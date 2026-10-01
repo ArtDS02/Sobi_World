@@ -6,6 +6,7 @@ const TEXT = `{
     {
       "id": "pig_a",
       "status": "placeholder",
+      "sleepAsset": null,
       "tags": ["x"]
     }
   ],
@@ -38,6 +39,11 @@ describe('patchRowText', () => {
       license: 'CC0',
     });
     expect(out.split('\n').length).toBe(TEXT.split('\n').length);
+  });
+
+  it('replaces a null value instead of adding a duplicate key', () => {
+    const out = patchRowText(TEXT, 'pig_a', { sleepAsset: 'a_sleep.png' });
+    expect(out).toBe(TEXT.replace('"sleepAsset": null', '"sleepAsset": "a_sleep.png"'));
   });
 
   it('appends to a multi-line row on its own indented line', () => {

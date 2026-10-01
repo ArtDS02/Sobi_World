@@ -3,7 +3,7 @@
   "pigs": [
     {
       "id": "pig_classic",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Hồng Cổ Điển",
       "collection": "base",
       "rarity": "P1",
@@ -16,7 +16,7 @@
     },
     {
       "id": "pig_watermelon",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Dưa Hấu",
       "collection": "base",
       "rarity": "P1",
@@ -29,7 +29,7 @@
     },
     {
       "id": "pig_superhero",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Siêu Nhân",
       "collection": "base",
       "rarity": "P1",
@@ -42,7 +42,7 @@
     },
     {
       "id": "pig_thienlong",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Thiên Long",
       "collection": "base",
       "rarity": "P5",
@@ -55,7 +55,7 @@
     },
     {
       "id": "pig_white",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Trắng",
       "collection": "base",
       "rarity": "P1",
@@ -63,12 +63,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/base/pig_white.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/base/pig_white_sleep.png",
       "tags": ["classic"]
     },
     {
       "id": "pig_black",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Đen",
       "collection": "base",
       "rarity": "P1",
@@ -76,12 +76,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/base/pig_black.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/base/pig_black_sleep.png",
       "tags": ["classic"]
     },
     {
       "id": "pig_brown",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Nâu",
       "collection": "base",
       "rarity": "P1",
@@ -89,12 +89,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/base/pig_brown.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/base/pig_brown_sleep.png",
       "tags": ["classic"]
     },
     {
       "id": "pig_farmer",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Nông Dân",
       "collection": "jobs",
       "rarity": "P1",
@@ -102,12 +102,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/jobs/pig_farmer.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/skins/jobs/pig_farmer_sleep.png",
       "tags": ["job", "farm"]
     },
     {
       "id": "pig_chef",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Đầu Bếp",
       "collection": "jobs",
       "rarity": "P1",
@@ -115,12 +115,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/jobs/pig_chef.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/skins/jobs/pig_chef_sleep.png",
       "tags": ["job", "food"]
     },
     {
       "id": "pig_nerd",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Mọt Sách",
       "collection": "jobs",
       "rarity": "P1",
@@ -128,12 +128,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/jobs/pig_nerd.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/skins/jobs/pig_nerd_sleep.png",
       "tags": ["job"]
     },
     {
       "id": "pig_knight",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Hiệp Sĩ",
       "collection": "fantasy",
       "rarity": "P1",
@@ -141,12 +141,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/fantasy/pig_knight.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/skins/fantasy/pig_knight_sleep.png",
       "tags": ["fantasy"]
     },
     {
       "id": "pig_wizard",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Pháp Sư",
       "collection": "fantasy",
       "rarity": "P1",
@@ -154,12 +154,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/fantasy/pig_wizard.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/skins/fantasy/pig_wizard_sleep.png",
       "tags": ["fantasy", "magic"]
     },
     {
       "id": "pig_cowboy",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Cao Bồi",
       "collection": "adventure",
       "rarity": "P1",
@@ -167,12 +167,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/adventure/pig_cowboy.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/skins/adventure/pig_cowboy_sleep.png",
       "tags": ["adventure"]
     },
     {
       "id": "pig_detective",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Thám Tử",
       "collection": "jobs",
       "rarity": "P1",
@@ -180,12 +180,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/jobs/pig_detective.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/skins/jobs/pig_detective_sleep.png",
       "tags": ["job"]
     },
     {
       "id": "pig_ghost",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Ma",
       "collection": "horror",
       "rarity": "P1",
@@ -193,12 +193,12 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/horror/pig_ghost.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/skins/horror/pig_ghost_sleep.png",
       "tags": ["horror", "funny"]
     },
     {
       "id": "pig_christmas",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Giáng Sinh",
       "collection": "seasonal",
       "rarity": "P1",
@@ -209,12 +209,12 @@
       },
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/seasonal/pig_christmas.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/skins/seasonal/pig_christmas_sleep.png",
       "tags": ["seasonal"]
     },
     {
       "id": "pig_tet",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Tết",
       "collection": "vietnam",
       "rarity": "P1",
@@ -225,7 +225,7 @@
       },
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/vietnam/pig_tet.png",
-      "sleepAsset": null,
+      "sleepAsset": "pigs/skins/vietnam/pig_tet_sleep.png",
       "tags": ["seasonal", "vietnam"]
     }
   ],
@@ -233,19 +233,19 @@
   "fx": [
     {
       "id": "fx_sick",
-      "status": "placeholder",
+      "status": "production",
       "asset": "fx/fx_sick.png",
       "anchor": "fx_above"
     },
     {
       "id": "fx_pregnant",
-      "status": "placeholder",
+      "status": "production",
       "asset": "fx/fx_pregnant.png",
       "anchor": "fx_above"
     },
     {
       "id": "fx_zzz",
-      "status": "placeholder",
+      "status": "production",
       "asset": "fx/fx_zzz.png",
       "anchor": "fx_above",
       "frames": {
@@ -257,31 +257,31 @@
     },
     {
       "id": "fx_heart",
-      "status": "placeholder",
+      "status": "production",
       "asset": "fx/fx_heart.png",
       "particle": true
     },
     {
       "id": "fx_bubble",
-      "status": "placeholder",
+      "status": "production",
       "asset": "fx/fx_bubble.png",
       "particle": true
     },
     {
       "id": "fx_crumb",
-      "status": "placeholder",
+      "status": "production",
       "asset": "fx/fx_crumb.png",
       "particle": true
     },
     {
       "id": "fx_sparkle",
-      "status": "placeholder",
+      "status": "production",
       "asset": "fx/fx_sparkle.png",
       "particle": true
     },
     {
       "id": "fx_coin",
-      "status": "placeholder",
+      "status": "production",
       "asset": "fx/fx_coin.png",
       "particle": true
     }
@@ -289,7 +289,7 @@
   "props": [
     {
       "id": "prop_feed_trough",
-      "status": "placeholder",
+      "status": "production",
       "states": {
         "empty": "props/prop_feed_trough_empty.png",
         "half": "props/prop_feed_trough_half.png",
@@ -298,81 +298,81 @@
     },
     {
       "id": "prop_order_board",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_order_board.png"
     },
     {
       "id": "prop_water_bowl",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_water_bowl.png"
     },
     {
       "id": "prop_mud_puddle",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_mud_puddle.png"
     },
     {
       "id": "prop_food_sack",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_food_sack.png"
     }
   ],
   "buildings": [
     {
       "id": "prop_pig_house",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/prop_pig_house.png"
     },
     {
       "id": "prop_hay_shed",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/prop_hay_shed.png"
     },
     {
       "id": "prop_water_well",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/prop_water_well.png"
     },
     {
       "id": "prop_fence_section",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/prop_fence_section.png"
     },
     {
       "id": "prop_shop_stall",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/prop_shop_stall.png"
     }
   ],
   "environment": [
     {
       "id": "env_sky",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/env_sky.png"
     },
     {
       "id": "env_cloud_1",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/env_cloud_1.png"
     },
     {
       "id": "env_cloud_2",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/env_cloud_2.png"
     },
     {
       "id": "env_hills_far",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/env_hills_far.png"
     },
     {
       "id": "env_trees_mid",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/env_trees_mid.png"
     },
     {
       "id": "env_ground_grass",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/env_ground_grass.png",
       "tile": true
     }
@@ -380,180 +380,204 @@
   "ui": [
     {
       "id": "ui_icon_hunger",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_hunger.png"
     },
     {
       "id": "ui_icon_cleanliness",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_cleanliness.png"
     },
     {
       "id": "ui_icon_health",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_health.png"
     },
     {
       "id": "ui_icon_happiness",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_happiness.png"
     },
     {
       "id": "ui_icon_growth",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_growth.png"
     },
     {
       "id": "ui_icon_gold",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_gold.png"
     },
     {
       "id": "ui_icon_xp",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_xp.png"
     },
     {
       "id": "ui_icon_trough",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_trough.png"
     },
     {
       "id": "ui_icon_order",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_order.png"
     },
     {
       "id": "ui_icon_collection",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_collection.png"
     },
     {
       "id": "ui_icon_skin",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_icon_skin.png"
     },
     {
       "id": "ui_btn_feed",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_btn_feed.png"
     },
     {
       "id": "ui_btn_clean",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_btn_clean.png"
     },
     {
       "id": "ui_btn_clean_all",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_btn_clean_all.png"
     },
     {
       "id": "ui_btn_heal",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_btn_heal.png"
     },
     {
       "id": "ui_btn_breed",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_btn_breed.png"
     },
     {
       "id": "ui_btn_shop",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_btn_shop.png"
     },
     {
       "id": "ui_btn_fill_trough",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_btn_fill_trough.png"
     }
   ],
   "audio": [
     {
       "id": "music_farm",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/music_farm.mp3",
       "kind": "music",
       "loop": true,
-      "volume": 0.6
+      "volume": 0.6,
+      "credit": "Ủn Ỉn Homemade — generated with Mureka AI",
+      "license": "Project-owned (Mureka AI output, per the account plan terms)"
     },
     {
       "id": "ui_click",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/ui_click.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     },
     {
       "id": "ui_error",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/ui_error.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     },
     {
       "id": "pig_oink_happy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/pig_oink_happy.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     },
     {
       "id": "pig_oink_hungry",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/pig_oink_hungry.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     },
     {
       "id": "feed_munch",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/feed_munch.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     },
     {
       "id": "water_splash",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/water_splash.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     },
     {
       "id": "coin_collect",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/coin_collect.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     },
     {
       "id": "breed_chime",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/breed_chime.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     },
     {
       "id": "birth_fanfare",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/birth_fanfare.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     },
     {
       "id": "level_up",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/level_up.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     },
     {
       "id": "notify",
-      "status": "placeholder",
+      "status": "production",
       "asset": "audio/notify.mp3",
       "kind": "sfx",
-      "volume": 0.8
+      "volume": 0.8,
+      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     }
   ],
   "layout": {

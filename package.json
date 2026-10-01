@@ -20,6 +20,7 @@
     "icon": "node scripts/make-icon.mjs",
     "assets:placeholders": "tsx scripts/make-placeholders.ts",
     "assets:check": "tsx scripts/assets-check.ts",
+    "art:generate": "tsx scripts/generate-art.ts",
     "art:process": "tsx scripts/process-art.ts",
     "sim:economy": "tsx scripts/simulate-economy.ts",
     "test:e2e": "npm run build && playwright test",
@@ -31,8 +32,10 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@breezystack/lamejs": "^1.2.7",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@types/pngjs": "^6.0.5",
     "electron": "^44.5.1",
     "electron-builder": "^26.15.3",

@@ -26,8 +26,13 @@ describe('assets:check (art standard §7.4)', () => {
   });
 
   it('placeholders regenerate exactly the files the manifest lists', () => {
-    const parsed = parseManifest(readManifest());
+    // Back to wave 0: every row placeholder, so the generator owns every pig file again.
+    const m = readManifest();
+    for (const v of Object.values(m))
+      if (Array.isArray(v)) for (const row of v) row.status = 'placeholder';
+    const parsed = parseManifest(m);
     if (!parsed.ok) throw new Error(parsed.message);
+    writeManifest(m);
     rmSync(join(root, 'pigs'), { recursive: true });
     makePlaceholders(parsed.manifest, root);
     expect(checkAssets(root)).toEqual([]);
@@ -88,6 +93,8 @@ describe('assets:check (art standard §7.4)', () => {
   it('production rows: audio needs credit + license, pig corners transparent', () => {
     const m = readManifest();
     m.audio[0].status = 'production';
+    delete m.audio[0].credit;
+    delete m.audio[0].license;
     m.pigs[0].status = 'production';
     writeManifest(m);
     const solid = new PNG({ width: 512, height: 512 });

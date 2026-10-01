@@ -69,10 +69,14 @@ describe('asset registry (spec §11.4)', () => {
       url: 'assets/pigs/base/pig_classic_sleep.png',
       overlay: null,
     });
-    const white = reg.pigTexture('pig_white', 'PIG_EARTH_PINK', true);
-    expect(white.url).toBe(reg.url('pig_white'));
+    // A skin without its own sleep frame (rarer skins, AI pack §3.3).
+    const m = manifest();
+    m.pigs.find((p) => p.id === 'pig_white')!.sleepAsset = null;
+    const noSleep = createAssetRegistry(m);
+    const white = noSleep.pigTexture('pig_white', 'PIG_EARTH_PINK', true);
+    expect(white.url).toBe(noSleep.url('pig_white'));
     expect(white.overlay).toBe('fx_zzz');
-    expect(reg.pigTexture('pig_white', 'PIG_EARTH_PINK').overlay).toBeNull();
+    expect(noSleep.pigTexture('pig_white', 'PIG_EARTH_PINK').overlay).toBeNull();
   });
 
   it('trough state by food: 0 → empty, ≤ half → half, else full', () => {

@@ -20,7 +20,10 @@ export function patchRowText(text: string, id: string, fields: Record<string, st
   const multiline = body.includes('\n');
   const indent = multiline ? (/\n([ \t]*)"id"/.exec(text.slice(start, at + 4))?.[1] ?? '  ') : '';
   for (const [field, value] of Object.entries(fields)) {
-    const re = new RegExp(`("${field}":\\s*)"(?:[^"\\\\]|\\\\.)*"`);
+    // Any scalar value: string, null, number or boolean.
+    const re = new RegExp(
+      `("${field}":\\s*)(?:"(?:[^"\\\\]|\\\\.)*"|null|true|false|-?[0-9][0-9.]*)`,
+    );
     if (re.test(body)) {
       body = body.replace(re, (_m, head: string) => `${head}${JSON.stringify(value)}`);
     } else {

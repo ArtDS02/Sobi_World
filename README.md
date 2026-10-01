@@ -103,9 +103,15 @@ và `npm run check` (golden value của spec không được nới).
 
 ## Credits
 
-Hiện mọi hình và âm thanh là **bản tạm do game tự sinh** (`scripts/make-placeholders.ts`), không có tác phẩm
-bên thứ ba. Khi thêm âm thanh/ảnh thật: chỉ dùng tác phẩm tự làm hoặc CC0, ghi `credit` + `license` trong dòng
-manifest — màn Cài đặt → Thông tin tự liệt kê các dòng đó, và cập nhật mục này.
+- **Hình** (heo, nhà, đạo cụ, cảnh nền, FX, icon, icon app): vẽ vector bằng code cho dự án —
+  `npm run art:generate` (`scripts/art/`, cùng một bộ màu/nét/ánh sáng theo `asset/reference/`), rồi
+  `npm run art:process` để hậu kỳ + đăng ký. Tác phẩm gốc của dự án.
+- **Hiệu ứng âm thanh** (11 key): tổng hợp bằng code (`scripts/art/sfx.ts`). Tác phẩm gốc của dự án.
+- **Nhạc nền** `music_farm`: tạo bằng Mureka AI cho dự án (`asset/music/music-bg.mp3`); quyền dùng theo điều
+  khoản gói Mureka của chủ dự án.
+
+Không có tác phẩm bên thứ ba. `credit` + `license` nằm trong từng dòng âm thanh của manifest — màn Cài đặt →
+Thông tin tự liệt kê. Thêm asset mới: chỉ dùng tác phẩm tự làm hoặc CC0 và cập nhật mục này.
 
 ---
 
@@ -114,7 +120,6 @@ manifest — màn Cài đặt → Thông tin tự liệt kê các dòng đó, v�
 - Chỉ Windows (v1). Không có thông báo nền khi game tắt (heo vẫn lớn, máng vẫn được ăn theo thời gian thật).
 - Save theo từng người dùng Windows; chuyển máy bằng chép thư mục hoặc Xuất/Nhập.
 - Installer chưa ký số (SmartScreen hỏi một lần).
-- Hình và âm thanh vẫn là bản tạm cho tới khi chạy các task ART (xem "Bàn giao").
 - Hết vàng mà máng trống (hoặc heo bệnh mà hết thuốc) thì heo con dừng ở 33 % và không bán được — người chơi
   có thể kẹt; spec chưa có cách gỡ (xem `PROJECT_STATUS.md`).
 
@@ -170,7 +175,7 @@ Các điểm spec để ngỏ hoặc tự mâu thuẫn, đã chốt trong `DECIS
 | 17 | Không chuỗi tiếng Việt ngoài `vi.ts` | PASS | chỉ còn trong comment và `nameVi` của config (Phụ lục A) |
 | 18 | Game chạy trên placeholder | PASS | 71/71 asset placeholder; e2e xanh |
 | 19 | Asset chỉ qua `assets.json`; `assets:check` | PASS | grep đường dẫn = 0; `assets:check OK` |
-| 20 | Mọi dòng v1 `production`/`final`; credit audio | **FAIL** | `assets:release`: 71 placeholder, 12 audio chưa credit → chạy ART |
+| 20 | Mọi dòng v1 `production`/`final`; credit audio | ĐẠT | `assets:release` OK (ART lô 1: 71 dòng production) |
 | 21 | Mỗi dòng §11.3 đủ animation/VFX/âm/toast | PASS* | bảng dữ liệu + `audio.test.ts`, `feedback.test.ts`; *chưa xem hết trên bản desktop |
 | 22 | Installer tạo lối tắt Desktop/Start Menu có icon | PASS* | cấu hình `build.nsis`; *installer 1.0.0 chưa build được (xem PROJECT_STATUS) |
 | 23 | Không cần terminal/Node/server/port; 0 request mạng | PASS | `main.ts` chặn http(s); e2e khẳng định 0 request |
@@ -181,7 +186,7 @@ Các điểm spec để ngỏ hoặc tự mâu thuẫn, đã chốt trong `DECIS
 | 28 | `prefers-reduced-motion` là giá trị đầu | PASS | `visualStates.test.ts` |
 | 29 | Đã thử trên Windows không có Node | **CHƯA** | cần người kiểm (xem `PROJECT_STATUS.md`) |
 
-§15: Phase 1–3 đạt. Phase 4 chưa đạt (asset v1 còn placeholder, âm thanh thật chưa có).
+§15: Phase 1–3 đạt. Phase 4: asset v1 đủ (production); còn chờ installer (`dist:win` EPERM) và thử trên máy không có Node.
 Phase 5: installer cấu hình đủ, e2e §14.8 xanh; còn chờ build installer 1.0.0 và thử trên máy không có Node.
 
 ---

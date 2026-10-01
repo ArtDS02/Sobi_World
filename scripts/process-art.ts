@@ -152,7 +152,8 @@ const dist = (d: Buffer, i: number, c: number[]) =>
  */
 function removeBackground(im: Img): { note?: string; error?: string } {
   const corners = cornerIdx(im);
-  if (corners.every((i) => im.d[i * 4 + 3]! <= OPAQUE)) return {};
+  // Already cut out (a tileable strip may touch the bottom corners, e.g. a fence on grass).
+  if (corners.filter((i) => im.d[i * 4 + 3]! <= OPAQUE).length >= 2) return {};
   const bg = [0, 1, 2].map((k) => corners.reduce((s, i) => s + im.d[i * 4 + k]!, 0) / 4);
   if (corners.some((i) => dist(im.d, i, bg) > BG_TOLERANCE)) {
     return { error: 'nền không trong suốt và 4 góc không cùng một màu — không tách tự động được' };
@@ -214,6 +215,14 @@ const isFullBleed = (t: Target) =>
 
 /** Trims, scales and positions the image on the canvas its category requires. */
 function layout(t: Target, src: Img, size: Size): { img: Img; upscaled: boolean } {
+  if (src.w === size.width && src.h === size.height) {
+    // Already authored on the final canvas (scripts/generate-art.ts): keep the scale so every pig
+    // shares one body size; pigs are only moved onto the ground line.
+    if (t.section !== 'pigs') return { img: src, upscaled: false };
+    const b = bbox(src)!;
+    const dy = Math.round(size.height * PIG_FEET_Y) - (b.y + b.h);
+    return { img: dy === 0 ? src : place(size, src, 0, dy), upscaled: false };
+  }
   if (isFullBleed(t)) {
     // Environment layers and sprite sheets: cover-fit the whole frame, no trim.
     const s = Math.max(size.width / src.w, size.height / src.h);
@@ -383,10 +392,11 @@ async function main() {
     patch(row.id, { asset: target, credit: credit.credit, license: credit.license });
     delivered.add(target);
     accepted.push(`audio/${file} → ${target}`);
-    notes.push(
-      `audio/${file}: chưa chuẩn hoá âm lượng (không có ffmpeg) — chỉnh "volume" trong manifest nếu cần`,
-    );
   }
+  if (audioFiles.length > 0)
+    notes.push(
+      'audio: không chuẩn hoá âm lượng (không có ffmpeg) — cân bằng bằng "volume" trong manifest',
+    );
 
   // Promote rows whose every image/audio file arrived in this batch.
   const promoted: string[] = [];
@@ -404,7 +414,7 @@ async function main() {
           patch(row.id, { status: 'production' });
         }
         promoted.push(row.id);
-        if (section === 'pigs')
+        if (section === 'pigs' && rowFiles(row).some(([k]) => k === 'anchors'))
           notes.push(`${row.id}: anchors.json vẫn là số của placeholder — đo lại khi xem gallery`);
       } else {
         partial.push(`${row.id} (thiếu ${files.filter((p) => !delivered.has(p)).join(', ')})`);
