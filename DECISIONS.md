@@ -72,3 +72,12 @@ Spec: §7.3, §14.1, §14.2 · Phase: S04A, S04B (advanceWorld phải gọi `adv
 
 **S04B-1** · Event cho away summary (§9.5): `TROUGH_EMPTY { at }` = thời điểm bữa cuối khi máng cạn trong window mà còn heo muốn ăn (đã cạn từ đầu window → không emit); `PIG_HUNGRY_ZERO { at, stalled }` = lúc hunger chạm 0 (chỉ ở lần vượt ngưỡng), `stalled` = chưa trưởng thành → UI tính "ngừng lớn bao lâu" = now − at. Thời điểm theo xấp xỉ Q4 (tham lam theo slot).
 Spec: §7.3, §7.4, §9.5 · Phase: S04B, UI away summary.
+
+**S05-1** · Storage: IndexedDB lưu cùng chuỗi JSON với mirror. Backup = save tốt gần nhất mà phiên này đã load/ghi (giữ trong bộ nhớ), chép sang backup key trước mỗi lần ghi đè; chưa có save tốt (vd sau recovery → "Bắt đầu mới") thì backup cũ giữ nguyên. Gặp SAVE_TOO_NEW ở bất kỳ nguồn nào → dừng chuỗi (không lùi về bản cũ hơn) và khoá ghi.
+Spec: §9.1, §9.2 · Phase: S05, store.
+
+**S05-2** · Migration v1→v2: `trough = { food 0, capacity theo level từ xp, lastResolvedAt = updatedAt }`; `collection.discoveredBreeds` = breed của heo + breedingRecords, `discoveredSkins` = skin default của các breed đó (không cộng discovery bonus); `ownedSkins` = 4 skin default. Field lạ của v1 bị zod bỏ qua.
+Spec: §9.2 · Phase: S05.
+
+**S05-3** · Helper vàng duy nhất: `src/core/engine/gold.ts:changeGold` (ghi Transaction, newest first, tối đa 200, không cho âm → INSUFFICIENT_GOLD). Id sinh bằng `rng.ts:randomId(rng)`.
+Spec: §8.16 · Phase: S05, mọi action.

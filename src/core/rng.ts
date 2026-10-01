@@ -39,6 +39,14 @@ export function orderSeed(windowIndex: number, slot: number): number {
   return ((windowIndex * 0x9e3779b1) ^ ((slot + 1) * 0x85ebca6b)) >>> 0;
 }
 
+/** UUID-v4-shaped id drawn from the injected rng (deterministic under a seeded rng). */
+export function randomId(rng: Rng): string {
+  const hex = (n: number) =>
+    Array.from({ length: n }, () => Math.floor(rng.next() * 16).toString(16)).join('');
+  const variant = (8 + Math.floor(rng.next() * 4)).toString(16);
+  return `${hex(8)}-${hex(4)}-4${hex(3)}-${variant}${hex(3)}-${hex(12)}`;
+}
+
 /** Uniform pick from a non-empty list. */
 export function pick<T>(rng: Rng, items: readonly T[]): T {
   if (items.length === 0) throw new Error('pick from empty list');

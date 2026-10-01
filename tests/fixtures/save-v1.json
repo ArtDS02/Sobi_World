@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "createdAt": 1700000000000,
+  "updatedAt": 1700003600000,
+  "player": { "gold": 3800, "xp": 120, "unlockedSlots": 4 },
+  "pigs": [
+    {
+      "id": "8f1c2a10-0000-4000-8000-000000000001",
+      "slotIndex": 0,
+      "breed": "PIG_EARTH_PINK",
+      "name": "Ủn Hồng",
+      "gender": "FEMALE",
+      "growthProgress": 100,
+      "hunger": 62.5,
+      "cleanliness": 48,
+      "isSick": false,
+      "pregnancy": {
+        "startedAt": 1700002000000,
+        "endsAt": 1700005600000,
+        "fatherId": "8f1c2a10-0000-4000-8000-000000000002",
+        "childBreed": "PIG_STRIPED_MELON",
+        "childGender": "MALE"
+      },
+      "lastTickedAt": 1700003600000,
+      "createdAt": 1700000100000
+    },
+    {
+      "id": "8f1c2a10-0000-4000-8000-000000000002",
+      "slotIndex": 2,
+      "breed": "PIG_EARTH_PINK",
+      "name": "Ủn Mập",
+      "gender": "MALE",
+      "growthProgress": 100,
+      "hunger": 10,
+      "cleanliness": 25,
+      "isSick": true,
+      "pregnancy": null,
+      "lastTickedAt": 1700003600000,
+      "createdAt": 1700000200000
+    }
+  ],
+  "inventory": { "FOOD_BASIC": 5, "MEDICINE_COMMON": 0 },
+  "transactions": [
+    { "id": "t3", "at": 1700002000000, "type": "BREEDING_FEE", "amount": -200, "refId": "b1" },
+    { "id": "t2", "at": 1700000200000, "type": "PIG_PURCHASE", "amount": -500 },
+    { "id": "t1", "at": 1700000100000, "type": "PIG_PURCHASE", "amount": -500 },
+    { "id": "t0", "at": 1700000000000, "type": "INITIAL_GOLD", "amount": 5000 }
+  ],
+  "breedingRecords": [
+    {
+      "id": "b1",
+      "at": 1700002000000,
+      "motherId": "8f1c2a10-0000-4000-8000-000000000001",
+      "fatherId": "8f1c2a10-0000-4000-8000-000000000002",
+      "motherBreed": "PIG_EARTH_PINK",
+      "fatherBreed": "PIG_EARTH_PINK",
+      "childBreed": "PIG_STRIPED_MELON",
+      "childGender": "MALE",
+      "bornAt": null
+    }
+  ],
+  "settings": { "musicOn": true, "sfxOn": false, "tutorialDone": true, "lastExportAt": null }
+}

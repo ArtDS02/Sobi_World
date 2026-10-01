@@ -1,10 +1,10 @@
 // Save document and domain types (spec §5). Derived values (§5.4) are never stored.
 import type { ErrorCode } from './config/errors';
-import type { BreedId, CosmeticSlot, Gender, ItemId } from './config/ids';
+import type { BreedId, CosmeticSlot, Gender, ItemId, TransactionType } from './config/ids';
 import type { GameEvent } from './events';
 import type { Rng } from './rng';
 
-export type { BreedId, CosmeticSlot, Gender, ItemId };
+export type { BreedId, CosmeticSlot, Gender, ItemId, TransactionType };
 export type GrowthStage = 'BABY' | 'YOUNG' | 'ADULT'; // derived, never stored
 
 export interface SaveGame {
@@ -76,18 +76,6 @@ export interface Order {
   rewardXp: number;
   fulfilledAt: number | null;
 }
-
-export type TransactionType =
-  | 'INITIAL_GOLD'
-  | 'SHOP_PURCHASE'
-  | 'PIG_PURCHASE'
-  | 'PIG_SELL'
-  | 'BREEDING_FEE'
-  | 'SLOT_PURCHASE'
-  | 'TROUGH_FILL'
-  | 'SKIN_PURCHASE'
-  | 'ORDER_REWARD'
-  | 'DISCOVERY_BONUS';
 
 export interface Transaction {
   id: string;
