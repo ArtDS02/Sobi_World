@@ -1,7 +1,7 @@
-Current phase: S00 — Setup + chốt quyết định + khung dự án      Status: DONE
+Current phase: S02 — Types, config, rng, clock, i18n      Status: DONE
 Current task: -
-Completed: S00 — tag p00
+Completed: S00, S02 — tag p02
 In progress: -
-Known issues: tsconfig.json ở root dùng chung cho src/tests/scripts (lib DOM có mặt cả ở core; core thuần dựa vào ESLint + guard)
+Known issues: tsconfig root dùng chung (lib DOM có ở core; dựa vào ESLint + guard). skins.ts (Phụ lục A) vẫn giữ priceGold/rarity cho 17 skin — theo C2 khi làm store/shop phải chuyển nguồn chân lý sang assets.json + SkinRegistry inject. File trích Phụ lục (breeds/skins/names/errors/vi) giữ nguyên format gốc, chưa prettier.
 Important decisions: -
-Next task: S02 — Types, config, rng, clock, i18n (block "### S02" trong PROMPTS_THEO_PHASE.md). Tạo src/core/types.ts, src/core/config/* (trích Phụ lục A bằng sed), src/core/rng.ts (Rng, mulberry32, hash Q3, defaultRng), src/core/clock.ts (Clock + fake, A2), src/i18n/vi.ts (Phụ lục B). Xem DECISIONS C1/C2/C3/Q3/Q6/A2.
+Next task: S03 — Engine advancePig & derived values (block "### S03" trong PROMPTS_THEO_PHASE.md). Dùng types.ts, config/care.ts (careRates), config/balance.ts, config/levels.ts, rng.ts (Rng, sequenceRng cho test sickness).
