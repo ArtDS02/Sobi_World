@@ -24,6 +24,10 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
+    rules: {
+      // Hooks for later phases keep their final signature with _-prefixed unused params.
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
   },
   {
     files: ['src/core/**/*.ts'],

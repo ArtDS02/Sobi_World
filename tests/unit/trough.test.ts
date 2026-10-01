@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { advancePig } from '../../src/core/engine/advancePig';
+import { advanceWorld } from '../../src/core/engine/advanceWorld';
 import { advanceWithTrough, resolveTrough, type Trough } from '../../src/core/engine/trough';
 import { sequenceRng, type Rng } from '../../src/core/rng';
 import type { Pig } from '../../src/core/types';
 import { makePig } from './pigFactory';
+import { makeState } from './stateFactory';
 
 const SEC = 1000;
 const PINK_PERIOD = 1200; // FOOD_HUNGER_RESTORE / (100 / 2400) s
@@ -32,7 +34,8 @@ describe('§14.2 trough', () => {
       ['a', 100],
       ['b', 50],
     ]);
-    for (let i = 0; i < 5; i++) expect(run(pigs, trough(1), 600)).toEqual(run(pigs, trough(1), 600));
+    for (let i = 0; i < 5; i++)
+      expect(run(pigs, trough(1), 600)).toEqual(run(pigs, trough(1), 600));
   });
 
   it('empty trough for the whole window: same as advancePig alone, growth stalls at tHungerZero', () => {
@@ -42,7 +45,13 @@ describe('§14.2 trough', () => {
     expect(out.trough.food).toBe(0);
   });
 
-  it.todo('advanceWorld twice with the same now consumes food only once (S04B)');
+  it('advanceWorld twice with the same now consumes food only once', () => {
+    const state = makeState([makePig({ hunger: 50 })], 5);
+    const first = advanceWorld(state, 2 * PINK_PERIOD * SEC, neverSick());
+    const second = advanceWorld(first.state, 2 * PINK_PERIOD * SEC, neverSick());
+    expect(first.state.trough.food).toBe(2);
+    expect(second.state.trough.food).toBe(2);
+  });
 
   it('3-day offline window with a full trough: food consumed, never negative, growth capped at 100', () => {
     const pigs = [0, 1, 2, 3].map((i) => makePig({ id: `p${i}`, slotIndex: i }));

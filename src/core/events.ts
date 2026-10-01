@@ -2,11 +2,12 @@
 import type { BreedId } from './types';
 
 export type GameEvent =
-  | { type: 'PIG_HUNGRY_ZERO'; pigId: string }
+  // `at` (epoch ms) and `stalled` (not yet adult) feed the away summary (§9.5).
+  | { type: 'PIG_HUNGRY_ZERO'; pigId: string; at: number; stalled: boolean }
   | { type: 'PIG_BECAME_SICK'; pigId: string }
   | { type: 'PIG_BECAME_ADULT'; pigId: string }
   | { type: 'BIRTH'; motherId: string; childId: string; childBreed: BreedId }
-  | { type: 'TROUGH_EMPTY' }
+  | { type: 'TROUGH_EMPTY'; at: number } // when the last unit was eaten
   | { type: 'ORDER_NEW'; orderId: string }
   | { type: 'ORDER_EXPIRED'; orderId: string }
   | { type: 'LEVEL_UP'; level: number }
