@@ -4,6 +4,6 @@ export default defineConfig({
   // Relative asset URLs: the desktop build loads dist/ from app:// or file:// (spec §13).
   base: './',
   test: {
-    include: ['tests/unit/**/*.test.ts', 'tests/electron/**/*.test.ts'],
+    include: ['tests/unit/**/*.test.ts', 'tests/electron/**/*.test.ts', 'tests/scripts/**/*.test.ts'],
   },
 });

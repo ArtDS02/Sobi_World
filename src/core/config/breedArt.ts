@@ -5,7 +5,7 @@ import type { BreedId } from './ids';
 export interface BreedArt {
   defaultSkin: string;
   catalogueSection: string; // asset/animals/PIG_CATALOGUE.md
-  conceptCell: string; // asset/reference/style_reference_pigs.png
+  conceptCell: string; // cell of the concept sheet asset/reference/style_reference_pigs
 }
 
 export const BREED_ART: Record<BreedId, BreedArt> = {

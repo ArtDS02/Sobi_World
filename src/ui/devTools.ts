@@ -14,7 +14,7 @@ export function devClockOffset() {
   };
 }
 
-export function renderDevTools(skip: (ms: number) => void): HTMLElement {
+export function renderDevTools(skip: (ms: number) => void, gallery?: () => void): HTMLElement {
   const button = (hours: number) =>
     el('button', {
       class: 'c-button c-button--ghost',
@@ -22,5 +22,13 @@ export function renderDevTools(skip: (ms: number) => void): HTMLElement {
       attrs: { type: 'button' },
       on: { click: () => skip(hours * HOUR) },
     });
-  return el('div', { class: 'c-devtools' }, button(1), button(6));
+  const assets = gallery
+    ? el('button', {
+        class: 'c-button c-button--ghost',
+        text: 'assets',
+        attrs: { type: 'button' },
+        on: { click: gallery },
+      })
+    : null;
+  return el('div', { class: 'c-devtools' }, button(1), button(6), assets);
 }

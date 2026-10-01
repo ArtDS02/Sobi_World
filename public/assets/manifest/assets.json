@@ -1,0 +1,670 @@
+{
+  "version": 2,
+  "pigs": [
+    {
+      "id": "pig_classic",
+      "status": "placeholder",
+      "nameVi": "Heo Hồng Cổ Điển",
+      "collection": "base",
+      "rarity": "P1",
+      "priceGold": null,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/base/pig_classic.png",
+      "sleepAsset": "pigs/base/pig_classic_sleep.png",
+      "tags": ["classic", "farm"]
+    },
+    {
+      "id": "pig_watermelon",
+      "status": "placeholder",
+      "nameVi": "Heo Dưa Hấu",
+      "collection": "base",
+      "rarity": "P1",
+      "priceGold": null,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/base/pig_watermelon.png",
+      "sleepAsset": "pigs/base/pig_watermelon_sleep.png",
+      "tags": ["food", "fun"]
+    },
+    {
+      "id": "pig_superhero",
+      "status": "placeholder",
+      "nameVi": "Heo Siêu Nhân",
+      "collection": "base",
+      "rarity": "P1",
+      "priceGold": null,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/base/pig_superhero.png",
+      "sleepAsset": "pigs/base/pig_superhero_sleep.png",
+      "tags": ["job", "hero"]
+    },
+    {
+      "id": "pig_thienlong",
+      "status": "placeholder",
+      "nameVi": "Heo Thiên Long",
+      "collection": "base",
+      "rarity": "P5",
+      "priceGold": null,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/base/pig_thienlong.png",
+      "sleepAsset": "pigs/base/pig_thienlong_sleep.png",
+      "tags": ["mythic", "legendary"]
+    },
+    {
+      "id": "pig_white",
+      "status": "placeholder",
+      "nameVi": "Heo Trắng",
+      "collection": "base",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/base/pig_white.png",
+      "sleepAsset": null,
+      "tags": ["classic"]
+    },
+    {
+      "id": "pig_black",
+      "status": "placeholder",
+      "nameVi": "Heo Đen",
+      "collection": "base",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/base/pig_black.png",
+      "sleepAsset": null,
+      "tags": ["classic"]
+    },
+    {
+      "id": "pig_brown",
+      "status": "placeholder",
+      "nameVi": "Heo Nâu",
+      "collection": "base",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/base/pig_brown.png",
+      "sleepAsset": null,
+      "tags": ["classic"]
+    },
+    {
+      "id": "pig_farmer",
+      "status": "placeholder",
+      "nameVi": "Heo Nông Dân",
+      "collection": "jobs",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/jobs/pig_farmer.png",
+      "sleepAsset": null,
+      "tags": ["job", "farm"]
+    },
+    {
+      "id": "pig_chef",
+      "status": "placeholder",
+      "nameVi": "Heo Đầu Bếp",
+      "collection": "jobs",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/jobs/pig_chef.png",
+      "sleepAsset": null,
+      "tags": ["job", "food"]
+    },
+    {
+      "id": "pig_nerd",
+      "status": "placeholder",
+      "nameVi": "Heo Mọt Sách",
+      "collection": "jobs",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/jobs/pig_nerd.png",
+      "sleepAsset": null,
+      "tags": ["job"]
+    },
+    {
+      "id": "pig_knight",
+      "status": "placeholder",
+      "nameVi": "Heo Hiệp Sĩ",
+      "collection": "fantasy",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/fantasy/pig_knight.png",
+      "sleepAsset": null,
+      "tags": ["fantasy"]
+    },
+    {
+      "id": "pig_wizard",
+      "status": "placeholder",
+      "nameVi": "Heo Pháp Sư",
+      "collection": "fantasy",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/fantasy/pig_wizard.png",
+      "sleepAsset": null,
+      "tags": ["fantasy", "magic"]
+    },
+    {
+      "id": "pig_cowboy",
+      "status": "placeholder",
+      "nameVi": "Heo Cao Bồi",
+      "collection": "adventure",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/adventure/pig_cowboy.png",
+      "sleepAsset": null,
+      "tags": ["adventure"]
+    },
+    {
+      "id": "pig_detective",
+      "status": "placeholder",
+      "nameVi": "Heo Thám Tử",
+      "collection": "jobs",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/jobs/pig_detective.png",
+      "sleepAsset": null,
+      "tags": ["job"]
+    },
+    {
+      "id": "pig_ghost",
+      "status": "placeholder",
+      "nameVi": "Heo Ma",
+      "collection": "horror",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/horror/pig_ghost.png",
+      "sleepAsset": null,
+      "tags": ["horror", "funny"]
+    },
+    {
+      "id": "pig_christmas",
+      "status": "placeholder",
+      "nameVi": "Heo Giáng Sinh",
+      "collection": "seasonal",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": {
+        "kind": "LEVEL",
+        "level": 3
+      },
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/seasonal/pig_christmas.png",
+      "sleepAsset": null,
+      "tags": ["seasonal"]
+    },
+    {
+      "id": "pig_tet",
+      "status": "placeholder",
+      "nameVi": "Heo Tết",
+      "collection": "vietnam",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": {
+        "kind": "LEVEL",
+        "level": 3
+      },
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/vietnam/pig_tet.png",
+      "sleepAsset": null,
+      "tags": ["seasonal", "vietnam"]
+    }
+  ],
+  "cosmetics": [],
+  "fx": [
+    {
+      "id": "fx_sick",
+      "status": "placeholder",
+      "asset": "fx/fx_sick.png",
+      "anchor": "fx_above"
+    },
+    {
+      "id": "fx_pregnant",
+      "status": "placeholder",
+      "asset": "fx/fx_pregnant.png",
+      "anchor": "fx_above"
+    },
+    {
+      "id": "fx_zzz",
+      "status": "placeholder",
+      "asset": "fx/fx_zzz.png",
+      "anchor": "fx_above",
+      "frames": {
+        "width": 256,
+        "height": 256,
+        "count": 3,
+        "fps": 4
+      }
+    },
+    {
+      "id": "fx_heart",
+      "status": "placeholder",
+      "asset": "fx/fx_heart.png",
+      "particle": true
+    },
+    {
+      "id": "fx_bubble",
+      "status": "placeholder",
+      "asset": "fx/fx_bubble.png",
+      "particle": true
+    },
+    {
+      "id": "fx_crumb",
+      "status": "placeholder",
+      "asset": "fx/fx_crumb.png",
+      "particle": true
+    },
+    {
+      "id": "fx_sparkle",
+      "status": "placeholder",
+      "asset": "fx/fx_sparkle.png",
+      "particle": true
+    },
+    {
+      "id": "fx_coin",
+      "status": "placeholder",
+      "asset": "fx/fx_coin.png",
+      "particle": true
+    }
+  ],
+  "props": [
+    {
+      "id": "prop_feed_trough",
+      "status": "placeholder",
+      "states": {
+        "empty": "props/prop_feed_trough_empty.png",
+        "half": "props/prop_feed_trough_half.png",
+        "full": "props/prop_feed_trough_full.png"
+      }
+    },
+    {
+      "id": "prop_order_board",
+      "status": "placeholder",
+      "asset": "props/prop_order_board.png"
+    },
+    {
+      "id": "prop_water_bowl",
+      "status": "placeholder",
+      "asset": "props/prop_water_bowl.png"
+    },
+    {
+      "id": "prop_mud_puddle",
+      "status": "placeholder",
+      "asset": "props/prop_mud_puddle.png"
+    },
+    {
+      "id": "prop_food_sack",
+      "status": "placeholder",
+      "asset": "props/prop_food_sack.png"
+    }
+  ],
+  "buildings": [
+    {
+      "id": "prop_pig_house",
+      "status": "placeholder",
+      "asset": "buildings/prop_pig_house.png"
+    },
+    {
+      "id": "prop_hay_shed",
+      "status": "placeholder",
+      "asset": "buildings/prop_hay_shed.png"
+    },
+    {
+      "id": "prop_water_well",
+      "status": "placeholder",
+      "asset": "buildings/prop_water_well.png"
+    },
+    {
+      "id": "prop_fence_section",
+      "status": "placeholder",
+      "asset": "buildings/prop_fence_section.png"
+    }
+  ],
+  "environment": [
+    {
+      "id": "env_sky",
+      "status": "placeholder",
+      "asset": "environment/env_sky.png"
+    },
+    {
+      "id": "env_cloud_1",
+      "status": "placeholder",
+      "asset": "environment/env_cloud_1.png"
+    },
+    {
+      "id": "env_cloud_2",
+      "status": "placeholder",
+      "asset": "environment/env_cloud_2.png"
+    },
+    {
+      "id": "env_hills_far",
+      "status": "placeholder",
+      "asset": "environment/env_hills_far.png"
+    },
+    {
+      "id": "env_trees_mid",
+      "status": "placeholder",
+      "asset": "environment/env_trees_mid.png"
+    },
+    {
+      "id": "env_ground_grass",
+      "status": "placeholder",
+      "asset": "environment/env_ground_grass.png",
+      "tile": true
+    }
+  ],
+  "ui": [
+    {
+      "id": "ui_icon_hunger",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_hunger.png"
+    },
+    {
+      "id": "ui_icon_cleanliness",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_cleanliness.png"
+    },
+    {
+      "id": "ui_icon_health",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_health.png"
+    },
+    {
+      "id": "ui_icon_happiness",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_happiness.png"
+    },
+    {
+      "id": "ui_icon_growth",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_growth.png"
+    },
+    {
+      "id": "ui_icon_gold",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_gold.png"
+    },
+    {
+      "id": "ui_icon_xp",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_xp.png"
+    },
+    {
+      "id": "ui_icon_trough",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_trough.png"
+    },
+    {
+      "id": "ui_icon_order",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_order.png"
+    },
+    {
+      "id": "ui_icon_collection",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_collection.png"
+    },
+    {
+      "id": "ui_icon_skin",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_skin.png"
+    },
+    {
+      "id": "ui_btn_feed",
+      "status": "placeholder",
+      "asset": "ui/ui_btn_feed.png"
+    },
+    {
+      "id": "ui_btn_clean",
+      "status": "placeholder",
+      "asset": "ui/ui_btn_clean.png"
+    },
+    {
+      "id": "ui_btn_clean_all",
+      "status": "placeholder",
+      "asset": "ui/ui_btn_clean_all.png"
+    },
+    {
+      "id": "ui_btn_heal",
+      "status": "placeholder",
+      "asset": "ui/ui_btn_heal.png"
+    },
+    {
+      "id": "ui_btn_breed",
+      "status": "placeholder",
+      "asset": "ui/ui_btn_breed.png"
+    },
+    {
+      "id": "ui_btn_shop",
+      "status": "placeholder",
+      "asset": "ui/ui_btn_shop.png"
+    },
+    {
+      "id": "ui_btn_fill_trough",
+      "status": "placeholder",
+      "asset": "ui/ui_btn_fill_trough.png"
+    }
+  ],
+  "audio": [
+    {
+      "id": "music_farm",
+      "status": "placeholder",
+      "asset": "audio/music_farm.mp3",
+      "kind": "music",
+      "loop": true,
+      "volume": 0.6
+    },
+    {
+      "id": "ui_click",
+      "status": "placeholder",
+      "asset": "audio/ui_click.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    },
+    {
+      "id": "ui_error",
+      "status": "placeholder",
+      "asset": "audio/ui_error.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    },
+    {
+      "id": "pig_oink_happy",
+      "status": "placeholder",
+      "asset": "audio/pig_oink_happy.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    },
+    {
+      "id": "pig_oink_hungry",
+      "status": "placeholder",
+      "asset": "audio/pig_oink_hungry.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    },
+    {
+      "id": "feed_munch",
+      "status": "placeholder",
+      "asset": "audio/feed_munch.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    },
+    {
+      "id": "water_splash",
+      "status": "placeholder",
+      "asset": "audio/water_splash.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    },
+    {
+      "id": "coin_collect",
+      "status": "placeholder",
+      "asset": "audio/coin_collect.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    },
+    {
+      "id": "breed_chime",
+      "status": "placeholder",
+      "asset": "audio/breed_chime.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    },
+    {
+      "id": "birth_fanfare",
+      "status": "placeholder",
+      "asset": "audio/birth_fanfare.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    },
+    {
+      "id": "level_up",
+      "status": "placeholder",
+      "asset": "audio/level_up.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    },
+    {
+      "id": "notify",
+      "status": "placeholder",
+      "asset": "audio/notify.mp3",
+      "kind": "sfx",
+      "volume": 0.8
+    }
+  ],
+  "layout": {
+    "designSize": {
+      "width": 1600,
+      "height": 900
+    },
+    "walkArea": {
+      "x": 0.08,
+      "y": 0.62,
+      "width": 0.84,
+      "height": 0.33
+    },
+    "pigScaleByY": {
+      "min": 0.85,
+      "max": 1.0
+    },
+    "placements": [
+      {
+        "id": "env_sky",
+        "layer": 0,
+        "x": 0.5,
+        "y": 0.0,
+        "originY": 0
+      },
+      {
+        "id": "env_cloud_1",
+        "layer": 0,
+        "x": 0.22,
+        "y": 0.08,
+        "originY": 0
+      },
+      {
+        "id": "env_cloud_2",
+        "layer": 0,
+        "x": 0.72,
+        "y": 0.14,
+        "originY": 0
+      },
+      {
+        "id": "env_hills_far",
+        "layer": 1,
+        "x": 0.5,
+        "y": 0.58,
+        "originY": 1
+      },
+      {
+        "id": "env_trees_mid",
+        "layer": 1,
+        "x": 0.5,
+        "y": 0.62,
+        "originY": 1
+      },
+      {
+        "id": "env_ground_grass",
+        "layer": 2,
+        "x": 0.5,
+        "y": 0.56,
+        "originY": 0
+      },
+      {
+        "id": "prop_pig_house",
+        "layer": 3,
+        "x": 0.14,
+        "y": 0.6
+      },
+      {
+        "id": "prop_hay_shed",
+        "layer": 3,
+        "x": 0.34,
+        "y": 0.58
+      },
+      {
+        "id": "prop_water_well",
+        "layer": 3,
+        "x": 0.62,
+        "y": 0.6
+      },
+      {
+        "id": "prop_fence_section",
+        "layer": 3,
+        "x": 0.48,
+        "y": 0.62
+      },
+      {
+        "id": "prop_food_sack",
+        "layer": 3,
+        "x": 0.42,
+        "y": 0.6
+      },
+      {
+        "id": "prop_order_board",
+        "layer": 3,
+        "x": 0.88,
+        "y": 0.62,
+        "role": "orderBoard"
+      },
+      {
+        "id": "prop_mud_puddle",
+        "layer": 2,
+        "x": 0.74,
+        "y": 0.86
+      },
+      {
+        "id": "prop_water_bowl",
+        "layer": 4,
+        "x": 0.28,
+        "y": 0.9
+      },
+      {
+        "id": "prop_feed_trough",
+        "layer": 4,
+        "x": 0.5,
+        "y": 0.76,
+        "role": "trough"
+      }
+    ]
+  }
+}

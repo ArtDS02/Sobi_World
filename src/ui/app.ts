@@ -1,4 +1,5 @@
 // App shell: top bar, current screen, bottom nav, toasts, dialogs. Re-renders on store notify.
+import type { AssetRegistry } from '../core/assets/registry';
 import { exportSave } from '../core/save/exportImport';
 import type { FileDialogs } from '../core/save/port';
 import type { Pig, SaveGame } from '../core/types';
@@ -42,6 +43,8 @@ export interface AppOptions {
   dialogs?: FileDialogs;
   /** The platform has a save folder to open (desktop). */
   saveFolder?: boolean;
+  /** Validated asset manifest (§11.4); the farm canvas (R05A) and thumbnails resolve ids here. */
+  assets?: AssetRegistry;
 }
 
 /** Replace children only when the markup changed, so a click is never lost to a 1 s re-render. */

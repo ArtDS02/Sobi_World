@@ -19,6 +19,6 @@
     "noUncheckedIndexedAccess": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "tests", "scripts", "vite.config.ts"],
-  "exclude": ["tests/electron"]
+  "include": ["src", "tests", "vite.config.ts"],
+  "exclude": ["tests/electron", "tests/scripts"]
 }

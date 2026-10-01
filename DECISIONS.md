@@ -159,3 +159,9 @@ Spec: §8.0, §8.11, §10.1 · Phase: R03.
 
 **R03-2** · `dev:desktop` (Electron chưa đóng gói) dùng userData riêng `%APPDATA%\Un In Homemade Dev\` để không bao giờ đụng nông trại thật; tham số sau `--` chuyển cho Electron (vd `--remote-debugging-port`).
 Spec: §9.1, §13.3 · Phase: R03.
+
+**R04-1** · Script asset: `pngjs` (devDep) để đọc/ghi PNG — checker phải giải mã được PNG bất kỳ do art giao (palette, 16-bit, interlace); tự viết decoder không đáng. Vẽ placeholder bằng raster tối giản trong `scripts/assets/raster.ts`. Script TS chạy bằng `tsx`, typecheck riêng `tsconfig.scripts.json` (types node), test ở `tests/scripts/`. Kích thước catalogue (env/building/prop) chỉ nằm trong `scripts/assets/sizes.ts` để sinh placeholder; `assets:check` chỉ ép kích thước các nhóm art standard §7.4 quy định (pig 512², cosmetic 256², fx 256²/64²/sheet = frames, icon 128²) — thêm building mới không cần sửa TS (placeholder mặc định 256²).
+Spec: art §4, §7.4, §10 · Phase: R04.
+
+**R04-2** · Audio placeholder là `.mp3` im lặng (khung MPEG-1 Layer III rỗng, ~0,26 s) vì sinh Ogg Vorbis hợp lệ cần encoder; art §7.2 chấp nhận `.mp3`. Bản thật đổi `asset` sang `.ogg` trong manifest. Pig không có `anchors` ở Wave 0 (trường optional; art giao `*.anchors.json` cùng sprite). Placement có `originX/originY` optional (mặc định renderer quyết ở R05A). Gallery dev: nút `assets` trên thanh dev (`?dev=1`), tile viền theo status. Manifest lỗi → `renderManifestError` (vi.desktop.manifestError + thông điệp zod) trước khi tạo store.
+Spec: §11.4, §12, art §7.2 · Phase: R04.

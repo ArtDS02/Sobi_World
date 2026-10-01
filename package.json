@@ -13,11 +13,13 @@
     "dist:win": "npm run build && electron-builder --win nsis",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.core.json && tsc -p tsconfig.electron.json",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.core.json && tsc -p tsconfig.electron.json && tsc -p tsconfig.scripts.json",
     "lint": "eslint .",
     "guard": "node .claude/skills/spec-to-source/scripts/check-architecture.mjs",
-    "check": "npm run typecheck && npm run lint && npm run guard && npm run test",
-    "icon": "node scripts/make-icon.mjs"
+    "check": "npm run typecheck && npm run lint && npm run guard && npm run assets:check && npm run test",
+    "icon": "node scripts/make-icon.mjs",
+    "assets:placeholders": "tsx scripts/make-placeholders.ts",
+    "assets:check": "tsx scripts/assets-check.ts"
   },
   "dependencies": {
     "idb": "^8.0.3",
@@ -26,12 +28,14 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/pngjs": "^6.0.5",
     "electron": "^44.5.1",
     "electron-builder": "^26.15.3",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "fake-indexeddb": "^6.2.5",
     "globals": "^17.13.0",
+    "pngjs": "^7.0.0",
     "prettier": "^3.9.9",
     "sass": "^1.105.1",
     "tsx": "^4.23.15",

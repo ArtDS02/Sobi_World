@@ -64,6 +64,15 @@
   padding: $sp-6 $sp-4;
   text-align: center;
 
+  &__detail {
+    max-width: $content-max;
+    margin: $sp-3 auto 0;
+    overflow-x: auto;
+    font-size: $fs-xs;
+    text-align: left;
+    white-space: pre-wrap;
+  }
+
   &__title {
     margin-bottom: $sp-2;
     font-size: $fs-lg;
@@ -203,4 +212,62 @@
   justify-content: center;
   padding: $sp-1;
   background: $c-surface-alt;
+}
+
+// Dev-only asset gallery (src/ui/devGallery.ts).
+.c-gallery {
+  position: fixed;
+  inset: 0;
+  z-index: $z-dialog;
+  overflow-y: auto;
+  padding: $sp-4;
+  background: $c-bg;
+
+  &__close {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: $sp-3;
+    margin-top: $sp-3;
+  }
+
+  &__tile {
+    display: grid;
+    gap: $sp-2;
+    padding: $sp-2;
+    font-size: $fs-xs;
+    background: $c-surface;
+    border: 2px solid $c-border;
+    border-radius: $radius-sm;
+
+    &.is-production {
+      border-color: $c-primary;
+    }
+
+    &.is-final {
+      border-color: $c-success;
+    }
+  }
+
+  &__images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-1;
+    align-items: flex-end;
+
+    img {
+      max-width: 100%;
+      max-height: 8rem;
+      background: repeating-conic-gradient($c-surface-alt 0 25%, $c-surface 0 50%) 0 0 / 16px 16px;
+    }
+
+    audio {
+      width: 100%;
+    }
+  }
 }

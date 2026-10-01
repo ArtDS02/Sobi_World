@@ -2,11 +2,19 @@
 import './styles/main.scss';
 import type { Clock } from './core/clock';
 import { createPlatform } from './platform';
+import { loadAssetRegistry } from './platform/assetSource';
 import { createGameStore } from './store/gameStore';
 import { realClock } from './store/runtime';
 import { mountApp, type AppOptions } from './ui/app';
+import { renderManifestError } from './ui/screens/statusScreen';
 
 async function start(root: HTMLElement) {
+  // §11.4: an invalid manifest is a startup error screen (a development bug, not a player state).
+  const assets = await loadAssetRegistry();
+  if (!assets.ok) {
+    root.replaceChildren(renderManifestError(assets.message));
+    return;
+  }
   let clock: Clock = realClock;
   const opts: AppOptions = {};
   let skip: ((ms: number) => void) | null = null;
@@ -16,7 +24,11 @@ async function start(root: HTMLElement) {
     const dev = await import('./ui/devTools');
     const offset = dev.devClockOffset();
     clock = { now: () => offset.now(realClock.now()) };
-    opts.devTools = dev.renderDevTools((ms) => skip?.(ms));
+    const gallery = await import('./ui/devGallery');
+    opts.devTools = dev.renderDevTools(
+      (ms) => skip?.(ms),
+      () => gallery.openAssetGallery(root, assets.registry),
+    );
     skip = (ms) => {
       offset.add(ms);
       store.tick();
@@ -33,6 +45,7 @@ async function start(root: HTMLElement) {
   mountApp(root, store, () => clock.now(), {
     ...opts,
     dialogs: platform.dialogs,
+    assets: assets.registry,
     saveFolder: platform.kind === 'desktop',
   });
   await store.init();

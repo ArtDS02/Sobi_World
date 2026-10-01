@@ -39,3 +39,13 @@ export function renderSaveErrorBanner(): HTMLElement {
     el('span', { text: vi.saveStatus.error }),
   );
 }
+
+/** §11.4: the manifest failed to load or validate; shows the validation message. */
+export function renderManifestError(message: string): HTMLElement {
+  return el(
+    'div',
+    { class: 'c-status', attrs: { role: 'alert' } },
+    el('h2', { class: 'c-status__title', text: vi.desktop.manifestError }),
+    el('pre', { class: 'c-status__detail', text: message }),
+  );
+}
