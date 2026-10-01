@@ -21,6 +21,9 @@ import { makePig } from './pigFactory';
 
 const parsed = parseManifest(structuredClone(manifestJson));
 if (!parsed.ok) throw new Error(parsed.message);
+// Fixture: the classic skin with its own sleep frame (skins cut from the reference sheets have none).
+parsed.manifest.pigs.find((p) => p.id === 'pig_classic')!.sleepAsset =
+  'pigs/base/pig_classic_sleep.png';
 const reg = createAssetRegistry(parsed.manifest);
 const layout = parsed.manifest.layout;
 

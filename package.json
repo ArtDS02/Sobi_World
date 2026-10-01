@@ -21,6 +21,7 @@
     "assets:placeholders": "tsx scripts/make-placeholders.ts",
     "assets:check": "tsx scripts/assets-check.ts",
     "art:generate": "tsx scripts/generate-art.ts",
+    "art:cut": "tsx scripts/cut-reference.ts",
     "art:process": "tsx scripts/process-art.ts",
     "sim:economy": "tsx scripts/simulate-economy.ts",
     "test:e2e": "npm run build && playwright test",

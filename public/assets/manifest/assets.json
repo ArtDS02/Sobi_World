@@ -11,7 +11,7 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/base/pig_classic.png",
-      "sleepAsset": "pigs/base/pig_classic_sleep.png",
+      "sleepAsset": null,
       "tags": ["classic", "farm"]
     },
     {
@@ -24,7 +24,7 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/base/pig_watermelon.png",
-      "sleepAsset": "pigs/base/pig_watermelon_sleep.png",
+      "sleepAsset": null,
       "tags": ["food", "fun"]
     },
     {
@@ -37,7 +37,7 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/base/pig_superhero.png",
-      "sleepAsset": "pigs/base/pig_superhero_sleep.png",
+      "sleepAsset": null,
       "tags": ["job", "hero"]
     },
     {
@@ -50,7 +50,7 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/base/pig_thienlong.png",
-      "sleepAsset": "pigs/base/pig_thienlong_sleep.png",
+      "sleepAsset": null,
       "tags": ["mythic", "legendary"]
     },
     {
@@ -63,7 +63,7 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/base/pig_white.png",
-      "sleepAsset": "pigs/base/pig_white_sleep.png",
+      "sleepAsset": null,
       "tags": ["classic"]
     },
     {
@@ -76,7 +76,7 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/base/pig_black.png",
-      "sleepAsset": "pigs/base/pig_black_sleep.png",
+      "sleepAsset": null,
       "tags": ["classic"]
     },
     {
@@ -89,7 +89,7 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/base/pig_brown.png",
-      "sleepAsset": "pigs/base/pig_brown_sleep.png",
+      "sleepAsset": null,
       "tags": ["classic"]
     },
     {
@@ -102,7 +102,7 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/jobs/pig_farmer.png",
-      "sleepAsset": "pigs/skins/jobs/pig_farmer_sleep.png",
+      "sleepAsset": null,
       "tags": ["job", "farm"]
     },
     {
@@ -115,7 +115,7 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/jobs/pig_chef.png",
-      "sleepAsset": "pigs/skins/jobs/pig_chef_sleep.png",
+      "sleepAsset": null,
       "tags": ["job", "food"]
     },
     {
@@ -128,7 +128,7 @@
       "unlock": null,
       "allowedBreeds": "ALL",
       "asset": "pigs/skins/jobs/pig_nerd.png",
-      "sleepAsset": "pigs/skins/jobs/pig_nerd_sleep.png",
+      "sleepAsset": null,
       "tags": ["job"]
     },
     {

@@ -3,7 +3,11 @@
  * Sets string fields on the row with `id`, editing the hand-formatted manifest text in place so the
  * diff shows only the changed fields (re-serialising would reflow the whole file).
  */
-export function patchRowText(text: string, id: string, fields: Record<string, string>): string {
+export function patchRowText(
+  text: string,
+  id: string,
+  fields: Record<string, string | null>,
+): string {
   const at = text.indexOf(`"id": ${JSON.stringify(id)}`);
   if (at < 0) throw new Error(`manifest: row ${id} not found`);
   const start = text.lastIndexOf('{', at);

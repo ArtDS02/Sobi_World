@@ -149,7 +149,10 @@ describe('scene layout (spec §11.1)', () => {
 
 describe('preload list (spec §11)', () => {
   it('has environment, all trough states, fx, ui icons and the requested skins only', () => {
-    const list = farmLoadList(reg, ['pig_classic', 'pig_classic']);
+    // Fixture: the classic skin with its own sleep frame (cut skins may have none).
+    const m = manifest();
+    m.pigs.find((p) => p.id === 'pig_classic')!.sleepAsset = 'pigs/base/pig_classic_sleep.png';
+    const list = farmLoadList(createAssetRegistry(m), ['pig_classic', 'pig_classic']);
     const keys = list.images.map((i) => i.key);
     for (const k of ['env_sky', 'env_ground_grass', 'prop_pig_house', 'fx_sick', 'ui_icon_gold'])
       expect(keys).toContain(k);

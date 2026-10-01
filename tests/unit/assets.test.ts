@@ -64,7 +64,12 @@ describe('asset registry (spec §11.4)', () => {
   });
 
   it('sleep: own frame when present, else idle + fx_zzz (DECISIONS Q5)', () => {
-    expect(reg.pigTexture('pig_classic', 'PIG_EARTH_PINK', true)).toEqual({
+    const withSleep = manifest();
+    withSleep.pigs.find((p) => p.id === 'pig_classic')!.sleepAsset =
+      'pigs/base/pig_classic_sleep.png';
+    expect(
+      createAssetRegistry(withSleep).pigTexture('pig_classic', 'PIG_EARTH_PINK', true),
+    ).toEqual({
       skinId: 'pig_classic',
       url: 'assets/pigs/base/pig_classic_sleep.png',
       overlay: null,
