@@ -1,0 +1,307 @@
+import { describe, expect, it } from 'vitest';
+import { buyItem } from '../../src/core/actions/buyItem';
+import { buyPig } from '../../src/core/actions/buyPig';
+import { renamePig } from '../../src/core/actions/renamePig';
+import { sellPig } from '../../src/core/actions/sellPig';
+import { PIG_NAME_POOL } from '../../src/core/config/names';
+import { pickPigName } from '../../src/core/engine/pigNames';
+import { addXP } from '../../src/core/engine/xp';
+import { mulberry32, type Rng } from '../../src/core/rng';
+import { newGame } from '../../src/core/save/newGame';
+import type { ActionResult, Pig, SaveGame } from '../../src/core/types';
+import { makePig } from './pigFactory';
+
+const SEC = 1000;
+const ctx = (now = 0, rng: Rng = mulberry32(7)) => ({ now, rng });
+const start = (): SaveGame => newGame(ctx());
+const withPigs = (pigs: Pig[], gold = 5000): SaveGame => {
+  const s = start();
+  return { ...s, pigs, player: { ...s.player, gold } };
+};
+const adult = (o: Partial<Pig> = {}) => makePig({ growthProgress: 100, ...o });
+
+function expectOk(r: ActionResult): Extract<ActionResult, { ok: true }> {
+  if (!r.ok) throw new Error(`expected ok, got ${r.error}`);
+  return r;
+}
+
+/** Failure must leave the input untouched and return only the error. */
+function expectError(run: (s: SaveGame) => ActionResult, s: SaveGame, error: string) {
+  const before = structuredClone(s);
+  expect(run(s)).toEqual({ ok: false, error });
+  expect(s).toEqual(before);
+}
+
+describe('buyPig (§8.1)', () => {
+  it('creates a PINK baby in slot 0 with the chosen gender, charges 500, records discovery', () => {
+    const r = expectOk(buyPig(start(), { breed: 'PIG_EARTH_PINK', gender: 'MALE' }, ctx(5 * SEC)));
+    const pig = r.state.pigs[0]!;
+    expect(pig).toMatchObject({
+      slotIndex: 0,
+      breed: 'PIG_EARTH_PINK',
+      skinId: 'pig_classic',
+      cosmetics: {},
+      gender: 'MALE',
+      growthProgress: 0,
+      hunger: 100,
+      cleanliness: 100,
+      isSick: false,
+      pregnancy: null,
+      lastTickedAt: 5 * SEC,
+    });
+    expect(PIG_NAME_POOL).toContain(pig.name);
+    expect(r.state.transactions.map((t) => [t.type, t.amount])).toEqual([
+      ['DISCOVERY_BONUS', 500],
+      ['PIG_PURCHASE', -500],
+      ['INITIAL_GOLD', 5000],
+    ]);
+    expect(r.state.player.gold).toBe(5000);
+    expect(r.state.collection.discoveredBreeds).toEqual(['PIG_EARTH_PINK']);
+    expect(r.events).toContainEqual({
+      type: 'DISCOVERY',
+      kind: 'BREED',
+      id: 'PIG_EARTH_PINK',
+      gold: 500,
+    });
+  });
+
+  it('second purchase: no discovery bonus, FEMALE respected', () => {
+    const first = expectOk(buyPig(start(), { breed: 'PIG_EARTH_PINK', gender: 'MALE' }, ctx()));
+    const r = expectOk(buyPig(first.state, { breed: 'PIG_EARTH_PINK', gender: 'FEMALE' }, ctx()));
+    expect(r.state.player.gold).toBe(4500);
+    expect(r.state.pigs[1]).toMatchObject({ gender: 'FEMALE', slotIndex: 1 });
+    expect(r.state.pigs[1]!.name).not.toBe(r.state.pigs[0]!.name);
+    expect(r.events).toEqual([]);
+  });
+
+  it('uses the lowest free slotIndex', () => {
+    const s = withPigs([makePig({ id: 'a', slotIndex: 0 }), makePig({ id: 'b', slotIndex: 2 })]);
+    const r = expectOk(buyPig(s, { breed: 'PIG_EARTH_PINK', gender: 'FEMALE' }, ctx()));
+    expect(r.state.pigs.find((p) => p.id !== 'a' && p.id !== 'b')!.slotIndex).toBe(1);
+  });
+
+  const buy = (s: SaveGame) => buyPig(s, { breed: 'PIG_EARTH_PINK', gender: 'MALE' }, ctx());
+  it('NO_PIG_SLOT when slots are full', () => {
+    expectError(
+      buy,
+      withPigs([0, 1, 2, 3].map((i) => makePig({ id: `p${i}`, slotIndex: i }))),
+      'NO_PIG_SLOT',
+    );
+  });
+
+  it('NO_PIG_SLOT when a pregnancy reserves the last slot (D8)', () => {
+    const pregnancy = {
+      startedAt: 0,
+      endsAt: 999_999 * SEC,
+      fatherId: 'p1',
+      childBreed: 'PIG_EARTH_PINK' as const,
+      childGender: 'MALE' as const,
+    };
+    const pigs = [0, 1, 2].map((i) => adult({ id: `p${i}`, slotIndex: i }));
+    pigs[0] = { ...pigs[0]!, pregnancy };
+    expectError(buy, withPigs(pigs), 'NO_PIG_SLOT');
+  });
+
+  it('INSUFFICIENT_GOLD below 500', () => {
+    expectError(buy, withPigs([], 499), 'INSUFFICIENT_GOLD');
+  });
+
+  it('INVALID_REQUEST for a non-buyable breed or a bad gender', () => {
+    expectError(
+      (s) => buyPig(s, { breed: 'PIG_SUPERMAN', gender: 'MALE' }, ctx()),
+      start(),
+      'INVALID_REQUEST',
+    );
+    expectError(
+      (s) => buyPig(s, { breed: 'PIG_EARTH_PINK', gender: 'X' as 'MALE' }, ctx()),
+      start(),
+      'INVALID_REQUEST',
+    );
+    expectError(
+      (s) => buyPig(s, { breed: 'NOPE' as 'PIG_EARTH_PINK', gender: 'MALE' }, ctx()),
+      start(),
+      'INVALID_REQUEST',
+    );
+  });
+});
+
+describe('pig names (DECISIONS Q8)', () => {
+  const living = (names: string[]) => names.map((name, i) => makePig({ id: `p${i}`, name }));
+
+  it('never repeats a living pig name while the pool has unused names', () => {
+    const used = PIG_NAME_POOL.slice(0, -1);
+    expect(pickPigName(mulberry32(1), living(used))).toBe(PIG_NAME_POOL.at(-1));
+  });
+
+  it('pool exhausted → smallest free numeric suffix', () => {
+    const all = [...PIG_NAME_POOL, ...PIG_NAME_POOL.map((n) => `${n} 2`)];
+    expect(pickPigName(mulberry32(1), living(all))).toMatch(/ 3$/);
+    expect(pickPigName(mulberry32(1), living([...PIG_NAME_POOL]))).toMatch(/ 2$/);
+  });
+});
+
+describe('sellPig (§8.7)', () => {
+  // dt = 0 so advanceWorld changes nothing and happiness is exactly as set.
+  it.each([
+    [0, 840],
+    [50, 1140],
+    [100, 1440],
+  ])('happiness %s → %s gold, +10 XP, PIG_SELL transaction', (h, price) => {
+    const s = withPigs([adult({ cleanliness: h, hunger: h })], 1000);
+    const r = expectOk(sellPig(s, { pigId: 'pig-1' }, ctx()));
+    expect(r.state.pigs).toEqual([]);
+    expect(r.state.player.gold).toBe(1000 + price);
+    expect(r.state.player.xp).toBe(10);
+    expect(r.state.transactions[0]).toMatchObject({
+      type: 'PIG_SELL',
+      amount: price,
+      refId: 'pig-1',
+      note: `PIG_EARTH_PINK happiness ${h}`,
+    });
+    expect(r.events).toContainEqual({ type: 'PIG_SOLD', pigId: 'pig-1', gold: price });
+  });
+
+  it('price is computed after advanceWorld (D18)', () => {
+    // 1,200 s unattended, no trough: clean 77.78, hunger 50 → happiness 65 → floor(1200 * 1.025).
+    const r = expectOk(sellPig(withPigs([adult()]), { pigId: 'pig-1' }, ctx(1200 * SEC)));
+    expect(r.state.transactions[0]!.amount).toBe(1230);
+  });
+
+  const sell = (s: SaveGame) => sellPig(s, { pigId: 'pig-1' }, ctx());
+  it('baby → PIG_NOT_MATURE', () => expectError(sell, withPigs([makePig()]), 'PIG_NOT_MATURE'));
+
+  it('pregnant → PIG_IS_PREGNANT', () => {
+    const pregnancy = {
+      startedAt: 0,
+      endsAt: 999_999 * SEC,
+      fatherId: 'x',
+      childBreed: 'PIG_EARTH_PINK' as const,
+      childGender: 'MALE' as const,
+    };
+    expectError(sell, withPigs([adult({ pregnancy })]), 'PIG_IS_PREGNANT');
+  });
+
+  it('second sell → PIG_NOT_FOUND', () => {
+    const once = expectOk(sell(withPigs([adult()])));
+    expectError(sell, once.state, 'PIG_NOT_FOUND');
+  });
+});
+
+describe('buyItem (§8.10)', () => {
+  it('buys a quantity with one SHOP_PURCHASE transaction', () => {
+    const r = expectOk(buyItem(start(), { itemId: 'FOOD_BASIC', quantity: 3 }, ctx()));
+    expect(r.state.player.gold).toBe(4925);
+    expect(r.state.inventory.FOOD_BASIC).toBe(13);
+    expect(r.state.transactions[0]).toMatchObject({ type: 'SHOP_PURCHASE', amount: -75 });
+  });
+
+  it.each([0, 100, 1.5, -1, Number.NaN])('quantity %s → INVALID_REQUEST', (quantity) => {
+    expectError(
+      (s) => buyItem(s, { itemId: 'FOOD_BASIC', quantity }, ctx()),
+      start(),
+      'INVALID_REQUEST',
+    );
+  });
+
+  it('unknown item → INVALID_REQUEST; too expensive → INSUFFICIENT_GOLD', () => {
+    expectError(
+      (s) => buyItem(s, { itemId: 'toString' as 'FOOD_BASIC', quantity: 1 }, ctx()),
+      start(),
+      'INVALID_REQUEST',
+    );
+    expectError(
+      (s) => buyItem(s, { itemId: 'MEDICINE_COMMON', quantity: 51 }, ctx()),
+      start(),
+      'INSUFFICIENT_GOLD',
+    );
+  });
+});
+
+describe('renamePig (§8.12)', () => {
+  const rename = (name: string) => (s: SaveGame) => renamePig(s, { pigId: 'pig-1', name }, ctx());
+
+  it('trims and strips control characters', () => {
+    const r = expectOk(rename('  \u0007Ủn\n Vàng  ')(withPigs([makePig()])));
+    expect(r.state.pigs[0]!.name).toBe('Ủn Vàng');
+  });
+
+  it('accepts 16 characters, rejects 17 and blank', () => {
+    expect(
+      expectOk(rename('a'.repeat(16))(withPigs([makePig()]))).state.pigs[0]!.name,
+    ).toHaveLength(16);
+    expectError(rename('a'.repeat(17)), withPigs([makePig()]), 'INVALID_REQUEST');
+    expectError(rename('   \t '), withPigs([makePig()]), 'INVALID_REQUEST');
+  });
+
+  it('unknown pig → PIG_NOT_FOUND', () => expectError(rename('Bin'), start(), 'PIG_NOT_FOUND'));
+});
+
+describe('addXP (§8.16)', () => {
+  it('level-up emits LEVEL_UP and recomputes trough capacity', () => {
+    const s = start();
+    const r = addXP({ ...s, player: { ...s.player, xp: 90 } }, 10);
+    expect(r.events).toEqual([{ type: 'LEVEL_UP', level: 2 }]);
+    expect(r.state.trough.capacity).toBe(30);
+  });
+
+  it('never lowers XP', () => {
+    const s = start();
+    expect(addXP(s, -5).state).toBe(s);
+  });
+});
+
+describe('gold never changes without a transaction (§8.16, §14.3)', () => {
+  it('random action sequence: every gold delta equals the sum of new transactions', () => {
+    const rng = mulberry32(2024);
+    let state = start();
+    let now = 0;
+    for (let step = 0; step < 400; step++) {
+      now += Math.floor(rng.next() * 3600) * SEC;
+      // Test-only nudge (no gold involved): grow everyone so sells can succeed.
+      if (rng.next() < 0.2) {
+        state = { ...state, pigs: state.pigs.map((p) => ({ ...p, growthProgress: 100 })) };
+      }
+      const pig = state.pigs[Math.floor(rng.next() * Math.max(1, state.pigs.length))];
+      const roll = rng.next();
+      const c = ctx(now, rng);
+      const result =
+        roll < 0.35
+          ? buyPig(
+              state,
+              { breed: 'PIG_EARTH_PINK', gender: rng.next() < 0.5 ? 'MALE' : 'FEMALE' },
+              c,
+            )
+          : roll < 0.65
+            ? sellPig(state, { pigId: pig?.id ?? 'none' }, c)
+            : roll < 0.9
+              ? buyItem(
+                  state,
+                  { itemId: 'FOOD_BASIC', quantity: 1 + Math.floor(rng.next() * 10) },
+                  c,
+                )
+              : renamePig(state, { pigId: pig?.id ?? 'none', name: `Heo ${step}` }, c);
+      if (!result.ok) continue;
+      const seen = new Set(state.transactions.map((t) => t.id));
+      const added = result.state.transactions.filter((t) => !seen.has(t.id));
+      const delta = added.reduce((sum, t) => sum + t.amount, 0);
+      expect(result.state.player.gold - state.player.gold).toBe(delta);
+      expect(result.state.player.gold).toBeGreaterThanOrEqual(0);
+      state = result.state;
+    }
+    expect(state.transactions.length).toBeGreaterThan(20);
+  });
+
+  it('no source file outside engine/gold.ts writes player.gold', () => {
+    const sources = import.meta.glob<string>('/src/**/*.ts', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    });
+    const writes = /\.gold\s*(\+\+|--|[-+*/]?=(?!=))|\bgold\s*:\s*[^,}\n]*\.gold\b/;
+    const offenders = Object.entries(sources)
+      .filter(([f, text]) => !f.endsWith('/src/core/engine/gold.ts') && writes.test(text))
+      .map(([f]) => f);
+    expect(Object.keys(sources).length).toBeGreaterThan(20);
+    expect(offenders).toEqual([]);
+  });
+});

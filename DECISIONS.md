@@ -81,3 +81,9 @@ Spec: §9.2 · Phase: S05.
 
 **S05-3** · Helper vàng duy nhất: `src/core/engine/gold.ts:changeGold` (ghi Transaction, newest first, tối đa 200, không cho âm → INSUFFICIENT_GOLD). Id sinh bằng `rng.ts:randomId(rng)`.
 Spec: §8.16 · Phase: S05, mọi action.
+
+**S06A-1** · Action pipeline `actions/runAction.ts`: advanceWorld → body(stateĐãAdvance) → `{ok, state(updatedAt=now), events: world + action}`; lỗi chỉ trả `{ok:false,error}`, store giữ state cũ. Helper vàng vẫn ở `engine/gold.ts:changeGold` (S05-3), XP ở `engine/xp.ts:addXP`, khám phá breed ở `engine/collection.ts:discoverBreed` (dùng cho buyPig, sau này birth). Thứ tự kiểm lỗi buyPig: breed/gender → NO_PIG_SLOT → INSUFFICIENT_GOLD (theo §8.1).
+Spec: §8, §8.1, §8.15, §8.16 · Phase: S06A+, mọi action.
+
+**S06A-2** · `BALANCE.SHOP_MAX_QUANTITY = 99`, `BALANCE.PIG_NAME_MAX = 16` (số từ §8.10/§8.12 đưa vào config). Độ dài tên đếm theo code point sau khi bỏ ký tự điều khiển (\p{Cc}) và trim.
+Spec: §8.10, §8.12 · Phase: S06A.
