@@ -19,7 +19,8 @@
     "check": "npm run typecheck && npm run lint && npm run guard && npm run assets:check && npm run test",
     "icon": "node scripts/make-icon.mjs",
     "assets:placeholders": "tsx scripts/make-placeholders.ts",
-    "assets:check": "tsx scripts/assets-check.ts"
+    "assets:check": "tsx scripts/assets-check.ts",
+    "sim:economy": "tsx scripts/simulate-economy.ts"
   },
   "dependencies": {
     "idb": "^8.0.3",

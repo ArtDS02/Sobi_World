@@ -1,0 +1,90 @@
+// npm run sim:economy (spec §14.7): per-breed economy table, unlock/skin affordability, and the
+// build gate "net gold per hour at happiness 100 >= 2x at happiness 0". Imports only src/core.
+import { readFileSync } from 'node:fs';
+import { parseManifest } from '../src/core/assets/manifestSchema';
+import { BALANCE } from '../src/core/config/balance';
+import { BREED_ID_VALUES } from '../src/core/config/ids';
+import {
+  CARE_RATIO_MIN,
+  breedEconomy,
+  gateFailures,
+  hoursToAfford,
+  stallGrowth,
+} from './economy/model';
+
+const MANIFEST = 'public/assets/manifest/assets.json';
+const n0 = (v: number) => Math.round(v).toLocaleString('en-US');
+const n1 = (v: number) => (Number.isFinite(v) ? v.toFixed(1) : '∞');
+
+function table(head: string[], rows: string[][]): string {
+  const widths = head.map((h, i) => Math.max(h.length, ...rows.map((r) => r[i]!.length)));
+  const line = (cells: string[]) => cells.map((c, i) => c.padStart(widths[i]!)).join(' | ');
+  return [line(head), widths.map((w) => '-'.repeat(w)).join('-|-'), ...rows.map(line)].join('\n');
+}
+
+const rows = BREED_ID_VALUES.map(breedEconomy);
+console.log('Breeds (net gold/h per slot = (sell - acquire - food) / growth hours)\n');
+console.log(
+  table(
+    ['breed', 'sell', 'growth h', 'food', 'food $', 'acquire', 'h=0', 'h=50', 'h=100', 'x', 'gate'],
+    rows.map((r) => [
+      r.breed,
+      n0(r.sellGold),
+      n1(r.growthHours),
+      String(r.food),
+      n0(r.foodCost),
+      n0(r.acquire),
+      n0(r.perHour[0]),
+      n0(r.perHour[50]),
+      n0(r.perHour[100]),
+      r.careRatio.toFixed(2),
+      r.gated ? 'yes' : 'info',
+    ]),
+  ),
+);
+console.log(`\nPINK empty-trough stall: ${stallGrowth('PIG_EARTH_PINK').toFixed(2)}% growth`);
+
+console.log('\nSlot unlocks (hours of PINK at happiness 100 on the slots already open)\n');
+console.log(
+  table(
+    ['slot', 'level', 'cost', 'hours'],
+    Object.entries(BALANCE.SLOT_UNLOCKS).map(([slot, u]) => [
+      slot,
+      String(u.level),
+      n0(u.cost),
+      n1(hoursToAfford(u.cost, Number(slot) - 1)),
+    ]),
+  ),
+);
+
+const manifest = parseManifest(JSON.parse(readFileSync(MANIFEST, 'utf8')));
+if (!manifest.ok) {
+  console.error(`manifest invalid: ${manifest.message}`);
+  process.exit(1);
+}
+const tiers = new Map<string, number>();
+for (const p of manifest.manifest.pigs) {
+  if (p.priceGold !== null) tiers.set(p.rarity, Math.max(tiers.get(p.rarity) ?? 0, p.priceGold));
+}
+console.log(
+  `\nSkin tiers in the manifest (hours of PINK at happiness 100 on ${BALANCE.START_SLOTS} slots)\n`,
+);
+console.log(
+  table(
+    ['tier', 'price', 'hours'],
+    [...tiers]
+      .sort()
+      .map(([tier, price]) => [tier, n0(price), n1(hoursToAfford(price, BALANCE.START_SLOTS))]),
+  ),
+);
+
+const failed = gateFailures(rows);
+if (failed.length > 0) {
+  for (const r of failed) {
+    console.error(
+      `\nFAIL ${r.breed}: ${n0(r.perHour[100])}/h at happiness 100 < ${CARE_RATIO_MIN}x ${n0(r.perHour[0])}/h at 0`,
+    );
+  }
+  process.exit(1);
+}
+console.log(`\nsim:economy OK — care ratio >= ${CARE_RATIO_MIN}x for every shop breed`);
