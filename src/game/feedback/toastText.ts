@@ -65,6 +65,7 @@ export function toastText(
     case 'SKIN_BOUGHT':
       return t(vi.event.skinBought, { name: skinName(event.skinId) });
     case 'SKIN_EQUIPPED':
+    case 'SETTING_CHANGED':
     case 'PIG_FED':
     case 'PIG_CLEANED':
     case 'TROUGH_FILLED':

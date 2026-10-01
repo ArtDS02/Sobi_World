@@ -25,7 +25,8 @@ export type GameEvent =
   | { type: 'SLOT_BOUGHT'; slots: number; gold: number } // gold signed as in the transaction (§8.0)
   | { type: 'ORDER_FULFILLED'; orderId: string; gold: number }
   | { type: 'SKIN_BOUGHT'; skinId: string; gold: number }
-  | { type: 'SKIN_EQUIPPED'; pigId: string; skinId: string };
+  | { type: 'SKIN_EQUIPPED'; pigId: string; skinId: string }
+  | { type: 'SETTING_CHANGED'; key: 'musicOn' | 'sfxOn'; value: boolean };
 
 export type GameEventType = GameEvent['type'];
 
@@ -53,6 +54,7 @@ export const GAME_EVENT_TYPES = [
   'ORDER_FULFILLED',
   'SKIN_BOUGHT',
   'SKIN_EQUIPPED',
+  'SETTING_CHANGED',
 ] as const satisfies readonly GameEventType[];
 
 // Compile-time check that the list above is complete.

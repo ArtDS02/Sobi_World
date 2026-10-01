@@ -44,6 +44,8 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   SLOT_BOUGHT: row(null, [], 'ui_click', true),
   ITEM_BOUGHT: row(null, [], 'ui_click', true),
   PIG_RENAMED: row(null, [], 'ui_click', true),
+  // The toggle itself is the feedback (the button's ui_click; music starts / stops).
+  SETTING_CHANGED: row(null, [], null, false),
   // Not in the §11.3 table: toast only, as before (DECISIONS R05B-1).
   PIG_HUNGRY_ZERO: row(null, [], null, true),
   ORDER_EXPIRED: row(null, [], null, true),

@@ -1,7 +1,6 @@
 // App shell (DECISIONS R05C-1): top bar, the farm canvas filling the window, one popup at a time
 // opened by clicking world objects, toasts, dialogs. Re-renders on store notify.
 import type { AssetRegistry } from '../core/assets/registry';
-import { exportSave } from '../core/save/exportImport';
 import type { FileDialogs } from '../core/save/port';
 import type { Pig, SaveGame } from '../core/types';
 import { vi } from '../i18n/vi';
@@ -13,7 +12,6 @@ import { renderTopBar } from './components/topBar';
 import {
   openBreedDialog,
   openBuyItemDialog,
-  openImportDialog,
   openOrderDialog,
   openWardrobeDialog,
   openRenameDialog,
@@ -27,7 +25,8 @@ import { renderHistoryScreen } from './screens/historyScreen';
 import { renderInventoryScreen } from './screens/inventoryScreen';
 import { renderCollectionScreen } from './screens/collectionScreen';
 import { renderOrdersScreen } from './screens/ordersScreen';
-import { renderSettingsScreen, type SettingsHandlers } from './screens/settingsScreen';
+import { renderSettingsScreen } from './screens/settingsScreen';
+import { settingsHandlers } from './settingsHandlers';
 import { renderShopScreen, type ShopHandlers, type ShopTab } from './screens/shopScreen';
 import {
   renderMultiTabBanner,
@@ -50,6 +49,8 @@ export interface AppOptions {
   saveFolder?: boolean;
   /** Validated asset manifest (§11.4); the farm canvas and thumbnails resolve ids here. */
   assets?: AssetRegistry;
+  /** A pig was clicked (main.ts routes it to the FeedbackDirector for the tap sound, §12). */
+  onPigTap?: (pigId: string) => void;
   /** Mounts the Phaser farm into the stage (main.ts injects src/game; absent in DOM tests). */
   farm?: (host: HTMLElement, onPick: (pick: FarmPick) => void) => FarmCanvas;
 }
@@ -143,6 +144,7 @@ export function mountApp(
   // Canvas click: a pig opens its panel, a world object its popup, empty ground deselects (§11.2).
   const onPick = (pick: FarmPick) => {
     if (pick.kind === 'pig') {
+      opts.onPigTap?.(pick.pigId);
       ui.selectedPigId = pick.pigId;
       go('pig');
     } else if (pick.kind === 'ground') {
@@ -175,28 +177,14 @@ export function mountApp(
       if (save) openTrough(Math.min(save.inventory.FOOD_BASIC, troughSpace(save)));
     },
   };
-  const settings: SettingsHandlers = {
-    exportSave: () => {
-      const save = store.getSnapshot().save;
-      if (!save || !opts.dialogs) return;
-      const at = now();
-      const out = exportSave(save, new Date(at));
-      void opts.dialogs.exportSave(out.json, out.fileName).then((ok) => {
-        if (ok) void store.markExported(at);
-      });
-    },
-    importSave: () => {
-      const dialogsPort = opts.dialogs;
-      if (!dialogsPort) return;
-      openImportDialog(dialogs, async () => {
-        const json = await dialogsPort.importSave();
-        if (json === null) return;
-        await store.importSave(json); // a rejection is toasted by the FeedbackDirector
-      });
-    },
-    openSaveFolder:
-      opts.saveFolder && opts.dialogs ? () => void opts.dialogs?.openSaveFolder() : null,
-  };
+  const settings = settingsHandlers({
+    store,
+    now,
+    act: handlers.act,
+    dialogHost: dialogs,
+    ...(opts.dialogs ? { files: opts.dialogs } : {}),
+    ...(opts.saveFolder ? { saveFolder: true } : {}),
+  });
   const go = (id: PanelId | null) => {
     ui.panel = id;
     if (id !== 'pig') ui.selectedPigId = null;
@@ -228,7 +216,7 @@ export function mountApp(
           deliver: (card) => openOrderDialog(dialogs, card, act),
         });
       case 'settings':
-        return renderSettingsScreen(settings);
+        return renderSettingsScreen(save, settings);
       case 'collection':
         return renderCollectionScreen(save, assets);
     }

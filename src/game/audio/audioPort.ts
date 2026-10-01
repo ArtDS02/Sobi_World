@@ -1,5 +1,5 @@
-// Sound output used by the FeedbackDirector (spec §12). R05B ships the silent port; R10 plugs in
-// the real player behind the same interface.
+// Sound output used by the FeedbackDirector (spec §12). AudioManager is the real player; the
+// silent port serves tests and builds without audio.
 import type { AudioKey } from '../../core/config/assetIds';
 
 export interface AudioPort {

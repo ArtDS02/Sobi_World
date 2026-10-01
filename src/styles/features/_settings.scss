@@ -1,4 +1,4 @@
-// Settings screen (minimal in R02: save file actions). Owns `.settings*` inside [data-screen="settings"].
+// Settings screen: sound toggles and save file actions. Owns `.settings*` inside [data-screen="settings"].
 @use '../core' as *;
 
 [data-screen='settings'] {
@@ -8,6 +8,19 @@
 
   .settings__title {
     font-size: $fs-lg;
+  }
+
+  .settings__toggles {
+    display: grid;
+    gap: $sp-2;
+  }
+
+  .settings__toggle {
+    display: flex;
+    gap: $sp-3;
+    align-items: center;
+    justify-content: space-between;
+    max-width: $dialog-max;
   }
 
   .settings__actions {

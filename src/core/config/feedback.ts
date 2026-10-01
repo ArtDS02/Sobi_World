@@ -33,6 +33,8 @@ export const FEEDBACK = {
     angleMax: 320,
     gravityY: 260,
   },
+  /** Pig tap sound thresholds (spec §12): hunger < 30 → hungry oink, happiness >= 50 → happy. */
+  TAP_SOUND: { hungryBelow: 30, happyFrom: 50 },
   /** Where `top` bursts appear (normalised), e.g. LEVEL_UP near the top bar. */
   TOP_POINT: { x: 0.5, y: 0.08 },
 } as const;

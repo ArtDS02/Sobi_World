@@ -251,6 +251,8 @@ export const vi = {
     music: "Nhạc nền",
     sfx: "Âm thanh",
     reduceMotion: "Giảm chuyển động",
+    on: "Bật",
+    off: "Tắt",
     export: "Xuất file lưu",
     import: "Nhập file lưu",
     importWarning: "Nhập file sẽ ghi đè dữ liệu hiện tại. Bản cũ được giữ làm sao lưu.",

@@ -1,10 +1,12 @@
 // The only place that turns GameEvents into presentation (spec §11.3, D25): per event,
 // animation → VFX → sound → toast, from the data table. Rejections → ui_error + reason toast.
+// Also the two sounds that are not game events: a pig tap and a DOM button press (§12).
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
 import type { GameStore } from '../../store/gameStore';
 import type { AudioPort } from '../audio/audioPort';
 import type { FarmEffects } from './effects';
+import { tapSound } from '../audio/tapSound';
 import { feedbackPlan } from './feedbackPlan';
 import { REJECT_ROW } from './feedbackTable';
 import { toastText } from './toastText';
@@ -18,7 +20,15 @@ export interface FeedbackDeps {
   skinName?: (skinId: string) => string;
 }
 
-export function createFeedbackDirector(deps: FeedbackDeps): () => void {
+export interface FeedbackDirector {
+  /** A pig was clicked on the farm (spec §12: pig_oink_happy / pig_oink_hungry). */
+  pigTapped(pigId: string): void;
+  /** Any DOM button was pressed (spec §12: ui_click). */
+  uiClick(): void;
+  dispose(): void;
+}
+
+export function createFeedbackDirector(deps: FeedbackDeps): FeedbackDirector {
   // The state before the latest change, so a sold pig can still be named in its toast.
   let current: SaveGame | null = deps.store.getSnapshot().save;
   let previous: SaveGame | null = current;
@@ -48,9 +58,17 @@ export function createFeedbackDirector(deps: FeedbackDeps): () => void {
     deps.toast(vi.error[error]);
   });
 
-  return () => {
-    offState();
-    offEvents();
-    offReject();
+  return {
+    pigTapped(pigId) {
+      const pig = current?.pigs.find((p) => p.id === pigId);
+      const key = pig ? tapSound(pig) : null;
+      if (key) deps.audio.play(key);
+    },
+    uiClick: () => deps.audio.play('ui_click'),
+    dispose() {
+      offState();
+      offEvents();
+      offReject();
+    },
   };
 }

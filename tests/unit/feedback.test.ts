@@ -41,6 +41,7 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   ORDER_FULFILLED: { type: 'ORDER_FULFILLED', orderId: 'o', gold: 800 },
   SKIN_BOUGHT: { type: 'SKIN_BOUGHT', skinId: 'pig_farmer', gold: -2000 },
   SKIN_EQUIPPED: { type: 'SKIN_EQUIPPED', pigId: 'pig-1', skinId: 'pig_farmer' },
+  SETTING_CHANGED: { type: 'SETTING_CHANGED', key: 'musicOn', value: false },
 };
 
 describe('feedback table (§11.3)', () => {
@@ -125,7 +126,7 @@ function fakeStore(save: SaveGame) {
 function director(save: SaveGame) {
   const store = fakeStore(save);
   const log: string[] = [];
-  createFeedbackDirector({
+  const d = createFeedbackDirector({
     store,
     effects: () => ({
       animate: (a, t) => log.push(`anim:${a}:${t.kind}`),
@@ -134,10 +135,21 @@ function director(save: SaveGame) {
     audio: { play: (k) => log.push(`sound:${k}`) },
     toast: (m) => log.push(`toast:${m}`),
   });
-  return { store, log };
+  return { store, log, d };
 }
 
 describe('FeedbackDirector', () => {
+  it('pig tap and DOM button sounds go through the director (§12)', () => {
+    const { log, d } = director(
+      farm([makePig({ hunger: 10 }), makePig({ id: 'happy', slotIndex: 1, hunger: 90 })]),
+    );
+    d.pigTapped('pig-1');
+    d.pigTapped('happy');
+    d.pigTapped('gone');
+    d.uiClick();
+    expect(log).toEqual(['sound:pig_oink_hungry', 'sound:pig_oink_happy', 'sound:ui_click']);
+  });
+
   it('order per event: animation → VFX → sound → toast', () => {
     const { store, log } = director(farm([makePig()]));
     store.emit([SAMPLES.PIG_BOUGHT], 'action');
