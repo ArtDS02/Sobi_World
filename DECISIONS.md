@@ -102,3 +102,6 @@ Spec: §10.1, §10.2, §10.5 · Phase: S08A.
 
 **S08A-2** · Store đổi deps timer `setInterval/clearInterval` → `every/cancel` để toàn `src/` chỉ còn đúng 1 dòng `setInterval` (grep guard adapter §8).
 Spec: §7.1 · Phase: S08A.
+
+**S08B-1** · Nút disable lấy lý do bằng cách chạy thử chính action đó trên save hiện tại (`ui/actionsVm.ts:probe`, rng bỏ đi) rồi map ErrorCode → `vi.disabled.*` (ngắn) hoặc `vi.error.*`; INSUFFICIENT_ITEM nói rõ hết thức ăn/hết thuốc. Mua heo đặt tạm ở thanh công cụ màn Nông trại (chọn Đực/Cái) cho tới khi có màn Cửa hàng; chạm thước máng ăn mở hộp đổ máng (§10.1). Bán luôn hỏi xác nhận kèm giá cuối, cảnh báo thêm cho SUPERMAN/MYTHICAL. DOM chỉ thay khi markup đổi (so outerHTML) để click không mất vì re-render mỗi giây. Dev time-travel: `npm run dev` + `?dev=1`, offset cộng vào clock của store, nằm sau `import.meta.env.DEV` + dynamic import nên không có trong build (đã kiểm dist).
+Spec: §10.1, §10.2 · Phase: S08B.

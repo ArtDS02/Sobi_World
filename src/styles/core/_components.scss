@@ -1,5 +1,6 @@
 // Shared components. Changing a default here affects every screen — add a modifier instead.
 @use 'tokens' as *;
+@use 'mixins' as *;
 
 .c-button {
   min-height: $sp-touch-min;
@@ -97,4 +98,103 @@
   color: $c-on-primary;
   background: $c-overlay;
   border-radius: $radius-md;
+}
+
+.c-button--ghost {
+  color: $c-text;
+  background: none;
+  border: 1px solid $c-border;
+}
+
+.c-button--warn {
+  background: $c-primary-strong;
+}
+
+.c-button:disabled {
+  color: $c-text-muted;
+  background: $c-surface-alt;
+  cursor: not-allowed;
+}
+
+// Button + visible disabled reason (§10.2).
+.c-action {
+  display: inline-flex;
+  flex-direction: column;
+  gap: $sp-1;
+  align-items: stretch;
+
+  &__reason {
+    font-size: $fs-xs;
+    color: $c-text-muted;
+    text-align: center;
+  }
+}
+
+.c-input {
+  width: 100%;
+  min-height: $sp-touch-min;
+  padding: $sp-2 $sp-3;
+  font: inherit;
+  border: 1px solid $c-border;
+  border-radius: $radius-sm;
+}
+
+.c-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: $z-dialog;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: $sp-3;
+  background: $c-backdrop;
+
+  @include mq(sm) {
+    align-items: center;
+  }
+
+  &__panel {
+    display: grid;
+    gap: $sp-3;
+    width: 100%;
+    max-width: $dialog-max;
+    padding: $sp-4;
+    background: $c-surface;
+    border-radius: $radius-md;
+  }
+
+  &__title {
+    font-size: $fs-lg;
+  }
+
+  &__body,
+  &__info {
+    display: grid;
+    gap: $sp-2;
+  }
+
+  &__strong {
+    font-weight: $fw-bold;
+  }
+
+  &__warn {
+    color: $c-danger;
+  }
+
+  &__hint {
+    font-size: $fs-sm;
+    color: $c-text-muted;
+  }
+
+  &__footer {
+    display: grid;
+  }
+}
+
+.c-devtools {
+  display: flex;
+  gap: $sp-2;
+  justify-content: center;
+  padding: $sp-1;
+  background: $c-surface-alt;
 }

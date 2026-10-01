@@ -6,9 +6,35 @@
   display: grid;
   gap: $sp-3;
 
-  @include mq(md) {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
+  .farm__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .farm__buy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+    align-items: flex-start;
+  }
+
+  .farm__buy-title {
+    flex-basis: 100%;
+    font-size: $fs-sm;
+    color: $c-text-muted;
+  }
+
+  .farm__body {
+    display: grid;
+    gap: $sp-3;
+
+    @include mq(md) {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
   }
 
   .farm__list {
@@ -63,7 +89,20 @@
     border-radius: $radius-md;
 
     &__name {
+      padding: 0;
       font-size: $fs-lg;
+      font-weight: $fw-bold;
+      text-align: left;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    &__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $sp-2;
+      padding-top: $sp-2;
     }
 
     &__row {
@@ -71,6 +110,14 @@
       justify-content: space-between;
       gap: $sp-2;
       font-size: $fs-sm;
+    }
+
+    &__row.is-key {
+      font-weight: $fw-bold;
+    }
+
+    &__row.is-sick {
+      color: $c-danger;
     }
 
     &__label {
