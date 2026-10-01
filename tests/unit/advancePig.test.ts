@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { advancePig } from '../../src/core/engine/advancePig';
+import { advanceWithTrough } from '../../src/core/engine/trough';
 import { mulberry32, sequenceRng, type Rng } from '../../src/core/rng';
 import type { Pig } from '../../src/core/types';
 import { makePig } from './pigFactory';
@@ -31,7 +32,15 @@ describe('§14.1 golden values (PINK baby, progress 0, hunger 100, clean 100)', 
     expect(p.growthProgress).toBeCloseTo(33.33, 2);
   });
 
-  it.todo('G4 advance 7,200 s, trough stocked with 10 → adult, trough food 4 (S04A)');
+  it('G4 advance 7,200 s, trough stocked with 10 → progress 100 (adult), trough food 4', () => {
+    const out = advanceWithTrough(
+      { pigs: [makePig()], trough: { food: 10, capacity: 20, lastResolvedAt: 0 } },
+      7200 * SEC,
+      neverSick(),
+    );
+    expect(out.pigs[0]!.growthProgress).toBe(100);
+    expect(out.trough.food).toBe(4);
+  });
 
   it('G5 cleanliness crosses 30 exactly at t = 3,780 s', () => {
     expect(advance(makePig(), 3780).cleanliness).toBeCloseTo(30, 9);

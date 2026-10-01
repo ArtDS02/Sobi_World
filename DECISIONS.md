@@ -64,3 +64,8 @@ Spec: §7.2, §14.1 · Phase: S03.
 
 **S03-2** · `sellPrice` cộng epsilon 1e-9 trước `floor` để tránh lỗi float (vd 1200 × 0.95); test so với phép tính nguyên chính xác cho mọi breed × happiness 0..100.
 Spec: §5.4 · Phase: S03.
+
+**S04A-1** · `resolveTrough` KHÔNG cap hunger ở 100 (pseudo-code §7.3 viết `min(100, …)`). Có cap thì cả golden §14.1 "trough 10 → adult, food 4" (ra 33.33) lẫn test bắt buộc §14.2 "hunger 50, trough 5, 2 periods → >50" (ra 0) đều fail. Không cap: hunger cuối window = `100 − (x mod 50)` ∈ (50, 100] khi đủ thức ăn — đúng với mô phỏng từng giây; giá trị trung gian > 100 chỉ dùng làm input cho advancePig, `advanceWithTrough` clamp ≤ 100 sau đó.
+Spec: §7.3, §14.1, §14.2 · Phase: S04A, S04B (advanceWorld phải gọi `advanceWithTrough`, không gọi resolveTrough riêng).
+
+**Q4-README** · Dòng cho README "Implementation assumptions": "Máng ăn tính dạng đóng theo từng window: mọi bữa trong window được cộng trước, advancePig trừ hao đói cả window sau; thức ăn chia tham lam theo slotIndex tăng dần — window dài (offline) mà thiếu thức ăn thì heo slot thấp ăn hết trước. Đây là xấp xỉ có chủ ý; đổi thì phải đổi golden §14.1."
