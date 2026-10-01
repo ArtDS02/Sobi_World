@@ -9,7 +9,7 @@ export const FEEDBACK = {
     clean: { deg: 6, ms: 90, repeat: 3 },
     eat: { deg: 8, ms: 250, repeat: 2 },
     exit: { px: 140, ms: 450 },
-    popIn: { from: 0.2, ms: 420 },
+    popIn: { from: 0.2, ms: 420, moveMs: 900 },
     grow: { from: 0.85, ms: 600 },
     wiggle: { deg: 4, ms: 80, repeat: 3 },
   },

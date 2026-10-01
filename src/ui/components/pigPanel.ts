@@ -3,6 +3,7 @@ import type { Pig, SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
 import type { BoundAction } from '../../store/gameStore';
 import { pigActions, type ActionVm } from '../actionsVm';
+import { breedingVm } from '../breedVm';
 import { el } from '../dom';
 import { pigPanelVm } from '../viewModel';
 import { actionButton } from './actionButton';
@@ -11,6 +12,7 @@ export interface PigPanelHandlers {
   act: (run: BoundAction) => void;
   sell: (pig: Pig, vm: ActionVm) => void;
   rename: (pig: Pig) => void;
+  breed: (pig: Pig) => void;
 }
 
 const row = (label: string, value: string, modifier = '') =>
@@ -29,6 +31,7 @@ export function renderPigPanel(
 ): HTMLElement {
   const vm = pigPanelVm(pig, now);
   const actions = pigActions(save, pig.id, now);
+  const breeding = breedingVm(save, pig, now);
   return el(
     'section',
     { class: 'pig-panel' },
@@ -70,6 +73,7 @@ export function renderPigPanel(
       actionButton(actions.feed, () => on.act(actions.feed.run)),
       actionButton(actions.clean, () => on.act(actions.clean.run)),
       actionButton(actions.treat, () => on.act(actions.treat.run)),
+      actionButton(breeding.button, () => on.breed(pig)),
       actionButton(actions.sell, () => on.sell(pig, actions.sell), 'c-button--warn'),
     ),
   );

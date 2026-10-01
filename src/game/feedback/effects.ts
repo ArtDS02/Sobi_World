@@ -5,7 +5,12 @@ import type { FeedbackTarget } from './feedbackPlan';
 import type { AnimationId } from './feedbackTable';
 
 export interface FarmEffects {
-  animate(animation: AnimationId, target: FeedbackTarget, delayMs: number): void;
+  animate(
+    animation: AnimationId,
+    target: FeedbackTarget,
+    delayMs: number,
+    from?: FeedbackTarget,
+  ): void;
   burst(fx: FxId, target: FeedbackTarget, delayMs: number): void;
 }
 

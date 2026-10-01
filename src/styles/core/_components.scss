@@ -244,6 +244,22 @@
     flex-wrap: wrap;
     gap: $sp-2;
   }
+
+  // Partner picker (breeding): one full-width button per partner, the chosen one marked.
+  &__choices {
+    display: grid;
+    gap: $sp-2;
+  }
+
+  &__choice {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  &__choice[aria-pressed='true'] {
+    border-color: $c-primary;
+    background: $c-surface-alt;
+  }
 }
 
 .c-devtools {

@@ -2,8 +2,12 @@
 import { BREEDS } from '../../core/config/breeds';
 import type { GameEvent } from '../../core/events';
 import type { Pig, SaveGame } from '../../core/types';
-import { formatInt, t } from '../../i18n/format';
+import { formatDuration, formatInt, t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
+
+/** When the mother's pregnancy started (the dispatch time), so the toast shows the full length. */
+const pregnancyStart = (s: SaveGame, motherId: string): number =>
+  s.pigs.find((p) => p.id === motherId)?.pregnancy?.startedAt ?? 0;
 
 /**
  * Toast text for an event, or null when it has none. `before` is the state before the dispatch
@@ -45,6 +49,11 @@ export function toastText(event: GameEvent, after: SaveGame, before: SaveGame): 
       return t(vi.event.itemBought, { quantity: event.quantity, item: vi.shop[event.itemId] });
     case 'PIG_RENAMED':
       return t(vi.event.renamed, { name: nameOf(event.pigId) });
+    case 'BREEDING_STARTED':
+      return t(vi.event.breedingStarted, {
+        name: nameOf(event.motherId),
+        time: formatDuration(Math.max(0, event.endsAt - pregnancyStart(after, event.motherId))),
+      });
     case 'SLOT_BOUGHT':
       return t(vi.event.slotBought, { slots: event.slots });
     case 'PIG_FED':

@@ -31,6 +31,12 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   ITEM_BOUGHT: { type: 'ITEM_BOUGHT', itemId: 'FOOD_BASIC', quantity: 2, gold: -50 },
   PIG_RENAMED: { type: 'PIG_RENAMED', pigId: 'pig-1' },
   PIG_SOLD: { type: 'PIG_SOLD', pigId: 'pig-1', gold: 1200 },
+  BREEDING_STARTED: {
+    type: 'BREEDING_STARTED',
+    motherId: 'pig-1',
+    fatherId: 'pig-2',
+    endsAt: 3_600_000,
+  },
   SLOT_BOUGHT: { type: 'SLOT_BOUGHT', slots: 5, gold: -2000 },
   ORDER_FULFILLED: { type: 'ORDER_FULFILLED', orderId: 'o', gold: 800 },
 };

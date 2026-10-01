@@ -141,6 +141,7 @@ export const vi = {
     itemBought: "Đã mua {quantity} {item}.",
     renamed: "Đã đổi tên thành {name}.",
     slotBought: "Đã mở thêm chuồng! Giờ có {slots} chỗ.",
+    breedingStarted: "{name} đã mang thai! Sinh sau {time}.",
   },
 
   away: {

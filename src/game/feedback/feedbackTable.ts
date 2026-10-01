@@ -30,6 +30,7 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   PIG_CLEANED: row('clean', ['fx_bubble'], 'water_splash', false, true),
   PIG_TREATED: row('hop', ['fx_sparkle'], 'ui_click', true),
   PIG_SOLD: row('exit', ['fx_coin'], 'coin_collect', true),
+  BREEDING_STARTED: row('hop', ['fx_heart'], 'breed_chime', true),
   BIRTH: row('popIn', ['fx_heart', 'fx_sparkle'], 'birth_fanfare', true),
   PIG_BECAME_ADULT: row('grow', ['fx_sparkle'], 'level_up', true),
   PIG_BECAME_SICK: row(null, ['fx_sick'], 'notify', true),

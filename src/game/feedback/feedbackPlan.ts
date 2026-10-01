@@ -11,7 +11,13 @@ export type FeedbackTarget =
   { kind: 'pig'; pigId: string } | { kind: 'trough' } | { kind: 'board' } | { kind: 'top' };
 
 export interface FeedbackPlan {
-  animations: { animation: AnimationId; target: FeedbackTarget; delayMs: number }[];
+  animations: {
+    animation: AnimationId;
+    target: FeedbackTarget;
+    delayMs: number;
+    /** Start point of the animation (BIRTH: the newborn pops in at its mother). */
+    from?: FeedbackTarget;
+  }[];
   vfx: { fx: FxId; target: FeedbackTarget; delayMs: number }[];
   sound: AudioKey | null;
   toast: boolean;
@@ -26,6 +32,8 @@ export function eventTargets(e: GameEvent): FeedbackTarget[] {
       return e.pigIds.map(pig);
     case 'BIRTH':
       return [pig(e.childId)];
+    case 'BREEDING_STARTED':
+      return [pig(e.motherId), pig(e.fatherId)];
     case 'TROUGH_FILLED':
     case 'TROUGH_EMPTY':
       return [{ kind: 'trough' }];
@@ -66,7 +74,12 @@ export function feedbackPlan(
   const animation = row.animation;
   return {
     animations: animation
-      ? targets.map((target, i) => ({ animation, target, delayMs: delay(i) }))
+      ? targets.map((target, i) => ({
+          animation,
+          target,
+          delayMs: delay(i),
+          ...(e.type === 'BIRTH' ? { from: pig(e.motherId) } : {}),
+        }))
       : [],
     vfx: targets.flatMap((target, i) => row.vfx.map((fx) => ({ fx, target, delayMs: delay(i) }))),
     sound,

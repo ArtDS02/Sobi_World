@@ -2,7 +2,11 @@
 import type { ActionVm } from '../actionsVm';
 import { el } from '../dom';
 
-export function actionButton(vm: ActionVm, onClick: () => void, variant = ''): HTMLElement {
+export function actionButton(
+  vm: Pick<ActionVm, 'label' | 'reason'>,
+  onClick: () => void,
+  variant = '',
+): HTMLElement {
   const disabled = vm.reason !== null;
   const button = el('button', {
     class: `c-button ${variant}`.trim(),

@@ -13,6 +13,7 @@ import { FALLBACK_FX_KEY } from '../view/textureKeys';
 export const PIG_ID_DATA = 'pigId';
 
 interface Motion {
+  dx: number;
   dy: number;
   scale: number;
   angle: number;
@@ -32,7 +33,7 @@ export class PigSprite {
   private overlays: Phaser.GameObjects.Image[] = [];
   private applied: Applied | null = null;
   /** Tweened offsets: dy (px, up is negative), scale multiplier, angle (deg), alpha. */
-  private readonly motion: Motion = { dy: 0, scale: 1, angle: 0, alpha: 1 };
+  private readonly motion: Motion = { dx: 0, dy: 0, scale: 1, angle: 0, alpha: 1 };
   private leaving = false;
 
   constructor(
@@ -81,10 +82,11 @@ export class PigSprite {
     const { view, anchors, selected, anchorOf } = this.applied;
     const m = this.motion;
     const displayH = FARM_VIEW.PIG_DISPLAY_PX * view.scale * m.scale;
+    const x = view.x + m.dx;
     const y = view.y + m.dy;
     this.image
       .setScale(displayH / this.image.height)
-      .setPosition(view.x, y)
+      .setPosition(x, y)
       .setFlipX(view.flipX)
       .setAngle(view.flipX ? -m.angle : m.angle)
       .setAlpha(m.alpha)
@@ -93,12 +95,12 @@ export class PigSprite {
 
     const sel = FARM_VIEW.SELECTION;
     this.marker
-      .setPosition(view.x, view.y)
+      .setPosition(x, view.y + m.dy)
       .setSize(displayW * sel.width, displayH * sel.height)
       .setDepth(view.depth - 0.5)
       .setVisible(selected && !this.leaving);
 
-    this.syncOverlays(view, anchors, anchorOf, displayW, displayH, y);
+    this.syncOverlays(view, anchors, anchorOf, displayW, displayH, x, y);
   }
 
   private syncOverlays(
@@ -107,6 +109,7 @@ export class PigSprite {
     anchorOf: (fx: FxId) => AnchorName,
     displayW: number,
     displayH: number,
+    x: number,
     y: number,
   ) {
     while (this.overlays.length > view.overlays.length) this.overlays.pop()?.destroy();
@@ -121,7 +124,7 @@ export class PigSprite {
       const off = anchorOffset(anchors, anchorOf(fx), view.flipX, displayW, displayH);
       img
         .setDisplaySize(size, size)
-        .setPosition(view.x + off.x + (i - (n - 1) / 2) * step, y + off.y)
+        .setPosition(x + off.x + (i - (n - 1) / 2) * step, y + off.y)
         .setAlpha(this.motion.alpha)
         .setDepth(FARM_VIEW.OVERLAY_DEPTH + view.depth);
     });
@@ -149,8 +152,13 @@ export class PigSprite {
     });
   }
 
-  /** Feedback animation (§11.3); `exit` is played by `leave`. */
-  play(animation: AnimationId, delayMs: number) {
+  /** Feet position right now (start point for a newborn). */
+  feet(): { x: number; y: number } {
+    return { x: this.image.x, y: this.image.y };
+  }
+
+  /** Feedback animation (§11.3); `exit` is played by `leave`. `from`: popIn starts there. */
+  play(animation: AnimationId, delayMs: number, from?: { x: number; y: number }) {
     if (this.leaving) return;
     const T = FEEDBACK.TWEEN;
     const delay = delayMs;
@@ -185,6 +193,11 @@ export class PigSprite {
         break;
       case 'popIn':
         this.motion.scale = T.popIn.from;
+        if (from && this.applied) {
+          this.motion.dx = from.x - this.applied.view.x;
+          this.motion.dy = from.y - this.applied.view.y;
+          this.tween({ dx: 0, dy: 0, duration: T.popIn.moveMs, ease: 'Sine.easeInOut', delay });
+        }
         this.layout();
         this.tween({ scale: 1, duration: T.popIn.ms, ease: 'Back.easeOut', delay });
         break;

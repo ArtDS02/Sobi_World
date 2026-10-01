@@ -34,6 +34,7 @@ const SHORT_REASON: Partial<Record<ErrorCode, string>> = {
   PIG_NOT_SICK: vi.disabled.notSick,
   PIG_NOT_MATURE: vi.disabled.notMature,
   PIG_IS_PREGNANT: vi.disabled.isPregnant,
+  PIG_IS_SICK: vi.disabled.isSick,
   NO_PIG_SLOT: vi.disabled.noSlot,
 };
 

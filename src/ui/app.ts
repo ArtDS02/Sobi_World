@@ -11,6 +11,7 @@ import { createPopupShell, type PanelId, type PopupShell } from './components/po
 import { createToaster } from './components/toast';
 import { renderTopBar } from './components/topBar';
 import {
+  openBreedDialog,
   openBuyItemDialog,
   openImportDialog,
   openRenameDialog,
@@ -121,6 +122,10 @@ export function mountApp(
     act: (run: BoundAction) => void act(run),
     sell: (pig: Pig, vm: ActionVm) => openSellDialog(dialogs, pig, vm, act),
     rename: (pig: Pig) => openRenameDialog(dialogs, pig, act),
+    breed: (pig: Pig) => {
+      const save = store.getSnapshot().save;
+      if (save) openBreedDialog(dialogs, save, pig, now(), act);
+    },
   };
   // Canvas click: a pig opens its panel, a world object its popup, empty ground deselects (§11.2).
   const onPick = (pick: FarmPick) => {

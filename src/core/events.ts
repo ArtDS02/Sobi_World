@@ -21,6 +21,7 @@ export type GameEvent =
   | { type: 'ITEM_BOUGHT'; itemId: ItemId; quantity: number; gold: number }
   | { type: 'PIG_RENAMED'; pigId: string }
   | { type: 'PIG_SOLD'; pigId: string; gold: number }
+  | { type: 'BREEDING_STARTED'; motherId: string; fatherId: string; endsAt: number }
   | { type: 'SLOT_BOUGHT'; slots: number; gold: number } // gold signed as in the transaction (§8.0)
   | { type: 'ORDER_FULFILLED'; orderId: string; gold: number };
 
@@ -45,6 +46,7 @@ export const GAME_EVENT_TYPES = [
   'ITEM_BOUGHT',
   'PIG_RENAMED',
   'PIG_SOLD',
+  'BREEDING_STARTED',
   'SLOT_BOUGHT',
   'ORDER_FULFILLED',
 ] as const satisfies readonly GameEventType[];

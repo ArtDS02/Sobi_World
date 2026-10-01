@@ -28,9 +28,10 @@ export class SceneEffects implements FarmEffects {
     return null;
   }
 
-  animate(animation: AnimationId, target: FeedbackTarget, delayMs: number) {
+  animate(animation: AnimationId, target: FeedbackTarget, delayMs: number, from?: FeedbackTarget) {
     if (target.kind === 'pig') {
-      this.targets.pig(target.pigId)?.play(animation, delayMs);
+      const start = from?.kind === 'pig' ? this.targets.pig(from.pigId)?.feet() : undefined;
+      this.targets.pig(target.pigId)?.play(animation, delayMs, start);
       return;
     }
     const obj = this.object(target);

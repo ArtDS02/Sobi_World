@@ -9,6 +9,7 @@ import { vi } from '../i18n/vi';
 import type { BoundAction } from '../store/gameStore';
 import type { ItemId } from '../core/config/ids';
 import { itemPurchase, troughFill, troughSpace, type ActionVm } from './actionsVm';
+import { breedingVm } from './breedVm';
 import { actionButton } from './components/actionButton';
 import { openDialog } from './components/dialog';
 import { el } from './dom';
@@ -153,6 +154,49 @@ export function openBuyItemDialog(
   refresh();
   input.focus();
   input.select();
+}
+
+/** §10.2: pick a valid partner, see the matrix chances and the pregnancy length, confirm. */
+export function openBreedDialog(
+  host: HTMLElement,
+  save: SaveGame,
+  pig: Pig,
+  now: number,
+  act: Act,
+) {
+  const d = openDialog(host, vi.breed.title);
+  const vm = breedingVm(save, pig, now);
+  if (vm.partners.length === 0) {
+    d.body.append(el('p', { text: t(vi.breed.noPartners, { name: pig.name }) }));
+    return;
+  }
+  const list = el('div', { class: 'c-dialog__choices' });
+  const detail = el('div', { class: 'c-dialog__info' });
+  const slot = el('div');
+  const select = (i: number) => {
+    const p = vm.partners[i]!;
+    [...list.children].forEach((b, j) => b.setAttribute('aria-pressed', String(i === j)));
+    detail.replaceChildren(
+      el('p', { class: 'c-dialog__strong', text: vi.breed.chances }),
+      ...p.chances.map((c) => el('p', { text: c })),
+      el('p', { text: p.duration }),
+      el('p', { text: vm.fee }),
+    );
+    slot.replaceChildren(actionButton(p.confirm, () => void act(p.confirm.run).then(d.close)));
+  };
+  vm.partners.forEach((p, i) =>
+    list.append(
+      el('button', {
+        class: 'c-button c-button--ghost c-dialog__choice',
+        text: p.label,
+        attrs: { type: 'button', 'aria-pressed': 'false' },
+        on: { click: () => select(i) },
+      }),
+    ),
+  );
+  d.body.append(list, detail);
+  d.footer.append(slot);
+  select(0);
 }
 
 /** §9.3: importing overwrites the current farm (which becomes a backup); confirm first. */
