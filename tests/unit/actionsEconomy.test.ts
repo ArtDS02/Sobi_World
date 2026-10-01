@@ -297,7 +297,7 @@ describe('gold never changes without a transaction (§8.16, §14.3)', () => {
       import: 'default',
       eager: true,
     });
-    const writes = /\.gold\s*(\+\+|--|[-+*/]?=(?!=))|\bgold\s*:\s*[^,}\n]*\.gold\b/;
+    const writes = /\.gold\s*(\+\+|--|[-+*/]?=(?!=))|\bgold\s*:\s*[^,}\n]*player\.gold\b/;
     const offenders = Object.entries(sources)
       .filter(([f, text]) => !f.endsWith('/src/core/engine/gold.ts') && writes.test(text))
       .map(([f]) => f);

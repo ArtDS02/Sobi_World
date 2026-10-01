@@ -1,0 +1,13 @@
+@use 'tokens' as *;
+
+$_breakpoints: (
+  sm: $bp-sm,
+  md: $bp-md,
+);
+
+/// Min-width media query for a named breakpoint (sm | md). The only way to write @media.
+@mixin mq($name) {
+  @media (min-width: map-get($_breakpoints, $name)) {
+    @content;
+  }
+}

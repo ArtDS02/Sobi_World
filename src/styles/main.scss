@@ -1,0 +1,3 @@
+// Root stylesheet: only @use, no rules (see core/_index.scss for cascade order).
+@use 'core';
+@use 'features';

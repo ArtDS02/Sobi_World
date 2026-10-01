@@ -1,0 +1,93 @@
+// App frame: top bar, main area, bottom nav (spec §10.1).
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  &__main {
+    flex: 1;
+    width: 100%;
+    max-width: $content-max;
+    margin: 0 auto;
+    padding: $sp-3;
+    padding-bottom: calc(#{$sp-touch-min} + #{$sp-6});
+  }
+
+  &__banner:empty {
+    display: none;
+  }
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: $z-bars;
+  background: $c-surface;
+  border-bottom: 1px solid $c-border;
+
+  &__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $sp-2 $sp-3;
+    max-width: $content-max;
+    margin: 0 auto;
+    padding: $sp-2 $sp-3;
+    font-size: $fs-sm;
+  }
+
+  &__level {
+    font-weight: $fw-bold;
+  }
+
+  &__xp {
+    color: $c-text-muted;
+  }
+
+  &__gold {
+    font-weight: $fw-bold;
+    color: $c-gold;
+  }
+
+  &__settings {
+    margin-left: auto;
+  }
+}
+
+.navbar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $z-bars;
+  background: $c-surface;
+  border-top: 1px solid $c-border;
+
+  &__inner {
+    display: flex;
+    max-width: $content-max;
+    margin: 0 auto;
+  }
+
+  &__item {
+    flex: 1;
+    min-height: $sp-touch-min;
+    padding: $sp-1;
+    font-size: $fs-xs;
+    background: none;
+    border: 0;
+    cursor: pointer;
+
+    @include mq(sm) {
+      font-size: $fs-sm;
+    }
+
+    &.is-active {
+      font-weight: $fw-bold;
+      color: $c-primary-strong;
+    }
+  }
+}

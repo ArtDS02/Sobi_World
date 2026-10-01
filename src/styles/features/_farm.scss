@@ -1,0 +1,80 @@
+// Farm screen (DOM stand-in for the Phaser farm) and the selected pig panel. Owns `.farm*`
+// and `.pig-panel*` inside [data-screen="farm"].
+@use '../core' as *;
+
+[data-screen='farm'] {
+  display: grid;
+  gap: $sp-3;
+
+  @include mq(md) {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+
+  .farm__list {
+    display: grid;
+    gap: $sp-2;
+  }
+
+  .farm__card {
+    display: flex;
+    flex-direction: column;
+    gap: $sp-1;
+    width: 100%;
+    min-height: $sp-touch-min;
+    padding: $sp-3;
+    text-align: left;
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
+    cursor: pointer;
+
+    &.is-selected {
+      border-color: $c-primary;
+      background: $c-surface-alt;
+    }
+
+    &.is-sick .farm__card-health {
+      color: $c-danger;
+    }
+  }
+
+  .farm__card-name {
+    font-weight: $fw-bold;
+  }
+
+  .farm__card-sub,
+  .farm__card-stats {
+    font-size: $fs-sm;
+    color: $c-text-muted;
+  }
+
+  .farm__card-health,
+  .farm__card-flag {
+    font-size: $fs-xs;
+  }
+
+  .pig-panel {
+    display: grid;
+    gap: $sp-2;
+    padding: $sp-4;
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
+
+    &__name {
+      font-size: $fs-lg;
+    }
+
+    &__row {
+      display: flex;
+      justify-content: space-between;
+      gap: $sp-2;
+      font-size: $fs-sm;
+    }
+
+    &__label {
+      color: $c-text-muted;
+    }
+  }
+}

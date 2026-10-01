@@ -1,0 +1,100 @@
+// Shared components. Changing a default here affects every screen — add a modifier instead.
+@use 'tokens' as *;
+
+.c-button {
+  min-height: $sp-touch-min;
+  padding: $sp-2 $sp-4;
+  color: $c-on-primary;
+  background: $c-primary;
+  border: 0;
+  border-radius: $radius-sm;
+  cursor: pointer;
+
+  &--icon {
+    min-width: $sp-touch-min;
+    padding: 0;
+    font-size: $fs-lg;
+    color: $c-text;
+    background: none;
+  }
+}
+
+.c-gauge {
+  padding: $sp-1 $sp-2;
+  background: $c-surface-alt;
+  border-radius: 9999px;
+
+  &.is-empty {
+    font-weight: $fw-bold;
+    color: $c-danger;
+    background: $c-danger-soft;
+  }
+}
+
+.c-bar {
+  height: $bar-height;
+  overflow: hidden;
+  background: $c-surface-alt;
+  border-radius: 9999px;
+
+  &__fill {
+    display: block;
+    height: 100%;
+    background: $c-success;
+  }
+}
+
+.c-empty {
+  padding: $sp-4;
+  color: $c-text-muted;
+  text-align: center;
+}
+
+.c-placeholder {
+  padding: $sp-6 $sp-4;
+  text-align: center;
+
+  &__title {
+    font-size: $fs-lg;
+  }
+}
+
+.c-status {
+  padding: $sp-6 $sp-4;
+  text-align: center;
+
+  &__title {
+    margin-bottom: $sp-2;
+    font-size: $fs-lg;
+  }
+}
+
+.c-banner {
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+  padding: $sp-3;
+  background: $c-danger-soft;
+}
+
+.c-toast-host {
+  position: fixed;
+  right: $sp-3;
+  bottom: calc(#{$sp-touch-min} + #{$sp-3});
+  left: $sp-3;
+  z-index: $z-toast;
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+  align-items: center;
+  pointer-events: none;
+}
+
+.c-toast {
+  max-width: 100%;
+  padding: $sp-2 $sp-4;
+  font-size: $fs-sm;
+  color: $c-on-primary;
+  background: $c-overlay;
+  border-radius: $radius-md;
+}

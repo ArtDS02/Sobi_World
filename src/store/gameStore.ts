@@ -39,8 +39,9 @@ export interface StoreDeps {
   storage: SaveStorage;
   clock: Clock;
   rng: Rng;
-  setInterval: (fn: () => void, ms: number) => unknown;
-  clearInterval: (handle: unknown) => void;
+  /** The game's single repeating timer (§7.1). */
+  every: (fn: () => void, ms: number) => unknown;
+  cancel: (handle: unknown) => void;
   sleep: (ms: number) => Promise<void>;
   channel: ChannelLike | null;
   page: PageLike | null;
@@ -76,8 +77,8 @@ function defaultDeps(): StoreDeps {
     storage: createSaveStorage(),
     clock: realClock,
     rng: defaultRng,
-    setInterval: (fn, ms) => globalThis.setInterval(fn, ms),
-    clearInterval: (h) => globalThis.clearInterval(h as ReturnType<typeof setInterval>),
+    every: (fn, ms) => globalThis.setInterval(fn, ms),
+    cancel: (h) => globalThis.clearInterval(h as number),
     sleep: (ms) => new Promise((resolve) => globalThis.setTimeout(resolve, ms)),
     channel: browserChannel(),
     page: browserPage(),
@@ -135,10 +136,10 @@ export function createGameStore(overrides: Partial<StoreDeps> = {}) {
   }
 
   const startLoop = () => {
-    if (interval === null) interval = deps.setInterval(tick, SAVE.TICK_MS);
+    if (interval === null) interval = deps.every(tick, SAVE.TICK_MS);
   };
   const stopLoop = () => {
-    if (interval !== null) deps.clearInterval(interval);
+    if (interval !== null) deps.cancel(interval);
     interval = null;
   };
 

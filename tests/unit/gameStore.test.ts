@@ -43,12 +43,12 @@ function fakeTimers() {
   let next = 1;
   let created = 0;
   return {
-    setInterval: (fn: () => void) => {
+    every: (fn: () => void) => {
       created += 1;
       live.set(next, fn);
       return next++;
     },
-    clearInterval: (h: unknown) => void live.delete(h as number),
+    cancel: (h: unknown) => void live.delete(h as number),
     fire: () => [...live.values()].forEach((fn) => fn()),
     live: () => live.size,
     created: () => created,
@@ -107,8 +107,8 @@ function makeStore(extra: Partial<StoreDeps> = {}) {
     storage,
     clock,
     rng: mulberry32(11),
-    setInterval: timers.setInterval,
-    clearInterval: timers.clearInterval,
+    every: timers.every,
+    cancel: timers.cancel,
     sleep: () => new Promise((r) => setTimeout(r, 0)),
     channel: null,
     page,

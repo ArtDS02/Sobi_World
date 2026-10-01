@@ -96,3 +96,9 @@ Spec: §4, §7.1, §9.1, §9.4 · Phase: S07, UI.
 
 **S07-2** · Multi-tab (`src/store/tabGuard.ts`): tab mới gửi `hello`, chờ 150 ms; tab khác trả `here {primary}`. Nhận `here` từ tab primary (hoặc tab id nhỏ hơn khi cùng khởi động) → read-only vĩnh viễn (`snapshot.readOnly`, UI hiện vi.multiTab, nút tải lại); tab read-only không bao giờ ghi. Multi-tab báo qua snapshot, không thêm GameEvent.
 Spec: §9.4 · Phase: S07, UI.
+
+**S08A-1** · Thêm nhóm `vi.ui` (comingSoon, farmEmpty, selectPig, breed, gender, percent, weightKg) — Phụ lục B không có các nhãn khung này. Định dạng số theo `vi-VN` (8.420; x1,20) qua `src/i18n/format.ts` (`t`, `formatInt`, `formatDec`, `formatDuration`). Bottom nav 5 mục như §10.1; Cài đặt ở nút ⚙ top bar; Lịch sử chưa có lối vào (S08B/màn settings). Toast `PIG_HUNGRY_ZERO` chỉ khi heo chưa trưởng thành.
+Spec: §10.1, §10.2, §10.5 · Phase: S08A.
+
+**S08A-2** · Store đổi deps timer `setInterval/clearInterval` → `every/cancel` để toàn `src/` chỉ còn đúng 1 dòng `setInterval` (grep guard adapter §8).
+Spec: §7.1 · Phase: S08A.
