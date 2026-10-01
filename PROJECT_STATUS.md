@@ -6,4 +6,4 @@ Known issues: tsconfig root dùng chung (lib DOM có ở core). skins.ts còn gi
 Important decisions: -
 Hooks: src/core/engine/breeding.ts:resolveBirths (S10, bước 3 §7.4), src/core/engine/orders.ts:refreshOrders (S11, bước 4). LEVEL_UP/DISCOVERY do actions phát.
 Golden §14.1 12/12. §14.2: tất cả pass trừ fillTrough TROUGH_FULL (todo, phase actions).
-Next task: xem block kế tiếp sau "### S04B" trong PROMPTS_THEO_PHASE.md.
+Next task: S05 — Save & persistence (block "### S05" trong PROMPTS_THEO_PHASE.md).
