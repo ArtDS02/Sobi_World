@@ -1,10 +1,12 @@
 // Where a pig stands and how it poses (spec §11, art standard §2.4, §3): visual-only wandering
-// inside the walk area, idle breathing, walk squash/stretch and the 120 ms turn. Nothing here
-// reaches the store or the save; the position lives only in this object.
+// inside the walk area, naps between strolls, idle breathing, walk squash/stretch and the 120 ms
+// turn; reduceMotion turns all of it off. Nothing here reaches the store or the save; the
+// position lives only in this object.
 import * as Phaser from 'phaser';
 import { FARM_VIEW } from '../../core/config/farmView';
 import { FEEDBACK } from '../../core/config/feedback';
-import { facesLeft, restMs, walkMs, wanderTarget } from '../state/wander';
+import type { PigMotion } from '../state/pigVisualState';
+import { facesLeft, napsDuring, restMs, walkMs, wanderTarget } from '../state/wander';
 import { hashId, type FarmLayout } from '../view/pigView';
 
 /** Pose multipliers on top of the pig's scale: breathing / squash (bx, by) and the turn (turn). */
@@ -28,6 +30,8 @@ export class PigMover {
   private turnTween: Phaser.Tweens.TweenChain | null = null;
   private timer: Phaser.Time.TimerEvent | null = null;
   private poseKind: PoseKind | null = null;
+  /** Asleep for the current rest (DECISIONS R09B-1); any interaction wakes the pig. */
+  private napping = false;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -39,6 +43,8 @@ export class PigMover {
     private readonly mayWander: () => boolean,
     /** A feedback state plays (eat / clean / happy): hold a neutral pose. */
     private readonly interacting: () => boolean,
+    /** settings.reduceMotion: no strolls, no pose tweens, instant turns. */
+    private readonly reduceMotion: () => boolean,
   ) {}
 
   /** First view: stand at home facing the derived way, start breathing and the stroll timer. */
@@ -47,12 +53,24 @@ export class PigMover {
     if (this.pos) return;
     this.pos = { ...home };
     this.facingLeft = facingLeft;
-    this.setPose('idle');
-    this.schedule(restMs(this.pigId, this.step));
+    this.rest();
   }
 
-  get moving(): boolean {
-    return this.walk !== null;
+  /** For pigVisualState: strolling (not paused), napping, or standing. */
+  get motion(): PigMotion {
+    if (this.walk && !this.walk.isPaused()) return 'walk';
+    return this.napping ? 'nap' : 'still';
+  }
+
+  private blocked(): boolean {
+    return this.reduceMotion() || !this.mayWander();
+  }
+
+  /** Rest before the next stroll; some rests are naps. */
+  private rest() {
+    this.napping = !this.blocked() && napsDuring(this.pigId, this.step);
+    this.refresh();
+    this.schedule(restMs(this.pigId, this.step));
   }
 
   /**
@@ -60,19 +78,28 @@ export class PigMover {
    * an interaction, squash while walking, otherwise breathing (sick and pregnant pigs too).
    */
   refresh() {
-    const blocked = !this.mayWander();
+    const blocked = this.blocked();
+    if (blocked) this.napping = false; // selected or acted on: wake up
     if (this.walk) {
       if (blocked && !this.walk.isPaused()) this.walk.pause();
       else if (!blocked && this.walk.isPaused()) this.walk.resume();
     }
     const walking = this.walk !== null && !blocked;
-    this.setPose(this.interacting() ? 'still' : walking ? 'walk' : 'idle');
+    const still = this.interacting() || this.reduceMotion();
+    this.setPose(still ? 'still' : walking ? 'walk' : 'idle');
+    this.onChange();
   }
 
   /** Turn to face left / right: scaleX 1 → 0, flip, 0 → 1 in POSE.turnMs (art standard §2.4). */
   face(left: boolean) {
     if (left === this.facingLeft) return;
     this.turnTween?.stop();
+    if (this.reduceMotion()) {
+      this.facingLeft = left;
+      this.pose.turn = 1;
+      this.onChange();
+      return;
+    }
     const half = FEEDBACK.POSE.turnMs / 2;
     this.turnTween = this.scene.tweens.chain({
       targets: this.pose,
@@ -102,11 +129,12 @@ export class PigMover {
   }
 
   private stroll() {
-    if (!this.pos || !this.mayWander()) {
+    if (!this.pos || this.blocked()) {
       this.schedule(FARM_VIEW.WANDER.retryMs);
       return;
     }
     const pos = this.pos;
+    this.napping = false;
     this.step += 1;
     const to = wanderTarget(this.pigId, this.step, this.home, this.layout);
     this.face(facesLeft(pos.x, to.x, this.facingLeft));
@@ -119,8 +147,7 @@ export class PigMover {
       onUpdate: this.onChange,
       onComplete: () => {
         this.walk = null;
-        this.refresh();
-        this.schedule(restMs(this.pigId, this.step));
+        this.rest();
       },
     });
     this.setPose('walk');

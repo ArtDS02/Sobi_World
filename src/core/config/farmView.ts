@@ -48,9 +48,13 @@ export const FARM_VIEW = {
     minWalkMs: 600,
     restMinMs: 2500,
     restMaxMs: 8000,
+    /** Share of rests a healthy idle pig spends asleep (DECISIONS R09B-1). */
+    napChance: 0.3,
     /** Retry delay while the pig may not wander (selected, interacting, sick...). */
     retryMs: 1000,
   },
+  /** Sick pigs are tinted green on top of the fx_sick overlay (spec §11 table). */
+  SICK_TINT: 0xb6e3a2,
   /** Alpha threshold for pixel-perfect pig clicks. */
   HIT_ALPHA: 1,
   /** Progress bar of the preload scene (design px). */

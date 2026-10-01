@@ -6,14 +6,31 @@ import { FARM_VIEW } from '../../core/config/farmView';
 import { t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 import { SCENE_KEYS } from '../config/phaser';
-import { farmLoadList, type LoadList } from '../view/textureKeys';
+import { farmLoadList, fxAnimKey, type LoadList, type SheetItem } from '../view/textureKeys';
 import type { FarmDeps } from '../farmView';
 
 /** Queue a load list; returns how many files were queued. */
 export function queueLoadList(load: Phaser.Loader.LoaderPlugin, list: LoadList): number {
   for (const i of list.images) load.image(i.key, i.url);
   for (const j of list.json) load.json(j.key, j.url);
-  return list.images.length + list.json.length;
+  for (const sh of list.sheets) {
+    load.spritesheet(sh.key, sh.url, { frameWidth: sh.frameWidth, frameHeight: sh.frameHeight });
+  }
+  return list.images.length + list.json.length + list.sheets.length;
+}
+
+/** One looping animation per multi-frame fx that loaded (missing files keep the fallback). */
+export function createFxAnims(scene: Phaser.Scene, sheets: readonly SheetItem[]) {
+  for (const sh of sheets) {
+    const key = fxAnimKey(sh.key);
+    if (!scene.textures.exists(sh.key) || scene.anims.exists(key)) continue;
+    scene.anims.create({
+      key,
+      frames: scene.anims.generateFrameNumbers(sh.key, { start: 0, end: sh.count - 1 }),
+      frameRate: sh.fps,
+      repeat: -1,
+    });
+  }
 }
 
 /** Dev builds log each failed file once (spec §11.4); the renderer uses the fallback texture. */
@@ -24,6 +41,8 @@ export function warnLoadErrors(load: Phaser.Loader.LoaderPlugin) {
 }
 
 export class PreloadScene extends Phaser.Scene {
+  private list: LoadList | null = null;
+
   constructor(private readonly deps: FarmDeps) {
     super(SCENE_KEYS.preload);
   }
@@ -53,10 +72,12 @@ export class PreloadScene extends Phaser.Scene {
       ...pigs.map((p) => p.skinId),
       ...Object.values(BREEDS).map((b) => b.defaultSkin),
     ];
-    queueLoadList(this.load, farmLoadList(this.deps.assets, skins));
+    this.list = farmLoadList(this.deps.assets, skins);
+    queueLoadList(this.load, this.list);
   }
 
   create() {
+    createFxAnims(this, this.list?.sheets ?? []);
     this.scene.start(SCENE_KEYS.farm);
   }
 }

@@ -15,6 +15,9 @@ export interface ActiveFeedback {
   until: number;
 }
 
+/** What the pig's own body is doing: standing, strolling or napping (PigMover). */
+export type PigMotion = 'still' | 'walk' | 'nap';
+
 /** Which feedback animations are pig visual states; the rest are one-off tweens (popIn, grow). */
 export const FEEDBACK_STATE: Partial<Record<AnimationId, FeedbackState>> = {
   eat: 'eat',
@@ -23,19 +26,21 @@ export const FEEDBACK_STATE: Partial<Record<AnimationId, FeedbackState>> = {
 };
 
 /**
- * Priority: a running feedback state (the player just acted) > sleep > sick > pregnant > walk >
- * idle. Sleep has no rule in the spec yet (DECISIONS R05A-1), so it is never produced here.
+ * Priority: a running feedback state (the player just acted) > sick > pregnant > sleep > walk >
+ * idle. Only a healthy, free pig naps (PigMover decides, DECISIONS R09B-1); a nap reported for a
+ * sick or pregnant pig is ignored.
  */
 export function pigVisualState(
   pig: Pick<Pig, 'isSick' | 'pregnancy'>,
   now: number,
   feedback: ActiveFeedback | null,
-  moving = false,
+  motion: PigMotion = 'still',
 ): VisualState {
   if (feedback && now < feedback.until) return feedback.state;
   if (pig.isSick) return 'sick';
   if (pig.pregnancy) return 'pregnant';
-  return moving ? 'walk' : 'idle';
+  if (motion === 'nap') return 'sleep';
+  return motion === 'walk' ? 'walk' : 'idle';
 }
 
 /**

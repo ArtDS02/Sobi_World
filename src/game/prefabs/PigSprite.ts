@@ -15,7 +15,7 @@ import {
   type ActiveFeedback,
   type VisualState,
 } from '../state/pigVisualState';
-import { pigScale, type FarmLayout, type PigView } from '../view/pigView';
+import { pigScale, sleepLook, type FarmLayout, type PigView } from '../view/pigView';
 import { playPigAnimation, type Motion, type TweenablePig } from '../fx/pigAnimations';
 import { PigMover } from './PigMover';
 import { PigOverlays } from './PigOverlays';
@@ -33,6 +33,8 @@ export interface PigEnv {
   layout: FarmLayout;
   /** Trough x in design px (eat turns toward it), or null without a trough. */
   troughX: () => number | null;
+  /** settings.reduceMotion right now. */
+  reduceMotion: () => boolean;
 }
 
 const T = FEEDBACK.TWEEN;
@@ -85,6 +87,7 @@ export class PigSprite {
       () => this.layout(),
       () => this.mayWander(),
       () => this.feedback !== null && this.scene.time.now < this.feedback.until,
+      () => env.reduceMotion(),
     );
     this.handle = {
       motion: this.motion,
@@ -110,24 +113,38 @@ export class PigSprite {
   /** The state this pig shows right now (spec §11 table). */
   visualState(): VisualState {
     const care = this.applied?.view.care ?? { isSick: false, pregnancy: null };
-    return pigVisualState(care, this.scene.time.now, this.feedback, this.mover.moving);
+    return pigVisualState(care, this.scene.time.now, this.feedback, this.mover.motion);
   }
 
   apply(view: PigView, anchors: Anchors, selected: boolean, anchorOf: (fx: FxId) => AnchorName) {
     if (this.leaving) return;
-    const key = this.textureFor(view);
-    if (this.image.texture.key !== key) {
-      this.image.setTexture(key);
-      // The pixel-perfect hit area keeps its first size; follow the new frame.
-      (this.image.input?.hitArea as Phaser.Geom.Rectangle | undefined)?.setSize(
-        this.image.width,
-        this.image.height,
-      );
-    }
     this.applied = { view, anchors, selected, anchorOf };
     this.mover.place({ x: view.x, y: view.y }, view.flipX);
     this.mover.refresh();
     this.layout();
+  }
+
+  private setTexture(key: string) {
+    if (this.image.texture.key === key) return;
+    this.image.setTexture(key);
+    // The pixel-perfect hit area keeps its first size; follow the new frame.
+    (this.image.input?.hitArea as Phaser.Geom.Rectangle | undefined)?.setSize(
+      this.image.width,
+      this.image.height,
+    );
+  }
+
+  /** Idle frame, or the sleep look (`_sleep` frame, else idle + fx_zzz, spec §11.4 / Q5). */
+  private look(view: PigView): { textureId: string; overlays: readonly FxId[] } {
+    if (this.visualState() !== 'sleep') {
+      return { textureId: this.textureFor(view), overlays: view.overlays };
+    }
+    const sleep = sleepLook(view, (k) => this.scene.textures.exists(k));
+    const textureId = sleep.textureId === view.textureId ? this.textureFor(view) : sleep.textureId;
+    return {
+      textureId,
+      overlays: sleep.overlay ? [...view.overlays, sleep.overlay] : view.overlays,
+    };
   }
 
   /** Wander position + pose + feedback motion → every game object of the pig. */
@@ -135,6 +152,11 @@ export class PigSprite {
     const pos = this.mover.pos;
     if (!this.applied || !pos) return;
     const { view, anchors, selected, anchorOf } = this.applied;
+    const look = this.look(view);
+    this.setTexture(look.textureId);
+    // Sick: green tint on top of the fx_sick overlay (spec §11 table).
+    if (view.care.isSick) this.image.setTint(FARM_VIEW.SICK_TINT);
+    else this.image.clearTint();
     const m = this.motion;
     const pose = this.mover.pose;
     const { height } = this.env.layout.designSize;
@@ -162,7 +184,8 @@ export class PigSprite {
       .setVisible(selected && !this.leaving);
 
     this.overlays.sync({
-      fx: view.overlays,
+      fx: look.overlays,
+      animate: !this.env.reduceMotion(),
       anchors,
       anchorOf,
       flipX,

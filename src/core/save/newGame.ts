@@ -5,7 +5,8 @@ import { STARTER_SKINS } from '../config/skins';
 import { changeGold } from '../engine/gold';
 import type { ActionContext, SaveGame } from '../types';
 
-export function newGame(ctx: ActionContext): SaveGame {
+/** `reduceMotion`: the OS preference at first launch (prefers-reduced-motion, read by the store). */
+export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {}): SaveGame {
   const empty: SaveGame = {
     schemaVersion: SAVE.SCHEMA_VERSION,
     createdAt: ctx.now,
@@ -26,7 +27,7 @@ export function newGame(ctx: ActionContext): SaveGame {
     settings: {
       musicOn: true,
       sfxOn: true,
-      reduceMotion: false,
+      reduceMotion: opts.reduceMotion ?? false,
       tutorialDone: false,
       lastExportAt: null,
     },

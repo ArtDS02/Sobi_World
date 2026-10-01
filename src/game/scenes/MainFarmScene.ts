@@ -61,7 +61,11 @@ export class MainFarmScene extends Phaser.Scene {
 
   create() {
     this.layout = this.deps.assets.manifest.layout;
-    this.pigEnv = { layout: this.layout, troughX: () => this.trough?.x ?? null };
+    this.pigEnv = {
+      layout: this.layout,
+      troughX: () => this.trough?.x ?? null,
+      reduceMotion: () => this.deps.store.getSnapshot().save?.settings.reduceMotion ?? false,
+    };
     warnLoadErrors(this.load);
     this.drawBackdrop();
     this.drawPlacements();

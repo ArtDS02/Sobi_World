@@ -2,7 +2,7 @@
 // code only applies the result. Position is derived from the slot and id, never stored.
 import type { AssetManifest } from '../../core/assets/manifestSchema';
 import type { AssetRegistry } from '../../core/assets/registry';
-import type { FxId } from '../../core/config/assetIds';
+import { SLEEP_FALLBACK_FX, type FxId } from '../../core/config/assetIds';
 import { FARM_VIEW } from '../../core/config/farmView';
 import type { Pig } from '../../core/types';
 import { pigVisualState, type VisualState } from '../state/pigVisualState';
@@ -14,6 +14,8 @@ export interface PigView {
   /** Texture to draw; `fallbackId` when it is not loaded (spec §11.4). */
   textureId: string;
   fallbackId: string;
+  /** The skin's `_sleep` frame, or null when the manifest has none (see sleepLook). */
+  sleepTextureId: string | null;
   /** Skin row whose anchors apply (after the breed-default fallback). */
   skinId: string;
   /** Home feet position in design pixels; wandering strays from it (visual only). */
@@ -66,9 +68,19 @@ export function pigScale(growthProgress: number, yNorm: number, layout: FarmLayo
 }
 
 /**
- * `now` is reserved for time-based states (wander phase, R05B); sleeping has no rule in the
- * spec yet, so the sleep frame is never chosen here (DECISIONS R05A-1).
+ * What a sleeping pig looks like (spec §11.4, DECISIONS Q5): the skin's `_sleep` frame when the
+ * manifest has one and it loaded; otherwise the idle frame plus the fx_zzz overlay.
  */
+export function sleepLook(
+  view: Pick<PigView, 'textureId' | 'sleepTextureId'>,
+  loaded: (key: string) => boolean,
+): { textureId: string; overlay: FxId | null } {
+  const sleep = view.sleepTextureId;
+  if (sleep !== null && loaded(sleep)) return { textureId: sleep, overlay: null };
+  return { textureId: view.textureId, overlay: SLEEP_FALLBACK_FX };
+}
+
+/** `now` is reserved for time-based states; the sprite adds feedback, walking and naps. */
 export function pigView(
   pig: Pig,
   _now: number,
@@ -76,23 +88,23 @@ export function pigView(
   textures: Pick<AssetRegistry, 'pigTexture'>,
 ): PigView {
   const visualState = pigVisualState(pig, 0, null);
-  const sleeping = false;
-  const tex = textures.pigTexture(pig.skinId, pig.breed, sleeping);
+  const tex = textures.pigTexture(pig.skinId, pig.breed, false);
   const fallbackId = fallbackPigKey(pig.breed);
-  const textureId =
-    tex.url === null
-      ? fallbackId
-      : textureKey(tex.skinId, sleeping && !tex.overlay ? 'sleep' : 'asset');
+  const textureId = tex.url === null ? fallbackId : textureKey(tex.skinId);
+  // No sleep row in the manifest → the registry answers with the fx_zzz overlay instead.
+  const asleep = textures.pigTexture(pig.skinId, pig.breed, true);
+  const sleepTextureId =
+    asleep.url === null || asleep.overlay ? null : textureKey(asleep.skinId, 'sleep');
 
   const overlays: FxId[] = [];
   if (pig.isSick) overlays.push('fx_sick');
   if (pig.pregnancy) overlays.push('fx_pregnant');
-  if (tex.overlay) overlays.push(tex.overlay as FxId);
 
   const spot = pigSpot(pig, layout);
   const y = spot.y * layout.designSize.height;
   return {
     textureId,
+    sleepTextureId,
     fallbackId,
     skinId: tex.skinId,
     x: spot.x * layout.designSize.width,

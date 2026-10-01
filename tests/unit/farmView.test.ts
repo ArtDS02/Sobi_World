@@ -151,8 +151,13 @@ describe('preload list (spec §11)', () => {
   it('has environment, all trough states, fx, ui icons and the requested skins only', () => {
     const list = farmLoadList(reg, ['pig_classic', 'pig_classic']);
     const keys = list.images.map((i) => i.key);
-    for (const k of ['env_sky', 'env_ground_grass', 'prop_pig_house', 'fx_zzz', 'ui_icon_gold'])
+    for (const k of ['env_sky', 'env_ground_grass', 'prop_pig_house', 'fx_sick', 'ui_icon_gold'])
       expect(keys).toContain(k);
+    // fx_zzz has 3 frames in the manifest: loaded as a sprite sheet, animated (§11.4, Q5).
+    expect(keys).not.toContain('fx_zzz');
+    expect(list.sheets).toEqual([
+      expect.objectContaining({ key: 'fx_zzz', frameWidth: 256, frameHeight: 256, count: 3 }),
+    ]);
     for (const s of ['empty', 'half', 'full'])
       expect(keys).toContain(textureKey('prop_feed_trough', s));
     expect(keys.filter((k) => k === 'pig_classic')).toHaveLength(1);
@@ -169,7 +174,7 @@ describe('preload list (spec §11)', () => {
     expect(s.json).toEqual([
       { key: 'pig_classic_anchors', url: 'assets/pigs/base/pig_classic.anchors.json' },
     ]);
-    expect(skinLoadList(reg, 'env_sky')).toEqual({ images: [], json: [] });
+    expect(skinLoadList(reg, 'env_sky')).toEqual({ images: [], json: [], sheets: [] });
   });
 });
 

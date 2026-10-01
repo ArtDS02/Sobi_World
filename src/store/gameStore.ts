@@ -49,6 +49,8 @@ export interface StoreDeps {
   cancel: (handle: unknown) => void;
   sleep: (ms: number) => Promise<void>;
   page: PageLike | null;
+  /** OS "reduce motion" preference; seeds settings.reduceMotion of a new game (spec §11.3). */
+  prefersReducedMotion: () => boolean;
 }
 
 function browserPage(): PageLike | null {
@@ -73,6 +75,8 @@ function defaultDeps(): DefaultDeps {
     cancel: (h) => globalThis.clearInterval(h as number),
     sleep: (ms) => new Promise((resolve) => globalThis.setTimeout(resolve, ms)),
     page: browserPage(),
+    prefersReducedMotion: () =>
+      typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches,
   };
 }
 
@@ -215,7 +219,7 @@ export function createGameStore(
       else if (loaded.kind === 'recovery') set({ status: 'recovery' });
       else if (loaded.kind === 'ok') becomeReady(loaded.save, loaded.source);
       else {
-        becomeReady(newGame(ctx()), null);
+        becomeReady(newGame(ctx(), { reduceMotion: deps.prefersReducedMotion() }), null);
         await persist();
       }
       return snapshot.status;
@@ -237,7 +241,7 @@ export function createGameStore(
     /** Recovery screen "start new", after the player's explicit confirmation (§9.2). */
     async startNewGame(): Promise<void> {
       if (snapshot.status === 'tooNew' || guard.isReadOnly()) return;
-      becomeReady(newGame(ctx()), null);
+      becomeReady(newGame(ctx(), { reduceMotion: deps.prefersReducedMotion() }), null);
       await persist();
     },
 

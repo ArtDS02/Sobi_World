@@ -31,6 +31,13 @@ export function restMs(pigId: string, step: number): number {
   return w.restMinMs + unit(pigId, step, 3) * (w.restMaxMs - w.restMinMs);
 }
 
+/**
+ * Whether the rest after stroll `step` is a nap (sleep state, DECISIONS R09B-1): visual only,
+ * the spec has no data rule for sleeping.
+ */
+export const napsDuring = (pigId: string, step: number): boolean =>
+  unit(pigId, step, 4) < FARM_VIEW.WANDER.napChance;
+
 /** Time to walk `distancePx` at WANDER.speedPx, never shorter than one squash cycle. */
 export const walkMs = (distancePx: number): number =>
   Math.max(FARM_VIEW.WANDER.minWalkMs, (distancePx / FARM_VIEW.WANDER.speedPx) * 1000);

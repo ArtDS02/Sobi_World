@@ -28,11 +28,13 @@ const pregnant = { isSick: false, pregnancy };
 const eating: ActiveFeedback = { state: 'eat', until: 1000 };
 
 describe('pigVisualState (spec §11)', () => {
-  it('priority: feedback > sick > pregnant > walk > idle', () => {
-    expect(pigVisualState({ isSick: true, pregnancy }, 500, eating, true)).toBe('eat');
-    expect(pigVisualState({ isSick: true, pregnancy }, 500, null, true)).toBe('sick');
-    expect(pigVisualState(pregnant, 500, null, true)).toBe('pregnant');
-    expect(pigVisualState(healthy, 500, null, true)).toBe('walk');
+  it('priority: feedback > sick > pregnant > sleep > walk > idle', () => {
+    expect(pigVisualState({ isSick: true, pregnancy }, 500, eating, 'nap')).toBe('eat');
+    expect(pigVisualState({ isSick: true, pregnancy }, 500, null, 'nap')).toBe('sick');
+    expect(pigVisualState(pregnant, 500, null, 'nap')).toBe('pregnant');
+    expect(pigVisualState(healthy, 500, eating, 'nap')).toBe('eat');
+    expect(pigVisualState(healthy, 500, null, 'nap')).toBe('sleep');
+    expect(pigVisualState(healthy, 500, null, 'walk')).toBe('walk');
     expect(pigVisualState(healthy, 500, null)).toBe('idle');
   });
 
@@ -41,10 +43,10 @@ describe('pigVisualState (spec §11)', () => {
     expect(pigVisualState(healthy, 1000, eating)).toBe('idle');
   });
 
-  it('never produces sleep (no rule in the spec yet, DECISIONS R05A-1)', () => {
+  it('sleep only comes from a nap (DECISIONS R09B-1)', () => {
     for (const care of [healthy, sick, pregnant])
-      for (const moving of [true, false])
-        expect(pigVisualState(care, 0, null, moving)).not.toBe('sleep');
+      for (const motion of ['still', 'walk'] as const)
+        expect(pigVisualState(care, 0, null, motion)).not.toBe('sleep');
   });
 
   it('feedback table animations map to eat / clean / happy', () => {

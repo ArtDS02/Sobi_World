@@ -15,6 +15,9 @@ export const fallbackPigKey = (breed: BreedId): string => `fallback_pig_${breed.
 export const FALLBACK_PROP_KEY = 'fallback_prop';
 export const FALLBACK_FX_KEY = 'fallback_fx';
 
+/** Animation key of a multi-frame fx (manifest `frames`, e.g. fx_zzz). */
+export const fxAnimKey = (fxId: string): string => `${fxId}_anim`;
+
 /** Trough texture by fill: 0 → empty, ≤ capacity/2 → half, otherwise full. */
 export const troughTextureKey = (food: number, capacity: number): string =>
   textureKey(TROUGH_PROP_ID, troughState(food, capacity));
@@ -24,9 +27,18 @@ export interface LoadItem {
   url: string;
 }
 
+/** A horizontal strip of equal frames (fx rows with `frames`), animated at `fps`. */
+export interface SheetItem extends LoadItem {
+  frameWidth: number;
+  frameHeight: number;
+  count: number;
+  fps: number;
+}
+
 export interface LoadList {
   images: LoadItem[];
   json: LoadItem[];
+  sheets: SheetItem[];
 }
 
 const FARM_SECTIONS = new Set(['environment', 'props', 'buildings', 'fx', 'ui']);
@@ -36,7 +48,7 @@ const SKIPPED_FILES = new Set(['shadow', 'flip', 'anchors']);
 /** Every file of one pig skin: idle, optional sleep frame, optional anchors json. */
 export function skinLoadList(assets: AssetRegistry, skinId: string): LoadList {
   const entry = assets.resolve(skinId);
-  if (!entry || entry.section !== 'pigs') return { images: [], json: [] };
+  if (!entry || entry.section !== 'pigs') return { images: [], json: [], sheets: [] };
   const url = (file: string) => assets.url(skinId, file);
   const images: LoadItem[] = [];
   for (const file of ['asset', 'sleep']) {
@@ -44,19 +56,33 @@ export function skinLoadList(assets: AssetRegistry, skinId: string): LoadList {
     if (u) images.push({ key: textureKey(skinId, file), url: u });
   }
   const a = url('anchors');
-  return { images, json: a ? [{ key: anchorsKey(skinId), url: a }] : [] };
+  return { images, json: a ? [{ key: anchorsKey(skinId), url: a }] : [], sheets: [] };
 }
 
 /** Environment, structures, props (all trough states), fx, ui icons, plus the given skins. */
 export function farmLoadList(assets: AssetRegistry, skinIds: Iterable<string>): LoadList {
   const images: LoadItem[] = [];
   const json: LoadItem[] = [];
+  const sheets: SheetItem[] = [];
+  const framesOf = new Map(assets.manifest.fx.map((r) => [r.id, r.frames]));
   for (const entry of assets.entries()) {
     if (!FARM_SECTIONS.has(entry.section)) continue;
     for (const file of Object.keys(entry.files)) {
       if (SKIPPED_FILES.has(file)) continue;
       const url = assets.url(entry.id, file);
-      if (url) images.push({ key: textureKey(entry.id, file), url });
+      if (!url) continue;
+      const frames = file === 'asset' ? framesOf.get(entry.id) : undefined;
+      const key = textureKey(entry.id, file);
+      if (frames) {
+        sheets.push({
+          key,
+          url,
+          frameWidth: frames.width,
+          frameHeight: frames.height,
+          count: frames.count,
+          fps: frames.fps,
+        });
+      } else images.push({ key, url });
     }
   }
   for (const skinId of new Set(skinIds)) {
@@ -64,5 +90,5 @@ export function farmLoadList(assets: AssetRegistry, skinIds: Iterable<string>): 
     images.push(...s.images);
     json.push(...s.json);
   }
-  return { images, json };
+  return { images, json, sheets };
 }
