@@ -50,5 +50,18 @@ export const ANCHOR_NAMES = [
   'fx_above',
 ] as const;
 
+export type AnchorName = (typeof ANCHOR_NAMES)[number];
+
 /** Feet line of every pig canvas (art standard §4.1). */
 export const PIG_FEET_Y = 0.82;
+
+/** Default anchors when a pig has no `*.anchors.json` (art standard §5). */
+export const DEFAULT_ANCHORS: Record<AnchorName, { x: number; y: number }> = {
+  head: { x: 0.53, y: 0.25 },
+  face: { x: 0.58, y: 0.31 },
+  body: { x: 0.48, y: 0.5 },
+  back: { x: 0.3, y: 0.46 },
+  hand_prop: { x: 0.64, y: 0.61 },
+  feet: { x: 0.5, y: PIG_FEET_Y },
+  fx_above: { x: 0.5, y: 0.1 },
+};

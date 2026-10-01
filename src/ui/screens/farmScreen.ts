@@ -1,15 +1,13 @@
-// Farm screen, DOM-only stand-in for the Phaser farm (§10.1): toolbar, pig cards, pig panel.
-// Buying pigs lives in the shop (R03).
+// Farm screen DOM side (§10.1, §11): toolbar and the selected pig panel. The pigs themselves are
+// drawn and clicked on the Phaser canvas in .app__stage (src/game). Buying pigs lives in the shop.
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
 import { farmActions } from '../actionsVm';
 import { actionButton } from '../components/actionButton';
 import { renderPigPanel, type PigPanelHandlers } from '../components/pigPanel';
 import { el } from '../dom';
-import { pigCardVm } from '../viewModel';
 
 export interface FarmHandlers extends PigPanelHandlers {
-  select: (pigId: string) => void;
   goShop: () => void;
 }
 
@@ -32,38 +30,8 @@ export function renderFarmScreen(
   const pigs = [...save.pigs].sort((a, b) => a.slotIndex - b.slotIndex);
   const selected = pigs.find((p) => p.id === selectedId) ?? null;
 
-  const list = pigs.length
-    ? el(
-        'ul',
-        { class: 'farm__list' },
-        ...pigs.map((pig) => {
-          const vm = pigCardVm(pig);
-          const state = [vm.id === selectedId ? 'is-selected' : '', vm.isSick ? 'is-sick' : ''];
-          return el(
-            'li',
-            {},
-            el(
-              'button',
-              {
-                class: `farm__card ${state.join(' ')}`.trim(),
-                attrs: { type: 'button', 'aria-pressed': String(vm.id === selectedId) },
-                on: { click: () => on.select(vm.id) },
-              },
-              el('span', { class: 'farm__card-name', text: vm.name }),
-              el('span', { class: 'farm__card-sub', text: `${vm.breed} · ${vm.stage}` }),
-              el(
-                'span',
-                { class: 'farm__card-stats' },
-                `${vi.stat.growth} ${vm.growth} · ${vi.stat.hunger} ${vm.hunger} · ${vi.stat.cleanliness} ${vm.cleanliness}`,
-              ),
-              el('span', { class: 'farm__card-health', text: vm.health }),
-              vm.isPregnant
-                ? el('span', { class: 'farm__card-flag', text: vi.stat.pregnant })
-                : null,
-            ),
-          );
-        }),
-      )
+  const empty = pigs.length
+    ? null
     : el(
         'div',
         { class: 'c-empty' },
@@ -83,7 +51,7 @@ export function renderFarmScreen(
     el(
       'div',
       { class: 'farm__body' },
-      list,
+      empty,
       selected
         ? renderPigPanel(save, selected, now, on)
         : pigs.length

@@ -16,9 +16,46 @@
     padding-bottom: calc(#{$sp-touch-min} + #{$sp-6});
   }
 
-  &__banner:empty,
-  &__stage:empty {
+  &__banner:empty {
     display: none;
+  }
+
+  &__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  &__stage {
+    display: none;
+  }
+
+  // Farm screen: the canvas fills the left, the DOM panel sits on the right (§10.4).
+  &.is-farm {
+    .app__body {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: $sp-3;
+      padding: $sp-3;
+    }
+
+    .app__stage {
+      display: block;
+      flex: 1;
+      min-width: 0;
+      height: $farm-stage-height;
+      overflow: hidden;
+      background: $c-farm-letterbox;
+      border-radius: $radius-md;
+    }
+
+    .app__main {
+      flex: 0 0 $farm-panel-width;
+      max-width: $farm-panel-width;
+      margin: 0;
+      padding: 0;
+      padding-bottom: calc(#{$sp-touch-min} + #{$sp-6});
+    }
   }
 }
 

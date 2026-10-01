@@ -9,10 +9,13 @@ export const MANIFEST_VERSION = 2;
 export const assetIdSchema = z
   .string()
   .regex(/^[a-z][a-z0-9_]*$/, 'id must be lowercase snake_case');
-/** Relative to public/assets/, forward slashes, no `..`. */
+/** Relative to public/assets/, forward slashes, no `..`; `*.anchors.json` per art standard §7.2. */
 const assetPath = z
   .string()
-  .regex(/^[a-z0-9_]+(\/[a-z0-9_]+)*\.(png|ogg|mp3|json)$/, 'path must be relative snake_case');
+  .regex(
+    /^[a-z0-9_]+(\/[a-z0-9_]+)*(\.anchors(?=\.json$))?\.(png|ogg|mp3|json)$/,
+    'path must be relative snake_case',
+  );
 const unit = z.number().min(0).max(1);
 
 const base = {

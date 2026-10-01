@@ -165,3 +165,9 @@ Spec: art §4, §7.4, §10 · Phase: R04.
 
 **R04-2** · Audio placeholder là `.mp3` im lặng (khung MPEG-1 Layer III rỗng, ~0,26 s) vì sinh Ogg Vorbis hợp lệ cần encoder; art §7.2 chấp nhận `.mp3`. Bản thật đổi `asset` sang `.ogg` trong manifest. Pig không có `anchors` ở Wave 0 (trường optional; art giao `*.anchors.json` cùng sprite). Placement có `originX/originY` optional (mặc định renderer quyết ở R05A). Gallery dev: nút `assets` trên thanh dev (`?dev=1`), tile viền theo status. Manifest lỗi → `renderManifestError` (vi.desktop.manifestError + thông điệp zod) trước khi tạo store.
 Spec: §11.4, §12, art §7.2 · Phase: R04.
+
+**R05A-1** · Vị trí heo không lưu: chân heo = điểm trong `walkArea`, x rải theo `slotIndex` (dãy tỉ lệ vàng), y và hướng (flipX) theo hash FNV-1a của id — tất định, không dùng rng. Spec chưa có luật "ngủ" → `pigView` chưa chọn frame `_sleep` (nhánh fallback idle + `fx_zzz` vẫn ở registry, Q5). Ốm + mang thai: hiện cả hai overlay, `visualState` = sick. Texture key = id (file `asset`) hoặc `${id}_${file}` (`pig_classic_sleep`, `prop_feed_trough_half`). Origin placement mặc định (0.5, 1); heo origin (0.5, 0.82). Depth: layer 0–3 âm theo thứ tự manifest, layer 4 = y px (máng + heo), layer 5 trên cùng. Ảnh môi trường thiếu → nền phẳng trời/cỏ vẽ sẵn; prop/building thiếu → khối màu; heo thiếu → khối bo tròn màu giống (BootScene). Skin mua sau preload: nạp 1 lần lúc reconcile.
+Spec: §11, §11.1, §11.2, §11.4 · Phase: R05A.
+
+**R05A-2** · Regex đường dẫn manifest nhận thêm hậu tố `.anchors.json` (art §7.2 ví dụ `pig_classic.anchors.json`). Màn Nông trại: canvas bên trái (`.app.is-farm`, cao `$farm-stage-height`), panel DOM bên phải rộng `$farm-panel-width`; màn khác ẩn stage và cho vòng lặp Phaser ngủ. Click heo → chọn (không toggle), click nền → bỏ chọn. `scale.expandParent: false` để Phaser không ghi đè kích thước host.
+Spec: §10.4, §11.2, art §5, §7.2 · Phase: R05A.

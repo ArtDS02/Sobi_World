@@ -1,6 +1,7 @@
-// Composition root: pick the platform, create the store, mount the DOM UI, load the save.
+// Composition root: pick the platform, create the store, mount the DOM UI + Phaser farm, load the save.
 import './styles/main.scss';
 import type { Clock } from './core/clock';
+import { createFarmView } from './game/farmView';
 import { createPlatform } from './platform';
 import { loadAssetRegistry } from './platform/assetSource';
 import { createGameStore } from './store/gameStore';
@@ -47,6 +48,8 @@ async function start(root: HTMLElement) {
     dialogs: platform.dialogs,
     assets: assets.registry,
     saveFolder: platform.kind === 'desktop',
+    farm: (host, onSelect) =>
+      createFarmView(host, { store, assets: assets.registry, now: () => clock.now(), onSelect }),
   });
   await store.init();
 }

@@ -43,8 +43,17 @@ export interface AppOptions {
   dialogs?: FileDialogs;
   /** The platform has a save folder to open (desktop). */
   saveFolder?: boolean;
-  /** Validated asset manifest (§11.4); the farm canvas (R05A) and thumbnails resolve ids here. */
+  /** Validated asset manifest (§11.4); the farm canvas and thumbnails resolve ids here. */
   assets?: AssetRegistry;
+  /** Mounts the Phaser farm into the stage (main.ts injects src/game; absent in DOM tests). */
+  farm?: (host: HTMLElement, onSelect: (pigId: string | null) => void) => FarmCanvas;
+}
+
+/** What the shell needs from the farm canvas (implemented by src/game/farmView.ts). */
+export interface FarmCanvas {
+  setSelected(pigId: string | null): void;
+  setVisible(visible: boolean): void;
+  destroy(): void;
 }
 
 /** Replace children only when the markup changed, so a click is never lost to a 1 s re-render. */
@@ -69,27 +78,24 @@ export function mountApp(
   const topbar = el('header', { class: 'topbar' });
   const banner = el('div', { class: 'app__banner' });
   const saveBanner = el('div', { class: 'app__banner' });
-  // Fixed host for the Phaser canvas (R05A): never passed to patch(), so it is never replaced.
+  // Fixed host for the Phaser canvas: never passed to patch(), so it is never replaced.
   const stage = el('div', { class: 'app__stage' });
+  const appEl = el('div', { class: 'app' });
   const main = el('main', { class: 'app__main' });
   const navbar = el('nav', { class: 'navbar', attrs: { 'aria-label': vi.app.title } });
   const toasts = el('div', { class: 'c-toast-host', attrs: { 'aria-live': 'polite' } });
   const dialogs = el('div', { class: 'app__dialogs' });
-  root.replaceChildren(
-    el(
-      'div',
-      { class: 'app' },
-      topbar,
-      banner,
-      saveBanner,
-      opts.devTools ?? '',
-      stage,
-      main,
-      navbar,
-      toasts,
-      dialogs,
-    ),
+  appEl.append(
+    topbar,
+    banner,
+    saveBanner,
+    opts.devTools ?? '',
+    el('div', { class: 'app__body' }, stage, main),
+    navbar,
+    toasts,
+    dialogs,
   );
+  root.replaceChildren(appEl);
   const toast = createToaster(toasts);
 
   let current: SaveGame | null = null;
@@ -104,14 +110,17 @@ export function mountApp(
   };
   const handlers = {
     act: (run: BoundAction) => void act(run),
-    select: (pigId: string) => {
-      ui.selectedPigId = ui.selectedPigId === pigId ? null : pigId;
-      rerender();
-    },
     sell: (pig: Pig, vm: ActionVm) => openSellDialog(dialogs, pig, vm, act),
     rename: (pig: Pig) => openRenameDialog(dialogs, pig, act),
     goShop: () => go('shop'),
   };
+  // Canvas click: a pig selects it, empty ground deselects (§11.2).
+  const farm =
+    opts.farm?.(stage, (pigId) => {
+      if (ui.selectedPigId === pigId) return;
+      ui.selectedPigId = pigId;
+      rerender();
+    }) ?? null;
   // Reads the latest save at click time: the top bar is only re-rendered when its text changes.
   const openTrough = (units?: number) => {
     const save = store.getSnapshot().save;
@@ -180,6 +189,10 @@ export function mountApp(
   }
 
   function render(snap: StoreSnapshot) {
+    const farmShown = snap.status === 'ready' && !!snap.save && ui.screen === 'farm';
+    appEl.classList.toggle('is-farm', farmShown && farm !== null);
+    farm?.setVisible(farmShown);
+    farm?.setSelected(ui.selectedPigId);
     patch(banner, snap.readOnly ? renderMultiTabBanner() : null);
     patch(saveBanner, snap.saveError ? renderSaveErrorBanner() : null);
     if (snap.status !== 'ready' || !snap.save) {
@@ -218,5 +231,6 @@ export function mountApp(
   return () => {
     offState();
     offEvents();
+    farm?.destroy();
   };
 }
