@@ -228,9 +228,11 @@ export const vi = {
     importWarning: "Nhập file sẽ ghi đè dữ liệu hiện tại. Bản cũ được giữ làm sao lưu.",
     lastExport: "Lần xuất gần nhất: {date}",
     neverExported: "Chưa xuất lần nào",
-    exportReminder: "Đã lâu bạn chưa sao lưu. Trình duyệt có thể xóa dữ liệu — nên xuất file để giữ nông trại.",
-    install: "Cài đặt vào màn hình chính",
-    installHint: "Cài vào màn hình chính giúp dữ liệu an toàn hơn nhiều.",
+    exportReminder: "Đã lâu bạn chưa xuất file lưu. Nên xuất một bản để phòng khi hỏng ổ đĩa.",
+    openSaveFolder: "Mở thư mục lưu",
+    saveFolderHint: "Nông trại được lưu trong máy, tự sao lưu 10 bản gần nhất. Chép thư mục này sang máy khác để chơi tiếp.",
+    restoreBackup: "Khôi phục bản sao lưu",
+    backupAt: "Bản lưu lúc {date}",
     reset: "Chơi lại từ đầu",
     resetWarning: "Toàn bộ nông trại sẽ bị xóa. Không thể hoàn tác.",
     credits: "Thông tin",
@@ -254,9 +256,10 @@ export const vi = {
     recovered: "Đã lưu lại được.",
   },
 
-  update: {
-    available: "Có bản mới",
-    reload: "Tải lại",
+  desktop: {
+    loadingAssets: "Đang chuẩn bị nông trại... {percent}%",
+    manifestError: "Không đọc được danh sách tài nguyên của game.",
+    version: "Phiên bản {version}",
   },
 
   tutorial: {

@@ -1,0 +1,23 @@
+// Settings screen (minimal in R02: save file actions). Owns `.settings*` inside [data-screen="settings"].
+@use '../core' as *;
+
+[data-screen='settings'] {
+  display: grid;
+  gap: $sp-3;
+  padding: $sp-4 0;
+
+  .settings__title {
+    font-size: $fs-lg;
+  }
+
+  .settings__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+  }
+
+  .settings__hint {
+    color: $c-text-muted;
+    font-size: $fs-sm;
+  }
+}

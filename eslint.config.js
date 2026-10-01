@@ -30,7 +30,7 @@ const mathRandom = {
 };
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage', 'node_modules', '.claude'] },
+  { ignores: ['dist', 'dist-electron', 'release', 'coverage', 'node_modules', '.claude'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

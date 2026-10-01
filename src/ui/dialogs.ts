@@ -83,3 +83,17 @@ export function openTroughDialog(host: HTMLElement, save: SaveGame, now: number,
   d.footer.append(slot);
   refresh();
 }
+
+/** §9.3: importing overwrites the current farm (which becomes a backup); confirm first. */
+export function openImportDialog(host: HTMLElement, onConfirm: () => Promise<void>) {
+  const d = openDialog(host, vi.settings.import);
+  d.body.append(el('p', { class: 'c-dialog__warn', text: vi.settings.importWarning }));
+  d.footer.append(
+    el('button', {
+      class: 'c-button',
+      text: vi.action.confirm,
+      attrs: { type: 'button' },
+      on: { click: () => void onConfirm().finally(d.close) },
+    }),
+  );
+}

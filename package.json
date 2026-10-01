@@ -2,16 +2,22 @@
   "name": "un-in-homemade",
   "private": true,
   "version": "0.0.0",
+  "description": "Ủn Ỉn Homemade — game nuôi heo offline cho Windows",
+  "author": "Ủn Ỉn Homemade",
   "type": "module",
+  "main": "dist-electron/main.cjs",
   "scripts": {
     "dev": "vite",
-    "build": "npm run typecheck && vite build",
+    "dev:desktop": "node scripts/dev-desktop.mjs",
+    "build": "npm run typecheck && vite build && vite build --config vite.electron.config.ts",
+    "dist:win": "npm run build && electron-builder --win nsis",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.core.json",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.core.json && tsc -p tsconfig.electron.json",
     "lint": "eslint .",
     "guard": "node .claude/skills/spec-to-source/scripts/check-architecture.mjs",
-    "check": "npm run typecheck && npm run lint && npm run guard && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run guard && npm run test",
+    "icon": "node scripts/make-icon.mjs"
   },
   "dependencies": {
     "idb": "^8.0.3",
@@ -20,6 +26,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "fake-indexeddb": "^6.2.5",
@@ -31,5 +39,36 @@
     "typescript-eslint": "^8.71.0",
     "vite": "^8.3.1",
     "vitest": "^5.0.3"
+  },
+  "build": {
+    "appId": "com.uninhomemade.game",
+    "productName": "Ủn Ỉn Homemade",
+    "executableName": "UnInHomemade",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "package.json",
+      "!node_modules/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Ủn Ỉn Homemade",
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "artifactName": "UnInHomemade-Setup-${version}.${ext}"
+    }
   }
 }

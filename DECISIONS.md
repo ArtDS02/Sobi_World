@@ -141,3 +141,15 @@ Spec: §16 · Phase: R02+.
 
 **R01-1** · `InstanceGuard.start(onReadOnly)` nhận callback lúc start (tabGuard cũ nhận lúc tạo) để platform tạo guard trước store. Tab id sinh ở platform (`crypto.randomUUID()`), không qua rng của store. `navigator.storage.persist()` + `requestPersist` bỏ theo §9.4 v4.1. Retry ghi lỗi đi qua cùng hàng đợi (không ghi chồng), ghi trạng thái mới nhất; chỉ 1 retry chờ tại một thời điểm. `vi.saveStatus.recovered` chưa dùng (toast phải qua FeedbackDirector — R05B).
 Spec: §9.1–9.4 · Phase: R01.
+
+**R02-1** · Build `electron/` bằng Vite lib mode (`vite.electron.config.ts`, không thêm dependency) → `dist-electron/{main,preload}.cjs`, mỗi entry bundle riêng (preload sandbox không `require` file cục bộ được). Typecheck riêng `tsconfig.electron.json` (lib ES2022 + types node, không DOM; gồm `tests/electron`). Tên kênh IPC là type `IpcChannel` trong `bridge.ts` (chỉ type), main/preload tự viết literal. Renderer không mang `node_modules` vào asar (`files` loại trừ).
+Spec: §13.1, §13.3 · Phase: R02.
+
+**R02-2** · `window.unin.save` thêm `markCorrupt(source)` ngoài danh sách §13.1: main không validate (§9.1), nên renderer báo file nào parse lỗi để main đổi tên `save.corrupt-*` (§9.2). Backup "từ save.json tốt" = save.json còn trong chuỗi (file hỏng đã bị đổi tên trước lần ghi đầu). Đổi tên áp cho cả backup hỏng gặp trên đường duyệt; gặp SAVE_TOO_NEW thì dừng, không đổi tên gì.
+Spec: §9.1, §9.2, §13.1 · Phase: R02.
+
+**R02-3** · Import (§9.3 "bản hiện tại thành backup trước"): main backup save.json ngay khi người chơi chọn file trong `importFrom()` (sau hộp xác nhận). `exportTo(json, suggestedName)` mở dialog ở main (renderer không chọn đường dẫn). `restoreBackup` backup bản hiện tại rồi chép đè; chưa có UI (R11). `store.markExported(at)` ghi `settings.lastExportAt` sau khi xuất thành công — đổi settings, không phát GameEvent (giống importSave).
+Spec: §9.3 · Phase: R02.
+
+**R02-4** · userData cố định `%APPDATA%\Un In Homemade\` (`app.setPath`) dù productName có dấu. Đóng cửa sổ: main chặn `close`, gửi flush (renderer `store.persistNow()`), chờ ≤ 3 s; `window-all-closed` chờ hàng đợi ghi rảnh (≤ 3 s) rồi mới quit để lần ghi lúc pagehide không bị cắt (tránh sót `save.json.tmp`). Installer tên `UnInHomemade-Setup-<version>.exe` (ASCII).
+Spec: §9.2, §13.1, §13.3 · Phase: R02.

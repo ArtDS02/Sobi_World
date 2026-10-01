@@ -1,4 +1,5 @@
 // App shell: top bar, current screen, bottom nav, toasts, dialogs. Re-renders on store notify.
+import { exportSave } from '../core/save/exportImport';
 import type { FileDialogs } from '../core/save/port';
 import type { Pig, SaveGame } from '../core/types';
 import { vi } from '../i18n/vi';
@@ -7,10 +8,11 @@ import type { ActionVm } from './actionsVm';
 import { renderNavBar, type ScreenId } from './components/navBar';
 import { createToaster } from './components/toast';
 import { renderTopBar } from './components/topBar';
-import { openRenameDialog, openSellDialog, openTroughDialog } from './dialogs';
+import { openImportDialog, openRenameDialog, openSellDialog, openTroughDialog } from './dialogs';
 import { el } from './dom';
 import { renderFarmScreen } from './screens/farmScreen';
 import { renderPlaceholderScreen } from './screens/placeholderScreen';
+import { renderSettingsScreen, type SettingsHandlers } from './screens/settingsScreen';
 import {
   renderMultiTabBanner,
   renderSaveErrorBanner,
@@ -26,8 +28,10 @@ interface UiState {
 export interface AppOptions {
   /** Dev-only toolbar (time travel), injected by main.ts behind import.meta.env.DEV. */
   devTools?: HTMLElement;
-  /** Platform export/import dialogs (§9.3); wired to the settings screen in a later task. */
+  /** Platform export/import dialogs (§9.3). */
   dialogs?: FileDialogs;
+  /** The platform has a save folder to open (desktop). */
+  saveFolder?: boolean;
 }
 
 /** Replace children only when the markup changed, so a click is never lost to a 1 s re-render. */
@@ -99,6 +103,29 @@ export function mountApp(
     const save = store.getSnapshot().save;
     if (save) openTroughDialog(dialogs, save, now(), act);
   };
+  const settings: SettingsHandlers = {
+    exportSave: () => {
+      const save = store.getSnapshot().save;
+      if (!save || !opts.dialogs) return;
+      const at = now();
+      const out = exportSave(save, new Date(at));
+      void opts.dialogs.exportSave(out.json, out.fileName).then((ok) => {
+        if (ok) void store.markExported(at);
+      });
+    },
+    importSave: () => {
+      const dialogsPort = opts.dialogs;
+      if (!dialogsPort) return;
+      openImportDialog(dialogs, async () => {
+        const json = await dialogsPort.importSave();
+        if (json === null) return;
+        const r = await store.importSave(json);
+        if (!r.ok) toast(vi.error[r.error]);
+      });
+    },
+    openSaveFolder:
+      opts.saveFolder && opts.dialogs ? () => void opts.dialogs?.openSaveFolder() : null,
+  };
   const go = (id: ScreenId) => {
     ui.screen = id;
     rerender();
@@ -120,7 +147,9 @@ export function mountApp(
       main,
       ui.screen === 'farm'
         ? renderFarmScreen(save, now(), ui.selectedPigId, handlers)
-        : renderPlaceholderScreen(ui.screen),
+        : ui.screen === 'settings'
+          ? renderSettingsScreen(settings)
+          : renderPlaceholderScreen(ui.screen),
     );
   }
 

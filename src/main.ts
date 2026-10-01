@@ -29,7 +29,12 @@ async function start(root: HTMLElement) {
     storage: platform.storage,
     instanceGuard: platform.instanceGuard,
   });
-  mountApp(root, store, () => clock.now(), { ...opts, dialogs: platform.dialogs });
+  platform.onFlushRequest(() => store.persistNow());
+  mountApp(root, store, () => clock.now(), {
+    ...opts,
+    dialogs: platform.dialogs,
+    saveFolder: platform.kind === 'desktop',
+  });
   await store.init();
 }
 

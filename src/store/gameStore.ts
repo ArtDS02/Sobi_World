@@ -238,6 +238,17 @@ export function createGameStore(
     /** Flushes pending writes. */
     flush: () => persistQueue,
 
+    /** Writes the current state now and waits for the queue (main's flush before quit, §9.1). */
+    persistNow: () => persist(),
+
+    /** Stamps settings.lastExportAt after a successful export (§9.3). Settings only: no event. */
+    async markExported(at: number): Promise<void> {
+      const save = snapshot.save;
+      if (!save || !canWrite()) return;
+      set({ save: { ...save, settings: { ...save.settings, lastExportAt: at } } });
+      await persist();
+    },
+
     dispose() {
       disposed = true;
       stopLoop();
