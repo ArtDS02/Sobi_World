@@ -26,7 +26,11 @@ export type GameEvent =
   | { type: 'ORDER_FULFILLED'; orderId: string; gold: number }
   | { type: 'SKIN_BOUGHT'; skinId: string; gold: number }
   | { type: 'SKIN_EQUIPPED'; pigId: string; skinId: string }
-  | { type: 'SETTING_CHANGED'; key: 'musicOn' | 'sfxOn'; value: boolean };
+  | {
+      type: 'SETTING_CHANGED';
+      key: 'musicOn' | 'sfxOn' | 'reduceMotion' | 'tutorialDone';
+      value: boolean;
+    };
 
 export type GameEventType = GameEvent['type'];
 

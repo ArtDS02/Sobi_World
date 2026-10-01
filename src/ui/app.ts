@@ -1,7 +1,5 @@
 // App shell (DECISIONS R05C-1): top bar, the farm canvas filling the window, one popup at a time
 // opened by clicking world objects, toasts, dialogs. Re-renders on store notify.
-import type { AssetRegistry } from '../core/assets/registry';
-import type { FileDialogs } from '../core/save/port';
 import type { Pig, SaveGame } from '../core/types';
 import { vi } from '../i18n/vi';
 import type { BoundAction, GameStore, StoreSnapshot } from '../store/gameStore';
@@ -18,7 +16,8 @@ import {
   openSellDialog,
   openTroughDialog,
 } from './dialogs';
-import { el } from './dom';
+import type { AppOptions, FarmPick, MountedApp } from './appTypes';
+import { el, patch } from './dom';
 import { pigSkins } from './skinsVm';
 import { renderFarmHint, renderPigPopup, renderWellPopup } from './screens/farmScreen';
 import { renderHistoryScreen } from './screens/historyScreen';
@@ -28,11 +27,8 @@ import { renderOrdersScreen } from './screens/ordersScreen';
 import { renderSettingsScreen } from './screens/settingsScreen';
 import { settingsHandlers } from './settingsHandlers';
 import { renderShopScreen, type ShopHandlers, type ShopTab } from './screens/shopScreen';
-import {
-  renderMultiTabBanner,
-  renderSaveErrorBanner,
-  renderStatusScreen,
-} from './screens/statusScreen';
+import { renderMultiTabBanner, renderStatusScreen } from './screens/statusScreen';
+import { createSession } from './session';
 
 interface UiState {
   panel: PanelId | null;
@@ -40,50 +36,7 @@ interface UiState {
   shopTab: ShopTab;
 }
 
-export interface AppOptions {
-  /** Dev-only toolbar (time travel), injected by main.ts behind import.meta.env.DEV. */
-  devTools?: HTMLElement;
-  /** Platform export/import dialogs (§9.3). */
-  dialogs?: FileDialogs;
-  /** The platform has a save folder to open (desktop). */
-  saveFolder?: boolean;
-  /** Validated asset manifest (§11.4); the farm canvas and thumbnails resolve ids here. */
-  assets?: AssetRegistry;
-  /** A pig was clicked (main.ts routes it to the FeedbackDirector for the tap sound, §12). */
-  onPigTap?: (pigId: string) => void;
-  /** Mounts the Phaser farm into the stage (main.ts injects src/game; absent in DOM tests). */
-  farm?: (host: HTMLElement, onPick: (pick: FarmPick) => void) => FarmCanvas;
-}
-
-/** World object actions (manifest layout.placements[].action). */
-export type FarmPickAction = 'shop' | 'inventory' | 'orders' | 'collection' | 'trough' | 'cleanAll';
-/** A click on the canvas: a pig, a world object, or empty ground. */
-export type FarmPick =
-  { kind: 'pig'; pigId: string } | { kind: 'action'; action: FarmPickAction } | { kind: 'ground' };
-
-export interface MountedApp {
-  /** The DOM toast host; only the FeedbackDirector calls it (§11.3). */
-  toast: (message: string) => void;
-  dispose: () => void;
-}
-
-/** What the shell needs from the farm canvas (implemented by src/game/farmView.ts). */
-export interface FarmCanvas {
-  setSelected(pigId: string | null): void;
-  setVisible(visible: boolean): void;
-  destroy(): void;
-}
-
-/** Replace children only when the markup changed, so a click is never lost to a 1 s re-render. */
-function patch(host: HTMLElement, next: HTMLElement | null) {
-  const prev = host.firstElementChild;
-  if (next === null) {
-    if (prev) host.replaceChildren();
-    return;
-  }
-  if (prev && prev.outerHTML === next.outerHTML) return;
-  host.replaceChildren(next);
-}
+export type { AppOptions, FarmCanvas, FarmPick, FarmPickAction, MountedApp } from './appTypes';
 
 export function mountApp(
   root: HTMLElement,
@@ -99,6 +52,7 @@ export function mountApp(
   // Fixed host for the Phaser canvas: never passed to patch(), so it is never replaced.
   const stage = el('div', { class: 'app__stage' });
   const hint = el('div', { class: 'app__hint-host' });
+  const coach = el('div', { class: 'app__coach-host' });
   const appEl = el('div', { class: 'app' });
   // Status screens (loading / recovery) only; the game itself is the canvas plus popups.
   const main = el('main', { class: 'app__main' });
@@ -111,7 +65,7 @@ export function mountApp(
     banner,
     saveBanner,
     opts.devTools ?? '',
-    el('div', { class: 'app__world' }, stage, hint),
+    el('div', { class: 'app__world' }, stage, hint, coach),
     main,
     popupHost,
     toasts,
@@ -184,10 +138,23 @@ export function mountApp(
     dialogHost: dialogs,
     ...(opts.dialogs ? { files: opts.dialogs } : {}),
     ...(opts.saveFolder ? { saveFolder: true } : {}),
+    onRestored: () => session.loadBackups(),
+  });
+  const session = createSession({
+    store,
+    now,
+    act: handlers.act,
+    dialogHost: dialogs,
+    rerender,
+    settings,
+    manifest: assets?.manifest ?? null,
+    version: opts.version ?? null,
+    hasBackups: !!opts.hasBackups,
   });
   const go = (id: PanelId | null) => {
     ui.panel = id;
     if (id !== 'pig') ui.selectedPigId = null;
+    if (id === 'settings') session.loadBackups();
     rerender();
   };
   // Esc closes the popup unless a dialog sits on top of it (the dialog handles its own Esc).
@@ -216,7 +183,7 @@ export function mountApp(
           deliver: (card) => openOrderDialog(dialogs, card, act),
         });
       case 'settings':
-        return renderSettingsScreen(save, settings);
+        return renderSettingsScreen(save, session.settingsVm(save), settings);
       case 'collection':
         return renderCollectionScreen(save, assets);
     }
@@ -243,12 +210,18 @@ export function mountApp(
     appEl.classList.toggle('is-ready', ready);
     farm?.setSelected(ui.selectedPigId);
     patch(banner, snap.readOnly ? renderMultiTabBanner() : null);
-    patch(saveBanner, snap.saveError ? renderSaveErrorBanner() : null);
+    patch(saveBanner, session.banners(snap));
     if (snap.status !== 'ready' || !snap.save) {
       patch(topbar, null);
       patch(hint, null);
+      patch(coach, null);
       renderPopup(null);
-      patch(main, renderStatusScreen(snap.status === 'ready' ? 'loading' : snap.status));
+      patch(
+        main,
+        snap.status === 'recovery'
+          ? session.recovery()
+          : renderStatusScreen(snap.status === 'ready' ? 'loading' : snap.status),
+      );
       farm?.setVisible(false);
       return;
     }
@@ -259,8 +232,10 @@ export function mountApp(
         settings: () => go('settings'),
         trough: () => openTrough(),
         history: () => go('history'),
+        nav: (panel) => go(panel),
       }),
     );
+    patch(coach, session.coach(snap));
     patch(main, null);
     farm?.setVisible(true); // after main is emptied, so the canvas measures its final host
     patch(
@@ -275,6 +250,7 @@ export function mountApp(
   rerender();
   return {
     toast,
+    showAway: session.showAway,
     dispose: () => {
       offState();
       document.removeEventListener('keydown', onKey);

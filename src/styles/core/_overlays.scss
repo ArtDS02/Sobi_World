@@ -1,0 +1,74 @@
+// Session overlays (R11): tutorial coach card, away summary lines, recovery screen lists.
+@use 'tokens' as *;
+
+.c-coach {
+  display: grid;
+  gap: $sp-2;
+  padding: $sp-3 $sp-4;
+  background: $c-surface;
+  border: 1px solid $c-border;
+  border-radius: $radius-md;
+
+  &__progress {
+    font-size: $fs-xs;
+    color: $c-text-muted;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+}
+
+.c-away {
+  &__trough {
+    padding: $sp-2 $sp-3;
+    font-weight: $fw-bold;
+    background: $c-surface-alt;
+    border-radius: $radius-sm;
+
+    &.is-alert {
+      color: $c-danger;
+      background: $c-danger-soft;
+    }
+  }
+
+  &__list {
+    display: grid;
+    gap: $sp-1;
+    padding-left: $sp-4;
+    list-style: disc;
+  }
+}
+
+.c-status {
+  &__heading {
+    margin-top: $sp-4;
+    font-size: $fs-md;
+  }
+
+  &__list {
+    display: grid;
+    gap: $sp-2;
+    max-width: $dialog-max;
+    margin: $sp-2 auto;
+  }
+
+  &__row {
+    display: flex;
+    gap: $sp-3;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+    justify-content: center;
+    margin-top: $sp-4;
+  }
+}

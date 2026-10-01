@@ -21,6 +21,11 @@ const dateTimeFormat = new Intl.DateTimeFormat('vi-VN', {
   month: '2-digit',
 });
 
+const timeFormat = new Intl.DateTimeFormat('vi-VN', { hour: '2-digit', minute: '2-digit' });
+
+/** Local clock time of an epoch-ms timestamp, e.g. 03:20. */
+export const formatTime = (at: number): string => timeFormat.format(at);
+
 /** Local time and date of an epoch-ms timestamp, e.g. 14:05 01/10. */
 export const formatDateTime = (at: number): string => dateTimeFormat.format(at);
 

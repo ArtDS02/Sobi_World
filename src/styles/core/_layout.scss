@@ -42,6 +42,14 @@
     background: $c-farm-letterbox;
   }
 
+  // Tutorial coach card (spec §10.3): top-left, clear of the bottom hint; never covers the farm.
+  &__coach-host {
+    position: absolute;
+    top: $sp-4;
+    left: $sp-4;
+    max-width: $coach-max;
+  }
+
   &__hint-host {
     position: absolute;
     bottom: $sp-6;
@@ -67,12 +75,12 @@
   background: $c-surface;
   border-bottom: 1px solid $c-border;
 
+  // Full window width on desktop (1024–1920 px, spec §10.4); wraps instead of scrolling.
   &__inner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: $sp-2 $sp-3;
-    max-width: $content-max;
     margin: 0 auto;
     padding: $sp-2 $sp-3;
     font-size: $fs-sm;
@@ -94,7 +102,14 @@
     color: $c-gold;
   }
 
-  &__settings {
+  &__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
     margin-left: auto;
+  }
+
+  &__nav-item {
+    padding: $sp-2 $sp-3;
   }
 }

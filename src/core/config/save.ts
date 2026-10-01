@@ -9,6 +9,8 @@ export const SAVE = {
   TRANSACTIONS_MAX: 200, // newest first, oldest dropped
   BREEDING_RECORDS_MAX: 100,
   EXPORT_REMINDER_DAYS: 7,
+  /** The away summary opens when the catch-up covers at least this long (§9.5). */
+  AWAY_SUMMARY_MIN_MS: 10 * 60 * 1000,
   EXPORT_FILE_PREFIX: 'un-in-save-',
 
   // Runtime loop (§7.1, §9.1, §9.4)

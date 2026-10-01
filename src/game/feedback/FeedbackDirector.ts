@@ -1,6 +1,8 @@
 // The only place that turns GameEvents into presentation (spec §11.3, D25): per event,
 // animation → VFX → sound → toast, from the data table. Rejections → ui_error + reason toast.
 // Also the two sounds that are not game events: a pig tap and a DOM button press (§12).
+import { SAVE } from '../../core/config/save';
+import type { GameEvent } from '../../core/events';
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
 import type { GameStore } from '../../store/gameStore';
@@ -16,6 +18,8 @@ export interface FeedbackDeps {
   effects: () => FarmEffects;
   audio: AudioPort;
   toast: (message: string) => void;
+  /** A catch-up of SAVE.AWAY_SUMMARY_MIN_MS or more: one summary instead of toasts (§9.5). */
+  away?: (events: GameEvent[], awayMs: number) => void;
   /** Skin id → display name from the manifest (toasts for skin events). */
   skinName?: (skinId: string) => string;
 }
@@ -38,9 +42,13 @@ export function createFeedbackDirector(deps: FeedbackDeps): FeedbackDirector {
     current = snap.save;
   });
 
-  const offEvents = deps.store.onEvents((events, origin) => {
+  const offEvents = deps.store.onEvents((events, origin, catchup) => {
     const after = current;
     if (!after) return;
+    if (deps.away && catchup && catchup.awayMs >= SAVE.AWAY_SUMMARY_MIN_MS) {
+      deps.away(events, catchup.awayMs);
+      return;
+    }
     const reduceMotion = after.settings.reduceMotion;
     const fx = deps.effects();
     for (const event of events) {

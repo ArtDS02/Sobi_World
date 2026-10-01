@@ -155,6 +155,9 @@ export const vi = {
     troughRanOut: "Máng ăn hết lúc {time}, {count} heo ngừng lớn trong {duration}",
     troughOk: "Máng ăn vẫn còn thức ăn. Heo lớn bình thường.",
     nothing: "Mọi thứ vẫn ổn.",
+    // Not in Appendix B (§9.5 lists expired and new orders).
+    ordersNew: "{count} đơn hàng mới",
+    ordersExpired: "{count} đơn hàng đã hết hạn",
     ok: "Vào nông trại",
   },
 
@@ -266,6 +269,18 @@ export const vi = {
     reset: "Chơi lại từ đầu",
     resetWarning: "Toàn bộ nông trại sẽ bị xóa. Không thể hoàn tác.",
     credits: "Thông tin",
+    // R11 (not in Appendix B).
+    sound: "Âm thanh và hiển thị",
+    saveFile: "File lưu",
+    backups: "Bản sao lưu",
+    backupsLoading: "Đang đọc danh sách bản sao lưu...",
+    backupsEmpty: "Chưa có bản sao lưu nào.",
+    backupsUnavailable: "Bản chạy trên trình duyệt không có thư mục sao lưu.",
+    restoreConfirm: "Nông trại hiện tại sẽ được cất thành một bản sao lưu, rồi thay bằng: {label}.",
+    about: "Game nuôi heo chơi đơn, chạy trên máy, không cần mạng.",
+    creditsEmpty: "Hình và âm thanh hiện là bản tạm do game tự tạo.",
+    credit: "{id}: {credit} ({license})",
+    devVersion: "phát triển",
   },
 
   recovery: {
@@ -273,6 +288,9 @@ export const vi = {
     body: "File lưu bị lỗi và bản sao lưu cũng không dùng được. Bạn có thể nhập file đã xuất trước đó, hoặc bắt đầu nông trại mới.",
     importSave: "Nhập file lưu",
     startNew: "Bắt đầu mới",
+    // R11 (not in Appendix B).
+    pickBackup: "Chọn một bản sao lưu",
+    startNewWarning: "Một nông trại mới sẽ được tạo. Các file lỗi vẫn được giữ trong thư mục lưu để kiểm tra.",
   },
 
   multiTab: {
@@ -298,6 +316,11 @@ export const vi = {
     step3: "Tắm cho heo. Heo bẩn lâu sẽ đổ bệnh và ngừng lớn.",
     step4: "Heo lớn dần theo thời gian thật. Quay lại sau nhé.",
     step5: "Heo càng vui vẻ, bán càng được giá. Chăm kỹ là lời nhiều.",
+    // R11 (not in Appendix B).
+    title: "Hướng dẫn",
+    progress: "Bước {n}/{total}",
+    waiting: "Làm xong bước này rồi bấm Tiếp",
+    finish: "Bắt đầu chơi",
   },
 
   // Added in S08A (not in spec Appendix B): shell labels the spec layout implies. DECISIONS S08A-1.

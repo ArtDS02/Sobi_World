@@ -1,4 +1,4 @@
-// Settings screen: sound toggles and save file actions. Owns `.settings*` inside [data-screen="settings"].
+// Settings screen: toggles, save file actions, backups, credits and version. Owns `.settings*` inside [data-screen="settings"].
 @use '../core' as *;
 
 [data-screen='settings'] {
@@ -10,9 +10,34 @@
     font-size: $fs-lg;
   }
 
-  .settings__toggles {
+  .settings__section {
     display: grid;
     gap: $sp-2;
+    padding-bottom: $sp-3;
+    border-bottom: 1px solid $c-border;
+  }
+
+  .settings__heading {
+    font-size: $fs-md;
+  }
+
+  .settings__backups,
+  .settings__credits {
+    display: grid;
+    gap: $sp-2;
+  }
+
+  .settings__backup {
+    display: flex;
+    gap: $sp-3;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .settings__credits,
+  .settings__version {
+    font-size: $fs-sm;
+    color: $c-text-muted;
   }
 
   .settings__toggle {

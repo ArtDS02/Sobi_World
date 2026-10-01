@@ -178,7 +178,7 @@ describe('setSetting (musicOn / sfxOn in the save)', () => {
   });
 
   it('rejects unknown keys and non-boolean values', () => {
-    const bad = { key: 'reduceMotion', value: true } as unknown as Parameters<typeof setSetting>[1];
+    const bad = { key: 'lastExportAt', value: true } as unknown as Parameters<typeof setSetting>[1];
     expectError((s) => setSetting(s, bad, ctx()), farm(), 'INVALID_REQUEST');
     const nonBool = { key: 'sfxOn', value: 1 } as unknown as Parameters<typeof setSetting>[1];
     expectError((s) => setSetting(s, nonBool, ctx()), farm(), 'INVALID_REQUEST');

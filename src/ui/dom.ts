@@ -23,3 +23,14 @@ export function el<K extends keyof HTMLElementTagNameMap>(
   for (const c of children) if (c) node.append(c);
   return node;
 }
+
+/** Replace children only when the markup changed, so a click is never lost to a 1 s re-render. */
+export function patch(host: HTMLElement, next: HTMLElement | null) {
+  const prev = host.firstElementChild;
+  if (next === null) {
+    if (prev) host.replaceChildren();
+    return;
+  }
+  if (prev && prev.outerHTML === next.outerHTML) return;
+  host.replaceChildren(next);
+}

@@ -1,16 +1,14 @@
 // Game store (spec §4 data flow, §7.1, §9): owns the save, the clock, the rng and the one loop.
 // dispatch: advanceWorld → action → persist → notify subscribers + emit events.
-import type { Clock } from '../core/clock';
 import { SAVE } from '../core/config/save';
 import { advanceWorld } from '../core/engine/advanceWorld';
 import type { GameEvent } from '../core/events';
-import type { Rng } from '../core/rng';
 import { importSave as parseImport } from '../core/save/exportImport';
 import { newGame } from '../core/save/newGame';
-import type { InstanceGuard, LoadSource, SaveStorage } from '../core/save/port';
+import type { LoadSource } from '../core/save/port';
 import type { ErrorCode } from '../core/config/errors';
 import type { ActionContext, ActionResult, SaveGame } from '../core/types';
-import { defaultRng, realClock } from './runtime';
+import { defaultDeps, type StoreDeps } from './storeDeps';
 
 export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew';
 
@@ -19,7 +17,15 @@ export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew';
  * right after load / import / the window becoming visible again (never animated, §9.5).
  */
 export type EventOrigin = 'action' | 'tick' | 'catchup';
-export type EventListener = (events: GameEvent[], origin: EventOrigin) => void;
+/** Catch-up only: how long the world was not ticked (§9.5 away summary). */
+export interface CatchupInfo {
+  awayMs: number;
+}
+export type EventListener = (
+  events: GameEvent[],
+  origin: EventOrigin,
+  catchup?: CatchupInfo,
+) => void;
 
 export interface StoreSnapshot {
   status: StoreStatus;
@@ -34,51 +40,7 @@ export interface StoreSnapshot {
 /** An action bound to its arguments, e.g. `(s, c) => buyPig(s, args, c)`. */
 export type BoundAction = (state: SaveGame, ctx: ActionContext) => ActionResult;
 
-export interface PageLike {
-  isVisible(): boolean;
-  on(type: 'visibilitychange' | 'pagehide', listener: () => void): () => void;
-}
-
-export interface StoreDeps {
-  storage: SaveStorage;
-  instanceGuard: InstanceGuard;
-  clock: Clock;
-  rng: Rng;
-  /** The game's single repeating timer (§7.1). */
-  every: (fn: () => void, ms: number) => unknown;
-  cancel: (handle: unknown) => void;
-  sleep: (ms: number) => Promise<void>;
-  page: PageLike | null;
-  /** OS "reduce motion" preference; seeds settings.reduceMotion of a new game (spec §11.3). */
-  prefersReducedMotion: () => boolean;
-}
-
-function browserPage(): PageLike | null {
-  if (typeof document === 'undefined') return null;
-  return {
-    isVisible: () => document.visibilityState === 'visible',
-    on(type, listener) {
-      const target = type === 'pagehide' ? window : document;
-      target.addEventListener(type, listener);
-      return () => target.removeEventListener(type, listener);
-    },
-  };
-}
-
-type DefaultDeps = Omit<StoreDeps, 'storage' | 'instanceGuard'>;
-
-function defaultDeps(): DefaultDeps {
-  return {
-    clock: realClock,
-    rng: defaultRng,
-    every: (fn, ms) => globalThis.setInterval(fn, ms),
-    cancel: (h) => globalThis.clearInterval(h as number),
-    sleep: (ms) => new Promise((resolve) => globalThis.setTimeout(resolve, ms)),
-    page: browserPage(),
-    prefersReducedMotion: () =>
-      typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches,
-  };
-}
+export type { PageLike, StoreDeps } from './storeDeps';
 
 /** Storage and the instance guard come from the platform (main.ts); the store never picks one. */
 export function createGameStore(
@@ -107,8 +69,11 @@ export function createGameStore(
     snapshot = { ...snapshot, ...patch };
     for (const fn of subscribers) fn(snapshot);
   };
-  const emit = (events: GameEvent[], origin: EventOrigin) => {
-    if (events.length > 0) for (const fn of eventListeners) fn(events, origin);
+  const emit = (events: GameEvent[], origin: EventOrigin, catchup?: CatchupInfo) => {
+    // A long catch-up is announced even when nothing happened (away summary, §9.5).
+    const away = catchup && catchup.awayMs >= SAVE.AWAY_SUMMARY_MIN_MS;
+    if (events.length === 0 && !away) return;
+    for (const fn of eventListeners) fn(events, origin, catchup);
   };
   const reject = (result: Extract<ActionResult, { ok: false }>): ActionResult => {
     for (const fn of rejectListeners) fn(result.error);
@@ -156,10 +121,12 @@ export function createGameStore(
   function tick(origin: EventOrigin = 'tick'): GameEvent[] {
     if (snapshot.status !== 'ready' || !snapshot.save) return [];
     const now = deps.clock.now();
+    // The trough is resolved on every tick: its stamp is when the world last ran.
+    const awayMs = Math.max(0, now - snapshot.save.trough.lastResolvedAt);
     const world = advanceWorld(snapshot.save, now, deps.rng);
     set({ save: world.state });
     if (world.events.length > 0 || now - lastPersistAt >= SAVE.AUTOSAVE_MS) void persist();
-    emit(world.events, origin);
+    emit(world.events, origin, origin === 'catchup' ? { awayMs } : undefined);
     return world.events;
   }
 
@@ -170,6 +137,18 @@ export function createGameStore(
     if (interval !== null) deps.cancel(interval);
     interval = null;
   };
+
+  /** Read chain → ready / recovery / tooNew, or a new game on first launch. */
+  async function load() {
+    const loaded = await deps.storage.load();
+    if (loaded.kind === 'tooNew') set({ status: 'tooNew', loadSource: loaded.source });
+    else if (loaded.kind === 'recovery') set({ status: 'recovery', save: null });
+    else if (loaded.kind === 'ok') becomeReady(loaded.save, loaded.source);
+    else {
+      becomeReady(newGame(ctx(), { reduceMotion: deps.prefersReducedMotion() }), null);
+      await persist();
+    }
+  }
 
   function becomeReady(save: SaveGame, loadSource: LoadSource | null) {
     lastPersistAt = deps.clock.now();
@@ -214,16 +193,34 @@ export function createGameStore(
           deps.page.on('pagehide', () => void persist()),
         );
       }
-      const loaded = await deps.storage.load();
-      if (loaded.kind === 'tooNew') set({ status: 'tooNew', loadSource: loaded.source });
-      else if (loaded.kind === 'recovery') set({ status: 'recovery' });
-      else if (loaded.kind === 'ok') becomeReady(loaded.save, loaded.source);
-      else {
-        becomeReady(newGame(ctx(), { reduceMotion: deps.prefersReducedMotion() }), null);
-        await persist();
-      }
+      await load();
       return snapshot.status;
     },
+
+    /**
+     * Settings / recovery: puts a backup back and reloads it (§9.2). Pending writes finish
+     * first; the platform keeps the current save as a backup. False (with a rejection) on failure.
+     */
+    async restoreBackup(name: string): Promise<boolean> {
+      if (!deps.backups || snapshot.status === 'tooNew' || guard.isReadOnly()) {
+        reject({ ok: false, error: 'INVALID_REQUEST' });
+        return false;
+      }
+      stopLoop();
+      await persistQueue;
+      try {
+        await deps.backups.restore(name);
+      } catch {
+        if (snapshot.status === 'ready') startLoop();
+        reject({ ok: false, error: 'SAVE_CORRUPT' });
+        return false;
+      }
+      await load();
+      return snapshot.status === 'ready';
+    },
+
+    /** Backups the player can pick, newest first; empty where the platform keeps none. */
+    listBackups: () => deps.backups?.list() ?? Promise.resolve([]),
 
     tick: () => tick('tick'),
 

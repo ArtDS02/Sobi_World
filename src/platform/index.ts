@@ -1,5 +1,5 @@
 // Platform selection (spec §4.1, §13.1): desktop adapters when window.unin exists, web otherwise.
-import type { FileDialogs, InstanceGuard, SaveStorage } from '../core/save/port';
+import type { BackupStore, FileDialogs, InstanceGuard, SaveStorage } from '../core/save/port';
 import type { UninBridge } from './desktop/bridge';
 import { createDesktopFileDialogs, desktopInstanceGuard } from './desktop/fileDialogs';
 import { createFileSaveStorage } from './desktop/fileSaveStorage';
@@ -15,6 +15,8 @@ export interface Platform {
   /** Desktop: main asks for a flush before the window closes (§13.1). */
   onFlushRequest(flush: () => Promise<void>): void;
   version: string | null;
+  /** Desktop backups (§9.2); the browser build has none to pick from. */
+  backups: BackupStore | null;
 }
 
 export function createPlatform(): Platform {
@@ -27,6 +29,10 @@ export function createPlatform(): Platform {
       instanceGuard: desktopInstanceGuard,
       onFlushRequest: (flush) => bridge.app.onFlushRequest(flush),
       version: bridge.app.version,
+      backups: {
+        list: () => bridge.save.listBackups(),
+        restore: (n) => bridge.save.restoreBackup(n),
+      },
     };
   }
   const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -37,5 +43,6 @@ export function createPlatform(): Platform {
     instanceGuard: createWebInstanceGuard(browserChannel(), crypto.randomUUID(), sleep),
     onFlushRequest: () => {},
     version: null,
+    backups: null,
   };
 }

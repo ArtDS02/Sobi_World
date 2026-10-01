@@ -44,6 +44,7 @@ async function start(root: HTMLElement) {
     clock,
     storage: platform.storage,
     instanceGuard: platform.instanceGuard,
+    backups: platform.backups,
   });
   platform.onFlushRequest(() => store.persistNow());
   // §12: the desktop shell allows autoplay; the browser build waits for the first gesture.
@@ -67,6 +68,8 @@ async function start(root: HTMLElement) {
     dialogs: platform.dialogs,
     assets: assets.registry,
     saveFolder: platform.kind === 'desktop',
+    version: platform.version,
+    hasBackups: platform.backups !== null,
     farm: (host, onPick) =>
       (farmView = createFarmView(host, {
         store,
@@ -81,6 +84,7 @@ async function start(root: HTMLElement) {
     effects: () => farmView?.effects() ?? noEffects,
     audio,
     toast: app.toast,
+    away: app.showAway,
     skinName: (id) => assets.registry.skins.get(id)?.nameVi ?? id,
   });
   // §12: ui_click for every DOM button, through one delegated listener.

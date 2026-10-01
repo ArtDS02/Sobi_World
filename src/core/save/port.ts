@@ -26,6 +26,21 @@ export interface FileDialogs {
   openSaveFolder(): Promise<void> | null;
 }
 
+/** A rotated backup of the save (desktop: saves/backups/<name>). */
+export interface BackupInfo {
+  name: string;
+  /** Epoch ms of the backup (from its name). */
+  at: number;
+}
+
+/** Backups the player can pick in settings or on the recovery screen (§9.2). */
+export interface BackupStore {
+  /** Newest first. */
+  list(): Promise<BackupInfo[]>;
+  /** Puts a backup back as the save (the current save is backed up first). */
+  restore(name: string): Promise<void>;
+}
+
 /** One writer per save (§9.4): tab guard in the browser, single-instance lock on desktop. */
 export interface InstanceGuard {
   /** Claims the save; resolves true when this instance may write. `onReadOnly` fires once. */

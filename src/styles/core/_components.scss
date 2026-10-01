@@ -21,7 +21,10 @@
 }
 
 .c-gauge {
-  padding: $sp-1 $sp-2;
+  min-height: $sp-touch-min; // it is a button (opens the trough dialog), spec §10.4
+  padding: $sp-1 $sp-3;
+  cursor: pointer;
+  border: 1px solid $c-border;
   background: $c-surface-alt;
   border-radius: 9999px;
 
@@ -89,10 +92,15 @@
 
 .c-banner {
   display: flex;
-  flex-direction: column;
-  gap: $sp-2;
-  padding: $sp-3;
+  flex-wrap: wrap;
+  gap: $sp-2 $sp-3;
+  align-items: center;
+  padding: $sp-2 $sp-3;
   background: $c-danger-soft;
+
+  &[role='status'] {
+    background: $c-surface-alt;
+  }
 }
 
 .c-toast-host {

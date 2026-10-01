@@ -1,14 +1,17 @@
-// What the settings screen's buttons do (spec §9.3, §12): sound toggles through the store,
-// export / import through the platform's file dialogs.
+// What the settings screen's buttons do (spec §9.2, §9.3, §12): toggles through the store,
+// export / import through the platform's file dialogs, backup restore after a confirmation.
 import { setSetting } from '../core/actions/setSetting';
 import { exportSave } from '../core/save/exportImport';
 import type { FileDialogs } from '../core/save/port';
 import type { BoundAction, GameStore } from '../store/gameStore';
+import { t } from '../i18n/format';
+import { vi } from '../i18n/vi';
+import { openConfirmDialog } from './components/dialog';
 import { openImportDialog } from './dialogs';
 import type { SettingsHandlers } from './screens/settingsScreen';
 
 export interface SettingsDeps {
-  store: Pick<GameStore, 'getSnapshot' | 'markExported' | 'importSave'>;
+  store: Pick<GameStore, 'getSnapshot' | 'markExported' | 'importSave' | 'restoreBackup'>;
   now: () => number;
   act: (run: BoundAction) => void;
   /** Host of modal dialogs. */
@@ -17,6 +20,8 @@ export interface SettingsDeps {
   files?: FileDialogs;
   /** The platform has a save folder to open (desktop). */
   saveFolder?: boolean;
+  /** After a restore attempt (the backup list changes). */
+  onRestored?: () => void;
 }
 
 export function settingsHandlers(d: SettingsDeps): SettingsHandlers {
@@ -41,5 +46,12 @@ export function settingsHandlers(d: SettingsDeps): SettingsHandlers {
       });
     },
     openSaveFolder: d.saveFolder && files ? () => void files.openSaveFolder() : null,
+    restore: (name, label) =>
+      openConfirmDialog(
+        d.dialogHost,
+        vi.settings.restoreBackup,
+        t(vi.settings.restoreConfirm, { label }),
+        () => d.store.restoreBackup(name).then(() => d.onRestored?.()),
+      ),
   };
 }

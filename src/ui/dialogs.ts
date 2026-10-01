@@ -14,7 +14,7 @@ import type { OrderCardVm } from './ordersVm';
 import type { SkinCardVm } from './skinsVm';
 import { thumb } from './components/thumb';
 import { actionButton } from './components/actionButton';
-import { openDialog } from './components/dialog';
+import { openConfirmDialog, openDialog } from './components/dialog';
 import { el } from './dom';
 
 export type Act = (run: BoundAction) => Promise<boolean>;
@@ -204,16 +204,7 @@ export function openBreedDialog(
 
 /** §9.3: importing overwrites the current farm (which becomes a backup); confirm first. */
 export function openImportDialog(host: HTMLElement, onConfirm: () => Promise<void>) {
-  const d = openDialog(host, vi.settings.import);
-  d.body.append(el('p', { class: 'c-dialog__warn', text: vi.settings.importWarning }));
-  d.footer.append(
-    el('button', {
-      class: 'c-button',
-      text: vi.action.confirm,
-      attrs: { type: 'button' },
-      on: { click: () => void onConfirm().finally(d.close) },
-    }),
-  );
+  openConfirmDialog(host, vi.settings.import, vi.settings.importWarning, onConfirm);
 }
 
 /** §8.14: pick which fitting pig is sold into the order. */

@@ -1,8 +1,9 @@
-// setSetting: the sound toggles of settings (spec §12: musicOn / sfxOn live in the save).
+// setSetting: the player toggles kept in the save (spec §10.3 tutorialDone, §10.4 reduceMotion,
+// §12 musicOn / sfxOn).
 import type { ActionContext, ActionResult, SaveGame } from '../types';
 import { ok, runAction } from './runAction';
 
-export const SETTING_KEYS = ['musicOn', 'sfxOn'] as const;
+export const SETTING_KEYS = ['musicOn', 'sfxOn', 'reduceMotion', 'tutorialDone'] as const;
 export type SettingKey = (typeof SETTING_KEYS)[number];
 
 export function setSetting(

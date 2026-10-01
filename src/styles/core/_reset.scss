@@ -32,3 +32,14 @@ button {
   font: inherit;
   color: inherit;
 }
+
+html,
+body {
+  overflow-x: hidden; // spec §10.4: never a horizontal scroll
+}
+
+// spec §10.4: keyboard focus is always visible (mouse clicks keep the clean look).
+:focus-visible {
+  outline: $focus-ring solid $c-primary-strong;
+  outline-offset: $sp-1;
+}

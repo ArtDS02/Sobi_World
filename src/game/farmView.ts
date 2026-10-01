@@ -60,6 +60,14 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
     running = true;
     applyVisible();
   });
+  // §10.4: the canvas follows its container (window resize, F11, a banner appearing above it),
+  // letterboxed by Scale.FIT, never stretched.
+  const resize = new ResizeObserver(() => {
+    if (!running || !visible) return;
+    game.scale.getParentBounds();
+    game.scale.refresh();
+  });
+  resize.observe(host);
 
   return {
     setSelected(pigId) {
@@ -73,6 +81,9 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
       if (running) applyVisible();
     },
     effects: () => bridge.effects,
-    destroy: () => game.destroy(true),
+    destroy: () => {
+      resize.disconnect();
+      game.destroy(true);
+    },
   };
 }
