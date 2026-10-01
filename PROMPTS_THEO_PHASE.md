@@ -211,6 +211,15 @@ Không tween, particle, âm thanh. Không cần screenshot; tôi tự xem bằng
 XONG KHI: check + build xanh, commit, checkpoint, tag r05a. DỪNG.
 ```
 
+### R05C — Một màn hình + popup theo vật thể (user yêu cầu sau R05A)
+
+```text
+TASK R05C — ONE SCREEN, CLICK WORLD OBJECTS. Theo CLAUDE.md. Đã làm; quyết định ở DECISIONS R05C-1.
+Bỏ nav dưới; canvas phủ toàn màn; click quầy hàng / nhà kho / bảng đơn / chuồng / máng / giếng / heo → popup DOM.
+Ánh xạ ở manifest layout.placements[].action. Thêm building prop_shop_stall (placeholder).
+XONG KHI: check + build xanh, commit, checkpoint, tag r05c. DỪNG.
+```
+
 ### R05B — Event cho mọi action + FeedbackDirector
 
 ```text

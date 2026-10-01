@@ -46,12 +46,13 @@ $radius-md: 0.75rem;
 $bar-height: 0.5rem;
 $content-max: 48rem;
 $dialog-max: 26rem;
-// Farm screen: Phaser stage beside the DOM side panel (spec §10.4, §11)
-$farm-stage-height: 72vh;
-$farm-panel-width: 24rem;
+// Popup window over the farm (DECISIONS R05C-1)
+$window-max: 52rem;
+$window-max-height: 86vh;
 
 // Layers
 $z-bars: 10;
+$z-window: 40; // below dialogs: a sell confirm opens over the pig popup
 $z-dialog: 50;
 $z-toast: 100;
 

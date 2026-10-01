@@ -39,6 +39,7 @@ export class PreloadScene extends Phaser.Scene {
       .text(width / 2, y - bar.height * 2, t(vi.desktop.loadingAssets, { percent: 0 }), {
         color: bar.text,
         fontSize: `${bar.height}px`,
+        fontFamily: FARM_VIEW.LABEL.fontFamily,
       })
       .setOrigin(0.5);
     this.load.on(Phaser.Loader.Events.PROGRESS, (p: number) => {

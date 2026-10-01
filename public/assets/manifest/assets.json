@@ -337,6 +337,11 @@
       "id": "prop_fence_section",
       "status": "placeholder",
       "asset": "buildings/prop_fence_section.png"
+    },
+    {
+      "id": "prop_shop_stall",
+      "status": "placeholder",
+      "asset": "buildings/prop_shop_stall.png"
     }
   ],
   "environment": [
@@ -613,19 +618,22 @@
         "id": "prop_pig_house",
         "layer": 3,
         "x": 0.14,
-        "y": 0.6
+        "y": 0.6,
+        "action": "collection"
       },
       {
         "id": "prop_hay_shed",
         "layer": 3,
         "x": 0.34,
-        "y": 0.58
+        "y": 0.58,
+        "action": "inventory"
       },
       {
         "id": "prop_water_well",
         "layer": 3,
         "x": 0.62,
-        "y": 0.6
+        "y": 0.6,
+        "action": "cleanAll"
       },
       {
         "id": "prop_fence_section",
@@ -640,11 +648,19 @@
         "y": 0.6
       },
       {
+        "id": "prop_shop_stall",
+        "layer": 3,
+        "x": 0.75,
+        "y": 0.6,
+        "action": "shop"
+      },
+      {
         "id": "prop_order_board",
         "layer": 3,
         "x": 0.88,
         "y": 0.62,
-        "role": "orderBoard"
+        "role": "orderBoard",
+        "action": "orders"
       },
       {
         "id": "prop_mud_puddle",
@@ -663,7 +679,8 @@
         "layer": 4,
         "x": 0.5,
         "y": 0.76,
-        "role": "trough"
+        "role": "trough",
+        "action": "trough"
       }
     ]
   }

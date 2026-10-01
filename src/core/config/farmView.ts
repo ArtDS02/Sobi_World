@@ -28,6 +28,17 @@ export const FARM_VIEW = {
     stroke: 0xe8708a,
     strokeWidth: 2,
   },
+  /** Name tag under each clickable world object (DECISIONS R05C-1). */
+  LABEL: {
+    fontPx: 34,
+    fontFamily: 'system-ui, "Segoe UI", sans-serif',
+    offsetY: 6,
+    color: '#3b2a26',
+    background: '#fff7f3',
+    padX: 14,
+    padY: 6,
+    depth: 50000,
+  },
   /** Alpha threshold for pixel-perfect pig clicks. */
   HIT_ALPHA: 1,
   /** Progress bar of the preload scene (design px). */

@@ -1,61 +1,62 @@
-// App frame: top bar, main area, bottom nav (spec §10.1).
+// App frame: top bar and the farm canvas under it; menus are popups (DECISIONS R05C-1).
 @use 'tokens' as *;
 @use 'mixins' as *;
 
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 
+  // Status screens only (loading / recovery); hidden once the farm is ready.
   &__main {
     flex: 1;
     width: 100%;
     max-width: $content-max;
     margin: 0 auto;
     padding: $sp-3;
-    padding-bottom: calc(#{$sp-touch-min} + #{$sp-6});
+    overflow-y: auto;
   }
 
+  &__main:empty,
   &__banner:empty {
     display: none;
   }
 
-  &__body {
-    display: flex;
+  // The farm canvas fills everything under the top bar (DECISIONS R05C-1).
+  &__world {
+    position: relative;
+    display: none;
     flex: 1;
-    flex-direction: column;
+    min-height: 0;
+  }
+
+  &.is-ready &__world {
+    display: block;
   }
 
   &__stage {
-    display: none;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: $c-farm-letterbox;
   }
 
-  // Farm screen: the canvas fills the left, the DOM panel sits on the right (§10.4).
-  &.is-farm {
-    .app__body {
-      flex-direction: row;
-      align-items: flex-start;
-      gap: $sp-3;
-      padding: $sp-3;
-    }
+  &__hint-host {
+    position: absolute;
+    bottom: $sp-6;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 
-    .app__stage {
-      display: block;
-      flex: 1;
-      min-width: 0;
-      height: $farm-stage-height;
-      overflow: hidden;
-      background: $c-farm-letterbox;
-      border-radius: $radius-md;
-    }
-
-    .app__main {
-      flex: 0 0 $farm-panel-width;
-      max-width: $farm-panel-width;
-      margin: 0;
-      padding: 0;
-      padding-bottom: calc(#{$sp-touch-min} + #{$sp-6});
-    }
+  &__hint {
+    display: flex;
+    gap: $sp-3;
+    align-items: center;
+    padding: $sp-2 $sp-4;
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
   }
 }
 
@@ -95,40 +96,5 @@
 
   &__settings {
     margin-left: auto;
-  }
-}
-
-.navbar {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: $z-bars;
-  background: $c-surface;
-  border-top: 1px solid $c-border;
-
-  &__inner {
-    display: flex;
-    max-width: $content-max;
-    margin: 0 auto;
-  }
-
-  &__item {
-    flex: 1;
-    min-height: $sp-touch-min;
-    padding: $sp-1;
-    font-size: $fs-xs;
-    background: none;
-    border: 0;
-    cursor: pointer;
-
-    @include mq(sm) {
-      font-size: $fs-sm;
-    }
-
-    &.is-active {
-      font-weight: $fw-bold;
-      color: $c-primary-strong;
-    }
   }
 }

@@ -48,8 +48,8 @@ async function start(root: HTMLElement) {
     dialogs: platform.dialogs,
     assets: assets.registry,
     saveFolder: platform.kind === 'desktop',
-    farm: (host, onSelect) =>
-      createFarmView(host, { store, assets: assets.registry, now: () => clock.now(), onSelect }),
+    farm: (host, onPick) =>
+      createFarmView(host, { store, assets: assets.registry, now: () => clock.now(), onPick }),
   });
   await store.init();
 }

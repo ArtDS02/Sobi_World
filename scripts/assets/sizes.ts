@@ -24,6 +24,7 @@ export const CATALOGUE_SIZES: Record<string, Size> = {
   prop_pig_house: { width: 512, height: 448 },
   prop_hay_shed: sq(384),
   prop_water_well: { width: 256, height: 384 },
+  prop_shop_stall: sq(384),
   prop_water_pump: { width: 256, height: 320 },
   prop_windmill: { width: 384, height: 512 },
   prop_fence_section: { width: 256, height: 160 },

@@ -2,6 +2,7 @@
 // the small handle the DOM shell needs (selection in, visibility). Phaser draws the world only.
 import * as Phaser from 'phaser';
 import type { AssetRegistry } from '../core/assets/registry';
+import type { FarmAction } from '../core/config/assetIds';
 import type { GameStore } from '../store/gameStore';
 import { phaserConfig } from './config/phaser';
 import { BootScene } from './scenes/BootScene';
@@ -12,9 +13,12 @@ export interface FarmDeps {
   store: GameStore;
   assets: AssetRegistry;
   now: () => number;
-  /** Click on a pig → its id; click on empty ground → null. */
-  onSelect: (pigId: string | null) => void;
+  /** Every canvas click: a pig, a world object with an `action`, or empty ground. */
+  onPick: (pick: FarmPick) => void;
 }
+
+export type FarmPick =
+  { kind: 'pig'; pigId: string } | { kind: 'action'; action: FarmAction } | { kind: 'ground' };
 
 /** Shared between the handle and MainFarmScene. */
 export interface FarmBridge {

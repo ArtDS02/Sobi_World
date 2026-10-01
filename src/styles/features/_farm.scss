@@ -1,10 +1,18 @@
-// Farm screen DOM side panel (the farm itself is the Phaser canvas) and the selected pig panel. Owns `.farm*`
+// Farm popups (pig panel, well); the farm itself is the Phaser canvas. Owns `.farm*`
 // and `.pig-panel*` inside [data-screen="farm"].
 @use '../core' as *;
 
 [data-screen='farm'] {
   display: grid;
   gap: $sp-3;
+
+  .farm__title {
+    font-size: $fs-lg;
+  }
+
+  .farm__hint {
+    color: $c-text-muted;
+  }
 
   .farm__toolbar {
     display: flex;

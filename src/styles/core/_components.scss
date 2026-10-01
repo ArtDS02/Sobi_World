@@ -148,6 +148,46 @@
   border-radius: $radius-sm;
 }
 
+.c-window {
+  position: fixed;
+  inset: 0;
+  z-index: $z-window;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $sp-3;
+  background: $c-backdrop;
+
+  &__panel {
+    position: relative;
+    width: 100%;
+    max-width: $window-max;
+    max-height: $window-max-height;
+    background: $c-bg;
+    border-radius: $radius-md;
+  }
+
+  // Pig and well popups hold one panel: dialog width.
+  &[data-panel='pig'] &__panel,
+  &[data-panel='well'] &__panel {
+    max-width: $dialog-max;
+  }
+
+  &__body {
+    max-height: $window-max-height;
+    padding: $sp-4;
+    padding-top: $sp-6;
+    overflow-y: auto;
+  }
+
+  &__close {
+    position: absolute;
+    top: $sp-2;
+    right: $sp-2;
+    z-index: 1;
+  }
+}
+
 .c-dialog {
   position: fixed;
   inset: 0;

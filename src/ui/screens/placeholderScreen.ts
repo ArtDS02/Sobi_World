@@ -1,9 +1,8 @@
 // Screens not built yet show vi.ui.comingSoon.
 import { vi } from '../../i18n/vi';
-import type { ScreenId } from '../components/navBar';
 import { el } from '../dom';
 
-export function renderPlaceholderScreen(id: ScreenId): HTMLElement {
+export function renderPlaceholderScreen(id: 'orders' | 'collection'): HTMLElement {
   return el(
     'div',
     { class: 'c-placeholder', data: { screen: id } },

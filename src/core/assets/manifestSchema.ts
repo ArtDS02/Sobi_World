@@ -1,7 +1,7 @@
 // zod schema for public/assets/manifest/assets.json, manifest v2 (art standard §7.2, DECISIONS R00-7).
 // A change to the shape bumps `version` here and in the file in the same commit.
 import { z } from 'zod';
-import { ANCHOR_NAMES } from '../config/assetIds';
+import { ANCHOR_NAMES, FARM_ACTIONS } from '../config/assetIds';
 import { BREED_ID_VALUES, COSMETIC_SLOT_VALUES } from '../config/ids';
 
 export const MANIFEST_VERSION = 2;
@@ -111,6 +111,8 @@ export const placementSchema = z.object({
   originX: unit.optional(),
   originY: unit.optional(),
   role: z.enum(['trough', 'orderBoard']).optional(),
+  /** Clicking the placement opens this (optional, additive: v2 files stay valid). */
+  action: z.enum(FARM_ACTIONS).optional(),
 });
 
 export const layoutSchema = z.object({

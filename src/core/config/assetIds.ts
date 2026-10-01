@@ -31,6 +31,17 @@ export const FX_IDS = [
 ] as const;
 export type FxId = (typeof FX_IDS)[number];
 
+/** What clicking a world placement opens (layout.placements[].action, DECISIONS R05C-1). */
+export const FARM_ACTIONS = [
+  'shop',
+  'inventory',
+  'orders',
+  'collection',
+  'trough',
+  'cleanAll',
+] as const;
+export type FarmAction = (typeof FARM_ACTIONS)[number];
+
 export const TROUGH_PROP_ID = 'prop_feed_trough';
 export const ORDER_BOARD_PROP_ID = 'prop_order_board';
 export const SLEEP_FALLBACK_FX: FxId = 'fx_zzz'; // DECISIONS Q5

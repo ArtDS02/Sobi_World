@@ -2,12 +2,18 @@
 // a Map<pigId, PigSprite> reconciled with every store snapshot. Draws only; selection goes to DOM.
 import * as Phaser from 'phaser';
 import { parseAnchors, type Anchors } from '../../core/assets/anchors';
-import { TROUGH_PROP_ID, type AnchorName, type FxId } from '../../core/config/assetIds';
-import { FARM_FALLBACK } from '../../core/config/farmView';
+import {
+  TROUGH_PROP_ID,
+  type AnchorName,
+  type FarmAction,
+  type FxId,
+} from '../../core/config/assetIds';
+import { FARM_FALLBACK, FARM_VIEW } from '../../core/config/farmView';
 import type { SaveGame } from '../../core/types';
 import type { StoreSnapshot } from '../../store/gameStore';
 import { SCENE_KEYS } from '../config/phaser';
-import type { FarmBridge, FarmDeps } from '../farmView';
+import type { FarmBridge, FarmDeps, FarmPick } from '../farmView';
+import { vi } from '../../i18n/vi';
 import { PIG_ID_DATA, PigSprite } from '../prefabs/PigSprite';
 import { pigView, type FarmLayout } from '../view/pigView';
 import { groundLineY, placementView } from '../view/sceneLayout';
@@ -19,6 +25,17 @@ import {
   troughTextureKey,
 } from '../view/textureKeys';
 import { queueLoadList, warnLoadErrors } from './PreloadScene';
+
+const ACTION_DATA = 'farmAction';
+
+/** The top object under the pointer → what was clicked. */
+function pickOf(top: Phaser.GameObjects.GameObject | undefined): FarmPick {
+  const pigId: unknown = top?.getData(PIG_ID_DATA);
+  if (typeof pigId === 'string') return { kind: 'pig', pigId };
+  const action: unknown = top?.getData(ACTION_DATA);
+  if (typeof action === 'string') return { kind: 'action', action: action as FarmAction };
+  return { kind: 'ground' };
+}
 
 export class MainFarmScene extends Phaser.Scene {
   private readonly pigs = new Map<string, PigSprite>();
@@ -43,8 +60,7 @@ export class MainFarmScene extends Phaser.Scene {
     this.input.on(
       Phaser.Input.Events.POINTER_DOWN,
       (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
-        const id = over.map((o) => o.getData(PIG_ID_DATA) as unknown).find((v) => v);
-        this.deps.onSelect(typeof id === 'string' ? id : null);
+        this.deps.onPick(pickOf(over[0]));
       },
     );
     const off = this.deps.store.subscribe((s) => this.sync(s));
@@ -74,10 +90,13 @@ export class MainFarmScene extends Phaser.Scene {
       const v = placementView(p, i, this.layout);
       const entry = this.deps.assets.resolve(p.id);
       if (p.role === 'trough' || p.id === TROUGH_PROP_ID) {
+        // Start on a real state texture so the name tag sits under the real sprite.
+        const first = troughTextureKey(0, 1);
         this.trough = this.add
-          .image(v.x, v.y, FALLBACK_PROP_KEY)
+          .image(v.x, v.y, this.textures.exists(first) ? first : FALLBACK_PROP_KEY)
           .setOrigin(v.originX, v.originY)
           .setDepth(v.depth);
+        if (p.action) this.makeClickable(this.trough, p.action);
         return;
       }
       const key = textureKey(p.id);
@@ -93,11 +112,36 @@ export class MainFarmScene extends Phaser.Scene {
           return;
         }
       }
-      this.add
+      const img = this.add
         .image(v.x, v.y, loaded ? key : FALLBACK_PROP_KEY)
         .setOrigin(v.originX, v.originY)
         .setDepth(v.depth);
+      if (p.action) this.makeClickable(img, p.action);
     });
+  }
+
+  /** Hand cursor + pixel-perfect hit + an always-visible name tag (no hover-only cue, §10.4). */
+  private makeClickable(img: Phaser.GameObjects.Image, action: FarmAction) {
+    img.setData(ACTION_DATA, action).setInteractive({
+      pixelPerfect: true,
+      alphaTolerance: FARM_VIEW.HIT_ALPHA,
+      useHandCursor: true,
+    });
+    const l = FARM_VIEW.LABEL;
+    const bottom = img.y + img.displayHeight * (1 - img.originY);
+    this.add
+      .text(img.x, bottom + l.offsetY, vi.farm[action], {
+        color: l.color,
+        backgroundColor: l.background,
+        fontSize: `${l.fontPx}px`,
+        fontFamily: l.fontFamily,
+        fontStyle: 'bold',
+        padding: { x: l.padX, y: l.padY },
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(l.depth)
+      .setData(ACTION_DATA, action)
+      .setInteractive({ useHandCursor: true });
   }
 
   private sync(snap: StoreSnapshot) {

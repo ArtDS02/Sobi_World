@@ -3,7 +3,7 @@ import manifestJson from '../../public/assets/manifest/assets.json';
 import { anchorOffset, anchorPoint, parseAnchors } from '../../src/core/assets/anchors';
 import { parseManifest, type AssetManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
-import { DEFAULT_ANCHORS, PIG_FEET_Y } from '../../src/core/config/assetIds';
+import { DEFAULT_ANCHORS, FARM_ACTIONS, PIG_FEET_Y } from '../../src/core/config/assetIds';
 import { FARM_VIEW } from '../../src/core/config/farmView';
 import { pigScale, pigSpot, pigView } from '../../src/game/view/pigView';
 import { groundLineY, placementDepth, placementView } from '../../src/game/view/sceneLayout';
@@ -170,5 +170,23 @@ describe('preload list (spec §11)', () => {
       { key: 'pig_classic_anchors', url: 'assets/pigs/base/pig_classic.anchors.json' },
     ]);
     expect(skinLoadList(reg, 'env_sky')).toEqual({ images: [], json: [] });
+  });
+});
+
+describe('clickable world objects (DECISIONS R05C-1)', () => {
+  it('every farm action is on exactly one placement, and that asset exists', () => {
+    for (const action of FARM_ACTIONS) {
+      const hits = layout.placements.filter((p) => p.action === action);
+      expect(hits, action).toHaveLength(1);
+      expect(reg.resolve(hits[0]!.id), action).toBeDefined();
+    }
+    expect(layout.placements.find((p) => p.action === 'shop')?.id).toBe('prop_shop_stall');
+    expect(layout.placements.find((p) => p.action === 'trough')?.role).toBe('trough');
+  });
+
+  it('rejects an unknown action', () => {
+    const bad = structuredClone(manifestJson) as { layout: { placements: { action?: string }[] } };
+    bad.layout.placements[0]!.action = 'teleport';
+    expect(parseManifest(bad).ok).toBe(false);
   });
 });

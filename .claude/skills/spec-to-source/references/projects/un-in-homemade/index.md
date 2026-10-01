@@ -8,7 +8,7 @@ không server/port. Cài bằng installer → double-click icon → chơi.
 - Danh sách task + định nghĩa từng task: `PROMPTS_THEO_PHASE.md` (gốc repo). Task `R05A` = block dưới
   heading `### R05A`; tìm bằng `grep -n "^### R05A" PROMPTS_THEO_PHASE.md` rồi đọc đúng block đó (tới `### ` kế tiếp).
 - Đã xong (lộ trình cũ, giữ nguyên code): S00 → S02 → S03 → S04A → S04B → S05 → S06A → S06B → S07 → S08A → S08B.
-- Thứ tự mới: R01 → R02 ★ → R03 → R04 → R05A → R05B ★ → R06 → R07A → R07B ★ → R08 → R09A → R09B → R10
+- Thứ tự mới: R01 → R02 ★ → R03 → R04 → R05A → R05C → R05B ★ → R06 → R07A → R07B ★ → R08 → R09A → R09B → R10
   → R11 → R12A → R12B. ART chạy khi user yêu cầu (sau R04).
 - ★ = cổng chơi thử: sau DONE, `NEXT:` ghi "user chơi thử rồi gọi task sau". Không tự đi tiếp.
 - User chỉ nói "tiếp" / gọi skill không kèm task → task = `Next task` trong `PROJECT_STATUS.md`.
