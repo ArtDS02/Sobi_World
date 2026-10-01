@@ -1,5 +1,6 @@
 // The farm (spec §11.1, §11.2): static scene from layout.placements (layers 0–5), the trough and
 // a Map<pigId, PigSprite> reconciled with every store snapshot. Draws only; selection goes to DOM.
+// Feedback (§11.3) arrives through bridge.effects (SceneEffects), never from diffing snapshots.
 import * as Phaser from 'phaser';
 import { parseAnchors, type Anchors } from '../../core/assets/anchors';
 import {
@@ -13,6 +14,8 @@ import type { SaveGame } from '../../core/types';
 import type { StoreSnapshot } from '../../store/gameStore';
 import { SCENE_KEYS } from '../config/phaser';
 import type { FarmBridge, FarmDeps, FarmPick } from '../farmView';
+import { noEffects } from '../feedback/effects';
+import { SceneEffects } from '../fx/SceneEffects';
 import { vi } from '../../i18n/vi';
 import { PIG_ID_DATA, PigSprite } from '../prefabs/PigSprite';
 import { pigView, type FarmLayout } from '../view/pigView';
@@ -39,10 +42,13 @@ function pickOf(top: Phaser.GameObjects.GameObject | undefined): FarmPick {
 
 export class MainFarmScene extends Phaser.Scene {
   private readonly pigs = new Map<string, PigSprite>();
+  /** Pigs gone from the save but still playing their exit tween (bursts can still find them). */
+  private readonly leaving = new Map<string, PigSprite>();
   private readonly anchors = new Map<string, Anchors>();
   /** Skins whose files were requested after preload (loaded once, failures fall back). */
   private readonly requested = new Set<string>();
   private trough: Phaser.GameObjects.Image | null = null;
+  private board: Phaser.GameObjects.Image | null = null;
   private layout!: FarmLayout;
 
   constructor(
@@ -65,9 +71,15 @@ export class MainFarmScene extends Phaser.Scene {
     );
     const off = this.deps.store.subscribe((s) => this.sync(s));
     this.bridge.refresh = () => this.sync(this.deps.store.getSnapshot());
+    this.bridge.effects = new SceneEffects(this, {
+      pig: (id) => this.pigs.get(id) ?? this.leaving.get(id),
+      trough: () => this.trough,
+      board: () => this.board,
+    });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       off();
       this.bridge.refresh = () => {};
+      this.bridge.effects = noEffects;
     });
     this.sync(this.deps.store.getSnapshot());
   }
@@ -116,6 +128,7 @@ export class MainFarmScene extends Phaser.Scene {
         .image(v.x, v.y, loaded ? key : FALLBACK_PROP_KEY)
         .setOrigin(v.originX, v.originY)
         .setDepth(v.depth);
+      if (p.role === 'orderBoard') this.board = img;
       if (p.action) this.makeClickable(img, p.action);
     });
   }
@@ -166,10 +179,12 @@ export class MainFarmScene extends Phaser.Scene {
         this.fxAnchor,
       );
     }
+    const reduceMotion = save?.settings.reduceMotion ?? false;
     for (const [id, sprite] of this.pigs) {
       if (seen.has(id)) continue;
-      sprite.destroy();
       this.pigs.delete(id);
+      this.leaving.set(id, sprite);
+      sprite.leave(reduceMotion, () => this.leaving.delete(id));
     }
   }
 

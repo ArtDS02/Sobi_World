@@ -5,7 +5,6 @@ import { levelFromXp } from '../core/config/levels';
 import { growthStage, weight } from '../core/engine/derived';
 import { happiness } from '../core/engine/happiness';
 import { sellMultiplier } from '../core/engine/pricing';
-import type { GameEvent } from '../core/events';
 import type { Pig, SaveGame } from '../core/types';
 import { formatDateTime, formatDec, formatDuration, formatInt, t } from '../i18n/format';
 import { vi } from '../i18n/vi';
@@ -91,43 +90,6 @@ export function pigPanelVm(pig: Pig, now: number): PigPanelVm {
       ? t(vi.stat.pregnantLeft, { time: formatDuration(pig.pregnancy.endsAt - now) })
       : null,
   };
-}
-
-/**
- * Toast text for an event, or null when it has no toast. `before` is the state before the
- * dispatch so sold pigs can still be named.
- */
-export function eventToast(event: GameEvent, after: SaveGame, before: SaveGame): string | null {
-  const nameOf = (id: string) =>
-    (after.pigs.find((p) => p.id === id) ?? before.pigs.find((p) => p.id === id))?.name ?? '';
-  switch (event.type) {
-    case 'PIG_BECAME_SICK':
-      return t(vi.event.becameSick, { name: nameOf(event.pigId) });
-    case 'PIG_BECAME_ADULT':
-      return t(vi.event.becameAdult, { name: nameOf(event.pigId) });
-    case 'PIG_HUNGRY_ZERO':
-      return event.stalled ? t(vi.event.hungryZero, { name: nameOf(event.pigId) }) : null;
-    case 'BIRTH':
-      return t(vi.event.birth, { mother: nameOf(event.motherId), child: nameOf(event.childId) });
-    case 'TROUGH_EMPTY':
-      return vi.event.troughEmpty;
-    case 'LEVEL_UP':
-      return t(vi.event.levelUp, { level: event.level });
-    case 'DISCOVERY': {
-      const name = event.kind === 'BREED' ? BREEDS[event.id as Pig['breed']].nameVi : event.id;
-      return t(vi.event.discovery, { name, gold: formatInt(event.gold) });
-    }
-    case 'ORDER_NEW':
-      return vi.event.orderNew;
-    case 'ORDER_EXPIRED':
-      return vi.event.orderExpired;
-    case 'PIG_SOLD':
-      return t(vi.event.sold, { name: nameOf(event.pigId), gold: formatInt(event.gold) });
-    case 'ORDER_FULFILLED':
-      return t(vi.event.orderFulfilled, { gold: formatInt(event.gold) });
-    case 'SLOT_BOUGHT':
-      return null; // action feedback goes through FeedbackDirector (R05B)
-  }
 }
 
 /** Signed gold as in the transaction: +500 vàng / -2.000 vàng. */

@@ -5,6 +5,7 @@ import type { AssetRegistry } from '../core/assets/registry';
 import type { FarmAction } from '../core/config/assetIds';
 import type { GameStore } from '../store/gameStore';
 import { phaserConfig } from './config/phaser';
+import { noEffects, type FarmEffects } from './feedback/effects';
 import { BootScene } from './scenes/BootScene';
 import { MainFarmScene } from './scenes/MainFarmScene';
 import { PreloadScene } from './scenes/PreloadScene';
@@ -25,9 +26,13 @@ export interface FarmBridge {
   selectedId: string | null;
   /** Re-sync the farm from the latest snapshot; a no-op until the scene runs. */
   refresh: () => void;
+  /** Feedback on the scene (§11.3); no-op until MainFarmScene runs. */
+  effects: FarmEffects;
 }
 
 export interface FarmView {
+  /** The FeedbackDirector's way into the scene; read at call time (the scene starts later). */
+  effects(): FarmEffects;
   setSelected(pigId: string | null): void;
   /** Hidden on other screens: the loop sleeps, and the scale is refreshed when shown again. */
   setVisible(visible: boolean): void;
@@ -35,7 +40,7 @@ export interface FarmView {
 }
 
 export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
-  const bridge: FarmBridge = { selectedId: null, refresh: () => {} };
+  const bridge: FarmBridge = { selectedId: null, refresh: () => {}, effects: noEffects };
   const scenes = [new BootScene(), new PreloadScene(deps), new MainFarmScene(deps, bridge)];
   const game = new Phaser.Game(phaserConfig(host, deps.assets.manifest.layout, scenes));
   let visible = true;
@@ -67,6 +72,7 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
       visible = next;
       if (running) applyVisible();
     },
+    effects: () => bridge.effects,
     destroy: () => game.destroy(true),
   };
 }

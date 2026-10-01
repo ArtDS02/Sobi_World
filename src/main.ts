@@ -1,7 +1,10 @@
 // Composition root: pick the platform, create the store, mount the DOM UI + Phaser farm, load the save.
 import './styles/main.scss';
 import type { Clock } from './core/clock';
-import { createFarmView } from './game/farmView';
+import { silentAudio } from './game/audio/audioPort';
+import { createFarmView, type FarmView } from './game/farmView';
+import { noEffects } from './game/feedback/effects';
+import { createFeedbackDirector } from './game/feedback/FeedbackDirector';
 import { createPlatform } from './platform';
 import { loadAssetRegistry } from './platform/assetSource';
 import { createGameStore } from './store/gameStore';
@@ -43,13 +46,26 @@ async function start(root: HTMLElement) {
     instanceGuard: platform.instanceGuard,
   });
   platform.onFlushRequest(() => store.persistNow());
-  mountApp(root, store, () => clock.now(), {
+  let farmView: FarmView | null = null;
+  const app = mountApp(root, store, () => clock.now(), {
     ...opts,
     dialogs: platform.dialogs,
     assets: assets.registry,
     saveFolder: platform.kind === 'desktop',
     farm: (host, onPick) =>
-      createFarmView(host, { store, assets: assets.registry, now: () => clock.now(), onPick }),
+      (farmView = createFarmView(host, {
+        store,
+        assets: assets.registry,
+        now: () => clock.now(),
+        onPick,
+      })),
+  });
+  // §11.3: every event and rejection becomes presentation here, and only here.
+  createFeedbackDirector({
+    store,
+    effects: () => farmView?.effects() ?? noEffects,
+    audio: silentAudio, // R10 plugs in the real player
+    toast: app.toast,
   });
   await store.init();
 }

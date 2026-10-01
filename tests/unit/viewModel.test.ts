@@ -1,14 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { formatDuration, t } from '../../src/i18n/format';
 import { vi } from '../../src/i18n/vi';
-import {
-  eventToast,
-  historyVm,
-  pigCardVm,
-  pigPanelVm,
-  signedGold,
-  topBarVm,
-} from '../../src/ui/viewModel';
+import { historyVm, pigCardVm, pigPanelVm, signedGold, topBarVm } from '../../src/ui/viewModel';
+import { toastText as eventToast } from '../../src/game/feedback/toastText';
 import { farm } from './actionKit';
 import { makePig } from './pigFactory';
 
@@ -78,7 +72,7 @@ describe('pig view-models (§10.2)', () => {
   });
 });
 
-describe('eventToast', () => {
+describe('toastText', () => {
   const s = farm([makePig()]);
   it.each([
     [{ type: 'PIG_BECAME_SICK', pigId: 'pig-1' } as const, 'Ủn Hồng bị bệnh rồi!'],

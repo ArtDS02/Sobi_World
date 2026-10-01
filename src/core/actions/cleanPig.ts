@@ -15,7 +15,9 @@ function cleanPigs(s: SaveGame, dirty: readonly Pig[]): { state: SaveGame; event
   const effective = dirty.filter(
     (p) => p.cleanliness <= BALANCE.XP_EFFECTIVE_CLEAN_MAX_CLEAN,
   ).length;
-  return addXP(cleaned, effective * BALANCE.XP.CLEAN);
+  const xp = addXP(cleaned, effective * BALANCE.XP.CLEAN);
+  const done: GameEvent = { type: 'PIG_CLEANED', pigIds: dirty.map((p) => p.id) };
+  return { state: xp.state, events: [done, ...xp.events] };
 }
 
 export function cleanPig(
@@ -32,7 +34,7 @@ export function cleanPig(
   });
 }
 
-/** Never errors; a clean farm returns ok with no events. */
+/** Never errors; a clean farm returns ok with PIG_CLEANED { pigIds: [] } (§8.0: ≥ 1 event). */
 export function cleanAll(state: SaveGame, ctx: ActionContext): ActionResult {
   return runAction(state, ctx, (s) => {
     const r = cleanPigs(

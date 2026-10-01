@@ -72,7 +72,9 @@ describe('buyPig (§8.1)', () => {
     expect(r.state.player.gold).toBe(4500);
     expect(r.state.pigs[1]).toMatchObject({ gender: 'FEMALE', slotIndex: 1 });
     expect(r.state.pigs[1]!.name).not.toBe(r.state.pigs[0]!.name);
-    expect(r.events).toEqual([]);
+    expect(r.events).toEqual([
+      { type: 'PIG_BOUGHT', pigId: r.state.pigs[1]!.id, breed: 'PIG_EARTH_PINK' },
+    ]);
   });
 
   it('uses the lowest free slotIndex', () => {

@@ -29,7 +29,6 @@ import {
   renderSaveErrorBanner,
   renderStatusScreen,
 } from './screens/statusScreen';
-import { eventToast } from './viewModel';
 
 interface UiState {
   panel: PanelId | null;
@@ -56,6 +55,12 @@ export type FarmPickAction = 'shop' | 'inventory' | 'orders' | 'collection' | 't
 export type FarmPick =
   { kind: 'pig'; pigId: string } | { kind: 'action'; action: FarmPickAction } | { kind: 'ground' };
 
+export interface MountedApp {
+  /** The DOM toast host; only the FeedbackDirector calls it (§11.3). */
+  toast: (message: string) => void;
+  dispose: () => void;
+}
+
 /** What the shell needs from the farm canvas (implemented by src/game/farmView.ts). */
 export interface FarmCanvas {
   setSelected(pigId: string | null): void;
@@ -79,7 +84,7 @@ export function mountApp(
   store: GameStore,
   now: () => number,
   opts: AppOptions = {},
-): () => void {
+): MountedApp {
   document.title = vi.app.title;
   const ui: UiState = { panel: null, selectedPigId: null, shopTab: 'pigs' };
   const topbar = el('header', { class: 'topbar' });
@@ -109,16 +114,9 @@ export function mountApp(
   root.replaceChildren(appEl);
   const toast = createToaster(toasts);
 
-  let current: SaveGame | null = null;
-  let previous: SaveGame | null = null;
-
   const rerender = () => render(store.getSnapshot());
-  /** Dispatch; an error becomes a toast (buttons normally prevent it). */
-  const act = async (run: BoundAction): Promise<boolean> => {
-    const r = await store.dispatch(run);
-    if (!r.ok) toast(vi.error[r.error]);
-    return r.ok;
-  };
+  /** Dispatch; a rejection reaches the FeedbackDirector through store.onReject (§11.3). */
+  const act = async (run: BoundAction): Promise<boolean> => (await store.dispatch(run)).ok;
   const handlers = {
     act: (run: BoundAction) => void act(run),
     sell: (pig: Pig, vm: ActionVm) => openSellDialog(dialogs, pig, vm, act),
@@ -175,8 +173,7 @@ export function mountApp(
       openImportDialog(dialogs, async () => {
         const json = await dialogsPort.importSave();
         if (json === null) return;
-        const r = await store.importSave(json);
-        if (!r.ok) toast(vi.error[r.error]);
+        await store.importSave(json); // a rejection is toasted by the FeedbackDirector
       });
     },
     openSaveFolder:
@@ -263,24 +260,15 @@ export function mountApp(
     renderPopup(save);
   }
 
-  const offState = store.subscribe((snap) => {
-    previous = current;
-    current = snap.save;
-    render(snap);
-  });
-  const offEvents = store.onEvents((events) => {
-    if (!current) return;
-    for (const e of events) {
-      const text = eventToast(e, current, previous ?? current);
-      if (text) toast(text);
-    }
-  });
+  const offState = store.subscribe(render);
 
   rerender();
-  return () => {
-    offState();
-    offEvents();
-    document.removeEventListener('keydown', onKey);
-    farm?.destroy();
+  return {
+    toast,
+    dispose: () => {
+      offState();
+      document.removeEventListener('keydown', onKey);
+      farm?.destroy();
+    },
   };
 }

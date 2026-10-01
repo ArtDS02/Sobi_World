@@ -135,6 +135,12 @@ export const vi = {
     orderExpired: "Một đơn hàng đã hết hạn.",
     sold: "Đã bán {name} được {gold} vàng.",
     orderFulfilled: "Giao đơn thành công! +{gold} vàng",
+    // Action toasts (spec §11.3, DECISIONS R05B-1); not in Appendix B.
+    bought: "Chào mừng {name} về nông trại!",
+    treated: "{name} đã khỏi bệnh.",
+    itemBought: "Đã mua {quantity} {item}.",
+    renamed: "Đã đổi tên thành {name}.",
+    slotBought: "Đã mở thêm chuồng! Giờ có {slots} chỗ.",
   },
 
   away: {

@@ -12,10 +12,13 @@ export function treatPig(
     if (!pig) return { ok: false, error: 'PIG_NOT_FOUND' };
     if (!pig.isSick) return { ok: false, error: 'PIG_NOT_SICK' };
     if (s.inventory.MEDICINE_COMMON < 1) return { ok: false, error: 'INSUFFICIENT_ITEM' };
-    return ok({
-      ...s,
-      inventory: { ...s.inventory, MEDICINE_COMMON: s.inventory.MEDICINE_COMMON - 1 },
-      pigs: s.pigs.map((p) => (p.id === pig.id ? { ...p, isSick: false } : p)),
-    });
+    return ok(
+      {
+        ...s,
+        inventory: { ...s.inventory, MEDICINE_COMMON: s.inventory.MEDICINE_COMMON - 1 },
+        pigs: s.pigs.map((p) => (p.id === pig.id ? { ...p, isSick: false } : p)),
+      },
+      [{ type: 'PIG_TREATED', pigId: pig.id }],
+    );
   });
 }

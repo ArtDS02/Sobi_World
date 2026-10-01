@@ -17,14 +17,18 @@ export function fillTrough(
     const fromInventory = Math.min(s.inventory.FOOD_BASIC, units);
     const shortfall = units - fromInventory;
     // One TROUGH_FILL transaction for the gold actually spent, 0 when all from inventory.
-    const paid = changeGold(s, -shortfall * ITEMS.FOOD_BASIC.priceGold, 'TROUGH_FILL', ctx, {
+    const gold = 0 - shortfall * ITEMS.FOOD_BASIC.priceGold; // 0 - x keeps +0 when nothing is bought
+    const paid = changeGold(s, gold, 'TROUGH_FILL', ctx, {
       note: `x${units} inventory ${fromInventory} bought ${shortfall}`,
     });
     if (!paid.ok) return paid;
-    return ok({
-      ...paid.state,
-      inventory: { ...paid.state.inventory, FOOD_BASIC: s.inventory.FOOD_BASIC - fromInventory },
-      trough: { ...paid.state.trough, food: s.trough.food + units },
-    });
+    return ok(
+      {
+        ...paid.state,
+        inventory: { ...paid.state.inventory, FOOD_BASIC: s.inventory.FOOD_BASIC - fromInventory },
+        trough: { ...paid.state.trough, food: s.trough.food + units },
+      },
+      [{ type: 'TROUGH_FILLED', units, fromInventory, gold }],
+    );
   });
 }

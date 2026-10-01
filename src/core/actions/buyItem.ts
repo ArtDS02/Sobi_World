@@ -17,12 +17,15 @@ export function buyItem(
     if (!item || !Number.isInteger(q) || q < 1 || q > BALANCE.SHOP_MAX_QUANTITY) {
       return { ok: false, error: 'INVALID_REQUEST' };
     }
-    const paid = changeGold(s, -item.priceGold * q, 'SHOP_PURCHASE', ctx, {
+    const gold = -item.priceGold * q;
+    const paid = changeGold(s, gold, 'SHOP_PURCHASE', ctx, {
       refId: item.id,
       note: `x${q}`,
     });
     if (!paid.ok) return paid;
     const inventory = { ...paid.state.inventory, [item.id]: paid.state.inventory[item.id] + q };
-    return ok({ ...paid.state, inventory });
+    return ok({ ...paid.state, inventory }, [
+      { type: 'ITEM_BOUGHT', itemId: item.id, quantity: q, gold },
+    ]);
   });
 }

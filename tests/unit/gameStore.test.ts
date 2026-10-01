@@ -325,3 +325,39 @@ describe('gameStore', () => {
     expect(reloaded.getSnapshot().save!.pigs).toHaveLength(1);
   });
 });
+
+describe('gameStore event origins and rejections (spec §11.3)', () => {
+  it('load tick is catchup, loop ticks tick, dispatch action, visible again catchup', async () => {
+    const { store, timers, page } = makeStore();
+    const origins: string[] = [];
+    store.onEvents((_e, origin) => origins.push(origin));
+    await store.init(); // first launch: the catch-up tick has no events yet
+    await store.dispatch(buy);
+    expect(origins).toEqual(['action']);
+
+    clock.advance(2400 * SEC); // hunger reaches 0 → PIG_HUNGRY_ZERO on the next loop tick
+    timers.fire();
+    expect(origins.at(-1)).toBe('tick');
+
+    page.visible = false;
+    page.emit('visibilitychange');
+    clock.advance(4 * 3600 * SEC); // long enough for world events (sick / adult)
+    page.visible = true;
+    page.emit('visibilitychange');
+    await store.flush();
+    expect(origins.at(-1)).toBe('catchup');
+  });
+
+  it('a rejected dispatch or import goes to onReject, not onEvents', async () => {
+    const { store } = makeStore();
+    await store.init();
+    const rejects: string[] = [];
+    const events: unknown[] = [];
+    store.onReject((e) => rejects.push(e));
+    store.onEvents((e) => events.push(e));
+    await store.dispatch((s, c) => sellPig(s, { pigId: 'nope' }, c));
+    await store.importSave('{not json');
+    expect(rejects).toEqual(['PIG_NOT_FOUND', expect.any(String)]);
+    expect(events).toEqual([]);
+  });
+});

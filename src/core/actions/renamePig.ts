@@ -22,6 +22,8 @@ export function renamePig(
     if (!s.pigs.some((p) => p.id === args.pigId)) return { ok: false, error: 'PIG_NOT_FOUND' };
     const name = cleanPigName(args.name);
     if (name === null) return { ok: false, error: 'INVALID_REQUEST' };
-    return ok({ ...s, pigs: s.pigs.map((p) => (p.id === args.pigId ? { ...p, name } : p)) });
+    return ok({ ...s, pigs: s.pigs.map((p) => (p.id === args.pigId ? { ...p, name } : p)) }, [
+      { type: 'PIG_RENAMED', pigId: args.pigId },
+    ]);
   });
 }

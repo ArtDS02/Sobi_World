@@ -24,6 +24,6 @@ export function feedPig(
     // D11: XP only when the feed was actually needed.
     const effective = pig.hunger <= BALANCE.XP_EFFECTIVE_FEED_MAX_HUNGER;
     const xp = addXP(fed, effective ? BALANCE.XP.FEED : 0);
-    return ok(xp.state, xp.events);
+    return ok(xp.state, [{ type: 'PIG_FED', pigId: pig.id }], xp.events);
   });
 }

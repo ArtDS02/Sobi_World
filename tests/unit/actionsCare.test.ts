@@ -68,10 +68,10 @@ describe('cleanPig (§8.3)', () => {
 });
 
 describe('cleanAll (§8.4)', () => {
-  it('clean farm → ok, no events, nothing changes but updatedAt', () => {
+  it('clean farm → ok, only PIG_CLEANED with no pigs (§8.0), nothing changes but updatedAt', () => {
     const s = farm([makePig(), makePig({ id: 'pig-2', slotIndex: 1 })]);
     const r = expectOk(cleanAll(s, ctx()));
-    expect(r.events).toEqual([]);
+    expect(r.events).toEqual([{ type: 'PIG_CLEANED', pigIds: [] }]);
     expect(r.state.pigs).toEqual(s.pigs);
     expect(r.state.player).toEqual(s.player);
   });
@@ -99,7 +99,10 @@ describe('cleanAll (§8.4)', () => {
     );
     const s = { ...base, player: { ...base.player, xp: 95 } };
     const r = expectOk(cleanAll(s, ctx()));
-    expect(r.events).toEqual([{ type: 'LEVEL_UP', level: 2 }]);
+    expect(r.events).toEqual([
+      { type: 'PIG_CLEANED', pigIds: ['p0', 'p1', 'p2', 'p3'] },
+      { type: 'LEVEL_UP', level: 2 },
+    ]);
   });
 });
 

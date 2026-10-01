@@ -51,6 +51,6 @@ export function buyPig(state: SaveGame, args: BuyPigArgs, ctx: ActionContext): A
       createdAt: ctx.now,
     };
     const found = discoverBreed({ ...paid.state, pigs: [...paid.state.pigs, pig] }, def.id, ctx);
-    return ok(found.state, found.events);
+    return ok(found.state, [{ type: 'PIG_BOUGHT', pigId, breed: def.id }], found.events);
   });
 }

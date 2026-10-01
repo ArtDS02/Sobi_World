@@ -8,10 +8,18 @@ import type { Rng } from '../core/rng';
 import { importSave as parseImport } from '../core/save/exportImport';
 import { newGame } from '../core/save/newGame';
 import type { InstanceGuard, LoadSource, SaveStorage } from '../core/save/port';
+import type { ErrorCode } from '../core/config/errors';
 import type { ActionContext, ActionResult, SaveGame } from '../core/types';
 import { defaultRng, realClock } from './runtime';
 
 export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew';
+
+/**
+ * Where events came from (spec §11.3): a player action, a visible tick, or the catch-up tick
+ * right after load / import / the window becoming visible again (never animated, §9.5).
+ */
+export type EventOrigin = 'action' | 'tick' | 'catchup';
+export type EventListener = (events: GameEvent[], origin: EventOrigin) => void;
 
 export interface StoreSnapshot {
   status: StoreStatus;
@@ -81,7 +89,8 @@ export function createGameStore(
     saveError: false,
   };
   const subscribers = new Set<(s: StoreSnapshot) => void>();
-  const eventListeners = new Set<(events: GameEvent[]) => void>();
+  const eventListeners = new Set<EventListener>();
+  const rejectListeners = new Set<(error: ErrorCode) => void>();
   let interval: unknown = null;
   let lastPersistAt = 0;
   let persistQueue: Promise<void> = Promise.resolve();
@@ -94,8 +103,12 @@ export function createGameStore(
     snapshot = { ...snapshot, ...patch };
     for (const fn of subscribers) fn(snapshot);
   };
-  const emit = (events: GameEvent[]) => {
-    if (events.length > 0) for (const fn of eventListeners) fn(events);
+  const emit = (events: GameEvent[], origin: EventOrigin) => {
+    if (events.length > 0) for (const fn of eventListeners) fn(events, origin);
+  };
+  const reject = (result: Extract<ActionResult, { ok: false }>): ActionResult => {
+    for (const fn of rejectListeners) fn(result.error);
+    return result;
   };
   const ctx = (): ActionContext => ({ now: deps.clock.now(), rng: deps.rng });
   const guard = deps.instanceGuard;
@@ -136,18 +149,18 @@ export function createGameStore(
   }
 
   /** Catch up time. Persists immediately when anything happened (§7.4 step 6). */
-  function tick(): GameEvent[] {
+  function tick(origin: EventOrigin = 'tick'): GameEvent[] {
     if (snapshot.status !== 'ready' || !snapshot.save) return [];
     const now = deps.clock.now();
     const world = advanceWorld(snapshot.save, now, deps.rng);
     set({ save: world.state });
     if (world.events.length > 0 || now - lastPersistAt >= SAVE.AUTOSAVE_MS) void persist();
-    emit(world.events);
+    emit(world.events, origin);
     return world.events;
   }
 
   const startLoop = () => {
-    if (interval === null) interval = deps.every(tick, SAVE.TICK_MS);
+    if (interval === null) interval = deps.every(() => tick('tick'), SAVE.TICK_MS);
   };
   const stopLoop = () => {
     if (interval !== null) deps.cancel(interval);
@@ -157,7 +170,7 @@ export function createGameStore(
   function becomeReady(save: SaveGame, loadSource: LoadSource | null) {
     lastPersistAt = deps.clock.now();
     set({ status: 'ready', save, loadSource });
-    tick(); // away catch-up; its events build the away summary (§9.5)
+    tick('catchup'); // away catch-up; its events build the away summary (§9.5)
     if (!deps.page || deps.page.isVisible()) startLoop();
   }
 
@@ -169,9 +182,15 @@ export function createGameStore(
       return () => subscribers.delete(fn);
     },
 
-    onEvents(fn: (events: GameEvent[]) => void): () => void {
+    onEvents(fn: EventListener): () => void {
       eventListeners.add(fn);
       return () => eventListeners.delete(fn);
+    },
+
+    /** Rejected actions and imports (`ok: false`): feedback is `ui_error` + a toast (§11.3). */
+    onReject(fn: (error: ErrorCode) => void): () => void {
+      rejectListeners.add(fn);
+      return () => rejectListeners.delete(fn);
     },
 
     /** Load (or create) the save, claim the instance, start the global loop. */
@@ -181,7 +200,7 @@ export function createGameStore(
         unlisten.push(
           deps.page.on('visibilitychange', () => {
             if (deps.page?.isVisible()) {
-              tick();
+              tick('catchup');
               startLoop();
             } else {
               stopLoop();
@@ -202,16 +221,16 @@ export function createGameStore(
       return snapshot.status;
     },
 
-    tick,
+    tick: () => tick('tick'),
 
     /** Runs an action; persists and notifies only on success. */
     async dispatch(action: BoundAction): Promise<ActionResult> {
-      if (!snapshot.save || !canWrite()) return { ok: false, error: 'INVALID_REQUEST' };
+      if (!snapshot.save || !canWrite()) return reject({ ok: false, error: 'INVALID_REQUEST' });
       const result = action(snapshot.save, ctx());
-      if (!result.ok) return result;
+      if (!result.ok) return reject(result);
       set({ save: result.state });
       await persist();
-      emit(result.events);
+      emit(result.events, 'action');
       return result;
     },
 
@@ -225,10 +244,10 @@ export function createGameStore(
     /** Import after confirmation; the previous save goes to the backup key. Invalid → untouched. */
     async importSave(json: string): Promise<ActionResult> {
       if (snapshot.status === 'tooNew' || guard.isReadOnly()) {
-        return { ok: false, error: 'INVALID_REQUEST' };
+        return reject({ ok: false, error: 'INVALID_REQUEST' });
       }
       const parsed = parseImport(json);
-      if (!parsed.ok) return parsed;
+      if (!parsed.ok) return reject(parsed);
       stopLoop();
       becomeReady(parsed.save, null);
       await persist();
@@ -256,6 +275,7 @@ export function createGameStore(
       guard.close();
       subscribers.clear();
       eventListeners.clear();
+      rejectListeners.clear();
     },
   };
 }
