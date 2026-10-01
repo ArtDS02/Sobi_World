@@ -58,3 +58,9 @@ Spec: §4.1 · Phase: S02, store.
 
 **A5** · `BALANCE.ORDER_SLOTS_PER_WINDOW = 3` (số slot sinh mỗi window, §8.14) tách khỏi `ORDER_MAX_ACTIVE = 6` (C1).
 Spec: §6.4, §8.14 · Phase: engine orders.
+
+**S03-1** · `advancePig`: `starving = tHungerZero <= tCleanBelow` (spec §7.2 viết `<`). Với `<`, heo đã đói 0 và cleanliness ≤ 30 (cả hai = 0) bị coi là không đói → hazard không nhân đôi, trái luật "Hunger at 0 doubles the sickness hazard" (§7.2 Rules, D21) và golden "starving hazard" §14.1. Không ảnh hưởng golden khác (khởi đầu 100/100 không có tie).
+Spec: §7.2, §14.1 · Phase: S03.
+
+**S03-2** · `sellPrice` cộng epsilon 1e-9 trước `floor` để tránh lỗi float (vd 1200 × 0.95); test so với phép tính nguyên chính xác cho mọi breed × happiness 0..100.
+Spec: §5.4 · Phase: S03.
