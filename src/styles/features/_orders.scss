@@ -1,0 +1,59 @@
+// Orders board: one card per live order. Owns `.orders*` inside [data-screen="orders"].
+@use '../core' as *;
+
+[data-screen='orders'] {
+  display: grid;
+  gap: $sp-3;
+
+  .orders__title {
+    font-size: $fs-lg;
+  }
+
+  .orders__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: $sp-3;
+  }
+
+  .orders__card {
+    display: grid;
+    gap: $sp-2;
+    align-content: start;
+    padding: $sp-3;
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
+
+    &.is-done {
+      color: $c-text-muted;
+    }
+  }
+
+  .orders__want {
+    font-size: $fs-md;
+    font-weight: $fw-bold;
+  }
+
+  .orders__req,
+  .orders__time {
+    font-size: $fs-sm;
+    color: $c-text-muted;
+  }
+
+  .orders__reward {
+    font-weight: $fw-bold;
+    color: $c-primary-strong;
+  }
+
+  .orders__foot {
+    display: flex;
+    gap: $sp-2;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .orders__done {
+    font-weight: $fw-bold;
+    color: $c-success;
+  }
+}

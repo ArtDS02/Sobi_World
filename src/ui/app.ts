@@ -14,6 +14,7 @@ import {
   openBreedDialog,
   openBuyItemDialog,
   openImportDialog,
+  openOrderDialog,
   openRenameDialog,
   openSellDialog,
   openTroughDialog,
@@ -22,6 +23,7 @@ import { el } from './dom';
 import { renderFarmHint, renderPigPopup, renderWellPopup } from './screens/farmScreen';
 import { renderHistoryScreen } from './screens/historyScreen';
 import { renderInventoryScreen } from './screens/inventoryScreen';
+import { renderOrdersScreen } from './screens/ordersScreen';
 import { renderPlaceholderScreen } from './screens/placeholderScreen';
 import { renderSettingsScreen, type SettingsHandlers } from './screens/settingsScreen';
 import { renderShopScreen, type ShopHandlers, type ShopTab } from './screens/shopScreen';
@@ -210,6 +212,10 @@ export function mountApp(
         return renderInventoryScreen(save, inventory);
       case 'history':
         return renderHistoryScreen(save);
+      case 'orders':
+        return renderOrdersScreen(save, now(), {
+          deliver: (card) => openOrderDialog(dialogs, card, act),
+        });
       case 'settings':
         return renderSettingsScreen(settings);
       default:

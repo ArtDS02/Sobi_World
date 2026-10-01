@@ -1,4 +1,4 @@
-// Sell confirmation, rename and trough-fill dialogs (spec §10.1, §10.2).
+// Sell confirmation, rename, trough-fill, breeding and order dialogs (spec §10.1, §10.2).
 import { renamePig, cleanPigName } from '../core/actions/renamePig';
 import { BREEDS } from '../core/config/breeds';
 import { happiness } from '../core/engine/happiness';
@@ -10,6 +10,7 @@ import type { BoundAction } from '../store/gameStore';
 import type { ItemId } from '../core/config/ids';
 import { itemPurchase, troughFill, troughSpace, type ActionVm } from './actionsVm';
 import { breedingVm } from './breedVm';
+import type { OrderCardVm } from './ordersVm';
 import { actionButton } from './components/actionButton';
 import { openDialog } from './components/dialog';
 import { el } from './dom';
@@ -210,5 +211,21 @@ export function openImportDialog(host: HTMLElement, onConfirm: () => Promise<voi
       attrs: { type: 'button' },
       on: { click: () => void onConfirm().finally(d.close) },
     }),
+  );
+}
+
+/** §8.14: pick which fitting pig is sold into the order. */
+export function openOrderDialog(host: HTMLElement, card: OrderCardVm, act: Act) {
+  const d = openDialog(host, vi.order.pickPig);
+  d.body.append(
+    el('p', { class: 'c-dialog__strong', text: card.want }),
+    el('p', { text: card.reward }),
+    el(
+      'div',
+      { class: 'c-dialog__choices' },
+      ...card.choices.map((c) =>
+        actionButton(c, () => void act(c.run).then(d.close), 'c-button--ghost c-dialog__choice'),
+      ),
+    ),
   );
 }

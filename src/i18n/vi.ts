@@ -209,6 +209,8 @@ export const vi = {
     fulfilled: "Đã giao",
     empty: "Chưa có đơn hàng nào. Đơn mới xuất hiện mỗi 4 tiếng.",
     pickPig: "Chọn heo để giao",
+    pigChoice: "{name} (vui vẻ {happiness})",
+    noMatchingPig: "Chưa có heo đáp ứng đơn này",
   },
 
   collection: {
