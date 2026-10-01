@@ -1,5 +1,6 @@
-// Second-tab detection over BroadcastChannel (spec §9.4): only one tab may write the save.
-import { SAVE } from '../core/config/save';
+// Second-tab detection over BroadcastChannel (spec §9.4, dev browser build only): one tab writes.
+import { SAVE } from '../../core/config/save';
+import type { InstanceGuard } from '../../core/save/port';
 
 export interface ChannelLike {
   postMessage(message: unknown): void;
@@ -69,4 +70,35 @@ export function createTabGuard(
     isReadOnly: () => readOnly,
     close: () => channel?.close(),
   };
+}
+
+/** Adapts the tab guard to the InstanceGuard port; `onReadOnly` is supplied at start. */
+export function createWebInstanceGuard(
+  channel: ChannelLike | null,
+  tabId: string,
+  sleep: (ms: number) => Promise<void>,
+): InstanceGuard {
+  let notify = () => {};
+  const guard = createTabGuard(channel, tabId, sleep, () => notify());
+  return {
+    start(onReadOnly) {
+      notify = onReadOnly;
+      return guard.start();
+    },
+    isReadOnly: guard.isReadOnly,
+    close: guard.close,
+  };
+}
+
+/** The real BroadcastChannel, or null where it does not exist. */
+export function browserChannel(): ChannelLike | null {
+  if (typeof BroadcastChannel === 'undefined') return null;
+  const bc = new BroadcastChannel(SAVE.TAB_CHANNEL);
+  const channel: ChannelLike = {
+    onmessage: null,
+    postMessage: (m) => bc.postMessage(m),
+    close: () => bc.close(),
+  };
+  bc.onmessage = (e) => channel.onmessage?.({ data: e.data as unknown });
+  return channel;
 }

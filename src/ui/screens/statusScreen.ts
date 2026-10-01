@@ -30,3 +30,12 @@ export function renderMultiTabBanner(): HTMLElement {
     }),
   );
 }
+
+/** Persistent banner while a write is failing (§9.2); the store keeps retrying. */
+export function renderSaveErrorBanner(): HTMLElement {
+  return el(
+    'div',
+    { class: 'c-banner', attrs: { role: 'status' } },
+    el('span', { text: vi.saveStatus.error }),
+  );
+}

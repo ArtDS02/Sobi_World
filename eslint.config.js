@@ -13,6 +13,17 @@ const coreRestrictedSyntax = [
     message: 'src/core is pure: inject `now` instead of new Date().',
   },
 ];
+const coreRestrictedGlobals = [
+  'window',
+  'document',
+  'localStorage',
+  'indexedDB',
+  'navigator',
+  'fetch',
+].map((name) => ({
+  name,
+  message: `src/core is pure: ${name} belongs in src/platform (or ui/store/game).`,
+}));
 const mathRandom = {
   selector: "CallExpression[callee.object.name='Math'][callee.property.name='random']",
   message: 'src/core is pure: inject `rng` instead of Math.random().',
@@ -33,23 +44,23 @@ export default tseslint.config(
     files: ['src/core/**/*.ts'],
     rules: {
       'no-restricted-syntax': ['error', ...coreRestrictedSyntax, mathRandom],
+      'no-restricted-globals': ['error', ...coreRestrictedGlobals],
       'no-restricted-imports': [
         'error',
         {
           patterns: [
             {
-              regex: '(^|/)(game|ui|store)(/|$)',
-              message: 'src/core must not import from game/, ui/ or store/.',
+              regex: '(^|/)(game|ui|store|platform)(/|$)',
+              message: 'src/core must not import from game/, ui/, store/ or platform/.',
+            },
+            {
+              regex: '^(idb|electron|node:.*)$',
+              message: 'src/core is pure: storage and Node APIs live outside core.',
             },
           ],
         },
       ],
     },
-  },
-  {
-    // defaultRng is the single allowed Math.random() call site in core.
-    files: ['src/core/rng.ts'],
-    rules: { 'no-restricted-syntax': ['error', ...coreRestrictedSyntax] },
   },
   prettier,
 );

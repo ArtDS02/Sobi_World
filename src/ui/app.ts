@@ -1,4 +1,5 @@
 // App shell: top bar, current screen, bottom nav, toasts, dialogs. Re-renders on store notify.
+import type { FileDialogs } from '../core/save/port';
 import type { Pig, SaveGame } from '../core/types';
 import { vi } from '../i18n/vi';
 import type { BoundAction, GameStore, StoreSnapshot } from '../store/gameStore';
@@ -10,7 +11,11 @@ import { openRenameDialog, openSellDialog, openTroughDialog } from './dialogs';
 import { el } from './dom';
 import { renderFarmScreen } from './screens/farmScreen';
 import { renderPlaceholderScreen } from './screens/placeholderScreen';
-import { renderMultiTabBanner, renderStatusScreen } from './screens/statusScreen';
+import {
+  renderMultiTabBanner,
+  renderSaveErrorBanner,
+  renderStatusScreen,
+} from './screens/statusScreen';
 import { eventToast } from './viewModel';
 
 interface UiState {
@@ -21,6 +26,8 @@ interface UiState {
 export interface AppOptions {
   /** Dev-only toolbar (time travel), injected by main.ts behind import.meta.env.DEV. */
   devTools?: HTMLElement;
+  /** Platform export/import dialogs (§9.3); wired to the settings screen in a later task. */
+  dialogs?: FileDialogs;
 }
 
 /** Replace children only when the markup changed, so a click is never lost to a 1 s re-render. */
@@ -44,12 +51,27 @@ export function mountApp(
   const ui: UiState = { screen: 'farm', selectedPigId: null };
   const topbar = el('header', { class: 'topbar' });
   const banner = el('div', { class: 'app__banner' });
+  const saveBanner = el('div', { class: 'app__banner' });
+  // Fixed host for the Phaser canvas (R05A): never passed to patch(), so it is never replaced.
+  const stage = el('div', { class: 'app__stage' });
   const main = el('main', { class: 'app__main' });
   const navbar = el('nav', { class: 'navbar', attrs: { 'aria-label': vi.app.title } });
   const toasts = el('div', { class: 'c-toast-host', attrs: { 'aria-live': 'polite' } });
   const dialogs = el('div', { class: 'app__dialogs' });
   root.replaceChildren(
-    el('div', { class: 'app' }, topbar, banner, opts.devTools ?? '', main, navbar, toasts, dialogs),
+    el(
+      'div',
+      { class: 'app' },
+      topbar,
+      banner,
+      saveBanner,
+      opts.devTools ?? '',
+      stage,
+      main,
+      navbar,
+      toasts,
+      dialogs,
+    ),
   );
   const toast = createToaster(toasts);
 
@@ -84,6 +106,7 @@ export function mountApp(
 
   function render(snap: StoreSnapshot) {
     patch(banner, snap.readOnly ? renderMultiTabBanner() : null);
+    patch(saveBanner, snap.saveError ? renderSaveErrorBanner() : null);
     if (snap.status !== 'ready' || !snap.save) {
       patch(topbar, null);
       patch(navbar, null);

@@ -249,6 +249,11 @@ export const vi = {
     reload: "Tải lại",
   },
 
+  saveStatus: {
+    error: "Chưa lưu được — đang thử lại...",
+    recovered: "Đã lưu lại được.",
+  },
+
   update: {
     available: "Có bản mới",
     reload: "Tải lại",

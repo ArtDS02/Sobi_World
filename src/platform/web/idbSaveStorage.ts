@@ -1,29 +1,15 @@
-// IndexedDB primary + localStorage mirror + backup (spec §9.1, §9.2).
-// The only file in src/core allowed to touch browser APIs (DECISIONS A1).
+// Dev browser adapter (spec §9.1, §9.2): IndexedDB primary + localStorage mirror + backup.
 import { openDB, type IDBPDatabase } from 'idb';
-import { SAVE } from '../config/save';
-import type { SaveGame } from '../types';
-import { parseSave } from './migrate';
+import { SAVE } from '../../core/config/save';
+import { parseSave } from '../../core/save/migrate';
+import type { LoadSource, SaveStorage } from '../../core/save/port';
+
+export type { LoadResult, LoadSource, SaveStorage } from '../../core/save/port';
 
 /** The subset of localStorage this module uses; injectable for tests. */
 export interface KeyValueStore {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
-}
-
-export type LoadSource = 'primary' | 'mirror' | 'backup';
-
-export type LoadResult =
-  | { kind: 'ok'; save: SaveGame; source: LoadSource }
-  | { kind: 'empty' } // first launch: caller creates newGame
-  | { kind: 'tooNew'; source: LoadSource } // SAVE_TOO_NEW: never overwrite
-  | { kind: 'recovery' }; // all copies invalid: recovery screen, nothing deleted
-
-export interface SaveStorage {
-  /** Read chain: primary → mirror → backup → recovery. Never writes or deletes. */
-  load(): Promise<LoadResult>;
-  /** Backup previous good save, write IndexedDB, then mirror the same JSON string. */
-  save(save: SaveGame): Promise<void>;
 }
 
 export interface StorageOptions {
@@ -96,13 +82,4 @@ export function createSaveStorage(opts: StorageOptions = {}): SaveStorage {
       lastGoodJson = json;
     },
   };
-}
-
-/** §9.4: ask the browser not to evict our data. Call after the first successful action. */
-export async function requestPersistentStorage(): Promise<boolean> {
-  try {
-    return (await globalThis.navigator?.storage?.persist?.()) ?? false;
-  } catch {
-    return false;
-  }
 }

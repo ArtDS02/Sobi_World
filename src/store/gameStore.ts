@@ -4,18 +4,12 @@ import type { Clock } from '../core/clock';
 import { SAVE } from '../core/config/save';
 import { advanceWorld } from '../core/engine/advanceWorld';
 import type { GameEvent } from '../core/events';
-import { randomId, type Rng } from '../core/rng';
+import type { Rng } from '../core/rng';
 import { importSave as parseImport } from '../core/save/exportImport';
 import { newGame } from '../core/save/newGame';
-import {
-  createSaveStorage,
-  requestPersistentStorage,
-  type LoadSource,
-  type SaveStorage,
-} from '../core/save/storage';
+import type { InstanceGuard, LoadSource, SaveStorage } from '../core/save/port';
 import type { ActionContext, ActionResult, SaveGame } from '../core/types';
 import { defaultRng, realClock } from './runtime';
-import { createTabGuard, type ChannelLike } from './tabGuard';
 
 export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew';
 
@@ -25,6 +19,8 @@ export interface StoreSnapshot {
   /** Another tab owns the save (§9.4): show vi.multiTab, refuse actions, never persist. */
   readOnly: boolean;
   loadSource: LoadSource | null;
+  /** The last write failed (§9.2): banner shown, retrying with backoff, memory state kept. */
+  saveError: boolean;
 }
 
 /** An action bound to its arguments, e.g. `(s, c) => buyPig(s, args, c)`. */
@@ -37,15 +33,14 @@ export interface PageLike {
 
 export interface StoreDeps {
   storage: SaveStorage;
+  instanceGuard: InstanceGuard;
   clock: Clock;
   rng: Rng;
   /** The game's single repeating timer (§7.1). */
   every: (fn: () => void, ms: number) => unknown;
   cancel: (handle: unknown) => void;
   sleep: (ms: number) => Promise<void>;
-  channel: ChannelLike | null;
   page: PageLike | null;
-  requestPersist: () => Promise<boolean>;
 }
 
 function browserPage(): PageLike | null {
@@ -60,46 +55,39 @@ function browserPage(): PageLike | null {
   };
 }
 
-function browserChannel(): ChannelLike | null {
-  if (typeof BroadcastChannel === 'undefined') return null;
-  const bc = new BroadcastChannel(SAVE.TAB_CHANNEL);
-  const channel: ChannelLike = {
-    onmessage: null,
-    postMessage: (m) => bc.postMessage(m),
-    close: () => bc.close(),
-  };
-  bc.onmessage = (e) => channel.onmessage?.({ data: e.data as unknown });
-  return channel;
-}
+type DefaultDeps = Omit<StoreDeps, 'storage' | 'instanceGuard'>;
 
-function defaultDeps(): StoreDeps {
+function defaultDeps(): DefaultDeps {
   return {
-    storage: createSaveStorage(),
     clock: realClock,
     rng: defaultRng,
     every: (fn, ms) => globalThis.setInterval(fn, ms),
     cancel: (h) => globalThis.clearInterval(h as number),
     sleep: (ms) => new Promise((resolve) => globalThis.setTimeout(resolve, ms)),
-    channel: browserChannel(),
     page: browserPage(),
-    requestPersist: requestPersistentStorage,
   };
 }
 
-export function createGameStore(overrides: Partial<StoreDeps> = {}) {
+/** Storage and the instance guard come from the platform (main.ts); the store never picks one. */
+export function createGameStore(
+  overrides: Pick<StoreDeps, 'storage' | 'instanceGuard'> & Partial<StoreDeps>,
+) {
   const deps: StoreDeps = { ...defaultDeps(), ...overrides };
   let snapshot: StoreSnapshot = {
     status: 'loading',
     save: null,
     readOnly: false,
     loadSource: null,
+    saveError: false,
   };
   const subscribers = new Set<(s: StoreSnapshot) => void>();
   const eventListeners = new Set<(events: GameEvent[]) => void>();
   let interval: unknown = null;
   let lastPersistAt = 0;
   let persistQueue: Promise<void> = Promise.resolve();
-  let persistRequested = false;
+  let retryStep = 0;
+  let retryScheduled = false;
+  let disposed = false;
   const unlisten: (() => void)[] = [];
 
   const set = (patch: Partial<StoreSnapshot>) => {
@@ -110,17 +98,40 @@ export function createGameStore(overrides: Partial<StoreDeps> = {}) {
     if (events.length > 0) for (const fn of eventListeners) fn(events);
   };
   const ctx = (): ActionContext => ({ now: deps.clock.now(), rng: deps.rng });
-  const guard = createTabGuard(deps.channel, randomId(deps.rng), deps.sleep, () =>
-    set({ readOnly: true }),
-  );
+  const guard = deps.instanceGuard;
   const canWrite = () => snapshot.status === 'ready' && !guard.isReadOnly();
 
-  /** Serialized writes; never runs for a read-only tab or a too-new save. */
+  /** One write; a failure is surfaced as `saveError` and retried, never swallowed (§9.2). */
+  async function write(save: SaveGame): Promise<void> {
+    try {
+      await deps.storage.save(save);
+      retryStep = 0;
+      if (snapshot.saveError) set({ saveError: false });
+    } catch {
+      if (!snapshot.saveError) set({ saveError: true });
+      scheduleRetry();
+    }
+  }
+
+  /** Backoff 1 s → 5 s → 30 s → every 30 s; a retry writes the latest state through the queue. */
+  function scheduleRetry() {
+    if (retryScheduled || disposed) return;
+    retryScheduled = true;
+    const delays = SAVE.SAVE_RETRY_MS;
+    const delay = delays[Math.min(retryStep, delays.length - 1)]!;
+    retryStep += 1;
+    void deps.sleep(delay).then(() => {
+      retryScheduled = false;
+      if (snapshot.saveError && !disposed) void persist();
+    });
+  }
+
+  /** Serialized writes; never runs for a read-only instance or a too-new save. */
   function persist(): Promise<void> {
     const save = snapshot.save;
     if (!save || !canWrite()) return persistQueue;
     lastPersistAt = deps.clock.now();
-    persistQueue = persistQueue.then(() => deps.storage.save(save)).catch(() => undefined);
+    persistQueue = persistQueue.then(() => write(save));
     return persistQueue;
   }
 
@@ -163,9 +174,9 @@ export function createGameStore(overrides: Partial<StoreDeps> = {}) {
       return () => eventListeners.delete(fn);
     },
 
-    /** Load (or create) the save, claim the tab, start the global loop. */
+    /** Load (or create) the save, claim the instance, start the global loop. */
     async init(): Promise<StoreStatus> {
-      await guard.start();
+      await guard.start(() => set({ readOnly: true }));
       if (deps.page) {
         unlisten.push(
           deps.page.on('visibilitychange', () => {
@@ -201,10 +212,6 @@ export function createGameStore(overrides: Partial<StoreDeps> = {}) {
       set({ save: result.state });
       await persist();
       emit(result.events);
-      if (!persistRequested) {
-        persistRequested = true;
-        void deps.requestPersist().catch(() => false);
-      }
       return result;
     },
 
@@ -232,6 +239,7 @@ export function createGameStore(overrides: Partial<StoreDeps> = {}) {
     flush: () => persistQueue,
 
     dispose() {
+      disposed = true;
       stopLoop();
       for (const off of unlisten.splice(0)) off();
       guard.close();

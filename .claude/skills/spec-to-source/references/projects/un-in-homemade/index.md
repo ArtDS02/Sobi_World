@@ -102,7 +102,6 @@ Renderer KHÔNG chạm file system: chỉ qua window.unin (preload, contextBridg
 |---|---|---|---|
 | `src/store/runtime.ts` | `Date.now`, `Math.random` | Một nơi duy nhất sinh thời gian/số thật, ngoài core | `DECISIONS.md` A2, A4 |
 | `config/*.ts` | Chứa `nameVi` tiếng Việt | Spec Phụ lục A viết sẵn như vậy. Chuỗi **hiển thị** vẫn chỉ ở `i18n/vi.ts` | — |
-| `src/core/save/storage.ts` | *(tới hết R01)* IndexedDB/localStorage | Nợ v4.0; R01 chuyển sang `src/platform/web/` rồi xoá ngoại lệ | `DECISIONS.md` A1 → R00-3 |
 
 Ngoài các mục này, không có ngoại lệ nào khác được chấp nhận mà không thêm block mới.
 
@@ -160,8 +159,7 @@ src/styles/
 
 ## 7. Config guard
 
-`.claude/spec-to-source.config.mjs` trong repo game. **Bản đích sau R01** (R01 phải cập nhật file thật cho khớp;
-trước R01 file thật còn ngoại lệ `src/core/save/storage.ts`):
+`.claude/spec-to-source.config.mjs` trong repo game (đã khớp file thật từ R01):
 
 ```js
 export default {
@@ -200,7 +198,7 @@ export default {
 ## 8. Grep guard
 
 ```bash
-# core phải thuần — không ngoại lệ (sau R01)
+# core phải thuần — không ngoại lệ (kể cả comment)
 grep -rn "Date.now()\|Math.random()\|localStorage\|indexedDB\|window\.\|document\.\|fetch(" src/core/
 
 # Node/Electron chỉ trong electron/

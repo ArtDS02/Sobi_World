@@ -15,5 +15,7 @@ export const SAVE = {
   TICK_MS: 1000, // one global interval while visible
   AUTOSAVE_MS: 30_000,
   TAB_CHANNEL: 'un-in-homemade:tabs',
+  /** Backoff after a failed write (§9.2); the last step repeats until a write succeeds. */
+  SAVE_RETRY_MS: [1000, 5000, 30_000],
   TAB_HANDSHAKE_MS: 150, // wait for an existing tab to answer before allowing writes
 } as const;

@@ -1,6 +1,7 @@
-// Entry point: create the store, mount the DOM UI, load the save.
+// Composition root: pick the platform, create the store, mount the DOM UI, load the save.
 import './styles/main.scss';
 import type { Clock } from './core/clock';
+import { createPlatform } from './platform';
 import { createGameStore } from './store/gameStore';
 import { realClock } from './store/runtime';
 import { mountApp, type AppOptions } from './ui/app';
@@ -22,8 +23,13 @@ async function start(root: HTMLElement) {
     };
   }
 
-  const store = createGameStore({ clock });
-  mountApp(root, store, () => clock.now(), opts);
+  const platform = createPlatform();
+  const store = createGameStore({
+    clock,
+    storage: platform.storage,
+    instanceGuard: platform.instanceGuard,
+  });
+  mountApp(root, store, () => clock.now(), { ...opts, dialogs: platform.dialogs });
   await store.init();
 }
 

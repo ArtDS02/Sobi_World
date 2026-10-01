@@ -1,4 +1,4 @@
-/** Used by buyPig and by birth. Pick with the injected rng, never Math.random(). */
+/** Used by buyPig and by birth. Pick with the injected rng, never a global random source. */
 export const PIG_NAME_POOL = [
   "Ủn Hồng", "Ủn Mập", "Ủn Béo", "Ủn Tròn", "Ủn Xinh", "Ủn Ngoan",
   "Ỉn Con", "Ỉn Bé", "Ỉn Múp", "Ỉn Nhỏ", "Bé Ủn", "Bé Ỉn",

@@ -6,14 +6,14 @@ import { sellPig } from '../../src/core/actions/sellPig';
 import { fakeClock, type FakeClock } from '../../src/core/clock';
 import { SAVE } from '../../src/core/config/save';
 import type { GameEvent } from '../../src/core/events';
-import { mulberry32 } from '../../src/core/rng';
+import { mulberry32, randomId } from '../../src/core/rng';
 import {
   createSaveStorage,
   type KeyValueStore,
   type SaveStorage,
-} from '../../src/core/save/storage';
+} from '../../src/platform/web/idbSaveStorage';
 import { createGameStore, type PageLike, type StoreDeps } from '../../src/store/gameStore';
-import type { ChannelLike } from '../../src/store/tabGuard';
+import { createWebInstanceGuard, type ChannelLike } from '../../src/platform/web/tabGuard';
 
 const SEC = 1000;
 const T0 = 1_700_000_000_000;
@@ -99,20 +99,23 @@ beforeEach(() => {
   clock = fakeClock(T0);
 });
 
-function makeStore(extra: Partial<StoreDeps> = {}) {
+type MakeStoreExtra = Partial<StoreDeps> & { channel?: ChannelLike | null };
+
+function makeStore({ channel = null, ...extra }: MakeStoreExtra = {}) {
   const { storage, counter } = countingStorage(local);
   const timers = fakeTimers();
   const page = fakePage();
+  const rng = extra.rng ?? mulberry32(11);
+  const sleep = () => new Promise<void>((r) => setTimeout(r, 0));
   const store = createGameStore({
     storage,
+    instanceGuard: createWebInstanceGuard(channel, randomId(rng), sleep),
     clock,
-    rng: mulberry32(11),
+    rng,
     every: timers.every,
     cancel: timers.cancel,
-    sleep: () => new Promise((r) => setTimeout(r, 0)),
-    channel: null,
+    sleep,
     page,
-    requestPersist: async () => true,
     ...extra,
   });
   return { store, counter, timers, page };
@@ -267,5 +270,58 @@ describe('gameStore', () => {
     expect((await store.importSave(JSON.stringify(other))).ok).toBe(true);
     expect(store.getSnapshot().save!.player.gold).toBe(42);
     expect(local.getItem(SAVE.BACKUP_KEY)).toBe(JSON.stringify(current));
+  });
+
+  it('a failed write sets saveError, keeps state, retries 1 s → 5 s → 30 s, clears on success', async () => {
+    const delays: number[] = [];
+    const wakers: (() => void)[] = [];
+    const sleep = (ms: number) => {
+      delays.push(ms);
+      return new Promise<void>((r) => wakers.push(r));
+    };
+    const { storage: real } = countingStorage(local);
+    let failing = true;
+    let inFlight = 0;
+    let overlapped = false;
+    const storage: SaveStorage = {
+      load: () => real.load(),
+      save: async (s) => {
+        inFlight += 1;
+        if (inFlight > 1) overlapped = true;
+        await new Promise((r) => setTimeout(r, 0));
+        inFlight -= 1;
+        if (failing) throw new Error('disk full');
+        await real.save(s);
+      },
+    };
+    const guard = createWebInstanceGuard(null, 't', async () => {});
+    const { store } = makeStore({ storage, instanceGuard: guard, sleep });
+    await store.init();
+    expect(store.getSnapshot().saveError).toBe(true);
+    expect(store.getSnapshot().status).toBe('ready');
+
+    const r = await store.dispatch(buy);
+    expect(r.ok).toBe(true);
+    expect(store.getSnapshot().save!.pigs).toHaveLength(1); // memory state kept
+    expect(delays).toEqual([1000]); // one pending retry, not one per failure
+
+    for (let i = 0; i < 4; i++) {
+      wakers.shift()!();
+      await new Promise((r) => setTimeout(r, 5));
+      await store.flush();
+    }
+    expect(delays).toEqual([1000, 5000, 30_000, 30_000, 30_000]);
+    expect(store.getSnapshot().saveError).toBe(true);
+
+    failing = false;
+    wakers.shift()!();
+    await new Promise((r) => setTimeout(r, 5));
+    await store.flush();
+    expect(store.getSnapshot().saveError).toBe(false);
+    expect(overlapped).toBe(false);
+
+    const reloaded = makeStore().store;
+    await reloaded.init();
+    expect(reloaded.getSnapshot().save!.pigs).toHaveLength(1);
   });
 });

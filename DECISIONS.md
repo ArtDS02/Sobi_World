@@ -138,3 +138,6 @@ Spec: §20 · Phase: —.
 Spec: §16 · Phase: R02+.
 
 **R00-10** · `hướng_dẫn_triển_khai.md` và `DESIGN_README.md` còn mô tả PWA — đã lỗi thời về runtime/save; vẫn không đọc (CLAUDE.md). Nguồn đúng: spec v4.1 + file này.
+
+**R01-1** · `InstanceGuard.start(onReadOnly)` nhận callback lúc start (tabGuard cũ nhận lúc tạo) để platform tạo guard trước store. Tab id sinh ở platform (`crypto.randomUUID()`), không qua rng của store. `navigator.storage.persist()` + `requestPersist` bỏ theo §9.4 v4.1. Retry ghi lỗi đi qua cùng hàng đợi (không ghi chồng), ghi trạng thái mới nhất; chỉ 1 retry chờ tại một thời điểm. `vi.saveStatus.recovered` chưa dùng (toast phải qua FeedbackDirector — R05B).
+Spec: §9.1–9.4 · Phase: R01.

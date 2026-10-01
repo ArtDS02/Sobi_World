@@ -33,7 +33,7 @@ const hungerRate = (pig: Pig): number => BALANCE.HUNGER_MAX / BREEDS[pig.breed].
  * Credits every auto-feed of the window [pig.lastTickedAt, now] as hunger, in slotIndex order.
  *
  * Intentional approximation (DECISIONS Q4): meals are added up front and advancePig then
- * subtracts decay for the same window. Hunger is NOT capped at 100 here (DECISIONS S04A-1):
+ * subtracts decay for the same interval. Hunger is NOT capped at 100 here (DECISIONS S04A-1):
  * the intermediate value may exceed 100 and is only valid as input to advancePig over the
  * same window — use `advanceWithTrough`, never this function alone.
  */

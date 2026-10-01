@@ -4,7 +4,7 @@ import { openDB } from 'idb';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { SAVE } from '../../src/core/config/save';
 import { importSave } from '../../src/core/save/exportImport';
-import { createSaveStorage, type KeyValueStore } from '../../src/core/save/storage';
+import { createSaveStorage, type KeyValueStore } from '../../src/platform/web/idbSaveStorage';
 import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';
 
