@@ -10,4 +10,10 @@ export const SAVE = {
   BREEDING_RECORDS_MAX: 100,
   EXPORT_REMINDER_DAYS: 7,
   EXPORT_FILE_PREFIX: 'un-in-save-',
+
+  // Runtime loop (§7.1, §9.1, §9.4)
+  TICK_MS: 1000, // one global interval while visible
+  AUTOSAVE_MS: 30_000,
+  TAB_CHANNEL: 'un-in-homemade:tabs',
+  TAB_HANDSHAKE_MS: 150, // wait for an existing tab to answer before allowing writes
 } as const;

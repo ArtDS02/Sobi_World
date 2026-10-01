@@ -90,3 +90,9 @@ Spec: §8.10, §8.12 · Phase: S06A.
 
 **S06B-1** · `fillTrough` luôn ghi đúng 1 transaction `TROUGH_FILL`, kể cả amount 0 khi lấy hết từ kho (§8.6 "0 if it all came from inventory"); `changeGold` chuẩn hoá -0 → 0. `units` không phải số nguyên ≥ 1 → INVALID_REQUEST. Cap sức chứa `BALANCE.TROUGH_CAPACITY_MAX = 120` áp trong `troughCapacityForLevel`. Note transaction là chuỗi máy (tiếng Anh), không hiển thị trực tiếp.
 Spec: §8.6 · Phase: S06B.
+
+**S07-1** · Store API (`src/store/gameStore.ts`): `init()` → status `ready | recovery | tooNew`; `dispatch((s, c) => action(s, args, c))`; `tick()`; `startNewGame()`/`importSave(json)` (UI hỏi xác nhận trước); `subscribe` (snapshot) + `onEvents` (GameEvent[]). Persist: sau action thành công, khi tick có event, khi ≥ 30 s từ lần ghi cuối, khi hidden và pagehide. Một `setInterval` 1 s duy nhất, dừng khi hidden, tick + chạy lại khi visible. `requestPersist()` gọi sau action thành công đầu tiên. Action bị từ chối khi read-only/tooNew/recovery → `INVALID_REQUEST` (ErrorCode không có mã riêng).
+Spec: §4, §7.1, §9.1, §9.4 · Phase: S07, UI.
+
+**S07-2** · Multi-tab (`src/store/tabGuard.ts`): tab mới gửi `hello`, chờ 150 ms; tab khác trả `here {primary}`. Nhận `here` từ tab primary (hoặc tab id nhỏ hơn khi cùng khởi động) → read-only vĩnh viễn (`snapshot.readOnly`, UI hiện vi.multiTab, nút tải lại); tab read-only không bao giờ ghi. Multi-tab báo qua snapshot, không thêm GameEvent.
+Spec: §9.4 · Phase: S07, UI.
