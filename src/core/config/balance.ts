@@ -17,7 +17,8 @@ export const BALANCE = {
 
   // Trough (D17)
   TROUGH_AUTO_FEED_AT: 50, // a pig auto-eats when hunger falls to this
-  TROUGH_CAPACITY_PER_LEVEL: 10, // capacity = START + (level-1) * this, cap 120 (unreachable, DECISIONS Q6)
+  TROUGH_CAPACITY_PER_LEVEL: 10, // capacity = START + (level-1) * this, capped below
+  TROUGH_CAPACITY_MAX: 120, // §8.6; unreachable at MAX_LEVEL 10 (DECISIONS Q6)
 
   // Happiness (D18)
   HAPPY_CLEAN_WEIGHT: 0.55,

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { fillTrough } from '../../src/core/actions/fillTrough';
 import { advancePig } from '../../src/core/engine/advancePig';
 import { advanceWorld } from '../../src/core/engine/advanceWorld';
 import { advanceWithTrough, resolveTrough, type Trough } from '../../src/core/engine/trough';
@@ -67,7 +68,15 @@ describe('§14.2 trough', () => {
     expect(out.pigs.map((p) => +p.growthProgress.toFixed(2))).toEqual([100, 33.33, 33.33, 33.33]);
   });
 
-  it.todo('fillTrough beyond capacity gives TROUGH_FULL and changes nothing (actions phase)');
+  it('fillTrough beyond capacity gives TROUGH_FULL and changes nothing', () => {
+    const s = makeState([], 18);
+    const before = structuredClone(s);
+    expect(fillTrough(s, { units: 3 }, { now: 0, rng: neverSick() })).toEqual({
+      ok: false,
+      error: 'TROUGH_FULL',
+    });
+    expect(s).toEqual(before);
+  });
 });
 
 describe('trough closed form vs step simulation', () => {

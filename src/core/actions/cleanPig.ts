@@ -1,0 +1,44 @@
+// cleanPig (spec §8.3) and cleanAll (§8.4). Cleaning never cures sickness.
+import { BALANCE } from '../config/balance';
+import type { GameEvent } from '../events';
+import { addXP } from '../engine/xp';
+import type { ActionContext, ActionResult, Pig, SaveGame } from '../types';
+import { ok, runAction } from './runAction';
+
+/** Cleans the given dirty pigs; XP per pig only when cleanliness was <= 70 (D11). */
+function cleanPigs(s: SaveGame, dirty: readonly Pig[]): { state: SaveGame; events: GameEvent[] } {
+  const ids = new Set(dirty.map((p) => p.id));
+  const cleaned: SaveGame = {
+    ...s,
+    pigs: s.pigs.map((p) => (ids.has(p.id) ? { ...p, cleanliness: BALANCE.CLEAN_MAX } : p)),
+  };
+  const effective = dirty.filter(
+    (p) => p.cleanliness <= BALANCE.XP_EFFECTIVE_CLEAN_MAX_CLEAN,
+  ).length;
+  return addXP(cleaned, effective * BALANCE.XP.CLEAN);
+}
+
+export function cleanPig(
+  state: SaveGame,
+  args: { pigId: string },
+  ctx: ActionContext,
+): ActionResult {
+  return runAction(state, ctx, (s) => {
+    const pig = s.pigs.find((p) => p.id === args.pigId);
+    if (!pig) return { ok: false, error: 'PIG_NOT_FOUND' };
+    if (pig.cleanliness >= BALANCE.CLEAN_MAX) return { ok: false, error: 'ALREADY_CLEAN' };
+    const r = cleanPigs(s, [pig]);
+    return ok(r.state, r.events);
+  });
+}
+
+/** Never errors; a clean farm returns ok with no events. */
+export function cleanAll(state: SaveGame, ctx: ActionContext): ActionResult {
+  return runAction(state, ctx, (s) => {
+    const r = cleanPigs(
+      s,
+      s.pigs.filter((p) => p.cleanliness < BALANCE.CLEAN_MAX),
+    );
+    return ok(r.state, r.events);
+  });
+}

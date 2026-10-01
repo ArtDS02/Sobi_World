@@ -10,9 +10,12 @@ export function levelFromXp(xp: number): number {
   return Math.min(level, BALANCE.MAX_LEVEL);
 }
 
-/** Trough capacity for a level: START + (level-1) * PER_LEVEL. */
+/** Trough capacity for a level: min(MAX, START + (level-1) * PER_LEVEL) (§8.6). */
 export const troughCapacityForLevel = (level: number): number =>
-  BALANCE.START_TROUGH_CAPACITY + (level - 1) * BALANCE.TROUGH_CAPACITY_PER_LEVEL;
+  Math.min(
+    BALANCE.TROUGH_CAPACITY_MAX,
+    BALANCE.START_TROUGH_CAPACITY + (level - 1) * BALANCE.TROUGH_CAPACITY_PER_LEVEL,
+  );
 
 type SlotNumber = keyof typeof BALANCE.SLOT_UNLOCKS;
 

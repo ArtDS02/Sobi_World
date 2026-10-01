@@ -13,6 +13,7 @@ export function changeGold(
   ctx: ActionContext,
   ref: { refId?: string; note?: string } = {},
 ): GoldResult {
+  amount = amount === 0 ? 0 : amount; // normalise -0 (e.g. -0 * price) so records read as 0
   const gold = state.player.gold + amount;
   if (gold < 0) return { ok: false, error: 'INSUFFICIENT_GOLD' };
   const tx = { id: randomId(ctx.rng), at: ctx.now, type, amount, ...ref };
