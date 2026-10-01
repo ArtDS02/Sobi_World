@@ -1,9 +1,10 @@
 # UN IN HOMEMADE — SOLO EDITION
-## Implementation Specification v4.0
+## Implementation Specification v4.1 — Desktop Edition
 
 **Document type:** Game design + technical specification for an AI coding agent
-**Target:** Progressive Web App (PWA) — desktop + mobile browser, installable, fully playable offline after first load
+**Target:** Windows desktop game. One installer (`.exe`) creates a Desktop and Start Menu shortcut; double-click opens the game. No terminal, no Node, no localhost, no port, no server process. Fully playable offline from the very first launch.
 **Scope:** Single player. No server, no accounts, no friends/social, no network calls at runtime.
+**v4.1 change:** the runtime moved from PWA to a desktop shell, the save moved from browser storage to files, and the asset/presentation pipeline was made explicit. Game rules are unchanged. See §19.1.
 **In-game language:** Vietnamese. All player-facing strings live in `src/i18n/vi.ts`.
 **Supersedes:** `UN_IN_GAME_SPEC_v3_SOLO.md`
 **Companion documents:**
@@ -25,7 +26,8 @@ This document is the source of truth for game rules. The coding AI MUST:
 - Treat every item marked **[D#]** in Section 2 as a fixed decision.
 - When something is genuinely undefined, choose the simplest option and record it in `README.md` under "Implementation assumptions".
 - Keep all gameplay logic in `src/core/` as pure TypeScript (Section 4).
-- Not add: backend, database server, accounts, analytics, ads, monetization, in-app purchase, multiplayer, or runtime network requests.
+- Not add: backend, database server, local HTTP server or open port, SQLite, accounts, analytics, ads, monetization, in-app purchase, multiplayer, auto-updater, or runtime network requests.
+- Keep the presentation driven by ids and events: gameplay code never names an asset file (only ids resolved through `assets.json`, §11 and the art standard §7), and every animation, effect and sound is triggered by a `GameEvent` or by derived state (§11.3), never by the UI guessing what an action did.
 - Use original or generated assets only. Never copy sprites, sounds, logos, UI or code from any existing commercial game.
 - Not start Section 20 (Backlog) unless explicitly asked.
 
@@ -63,8 +65,8 @@ The spec has **4 breeds**. The asset bible has **116 pig concepts and 129 cosmet
 
 | ID | Decision | Status |
 |---|---|---|
-| D1 | Platform is a PWA (web), one codebase for PC and mobile. Capacitor wrapping is a post-v1 option and must not be designed against now. | CONFIRMED |
-| D2 | No backend. Save lives in **IndexedDB** as one versioned JSON document, with a `localStorage` mirror as crash fallback, plus JSON export/import. | CHANGED (v3: localStorage only) |
+| D1 | Platform is a **Windows desktop app**: an Electron shell around one TypeScript/Vite codebase, shipped as an NSIS installer with Desktop and Start Menu shortcuts (§13). The browser build (`npm run dev`) is a development target only, never a product. No mobile target in v1. | CHANGED (v4.0: PWA, PC + mobile) |
+| D2 | No backend, no server process, no database. The save is one versioned JSON document stored as a **file** in the per-user data directory, written atomically with rotating backups, behind the `SaveStorage` port (§9). JSON export/import uses native file dialogs. The dev browser build uses an IndexedDB adapter behind the same port. | CHANGED (v4.0: IndexedDB + localStorage mirror) |
 | D3 | `growthStage` is derived from `growthProgress`, never stored: BABY `< 30`, YOUNG `30 <= p < 100`, ADULT `= 100`. | CONFIRMED |
 | D4 | ADULT is the final stage. Hunger and cleanliness keep decaying in every stage. | CONFIRMED |
 | D5 | Sickness uses the exponential model of Section 7.2 — memoryless, so the result does not depend on how often the engine runs. | CONFIRMED |
@@ -86,6 +88,9 @@ The spec has **4 breeds**. The asset bible has **116 pig concepts and 129 cosmet
 | D21 | Pigs never die and are never removed by neglect. Neglect costs **time and sell price**, nothing else. This is a relaxing game. | NEW |
 | D22 | `pregnancySec` is per breed (the mother's breed), not one global constant. | CHANGED (v3: flat 3,600 s) |
 | D23 | Sprites are drawn **facing right only**; left is a horizontal flip at runtime. Back and front views are never produced. See the art standard, section 2. | NEW |
+| D24 | Every asset (image, sprite sheet, audio, layout) is addressed by a stable **id** and resolved through `public/assets/manifest/assets.json` (manifest v2, art standard §7.2). Each row carries a lifecycle `status`: `placeholder` → `production` → `final`. The game must run, complete, with every row at `placeholder`; upgrading art is a file + row change, never a TypeScript change. | NEW (v4.1) |
+| D25 | Every successful action emits at least one `GameEvent` (§8.0). Presentation — animation, VFX, sound, toast — is driven only by events and derived state through one `FeedbackDirector` (§11.3). The render loop is visual only and never writes game state. | NEW (v4.1) |
+| D26 | Distribution: per-user NSIS installer, app icon, Desktop + Start Menu shortcut. Uninstalling keeps the save. A new version is installed over the old one; save migrations (§9.2) handle the rest. No auto-updater, no code-signing requirement for v1. | NEW (v4.1) |
 
 ---
 
@@ -131,42 +136,55 @@ Compared with v3 the loop now has: a reason to prepare before logging off (troug
 - Phaser 3 — farm world, pigs, animations, effects only
 - Plain DOM/CSS overlays for all menus, panels and modals
 - `zod` — validate save data on load and import
-- `idb` (or hand-written IndexedDB wrapper) — save storage (D2)
-- `vite-plugin-pwa` — manifest and service worker
-- Vitest — unit and integration tests; Playwright — one optional smoke test
-- No Node/Express/MongoDB/Socket.io/Docker
+- Electron — desktop shell (main process + preload + renderer), `electron-builder` — NSIS installer (D1, D26)
+- `idb` — IndexedDB adapter for the **dev browser build only** (D2)
+- Vitest — unit and integration tests; Playwright (`_electron`) — one smoke test against the packaged app
+- No Node/Express/MongoDB/Socket.io/Docker, no SQLite, no HTTP server of any kind, no `vite-plugin-pwa`/service worker
+
+Layers (the arrows are the only allowed dependency directions):
 
 ```text
-Browser
- ├── DOM UI  ─┐
- ├── Phaser  ─┼──► gameStore ──► core (pure functions) ──► SaveGame
- └── Audio   ─┘                          │
-                            IndexedDB (save) + localStorage (mirror)
+Application (Ủn Ỉn Homemade.exe)
+├── Presentation   src/ui (DOM menus/HUD) · src/game (Phaser farm) · src/game/feedback (FeedbackDirector)
+│        │ dispatch / subscribe / onEvents
+├── Application    src/store (gameStore: one 1 s loop, dispatch, persist policy, event fan-out)
+│        │
+├── Game Core      src/core (pure: config, engine, actions, events, save schema/migrate, asset schema)
+│        │ SaveStorage port (load/save), AssetSource port
+├── Data/Platform  src/platform/desktop (file save via preload IPC) · src/platform/web (IndexedDB, dev only)
+└── Runtime        electron/ (main: window, app:// protocol, single instance, file IO, dialogs; preload: contextBridge)
 ```
 
 Data flow for every gameplay action:
 
 ```text
-UI click → gameStore.dispatch(action)
+Input (DOM button / Phaser pointer) → gameStore.dispatch(action)
         → advanceWorld(state, now, rng)   // catch up time first
-        → action(state, args, {now, rng}) // validate + return new state
-        → persist                          // IndexedDB write + localStorage mirror
-        → notify UI/Phaser + play events (toast/sound/animation)
+        → action(state, args, {now, rng}) // validate + return { state, events }
+        → commit + notify subscribers      // DOM HUD, MainFarmScene.reconcile(state)
+        → FeedbackDirector(events)         // animation → VFX → sound → toast (§11.3)
+        → persist via SaveStorage           // async; failure is surfaced, never swallowed (§9.2)
 ```
+
+Two loops, never mixed: the **simulation loop** (one 1 s interval in the store, §7.1) is the only thing that changes state; the **render loop** (Phaser, ~60 fps) only draws, tweens and plays effects.
 
 ## 4.1 Directory structure
 
 ```text
 un-in-homemade/
+├── build/                     # installer resources: icon.ico, icon.png (1024), installer art
+├── electron/                  # Runtime. Node APIs allowed here only.
+│   ├── main.ts                # window, app:// protocol, single-instance, IPC handlers, quit flush
+│   ├── preload.ts             # contextBridge → window.unin (save, dialogs, app)
+│   └── saveFiles.ts           # atomic write, backup rotation, read chain (§9.1)
 ├── public/
-│   ├── icons/                 # pwa-192.png, pwa-512.png
 │   └── assets/
 │       ├── pigs/{base,skins,cosmetics}/
-│       ├── buildings/ props/ ui/ fx/ audio/
-│       └── manifest/assets.json      # asset manifest, see art standard §7
+│       ├── environment/ buildings/ props/ ui/ fx/ audio/
+│       └── manifest/assets.json      # manifest v2, see art standard §7.2
 ├── src/
-│   ├── core/                  # PURE TypeScript. No DOM, no Phaser,
-│   │   │                      # no Date.now(), no Math.random() inside.
+│   ├── core/                  # PURE TypeScript. No DOM, no Node, no Phaser,
+│   │   │                      # no Date.now(), no Math.random(), no exceptions.
 │   │   ├── config/            # breeds, items, skins, breedingMatrix,
 │   │   │                      # levels, orders, balance, errors
 │   │   ├── engine/            # advancePig, advanceWorld, trough, pricing,
@@ -174,28 +192,33 @@ un-in-homemade/
 │   │   ├── actions/           # feedPig, cleanPig, treatPig, buyPig, sellPig,
 │   │   │                      # breedPigs, buySlot, renamePig, fillTrough,
 │   │   │                      # buySkin, equipSkin, fulfillOrder
-│   │   ├── save/              # schema, migrate, storage, exportImport
-│   │   ├── rng.ts             # Rng interface, seeded rng (tests), default rng
-│   │   ├── clock.ts           # Clock interface (real + fake)
+│   │   ├── save/              # schema, migrate, exportImport, port.ts (SaveStorage interface)
+│   │   ├── assets/            # manifestSchema (zod), registry (id → entry, fallbacks)
+│   │   ├── rng.ts             # Rng interface, seeded rng (tests)
+│   │   ├── clock.ts           # Clock interface + fake clock
 │   │   ├── events.ts          # GameEvent types
 │   │   └── types.ts
-│   ├── store/gameStore.ts
-│   ├── game/                  # Phaser: scenes/, prefabs/, config/
+│   ├── platform/              # Data layer adapters. Browser/IPC APIs allowed here.
+│   │   ├── index.ts           # Platform interface + detection (window.unin present → desktop)
+│   │   ├── desktop/           # FileSaveStorage, native dialogs, instance guard (via window.unin)
+│   │   └── web/               # IdbSaveStorage, download/upload, BroadcastChannel tab guard (dev)
+│   ├── store/                 # gameStore, runtime (realClock, defaultRng)
+│   ├── game/                  # Phaser: scenes/, prefabs/, fx/, audio/, feedback/, config/
 │   ├── ui/                    # DOM components/screens
 │   ├── i18n/vi.ts
 │   └── main.ts
 ├── tests/{unit,e2e}/
-├── scripts/simulate-economy.ts
+├── scripts/                   # simulate-economy, make-placeholders, assets-check, process-art
 └── README.md
 ```
 
-Rule, unchanged from v3 and non-negotiable: `src/core/` must never import from `game/`, `ui/`, `store/` or any browser API. `now` and `rng` are always injected.
+Rule, non-negotiable: `src/core/` never imports from `game/`, `ui/`, `store/`, `platform/` or any browser/Node API — with **no file-level exceptions** (v4.0 allowed `save/storage.ts`; v4.1 moves storage to `src/platform/`). `now` and `rng` are always injected. Browser APIs live in `src/platform/`, `src/store/`, `src/ui/`, `src/game/`; Node APIs live only in `electron/`.
 
 ---
 
 # 5. DATA MODEL
 
-All timestamps are epoch milliseconds. IndexedDB database `un-in-homemade`, store `saves`, key `current`. Mirror key in localStorage: `un-in-homemade:save:mirror`. Backup key: `un-in-homemade:save:backup`.
+All timestamps are epoch milliseconds. Where the save document is stored is the platform's business (§9.1); the document itself is identical on every platform.
 
 ## 5.1 Save document
 
@@ -496,7 +519,8 @@ interface SkinDef {
   priceGold: number | null;      // null = not purchasable, unlock only
   unlock?: { kind: "LEVEL"; level: number } | { kind: "COLLECTION"; count: number };
   allowedBreeds: BreedId[] | "ALL";
-  asset: string;                 // path into the asset manifest
+  // v4.1: no `asset` path here. The skin id IS its asset id; the file path,
+  // sleep frame and anchors live only in the manifest row with the same id (D24).
 }
 ```
 
@@ -638,6 +662,27 @@ TROUGH_FULL  SKIN_NOT_OWNED  SKIN_ALREADY_OWNED  SKIN_BREED_NOT_ALLOWED
 ORDER_NOT_FOUND  ORDER_EXPIRED  ORDER_REQUIREMENTS_NOT_MET
 ```
 
+## 8.0 Action feedback events (D25, v4.1)
+
+Every successful action returns at least one event describing **what the player did**, in addition to any world events produced by the catch-up. These events are pure data; they are what the presentation layer animates and sounds (§11.3). The UI must never infer feedback by diffing states.
+
+| Action | Event(s) |
+|---|---|
+| `buyPig` | `PIG_BOUGHT { pigId, breed }` (+ `DISCOVERY` when new) |
+| `feedPig` | `PIG_FED { pigId }` |
+| `cleanPig` / `cleanAll` | `PIG_CLEANED { pigIds }` |
+| `treatPig` | `PIG_TREATED { pigId }` |
+| `fillTrough` | `TROUGH_FILLED { units, fromInventory, gold }` |
+| `buyItem` | `ITEM_BOUGHT { itemId, quantity, gold }` |
+| `sellPig` | `PIG_SOLD { pigId, gold }` |
+| `renamePig` | `PIG_RENAMED { pigId }` |
+| `buySlot` | `SLOT_BOUGHT { slots, gold }` |
+| `breedPigs` | `BREEDING_STARTED { motherId, fatherId, endsAt }` |
+| `buySkin` / `equipSkin` | `SKIN_BOUGHT { skinId, gold }` / `SKIN_EQUIPPED { pigId, skinId }` |
+| `fulfillOrder` | `ORDER_FULFILLED { orderId, gold }` |
+
+`XP` gains that cross a level boundary add `LEVEL_UP` (already in §7.4). Gold amounts in events are signed as in the transaction, so `coin_collect` (§12) is "any event whose `gold > 0`".
+
 ## 8.1 `buyPig({ breed, gender })`
 - `breed` must be PIG_EARTH_PINK, else `INVALID_REQUEST`. `gender` must be MALE or FEMALE (D6).
 - `freeSlots >= 1` else `NO_PIG_SLOT`; `gold >= 500` else `INSUFFICIENT_GOLD`.
@@ -755,26 +800,37 @@ Orders are the difference between "sell whatever is ready" and "plan which pig t
 # 9. PERSISTENCE
 
 ## 9.1 Save and load (D2)
-- Persist after every successful action, on every event from `advanceWorld`, every 30 s while the tab is open, and on `visibilitychange -> hidden` and `pagehide`.
-- Primary store is IndexedDB (async, no main-thread jank, room to grow). After each successful IndexedDB write, mirror the same JSON string into `localStorage` under the mirror key — that mirror is what recovers the game if IndexedDB is wiped or a write is interrupted.
-- Validate with a `zod` schema on load. Before overwriting, copy the previous good save to the backup key.
+- Persist after every successful action, on every event from `advanceWorld`, every 30 s while the window is visible, on `visibilitychange -> hidden` (window minimised) and `pagehide`, and when the main process asks for a flush before quitting (§13.1). The store keeps one write queue; writes never overlap.
+- The store talks to storage only through the `SaveStorage` port (`src/core/save/port.ts`): `load(): Promise<LoadResult>` and `save(save): Promise<void>`. Parsing, validation (`zod`) and migration stay in core; the adapter only moves JSON strings.
+- **Desktop adapter (the product).** Files live in the per-user data directory (`app.getPath('userData')`, on Windows `%APPDATA%\Un In Homemade\`):
+
+  ```text
+  saves/save.json                         current save
+  saves/save.json.tmp                     write target: write → flush → rename over save.json (atomic)
+  saves/backups/save-YYYYMMDD-HHmmss.json rotating backups, newest 10 kept
+  ```
+
+  A backup is taken from the last good `save.json` before the first write of each session and then at most once every 15 minutes, so the 10 backups span hours, not seconds. The renderer never touches the file system: it calls `window.unin.save.*`, which the preload forwards over IPC to `electron/saveFiles.ts`.
+- **Dev browser adapter.** IndexedDB database `un-in-homemade`, store `saves`, key `current`, plus the v4.0 localStorage mirror (`un-in-homemade:save:mirror`) and backup (`un-in-homemade:save:backup`). Kept so `npm run dev` stays a fast iteration loop; it is not shipped.
 - First launch creates the starter state (D7) with an `INITIAL_GOLD` transaction.
 
-Why IndexedDB rather than v3's localStorage: localStorage writes are synchronous on the main thread, and v3 asked for a write after every action *and* on every 1-second tick that produced an event. At 12 pigs with transaction history that is a visible stutter on a mid-range phone. Both stores are subject to the same eviction policy, so this is a performance decision, not a durability one — durability comes from `persist()` and export.
+Why files rather than SQLite or a local server: the save is one small document (at most 12 pigs, 200 transactions, 100 breeding records — tens of kilobytes) that is always read and written whole. A database adds a native module and a schema with nothing to query; a local HTTP API adds a port and a firewall prompt. A JSON file with atomic replace and backups is the simplest thing that is also durable, inspectable and easy to copy between machines.
 
 ## 9.2 Corruption and safety
-- If the IndexedDB save fails validation, try the localStorage mirror, then the backup key. If all fail, show a **recovery screen** offering import-from-file or start-new-game with an explicit confirmation. **Never silently wipe.**
-- `schemaVersion` greater than the app's version gives `SAVE_TOO_NEW`; refuse to overwrite it.
+- Read chain: `save.json` → newest valid backup → next backup … → **recovery screen** offering choose-a-backup, import-from-file, or start-new-game with an explicit confirmation. (Browser adapter: primary → mirror → backup → recovery.) **Never silently wipe, never delete a file that failed to parse** — rename it to `save.corrupt-YYYYMMDD-HHmmss.json` so it can be inspected.
+- `schemaVersion` greater than the app's version gives `SAVE_TOO_NEW`; stop the chain (do not fall back to an older copy) and refuse every write.
 - `migrate(raw)` runs sequential `vN -> vN+1` migrations. v3 saves are `schemaVersion: 1`; the v1 to v2 migration must add `trough`, `orders`, `collection`, `player.ownedSkins`, `settings.reduceMotion`, and set `skinId`/`cosmetics` on every existing pig from the breed defaults. Unit-test each migration plus a "future version" case.
+- **A failed write is never swallowed.** The store exposes `saveError` in its snapshot; the UI shows a persistent banner ("Chưa lưu được — đang thử lại"), the store retries with backoff (1 s, 5 s, 30 s, then every 30 s), and the in-memory state is kept. Quitting while a write is pending waits for the queue (at most 3 s) before the window closes.
 
 ## 9.3 Export and import
-- Settings screen offers **Export save** (downloads `un-in-save-YYYYMMDD-HHmm.json`) and **Import save** (file picker, validate, confirm overwrite, keep the old save as backup).
-- Update `settings.lastExportAt`. If the last export is older than 7 days, show one gentle reminder per session.
+- Settings screen offers **Export save** (native save dialog, default name `un-in-save-YYYYMMDD-HHmm.json`), **Import save** (native open dialog, validate, confirm overwrite, the current save becomes a backup first) and **Open save folder** (opens `saves/` in Explorer). The browser adapter falls back to download/file input.
+- Update `settings.lastExportAt`. If the last export is older than 7 days, show one gentle reminder per session — files survive app updates and uninstall, but not a dead disk.
+- Copying `save.json` to another machine (or keeping the data folder in a synced folder such as OneDrive) is the supported way to move a farm. Running the game on two machines at the same time against a synced folder is not supported; the README says so.
 
-## 9.4 Browser storage caveats that must be handled
-- Call `navigator.storage.persist()` after the first successful action.
-- Show an Install / Add to Home Screen hint. Safari may evict data for non-installed sites after roughly 7 days of disuse; installed PWAs are far safer. **Export is the real safety net and the UI should say so plainly, once, in the settings screen.**
-- Detect a second tab with `BroadcastChannel`. The second tab shows "Game đang mở ở tab khác" and is read-only, so it cannot overwrite the save.
+## 9.4 One running instance
+- Desktop: the main process takes `app.requestSingleInstanceLock()`. A second launch does not open a second window; it focuses and restores the existing one. Two writers on one save are therefore impossible on one machine.
+- Dev browser build only: detect a second tab with `BroadcastChannel`; the second tab shows "Game đang mở ở tab khác" and is read-only.
+- v4.0's `navigator.storage.persist()` call and the Install / Add to Home Screen hint are removed: they only existed to fight browser eviction.
 
 ## 9.5 Away summary
 If the player was away >= 10 minutes, show a "Trong lúc bạn vắng mặt" modal built from the `advanceWorld` events: pigs that reached adulthood, pigs that ran out of food, pigs that got sick, births, whether the trough ran dry and when, expired and new orders.
@@ -823,10 +879,10 @@ Mang thai: còn 42 phút
 ## 10.3 First-run tutorial
 Skippable, 5 steps: buy a pig (choose gender) → fill the trough → clean → see growth → read the happiness-to-price line. Stored in `settings.tutorialDone`. Step 2 is new and is the step that teaches the actual loop.
 
-## 10.4 Responsive
-- Minimum width 360 px; comfortable at >= 1280 px; desktop supported from 1024 px.
-- Touch targets >= 44 px, no hover-only interaction, no horizontal scrolling, mobile-friendly modals, bottom navigation on mobile, side panel allowed on desktop.
-- The Phaser canvas resizes with its container.
+## 10.4 Window and layout (v4.1: desktop)
+- The game runs in one desktop window: default 1280 × 800, minimum 1024 × 640, resizable, remembers its size and position, F11 toggles fullscreen. Layout is comfortable from 1024 to 1920 px wide; no mobile layout is required in v1 (D1).
+- Click targets >= 44 px, no hover-only interaction, no horizontal scrolling, keyboard focus visible. Menus may use a side panel; the farm view stays visible behind modals.
+- The Phaser canvas resizes with its container and keeps the farm layout's aspect by letterboxing with the environment background, never by stretching sprites.
 - `settings.reduceMotion` disables wandering, particles and non-essential tweens. Also respect `prefers-reduced-motion` as the initial value.
 
 ## 10.5 i18n
@@ -834,9 +890,9 @@ All strings in `src/i18n/vi.ts`. No hard-coded player-facing text anywhere else.
 
 ---
 
-# 11. PHASER AND VISUAL STATE
+# 11. PHASER, SCENE AND PRESENTATION
 
-Scenes: `BootScene`, `PreloadScene`, `MainFarmScene`.
+Scenes: `BootScene` (read manifest, generate fallback textures), `PreloadScene` (load what the farm needs, show a progress bar), `MainFarmScene` (the farm). Menus, panels and modals stay DOM (§4); Phaser draws the world only.
 
 Pig visual state is derived from data, never stored: `idle`, `walk`, `eat`, `clean`, `sleep`, `happy`, `sick`, `pregnant`.
 
@@ -857,7 +913,58 @@ So a fully expressive pig costs **2 drawn images** (`idle`, `sleep`) plus two sh
 
 Wandering is visual only, stays inside farm bounds, pauses during interaction animations, and never changes game state. Draw order is sorted by Y so a pig lower on screen renders in front — that plus a small scale change with Y is the entire depth illusion and is why front and back views are unnecessary (D23).
 
-**Placeholder assets MUST work before final art exists.** Final art is swapped in through `public/assets/manifest/assets.json` with no code change.
+**Placeholder assets MUST work before final art exists.** Final art is swapped in through `public/assets/manifest/assets.json` with no code change (D24).
+
+## 11.1 Farm scene layout (v4.1)
+
+The farm is one fixed-size logical scene (design size 1600 × 900, scaled to the canvas). Its composition is **data** — the `layout` section of the manifest (art standard §7.2), in normalised 0–1 coordinates — so art can be re-arranged without code:
+
+| Layer (back → front) | Content | Asset ids |
+|---|---|---|
+| 0 sky | sky gradient, clouds (may drift slowly) | `env_sky`, `env_cloud_*` |
+| 1 far | hills, distant trees | `env_hills_far`, `env_trees_mid` |
+| 2 ground | grass field, tiled or one image | `env_ground_grass` |
+| 3 structures | pig house, hay shed, well, fence row, order board, small props | `prop_pig_house`, `prop_hay_shed`, `prop_water_well`, `prop_fence_section`, `prop_order_board`, `prop_*` |
+| 4 actors | trough (3 states) and pigs, **Y-sorted together** | `prop_feed_trough_*`, skins |
+| 5 overlays | `fx_*` attached to the `fx_above` anchor, particles | `fx_*` |
+| DOM | top bar, panels, dialogs, toasts | `ui_*` |
+
+`layout` also defines `walkArea` (rect the pigs wander in), the `trough` and `orderBoard` positions, the `pigScale` range by Y (0.85–1.0) and where each structure/prop sits. Missing environment assets fall back to flat colour fills so the scene always renders (§11.4).
+
+## 11.2 Entity sync
+
+`MainFarmScene` keeps `Map<pigId, PigSprite>` and reconciles it with every store snapshot: create sprites for new pigs, update texture/scale/overlays for existing ones, destroy (with a short exit tween) the ones that are gone. The mapping `(pig, now, layout) → { textureId, scale, flipX, overlays, visualState }` is a pure function with unit tests; Phaser code only applies its result. Clicking a pig selects it (DOM panel updates), clicking empty ground deselects.
+
+## 11.3 Presentation event contract (D25)
+
+One `FeedbackDirector` (`src/game/feedback/`) subscribes to `store.onEvents` and is the only place that turns events into presentation. Order per event: **animation → VFX → sound → UI toast**. The table is data (`feedbackTable.ts`), so adding an event is one row, not edits in several files.
+
+| Event | Animation (pig/scene) | VFX | Sound (§12) | UI |
+|---|---|---|---|---|
+| `PIG_BOUGHT` | pig drops in with a bounce | `fx_sparkle` | `ui_click` | toast |
+| `PIG_FED` | `eat` state 1.5 s | `fx_crumb` | `feed_munch` | — |
+| `TROUGH_FILLED` | trough sprite swaps state, small shake | `fx_crumb` | `feed_munch` | gauge updates |
+| `PIG_CLEANED` | `clean` state per pig, staggered | `fx_bubble` | `water_splash` | — |
+| `PIG_TREATED` | `happy` hop, sick tint fades | `fx_sparkle` | `ui_click` | toast |
+| `PIG_SOLD` | pig hops off-screen | `fx_coin` burst | `coin_collect` | toast with price |
+| `BREEDING_STARTED` | both pigs `happy` | `fx_heart` | `breed_chime` | toast |
+| `BIRTH` | newborn pops in next to mother | `fx_heart`, `fx_sparkle` | `birth_fanfare` | toast |
+| `PIG_BECAME_ADULT` | scale tween to adult size | `fx_sparkle` | `level_up` | toast |
+| `PIG_BECAME_SICK` | sick state | `fx_sick` | `notify` | toast |
+| `LEVEL_UP` | — | `fx_sparkle` near top bar | `level_up` | toast |
+| `TROUGH_EMPTY`, `ORDER_NEW` | trough / board wiggle | — | `notify` | toast |
+| `ORDER_FULFILLED`, `DISCOVERY` | — | `fx_coin` | `coin_collect` | toast |
+| `SKIN_BOUGHT`, `SLOT_BOUGHT`, `ITEM_BOUGHT`, `PIG_RENAMED` | — | — | `ui_click` | toast |
+| `SKIN_EQUIPPED` | texture swap with a puff | `fx_sparkle` | `ui_click` | — |
+| rejected action (`ok: false`) | — | — | `ui_error` | toast with reason |
+
+`coin_collect` additionally plays for any event whose `gold > 0` that is not listed above. Events produced by a long catch-up (opening the game after hours away) are **not** replayed as animations; they feed the away summary (§9.5). The director animates only events from actions and from ticks while the window is visible. `reduceMotion` keeps sounds and toasts and drops tweens and particles.
+
+## 11.4 Loading and missing assets
+
+- `BootScene` loads and validates the manifest. An invalid manifest is a startup error screen with the validation message (a development bug, not a player state).
+- `PreloadScene` loads environment, trough, fx, UI icons, audio and the skins of the pigs currently on the farm, with a progress bar. Other skins load lazily; shop and collection use DOM `<img>` thumbnails resolved through the registry.
+- Missing or failed file → generated placeholder texture (rounded rectangle in the breed colour, feet on the 82 % line); missing skin → breed default; missing `_sleep` → idle + `fx_zzz`; missing audio → silence. Each fallback is logged once, in development builds only.
 
 ---
 
@@ -880,18 +987,34 @@ Canonical keys — these replace the two conflicting naming schemes in the v3 sp
 | `level_up` | Level up or stage change |
 | `notify` | Order appeared, trough empty |
 
-Music starts only after the first user gesture (browser autoplay policy). Toggles live in `settings`. Use original or CC0 audio and list credits in `README.md` and the credits screen.
+Audio files are resolved through the `audio` section of the manifest by these exact keys (art standard §7.2); a missing file plays nothing. Music starts on launch in the desktop app (the shell disables the autoplay gesture requirement); the dev browser build starts it after the first user gesture. Toggles `musicOn` / `sfxOn` live in `settings`. Use original or CC0 audio and list credits in `README.md`, the credits screen and the manifest row (`credit`, `license`).
 
 ---
 
-# 13. PWA AND OFFLINE
+# 13. DESKTOP RUNTIME, PACKAGING AND OFFLINE (v4.1)
 
-- `manifest.webmanifest`: name, short name, `display: standalone`, theme colour, 192/512 icons.
-- The service worker precaches all built assets. The game must load and play fully with the network disabled after first load.
-- No runtime fetch to external hosts, no CDN fonts or scripts, no analytics.
-- Update flow: when a new version is available show "Có bản mới — tải lại", never reload silently mid-action.
-- Hosting: any static host, or `npm run preview` locally. Service workers need HTTPS or `localhost`; opening `index.html` over `file://` will not work.
-- **Document in README:** a web app cannot deliver reliable background notifications while closed. The away-summary modal (9.5) is the deliberate substitute.
+## 13.1 Process model
+- **Main process** (`electron/main.ts`): creates the window (§10.4), registers the privileged `app://` scheme with `protocol.handle` and serves the built `dist/` from inside the app package, takes the single-instance lock (§9.4), handles save IPC (§9.1) and native dialogs (§9.3), and on `before-quit` asks the renderer to flush the save queue (max 3 s).
+- **Preload** (`electron/preload.ts`): exposes exactly one object through `contextBridge`, `window.unin = { save: { load, write, listBackups, restoreBackup, exportTo, importFrom, openFolder }, app: { version, onFlushRequest } }`. Nothing else from Node reaches the page.
+- **Renderer**: the same Vite build as the browser target. `src/platform/index.ts` picks the desktop adapters when `window.unin` exists, the web adapters otherwise.
+- **No HTTP server, no port, no localhost** in the shipped app: `loadURL('app://game/index.html')`. Vite builds with `base: './'` so every asset URL is relative.
+
+## 13.2 Security and offline
+- `contextIsolation: true`, `nodeIntegration: false`, `sandbox: true`, `webSecurity: true`. A Content-Security-Policy allows only `'self'` / `app:` sources.
+- Navigation away from `app://`, `window.open`, and every permission request are denied. Every `http(s)` request from the renderer is cancelled by a session `webRequest` filter: the game makes **zero** network requests and works with the network unplugged from the first launch.
+- No CDN fonts or scripts, no analytics, no telemetry, no crash upload.
+
+## 13.3 Packaging and installation
+- `electron-builder`, Windows target `nsis`, per-user install (no admin prompt), `oneClick: false` with a chosen install folder, Desktop and Start Menu shortcuts, product name "Ủn Ỉn Homemade", executable `UnInHomemade.exe`, app id `com.uninhomemade.game`, icon `build/icon.ico` generated from a 1024 px `build/icon.png` (art standard §7.3).
+- Uninstall removes the program and **never** `%APPDATA%\Un In Homemade\` (D26).
+- Scripts: `npm run dev` (browser, fast iteration), `npm run dev:desktop` (Electron against the Vite dev server — the only place a dev port exists), `npm run build` (renderer + electron), `npm run dist:win` (installer into `release/`).
+- The installer is not code-signed in v1; Windows SmartScreen shows "More info → Run anyway". Documented in README.
+
+## 13.4 Updates
+No auto-updater (it would need the network). A new version is a new installer run over the old one; the save in the user data folder is untouched and migrated on next load (§9.2). The credits screen shows the app version.
+
+## 13.5 Limitations to document in README
+A closed desktop app cannot deliver background notifications; the away-summary modal (9.5) is the deliberate substitute. Saves are per Windows user; moving them is a file copy (§9.3).
 
 ---
 
@@ -935,57 +1058,67 @@ Every matrix entry sums to 100 and `A+B` resolves the same as `B+A`; seeded 10,0
 Same `windowIndex` always generates the same 3 orders; a different window generates different ones; only discovered breeds appear; expiry drops the order and emits `ORDER_EXPIRED`; `fulfillOrder` rejects wrong breed, wrong gender and insufficient happiness; a fulfilled order cannot be claimed twice; discovery bonus fires exactly once per breed and per skin.
 
 ## 14.6 Save tests
-Round-trip equality; corrupt IndexedDB save falls back to the localStorage mirror, then the backup, then the recovery state with no wipe; each migration including **v1 (a real v3 save) to v2**; future `schemaVersion` refused; import rejects invalid JSON and invalid schema without touching the existing save; invariants (5.5) hold after every action in a randomised fuzz test.
+Round-trip equality; each migration including **v1 (a real v3 save) to v2**; future `schemaVersion` refused and the chain stops; import rejects invalid JSON and invalid schema without touching the existing save; invariants (5.5) hold after every action in a randomised fuzz test. Per adapter: **desktop** (`electron/saveFiles.ts`, tested with a temp directory) — interrupted write leaves the previous `save.json` intact, corrupt `save.json` falls back to the newest valid backup and is renamed `save.corrupt-*`, backup rotation keeps 10 and respects the 15-minute spacing; **web** — corrupt IndexedDB falls back to the mirror, then the backup. **Store** — a failing `SaveStorage.save` sets `saveError`, keeps the state and retries.
 
 ## 14.7 Economy simulation
 `npm run sim:economy` prints, per breed: base sell, growth hours, food units needed to reach adult, food cost, net gold per hour per slot at happiness 0 / 50 / 100, and hours of play to afford each slot unlock and each skin tier. **Fail the build if net gold per hour at happiness 100 is not at least 2x the value at happiness 0** — that ratio is the mechanical statement of "caring for pigs matters", and a future balance edit that breaks it should not pass silently.
 
-## 14.8 Optional smoke test (Playwright)
-Fresh load → buy pig → fill trough → reload → pig and trough still there → export save.
+## 14.8 Smoke test (Playwright + Electron)
+Against the unpacked production build (`_electron.launch`), with a temporary user data directory: first launch → buy pig → fill trough → close the app → relaunch → pig and trough still there → export save to a temp file. Also assert that no network request was attempted.
+
+## 14.9 Asset tests
+`npm run assets:check` (part of `npm run check`): manifest passes its zod schema; every id referenced by config (breed default skins, shop skins, the 12 audio keys, the fx set, trough states, layout ids) has a row; every path exists; images match the size, alpha and naming rules of the art standard §4 and §7 for their `status`; no orphan files under `public/assets/`; `grep` finds no `.png`/`.ogg`/`.mp3` literal under `src/`.
 
 ---
 
 # 15. ACCEPTANCE CRITERIA
 
-**Phase 1 — Core farm.** First launch creates the starter state; the tutorial works. Buying a pig (with gender) puts it on the farm and it survives refresh and browser restart. Hunger and cleanliness decay correctly including across hours away. Growth works and stops at the exact moment hunger hits 0 or sickness starts. Feed, clean, cleanAll, medicine work with the correct errors. An adult can be sold, the happiness multiplier is visible and correct, every gold change has a transaction. The away summary appears after >= 10 minutes.
+**Phase 1 — Core farm.** First launch creates the starter state; the tutorial works. Buying a pig (with gender) puts it on the farm and it survives closing and relaunching the game. Hunger and cleanliness decay correctly including across hours away. Growth works and stops at the exact moment hunger hits 0 or sickness starts. Feed, clean, cleanAll, medicine work with the correct errors. An adult can be sold, the happiness multiplier is visible and correct, every gold change has a transaction. The away summary appears after >= 10 minutes.
 
 **Phase 2 — Trough, shop, progression.** Filling the trough works from inventory and from gold. Pigs auto-eat while away and the away summary reports when the trough ran dry. Shop, inventory, XP, levels, the anti-spam XP rule, level-gated slot purchases and the transaction history screen all work.
 
-**Phase 3 — Breeding, orders, collection.** Breeding validation, fee, weighted result and per-breed pregnancy countdown work. Pregnancy and birth survive refresh with no duplicates and the slot reservation holds. Orders generate deterministically, expire, and pay out. The collection book fills and pays the discovery bonus once. Skins can be bought and equipped and change nothing but the picture.
+**Phase 3 — Breeding, orders, collection.** Breeding validation, fee, weighted result and per-breed pregnancy countdown work. Pregnancy and birth survive a relaunch with no duplicates and the slot reservation holds. Orders generate deterministically, expire, and pay out. The collection book fills and pays the discovery bonus once. Skins can be bought and equipped and change nothing but the picture.
 
-**Phase 4 — Polish and PWA.** Animations, sounds, loading/error/empty states, mobile and desktop layouts. Export/import, recovery screen, multi-tab notice. `reduceMotion` honoured. The app installs and plays fully offline. All tests pass, including the 14.7 economy assertion.
+**Phase 4 — Presentation.** The farm scene renders every layer of §11.1; all 8 pig states work; every row of §11.3 produces its animation, effect, sound and toast; music and all 11 sound effects play; loading, error and empty states exist; `reduceMotion` honoured. All v1-scope assets (art standard §10, waves 1–2) are at `status: production` or `final`.
+
+**Phase 5 — Desktop release.** One installer; Desktop and Start Menu shortcuts with the app icon; double-click opens the game with no terminal, server, port or network; save survives quit, crash, reinstall and uninstall; backups, recovery, export/import and "open save folder" work; a second launch focuses the running window; all tests pass, including 14.7, 14.8 and 14.9; verified on a Windows machine without Node installed.
 
 ---
 
 # 16. DEVELOPMENT ORDER
 
 ```text
- 1. Project skeleton (Vite + TS + Vitest + lint)
- 2. core/types, config, rng, clock
- 3. advancePig + advanceWorld + unit tests           ← 14.1
- 4. resolveTrough + trough tests                     ← 14.2, do this before any UI
- 5. Save schema, IndexedDB storage, mirror, migrate, export/import + tests
- 6. Actions: buyPig, feed, clean, cleanAll, treat, fillTrough, sell + tests
- 7. gameStore (dispatch, persist, notify, one global interval)
- 8. Minimal DOM UI, no Phaser: pig list + action buttons + trough gauge
+ 1. Project skeleton (Vite + TS + Vitest + lint)                       done (S00)
+ 2. core/types, config, rng, clock                                     done (S02)
+ 3. advancePig + advanceWorld + unit tests           ← 14.1             done (S03, S04B)
+ 4. resolveTrough + trough tests                     ← 14.2             done (S04A)
+ 5. Save schema, storage, migrate, export/import + tests                done (S05)
+ 6. Actions: buyPig, feed, clean, cleanAll, treat, fillTrough, sell     done (S06A, S06B)
+ 7. gameStore (dispatch, persist, notify, one global interval)          done (S07)
+ 8. Minimal DOM UI, no Phaser: pig list + action buttons + trough gauge done (S08A, S08B)
         ← THE GAME MUST BE PLAYABLE AND FUN HERE. Stop and play it.
- 9. Shop, inventory, XP/levels, slots, transaction history
-10. Breeding, pregnancy, birth + tests
-11. Orders + collection book + skin shop + tests
-12. Phaser MainFarmScene, pig visuals, wandering, state overlays (section 11)
-13. Responsive UI, tutorial, away summary, toasts
-14. Audio
-15. PWA (manifest, service worker, offline, update flow)
-16. Economy simulation script, edge cases, README
+ 9. Platform seam: SaveStorage port out of core, saveError, base './'   (v4.1)
+10. Desktop shell + file save + installer — play step 8 from the installed app
+11. Shop, inventory, XP/levels, slots, transaction history
+12. Asset foundation: manifest v2, registry, placeholders, assets:check
+13. Phaser farm scene (layout, entity sync, trough, picking) + action events + FeedbackDirector
+14. Breeding, pregnancy, birth + tests
+15. Orders + collection book + skin shop + tests
+16. Economy simulation script + invariant fuzz
+17. Pig visual states, wandering, overlays, reduceMotion
+18. Audio
+19. UX completion: desktop layout, tutorial, away summary, settings, recovery
+20. Presentation polish, final packaging, QA, README
+    Art waves (art standard §10) run in parallel from step 12 on.
 ```
 
-Do not start Phaser or visual polish before step 8 is playable and the core tests pass. If the game is not enjoyable as a text list of pigs with buttons, no amount of art will fix it — and step 8 is the cheapest possible place to discover that.
+Do not start Phaser or visual polish before step 8 is playable and the core tests pass. If the game is not enjoyable as a text list of pigs with buttons, no amount of art will fix it — and step 8 is the cheapest possible place to discover that. The desktop shell comes early (step 10) on purpose: every later step is then verified in the real runtime, not in a browser tab.
 
 ---
 
 # 17. README REQUIREMENTS
 
-Overview, architecture, install, dev/build/preview commands, test commands, how saves work (stores, mirror, backup, export/import, eviction caveat), how to install as a PWA, how to tune `BALANCE`, how to add a breed, how to add a skin or cosmetic **without touching code**, asset credits, known limitations (no background notifications, data is per-browser, per-device), and implementation assumptions.
+Overview, architecture (the layer diagram of §4), how to install and play (installer, SmartScreen note), dev/build/dist commands, test commands, how saves work (folder, atomic write, backups, recovery, export/import, moving a farm to another machine), how to tune `BALANCE`, how to add a breed, how to add or upgrade a skin or any asset **without touching code** (manifest row + file + `assets:check`), asset and audio credits, known limitations (no background notifications, Windows only, saves are per Windows user, not code-signed), and implementation assumptions.
 
 ---
 
@@ -1019,10 +1152,26 @@ The agent must implement the value shown; these are flagged because they are jud
 - Collection book and gold-sink skin shop (D19) — an endgame target, and the bridge that finally makes the 245 drawn assets reachable from the data model.
 - `cleanAll`, promoted from backlog because 12 individual taps per session is the worst part of the v3 design.
 - `settings.reduceMotion`.
-- IndexedDB with a localStorage mirror (D2), for write performance rather than durability.
+- IndexedDB with a localStorage mirror (D2), for write performance rather than durability. *(Superseded in v4.1 by file saves — §19.1.)*
 - An explicit breed-to-artwork mapping (6.6) and a rendered-state table (section 11), so the spec and the asset bible finally describe the same game.
 
 **Explicitly rejected:** pig death or removal by neglect (D21 — wrong for a cozy game), gacha or paid boxes (D19), and four-directional sprites (D23 — see the art standard for the full reasoning).
+
+## 19.1 Changes in v4.1 (desktop edition)
+
+**Why:** the product goal is "install, double-click the icon, play offline" with a game that feels finished — characters, environment, animation, effects and sound — not a web page. A PWA needs a host and a browser profile; the save lived in storage the browser may evict. Game rules, balance and golden values are **unchanged**.
+
+| Area | v4.0 | v4.1 |
+|---|---|---|
+| Runtime (D1) | PWA, PC + mobile browser | Windows desktop app, Electron shell, `app://` protocol, no server or port (§13) |
+| Save (D2) | IndexedDB + localStorage mirror | JSON file, atomic write, 10 rotating backups, native export/import; IndexedDB kept for the dev browser build (§9) |
+| Core purity | `save/storage.ts` exception | No exceptions; storage behind the `SaveStorage` port in `src/platform/` (§4.1) |
+| Multi-instance | BroadcastChannel second-tab lock | Single-instance lock (§9.4) |
+| Assets (D24) | manifest v1 example | manifest v2: lifecycle `status`, `environment`, `audio`, `layout`, frames, credits (art standard §7.2) |
+| Presentation (D25) | "play events (toast/sound/animation)" | Action events for every action (§8.0), farm layout (§11.1), entity sync (§11.2), event contract (§11.3), loading and fallbacks (§11.4) |
+| Distribution (D26) | static hosting | NSIS installer, shortcuts, icon, uninstall keeps saves, update = install over (§13.3–13.4) |
+| Layout | 360 px mobile → desktop | Desktop window 1024 px minimum (§10.4) |
+| Removed | service worker, manifest.webmanifest, install hint, `navigator.storage.persist()`, update prompt, `npm run preview` hosting | — |
 
 ---
 
@@ -1033,7 +1182,9 @@ The agent must implement the value shown; these are flagged because they are jud
 3. **Random events and market days** — sell price +20% for a day, rain makes pigs dirtier faster.
 4. **Achievements** and a daily login reward.
 5. **Seasonal skin rotation** driven by the asset bible's seasonal collections.
-6. **Capacitor wrapper** for the app stores, which would also enable real local push notifications ("Ủn đẻ rồi!") — the one genuine capability the web version cannot have.
+6. **Other platforms** — macOS/Linux builds of the desktop shell, or a Capacitor wrapper for mobile stores (which would also enable real local push notifications, "Ủn đẻ rồi!"). v4.1 is Windows only (D1).
+7. **Cosmetics equip system** (hats, glasses, capes on any pig). The data field `Pig.cosmetics` exists and stays empty in v1; no equip action, no cosmetic shop (DECISIONS C3). The 129 cosmetic concepts and the anchor system (art standard §5) are ready for it.
+8. **Optional cloud backup** of the save file. Not needed in v1: keeping the data folder inside a synced folder already moves a farm between machines (§9.3).
 
 ---
 
@@ -1183,6 +1334,8 @@ Every code in this list MUST have a Vietnamese message in Appendix B. A unit tes
 # APPENDIX B — `src/i18n/vi.ts`, COMPLETE
 
 The whole player-facing string set. No Vietnamese text may appear anywhere else in the codebase (§10.5). `{x}` placeholders are interpolated at call time.
+
+**v4.1:** the `settings` group lost `install`/`installHint` and gained the save-folder strings; `saveStatus` and `desktop` groups are new; the `update` group is removed (no in-app update, §13.4); `multiTab` is used by the dev browser build only. Tasks that touch these screens apply the changes to `src/i18n/vi.ts`; groups added during implementation (for example `vi.ui`, DECISIONS S08A-1) are recorded in `DECISIONS.md`.
 
 ```ts
 export const vi = {
@@ -1415,9 +1568,11 @@ export const vi = {
     importWarning: "Nhập file sẽ ghi đè dữ liệu hiện tại. Bản cũ được giữ làm sao lưu.",
     lastExport: "Lần xuất gần nhất: {date}",
     neverExported: "Chưa xuất lần nào",
-    exportReminder: "Đã lâu bạn chưa sao lưu. Trình duyệt có thể xóa dữ liệu — nên xuất file để giữ nông trại.",
-    install: "Cài đặt vào màn hình chính",
-    installHint: "Cài vào màn hình chính giúp dữ liệu an toàn hơn nhiều.",
+    exportReminder: "Đã lâu bạn chưa xuất file lưu. Nên xuất một bản để phòng khi hỏng ổ đĩa.",
+    openSaveFolder: "Mở thư mục lưu",
+    saveFolderHint: "Nông trại được lưu trong máy, tự sao lưu 10 bản gần nhất. Chép thư mục này sang máy khác để chơi tiếp.",
+    restoreBackup: "Khôi phục bản sao lưu",
+    backupAt: "Bản lưu lúc {date}",
     reset: "Chơi lại từ đầu",
     resetWarning: "Toàn bộ nông trại sẽ bị xóa. Không thể hoàn tác.",
     credits: "Thông tin",
@@ -1436,9 +1591,15 @@ export const vi = {
     reload: "Tải lại",
   },
 
-  update: {
-    available: "Có bản mới",
-    reload: "Tải lại",
+  saveStatus: {
+    error: "Chưa lưu được — đang thử lại...",
+    recovered: "Đã lưu lại được.",
+  },
+
+  desktop: {
+    loadingAssets: "Đang chuẩn bị nông trại... {percent}%",
+    manifestError: "Không đọc được danh sách tài nguyên của game.",
+    version: "Phiên bản {version}",
   },
 
   tutorial: {
@@ -1466,7 +1627,7 @@ export const vi = {
 Before reporting the project complete, verify every line. Each maps to a section above.
 
 **Rules correctness**
-- [ ] `src/core/` imports nothing from `game/`, `ui/`, `store/` or any browser API
+- [ ] `src/core/` imports nothing from `game/`, `ui/`, `store/`, `platform/` or any browser/Node API — no file-level exceptions
 - [ ] No `Date.now()` or `Math.random()` anywhere under `src/core/`
 - [ ] Hunger and cleanliness rates are computed from `growthSec`, not hard-coded (D16)
 - [ ] `resolveTrough` runs **before** `advancePig` in the same window (§7.3)
@@ -1481,17 +1642,25 @@ Before reporting the project complete, verify every line. Each maps to a section
 
 **Save**
 - [ ] A v3 save (`schemaVersion: 1`) migrates cleanly to v2
-- [ ] Corrupt primary falls back to mirror, then backup, then the recovery screen — never a silent wipe
+- [ ] Corrupt `save.json` falls back to the newest valid backup, then the recovery screen — never a silent wipe; the corrupt file is kept as `save.corrupt-*`
+- [ ] Killing the app during a write never leaves an unreadable `save.json` (atomic replace)
+- [ ] A failed write shows the save-error banner and retries; nothing is swallowed
 - [ ] Export produces a file that imports back to an identical state
 
 **Content**
 - [ ] Every `ErrorCode` has a Vietnamese message (test asserts totality)
 - [ ] No Vietnamese string exists outside `src/i18n/vi.ts`
 - [ ] Game runs on placeholder rectangles with no real art present
-- [ ] Every asset is loaded through `assets.json`, none by a hard-coded path
+- [ ] Every asset is loaded through `assets.json`, none by a hard-coded path; `npm run assets:check` passes
+- [ ] Every v1-scope manifest row is `production` or `final`; credits are filled for audio
+- [ ] Every row of the presentation contract (§11.3) produces its animation, effect, sound and toast
 
 **Platform**
-- [ ] Plays fully with the network disabled after first load
-- [ ] No runtime request to any external host
-- [ ] Usable at 360 px wide; all touch targets at least 44 px
+- [ ] The installer creates Desktop and Start Menu shortcuts with the app icon; double-click opens the game
+- [ ] No terminal, Node, server, port or localhost is needed; the shipped app makes zero network requests
+- [ ] Works with the network unplugged from the very first launch
+- [ ] A second launch focuses the running window (single instance)
+- [ ] Uninstall and reinstall keep the save; installing a new version over the old one migrates it
+- [ ] Usable at 1024 × 640; all click targets at least 44 px
 - [ ] `prefers-reduced-motion` respected as the initial value of `settings.reduceMotion`
+- [ ] Verified on a Windows machine without Node or development tools

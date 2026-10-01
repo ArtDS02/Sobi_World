@@ -44,7 +44,7 @@ Spec: Phụ lục A.3 · Phase: actions buyPig/birth.
 
 ## Kiến trúc
 
-**A1** · Browser API (IndexedDB, localStorage, window, document) trong `src/core/` chỉ được nằm ở `src/core/save/storage.ts`.
+**A1** · ~~Browser API trong `src/core/` chỉ được nằm ở `src/core/save/storage.ts`.~~ **Thay bởi R00-3** (v4.1): `src/core/` không có ngoại lệ nào; storage chuyển sang `src/platform/` ở R01.
 Spec: §4.1, D2 · Phase: save/storage; guard + ESLint.
 
 **A2** · Real clock (`Date.now()`) không nằm trong `src/core/clock.ts`: core chỉ giữ interface `Clock` + fake clock; `realClock` đặt ở `src/store/`. Lý do: §4.1 ghi "clock.ts (real + fake)" nhưng guard/CLAUDE.md cấm `Date.now()` trong core (chỉ ngoại lệ rng.ts, storage.ts).
@@ -73,7 +73,7 @@ Spec: §7.3, §14.1, §14.2 · Phase: S04A, S04B (advanceWorld phải gọi `adv
 **S04B-1** · Event cho away summary (§9.5): `TROUGH_EMPTY { at }` = thời điểm bữa cuối khi máng cạn trong window mà còn heo muốn ăn (đã cạn từ đầu window → không emit); `PIG_HUNGRY_ZERO { at, stalled }` = lúc hunger chạm 0 (chỉ ở lần vượt ngưỡng), `stalled` = chưa trưởng thành → UI tính "ngừng lớn bao lâu" = now − at. Thời điểm theo xấp xỉ Q4 (tham lam theo slot).
 Spec: §7.3, §7.4, §9.5 · Phase: S04B, UI away summary.
 
-**S05-1** · Storage: IndexedDB lưu cùng chuỗi JSON với mirror. Backup = save tốt gần nhất mà phiên này đã load/ghi (giữ trong bộ nhớ), chép sang backup key trước mỗi lần ghi đè; chưa có save tốt (vd sau recovery → "Bắt đầu mới") thì backup cũ giữ nguyên. Gặp SAVE_TOO_NEW ở bất kỳ nguồn nào → dừng chuỗi (không lùi về bản cũ hơn) và khoá ghi.
+**S05-1** · (v4.1: áp cho adapter web dev; adapter desktop theo spec §9.1–9.2 + R00-4.) Storage: IndexedDB lưu cùng chuỗi JSON với mirror. Backup = save tốt gần nhất mà phiên này đã load/ghi (giữ trong bộ nhớ), chép sang backup key trước mỗi lần ghi đè; chưa có save tốt (vd sau recovery → "Bắt đầu mới") thì backup cũ giữ nguyên. Gặp SAVE_TOO_NEW ở bất kỳ nguồn nào → dừng chuỗi (không lùi về bản cũ hơn) và khoá ghi.
 Spec: §9.1, §9.2 · Phase: S05, store.
 
 **S05-2** · Migration v1→v2: `trough = { food 0, capacity theo level từ xp, lastResolvedAt = updatedAt }`; `collection.discoveredBreeds` = breed của heo + breedingRecords, `discoveredSkins` = skin default của các breed đó (không cộng discovery bonus); `ownedSkins` = 4 skin default. Field lạ của v1 bị zod bỏ qua.
@@ -94,7 +94,7 @@ Spec: §8.6 · Phase: S06B.
 **S07-1** · Store API (`src/store/gameStore.ts`): `init()` → status `ready | recovery | tooNew`; `dispatch((s, c) => action(s, args, c))`; `tick()`; `startNewGame()`/`importSave(json)` (UI hỏi xác nhận trước); `subscribe` (snapshot) + `onEvents` (GameEvent[]). Persist: sau action thành công, khi tick có event, khi ≥ 30 s từ lần ghi cuối, khi hidden và pagehide. Một `setInterval` 1 s duy nhất, dừng khi hidden, tick + chạy lại khi visible. `requestPersist()` gọi sau action thành công đầu tiên. Action bị từ chối khi read-only/tooNew/recovery → `INVALID_REQUEST` (ErrorCode không có mã riêng).
 Spec: §4, §7.1, §9.1, §9.4 · Phase: S07, UI.
 
-**S07-2** · Multi-tab (`src/store/tabGuard.ts`): tab mới gửi `hello`, chờ 150 ms; tab khác trả `here {primary}`. Nhận `here` từ tab primary (hoặc tab id nhỏ hơn khi cùng khởi động) → read-only vĩnh viễn (`snapshot.readOnly`, UI hiện vi.multiTab, nút tải lại); tab read-only không bao giờ ghi. Multi-tab báo qua snapshot, không thêm GameEvent.
+**S07-2** · (v4.1: chỉ còn dùng cho bản web dev, chuyển vào `src/platform/web/` ở R01; desktop dùng single-instance — R00-5.) Multi-tab (`src/store/tabGuard.ts`): tab mới gửi `hello`, chờ 150 ms; tab khác trả `here {primary}`. Nhận `here` từ tab primary (hoặc tab id nhỏ hơn khi cùng khởi động) → read-only vĩnh viễn (`snapshot.readOnly`, UI hiện vi.multiTab, nút tải lại); tab read-only không bao giờ ghi. Multi-tab báo qua snapshot, không thêm GameEvent.
 Spec: §9.4 · Phase: S07, UI.
 
 **S08A-1** · Thêm nhóm `vi.ui` (comingSoon, farmEmpty, selectPig, breed, gender, percent, weightKg) — Phụ lục B không có các nhãn khung này. Định dạng số theo `vi-VN` (8.420; x1,20) qua `src/i18n/format.ts` (`t`, `formatInt`, `formatDec`, `formatDuration`). Bottom nav 5 mục như §10.1; Cài đặt ở nút ⚙ top bar; Lịch sử chưa có lối vào (S08B/màn settings). Toast `PIG_HUNGRY_ZERO` chỉ khi heo chưa trưởng thành.
@@ -105,3 +105,36 @@ Spec: §7.1 · Phase: S08A.
 
 **S08B-1** · Nút disable lấy lý do bằng cách chạy thử chính action đó trên save hiện tại (`ui/actionsVm.ts:probe`, rng bỏ đi) rồi map ErrorCode → `vi.disabled.*` (ngắn) hoặc `vi.error.*`; INSUFFICIENT_ITEM nói rõ hết thức ăn/hết thuốc. Mua heo đặt tạm ở thanh công cụ màn Nông trại (chọn Đực/Cái) cho tới khi có màn Cửa hàng; chạm thước máng ăn mở hộp đổ máng (§10.1). Bán luôn hỏi xác nhận kèm giá cuối, cảnh báo thêm cho SUPERMAN/MYTHICAL. DOM chỉ thay khi markup đổi (so outerHTML) để click không mất vì re-render mỗi giây. Dev time-travel: `npm run dev` + `?dev=1`, offset cộng vào clock của store, nằm sau `import.meta.env.DEV` + dynamic import nên không có trong build (đã kiểm dist).
 Spec: §10.1, §10.2 · Phase: S08B.
+
+## Hướng desktop — R00 (spec v4.1, art standard v1.1)
+
+Chốt sau Architecture & Product Direction Review (sau S08B). Spec v4.1 đã ghi nguyên văn; mục dưới chỉ là các lựa chọn spec để ngỏ hoặc cần nhớ khi code. Bốn câu hỏi mở của review chốt theo khuyến nghị.
+
+**R00-1** · Runtime = **Electron** (không Tauri: không thêm Rust/MSVC toolchain, Chromium giống môi trường dev/test; đổi được sau vì chỉ chạm `electron/` + `src/platform/desktop`). **Chỉ Windows**, không mobile (spec D1, §10.4). Bản web (`npm run dev`) chỉ để dev.
+Spec: D1, §4, §13 · Phase: R02.
+
+**R00-2** · Data layer = **file JSON** qua port `SaveStorage` (không SQLite, không HTTP API cục bộ — save là 1 tài liệu nhỏ đọc/ghi nguyên khối). BE cloud không làm; đồng bộ máy = chép/đồng bộ thư mục save (spec §9.3, §20 mục 8).
+Spec: D2, §9 · Phase: R01, R02.
+
+**R00-3** · `src/core/` thuần tuyệt đối: không browser/Node API, không ngoại lệ file. `SaveStorage` interface ở `src/core/save/port.ts`; adapter ở `src/platform/{web,desktop}/`; Node API chỉ trong `electron/`. Guard (`.claude/spec-to-source.config.mjs`) + ESLint cập nhật ở R01.
+Spec: §4.1 · Phase: R01.
+
+**R00-4** · Backup desktop: tạo từ `save.json` tốt trước lần ghi đầu mỗi phiên, sau đó tối đa 15 phút/lần, giữ 10 bản; file hỏng đổi tên `save.corrupt-*` (không xoá). Ghi lỗi → `saveError` + retry 1 s/5 s/30 s; thoát app chờ hàng đợi ghi ≤ 3 s.
+Spec: §9.1, §9.2 · Phase: R01 (saveError), R02 (file).
+
+**R00-5** · Một instance: `app.requestSingleInstanceLock()`, lần mở thứ hai focus cửa sổ cũ. tabGuard/BroadcastChannel chỉ còn ở bản web dev.
+Spec: §9.4 · Phase: R02.
+
+**R00-6** · Mọi action thành công phát ≥ 1 event (spec §8.0); feedback chỉ qua `FeedbackDirector` + bảng dữ liệu (§11.3). Event catch-up dài không phát animation, chỉ vào away summary.
+Spec: D25, §8.0, §11.3 · Phase: R05B (event các action đã có), R06/R07 (event action mới).
+
+**R00-7** · Manifest v2 (art standard §7.2): `status` placeholder/production/final, thêm `environment`, `audio`, `layout`, `frames`, `credit/license`; trough/order board ở `props/`. Schema zod ở `src/core/assets/manifestSchema.ts` (thuần); nạp file ở `src/platform/` (fetch tương đối, chạy cả `app://` lẫn dev). Thay cho kế hoạch `src/store/assetRegistry.ts` của S13 cũ.
+Spec: D24, §11.4, art §7.2–7.4 · Phase: R04.
+
+**R00-8** · Cosmetics/accessories **vẫn ngoài v1** (C3 giữ nguyên, spec §20 mục 7). Phạm vi asset v1 = wave 0–2 (art standard §10).
+Spec: §20 · Phase: —.
+
+**R00-9** · Đóng gói lên sớm: R02 (ngay sau R01) đã ra installer; cổng chơi thử S08B làm trên bản cài đặt. Mọi phase sau kiểm trên `npm run dev:desktop` hoặc bản `dist:win`.
+Spec: §16 · Phase: R02+.
+
+**R00-10** · `hướng_dẫn_triển_khai.md` và `DESIGN_README.md` còn mô tả PWA — đã lỗi thời về runtime/save; vẫn không đọc (CLAUDE.md). Nguồn đúng: spec v4.1 + file này.

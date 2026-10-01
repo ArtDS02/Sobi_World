@@ -43,6 +43,22 @@ The trough already exists as concept art in the reference sheet, row 2 column 2 
 
 ---
 
+# 1A. FARM SCENE LAYERS — **P0, wave 1** (new in game spec v4.1)
+
+The farm scene (game spec §11.1) is built from layers. These are what make the game read as a place rather than pigs on a flat colour. All live in `public/assets/environment/`, are placed by the `layout` section of the manifest (standard §7.2), and use the same palette and top-left light as `reference/style_reference_environment.png`.
+
+| File | Size | Description |
+|---|---|---|
+| `env_sky.png` | 1600 × 500 | Soft daytime sky gradient, pale blue to warm cream at the horizon, no sun disc |
+| `env_cloud_1.png`, `env_cloud_2.png` | 384 × 160 | Fluffy rounded clouds, transparent, drift slowly |
+| `env_hills_far.png` | 1600 × 300 | Rolling green hills, desaturated for distance, transparent top |
+| `env_trees_mid.png` | 1600 × 260 | Row of round cartoon trees and bushes, transparent top |
+| `env_ground_grass.png` | 512 × 512 | Seamless tileable grass with tiny flowers, no shadows, no objects |
+
+Flat colour fills stand in when any layer is missing, so the scene always renders.
+
+---
+
 # 2. STRUCTURAL BUILDINGS (`sprites/buildings/`)
 
 Decorative in v1 — they set the scene but carry no mechanic. Produce after wave 1.
@@ -119,6 +135,14 @@ Every entry in this section appears in the reference sheet rows 2–3 and can be
 
 ---
 
+## 4.4 App icon — wave 1 (new in game spec v4.1)
+
+| File | Size | Description |
+|---|---|---|
+| `build/icon.png` | 1024 × 1024 | `pig_classic` head and snout, three-quarter crop, on a rounded warm-cream tile; must read at 16 px. Converted to `build/icon.ico` (16–256 px) for the installer and shortcuts. |
+
+---
+
 # 5. CROPS & FARMING — **BACKLOG, do not produce yet**
 
 > This whole section is game spec §20 item 1. It is **not in v1.** The concepts are good and the design is sound — home-grown food is free but takes real time, bought food is instant but costs gold — but the feed trough has to prove itself first. Producing these now means drawing assets for a system whose rules do not exist yet.
@@ -163,8 +187,8 @@ Matches production standard §10.
 | Wave | Assets from this catalogue | Count |
 |---|---|---|
 | 0 | none — coloured rectangles stand in | 0 |
-| 1 | §1 core mechanic props, §4.1 + §4.2 + §4.3 icons | 4 + 18 |
-| 2 | §2 P1 buildings, §3 P1 props | 4 + 4 |
+| 1 | §1 core mechanic props, §1A scene layers, §4.1 + §4.2 + §4.3 icons, §4.4 app icon | 4 + 6 + 18 + 1 |
+| 2 | §2 P1 buildings, §3 P1 props, §6 audio (music + 11 effects) | 4 + 4 + 12 |
 | 3 | §2 P2 buildings, §3 P2/P3 props | 2 + 9 |
 | backlog | §5 crops | 5 |
 

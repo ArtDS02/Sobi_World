@@ -417,6 +417,7 @@ Nothing is in the game until it has a row in `public/assets/manifest/assets.json
 ```json
 {
   "id": "pig_wizard",
+  "status": "production",
   "nameVi": "Heo Pháp Sư",
   "collection": "jobs",
   "rarity": "P1",
@@ -432,6 +433,7 @@ Nothing is in the game until it has a row in `public/assets/manifest/assets.json
 ```json
 {
   "id": "acc_head_pirate",
+  "status": "production",
   "nameVi": "Mũ Cướp Biển",
   "slot": "head",
   "rarity": "P2",
@@ -443,7 +445,7 @@ Nothing is in the game until it has a row in `public/assets/manifest/assets.json
 }
 ```
 
-Full schema: standard §7.2. Price ladder by rarity: P1 = 2,000, P2 = 6,000, P3 = 15,000, P4 = 40,000, P5 = unlock only (game spec §6.6, tunable).
+Full schema (manifest v2 — environment, audio, layout, frames, credits): standard §7.2. Replacing a placeholder keeps the row's `id` and path and changes `status` to `production`; `npm run assets:check` (standard §7.4) must pass before the commit. Cosmetic rows stay out of the v1 manifest (game spec §20 item 7). Price ladder by rarity: P1 = 2,000, P2 = 6,000, P3 = 15,000, P4 = 40,000, P5 = unlock only (game spec §6.6, tunable).
 
 ---
 
