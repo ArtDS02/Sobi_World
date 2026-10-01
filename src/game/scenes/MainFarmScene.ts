@@ -15,6 +15,7 @@ import type { StoreSnapshot } from '../../store/gameStore';
 import { SCENE_KEYS } from '../config/phaser';
 import type { FarmBridge, FarmDeps, FarmPick } from '../farmView';
 import { noEffects } from '../feedback/effects';
+import { Ambient } from '../fx/ambient';
 import { SceneEffects } from '../fx/SceneEffects';
 import { vi } from '../../i18n/vi';
 import { PIG_ID_DATA, PigSprite, type PigEnv } from '../prefabs/PigSprite';
@@ -51,6 +52,7 @@ export class MainFarmScene extends Phaser.Scene {
   private board: Phaser.GameObjects.Image | null = null;
   private layout!: FarmLayout;
   private pigEnv!: PigEnv;
+  private ambient!: Ambient;
 
   constructor(
     private readonly deps: FarmDeps,
@@ -67,8 +69,11 @@ export class MainFarmScene extends Phaser.Scene {
       reduceMotion: () => this.deps.store.getSnapshot().save?.settings.reduceMotion ?? false,
     };
     warnLoadErrors(this.load);
+    this.ambient = new Ambient(this, this.pigEnv.reduceMotion);
     this.drawBackdrop();
     this.drawPlacements();
+    // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
+    if (!this.pigEnv.reduceMotion()) this.cameras.main.fadeIn(FARM_VIEW.AMBIENT.fadeInMs);
     this.input.on(
       Phaser.Input.Events.POINTER_DOWN,
       (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
@@ -123,10 +128,11 @@ export class MainFarmScene extends Phaser.Scene {
         if (!loaded) return; // the flat backdrop shows through
         const row = this.deps.assets.manifest.environment.find((r) => r.id === p.id);
         if (row?.tile) {
-          this.add
+          const tile = this.add
             .tileSprite(0, v.y, width, height - v.y, key)
             .setOrigin(0, 0)
             .setDepth(v.depth);
+          this.ambient.add(p.id, tile);
           return;
         }
       }
@@ -134,6 +140,7 @@ export class MainFarmScene extends Phaser.Scene {
         .image(v.x, v.y, loaded ? key : FALLBACK_PROP_KEY)
         .setOrigin(v.originX, v.originY)
         .setDepth(v.depth);
+      if (entry?.section === 'environment') this.ambient.add(p.id, img);
       if (p.role === 'orderBoard') this.board = img;
       if (p.action) this.makeClickable(img, p.action);
     });
@@ -163,9 +170,14 @@ export class MainFarmScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true });
   }
 
+  override update(_time: number, delta: number) {
+    this.ambient.update(delta);
+  }
+
   private sync(snap: StoreSnapshot) {
     const save = snap.save;
     if (!this.sys.isActive()) return;
+    this.ambient.sync();
     this.syncTrough(save);
     const now = this.deps.now();
     const seen = new Set<string>();
@@ -191,6 +203,27 @@ export class MainFarmScene extends Phaser.Scene {
       this.pigs.delete(id);
       this.leaving.set(id, sprite);
       sprite.leave(reduceMotion, () => this.leaving.delete(id));
+    }
+    this.releaseSkins();
+  }
+
+  /**
+   * R12A: a skin loaded after preload (bought / equipped later) is freed once no pig, staying or
+   * leaving, wears it; wearing it again reloads it. Preloaded breed defaults are kept.
+   */
+  private releaseSkins() {
+    if (this.requested.size === 0) return;
+    const sprites = [...this.pigs.values(), ...this.leaving.values()];
+    const worn = new Set(sprites.map((s) => s.skinId));
+    for (const skinId of this.requested) {
+      if (worn.has(skinId)) continue;
+      for (const file of ['asset', 'sleep']) {
+        const key = textureKey(skinId, file);
+        if (this.textures.exists(key)) this.textures.remove(key);
+      }
+      this.cache.json.remove(anchorsKey(skinId));
+      this.anchors.delete(skinId);
+      this.requested.delete(skinId);
     }
   }
 

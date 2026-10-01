@@ -4,7 +4,12 @@ import type { Pig, SaveGame } from '../core/types';
 import { vi } from '../i18n/vi';
 import type { BoundAction, GameStore, StoreSnapshot } from '../store/gameStore';
 import { troughSpace, type ActionVm } from './actionsVm';
-import { createPopupShell, type PanelId, type PopupShell } from './components/popup';
+import {
+  closePopupShell,
+  createPopupShell,
+  type PanelId,
+  type PopupShell,
+} from './components/popup';
 import { createToaster } from './components/toast';
 import { renderTopBar } from './components/topBar';
 import {
@@ -17,6 +22,7 @@ import {
   openTroughDialog,
 } from './dialogs';
 import type { AppOptions, FarmPick, MountedApp } from './appTypes';
+import { setIconSource } from './components/icon';
 import { el, patch } from './dom';
 import { pigSkins } from './skinsVm';
 import { renderFarmHint, renderPigPopup, renderWellPopup } from './screens/farmScreen';
@@ -45,6 +51,7 @@ export function mountApp(
   opts: AppOptions = {},
 ): MountedApp {
   document.title = vi.app.title;
+  setIconSource(opts.assets ? (id) => opts.assets?.url(id) ?? null : null);
   const ui: UiState = { panel: null, selectedPigId: null, shopTab: 'pigs' };
   const topbar = el('header', { class: 'topbar' });
   const banner = el('div', { class: 'app__banner' });
@@ -193,8 +200,8 @@ export function mountApp(
     const body = save && ui.panel ? renderPanel(save, ui.panel) : null;
     if (!body || !ui.panel) {
       if (ui.panel) ui.panel = null; // nothing left to show
+      if (popup) closePopupShell(popup, appEl.classList.contains('is-reduced-motion'));
       popup = null;
-      patch(popupHost, null);
       return;
     }
     if (popup?.panel !== ui.panel) {
@@ -208,6 +215,7 @@ export function mountApp(
   function render(snap: StoreSnapshot) {
     const ready = snap.status === 'ready' && !!snap.save;
     appEl.classList.toggle('is-ready', ready);
+    appEl.classList.toggle('is-reduced-motion', !!snap.save?.settings.reduceMotion);
     farm?.setSelected(ui.selectedPigId);
     patch(banner, snap.readOnly ? renderMultiTabBanner() : null);
     patch(saveBanner, session.banners(snap));

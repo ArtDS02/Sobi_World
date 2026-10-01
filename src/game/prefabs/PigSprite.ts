@@ -19,6 +19,7 @@ import { pigScale, sleepLook, type FarmLayout, type PigView } from '../view/pigV
 import { playPigAnimation, type Motion, type TweenablePig } from '../fx/pigAnimations';
 import { PigMover } from './PigMover';
 import { PigOverlays } from './PigOverlays';
+import { SickTint } from './SickTint';
 
 export const PIG_ID_DATA = 'pigId';
 
@@ -55,6 +56,7 @@ export class PigSprite {
   private readonly mover: PigMover;
   private feedback: ActiveFeedback | null = null;
   private leaving = false;
+  private readonly sick: SickTint;
   /** What the shared animation code may touch. */
   private readonly handle: TweenablePig;
 
@@ -79,6 +81,7 @@ export class PigSprite {
         useHandCursor: true,
       });
     this.overlays = new PigOverlays(scene);
+    this.sick = new SickTint(scene, env.reduceMotion, () => this.layout());
     this.bright = this.image.preFX?.addColorMatrix() ?? null; // WebGL only
     this.mover = new PigMover(
       scene,
@@ -110,6 +113,11 @@ export class PigSprite {
     );
   }
 
+  /** Skin row drawn right now (after the breed-default fallback); null before the first view. */
+  get skinId(): string | null {
+    return this.applied?.view.skinId ?? null;
+  }
+
   /** The state this pig shows right now (spec §11 table). */
   visualState(): VisualState {
     const care = this.applied?.view.care ?? { isSick: false, pregnancy: null };
@@ -118,6 +126,7 @@ export class PigSprite {
 
   apply(view: PigView, anchors: Anchors, selected: boolean, anchorOf: (fx: FxId) => AnchorName) {
     if (this.leaving) return;
+    this.sick.follow(view.care.isSick);
     this.applied = { view, anchors, selected, anchorOf };
     this.mover.place({ x: view.x, y: view.y }, view.flipX);
     this.mover.refresh();
@@ -155,8 +164,7 @@ export class PigSprite {
     const look = this.look(view);
     this.setTexture(look.textureId);
     // Sick: green tint on top of the fx_sick overlay (spec §11 table).
-    if (view.care.isSick) this.image.setTint(FARM_VIEW.SICK_TINT);
-    else this.image.clearTint();
+    this.sick.apply(this.image);
     const m = this.motion;
     const pose = this.mover.pose;
     const { height } = this.env.layout.designSize;
@@ -276,6 +284,7 @@ export class PigSprite {
 
   destroy() {
     this.mover.destroy();
+    this.sick.destroy();
     this.scene.tweens.killTweensOf(this.motion);
     this.image.destroy();
     this.marker.destroy();

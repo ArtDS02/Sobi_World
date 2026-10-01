@@ -53,6 +53,18 @@ export const FARM_VIEW = {
     /** Retry delay while the pig may not wander (selected, interacting, sick...). */
     retryMs: 1000,
   },
+  /** Ambient motion (R12A), off with reduceMotion. Speeds in design px per second. */
+  AMBIENT: {
+    cloudSpeedPx: 12,
+    /** Trees: a slow vertical stretch from the base plus a small side shift. */
+    sway: { scaleY: 0.012, dxPx: 3, ms: 2600 },
+    /** Tiled grass: the tile pattern rocks sideways. */
+    grassPx: 6,
+    /** Fade-in of the farm after the preload screen (R12A). */
+    fadeInMs: 450,
+  },
+  /** How long the sick tint takes to fade after a cure (§11.3 PIG_TREATED). */
+  SICK_TINT_FADE_MS: 600,
   /** Sick pigs are tinted green on top of the fx_sick overlay (spec §11 table). */
   SICK_TINT: 0xb6e3a2,
   /** Alpha threshold for pixel-perfect pig clicks. */

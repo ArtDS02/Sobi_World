@@ -30,5 +30,15 @@ export function renderDevTools(skip: (ms: number) => void, gallery?: () => void)
         on: { click: gallery },
       })
     : null;
-  return el('div', { class: 'c-devtools' }, button(1), button(6), assets);
+  const meter = el('span', { class: 'c-devtools__fps', text: 'fps -' });
+  return el('div', { class: 'c-devtools' }, button(1), button(6), assets, meter);
+}
+
+/**
+ * The farm's measured frame rate (R12A performance check with 12 pigs). Called on every store
+ * notify (the game's one 1 s tick), so no extra timer.
+ */
+export function showFps(tools: HTMLElement, fps: number | null) {
+  const meter = tools.querySelector('.c-devtools__fps');
+  if (meter) meter.textContent = fps === null ? 'fps -' : `fps ${Math.round(fps)}`;
 }

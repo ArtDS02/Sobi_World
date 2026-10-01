@@ -36,6 +36,8 @@ export interface FarmView {
   setSelected(pigId: string | null): void;
   /** Hidden on other screens: the loop sleeps, and the scale is refreshed when shown again. */
   setVisible(visible: boolean): void;
+  /** Measured frames per second of the farm loop (dev tools), null before it runs. */
+  fps(): number | null;
   destroy(): void;
 }
 
@@ -81,6 +83,7 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
       if (running) applyVisible();
     },
     effects: () => bridge.effects,
+    fps: () => (running ? game.loop.actualFps : null),
     destroy: () => {
       resize.disconnect();
       game.destroy(true);

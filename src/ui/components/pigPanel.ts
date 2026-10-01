@@ -6,7 +6,9 @@ import { pigActions, type ActionVm } from '../actionsVm';
 import { breedingVm } from '../breedVm';
 import { el } from '../dom';
 import { pigPanelVm } from '../viewModel';
+import type { UiIcon } from '../../core/config/assetIds';
 import { actionButton } from './actionButton';
+import { icon } from './icon';
 
 export interface PigPanelHandlers {
   act: (run: BoundAction) => void;
@@ -17,11 +19,11 @@ export interface PigPanelHandlers {
   wardrobe?: (pig: Pig) => void;
 }
 
-const row = (label: string, value: string, modifier = '') =>
+const row = (label: string, value: string, modifier = '', iconName?: UiIcon) =>
   el(
     'div',
     { class: `pig-panel__row ${modifier}`.trim() },
-    el('span', { class: 'pig-panel__label', text: label }),
+    el('span', { class: 'pig-panel__label' }, icon(iconName), label),
     el('span', { class: 'pig-panel__value', text: value }),
   );
 
@@ -55,7 +57,7 @@ export function renderPigPanel(
     el(
       'div',
       { class: 'pig-panel__growth' },
-      row(vi.stat.growth, `${vm.growth} · ${vm.stage}`),
+      row(vi.stat.growth, `${vm.growth} · ${vm.stage}`, '', 'growth'),
       el(
         'div',
         { class: 'c-bar', attrs: { role: 'progressbar', 'aria-valuenow': String(vm.growthValue) } },
@@ -63,21 +65,26 @@ export function renderPigPanel(
       ),
     ),
     row(vi.stat.weight, vm.weight),
-    row(vi.stat.hunger, vm.hunger),
-    row(vi.stat.cleanliness, vm.cleanliness),
-    row(vi.stat.health, vm.health, pig.isSick ? 'is-sick' : ''),
+    row(vi.stat.hunger, vm.hunger, '', 'hunger'),
+    row(vi.stat.cleanliness, vm.cleanliness, '', 'cleanliness'),
+    row(vi.stat.health, vm.health, pig.isSick ? 'is-sick' : '', 'health'),
     // The line that makes care legible: happiness and the resulting price multiplier.
-    row(vi.stat.happiness, `${vm.happiness} → ${vm.priceMultiplier}`, 'is-key'),
+    row(vi.stat.happiness, `${vm.happiness} → ${vm.priceMultiplier}`, 'is-key', 'happiness'),
     vm.pregnancy ? row(vi.stat.pregnant, vm.pregnancy) : null,
     el(
       'div',
       { class: 'pig-panel__actions' },
-      actionButton(actions.feed, () => on.act(actions.feed.run)),
-      actionButton(actions.clean, () => on.act(actions.clean.run)),
-      actionButton(actions.treat, () => on.act(actions.treat.run)),
-      actionButton(breeding.button, () => on.breed(pig)),
+      actionButton(actions.feed, () => on.act(actions.feed.run), '', 'feed'),
+      actionButton(actions.clean, () => on.act(actions.clean.run), '', 'clean'),
+      actionButton(actions.treat, () => on.act(actions.treat.run), '', 'treat'),
+      actionButton(breeding.button, () => on.breed(pig), '', 'breed'),
       on.wardrobe
-        ? actionButton({ label: vi.action.wardrobe, reason: null }, () => on.wardrobe?.(pig))
+        ? actionButton(
+            { label: vi.action.wardrobe, reason: null },
+            () => on.wardrobe?.(pig),
+            '',
+            'skin',
+          )
         : null,
       actionButton(actions.sell, () => on.sell(pig, actions.sell), 'c-button--warn'),
     ),

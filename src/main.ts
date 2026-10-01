@@ -22,6 +22,7 @@ async function start(root: HTMLElement) {
   let clock: Clock = realClock;
   const opts: AppOptions = {};
   let skip: ((ms: number) => void) | null = null;
+  let showDevFps: (() => void) | null = null;
 
   // Dev-only time travel: `npm run dev` + ?dev=1. Dead code in production builds.
   if (import.meta.env.DEV && new URLSearchParams(location.search).has('dev')) {
@@ -33,6 +34,8 @@ async function start(root: HTMLElement) {
       (ms) => skip?.(ms),
       () => gallery.openAssetGallery(root, assets.registry),
     );
+    const tools = opts.devTools;
+    showDevFps = () => dev.showFps(tools, farmView?.fps() ?? null);
     skip = (ms) => {
       offset.add(ms);
       store.tick();
@@ -54,7 +57,10 @@ async function start(root: HTMLElement) {
     unlocked: platform.kind === 'desktop',
     ...(import.meta.env.DEV ? { warn: (m: string) => console.warn(m) } : {}),
   });
-  store.subscribe(() => audio.sync());
+  store.subscribe(() => {
+    audio.sync();
+    showDevFps?.();
+  });
   if (platform.kind !== 'desktop') {
     const unlock = () => audio.unlock();
     document.addEventListener('pointerdown', unlock, { once: true, capture: true });

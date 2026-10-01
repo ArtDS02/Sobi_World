@@ -48,3 +48,14 @@ export function createPopupShell(panel: PanelId, label: string, onClose: () => v
   );
   return { panel, root, body };
 }
+
+/** Plays the closing fade (R12A), then removes the window; at once with reduceMotion. */
+export function closePopupShell(shell: PopupShell, reduceMotion: boolean) {
+  const { root } = shell;
+  if (reduceMotion || !root.isConnected) {
+    root.remove();
+    return;
+  }
+  root.classList.add('is-closing');
+  root.addEventListener('animationend', () => root.remove(), { once: true });
+}

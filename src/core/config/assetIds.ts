@@ -46,6 +46,33 @@ export const TROUGH_PROP_ID = 'prop_feed_trough';
 export const ORDER_BOARD_PROP_ID = 'prop_order_board';
 export const SLEEP_FALLBACK_FX: FxId = 'fx_zzz'; // DECISIONS Q5
 
+/** DOM icons (spec §11.1 DOM layer: ui_*), by what they label. Resolved through the manifest. */
+export const UI_ICON = {
+  gold: 'ui_icon_gold',
+  xp: 'ui_icon_xp',
+  trough: 'ui_icon_trough',
+  orders: 'ui_icon_order',
+  collection: 'ui_icon_collection',
+  skin: 'ui_icon_skin',
+  hunger: 'ui_icon_hunger',
+  cleanliness: 'ui_icon_cleanliness',
+  health: 'ui_icon_health',
+  happiness: 'ui_icon_happiness',
+  growth: 'ui_icon_growth',
+  feed: 'ui_btn_feed',
+  clean: 'ui_btn_clean',
+  cleanAll: 'ui_btn_clean_all',
+  treat: 'ui_btn_heal',
+  breed: 'ui_btn_breed',
+  shop: 'ui_btn_shop',
+  fillTrough: 'ui_btn_fill_trough',
+} as const;
+export type UiIcon = keyof typeof UI_ICON;
+
+/** Ambient life (spec §11.1 "clouds may drift slowly"): placements that drift or sway. */
+export const AMBIENT_DRIFT_PREFIX = 'env_cloud_';
+export const AMBIENT_SWAY_IDS: readonly string[] = ['env_trees_mid', 'env_ground_grass'];
+
 /** Trough sprite states (environment catalogue §1). */
 export const TROUGH_STATES = ['empty', 'half', 'full'] as const;
 export type TroughState = (typeof TROUGH_STATES)[number];

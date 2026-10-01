@@ -72,3 +72,73 @@
     margin-top: $sp-4;
   }
 }
+
+// R12A: ui_* icons inside buttons and labels.
+.c-icon {
+  flex: none;
+  width: $icon-size;
+  height: $icon-size;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+// R12A: button states — hover / press feedback; disabled keeps its reason line (§10.2).
+.c-button,
+.c-gauge {
+  display: inline-flex;
+  gap: $sp-1;
+  align-items: center;
+  justify-content: center;
+  transition:
+    filter $dur-fast ease-out,
+    transform $dur-fast ease-out;
+
+  &:hover:not(:disabled) {
+    filter: brightness($hover-bright);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px) scale($press-scale);
+  }
+}
+
+// R12A: popups and dialogs open (and popups close) with a short fade + scale.
+@keyframes c-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes c-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes c-pop-in {
+  from {
+    opacity: 0;
+    transform: scale($pop-from);
+  }
+}
+
+.c-window,
+.c-dialog {
+  animation: c-fade-in $dur-fast ease-out;
+}
+
+.c-window__panel,
+.c-dialog__panel {
+  animation: c-pop-in $dur-fast ease-out;
+}
+
+.c-window.is-closing {
+  pointer-events: none;
+  animation: c-fade-out $dur-fast ease-in forwards;
+}
+
+// settings.reduceMotion (spec §10.4): no UI transitions either.
+.is-reduced-motion * {
+  animation: none !important;
+  transition: none !important;
+}

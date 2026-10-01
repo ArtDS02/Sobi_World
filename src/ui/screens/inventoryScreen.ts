@@ -2,6 +2,7 @@
 import { ITEM_IDS } from '../../core/config/items';
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
+import { icon } from '../components/icon';
 import { el } from '../dom';
 
 export interface InventoryHandlers {
@@ -24,12 +25,12 @@ export function renderInventoryScreen(save: SaveGame, on: InventoryHandlers): HT
           el('span', { class: 'inventory__qty', text: `x${save.inventory[id]}` }),
           // Medicine is used from the sick pig's panel (it needs a target).
           id === 'FOOD_BASIC'
-            ? el('button', {
-                class: 'c-button',
-                text: vi.action.fillTrough,
-                attrs: { type: 'button' },
-                on: { click: on.fillTrough },
-              })
+            ? el(
+                'button',
+                { class: 'c-button', attrs: { type: 'button' }, on: { click: on.fillTrough } },
+                icon('fillTrough'),
+                vi.action.fillTrough,
+              )
             : null,
         ),
       ),

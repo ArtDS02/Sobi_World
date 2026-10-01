@@ -41,6 +41,13 @@ $sp-6: 1.5rem;
 $sp-touch-min: 44px; // spec §10.4 minimum touch target
 $focus-ring: 3px; // spec §10.4: keyboard focus always visible
 $coach-max: 24rem;
+$icon-size: 1.25em;
+
+// Motion (R12A): short UI transitions, off with reduceMotion.
+$dur-fast: 150ms;
+$pop-from: 0.96;
+$press-scale: 0.98;
+$hover-bright: 1.06;
 
 // Shape
 $radius-sm: 0.375rem;
