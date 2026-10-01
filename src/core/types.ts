@@ -105,4 +105,5 @@ export interface ActionContext {
 }
 
 export type ActionResult =
-  { ok: true; state: SaveGame; events: GameEvent[] } | { ok: false; error: ErrorCode };
+  | { ok: true; state: SaveGame; events: GameEvent[] }
+  | { ok: false; error: ErrorCode };
