@@ -4,7 +4,7 @@ export const FEEDBACK = {
   STAGGER_MS: 140,
   TWEEN: {
     bounce: { dropPx: 220, ms: 700 },
-    hop: { px: 36, ms: 220 },
+    happy: { px: 36, ms: 220, repeat: 1 },
     shake: { px: 8, ms: 50, repeat: 3 },
     clean: { deg: 6, ms: 90, repeat: 3 },
     eat: { deg: 8, ms: 250, repeat: 2 },
@@ -12,6 +12,14 @@ export const FEEDBACK = {
     popIn: { from: 0.2, ms: 420, moveMs: 900 },
     grow: { from: 0.85, ms: 600 },
     wiggle: { deg: 4, ms: 80, repeat: 3 },
+    /** Brightness lift while cleaning (colour matrix, WebGL only). */
+    cleanBright: { amount: 0.35, ms: 180 },
+  },
+  /** Continuous pose tweens (art standard §2.4, §3): idle breathing, walk squash, turn. */
+  POSE: {
+    breathe: { amount: 0.025, ms: 1300 },
+    squash: { x: 1.04, y: 0.95, ms: 170 },
+    turnMs: 120,
   },
   PARTICLE: {
     count: 8,

@@ -5,10 +5,10 @@ import type { AssetRegistry } from '../../core/assets/registry';
 import type { FxId } from '../../core/config/assetIds';
 import { FARM_VIEW } from '../../core/config/farmView';
 import type { Pig } from '../../core/types';
+import { pigVisualState, type VisualState } from '../state/pigVisualState';
 import { fallbackPigKey, textureKey } from './textureKeys';
 
 export type FarmLayout = AssetManifest['layout'];
-export type PigVisualState = 'idle' | 'sick' | 'pregnant' | 'sleep';
 
 export interface PigView {
   /** Texture to draw; `fallbackId` when it is not loaded (spec §11.4). */
@@ -16,16 +16,22 @@ export interface PigView {
   fallbackId: string;
   /** Skin row whose anchors apply (after the breed-default fallback). */
   skinId: string;
-  /** Feet position in design pixels. */
+  /** Home feet position in design pixels; wandering strays from it (visual only). */
   x: number;
   y: number;
-  /** growth × Y-depth factor; display height = FARM_VIEW.PIG_DISPLAY_PX × scale. */
+  /** growth × Y-depth factor at home; display height = FARM_VIEW.PIG_DISPLAY_PX × scale. */
   scale: number;
+  /** growthProgress, so the sprite can rescale by Y while it wanders. */
+  growth: number;
+  /** Initial facing; afterwards the walk direction decides. */
   flipX: boolean;
   /** Y-sort inside layer 4 (spec §11.1). */
   depth: number;
   overlays: FxId[];
-  visualState: PigVisualState;
+  /** The flags the visual state reads, for the sprite's own pigVisualState calls. */
+  care: Pick<Pig, 'isSick' | 'pregnancy'>;
+  /** Data-only state (no feedback, not walking); the sprite adds those (pigVisualState). */
+  visualState: VisualState;
 }
 
 /** FNV-1a, 32 bit: a stable pseudo-random value per pig id (no rng: purely visual). */
@@ -59,13 +65,6 @@ export function pigScale(growthProgress: number, yNorm: number, layout: FarmLayo
   return growth * byY;
 }
 
-/** Sick wins over pregnant for the state name; both overlays show (art standard §3). */
-function visualStateOf(pig: Pig): PigVisualState {
-  if (pig.isSick) return 'sick';
-  if (pig.pregnancy) return 'pregnant';
-  return 'idle';
-}
-
 /**
  * `now` is reserved for time-based states (wander phase, R05B); sleeping has no rule in the
  * spec yet, so the sleep frame is never chosen here (DECISIONS R05A-1).
@@ -76,7 +75,7 @@ export function pigView(
   layout: FarmLayout,
   textures: Pick<AssetRegistry, 'pigTexture'>,
 ): PigView {
-  const visualState = visualStateOf(pig);
+  const visualState = pigVisualState(pig, 0, null);
   const sleeping = false;
   const tex = textures.pigTexture(pig.skinId, pig.breed, sleeping);
   const fallbackId = fallbackPigKey(pig.breed);
@@ -99,9 +98,11 @@ export function pigView(
     x: spot.x * layout.designSize.width,
     y,
     scale: pigScale(pig.growthProgress, spot.y, layout),
+    growth: pig.growthProgress,
     flipX: (hashId(pig.id) & 1) === 1,
     depth: y,
     overlays,
+    care: { isSick: pig.isSick, pregnancy: pig.pregnancy },
     visualState,
   };
 }

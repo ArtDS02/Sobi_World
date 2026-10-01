@@ -1,24 +1,26 @@
 // One pig on the farm canvas (spec §11, §11.2): applies a PigView, never computes game state.
-// Base image + selection marker under the feet + fx overlays on their anchors (layer 5).
-// Feedback tweens (§11.3) animate a separate `motion` offset, so a store re-sync never fights them.
+// Base image + selection marker under the feet + fx overlays (PigOverlays, layer 5).
+// Feedback tweens (§11.3) animate a separate `motion` offset and wandering / pose live in
+// PigMover, so a store re-sync never fights them. Visual state: state/pigVisualState.ts.
 import * as Phaser from 'phaser';
 import { anchorOffset, type Anchors } from '../../core/assets/anchors';
 import { PIG_FEET_Y, type AnchorName, type FxId } from '../../core/config/assetIds';
 import { FARM_VIEW } from '../../core/config/farmView';
 import { FEEDBACK } from '../../core/config/feedback';
 import type { AnimationId } from '../feedback/feedbackTable';
-import type { PigView } from '../view/pigView';
-import { FALLBACK_FX_KEY } from '../view/textureKeys';
+import {
+  FEEDBACK_STATE,
+  canWander,
+  pigVisualState,
+  type ActiveFeedback,
+  type VisualState,
+} from '../state/pigVisualState';
+import { pigScale, type FarmLayout, type PigView } from '../view/pigView';
+import { playPigAnimation, type Motion, type TweenablePig } from '../fx/pigAnimations';
+import { PigMover } from './PigMover';
+import { PigOverlays } from './PigOverlays';
 
 export const PIG_ID_DATA = 'pigId';
-
-interface Motion {
-  dx: number;
-  dy: number;
-  scale: number;
-  angle: number;
-  alpha: number;
-}
 
 interface Applied {
   view: PigView;
@@ -27,19 +29,38 @@ interface Applied {
   anchorOf: (fx: FxId) => AnchorName;
 }
 
+export interface PigEnv {
+  layout: FarmLayout;
+  /** Trough x in design px (eat turns toward it), or null without a trough. */
+  troughX: () => number | null;
+}
+
+const T = FEEDBACK.TWEEN;
+/** How long each feedback state holds (yoyo tweens run there and back). */
+const HOLD_MS: Record<'eat' | 'clean' | 'happy', number> = {
+  eat: T.eat.ms * 2 * (T.eat.repeat + 1),
+  clean: T.clean.ms * 2 * (T.clean.repeat + 1),
+  happy: T.happy.ms * 2 * (T.happy.repeat + 1),
+};
+
 export class PigSprite {
   private readonly image: Phaser.GameObjects.Image;
   private readonly marker: Phaser.GameObjects.Ellipse;
-  private overlays: Phaser.GameObjects.Image[] = [];
+  private readonly bright: Phaser.FX.ColorMatrix | null;
+  private readonly overlays: PigOverlays;
   private applied: Applied | null = null;
-  /** Tweened offsets: dy (px, up is negative), scale multiplier, angle (deg), alpha. */
-  private readonly motion: Motion = { dx: 0, dy: 0, scale: 1, angle: 0, alpha: 1 };
+  private readonly motion: Motion = { dx: 0, dy: 0, scale: 1, angle: 0, alpha: 1, bright: 0 };
+  private readonly mover: PigMover;
+  private feedback: ActiveFeedback | null = null;
   private leaving = false;
+  /** What the shared animation code may touch. */
+  private readonly handle: TweenablePig;
 
   constructor(
     private readonly scene: Phaser.Scene,
     pigId: string,
     view: PigView,
+    private readonly env: PigEnv,
   ) {
     const sel = FARM_VIEW.SELECTION;
     this.marker = scene.add
@@ -55,10 +76,41 @@ export class PigSprite {
         alphaTolerance: FARM_VIEW.HIT_ALPHA,
         useHandCursor: true,
       });
+    this.overlays = new PigOverlays(scene);
+    this.bright = this.image.preFX?.addColorMatrix() ?? null; // WebGL only
+    this.mover = new PigMover(
+      scene,
+      pigId,
+      env.layout,
+      () => this.layout(),
+      () => this.mayWander(),
+      () => this.feedback !== null && this.scene.time.now < this.feedback.until,
+    );
+    this.handle = {
+      motion: this.motion,
+      mover: this.mover,
+      layout: () => this.layout(),
+      tween: (c) => this.tween(c),
+      reset: (k) => this.reset(k),
+      troughX: () => env.troughX(),
+    };
   }
 
   private textureFor(view: PigView): string {
     return this.scene.textures.exists(view.textureId) ? view.textureId : view.fallbackId;
+  }
+
+  private mayWander(): boolean {
+    const a = this.applied;
+    return (
+      !this.leaving && !!a && canWander(a.view.care, this.scene.time.now, this.feedback, a.selected)
+    );
+  }
+
+  /** The state this pig shows right now (spec §11 table). */
+  visualState(): VisualState {
+    const care = this.applied?.view.care ?? { isSick: false, pregnancy: null };
+    return pigVisualState(care, this.scene.time.now, this.feedback, this.mover.moving);
   }
 
   apply(view: PigView, anchors: Anchors, selected: boolean, anchorOf: (fx: FxId) => AnchorName) {
@@ -73,72 +125,66 @@ export class PigSprite {
       );
     }
     this.applied = { view, anchors, selected, anchorOf };
+    this.mover.place({ x: view.x, y: view.y }, view.flipX);
+    this.mover.refresh();
     this.layout();
   }
 
-  /** Base view + motion offsets → every game object of the pig. */
+  /** Wander position + pose + feedback motion → every game object of the pig. */
   private layout() {
-    if (!this.applied) return;
+    const pos = this.mover.pos;
+    if (!this.applied || !pos) return;
     const { view, anchors, selected, anchorOf } = this.applied;
     const m = this.motion;
-    const displayH = FARM_VIEW.PIG_DISPLAY_PX * view.scale * m.scale;
-    const x = view.x + m.dx;
-    const y = view.y + m.dy;
+    const pose = this.mover.pose;
+    const { height } = this.env.layout.designSize;
+    const scale = pigScale(view.growth, pos.y / height, this.env.layout);
+    const displayH = FARM_VIEW.PIG_DISPLAY_PX * scale * m.scale;
+    const flipX = this.mover.facingLeft;
+    const x = pos.x + m.dx;
+    const y = pos.y + m.dy;
+    const base = displayH / this.image.height;
     this.image
-      .setScale(displayH / this.image.height)
+      .setScale(base * pose.bx * pose.turn, base * pose.by)
       .setPosition(x, y)
-      .setFlipX(view.flipX)
-      .setAngle(view.flipX ? -m.angle : m.angle)
+      .setFlipX(flipX)
+      .setAngle(flipX ? -m.angle : m.angle)
       .setAlpha(m.alpha)
-      .setDepth(view.depth);
-    const displayW = this.image.displayWidth;
+      .setDepth(pos.y); // Y-sort (spec §11, D23)
+    this.bright?.brightness(1 + m.bright * T.cleanBright.amount);
+    const displayW = this.image.width * base;
 
     const sel = FARM_VIEW.SELECTION;
     this.marker
-      .setPosition(x, view.y + m.dy)
+      .setPosition(x, pos.y + m.dy)
       .setSize(displayW * sel.width, displayH * sel.height)
-      .setDepth(view.depth - 0.5)
+      .setDepth(pos.y - 0.5)
       .setVisible(selected && !this.leaving);
 
-    this.syncOverlays(view, anchors, anchorOf, displayW, displayH, x, y);
-  }
-
-  private syncOverlays(
-    view: PigView,
-    anchors: Anchors,
-    anchorOf: (fx: FxId) => AnchorName,
-    displayW: number,
-    displayH: number,
-    x: number,
-    y: number,
-  ) {
-    while (this.overlays.length > view.overlays.length) this.overlays.pop()?.destroy();
-    const size = FARM_VIEW.FX_DISPLAY_PX * view.scale;
-    const step = size + FARM_VIEW.FX_STACK_GAP_PX * view.scale;
-    const n = view.overlays.length;
-    view.overlays.forEach((fx, i) => {
-      const key = this.scene.textures.exists(fx) ? fx : FALLBACK_FX_KEY;
-      const img = this.overlays[i] ?? this.scene.add.image(0, 0, key);
-      this.overlays[i] = img;
-      if (img.texture.key !== key) img.setTexture(key);
-      const off = anchorOffset(anchors, anchorOf(fx), view.flipX, displayW, displayH);
-      img
-        .setDisplaySize(size, size)
-        .setPosition(x + off.x + (i - (n - 1) / 2) * step, y + off.y)
-        .setAlpha(this.motion.alpha)
-        .setDepth(FARM_VIEW.OVERLAY_DEPTH + view.depth);
+    this.overlays.sync({
+      fx: view.overlays,
+      anchors,
+      anchorOf,
+      flipX,
+      scale,
+      depth: pos.y,
+      displayW,
+      displayH,
+      x,
+      y,
+      alpha: m.alpha,
     });
   }
 
   /** World position of an anchor right now (for particle bursts). */
   anchorPoint(name: AnchorName): { x: number; y: number } {
     if (!this.applied) return { x: this.image.x, y: this.image.y };
-    const { view, anchors } = this.applied;
+    const w = Math.abs(this.image.displayWidth);
     const off = anchorOffset(
-      anchors,
+      this.applied.anchors,
       name,
-      view.flipX,
-      this.image.displayWidth,
+      this.mover.facingLeft,
+      w,
       this.image.displayHeight,
     );
     return { x: this.image.x + off.x, y: this.image.y + off.y };
@@ -157,59 +203,24 @@ export class PigSprite {
     return { x: this.image.x, y: this.image.y };
   }
 
+  /** Holds a feedback state (eat / clean / happy): wandering pauses until it ends. */
+  private hold(animation: AnimationId, delayMs: number) {
+    const state = FEEDBACK_STATE[animation];
+    if (!state) return;
+    const until = this.scene.time.now + delayMs + HOLD_MS[state];
+    this.feedback = { state, until };
+    this.mover.refresh();
+    this.scene.time.delayedCall(delayMs + HOLD_MS[state], () => {
+      if (this.feedback?.until === until) this.feedback = null;
+      if (!this.leaving) this.mover.refresh();
+    });
+  }
+
   /** Feedback animation (§11.3); `exit` is played by `leave`. `from`: popIn starts there. */
-  play(animation: AnimationId, delayMs: number, from?: { x: number; y: number }) {
+  play(animation: AnimationId, delay: number, from?: { x: number; y: number }) {
     if (this.leaving) return;
-    const T = FEEDBACK.TWEEN;
-    const delay = delayMs;
-    switch (animation) {
-      case 'bounce':
-        this.motion.dy = -T.bounce.dropPx;
-        this.layout();
-        this.tween({ dy: 0, duration: T.bounce.ms, ease: 'Bounce.easeOut', delay });
-        break;
-      case 'hop':
-        this.tween({ dy: -T.hop.px, duration: T.hop.ms, yoyo: true, ease: 'Quad.easeOut', delay });
-        break;
-      case 'eat':
-        this.tween({
-          angle: T.eat.deg,
-          duration: T.eat.ms,
-          yoyo: true,
-          repeat: T.eat.repeat,
-          delay,
-        });
-        break;
-      case 'clean':
-      case 'shake':
-        this.tween({
-          angle: T.clean.deg,
-          duration: T.clean.ms,
-          yoyo: true,
-          repeat: T.clean.repeat,
-          delay,
-          onComplete: () => this.reset('angle'),
-        });
-        break;
-      case 'popIn':
-        this.motion.scale = T.popIn.from;
-        if (from && this.applied) {
-          this.motion.dx = from.x - this.applied.view.x;
-          this.motion.dy = from.y - this.applied.view.y;
-          this.tween({ dx: 0, dy: 0, duration: T.popIn.moveMs, ease: 'Sine.easeInOut', delay });
-        }
-        this.layout();
-        this.tween({ scale: 1, duration: T.popIn.ms, ease: 'Back.easeOut', delay });
-        break;
-      case 'grow':
-        this.motion.scale = T.grow.from;
-        this.layout();
-        this.tween({ scale: 1, duration: T.grow.ms, ease: 'Back.easeOut', delay });
-        break;
-      case 'wiggle':
-      case 'exit':
-        break;
-    }
+    this.hold(animation, delay);
+    playPigAnimation(this.handle, animation, delay, from);
   }
 
   private reset(key: keyof Motion) {
@@ -220,6 +231,7 @@ export class PigSprite {
   /** Removed from the save: hop off and fade (§11.2), or vanish at once with reduceMotion. */
   leave(reduceMotion: boolean, done: () => void) {
     this.leaving = true;
+    this.mover.refresh();
     this.image.disableInteractive();
     this.marker.setVisible(false);
     if (reduceMotion) {
@@ -227,11 +239,10 @@ export class PigSprite {
       done();
       return;
     }
-    const T = FEEDBACK.TWEEN.exit;
     this.tween({
-      dy: -T.px,
+      dy: -T.exit.px,
       alpha: 0,
-      duration: T.ms,
+      duration: T.exit.ms,
       ease: 'Quad.easeIn',
       onComplete: () => {
         this.destroy();
@@ -241,10 +252,10 @@ export class PigSprite {
   }
 
   destroy() {
+    this.mover.destroy();
     this.scene.tweens.killTweensOf(this.motion);
     this.image.destroy();
     this.marker.destroy();
-    for (const o of this.overlays) o.destroy();
-    this.overlays = [];
+    this.overlays.destroy();
   }
 }

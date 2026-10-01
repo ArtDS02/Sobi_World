@@ -4,7 +4,7 @@ import type { AudioKey, FxId } from '../../core/config/assetIds';
 import type { GameEventType } from '../../core/events';
 
 export type AnimationId =
-  'bounce' | 'eat' | 'shake' | 'clean' | 'hop' | 'exit' | 'popIn' | 'grow' | 'wiggle';
+  'bounce' | 'eat' | 'shake' | 'clean' | 'happy' | 'exit' | 'popIn' | 'grow' | 'wiggle';
 
 export interface FeedbackRow {
   animation: AnimationId | null;
@@ -28,9 +28,9 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   PIG_FED: row('eat', ['fx_crumb'], 'feed_munch', false),
   TROUGH_FILLED: row('shake', ['fx_crumb'], 'feed_munch', false),
   PIG_CLEANED: row('clean', ['fx_bubble'], 'water_splash', false, true),
-  PIG_TREATED: row('hop', ['fx_sparkle'], 'ui_click', true),
+  PIG_TREATED: row('happy', ['fx_sparkle'], 'ui_click', true),
   PIG_SOLD: row('exit', ['fx_coin'], 'coin_collect', true),
-  BREEDING_STARTED: row('hop', ['fx_heart'], 'breed_chime', true),
+  BREEDING_STARTED: row('happy', ['fx_heart'], 'breed_chime', true),
   BIRTH: row('popIn', ['fx_heart', 'fx_sparkle'], 'birth_fanfare', true),
   PIG_BECAME_ADULT: row('grow', ['fx_sparkle'], 'level_up', true),
   PIG_BECAME_SICK: row(null, ['fx_sick'], 'notify', true),

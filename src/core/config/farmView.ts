@@ -39,6 +39,18 @@ export const FARM_VIEW = {
     padY: 6,
     depth: 50000,
   },
+  /** Visual-only strolls inside layout.walkArea (spec §11). Radius is normalised to width. */
+  WANDER: {
+    radius: 0.08,
+    /** Vertical reach relative to the horizontal one (the walk area is wide and shallow). */
+    yRatio: 0.6,
+    speedPx: 70,
+    minWalkMs: 600,
+    restMinMs: 2500,
+    restMaxMs: 8000,
+    /** Retry delay while the pig may not wander (selected, interacting, sick...). */
+    retryMs: 1000,
+  },
   /** Alpha threshold for pixel-perfect pig clicks. */
   HIT_ALPHA: 1,
   /** Progress bar of the preload scene (design px). */

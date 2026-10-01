@@ -17,7 +17,7 @@ import type { FarmBridge, FarmDeps, FarmPick } from '../farmView';
 import { noEffects } from '../feedback/effects';
 import { SceneEffects } from '../fx/SceneEffects';
 import { vi } from '../../i18n/vi';
-import { PIG_ID_DATA, PigSprite } from '../prefabs/PigSprite';
+import { PIG_ID_DATA, PigSprite, type PigEnv } from '../prefabs/PigSprite';
 import { pigView, type FarmLayout } from '../view/pigView';
 import { groundLineY, placementView } from '../view/sceneLayout';
 import {
@@ -50,6 +50,7 @@ export class MainFarmScene extends Phaser.Scene {
   private trough: Phaser.GameObjects.Image | null = null;
   private board: Phaser.GameObjects.Image | null = null;
   private layout!: FarmLayout;
+  private pigEnv!: PigEnv;
 
   constructor(
     private readonly deps: FarmDeps,
@@ -60,6 +61,7 @@ export class MainFarmScene extends Phaser.Scene {
 
   create() {
     this.layout = this.deps.assets.manifest.layout;
+    this.pigEnv = { layout: this.layout, troughX: () => this.trough?.x ?? null };
     warnLoadErrors(this.load);
     this.drawBackdrop();
     this.drawPlacements();
@@ -169,7 +171,7 @@ export class MainFarmScene extends Phaser.Scene {
       if (!this.textures.exists(view.textureId)) this.requestSkin(view.skinId);
       let sprite = this.pigs.get(pig.id);
       if (!sprite) {
-        sprite = new PigSprite(this, pig.id, view);
+        sprite = new PigSprite(this, pig.id, view, this.pigEnv);
         this.pigs.set(pig.id, sprite);
       }
       sprite.apply(
