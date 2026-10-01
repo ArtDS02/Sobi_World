@@ -4,3 +4,4 @@ coverage
 .vite
 dist-electron
 release
+test-results/

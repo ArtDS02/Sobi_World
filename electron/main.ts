@@ -20,7 +20,7 @@ import { readWindowState, WINDOW_MIN, writeWindowState } from './windowState';
 const FLUSH_TIMEOUT_MS = 3000;
 const SCHEME = 'app';
 const ORIGIN = `${SCHEME}://game`;
-const DEV_URL = app.isPackaged ? null : (process.env.UNIN_DEV_URL ?? null);
+const DEV_URL = app.isPackaged ? null : process.env.UNIN_DEV_URL || null; // empty = unset
 const DIST_DIR = join(__dirname, '..', 'dist');
 const CSP = [
   "default-src 'self'",
@@ -52,7 +52,9 @@ const MIME: Record<string, string> = {
 // Saves live in %APPDATA%\Un In Homemade\ whatever the (Vietnamese) product name is (§9.1).
 // An unpackaged run (dev:desktop) uses its own folder so it never touches the player's farm.
 const DATA_DIR = app.isPackaged ? 'Un In Homemade' : 'Un In Homemade Dev';
-app.setPath('userData', join(app.getPath('appData'), DATA_DIR));
+// The e2e smoke test (§14.8) points an unpackaged run at a temporary folder; ignored when packaged.
+const TEST_USER_DATA = app.isPackaged ? null : process.env.UNIN_USER_DATA || null;
+app.setPath('userData', TEST_USER_DATA ?? join(app.getPath('appData'), DATA_DIR));
 protocol.registerSchemesAsPrivileged([
   {
     scheme: SCHEME,
