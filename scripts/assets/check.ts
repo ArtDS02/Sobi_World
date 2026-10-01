@@ -25,7 +25,7 @@ const FILE_NAME = /^[a-z0-9_]+\.(png|ogg|mp3|json)$/;
 
 type Row = AssetManifest[ManifestSection][number];
 
-function rowFiles(row: Row): [string, string][] {
+export function rowFiles(row: Row): [string, string][] {
   const r = row as Record<string, unknown>;
   const out: [string, string][] = [];
   for (const [key, field] of [

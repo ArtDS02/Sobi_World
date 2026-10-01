@@ -5,3 +5,4 @@ coverage
 dist-electron
 release
 test-results/
+art_inbox/
