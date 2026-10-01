@@ -45,10 +45,13 @@
   }
 
   &__xp {
+    display: grid;
+    gap: $sp-1;
+    min-width: 7rem;
     color: $c-text-muted;
   }
 
-  &__gold {
+  &__gold.c-button {
     font-weight: $fw-bold;
     color: $c-gold;
   }

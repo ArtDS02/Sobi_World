@@ -1,0 +1,35 @@
+// Inventory screen. Owns `.inventory*` inside [data-screen="inventory"].
+@use '../core' as *;
+
+[data-screen='inventory'] {
+  display: grid;
+  gap: $sp-3;
+
+  .inventory__title {
+    font-size: $fs-lg;
+  }
+
+  .inventory__list {
+    display: grid;
+    gap: $sp-2;
+  }
+
+  .inventory__row {
+    display: flex;
+    gap: $sp-3;
+    align-items: center;
+    min-height: $sp-touch-min;
+    padding: $sp-2 $sp-3;
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
+  }
+
+  .inventory__name {
+    flex: 1;
+  }
+
+  .inventory__qty {
+    font-weight: $fw-bold;
+  }
+}

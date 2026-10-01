@@ -4,15 +4,24 @@ import type { FileDialogs } from '../core/save/port';
 import type { Pig, SaveGame } from '../core/types';
 import { vi } from '../i18n/vi';
 import type { BoundAction, GameStore, StoreSnapshot } from '../store/gameStore';
-import type { ActionVm } from './actionsVm';
+import { troughSpace, type ActionVm } from './actionsVm';
 import { renderNavBar, type ScreenId } from './components/navBar';
 import { createToaster } from './components/toast';
 import { renderTopBar } from './components/topBar';
-import { openImportDialog, openRenameDialog, openSellDialog, openTroughDialog } from './dialogs';
+import {
+  openBuyItemDialog,
+  openImportDialog,
+  openRenameDialog,
+  openSellDialog,
+  openTroughDialog,
+} from './dialogs';
 import { el } from './dom';
 import { renderFarmScreen } from './screens/farmScreen';
+import { renderHistoryScreen } from './screens/historyScreen';
+import { renderInventoryScreen } from './screens/inventoryScreen';
 import { renderPlaceholderScreen } from './screens/placeholderScreen';
 import { renderSettingsScreen, type SettingsHandlers } from './screens/settingsScreen';
+import { renderShopScreen, type ShopHandlers, type ShopTab } from './screens/shopScreen';
 import {
   renderMultiTabBanner,
   renderSaveErrorBanner,
@@ -23,6 +32,7 @@ import { eventToast } from './viewModel';
 interface UiState {
   screen: ScreenId;
   selectedPigId: string | null;
+  shopTab: ShopTab;
 }
 
 export interface AppOptions {
@@ -52,7 +62,7 @@ export function mountApp(
   opts: AppOptions = {},
 ): () => void {
   document.title = vi.app.title;
-  const ui: UiState = { screen: 'farm', selectedPigId: null };
+  const ui: UiState = { screen: 'farm', selectedPigId: null, shopTab: 'pigs' };
   const topbar = el('header', { class: 'topbar' });
   const banner = el('div', { class: 'app__banner' });
   const saveBanner = el('div', { class: 'app__banner' });
@@ -97,11 +107,29 @@ export function mountApp(
     },
     sell: (pig: Pig, vm: ActionVm) => openSellDialog(dialogs, pig, vm, act),
     rename: (pig: Pig) => openRenameDialog(dialogs, pig, act),
+    goShop: () => go('shop'),
   };
   // Reads the latest save at click time: the top bar is only re-rendered when its text changes.
-  const openTrough = () => {
+  const openTrough = (units?: number) => {
     const save = store.getSnapshot().save;
-    if (save) openTroughDialog(dialogs, save, now(), act);
+    if (save) openTroughDialog(dialogs, save, now(), act, units);
+  };
+  const shop: ShopHandlers = {
+    act: handlers.act,
+    tab: (tab) => {
+      ui.shopTab = tab;
+      rerender();
+    },
+    buyItem: (itemId) => {
+      const save = store.getSnapshot().save;
+      if (save) openBuyItemDialog(dialogs, save, itemId, now(), act);
+    },
+  };
+  const inventory = {
+    fillTrough: () => {
+      const save = store.getSnapshot().save;
+      if (save) openTrough(Math.min(save.inventory.FOOD_BASIC, troughSpace(save)));
+    },
   };
   const settings: SettingsHandlers = {
     exportSave: () => {
@@ -131,6 +159,23 @@ export function mountApp(
     rerender();
   };
 
+  function renderScreen(save: SaveGame): HTMLElement {
+    switch (ui.screen) {
+      case 'farm':
+        return renderFarmScreen(save, now(), ui.selectedPigId, handlers);
+      case 'shop':
+        return renderShopScreen(save, now(), ui.shopTab, shop);
+      case 'inventory':
+        return renderInventoryScreen(save, inventory);
+      case 'history':
+        return renderHistoryScreen(save);
+      case 'settings':
+        return renderSettingsScreen(settings);
+      default:
+        return renderPlaceholderScreen(ui.screen);
+    }
+  }
+
   function render(snap: StoreSnapshot) {
     patch(banner, snap.readOnly ? renderMultiTabBanner() : null);
     patch(saveBanner, snap.saveError ? renderSaveErrorBanner() : null);
@@ -141,16 +186,16 @@ export function mountApp(
       return;
     }
     const save = snap.save;
-    patch(topbar, renderTopBar(save, { settings: () => go('settings'), trough: openTrough }));
-    patch(navbar, renderNavBar(ui.screen, go));
     patch(
-      main,
-      ui.screen === 'farm'
-        ? renderFarmScreen(save, now(), ui.selectedPigId, handlers)
-        : ui.screen === 'settings'
-          ? renderSettingsScreen(settings)
-          : renderPlaceholderScreen(ui.screen),
+      topbar,
+      renderTopBar(save, {
+        settings: () => go('settings'),
+        trough: () => openTrough(),
+        history: () => go('history'),
+      }),
     );
+    patch(navbar, renderNavBar(ui.screen, go));
+    patch(main, renderScreen(save));
   }
 
   const offState = store.subscribe((snap) => {

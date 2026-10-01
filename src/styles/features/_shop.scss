@@ -1,0 +1,70 @@
+// Shop screen: tabs and item/pig/slot cards. Owns `.shop*` inside [data-screen="shop"].
+@use '../core' as *;
+
+[data-screen='shop'] {
+  display: grid;
+  gap: $sp-3;
+
+  .shop__title {
+    font-size: $fs-lg;
+  }
+
+  .shop__tabs {
+    display: flex;
+    gap: $sp-2;
+    border-bottom: 1px solid $c-border;
+  }
+
+  .shop__tab {
+    min-height: $sp-touch-min;
+    padding: $sp-2 $sp-3;
+    font-size: $fs-sm;
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+
+    &.is-active {
+      font-weight: $fw-bold;
+      color: $c-primary-strong;
+      border-bottom-color: $c-primary;
+    }
+  }
+
+  .shop__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: $sp-3;
+  }
+
+  .shop__card {
+    display: grid;
+    gap: $sp-2;
+    align-content: start;
+    padding: $sp-3;
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
+  }
+
+  .shop__name {
+    font-size: $fs-md;
+  }
+
+  .shop__desc,
+  .shop__owned {
+    font-size: $fs-sm;
+    color: $c-text-muted;
+  }
+
+  .shop__price {
+    font-weight: $fw-bold;
+    color: $c-gold;
+  }
+
+  .shop__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+  }
+}

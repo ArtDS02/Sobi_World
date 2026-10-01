@@ -14,6 +14,7 @@ export type GameEvent =
   | { type: 'DISCOVERY'; kind: 'BREED' | 'SKIN'; id: string; gold: number }
   // Action feedback, backed by vi.event.sold / vi.event.orderFulfilled.
   | { type: 'PIG_SOLD'; pigId: string; gold: number }
+  | { type: 'SLOT_BOUGHT'; slots: number; gold: number } // gold signed as in the transaction (§8.0)
   | { type: 'ORDER_FULFILLED'; orderId: string; gold: number };
 
 export type GameEventType = GameEvent['type'];

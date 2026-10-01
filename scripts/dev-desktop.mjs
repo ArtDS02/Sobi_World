@@ -10,7 +10,8 @@ await server.listen();
 const url = server.resolvedUrls?.local[0];
 if (!url) throw new Error('Vite dev server has no local URL');
 
-const child = spawn(String(electronPath), ['.'], {
+// Extra CLI args go to Electron, e.g. `npm run dev:desktop -- --remote-debugging-port=9333`.
+const child = spawn(String(electronPath), ['.', ...process.argv.slice(2)], {
   stdio: 'inherit',
   env: { ...process.env, UNIN_DEV_URL: url },
 });

@@ -3,6 +3,9 @@ import { ERRORS } from '../../src/core/config/errors';
 import { vi } from '../../src/i18n/vi';
 import {
   farmActions,
+  itemPurchase,
+  shopPigs,
+  shopSlot,
   pigActions,
   reasonFor,
   troughFill,
@@ -66,14 +69,44 @@ describe('disabled reasons (§10.2)', () => {
   });
 });
 
-describe('farm toolbar', () => {
-  it('buy is enabled on a new game, disabled with reasons when full or broke', () => {
-    expect(farmActions(farm(), NOW).buyMale.reason).toBeNull();
+describe('shop (R03)', () => {
+  it('buy pig is enabled on a new game, disabled with reasons when full or broke', () => {
+    const [pink] = shopPigs(farm(), NOW);
+    expect(pink!.breed).toBe('PIG_EARTH_PINK');
+    expect(pink!.male.reason).toBeNull();
     const full = farm([0, 1, 2, 3].map((i) => makePig({ id: `p${i}`, slotIndex: i })));
-    expect(farmActions(full, NOW).buyFemale.reason).toBe(vi.disabled.noSlot);
+    expect(shopPigs(full, NOW)[0]!.female.reason).toBe(vi.disabled.noSlot);
     const base = farm();
     const broke = { ...base, player: { ...base.player, gold: 10 } };
-    expect(farmActions(broke, NOW).buyMale.reason).toBe(vi.error.INSUFFICIENT_GOLD);
+    expect(shopPigs(broke, NOW)[0]!.male.reason).toBe(vi.error.INSUFFICIENT_GOLD);
+  });
+
+  it('only breeds with a shop price are listed', () => {
+    expect(shopPigs(farm(), NOW).map((p) => p.breed)).toEqual(['PIG_EARTH_PINK']);
+  });
+
+  it('item purchase: live total, invalid quantity and gold shortfall disable the button', () => {
+    const s = farm();
+    const vm = itemPurchase(s, 'FOOD_BASIC', 4, NOW);
+    expect(vm.total).toBe('Tổng: 100 vàng');
+    expect(vm.confirm.reason).toBeNull();
+    expect(itemPurchase(s, 'FOOD_BASIC', 0, NOW).confirm.reason).toBe(vi.error.INVALID_REQUEST);
+    const broke = { ...s, player: { ...s.player, gold: 99 } };
+    expect(itemPurchase(broke, 'MEDICINE_COMMON', 1, NOW).confirm.reason).toBe(
+      vi.error.INSUFFICIENT_GOLD,
+    );
+  });
+
+  it('slot: level gate shows the required level; enabled at level 2 with gold; null when all open', () => {
+    const s = farm();
+    const low = shopSlot({ ...s, player: { ...s.player, xp: 0, gold: 99_999 } }, NOW)!;
+    expect(low.title).toBe('Chuồng thứ 5');
+    expect(low.price).toBe('2.000 vàng');
+    expect(low.buy.reason).toBe('Cần cấp 2');
+    expect(
+      shopSlot({ ...s, player: { ...s.player, xp: 100, gold: 2000 } }, NOW)!.buy.reason,
+    ).toBeNull();
+    expect(shopSlot({ ...s, player: { ...s.player, unlockedSlots: 12 } }, NOW)).toBeNull();
   });
 
   it('cleanAll never disabled', () => {

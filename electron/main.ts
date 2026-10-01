@@ -50,7 +50,9 @@ const MIME: Record<string, string> = {
 };
 
 // Saves live in %APPDATA%\Un In Homemade\ whatever the (Vietnamese) product name is (§9.1).
-app.setPath('userData', join(app.getPath('appData'), 'Un In Homemade'));
+// An unpackaged run (dev:desktop) uses its own folder so it never touches the player's farm.
+const DATA_DIR = app.isPackaged ? 'Un In Homemade' : 'Un In Homemade Dev';
+app.setPath('userData', join(app.getPath('appData'), DATA_DIR));
 protocol.registerSchemesAsPrivileged([
   {
     scheme: SCHEME,

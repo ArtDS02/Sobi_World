@@ -1,4 +1,5 @@
 // Farm screen, DOM-only stand-in for the Phaser farm (§10.1): toolbar, pig cards, pig panel.
+// Buying pigs lives in the shop (R03).
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
 import { farmActions } from '../actionsVm';
@@ -9,21 +10,16 @@ import { pigCardVm } from '../viewModel';
 
 export interface FarmHandlers extends PigPanelHandlers {
   select: (pigId: string) => void;
+  goShop: () => void;
 }
 
-function renderToolbar(save: SaveGame, now: number, on: FarmHandlers): HTMLElement {
+function renderToolbar(save: SaveGame, now: number, on: FarmHandlers): HTMLElement | null {
+  if (save.pigs.length === 0) return null;
   const a = farmActions(save, now);
   return el(
     'div',
     { class: 'farm__toolbar' },
-    el(
-      'div',
-      { class: 'farm__buy' },
-      el('span', { class: 'farm__buy-title', text: a.buyTitle }),
-      actionButton(a.buyMale, () => on.act(a.buyMale.run)),
-      actionButton(a.buyFemale, () => on.act(a.buyFemale.run)),
-    ),
-    save.pigs.length > 0 ? actionButton(a.cleanAll, () => on.act(a.cleanAll.run)) : null,
+    actionButton(a.cleanAll, () => on.act(a.cleanAll.run)),
   );
 }
 
@@ -68,7 +64,17 @@ export function renderFarmScreen(
           );
         }),
       )
-    : el('p', { class: 'c-empty', text: vi.ui.farmEmpty });
+    : el(
+        'div',
+        { class: 'c-empty' },
+        el('p', { text: vi.ui.farmEmpty }),
+        el('button', {
+          class: 'c-button',
+          text: vi.nav.shop,
+          attrs: { type: 'button' },
+          on: { click: on.goShop },
+        }),
+      );
 
   return el(
     'div',

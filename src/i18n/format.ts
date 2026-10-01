@@ -14,6 +14,16 @@ const decFormat = new Intl.NumberFormat('vi-VN', {
   maximumFractionDigits: 2,
 });
 
+const dateTimeFormat = new Intl.DateTimeFormat('vi-VN', {
+  hour: '2-digit',
+  minute: '2-digit',
+  day: '2-digit',
+  month: '2-digit',
+});
+
+/** Local time and date of an epoch-ms timestamp, e.g. 14:05 01/10. */
+export const formatDateTime = (at: number): string => dateTimeFormat.format(at);
+
 /** Grouped integer, e.g. 8.420. */
 export const formatInt = (n: number): string => intFormat.format(Math.floor(n));
 

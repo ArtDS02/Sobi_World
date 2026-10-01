@@ -1,0 +1,42 @@
+// Transaction history. Owns `.history*` inside [data-screen="history"].
+@use '../core' as *;
+
+[data-screen='history'] {
+  display: grid;
+  gap: $sp-3;
+
+  .history__title {
+    font-size: $fs-lg;
+  }
+
+  .history__row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: $sp-3;
+    align-items: center;
+    padding: $sp-2 0;
+    font-size: $fs-sm;
+    border-bottom: 1px solid $c-border;
+  }
+
+  .history__at {
+    color: $c-text-muted;
+  }
+
+  .history__amount {
+    font-weight: $fw-bold;
+    text-align: right;
+
+    &.is-plus {
+      color: $c-success;
+    }
+
+    &.is-minus {
+      color: $c-danger;
+    }
+
+    &.is-zero {
+      color: $c-text-muted;
+    }
+  }
+}

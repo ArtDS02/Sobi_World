@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { formatDuration, t } from '../../src/i18n/format';
 import { vi } from '../../src/i18n/vi';
-import { eventToast, pigCardVm, pigPanelVm, topBarVm } from '../../src/ui/viewModel';
+import {
+  eventToast,
+  historyVm,
+  pigCardVm,
+  pigPanelVm,
+  signedGold,
+  topBarVm,
+} from '../../src/ui/viewModel';
 import { farm } from './actionKit';
 import { makePig } from './pigFactory';
 
@@ -25,6 +32,7 @@ describe('topBarVm (§10.1)', () => {
     const vm = topBarVm({ ...s, player: { ...s.player, xp: 320, gold: 8420 } });
     expect(vm.level).toBe('Cấp 3');
     expect(vm.xp).toBe('320/500 KN');
+    expect(vm.xpProgress).toBe(28); // (320-250)/(500-250)
     expect(vm.gold).toBe('8.420 vàng');
     expect(vm.trough).toBe(vi.hud.troughEmpty);
     expect(vm.troughEmpty).toBe(true);
@@ -36,6 +44,7 @@ describe('topBarVm (§10.1)', () => {
     expect(vm.trough).toBe('Máng ăn 12/30');
     expect(vm.level).toBe('Cấp 10');
     expect(vm.xp).toBe('5.700/5.700 KN');
+    expect(vm.xpProgress).toBe(100);
   });
 });
 
@@ -88,5 +97,26 @@ describe('eventToast', () => {
     expect(eventToast({ type: 'PIG_SOLD', pigId: 'pig-1', gold: 1440 }, after, s)).toBe(
       'Đã bán Ủn Hồng được 1.440 vàng.',
     );
+  });
+});
+
+describe('history (DECISIONS Q7)', () => {
+  it('signed gold', () => {
+    expect(signedGold(500)).toBe('+500 vàng');
+    expect(signedGold(-2000)).toBe('-2.000 vàng');
+    expect(signedGold(0)).toBe('0 vàng');
+  });
+
+  it('rows keep the save order (newest first) with type labels', () => {
+    const s = farm();
+    const transactions = [
+      { id: 'b', at: 2000, type: 'SLOT_PURCHASE' as const, amount: -2000 },
+      { id: 'a', at: 1000, type: 'PIG_SELL' as const, amount: 1200 },
+    ];
+    const rows = historyVm({ ...s, transactions });
+    expect(rows.map((r) => [r.id, r.label, r.amount, r.tone])).toEqual([
+      ['b', 'Mở chuồng', '-2.000 vàng', 'minus'],
+      ['a', 'Bán heo', '+1.200 vàng', 'plus'],
+    ]);
   });
 });

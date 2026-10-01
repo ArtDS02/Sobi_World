@@ -7,12 +7,14 @@ import { happiness } from '../core/engine/happiness';
 import { sellMultiplier } from '../core/engine/pricing';
 import type { GameEvent } from '../core/events';
 import type { Pig, SaveGame } from '../core/types';
-import { formatDec, formatDuration, formatInt, t } from '../i18n/format';
+import { formatDateTime, formatDec, formatDuration, formatInt, t } from '../i18n/format';
 import { vi } from '../i18n/vi';
 
 export interface TopBarVm {
   level: string;
   xp: string;
+  /** 0-100 progress from the current level's threshold to the next one. */
+  xpProgress: number;
   gold: string;
   trough: string;
   troughEmpty: boolean;
@@ -23,10 +25,14 @@ export function topBarVm(save: SaveGame): TopBarVm {
   const level = levelFromXp(xp);
   const next = BALANCE.LEVEL_XP[Math.min(level, BALANCE.MAX_LEVEL - 1)] ?? xp;
   const shownXp = level >= BALANCE.MAX_LEVEL ? next : xp; // displays as capped (§8.16)
+  const floor = BALANCE.LEVEL_XP[level - 1] ?? 0;
+  const xpProgress =
+    level >= BALANCE.MAX_LEVEL ? 100 : Math.floor(((xp - floor) / (next - floor)) * 100);
   const { food, capacity } = save.trough;
   return {
     level: t(vi.hud.level, { level }),
     xp: t(vi.hud.xp, { current: formatInt(shownXp), next: formatInt(next) }),
+    xpProgress,
     gold: t(vi.hud.gold, { amount: formatInt(gold) }),
     trough: food <= 0 ? vi.hud.troughEmpty : t(vi.hud.trough, { food, capacity }),
     troughEmpty: food <= 0,
@@ -119,5 +125,32 @@ export function eventToast(event: GameEvent, after: SaveGame, before: SaveGame):
       return t(vi.event.sold, { name: nameOf(event.pigId), gold: formatInt(event.gold) });
     case 'ORDER_FULFILLED':
       return t(vi.event.orderFulfilled, { gold: formatInt(event.gold) });
+    case 'SLOT_BOUGHT':
+      return null; // action feedback goes through FeedbackDirector (R05B)
   }
+}
+
+/** Signed gold as in the transaction: +500 vàng / -2.000 vàng. */
+export function signedGold(amount: number): string {
+  const sign = amount > 0 ? '+' : amount < 0 ? '-' : '';
+  return t(vi.hud.gold, { amount: `${sign}${formatInt(Math.abs(amount))}` });
+}
+
+export interface HistoryRowVm {
+  id: string;
+  label: string;
+  amount: string;
+  tone: 'plus' | 'minus' | 'zero';
+  at: string;
+}
+
+/** Transactions newest first (the save keeps them newest first, at most 200; DECISIONS Q7). */
+export function historyVm(save: SaveGame): HistoryRowVm[] {
+  return save.transactions.map((tx) => ({
+    id: tx.id,
+    label: vi.history[tx.type],
+    amount: signedGold(tx.amount),
+    tone: tx.amount > 0 ? 'plus' : tx.amount < 0 ? 'minus' : 'zero',
+    at: formatDateTime(tx.at),
+  }));
 }

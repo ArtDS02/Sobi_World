@@ -7,7 +7,8 @@ import type { Pig, SaveGame } from '../core/types';
 import { formatDec, formatInt, t } from '../i18n/format';
 import { vi } from '../i18n/vi';
 import type { BoundAction } from '../store/gameStore';
-import { troughFill, troughSpace, type ActionVm } from './actionsVm';
+import type { ItemId } from '../core/config/ids';
+import { itemPurchase, troughFill, troughSpace, type ActionVm } from './actionsVm';
 import { actionButton } from './components/actionButton';
 import { openDialog } from './components/dialog';
 import { el } from './dom';
@@ -60,12 +61,19 @@ export function openRenameDialog(host: HTMLElement, pig: Pig, act: Act) {
   input.select();
 }
 
-export function openTroughDialog(host: HTMLElement, save: SaveGame, now: number, act: Act) {
+/** §8.6: fill from inventory first, shortfall bought with gold. `units` presets the amount. */
+export function openTroughDialog(
+  host: HTMLElement,
+  save: SaveGame,
+  now: number,
+  act: Act,
+  units = troughSpace(save),
+) {
   const d = openDialog(host, vi.trough.title);
   const space = troughSpace(save);
   const input = el('input', {
     class: 'c-input',
-    attrs: { type: 'number', min: '1', max: String(Math.max(1, space)), value: String(space) },
+    attrs: { type: 'number', min: '1', max: String(Math.max(1, space)), value: String(units) },
   });
   const info = el('div', { class: 'c-dialog__info' });
   const slot = el('div');
@@ -78,10 +86,73 @@ export function openTroughDialog(host: HTMLElement, save: SaveGame, now: number,
     );
     slot.replaceChildren(actionButton(vm.confirm, () => void act(vm.confirm.run).then(d.close)));
   };
+  const preset = (label: string, n: number) =>
+    el('button', {
+      class: 'c-button c-button--ghost',
+      text: label,
+      attrs: { type: 'button', ...(n < 1 ? { disabled: '' } : {}) },
+      on: {
+        click: () => {
+          input.value = String(n);
+          refresh();
+        },
+      },
+    });
+  const fromStock = Math.min(save.inventory.FOOD_BASIC, space);
   input.addEventListener('input', refresh);
-  d.body.append(el('p', { class: 'c-dialog__hint', text: vi.trough.hint }), input, info);
+  d.body.append(
+    el('p', { class: 'c-dialog__hint', text: vi.trough.hint }),
+    el(
+      'div',
+      { class: 'c-dialog__presets' },
+      preset(t(vi.trough.fromInventory, { n: fromStock }), fromStock),
+      preset(t(vi.trough.fill, { n: space }), space),
+    ),
+    input,
+    info,
+  );
   d.footer.append(slot);
   refresh();
+}
+
+/** §8.10: quantity 1–99, total updates live; disabled reason from the real action. */
+export function openBuyItemDialog(
+  host: HTMLElement,
+  save: SaveGame,
+  itemId: ItemId,
+  now: number,
+  act: Act,
+) {
+  const d = openDialog(host, vi.shop[itemId]);
+  const first = itemPurchase(save, itemId, 1, now);
+  const input = el('input', {
+    class: 'c-input',
+    attrs: {
+      type: 'number',
+      min: '1',
+      max: String(first.max),
+      value: '1',
+      'aria-label': vi.shop.quantity,
+    },
+  });
+  const total = el('p', { class: 'c-dialog__strong' });
+  const slot = el('div');
+  const refresh = () => {
+    const vm = itemPurchase(save, itemId, Math.floor(Number(input.value)), now);
+    total.textContent = vm.total;
+    slot.replaceChildren(actionButton(vm.confirm, () => void act(vm.confirm.run).then(d.close)));
+  };
+  input.addEventListener('input', refresh);
+  d.body.append(
+    el('p', { text: vi.shop[`${itemId}_desc`] }),
+    el('label', { class: 'c-dialog__hint', text: vi.shop.quantity }),
+    input,
+    total,
+  );
+  d.footer.append(slot);
+  refresh();
+  input.focus();
+  input.select();
 }
 
 /** §9.3: importing overwrites the current farm (which becomes a backup); confirm first. */

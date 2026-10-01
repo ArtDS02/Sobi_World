@@ -189,6 +189,12 @@
   &__footer {
     display: grid;
   }
+
+  &__presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+  }
 }
 
 .c-devtools {

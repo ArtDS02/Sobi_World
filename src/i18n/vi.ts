@@ -273,7 +273,7 @@ export const vi = {
   // Added in S08A (not in spec Appendix B): shell labels the spec layout implies. DECISIONS S08A-1.
   ui: {
     comingSoon: "Sắp có",
-    farmEmpty: "Chưa có heo nào. Mua một heo con ở trên nhé.",
+    farmEmpty: "Chưa có heo nào. Vào Cửa hàng mua một heo con nhé.",
     selectPig: "Chạm vào một chú heo để xem chi tiết.",
     breed: "Giống",
     gender: "Giới tính",

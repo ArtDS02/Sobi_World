@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buyItem } from '../../src/core/actions/buyItem';
 import { buyPig } from '../../src/core/actions/buyPig';
+import { buySlot } from '../../src/core/actions/buySlot';
 import { renamePig } from '../../src/core/actions/renamePig';
 import { sellPig } from '../../src/core/actions/sellPig';
 import { PIG_NAME_POOL } from '../../src/core/config/names';
@@ -217,6 +218,33 @@ describe('buyItem (§8.10)', () => {
   });
 });
 
+describe('buySlot (§8.11)', () => {
+  const at = (xp: number, gold: number, unlockedSlots = 4): SaveGame => {
+    const s = start();
+    return { ...s, player: { ...s.player, xp, gold, unlockedSlots } };
+  };
+
+  it('opens slot 5 at level 2 for 2000: SLOT_PURCHASE transaction and SLOT_BOUGHT event', () => {
+    const r = expectOk(buySlot(at(100, 2500), {}, ctx(SEC)));
+    expect(r.state.player.unlockedSlots).toBe(5);
+    expect(r.state.player.gold).toBe(500);
+    expect(r.state.transactions[0]).toMatchObject({ type: 'SLOT_PURCHASE', amount: -2000 });
+    expect(r.events).toContainEqual({ type: 'SLOT_BOUGHT', slots: 5, gold: -2000 });
+  });
+
+  it('level gate before gold: LEVEL_TOO_LOW, then INSUFFICIENT_GOLD', () => {
+    expectError((s) => buySlot(s, {}, ctx()), at(99, 1_000_000), 'LEVEL_TOO_LOW');
+    expectError((s) => buySlot(s, {}, ctx()), at(100, 1999), 'INSUFFICIENT_GOLD');
+  });
+
+  it('slot 12 needs level 9; nothing past MAX_SLOTS', () => {
+    expectError((s) => buySlot(s, {}, ctx()), at(3000, 1_000_000, 11), 'LEVEL_TOO_LOW');
+    const r = expectOk(buySlot(at(4200, 80_000, 11), {}, ctx()));
+    expect(r.state.player.unlockedSlots).toBe(12);
+    expectError((s) => buySlot(s, {}, ctx()), r.state, 'MAX_SLOTS_REACHED');
+  });
+});
+
 describe('renamePig (§8.12)', () => {
   const rename = (name: string) => (s: SaveGame) => renamePig(s, { pigId: 'pig-1', name }, ctx());
 
@@ -273,13 +301,15 @@ describe('gold never changes without a transaction (§8.16, §14.3)', () => {
             )
           : roll < 0.65
             ? sellPig(state, { pigId: pig?.id ?? 'none' }, c)
-            : roll < 0.9
+            : roll < 0.85
               ? buyItem(
                   state,
                   { itemId: 'FOOD_BASIC', quantity: 1 + Math.floor(rng.next() * 10) },
                   c,
                 )
-              : renamePig(state, { pigId: pig?.id ?? 'none', name: `Heo ${step}` }, c);
+              : roll < 0.9
+                ? buySlot(state, {}, c)
+                : renamePig(state, { pigId: pig?.id ?? 'none', name: `Heo ${step}` }, c);
       if (!result.ok) continue;
       const seen = new Set(state.transactions.map((t) => t.id));
       const added = result.state.transactions.filter((t) => !seen.has(t.id));

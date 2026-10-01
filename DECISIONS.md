@@ -153,3 +153,9 @@ Spec: §9.3 · Phase: R02.
 
 **R02-4** · userData cố định `%APPDATA%\Un In Homemade\` (`app.setPath`) dù productName có dấu. Đóng cửa sổ: main chặn `close`, gửi flush (renderer `store.persistNow()`), chờ ≤ 3 s; `window-all-closed` chờ hàng đợi ghi rảnh (≤ 3 s) rồi mới quit để lần ghi lúc pagehide không bị cắt (tránh sót `save.json.tmp`). Installer tên `UnInHomemade-Setup-<version>.exe` (ASCII).
 Spec: §9.2, §13.1, §13.3 · Phase: R02.
+
+**R03-1** · Shop có 3 tab Heo giống / Vật phẩm / Chuồng (Bộ đồ chờ R04). Mua vật phẩm qua hộp chọn số lượng 1–99 (tổng cập nhật trực tiếp, lý do disable từ chính `buyItem`). Chuồng hiện chuồng kế tiếp; LEVEL_TOO_LOW hiển thị `vi.shop.slotLocked`. Lối vào Lịch sử = bấm ô vàng trên thanh trên (nav dưới không có Lịch sử). Kho: Thức ăn có nút "Đổ máng" mở hộp đổ máng với mặc định = min(kho, chỗ trống); hộp đổ máng có 2 nút đặt nhanh "Lấy từ kho: n" / "Đổ đầy". Thuốc dùng từ panel heo bệnh. `SLOT_BOUGHT` chưa có toast (feedback hành động → R05B). Màn Nông trại trống có nút sang Cửa hàng; `vi.ui.farmEmpty` đổi câu cho khớp.
+Spec: §8.0, §8.11, §10.1 · Phase: R03.
+
+**R03-2** · `dev:desktop` (Electron chưa đóng gói) dùng userData riêng `%APPDATA%\Un In Homemade Dev\` để không bao giờ đụng nông trại thật; tham số sau `--` chuyển cho Electron (vd `--remote-debugging-port`).
+Spec: §9.1, §13.3 · Phase: R03.
