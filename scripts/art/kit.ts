@@ -143,32 +143,42 @@ export function setScale(stroke: number, shade: number) {
 }
 
 /**
- * A filled shape with soft cel shading lit from the top left and an even outline. Everything in
- * the generated art is built from this so light direction and line weight never drift.
+ * A filled shape painted like the reference sheets: a soft radial body gradient lit from the top
+ * left, a blurred core shadow along the bottom-right edge, a blurred rim light along the top-left
+ * edge, and an even warm outline. Everything is built from this so light and line never drift.
  */
 export function part(d: string, fill: string, o: PartOpts = {}): string {
   const stroke = o.stroke ?? defaultStroke;
   const sh = o.shade ?? defaultShade;
-  const li = o.light ?? sh * 0.45;
-  const shadeColor = o.shadeColor ?? darken(fill, 0.2);
-  const lightColor = o.lightColor ?? lighten(fill, 0.35);
+  const li = o.light ?? sh * 0.6;
+  const shadeColor = o.shadeColor ?? darken(fill, 0.26);
+  const lightColor = o.lightColor ?? lighten(fill, 0.6);
   const ink = o.ink ?? inkOf(fill);
   const clip = nextId('c'),
-    mask = nextId('m'),
-    blur = nextId('b');
-  const defs =
-    `<defs><clipPath id="${clip}"><path d="${d}"/></clipPath>` +
-    `<mask id="${mask}" maskUnits="userSpaceOnUse" x="-4000" y="-4000" width="9000" height="9000">` +
-    `<path d="${d}" fill="#fff"/><path d="${d}" fill="#000" transform="translate(${-sh},${-sh})"/></mask>` +
-    `<filter id="${blur}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${f(sh * 0.22)}"/></filter></defs>`;
-  const fills =
-    sh > 0
-      ? `<g clip-path="url(#${clip})">` +
-        (li > 0
-          ? `<path d="${d}" fill="${lightColor}"/><path d="${d}" fill="${fill}" transform="translate(${f(li)},${f(li)})"/>`
-          : `<path d="${d}" fill="${fill}"/>`) +
-        `<g filter="url(#${blur})"><path d="${d}" fill="${shadeColor}" mask="url(#${mask})"/></g></g>`
-      : `<path d="${d}" fill="${fill}"/>`;
+    grad = nextId('r'),
+    mShade = nextId('m'),
+    mLight = nextId('n'),
+    blur = nextId('b'),
+    blurL = nextId('l');
+  const big = 'maskUnits="userSpaceOnUse" x="-4000" y="-4000" width="9000" height="9000"';
+  let defs =
+    `<clipPath id="${clip}"><path d="${d}"/></clipPath>` +
+    `<radialGradient id="${grad}" cx="0.4" cy="0.34" r="0.78" fx="0.32" fy="0.26">` +
+    `<stop offset="0" stop-color="${lighten(fill, 0.3)}"/><stop offset="0.55" stop-color="${fill}"/>` +
+    `<stop offset="1" stop-color="${darken(fill, 0.12)}"/></radialGradient>`;
+  let fills = `<path d="${d}" fill="url(#${grad})"/>`;
+  if (sh > 0) {
+    defs +=
+      `<mask id="${mShade}" ${big}><path d="${d}" fill="#fff"/><path d="${d}" fill="#000" transform="translate(${-sh},${-sh})"/></mask>` +
+      `<filter id="${blur}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${f(sh * 0.45)}"/></filter>`;
+    fills += `<g filter="url(#${blur})"><path d="${d}" fill="${shadeColor}" opacity="0.8" mask="url(#${mShade})"/></g>`;
+  }
+  if (li > 0) {
+    defs +=
+      `<mask id="${mLight}" ${big}><path d="${d}" fill="#fff"/><path d="${d}" fill="#000" transform="translate(${f(li)},${f(li)})"/></mask>` +
+      `<filter id="${blurL}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${f(li * 0.4)}"/></filter>`;
+    fills += `<g filter="url(#${blurL})"><path d="${d}" fill="${lightColor}" opacity="0.75" mask="url(#${mLight})"/></g>`;
+  }
   const outline =
     stroke > 0
       ? `<path d="${d}" fill="none" stroke="${ink}" stroke-width="${stroke}" stroke-linejoin="round"/>`
@@ -179,7 +189,21 @@ export function part(d: string, fill: string, o: PartOpts = {}): string {
   ]
     .filter(Boolean)
     .join(' ');
-  return `<g ${attrs}>${defs}${fills}${outline}</g>`;
+  return `<g ${attrs}><defs>${defs}</defs><g clip-path="url(#${clip})">${fills}</g>${outline}</g>`;
+}
+
+/** Soft blurred colour spot (blush, glow, painted shadow), clipped by the caller if needed. */
+export function softSpot(
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number,
+  color: string,
+  opacity: number,
+  blur: number,
+) {
+  const id = nextId('q');
+  return `<defs><filter id="${id}" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="${f(blur)}"/></filter></defs><ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${f(rx)}" ry="${f(ry)}" fill="${color}" opacity="${opacity}" filter="url(#${id})"/>`;
 }
 
 /** Flat shape, no shading (small details: nostrils, seeds, patterns). */

@@ -17,10 +17,12 @@ import {
   rectD,
   rng,
   setScale,
+  softSpot,
+  clipTo,
   svgDoc,
 } from './kit';
 
-const PROP_STROKE = 3.2;
+const PROP_STROKE = 4;
 const PROP_SHADE = 7;
 
 // ---------- shared pieces ----------
@@ -70,13 +72,75 @@ export const daisy = (x: number, y: number, s: number) => {
   return d + flat(ellipseD(x, y, s * 0.55, s * 0.5), '#f6c445');
 };
 
-/** Horizontal plank lines inside a box (wood walls, crates). */
-const planks = (x: number, y: number, w: number, h: number, step: number, c: string) => {
+type Pt = [number, number];
+const lerp = (p: Pt, q: Pt, t: number): Pt => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+
+/**
+ * Scalloped clay tiles on a roof plane a-b (ridge) to d-c (eave), clipped to the plane: the
+ * rounded tile rows of the reference barn.
+ */
+function roofTiles(a: Pt, b: Pt, c: Pt, d: Pt, rows: number, cols: number, color: string) {
+  const ink = darken(color, 0.38),
+    hi = lighten(color, 0.35);
+  let lines = '';
+  for (let i = 1; i <= rows; i++) {
+    const t = i / rows;
+    const l = lerp(a, d, t),
+      r = lerp(b, c, t);
+    const lPrev = lerp(a, d, (i - 1) / rows);
+    const drop = Math.hypot(l[0] - lPrev[0], l[1] - lPrev[1]) * 0.42;
+    const off = i % 2 ? 0 : 0.5;
+    let path = '';
+    for (let j = -1; j <= cols; j++) {
+      const u0 = (j + off) / cols,
+        u1 = (j + 1 + off) / cols;
+      const p0 = lerp(l, r, u0),
+        p1 = lerp(l, r, u1);
+      const m: Pt = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2 + drop];
+      path += `M${p0[0].toFixed(1)},${(p0[1] - drop * 0.6).toFixed(1)} Q${p0[0].toFixed(1)},${m[1].toFixed(1)} ${m[0].toFixed(1)},${m[1].toFixed(1)} Q${p1[0].toFixed(1)},${m[1].toFixed(1)} ${p1[0].toFixed(1)},${(p1[1] - drop * 0.6).toFixed(1)} `;
+    }
+    lines +=
+      line(path, ink, 2.6, 'opacity="0.75"') +
+      line(path, hi, 2, `transform="translate(-1.5,-3)" opacity="0.45"`);
+  }
+  return clipTo(polyD([a, b, c, d]), lines);
+}
+
+/** Wood grain: plank seams plus short grain strokes and a knot or two. */
+function grain(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  step: number,
+  c: string,
+  seed: number,
+  vertical = false,
+) {
+  const r = rng(seed);
   let s = '';
-  for (let yy = y + step; yy < y + h - 2; yy += step)
-    s += line(`M${x + 3},${yy} H${x + w - 3}`, c, 2);
+  if (vertical) {
+    for (let xx = x + step; xx < x + w - 2; xx += step)
+      s += line(`M${xx},${y + 3} V${y + h - 3}`, c, 2.4);
+  } else {
+    for (let yy = y + step; yy < y + h - 2; yy += step)
+      s += line(`M${x + 3},${yy} H${x + w - 3}`, c, 2.4);
+  }
+  for (let i = 0; i < (w * h) / 900; i++) {
+    const gx = x + 8 + r() * (w - 16),
+      gy = y + 6 + r() * (h - 12),
+      len = 10 + r() * 18;
+    s += vertical
+      ? line(`M${gx},${gy} q2,${len / 2} 0,${len}`, c, 1.4, 'opacity="0.55"')
+      : line(`M${gx},${gy} q${len / 2},2 ${len},0`, c, 1.4, 'opacity="0.55"');
+  }
+  for (let i = 0; i < Math.max(1, (w * h) / 9000); i++) {
+    const kx = x + 14 + r() * (w - 28),
+      ky = y + 10 + r() * (h - 20);
+    s += flat(ellipseD(kx, ky, 4, 2.6), 'none', 1.6, c, 'opacity="0.6"');
+  }
   return s;
-};
+}
 
 /** Little carved pig face (trough, sack, bowl emblems). */
 const pigEmblem = (x: number, y: number, s: number, fill: string, ink: string) =>
@@ -150,7 +214,7 @@ function trough(level: 'empty' | 'half' | 'full'): string {
     darken(wood, 0.18),
   );
   s += part(rectD(46, 120, 274, 84, 6), wood);
-  s += planks(46, 120, 274, 84, 28, darken(wood, 0.3));
+  s += grain(46, 120, 274, 84, 28, darken(wood, 0.32), 5);
   s += pigEmblem(183, 166, 17, lighten(wood, 0.25), darken(wood, 0.5));
   // End posts with darker banding.
   for (const x of [34, 300]) {
@@ -172,7 +236,7 @@ function orderBoard(): string {
   s += contactShadow(128, 344, 90, 12, 0.3);
   for (const x of [54, 182]) s += part(rectD(x, 120, 22, 232, 6), PAL.woodDark);
   s += part(rectD(26, 118, 204, 172, 10), PAL.wood);
-  s += planks(26, 118, 204, 172, 34, darken(PAL.wood, 0.3));
+  s += grain(26, 118, 204, 172, 34, darken(PAL.wood, 0.32), 6);
   s += part(rectD(38, 130, 180, 148, 6), lighten(PAL.wood, 0.18), { stroke: 2.2 });
   // Small pitched roof.
   s += part(
@@ -311,7 +375,7 @@ function pigHouse(): string {
     ]),
     wallSide,
   );
-  s += planks(72, 252, 162, 124, 24, darken(wallSide, 0.25));
+  s += grain(72, 236, 162, 150, 22, darken(wallSide, 0.25), 7);
   s +=
     part(rectD(118, 286, 44, 38, 4), '#7b5236') + line('M140,288 V322 M120,305 H160', wallSide, 3);
   s += part(
@@ -324,7 +388,16 @@ function pigHouse(): string {
     ]),
     wall,
   );
-  s += planks(234, 236, 200, 150, 26, darken(wall, 0.22));
+  s += clipTo(
+    polyD([
+      [234, 236],
+      [334, 140],
+      [434, 236],
+      [434, 386],
+      [234, 386],
+    ]),
+    grain(234, 140, 200, 246, 25, darken(wall, 0.2), 8, true),
+  );
   // Heart window in the gable, arched doorway with straw, ramp.
   s += part(heartD(334, 196, 20), '#6b4430', { shade: 3 });
   s += part('M290,386 L290,306 C290,262 378,262 378,306 L378,386 Z', '#6b4430', { shade: 4 });
@@ -359,14 +432,7 @@ function pigHouse(): string {
     PAL.roofRed,
     { shade: 12 },
   );
-  for (let i = 1; i < 5; i++) {
-    const t = i / 5;
-    const ax = 172 + (50 - 172) * t,
-      ay = 104 + (264 - 104) * t,
-      bx = 336 + (226 - 336) * t,
-      by = 116 + (252 - 116) * t;
-    s += line(`M${ax + 4},${ay} L${bx - 4},${by}`, darken(PAL.roofRed, 0.3), 2.4);
-  }
+  s += roofTiles([172, 104], [336, 116], [226, 252], [50, 264], 5, 7, PAL.roofRed);
   s += part(
     polyD(
       [
@@ -405,7 +471,7 @@ function hayShed(): string {
   let s = grassPatch(192, 344, 180, 34, 71, 3);
   s += contactShadow(196, 330, 150, 18, 0.32);
   s += part(rectD(80, 150, 240, 160, 4), darken(PAL.wood, 0.25));
-  s += planks(80, 150, 240, 160, 26, darken(PAL.wood, 0.45));
+  s += grain(80, 150, 240, 160, 26, darken(PAL.wood, 0.45), 9);
   for (const x of [96, 304]) s += part(rectD(x, 150, 18, 160, 4), darken(PAL.woodDark, 0.15));
   s += hayBale(146, 284, 52) + hayBale(250, 288, 50) + hayBale(198, 222, 46);
   for (const x of [56, 314]) s += part(rectD(x, 150, 22, 184, 5), PAL.woodDark);
@@ -422,11 +488,7 @@ function hayShed(): string {
     PAL.roofRed,
     { shade: 12 },
   );
-  for (let i = 1; i < 4; i++) {
-    const y = 64 + (108 * i) / 4;
-    const k = (y - 64) / 108;
-    s += line(`M${104 - 74 * k + 6},${y} H${282 + 74 * k - 6}`, darken(PAL.roofRed, 0.3), 2.4);
-  }
+  s += roofTiles([104, 64], [282, 64], [356, 172], [30, 172], 4, 9, PAL.roofRed);
   s += part(
     polyD(
       [
@@ -567,7 +629,7 @@ function shopStall(): string {
   s += kernels(266, 182, 34, 8, 30, 92, 4.2);
   s += part(rectD(48, 212, 288, 24, 6), PAL.woodLight);
   s += part(rectD(60, 234, 264, 94, 6), PAL.wood);
-  s += planks(60, 234, 264, 94, 30, darken(PAL.wood, 0.3));
+  s += grain(60, 234, 264, 94, 30, darken(PAL.wood, 0.32), 10);
   s += pigEmblem(192, 282, 18, lighten(PAL.wood, 0.25), darken(PAL.wood, 0.5));
   // Striped awning with a scalloped edge.
   const top = 62,
@@ -602,24 +664,26 @@ function sky(): string {
 }
 
 function cloud(seed: number): string {
-  setScale(3, 10);
+  // Soft painted cloud, no outline: white puffs, a cool shadow along the bottom, a warm top glint.
   const r = rng(seed);
   const puffs: [number, number, number][] = [];
-  for (let i = 0; i < 6; i++)
-    puffs.push([
-      70 + i * 48 + r() * 12,
-      92 - Math.sin((i / 5) * Math.PI) * 30 + r() * 8,
-      34 + Math.sin((i / 5) * Math.PI) * 18 + r() * 6,
-    ]);
-  let d = '';
-  for (const [x, y, rad] of puffs) d += ellipseD(x, y, rad, rad * 0.92) + ' ';
-  d += rectD(56, 96, 272, 34, 17);
-  return svgDoc(
-    384,
-    160,
-    part(d, '#ffffff', { stroke: 0, shade: 14, shadeColor: '#dbe9f6', light: 0 }) +
-      line('M60,128 C120,136 260,136 326,128', '#bcd3ea', 3),
-  );
+  for (let i = 0; i < 6; i++) {
+    const k = Math.sin((i / 5) * Math.PI);
+    puffs.push([70 + i * 48 + r() * 12, 96 - k * 34 + r() * 8, 32 + k * 20 + r() * 6]);
+  }
+  const d =
+    puffs.map(([x, y, rad]) => ellipseD(x, y, rad, rad * 0.9)).join(' ') +
+    ' ' +
+    rectD(52, 92, 280, 42, 21);
+  const body =
+    `<path d="${d}" fill="#ffffff"/>` +
+    softSpot(192, 140, 170, 34, '#c9dcf0', 0.9, 14) +
+    puffs
+      .map(([x, y, rad]) =>
+        softSpot(x - rad * 0.25, y - rad * 0.35, rad * 0.5, rad * 0.3, '#ffffff', 1, 6),
+      )
+      .join('');
+  return svgDoc(384, 160, clipTo(d, `<path d="${d}" fill="#ffffff"/>` + body));
 }
 
 function hillsFar(): string {
@@ -693,20 +757,21 @@ function groundGrass(): string {
     for (const dx of [-512, 0, 512]) for (const dy of [-512, 0, 512]) out += draw(x + dx, y + dy);
     return out;
   };
-  for (let i = 0; i < 18; i++) {
+  for (let i = 0; i < 16; i++) {
     const x = r() * 512,
       y = r() * 512,
-      rx = 40 + r() * 60;
-    const c = r() < 0.5 ? '#93d068' : '#7fc055';
-    s += wrap(x, y, (a, b) => flat(ellipseD(a, b, rx, rx * 0.5), c, 0, '', 'opacity="0.7"'));
+      rx = 50 + r() * 70,
+      c = r() < 0.5 ? '#97d36c' : '#7dbf55';
+    s += wrap(x, y, (a, b) => softSpot(a, b, rx, rx * 0.5, c, 0.6, 18));
   }
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0; i < 34; i++) {
     const x = r() * 512,
       y = r() * 512,
-      h = 6 + r() * 6;
-    s += wrap(x, y, (a, b) => tuft(a, b, h, r() < 0.5 ? PAL.grassDark : '#6fb34d'));
+      h = 6 + r() * 5,
+      c = r() < 0.6 ? '#74b84d' : '#a6dc7c';
+    s += wrap(x, y, (a, b) => tuft(a, b, h, c));
   }
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 12; i++) {
     const x = r() * 512,
       y = r() * 512,
       yellow = r() < 0.35;
