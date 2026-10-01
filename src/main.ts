@@ -66,6 +66,7 @@ async function start(root: HTMLElement) {
     effects: () => farmView?.effects() ?? noEffects,
     audio: silentAudio, // R10 plugs in the real player
     toast: app.toast,
+    skinName: (id) => assets.registry.skins.get(id)?.nameVi ?? id,
   });
   await store.init();
 }

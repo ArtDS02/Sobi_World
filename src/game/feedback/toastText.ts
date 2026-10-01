@@ -11,9 +11,14 @@ const pregnancyStart = (s: SaveGame, motherId: string): number =>
 
 /**
  * Toast text for an event, or null when it has none. `before` is the state before the dispatch
- * so a sold pig can still be named.
+ * so a sold pig can still be named. `skinName` resolves a skin id to its manifest name.
  */
-export function toastText(event: GameEvent, after: SaveGame, before: SaveGame): string | null {
+export function toastText(
+  event: GameEvent,
+  after: SaveGame,
+  before: SaveGame,
+  skinName: (skinId: string) => string = (id) => id,
+): string | null {
   const nameOf = (id: string) =>
     (after.pigs.find((p) => p.id === id) ?? before.pigs.find((p) => p.id === id))?.name ?? '';
   switch (event.type) {
@@ -30,7 +35,8 @@ export function toastText(event: GameEvent, after: SaveGame, before: SaveGame): 
     case 'LEVEL_UP':
       return t(vi.event.levelUp, { level: event.level });
     case 'DISCOVERY': {
-      const name = event.kind === 'BREED' ? BREEDS[event.id as Pig['breed']].nameVi : event.id;
+      const name =
+        event.kind === 'BREED' ? BREEDS[event.id as Pig['breed']].nameVi : skinName(event.id);
       return t(vi.event.discovery, { name, gold: formatInt(event.gold) });
     }
     case 'ORDER_NEW':
@@ -56,6 +62,9 @@ export function toastText(event: GameEvent, after: SaveGame, before: SaveGame): 
       });
     case 'SLOT_BOUGHT':
       return t(vi.event.slotBought, { slots: event.slots });
+    case 'SKIN_BOUGHT':
+      return t(vi.event.skinBought, { name: skinName(event.skinId) });
+    case 'SKIN_EQUIPPED':
     case 'PIG_FED':
     case 'PIG_CLEANED':
     case 'TROUGH_FILLED':

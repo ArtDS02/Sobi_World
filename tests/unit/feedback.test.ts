@@ -39,6 +39,8 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   },
   SLOT_BOUGHT: { type: 'SLOT_BOUGHT', slots: 5, gold: -2000 },
   ORDER_FULFILLED: { type: 'ORDER_FULFILLED', orderId: 'o', gold: 800 },
+  SKIN_BOUGHT: { type: 'SKIN_BOUGHT', skinId: 'pig_farmer', gold: -2000 },
+  SKIN_EQUIPPED: { type: 'SKIN_EQUIPPED', pigId: 'pig-1', skinId: 'pig_farmer' },
 };
 
 describe('feedback table (§11.3)', () => {

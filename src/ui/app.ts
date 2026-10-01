@@ -15,16 +15,18 @@ import {
   openBuyItemDialog,
   openImportDialog,
   openOrderDialog,
+  openWardrobeDialog,
   openRenameDialog,
   openSellDialog,
   openTroughDialog,
 } from './dialogs';
 import { el } from './dom';
+import { pigSkins } from './skinsVm';
 import { renderFarmHint, renderPigPopup, renderWellPopup } from './screens/farmScreen';
 import { renderHistoryScreen } from './screens/historyScreen';
 import { renderInventoryScreen } from './screens/inventoryScreen';
+import { renderCollectionScreen } from './screens/collectionScreen';
 import { renderOrdersScreen } from './screens/ordersScreen';
-import { renderPlaceholderScreen } from './screens/placeholderScreen';
 import { renderSettingsScreen, type SettingsHandlers } from './screens/settingsScreen';
 import { renderShopScreen, type ShopHandlers, type ShopTab } from './screens/shopScreen';
 import {
@@ -119,6 +121,7 @@ export function mountApp(
 
   const rerender = () => render(store.getSnapshot());
   /** Dispatch; a rejection reaches the FeedbackDirector through store.onReject (§11.3). */
+  const assets = opts.assets ?? null;
   const act = async (run: BoundAction): Promise<boolean> => (await store.dispatch(run)).ok;
   const handlers = {
     act: (run: BoundAction) => void act(run),
@@ -128,6 +131,14 @@ export function mountApp(
       const save = store.getSnapshot().save;
       if (save) openBreedDialog(dialogs, save, pig, now(), act);
     },
+    ...(assets
+      ? {
+          wardrobe: (pig: Pig) => {
+            const save = store.getSnapshot().save;
+            if (save) openWardrobeDialog(dialogs, pig, pigSkins(save, pig, assets), act);
+          },
+        }
+      : {}),
   };
   // Canvas click: a pig opens its panel, a world object its popup, empty ground deselects (§11.2).
   const onPick = (pick: FarmPick) => {
@@ -207,7 +218,7 @@ export function mountApp(
       case 'well':
         return renderWellPopup(save, now(), handlers.act);
       case 'shop':
-        return renderShopScreen(save, now(), ui.shopTab, shop);
+        return renderShopScreen(save, now(), ui.shopTab, shop, assets);
       case 'inventory':
         return renderInventoryScreen(save, inventory);
       case 'history':
@@ -218,8 +229,8 @@ export function mountApp(
         });
       case 'settings':
         return renderSettingsScreen(settings);
-      default:
-        return renderPlaceholderScreen(panel);
+      case 'collection':
+        return renderCollectionScreen(save, assets);
     }
   }
 

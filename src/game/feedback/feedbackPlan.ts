@@ -45,6 +45,7 @@ export function eventTargets(e: GameEvent): FeedbackTarget[] {
     case 'DISCOVERY':
     case 'SLOT_BOUGHT':
     case 'ITEM_BOUGHT':
+    case 'SKIN_BOUGHT':
       return [{ kind: 'top' }];
     default:
       return 'pigId' in e ? [pig(e.pigId)] : [];

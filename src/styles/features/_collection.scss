@@ -1,0 +1,47 @@
+// Collection book. Owns `.collection*` inside [data-screen="collection"].
+@use '../core' as *;
+
+[data-screen='collection'] {
+  display: grid;
+  gap: $sp-3;
+
+  .collection__title {
+    font-size: $fs-lg;
+  }
+
+  .collection__heading {
+    display: flex;
+    justify-content: space-between;
+    font-size: $fs-md;
+    border-bottom: 1px solid $c-border;
+  }
+
+  .collection__progress {
+    color: $c-text-muted;
+  }
+
+  .collection__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+    gap: $sp-3;
+  }
+
+  .collection__entry {
+    display: grid;
+    gap: $sp-1;
+    justify-items: center;
+    padding: $sp-2;
+    background: $c-surface;
+    border: 1px solid $c-border;
+    border-radius: $radius-md;
+
+    &.is-hidden {
+      color: $c-text-muted;
+    }
+  }
+
+  .collection__name {
+    font-size: $fs-xs;
+    text-align: center;
+  }
+}

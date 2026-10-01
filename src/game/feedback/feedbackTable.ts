@@ -39,6 +39,8 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   ORDER_NEW: row('wiggle', [], 'notify', true),
   ORDER_FULFILLED: row(null, ['fx_coin'], 'coin_collect', true),
   DISCOVERY: row(null, ['fx_coin'], 'coin_collect', true),
+  SKIN_BOUGHT: row(null, [], 'ui_click', true),
+  SKIN_EQUIPPED: row('bounce', ['fx_sparkle'], 'ui_click', false), // texture swap + puff
   SLOT_BOUGHT: row(null, [], 'ui_click', true),
   ITEM_BOUGHT: row(null, [], 'ui_click', true),
   PIG_RENAMED: row(null, [], 'ui_click', true),

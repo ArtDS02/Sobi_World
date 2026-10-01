@@ -51,12 +51,20 @@
   text-align: center;
 }
 
-.c-placeholder {
-  padding: $sp-6 $sp-4;
-  text-align: center;
+// Manifest thumbnail (skins, collection). Undiscovered entries are a dark silhouette (§8.15).
+.c-thumb {
+  display: block;
+  width: $thumb-size;
+  height: $thumb-size;
+  object-fit: contain;
 
-  &__title {
-    font-size: $fs-lg;
+  &.is-silhouette {
+    filter: brightness(0) opacity($silhouette-opacity);
+  }
+
+  &.is-missing {
+    background: $c-surface-alt;
+    border-radius: $radius-sm;
   }
 }
 
@@ -259,6 +267,18 @@
   &__choice[aria-pressed='true'] {
     border-color: $c-primary;
     background: $c-surface-alt;
+  }
+
+  &__skins {
+    display: grid;
+    gap: $sp-2;
+  }
+
+  &__skin {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: $sp-3;
+    align-items: center;
   }
 }
 

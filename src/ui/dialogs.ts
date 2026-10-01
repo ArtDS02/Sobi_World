@@ -1,4 +1,4 @@
-// Sell confirmation, rename, trough-fill, breeding and order dialogs (spec §10.1, §10.2).
+// Sell confirmation, rename, trough-fill, breeding, order and wardrobe dialogs (spec §10.1, §10.2).
 import { renamePig, cleanPigName } from '../core/actions/renamePig';
 import { BREEDS } from '../core/config/breeds';
 import { happiness } from '../core/engine/happiness';
@@ -11,6 +11,8 @@ import type { ItemId } from '../core/config/ids';
 import { itemPurchase, troughFill, troughSpace, type ActionVm } from './actionsVm';
 import { breedingVm } from './breedVm';
 import type { OrderCardVm } from './ordersVm';
+import type { SkinCardVm } from './skinsVm';
+import { thumb } from './components/thumb';
 import { actionButton } from './components/actionButton';
 import { openDialog } from './components/dialog';
 import { el } from './dom';
@@ -225,6 +227,26 @@ export function openOrderDialog(host: HTMLElement, card: OrderCardVm, act: Act) 
       { class: 'c-dialog__choices' },
       ...card.choices.map((c) =>
         actionButton(c, () => void act(c.run).then(d.close), 'c-button--ghost c-dialog__choice'),
+      ),
+    ),
+  );
+}
+
+/** §8.13: owned skins this pig may wear; equipping is free and changes no number. */
+export function openWardrobeDialog(host: HTMLElement, pig: Pig, skins: SkinCardVm[], act: Act) {
+  const d = openDialog(host, t(vi.wardrobe.title, { name: pig.name }));
+  d.body.append(
+    el(
+      'ul',
+      { class: 'c-dialog__skins' },
+      ...skins.map((s) =>
+        el(
+          'li',
+          { class: 'c-dialog__skin' },
+          thumb(s.thumb, s.name),
+          el('span', { text: s.name }),
+          actionButton(s.button, () => void act(s.button.run).then(d.close)),
+        ),
       ),
     ),
   );

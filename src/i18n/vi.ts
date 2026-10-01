@@ -72,6 +72,7 @@ export const vi = {
     rename: "Đổi tên",
     equip: "Mặc",
     equipped: "Đang mặc",
+    wardrobe: "Thay đồ",
     confirm: "Xác nhận",
     cancel: "Hủy",
     close: "Đóng",
@@ -142,6 +143,7 @@ export const vi = {
     renamed: "Đã đổi tên thành {name}.",
     slotBought: "Đã mở thêm chuồng! Giờ có {slots} chỗ.",
     breedingStarted: "{name} đã mang thai! Sinh sau {time}.",
+    skinBought: "Đã mua bộ đồ {name}.",
   },
 
   away: {
@@ -168,6 +170,7 @@ export const vi = {
     MEDICINE_COMMON_desc: "Chữa khỏi bệnh cho một con heo.",
     slotNext: "Chuồng thứ {n}",
     slotLocked: "Cần cấp {level}",
+    collectionLocked: "Cần {count} mục trong bộ sưu tập",
     quantity: "Số lượng",
     total: "Tổng: {gold} vàng",
     owned: "Đã sở hữu",
@@ -211,6 +214,11 @@ export const vi = {
     pickPig: "Chọn heo để giao",
     pigChoice: "{name} (vui vẻ {happiness})",
     noMatchingPig: "Chưa có heo đáp ứng đơn này",
+  },
+
+  // Wardrobe dialog (spec §8.13); not in Appendix B.
+  wardrobe: {
+    title: "Thay đồ cho {name}",
   },
 
   collection: {

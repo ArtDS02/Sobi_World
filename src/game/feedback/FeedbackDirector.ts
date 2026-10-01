@@ -14,6 +14,8 @@ export interface FeedbackDeps {
   effects: () => FarmEffects;
   audio: AudioPort;
   toast: (message: string) => void;
+  /** Skin id → display name from the manifest (toasts for skin events). */
+  skinName?: (skinId: string) => string;
 }
 
 export function createFeedbackDirector(deps: FeedbackDeps): () => void {
@@ -36,7 +38,7 @@ export function createFeedbackDirector(deps: FeedbackDeps): () => void {
       for (const a of plan.animations) fx.animate(a.animation, a.target, a.delayMs, a.from);
       for (const v of plan.vfx) fx.burst(v.fx, v.target, v.delayMs);
       if (plan.sound) deps.audio.play(plan.sound);
-      const text = plan.toast ? toastText(event, after, previous ?? after) : null;
+      const text = plan.toast ? toastText(event, after, previous ?? after, deps.skinName) : null;
       if (text) deps.toast(text);
     }
   });
