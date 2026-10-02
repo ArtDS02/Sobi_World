@@ -27,6 +27,8 @@ export interface UninBridge {
     listBackups(): Promise<BackupInfo[]>;
     /** Copies a backup over save.json (the current save is backed up first). */
     restoreBackup(name: string): Promise<void>;
+    /** Before "play again": a rotated backup plus a permanent saves/before-reset-*.json copy. */
+    backupBeforeReset(): Promise<void>;
     /** Native save dialog; false when cancelled. */
     exportTo(json: string, suggestedName: string): Promise<boolean>;
     /** Native open dialog; backs up the current save, returns the file text or null when cancelled. */
@@ -50,6 +52,7 @@ export type IpcChannel =
   | 'unin:save:markCorrupt'
   | 'unin:save:listBackups'
   | 'unin:save:restoreBackup'
+  | 'unin:save:backupBeforeReset'
   | 'unin:save:exportTo'
   | 'unin:save:importFrom'
   | 'unin:save:openFolder'

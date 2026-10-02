@@ -8,14 +8,16 @@ import type { UiIcon } from '../../core/config/assetIds';
 import { el } from '../dom';
 import { icon } from './icon';
 import type { PanelId } from './popup';
+import { progressDot } from '../progressVm';
 import { clockVm, topBarVm } from '../viewModel';
 
-const NAV = ['shop', 'inventory', 'orders', 'collection'] as const;
+const NAV = ['shop', 'inventory', 'orders', 'collection', 'achievements'] as const;
 const NAV_ICON: Record<(typeof NAV)[number], UiIcon> = {
   shop: 'shop',
   inventory: 'fillTrough',
   orders: 'orders',
   collection: 'collection',
+  achievements: 'xp',
 };
 
 const bar = (progress: number, mod: string) =>
@@ -40,7 +42,10 @@ export function renderTopBar(
 ): HTMLElement {
   const vm = topBarVm(save);
   const clock = clockVm(now);
-  const orders = readyOrderCount(save, now);
+  const dots: Partial<Record<(typeof NAV)[number], number>> = {
+    orders: readyOrderCount(save, now),
+    achievements: progressDot(save, now),
+  };
   const navButton = (panel: (typeof NAV)[number]) =>
     el(
       'button',
@@ -51,8 +56,8 @@ export function renderTopBar(
       },
       el('span', { class: 'topbar__nav-icon' }, icon(NAV_ICON[panel])),
       el('span', { class: 'topbar__nav-label', text: vi.nav[panel] }),
-      panel === 'orders' && orders > 0
-        ? el('span', { class: 'c-dot', text: String(orders), attrs: { 'aria-hidden': 'true' } })
+      (dots[panel] ?? 0) > 0
+        ? el('span', { class: 'c-dot', text: String(dots[panel]), attrs: { 'aria-hidden': 'true' } })
         : null,
     );
   return el(

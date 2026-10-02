@@ -51,3 +51,14 @@ export function formatDuration(ms: number): string {
   if (h === 0) return t(vi.time.minutes, { n: m });
   return m === 0 ? t(vi.time.hours, { n: h }) : t(vi.time.hoursMinutes, { h, m });
 }
+
+/** "100 vàng, 5 thức ăn" — the non-zero parts of a reward. */
+export function rewardText(r: { gold: number; food: number; medicine: number }): string {
+  return [
+    r.gold > 0 ? t(vi.relief.gold, { n: formatInt(r.gold) }) : null,
+    r.food > 0 ? t(vi.relief.foodUnits, { n: r.food }) : null,
+    r.medicine > 0 ? t(vi.relief.medicine, { n: r.medicine }) : null,
+  ]
+    .filter((s): s is string => s !== null)
+    .join(', ');
+}

@@ -21,6 +21,7 @@ import { makePig } from './pigFactory';
 const MIN = 60_000;
 const HOUR = 60 * MIN;
 const T0 = 1_790_000_000_000;
+const SAVE_START_GOLD = newGame({ now: 0, rng: mulberry32(0) }).player.gold;
 
 describe('away summary (spec §9.5)', () => {
   const now = T0 + 6 * HOUR;
@@ -126,6 +127,7 @@ function platform(start: LoadResult, backup: SaveGame | null) {
       if (name !== 'b1' || !backup) throw new Error('missing');
       current = { kind: 'ok', save: backup, source: 'primary' };
     },
+    backupBeforeReset: async () => {},
   };
   const instanceGuard: InstanceGuard = {
     start: async () => true,
@@ -227,5 +229,45 @@ describe('FeedbackDirector: long catch-up → away summary instead of toasts', (
     listener!(sick, 'catchup', { awayMs: SAVE.AWAY_SUMMARY_MIN_MS });
     listener!(sick, 'catchup', { awayMs: SAVE.AWAY_SUMMARY_MIN_MS - 1 });
     expect(log).toEqual([`away:1:${SAVE.AWAY_SUMMARY_MIN_MS}`, 'toast:Ủn Hồng bị bệnh rồi!']);
+  });
+});
+
+describe('store: play again (DECISIONS PG-4)', () => {
+  const rich = () => {
+    const s = newGame({ now: T0, rng: mulberry32(1) });
+    return { ...s, player: { ...s.player, gold: 99_999, xp: 900 } };
+  };
+
+  it('backs the farm up first, then starts a new farm and writes it', async () => {
+    const p = platform({ kind: 'ok', save: rich(), source: 'primary' }, null);
+    const order: string[] = [];
+    const save = p.storage.save;
+    p.storage.save = async (s) => {
+      order.push(`save:${s.player.gold}`);
+      await save(s);
+    };
+    p.backups.backupBeforeReset = async () => void order.push('backup');
+    const store = createGameStore({ ...p, ...quiet, clock: fakeClock(T0), rng: mulberry32(2) });
+    await store.init();
+    order.length = 0;
+    expect(await store.resetGame()).toBe(true);
+    expect(order[0]).toBe('save:99999');
+    expect(order[1]).toBe('backup');
+    expect(order.at(-1)).toBe(`save:${SAVE_START_GOLD}`);
+    expect(store.getSnapshot().save?.player.xp).toBe(0);
+  });
+
+  it('a failed backup keeps the current farm', async () => {
+    const p = platform({ kind: 'ok', save: rich(), source: 'primary' }, null);
+    p.backups.backupBeforeReset = async () => {
+      throw new Error('disk full');
+    };
+    const store = createGameStore({ ...p, ...quiet, clock: fakeClock(T0), rng: mulberry32(2) });
+    const errors: string[] = [];
+    store.onReject((e) => errors.push(e));
+    await store.init();
+    expect(await store.resetGame()).toBe(false);
+    expect(errors).toEqual(['INVALID_REQUEST']);
+    expect(store.getSnapshot().save?.player.gold).toBe(99_999);
   });
 });

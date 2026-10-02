@@ -1,5 +1,6 @@
 // Shared action pipeline (spec §8): advanceWorld first, then the action's validate + apply.
 import { advanceWorld } from '../engine/advanceWorld';
+import { progressStep } from '../engine/progress';
 import type { GameEvent } from '../events';
 import type { ActionContext, ActionResult, SaveGame } from '../types';
 
@@ -10,10 +11,11 @@ export function runAction(state: SaveGame, ctx: ActionContext, body: ActionBody)
   const world = advanceWorld(state, ctx.now, ctx.rng);
   const result = body(world.state, ctx);
   if (!result.ok) return result;
+  const progress = progressStep(world.state, result.state, result.events);
   return {
     ok: true,
-    state: { ...result.state, updatedAt: ctx.now },
-    events: [...world.events, ...result.events],
+    state: { ...progress.state, updatedAt: ctx.now },
+    events: [...world.events, ...result.events, ...progress.events],
   };
 }
 

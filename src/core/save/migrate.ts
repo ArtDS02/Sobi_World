@@ -161,12 +161,31 @@ function v4ToV5(raw: Raw): Raw {
   };
 }
 
+/**
+ * v5 -> v6 (DECISIONS PG-2, PG-3): achievements, daily reward, decorations. Births already on
+ * record count toward the birth achievements; other counters start at 0.
+ */
+function v5ToV6(raw: Raw): Raw {
+  const births = asArray(raw.breedingRecords).filter((r) => typeof r.bornAt === 'number').length;
+  return {
+    ...raw,
+    schemaVersion: 6,
+    progress: {
+      stats: births > 0 ? { births } : {},
+      claimed: {},
+      daily: { lastDay: null, streak: 0 },
+    },
+    decor: [],
+  };
+}
+
 /** MIGRATIONS[n] upgrades a save from version n to n+1. */
 const MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
   1: v1ToV2,
   2: v2ToV3,
   3: v3ToV4,
   4: v4ToV5,
+  5: v5ToV6,
 };
 /** REFUNDS[n] lists what the n -> n+1 step refunds, read from the save before that step. */
 const REFUNDS: Record<number, (raw: Raw) => Refund[]> = { 2: v3Refunds, 4: v5Refunds };

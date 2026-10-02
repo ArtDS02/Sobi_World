@@ -43,6 +43,15 @@
     padding-top: $sp-2;
   }
 
+  .shop__group--note {
+    font-size: $fs-sm;
+    color: $c-text-muted;
+  }
+
+  .shop__card.is-owned {
+    border-color: $c-leaf;
+  }
+
   // Picture on the left, text and buttons on the right.
   .shop__card {
     display: grid;

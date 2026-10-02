@@ -1,6 +1,9 @@
 // Farm DOM pieces around the canvas (§10.1, §10.2, DECISIONS R05C-1): the pig popup body, the well
-// popup (clean all) and the empty-farm hint. The farm itself is drawn and clicked in src/game.
+// popup (clean all), the empty-farm hint and the neighbour's help card (DECISIONS PG-1). The farm itself is drawn and clicked in src/game.
+import { claimRelief } from '../../core/actions/claimRelief';
+import { reliefNeed } from '../../core/engine/relief';
 import type { Pig, SaveGame } from '../../core/types';
+import { rewardText } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 import type { BoundAction } from '../../store/gameStore';
 import { farmActions } from '../actionsVm';
@@ -37,8 +40,31 @@ export function renderWellPopup(
   );
 }
 
-/** Shown over the canvas while the farm has no pig. */
-export function renderFarmHint(save: SaveGame, goShop: () => void): HTMLElement | null {
+/**
+ * Shown over the canvas: the neighbour's help while the farm is stuck (soft-lock, PG-1), else the
+ * empty-farm hint.
+ */
+export function renderFarmHint(
+  save: SaveGame,
+  goShop: () => void,
+  act: (run: BoundAction) => void,
+): HTMLElement | null {
+  const need = reliefNeed(save);
+  if (need) {
+    return el(
+      'div',
+      { class: 'app__hint app__hint--relief', data: { hint: 'relief' } },
+      el('h3', { class: 'app__hint-title', text: vi.relief.title }),
+      el('p', { text: need.gold > 0 ? vi.relief.start : vi.relief.food }),
+      el('p', { class: 'app__hint-reward', text: rewardText(need) }),
+      el('button', {
+        class: 'c-button',
+        text: vi.relief.claim,
+        attrs: { type: 'button' },
+        on: { click: () => act((s, c) => claimRelief(s, {}, c)) },
+      }),
+    );
+  }
   if (save.pigs.length > 0) return null;
   return el(
     'div',

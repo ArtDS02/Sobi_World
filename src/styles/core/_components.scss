@@ -162,6 +162,12 @@
   box-shadow: 0 3px 0 $c-border;
 }
 
+.c-button--danger {
+  color: $c-on-primary;
+  background: $c-danger;
+  box-shadow: 0 3px 0 color.adjust($c-danger, $lightness: -18%);
+}
+
 .c-button--warn {
   background: $c-honey;
   color: $c-wood-dark;

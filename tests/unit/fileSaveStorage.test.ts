@@ -18,6 +18,7 @@ function fakeBridge(candidates: SaveCandidate[], failWrites = false) {
     markCorrupt: async (source) => void corrupt.push(source),
     listBackups: async () => [],
     restoreBackup: async () => {},
+    backupBeforeReset: async () => {},
     exportTo: async () => true,
     importFrom: async () => null,
     openFolder: async () => {},

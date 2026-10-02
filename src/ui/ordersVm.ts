@@ -1,5 +1,6 @@
 // Orders view-model (spec §8.14, §10.1): one card per live order with its requirements, reward,
 // time left and the pigs that can fill it. Pure, so it is unit-tested directly.
+import { decorBonus } from '../core/engine/decor';
 import { fulfillOrder, pigMeetsOrder } from '../core/actions/fulfillOrder';
 import { BREEDS } from '../core/config/breeds';
 import { happiness } from '../core/engine/happiness';
@@ -25,6 +26,7 @@ export interface OrderCardVm {
 }
 
 export function ordersVm(save: SaveGame, now: number): OrderCardVm[] {
+  const bonus = decorBonus(save);
   return [...save.orders]
     .filter((o) => o.expiresAt > now)
     .sort((a, b) => a.createdAt - b.createdAt || a.id.localeCompare(b.id))
@@ -33,9 +35,9 @@ export function ordersVm(save: SaveGame, now: number): OrderCardVm[] {
         o.fulfilledAt !== null
           ? []
           : save.pigs
-              .filter((p) => pigMeetsOrder(p, o))
+              .filter((p) => pigMeetsOrder(p, o, bonus))
               .map((p) => ({
-                label: t(vi.order.pigChoice, { name: p.name, happiness: happiness(p) }),
+                label: t(vi.order.pigChoice, { name: p.name, happiness: happiness(p, bonus) }),
                 reason: null,
                 run: (s, c) => fulfillOrder(s, { orderId: o.id, pigId: p.id }, c),
               }));

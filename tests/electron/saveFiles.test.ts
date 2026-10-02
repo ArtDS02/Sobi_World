@@ -155,4 +155,24 @@ describe('saveFiles', () => {
     const all = await f.listBackups();
     expect(await readBackup(all[0]!.name)).toBe('{"v":2}');
   });
+
+  it('backupBeforeReset keeps a restorable backup and a permanent copy outside rotation', async () => {
+    const f = files();
+    await f.backupBeforeReset(); // nothing to keep yet
+    expect(await backups()).toEqual([]);
+    await f.write('{"farm":"old"}');
+    t += MIN;
+    await f.backupBeforeReset();
+    const [newest] = await f.listBackups();
+    expect(await readBackup(newest!.name)).toBe('{"farm":"old"}');
+    const kept = (await readdir(dir)).filter((n) => n.startsWith('before-reset-'));
+    expect(kept).toHaveLength(1);
+    expect(await read(kept[0]!)).toBe('{"farm":"old"}');
+    // Many later backups never remove the permanent copy.
+    for (let i = 0; i < BACKUP_KEEP + 2; i++) {
+      t += BACKUP_SPACING_MS;
+      await f.write(`{"v":${i}}`);
+    }
+    expect((await readdir(dir)).filter((n) => n.startsWith('before-reset-'))).toHaveLength(1);
+  });
 });

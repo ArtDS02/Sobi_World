@@ -1,21 +1,22 @@
-// Shop (spec §10.1): pig species, items and slots.
+// Shop (spec §10.1): pig species, items, slots and decorations (PG-3).
 import type { AssetRegistry } from '../../core/assets/registry';
 import type { Rarity } from '../../core/config/rarity';
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
 import type { BoundAction } from '../../store/gameStore';
-import { shopItems, shopPigs, shopSlot } from '../actionsVm';
+import { shopDecor, shopItems, shopPigs, shopSlot } from '../actionsVm';
 import { actionButton } from '../components/actionButton';
 import { rarityBadge } from '../components/rarityBadge';
 import { art, icon } from '../components/icon';
 import { thumb } from '../components/thumb';
 import { el } from '../dom';
 
-export type ShopTab = 'pigs' | 'items' | 'slots';
+export type ShopTab = 'pigs' | 'items' | 'slots' | 'decor';
 const TABS: [ShopTab, string][] = [
   ['pigs', vi.shop.tabPigs],
   ['items', vi.shop.tabItems],
   ['slots', vi.shop.tabSlots],
+  ['decor', vi.shop.tabDecor],
 ];
 
 export interface ShopHandlers {
@@ -100,6 +101,28 @@ function slotsTab(save: SaveGame, now: number, on: ShopHandlers) {
   ];
 }
 
+function decorTab(save: SaveGame, now: number, on: ShopHandlers) {
+  const vm = shopDecor(save, now);
+  return [
+    el('li', { class: 'shop__group shop__group--note', text: vm.total }),
+    ...vm.items.map((d) =>
+      el(
+        'li',
+        { class: `shop__card${d.owned ? ' is-owned' : ''}`, data: { decor: d.id } },
+        el('div', { class: 'shop__pic' }, art(d.artId, 'shop__art')),
+        el(
+          'div',
+          { class: 'shop__info' },
+          el('h3', { class: 'shop__name', text: d.name }),
+          line('desc', d.bonus),
+          price(d.price),
+          actionButton(d.buy, () => on.act(d.buy.run)),
+        ),
+      ),
+    ),
+  ];
+}
+
 export function renderShopScreen(
   save: SaveGame,
   now: number,
@@ -112,7 +135,9 @@ export function renderShopScreen(
       ? pigsTab(save, now, on, assets)
       : tab === 'items'
         ? itemsTab(save, on)
-        : slotsTab(save, now, on);
+        : tab === 'slots'
+          ? slotsTab(save, now, on)
+          : decorTab(save, now, on);
   return el(
     'section',
     { class: 'shop', data: { screen: 'shop' } },

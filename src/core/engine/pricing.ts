@@ -11,7 +11,10 @@ export const sellMultiplier = (happy: number): number =>
 // Guards floor() against binary float error (e.g. 1200 * 0.95 landing at 1139.999...).
 const FLOOR_EPSILON = 1e-9;
 
-export function sellPrice(pig: Pick<Pig, 'breed' | 'cleanliness' | 'hunger' | 'isSick'>): number {
-  const raw = BREEDS[pig.breed].sellGold * sellMultiplier(happiness(pig));
+export function sellPrice(
+  pig: Pick<Pig, 'breed' | 'cleanliness' | 'hunger' | 'isSick'>,
+  decorBonus = 0,
+): number {
+  const raw = BREEDS[pig.breed].sellGold * sellMultiplier(happiness(pig, decorBonus));
   return Math.floor(raw + FLOOR_EPSILON);
 }

@@ -14,6 +14,7 @@ const unin: UninBridge = {
     markCorrupt: (source) => invoke('unin:save:markCorrupt', source),
     listBackups: () => invoke('unin:save:listBackups'),
     restoreBackup: (name) => invoke('unin:save:restoreBackup', name),
+    backupBeforeReset: () => invoke('unin:save:backupBeforeReset'),
     exportTo: (json, suggestedName) => invoke('unin:save:exportTo', json, suggestedName),
     importFrom: () => invoke('unin:save:importFrom'),
     openFolder: () => invoke('unin:save:openFolder'),

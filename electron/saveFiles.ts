@@ -200,6 +200,16 @@ export function createSaveFiles(opts: SaveFilesOptions) {
 
     /** Backs up the current save now (before an import overwrites it, §9.3). */
     backupNow: () => serial(backupCurrent),
+    /**
+     * "Play again" (PG-4): a rotated backup (restorable from settings) plus a permanent copy
+     * saves/before-reset-<stamp>.json that rotation never deletes.
+     */
+    backupBeforeReset: () =>
+      serial(async () => {
+        if (!(await exists(savePath))) return;
+        await backupCurrent();
+        await fsp.copyFile(savePath, join(dir, await freeName(dir, 'before-reset-')));
+      }),
 
     /** Resolves when every queued write has finished (quit waits on it). */
     idle: () => queue.then(() => undefined),

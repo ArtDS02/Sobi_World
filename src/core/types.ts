@@ -1,14 +1,14 @@
 // Save document and domain types (spec §5). Derived values (§5.4) are never stored.
 import type { ErrorCode } from './config/errors';
-import type { BreedId, Gender, ItemId, TransactionType } from './config/ids';
+import type { BreedId, DecorId, Gender, ItemId, StatId, TransactionType } from './config/ids';
 import type { GameEvent } from './events';
 import type { Rng } from './rng';
 
-export type { BreedId, Gender, ItemId, TransactionType };
+export type { BreedId, DecorId, Gender, ItemId, StatId, TransactionType };
 export type GrowthStage = 'BABY' | 'YOUNG' | 'ADULT'; // derived, never stored
 
 export interface SaveGame {
-  schemaVersion: 5;
+  schemaVersion: 6;
   createdAt: number;
   updatedAt: number;
   player: {
@@ -33,6 +33,16 @@ export interface SaveGame {
     nextAt: number | null; // next spawn; null while the farm has no pigs (U06)
     boxes: GiftBox[]; // at most GIFTS.MAX_ON_FARM
   };
+  /** Achievements and the daily reward (save v6, DECISIONS PG-2). */
+  progress: {
+    stats: Record<string, number>; // StatId -> count, absent = 0
+    claimed: Record<string, number>; // achievement id -> claimed at
+    daily: {
+      lastDay: number | null; // local day number of the last claim (ui/time.ts localDay)
+      streak: number; // consecutive days up to lastDay
+    };
+  };
+  decor: DecorId[]; // owned farm decorations (save v6, PG-3)
   settings: {
     musicOn: boolean;
     sfxOn: boolean;

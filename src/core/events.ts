@@ -1,5 +1,5 @@
 // Game events returned by advanceWorld (spec §7.4) and by actions.
-import type { BreedId, ItemId } from './config/ids';
+import type { BreedId, DecorId, ItemId } from './config/ids';
 
 export type GameEvent =
   // `at` (epoch ms) and `stalled` (not yet adult) feed the away summary (§9.5).
@@ -26,6 +26,12 @@ export type GameEvent =
   | { type: 'ORDER_FULFILLED'; orderId: string; gold: number }
   | { type: 'GIFT_SPAWNED'; giftId: string }
   | { type: 'GIFT_OPENED'; giftId: string; gold: number; xp: number }
+  // PG-1..3: neighbour's help, daily reward, achievements, decorations.
+  | { type: 'RELIEF_CLAIMED'; gold: number; food: number; medicine: number }
+  | { type: 'DAILY_CLAIMED'; streak: number; gold: number; food: number; medicine: number }
+  | { type: 'ACHIEVEMENT_REACHED'; id: string } // reward waits in the achievements panel
+  | { type: 'ACHIEVEMENT_CLAIMED'; id: string; gold: number; xp: number }
+  | { type: 'DECOR_BOUGHT'; decorId: DecorId; gold: number }
   | {
       type: 'SETTING_CHANGED';
       key: 'musicOn' | 'sfxOn' | 'reduceMotion' | 'tutorialDone';
@@ -58,6 +64,11 @@ export const GAME_EVENT_TYPES = [
   'ORDER_FULFILLED',
   'GIFT_SPAWNED',
   'GIFT_OPENED',
+  'RELIEF_CLAIMED',
+  'DAILY_CLAIMED',
+  'ACHIEVEMENT_REACHED',
+  'ACHIEVEMENT_CLAIMED',
+  'DECOR_BOUGHT',
   'SETTING_CHANGED',
 ] as const satisfies readonly GameEventType[];
 

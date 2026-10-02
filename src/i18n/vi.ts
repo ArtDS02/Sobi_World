@@ -12,6 +12,7 @@ export const vi = {
     collection: "Bộ sưu tập",
     history: "Lịch sử",
     settings: "Cài đặt",
+    achievements: "Thành tích",
   },
 
   // Labels of clickable world objects on the farm canvas (DECISIONS R05C-1).
@@ -120,6 +121,11 @@ export const vi = {
     ORDER_EXPIRED: "Đơn hàng đã hết hạn.",
     ORDER_REQUIREMENTS_NOT_MET: "Heo chưa đáp ứng yêu cầu của đơn hàng.",
     GIFT_NOT_FOUND: "Hộp quà này đã được mở.",
+    NOT_STUCK: "Nông trại vẫn tự xoay xở được.",
+    DAILY_ALREADY_CLAIMED: "Hôm nay bạn đã nhận quà rồi. Mai quay lại nhé!",
+    ACHIEVEMENT_LOCKED: "Chưa đạt thành tích này.",
+    ALREADY_CLAIMED: "Đã nhận thưởng rồi.",
+    ALREADY_OWNED: "Bạn đã có món này.",
   },
 
   // Shown on a disabled button so the player knows why, not just that.
@@ -158,6 +164,11 @@ export const vi = {
     slotBought: "Đã mở thêm chuồng! Giờ có {slots} chỗ.",
     breedingStarted: "{name} đã mang thai! Sinh sau {time}.",
     giftOpened: "Mở quà: +{gold} vàng, +{xp} KN",
+    reliefClaimed: "Bác hàng xóm gửi giúp: {what}",
+    dailyClaimed: "Quà ngày {streak}: {what}",
+    achievementReached: "Đạt thành tích: {name}! Vào Thành tích để nhận thưởng.",
+    achievementClaimed: "Nhận thưởng {name}: +{gold} vàng",
+    decorBought: "Đã đặt {name} lên nông trại. Heo vui hơn!",
   },
 
   away: {
@@ -181,6 +192,7 @@ export const vi = {
     tabItems: "Vật phẩm",
     tabPigs: "Heo giống",
     tabSlots: "Chuồng",
+    tabDecor: "Trang trí",
     FOOD_BASIC: "Thức ăn",
     FOOD_BASIC_desc: "Tăng 50 độ no. Cũng là đơn vị đổ vào máng ăn.",
     MEDICINE_COMMON: "Thuốc",
@@ -271,6 +283,10 @@ export const vi = {
     SKIN_REFUND: "Hoàn tiền hàng ngừng bán",
     GIFT_REWARD: "Hộp quà",
     ADMIN_ADJUST: "Điều chỉnh của quản trị",
+    RELIEF: "Hàng xóm giúp đỡ",
+    DAILY_REWARD: "Quà hằng ngày",
+    ACHIEVEMENT_REWARD: "Thưởng thành tích",
+    DECOR_PURCHASE: "Mua đồ trang trí",
   },
 
   settings: {
@@ -291,7 +307,9 @@ export const vi = {
     restoreBackup: "Khôi phục bản sao lưu",
     backupAt: "Bản lưu lúc {date}",
     reset: "Chơi lại từ đầu",
-    resetWarning: "Toàn bộ nông trại sẽ bị xóa. Không thể hoàn tác.",
+    resetWarning: "Nông trại hiện tại sẽ được cất thành một bản sao lưu (khôi phục lại được ở mục Bản sao lưu), rồi bắt đầu một nông trại mới.",
+    resetConfirmAgain: "Chắc chắn chơi lại từ đầu? Vàng, heo và cấp độ hiện tại sẽ không còn trong game.",
+    resetHint: "Bắt đầu một nông trại mới. Bản hiện tại được giữ trong thư mục sao lưu.",
     credits: "Thông tin",
     // R11 (not in Appendix B).
     sound: "Âm thanh và hiển thị",
@@ -356,6 +374,78 @@ export const vi = {
     percent: "{n}%",
     weightKg: "{n} kg",
     generation: "Thế hệ {n}",
+  },
+
+  // PG-1: neighbour's help when the farm is stuck.
+  relief: {
+    title: "Bác hàng xóm ghé thăm",
+    food: "Hết thức ăn, hết vàng mà chưa có heo nào bán được? Bác gửi tặng ít đồ để nông trại chạy tiếp.",
+    start: "Chưa đủ vàng mua heo con? Bác cho mượn vốn để bắt đầu lại.",
+    claim: "Nhận giúp đỡ",
+    gold: "{n} vàng",
+    foodUnits: "{n} thức ăn",
+    medicine: "{n} thuốc",
+  },
+
+  // PG-2: daily reward + achievements.
+  daily: {
+    title: "Quà hằng ngày",
+    day: "Ngày {n}",
+    claim: "Nhận quà hôm nay",
+    claimed: "Đã nhận hôm nay. Mai quay lại nhé!",
+    streak: "Chuỗi đăng nhập: {n} ngày",
+    hint: "Vào game mỗi ngày để nhận quà lớn dần. Bỏ một ngày sẽ quay lại ngày 1.",
+  },
+  achievements: {
+    title: "Thành tích",
+    claim: "Nhận",
+    claimed: "Đã nhận",
+    progress: "{current}/{target}",
+    reward: "+{gold} vàng",
+    rewardXp: "+{gold} vàng, +{xp} KN",
+    summary: "Đã đạt {done}/{total}",
+    FIRST_PIG: "Chủ trại mới — mua heo đầu tiên",
+    FIRST_SALE: "Mối hàng đầu tiên — bán 1 heo",
+    SELLER_10: "Lái buôn — bán 10 heo",
+    SELLER_50: "Thương lái — bán 50 heo",
+    SELLER_200: "Vua chợ heo — bán 200 heo",
+    FIRST_BREEDING: "Ông tơ bà nguyệt — phối giống lần đầu",
+    FIRST_BIRTH: "Tiếng ủn đầu tiên — 1 heo con chào đời",
+    BIRTHS_25: "Nhà hộ sinh — 25 heo con chào đời",
+    BIRTHS_100: "Đại gia đình — 100 heo con chào đời",
+    ORDERS_1: "Giao hàng tận nơi — 1 đơn hàng",
+    ORDERS_20: "Uy tín — 20 đơn hàng",
+    ORDERS_100: "Nhà cung cấp số 1 — 100 đơn hàng",
+    GIFTS_10: "Săn quà — mở 10 hộp quà",
+    GIFTS_50: "Ông già Noel — mở 50 hộp quà",
+    CLEAN_100: "Sạch sẽ thơm tho — tắm 100 lượt heo",
+    TREAT_10: "Bác sĩ thú y — chữa 10 heo",
+    EARN_100K: "Khá giả — kiếm 100.000 vàng",
+    EARN_1M: "Triệu phú heo — kiếm 1.000.000 vàng",
+    COLLECT_10: "Nhà sưu tầm — khám phá 10 giống",
+    COLLECT_25: "Bảo tàng heo — khám phá 25 giống",
+    COLLECT_50: "Bách khoa heo — khám phá 50 giống",
+    COLLECT_ALL: "Trọn bộ — khám phá mọi giống heo",
+    LEVEL_5: "Lên tay — đạt cấp 5",
+    LEVEL_10: "Lão nông — đạt cấp 10",
+    SLOTS_12: "Mở rộng — có 12 chuồng",
+    SLOTS_24: "Trang trại lớn — có 24 chuồng",
+    DECOR_1: "Trang hoàng — mua món trang trí đầu tiên",
+    DECOR_ALL: "Nông trại đẹp nhất xóm — mua mọi món trang trí",
+    STREAK_7: "Chăm chỉ — nhận quà 7 ngày liền",
+  },
+
+  // PG-3: farm decorations.
+  decor: {
+    DECOR_HAY_BALE: "Kiện rơm",
+    DECOR_WHEELBARROW: "Xe cút kít",
+    DECOR_SUNFLOWERS: "Khóm hướng dương",
+    DECOR_FENCE: "Hàng rào gỗ",
+    DECOR_VEGGIE_PATCH: "Luống rau",
+    DECOR_WINDMILL: "Cối xay gió",
+    bonus: "Heo vui +{n}",
+    total: "Trang trí đang cộng +{n} vui vẻ cho mọi heo.",
+    owned: "Đã đặt",
   },
 
   time: {

@@ -1,13 +1,17 @@
 // Toast text per event (spec §10.2, §11.3). Pure; the FeedbackDirector decides when it shows.
 import { BREEDS } from '../../core/config/breeds';
+import type { DecorId } from '../../core/config/ids';
 import type { GameEvent } from '../../core/events';
 import type { Pig, SaveGame } from '../../core/types';
-import { formatDuration, formatInt, t } from '../../i18n/format';
+import { formatDuration, formatInt, rewardText, t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 
 /** When the mother's pregnancy started (the dispatch time), so the toast shows the full length. */
 const pregnancyStart = (s: SaveGame, motherId: string): number =>
   s.pigs.find((p) => p.id === motherId)?.pregnancy?.startedAt ?? 0;
+
+const achievementName = (id: string): string =>
+  (vi.achievements as Record<string, string>)[id] ?? id;
 
 /**
  * Toast text for an event, or null when it has none. `before` is the state before the dispatch
@@ -63,6 +67,19 @@ export function toastText(
       return t(vi.event.slotBought, { slots: event.slots });
     case 'GIFT_OPENED':
       return t(vi.event.giftOpened, { gold: formatInt(event.gold), xp: formatInt(event.xp) });
+    case 'RELIEF_CLAIMED':
+      return t(vi.event.reliefClaimed, { what: rewardText(event) });
+    case 'DAILY_CLAIMED':
+      return t(vi.event.dailyClaimed, { streak: event.streak, what: rewardText(event) });
+    case 'ACHIEVEMENT_REACHED':
+      return t(vi.event.achievementReached, { name: achievementName(event.id) });
+    case 'ACHIEVEMENT_CLAIMED':
+      return t(vi.event.achievementClaimed, {
+        name: achievementName(event.id),
+        gold: formatInt(event.gold),
+      });
+    case 'DECOR_BOUGHT':
+      return t(vi.event.decorBought, { name: vi.decor[event.decorId as DecorId] });
     case 'GIFT_SPAWNED': // the box itself appears on the farm
     case 'SETTING_CHANGED':
     case 'PIG_FED':

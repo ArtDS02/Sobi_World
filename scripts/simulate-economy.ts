@@ -1,7 +1,11 @@
 // npm run sim:economy (spec §14.7): per-breed economy table, unlock affordability, and the
 // build gate "net gold per hour at happiness 100 >= 2x at happiness 0". Imports only src/core.
 import { BALANCE } from '../src/core/config/balance';
+import { ACHIEVEMENTS } from '../src/core/config/achievements';
+import { DAILY } from '../src/core/config/daily';
+import { DECORS } from '../src/core/config/decor';
 import { BREED_ID_VALUES } from '../src/core/config/ids';
+import { ITEMS } from '../src/core/config/items';
 import {
   CARE_RATIO_MIN,
   breedEconomy,
@@ -54,6 +58,28 @@ console.log(
   ),
 );
 
+
+// PG-2 / PG-3: free gold (daily, achievements) against the gold sink (decorations).
+const food = ITEMS.FOOD_BASIC.priceGold;
+const dailyWeek = DAILY.REWARDS.reduce(
+  (n, r) => n + r.gold + r.food * food + r.medicine * ITEMS.MEDICINE_COMMON.priceGold,
+  0,
+);
+const achievementGold = ACHIEVEMENTS.reduce((n, a) => n + a.gold, 0);
+const decors = Object.values(DECORS);
+const decorCost = decors.reduce((n, d) => n + d.priceGold, 0);
+const decorBonus = decors.reduce((n, d) => n + d.happyBonus, 0);
+console.log('\nFree gold and sinks (DECISIONS PG-2, PG-3)\n');
+console.log(
+  table(
+    ['source', 'gold', 'PINK hours (1 slot, h=100)'],
+    [
+      ['daily, 7-day cycle (items at shop price)', n0(dailyWeek), n1(hoursToAfford(dailyWeek, 1))],
+      ['all achievements, once', n0(achievementGold), n1(hoursToAfford(achievementGold, 1))],
+      [`all decorations (+${decorBonus} happiness)`, n0(-decorCost), n1(hoursToAfford(decorCost, 1))],
+    ],
+  ),
+);
 
 const failed = gateFailures(rows);
 if (failed.length > 0) {

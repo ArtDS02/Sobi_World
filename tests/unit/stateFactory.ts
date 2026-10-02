@@ -3,7 +3,7 @@ import type { Pig, SaveGame } from '../../src/core/types';
 /** Minimal valid save at t=0 with the given pigs and trough food. */
 export function makeState(pigs: Pig[] = [], troughFood = 0): SaveGame {
   return {
-    schemaVersion: 5,
+    schemaVersion: 6,
     createdAt: 0,
     updatedAt: 0,
     player: {
@@ -19,6 +19,8 @@ export function makeState(pigs: Pig[] = [], troughFood = 0): SaveGame {
     transactions: [],
     breedingRecords: [],
     gifts: { nextAt: null, boxes: [] },
+    progress: { stats: {}, claimed: {}, daily: { lastDay: null, streak: 0 } },
+    decor: [],
     settings: {
       musicOn: true,
       sfxOn: true,

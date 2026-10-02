@@ -115,8 +115,9 @@ export interface PigPanelVm extends PigCardVm {
   pregnancy: string | null;
 }
 
-export function pigPanelVm(pig: Pig, now: number): PigPanelVm {
-  const happy = happiness(pig);
+/** `decorBonus`: the farm's decoration bonus (engine/decor.ts), part of happiness (PG-3). */
+export function pigPanelVm(pig: Pig, now: number, decorBonus = 0): PigPanelVm {
+  const happy = happiness(pig, decorBonus);
   return {
     ...pigCardVm(pig),
     gender: vi.gender[pig.gender],

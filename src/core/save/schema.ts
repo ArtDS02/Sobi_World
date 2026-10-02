@@ -4,6 +4,7 @@ import { BALANCE } from '../config/balance';
 import { GIFTS } from '../config/gifts';
 import {
   BREED_ID_VALUES,
+  DECOR_ID_VALUES,
   GENDER_VALUES,
   ITEM_ID_VALUES,
   TRANSACTION_TYPE_VALUES,
@@ -103,6 +104,13 @@ const shapeSchema = z.object({
   transactions: z.array(transactionSchema),
   breedingRecords: z.array(breedingRecordSchema),
   gifts: z.object({ nextAt: time.nullable(), boxes: z.array(giftSchema) }),
+  // String keys, not enums: a stat or achievement dropped from config never breaks a save.
+  progress: z.object({
+    stats: z.record(z.string(), nonNeg),
+    claimed: z.record(z.string(), time),
+    daily: z.object({ lastDay: z.number().int().nullable(), streak: z.number().int().min(0) }),
+  }),
+  decor: z.array(z.enum(DECOR_ID_VALUES)),
   settings: z.object({
     musicOn: z.boolean(),
     sfxOn: z.boolean(),

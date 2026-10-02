@@ -32,6 +32,7 @@ export function createPlatform(): Platform {
       backups: {
         list: () => bridge.save.listBackups(),
         restore: (n) => bridge.save.restoreBackup(n),
+        backupBeforeReset: () => bridge.save.backupBeforeReset(),
       },
     };
   }

@@ -11,7 +11,7 @@ import { openImportDialog } from './dialogs';
 import type { SettingsHandlers } from './screens/settingsScreen';
 
 export interface SettingsDeps {
-  store: Pick<GameStore, 'getSnapshot' | 'markExported' | 'importSave' | 'restoreBackup'>;
+  store: Pick<GameStore, 'getSnapshot' | 'markExported' | 'importSave' | 'restoreBackup' | 'resetGame'>;
   now: () => number;
   act: (run: BoundAction) => void;
   /** Host of modal dialogs. */
@@ -46,6 +46,13 @@ export function settingsHandlers(d: SettingsDeps): SettingsHandlers {
       });
     },
     openSaveFolder: d.saveFolder && files ? () => void files.openSaveFolder() : null,
+    // Two confirmations (PG-4): the second names what is lost from the game itself.
+    reset: () =>
+      openConfirmDialog(d.dialogHost, vi.settings.reset, vi.settings.resetWarning, async () =>
+        openConfirmDialog(d.dialogHost, vi.settings.reset, vi.settings.resetConfirmAgain, () =>
+          d.store.resetGame().then(() => d.onRestored?.()),
+        ),
+      ),
     restore: (name, label) =>
       openConfirmDialog(
         d.dialogHost,

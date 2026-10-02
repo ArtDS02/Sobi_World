@@ -1,4 +1,5 @@
 // fulfillOrder (spec §8.14): the pig is sold into the order for rewardGold + rewardXp.
+import { decorBonus } from '../engine/decor';
 import { changeGold } from '../engine/gold';
 import { happiness } from '../engine/happiness';
 import { addXP } from '../engine/xp';
@@ -6,13 +7,13 @@ import type { ActionContext, ActionResult, Order, Pig, SaveGame } from '../types
 import { ok, runAction } from './runAction';
 
 /** Whether `pig` satisfies every requirement of `order` (ADULT, not pregnant, breed, gender, mood). */
-export function pigMeetsOrder(pig: Pig, order: Order): boolean {
+export function pigMeetsOrder(pig: Pig, order: Order, bonus = 0): boolean {
   return (
     pig.growthProgress >= 100 &&
     pig.pregnancy === null &&
     pig.breed === order.wantBreed &&
     (order.wantGender === null || pig.gender === order.wantGender) &&
-    happiness(pig) >= order.minHappiness
+    happiness(pig, bonus) >= order.minHappiness
   );
 }
 
@@ -20,7 +21,9 @@ export function pigMeetsOrder(pig: Pig, order: Order): boolean {
 export function readyOrderCount(state: SaveGame, now: number): number {
   return state.orders.filter(
     (o) =>
-      o.fulfilledAt === null && o.expiresAt > now && state.pigs.some((p) => pigMeetsOrder(p, o)),
+      o.fulfilledAt === null &&
+      o.expiresAt > now &&
+      state.pigs.some((p) => pigMeetsOrder(p, o, decorBonus(state))),
   ).length;
 }
 
@@ -35,7 +38,7 @@ export function fulfillOrder(
     if (ctx.now >= order.expiresAt) return { ok: false, error: 'ORDER_EXPIRED' };
     const pig = s.pigs.find((p) => p.id === args.pigId);
     if (!pig) return { ok: false, error: 'PIG_NOT_FOUND' };
-    if (!pigMeetsOrder(pig, order)) return { ok: false, error: 'ORDER_REQUIREMENTS_NOT_MET' };
+    if (!pigMeetsOrder(pig, order, decorBonus(s))) return { ok: false, error: 'ORDER_REQUIREMENTS_NOT_MET' };
 
     const done: SaveGame = {
       ...s,
@@ -44,7 +47,7 @@ export function fulfillOrder(
     };
     const paid = changeGold(done, order.rewardGold, 'ORDER_REWARD', ctx, {
       refId: order.id,
-      note: `${pig.breed} happiness ${happiness(pig)}`,
+      note: `${pig.breed} happiness ${happiness(pig, decorBonus(s))}`,
     });
     if (!paid.ok) return paid;
     const xp = addXP(paid.state, order.rewardXp);

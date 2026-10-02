@@ -1,5 +1,6 @@
 // sellPig (spec §8.7): price uses the happiness multiplier after advanceWorld (D18).
 import { BALANCE } from '../config/balance';
+import { decorBonus } from '../engine/decor';
 import { changeGold } from '../engine/gold';
 import { happiness } from '../engine/happiness';
 import { sellPrice } from '../engine/pricing';
@@ -18,11 +19,12 @@ export function sellPig(
     if (pig.growthProgress < 100) return { ok: false, error: 'PIG_NOT_MATURE' };
     if (pig.pregnancy !== null) return { ok: false, error: 'PIG_IS_PREGNANT' };
 
-    const price = sellPrice(pig);
+    const bonus = decorBonus(s);
+    const price = sellPrice(pig, bonus);
     const removed: SaveGame = { ...s, pigs: s.pigs.filter((p) => p.id !== pig.id) };
     const paid = changeGold(removed, price, 'PIG_SELL', ctx, {
       refId: pig.id,
-      note: `${pig.breed} happiness ${happiness(pig)}`,
+      note: `${pig.breed} happiness ${happiness(pig, bonus)}`,
     });
     if (!paid.ok) return paid;
     const xp = addXP(paid.state, BALANCE.XP.SELL);

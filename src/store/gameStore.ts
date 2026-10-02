@@ -145,10 +145,12 @@ export function createGameStore(
     else if (loaded.kind === 'recovery') set({ status: 'recovery', save: null });
     else if (loaded.kind === 'ok') becomeReady(loaded.save, loaded.source);
     else {
-      becomeReady(newGame(ctx(), { reduceMotion: deps.prefersReducedMotion() }), null);
+      becomeReady(fresh(), null);
       await persist();
     }
   }
+
+  const fresh = () => newGame(ctx(), { reduceMotion: deps.prefersReducedMotion() }); // new farm
 
   function becomeReady(save: SaveGame, loadSource: LoadSource | null) {
     lastPersistAt = deps.clock.now();
@@ -238,8 +240,21 @@ export function createGameStore(
     /** Recovery screen "start new", after the player's explicit confirmation (§9.2). */
     async startNewGame(): Promise<void> {
       if (snapshot.status === 'tooNew' || guard.isReadOnly()) return;
-      becomeReady(newGame(ctx(), { reduceMotion: deps.prefersReducedMotion() }), null);
+      becomeReady(fresh(), null);
       await persist();
+    },
+
+    /** Settings "play again" (PG-4): the farm is written and backed up first; a failure aborts. */
+    async resetGame(): Promise<boolean> {
+      const kept =
+        canWrite() &&
+        (await persist()
+          .then(() => deps.backups?.backupBeforeReset())
+          .then(() => true, () => false));
+      if (!kept) reject({ ok: false, error: 'INVALID_REQUEST' });
+      else becomeReady(fresh(), null);
+      await persist();
+      return kept;
     },
 
     /** Import after confirmation; the previous save goes to the backup key. Invalid → untouched. */

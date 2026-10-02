@@ -15,6 +15,8 @@ export interface SettingsHandlers {
   toggle(key: SettingKey, value: boolean): void;
   /** Restore one backup (after a confirmation). */
   restore(name: string, label: string): void;
+  /** Start a new farm (after two confirmations, PG-4). */
+  reset(): void;
 }
 
 const TOGGLES: [SettingKey, string][] = [
@@ -106,6 +108,15 @@ export function renderSettingsScreen(
             ),
           )
         : null,
+    ),
+    section(
+      vi.settings.reset,
+      el('p', { class: 'settings__hint', text: vi.settings.resetHint }),
+      el(
+        'div',
+        { class: 'settings__actions' },
+        button(vi.settings.reset, h.reset, 'c-button--danger'),
+      ),
     ),
     section(
       vi.settings.credits,

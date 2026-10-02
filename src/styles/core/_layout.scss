@@ -84,6 +84,28 @@
     border: 1px solid $c-border;
     border-radius: $radius-md;
   }
+
+  // Neighbour's help card (PG-1): wraps text, wider than the one-line empty-farm hint.
+  &__hint--relief {
+    flex-direction: column;
+    gap: $sp-2;
+    width: min(26rem, 90vw);
+    padding: $sp-3 $sp-4;
+    text-align: center;
+    white-space: normal;
+    background: $c-cream;
+    border: 2px solid $c-honey;
+  }
+
+  &__hint-title {
+    font-size: $fs-md;
+    color: $c-wood-dark;
+  }
+
+  &__hint-reward {
+    font-weight: 700;
+    color: $c-gold;
+  }
 }
 
 // HUD floating over the farm (farm layout rework): the layer ignores clicks, its pieces take them.

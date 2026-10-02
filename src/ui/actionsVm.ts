@@ -1,5 +1,6 @@
 // Button availability by dry-running the real action: the disabled reason always matches what
 // dispatch would answer. Pure (no DOM), unit-tested.
+import { buyDecor } from '../core/actions/buyDecor';
 import { buyPig } from '../core/actions/buyPig';
 import { buyProduct } from '../core/actions/buyProduct';
 import { buySlot } from '../core/actions/buySlot';
@@ -17,6 +18,8 @@ import { levelFromXp, slotUnlock } from '../core/config/levels';
 import { rarityRank } from '../core/config/rarity';
 import type { AssetRegistry } from '../core/assets/registry';
 import { ITEMS } from '../core/config/items';
+import { DECOR_IDS, DECORS } from '../core/config/decor';
+import { decorBonus } from '../core/engine/decor';
 import { productById, shopProducts } from '../core/engine/shopProducts';
 import { sellMultiplier } from '../core/engine/pricing';
 import { mulberry32 } from '../core/rng';
@@ -151,6 +154,33 @@ export function shopSlot(save: SaveGame, now: number) {
     price: goldText(unlock.cost),
     buy: { label: vi.action.buy, reason, run } satisfies ActionVm,
   };
+}
+
+/** Shop decorations tab (PG-3): every decoration, owned ones marked; total bonus on top. */
+export function shopDecor(save: SaveGame, now: number) {
+  const items = DECOR_IDS.map((id) => {
+    const def = DECORS[id];
+    const run: BoundAction = (s, c) => buyDecor(s, { decorId: id }, c);
+    const error = probe(save, run, now);
+    const reason =
+      error === 'LEVEL_TOO_LOW'
+        ? t(vi.shop.slotLocked, { level: def.unlockLevel })
+        : error === 'ALREADY_OWNED'
+          ? vi.decor.owned
+          : error
+            ? reasonFor(error)
+            : null;
+    return {
+      id,
+      artId: def.artId,
+      name: vi.decor[id],
+      bonus: t(vi.decor.bonus, { n: def.happyBonus }),
+      price: goldText(def.priceGold),
+      owned: save.decor.includes(id),
+      buy: { label: vi.action.buy, reason, run } satisfies ActionVm,
+    };
+  });
+  return { total: t(vi.decor.total, { n: decorBonus(save) }), items };
 }
 
 /** Fill dialog breakdown and confirm button for `units` (§8.6). */

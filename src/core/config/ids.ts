@@ -88,9 +88,37 @@ export const TRANSACTION_TYPE_VALUES = [
   'SKIN_REFUND', // save migration refunds: v2 -> v3 species skins, v4 -> v5 outfits (A2-1)
   'GIFT_REWARD', // gift box opened on the farm (U06)
   'ADMIN_ADJUST', // gold set by the dev admin dashboard's user editor (DECISIONS AD-1)
+  'RELIEF', // neighbour's help when the farm is stuck (DECISIONS PG-1)
+  'DAILY_REWARD', // daily login reward (PG-2)
+  'ACHIEVEMENT_REWARD', // achievement claimed (PG-2)
+  'DECOR_PURCHASE', // farm decoration bought (PG-3)
+] as const;
+/** Farm decorations (PG-3). Ids are never removed: saves keep them. */
+export const DECOR_ID_VALUES = [
+  'DECOR_HAY_BALE',
+  'DECOR_WHEELBARROW',
+  'DECOR_SUNFLOWERS',
+  'DECOR_FENCE',
+  'DECOR_VEGGIE_PATCH',
+  'DECOR_WINDMILL',
+] as const;
+/** Counters kept in save.progress.stats (PG-2). */
+export const STAT_ID_VALUES = [
+  'pigsBought',
+  'pigsSold',
+  'births',
+  'ordersFulfilled',
+  'giftsOpened',
+  'pigsCleaned',
+  'pigsTreated',
+  'breedings',
+  'goldEarned',
+  'bestStreak',
 ] as const;
 
 export type Gender = (typeof GENDER_VALUES)[number];
 export type BreedId = (typeof BREED_ID_VALUES)[number];
 export type ItemId = (typeof ITEM_ID_VALUES)[number];
 export type TransactionType = (typeof TRANSACTION_TYPE_VALUES)[number];
+export type DecorId = (typeof DECOR_ID_VALUES)[number];
+export type StatId = (typeof STAT_ID_VALUES)[number];

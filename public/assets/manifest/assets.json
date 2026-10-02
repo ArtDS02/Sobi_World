@@ -1274,6 +1274,54 @@
         "x": 0.7625,
         "y": 0.9833,
         "width": 160
+      },
+      {
+        "id": "prop_windmill",
+        "layer": 4,
+        "x": 0.5313,
+        "y": 0.3667,
+        "width": 170,
+        "decor": "DECOR_WINDMILL"
+      },
+      {
+        "id": "prop_fence_section",
+        "layer": 4,
+        "x": 0.5625,
+        "y": 0.9778,
+        "width": 150,
+        "decor": "DECOR_FENCE"
+      },
+      {
+        "id": "prop_veggie_patch",
+        "layer": 4,
+        "x": 0.4063,
+        "y": 0.9889,
+        "width": 200,
+        "decor": "DECOR_VEGGIE_PATCH"
+      },
+      {
+        "id": "prop_sunflower",
+        "layer": 4,
+        "x": 0.2938,
+        "y": 0.9778,
+        "width": 100,
+        "decor": "DECOR_SUNFLOWERS"
+      },
+      {
+        "id": "prop_wheelbarrow",
+        "layer": 4,
+        "x": 0.0688,
+        "y": 0.8,
+        "width": 120,
+        "decor": "DECOR_WHEELBARROW"
+      },
+      {
+        "id": "prop_hay_bale",
+        "layer": 4,
+        "x": 0.9313,
+        "y": 0.7889,
+        "width": 110,
+        "decor": "DECOR_HAY_BALE"
       }
     ]
   }

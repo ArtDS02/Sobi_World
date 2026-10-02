@@ -23,6 +23,8 @@ export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {
     transactions: [],
     breedingRecords: [],
     gifts: { nextAt: null, boxes: [] },
+    progress: { stats: {}, claimed: {}, daily: { lastDay: null, streak: 0 } },
+    decor: [],
     settings: {
       musicOn: true,
       sfxOn: true,

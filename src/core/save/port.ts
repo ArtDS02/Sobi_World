@@ -39,6 +39,8 @@ export interface BackupStore {
   list(): Promise<BackupInfo[]>;
   /** Puts a backup back as the save (the current save is backed up first). */
   restore(name: string): Promise<void>;
+  /** Before "play again" (PG-4): the current save is kept as a backup the player can restore. */
+  backupBeforeReset(): Promise<void>;
 }
 
 /** One writer per save (§9.4): tab guard in the browser, single-instance lock on desktop. */

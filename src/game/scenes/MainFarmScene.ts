@@ -11,7 +11,6 @@ import {
 } from '../../core/config/assetIds';
 import { FARM_VIEW } from '../../core/config/farmView';
 import { readyOrderCount } from '../../core/actions/fulfillOrder';
-import type { SaveGame } from '../../core/types';
 import type { StoreSnapshot } from '../../store/gameStore';
 import { SCENE_KEYS } from '../config/phaser';
 import type { FarmBridge, FarmDeps } from '../farmView';
@@ -22,6 +21,7 @@ import { SceneEffects } from '../fx/SceneEffects';
 import { vi } from '../../i18n/vi';
 import { Backdrop } from '../prefabs/Backdrop';
 import { DayNightLayer } from '../prefabs/DayNightLayer';
+import { FarmProps } from '../prefabs/FarmProps';
 import { othersOf, spreadCrowd } from '../prefabs/crowd';
 import { GiftBoxes } from '../prefabs/GiftBoxes';
 import { Nameplates } from '../prefabs/Nameplates';
@@ -60,6 +60,7 @@ export class MainFarmScene extends Phaser.Scene {
   private dayNight!: DayNightLayer;
   private dayClock!: DayNightDirector;
   private readonly obstacles: Rect[] = []; // world object bounds; gift boxes keep clear (U06)
+  private readonly props = new FarmProps(); // trough texture + owned decorations (PG-3)
 
   constructor(
     private readonly deps: FarmDeps,
@@ -160,7 +161,9 @@ export class MainFarmScene extends Phaser.Scene {
   private dress(img: Phaser.GameObjects.Image, p: FarmLayout['placements'][number]) {
     const t = placementTransform(p, img.width, img.height); // layout editor fields (AD-1)
     img.setScale(t.scaleX, t.scaleY).setAngle(t.angle).setFlipX(t.flipX);
-    if (p.layer > 2) this.dayNight.addShadow(addShadow(this, img));
+    const shadow = p.layer > 2 ? addShadow(this, img) : null;
+    if (shadow) this.dayNight.addShadow(shadow);
+    if (p.decor) return this.props.addDecor(p.decor, img, shadow); // no click, light or obstacle
     this.dayNight.addLight(img, p.action);
     this.obstacles.push(img.getBounds());
     if (p.action) {
@@ -209,7 +212,7 @@ export class MainFarmScene extends Phaser.Scene {
     if (!this.sys.isActive()) return;
     this.ambient.sync();
     this.dayClock.update();
-    this.syncTrough(save);
+    this.props.sync(this.textures, this.trough, save);
     const now = this.deps.now();
     this.ordersBadge?.set(save ? readyOrderCount(save, now) : 0);
     const seen = new Set<string>();
@@ -263,13 +266,6 @@ export class MainFarmScene extends Phaser.Scene {
       this.anchors.delete(artId);
       this.requested.delete(artId);
     }
-  }
-
-  private syncTrough(save: SaveGame | null) {
-    if (!this.trough || !save) return;
-    const key = troughTextureKey(save.trough.food, save.trough.capacity);
-    const next = this.textures.exists(key) ? key : FALLBACK_PROP_KEY;
-    if (this.trough.texture.key !== next) this.trough.setTexture(next);
   }
 
   private anchorsOf(artId: string): Anchors {

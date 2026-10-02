@@ -19,8 +19,15 @@ export type Act = (run: BoundAction) => Promise<boolean>;
 /** Rare breeds always warn (§10.2: mandatory confirmation for SUPERMAN and MYTHICAL). */
 const RARE = new Set<Pig['breed']>(['PIG_SUPERMAN', 'PIG_MYTHICAL']);
 
-export function openSellDialog(host: HTMLElement, pig: Pig, sell: ActionVm, act: Act) {
-  const happy = happiness(pig);
+/** `bonus`: the farm's decoration bonus, so the shown price is the one paid (PG-3). */
+export function openSellDialog(
+  host: HTMLElement,
+  pig: Pig,
+  sell: ActionVm,
+  act: Act,
+  bonus = 0,
+) {
+  const happy = happiness(pig, bonus);
   const d = openDialog(host, t(vi.sell.title, { name: pig.name }), undefined, 'gold');
   d.body.append(
     el('p', { text: t(vi.sell.base, { gold: formatInt(BREEDS[pig.breed].sellGold) }) }),
@@ -29,7 +36,7 @@ export function openSellDialog(host: HTMLElement, pig: Pig, sell: ActionVm, act:
     }),
     el('p', {
       class: 'c-dialog__strong',
-      text: t(vi.sell.final, { gold: formatInt(sellPrice(pig)) }),
+      text: t(vi.sell.final, { gold: formatInt(sellPrice(pig, bonus)) }),
     }),
     RARE.has(pig.breed) ? el('p', { class: 'c-dialog__warn', text: vi.sell.warning }) : '',
   );

@@ -143,6 +143,7 @@ function registerSaveIpc(saves: SaveFiles, getWin: () => BrowserWindow | null) {
   handle('unin:save:markCorrupt', (source: SaveCandidateSource) => saves.markCorrupt(source));
   handle('unin:save:listBackups', () => saves.listBackups());
   handle('unin:save:restoreBackup', (name: string) => saves.restoreBackup(name));
+  handle('unin:save:backupBeforeReset', () => saves.backupBeforeReset());
   handle('unin:save:exportTo', async (json: string, suggestedName: string) => {
     const win = getWin();
     const options = {

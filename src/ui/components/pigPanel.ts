@@ -1,5 +1,6 @@
 // Selected pig panel (spec §10.2): portrait column (art, name → rename, breed / gender / stage
 // chips) beside the care column (stat bars, happiness → price multiplier, actions with reasons).
+import { decorBonus } from '../../core/engine/decor';
 import { BREEDS } from '../../core/config/breeds';
 import type { UiIcon } from '../../core/config/assetIds';
 import { happiness } from '../../core/engine/happiness';
@@ -51,7 +52,8 @@ export function renderPigPanel(
   now: number,
   on: PigPanelHandlers,
 ): HTMLElement {
-  const vm = pigPanelVm(pig, now);
+  const bonus = decorBonus(save);
+  const vm = pigPanelVm(pig, now, bonus);
   const actions = pigActions(save, pig.id, now);
   const breeding = breedingVm(save, pig, now);
   const def = BREEDS[pig.breed];
@@ -100,7 +102,7 @@ export function renderPigPanel(
         vi.stat.happiness,
         `${vm.happiness} → ${vm.priceMultiplier}`,
         'happiness',
-        happiness(pig),
+        happiness(pig, bonus),
         'is-key',
       ),
       el(

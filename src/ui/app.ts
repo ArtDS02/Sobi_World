@@ -1,6 +1,7 @@
 // App shell (DECISIONS R05C-1): top bar, the farm canvas filling the window, one popup at a time
 // opened by clicking world objects, toasts, dialogs. Re-renders on store notify.
 import { openGift } from '../core/actions/openGift';
+import { decorBonus } from '../core/engine/decor';
 import type { Pig, SaveGame } from '../core/types';
 import { vi } from '../i18n/vi';
 import type { BoundAction, GameStore, StoreSnapshot } from '../store/gameStore';
@@ -27,6 +28,7 @@ import { el, patch } from './dom';
 import { renderFarmHint, renderPigPopup, renderWellPopup } from './screens/farmScreen';
 import { renderHistoryScreen } from './screens/historyScreen';
 import { renderInventoryScreen } from './screens/inventoryScreen';
+import { renderAchievementsScreen } from './screens/achievementsScreen';
 import { renderCollectionScreen } from './screens/collectionScreen';
 import { renderOrdersScreen } from './screens/ordersScreen';
 import { renderSettingsScreen } from './screens/settingsScreen';
@@ -86,7 +88,10 @@ export function mountApp(
   const act = async (run: BoundAction): Promise<boolean> => (await store.dispatch(run)).ok;
   const handlers = {
     act: (run: BoundAction) => void act(run),
-    sell: (pig: Pig, vm: ActionVm) => openSellDialog(dialogs, pig, vm, act),
+    sell: (pig: Pig, vm: ActionVm) => {
+      const save = store.getSnapshot().save;
+      openSellDialog(dialogs, pig, vm, act, save ? decorBonus(save) : 0);
+    },
     rename: (pig: Pig) => openRenameDialog(dialogs, pig, act),
     breed: (pig: Pig) => {
       const save = store.getSnapshot().save;
@@ -186,6 +191,8 @@ export function mountApp(
         return renderSettingsScreen(save, session.settingsVm(save), settings);
       case 'collection':
         return renderCollectionScreen(save, assets);
+      case 'achievements':
+        return renderAchievementsScreen(save, now(), handlers.act);
     }
   }
 
@@ -242,7 +249,7 @@ export function mountApp(
     farm?.setVisible(true); // after main is emptied, so the canvas measures its final host
     patch(
       hint,
-      renderFarmHint(save, () => go('shop')),
+      renderFarmHint(save, () => go('shop'), handlers.act),
     );
     renderPopup(save);
   }

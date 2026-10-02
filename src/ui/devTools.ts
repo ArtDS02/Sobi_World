@@ -1,6 +1,7 @@
 // Dev-only time travel (?dev=1 in `npm run dev`). Callers gate on import.meta.env.DEV, so a
 // production build drops this module.
 import { BALANCE } from '../core/config/balance';
+import { DECOR_IDS } from '../core/config/decor';
 import { BREED_IDS } from '../core/config/breeds';
 import { DAY_PHASES, type DayPhase } from '../core/config/dayNight';
 import { randomId } from '../core/rng';
@@ -46,7 +47,9 @@ export const devFillPigs: BoundAction = (s, c) => {
     });
   }
   const player = { ...s.player, unlockedSlots: BALANCE.MAX_SLOTS };
-  return { ok: true, state: { ...s, player, pigs: [...s.pigs, ...pigs] }, events: [] };
+  // Every decoration too, so the full farm layout can be checked (PG-3).
+  const state = { ...s, player, pigs: [...s.pigs, ...pigs], decor: [...DECOR_IDS] };
+  return { ok: true, state, events: [] };
 };
 
 export function renderDevTools(

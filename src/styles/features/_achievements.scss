@@ -1,0 +1,111 @@
+// Achievements panel (PG-2). Owns `.achievements*` inside [data-screen="achievements"].
+@use '../core' as *;
+
+[data-screen='achievements'] {
+  display: grid;
+  gap: $sp-3;
+
+  .achievements__heading {
+    display: flex;
+    gap: $sp-2;
+    justify-content: space-between;
+    justify-self: stretch;
+    padding: $sp-2 $sp-3;
+    font-size: $fs-md;
+    color: $c-wood-dark;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: 9999px;
+  }
+
+  .achievements__sub,
+  .achievements__hint,
+  .achievements__meta {
+    font-size: $fs-sm;
+    color: $c-text-muted;
+  }
+
+  .achievements__daily {
+    display: grid;
+    gap: $sp-2;
+    justify-items: center;
+  }
+
+  .achievements__days {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: $sp-2;
+    width: 100%;
+    list-style: none;
+
+    @include mq(sm) {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+  }
+
+  .achievements__day {
+    display: grid;
+    gap: $sp-1;
+    align-content: start;
+    padding: $sp-2 $sp-1;
+    font-size: $fs-sm;
+    text-align: center;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: $radius-md;
+
+    &.is-done {
+      opacity: 0.6;
+      border-color: $c-leaf;
+    }
+
+    &.is-next {
+      background: $c-cream;
+      border-color: $c-honey;
+    }
+  }
+
+  .achievements__list {
+    display: grid;
+    gap: $sp-2;
+    list-style: none;
+  }
+
+  .achievements__item {
+    display: flex;
+    gap: $sp-3;
+    align-items: center;
+    padding: $sp-2 $sp-3;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: $radius-md;
+
+    &.is-claimable {
+      background: $c-cream;
+      border-color: $c-honey;
+    }
+
+    &.is-claimed {
+      opacity: 0.65;
+    }
+  }
+
+  .achievements__info {
+    display: grid;
+    flex: 1;
+    gap: $sp-1;
+  }
+
+  .achievements__name {
+    font-weight: 700;
+  }
+
+  .achievements__bar {
+    width: 100%;
+  }
+
+  .achievements__state {
+    font-size: $fs-sm;
+    color: $c-success;
+  }
+}

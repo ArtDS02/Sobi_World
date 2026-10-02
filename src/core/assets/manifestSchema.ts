@@ -2,6 +2,7 @@
 // A change to the shape bumps `version` here and in the file in the same commit.
 import { z } from 'zod';
 import { ANCHOR_NAMES, FARM_ACTIONS } from '../config/assetIds';
+import { DECOR_ID_VALUES } from '../config/ids';
 
 export const MANIFEST_VERSION = 3;
 
@@ -111,6 +112,8 @@ export const placementSchema = z.object({
   locked: z.boolean().optional(),
   /** Editor-only display name. */
   label: z.string().max(40).optional(),
+  /** Shown only while the save owns this decoration (DECISIONS PG-3; additive, no version bump). */
+  decor: z.enum(DECOR_ID_VALUES).optional(),
 });
 
 export const layoutSchema = z.object({
