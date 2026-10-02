@@ -6,7 +6,7 @@ import { BREEDS } from '../config/breeds';
 import { SAVE } from '../config/save';
 import type { ErrorCode } from '../config/errors';
 import { rollChild } from '../engine/breeding';
-import { freeSlots } from '../engine/derived';
+import { freeSlots, generationOf } from '../engine/derived';
 import { changeGold } from '../engine/gold';
 import { addXP } from '../engine/xp';
 import { randomId } from '../rng';
@@ -53,6 +53,7 @@ export function breedPigs(state: SaveGame, args: BreedPigsArgs, ctx: ActionConte
 
     const child = rollChild(ctx.rng, mother.breed, father.breed);
     const endsAt = ctx.now + pregnancySec * 1000; // D22: the mother's breed
+    const childGeneration = Math.max(generationOf(mother), generationOf(father)) + 1;
     const record: BreedingRecord = {
       id: randomId(ctx.rng),
       at: ctx.now,
@@ -62,6 +63,7 @@ export function breedPigs(state: SaveGame, args: BreedPigsArgs, ctx: ActionConte
       fatherBreed: father.breed,
       childBreed: child.breed,
       childGender: child.gender,
+      childGeneration,
       bornAt: null,
     };
     const bred: SaveGame = {
@@ -76,6 +78,7 @@ export function breedPigs(state: SaveGame, args: BreedPigsArgs, ctx: ActionConte
                 fatherId: father.id,
                 childBreed: child.breed,
                 childGender: child.gender,
+                childGeneration,
               },
             }
           : p,

@@ -1,21 +1,48 @@
-// Breeding odds as rules, not a pair matrix (DECISIONS U00-1 D4). Adding a species needs no row
-// here: it joins its family and rarity tier. Weights are relative points, TUNABLE.
+// Breeding odds as rules, not a pair matrix (DECISIONS U00-1 D4, PS-2). Adding a species needs no
+// row here: it joins its rarity tier, family and traits. Two steps, both data:
+//   1. which RARITY the child gets — RARITY_SAME / RARITY_MIXED, rarer results scaled by the
+//      pair's compatibility (COMPAT);
+//   2. which SPECIES of that rarity — SPECIES weights (parent species, family, shared traits).
+// Then MUTATIONS (named recipes) add points for their result. Every number is TUNABLE.
 import type { BreedId } from './ids';
 
 export const BREEDING_RULES = {
-  /** Shared by the two parent species (all of it when both are the same species). */
-  SAME_PARENT: 60,
-  /** Spread over other species of either parent's family, no rarer than the rarer parent. */
-  SAME_FAMILY: 25,
-  /** Spread over species one rarity above the rarer parent (parents' families first). */
-  TIER_UP: 9,
-  /** Same, two rarities above: the "very rare" result. */
-  TIER_UP_2: 1,
-  /** Breed dialog: the most likely results listed by name, the rest summed as one line. */
+  /** Parents of one rarity: percent of each child rarity (relative to theirs). */
+  RARITY_SAME: { down: 8, same: 80, up: 10, up2: 1.5 },
+  /**
+   * Parents of two rarities (low < high): the lower one, the ones in between, the higher one,
+   * one above the higher one. A rarity that does not exist is dropped and the rest rescaled.
+   */
+  RARITY_MIXED: { low: 44, between: 30, high: 22, above: 3 },
+  /** Rarer-than-parents percents are multiplied by min + (max − min) × compatibility. */
+  UP_SCALE: { min: 0.5, max: 1.5 },
+  /** Relative weight of each species inside the child's rarity. */
+  SPECIES: {
+    /** One of the parents' species (inheritance). */
+    PARENT: 150,
+    /** Same family (collection theme) as a parent. */
+    FAMILY: 8,
+    /** Per trait shared with the parents (counted up to TRAIT_CAP). */
+    TRAIT: 4,
+    TRAIT_CAP: 3,
+    /** Anything else of that rarity: the discovery tail. */
+    BASE: 1,
+  },
+  /** Compatibility 0..1 of a pair (shown as hearts; scales the rare results). */
+  COMPAT: {
+    base: 0.35,
+    sameFamily: 0.3,
+    perSharedTrait: 0.1,
+    traitCap: 3,
+    perRarityGap: 0.08,
+    /** A pair named in MUTATIONS is a known good match. */
+    recipe: 0.25,
+  },
+  /** Breed dialog: the most likely results listed, the rest summed as one line. */
   CHANCES_SHOWN: 4,
 } as const;
 
-/** Special pairs: extra points for a result the rules alone would not favour. */
+/** Named recipes: extra percent points for a result the rules alone would not favour. */
 export interface Mutation {
   parents: readonly [BreedId, BreedId]; // unordered
   result: BreedId;

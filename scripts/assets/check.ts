@@ -32,6 +32,7 @@ export function rowFiles(row: Row): [string, string][] {
   for (const [key, field] of [
     ['asset', 'asset'],
     ['sleep', 'sleepAsset'],
+    ['wake', 'wakeAsset'],
     ['shadow', 'shadow'],
     ['flip', 'assetFlip'],
     ['anchors', 'anchors'],

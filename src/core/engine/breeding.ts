@@ -54,6 +54,7 @@ function giveBirth(state: SaveGame, mother: Pig, now: number, rng: Rng) {
     pregnancy: null,
     lastTickedAt: preg.endsAt, // offline growth counts from the birth time
     createdAt: preg.endsAt,
+    generation: preg.childGeneration ?? 2,
   };
   const child = advancePig(newborn, now, rng);
   const born: SaveGame = {

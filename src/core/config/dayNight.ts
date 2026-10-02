@@ -123,13 +123,31 @@ export const DAY_NIGHT_VIEW = {
   glow: { color: 0xffc46b, alpha: 0.55, width: 0.95, height: 0.75, centerY: 0.55 },
   /** World objects (by their click action) that light up at night: houses and the shop. */
   litActions: ['collection', 'inventory', 'shop'] as readonly string[],
-  /** Night pigs nap more often (visual only, DECISIONS R09B-1); other phases keep WANDER.napChance. */
-  nightNapChance: 0.6,
   /** Depths just under the fx overlay band (FARM_VIEW.OVERLAY_DEPTH). */
   ambientDepthBelowOverlay: 2,
   glowDepthBelowOverlay: 1,
   skyDepth: -2000000,
   backdropDepth: -1000000,
+} as const;
+
+/**
+ * Global pig sleep (DECISIONS PS-1): every pig on the farm sleeps through these phases and is
+ * awake in the others. One day/night signal drives all pigs; the stagger only offsets each pig's
+ * start (by its id) so the herd does not blink in unison. Visual only, TUNABLE.
+ */
+export const PIG_SLEEP = {
+  phases: ['night'] as readonly DayPhase[],
+  /** Falling asleep: heavy lids + settling down. */
+  fallAsleepMs: 1800,
+  /** Waking up: heavy lids + stretch. */
+  wakeUpMs: 1600,
+  /** Each pig starts its transition up to this long after the switch. */
+  staggerMs: 2400,
+  /** Sleeping pose: body settles (by < 1, bx > 1) and breathes slowly. */
+  settle: { bx: 1.04, by: 0.9 },
+  breathe: { amount: 0.025, ms: 2600 },
+  /** Waking stretch peak before the pig stands normally again. */
+  stretch: { bx: 0.96, by: 1.08 },
 } as const;
 
 /**

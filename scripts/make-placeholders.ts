@@ -126,6 +126,7 @@ export function makePlaceholders(manifest: AssetManifest, root = ASSETS_DIR): st
       const files: [string, string][] = [];
       if (typeof r.asset === 'string') files.push(['asset', r.asset]);
       if (typeof r.sleepAsset === 'string') files.push(['sleep', r.sleepAsset]);
+      if (typeof r.wakeAsset === 'string') files.push(['wake', r.wakeAsset]);
       if (typeof r.shadow === 'string') files.push(['shadow', r.shadow]);
       if (typeof r.assetFlip === 'string') files.push(['flip', r.assetFlip]);
       if (r.states && typeof r.states === 'object')

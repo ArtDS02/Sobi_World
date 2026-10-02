@@ -227,7 +227,7 @@ export function freeArtIds(exceptRowId?: string): string[] {
   const used = new Set(state.rows.filter((r) => r.id !== exceptRowId).map((r) => r.artId));
   const rows = state.pigs.map((p) => p.id);
   const files = [...state.files]
-    .filter((f) => f.startsWith('pigs/base/') && !f.endsWith('_sleep.png'))
+    .filter((f) => f.startsWith('pigs/base/') && !/_(sleep|wake).png$/.test(f))
     .map((f) => f.slice('pigs/base/'.length, -'.png'.length));
   return [...new Set([...rows, ...files])].filter((id) => !used.has(id)).sort();
 }

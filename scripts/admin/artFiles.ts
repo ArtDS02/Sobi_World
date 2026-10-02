@@ -43,12 +43,13 @@ export function library() {
     const path = join(BASE, name);
     const st = statSync(path);
     const file = `pigs/base/${name}`;
-    const row = pigs.find((p) => p.asset === file || p.sleepAsset === file) ?? null;
+    const frames = (p: (typeof pigs)[number]) => [p.asset, p.sleepAsset, p.wakeAsset];
+    const row = pigs.find((p) => frames(p).includes(file)) ?? null;
     return {
       file,
       artId: name.replace(/\.png$/, ''),
       rowId: row?.id ?? null,
-      sleep: row?.sleepAsset === file,
+      sleep: !!row && row.asset !== file, // sleep or wake frame (PS-1)
       bytes: st.size,
       modifiedAt: st.mtimeMs,
       size: pngSize(readFileSync(path)),

@@ -177,10 +177,13 @@ export function openBreedDialog(
     const p = vm.partners[i]!;
     [...list.children].forEach((b, j) => b.setAttribute('aria-pressed', String(i === j)));
     detail.replaceChildren(
+      el('p', { text: p.compat }),
+      ...(p.known ? [el('p', { text: p.known })] : []),
       el('p', { class: 'c-dialog__strong', text: vi.breed.chances }),
       ...p.chances.map((c) => el('p', { text: c })),
       el('p', { text: p.duration }),
       el('p', { text: vm.fee }),
+      el('p', { text: vm.capacity }),
     );
     slot.replaceChildren(actionButton(p.confirm, () => void act(p.confirm.run).then(d.close)));
   };

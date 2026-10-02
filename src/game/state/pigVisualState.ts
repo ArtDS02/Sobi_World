@@ -4,7 +4,7 @@ import type { Pig } from '../../core/types';
 import type { AnimationId } from '../feedback/feedbackTable';
 
 export type VisualState =
-  'idle' | 'walk' | 'eat' | 'clean' | 'sleep' | 'happy' | 'sick' | 'pregnant';
+  'idle' | 'walk' | 'eat' | 'clean' | 'sleep' | 'drowsy' | 'happy' | 'sick' | 'pregnant';
 
 /** States a feedback animation puts the pig in for its duration (§11.3). */
 export type FeedbackState = Extract<VisualState, 'eat' | 'clean' | 'happy'>;
@@ -15,8 +15,11 @@ export interface ActiveFeedback {
   until: number;
 }
 
-/** What the pig's own body is doing: standing, strolling or napping (PigMover). */
-export type PigMotion = 'still' | 'walk' | 'nap';
+/**
+ * What the pig's own body is doing (PigMover): standing, strolling, a daytime nap, or the global
+ * night rest (DECISIONS PS-1): `drowsy` while falling asleep / waking up, `sleep` while asleep.
+ */
+export type PigMotion = 'still' | 'walk' | 'nap' | 'drowsy' | 'sleep';
 
 /** Which feedback animations are pig visual states; the rest are one-off tweens (popIn, grow). */
 export const FEEDBACK_STATE: Partial<Record<AnimationId, FeedbackState>> = {
@@ -26,9 +29,10 @@ export const FEEDBACK_STATE: Partial<Record<AnimationId, FeedbackState>> = {
 };
 
 /**
- * Priority: a running feedback state (the player just acted) > sick > pregnant > sleep > walk >
- * idle. Only a healthy, free pig naps (PigMover decides, DECISIONS R09B-1); a nap reported for a
- * sick or pregnant pig is ignored.
+ * Priority: a running feedback state (the player just acted) > night rest (every pig, sick and
+ * pregnant too, PS-1) > sick > pregnant > nap > walk > idle. Only a healthy, free pig takes a
+ * daytime nap (PigMover decides, DECISIONS R09B-1); a nap reported for a sick or pregnant pig is
+ * ignored.
  */
 export function pigVisualState(
   pig: Pick<Pig, 'isSick' | 'pregnancy'>,
@@ -37,6 +41,8 @@ export function pigVisualState(
   motion: PigMotion = 'still',
 ): VisualState {
   if (feedback && now < feedback.until) return feedback.state;
+  if (motion === 'sleep') return 'sleep';
+  if (motion === 'drowsy') return 'drowsy';
   if (pig.isSick) return 'sick';
   if (pig.pregnancy) return 'pregnant';
   if (motion === 'nap') return 'sleep';

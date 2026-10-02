@@ -45,13 +45,20 @@ const FARM_SECTIONS = new Set(['environment', 'props', 'buildings', 'fx', 'ui'])
 /** Files rendered by the farm; shadows, flips and audio are not drawn in R05A. */
 const SKIPPED_FILES = new Set(['shadow', 'flip', 'anchors']);
 
-/** Every file of one species art row: idle, optional sleep frame, optional anchors json. */
+/** Files of a species art row the farm draws: idle, optional sleep and wake frames (PS-1). */
+export const PIG_FRAMES = ['asset', 'sleep', 'wake'] as const;
+
+/** Texture keys of every frame of a species art row (loaded or not). */
+export const artTextureKeys = (artId: string): string[] =>
+  PIG_FRAMES.map((file) => textureKey(artId, file));
+
+/** Every file of one species art row: idle, optional sleep / wake frames, optional anchors json. */
 export function artLoadList(assets: AssetRegistry, artId: string): LoadList {
   const entry = assets.resolve(artId);
   if (!entry || entry.section !== 'pigs') return { images: [], json: [], sheets: [] };
   const url = (file: string) => assets.url(artId, file);
   const images: LoadItem[] = [];
-  for (const file of ['asset', 'sleep']) {
+  for (const file of PIG_FRAMES) {
     const u = url(file);
     if (u) images.push({ key: textureKey(artId, file), url: u });
   }

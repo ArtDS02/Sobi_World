@@ -1,5 +1,5 @@
 // HUD over the farm (spec §10.1, §10.4, farm layout rework): pills top-left (level + XP bar,
-// gold → history, trough gauge → fill dialog), settings top-right, and the bottom dock with the
+// gold → history, trough gauge → fill dialog, pig count / capacity → shop), settings top-right, and the bottom dock with the
 // menu nav (the same popups as the world objects, reachable by keyboard).
 import { readyOrderCount } from '../../core/actions/fulfillOrder';
 import type { SaveGame } from '../../core/types';
@@ -90,6 +90,16 @@ export function renderTopBar(
         icon('trough'),
         bar(vm.troughProgress, 'trough'),
         el('b', { text: vm.troughShort }),
+      ),
+      el(
+        'button',
+        {
+          class: `hud-pill topbar__pigs${vm.pigsFull ? ' is-full' : ''}`,
+          attrs: { type: 'button', title: vm.pigsTitle, 'aria-label': vm.pigsTitle },
+          on: { click: () => on.nav('shop') },
+        },
+        el('span', { class: 'topbar__pigs-icon', text: vi.hud.pigsIcon, attrs: { 'aria-hidden': 'true' } }),
+        el('b', { text: vm.pigs }),
       ),
       clock
         ? el(

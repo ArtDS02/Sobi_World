@@ -48,6 +48,7 @@ export interface Pregnancy {
   fatherId: string;
   childBreed: BreedId; // decided at breeding time
   childGender: Gender; // decided at breeding time
+  childGeneration?: number; // parents' highest generation + 1 (PS-2); absent in old saves = 2
 }
 
 export interface Pig {
@@ -63,6 +64,8 @@ export interface Pig {
   pregnancy: Pregnancy | null;
   lastTickedAt: number;
   createdAt: number;
+  /** 1 = bought / starter, n + 1 = child of a generation-n parent (PS-2). Absent = 1. */
+  generation?: number;
 }
 
 /** A gift lying on the farm. Its reward is fixed when it spawns; `seed` places it (view only). */
@@ -104,6 +107,7 @@ export interface BreedingRecord {
   fatherBreed: BreedId;
   childBreed: BreedId;
   childGender: Gender;
+  childGeneration?: number; // PS-2, absent in old saves
   bornAt: number | null; // null until birth
 }
 

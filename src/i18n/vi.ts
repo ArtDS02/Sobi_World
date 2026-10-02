@@ -35,6 +35,11 @@ export const vi = {
     troughEmpty: "Máng ăn trống!",
     goldUnit: "vàng",
     troughShort: "{food}/{capacity}",
+    pigs: "{count}/{max}",
+    pigsTitle: "Heo trong trại: {count}/{max}",
+    pigsReserved: "{n} chỗ giữ cho heo sắp sinh",
+    pigsFull: "Trại đã đầy — mua thêm chỗ hoặc bán bớt heo",
+    pigsIcon: "🐷",
   },
 
   /** Day / night (DN): HUD clock icon + phase name per phase. */
@@ -202,6 +207,10 @@ export const vi = {
     fee: "Phí phối giống: {gold} vàng",
     chances: "Tỉ lệ ra giống con",
     otherChance: "Giống khác {n}%",
+    unknown: "??? ({rarity})",
+    compat: "Độ hợp: {hearts}",
+    known: "Công thức đã thử",
+    capacity: "Chỗ trong trại: {used}/{max} (còn {free})",
     duration: "Thời gian mang thai: {time}",
     noPartners: "Chưa có con nào đủ điều kiện phối với {name}.",
     confirm: "Phối giống",
@@ -346,6 +355,7 @@ export const vi = {
     gender: "Giới tính",
     percent: "{n}%",
     weightKg: "{n} kg",
+    generation: "Thế hệ {n}",
   },
 
   time: {

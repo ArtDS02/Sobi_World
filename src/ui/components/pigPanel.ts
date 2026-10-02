@@ -84,6 +84,7 @@ export function renderPigPanel(
         chip(`${pig.gender === 'MALE' ? '♂' : '♀'} ${vm.gender}`, `is-${pig.gender.toLowerCase()}`),
         chip(vm.stage),
         chip(vm.weight),
+        chip(vm.generation),
       ),
       vm.pregnancy ? chip(`${vi.stat.pregnant} · ${vm.pregnancy}`, 'is-pregnant') : null,
     ),

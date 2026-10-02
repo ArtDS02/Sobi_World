@@ -22,6 +22,7 @@ const pregnancySchema = z.object({
   fatherId: z.string(),
   childBreed: breedId,
   childGender: gender,
+  childGeneration: z.number().int().min(1).optional(),
 });
 
 const pigSchema = z.object({
@@ -37,6 +38,7 @@ const pigSchema = z.object({
   pregnancy: pregnancySchema.nullable(),
   lastTickedAt: time,
   createdAt: time,
+  generation: z.number().int().min(1).optional(),
 });
 
 const orderSchema = z.object({
@@ -69,6 +71,7 @@ const breedingRecordSchema = z.object({
   fatherBreed: breedId,
   childBreed: breedId,
   childGender: gender,
+  childGeneration: z.number().int().min(1).optional(),
   bornAt: time.nullable(),
 });
 

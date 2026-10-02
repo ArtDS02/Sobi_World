@@ -32,6 +32,22 @@ describe('topBarVm (§10.1)', () => {
     expect(vm.troughEmpty).toBe(true);
   });
 
+  it('pig count / capacity from the save, full when no slot is free (reserved included, PS-1)', () => {
+    const pigs = [0, 1, 2].map((i) => makePig({ id: `p${i}`, slotIndex: i }));
+    const s = farm(pigs);
+    const at = (slots: number, list = pigs) =>
+      topBarVm({ ...s, pigs: list, player: { ...s.player, unlockedSlots: slots } });
+    expect(at(8).pigs).toBe('3/8');
+    expect(at(8).pigsFull).toBe(false);
+    expect(at(3).pigsFull).toBe(true);
+    expect(at(3).pigsTitle).toContain(vi.hud.pigsFull);
+    const preg = { startedAt: 0, endsAt: 1, fatherId: 'p1', childBreed: pigs[0]!.breed, childGender: 'MALE' as const };
+    const withChild = [{ ...pigs[0]!, pregnancy: preg }, pigs[1]!, pigs[2]!];
+    expect(at(4, withChild).pigsFull).toBe(true); // 3 pigs + 1 reserved = 4
+    expect(at(4, withChild).pigsTitle).toContain('1 chỗ giữ');
+    expect(pigPanelVm(pigs[0]!, 0).generation).toBe('Thế hệ 1');
+  });
+
   it('trough gauge with food; xp capped at max level', () => {
     const s = farm([], { trough: { food: 12, capacity: 30, lastResolvedAt: 0 } });
     const vm = topBarVm({ ...s, player: { ...s.player, xp: 99_999 } });

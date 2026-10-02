@@ -35,6 +35,7 @@ import {
   anchorsKey,
   FALLBACK_PROP_KEY,
   artLoadList,
+  artTextureKeys,
   textureKey,
   troughTextureKey,
 } from '../view/textureKeys';
@@ -74,7 +75,7 @@ export class MainFarmScene extends Phaser.Scene {
       troughX: () => this.trough?.x ?? null,
       reduceMotion: () => this.deps.store.getSnapshot().save?.settings.reduceMotion ?? false,
       others: (pigId) => othersOf(this.pigs, pigId),
-      napChance: () => this.dayClock.napChance(),
+      night: () => this.dayClock?.isNight() ?? false,
     };
     warnLoadErrors(this.load);
     this.ambient = new Ambient(this, this.pigEnv.reduceMotion);
@@ -84,7 +85,8 @@ export class MainFarmScene extends Phaser.Scene {
     Backdrop.follow(this, this.layout, (rect) => this.dayNight.setView(rect));
     this.drawPlacements();
     const preview = () => this.bridge.phasePreview;
-    this.dayClock = new DayNightDirector(this, this.dayNight, this.deps.now, preview);
+    const bedtime = () => [...this.pigs.values()].forEach((p) => p.setNight());
+    this.dayClock = new DayNightDirector(this, this.dayNight, this.deps.now, preview, bedtime);
     // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
     if (!this.pigEnv.reduceMotion()) this.cameras.main.fadeIn(FARM_VIEW.AMBIENT.fadeInMs);
     this.input.on(
@@ -256,10 +258,7 @@ export class MainFarmScene extends Phaser.Scene {
     const worn = new Set(sprites.map((s) => s.artId));
     for (const artId of this.requested) {
       if (worn.has(artId)) continue;
-      for (const file of ['asset', 'sleep']) {
-        const key = textureKey(artId, file);
-        if (this.textures.exists(key)) this.textures.remove(key);
-      }
+      for (const key of artTextureKeys(artId)) if (this.textures.exists(key)) this.textures.remove(key);
       this.cache.json.remove(anchorsKey(artId));
       this.anchors.delete(artId);
       this.requested.delete(artId);

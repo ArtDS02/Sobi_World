@@ -271,6 +271,16 @@
     font-variant-numeric: tabular-nums;
   }
 
+  // Pig count / capacity (PS-1): turns red when the farm is full.
+  &.topbar__pigs {
+    padding: 0 $sp-3;
+    font-variant-numeric: tabular-nums;
+
+    &.is-full {
+      background: $c-danger-soft;
+    }
+  }
+
   &.c-gauge {
     min-height: 0;
     background: $c-pill;

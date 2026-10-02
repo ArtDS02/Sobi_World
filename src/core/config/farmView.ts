@@ -73,8 +73,11 @@ export const FARM_VIEW = {
     restMaxMs: 4000,
     napMinMs: 6000,
     napMaxMs: 12000,
-    /** Share of rests a healthy idle pig spends asleep (DECISIONS R09B-1). */
-    napChance: 0.2,
+    /**
+     * Share of daytime rests a healthy idle pig spends asleep (DECISIONS R09B-1). 0 since PS-1:
+     * by day pigs only idle and walk; they sleep through the night (PIG_SLEEP).
+     */
+    napChance: 0,
     /** A target closer than this to another pig's spot is re-rolled (names never stack). */
     minGapPx: 120,
     /** Speed of the push apart between standing pigs closer than minGapPx (px per second). */

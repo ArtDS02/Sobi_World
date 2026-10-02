@@ -4,7 +4,14 @@ import { BREEDS } from '../core/config/breeds';
 import { DAY_NIGHT } from '../core/config/dayNight';
 import { levelFromXp } from '../core/config/levels';
 import { formatHm, minuteOf, phaseAt } from '../core/engine/dayNight';
-import { growthStage, weight } from '../core/engine/derived';
+import {
+  freeSlots,
+  generationOf,
+  growthStage,
+  pigCapacity,
+  reservedSlots,
+  weight,
+} from '../core/engine/derived';
 import { happiness } from '../core/engine/happiness';
 import { sellMultiplier } from '../core/engine/pricing';
 import type { Pig, SaveGame } from '../core/types';
@@ -24,6 +31,10 @@ export interface TopBarVm {
   troughShort: string;
   /** 0-100 trough fill. */
   troughProgress: number;
+  /** Pig count pill (PS-1): "8/20", its tooltip, and full = no free slot (reserved included). */
+  pigs: string;
+  pigsTitle: string;
+  pigsFull: boolean;
   troughEmpty: boolean;
 }
 
@@ -46,7 +57,21 @@ export function topBarVm(save: SaveGame): TopBarVm {
     troughShort: t(vi.hud.troughShort, { food, capacity }),
     troughProgress: capacity > 0 ? Math.round((food / capacity) * 100) : 0,
     troughEmpty: food <= 0,
+    ...pigsVm(save),
   };
+}
+
+function pigsVm(save: SaveGame): Pick<TopBarVm, 'pigs' | 'pigsTitle' | 'pigsFull'> {
+  const count = save.pigs.length;
+  const max = pigCapacity(save);
+  const reserved = reservedSlots(save);
+  const full = freeSlots(save) <= 0;
+  const title = [
+    t(vi.hud.pigsTitle, { count, max }),
+    reserved > 0 ? t(vi.hud.pigsReserved, { n: reserved }) : '',
+    full ? vi.hud.pigsFull : '',
+  ];
+  return { pigs: t(vi.hud.pigs, { count, max }), pigsTitle: title.filter(Boolean).join(' · '), pigsFull: full };
 }
 
 export interface PigCardVm {
@@ -83,6 +108,8 @@ export interface PigPanelVm extends PigCardVm {
   gender: string;
   growthValue: number; // 0-100 for the bar
   weight: string;
+  /** "Thế hệ 2" (PS-2). */
+  generation: string;
   happiness: string;
   priceMultiplier: string;
   pregnancy: string | null;
@@ -95,6 +122,7 @@ export function pigPanelVm(pig: Pig, now: number): PigPanelVm {
     gender: vi.gender[pig.gender],
     growthValue: pig.growthProgress,
     weight: t(vi.ui.weightKg, { n: formatInt(weight(pig)) }),
+    generation: t(vi.ui.generation, { n: generationOf(pig) }),
     happiness: String(happy),
     priceMultiplier: t(vi.stat.priceMultiplier, { mult: formatDec(sellMultiplier(happy)) }),
     pregnancy: pig.pregnancy

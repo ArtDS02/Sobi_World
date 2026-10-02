@@ -20,6 +20,16 @@ describe('breedingVm (§10.2)', () => {
     expect(chances[4]).toMatch(/^Giống khác [\d,]+%$/);
     expect(vm.partners[0]!.duration).toContain('1 giờ');
     expect(vm.fee).toContain('200');
+    expect(vm.partners[0]!.compat).toMatch(/^Độ hợp: [♥♡]{5}$/);
+    expect(vm.capacity).toMatch(/^Chỗ trong trại: 3\/\d+ /);
+  });
+
+  it('hidden discovery: species never seen show as ??? with their rarity (PS-2)', () => {
+    const s = farm([mom, dad]);
+    const lines = breedingVm(s, dad, 0).partners[0]!.chances;
+    expect(lines[0]).toMatch(/^Heo Hồng Đất /); // the parents' own species is known
+    expect(lines.some((l) => /^\?\?\? \(/.test(l))).toBe(true);
+    expect(lines.join(' ')).not.toContain('Heo Sọc Dưa');
   });
 
   it('the confirm runs the real breedPigs', () => {

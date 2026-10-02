@@ -18,7 +18,7 @@ export interface AssetEntry {
   id: string;
   section: ManifestSection;
   status: AssetStatus;
-  /** Every file of the row, keyed: `asset`, `sleep`, `shadow`, `flip`, `anchors` or a state name. */
+  /** Every file of the row, keyed: `asset`, `sleep`, `wake`, `shadow`, `flip`, `anchors` or a state name. */
   files: Record<string, string>;
 }
 
@@ -37,6 +37,7 @@ function filesOf(row: Record<string, unknown>): Record<string, string> {
   };
   add('asset', row.asset);
   add('sleep', row.sleepAsset);
+  add('wake', row.wakeAsset);
   add('shadow', row.shadow);
   add('flip', row.assetFlip);
   add('anchors', row.anchors);
@@ -82,6 +83,12 @@ export function createAssetRegistry(manifest: AssetManifest) {
       if (!row) return { artId, url: null, overlay: sleeping ? SLEEP_FALLBACK_FX : null };
       if (sleeping && row.sleepAsset) return { artId, url: url(row.sleepAsset), overlay: null };
       return { artId, url: url(row.asset), overlay: sleeping ? SLEEP_FALLBACK_FX : null };
+    },
+
+    /** URL of a species frame (`sleep` / `wake`) of its art row; null when the row has none. */
+    pigFrame(breed: BreedId, frame: 'sleep' | 'wake'): string | null {
+      const row = pigs.get(BREEDS[breed].artId);
+      return url((frame === 'sleep' ? row?.sleepAsset : row?.wakeAsset) ?? undefined);
     },
 
     troughUrl: (food: number, capacity: number): string | null =>

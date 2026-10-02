@@ -16,6 +16,8 @@ export interface PigView {
   fallbackId: string;
   /** The species' `_sleep` frame, or null when the manifest has none (see sleepLook). */
   sleepTextureId: string | null;
+  /** The species' `_wake` frame (heavy lids, DECISIONS PS-1), or null when the manifest has none. */
+  wakeTextureId: string | null;
   /** Species art row whose anchors apply. */
   artId: string;
   /** Home feet position in design pixels; wandering strays from it (visual only). */
@@ -85,12 +87,34 @@ export function sleepLook(
   return { textureId: view.textureId, overlay: SLEEP_FALLBACK_FX };
 }
 
+/**
+ * Frame + overlays a pig shows (DECISIONS PS-1): the heavy-lid `_wake` frame while falling asleep
+ * or waking up, the sleep look while asleep (plus fx_zzz through the night even with a real sleep
+ * frame), else the idle frame. A frame that is missing or not loaded falls back to idle.
+ */
+export function frameLook(
+  view: Pick<PigView, 'textureId' | 'sleepTextureId' | 'wakeTextureId' | 'overlays'>,
+  state: VisualState,
+  loaded: (key: string) => boolean,
+  nightSleep: boolean,
+): { textureId: string; overlays: readonly FxId[] } {
+  const idle = { textureId: view.textureId, overlays: view.overlays };
+  if (state === 'drowsy') {
+    const wake = view.wakeTextureId;
+    return wake !== null && loaded(wake) ? { ...idle, textureId: wake } : idle;
+  }
+  if (state !== 'sleep') return idle;
+  const sleep = sleepLook(view, loaded);
+  const zzz = sleep.overlay ?? (nightSleep ? SLEEP_FALLBACK_FX : null);
+  return { textureId: sleep.textureId, overlays: zzz ? [...view.overlays, zzz] : view.overlays };
+}
+
 /** `now` is reserved for time-based states; the sprite adds feedback, walking and naps. */
 export function pigView(
   pig: Pig,
   _now: number,
   layout: FarmLayout,
-  textures: Pick<AssetRegistry, 'pigTexture'>,
+  textures: Pick<AssetRegistry, 'pigTexture'> & Partial<Pick<AssetRegistry, 'pigFrame'>>,
 ): PigView {
   const visualState = pigVisualState(pig, 0, null);
   const tex = textures.pigTexture(pig.breed, false);
@@ -101,6 +125,9 @@ export function pigView(
   const sleepTextureId =
     asleep.url === null || asleep.overlay ? null : textureKey(asleep.artId, 'sleep');
 
+  const wake = textures.pigFrame?.(pig.breed, 'wake') ?? null;
+  const wakeTextureId = wake === null ? null : textureKey(tex.artId, 'wake');
+
   const overlays: FxId[] = [];
   if (pig.isSick) overlays.push('fx_sick');
   if (pig.pregnancy) overlays.push('fx_pregnant');
@@ -110,6 +137,7 @@ export function pigView(
   return {
     textureId,
     sleepTextureId,
+    wakeTextureId,
     fallbackId,
     artId: tex.artId,
     x: spot.x * layout.designSize.width,

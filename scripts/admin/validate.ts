@@ -17,6 +17,7 @@ export interface PigArtRow {
   status: string;
   asset: string;
   sleepAsset?: string | null;
+  wakeAsset?: string | null;
   tags?: string[];
 }
 
@@ -128,7 +129,7 @@ export function validateSpecies(input: ValidateInput): Issue[] {
   for (const p of input.pigs) {
     if (!arts.has(p.id)) issues.push({ level: 'info', speciesId: null, text: `Art ${p.id} (${p.nameVi}) chưa gán species nào` });
   }
-  const declared = new Set(input.pigs.flatMap((p) => [p.asset, p.sleepAsset ?? '']));
+  const declared = new Set(input.pigs.flatMap((p) => [p.asset, p.sleepAsset ?? '', p.wakeAsset ?? '']));
   for (const f of input.files) {
     if (f.startsWith('pigs/') && !declared.has(f)) issues.push({ level: 'warn', speciesId: null, text: `File chưa đăng ký manifest: ${f}` });
   }

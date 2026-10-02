@@ -30,6 +30,8 @@ export const pigRowSchema = z.object({
   collection: z.string().min(1),
   asset: assetPath,
   sleepAsset: assetPath.nullable().optional(),
+  /** Half-open eyes: falling asleep / waking up (DECISIONS PS-1); missing → idle frame. */
+  wakeAsset: assetPath.nullable().optional(),
   anchors: assetPath.optional(),
   tags: z.array(z.string()).default([]),
 });

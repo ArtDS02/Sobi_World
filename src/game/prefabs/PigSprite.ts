@@ -13,7 +13,7 @@ import {
   type ActiveFeedback,
   type VisualState,
 } from '../state/pigVisualState';
-import { pigScale, sleepLook, type PigView } from '../view/pigView';
+import { frameLook, pigScale, type PigView } from '../view/pigView';
 import { HOLD_MS, playPigAnimation, type Motion, type TweenablePig } from '../fx/pigAnimations';
 import { PigMover } from './PigMover';
 import type { PlateAnchor } from './Nameplates';
@@ -82,6 +82,7 @@ export class PigSprite {
       () => env.reduceMotion(),
       () => env.others?.(pigId) ?? [],
       () => env.napChance?.() ?? FARM_VIEW.WANDER.napChance,
+      () => env.night?.() ?? false,
     );
     this.handle = {
       motion: this.motion,
@@ -108,6 +109,10 @@ export class PigSprite {
   readonly dest = () => this.mover.dest;
   readonly stand = () => this.mover.pos;
   readonly nudge = (dx: number, dy: number) => !this.leaving && this.mover.nudge(dx, dy);
+  /** Day ↔ night switched (one signal for the whole farm): fall asleep / wake up (PS-1). */
+  readonly setNight = () => !this.leaving && this.mover.setNight();
+  /** Night rest state (IDLE / WALKING / FALLING_ASLEEP / SLEEPING / WAKING_UP). */
+  readonly restState = () => this.mover.restNow;
 
   /** Species art row drawn right now; null before the first view. */
   get artId(): string | null {
@@ -132,24 +137,17 @@ export class PigSprite {
   private setTexture(key: string) {
     if (this.image.texture.key === key) return;
     this.image.setTexture(key);
-    // The pixel-perfect hit area keeps its first size; follow the new frame.
-    (this.image.input?.hitArea as Phaser.Geom.Rectangle | undefined)?.setSize(
-      this.image.width,
-      this.image.height,
-    );
+    // A rectangle hit area keeps its first size: follow the new frame. The pixel-perfect test
+    // has a plain-object hit area and reads the current texture itself (sleep / wake frames).
+    const area = this.image.input?.hitArea as unknown;
+    if (area instanceof Phaser.Geom.Rectangle) area.setSize(this.image.width, this.image.height);
   }
 
-  /** Idle frame, or the sleep look (`_sleep` frame, else idle + fx_zzz, spec §11.4 / Q5). */
+  // Frame + overlays for the visual state (frameLook); an unloaded idle shows the flat fill.
   private look(view: PigView): { textureId: string; overlays: readonly FxId[] } {
-    if (this.visualState() !== 'sleep') {
-      return { textureId: this.textureFor(view), overlays: view.overlays };
-    }
-    const sleep = sleepLook(view, (k) => this.scene.textures.exists(k));
-    const textureId = sleep.textureId === view.textureId ? this.textureFor(view) : sleep.textureId;
-    return {
-      textureId,
-      overlays: sleep.overlay ? [...view.overlays, sleep.overlay] : view.overlays,
-    };
+    const loaded = (k: string) => this.scene.textures.exists(k);
+    const l = frameLook(view, this.visualState(), loaded, this.mover.motion === 'sleep');
+    return l.textureId === view.textureId ? { ...l, textureId: this.textureFor(view) } : l;
   }
 
   /** Wander position + pose + feedback motion → every game object of the pig. */

@@ -25,6 +25,8 @@
     "art:cut": "tsx scripts/cut-reference.ts",
     "art:buildings": "tsx scripts/cut-buildings.ts",
     "art:process": "tsx scripts/process-art.ts",
+    "art:sleep": "tsx scripts/sleep-frames.ts",
+    "breeding:report": "tsx scripts/breeding-report.ts",
     "sim:economy": "tsx scripts/simulate-economy.ts",
     "test:e2e": "npm run build && playwright test",
     "assets:release": "tsx scripts/assets-check.ts --release"
