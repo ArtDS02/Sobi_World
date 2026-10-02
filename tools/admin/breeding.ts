@@ -1,8 +1,13 @@
-// Breeding rules page (DECISIONS AD-1): the pair table of src/core/config/breedingPairs.ts. A rule =
-// parents A + B (order ignored) → possible children with percents summing to 100. Pairs without an
-// active rule keep the rule system (breedingRules.ts); the editor can start from those odds.
+// Breeding page (DECISIONS AD-1, BR-2). Three views of the ONE breeding data set the game uses:
+// the breed map (generation graph + lineage), the rule system as it runs (numbers, recipes, audit,
+// odds explorer) and the pair table of src/core/config/breedingPairs.ts — a rule = parents A + B
+// (order ignored) → children with percents summing to 100; pairs without an active rule keep the
+// rule system (breedingRules.ts), and the editor can start from those odds.
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
+import { BREEDING_RULES } from '../../src/core/config/breedingRules';
+import { renderBreedMap, type PigLook } from './breedMap';
+import { renderBreedRules } from './breedRules';
 import type { BreedId } from '../../src/core/config/ids';
 import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from '../../src/core/config/breedingPairs';
 import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
@@ -21,10 +26,40 @@ const draft = { rows: PAIR_RULES.map(clone), dirty: false };
 const breedInfo = Object.fromEntries(BREED_IDS.map((id) => [id, { breedable: BREEDS[id].breedable, enabled: BREEDS[id].enabled }]));
 const issues = (rows: readonly Rule[] = draft.rows): Issue[] => pairIssues(rows, { breeds: breedInfo, epsilon: PAIR_PERCENT_EPSILON });
 const nameOf = (id: string) => state.rows.find((r) => r.id === id)?.nameVi ?? id;
-const img = (id: string) => {
+const imgUrl = (id: string) => {
   const art = state.rows.find((r) => r.id === id)?.artId;
-  return art ? `<img class="thumb" src="/assets/pigs/base/${esc(art)}.png" alt="" loading="lazy" />` : '';
+  return art ? `/assets/pigs/base/${art}.png` : null;
 };
+const img = (id: string) => {
+  const url = imgUrl(id);
+  return url ? `<img class="thumb" src="${esc(url)}" alt="" loading="lazy" />` : '';
+};
+const look: PigLook = { name: nameOf, img: imgUrl };
+
+type View = 'map' | 'rules' | 'pairs';
+let view: View = 'map';
+const VIEWS: readonly (readonly [View, string])[] = [
+  ['map', '🧬 Sơ đồ phả hệ'],
+  ['rules', '📐 Luật đang chạy'],
+  ['pairs', '✏️ Bảng ghi đè cặp'],
+];
+
+export function renderBreeding(root: HTMLElement, rerender: () => void) {
+  const active = draft.rows.filter((r) => r.active).length;
+  root.innerHTML = `<div class="subtabs" role="tablist">${VIEWS.map(([v, label]) =>
+    `<button type="button" role="tab" class="subtabs__tab${v === view ? ' is-active' : ''}" aria-selected="${v === view}" data-view="${v}">${label}${v === 'pairs' ? ` (${active})` : ''}</button>`).join('')}</div>
+    <div data-view-host></div>`;
+  root.querySelectorAll<HTMLElement>('[data-view]').forEach((b) =>
+    b.addEventListener('click', () => {
+      view = b.dataset.view as View;
+      rerender();
+    }),
+  );
+  const host = root.querySelector<HTMLElement>('[data-view-host]')!;
+  if (view === 'map') renderBreedMap(host, look);
+  else if (view === 'rules') renderBreedRules(host, look);
+  else renderPairTable(host, rerender);
+}
 
 /** Species options grouped by rarity (optgroups), names A-Z, retired ones marked. */
 const options = (ids: readonly string[], cur: string) =>
@@ -178,7 +213,7 @@ function card(r: Rule) {
   </div>`;
 }
 
-export function renderBreeding(root: HTMLElement, rerender: () => void) {
+function renderPairTable(root: HTMLElement, rerender: () => void) {
   const all = issues();
   const errors = all.filter((i) => i.level === 'error');
   root.innerHTML = `
@@ -187,7 +222,7 @@ export function renderBreeding(root: HTMLElement, rerender: () => void) {
       <span class="badge status-warn">⏸ ${draft.rows.filter((r) => !r.active).length} đang tắt</span>
       ${errors.length ? `<span class="badge status-error">✕ ${errors.length} lỗi</span>` : ''}
     </div>
-    <p class="muted">Cặp không có luật dùng hệ mặc định (cùng loài 60 · cùng nhóm 25 · lên 1 bậc 9 · lên 2 bậc 1 + đột biến). Luật ở đây thay hoàn toàn tỷ lệ của cặp đó.</p>
+    <p class="muted">Bảng này chỉ chứa <b>ngoại lệ</b>. Cặp không có luật ở đây dùng luật hệ thống (tab "Luật đang chạy": cùng độ hiếm giữ bậc ${BREEDING_RULES.RARITY_SAME.same} · lên 1 bậc ${BREEDING_RULES.RARITY_SAME.up} · lên 2 bậc ${BREEDING_RULES.RARITY_SAME.up2} · tụt ${BREEDING_RULES.RARITY_SAME.down}, rồi chọn loài theo bố mẹ / nhóm / đặc điểm + công thức đột biến). Luật ở đây thay hoàn toàn tỷ lệ của cặp đó.${draft.rows.length === 0 ? ' Hiện chưa có ngoại lệ nào — toàn bộ game đang chạy theo luật hệ thống.' : ''}</p>
     <div class="savebar">
       ${draft.dirty ? '<span class="badge status-warn">Chưa lưu</span><button class="btn" data-discard>Huỷ thay đổi</button>' : ''}
       <button class="btn btn-primary" data-save ${!draft.dirty || !state.apiOnline || errors.length ? 'disabled' : ''}>💾 Lưu luật vào game</button>

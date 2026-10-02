@@ -64,10 +64,10 @@ const SECTIONS: Section[] = [
   },
   {
     id: 'breeding', icon: '🧬', title: 'Phối giống',
-    purpose: 'Bảng luật Heo A + Heo B → các kết quả có thể sinh ra với tỷ lệ % (src/core/config/breedingPairs.ts). Cặp không có luật dùng hệ mặc định.',
-    steps: ['＋ Thêm luật → chọn Heo A, Heo B (chỉ heo lai được).', 'Form tự điền tỷ lệ hiện tại của game; thêm/bớt kết quả, sửa %.', 'Tổng phải đúng 100 % (nút ⚖ chia lại cho đủ). Trùng cặp (A+B = B+A) bị chặn.', '💾 Lưu luật vào game — hộp thoại phối giống trong game hiện đúng tỷ lệ này.'],
+    purpose: 'Ba tab trên cùng một dữ liệu phối giống của game: 🧬 Sơ đồ phả hệ (heo xếp theo thế hệ, bấm một heo để thấy bố mẹ, tổ tiên, hậu duệ), 📐 Luật đang chạy (số liệu luật, công thức đột biến, kiểm tra dữ liệu, thử một cặp) và ✏️ Bảng ghi đè cặp: Heo A + Heo B → các kết quả với tỷ lệ % (src/core/config/breedingPairs.ts). Cặp không có luật ghi đè dùng luật hệ thống.',
+    steps: ['Sơ đồ phả hệ: bấm heo (hoặc chọn ở ô Tìm heo) → sơ đồ tự cuộn tới, đường hồng = tổ tiên, xanh = hậu duệ, viền nét đứt = chỉ lai ra được bằng đường hiếm (< 5 %).', '＋ Thêm luật → chọn Heo A, Heo B (chỉ heo lai được).', 'Form tự điền tỷ lệ hiện tại của game; thêm/bớt kết quả, sửa %.', 'Tổng phải đúng 100 % (nút ⚖ chia lại cho đủ). Trùng cặp (A+B = B+A) bị chặn.', '💾 Lưu luật vào game — hộp thoại phối giống trong game hiện đúng tỷ lệ này.'],
     example: ['Heo Hồng + Heo Đen: Heo Hồng 60 %, Heo Đen 25 %, Heo Gấu Trúc 10 %, Heo Galaxy 5 % → Lưu.'],
-    notes: ['Tắt luật để quay về tỷ lệ mặc định mà vẫn giữ luật.', 'Kết quả là heo đang tắt bị bỏ qua khi chơi; phần còn lại tự chia lại cho đủ 100 %.'],
+    notes: ['Thế hệ 0 = heo bán ở cửa hàng; thế hệ n = lai ra (tỷ lệ ≥ 5 %) từ hai heo thế hệ trước. Sơ đồ đọc trực tiếp luật + công thức + bảng ghi đè, không có dữ liệu riêng.', 'Tắt luật để quay về tỷ lệ mặc định mà vẫn giữ luật.', 'Kết quả là heo đang tắt bị bỏ qua khi chơi; phần còn lại tự chia lại cho đủ 100 %.'],
   },
   {
     id: 'daynight', icon: '🌗', title: 'Ngày / Đêm',

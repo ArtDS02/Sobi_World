@@ -40,6 +40,13 @@ export const BREEDING_RULES = {
   },
   /** Breed dialog: the most likely results listed, the rest summed as one line. */
   CHANCES_SHOWN: 4,
+  /**
+   * Breed map (admin, DECISIONS BR-2): a route at least this likely places a species one
+   * generation after its parents; species only reachable by weaker routes come after.
+   */
+  MAP_STRONG_PERCENT: 5,
+  /** Weaker routes (the discovery tail) still place a species from this percent on. */
+  MAP_WEAK_PERCENT: 1,
 } as const;
 
 /** Named recipes: extra percent points for a result the rules alone would not favour. */
