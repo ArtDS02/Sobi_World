@@ -458,6 +458,80 @@ XONG KHI: check + build xanh, commit `feat(art): <lô>`. Liệt kê đã nhận 
 
 ---
 
+## 3b. Lộ trình U — Update & Expand (master prompt 2026-10-02)
+
+Quyết định: `UPDATE_AUDIT.md` §5 (D1–D9) + DECISIONS U00-1. Species: `UN_IN_PIG_CATALOGUE.md` (từ U01).
+Thứ tự: U01 → U03 → U04 ★ → U05 ★ → U06 ★ → U07 → U08. Code chạy trên placeholder trước, art ở U07.
+
+### U01 — Species + rarity + save v3
+
+```text
+TASK U01. Theo CLAUDE.md. Đọc UPDATE_AUDIT.md §1, §3–§6; PIG_CONCEPT_PROPOSAL.md §3.
+Làm:
+1. core/config/rarity.ts: RARITY_VALUES COMMON..LEGENDARY, ánh xạ P1..P5 (D9), thứ tự bậc.
+2. BreedDef thêm rarity, family, unlockLevel?; thêm 15 species → tổng 19 (proposal §3). Số TUNABLE.
+3. Manifest: row default skin cho species mới (placeholder), pig_white/black/brown/spotted thành default
+   của species (priceGold null). allowedBreeds theo D6. STARTER_SKINS = mọi default skin của breed.
+4. buyPig chặn unlockLevel. Save v3 + migrate v2→v3 theo D3 (test).
+5. core/config/clothing.ts: ClothingDef + CLOTHING rỗng (D1).
+6. UN_IN_PIG_CATALOGUE.md từ proposal (cột Asset Status thật).
+XONG KHI: check xanh, assets:check xanh, test migrate D3, commit, tag u01. DỪNG.
+```
+
+### U03 — Breeding theo luật
+
+```text
+TASK U03. Theo CLAUDE.md. D4. Thay BREEDING_MATRIX bằng core/config/breedingRules.ts: trọng số
+SAME_PARENT / SAME_FAMILY / TIER_UP / TIER_UP_2 + MUTATIONS theo cặp; breedingOutcomes(a,b) luôn có kết quả
+(trừ species breedable=false). Rarity hiếm hơn → xác suất thấp hơn. Test: bảng trọng số chính xác cho vài cặp +
+Monte Carlo seed. Viết lại test breeding cũ. UI phối giống hiện tỉ lệ (nếu đã có chỗ).
+XONG KHI: check xanh, commit, tag u03. DỪNG.
+```
+
+### U04 — Shop + collection theo rarity ★
+
+```text
+TASK U04. Theo CLAUDE.md. Tab Heo: nhóm theo rarity, badge màu (token SCSS $c-rarity-*), khoá theo
+unlockLevel; tab Skin tách rõ; collection nhóm rarity + đếm x/y; order chọn breed theo rarity/đã khám phá.
+sim:economy chạy với species mới, chỉnh số trong config tới khi hợp lý.
+XONG KHI: check + sim xanh, commit, tag u04. NEXT: user chơi thử.
+```
+
+### U05 — Farm layout + nameplate + perf ★
+
+```text
+TASK U05. Theo CLAUDE.md. Tham khảo asset/building/style_reference_building.png. Nhãn công trình nhỏ, không đè
+walkArea/heo; bảng tên heo nhỏ trên đầu, layout thuần (game/view/nameplateLayout.ts) đẩy tránh chồng, có test.
+Đo fps 12/20/30 heo (dev tool); ổn thì nâng MAX_SLOTS (D7) + bảng mở slot.
+XONG KHI: check xanh, ảnh chụp farm, fps ghi vào commit, tag u05. NEXT: user chơi thử.
+```
+
+### U06 — Gift box ★
+
+```text
+TASK U06. Theo CLAUDE.md. UPDATE_AUDIT.md §6. Save v4 gifts; core/config/gifts.ts; engine/gifts.ts
+(resolveGifts trong advanceWorld, offline, cap trên farm, reward chốt lúc spawn, clamp MIN/MAX);
+actions/openGift.ts (GIFT_REWARD qua changeGold + XP, claim 1 lần); game/view/giftPlacement.ts (seed → vị trí,
+validate, retry); prefab + FeedbackDirector: khói → pop 0→1.15→0.95→1 → bounce → idle; mở: 1.1 → pop → số bay.
+Catch-up không animation. Hết tween khi hộp mất.
+XONG KHI: check xanh, test offline/claim-once, xem trên dev, tag u06. NEXT: user chơi thử.
+```
+
+### U07 — Asset expansion
+
+```text
+TASK U07. Skill image-to-asset. Species placeholder → production theo UN_IN_PIG_CATALOGUE.md; gift box
+(đóng/mở), fx khói, badge rarity; props còn thiếu trong style_reference_building.png nếu layout dùng.
+XONG KHI: assets:check xanh, tag u07. DỪNG.
+```
+
+### U08 — Polish
+
+```text
+TASK U08. Rà animation/game feel, layout cửa sổ nhỏ/lớn, perf 5/10/20/30 heo, timer/tween leak, save/load.
+XONG KHI: check + e2e xanh, fps ghi lại, tag u08.
+```
+
 ## 4. Prompt tiện ích
 
 ### CONTINUE — sau reset usage, bị ngắt giữa task, hoặc sang task tiếp

@@ -41,7 +41,7 @@ Phase 0 (U00) · 2026-10-02 · base: `start/unimo-v1` @ 31dead4 · `npm run chec
 |---|---|
 | `config/ids.ts` | Mở rộng `BREED_ID_VALUES`; thêm `RARITY_VALUES`; thêm transaction `GIFT_REWARD` (+ `SKIN_REFUND` nếu chọn hoàn tiền, §5-D3). |
 | `config/breeds.ts` | `BreedDef` thêm `rarity`, `family`, `shop: { buyable, unlockLevel? }`; giá mua/bán suy từ rarity × base (giữ 4 breed cũ đúng số spec). Giữ tên `breed` trong code (species = breed) — không đổi tên hàng loạt. |
-| `config/breedingMatrix.ts` → `config/breedingRules.ts` | Trọng số theo luật + `MUTATIONS` + `OVERRIDES` (= ma trận cũ, golden giữ nguyên). `breedingOutcomes(a,b)` luôn trả kết quả. |
+| `config/breedingMatrix.ts` → `config/breedingRules.ts` | Trọng số theo luật + `MUTATIONS` (bỏ ma trận cặp — D4). `breedingOutcomes(a,b)` luôn trả kết quả. |
 | `core/types.ts`, `save/schema.ts`, `save/migrate.ts` | Schema v3: `gifts` state; enum breed mới; migrate v2→v3. |
 | `engine/advanceWorld.ts` | Bước 5: `resolveGifts` (sau orders), idempotent. |
 | `engine/orders.ts` | Order chọn breed đều (Q1) → cân nhắc giới hạn theo rarity (tránh order đòi LEGENDARY). |
@@ -61,19 +61,27 @@ Phase 0 (U00) · 2026-10-02 · base: `start/unimo-v1` @ 31dead4 · `npm run chec
 7. i18n: `vi.rarity.*`, `vi.gift.*`, `vi.breeds.*` mới, `vi.shop.tab*`.
 8. Docs: `UN_IN_PIG_CATALOGUE.md` (sau khi user duyệt proposal), dòng `DECISIONS.md` cho từng quyết định §5.
 
-## 5. Xung đột với spec / CLAUDE.md — cần user chốt trước khi code (master prompt §56)
+## 5. Quyết định cuối (user chốt 2026-10-02 — game single-player cá nhân)
 
-| # | Xung đột | Đề xuất an toàn nhất |
+Nguyên tắc: mỗi constraint phải có lợi thật cho game single-player này. Không anti-cheat, không chống exploit, không
+backward-compat phức tạp, không giới hạn chỉ vì "production thường làm vậy". Vẫn bảo vệ: save, không mất dữ liệu khi
+migrate, không phá feature đang chạy, performance, kiến trúc sạch.
+
+| # | Quyết định | Lý do |
 |---|---|---|
-| D1 | **Clothing/cosmetics** = spec §20.7 Backlog; DECISIONS C3/R00-8; CLAUDE.md "không cosmetics". | Làm **foundation dữ liệu** thôi: type `ClothingDef` + slot `hat/shirt/pants/accessory` ánh xạ vào `COSMETIC_SLOT_VALUES` hiện có; không equip action, không shop. Cần user xác nhận gỡ C3 một phần và sửa dòng CLAUDE.md. |
-| D2 | **4 hướng (front/back/left/right)** vs D23 / art standard §2 (1 hướng side-view + flip; lý do: x8 asset, mất mặt heo khi quay lưng). | Giữ D23. Đi "vào trong" = di chuyển trục Y + scale + Y-sort (đã có). Thêm tween quay đầu 120 ms nếu chưa có. Không vẽ front/back. |
-| D3 | Người chơi đã **mua skin** `pig_white/black/brown/spotted` (2000 vàng). Khi thành species, skin đó còn ý nghĩa gì? | Migrate v2→v3: gỡ khỏi `ownedSkins`, hoàn tiền giá gốc qua `changeGold('SKIN_REFUND')`, heo đang mặc → về default skin của breed. (Phương án khác: giữ như skin nhưng ngừng bán.) |
-| D4 | **Golden value breeding** (§6.5/§14.4): pink×pink = 90/10. Master prompt muốn "related ~25%, rare, ultra rare". | Giữ nguyên 6 cặp cũ làm `OVERRIDES` (không đụng golden). Luật mới chỉ áp cho cặp có species mới. Nếu muốn đổi cả cặp cũ → user phải duyệt đổi golden. |
-| D5 | Release **v1.0.0 chưa tag** (R12B dở: EPERM khi `dist:win`). | Tag/đóng v1.0.0 trước, U-phase là v1.1 trên nhánh riêng. Hoặc gộp — user chọn. |
-| D6 | **Skin pink trên species khác**: skin hiện là ảnh trọn thân màu hồng (`pig_farmer`, `pig_chef`…). Mặc lên Heo Đen → mất nhận diện species — trái tinh thần "skin không thay species". | Ngắn hạn: skin trọn thân chỉ cho phép breed có thân hồng (`allowedBreeds`), species khác chỉ dùng default. Dài hạn: clothing layer (D1) mới là "thay đồ" đúng nghĩa. |
-| D7 | Số heo **30+** để test hiệu năng vs `MAX_SLOTS = 12`. | Giữ 12 slot (gameplay). Test hiệu năng 30–40 heo qua dev tool (`?dev=1`), không đổi luật. |
-| D8 | **Pig level/XP từng con**, Happiness đa chỉ số. | Hoãn (master prompt §57 cho phép). Happiness đã có (D18 từ hunger + clean + sick) — không thêm chỉ số. |
-| D9 | Tên rarity: catalogue P1–P5 = Common/Rare/Epic/Legendary/Mythic; master prompt = COMMON/UNCOMMON/RARE/EPIC/LEGENDARY. | Dùng tên master prompt, ánh xạ P1→COMMON … P5→LEGENDARY cho cả skin (chỉ đổi nhãn hiển thị, giữ key P* trong manifest). |
+| D1 | **Clothing = data foundation tối thiểu.** Type `ClothingDef { id, slot, rarity, priceGold }` dùng lại `CosmeticSlot` + field `Pig.cosmetics` đã có; registry rỗng. Không equip action, không shop, không art cho tới khi cần. | Đủ sạch để thêm sau, không tốn gì bây giờ. |
+| D2 | **Giữ 1 góc nghiêng + flip** (D23). Không front/back. | Camera hiện tại không cần; tiết kiệm x4 art. |
+| D3 | **Migrate save v2→v3, không xoá gì:** heo `PIG_EARTH_PINK` đang mặc skin `pig_white/black/brown/spotted` → **đổi thành species tương ứng** (skin đó vốn là species). Skin đó đã mua mà không heo nào mặc → hoàn giá mua (`SKIN_REFUND`, qua `changeGold`). Mọi skin vẫn nằm trong `ownedSkins`; species được đánh dấu đã khám phá (không thưởng lần 2). Skin trang phục đang mặc trên heo không tương thích → giữ nguyên (chỉ chặn lần mặc mới). | Người chơi giữ nguyên giá trị; migration 1 bước, ít luật. |
+| D4 | **Bỏ ma trận cặp, thay bằng luật data-driven** (U03): cùng loài cao → cùng family → bậc hiếm +1 → +2 → mutation theo cặp. 6 cặp cũ không còn là golden; test breeding cũ viết lại theo luật mới. | Thêm species = thêm 1 dòng config, không thêm cặp. |
+| D5 | **Trạng thái hiện tại là baseline, không tag v1.0.0.** Giữ tag theo task (`u01`…) vì rẻ và để `git reset` khi cần. R12B (installer) không chặn U-phase. | Chưa release thật. |
+| D6 | **Skin trọn thân chỉ cho species tương thích:** skin trang phục vẽ trên thân hồng → `allowedBreeds: ["PIG_EARTH_PINK"]`; skin default của species → chỉ species đó. | Không cần universal skin. |
+| D7 | **12 slot không phải luật.** `MAX_SLOTS` + bảng mở slot là data; U05 đo hiệu năng 20–30 heo, ổn thì nâng (mục tiêu 24) và nới bảng slot. | Giới hạn chỉ giữ nếu gameplay/perf cần. |
+| D8 | **Hoãn Pig Level/XP.** Thêm sau = 2 field optional trên `Pig` + 1 bước migrate; không có gì hiện tại chặn. | Chưa cần. |
+| D9 | **Rarity `COMMON → UNCOMMON → RARE → EPIC → LEGENDARY`**, ánh xạ cố định `P1→COMMON, P2→UNCOMMON, P3→RARE, P4→EPIC, P5→LEGENDARY` (manifest skin giữ key P*, UI hiển thị tên mới). | Một thang cho cả species và skin. |
+
+Thêm: **Gift + đồng hồ** — không anti-cheat; chỉ bỏ qua `now` lùi (tránh state lạ). Giới hạn số hộp trên farm vẫn giữ vì là gameplay (không spam).
+**Kinh tế** — `sim:economy` giữ làm công cụ cân bằng, không phải hàng rào chống exploit; số là TUNABLE trong config.
+**Species** — duyệt nguyên 19 loại của `PIG_CONCEPT_PROPOSAL.md`; chỉnh sau bằng config.
 
 ## 6. Kiến trúc đề xuất (khớp code thật)
 
@@ -92,7 +100,6 @@ const BREEDING = {
   BREED_ONLY_LEGENDARY: true,
 };
 const MUTATIONS: { pair: [BreedId, BreedId]; result: BreedId; weight: number }[];
-const OVERRIDES: Record<string, BreedingOutcome[]>; // = BREEDING_MATRIX cũ (golden)
 
 // save v3
 interface GiftState { lastCheckedAt: number; nextSpawnAt: number; boxes: GiftBox[] }
@@ -100,34 +107,35 @@ interface GiftBox { id: string; spawnedAt: number; seed: number; reward: { gold:
 ```
 
 - **Gift spawn** (trong `advanceWorld`, không timer riêng): mỗi khi `now ≥ nextSpawnAt` → spawn tối đa `MAX_PER_ROLL` hộp (1 + floor(số heo / 6), cap) nhưng tổng ≤ `MAX_ON_FARM` (3). Khoảng chờ = `BASE_INTERVAL × factor(rarity trung bình đàn)` (≈4h COMMON → 6h LEGENDARY). Offline: lặp các mốc đã qua, dừng khi đầy → mở game sau 2 ngày vẫn tối đa 3 hộp. 0 heo → không spawn. Reward chốt lúc spawn (rng inject) = clamp(MIN, MAX, Σ giftWeight(rarity) × growth × variance) → không reroll được bằng reload.
-- **Chống chỉnh đồng hồ**: `now < lastCheckedAt` → không tiến (không spawn, không lùi `nextSpawnAt`); chỉ tăng `lastCheckedAt` bằng max. Nhảy giờ tới tương lai bị chặn bởi `MAX_ON_FARM`.
+- **Đồng hồ lùi**: `now < lastCheckedAt` → bỏ qua lượt đó (không anti-cheat, chỉ tránh state lạ).
 - **Vị trí**: save chỉ lưu `seed`; view suy vị trí thuần từ seed + layout (core không biết layout manifest; heo đi dạo không có trong save). Retry N lần, fallback điểm cố định.
 - **Open**: action `openGift({ giftId })` → xoá box (claim 1 lần, tự idempotent vì box không còn) → `GIFT_REWARD` transaction + XP → event `GIFT_OPENED` → FeedbackDirector chạy pop + số bay lên; state đã cộng trước khi số bay (UI chỉ đọc state).
 - **FX**: smoke → scale 0→1.15→0.95→1 → bounce → idle float (1 tween lặp/hộp, tối đa 3) — huỷ khi box biến mất; reduceMotion bỏ tween. Catch-up không phát animation (§11.3): hộp spawn offline hiện tĩnh.
 
 ## 7. Dependencies
 
-U01 (rarity + species model + save v3) → U02 (catalogue chốt) → U03 (breeding rules) → U04 (shop/collection theo rarity) ; U05 (farm layout/nameplate) độc lập ; U06 (gift) cần U01 (rarity, save v3) ; U07 (asset) cần U02 + skill `image-to-asset` ; U08 polish/perf cuối. Sim kinh tế chạy lại ở U03, U04, U06.
+U01 (rarity + species + catalogue + save v3) → U03 (breeding rules) → U04 (shop/collection theo rarity) ; U05 (farm layout/nameplate/perf) độc lập ; U06 (gift) cần U01 ; U07 (asset) cần U01 + skill `image-to-asset` ; U08 polish/perf cuối. Sim kinh tế chạy lại ở U03, U04, U06.
 
 ## 8. Rủi ro
 
 - **Kinh tế**: species mua được + quà miễn phí → lạm phát vàng; fuzz §5.5 / `sim:economy` phải xanh trước khi chốt giá. Có thể giải luôn SOFT-LOCK đã biết (hết vàng → kẹt) nhờ quà, nhưng phải đo.
 - **Save migration**: enum breed mới + gift state + hoàn tiền skin — sai là hỏng save thật; cần test migrate từ save v1 và v2 fixture.
-- **Golden test**: đổi ma trận cũ = vi phạm "không nới golden" → giữ OVERRIDES.
+- **Test breeding cũ**: viết lại theo luật mới (D4, user cho phép).
 - **Asset**: ~11 species mới cần art cùng style; game phải chạy trên placeholder (D24) — code xong trước, art sau.
 - **Order**: order đòi species hiếm chưa từng thấy → không làm được; Q1 (đều) phải đổi sang trọng số theo rarity/đã khám phá.
 - **Hiệu năng**: nameplate (text) × 12 heo + 3 hộp quà là nhỏ; rủi ro chính là tween lặp không huỷ → test destroy.
 - **Phạm vi**: 9 phase ≈ 9+ session; release v1 đang dở.
 
-## 9. Kế hoạch phase (mỗi phase = 1 task `### Uxx` sẽ thêm vào `PROMPTS_THEO_PHASE.md` sau khi chốt §5)
+## 9. Kế hoạch phase (block `### Uxx` trong `PROMPTS_THEO_PHASE.md`)
 
 | Task | Nội dung | Xong khi |
 |---|---|---|
-| U01 | `rarity.ts`, BreedDef + rarity/family/shop, species FARM (white/black/brown/spotted) từ art có sẵn, save v3 + migrate (D3), skin `allowedBreeds` (D6), foundation clothing (nếu D1 = có) | check xanh, test migrate |
-| U02 | `UN_IN_PIG_CATALOGUE.md` từ proposal đã duyệt; thêm species còn lại vào config (placeholder art) | assets:check xanh |
-| U03 | `breedingRules.ts` + MUTATIONS + OVERRIDES, test xác suất | golden cũ xanh, test bảng trọng số |
-| U04 | Shop tab Heo theo rarity + badge, collection nhóm rarity, order theo rarity | sim:economy xanh |
-| U05 | Nhãn công trình không đè heo, nameplate heo + tránh chồng | test layout thuần + xem trên dev |
-| U06 | Gift: state, resolveGifts, openGift, placement, FX, save/offline | test offline/clock/claim-once + xem trên dev |
-| U07 | Asset species + gift + badge qua `image-to-asset` | assets:release xanh |
-| U08 | Polish + perf 5/10/12 heo (+30 qua dev) | fps ghi lại |
+| U01 | `rarity.ts`; BreedDef + rarity/family/unlockLevel; đủ 19 species (art có sẵn hoặc placeholder); save v3 + migrate D3; skin tương thích D6; clothing foundation D1; `UN_IN_PIG_CATALOGUE.md` | check xanh, test migrate |
+| U03 | `breedingRules.ts` (luật + mutation) thay ma trận, test xác suất | test bảng trọng số + Monte Carlo |
+| U04 | Shop tab Heo theo rarity + badge, collection nhóm rarity, order theo rarity, sim kinh tế | sim:economy xanh |
+| U05 | Nhãn công trình không đè heo, nameplate heo + tránh chồng, đo perf 20–30 heo → nâng MAX_SLOTS (D7) | test layout thuần + xem trên dev |
+| U06 | Gift: state v4, resolveGifts, openGift, placement, FX, offline | test offline/claim-once + xem trên dev |
+| U07 | Asset species mới + gift + badge qua `image-to-asset` | assets:check xanh |
+| U08 | Polish + perf cuối | fps ghi lại |
+
+(U02 gộp vào U01: catalogue và config species làm cùng lúc để không sửa config hai lần.)
