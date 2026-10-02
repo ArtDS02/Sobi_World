@@ -231,3 +231,6 @@ Spec: §5.2, §6.5, §6.6, §20.7 · Phase: U00.
 
 **U03-1** · Breeding theo luật (`config/breedingRules.ts` + `engine/breedingOdds.ts`, thay `breedingMatrix.ts`): 60 điểm chia cho loài bố/mẹ, 25 cho loài cùng family không hiếm hơn bố/mẹ hiếm nhất, 9 cho bậc +1, 1 cho bậc +2 (ưu tiên family của bố/mẹ, không có thì mọi family), cộng `MUTATIONS` theo cặp; chuẩn hoá về 100 %. LEGENDARY không lai (undefined → BREEDING_COMBINATION_NOT_SUPPORTED). Hộp phối hiện 4 kết quả cao nhất + dòng "Giống khác" (`CHANCES_SHOWN`). Ví dụ hồng×hồng: hồng 60 %, FARM ~6 % mỗi loài, dưa 6,8 %, UNCOMMON 1,8 %, RARE 0,3 %.
 Spec: §6.5, §8.8, §14.4 · Phase: U03.
+
+**U04-1** · Shop/collection theo rarity. Tab Heo: species bán được xếp COMMON→RARE (giữ thứ tự config trong bậc), mỗi bậc 1 dòng badge; thẻ có ảnh species, giá mua, "Bán tới" (giá ở vui vẻ 100); species chưa đủ cấp hiện "Cần cấp N" trước lý do thiếu vàng. Skin hiện badge theo ánh xạ P*→rarity. Sổ sưu tập: giống heo nhóm theo rarity, mỗi nhóm có x/y. Badge = `ui/components/rarityBadge.ts` + `.c-badge--<rarity>` sinh từ map `$c-rarity` (tokens). Đơn hàng: thay Q1 (đều) bằng trọng số `RARITY_ORDER_WEIGHT` (6/4/2/1/0,5) trên các giống đã khám phá.
+Spec: §8.14, §8.15, §10.1, Q1 · Phase: U04.
