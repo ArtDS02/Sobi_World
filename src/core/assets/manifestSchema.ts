@@ -97,6 +97,18 @@ export const placementSchema = z.object({
   width: z.number().positive().optional(),
   /** Notification badge drawn on the object (farm layout v4.1 rework). */
   badge: z.enum(['orders']).optional(),
+  // Layout editor fields (admin dashboard, DECISIONS AD-1), all optional and additive.
+  /** On-screen height in design px; absent = from width and the art's aspect ratio. */
+  height: z.number().positive().optional(),
+  /** Degrees, clockwise. */
+  rotation: z.number().min(-360).max(360).optional(),
+  flipX: z.boolean().optional(),
+  /** false = kept in the data but not drawn. */
+  visible: z.boolean().optional(),
+  /** Editor-only: the placement cannot be dragged in the layout editor. */
+  locked: z.boolean().optional(),
+  /** Editor-only display name. */
+  label: z.string().max(40).optional(),
 });
 
 export const layoutSchema = z.object({

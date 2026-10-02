@@ -120,9 +120,9 @@ export function mountApp(
       ui.shopTab = tab;
       rerender();
     },
-    buyItem: (itemId) => {
+    buyItem: (productId) => {
       const save = store.getSnapshot().save;
-      if (save) openBuyItemDialog(dialogs, save, itemId, now(), act);
+      if (save) openBuyItemDialog(dialogs, save, productId, now(), act);
     },
   };
   const inventory = {

@@ -7,8 +7,7 @@ import type { Pig, SaveGame } from '../core/types';
 import { formatDec, formatInt, t } from '../i18n/format';
 import { vi } from '../i18n/vi';
 import type { BoundAction } from '../store/gameStore';
-import type { ItemId } from '../core/config/ids';
-import { itemPurchase, troughFill, troughSpace, type ActionVm } from './actionsVm';
+import { productPurchase, troughFill, troughSpace, type ActionVm } from './actionsVm';
 import { breedingVm } from './breedVm';
 import type { OrderCardVm } from './ordersVm';
 import { actionButton } from './components/actionButton';
@@ -117,16 +116,16 @@ export function openTroughDialog(
   refresh();
 }
 
-/** §8.10: quantity 1–99, total updates live; disabled reason from the real action. */
+/** §8.10: quantity 1–99 packs of a shop product, total updates live; reason from the real action. */
 export function openBuyItemDialog(
   host: HTMLElement,
   save: SaveGame,
-  itemId: ItemId,
+  productId: string,
   now: number,
   act: Act,
 ) {
-  const d = openDialog(host, vi.shop[itemId], undefined, 'shop');
-  const first = itemPurchase(save, itemId, 1, now);
+  const first = productPurchase(save, productId, 1, now);
+  const d = openDialog(host, first.name, undefined, 'shop');
   const input = el('input', {
     class: 'c-input',
     attrs: {
@@ -140,13 +139,13 @@ export function openBuyItemDialog(
   const total = el('p', { class: 'c-dialog__strong' });
   const slot = el('div');
   const refresh = () => {
-    const vm = itemPurchase(save, itemId, Math.floor(Number(input.value)), now);
+    const vm = productPurchase(save, productId, Math.floor(Number(input.value)), now);
     total.textContent = vm.total;
     slot.replaceChildren(actionButton(vm.confirm, () => void act(vm.confirm.run).then(d.close)));
   };
   input.addEventListener('input', refresh);
   d.body.append(
-    el('p', { text: vi.shop[`${itemId}_desc`] }),
+    el('p', { text: first.desc }),
     el('label', { class: 'c-dialog__hint', text: vi.shop.quantity }),
     input,
     total,

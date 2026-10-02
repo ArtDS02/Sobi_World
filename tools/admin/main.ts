@@ -1,23 +1,41 @@
-// Admin dashboard entry (admin.html, `npm run admin`). Hash routes: #/ overview, #/pigs[?filters],
-// #/pigs/<ID> editor drawer, #/pigs/new, #/validation, #/assets, #/daynight (DN).
+// Admin dashboard entry (admin.html, `npm run admin`). Hash routes (DECISIONS A7-1, AD-1):
+// #/ overview · #/users[/<id>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
+// #/assets (source) · #/library · #/layout · #/products · #/breeding · #/daynight · #/guide[/<section>]
 import { renderAssets } from './assets';
+import { breedingDirty, renderBreeding } from './breeding';
 import { renderDayNight } from './dayNight';
 import { renderEditor } from './editor';
+import { renderGuide } from './guide';
 import { esc } from './labels';
+import { layoutDirty, renderLayout } from './layout';
+import { renderLibrary } from './library';
 import { renderOverview } from './overview';
-import { filtersFromHash, renderPigList } from './pigList';
+import { applyQueryString } from './listKit';
+import { renderPigList } from './pigList';
+import { productsDirty, renderProducts } from './products';
 import { discard, load, onChange, save, state } from './store';
+import { renderUserDetail, userDirty } from './userDetail';
+import { renderUsers } from './users';
 import { renderValidation } from './validation';
 
-const NAV = [
-  ['', '🏡', 'Tổng quan'],
-  ['pigs', '🐷', 'Quản lý heo'],
-  ['validation', '🩺', 'Kiểm tra dữ liệu'],
-  ['assets', '🖼️', 'Asset nguồn'],
-  ['daynight', '🌗', 'Ngày / Đêm'],
-] as const;
+type NavItem = readonly [page: string, icon: string, label: string, help: string];
+const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])[] = [
+  [null, [['', '🏡', 'Tổng quan', 'overview'], ['users', '👤', 'Người chơi', 'users']]],
+  ['Heo', [['pigs', '🐷', 'Quản lý heo', 'pigs'], ['validation', '🩺', 'Kiểm tra dữ liệu', 'pigs']]],
+  ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
+  ['Game', [['layout', '🗺️', 'Bố cục nông trại', 'layout'], ['daynight', '🌗', 'Ngày / Đêm', 'daynight']]],
+  ['Cửa hàng', [['products', '🛒', 'Sản phẩm', 'shop']]],
+  ['Phối giống', [['breeding', '🧬', 'Luật phối giống', 'breeding']]],
+  [null, [['guide', '📘', 'Hướng dẫn quản trị', 'overview']]],
+];
+const ALL = NAV.flatMap(([, items]) => items);
+/** Pages that edit the species draft: the header save belongs to them. */
+const SPECIES_PAGES = new Set(['pigs', 'validation']);
+/** `#/<page>?key=value` links (overview cards) preset that page's list filters. */
+const LIST_OF: Record<string, string> = { pigs: 'pigs', assets: 'asset-source', library: 'asset-library', products: 'products', breeding: 'breeding', users: 'users' };
 
 const app = document.getElementById('admin')!;
+let appliedHash = '';
 
 function route() {
   const [path = '', query = ''] = location.hash.replace(/^#\/?/, '').split('?');
@@ -32,12 +50,13 @@ const go = (hash: string) => {
 function shell() {
   const { page } = route();
   const errors = state.issues.filter((i) => i.level === 'error').length;
-  const nav = NAV.map(
-    ([p, icon, label]) => `<a href="#/${p}" class="nav__item${page === p ? ' is-active' : ''}">
+  const nav = NAV.map(([group, items]) => `${group ? `<p class="nav__group">${esc(group)}</p>` : ''}${items
+    .map(([p, icon, label]) => `<a href="#/${p}" class="nav__item${page === p ? ' is-active' : ''}">
       <span class="nav__icon">${icon}</span><span class="nav__label">${label}</span>
-      ${p === 'validation' && errors ? `<span class="nav__count">${errors}</span>` : ''}</a>`,
-  ).join('');
-  const title = NAV.find((n) => n[0] === page)?.[2] ?? 'Tổng quan';
+      ${p === 'validation' && errors ? `<span class="nav__count">${errors}</span>` : ''}</a>`)
+    .join('')}`).join('');
+  const current = ALL.find((n) => n[0] === page) ?? ALL[0]!;
+  const species = SPECIES_PAGES.has(page);
   const msg = state.message
     ? `<div class="toast ${state.message.kind}"><pre>${esc(state.message.text)}</pre><button class="icon-btn" data-dismiss>✕</button></div>`
     : '';
@@ -50,12 +69,13 @@ function shell() {
       </aside>
       <main class="main">
         <header class="header">
-          <h1>${esc(title)}</h1>
+          <h1>${current[1]} ${esc(current[2])}</h1>
           <div class="header__actions">
-            ${state.dirty ? '<span class="badge status-warn">Chưa lưu</span><button class="btn" data-discard>Huỷ thay đổi</button>' : ''}
-            <button class="btn btn-primary" data-save ${!state.dirty || state.saving || !state.apiOnline || errors > 0 ? 'disabled' : ''}
+            ${page !== 'guide' ? `<a class="help-link" href="#/guide/${current[3]}">❔ Hướng dẫn</a>` : ''}
+            ${species && state.dirty ? '<span class="badge status-warn">Chưa lưu</span><button class="btn" data-discard>Huỷ thay đổi</button>' : ''}
+            ${species ? `<button class="btn btn-primary" data-save ${!state.dirty || state.saving || !state.apiOnline || errors > 0 ? 'disabled' : ''}
               title="${errors ? 'Sửa hết lỗi trước khi lưu' : 'Ghi vào src/core/config + manifest'}">
-              ${state.saving ? 'Đang lưu…' : '💾 Lưu vào game'}</button>
+              ${state.saving ? 'Đang lưu…' : '💾 Lưu vào game'}</button>` : ''}
           </div>
         </header>
         ${msg}
@@ -77,22 +97,31 @@ function render() {
   const { page, id, query } = route();
   const content = app.querySelector<HTMLElement>('.content')!;
   const open = (pigId: string | null) => go(`#/pigs/${pigId ? encodeURIComponent(pigId) : 'new'}`);
-  if (page === 'pigs') {
-    filtersFromHash(query);
-    renderPigList(content, open);
-  } else if (page === 'validation') renderValidation(content, (pigId) => open(pigId));
-  else if (page === 'assets') renderAssets(content);
-  else if (page === 'daynight') renderDayNight(content, state.apiOnline);
-  else renderOverview(content);
-  content.scrollTop = scroll;
+  const pages: Record<string, () => void> = {
+    pigs: () => renderPigList(content, open),
+    validation: () => renderValidation(content, (pigId) => open(pigId)),
+    assets: () => renderAssets(content),
+    library: () => renderLibrary(content),
+    daynight: () => renderDayNight(content, state.apiOnline),
+    users: () => (id ? renderUserDetail(content, id, render) : renderUsers(content, render)),
+    products: () => renderProducts(content, render),
+    breeding: () => renderBreeding(content, render),
+    layout: () => renderLayout(content, render),
+    guide: () => renderGuide(content, id),
+  };
+  if (query && !id && LIST_OF[page] && location.hash !== appliedHash) applyQueryString(LIST_OF[page], query);
+  appliedHash = location.hash;
+  (pages[page] ?? (() => renderOverview(content)))();
+  if (page !== 'guide') content.scrollTop = scroll;
   if (page === 'pigs' && id) {
-    renderEditor(app.querySelector<HTMLElement>('.drawer-host')!, id === 'new' ? null : id, () => go('#/pigs'));
+    const art = new URLSearchParams(query).get('art') ?? undefined;
+    renderEditor(app.querySelector<HTMLElement>('.drawer-host')!, id === 'new' ? null : id, () => go('#/pigs'), art);
   }
 }
 
 window.addEventListener('hashchange', render);
 window.addEventListener('beforeunload', (e) => {
-  if (state.dirty) e.preventDefault();
+  if (state.dirty || productsDirty() || breedingDirty() || layoutDirty() || userDirty()) e.preventDefault();
 });
 onChange(render);
 app.innerHTML = '<p class="loading">Đang tải data heo… 🐷</p>';

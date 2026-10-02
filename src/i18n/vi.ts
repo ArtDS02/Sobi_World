@@ -261,6 +261,7 @@ export const vi = {
     DISCOVERY_BONUS: "Thưởng khám phá",
     SKIN_REFUND: "Hoàn tiền hàng ngừng bán",
     GIFT_REWARD: "Hộp quà",
+    ADMIN_ADJUST: "Điều chỉnh của quản trị",
   },
 
   settings: {

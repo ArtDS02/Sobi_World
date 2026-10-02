@@ -30,7 +30,7 @@ import type { PigEnv } from '../prefabs/pigEnv';
 import { PigSprite } from '../prefabs/PigSprite';
 import { giftSpot, type Rect } from '../view/giftPlacement';
 import { pigView, type FarmLayout } from '../view/pigView';
-import { placementView } from '../view/sceneLayout';
+import { placementTransform, placementView, visibleLayout } from '../view/sceneLayout';
 import {
   anchorsKey,
   FALLBACK_PROP_KEY,
@@ -58,8 +58,7 @@ export class MainFarmScene extends Phaser.Scene {
   private gifts!: GiftBoxes;
   private dayNight!: DayNightLayer;
   private dayClock!: DayNightDirector;
-  /** Bounds of every world object; gift boxes keep clear of them (U06). */
-  private readonly obstacles: Rect[] = [];
+  private readonly obstacles: Rect[] = []; // world object bounds; gift boxes keep clear (U06)
 
   constructor(
     private readonly deps: FarmDeps,
@@ -69,7 +68,7 @@ export class MainFarmScene extends Phaser.Scene {
   }
 
   create() {
-    this.layout = this.deps.assets.manifest.layout;
+    this.layout = visibleLayout(this.deps.assets.manifest.layout);
     this.pigEnv = {
       layout: this.layout,
       troughX: () => this.trough?.x ?? null,
@@ -155,9 +154,10 @@ export class MainFarmScene extends Phaser.Scene {
     });
   }
 
-  /** Width from the layout, shadow, gift obstacle, click + hover, badge (non-environment art). */
+  /** Size/rotation/mirror from the layout, shadow, gift obstacle, click + hover, badge (non-environment art). */
   private dress(img: Phaser.GameObjects.Image, p: FarmLayout['placements'][number]) {
-    if (p.width) img.setScale(p.width / img.width);
+    const t = placementTransform(p, img.width, img.height); // layout editor fields (AD-1)
+    img.setScale(t.scaleX, t.scaleY).setAngle(t.angle).setFlipX(t.flipX);
     if (p.layer > 2) this.dayNight.addShadow(addShadow(this, img));
     this.dayNight.addLight(img, p.action);
     this.obstacles.push(img.getBounds());

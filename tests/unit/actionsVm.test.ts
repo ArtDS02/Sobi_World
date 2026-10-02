@@ -6,7 +6,7 @@ import { rarityRank } from '../../src/core/config/rarity';
 import { vi } from '../../src/i18n/vi';
 import {
   farmActions,
-  itemPurchase,
+  productPurchase,
   shopPigs,
   shopSlot,
   pigActions,
@@ -103,12 +103,12 @@ describe('shop (R03)', () => {
 
   it('item purchase: live total, invalid quantity and gold shortfall disable the button', () => {
     const s = farm();
-    const vm = itemPurchase(s, 'FOOD_BASIC', 4, NOW);
+    const vm = productPurchase(s, 'FOOD_BASIC', 4, NOW);
     expect(vm.total).toBe('Tổng: 100 vàng');
     expect(vm.confirm.reason).toBeNull();
-    expect(itemPurchase(s, 'FOOD_BASIC', 0, NOW).confirm.reason).toBe(vi.error.INVALID_REQUEST);
+    expect(productPurchase(s, 'FOOD_BASIC', 0, NOW).confirm.reason).toBe(vi.error.INVALID_REQUEST);
     const broke = { ...s, player: { ...s.player, gold: 99 } };
-    expect(itemPurchase(broke, 'MEDICINE_COMMON', 1, NOW).confirm.reason).toBe(
+    expect(productPurchase(broke, 'MEDICINE_COMMON', 1, NOW).confirm.reason).toBe(
       vi.error.INSUFFICIENT_GOLD,
     );
   });

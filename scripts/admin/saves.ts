@@ -1,0 +1,119 @@
+// Player saves for the admin dashboard's user management (DECISIONS AD-1). The game is single-player
+// and offline: a "user" is one desktop save folder (%APPDATA%\Un In Homemade*\saves*\save.json,
+// spec §9.1). Writes follow the game's own rules: the current save is copied into backups/ first
+// (a name the in-game restore lists), then tmp → rename. Nothing is ever hard-deleted.
+import { existsSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join, resolve, sep } from 'node:path';
+
+type Result = { status: number; body: unknown };
+
+export interface SaveProfile {
+  id: string;
+  app: string; // "Un In Homemade" (installed) | "Un In Homemade Dev" (npm run dev:desktop)
+  folder: string; // saves | saves-<test>
+  path: string;
+  modifiedAt: number;
+  bytes: number;
+  backups: number;
+}
+
+const APP_PREFIX = 'Un In Homemade';
+const SAVE = 'save.json';
+
+/** %APPDATA%, or UNIN_ADMIN_SAVES_ROOT (tests, other machines' copies). */
+export const savesRoot = () =>
+  process.env.UNIN_ADMIN_SAVES_ROOT ?? process.env.APPDATA ?? join(homedir(), 'AppData', 'Roaming');
+
+const encode = (rel: string) => Buffer.from(rel, 'utf8').toString('base64url');
+
+/** Profile id → its saves folder, refusing anything outside the root's game folders. */
+function folderOf(root: string, id: string): string | null {
+  const rel = Buffer.from(id, 'base64url').toString('utf8');
+  const [app, folder, ...rest] = rel.split('/');
+  if (!app?.startsWith(APP_PREFIX) || !folder || !/^saves[\w-]*$/.test(folder) || rest.length) return null;
+  const dir = resolve(root, app, folder);
+  return dir.startsWith(resolve(root) + sep) ? dir : null;
+}
+
+const dirs = (path: string) =>
+  existsSync(path) ? readdirSync(path, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name) : [];
+
+export function listProfiles(root = savesRoot()): SaveProfile[] {
+  const out: SaveProfile[] = [];
+  for (const app of dirs(root).filter((d) => d.startsWith(APP_PREFIX))) {
+    for (const folder of dirs(join(root, app)).filter((d) => /^saves[\w-]*$/.test(d))) {
+      const path = join(root, app, folder, SAVE);
+      if (!existsSync(path)) continue;
+      const st = statSync(path);
+      const backups = join(root, app, folder, 'backups');
+      out.push({
+        id: encode(`${app}/${folder}`),
+        app,
+        folder,
+        path,
+        modifiedAt: st.mtimeMs,
+        bytes: st.size,
+        backups: existsSync(backups) ? readdirSync(backups).filter((f) => f.endsWith('.json')).length : 0,
+      });
+    }
+  }
+  return out.sort((a, b) => b.modifiedAt - a.modifiedAt);
+}
+
+export function readProfile(id: string, root = savesRoot()): Result {
+  const dir = folderOf(root, id);
+  if (!dir || !existsSync(join(dir, SAVE))) return { status: 404, body: { error: 'Không tìm thấy save' } };
+  const profile = listProfiles(root).find((p) => p.id === id);
+  return { status: 200, body: { profile, json: readFileSync(join(dir, SAVE), 'utf8') } };
+}
+
+const pad = (n: number) => String(n).padStart(2, '0');
+/** save-YYYYMMDD-HHmmss[-n].json, the backup name electron/saveFiles.ts lists for restore. */
+function backupName(dir: string, at: Date): string {
+  const s = `save-${at.getFullYear()}${pad(at.getMonth() + 1)}${pad(at.getDate())}-${pad(at.getHours())}${pad(at.getMinutes())}${pad(at.getSeconds())}`;
+  let name = `${s}.json`;
+  for (let n = 1; existsSync(join(dir, name)); n++) name = `${s}-${n}.json`;
+  return name;
+}
+
+function backupCurrent(dir: string, now: Date): string {
+  const backups = join(dir, 'backups');
+  mkdirSync(backups, { recursive: true });
+  const name = backupName(backups, now);
+  writeFileSync(join(backups, name), readFileSync(join(dir, SAVE)));
+  return name;
+}
+
+/**
+ * Validated JSON → save.json. `baseModifiedAt` is the mtime the dashboard loaded: a newer file
+ * means the game (or another tab) wrote meanwhile, and the edit is refused instead of lost.
+ */
+export function writeProfile(
+  args: { id: string; json: string; baseModifiedAt: number },
+  validate: (json: string) => string | null,
+  root = savesRoot(),
+  now = new Date(),
+): Result {
+  const dir = folderOf(root, args.id);
+  if (!dir || !existsSync(join(dir, SAVE))) return { status: 404, body: { error: 'Không tìm thấy save' } };
+  const error = validate(args.json);
+  if (error) return { status: 400, body: { error: `Save không hợp lệ: ${error}` } };
+  if (Math.abs(statSync(join(dir, SAVE)).mtimeMs - args.baseModifiedAt) > 1)
+    return { status: 409, body: { error: 'Save vừa bị game ghi đè sau khi bạn mở — tải lại rồi sửa lại (hãy đóng game trước).' } };
+  const backup = backupCurrent(dir, now);
+  writeFileSync(join(dir, `${SAVE}.tmp`), args.json, 'utf8');
+  renameSync(join(dir, `${SAVE}.tmp`), join(dir, SAVE));
+  return { status: 200, body: { ok: true, backup, modifiedAt: statSync(join(dir, SAVE)).mtimeMs } };
+}
+
+/** "Delete" = the save moves into backups/ (restorable from the game's settings), never erased. */
+export function archiveProfile(id: string, root = savesRoot(), now = new Date()): Result {
+  const dir = folderOf(root, id);
+  if (!dir || !existsSync(join(dir, SAVE))) return { status: 404, body: { error: 'Không tìm thấy save' } };
+  const backups = join(dir, 'backups');
+  mkdirSync(backups, { recursive: true });
+  const name = backupName(backups, now);
+  renameSync(join(dir, SAVE), join(backups, name));
+  return { status: 200, body: { ok: true, backup: name } };
+}

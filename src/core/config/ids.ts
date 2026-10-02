@@ -87,6 +87,7 @@ export const TRANSACTION_TYPE_VALUES = [
   'DISCOVERY_BONUS',
   'SKIN_REFUND', // save migration refunds: v2 -> v3 species skins, v4 -> v5 outfits (A2-1)
   'GIFT_REWARD', // gift box opened on the farm (U06)
+  'ADMIN_ADJUST', // gold set by the dev admin dashboard's user editor (DECISIONS AD-1)
 ] as const;
 
 export type Gender = (typeof GENDER_VALUES)[number];

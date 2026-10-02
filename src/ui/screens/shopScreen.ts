@@ -1,6 +1,5 @@
 // Shop (spec §10.1): pig species, items and slots.
 import type { AssetRegistry } from '../../core/assets/registry';
-import type { ItemId } from '../../core/config/ids';
 import type { Rarity } from '../../core/config/rarity';
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
@@ -10,7 +9,6 @@ import { actionButton } from '../components/actionButton';
 import { rarityBadge } from '../components/rarityBadge';
 import { art, icon } from '../components/icon';
 import { thumb } from '../components/thumb';
-import type { UiIcon } from '../../core/config/assetIds';
 import { el } from '../dom';
 
 export type ShopTab = 'pigs' | 'items' | 'slots';
@@ -23,11 +21,8 @@ const TABS: [ShopTab, string][] = [
 export interface ShopHandlers {
   act: (run: BoundAction) => void;
   tab: (tab: ShopTab) => void;
-  buyItem: (itemId: ItemId) => void;
+  buyItem: (productId: string) => void;
 }
-
-/** Picture per shop item (ui icons; the pig house art for a new slot). */
-const ITEM_ICON: Record<ItemId, UiIcon> = { FOOD_BASIC: 'fillTrough', MEDICINE_COMMON: 'treat' };
 
 const card = (pic: HTMLElement | null, title: string, ...rest: (HTMLElement | null)[]) =>
   el(
@@ -77,7 +72,7 @@ function pigsTab(save: SaveGame, now: number, on: ShopHandlers, assets: AssetReg
 function itemsTab(save: SaveGame, on: ShopHandlers) {
   return shopItems(save).map((item) =>
     card(
-      icon(ITEM_ICON[item.id]),
+      art(item.icon, 'c-icon'),
       item.name,
       line('desc', item.desc),
       price(item.price),

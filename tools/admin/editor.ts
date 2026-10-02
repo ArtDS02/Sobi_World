@@ -50,6 +50,16 @@ function preview(row: SpeciesRowData, baby: boolean) {
     </div>`;
 }
 
+/** "pig_x — Tên" for the art select; unregistered files say so (registered when saved). */
+function artLabels(ids: readonly string[]): Record<string, string> {
+  return Object.fromEntries(
+    ids.map((id) => {
+      const m = state.pigs.find((p) => p.id === id);
+      return [id, m ? `${id} — ${m.nameVi}` : `${id} (chưa đăng ký manifest)`];
+    }),
+  );
+}
+
 function form(row: SpeciesRowData, isNew: boolean) {
   const tier = RARITY_TIER[row.rarity as keyof typeof RARITY_TIER];
   const s = stats(row);
@@ -70,7 +80,7 @@ function form(row: SpeciesRowData, isNew: boolean) {
         <label class="field"><span>Pig ID</span><input name="id" value="${esc(row.id)}" ${isNew ? '' : 'readonly'} placeholder="PIG_TEN_HEO" /></label>
         <label class="field"><span>Độ hiếm</span>${sel('rarity', RARITY_VALUES, RARITY_LABEL, row.rarity)}</label>
         <label class="field"><span>Nhóm / chủ đề</span>${sel('family', FAMILY_VALUES, FAMILY_LABEL, row.family)}</label>
-        <label class="field"><span>Ảnh (art id)</span>${sel('artId', arts, {}, row.artId)}</label>
+        <label class="field"><span>Ảnh (art id) <a class="link" href="#/library">Thư viện →</a></span>${sel('artId', arts, artLabels(arts), row.artId)}</label>
         <label class="field"><span>Màu dự phòng</span><input type="color" name="color" value="${hexColor(row.color)}" /></label>
         ${NUMBERS.map(num).join('')}
         <label class="check"><input type="checkbox" name="breedable" ${s.breedable ? 'checked' : ''} /> Lai được</label>
@@ -112,11 +122,15 @@ function readForm(f: HTMLFormElement): SpeciesRowData {
   return row;
 }
 
-export function renderEditor(host: HTMLElement, id: string | null, onClose: () => void) {
+/** `presetArt`: "Tạo heo từ ảnh này" links (#/pigs/new?art=pig_x) preselect the image. */
+export function renderEditor(host: HTMLElement, id: string | null, onClose: () => void, presetArt?: string) {
   const existing = id ? state.rows.find((r) => r.id === id) : undefined;
   const isNew = !existing;
+  const art0 = presetArt && freeArtIds().includes(presetArt) ? presetArt : (freeArtIds()[0] ?? '');
+  const name0 = state.pigs.find((p) => p.id === art0)?.nameVi ?? '';
+  const suggestedId = art0.toUpperCase();
   let row: SpeciesRowData = existing ?? {
-    id: '', nameVi: '', rarity: 'COMMON', family: 'FARM', artId: freeArtIds()[0] ?? '', color: 0xf7a8b8,
+    id: suggestedId, nameVi: name0, rarity: 'COMMON', family: 'FARM', artId: art0, color: 0xf7a8b8,
   };
   let baby = false;
   const draw = () => {
@@ -126,7 +140,7 @@ export function renderEditor(host: HTMLElement, id: string | null, onClose: () =
           <div><h2>${esc(row.nameVi || 'Heo mới')}</h2><p class="muted">${esc(row.id || 'Chưa có ID')} · ${esc(row.artId || 'chưa chọn ảnh')}</p></div>
           <button class="icon-btn" data-close aria-label="Đóng">✕</button>
         </header>
-        ${row.artId ? preview(row, baby) : '<p class="empty">Chưa có ảnh trống để gán. Nhập ảnh ở mục “Asset nguồn” trước.</p>'}
+        ${row.artId ? preview(row, baby) : '<p class="empty">Chưa có ảnh trống để gán. Nhập hoặc tải ảnh lên ở <a href="#/assets">Asset nguồn</a> trước.</p>'}
         ${form(row, isNew)}
       </aside>`;
     const f = host.querySelector<HTMLFormElement>('form')!;

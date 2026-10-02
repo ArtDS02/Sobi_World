@@ -2,6 +2,8 @@
 import { FAMILY_VALUES } from '../../src/core/config/breeds';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import { FAMILY_LABEL, RARITY_LABEL, art, esc, isNew } from './labels';
+import { PRODUCTS } from '../../src/core/config/products';
+import { PAIR_RULES } from '../../src/core/config/breedingPairs';
 import { state } from './store';
 
 function card(icon: string, label: string, value: number | string, tone = '', href = '') {
@@ -36,7 +38,8 @@ export function renderOverview(root: HTMLElement) {
   const errors = state.issues.filter((i) => i.level === 'error').length;
   const warns = state.issues.filter((i) => i.level === 'warn').length;
   const pct = rows.length ? Math.round((complete / rows.length) * 100) : 0;
-  const unusedSource = state.inventory.filter((i) => !i.inGame).length;
+  const unusedSource = state.inventory.filter((i) => !i.inGame && i.importedAs.length === 0).length;
+  const unregistered = state.library.filter((i) => !i.rowId).length;
 
   const byRarity = RARITY_VALUES.map((r): [string, number, string] => [
     RARITY_LABEL[r]!, rows.filter((x) => x.rarity === r).length, `rarity-${r.toLowerCase()}`,
@@ -59,7 +62,11 @@ export function renderOverview(root: HTMLElement) {
       ${card('🆕', 'Heo mới', rows.filter(isNew).length, 'tone-new', '#/pigs?status=new')}
       ${card('🖼️', 'Asset đang dùng', used.size)}
       ${card('⚠️', 'Vấn đề cần xử lý', errors + warns, errors ? 'tone-error' : warns ? 'tone-warn' : 'tone-ok', '#/validation')}
-      ${card('📥', 'Ảnh nguồn chưa dùng', unusedSource, unusedSource ? 'tone-warn' : '', '#/assets')}
+      ${card('📥', 'Ảnh nguồn chưa dùng', unusedSource, unusedSource ? 'tone-warn' : '', '#/assets?status=new')}
+      ${card('📝', 'Ảnh chưa đăng ký manifest', unregistered, unregistered ? 'tone-error' : 'tone-ok', '#/library?reg=no')}
+      ${card('🛒', 'Sản phẩm đang bán', PRODUCTS.filter((p) => p.active).length, '', '#/products')}
+      ${card('🧬', 'Luật phối giống', PAIR_RULES.filter((r) => r.active).length, '', '#/breeding')}
+      ${card('👤', 'Người chơi (save)', '→', '', '#/users')}
     </div>
     <section class="panel">
       <h3>Tiến độ asset</h3>

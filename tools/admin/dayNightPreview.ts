@@ -9,7 +9,7 @@ import {
 import type { AssetManifest } from '../../src/core/assets/manifestSchema';
 import { DAY_NIGHT_VIEW, type PhaseLook } from '../../src/core/config/dayNight';
 import { paintBackdrop } from '../../src/game/view/backdropPaint';
-import { placementView } from '../../src/game/view/sceneLayout';
+import { placementTransform, placementView, visibleLayout } from '../../src/game/view/sceneLayout';
 import { cssColor, paintSky } from '../../src/game/view/skyPaint';
 
 type Registry = AssetRegistry;
@@ -45,7 +45,7 @@ const fileUrl = (reg: Registry, id: string) => reg.url(id, 'asset') ?? reg.url(i
 /** Paints the farm at `look` into `canvas` (any size; the 1600×900 frame is scaled to fit). */
 export async function paintPreview(canvas: HTMLCanvasElement, look: PhaseLook) {
   const reg = await loadRegistry();
-  const layout = reg.manifest.layout;
+  const layout = visibleLayout(reg.manifest.layout);
   const { width: W, height: H } = layout.designSize;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
@@ -68,11 +68,17 @@ export async function paintPreview(canvas: HTMLCanvasElement, look: PhaseLook) {
   const lit: { x: number; y: number; w: number; h: number }[] = [];
   for (const { p, v, img } of [...placed].sort((a, b) => a.v.depth - b.v.depth)) {
     if (!img) continue;
-    const w = p.width ?? img.width;
-    const h = (img.height * w) / img.width;
+    const t = placementTransform(p, img.width, img.height);
+    const w = img.width * t.scaleX;
+    const h = img.height * t.scaleY;
     const x = v.x - w * v.originX;
     const y = v.y - h * v.originY;
-    ctx.drawImage(img, x, y, w, h);
+    ctx.save();
+    ctx.translate(v.x, v.y);
+    ctx.rotate((t.angle * Math.PI) / 180);
+    ctx.scale(t.flipX ? -1 : 1, 1);
+    ctx.drawImage(img, -w * v.originX, -h * v.originY, w, h);
+    ctx.restore();
     if (p.action && DAY_NIGHT_VIEW.litActions.includes(p.action)) lit.push({ x, y, w, h });
   }
   if (pig) {

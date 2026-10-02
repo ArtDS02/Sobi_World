@@ -1,0 +1,136 @@
+[
+  {
+    "id": "env_cloud_1",
+    "layer": 0,
+    "x": 0.22,
+    "y": 0.03,
+    "originY": 0
+  },
+  {
+    "id": "env_cloud_2",
+    "layer": 0,
+    "x": 0.72,
+    "y": 0.08,
+    "originY": 0
+  },
+  {
+    "id": "prop_mud_puddle",
+    "layer": 2,
+    "x": 0.6,
+    "y": 0.8444,
+    "width": 220
+  },
+  {
+    "id": "prop_pig_house",
+    "layer": 4,
+    "x": 0.1219,
+    "y": 0.3833,
+    "width": 285,
+    "action": "collection",
+    "signed": true
+  },
+  {
+    "id": "prop_hay_shed",
+    "layer": 4,
+    "x": 0.2813,
+    "y": 0.3722,
+    "width": 190,
+    "action": "inventory",
+    "signed": true
+  },
+  {
+    "id": "prop_red_tree",
+    "layer": 4,
+    "x": 0.3875,
+    "y": 0.35,
+    "width": 120
+  },
+  {
+    "id": "prop_order_board",
+    "layer": 4,
+    "x": 0.6625,
+    "y": 0.3722,
+    "width": 150,
+    "role": "orderBoard",
+    "action": "orders",
+    "signed": true,
+    "badge": "orders"
+  },
+  {
+    "id": "prop_shop_stall",
+    "layer": 4,
+    "x": 0.8469,
+    "y": 0.3833,
+    "width": 290,
+    "action": "shop",
+    "signed": true
+  },
+  {
+    "id": "prop_water_well",
+    "layer": 4,
+    "x": 0.075,
+    "y": 0.6222,
+    "width": 160,
+    "action": "cleanAll",
+    "signed": true
+  },
+  {
+    "id": "prop_water_bowl",
+    "layer": 4,
+    "x": 0.1688,
+    "y": 0.7111,
+    "width": 130
+  },
+  {
+    "id": "prop_food_sack",
+    "layer": 4,
+    "x": 0.0594,
+    "y": 0.9222,
+    "width": 100
+  },
+  {
+    "id": "prop_feed_trough",
+    "layer": 4,
+    "x": 0.1625,
+    "y": 0.9444,
+    "width": 230,
+    "role": "trough",
+    "action": "trough",
+    "signed": true
+  },
+  {
+    "id": "prop_apple_crate",
+    "layer": 4,
+    "x": 0.925,
+    "y": 0.6444,
+    "width": 150
+  },
+  {
+    "id": "prop_sunflower",
+    "layer": 4,
+    "x": 0.9375,
+    "y": 0.9556,
+    "width": 120
+  },
+  {
+    "id": "prop_rock",
+    "layer": 4,
+    "x": 0.8406,
+    "y": 0.8889,
+    "width": 90
+  },
+  {
+    "id": "prop_mushroom",
+    "layer": 4,
+    "x": 0.6844,
+    "y": 0.9778,
+    "width": 62
+  },
+  {
+    "id": "prop_bush",
+    "layer": 4,
+    "x": 0.7625,
+    "y": 0.9833,
+    "width": 160
+  }
+]

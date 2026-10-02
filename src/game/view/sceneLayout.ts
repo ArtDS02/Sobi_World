@@ -39,3 +39,25 @@ export function groundLineY(layout: FarmLayout, isEnvironment: (id: string) => b
   const ground = layout.placements.find((p) => p.layer === 2 && isEnvironment(p.id));
   return (ground?.y ?? FARM_FALLBACK.GROUND_Y) * layout.designSize.height;
 }
+
+/** The layout the scene draws: placements hidden in the layout editor (`visible: false`) drop out. */
+export function visibleLayout(layout: FarmLayout): FarmLayout {
+  return { ...layout, placements: layout.placements.filter((p) => p.visible !== false) };
+}
+
+export interface PlacementTransform {
+  scaleX: number;
+  scaleY: number;
+  angle: number;
+  flipX: boolean;
+}
+
+/**
+ * Size, rotation and mirror of a placement drawn from art `artW` × `artH`: width alone keeps the
+ * aspect ratio (as before the layout editor), height alone too, both stretch.
+ */
+export function placementTransform(p: Placement, artW: number, artH: number): PlacementTransform {
+  const sy = p.height ? p.height / artH : null;
+  const scaleX = p.width ? p.width / artW : (sy ?? 1);
+  return { scaleX, scaleY: sy ?? scaleX, angle: p.rotation ?? 0, flipX: p.flipX ?? false };
+}

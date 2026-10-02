@@ -1,0 +1,303 @@
+// Game layout editor page (DECISIONS AD-1): asset library → drag onto the farm frame → edit
+// properties → save into the manifest `layout.placements` the game draws (no code change needed).
+// Keyboard: arrows nudge (Shift ×10), Delete, Ctrl+D duplicate, Ctrl+Z / Ctrl+Y, Esc.
+import { FARM_ACTIONS, TROUGH_PROP_ID } from '../../src/core/config/assetIds';
+import { layoutIssues } from '../../scripts/admin/rules';
+import { esc } from './labels';
+import { mountList } from './listKit';
+import { byNumber, byText } from './listQuery';
+import { History, add, duplicate, moveTo, patch, remove, reorder, type Design, type Placement } from './layoutModel';
+import { mountStage, preloadSizes, sizeOf } from './layoutStage';
+import { confirmDanger } from './modal';
+import { json, post, state } from './store';
+
+interface Manifest {
+  layout: { designSize: Design; walkArea: { x: number; y: number; width: number; height: number }; placements: Placement[] };
+}
+
+let refocus = false;
+const ed = {
+  loaded: false,
+  design: { width: 1600, height: 900 } as Design,
+  walk: { x: 0, y: 0, width: 1, height: 1 },
+  list: [] as Placement[],
+  saved: [] as Placement[],
+  sel: null as number | null,
+  history: new History(),
+  preview: false,
+  showWalk: true,
+  snap: 10,
+};
+const LAYER_LABEL = ['0 · Trời / mây', '1 · Hậu cảnh xa', '2 · Mặt đất', '3 · Trang trí nền', '4 · Cùng lớp heo (xếp theo Y)', '5 · Trên cùng'];
+const SECTION_LABEL: Record<string, string> = { props: 'Đồ vật', buildings: 'Công trình', environment: 'Môi trường', ui: 'UI', fx: 'Hiệu ứng' };
+const urlOf = (id: string) => state.art.find((a) => a.id === id)?.url ?? null;
+const dirty = () => JSON.stringify(ed.list) !== JSON.stringify(ed.saved);
+const issues = () => layoutIssues(ed.list, { assetIds: new Set(state.art.map((a) => a.id)), troughId: TROUGH_PROP_ID });
+
+async function load() {
+  const m = await json<Manifest>(`/assets/manifest/assets.json?t=${Date.now()}`);
+  ed.design = m.layout.designSize;
+  ed.walk = m.layout.walkArea;
+  ed.list = m.layout.placements;
+  ed.saved = [...m.layout.placements];
+  ed.history.clear();
+  ed.sel = null;
+  await preloadSizes(state.art.map((a) => a.url));
+  ed.loaded = true;
+}
+
+function change(next: Placement[], sel = ed.sel) {
+  ed.history.push(ed.list);
+  ed.list = next;
+  ed.sel = sel !== null && sel < next.length ? sel : null;
+}
+
+const field = (label: string, name: string, value: unknown, type = 'number', attrs = '') =>
+  `<label class="field"><span>${label}</span><input type="${type}" name="${name}" value="${esc(value ?? '')}" ${attrs} /></label>`;
+
+function properties(): string {
+  const i = ed.sel;
+  const p = i === null ? null : ed.list[i];
+  if (!p || i === null) return '<p class="muted">Chọn một vật trên khung để sửa. Kéo asset từ thư viện bên trái vào khung để thêm.</p>';
+  const nat = sizeOf(urlOf(p.id));
+  const opt = (values: readonly string[], cur: string | undefined, none: string) =>
+    [`<option value="">${none}</option>`, ...values.map((v) => `<option value="${v}"${v === cur ? ' selected' : ''}>${v}</option>`)].join('');
+  return `<form class="props" data-props>
+    <div class="props__head">${urlOf(p.id) ? `<img class="thumb" src="${esc(urlOf(p.id)!)}" alt="" />` : ''}<div><b>${esc(p.label ?? p.id)}</b><small class="mono">#${i + 1} · ${esc(p.id)} · ảnh gốc ${nat.w}×${nat.h}</small></div></div>
+    <h4>Vị trí (px, điểm neo = ${Math.round((p.originX ?? 0.5) * 100)}% ngang, ${Math.round((p.originY ?? 1) * 100)}% dọc)</h4>
+    <div class="form-grid">${field('X', 'x', Math.round(p.x * ed.design.width))}${field('Y', 'y', Math.round(p.y * ed.design.height))}</div>
+    <h4>Kích thước (trống = theo ảnh gốc / giữ tỷ lệ)</h4>
+    <div class="form-grid">${field('Rộng', 'width', p.width, 'number', 'min="1"')}${field('Cao', 'height', p.height, 'number', 'min="1"')}</div>
+    <h4>Lớp</h4>
+    <div class="form-grid"><label class="field span-2"><span>Layer / z-index</span><select name="layer">${LAYER_LABEL.map((l, k) => `<option value="${k}"${k === p.layer ? ' selected' : ''}>${l}</option>`).join('')}</select></label></div>
+    <div class="dn__buttons"><button type="button" class="btn btn-small" data-order="back">⇊ Dưới cùng</button><button type="button" class="btn btn-small" data-order="down">↓ Xuống</button>
+      <button type="button" class="btn btn-small" data-order="up">↑ Lên</button><button type="button" class="btn btn-small" data-order="front">⇈ Trên cùng</button></div>
+    <h4>Biến đổi</h4>
+    <div class="form-grid">${field('Xoay (°)', 'rotation', p.rotation ?? 0, 'number', 'min="-360" max="360" step="1"')}
+      <label class="field"><span>Phóng to (× rộng/cao)</span><span class="dn__buttons"><button type="button" class="btn btn-small" data-scale="0.9">−10%</button><button type="button" class="btn btn-small" data-scale="1.1">+10%</button></span></label>
+      <label class="check"><input type="checkbox" name="flipX" ${p.flipX ? 'checked' : ''} /> Lật ngang</label></div>
+    <h4>Trạng thái</h4>
+    <div class="form-grid"><label class="check"><input type="checkbox" name="visible" ${p.visible === false ? '' : 'checked'} /> Hiển thị</label>
+      <label class="check"><input type="checkbox" name="locked" ${p.locked ? 'checked' : ''} /> Khoá (không kéo được)</label></div>
+    <h4>Asset & tương tác</h4>
+    <div class="form-grid">
+      ${field('Tên trong editor', 'label', p.label ?? '', 'text', 'maxlength="40"')}
+      <label class="field"><span>Asset hiện tại → thay</span><select name="id">${state.art.filter((a) => a.section !== 'ui' && a.section !== 'fx').map((a) => `<option value="${esc(a.id)}"${a.id === p.id ? ' selected' : ''}>${esc(a.id)}</option>`).join('')}</select></label>
+      <label class="field"><span>Bấm vào mở</span><select name="action">${opt(FARM_ACTIONS, p.action, '— không —')}</select></label>
+      <label class="check"><input type="checkbox" name="signed" ${p.signed ? 'checked' : ''} /> Ảnh có sẵn biển tên</label>
+    </div>
+    <p class="muted">${p.role ? `Vai trò: <b>${esc(p.role)}</b> (duy nhất, giữ nguyên). ` : ''}Lớp 4 được game xếp theo Y cùng heo.</p>
+    <div class="dn__buttons"><button type="button" class="btn btn-small" data-dup>⧉ Nhân bản</button><button type="button" class="btn btn-small btn-danger" data-del>🗑 Xoá khỏi layout</button></div>
+  </form>`;
+}
+
+function readProps(f: HTMLFormElement): Partial<Placement> {
+  const d = new FormData(f);
+  const n = (k: string) => (String(d.get(k) ?? '').trim() === '' ? undefined : Number(d.get(k)));
+  const s = (k: string) => String(d.get(k) ?? '').trim() || undefined;
+  return {
+    x: (n('x') ?? 0) / ed.design.width, y: (n('y') ?? 0) / ed.design.height, width: n('width'), height: n('height'),
+    layer: Number(d.get('layer')), rotation: n('rotation') ?? 0, flipX: d.get('flipX') === 'on', visible: d.get('visible') === 'on',
+    locked: d.get('locked') === 'on', label: s('label'), id: String(d.get('id')), action: s('action') as Placement['action'], signed: d.get('signed') === 'on',
+  };
+}
+
+export function renderLayout(root: HTMLElement, rerender: () => void) {
+  if (!ed.loaded) {
+    root.innerHTML = '<p class="loading">Đang tải layout… 🐷</p>';
+    load().then(rerender, (e: unknown) => (root.innerHTML = `<p class="empty">${esc((e as Error).message)}</p>`));
+    return;
+  }
+  const all = issues();
+  const errors = all.filter((x) => x.level === 'error');
+  root.innerHTML = `
+    <div class="savebar">
+      <button class="btn btn-small" data-undo ${ed.history.canUndo ? '' : 'disabled'}>↶ Hoàn tác</button>
+      <button class="btn btn-small" data-redo ${ed.history.canRedo ? '' : 'disabled'}>↷ Làm lại</button>
+      <label class="check"><input type="checkbox" data-opt="preview" ${ed.preview ? 'checked' : ''} /> Xem trước</label>
+      <label class="check"><input type="checkbox" data-opt="walk" ${ed.showWalk ? 'checked' : ''} /> Vùng heo đi</label>
+      <label class="field inline"><span>Lưới</span><select data-snap>${[1, 5, 10, 20].map((g) => `<option value="${g}"${g === ed.snap ? ' selected' : ''}>${g === 1 ? 'tắt' : `${g}px`}</option>`).join('')}</select></label>
+      <span class="spacer"></span>
+      <button class="btn btn-small" data-reset>↺ Về layout mặc định</button>
+      ${dirty() ? '<span class="badge status-warn">Chưa lưu</span><button class="btn btn-small" data-discard>Huỷ thay đổi</button>' : ''}
+      <button class="btn btn-primary" data-save ${!dirty() || errors.length || !state.apiOnline ? 'disabled' : ''}>💾 Lưu layout vào game</button>
+    </div>
+    ${all.filter((x) => x.level !== 'info').length ? `<ul class="issues">${all.filter((x) => x.level !== 'info').map((x) => `<li class="issue ${x.level}">${esc(x.speciesId ?? 'Layout')} — ${esc(x.text)}</li>`).join('')}</ul>` : ''}
+    <div class="layout-editor">
+      <aside class="panel lib" data-lib></aside>
+      <section class="layout-editor__center"><div data-stage></div><h3>Vật trong layout</h3><div data-placements></div></section>
+      <aside class="panel" data-props-host>${properties()}</aside>
+    </div>`;
+
+  const stage = mountStage(root.querySelector<HTMLElement>('[data-stage]')!, ed.design, {
+    list: () => ed.list,
+    selected: () => ed.sel,
+    select: (i) => {
+      ed.sel = i;
+      stage.draw();
+      root.querySelector<HTMLElement>('[data-props-host]')!.innerHTML = properties();
+      bindProps();
+    },
+    live: (i, next) => {
+      ed.list = ed.list.map((p, k) => (k === i ? next : p));
+    },
+    commit: (before) => {
+      ed.history.push(before);
+      refocus = true;
+      rerender();
+    },
+    drop: (id, x, y) => {
+      const nat = sizeOf(urlOf(id));
+      change(add(ed.list, id, x, y + nat.h / 2, ed.design, 4, Math.min(nat.w, 300)), ed.list.length);
+      rerender();
+    },
+    urlOf,
+    options: () => ({ preview: ed.preview, walk: ed.showWalk, snap: ed.snap }),
+    walkArea: ed.walk,
+  });
+
+  const act = (fn: () => void) => () => {
+    fn();
+    rerender();
+  };
+  function bindProps() {
+    const f = root.querySelector<HTMLFormElement>('[data-props]');
+    if (!f || ed.sel === null) return;
+    const i = ed.sel;
+    f.addEventListener('change', act(() => {
+      const next = readProps(f);
+      const p = ed.list[i]!;
+      // Keep the stored fraction when the shown pixel did not change (no drift from rounding).
+      const W = ed.design.width;
+      const H = ed.design.height;
+      next.x = Math.round(p.x * W) === Math.round(next.x! * W) ? p.x : Math.round(next.x! * 10000) / 10000;
+      next.y = Math.round(p.y * H) === Math.round(next.y! * H) ? p.y : Math.round(next.y! * 10000) / 10000;
+      change(patch(ed.list, i, next));
+    }));
+    f.querySelectorAll<HTMLElement>('[data-order]').forEach((b) =>
+      b.addEventListener('click', act(() => {
+        const r = reorder(ed.list, i, b.dataset.order as 'up');
+        change(r.list, r.index);
+      })),
+    );
+    f.querySelectorAll<HTMLElement>('[data-scale]').forEach((b) =>
+      b.addEventListener('click', act(() => {
+        const p = ed.list[i]!;
+        const k = Number(b.dataset.scale);
+        const base = p.width ?? sizeOf(urlOf(p.id)).w;
+        change(patch(ed.list, i, { width: Math.round(base * k), ...(p.height ? { height: Math.round(p.height * k) } : {}) }));
+      })),
+    );
+    f.querySelector('[data-dup]')?.addEventListener('click', act(() => change(duplicate(ed.list, i), i + 1)));
+    f.querySelector('[data-del]')?.addEventListener('click', () =>
+      confirmDanger('Xoá khỏi layout', `Xoá ${ed.list[i]!.label ?? ed.list[i]!.id} khỏi nông trại? (Ảnh vẫn còn trong thư viện.)`, 'Xoá', act(() => change(remove(ed.list, i), null))),
+    );
+  }
+  bindProps();
+
+  mountList(root.querySelector<HTMLElement>('[data-lib]')!, {
+    id: 'layout-lib',
+    items: () => state.art.filter((a) => a.url && a.section !== 'ui' && a.section !== 'fx'),
+    text: (a) => [a.id, a.nameVi, SECTION_LABEL[a.section]],
+    filters: [
+      { key: 'section', label: 'Mọi loại', options: ['props', 'buildings', 'environment'].map((s) => [s, SECTION_LABEL[s]!] as const), test: (a, v) => a.section === v },
+      { key: 'used', label: 'Đang dùng / chưa', options: [['used', 'Đang có trong layout'], ['unused', 'Chưa dùng']], test: (a, v) => (v === 'used') === ed.list.some((p) => p.id === a.id) },
+    ],
+    sorts: [{ key: 'az', label: 'Tên A-Z', compare: byText((a) => a.id) }],
+    pageSize: 40,
+    placeholder: 'Tìm asset…',
+    noun: 'asset',
+    resultsClass: 'lib__grid',
+    render: (rows) => rows.map((a) => `<button type="button" class="lib__item" draggable="true" data-asset="${esc(a.id)}" title="Kéo vào khung hoặc bấm để thêm">
+      <img src="${esc(a.url!)}" alt="" draggable="false" /><small>${esc(a.id)}</small></button>`).join(''),
+    bind: (el) =>
+      el.querySelectorAll<HTMLElement>('[data-asset]').forEach((b) => {
+        b.addEventListener('dragstart', (e) => e.dataTransfer?.setData('text/x-unin-asset', b.dataset.asset!));
+        b.addEventListener('click', () => {
+          const nat = sizeOf(urlOf(b.dataset.asset!));
+          change(add(ed.list, b.dataset.asset!, ed.design.width / 2, ed.design.height * 0.75, ed.design, 4, Math.min(nat.w, 300)), ed.list.length);
+          rerender();
+        });
+      }),
+  });
+
+  mountList(root.querySelector<HTMLElement>('[data-placements]')!, {
+    id: 'layout-placements',
+    items: () => ed.list.map((p, i) => ({ p, i })),
+    text: ({ p }) => [p.id, p.label, p.action, p.role],
+    filters: [
+      { key: 'layer', label: 'Mọi lớp', options: LAYER_LABEL.map((l, k) => [String(k), l] as const), test: ({ p }, v) => p.layer === Number(v) },
+      { key: 'vis', label: 'Hiện / ẩn', options: [['on', 'Đang hiện'], ['off', 'Đang ẩn'], ['locked', 'Đang khoá']], test: ({ p }, v) => (v === 'locked' ? !!p.locked : (v === 'on') === (p.visible !== false)) },
+      { key: 'action', label: 'Mọi tương tác', options: [['yes', 'Bấm được'], ['no', 'Trang trí']], test: ({ p }, v) => (v === 'yes') === !!p.action },
+    ],
+    sorts: [
+      { key: 'list', label: 'Thứ tự trong data', compare: byNumber(({ i }) => i) },
+      { key: 'layer', label: 'Theo lớp', compare: byNumber(({ p }) => p.layer) },
+      { key: 'az', label: 'Tên A-Z', compare: byText(({ p }) => p.label ?? p.id) },
+    ],
+    pageSize: 50,
+    placeholder: 'Tìm vật trong layout…',
+    noun: 'vật',
+    resultsClass: 'table-wrap',
+    render: (rows) => `<table class="table"><tbody>${rows.map(({ p, i }) => `<tr class="${i === ed.sel ? 'is-selected' : ''}${p.visible === false ? ' is-off' : ''}" data-pick="${i}">
+      <td>${urlOf(p.id) ? `<img class="thumb" src="${esc(urlOf(p.id)!)}" alt="" />` : ''}</td><td><b>${esc(p.label ?? p.id)}</b><br /><small class="mono">#${i + 1} ${esc(p.id)}</small></td>
+      <td>Lớp ${p.layer}</td><td>${Math.round(p.x * ed.design.width)}, ${Math.round(p.y * ed.design.height)}</td><td>${p.width ?? '—'}${p.height ? `×${p.height}` : ''}</td>
+      <td>${p.action ? `<span class="chip">${esc(p.action)}</span>` : ''}${p.visible === false ? ' 🙈' : ''}${p.locked ? ' 🔒' : ''}</td></tr>`).join('')}</tbody></table>`,
+    bind: (el) => el.querySelectorAll<HTMLElement>('[data-pick]').forEach((r) => r.addEventListener('click', act(() => (ed.sel = Number(r.dataset.pick))))),
+  });
+
+  const bar = (sel: string, fn: () => void) => root.querySelector(sel)?.addEventListener('click', act(fn));
+  bar('[data-undo]', () => (ed.list = ed.history.undo(ed.list) ?? ed.list));
+  bar('[data-redo]', () => (ed.list = ed.history.redo(ed.list) ?? ed.list));
+  bar('[data-discard]', () => change([...ed.saved], null));
+  root.querySelector('[data-reset]')?.addEventListener('click', () =>
+    confirmDanger('Về layout mặc định', 'Thay toàn bộ layout bằng bản mặc định (vẫn hoàn tác được, chưa ghi tới khi bấm Lưu).', 'Dùng layout mặc định', async () => {
+      const r = await json<{ placements: Placement[] }>('/__admin/layout-default');
+      change(r.placements, null);
+      rerender();
+    }),
+  );
+  root.querySelectorAll<HTMLInputElement>('[data-opt]').forEach((c) =>
+    c.addEventListener('change', act(() => (c.dataset.opt === 'preview' ? (ed.preview = c.checked) : (ed.showWalk = c.checked)))),
+  );
+  root.querySelector<HTMLSelectElement>('[data-snap]')?.addEventListener('change', (e) => (ed.snap = Number((e.target as HTMLSelectElement).value)));
+  root.querySelector('[data-save]')?.addEventListener('click', async () => {
+    try {
+      await post('/__admin/layout', { placements: ed.list });
+      ed.saved = [...ed.list];
+      state.message = { kind: 'ok', text: `Đã lưu layout (${ed.list.length} vật) vào manifest. Game đọc layout mới khi tải lại (F5 / mở lại).` };
+    } catch (e) {
+      state.message = { kind: 'error', text: (e as Error).message };
+    }
+    rerender();
+  });
+  stage.stage.addEventListener('keydown', (e) => onKey(e, rerender));
+  if (refocus) stage.stage.focus({ preventScroll: true });
+  refocus = false;
+}
+
+function onKey(e: KeyboardEvent, rerender: () => void) {
+  const i = ed.sel;
+  const ctrl = e.ctrlKey || e.metaKey;
+  const done = () => {
+    e.preventDefault();
+    refocus = true;
+    rerender();
+  };
+  if (ctrl && e.key.toLowerCase() === 'z') return void ((ed.list = ed.history.undo(ed.list) ?? ed.list), done());
+  if (ctrl && e.key.toLowerCase() === 'y') return void ((ed.list = ed.history.redo(ed.list) ?? ed.list), done());
+  if (i === null) return;
+  const p = ed.list[i]!;
+  if (e.key === 'Escape') return void ((ed.sel = null), done());
+  if (ctrl && e.key.toLowerCase() === 'd') return void (change(duplicate(ed.list, i), i + 1), done());
+  if (e.key === 'Delete') return void (change(remove(ed.list, i), null), done());
+  const step = e.shiftKey ? 10 : 1;
+  const dir: Record<string, [number, number]> = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
+  const v = dir[e.key];
+  if (v && !p.locked) {
+    change(moveTo(ed.list, i, p.x * ed.design.width + v[0], p.y * ed.design.height + v[1], ed.design));
+    done();
+  }
+}
+
+export const layoutDirty = () => ed.loaded && dirty();

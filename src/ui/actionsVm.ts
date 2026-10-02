@@ -1,7 +1,7 @@
 // Button availability by dry-running the real action: the disabled reason always matches what
 // dispatch would answer. Pure (no DOM), unit-tested.
-import { buyItem } from '../core/actions/buyItem';
 import { buyPig } from '../core/actions/buyPig';
+import { buyProduct } from '../core/actions/buyProduct';
 import { buySlot } from '../core/actions/buySlot';
 import { cleanAll, cleanPig } from '../core/actions/cleanPig';
 import { feedPig } from '../core/actions/feedPig';
@@ -12,11 +12,12 @@ import { BREEDS } from '../core/config/breeds';
 import type { ErrorCode } from '../core/config/errors';
 import { BALANCE } from '../core/config/balance';
 import { BREED_IDS } from '../core/config/breeds';
-import type { BreedId, Gender, ItemId } from '../core/config/ids';
+import type { BreedId, Gender } from '../core/config/ids';
 import { levelFromXp, slotUnlock } from '../core/config/levels';
 import { rarityRank } from '../core/config/rarity';
 import type { AssetRegistry } from '../core/assets/registry';
-import { ITEM_IDS, ITEMS } from '../core/config/items';
+import { ITEMS } from '../core/config/items';
+import { productById, shopProducts } from '../core/engine/shopProducts';
 import { sellMultiplier } from '../core/engine/pricing';
 import { mulberry32 } from '../core/rng';
 import type { SaveGame } from '../core/types';
@@ -108,21 +109,26 @@ export function shopPigs(save: SaveGame, now: number, assets: AssetRegistry | nu
 }
 
 /** Shop items tab rows; the quantity is chosen in the buy dialog (itemPurchase). */
+/** Shop item tab: the active products (DECISIONS AD-1), in their admin order. */
 export function shopItems(save: SaveGame) {
-  return ITEM_IDS.map((id: ItemId) => ({
-    id,
-    name: vi.shop[id],
-    desc: vi.shop[`${id}_desc`],
-    price: goldText(ITEMS[id].priceGold),
-    owned: save.inventory[id],
+  return shopProducts().map((p) => ({
+    id: p.id,
+    icon: p.icon,
+    name: p.nameVi,
+    desc: p.descVi,
+    price: goldText(p.priceGold),
+    owned: save.inventory[p.itemId],
   }));
 }
 
-/** Buy dialog for `quantity` of one item (§8.10). */
-export function itemPurchase(save: SaveGame, itemId: ItemId, quantity: number, now: number) {
+/** Buy dialog for `count` packs of one product (§8.10). */
+export function productPurchase(save: SaveGame, productId: string, count: number, now: number) {
+  const p = productById(productId);
   return {
-    total: t(vi.shop.total, { gold: formatInt(ITEMS[itemId].priceGold * Math.max(0, quantity)) }),
-    confirm: vm(save, now, vi.action.buy, (s, c) => buyItem(s, { itemId, quantity }, c)),
+    name: p?.nameVi ?? productId,
+    desc: p?.descVi ?? '',
+    total: t(vi.shop.total, { gold: formatInt((p?.priceGold ?? 0) * Math.max(0, count)) }),
+    confirm: vm(save, now, vi.action.buy, (s, c) => buyProduct(s, { productId, count }, c)),
     max: BALANCE.SHOP_MAX_QUANTITY,
   };
 }

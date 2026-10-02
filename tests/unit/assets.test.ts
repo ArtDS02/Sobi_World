@@ -39,8 +39,9 @@ describe('manifest v2 (art standard §7.2)', () => {
 
   it('covers scope: one art row per species, fx, audio keys', () => {
     const m = manifest();
-    // Outfits were removed in A2 (DECISIONS A2-1): pig rows are species art only.
-    expect(m.pigs).toHaveLength(BREED_IDS.length);
+    // Outfits were removed in A2 (DECISIONS A2-1): pig rows are species art only — plus library
+    // art registered by the admin before a species uses it (AD-1), always tagged "new".
+    expect(m.pigs.length).toBeGreaterThanOrEqual(BREED_IDS.length);
     expect(m.fx.map((f) => f.id).sort()).toEqual([...FX_IDS].sort());
     expect(m.audio.map((a) => a.id)).toEqual([...AUDIO_KEYS]);
     expect(m.layout.designSize).toEqual({ width: 1600, height: 900 });
@@ -126,7 +127,9 @@ describe('asset registry (spec §11.4)', () => {
   it('every species has an art row; pig rows are species art only (DECISIONS A2-1)', () => {
     const arts = new Set(Object.values(BREEDS).map((b) => b.artId));
     for (const id of arts) expect(reg.resolve(id)?.section, id).toBe('pigs');
-    for (const row of reg.manifest.pigs) expect(arts.has(row.id), row.id).toBe(true);
+    for (const row of reg.manifest.pigs) {
+      expect(arts.has(row.id) || (row.collection === 'species' && row.tags.includes('new')), row.id).toBe(true);
+    }
   });
 });
 

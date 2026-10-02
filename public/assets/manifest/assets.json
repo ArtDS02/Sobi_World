@@ -618,6 +618,33 @@
       "asset": "pigs/base/pig_thor.png",
       "sleepAsset": null,
       "tags": ["species", "fantasy", "new"]
+    },
+    {
+      "id": "pig_alien_v3",
+      "status": "production",
+      "nameVi": "Heo Ngoài Hành Tinh v3",
+      "collection": "species",
+      "asset": "pigs/base/pig_alien_v3.png",
+      "sleepAsset": null,
+      "tags": ["species", "new"]
+    },
+    {
+      "id": "pig_alien_v4",
+      "status": "production",
+      "nameVi": "Heo Ngoài Hành Tinh v4",
+      "collection": "species",
+      "asset": "pigs/base/pig_alien_v4.png",
+      "sleepAsset": null,
+      "tags": ["species", "new"]
+    },
+    {
+      "id": "pig_cyborg_v3",
+      "status": "production",
+      "nameVi": "Heo Cyborg v3",
+      "collection": "species",
+      "asset": "pigs/base/pig_cyborg_v3.png",
+      "sleepAsset": null,
+      "tags": ["species", "new"]
     }
   ],
   "fx": [

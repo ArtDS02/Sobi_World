@@ -1,5 +1,7 @@
 // Child species odds for a pair (spec §6.5 as rules, DECISIONS U00-1 D4): same species, same
-// family, one and two rarities up, plus the special pairs of MUTATIONS.
+// family, one and two rarities up, plus the special pairs of MUTATIONS — unless the admin pair
+// table (breedingPairs.ts, DECISIONS AD-1) has an active row for the pair: that row wins.
+import { PAIR_RULES, type PairRule } from '../config/breedingPairs';
 import { BREEDING_RULES, MUTATIONS } from '../config/breedingRules';
 import { BREED_IDS, BREEDS } from '../config/breeds';
 import type { BreedId } from '../config/ids';
@@ -26,12 +28,40 @@ function tierUp(families: Set<string>, top: number, steps: number): BreedId[] {
   return related.length > 0 ? related : tier;
 }
 
+/** The active pair-table row of an unordered pair, if any. */
+export function pairRuleFor(
+  a: BreedId,
+  b: BreedId,
+  rules: readonly PairRule[] = PAIR_RULES,
+): PairRule | undefined {
+  return rules.find(
+    (r) => r.active && ((r.parents[0] === a && r.parents[1] === b) || (r.parents[0] === b && r.parents[1] === a)),
+  );
+}
+
+/** A pair-table row's live outcomes (retired species drop out, the rest rescale to 100). */
+function tableOutcomes(rule: PairRule): BreedingOutcome[] | undefined {
+  const live = rule.outcomes.filter((o) => BREEDS[o.breed].enabled && o.percent > 0);
+  const total = live.reduce((s, o) => s + o.percent, 0);
+  if (total === 0) return undefined;
+  return live
+    .map((o) => ({ breed: o.breed, weight: (o.percent / total) * 100 }))
+    .sort((p, q) => q.weight - p.weight || BREED_IDS.indexOf(p.breed) - BREED_IDS.indexOf(q.breed));
+}
+
 /**
  * Outcomes for a pair, most likely first; undefined when a parent cannot breed (caller fails
  * with BREEDING_COMBINATION_NOT_SUPPORTED — never a silent fallback).
  */
-export function breedingOutcomes(a: BreedId, b: BreedId): BreedingOutcome[] | undefined {
+export function breedingOutcomes(
+  a: BreedId,
+  b: BreedId,
+  pairs: readonly PairRule[] = PAIR_RULES,
+): BreedingOutcome[] | undefined {
   if (!BREEDS[a].breedable || !BREEDS[b].breedable) return undefined;
+  const rule = pairRuleFor(a, b, pairs);
+  const table = rule && tableOutcomes(rule);
+  if (table) return table;
   const R = BREEDING_RULES;
   const odds = new Map<BreedId, number>();
   const top = Math.max(rank(a), rank(b));

@@ -65,15 +65,16 @@ export interface ArtState {
   complete: boolean;
 }
 
+const fileOf = (artId: string) => `pigs/base/${artId}.png`;
+
 /** Art coverage of one species: right-facing idle drawn, left by flip, front/back never produced. */
 export function artState(artId: string, pigs: ValidateInput['pigs'], files: ValidateInput['files']): ArtState {
   const manifest = pigs.find((p) => p.id === artId) ?? null;
-  const right = !!manifest && files.has(manifest.asset);
+  // A file without its manifest row still previews (it is registered on save); only complete needs both.
+  const right = manifest ? files.has(manifest.asset) : files.has(fileOf(artId));
   const sleep = manifest?.sleepAsset ? files.has(manifest.sleepAsset) : null;
-  return { manifest, right, left: right, sleep, complete: right && sleep !== false };
+  return { manifest, right, left: right, sleep, complete: !!manifest && right && sleep !== false };
 }
-
-const fileOf = (artId: string) => `pigs/base/${artId}.png`;
 
 function rowIssues(row: SpeciesRowData, input: ValidateInput, push: (l: IssueLevel, t: string) => void) {
   if (!SPECIES_ID.test(row.id)) push('error', `ID "${row.id}" phải dạng PIG_TEN_HEO`);
