@@ -37,6 +37,16 @@ export const vi = {
     troughShort: "{food}/{capacity}",
   },
 
+  /** Day / night (DN): HUD clock icon + phase name per phase. */
+  dayPhase: {
+    dawn: { icon: "🌅", name: "Bình minh" },
+    morning: { icon: "🌤", name: "Buổi sáng" },
+    day: { icon: "☀", name: "Ban ngày" },
+    afternoon: { icon: "☀", name: "Buổi chiều" },
+    sunset: { icon: "🌇", name: "Hoàng hôn" },
+    night: { icon: "🌙", name: "Ban đêm" },
+  },
+
   stage: {
     BABY: "Heo con",
     YOUNG: "Heo choai",

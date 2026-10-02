@@ -1,6 +1,7 @@
 // Admin dashboard entry (admin.html, `npm run admin`). Hash routes: #/ overview, #/pigs[?filters],
-// #/pigs/<ID> editor drawer, #/pigs/new, #/validation, #/assets.
+// #/pigs/<ID> editor drawer, #/pigs/new, #/validation, #/assets, #/daynight (DN).
 import { renderAssets } from './assets';
+import { renderDayNight } from './dayNight';
 import { renderEditor } from './editor';
 import { esc } from './labels';
 import { renderOverview } from './overview';
@@ -13,6 +14,7 @@ const NAV = [
   ['pigs', '🐷', 'Quản lý heo'],
   ['validation', '🩺', 'Kiểm tra dữ liệu'],
   ['assets', '🖼️', 'Asset nguồn'],
+  ['daynight', '🌗', 'Ngày / Đêm'],
 ] as const;
 
 const app = document.getElementById('admin')!;
@@ -80,6 +82,7 @@ function render() {
     renderPigList(content, open);
   } else if (page === 'validation') renderValidation(content, (pigId) => open(pigId));
   else if (page === 'assets') renderAssets(content);
+  else if (page === 'daynight') renderDayNight(content, state.apiOnline);
   else renderOverview(content);
   content.scrollTop = scroll;
   if (page === 'pigs' && id) {

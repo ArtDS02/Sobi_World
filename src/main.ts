@@ -3,6 +3,7 @@ import '@fontsource/baloo-2/500.css';
 import '@fontsource/baloo-2/700.css';
 import './styles/main.scss';
 import type { Clock } from './core/clock';
+import type { DayPhase } from './core/config/dayNight';
 import { AudioManager, audioTracks, type AudioClip } from './game/audio/AudioManager';
 import { createFarmView, type FarmView } from './game/farmView';
 import { noEffects } from './game/feedback/effects';
@@ -27,6 +28,7 @@ async function start(root: HTMLElement) {
   const opts: AppOptions = {};
   let skip: ((ms: number) => void) | null = null;
   let showDevFps: (() => void) | null = null;
+  let devPhase: DayPhase | null = null;
 
   // Dev-only time travel: `npm run dev` + ?dev=1. Dead code in production builds.
   if (import.meta.env.DEV && new URLSearchParams(location.search).has('dev')) {
@@ -38,7 +40,9 @@ async function start(root: HTMLElement) {
       (ms) => skip?.(ms),
       () => gallery.openAssetGallery(root, assets.registry),
       () => void store.dispatch(dev.devFillPigs),
+      (phase) => farmView?.previewPhase(phase),
     );
+    devPhase = dev.devPhaseParam();
     const tools = opts.devTools;
     showDevFps = () => dev.showFps(tools, farmView?.fps() ?? null);
     skip = (ms) => {
@@ -81,13 +85,16 @@ async function start(root: HTMLElement) {
     saveFolder: platform.kind === 'desktop',
     version: platform.version,
     hasBackups: platform.backups !== null,
-    farm: (host, onPick) =>
-      (farmView = createFarmView(host, {
+    farm: (host, onPick) => {
+      farmView = createFarmView(host, {
         store,
         assets: assets.registry,
         now: () => clock.now(),
         onPick,
-      })),
+      });
+      if (devPhase) farmView.previewPhase(devPhase);
+      return farmView;
+    },
   });
   // §11.3: every event and rejection becomes presentation here, and only here.
   director = createFeedbackDirector({

@@ -2,12 +2,16 @@
 // clickable objects and the pulsing notification badge. Visual only.
 import * as Phaser from 'phaser';
 import { FARM_VIEW } from '../../core/config/farmView';
+import { SHADOW_LIGHT_KEY } from './DayNightLayer';
 
 /** Flat ellipse under the object's feet, just below it in depth. */
-export function addShadow(scene: Phaser.Scene, img: Phaser.GameObjects.Image) {
+export function addShadow(
+  scene: Phaser.Scene,
+  img: Phaser.GameObjects.Image,
+): Phaser.GameObjects.Ellipse {
   const s = FARM_VIEW.SHADOW;
   const w = img.displayWidth * s.width;
-  scene.add
+  return scene.add
     .ellipse(img.x, img.y - w * s.height * 0.25, w, w * s.height, s.color, s.alpha)
     .setDepth(img.depth - 0.5);
 }
@@ -16,7 +20,7 @@ export function addShadow(scene: Phaser.Scene, img: Phaser.GameObjects.Image) {
 export class FeetShadow {
   private readonly shape: Phaser.GameObjects.Ellipse;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(private readonly scene: Phaser.Scene) {
     const s = FARM_VIEW.SHADOW;
     this.shape = scene.add.ellipse(0, 0, 1, 1, s.color, s.alpha);
   }
@@ -27,7 +31,8 @@ export class FeetShadow {
       .setPosition(x, feetY)
       .setSize(width * s.width, width * s.width * s.height)
       .setDepth(feetY - 0.6)
-      .setAlpha(alpha);
+      // Day / night shadow strength (DN), 1 until the layer sets it.
+      .setAlpha(alpha * ((this.scene.registry.get(SHADOW_LIGHT_KEY) as number | undefined) ?? 1));
   }
 
   hide() {

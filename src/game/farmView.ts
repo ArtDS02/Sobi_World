@@ -3,6 +3,7 @@
 import * as Phaser from 'phaser';
 import type { AssetRegistry } from '../core/assets/registry';
 import type { FarmAction } from '../core/config/assetIds';
+import type { DayPhase } from '../core/config/dayNight';
 import type { GameStore } from '../store/gameStore';
 import { phaserConfig } from './config/phaser';
 import { noEffects, type FarmEffects } from './feedback/effects';
@@ -31,12 +32,16 @@ export interface FarmBridge {
   refresh: () => void;
   /** Feedback on the scene (§11.3); no-op until MainFarmScene runs. */
   effects: FarmEffects;
+  /** Admin / dev day-night preview (DN): shown instead of the clock's phase; never saved. */
+  phasePreview: DayPhase | null;
 }
 
 export interface FarmView {
   /** The FeedbackDirector's way into the scene; read at call time (the scene starts later). */
   effects(): FarmEffects;
   setSelected(pigId: string | null): void;
+  /** Day / night preview (dev / admin only): a phase, or null to follow the local clock again. */
+  previewPhase(phase: DayPhase | null): void;
   /** Hidden on other screens: the loop sleeps, and the scale is refreshed when shown again. */
   setVisible(visible: boolean): void;
   /** Measured frames per second of the farm loop (dev tools), null before it runs. */
@@ -45,7 +50,12 @@ export interface FarmView {
 }
 
 export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
-  const bridge: FarmBridge = { selectedId: null, refresh: () => {}, effects: noEffects };
+  const bridge: FarmBridge = {
+    selectedId: null,
+    refresh: () => {},
+    effects: noEffects,
+    phasePreview: null,
+  };
   const scenes = [new BootScene(), new PreloadScene(deps), new MainFarmScene(deps, bridge)];
   const game = new Phaser.Game(phaserConfig(host, deps.assets.manifest.layout, scenes));
   let visible = true;
@@ -81,6 +91,11 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
     setSelected(pigId) {
       if (bridge.selectedId === pigId) return;
       bridge.selectedId = pigId;
+      bridge.refresh();
+    },
+    previewPhase(phase) {
+      if (bridge.phasePreview === phase) return;
+      bridge.phasePreview = phase;
       bridge.refresh();
     },
     setVisible(next) {

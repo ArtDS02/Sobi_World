@@ -17,9 +17,11 @@ import { SCENE_KEYS } from '../config/phaser';
 import type { FarmBridge, FarmDeps } from '../farmView';
 import { noEffects } from '../feedback/effects';
 import { Ambient } from '../fx/ambient';
+import { DayNightDirector } from '../fx/DayNightDirector';
 import { SceneEffects } from '../fx/SceneEffects';
 import { vi } from '../../i18n/vi';
 import { Backdrop } from '../prefabs/Backdrop';
+import { DayNightLayer } from '../prefabs/DayNightLayer';
 import { othersOf, spreadCrowd } from '../prefabs/crowd';
 import { GiftBoxes } from '../prefabs/GiftBoxes';
 import { Nameplates } from '../prefabs/Nameplates';
@@ -54,6 +56,8 @@ export class MainFarmScene extends Phaser.Scene {
   private ambient!: Ambient;
   private plates!: Nameplates;
   private gifts!: GiftBoxes;
+  private dayNight!: DayNightLayer;
+  private dayClock!: DayNightDirector;
   /** Bounds of every world object; gift boxes keep clear of them (U06). */
   private readonly obstacles: Rect[] = [];
 
@@ -71,13 +75,17 @@ export class MainFarmScene extends Phaser.Scene {
       troughX: () => this.trough?.x ?? null,
       reduceMotion: () => this.deps.store.getSnapshot().save?.settings.reduceMotion ?? false,
       others: (pigId) => othersOf(this.pigs, pigId),
+      napChance: () => this.dayClock.napChance(),
     };
     warnLoadErrors(this.load);
     this.ambient = new Ambient(this, this.pigEnv.reduceMotion);
     this.plates = new Nameplates(this);
     this.gifts = new GiftBoxes(this, this.pigEnv.reduceMotion);
-    Backdrop.follow(this, this.layout);
+    this.dayNight = new DayNightLayer(this);
+    Backdrop.follow(this, this.layout, (rect) => this.dayNight.setView(rect));
     this.drawPlacements();
+    const preview = () => this.bridge.phasePreview;
+    this.dayClock = new DayNightDirector(this, this.dayNight, this.deps.now, preview);
     // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
     if (!this.pigEnv.reduceMotion()) this.cameras.main.fadeIn(FARM_VIEW.AMBIENT.fadeInMs);
     this.input.on(
@@ -98,6 +106,7 @@ export class MainFarmScene extends Phaser.Scene {
       off();
       this.plates.destroy();
       this.gifts.destroy();
+      this.dayNight.destroy();
       this.bridge.refresh = () => {};
       this.bridge.effects = noEffects;
     });
@@ -149,7 +158,8 @@ export class MainFarmScene extends Phaser.Scene {
   /** Width from the layout, shadow, gift obstacle, click + hover, badge (non-environment art). */
   private dress(img: Phaser.GameObjects.Image, p: FarmLayout['placements'][number]) {
     if (p.width) img.setScale(p.width / img.width);
-    if (p.layer > 2) addShadow(this, img);
+    if (p.layer > 2) this.dayNight.addShadow(addShadow(this, img));
+    this.dayNight.addLight(img, p.action);
     this.obstacles.push(img.getBounds());
     if (p.action) {
       this.makeClickable(img, p.action, !p.signed);
@@ -196,6 +206,7 @@ export class MainFarmScene extends Phaser.Scene {
     const save = snap.save;
     if (!this.sys.isActive()) return;
     this.ambient.sync();
+    this.dayClock.update();
     this.syncTrough(save);
     const now = this.deps.now();
     this.ordersBadge?.set(save ? readyOrderCount(save, now) : 0);

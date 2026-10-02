@@ -81,6 +81,7 @@ export class PigSprite {
       () => this.feedback !== null && this.scene.time.now < this.feedback.until,
       () => env.reduceMotion(),
       () => env.others?.(pigId) ?? [],
+      () => env.napChance?.() ?? FARM_VIEW.WANDER.napChance,
     );
     this.handle = {
       motion: this.motion,

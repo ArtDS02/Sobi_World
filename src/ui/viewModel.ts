@@ -1,7 +1,9 @@
 // Pure view-models: SaveGame → display strings. No DOM, so they are unit-tested directly.
 import { BALANCE } from '../core/config/balance';
 import { BREEDS } from '../core/config/breeds';
+import { DAY_NIGHT } from '../core/config/dayNight';
 import { levelFromXp } from '../core/config/levels';
+import { formatHm, minuteOf, phaseAt } from '../core/engine/dayNight';
 import { growthStage, weight } from '../core/engine/derived';
 import { happiness } from '../core/engine/happiness';
 import { sellMultiplier } from '../core/engine/pricing';
@@ -124,4 +126,22 @@ export function historyVm(save: SaveGame): HistoryRowVm[] {
     tone: tx.amount > 0 ? 'plus' : tx.amount < 0 ? 'minus' : 'zero',
     at: formatDateTime(tx.at),
   }));
+}
+
+export interface ClockVm {
+  icon: string;
+  time: string;
+  phase: string;
+}
+
+/**
+ * HUD clock (DN): local time and the phase icon, or null when day / night is off. Reads the given
+ * `now` in the device time zone (the same clock the farm lighting uses).
+ */
+export function clockVm(now: number): ClockVm | null {
+  if (!DAY_NIGHT.enabled) return null;
+  const d = new Date(now);
+  const minute = minuteOf(d.getHours(), d.getMinutes());
+  const phase = vi.dayPhase[phaseAt(minute, DAY_NIGHT)];
+  return { icon: phase.icon, time: formatHm(minute), phase: phase.name };
 }

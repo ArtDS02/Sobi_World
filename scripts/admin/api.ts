@@ -4,6 +4,7 @@
 //   GET  /__admin/files        → asset files + inventory of asset/animals/asset/
 //   POST /__admin/species      { rows }              → speciesTable.ts, ids.ts, manifest pigs[]
 //   POST /__admin/import-art   { source, artId }     → copies a source image into pigs/base/
+//   POST /__admin/day-night    { settings }          → DAY_NIGHT block of config/dayNight.ts (DN)
 import { copyFileSync, existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { join } from 'node:path';
@@ -14,6 +15,9 @@ import {
   speciesTableText,
   type SpeciesRowData,
 } from './speciesText';
+import type { DayNightSettings } from '../../src/core/config/dayNight';
+import { dayNightIssues } from '../../src/core/engine/dayNight';
+import { replaceDayNightBlock } from './dayNightText';
 import { ART_ID, validateSpecies, type PigArtRow, type ValidateInput } from './validate';
 
 const ASSETS = 'public/assets';
@@ -22,6 +26,7 @@ const SOURCE = 'asset/animals/asset';
 const MANIFEST = join(ASSETS, 'manifest', 'assets.json');
 const TABLE = 'src/core/config/speciesTable.ts';
 const IDS = 'src/core/config/ids.ts';
+const DAY_NIGHT_FILE = 'src/core/config/dayNight.ts';
 
 const readPigs = () => (JSON.parse(readFileSync(MANIFEST, 'utf8')) as { pigs: PigArtRow[] }).pigs;
 const pngs = (dir: string) => (existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.png')).sort() : []);
@@ -98,6 +103,15 @@ function importArt({ source, artId }: { source: string; artId: string }) {
   return { status: 200, body: { ok: true, asset: `pigs/base/${artId}.png` } };
 }
 
+/** DN: validated settings → the admin block of dayNight.ts (the game reloads with them). */
+function saveDayNight(settings: DayNightSettings) {
+  const issues = dayNightIssues(settings);
+  if (issues.length > 0) return { status: 400, body: { error: issues.join('\n') } };
+  const text = readFileSync(DAY_NIGHT_FILE, 'utf8');
+  writeFileSync(DAY_NIGHT_FILE, replaceDayNightBlock(text, settings));
+  return { status: 200, body: { ok: true } };
+}
+
 async function readJson<T>(req: IncomingMessage): Promise<T> {
   const chunks: Buffer[] = [];
   for await (const c of req) chunks.push(c as Buffer);
@@ -124,6 +138,10 @@ export function adminApi(): Plugin {
             return saveSpecies(rows, await loadRules(server));
           }
           if (route === 'POST /import-art') return importArt(await readJson(req));
+          if (route === 'POST /day-night') {
+            const { settings } = await readJson<{ settings: DayNightSettings }>(req);
+            return saveDayNight(settings);
+          }
           return { status: 404, body: { error: `unknown route ${route}` } };
         };
         // Write failures surface to the dashboard as a 500 with the message — never swallowed.

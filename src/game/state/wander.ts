@@ -62,8 +62,11 @@ export function restMs(pigId: string, step: number, nap = false): number {
  * Whether the rest after stroll `step` is a nap (sleep state, DECISIONS R09B-1): visual only,
  * the spec has no data rule for sleeping.
  */
-export const napsDuring = (pigId: string, step: number): boolean =>
-  unit(pigId, step, 4) < FARM_VIEW.WANDER.napChance;
+export const napsDuring = (
+  pigId: string,
+  step: number,
+  chance: number = FARM_VIEW.WANDER.napChance,
+): boolean => unit(pigId, step, 4) < chance;
 
 /** Time to walk `distancePx` at WANDER.speedPx, never shorter than one squash cycle. */
 export const walkMs = (distancePx: number): number =>

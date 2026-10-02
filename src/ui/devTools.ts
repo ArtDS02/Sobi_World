@@ -2,6 +2,7 @@
 // production build drops this module.
 import { BALANCE } from '../core/config/balance';
 import { BREED_IDS } from '../core/config/breeds';
+import { DAY_PHASES, type DayPhase } from '../core/config/dayNight';
 import { randomId } from '../core/rng';
 import type { Pig } from '../core/types';
 import type { BoundAction } from '../store/gameStore';
@@ -52,6 +53,7 @@ export function renderDevTools(
   skip: (ms: number) => void,
   gallery?: () => void,
   fillPigs?: () => void,
+  previewPhase?: (phase: DayPhase | null) => void,
 ): HTMLElement {
   const button = (hours: number) =>
     el('button', {
@@ -77,8 +79,37 @@ export function renderDevTools(
       })
     : null;
   const meter = el('span', { class: 'c-devtools__fps', text: 'fps -' });
-  return el('div', { class: 'c-devtools' }, button(1), button(6), assets, fill, meter);
+  return el(
+    'div',
+    { class: 'c-devtools' },
+    button(1),
+    button(6),
+    assets,
+    fill,
+    previewPhase ? phaseSelect(previewPhase) : null,
+    meter,
+  );
 }
+
+/** Day / night preview (DN): auto = local clock; a phase is shown until auto again. Never saved. */
+function phaseSelect(previewPhase: (phase: DayPhase | null) => void): HTMLElement {
+  const select = el(
+    'select',
+    { attrs: { 'aria-label': 'day / night preview' } },
+    el('option', { text: 'auto', attrs: { value: '' } }),
+    ...DAY_PHASES.map((p) => el('option', { text: p, attrs: { value: p } })),
+  );
+  select.value = devPhaseParam() ?? '';
+  select.addEventListener('change', () => previewPhase(parsePhase(select.value)));
+  return select;
+}
+
+const parsePhase = (value: string | null): DayPhase | null =>
+  (DAY_PHASES as readonly string[]).includes(value ?? '') ? (value as DayPhase) : null;
+
+/** `?phase=night` in the dev URL (the admin dashboard's "open in game" link). */
+export const devPhaseParam = (): DayPhase | null =>
+  parsePhase(new URLSearchParams(location.search).get('phase'));
 
 /**
  * The farm's measured frame rate (R12A performance check with 12 pigs). Called on every store

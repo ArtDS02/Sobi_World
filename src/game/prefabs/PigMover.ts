@@ -56,6 +56,8 @@ export class PigMover {
     private readonly reduceMotion: () => boolean,
     /** Where the other pigs stand: strolls keep clear of them. */
     private readonly others: () => { x: number; y: number }[] = () => [],
+    /** Share of rests spent napping (more at night, DN). */
+    private readonly napChance: () => number = () => FARM_VIEW.WANDER.napChance,
   ) {}
 
   /** First view: stand at home facing the derived way, start breathing and the stroll timer. */
@@ -87,7 +89,7 @@ export class PigMover {
 
   /** Rest before the next stroll; some rests are naps. */
   private rest() {
-    this.napping = !this.blocked() && napsDuring(this.pigId, this.step);
+    this.napping = !this.blocked() && napsDuring(this.pigId, this.step, this.napChance());
     this.refresh();
     this.schedule(restMs(this.pigId, this.step, this.napping));
   }

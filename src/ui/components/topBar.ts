@@ -8,7 +8,7 @@ import type { UiIcon } from '../../core/config/assetIds';
 import { el } from '../dom';
 import { icon } from './icon';
 import type { PanelId } from './popup';
-import { topBarVm } from '../viewModel';
+import { clockVm, topBarVm } from '../viewModel';
 
 const NAV = ['shop', 'inventory', 'orders', 'collection'] as const;
 const NAV_ICON: Record<(typeof NAV)[number], UiIcon> = {
@@ -39,6 +39,7 @@ export function renderTopBar(
   },
 ): HTMLElement {
   const vm = topBarVm(save);
+  const clock = clockVm(now);
   const orders = readyOrderCount(save, now);
   const navButton = (panel: (typeof NAV)[number]) =>
     el(
@@ -90,6 +91,14 @@ export function renderTopBar(
         bar(vm.troughProgress, 'trough'),
         el('b', { text: vm.troughShort }),
       ),
+      clock
+        ? el(
+            'span',
+            { class: 'hud-pill topbar__clock', attrs: { title: clock.phase } },
+            el('span', { class: 'topbar__clock-icon', text: clock.icon, attrs: { 'aria-hidden': 'true' } }),
+            el('b', { text: clock.time }),
+          )
+        : null,
     ),
     el('button', {
       class: 'topbar__settings',

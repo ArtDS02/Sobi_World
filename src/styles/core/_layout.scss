@@ -265,6 +265,12 @@
     background: $c-honey;
   }
 
+  // Day / night clock (DN): small, fixed-width digits so it does not jitter each minute.
+  &.topbar__clock {
+    padding: 0 $sp-3;
+    font-variant-numeric: tabular-nums;
+  }
+
   &.c-gauge {
     min-height: 0;
     background: $c-pill;
