@@ -26,16 +26,34 @@ export const FARM_VIEW = {
     stroke: 0xe8708a,
     strokeWidth: 2,
   },
-  /** Name tag under each clickable world object (DECISIONS R05C-1). */
+  /**
+   * Small name plate on top of each clickable world object (R05C-1, U05). Drawn just above its
+   * object in depth, so pigs walking in front cover the plate instead of the plate covering them.
+   */
   LABEL: {
-    fontPx: 34,
+    fontPx: 22,
     fontFamily: 'system-ui, "Segoe UI", sans-serif',
-    offsetY: 6,
+    offsetY: 4,
     color: '#3b2a26',
     background: '#fff7f3',
-    padX: 14,
-    padY: 6,
-    depth: 50000,
+    padX: 10,
+    padY: 3,
+    depthAbove: 0.1,
+  },
+  /**
+   * Pig name plate under the feet (U05): it never covers a pig — pigs further front are drawn over
+   * it, pigs behind are above it on screen. Plates that collide shift down by a row.
+   */
+  NAMEPLATE: {
+    fontPx: 17,
+    gapPx: 4,
+    padX: 7,
+    padY: 1,
+    rowGapPx: 2,
+    maxShift: 3,
+    color: '#3b2a26',
+    background: '#fff7f3cc',
+    depthAbove: 0.2,
   },
   /** Visual-only strolls inside layout.walkArea (spec §11). Radius is normalised to width. */
   WANDER: {

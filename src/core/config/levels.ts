@@ -19,6 +19,6 @@ export const troughCapacityForLevel = (level: number): number =>
 
 type SlotNumber = keyof typeof BALANCE.SLOT_UNLOCKS;
 
-/** Cost and level gate for unlocking slot number `slot` (5..12), or undefined. */
+/** Cost and level gate for unlocking slot number `slot` (5..MAX_SLOTS), or undefined. */
 export const slotUnlock = (slot: number): { cost: number; level: number } | undefined =>
   BALANCE.SLOT_UNLOCKS[slot as SlotNumber];

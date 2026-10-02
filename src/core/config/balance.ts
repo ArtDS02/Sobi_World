@@ -39,7 +39,7 @@ export const BALANCE = {
   MAX_LEVEL: 10,
   LEVEL_XP: [0, 100, 250, 500, 900, 1400, 2100, 3000, 4200, 5700],
 
-  MAX_SLOTS: 12,
+  MAX_SLOTS: 24, // U05: 30 pigs measured at 0.8 ms/frame; 24 keeps the pen readable
   SLOT_UNLOCKS: {
     5: { cost: 2000, level: 2 },
     6: { cost: 4000, level: 3 },
@@ -49,6 +49,18 @@ export const BALANCE = {
     10: { cost: 32000, level: 7 },
     11: { cost: 50000, level: 8 },
     12: { cost: 80000, level: 9 },
+    13: { cost: 100000, level: 10 },
+    14: { cost: 120000, level: 10 },
+    15: { cost: 145000, level: 10 },
+    16: { cost: 175000, level: 10 },
+    17: { cost: 210000, level: 10 },
+    18: { cost: 250000, level: 10 },
+    19: { cost: 300000, level: 10 },
+    20: { cost: 360000, level: 10 },
+    21: { cost: 430000, level: 10 },
+    22: { cost: 510000, level: 10 },
+    23: { cost: 600000, level: 10 },
+    24: { cost: 700000, level: 10 },
   },
 
   // Orders (D20)

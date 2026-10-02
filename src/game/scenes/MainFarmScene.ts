@@ -18,6 +18,7 @@ import { noEffects } from '../feedback/effects';
 import { Ambient } from '../fx/ambient';
 import { SceneEffects } from '../fx/SceneEffects';
 import { vi } from '../../i18n/vi';
+import { Nameplates } from '../prefabs/Nameplates';
 import { PIG_ID_DATA, PigSprite, type PigEnv } from '../prefabs/PigSprite';
 import { pigView, type FarmLayout } from '../view/pigView';
 import { groundLineY, placementView } from '../view/sceneLayout';
@@ -53,6 +54,7 @@ export class MainFarmScene extends Phaser.Scene {
   private layout!: FarmLayout;
   private pigEnv!: PigEnv;
   private ambient!: Ambient;
+  private plates!: Nameplates;
 
   constructor(
     private readonly deps: FarmDeps,
@@ -70,6 +72,7 @@ export class MainFarmScene extends Phaser.Scene {
     };
     warnLoadErrors(this.load);
     this.ambient = new Ambient(this, this.pigEnv.reduceMotion);
+    this.plates = new Nameplates(this);
     this.drawBackdrop();
     this.drawPlacements();
     // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
@@ -89,6 +92,7 @@ export class MainFarmScene extends Phaser.Scene {
     });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       off();
+      this.plates.destroy();
       this.bridge.refresh = () => {};
       this.bridge.effects = noEffects;
     });
@@ -154,9 +158,9 @@ export class MainFarmScene extends Phaser.Scene {
       useHandCursor: true,
     });
     const l = FARM_VIEW.LABEL;
-    const bottom = img.y + img.displayHeight * (1 - img.originY);
+    const top = img.y - img.displayHeight * img.originY;
     this.add
-      .text(img.x, bottom + l.offsetY, vi.farm[action], {
+      .text(img.x, top - l.offsetY, vi.farm[action], {
         color: l.color,
         backgroundColor: l.background,
         fontSize: `${l.fontPx}px`,
@@ -164,14 +168,15 @@ export class MainFarmScene extends Phaser.Scene {
         fontStyle: 'bold',
         padding: { x: l.padX, y: l.padY },
       })
-      .setOrigin(0.5, 0)
-      .setDepth(l.depth)
+      .setOrigin(0.5, 1)
+      .setDepth(img.depth + l.depthAbove)
       .setData(ACTION_DATA, action)
       .setInteractive({ useHandCursor: true });
   }
 
   override update(_time: number, delta: number) {
     this.ambient.update(delta);
+    this.plates.update((id) => this.pigs.get(id)?.plateAnchor() ?? null);
   }
 
   private sync(snap: StoreSnapshot) {
@@ -197,6 +202,7 @@ export class MainFarmScene extends Phaser.Scene {
         this.fxAnchor,
       );
     }
+    this.plates.sync(new Map((save?.pigs ?? []).map((p) => [p.id, p.name])));
     const reduceMotion = save?.settings.reduceMotion ?? false;
     for (const [id, sprite] of this.pigs) {
       if (seen.has(id)) continue;

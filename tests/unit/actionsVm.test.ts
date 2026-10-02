@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ERRORS } from '../../src/core/config/errors';
+import { BALANCE } from '../../src/core/config/balance';
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
 import { rarityRank } from '../../src/core/config/rarity';
 import { vi } from '../../src/i18n/vi';
@@ -121,7 +122,9 @@ describe('shop (R03)', () => {
     expect(
       shopSlot({ ...s, player: { ...s.player, xp: 100, gold: 2000 } }, NOW)!.buy.reason,
     ).toBeNull();
-    expect(shopSlot({ ...s, player: { ...s.player, unlockedSlots: 12 } }, NOW)).toBeNull();
+    expect(
+      shopSlot({ ...s, player: { ...s.player, unlockedSlots: BALANCE.MAX_SLOTS } }, NOW),
+    ).toBeNull();
   });
 
   it('cleanAll never disabled', () => {

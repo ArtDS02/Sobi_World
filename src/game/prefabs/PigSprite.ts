@@ -1,7 +1,5 @@
-// One pig on the farm canvas (spec §11, §11.2): applies a PigView, never computes game state.
-// Base image + selection marker under the feet + fx overlays (PigOverlays, layer 5).
-// Feedback tweens (§11.3) animate a separate `motion` offset and wandering / pose live in
-// PigMover, so a store re-sync never fights them. Visual state: state/pigVisualState.ts.
+// One pig on the farm canvas (§11.2): image, selection marker, fx overlays. Feedback tweens (§11.3)
+// move a separate `motion` offset and PigMover owns wandering, so a re-sync never fights them.
 import * as Phaser from 'phaser';
 import { anchorOffset, type Anchors } from '../../core/assets/anchors';
 import { PIG_FEET_Y, type AnchorName, type FxId } from '../../core/config/assetIds';
@@ -18,6 +16,7 @@ import {
 import { pigScale, sleepLook, type FarmLayout, type PigView } from '../view/pigView';
 import { playPigAnimation, type Motion, type TweenablePig } from '../fx/pigAnimations';
 import { PigMover } from './PigMover';
+import type { PlateAnchor } from './Nameplates';
 import { PigOverlays } from './PigOverlays';
 import { SickTint } from './SickTint';
 
@@ -227,6 +226,13 @@ export class PigSprite {
       onUpdate: () => this.layout(),
       ...config,
     });
+  }
+
+  /** Where the name plate hangs (U05); null before the first view or while leaving. */
+  plateAnchor(): PlateAnchor | null {
+    const pos = this.mover.pos;
+    if (!pos || !this.applied || this.leaving) return null;
+    return { x: this.image.x, feetY: this.image.y, depth: pos.y, alpha: this.motion.alpha };
   }
 
   /** Feet position right now (start point for a newborn). */

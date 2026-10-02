@@ -33,6 +33,7 @@ async function start(root: HTMLElement) {
     opts.devTools = dev.renderDevTools(
       (ms) => skip?.(ms),
       () => gallery.openAssetGallery(root, assets.registry),
+      () => void store.dispatch(dev.devFillPigs),
     );
     const tools = opts.devTools;
     showDevFps = () => dev.showFps(tools, farmView?.fps() ?? null);

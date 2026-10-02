@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { BALANCE } from '../../src/core/config/balance';
 import { buyItem } from '../../src/core/actions/buyItem';
 import { buyPig } from '../../src/core/actions/buyPig';
 import { buySlot } from '../../src/core/actions/buySlot';
@@ -240,11 +241,15 @@ describe('buySlot (§8.11)', () => {
     expectError((s) => buySlot(s, {}, ctx()), at(100, 1999), 'INSUFFICIENT_GOLD');
   });
 
-  it('slot 12 needs level 9; nothing past MAX_SLOTS', () => {
+  it('slot 12 needs level 9; slots past 12 need level 10; nothing past MAX_SLOTS (U05)', () => {
     expectError((s) => buySlot(s, {}, ctx()), at(3000, 1_000_000, 11), 'LEVEL_TOO_LOW');
     const r = expectOk(buySlot(at(4200, 80_000, 11), {}, ctx()));
     expect(r.state.player.unlockedSlots).toBe(12);
-    expectError((s) => buySlot(s, {}, ctx()), r.state, 'MAX_SLOTS_REACHED');
+    expectError((s) => buySlot(s, {}, ctx()), r.state, 'LEVEL_TOO_LOW');
+    const last = at(5700, 10_000_000, BALANCE.MAX_SLOTS - 1);
+    const full = expectOk(buySlot(last, {}, ctx()));
+    expect(full.state.player.unlockedSlots).toBe(BALANCE.MAX_SLOTS);
+    expectError((s) => buySlot(s, {}, ctx()), full.state, 'MAX_SLOTS_REACHED');
   });
 });
 
