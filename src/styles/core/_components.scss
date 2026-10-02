@@ -54,6 +54,24 @@
   text-align: center;
 }
 
+// Rarity badge (U04): one modifier per key of $c-rarity.
+.c-badge {
+  display: inline-block;
+  justify-self: start;
+  padding: 0 $sp-2;
+  font-size: $fs-xs;
+  font-weight: $fw-bold;
+  line-height: $lh-base;
+  color: $c-on-primary;
+  border-radius: 9999px;
+
+  @each $name, $color in $c-rarity {
+    &--#{$name} {
+      background: $color;
+    }
+  }
+}
+
 // Manifest thumbnail (skins, collection). Undiscovered entries are a dark silhouette (§8.15).
 .c-thumb {
   display: block;

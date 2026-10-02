@@ -4,6 +4,7 @@ import { buySkin, equipSkin, skinFits, skinUnlocked } from '../core/actions/skin
 import type { AssetRegistry } from '../core/assets/registry';
 import { BREEDS } from '../core/config/breeds';
 import { BREED_ID_VALUES } from '../core/config/ids';
+import { RARITY_OF_SKIN_KEY, RARITY_VALUES, type Rarity } from '../core/config/rarity';
 import type { SkinDef } from '../core/config/skins';
 import type { Pig, SaveGame } from '../core/types';
 import { formatInt, t } from '../i18n/format';
@@ -16,6 +17,7 @@ export interface SkinCardVm {
   name: string;
   /** Thumbnail URL from the manifest, or null when the row has no file. */
   thumb: string | null;
+  rarity: Rarity;
   price: string;
   button: ActionVm;
 }
@@ -46,6 +48,7 @@ export function shopSkins(save: SaveGame, now: number, assets: AssetRegistry): S
       id: skin.id,
       name: skin.nameVi,
       thumb: assets.url(skin.id),
+      rarity: RARITY_OF_SKIN_KEY[skin.rarity],
       price: t(vi.hud.gold, { amount: formatInt(skin.priceGold ?? 0) }),
       button: { label: vi.action.buy, reason, run },
     };
@@ -63,6 +66,7 @@ export function pigSkins(save: SaveGame, pig: Pig, assets: AssetRegistry): SkinC
         id: skin.id,
         name: skin.nameVi,
         thumb: assets.url(skin.id),
+        rarity: RARITY_OF_SKIN_KEY[skin.rarity],
         price: '',
         button: {
           label: worn ? vi.action.equipped : vi.action.equip,
@@ -81,8 +85,16 @@ export interface BookEntryVm {
   found: boolean;
 }
 
+export interface BookGroupVm {
+  rarity: Rarity;
+  progress: string;
+  entries: BookEntryVm[];
+}
+
 export interface CollectionVm {
   breeds: BookEntryVm[];
+  /** The same species entries, one group per rarity that has any (U04). */
+  breedGroups: BookGroupVm[];
   skins: BookEntryVm[];
   breedProgress: string;
   skinProgress: string;
@@ -106,5 +118,15 @@ export function collectionVm(save: SaveGame, assets: AssetRegistry | null): Coll
   );
   const progress = (list: BookEntryVm[]) =>
     t(vi.collection.progress, { found: list.filter((e) => e.found).length, total: list.length });
-  return { breeds, skins, breedProgress: progress(breeds), skinProgress: progress(skins) };
+  const breedGroups = RARITY_VALUES.map((rarity) => {
+    const entries = breeds.filter((_, i) => BREEDS[BREED_ID_VALUES[i]!].rarity === rarity);
+    return { rarity, progress: progress(entries), entries };
+  }).filter((g) => g.entries.length > 0);
+  return {
+    breeds,
+    breedGroups,
+    skins,
+    breedProgress: progress(breeds),
+    skinProgress: progress(skins),
+  };
 }

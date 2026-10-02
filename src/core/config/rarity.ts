@@ -12,5 +12,14 @@ export const RARITY_OF_SKIN_KEY: Record<SkinRarityKey, Rarity> = {
   P5: 'LEGENDARY',
 };
 
+/** NPC order demand per rarity (U04): common species are wanted more often, TUNABLE. */
+export const RARITY_ORDER_WEIGHT: Record<Rarity, number> = {
+  COMMON: 6,
+  UNCOMMON: 4,
+  RARE: 2,
+  EPIC: 1,
+  LEGENDARY: 0.5,
+};
+
 /** 0 = COMMON … 4 = LEGENDARY. */
 export const rarityRank = (r: Rarity): number => RARITY_VALUES.indexOf(r);

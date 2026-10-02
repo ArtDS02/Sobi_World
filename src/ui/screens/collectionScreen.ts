@@ -2,6 +2,7 @@
 import type { AssetRegistry } from '../../core/assets/registry';
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
+import { rarityBadge } from '../components/rarityBadge';
 import { thumb } from '../components/thumb';
 import { el } from '../dom';
 import { collectionVm, type BookEntryVm } from '../skinsVm';
@@ -35,7 +36,15 @@ export function renderCollectionScreen(save: SaveGame, assets: AssetRegistry | n
     { class: 'collection', data: { screen: 'collection' } },
     el('h2', { class: 'collection__title', text: vi.collection.title }),
     heading(vi.collection.breeds, vm.breedProgress),
-    grid(vm.breeds),
+    ...vm.breedGroups.flatMap((g) => [
+      el(
+        'h4',
+        { class: 'collection__group' },
+        rarityBadge(g.rarity),
+        el('span', { class: 'collection__progress', text: g.progress }),
+      ),
+      grid(g.entries),
+    ]),
     heading(vi.collection.skins, vm.skinProgress),
     grid(vm.skins),
   );

@@ -17,6 +17,14 @@ $c-danger-soft: #fde4e4;
 $c-farm-letterbox: #9bd37a; // matches FARM_FALLBACK.GROUND, behind the letterboxed canvas
 $c-overlay: rgba(59, 42, 38, 0.92);
 $c-backdrop: rgba(59, 42, 38, 0.45);
+// Rarity badges, keyed by the lowercase Rarity id (core/config/rarity.ts).
+$c-rarity: (
+  common: #8a8f87,
+  uncommon: #4f9d5d,
+  rare: #3f7fd6,
+  epic: #9b59d0,
+  legendary: #e08a1e,
+);
 
 // Type
 $ff-base:

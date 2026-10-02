@@ -37,6 +37,11 @@
     gap: $sp-3;
   }
 
+  .shop__group {
+    grid-column: 1 / -1;
+    padding-top: $sp-2;
+  }
+
   .shop__card {
     display: grid;
     gap: $sp-2;

@@ -177,6 +177,7 @@ export const vi = {
     quantity: "Số lượng",
     total: "Tổng: {gold} vàng",
     owned: "Đã sở hữu",
+    sellUpTo: "Bán tới {gold} vàng",
   },
 
   trough: {
@@ -223,6 +224,14 @@ export const vi = {
   // Wardrobe dialog (spec §8.13); not in Appendix B.
   wardrobe: {
     title: "Thay đồ cho {name}",
+  },
+
+  rarity: {
+    COMMON: "Thường",
+    UNCOMMON: "Khá hiếm",
+    RARE: "Hiếm",
+    EPIC: "Sử thi",
+    LEGENDARY: "Huyền thoại",
   },
 
   collection: {

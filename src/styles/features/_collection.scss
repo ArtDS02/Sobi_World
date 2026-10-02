@@ -16,6 +16,13 @@
     border-bottom: 1px solid $c-border;
   }
 
+  .collection__group {
+    display: flex;
+    gap: $sp-2;
+    align-items: center;
+    font-size: $fs-sm;
+  }
+
   .collection__progress {
     color: $c-text-muted;
   }

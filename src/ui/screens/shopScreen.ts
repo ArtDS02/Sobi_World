@@ -1,11 +1,13 @@
 // Shop (spec §10.1): pigs, items, slots and skins (§8.13, catalogue from the manifest).
 import type { AssetRegistry } from '../../core/assets/registry';
 import type { ItemId } from '../../core/config/ids';
+import type { Rarity } from '../../core/config/rarity';
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
 import type { BoundAction } from '../../store/gameStore';
 import { shopItems, shopPigs, shopSlot } from '../actionsVm';
 import { actionButton } from '../components/actionButton';
+import { rarityBadge } from '../components/rarityBadge';
 import { thumb } from '../components/thumb';
 import { el } from '../dom';
 import { shopSkins } from '../skinsVm';
@@ -28,19 +30,33 @@ const card = (title: string, ...rest: (HTMLElement | null)[]) =>
   el('li', { class: 'shop__card' }, el('h3', { class: 'shop__name', text: title }), ...rest);
 const line = (cls: string, text: string) => el('p', { class: `shop__${cls}`, text });
 
-function pigsTab(save: SaveGame, now: number, on: ShopHandlers) {
-  return shopPigs(save, now).map((p) =>
-    card(
-      p.name,
-      line('price', p.price),
+/** Species cards, one heading row per rarity (U04). */
+function pigsTab(save: SaveGame, now: number, on: ShopHandlers, assets: AssetRegistry | null) {
+  const rows: HTMLElement[] = [];
+  let group: Rarity | null = null;
+  for (const p of shopPigs(save, now, assets)) {
+    if (p.rarity !== group) {
+      group = p.rarity;
+      rows.push(el('li', { class: 'shop__group' }, rarityBadge(p.rarity)));
+    }
+    rows.push(
       el(
-        'div',
-        { class: 'shop__actions' },
-        actionButton(p.male, () => on.act(p.male.run)),
-        actionButton(p.female, () => on.act(p.female.run)),
+        'li',
+        { class: 'shop__card shop__card--pig', data: { breed: p.breed } },
+        thumb(p.thumb, p.name),
+        el('h3', { class: 'shop__name', text: p.name }),
+        line('price', p.price),
+        line('desc', p.sell),
+        el(
+          'div',
+          { class: 'shop__actions' },
+          actionButton(p.male, () => on.act(p.male.run)),
+          actionButton(p.female, () => on.act(p.female.run)),
+        ),
       ),
-    ),
-  );
+    );
+  }
+  return rows;
 }
 
 function itemsTab(save: SaveGame, on: ShopHandlers) {
@@ -80,6 +96,7 @@ function skinsTab(save: SaveGame, now: number, on: ShopHandlers, assets: AssetRe
       { class: 'shop__card shop__card--skin', data: { skin: skin.id } },
       thumb(skin.thumb, skin.name),
       el('h3', { class: 'shop__name', text: skin.name }),
+      rarityBadge(skin.rarity),
       line('price', skin.price),
       actionButton(skin.button, () => on.act(skin.button.run)),
     ),
@@ -95,7 +112,7 @@ export function renderShopScreen(
 ): HTMLElement {
   const cards =
     tab === 'pigs'
-      ? pigsTab(save, now, on)
+      ? pigsTab(save, now, on, assets)
       : tab === 'items'
         ? itemsTab(save, on)
         : tab === 'slots'

@@ -13,8 +13,11 @@ import type { ErrorCode } from '../core/config/errors';
 import { BALANCE } from '../core/config/balance';
 import { BREED_IDS } from '../core/config/breeds';
 import type { BreedId, Gender, ItemId } from '../core/config/ids';
-import { slotUnlock } from '../core/config/levels';
+import { levelFromXp, slotUnlock } from '../core/config/levels';
+import { rarityRank } from '../core/config/rarity';
+import type { AssetRegistry } from '../core/assets/registry';
 import { ITEM_IDS, ITEMS } from '../core/config/items';
+import { sellMultiplier } from '../core/engine/pricing';
 import { mulberry32 } from '../core/rng';
 import type { SaveGame } from '../core/types';
 import { formatInt, t } from '../i18n/format';
@@ -73,16 +76,31 @@ export function farmActions(save: SaveGame, now: number) {
 
 const goldText = (amount: number) => t(vi.hud.gold, { amount: formatInt(amount) });
 
-/** Shop pigs tab: every breed with a shop price (D6), one button per gender. */
-export function shopPigs(save: SaveGame, now: number) {
-  const buyable = BREED_IDS.filter((id) => BREEDS[id].buyGold !== null);
+/**
+ * Shop pigs tab: every species with a shop price, commonest first (stable in config order), one
+ * button per gender. The level lock reads better than "not enough gold" when both fail.
+ */
+export function shopPigs(save: SaveGame, now: number, assets: AssetRegistry | null = null) {
+  const buyable = BREED_IDS.filter((id) => BREEDS[id].buyGold !== null).sort(
+    (a, b) => rarityRank(BREEDS[a].rarity) - rarityRank(BREEDS[b].rarity),
+  );
+  const level = levelFromXp(save.player.xp);
   return buyable.map((breed: BreedId) => {
-    const buy = (gender: Gender) =>
-      vm(save, now, vi.gender[gender], (s, c) => buyPig(s, { breed, gender }, c));
+    const def = BREEDS[breed];
+    const lock = level < def.unlockLevel ? t(vi.shop.slotLocked, { level: def.unlockLevel }) : null;
+    const buy = (gender: Gender): ActionVm => {
+      const b = vm(save, now, vi.gender[gender], (s, c) => buyPig(s, { breed, gender }, c));
+      return lock ? { ...b, reason: lock } : b;
+    };
     return {
       breed,
-      name: BREEDS[breed].nameVi,
-      price: goldText(BREEDS[breed].buyGold ?? 0),
+      rarity: def.rarity,
+      name: def.nameVi,
+      thumb: assets?.url(def.defaultSkin) ?? null,
+      price: goldText(def.buyGold ?? 0),
+      sell: t(vi.shop.sellUpTo, {
+        gold: formatInt(Math.floor(def.sellGold * sellMultiplier(100))),
+      }),
       male: buy('MALE'),
       female: buy('FEMALE'),
     };

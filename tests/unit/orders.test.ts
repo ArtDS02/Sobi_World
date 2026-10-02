@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { fulfillOrder } from '../../src/core/actions/fulfillOrder';
 import { BALANCE } from '../../src/core/config/balance';
+import { BREEDS } from '../../src/core/config/breeds';
 import { BREED_ID_VALUES, type BreedId } from '../../src/core/config/ids';
+import { RARITY_ORDER_WEIGHT } from '../../src/core/config/rarity';
 import { advanceWorld } from '../../src/core/engine/advanceWorld';
 import { generateOrder, orderWindowIndex, refreshOrders } from '../../src/core/engine/orders';
 import { mulberry32, orderSeed } from '../../src/core/rng';
@@ -69,7 +71,7 @@ describe('order generation (§8.14, §14.5)', () => {
     expect(refreshOrders(discovered([]), T)).toEqual({ state: discovered([]), events: [] });
   });
 
-  it('breeds are picked uniformly (Q1) and requirements come from the spec sets', () => {
+  it('breeds are weighted by rarity (U04-1) and requirements come from the spec sets', () => {
     const counts = new Map<string, number>();
     for (let w = 0; w < 4000; w += 1) {
       const o = generateOrder(w, w % 3, BREED_ID_VALUES);
@@ -77,8 +79,10 @@ describe('order generation (§8.14, §14.5)', () => {
       expect([0, 50, 75]).toContain(o.minHappiness);
       expect([null, 'MALE', 'FEMALE']).toContain(o.wantGender);
     }
-    const even = 1 / BREED_ID_VALUES.length;
-    for (const b of BREED_ID_VALUES) expect(Math.abs(counts.get(b)! / 4000 - even)).toBeLessThan(0.02);
+    const weight = (b: BreedId) => RARITY_ORDER_WEIGHT[BREEDS[b].rarity];
+    const total = BREED_ID_VALUES.reduce((sum, b) => sum + weight(b), 0);
+    for (const b of BREED_ID_VALUES)
+      expect(Math.abs((counts.get(b) ?? 0) / 4000 - weight(b) / total), b).toBeLessThan(0.02);
   });
 
   it('emits ORDER_NEW once and is idempotent for the same now', () => {

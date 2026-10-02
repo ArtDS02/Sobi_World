@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { RARITY_VALUES } from '../../src/core/config/rarity';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { buyPig } from '../../src/core/actions/buyPig';
 import { buySkin, equipSkin } from '../../src/core/actions/skins';
@@ -145,6 +146,10 @@ describe('collection book (§8.15, §14.5)', () => {
     expect(vm.breeds.map((b) => b.found)).toEqual(vm.breeds.map((_, i) => i === 0));
     expect(vm.breeds[1]!.name).toBe(vi.collection.undiscovered);
     expect(vm.breedProgress).toBe(`1/${vm.breeds.length}`);
+    // Grouped by rarity: every species once, COMMON first with the one found pig.
+    expect(vm.breedGroups.map((g) => g.rarity)).toEqual([...RARITY_VALUES]);
+    expect(vm.breedGroups.flatMap((g) => g.entries)).toHaveLength(vm.breeds.length);
+    expect(vm.breedGroups[0]!.progress).toBe(`1/${vm.breedGroups[0]!.entries.length}`);
     expect(vm.skins).toHaveLength(skins.all().length);
     // Pre-R07B saves: a discovered breed's default skin shows as found.
     expect(vm.skins.filter((e) => e.found).map((e) => e.id)).toEqual(['pig_classic']);

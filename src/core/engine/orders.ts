@@ -1,11 +1,14 @@
 // NPC orders (spec §8.14, D20): derived from the clock, so the same window always yields the same
-// orders and no seed is stored. DECISIONS C1 (cap 6), Q1 (uniform breed), Q2 (no regen), Q3 (hash).
+// orders and no seed is stored. DECISIONS C1 (cap 6), U04-1 (breed weighted by rarity, was Q1),
+// Q2 (no regen), Q3 (hash).
 import { BALANCE } from '../config/balance';
 import { BREEDS } from '../config/breeds';
 import { BREED_ID_VALUES, GENDER_VALUES, type BreedId } from '../config/ids';
+import { RARITY_ORDER_WEIGHT } from '../config/rarity';
 import type { GameEvent } from '../events';
 import { mulberry32, orderSeed, pick } from '../rng';
 import type { Order, SaveGame } from '../types';
+import { weightedPick } from './breeding';
 
 const MIN_HAPPINESS = [0, 50, 75] as const;
 const GENDER_CHANCE = 0.4;
@@ -22,9 +25,12 @@ export function generateOrder(
   breeds: readonly BreedId[],
 ): Order {
   const rng = mulberry32(orderSeed(windowIndex, slot));
-  const pool = BREED_ID_VALUES.filter((b) => breeds.includes(b));
+  const pool = BREED_ID_VALUES.filter((b) => breeds.includes(b)).map((breed) => ({
+    breed,
+    weight: RARITY_ORDER_WEIGHT[BREEDS[breed].rarity],
+  }));
   const createdAt = windowIndex * BALANCE.ORDER_WINDOW_MS;
-  const wantBreed = pick(rng, pool);
+  const wantBreed = weightedPick(rng, pool);
   const wantGender = rng.next() < GENDER_CHANCE ? pick(rng, GENDER_VALUES) : null;
   const minHappiness = pick(rng, MIN_HAPPINESS);
   return {

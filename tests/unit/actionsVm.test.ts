@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ERRORS } from '../../src/core/config/errors';
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
+import { rarityRank } from '../../src/core/config/rarity';
 import { vi } from '../../src/i18n/vi';
 import {
   farmActions,
@@ -87,6 +88,16 @@ describe('shop (R03)', () => {
       BREED_IDS.filter((id) => BREEDS[id].buyGold !== null),
     );
     expect(shopPigs(farm(), NOW).map((p) => p.breed)).toContain('PIG_TIGER');
+  });
+
+  it('pig cards come commonest first and show the level a locked species needs (U04)', () => {
+    const rows = shopPigs(farm(), NOW);
+    const ranks = rows.map((p) => rarityRank(p.rarity));
+    expect(ranks).toEqual([...ranks].sort((a, b) => a - b));
+    const tiger = rows.find((p) => p.breed === 'PIG_TIGER')!;
+    expect(tiger.male.reason).toBe('Cần cấp 6');
+    expect(rows.find((p) => p.breed === 'PIG_EARTH_PINK')!.male.reason).toBeNull();
+    expect(tiger.sell).toBe('Bán tới 14.400 vàng');
   });
 
   it('item purchase: live total, invalid quantity and gold shortfall disable the button', () => {
