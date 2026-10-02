@@ -4,11 +4,13 @@ import * as Phaser from 'phaser';
 import type { AssetRegistry } from '../core/assets/registry';
 import type { FarmAction } from '../core/config/assetIds';
 import type { GameStore } from '../store/gameStore';
+import { FARM_VIEW } from '../core/config/farmView';
 import { phaserConfig } from './config/phaser';
 import { noEffects, type FarmEffects } from './feedback/effects';
 import { BootScene } from './scenes/BootScene';
 import { MainFarmScene } from './scenes/MainFarmScene';
 import { PreloadScene } from './scenes/PreloadScene';
+import { stageFit } from './view/stageFit';
 
 export interface FarmDeps {
   store: GameStore;
@@ -47,12 +49,32 @@ export interface FarmView {
 export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
   const bridge: FarmBridge = { selectedId: null, refresh: () => {}, effects: noEffects };
   const scenes = [new BootScene(), new PreloadScene(deps), new MainFarmScene(deps, bridge)];
-  const game = new Phaser.Game(phaserConfig(host, deps.assets.manifest.layout, scenes));
+  // The canvas lives in a frame sized by stageFit (covers the host, crops ≤ STAGE_MAX_CROP).
+  const frame = document.createElement('div');
+  frame.className = 'app__frame';
+  host.append(frame);
+  const { designSize } = deps.assets.manifest.layout;
+  const placeFrame = () => {
+    const b = stageFit(
+      host.clientWidth,
+      host.clientHeight,
+      designSize.width,
+      designSize.height,
+      FARM_VIEW.STAGE_MAX_CROP,
+    );
+    frame.style.width = `${b.width}px`;
+    frame.style.height = `${b.height}px`;
+    frame.style.left = `${b.left}px`;
+    frame.style.top = `${b.top}px`;
+  };
+  placeFrame();
+  const game = new Phaser.Game(phaserConfig(frame, deps.assets.manifest.layout, scenes));
   let visible = true;
   let running = false;
   const applyVisible = () => {
     if (visible) {
       game.loop.wake();
+      placeFrame();
       // The host was display:none; measure it now instead of waiting for Phaser's resize poll.
       game.scale.getParentBounds();
       game.scale.refresh();
@@ -65,9 +87,10 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
     running = true;
     applyVisible();
   });
-  // §10.4: the canvas follows its container (window resize, F11, a banner appearing above it),
-  // letterboxed by Scale.FIT, never stretched.
+  // §10.4: the canvas follows its container (window resize, F11, a banner appearing above it):
+  // the frame is re-placed by stageFit and Phaser fits the frame, never stretched.
   const resize = new ResizeObserver(() => {
+    placeFrame();
     if (!running || !visible) return;
     game.scale.getParentBounds();
     game.scale.refresh();
@@ -90,6 +113,7 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
     destroy: () => {
       resize.disconnect();
       game.destroy(true);
+      frame.remove();
     },
   };
 }

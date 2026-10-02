@@ -24,7 +24,8 @@ describe('giftSpot (U06)', () => {
   });
 
   it('avoids obstacles, pig homes and other gifts when there is room', () => {
-    const trough: Rect = { x: 650, y: 600, width: 300, height: 120 };
+    // Inside the walk ellipse (centre 800, 580).
+    const trough: Rect = { x: 700, y: 560, width: 200, height: 100 };
     const pigHomes = [
       { x: 300, y: 700 },
       { x: 1200, y: 760 },

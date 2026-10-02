@@ -1,4 +1,6 @@
 // Composition root: pick the platform, create the store, mount the DOM UI + Phaser farm, load the save.
+import '@fontsource/baloo-2/500.css';
+import '@fontsource/baloo-2/700.css';
 import './styles/main.scss';
 import type { Clock } from './core/clock';
 import { AudioManager, audioTracks, type AudioClip } from './game/audio/AudioManager';
@@ -19,6 +21,8 @@ async function start(root: HTMLElement) {
     root.replaceChildren(renderManifestError(assets.message));
     return;
   }
+  // The farm canvas draws text with Baloo 2: have it (bundled, never fetched online) before Phaser.
+  await document.fonts.load('700 20px "Baloo 2"', 'Ủn Ỉn Cấp vàng').catch(() => []);
   let clock: Clock = realClock;
   const opts: AppOptions = {};
   let skip: ((ms: number) => void) | null = null;

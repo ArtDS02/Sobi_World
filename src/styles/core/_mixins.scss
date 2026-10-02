@@ -11,3 +11,10 @@ $_breakpoints: (
     @content;
   }
 }
+
+/// Max-height query for short (landscape phone) screens: the HUD shrinks.
+@mixin mq-short {
+  @media (max-height: #{$bp-short - 1px}) {
+    @content;
+  }
+}

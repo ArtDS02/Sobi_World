@@ -1032,10 +1032,10 @@
       "height": 900
     },
     "walkArea": {
-      "x": 0.08,
-      "y": 0.62,
-      "width": 0.84,
-      "height": 0.33
+      "x": 0.2313,
+      "y": 0.4333,
+      "width": 0.5375,
+      "height": 0.4222
     },
     "pigScaleByY": {
       "min": 0.85,
@@ -1043,179 +1043,138 @@
     },
     "placements": [
       {
-        "id": "env_sky",
-        "layer": 0,
-        "x": 0.5,
-        "y": 0,
-        "originY": 0
-      },
-      {
         "id": "env_cloud_1",
         "layer": 0,
         "x": 0.22,
-        "y": 0.08,
+        "y": 0.03,
         "originY": 0
       },
       {
         "id": "env_cloud_2",
         "layer": 0,
         "x": 0.72,
-        "y": 0.14,
+        "y": 0.08,
         "originY": 0
-      },
-      {
-        "id": "env_hills_far",
-        "layer": 1,
-        "x": 0.5,
-        "y": 0.58,
-        "originY": 1
-      },
-      {
-        "id": "env_trees_mid",
-        "layer": 1,
-        "x": 0.5,
-        "y": 0.62,
-        "originY": 1
-      },
-      {
-        "id": "env_ground_grass",
-        "layer": 2,
-        "x": 0.5,
-        "y": 0.56,
-        "originY": 0
-      },
-      {
-        "id": "prop_windmill",
-        "layer": 2,
-        "x": 0.035,
-        "y": 0.585
       },
       {
         "id": "prop_mud_puddle",
         "layer": 2,
-        "x": 0.74,
-        "y": 0.86
-      },
-      {
-        "id": "prop_red_tree",
-        "layer": 3,
-        "x": 0.985,
-        "y": 0.635
+        "x": 0.6,
+        "y": 0.8444,
+        "width": 220
       },
       {
         "id": "prop_pig_house",
-        "layer": 3,
-        "x": 0.125,
-        "y": 0.62,
-        "action": "collection"
+        "layer": 4,
+        "x": 0.1219,
+        "y": 0.3833,
+        "width": 285,
+        "action": "collection",
+        "signed": true
       },
       {
         "id": "prop_hay_shed",
-        "layer": 3,
-        "x": 0.355,
-        "y": 0.615,
+        "layer": 4,
+        "x": 0.2813,
+        "y": 0.3722,
+        "width": 190,
         "action": "inventory",
         "signed": true
       },
       {
-        "id": "prop_water_well",
-        "layer": 3,
-        "x": 0.565,
-        "y": 0.615,
-        "action": "cleanAll",
-        "signed": true
+        "id": "prop_red_tree",
+        "layer": 4,
+        "x": 0.3875,
+        "y": 0.35,
+        "width": 120
+      },
+      {
+        "id": "prop_order_board",
+        "layer": 4,
+        "x": 0.6625,
+        "y": 0.3722,
+        "width": 150,
+        "role": "orderBoard",
+        "action": "orders",
+        "signed": true,
+        "badge": "orders"
       },
       {
         "id": "prop_shop_stall",
-        "layer": 3,
-        "x": 0.735,
-        "y": 0.615,
+        "layer": 4,
+        "x": 0.8469,
+        "y": 0.3833,
+        "width": 290,
         "action": "shop",
         "signed": true
       },
       {
-        "id": "prop_order_board",
-        "layer": 3,
-        "x": 0.9,
-        "y": 0.62,
-        "role": "orderBoard",
-        "action": "orders",
-        "signed": true
-      },
-      {
-        "id": "prop_hay_bale",
+        "id": "prop_water_well",
         "layer": 4,
-        "x": 0.255,
-        "y": 0.66
-      },
-      {
-        "id": "prop_wheelbarrow",
-        "layer": 4,
-        "x": 0.655,
-        "y": 0.655
-      },
-      {
-        "id": "prop_apple_crate",
-        "layer": 4,
-        "x": 0.835,
-        "y": 0.665
-      },
-      {
-        "id": "prop_food_sack",
-        "layer": 4,
-        "x": 0.39,
-        "y": 0.79
-      },
-      {
-        "id": "prop_feed_trough",
-        "layer": 4,
-        "x": 0.5,
-        "y": 0.76,
-        "role": "trough",
-        "action": "trough",
+        "x": 0.075,
+        "y": 0.6222,
+        "width": 160,
+        "action": "cleanAll",
         "signed": true
       },
       {
         "id": "prop_water_bowl",
         "layer": 4,
-        "x": 0.28,
-        "y": 0.9
+        "x": 0.1688,
+        "y": 0.7111,
+        "width": 130
       },
       {
-        "id": "prop_fence_section",
+        "id": "prop_food_sack",
         "layer": 4,
-        "x": 0.03,
-        "y": 0.745
+        "x": 0.0594,
+        "y": 0.9222,
+        "width": 100
       },
       {
-        "id": "prop_mushroom",
+        "id": "prop_feed_trough",
         "layer": 4,
-        "x": 0.035,
-        "y": 0.84
+        "x": 0.1625,
+        "y": 0.9444,
+        "width": 230,
+        "role": "trough",
+        "action": "trough",
+        "signed": true
       },
       {
-        "id": "prop_veggie_patch",
+        "id": "prop_apple_crate",
         "layer": 4,
-        "x": 0.07,
-        "y": 0.995
+        "x": 0.925,
+        "y": 0.6444,
+        "width": 150
       },
       {
         "id": "prop_sunflower",
         "layer": 4,
-        "x": 0.965,
-        "y": 0.82
+        "x": 0.9375,
+        "y": 0.9556,
+        "width": 120
       },
       {
         "id": "prop_rock",
         "layer": 4,
-        "x": 0.86,
-        "y": 0.995
+        "x": 0.8406,
+        "y": 0.8889,
+        "width": 90
+      },
+      {
+        "id": "prop_mushroom",
+        "layer": 4,
+        "x": 0.6844,
+        "y": 0.9778,
+        "width": 62
       },
       {
         "id": "prop_bush",
         "layer": 4,
-        "x": 0.95,
-        "y": 0.995
+        "x": 0.7625,
+        "y": 0.9833,
+        "width": 160
       }
     ]
   }

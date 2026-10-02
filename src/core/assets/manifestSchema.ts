@@ -93,6 +93,10 @@ export const placementSchema = z.object({
   action: z.enum(FARM_ACTIONS).optional(),
   /** The art carries its own name sign: no text label is drawn over it (A4). */
   signed: z.boolean().optional(),
+  /** On-screen width in design px; the art keeps its aspect ratio (absent: native size). */
+  width: z.number().positive().optional(),
+  /** Notification badge drawn on the object (farm layout v4.1 rework). */
+  badge: z.enum(['orders']).optional(),
 });
 
 export const layoutSchema = z.object({

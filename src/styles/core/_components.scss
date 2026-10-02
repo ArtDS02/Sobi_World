@@ -121,10 +121,11 @@
   }
 }
 
+// Top centre, under the HUD pills (farm layout rework).
 .c-toast-host {
   position: fixed;
+  top: calc(#{$hud-pill-h} + #{$sp-6});
   right: $sp-3;
-  bottom: calc(#{$sp-touch-min} + #{$sp-3});
   left: $sp-3;
   z-index: $z-toast;
   display: flex;

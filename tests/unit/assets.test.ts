@@ -106,14 +106,14 @@ describe('asset registry (spec §11.4)', () => {
       expect(row.status, row.id).not.toBe('placeholder');
       expect(reg.url(row.id, row.asset ? 'asset' : 'full'), row.id).not.toBeNull();
     }
-    for (const id of ['prop_windmill', 'prop_hay_bale', 'prop_sunflower', 'prop_bush'])
+    for (const id of ['prop_red_tree', 'prop_sunflower', 'prop_bush', 'prop_mushroom'])
       expect(m.layout.placements.some((p) => p.id === id), id).toBe(true);
   });
 
   it('a painted sign replaces the text tag only on clickable objects (A4)', () => {
     for (const p of reg.placements().filter((x) => x.signed)) expect(p.action, p.id).toBeDefined();
-    // The pig house opens the collection, which its art does not say: it keeps its tag.
-    expect(reg.placements().find((p) => p.id === 'prop_pig_house')?.signed).toBeFalsy();
+    // The pig house art (user art, farm layout rework) carries its own "Chuồng Heo" sign.
+    expect(reg.placements().find((p) => p.id === 'prop_pig_house')?.signed).toBe(true);
   });
 
   it('placements sorted back to front, filterable by layer, roles present', () => {

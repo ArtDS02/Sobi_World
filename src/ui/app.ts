@@ -66,12 +66,12 @@ export function mountApp(
   let popup: PopupShell | null = null;
   const toasts = el('div', { class: 'c-toast-host', attrs: { 'aria-live': 'polite' } });
   const dialogs = el('div', { class: 'app__dialogs' });
+  // The HUD floats over the farm (farm layout rework); banners stay above it in the flow.
   appEl.append(
-    topbar,
     banner,
     saveBanner,
     opts.devTools ?? '',
-    el('div', { class: 'app__world' }, stage, hint, coach),
+    el('div', { class: 'app__world' }, stage, topbar, hint, coach),
     main,
     popupHost,
     toasts,
@@ -229,7 +229,7 @@ export function mountApp(
     const save = snap.save;
     patch(
       topbar,
-      renderTopBar(save, {
+      renderTopBar(save, now(), {
         settings: () => go('settings'),
         trough: () => openTrough(),
         history: () => go('history'),

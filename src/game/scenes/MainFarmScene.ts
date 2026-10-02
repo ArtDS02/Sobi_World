@@ -9,7 +9,8 @@ import {
   type FarmAction,
   type FxId,
 } from '../../core/config/assetIds';
-import { FARM_FALLBACK, FARM_VIEW } from '../../core/config/farmView';
+import { FARM_VIEW } from '../../core/config/farmView';
+import { readyOrderCount } from '../../core/actions/fulfillOrder';
 import type { SaveGame } from '../../core/types';
 import type { StoreSnapshot } from '../../store/gameStore';
 import { SCENE_KEYS } from '../config/phaser';
@@ -18,12 +19,15 @@ import { noEffects } from '../feedback/effects';
 import { Ambient } from '../fx/ambient';
 import { SceneEffects } from '../fx/SceneEffects';
 import { vi } from '../../i18n/vi';
+import { drawBackdrop } from '../prefabs/Backdrop';
 import { GIFT_ID_DATA, GiftBoxes } from '../prefabs/GiftBoxes';
 import { Nameplates } from '../prefabs/Nameplates';
-import { PIG_ID_DATA, PigSprite, type PigEnv } from '../prefabs/PigSprite';
+import { addHover, addShadow, Badge } from '../prefabs/ObjectDecor';
+import type { PigEnv } from '../prefabs/pigEnv';
+import { PIG_ID_DATA, PigSprite } from '../prefabs/PigSprite';
 import { giftSpot, type Rect } from '../view/giftPlacement';
 import { pigView, type FarmLayout } from '../view/pigView';
-import { groundLineY, placementView } from '../view/sceneLayout';
+import { placementView } from '../view/sceneLayout';
 import {
   anchorsKey,
   FALLBACK_PROP_KEY,
@@ -55,6 +59,7 @@ export class MainFarmScene extends Phaser.Scene {
   private readonly requested = new Set<string>();
   private trough: Phaser.GameObjects.Image | null = null;
   private board: Phaser.GameObjects.Image | null = null;
+  private ordersBadge: Badge | null = null;
   private layout!: FarmLayout;
   private pigEnv!: PigEnv;
   private ambient!: Ambient;
@@ -76,12 +81,14 @@ export class MainFarmScene extends Phaser.Scene {
       layout: this.layout,
       troughX: () => this.trough?.x ?? null,
       reduceMotion: () => this.deps.store.getSnapshot().save?.settings.reduceMotion ?? false,
+      others: (pigId) =>
+        [...this.pigs].filter(([id]) => id !== pigId).flatMap(([, p]) => p.dest() ?? []),
     };
     warnLoadErrors(this.load);
     this.ambient = new Ambient(this, this.pigEnv.reduceMotion);
     this.plates = new Nameplates(this);
     this.gifts = new GiftBoxes(this, this.pigEnv.reduceMotion);
-    this.drawBackdrop();
+    drawBackdrop(this, this.layout.designSize.width, this.layout.designSize.height);
     this.drawPlacements();
     // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
     if (!this.pigEnv.reduceMotion()) this.cameras.main.fadeIn(FARM_VIEW.AMBIENT.fadeInMs);
@@ -109,18 +116,6 @@ export class MainFarmScene extends Phaser.Scene {
     this.sync(this.deps.store.getSnapshot());
   }
 
-  /** Flat sky and ground fills: what shows where an environment file is missing (spec §11.4). */
-  private drawBackdrop() {
-    const { width, height } = this.layout.designSize;
-    const isEnv = (id: string) => this.deps.assets.resolve(id)?.section === 'environment';
-    const ground = groundLineY(this.layout, isEnv);
-    this.add.rectangle(0, 0, width, ground, FARM_FALLBACK.SKY).setOrigin(0).setDepth(-Infinity);
-    this.add
-      .rectangle(0, ground, width, height - ground, FARM_FALLBACK.GROUND)
-      .setOrigin(0)
-      .setDepth(-Infinity);
-  }
-
   private drawPlacements() {
     const { width, height } = this.layout.designSize;
     this.layout.placements.forEach((p, i) => {
@@ -133,8 +128,7 @@ export class MainFarmScene extends Phaser.Scene {
           .image(v.x, v.y, this.textures.exists(first) ? first : FALLBACK_PROP_KEY)
           .setOrigin(v.originX, v.originY)
           .setDepth(v.depth);
-        if (p.action) this.makeClickable(this.trough, p.action, !p.signed);
-        this.obstacles.push(this.trough.getBounds());
+        this.dress(this.trough, p);
         return;
       }
       const key = textureKey(p.id);
@@ -155,11 +149,25 @@ export class MainFarmScene extends Phaser.Scene {
         .image(v.x, v.y, loaded ? key : FALLBACK_PROP_KEY)
         .setOrigin(v.originX, v.originY)
         .setDepth(v.depth);
-      if (entry?.section === 'environment') this.ambient.add(p.id, img);
+      if (entry?.section === 'environment') {
+        this.ambient.add(p.id, img);
+        return;
+      }
       if (p.role === 'orderBoard') this.board = img;
-      this.obstacles.push(img.getBounds());
-      if (p.action) this.makeClickable(img, p.action, !p.signed);
+      this.dress(img, p);
     });
+  }
+
+  /** Width from the layout, shadow, gift obstacle, click + hover, badge (non-environment art). */
+  private dress(img: Phaser.GameObjects.Image, p: FarmLayout['placements'][number]) {
+    if (p.width) img.setScale(p.width / img.width);
+    if (p.layer > 2) addShadow(this, img);
+    this.obstacles.push(img.getBounds());
+    if (p.action) {
+      this.makeClickable(img, p.action, !p.signed);
+      addHover(this, img, this.pigEnv.reduceMotion);
+    }
+    if (p.badge === 'orders') this.ordersBadge = new Badge(this, img, this.pigEnv.reduceMotion);
   }
 
   /**
@@ -174,9 +182,9 @@ export class MainFarmScene extends Phaser.Scene {
     });
     if (!tag) return;
     const l = FARM_VIEW.LABEL;
-    const top = img.y - img.displayHeight * img.originY;
+    const bottom = img.y + img.displayHeight * (1 - img.originY);
     this.add
-      .text(img.x, top - l.offsetY, vi.farm[action], {
+      .text(img.x, bottom + l.offsetY, vi.farm[action], {
         color: l.color,
         backgroundColor: l.background,
         fontSize: `${l.fontPx}px`,
@@ -184,7 +192,7 @@ export class MainFarmScene extends Phaser.Scene {
         fontStyle: 'bold',
         padding: { x: l.padX, y: l.padY },
       })
-      .setOrigin(0.5, 1)
+      .setOrigin(0.5, 0)
       .setDepth(img.depth + l.depthAbove)
       .setData(ACTION_DATA, action)
       .setInteractive({ useHandCursor: true });
@@ -201,6 +209,7 @@ export class MainFarmScene extends Phaser.Scene {
     this.ambient.sync();
     this.syncTrough(save);
     const now = this.deps.now();
+    this.ordersBadge?.set(save ? readyOrderCount(save, now) : 0);
     const seen = new Set<string>();
     for (const pig of save?.pigs ?? []) {
       seen.add(pig.id);

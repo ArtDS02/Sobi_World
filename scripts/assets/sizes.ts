@@ -23,7 +23,7 @@ export const CATALOGUE_SIZES: Record<string, Size> = {
   env_hills_far: { width: 1600, height: 300 },
   env_trees_mid: { width: 1600, height: 260 },
   env_ground_grass: sq(512),
-  prop_pig_house: { width: 384, height: 304 },
+  prop_pig_house: { width: 384, height: 355 },
   prop_hay_shed: { width: 424, height: 336 },
   prop_water_well: { width: 304, height: 280 },
   prop_shop_stall: { width: 328, height: 344 },

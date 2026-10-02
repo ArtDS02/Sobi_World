@@ -14,7 +14,21 @@ $c-gold: #b8860b;
 $c-success: #4f9d5d;
 $c-danger: #d64545;
 $c-danger-soft: #fde4e4;
-$c-farm-letterbox: #9bd37a; // matches FARM_FALLBACK.GROUND, behind the letterboxed canvas
+$c-farm-letterbox: #9ed36a; // matches FARM_VIEW.BACKDROP.grass, behind the letterboxed canvas
+// Farm HUD pastel palette (farm layout rework)
+$c-pig: #ffb6c4;
+$c-pig-line: #e7798f;
+$c-wood: #b9824f;
+$c-wood-dark: #7a4f2a;
+$c-cream: #fff6e6;
+$c-pill: #fffaf0;
+$c-honey: #f7b733;
+$c-leaf: #6cc04a;
+$c-badge: #ff6b81;
+$c-level: #4fb3e8;
+$hud-shadow:
+  0 4px 0 rgba(122, 79, 42, 0.18),
+  0 6px 14px rgba(59, 42, 38, 0.12);
 $c-overlay: rgba(59, 42, 38, 0.92);
 $c-backdrop: rgba(59, 42, 38, 0.45);
 // Rarity badges, keyed by the lowercase Rarity id (core/config/rarity.ts).
@@ -28,6 +42,7 @@ $c-rarity: (
 
 // Type
 $ff-base:
+  'Baloo 2',
   system-ui,
   -apple-system,
   'Segoe UI',
@@ -75,6 +90,13 @@ $z-window: 40; // below dialogs: a sell confirm opens over the pig popup
 $z-dialog: 50;
 $z-toast: 100;
 
-// Breakpoints — exactly two (adapter §5). Do not add more.
+// Breakpoints — exactly two widths (adapter §5). Do not add more.
 $bp-sm: 480px;
 $bp-md: 768px;
+// Plus one height query: landscape phones (farm layout rework, DECISIONS FL-1).
+$bp-short: 520px;
+// HUD sizes (farm layout rework)
+$hud-pill-h: 48px;
+$hud-pill-h-short: 32px;
+$dock-icon: 40px;
+$dock-icon-short: 24px;

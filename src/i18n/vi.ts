@@ -33,6 +33,8 @@ export const vi = {
     gold: "{amount} vàng",
     trough: "Máng ăn {food}/{capacity}",
     troughEmpty: "Máng ăn trống!",
+    goldUnit: "vàng",
+    troughShort: "{food}/{capacity}",
   },
 
   stage: {

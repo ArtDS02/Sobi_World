@@ -13,10 +13,12 @@ import {
   type ActiveFeedback,
   type VisualState,
 } from '../state/pigVisualState';
-import { pigScale, sleepLook, type FarmLayout, type PigView } from '../view/pigView';
-import { playPigAnimation, type Motion, type TweenablePig } from '../fx/pigAnimations';
+import { pigScale, sleepLook, type PigView } from '../view/pigView';
+import { HOLD_MS, playPigAnimation, type Motion, type TweenablePig } from '../fx/pigAnimations';
 import { PigMover } from './PigMover';
 import type { PlateAnchor } from './Nameplates';
+import { FeetShadow } from './ObjectDecor';
+import type { PigEnv } from './pigEnv';
 import { PigOverlays } from './PigOverlays';
 import { SickTint } from './SickTint';
 
@@ -29,25 +31,12 @@ interface Applied {
   anchorOf: (fx: FxId) => AnchorName;
 }
 
-export interface PigEnv {
-  layout: FarmLayout;
-  /** Trough x in design px (eat turns toward it), or null without a trough. */
-  troughX: () => number | null;
-  /** settings.reduceMotion right now. */
-  reduceMotion: () => boolean;
-}
-
 const T = FEEDBACK.TWEEN;
-/** How long each feedback state holds (yoyo tweens run there and back). */
-const HOLD_MS: Record<'eat' | 'clean' | 'happy', number> = {
-  eat: T.eat.ms * 2 * (T.eat.repeat + 1),
-  clean: T.clean.ms * 2 * (T.clean.repeat + 1),
-  happy: T.happy.ms * 2 * (T.happy.repeat + 1),
-};
 
 export class PigSprite {
   private readonly image: Phaser.GameObjects.Image;
   private readonly marker: Phaser.GameObjects.Ellipse;
+  private readonly shadow: FeetShadow;
   private readonly bright: Phaser.FX.ColorMatrix | null;
   private readonly overlays: PigOverlays;
   private applied: Applied | null = null;
@@ -65,6 +54,7 @@ export class PigSprite {
     view: PigView,
     private readonly env: PigEnv,
   ) {
+    this.shadow = new FeetShadow(scene);
     const sel = FARM_VIEW.SELECTION;
     this.marker = scene.add
       .ellipse(0, 0, 1, 1, sel.color, sel.alpha)
@@ -90,6 +80,7 @@ export class PigSprite {
       () => this.mayWander(),
       () => this.feedback !== null && this.scene.time.now < this.feedback.until,
       () => env.reduceMotion(),
+      () => env.others?.(pigId) ?? [],
     );
     this.handle = {
       motion: this.motion,
@@ -111,6 +102,9 @@ export class PigSprite {
       !this.leaving && !!a && canWander(a.view.care, this.scene.time.now, this.feedback, a.selected)
     );
   }
+
+  /** Where the pig stands or is walking to; null before the first view. */
+  readonly dest = () => this.mover.dest;
 
   /** Species art row drawn right now; null before the first view. */
   get artId(): string | null {
@@ -183,6 +177,7 @@ export class PigSprite {
     this.bright?.brightness(1 + m.bright * T.cleanBright.amount);
     const displayW = this.image.width * base;
 
+    this.shadow.follow(x, pos.y, displayW, m.alpha);
     const sel = FARM_VIEW.SELECTION;
     this.marker
       .setPosition(x, pos.y + m.dy)
@@ -271,6 +266,7 @@ export class PigSprite {
     this.mover.refresh();
     this.image.disableInteractive();
     this.marker.setVisible(false);
+    this.shadow.hide();
     if (reduceMotion) {
       this.destroy();
       done();
@@ -294,6 +290,7 @@ export class PigSprite {
     this.scene.tweens.killTweensOf(this.motion);
     this.image.destroy();
     this.marker.destroy();
+    this.shadow.destroy();
     this.overlays.destroy();
   }
 }

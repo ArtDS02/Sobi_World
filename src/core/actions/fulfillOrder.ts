@@ -16,6 +16,14 @@ export function pigMeetsOrder(pig: Pig, order: Order): boolean {
   );
 }
 
+/** Open orders (not expired, not fulfilled) that at least one pig can fill right now. */
+export function readyOrderCount(state: SaveGame, now: number): number {
+  return state.orders.filter(
+    (o) =>
+      o.fulfilledAt === null && o.expiresAt > now && state.pigs.some((p) => pigMeetsOrder(p, o)),
+  ).length;
+}
+
 export function fulfillOrder(
   state: SaveGame,
   args: { orderId: string; pigId: string },

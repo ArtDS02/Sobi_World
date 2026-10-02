@@ -1,34 +1,61 @@
-// Wandering targets (spec §11, art standard §2.4): visual only, inside layout.walkArea, near the
-// pig's home spot. Deterministic per (pig id, step) so tests and replays agree; never saved.
+// Wandering targets (spec §11, art standard §2.4): visual only, anywhere in the ellipse inscribed
+// in layout.walkArea. Deterministic per (pig id, step) so tests and replays agree; never saved.
 import { FARM_VIEW } from '../../core/config/farmView';
 import { hashId, type FarmLayout } from '../view/pigView';
 
 const unit = (pigId: string, step: number, salt: number) =>
   (hashId(`${pigId}:${step}:${salt}`) % 10007) / 10006;
-const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
-/** Next stroll target in design px: within WANDER.radius of home, clamped to the walk area. */
-export function wanderTarget(
-  pigId: string,
-  step: number,
-  home: { x: number; y: number },
-  layout: FarmLayout,
-): { x: number; y: number } {
+/** The walk ellipse inscribed in layout.walkArea, in design px. */
+export function walkEllipse(layout: FarmLayout) {
   const { width, height } = layout.designSize;
   const a = layout.walkArea;
-  const r = FARM_VIEW.WANDER.radius;
-  const nx = home.x / width + (unit(pigId, step, 1) * 2 - 1) * r;
-  const ny = home.y / height + (unit(pigId, step, 2) * 2 - 1) * r * FARM_VIEW.WANDER.yRatio;
   return {
-    x: clamp(nx, a.x, a.x + a.width) * width,
-    y: clamp(ny, a.y, a.y + a.height) * height,
+    cx: (a.x + a.width / 2) * width,
+    cy: (a.y + a.height / 2) * height,
+    rx: (a.width / 2) * width,
+    ry: (a.height / 2) * height,
   };
 }
 
-/** Pause before the next stroll, ms. */
-export function restMs(pigId: string, step: number): number {
+/** Point of the ellipse for unit square coordinates (u, v), area-uniform. */
+export function ellipsePoint(layout: FarmLayout, u: number, v: number) {
+  const e = walkEllipse(layout);
+  const r = Math.sqrt(u);
+  const t = v * Math.PI * 2;
+  return { x: e.cx + Math.cos(t) * r * e.rx, y: e.cy + Math.sin(t) * r * e.ry };
+}
+
+/**
+ * Next stroll target in design px: anywhere in the walk ellipse, re-rolled (up to WANDER.tries)
+ * while it lands within WANDER.minGapPx of another pig, so pigs and their names spread out.
+ */
+export function wanderTarget(
+  pigId: string,
+  step: number,
+  layout: FarmLayout,
+  others: readonly { x: number; y: number }[] = [],
+): { x: number; y: number } {
   const w = FARM_VIEW.WANDER;
-  return w.restMinMs + unit(pigId, step, 3) * (w.restMaxMs - w.restMinMs);
+  let best = { x: 0, y: 0 };
+  let bestGap = -1;
+  for (let i = 0; i < w.tries; i++) {
+    const p = ellipsePoint(layout, unit(pigId, step, 10 + i * 2), unit(pigId, step, 11 + i * 2));
+    const gap = Math.min(Infinity, ...others.map((o) => Math.hypot(o.x - p.x, o.y - p.y)));
+    if (gap >= w.minGapPx) return p;
+    if (gap > bestGap) {
+      best = p;
+      bestGap = gap;
+    }
+  }
+  return best;
+}
+
+/** Pause before the next stroll, ms: a short rest, or a long one when napping. */
+export function restMs(pigId: string, step: number, nap = false): number {
+  const w = FARM_VIEW.WANDER;
+  const [min, max] = nap ? [w.napMinMs, w.napMaxMs] : [w.restMinMs, w.restMaxMs];
+  return min + unit(pigId, step, 3) * (max - min);
 }
 
 /**
@@ -41,6 +68,10 @@ export const napsDuring = (pigId: string, step: number): boolean =>
 /** Time to walk `distancePx` at WANDER.speedPx, never shorter than one squash cycle. */
 export const walkMs = (distancePx: number): number =>
   Math.max(FARM_VIEW.WANDER.minWalkMs, (distancePx / FARM_VIEW.WANDER.speedPx) * 1000);
+
+/** Walk distance for a move: vertical moves count longer (slower, WANDER.ySpeed). */
+export const walkDistance = (dx: number, dy: number): number =>
+  Math.hypot(dx, dy / FARM_VIEW.WANDER.ySpeed);
 
 /** Facing after moving from `fromX` to `toX`: left when the target is to the left. */
 export const facesLeft = (fromX: number, toX: number, current: boolean): boolean =>

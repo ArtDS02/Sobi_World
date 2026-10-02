@@ -15,7 +15,13 @@ export interface TopBarVm {
   /** 0-100 progress from the current level's threshold to the next one. */
   xpProgress: number;
   gold: string;
+  /** The number alone ("2.876"); the HUD pill adds vi.hud.goldUnit, hidden on short screens. */
+  goldAmount: string;
   trough: string;
+  /** "18/20" for the trough pill. */
+  troughShort: string;
+  /** 0-100 trough fill. */
+  troughProgress: number;
   troughEmpty: boolean;
 }
 
@@ -33,7 +39,10 @@ export function topBarVm(save: SaveGame): TopBarVm {
     xp: t(vi.hud.xp, { current: formatInt(shownXp), next: formatInt(next) }),
     xpProgress,
     gold: t(vi.hud.gold, { amount: formatInt(gold) }),
+    goldAmount: formatInt(gold),
     trough: food <= 0 ? vi.hud.troughEmpty : t(vi.hud.trough, { food, capacity }),
+    troughShort: t(vi.hud.troughShort, { food, capacity }),
+    troughProgress: capacity > 0 ? Math.round((food / capacity) * 100) : 0,
     troughEmpty: food <= 0,
   };
 }

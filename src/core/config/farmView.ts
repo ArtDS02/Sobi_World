@@ -1,6 +1,11 @@
 // Farm canvas presentation numbers (spec §11, §11.1, §11.4; art standard §2.4, §5).
 // Positions in the manifest layout are normalised; everything here is in design pixels.
 export const FARM_VIEW = {
+  /**
+   * The 1600×900 frame covers the window but loses at most this share of each axis: 12% of the
+   * width (both sides), 6% of the height (bottom only — the back row must stay under the HUD).
+   */
+  STAGE_MAX_CROP: { x: 0.12, y: 0.06 },
   /** On-screen height of an adult pig at the front of the walk area (scale 1). */
   PIG_DISPLAY_PX: 200,
   /** growthProgress 0 → baby, 100 → adult (spec §11: baby small, adult larger). */
@@ -32,10 +37,10 @@ export const FARM_VIEW = {
    */
   LABEL: {
     fontPx: 22,
-    fontFamily: 'system-ui, "Segoe UI", sans-serif',
+    fontFamily: '"Baloo 2", system-ui, "Segoe UI", sans-serif',
     offsetY: 4,
-    color: '#3b2a26',
-    background: '#fff7f3',
+    color: '#7a4f2a',
+    background: '#fff6e6',
     padX: 10,
     padY: 3,
     depthAbove: 0.1,
@@ -51,21 +56,25 @@ export const FARM_VIEW = {
     padY: 1,
     rowGapPx: 2,
     maxShift: 3,
-    color: '#3b2a26',
-    background: '#fff7f3cc',
+    color: '#e7798f',
+    background: '#ffffff',
     depthAbove: 0.2,
   },
   /** Visual-only strolls inside layout.walkArea (spec §11). Radius is normalised to width. */
   WANDER: {
-    radius: 0.08,
-    /** Vertical reach relative to the horizontal one (the walk area is wide and shallow). */
-    yRatio: 0.6,
+    /** Vertical moves are slower than horizontal ones (perspective). */
+    ySpeed: 0.8,
     speedPx: 70,
     minWalkMs: 600,
-    restMinMs: 2500,
-    restMaxMs: 8000,
+    restMinMs: 1000,
+    restMaxMs: 4000,
+    napMinMs: 6000,
+    napMaxMs: 12000,
     /** Share of rests a healthy idle pig spends asleep (DECISIONS R09B-1). */
-    napChance: 0.3,
+    napChance: 0.2,
+    /** A target closer than this to another pig's spot is re-rolled (names never stack). */
+    minGapPx: 120,
+    tries: 8,
     /** Retry delay while the pig may not wander (selected, interacting, sick...). */
     retryMs: 1000,
   },
@@ -79,6 +88,42 @@ export const FARM_VIEW = {
     /** Fade-in of the farm after the preload screen (R12A). */
     fadeInMs: 450,
   },
+  /**
+   * Painted backdrop (farm layout rework): sky, two hill bands, the back fence, grass with dots, a
+   * lighter oval behind the pigs and a few small flowers. All in design px on the 1600×900 frame.
+   */
+  BACKDROP: {
+    sky: { top: '#a9dcff', bottom: '#d9f1ff', gradientEndY: 215 },
+    hills: [
+      { color: '#c4e8a4', baseY: 190, amp: 26, waves: 2.2, phase: 0.3 },
+      { color: '#acdc86', baseY: 238, amp: 20, waves: 3.1, phase: 1.7 },
+    ],
+    grass: { color: '#9ed36a', top: 290, dot: '#b2df84', dots: 260, dotR: 3 },
+    oval: { color: '#b7e28a', cx: 800, cy: 590, rx: 560, ry: 250 },
+    fence: {
+      y: 315,
+      height: 52,
+      postEvery: 64,
+      postW: 14,
+      railH: 9,
+      wood: '#b9824f',
+      dark: '#7a4f2a',
+    },
+    flowers: [
+      { x: 520, y: 870 },
+      { x: 420, y: 760 },
+      { x: 780, y: 385 },
+    ],
+    flowerR: 7,
+    petal: '#ffffff',
+    flowerCore: '#f7b733',
+  },
+  /** Soft shadow under every world object and pig, relative to its display width. */
+  SHADOW: { width: 0.78, height: 0.14, color: 0x3b5a2a, alpha: 0.18 },
+  /** Hover "boing" on clickable objects (scale pulse), off with reduceMotion. */
+  HOVER: { scaleX: 1.05, scaleY: 0.95, ms: 140 },
+  /** Notification badge on objects with `badge` (orders count). */
+  BADGE: { r: 16, color: 0xff6b81, ring: 0xffffff, ringPx: 3, fontPx: 18, pulse: 1.15, ms: 700 },
   /** Gift placement (U06): inside walkArea minus this margin, clear of objects and pig homes. */
   GIFT_SPOT: { marginPx: 60, clearPx: 70, pigHomePx: 90, giftPx: 110, tries: 24 },
   /** How long the sick tint takes to fade after a cure (§11.3 PIG_TREATED). */

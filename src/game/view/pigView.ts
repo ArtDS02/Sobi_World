@@ -49,12 +49,17 @@ export function hashId(id: string): number {
 const frac = (n: number) => n - Math.floor(n);
 const lerp = (a: number, b: number, t: number) => a + (b - a) * Math.min(1, Math.max(0, t));
 
-/** Normalised feet position inside the walk area: x spread by slot, y by id. */
+/**
+ * Normalised feet position inside the ellipse inscribed in the walk area: x spread by slot, y by
+ * id within the ellipse's height at that x.
+ */
 export function pigSpot(pig: Pick<Pig, 'id' | 'slotIndex'>, layout: FarmLayout) {
   const w = layout.walkArea;
   const u = frac(FARM_VIEW.PIG_SPREAD_OFFSET + pig.slotIndex * FARM_VIEW.PIG_SPREAD_STEP);
   const v = (hashId(pig.id) % 1000) / 999;
-  return { x: w.x + u * w.width, y: w.y + v * w.height };
+  const dx = (u * 2 - 1) * 0.9;
+  const dy = (v * 2 - 1) * Math.sqrt(1 - dx * dx);
+  return { x: w.x + ((dx + 1) / 2) * w.width, y: w.y + ((dy + 1) / 2) * w.height };
 }
 
 /** Scale from growth (baby → adult) times the depth scale by Y (back → front). */

@@ -1,7 +1,7 @@
 // Minimal toast stack for GameEvents (spec §10.2).
 import { el } from '../dom';
 
-const TOAST_MS = 3500;
+const TOAST_MS = 1400; // farm layout rework: short toasts, top centre
 const MAX_TOASTS = 4;
 
 export function createToaster(host: HTMLElement) {

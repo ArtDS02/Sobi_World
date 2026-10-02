@@ -161,7 +161,7 @@ describe('the visual layer never writes the save', () => {
       for (const pig of save.pigs) {
         const v = pigView(pig, clock.now(), layout, reg);
         pigVisualState(v.care, clock.now(), null, napsDuring(pig.id, s) ? 'nap' : 'walk');
-        wanderTarget(pig.id, s, { x: v.x, y: v.y }, layout);
+        wanderTarget(pig.id, s, layout, [{ x: v.x, y: v.y }]);
         sleepLook(v, () => s % 2 === 0);
       }
     }

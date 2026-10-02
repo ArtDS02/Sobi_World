@@ -6,7 +6,7 @@ import * as Phaser from 'phaser';
 import { FARM_VIEW } from '../../core/config/farmView';
 import { FEEDBACK } from '../../core/config/feedback';
 import type { PigMotion } from '../state/pigVisualState';
-import { facesLeft, napsDuring, restMs, walkMs, wanderTarget } from '../state/wander';
+import { facesLeft, napsDuring, restMs, walkDistance, walkMs, wanderTarget } from '../state/wander';
 import { hashId, type FarmLayout } from '../view/pigView';
 
 /** Pose multipliers on top of the pig's scale: breathing / squash (bx, by) and the turn (turn). */
@@ -23,7 +23,8 @@ export class PigMover {
   pos: { x: number; y: number } | null = null;
   facingLeft = false;
   readonly pose: Pose = { bx: 1, by: 1, turn: 1 };
-  private home = { x: 0, y: 0 };
+  /** Where the pig is heading (its feet position while it stands). */
+  dest: { x: number; y: number } | null = null;
   private step = 0;
   private walk: Phaser.Tweens.Tween | null = null;
   private poseTween: Phaser.Tweens.Tween | null = null;
@@ -45,13 +46,15 @@ export class PigMover {
     private readonly interacting: () => boolean,
     /** settings.reduceMotion: no strolls, no pose tweens, instant turns. */
     private readonly reduceMotion: () => boolean,
+    /** Where the other pigs stand: strolls keep clear of them. */
+    private readonly others: () => { x: number; y: number }[] = () => [],
   ) {}
 
   /** First view: stand at home facing the derived way, start breathing and the stroll timer. */
   place(home: { x: number; y: number }, facingLeft: boolean) {
-    this.home = home;
     if (this.pos) return;
     this.pos = { ...home };
+    this.dest = { ...home };
     this.facingLeft = facingLeft;
     this.rest();
   }
@@ -70,7 +73,7 @@ export class PigMover {
   private rest() {
     this.napping = !this.blocked() && napsDuring(this.pigId, this.step);
     this.refresh();
-    this.schedule(restMs(this.pigId, this.step));
+    this.schedule(restMs(this.pigId, this.step, this.napping));
   }
 
   /**
@@ -136,13 +139,14 @@ export class PigMover {
     const pos = this.pos;
     this.napping = false;
     this.step += 1;
-    const to = wanderTarget(this.pigId, this.step, this.home, this.layout);
+    const to = wanderTarget(this.pigId, this.step, this.layout, this.others());
+    this.dest = to;
     this.face(facesLeft(pos.x, to.x, this.facingLeft));
     this.walk = this.scene.tweens.add({
       targets: pos,
       x: to.x,
       y: to.y,
-      duration: walkMs(Math.hypot(to.x - pos.x, to.y - pos.y)),
+      duration: walkMs(walkDistance(to.x - pos.x, to.y - pos.y)),
       ease: 'Sine.easeInOut',
       onUpdate: this.onChange,
       onComplete: () => {

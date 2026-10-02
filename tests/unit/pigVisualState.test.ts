@@ -9,7 +9,14 @@ import {
   pigVisualState,
   type ActiveFeedback,
 } from '../../src/game/state/pigVisualState';
-import { facesLeft, restMs, walkMs, wanderTarget } from '../../src/game/state/wander';
+import {
+  facesLeft,
+  restMs,
+  walkDistance,
+  walkEllipse,
+  walkMs,
+  wanderTarget,
+} from '../../src/game/state/wander';
 
 const parsed = parseManifest(structuredClone(manifestJson));
 if (!parsed.ok) throw new Error(parsed.message);
@@ -67,26 +74,29 @@ describe('pigVisualState (spec §11)', () => {
   });
 });
 
-describe('wandering (spec §11, art §2.4) — visual only, inside walkArea', () => {
-  const { width, height } = layout.designSize;
-  const a = layout.walkArea;
-  const home = { x: (a.x + a.width / 2) * width, y: (a.y + a.height / 2) * height };
+describe('wandering (spec §11, art §2.4) — visual only, inside the walk ellipse', () => {
+  const e = walkEllipse(layout);
+  const inside = (p: { x: number; y: number }) =>
+    ((p.x - e.cx) / e.rx) ** 2 + ((p.y - e.cy) / e.ry) ** 2 <= 1 + 1e-9;
 
-  it('targets stay inside the walk area and near home, deterministically', () => {
+  it('targets stay inside the walk ellipse, deterministically', () => {
     for (let step = 0; step < 200; step += 1) {
-      for (const h of [home, { x: a.x * width, y: a.y * height }]) {
-        const t = wanderTarget('pig-1', step, h, layout);
-        expect(t.x).toBeGreaterThanOrEqual(a.x * width - 1e-6);
-        expect(t.x).toBeLessThanOrEqual((a.x + a.width) * width + 1e-6);
-        expect(t.y).toBeGreaterThanOrEqual(a.y * height - 1e-6);
-        expect(t.y).toBeLessThanOrEqual((a.y + a.height) * height + 1e-6);
-        expect(Math.abs(t.x - h.x)).toBeLessThanOrEqual(FARM_VIEW.WANDER.radius * width + 1e-6);
-      }
+      expect(inside(wanderTarget('pig-1', step, layout))).toBe(true);
     }
-    expect(wanderTarget('pig-1', 3, home, layout)).toEqual(wanderTarget('pig-1', 3, home, layout));
-    expect(wanderTarget('pig-1', 3, home, layout)).not.toEqual(
-      wanderTarget('pig-2', 3, home, layout),
-    );
+    expect(wanderTarget('pig-1', 3, layout)).toEqual(wanderTarget('pig-1', 3, layout));
+    expect(wanderTarget('pig-1', 3, layout)).not.toEqual(wanderTarget('pig-2', 3, layout));
+  });
+
+  it('targets keep clear of the other pigs when there is room', () => {
+    const others = [
+      { x: e.cx, y: e.cy },
+      { x: e.cx - e.rx / 2, y: e.cy },
+    ];
+    for (let step = 0; step < 50; step += 1) {
+      const t = wanderTarget('pig-1', step, layout, others);
+      const gap = Math.min(...others.map((o) => Math.hypot(o.x - t.x, o.y - t.y)));
+      expect(gap).toBeGreaterThanOrEqual(FARM_VIEW.WANDER.minGapPx);
+    }
   });
 
   it('rest and walk times are bounded; facing follows the walk direction', () => {
@@ -94,7 +104,11 @@ describe('wandering (spec §11, art §2.4) — visual only, inside walkArea', ()
       const r = restMs('pig-1', s);
       expect(r).toBeGreaterThanOrEqual(FARM_VIEW.WANDER.restMinMs);
       expect(r).toBeLessThanOrEqual(FARM_VIEW.WANDER.restMaxMs);
+      const n = restMs('pig-1', s, true);
+      expect(n).toBeGreaterThanOrEqual(FARM_VIEW.WANDER.napMinMs);
+      expect(n).toBeLessThanOrEqual(FARM_VIEW.WANDER.napMaxMs);
     }
+    expect(walkDistance(0, 80)).toBeCloseTo(80 / FARM_VIEW.WANDER.ySpeed);
     expect(walkMs(0)).toBe(FARM_VIEW.WANDER.minWalkMs);
     expect(walkMs(FARM_VIEW.WANDER.speedPx * 10)).toBe(10_000);
     expect(facesLeft(100, 50, false)).toBe(true);

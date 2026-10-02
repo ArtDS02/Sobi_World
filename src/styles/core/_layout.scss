@@ -1,4 +1,4 @@
-// App frame: top bar and the farm canvas under it; menus are popups (DECISIONS R05C-1).
+// App frame: the farm canvas fills the window with the HUD floating over it; menus are popups (DECISIONS R05C-1).
 @use 'tokens' as *;
 @use 'mixins' as *;
 
@@ -39,20 +39,49 @@
     position: absolute;
     inset: 0;
     overflow: hidden;
-    background: $c-farm-letterbox;
+    // Letterbox bands continue the painted sky / grass (FARM_VIEW.BACKDROP).
+    background: linear-gradient(
+      to bottom,
+      #a9dcff 0%,
+      #d9f1ff 22%,
+      #acdc86 30%,
+      $c-farm-letterbox 36%
+    );
+  }
+
+  // The 1600×900 frame, sized and centred by stageFit (src/game/view/stageFit.ts).
+  &__frame {
+    position: absolute;
   }
 
   // Tutorial coach card (spec §10.3): top-left, clear of the bottom hint; never covers the farm.
+  // Top centre, over the sky between the back-row buildings.
   &__coach-host {
     position: absolute;
-    top: $sp-4;
-    left: $sp-4;
-    max-width: $coach-max;
+    top: calc(#{$hud-pill-h} + #{$sp-4});
+    left: 50%;
+    z-index: $z-bars;
+    width: min(#{$coach-max}, calc(100% - 2 * #{$sp-4}));
+    transform: translateX(-50%);
+
+    @include mq-short {
+      top: calc(#{$hud-pill-h-short} + #{$sp-2});
+      transform: translateX(-50%) scale(0.75);
+      transform-origin: top center;
+    }
   }
 
+  // Above the dock.
   &__hint-host {
     position: absolute;
-    bottom: $sp-6;
+    bottom: 6.5rem;
+    z-index: $z-bars;
+
+    @include mq-short {
+      bottom: 3.75rem;
+      transform: translateX(-50%) scale(0.75);
+      transform-origin: bottom center;
+    }
     left: 50%;
     transform: translateX(-50%);
   }
@@ -63,53 +92,248 @@
     align-items: center;
     padding: $sp-2 $sp-4;
     background: $c-surface;
+    white-space: nowrap;
     border: 1px solid $c-border;
     border-radius: $radius-md;
   }
 }
 
+// HUD floating over the farm (farm layout rework): the layer ignores clicks, its pieces take them.
 .topbar {
-  position: sticky;
-  top: 0;
+  position: absolute;
+  inset: 0;
   z-index: $z-bars;
-  background: $c-surface;
-  border-bottom: 1px solid $c-border;
+  pointer-events: none;
 
-  // Full window width on desktop (1024–1920 px, spec §10.4); wraps instead of scrolling.
   &__inner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: $sp-2 $sp-3;
-    margin: 0 auto;
-    padding: $sp-2 $sp-3;
-    font-size: $fs-sm;
+    display: contents;
   }
 
-  &__level {
-    font-weight: $fw-bold;
-  }
-
-  &__xp {
-    display: grid;
-    gap: $sp-1;
-    min-width: 7rem;
-    color: $c-text-muted;
-  }
-
-  &__gold.c-button {
-    font-weight: $fw-bold;
-    color: $c-gold;
-  }
-
-  &__nav {
+  &__pills {
+    position: absolute;
+    top: $sp-3;
+    left: $sp-3;
+    right: 5rem;
     display: flex;
     flex-wrap: wrap;
     gap: $sp-2;
-    margin-left: auto;
+    pointer-events: none;
+
+    > * {
+      pointer-events: auto;
+    }
+  }
+
+  &__settings {
+    position: absolute;
+    top: $sp-3;
+    right: $sp-3;
+    width: $hud-pill-h;
+    height: $hud-pill-h;
+    font-size: $fs-lg;
+    color: $c-wood-dark;
+    cursor: pointer;
+    background: $c-pill;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: $hud-shadow;
+    pointer-events: auto;
+  }
+
+  // Bottom dock: big icon + label per button, lifts on hover.
+  &__nav {
+    position: absolute;
+    bottom: $sp-3;
+    left: 50%;
+    display: flex;
+    gap: $sp-1;
+    padding: $sp-1 $sp-2;
+    background: $c-pill;
+    border: 3px solid #fff;
+    border-radius: 1.5rem;
+    box-shadow: $hud-shadow;
+    transform: translateX(-50%);
+    pointer-events: auto;
   }
 
   &__nav-item {
-    padding: $sp-2 $sp-3;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 5.5rem;
+    padding: $sp-1 $sp-2;
+    font-size: $fs-sm;
+    font-weight: $fw-bold;
+    line-height: 1.1;
+    color: $c-wood-dark;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    border-radius: $radius-md;
+    transition: transform $dur-fast ease-out;
+
+    &:hover {
+      background: $c-cream;
+      transform: translateY(-4px);
+    }
   }
+
+  &__nav-icon {
+    display: grid;
+    place-items: center;
+    width: $dock-icon;
+    height: $dock-icon;
+
+    .c-icon {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  @include mq-short {
+    &__pills {
+      top: $sp-1;
+      left: $sp-2;
+    }
+
+    &__settings {
+      top: $sp-1;
+      width: $hud-pill-h-short;
+      height: $hud-pill-h-short;
+      font-size: $fs-md;
+      border-width: 2px;
+    }
+
+    &__nav {
+      bottom: $sp-1;
+      padding: 2px $sp-1;
+    }
+
+    &__nav-item {
+      min-width: 4rem;
+      padding: 2px $sp-1;
+      font-size: 11px;
+    }
+
+    &__nav-icon {
+      width: $dock-icon-short;
+      height: $dock-icon-short;
+    }
+  }
+}
+
+// One rounded HUD "pill": cream, white rim, soft drop shadow.
+.hud-pill {
+  display: inline-flex;
+  gap: $sp-2;
+  align-items: center;
+  height: $hud-pill-h;
+  padding: 0 $sp-3 0 $sp-2;
+  font-size: $fs-md;
+  color: $c-wood-dark;
+  white-space: nowrap;
+  background: $c-pill;
+  border: 3px solid #fff;
+  border-radius: 9999px;
+  box-shadow: $hud-shadow;
+
+  &:is(button) {
+    cursor: pointer;
+  }
+
+  .c-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  &__star {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    color: #fff;
+    background: $c-level;
+    border-radius: 50%;
+  }
+
+  &__sub {
+    font-size: $fs-sm;
+    color: $c-text-muted;
+  }
+
+  &__bar {
+    width: 5.5rem;
+    height: 0.6rem;
+    background: $c-cream;
+    box-shadow: inset 0 0 0 1px rgba(122, 79, 42, 0.2);
+  }
+
+  &__bar--xp .c-bar__fill {
+    background: $c-leaf;
+  }
+
+  &__bar--trough .c-bar__fill {
+    background: $c-honey;
+  }
+
+  &.c-gauge {
+    min-height: 0;
+    background: $c-pill;
+    border: 3px solid #fff;
+
+    &.is-empty {
+      background: $c-danger-soft;
+    }
+  }
+
+  @include mq-short {
+    gap: $sp-1;
+    height: $hud-pill-h-short;
+    padding: 0 $sp-2 0 $sp-1;
+    font-size: $fs-sm;
+    border-width: 2px;
+
+    .c-icon,
+    &__star {
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+
+    &__sub {
+      display: none;
+    }
+
+    &__bar {
+      width: 3.5rem;
+    }
+  }
+}
+
+// Notification dot (dock "Đơn hàng").
+.c-dot {
+  position: absolute;
+  top: 0;
+  right: $sp-2;
+  display: grid;
+  place-items: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 4px;
+  font-size: $fs-xs;
+  color: #fff;
+  background: $c-badge;
+  border: 2px solid #fff;
+  border-radius: 9999px;
+  animation: c-dot-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes c-dot-pulse {
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.is-reduced-motion .c-dot {
+  animation: none;
 }

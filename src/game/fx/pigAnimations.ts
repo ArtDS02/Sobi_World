@@ -7,6 +7,13 @@ import type { PigMover } from '../prefabs/PigMover';
 
 const T = FEEDBACK.TWEEN;
 
+/** How long each feedback state holds (yoyo tweens run there and back). */
+export const HOLD_MS: Record<'eat' | 'clean' | 'happy', number> = {
+  eat: T.eat.ms * 2 * (T.eat.repeat + 1),
+  clean: T.clean.ms * 2 * (T.clean.repeat + 1),
+  happy: T.happy.ms * 2 * (T.happy.repeat + 1),
+};
+
 /** Feedback offsets: dy (px, up is negative), scale multiplier, angle (deg), alpha, brightness. */
 export interface Motion {
   dx: number;

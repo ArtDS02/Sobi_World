@@ -217,8 +217,7 @@ function troughFill(keep: number) {
 }
 
 export const BUILDING_CUTS: BuildingCut[] = [
-  // Pig house without the "Chuồng Heo" sign (it opens the collection): older sheet, same design.
-  { file: 'prop_pig_house', box: [20, 20, 380, 310], old: true },
+  // prop_pig_house is user art (signed "Chuồng Heo", background removed by hand): not cut here.
   { file: 'prop_hay_shed', box: [395, 20, 350, 285] },
   { file: 'prop_water_well', box: [765, 60, 255, 235] },
   { file: 'prop_shop_stall', box: [1045, 15, 270, 285] },
