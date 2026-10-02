@@ -21,9 +21,23 @@ export interface SaveProfile {
 const APP_PREFIX = 'Un In Homemade';
 const SAVE = 'save.json';
 
-/** %APPDATA%, or UNIN_ADMIN_SAVES_ROOT (tests, other machines' copies). */
+let rootOverride: string | null = null;
+
+/** The folder chosen in the dashboard, else UNIN_ADMIN_SAVES_ROOT (tests, copies), else %APPDATA%. */
 export const savesRoot = () =>
-  process.env.UNIN_ADMIN_SAVES_ROOT ?? process.env.APPDATA ?? join(homedir(), 'AppData', 'Roaming');
+  rootOverride ?? process.env.UNIN_ADMIN_SAVES_ROOT ?? process.env.APPDATA ?? join(homedir(), 'AppData', 'Roaming');
+
+/** Dashboard "Đổi thư mục quét": a folder holding the "Un In Homemade*" folders; empty = default. */
+export function setSavesRoot(path: string): Result {
+  const p = path.trim().replace(/^"|"$/g, '');
+  if (!p) {
+    rootOverride = null;
+    return { status: 200, body: { root: savesRoot() } };
+  }
+  if (!existsSync(p) || !statSync(p).isDirectory()) return { status: 400, body: { error: `Không có thư mục ${p}` } };
+  rootOverride = resolve(p);
+  return { status: 200, body: { root: rootOverride } };
+}
 
 const encode = (rel: string) => Buffer.from(rel, 'utf8').toString('base64url');
 

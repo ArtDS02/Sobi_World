@@ -2,6 +2,7 @@
 // parents A + B (order ignored) → possible children with percents summing to 100. Pairs without an
 // active rule keep the rule system (breedingRules.ts); the editor can start from those odds.
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
+import { RARITY_VALUES } from '../../src/core/config/rarity';
 import type { BreedId } from '../../src/core/config/ids';
 import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from '../../src/core/config/breedingPairs';
 import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
@@ -25,8 +26,13 @@ const img = (id: string) => {
   return art ? `<img class="thumb" src="/assets/pigs/base/${esc(art)}.png" alt="" loading="lazy" />` : '';
 };
 
+/** Species options grouped by rarity (optgroups), names A-Z, retired ones marked. */
 const options = (ids: readonly string[], cur: string) =>
-  ids.map((id) => `<option value="${id}"${id === cur ? ' selected' : ''}>${esc(nameOf(id))} (${esc(RARITY_LABEL[BREEDS[id as BreedId].rarity] ?? '')})</option>`).join('');
+  RARITY_VALUES.map((rar) => {
+    const group = ids.filter((id) => BREEDS[id as BreedId].rarity === rar).sort((a, b) => nameOf(a).localeCompare(nameOf(b), 'vi'));
+    if (!group.length) return '';
+    return `<optgroup label="${esc(RARITY_LABEL[rar] ?? rar)}">${group.map((id) => `<option value="${id}"${id === cur ? ' selected' : ''}>${esc(nameOf(id))}${BREEDS[id as BreedId].enabled ? '' : ' (đang tắt)'}</option>`).join('')}</optgroup>`;
+  }).join('');
 const BREEDABLE = BREED_IDS.filter((id) => BREEDS[id].breedable);
 
 /** Default odds of the rule system for a pair, rounded to 2 decimals and fixed to sum to 100. */
@@ -39,9 +45,10 @@ function systemOdds(a: BreedId, b: BreedId): { breed: BreedId; percent: number }
 }
 
 function outcomeRows(r: Rule) {
-  return r.outcomes.map((o, i) => `<div class="outcome">
+  return r.outcomes.map((o, i) => `<div class="outcome">${img(o.breed) || '<span></span>'}
       <select name="breed-${i}">${options(BREED_IDS, o.breed)}</select>
       <input type="number" name="pct-${i}" min="0.01" max="100" step="0.01" value="${o.percent}" aria-label="Tỷ lệ %" /> %
+      ${rarityBadge(BREEDS[o.breed].rarity)}
       <button type="button" class="icon-btn" data-remove="${i}" aria-label="Bỏ kết quả">✕</button>
     </div>`).join('');
 }
@@ -83,6 +90,8 @@ function openEditor(existing: Rule | null, redraw: () => void) {
       <button type="button" class="btn btn-small" data-add>＋ Thêm kết quả</button>
       <button type="button" class="btn btn-small" data-system>↺ Điền theo tỷ lệ hiện tại của game</button>
       <button type="button" class="btn btn-small" data-normalize>⚖ Chia lại cho đủ 100 %</button>
+      <button type="button" class="btn btn-small" data-even>≡ Chia đều</button>
+      <button type="button" class="btn btn-small" data-sortodds>↓ Sắp theo tỷ lệ</button>
     </div>
     <ul class="issues" data-issues></ul>
     <p class="muted">A + B và B + A là cùng một cặp. Heo đang tắt trong kết quả bị bỏ qua khi chơi (phần còn lại tự chia lại cho đủ 100 %).</p>`;
@@ -108,7 +117,10 @@ function openEditor(existing: Rule | null, redraw: () => void) {
       });
       f.addEventListener('change', (e) => {
         const name = (e.target as HTMLElement).getAttribute('name');
-        if (name === 'a' || name === 'b') {
+        if (name?.startsWith('breed-')) {
+          r = readRule(f, r);
+          rebuild(); // thumbnail + rarity of the new child
+        } else if (name === 'a' || name === 'b') {
           r = readRule(f, r);
           // A new rule starts from the pair's current odds; an edited one keeps its outcomes.
           if (!existing) r.outcomes = systemOdds(r.parents[0], r.parents[1]);
@@ -125,7 +137,12 @@ function openEditor(existing: Rule | null, redraw: () => void) {
           r.outcomes = r.outcomes.map((o) => ({ ...o, percent: Math.round((o.percent / total) * 10000) / 100 }));
           const diff = Math.round((100 - outcomeTotal(r)) * 100) / 100;
           if (r.outcomes[0]) r.outcomes[0].percent = Math.round((r.outcomes[0].percent + diff) * 100) / 100;
-        } else if (t.closest('[data-remove]')) r.outcomes.splice(Number(t.closest<HTMLElement>('[data-remove]')!.dataset.remove), 1);
+        } else if (t.closest('[data-even]')) {
+          const n = r.outcomes.length || 1;
+          const each = Math.floor((100 / n) * 100) / 100;
+          r.outcomes = r.outcomes.map((o, i) => ({ ...o, percent: i === 0 ? Math.round((100 - each * (n - 1)) * 100) / 100 : each }));
+        } else if (t.closest('[data-sortodds]')) r.outcomes = [...r.outcomes].sort((x, y) => y.percent - x.percent);
+        else if (t.closest('[data-remove]')) r.outcomes.splice(Number(t.closest<HTMLElement>('[data-remove]')!.dataset.remove), 1);
         else return;
         rebuild();
       });

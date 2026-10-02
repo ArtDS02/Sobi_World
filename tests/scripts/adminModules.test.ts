@@ -20,7 +20,7 @@ import { mulberry32 } from '../../src/core/rng';
 import { parseSave } from '../../src/core/save/migrate';
 import { newGame } from '../../src/core/save/newGame';
 import { History, add, duplicate, reorder, type Placement } from '../../tools/admin/layoutModel';
-import { activeCount, byText, emptyState, fold, runQuery } from '../../tools/admin/listQuery';
+import { activeCount, byText, emptyState, facetCounts, fold, runQuery } from '../../tools/admin/listQuery';
 import * as E from '../../tools/admin/userEdits';
 
 const MANIFEST = 'public/assets/manifest/assets.json';
@@ -48,6 +48,11 @@ describe('list query', () => {
     expect([p0.total, p0.pages, p0.rows.map((r) => r.name)]).toEqual([3, 2, ['Heo Hồng', 'Heo Rồng']]);
     expect(runQuery(rows, q, { ...emptyState('az'), page: 9 }).page).toBe(1); // clamped
     expect(activeCount({ ...emptyState(), q: 'x', filters: { a: '1', b: '' } })).toBe(2);
+  });
+  it('counts each filter option against the search and the other filters, not itself', () => {
+    const fq = { ...q, filters: [{ ...q.filters[0]!, options: [['MYTHIC', ''], ['FARM', ''], ['WILD', '']] as const }] };
+    expect(facetCounts(rows, fq, { ...emptyState(), filters: { family: 'WILD' } }, 'family')).toEqual({ MYTHIC: 1, FARM: 1, WILD: 1 });
+    expect(facetCounts(rows, fq, { ...emptyState(), q: 'rong' }, 'family')).toEqual({ MYTHIC: 1, FARM: 0, WILD: 0 });
   });
 });
 

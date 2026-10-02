@@ -7,6 +7,7 @@ import type { SaveGame } from '../../src/core/types';
 import { esc, gold } from './labels';
 import { mountList } from './listKit';
 import { byNumber, reverse } from './listQuery';
+import { openModal } from './modal';
 import { json, post, state } from './store';
 import { summary } from './userEdits';
 
@@ -28,6 +29,7 @@ interface Loaded {
 
 export const users = {
   list: [] as Loaded[],
+  root: '',
   loaded: false,
   /** The save being edited: `file` = opened from a .json (saved back by download). */
   open: null as null | { id: string; source: 'disk' | 'file'; label: string; original: SaveGame; draft: SaveGame; baseModifiedAt: number; dirty: boolean },
@@ -42,7 +44,8 @@ function parse(text: string): { save: SaveGame | null; error: string | null } {
 }
 
 export async function loadUsers() {
-  const { profiles } = await json<{ profiles: Profile[] }>('/__admin/saves');
+  const { profiles, root } = await json<{ profiles: Profile[]; root: string }>('/__admin/saves');
+  users.root = root;
   users.list = await Promise.all(
     profiles.map(async (profile) => {
       const r = await json<{ json: string }>(`/__admin/saves/read?id=${encodeURIComponent(profile.id)}`);
@@ -118,9 +121,16 @@ export function renderUsers(root: HTMLElement, rerender: () => void) {
     loadUsers().then(rerender, (e: unknown) => (root.innerHTML = `<p class="empty">${esc((e as Error).message)}</p>`));
     return;
   }
+  const none = users.list.length === 0
+    ? `<div class="panel empty-guide"><h3>Không tìm thấy save nào trong thư mục quét</h3>
+        <ol><li>Chơi bản desktop ít nhất 1 lần (<code>npm run dev:desktop</code> hoặc bản cài đặt) để game tạo <code>save.json</code>.</li>
+        <li>Nếu chắc chắn đã có save mà vẫn trống: dashboard đang chạy trong môi trường không thấy <code>%APPDATA%</code> thật — tắt và chạy lại <code>npm run admin</code> từ terminal thường, hoặc bấm “📁 Đổi thư mục quét” và dán đường dẫn thư mục <code>AppData\\Roaming</code>.</li>
+        <li>Save bản web/dev: trong game Cài đặt → Xuất file lưu, rồi “📂 Mở file save”.</li></ol></div>`
+    : '';
   root.innerHTML = `
-    <p class="muted">Game chơi đơn, offline: mỗi “người chơi” là một save — thư mục save desktop trong <code>%APPDATA%</code>,
-      hoặc file <code>.json</code> xuất từ game (bản web/dev, máy khác).</p>
+    <p class="muted">Game chơi đơn, offline: mỗi “người chơi” là một save — thư mục save desktop, hoặc file <code>.json</code> xuất từ game (bản web/dev, máy khác).
+      Thư mục quét: <code>${esc(users.root)}</code> <button class="btn btn-small" data-root type="button">📁 Đổi thư mục quét</button></p>
+    ${none}
     <div data-list></div>`;
   mountList(root.querySelector<HTMLElement>('[data-list]')!, {
     id: 'users',
@@ -146,6 +156,19 @@ export function renderUsers(root: HTMLElement, rerender: () => void) {
     render: (rows) => `<table class="table"><thead><tr><th>Save</th><th>Cấp</th><th>Vàng</th><th>Heo/chuồng</th><th>Đã khám phá</th><th>Lưu lần cuối</th><th>Trạng thái</th><th></th></tr></thead>
       <tbody>${rows.map(row).join('')}</tbody></table>`,
   });
+  root.querySelector('[data-root]')?.addEventListener('click', () =>
+    openModal({
+      title: 'Thư mục quét save',
+      submit: 'Quét thư mục này',
+      body: `<label class="field"><span>Thư mục chứa các thư mục “Un In Homemade…” (để trống = mặc định %APPDATA%)</span>
+        <input name="path" value="${esc(users.root)}" placeholder="C:\\Users\\ten\\AppData\\Roaming" /></label>`,
+      onSubmit: async (f) => {
+        await post('/__admin/saves/root', { path: String(new FormData(f).get('path') ?? '') });
+        users.loaded = false;
+        rerender();
+      },
+    }),
+  );
   root.querySelector('[data-reload]')?.addEventListener('click', () => {
     users.loaded = false;
     rerender();

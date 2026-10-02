@@ -6,6 +6,7 @@ import { FAMILY_VALUES, RARITY_TIER } from '../../src/core/config/breeds';
 import { FARM_VIEW } from '../../src/core/config/farmView';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import { FAMILY_LABEL, RARITY_LABEL, art, assetUrl, esc, gold, hexColor, hours, rowImage, stats } from './labels';
+import { openPicker, pickButton, type PickItem } from './picker';
 import { freeArtIds, state, updateRow } from './store';
 
 const NUMBERS = ['buyGold', 'unlockLevel', 'sellGold', 'growthSec', 'pregnancySec', 'maxWeight'] as const;
@@ -50,14 +51,21 @@ function preview(row: SpeciesRowData, baby: boolean) {
     </div>`;
 }
 
-/** "pig_x — Tên" for the art select; unregistered files say so (registered when saved). */
-function artLabels(ids: readonly string[]): Record<string, string> {
-  return Object.fromEntries(
-    ids.map((id) => {
-      const m = state.pigs.find((p) => p.id === id);
-      return [id, m ? `${id} — ${m.nameVi}` : `${id} (chưa đăng ký manifest)`];
-    }),
-  );
+/** Every pig image for the picker: free ones selectable, ones another species uses greyed out. */
+function artChoices(row: SpeciesRowData): PickItem[] {
+  const ids = [...new Set([...state.pigs.map((p) => p.id), ...freeArtIds(row.id)])];
+  return ids.map((id) => {
+    const m = state.pigs.find((p) => p.id === id);
+    const owner = state.rows.find((r) => r.artId === id && r.id !== row.id);
+    return {
+      id,
+      label: m?.nameVi ?? id,
+      url: `/assets/${m?.asset ?? `pigs/base/${id}.png`}`,
+      group: owner ? 'Đang dùng bởi heo khác' : m ? 'Chưa gán heo' : 'Chưa đăng ký manifest',
+      note: m ? id : `${id} · đăng ký khi lưu`,
+      blocked: owner ? `Đang dùng: ${owner.nameVi}` : null,
+    };
+  });
 }
 
 function form(row: SpeciesRowData, isNew: boolean) {
@@ -65,7 +73,6 @@ function form(row: SpeciesRowData, isNew: boolean) {
   const s = stats(row);
   const sel = (name: string, values: readonly string[], labels: Record<string, string>, cur: string) =>
     `<select name="${name}">${values.map((v) => `<option value="${v}"${v === cur ? ' selected' : ''}>${esc(labels[v] ?? v)}</option>`).join('')}</select>`;
-  const arts = [row.artId, ...freeArtIds(row.id)].filter((v, i, a) => v && a.indexOf(v) === i);
   const num = (k: (typeof NUMBERS)[number]) => {
     const own = row[k];
     const ph = k === 'buyGold' ? 'không bán' : k === 'unlockLevel' ? '1' : String((tier as Record<string, unknown>)?.[k] ?? '—');
@@ -80,7 +87,7 @@ function form(row: SpeciesRowData, isNew: boolean) {
         <label class="field"><span>Pig ID</span><input name="id" value="${esc(row.id)}" ${isNew ? '' : 'readonly'} placeholder="PIG_TEN_HEO" /></label>
         <label class="field"><span>Độ hiếm</span>${sel('rarity', RARITY_VALUES, RARITY_LABEL, row.rarity)}</label>
         <label class="field"><span>Nhóm / chủ đề</span>${sel('family', FAMILY_VALUES, FAMILY_LABEL, row.family)}</label>
-        <label class="field"><span>Ảnh (art id) <a class="link" href="#/library">Thư viện →</a></span>${sel('artId', arts, artLabels(arts), row.artId)}</label>
+        <div class="field"><span>Ảnh (art id) <a class="link" href="#/library">Thư viện →</a></span>${pickButton('artId', row.artId, row.artId ? rowImage(row) : null, state.pigs.find((p) => p.id === row.artId)?.nameVi ?? (row.artId || 'Chọn ảnh'))}</div>
         <label class="field"><span>Màu dự phòng</span><input type="color" name="color" value="${hexColor(row.color)}" /></label>
         ${NUMBERS.map(num).join('')}
         <label class="check"><input type="checkbox" name="breedable" ${s.breedable ? 'checked' : ''} /> Lai được</label>
@@ -155,6 +162,21 @@ export function renderEditor(host: HTMLElement, id: string | null, onClose: () =
       updateRow(existing?.id ?? next.id, next);
       onClose();
     });
+    host.querySelector('[data-picker="artId"]')?.addEventListener('click', () =>
+      openPicker({
+        title: 'Chọn ảnh cho heo',
+        items: artChoices(row),
+        current: row.artId,
+        onPick: (id) => {
+          f.querySelector<HTMLInputElement>('[name=artId]')!.value = id;
+          row = readForm(f);
+          // A fresh pig takes the art's manifest name when none was typed yet.
+          if (isNew && !row.nameVi) row.nameVi = state.pigs.find((p) => p.id === id)?.nameVi ?? '';
+          if (isNew && !row.id) row.id = id.toUpperCase();
+          draw();
+        },
+      }),
+    );
     host.querySelectorAll<HTMLElement>('[data-close]').forEach((b) => b.addEventListener('click', onClose));
     host.querySelectorAll<HTMLElement>('[data-stage]').forEach((b) =>
       b.addEventListener('click', () => {

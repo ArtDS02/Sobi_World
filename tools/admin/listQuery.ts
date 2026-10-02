@@ -59,3 +59,15 @@ export function runQuery<T>(items: readonly T[], q: ListQuery<T>, s: ListState) 
 export const byText = <T>(get: (t: T) => string) => (a: T, b: T) => get(a).localeCompare(get(b), 'vi');
 export const byNumber = <T>(get: (t: T) => number) => (a: T, b: T) => get(a) - get(b);
 export const reverse = <T>(cmp: (a: T, b: T) => number) => (a: T, b: T) => cmp(b, a);
+
+/**
+ * Faceted counts for one filter: how many items each option would leave, given the search and the
+ * OTHER active filters (so the numbers always describe the next click).
+ */
+export function facetCounts<T>(items: readonly T[], q: ListQuery<T>, s: ListState, key: string): Record<string, number> {
+  const f = q.filters.find((x) => x.key === key);
+  if (!f) return {};
+  const others = { ...s, filters: { ...s.filters, [key]: '' }, page: 0 };
+  const base = runQuery(items, { ...q, sorts: [], pageSize: Number.MAX_SAFE_INTEGER }, others).rows;
+  return Object.fromEntries(f.options.map(([v]) => [v, base.filter((item) => f.test(item, v)).length]));
+}

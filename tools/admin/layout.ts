@@ -1,7 +1,7 @@
 // Game layout editor page (DECISIONS AD-1): asset library → drag onto the farm frame → edit
 // properties → save into the manifest `layout.placements` the game draws (no code change needed).
 // Keyboard: arrows nudge (Shift ×10), Delete, Ctrl+D duplicate, Ctrl+Z / Ctrl+Y, Esc.
-import { FARM_ACTIONS, TROUGH_PROP_ID } from '../../src/core/config/assetIds';
+import { TROUGH_PROP_ID } from '../../src/core/config/assetIds';
 import { layoutIssues } from '../../scripts/admin/rules';
 import { esc } from './labels';
 import { mountList } from './listKit';
@@ -9,7 +9,9 @@ import { byNumber, byText } from './listQuery';
 import { History, add, duplicate, moveTo, patch, remove, reorder, type Design, type Placement } from './layoutModel';
 import { mountStage, preloadSizes, sizeOf } from './layoutStage';
 import { confirmDanger } from './modal';
-import { json, post, state } from './store';
+import { openPicker } from './picker';
+import { LAYER_LABEL, properties as propsForm, readProps as readPropsForm } from './layoutProps';
+import { artUrl, json, post, state } from './store';
 
 interface Manifest {
   layout: { designSize: Design; walkArea: { x: number; y: number; width: number; height: number }; placements: Placement[] };
@@ -28,9 +30,8 @@ const ed = {
   showWalk: true,
   snap: 10,
 };
-const LAYER_LABEL = ['0 · Trời / mây', '1 · Hậu cảnh xa', '2 · Mặt đất', '3 · Trang trí nền', '4 · Cùng lớp heo (xếp theo Y)', '5 · Trên cùng'];
-const SECTION_LABEL: Record<string, string> = { props: 'Đồ vật', buildings: 'Công trình', environment: 'Môi trường', ui: 'UI', fx: 'Hiệu ứng' };
-const urlOf = (id: string) => state.art.find((a) => a.id === id)?.url ?? null;
+export const SECTION_LABEL: Record<string, string> = { props: 'Đồ vật', buildings: 'Công trình', environment: 'Môi trường', ui: 'UI', fx: 'Hiệu ứng' };
+const urlOf = artUrl;
 const dirty = () => JSON.stringify(ed.list) !== JSON.stringify(ed.saved);
 const issues = () => layoutIssues(ed.list, { assetIds: new Set(state.art.map((a) => a.id)), troughId: TROUGH_PROP_ID });
 
@@ -50,56 +51,6 @@ function change(next: Placement[], sel = ed.sel) {
   ed.history.push(ed.list);
   ed.list = next;
   ed.sel = sel !== null && sel < next.length ? sel : null;
-}
-
-const field = (label: string, name: string, value: unknown, type = 'number', attrs = '') =>
-  `<label class="field"><span>${label}</span><input type="${type}" name="${name}" value="${esc(value ?? '')}" ${attrs} /></label>`;
-
-function properties(): string {
-  const i = ed.sel;
-  const p = i === null ? null : ed.list[i];
-  if (!p || i === null) return '<p class="muted">Chọn một vật trên khung để sửa. Kéo asset từ thư viện bên trái vào khung để thêm.</p>';
-  const nat = sizeOf(urlOf(p.id));
-  const opt = (values: readonly string[], cur: string | undefined, none: string) =>
-    [`<option value="">${none}</option>`, ...values.map((v) => `<option value="${v}"${v === cur ? ' selected' : ''}>${v}</option>`)].join('');
-  return `<form class="props" data-props>
-    <div class="props__head">${urlOf(p.id) ? `<img class="thumb" src="${esc(urlOf(p.id)!)}" alt="" />` : ''}<div><b>${esc(p.label ?? p.id)}</b><small class="mono">#${i + 1} · ${esc(p.id)} · ảnh gốc ${nat.w}×${nat.h}</small></div></div>
-    <h4>Vị trí (px, điểm neo = ${Math.round((p.originX ?? 0.5) * 100)}% ngang, ${Math.round((p.originY ?? 1) * 100)}% dọc)</h4>
-    <div class="form-grid">${field('X', 'x', Math.round(p.x * ed.design.width))}${field('Y', 'y', Math.round(p.y * ed.design.height))}</div>
-    <h4>Kích thước (trống = theo ảnh gốc / giữ tỷ lệ)</h4>
-    <div class="form-grid">${field('Rộng', 'width', p.width, 'number', 'min="1"')}${field('Cao', 'height', p.height, 'number', 'min="1"')}</div>
-    <h4>Lớp</h4>
-    <div class="form-grid"><label class="field span-2"><span>Layer / z-index</span><select name="layer">${LAYER_LABEL.map((l, k) => `<option value="${k}"${k === p.layer ? ' selected' : ''}>${l}</option>`).join('')}</select></label></div>
-    <div class="dn__buttons"><button type="button" class="btn btn-small" data-order="back">⇊ Dưới cùng</button><button type="button" class="btn btn-small" data-order="down">↓ Xuống</button>
-      <button type="button" class="btn btn-small" data-order="up">↑ Lên</button><button type="button" class="btn btn-small" data-order="front">⇈ Trên cùng</button></div>
-    <h4>Biến đổi</h4>
-    <div class="form-grid">${field('Xoay (°)', 'rotation', p.rotation ?? 0, 'number', 'min="-360" max="360" step="1"')}
-      <label class="field"><span>Phóng to (× rộng/cao)</span><span class="dn__buttons"><button type="button" class="btn btn-small" data-scale="0.9">−10%</button><button type="button" class="btn btn-small" data-scale="1.1">+10%</button></span></label>
-      <label class="check"><input type="checkbox" name="flipX" ${p.flipX ? 'checked' : ''} /> Lật ngang</label></div>
-    <h4>Trạng thái</h4>
-    <div class="form-grid"><label class="check"><input type="checkbox" name="visible" ${p.visible === false ? '' : 'checked'} /> Hiển thị</label>
-      <label class="check"><input type="checkbox" name="locked" ${p.locked ? 'checked' : ''} /> Khoá (không kéo được)</label></div>
-    <h4>Asset & tương tác</h4>
-    <div class="form-grid">
-      ${field('Tên trong editor', 'label', p.label ?? '', 'text', 'maxlength="40"')}
-      <label class="field"><span>Asset hiện tại → thay</span><select name="id">${state.art.filter((a) => a.section !== 'ui' && a.section !== 'fx').map((a) => `<option value="${esc(a.id)}"${a.id === p.id ? ' selected' : ''}>${esc(a.id)}</option>`).join('')}</select></label>
-      <label class="field"><span>Bấm vào mở</span><select name="action">${opt(FARM_ACTIONS, p.action, '— không —')}</select></label>
-      <label class="check"><input type="checkbox" name="signed" ${p.signed ? 'checked' : ''} /> Ảnh có sẵn biển tên</label>
-    </div>
-    <p class="muted">${p.role ? `Vai trò: <b>${esc(p.role)}</b> (duy nhất, giữ nguyên). ` : ''}Lớp 4 được game xếp theo Y cùng heo.</p>
-    <div class="dn__buttons"><button type="button" class="btn btn-small" data-dup>⧉ Nhân bản</button><button type="button" class="btn btn-small btn-danger" data-del>🗑 Xoá khỏi layout</button></div>
-  </form>`;
-}
-
-function readProps(f: HTMLFormElement): Partial<Placement> {
-  const d = new FormData(f);
-  const n = (k: string) => (String(d.get(k) ?? '').trim() === '' ? undefined : Number(d.get(k)));
-  const s = (k: string) => String(d.get(k) ?? '').trim() || undefined;
-  return {
-    x: (n('x') ?? 0) / ed.design.width, y: (n('y') ?? 0) / ed.design.height, width: n('width'), height: n('height'),
-    layer: Number(d.get('layer')), rotation: n('rotation') ?? 0, flipX: d.get('flipX') === 'on', visible: d.get('visible') === 'on',
-    locked: d.get('locked') === 'on', label: s('label'), id: String(d.get('id')), action: s('action') as Placement['action'], signed: d.get('signed') === 'on',
-  };
 }
 
 export function renderLayout(root: HTMLElement, rerender: () => void) {
@@ -126,7 +77,7 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
     <div class="layout-editor">
       <aside class="panel lib" data-lib></aside>
       <section class="layout-editor__center"><div data-stage></div><h3>Vật trong layout</h3><div data-placements></div></section>
-      <aside class="panel" data-props-host>${properties()}</aside>
+      <aside class="panel" data-props-host>${propsForm(ed.list, ed.sel, ed.design)}</aside>
     </div>`;
 
   const stage = mountStage(root.querySelector<HTMLElement>('[data-stage]')!, ed.design, {
@@ -135,7 +86,7 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
     select: (i) => {
       ed.sel = i;
       stage.draw();
-      root.querySelector<HTMLElement>('[data-props-host]')!.innerHTML = properties();
+      root.querySelector<HTMLElement>('[data-props-host]')!.innerHTML = propsForm(ed.list, ed.sel, ed.design);
       bindProps();
     },
     live: (i, next) => {
@@ -165,7 +116,7 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
     if (!f || ed.sel === null) return;
     const i = ed.sel;
     f.addEventListener('change', act(() => {
-      const next = readProps(f);
+      const next = readPropsForm(f, ed.design);
       const p = ed.list[i]!;
       // Keep the stored fraction when the shown pixel did not change (no drift from rounding).
       const W = ed.design.width;
@@ -174,6 +125,29 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
       next.y = Math.round(p.y * H) === Math.round(next.y! * H) ? p.y : Math.round(next.y! * 10000) / 10000;
       change(patch(ed.list, i, next));
     }));
+    f.querySelector('[data-picker="id"]')?.addEventListener('click', () =>
+      openPicker({
+        title: 'Thay asset',
+        current: ed.list[i]!.id,
+        items: state.art.filter((a) => a.url && SECTION_LABEL[a.section] && a.section !== 'ui' && a.section !== 'fx').map((a) => ({
+          id: a.id, label: a.nameVi ?? a.id, url: a.url, group: SECTION_LABEL[a.section]!,
+          note: ed.list.some((p) => p.id === a.id) ? `${a.id} · đang có trong layout` : a.id,
+        })),
+        onPick: (id) => {
+          change(patch(ed.list, i, { id }));
+          rerender();
+        },
+      }),
+    );
+    f.querySelectorAll<HTMLElement>('[data-quick]').forEach((b) =>
+      b.addEventListener('click', act(() => {
+        const q = b.dataset.quick;
+        const p = ed.list[i]!;
+        if (q === 'native') change(patch(ed.list, i, { width: undefined, height: undefined }));
+        else if (q === 'ratio') change(patch(ed.list, i, { height: undefined, width: p.width ?? sizeOf(urlOf(p.id)).w }));
+        else change(patch(ed.list, i, { x: 0.5 }));
+      })),
+    );
     f.querySelectorAll<HTMLElement>('[data-order]').forEach((b) =>
       b.addEventListener('click', act(() => {
         const r = reorder(ed.list, i, b.dataset.order as 'up');

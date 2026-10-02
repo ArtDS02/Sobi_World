@@ -100,6 +100,9 @@ export function artRows(manifest: Record<string, unknown>): ArtRow[] {
   );
 }
 
+/** Picture URL of a non-pig manifest row (props, buildings, ui…), null when none. */
+export const artUrl = (id: string) => state.art.find((a) => a.id === id)?.url ?? null;
+
 /** Keeps a confirmation across the full reload Vite does after a config file is written. */
 export function rememberMessage(text: string) {
   state.message = { kind: 'ok', text };

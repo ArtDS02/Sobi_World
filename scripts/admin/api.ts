@@ -8,7 +8,7 @@
 //   POST /register-art   { artId, nameVi }   → manifest row for a file already in pigs/base/
 //   POST /day-night      { settings }        → DAY_NIGHT block of config/dayNight.ts (DN)
 //   GET  /saves | /saves/read?id=            → desktop save folders (user management)
-//   POST /saves/write    { id, json, baseModifiedAt } · POST /saves/archive { id }
+//   POST /saves/write    { id, json, baseModifiedAt } · POST /saves/archive { id } · POST /saves/root { path }
 //   POST /products       { rows }            → PRODUCTS block of config/products.ts
 //   POST /breeding-pairs { rows }            → PAIR_RULES block of config/breedingPairs.ts
 //   GET  /layout-default · POST /layout { placements } → manifest layout.placements
@@ -21,7 +21,7 @@ import { dayNightIssues } from '../../src/core/engine/dayNight';
 import { replaceDayNightBlock } from './dayNightText';
 import { validateSpecies, type ValidateInput } from './validate';
 import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, registerExisting, uploadArt } from './artFiles';
-import { archiveProfile, listProfiles, readProfile, savesRoot, writeProfile } from './saves';
+import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
 import { pairsBlock, productsBlock, replaceBlock, replacePlacementsText } from './configBlocks';
 import { layoutIssues, pairIssues, productIssues, type PairRuleRow, type PlacementRow, type ProductRow } from './rules';
 
@@ -193,6 +193,8 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
       return readProfile(url.searchParams.get('id') ?? '');
     case 'POST /saves/write':
       return writeProfile(await body(), await saveValidator(load));
+    case 'POST /saves/root':
+      return setSavesRoot((await body<{ path: string }>()).path);
     case 'POST /saves/archive':
       return archiveProfile((await body<{ id: string }>()).id);
     case 'POST /products':

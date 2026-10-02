@@ -9,6 +9,7 @@ import { esc, gold } from './labels';
 import { mountList } from './listKit';
 import { byNumber, byText, reverse } from './listQuery';
 import { confirmDanger, openModal } from './modal';
+import { openPicker, pickButton } from './picker';
 import { post, rememberMessage, state } from './store';
 
 export const CATEGORY_LABEL: Record<string, string> = { FOOD: 'Thức ăn', MEDICINE: 'Thuốc', SUPPLY: 'Vật dụng', SPECIAL: 'Đặc biệt' };
@@ -66,7 +67,11 @@ function openEditor(existing: ProductDef | null, redraw: () => void) {
     id: '', nameVi: '', descVi: '', category: 'FOOD', currency: 'GOLD', itemId: 'FOOD_BASIC', quantity: 10,
     priceGold: ITEMS.FOOD_BASIC.priceGold * 10, icon: 'ui_btn_fill_trough', sortOrder: maxOrder + 10, active: true,
   };
-  const icons = state.art.filter((a) => a.url && (a.section === 'ui' || a.section === 'props'));
+  const SECTION: Record<string, string> = { ui: 'Icon UI', props: 'Đồ vật', buildings: 'Công trình', fx: 'Hiệu ứng' };
+  const icons = state.art.filter((a) => a.url && SECTION[a.section]).map((a) => ({
+    id: a.id, label: a.nameVi ?? a.id, url: a.url, group: SECTION[a.section]!,
+    note: draft.rows.filter((r) => r.icon === a.id).map((r) => r.nameVi).join(', ') || a.id,
+  }));
   openModal({
     title: existing ? `Sửa ${existing.nameVi}` : 'Sản phẩm mới',
     submit: existing ? 'Áp dụng' : 'Thêm vào bản nháp',
@@ -79,15 +84,28 @@ function openEditor(existing: ProductDef | null, redraw: () => void) {
         <label class="field"><span>Loại tiền</span><select name="currency">${opt(CURRENCY_VALUES, { GOLD: 'Vàng' }, p.currency)}</select></label>
         <label class="field"><span>Vật phẩm nhận được</span><select name="itemId">${opt(ITEM_ID_VALUES, ITEM_LABEL, p.itemId)}</select></label>
         <label class="field"><span>Số lượng mỗi lần mua</span><input type="number" name="quantity" min="1" max="999" step="1" value="${p.quantity}" /></label>
-        <label class="field"><span>Giá (vàng)</span><input type="number" name="priceGold" min="1" step="1" value="${p.priceGold}" /></label>
+        <label class="field"><span>Giá (vàng)</span><input type="number" name="priceGold" min="1" step="1" value="${p.priceGold}" />
+          <span class="quick-row"><button type="button" class="btn btn-small" data-price="1">= giá gốc × SL</button><button type="button" class="btn btn-small" data-price="0.9">−10%</button><button type="button" class="btn btn-small" data-price="0.8">−20%</button></span></label>
         <label class="field"><span>Thứ tự hiển thị (nhỏ → trước)</span><input type="number" name="sortOrder" step="1" value="${p.sortOrder}" /></label>
-        <label class="field span-2"><span>Icon / asset</span><select name="icon">${icons.map((a) => `<option value="${esc(a.id)}"${a.id === p.icon ? ' selected' : ''}>${esc(a.id)}</option>`).join('')}</select></label>
+        <div class="field span-2"><span>Icon / asset</span><span data-iconbtn>${pickButton('icon', p.icon, iconUrl(p.icon), p.icon)}</span></div>
         <label class="check"><input type="checkbox" name="active" ${p.active ? 'checked' : ''} /> Đang bán</label>
       </div>
       <div><p class="muted">Xem trước trong shop</p><div data-preview>${preview(p)}</div>
         <p class="muted" data-unit></p></div>
     </div>`,
     onOpen: (f) => {
+      f.querySelector('[data-iconbtn]')!.addEventListener('click', (e) => {
+        if (!(e.target as HTMLElement).closest('[data-picker]')) return;
+        openPicker({
+          title: 'Chọn icon sản phẩm',
+          items: icons,
+          current: p.icon,
+          onPick: (id) => {
+            f.querySelector('[data-iconbtn]')!.innerHTML = pickButton('icon', id, iconUrl(id), id);
+            f.dispatchEvent(new Event('input'));
+          },
+        });
+      });
       const update = () => {
         p = readForm(f, existing ?? p);
         f.querySelector('[data-preview]')!.innerHTML = preview(p);
@@ -95,6 +113,15 @@ function openEditor(existing: ProductDef | null, redraw: () => void) {
         f.querySelector('[data-unit]')!.textContent = `Giá gốc 1 ${p.itemId}: ${gold(base)} vàng (đổ máng tính theo giá gốc).`;
       };
       f.addEventListener('input', update);
+      // Quick prices: the item's base price × quantity, optionally discounted (bulk packs).
+      f.querySelectorAll<HTMLElement>('[data-price]').forEach((b) =>
+        b.addEventListener('click', () => {
+          const d = new FormData(f);
+          const base = ITEMS[String(d.get('itemId')) as keyof typeof ITEMS]?.priceGold ?? 0;
+          f.querySelector<HTMLInputElement>('[name=priceGold]')!.value = String(Math.max(1, Math.round(base * Number(d.get('quantity')) * Number(b.dataset.price))));
+          update();
+        }),
+      );
       update();
     },
     onSubmit: (f) => {
