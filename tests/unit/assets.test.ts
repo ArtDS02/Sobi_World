@@ -38,9 +38,11 @@ describe('manifest v2 (art standard §7.2)', () => {
     expect(parseManifest(bad).ok).toBe(false);
   });
 
-  it('covers v1 scope: 4 defaults + 13 P1 skins, 8 fx, 12 audio keys', () => {
+  it('covers v1 scope: 4 defaults + 13 P1 skins (+6 reference-cut skins), 8 fx, 12 audio keys', () => {
     const m = manifest();
-    expect(m.pigs).toHaveLength(17);
+    // 17 = art standard §10 waves 1–2; +6 = skins cut from asset/reference (spotted, pilot, pirate,
+    // ninja, robot, unicorn), added on user request 2026-10-02 (DECISIONS ART-5).
+    expect(m.pigs).toHaveLength(23);
     expect(m.fx.map((f) => f.id).sort()).toEqual([...FX_IDS].sort());
     expect(m.audio.map((a) => a.id)).toEqual([...AUDIO_KEYS]);
     expect(m.layout.designSize).toEqual({ width: 1600, height: 900 });
@@ -99,7 +101,7 @@ describe('asset registry (spec §11.4)', () => {
   });
 
   it('SkinRegistry reads prices, rarity and unlocks from the manifest (DECISIONS C2)', () => {
-    expect(reg.skins.forSale()).toHaveLength(13);
+    expect(reg.skins.forSale()).toHaveLength(19);
     expect(reg.skins.get('pig_tet')).toMatchObject({
       priceGold: 2000,
       rarity: 'P1',

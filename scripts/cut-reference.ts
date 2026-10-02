@@ -73,7 +73,12 @@ export const CUTS: Cut[] = [
   { id: 'pig_farmer', sheet: PIGS, box: cell(0, 1) },
   { id: 'pig_chef', sheet: PIGS, box: cell(1, 2) },
   { id: 'pig_nerd', sheet: PIGS, box: cell(2, 2) },
-  {
+  { id: 'pig_spotted', sheet: PIGS, box: cell(5, 0) },
+  { id: 'pig_pilot', sheet: PIGS, box: cell(4, 1) },
+  { id: 'pig_pirate', sheet: PIGS, box: cell(5, 1) },
+  { id: 'pig_ninja', sheet: PIGS, box: cell(0, 2) },
+  { id: 'pig_robot', sheet: PIGS, box: cell(1, 3) },
+  { id: 'pig_unicorn', sheet: PIGS, box: cell(2, 3) },  {
     id: 'pig_white',
     sheet: ENV,
     box: [20, 50, 360, 300],

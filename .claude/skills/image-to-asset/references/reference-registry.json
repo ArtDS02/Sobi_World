@@ -1,0 +1,39 @@
+{
+  "_doc": "Analysed reference images. Hash = first 16 hex of sha256. ref-check.mjs compares asset/reference/ against this list; an unlisted or changed file must be classified (workflows/reference-analysis.md) before it may influence a brief. class: CORE = defines the style; VARIATION = same style, extra evidence; OUTLIER = different style, never a style source. Cells of the pig sheet are 256x256 on a 6x4 grid: cell = c<col>r<row>, box = [col*256, row*256, 256, 256] (widen by 40 px when cutting).",
+  "analysedAt": "2026-10-01",
+  "files": [
+    { "file": "asset/reference/style_reference_pigs.png", "sha16": "f1c34e5682e81486", "size": [1536, 1024], "class": "CORE", "role": "Pig style source (art standard §1, A1)." },
+    { "file": "asset/reference/style_reference_environment.png", "sha16": "259d18f075ba7296", "size": [1536, 1024], "class": "CORE", "role": "Building/prop style source; top row = the 4 P0 breed pigs (same style as the pig sheet)." },
+    { "file": "asset/reference/style_reference_pigs_alt.png", "sha16": "4e008bf6a0d25dce", "size": [1536, 1024], "class": "OUTLIER", "role": "Rejected painterly style (art standard §1, §6.2): big head ~1:1.1, sketch texture, baked captions and scene props. Use only as a list of failure modes." }
+  ],
+  "cells": [
+    { "sheet": "env", "cell": "box[20,50,360,300]", "ids": ["pig_classic"], "match": "EXACT", "cuttable": true, "note": "Style anchor pig. Also the base of the white/brown recolours." },
+    { "sheet": "env", "cell": "box[395,30,370,320]", "ids": ["pig_watermelon"], "match": "EXACT", "cuttable": true, "note": "Green striped body, leaf sprout, seed dots." },
+    { "sheet": "env", "cell": "box[770,50,370,300]", "ids": ["pig_superhero"], "match": "EXACT", "cuttable": true, "note": "Periwinkle body, red cape + knot; mask accent from pack concept missing." },
+    { "sheet": "env", "cell": "box[1140,30,390,320]", "ids": ["pig_thienlong"], "match": "EXACT", "cuttable": true, "note": "Golden body, white wings, crown, collar + bell." },
+    { "sheet": "pigs", "cell": "c0r0", "ids": [], "match": "STYLE", "cuttable": true, "note": "Plain pink pig — scale reference for the pig sheet." },
+    { "sheet": "pigs", "cell": "c1r0", "ids": ["pig_watermelon"], "match": "STYLE", "cuttable": true, "note": "Duplicate of the env watermelon." },
+    { "sheet": "pigs", "cell": "c2r0", "ids": ["pig_superhero"], "match": "STYLE", "cuttable": true, "note": "Duplicate of the env superhero." },
+    { "sheet": "pigs", "cell": "c3r0", "ids": ["pig_thienlong"], "match": "STYLE", "cuttable": true, "note": "Duplicate of the env thienlong." },
+    { "sheet": "pigs", "cell": "c4r0", "ids": ["pig_black"], "match": "EXACT", "cuttable": true, "note": "Charcoal pig with light flank patch." },
+    { "sheet": "pigs", "cell": "c5r0", "ids": ["pig_spotted"], "match": "EXACT", "cuttable": true, "note": "Pink body, brown spots (catalogue: dark spots)." },
+    { "sheet": "pigs", "cell": "c0r1", "ids": ["pig_farmer"], "match": "PARTIAL", "cuttable": true, "note": "Straw sun hat + green scarf + bell. Pack pig_farmer wants nón lá + denim overalls + leaf in mouth — spec mismatch." },
+    { "sheet": "pigs", "cell": "c1r1", "ids": [], "match": "POSE", "cuttable": false, "note": "Pig lying in mud: baked puddle. Pose reference for lying/sleep only." },
+    { "sheet": "pigs", "cell": "c2r1", "ids": [], "match": "STYLE", "cuttable": false, "note": "Sunflower hood pig — no catalogue entry. Style evidence for petal/hood costumes." },
+    { "sheet": "pigs", "cell": "c3r1", "ids": [], "match": "STYLE", "cuttable": false, "note": "Pink bow pig with floating hearts (extra objects) — no catalogue entry." },
+    { "sheet": "pigs", "cell": "c4r1", "ids": ["pig_pilot"], "match": "PARTIAL", "cuttable": true, "note": "Leather aviator helmet + goggles + red scarf. Catalogue: pilot cap + aviator glasses — close." },
+    { "sheet": "pigs", "cell": "c5r1", "ids": ["pig_pirate"], "match": "EXACT", "cuttable": true, "note": "Tricorn with skull, eyepatch, belt. Asymmetric (eyepatch) — accepted mirror (standard §2.3)." },
+    { "sheet": "pigs", "cell": "c0r2", "ids": ["pig_ninja"], "match": "EXACT", "cuttable": true, "note": "Black pig, red headband + neckerchief." },
+    { "sheet": "pigs", "cell": "c1r2", "ids": ["pig_chef"], "match": "PARTIAL", "cuttable": true, "note": "Chef toque + red neckerchief. Pack wants an orange neckerchief." },
+    { "sheet": "pigs", "cell": "c2r2", "ids": ["pig_nerd"], "match": "PARTIAL", "cuttable": true, "note": "Round glasses + blue satchel. Pack wants green sweater vest + brown fringe, nothing held/carried." },
+    { "sheet": "pigs", "cell": "c3r2", "ids": [], "match": "STYLE", "cuttable": false, "note": "Yellow raincoat pig with baked puddle + bubbles — no catalogue entry." },
+    { "sheet": "pigs", "cell": "c4r2", "ids": [], "match": "STYLE", "cuttable": true, "note": "King pig: crown + ermine cape — no catalogue pig (crown = acc_head_crown idea)." },
+    { "sheet": "pigs", "cell": "c5r2", "ids": ["pig_sleepy"], "match": "POSE", "cuttable": false, "note": "Asleep in nightcap on a pillow (baked pillow). THE sleep-pose reference (standard §3.2)." },
+    { "sheet": "pigs", "cell": "c0r3", "ids": [], "match": "STYLE", "cuttable": true, "note": "Scarecrow / straw pig with overalls — no catalogue entry." },
+    { "sheet": "pigs", "cell": "c1r3", "ids": ["pig_robot"], "match": "EXACT", "cuttable": true, "note": "Grey metal body, cyan LED eyes/joints." },
+    { "sheet": "pigs", "cell": "c2r3", "ids": ["pig_unicorn"], "match": "EXACT", "cuttable": true, "note": "Rainbow mane + tail, golden horn; small sparkles float nearby (remove)." },
+    { "sheet": "pigs", "cell": "c3r3", "ids": [], "match": "STYLE", "cuttable": true, "note": "Bee costume pig — no catalogue entry." },
+    { "sheet": "pigs", "cell": "c4r3", "ids": [], "match": "STYLE", "cuttable": true, "note": "Devil pig: dark red, horns, bat wings — no catalogue entry (closest: pig_oni / pig_hades, not a match)." },
+    { "sheet": "pigs", "cell": "c5r3", "ids": ["pig_pumpkin"], "match": "EXACT", "cuttable": false, "note": "Pig inside an orange pumpkin costume. Rejected at V 2026-10-02: costume hides all four legs (catalogue §34) → backend X." }
+  ]
+}

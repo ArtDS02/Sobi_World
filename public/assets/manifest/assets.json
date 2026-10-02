@@ -227,6 +227,78 @@
       "asset": "pigs/skins/vietnam/pig_tet.png",
       "sleepAsset": "pigs/skins/vietnam/pig_tet_sleep.png",
       "tags": ["seasonal", "vietnam"]
+    },
+    {
+      "id": "pig_spotted",
+      "status": "production",
+      "nameVi": "Heo Đốm",
+      "collection": "base",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/base/pig_spotted.png",
+      "tags": ["classic"]
+    },
+    {
+      "id": "pig_pilot",
+      "status": "production",
+      "nameVi": "Heo Phi Công",
+      "collection": "jobs",
+      "rarity": "P1",
+      "priceGold": 2000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/jobs/pig_pilot.png",
+      "tags": ["job"]
+    },
+    {
+      "id": "pig_pirate",
+      "status": "production",
+      "nameVi": "Heo Cướp Biển",
+      "collection": "adventure",
+      "rarity": "P2",
+      "priceGold": 6000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/adventure/pig_pirate.png",
+      "tags": ["adventure", "pirate"]
+    },
+    {
+      "id": "pig_ninja",
+      "status": "production",
+      "nameVi": "Heo Ninja",
+      "collection": "adventure",
+      "rarity": "P2",
+      "priceGold": 6000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/adventure/pig_ninja.png",
+      "tags": ["adventure", "ninja"]
+    },
+    {
+      "id": "pig_robot",
+      "status": "production",
+      "nameVi": "Heo Cơ Giáp",
+      "collection": "robot",
+      "rarity": "P2",
+      "priceGold": 6000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/robot/pig_robot.png",
+      "tags": ["robot", "scifi"]
+    },
+    {
+      "id": "pig_unicorn",
+      "status": "production",
+      "nameVi": "Heo Kỳ Lân",
+      "collection": "fantasy",
+      "rarity": "P2",
+      "priceGold": 6000,
+      "unlock": null,
+      "allowedBreeds": "ALL",
+      "asset": "pigs/skins/fantasy/pig_unicorn.png",
+      "tags": ["fantasy", "magic"]
     }
   ],
   "cosmetics": [],

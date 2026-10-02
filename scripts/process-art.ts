@@ -5,8 +5,8 @@
 //   `<id> | <author / source> | <license>` (lines starting with # are ignored).
 // A row becomes `production` once every image/audio file it references arrives in the same batch.
 // Usage: npm run art:process [-- --dry-run]
-import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { PNG } from 'pngjs';
 import { PIG_FEET_Y } from '../src/core/config/assetIds';
 import {
@@ -354,7 +354,11 @@ async function main() {
     }
     const out = new PNG({ width: img.w, height: img.h });
     img.d.copy(out.data);
-    if (!dryRun) writeFileSync(join(ASSETS_DIR, t.path), PNG.sync.write(out));
+    if (!dryRun) {
+      // A new collection folder (e.g. skins/robot/) may not exist yet.
+      mkdirSync(dirname(join(ASSETS_DIR, t.path)), { recursive: true });
+      writeFileSync(join(ASSETS_DIR, t.path), PNG.sync.write(out));
+    }
     delivered.add(t.path);
     accepted.push(`${file} → ${t.path}`);
   }
