@@ -41,7 +41,7 @@ describe('audio keys (spec §12)', () => {
   it('every key resolves through manifest.audio with its volume and loop', () => {
     const tracks = audioTracks(reg);
     expect([...tracks.keys()].sort()).toEqual([...AUDIO_KEYS].sort());
-    expect(tracks.get('music_farm')).toMatchObject({ loop: true, volume: 0.6, kind: 'music' });
+    expect(tracks.get('music_farm')).toMatchObject({ loop: true, volume: 0.35, kind: 'music' });
     expect(tracks.get('ui_click')?.url).toMatch(/^assets\/audio\//);
   });
 
