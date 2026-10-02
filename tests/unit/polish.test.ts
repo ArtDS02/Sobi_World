@@ -18,6 +18,7 @@ describe('ambient motion (R12A)', () => {
   it('a cloud moves right at cloudSpeedPx and wraps around once fully off-scene', () => {
     expect(driftX(100, 50, 1600, 1000)).toBeCloseTo(100 + FARM_VIEW.AMBIENT.cloudSpeedPx);
     expect(driftX(1649, 50, 1600, 1000)).toBe(-50);
+    expect(driftX(1649, 50, 1600, 1000, -200)).toBe(-250);
   });
 });
 

@@ -5,51 +5,83 @@
   display: grid;
   gap: $sp-3;
 
-  .orders__title {
-    font-size: $fs-lg;
+  .orders__empty-art {
+    width: 9rem;
+    height: auto;
   }
 
   .orders__list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
     gap: $sp-3;
   }
 
+  // A pinned note: wanted pig on top, requirements, reward, deliver button.
   .orders__card {
     display: grid;
-    gap: $sp-2;
+    gap: $sp-1;
     align-content: start;
+    justify-items: center;
     padding: $sp-3;
-    background: $c-surface;
-    border: 1px solid $c-border;
-    border-radius: $radius-md;
+    text-align: center;
+    background: #fffdf5;
+    border: 2px solid $c-border;
+    border-radius: $radius-card;
+    box-shadow: 0 3px 0 $c-border;
 
     &.is-done {
       color: $c-text-muted;
+      opacity: 0.75;
     }
+  }
+
+  .orders__pic {
+    display: grid;
+    place-items: center;
+    width: 6rem;
+    height: 6rem;
+    background: radial-gradient(circle at 50% 65%, #e3f5cf 0 60%, #c9eaa6 61% 100%);
+    border-radius: 50%;
+  }
+
+  .orders__art {
+    width: 5.2rem;
+    height: 5.2rem;
+    object-fit: contain;
   }
 
   .orders__want {
     font-size: $fs-md;
     font-weight: $fw-bold;
+    color: $c-wood-dark;
   }
 
   .orders__req,
   .orders__time {
+    display: inline-flex;
+    gap: $sp-1;
+    align-items: center;
     font-size: $fs-sm;
     color: $c-text-muted;
   }
 
   .orders__reward {
+    display: inline-flex;
+    gap: $sp-1;
+    align-items: center;
+    padding: 0 $sp-2;
     font-weight: $fw-bold;
-    color: $c-primary-strong;
+    color: $c-wood-dark;
+    background: #fff4cc;
+    border-radius: 9999px;
   }
 
   .orders__foot {
-    display: flex;
-    gap: $sp-2;
-    align-items: center;
-    justify-content: space-between;
+    display: grid;
+    gap: $sp-1;
+    justify-items: center;
+    width: 100%;
+    padding-top: $sp-1;
   }
 
   .orders__done {

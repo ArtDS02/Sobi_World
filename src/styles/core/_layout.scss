@@ -39,19 +39,7 @@
     position: absolute;
     inset: 0;
     overflow: hidden;
-    // Letterbox bands continue the painted sky / grass (FARM_VIEW.BACKDROP).
-    background: linear-gradient(
-      to bottom,
-      #a9dcff 0%,
-      #d9f1ff 22%,
-      #acdc86 30%,
-      $c-farm-letterbox 36%
-    );
-  }
-
-  // The 1600×900 frame, sized and centred by stageFit (src/game/view/stageFit.ts).
-  &__frame {
-    position: absolute;
+    background: $c-farm-letterbox; // the canvas fills it; seen only before the first frame
   }
 
   // Tutorial coach card (spec §10.3): top-left, clear of the bottom hint; never covers the farm.

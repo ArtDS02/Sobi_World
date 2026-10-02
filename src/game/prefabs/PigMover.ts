@@ -6,7 +6,15 @@ import * as Phaser from 'phaser';
 import { FARM_VIEW } from '../../core/config/farmView';
 import { FEEDBACK } from '../../core/config/feedback';
 import type { PigMotion } from '../state/pigVisualState';
-import { facesLeft, napsDuring, restMs, walkDistance, walkMs, wanderTarget } from '../state/wander';
+import {
+  clampToEllipse,
+  facesLeft,
+  napsDuring,
+  restMs,
+  walkDistance,
+  walkMs,
+  wanderTarget,
+} from '../state/wander';
 import { hashId, type FarmLayout } from '../view/pigView';
 
 /** Pose multipliers on top of the pig's scale: breathing / squash (bx, by) and the turn (turn). */
@@ -57,6 +65,14 @@ export class PigMover {
     this.dest = { ...home };
     this.facingLeft = facingLeft;
     this.rest();
+  }
+
+  /** Pushed by a crowded neighbour (separation): only while standing, kept in the ellipse. */
+  nudge(dx: number, dy: number) {
+    if (!this.pos || this.walk) return;
+    this.pos = clampToEllipse(this.layout, { x: this.pos.x + dx, y: this.pos.y + dy });
+    this.dest = { ...this.pos };
+    this.onChange();
   }
 
   /** For pigVisualState: strolling (not paused), napping, or standing. */

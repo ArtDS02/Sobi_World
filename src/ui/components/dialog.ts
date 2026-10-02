@@ -1,6 +1,8 @@
 // Modal dialog. Rendered once when opened, outside the per-tick re-render, so inputs keep state.
+import type { UiIcon } from '../../core/config/assetIds';
 import { vi } from '../../i18n/vi';
 import { el } from '../dom';
+import { icon } from './icon';
 
 export interface DialogHandle {
   close(): void;
@@ -8,11 +10,15 @@ export interface DialogHandle {
   footer: HTMLElement;
 }
 
-/** `closeLabel`: text of the closing button (default "Hủy"; e.g. "Vào nông trại" for a notice). */
+/**
+ * `closeLabel`: text of the closing button (default "Hủy"; e.g. "Vào nông trại" for a notice).
+ * `iconName`: picture in the title badge.
+ */
 export function openDialog(
   host: HTMLElement,
   title: string,
   closeLabel: string = vi.action.cancel,
+  iconName?: UiIcon,
 ): DialogHandle {
   const body = el('div', { class: 'c-dialog__body' });
   const footer = el('div', { class: 'c-dialog__footer' });
@@ -30,15 +36,25 @@ export function openDialog(
     el(
       'div',
       { class: 'c-dialog__panel', attrs: { role: 'dialog', 'aria-modal': 'true' } },
-      el('h2', { class: 'c-dialog__title', text: title }),
+      el(
+        'h2',
+        { class: 'c-dialog__title' },
+        el('span', { class: 'c-dialog__badge' }, icon(iconName) ?? '🐷'),
+        title,
+      ),
       body,
-      footer,
-      el('button', {
-        class: 'c-button c-button--ghost',
-        text: closeLabel,
-        attrs: { type: 'button' },
-        on: { click: close },
-      }),
+      // Cancel and the confirm slot side by side.
+      el(
+        'div',
+        { class: 'c-dialog__bar' },
+        el('button', {
+          class: 'c-button c-button--ghost',
+          text: closeLabel,
+          attrs: { type: 'button' },
+          on: { click: close },
+        }),
+        footer,
+      ),
     ),
   );
   document.addEventListener('keydown', onKey);

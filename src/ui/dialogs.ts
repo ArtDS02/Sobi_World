@@ -22,7 +22,7 @@ const RARE = new Set<Pig['breed']>(['PIG_SUPERMAN', 'PIG_MYTHICAL']);
 
 export function openSellDialog(host: HTMLElement, pig: Pig, sell: ActionVm, act: Act) {
   const happy = happiness(pig);
-  const d = openDialog(host, t(vi.sell.title, { name: pig.name }));
+  const d = openDialog(host, t(vi.sell.title, { name: pig.name }), undefined, 'gold');
   d.body.append(
     el('p', { text: t(vi.sell.base, { gold: formatInt(BREEDS[pig.breed].sellGold) }) }),
     el('p', {
@@ -71,7 +71,7 @@ export function openTroughDialog(
   act: Act,
   units = troughSpace(save),
 ) {
-  const d = openDialog(host, vi.trough.title);
+  const d = openDialog(host, vi.trough.title, undefined, 'trough');
   const space = troughSpace(save);
   const input = el('input', {
     class: 'c-input',
@@ -125,7 +125,7 @@ export function openBuyItemDialog(
   now: number,
   act: Act,
 ) {
-  const d = openDialog(host, vi.shop[itemId]);
+  const d = openDialog(host, vi.shop[itemId], undefined, 'shop');
   const first = itemPurchase(save, itemId, 1, now);
   const input = el('input', {
     class: 'c-input',
@@ -165,7 +165,7 @@ export function openBreedDialog(
   now: number,
   act: Act,
 ) {
-  const d = openDialog(host, vi.breed.title);
+  const d = openDialog(host, vi.breed.title, undefined, 'breed');
   const vm = breedingVm(save, pig, now);
   if (vm.partners.length === 0) {
     d.body.append(el('p', { text: t(vi.breed.noPartners, { name: pig.name }) }));
@@ -207,7 +207,7 @@ export function openImportDialog(host: HTMLElement, onConfirm: () => Promise<voi
 
 /** §8.14: pick which fitting pig is sold into the order. */
 export function openOrderDialog(host: HTMLElement, card: OrderCardVm, act: Act) {
-  const d = openDialog(host, vi.order.pickPig);
+  const d = openDialog(host, vi.order.pickPig, undefined, 'orders');
   d.body.append(
     el('p', { class: 'c-dialog__strong', text: card.want }),
     el('p', { text: card.reward }),

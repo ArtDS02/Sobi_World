@@ -198,7 +198,8 @@ export function mountApp(
       return;
     }
     if (popup?.panel !== ui.panel) {
-      const label = ui.panel === 'pig' || ui.panel === 'well' ? vi.app.title : vi.nav[ui.panel];
+      const label =
+        ui.panel === 'pig' ? vi.app.title : ui.panel === 'well' ? vi.farm.cleanAll : vi.nav[ui.panel];
       popup = createPopupShell(ui.panel, label, () => go(null));
       popupHost.replaceChildren(popup.root);
     }

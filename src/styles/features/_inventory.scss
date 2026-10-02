@@ -5,31 +5,60 @@
   display: grid;
   gap: $sp-3;
 
-  .inventory__title {
-    font-size: $fs-lg;
-  }
-
   .inventory__list {
     display: grid;
-    gap: $sp-2;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    gap: $sp-3;
   }
 
   .inventory__row {
-    display: flex;
-    gap: $sp-3;
+    display: grid;
+    grid-template-columns: 4rem 1fr auto;
+    gap: $sp-2 $sp-3;
     align-items: center;
-    min-height: $sp-touch-min;
-    padding: $sp-2 $sp-3;
-    background: $c-surface;
-    border: 1px solid $c-border;
-    border-radius: $radius-md;
+    padding: $sp-3;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: $radius-card;
+    box-shadow: 0 3px 0 $c-border;
+
+    > .c-button {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .inventory__pic {
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    background: $c-cream;
+    border-radius: 50%;
+
+    .c-icon {
+      width: 2.6rem;
+      height: 2.6rem;
+    }
+  }
+
+  .inventory__text {
+    display: grid;
   }
 
   .inventory__name {
-    flex: 1;
+    font-weight: $fw-bold;
+    color: $c-wood-dark;
+  }
+
+  .inventory__desc {
+    font-size: $fs-xs;
+    color: $c-text-muted;
   }
 
   .inventory__qty {
+    padding: 0 $sp-2;
+    font-size: $fs-lg;
     font-weight: $fw-bold;
+    color: $c-pig-line;
   }
 }

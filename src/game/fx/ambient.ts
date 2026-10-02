@@ -60,7 +60,8 @@ export class Ambient {
   /** Scene update step. */
   update(dtMs: number) {
     if (this.paused) return;
-    const width = this.scene.scale.gameSize.width;
-    for (const c of this.drifting) c.x = driftX(c.x, c.displayWidth / 2, width, dtMs);
+    // Clouds wrap across the visible world (the camera may show more than the design frame).
+    const view = this.scene.cameras.main.worldView;
+    for (const c of this.drifting) c.x = driftX(c.x, c.displayWidth / 2, view.right, dtMs, view.x);
   }
 }

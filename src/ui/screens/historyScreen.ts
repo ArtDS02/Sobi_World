@@ -9,7 +9,6 @@ export function renderHistoryScreen(save: SaveGame): HTMLElement {
   return el(
     'section',
     { class: 'history', data: { screen: 'history' } },
-    el('h2', { class: 'history__title', text: vi.history.transactions }),
     rows.length === 0
       ? el('p', { class: 'c-empty', text: vi.history.empty })
       : el(
@@ -19,6 +18,11 @@ export function renderHistoryScreen(save: SaveGame): HTMLElement {
             el(
               'li',
               { class: 'history__row' },
+              el('span', {
+                class: `history__sign is-${r.tone}`,
+                text: r.tone === 'plus' ? '+' : r.tone === 'minus' ? '−' : '·',
+                attrs: { 'aria-hidden': 'true' },
+              }),
               el('span', { class: 'history__label', text: r.label }),
               el('span', { class: 'history__at', text: r.at }),
               el('span', {

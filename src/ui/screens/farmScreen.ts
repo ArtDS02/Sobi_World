@@ -6,6 +6,7 @@ import type { BoundAction } from '../../store/gameStore';
 import { farmActions } from '../actionsVm';
 import { actionButton } from '../components/actionButton';
 import { renderPigPanel, type PigPanelHandlers } from '../components/pigPanel';
+import { art } from '../components/icon';
 import { el } from '../dom';
 
 export function renderPigPopup(
@@ -26,7 +27,7 @@ export function renderWellPopup(
   return el(
     'div',
     { class: 'farm', data: { screen: 'farm' } },
-    el('h2', { class: 'farm__title', text: vi.farm.cleanAll }),
+    art('prop_water_well', 'farm__art'),
     el('p', { class: 'farm__hint', text: vi.farm.wellHint }),
     el(
       'div',

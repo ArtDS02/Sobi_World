@@ -105,6 +105,8 @@ export class PigSprite {
 
   /** Where the pig stands or is walking to; null before the first view. */
   readonly dest = () => this.mover.dest;
+  readonly stand = () => this.mover.pos;
+  readonly nudge = (dx: number, dy: number) => !this.leaving && this.mover.nudge(dx, dy);
 
   /** Species art row drawn right now; null before the first view. */
   get artId(): string | null {

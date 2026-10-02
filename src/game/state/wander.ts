@@ -76,3 +76,50 @@ export const walkDistance = (dx: number, dy: number): number =>
 /** Facing after moving from `fromX` to `toX`: left when the target is to the left. */
 export const facesLeft = (fromX: number, toX: number, current: boolean): boolean =>
   toX === fromX ? current : toX < fromX;
+
+/** `p` moved inside the walk ellipse (unchanged when already in). */
+export function clampToEllipse(layout: FarmLayout, p: { x: number; y: number }) {
+  const e = walkEllipse(layout);
+  const nx = (p.x - e.cx) / e.rx;
+  const ny = (p.y - e.cy) / e.ry;
+  const d = Math.hypot(nx, ny);
+  return d <= 1 ? p : { x: e.cx + (nx / d) * e.rx, y: e.cy + (ny / d) * e.ry };
+}
+
+/**
+ * Gentle push between standing pigs closer than WANDER.minGapPx (names never stack): each one of a
+ * pair moves half the overlap away, at most `maxStep` px. Coincident pigs split by id. Pure.
+ */
+export function separation(
+  pigs: readonly { id: string; x: number; y: number }[],
+  maxStep: number,
+): Map<string, { dx: number; dy: number }> {
+  const gap = FARM_VIEW.WANDER.minGapPx;
+  const out = new Map<string, { dx: number; dy: number }>();
+  const add = (id: string, dx: number, dy: number) => {
+    const o = out.get(id) ?? { dx: 0, dy: 0 };
+    out.set(id, { dx: o.dx + dx, dy: o.dy + dy });
+  };
+  for (let i = 0; i < pigs.length; i++) {
+    for (let j = i + 1; j < pigs.length; j++) {
+      const a = pigs[i]!;
+      const b = pigs[j]!;
+      let dx = b.x - a.x;
+      let dy = b.y - a.y;
+      const d = Math.hypot(dx, dy);
+      if (d >= gap) continue;
+      if (d < 1e-6) {
+        const t = (hashId(`${a.id}|${b.id}`) % 360) * (Math.PI / 180);
+        dx = Math.cos(t);
+        dy = Math.sin(t);
+      } else {
+        dx /= d;
+        dy /= d;
+      }
+      const step = Math.min(maxStep, (gap - d) / 2);
+      add(a.id, -dx * step, -dy * step);
+      add(b.id, dx * step, dy * step);
+    }
+  }
+  return out;
+}

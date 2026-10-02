@@ -10,6 +10,8 @@ import type { ActionVm } from './actionsVm';
 
 export interface OrderCardVm {
   id: string;
+  /** Art of the wanted species (manifest id). */
+  artId: string;
   want: string;
   gender: string;
   minHappiness: string;
@@ -39,6 +41,7 @@ export function ordersVm(save: SaveGame, now: number): OrderCardVm[] {
               }));
       return {
         id: o.id,
+        artId: BREEDS[o.wantBreed].artId,
         want: t(vi.order.want, { breed: BREEDS[o.wantBreed].nameVi }),
         gender: t(vi.order.wantGender, { gender: vi.gender[o.wantGender ?? 'any'] }),
         minHappiness: t(vi.order.minHappiness, { value: o.minHappiness }),

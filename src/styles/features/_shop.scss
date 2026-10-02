@@ -5,35 +5,36 @@
   display: grid;
   gap: $sp-3;
 
-  .shop__title {
-    font-size: $fs-lg;
-  }
-
+  // Segmented pill tabs.
   .shop__tabs {
     display: flex;
-    gap: $sp-2;
-    border-bottom: 1px solid $c-border;
+    gap: $sp-1;
+    justify-self: center;
+    padding: $sp-1;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: 9999px;
   }
 
   .shop__tab {
-    min-height: $sp-touch-min;
-    padding: $sp-2 $sp-3;
-    font-size: $fs-sm;
+    min-height: 2.5rem;
+    padding: $sp-1 $sp-4;
+    font-weight: $fw-bold;
+    color: $c-wood-dark;
+    cursor: pointer;
     background: none;
     border: 0;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
+    border-radius: 9999px;
 
     &.is-active {
-      font-weight: $fw-bold;
-      color: $c-primary-strong;
-      border-bottom-color: $c-primary;
+      color: #fff;
+      background: $c-primary;
     }
   }
 
   .shop__list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
     gap: $sp-3;
   }
 
@@ -42,34 +43,84 @@
     padding-top: $sp-2;
   }
 
+  // Picture on the left, text and buttons on the right.
   .shop__card {
     display: grid;
-    gap: $sp-2;
-    align-content: start;
+    grid-template-columns: 6rem 1fr;
+    gap: $sp-3;
+    align-items: center;
     padding: $sp-3;
-    background: $c-surface;
-    border: 1px solid $c-border;
-    border-radius: $radius-md;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: $radius-card;
+    box-shadow: 0 3px 0 $c-border;
+  }
+
+  .shop__pic {
+    display: grid;
+    place-items: center;
+    width: 6rem;
+    height: 6rem;
+    background: radial-gradient(circle at 50% 65%, #e3f5cf 0 60%, #c9eaa6 61% 100%);
+    border-radius: 50%;
+
+    .c-thumb,
+    .shop__art {
+      width: 5.2rem;
+      height: 5.2rem;
+      object-fit: contain;
+    }
+
+    .c-icon {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+  }
+
+  .shop__info {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
   }
 
   .shop__name {
     font-size: $fs-md;
+    color: $c-wood-dark;
   }
 
   .shop__desc,
   .shop__owned {
-    font-size: $fs-sm;
+    font-size: $fs-xs;
     color: $c-text-muted;
   }
 
   .shop__price {
+    display: inline-flex;
+    gap: $sp-1;
+    align-items: center;
+    justify-self: start;
+    padding: 0 $sp-2;
     font-weight: $fw-bold;
-    color: $c-gold;
+    color: $c-wood-dark;
+    background: #fff4cc;
+    border-radius: 9999px;
   }
 
   .shop__actions {
     display: flex;
     flex-wrap: wrap;
     gap: $sp-2;
+    padding-top: $sp-1;
+
+    .c-button {
+      min-height: 2.25rem;
+      padding: $sp-1 $sp-3;
+    }
+  }
+
+  .shop__info > .c-button,
+  .shop__info > .c-action {
+    justify-self: start;
+    margin-top: $sp-1;
   }
 }

@@ -5,15 +5,15 @@
   display: grid;
   gap: $sp-3;
 
-  .collection__title {
-    font-size: $fs-lg;
-  }
-
   .collection__heading {
     display: flex;
     justify-content: space-between;
+    padding: $sp-2 $sp-3;
     font-size: $fs-md;
-    border-bottom: 1px solid $c-border;
+    color: $c-wood-dark;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: 9999px;
   }
 
   .collection__group {
@@ -38,17 +38,26 @@
     gap: $sp-1;
     justify-items: center;
     padding: $sp-2;
-    background: $c-surface;
-    border: 1px solid $c-border;
-    border-radius: $radius-md;
+    background: radial-gradient(circle at 50% 40%, #fff 0 45%, #eaf7dc 46% 100%);
+    border: 2px solid $c-border;
+    border-radius: $radius-card;
+    box-shadow: 0 3px 0 $c-border;
 
     &.is-hidden {
       color: $c-text-muted;
+      background: #f6efe6;
+    }
+
+    .c-thumb {
+      width: 4.5rem;
+      height: 4.5rem;
     }
   }
 
   .collection__name {
     font-size: $fs-xs;
+    font-weight: $fw-bold;
+    color: $c-wood-dark;
     text-align: center;
   }
 }

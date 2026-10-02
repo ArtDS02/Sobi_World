@@ -5,7 +5,7 @@ import { BREEDS } from '../../core/config/breeds';
 import { FARM_VIEW } from '../../core/config/farmView';
 import { t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
-import { SCENE_KEYS } from '../config/phaser';
+import { fitCamera, SCENE_KEYS } from '../config/phaser';
 import { farmLoadList, fxAnimKey, type LoadList, type SheetItem } from '../view/textureKeys';
 import type { FarmDeps } from '../farmView';
 
@@ -48,7 +48,8 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    const { width, height } = this.scale;
+    fitCamera(this, this.deps.assets.manifest.layout);
+    const { width, height } = this.deps.assets.manifest.layout.designSize;
     const bar = FARM_VIEW.LOADING_BAR;
     const x = (width - bar.width) / 2;
     const y = height / 2;

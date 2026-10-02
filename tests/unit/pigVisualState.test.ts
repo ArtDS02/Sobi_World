@@ -10,7 +10,9 @@ import {
   type ActiveFeedback,
 } from '../../src/game/state/pigVisualState';
 import {
+  clampToEllipse,
   facesLeft,
+  separation,
   restMs,
   walkDistance,
   walkEllipse,
@@ -114,5 +116,38 @@ describe('wandering (spec §11, art §2.4) — visual only, inside the walk elli
     expect(facesLeft(100, 50, false)).toBe(true);
     expect(facesLeft(100, 150, true)).toBe(false);
     expect(facesLeft(100, 100, true)).toBe(true);
+  });
+});
+
+describe('separation (farm layout rework) — crowded pigs drift apart', () => {
+  it('pushes a close pair apart symmetrically, leaves distant pigs alone', () => {
+    const push = separation(
+      [
+        { id: 'a', x: 500, y: 500 },
+        { id: 'b', x: 540, y: 500 },
+        { id: 'c', x: 900, y: 500 },
+      ],
+      5,
+    );
+    expect(push.get('a')!.dx).toBeCloseTo(-5);
+    expect(push.get('b')!.dx).toBeCloseTo(5);
+    expect(push.has('c')).toBe(false);
+  });
+
+  it('splits pigs standing on the same spot', () => {
+    const push = separation(
+      [
+        { id: 'a', x: 500, y: 500 },
+        { id: 'b', x: 500, y: 500 },
+      ],
+      5,
+    );
+    expect(Math.hypot(push.get('a')!.dx, push.get('a')!.dy)).toBeCloseTo(5);
+  });
+
+  it('clampToEllipse keeps a pushed pig inside the walk area', () => {
+    const e = walkEllipse(layout);
+    const p = clampToEllipse(layout, { x: e.cx + e.rx * 2, y: e.cy });
+    expect(p.x).toBeCloseTo(e.cx + e.rx);
   });
 });

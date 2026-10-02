@@ -5,18 +5,48 @@
   display: grid;
   gap: $sp-3;
 
-  .history__title {
-    font-size: $fs-lg;
+  .history__list {
+    display: grid;
+    gap: $sp-2;
   }
 
   .history__row {
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: auto 1fr auto auto;
     gap: $sp-3;
     align-items: center;
-    padding: $sp-2 0;
+    padding: $sp-2 $sp-3;
     font-size: $fs-sm;
-    border-bottom: 1px solid $c-border;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: $radius-card;
+  }
+
+  .history__sign {
+    display: grid;
+    place-items: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    font-weight: $fw-bold;
+    color: #fff;
+    border-radius: 50%;
+
+    &.is-plus {
+      background: $c-success;
+    }
+
+    &.is-minus {
+      background: $c-danger;
+    }
+
+    &.is-zero {
+      background: $c-text-muted;
+    }
+  }
+
+  .history__label {
+    font-weight: $fw-bold;
+    color: $c-wood-dark;
   }
 
   .history__at {

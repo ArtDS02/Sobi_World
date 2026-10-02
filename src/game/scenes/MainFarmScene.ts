@@ -14,17 +14,18 @@ import { readyOrderCount } from '../../core/actions/fulfillOrder';
 import type { SaveGame } from '../../core/types';
 import type { StoreSnapshot } from '../../store/gameStore';
 import { SCENE_KEYS } from '../config/phaser';
-import type { FarmBridge, FarmDeps, FarmPick } from '../farmView';
+import type { FarmBridge, FarmDeps } from '../farmView';
 import { noEffects } from '../feedback/effects';
 import { Ambient } from '../fx/ambient';
 import { SceneEffects } from '../fx/SceneEffects';
 import { vi } from '../../i18n/vi';
-import { drawBackdrop } from '../prefabs/Backdrop';
-import { GIFT_ID_DATA, GiftBoxes } from '../prefabs/GiftBoxes';
+import { Backdrop } from '../prefabs/Backdrop';
+import { othersOf, spreadCrowd } from '../prefabs/crowd';
+import { GiftBoxes } from '../prefabs/GiftBoxes';
 import { Nameplates } from '../prefabs/Nameplates';
 import { addHover, addShadow, Badge } from '../prefabs/ObjectDecor';
 import type { PigEnv } from '../prefabs/pigEnv';
-import { PIG_ID_DATA, PigSprite } from '../prefabs/PigSprite';
+import { PigSprite } from '../prefabs/PigSprite';
 import { giftSpot, type Rect } from '../view/giftPlacement';
 import { pigView, type FarmLayout } from '../view/pigView';
 import { placementView } from '../view/sceneLayout';
@@ -35,20 +36,8 @@ import {
   textureKey,
   troughTextureKey,
 } from '../view/textureKeys';
+import { ACTION_DATA, pickOf } from './farmPick';
 import { queueLoadList, warnLoadErrors } from './PreloadScene';
-
-const ACTION_DATA = 'farmAction';
-
-/** The top object under the pointer → what was clicked. */
-function pickOf(top: Phaser.GameObjects.GameObject | undefined): FarmPick {
-  const pigId: unknown = top?.getData(PIG_ID_DATA);
-  if (typeof pigId === 'string') return { kind: 'pig', pigId };
-  const giftId: unknown = top?.getData(GIFT_ID_DATA);
-  if (typeof giftId === 'string') return { kind: 'gift', giftId };
-  const action: unknown = top?.getData(ACTION_DATA);
-  if (typeof action === 'string') return { kind: 'action', action: action as FarmAction };
-  return { kind: 'ground' };
-}
 
 export class MainFarmScene extends Phaser.Scene {
   private readonly pigs = new Map<string, PigSprite>();
@@ -81,14 +70,13 @@ export class MainFarmScene extends Phaser.Scene {
       layout: this.layout,
       troughX: () => this.trough?.x ?? null,
       reduceMotion: () => this.deps.store.getSnapshot().save?.settings.reduceMotion ?? false,
-      others: (pigId) =>
-        [...this.pigs].filter(([id]) => id !== pigId).flatMap(([, p]) => p.dest() ?? []),
+      others: (pigId) => othersOf(this.pigs, pigId),
     };
     warnLoadErrors(this.load);
     this.ambient = new Ambient(this, this.pigEnv.reduceMotion);
     this.plates = new Nameplates(this);
     this.gifts = new GiftBoxes(this, this.pigEnv.reduceMotion);
-    drawBackdrop(this, this.layout.designSize.width, this.layout.designSize.height);
+    Backdrop.follow(this, this.layout);
     this.drawPlacements();
     // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
     if (!this.pigEnv.reduceMotion()) this.cameras.main.fadeIn(FARM_VIEW.AMBIENT.fadeInMs);
@@ -200,6 +188,7 @@ export class MainFarmScene extends Phaser.Scene {
 
   override update(_time: number, delta: number) {
     this.ambient.update(delta);
+    spreadCrowd(this.pigs, delta);
     this.plates.update((id) => this.pigs.get(id)?.plateAnchor() ?? null);
   }
 

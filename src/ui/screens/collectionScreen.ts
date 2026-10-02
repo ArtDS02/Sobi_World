@@ -34,7 +34,6 @@ export function renderCollectionScreen(save: SaveGame, assets: AssetRegistry | n
   return el(
     'section',
     { class: 'collection', data: { screen: 'collection' } },
-    el('h2', { class: 'collection__title', text: vi.collection.title }),
     heading(vi.collection.breeds, vm.breedProgress),
     ...vm.breedGroups.flatMap((g) => [
       el(

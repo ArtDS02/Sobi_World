@@ -18,3 +18,13 @@ export function icon(name: UiIcon | undefined): HTMLElement | null {
     attrs: { src: url, alt: '', 'aria-hidden': 'true', draggable: 'false' },
   });
 }
+
+/** Any manifest image by id (pig / prop art in popups); null when it has no file. */
+export function art(id: string, cls: string, alt = ''): HTMLElement | null {
+  const url = source ? source(id) : null;
+  if (!url) return null;
+  return el('img', {
+    class: cls,
+    attrs: { src: url, alt, draggable: 'false', decoding: 'async', ...(alt ? {} : { 'aria-hidden': 'true' }) },
+  });
+}

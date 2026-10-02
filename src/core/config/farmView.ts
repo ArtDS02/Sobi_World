@@ -2,10 +2,10 @@
 // Positions in the manifest layout are normalised; everything here is in design pixels.
 export const FARM_VIEW = {
   /**
-   * The 1600×900 frame covers the window but loses at most this share of each axis: 12% of the
-   * width (both sides), 6% of the height (bottom only — the back row must stay under the HUD).
+   * The 1600×900 frame is always shown whole (camera fit); extra screen space shows more painted
+   * backdrop around it, at most this many design sizes per axis.
    */
-  STAGE_MAX_CROP: { x: 0.12, y: 0.06 },
+  VIEW_MAX_EXTEND: 2,
   /** On-screen height of an adult pig at the front of the walk area (scale 1). */
   PIG_DISPLAY_PX: 200,
   /** growthProgress 0 → baby, 100 → adult (spec §11: baby small, adult larger). */
@@ -74,6 +74,8 @@ export const FARM_VIEW = {
     napChance: 0.2,
     /** A target closer than this to another pig's spot is re-rolled (names never stack). */
     minGapPx: 120,
+    /** Speed of the push apart between standing pigs closer than minGapPx (px per second). */
+    pushPx: 40,
     tries: 8,
     /** Retry delay while the pig may not wander (selected, interacting, sick...). */
     retryMs: 1000,

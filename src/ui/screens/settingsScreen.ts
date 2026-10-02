@@ -67,7 +67,6 @@ export function renderSettingsScreen(
   return el(
     'section',
     { class: 'settings', data: { screen: 'settings' } },
-    el('h2', { class: 'settings__title', text: vi.settings.title }),
     section(
       vi.settings.sound,
       ...TOGGLES.map(([key, label]) => toggle(save.settings, key, label, h)),

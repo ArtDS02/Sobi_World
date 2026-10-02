@@ -1,43 +1,83 @@
-// Painted farm backdrop (farm layout rework): one canvas texture under everything — sky gradient,
-// two wavy hill bands, grass with light dots, a lighter oval where the pigs roam, the back fence and
-// a few small flowers. Replaces the env_sky / hills / ground images (no white edges, no seams).
+// Painted farm backdrop (farm layout rework): one canvas texture under everything, redrawn to the
+// camera view on resize — sky gradient, two wavy hill bands, grass with light dots, a lighter oval
+// where the pigs roam, the back fence and a few small flowers. Replaces the env_sky / hills /
+// ground images (no white edges, no seams).
 import * as Phaser from 'phaser';
 import { FARM_VIEW } from '../../core/config/farmView';
+import { fitCamera } from '../config/phaser';
+import { backdropRect, type WorldRect } from '../view/farmCamera';
+import type { FarmLayout } from '../view/pigView';
 import { hashId } from '../view/pigView';
 
 const KEY = 'farm_backdrop';
+/** Grass dots are scattered per world cell, so they stay put when the view grows. */
+const DOT_CELL = 100;
 
-/** Stable pseudo-random in [0, 1) per index (no Math.random: the backdrop never changes). */
-const unit = (i: number, salt: number) => (hashId(`bg:${i}:${salt}`) % 10007) / 10007;
+/** Stable pseudo-random in [0, 1) (no Math.random: the backdrop never changes). */
+const unit = (a: number, b: number, salt: number) =>
+  (hashId(`bg:${a}:${b}:${salt}`) % 10007) / 10007;
 
-export function drawBackdrop(scene: Phaser.Scene, width: number, height: number) {
-  if (scene.textures.exists(KEY)) scene.textures.remove(KEY);
-  const tex = scene.textures.createCanvas(KEY, width, height);
-  if (!tex) return;
-  const ctx = tex.getContext();
+/**
+ * The backdrop image under everything. `redraw` paints the given world rect (the camera view,
+ * which can be wider or taller than the design frame); painting is in world coordinates.
+ */
+export class Backdrop {
+  private image: Phaser.GameObjects.Image | null = null;
+
+  constructor(private readonly scene: Phaser.Scene) {}
+
+  /** Fits the scene camera to the design frame and repaints the backdrop on every resize. */
+  static follow(scene: Phaser.Scene, layout: FarmLayout) {
+    const backdrop = new Backdrop(scene);
+    const { width, height } = layout.designSize;
+    fitCamera(scene, layout, (view) =>
+      backdrop.redraw(backdropRect(view, width, height, FARM_VIEW.VIEW_MAX_EXTEND)),
+    );
+  }
+
+  redraw(rect: WorldRect) {
+    const { scene } = this;
+    if (scene.textures.exists(KEY)) {
+      this.image?.destroy();
+      scene.textures.remove(KEY);
+    }
+    const tex = scene.textures.createCanvas(KEY, rect.width, rect.height);
+    if (!tex) return;
+    const ctx = tex.getContext();
+    ctx.translate(-rect.x, -rect.y);
+    paint(ctx, rect);
+    tex.refresh();
+    this.image = scene.add.image(rect.x, rect.y, KEY).setOrigin(0).setDepth(-Infinity);
+  }
+}
+
+function paint(ctx: CanvasRenderingContext2D, r: WorldRect) {
   const B = FARM_VIEW.BACKDROP;
+  const left = r.x;
+  const right = r.x + r.width;
+  const bottom = r.y + r.height;
 
   const sky = ctx.createLinearGradient(0, 0, 0, B.sky.gradientEndY);
   sky.addColorStop(0, B.sky.top);
   sky.addColorStop(1, B.sky.bottom);
   ctx.fillStyle = sky;
-  ctx.fillRect(0, 0, width, B.grass.top + 10);
+  ctx.fillRect(left, r.y, r.width, B.grass.top + 10 - r.y);
 
   for (const h of B.hills) {
     ctx.fillStyle = h.color;
     ctx.beginPath();
-    ctx.moveTo(0, B.grass.top + 10);
-    for (let x = 0; x <= width; x += 8) {
-      const t = (x / width) * Math.PI * 2 * h.waves + h.phase;
+    ctx.moveTo(left, B.grass.top + 10);
+    for (let x = Math.floor(left / 8) * 8; x <= right + 8; x += 8) {
+      const t = (x / 1600) * Math.PI * 2 * h.waves + h.phase;
       ctx.lineTo(x, h.baseY - Math.sin(t) * h.amp - Math.sin(t * 2.3) * h.amp * 0.3);
     }
-    ctx.lineTo(width, B.grass.top + 10);
+    ctx.lineTo(right + 8, B.grass.top + 10);
     ctx.closePath();
     ctx.fill();
   }
 
   ctx.fillStyle = B.grass.color;
-  ctx.fillRect(0, B.grass.top, width, height - B.grass.top);
+  ctx.fillRect(left, B.grass.top, r.width, bottom - B.grass.top);
 
   const o = B.oval;
   ctx.save();
@@ -54,32 +94,36 @@ export function drawBackdrop(scene: Phaser.Scene, width: number, height: number)
   ctx.restore();
 
   ctx.fillStyle = B.grass.dot;
-  for (let i = 0; i < B.grass.dots; i++) {
-    const x = unit(i, 1) * width;
-    const y = B.grass.top + 30 + unit(i, 2) * (height - B.grass.top - 30);
-    ctx.beginPath();
-    ctx.ellipse(x, y, B.grass.dotR * 1.6, B.grass.dotR, 0, 0, Math.PI * 2);
-    ctx.fill();
+  const perCell = (B.grass.dots * DOT_CELL * DOT_CELL) / (1600 * 600);
+  for (let cx = Math.floor(left / DOT_CELL); cx * DOT_CELL < right; cx++) {
+    for (let cy = Math.floor(B.grass.top / DOT_CELL); cy * DOT_CELL < bottom; cy++) {
+      for (let i = 0; i < perCell; i++) {
+        const x = (cx + unit(cx, cy, i * 2)) * DOT_CELL;
+        const y = (cy + unit(cx, cy, i * 2 + 1)) * DOT_CELL;
+        if (y < B.grass.top + 30) continue;
+        ctx.beginPath();
+        ctx.ellipse(x, y, B.grass.dotR * 1.6, B.grass.dotR, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
   }
 
-  drawFence(ctx, width);
-
+  drawFence(ctx, left, right);
   for (const f of B.flowers) drawFlower(ctx, f.x, f.y);
-  tex.refresh();
-  scene.add.image(0, 0, KEY).setOrigin(0).setDepth(-Infinity);
 }
 
-function drawFence(ctx: CanvasRenderingContext2D, width: number) {
+function drawFence(ctx: CanvasRenderingContext2D, left: number, right: number) {
   const F = FARM_VIEW.BACKDROP.fence;
   const top = F.y - F.height;
   ctx.lineWidth = 2;
   ctx.strokeStyle = F.dark;
   ctx.fillStyle = F.wood;
   for (const ry of [top + F.height * 0.28, top + F.height * 0.62]) {
-    ctx.fillRect(0, ry, width, F.railH);
-    ctx.strokeRect(-2, ry, width + 4, F.railH);
+    ctx.fillRect(left, ry, right - left, F.railH);
+    ctx.strokeRect(left - 2, ry, right - left + 4, F.railH);
   }
-  for (let x = F.postEvery / 2; x < width; x += F.postEvery) {
+  const first = F.postEvery / 2 + Math.floor(left / F.postEvery) * F.postEvery;
+  for (let x = first; x < right + F.postEvery; x += F.postEvery) {
     const l = x - F.postW / 2;
     ctx.beginPath();
     ctx.moveTo(l, F.y);

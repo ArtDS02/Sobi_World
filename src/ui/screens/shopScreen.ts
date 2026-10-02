@@ -8,7 +8,9 @@ import type { BoundAction } from '../../store/gameStore';
 import { shopItems, shopPigs, shopSlot } from '../actionsVm';
 import { actionButton } from '../components/actionButton';
 import { rarityBadge } from '../components/rarityBadge';
+import { art, icon } from '../components/icon';
 import { thumb } from '../components/thumb';
+import type { UiIcon } from '../../core/config/assetIds';
 import { el } from '../dom';
 
 export type ShopTab = 'pigs' | 'items' | 'slots';
@@ -24,9 +26,18 @@ export interface ShopHandlers {
   buyItem: (itemId: ItemId) => void;
 }
 
-const card = (title: string, ...rest: (HTMLElement | null)[]) =>
-  el('li', { class: 'shop__card' }, el('h3', { class: 'shop__name', text: title }), ...rest);
+/** Picture per shop item (ui icons; the pig house art for a new slot). */
+const ITEM_ICON: Record<ItemId, UiIcon> = { FOOD_BASIC: 'fillTrough', MEDICINE_COMMON: 'treat' };
+
+const card = (pic: HTMLElement | null, title: string, ...rest: (HTMLElement | null)[]) =>
+  el(
+    'li',
+    { class: 'shop__card' },
+    el('div', { class: 'shop__pic' }, pic),
+    el('div', { class: 'shop__info' }, el('h3', { class: 'shop__name', text: title }), ...rest),
+  );
 const line = (cls: string, text: string) => el('p', { class: `shop__${cls}`, text });
+const price = (text: string) => el('p', { class: 'shop__price' }, icon('gold'), text);
 
 /** Species cards, one heading row per rarity (U04). */
 function pigsTab(save: SaveGame, now: number, on: ShopHandlers, assets: AssetRegistry | null) {
@@ -41,15 +52,21 @@ function pigsTab(save: SaveGame, now: number, on: ShopHandlers, assets: AssetReg
       el(
         'li',
         { class: 'shop__card shop__card--pig', data: { breed: p.breed } },
-        thumb(p.thumb, p.name),
-        el('h3', { class: 'shop__name', text: p.name }),
-        line('price', p.price),
-        line('desc', p.sell),
+        el('div', { class: 'shop__pic' }, thumb(p.thumb, p.name)),
         el(
           'div',
-          { class: 'shop__actions' },
-          actionButton(p.male, () => on.act(p.male.run)),
-          actionButton(p.female, () => on.act(p.female.run)),
+          { class: 'shop__info' },
+          el('h3', { class: 'shop__name', text: p.name }),
+          price(p.price),
+          line('desc', p.sell),
+          el(
+            'div',
+            { class: 'shop__actions' },
+            actionButton({ ...p.male, label: `♂ ${p.male.label}` }, () => on.act(p.male.run)),
+            actionButton({ ...p.female, label: `♀ ${p.female.label}` }, () =>
+              on.act(p.female.run),
+            ),
+          ),
         ),
       ),
     );
@@ -60,9 +77,10 @@ function pigsTab(save: SaveGame, now: number, on: ShopHandlers, assets: AssetReg
 function itemsTab(save: SaveGame, on: ShopHandlers) {
   return shopItems(save).map((item) =>
     card(
+      icon(ITEM_ICON[item.id]),
       item.name,
       line('desc', item.desc),
-      line('price', item.price),
+      price(item.price),
       line('owned', `${vi.shop.owned}: ${item.owned}`),
       el('button', {
         class: 'c-button',
@@ -79,8 +97,9 @@ function slotsTab(save: SaveGame, now: number, on: ShopHandlers) {
   if (!slot) return [el('li', { class: 'c-empty', text: vi.error.MAX_SLOTS_REACHED })];
   return [
     card(
+      art('prop_pig_house', 'shop__art'),
       slot.title,
-      line('price', slot.price),
+      price(slot.price),
       actionButton(slot.buy, () => on.act(slot.buy.run)),
     ),
   ];
@@ -102,7 +121,6 @@ export function renderShopScreen(
   return el(
     'section',
     { class: 'shop', data: { screen: 'shop' } },
-    el('h2', { class: 'shop__title', text: vi.shop.title }),
     el(
       'div',
       { class: 'shop__tabs', attrs: { role: 'tablist' } },

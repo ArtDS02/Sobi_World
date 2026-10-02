@@ -2,8 +2,12 @@
 import { ITEM_IDS } from '../../core/config/items';
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
+import type { UiIcon } from '../../core/config/assetIds';
+import type { ItemId } from '../../core/config/ids';
 import { icon } from '../components/icon';
 import { el } from '../dom';
+
+const ITEM_ICON: Record<ItemId, UiIcon> = { FOOD_BASIC: 'fillTrough', MEDICINE_COMMON: 'treat' };
 
 export interface InventoryHandlers {
   fillTrough: () => void;
@@ -13,7 +17,6 @@ export function renderInventoryScreen(save: SaveGame, on: InventoryHandlers): HT
   return el(
     'section',
     { class: 'inventory', data: { screen: 'inventory' } },
-    el('h2', { class: 'inventory__title', text: vi.nav.inventory }),
     el(
       'ul',
       { class: 'inventory__list' },
@@ -21,7 +24,13 @@ export function renderInventoryScreen(save: SaveGame, on: InventoryHandlers): HT
         el(
           'li',
           { class: 'inventory__row' },
-          el('span', { class: 'inventory__name', text: vi.shop[id] }),
+          el('span', { class: 'inventory__pic' }, icon(ITEM_ICON[id])),
+          el(
+            'span',
+            { class: 'inventory__text' },
+            el('span', { class: 'inventory__name', text: vi.shop[id] }),
+            el('span', { class: 'inventory__desc', text: vi.shop[`${id}_desc`] }),
+          ),
           el('span', { class: 'inventory__qty', text: `x${save.inventory[id]}` }),
           // Medicine is used from the sick pig's panel (it needs a target).
           id === 'FOOD_BASIC'

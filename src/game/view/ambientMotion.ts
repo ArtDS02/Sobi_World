@@ -10,8 +10,16 @@ export function ambientKind(id: string): AmbientKind {
   return AMBIENT_SWAY_IDS.includes(id) ? 'sway' : null;
 }
 
-/** Next x of a drifting cloud: moves right, re-enters from the left once fully off-scene. Pure. */
-export function driftX(x: number, halfWidth: number, sceneWidth: number, dtMs: number): number {
+/**
+ * Next x of a drifting cloud: moves right, re-enters at `left` once fully past `right`. Pure.
+ */
+export function driftX(
+  x: number,
+  halfWidth: number,
+  right: number,
+  dtMs: number,
+  left = 0,
+): number {
   const next = x + (FARM_VIEW.AMBIENT.cloudSpeedPx * dtMs) / 1000;
-  return next - halfWidth > sceneWidth ? -halfWidth : next;
+  return next - halfWidth > right ? left - halfWidth : next;
 }

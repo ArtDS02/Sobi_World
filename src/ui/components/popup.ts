@@ -1,7 +1,9 @@
 // Popup window over the farm canvas (DECISIONS R05C-1): one at a time, closed by ✕, Esc or a click
 // on the backdrop. The shell is stable per panel; only the body is re-rendered, so scroll survives.
+import type { UiIcon } from '../../core/config/assetIds';
 import { vi } from '../../i18n/vi';
 import { el } from '../dom';
+import { icon } from './icon';
 
 /** Everything that opens over the farm; the farm itself is the canvas, never a panel. */
 export const PANELS = [
@@ -15,6 +17,18 @@ export const PANELS = [
   'well',
 ] as const;
 export type PanelId = (typeof PANELS)[number];
+
+/** Header icon per popup; the pig popup has no header (its own portrait column names it). */
+const PANEL_ICON: Record<PanelId, UiIcon | null> = {
+  shop: 'shop',
+  inventory: 'fillTrough',
+  orders: 'orders',
+  collection: 'collection',
+  history: 'gold',
+  settings: null,
+  pig: null,
+  well: 'cleanAll',
+};
 
 export interface PopupShell {
   panel: PanelId;
@@ -37,8 +51,16 @@ export function createPopupShell(panel: PanelId, label: string, onClose: () => v
         class: 'c-window__panel',
         attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-label': label },
       },
+      panel === 'pig'
+        ? null
+        : el(
+            'header',
+            { class: 'c-window__head' },
+            el('span', { class: 'c-window__badge' }, icon(PANEL_ICON[panel] ?? undefined) ?? '⚙'),
+            el('h2', { class: 'c-window__title', text: label }),
+          ),
       el('button', {
-        class: 'c-button c-button--icon c-window__close',
+        class: 'c-window__close',
         text: '✕',
         attrs: { type: 'button', 'aria-label': vi.action.close },
         on: { click: onClose },
