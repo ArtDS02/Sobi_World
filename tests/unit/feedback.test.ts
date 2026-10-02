@@ -42,6 +42,8 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   SKIN_BOUGHT: { type: 'SKIN_BOUGHT', skinId: 'pig_farmer', gold: -2000 },
   SKIN_EQUIPPED: { type: 'SKIN_EQUIPPED', pigId: 'pig-1', skinId: 'pig_farmer' },
   SETTING_CHANGED: { type: 'SETTING_CHANGED', key: 'musicOn', value: false },
+  GIFT_SPAWNED: { type: 'GIFT_SPAWNED', giftId: 'g1' },
+  GIFT_OPENED: { type: 'GIFT_OPENED', giftId: 'g1', gold: 120, xp: 35 },
 };
 
 describe('feedback table (§11.3)', () => {
@@ -49,10 +51,11 @@ describe('feedback table (§11.3)', () => {
     expect(Object.keys(FEEDBACK_TABLE).sort()).toEqual([...GAME_EVENT_TYPES].sort());
   });
 
-  it('a row toasts exactly when its event has toast text', () => {
+  it('a row toasts (or floats, toasting under reduceMotion) exactly when it has toast text', () => {
     const s = farm([makePig()]);
     for (const type of GAME_EVENT_TYPES) {
-      expect(toastText(SAMPLES[type], s, s) !== null, type).toBe(FEEDBACK_TABLE[type].toast);
+      const row = FEEDBACK_TABLE[type];
+      expect(toastText(SAMPLES[type], s, s) !== null, type).toBe(row.toast || !!row.float);
     }
   });
 
@@ -77,7 +80,23 @@ describe('feedbackPlan', () => {
 
   it('reduceMotion drops tweens and particles, keeps sound and toast', () => {
     const p = feedbackPlan(SAMPLES.PIG_BOUGHT, 'action', true);
-    expect(p).toEqual({ animations: [], vfx: [], sound: 'ui_click', toast: true });
+    expect(p).toEqual({ animations: [], vfx: [], floats: [], sound: 'ui_click', toast: true });
+  });
+
+  it('gift: smoke + pop on spawn; open pops, floats the reward, toasts only under reduceMotion', () => {
+    const spawn = feedbackPlan(SAMPLES.GIFT_SPAWNED, 'tick', false);
+    expect(spawn.animations).toEqual([
+      { animation: 'giftSpawn', target: { kind: 'gift', giftId: 'g1' }, delayMs: 0 },
+    ]);
+    expect(spawn.vfx.map((v) => v.fx)).toEqual(['fx_smoke']);
+    expect(feedbackPlan(SAMPLES.GIFT_SPAWNED, 'catchup', false).animations).toEqual([]);
+    const open = feedbackPlan(SAMPLES.GIFT_OPENED, 'action', false);
+    expect(open.floats).toEqual([
+      { lines: ['+120 vàng', '+35 KN'], target: { kind: 'gift', giftId: 'g1' }, delayMs: 0 },
+    ]);
+    expect(open.toast).toBe(false);
+    const still = feedbackPlan(SAMPLES.GIFT_OPENED, 'action', true);
+    expect(still).toMatchObject({ floats: [], toast: true, sound: 'coin_collect' });
   });
 
   it('PIG_CLEANED animates each pig, staggered', () => {
@@ -131,6 +150,7 @@ function director(save: SaveGame) {
     effects: () => ({
       animate: (a, t) => log.push(`anim:${a}:${t.kind}`),
       burst: (fx, t) => log.push(`vfx:${fx}:${t.kind}`),
+      float: (lines, t) => log.push(`float:${lines.join('|')}:${t.kind}`),
     }),
     audio: { play: (k) => log.push(`sound:${k}`) },
     toast: (m) => log.push(`toast:${m}`),

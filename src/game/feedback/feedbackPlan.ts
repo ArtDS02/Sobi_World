@@ -4,11 +4,17 @@ import type { AudioKey, FxId } from '../../core/config/assetIds';
 import { FEEDBACK } from '../../core/config/feedback';
 import type { GameEvent } from '../../core/events';
 import type { EventOrigin } from '../../store/gameStore';
+import { formatInt, t } from '../../i18n/format';
+import { vi } from '../../i18n/vi';
 import { FEEDBACK_TABLE, type AnimationId } from './feedbackTable';
 
 /** What a step plays on: a pig sprite, the trough, the order board, or the top of the scene. */
 export type FeedbackTarget =
-  { kind: 'pig'; pigId: string } | { kind: 'trough' } | { kind: 'board' } | { kind: 'top' };
+  | { kind: 'pig'; pigId: string }
+  | { kind: 'gift'; giftId: string }
+  | { kind: 'trough' }
+  | { kind: 'board' }
+  | { kind: 'top' };
 
 export interface FeedbackPlan {
   animations: {
@@ -19,6 +25,8 @@ export interface FeedbackPlan {
     from?: FeedbackTarget;
   }[];
   vfx: { fx: FxId; target: FeedbackTarget; delayMs: number }[];
+  /** Text lines rising from the target (gift rewards, U06). */
+  floats: { lines: string[]; target: FeedbackTarget; delayMs: number }[];
   sound: AudioKey | null;
   toast: boolean;
 }
@@ -41,6 +49,9 @@ export function eventTargets(e: GameEvent): FeedbackTarget[] {
     case 'ORDER_FULFILLED':
     case 'ORDER_EXPIRED':
       return [{ kind: 'board' }];
+    case 'GIFT_SPAWNED':
+    case 'GIFT_OPENED':
+      return [{ kind: 'gift', giftId: e.giftId }];
     case 'LEVEL_UP':
     case 'DISCOVERY':
     case 'SLOT_BOUGHT':
@@ -58,6 +69,14 @@ function soundOf(e: GameEvent, sound: AudioKey | null): AudioKey | null {
   return 'gold' in e && e.gold > 0 ? 'coin_collect' : null;
 }
 
+const still = { animations: [], vfx: [], floats: [] };
+
+/** Reward lines of an event that floats (gift: gold and XP). */
+function floatLines(e: GameEvent): string[] {
+  if (e.type !== 'GIFT_OPENED') return [];
+  return [t(vi.farm.giftGold, { n: formatInt(e.gold) }), t(vi.farm.giftXp, { n: formatInt(e.xp) })];
+}
+
 export function feedbackPlan(
   e: GameEvent,
   origin: EventOrigin,
@@ -66,9 +85,9 @@ export function feedbackPlan(
   const row = FEEDBACK_TABLE[e.type];
   // Catch-up events are never replayed as presentation (§9.5): the toast stays until the away
   // summary exists (R11, DECISIONS R05B-1).
-  if (origin === 'catchup') return { animations: [], vfx: [], sound: null, toast: row.toast };
+  if (origin === 'catchup') return { ...still, sound: null, toast: row.toast };
   const sound = soundOf(e, row.sound);
-  if (reduceMotion) return { animations: [], vfx: [], sound, toast: row.toast };
+  if (reduceMotion) return { ...still, sound, toast: row.toast || !!row.float };
 
   const targets = eventTargets(e);
   const delay = (i: number) => (row.stagger ? i * FEEDBACK.STAGGER_MS : 0);
@@ -83,6 +102,9 @@ export function feedbackPlan(
         }))
       : [],
     vfx: targets.flatMap((target, i) => row.vfx.map((fx) => ({ fx, target, delayMs: delay(i) }))),
+    floats: row.float
+      ? targets.map((target) => ({ lines: floatLines(e), target, delayMs: 0 }))
+      : [],
     sound,
     toast: row.toast,
   };

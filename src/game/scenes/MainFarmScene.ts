@@ -18,8 +18,10 @@ import { noEffects } from '../feedback/effects';
 import { Ambient } from '../fx/ambient';
 import { SceneEffects } from '../fx/SceneEffects';
 import { vi } from '../../i18n/vi';
+import { GIFT_ID_DATA, GiftBoxes } from '../prefabs/GiftBoxes';
 import { Nameplates } from '../prefabs/Nameplates';
 import { PIG_ID_DATA, PigSprite, type PigEnv } from '../prefabs/PigSprite';
+import { giftSpot, type Rect } from '../view/giftPlacement';
 import { pigView, type FarmLayout } from '../view/pigView';
 import { groundLineY, placementView } from '../view/sceneLayout';
 import {
@@ -37,6 +39,8 @@ const ACTION_DATA = 'farmAction';
 function pickOf(top: Phaser.GameObjects.GameObject | undefined): FarmPick {
   const pigId: unknown = top?.getData(PIG_ID_DATA);
   if (typeof pigId === 'string') return { kind: 'pig', pigId };
+  const giftId: unknown = top?.getData(GIFT_ID_DATA);
+  if (typeof giftId === 'string') return { kind: 'gift', giftId };
   const action: unknown = top?.getData(ACTION_DATA);
   if (typeof action === 'string') return { kind: 'action', action: action as FarmAction };
   return { kind: 'ground' };
@@ -55,6 +59,9 @@ export class MainFarmScene extends Phaser.Scene {
   private pigEnv!: PigEnv;
   private ambient!: Ambient;
   private plates!: Nameplates;
+  private gifts!: GiftBoxes;
+  /** Bounds of every world object; gift boxes keep clear of them (U06). */
+  private readonly obstacles: Rect[] = [];
 
   constructor(
     private readonly deps: FarmDeps,
@@ -73,6 +80,7 @@ export class MainFarmScene extends Phaser.Scene {
     warnLoadErrors(this.load);
     this.ambient = new Ambient(this, this.pigEnv.reduceMotion);
     this.plates = new Nameplates(this);
+    this.gifts = new GiftBoxes(this, this.pigEnv.reduceMotion);
     this.drawBackdrop();
     this.drawPlacements();
     // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
@@ -89,10 +97,12 @@ export class MainFarmScene extends Phaser.Scene {
       pig: (id) => this.pigs.get(id) ?? this.leaving.get(id),
       trough: () => this.trough,
       board: () => this.board,
+      gifts: () => this.gifts,
     });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       off();
       this.plates.destroy();
+      this.gifts.destroy();
       this.bridge.refresh = () => {};
       this.bridge.effects = noEffects;
     });
@@ -124,6 +134,7 @@ export class MainFarmScene extends Phaser.Scene {
           .setOrigin(v.originX, v.originY)
           .setDepth(v.depth);
         if (p.action) this.makeClickable(this.trough, p.action);
+        this.obstacles.push(this.trough.getBounds());
         return;
       }
       const key = textureKey(p.id);
@@ -146,6 +157,7 @@ export class MainFarmScene extends Phaser.Scene {
         .setDepth(v.depth);
       if (entry?.section === 'environment') this.ambient.add(p.id, img);
       if (p.role === 'orderBoard') this.board = img;
+      this.obstacles.push(img.getBounds());
       if (p.action) this.makeClickable(img, p.action);
     });
   }
@@ -203,6 +215,14 @@ export class MainFarmScene extends Phaser.Scene {
       );
     }
     this.plates.sync(new Map((save?.pigs ?? []).map((p) => [p.id, p.name])));
+    const pigHomes = (save?.pigs ?? []).map((p) => pigView(p, now, this.layout, this.deps.assets));
+    this.gifts.sync(save?.gifts.boxes ?? [], (box) =>
+      giftSpot(box.seed, this.layout, {
+        obstacles: this.obstacles,
+        pigHomes,
+        gifts: this.gifts.points(),
+      }),
+    );
     const reduceMotion = save?.settings.reduceMotion ?? false;
     for (const [id, sprite] of this.pigs) {
       if (seen.has(id)) continue;

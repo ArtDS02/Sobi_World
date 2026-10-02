@@ -6,6 +6,7 @@ import {
   AUDIO_KEYS,
   FX_IDS,
   ORDER_BOARD_PROP_ID,
+  GIFT_PROP_ID,
   PIG_FEET_Y,
   TROUGH_PROP_ID,
   TROUGH_STATES,
@@ -101,6 +102,7 @@ export function checkAssets(root: string): string[] {
   for (const id of FX_IDS) need(id, 'fx', 'shared fx set');
   for (const id of AUDIO_KEYS) need(id, 'audio', 'spec §12 audio key');
   need(ORDER_BOARD_PROP_ID, 'props', 'order board');
+  need(GIFT_PROP_ID, 'props', 'gift box (U06)');
   need(TROUGH_PROP_ID, 'props', 'trough');
   const trough = manifest.props.find((p) => p.id === TROUGH_PROP_ID);
   for (const state of TROUGH_STATES) {

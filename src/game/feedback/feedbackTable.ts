@@ -4,7 +4,17 @@ import type { AudioKey, FxId } from '../../core/config/assetIds';
 import type { GameEventType } from '../../core/events';
 
 export type AnimationId =
-  'bounce' | 'eat' | 'shake' | 'clean' | 'happy' | 'exit' | 'popIn' | 'grow' | 'wiggle';
+  | 'bounce'
+  | 'eat'
+  | 'shake'
+  | 'clean'
+  | 'happy'
+  | 'exit'
+  | 'popIn'
+  | 'grow'
+  | 'wiggle'
+  | 'giftSpawn'
+  | 'giftOpen';
 
 export interface FeedbackRow {
   animation: AnimationId | null;
@@ -13,6 +23,8 @@ export interface FeedbackRow {
   toast: boolean;
   /** Several pigs animate one after another (FEEDBACK.STAGGER_MS apart). */
   stagger?: boolean;
+  /** Reward amounts rise from the target as text (U06); a toast instead under reduceMotion. */
+  float?: boolean;
 }
 
 const row = (
@@ -41,6 +53,9 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   DISCOVERY: row(null, ['fx_coin'], 'coin_collect', true),
   SKIN_BOUGHT: row(null, [], 'ui_click', true),
   SKIN_EQUIPPED: row('bounce', ['fx_sparkle'], 'ui_click', false), // texture swap + puff
+  // U06: small smoke puff then the box pops in; opening pops it and the reward floats up.
+  GIFT_SPAWNED: row('giftSpawn', ['fx_smoke'], 'notify', false),
+  GIFT_OPENED: { ...row('giftOpen', ['fx_sparkle'], 'coin_collect', false), float: true },
   SLOT_BOUGHT: row(null, [], 'ui_click', true),
   ITEM_BOUGHT: row(null, [], 'ui_click', true),
   PIG_RENAMED: row(null, [], 'ui_click', true),

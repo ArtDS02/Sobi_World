@@ -49,6 +49,7 @@ export function awayVm(
   add(vi.away.born, count(events, 'BIRTH'));
   add(vi.away.ordersNew, count(events, 'ORDER_NEW'));
   add(vi.away.ordersExpired, count(events, 'ORDER_EXPIRED'));
+  add(vi.away.gifts, count(events, 'GIFT_SPAWNED') > 0 ? after.gifts.boxes.length : 0);
   if (lines.length === 0) lines.push(vi.away.nothing);
 
   return {

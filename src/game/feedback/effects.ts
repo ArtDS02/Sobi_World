@@ -12,6 +12,8 @@ export interface FarmEffects {
     from?: FeedbackTarget,
   ): void;
   burst(fx: FxId, target: FeedbackTarget, delayMs: number): void;
+  /** Text lines rising and fading from the target (gift rewards, U06). */
+  float(lines: readonly string[], target: FeedbackTarget, delayMs: number): void;
 }
 
-export const noEffects: FarmEffects = { animate: () => {}, burst: () => {} };
+export const noEffects: FarmEffects = { animate: () => {}, burst: () => {}, float: () => {} };

@@ -24,9 +24,12 @@ export interface AppOptions {
 
 /** World object actions (manifest layout.placements[].action). */
 export type FarmPickAction = 'shop' | 'inventory' | 'orders' | 'collection' | 'trough' | 'cleanAll';
-/** A click on the canvas: a pig, a world object, or empty ground. */
+/** A click on the canvas: a pig, a gift box (U06), a world object, or empty ground. */
 export type FarmPick =
-  { kind: 'pig'; pigId: string } | { kind: 'action'; action: FarmPickAction } | { kind: 'ground' };
+  | { kind: 'pig'; pigId: string }
+  | { kind: 'gift'; giftId: string }
+  | { kind: 'action'; action: FarmPickAction }
+  | { kind: 'ground' };
 
 export interface MountedApp {
   /** The DOM toast host; only the FeedbackDirector calls it (§11.3). */

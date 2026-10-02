@@ -1,5 +1,6 @@
 // App shell (DECISIONS R05C-1): top bar, the farm canvas filling the window, one popup at a time
 // opened by clicking world objects, toasts, dialogs. Re-renders on store notify.
+import { openGift } from '../core/actions/openGift';
 import type { Pig, SaveGame } from '../core/types';
 import { vi } from '../i18n/vi';
 import type { BoundAction, GameStore, StoreSnapshot } from '../store/gameStore';
@@ -108,6 +109,8 @@ export function mountApp(
       opts.onPigTap?.(pick.pigId);
       ui.selectedPigId = pick.pigId;
       go('pig');
+    } else if (pick.kind === 'gift') {
+      handlers.act((s, c) => openGift(s, { giftId: pick.giftId }, c));
     } else if (pick.kind === 'ground') {
       if (ui.selectedPigId === null) return;
       ui.selectedPigId = null;

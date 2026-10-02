@@ -15,6 +15,7 @@ export const CATALOGUE_SIZES: Record<string, Size> = {
   prop_feed_trough_half: { width: 384, height: 256 },
   prop_feed_trough_full: { width: 384, height: 256 },
   prop_order_board: { width: 256, height: 384 },
+  prop_gift_box: sq(192),
   env_sky: { width: 1600, height: 500 },
   env_cloud_1: { width: 384, height: 160 },
   env_cloud_2: { width: 384, height: 160 },

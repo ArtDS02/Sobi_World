@@ -79,6 +79,8 @@ export const FARM_VIEW = {
     /** Fade-in of the farm after the preload screen (R12A). */
     fadeInMs: 450,
   },
+  /** Gift placement (U06): inside walkArea minus this margin, clear of objects and pig homes. */
+  GIFT_SPOT: { marginPx: 60, clearPx: 70, pigHomePx: 90, giftPx: 110, tries: 24 },
   /** How long the sick tint takes to fade after a cure (§11.3 PIG_TREATED). */
   SICK_TINT_FADE_MS: 600,
   /** Sick pigs are tinted green on top of the fx_sick overlay (spec §11 table). */

@@ -23,6 +23,8 @@ export const vi = {
     trough: "Máng ăn",
     cleanAll: "Giếng nước",
     wellHint: "Múc nước tắm cho cả đàn heo.",
+    giftGold: "+{n} vàng",
+    giftXp: "+{n} KN",
   },
 
   hud: {
@@ -106,6 +108,7 @@ export const vi = {
     ORDER_NOT_FOUND: "Không tìm thấy đơn hàng.",
     ORDER_EXPIRED: "Đơn hàng đã hết hạn.",
     ORDER_REQUIREMENTS_NOT_MET: "Heo chưa đáp ứng yêu cầu của đơn hàng.",
+    GIFT_NOT_FOUND: "Hộp quà này đã được mở.",
   },
 
   // Shown on a disabled button so the player knows why, not just that.
@@ -144,6 +147,7 @@ export const vi = {
     slotBought: "Đã mở thêm chuồng! Giờ có {slots} chỗ.",
     breedingStarted: "{name} đã mang thai! Sinh sau {time}.",
     skinBought: "Đã mua bộ đồ {name}.",
+    giftOpened: "Mở quà: +{gold} vàng, +{xp} KN",
   },
 
   away: {
@@ -158,6 +162,7 @@ export const vi = {
     // Not in Appendix B (§9.5 lists expired and new orders).
     ordersNew: "{count} đơn hàng mới",
     ordersExpired: "{count} đơn hàng đã hết hạn",
+    gifts: "{count} hộp quà đang chờ bạn mở",
     ok: "Vào nông trại",
   },
 
@@ -258,6 +263,7 @@ export const vi = {
     ORDER_REWARD: "Thưởng đơn hàng",
     DISCOVERY_BONUS: "Thưởng khám phá",
     SKIN_REFUND: "Hoàn tiền skin (heo thành giống)",
+    GIFT_REWARD: "Hộp quà",
   },
 
   settings: {

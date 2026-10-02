@@ -1,6 +1,7 @@
 // zod schema for SaveGame (spec §5.1) plus the §5.5 invariants (orders cap per DECISIONS C1).
 import { z } from 'zod';
 import { BALANCE } from '../config/balance';
+import { GIFTS } from '../config/gifts';
 import {
   BREED_ID_VALUES,
   COSMETIC_SLOT_VALUES,
@@ -74,6 +75,14 @@ const breedingRecordSchema = z.object({
   bornAt: time.nullable(),
 });
 
+const giftSchema = z.object({
+  id: z.string().min(1),
+  spawnedAt: time,
+  seed: z.number().int().min(0),
+  gold: nonNeg,
+  xp: nonNeg,
+});
+
 const shapeSchema = z.object({
   schemaVersion: z.literal(SAVE.SCHEMA_VERSION),
   createdAt: time,
@@ -81,7 +90,8 @@ const shapeSchema = z.object({
   player: z.object({
     gold: nonNeg,
     xp: nonNeg,
-    unlockedSlots: z.number().int().min(1).max(BALANCE.MAX_SLOTS),
+    // No upper bound: MAX_SLOTS is tunable data, lowering it must never make a save unreadable.
+    unlockedSlots: z.number().int().min(1),
     ownedSkins: z.array(z.string()),
   }),
   pigs: z.array(pigSchema),
@@ -94,6 +104,7 @@ const shapeSchema = z.object({
   }),
   transactions: z.array(transactionSchema),
   breedingRecords: z.array(breedingRecordSchema),
+  gifts: z.object({ nextAt: time.nullable(), boxes: z.array(giftSchema) }),
   settings: z.object({
     musicOn: z.boolean(),
     sfxOn: z.boolean(),
@@ -115,6 +126,7 @@ export const saveGameSchema = shapeSchema.superRefine((s, ctx) => {
   const owned = new Set(s.player.ownedSkins);
   if (s.pigs.some((p) => !owned.has(p.skinId))) issue('pig skinId must be owned');
   if (s.orders.length > BALANCE.ORDER_MAX_ACTIVE) issue('too many orders');
+  if (s.gifts.boxes.length > GIFTS.MAX_ON_FARM) issue('too many gift boxes');
 });
 
 export type SaveGameParsed = z.infer<typeof saveGameSchema>;

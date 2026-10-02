@@ -1,8 +1,9 @@
-// World catch-up (spec §7.4): trough → pigs → births → orders, then diff into GameEvents.
+// World catch-up (spec §7.4): trough → pigs → births → orders → gifts (U06), then diff into events.
 import type { GameEvent } from '../events';
 import type { Rng } from '../rng';
 import type { Pig, SaveGame } from '../types';
 import { resolveBirths } from './breeding';
+import { resolveGifts } from './gifts';
 import { refreshOrders } from './orders';
 import { advanceWithTrough } from './trough';
 
@@ -31,6 +32,11 @@ export function advanceWorld(state: SaveGame, now: number, rng: Rng): WorldResul
   const orders = refreshOrders(next, now);
   next = orders.state;
   events.push(...orders.events);
+
+  // Step 5: gift boxes (U06).
+  const gifts = resolveGifts(next, now);
+  next = gifts.state;
+  events.push(...gifts.events);
 
   return { state: next, events };
 }

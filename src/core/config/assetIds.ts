@@ -18,7 +18,7 @@ export const AUDIO_KEYS = [
 ] as const;
 export type AudioKey = (typeof AUDIO_KEYS)[number];
 
-/** The 8 shared overlays and particles (art standard §3.1). */
+/** The shared overlays and particles (art standard §3.1; fx_smoke: gift spawn, U06). */
 export const FX_IDS = [
   'fx_sick',
   'fx_pregnant',
@@ -28,6 +28,7 @@ export const FX_IDS = [
   'fx_crumb',
   'fx_sparkle',
   'fx_coin',
+  'fx_smoke',
 ] as const;
 export type FxId = (typeof FX_IDS)[number];
 
@@ -44,6 +45,7 @@ export type FarmAction = (typeof FARM_ACTIONS)[number];
 
 export const TROUGH_PROP_ID = 'prop_feed_trough';
 export const ORDER_BOARD_PROP_ID = 'prop_order_board';
+export const GIFT_PROP_ID = 'prop_gift_box'; // U06
 export const SLEEP_FALLBACK_FX: FxId = 'fx_zzz'; // DECISIONS Q5
 
 /** DOM icons (spec §11.1 DOM layer: ui_*), by what they label. Resolved through the manifest. */

@@ -499,6 +499,12 @@
       "status": "production",
       "asset": "fx/fx_coin.png",
       "particle": true
+    },
+    {
+      "id": "fx_smoke",
+      "status": "placeholder",
+      "asset": "fx/fx_smoke.png",
+      "particle": true
     }
   ],
   "props": [
@@ -530,6 +536,11 @@
       "id": "prop_food_sack",
       "status": "production",
       "asset": "props/prop_food_sack.png"
+    },
+    {
+      "id": "prop_gift_box",
+      "status": "placeholder",
+      "asset": "props/prop_gift_box.png"
     }
   ],
   "buildings": [

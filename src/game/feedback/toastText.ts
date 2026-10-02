@@ -64,6 +64,9 @@ export function toastText(
       return t(vi.event.slotBought, { slots: event.slots });
     case 'SKIN_BOUGHT':
       return t(vi.event.skinBought, { name: skinName(event.skinId) });
+    case 'GIFT_OPENED':
+      return t(vi.event.giftOpened, { gold: formatInt(event.gold), xp: formatInt(event.xp) });
+    case 'GIFT_SPAWNED': // the box itself appears on the farm
     case 'SKIN_EQUIPPED':
     case 'SETTING_CHANGED':
     case 'PIG_FED':

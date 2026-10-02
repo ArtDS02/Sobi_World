@@ -103,8 +103,15 @@ function refund(save: SaveGame, skins: readonly string[]): SaveGame {
   }, save);
 }
 
+/** v3 -> v4 (U06): no gifts yet; the timer starts with the first tick that sees a pig. */
+const v3ToV4 = (raw: Raw): Raw => ({
+  ...raw,
+  schemaVersion: 4,
+  gifts: { nextAt: null, boxes: [] },
+});
+
 /** MIGRATIONS[n] upgrades a save from version n to n+1. */
-const MIGRATIONS: Record<number, (raw: Raw) => Raw> = { 1: v1ToV2, 2: v2ToV3 };
+const MIGRATIONS: Record<number, (raw: Raw) => Raw> = { 1: v1ToV2, 2: v2ToV3, 3: v3ToV4 };
 
 export function migrate(input: unknown): MigrateResult {
   if (!isObject(input)) return { ok: false, error: 'SAVE_CORRUPT' };

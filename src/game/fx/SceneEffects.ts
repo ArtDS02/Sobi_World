@@ -7,6 +7,7 @@ import { FEEDBACK } from '../../core/config/feedback';
 import type { FarmEffects } from '../feedback/effects';
 import type { FeedbackTarget } from '../feedback/feedbackPlan';
 import type { AnimationId } from '../feedback/feedbackTable';
+import type { GiftBoxes } from '../prefabs/GiftBoxes';
 import type { PigSprite } from '../prefabs/PigSprite';
 import { FALLBACK_FX_KEY } from '../view/textureKeys';
 
@@ -14,6 +15,7 @@ export interface EffectTargets {
   pig(pigId: string): PigSprite | undefined;
   trough(): Phaser.GameObjects.Image | null;
   board(): Phaser.GameObjects.Image | null;
+  gifts(): GiftBoxes;
 }
 
 export class SceneEffects implements FarmEffects {
@@ -25,6 +27,7 @@ export class SceneEffects implements FarmEffects {
   private object(target: FeedbackTarget): Phaser.GameObjects.Image | null {
     if (target.kind === 'trough') return this.targets.trough();
     if (target.kind === 'board') return this.targets.board();
+    if (target.kind === 'gift') return this.targets.gifts().get(target.giftId) ?? null;
     return null;
   }
 
@@ -32,6 +35,11 @@ export class SceneEffects implements FarmEffects {
     if (target.kind === 'pig') {
       const start = from?.kind === 'pig' ? this.targets.pig(from.pigId)?.feet() : undefined;
       this.targets.pig(target.pigId)?.play(animation, delayMs, start);
+      return;
+    }
+    if (target.kind === 'gift') {
+      if (animation === 'giftSpawn') this.targets.gifts().spawn(target.giftId, delayMs);
+      if (animation === 'giftOpen') this.targets.gifts().open(target.giftId, delayMs);
       return;
     }
     const obj = this.object(target);
@@ -92,5 +100,37 @@ export class SceneEffects implements FarmEffects {
       .setDepth(FARM_VIEW.OVERLAY_DEPTH * 2);
     this.scene.time.delayedCall(delayMs, () => emitter.explode(P.count));
     this.scene.time.delayedCall(delayMs + P.lifespanMs + 100, () => emitter.destroy());
+  }
+
+  /** Reward text: rises and fades from the top of the target, then is destroyed. */
+  float(lines: readonly string[], target: FeedbackTarget, delayMs: number) {
+    const at = this.point(target);
+    if (!at) return;
+    const F = FEEDBACK.GIFT.float;
+    lines.forEach((line, i) => {
+      const text = this.scene.add
+        .text(at.x, at.y - i * F.lineGapPx, line, {
+          color: F.color,
+          fontSize: `${F.fontPx}px`,
+          fontFamily: FARM_VIEW.LABEL.fontFamily,
+          fontStyle: 'bold',
+          stroke: F.stroke,
+          strokeThickness: 6,
+        })
+        .setOrigin(0.5, 1)
+        .setDepth(FARM_VIEW.OVERLAY_DEPTH * 2)
+        .setScale(0.6)
+        .setAlpha(0);
+      this.scene.tweens.add({
+        targets: text,
+        y: text.y - F.risePx,
+        scale: 1,
+        alpha: { from: 1, to: 0, ease: 'Cubic.easeIn' },
+        duration: F.ms,
+        delay: delayMs,
+        ease: 'Quad.easeOut',
+        onComplete: () => text.destroy(),
+      });
+    });
   }
 }

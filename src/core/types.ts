@@ -8,7 +8,7 @@ export type { BreedId, CosmeticSlot, Gender, ItemId, TransactionType };
 export type GrowthStage = 'BABY' | 'YOUNG' | 'ADULT'; // derived, never stored
 
 export interface SaveGame {
-  schemaVersion: 3;
+  schemaVersion: 4;
   createdAt: number;
   updatedAt: number;
   player: {
@@ -31,6 +31,10 @@ export interface SaveGame {
   };
   transactions: Transaction[]; // newest first, max 200
   breedingRecords: BreedingRecord[]; // newest first, max 100
+  gifts: {
+    nextAt: number | null; // next spawn; null while the farm has no pigs (U06)
+    boxes: GiftBox[]; // at most GIFTS.MAX_ON_FARM
+  };
   settings: {
     musicOn: boolean;
     sfxOn: boolean;
@@ -63,6 +67,15 @@ export interface Pig {
   pregnancy: Pregnancy | null;
   lastTickedAt: number;
   createdAt: number;
+}
+
+/** A gift lying on the farm. Its reward is fixed when it spawns; `seed` places it (view only). */
+export interface GiftBox {
+  id: string; // `${spawnedAt}:${index}`
+  spawnedAt: number;
+  seed: number;
+  gold: number;
+  xp: number;
 }
 
 export interface Order {

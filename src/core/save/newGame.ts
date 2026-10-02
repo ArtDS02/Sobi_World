@@ -24,6 +24,7 @@ export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {
     collection: { discoveredBreeds: [], discoveredSkins: [] },
     transactions: [],
     breedingRecords: [],
+    gifts: { nextAt: null, boxes: [] },
     settings: {
       musicOn: true,
       sfxOn: true,

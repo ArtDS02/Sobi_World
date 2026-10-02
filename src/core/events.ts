@@ -26,6 +26,8 @@ export type GameEvent =
   | { type: 'ORDER_FULFILLED'; orderId: string; gold: number }
   | { type: 'SKIN_BOUGHT'; skinId: string; gold: number }
   | { type: 'SKIN_EQUIPPED'; pigId: string; skinId: string }
+  | { type: 'GIFT_SPAWNED'; giftId: string }
+  | { type: 'GIFT_OPENED'; giftId: string; gold: number; xp: number }
   | {
       type: 'SETTING_CHANGED';
       key: 'musicOn' | 'sfxOn' | 'reduceMotion' | 'tutorialDone';
@@ -58,6 +60,8 @@ export const GAME_EVENT_TYPES = [
   'ORDER_FULFILLED',
   'SKIN_BOUGHT',
   'SKIN_EQUIPPED',
+  'GIFT_SPAWNED',
+  'GIFT_OPENED',
   'SETTING_CHANGED',
 ] as const satisfies readonly GameEventType[];
 

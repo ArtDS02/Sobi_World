@@ -2,7 +2,7 @@
 import type { BreedId } from './ids';
 
 export const SAVE = {
-  SCHEMA_VERSION: 3,
+  SCHEMA_VERSION: 4,
   IDB_NAME: 'un-in-homemade',
   IDB_STORE: 'saves',
   IDB_KEY: 'current',

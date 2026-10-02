@@ -55,6 +55,7 @@ export function createFeedbackDirector(deps: FeedbackDeps): FeedbackDirector {
       const plan = feedbackPlan(event, origin, reduceMotion);
       for (const a of plan.animations) fx.animate(a.animation, a.target, a.delayMs, a.from);
       for (const v of plan.vfx) fx.burst(v.fx, v.target, v.delayMs);
+      for (const f of plan.floats) fx.float(f.lines, f.target, f.delayMs);
       if (plan.sound) deps.audio.play(plan.sound);
       const text = plan.toast ? toastText(event, after, previous ?? after, deps.skinName) : null;
       if (text) deps.toast(text);

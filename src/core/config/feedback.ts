@@ -35,6 +35,18 @@ export const FEEDBACK = {
   },
   /** Pig tap sound thresholds (spec §12): hunger < 30 → hungry oink, happiness >= 50 → happy. */
   TAP_SOUND: { hungryBelow: 30, happyFrom: 50 },
+  /** Gift boxes (U06): smoke → short wait → pop 0 → 1.15 → 0.95 → 1 → idle float; open: 1.1 → pop. */
+  GIFT: {
+    displayPx: 96,
+    anticipationMs: 160,
+    popMs: [180, 120, 110],
+    popScale: [1.15, 0.95, 1],
+    popAngleDeg: 6,
+    idle: { px: 5, ms: 1400 },
+    open: { squeeze: 1.1, squeezeMs: 120, pop: 1.35, popMs: 180 },
+    /** Reward text rising from the box. */
+    float: { fontPx: 30, risePx: 70, ms: 1100, lineGapPx: 34, color: '#b8860b', stroke: '#fff7f3' },
+  },
   /** Where `top` bursts appear (normalised), e.g. LEVEL_UP near the top bar. */
   TOP_POINT: { x: 0.5, y: 0.08 },
 } as const;

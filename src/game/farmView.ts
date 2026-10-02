@@ -19,7 +19,10 @@ export interface FarmDeps {
 }
 
 export type FarmPick =
-  { kind: 'pig'; pigId: string } | { kind: 'action'; action: FarmAction } | { kind: 'ground' };
+  | { kind: 'pig'; pigId: string }
+  | { kind: 'gift'; giftId: string }
+  | { kind: 'action'; action: FarmAction }
+  | { kind: 'ground' };
 
 /** Shared between the handle and MainFarmScene. */
 export interface FarmBridge {
