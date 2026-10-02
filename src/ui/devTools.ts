@@ -4,6 +4,8 @@ import { BALANCE } from '../core/config/balance';
 import { DECOR_IDS } from '../core/config/decor';
 import { BREED_IDS } from '../core/config/breeds';
 import { DAY_PHASES, type DayPhase } from '../core/config/dayNight';
+import { SEASON_IDS, type SeasonId } from '../core/config/seasons';
+import { parseSeason } from '../core/engine/season';
 import { randomId } from '../core/rng';
 import type { Pig } from '../core/types';
 import type { BoundAction } from '../store/gameStore';
@@ -57,6 +59,7 @@ export function renderDevTools(
   gallery?: () => void,
   fillPigs?: () => void,
   previewPhase?: (phase: DayPhase | null) => void,
+  previewSeason?: (season: SeasonId | null) => void,
 ): HTMLElement {
   const button = (hours: number) =>
     el('button', {
@@ -90,6 +93,7 @@ export function renderDevTools(
     assets,
     fill,
     previewPhase ? phaseSelect(previewPhase) : null,
+    previewSeason ? seasonSelect(previewSeason) : null,
     meter,
   );
 }
@@ -106,6 +110,22 @@ function phaseSelect(previewPhase: (phase: DayPhase | null) => void): HTMLElemen
   select.addEventListener('change', () => previewPhase(parsePhase(select.value)));
   return select;
 }
+
+/** Season preview (SE-1): auto = local calendar; `?season=winter` in the dev URL preselects one. */
+function seasonSelect(previewSeason: (season: SeasonId | null) => void): HTMLElement {
+  const select = el(
+    'select',
+    { attrs: { 'aria-label': 'season preview' } },
+    el('option', { text: 'auto', attrs: { value: '' } }),
+    ...SEASON_IDS.map((s) => el('option', { text: s, attrs: { value: s } })),
+  );
+  select.value = devSeasonParam() ?? '';
+  select.addEventListener('change', () => previewSeason(parseSeason(select.value)));
+  return select;
+}
+
+export const devSeasonParam = (): SeasonId | null =>
+  parseSeason(new URLSearchParams(location.search).get('season'));
 
 const parsePhase = (value: string | null): DayPhase | null =>
   (DAY_PHASES as readonly string[]).includes(value ?? '') ? (value as DayPhase) : null;

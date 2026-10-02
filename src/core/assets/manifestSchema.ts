@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { ANCHOR_NAMES, FARM_ACTIONS } from '../config/assetIds';
 import { DECOR_ID_VALUES } from '../config/ids';
+import { SEASON_IDS } from '../config/seasons';
 
 export const MANIFEST_VERSION = 3;
 
@@ -17,6 +18,8 @@ const assetPath = z
     'path must be relative snake_case',
   );
 const unit = z.number().min(0).max(1);
+/** Seasonal files of a building / prop (DECISIONS SE-1); a missing season uses the default file. */
+const seasonFiles = z.partialRecord(z.enum(SEASON_IDS), assetPath).optional();
 
 const base = {
   id: assetIdSchema,
@@ -57,6 +60,7 @@ export const propRowSchema = z
     ...base,
     asset: assetPath.optional(),
     states: z.record(assetIdSchema, assetPath).optional(),
+    seasons: seasonFiles,
   })
   .refine((r) => (r.asset === undefined) !== (r.states === undefined), {
     message: 'a prop has either `asset` or `states`',
@@ -66,6 +70,7 @@ export const buildingRowSchema = z.object({
   ...base,
   asset: assetPath,
   shadow: assetPath.optional(),
+  seasons: seasonFiles,
 });
 
 export const environmentRowSchema = z.object({

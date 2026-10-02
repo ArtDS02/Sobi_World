@@ -7,7 +7,8 @@ import { t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 import { fitCamera, SCENE_KEYS } from '../config/phaser';
 import { farmLoadList, fxAnimKey, type LoadList, type SheetItem } from '../view/textureKeys';
-import type { FarmDeps } from '../farmView';
+import type { FarmBridge, FarmDeps } from '../farmView';
+import { farmSeason } from '../state/seasonClock';
 
 /** Queue a load list; returns how many files were queued. */
 export function queueLoadList(load: Phaser.Loader.LoaderPlugin, list: LoadList): number {
@@ -43,7 +44,10 @@ export function warnLoadErrors(load: Phaser.Loader.LoaderPlugin) {
 export class PreloadScene extends Phaser.Scene {
   private list: LoadList | null = null;
 
-  constructor(private readonly deps: FarmDeps) {
+  constructor(
+    private readonly deps: FarmDeps,
+    private readonly bridge: FarmBridge,
+  ) {
     super(SCENE_KEYS.preload);
   }
 
@@ -71,6 +75,7 @@ export class PreloadScene extends Phaser.Scene {
     this.list = farmLoadList(
       this.deps.assets,
       Object.values(BREEDS).map((b) => b.artId),
+      farmSeason(this.deps.now(), this.bridge.seasonPreview), // only this season's variants (SE-1)
     );
     queueLoadList(this.load, this.list);
   }

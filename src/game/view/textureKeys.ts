@@ -4,6 +4,8 @@ import type { AssetRegistry } from '../../core/assets/registry';
 import { troughState } from '../../core/assets/registry';
 import { TROUGH_PROP_ID } from '../../core/config/assetIds';
 import type { BreedId } from '../../core/config/ids';
+import type { SeasonId } from '../../core/config/seasons';
+import { isSeasonFile, seasonFile } from '../../core/engine/season';
 
 /** `asset` → the id itself; any other file of the row → `${id}_${file}` (e.g. pig_classic_sleep). */
 export const textureKey = (id: string, file = 'asset'): string =>
@@ -66,8 +68,30 @@ export function artLoadList(assets: AssetRegistry, artId: string): LoadList {
   return { images, json: a ? [{ key: anchorsKey(artId), url: a }] : [], sheets: [] };
 }
 
-/** Environment, structures, props (all trough states), fx, ui icons, plus the given pig art rows. */
-export function farmLoadList(assets: AssetRegistry, artIds: Iterable<string>): LoadList {
+/** Texture of placement art `id` in `season`: its seasonal variant when the row has one (SE-1). */
+export const seasonalTextureKey = (assets: AssetRegistry, id: string, season: SeasonId): string =>
+  textureKey(id, assets.seasonalFile(id, season));
+
+/** The seasonal variants of one season (loaded when the season changes mid-session). */
+export function seasonLoadList(assets: AssetRegistry, season: SeasonId): LoadList {
+  const images: LoadItem[] = [];
+  const file = seasonFile(season);
+  for (const entry of assets.entries()) {
+    const url = entry.files[file] ? assets.url(entry.id, file) : null;
+    if (url && FARM_SECTIONS.has(entry.section)) images.push({ key: textureKey(entry.id, file), url });
+  }
+  return { images, json: [], sheets: [] };
+}
+
+/**
+ * Environment, structures, props (all trough states), fx, ui icons, plus the given pig art rows.
+ * Of the seasonal variants only `season`'s are loaded (none when omitted).
+ */
+export function farmLoadList(
+  assets: AssetRegistry,
+  artIds: Iterable<string>,
+  season?: SeasonId,
+): LoadList {
   const images: LoadItem[] = [];
   const json: LoadItem[] = [];
   const sheets: SheetItem[] = [];
@@ -76,6 +100,7 @@ export function farmLoadList(assets: AssetRegistry, artIds: Iterable<string>): L
     if (!FARM_SECTIONS.has(entry.section)) continue;
     for (const file of Object.keys(entry.files)) {
       if (SKIPPED_FILES.has(file)) continue;
+      if (isSeasonFile(file) && (!season || file !== seasonFile(season))) continue;
       const url = assets.url(entry.id, file);
       if (!url) continue;
       const frames = file === 'asset' ? framesOf.get(entry.id) : undefined;

@@ -3,6 +3,7 @@
 // canvas. The sky above the hills stays transparent — the day / night sky layer shows through.
 // No Phaser: the admin day / night preview paints with it too.
 import { FARM_VIEW } from '../../core/config/farmView';
+import { SEASON_LOOKS, type BackdropPalette } from '../../core/config/seasons';
 import type { WorldRect } from './farmCamera';
 import { hashId } from './pigView';
 
@@ -16,14 +17,21 @@ const unit = (a: number, b: number, salt: number) =>
 /** Bottom of the sky band: the hills and the grass cover everything below. */
 export const SKY_BOTTOM_Y = FARM_VIEW.BACKDROP.grass.top + 10;
 
-export function paintBackdrop(ctx: CanvasRenderingContext2D, r: WorldRect) {
+/** The summer look is the farm's original palette (SE-1). */
+export const DEFAULT_PALETTE: BackdropPalette = SEASON_LOOKS.summer.backdrop;
+
+export function paintBackdrop(
+  ctx: CanvasRenderingContext2D,
+  r: WorldRect,
+  pal: BackdropPalette = DEFAULT_PALETTE,
+) {
   const B = FARM_VIEW.BACKDROP;
   const left = r.x;
   const right = r.x + r.width;
   const bottom = r.y + r.height;
 
-  for (const h of B.hills) {
-    ctx.fillStyle = h.color;
+  B.hills.forEach((h, i) => {
+    ctx.fillStyle = pal.hills[i] ?? h.color;
     ctx.beginPath();
     ctx.moveTo(left, B.grass.top + 10);
     for (let x = Math.floor(left / 8) * 8; x <= right + 8; x += 8) {
@@ -33,12 +41,12 @@ export function paintBackdrop(ctx: CanvasRenderingContext2D, r: WorldRect) {
     ctx.lineTo(right + 8, B.grass.top + 10);
     ctx.closePath();
     ctx.fill();
-  }
+  });
 
-  ctx.fillStyle = B.grass.color;
+  ctx.fillStyle = pal.grass;
   ctx.fillRect(left, B.grass.top, r.width, bottom - B.grass.top);
 
-  const o = B.oval;
+  const o = { ...B.oval, color: pal.oval };
   ctx.save();
   ctx.translate(o.cx, o.cy);
   ctx.scale(1, o.ry / o.rx);
@@ -52,7 +60,7 @@ export function paintBackdrop(ctx: CanvasRenderingContext2D, r: WorldRect) {
   ctx.fill();
   ctx.restore();
 
-  ctx.fillStyle = B.grass.dot;
+  ctx.fillStyle = pal.dot;
   const perCell = (B.grass.dots * DOT_CELL * DOT_CELL) / (1600 * 600);
   for (let cx = Math.floor(left / DOT_CELL); cx * DOT_CELL < right; cx++) {
     for (let cy = Math.floor(B.grass.top / DOT_CELL); cy * DOT_CELL < bottom; cy++) {
@@ -68,7 +76,7 @@ export function paintBackdrop(ctx: CanvasRenderingContext2D, r: WorldRect) {
   }
 
   drawFence(ctx, left, right);
-  for (const f of B.flowers) drawFlower(ctx, f.x, f.y);
+  for (const f of B.flowers) drawFlower(ctx, f.x, f.y, pal);
 }
 
 function drawFence(ctx: CanvasRenderingContext2D, left: number, right: number) {
@@ -96,17 +104,16 @@ function drawFence(ctx: CanvasRenderingContext2D, left: number, right: number) {
   }
 }
 
-function drawFlower(ctx: CanvasRenderingContext2D, x: number, y: number) {
-  const B = FARM_VIEW.BACKDROP;
-  const r = B.flowerR;
-  ctx.fillStyle = B.petal;
+function drawFlower(ctx: CanvasRenderingContext2D, x: number, y: number, pal: BackdropPalette) {
+  const r = FARM_VIEW.BACKDROP.flowerR;
+  ctx.fillStyle = pal.petal;
   for (let i = 0; i < 5; i++) {
     const a = (i / 5) * Math.PI * 2;
     ctx.beginPath();
     ctx.arc(x + Math.cos(a) * r, y - r + Math.sin(a) * r, r * 0.8, 0, Math.PI * 2);
     ctx.fill();
   }
-  ctx.fillStyle = B.flowerCore;
+  ctx.fillStyle = pal.flowerCore;
   ctx.beginPath();
   ctx.arc(x, y - r, r * 0.6, 0, Math.PI * 2);
   ctx.fill();

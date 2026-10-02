@@ -2,6 +2,8 @@
 // fallbacks. Built from a validated manifest; never touches the network or the DOM.
 import { SLEEP_FALLBACK_FX, TROUGH_PROP_ID, type TroughState } from '../config/assetIds';
 import { BREEDS } from '../config/breeds';
+import type { SeasonId } from '../config/seasons';
+import { seasonFile } from '../engine/season';
 import type { BreedId } from '../config/ids';
 import {
   MANIFEST_SECTIONS,
@@ -43,6 +45,9 @@ function filesOf(row: Record<string, unknown>): Record<string, string> {
   add('anchors', row.anchors);
   if (row.states && typeof row.states === 'object') {
     for (const [state, path] of Object.entries(row.states)) add(state, path);
+  }
+  if (row.seasons && typeof row.seasons === 'object') {
+    for (const [season, path] of Object.entries(row.seasons)) add(seasonFile(season as SeasonId), path);
   }
   return files;
 }
@@ -90,6 +95,10 @@ export function createAssetRegistry(manifest: AssetManifest) {
       const row = pigs.get(BREEDS[breed].artId);
       return url((frame === 'sleep' ? row?.sleepAsset : row?.wakeAsset) ?? undefined);
     },
+
+    /** File key to draw for `id` in `season`: its seasonal variant, else the default `asset`. */
+    seasonalFile: (id: string, season: SeasonId): string =>
+      entries.get(id)?.files[seasonFile(season)] ? seasonFile(season) : 'asset',
 
     troughUrl: (food: number, capacity: number): string | null =>
       url(entries.get(TROUGH_PROP_ID)?.files[troughState(food, capacity)]),

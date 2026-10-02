@@ -8,6 +8,8 @@ import { backdropRect, type WorldRect } from '../view/farmCamera';
 import type { FarmLayout } from '../view/pigView';
 import { paintBackdrop } from '../view/backdropPaint';
 import { DAY_NIGHT_VIEW } from '../../core/config/dayNight';
+import type { BackdropPalette } from '../../core/config/seasons';
+import { DEFAULT_PALETTE } from '../view/backdropPaint';
 
 const KEY = 'farm_backdrop';
 
@@ -17,6 +19,8 @@ const KEY = 'farm_backdrop';
  */
 export class Backdrop {
   private image: Phaser.GameObjects.Image | null = null;
+  private rect: WorldRect | null = null;
+  private palette: BackdropPalette = DEFAULT_PALETTE;
 
   constructor(private readonly scene: Phaser.Scene) {}
 
@@ -24,7 +28,11 @@ export class Backdrop {
    * Fits the scene camera to the design frame and repaints the backdrop on every resize; `onRect`
    * gets the same painted rect (the day / night sky follows it).
    */
-  static follow(scene: Phaser.Scene, layout: FarmLayout, onRect: (rect: WorldRect) => void) {
+  static follow(
+    scene: Phaser.Scene,
+    layout: FarmLayout,
+    onRect: (rect: WorldRect) => void,
+  ): Backdrop {
     const backdrop = new Backdrop(scene);
     const { width, height } = layout.designSize;
     fitCamera(scene, layout, (view) => {
@@ -32,10 +40,19 @@ export class Backdrop {
       backdrop.redraw(rect);
       onRect(rect);
     });
+    return backdrop;
+  }
+
+  /** Season palette (SE-1): repaints the current view when it changes. */
+  setPalette(palette: BackdropPalette) {
+    if (palette === this.palette) return;
+    this.palette = palette;
+    if (this.rect) this.redraw(this.rect);
   }
 
   redraw(rect: WorldRect) {
     const { scene } = this;
+    this.rect = rect;
     if (scene.textures.exists(KEY)) {
       this.image?.destroy();
       scene.textures.remove(KEY);
@@ -44,7 +61,7 @@ export class Backdrop {
     if (!tex) return;
     const ctx = tex.getContext();
     ctx.translate(-rect.x, -rect.y);
-    paintBackdrop(ctx, rect);
+    paintBackdrop(ctx, rect, this.palette);
     tex.refresh();
     this.image = scene.add.image(rect.x, rect.y, KEY).setOrigin(0).setDepth(DAY_NIGHT_VIEW.backdropDepth);
   }

@@ -4,6 +4,7 @@ import * as Phaser from 'phaser';
 import type { AssetRegistry } from '../core/assets/registry';
 import type { FarmAction } from '../core/config/assetIds';
 import type { DayPhase } from '../core/config/dayNight';
+import type { SeasonId } from '../core/config/seasons';
 import type { GameStore } from '../store/gameStore';
 import { phaserConfig } from './config/phaser';
 import { noEffects, type FarmEffects } from './feedback/effects';
@@ -34,6 +35,8 @@ export interface FarmBridge {
   effects: FarmEffects;
   /** Admin / dev day-night preview (DN): shown instead of the clock's phase; never saved. */
   phasePreview: DayPhase | null;
+  /** Admin / dev season preview (SE-1): shown instead of the calendar's season; never saved. */
+  seasonPreview: SeasonId | null;
 }
 
 export interface FarmView {
@@ -42,6 +45,8 @@ export interface FarmView {
   setSelected(pigId: string | null): void;
   /** Day / night preview (dev / admin only): a phase, or null to follow the local clock again. */
   previewPhase(phase: DayPhase | null): void;
+  /** Season preview (dev / admin only): a season, or null to follow the local calendar again. */
+  previewSeason(season: SeasonId | null): void;
   /** Hidden on other screens: the loop sleeps, and the scale is refreshed when shown again. */
   setVisible(visible: boolean): void;
   /** Measured frames per second of the farm loop (dev tools), null before it runs. */
@@ -55,8 +60,9 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
     refresh: () => {},
     effects: noEffects,
     phasePreview: null,
+    seasonPreview: null,
   };
-  const scenes = [new BootScene(), new PreloadScene(deps), new MainFarmScene(deps, bridge)];
+  const scenes = [new BootScene(), new PreloadScene(deps, bridge), new MainFarmScene(deps, bridge)];
   const game = new Phaser.Game(phaserConfig(host, deps.assets.manifest.layout, scenes));
   let visible = true;
   // The canvas takes the host's size (never 0: a hidden host keeps the last size).
@@ -96,6 +102,11 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
     previewPhase(phase) {
       if (bridge.phasePreview === phase) return;
       bridge.phasePreview = phase;
+      bridge.refresh();
+    },
+    previewSeason(season) {
+      if (bridge.seasonPreview === season) return;
+      bridge.seasonPreview = season;
       bridge.refresh();
     },
     setVisible(next) {

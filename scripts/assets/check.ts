@@ -41,6 +41,9 @@ export function rowFiles(row: Row): [string, string][] {
   }
   if (r.states && typeof r.states === 'object')
     out.push(...(Object.entries(r.states) as [string, string][]));
+  if (r.seasons && typeof r.seasons === 'object')
+    for (const [season, path] of Object.entries(r.seasons as Record<string, string>))
+      out.push([`season_${season}`, path]);
   return out;
 }
 
@@ -69,6 +72,14 @@ const cornersClear = (png: PNG) =>
     [0, png.height - 1],
     [png.width - 1, png.height - 1],
   ].every(([x, y]) => png.data[(y! * png.width + x!) * 4 + 3]! <= OPAQUE);
+
+function defaultSize(root: string, row: Row): { width: number; height: number } | null {
+  const asset = (row as { asset?: string }).asset;
+  const full = asset ? join(root, asset) : '';
+  if (!asset || !existsSync(full)) return null;
+  const png = PNG.sync.read(readFileSync(full));
+  return { width: png.width, height: png.height };
+}
 
 /** `root` is the public/assets directory. */
 export function checkAssets(root: string): string[] {
@@ -144,7 +155,9 @@ export function checkAssets(root: string): string[] {
           errors.push(`${row.id}: ${path} is not a valid PNG (${(e as Error).message})`);
           continue;
         }
-        const size = requiredSize(section, row, key);
+        // A seasonal variant keeps the default file's canvas: same on-screen size and hit box (SE-1).
+        const size =
+          requiredSize(section, row, key) ?? (key.startsWith('season_') ? defaultSize(root, row) : null);
         if (size && (png.width !== size.width || png.height !== size.height)) {
           errors.push(
             `${row.id}: ${path} is ${png.width}x${png.height}, expected ${size.width}x${size.height}`,

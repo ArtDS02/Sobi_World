@@ -785,12 +785,24 @@
     {
       "id": "prop_order_board",
       "status": "production",
-      "asset": "props/prop_order_board.png"
+      "asset": "props/prop_order_board.png",
+      "seasons": {
+        "spring": "props/prop_order_board_spring.png",
+        "summer": "props/prop_order_board_summer.png",
+        "autumn": "props/prop_order_board_autumn.png",
+        "winter": "props/prop_order_board_winter.png"
+      }
     },
     {
       "id": "prop_water_bowl",
       "status": "production",
-      "asset": "props/prop_water_bowl.png"
+      "asset": "props/prop_water_bowl.png",
+      "seasons": {
+        "spring": "props/prop_water_bowl_spring.png",
+        "summer": "props/prop_water_bowl_summer.png",
+        "autumn": "props/prop_water_bowl_autumn.png",
+        "winter": "props/prop_water_bowl_winter.png"
+      }
     },
     {
       "id": "prop_mud_puddle",
@@ -800,7 +812,13 @@
     {
       "id": "prop_food_sack",
       "status": "production",
-      "asset": "props/prop_food_sack.png"
+      "asset": "props/prop_food_sack.png",
+      "seasons": {
+        "spring": "props/prop_food_sack_spring.png",
+        "summer": "props/prop_food_sack_summer.png",
+        "autumn": "props/prop_food_sack_autumn.png",
+        "winter": "props/prop_food_sack_winter.png"
+      }
     },
     {
       "id": "prop_gift_box",
@@ -810,74 +828,158 @@
     {
       "id": "prop_apple_crate",
       "status": "production",
-      "asset": "props/prop_apple_crate.png"
+      "asset": "props/prop_apple_crate.png",
+      "seasons": {
+        "spring": "props/prop_apple_crate_spring.png",
+        "summer": "props/prop_apple_crate_summer.png",
+        "autumn": "props/prop_apple_crate_autumn.png",
+        "winter": "props/prop_apple_crate_winter.png"
+      }
     },
     {
       "id": "prop_veggie_patch",
       "status": "production",
-      "asset": "props/prop_veggie_patch.png"
+      "asset": "props/prop_veggie_patch.png",
+      "seasons": {
+        "spring": "props/prop_veggie_patch_spring.png",
+        "summer": "props/prop_veggie_patch_summer.png",
+        "autumn": "props/prop_veggie_patch_autumn.png",
+        "winter": "props/prop_veggie_patch_winter.png"
+      }
     },
     {
       "id": "prop_bush",
       "status": "production",
-      "asset": "props/prop_bush.png"
+      "asset": "props/prop_bush.png",
+      "seasons": {
+        "spring": "props/prop_bush_spring.png",
+        "summer": "props/prop_bush_summer.png",
+        "autumn": "props/prop_bush_autumn.png",
+        "winter": "props/prop_bush_winter.png"
+      }
     },
     {
       "id": "prop_rock",
       "status": "production",
-      "asset": "props/prop_rock.png"
+      "asset": "props/prop_rock.png",
+      "seasons": {
+        "spring": "props/prop_rock_spring.png",
+        "summer": "props/prop_rock_summer.png",
+        "autumn": "props/prop_rock_autumn.png",
+        "winter": "props/prop_rock_winter.png"
+      }
     },
     {
       "id": "prop_red_tree",
       "status": "production",
-      "asset": "props/prop_red_tree.png"
+      "asset": "props/prop_red_tree.png",
+      "seasons": {
+        "spring": "props/prop_red_tree_spring.png",
+        "summer": "props/prop_red_tree_summer.png",
+        "autumn": "props/prop_red_tree_autumn.png",
+        "winter": "props/prop_red_tree_winter.png"
+      }
     },
     {
       "id": "prop_wheelbarrow",
       "status": "production",
-      "asset": "props/prop_wheelbarrow.png"
+      "asset": "props/prop_wheelbarrow.png",
+      "seasons": {
+        "spring": "props/prop_wheelbarrow_spring.png",
+        "summer": "props/prop_wheelbarrow_summer.png",
+        "autumn": "props/prop_wheelbarrow_autumn.png",
+        "winter": "props/prop_wheelbarrow_winter.png"
+      }
     },
     {
       "id": "prop_hay_bale",
       "status": "production",
-      "asset": "props/prop_hay_bale.png"
+      "asset": "props/prop_hay_bale.png",
+      "seasons": {
+        "spring": "props/prop_hay_bale_spring.png",
+        "summer": "props/prop_hay_bale_summer.png",
+        "autumn": "props/prop_hay_bale_autumn.png",
+        "winter": "props/prop_hay_bale_winter.png"
+      }
     },
     {
       "id": "prop_sunflower",
       "status": "production",
-      "asset": "props/prop_sunflower.png"
+      "asset": "props/prop_sunflower.png",
+      "seasons": {
+        "spring": "props/prop_sunflower_spring.png",
+        "summer": "props/prop_sunflower_summer.png",
+        "autumn": "props/prop_sunflower_autumn.png",
+        "winter": "props/prop_sunflower_winter.png"
+      }
     },
     {
       "id": "prop_mushroom",
       "status": "production",
-      "asset": "props/prop_mushroom.png"
+      "asset": "props/prop_mushroom.png",
+      "seasons": {
+        "spring": "props/prop_mushroom_spring.png",
+        "summer": "props/prop_mushroom_summer.png",
+        "autumn": "props/prop_mushroom_autumn.png",
+        "winter": "props/prop_mushroom_winter.png"
+      }
     }
   ],
   "buildings": [
     {
       "id": "prop_pig_house",
       "status": "production",
-      "asset": "buildings/prop_pig_house.png"
+      "asset": "buildings/prop_pig_house.png",
+      "seasons": {
+        "spring": "buildings/prop_pig_house_spring.png",
+        "summer": "buildings/prop_pig_house_summer.png",
+        "autumn": "buildings/prop_pig_house_autumn.png",
+        "winter": "buildings/prop_pig_house_winter.png"
+      }
     },
     {
       "id": "prop_hay_shed",
       "status": "production",
-      "asset": "buildings/prop_hay_shed.png"
+      "asset": "buildings/prop_hay_shed.png",
+      "seasons": {
+        "spring": "buildings/prop_hay_shed_spring.png",
+        "summer": "buildings/prop_hay_shed_summer.png",
+        "autumn": "buildings/prop_hay_shed_autumn.png",
+        "winter": "buildings/prop_hay_shed_winter.png"
+      }
     },
     {
       "id": "prop_water_well",
       "status": "production",
-      "asset": "buildings/prop_water_well.png"
+      "asset": "buildings/prop_water_well.png",
+      "seasons": {
+        "spring": "buildings/prop_water_well_spring.png",
+        "summer": "buildings/prop_water_well_summer.png",
+        "autumn": "buildings/prop_water_well_autumn.png",
+        "winter": "buildings/prop_water_well_winter.png"
+      }
     },
     {
       "id": "prop_fence_section",
       "status": "production",
-      "asset": "buildings/prop_fence_section.png"
+      "asset": "buildings/prop_fence_section.png",
+      "seasons": {
+        "spring": "buildings/prop_fence_section_spring.png",
+        "summer": "buildings/prop_fence_section_summer.png",
+        "autumn": "buildings/prop_fence_section_autumn.png",
+        "winter": "buildings/prop_fence_section_winter.png"
+      }
     },
     {
       "id": "prop_shop_stall",
       "status": "production",
-      "asset": "buildings/prop_shop_stall.png"
+      "asset": "buildings/prop_shop_stall.png",
+      "seasons": {
+        "spring": "buildings/prop_shop_stall_spring.png",
+        "summer": "buildings/prop_shop_stall_summer.png",
+        "autumn": "buildings/prop_shop_stall_autumn.png",
+        "winter": "buildings/prop_shop_stall_winter.png"
+      }
     },
     {
       "id": "prop_windmill",

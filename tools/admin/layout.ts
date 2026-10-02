@@ -2,6 +2,8 @@
 // properties → save into the manifest `layout.placements` the game draws (no code change needed).
 // Keyboard: arrows nudge (Shift ×10), Delete, Ctrl+D duplicate, Ctrl+Z / Ctrl+Y, Esc.
 import { TROUGH_PROP_ID } from '../../src/core/config/assetIds';
+import { SEASON_IDS, SEASON_LOOKS, type SeasonId } from '../../src/core/config/seasons';
+import { parseSeason } from '../../src/core/engine/season';
 import { layoutIssues } from '../../scripts/admin/rules';
 import { esc } from './labels';
 import { mountList } from './listKit';
@@ -13,7 +15,10 @@ import { openPicker } from './picker';
 import { LAYER_LABEL, properties as propsForm, readProps as readPropsForm } from './layoutProps';
 import { artUrl, json, post, state } from './store';
 
+type SeasonFiles = Partial<Record<SeasonId, string>>;
 interface Manifest {
+  props: { id: string; seasons?: SeasonFiles }[];
+  buildings: { id: string; seasons?: SeasonFiles }[];
   layout: { designSize: Design; walkArea: { x: number; y: number; width: number; height: number }; placements: Placement[] };
 }
 
@@ -29,9 +34,17 @@ const ed = {
   preview: false,
   showWalk: true,
   snap: 10,
+  /** Season preview (SE-1): the game draws the same layout with each season's art; null = default art. */
+  season: null as SeasonId | null,
+  seasons: new Map<string, SeasonFiles>(),
 };
+const SEASON_LABEL: Record<SeasonId, string> = { spring: '🌸 Xuân', summer: '☀️ Hạ', autumn: '🍂 Thu', winter: '❄️ Đông' };
 export const SECTION_LABEL: Record<string, string> = { props: 'Đồ vật', buildings: 'Công trình', environment: 'Môi trường', ui: 'UI', fx: 'Hiệu ứng' };
-const urlOf = artUrl;
+/** Art of `id` as the game draws it in the previewed season (fallback: the default file). */
+const urlOf = (id: string) => {
+  const path = ed.season ? ed.seasons.get(id)?.[ed.season] : undefined;
+  return path ? `/assets/${path}` : artUrl(id);
+};
 const dirty = () => JSON.stringify(ed.list) !== JSON.stringify(ed.saved);
 const issues = () => layoutIssues(ed.list, { assetIds: new Set(state.art.map((a) => a.id)), troughId: TROUGH_PROP_ID });
 
@@ -41,9 +54,13 @@ async function load() {
   ed.walk = m.layout.walkArea;
   ed.list = m.layout.placements;
   ed.saved = [...m.layout.placements];
+  ed.seasons = new Map([...m.props, ...m.buildings].filter((r) => r.seasons).map((r) => [r.id, r.seasons!]));
   ed.history.clear();
   ed.sel = null;
-  await preloadSizes(state.art.map((a) => a.url));
+  await preloadSizes([
+    ...state.art.map((a) => a.url),
+    ...[...ed.seasons.values()].flatMap((s) => Object.values(s).map((p) => `/assets/${p}`)),
+  ]);
   ed.loaded = true;
 }
 
@@ -68,6 +85,7 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
       <label class="check"><input type="checkbox" data-opt="preview" ${ed.preview ? 'checked' : ''} /> Xem trước</label>
       <label class="check"><input type="checkbox" data-opt="walk" ${ed.showWalk ? 'checked' : ''} /> Vùng heo đi</label>
       <label class="field inline"><span>Lưới</span><select data-snap>${[1, 5, 10, 20].map((g) => `<option value="${g}"${g === ed.snap ? ' selected' : ''}>${g === 1 ? 'tắt' : `${g}px`}</option>`).join('')}</select></label>
+      <label class="field inline"><span>Mùa</span><select data-season><option value="">Mặc định</option>${SEASON_IDS.map((s) => `<option value="${s}"${s === ed.season ? ' selected' : ''}>${SEASON_LABEL[s]}</option>`).join('')}</select></label>
       <span class="spacer"></span>
       <button class="btn btn-small" data-reset>↺ Về layout mặc định</button>
       ${dirty() ? '<span class="badge status-warn">Chưa lưu</span><button class="btn btn-small" data-discard>Huỷ thay đổi</button>' : ''}
@@ -105,6 +123,7 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
     urlOf,
     options: () => ({ preview: ed.preview, walk: ed.showWalk, snap: ed.snap }),
     walkArea: ed.walk,
+    ...(ed.season ? { palette: SEASON_LOOKS[ed.season].backdrop } : {}),
   });
 
   const act = (fn: () => void) => () => {
@@ -235,6 +254,10 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
     c.addEventListener('change', act(() => (c.dataset.opt === 'preview' ? (ed.preview = c.checked) : (ed.showWalk = c.checked)))),
   );
   root.querySelector<HTMLSelectElement>('[data-snap]')?.addEventListener('change', (e) => (ed.snap = Number((e.target as HTMLSelectElement).value)));
+  root.querySelector<HTMLSelectElement>('[data-season]')?.addEventListener('change', (e) => {
+    ed.season = parseSeason((e.target as HTMLSelectElement).value);
+    rerender();
+  });
   root.querySelector('[data-save]')?.addEventListener('click', async () => {
     try {
       await post('/__admin/layout', { placements: ed.list });

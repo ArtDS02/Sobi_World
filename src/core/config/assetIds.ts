@@ -46,6 +46,8 @@ export type FarmAction = (typeof FARM_ACTIONS)[number];
 export const TROUGH_PROP_ID = 'prop_feed_trough';
 export const ORDER_BOARD_PROP_ID = 'prop_order_board';
 export const GIFT_PROP_ID = 'prop_gift_box'; // U06
+/** Signed objects whose seasonal art has no painted sign: they get a text tag in season (SE-1). */
+export const SEASON_UNSIGNED_IDS: readonly string[] = ['prop_water_well'];
 export const SLEEP_FALLBACK_FX: FxId = 'fx_zzz'; // DECISIONS Q5
 
 /** DOM icons (spec §11.1 DOM layer: ui_*), by what they label. Resolved through the manifest. */

@@ -4,6 +4,7 @@ import '@fontsource/baloo-2/700.css';
 import './styles/main.scss';
 import type { Clock } from './core/clock';
 import type { DayPhase } from './core/config/dayNight';
+import type { SeasonId } from './core/config/seasons';
 import { AudioManager, audioTracks, type AudioClip } from './game/audio/AudioManager';
 import { createFarmView, type FarmView } from './game/farmView';
 import { noEffects } from './game/feedback/effects';
@@ -29,6 +30,7 @@ async function start(root: HTMLElement) {
   let skip: ((ms: number) => void) | null = null;
   let showDevFps: (() => void) | null = null;
   let devPhase: DayPhase | null = null;
+  let devSeason: SeasonId | null = null;
 
   // Dev-only time travel: `npm run dev` + ?dev=1. Dead code in production builds.
   if (import.meta.env.DEV && new URLSearchParams(location.search).has('dev')) {
@@ -41,8 +43,10 @@ async function start(root: HTMLElement) {
       () => gallery.openAssetGallery(root, assets.registry),
       () => void store.dispatch(dev.devFillPigs),
       (phase) => farmView?.previewPhase(phase),
+      (season) => farmView?.previewSeason(season),
     );
     devPhase = dev.devPhaseParam();
+    devSeason = dev.devSeasonParam();
     const tools = opts.devTools;
     showDevFps = () => dev.showFps(tools, farmView?.fps() ?? null);
     skip = (ms) => {
@@ -93,6 +97,7 @@ async function start(root: HTMLElement) {
         onPick,
       });
       if (devPhase) farmView.previewPhase(devPhase);
+      if (devSeason) farmView.previewSeason(devSeason);
       return farmView;
     },
   });

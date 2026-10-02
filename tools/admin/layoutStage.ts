@@ -2,6 +2,7 @@
 // game's own sky + backdrop painters, placements as DOM images (same box, origin, rotation, mirror
 // and stacking as the Phaser scene), drag to move, corner handle to resize, drop from the library.
 import { PHASE_LOOKS } from '../../src/core/config/dayNight';
+import type { BackdropPalette } from '../../src/core/config/seasons';
 import { paintBackdrop } from '../../src/game/view/backdropPaint';
 import { paintSky } from '../../src/game/view/skyPaint';
 import { esc } from './labels';
@@ -19,6 +20,8 @@ export interface StageHooks {
   urlOf: (id: string) => string | null;
   options: () => { preview: boolean; walk: boolean; snap: number };
   walkArea: { x: number; y: number; width: number; height: number };
+  /** Season palette of the painted backdrop (SE-1); absent = the default (summer) look. */
+  palette?: BackdropPalette;
 }
 
 const natural = new Map<string, { w: number; h: number }>();
@@ -57,7 +60,7 @@ export function mountStage(host: HTMLElement, d: Design, h: StageHooks) {
   const ctx = host.querySelector('canvas')!.getContext('2d')!;
   const rect = { x: 0, y: 0, width: d.width, height: d.height };
   paintSky(ctx, rect, PHASE_LOOKS.day);
-  paintBackdrop(ctx, rect);
+  paintBackdrop(ctx, rect, h.palette);
   const w = h.walkArea;
   Object.assign(host.querySelector<HTMLElement>('.stage__walk')!.style, {
     left: `${w.x * d.width}px`, top: `${w.y * d.height}px`, width: `${w.width * d.width}px`, height: `${w.height * d.height}px`,

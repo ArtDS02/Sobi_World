@@ -4,9 +4,9 @@
 import * as Phaser from 'phaser';
 import { parseAnchors, type Anchors } from '../../core/assets/anchors';
 import {
+  SEASON_UNSIGNED_IDS,
   TROUGH_PROP_ID,
   type AnchorName,
-  type FarmAction,
   type FxId,
 } from '../../core/config/assetIds';
 import { FARM_VIEW } from '../../core/config/farmView';
@@ -17,8 +17,8 @@ import type { FarmBridge, FarmDeps } from '../farmView';
 import { noEffects } from '../feedback/effects';
 import { Ambient } from '../fx/ambient';
 import { DayNightDirector } from '../fx/DayNightDirector';
+import { SeasonDirector } from '../fx/SeasonDirector';
 import { SceneEffects } from '../fx/SceneEffects';
-import { vi } from '../../i18n/vi';
 import { Backdrop } from '../prefabs/Backdrop';
 import { DayNightLayer } from '../prefabs/DayNightLayer';
 import { FarmProps } from '../prefabs/FarmProps';
@@ -39,7 +39,7 @@ import {
   textureKey,
   troughTextureKey,
 } from '../view/textureKeys';
-import { ACTION_DATA, pickOf } from './farmPick';
+import { makeClickable, pickOf } from './farmPick';
 import { queueLoadList, warnLoadErrors } from './PreloadScene';
 
 export class MainFarmScene extends Phaser.Scene {
@@ -59,6 +59,7 @@ export class MainFarmScene extends Phaser.Scene {
   private gifts!: GiftBoxes;
   private dayNight!: DayNightLayer;
   private dayClock!: DayNightDirector;
+  private season!: SeasonDirector; // seasonal art, backdrop palette, weather (SE-1)
   private readonly obstacles: Rect[] = []; // world object bounds; gift boxes keep clear (U06)
   private readonly props = new FarmProps(); // trough texture + owned decorations (PG-3)
 
@@ -83,8 +84,11 @@ export class MainFarmScene extends Phaser.Scene {
     this.plates = new Nameplates(this);
     this.gifts = new GiftBoxes(this, this.pigEnv.reduceMotion);
     this.dayNight = new DayNightLayer(this);
-    Backdrop.follow(this, this.layout, (rect) => this.dayNight.setView(rect));
+    const backdrop = Backdrop.follow(this, this.layout, (rect) => this.dayNight.setView(rect));
+    const seasonPreview = () => this.bridge.seasonPreview;
+    this.season = new SeasonDirector(this, this.deps.assets, backdrop, this.deps.now, seasonPreview);
     this.drawPlacements();
+    this.season.update();
     const preview = () => this.bridge.phasePreview;
     const bedtime = () => [...this.pigs.values()].forEach((p) => p.setNight());
     this.dayClock = new DayNightDirector(this, this.dayNight, this.deps.now, preview, bedtime);
@@ -153,56 +157,41 @@ export class MainFarmScene extends Phaser.Scene {
         return;
       }
       if (p.role === 'orderBoard') this.board = img;
-      this.dress(img, p);
+      this.season.track(p.id, img, this.dress(img, p));
     });
   }
 
-  /** Size/rotation/mirror from the layout, shadow, gift obstacle, click + hover, badge (non-environment art). */
-  private dress(img: Phaser.GameObjects.Image, p: FarmLayout['placements'][number]) {
+  /**
+   * Size/rotation/mirror from the layout, shadow, gift obstacle, click + hover, badge (non-environment
+   * art). Returns the name tag that only shows with sign-less seasonal art (SE-1), if any.
+   */
+  private dress(
+    img: Phaser.GameObjects.Image,
+    p: FarmLayout['placements'][number],
+  ): Phaser.GameObjects.Text | null {
     const t = placementTransform(p, img.width, img.height); // layout editor fields (AD-1)
     img.setScale(t.scaleX, t.scaleY).setAngle(t.angle).setFlipX(t.flipX);
     const shadow = p.layer > 2 ? addShadow(this, img) : null;
     if (shadow) this.dayNight.addShadow(shadow);
-    if (p.decor) return this.props.addDecor(p.decor, img, shadow); // no click, light or obstacle
+    if (p.decor) {
+      this.props.addDecor(p.decor, img, shadow); // no click, light or obstacle
+      return null;
+    }
     this.dayNight.addLight(img, p.action);
     this.obstacles.push(img.getBounds());
+    const seasonTag = !!p.signed && SEASON_UNSIGNED_IDS.includes(p.id);
+    let tag: Phaser.GameObjects.Text | null = null;
     if (p.action) {
-      this.makeClickable(img, p.action, !p.signed);
+      tag = makeClickable(this, img, p.action, !p.signed || seasonTag);
       addHover(this, img, this.pigEnv.reduceMotion);
     }
     if (p.badge === 'orders') this.ordersBadge = new Badge(this, img, this.pigEnv.reduceMotion);
+    return seasonTag ? tag : null;
   }
 
-  /**
-   * Hand cursor + pixel-perfect hit + an always-visible name tag (no hover-only cue, §10.4); art
-   * with its own painted sign (`signed`) needs no tag.
-   */
-  private makeClickable(img: Phaser.GameObjects.Image, action: FarmAction, tag: boolean) {
-    img.setData(ACTION_DATA, action).setInteractive({
-      pixelPerfect: true,
-      alphaTolerance: FARM_VIEW.HIT_ALPHA,
-      useHandCursor: true,
-    });
-    if (!tag) return;
-    const l = FARM_VIEW.LABEL;
-    const bottom = img.y + img.displayHeight * (1 - img.originY);
-    this.add
-      .text(img.x, bottom + l.offsetY, vi.farm[action], {
-        color: l.color,
-        backgroundColor: l.background,
-        fontSize: `${l.fontPx}px`,
-        fontFamily: l.fontFamily,
-        fontStyle: 'bold',
-        padding: { x: l.padX, y: l.padY },
-      })
-      .setOrigin(0.5, 0)
-      .setDepth(img.depth + l.depthAbove)
-      .setData(ACTION_DATA, action)
-      .setInteractive({ useHandCursor: true });
-  }
-
-  override update(_time: number, delta: number) {
+  override update(time: number, delta: number) {
     this.ambient.update(delta);
+    this.season.tick(time, delta);
     spreadCrowd(this.pigs, delta);
     this.plates.update((id) => this.pigs.get(id)?.plateAnchor() ?? null);
   }
@@ -212,6 +201,8 @@ export class MainFarmScene extends Phaser.Scene {
     if (!this.sys.isActive()) return;
     this.ambient.sync();
     this.dayClock.update();
+    this.season.update();
+    this.season.setReduceMotion(this.pigEnv.reduceMotion());
     this.props.sync(this.textures, this.trough, save);
     const now = this.deps.now();
     this.ordersBadge?.set(save ? readyOrderCount(save, now) : 0);
