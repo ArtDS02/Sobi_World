@@ -81,7 +81,7 @@ const goldText = (amount: number) => t(vi.hud.gold, { amount: formatInt(amount) 
  * button per gender. The level lock reads better than "not enough gold" when both fail.
  */
 export function shopPigs(save: SaveGame, now: number, assets: AssetRegistry | null = null) {
-  const buyable = BREED_IDS.filter((id) => BREEDS[id].buyGold !== null).sort(
+  const buyable = BREED_IDS.filter((id) => BREEDS[id].buyGold !== null && BREEDS[id].enabled).sort(
     (a, b) => rarityRank(BREEDS[a].rarity) - rarityRank(BREEDS[b].rarity),
   );
   const level = levelFromXp(save.player.xp);

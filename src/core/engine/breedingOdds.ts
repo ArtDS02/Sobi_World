@@ -11,6 +11,8 @@ export interface BreedingOutcome {
 }
 
 const rank = (id: BreedId) => rarityRank(BREEDS[id].rarity);
+/** Species a birth may produce: retired ones (enabled false) never come out (A7-1). */
+const liveIds = () => BREED_IDS.filter((id) => BREEDS[id].enabled);
 
 /** Spreads `points` evenly over `pool` (nothing when the pool is empty). */
 function spread(odds: Map<BreedId, number>, pool: readonly BreedId[], points: number) {
@@ -19,7 +21,7 @@ function spread(odds: Map<BreedId, number>, pool: readonly BreedId[], points: nu
 
 /** Species `steps` rarities above `top`, from the parents' families when any exist there. */
 function tierUp(families: Set<string>, top: number, steps: number): BreedId[] {
-  const tier = BREED_IDS.filter((id) => rank(id) === top + steps);
+  const tier = liveIds().filter((id) => rank(id) === top + steps);
   const related = tier.filter((id) => families.has(BREEDS[id].family));
   return related.length > 0 ? related : tier;
 }
@@ -35,8 +37,8 @@ export function breedingOutcomes(a: BreedId, b: BreedId): BreedingOutcome[] | un
   const top = Math.max(rank(a), rank(b));
   const families = new Set([BREEDS[a].family, BREEDS[b].family]);
 
-  spread(odds, a === b ? [a] : [a, b], R.SAME_PARENT);
-  const kin = BREED_IDS.filter(
+  spread(odds, (a === b ? [a] : [a, b]).filter((id) => BREEDS[id].enabled), R.SAME_PARENT);
+  const kin = liveIds().filter(
     (id) => id !== a && id !== b && families.has(BREEDS[id].family) && rank(id) <= top,
   );
   spread(odds, kin, R.SAME_FAMILY);
@@ -44,10 +46,12 @@ export function breedingOutcomes(a: BreedId, b: BreedId): BreedingOutcome[] | un
   spread(odds, tierUp(families, top, 2), R.TIER_UP_2);
   for (const m of MUTATIONS) {
     const [x, y] = m.parents;
-    if ((x === a && y === b) || (x === b && y === a)) spread(odds, [m.result], m.weight);
+    const pair = (x === a && y === b) || (x === b && y === a);
+    if (pair && BREEDS[m.result].enabled) spread(odds, [m.result], m.weight);
   }
 
   const total = [...odds.values()].reduce((s, w) => s + w, 0);
+  if (total === 0) return undefined;
   return [...odds]
     .map(([breed, w]) => ({ breed, weight: (w / total) * 100 }))
     .sort((p, q) => q.weight - p.weight || BREED_IDS.indexOf(p.breed) - BREED_IDS.indexOf(q.breed));

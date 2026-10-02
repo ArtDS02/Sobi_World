@@ -76,13 +76,10 @@ export const CUTS: Cut[] = [
   { id: 'pig_superhero', sheet: ENV, box: [770, 50, 370, 300] },
   { id: 'pig_thienlong', sheet: ENV, box: [1140, 30, 390, 320] },
   { id: 'pig_black', sheet: PIGS, box: cell(4, 0) },
-  { id: 'pig_farmer', sheet: PIGS, box: cell(0, 1) },
-  { id: 'pig_chef', sheet: PIGS, box: cell(1, 2) },
+  // farmer, chef, pirate, ninja: user art in asset/animals/asset/ now (A7-1) — never cut them again.
   { id: 'pig_nerd', sheet: PIGS, box: cell(2, 2) },
   { id: 'pig_spotted', sheet: PIGS, box: cell(5, 0) },
   { id: 'pig_pilot', sheet: PIGS, box: cell(4, 1) },
-  { id: 'pig_pirate', sheet: PIGS, box: cell(5, 1) },
-  { id: 'pig_ninja', sheet: PIGS, box: cell(0, 2) },
   { id: 'pig_robot', sheet: PIGS, box: cell(1, 3) },
   { id: 'pig_unicorn', sheet: PIGS, box: cell(2, 3) },
   // U07 species: bee and dragonling from STYLE cells; coats painted on the plain pig.

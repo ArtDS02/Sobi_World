@@ -1,6 +1,6 @@
 # PIG CONCEPT PROPOSAL — Species (A3, cập nhật 2026-10-02)
 
-Trạng thái: **đã triển khai** (27 species, đều có art production). Bảng tra nhanh: `UN_IN_PIG_CATALOGUE.md`.
+Trạng thái: **đã triển khai** (27 species A3 dưới đây + 42 species A7 từ art user, xem `UN_IN_PIG_CATALOGUE.md`). Bảng tra nhanh: `UN_IN_PIG_CATALOGUE.md`.
 Số liệu thật: `src/core/config/breeds.ts`; luật lai: `src/core/config/breedingRules.ts`. Giá là TUNABLE (`npm run sim:economy`).
 
 ## 0. Nguồn và luật
@@ -23,7 +23,7 @@ Số liệu thật: `src/core/config/breeds.ts`; luật lai: `src/core/config/br
 | Voi, hươu cao cổ, cú, cá | thay mõm / cổ dài / mỏ / thân cá → mất khung heo |
 | Mèo, chó, cáo | tai nhọn đổi silhouette đầu heo |
 | Heo baby/tiny/fat/fluffy/long_ear | chỉ khác tỷ lệ (trùng growth stage) |
-| 13 bộ đồ (farmer, chef, nerd, knight, wizard, cowboy, detective, ghost, christmas, tet, pilot, pirate, ninja) | là trang phục, không phải loài — đã gỡ (A2-1); robot + kỳ lân là thân → thành species |
+| 13 bộ đồ (farmer, chef, nerd, knight, wizard, cowboy, detective, ghost, christmas, tet, pilot, pirate, ninja) | là trang phục, không phải loài — đã gỡ (A2-1); robot + kỳ lân là thân → thành species. **A7-1:** user vẽ sẵn ảnh nguyên thân → farmer, chef, knight, detective, ghost, tet, pirate, ninja (+34 concept khác) thành species; bảng: `UN_IN_PIG_CATALOGUE.md` |
 
 ## 2. Species
 

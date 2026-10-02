@@ -27,7 +27,7 @@ function lowestFreeSlot(state: SaveGame): number {
 export function buyPig(state: SaveGame, args: BuyPigArgs, ctx: ActionContext): ActionResult {
   return runAction(state, ctx, (s) => {
     const def = BREEDS[args.breed] as (typeof BREEDS)[BreedId] | undefined;
-    if (!def || def.buyGold === null) return { ok: false, error: 'INVALID_REQUEST' };
+    if (!def || def.buyGold === null || !def.enabled) return { ok: false, error: 'INVALID_REQUEST' };
     if (!GENDER_VALUES.includes(args.gender)) return { ok: false, error: 'INVALID_REQUEST' };
     if (levelFromXp(s.player.xp) < def.unlockLevel) return { ok: false, error: 'LEVEL_TOO_LOW' };
     if (freeSlots(s) < 1) return { ok: false, error: 'NO_PIG_SLOT' };

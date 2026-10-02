@@ -8,6 +8,243 @@
 
 ---
 
+# STATUS — REAL PROJECT STATE (A7 asset sync, 2026-10-02)
+
+> This section is generated from the files that actually ship (`public/assets/pigs/base/`, manifest `pigs[]`,
+> `src/core/config/speciesTable.ts`), not from design intent. Re-check it with the admin dashboard
+> (`npm run admin` → *Kiểm tra dữ liệu*) after any art change.
+
+**Totals:** 69 species in game (27 before A7 + 42 new) · 116 catalogue concepts · 59 source images in `asset/animals/asset/`.
+
+| Status | Count | Meaning |
+|---|---|---|
+| ✅ COMPLETED | 27 | In game, every required asset present and valid (`assets:check`) |
+| 🆕 NEW | 42 | Added in A7 from `asset/animals/asset/`; in game, every required asset present |
+| 🟡 PARTIAL | 2 | Source art exists but does not match the concept — not in game, needs review/redraw |
+| ⬜ NOT DESIGNED | 60 | Described here, no artwork anywhere yet |
+
+**What "complete" means** (production standard §2, this file §1.2 — the standard is normative):
+
+- **Right** = the one drawn view, 512 × 512, transparent, feet on the 82 % ground line.
+- **Left** = runtime horizontal flip of Right (`✓ flip`). No file.
+- **Front / Back** = never produced by the standard (`—`, not missing). A concept is not held back for them.
+- **Adult** = the drawn sprite. **Baby** = the same sprite scaled ×0.6 at runtime (`FARM_VIEW.PIG_GROWTH_SCALE`). No file.
+- **Sleep** frame is optional (DECISIONS Q5: idle + `fx_zzz`); no species ships one today.
+
+## Catalogue concepts
+
+| Concept | Art ID | Species ID | Theme | Baby | Adult | Left | Right | Front | Back | Status | Asset path |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Heo Hồng Cổ Điển | `pig_classic` | `PIG_EARTH_PINK` | Base / Classic Pigs | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_classic.png` |
+| Heo Trắng | `pig_white` | `PIG_WHITE` | Base / Classic Pigs | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_white.png` |
+| Heo Đen | `pig_black` | `PIG_BLACK` | Base / Classic Pigs | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_black.png` |
+| Heo Nâu | `pig_brown` | `PIG_BROWN` | Base / Classic Pigs | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_brown.png` |
+| Heo Đốm | `pig_spotted` | `PIG_SPOTTED` | Base / Classic Pigs | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_spotted.png` |
+| Heo Em Bé | `pig_baby` | — | Base / Classic Pigs | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Tí Hon | `pig_tiny` | — | Base / Classic Pigs | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Mập | `pig_fat` | — | Base / Classic Pigs | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Bông | `pig_fluffy` | — | Base / Classic Pigs | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Tai Dài | `pig_long_ear` | — | Base / Classic Pigs | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Nông Dân | `pig_farmer` | `PIG_FARMER` | Vietnamese / Countryside Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_farmer.png` |
+| Heo Áo Dài | `pig_ao_dai` | `PIG_AO_DAI` | Vietnamese / Countryside Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_ao_dai.png` |
+| Heo Tết | `pig_tet` | `PIG_TET` | Vietnamese / Countryside Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_tet.png` |
+| Heo Lân | `pig_lan` | `PIG_LAN` | Vietnamese / Countryside Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_lan.png` |
+| Heo Ông Địa | `pig_ong_dia` | — | Vietnamese / Countryside Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Thổ Địa | `pig_tho_dia` | — | Vietnamese / Countryside Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Bánh Chưng | `pig_banh_chung` | `PIG_BANH_CHUNG` | Vietnamese / Countryside Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_banh_chung.png` |
+| Heo Bánh Dày | `pig_banh_day` | — | Vietnamese / Countryside Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Làng Quê | `pig_village` | — | Vietnamese / Countryside Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Ngư Dân | `pig_fisherman` | — | Vietnamese / Countryside Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Làm Vườn | `pig_gardener` | — | Vietnamese / Countryside Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Cà Phê | `pig_coffee` | — | Vietnamese / Countryside Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Đầu Bếp | `pig_chef` | `PIG_CHEF` | Job / Everyday Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_chef.png` |
+| Heo Bác Học | `pig_nerd` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Bác Sĩ | `pig_doctor` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Giáo Viên | `pig_teacher` | `PIG_TEACHER` | Job / Everyday Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_teacher.png` |
+| Heo Thám Tử | `pig_detective` | `PIG_DETECTIVE` | Job / Everyday Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_detective.png` |
+| Heo Doanh Nhân | `pig_business` | `PIG_BUSINESS` | Job / Everyday Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_business.png` |
+| Heo CEO | `pig_ceo` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Họa Sĩ | `pig_artist` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Nhạc Công | `pig_musician` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Rock Star | `pig_rockstar` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Streamer | `pig_streamer` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Idol | `pig_influencer` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Cao Bồi | `pig_cowboy` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Cứu Hỏa | `pig_firefighter` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Phi Công | `pig_pilot` | — | Job / Everyday Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Phi Hành Gia | `pig_astronaut` | `PIG_ASTRONAUT` | Job / Everyday Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_astronaut.png` |
+| Heo Cướp Biển | `pig_pirate` | `PIG_PIRATE` | Adventure Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_pirate.png` |
+| Heo Ninja | `pig_ninja` | `PIG_NINJA` | Adventure Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_ninja.png` |
+| Heo Samurai | `pig_samurai` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Shogun | `pig_shogun` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Hiệp Sĩ | `pig_knight` | `PIG_KNIGHT` | Adventure Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_knight.png` |
+| Heo Viking | `pig_viking` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Pháp Sư | `pig_wizard` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Phù Thủy | `pig_witch` | `PIG_WITCH` | Adventure Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_witch.png` |
+| Heo Giả Kim | `pig_alchemist` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Cung Thủ | `pig_archer` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Thám Hiểm | `pig_explorer` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Siêu Anh Hùng | `pig_superhero` | `PIG_SUPERMAN` | Adventure Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_superhero.png` |
+| Heo Phản Diện | `pig_villain` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Cơ Giáp | `pig_robot` | `PIG_ROBOT` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_robot.png` |
+| Heo Mecha | `pig_mecha` | `PIG_MECHA` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_mecha.png` |
+| Heo Cyborg | `pig_cyborg` | `PIG_CYBORG` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_cyborg.png` |
+| Heo Android | `pig_android` | — | Robot / Sci-Fi Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Battlebot | `pig_battlebot` | `PIG_BATTLEBOT` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_battlebot.png` |
+| Heo AI | `pig_ai` | — | Robot / Sci-Fi Collection | — | ✗ | ✗ | ✗ | — | — | 🟡 PARTIAL | `asset/animals/asset/pig_ai.png` (review) |
+| Heo Không Gian | `pig_space` | — | Robot / Sci-Fi Collection | — | ✗ | ✗ | ✗ | — | — | 🟡 PARTIAL | `asset/animals/asset/pig_space.png` (review) |
+| Heo Ngoài Hành Tinh | `pig_alien` | `PIG_ALIEN` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_alien.png` |
+| Heo UFO | `pig_ufo` | `PIG_UFO` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_ufo.png` |
+| Heo Khai Khoáng | `pig_miningbot` | — | Robot / Sci-Fi Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Steampunk | `pig_steampunk` | — | Robot / Sci-Fi Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Phản Lực | `pig_jet` | — | Robot / Sci-Fi Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Rồng | `pig_dragon` | `PIG_DRAGON` | Fantasy / Dragon Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_dragon.png` |
+| Heo Thần Long | `pig_thienlong` | `PIG_MYTHICAL` | Fantasy / Dragon Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_thienlong.png` |
+| Heo Phượng Hoàng | `pig_phoenix` | `PIG_PHOENIX` | Fantasy / Dragon Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_phoenix.png` |
+| Heo Kỳ Lân | `pig_unicorn` | `PIG_UNICORN` | Fantasy / Dragon Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_unicorn.png` |
+| Heo Hồ Ly | `pig_kitsune` | `PIG_KITSUNE` | Fantasy / Dragon Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_kitsune.png` |
+| Heo Pegasus | `pig_pegasus` | `PIG_PEGASUS` | Fantasy / Dragon Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_pegasus.png` |
+| Heo Mỹ Nhân Ngư | `pig_mermaid` | — | Fantasy / Dragon Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Tiên | `pig_fairy` | — | Fantasy / Dragon Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Golem | `pig_golem` | — | Fantasy / Dragon Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Elf | `pig_elf` | — | Fantasy / Dragon Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Oni | `pig_oni` | `PIG_ONI` | Mythology Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_oni.png` |
+| Heo Zeus | `pig_zeus` | `PIG_ZEUS` | Mythology Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_zeus.png` |
+| Heo Poseidon | `pig_poseidon` | — | Mythology Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Hades | `pig_hades` | — | Mythology Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Athena | `pig_athena` | — | Mythology Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Valkyrie | `pig_valkyrie` | `PIG_VALKYRIE` | Mythology Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_valkyrie.png` |
+| Heo Minotaur | `pig_minotaur` | — | Mythology Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Medusa | `pig_medusa` | — | Mythology Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Thor | `pig_thor` | `PIG_THOR` | Mythology Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_thor.png` |
+| Heo Loki | `pig_loki` | — | Mythology Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Bí Ngô | `pig_pumpkin` | `PIG_PUMPKIN` | Horror / Halloween Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_pumpkin.png` |
+| Heo Ma | `pig_ghost` | `PIG_GHOST` | Horror / Halloween Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_ghost.png` |
+| Heo Ma Cà Rồng | `pig_vampire` | `PIG_VAMPIRE` | Horror / Halloween Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_vampire.png` |
+| Heo Zombie | `pig_zombie` | `PIG_ZOMBIE` | Horror / Halloween Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_zombie.png` |
+| Heo Xác Ướp | `pig_mummy` | — | Horror / Halloween Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Frankenstein | `pig_franken` | — | Horror / Halloween Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Xương | `pig_skeleton` | — | Horror / Halloween Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Người Sói | `pig_werewolf` | — | Horror / Halloween Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Đi Biển | `pig_beach` | — | Seasonal Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Lướt Sóng | `pig_surfer` | `PIG_SURFER` | Seasonal Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_surfer.png` |
+| Heo Thợ Lặn | `pig_diver` | `PIG_DIVER` | Seasonal Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_diver.png` |
+| Heo Kem | `pig_icecream` | `PIG_ICECREAM` | Seasonal Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_icecream.png` |
+| Heo Noel | `pig_christmas` | — | Seasonal Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Người Tuyết | `pig_snowman` | — | Seasonal Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Tuần Lộc | `pig_reindeer` | — | Seasonal Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Elf Noel | `pig_elf_christmas` | — | Seasonal Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Hộp Quà | `pig_gift` | — | Seasonal Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Bánh Kem | `pig_cake` | — | Food / Fun Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Donut | `pig_donut` | `PIG_DONUT` | Food / Fun Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_donut.png` |
+| Heo Burger | `pig_burger` | `PIG_BURGER` | Food / Fun Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_burger.png` |
+| Heo Trà Sữa | `pig_boba` | `PIG_BOBA` | Food / Fun Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_boba.png` |
+| Heo Dưa Hấu | `pig_watermelon` | `PIG_STRIPED_MELON` | Food / Fun Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_watermelon.png` |
+| Heo Bắp | `pig_corn` | — | Food / Fun Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Dâu | `pig_strawberry` | — | Food / Fun Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Buồn Ngủ | `pig_sleepy` | `PIG_SLEEPY` | Funny Personality Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_sleepy.png` |
+| Heo Lười | `pig_lazy` | `PIG_LAZY` | Funny Personality Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_lazy.png` |
+| Heo Cáu | `pig_angry` | `PIG_ANGRY` | Funny Personality Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_angry.png` |
+| Heo Mít Ướt | `pig_crybaby` | `PIG_CRYBABY` | Funny Personality Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_crybaby.png` |
+| Heo Ngầu | `pig_cool` | — | Funny Personality Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Đại Gia | `pig_rich` | `PIG_RICH` | Funny Personality Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_rich.png` |
+| Heo Ông | `pig_grandpa` | `PIG_GRANDPA` | Funny Personality Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_grandpa.png` |
+| Heo Bà | `pig_grandma` | — | Funny Personality Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Quẩy | `pig_party` | `PIG_PARTY` | Funny Personality Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_party.png` |
+
+## Species in game that are not catalogue concepts (A3 animal species)
+
+| Concept | Art ID | Species ID | Theme | Baby | Adult | Left | Right | Front | Back | Status | Asset path |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Heo Rừng | `pig_boar` | `PIG_BOAR` | Species A3 (Wild) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_boar.png` |
+| Heo Cừu | `pig_sheep` | `PIG_SHEEP` | Species A3 (Meadow) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_sheep.png` |
+| Heo Ong | `pig_bee` | `PIG_BEE` | Species A3 (Meadow) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_bee.png` |
+| Heo Cánh Cụt | `pig_penguin` | `PIG_PENGUIN` | Species A3 (Water) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_penguin.png` |
+| Heo Trâu | `pig_buffalo` | `PIG_BUFFALO` | Species A3 (Farm) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_buffalo.png` |
+| Heo Hươu Sao | `pig_deer` | `PIG_DEER` | Species A3 (Meadow) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_deer.png` |
+| Heo Hổ | `pig_tiger` | `PIG_TIGER` | Species A3 (Wild) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_tiger.png` |
+| Heo Gấu Trúc | `pig_panda` | `PIG_PANDA` | Species A3 (Wild) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_panda.png` |
+| Heo Kỳ Giông | `pig_axolotl` | `PIG_AXOLOTL` | Species A3 (Water) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_axolotl.png` |
+| Heo Hướng Dương | `pig_sunflower` | `PIG_SUNFLOWER` | Species A3 (Meadow) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_sunflower.png` |
+| Heo Nhím | `pig_hedgehog` | `PIG_HEDGEHOG` | Species A3 (Wild) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_hedgehog.png` |
+| Heo Rùa | `pig_turtle` | `PIG_TURTLE` | Species A3 (Water) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_turtle.png` |
+| Heo Cá Chép | `pig_koi` | `PIG_KOI` | Species A3 (Water) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_koi.png` |
+| Heo Rồng Con | `pig_dragonling` | `PIG_DRAGONLING` | Species A3 (Mythic) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_dragonling.png` |
+| Heo Ngân Hà | `pig_galaxy` | `PIG_GALAXY` | Species A3 (Mythic) | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_galaxy.png` |
+
+## Source inventory — `asset/animals/asset/` (59 files)
+
+Every file was checked visually (all are 512², right-facing side view, feet on 82 %). Duplicates and alternative
+versions were **not** copied over live art; the live file keeps its name, sources stay untouched.
+
+| File | Concept | In game | Note / review |
+|---|---|---|---|
+| `pig_ai.png` | `pig_ai` | — | Hình chỉ là bóng đen viền tím — không thấy lõi AI/hologram như concept; chưa dùng, cần vẽ lại hoặc user xác nhận |
+| `pig_alien.png` | `pig_alien` | ✓ dùng → `pig_alien` |  |
+| `pig_alien_v2.png` | `pig_alien` | — | Bản thay thế (xanh ngọc, bộ đồ phi hành) — game dùng pig_alien (tím, ăng-ten đúng concept) |
+| `pig_angry.png` | `pig_angry` | ✓ dùng → `pig_angry` |  |
+| `pig_ao_dai.png` | `pig_ao_dai` | ✓ dùng → `pig_ao_dai` |  |
+| `pig_ao_dai_v2.png` | `pig_ao_dai` | — | Bản thay thế (áo dài xanh) — game dùng pig_ao_dai (đỏ/vàng) |
+| `pig_astronaut.png` | `pig_astronaut` | ✓ dùng → `pig_astronaut` |  |
+| `pig_banh_chung.png` | `pig_banh_chung` | ✓ dùng → `pig_banh_chung` |  |
+| `pig_battlebot.png` | `pig_battlebot` | ✓ dùng → `pig_battlebot` |  |
+| `pig_boba.png` | `pig_boba` | ✓ dùng → `pig_boba` |  |
+| `pig_burger.png` | `pig_burger` | ✓ dùng → `pig_burger` |  |
+| `pig_business.png` | `pig_business` | ✓ dùng → `pig_business` |  |
+| `pig_chef.png` | `pig_chef` | ✓ dùng → `pig_chef` |  |
+| `pig_classic.png` | `pig_classic` | ✓ dùng → `pig_classic` (đã có từ trước, giống hệt) |  |
+| `pig_crybaby.png` | `pig_crybaby` | ✓ dùng → `pig_crybaby` |  |
+| `pig_cyborg.png` | `pig_cyborg` | ✓ dùng → `pig_cyborg` |  |
+| `pig_detective.png` | `pig_detective` | ✓ dùng → `pig_detective` |  |
+| `pig_diver.png` | `pig_diver` | ✓ dùng → `pig_diver` |  |
+| `pig_donut.png` | `pig_donut` | ✓ dùng → `pig_donut` |  |
+| `pig_dragon.png` | `pig_dragon` | ✓ dùng → `pig_dragon` |  |
+| `pig_dragonling.png` | `pig_dragonling` | ✓ dùng → `pig_dragonling` (đã có từ trước, giống hệt) |  |
+| `pig_farmer.png` | `pig_farmer` | ✓ dùng → `pig_farmer` |  |
+| `pig_ghost.png` | `pig_ghost` | ✓ dùng → `pig_ghost` |  |
+| `pig_grandpa.png` | `pig_grandpa` | ✓ dùng → `pig_grandpa` |  |
+| `pig_icecream.png` | `pig_icecream` | ✓ dùng → `pig_icecream` |  |
+| `pig_icecream_v2.png` | `pig_icecream` | — | Bản thay thế (viên kem trên đầu) — game dùng pig_icecream (ốc quế) |
+| `pig_kitsune.png` | `pig_kitsune` | ✓ dùng → `pig_kitsune` |  |
+| `pig_knight_v2.png` | `pig_knight` | ✓ dùng → `pig_knight` |  |
+| `pig_lan.png` | `pig_lan` | ✓ dùng → `pig_lan` |  |
+| `pig_lazy.png` | `pig_lazy` | ✓ dùng → `pig_lazy` |  |
+| `pig_mecha.png` | `pig_mecha` | ✓ dùng → `pig_mecha` |  |
+| `pig_mecha_v2.png` | `pig_mecha` | — | Bản thay thế (giáp người máy đứng 2 chân, phá silhouette heo) — game dùng pig_mecha |
+| `pig_mecha_v3.png` | `pig_mecha` | — | Bản thay thế (giáp bạc kiểu phi hành) — game dùng pig_mecha |
+| `pig_ninja.png` | `pig_ninja` | ✓ dùng → `pig_ninja` |  |
+| `pig_oni.png` | `pig_oni` | — | Bản thay thế (heo hồng sừng đỏ) — game dùng pig_oni_v2 (đỏ, sừng, răng nanh: khớp concept) |
+| `pig_oni_v2.png` | `pig_oni` | ✓ dùng → `pig_oni` |  |
+| `pig_party.png` | `pig_party` | ✓ dùng → `pig_party` |  |
+| `pig_pegasus.png` | `pig_pegasus` | ✓ dùng → `pig_pegasus` |  |
+| `pig_pirate.png` | `pig_pirate` | ✓ dùng → `pig_pirate` |  |
+| `pig_pumpkin.png` | `pig_pumpkin` | — | Bản khác pig_pumpkin đang dùng (art sheet A3) — không ghi đè; user duyệt |
+| `pig_rich.png` | `pig_rich` | ✓ dùng → `pig_rich` |  |
+| `pig_robot_v2.png` | `pig_robot` | — | Ứng viên thay pig_robot (giáp xanh, mắt LED) — KHÔNG ghi đè art đang dùng; user duyệt |
+| `pig_robot_v3.png` | `pig_robot` | — | Ứng viên thay pig_robot (bạc, cánh) — KHÔNG ghi đè; user duyệt |
+| `pig_sleepy.png` | `pig_sleepy` | ✓ dùng → `pig_sleepy` |  |
+| `pig_space.png` | `pig_space` | — | Heo tím trơn, không có đồ/thiết bị không gian; chưa dùng, cần vẽ lại hoặc user xác nhận |
+| `pig_surfer.png` | `pig_surfer` | ✓ dùng → `pig_surfer` |  |
+| `pig_teacher.png` | `pig_teacher` | ✓ dùng → `pig_teacher` |  |
+| `pig_tet.png` | `pig_tet` | — | Heo dưa hấu đeo bảng chữ Tết — trùng thân pig_watermelon, không khớp concept áo đỏ/vàng; giữ pig_tet_v3 |
+| `pig_tet_v3.png` | `pig_tet` | ✓ dùng → `pig_tet` |  |
+| `pig_thienlong.png` | `pig_thienlong` | — | Bản khác pig_thienlong (đồ rồng cam) — không ghi đè; game giữ bản P0 cánh + vương miện |
+| `pig_thor.png` | `pig_thor` | ✓ dùng → `pig_thor` |  |
+| `pig_ufo.png` | `pig_ufo` | ✓ dùng → `pig_ufo` |  |
+| `pig_unicorn.png` | `pig_unicorn` | — | Bản khác pig_unicorn (thân cầu vồng) — không ghi đè; user duyệt |
+| `pig_valkyrie_v2.png` | `pig_valkyrie` | ✓ dùng → `pig_valkyrie` |  |
+| `pig_vampire.png` | `pig_vampire` | ✓ dùng → `pig_vampire` |  |
+| `pig_watermelon.png` | `pig_watermelon` | — | Bản khác pig_watermelon (không mầm lá — catalogue yêu cầu mầm lá) — giữ bản đang dùng |
+| `pig_witch.png` | `pig_witch` | ✓ dùng → `pig_witch` |  |
+| `pig_zeus.png` | `pig_zeus` | ✓ dùng → `pig_zeus` |  |
+| `pig_zombie.png` | `pig_zombie` | ✓ dùng → `pig_zombie` |  |
+
+Renamed on copy: `pig_knight_v2` → `pig_knight`, `pig_valkyrie_v2` → `pig_valkyrie`, `pig_tet_v3` → `pig_tet`,
+`pig_oni_v2` → `pig_oni` (no other version in game, so the suffix is dropped — §29 naming).
+To use an alternative later: admin → *Asset nguồn* → *Nhập vào game* (never overwrites) → assign it to a species.
+
+---
+
 # 0. DOCUMENT PURPOSE
 
 This catalogue is the list of pig concepts and cosmetics. It does not define file format or production rules — those live in the production standard.

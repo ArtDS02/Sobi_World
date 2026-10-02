@@ -240,6 +240,384 @@
       "asset": "pigs/base/pig_turtle.png",
       "sleepAsset": null,
       "tags": ["species"]
+    },
+    {
+      "id": "pig_farmer",
+      "status": "production",
+      "nameVi": "Heo Nông Dân",
+      "collection": "species",
+      "asset": "pigs/base/pig_farmer.png",
+      "sleepAsset": null,
+      "tags": ["species", "vietnam", "new"]
+    },
+    {
+      "id": "pig_icecream",
+      "status": "production",
+      "nameVi": "Heo Kem",
+      "collection": "species",
+      "asset": "pigs/base/pig_icecream.png",
+      "sleepAsset": null,
+      "tags": ["species", "food", "new"]
+    },
+    {
+      "id": "pig_chef",
+      "status": "production",
+      "nameVi": "Heo Đầu Bếp",
+      "collection": "species",
+      "asset": "pigs/base/pig_chef.png",
+      "sleepAsset": null,
+      "tags": ["species", "job", "new"]
+    },
+    {
+      "id": "pig_sleepy",
+      "status": "production",
+      "nameVi": "Heo Buồn Ngủ",
+      "collection": "species",
+      "asset": "pigs/base/pig_sleepy.png",
+      "sleepAsset": null,
+      "tags": ["species", "funny", "new"]
+    },
+    {
+      "id": "pig_ghost",
+      "status": "production",
+      "nameVi": "Heo Ma",
+      "collection": "species",
+      "asset": "pigs/base/pig_ghost.png",
+      "sleepAsset": null,
+      "tags": ["species", "horror", "new"]
+    },
+    {
+      "id": "pig_teacher",
+      "status": "production",
+      "nameVi": "Heo Giáo Viên",
+      "collection": "species",
+      "asset": "pigs/base/pig_teacher.png",
+      "sleepAsset": null,
+      "tags": ["species", "job", "new"]
+    },
+    {
+      "id": "pig_knight",
+      "status": "production",
+      "nameVi": "Heo Hiệp Sĩ",
+      "collection": "species",
+      "asset": "pigs/base/pig_knight.png",
+      "sleepAsset": null,
+      "tags": ["species", "adventure", "new"]
+    },
+    {
+      "id": "pig_detective",
+      "status": "production",
+      "nameVi": "Heo Thám Tử",
+      "collection": "species",
+      "asset": "pigs/base/pig_detective.png",
+      "sleepAsset": null,
+      "tags": ["species", "job", "new"]
+    },
+    {
+      "id": "pig_business",
+      "status": "production",
+      "nameVi": "Heo Doanh Nhân",
+      "collection": "species",
+      "asset": "pigs/base/pig_business.png",
+      "sleepAsset": null,
+      "tags": ["species", "job", "new"]
+    },
+    {
+      "id": "pig_boba",
+      "status": "production",
+      "nameVi": "Heo Trà Sữa",
+      "collection": "species",
+      "asset": "pigs/base/pig_boba.png",
+      "sleepAsset": null,
+      "tags": ["species", "food", "new"]
+    },
+    {
+      "id": "pig_lazy",
+      "status": "production",
+      "nameVi": "Heo Lười",
+      "collection": "species",
+      "asset": "pigs/base/pig_lazy.png",
+      "sleepAsset": null,
+      "tags": ["species", "funny", "new"]
+    },
+    {
+      "id": "pig_angry",
+      "status": "production",
+      "nameVi": "Heo Cáu",
+      "collection": "species",
+      "asset": "pigs/base/pig_angry.png",
+      "sleepAsset": null,
+      "tags": ["species", "funny", "new"]
+    },
+    {
+      "id": "pig_crybaby",
+      "status": "production",
+      "nameVi": "Heo Mít Ướt",
+      "collection": "species",
+      "asset": "pigs/base/pig_crybaby.png",
+      "sleepAsset": null,
+      "tags": ["species", "funny", "new"]
+    },
+    {
+      "id": "pig_grandpa",
+      "status": "production",
+      "nameVi": "Heo Ông",
+      "collection": "species",
+      "asset": "pigs/base/pig_grandpa.png",
+      "sleepAsset": null,
+      "tags": ["species", "funny", "new"]
+    },
+    {
+      "id": "pig_party",
+      "status": "production",
+      "nameVi": "Heo Quẩy",
+      "collection": "species",
+      "asset": "pigs/base/pig_party.png",
+      "sleepAsset": null,
+      "tags": ["species", "funny", "new"]
+    },
+    {
+      "id": "pig_ao_dai",
+      "status": "production",
+      "nameVi": "Heo Áo Dài",
+      "collection": "species",
+      "asset": "pigs/base/pig_ao_dai.png",
+      "sleepAsset": null,
+      "tags": ["species", "vietnam", "new"]
+    },
+    {
+      "id": "pig_tet",
+      "status": "production",
+      "nameVi": "Heo Tết",
+      "collection": "species",
+      "asset": "pigs/base/pig_tet.png",
+      "sleepAsset": null,
+      "tags": ["species", "vietnam", "new"]
+    },
+    {
+      "id": "pig_lan",
+      "status": "production",
+      "nameVi": "Heo Lân",
+      "collection": "species",
+      "asset": "pigs/base/pig_lan.png",
+      "sleepAsset": null,
+      "tags": ["species", "vietnam", "new"]
+    },
+    {
+      "id": "pig_banh_chung",
+      "status": "production",
+      "nameVi": "Heo Bánh Chưng",
+      "collection": "species",
+      "asset": "pigs/base/pig_banh_chung.png",
+      "sleepAsset": null,
+      "tags": ["species", "vietnam", "new"]
+    },
+    {
+      "id": "pig_astronaut",
+      "status": "production",
+      "nameVi": "Heo Phi Hành Gia",
+      "collection": "species",
+      "asset": "pigs/base/pig_astronaut.png",
+      "sleepAsset": null,
+      "tags": ["species", "job", "new"]
+    },
+    {
+      "id": "pig_pirate",
+      "status": "production",
+      "nameVi": "Heo Cướp Biển",
+      "collection": "species",
+      "asset": "pigs/base/pig_pirate.png",
+      "sleepAsset": null,
+      "tags": ["species", "adventure", "new"]
+    },
+    {
+      "id": "pig_ninja",
+      "status": "production",
+      "nameVi": "Heo Ninja",
+      "collection": "species",
+      "asset": "pigs/base/pig_ninja.png",
+      "sleepAsset": null,
+      "tags": ["species", "adventure", "new"]
+    },
+    {
+      "id": "pig_witch",
+      "status": "production",
+      "nameVi": "Heo Phù Thủy",
+      "collection": "species",
+      "asset": "pigs/base/pig_witch.png",
+      "sleepAsset": null,
+      "tags": ["species", "adventure", "new"]
+    },
+    {
+      "id": "pig_surfer",
+      "status": "production",
+      "nameVi": "Heo Lướt Sóng",
+      "collection": "species",
+      "asset": "pigs/base/pig_surfer.png",
+      "sleepAsset": null,
+      "tags": ["species", "adventure", "new"]
+    },
+    {
+      "id": "pig_diver",
+      "status": "production",
+      "nameVi": "Heo Thợ Lặn",
+      "collection": "species",
+      "asset": "pigs/base/pig_diver.png",
+      "sleepAsset": null,
+      "tags": ["species", "adventure", "new"]
+    },
+    {
+      "id": "pig_alien",
+      "status": "production",
+      "nameVi": "Heo Ngoài Hành Tinh",
+      "collection": "species",
+      "asset": "pigs/base/pig_alien.png",
+      "sleepAsset": null,
+      "tags": ["species", "scifi", "new"]
+    },
+    {
+      "id": "pig_mecha",
+      "status": "production",
+      "nameVi": "Heo Mecha",
+      "collection": "species",
+      "asset": "pigs/base/pig_mecha.png",
+      "sleepAsset": null,
+      "tags": ["species", "scifi", "new"]
+    },
+    {
+      "id": "pig_cyborg",
+      "status": "production",
+      "nameVi": "Heo Cyborg",
+      "collection": "species",
+      "asset": "pigs/base/pig_cyborg.png",
+      "sleepAsset": null,
+      "tags": ["species", "scifi", "new"]
+    },
+    {
+      "id": "pig_dragon",
+      "status": "production",
+      "nameVi": "Heo Rồng",
+      "collection": "species",
+      "asset": "pigs/base/pig_dragon.png",
+      "sleepAsset": null,
+      "tags": ["species", "fantasy", "new"]
+    },
+    {
+      "id": "pig_oni",
+      "status": "production",
+      "nameVi": "Heo Oni",
+      "collection": "species",
+      "asset": "pigs/base/pig_oni.png",
+      "sleepAsset": null,
+      "tags": ["species", "fantasy", "new"]
+    },
+    {
+      "id": "pig_vampire",
+      "status": "production",
+      "nameVi": "Heo Ma Cà Rồng",
+      "collection": "species",
+      "asset": "pigs/base/pig_vampire.png",
+      "sleepAsset": null,
+      "tags": ["species", "horror", "new"]
+    },
+    {
+      "id": "pig_zombie",
+      "status": "production",
+      "nameVi": "Heo Zombie",
+      "collection": "species",
+      "asset": "pigs/base/pig_zombie.png",
+      "sleepAsset": null,
+      "tags": ["species", "horror", "new"]
+    },
+    {
+      "id": "pig_donut",
+      "status": "production",
+      "nameVi": "Heo Donut",
+      "collection": "species",
+      "asset": "pigs/base/pig_donut.png",
+      "sleepAsset": null,
+      "tags": ["species", "food", "new"]
+    },
+    {
+      "id": "pig_burger",
+      "status": "production",
+      "nameVi": "Heo Burger",
+      "collection": "species",
+      "asset": "pigs/base/pig_burger.png",
+      "sleepAsset": null,
+      "tags": ["species", "food", "new"]
+    },
+    {
+      "id": "pig_rich",
+      "status": "production",
+      "nameVi": "Heo Đại Gia",
+      "collection": "species",
+      "asset": "pigs/base/pig_rich.png",
+      "sleepAsset": null,
+      "tags": ["species", "funny", "new"]
+    },
+    {
+      "id": "pig_battlebot",
+      "status": "production",
+      "nameVi": "Heo Battlebot",
+      "collection": "species",
+      "asset": "pigs/base/pig_battlebot.png",
+      "sleepAsset": null,
+      "tags": ["species", "scifi", "new"]
+    },
+    {
+      "id": "pig_ufo",
+      "status": "production",
+      "nameVi": "Heo UFO",
+      "collection": "species",
+      "asset": "pigs/base/pig_ufo.png",
+      "sleepAsset": null,
+      "tags": ["species", "scifi", "new"]
+    },
+    {
+      "id": "pig_kitsune",
+      "status": "production",
+      "nameVi": "Heo Hồ Ly",
+      "collection": "species",
+      "asset": "pigs/base/pig_kitsune.png",
+      "sleepAsset": null,
+      "tags": ["species", "fantasy", "new"]
+    },
+    {
+      "id": "pig_pegasus",
+      "status": "production",
+      "nameVi": "Heo Pegasus",
+      "collection": "species",
+      "asset": "pigs/base/pig_pegasus.png",
+      "sleepAsset": null,
+      "tags": ["species", "fantasy", "new"]
+    },
+    {
+      "id": "pig_zeus",
+      "status": "production",
+      "nameVi": "Heo Zeus",
+      "collection": "species",
+      "asset": "pigs/base/pig_zeus.png",
+      "sleepAsset": null,
+      "tags": ["species", "fantasy", "new"]
+    },
+    {
+      "id": "pig_valkyrie",
+      "status": "production",
+      "nameVi": "Heo Valkyrie",
+      "collection": "species",
+      "asset": "pigs/base/pig_valkyrie.png",
+      "sleepAsset": null,
+      "tags": ["species", "fantasy", "new"]
+    },
+    {
+      "id": "pig_thor",
+      "status": "production",
+      "nameVi": "Heo Thor",
+      "collection": "species",
+      "asset": "pigs/base/pig_thor.png",
+      "sleepAsset": null,
+      "tags": ["species", "fantasy", "new"]
     }
   ],
   "fx": [

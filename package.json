@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "dev:desktop": "node scripts/dev-desktop.mjs",
+    "admin": "vite --config vite.admin.config.ts",
     "build": "npm run typecheck && vite build && vite build --config vite.electron.config.ts",
     "dist:win": "npm run build && electron-builder --win nsis",
     "preview": "vite preview",
