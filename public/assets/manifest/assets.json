@@ -55,7 +55,7 @@
     },
     {
       "id": "pig_boar",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Rừng",
       "collection": "species",
       "rarity": "P2",
@@ -81,7 +81,7 @@
     },
     {
       "id": "pig_bee",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Ong",
       "collection": "species",
       "rarity": "P2",
@@ -94,7 +94,7 @@
     },
     {
       "id": "pig_penguin",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Cánh Cụt",
       "collection": "species",
       "rarity": "P2",
@@ -107,7 +107,7 @@
     },
     {
       "id": "pig_tiger",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Hổ",
       "collection": "species",
       "rarity": "P3",
@@ -120,7 +120,7 @@
     },
     {
       "id": "pig_panda",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Gấu Trúc",
       "collection": "species",
       "rarity": "P3",
@@ -146,7 +146,7 @@
     },
     {
       "id": "pig_koi",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Cá Chép",
       "collection": "species",
       "rarity": "P4",
@@ -159,7 +159,7 @@
     },
     {
       "id": "pig_dragonling",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Rồng Con",
       "collection": "species",
       "rarity": "P4",
@@ -172,7 +172,7 @@
     },
     {
       "id": "pig_galaxy",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Ngân Hà",
       "collection": "species",
       "rarity": "P4",
@@ -502,7 +502,7 @@
     },
     {
       "id": "fx_smoke",
-      "status": "placeholder",
+      "status": "production",
       "asset": "fx/fx_smoke.png",
       "particle": true
     }
@@ -539,7 +539,7 @@
     },
     {
       "id": "prop_gift_box",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_gift_box.png"
     }
   ],

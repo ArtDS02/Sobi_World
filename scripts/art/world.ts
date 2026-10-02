@@ -340,6 +340,25 @@ function foodSack(): string {
   return svgDoc(192, 224, s);
 }
 
+/** U06 gift box: pink wrapped box, gold ribbon cross and bow, tiny pig emblem; no grass base
+ * (it pops into the walk area from a puff of smoke), only a soft contact shadow. */
+function giftBox(): string {
+  setScale(PROP_STROKE, PROP_SHADE);
+  const paper = '#f48aa2';
+  const lid = '#f7a1b4';
+  let s = contactShadow(96, 178, 66, 10, 0.3);
+  s += part(rectD(38, 92, 116, 86, 10), paper); // box body
+  s += part(rectD(30, 72, 132, 30, 9), lid); // lid
+  s += part(rectD(86, 92, 20, 86, 3), PAL.gold, { shade: 3 }); // ribbon down the front
+  s += part(rectD(84, 72, 24, 30, 3), PAL.gold, { shade: 3 });
+  s += part('M96,72 C78,46 52,46 56,62 C58,72 80,74 96,72 Z', PAL.gold, { shade: 3 }); // bow
+  s += part('M96,72 C114,46 140,46 136,62 C134,72 112,74 96,72 Z', PAL.gold, { shade: 3 });
+  s += part(ellipseD(96, 70, 10, 8), PAL.goldDark, { shade: 2 });
+  s += pigEmblem(62, 140, 11, '#ffd0da', '#c2546f');
+  s += glint(50, 82, 5) + glint(132, 104, 3.5, 0.8);
+  return svgDoc(192, 192, s);
+}
+
 // ---------- buildings ----------
 
 function pigHouse(): string {
@@ -791,6 +810,7 @@ export const WORLD: Record<string, () => string> = {
   prop_water_bowl: waterBowl,
   prop_mud_puddle: mudPuddle,
   prop_food_sack: foodSack,
+  prop_gift_box: giftBox,
   prop_pig_house: pigHouse,
   prop_hay_shed: hayShed,
   prop_water_well: waterWell,

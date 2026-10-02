@@ -157,6 +157,15 @@ const fxCrumb = () => (
   )
 );
 const fxSparkle = () => (setScale(3, 4), particle(sparkle4(32, 32, 27, '#ffe27a', 3)));
+/** U06 gift spawn: a soft cream puff of three round blobs (no hard outline, like a small cloud). */
+const fxSmoke = () => (
+  setScale(2.5, 4),
+  particle(
+    part(ellipseD(22, 38, 14, 12), '#fbf3e6', { ink: '#d8c8b4', light: 4 }) +
+      part(ellipseD(42, 38, 14, 12), '#fbf3e6', { ink: '#d8c8b4', light: 4 }) +
+      part(ellipseD(32, 26, 16, 14), '#fffaf2', { ink: '#d8c8b4', light: 5 }),
+  )
+);
 const fxCoin = () => (
   setScale(3.5, 6),
   particle(
@@ -482,6 +491,7 @@ export const ICON_FILES: Record<string, () => string> = {
   fx_bubble: fxBubble,
   fx_crumb: fxCrumb,
   fx_sparkle: fxSparkle,
+  fx_smoke: fxSmoke,
   fx_coin: fxCoin,
   ...Object.fromEntries(
     Object.entries(ICONS).map(([id, draw]) => [

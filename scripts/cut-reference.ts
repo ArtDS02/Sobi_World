@@ -9,6 +9,7 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PNG } from 'pngjs';
+import { COATS, toTeal } from './assets/coats';
 import { patchRowText } from './assets/manifestText';
 
 const INBOX = 'art_inbox';
@@ -32,6 +33,8 @@ interface Cut {
   box: [number, number, number, number]; // x, y, w, h on the sheet
   /** Optional recolour of the body (white / brown variants of the plain pig). */
   tint?: (r: number, g: number, b: number) => [number, number, number];
+  /** Optional coat pattern for species derived from a reference pig (U07, scripts/assets/coats). */
+  coat?: keyof typeof COATS;
 }
 
 const ENV = 'asset/reference/style_reference_environment.png';
@@ -78,7 +81,17 @@ export const CUTS: Cut[] = [
   { id: 'pig_pirate', sheet: PIGS, box: cell(5, 1) },
   { id: 'pig_ninja', sheet: PIGS, box: cell(0, 2) },
   { id: 'pig_robot', sheet: PIGS, box: cell(1, 3) },
-  { id: 'pig_unicorn', sheet: PIGS, box: cell(2, 3) },  {
+  { id: 'pig_unicorn', sheet: PIGS, box: cell(2, 3) },
+  // U07 species: bee and dragonling from STYLE cells; coats painted on the plain pig.
+  { id: 'pig_bee', sheet: PIGS, box: cell(3, 3) },
+  { id: 'pig_dragonling', sheet: PIGS, box: cell(4, 3), tint: toTeal },
+  { id: 'pig_tiger', sheet: ENV, box: [20, 50, 360, 300], coat: 'tiger' },
+  { id: 'pig_panda', sheet: ENV, box: [20, 50, 360, 300], coat: 'panda' },
+  { id: 'pig_penguin', sheet: ENV, box: [20, 50, 360, 300], coat: 'penguin' },
+  { id: 'pig_koi', sheet: ENV, box: [20, 50, 360, 300], coat: 'koi' },
+  { id: 'pig_galaxy', sheet: ENV, box: [20, 50, 360, 300], coat: 'galaxy' },
+  { id: 'pig_boar', sheet: ENV, box: [20, 50, 360, 300], coat: 'boar' },
+  {
     id: 'pig_white',
     sheet: ENV,
     box: [20, 50, 360, 300],
@@ -284,6 +297,7 @@ function main() {
   for (const c of CUTS) {
     const im = crop(sheet(c.sheet), c.box);
     const pig = cutout(im, mask(im), c.tint);
+    if (c.coat) COATS[c.coat]!({ orig: im, out: pig, bbox: bbox(pig) });
     const out = placeScaled(pig, scale.get(c.sheet)!, FEET);
     const png = new PNG({ width: SIZE, height: SIZE });
     out.d.copy(png.data);
