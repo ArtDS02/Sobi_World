@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ERRORS } from '../../src/core/config/errors';
+import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
 import { vi } from '../../src/i18n/vi';
 import {
   farmActions,
@@ -82,7 +83,10 @@ describe('shop (R03)', () => {
   });
 
   it('only breeds with a shop price are listed', () => {
-    expect(shopPigs(farm(), NOW).map((p) => p.breed)).toEqual(['PIG_EARTH_PINK']);
+    expect(shopPigs(farm(), NOW).map((p) => p.breed)).toEqual(
+      BREED_IDS.filter((id) => BREEDS[id].buyGold !== null),
+    );
+    expect(shopPigs(farm(), NOW).map((p) => p.breed)).toContain('PIG_TIGER');
   });
 
   it('item purchase: live total, invalid quantity and gold shortfall disable the button', () => {

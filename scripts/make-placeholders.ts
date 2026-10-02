@@ -4,6 +4,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { PIG_FEET_Y } from '../src/core/config/assetIds';
+import { BREEDS } from '../src/core/config/breeds';
 import {
   MANIFEST_SECTIONS,
   parseManifest,
@@ -16,13 +17,13 @@ import { placeholderSize } from './assets/sizes';
 export const ASSETS_DIR = 'public/assets';
 const CLEAR: Rgba = [0, 0, 0, 0];
 
-/** Breed defaults keep their concept colours so the farm reads at a glance. */
-const PIG_COLOURS: Record<string, Rgba> = {
-  pig_classic: [246, 160, 182, 255],
-  pig_watermelon: [96, 176, 96, 255],
-  pig_superhero: [150, 100, 200, 255],
-  pig_thienlong: [226, 182, 64, 255],
-};
+/** Species artwork keeps the species colour (breeds.ts) so the farm reads at a glance. */
+const PIG_COLOURS: Record<string, Rgba> = Object.fromEntries(
+  Object.values(BREEDS).map((b): [string, Rgba] => [
+    b.defaultSkin,
+    [(b.color >> 16) & 255, (b.color >> 8) & 255, b.color & 255, 255],
+  ]),
+);
 
 /** Side view facing right; the lowest opaque row is the 82 % feet line (art standard §4.1). */
 function drawPig(r: Raster, colour: Rgba, sleeping: boolean) {

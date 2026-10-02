@@ -4,7 +4,6 @@ import { parseManifest, type AssetManifest } from '../../src/core/assets/manifes
 import { createAssetRegistry, troughState } from '../../src/core/assets/registry';
 import { AUDIO_KEYS, FX_IDS } from '../../src/core/config/assetIds';
 import { BREEDS } from '../../src/core/config/breeds';
-import { SKINS } from '../../src/core/config/skins';
 import { loadAssetRegistry, MANIFEST_URL } from '../../src/platform/assetSource';
 
 function manifest(): AssetManifest {
@@ -41,8 +40,9 @@ describe('manifest v2 (art standard §7.2)', () => {
   it('covers v1 scope: 4 defaults + 13 P1 skins (+6 reference-cut skins), 8 fx, 12 audio keys', () => {
     const m = manifest();
     // 17 = art standard §10 waves 1–2; +6 = skins cut from asset/reference (spotted, pilot, pirate,
-    // ninja, robot, unicorn), added on user request 2026-10-02 (DECISIONS ART-5).
-    expect(m.pigs).toHaveLength(23);
+    // ninja, robot, unicorn), added on user request 2026-10-02 (DECISIONS ART-5); +11 = species
+    // artwork added in U01 (UN_IN_PIG_CATALOGUE.md).
+    expect(m.pigs).toHaveLength(34);
     expect(m.fx.map((f) => f.id).sort()).toEqual([...FX_IDS].sort());
     expect(m.audio.map((a) => a.id)).toEqual([...AUDIO_KEYS]);
     expect(m.layout.designSize).toEqual({ width: 1600, height: 900 });
@@ -101,7 +101,7 @@ describe('asset registry (spec §11.4)', () => {
   });
 
   it('SkinRegistry reads prices, rarity and unlocks from the manifest (DECISIONS C2)', () => {
-    expect(reg.skins.forSale()).toHaveLength(19);
+    expect(reg.skins.forSale()).toHaveLength(15);
     expect(reg.skins.get('pig_tet')).toMatchObject({
       priceGold: 2000,
       rarity: 'P1',
@@ -110,16 +110,17 @@ describe('asset registry (spec §11.4)', () => {
     expect(reg.skins.get('pig_classic')?.priceGold).toBeNull();
   });
 
-  it('breed defaults in skins.ts agree with their manifest rows', () => {
+  it('species artwork rows are never sold and fit only their species (U00-1 D6)', () => {
     for (const breed of Object.values(BREEDS)) {
-      const fromConfig = SKINS[breed.defaultSkin]!;
-      const fromManifest = reg.skins.get(breed.defaultSkin)!;
-      expect(fromManifest).toMatchObject({
-        nameVi: fromConfig.nameVi,
-        rarity: fromConfig.rarity,
+      expect(reg.skins.get(breed.defaultSkin), breed.id).toMatchObject({
         priceGold: null,
+        allowedBreeds: [breed.id],
       });
     }
+  });
+
+  it('outfit skins fit the pink body only (U00-1 D6)', () => {
+    for (const skin of reg.skins.forSale()) expect(skin.allowedBreeds).toEqual(['PIG_EARTH_PINK']);
   });
 });
 

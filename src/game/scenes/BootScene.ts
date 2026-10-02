@@ -2,6 +2,7 @@
 // the fallback textures so every later lookup can render something.
 import * as Phaser from 'phaser';
 import { BREED_ID_VALUES } from '../../core/config/ids';
+import { BREEDS } from '../../core/config/breeds';
 import { PIG_FEET_Y } from '../../core/config/assetIds';
 import { FARM_FALLBACK } from '../../core/config/farmView';
 import { SCENE_KEYS } from '../config/phaser';
@@ -21,7 +22,7 @@ export class BootScene extends Phaser.Scene {
     const top = pig.size * PIG_FEET_Y - h;
     for (const breed of BREED_ID_VALUES) {
       g.clear();
-      g.fillStyle(FARM_FALLBACK.BREED[breed], 1);
+      g.fillStyle(BREEDS[breed].color, 1);
       g.lineStyle(pig.stroke, pig.outline, 1);
       g.fillRoundedRect((pig.size - w) / 2, top, w, h, pig.radius);
       g.strokeRoundedRect((pig.size - w) / 2, top, w, h, pig.radius);

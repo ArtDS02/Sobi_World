@@ -77,7 +77,8 @@ describe('order generation (§8.14, §14.5)', () => {
       expect([0, 50, 75]).toContain(o.minHappiness);
       expect([null, 'MALE', 'FEMALE']).toContain(o.wantGender);
     }
-    for (const b of BREED_ID_VALUES) expect(counts.get(b)! / 4000).toBeCloseTo(0.25, 1);
+    const even = 1 / BREED_ID_VALUES.length;
+    for (const b of BREED_ID_VALUES) expect(Math.abs(counts.get(b)! / 4000 - even)).toBeLessThan(0.02);
   });
 
   it('emits ORDER_NEW once and is idempotent for the same now', () => {

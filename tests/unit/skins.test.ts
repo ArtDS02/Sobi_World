@@ -142,9 +142,9 @@ describe('collection book (§8.15, §14.5)', () => {
       collection: { discoveredBreeds: ['PIG_EARTH_PINK'], discoveredSkins: [] },
     });
     const vm = collectionVm(s, assets);
-    expect(vm.breeds.map((b) => b.found)).toEqual([true, false, false, false]);
+    expect(vm.breeds.map((b) => b.found)).toEqual(vm.breeds.map((_, i) => i === 0));
     expect(vm.breeds[1]!.name).toBe(vi.collection.undiscovered);
-    expect(vm.breedProgress).toBe('1/4');
+    expect(vm.breedProgress).toBe(`1/${vm.breeds.length}`);
     expect(vm.skins).toHaveLength(skins.all().length);
     // Pre-R07B saves: a discovered breed's default skin shows as found.
     expect(vm.skins.filter((e) => e.found).map((e) => e.id)).toEqual(['pig_classic']);
@@ -156,7 +156,12 @@ describe('collection book (§8.15, §14.5)', () => {
     expect(shop.find((c) => c.id === 'pig_christmas')!.button.reason).toBe(t3());
     expect(shop.find((c) => c.id === 'pig_farmer')!.button.reason).toBeNull();
     const wardrobe = pigSkins(rich(), rich().pigs[0]!, assets);
-    expect(wardrobe.map((w) => w.id)).toEqual(rich().player.ownedSkins);
+    // Only skins that fit the pink pig (U00-1 D6): its own artwork and outfits.
+    const fits = rich().player.ownedSkins.filter((id) =>
+      assets.skins.get(id)?.allowedBreeds.includes('PIG_EARTH_PINK'),
+    );
+    expect(wardrobe.map((w) => w.id)).toEqual(fits);
+    expect(fits[0]).toBe('pig_classic');
     expect(wardrobe[0]!.button.reason).toBe(vi.action.equipped);
   });
 });

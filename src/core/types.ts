@@ -8,7 +8,7 @@ export type { BreedId, CosmeticSlot, Gender, ItemId, TransactionType };
 export type GrowthStage = 'BABY' | 'YOUNG' | 'ADULT'; // derived, never stored
 
 export interface SaveGame {
-  schemaVersion: 2;
+  schemaVersion: 3;
   createdAt: number;
   updatedAt: number;
   player: {

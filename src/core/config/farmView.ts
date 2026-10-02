@@ -1,7 +1,5 @@
 // Farm canvas presentation numbers (spec §11, §11.1, §11.4; art standard §2.4, §5).
 // Positions in the manifest layout are normalised; everything here is in design pixels.
-import type { BreedId } from './ids';
-
 export const FARM_VIEW = {
   /** On-screen height of an adult pig at the front of the walk area (scale 1). */
   PIG_DISPLAY_PX: 200,
@@ -82,10 +80,4 @@ export const FARM_FALLBACK = {
   PROP: { width: 160, height: 120, radius: 20, color: 0xc8a27a },
   FX: { size: 64, color: 0xffffff },
   PIG: { size: 512, bodyWidth: 0.7, bodyHeight: 0.5, radius: 96, stroke: 8, outline: 0x3b2a26 },
-  BREED: {
-    PIG_EARTH_PINK: 0xf7a8b8,
-    PIG_STRIPED_MELON: 0x8fd18a,
-    PIG_SUPERMAN: 0x7fa8f0,
-    PIG_MYTHICAL: 0xc9a0f0,
-  } satisfies Record<BreedId, number>,
 } as const;

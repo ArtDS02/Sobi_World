@@ -247,6 +247,7 @@ export const vi = {
     SKIN_PURCHASE: "Mua bộ đồ",
     ORDER_REWARD: "Thưởng đơn hàng",
     DISCOVERY_BONUS: "Thưởng khám phá",
+    SKIN_REFUND: "Hoàn tiền skin (heo thành giống)",
   },
 
   settings: {

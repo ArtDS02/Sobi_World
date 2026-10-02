@@ -1,6 +1,7 @@
-// buyPig (spec §8.1).
+// buyPig (spec §8.1); species above the player's level stay locked (BreedDef.unlockLevel).
 import { BALANCE } from '../config/balance';
 import { BREEDS } from '../config/breeds';
+import { levelFromXp } from '../config/levels';
 import { GENDER_VALUES, type BreedId, type Gender } from '../config/ids';
 import { discoverBreed } from '../engine/collection';
 import { freeSlots } from '../engine/derived';
@@ -28,6 +29,7 @@ export function buyPig(state: SaveGame, args: BuyPigArgs, ctx: ActionContext): A
     const def = BREEDS[args.breed] as (typeof BREEDS)[BreedId] | undefined;
     if (!def || def.buyGold === null) return { ok: false, error: 'INVALID_REQUEST' };
     if (!GENDER_VALUES.includes(args.gender)) return { ok: false, error: 'INVALID_REQUEST' };
+    if (levelFromXp(s.player.xp) < def.unlockLevel) return { ok: false, error: 'LEVEL_TOO_LOW' };
     if (freeSlots(s) < 1) return { ok: false, error: 'NO_PIG_SLOT' };
 
     const pigId = randomId(ctx.rng);
