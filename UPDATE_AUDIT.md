@@ -139,3 +139,17 @@ U01 (rarity + species + catalogue + save v3) → U03 (breeding rules) → U04 (s
 | U08 | Polish + perf cuối | fps ghi lại |
 
 (U02 gộp vào U01: catalogue và config species làm cùng lúc để không sửa config hai lần.)
+
+## 10. Kết quả triển khai (2026-10-02)
+
+| Task | Tag | Kết quả |
+|---|---|---|
+| U01 | u01 | 19 species + rarity (RARITY_TIER), save v3 (skin species → species, hoàn tiền skin không ai mặc), skin trang phục chỉ cho heo hồng, clothing foundation, `UN_IN_PIG_CATALOGUE.md` |
+| U03 | u03 | Breeding theo luật (cùng loài 60 / cùng family 25 / bậc +1 9 / bậc +2 1 + 15 mutation), hộp phối 4 dòng + "Giống khác" |
+| U04 | u04 | Badge rarity, shop + sổ sưu tập nhóm bậc, "Cần cấp N", "Bán tới", đơn hàng theo trọng số rarity |
+| U05 | u05 | Nhãn công trình trên đỉnh, dưới heo; bảng tên heo dưới chân tránh chồng; 30 heo 0,8 ms/khung → MAX_SLOTS 24 |
+| U06 | u06 | Hộp quà: save v4, timer chung offline, cap 2/lần 3/farm, thưởng theo số heo + rarity + tuổi (kẹp MIN/MAX), claim 1 lần, khói/pop/nổi/mở/chữ bay |
+| U07 | u07 | Art 8/11 species mới + hộp quà + khói; Cừu / Kỳ Giông / Phượng Hoàng chờ model ảnh (brief sẵn) |
+| U08 | u08 | `npm run check` (480 test), build, e2e Electron xanh; farm xem ở 1024×640 |
+
+Còn mở: art 3 species (cần model ảnh); Pig Level/XP và quần áo (hoãn theo D1/D8); release installer (R12B, EPERM cũ).
