@@ -1,11 +1,11 @@
-Current phase: A6 — test & polish (master prompt "Pig species & asset")      Status: DONE
-Current task: A-phase xong (A1–A6). Tổng kết: PROJECT_ASSET_AUDIT.md §7
-Completed: S00…S08B, R00–R12A, ART lô 1, U00–U08, A2, A3, A4, A6 — tag a6
+Current phase: A7 — sync art heo user + admin dashboard      Status: DONE
+Current task: A7 xong: 42 species mới (69 tổng) từ asset/animals/asset/, admin dashboard `npm run admin`. Trạng thái art thật: asset/animals/PIG_CATALOGUE.md mục STATUS
+Completed: S00…S08B, R00–R12A, ART lô 1, U00–U08, A2, A3, A4, A6, A7 — tag a7
 In progress: R12B làm xong trừ release: README, bảng Phụ lục C, e2e, assets:release, version 1.0.0 đã có; chưa tag v1.0.0.
 Known issues: Không còn bộ đồ/clothing (A2-1, save v5). Art species/building lấy từ sheet reference + coat/trait vẽ code (A3-1, A4-1) — user nên xem farm + sổ sưu tập và duyệt lên `final`. `pig_panda` quầng mắt lệch về phía tai (U07, chưa sửa). Thumbnail sổ sưu tập lazy-load (ô cuối có thể trống 1 khung hình). Âm lượng nhạc nền chưa chuẩn hoá (không có ffmpeg). BLOCKER 2: `npm run dist:win` lỗi EPERM khi electron-builder đổi tên release/win-unpacked.tmp (antivirus/Controlled folder access?). SOFT-LOCK (fuzz): hết vàng + máng trống → heo con kẹt — hộp quà U06 giảm bớt, chưa có quyết định sản phẩm. "Chơi lại từ đầu" chưa có. `npm run icon` ghi đè icon thật — đừng chạy. `npm run art:generate` + `art:process` sẽ thay art cắt bằng art vẽ code — luôn chạy `art:cut` và `art:buildings` sau nó. Bundle renderer ~1,4 MB (Phaser), chấp nhận.
-Important decisions: A2-1, A3-1, A4-1 (DECISIONS.md).
+Important decisions: A2-1, A3-1, A4-1, A7-1 (DECISIONS.md).
 Desktop: electron/{main,preload,saveFiles,windowState}.ts → dist-electron/*.cjs. src/platform/desktop/{bridge,fileSaveStorage,fileDialogs}.ts. Save: %APPDATA%\Un In Homemade\saves\ (schema v5).
-Next task: (user) chơi thử bản A (farm mới, 27 species, không còn Bộ đồ). Tuỳ chọn: R12B installer (npm run dist:win, lỗi EPERM cũ).
+Next task: (user) duyệt art trong admin → Asset nguồn: ứng viên thay robot/pumpkin/thienlong/unicorn/watermelon; pig_ai, pig_space cần vẽ lại. Chơi thử 69 species. Tuỳ chọn: R12B installer (npm run dist:win, lỗi EPERM cũ).
 Farm canvas: src/game/farmView.ts; scenes/{Boot,Preload,MainFarm}Scene.ts; prefabs/PigSprite.ts; view/{pigView,sceneLayout,textureKeys}.ts; số ở core/config/farmView.ts. Vật thể bấm được = placements[].action; `signed: true` = art có biển tên, không vẽ nhãn chữ.
 Assets: id → public/assets/manifest/assets.json (manifest v3). Heo: `BREEDS[breed].artId` = dòng `pigs[]`. Art heo: `npm run art:cut [-- id…]` (scripts/cut-reference.ts + assets/{coats,traits}.ts); building/prop: `npm run art:buildings [-- file…]` (scripts/cut-buildings.ts, kích thước ở scripts/assets/sizes.ts) → `npm run art:process` → `npm run assets:check`.
-Thêm species: 1 id `ids.ts` + 1 dòng `BREEDS` + 1 dòng manifest `pigs[]` (+ tuỳ chọn 1 mutation `breedingRules.ts`) — xem UN_IN_PIG_CATALOGUE.md.
+Thêm/sửa species: `npm run admin` (cổng 5175, dev-only; ghi `config/speciesTable.ts` + `ids.ts` + manifest) hoặc tay: 1 id `ids.ts` + 1 dòng `speciesTable.ts` + 1 dòng manifest `pigs[]` (+ tuỳ chọn 1 mutation `breedingRules.ts`) — xem UN_IN_PIG_CATALOGUE.md.
