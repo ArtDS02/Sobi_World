@@ -11,6 +11,30 @@ A previous version of this file said it extended `UN_IN_ASSET_LIST_v2_CHARACTERS
 
 ---
 
+# A4. BUILDING VISUAL STANDARD (2026-10-02 — wins over older notes below)
+
+Source of truth: `style_reference_building_new.png` (Vietnamese signs, game semantics) and
+`style_reference_building.png` (pig house without sign, windmill). Both are cut directly — never redrawn —
+by `npm run art:buildings` (`scripts/cut-buildings.ts`) → `art_inbox/` → `npm run art:process`.
+
+| Aspect | Standard (measured on the sheets) |
+|---|---|
+| Camera | three-quarter view from slightly above, one angle, never flipped |
+| Silhouette | chunky, rounded, slightly squashed; roof ≈ 45 % of building height, big arched door (≈ 40 % of facade height) |
+| Shape language | soft corners, bulging planks and stones, no straight technical lines |
+| Outline | dark warm brown, ≈ 3 px on the sheet (≈ pig outline on screen), slightly uneven |
+| Palette | red-tile roofs `#d8453a`, honey wood `#c98a4a`, cream plaster `#f3e2c0`, grey stone `#9a9a9a`, pastel blue water `#7cc8f0`, grass `#7cc04a` |
+| Light | top-left; soft cel shadow bottom-right, highlight on top edges |
+| Materials | wood planks with grain, clay tiles, rough stone, burlap, hay — no glass/metal except small fittings |
+| Base | every item stands on its own grass tuft (baked contact shadow) |
+| Detail | ≤ pig detail: one or two motifs per item (heart window, pig emblem, sign) |
+| Signs | painted Vietnamese name boards replace the code text tag (`signed: true` in the layout) |
+| Scale | one world factor for all items (`WORLD_SCALE` 1.2 sheet px → canvas px; older sheet ×0.83) so relative sizes stay as painted |
+
+Canvas sizes now follow the cut (`scripts/assets/sizes.ts`), not the table in §2–§3 below.
+Decor in the scene: windmill, red tree, hay bale, wheelbarrow, apple crate, fence, mushroom, veggie patch,
+sunflowers, rock, bush (props without an action).
+
 # 0. RULES THAT DIFFER FROM PIGS
 
 Two deliberate inversions of the pig rules. Read these before generating anything here.

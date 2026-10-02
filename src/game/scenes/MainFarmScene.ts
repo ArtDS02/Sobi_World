@@ -133,7 +133,7 @@ export class MainFarmScene extends Phaser.Scene {
           .image(v.x, v.y, this.textures.exists(first) ? first : FALLBACK_PROP_KEY)
           .setOrigin(v.originX, v.originY)
           .setDepth(v.depth);
-        if (p.action) this.makeClickable(this.trough, p.action);
+        if (p.action) this.makeClickable(this.trough, p.action, !p.signed);
         this.obstacles.push(this.trough.getBounds());
         return;
       }
@@ -158,17 +158,21 @@ export class MainFarmScene extends Phaser.Scene {
       if (entry?.section === 'environment') this.ambient.add(p.id, img);
       if (p.role === 'orderBoard') this.board = img;
       this.obstacles.push(img.getBounds());
-      if (p.action) this.makeClickable(img, p.action);
+      if (p.action) this.makeClickable(img, p.action, !p.signed);
     });
   }
 
-  /** Hand cursor + pixel-perfect hit + an always-visible name tag (no hover-only cue, §10.4). */
-  private makeClickable(img: Phaser.GameObjects.Image, action: FarmAction) {
+  /**
+   * Hand cursor + pixel-perfect hit + an always-visible name tag (no hover-only cue, §10.4); art
+   * with its own painted sign (`signed`) needs no tag.
+   */
+  private makeClickable(img: Phaser.GameObjects.Image, action: FarmAction, tag: boolean) {
     img.setData(ACTION_DATA, action).setInteractive({
       pixelPerfect: true,
       alphaTolerance: FARM_VIEW.HIT_ALPHA,
       useHandCursor: true,
     });
+    if (!tag) return;
     const l = FARM_VIEW.LABEL;
     const top = img.y - img.displayHeight * img.originY;
     this.add

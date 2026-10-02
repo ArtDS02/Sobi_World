@@ -91,6 +91,8 @@ export const placementSchema = z.object({
   role: z.enum(['trough', 'orderBoard']).optional(),
   /** Clicking the placement opens this (optional, additive: v2 files stay valid). */
   action: z.enum(FARM_ACTIONS).optional(),
+  /** The art carries its own name sign: no text label is drawn over it (A4). */
+  signed: z.boolean().optional(),
 });
 
 export const layoutSchema = z.object({
