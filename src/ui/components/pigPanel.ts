@@ -87,6 +87,7 @@ export function renderPigPanel(
         chip(vm.stage),
         chip(vm.weight),
         chip(vm.generation),
+        vm.parents ? chip(vm.parents) : null,
       ),
       vm.pregnancy ? chip(`${vi.stat.pregnant} · ${vm.pregnancy}`, 'is-pregnant') : null,
     ),

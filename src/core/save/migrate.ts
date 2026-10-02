@@ -179,6 +179,11 @@ function v5ToV6(raw: Raw): Raw {
   };
 }
 
+/** v6 -> v7 (DECISIONS BR-1): newborns wait in an inventory nursery; it starts empty. */
+function v6ToV7(raw: Raw): Raw {
+  return { ...raw, schemaVersion: 7, nursery: [] };
+}
+
 /** MIGRATIONS[n] upgrades a save from version n to n+1. */
 const MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
   1: v1ToV2,
@@ -186,6 +191,7 @@ const MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
   3: v3ToV4,
   4: v4ToV5,
   5: v5ToV6,
+  6: v6ToV7,
 };
 /** REFUNDS[n] lists what the n -> n+1 step refunds, read from the save before that step. */
 const REFUNDS: Record<number, (raw: Raw) => Refund[]> = { 2: v3Refunds, 4: v5Refunds };

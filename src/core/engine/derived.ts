@@ -26,14 +26,17 @@ export function pigCapacity(state: Pick<SaveGame, 'player'>): number {
   return state.player.unlockedSlots;
 }
 
-/** Slots held for unborn children (D8: a pregnancy reserves one). */
-export function reservedSlots(state: Pick<SaveGame, 'pigs'>): number {
-  return state.pigs.filter((p) => p.pregnancy !== null).length;
+/**
+ * Newborns waiting in the nursery plus unborn ones (BR-1). They hold no pen slot: a child joins
+ * the farm only when the player raises it (adoptPig), which needs a free slot then.
+ */
+export function waitingPigs(state: Pick<SaveGame, 'pigs' | 'nursery'>): number {
+  return state.nursery.length + state.pigs.filter((p) => p.pregnancy !== null).length;
 }
 
-/** D8: free = capacity − pigs − reserved. Every action that adds a pig needs at least 1. */
+/** free = capacity − pigs (BR-1 replaces D8's reservation). Every action that adds a pig needs 1. */
 export function freeSlots(state: Pick<SaveGame, 'player' | 'pigs'>): number {
-  return pigCapacity(state) - state.pigs.length - reservedSlots(state);
+  return pigCapacity(state) - state.pigs.length;
 }
 
 /** Generation of a pig (PS-2): starters and shop pigs are 1; saves before PS-2 omit it. */

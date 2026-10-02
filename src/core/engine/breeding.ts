@@ -1,12 +1,10 @@
 // Breeding outcome and births (spec §6.5, §8.8, §8.9).
-import { BALANCE } from '../config/balance';
 import { breedingOutcomes, type BreedingOutcome } from './breedingOdds';
 import { BREEDS } from '../config/breeds';
 import type { BreedId, Gender } from '../config/ids';
 import type { GameEvent } from '../events';
 import { randomId, type Rng } from '../rng';
-import type { Pig, SaveGame } from '../types';
-import { advancePig } from './advancePig';
+import type { NurseryPig, Pig, SaveGame } from '../types';
 import { discoverBreed } from './collection';
 import { pickPigName } from './pigNames';
 
@@ -30,48 +28,53 @@ export function rollChild(rng: Rng, a: BreedId, b: BreedId): { breed: BreedId; g
   return { breed, gender };
 }
 
-function lowestFreeSlot(pigs: readonly Pig[]): number {
+/** The pen slot a new farm pig takes: the lowest index no pig uses. */
+export function lowestFreeSlot(pigs: readonly Pig[]): number {
   const used = new Set(pigs.map((p) => p.slotIndex));
   let i = 0;
   while (used.has(i)) i += 1;
   return i;
 }
 
-/** One birth (§8.9 steps 1–4) for a mother whose pregnancy has ended. */
+/**
+ * One birth (§8.9 steps 1–4) for a mother whose pregnancy has ended. BR-1: the newborn is its own
+ * pig instance with its genealogy, put in the inventory nursery — never straight onto the farm.
+ */
 function giveBirth(state: SaveGame, mother: Pig, now: number, rng: Rng) {
   const preg = mother.pregnancy!;
-  const def = BREEDS[preg.childBreed];
-  const newborn: Pig = {
+  const father = state.pigs.find((p) => p.id === preg.fatherId);
+  const record = state.breedingRecords.find(
+    (r) => r.motherId === mother.id && r.bornAt === null && r.at === preg.startedAt,
+  );
+  const newborn: NurseryPig = {
     id: randomId(rng),
-    slotIndex: lowestFreeSlot(state.pigs),
-    breed: def.id,
-    name: pickPigName(rng, state.pigs),
+    breed: BREEDS[preg.childBreed].id,
+    name: pickPigName(rng, [...state.pigs, ...state.nursery]),
     gender: preg.childGender,
-    growthProgress: 0,
-    hunger: BALANCE.HUNGER_MAX,
-    cleanliness: BALANCE.CLEAN_MAX,
-    isSick: false,
-    pregnancy: null,
-    lastTickedAt: preg.endsAt, // offline growth counts from the birth time
-    createdAt: preg.endsAt,
     generation: preg.childGeneration ?? 2,
+    bornAt: preg.endsAt,
+    parents: {
+      motherId: mother.id,
+      fatherId: preg.fatherId,
+      motherBreed: mother.breed,
+      // The father may be sold before the birth: the breeding record still knows his species.
+      fatherBreed: father?.breed ?? record?.fatherBreed ?? mother.breed,
+    },
   };
-  const child = advancePig(newborn, now, rng);
   const born: SaveGame = {
     ...state,
-    pigs: [...state.pigs.map((p) => (p.id === mother.id ? { ...p, pregnancy: null } : p)), child],
+    pigs: state.pigs.map((p) => (p.id === mother.id ? { ...p, pregnancy: null } : p)),
+    nursery: [...state.nursery, newborn],
     breedingRecords: state.breedingRecords.map((r) =>
-      r.motherId === mother.id && r.bornAt === null && r.at === preg.startedAt
-        ? { ...r, bornAt: preg.endsAt }
-        : r,
+      r === record ? { ...r, bornAt: preg.endsAt } : r,
     ),
   };
-  const found = discoverBreed(born, child.breed, { now, rng });
+  const found = discoverBreed(born, newborn.breed, { now, rng });
   const birth: GameEvent = {
     type: 'BIRTH',
     motherId: mother.id,
-    childId: child.id,
-    childBreed: child.breed,
+    childId: newborn.id,
+    childBreed: newborn.breed,
   };
   return { state: found.state, events: [birth, ...found.events] };
 }

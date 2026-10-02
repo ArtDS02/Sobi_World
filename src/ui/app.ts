@@ -2,7 +2,7 @@
 // opened by clicking world objects, toasts, dialogs. Re-renders on store notify.
 import { openGift } from '../core/actions/openGift';
 import { decorBonus } from '../core/engine/decor';
-import type { Pig, SaveGame } from '../core/types';
+import type { NurseryPig, Pig, SaveGame } from '../core/types';
 import { vi } from '../i18n/vi';
 import type { BoundAction, GameStore, StoreSnapshot } from '../store/gameStore';
 import { troughSpace, type ActionVm } from './actionsVm';
@@ -15,6 +15,7 @@ import {
 import { createToaster } from './components/toast';
 import { renderTopBar } from './components/topBar';
 import {
+  openAdoptDialog,
   openBreedDialog,
   openBuyItemDialog,
   openOrderDialog,
@@ -135,6 +136,10 @@ export function mountApp(
       const save = store.getSnapshot().save;
       if (save) openTrough(Math.min(save.inventory.FOOD_BASIC, troughSpace(save)));
     },
+    raise: (baby: NurseryPig) => {
+      const save = store.getSnapshot().save;
+      if (save) openAdoptDialog(dialogs, save, baby, act);
+    },
   };
   const settings = settingsHandlers({
     store,
@@ -180,7 +185,7 @@ export function mountApp(
       case 'shop':
         return renderShopScreen(save, now(), ui.shopTab, shop, assets);
       case 'inventory':
-        return renderInventoryScreen(save, inventory);
+        return renderInventoryScreen(save, inventory, assets ?? undefined);
       case 'history':
         return renderHistoryScreen(save);
       case 'orders':

@@ -8,7 +8,7 @@ export type { BreedId, DecorId, Gender, ItemId, StatId, TransactionType };
 export type GrowthStage = 'BABY' | 'YOUNG' | 'ADULT'; // derived, never stored
 
 export interface SaveGame {
-  schemaVersion: 6;
+  schemaVersion: 7;
   createdAt: number;
   updatedAt: number;
   player: {
@@ -17,6 +17,8 @@ export interface SaveGame {
     unlockedSlots: number;
   };
   pigs: Pig[];
+  /** Newborns waiting in the inventory until the player raises them (save v7, DECISIONS BR-1). */
+  nursery: NurseryPig[];
   trough: {
     food: number;
     capacity: number;
@@ -76,6 +78,27 @@ export interface Pig {
   createdAt: number;
   /** 1 = bought / starter, n + 1 = child of a generation-n parent (PS-2). Absent = 1. */
   generation?: number;
+  /** Who bred it (BR-1); absent for shop pigs and pigs born before save v7. */
+  parents?: PigParents;
+}
+
+/** Genealogy of a bred pig: ids (the parents may be sold later) and their species. */
+export interface PigParents {
+  motherId: string;
+  fatherId: string;
+  motherBreed: BreedId;
+  fatherBreed: BreedId;
+}
+
+/** A newborn in the inventory nursery: its own pig instance, not on the farm yet (BR-1). */
+export interface NurseryPig {
+  id: string; // becomes the farm pig's id when raised
+  breed: BreedId;
+  name: string;
+  gender: Gender;
+  generation: number;
+  bornAt: number;
+  parents: PigParents;
 }
 
 /** A gift lying on the farm. Its reward is fixed when it spawns; `seed` places it (view only). */

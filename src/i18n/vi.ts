@@ -38,7 +38,7 @@ export const vi = {
     troughShort: "{food}/{capacity}",
     pigs: "{count}/{max}",
     pigsTitle: "Heo trong trại: {count}/{max}",
-    pigsReserved: "{n} chỗ giữ cho heo sắp sinh",
+    pigsReserved: "{n} heo con đang chờ trong Kho",
     pigsFull: "Trại đã đầy — mua thêm chỗ hoặc bán bớt heo",
     pigsIcon: "🐷",
   },
@@ -126,6 +126,7 @@ export const vi = {
     ACHIEVEMENT_LOCKED: "Chưa đạt thành tích này.",
     ALREADY_CLAIMED: "Đã nhận thưởng rồi.",
     ALREADY_OWNED: "Bạn đã có món này.",
+    NURSERY_FULL: "Kho heo con đã đầy. Hãy đưa bớt heo con ra trại trước.",
   },
 
   // Shown on a disabled button so the player knows why, not just that.
@@ -136,6 +137,7 @@ export const vi = {
     noMedicine: "Hết thuốc",
     noFood: "Hết thức ăn",
     noSlot: "Hết chỗ chứa",
+    nurseryFull: "Kho heo con đã đầy",
     notHungry: "Đang no",
     notDirty: "Đang sạch",
     notSick: "Không bệnh",
@@ -148,7 +150,8 @@ export const vi = {
     becameAdult: "{name} đã trưởng thành!",
     becameSick: "{name} bị bệnh rồi!",
     hungryZero: "{name} đói lả, ngừng lớn.",
-    birth: "{mother} vừa sinh {child}!",
+    birth: "{mother} vừa sinh {child}! Heo con đang chờ trong Kho.",
+    adopted: "{name} đã về nông trại!",
     troughEmpty: "Máng ăn đã hết. Heo sẽ ngừng lớn.",
     levelUp: "Lên cấp {level}!",
     discovery: "Khám phá mới: {name}! +{gold} vàng",
@@ -222,7 +225,7 @@ export const vi = {
     unknown: "??? ({rarity})",
     compat: "Độ hợp: {hearts}",
     known: "Công thức đã thử",
-    capacity: "Chỗ trong trại: {used}/{max} (còn {free})",
+    capacity: "Chỗ trong trại: {used}/{max} (còn {free}) · Heo con chờ trong Kho: {waiting}/{nurseryMax}",
     duration: "Thời gian mang thai: {time}",
     noPartners: "Chưa có con nào đủ điều kiện phối với {name}.",
     confirm: "Phối giống",
@@ -374,6 +377,19 @@ export const vi = {
     percent: "{n}%",
     weightKg: "{n} kg",
     generation: "Thế hệ {n}",
+  },
+
+  // BR-1: newborns wait in the inventory until the player raises them.
+  nursery: {
+    title: "Heo con mới sinh ({n}/{max})",
+    empty: "Chưa có heo con nào. Heo con phối giống sinh ra sẽ chờ ở đây.",
+    parents: "Con của {mother} × {father}",
+    hint: "Bấm vào heo con để đưa ra nông trại.",
+    askTitle: "Bạn muốn nuôi heo ngay không?",
+    askBody: "{name} sẽ vào nông trại. Chỗ trống: {free}/{max}.",
+    full: "Nông trại đã hết chỗ — heo con vẫn ở lại an toàn trong Kho. Mua thêm chuồng hoặc bán bớt heo nhé.",
+    yes: "Có",
+    no: "Không",
   },
 
   // PG-1: neighbour's help when the farm is stuck.

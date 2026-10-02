@@ -23,7 +23,8 @@ export function toastText(
   before: SaveGame,
 ): string | null {
   const nameOf = (id: string) =>
-    (after.pigs.find((p) => p.id === id) ?? before.pigs.find((p) => p.id === id))?.name ?? '';
+    [...after.pigs, ...after.nursery, ...before.pigs, ...before.nursery].find((p) => p.id === id)
+      ?.name ?? '';
   switch (event.type) {
     case 'PIG_BECAME_SICK':
       return t(vi.event.becameSick, { name: nameOf(event.pigId) });
@@ -52,6 +53,8 @@ export function toastText(
       return t(vi.event.orderFulfilled, { gold: formatInt(event.gold) });
     case 'PIG_BOUGHT':
       return t(vi.event.bought, { name: nameOf(event.pigId) });
+    case 'PIG_ADOPTED':
+      return t(vi.event.adopted, { name: nameOf(event.pigId) });
     case 'PIG_TREATED':
       return t(vi.event.treated, { name: nameOf(event.pigId) });
     case 'ITEM_BOUGHT':

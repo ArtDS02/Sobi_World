@@ -45,10 +45,26 @@ describe('schema (§5.1, §5.5)', () => {
     ['duplicate slotIndex', (s) => s.pigs.push(makePig({ id: 'pig-2' }))],
     ['too many orders', (s) => (s.orders = Array.from({ length: 7 }, (_, i) => order(i)))],
     [
-      'pigs + pregnancies exceed slots',
+      'pigs exceed slots',
       (s) => {
-        s.player.unlockedSlots = 2;
+        s.player.unlockedSlots = 1;
         s.pigs = [makePig({ pregnancy: preg }), makePig({ id: 'pig-2', slotIndex: 1 })];
+      },
+    ],
+    [
+      'a nursery pig shares an id with a farm pig (BR-1)',
+      (s) => {
+        s.nursery = [
+          {
+            id: s.pigs[0]!.id,
+            breed: 'PIG_EARTH_PINK',
+            name: 'Bé',
+            gender: 'MALE',
+            generation: 2,
+            bornAt: 0,
+            parents: { motherId: 'a', fatherId: 'b', motherBreed: 'PIG_EARTH_PINK', fatherBreed: 'PIG_EARTH_PINK' },
+          },
+        ];
       },
     ],
     ['wrong schemaVersion', (s) => ((s as { schemaVersion: number }).schemaVersion = 99)],

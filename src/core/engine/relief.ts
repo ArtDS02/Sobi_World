@@ -25,6 +25,7 @@ export function reliefNeed(state: SaveGame): ReliefNeed | null {
   const { gold } = state.player;
   const coming =
     state.gifts.boxes.length > 0 ||
+    state.nursery.length > 0 || // a newborn to raise (BR-1)
     state.pigs.some((p) => p.pregnancy !== null || p.growthProgress >= 100);
   if (coming) return null;
 

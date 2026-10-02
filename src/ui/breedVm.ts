@@ -6,7 +6,7 @@ import { breedPigs } from '../core/actions/breedPigs';
 import { BALANCE } from '../core/config/balance';
 import { BREEDING_RULES } from '../core/config/breedingRules';
 import { breedingOutcomes, compatibility, type BreedingOutcome } from '../core/engine/breedingOdds';
-import { freeSlots, pigCapacity, reservedSlots } from '../core/engine/derived';
+import { freeSlots, pigCapacity, waitingPigs } from '../core/engine/derived';
 import { BREEDS } from '../core/config/breeds';
 import type { ErrorCode } from '../core/config/errors';
 import type { Pig, SaveGame } from '../core/types';
@@ -47,7 +47,7 @@ function selfReason(pig: Pig): string | null {
 
 /** All partners fail for the same farm-level reason (slot, gold) → show it; else "no partner". */
 function sharedReason(errors: ErrorCode[]): string {
-  for (const farmWide of ['NO_PIG_SLOT', 'INSUFFICIENT_GOLD'] as const) {
+  for (const farmWide of ['NURSERY_FULL', 'INSUFFICIENT_GOLD'] as const) {
     if (errors.length > 0 && errors.every((e) => e === farmWide)) return reasonFor(farmWide);
   }
   return vi.disabled.noPartner;
@@ -104,9 +104,11 @@ export function breedingVm(save: SaveGame, pig: Pig, now: number): BreedingVm {
     partners,
     fee: t(vi.breed.fee, { gold: formatInt(BALANCE.BREEDING_FEE) }),
     capacity: t(vi.breed.capacity, {
-      used: save.pigs.length + reservedSlots(save),
+      used: save.pigs.length,
       max: pigCapacity(save),
       free: Math.max(0, freeSlots(save)),
+      waiting: waitingPigs(save),
+      nurseryMax: BALANCE.NURSERY_MAX,
     }),
   };
 }

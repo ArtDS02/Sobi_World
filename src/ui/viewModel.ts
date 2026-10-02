@@ -9,7 +9,7 @@ import {
   generationOf,
   growthStage,
   pigCapacity,
-  reservedSlots,
+  waitingPigs,
   weight,
 } from '../core/engine/derived';
 import { happiness } from '../core/engine/happiness';
@@ -64,7 +64,7 @@ export function topBarVm(save: SaveGame): TopBarVm {
 function pigsVm(save: SaveGame): Pick<TopBarVm, 'pigs' | 'pigsTitle' | 'pigsFull'> {
   const count = save.pigs.length;
   const max = pigCapacity(save);
-  const reserved = reservedSlots(save);
+  const reserved = waitingPigs(save);
   const full = freeSlots(save) <= 0;
   const title = [
     t(vi.hud.pigsTitle, { count, max }),
@@ -110,6 +110,8 @@ export interface PigPanelVm extends PigCardVm {
   weight: string;
   /** "Thế hệ 2" (PS-2). */
   generation: string;
+  /** "Con của Heo Trắng × Heo Đen" for a bred pig (BR-1), null for shop pigs. */
+  parents: string | null;
   happiness: string;
   priceMultiplier: string;
   pregnancy: string | null;
@@ -124,6 +126,12 @@ export function pigPanelVm(pig: Pig, now: number, decorBonus = 0): PigPanelVm {
     growthValue: pig.growthProgress,
     weight: t(vi.ui.weightKg, { n: formatInt(weight(pig)) }),
     generation: t(vi.ui.generation, { n: generationOf(pig) }),
+    parents: pig.parents
+      ? t(vi.nursery.parents, {
+          mother: BREEDS[pig.parents.motherBreed].nameVi,
+          father: BREEDS[pig.parents.fatherBreed].nameVi,
+        })
+      : null,
     happiness: String(happy),
     priceMultiplier: t(vi.stat.priceMultiplier, { mult: formatDec(sellMultiplier(happy)) }),
     pregnancy: pig.pregnancy

@@ -4,6 +4,7 @@ import { BREEDS } from '../config/breeds';
 import { levelFromXp } from '../config/levels';
 import { GENDER_VALUES, type BreedId, type Gender } from '../config/ids';
 import { discoverBreed } from '../engine/collection';
+import { lowestFreeSlot } from '../engine/breeding';
 import { freeSlots } from '../engine/derived';
 import { changeGold } from '../engine/gold';
 import { pickPigName } from '../engine/pigNames';
@@ -14,14 +15,6 @@ import { ok, runAction } from './runAction';
 export interface BuyPigArgs {
   breed: BreedId;
   gender: Gender;
-}
-
-/** Lowest slotIndex in [0, unlockedSlots) not used by a pig. */
-function lowestFreeSlot(state: SaveGame): number {
-  const used = new Set(state.pigs.map((p) => p.slotIndex));
-  let i = 0;
-  while (used.has(i)) i += 1;
-  return i;
 }
 
 export function buyPig(state: SaveGame, args: BuyPigArgs, ctx: ActionContext): ActionResult {
@@ -38,9 +31,9 @@ export function buyPig(state: SaveGame, args: BuyPigArgs, ctx: ActionContext): A
 
     const pig: Pig = {
       id: pigId,
-      slotIndex: lowestFreeSlot(s),
+      slotIndex: lowestFreeSlot(s.pigs),
       breed: def.id,
-      name: pickPigName(ctx.rng, s.pigs),
+      name: pickPigName(ctx.rng, [...s.pigs, ...s.nursery]),
       gender: args.gender,
       growthProgress: 0,
       hunger: BALANCE.HUNGER_MAX,

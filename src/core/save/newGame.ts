@@ -16,6 +16,7 @@ export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {
       unlockedSlots: BALANCE.START_SLOTS,
     },
     pigs: [],
+    nursery: [],
     trough: { food: 0, capacity: BALANCE.START_TROUGH_CAPACITY, lastResolvedAt: ctx.now },
     inventory: { ...BALANCE.START_INVENTORY },
     orders: [],

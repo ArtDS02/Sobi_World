@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
-import { freeSlots, growthStage, level, weight } from '../../src/core/engine/derived';
+import { freeSlots, growthStage, level, waitingPigs, weight } from '../../src/core/engine/derived';
 import { happiness } from '../../src/core/engine/happiness';
 import { sellPrice } from '../../src/core/engine/pricing';
 import { makePig } from './pigFactory';
@@ -58,7 +58,7 @@ describe('weight, level, freeSlots', () => {
     expect(level({ player: { gold: 0, xp: 250, unlockedSlots: 4 } })).toBe(3);
   });
 
-  it('a pregnancy reserves an extra slot (D8)', () => {
+  it('a pregnancy holds no slot; waiting = nursery + unborn (BR-1)', () => {
     const pregnancy = {
       startedAt: 0,
       endsAt: 1,
@@ -70,6 +70,7 @@ describe('weight, level, freeSlots', () => {
       player: { gold: 0, xp: 0, unlockedSlots: 4, ownedSkins: [] },
       pigs: [makePig({ pregnancy }), makePig({ id: 'pig-2', slotIndex: 1 })],
     };
-    expect(freeSlots(state)).toBe(1);
+    expect(freeSlots(state)).toBe(2);
+    expect(waitingPigs({ ...state, nursery: [] })).toBe(1);
   });
 });

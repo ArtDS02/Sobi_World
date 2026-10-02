@@ -46,13 +46,20 @@ describe('breedingVm (§10.2)', () => {
     expect(breedingVm(farm([mythical, dad]), mythical, 0).button.reason).toBe(
       vi.disabled.cannotBreed,
     );
-    const full = farm([
-      mom,
-      dad,
-      adult({ id: 'c', slotIndex: 2 }),
-      adult({ id: 'd', slotIndex: 3 }),
-    ]);
-    expect(breedingVm(full, mom, 0).button.reason).toBe(vi.disabled.noSlot);
+    // BR-1: a full farm still breeds (the child waits in the nursery); a full nursery does not.
+    const full = farm([mom, dad, adult({ id: 'c', slotIndex: 2 }), adult({ id: 'd', slotIndex: 3 })]);
+    expect(breedingVm(full, mom, 0).button.reason).toBeNull();
+    const baby = (id: string) => ({
+      id,
+      breed: 'PIG_EARTH_PINK' as const,
+      name: id,
+      gender: 'MALE' as const,
+      generation: 2,
+      bornAt: 0,
+      parents: { motherId: 'a', fatherId: 'b', motherBreed: 'PIG_EARTH_PINK' as const, fatherBreed: 'PIG_EARTH_PINK' as const },
+    });
+    const crowded = { ...farm([mom, dad]), nursery: Array.from({ length: 12 }, (_, i) => baby(`n${i}`)) };
+    expect(breedingVm(crowded, mom, 0).button.reason).toBe(vi.disabled.nurseryFull);
     expect(breedingVm(farm([mom]), mom, 0).button.reason).toBe(vi.disabled.noPartner);
   });
 });

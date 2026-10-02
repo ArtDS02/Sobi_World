@@ -39,6 +39,8 @@ export const BALANCE = {
   MAX_LEVEL: 10,
   LEVEL_XP: [0, 100, 250, 500, 900, 1400, 2100, 3000, 4200, 5700],
 
+  /** Newborns waiting in the inventory nursery, unborn included (DECISIONS BR-1). */
+  NURSERY_MAX: 12,
   MAX_SLOTS: 24, // U05: 30 pigs measured at 0.8 ms/frame; 24 keeps the pen readable
   SLOT_UNLOCKS: {
     5: { cost: 2000, level: 2 },

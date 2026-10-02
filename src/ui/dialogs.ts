@@ -1,9 +1,11 @@
 // Sell confirmation, rename, trough-fill, breeding and order dialogs (spec §10.1, §10.2).
+import { adoptPig } from '../core/actions/adoptPig';
 import { renamePig, cleanPigName } from '../core/actions/renamePig';
 import { BREEDS } from '../core/config/breeds';
 import { happiness } from '../core/engine/happiness';
 import { sellMultiplier, sellPrice } from '../core/engine/pricing';
-import type { Pig, SaveGame } from '../core/types';
+import { freeSlots, pigCapacity } from '../core/engine/derived';
+import type { NurseryPig, Pig, SaveGame } from '../core/types';
 import { formatDec, formatInt, t } from '../i18n/format';
 import { vi } from '../i18n/vi';
 import type { BoundAction } from '../store/gameStore';
@@ -227,5 +229,29 @@ export function openOrderDialog(host: HTMLElement, card: OrderCardVm, act: Act) 
         actionButton(c, () => void act(c.run).then(d.close), 'c-button--ghost c-dialog__choice'),
       ),
     ),
+  );
+}
+
+/**
+ * BR-1: "raise this newborn now?" Yes → adoptPig (needs a free pen slot; on a full farm the store
+ * rejects with NO_PIG_SLOT, the error toast explains and the newborn stays in the nursery).
+ * No → just closes.
+ */
+export function openAdoptDialog(host: HTMLElement, save: SaveGame, baby: NurseryPig, act: Act) {
+  const d = openDialog(host, vi.nursery.askTitle, vi.nursery.no);
+  const free = Math.max(0, freeSlots(save));
+  d.body.append(
+    el('p', { text: t(vi.nursery.askBody, { name: baby.name, free, max: pigCapacity(save) }) }),
+    free > 0 ? '' : el('p', { class: 'c-dialog__warn', text: vi.nursery.full }),
+  );
+  const run: BoundAction = (s, c) => adoptPig(s, { nurseryId: baby.id }, c);
+  d.footer.append(
+    el('button', {
+      class: 'c-button',
+      text: vi.nursery.yes,
+      attrs: { type: 'button' },
+      data: { adopt: baby.id },
+      on: { click: () => void act(run).then(d.close) },
+    }),
   );
 }

@@ -6,7 +6,7 @@ import { BREEDS } from '../config/breeds';
 import { SAVE } from '../config/save';
 import type { ErrorCode } from '../config/errors';
 import { rollChild } from '../engine/breeding';
-import { freeSlots, generationOf } from '../engine/derived';
+import { generationOf, waitingPigs } from '../engine/derived';
 import { changeGold } from '../engine/gold';
 import { addXP } from '../engine/xp';
 import { randomId } from '../rng';
@@ -30,7 +30,8 @@ export function breedingError(
   if (a.pregnancy || b.pregnancy) return 'PIG_IS_PREGNANT';
   if (a.gender === b.gender) return 'INVALID_BREEDING_PARTNERS';
   if (!breedingOutcomes(a.breed, b.breed)) return 'BREEDING_COMBINATION_NOT_SUPPORTED';
-  if (freeSlots(s) < 1) return 'NO_PIG_SLOT'; // reserves the child's slot (D8)
+  // BR-1: the child waits in the nursery (no pen slot needed); the nursery has a cap.
+  if (waitingPigs(s) >= BALANCE.NURSERY_MAX) return 'NURSERY_FULL';
   return null;
 }
 

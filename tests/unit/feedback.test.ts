@@ -24,6 +24,7 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   LEVEL_UP: { type: 'LEVEL_UP', level: 2 },
   DISCOVERY: { type: 'DISCOVERY', kind: 'BREED', id: 'PIG_EARTH_PINK', gold: 500 },
   PIG_BOUGHT: { type: 'PIG_BOUGHT', pigId: 'pig-1', breed: 'PIG_EARTH_PINK' },
+  PIG_ADOPTED: { type: 'PIG_ADOPTED', pigId: 'pig-1', breed: 'PIG_EARTH_PINK' },
   PIG_FED: { type: 'PIG_FED', pigId: 'pig-1' },
   PIG_CLEANED: { type: 'PIG_CLEANED', pigIds: ['pig-1', 'pig-2'] },
   PIG_TREATED: { type: 'PIG_TREATED', pigId: 'pig-1' },

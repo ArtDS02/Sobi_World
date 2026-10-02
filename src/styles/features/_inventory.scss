@@ -61,4 +61,47 @@
     font-weight: $fw-bold;
     color: $c-pig-line;
   }
+
+  // BR-1: newborns waiting in the nursery.
+  .inventory__heading {
+    margin: 0;
+    font-size: $fs-lg;
+    color: $c-wood-dark;
+  }
+
+  .inventory__nursery {
+    display: grid;
+    gap: $sp-2;
+  }
+
+  .inventory__babies {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    gap: $sp-3;
+  }
+
+  .inventory__baby {
+    display: grid;
+    grid-template-columns: 4rem 1fr auto;
+    gap: $sp-3;
+    align-items: center;
+    padding: $sp-3;
+    text-align: left;
+    cursor: pointer;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: $radius-card;
+    box-shadow: 0 3px 0 $c-border;
+
+    .c-thumb {
+      width: 4rem;
+      height: 4rem;
+      object-fit: contain;
+    }
+
+    &:hover,
+    &:focus-visible {
+      border-color: $c-pig-line;
+    }
+  }
 }

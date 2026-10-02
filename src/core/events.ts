@@ -14,6 +14,7 @@ export type GameEvent =
   | { type: 'DISCOVERY'; kind: 'BREED'; id: string; gold: number }
   // Action feedback (spec §8.0, D25). Gold is signed as in the transaction.
   | { type: 'PIG_BOUGHT'; pigId: string; breed: BreedId }
+  | { type: 'PIG_ADOPTED'; pigId: string; breed: BreedId } // a newborn raised from the nursery (BR-1)
   | { type: 'PIG_FED'; pigId: string }
   | { type: 'PIG_CLEANED'; pigIds: string[] }
   | { type: 'PIG_TREATED'; pigId: string }
@@ -52,6 +53,7 @@ export const GAME_EVENT_TYPES = [
   'LEVEL_UP',
   'DISCOVERY',
   'PIG_BOUGHT',
+  'PIG_ADOPTED',
   'PIG_FED',
   'PIG_CLEANED',
   'PIG_TREATED',

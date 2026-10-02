@@ -92,7 +92,7 @@ describe('buyPig (§8.1)', () => {
     );
   });
 
-  it('NO_PIG_SLOT when a pregnancy reserves the last slot (D8)', () => {
+  it('a pregnancy no longer reserves a slot (BR-1): the 4th pig can be bought', () => {
     const pregnancy = {
       startedAt: 0,
       endsAt: 999_999 * SEC,
@@ -102,7 +102,9 @@ describe('buyPig (§8.1)', () => {
     };
     const pigs = [0, 1, 2].map((i) => adult({ id: `p${i}`, slotIndex: i }));
     pigs[0] = { ...pigs[0]!, pregnancy };
-    expectError(buy, withPigs(pigs), 'NO_PIG_SLOT');
+    expectOk(buy(withPigs(pigs)));
+    const four = [...pigs, adult({ id: 'p3', slotIndex: 3 })];
+    expectError(buy, withPigs(four), 'NO_PIG_SLOT');
   });
 
   it('new shop species (A3): level gate, then bought at its price and discovered', () => {

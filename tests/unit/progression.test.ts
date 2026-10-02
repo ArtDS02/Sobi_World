@@ -212,7 +212,8 @@ describe('save v5 -> v6', () => {
     delete v5.decor;
     const res = migrate(v5);
     if (!res.ok) throw new Error(res.error);
-    expect(res.save.schemaVersion).toBe(6);
+    expect(res.save.schemaVersion).toBe(7);
+    expect(res.save.nursery).toEqual([]); // v6 -> v7 (BR-1)
     expect(res.save.progress).toEqual({
       stats: { births: 1 },
       claimed: {},

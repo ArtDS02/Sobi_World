@@ -26,6 +26,23 @@ const pregnancySchema = z.object({
   childGeneration: z.number().int().min(1).optional(),
 });
 
+const parentsSchema = z.object({
+  motherId: z.string(),
+  fatherId: z.string(),
+  motherBreed: breedId,
+  fatherBreed: breedId,
+});
+
+const nurseryPigSchema = z.object({
+  id: z.string().min(1),
+  breed: breedId,
+  name: z.string().min(1).max(16),
+  gender,
+  generation: z.number().int().min(1),
+  bornAt: time,
+  parents: parentsSchema,
+});
+
 const pigSchema = z.object({
   id: z.string().min(1),
   slotIndex: z.number().int().min(0),
@@ -40,6 +57,7 @@ const pigSchema = z.object({
   lastTickedAt: time,
   createdAt: time,
   generation: z.number().int().min(1).optional(),
+  parents: parentsSchema.optional(),
 });
 
 const orderSchema = z.object({
@@ -95,6 +113,7 @@ const shapeSchema = z.object({
     unlockedSlots: z.number().int().min(1),
   }),
   pigs: z.array(pigSchema),
+  nursery: z.array(nurseryPigSchema),
   trough: z.object({ food: nonNeg, capacity: nonNeg, lastResolvedAt: time }),
   inventory: z.record(z.enum(ITEM_ID_VALUES), nonNeg),
   orders: z.array(orderSchema),
@@ -127,8 +146,10 @@ export const saveGameSchema = shapeSchema.superRefine((s, ctx) => {
   if (new Set(slots).size !== slots.length) issue('slotIndex must be unique');
   if (slots.some((i) => i >= s.player.unlockedSlots)) issue('slotIndex must be < unlockedSlots');
   if (s.trough.food > s.trough.capacity) issue('trough.food must be <= trough.capacity');
-  const pregnant = s.pigs.filter((p) => p.pregnancy !== null).length;
-  if (s.pigs.length + pregnant > s.player.unlockedSlots) issue('pigs + pregnancies exceed slots');
+  // BR-1: a pregnancy no longer holds a pen slot (the child waits in the nursery).
+  if (s.pigs.length > s.player.unlockedSlots) issue('pigs exceed slots');
+  const ids = [...s.pigs, ...s.nursery].map((p) => p.id);
+  if (new Set(ids).size !== ids.length) issue('pig ids must be unique (farm + nursery)');
   if (s.orders.length > BALANCE.ORDER_MAX_ACTIVE) issue('too many orders');
   if (s.gifts.boxes.length > GIFTS.MAX_ON_FARM) issue('too many gift boxes');
 });

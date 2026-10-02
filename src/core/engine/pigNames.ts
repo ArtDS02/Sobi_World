@@ -3,7 +3,7 @@ import { PIG_NAME_POOL } from '../config/names';
 import { pick, type Rng } from '../rng';
 import type { Pig } from '../types';
 
-export function pickPigName(rng: Rng, living: readonly Pig[]): string {
+export function pickPigName(rng: Rng, living: readonly Pick<Pig, 'name'>[]): string {
   const taken = new Set(living.map((p) => p.name));
   const unused = PIG_NAME_POOL.filter((n) => !taken.has(n));
   if (unused.length > 0) return pick(rng, unused);

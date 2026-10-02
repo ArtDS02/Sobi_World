@@ -43,6 +43,7 @@ const SHORT_REASON: Partial<Record<ErrorCode, string>> = {
   PIG_IS_PREGNANT: vi.disabled.isPregnant,
   PIG_IS_SICK: vi.disabled.isSick,
   NO_PIG_SLOT: vi.disabled.noSlot,
+  NURSERY_FULL: vi.disabled.nurseryFull,
 };
 
 /** Error code → short disabled reason; INSUFFICIENT_ITEM names the missing item. */

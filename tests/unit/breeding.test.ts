@@ -12,6 +12,17 @@ import { mulberry32, sequenceRng } from '../../src/core/rng';
 import type { Pig, SaveGame } from '../../src/core/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
+import type { NurseryPig } from '../../src/core/types';
+
+const nurseryPig = (id: string): NurseryPig => ({
+  id,
+  breed: 'PIG_EARTH_PINK',
+  name: id,
+  gender: 'MALE',
+  generation: 2,
+  bornAt: 0,
+  parents: { motherId: 'm', fatherId: 'f', motherBreed: 'PIG_EARTH_PINK', fatherBreed: 'PIG_EARTH_PINK' },
+});
 
 const SEC = 1000;
 const adult = (o: Partial<Pig>) => makePig({ growthProgress: 100, ...o });
@@ -85,14 +96,16 @@ describe('breedPigs validation (§8.8) — right error, no state change', () => 
     expectError(breed(), pair({}, { breed: 'PIG_MYTHICAL' }), 'BREEDING_COMBINATION_NOT_SUPPORTED');
   });
 
-  it('no free slot, insufficient gold', () => {
+  it('full farm still breeds (BR-1: the child waits in the nursery); nursery cap; gold', () => {
     const full = farm([
       mom(),
       dad(),
       adult({ id: 'c', slotIndex: 2 }),
       adult({ id: 'd', slotIndex: 3 }),
     ]);
-    expectError(breed(), full, 'NO_PIG_SLOT');
+    expectOk(breed()(full));
+    const crowded = { ...pair(), nursery: Array.from({ length: 12 }, (_, i) => nurseryPig(`n${i}`)) };
+    expectError(breed(), crowded, 'NURSERY_FULL');
     const poor = pair();
     expectError(breed(), { ...poor, player: { ...poor.player, gold: 199 } }, 'INSUFFICIENT_GOLD');
   });
@@ -147,7 +160,7 @@ describe('birth (§8.9)', () => {
     const p = mother(s).pregnancy!;
     for (const seed of [1, 2, 3]) {
       const w = advanceWorld(s, p.endsAt, mulberry32(seed));
-      const child = w.state.pigs.find((x) => x.id !== 'mom' && x.id !== 'dad')!;
+      const child = w.state.nursery[0]!;
       expect([child.breed, child.gender]).toEqual([p.childBreed, p.childGender]);
     }
   });
@@ -160,40 +173,38 @@ describe('birth (§8.9)', () => {
     expect(early.events.some((e) => e.type === 'BIRTH')).toBe(false);
 
     const born = advanceWorld(early.state, endsAt, mulberry32(1));
-    expect(born.state.pigs).toHaveLength(3);
+    expect(born.state.pigs).toHaveLength(2); // BR-1: never straight onto the farm
+    expect(born.state.nursery).toHaveLength(1);
     expect(born.events.filter((e) => e.type === 'BIRTH')).toHaveLength(1);
     expect(mother(born.state).pregnancy).toBeNull();
     expect(born.state.breedingRecords[0]!.bornAt).toBe(endsAt);
 
     const again = advanceWorld(born.state, endsAt + SEC, mulberry32(2));
-    expect(again.state.pigs).toHaveLength(3);
+    expect(again.state.nursery).toHaveLength(1);
     expect(again.events.some((e) => e.type === 'BIRTH')).toBe(false);
   });
 
-  it('child growth counts from endsAt; baby defaults; lowest free slot', () => {
+  it('the newborn is its own pig in the nursery with its genealogy (BR-1)', () => {
     const s = bred();
-    const { endsAt, childBreed } = mother(s).pregnancy!;
+    const { endsAt, childBreed, childGender } = mother(s).pregnancy!;
     const w = advanceWorld(s, endsAt + 1800 * SEC, mulberry32(1));
-    const child = w.state.pigs.find((x) => x.id !== 'mom' && x.id !== 'dad')!;
-    expect(child).toMatchObject({
-      breed: childBreed,
-      slotIndex: 2,
-      isSick: false,
-      pregnancy: null,
-      lastTickedAt: endsAt + 1800 * SEC,
-      createdAt: endsAt,
-    });
-    // 1800 s of growth, still fed (hunger lasts growthSec / 3 >= 2400 s)
-    expect(child.growthProgress).toBeCloseTo((1800 * 100) / BREEDS[childBreed].growthSec, 6);
+    expect(w.state.nursery).toEqual([
+      expect.objectContaining({
+        breed: childBreed,
+        gender: childGender,
+        generation: 2,
+        bornAt: endsAt,
+        parents: { motherId: 'mom', fatherId: 'dad', motherBreed: 'PIG_EARTH_PINK', fatherBreed: 'PIG_EARTH_PINK' },
+      }),
+    ]);
+    expect(w.events.find((e) => e.type === 'BIRTH')).toMatchObject({ childId: w.state.nursery[0]!.id });
   });
 
   it('birth after 3 days offline works, with a BIRTH event', () => {
     const s = bred();
     const w = advanceWorld(s, 3 * 86400 * SEC, mulberry32(9));
-    expect(w.state.pigs).toHaveLength(3);
+    expect(w.state.nursery).toHaveLength(1);
     expect(w.events.some((e) => e.type === 'BIRTH')).toBe(true);
-    const child = w.state.pigs.find((x) => x.id !== 'mom' && x.id !== 'dad')!;
-    expect(child.growthProgress).toBeGreaterThan(0);
   });
 
   it('a new breed from birth is discovered once (DISCOVERY + bonus)', () => {
@@ -206,18 +217,20 @@ describe('birth (§8.9)', () => {
     expect(w.state.collection.discoveredBreeds).toContain('PIG_STRIPED_MELON');
   });
 
-  it('4 slots, 2 adults, 1 pregnancy: buying sees 0 free slots, birth still finds one (D8)', () => {
+  it('a pregnancy holds no pen slot; a birth on a full farm still lands in the nursery (BR-1)', () => {
     const s = bred();
-    expect(s.player.unlockedSlots).toBe(4);
-    const withThird = { ...s, pigs: [...s.pigs, adult({ id: 'x', slotIndex: 2 })] };
-    expect(freeSlots(withThird)).toBe(0);
+    const full = {
+      ...s,
+      pigs: [...s.pigs, adult({ id: 'x', slotIndex: 2 }), adult({ id: 'y', slotIndex: 3 })],
+    };
+    expect(freeSlots({ ...s, pigs: [...s.pigs, adult({ id: 'x', slotIndex: 2 })] })).toBe(1);
     expectError(
       (st) => buyPig(st, { breed: 'PIG_EARTH_PINK', gender: 'MALE' }, ctx(0)),
-      withThird,
+      full,
       'NO_PIG_SLOT',
     );
-    const w = advanceWorld(withThird, mother(s).pregnancy!.endsAt, mulberry32(1));
+    const w = advanceWorld(full, mother(s).pregnancy!.endsAt, mulberry32(1));
     expect(w.state.pigs).toHaveLength(4);
-    expect(new Set(w.state.pigs.map((p) => p.slotIndex))).toEqual(new Set([0, 1, 2, 3]));
+    expect(w.state.nursery).toHaveLength(1);
   });
 });

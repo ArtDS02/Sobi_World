@@ -39,7 +39,7 @@ export function eventTargets(e: GameEvent): FeedbackTarget[] {
     case 'PIG_CLEANED':
       return e.pigIds.map(pig);
     case 'BIRTH':
-      return [pig(e.childId)];
+      return [pig(e.motherId)]; // the child waits in the nursery (BR-1)
     case 'BREEDING_STARTED':
       return [pig(e.motherId), pig(e.fatherId)];
     case 'TROUGH_FILLED':
@@ -97,7 +97,6 @@ export function feedbackPlan(
           animation,
           target,
           delayMs: delay(i),
-          ...(e.type === 'BIRTH' ? { from: pig(e.motherId) } : {}),
         }))
       : [],
     vfx: targets.flatMap((target, i) => row.vfx.map((fx) => ({ fx, target, delayMs: delay(i) }))),

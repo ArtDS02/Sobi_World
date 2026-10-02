@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { adoptPig } from '../../src/core/actions/adoptPig';
 import { breedPigs } from '../../src/core/actions/breedPigs';
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
 import type { BreedId } from '../../src/core/config/ids';
@@ -121,10 +122,12 @@ describe('generation (PS-2)', () => {
     expect(preg.childGeneration).toBe(4);
     expect(bred.state.breedingRecords[0]!.childGeneration).toBe(4);
     const born = resolveBirths(bred.state, preg.endsAt, ctx().rng).state;
-    const child = born.pigs.find((p) => p.id !== 'mom' && p.id !== 'dad')!;
-    expect(generationOf(child)).toBe(4);
+    const child = born.nursery[0]!; // BR-1: the newborn waits in the nursery
+    expect(child.generation).toBe(4);
     const round = parseSave(JSON.stringify(born));
-    expect(round.ok && round.save.pigs.find((p) => p.id === child.id)?.generation).toBe(4);
+    expect(round.ok && round.save.nursery.find((p) => p.id === child.id)?.generation).toBe(4);
+    const raised = expectOk(adoptPig(born, { nurseryId: child.id }, ctx(preg.endsAt)));
+    expect(generationOf(raised.state.pigs.find((p) => p.id === child.id)!)).toBe(4);
   });
 
   it('pigs from old saves (no field) count as generation 1', () => {

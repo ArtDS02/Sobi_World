@@ -32,7 +32,7 @@ describe('topBarVm (§10.1)', () => {
     expect(vm.troughEmpty).toBe(true);
   });
 
-  it('pig count / capacity from the save, full when no slot is free (reserved included, PS-1)', () => {
+  it('pig count / capacity from the save, full when no slot is free (BR-1: unborn not counted)', () => {
     const pigs = [0, 1, 2].map((i) => makePig({ id: `p${i}`, slotIndex: i }));
     const s = farm(pigs);
     const at = (slots: number, list = pigs) =>
@@ -43,8 +43,9 @@ describe('topBarVm (§10.1)', () => {
     expect(at(3).pigsTitle).toContain(vi.hud.pigsFull);
     const preg = { startedAt: 0, endsAt: 1, fatherId: 'p1', childBreed: pigs[0]!.breed, childGender: 'MALE' as const };
     const withChild = [{ ...pigs[0]!, pregnancy: preg }, pigs[1]!, pigs[2]!];
-    expect(at(4, withChild).pigsFull).toBe(true); // 3 pigs + 1 reserved = 4
-    expect(at(4, withChild).pigsTitle).toContain('1 chỗ giữ');
+    // BR-1: an unborn child holds no slot, it is only listed as waiting.
+    expect(at(4, withChild).pigsFull).toBe(false);
+    expect(at(4, withChild).pigsTitle).toContain('1 heo con đang chờ');
     expect(pigPanelVm(pigs[0]!, 0).generation).toBe('Thế hệ 1');
   });
 
