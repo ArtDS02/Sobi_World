@@ -105,6 +105,17 @@ describe('buyPig (§8.1)', () => {
     expectError(buy, withPigs(pigs), 'NO_PIG_SLOT');
   });
 
+  it('new shop species (A3): level gate, then bought at its price and discovered', () => {
+    const run = (s: SaveGame) => buyPig(s, { breed: 'PIG_HEDGEHOG', gender: 'FEMALE' }, ctx());
+    expectError(run, withPigs([], 10_000), 'LEVEL_TOO_LOW');
+    const s = withPigs([], 10_000);
+    const leveled = { ...s, player: { ...s.player, xp: BALANCE.LEVEL_XP[7]! } }; // level 8
+    const r = expectOk(run(leveled));
+    expect(r.state.pigs[0]?.breed).toBe('PIG_HEDGEHOG');
+    expect(r.state.player.gold).toBe(10_000 - 7000 + BALANCE.DISCOVERY_BONUS_GOLD);
+    expect(r.state.collection.discoveredBreeds).toContain('PIG_HEDGEHOG');
+  });
+
   it('INSUFFICIENT_GOLD below 500', () => {
     expectError(buy, withPigs([], 499), 'INSUFFICIENT_GOLD');
   });

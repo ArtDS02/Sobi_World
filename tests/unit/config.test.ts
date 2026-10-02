@@ -6,6 +6,7 @@ import { ERRORS } from '../../src/core/config/errors';
 import type { BreedId } from '../../src/core/config/ids';
 import { levelFromXp, troughCapacityForLevel } from '../../src/core/config/levels';
 import { RARITY_VALUES, rarityRank } from '../../src/core/config/rarity';
+import { MUTATIONS } from '../../src/core/config/breedingRules';
 import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
 import { vi } from '../../src/i18n/vi';
 
@@ -58,6 +59,26 @@ describe('breeding rules (§6.5 as rules, U00-1 D4)', () => {
       odds('PIG_WHITE', 'PIG_WHITE').PIG_PANDA ?? 0,
     );
     expect(odds('PIG_KOI', 'PIG_DRAGONLING').PIG_MYTHICAL).toBeGreaterThan(0);
+  });
+
+  it('A3 mutations give their new species', () => {
+    const cases: [BreedId, BreedId, BreedId][] = [
+      ['PIG_BLACK', 'PIG_BOAR', 'PIG_BUFFALO'],
+      ['PIG_SPOTTED', 'PIG_BROWN', 'PIG_DEER'],
+      ['PIG_EARTH_PINK', 'PIG_STRIPED_MELON', 'PIG_PUMPKIN'],
+      ['PIG_BEE', 'PIG_PUMPKIN', 'PIG_SUNFLOWER'],
+      ['PIG_BOAR', 'PIG_SHEEP', 'PIG_HEDGEHOG'],
+      ['PIG_PENGUIN', 'PIG_STRIPED_MELON', 'PIG_TURTLE'],
+      ['PIG_SUPERMAN', 'PIG_PENGUIN', 'PIG_ROBOT'],
+      ['PIG_SHEEP', 'PIG_SUPERMAN', 'PIG_UNICORN'],
+    ];
+    for (const [a, b, child] of cases) expect(odds(a, b)[child], child).toBeGreaterThan(0);
+  });
+
+  it('mutations reference breedable parents and no duplicate pair → result', () => {
+    const keys = MUTATIONS.map((m) => [...m.parents].sort().join('+') + '>' + m.result);
+    expect(new Set(keys).size).toBe(keys.length);
+    for (const m of MUTATIONS) for (const p of m.parents) expect(BREEDS[p].breedable, p).toBe(true);
   });
 
   it('every species can be obtained: bought, or bred from some pair', () => {

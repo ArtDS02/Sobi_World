@@ -49,3 +49,13 @@ Task: A1 audit → A2 gỡ Bộ đồ → A3 species → A4 building → A5 tíc
 2. A3 — vẽ đặc điểm hình khối (lông xoăn, mang, lông vũ, sừng, gạc, gai, mai, bờm) bằng SVG chồng lên heo gốc cùng nét viền; thêm species có silhouette riêng; catalogue + breeding rules.
 3. A4 — `art:cut` mở rộng cho sheet building; thay 5 building + props; thêm decor (placement không `action`, không đè walkArea).
 4. A5/A6 — test migrate v4→v5, shop/breeding với species mới, manifest không id trùng/thiếu; build + e2e.
+
+## 7. Kết quả (2026-10-02)
+
+| Task | Tag | Kết quả |
+|---|---|---|
+| A1 | — | Audit này |
+| A2 | a2 | Gỡ toàn bộ Bộ đồ/clothing; save v5 (hoàn tiền bộ đồ, robot/kỳ lân → species); manifest v3 |
+| A3 | a3 | 19 → 27 species, đủ art production (coat + trait hình khối, hoặc cắt từ sheet); 8 mutation mới; catalogue + proposal |
+| A4 | a4 | 5 building + 6 prop cắt từ sheet building mới, 11 decor mới, biển vẽ sẵn thay nhãn chữ; chuẩn hình ảnh `ENVIRONMENT_CATALOGUE.md` §A4 |
+| A5/A6 | a6 | e2e Electron: migrate v4→v5 + 11 species mới hiển thị, sổ sưu tập, khởi động lại; test mua species mới, mutation mới, building load; `npm run check` 475 test, `assets:release` OK, sim:economy OK |

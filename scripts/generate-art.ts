@@ -1,8 +1,9 @@
 // Generated art + sound for the v1 manifest (art standard §10 waves 1–2), drawn with one style kit
 // (scripts/art/kit.ts) so every family matches the reference sheets. Writes raw files into
 // art_inbox/ for `npm run art:process`, and the app icon into build/.
-// Usage: npm run art:generate && npm run art:cut && npm run art:process (art:cut overwrites the pigs
-// that exist in asset/reference/ with cut-outs of the reference art).
+// Usage: npm run art:generate && npm run art:cut && npm run art:buildings && npm run art:process
+// (art:cut / art:buildings overwrite the pigs, buildings and props that exist in asset/reference/ and
+// asset/building/ with cut-outs of the reference art).
 import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ICON_FILES, appIconSvg } from './art/icons';
