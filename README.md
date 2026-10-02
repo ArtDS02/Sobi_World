@@ -2,7 +2,8 @@
 
 Game nuôi heo nhàn cho **Windows**, chơi đơn, chạy hoàn toàn trên máy: không tài khoản, không máy chủ,
 không cần mạng — kể cả lần mở đầu tiên. Mua heo con, đổ máng ăn, tắm, chữa bệnh, cho lớn rồi bán; heo càng
-vui vẻ bán càng được giá. Phối giống ra giống hiếm, nhận đơn hàng NPC, sưu tầm giống và bộ đồ.
+vui vẻ bán càng được giá. Phối giống ra giống hiếm, nhận đơn hàng NPC, sưu tầm 69 giống heo, săn thành
+tích, nhận quà mỗi ngày và trang trí nông trại.
 
 Đặc tả: `UN_IN_GAME_SPEC_v4_SOLO.md` (v4.1) · luật vẽ: `asset/ASSET_PRODUCTION_STANDARD_v1.md` ·
 quyết định đã chốt: [`DECISIONS.md`](DECISIONS.md) · trạng thái: [`PROJECT_STATUS.md`](PROJECT_STATUS.md) ·
@@ -66,6 +67,8 @@ Luồng: `UI → store.dispatch(action) → advanceWorld → action → lưu →
   này; cài lại hoặc cài bản mới đè lên vẫn giữ nông trại (bản mới tự migrate save cũ).
 - Ghi **atomic**: ghi file tạm → flush → đổi tên; tắt máy giữa chừng không làm hỏng `save.json`.
 - **Backup**: giữ 10 bản gần nhất trong `saves\backups\` (Cài đặt → Bản sao lưu → Khôi phục).
+- **Chơi lại từ đầu** (Cài đặt, xác nhận 2 lần): nông trại cũ được cất thành 1 bản sao lưu khôi phục được và
+  1 bản giữ vĩnh viễn `saves\before-reset-YYYYMMDD-HHmmss.json`.
 - Hỏng file: tự lùi về backup hợp lệ mới nhất; file hỏng được đổi tên `save.corrupt-YYYYMMDD-HHmmss.json`, không
   bao giờ bị xoá. Hỏng hết → màn khôi phục: chọn bản sao lưu, nhập file, hoặc bắt đầu mới (có xác nhận).
 - Ghi lỗi → banner "Chưa lưu được — đang thử lại…", thử lại 1 s → 5 s → 30 s, dữ liệu trong bộ nhớ được giữ.
@@ -120,8 +123,8 @@ Thông tin tự liệt kê. Thêm asset mới: chỉ dùng tác phẩm tự làm
 - Chỉ Windows (v1). Không có thông báo nền khi game tắt (heo vẫn lớn, máng vẫn được ăn theo thời gian thật).
 - Save theo từng người dùng Windows; chuyển máy bằng chép thư mục hoặc Xuất/Nhập.
 - Installer chưa ký số (SmartScreen hỏi một lần).
-- Hết vàng mà máng trống (hoặc heo bệnh mà hết thuốc) thì heo con dừng ở 33 % và không bán được — người chơi
-  có thể kẹt; spec chưa có cách gỡ (xem `PROJECT_STATUS.md`).
+- Hết vàng mà máng trống (hoặc heo bệnh mà hết thuốc) và không còn heo bán được: "Bác hàng xóm" hiện trên
+  nông trại, tặng thức ăn / thuốc / vốn mua heo (DECISIONS PG-1) — không còn kẹt.
 
 ---
 
@@ -186,8 +189,9 @@ Các điểm spec để ngỏ hoặc tự mâu thuẫn, đã chốt trong `DECIS
 | 28 | `prefers-reduced-motion` là giá trị đầu | PASS | `visualStates.test.ts` |
 | 29 | Đã thử trên Windows không có Node | **CHƯA** | cần người kiểm (xem `PROJECT_STATUS.md`) |
 
-§15: Phase 1–3 đạt. Phase 4: asset v1 đủ (production); còn chờ installer (`dist:win` EPERM) và thử trên máy không có Node.
-Phase 5: installer cấu hình đủ, e2e §14.8 xanh; còn chờ build installer 1.0.0 và thử trên máy không có Node.
+§15: Phase 1–3 đạt. Phase 4: asset v1 đủ (production). Phase 5: `UnInHomemade-Setup-1.0.0.exe` build được
+(`electronDist` = Electron trong node_modules, tránh EPERM khi đổi tên thư mục giải nén), e2e §14.8 xanh; còn
+chờ thử trên máy không có Node.
 
 ---
 

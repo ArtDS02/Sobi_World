@@ -62,6 +62,7 @@
     "appId": "com.uninhomemade.game",
     "productName": "Ủn Ỉn Homemade",
     "executableName": "UnInHomemade",
+    "electronDist": "node_modules/electron/dist",
     "directories": {
       "output": "release",
       "buildResources": "build"

@@ -1,5 +1,5 @@
 // A5 integration (production build, temp user data): a v4 save with outfits migrates on launch
-// (refund + body outfit → species) and is written back as v5; a farm holding the new species
+// (refund + body outfit → species) and is written back as the current version (v6); a farm holding the new species
 // renders them, lists them in the collection and keeps them across a restart.
 import { _electron as electron, expect, test, type ElectronApplication } from '@playwright/test';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -75,7 +75,7 @@ async function withTemp(run: (dir: string) => Promise<void>) {
   }
 }
 
-test('v4 save with outfits: refunded, robot body becomes a species, written back as v5', async () => {
+test('v4 save with outfits: refunded, robot body becomes a species, written back as v6', async () => {
   await withTemp(async (dir) => {
     const v4 = base(4, 4);
     seed(dir, {
@@ -95,11 +95,12 @@ test('v4 save with outfits: refunded, robot body becomes a species, written back
     await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
     await expect(page.locator('.topbar')).toContainText('9.000'); // 1000 + 2000 + 6000 refunded
     await page.locator('.topbar__nav').getByRole('button', { name: 'Cửa hàng' }).click();
-    await expect(page.locator('.shop__tab')).toHaveText(['Heo giống', 'Vật phẩm', 'Chuồng']);
+    await expect(page.locator('.shop__tab')).toHaveText(['Heo giống', 'Vật phẩm', 'Chuồng', 'Trang trí']);
     await page.keyboard.press('Escape');
     await app.close();
     const s = readSave(dir);
-    expect(s.schemaVersion).toBe(5);
+    expect(s.schemaVersion).toBe(6);
+    expect(s.decor).toEqual([]);
     expect(s.pigs.map((p: { breed: string }) => p.breed)).toEqual(['PIG_ROBOT', 'PIG_EARTH_PINK']);
     expect(s.player.gold).toBe(9000);
     expect(JSON.stringify(s)).not.toMatch(/skinId|ownedSkins|cosmetics|discoveredSkins/);

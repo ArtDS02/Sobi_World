@@ -286,3 +286,6 @@ Phase: PG.
 
 **PG-5** · Dọn art. `pig_panda`: quầng mắt cũ chỉ to bằng con mắt (tô đen tròng, không thành quầng) → blob rộng hơn quanh mắt, mảng đen dời lên vạt tai, dải chân chỉ dưới đường bụng (`coats.ts`), cắt lại + `art:sleep`. Xoá `pig_alien_v4` (trùng byte `pig_alien_v3`). Âm lượng: không có ffmpeg → đo RMS bằng WebAudio trong bản dev (nhạc −15,4 dB, SFX −16…−18 dB, `level_up` −9,6 dB) và chỉnh `volume` manifest thay vì mã hoá lại: `music_farm` 0,6 → 0,35 (≈7 dB dưới SFX), `level_up` 0,8 → 0,45. `pig_ai`, `pig_space` (ảnh nguồn chưa nhập game) vẫn cần vẽ lại bằng model ảnh — không làm được trong session.
 Phase: PG.
+
+**PG-6** · Installer: lỗi EPERM (`release/win-unpacked.tmp` → `win-unpacked` bị khoá lúc đổi tên, nghi antivirus quét `electron.exe` vừa giải nén) tránh bằng `build.electronDist = "node_modules/electron/dist"` — electron-builder copy thẳng bản Electron đã cài (đúng version của dependency) thay vì giải nén zip + đổi tên. `npm run dist:win` → `release/UnInHomemade-Setup-1.0.0.exe`. Thay U00-1 D5: bản này là v1.0.0 (tag `v1.0.0`). Bản đóng gói bỏ qua `UNIN_USER_DATA` nên không chạy thử trên save thật; e2e chạy cùng mã chưa đóng gói.
+Phase: PG.
