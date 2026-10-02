@@ -96,7 +96,9 @@ Art: một hướng side-view nhìn phải + flip (D23), 512×512, theo `asset/r
 | PIG_VALKYRIE | Heo Valkyrie | RARE | FANTASY | mũ cánh, giáo | — | lai | U `pig_valkyrie` |
 | PIG_THOR | Heo Thor | RARE | FANTASY | búa | — | lai | U `pig_thor` |
 
-Ngoài mutation, mọi cặp còn ra: cùng loài 60 · cùng family 25 · bậc +1 9 · bậc +2 1 (`BREEDING_RULES`).
+Lai giống (DECISIONS PS-2, `BREEDING_RULES`): bậc hiếm của con theo bậc bố mẹ (cùng bậc: thấp hơn 8 · cùng 80 · +1 10 · +2 1,5; khác bậc: thấp 44 · giữa 30 · cao 22 · trên 3), bậc hiếm hơn nhân theo độ hợp; trong bậc thì loài bố/mẹ > cùng family > trait chung (`config/speciesTraits.ts`) > còn lại; mutation cộng thêm. Báo cáo: `npm run breeding:report -- --all`.
+
+Ngủ/thức (PS-1): mỗi art có `<id>_sleep.png` + `<id>_wake.png` dẫn xuất từ idle (`npm run art:sleep`, chạy lại sau khi đổi idle).
 
 **Backend art:** U = ảnh user vẽ sẵn trong `asset/animals/asset/` (A7, chép nguyên vào `pigs/base/`); R = cắt nguyên từ sheet reference (`npm run art:cut`); R+tint = cắt + đổi màu giữ bóng;
 R+coat = `pig_classic` + hoa văn lông (`scripts/assets/coats.ts`); R+trait = thêm hình khối (lông, mang, sừng, gạc,
