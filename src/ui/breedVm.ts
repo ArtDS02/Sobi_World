@@ -2,11 +2,12 @@
 // pregnancy length of each pairing. Availability comes from dry-running the real breedPigs.
 import { breedPigs } from '../core/actions/breedPigs';
 import { BALANCE } from '../core/config/balance';
-import { breedingOutcomes } from '../core/config/breedingMatrix';
+import { BREEDING_RULES } from '../core/config/breedingRules';
+import { breedingOutcomes, type BreedingOutcome } from '../core/engine/breedingOdds';
 import { BREEDS } from '../core/config/breeds';
 import type { ErrorCode } from '../core/config/errors';
 import type { Pig, SaveGame } from '../core/types';
-import { formatDuration, formatInt, t } from '../i18n/format';
+import { formatDuration, formatInt, formatPercent, t } from '../i18n/format';
 import { vi } from '../i18n/vi';
 import { probe, reasonFor, type ActionVm } from './actionsVm';
 
@@ -43,6 +44,16 @@ function sharedReason(errors: ErrorCode[]): string {
   return vi.disabled.noPartner;
 }
 
+/** Top results by name, the long tail as one "other" line. */
+function chanceLines(outcomes: readonly BreedingOutcome[]): string[] {
+  const shown = outcomes.slice(0, BREEDING_RULES.CHANCES_SHOWN);
+  const rest = outcomes.slice(shown.length).reduce((sum, o) => sum + o.weight, 0);
+  const lines = shown.map(
+    (o) => `${BREEDS[o.breed].nameVi} ${t(vi.ui.percent, { n: formatPercent(o.weight) })}`,
+  );
+  return rest > 0 ? [...lines, t(vi.breed.otherChance, { n: formatPercent(rest) })] : lines;
+}
+
 export function breedingVm(save: SaveGame, pig: Pig, now: number): BreedingVm {
   const partners: PartnerVm[] = [];
   const errors: ErrorCode[] = [];
@@ -55,15 +66,11 @@ export function breedingVm(save: SaveGame, pig: Pig, now: number): BreedingVm {
       continue;
     }
     const mother = pig.gender === 'FEMALE' ? pig : other;
-    const outcomes = [...(breedingOutcomes(pig.breed, other.breed) ?? [])].sort(
-      (a, b) => b.weight - a.weight,
-    );
+    const outcomes = breedingOutcomes(pig.breed, other.breed) ?? []; // most likely first
     partners.push({
       pigId: other.id,
       label: `${other.name} · ${BREEDS[other.breed].nameVi} · ${vi.gender[other.gender]}`,
-      chances: outcomes.map(
-        (o) => `${BREEDS[o.breed].nameVi} ${t(vi.ui.percent, { n: o.weight })}`,
-      ),
+      chances: chanceLines(outcomes),
       duration: t(vi.breed.duration, {
         time: formatDuration((BREEDS[mother.breed].pregnancySec ?? 0) * 1000),
       }),

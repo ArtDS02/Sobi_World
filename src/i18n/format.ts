@@ -32,6 +32,11 @@ export const formatDateTime = (at: number): string => dateTimeFormat.format(at);
 /** Grouped integer, e.g. 8.420. */
 export const formatInt = (n: number): string => intFormat.format(Math.floor(n));
 
+const pctFormat = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 });
+
+/** Percent figure: one decimal below 10 (e.g. 0,6), whole above (e.g. 63). */
+export const formatPercent = (n: number): string => pctFormat.format(n < 10 ? n : Math.round(n));
+
 /** Two-decimal number, e.g. 1,11. */
 export const formatDec = (n: number): string => decFormat.format(n);
 

@@ -1,38 +1,73 @@
 import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../../src/core/config/balance';
-import { BREEDING_MATRIX, breedingOutcomes, matrixKey } from '../../src/core/config/breedingMatrix';
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
 import { careRates } from '../../src/core/config/care';
 import { ERRORS } from '../../src/core/config/errors';
 import type { BreedId } from '../../src/core/config/ids';
 import { levelFromXp, troughCapacityForLevel } from '../../src/core/config/levels';
 import { RARITY_VALUES, rarityRank } from '../../src/core/config/rarity';
+import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
 import { STARTER_SKINS } from '../../src/core/config/skins';
 import { vi } from '../../src/i18n/vi';
 
-// The pair matrix only knows the four v1 breeds; U03 replaces it with rules for every species.
 const V1: BreedId[] = ['PIG_EARTH_PINK', 'PIG_STRIPED_MELON', 'PIG_SUPERMAN', 'PIG_MYTHICAL'];
-const NON_MYTHICAL = V1.filter((b) => b !== 'PIG_MYTHICAL');
+const BREEDABLE = BREED_IDS.filter((b) => BREEDS[b].breedable);
+const odds = (a: BreedId, b: BreedId) =>
+  Object.fromEntries(breedingOutcomes(a, b)!.map((o) => [o.breed, o.weight]));
 
-describe('breeding matrix (§6.5)', () => {
-  it('every entry sums to 100', () => {
-    for (const [key, outcomes] of Object.entries(BREEDING_MATRIX)) {
-      expect(outcomes.reduce((s, o) => s + o.weight, 0), key).toBe(100);
-    }
-  });
-
-  it('A+B is the same entry as B+A and covers every non-MYTHICAL pair (D9)', () => {
-    for (const a of NON_MYTHICAL) {
-      for (const b of NON_MYTHICAL) {
-        expect(matrixKey(a, b)).toBe(matrixKey(b, a));
-        expect(breedingOutcomes(a, b)).toBeDefined();
-        expect(breedingOutcomes(a, b)).toBe(breedingOutcomes(b, a));
+describe('breeding rules (§6.5 as rules, U00-1 D4)', () => {
+  it('every breedable pair has outcomes summing to 100, and A+B equals B+A', () => {
+    for (const a of BREEDABLE) {
+      for (const b of BREEDABLE) {
+        const out = breedingOutcomes(a, b)!;
+        expect(
+          out.reduce((s, o) => s + o.weight, 0),
+          `${a}:${b}`,
+        ).toBeCloseTo(100, 9);
+        expect(out).toEqual(breedingOutcomes(b, a));
       }
     }
   });
 
-  it('has no MYTHICAL parent entry (D10)', () => {
+  it('LEGENDARY parents cannot breed (D10)', () => {
     for (const b of BREED_IDS) expect(breedingOutcomes('PIG_MYTHICAL', b)).toBeUndefined();
+    for (const b of BREED_IDS) expect(breedingOutcomes(b, 'PIG_PHOENIX')).toBeUndefined();
+  });
+
+  it('pink x pink: mostly pink, then family, rare results rarer still', () => {
+    const o = odds('PIG_EARTH_PINK', 'PIG_EARTH_PINK');
+    expect(o.PIG_EARTH_PINK).toBeGreaterThan(50);
+    expect(o.PIG_WHITE).toBeGreaterThan(o.PIG_STRIPED_MELON! / 2);
+    expect(o.PIG_TIGER).toBeLessThan(1);
+    expect(o.PIG_KOI).toBeUndefined(); // three tiers up: never
+  });
+
+  it('same species beats different species; rarity lowers the odds', () => {
+    for (const a of BREEDABLE) {
+      const o = odds(a, a);
+      const best = Math.max(...Object.values(o));
+      expect(o[a], a).toBe(best);
+      for (const [child, w] of Object.entries(o)) {
+        const up = rarityRank(BREEDS[child as BreedId].rarity) - rarityRank(BREEDS[a].rarity);
+        if (up === 2) expect(w, `${a} -> ${child}`).toBeLessThan(2);
+      }
+    }
+  });
+
+  it('mutations add their special result (white x black can give a panda)', () => {
+    expect(odds('PIG_WHITE', 'PIG_BLACK').PIG_PANDA).toBeGreaterThan(
+      odds('PIG_WHITE', 'PIG_WHITE').PIG_PANDA ?? 0,
+    );
+    expect(odds('PIG_KOI', 'PIG_DRAGONLING').PIG_MYTHICAL).toBeGreaterThan(0);
+  });
+
+  it('every species can be obtained: bought, or bred from some pair', () => {
+    const bred = new Set(
+      BREEDABLE.flatMap((a) =>
+        BREEDABLE.flatMap((b) => breedingOutcomes(a, b)!.map((o) => o.breed)),
+      ),
+    );
+    for (const id of BREED_IDS) expect(BREEDS[id].buyGold !== null || bred.has(id), id).toBe(true);
   });
 });
 

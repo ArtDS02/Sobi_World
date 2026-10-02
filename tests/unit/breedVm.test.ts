@@ -14,7 +14,10 @@ describe('breedingVm (§10.2)', () => {
     const vm = breedingVm(s, dad, 0);
     expect(vm.button.reason).toBeNull();
     expect(vm.partners.map((p) => p.pigId)).toEqual(['mom', 'sis']);
-    expect(vm.partners[0]!.chances).toEqual(['Heo Hồng Đất 90%', 'Heo Sọc Dưa 10%']);
+    const chances = vm.partners[0]!.chances;
+    expect(chances).toHaveLength(5); // 4 named + the rest
+    expect(chances[0]).toMatch(/^Heo Hồng Đất \d+%$/);
+    expect(chances[4]).toMatch(/^Giống khác [\d,]+%$/);
     expect(vm.partners[0]!.duration).toContain('1 giờ');
     expect(vm.fee).toContain('200');
   });

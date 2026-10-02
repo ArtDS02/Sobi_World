@@ -1,7 +1,7 @@
 // breedPigs (spec §8.8): validation in the spec's exact order; the child (breed + gender) is
 // drawn now from the injected rng and stored on the mother, so it can never change later.
 import { BALANCE } from '../config/balance';
-import { breedingOutcomes } from '../config/breedingMatrix';
+import { breedingOutcomes } from '../engine/breedingOdds';
 import { BREEDS } from '../config/breeds';
 import { SAVE } from '../config/save';
 import type { ErrorCode } from '../config/errors';
@@ -29,9 +29,7 @@ export function breedingError(
   if (a.isSick || b.isSick) return 'PIG_IS_SICK';
   if (a.pregnancy || b.pregnancy) return 'PIG_IS_PREGNANT';
   if (a.gender === b.gender) return 'INVALID_BREEDING_PARTNERS';
-  const supported =
-    BREEDS[a.breed].breedable && BREEDS[b.breed].breedable && breedingOutcomes(a.breed, b.breed);
-  if (!supported) return 'BREEDING_COMBINATION_NOT_SUPPORTED';
+  if (!breedingOutcomes(a.breed, b.breed)) return 'BREEDING_COMBINATION_NOT_SUPPORTED';
   if (freeSlots(s) < 1) return 'NO_PIG_SLOT'; // reserves the child's slot (D8)
   return null;
 }

@@ -1,6 +1,6 @@
 // Breeding outcome and births (spec §6.5, §8.8, §8.9).
 import { BALANCE } from '../config/balance';
-import { breedingOutcomes, type BreedingOutcome } from '../config/breedingMatrix';
+import { breedingOutcomes, type BreedingOutcome } from './breedingOdds';
 import { BREEDS } from '../config/breeds';
 import type { BreedId, Gender } from '../config/ids';
 import type { GameEvent } from '../events';
@@ -10,7 +10,7 @@ import { advancePig } from './advancePig';
 import { discoverBreed } from './collection';
 import { pickPigName } from './pigNames';
 
-/** Weighted pick; weights sum to 100 (§6.5). rng.next() in [0, 1). */
+/** Weighted pick over relative weights. rng.next() in [0, 1). */
 export function weightedPick(rng: Rng, outcomes: readonly BreedingOutcome[]): BreedId {
   const total = outcomes.reduce((sum, o) => sum + o.weight, 0);
   let roll = rng.next() * total;

@@ -192,6 +192,7 @@ export const vi = {
     title: "Chọn bạn phối",
     fee: "Phí phối giống: {gold} vàng",
     chances: "Tỉ lệ ra giống con",
+    otherChance: "Giống khác {n}%",
     duration: "Thời gian mang thai: {time}",
     noPartners: "Chưa có con nào đủ điều kiện phối với {name}.",
     confirm: "Phối giống",

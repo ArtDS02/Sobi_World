@@ -2,11 +2,11 @@
 import { describe, expect, it } from 'vitest';
 import { breedPigs } from '../../src/core/actions/breedPigs';
 import { buyPig } from '../../src/core/actions/buyPig';
-import { BREEDING_MATRIX, matrixKey } from '../../src/core/config/breedingMatrix';
 import { BREEDS } from '../../src/core/config/breeds';
 import type { BreedId } from '../../src/core/config/ids';
 import { advanceWorld } from '../../src/core/engine/advanceWorld';
 import { rollChild } from '../../src/core/engine/breeding';
+import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
 import { freeSlots } from '../../src/core/engine/derived';
 import { mulberry32, sequenceRng } from '../../src/core/rng';
 import type { Pig, SaveGame } from '../../src/core/types';
@@ -30,14 +30,8 @@ function bred(m: Partial<Pig> = {}, d: Partial<Pig> = {}, rng = mulberry32(3)): 
 }
 const mother = (s: SaveGame) => s.pigs.find((p) => p.id === 'mom')!;
 
-describe('breeding matrix and outcome (§6.5)', () => {
-  it('every entry sums to 100; A+B resolves like B+A', () => {
-    for (const outcomes of Object.values(BREEDING_MATRIX)) {
-      expect(outcomes.reduce((s, o) => s + o.weight, 0)).toBe(100);
-    }
-    expect(matrixKey('PIG_SUPERMAN', 'PIG_EARTH_PINK')).toBe(
-      matrixKey('PIG_EARTH_PINK', 'PIG_SUPERMAN'),
-    );
+describe('breeding outcome (§6.5 as rules, U00-1 D4)', () => {
+  it('A+B resolves like B+A', () => {
     const a = rollChild(sequenceRng([0.97, 0.2]), 'PIG_EARTH_PINK', 'PIG_STRIPED_MELON');
     const b = rollChild(sequenceRng([0.97, 0.2]), 'PIG_STRIPED_MELON', 'PIG_EARTH_PINK');
     expect(a).toEqual(b);
@@ -45,8 +39,13 @@ describe('breeding matrix and outcome (§6.5)', () => {
 
   it('seeded 10,000-sample distribution within 1.5 points of every weight', () => {
     const rng = mulberry32(2024);
-    for (const [key, outcomes] of Object.entries(BREEDING_MATRIX)) {
-      const [x, y] = key.split(':') as [BreedId, BreedId];
+    const pairs: [BreedId, BreedId][] = [
+      ['PIG_EARTH_PINK', 'PIG_EARTH_PINK'],
+      ['PIG_WHITE', 'PIG_BLACK'],
+      ['PIG_BOAR', 'PIG_BROWN'],
+      ['PIG_KOI', 'PIG_DRAGONLING'],
+    ];
+    for (const [x, y] of pairs) {
       const counts = new Map<BreedId, number>();
       let males = 0;
       for (let i = 0; i < 10_000; i++) {
@@ -54,7 +53,7 @@ describe('breeding matrix and outcome (§6.5)', () => {
         counts.set(c.breed, (counts.get(c.breed) ?? 0) + 1);
         if (c.gender === 'MALE') males += 1;
       }
-      for (const o of outcomes)
+      for (const o of breedingOutcomes(x, y)!)
         expect(Math.abs((counts.get(o.breed) ?? 0) / 100 - o.weight)).toBeLessThan(1.5);
       expect(Math.abs(males / 100 - 50)).toBeLessThan(1.5);
     }
