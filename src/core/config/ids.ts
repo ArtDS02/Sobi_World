@@ -24,6 +24,12 @@ export const BREED_ID_VALUES = [
   'PIG_PHOENIX',
   'PIG_ROBOT',
   'PIG_UNICORN',
+  'PIG_BUFFALO',
+  'PIG_DEER',
+  'PIG_PUMPKIN',
+  'PIG_SUNFLOWER',
+  'PIG_HEDGEHOG',
+  'PIG_TURTLE',
 ] as const;
 export const ITEM_ID_VALUES = ['FOOD_BASIC', 'MEDICINE_COMMON'] as const;
 export const TRANSACTION_TYPE_VALUES = [

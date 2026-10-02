@@ -48,7 +48,7 @@
     },
     {
       "id": "pig_sheep",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Cừu",
       "collection": "species",
       "asset": "pigs/base/pig_sheep.png",
@@ -93,7 +93,7 @@
     },
     {
       "id": "pig_axolotl",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Kỳ Giông",
       "collection": "species",
       "asset": "pigs/base/pig_axolotl.png",
@@ -129,7 +129,7 @@
     },
     {
       "id": "pig_phoenix",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Phượng Hoàng",
       "collection": "species",
       "asset": "pigs/base/pig_phoenix.png",
@@ -186,6 +186,60 @@
       "collection": "species",
       "asset": "pigs/base/pig_unicorn.png",
       "tags": ["fantasy", "magic"]
+    },
+    {
+      "id": "pig_buffalo",
+      "status": "production",
+      "nameVi": "Heo Trâu",
+      "collection": "species",
+      "asset": "pigs/base/pig_buffalo.png",
+      "sleepAsset": null,
+      "tags": ["species"]
+    },
+    {
+      "id": "pig_deer",
+      "status": "production",
+      "nameVi": "Heo Hươu Sao",
+      "collection": "species",
+      "asset": "pigs/base/pig_deer.png",
+      "sleepAsset": null,
+      "tags": ["species"]
+    },
+    {
+      "id": "pig_pumpkin",
+      "status": "production",
+      "nameVi": "Heo Bí Ngô",
+      "collection": "species",
+      "asset": "pigs/base/pig_pumpkin.png",
+      "sleepAsset": null,
+      "tags": ["species"]
+    },
+    {
+      "id": "pig_sunflower",
+      "status": "production",
+      "nameVi": "Heo Hướng Dương",
+      "collection": "species",
+      "asset": "pigs/base/pig_sunflower.png",
+      "sleepAsset": null,
+      "tags": ["species"]
+    },
+    {
+      "id": "pig_hedgehog",
+      "status": "production",
+      "nameVi": "Heo Nhím",
+      "collection": "species",
+      "asset": "pigs/base/pig_hedgehog.png",
+      "sleepAsset": null,
+      "tags": ["species"]
+    },
+    {
+      "id": "pig_turtle",
+      "status": "production",
+      "nameVi": "Heo Rùa",
+      "collection": "species",
+      "asset": "pigs/base/pig_turtle.png",
+      "sleepAsset": null,
+      "tags": ["species"]
     }
   ],
   "fx": [

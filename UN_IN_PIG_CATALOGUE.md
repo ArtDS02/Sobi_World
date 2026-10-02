@@ -1,52 +1,59 @@
 # UN IN — PIG SPECIES CATALOGUE
 
-Danh mục **species** (loài heo) của game — nguồn: `PIG_CONCEPT_PROPOSAL.md` (duyệt 2026-10-02, U00-1).
-Số liệu thật nằm ở `src/core/config/breeds.ts` (bảng này chỉ để đọc; lệch thì code thắng). Art: một hướng
-side-view nhìn phải + flip (D23), 512×512, theo `asset/reference/style_reference_pigs.png`.
+Danh mục **species** (loài heo) của game. Concept chi tiết: `PIG_CONCEPT_PROPOSAL.md`. Số liệu thật ở
+`src/core/config/breeds.ts`, luật lai ở `src/core/config/breedingRules.ts` (bảng này chỉ để đọc; lệch thì code thắng).
+Art: một hướng side-view nhìn phải + flip (D23), 512×512, theo `asset/reference/style_reference_pigs.png`.
 
-- **Species** = thân/da/lông → quyết định giá, thời gian lớn, lai, sưu tập. Đổi species = đổi con heo.
-- **Skin** = ảnh trang phục trọn thân vẽ trên thân hồng → chỉ mặc cho `PIG_EARTH_PINK` (D6), không đổi số nào.
-- **Clothing** = lớp đồ (mũ/áo/phụ kiện) — mới có data foundation (`config/clothing.ts`), chưa dùng (D1).
+- **Species** = thân/da/lông → quyết định giá, thời gian lớn, lai, sưu tập. Hình của heo = `BREEDS[breed].artId`.
+- **Không có bộ đồ / clothing / phụ kiện** (DECISIONS A2-1).
 - **Thêm species**: 1 dòng `BREEDS` (+ id trong `ids.ts`) + 1 dòng manifest `pigs[]` (status `placeholder`) →
-  `npm run assets:placeholders`. Chỉ số lấy theo `RARITY_TIER`, dòng species chỉ ghi phần khác.
+  `npm run assets:placeholders`. Chỉ số theo `RARITY_TIER`; tuỳ chọn 1 mutation trong `breedingRules.ts`.
 
 ## Rarity
 
-| Rarity | Key skin | Giá bán | Lớn | Lai | Trong shop |
-|---|---|---|---|---|---|
-| COMMON | P1 | 1.200 | 2h | có | có (500) |
-| UNCOMMON | P2 | 3.000 | 4h | có | một số, theo cấp |
-| RARE | P3 | 12.000 | 8h | có | một số, theo cấp |
-| EPIC | P4 | 24.000 | 16h | có | không |
-| LEGENDARY | P5 | 50.000 | 24h | **không** | không |
+| Rarity | Giá bán | Lớn | Lai | Trong shop |
+|---|---|---|---|---|
+| COMMON | 1.200 | 2h | có | có (500) |
+| UNCOMMON | 3.000 | 4h | có | một số, theo cấp |
+| RARE | 12.000 | 8h | có | một số, theo cấp |
+| EPIC | 24.000 | 16h | có | không |
+| LEGENDARY | 50.000 | 24h | **không** | không |
 
-## Species
+## Species (27)
 
-| Pig ID | Tên | Cảm hứng | Rarity | Family | Mô tả | Đặc điểm nhận diện | Bảng màu | Ghi chú lai (U03) | Giá shop | Asset |
-|---|---|---|---|---|---|---|---|---|---|---|
-| PIG_EARTH_PINK | Heo Hồng Đất | — | COMMON | FARM | heo hồng cổ điển, chuẩn của cả bộ | — | hồng #F7B8C4 | khởi đầu | 500 · cấp 1 | ✅ production `pig_classic` |
-| PIG_WHITE | Heo Trắng | heo Yorkshire | COMMON | FARM | thân kem trắng, tai hồng nhạt | sáng nhất bộ | kem #FFF4EA | WHITE×BLACK → PANDA (mutation) | 500 · cấp 1 | ✅ production `pig_white` |
-| PIG_BLACK | Heo Đen | heo Mường / Ỉ | COMMON | FARM | đen than mềm, mõm hồng xám | mắt sáng trên nền tối | than #3D3540 | BLACK×MYTHIC → GALAXY | 500 · cấp 1 | ✅ production `pig_black` |
-| PIG_BROWN | Heo Nâu | heo Duroc | COMMON | FARM | nâu đỏ ấm, bụng kem | màu đất | nâu #B9744F | BROWN×BOAR ↑ TIGER | 500 · cấp 2 | ✅ production `pig_brown` |
-| PIG_SPOTTED | Heo Đốm | heo lang | COMMON | FARM | hồng, 3–4 mảng nâu lớn | đốm to không đối xứng | hồng + nâu #8C5A3C | — | 500 · cấp 3 | ✅ production `pig_spotted` |
-| PIG_STRIPED_MELON | Heo Sọc Dưa | dưa hấu | UNCOMMON | MEADOW | xanh sọc dọc, mầm lá trên đầu | sọc + mầm | #8FD18A / #3E8E4A | từ FARM | lai ra | ✅ production `pig_watermelon` |
-| PIG_BOAR | Heo Rừng | lợn rừng | UNCOMMON | WILD | nâu xám, bờm lông dọc sống lưng, 2 nanh mini tròn | bờm + nanh (không nhọn) | #7A6250, bờm #4E3B30 | mở đường WILD | 1.500 · cấp 3 | ✅ production `pig_boar` (R+coat) |
-| PIG_SHEEP | Heo Cừu | cừu / heo Mangalica | UNCOMMON | MEADOW | thân phủ lông xoăn kem, mặt + chân trần | lông cuộn bồng | #F5EBDD | WHITE×WHITE | 1.500 · cấp 4 | ⬜ placeholder `pig_sheep` — cần model ảnh (brief `art_inbox/.briefs/pig_sheep.md`) |
-| PIG_BEE | Heo Ong | ong mật | UNCOMMON | MEADOW | vàng sọc đen ngang, cánh trong nhỏ, 2 râu tròn | sọc ngang + cánh mini | #F6C944 / #3B2E2A | MELON×SHEEP | lai ra | ✅ production `pig_bee` (R, ô c3r3) |
-| PIG_PENGUIN | Heo Cánh Cụt | chim cánh cụt | UNCOMMON | WATER | lưng navy, bụng + mặt trắng, má vàng nhạt | "áo tux" tự nhiên | #33415C, trắng, #FFD873 | WHITE×BLACK | 1.800 · cấp 5 | ✅ production `pig_penguin` (R+coat) |
-| PIG_SUPERMAN | Heo Siêu Nhân | — | RARE | HERO | thân tím, áo choàng đỏ (v1) | áo choàng | #8C8FE6, đỏ | từ MELON | lai ra | ✅ production `pig_superhero` |
-| PIG_TIGER | Heo Hổ | hổ | RARE | WILD | cam, sọc đen ngắn trên trán + lưng, bụng + má trắng | sọc trán, má trắng | #F29A4A, đen, trắng | BOAR×BROWN, BOAR×BOAR | 7.000 · cấp 6 | ✅ production `pig_tiger` (R+coat) |
-| PIG_PANDA | Heo Gấu Trúc | gấu trúc | RARE | WILD | trắng; tai, 4 chân, quầng mắt đen tròn | quầng mắt (mắt vẫn to sáng) | trắng, #2E2A2E | **WHITE×BLACK mutation** | lai ra | ✅ production `pig_panda` (R+coat) |
-| PIG_AXOLOTL | Heo Kỳ Giông | kỳ giông | RARE | WATER | hồng pastel, 3 cặp chùm mang xù sau tai | mang như san hô | #FFC4D6, mang #F07AA0 | PENGUIN×PINK | 7.000 · cấp 7 | ⬜ placeholder `pig_axolotl` — cần model ảnh (brief `art_inbox/.briefs/pig_axolotl.md`) |
-| PIG_KOI | Heo Cá Chép | koi / cá chép hoá rồng | EPIC | WATER | trắng, mảng đỏ cam kiểu koi, tai dạng vây mềm | mảng koi + vây tai | trắng, #E8573E, vàng | AXOLOTL×WHITE; KOI×DRAGONLING → MYTHICAL | lai ra | ✅ production `pig_koi` (R+coat) |
-| PIG_DRAGONLING | Heo Rồng Con | rồng | EPIC | MYTHIC | xanh ngọc, vảy bụng kem, sừng nụ tròn, cánh dơi nhỏ | sừng nụ + cánh mini + gai lưng tròn | #5FC2A0, bụng #F3E3B5 | TIGER×SUPERMAN | lai ra | ✅ production `pig_dragonling` (R+tint, ô c4r3) |
-| PIG_GALAXY | Heo Ngân Hà | bầu trời đêm | EPIC | MYTHIC | tím đêm, đốm sao nhỏ phát sáng | sao trên thân, đuôi lấp lánh | #3B3A78, sao #FFF3B0 | BLACK×DRAGONLING | lai ra | ✅ production `pig_galaxy` (R+coat) |
-| PIG_MYTHICAL | Heo Thần Thoại | — | LEGENDARY | MYTHIC | vàng, cánh thiên thần, vương miện (v1) | cánh + vương miện | #F7D774 | không lai tiếp | lai ra | ✅ production `pig_thienlong` |
-| PIG_PHOENIX | Heo Phượng Hoàng | phượng hoàng | LEGENDARY | MYTHIC | đỏ cam → vàng, lông vũ ở tai, chỏm đầu, đuôi | lông lửa chuyển màu | #E8573E → #FFC94A | DRAGONLING×GALAXY; không lai tiếp | lai ra | ⬜ placeholder `pig_phoenix` — cần model ảnh (brief `art_inbox/.briefs/pig_phoenix.md`) |
+| Pig ID | Tên | Rarity | Family | Nhận diện | Mutation chính | Shop | Art |
+|---|---|---|---|---|---|---|---|
+| PIG_EARTH_PINK | Heo Hồng Đất | COMMON | FARM | heo hồng chuẩn | — | 500 · cấp 1 | R `pig_classic` |
+| PIG_WHITE | Heo Trắng | COMMON | FARM | thân kem trắng | WHITE×BLACK → PANDA/PENGUIN | 500 · cấp 1 | R+tint `pig_white` |
+| PIG_BLACK | Heo Đen | COMMON | FARM | đen than, mắt sáng | BLACK×BOAR → BUFFALO | 500 · cấp 1 | R `pig_black` |
+| PIG_BROWN | Heo Nâu | COMMON | FARM | nâu đỏ ấm | BROWN×BOAR → TIGER | 500 · cấp 2 | R+tint `pig_brown` |
+| PIG_SPOTTED | Heo Đốm | COMMON | FARM | mảng nâu lớn | SPOTTED×BROWN → DEER | 500 · cấp 3 | R `pig_spotted` |
+| PIG_STRIPED_MELON | Heo Sọc Dưa | UNCOMMON | MEADOW | sọc dưa + mầm lá | PINK×PINK | lai | R `pig_watermelon` |
+| PIG_BOAR | Heo Rừng | UNCOMMON | WILD | bờm sống lưng | BROWN×BROWN | 1.500 · cấp 3 | R+coat `pig_boar` |
+| PIG_SHEEP | Heo Cừu | UNCOMMON | MEADOW | mây lông xoăn trên thân + chỏm đầu | WHITE×WHITE | 1.500 · cấp 4 | R+trait `pig_sheep` |
+| PIG_BEE | Heo Ong | UNCOMMON | MEADOW | sọc vàng-đen, cánh, râu | MELON×SHEEP | lai | R `pig_bee` |
+| PIG_PENGUIN | Heo Cánh Cụt | UNCOMMON | WATER | lưng navy, bụng trắng | WHITE×BLACK | 1.800 · cấp 5 | R+coat `pig_penguin` |
+| PIG_BUFFALO | Heo Trâu | UNCOMMON | FARM | da xám đá, cặp sừng lưỡi liềm | BLACK×BOAR | 1.500 · cấp 4 | R+coat+trait `pig_buffalo` |
+| PIG_DEER | Heo Hươu Sao | UNCOMMON | MEADOW | lông vàng nâu đốm trắng, gạc nhỏ | SPOTTED×BROWN | lai | R+coat+trait `pig_deer` |
+| PIG_PUMPKIN | Heo Bí Ngô | UNCOMMON | MEADOW | thân bí ngô cam, cuống xoắn | PINK×MELON | lai | R `pig_pumpkin` |
+| PIG_SUPERMAN | Heo Siêu Nhân | RARE | HERO | thân tím, áo choàng đỏ | MELON×MELON | lai | R `pig_superhero` |
+| PIG_TIGER | Heo Hổ | RARE | WILD | cam sọc đen | BOAR×BROWN, BOAR×BOAR | 7.000 · cấp 6 | R+coat `pig_tiger` |
+| PIG_PANDA | Heo Gấu Trúc | RARE | WILD | trắng, mảng đen tai/chân | WHITE×BLACK | lai | R+coat `pig_panda` |
+| PIG_AXOLOTL | Heo Kỳ Giông | RARE | WATER | hồng pastel, 3 cặp mang san hô | PENGUIN×PINK | 7.000 · cấp 7 | R+coat+trait `pig_axolotl` |
+| PIG_SUNFLOWER | Heo Hướng Dương | RARE | MEADOW | vòng cánh hoa vàng quanh mặt | BEE×PUMPKIN | lai | R `pig_sunflower` |
+| PIG_HEDGEHOG | Heo Nhím | RARE | WILD | áo gai tròn nâu từ đỉnh đầu tới mông | BOAR×SHEEP | 7.000 · cấp 8 | R+coat+trait `pig_hedgehog` |
+| PIG_TURTLE | Heo Rùa | RARE | WATER | da xanh ô liu, mai vòm vảy lục giác | PENGUIN×MELON | lai | R+coat+trait `pig_turtle` |
+| PIG_KOI | Heo Cá Chép | EPIC | WATER | trắng mảng đỏ koi | AXOLOTL×WHITE | lai | R+coat `pig_koi` |
+| PIG_DRAGONLING | Heo Rồng Con | EPIC | MYTHIC | xanh ngọc, sừng nụ, cánh dơi | TIGER×SUPERMAN | lai | R+tint `pig_dragonling` |
+| PIG_GALAXY | Heo Ngân Hà | EPIC | MYTHIC | tím đêm đốm sao | BLACK×DRAGONLING | lai | R+coat `pig_galaxy` |
+| PIG_ROBOT | Heo Robot | EPIC | HERO | thân kim loại, mắt xanh, bánh xe | SUPERMAN×PENGUIN | lai | R `pig_robot` |
+| PIG_UNICORN | Heo Kỳ Lân | EPIC | MYTHIC | sừng vàng, bờm cầu vồng | SHEEP×SUPERMAN | lai | R `pig_unicorn` |
+| PIG_MYTHICAL | Heo Thần Thoại | LEGENDARY | MYTHIC | vàng, cánh, vương miện | KOI×DRAGONLING | lai | R `pig_thienlong` |
+| PIG_PHOENIX | Heo Phượng Hoàng | LEGENDARY | MYTHIC | thân lửa đỏ → vàng, mào + đuôi + cánh lông vũ | DRAGONLING×GALAXY | lai | R+coat+trait `pig_phoenix` |
 
-Luật vẽ khi chuyển art (U07, skill `image-to-asset`): giữ thân/mặt/mõm/tai/móng/đuôi xoắn của heo; chỉ mượn
-2–3 đặc điểm của con vật; không thay mõm, không tai nhọn, không cổ dài, không thân cá (`PIG_CONCEPT_PROPOSAL.md` §1).
+Ngoài mutation, mọi cặp còn ra: cùng loài 60 · cùng family 25 · bậc +1 9 · bậc +2 1 (`BREEDING_RULES`).
 
-**Backend art (U07):** R = cắt nguyên từ `asset/reference/style_reference_pigs.png`; R+tint = cắt + đổi màu giữ bóng;
-R+coat = heo hồng chuẩn (`pig_classic`) + hoa văn lông vẽ bằng code (`scripts/assets/coats.ts`), giữ nguyên nét
-viền, mắt, mõm và đổ bóng gốc. Ba loài cần thêm hình (lông xoăn, mang, lông vũ) phải dùng model ảnh — brief sẵn.
+**Backend art:** R = cắt nguyên từ sheet reference (`npm run art:cut`); R+tint = cắt + đổi màu giữ bóng;
+R+coat = `pig_classic` + hoa văn lông (`scripts/assets/coats.ts`); R+trait = thêm hình khối (lông, mang, sừng, gạc,
+gai, mai, lông vũ) vẽ bằng bộ kit chung, chồng lên/dưới heo gốc (`scripts/assets/traits.ts`). Mọi species giữ
+nguyên đầu, mắt, mõm, chân, móng và đuôi xoắn của heo reference.

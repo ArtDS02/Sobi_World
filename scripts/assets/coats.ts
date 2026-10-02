@@ -180,4 +180,53 @@ export const COATS: Record<string, (c: CoatCtx) => void> = {
       return { color: mix(coat, shade([58, 42, 34], ref, 1.1), mane), t: 1 };
     });
   },
+  /** Pastel bubblegum-lilac coat with a few tiny freckles (axolotl). */
+  axolotl: (c) => {
+    const n = noise(7);
+    eachBody(c, (u, v, ref) => {
+      const base = shade([255, 168, 204], ref, 1.18);
+      const freckle = n(u, v, 30) > 0.9 && v < 0.7 ? 0.35 : 0;
+      return { color: mix(base, [214, 110, 150], freckle), t: 0.9 };
+    });
+  },
+  /** Flame coat: deep red on the back, orange flanks, golden belly (phoenix). */
+  phoenix: (c) =>
+    eachBody(c, (u, v, ref) => {
+      const red = shade([232, 82, 54], ref, 1.25);
+      const orange = shade([246, 150, 58], ref, 1.25);
+      const gold = shade([255, 214, 96], ref, 1.25);
+      const top = mix(red, orange, sm(0.2, 0.55, v));
+      return { color: mix(top, gold, belly(u, v)), t: 1 };
+    }),
+  /** Slate-grey water buffalo hide, lighter grey belly. */
+  buffalo: (c) =>
+    eachBody(c, (u, v, ref) => {
+      const slate = shade([118, 126, 140], ref, 1.2);
+      const pale = shade([178, 182, 190], ref, 1.25);
+      return { color: mix(slate, pale, belly(u, v)), t: 1 };
+    }),
+  /** Fawn coat with cream belly and white spots along the back (sika deer). */
+  deer: (c) => {
+    const n = noise(5);
+    eachBody(c, (u, v, ref) => {
+      const fawn = shade([206, 138, 82], ref, 1.25);
+      const cream = shade([252, 236, 210], ref, 1.25);
+      const onBack = (1 - sm(0.45, 0.58, v)) * (1 - sm(0.55, 0.62, u));
+      const spot = sm(0.72, 0.78, n(u, v, 16)) * onBack;
+      return { color: mix(mix(fawn, cream, belly(u, v)), [255, 250, 240], spot), t: 1 };
+    });
+  },
+  /** Warm cream-tan skin under the quills (hedgehog). */
+  hedgehog: (c) =>
+    eachBody(c, (u, v, ref) => {
+      const tan = shade([236, 204, 168], ref, 1.22);
+      return { color: mix(tan, shade([250, 230, 206], ref, 1.25), belly(u, v)), t: 1 };
+    }),
+  /** Soft olive-green skin, paler belly (turtle). */
+  turtle: (c) =>
+    eachBody(c, (u, v, ref) => {
+      const green = shade([150, 196, 120], ref, 1.22);
+      const pale = shade([214, 228, 170], ref, 1.25);
+      return { color: mix(green, pale, belly(u, v)), t: 1 };
+    }),
 };

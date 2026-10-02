@@ -5,11 +5,12 @@
 // with its lowest pixel on the 82 % ground line. Output goes to art_inbox/ for npm run art:process.
 // The sheets have no sleeping poses, so cut pigs drop their `sleepAsset` (the game then shows the
 // idle frame + fx_zzz, DECISIONS Q5) and their old sleep files are removed.
-// Usage: npm run art:cut
+// Usage: npm run art:cut [-- <id> …]  (no ids = every cut)
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PNG } from 'pngjs';
 import { COATS, toTeal } from './assets/coats';
+import { TRAITS, applyTrait } from './assets/traits';
 import { patchRowText } from './assets/manifestText';
 
 const INBOX = 'art_inbox';
@@ -35,6 +36,8 @@ interface Cut {
   tint?: (r: number, g: number, b: number) => [number, number, number];
   /** Optional coat pattern for species derived from a reference pig (U07, scripts/assets/coats). */
   coat?: keyof typeof COATS;
+  /** Optional anatomy drawn over the final pig (A3, scripts/assets/traits). */
+  trait?: keyof typeof TRAITS;
 }
 
 const ENV = 'asset/reference/style_reference_environment.png';
@@ -91,6 +94,17 @@ export const CUTS: Cut[] = [
   { id: 'pig_koi', sheet: ENV, box: [20, 50, 360, 300], coat: 'koi' },
   { id: 'pig_galaxy', sheet: ENV, box: [20, 50, 360, 300], coat: 'galaxy' },
   { id: 'pig_boar', sheet: ENV, box: [20, 50, 360, 300], coat: 'boar' },
+  // A3 species: anatomy traits (scripts/assets/traits) over a coat on the plain pig.
+  { id: 'pig_sheep', sheet: ENV, box: [20, 50, 360, 300], trait: 'sheep' },
+  { id: 'pig_axolotl', sheet: ENV, box: [20, 50, 360, 300], coat: 'axolotl', trait: 'axolotl' },
+  { id: 'pig_phoenix', sheet: ENV, box: [20, 50, 360, 300], coat: 'phoenix', trait: 'phoenix' },
+  { id: 'pig_buffalo', sheet: ENV, box: [20, 50, 360, 300], coat: 'buffalo', trait: 'buffalo' },
+  { id: 'pig_deer', sheet: ENV, box: [20, 50, 360, 300], coat: 'deer', trait: 'deer' },
+  { id: 'pig_hedgehog', sheet: ENV, box: [20, 50, 360, 300], coat: 'hedgehog', trait: 'hedgehog' },
+  { id: 'pig_turtle', sheet: ENV, box: [20, 50, 360, 300], coat: 'turtle', trait: 'turtle' },
+  // A3 species cut whole from STYLE cells: pumpkin and sunflower pigs.
+  { id: 'pig_pumpkin', sheet: PIGS, box: cell(5, 3) },
+  { id: 'pig_sunflower', sheet: PIGS, box: cell(2, 1) },
   {
     id: 'pig_white',
     sheet: ENV,
@@ -294,11 +308,14 @@ function main() {
     const im = crop(sheet(p), box);
     scale.set(p, CLASSIC_HEIGHT / bbox(cutout(im, mask(im))).h);
   }
-  for (const c of CUTS) {
+  const only = new Set(process.argv.slice(2));
+  const cuts = CUTS.filter((c) => only.size === 0 || only.has(c.id));
+  for (const c of cuts) {
     const im = crop(sheet(c.sheet), c.box);
     const pig = cutout(im, mask(im), c.tint);
     if (c.coat) COATS[c.coat]!({ orig: im, out: pig, bbox: bbox(pig) });
-    const out = placeScaled(pig, scale.get(c.sheet)!, FEET);
+    const placed = placeScaled(pig, scale.get(c.sheet)!, FEET);
+    const out = c.trait ? applyTrait(placed, TRAITS[c.trait]!) : placed;
     const png = new PNG({ width: SIZE, height: SIZE });
     out.d.copy(png.data);
     writeFileSync(join(INBOX, `${c.id}.png`), PNG.sync.write(png));
@@ -306,7 +323,7 @@ function main() {
   }
   let text = readFileSync(MANIFEST, 'utf8');
   const pigs = (JSON.parse(text) as { pigs: { id: string; sleepAsset?: string | null }[] }).pigs;
-  for (const c of CUTS) {
+  for (const c of cuts) {
     const sleep = pigs.find((p) => p.id === c.id)?.sleepAsset;
     if (!sleep) continue;
     text = patchRowText(text, c.id, { sleepAsset: null });

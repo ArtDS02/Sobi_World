@@ -38,6 +38,12 @@ export const MUTATIONS: readonly Mutation[] = [
   { parents: ['PIG_BLACK', 'PIG_DRAGONLING'], result: 'PIG_GALAXY', weight: 4 },
   { parents: ['PIG_SUPERMAN', 'PIG_PENGUIN'], result: 'PIG_ROBOT', weight: 4 },
   { parents: ['PIG_SHEEP', 'PIG_SUPERMAN'], result: 'PIG_UNICORN', weight: 4 },
+  { parents: ['PIG_BLACK', 'PIG_BOAR'], result: 'PIG_BUFFALO', weight: 5 },
+  { parents: ['PIG_SPOTTED', 'PIG_BROWN'], result: 'PIG_DEER', weight: 6 },
+  { parents: ['PIG_EARTH_PINK', 'PIG_STRIPED_MELON'], result: 'PIG_PUMPKIN', weight: 6 },
+  { parents: ['PIG_BEE', 'PIG_PUMPKIN'], result: 'PIG_SUNFLOWER', weight: 5 },
+  { parents: ['PIG_BOAR', 'PIG_SHEEP'], result: 'PIG_HEDGEHOG', weight: 5 },
+  { parents: ['PIG_PENGUIN', 'PIG_STRIPED_MELON'], result: 'PIG_TURTLE', weight: 5 },
   { parents: ['PIG_KOI', 'PIG_DRAGONLING'], result: 'PIG_MYTHICAL', weight: 3 },
   { parents: ['PIG_DRAGONLING', 'PIG_GALAXY'], result: 'PIG_PHOENIX', weight: 2 },
 ];

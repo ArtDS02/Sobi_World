@@ -58,11 +58,17 @@ export const BREEDS: Record<BreedId, BreedDef> = {
   PIG_SHEEP:      species({ id: "PIG_SHEEP", nameVi: "Heo Cừu", rarity: "UNCOMMON", family: "MEADOW", buyGold: 1500, unlockLevel: 4, artId: "pig_sheep", color: 0xf5ebdd }),
   PIG_BEE:        species({ id: "PIG_BEE", nameVi: "Heo Ong", rarity: "UNCOMMON", family: "MEADOW", artId: "pig_bee", color: 0xf6c944 }),
   PIG_PENGUIN:    species({ id: "PIG_PENGUIN", nameVi: "Heo Cánh Cụt", rarity: "UNCOMMON", family: "WATER", buyGold: 1800, unlockLevel: 5, artId: "pig_penguin", color: 0x33415c }),
+  PIG_BUFFALO:    species({ id: "PIG_BUFFALO", nameVi: "Heo Trâu", rarity: "UNCOMMON", family: "FARM", buyGold: 1500, unlockLevel: 4, artId: "pig_buffalo", color: 0x767e8c }),
+  PIG_DEER:       species({ id: "PIG_DEER", nameVi: "Heo Hươu Sao", rarity: "UNCOMMON", family: "MEADOW", artId: "pig_deer", color: 0xce8a52 }),
+  PIG_PUMPKIN:    species({ id: "PIG_PUMPKIN", nameVi: "Heo Bí Ngô", rarity: "UNCOMMON", family: "MEADOW", artId: "pig_pumpkin", color: 0xf28c28 }),
   // RARE
   PIG_SUPERMAN:   species({ id: "PIG_SUPERMAN", nameVi: "Heo Siêu Nhân", rarity: "RARE", family: "HERO", artId: "pig_superhero", color: 0x7fa8f0 }),
   PIG_TIGER:      species({ id: "PIG_TIGER", nameVi: "Heo Hổ", rarity: "RARE", family: "WILD", buyGold: 7000, unlockLevel: 6, artId: "pig_tiger", color: 0xf29a4a }),
   PIG_PANDA:      species({ id: "PIG_PANDA", nameVi: "Heo Gấu Trúc", rarity: "RARE", family: "WILD", artId: "pig_panda", color: 0xf4f1ee }),
   PIG_AXOLOTL:    species({ id: "PIG_AXOLOTL", nameVi: "Heo Kỳ Giông", rarity: "RARE", family: "WATER", buyGold: 7000, unlockLevel: 7, artId: "pig_axolotl", color: 0xffc4d6 }),
+  PIG_SUNFLOWER:  species({ id: "PIG_SUNFLOWER", nameVi: "Heo Hướng Dương", rarity: "RARE", family: "MEADOW", artId: "pig_sunflower", color: 0xf6c62e }),
+  PIG_HEDGEHOG:   species({ id: "PIG_HEDGEHOG", nameVi: "Heo Nhím", rarity: "RARE", family: "WILD", buyGold: 7000, unlockLevel: 8, artId: "pig_hedgehog", color: 0x8a5a3c }),
+  PIG_TURTLE:     species({ id: "PIG_TURTLE", nameVi: "Heo Rùa", rarity: "RARE", family: "WATER", artId: "pig_turtle", color: 0x6a9f56 }),
   // EPIC — bred only
   PIG_KOI:        species({ id: "PIG_KOI", nameVi: "Heo Cá Chép", rarity: "EPIC", family: "WATER", artId: "pig_koi", color: 0xe8573e }),
   PIG_DRAGONLING: species({ id: "PIG_DRAGONLING", nameVi: "Heo Rồng Con", rarity: "EPIC", family: "MYTHIC", artId: "pig_dragonling", color: 0x5fc2a0 }),
