@@ -56,8 +56,11 @@ export const FARM_VIEW = {
     padY: 1,
     rowGapPx: 2,
     maxShift: 3,
-    color: '#e7798f',
-    background: '#ffffff',
+    /** Text only (no plate): deep pink, thin white outline + soft shadow so it reads on grass. */
+    color: '#c94d69',
+    stroke: '#ffffff',
+    strokePx: 3,
+    shadow: { x: 0, y: 1, color: 'rgba(59, 42, 38, 0.3)', blur: 2 },
     depthAbove: 0.2,
   },
   /** Visual-only strolls inside layout.walkArea (spec §11). Radius is normalised to width. */

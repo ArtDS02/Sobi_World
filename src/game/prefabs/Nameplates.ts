@@ -34,11 +34,19 @@ export class Nameplates {
       const made = this.scene.add
         .text(0, 0, name, {
           color: n.color,
-          backgroundColor: n.background,
+          stroke: n.stroke,
+          strokeThickness: n.strokePx,
           fontSize: `${n.fontPx}px`,
           fontFamily: FARM_VIEW.LABEL.fontFamily,
           fontStyle: 'bold',
           padding: { x: n.padX, y: n.padY },
+          shadow: {
+            offsetX: n.shadow.x,
+            offsetY: n.shadow.y,
+            color: n.shadow.color,
+            blur: n.shadow.blur,
+            fill: true,
+          },
         })
         .setOrigin(0.5, 0);
       this.texts.set(id, made);
