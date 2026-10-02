@@ -17,7 +17,6 @@ import {
   openBreedDialog,
   openBuyItemDialog,
   openOrderDialog,
-  openWardrobeDialog,
   openRenameDialog,
   openSellDialog,
   openTroughDialog,
@@ -25,7 +24,6 @@ import {
 import type { AppOptions, FarmPick, MountedApp } from './appTypes';
 import { setIconSource } from './components/icon';
 import { el, patch } from './dom';
-import { pigSkins } from './skinsVm';
 import { renderFarmHint, renderPigPopup, renderWellPopup } from './screens/farmScreen';
 import { renderHistoryScreen } from './screens/historyScreen';
 import { renderInventoryScreen } from './screens/inventoryScreen';
@@ -94,14 +92,6 @@ export function mountApp(
       const save = store.getSnapshot().save;
       if (save) openBreedDialog(dialogs, save, pig, now(), act);
     },
-    ...(assets
-      ? {
-          wardrobe: (pig: Pig) => {
-            const save = store.getSnapshot().save;
-            if (save) openWardrobeDialog(dialogs, pig, pigSkins(save, pig, assets), act);
-          },
-        }
-      : {}),
   };
   // Canvas click: a pig opens its panel, a world object its popup, empty ground deselects (§11.2).
   const onPick = (pick: FarmPick) => {

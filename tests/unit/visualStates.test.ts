@@ -21,14 +21,14 @@ import { makePig } from './pigFactory';
 
 const parsed = parseManifest(structuredClone(manifestJson));
 if (!parsed.ok) throw new Error(parsed.message);
-// Fixture: the classic skin with its own sleep frame (skins cut from the reference sheets have none).
+// Fixture: the classic art with its own sleep frame (art cut from the reference sheets has none).
 parsed.manifest.pigs.find((p) => p.id === 'pig_classic')!.sleepAsset =
   'pigs/base/pig_classic_sleep.png';
 const reg = createAssetRegistry(parsed.manifest);
 const layout = parsed.manifest.layout;
 
 describe('sleep look (spec §11.4, DECISIONS Q5)', () => {
-  const classic = pigView(makePig({ skinId: 'pig_classic' }), 0, layout, reg);
+  const classic = pigView(makePig(), 0, layout, reg);
   const all = () => true;
 
   it('uses the _sleep frame when the manifest has one and it loaded', () => {

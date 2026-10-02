@@ -51,8 +51,6 @@ export function requiredSize(section: ManifestSection, row: Row, key: string): S
   switch (section) {
     case 'pigs':
       return sq(512);
-    case 'cosmetics':
-      return sq(256);
     case 'ui':
       return sq(128);
     case 'fx': {

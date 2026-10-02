@@ -55,7 +55,6 @@ export const UI_ICON = {
   trough: 'ui_icon_trough',
   orders: 'ui_icon_order',
   collection: 'ui_icon_collection',
-  skin: 'ui_icon_skin',
   hunger: 'ui_icon_hunger',
   cleanliness: 'ui_icon_cleanliness',
   health: 'ui_icon_health',

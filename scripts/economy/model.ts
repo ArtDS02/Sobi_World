@@ -21,8 +21,6 @@ const baby = (breed: BreedId): Pig => ({
   id: 'sim',
   slotIndex: 0,
   breed,
-  skinId: BREEDS[breed].defaultSkin,
-  cosmetics: {},
   name: 'sim',
   gender: 'FEMALE',
   growthProgress: 0,

@@ -358,16 +358,6 @@ const ICONS: Record<string, () => string> = {
           .join('') +
         part(starD(64, 66, 24, 11), PAL.gold, { ink: '#8a5a14' }),
     ),
-  ui_icon_skin: () =>
-    icon(
-      line('M64,30 C64,18 78,18 76,28 C74,34 68,34 64,38', '#8a5a34', 5) +
-        part('M14,56 L64,38 L114,56 L106,62 Z', PAL.wood, { stroke: 4 }) +
-        part(
-          'M34,52 L50,44 C56,52 72,52 78,44 L94,52 L110,70 L96,80 L90,72 L90,110 L38,110 L38,72 L32,80 L18,70 Z',
-          '#f6a2b6',
-        ) +
-        sparkle4(106, 96, 12, '#ffe27a', 3.5),
-    ),
   ui_btn_feed: () =>
     icon(
       corn(64, 64, 40, 32) +

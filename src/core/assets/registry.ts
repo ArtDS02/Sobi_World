@@ -3,13 +3,11 @@
 import { SLEEP_FALLBACK_FX, TROUGH_PROP_ID, type TroughState } from '../config/assetIds';
 import { BREEDS } from '../config/breeds';
 import type { BreedId } from '../config/ids';
-import type { SkinDef } from '../config/skins';
 import {
   MANIFEST_SECTIONS,
   type AssetManifest,
   type AssetStatus,
   type ManifestSection,
-  type PigRow,
   type Placement,
 } from './manifestSchema';
 
@@ -25,28 +23,12 @@ export interface AssetEntry {
 }
 
 export interface PigTexture {
-  /** Skin row actually used (after the breed-default fallback). */
-  skinId: string;
+  /** Pig art row used (the species' artId), or that id when the row is missing. */
+  artId: string;
   url: string | null;
   /** Overlay drawn on the fx_above anchor when the sleep frame is missing (DECISIONS Q5). */
   overlay: string | null;
 }
-
-export interface SkinRegistry {
-  get(id: string): SkinDef | undefined;
-  all(): SkinDef[];
-  /** Skins with a price, i.e. the shop stock (spec §6.6). */
-  forSale(): SkinDef[];
-}
-
-const toSkin = (row: PigRow): SkinDef => ({
-  id: row.id,
-  nameVi: row.nameVi,
-  rarity: row.rarity,
-  priceGold: row.priceGold,
-  allowedBreeds: row.allowedBreeds,
-  ...(row.unlock ? { unlock: row.unlock } : {}),
-});
 
 function filesOf(row: Record<string, unknown>): Record<string, string> {
   const files: Record<string, string> = {};
@@ -83,32 +65,23 @@ export function createAssetRegistry(manifest: AssetManifest) {
     }
   }
   const pigs = new Map(manifest.pigs.map((p) => [p.id, p]));
-  const skins = manifest.pigs.map(toSkin);
   const url = (path: string | undefined) => (path ? `${ASSET_URL_BASE}${path}` : null);
-
-  const skinRegistry: SkinRegistry = {
-    get: (id) => skins.find((s) => s.id === id),
-    all: () => [...skins],
-    forSale: () => skins.filter((s) => s.priceGold !== null),
-  };
 
   return {
     manifest,
-    skins: skinRegistry,
 
     resolve: (id: string): AssetEntry | undefined => entries.get(id),
 
     /** URL of a row's file (`asset` by default, or a state / `sleep` / `shadow` key); null if none. */
     url: (id: string, key = 'asset'): string | null => url(entries.get(id)?.files[key]),
 
-    /** Pig texture with fallbacks: unknown skin → breed default; no sleep frame → idle + fx_zzz. */
-    pigTexture(skinId: string, breed: BreedId, sleeping = false): PigTexture {
-      const row = pigs.get(skinId) ?? pigs.get(BREEDS[breed].defaultSkin);
-      if (!row) return { skinId, url: null, overlay: sleeping ? SLEEP_FALLBACK_FX : null };
-      if (sleeping && row.sleepAsset) {
-        return { skinId: row.id, url: url(row.sleepAsset), overlay: null };
-      }
-      return { skinId: row.id, url: url(row.asset), overlay: sleeping ? SLEEP_FALLBACK_FX : null };
+    /** Species texture; missing row → url null (flat fill); no sleep frame → idle + fx_zzz. */
+    pigTexture(breed: BreedId, sleeping = false): PigTexture {
+      const artId = BREEDS[breed].artId;
+      const row = pigs.get(artId);
+      if (!row) return { artId, url: null, overlay: sleeping ? SLEEP_FALLBACK_FX : null };
+      if (sleeping && row.sleepAsset) return { artId, url: url(row.sleepAsset), overlay: null };
+      return { artId, url: url(row.asset), overlay: sleeping ? SLEEP_FALLBACK_FX : null };
     },
 
     troughUrl: (food: number, capacity: number): string | null =>

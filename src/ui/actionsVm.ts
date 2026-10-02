@@ -96,7 +96,7 @@ export function shopPigs(save: SaveGame, now: number, assets: AssetRegistry | nu
       breed,
       rarity: def.rarity,
       name: def.nameVi,
-      thumb: assets?.url(def.defaultSkin) ?? null,
+      thumb: assets?.url(def.artId) ?? null,
       price: goldText(def.buyGold ?? 0),
       sell: t(vi.shop.sellUpTo, {
         gold: formatInt(Math.floor(def.sellGold * sellMultiplier(100))),

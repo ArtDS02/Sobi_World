@@ -70,5 +70,5 @@ export const BALANCE = {
   ORDER_MAX_ACTIVE: 6, // DECISIONS C1: two live windows x 3 slots (spec said 3)
   ORDER_REWARD_MULT: { 0: 1.5, 50: 1.8, 75: 2.2 }, // keyed by minHappiness
 
-  DISCOVERY_BONUS_GOLD: 500, // first time a breed or skin is seen
+  DISCOVERY_BONUS_GOLD: 500, // first time a species is seen
 } as const;

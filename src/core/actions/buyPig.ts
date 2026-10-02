@@ -40,8 +40,6 @@ export function buyPig(state: SaveGame, args: BuyPigArgs, ctx: ActionContext): A
       id: pigId,
       slotIndex: lowestFreeSlot(s),
       breed: def.id,
-      skinId: def.defaultSkin,
-      cosmetics: {},
       name: pickPigName(ctx.rng, s.pigs),
       gender: args.gender,
       growthProgress: 0,

@@ -1,7 +1,5 @@
-// npm run sim:economy (spec §14.7): per-breed economy table, unlock/skin affordability, and the
+// npm run sim:economy (spec §14.7): per-breed economy table, unlock affordability, and the
 // build gate "net gold per hour at happiness 100 >= 2x at happiness 0". Imports only src/core.
-import { readFileSync } from 'node:fs';
-import { parseManifest } from '../src/core/assets/manifestSchema';
 import { BALANCE } from '../src/core/config/balance';
 import { BREED_ID_VALUES } from '../src/core/config/ids';
 import {
@@ -12,7 +10,6 @@ import {
   stallGrowth,
 } from './economy/model';
 
-const MANIFEST = 'public/assets/manifest/assets.json';
 const n0 = (v: number) => Math.round(v).toLocaleString('en-US');
 const n1 = (v: number) => (Number.isFinite(v) ? v.toFixed(1) : '∞');
 
@@ -57,26 +54,6 @@ console.log(
   ),
 );
 
-const manifest = parseManifest(JSON.parse(readFileSync(MANIFEST, 'utf8')));
-if (!manifest.ok) {
-  console.error(`manifest invalid: ${manifest.message}`);
-  process.exit(1);
-}
-const tiers = new Map<string, number>();
-for (const p of manifest.manifest.pigs) {
-  if (p.priceGold !== null) tiers.set(p.rarity, Math.max(tiers.get(p.rarity) ?? 0, p.priceGold));
-}
-console.log(
-  `\nSkin tiers in the manifest (hours of PINK at happiness 100 on ${BALANCE.START_SLOTS} slots)\n`,
-);
-console.log(
-  table(
-    ['tier', 'price', 'hours'],
-    [...tiers]
-      .sort()
-      .map(([tier, price]) => [tier, n0(price), n1(hoursToAfford(price, BALANCE.START_SLOTS))]),
-  ),
-);
 
 const failed = gateFailures(rows);
 if (failed.length > 0) {

@@ -22,9 +22,10 @@ export const BREED_ID_VALUES = [
   'PIG_DRAGONLING',
   'PIG_GALAXY',
   'PIG_PHOENIX',
+  'PIG_ROBOT',
+  'PIG_UNICORN',
 ] as const;
 export const ITEM_ID_VALUES = ['FOOD_BASIC', 'MEDICINE_COMMON'] as const;
-export const COSMETIC_SLOT_VALUES = ['head', 'face', 'body', 'back', 'prop', 'fx'] as const;
 export const TRANSACTION_TYPE_VALUES = [
   'INITIAL_GOLD',
   'SHOP_PURCHASE',
@@ -33,15 +34,14 @@ export const TRANSACTION_TYPE_VALUES = [
   'BREEDING_FEE',
   'SLOT_PURCHASE',
   'TROUGH_FILL',
-  'SKIN_PURCHASE',
+  'SKIN_PURCHASE', // legacy history only: outfits were removed in save v5 (DECISIONS A2-1)
   'ORDER_REWARD',
   'DISCOVERY_BONUS',
-  'SKIN_REFUND', // save v2 -> v3: species skins nobody wore (DECISIONS U00-1 D3)
+  'SKIN_REFUND', // save migration refunds: v2 -> v3 species skins, v4 -> v5 outfits (A2-1)
   'GIFT_REWARD', // gift box opened on the farm (U06)
 ] as const;
 
 export type Gender = (typeof GENDER_VALUES)[number];
 export type BreedId = (typeof BREED_ID_VALUES)[number];
 export type ItemId = (typeof ITEM_ID_VALUES)[number];
-export type CosmeticSlot = (typeof COSMETIC_SLOT_VALUES)[number];
 export type TransactionType = (typeof TRANSACTION_TYPE_VALUES)[number];

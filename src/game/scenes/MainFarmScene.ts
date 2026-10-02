@@ -27,7 +27,7 @@ import { groundLineY, placementView } from '../view/sceneLayout';
 import {
   anchorsKey,
   FALLBACK_PROP_KEY,
-  skinLoadList,
+  artLoadList,
   textureKey,
   troughTextureKey,
 } from '../view/textureKeys';
@@ -51,7 +51,7 @@ export class MainFarmScene extends Phaser.Scene {
   /** Pigs gone from the save but still playing their exit tween (bursts can still find them). */
   private readonly leaving = new Map<string, PigSprite>();
   private readonly anchors = new Map<string, Anchors>();
-  /** Skins whose files were requested after preload (loaded once, failures fall back). */
+  /** Pig art rows whose files were requested after preload (loaded once, failures fall back). */
   private readonly requested = new Set<string>();
   private trough: Phaser.GameObjects.Image | null = null;
   private board: Phaser.GameObjects.Image | null = null;
@@ -201,7 +201,7 @@ export class MainFarmScene extends Phaser.Scene {
     for (const pig of save?.pigs ?? []) {
       seen.add(pig.id);
       const view = pigView(pig, now, this.layout, this.deps.assets);
-      if (!this.textures.exists(view.textureId)) this.requestSkin(view.skinId);
+      if (!this.textures.exists(view.textureId)) this.requestArt(view.artId);
       let sprite = this.pigs.get(pig.id);
       if (!sprite) {
         sprite = new PigSprite(this, pig.id, view, this.pigEnv);
@@ -209,7 +209,7 @@ export class MainFarmScene extends Phaser.Scene {
       }
       sprite.apply(
         view,
-        this.anchorsOf(view.skinId),
+        this.anchorsOf(view.artId),
         pig.id === this.bridge.selectedId,
         this.fxAnchor,
       );
@@ -230,26 +230,26 @@ export class MainFarmScene extends Phaser.Scene {
       this.leaving.set(id, sprite);
       sprite.leave(reduceMotion, () => this.leaving.delete(id));
     }
-    this.releaseSkins();
+    this.releaseArt();
   }
 
   /**
-   * R12A: a skin loaded after preload (bought / equipped later) is freed once no pig, staying or
+   * R12A: pig art loaded after preload (missed by the preload list) is freed once no pig, staying or
    * leaving, wears it; wearing it again reloads it. Preloaded breed defaults are kept.
    */
-  private releaseSkins() {
+  private releaseArt() {
     if (this.requested.size === 0) return;
     const sprites = [...this.pigs.values(), ...this.leaving.values()];
-    const worn = new Set(sprites.map((s) => s.skinId));
-    for (const skinId of this.requested) {
-      if (worn.has(skinId)) continue;
+    const worn = new Set(sprites.map((s) => s.artId));
+    for (const artId of this.requested) {
+      if (worn.has(artId)) continue;
       for (const file of ['asset', 'sleep']) {
-        const key = textureKey(skinId, file);
+        const key = textureKey(artId, file);
         if (this.textures.exists(key)) this.textures.remove(key);
       }
-      this.cache.json.remove(anchorsKey(skinId));
-      this.anchors.delete(skinId);
-      this.requested.delete(skinId);
+      this.cache.json.remove(anchorsKey(artId));
+      this.anchors.delete(artId);
+      this.requested.delete(artId);
     }
   }
 
@@ -260,14 +260,14 @@ export class MainFarmScene extends Phaser.Scene {
     if (this.trough.texture.key !== next) this.trough.setTexture(next);
   }
 
-  private anchorsOf(skinId: string): Anchors {
-    const cached = this.anchors.get(skinId);
+  private anchorsOf(artId: string): Anchors {
+    const cached = this.anchors.get(artId);
     if (cached) return cached;
-    const raw: unknown = this.cache.json.get(anchorsKey(skinId));
+    const raw: unknown = this.cache.json.get(anchorsKey(artId));
     const parsed = parseAnchors(raw);
-    // Only cache once the json is in (or the skin has none), so a late load still applies.
-    if (raw !== undefined || !this.deps.assets.url(skinId, 'anchors')) {
-      this.anchors.set(skinId, parsed);
+    // Only cache once the json is in (or the art row has none), so a late load still applies.
+    if (raw !== undefined || !this.deps.assets.url(artId, 'anchors')) {
+      this.anchors.set(artId, parsed);
     }
     return parsed;
   }
@@ -275,11 +275,11 @@ export class MainFarmScene extends Phaser.Scene {
   private readonly fxAnchor = (fx: FxId): AnchorName =>
     this.deps.assets.manifest.fx.find((r) => r.id === fx)?.anchor ?? 'fx_above';
 
-  /** A skin bought after preload: load it once, then re-sync. */
-  private requestSkin(skinId: string) {
-    if (this.requested.has(skinId)) return;
-    this.requested.add(skinId);
-    if (queueLoadList(this.load, skinLoadList(this.deps.assets, skinId)) === 0) return;
+  /** Pig art missing after preload: load it once, then re-sync. */
+  private requestArt(artId: string) {
+    if (this.requested.has(artId)) return;
+    this.requested.add(artId);
+    if (queueLoadList(this.load, artLoadList(this.deps.assets, artId)) === 0) return;
     this.load.once(Phaser.Loader.Events.COMPLETE, () => this.bridge.refresh());
     this.load.start();
   }

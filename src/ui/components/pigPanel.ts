@@ -15,8 +15,6 @@ export interface PigPanelHandlers {
   sell: (pig: Pig, vm: ActionVm) => void;
   rename: (pig: Pig) => void;
   breed: (pig: Pig) => void;
-  /** Opens the wardrobe (owned skins this pig may wear); absent without an asset registry. */
-  wardrobe?: (pig: Pig) => void;
 }
 
 const row = (label: string, value: string, modifier = '', iconName?: UiIcon) =>
@@ -78,14 +76,6 @@ export function renderPigPanel(
       actionButton(actions.clean, () => on.act(actions.clean.run), '', 'clean'),
       actionButton(actions.treat, () => on.act(actions.treat.run), '', 'treat'),
       actionButton(breeding.button, () => on.breed(pig), '', 'breed'),
-      on.wardrobe
-        ? actionButton(
-            { label: vi.action.wardrobe, reason: null },
-            () => on.wardrobe?.(pig),
-            '',
-            'skin',
-          )
-        : null,
       actionButton(actions.sell, () => on.sell(pig, actions.sell), 'c-button--warn'),
     ),
   );

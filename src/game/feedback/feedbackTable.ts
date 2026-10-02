@@ -51,8 +51,6 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   ORDER_NEW: row('wiggle', [], 'notify', true),
   ORDER_FULFILLED: row(null, ['fx_coin'], 'coin_collect', true),
   DISCOVERY: row(null, ['fx_coin'], 'coin_collect', true),
-  SKIN_BOUGHT: row(null, [], 'ui_click', true),
-  SKIN_EQUIPPED: row('bounce', ['fx_sparkle'], 'ui_click', false), // texture swap + puff
   // U06: small smoke puff then the box pops in; opening pops it and the reward floats up.
   GIFT_SPAWNED: row('giftSpawn', ['fx_smoke'], 'notify', false),
   GIFT_OPENED: { ...row('giftOpen', ['fx_sparkle'], 'coin_collect', false), float: true },

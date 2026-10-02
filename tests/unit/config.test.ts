@@ -7,7 +7,6 @@ import type { BreedId } from '../../src/core/config/ids';
 import { levelFromXp, troughCapacityForLevel } from '../../src/core/config/levels';
 import { RARITY_VALUES, rarityRank } from '../../src/core/config/rarity';
 import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
-import { STARTER_SKINS } from '../../src/core/config/skins';
 import { vi } from '../../src/i18n/vi';
 
 const V1: BreedId[] = ['PIG_EARTH_PINK', 'PIG_STRIPED_MELON', 'PIG_SUPERMAN', 'PIG_MYTHICAL'];
@@ -111,9 +110,8 @@ describe('levels (§6.4)', () => {
 
 describe('species (U01)', () => {
   it('every species has its own artwork, owned from the start', () => {
-    const skins = BREED_IDS.map((id) => BREEDS[id].defaultSkin);
-    expect(new Set(skins).size).toBe(BREED_IDS.length);
-    expect([...STARTER_SKINS].sort()).toEqual([...skins].sort());
+    const arts = BREED_IDS.map((id) => BREEDS[id].artId);
+    expect(new Set(arts).size).toBe(BREED_IDS.length);
   });
 
   it('rarer species are worth more and take longer', () => {

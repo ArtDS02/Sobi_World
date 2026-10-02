@@ -98,7 +98,7 @@ export function checkAssets(root: string): string[] {
     if (ids.get(id) !== section) errors.push(`${id}: missing ${section} row (${why})`);
   };
   for (const breed of Object.values(BREEDS))
-    need(breed.defaultSkin, 'pigs', `default skin of ${breed.id}`);
+    need(breed.artId, 'pigs', `art of ${breed.id}`);
   for (const id of FX_IDS) need(id, 'fx', 'shared fx set');
   for (const id of AUDIO_KEYS) need(id, 'audio', 'spec §12 audio key');
   need(ORDER_BOARD_PROP_ID, 'props', 'order board');

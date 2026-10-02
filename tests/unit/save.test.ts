@@ -1,8 +1,7 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import v1Fixture from '../fixtures/save-v1.json';
 import { BALANCE } from '../../src/core/config/balance';
-import { SAVE, V3_SKIN_REFUND_GOLD } from '../../src/core/config/save';
-import { STARTER_SKINS } from '../../src/core/config/skins';
+import { SAVE, V3_SKIN_REFUND_GOLD, V5_OUTFIT_PRICES } from '../../src/core/config/save';
 import { changeGold } from '../../src/core/engine/gold';
 import { mulberry32 } from '../../src/core/rng';
 import {
@@ -44,7 +43,6 @@ describe('schema (§5.1, §5.5)', () => {
     ['growth > 100', (s) => (s.pigs[0]!.growthProgress = 101)],
     ['slotIndex >= unlockedSlots', (s) => (s.pigs[0]!.slotIndex = 4)],
     ['duplicate slotIndex', (s) => s.pigs.push(makePig({ id: 'pig-2' }))],
-    ['skin not owned', (s) => (s.pigs[0]!.skinId = 'pig_witch')],
     ['too many orders', (s) => (s.orders = Array.from({ length: 7 }, (_, i) => order(i)))],
     [
       'pigs + pregnancies exceed slots',
@@ -87,20 +85,20 @@ const order = (i: number) => ({
 });
 
 describe('migrate (§9.2)', () => {
-  it('v1 (v3 save) → v2 adds trough, orders, collection, ownedSkins, reduceMotion, pig skins', () => {
+  it('v1 (v3 save) → current adds trough, orders, collection, reduceMotion; no skin fields', () => {
     const res = migrate(structuredClone(v1Fixture));
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     const s = res.save;
     expect(s.schemaVersion).toBe(SAVE.SCHEMA_VERSION);
-    expect([...s.player.ownedSkins].sort()).toEqual([...STARTER_SKINS].sort());
+    expect(s.player).not.toHaveProperty('ownedSkins');
     expect(s.trough).toEqual({ food: 0, capacity: 30, lastResolvedAt: v1Fixture.updatedAt }); // xp 120 → level 2
     expect(s.orders).toEqual([]);
     expect(s.collection.discoveredBreeds.sort()).toEqual(['PIG_EARTH_PINK', 'PIG_STRIPED_MELON']);
     expect(s.settings.reduceMotion).toBe(false);
     for (const p of s.pigs) {
-      expect(p.skinId).toBe('pig_classic');
-      expect(p.cosmetics).toEqual({});
+      expect(p).not.toHaveProperty('skinId');
+      expect(p).not.toHaveProperty('cosmetics');
     }
     // Untouched data survives.
     expect(s.player.gold).toBe(3800);
@@ -114,20 +112,25 @@ describe('migrate (§9.2)', () => {
     expect(migrate(structuredClone(s))).toEqual({ ok: true, save: s });
   });
 
+  /** A pig as saves before v5 stored it: with skin and cosmetic fields. */
+  const worn = (skinId: string, o: Parameters<typeof makePig>[0]) => ({
+    ...makePig(o),
+    skinId,
+    cosmetics: {},
+  });
+
   describe('v2 → v3: species-looking skins become species (U00-1 D3)', () => {
     const v2 = () => {
-      const s = makeState(
-        [
-          makePig({ id: 'a', slotIndex: 0, breed: 'PIG_EARTH_PINK', skinId: 'pig_black' }),
-          makePig({ id: 'b', slotIndex: 1, breed: 'PIG_STRIPED_MELON', skinId: 'pig_white' }),
-          makePig({ id: 'c', slotIndex: 2, breed: 'PIG_EARTH_PINK', skinId: 'pig_farmer' }),
-        ],
-        3,
-      );
+      const s = makeState([], 3);
       const old = ['pig_classic', 'pig_watermelon', 'pig_superhero', 'pig_thienlong'];
       return {
         ...s,
         schemaVersion: 2,
+        pigs: [
+          worn('pig_black', { id: 'a', slotIndex: 0, breed: 'PIG_EARTH_PINK' }),
+          worn('pig_white', { id: 'b', slotIndex: 1, breed: 'PIG_STRIPED_MELON' }),
+          worn('pig_farmer', { id: 'c', slotIndex: 2, breed: 'PIG_EARTH_PINK' }),
+        ],
         player: {
           ...s.player,
           gold: 1000,
@@ -142,31 +145,76 @@ describe('migrate (§9.2)', () => {
       expect(res.ok).toBe(true);
       if (!res.ok) return;
       const breed = (id: string) => res.save.pigs.find((p) => p.id === id)!;
-      expect(breed('a')).toMatchObject({ breed: 'PIG_BLACK', skinId: 'pig_black' });
-      expect(breed('b')).toMatchObject({ breed: 'PIG_STRIPED_MELON', skinId: 'pig_white' });
-      expect(breed('c')).toMatchObject({ breed: 'PIG_EARTH_PINK', skinId: 'pig_farmer' });
+      expect(breed('a').breed).toBe('PIG_BLACK');
+      expect(breed('b').breed).toBe('PIG_STRIPED_MELON');
+      expect(breed('c').breed).toBe('PIG_EARTH_PINK');
     });
 
-    it('nothing owned is lost: every skin stays owned, all species artwork is added', () => {
+    it('owned species skins become discovered species', () => {
       const res = migrate(v2());
       if (!res.ok) throw new Error(res.error);
-      for (const id of [...v2().player.ownedSkins, ...STARTER_SKINS])
-        expect(res.save.player.ownedSkins).toContain(id);
-      expect(new Set(res.save.player.ownedSkins).size).toBe(res.save.player.ownedSkins.length);
       expect([...res.save.collection.discoveredBreeds].sort()).toEqual(
         ['PIG_BLACK', 'PIG_BROWN', 'PIG_EARTH_PINK', 'PIG_STRIPED_MELON', 'PIG_WHITE'].sort(),
       );
     });
 
-    it('a species skin owned but worn by nobody is refunded once, through a transaction', () => {
+    it('unworn species skin (v3) and the outfit (v5) are refunded once, through transactions', () => {
       const res = migrate(v2());
       if (!res.ok) throw new Error(res.error);
-      expect(res.save.player.gold).toBe(1000 + V3_SKIN_REFUND_GOLD);
+      expect(res.save.player.gold).toBe(1000 + V3_SKIN_REFUND_GOLD + V5_OUTFIT_PRICES.pig_farmer!);
       const refunds = res.save.transactions.filter((t) => t.type === 'SKIN_REFUND');
-      expect(refunds).toEqual([
-        expect.objectContaining({ amount: V3_SKIN_REFUND_GOLD, refId: 'pig_brown' }),
-      ]);
+      expect(refunds).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ amount: V3_SKIN_REFUND_GOLD, refId: 'pig_brown' }),
+          expect.objectContaining({ amount: 2000, refId: 'pig_farmer' }),
+        ]),
+      );
+      expect(refunds).toHaveLength(2);
       // Loading the migrated save again changes nothing.
+      expect(migrate(structuredClone(res.save))).toEqual(res);
+    });
+  });
+
+  describe('v4 → v5: outfits removed (DECISIONS A2-1)', () => {
+    const v4 = () => {
+      const s = makeState([], 3);
+      return {
+        ...s,
+        schemaVersion: 4,
+        pigs: [
+          worn('pig_robot', { id: 'a', slotIndex: 0, breed: 'PIG_EARTH_PINK' }),
+          worn('pig_unicorn', { id: 'b', slotIndex: 1, breed: 'PIG_WHITE' }),
+          worn('pig_tiger', { id: 'c', slotIndex: 2, breed: 'PIG_TIGER' }),
+        ],
+        player: {
+          ...s.player,
+          gold: 1000,
+          ownedSkins: ['pig_classic', 'pig_tiger', 'pig_robot', 'pig_unicorn', 'pig_ninja'],
+        },
+        collection: { discoveredBreeds: ['PIG_TIGER'], discoveredSkins: ['pig_robot'] },
+      };
+    };
+
+    it('a pink pig in a body outfit becomes that species; other pigs keep theirs', () => {
+      const res = migrate(v4());
+      if (!res.ok) throw new Error(res.error);
+      expect(res.save.pigs.map((p) => p.breed)).toEqual(['PIG_ROBOT', 'PIG_WHITE', 'PIG_TIGER']);
+      for (const p of res.save.pigs) {
+        expect(p).not.toHaveProperty('skinId');
+        expect(p).not.toHaveProperty('cosmetics');
+      }
+      expect(res.save.player).not.toHaveProperty('ownedSkins');
+      expect(res.save.collection).toEqual({
+        discoveredBreeds: ['PIG_TIGER', 'PIG_ROBOT', 'PIG_WHITE'],
+      });
+    });
+
+    it('every other owned outfit is refunded at its price, once', () => {
+      const res = migrate(v4());
+      if (!res.ok) throw new Error(res.error);
+      expect(res.save.player.gold).toBe(1000 + 6000 + 6000); // unicorn (worn by a white pig) + ninja
+      const refunds = res.save.transactions.filter((t) => t.type === 'SKIN_REFUND');
+      expect(refunds.map((t) => t.refId).sort()).toEqual(['pig_ninja', 'pig_unicorn']);
       expect(migrate(structuredClone(res.save))).toEqual(res);
     });
   });

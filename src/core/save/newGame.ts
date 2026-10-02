@@ -1,7 +1,6 @@
 // Starter state (D7) with an INITIAL_GOLD transaction (spec §9.1).
 import { BALANCE } from '../config/balance';
 import { SAVE } from '../config/save';
-import { STARTER_SKINS } from '../config/skins';
 import { changeGold } from '../engine/gold';
 import type { ActionContext, SaveGame } from '../types';
 
@@ -15,13 +14,12 @@ export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {
       gold: 0,
       xp: 0,
       unlockedSlots: BALANCE.START_SLOTS,
-      ownedSkins: [...STARTER_SKINS],
     },
     pigs: [],
     trough: { food: 0, capacity: BALANCE.START_TROUGH_CAPACITY, lastResolvedAt: ctx.now },
     inventory: { ...BALANCE.START_INVENTORY },
     orders: [],
-    collection: { discoveredBreeds: [], discoveredSkins: [] },
+    collection: { discoveredBreeds: [] },
     transactions: [],
     breedingRecords: [],
     gifts: { nextAt: null, boxes: [] },

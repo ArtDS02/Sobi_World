@@ -1,4 +1,4 @@
-// Shop (spec §10.1): pigs, items, slots and skins (§8.13, catalogue from the manifest).
+// Shop (spec §10.1): pig species, items and slots.
 import type { AssetRegistry } from '../../core/assets/registry';
 import type { ItemId } from '../../core/config/ids';
 import type { Rarity } from '../../core/config/rarity';
@@ -10,14 +10,12 @@ import { actionButton } from '../components/actionButton';
 import { rarityBadge } from '../components/rarityBadge';
 import { thumb } from '../components/thumb';
 import { el } from '../dom';
-import { shopSkins } from '../skinsVm';
 
-export type ShopTab = 'pigs' | 'items' | 'slots' | 'skins';
+export type ShopTab = 'pigs' | 'items' | 'slots';
 const TABS: [ShopTab, string][] = [
   ['pigs', vi.shop.tabPigs],
   ['items', vi.shop.tabItems],
   ['slots', vi.shop.tabSlots],
-  ['skins', vi.shop.tabSkins],
 ];
 
 export interface ShopHandlers {
@@ -88,21 +86,6 @@ function slotsTab(save: SaveGame, now: number, on: ShopHandlers) {
   ];
 }
 
-function skinsTab(save: SaveGame, now: number, on: ShopHandlers, assets: AssetRegistry | null) {
-  if (!assets) return [];
-  return shopSkins(save, now, assets).map((skin) =>
-    el(
-      'li',
-      { class: 'shop__card shop__card--skin', data: { skin: skin.id } },
-      thumb(skin.thumb, skin.name),
-      el('h3', { class: 'shop__name', text: skin.name }),
-      rarityBadge(skin.rarity),
-      line('price', skin.price),
-      actionButton(skin.button, () => on.act(skin.button.run)),
-    ),
-  );
-}
-
 export function renderShopScreen(
   save: SaveGame,
   now: number,
@@ -115,9 +98,7 @@ export function renderShopScreen(
       ? pigsTab(save, now, on, assets)
       : tab === 'items'
         ? itemsTab(save, on)
-        : tab === 'slots'
-          ? slotsTab(save, now, on)
-          : skinsTab(save, now, on, assets);
+        : slotsTab(save, now, on);
   return el(
     'section',
     { class: 'shop', data: { screen: 'shop' } },

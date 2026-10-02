@@ -45,8 +45,6 @@ function giveBirth(state: SaveGame, mother: Pig, now: number, rng: Rng) {
     id: randomId(rng),
     slotIndex: lowestFreeSlot(state.pigs),
     breed: def.id,
-    skinId: def.defaultSkin,
-    cosmetics: {},
     name: pickPigName(rng, state.pigs),
     gender: preg.childGender,
     growthProgress: 0,

@@ -1,5 +1,5 @@
-// Preload (spec §11): environment, structures, trough states, fx, ui icons and the skins of the
-// pigs on the farm (plus the breed defaults), with a progress bar. Failed files fall back later.
+// Preload (spec §11): environment, structures, trough states, fx, ui icons and the art of every
+// species, with a progress bar. Failed files fall back later.
 import * as Phaser from 'phaser';
 import { BREEDS } from '../../core/config/breeds';
 import { FARM_VIEW } from '../../core/config/farmView';
@@ -67,12 +67,10 @@ export class PreloadScene extends Phaser.Scene {
     });
     warnLoadErrors(this.load);
 
-    const pigs = this.deps.store.getSnapshot().save?.pigs ?? [];
-    const skins = [
-      ...pigs.map((p) => p.skinId),
-      ...Object.values(BREEDS).map((b) => b.defaultSkin),
-    ];
-    this.list = farmLoadList(this.deps.assets, skins);
+    this.list = farmLoadList(
+      this.deps.assets,
+      Object.values(BREEDS).map((b) => b.artId),
+    );
     queueLoadList(this.load, this.list);
   }
 

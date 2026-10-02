@@ -41,8 +41,6 @@ describe('buyPig (§8.1)', () => {
     expect(pig).toMatchObject({
       slotIndex: 0,
       breed: 'PIG_EARTH_PINK',
-      skinId: 'pig_classic',
-      cosmetics: {},
       gender: 'MALE',
       growthProgress: 0,
       hunger: 100,

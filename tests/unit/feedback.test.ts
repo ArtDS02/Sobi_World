@@ -39,8 +39,6 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   },
   SLOT_BOUGHT: { type: 'SLOT_BOUGHT', slots: 5, gold: -2000 },
   ORDER_FULFILLED: { type: 'ORDER_FULFILLED', orderId: 'o', gold: 800 },
-  SKIN_BOUGHT: { type: 'SKIN_BOUGHT', skinId: 'pig_farmer', gold: -2000 },
-  SKIN_EQUIPPED: { type: 'SKIN_EQUIPPED', pigId: 'pig-1', skinId: 'pig_farmer' },
   SETTING_CHANGED: { type: 'SETTING_CHANGED', key: 'musicOn', value: false },
   GIFT_SPAWNED: { type: 'GIFT_SPAWNED', giftId: 'g1' },
   GIFT_OPENED: { type: 'GIFT_OPENED', giftId: 'g1', gold: 120, xp: 35 },

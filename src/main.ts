@@ -92,7 +92,6 @@ async function start(root: HTMLElement) {
     audio,
     toast: app.toast,
     away: app.showAway,
-    skinName: (id) => assets.registry.skins.get(id)?.nameVi ?? id,
   });
   // §12: ui_click for every DOM button, through one delegated listener.
   root.addEventListener('click', (e) => {

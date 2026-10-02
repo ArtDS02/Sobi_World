@@ -25,7 +25,7 @@ const ASSETS_DIR = 'public/assets';
 const MANIFEST = join(ASSETS_DIR, 'manifest', 'assets.json');
 const OPAQUE = 16;
 const PIG_HEIGHT = 0.86; // character height / canvas (AI pack §8.1 step 3)
-const FIT = 0.92; // max share of the canvas for centred items (ui, fx, cosmetics)
+const FIT = 0.92; // max share of the canvas for centred items (ui, fx)
 const BOTTOM_MARGIN = 4; // px under buildings/props (AI pack §8.2)
 const BG_TOLERANCE = 48; // RGB distance still counted as background
 const HALO_LUMA = 225; // light edge pixel → halo suspect (AI pack §8.3)
@@ -355,7 +355,7 @@ async function main() {
     const out = new PNG({ width: img.w, height: img.h });
     img.d.copy(out.data);
     if (!dryRun) {
-      // A new collection folder (e.g. skins/robot/) may not exist yet.
+      // A new collection folder (e.g. pigs/base/) may not exist yet.
       mkdirSync(dirname(join(ASSETS_DIR, t.path)), { recursive: true });
       writeFileSync(join(ASSETS_DIR, t.path), PNG.sync.write(out));
     }

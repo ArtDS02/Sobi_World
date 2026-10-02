@@ -3,7 +3,7 @@ import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest, type AssetManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry, troughState } from '../../src/core/assets/registry';
 import { AUDIO_KEYS, FX_IDS } from '../../src/core/config/assetIds';
-import { BREEDS } from '../../src/core/config/breeds';
+import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
 import { loadAssetRegistry, MANIFEST_URL } from '../../src/platform/assetSource';
 
 function manifest(): AssetManifest {
@@ -37,12 +37,10 @@ describe('manifest v2 (art standard §7.2)', () => {
     expect(parseManifest(bad).ok).toBe(false);
   });
 
-  it('covers v1 scope: 4 defaults + 13 P1 skins (+6 reference-cut skins), 8 fx, 12 audio keys', () => {
+  it('covers scope: one art row per species, fx, audio keys', () => {
     const m = manifest();
-    // 17 = art standard §10 waves 1–2; +6 = skins cut from asset/reference (spotted, pilot, pirate,
-    // ninja, robot, unicorn), added on user request 2026-10-02 (DECISIONS ART-5); +11 = species
-    // artwork added in U01 (UN_IN_PIG_CATALOGUE.md).
-    expect(m.pigs).toHaveLength(34);
+    // Outfits were removed in A2 (DECISIONS A2-1): pig rows are species art only.
+    expect(m.pigs).toHaveLength(BREED_IDS.length);
     expect(m.fx.map((f) => f.id).sort()).toEqual([...FX_IDS].sort());
     expect(m.audio.map((a) => a.id)).toEqual([...AUDIO_KEYS]);
     expect(m.layout.designSize).toEqual({ width: 1600, height: 900 });
@@ -59,10 +57,19 @@ describe('asset registry (spec §11.4)', () => {
     expect(reg.url('nope')).toBeNull();
   });
 
-  it('unknown skin falls back to the breed default', () => {
-    const t = reg.pigTexture('pig_does_not_exist', 'PIG_STRIPED_MELON');
-    expect(t.skinId).toBe('pig_watermelon');
+  it('pig texture is the species art row', () => {
+    const t = reg.pigTexture('PIG_STRIPED_MELON');
+    expect(t.artId).toBe('pig_watermelon');
     expect(t.url).toBe(reg.url('pig_watermelon'));
+  });
+
+  it('missing art row → url null (flat fill)', () => {
+    const m = manifest();
+    m.pigs = m.pigs.filter((p) => p.id !== 'pig_watermelon');
+    expect(createAssetRegistry(m).pigTexture('PIG_STRIPED_MELON')).toMatchObject({
+      artId: 'pig_watermelon',
+      url: null,
+    });
   });
 
   it('sleep: own frame when present, else idle + fx_zzz (DECISIONS Q5)', () => {
@@ -70,20 +77,20 @@ describe('asset registry (spec §11.4)', () => {
     withSleep.pigs.find((p) => p.id === 'pig_classic')!.sleepAsset =
       'pigs/base/pig_classic_sleep.png';
     expect(
-      createAssetRegistry(withSleep).pigTexture('pig_classic', 'PIG_EARTH_PINK', true),
+      createAssetRegistry(withSleep).pigTexture('PIG_EARTH_PINK', true),
     ).toEqual({
-      skinId: 'pig_classic',
+      artId: 'pig_classic',
       url: 'assets/pigs/base/pig_classic_sleep.png',
       overlay: null,
     });
-    // A skin without its own sleep frame (rarer skins, AI pack §3.3).
+    // Art without its own sleep frame (AI pack §3.3).
     const m = manifest();
     m.pigs.find((p) => p.id === 'pig_white')!.sleepAsset = null;
     const noSleep = createAssetRegistry(m);
-    const white = noSleep.pigTexture('pig_white', 'PIG_EARTH_PINK', true);
+    const white = noSleep.pigTexture('PIG_WHITE', true);
     expect(white.url).toBe(noSleep.url('pig_white'));
     expect(white.overlay).toBe('fx_zzz');
-    expect(noSleep.pigTexture('pig_white', 'PIG_EARTH_PINK').overlay).toBeNull();
+    expect(noSleep.pigTexture('PIG_WHITE').overlay).toBeNull();
   });
 
   it('trough state by food: 0 → empty, ≤ half → half, else full', () => {
@@ -100,27 +107,10 @@ describe('asset registry (spec §11.4)', () => {
     expect(reg.placements().find((p) => p.role === 'trough')?.id).toBe('prop_feed_trough');
   });
 
-  it('SkinRegistry reads prices, rarity and unlocks from the manifest (DECISIONS C2)', () => {
-    expect(reg.skins.forSale()).toHaveLength(15);
-    expect(reg.skins.get('pig_tet')).toMatchObject({
-      priceGold: 2000,
-      rarity: 'P1',
-      unlock: { kind: 'LEVEL', level: 3 },
-    });
-    expect(reg.skins.get('pig_classic')?.priceGold).toBeNull();
-  });
-
-  it('species artwork rows are never sold and fit only their species (U00-1 D6)', () => {
-    for (const breed of Object.values(BREEDS)) {
-      expect(reg.skins.get(breed.defaultSkin), breed.id).toMatchObject({
-        priceGold: null,
-        allowedBreeds: [breed.id],
-      });
-    }
-  });
-
-  it('outfit skins fit the pink body only (U00-1 D6)', () => {
-    for (const skin of reg.skins.forSale()) expect(skin.allowedBreeds).toEqual(['PIG_EARTH_PINK']);
+  it('every species has an art row; pig rows are species art only (DECISIONS A2-1)', () => {
+    const arts = new Set(Object.values(BREEDS).map((b) => b.artId));
+    for (const id of arts) expect(reg.resolve(id)?.section, id).toBe('pigs');
+    for (const row of reg.manifest.pigs) expect(arts.has(row.id), row.id).toBe(true);
   });
 });
 

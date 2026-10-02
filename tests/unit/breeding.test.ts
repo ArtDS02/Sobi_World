@@ -177,7 +177,6 @@ describe('birth (§8.9)', () => {
     const child = w.state.pigs.find((x) => x.id !== 'mom' && x.id !== 'dad')!;
     expect(child).toMatchObject({
       breed: childBreed,
-      skinId: BREEDS[childBreed].defaultSkin,
       slotIndex: 2,
       isSick: false,
       pregnancy: null,

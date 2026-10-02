@@ -3,8 +3,13 @@ import { BREEDS } from '../config/breeds';
 import type { ErrorCode } from '../config/errors';
 import type { BreedId } from '../config/ids';
 import { levelFromXp, troughCapacityForLevel } from '../config/levels';
-import { SAVE, V3_SKIN_REFUND_GOLD, V3_SPECIES_SKINS } from '../config/save';
-import { STARTER_SKINS } from '../config/skins';
+import {
+  SAVE,
+  V3_SKIN_REFUND_GOLD,
+  V3_SPECIES_SKINS,
+  V5_BODY_OUTFITS,
+  V5_OUTFIT_PRICES,
+} from '../config/save';
 import { changeGold } from '../engine/gold';
 import { mulberry32 } from '../rng';
 import type { SaveGame } from '../types';
@@ -28,7 +33,7 @@ function v1ToV2(raw: Raw): Raw {
   const player = asObject(raw.player);
   const pigs = asArray(raw.pigs).map((p): Raw => {
     const breed = BREEDS[p.breed as BreedId];
-    return { ...p, skinId: breed?.defaultSkin, cosmetics: {} };
+    return { ...p, skinId: breed?.artId };
   });
   const seen = new Set<BreedId>();
   const records = asArray(raw.breedingRecords);
@@ -51,7 +56,6 @@ function v1ToV2(raw: Raw): Raw {
     orders: [],
     collection: {
       discoveredBreeds: [...seen],
-      discoveredSkins: [...seen].map((b) => BREEDS[b].defaultSkin),
     },
     settings: { ...asObject(raw.settings), reduceMotion: false },
   };
@@ -81,24 +85,42 @@ function v2ToV3(raw: Raw): Raw {
   return {
     ...raw,
     schemaVersion: 3,
-    player: { ...player, ownedSkins: [...new Set([...owned, ...STARTER_SKINS])] },
+    player: { ...player, ownedSkins: owned },
     pigs,
     collection: { ...collection, discoveredBreeds: [...seen].filter((b) => b in BREEDS) },
   };
 }
 
-/** Species skins a v2 save owned but no pig wore: refunded after the v2 -> v3 step. */
-function v3Refunds(v2: Raw): string[] {
-  const worn = new Set(asArray(v2.pigs).map((p) => p.skinId));
-  return strings(asObject(v2.player).ownedSkins).filter(
-    (id) => id in V3_SPECIES_SKINS && !worn.has(id),
-  );
+/** A skin refunded after migration (needs a Transaction, so it runs on the validated save). */
+interface Refund {
+  id: string;
+  gold: number;
 }
 
-function refund(save: SaveGame, skins: readonly string[]): SaveGame {
+/** Species skins a v2 save owned but no pig wore: refunded after the v2 -> v3 step. */
+function v3Refunds(v2: Raw): Refund[] {
+  const worn = new Set(asArray(v2.pigs).map((p) => p.skinId));
+  return strings(asObject(v2.player).ownedSkins)
+    .filter((id) => id in V3_SPECIES_SKINS && !worn.has(id))
+    .map((id) => ({ id, gold: V3_SKIN_REFUND_GOLD }));
+}
+
+/** A v4 pig that becomes a species because it wore a body outfit (A2-1). */
+const bodySpecies = (p: Raw): BreedId | undefined =>
+  p.breed === 'PIG_EARTH_PINK' ? V5_BODY_OUTFITS[p.skinId as string] : undefined;
+
+/** Outfits a v4 save owned, minus body outfits a pink pig wore (that pig became the species). */
+function v5Refunds(v4: Raw): Refund[] {
+  const kept = new Set(asArray(v4.pigs).filter((p) => bodySpecies(p)).map((p) => p.skinId));
+  return strings(asObject(v4.player).ownedSkins)
+    .filter((id) => id in V5_OUTFIT_PRICES && !kept.has(id))
+    .map((id) => ({ id, gold: V5_OUTFIT_PRICES[id]! }));
+}
+
+function refund(save: SaveGame, refunds: readonly Refund[]): SaveGame {
   const ctx = { now: save.updatedAt, rng: mulberry32(save.createdAt) };
-  return skins.reduce((s, id) => {
-    const r = changeGold(s, V3_SKIN_REFUND_GOLD, 'SKIN_REFUND', ctx, { refId: id });
+  return refunds.reduce((s, { id, gold }) => {
+    const r = changeGold(s, gold, 'SKIN_REFUND', ctx, { refId: id });
     return r.ok ? r.state : s;
   }, save);
 }
@@ -110,8 +132,44 @@ const v3ToV4 = (raw: Raw): Raw => ({
   gifts: { nextAt: null, boxes: [] },
 });
 
+/**
+ * v4 -> v5 (DECISIONS A2-1): outfits removed. A pig's look is its species; skin and cosmetic
+ * fields go. Body outfits worn by a pink pig turn it into that species (discovered, no bonus).
+ */
+function v4ToV5(raw: Raw): Raw {
+  const player = asObject(raw.player);
+  const collection = asObject(raw.collection);
+  const pigs = asArray(raw.pigs).map((p): Raw => {
+    const rest = { ...p };
+    delete rest.skinId;
+    delete rest.cosmetics;
+    const species = bodySpecies(p);
+    return species ? { ...rest, breed: species } : rest;
+  });
+  const keptPlayer = { ...player };
+  delete keptPlayer.ownedSkins;
+  const seen = new Set([
+    ...strings(collection.discoveredBreeds),
+    ...pigs.map((p) => p.breed as string),
+  ]);
+  return {
+    ...raw,
+    schemaVersion: 5,
+    player: keptPlayer,
+    pigs,
+    collection: { discoveredBreeds: [...seen].filter((b) => b in BREEDS) },
+  };
+}
+
 /** MIGRATIONS[n] upgrades a save from version n to n+1. */
-const MIGRATIONS: Record<number, (raw: Raw) => Raw> = { 1: v1ToV2, 2: v2ToV3, 3: v3ToV4 };
+const MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
+  1: v1ToV2,
+  2: v2ToV3,
+  3: v3ToV4,
+  4: v4ToV5,
+};
+/** REFUNDS[n] lists what the n -> n+1 step refunds, read from the save before that step. */
+const REFUNDS: Record<number, (raw: Raw) => Refund[]> = { 2: v3Refunds, 4: v5Refunds };
 
 export function migrate(input: unknown): MigrateResult {
   if (!isObject(input)) return { ok: false, error: 'SAVE_CORRUPT' };
@@ -122,11 +180,11 @@ export function migrate(input: unknown): MigrateResult {
   if (version > SAVE.SCHEMA_VERSION) return { ok: false, error: 'SAVE_TOO_NEW' };
 
   let raw: Raw = input;
-  let refunds: string[] = [];
+  const refunds: Refund[] = [];
   while (version < SAVE.SCHEMA_VERSION) {
     const step = MIGRATIONS[version];
     if (!step) return { ok: false, error: 'SAVE_CORRUPT' };
-    if (version === 2) refunds = v3Refunds(raw);
+    refunds.push(...(REFUNDS[version]?.(raw) ?? []));
     raw = step(raw);
     version += 1;
   }

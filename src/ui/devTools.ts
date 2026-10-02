@@ -1,7 +1,7 @@
 // Dev-only time travel (?dev=1 in `npm run dev`). Callers gate on import.meta.env.DEV, so a
 // production build drops this module.
 import { BALANCE } from '../core/config/balance';
-import { BREED_IDS, BREEDS } from '../core/config/breeds';
+import { BREED_IDS } from '../core/config/breeds';
 import { randomId } from '../core/rng';
 import type { Pig } from '../core/types';
 import type { BoundAction } from '../store/gameStore';
@@ -33,8 +33,6 @@ export const devFillPigs: BoundAction = (s, c) => {
       id: randomId(c.rng),
       slotIndex: slot,
       breed,
-      skinId: BREEDS[breed].defaultSkin,
-      cosmetics: {},
       name: `Heo ${slot + 1}`,
       gender: slot % 2 === 0 ? 'MALE' : 'FEMALE',
       growthProgress: 100,

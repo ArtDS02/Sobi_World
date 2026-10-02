@@ -72,9 +72,6 @@ export const vi = {
     buy: "Mua",
     fillTrough: "Đổ máng",
     rename: "Đổi tên",
-    equip: "Mặc",
-    equipped: "Đang mặc",
-    wardrobe: "Thay đồ",
     confirm: "Xác nhận",
     cancel: "Hủy",
     close: "Đóng",
@@ -102,9 +99,6 @@ export const vi = {
     SAVE_CORRUPT: "File lưu bị lỗi.",
     SAVE_TOO_NEW: "File lưu thuộc phiên bản mới hơn. Hãy cập nhật game.",
     TROUGH_FULL: "Máng ăn đã đầy.",
-    SKIN_NOT_OWNED: "Bạn chưa sở hữu bộ đồ này.",
-    SKIN_ALREADY_OWNED: "Bạn đã có bộ đồ này rồi.",
-    SKIN_BREED_NOT_ALLOWED: "Giống heo này không mặc được bộ đồ đó.",
     ORDER_NOT_FOUND: "Không tìm thấy đơn hàng.",
     ORDER_EXPIRED: "Đơn hàng đã hết hạn.",
     ORDER_REQUIREMENTS_NOT_MET: "Heo chưa đáp ứng yêu cầu của đơn hàng.",
@@ -146,7 +140,6 @@ export const vi = {
     renamed: "Đã đổi tên thành {name}.",
     slotBought: "Đã mở thêm chuồng! Giờ có {slots} chỗ.",
     breedingStarted: "{name} đã mang thai! Sinh sau {time}.",
-    skinBought: "Đã mua bộ đồ {name}.",
     giftOpened: "Mở quà: +{gold} vàng, +{xp} KN",
   },
 
@@ -171,14 +164,12 @@ export const vi = {
     tabItems: "Vật phẩm",
     tabPigs: "Heo giống",
     tabSlots: "Chuồng",
-    tabSkins: "Bộ đồ",
     FOOD_BASIC: "Thức ăn",
     FOOD_BASIC_desc: "Tăng 50 độ no. Cũng là đơn vị đổ vào máng ăn.",
     MEDICINE_COMMON: "Thuốc",
     MEDICINE_COMMON_desc: "Chữa khỏi bệnh cho một con heo.",
     slotNext: "Chuồng thứ {n}",
     slotLocked: "Cần cấp {level}",
-    collectionLocked: "Cần {count} mục trong bộ sưu tập",
     quantity: "Số lượng",
     total: "Tổng: {gold} vàng",
     owned: "Đã sở hữu",
@@ -226,11 +217,6 @@ export const vi = {
     noMatchingPig: "Chưa có heo đáp ứng đơn này",
   },
 
-  // Wardrobe dialog (spec §8.13); not in Appendix B.
-  wardrobe: {
-    title: "Thay đồ cho {name}",
-  },
-
   rarity: {
     COMMON: "Thường",
     UNCOMMON: "Khá hiếm",
@@ -242,7 +228,6 @@ export const vi = {
   collection: {
     title: "Bộ sưu tập",
     breeds: "Giống heo",
-    skins: "Bộ đồ",
     progress: "{found}/{total}",
     undiscovered: "Chưa khám phá",
   },
@@ -259,10 +244,10 @@ export const vi = {
     BREEDING_FEE: "Phí phối giống",
     SLOT_PURCHASE: "Mở chuồng",
     TROUGH_FILL: "Đổ máng",
-    SKIN_PURCHASE: "Mua bộ đồ",
+    SKIN_PURCHASE: "Mua hàng (đã ngừng bán)",
     ORDER_REWARD: "Thưởng đơn hàng",
     DISCOVERY_BONUS: "Thưởng khám phá",
-    SKIN_REFUND: "Hoàn tiền skin (heo thành giống)",
+    SKIN_REFUND: "Hoàn tiền hàng ngừng bán",
     GIFT_REWARD: "Hộp quà",
   },
 

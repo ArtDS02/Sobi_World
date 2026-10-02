@@ -6,8 +6,6 @@ export function makePig(overrides: Partial<Pig> = {}): Pig {
     id: 'pig-1',
     slotIndex: 0,
     breed: 'PIG_EARTH_PINK',
-    skinId: 'pig_classic',
-    cosmetics: {},
     name: 'Ủn Hồng',
     gender: 'FEMALE',
     growthProgress: 0,

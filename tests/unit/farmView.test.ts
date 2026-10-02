@@ -10,7 +10,7 @@ import { groundLineY, placementDepth, placementView } from '../../src/game/view/
 import {
   farmLoadList,
   fallbackPigKey,
-  skinLoadList,
+  artLoadList,
   textureKey,
   troughTextureKey,
 } from '../../src/game/view/textureKeys';
@@ -25,7 +25,7 @@ const reg = createAssetRegistry(manifest());
 const layout = reg.manifest.layout;
 
 describe('pigView (spec §11.2)', () => {
-  it('idle pig: own skin texture, feet inside the walk area, depth = y', () => {
+  it('idle pig: own species texture, feet inside the walk area, depth = y', () => {
     const v = pigView(makePig(), 0, layout, reg);
     expect(v.textureId).toBe('pig_classic');
     expect(v.fallbackId).toBe(fallbackPigKey('PIG_EARTH_PINK'));
@@ -80,9 +80,9 @@ describe('pigView (spec §11.2)', () => {
     expect(v.overlays).toEqual(['fx_sick', 'fx_pregnant']);
   });
 
-  it('unknown skin → breed default; no art at all → breed fallback texture', () => {
-    expect(pigView(makePig({ skinId: 'nope' }), 0, layout, reg).textureId).toBe('pig_classic');
-    const none = { pigTexture: () => ({ skinId: 'x', url: null, overlay: null }) };
+  it('species art texture; no art at all → breed fallback texture', () => {
+    expect(pigView(makePig(), 0, layout, reg).textureId).toBe('pig_classic');
+    const none = { pigTexture: () => ({ artId: 'x', url: null, overlay: null }) };
     expect(pigView(makePig({ breed: 'PIG_MYTHICAL' }), 0, layout, none).textureId).toBe(
       fallbackPigKey('PIG_MYTHICAL'),
     );
@@ -148,8 +148,8 @@ describe('scene layout (spec §11.1)', () => {
 });
 
 describe('preload list (spec §11)', () => {
-  it('has environment, all trough states, fx, ui icons and the requested skins only', () => {
-    // Fixture: the classic skin with its own sleep frame (cut skins may have none).
+  it('has environment, all trough states, fx, ui icons and the requested pig art only', () => {
+    // Fixture: the classic art with its own sleep frame (cut art may have none).
     const m = manifest();
     m.pigs.find((p) => p.id === 'pig_classic')!.sleepAsset = 'pigs/base/pig_classic_sleep.png';
     const list = farmLoadList(createAssetRegistry(m), ['pig_classic', 'pig_classic']);
@@ -169,15 +169,15 @@ describe('preload list (spec §11)', () => {
     expect(keys.some((k) => k.startsWith('music_') || k.startsWith('acc_'))).toBe(false);
   });
 
-  it('skin list carries the anchors json when the row has one', () => {
+  it('art list carries the anchors json when the row has one', () => {
     const m = manifest();
     m.pigs[0]!.anchors = 'pigs/base/pig_classic.anchors.json';
     expect(parseManifest(m).ok).toBe(true);
-    const s = skinLoadList(createAssetRegistry(m), m.pigs[0]!.id);
+    const s = artLoadList(createAssetRegistry(m), m.pigs[0]!.id);
     expect(s.json).toEqual([
       { key: 'pig_classic_anchors', url: 'assets/pigs/base/pig_classic.anchors.json' },
     ]);
-    expect(skinLoadList(reg, 'env_sky')).toEqual({ images: [], json: [], sheets: [] });
+    expect(artLoadList(reg, 'env_sky')).toEqual({ images: [], json: [], sheets: [] });
   });
 });
 

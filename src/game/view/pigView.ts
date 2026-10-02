@@ -14,10 +14,10 @@ export interface PigView {
   /** Texture to draw; `fallbackId` when it is not loaded (spec §11.4). */
   textureId: string;
   fallbackId: string;
-  /** The skin's `_sleep` frame, or null when the manifest has none (see sleepLook). */
+  /** The species' `_sleep` frame, or null when the manifest has none (see sleepLook). */
   sleepTextureId: string | null;
-  /** Skin row whose anchors apply (after the breed-default fallback). */
-  skinId: string;
+  /** Species art row whose anchors apply. */
+  artId: string;
   /** Home feet position in design pixels; wandering strays from it (visual only). */
   x: number;
   y: number;
@@ -68,7 +68,7 @@ export function pigScale(growthProgress: number, yNorm: number, layout: FarmLayo
 }
 
 /**
- * What a sleeping pig looks like (spec §11.4, DECISIONS Q5): the skin's `_sleep` frame when the
+ * What a sleeping pig looks like (spec §11.4, DECISIONS Q5): the species' `_sleep` frame when the
  * manifest has one and it loaded; otherwise the idle frame plus the fx_zzz overlay.
  */
 export function sleepLook(
@@ -88,13 +88,13 @@ export function pigView(
   textures: Pick<AssetRegistry, 'pigTexture'>,
 ): PigView {
   const visualState = pigVisualState(pig, 0, null);
-  const tex = textures.pigTexture(pig.skinId, pig.breed, false);
+  const tex = textures.pigTexture(pig.breed, false);
   const fallbackId = fallbackPigKey(pig.breed);
-  const textureId = tex.url === null ? fallbackId : textureKey(tex.skinId);
+  const textureId = tex.url === null ? fallbackId : textureKey(tex.artId);
   // No sleep row in the manifest → the registry answers with the fx_zzz overlay instead.
-  const asleep = textures.pigTexture(pig.skinId, pig.breed, true);
+  const asleep = textures.pigTexture(pig.breed, true);
   const sleepTextureId =
-    asleep.url === null || asleep.overlay ? null : textureKey(asleep.skinId, 'sleep');
+    asleep.url === null || asleep.overlay ? null : textureKey(asleep.artId, 'sleep');
 
   const overlays: FxId[] = [];
   if (pig.isSick) overlays.push('fx_sick');
@@ -106,7 +106,7 @@ export function pigView(
     textureId,
     sleepTextureId,
     fallbackId,
-    skinId: tex.skinId,
+    artId: tex.artId,
     x: spot.x * layout.designSize.width,
     y,
     scale: pigScale(pig.growthProgress, spot.y, layout),

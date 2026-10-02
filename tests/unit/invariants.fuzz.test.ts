@@ -1,7 +1,6 @@
-// Fuzz (spec §5.5): 1000 random actions with a fixed seed — including breeding, orders and skins —
+// Fuzz (spec §5.5): 1000 random actions with a fixed seed — including breeding and orders —
 // interleaved with time jumps; after every step the save must pass the §5.5 schema.
 import { describe, expect, it } from 'vitest';
-import manifestJson from '../../public/assets/manifest/assets.json';
 import { breedPigs } from '../../src/core/actions/breedPigs';
 import { buyItem } from '../../src/core/actions/buyItem';
 import { buyPig } from '../../src/core/actions/buyPig';
@@ -12,10 +11,7 @@ import { fillTrough } from '../../src/core/actions/fillTrough';
 import { fulfillOrder, pigMeetsOrder } from '../../src/core/actions/fulfillOrder';
 import { renamePig } from '../../src/core/actions/renamePig';
 import { sellPig } from '../../src/core/actions/sellPig';
-import { buySkin, equipSkin } from '../../src/core/actions/skins';
 import { treatPig } from '../../src/core/actions/treatPig';
-import { parseManifest } from '../../src/core/assets/manifestSchema';
-import { createAssetRegistry } from '../../src/core/assets/registry';
 import { BALANCE } from '../../src/core/config/balance';
 import { GENDER_VALUES, ITEM_ID_VALUES } from '../../src/core/config/ids';
 import { ITEMS } from '../../src/core/config/items';
@@ -36,14 +32,7 @@ const ABSENCES = [60 * MIN, 4 * 60 * MIN, 12 * 60 * MIN, 3 * 24 * 60 * MIN];
 const ABSENCE_CHANCE = 0.05;
 const jump = (r: Rng) => pick(r, r.next() < ABSENCE_CHANCE ? ABSENCES : SESSION_JUMPS);
 
-const parsed = parseManifest(structuredClone(manifestJson));
-if (!parsed.ok) throw new Error(parsed.message);
-const skins = createAssetRegistry(parsed.manifest).skins;
-
 type Step = (s: SaveGame, c: ActionContext, r: Rng) => ActionResult;
-/** Owned skins half the time, any catalogue skin otherwise (exercises SKIN_NOT_OWNED). */
-const anySkin = (s: SaveGame, r: Rng) =>
-  r.next() < 0.5 ? pick(r, s.player.ownedSkins) : pick(r, skins.all()).id;
 const anyInt = (r: Rng, max: number) => Math.floor(r.next() * (max + 1));
 const adults = (s: SaveGame) => s.pigs.filter((p) => p.growthProgress >= 100 && !p.pregnancy);
 
@@ -112,12 +101,6 @@ const ACTIONS: [string, number, Step][] = [
   ['buySlot', 1, (s, c) => buySlot(s, {}, c)],
   ['breedPigs', 4, breed],
   ['fulfillOrder', 4, fulfill],
-  ['buySkin', 2, (s, c, r) => buySkin(s, { skinId: pick(r, skins.all()).id }, c, skins)],
-  [
-    'equipSkin',
-    2,
-    (s, c, r) => equipSkin(s, { pigId: target(s, r), skinId: anySkin(s, r) }, c, skins),
-  ],
 ];
 const TOTAL_WEIGHT = ACTIONS.reduce((n, [, w]) => n + w, 0);
 
@@ -200,7 +183,7 @@ describe('§5.5 invariants under random play (fuzz)', () => {
     }
 
     // The run must actually exercise the rare systems, or it proves little.
-    for (const name of ['buyPig', 'sellPig', 'breedPigs', 'fulfillOrder', 'buySkin', 'equipSkin']) {
+    for (const name of ['buyPig', 'sellPig', 'breedPigs', 'fulfillOrder']) {
       expect(ok.get(name) ?? 0, name).toBeGreaterThan(0);
     }
   });

@@ -112,9 +112,9 @@ export class PigSprite {
     );
   }
 
-  /** Skin row drawn right now (after the breed-default fallback); null before the first view. */
-  get skinId(): string | null {
-    return this.applied?.view.skinId ?? null;
+  /** Species art row drawn right now; null before the first view. */
+  get artId(): string | null {
+    return this.applied?.view.artId ?? null;
   }
 
   /** The state this pig shows right now (spec §11 table). */

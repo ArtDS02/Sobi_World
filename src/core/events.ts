@@ -11,7 +11,7 @@ export type GameEvent =
   | { type: 'ORDER_NEW'; orderId: string }
   | { type: 'ORDER_EXPIRED'; orderId: string }
   | { type: 'LEVEL_UP'; level: number }
-  | { type: 'DISCOVERY'; kind: 'BREED' | 'SKIN'; id: string; gold: number }
+  | { type: 'DISCOVERY'; kind: 'BREED'; id: string; gold: number }
   // Action feedback (spec §8.0, D25). Gold is signed as in the transaction.
   | { type: 'PIG_BOUGHT'; pigId: string; breed: BreedId }
   | { type: 'PIG_FED'; pigId: string }
@@ -24,8 +24,6 @@ export type GameEvent =
   | { type: 'BREEDING_STARTED'; motherId: string; fatherId: string; endsAt: number }
   | { type: 'SLOT_BOUGHT'; slots: number; gold: number } // gold signed as in the transaction (§8.0)
   | { type: 'ORDER_FULFILLED'; orderId: string; gold: number }
-  | { type: 'SKIN_BOUGHT'; skinId: string; gold: number }
-  | { type: 'SKIN_EQUIPPED'; pigId: string; skinId: string }
   | { type: 'GIFT_SPAWNED'; giftId: string }
   | { type: 'GIFT_OPENED'; giftId: string; gold: number; xp: number }
   | {
@@ -58,8 +56,6 @@ export const GAME_EVENT_TYPES = [
   'BREEDING_STARTED',
   'SLOT_BOUGHT',
   'ORDER_FULFILLED',
-  'SKIN_BOUGHT',
-  'SKIN_EQUIPPED',
   'GIFT_SPAWNED',
   'GIFT_OPENED',
   'SETTING_CHANGED',

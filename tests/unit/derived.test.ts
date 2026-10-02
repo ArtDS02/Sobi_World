@@ -55,7 +55,7 @@ describe('weight, level, freeSlots', () => {
   });
 
   it('level derives from xp', () => {
-    expect(level({ player: { gold: 0, xp: 250, unlockedSlots: 4, ownedSkins: [] } })).toBe(3);
+    expect(level({ player: { gold: 0, xp: 250, unlockedSlots: 4 } })).toBe(3);
   });
 
   it('a pregnancy reserves an extra slot (D8)', () => {

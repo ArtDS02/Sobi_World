@@ -20,8 +20,6 @@ export interface FeedbackDeps {
   toast: (message: string) => void;
   /** A catch-up of SAVE.AWAY_SUMMARY_MIN_MS or more: one summary instead of toasts (§9.5). */
   away?: (events: GameEvent[], awayMs: number) => void;
-  /** Skin id → display name from the manifest (toasts for skin events). */
-  skinName?: (skinId: string) => string;
 }
 
 export interface FeedbackDirector {
@@ -57,7 +55,7 @@ export function createFeedbackDirector(deps: FeedbackDeps): FeedbackDirector {
       for (const v of plan.vfx) fx.burst(v.fx, v.target, v.delayMs);
       for (const f of plan.floats) fx.float(f.lines, f.target, f.delayMs);
       if (plan.sound) deps.audio.play(plan.sound);
-      const text = plan.toast ? toastText(event, after, previous ?? after, deps.skinName) : null;
+      const text = plan.toast ? toastText(event, after, previous ?? after) : null;
       if (text) deps.toast(text);
     }
   });

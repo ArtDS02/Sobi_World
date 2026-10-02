@@ -1,21 +1,20 @@
 // Save document and domain types (spec §5). Derived values (§5.4) are never stored.
 import type { ErrorCode } from './config/errors';
-import type { BreedId, CosmeticSlot, Gender, ItemId, TransactionType } from './config/ids';
+import type { BreedId, Gender, ItemId, TransactionType } from './config/ids';
 import type { GameEvent } from './events';
 import type { Rng } from './rng';
 
-export type { BreedId, CosmeticSlot, Gender, ItemId, TransactionType };
+export type { BreedId, Gender, ItemId, TransactionType };
 export type GrowthStage = 'BABY' | 'YOUNG' | 'ADULT'; // derived, never stored
 
 export interface SaveGame {
-  schemaVersion: 4;
+  schemaVersion: 5;
   createdAt: number;
   updatedAt: number;
   player: {
     gold: number;
     xp: number;
     unlockedSlots: number;
-    ownedSkins: string[]; // always contains the 4 breed defaults
   };
   pigs: Pig[];
   trough: {
@@ -27,7 +26,6 @@ export interface SaveGame {
   orders: Order[]; // at most BALANCE.ORDER_MAX_ACTIVE (DECISIONS C1)
   collection: {
     discoveredBreeds: BreedId[];
-    discoveredSkins: string[];
   };
   transactions: Transaction[]; // newest first, max 200
   breedingRecords: BreedingRecord[]; // newest first, max 100
@@ -55,9 +53,7 @@ export interface Pregnancy {
 export interface Pig {
   id: string;
   slotIndex: number; // unique, 0 <= slotIndex < unlockedSlots
-  breed: BreedId; // economy axis
-  skinId: string; // visual axis
-  cosmetics: Partial<Record<CosmeticSlot, string>>; // always empty in MVP (DECISIONS C3)
+  breed: BreedId; // species; its look is BREEDS[breed].artId
   name: string; // 1-16 chars
   gender: Gender;
   growthProgress: number; // 0-100

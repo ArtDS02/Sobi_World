@@ -64,8 +64,6 @@ describe('audio keys (spec §12)', () => {
       [{ type: 'ORDER_NEW', orderId: 'o' }, 'notify'],
       [{ type: 'ORDER_FULFILLED', orderId: 'o', gold: 800 }, 'coin_collect'],
       [{ type: 'DISCOVERY', kind: 'BREED', id: 'PIG_EARTH_PINK', gold: 500 }, 'coin_collect'],
-      [{ type: 'SKIN_BOUGHT', skinId: 's', gold: -2000 }, 'ui_click'],
-      [{ type: 'SKIN_EQUIPPED', pigId: 'p', skinId: 's' }, 'ui_click'],
       [{ type: 'SLOT_BOUGHT', slots: 5, gold: -2000 }, 'ui_click'],
       [{ type: 'ITEM_BOUGHT', itemId: 'FOOD_BASIC', quantity: 1, gold: -25 }, 'ui_click'],
       [{ type: 'PIG_RENAMED', pigId: 'p' }, 'ui_click'],

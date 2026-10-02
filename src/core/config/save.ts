@@ -2,7 +2,7 @@
 import type { BreedId } from './ids';
 
 export const SAVE = {
-  SCHEMA_VERSION: 4,
+  SCHEMA_VERSION: 5,
   IDB_NAME: 'un-in-homemade',
   IDB_STORE: 'saves',
   IDB_KEY: 'current',
@@ -35,3 +35,29 @@ export const V3_SPECIES_SKINS: Record<string, BreedId> = {
   pig_spotted: 'PIG_SPOTTED',
 };
 export const V3_SKIN_REFUND_GOLD = 2000; // their shop price in save v2
+
+/**
+ * Save v4 -> v5 (DECISIONS A2-1): outfits are gone. Each outfit a save owned is refunded at its
+ * shop price, except the two that were really bodies: a pink pig wearing one becomes that species.
+ */
+export const V5_OUTFIT_PRICES: Record<string, number> = {
+  pig_farmer: 2000,
+  pig_chef: 2000,
+  pig_nerd: 2000,
+  pig_knight: 2000,
+  pig_wizard: 2000,
+  pig_cowboy: 2000,
+  pig_detective: 2000,
+  pig_ghost: 2000,
+  pig_christmas: 2000,
+  pig_tet: 2000,
+  pig_pilot: 2000,
+  pig_pirate: 6000,
+  pig_ninja: 6000,
+  pig_robot: 6000,
+  pig_unicorn: 6000,
+};
+export const V5_BODY_OUTFITS: Record<string, BreedId> = {
+  pig_robot: 'PIG_ROBOT',
+  pig_unicorn: 'PIG_UNICORN',
+};

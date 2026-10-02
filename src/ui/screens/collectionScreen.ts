@@ -1,11 +1,11 @@
-// Collection book (spec §8.15): every breed and skin, undiscovered ones as silhouettes.
+// Collection book (spec §8.15): every species, undiscovered ones as silhouettes.
 import type { AssetRegistry } from '../../core/assets/registry';
 import type { SaveGame } from '../../core/types';
 import { vi } from '../../i18n/vi';
 import { rarityBadge } from '../components/rarityBadge';
 import { thumb } from '../components/thumb';
 import { el } from '../dom';
-import { collectionVm, type BookEntryVm } from '../skinsVm';
+import { collectionVm, type BookEntryVm } from '../collectionVm';
 
 const grid = (entries: BookEntryVm[]) =>
   el(
@@ -45,7 +45,5 @@ export function renderCollectionScreen(save: SaveGame, assets: AssetRegistry | n
       ),
       grid(g.entries),
     ]),
-    heading(vi.collection.skins, vm.skinProgress),
-    grid(vm.skins),
   );
 }

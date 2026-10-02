@@ -20,7 +20,7 @@ const CLEAR: Rgba = [0, 0, 0, 0];
 /** Species artwork keeps the species colour (breeds.ts) so the farm reads at a glance. */
 const PIG_COLOURS: Record<string, Rgba> = Object.fromEntries(
   Object.values(BREEDS).map((b): [string, Rgba] => [
-    b.defaultSkin,
+    b.artId,
     [(b.color >> 16) & 255, (b.color >> 8) & 255, b.color & 255, 255],
   ]),
 );

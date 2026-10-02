@@ -4,7 +4,6 @@ import { BALANCE } from '../config/balance';
 import { GIFTS } from '../config/gifts';
 import {
   BREED_ID_VALUES,
-  COSMETIC_SLOT_VALUES,
   GENDER_VALUES,
   ITEM_ID_VALUES,
   TRANSACTION_TYPE_VALUES,
@@ -29,8 +28,6 @@ const pigSchema = z.object({
   id: z.string().min(1),
   slotIndex: z.number().int().min(0),
   breed: breedId,
-  skinId: z.string().min(1),
-  cosmetics: z.partialRecord(z.enum(COSMETIC_SLOT_VALUES), z.string()),
   name: z.string().min(1).max(16),
   gender,
   growthProgress: pct,
@@ -92,7 +89,6 @@ const shapeSchema = z.object({
     xp: nonNeg,
     // No upper bound: MAX_SLOTS is tunable data, lowering it must never make a save unreadable.
     unlockedSlots: z.number().int().min(1),
-    ownedSkins: z.array(z.string()),
   }),
   pigs: z.array(pigSchema),
   trough: z.object({ food: nonNeg, capacity: nonNeg, lastResolvedAt: time }),
@@ -100,7 +96,6 @@ const shapeSchema = z.object({
   orders: z.array(orderSchema),
   collection: z.object({
     discoveredBreeds: z.array(breedId),
-    discoveredSkins: z.array(z.string()),
   }),
   transactions: z.array(transactionSchema),
   breedingRecords: z.array(breedingRecordSchema),
@@ -123,8 +118,6 @@ export const saveGameSchema = shapeSchema.superRefine((s, ctx) => {
   if (s.trough.food > s.trough.capacity) issue('trough.food must be <= trough.capacity');
   const pregnant = s.pigs.filter((p) => p.pregnancy !== null).length;
   if (s.pigs.length + pregnant > s.player.unlockedSlots) issue('pigs + pregnancies exceed slots');
-  const owned = new Set(s.player.ownedSkins);
-  if (s.pigs.some((p) => !owned.has(p.skinId))) issue('pig skinId must be owned');
   if (s.orders.length > BALANCE.ORDER_MAX_ACTIVE) issue('too many orders');
   if (s.gifts.boxes.length > GIFTS.MAX_ON_FARM) issue('too many gift boxes');
 });

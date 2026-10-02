@@ -72,7 +72,7 @@
   }
 }
 
-// Manifest thumbnail (skins, collection). Undiscovered entries are a dark silhouette (§8.15).
+// Manifest thumbnail (shop, collection). Undiscovered entries are a dark silhouette (§8.15).
 .c-thumb {
   display: block;
   width: $thumb-size;
@@ -293,18 +293,6 @@
   &__choice[aria-pressed='true'] {
     border-color: $c-primary;
     background: $c-surface-alt;
-  }
-
-  &__skins {
-    display: grid;
-    gap: $sp-2;
-  }
-
-  &__skin {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: $sp-3;
-    align-items: center;
   }
 }
 

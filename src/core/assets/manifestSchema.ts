@@ -2,9 +2,8 @@
 // A change to the shape bumps `version` here and in the file in the same commit.
 import { z } from 'zod';
 import { ANCHOR_NAMES, FARM_ACTIONS } from '../config/assetIds';
-import { BREED_ID_VALUES, COSMETIC_SLOT_VALUES } from '../config/ids';
 
-export const MANIFEST_VERSION = 2;
+export const MANIFEST_VERSION = 3;
 
 export const assetIdSchema = z
   .string()
@@ -25,35 +24,14 @@ const base = {
   license: z.string().min(1).optional(),
 };
 
-const rarity = z.enum(['P1', 'P2', 'P3', 'P4', 'P5']);
-const unlock = z
-  .discriminatedUnion('kind', [
-    z.object({ kind: z.literal('LEVEL'), level: z.number().int().min(1) }),
-    z.object({ kind: z.literal('COLLECTION'), count: z.number().int().min(1) }),
-  ])
-  .nullable();
-
 export const pigRowSchema = z.object({
   ...base,
   nameVi: z.string().min(1),
   collection: z.string().min(1),
-  rarity,
-  priceGold: z.number().int().positive().nullable(),
-  unlock,
-  allowedBreeds: z.union([z.literal('ALL'), z.array(z.enum(BREED_ID_VALUES)).min(1)]),
   asset: assetPath,
   sleepAsset: assetPath.nullable().optional(),
   anchors: assetPath.optional(),
   tags: z.array(z.string()).default([]),
-});
-
-export const cosmeticRowSchema = z.object({
-  ...base,
-  slot: z.enum(COSMETIC_SLOT_VALUES),
-  symmetric: z.boolean(),
-  asset: assetPath,
-  assetFlip: assetPath.optional(),
-  compatibleTags: z.array(z.string()).default([]),
 });
 
 const frames = z.object({
@@ -125,7 +103,6 @@ export const layoutSchema = z.object({
 export const manifestSchema = z.object({
   version: z.literal(MANIFEST_VERSION),
   pigs: z.array(pigRowSchema),
-  cosmetics: z.array(cosmeticRowSchema),
   fx: z.array(fxRowSchema),
   props: z.array(propRowSchema),
   buildings: z.array(buildingRowSchema),
@@ -145,7 +122,6 @@ export type AssetStatus = PigRow['status'];
 export type ManifestSection = Exclude<keyof AssetManifest, 'version' | 'layout'>;
 export const MANIFEST_SECTIONS: ManifestSection[] = [
   'pigs',
-  'cosmetics',
   'fx',
   'props',
   'buildings',

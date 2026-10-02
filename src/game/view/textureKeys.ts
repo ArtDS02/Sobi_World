@@ -9,7 +9,7 @@ import type { BreedId } from '../../core/config/ids';
 export const textureKey = (id: string, file = 'asset'): string =>
   file === 'asset' ? id : `${id}_${file}`;
 
-export const anchorsKey = (skinId: string): string => textureKey(skinId, 'anchors');
+export const anchorsKey = (artId: string): string => textureKey(artId, 'anchors');
 
 export const fallbackPigKey = (breed: BreedId): string => `fallback_pig_${breed.toLowerCase()}`;
 export const FALLBACK_PROP_KEY = 'fallback_prop';
@@ -45,22 +45,22 @@ const FARM_SECTIONS = new Set(['environment', 'props', 'buildings', 'fx', 'ui'])
 /** Files rendered by the farm; shadows, flips and audio are not drawn in R05A. */
 const SKIPPED_FILES = new Set(['shadow', 'flip', 'anchors']);
 
-/** Every file of one pig skin: idle, optional sleep frame, optional anchors json. */
-export function skinLoadList(assets: AssetRegistry, skinId: string): LoadList {
-  const entry = assets.resolve(skinId);
+/** Every file of one species art row: idle, optional sleep frame, optional anchors json. */
+export function artLoadList(assets: AssetRegistry, artId: string): LoadList {
+  const entry = assets.resolve(artId);
   if (!entry || entry.section !== 'pigs') return { images: [], json: [], sheets: [] };
-  const url = (file: string) => assets.url(skinId, file);
+  const url = (file: string) => assets.url(artId, file);
   const images: LoadItem[] = [];
   for (const file of ['asset', 'sleep']) {
     const u = url(file);
-    if (u) images.push({ key: textureKey(skinId, file), url: u });
+    if (u) images.push({ key: textureKey(artId, file), url: u });
   }
   const a = url('anchors');
-  return { images, json: a ? [{ key: anchorsKey(skinId), url: a }] : [], sheets: [] };
+  return { images, json: a ? [{ key: anchorsKey(artId), url: a }] : [], sheets: [] };
 }
 
-/** Environment, structures, props (all trough states), fx, ui icons, plus the given skins. */
-export function farmLoadList(assets: AssetRegistry, skinIds: Iterable<string>): LoadList {
+/** Environment, structures, props (all trough states), fx, ui icons, plus the given pig art rows. */
+export function farmLoadList(assets: AssetRegistry, artIds: Iterable<string>): LoadList {
   const images: LoadItem[] = [];
   const json: LoadItem[] = [];
   const sheets: SheetItem[] = [];
@@ -85,8 +85,8 @@ export function farmLoadList(assets: AssetRegistry, skinIds: Iterable<string>): 
       } else images.push({ key, url });
     }
   }
-  for (const skinId of new Set(skinIds)) {
-    const s = skinLoadList(assets, skinId);
+  for (const artId of new Set(artIds)) {
+    const s = artLoadList(assets, artId);
     images.push(...s.images);
     json.push(...s.json);
   }
