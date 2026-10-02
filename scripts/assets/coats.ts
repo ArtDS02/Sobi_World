@@ -123,10 +123,12 @@ export const COATS: Record<string, (c: CoatCtx) => void> = {
       const black = shade([46, 42, 46], ref, 1.1);
       const white = shade([250, 248, 244], ref, 1.22);
       const k = Math.max(
-        blob(u, v, 0.68, 0.38, 0.075, 0.1), // near eye
-        blob(u, v, 0.4, 0.33, 0.12, 0.17), // near ear flap
+        // Patch around the near eye, wider than the eye and dropping toward the cheek (the old
+        // eye-sized spot only darkened the iris, so no patch showed).
+        blob(u, v, 0.665, 0.395, 0.115, 0.13),
+        blob(u, v, 0.43, 0.27, 0.12, 0.15), // near ear flap
         blob(u, v, 0.88, 0.08, 0.08, 0.1), // far ear
-        sm(0.76, 0.82, v), // legs
+        sm(0.85, 0.9, v), // legs, below the belly line
       );
       return { color: mix(white, black, k), t: 1, skin: k > 0.05 }; // snout, blush stay pink
     }),

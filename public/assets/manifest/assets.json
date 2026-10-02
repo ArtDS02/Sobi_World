@@ -701,15 +701,6 @@
       "tags": ["species", "new"]
     },
     {
-      "id": "pig_alien_v4",
-      "status": "production",
-      "nameVi": "Heo Ngoài Hành Tinh v4",
-      "collection": "species",
-      "asset": "pigs/base/pig_alien_v4.png",
-      "sleepAsset": null,
-      "tags": ["species", "new"]
-    },
-    {
       "id": "pig_cyborg_v3",
       "status": "production",
       "nameVi": "Heo Cyborg v3",
@@ -1021,7 +1012,7 @@
       "asset": "audio/music_farm.mp3",
       "kind": "music",
       "loop": true,
-      "volume": 0.6,
+      "volume": 0.35,
       "credit": "Ủn Ỉn Homemade — generated with Mureka AI",
       "license": "Project-owned (Mureka AI output, per the account plan terms)"
     },
@@ -1111,7 +1102,7 @@
       "status": "production",
       "asset": "audio/level_up.mp3",
       "kind": "sfx",
-      "volume": 0.8,
+      "volume": 0.45,
       "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },

@@ -283,3 +283,6 @@ Phase: PG.
 
 **PG-4** · **Chơi lại từ đầu.** Cài đặt → 2 lần xác nhận → `store.resetGame()`: ghi save hiện tại, rồi `backups.backupBeforeReset()` (desktop: 1 bản trong `backups/` khôi phục được + 1 bản vĩnh viễn `saves/before-reset-<stamp>.json` ngoài vòng xoay 10 bản), lỗi sao lưu → huỷ, giữ nguyên nông trại. IPC mới `unin:save:backupBeforeReset`. Bản trình duyệt (dev) không có sao lưu: reset luôn.
 Phase: PG.
+
+**PG-5** · Dọn art. `pig_panda`: quầng mắt cũ chỉ to bằng con mắt (tô đen tròng, không thành quầng) → blob rộng hơn quanh mắt, mảng đen dời lên vạt tai, dải chân chỉ dưới đường bụng (`coats.ts`), cắt lại + `art:sleep`. Xoá `pig_alien_v4` (trùng byte `pig_alien_v3`). Âm lượng: không có ffmpeg → đo RMS bằng WebAudio trong bản dev (nhạc −15,4 dB, SFX −16…−18 dB, `level_up` −9,6 dB) và chỉnh `volume` manifest thay vì mã hoá lại: `music_farm` 0,6 → 0,35 (≈7 dB dưới SFX), `level_up` 0,8 → 0,45. `pig_ai`, `pig_space` (ảnh nguồn chưa nhập game) vẫn cần vẽ lại bằng model ảnh — không làm được trong session.
+Phase: PG.
