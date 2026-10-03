@@ -2,11 +2,11 @@
 // checked for orphans (species no route reaches), invalid / duplicate rules and probability
 // errors. Run by tests (must stay clean) and printed by `npm run breeding:report`.
 import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from '../config/breedingPairs';
-import { MUTATIONS, type Mutation } from '../config/breedingRules';
+import { GENETICS, MUTATIONS, type GeneticsRules, type Mutation } from '../config/breedingRules';
 import { BREED_IDS, BREEDS } from '../config/breeds';
 import type { BreedId } from '../config/ids';
 import { RARITY_VALUES, type Rarity } from '../config/rarity';
-import { breedingOutcomes } from './breedingOdds';
+import { breedingOutcomes, geneticsIssues, recipeIssues } from './breedingOdds';
 
 /** A route below this percent still counts, but the report flags species whose best is weaker. */
 export const WEAK_ROUTE_PERCENT = 0.2;
@@ -74,6 +74,7 @@ function ruleIssues(mutations: readonly Mutation[], pairs: readonly PairRule[]) 
 export function breedingCoverage(
   mutations: readonly Mutation[] = MUTATIONS,
   pairs: readonly PairRule[] = PAIR_RULES,
+  genetics: GeneticsRules = GENETICS,
 ): BreedingCoverage {
   const ids = live();
   const parents = ids.filter((id) => BREEDS[id].breedable);
@@ -84,7 +85,7 @@ export function breedingCoverage(
     for (let j = i; j < parents.length; j++) {
       const a = parents[i]!,
         b = parents[j]!;
-      const out = breedingOutcomes(a, b, pairs) ?? [];
+      const out = breedingOutcomes(a, b, pairs, { mutations, genetics }) ?? [];
       const sum = out.reduce((s, o) => s + o.weight, 0);
       if (out.length === 0 || Math.abs(sum - 100) > 1e-6 || out.some((o) => !(o.weight >= 0)))
         probabilityErrors.push(`${a} × ${b}: ${sum}%`);
@@ -130,6 +131,7 @@ export function breedingCoverage(
     RARITY_VALUES.map((r) => [r, ids.filter((id) => BREEDS[id].rarity === r).length]),
   ) as Record<Rarity, number>;
   const { invalid, dupes } = ruleIssues(mutations, pairs);
+  invalid.push(...recipeIssues(mutations), ...geneticsIssues(genetics));
   return {
     total: ids.length,
     byRarity,

@@ -3,7 +3,7 @@ import { breedingOutcomes, type BreedingOutcome } from './breedingOdds';
 import { BREEDS } from '../config/breeds';
 import type { BreedId, Gender } from '../config/ids';
 import type { GameEvent } from '../events';
-import { randomId, type Rng } from '../rng';
+import { mulberry32, randomId, type Rng } from '../rng';
 import type { NurseryPig, Pig, SaveGame } from '../types';
 import { discoverBreed } from './collection';
 import { pickPigName } from './pigNames';
@@ -27,6 +27,12 @@ export function rollChild(rng: Rng, a: BreedId, b: BreedId): { breed: BreedId; g
   const gender: Gender = rng.next() < 0.5 ? 'MALE' : 'FEMALE';
   return { breed, gender };
 }
+
+/**
+ * rollChild under a fixed seed (DECISIONS MU-1): the same pair and seed always give the same child —
+ * for bug reproduction, tests and deterministic simulation. Never shown to the player.
+ */
+export const rollChildSeeded = (seed: number, a: BreedId, b: BreedId) => rollChild(mulberry32(seed), a, b);
 
 /** The pen slot a new farm pig takes: the lowest index no pig uses. */
 export function lowestFreeSlot(pigs: readonly Pig[]): number {

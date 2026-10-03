@@ -22,25 +22,25 @@ const share = (a: BreedId, b: BreedId, pick: (id: BreedId) => boolean) =>
   (breedingOutcomes(a, b) ?? []).filter((o) => pick(o.breed)).reduce((s, o) => s + o.weight, 0);
 
 describe('breeding engine v2 (DECISIONS PS-2)', () => {
-  it('same rarity: mostly the same rarity, a real chance one up, a small chance one down', () => {
+  it('same rarity: mostly the same rarity, a real chance one up, never down or two up (MU-1)', () => {
     const rr = tier('PIG_TIGER', 'PIG_PANDA'); // RARE × RARE
-    expect(rr(0)).toBeGreaterThan(65);
+    expect(rr(0)).toBeGreaterThan(80);
     expect(rr(1)).toBeGreaterThan(4); // EPIC
-    expect(rr(-1)).toBeGreaterThan(3); // UNCOMMON
-    expect(rr(-1)).toBeLessThan(15);
-    expect(rr(2)).toBeLessThan(3); // LEGENDARY: very low
+    expect(rr(-1)).toBe(0); // no tier down
+    expect(rr(2)).toBe(0); // LEGENDARY: never two tiers
     const ee = tier('PIG_KOI', 'PIG_DRAGONLING'); // EPIC × EPIC
-    expect(ee(0)).toBeGreaterThan(60);
+    expect(ee(0)).toBeGreaterThan(80);
     expect(ee(1)).toBeGreaterThan(5); // LEGENDARY: meaningful
   });
 
-  it('common × common never gives a legendary or epic; mixed pairs lean to the lower rarity', () => {
-    const cc = share('PIG_EARTH_PINK', 'PIG_WHITE', (id) => rarityRank(BREEDS[id].rarity) >= 3);
+  it('common × common never gives a legendary or epic; mixed pairs lean to the parents', () => {
+    const cc = share('PIG_EARTH_PINK', 'PIG_WHITE', (id) => rarityRank(BREEDS[id].rarity) >= 2);
     expect(cc).toBe(0);
     const cr = tier('PIG_EARTH_PINK', 'PIG_TIGER'); // COMMON × RARE → base RARE
-    expect(cr(-2)).toBeGreaterThan(cr(0)); // common more likely than rare
-    expect(cr(-1)).toBeGreaterThan(0);
-    expect(cr(1)).toBeLessThan(5);
+    expect(cr(-1)).toBeGreaterThan(0); // UNCOMMON: the middle tier
+    expect(cr(1)).toBe(0); // nothing above the higher parent
+    const parents = share('PIG_EARTH_PINK', 'PIG_TIGER', (id) => id === 'PIG_EARTH_PINK' || id === 'PIG_TIGER');
+    expect(parents).toBeGreaterThan(cr(-1));
   });
 
   it('compatibility: own species and recipes high, unrelated far rarities low, always > 0', () => {

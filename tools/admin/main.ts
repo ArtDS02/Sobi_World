@@ -1,9 +1,10 @@
 // Admin dashboard entry (admin.html, `npm run admin`). Hash routes (DECISIONS A7-1, AD-1):
 // #/ overview · #/users[/<id>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
-// #/assets (source) · #/library · #/layout · #/products · #/breeding · #/daynight · #/guide[/<section>]
+// #/assets (source) · #/library · #/layout · #/products · #/breeding · #/daynight · #/seasons · #/guide[/<section>]
 import { renderAssets } from './assets';
 import { breedingDirty, renderBreeding } from './breeding';
 import { renderDayNight } from './dayNight';
+import { renderSeasons } from './seasons';
 import { renderEditor } from './editor';
 import { renderGuide } from './guide';
 import { esc } from './labels';
@@ -23,7 +24,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
   [null, [['', '🏡', 'Tổng quan', 'overview'], ['users', '👤', 'Người chơi', 'users']]],
   ['Heo', [['pigs', '🐷', 'Quản lý heo', 'pigs'], ['validation', '🩺', 'Kiểm tra dữ liệu', 'pigs']]],
   ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
-  ['Game', [['layout', '🗺️', 'Bố cục nông trại', 'layout'], ['daynight', '🌗', 'Ngày / Đêm', 'daynight']]],
+  ['Game', [['layout', '🗺️', 'Bố cục nông trại', 'layout'], ['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['seasons', '🍂', 'Mùa & hiệu ứng', 'seasons']]],
   ['Cửa hàng', [['products', '🛒', 'Sản phẩm', 'shop']]],
   ['Phối giống', [['breeding', '🧬', 'Luật phối giống', 'breeding']]],
   [null, [['guide', '📘', 'Hướng dẫn quản trị', 'overview']]],
@@ -103,6 +104,7 @@ function render() {
     assets: () => renderAssets(content),
     library: () => renderLibrary(content),
     daynight: () => renderDayNight(content, state.apiOnline),
+    seasons: () => renderSeasons(content, render),
     users: () => (id ? renderUserDetail(content, id, render) : renderUsers(content, render)),
     products: () => renderProducts(content, render),
     breeding: () => renderBreeding(content, render),

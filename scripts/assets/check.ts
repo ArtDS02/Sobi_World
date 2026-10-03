@@ -12,6 +12,7 @@ import {
   TROUGH_STATES,
 } from '../../src/core/config/assetIds';
 import { BREEDS } from '../../src/core/config/breeds';
+import { SEASON_FX_ART_IDS } from '../../src/core/config/seasonFx';
 import {
   MANIFEST_SECTIONS,
   parseManifest,
@@ -73,6 +74,32 @@ const cornersClear = (png: PNG) =>
     [png.width - 1, png.height - 1],
   ].every(([x, y]) => png.data[(y! * png.width + x!) * 4 + 3]! <= OPAQUE);
 
+/**
+ * Seasonal FX art (DECISIONS MU-2): RGBA with a clean cut — every frame's 1 px border fully clear
+ * (no rectangle / background box), something painted, and no frame mostly opaque (a baked-in
+ * backdrop). Returns the problems.
+ */
+export function fxCutIssues(png: PNG, frameWidth: number): string[] {
+  const issues: string[] = [];
+  const count = Math.max(1, Math.round(png.width / frameWidth));
+  for (let f = 0; f < count; f++) {
+    let border = 0, painted = 0, opaque = 0;
+    for (let y = 0; y < png.height; y++)
+      for (let x = f * frameWidth; x < (f + 1) * frameWidth; x++) {
+        const a = png.data[(y * png.width + x) * 4 + 3]!;
+        const edge = y === 0 || y === png.height - 1 || x === f * frameWidth || x === (f + 1) * frameWidth - 1;
+        if (edge && a > 0) border++;
+        if (a > OPAQUE) painted++;
+        if (a > 240) opaque++;
+      }
+    const area = frameWidth * png.height;
+    if (border > 0) issues.push(`frame ${f}: ${border} px on the border are not transparent`);
+    if (painted === 0) issues.push(`frame ${f}: empty`);
+    if (opaque > area * 0.85) issues.push(`frame ${f}: ${Math.round((opaque / area) * 100)}% opaque (background?)`);
+  }
+  return issues;
+}
+
 function defaultSize(root: string, row: Row): { width: number; height: number } | null {
   const asset = (row as { asset?: string }).asset;
   const full = asset ? join(root, asset) : '';
@@ -112,6 +139,7 @@ export function checkAssets(root: string): string[] {
   for (const breed of Object.values(BREEDS))
     need(breed.artId, 'pigs', `art of ${breed.id}`);
   for (const id of FX_IDS) need(id, 'fx', 'shared fx set');
+  for (const id of SEASON_FX_ART_IDS) need(id, 'fx', 'seasonal FX (MU-2)');
   for (const id of AUDIO_KEYS) need(id, 'audio', 'spec §12 audio key');
   need(ORDER_BOARD_PROP_ID, 'props', 'order board');
   need(GIFT_PROP_ID, 'props', 'gift box (U06)');
@@ -167,6 +195,10 @@ export function checkAssets(root: string): string[] {
           errors.push(`${row.id}: ${path} has no alpha channel`);
         if (strict && (section === 'pigs' || section === 'fx') && !cornersClear(png)) {
           errors.push(`${row.id}: ${path} corners are not transparent`);
+        }
+        if (strict && section === 'fx' && (SEASON_FX_ART_IDS as readonly string[]).includes(row.id)) {
+          const fx = row as AssetManifest['fx'][number];
+          for (const issue of fxCutIssues(png, fx.frames?.width ?? png.width)) errors.push(`${row.id}: ${issue}`);
         }
         if (section === 'pigs') {
           const feet = feetLine(png);

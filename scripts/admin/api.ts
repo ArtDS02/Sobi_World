@@ -11,6 +11,9 @@
 //   POST /saves/write    { id, json, baseModifiedAt } · POST /saves/archive { id } · POST /saves/root { path }
 //   POST /products       { rows }            → PRODUCTS block of config/products.ts
 //   POST /breeding-pairs { rows }            → PAIR_RULES block of config/breedingPairs.ts
+//   POST /breeding-genetics { genetics, mutations, geneBonuses } → GENETICS + MUTATIONS blocks of
+//        config/breedingRules.ts and GENE_BONUSES of config/genePool.ts (MU-1)
+//   POST /season-fx      { tuning }          → SEASON_FX_TUNING block of config/seasonFx.ts (MU-2)
 //   GET  /layout-default · POST /layout { placements } → manifest layout.placements
 import { readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -22,7 +25,19 @@ import { replaceDayNightBlock } from './dayNightText';
 import { validateSpecies, type ValidateInput } from './validate';
 import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, registerExisting, uploadArt } from './artFiles';
 import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
-import { pairsBlock, productsBlock, replaceBlock, replacePlacementsText } from './configBlocks';
+import {
+  geneBonusesBlock,
+  geneticsBlock,
+  mutationsBlock,
+  seasonFxBlock,
+  pairsBlock,
+  productsBlock,
+  replaceBlock,
+  replacePlacementsText,
+} from './configBlocks';
+import type { GeneticsRules, Mutation } from '../../src/core/config/breedingRules';
+import type { GeneBonuses } from '../../src/core/config/genePool';
+import type { SeasonFxTuning } from '../../src/core/config/seasonFx';
 import { layoutIssues, pairIssues, productIssues, type PairRuleRow, type PlacementRow, type ProductRow } from './rules';
 
 const TABLE = 'src/core/config/speciesTable.ts';
@@ -30,6 +45,9 @@ const IDS = 'src/core/config/ids.ts';
 const DAY_NIGHT_FILE = 'src/core/config/dayNight.ts';
 const PRODUCTS_FILE = 'src/core/config/products.ts';
 const PAIRS_FILE = 'src/core/config/breedingPairs.ts';
+const RULES_FILE = 'src/core/config/breedingRules.ts';
+const GENE_FILE = 'src/core/config/genePool.ts';
+const SEASON_FX_FILE = 'src/core/config/seasonFx.ts';
 const LAYOUT_DEFAULT = 'scripts/admin/layoutDefault.json';
 
 type Result = { status: number; body: unknown };
@@ -133,6 +151,47 @@ async function savePairs(rows: PairRuleRow[], load: (p: string) => Promise<Mod>)
   return { status: 200, body: { ok: true, rows: rows.length } };
 }
 
+interface GeneticsBody {
+  genetics: GeneticsRules;
+  mutations: Mutation[];
+  geneBonuses: GeneBonuses;
+}
+
+/** MU-1: random-genetics percents, special recipes and gene bonuses, validated by the engine itself. */
+async function saveGenetics(b: GeneticsBody, load: (p: string) => Promise<Mod>): Promise<Result> {
+  const [odds, breeds] = await Promise.all([load('/src/core/engine/breedingOdds.ts'), load('/src/core/config/breeds.ts')]);
+  const known = breeds.BREEDS as Record<string, { breedable: boolean } | undefined>;
+  const issues = [
+    ...(odds.geneticsIssues as (g: GeneticsRules) => string[])(b.genetics),
+    ...(odds.recipeIssues as (m: Mutation[]) => string[])(b.mutations),
+    ...b.mutations.flatMap((m) =>
+      [...m.parents, m.result].filter((id) => !known[id]).map((id) => `công thức: loài ${id} không tồn tại`),
+    ),
+    ...b.mutations.flatMap((m) =>
+      m.parents.filter((id) => known[id] && !known[id]!.breedable).map((id) => `công thức: ${id} không phối giống được`),
+    ),
+  ];
+  const g = b.geneBonuses;
+  if (!(g.base > 0) || [g.sameTheme, g.relatedTheme, g.perGeneTag, g.geneTagCap].some((v) => !(v >= 0)))
+    issues.push('gene pool: base > 0, các điểm cộng ≥ 0');
+  if (issues.length) return { status: 400, body: { error: issues.join('\n') } };
+  let rules = readFileSync(RULES_FILE, 'utf8');
+  rules = replaceBlock(rules, 'genetics', geneticsBlock(b.genetics));
+  rules = replaceBlock(rules, 'mutations', mutationsBlock(b.mutations));
+  writeText(RULES_FILE, rules);
+  writeText(GENE_FILE, replaceBlock(readFileSync(GENE_FILE, 'utf8'), 'geneBonuses', geneBonusesBlock(g)));
+  return { status: 200, body: { ok: true, recipes: b.mutations.length } };
+}
+
+/** MU-2: seasonal FX tuning (on / off, density, spawn rate), validated by the engine. */
+async function saveSeasonFx(tuning: SeasonFxTuning, load: (p: string) => Promise<Mod>): Promise<Result> {
+  const fx = await load('/src/core/engine/seasonFx.ts');
+  const issues = (fx.seasonFxIssues as (t: SeasonFxTuning) => string[])(tuning);
+  if (issues.length) return { status: 400, body: { error: issues.join('; ') } };
+  writeText(SEASON_FX_FILE, replaceBlock(readFileSync(SEASON_FX_FILE, 'utf8'), 'seasonFx', seasonFxBlock(tuning)));
+  return { status: 200, body: { ok: true } };
+}
+
 async function saveLayout(placements: PlacementRow[], load: (p: string) => Promise<Mod>): Promise<Result> {
   const [schema, assetIds] = await Promise.all([load('/src/core/assets/manifestSchema.ts'), load('/src/core/config/assetIds.ts')]);
   const parse = schema.placementSchema as { safeParse: (v: unknown) => { success: boolean; error?: { message: string } } };
@@ -201,6 +260,10 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
       return saveProducts((await body<{ rows: ProductRow[] }>()).rows, load);
     case 'POST /breeding-pairs':
       return savePairs((await body<{ rows: PairRuleRow[] }>()).rows, load);
+    case 'POST /breeding-genetics':
+      return saveGenetics(await body<GeneticsBody>(), load);
+    case 'POST /season-fx':
+      return saveSeasonFx((await body<{ tuning: SeasonFxTuning }>()).tuning, load);
     case 'GET /layout-default':
       return { status: 200, body: { placements: JSON.parse(readFileSync(LAYOUT_DEFAULT, 'utf8')) } };
     case 'POST /layout':

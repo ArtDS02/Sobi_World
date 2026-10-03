@@ -25,6 +25,7 @@
     "art:cut": "tsx scripts/cut-reference.ts",
     "art:buildings": "tsx scripts/cut-buildings.ts",
     "art:seasons": "tsx scripts/cut-seasons.ts",
+    "art:season-fx": "tsx scripts/cut-season-fx.ts",
     "art:process": "tsx scripts/process-art.ts",
     "art:sleep": "tsx scripts/sleep-frames.ts",
     "breeding:report": "tsx scripts/breeding-report.ts",

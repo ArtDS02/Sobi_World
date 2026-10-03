@@ -1,34 +1,51 @@
-// Breeding odds as rules, not a pair matrix (DECISIONS U00-1 D4, PS-2). Adding a species needs no
-// row here: it joins its rarity tier, family and traits. Two steps, both data:
-//   1. which RARITY the child gets — RARITY_SAME / RARITY_MIXED, rarer results scaled by the
-//      pair's compatibility (COMPAT);
-//   2. which SPECIES of that rarity — SPECIES weights (parent species, family, shared traits).
-// Then MUTATIONS (named recipes) add points for their result. Every number is TUNABLE.
+// Breeding as data (DECISIONS U00-1 D4, PS-2, MU-1). A pair's child is decided in layers, highest
+// priority first — a lower layer never overrides a higher one:
+//   1. the admin pair table (breedingPairs.ts, AD-1): an active row IS the pair's whole odds;
+//   2. SPECIAL RECIPES (MUTATIONS): a named result takes its percent of the pair's odds first;
+//   3. RANDOM GENETICS (GENETICS): the rest, so every valid pair has a child — parent species
+//      first, then other species of the same / middle rarity, then one tier up at most.
+// Inside a bucket the gene pool (genePool.ts: theme + gene tags) only shapes which species of that
+// bucket comes out. Adding a species needs no row here. Every number is TUNABLE; the blocks
+// between the admin markers are rewritten by the admin dashboard (→ Phối giống).
 import type { BreedId } from './ids';
 
-export const BREEDING_RULES = {
-  /** Parents of one rarity: percent of each child rarity (relative to theirs). */
-  RARITY_SAME: { down: 8, same: 80, up: 10, up2: 1.5 },
+/** Percent buckets of one random-genetics case; a bucket with no species is dropped, the rest rescale. */
+export interface GeneticsBuckets {
+  /** Child is the species of parent A or parent B (split evenly). */
+  parentTypeChance: number;
+  /** Another species of a parent's rarity (sameRarity: theirs; adjacentRarity: either one). */
+  sameRarityTypeChance: number;
+  /** A species of a rarity strictly between the parents' (differentRarity only). */
+  middleRarityChance: number;
   /**
-   * Parents of two rarities (low < high): the lower one, the ones in between, the higher one,
-   * one above the higher one. A rarity that does not exist is dropped and the rest rescaled.
+   * sameRarity: a species one tier above the parents (never more than one tier).
+   * different / adjacentRarity: another species of the higher parent's rarity.
    */
-  RARITY_MIXED: { low: 44, between: 30, high: 22, above: 3 },
-  /** Rarer-than-parents percents are multiplied by min + (max − min) × compatibility. */
-  UP_SCALE: { min: 0.5, max: 1.5 },
-  /** Relative weight of each species inside the child's rarity. */
-  SPECIES: {
-    /** One of the parents' species (inheritance). */
-    PARENT: 150,
-    /** Same family (collection theme) as a parent. */
-    FAMILY: 8,
-    /** Per trait shared with the parents (counted up to TRAIT_CAP). */
-    TRAIT: 4,
-    TRAIT_CAP: 3,
-    /** Anything else of that rarity: the discovery tail. */
-    BASE: 1,
-  },
-  /** Compatibility 0..1 of a pair (shown as hearts; scales the rare results). */
+  higherRarityChance: number;
+}
+
+export interface GeneticsRules {
+  /** Parents of one rarity. */
+  sameRarity: GeneticsBuckets;
+  /** Parents with at least one rarity tier between them (Common × Epic → Uncommon, Rare). */
+  differentRarity: GeneticsBuckets;
+  /** Parents of neighbouring rarities (Common × Uncommon): no middle tier. */
+  adjacentRarity: GeneticsBuckets;
+  /** sameRarity's one-tier-up bucket is multiplied by min + (max − min) × compatibility. */
+  compatScale: { min: number; max: number };
+}
+
+// <admin:genetics>
+export const GENETICS: GeneticsRules = {
+  sameRarity: { parentTypeChance: 66, sameRarityTypeChance: 26, middleRarityChance: 0, higherRarityChance: 8 },
+  differentRarity: { parentTypeChance: 60, sameRarityTypeChance: 0, middleRarityChance: 28, higherRarityChance: 12 },
+  adjacentRarity: { parentTypeChance: 62, sameRarityTypeChance: 26, middleRarityChance: 0, higherRarityChance: 12 },
+  compatScale: { min: 0.5, max: 1.5 },
+};
+// </admin:genetics>
+
+export const BREEDING_RULES = {
+  /** Compatibility 0..1 of a pair (shown as hearts; scales the one-tier-up chance). */
   COMPAT: {
     base: 0.35,
     sameFamily: 0.3,
@@ -49,13 +66,15 @@ export const BREEDING_RULES = {
   MAP_WEAK_PERCENT: 1,
 } as const;
 
-/** Named recipes: extra percent points for a result the rules alone would not favour. */
+/** A special recipe: this unordered pair gives `result` with `weight` percent, before any random genetics. */
 export interface Mutation {
   parents: readonly [BreedId, BreedId]; // unordered
   result: BreedId;
+  /** Percent of the pair's odds (0 < weight ≤ 100); one pair's recipes together stay ≤ 100. */
   weight: number;
 }
 
+// <admin:mutations>
 export const MUTATIONS: readonly Mutation[] = [
   { parents: ['PIG_WHITE', 'PIG_BLACK'], result: 'PIG_PANDA', weight: 3 },
   { parents: ['PIG_WHITE', 'PIG_BLACK'], result: 'PIG_PENGUIN', weight: 6 },
@@ -81,3 +100,4 @@ export const MUTATIONS: readonly Mutation[] = [
   { parents: ['PIG_KOI', 'PIG_DRAGONLING'], result: 'PIG_MYTHICAL', weight: 3 },
   { parents: ['PIG_DRAGONLING', 'PIG_GALAXY'], result: 'PIG_PHOENIX', weight: 2 },
 ];
+// </admin:mutations>

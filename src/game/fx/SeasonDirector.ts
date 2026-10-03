@@ -1,16 +1,18 @@
 // Season of the farm (SE-1): reads the player's local calendar month (through the injected `now`,
 // so dev time travel moves it too) or the admin / dev preview, and dresses the one base layout for
 // it — every tracked building / prop image swaps to its seasonal texture (default art when the row
-// has no variant), the backdrop takes the season palette and the weather follows. A season change
+// has no variant), the backdrop takes the season palette and the season's environment FX run
+// (SeasonFxLayer, DECISIONS MU-2; gated by the day / night phase). A season change
 // mid-session loads that season's files first; only the current season's files are ever loaded.
 import * as Phaser from 'phaser';
+import type { DayPhase } from '../../core/config/dayNight';
 import { SEASON_LOOKS, SEASON_VIEW, type SeasonId } from '../../core/config/seasons';
 import type { AssetRegistry } from '../../core/assets/registry';
 import type { Backdrop } from '../prefabs/Backdrop';
 import { queueLoadList } from '../scenes/PreloadScene';
 import { FALLBACK_PROP_KEY, seasonLoadList, seasonalTextureKey, textureKey } from '../view/textureKeys';
 import { farmSeason } from '../state/seasonClock';
-import { SeasonWeather } from './SeasonWeather';
+import { SeasonFxLayer } from './SeasonFxLayer';
 
 interface Tracked {
   id: string;
@@ -24,7 +26,7 @@ export class SeasonDirector {
   private season: SeasonId | null = null;
   private readonly tracked: Tracked[] = [];
   private readonly loaded = new Set<SeasonId>();
-  private readonly weather: SeasonWeather;
+  private readonly fx: SeasonFxLayer;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -32,8 +34,16 @@ export class SeasonDirector {
     private readonly backdrop: Backdrop,
     private readonly now: () => number,
     private readonly preview: () => SeasonId | null,
+    /** The shown day / night phase (DayNightDirector: the one clock, admin preview included). */
+    private readonly phase: () => DayPhase,
   ) {
-    this.weather = new SeasonWeather(scene);
+    // FX anchors = the tracked placements (spring trees, the well, the barn …), by display bounds.
+    const anchors = () =>
+      this.tracked.map((t) => {
+        const b = t.img.getBounds();
+        return { id: t.id, x: b.centerX, y: b.centerY, width: b.width, height: b.height };
+      });
+    this.fx = new SeasonFxLayer(scene, assets, anchors, now());
     const timer = scene.time.addEvent({
       delay: SEASON_VIEW.pollMs,
       loop: true,
@@ -41,7 +51,7 @@ export class SeasonDirector {
     });
     scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       timer.remove();
-      this.weather.destroy();
+      this.fx.destroy();
     });
   }
 
@@ -75,17 +85,19 @@ export class SeasonDirector {
   }
 
   setReduceMotion(off: boolean) {
-    this.weather.setHidden(off);
+    this.fx.setHidden(off);
   }
 
-  tick(time: number, delta: number) {
-    this.weather.update(time, delta);
+  tick(time: number) {
+    // The day / night phase can change between season polls (clock, admin preview): a cheap key check.
+    if (this.season) this.fx.set(this.season, this.phase());
+    this.fx.update(time);
   }
 
   private show(season: SeasonId) {
     for (const t of this.tracked) this.apply(t, season);
     this.backdrop.setPalette(SEASON_LOOKS[season].backdrop);
-    this.weather.set(SEASON_LOOKS[season].weather);
+    this.fx.set(season, this.phase());
   }
 
   private apply(t: Tracked, season: SeasonId) {

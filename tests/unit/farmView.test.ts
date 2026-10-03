@@ -158,7 +158,8 @@ describe('preload list (spec §11)', () => {
       expect(keys).toContain(k);
     // fx_zzz has 3 frames in the manifest: loaded as a sprite sheet, animated (§11.4, Q5).
     expect(keys).not.toContain('fx_zzz');
-    expect(list.sheets).toEqual([
+    // Seasonal FX strips (fx_env_*, MU-2) are sheets too: one frame per variant.
+    expect(list.sheets.filter((s) => !s.key.startsWith('fx_env_'))).toEqual([
       expect.objectContaining({ key: 'fx_zzz', frameWidth: 256, frameHeight: 256, count: 3 }),
     ]);
     for (const s of ['empty', 'half', 'full'])

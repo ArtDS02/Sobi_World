@@ -52,7 +52,7 @@ export function breedMap(
     for (let j = i; j < parents.length; j++) {
       const a = parents[i]!,
         b = parents[j]!;
-      odds.set(pairKey(a, b), new Map((breedingOutcomes(a, b, pairs) ?? []).map((o) => [o.breed, o.weight])));
+      odds.set(pairKey(a, b), new Map((breedingOutcomes(a, b, pairs, { mutations }) ?? []).map((o) => [o.breed, o.weight])));
     }
   const chance = (a: BreedId, b: BreedId, child: BreedId) => odds.get(pairKey(a, b))?.get(child) ?? 0;
 

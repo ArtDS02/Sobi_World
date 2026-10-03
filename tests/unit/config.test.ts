@@ -38,7 +38,7 @@ describe('breeding rules (§6.5 as rules, U00-1 D4)', () => {
     const o = odds('PIG_EARTH_PINK', 'PIG_EARTH_PINK');
     expect(o.PIG_EARTH_PINK).toBeGreaterThan(50);
     expect(o.PIG_WHITE).toBeGreaterThan(o.PIG_STRIPED_MELON! / 2);
-    expect(o.PIG_TIGER).toBeLessThan(1);
+    expect(o.PIG_TIGER).toBeUndefined(); // two tiers up: never (MU-1, one tier at most)
     expect(o.PIG_KOI).toBeUndefined(); // three tiers up: never
   });
 
@@ -49,7 +49,7 @@ describe('breeding rules (§6.5 as rules, U00-1 D4)', () => {
       expect(o[a], a).toBe(best);
       for (const [child, w] of Object.entries(o)) {
         const up = rarityRank(BREEDS[child as BreedId].rarity) - rarityRank(BREEDS[a].rarity);
-        if (up === 2) expect(w, `${a} -> ${child}`).toBeLessThan(2);
+        expect(up, `${a} -> ${child} (${w})`).toBeLessThanOrEqual(1);
       }
     }
   });

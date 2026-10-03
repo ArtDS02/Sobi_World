@@ -770,6 +770,94 @@
       "status": "production",
       "asset": "fx/fx_smoke.png",
       "particle": true
+    },
+    {
+      "id": "fx_env_petals",
+      "status": "production",
+      "asset": "fx/env/fx_env_petals.png",
+      "frames": {
+        "width": 48,
+        "height": 48,
+        "count": 27,
+        "fps": 8
+      }
+    },
+    {
+      "id": "fx_env_fireflies",
+      "status": "production",
+      "asset": "fx/env/fx_env_fireflies.png",
+      "frames": {
+        "width": 64,
+        "height": 64,
+        "count": 4,
+        "fps": 8
+      }
+    },
+    {
+      "id": "fx_env_leaves",
+      "status": "production",
+      "asset": "fx/env/fx_env_leaves.png",
+      "frames": {
+        "width": 64,
+        "height": 64,
+        "count": 18,
+        "fps": 8
+      }
+    },
+    {
+      "id": "fx_env_snowflakes",
+      "status": "production",
+      "asset": "fx/env/fx_env_snowflakes.png",
+      "frames": {
+        "width": 48,
+        "height": 48,
+        "count": 8,
+        "fps": 8
+      }
+    },
+    {
+      "id": "fx_env_wind",
+      "status": "production",
+      "asset": "fx/env/fx_env_wind.png",
+      "frames": {
+        "width": 160,
+        "height": 96,
+        "count": 4,
+        "fps": 8
+      }
+    },
+    {
+      "id": "fx_env_sunbeams",
+      "status": "production",
+      "asset": "fx/env/fx_env_sunbeams.png",
+      "frames": {
+        "width": 128,
+        "height": 192,
+        "count": 3,
+        "fps": 8
+      }
+    },
+    {
+      "id": "fx_env_butterflies",
+      "status": "production",
+      "asset": "fx/env/fx_env_butterflies.png",
+      "frames": {
+        "width": 64,
+        "height": 64,
+        "count": 6,
+        "fps": 8
+      }
+    },
+    {
+      "id": "fx_env_glow",
+      "status": "production",
+      "asset": "fx/env/fx_env_glow.png",
+      "particle": true
+    },
+    {
+      "id": "fx_env_haze",
+      "status": "production",
+      "asset": "fx/env/fx_env_haze.png"
     }
   ],
   "props": [

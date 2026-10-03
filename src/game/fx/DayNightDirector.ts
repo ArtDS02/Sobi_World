@@ -18,6 +18,7 @@ export const localMinute = (now: number) => {
 export class DayNightDirector {
   private skyKey = '';
   private night = false;
+  private shown: DayPhase = 'day';
 
   constructor(
     scene: Phaser.Scene,
@@ -40,6 +41,7 @@ export class DayNightDirector {
   /** Re-reads the clock; the first call shows the look at once (the farm fades in anyway). */
   update(instant = false) {
     const next = dayScene(localMinute(this.now()), DAY_NIGHT, this.preview());
+    this.shown = next.phase;
     const night = isSleepPhase(next.phase);
     if (night !== this.night) {
       this.night = night;
@@ -52,6 +54,11 @@ export class DayNightDirector {
       this.layer.setSkyArt(next.blend);
     }
     this.layer.show(next.look, instant ? 0 : DAY_NIGHT.transitionMs);
+  }
+
+  /** The phase shown (clock or admin preview): seasonal FX conditions read it (MU-2). */
+  phase(): DayPhase {
+    return this.shown;
   }
 
   /** Sleep time on the farm (the shown phase, so the admin preview puts pigs to bed too). */

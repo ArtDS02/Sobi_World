@@ -5,7 +5,6 @@
 // rule system (breedingRules.ts), and the editor can start from those odds.
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
-import { BREEDING_RULES } from '../../src/core/config/breedingRules';
 import { renderBreedMap, type PigLook } from './breedMap';
 import { renderBreedRules } from './breedRules';
 import type { BreedId } from '../../src/core/config/ids';
@@ -222,7 +221,7 @@ function renderPairTable(root: HTMLElement, rerender: () => void) {
       <span class="badge status-warn">⏸ ${draft.rows.filter((r) => !r.active).length} đang tắt</span>
       ${errors.length ? `<span class="badge status-error">✕ ${errors.length} lỗi</span>` : ''}
     </div>
-    <p class="muted">Bảng này chỉ chứa <b>ngoại lệ</b>. Cặp không có luật ở đây dùng luật hệ thống (tab "Luật đang chạy": cùng độ hiếm giữ bậc ${BREEDING_RULES.RARITY_SAME.same} · lên 1 bậc ${BREEDING_RULES.RARITY_SAME.up} · lên 2 bậc ${BREEDING_RULES.RARITY_SAME.up2} · tụt ${BREEDING_RULES.RARITY_SAME.down}, rồi chọn loài theo bố mẹ / nhóm / đặc điểm + công thức đột biến). Luật ở đây thay hoàn toàn tỷ lệ của cặp đó.${draft.rows.length === 0 ? ' Hiện chưa có ngoại lệ nào — toàn bộ game đang chạy theo luật hệ thống.' : ''}</p>
+    <p class="muted">Bảng này chỉ chứa <b>ngoại lệ</b> (tầng ưu tiên cao nhất). Cặp không có luật ở đây dùng công thức đặc biệt + random genetics (tab "Luật đang chạy"). Luật ở đây thay hoàn toàn tỷ lệ của cặp đó.${draft.rows.length === 0 ? ' Hiện chưa có ngoại lệ nào — toàn bộ game đang chạy theo luật hệ thống.' : ''}</p>
     <div class="savebar">
       ${draft.dirty ? '<span class="badge status-warn">Chưa lưu</span><button class="btn" data-discard>Huỷ thay đổi</button>' : ''}
       <button class="btn btn-primary" data-save ${!draft.dirty || !state.apiOnline || errors.length ? 'disabled' : ''}>💾 Lưu luật vào game</button>

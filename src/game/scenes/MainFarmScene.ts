@@ -59,7 +59,7 @@ export class MainFarmScene extends Phaser.Scene {
   private gifts!: GiftBoxes;
   private dayNight!: DayNightLayer;
   private dayClock!: DayNightDirector;
-  private season!: SeasonDirector; // seasonal art, backdrop palette, weather (SE-1)
+  private season!: SeasonDirector; // seasonal art, backdrop palette, environment FX (SE-1, MU-2)
   private readonly obstacles: Rect[] = []; // world object bounds; gift boxes keep clear (U06)
   private readonly props = new FarmProps(); // trough texture + owned decorations (PG-3)
 
@@ -86,7 +86,8 @@ export class MainFarmScene extends Phaser.Scene {
     this.dayNight = new DayNightLayer(this);
     const backdrop = Backdrop.follow(this, this.layout, (rect) => this.dayNight.setView(rect));
     const seasonPreview = () => this.bridge.seasonPreview;
-    this.season = new SeasonDirector(this, this.deps.assets, backdrop, this.deps.now, seasonPreview);
+    const phase = () => this.dayClock?.phase() ?? 'day';
+    this.season = new SeasonDirector(this, this.deps.assets, backdrop, this.deps.now, seasonPreview, phase);
     this.drawPlacements();
     this.season.update();
     const preview = () => this.bridge.phasePreview;
@@ -191,7 +192,7 @@ export class MainFarmScene extends Phaser.Scene {
 
   override update(time: number, delta: number) {
     this.ambient.update(delta);
-    this.season.tick(time, delta);
+    this.season.tick(time);
     spreadCrowd(this.pigs, delta);
     this.plates.update((id) => this.pigs.get(id)?.plateAnchor() ?? null);
   }
