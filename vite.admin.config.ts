@@ -5,5 +5,11 @@ import { adminApi } from './scripts/admin/api';
 
 export default defineConfig({
   plugins: [adminApi()],
-  server: { port: 5175, strictPort: false, open: '/admin.html' },
+  // Build output is not source: `npm run dist:win` locks files there (EBUSY crashed the watcher).
+  server: {
+    port: 5175,
+    strictPort: false,
+    open: '/admin.html',
+    watch: { ignored: ['**/release/**', '**/dist/**', '**/dist-electron/**'] },
+  },
 });
