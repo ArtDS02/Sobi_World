@@ -1,0 +1,10 @@
+# Keep LF everywhere: admin config writers and round-trip tests compare exact text.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.mp3 binary
+*.ogg binary
+*.woff binary
+*.woff2 binary
+*.exe binary
