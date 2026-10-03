@@ -1,133 +1,216 @@
-// Scenery of the loading screen (DECISIONS AM-1): the season's painted farm backdrop under a morning
-// sky, drifting clouds, crop beds, a front wooden fence, swaying grass tufts, rising sparkles and a
-// few falling leaves. Shapes only (nothing is loaded yet); every motion is skipped with reduceMotion.
+// Scenery of the loading screen (DECISIONS AM-1, AM-2): the season's painted farm backdrop under a
+// bright sky, sun rays, terraced crop beds, trees, a hay bale, butterflies, a soft green glow behind the
+// sign, a vignette and a green-gold swirl carrying leaves and vegetables around the sign. Shapes only
+// (nothing is loaded yet); every motion is skipped with reduceMotion.
 import * as Phaser from 'phaser';
 import { FARM_VIEW } from '../../core/config/farmView';
 import { LOADING_SCREEN as L } from '../../core/config/loadingScreen';
 import { SEASON_LOOKS, type SeasonId } from '../../core/config/seasons';
 import { fitCamera } from '../config/phaser';
-import { backdropRect } from '../view/farmCamera';
+import { backdropRect, type WorldRect } from '../view/farmCamera';
 import { paintBackdrop } from '../view/backdropPaint';
 import type { FarmLayout } from '../view/pigView';
+import { butterfly, cabbage, carrot, corn, flower, leaf, tomato } from './loadingIcons';
 
-const KEY = 'preload_backdrop';
+const SKY = 'loading_sky';
+const SHADE = 'loading_shade';
+const hex = (n: number) => `#${n.toString(16).padStart(6, '0')}`;
 
 export function drawLoadingScenery(scene: Phaser.Scene, layout: FarmLayout, season: SeasonId, still: boolean) {
   const { width, height } = layout.designSize;
-  fitCamera(scene, layout, (view) => paintSky(scene, backdropRect(view, width, height, FARM_VIEW.VIEW_MAX_EXTEND), season));
-  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-    if (scene.textures.exists(KEY)) scene.textures.remove(KEY);
+  fitCamera(scene, layout, (view) => {
+    const rect = backdropRect(view, width, height, FARM_VIEW.VIEW_MAX_EXTEND);
+    paintSky(scene, rect, season);
+    paintShade(scene, rect);
   });
-  clouds(scene, still);
-  crops(scene);
-  fence(scene);
-  grass(scene, still);
-  if (still) return;
-  sparkles(scene);
-  leaves(scene);
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+    for (const k of [SKY, SHADE]) if (scene.textures.exists(k)) scene.textures.remove(k);
+  });
+  rays(scene, still);
+  beds(scene);
+  trees(scene);
+  hay(scene);
+  swirl(scene, still);
+  butterflies(scene, still);
 }
 
-function paintSky(scene: Phaser.Scene, rect: { x: number; y: number; width: number; height: number }, season: SeasonId) {
-  if (scene.textures.exists(KEY)) scene.textures.remove(KEY);
-  const tex = scene.textures.createCanvas(KEY, rect.width, rect.height);
+/** A canvas texture covering `rect`, replaced on every resize. */
+function canvasLayer(scene: Phaser.Scene, key: string, rect: WorldRect, depth: number, paint: (ctx: CanvasRenderingContext2D) => void) {
+  if (scene.textures.exists(key)) scene.textures.remove(key);
+  const tex = scene.textures.createCanvas(key, rect.width, rect.height);
   if (!tex) return;
   const ctx = tex.getContext();
   ctx.translate(-rect.x, -rect.y);
-  const grad = ctx.createLinearGradient(0, rect.y, 0, FARM_VIEW.BACKDROP.sky.gradientEndY);
-  const hex = (n: number) => `#${n.toString(16).padStart(6, '0')}`;
-  grad.addColorStop(0, hex(L.sky.top));
-  grad.addColorStop(1, hex(L.sky.bottom));
-  ctx.fillStyle = grad;
-  ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-  paintBackdrop(ctx, rect, SEASON_LOOKS[season].backdrop);
+  paint(ctx);
   tex.refresh();
-  scene.children.getByName(KEY)?.destroy();
-  scene.add.image(rect.x, rect.y, KEY).setOrigin(0).setName(KEY).setDepth(-10);
+  scene.children.getByName(key)?.destroy();
+  scene.add.image(rect.x, rect.y, key).setOrigin(0).setName(key).setDepth(depth);
 }
 
-function clouds(scene: Phaser.Scene, still: boolean) {
-  const C = L.clouds;
-  for (const [i, c] of C.list.entries()) {
-    const g = scene.add.graphics().setDepth(-9);
-    g.fillStyle(C.shade, C.alpha).fillEllipse(0, 14, 190, 46);
-    g.fillStyle(C.color, C.alpha).fillCircle(-52, 0, 34).fillCircle(0, -18, 46).fillCircle(54, -2, 36).fillEllipse(0, 12, 180, 40);
-    const cloud = scene.add.container(c.x, c.y, [g]).setScale(c.s).setDepth(-9);
-    if (still) continue;
-    scene.tweens.add({ targets: cloud, x: c.x + C.driftPx * (i % 2 ? -1 : 1), duration: C.driftMs, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 });
+function paintSky(scene: Phaser.Scene, rect: WorldRect, season: SeasonId) {
+  canvasLayer(scene, SKY, rect, -10, (ctx) => {
+    const grad = ctx.createLinearGradient(0, rect.y, 0, FARM_VIEW.BACKDROP.sky.gradientEndY);
+    grad.addColorStop(0, hex(L.sky.top));
+    grad.addColorStop(1, hex(L.sky.bottom));
+    ctx.fillStyle = grad;
+    ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+    paintBackdrop(ctx, rect, SEASON_LOOKS[season].backdrop);
+  });
+}
+
+/** Green glow behind the sign + a soft vignette, over the scenery and under the sign. */
+function paintShade(scene: Phaser.Scene, rect: WorldRect) {
+  canvasLayer(scene, SHADE, rect, -2, (ctx) => {
+    const G = L.glow;
+    ctx.save();
+    ctx.translate(G.x, G.y);
+    ctx.scale(1, G.ry / G.rx);
+    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, G.rx);
+    glow.addColorStop(0, G.inner);
+    glow.addColorStop(1, G.outer);
+    ctx.fillStyle = glow;
+    ctx.fillRect(-G.rx, -G.rx, G.rx * 2, G.rx * 2);
+    ctx.restore();
+    const cx = rect.x + rect.width / 2;
+    const cy = rect.y + rect.height / 2;
+    const r = Math.hypot(rect.width, rect.height) / 2;
+    const v = ctx.createRadialGradient(cx, cy, r * L.vignette.inner, cx, cy, r);
+    v.addColorStop(0, 'rgba(0,0,0,0)');
+    v.addColorStop(1, L.vignette.color);
+    ctx.fillStyle = v;
+    ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+  });
+}
+
+function rays(scene: Phaser.Scene, still: boolean) {
+  const R = L.rays;
+  const g = scene.add.graphics().setDepth(-3);
+  for (let i = 0; i < R.count; i++) {
+    const a = Phaser.Math.DegToRad(R.fromDeg + (i * R.spreadDeg) / R.count);
+    const w = Phaser.Math.DegToRad(2 + (i % 3) * 1.5);
+    g.fillStyle(R.color, R.alpha * (i % 2 ? 0.6 : 1)).fillTriangle(
+      R.x, R.y,
+      R.x + Math.cos(a - w) * R.length, R.y + Math.sin(a - w) * R.length,
+      R.x + Math.cos(a + w) * R.length, R.y + Math.sin(a + w) * R.length,
+    );
   }
+  if (!still) scene.tweens.add({ targets: g, alpha: 0.55, duration: R.pulseMs, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 });
 }
 
-function crops(scene: Phaser.Scene) {
-  const C = L.crops;
+function beds(scene: Phaser.Scene) {
+  const B = L.beds;
   const g = scene.add.graphics().setDepth(-6);
-  for (const bed of C.beds) {
-    const h = C.rowGapPx * bed.rows + 16;
-    g.fillStyle(C.soilDark, 1).fillRoundedRect(bed.x, bed.y - h + 6, bed.width, h, 16);
-    g.fillStyle(C.soil, 1).fillRoundedRect(bed.x, bed.y - h, bed.width, h, 16);
-    for (let r = 0; r < bed.rows; r++) {
-      const y = bed.y - h + 22 + r * C.rowGapPx;
-      for (let x = bed.x + 30 + (r % 2) * (C.plantEveryPx / 2); x < bed.x + bed.width - 20; x += C.plantEveryPx) {
-        if ((x / C.plantEveryPx + r) % 3 < 1) {
-          g.fillStyle(C.carrot, 1).fillTriangle(x - 7, y + 4, x + 7, y + 4, x, y + 20);
-          g.fillStyle(C.leaf, 1).fillEllipse(x - 5, y - 4, 8, 18).fillEllipse(x + 5, y - 4, 8, 18);
-        } else {
-          g.fillStyle(C.leafDark, 1).fillCircle(x, y + 2, 15);
-          g.fillStyle(C.leaf, 1).fillCircle(x - 6, y - 2, 10).fillCircle(x + 6, y - 2, 10).fillCircle(x, y + 6, 9);
-        }
+  for (const bed of B.list) {
+    const [ax, ay, bx, by, cx, cy, dx, dy] = bed.pts;
+    g.fillStyle(B.grassEdge, 1).fillPoints([{ x: ax, y: ay - 8 }, { x: bx, y: by - 8 }, { x: cx, y: cy + 10 }, { x: dx, y: dy + 10 }], true);
+    g.fillStyle(B.soilDark, 1).fillPoints([{ x: ax, y: ay + 6 }, { x: bx, y: by + 6 }, { x: cx, y: cy + 6 }, { x: dx, y: dy + 6 }], true);
+    g.fillStyle(B.soil, 1).fillPoints([{ x: ax, y: ay }, { x: bx, y: by }, { x: cx, y: cy }, { x: dx, y: dy }], true);
+    // Two rows of plants along the strip, bigger towards the front.
+    const len = Math.hypot(bx - ax, by - ay);
+    const n = Math.max(2, Math.floor(len / B.plantEveryPx));
+    for (const row of [0.3, 0.72]) {
+      for (let i = 0; i <= n; i++) {
+        const t = (i + 0.5) / (n + 1);
+        const x = ax + (bx - ax) * t + (dx - ax + (cx - bx - (dx - ax)) * t) * row;
+        const y = ay + (by - ay) * t + (dy - ay + (cy - by - (dy - ay)) * t) * row;
+        const s = 0.75 + row * 0.5;
+        if (bed.crop === 'carrot') carrot(g, x, y, s * 0.9, -0.2);
+        else if (bed.crop === 'corn') corn(g, x, y - 8, s * 1.3);
+        else if (bed.crop === 'tomato') {
+          cabbage(g, x, y, s * 0.8);
+          tomato(g, x + 6, y - 4, s * 0.55);
+        } else cabbage(g, x, y, s);
       }
     }
   }
 }
 
-function fence(scene: Phaser.Scene) {
-  const F = L.fence;
+function trees(scene: Phaser.Scene) {
   const g = scene.add.graphics().setDepth(-5);
-  const rail = (y: number) =>
-    g.fillStyle(F.outline, 1).fillRect(F.from, y - 2, F.to - F.from, F.railPx + 4).fillStyle(F.color, 1).fillRect(F.from, y, F.to - F.from, F.railPx);
-  rail(F.y + 14);
-  rail(F.y + 42);
-  for (let x = F.from; x <= F.to; x += F.postEveryPx) {
-    const w = F.postWidth;
-    g.fillStyle(F.outline, 1).fillRoundedRect(x - w / 2 - 3, F.y - 3, w + 6, F.height + 6, { tl: w / 2, tr: w / 2, bl: 2, br: 2 });
-    g.fillStyle(F.color, 1).fillRoundedRect(x - w / 2, F.y, w, F.height, { tl: w / 2 - 2, tr: w / 2 - 2, bl: 0, br: 0 });
+  for (const t of L.trees) {
+    const s = t.s;
+    g.fillStyle(0x7a4a26, 1).fillRoundedRect(t.x - 9 * s, t.y - 10 * s, 18 * s, 70 * s, 6 * s);
+    g.fillStyle(0x3f8a2e, 1).fillCircle(t.x - 34 * s, t.y - 18 * s, 42 * s).fillCircle(t.x + 34 * s, t.y - 18 * s, 42 * s).fillCircle(t.x, t.y - 52 * s, 50 * s);
+    g.fillStyle(0x5fae35, 1).fillCircle(t.x - 26 * s, t.y - 28 * s, 34 * s).fillCircle(t.x + 26 * s, t.y - 30 * s, 34 * s).fillCircle(t.x, t.y - 60 * s, 40 * s);
+    g.fillStyle(0x8fd14f, 0.8).fillCircle(t.x - 14 * s, t.y - 72 * s, 16 * s);
   }
 }
 
-function grass(scene: Phaser.Scene, still: boolean) {
-  const G = L.grass;
-  for (let i = 0; i < G.tufts; i++) {
-    const x = -400 + (i * 2400) / G.tufts + ((i * 37) % 40);
-    const g = scene.add.graphics();
-    g.fillStyle(i % 2 ? G.dark : G.color, 1).fillTriangle(-12, 0, -4, 0, -10, -30).fillTriangle(-5, 0, 5, 0, 0, -40).fillTriangle(4, 0, 12, 0, 10, -28);
-    const tuft = scene.add.container(x, G.y - ((i * 13) % 30), [g]).setDepth(-4);
+function hay(scene: Phaser.Scene) {
+  const H = L.hay;
+  const g = scene.add.graphics().setDepth(-4);
+  g.fillStyle(H.dark, 1).fillRoundedRect(H.x - H.width / 2, H.y - H.height / 2 + 6, H.width, H.height, 16);
+  g.fillStyle(H.color, 1).fillRoundedRect(H.x - H.width / 2, H.y - H.height / 2, H.width, H.height, 16);
+  g.lineStyle(3, H.dark, 0.8);
+  for (let i = 1; i < 6; i++) g.lineBetween(H.x - H.width / 2 + 10, H.y - H.height / 2 + i * 13, H.x + H.width / 2 - 10, H.y - H.height / 2 + i * 13);
+}
+
+/** A glowing arc around the sign with leaves and vegetables riding along it. */
+function swirl(scene: Phaser.Scene, still: boolean) {
+  const S = L.swirl;
+  const tilt = Phaser.Math.DegToRad(S.tiltDeg);
+  const at = (deg: number) => {
+    const a = Phaser.Math.DegToRad(deg);
+    const x = Math.cos(a) * S.rx;
+    const y = Math.sin(a) * S.ry;
+    return { x: S.cx + x * Math.cos(tilt) - y * Math.sin(tilt), y: S.cy + x * Math.sin(tilt) + y * Math.cos(tilt) };
+  };
+  const g = scene.add.graphics().setDepth(-1);
+  for (const [w, a] of [[S.widthPx * 2.2, S.alpha * 0.35], [S.widthPx, S.alpha], [S.widthPx * 0.3, 0.55]] as const) {
+    g.lineStyle(w, S.color, a).beginPath();
+    for (let d = S.arcFrom; d <= S.arcTo; d += 3) {
+      const p = at(d);
+      if (d === S.arcFrom) g.moveTo(p.x, p.y);
+      else g.lineTo(p.x, p.y);
+    }
+    g.strokePath();
+  }
+  const draw = [
+    (x: Phaser.GameObjects.Graphics) => leaf(x, 0, 0, 1.3),
+    (x: Phaser.GameObjects.Graphics) => carrot(x, 0, 0, 1.2),
+    (x: Phaser.GameObjects.Graphics) => leaf(x, 0, 0, 1.1, 0xf2d75a),
+    (x: Phaser.GameObjects.Graphics) => corn(x, 0, 0, 1),
+    (x: Phaser.GameObjects.Graphics) => tomato(x, 0, 0, 1.1),
+    (x: Phaser.GameObjects.Graphics) => flower(x, 0, 0, 1.3),
+  ];
+  for (let i = 0; i < S.items; i++) {
+    const ig = scene.add.graphics();
+    draw[i % draw.length]!(ig);
+    const item = scene.add.container(0, 0, [ig]).setDepth(4);
+    const state = { deg: S.arcFrom + ((S.arcTo - S.arcFrom) * i) / S.items };
+    const place = () => {
+      const p = at(state.deg);
+      item.setPosition(p.x, p.y);
+      // Fade in/out at the ends of the arc.
+      const t = (state.deg - S.arcFrom) / (S.arcTo - S.arcFrom);
+      item.setAlpha(Math.min(1, t * 6, (1 - t) * 6));
+    };
+    place();
     if (still) continue;
-    tuft.angle = -G.swayDeg / 2;
-    scene.tweens.add({ targets: tuft, angle: G.swayDeg / 2, duration: G.swayMs + (i % 5) * 140, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 });
-  }
-}
-
-function sparkles(scene: Phaser.Scene) {
-  const S = L.sparkles;
-  for (let i = 0; i < S.count; i++) {
-    const g = scene.add.graphics().fillStyle(S.color, 1);
-    g.fillTriangle(-2, 0, 2, 0, 0, -8).fillTriangle(-2, 0, 2, 0, 0, 8).fillTriangle(0, -2, 0, 2, -8, 0).fillTriangle(0, -2, 0, 2, 8, 0);
-    const star = scene.add.container(Phaser.Math.Between(-200, 1800), Phaser.Math.Between(S.minY, S.maxY), [g]).setDepth(5).setAlpha(0);
     scene.tweens.add({
-      targets: star, y: star.y - S.risePx, alpha: { from: 0, to: 0.9 }, angle: 90,
-      duration: S.riseMs, delay: i * (S.riseMs / S.count), repeat: -1, ease: 'Sine.easeInOut',
+      targets: state, deg: S.arcTo, duration: (S.orbitMs * (S.arcTo - state.deg)) / (S.arcTo - S.arcFrom),
+      onUpdate: place,
+      onComplete: () => {
+        state.deg = S.arcFrom;
+        scene.tweens.add({ targets: state, deg: S.arcTo, duration: S.orbitMs, repeat: -1, onUpdate: place });
+      },
     });
+    scene.tweens.add({ targets: item, angle: 360, duration: 4000 + i * 300, repeat: -1 });
   }
 }
 
-function leaves(scene: Phaser.Scene) {
-  const F = L.leaves;
-  for (let i = 0; i < F.count; i++) {
-    const x = Phaser.Math.Between(-100, 1500);
-    const y = Phaser.Math.Between(-60, 200);
-    const leaf = scene.add.ellipse(x, y, 18, 9, F.colors[i % F.colors.length]).setDepth(5).setAlpha(0);
+function butterflies(scene: Phaser.Scene, still: boolean) {
+  const F = L.flutter;
+  for (const [i, b] of L.butterflies.entries()) {
+    const g = scene.add.graphics();
+    butterfly(g, b.color, b.edge);
+    const wings = scene.add.container(0, 0, [g]);
+    const fly = scene.add.container(b.x, b.y, [wings]).setScale(b.s).setDepth(5).setAngle(i % 2 ? 12 : -10);
+    if (still) continue;
+    scene.tweens.add({ targets: wings, scaleX: 0.25, duration: F.flapMs, yoyo: true, repeat: -1, delay: i * 60 });
     scene.tweens.add({
-      targets: leaf, x: x + F.driftPx, y: y + 620, angle: 360, alpha: { from: 0.9, to: 0 },
-      duration: F.fallMs, delay: i * (F.fallMs / F.count), repeat: -1,
+      targets: fly, x: b.x + (i % 2 ? -F.driftPx : F.driftPx), y: b.y - F.driftPx * 0.6,
+      duration: F.driftMs + i * 500, ease: 'Sine.easeInOut', yoyo: true, repeat: -1,
     });
   }
 }

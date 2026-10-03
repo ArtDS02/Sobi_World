@@ -65,7 +65,7 @@ function shell() {
   app.innerHTML = `
     <div class="layout">
       <aside class="sidebar">
-        <div class="brand"><span class="brand__logo">🐽</span><span><b>Ủn Ỉn</b><small>Admin</small></span></div>
+        <div class="brand"><span class="brand__logo">🐽</span><span><b>Sobi Farm</b><small>Admin</small></span></div>
         <nav class="nav">${nav}</nav>
         <p class="sidebar__foot">${state.apiOnline ? '● Đang nối data game' : '○ Chỉ đọc'}</p>
       </aside>

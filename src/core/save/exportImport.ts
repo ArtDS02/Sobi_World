@@ -5,7 +5,7 @@ import { parseSave, type MigrateResult } from './migrate';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** `un-in-save-YYYYMMDD-HHmm.json` in the local time of `at`. */
+/** `sobi-farm-save-YYYYMMDD-HHmm.json` in the local time of `at`. */
 export function exportFileName(at: Date): string {
   const date = `${at.getFullYear()}${pad(at.getMonth() + 1)}${pad(at.getDate())}`;
   return `${SAVE.EXPORT_FILE_PREFIX}${date}-${pad(at.getHours())}${pad(at.getMinutes())}.json`;

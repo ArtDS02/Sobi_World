@@ -2,8 +2,8 @@
   "name": "un-in-homemade",
   "private": true,
   "version": "1.0.0",
-  "description": "Ủn Ỉn Homemade — game nuôi heo offline cho Windows",
-  "author": "Ủn Ỉn Homemade",
+  "description": "Sobi Farm — game nuôi heo offline cho Windows",
+  "author": "Sobi Farm",
   "type": "module",
   "main": "dist-electron/main.cjs",
   "scripts": {
@@ -62,8 +62,8 @@
   },
   "build": {
     "appId": "com.uninhomemade.game",
-    "productName": "Ủn Ỉn Homemade",
-    "executableName": "UnInHomemade",
+    "productName": "Sobi Farm",
+    "executableName": "SobiFarm",
     "electronDist": "node_modules/electron/dist",
     "directories": {
       "output": "release",
@@ -85,9 +85,9 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Ủn Ỉn Homemade",
+      "shortcutName": "Sobi Farm",
       "deleteAppDataOnUninstall": false,
-      "artifactName": "UnInHomemade-Setup-${version}.${ext}"
+      "artifactName": "SobiFarm-Setup-${version}.${ext}"
     }
   }
 }

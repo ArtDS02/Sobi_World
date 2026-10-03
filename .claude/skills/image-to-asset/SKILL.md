@@ -1,7 +1,7 @@
 ---
 name: image-to-asset
 description: >-
-  Art director + asset generator + visual QA for Ủn Ỉn Homemade game art. Turns an asset request
+  Art director + asset generator + visual QA for Sobi Farm (formerly Ủn Ỉn Homemade) game art. Turns an asset request
   ("tạo Pig #42", "làm pig_pilot", "vẽ lại heo cao bồi", "tạo fx_heart / prop / icon") into a
   production-ready PNG that matches asset/reference and the asset specs: resolve spec → pick
   references → brief → generate → QA gate → refine → art_inbox → art:process → assets:check.

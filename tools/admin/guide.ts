@@ -16,14 +16,14 @@ const SECTIONS: Section[] = [
   {
     id: 'overview', icon: '🏡', title: 'Tổng quan Dashboard',
     purpose: 'Công cụ dev (npm run admin, cổng 5175) sửa đúng các file game đọc: bảng heo, manifest asset, sản phẩm, luật phối giống, layout, ngày/đêm và save người chơi. Không có trong bản cài đặt gửi người chơi.',
-    steps: ['Chạy npm run admin, mở http://localhost:5175/admin.html.', 'Chân thanh bên trái phải là “● Đang nối data game” — nếu “○ Chỉ đọc” thì mọi nút lưu bị khoá.', 'Mỗi trang có nút 💾 Lưu riêng; dashboard kiểm lỗi trước, API kiểm lại lần nữa rồi mới ghi file.', 'Dữ liệu game (heo, asset, shop, luật…): game dev (npm run dev / dev:desktop) tự tải lại. Save người chơi: game đang mở tự tải lại save vừa lưu.', 'Bản cài đặt (UnInHomemade.exe) chỉ có dữ liệu game mới sau khi build lại installer — xem 🎮 Desktop Game.'],
+    steps: ['Chạy npm run admin, mở http://localhost:5175/admin.html.', 'Chân thanh bên trái phải là “● Đang nối data game” — nếu “○ Chỉ đọc” thì mọi nút lưu bị khoá.', 'Mỗi trang có nút 💾 Lưu riêng; dashboard kiểm lỗi trước, API kiểm lại lần nữa rồi mới ghi file.', 'Dữ liệu game (heo, asset, shop, luật…): game dev (npm run dev / dev:desktop) tự tải lại. Save người chơi: game đang mở tự tải lại save vừa lưu.', 'Bản cài đặt (SobiFarm.exe) chỉ có dữ liệu game mới sau khi build lại installer — xem 🎮 Desktop Game.'],
     example: ['Thẻ “Vấn đề cần xử lý” → bấm → trang Kiểm tra dữ liệu → mở heo bị lỗi → sửa → 💾 Lưu vào game.'],
     notes: ['Mọi file được ghi là file nguồn trong git: xem lại bằng git diff trước khi commit.', 'Sau khi lưu file config (.ts), trang tự tải lại — đó là bình thường.'],
   },
   {
     id: 'users', icon: '👤', title: 'Người chơi (save)',
     purpose: 'Game chơi đơn, offline: mỗi “người chơi” là một save. Xem và sửa vàng, kho đồ, heo, tiến trình, trạng thái game theo từng nhóm — không sửa JSON tuỳ ý.',
-    steps: ['Mục Người chơi liệt kê save trong %APPDATA%\\Un In Homemade*\\saves*: “Bản dev” = save của CẢ npm run dev (trình duyệt) VÀ npm run dev:desktop; “Bản cài đặt” = save của UnInHomemade.exe. File .json từ máy khác: “📂 Mở file save”.', 'Mở một save → chọn tab Hồ sơ / Tiền tệ / Kho đồ / Heo / Tiến trình / Trang trí & thành tích / Trạng thái game.', 'Sửa trong tab, bấm “Áp dụng” (kiểm bằng chính schema save của game). Tặng / đổi giống heo: bấm thẻ ảnh heo (tìm, lọc độ hiếm / chủ đề, sắp xếp).', 'Bấm 💾 Lưu vào save — game đang mở tự tải lại save mới trong vài giây; khởi động lại vẫn giữ.'],
+    steps: ['Mục Người chơi liệt kê save trong %APPDATA%\\Un In Homemade*\\saves*: “Bản dev” = save của CẢ npm run dev (trình duyệt) VÀ npm run dev:desktop; “Bản cài đặt” = save của Sobi Farm bản cài (SobiFarm.exe; thư mục giữ tên cũ “Un In Homemade” để không mất save). File .json từ máy khác: “📂 Mở file save”.', 'Mở một save → chọn tab Hồ sơ / Tiền tệ / Kho đồ / Heo / Tiến trình / Trang trí & thành tích / Trạng thái game.', 'Sửa trong tab, bấm “Áp dụng” (kiểm bằng chính schema save của game). Tặng / đổi giống heo: bấm thẻ ảnh heo (tìm, lọc độ hiếm / chủ đề, sắp xếp).', 'Bấm 💾 Lưu vào save — game đang mở tự tải lại save mới trong vài giây; khởi động lại vẫn giữ.'],
     example: ['Tặng 10.000 vàng: Tiền tệ → đặt Vàng = số mới → Áp dụng → Lưu. Lịch sử giao dịch có dòng “Điều chỉnh của quản trị”.', 'Tặng heo vừa tạo từ asset mới: Asset nguồn → Nhập → Tạo heo → 💾 Lưu vào game → Người chơi → Heo → ＋ Tặng heo → bấm thẻ heo đó.', 'Kiểm heo ốm: tab Heo, cột Tình trạng; sửa → bỏ “Đang ốm”.'],
     notes: ['Không cần đóng game: game không bao giờ ghi đè save do dashboard vừa lưu (nó tải lại bản mới). Nếu game tự lưu sau khi bạn mở, dashboard áp lại thay đổi của bạn lên bản mới nhất.', 'Thao tác trong game đúng lúc dashboard lưu có thể mất (thay đổi của dashboard thắng).', 'Mỗi lần lưu, bản cũ vào backups/ (khôi phục được trong game).', 'Reset / Xoá save phải gõ xác nhận; “Xoá” chỉ chuyển save vào backups, không xoá vĩnh viễn.', 'Chỉ đọc (game tự sinh): lịch sử giao dịch, lịch sử phối giống, giờ hộp quà kế tiếp.'],
   },
@@ -84,7 +84,7 @@ const SECTIONS: Section[] = [
   {
     id: 'desktop', icon: '🎮', title: 'Desktop Game',
     purpose: 'Build game thành ứng dụng Windows: installer tạo shortcut Desktop + Start Menu; người chơi double-click là vào game, không cần VS Code, Terminal, npm hay dev server.',
-    steps: ['Mở trang 🎮 Desktop Game (thanh bên, nhóm Hệ thống / Hướng dẫn): lệnh thật đọc từ package.json, có nút Copy.', 'Chạy lệnh Package Desktop → installer trong thư mục output.', 'Chạy installer → shortcut “Ủn Ỉn Homemade” trên Desktop → double-click.'],
+    steps: ['Mở trang 🎮 Desktop Game (thanh bên, nhóm Hệ thống / Hướng dẫn): lệnh thật đọc từ package.json, có nút Copy.', 'Chạy lệnh Package Desktop → installer trong thư mục output.', 'Chạy installer → shortcut “Sobi Farm” trên Desktop → double-click.'],
     example: ['Bản mới: tăng version → build installer → cài đè: save trong %APPDATA%\\Un In Homemade\\saves giữ nguyên.'],
     notes: ['Save không nằm trong thư mục cài; gỡ cài đặt cũng không xoá save.', 'Installer chưa ký số: SmartScreen có thể hỏi — More info → Run anyway.'],
   },

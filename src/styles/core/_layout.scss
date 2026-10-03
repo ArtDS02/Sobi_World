@@ -42,8 +42,9 @@
     background: $c-farm-letterbox; // the canvas fills it; seen only before the first frame
   }
 
-  // AM-1: the HUD, hint and coach (siblings after the stage) wait for the loading screen to finish.
-  &__stage[data-farm-loading] ~ * {
+  // AM-2 (mock-up): the HUD frames the loading screen; the hint and the tutorial coach wait for it.
+  &__stage[data-farm-loading] ~ &__hint-host,
+  &__stage[data-farm-loading] ~ &__coach-host {
     visibility: hidden;
   }
 

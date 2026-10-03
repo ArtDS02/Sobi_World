@@ -66,7 +66,7 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
     loaded: () => delete host.dataset.farmLoading,
   };
   host.dataset.farmLoading = ''; // HUD hidden over the loading screen (styles/core/_layout.scss)
-  const scenes = [new BootScene(), new PreloadScene(deps, bridge), new MainFarmScene(deps, bridge)];
+  const scenes = [new BootScene(deps.assets), new PreloadScene(deps, bridge), new MainFarmScene(deps, bridge)];
   const game = new Phaser.Game(phaserConfig(host, deps.assets.manifest.layout, scenes));
   let visible = true;
   // The canvas takes the host's size (never 0: a hidden host keeps the last size).

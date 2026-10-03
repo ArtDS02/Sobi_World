@@ -3,6 +3,7 @@ import type { BreedId } from './ids';
 
 export const SAVE = {
   SCHEMA_VERSION: 7,
+  // Storage keys keep the pre-rebrand name (AM-2): renaming them would orphan existing saves.
   IDB_NAME: 'un-in-homemade',
   IDB_STORE: 'saves',
   IDB_KEY: 'current',
@@ -13,7 +14,7 @@ export const SAVE = {
   EXPORT_REMINDER_DAYS: 7,
   /** The away summary opens when the catch-up covers at least this long (§9.5). */
   AWAY_SUMMARY_MIN_MS: 10 * 60 * 1000,
-  EXPORT_FILE_PREFIX: 'un-in-save-',
+  EXPORT_FILE_PREFIX: 'sobi-farm-save-', // display only: import reads any file name
 
   // Runtime loop (§7.1, §9.1, §9.4)
   TICK_MS: 1000, // one global interval while visible

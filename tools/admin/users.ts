@@ -41,7 +41,7 @@ export const users = {
 
 /** Which run mode plays a save folder (electron/dataDir.ts, DECISIONS AM-1). */
 export const appLabel = (app: string, folder: string) =>
-  `${app === 'Un In Homemade' ? 'Bản cài đặt (UnInHomemade.exe)' : app === 'Un In Homemade Dev' ? 'Bản dev (npm run dev + npm run dev:desktop)' : app}${folder === 'saves' ? '' : ` · ${folder}`}`;
+  `${app === 'Un In Homemade' ? 'Bản cài đặt (Sobi Farm)' : app === 'Un In Homemade Dev' ? 'Bản dev (npm run dev + npm run dev:desktop)' : app}${folder === 'saves' ? '' : ` · ${folder}`}`;
 
 function parse(text: string): { save: SaveGame | null; error: string | null } {
   const r = parseSave(text);

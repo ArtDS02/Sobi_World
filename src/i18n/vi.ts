@@ -1,6 +1,6 @@
 export const vi = {
   app: {
-    title: "Ủn Ỉn Homemade",
+    title: "Sobi Farm",
     loading: "Đang tải...",
   },
 
@@ -371,14 +371,13 @@ export const vi = {
   },
 
   desktop: {
-    loadingTitle: "Đang chuẩn bị\nnông trại",
-    // AM-1: one short line per real loading step (core/config/loadingScreen.ts LOADING_STEPS).
+    // AM-1/AM-2: the loading title, one short line per real step (config/loadingScreen.ts LOADING_STEPS).
     loadingSteps: {
-      config: "Đang mở sổ nông trại...",
-      farm: "Đang dọn chuồng...",
-      pigs: "Đang gọi đàn heo...",
-      world: "Đang chuẩn bị thức ăn...",
-      ready: "Chào mừng đến với nông trại!",
+      config: "Đang mở sổ nông trại",
+      farm: "Đang chuẩn bị nông trại",
+      pigs: "Đang gọi đàn heo",
+      world: "Đang chuẩn bị thức ăn",
+      ready: "Chào mừng đến Sobi Farm!",
     },
     loadingPercent: "{percent}%",
     loadingTips: [

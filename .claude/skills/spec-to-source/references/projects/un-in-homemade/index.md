@@ -1,4 +1,4 @@
-# Adapter — Ủn Ỉn Homemade (Solo Edition, spec v4.1 Desktop)
+# Adapter — Sobi Farm, tên cũ Ủn Ỉn Homemade (Solo Edition, spec v4.1 Desktop)
 
 Game nuôi heo nhàn, **app desktop Windows (Electron)**, chơi đơn tuyệt đối, offline từ lần mở đầu, không backend,
 không server/port. Cài bằng installer → double-click icon → chơi.

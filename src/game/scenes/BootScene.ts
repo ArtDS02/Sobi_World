@@ -1,16 +1,26 @@
-// Boot (spec §11, §11.4): the manifest is already validated by main.ts; this scene only generates
-// the fallback textures so every later lookup can render something.
+// Boot (spec §11, §11.4): the manifest is already validated by main.ts; this scene loads the one
+// picture of the loading screen (its pig, AM-2) and generates the fallback textures so every later
+// lookup can render something.
 import * as Phaser from 'phaser';
 import { BREED_ID_VALUES } from '../../core/config/ids';
 import { BREEDS } from '../../core/config/breeds';
 import { PIG_FEET_Y } from '../../core/config/assetIds';
 import { FARM_FALLBACK } from '../../core/config/farmView';
+import { LOADING_PIG_BREED } from '../../core/config/loadingScreen';
+import type { AssetRegistry } from '../../core/assets/registry';
+import { LOADING_PIG_KEY } from '../prefabs/LoadingScreen';
 import { SCENE_KEYS } from '../config/phaser';
 import { FALLBACK_FX_KEY, FALLBACK_PROP_KEY, fallbackPigKey } from '../view/textureKeys';
 
 export class BootScene extends Phaser.Scene {
-  constructor() {
+  constructor(private readonly assets: AssetRegistry) {
     super(SCENE_KEYS.boot);
+  }
+
+  preload() {
+    // A missing file only means the loading screen draws its pig (no error screen).
+    const url = this.assets.url(BREEDS[LOADING_PIG_BREED].artId, 'asset');
+    if (url) this.load.image(LOADING_PIG_KEY, url);
   }
 
   create() {

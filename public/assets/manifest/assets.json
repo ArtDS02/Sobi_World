@@ -1203,7 +1203,7 @@
       "kind": "music",
       "loop": true,
       "volume": 0.35,
-      "credit": "Ủn Ỉn Homemade — generated with Mureka AI",
+      "credit": "Sobi Farm — generated with Mureka AI",
       "license": "Project-owned (Mureka AI output, per the account plan terms)"
     },
     {
@@ -1212,7 +1212,7 @@
       "asset": "audio/ui_click.mp3",
       "kind": "sfx",
       "volume": 0.8,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },
     {
@@ -1221,7 +1221,7 @@
       "asset": "audio/ui_error.mp3",
       "kind": "sfx",
       "volume": 0.8,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },
     {
@@ -1230,7 +1230,7 @@
       "asset": "audio/pig_oink_happy.mp3",
       "kind": "sfx",
       "volume": 0.8,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },
     {
@@ -1239,7 +1239,7 @@
       "asset": "audio/pig_oink_hungry.mp3",
       "kind": "sfx",
       "volume": 0.8,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },
     {
@@ -1248,7 +1248,7 @@
       "asset": "audio/feed_munch.mp3",
       "kind": "sfx",
       "volume": 0.8,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },
     {
@@ -1257,7 +1257,7 @@
       "asset": "audio/water_splash.mp3",
       "kind": "sfx",
       "volume": 0.8,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },
     {
@@ -1266,7 +1266,7 @@
       "asset": "audio/coin_collect.mp3",
       "kind": "sfx",
       "volume": 0.8,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },
     {
@@ -1275,7 +1275,7 @@
       "asset": "audio/breed_chime.mp3",
       "kind": "sfx",
       "volume": 0.8,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },
     {
@@ -1284,7 +1284,7 @@
       "asset": "audio/birth_fanfare.mp3",
       "kind": "sfx",
       "volume": 0.8,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },
     {
@@ -1293,7 +1293,7 @@
       "asset": "audio/level_up.mp3",
       "kind": "sfx",
       "volume": 0.45,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     },
     {
@@ -1302,7 +1302,7 @@
       "asset": "audio/notify.mp3",
       "kind": "sfx",
       "volume": 0.8,
-      "credit": "Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts",
+      "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
     }
   ],

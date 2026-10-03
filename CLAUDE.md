@@ -1,4 +1,4 @@
-# Ủn Ỉn Homemade
+# Sobi Farm (tên cũ Ủn Ỉn Homemade)
 Game desktop Windows (Electron), chơi đơn, offline. Spec v4.1. Mọi việc triển khai/tiếp tục: dùng skill `spec-to-source` (quy trình, giao tiếp, state). Task: `PROMPTS_THEO_PHASE.md`. State: `PROJECT_STATUS.md`.
 - Không đọc: archive/, hướng_dẫn_triển_khai.md, DESIGN_README.md (cả hai lỗi thời về runtime), asset/animals/, asset/building/, ảnh (trừ khi task bảo).
 - src/core/ thuần tuyệt đối: không import game/ui/store/platform, không DOM/browser/Node API, không Date.now()/Math.random() — không có ngoại lệ. now/rng luôn inject. Browser API ở src/platform|store|ui|game; Node API chỉ ở electron/.

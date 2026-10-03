@@ -1,4 +1,6 @@
-# Ủn Ỉn Homemade
+# Sobi Farm
+
+_(Tên cũ: Ủn Ỉn Homemade — đổi tên ở AM-2. Thư mục save và key lưu trữ giữ tên cũ để không mất dữ liệu.)_
 
 Game nuôi heo nhàn cho **Windows**, chơi đơn, chạy hoàn toàn trên máy: không tài khoản, không máy chủ,
 không cần mạng — kể cả lần mở đầu tiên. Mua heo con, đổ máng ăn, tắm, chữa bệnh, cho lớn rồi bán; heo càng
@@ -13,11 +15,11 @@ tài liệu thiết kế cũ (bản PWA, đã lỗi thời về runtime/lưu tr�
 
 ## Cài và chơi
 
-1. Chạy `UnInHomemade-Setup-<phiên bản>.exe`. Cài cho người dùng hiện tại, không cần quyền admin; được chọn
+1. Chạy `SobiFarm-Setup-<phiên bản>.exe`. Cài cho người dùng hiện tại, không cần quyền admin; được chọn
    thư mục cài; tạo lối tắt ở Desktop và Start Menu.
 2. Bản v1 **chưa ký số**: Windows SmartScreen hiện "Windows protected your PC" → bấm **More info** →
    **Run anyway**.
-3. Double-click biểu tượng **Ủn Ỉn Homemade**. Không cần Node, terminal, server hay mạng.
+3. Double-click biểu tượng **Sobi Farm**. Không cần Node, terminal, server hay mạng.
 
 Cửa sổ mặc định 1280 × 800, tối thiểu 1024 × 640, nhớ kích thước/vị trí; **F11** bật/tắt toàn màn hình.
 Mở lần thứ hai chỉ đưa cửa sổ đang chạy lên trước.
@@ -63,7 +65,7 @@ Luồng: `UI → store.dispatch(action) → advanceWorld → action → lưu →
 
 ## Lưu game
 
-- Thư mục: `%APPDATA%\Un In Homemade\saves\` (Cài đặt → **Mở thư mục lưu**). Gỡ cài đặt **không** xoá thư mục
+- Thư mục: `%APPDATA%\Un In Homemade\saves\` (tên thư mục cũ, giữ nguyên để không mất save; Cài đặt → **Mở thư mục lưu**). Gỡ cài đặt **không** xoá thư mục
   này; cài lại hoặc cài bản mới đè lên vẫn giữ nông trại (bản mới tự migrate save cũ).
 - Ghi **atomic**: ghi file tạm → flush → đổi tên; tắt máy giữa chừng không làm hỏng `save.json`.
 - **Backup**: giữ 10 bản gần nhất trong `saves\backups\` (Cài đặt → Bản sao lưu → Khôi phục).

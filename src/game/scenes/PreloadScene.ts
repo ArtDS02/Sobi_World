@@ -82,6 +82,8 @@ export class PreloadScene extends Phaser.Scene {
   create() {
     createFxAnims(this, this.list?.sheets ?? []);
     this.screen?.setStep('ready');
+    // Dev only: `?loading=hold` keeps the loading screen up to look at it (AM-2).
+    if (import.meta.env.DEV && new URLSearchParams(location.search).get('loading') === 'hold') return;
     this.scene.start(SCENE_KEYS.farm);
   }
 }

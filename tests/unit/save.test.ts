@@ -293,8 +293,8 @@ describe('changeGold (§8.16)', () => {
 });
 
 describe('export / import (§9.3)', () => {
-  it('file name un-in-save-YYYYMMDD-HHmm.json from the passed date', () => {
-    expect(exportFileName(new Date(2026, 9, 1, 3, 7))).toBe('un-in-save-20261001-0307.json');
+  it('file name sobi-farm-save-YYYYMMDD-HHmm.json from the passed date', () => {
+    expect(exportFileName(new Date(2026, 9, 1, 3, 7))).toBe('sobi-farm-save-20261001-0307.json');
   });
 
   it('export stamps lastExportAt and the JSON imports back to the same save', () => {

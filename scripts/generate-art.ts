@@ -15,9 +15,9 @@ import { WORLD } from './art/world';
 const INBOX = 'art_inbox';
 const AUDIO = join(INBOX, 'audio');
 const MUSIC_SOURCE = 'asset/music/music-bg.mp3';
-const CREDIT_SFX = 'Ủn Ỉn Homemade — synthesised in scripts/art/sfx.ts';
+const CREDIT_SFX = 'Sobi Farm — synthesised in scripts/art/sfx.ts';
 const LICENSE_SFX = 'Original work, project-owned';
-const CREDIT_MUSIC = 'Ủn Ỉn Homemade — generated with Mureka AI';
+const CREDIT_MUSIC = 'Sobi Farm — generated with Mureka AI';
 const LICENSE_MUSIC = 'Project-owned (Mureka AI output, per the account plan terms)';
 
 mkdirSync(AUDIO, { recursive: true });

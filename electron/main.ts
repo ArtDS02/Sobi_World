@@ -50,7 +50,7 @@ const MIME: Record<string, string> = {
   '.woff2': 'font/woff2',
 };
 
-// Saves live in %APPDATA%\Un In Homemade\ whatever the (Vietnamese) product name is (§9.1).
+// Saves live in %APPDATA%\Un In Homemade\ whatever the product name ("Sobi Farm") is (§9.1, AM-2).
 // An unpackaged run (dev:desktop) uses the dev folder — the same farm `npm run dev` plays (AM-1) —
 // so it never touches the player's farm. The e2e smoke test (§14.8) points it at a temp folder.
 app.setPath(
