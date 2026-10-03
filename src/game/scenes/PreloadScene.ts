@@ -2,10 +2,8 @@
 // species, with a progress bar. Failed files fall back later.
 import * as Phaser from 'phaser';
 import { BREEDS } from '../../core/config/breeds';
-import { FARM_VIEW } from '../../core/config/farmView';
-import { t } from '../../i18n/format';
-import { vi } from '../../i18n/vi';
-import { fitCamera, SCENE_KEYS } from '../config/phaser';
+import { SCENE_KEYS } from '../config/phaser';
+import { LoadingScreen } from '../prefabs/LoadingScreen';
 import { farmLoadList, fxAnimKey, type LoadList, type SheetItem } from '../view/textureKeys';
 import type { FarmBridge, FarmDeps } from '../farmView';
 import { farmSeason } from '../state/seasonClock';
@@ -52,30 +50,16 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    fitCamera(this, this.deps.assets.manifest.layout);
-    const { width, height } = this.deps.assets.manifest.layout.designSize;
-    const bar = FARM_VIEW.LOADING_BAR;
-    const x = (width - bar.width) / 2;
-    const y = height / 2;
-    this.add.rectangle(x, y, bar.width, bar.height, bar.track).setOrigin(0, 0.5);
-    const fill = this.add.rectangle(x, y, 0, bar.height, bar.color).setOrigin(0, 0.5);
-    const label = this.add
-      .text(width / 2, y - bar.height * 2, t(vi.desktop.loadingAssets, { percent: 0 }), {
-        color: bar.text,
-        fontSize: `${bar.height}px`,
-        fontFamily: FARM_VIEW.LABEL.fontFamily,
-      })
-      .setOrigin(0.5);
-    this.load.on(Phaser.Loader.Events.PROGRESS, (p: number) => {
-      fill.width = bar.width * p;
-      label.setText(t(vi.desktop.loadingAssets, { percent: Math.round(p * 100) }));
-    });
+    const season = farmSeason(this.deps.now(), this.bridge.seasonPreview);
+    const reduceMotion = this.deps.store.getSnapshot().save?.settings.reduceMotion ?? false;
+    const screen = new LoadingScreen(this, this.deps.assets.manifest.layout, season, reduceMotion);
+    this.load.on(Phaser.Loader.Events.PROGRESS, (p: number) => screen.setProgress(p));
     warnLoadErrors(this.load);
 
     this.list = farmLoadList(
       this.deps.assets,
       Object.values(BREEDS).map((b) => b.artId),
-      farmSeason(this.deps.now(), this.bridge.seasonPreview), // only this season's variants (SE-1)
+      season, // only this season's variants (SE-1)
     );
     queueLoadList(this.load, this.list);
   }

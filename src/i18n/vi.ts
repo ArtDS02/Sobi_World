@@ -371,7 +371,15 @@ export const vi = {
   },
 
   desktop: {
-    loadingAssets: "Đang chuẩn bị nông trại... {percent}%",
+    loadingTitle: "Đang chuẩn bị nông trại",
+    loadingPercent: "{percent}%",
+    loadingTips: [
+      "Mẹo: đổ đầy máng, heo tự ăn kể cả khi bạn tắt game.",
+      "Mẹo: heo sạch sẽ thì ít bệnh hơn.",
+      "Mẹo: heo vui vẻ bán được giá cao hơn.",
+      "Mẹo: phối giống để tìm loài heo mới.",
+      "Mẹo: ghé mỗi ngày để nhận quà.",
+    ],
     manifestError: "Không đọc được danh sách tài nguyên của game.",
     version: "Phiên bản {version}",
   },

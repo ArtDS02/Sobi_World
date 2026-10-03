@@ -140,8 +140,19 @@ export const FARM_VIEW = {
   SICK_TINT: 0xb6e3a2,
   /** Alpha threshold for pixel-perfect pig clicks. */
   HIT_ALPHA: 1,
-  /** Progress bar of the preload scene (design px). */
-  LOADING_BAR: { width: 640, height: 24, color: 0xe8708a, track: 0xffe9e1, text: '#3b2a26' },
+  /**
+   * Preload screen (design px, centred on the 1600×900 frame): the painted farm, a cream card with a
+   * bobbing pig, a pill progress bar and a rotating tip. Colours follow the HUD tokens.
+   */
+  LOADING: {
+    card: { width: 600, height: 260, y: 380, radius: 40, color: 0xfff6e6, border: 0xffffff, borderPx: 6 },
+    shadow: { dy: 10, color: 0x3b5a2a, alpha: 0.16 },
+    pig: { y: 372, r: 56, bobPx: 10, bobMs: 520, body: 0xffb8c6, snout: 0xff90a8, outline: 0x3b2a26 },
+    title: { y: 468, px: 34, color: '#3b2a26' },
+    bar: { y: 520, width: 460, height: 30, track: 0xffe9e1, fill: 0xe8708a, shine: 0xffffff },
+    percent: { y: 520, px: 18, color: '#ffffff', dark: '#c94d69' },
+    tip: { y: 580, px: 21, color: '#85706a', everyMs: 2600 },
+  },
 } as const;
 
 /** Flat colour fills drawn when environment / prop / fx files are missing (spec §11.4). */
