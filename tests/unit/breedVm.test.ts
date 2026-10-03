@@ -32,6 +32,22 @@ describe('breedingVm (§10.2)', () => {
     expect(lines.join(' ')).not.toContain('Heo Sọc Dưa');
   });
 
+  it('picture cards: this pig and each partner with art, name, species, gender; child tiles', () => {
+    const s = farm([mom, dad]);
+    const vm = breedingVm(s, dad, 0);
+    expect(vm.self).toMatchObject({ pigId: 'dad', name: 'Bố', gender: 'MALE', artId: 'pig_classic' });
+    const p = vm.partners[0]!;
+    expect(p.card).toMatchObject({ pigId: 'mom', name: 'Mẹ', gender: 'FEMALE', breedName: 'Heo Hồng Đất' });
+    expect(p.hearts).toBeGreaterThanOrEqual(1);
+    expect(p.hearts).toBeLessThanOrEqual(5);
+    expect(p.children).toHaveLength(4);
+    expect(p.children[0]).toMatchObject({ artId: 'pig_classic', name: 'Heo Hồng Đất' });
+    // Unseen species stay a mystery: no art, no name.
+    for (const c of p.children.filter((x) => x.artId === null)) expect(c.name).toBe(vi.breed.mystery);
+    expect(p.children.some((c) => c.artId === null)).toBe(true);
+    expect(p.other).toMatch(/^Giống khác/);
+  });
+
   it('the confirm runs the real breedPigs', () => {
     const s = farm([mom, dad]);
     const r = expectOk(breedingVm(s, mom, 0).partners[0]!.confirm.run(s, ctx()));

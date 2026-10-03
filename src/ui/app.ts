@@ -16,13 +16,13 @@ import { createToaster } from './components/toast';
 import { renderTopBar } from './components/topBar';
 import {
   openAdoptDialog,
-  openBreedDialog,
   openBuyItemDialog,
   openOrderDialog,
   openRenameDialog,
   openSellDialog,
   openTroughDialog,
 } from './dialogs';
+import { openBreedDialog } from './breedDialog';
 import type { AppOptions, FarmPick, MountedApp } from './appTypes';
 import { setIconSource } from './components/icon';
 import { el, patch } from './dom';

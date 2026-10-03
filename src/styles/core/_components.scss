@@ -363,6 +363,10 @@
     border-radius: $radius-window;
     box-shadow: $hud-shadow, 0 18px 40px rgba(59, 42, 38, 0.25);
 
+    // Rich dialogs (breeding): room for a picture layout.
+    &--wide {
+      max-width: 40rem;
+    }
   }
 
   &__bar {

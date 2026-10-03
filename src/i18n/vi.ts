@@ -228,6 +228,9 @@ export const vi = {
     capacity: "Chỗ trong trại: {used}/{max} (còn {free}) · Heo con chờ trong Kho: {waiting}/{nurseryMax}",
     duration: "Thời gian mang thai: {time}",
     noPartners: "Chưa có con nào đủ điều kiện phối với {name}.",
+    partners: "Chọn bạn đời ({n})",
+    mystery: "Bí ẩn",
+    compatLabel: "Độ hợp",
     confirm: "Phối giống",
   },
 
