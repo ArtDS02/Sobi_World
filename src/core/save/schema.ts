@@ -58,6 +58,12 @@ const pigSchema = z.object({
   createdAt: time,
   generation: z.number().int().min(1).optional(),
   parents: parentsSchema.optional(),
+  lastFedAt: time.optional(),
+  lastCleanedAt: time.optional(),
+  lastSickAt: time.optional(),
+  sickDay: z.number().int().optional(),
+  sickEpisodes: z.number().int().min(0).optional(),
+  recoveringUntil: time.optional(),
 });
 
 const orderSchema = z.object({

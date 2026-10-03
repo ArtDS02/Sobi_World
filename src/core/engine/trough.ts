@@ -79,13 +79,18 @@ export function resolveTrough(win: FarmWindow, now: number): ResolvedWindow {
 }
 
 /** One window: resolveTrough THEN advancePig for every pig (mandatory order, §7.3). */
-export function advanceWithTrough(win: FarmWindow, now: number, rng: Rng): ResolvedWindow {
+export function advanceWithTrough(
+  win: FarmWindow,
+  now: number,
+  rng: Rng,
+  dayOffsetMs = 0,
+): ResolvedWindow {
   const resolved = resolveTrough(win, now);
   const hungerZeroAt: Record<string, number> = {};
   // rng is consumed in slotIndex order so results do not depend on array order.
   const advanced = new Map(
     bySlot(resolved.pigs).map((p) => {
-      const next = advancePig(p, now, rng);
+      const next = advancePig(p, now, rng, dayOffsetMs);
       if (p.hunger > 0 && next.hunger === 0 && now > p.lastTickedAt) {
         hungerZeroAt[p.id] = Math.round(p.lastTickedAt + (p.hunger / hungerRate(p)) * 1000);
       }

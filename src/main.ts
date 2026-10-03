@@ -36,7 +36,7 @@ async function start(root: HTMLElement) {
   if (import.meta.env.DEV && new URLSearchParams(location.search).has('dev')) {
     const dev = await import('./ui/devTools');
     const offset = dev.devClockOffset();
-    clock = { now: () => offset.now(realClock.now()) };
+    clock = { ...realClock, now: () => offset.now(realClock.now()) };
     const gallery = await import('./ui/devGallery');
     opts.devTools = dev.renderDevTools(
       (ms) => skip?.(ms),

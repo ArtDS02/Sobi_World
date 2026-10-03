@@ -8,7 +8,7 @@ import { newGame } from '../core/save/newGame';
 import type { LoadSource } from '../core/save/port';
 import type { ErrorCode } from '../core/config/errors';
 import type { ActionContext, ActionResult, SaveGame } from '../core/types';
-import { defaultDeps, type StoreDeps } from './storeDeps';
+import { actionContext, defaultDeps, type StoreDeps } from './storeDeps';
 
 export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew';
 
@@ -79,7 +79,7 @@ export function createGameStore(
     for (const fn of rejectListeners) fn(result.error);
     return result;
   };
-  const ctx = (): ActionContext => ({ now: deps.clock.now(), rng: deps.rng });
+  const ctx = (now?: number): ActionContext => actionContext(deps.clock, deps.rng, now);
   const guard = deps.instanceGuard;
   const canWrite = () => snapshot.status === 'ready' && !guard.isReadOnly();
 
@@ -123,7 +123,7 @@ export function createGameStore(
     const now = deps.clock.now();
     // The trough is resolved on every tick: its stamp is when the world last ran.
     const awayMs = Math.max(0, now - snapshot.save.trough.lastResolvedAt);
-    const world = advanceWorld(snapshot.save, now, deps.rng);
+    const world = advanceWorld(snapshot.save, now, deps.rng, ctx(now).dayOffsetMs);
     set({ save: world.state });
     if (world.events.length > 0 || now - lastPersistAt >= SAVE.AUTOSAVE_MS) void persist();
     emit(world.events, origin, origin === 'catchup' ? { awayMs } : undefined);

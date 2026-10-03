@@ -30,6 +30,8 @@ export function toastText(
       return t(vi.event.becameSick, { name: nameOf(event.pigId) });
     case 'PIG_BECAME_ADULT':
       return t(vi.event.becameAdult, { name: nameOf(event.pigId) });
+    case 'PIG_NEED_DROPPED':
+      return t(vi.event.needDropped[event.need][event.level], { name: nameOf(event.pigId) });
     case 'PIG_HUNGRY_ZERO':
       return event.stalled ? t(vi.event.hungryZero, { name: nameOf(event.pigId) }) : null;
     case 'BIRTH':

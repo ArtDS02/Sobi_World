@@ -8,7 +8,7 @@ import type { ActionContext, ActionResult, SaveGame } from '../types';
 export type ActionBody = (state: SaveGame, ctx: ActionContext) => ActionResult;
 
 export function runAction(state: SaveGame, ctx: ActionContext, body: ActionBody): ActionResult {
-  const world = advanceWorld(state, ctx.now, ctx.rng);
+  const world = advanceWorld(state, ctx.now, ctx.rng, ctx.dayOffsetMs);
   const result = body(world.state, ctx);
   if (!result.ok) return result;
   const progress = progressStep(world.state, result.state, result.events);

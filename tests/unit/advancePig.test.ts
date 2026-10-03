@@ -11,54 +11,65 @@ const neverSick = (): Rng => sequenceRng([1 - 1e-12]);
 const advance = (pig: Pig, seconds: number, rng: Rng = neverSick()) =>
   advancePig(pig, pig.lastTickedAt + seconds * SEC, rng);
 
-describe('§14.1 golden values (PINK baby, progress 0, hunger 100, clean 100)', () => {
-  it('G1 advance 1,200 s → hunger 50, cleanliness 77.8, progress 16.67', () => {
-    const p = advance(makePig(), 1200);
+// NH-1 rebalance: PINK hunger budget 7,200 s, cleanliness 18,000 s (was 2,400 / 5,400, D16).
+describe('§14.1 golden values (PINK baby, progress 0, hunger 100, clean 100) — NH-1 budgets', () => {
+  it('G1 advance 3,600 s → hunger 50, cleanliness 80, progress 50', () => {
+    const p = advance(makePig(), 3600);
     expect(p.hunger).toBeCloseTo(50, 6);
-    expect(p.cleanliness).toBeCloseTo(77.8, 1);
-    expect(p.growthProgress).toBeCloseTo(16.67, 2);
+    expect(p.cleanliness).toBeCloseTo(80, 6);
+    expect(p.growthProgress).toBeCloseTo(50, 6);
   });
 
-  it('G2 advance 2,400 s → hunger 0, cleanliness 55.6, progress 33.33', () => {
-    const p = advance(makePig(), 2400);
-    expect(p.hunger).toBeCloseTo(0, 6);
-    expect(p.cleanliness).toBeCloseTo(55.6, 1);
-    expect(p.growthProgress).toBeCloseTo(33.33, 2);
-  });
-
-  it('G3 advance 7,200 s, no trough → hunger 0, progress 33.33 (growth stopped at t=2,400)', () => {
+  it('G2 advance 7,200 s → hunger 0, cleanliness 60, progress 100', () => {
     const p = advance(makePig(), 7200);
-    expect(p.hunger).toBe(0);
-    expect(p.growthProgress).toBeCloseTo(33.33, 2);
+    expect(p.hunger).toBeCloseTo(0, 6);
+    expect(p.cleanliness).toBeCloseTo(60, 6);
+    expect(p.growthProgress).toBe(100);
   });
 
-  it('G4 advance 7,200 s, trough stocked with 10 → progress 100 (adult), trough food 4', () => {
+  it('G3 hunger 50, advance 7,200 s, no trough → hunger 0, progress 50 (growth stopped at t=3,600)', () => {
+    const p = advance(makePig({ hunger: 50 }), 7200);
+    expect(p.hunger).toBe(0);
+    expect(p.growthProgress).toBeCloseTo(50, 6);
+  });
+
+  it('G4 MELON advance 14,400 s: no trough → 25 %; trough stocked with 10 → adult, trough food 6', () => {
+    const melon = () => makePig({ breed: 'PIG_STRIPED_MELON', hunger: 50 });
+    expect(advance(melon(), 14_400).growthProgress).toBeCloseTo(25, 6);
     const out = advanceWithTrough(
-      { pigs: [makePig()], trough: { food: 10, capacity: 20, lastResolvedAt: 0 } },
-      7200 * SEC,
+      {
+        pigs: [makePig({ breed: 'PIG_STRIPED_MELON' })],
+        trough: { food: 10, capacity: 20, lastResolvedAt: 0 },
+      },
+      14_400 * SEC,
       neverSick(),
     );
     expect(out.pigs[0]!.growthProgress).toBe(100);
-    expect(out.trough.food).toBe(4);
+    expect(out.trough.food).toBe(6);
   });
 
-  it('G5 cleanliness crosses 30 exactly at t = 3,780 s', () => {
-    expect(advance(makePig(), 3780).cleanliness).toBeCloseTo(30, 9);
-    expect(advance(makePig(), 3779).cleanliness).toBeGreaterThan(30);
-    expect(advance(makePig(), 3781).cleanliness).toBeLessThan(30);
+  it('G5 cleanliness crosses 30 exactly at t = 12,600 s', () => {
+    expect(advance(makePig(), 12_600).cleanliness).toBeCloseTo(30, 9);
+    expect(advance(makePig(), 12_599).cleanliness).toBeGreaterThan(30);
+    expect(advance(makePig(), 12_601).cleanliness).toBeLessThan(30);
   });
 
   it('G6 sick pig advance → growth unchanged; hunger and cleanliness still decay', () => {
     const sick = makePig({ isSick: true, growthProgress: 20 });
-    const p = advance(sick, 1200);
+    const p = advance(sick, 3600);
     expect(p.growthProgress).toBe(20);
     expect(p.hunger).toBeCloseTo(50, 6);
-    expect(p.cleanliness).toBeCloseTo(77.78, 2);
+    expect(p.cleanliness).toBeCloseTo(80, 6);
     expect(p.isSick).toBe(true);
   });
 
   it('G7 now < lastTickedAt → no change except lastTickedAt = now (D14)', () => {
-    const pig = makePig({ lastTickedAt: 10_000 * SEC, hunger: 42, cleanliness: 17, growthProgress: 5 });
+    const pig = makePig({
+      lastTickedAt: 10_000 * SEC,
+      hunger: 42,
+      cleanliness: 17,
+      growthProgress: 5,
+    });
     const p = advancePig(pig, 9_000 * SEC, mulberry32(1));
     expect(p).toEqual({ ...pig, lastTickedAt: 9_000 * SEC });
   });
@@ -71,12 +82,12 @@ describe('§14.1 golden values (PINK baby, progress 0, hunger 100, clean 100)', 
   });
 
   it('G9 sickness, rng.next() = 0 → sick the moment cleanliness drops below 30', () => {
-    expect(advance(makePig(), 3780, sequenceRng([0])).isSick).toBe(false);
-    expect(advance(makePig(), 3780.001, sequenceRng([0])).isSick).toBe(true);
+    expect(advance(makePig(), 12_600, sequenceRng([0])).isSick).toBe(false);
+    expect(advance(makePig(), 12_600.001, sequenceRng([0])).isSick).toBe(true);
   });
 
   it('G10 sickness, rng.next() = 0.9999 → not sick within 1 h of exposure', () => {
-    expect(advance(makePig(), 3780 + 3600, sequenceRng([0.9999])).isSick).toBe(false);
+    expect(advance(makePig(), 12_600 + 3600, sequenceRng([0.9999])).isSick).toBe(false);
   });
 
   // Fixed seed, N runs over one stream. Binomial σ = sqrt(p(1-p)/N).

@@ -69,6 +69,8 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   SETTING_CHANGED: row(null, [], null, false),
   // Not in the §11.3 table: toast only, as before (DECISIONS R05B-1).
   PIG_HUNGRY_ZERO: row(null, [], null, true),
+  // NH-1: care level warning, once per drop (never per tick); silent toast.
+  PIG_NEED_DROPPED: row(null, [], null, true),
   ORDER_EXPIRED: row(null, [], null, true),
 };
 

@@ -172,7 +172,7 @@ describe('gameStore', () => {
     await store.dispatch(buy);
     expect(timers.live()).toBe(1);
     const writes = counter.saves;
-    clock.advance(2400 * SEC); // PINK hunger reaches 0 → PIG_HUNGRY_ZERO
+    clock.advance(7200 * SEC); // PINK hunger reaches 0 → PIG_HUNGRY_ZERO (NH-1 budget)
     timers.fire();
     await store.flush();
     expect(store.getSnapshot().save!.pigs[0]!.hunger).toBe(0);
@@ -205,7 +205,7 @@ describe('gameStore', () => {
     expect(timers.live()).toBe(0);
     expect(counter.saves).toBe(writes + 1);
 
-    clock.advance(1200 * SEC);
+    clock.advance(3600 * SEC); // half the PINK hunger budget (NH-1)
     page.visible = true;
     page.emit('visibilitychange'); // > 30 s since the last write → autosave
     await store.flush();
@@ -335,7 +335,7 @@ describe('gameStore event origins and rejections (spec §11.3)', () => {
     await store.dispatch(buy);
     expect(origins).toEqual(['action']);
 
-    clock.advance(2400 * SEC); // hunger reaches 0 → PIG_HUNGRY_ZERO on the next loop tick
+    clock.advance(7200 * SEC); // hunger reaches 0 → PIG_HUNGRY_ZERO on the next loop tick (NH-1)
     timers.fire();
     expect(origins.at(-1)).toBe('tick');
 

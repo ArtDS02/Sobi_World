@@ -13,6 +13,7 @@ import {
   weight,
 } from '../core/engine/derived';
 import { happiness } from '../core/engine/happiness';
+import { diseaseState, type DiseaseState } from '../core/engine/pigHealth';
 import { sellMultiplier } from '../core/engine/pricing';
 import type { Pig, SaveGame } from '../core/types';
 import { formatDateTime, formatDec, formatDuration, formatInt, t } from '../i18n/format';
@@ -71,7 +72,11 @@ function pigsVm(save: SaveGame): Pick<TopBarVm, 'pigs' | 'pigsTitle' | 'pigsFull
     reserved > 0 ? t(vi.hud.pigsReserved, { n: reserved }) : '',
     full ? vi.hud.pigsFull : '',
   ];
-  return { pigs: t(vi.hud.pigs, { count, max }), pigsTitle: title.filter(Boolean).join(' · '), pigsFull: full };
+  return {
+    pigs: t(vi.hud.pigs, { count, max }),
+    pigsTitle: title.filter(Boolean).join(' · '),
+    pigsFull: full,
+  };
 }
 
 export interface PigCardVm {
@@ -87,6 +92,13 @@ export interface PigCardVm {
   isPregnant: boolean;
 }
 
+/** lastTickedAt is the last world tick (≤ 1 s old), good enough for a label. */
+const HEALTH_TEXT: Record<DiseaseState, string> = {
+  healthy: vi.stat.healthy,
+  ill: vi.stat.sick,
+  recovering: vi.stat.recovering,
+};
+
 const pct = (n: number) => t(vi.ui.percent, { n: Math.floor(n) });
 
 export function pigCardVm(pig: Pig): PigCardVm {
@@ -98,7 +110,7 @@ export function pigCardVm(pig: Pig): PigCardVm {
     growth: pct(pig.growthProgress),
     hunger: pct(pig.hunger),
     cleanliness: pct(pig.cleanliness),
-    health: pig.isSick ? vi.stat.sick : vi.stat.healthy,
+    health: HEALTH_TEXT[diseaseState(pig, pig.lastTickedAt)],
     isSick: pig.isSick,
     isPregnant: pig.pregnancy !== null,
   };

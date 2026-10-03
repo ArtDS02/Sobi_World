@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { fillTrough } from '../../src/core/actions/fillTrough';
+import { BALANCE } from '../../src/core/config/balance';
+import { BREEDS } from '../../src/core/config/breeds';
 import { advancePig } from '../../src/core/engine/advancePig';
 import { advanceWorld } from '../../src/core/engine/advanceWorld';
 import { advanceWithTrough, resolveTrough, type Trough } from '../../src/core/engine/trough';
@@ -9,7 +11,9 @@ import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';
 
 const SEC = 1000;
-const PINK_PERIOD = 1200; // FOOD_HUNGER_RESTORE / (100 / 2400) s
+/** PINK hunger budget (7,200 s since NH-1) and the seconds between two auto-feeds. */
+const PINK_HUNGER_SEC = BREEDS.PIG_EARTH_PINK.hungerFullSec;
+const PINK_PERIOD = (BALANCE.FOOD_HUNGER_RESTORE * PINK_HUNGER_SEC) / BALANCE.HUNGER_MAX;
 const neverSick = (): Rng => sequenceRng([1 - 1e-12]);
 const trough = (food: number, capacity = 20): Trough => ({ food, capacity, lastResolvedAt: 0 });
 const run = (pigs: Pig[], t: Trough, seconds: number) =>
@@ -40,9 +44,10 @@ describe('§14.2 trough', () => {
   });
 
   it('empty trough for the whole window: same as advancePig alone, growth stalls at tHungerZero', () => {
-    const out = run([makePig()], trough(0), 7200);
-    expect(out.pigs[0]).toEqual(advancePig(makePig(), 7200 * SEC, neverSick()));
-    expect(out.pigs[0]!.growthProgress).toBeCloseTo(33.33, 2);
+    const pig = makePig({ hunger: 50 });
+    const out = run([pig], trough(0), 7200);
+    expect(out.pigs[0]).toEqual(advancePig(pig, 7200 * SEC, neverSick()));
+    expect(out.pigs[0]!.growthProgress).toBeCloseTo(50, 6);
     expect(out.trough.food).toBe(0);
   });
 
@@ -55,7 +60,7 @@ describe('§14.2 trough', () => {
   });
 
   it('3-day offline window with a full trough: food consumed, never negative, growth capped at 100', () => {
-    const pigs = [0, 1, 2, 3].map((i) => makePig({ id: `p${i}`, slotIndex: i }));
+    const pigs = [0, 1, 2, 3].map((i) => makePig({ id: `p${i}`, slotIndex: i, hunger: 50 }));
     const out = run(pigs, trough(20), 3 * 24 * 3600);
     expect(out.trough.food).toBe(0);
     for (const p of out.pigs) {
@@ -65,7 +70,7 @@ describe('§14.2 trough', () => {
     }
     // Closed form is greedy by slotIndex (DECISIONS Q4): slot 0 eats all 20 units and reaches
     // adult; the others get nothing and stall at tHungerZero.
-    expect(out.pigs.map((p) => +p.growthProgress.toFixed(2))).toEqual([100, 33.33, 33.33, 33.33]);
+    expect(out.pigs.map((p) => +p.growthProgress.toFixed(2))).toEqual([100, 50, 50, 50]);
   });
 
   it('fillTrough beyond capacity gives TROUGH_FULL and changes nothing', () => {
@@ -81,12 +86,12 @@ describe('§14.2 trough', () => {
 
 describe('trough closed form vs step simulation', () => {
   /**
-   * Reference: 1 s steps in integer units (1 unit = 1/24 hunger = 1 s of PINK decay, so no float
-   * drift). Eats one food whenever hunger <= 50, including at the window end (meals at exactly
+   * Reference: 1 s steps in integer units (1 unit = 1 s of PINK decay = 100 / PINK_HUNGER_SEC
+   * hunger, so no float drift). Eats one food whenever hunger <= 50, including at the window end (meals at exactly
    * t = dt count, as in the closed form and G4).
    */
   function stepSim(hunger: number, food: number, seconds: number) {
-    const UNITS = 24;
+    const UNITS = PINK_HUNGER_SEC / BALANCE.HUNGER_MAX;
     let h = Math.round(hunger * UNITS);
     let f = food;
     let fedTime = 0; // seconds with hunger > 0
@@ -109,7 +114,7 @@ describe('trough closed form vs step simulation', () => {
     [100, 20, 7200],
     [50, 5, 2400],
     [73, 2, 9000],
-    [10, 3, 5000],
+    [10, 1, 5000], // start below 50: one meal only (Q4 spaces meals a full period apart)
     [100, 1, 7200],
     [60, 50, 30_000],
   ])('hunger %s, food %s, %s s', (hunger, food, seconds) => {

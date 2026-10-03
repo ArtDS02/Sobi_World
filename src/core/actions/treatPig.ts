@@ -1,4 +1,5 @@
-// treatPig (spec §8.5): medicine cures sickness only; no XP.
+// treatPig (spec §8.5): medicine cures sickness only; no XP. NH-1: then Recovering (immune).
+import { BALANCE } from '../config/balance';
 import type { ActionContext, ActionResult, SaveGame } from '../types';
 import { ok, runAction } from './runAction';
 
@@ -16,7 +17,11 @@ export function treatPig(
       {
         ...s,
         inventory: { ...s.inventory, MEDICINE_COMMON: s.inventory.MEDICINE_COMMON - 1 },
-        pigs: s.pigs.map((p) => (p.id === pig.id ? { ...p, isSick: false } : p)),
+        pigs: s.pigs.map((p) =>
+          p.id === pig.id
+            ? { ...p, isSick: false, recoveringUntil: ctx.now + BALANCE.SICK_RECOVERY_SEC * 1000 }
+            : p,
+        ),
       },
       [{ type: 'PIG_TREATED', pigId: pig.id }],
     );

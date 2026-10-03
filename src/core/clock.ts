@@ -3,6 +3,8 @@
 export interface Clock {
   /** Epoch milliseconds. */
   now(): number;
+  /** Local time minus UTC (ms) at `at`, for game-day rules (NH-1). Absent = 0 (UTC days). */
+  dayOffsetMs?(at: number): number;
 }
 
 export interface FakeClock extends Clock {

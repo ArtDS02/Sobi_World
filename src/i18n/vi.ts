@@ -74,6 +74,7 @@ export const vi = {
     happiness: "Vui vẻ",
     healthy: "Khỏe mạnh",
     sick: "Đang bệnh",
+    recovering: "Đang hồi phục",
     pregnant: "Đang mang thai",
     pregnantLeft: "Còn {time} nữa sinh",
     priceMultiplier: "Giá bán x{mult}",
@@ -150,6 +151,23 @@ export const vi = {
     becameAdult: "{name} đã trưởng thành!",
     becameSick: "{name} bị bệnh rồi!",
     hungryZero: "{name} đói lả, ngừng lớn.",
+    // NH-1: shown once when a pig drops into a worse care level.
+    needDropped: {
+      hunger: {
+        good: "{name} no căng.",
+        normal: "{name} hơi đói.",
+        low: "{name} đang đói.",
+        veryLow: "{name} rất đói!",
+        critical: "{name} sắp đói lả!",
+      },
+      clean: {
+        good: "{name} sạch sẽ.",
+        normal: "{name} hơi bẩn.",
+        low: "{name} bẩn rồi.",
+        veryLow: "{name} rất bẩn!",
+        critical: "{name} bẩn quá, dễ bị bệnh!",
+      },
+    },
     birth: "{mother} vừa sinh {child}! Heo con đang chờ trong Kho.",
     adopted: "{name} đã về nông trại!",
     troughEmpty: "Máng ăn đã hết. Heo sẽ ngừng lớn.",

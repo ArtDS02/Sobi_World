@@ -3,6 +3,7 @@
 import type { Clock } from '../core/clock';
 import type { Rng } from '../core/rng';
 import type { BackupStore, InstanceGuard, SaveStorage } from '../core/save/port';
+import type { ActionContext } from '../core/types';
 import { defaultRng, realClock } from './runtime';
 
 export interface PageLike {
@@ -52,4 +53,9 @@ export function defaultDeps(): DefaultDeps {
     prefersReducedMotion: () =>
       typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches,
   };
+}
+
+/** Action context at `now` (default: the clock's time), with the local day offset (NH-1). */
+export function actionContext(clock: Clock, rng: Rng, now = clock.now()): ActionContext {
+  return { now, rng, dayOffsetMs: clock.dayOffsetMs?.(now) ?? 0 };
 }

@@ -84,7 +84,10 @@ export function feedbackPlan(
   const row = FEEDBACK_TABLE[e.type];
   // Catch-up events are never replayed as presentation (§9.5): the toast stays until the away
   // summary exists (R11, DECISIONS R05B-1).
-  if (origin === 'catchup') return { ...still, sound: null, toast: row.toast };
+  // NH-1: care-level drops while away are not toasted one by one (the away summary covers them).
+  if (origin === 'catchup') {
+    return { ...still, sound: null, toast: row.toast && e.type !== 'PIG_NEED_DROPPED' };
+  }
   const sound = soundOf(e, row.sound);
   if (reduceMotion) return { ...still, sound, toast: row.toast || !!row.float };
 

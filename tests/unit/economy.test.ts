@@ -6,20 +6,27 @@ import {
   priceAt,
   stallGrowth,
 } from '../../scripts/economy/model';
+import { BALANCE } from '../../src/core/config/balance';
+import { BREEDS } from '../../src/core/config/breeds';
 import { BREED_ID_VALUES } from '../../src/core/config/ids';
 
 // Spec §6.4 sanity table, reproduced through the real engine (§14.7, Appendix C "Balance sanity").
 describe('economy sanity (§6.4)', () => {
-  it('a PINK pig eats exactly 6 food units from birth to adult (150 gold)', () => {
-    expect(foodToAdult('PIG_EARTH_PINK')).toBe(6);
-    expect(breedEconomy('PIG_EARTH_PINK').foodCost).toBe(150);
+  // NH-1 budgets: PINK hunger lasts its whole growth (7,200 s), so 2 meals (at 3,600 / 7,200 s).
+  it('a PINK pig eats exactly 2 food units from birth to adult (50 gold)', () => {
+    expect(foodToAdult('PIG_EARTH_PINK')).toBe(2);
+    expect(breedEconomy('PIG_EARTH_PINK').foodCost).toBe(50);
   });
 
-  it('every breed needs the same 6 units: care budgets derive from growthSec (D16)', () => {
-    for (const b of BREED_ID_VALUES) expect(foodToAdult(b)).toBe(6);
+  it('every breed eats one meal per half hunger budget: care budgets derive from growthSec (NH-1)', () => {
+    for (const b of BREED_ID_VALUES) {
+      const { growthSec, hungerFullSec } = BREEDS[b];
+      const period = (hungerFullSec * BALANCE.FOOD_HUNGER_RESTORE) / BALANCE.HUNGER_MAX;
+      expect(foodToAdult(b), b).toBe(Math.floor(growthSec / period));
+    }
   });
 
-  it('PINK sell price 840 / 1,140 / 1,440 and net profit 190 / 490 / 790 at happiness 0 / 50 / 100', () => {
+  it('PINK sell price 840 / 1,140 / 1,440 and net profit 290 / 590 / 890 at happiness 0 / 50 / 100', () => {
     expect([
       priceAt('PIG_EARTH_PINK', 0),
       priceAt('PIG_EARTH_PINK', 50),
@@ -28,12 +35,13 @@ describe('economy sanity (§6.4)', () => {
     const e = breedEconomy('PIG_EARTH_PINK');
     expect(
       [0, 50, 100].map((h) => Math.round(e.perHour[h as 0 | 50 | 100] * e.growthHours)),
-    ).toEqual([190, 490, 790]);
-    expect(e.careRatio).toBeCloseTo(790 / 190, 10); // "care is worth 4.2x the margin"
+    ).toEqual([290, 590, 890]);
+    expect(e.careRatio).toBeCloseTo(890 / 290, 10); // care still worth > 3x the margin (NH-1)
   });
 
-  it('a PINK pig with an empty trough stalls at 33.33% growth', () => {
-    expect(stallGrowth('PIG_EARTH_PINK')).toBeCloseTo(100 / 3, 2);
+  it('an unfed baby stalls at hungerFullSec / growthSec: PINK 100 %, MELON 50 % (NH-1)', () => {
+    expect(stallGrowth('PIG_EARTH_PINK')).toBeCloseTo(100, 6);
+    expect(stallGrowth('PIG_STRIPED_MELON')).toBeCloseTo(50, 6);
   });
 
   it('§14.7 gate passes for the shop breed and catches a ratio under 2x', () => {

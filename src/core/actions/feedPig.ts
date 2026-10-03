@@ -19,7 +19,7 @@ export function feedPig(
     const fed: SaveGame = {
       ...s,
       inventory: { ...s.inventory, FOOD_BASIC: s.inventory.FOOD_BASIC - 1 },
-      pigs: s.pigs.map((p) => (p.id === pig.id ? { ...p, hunger } : p)),
+      pigs: s.pigs.map((p) => (p.id === pig.id ? { ...p, hunger, lastFedAt: ctx.now } : p)),
     };
     // D11: XP only when the feed was actually needed.
     const effective = pig.hunger <= BALANCE.XP_EFFECTIVE_FEED_MAX_HUNGER;

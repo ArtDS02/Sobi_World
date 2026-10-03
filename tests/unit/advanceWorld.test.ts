@@ -10,8 +10,8 @@ const neverSick = (): Rng => sequenceRng([1 - 1e-12]);
 describe('advanceWorld (§7.4)', () => {
   it('twice with the same now consumes food only once and emits nothing the second time', () => {
     const state = makeState([makePig({ hunger: 50 })], 5);
-    const first = advanceWorld(state, 2400 * SEC, mulberry32(1));
-    const second = advanceWorld(first.state, 2400 * SEC, mulberry32(2));
+    const first = advanceWorld(state, 7200 * SEC, mulberry32(1));
+    const second = advanceWorld(first.state, 7200 * SEC, mulberry32(2));
     expect(first.state.trough.food).toBe(2);
     expect(second.state.trough.food).toBe(2);
     expect(second.state).toEqual(first.state);
@@ -43,10 +43,10 @@ describe('advanceWorld (§7.4)', () => {
   });
 
   it('TROUGH_EMPTY carries the time of the last meal', () => {
-    // PINK at hunger 100, 2 units: meals at 1,200 s and 2,400 s, then dry.
-    const out = advanceWorld(makeState([makePig()], 2), 7200 * SEC, neverSick());
+    // PINK at hunger 100, 2 units: meals at 3,600 s and 7,200 s, then dry (NH-1 budgets).
+    const out = advanceWorld(makeState([makePig()], 2), 21_600 * SEC, neverSick());
     expect(out.state.trough.food).toBe(0);
-    expect(out.events).toContainEqual({ type: 'TROUGH_EMPTY', at: 2400 * SEC });
+    expect(out.events).toContainEqual({ type: 'TROUGH_EMPTY', at: 7200 * SEC });
   });
 
   it('TROUGH_EMPTY with short food over several pigs uses the latest meal (slot order)', () => {
@@ -54,10 +54,10 @@ describe('advanceWorld (§7.4)', () => {
       makePig({ id: 'a', slotIndex: 0 }),
       makePig({ id: 'b', slotIndex: 1, hunger: 50 }),
     ];
-    // Slot 0 eats all 3 units at 1,200 / 2,400 / 3,600 s; slot 1 is deprived.
-    const out = advanceWorld(makeState(pigs, 3), 7200 * SEC, neverSick());
+    // Slot 0 eats all 3 units at 3,600 / 7,200 / 10,800 s; slot 1 is deprived.
+    const out = advanceWorld(makeState(pigs, 3), 21_600 * SEC, neverSick());
     expect(out.events.filter((e) => e.type === 'TROUGH_EMPTY')).toEqual([
-      { type: 'TROUGH_EMPTY', at: 3600 * SEC },
+      { type: 'TROUGH_EMPTY', at: 10_800 * SEC },
     ]);
   });
 
@@ -68,28 +68,33 @@ describe('advanceWorld (§7.4)', () => {
     expect(
       advanceWorld(makeState([makePig()], 0), 7200 * SEC, neverSick()).events,
     ).not.toContainEqual(expect.objectContaining({ type: 'TROUGH_EMPTY' }));
-    // Exactly enough: 6 meals in 7,200 s, nobody left wanting.
+    // Exactly enough: 6 meals in 21,600 s, nobody left wanting.
     expect(
-      advanceWorld(makeState([makePig()], 6), 7200 * SEC, neverSick()).events,
+      advanceWorld(makeState([makePig()], 6), 21_600 * SEC, neverSick()).events,
     ).not.toContainEqual(expect.objectContaining({ type: 'TROUGH_EMPTY' }));
   });
 
   it('PIG_HUNGRY_ZERO reports when growth stopped', () => {
-    // 2 meals → hunger 200 credited → zero at 4,800 s; stalled for 2,400 s of the window.
-    const out = advanceWorld(makeState([makePig()], 2), 7200 * SEC, neverSick());
+    // SUPERMAN (growth 28,800 s, hunger 14,400 s): 1 meal at 7,200 s → hunger 150 credited →
+    // zero at 21,600 s; stalled for 7,200 s of the window.
+    const out = advanceWorld(
+      makeState([makePig({ breed: 'PIG_SUPERMAN' })], 1),
+      28_800 * SEC,
+      neverSick(),
+    );
     expect(out.events).toContainEqual({
       type: 'PIG_HUNGRY_ZERO',
       pigId: 'pig-1',
-      at: 4800 * SEC,
+      at: 21_600 * SEC,
       stalled: true,
     });
-    expect(out.state.pigs[0]!.growthProgress).toBeCloseTo((4800 * 100) / 7200, 6);
+    expect(out.state.pigs[0]!.growthProgress).toBeCloseTo(75, 6);
   });
 
   it('PIG_HUNGRY_ZERO only on the crossing, not while already at 0', () => {
-    const once = advanceWorld(makeState([makePig()]), 3000 * SEC, neverSick());
+    const once = advanceWorld(makeState([makePig()]), 9000 * SEC, neverSick());
     expect(once.events.filter((e) => e.type === 'PIG_HUNGRY_ZERO')).toHaveLength(1);
-    const again = advanceWorld(once.state, 4000 * SEC, neverSick());
+    const again = advanceWorld(once.state, 12_000 * SEC, neverSick());
     expect(again.events.filter((e) => e.type === 'PIG_HUNGRY_ZERO')).toHaveLength(0);
   });
 

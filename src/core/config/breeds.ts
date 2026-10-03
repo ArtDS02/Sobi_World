@@ -1,6 +1,7 @@
 // Pig species (spec §6.1, UN_IN_PIG_CATALOGUE.md). Stats come from the rarity tier; a species row
 // (speciesTable.ts) only overrides what makes it different. Adding a species = one row there + one
 // id in ids.ts + one manifest row — the admin dashboard does all three (DECISIONS A7-1).
+import { BALANCE } from "./balance";
 import type { BreedId } from "./ids";
 import type { Rarity } from "./rarity";
 import { SPECIES_ROWS } from "./speciesTable";
@@ -27,8 +28,8 @@ export interface BreedDef {
   enabled: boolean;            // false = retired: not sold, never bred; pigs already owned stay
   artId: string;         // its artwork; the manifest row with this id (§6.6)
   color: number;               // flat fill when the artwork is missing (§11.4)
-  hungerFullSec: number;       // derived, D16
-  cleanFullSec: number;        // derived, D16
+  hungerFullSec: number;       // derived, D16 / NH-1
+  cleanFullSec: number;        // derived, D16 / NH-1
 }
 
 /** Per-rarity stats, TUNABLE. COMMON..LEGENDARY match the four v1 breeds exactly. */
@@ -46,10 +47,18 @@ export const RARITY_TIER: Record<
 export type SpeciesRow = Pick<BreedDef, "id" | "nameVi" | "rarity" | "family" | "artId" | "color"> &
   Partial<Pick<BreedDef, "buyGold" | "unlockLevel" | "enabled" | keyof (typeof RARITY_TIER)[Rarity]>>;
 
-/** Tier stats + row overrides, then D16: care budgets derived from growth time, never hand-tuned. */
+/** Care budget (NH-1): derived from growth time with a floor, never hand-tuned per species. */
+const budget = (growthSec: number, ratio: number, minSec: number): number =>
+  Math.max(minSec, growthSec * ratio);
+
+/** Tier stats + row overrides, then D16 / NH-1: care budgets derived from growth time. */
 const species = (row: SpeciesRow): BreedDef => {
   const b = { buyGold: null, unlockLevel: 1, enabled: true, ...RARITY_TIER[row.rarity], ...row };
-  return { ...b, hungerFullSec: b.growthSec / 3, cleanFullSec: b.growthSec * 0.75 };
+  return {
+    ...b,
+    hungerFullSec: budget(b.growthSec, BALANCE.CARE_HUNGER_GROWTH_RATIO, BALANCE.CARE_HUNGER_MIN_SEC),
+    cleanFullSec: budget(b.growthSec, BALANCE.CARE_CLEAN_GROWTH_RATIO, BALANCE.CARE_CLEAN_MIN_SEC),
+  };
 };
 
 /** Every species, in SPECIES_ROWS order (grouped by rarity). */

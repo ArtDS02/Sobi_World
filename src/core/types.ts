@@ -80,6 +80,15 @@ export interface Pig {
   generation?: number;
   /** Who bred it (BR-1); absent for shop pigs and pigs born before save v7. */
   parents?: PigParents;
+  // NH-1 care & disease history. All optional: absent = never happened (older saves).
+  lastFedAt?: number; // last manual feed
+  lastCleanedAt?: number;
+  lastSickAt?: number; // start of the latest disease episode
+  /** Game day of lastSickAt and the episodes started on it (per-day limit). */
+  sickDay?: number;
+  sickEpisodes?: number;
+  /** After medicine: no new episode before this time (Recovering). */
+  recoveringUntil?: number;
 }
 
 /** Genealogy of a bred pig: ids (the parents may be sold later) and their species. */
@@ -148,6 +157,8 @@ export interface BreedingRecord {
 export interface ActionContext {
   now: number;
   rng: Rng;
+  /** Local time minus UTC (ms) for game-day rules (NH-1). Absent = 0 (UTC days). */
+  dayOffsetMs?: number;
 }
 
 export type ActionResult =

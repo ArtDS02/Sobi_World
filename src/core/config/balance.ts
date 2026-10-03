@@ -14,6 +14,16 @@ export const BALANCE = {
   SICK_CHANCE_PER_INTERVAL: 0.05, // 5% ...
   SICK_INTERVAL_SEC: 600, // ... per 10 minutes of exposure
   SICK_STARVING_MULTIPLIER: 2, // doubled while hunger = 0 (D21: no death)
+  // Disease lifecycle (NH-1): Healthy → Ill (until treated) → Recovering → Healthy.
+  SICK_MAX_EPISODES_PER_DAY: 1, // onsets per game day (local calendar day)
+  SICK_RECOVERY_SEC: 2 * 3600, // immune after medicine
+
+  // Care budgets (NH-1, replaces D16's growth/3 and growth*0.75): full → 0 takes
+  // max(MIN, growthSec * RATIO) seconds of game time (game time = wall clock, 1:1).
+  CARE_HUNGER_GROWTH_RATIO: 0.5,
+  CARE_HUNGER_MIN_SEC: 2 * 3600,
+  CARE_CLEAN_GROWTH_RATIO: 1,
+  CARE_CLEAN_MIN_SEC: 5 * 3600,
 
   // Trough (D17)
   TROUGH_AUTO_FEED_AT: 50, // a pig auto-eats when hunger falls to this

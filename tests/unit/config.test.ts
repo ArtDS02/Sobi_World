@@ -91,26 +91,37 @@ describe('breeding rules (§6.5 as rules, U00-1 D4)', () => {
   });
 });
 
-describe('care budgets (§6.2, D16)', () => {
-  // Check table from §6.2; the source of truth is the formula on growthSec.
+describe('care budgets (§6.2, D16 → NH-1)', () => {
+  // NH-1: budget = max(floor, growthSec * ratio); the table is the check, the formula the truth.
   const table: Partial<Record<BreedId, [number, number, number, number, number]>> = {
-    PIG_EARTH_PINK: [2400, 0.041667, 5400, 0.018519, 3780],
-    PIG_STRIPED_MELON: [4800, 0.020833, 10800, 0.009259, 7560],
-    PIG_SUPERMAN: [9600, 0.010417, 21600, 0.00463, 15120],
-    PIG_MYTHICAL: [28800, 0.003472, 64800, 0.001543, 45360],
+    PIG_EARTH_PINK: [7200, 0.013889, 18000, 0.005556, 12600],
+    PIG_STRIPED_MELON: [7200, 0.013889, 18000, 0.005556, 12600],
+    PIG_SUPERMAN: [14400, 0.006944, 28800, 0.003472, 20160],
+    PIG_MYTHICAL: [43200, 0.002315, 86400, 0.001157, 60480],
   };
 
   it.each(V1)('%s follows the growthSec formula', (id) => {
     const b = BREEDS[id];
     const [hungerFull, hungerPerSec, cleanFull, cleanPerSec, sickAt] = table[id]!;
-    expect(b.hungerFullSec).toBe(b.growthSec / 3);
-    expect(b.cleanFullSec).toBe(b.growthSec * 0.75);
+    expect(b.hungerFullSec).toBe(
+      Math.max(BALANCE.CARE_HUNGER_MIN_SEC, b.growthSec * BALANCE.CARE_HUNGER_GROWTH_RATIO),
+    );
+    expect(b.cleanFullSec).toBe(
+      Math.max(BALANCE.CARE_CLEAN_MIN_SEC, b.growthSec * BALANCE.CARE_CLEAN_GROWTH_RATIO),
+    );
     expect(b.hungerFullSec).toBe(hungerFull);
     expect(b.cleanFullSec).toBe(cleanFull);
     const rates = careRates(id);
     expect(rates.hungerPerSec).toBeCloseTo(hungerPerSec, 6);
     expect(rates.cleanPerSec).toBeCloseTo(cleanPerSec, 6);
     expect(rates.sickRiskStartSec).toBeCloseTo(sickAt, 6);
+  });
+
+  it('no species gets hungry within 2 h or dirty within 5 h of a full meal / bath', () => {
+    for (const id of BREED_IDS) {
+      expect(BREEDS[id].hungerFullSec).toBeGreaterThanOrEqual(2 * 3600);
+      expect(BREEDS[id].cleanFullSec).toBeGreaterThanOrEqual(5 * 3600);
+    }
   });
 });
 
