@@ -2,6 +2,7 @@
 // one the admin dashboard edits (DECISIONS AM-1). Talks to the dev-only Vite plugin
 // (scripts/dev/saveApi.ts); the shipped desktop game uses window.unin instead.
 import { SAVE_CHANGED_EXTERNALLY, type BackupStore, type SaveStorage } from '../../core/save/port';
+import type { SaveGame } from '../../core/types';
 import type { BackupInfo, SaveCandidate } from '../desktop/bridge';
 import { createFileSaveStorage, type SaveFileBridge } from '../desktop/fileSaveStorage';
 import { DEV_SAVE_EVENT, DEV_SAVE_META, DEV_SAVE_ROUTE } from './devSaveApi';
@@ -34,19 +35,42 @@ export const devBackups: BackupStore = {
   backupBeforeReset: () => call<void>('backupBeforeReset', {}),
 };
 
+/** Last action or last world tick (the trough is resolved on every tick). */
+const lastPlayed = (s: SaveGame) => Math.max(s.updatedAt, s.trough.lastResolvedAt);
+
+const MIGRATED_KEY = 'unin:dev-file-save-migrated';
+const flag = {
+  get: () => {
+    try {
+      return localStorage.getItem(MIGRATED_KEY) !== null;
+    } catch {
+      return false;
+    }
+  },
+  set: () => {
+    try {
+      localStorage.setItem(MIGRATED_KEY, '1');
+    } catch {
+      /* storage blocked: the check simply runs again next time */
+    }
+  },
+};
+
 /**
- * The dev save file; when it does not exist yet, a farm left in this browser's IndexedDB (dev
- * before AM-1) is carried over once instead of starting a new one.
+ * The dev save file. Once per browser, a farm left in IndexedDB (`npm run dev` before AM-1) is
+ * carried over when it is newer than the file (or there is no file); the file copy it replaces is
+ * kept in saves/backups/ by the first write of the session. Nothing is deleted.
  */
-export function createDevFileSaveStorage(legacy: SaveStorage): SaveStorage {
+export function createDevFileSaveStorage(legacy: SaveStorage, migrated = flag): SaveStorage {
   const files = createFileSaveStorage(bridge);
   return {
     ...files,
     async load() {
       const r = await files.load();
-      if (r.kind !== 'empty') return r;
+      if (migrated.get() || r.kind === 'tooNew') return r;
       const old = await legacy.load();
-      if (old.kind !== 'ok') return r;
+      migrated.set();
+      if (old.kind !== 'ok' || (r.kind === 'ok' && lastPlayed(r.save) >= lastPlayed(old.save))) return r;
       await files.save(old.save);
       return { ...old, source: 'primary' };
     },

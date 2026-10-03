@@ -50,7 +50,8 @@ export function buildInfo(): Result {
       unpacked: fileInfo(join(out, 'win-unpacked', `${p.build.executableName}.exe`)),
       lastBuild: fileInfo(join('dist-electron', 'main.cjs')),
       nsis: p.build.nsis,
-      installDir: join(process.env.LOCALAPPDATA ?? join(homedir(), 'AppData', 'Local'), 'Programs', p.build.productName),
+      // Per-user NSIS default (verified by installing): %LOCALAPPDATA%/Programs/<executableName>.
+      installDir: join(process.env.LOCALAPPDATA ?? join(homedir(), 'AppData', 'Local'), 'Programs', p.build.executableName),
       data: {
         installed: { ...fileInfo(join(saves(DATA_DIR_NAME.installed), 'save.json')), dir: saves(DATA_DIR_NAME.installed) },
         dev: { ...fileInfo(join(saves(DATA_DIR_NAME.dev), 'save.json')), dir: saves(DATA_DIR_NAME.dev) },
