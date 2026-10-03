@@ -2,6 +2,7 @@
 // one-shot particle bursts from the fx_* textures (placeholder art works the same).
 import * as Phaser from 'phaser';
 import type { FxId } from '../../core/config/assetIds';
+import type { GameEvent } from '../../core/events';
 import { FARM_VIEW } from '../../core/config/farmView';
 import { FEEDBACK } from '../../core/config/feedback';
 import type { FarmEffects } from '../feedback/effects';
@@ -16,6 +17,8 @@ export interface EffectTargets {
   trough(): Phaser.GameObjects.Image | null;
   board(): Phaser.GameObjects.Image | null;
   gifts(): GiftBoxes;
+  /** The life simulation (PL-1). */
+  life(event: GameEvent): void;
 }
 
 export class SceneEffects implements FarmEffects {
@@ -103,6 +106,10 @@ export class SceneEffects implements FarmEffects {
   }
 
   /** Reward text: rises and fades from the top of the target, then is destroyed. */
+  life(event: GameEvent) {
+    this.targets.life(event);
+  }
+
   float(lines: readonly string[], target: FeedbackTarget, delayMs: number) {
     const at = this.point(target);
     if (!at) return;

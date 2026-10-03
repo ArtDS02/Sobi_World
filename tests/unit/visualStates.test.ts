@@ -7,13 +7,12 @@ import type { Anchors } from '../../src/core/assets/anchors';
 import { parseManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
 import { fakeClock } from '../../src/core/clock';
-import { FARM_VIEW } from '../../src/core/config/farmView';
 import { mulberry32 } from '../../src/core/rng';
 import { newGame } from '../../src/core/save/newGame';
 import type { InstanceGuard, LoadResult, SaveStorage } from '../../src/core/save/port';
 import type { SaveGame } from '../../src/core/types';
 import { pigVisualState } from '../../src/game/state/pigVisualState';
-import { napsDuring, wanderTarget } from '../../src/game/state/wander';
+import { wanderTarget } from '../../src/game/state/wander';
 import { overlayLayout } from '../../src/game/view/overlayLayout';
 import { pigView, sleepLook } from '../../src/game/view/pigView';
 import { createGameStore } from '../../src/store/gameStore';
@@ -49,13 +48,6 @@ describe('sleep look (spec §11.4, DECISIONS Q5)', () => {
     const v = pigView(makePig(), 0, layout, createAssetRegistry(m));
     expect(v.sleepTextureId).toBeNull();
     expect(sleepLook(v, all)).toEqual({ textureId: 'pig_classic', overlay: 'fx_zzz' });
-  });
-
-  it('naps are deterministic and roughly napChance of rests', () => {
-    let naps = 0;
-    for (let s = 0; s < 2000; s += 1) if (napsDuring('pig-1', s)) naps += 1;
-    expect(naps / 2000).toBeCloseTo(FARM_VIEW.WANDER.napChance, 1);
-    expect(napsDuring('pig-1', 7)).toBe(napsDuring('pig-1', 7));
   });
 });
 
@@ -160,7 +152,7 @@ describe('the visual layer never writes the save', () => {
       const save = store.getSnapshot().save!;
       for (const pig of save.pigs) {
         const v = pigView(pig, clock.now(), layout, reg);
-        pigVisualState(v.care, clock.now(), null, napsDuring(pig.id, s) ? 'nap' : 'walk');
+        pigVisualState(v.care, clock.now(), null, s % 3 === 0 ? 'nap' : 'walk');
         wanderTarget(pig.id, s, layout, [{ x: v.x, y: v.y }]);
         sleepLook(v, () => s % 2 === 0);
       }

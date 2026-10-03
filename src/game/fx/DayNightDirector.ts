@@ -6,7 +6,7 @@
 import * as Phaser from 'phaser';
 import { DAY_NIGHT, DAY_NIGHT_VIEW, type DayPhase } from '../../core/config/dayNight';
 import { isSleepPhase } from '../state/sleepCycle';
-import { dayScene, minuteOf } from '../../core/engine/dayNight';
+import { dayScene, MINUTES_PER_DAY, minuteOf, parseHm } from '../../core/engine/dayNight';
 import type { DayNightLayer } from '../prefabs/DayNightLayer';
 
 /** Minute of the local day for an epoch-ms timestamp (device time zone). */
@@ -14,6 +14,12 @@ export const localMinute = (now: number) => {
   const d = new Date(now);
   return minuteOf(d.getHours(), d.getMinutes());
 };
+
+/** Game time since today's dawn (DAY_NIGHT.phases.dawn), for a pig first seen by day (PL-1). */
+export function msSinceDawn(now: number): number {
+  const dawn = parseHm(DAY_NIGHT.phases.dawn) ?? 0;
+  return ((localMinute(now) - dawn + MINUTES_PER_DAY) % MINUTES_PER_DAY) * 60_000;
+}
 
 export class DayNightDirector {
   private skyKey = '';

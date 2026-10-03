@@ -8,11 +8,11 @@ import { FEEDBACK } from '../../core/config/feedback';
 import type { AnimationId } from '../feedback/feedbackTable';
 import {
   FEEDBACK_STATE,
-  canWander,
   pigVisualState,
   type ActiveFeedback,
   type VisualState,
 } from '../state/pigVisualState';
+import type { PigRestState } from '../state/sleepCycle';
 import { frameLook, pigScale, type PigView } from '../view/pigView';
 import { HOLD_MS, playPigAnimation, type Motion, type TweenablePig } from '../fx/pigAnimations';
 import { PigMover } from './PigMover';
@@ -53,6 +53,8 @@ export class PigSprite {
     pigId: string,
     view: PigView,
     private readonly env: PigEnv,
+    /** The pose the pig appears in (asleep when it appears at night, PL-1). */
+    private readonly initialRest: PigRestState = 'IDLE',
   ) {
     this.shadow = new FeetShadow(scene);
     const sel = FARM_VIEW.SELECTION;
@@ -77,12 +79,9 @@ export class PigSprite {
       pigId,
       env.layout,
       () => this.layout(),
-      () => this.mayWander(),
-      () => this.feedback !== null && this.scene.time.now < this.feedback.until,
+      () => this.held() || this.interacting(),
+      () => this.interacting(),
       () => env.reduceMotion(),
-      () => env.others?.(pigId) ?? [],
-      () => env.napChance?.() ?? FARM_VIEW.WANDER.napChance,
-      () => env.night?.() ?? false,
     );
     this.handle = {
       motion: this.motion,
@@ -94,25 +93,27 @@ export class PigSprite {
     };
   }
 
-  private textureFor(view: PigView): string {
-    return this.scene.textures.exists(view.textureId) ? view.textureId : view.fallbackId;
-  }
+  private readonly textureFor = (view: PigView): string =>
+    this.scene.textures.exists(view.textureId) ? view.textureId : view.fallbackId;
+  private readonly interacting = (): boolean =>
+    this.feedback !== null && this.scene.time.now < this.feedback.until;
 
-  private mayWander(): boolean {
-    const a = this.applied;
-    return (
-      !this.leaving && !!a && canWander(a.view.care, this.scene.time.now, this.feedback, a.selected)
-    );
-  }
+  /** Selected or leaving: the pig's activity holds (spec §11: pauses during interaction). */
+  readonly held = (): boolean => this.leaving || !this.applied || this.applied.selected;
 
   /** Where the pig stands or is walking to; null before the first view. */
   readonly dest = () => this.mover.dest;
   readonly stand = () => this.mover.pos;
   readonly nudge = (dx: number, dy: number) => !this.leaving && this.mover.nudge(dx, dy);
-  /** Day ↔ night switched (one signal for the whole farm): fall asleep / wake up (PS-1). */
-  readonly setNight = () => !this.leaving && this.mover.setNight();
-  /** Night rest state (IDLE / WALKING / FALLING_ASLEEP / SLEEPING / WAKING_UP). */
-  readonly restState = () => this.mover.restNow;
+  /** The mover, for the life simulation's commands (PL-1); null once leaving. */
+  readonly body = (): PigMover | null => (this.leaving ? null : this.mover);
+
+  /** Eating at the trough (PL-1): the eat state repeats while the brain keeps the pig there. */
+  eatAtTrough() {
+    if (this.leaving || this.interacting()) return;
+    this.mover.anchor();
+    this.play('eat', 0);
+  }
 
   /** Species art row drawn right now; null before the first view. */
   get artId(): string | null {
@@ -129,7 +130,7 @@ export class PigSprite {
     if (this.leaving) return;
     this.sick.follow(view.care.isSick);
     this.applied = { view, anchors, selected, anchorOf };
-    this.mover.place({ x: view.x, y: view.y }, view.flipX);
+    this.mover.place({ x: view.x, y: view.y }, view.flipX, this.initialRest);
     this.mover.refresh();
     this.layout();
   }

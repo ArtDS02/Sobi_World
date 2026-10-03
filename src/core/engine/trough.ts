@@ -18,6 +18,8 @@ export interface TroughReport {
   emptiedAt: number | null;
   /** Pigs whose hunger reached 0 during this window, with the crossing time. */
   hungerZeroAt: Record<string, number>;
+  /** Pigs that ate from the trough this window: meals and hunger just before the first (PL-1). */
+  meals: Record<string, { meals: number; hungerBefore: number }>;
 }
 
 export interface ResolvedWindow extends FarmWindow {
@@ -38,7 +40,7 @@ const hungerRate = (pig: Pig): number => BALANCE.HUNGER_MAX / BREEDS[pig.breed].
  * same window — use `advanceWithTrough`, never this function alone.
  */
 export function resolveTrough(win: FarmWindow, now: number): ResolvedWindow {
-  const noReport: TroughReport = { emptiedAt: null, hungerZeroAt: {} };
+  const noReport: TroughReport = { emptiedAt: null, hungerZeroAt: {}, meals: {} };
   if (now < win.trough.lastResolvedAt) {
     return { pigs: win.pigs, trough: { ...win.trough, lastResolvedAt: now }, report: noReport }; // D14
   }
@@ -48,6 +50,7 @@ export function resolveTrough(win: FarmWindow, now: number): ResolvedWindow {
   let deprived = false; // some pig wanted a meal the trough could not give
   let lastMealAt = -Infinity;
   const fed = new Map<string, number>();
+  const meals: TroughReport['meals'] = {};
 
   for (const pig of bySlot(win.pigs)) {
     const dt = Math.max(0, (now - pig.lastTickedAt) / 1000);
@@ -64,6 +67,7 @@ export function resolveTrough(win: FarmWindow, now: number): ResolvedWindow {
     if (eaten < possible) deprived = true;
     food -= eaten;
     fed.set(pig.id, pig.hunger + eaten * BALANCE.FOOD_HUNGER_RESTORE);
+    meals[pig.id] = { meals: eaten, hungerBefore: Math.max(0, pig.hunger - r * tFirst) };
     lastMealAt = Math.max(lastMealAt, pig.lastTickedAt + (tFirst + (eaten - 1) * period) * 1000);
   }
 
@@ -74,7 +78,7 @@ export function resolveTrough(win: FarmWindow, now: number): ResolvedWindow {
       return hunger === undefined ? p : { ...p, hunger };
     }),
     trough: { ...win.trough, food, lastResolvedAt: now },
-    report: { emptiedAt, hungerZeroAt: {} },
+    report: { emptiedAt, hungerZeroAt: {}, meals },
   };
 }
 

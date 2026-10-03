@@ -90,6 +90,7 @@ export function toastText(
     case 'PIG_FED':
     case 'PIG_CLEANED':
     case 'TROUGH_FILLED':
+    case 'PIG_ATE_FROM_TROUGH':
       return null; // §11.3: no toast (the trough gauge updates itself)
   }
 }

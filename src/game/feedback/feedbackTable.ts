@@ -25,6 +25,8 @@ export interface FeedbackRow {
   stagger?: boolean;
   /** Reward amounts rise from the target as text (U06); a toast instead under reduceMotion. */
   float?: boolean;
+  /** Handed to the pigs' life simulation (PL-1), which plays the behaviour itself. */
+  life?: boolean;
 }
 
 const row = (
@@ -47,6 +49,8 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   // BR-1: the newborn goes to the nursery; the mother celebrates on the farm.
   BIRTH: row('happy', ['fx_heart', 'fx_sparkle'], 'birth_fanfare', true),
   PIG_BECAME_ADULT: row('grow', ['fx_sparkle'], 'level_up', true),
+  // PL-1: no sound / toast; the life simulation walks the pig to the trough and plays eating.
+  PIG_ATE_FROM_TROUGH: { ...row(null, [], null, false), life: true },
   PIG_BECAME_SICK: row(null, ['fx_sick'], 'notify', true),
   LEVEL_UP: row(null, ['fx_sparkle'], 'level_up', true),
   TROUGH_EMPTY: row('wiggle', [], 'notify', true),

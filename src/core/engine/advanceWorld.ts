@@ -28,6 +28,9 @@ export function advanceWorld(state: SaveGame, now: number, rng: Rng, dayOffsetMs
 
   if (win.report.emptiedAt !== null)
     events.push({ type: 'TROUGH_EMPTY', at: win.report.emptiedAt });
+  for (const [pigId, m] of Object.entries(win.report.meals)) {
+    events.push({ type: 'PIG_ATE_FROM_TROUGH', pigId, ...m });
+  }
   events.push(...diffPigs(state.pigs, win.pigs, win.report.hungerZeroAt));
 
   // Step 3: pregnancies (S10).

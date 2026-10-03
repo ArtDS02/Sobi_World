@@ -69,22 +69,11 @@ export const FARM_VIEW = {
     ySpeed: 0.8,
     speedPx: 70,
     minWalkMs: 600,
-    restMinMs: 1000,
-    restMaxMs: 4000,
-    napMinMs: 6000,
-    napMaxMs: 12000,
-    /**
-     * Share of daytime rests a healthy idle pig spends asleep (DECISIONS R09B-1). 0 since PS-1:
-     * by day pigs only idle and walk; they sleep through the night (PIG_SLEEP).
-     */
-    napChance: 0,
     /** A target closer than this to another pig's spot is re-rolled (names never stack). */
     minGapPx: 120,
     /** Speed of the push apart between standing pigs closer than minGapPx (px per second). */
     pushPx: 40,
     tries: 8,
-    /** Retry delay while the pig may not wander (selected, interacting, sick...). */
-    retryMs: 1000,
   },
   /** Ambient motion (R12A), off with reduceMotion. Speeds in design px per second. */
   AMBIENT: {

@@ -18,11 +18,12 @@ import { noEffects } from '../feedback/effects';
 import { Ambient } from '../fx/ambient';
 import { DayNightDirector } from '../fx/DayNightDirector';
 import { SeasonDirector } from '../fx/SeasonDirector';
+import { PigLife } from '../fx/PigLife';
 import { SceneEffects } from '../fx/SceneEffects';
 import { Backdrop } from '../prefabs/Backdrop';
 import { DayNightLayer } from '../prefabs/DayNightLayer';
 import { FarmProps } from '../prefabs/FarmProps';
-import { othersOf, spreadCrowd } from '../prefabs/crowd';
+import { spreadCrowd } from '../prefabs/crowd';
 import { GiftBoxes } from '../prefabs/GiftBoxes';
 import { Nameplates } from '../prefabs/Nameplates';
 import { addHover, addShadow, Badge } from '../prefabs/ObjectDecor';
@@ -60,6 +61,7 @@ export class MainFarmScene extends Phaser.Scene {
   private dayNight!: DayNightLayer;
   private dayClock!: DayNightDirector;
   private season!: SeasonDirector; // seasonal art, backdrop palette, environment FX (SE-1, MU-2)
+  private life!: PigLife; // the pigs' needs-driven behaviour (PL-1)
   private readonly obstacles: Rect[] = []; // world object bounds; gift boxes keep clear (U06)
   private readonly props = new FarmProps(); // trough texture + owned decorations (PG-3)
 
@@ -76,8 +78,6 @@ export class MainFarmScene extends Phaser.Scene {
       layout: this.layout,
       troughX: () => this.trough?.x ?? null,
       reduceMotion: () => this.deps.store.getSnapshot().save?.settings.reduceMotion ?? false,
-      others: (pigId) => othersOf(this.pigs, pigId),
-      night: () => this.dayClock?.isNight() ?? false,
     };
     warnLoadErrors(this.load);
     this.ambient = new Ambient(this, this.pigEnv.reduceMotion);
@@ -91,8 +91,17 @@ export class MainFarmScene extends Phaser.Scene {
     this.drawPlacements();
     this.season.update();
     const preview = () => this.bridge.phasePreview;
-    const bedtime = () => [...this.pigs.values()].forEach((p) => p.setNight());
+    const bedtime = () => this.life?.nightChanged();
     this.dayClock = new DayNightDirector(this, this.dayNight, this.deps.now, preview, bedtime);
+    this.life = new PigLife({
+      layout: this.layout,
+      now: this.deps.now,
+      night: () => this.dayClock.isNight(),
+      reduceMotion: this.pigEnv.reduceMotion,
+      pigs: () => this.pigs,
+      data: () => this.deps.store.getSnapshot().save?.pigs ?? [],
+      trough: () => this.trough?.getBounds() ?? null,
+    });
     // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
     if (!this.pigEnv.reduceMotion()) this.cameras.main.fadeIn(FARM_VIEW.AMBIENT.fadeInMs);
     this.input.on(
@@ -108,6 +117,7 @@ export class MainFarmScene extends Phaser.Scene {
       trough: () => this.trough,
       board: () => this.board,
       gifts: () => this.gifts,
+      life: (e) => this.life.onEvent(e),
     });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       off();
@@ -193,6 +203,7 @@ export class MainFarmScene extends Phaser.Scene {
   override update(time: number, delta: number) {
     this.ambient.update(delta);
     this.season.tick(time);
+    this.life.update(delta);
     spreadCrowd(this.pigs, delta);
     this.plates.update((id) => this.pigs.get(id)?.plateAnchor() ?? null);
   }
@@ -214,7 +225,7 @@ export class MainFarmScene extends Phaser.Scene {
       if (!this.textures.exists(view.textureId)) this.requestArt(view.artId);
       let sprite = this.pigs.get(pig.id);
       if (!sprite) {
-        sprite = new PigSprite(this, pig.id, view, this.pigEnv);
+        sprite = new PigSprite(this, pig.id, view, this.pigEnv, this.life.add(pig.id));
         this.pigs.set(pig.id, sprite);
       }
       sprite.apply(
@@ -237,6 +248,7 @@ export class MainFarmScene extends Phaser.Scene {
     for (const [id, sprite] of this.pigs) {
       if (seen.has(id)) continue;
       this.pigs.delete(id);
+      this.life.remove(id);
       this.leaving.set(id, sprite);
       sprite.leave(reduceMotion, () => this.leaving.delete(id));
     }

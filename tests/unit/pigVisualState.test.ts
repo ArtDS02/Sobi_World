@@ -13,7 +13,6 @@ import {
   clampToEllipse,
   facesLeft,
   separation,
-  restMs,
   walkDistance,
   walkEllipse,
   walkMs,
@@ -101,15 +100,7 @@ describe('wandering (spec §11, art §2.4) — visual only, inside the walk elli
     }
   });
 
-  it('rest and walk times are bounded; facing follows the walk direction', () => {
-    for (let s = 0; s < 50; s += 1) {
-      const r = restMs('pig-1', s);
-      expect(r).toBeGreaterThanOrEqual(FARM_VIEW.WANDER.restMinMs);
-      expect(r).toBeLessThanOrEqual(FARM_VIEW.WANDER.restMaxMs);
-      const n = restMs('pig-1', s, true);
-      expect(n).toBeGreaterThanOrEqual(FARM_VIEW.WANDER.napMinMs);
-      expect(n).toBeLessThanOrEqual(FARM_VIEW.WANDER.napMaxMs);
-    }
+  it('walk times are bounded; facing follows the walk direction', () => {
     expect(walkDistance(0, 80)).toBeCloseTo(80 / FARM_VIEW.WANDER.ySpeed);
     expect(walkMs(0)).toBe(FARM_VIEW.WANDER.minWalkMs);
     expect(walkMs(FARM_VIEW.WANDER.speedPx * 10)).toBe(10_000);

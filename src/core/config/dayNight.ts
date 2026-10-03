@@ -141,8 +141,6 @@ export const PIG_SLEEP = {
   fallAsleepMs: 1800,
   /** Waking up: heavy lids + stretch. */
   wakeUpMs: 1600,
-  /** Each pig starts its transition up to this long after the switch. */
-  staggerMs: 2400,
   /** Sleeping pose: body settles (by < 1, bx > 1) and breathes slowly. */
   settle: { bx: 1.04, by: 0.9 },
   breathe: { amount: 0.025, ms: 2600 },

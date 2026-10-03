@@ -11,6 +11,8 @@ export type GameEvent =
   // NH-1: hunger / cleanliness fell into a worse care level (low or below), once per drop.
   | { type: 'PIG_NEED_DROPPED'; pigId: string; need: PigNeed; level: NeedLevel }
   | { type: 'PIG_BECAME_ADULT'; pigId: string }
+  // PL-1: the trough fed this pig (auto-feeding); the farm shows it walking over to eat.
+  | { type: 'PIG_ATE_FROM_TROUGH'; pigId: string; meals: number; hungerBefore: number }
   | { type: 'BIRTH'; motherId: string; childId: string; childBreed: BreedId }
   | { type: 'TROUGH_EMPTY'; at: number } // when the last unit was eaten
   | { type: 'ORDER_NEW'; orderId: string }
@@ -52,6 +54,7 @@ export const GAME_EVENT_TYPES = [
   'PIG_BECAME_SICK',
   'PIG_NEED_DROPPED',
   'PIG_BECAME_ADULT',
+  'PIG_ATE_FROM_TROUGH',
   'BIRTH',
   'TROUGH_EMPTY',
   'ORDER_NEW',

@@ -51,23 +51,6 @@ export function wanderTarget(
   return best;
 }
 
-/** Pause before the next stroll, ms: a short rest, or a long one when napping. */
-export function restMs(pigId: string, step: number, nap = false): number {
-  const w = FARM_VIEW.WANDER;
-  const [min, max] = nap ? [w.napMinMs, w.napMaxMs] : [w.restMinMs, w.restMaxMs];
-  return min + unit(pigId, step, 3) * (max - min);
-}
-
-/**
- * Whether the rest after stroll `step` is a nap (sleep state, DECISIONS R09B-1): visual only,
- * the spec has no data rule for sleeping.
- */
-export const napsDuring = (
-  pigId: string,
-  step: number,
-  chance: number = FARM_VIEW.WANDER.napChance,
-): boolean => unit(pigId, step, 4) < chance;
-
 /** Time to walk `distancePx` at WANDER.speedPx, never shorter than one squash cycle. */
 export const walkMs = (distancePx: number): number =>
   Math.max(FARM_VIEW.WANDER.minWalkMs, (distancePx / FARM_VIEW.WANDER.speedPx) * 1000);
@@ -79,6 +62,12 @@ export const walkDistance = (dx: number, dy: number): number =>
 /** Facing after moving from `fromX` to `toX`: left when the target is to the left. */
 export const facesLeft = (fromX: number, toX: number, current: boolean): boolean =>
   toX === fromX ? current : toX < fromX;
+
+/** Whether `p` lies inside the walk ellipse (the trough and the house stand outside it). */
+export function insideEllipse(layout: FarmLayout, p: { x: number; y: number }): boolean {
+  const e = walkEllipse(layout);
+  return Math.hypot((p.x - e.cx) / e.rx, (p.y - e.cy) / e.ry) <= 1 + 1e-6;
+}
 
 /** `p` moved inside the walk ellipse (unchanged when already in). */
 export function clampToEllipse(layout: FarmLayout, p: { x: number; y: number }) {

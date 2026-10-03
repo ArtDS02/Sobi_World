@@ -18,6 +18,7 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   PIG_BECAME_SICK: { type: 'PIG_BECAME_SICK', pigId: 'pig-1' },
   PIG_NEED_DROPPED: { type: 'PIG_NEED_DROPPED', pigId: 'pig-1', need: 'hunger', level: 'low' },
   PIG_BECAME_ADULT: { type: 'PIG_BECAME_ADULT', pigId: 'pig-1' },
+  PIG_ATE_FROM_TROUGH: { type: 'PIG_ATE_FROM_TROUGH', pigId: 'pig-1', meals: 1, hungerBefore: 50 },
   BIRTH: { type: 'BIRTH', motherId: 'pig-1', childId: 'pig-1', childBreed: 'PIG_EARTH_PINK' },
   TROUGH_EMPTY: { type: 'TROUGH_EMPTY', at: 0 },
   ORDER_NEW: { type: 'ORDER_NEW', orderId: 'o' },
@@ -85,7 +86,14 @@ describe('feedbackPlan', () => {
 
   it('reduceMotion drops tweens and particles, keeps sound and toast', () => {
     const p = feedbackPlan(SAMPLES.PIG_BOUGHT, 'action', true);
-    expect(p).toEqual({ animations: [], vfx: [], floats: [], sound: 'ui_click', toast: true });
+    expect(p).toEqual({
+      animations: [],
+      vfx: [],
+      floats: [],
+      life: false,
+      sound: 'ui_click',
+      toast: true,
+    });
   });
 
   it('gift: smoke + pop on spawn; open pops, floats the reward, toasts only under reduceMotion', () => {
@@ -156,6 +164,7 @@ function director(save: SaveGame) {
       animate: (a, t) => log.push(`anim:${a}:${t.kind}`),
       burst: (fx, t) => log.push(`vfx:${fx}:${t.kind}`),
       float: (lines, t) => log.push(`float:${lines.join('|')}:${t.kind}`),
+      life: (e) => log.push(`life:${e.type}`),
     }),
     audio: { play: (k) => log.push(`sound:${k}`) },
     toast: (m) => log.push(`toast:${m}`),

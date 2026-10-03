@@ -44,6 +44,8 @@ export const FARM_ACTIONS = [
 export type FarmAction = (typeof FARM_ACTIONS)[number];
 
 export const TROUGH_PROP_ID = 'prop_feed_trough';
+/** Pigs sleep in a cluster on the side of the walk area toward this prop (PL-1). */
+export const PIG_HOUSE_PROP_ID = 'prop_pig_house';
 export const ORDER_BOARD_PROP_ID = 'prop_order_board';
 export const GIFT_PROP_ID = 'prop_gift_box'; // U06
 /** Signed objects whose seasonal art has no painted sign: they get a text tag in season (SE-1). */

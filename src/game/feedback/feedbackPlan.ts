@@ -29,6 +29,8 @@ export interface FeedbackPlan {
   floats: { lines: string[]; target: FeedbackTarget; delayMs: number }[];
   sound: AudioKey | null;
   toast: boolean;
+  /** Hand the event to the life simulation (PL-1); never for catch-up or reduceMotion. */
+  life: boolean;
 }
 
 const pig = (pigId: string): FeedbackTarget => ({ kind: 'pig', pigId });
@@ -68,7 +70,7 @@ function soundOf(e: GameEvent, sound: AudioKey | null): AudioKey | null {
   return 'gold' in e && e.gold > 0 ? 'coin_collect' : null;
 }
 
-const still = { animations: [], vfx: [], floats: [] };
+const still = { animations: [], vfx: [], floats: [], life: false };
 
 /** Reward lines of an event that floats (gift: gold and XP). */
 function floatLines(e: GameEvent): string[] {
@@ -90,6 +92,7 @@ export function feedbackPlan(
   }
   const sound = soundOf(e, row.sound);
   if (reduceMotion) return { ...still, sound, toast: row.toast || !!row.float };
+  const life = !!row.life;
 
   const targets = eventTargets(e);
   const delay = (i: number) => (row.stagger ? i * FEEDBACK.STAGGER_MS : 0);
@@ -108,5 +111,6 @@ export function feedbackPlan(
       : [],
     sound,
     toast: row.toast,
+    life,
   };
 }
