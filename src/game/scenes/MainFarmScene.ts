@@ -102,6 +102,7 @@ export class MainFarmScene extends Phaser.Scene {
       data: () => this.deps.store.getSnapshot().save?.pigs ?? [],
       trough: () => this.trough?.getBounds() ?? null,
     });
+    this.bridge.loaded();
     // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
     if (!this.pigEnv.reduceMotion()) this.cameras.main.fadeIn(FARM_VIEW.AMBIENT.fadeInMs);
     this.input.on(

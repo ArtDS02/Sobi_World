@@ -87,8 +87,6 @@
       "createStartMenuShortcut": true,
       "shortcutName": "Ủn Ỉn Homemade",
       "deleteAppDataOnUninstall": false,
-      "installerIcon": "build/icon.ico",
-      "uninstallerIcon": "build/icon.ico",
       "artifactName": "UnInHomemade-Setup-${version}.${ext}"
     }
   }

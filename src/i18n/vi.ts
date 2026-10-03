@@ -371,7 +371,15 @@ export const vi = {
   },
 
   desktop: {
-    loadingTitle: "Đang chuẩn bị nông trại",
+    loadingTitle: "Đang chuẩn bị\nnông trại",
+    // AM-1: one short line per real loading step (core/config/loadingScreen.ts LOADING_STEPS).
+    loadingSteps: {
+      config: "Đang mở sổ nông trại...",
+      farm: "Đang dọn chuồng...",
+      pigs: "Đang gọi đàn heo...",
+      world: "Đang chuẩn bị thức ăn...",
+      ready: "Chào mừng đến với nông trại!",
+    },
     loadingPercent: "{percent}%",
     loadingTips: [
       "Mẹo: đổ đầy máng, heo tự ăn kể cả khi bạn tắt game.",

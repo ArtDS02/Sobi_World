@@ -20,7 +20,10 @@ export interface UninBridge {
   save: {
     /** Candidates in read-chain order: save.json, then backups newest first. Main never validates. */
     load(): Promise<SaveCandidate[]>;
-    /** Atomic write of the whole save (tmp → flush → rename) plus backup rotation. Rejects on failure. */
+    /**
+     * Atomic write of the whole save (tmp → flush → rename) plus backup rotation. Rejects on failure,
+     * with SAVE_CHANGED_EXTERNALLY in the message when another program replaced save.json (AM-1).
+     */
     write(json: string): Promise<void>;
     /** Renames a candidate that failed to parse to save.corrupt-*.json; never deletes (§9.2). */
     markCorrupt(source: SaveCandidateSource): Promise<void>;
@@ -34,6 +37,8 @@ export interface UninBridge {
     /** Native open dialog; backs up the current save, returns the file text or null when cancelled. */
     importFrom(): Promise<string | null>;
     openFolder(): Promise<void>;
+    /** save.json was replaced by another program while the game runs (AM-1). */
+    onExternalChange(fn: () => void): void;
   };
   app: {
     version: string;
@@ -56,6 +61,7 @@ export type IpcChannel =
   | 'unin:save:exportTo'
   | 'unin:save:importFrom'
   | 'unin:save:openFolder'
+  | 'unin:save:changed'
   | 'unin:app:version'
   | 'unin:app:flushRequest'
   | 'unin:app:flushDone';

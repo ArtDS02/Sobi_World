@@ -1,10 +1,13 @@
 // Preload (spec §11): environment, structures, trough states, fx, ui icons and the art of every
-// species, with a progress bar. Failed files fall back later.
+// species, behind the loading screen. Progress is real (AM-1): config (manifest + save already read
+// by main.ts) → farm files → pig art (file loader progress) → building the world → ready.
+// Failed files fall back later.
 import * as Phaser from 'phaser';
 import { BREEDS } from '../../core/config/breeds';
+import { LOADING_FILES_SPAN } from '../../core/config/loadingScreen';
 import { SCENE_KEYS } from '../config/phaser';
 import { LoadingScreen } from '../prefabs/LoadingScreen';
-import { farmLoadList, fxAnimKey, type LoadList, type SheetItem } from '../view/textureKeys';
+import { artLoadList, farmLoadList, fxAnimKey, type LoadList, type SheetItem } from '../view/textureKeys';
 import type { FarmBridge, FarmDeps } from '../farmView';
 import { farmSeason } from '../state/seasonClock';
 
@@ -41,6 +44,7 @@ export function warnLoadErrors(load: Phaser.Loader.LoaderPlugin) {
 
 export class PreloadScene extends Phaser.Scene {
   private list: LoadList | null = null;
+  private screen: LoadingScreen | null = null;
 
   constructor(
     private readonly deps: FarmDeps,
@@ -53,19 +57,31 @@ export class PreloadScene extends Phaser.Scene {
     const season = farmSeason(this.deps.now(), this.bridge.seasonPreview);
     const reduceMotion = this.deps.store.getSnapshot().save?.settings.reduceMotion ?? false;
     const screen = new LoadingScreen(this, this.deps.assets.manifest.layout, season, reduceMotion);
-    this.load.on(Phaser.Loader.Events.PROGRESS, (p: number) => screen.setProgress(p));
+    this.screen = screen;
     warnLoadErrors(this.load);
 
-    this.list = farmLoadList(
-      this.deps.assets,
-      Object.values(BREEDS).map((b) => b.artId),
-      season, // only this season's variants (SE-1)
-    );
-    queueLoadList(this.load, this.list);
+    const artIds = Object.values(BREEDS).map((b) => b.artId);
+    this.list = farmLoadList(this.deps.assets, artIds, season); // only this season's variants (SE-1)
+    // Farm files are queued before pig art: the step follows which kind finishes now.
+    const pigKeys = new Set(artIds.flatMap((id) => artLoadList(this.deps.assets, id).images.map((i) => i.key)));
+    const total = queueLoadList(this.load, this.list);
+    const farmFiles = Math.max(0, total - pigKeys.size);
+    let done = 0;
+    screen.setStep('farm');
+    const span = LOADING_FILES_SPAN.to - LOADING_FILES_SPAN.from;
+    this.load.on(Phaser.Loader.Events.PROGRESS, (p: number) => screen.setProgress(LOADING_FILES_SPAN.from + span * p));
+    const fileDone = () => {
+      done += 1;
+      if (done === farmFiles) screen.setStep('pigs');
+    };
+    this.load.on(Phaser.Loader.Events.FILE_COMPLETE, fileDone);
+    this.load.on(Phaser.Loader.Events.FILE_LOAD_ERROR, fileDone);
+    this.load.once(Phaser.Loader.Events.COMPLETE, () => screen.setStep('world'));
   }
 
   create() {
     createFxAnims(this, this.list?.sheets ?? []);
+    this.screen?.setStep('ready');
     this.scene.start(SCENE_KEYS.farm);
   }
 }

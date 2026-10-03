@@ -1,12 +1,20 @@
 // Desktop adapter (spec §9.1, §9.2): the read chain runs here with core's parseSave; main only
 // moves files. A candidate that fails to parse is renamed save.corrupt-* (never deleted).
 import { parseSave } from '../../core/save/migrate';
-import type { LoadSource, SaveStorage } from '../../core/save/port';
+import {
+  isSaveChangedExternally,
+  SAVE_CHANGED_EXTERNALLY,
+  type LoadSource,
+  type SaveStorage,
+} from '../../core/save/port';
 import type { SaveCandidateSource, UninBridge } from './bridge';
 
 const loadSource = (s: SaveCandidateSource): LoadSource => (s === 'save' ? 'primary' : 'backup');
 
-export function createFileSaveStorage(bridge: UninBridge['save']): SaveStorage {
+/** The file calls a save storage needs: window.unin.save, or the dev server's twin (AM-1). */
+export type SaveFileBridge = Pick<UninBridge['save'], 'load' | 'write' | 'markCorrupt' | 'onExternalChange'>;
+
+export function createFileSaveStorage(bridge: SaveFileBridge): SaveStorage {
   let locked = false; // a newer-version save exists somewhere in the chain
 
   return {
@@ -27,7 +35,14 @@ export function createFileSaveStorage(bridge: UninBridge['save']): SaveStorage {
 
     async save(save) {
       if (locked) throw new Error('SAVE_TOO_NEW: refusing to overwrite a newer save');
-      await bridge.write(JSON.stringify(save));
+      try {
+        await bridge.write(JSON.stringify(save));
+      } catch (e) {
+        // IPC wraps the message ("Error invoking remote method…"): normalise it for the store.
+        throw isSaveChangedExternally(e) ? new Error(SAVE_CHANGED_EXTERNALLY) : e;
+      }
     },
+
+    onExternalChange: (fn) => bridge.onExternalChange(fn),
   };
 }

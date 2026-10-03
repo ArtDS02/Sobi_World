@@ -5,7 +5,7 @@ import { advanceWorld } from '../core/engine/advanceWorld';
 import type { GameEvent } from '../core/events';
 import { importSave as parseImport } from '../core/save/exportImport';
 import { newGame } from '../core/save/newGame';
-import type { LoadSource } from '../core/save/port';
+import { isSaveChangedExternally, type LoadSource } from '../core/save/port';
 import type { ErrorCode } from '../core/config/errors';
 import type { ActionContext, ActionResult, SaveGame } from '../core/types';
 import { actionContext, defaultDeps, type StoreDeps } from './storeDeps';
@@ -18,14 +18,8 @@ export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew';
  */
 export type EventOrigin = 'action' | 'tick' | 'catchup';
 /** Catch-up only: how long the world was not ticked (§9.5 away summary). */
-export interface CatchupInfo {
-  awayMs: number;
-}
-export type EventListener = (
-  events: GameEvent[],
-  origin: EventOrigin,
-  catchup?: CatchupInfo,
-) => void;
+export interface CatchupInfo { awayMs: number }
+export type EventListener = (events: GameEvent[], origin: EventOrigin, catchup?: CatchupInfo) => void;
 
 export interface StoreSnapshot {
   status: StoreStatus;
@@ -55,6 +49,7 @@ export function createGameStore(
     saveError: false,
   };
   const subscribers = new Set<(s: StoreSnapshot) => void>();
+  const listen = <F>(set: Set<F>, fn: F) => (set.add(fn), () => void set.delete(fn));
   const eventListeners = new Set<EventListener>();
   const rejectListeners = new Set<(error: ErrorCode) => void>();
   let interval: unknown = null;
@@ -63,6 +58,7 @@ export function createGameStore(
   let retryStep = 0;
   let retryScheduled = false;
   let disposed = false;
+  let reloading = false; // AM-1: adopting a save another program wrote; nothing is persisted
   const unlisten: (() => void)[] = [];
 
   const set = (patch: Partial<StoreSnapshot>) => {
@@ -81,15 +77,17 @@ export function createGameStore(
   };
   const ctx = (now?: number): ActionContext => actionContext(deps.clock, deps.rng, now);
   const guard = deps.instanceGuard;
-  const canWrite = () => snapshot.status === 'ready' && !guard.isReadOnly();
+  const canWrite = () => snapshot.status === 'ready' && !guard.isReadOnly() && !reloading;
 
   /** One write; a failure is surfaced as `saveError` and retried, never swallowed (§9.2). */
   async function write(save: SaveGame): Promise<void> {
+    if (reloading) return; // queued before the reload: stale, the file now holds the newer save
     try {
       await deps.storage.save(save);
       retryStep = 0;
       if (snapshot.saveError) set({ saveError: false });
-    } catch {
+    } catch (e) {
+      if (isSaveChangedExternally(e)) return void reloadExternal();
       if (!snapshot.saveError) set({ saveError: true });
       scheduleRetry();
     }
@@ -150,6 +148,15 @@ export function createGameStore(
     }
   }
 
+  /** AM-1: another program (admin dashboard) replaced the save: adopt it, never overwrite it. */
+  async function reloadExternal() {
+    if (reloading || disposed || snapshot.status === 'tooNew' || guard.isReadOnly()) return;
+    reloading = true;
+    stopLoop();
+    await persistQueue; // queued writes see `reloading` and skip
+    await load().finally(() => (reloading = false));
+  }
+
   const fresh = () => newGame(ctx(), { reduceMotion: deps.prefersReducedMotion() }); // new farm
 
   function becomeReady(save: SaveGame, loadSource: LoadSource | null) {
@@ -162,21 +169,12 @@ export function createGameStore(
   return {
     getSnapshot: () => snapshot,
 
-    subscribe(fn: (s: StoreSnapshot) => void): () => void {
-      subscribers.add(fn);
-      return () => subscribers.delete(fn);
-    },
+    subscribe: (fn: (s: StoreSnapshot) => void): (() => void) => listen(subscribers, fn),
 
-    onEvents(fn: EventListener): () => void {
-      eventListeners.add(fn);
-      return () => eventListeners.delete(fn);
-    },
+    onEvents: (fn: EventListener): (() => void) => listen(eventListeners, fn),
 
     /** Rejected actions and imports (`ok: false`): feedback is `ui_error` + a toast (§11.3). */
-    onReject(fn: (error: ErrorCode) => void): () => void {
-      rejectListeners.add(fn);
-      return () => rejectListeners.delete(fn);
-    },
+    onReject: (fn: (error: ErrorCode) => void): (() => void) => listen(rejectListeners, fn),
 
     /** Load (or create) the save, claim the instance, start the global loop. */
     async init(): Promise<StoreStatus> {
@@ -195,6 +193,7 @@ export function createGameStore(
           deps.page.on('pagehide', () => void persist()),
         );
       }
+      deps.storage.onExternalChange?.(() => void reloadExternal());
       await load();
       return snapshot.status;
     },

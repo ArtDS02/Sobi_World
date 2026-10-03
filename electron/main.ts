@@ -14,6 +14,7 @@ import {
 import * as fsp from 'node:fs/promises';
 import { extname, join, normalize, sep } from 'node:path';
 import type { IpcChannel, SaveCandidateSource } from '../src/platform/desktop/bridge';
+import { DATA_DIR_NAME, devUserDataDir } from './dataDir';
 import { createSaveFiles, type SaveFiles } from './saveFiles';
 import { readWindowState, WINDOW_MIN, writeWindowState } from './windowState';
 
@@ -50,11 +51,14 @@ const MIME: Record<string, string> = {
 };
 
 // Saves live in %APPDATA%\Un In Homemade\ whatever the (Vietnamese) product name is (§9.1).
-// An unpackaged run (dev:desktop) uses its own folder so it never touches the player's farm.
-const DATA_DIR = app.isPackaged ? 'Un In Homemade' : 'Un In Homemade Dev';
-// The e2e smoke test (§14.8) points an unpackaged run at a temporary folder; ignored when packaged.
-const TEST_USER_DATA = app.isPackaged ? null : process.env.UNIN_USER_DATA || null;
-app.setPath('userData', TEST_USER_DATA ?? join(app.getPath('appData'), DATA_DIR));
+// An unpackaged run (dev:desktop) uses the dev folder — the same farm `npm run dev` plays (AM-1) —
+// so it never touches the player's farm. The e2e smoke test (§14.8) points it at a temp folder.
+app.setPath(
+  'userData',
+  app.isPackaged
+    ? join(app.getPath('appData'), DATA_DIR_NAME.installed)
+    : devUserDataDir(app.getPath('appData'), process.env.UNIN_USER_DATA),
+);
 protocol.registerSchemesAsPrivileged([
   {
     scheme: SCHEME,
@@ -96,6 +100,11 @@ if (!app.requestSingleInstanceLock()) {
     registerSaveIpc(saves, () => win);
     if (app.isPackaged) Menu.setApplicationMenu(null);
     win = await createWindow();
+    // AM-1: save.json replaced by another program (admin dashboard) → the renderer reloads it.
+    const changed: IpcChannel = 'unin:save:changed';
+    await saves.watch(() => {
+      if (win && !win.webContents.isDestroyed()) win.webContents.send(changed);
+    });
   });
 }
 

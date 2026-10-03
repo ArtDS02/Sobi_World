@@ -1,5 +1,5 @@
-// Ports between the store and the platform (spec §4, §9.1–9.4). Types only: adapters live in
-// src/platform/{web,desktop}/ and move JSON; parsing, validation and migration stay in core.
+// Ports between the store and the platform (spec §4, §9.1–9.4). Types (+ one error code): adapters
+// live in src/platform/{web,desktop}/ and move JSON; parsing, validation and migration stay in core.
 import type { SaveGame } from '../types';
 
 export type LoadSource = 'primary' | 'mirror' | 'backup';
@@ -10,11 +10,24 @@ export type LoadResult =
   | { kind: 'tooNew'; source: LoadSource } // SAVE_TOO_NEW: never overwrite
   | { kind: 'recovery' }; // all copies invalid: recovery screen, nothing deleted
 
+/**
+ * A file storage refuses to write when another program (the admin dashboard) replaced the save
+ * since the game read it; the store reloads that save instead of overwriting it (AM-1).
+ */
+export const SAVE_CHANGED_EXTERNALLY = 'SAVE_CHANGED_EXTERNALLY';
+export const isSaveChangedExternally = (e: unknown) =>
+  e instanceof Error && e.message.includes(SAVE_CHANGED_EXTERNALLY);
+
 export interface SaveStorage {
   /** Read chain (§9.2). Never writes or deletes. */
   load(): Promise<LoadResult>;
-  /** Writes the whole save. Rejects on failure; the store surfaces it as `saveError`. */
+  /**
+   * Writes the whole save. Rejects on failure; the store surfaces it as `saveError`, or reloads
+   * when the error is SAVE_CHANGED_EXTERNALLY.
+   */
   save(save: SaveGame): Promise<void>;
+  /** File storages: the save was replaced by another program while the game runs (AM-1). */
+  onExternalChange?(fn: () => void): void;
 }
 
 export interface FileDialogs {

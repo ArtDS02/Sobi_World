@@ -9,7 +9,7 @@ import { mountList } from './listKit';
 import { byNumber, reverse } from './listQuery';
 import { openModal } from './modal';
 import { json, post, state } from './store';
-import { summary } from './userEdits';
+import { apply, summary, type Edit } from './userEdits';
 
 export interface Profile {
   id: string;
@@ -32,11 +32,16 @@ export const users = {
   root: '',
   loaded: false,
   /** The save being edited: `file` = opened from a .json (saved back by download). */
-  open: null as null | { id: string; source: 'disk' | 'file'; label: string; original: SaveGame; draft: SaveGame; baseModifiedAt: number; dirty: boolean },
+  open: null as null | {
+    id: string; source: 'disk' | 'file'; label: string; original: SaveGame; draft: SaveGame; baseModifiedAt: number; dirty: boolean;
+    /** Edits applied to `original` since it was opened: replayed on a newer save the game wrote meanwhile. */
+    edits: Edit[];
+  },
 };
 
+/** Which run mode plays a save folder (electron/dataDir.ts, DECISIONS AM-1). */
 export const appLabel = (app: string, folder: string) =>
-  `${app === 'Un In Homemade' ? 'Bản cài đặt' : app === 'Un In Homemade Dev' ? 'Bản dev desktop' : app}${folder === 'saves' ? '' : ` · ${folder}`}`;
+  `${app === 'Un In Homemade' ? 'Bản cài đặt (UnInHomemade.exe)' : app === 'Un In Homemade Dev' ? 'Bản dev (npm run dev + npm run dev:desktop)' : app}${folder === 'saves' ? '' : ` · ${folder}`}`;
 
 function parse(text: string): { save: SaveGame | null; error: string | null } {
   const r = parseSave(text);
@@ -60,13 +65,13 @@ export async function openProfile(id: string) {
   const r = await json<{ profile: Profile; json: string }>(`/__admin/saves/read?id=${encodeURIComponent(id)}`);
   const p = parse(r.json);
   if (!p.save) throw new Error(`Save không đọc được (${p.error}) — game sẽ tự lấy bản backup gần nhất.`);
-  users.open = { id, source: 'disk', label: appLabel(r.profile.app, r.profile.folder), original: p.save, draft: p.save, baseModifiedAt: r.profile.modifiedAt, dirty: false };
+  users.open = { id, source: 'disk', label: appLabel(r.profile.app, r.profile.folder), original: p.save, draft: p.save, baseModifiedAt: r.profile.modifiedAt, dirty: false, edits: [] };
 }
 
 export async function openFile(file: File) {
   const p = parse(await file.text());
   if (!p.save) throw new Error(`File không phải save hợp lệ (${p.error})`);
-  users.open = { id: 'file', source: 'file', label: file.name, original: p.save, draft: p.save, baseModifiedAt: 0, dirty: false };
+  users.open = { id: 'file', source: 'file', label: file.name, original: p.save, draft: p.save, baseModifiedAt: 0, dirty: false, edits: [] };
 }
 
 /** Writes the draft: disk saves through the API (backup first), files as a download for import. */
@@ -81,12 +86,28 @@ export async function saveOpen(): Promise<string> {
     o.dirty = false;
     return `Đã tải ${a.download}. Trong game: Cài đặt → Nhập file lưu để dùng save này.`;
   }
-  const r = await post<{ backup: string; modifiedAt: number }>('/__admin/saves/write', { id: o.id, json: text, baseModifiedAt: o.baseModifiedAt });
+  const write = (json: string) => post<{ backup: string; modifiedAt: number }>('/__admin/saves/write', { id: o.id, json, baseModifiedAt: o.baseModifiedAt });
+  let r: { backup: string; modifiedAt: number };
+  let replayed = false;
+  try {
+    r = await write(text);
+  } catch (e) {
+    if ((e as { status?: number }).status !== 409) throw e;
+    // The running game autosaved meanwhile: replay these edits on its newer save (AM-1).
+    const fresh = await json<{ profile: Profile; json: string }>(`/__admin/saves/read?id=${encodeURIComponent(o.id)}`);
+    const p = parse(fresh.json);
+    if (!p.save) throw new Error(`Save trên đĩa không đọc được (${p.error})`, { cause: e });
+    o.draft = o.edits.reduce(apply, p.save);
+    o.baseModifiedAt = fresh.profile.modifiedAt;
+    r = await write(JSON.stringify(o.draft));
+    replayed = true;
+  }
   o.original = o.draft;
+  o.edits = [];
   o.baseModifiedAt = r.modifiedAt;
   o.dirty = false;
   await loadUsers();
-  return `Đã lưu save. Bản cũ ở backups/${r.backup} (khôi phục được trong game: Cài đặt → Khôi phục bản sao lưu).`;
+  return `Đã lưu save${replayed ? ' (game vừa tự lưu — đã áp lại thay đổi của bạn lên bản mới nhất)' : ''}. Game đang mở sẽ tự tải lại. Bản cũ ở backups/${r.backup} (khôi phục được trong game: Cài đặt → Khôi phục bản sao lưu).`;
 }
 
 export async function archiveOpen(): Promise<string> {

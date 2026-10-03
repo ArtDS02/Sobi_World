@@ -1,11 +1,12 @@
 // Admin dashboard entry (admin.html, `npm run admin`). Hash routes (DECISIONS A7-1, AD-1):
 // #/ overview · #/users[/<id>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
-// #/assets (source) · #/library · #/layout · #/products · #/breeding · #/daynight · #/seasons · #/guide[/<section>]
+// #/assets (source) · #/library · #/layout · #/products · #/breeding · #/daynight · #/seasons · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
 import { breedingDirty, renderBreeding } from './breeding';
 import { renderDayNight } from './dayNight';
 import { renderSeasons } from './seasons';
 import { renderEditor } from './editor';
+import { renderDesktop } from './desktop';
 import { renderGuide } from './guide';
 import { esc } from './labels';
 import { layoutDirty, renderLayout } from './layout';
@@ -27,7 +28,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
   ['Game', [['layout', '🗺️', 'Bố cục nông trại', 'layout'], ['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['seasons', '🍂', 'Mùa & hiệu ứng', 'seasons']]],
   ['Cửa hàng', [['products', '🛒', 'Sản phẩm', 'shop']]],
   ['Phối giống', [['breeding', '🧬', 'Luật phối giống', 'breeding']]],
-  [null, [['guide', '📘', 'Hướng dẫn quản trị', 'overview']]],
+  ['Hệ thống / Hướng dẫn', [['desktop', '🎮', 'Desktop Game', 'desktop'], ['guide', '📘', 'Hướng dẫn quản trị', 'overview']]],
 ];
 const ALL = NAV.flatMap(([, items]) => items);
 /** Pages that edit the species draft: the header save belongs to them. */
@@ -109,6 +110,7 @@ function render() {
     products: () => renderProducts(content, render),
     breeding: () => renderBreeding(content, render),
     layout: () => renderLayout(content, render),
+    desktop: () => renderDesktop(content),
     guide: () => renderGuide(content, id),
   };
   if (query && !id && LIST_OF[page] && location.hash !== appliedHash) applyQueryString(LIST_OF[page], query);

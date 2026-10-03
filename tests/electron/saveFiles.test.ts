@@ -176,3 +176,53 @@ describe('saveFiles', () => {
     expect((await readdir(dir)).filter((n) => n.startsWith('before-reset-'))).toHaveLength(1);
   });
 });
+
+describe('saveFiles: save.json replaced by another program (AM-1)', () => {
+  const later = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  it('a write after an outside edit is refused; the edit survives', async () => {
+    const game = files();
+    await game.write('{"gold":1}');
+    await later(20); // a different mtime even on coarse file systems
+    await writeFile(join(dir, 'save.json'), '{"gold":99999}', 'utf8'); // admin dashboard
+    await expect(game.write('{"gold":2}')).rejects.toThrow('SAVE_CHANGED_EXTERNALLY');
+    expect(await read('save.json')).toBe('{"gold":99999}');
+  });
+
+  it('after re-reading, the game writes again', async () => {
+    const game = files();
+    await game.write('{"gold":1}');
+    await later(20);
+    await writeFile(join(dir, 'save.json'), '{"gold":7}', 'utf8');
+    expect((await game.readCandidates())[0]!.json).toBe('{"gold":7}');
+    await game.write('{"gold":8}');
+    expect(await read('save.json')).toBe('{"gold":8}');
+  });
+
+  it('an outside edit created before the first write is also caught', async () => {
+    const game = files();
+    expect(await game.readCandidates()).toEqual([]); // first launch: no file
+    await writeFile(join(dir, 'save.json'), '{"gold":5}', 'utf8');
+    await expect(game.write('{"gold":0}')).rejects.toThrow('SAVE_CHANGED_EXTERNALLY');
+  });
+
+  it('a new instance (no read yet) never refuses', async () => {
+    await writeFile(join(dir, 'save.json'), '{"gold":5}', 'utf8');
+    await files().write('{"gold":6}');
+    expect(await read('save.json')).toBe('{"gold":6}');
+  });
+
+  it('watch fires for an outside edit, not for its own writes', async () => {
+    const game = files();
+    await game.write('{"gold":1}');
+    let fired = 0;
+    const stop = await game.watch(() => fired++);
+    await game.write('{"gold":2}');
+    await later(600);
+    expect(fired).toBe(0);
+    await writeFile(join(dir, 'save.json'), '{"gold":3}', 'utf8');
+    await later(600);
+    stop();
+    expect(fired).toBeGreaterThanOrEqual(1);
+  });
+});

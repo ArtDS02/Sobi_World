@@ -15,6 +15,7 @@
 //        config/breedingRules.ts and GENE_BONUSES of config/genePool.ts (MU-1)
 //   POST /season-fx      { tuning }          → SEASON_FX_TUNING block of config/seasonFx.ts (MU-2)
 //   GET  /layout-default · POST /layout { placements } → manifest layout.placements
+//   GET  /build-info · POST /open-folder { which } → desktop build status + guide data (AM-1)
 import { readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin, ViteDevServer } from 'vite';
@@ -24,6 +25,7 @@ import { dayNightIssues } from '../../src/core/engine/dayNight';
 import { replaceDayNightBlock } from './dayNightText';
 import { validateSpecies, type ValidateInput } from './validate';
 import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, registerExisting, uploadArt } from './artFiles';
+import { buildInfo, openFolder } from './buildInfo';
 import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
 import {
   geneBonusesBlock,
@@ -268,6 +270,10 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
       return { status: 200, body: { placements: JSON.parse(readFileSync(LAYOUT_DEFAULT, 'utf8')) } };
     case 'POST /layout':
       return saveLayout((await body<{ placements: PlacementRow[] }>()).placements, load);
+    case 'GET /build-info':
+      return buildInfo();
+    case 'POST /open-folder':
+      return openFolder((await body<{ which: string }>()).which);
     default:
       return { status: 404, body: { error: `unknown route ${r}` } };
   }

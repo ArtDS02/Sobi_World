@@ -7,6 +7,8 @@ export interface ModalOptions {
   body: string; // form fields markup
   submit: string;
   danger?: boolean;
+  /** Wide dialog (image grids). */
+  wide?: boolean;
   /** Return an error text to keep the modal open, or nothing to close it. */
   onSubmit: (form: HTMLFormElement) => Promise<string | void> | string | void;
   onOpen?: (form: HTMLFormElement) => void;
@@ -16,7 +18,7 @@ export function openModal(o: ModalOptions): () => void {
   const host = document.createElement('div');
   host.className = 'modal-host';
   host.innerHTML = `<div class="modal-backdrop" data-mclose></div>
-    <form class="modal" role="dialog" aria-modal="true" aria-label="${esc(o.title)}">
+    <form class="modal${o.wide ? ' modal--wide' : ''}" role="dialog" aria-modal="true" aria-label="${esc(o.title)}">
       <header class="modal__head"><h2>${esc(o.title)}</h2><button type="button" class="icon-btn" data-mclose aria-label="Đóng">✕</button></header>
       <div class="modal__body">${o.body}</div>
       <p class="modal__error" hidden></p>

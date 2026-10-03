@@ -37,6 +37,8 @@ export interface FarmBridge {
   phasePreview: DayPhase | null;
   /** Admin / dev season preview (SE-1): shown instead of the calendar's season; never saved. */
   seasonPreview: SeasonId | null;
+  /** The farm scene is up: the loading screen is gone (AM-1: the HUD waits for it). */
+  loaded: () => void;
 }
 
 export interface FarmView {
@@ -61,7 +63,9 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
     effects: noEffects,
     phasePreview: null,
     seasonPreview: null,
+    loaded: () => delete host.dataset.farmLoading,
   };
+  host.dataset.farmLoading = ''; // HUD hidden over the loading screen (styles/core/_layout.scss)
   const scenes = [new BootScene(), new PreloadScene(deps, bridge), new MainFarmScene(deps, bridge)];
   const game = new Phaser.Game(phaserConfig(host, deps.assets.manifest.layout, scenes));
   let visible = true;

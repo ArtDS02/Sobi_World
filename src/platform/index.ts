@@ -1,8 +1,10 @@
-// Platform selection (spec §4.1, §13.1): desktop adapters when window.unin exists, web otherwise.
+// Platform selection (spec §4.1, §13.1): desktop adapters when window.unin exists, web otherwise
+// (`npm run dev`: the dev save file through the dev server, AM-1; a plain web build: IndexedDB).
 import type { BackupStore, FileDialogs, InstanceGuard, SaveStorage } from '../core/save/port';
 import type { UninBridge } from './desktop/bridge';
 import { createDesktopFileDialogs, desktopInstanceGuard } from './desktop/fileDialogs';
 import { createFileSaveStorage } from './desktop/fileSaveStorage';
+import { createDevFileSaveStorage, devBackups, hasDevSaveApi } from './web/devFileSaves';
 import { createWebFileDialogs } from './web/fileDialogs';
 import { createSaveStorage } from './web/idbSaveStorage';
 import { browserChannel, createWebInstanceGuard } from './web/tabGuard';
@@ -37,13 +39,15 @@ export function createPlatform(): Platform {
     };
   }
   const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+  // `npm run dev`: the dev save file shared with dev:desktop and the admin dashboard (AM-1).
+  const devFiles = import.meta.env.DEV && hasDevSaveApi();
   return {
     kind: 'web',
-    storage: createSaveStorage(),
+    storage: devFiles ? createDevFileSaveStorage(createSaveStorage()) : createSaveStorage(),
     dialogs: createWebFileDialogs(),
     instanceGuard: createWebInstanceGuard(browserChannel(), crypto.randomUUID(), sleep),
     onFlushRequest: () => {},
     version: null,
-    backups: null,
+    backups: devFiles ? devBackups : null,
   };
 }

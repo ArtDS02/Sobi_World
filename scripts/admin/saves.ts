@@ -114,7 +114,7 @@ export function writeProfile(
   const error = validate(args.json);
   if (error) return { status: 400, body: { error: `Save không hợp lệ: ${error}` } };
   if (Math.abs(statSync(join(dir, SAVE)).mtimeMs - args.baseModifiedAt) > 1)
-    return { status: 409, body: { error: 'Save vừa bị game ghi đè sau khi bạn mở — tải lại rồi sửa lại (hãy đóng game trước).' } };
+    return { status: 409, body: { error: 'Save vừa được game tự lưu sau khi bạn mở — dashboard sẽ áp lại thay đổi lên bản mới nhất.' } };
   const backup = backupCurrent(dir, now);
   writeFileSync(join(dir, `${SAVE}.tmp`), args.json, 'utf8');
   renameSync(join(dir, `${SAVE}.tmp`), join(dir, SAVE));

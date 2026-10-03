@@ -18,6 +18,9 @@ const unin: UninBridge = {
     exportTo: (json, suggestedName) => invoke('unin:save:exportTo', json, suggestedName),
     importFrom: () => invoke('unin:save:importFrom'),
     openFolder: () => invoke('unin:save:openFolder'),
+    onExternalChange(fn) {
+      ipcRenderer.on(channel('unin:save:changed'), () => fn());
+    },
   },
   app: {
     version: ipcRenderer.sendSync(channel('unin:app:version')) as string,

@@ -42,6 +42,11 @@
     background: $c-farm-letterbox; // the canvas fills it; seen only before the first frame
   }
 
+  // AM-1: the HUD, hint and coach (siblings after the stage) wait for the loading screen to finish.
+  &__stage[data-farm-loading] ~ * {
+    visibility: hidden;
+  }
+
   // Tutorial coach card (spec §10.3): top-left, clear of the bottom hint; never covers the farm.
   // Top centre, over the sky between the back-row buildings.
   &__coach-host {

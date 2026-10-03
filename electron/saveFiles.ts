@@ -1,6 +1,6 @@
 // Desktop save files (spec §9.1, §9.2, R00-4). Pure Node: no Electron import, tested with a temp dir.
 // Main never validates a save: it hands JSON strings to the renderer, which runs core's parseSave.
-import { constants } from 'node:fs';
+import { constants, watch as watchDir } from 'node:fs';
 import * as fsp from 'node:fs/promises';
 import { join } from 'node:path';
 import type {
@@ -14,6 +14,14 @@ export const BACKUP_SPACING_MS = 15 * 60 * 1000;
 const RENAME_RETRIES = 5;
 const RENAME_RETRY_MS = 50;
 const BACKUP_NAME = /^save-(\d{8})-(\d{6})(?:-(\d+))?\.json$/;
+const WATCH_DEBOUNCE_MS = 300;
+/** Rejection message of a write refused because save.json changed outside the game (AM-1). */
+export const SAVE_CHANGED_EXTERNALLY = 'SAVE_CHANGED_EXTERNALLY';
+
+/** mtime + size of save.json; null = no file. Two equal stamps = nobody else wrote in between. */
+type Stamp = { mtimeMs: number; size: number } | null;
+const sameStamp = (a: Stamp, b: Stamp) =>
+  a === b || (a !== null && b !== null && a.mtimeMs === b.mtimeMs && a.size === b.size);
 
 /** The fs calls a write goes through; tests replace one to simulate a crash or a locked file. */
 export interface FsOps {
@@ -89,6 +97,19 @@ export function createSaveFiles(opts: SaveFilesOptions) {
   let wroteThisSession = false;
   let lastBackupAt: number | null = null;
   let queue: Promise<unknown> = Promise.resolve();
+  // What this process last saw in save.json; undefined = never read nor written (no claim yet).
+  let known: Stamp | undefined;
+
+  const stampNow = async (): Promise<Stamp> => {
+    try {
+      const st = await fsp.stat(savePath);
+      return { mtimeMs: st.mtimeMs, size: st.size };
+    } catch {
+      return null;
+    }
+  };
+  /** True when another program (the admin dashboard, a copy by hand) replaced save.json. */
+  const changedOutside = async () => known !== undefined && !sameStamp(await stampNow(), known);
 
   /** Serializes every mutation so two writes never interleave. */
   const serial = <T>(fn: () => Promise<T>): Promise<T> => {
@@ -147,6 +168,7 @@ export function createSaveFiles(opts: SaveFilesOptions) {
     await fsp.mkdir(dir, { recursive: true });
     await fs.writeFile(tmpPath, json);
     await renameWithRetry(tmpPath, savePath);
+    known = await stampNow();
   }
 
   function sourcePath(source: SaveCandidateSource): string {
@@ -163,6 +185,8 @@ export function createSaveFiles(opts: SaveFilesOptions) {
     /** save.json first, then backups newest first. Unreadable files are skipped, never deleted. */
     async readCandidates(): Promise<SaveCandidate[]> {
       const out: SaveCandidate[] = [];
+      await queue; // a write in flight finishes first: `known` then matches what is read
+      known = await stampNow();
       const read = async (source: SaveCandidateSource) => {
         try {
           out.push({ source, json: await fsp.readFile(sourcePath(source), 'utf8') });
@@ -175,9 +199,14 @@ export function createSaveFiles(opts: SaveFilesOptions) {
       return out;
     },
 
-    /** Backup (first write of the session, then at most every 15 min), then atomic replace. */
+    /**
+     * Backup (first write of the session, then at most every 15 min), then atomic replace.
+     * Refused with SAVE_CHANGED_EXTERNALLY when save.json changed since this process last read or
+     * wrote it: the game reloads that save instead of overwriting an admin edit (AM-1).
+     */
     write(json: string): Promise<void> {
       return serial(async () => {
+        if (await changedOutside()) throw new Error(SAVE_CHANGED_EXTERNALLY);
         const due =
           !wroteThisSession ||
           lastBackupAt === null ||
@@ -195,6 +224,7 @@ export function createSaveFiles(opts: SaveFilesOptions) {
         const from = sourcePath(source);
         if (!(await exists(from))) return;
         await renameWithRetry(from, join(dir, await freeName(dir, 'save.corrupt-')));
+        if (source === 'save') known = null;
       });
     },
 
@@ -210,6 +240,26 @@ export function createSaveFiles(opts: SaveFilesOptions) {
         await backupCurrent();
         await fsp.copyFile(savePath, join(dir, await freeName(dir, 'before-reset-')));
       }),
+
+    /**
+     * Calls `onChange` (debounced) whenever save.json is replaced by another program while the game
+     * runs. Own writes never fire it. Returns a stop function.
+     */
+    async watch(onChange: () => void): Promise<() => void> {
+      await fsp.mkdir(dir, { recursive: true });
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      const check = () =>
+        void serial(changedOutside).then((changed) => changed && onChange(), () => undefined);
+      const watcher = watchDir(dir, (_event, name) => {
+        if (name && name !== 'save.json') return;
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(check, WATCH_DEBOUNCE_MS);
+      });
+      return () => {
+        if (timer) clearTimeout(timer);
+        watcher.close();
+      };
+    },
 
     /** Resolves when every queued write has finished (quit waits on it). */
     idle: () => queue.then(() => undefined),

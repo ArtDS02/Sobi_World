@@ -4,7 +4,8 @@
 // every result is checked with the game's own save schema before it can be written.
 import { BALANCE } from '../../src/core/config/balance';
 import { BREEDS } from '../../src/core/config/breeds';
-import type { BreedId, Gender, ItemId } from '../../src/core/config/ids';
+import { DECORS } from '../../src/core/config/decor';
+import type { BreedId, DecorId, Gender, ItemId, StatId } from '../../src/core/config/ids';
 import { levelFromXp, troughCapacityForLevel } from '../../src/core/config/levels';
 import { happiness } from '../../src/core/engine/happiness';
 import { changeGold } from '../../src/core/engine/gold';
@@ -94,7 +95,7 @@ export const setTroughFood = (food: number): Edit => (s) => ({
 });
 
 /** Pigs: the editable fields of one pig (name 1–16 chars, stats 0–100). */
-export type PigPatch = Partial<Pick<Pig, 'name' | 'breed' | 'gender' | 'growthProgress' | 'hunger' | 'cleanliness' | 'isSick'>>;
+export type PigPatch = Partial<Pick<Pig, 'name' | 'breed' | 'gender' | 'growthProgress' | 'hunger' | 'cleanliness' | 'isSick' | 'generation'>>;
 
 export const patchPig = (id: string, patch: PigPatch): Edit => (s) => {
   if (!s.pigs.some((p) => p.id === id)) throw new Error('Không tìm thấy heo');
@@ -109,6 +110,7 @@ export const patchPig = (id: string, patch: PigPatch): Edit => (s) => {
       const next = { ...p, ...patch };
       if (patch.name !== undefined) next.name = patch.name.trim();
       for (const k of ['growthProgress', 'hunger', 'cleanliness'] as const) if (patch[k] !== undefined) next[k] = pct(patch[k])!;
+      if (patch.generation !== undefined) next.generation = int(patch.generation, 1, 999);
       // A father cannot be pregnant: switching gender drops the pregnancy.
       if (patch.gender === 'MALE') next.pregnancy = null;
       return next;
@@ -132,6 +134,38 @@ export const addPig = (breed: BreedId, gender: Gender, name: string, now: number
   const discovered = s.collection.discoveredBreeds.includes(breed) ? s.collection.discoveredBreeds : [...s.collection.discoveredBreeds, breed];
   return { ...s, pigs: [...s.pigs, pig], collection: { discoveredBreeds: discovered } };
 };
+
+/** Nursery (heo con chờ nhận, BR-1): rename or remove a waiting piglet. */
+export const patchNursery = (id: string, name: string): Edit => (s) => {
+  if (!(name.trim().length >= 1 && name.trim().length <= 16)) throw new Error('Tên heo 1–16 ký tự');
+  return { ...s, nursery: s.nursery.map((p) => (p.id === id ? { ...p, name: name.trim() } : p)) };
+};
+export const removeNursery = (id: string): Edit => (s) => ({ ...s, nursery: s.nursery.filter((p) => p.id !== id) });
+
+/** Decorations owned (PG-3): the happiness bonus follows the set. Kept in config order. */
+export const setDecor = (ids: readonly DecorId[]): Edit => (s) => ({
+  ...s,
+  decor: (Object.keys(DECORS) as DecorId[]).filter((d) => ids.includes(d)),
+});
+
+/** Achievements claimed (PG-2): kept ones keep their time, new ones are stamped `now`. */
+export const setClaimed = (ids: readonly string[], now: number): Edit => (s) => ({
+  ...s,
+  progress: { ...s.progress, claimed: Object.fromEntries(ids.map((id) => [id, s.progress.claimed[id] ?? now])) },
+});
+
+/** Progress counters (achievement metrics). */
+export const setStats = (stats: Partial<Record<StatId, number>>): Edit => (s) => {
+  const next = { ...s.progress.stats };
+  for (const [k, v] of Object.entries(stats)) next[k] = int(v, 0);
+  return { ...s, progress: { ...s.progress, stats: next } };
+};
+
+/** Daily gift streak; `claimedToday` false clears lastDay so today's gift can be claimed again. */
+export const setDaily = (streak: number, lastDay: number | null): Edit => (s) => ({
+  ...s,
+  progress: { ...s.progress, daily: { streak: int(streak, 0, 10_000), lastDay } },
+});
 
 /** Profile / settings switches. */
 export const setSettings = (patch: Partial<SaveGame['settings']>): Edit => (s) => ({ ...s, settings: { ...s.settings, ...patch } });

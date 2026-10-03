@@ -81,7 +81,7 @@ export async function json<T>(url: string, init?: RequestInit): Promise<T> {
   const body = (await res.json()) as T & { error?: string; issues?: Issue[] };
   if (!res.ok) {
     const detail = body.issues?.map((i) => `${i.speciesId ?? ''} ${i.text}`).join('\n');
-    throw new Error(detail ? `${body.error}\n${detail}` : (body.error ?? res.statusText));
+    throw Object.assign(new Error(detail ? `${body.error}\n${detail}` : (body.error ?? res.statusText)), { status: res.status });
   }
   return body;
 }
