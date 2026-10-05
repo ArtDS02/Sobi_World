@@ -1,13 +1,9 @@
-// The save codec of this build: how to read Sobi Farm saves and which Areas own a save slice.
-import { farmSaveSpec, newFarmWorld } from '../areas/farm/logic/save/farmSave';
+// The save codec of this build: how to read Sobi Farm saves, and the Areas that own a save slice.
 import { legacyToWorld } from '../areas/farm/logic/save/legacy';
-import { FARM_AREA_ID } from '../areas/farm/logic/save/lens';
 import { parseSave, type SaveCodec } from '../core/save/migrate';
+import { defaultSettings } from '../core/save/world';
+import { AREAS } from './areas';
 
-export const SAVE_CODEC: SaveCodec = {
-  legacy: legacyToWorld,
-  areas: { [FARM_AREA_ID]: farmSaveSpec },
-  newWorld: newFarmWorld,
-};
+export const SAVE_CODEC: SaveCodec = AREAS.codec(legacyToWorld, defaultSettings);
 
 export const parseWorldSave = (json: string) => parseSave(json, SAVE_CODEC);

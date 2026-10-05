@@ -13,12 +13,14 @@ export interface PageLike {
   on(type: 'visibilitychange' | 'pagehide', listener: () => void): () => void;
 }
 
-/** Catches the world up to `now` (the farm's advanceWorld until the Area registry, GĐ1 step 6). */
+/** Catches the world up to `now`: every registered Area (core/area-registry). */
 export type WorldAdvance = (
   state: WorldSave,
   now: number,
   rng: Rng,
   dayOffsetMs: number,
+  /** `offline` for the catch-up after load / a hidden window (DECISIONS 004), else `online`. */
+  mode: 'online' | 'offline',
 ) => { state: WorldSave; events: EventBase[] };
 
 export interface StoreDeps {

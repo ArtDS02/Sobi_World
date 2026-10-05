@@ -2,6 +2,7 @@
 // §8, core/content). The config modules next to this one expose them under their game names
 // (BALANCE, BREEDS, PIG_LIFE…).
 import farmBalanceRaw from '../../../../../content/farm/balance.json';
+import areaRaw from '../../../../../content/farm/area.json';
 import behaviorRaw from '../../../../../content/farm/behavior.json';
 import breedingRaw from '../../../../../content/farm/breeding.json';
 import decorRaw from '../../../../../content/farm/decor.json';
@@ -10,6 +11,7 @@ import layoutRaw from '../../../../../content/farm/layout.json';
 import namesRaw from '../../../../../content/farm/names.json';
 import seasonFxRaw from '../../../../../content/farm/season-fx.json';
 import speciesRaw from '../../../../../content/farm/species.json';
+import { areaManifestSchema } from '../../../../../content/schemas/area';
 import { farmBalanceFileSchema } from '../../../../../content/schemas/farm/balance';
 import { behaviorFileSchema } from '../../../../../content/schemas/farm/behavior';
 import { breedingFileSchema } from '../../../../../content/schemas/farm/breeding';
@@ -22,6 +24,7 @@ import { speciesFileSchema } from '../../../../../content/schemas/farm/species';
 import { loadContent } from '../../../../core/content/load';
 
 export const FARM_CONTENT = {
+  area: loadContent('farm/area.json', areaManifestSchema, areaRaw),
   farmBalance: loadContent('farm/balance.json', farmBalanceFileSchema, farmBalanceRaw),
   species: loadContent('farm/species.json', speciesFileSchema, speciesRaw),
   breeding: loadContent('farm/breeding.json', breedingFileSchema, breedingRaw),

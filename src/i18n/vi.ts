@@ -29,6 +29,17 @@ export const vi = {
     giftXp: "+{n} KN",
   },
 
+  // Away-screen lines of each Area (AreaModule.getSummary keys: summary.<area>.<line>).
+  summary: {
+    farm: {
+      births: "{count} heo con chào đời",
+      grown: "{count} heo đã trưởng thành",
+      sick: "{count} heo bị bệnh",
+      orders: "{count} đơn hàng mới",
+      gifts: "{count} hộp quà mới",
+    },
+  },
+
   hud: {
     level: "Cấp {level}",
     xp: "{current}/{next} KN",

@@ -1,6 +1,5 @@
-// The farm's rules on the world save: its catch-up as the world tick, and any farm action lifted from
-// the farm's working state (FarmGame) to the world (save/lens.ts). Until the Area registry (GĐ1 step 6)
-// the farm is the world's only Area, so its tick is the world's tick.
+// The farm's rules on the world save: its catch-up (the Area's `simulate` hook) and any farm action
+// lifted from the farm's working state (FarmGame) to the world (save/lens.ts).
 import type { WorldSave } from '../../../core/save/world';
 import type { ActionContext, ActionResultOf } from '../../../core/types';
 import type { Rng } from '../../../core/rng';

@@ -50,6 +50,6 @@ export function farmWorldEvents(e: GameEvent): WorldEvent[] {
   }
 }
 
-/** Store dependency: every event the store carries is a farm event until the Area registry. */
+/** The Area hook: the farm's events among the store's (others map to nothing). */
 export const farmEventsToWorld = (events: readonly EventBase[]): WorldEvent[] =>
   (events as readonly GameEvent[]).flatMap(farmWorldEvents);

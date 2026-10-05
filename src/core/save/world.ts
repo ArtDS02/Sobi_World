@@ -104,3 +104,12 @@ export function emptyWorld(now: number, settings: WorldSettings, firstArea: stri
     areas: {},
   };
 }
+
+/** Settings of a new world; `reduceMotion` = the OS preference at first launch (spec §11.3). */
+export const defaultSettings = (opts: { reduceMotion?: boolean } = {}): WorldSettings => ({
+  musicOn: true,
+  sfxOn: true,
+  reduceMotion: opts.reduceMotion ?? false,
+  tutorialDone: false,
+  lastExportAt: null,
+});

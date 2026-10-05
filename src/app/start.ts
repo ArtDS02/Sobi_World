@@ -64,7 +64,7 @@ export async function start(root: HTMLElement) {
     instanceGuard: platform.instanceGuard,
     backups: platform.backups,
   });
-  // Sobi Farm is the world's only Area until the Area registry (GĐ1 step 6).
+  // The farm's screens and scene see the world through the farm facade (areas/farm/store.ts).
   const store = farmStore(world);
   platform.onFlushRequest(() => store.persistNow());
   // §12: the desktop shell allows autoplay; the browser build waits for the first gesture.

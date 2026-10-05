@@ -1,0 +1,12 @@
+{
+  "id": "sobi_farm",
+  "name": { "vi": "Sobi Farm" },
+  "portalInPlaza": "pig_barn",
+  "unlock": {},
+  "layout": "farm/layout.json",
+  "buildings": ["barn", "auto_feeder", "breeding_station", "storage"],
+  "produces": [],
+  "consumes": ["FOOD_BASIC", "MEDICINE_COMMON"],
+  "npc": "npc_farmer",
+  "icon": "prop_pig_house"
+}

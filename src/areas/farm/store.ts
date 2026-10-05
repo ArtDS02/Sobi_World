@@ -10,8 +10,8 @@ import type { ActionResult, FarmGame } from './logic/types';
 import { liftFarmAction, type FarmAction } from './logic/world';
 
 export type { CatchupInfo, EventOrigin, StoreStatus } from '../../core/world/gameStore';
-/** The store's events as the farm reads them: until the Area registry the farm is the only Area
- * emitting, so every event the store carries is a farm event. */
+/** The store's events as the farm reads them. Another Area's events have types the farm's
+ * consumers do not know and ignore (their switches fall through to nothing). */
 export type EventListener = (events: GameEvent[], origin: EventOrigin, catchup?: CatchupInfo) => void;
 /** A farm action bound to its arguments, e.g. `(s, c) => buyPig(s, args, c)`. */
 export type BoundAction = FarmAction;

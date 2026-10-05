@@ -341,7 +341,7 @@ describe('gold never changes without a transaction (§8.16, §14.3)', () => {
     expect(state.transactions.length).toBeGreaterThan(20);
   });
 
-  it('no source file outside engine/gold.ts writes player.gold', () => {
+  it('no source file outside the farm gold.ts writes player.gold (the ledger posts every change)', () => {
     const sources = import.meta.glob<string>('/src/**/*.ts', {
       query: '?raw',
       import: 'default',
@@ -349,7 +349,7 @@ describe('gold never changes without a transaction (§8.16, §14.3)', () => {
     });
     const writes = /\.gold\s*(\+\+|--|[-+*/]?=(?!=))|\bgold\s*:\s*[^,}\n]*player\.gold\b/;
     const offenders = Object.entries(sources)
-      .filter(([f, text]) => !f.endsWith('/src/core/engine/gold.ts') && writes.test(text))
+      .filter(([f, text]) => !f.endsWith('/src/areas/farm/logic/gold.ts') && writes.test(text))
       .map(([f]) => f);
     expect(Object.keys(sources).length).toBeGreaterThan(20);
     expect(offenders).toEqual([]);

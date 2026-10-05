@@ -104,7 +104,8 @@ export function createWorldStore(deps: StoreDeps) {
     if (snapshot.status !== 'ready' || !snapshot.save) return [];
     const now = deps.clock.now();
     const awayMs = Math.max(0, now - deps.lastSimulatedAt(snapshot.save));
-    const world = deps.advanceWorld(snapshot.save, now, deps.rng, ctx(now).dayOffsetMs ?? 0);
+    const mode = origin === 'catchup' ? 'offline' : 'online';
+    const world = deps.advanceWorld(snapshot.save, now, deps.rng, ctx(now).dayOffsetMs ?? 0, mode);
     set({ save: world.state });
     if (world.events.length > 0 || now - lastPersistAt >= SAVE.AUTOSAVE_MS) void persist();
     emit(world.events, origin, origin === 'catchup' ? { awayMs } : undefined);
