@@ -9,6 +9,9 @@ import { diseaseState, healthStage, onsetFields, sickBlockedUntil } from '../../
 import { addMoodSample, QUALITY_RULES, qualityFromMood, withBond } from '../../src/systems/quality/quality';
 import { healthFactor, linearFactor, valueOf, weightFactor } from '../../src/systems/valuation/value';
 import { sequenceRng } from '../../src/core/rng';
+import { idRoll, traitScale, traitsOf } from '../../src/systems/behavior-ai/identity';
+import { outranks, pickWeighted } from '../../src/systems/behavior-ai/priority';
+import { clampToEllipse, ellipsePoint, insideEllipse, separation, walkEllipse } from '../../src/systems/layout/walkArea';
 
 const H = 3_600_000;
 const fish: Creature = {
@@ -107,5 +110,37 @@ describe('valuation', () => {
     expect(linearFactor(50, 0.7, 0.5)).toBeCloseTo(0.95);
     expect(weightFactor(120, 100, 1.1)).toBe(1.1);
     expect(healthFactor(5, 0.1, 0.7)).toBe(0.7);
+  });
+});
+
+describe('behavior-ai', () => {
+  it('rolls and traits are fixed per id', () => {
+    expect(idRoll('pig-1', 3, 7)).toBe(idRoll('pig-1', 3, 7));
+    expect(idRoll('pig-1', 3, 7)).not.toBe(idRoll('pig-2', 3, 7));
+    const t = traitsOf('fish-9', ['speed', 'shy'] as const);
+    expect(t.speed).toBeGreaterThanOrEqual(0);
+    expect(t.shy).toBeLessThanOrEqual(1);
+    expect(traitScale(1, 0.35)).toBeCloseTo(1.35);
+  });
+  it('urgency order and weighted free time', () => {
+    const order = ['flee', 'eat', 'free'] as const;
+    expect(outranks(order, 'flee', 'eat')).toBe(true);
+    expect(outranks(order, 'free', 'eat')).toBe(false);
+    const w = [['a', 1], ['b', 0], ['c', 3]] as const;
+    expect([0, 0.24, 0.25, 0.99].map((r) => pickWeighted(w, r))).toEqual(['a', 'a', 'c', 'c']);
+  });
+});
+
+describe('layout: walk area', () => {
+  const e = walkEllipse({ width: 1000, height: 500 }, { x: 0.1, y: 0.2, width: 0.8, height: 0.6 });
+  it('ellipse, inside, clamp', () => {
+    expect(e).toEqual({ cx: 500, cy: 250, rx: 400, ry: 150 });
+    expect(insideEllipse(e, ellipsePoint(e, 1, 0.3))).toBe(true);
+    expect(clampToEllipse(e, { x: 2000, y: 250 })).toEqual({ x: 900, y: 250 });
+  });
+  it('pushes close neighbours apart', () => {
+    const push = separation([{ id: 'a', x: 0, y: 0 }, { id: 'b', x: 10, y: 0 }], 50, 100, () => 0);
+    expect(push.get('a')).toEqual({ dx: -20, dy: 0 });
+    expect(push.get('b')).toEqual({ dx: 20, dy: 0 });
   });
 });

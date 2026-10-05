@@ -1,6 +1,8 @@
 // Pig life simulation rules (DECISIONS PL-1): personality, sleepiness and the need priority that
 // picks what a pig does next. Pure and deterministic — `now` arrives as elapsed ms, randomness as
 // rolls derived from the pig id; the farm view (game/state/pigBrain.ts) plays the result.
+import { idHash, idRoll, traitScale as coreTraitScale, traitsOf } from '../../../systems/behavior-ai/identity';
+import { pickWeighted, rankIn } from '../../../systems/behavior-ai/priority';
 import { PIG_LIFE, SLEEP_LEVELS, type SleepLevel } from './config/pigLife';
 import type { Pig } from './types';
 import { needLevel, needRank } from './pigHealth';
@@ -20,29 +22,17 @@ export interface Personality {
 
 const TRAITS = ['foodDrive', 'thirstDrive', 'energy', 'social', 'curiosity', 'laziness'] as const;
 
-/** FNV-1a 32-bit hash of a string. */
-export function lifeHash(text: string): number {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < text.length; i++) {
-    h ^= text.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return h >>> 0;
-}
+/** FNV-1a 32-bit hash of a string (systems/behavior-ai). */
+export const lifeHash = idHash;
 
 /** Deterministic roll in [0, 1] for (pig, step, salt). */
-export const lifeRoll = (pigId: string, step: number, salt: number): number =>
-  (lifeHash(`${pigId}:${step}:${salt}`) % 10007) / 10006;
+export const lifeRoll = idRoll;
 
 /** Fixed per pig id, so it survives save / load without being stored. */
-export function personalityOf(pigId: string): Personality {
-  const p = {} as Personality;
-  TRAITS.forEach((t, i) => (p[t] = lifeRoll(pigId, 0, 100 + i)));
-  return p;
-}
+export const personalityOf = (pigId: string): Personality => traitsOf(pigId, TRAITS);
 
 /** A 0..1 trait as a multiplier around 1 (± personality.spread). */
-export const traitScale = (t: number): number => 1 + PIG_LIFE.personality.spread * (2 * t - 1);
+export const traitScale = (t: number): number => coreTraitScale(t, PIG_LIFE.personality.spread);
 
 export function sleepLevel(value: number): SleepLevel {
   return [...SLEEP_LEVELS].reverse().find((l) => value >= S.levelMin[l]) ?? 'awake';
@@ -111,7 +101,7 @@ export const sleepinessOnWake = (value: number, sinceDayMs: number): number =>
 /** What the pig's needs ask for, most urgent first. */
 export type LifeBehavior = 'eatUrgent' | 'sleep' | 'eat' | 'rest' | 'free';
 const RANK: readonly LifeBehavior[] = ['eatUrgent', 'sleep', 'eat', 'rest', 'free'];
-export const behaviorRank = (b: LifeBehavior): number => RANK.indexOf(b);
+export const behaviorRank = (b: LifeBehavior): number => rankIn(RANK, b);
 
 export interface LifeInput {
   /** A trough meal already eaten in the data (PIG_ATE_FROM_TROUGH) still to be shown. */
@@ -169,9 +159,14 @@ export function freeChoice(
     : (w.wander * traitScale(p.energy) * (i.moping ? 0.4 : 1)) / traitScale(p.laziness);
   const look = w.lookAround * traitScale(p.curiosity);
   const idle = w.idle * traitScale(p.laziness);
-  const r = roll * (wander + look + idle);
-  if (r < wander) return 'wander';
-  return r < wander + look ? 'lookAround' : 'idle';
+  return pickWeighted<FreeChoice>(
+    [
+      ['wander', wander],
+      ['lookAround', look],
+      ['idle', idle],
+    ],
+    roll,
+  );
 }
 
 /** Pause before the next activity: longer for lazy or moping pigs, shorter for energetic ones. */

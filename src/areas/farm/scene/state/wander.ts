@@ -1,30 +1,23 @@
 // Wandering targets (spec §11, art standard §2.4): visual only, anywhere in the ellipse inscribed
 // in layout.walkArea. Deterministic per (pig id, step) so tests and replays agree; never saved.
+import {
+  clampToEllipse as clampTo,
+  ellipsePoint as pointOn,
+  insideEllipse as inside,
+  separation as separate,
+  walkEllipse as areaEllipse,
+} from '../../../../systems/layout/walkArea';
 import { FARM_VIEW } from '../config/farmView';
 import { hashId, type FarmLayout } from '../view/pigView';
 
 const unit = (pigId: string, step: number, salt: number) =>
   (hashId(`${pigId}:${step}:${salt}`) % 10007) / 10006;
 
-/** The walk ellipse inscribed in layout.walkArea, in design px. */
-export function walkEllipse(layout: FarmLayout) {
-  const { width, height } = layout.designSize;
-  const a = layout.walkArea;
-  return {
-    cx: (a.x + a.width / 2) * width,
-    cy: (a.y + a.height / 2) * height,
-    rx: (a.width / 2) * width,
-    ry: (a.height / 2) * height,
-  };
-}
+/** The walk ellipse inscribed in layout.walkArea, in design px (systems/layout). */
+export const walkEllipse = (layout: FarmLayout) => areaEllipse(layout.designSize, layout.walkArea);
 
 /** Point of the ellipse for unit square coordinates (u, v), area-uniform. */
-export function ellipsePoint(layout: FarmLayout, u: number, v: number) {
-  const e = walkEllipse(layout);
-  const r = Math.sqrt(u);
-  const t = v * Math.PI * 2;
-  return { x: e.cx + Math.cos(t) * r * e.rx, y: e.cy + Math.sin(t) * r * e.ry };
-}
+export const ellipsePoint = (layout: FarmLayout, u: number, v: number) => pointOn(walkEllipse(layout), u, v);
 
 /**
  * Next stroll target in design px: anywhere in the walk ellipse, re-rolled (up to WANDER.tries)
@@ -64,54 +57,17 @@ export const facesLeft = (fromX: number, toX: number, current: boolean): boolean
   toX === fromX ? current : toX < fromX;
 
 /** Whether `p` lies inside the walk ellipse (the trough and the house stand outside it). */
-export function insideEllipse(layout: FarmLayout, p: { x: number; y: number }): boolean {
-  const e = walkEllipse(layout);
-  return Math.hypot((p.x - e.cx) / e.rx, (p.y - e.cy) / e.ry) <= 1 + 1e-6;
-}
+export const insideEllipse = (layout: FarmLayout, p: { x: number; y: number }): boolean =>
+  inside(walkEllipse(layout), p);
 
 /** `p` moved inside the walk ellipse (unchanged when already in). */
-export function clampToEllipse(layout: FarmLayout, p: { x: number; y: number }) {
-  const e = walkEllipse(layout);
-  const nx = (p.x - e.cx) / e.rx;
-  const ny = (p.y - e.cy) / e.ry;
-  const d = Math.hypot(nx, ny);
-  return d <= 1 ? p : { x: e.cx + (nx / d) * e.rx, y: e.cy + (ny / d) * e.ry };
-}
+export const clampToEllipse = (layout: FarmLayout, p: { x: number; y: number }) => clampTo(walkEllipse(layout), p);
 
 /**
  * Gentle push between standing pigs closer than WANDER.minGapPx (names never stack): each one of a
  * pair moves half the overlap away, at most `maxStep` px. Coincident pigs split by id. Pure.
  */
-export function separation(
+export const separation = (
   pigs: readonly { id: string; x: number; y: number }[],
   maxStep: number,
-): Map<string, { dx: number; dy: number }> {
-  const gap = FARM_VIEW.WANDER.minGapPx;
-  const out = new Map<string, { dx: number; dy: number }>();
-  const add = (id: string, dx: number, dy: number) => {
-    const o = out.get(id) ?? { dx: 0, dy: 0 };
-    out.set(id, { dx: o.dx + dx, dy: o.dy + dy });
-  };
-  for (let i = 0; i < pigs.length; i++) {
-    for (let j = i + 1; j < pigs.length; j++) {
-      const a = pigs[i]!;
-      const b = pigs[j]!;
-      let dx = b.x - a.x;
-      let dy = b.y - a.y;
-      const d = Math.hypot(dx, dy);
-      if (d >= gap) continue;
-      if (d < 1e-6) {
-        const t = (hashId(`${a.id}|${b.id}`) % 360) * (Math.PI / 180);
-        dx = Math.cos(t);
-        dy = Math.sin(t);
-      } else {
-        dx /= d;
-        dy /= d;
-      }
-      const step = Math.min(maxStep, (gap - d) / 2);
-      add(a.id, -dx * step, -dy * step);
-      add(b.id, dx * step, dy * step);
-    }
-  }
-  return out;
-}
+): Map<string, { dx: number; dy: number }> => separate(pigs, FARM_VIEW.WANDER.minGapPx, maxStep, hashId);
