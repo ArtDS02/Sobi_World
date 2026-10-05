@@ -1,6 +1,6 @@
-// Shop items (spec §6.3).
-import { BALANCE } from './balance';
-import type { ItemId } from './ids';
+// Items (spec §6 Item): what each one does — content/shared/items.json.
+import { byId, CONTENT } from './content';
+import { ITEM_ID_VALUES, type ItemId } from './ids';
 
 export interface ItemDef {
   id: ItemId;
@@ -9,15 +9,7 @@ export interface ItemDef {
   curesSickness: boolean;
 }
 
-export const ITEMS: Record<ItemId, ItemDef> = {
-  // Also the unit the trough consumes.
-  FOOD_BASIC: {
-    id: 'FOOD_BASIC',
-    priceGold: 25,
-    hungerRestore: BALANCE.FOOD_HUNGER_RESTORE,
-    curesSickness: false,
-  },
-  MEDICINE_COMMON: { id: 'MEDICINE_COMMON', priceGold: 100, hungerRestore: 0, curesSickness: true },
-};
+/** FOOD_BASIC is also the unit the trough consumes. */
+export const ITEMS: Record<ItemId, ItemDef> = byId('shared/items.json', CONTENT.items.items, ITEM_ID_VALUES);
 
 export const ITEM_IDS = Object.keys(ITEMS) as ItemId[];

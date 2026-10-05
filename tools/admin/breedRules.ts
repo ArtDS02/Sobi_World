@@ -1,6 +1,6 @@
 // Breeding system page (DECISIONS BR-2, MU-1): what the game actually runs and where it is tuned —
 // coverage audit, the random-genetics percents, gene-pool bonuses and the special recipes (all
-// editable here, saved into breedingRules.ts / genePool.ts by the dev API), plus an odds explorer
+// editable here, saved into content/farm/breeding.json by the dev API), plus an odds explorer
 // with a seeded sampler. Every number shown comes from src/core (draft edits preview through the
 // same engine functions; no copy of the rules lives here).
 import { GENETICS, MUTATIONS, type GeneticsBuckets, type GeneticsRules, type Mutation } from '../../src/core/config/breedingRules';

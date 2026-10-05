@@ -1,0 +1,14 @@
+// content/shared/items.json — every item of the shared bag (spec §6 Item): what it does.
+import { z } from 'zod';
+import { itemId, nonNeg } from '../fields';
+
+export const itemSchema = z.strictObject({
+  id: itemId,
+  /** Unit price at the shop (shop.json may sell packs at other prices). */
+  priceGold: nonNeg,
+  /** Hunger restored when a creature eats it; 0 = not food. */
+  hungerRestore: nonNeg,
+  curesSickness: z.boolean(),
+});
+
+export const itemsFileSchema = z.strictObject({ items: z.array(itemSchema) });

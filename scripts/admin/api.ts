@@ -2,65 +2,51 @@
 // mounted only by vite.admin.config.ts — never part of the shipped app (no server/port in the build).
 // It writes the same files the game imports, so `npm run dev` / the next build plays the edits.
 //   GET  /files                              → pig files, manifest pigs[], source inventory, library
-//   POST /species        { rows }            → speciesTable.ts, ids.ts, manifest pigs[]
+// Content goes to content/*.json, validated by the game's schemas (content/schemas) first.
+//   POST /species        { rows }            → farm/species.json, schemas/ids.generated.ts, manifest pigs[]
 //   POST /import-art     { source, artId, nameVi } → pigs/base/<artId>.png + manifest row
 //   POST /upload-art     { artId, nameVi, data }   → same, from an uploaded PNG (base64)
 //   POST /register-art   { artId, nameVi }   → manifest row for a file already in pigs/base/
-//   POST /day-night      { settings }        → DAY_NIGHT block of config/dayNight.ts (DN)
+//   POST /day-night      { settings }        → shared/daynight.json (DN)
 //   GET  /saves | /saves/read?id=            → desktop save folders (user management)
 //   POST /saves/write    { id, json, baseModifiedAt } · POST /saves/archive { id } · POST /saves/root { path }
-//   POST /products       { rows }            → PRODUCTS block of config/products.ts
-//   POST /breeding-pairs { rows }            → PAIR_RULES block of config/breedingPairs.ts
-//   POST /breeding-genetics { genetics, mutations, geneBonuses } → GENETICS + MUTATIONS blocks of
-//        config/breedingRules.ts and GENE_BONUSES of config/genePool.ts (MU-1)
-//   POST /season-fx      { tuning }          → SEASON_FX_TUNING block of config/seasonFx.ts (MU-2)
+//   POST /products       { rows }            → shared/shop.json
+//   POST /breeding-pairs { rows }            → farm/breeding.json `pairs`
+//   POST /breeding-genetics { genetics, mutations, geneBonuses } → farm/breeding.json (MU-1)
+//   POST /season-fx      { tuning }          → farm/season-fx.json (MU-2)
 //   GET  /layout-default · POST /layout { placements } → manifest layout.placements
 //   GET  /build-info · POST /open-folder { which } → desktop build status + guide data (AM-1)
 import { readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin, ViteDevServer } from 'vite';
-import { addBreedIdsText, appendPigRowsText, speciesTableText, type SpeciesRowData } from './speciesText';
+import { appendPigRowsText, type SpeciesRowData } from './speciesText';
+import {
+  CONTENT_FILE,
+  readContent,
+  readIds,
+  regenerateIds,
+  savedBreedIds,
+  speciesFileValue,
+  writeContent,
+  writeIds,
+} from './contentFiles';
 import type { DayNightSettings } from '../../src/core/config/dayNight';
 import { dayNightIssues } from '../../src/core/engine/dayNight';
-import { replaceDayNightBlock } from './dayNightText';
 import { validateSpecies, type ValidateInput } from './validate';
 import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, registerExisting, uploadArt } from './artFiles';
 import { buildInfo, openFolder } from './buildInfo';
 import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
-import {
-  geneBonusesBlock,
-  geneticsBlock,
-  mutationsBlock,
-  seasonFxBlock,
-  pairsBlock,
-  productsBlock,
-  replaceBlock,
-  replacePlacementsText,
-} from './configBlocks';
+import { replacePlacementsText } from './layoutText';
 import type { GeneticsRules, Mutation } from '../../src/core/config/breedingRules';
 import type { GeneBonuses } from '../../src/core/config/genePool';
 import type { SeasonFxTuning } from '../../src/core/config/seasonFx';
 import { layoutIssues, pairIssues, productIssues, type PairRuleRow, type PlacementRow, type ProductRow } from './rules';
 
-const TABLE = 'src/core/config/speciesTable.ts';
-const IDS = 'src/core/config/ids.ts';
-const DAY_NIGHT_FILE = 'src/core/config/dayNight.ts';
-const PRODUCTS_FILE = 'src/core/config/products.ts';
-const PAIRS_FILE = 'src/core/config/breedingPairs.ts';
-const RULES_FILE = 'src/core/config/breedingRules.ts';
-const GENE_FILE = 'src/core/config/genePool.ts';
-const SEASON_FX_FILE = 'src/core/config/seasonFx.ts';
 const LAYOUT_DEFAULT = 'scripts/admin/layoutDefault.json';
 
 type Result = { status: number; body: unknown };
 type Mod = Record<string, unknown>;
 
-/** Ids saves may hold: the BREED_ID_VALUES list as written in ids.ts now. */
-function savedIds(): string[] {
-  const text = readFileSync(IDS, 'utf8');
-  const list = text.slice(text.indexOf('BREED_ID_VALUES = ['), text.indexOf('] as const;', text.indexOf('BREED_ID_VALUES')));
-  return [...list.matchAll(/'(PIG_[A-Z0-9_]+)'/g)].map((m) => m[1]!);
-}
 
 type Rules = Pick<ValidateInput, 'rarities' | 'families' | 'tiers' | 'maxLevel'>;
 
@@ -84,9 +70,19 @@ async function loadRules(load: (p: string) => Promise<Mod>): Promise<Rules> {
   };
 }
 
-function saveSpecies(rows: SpeciesRowData[], rules: Rules): Result {
+/** Schema problems as a 400 (null when the file was written). */
+const invalid = (problems: string[]): Result | null =>
+  problems.length ? { status: 400, body: { error: problems.join('\n') } } : null;
+
+async function saveSpecies(
+  rows: SpeciesRowData[],
+  rules: Rules,
+  load: (p: string) => Promise<Mod>,
+  /** Drops Vite's cached modules: the schema must see the regenerated ids. */
+  invalidate: () => void,
+): Promise<Result> {
   const pigs = readPigs();
-  const issues = validateSpecies({ rows, pigs, files: assetFiles(), savedIds: savedIds(), ...rules }).filter(
+  const issues = validateSpecies({ rows, pigs, files: assetFiles(), savedIds: savedBreedIds(), ...rules }).filter(
     (i) => i.level === 'error',
   );
   if (issues.length > 0) return { status: 400, body: { error: 'invalid', issues } };
@@ -94,18 +90,28 @@ function saveSpecies(rows: SpeciesRowData[], rules: Rules): Result {
   const newArt = rows
     .filter((r) => !known.has(r.artId))
     .map((r) => ({ id: r.artId, nameVi: r.nameVi, asset: `pigs/base/${r.artId}.png`, tags: ['species', 'new'] }));
-  writeText(IDS, addBreedIdsText(readFileSync(IDS, 'utf8'), rows.map((r) => r.id)));
+  const value = speciesFileValue(rows, readContent(CONTENT_FILE.species));
+  const before = { species: readFileSync(`content/${CONTENT_FILE.species}`, 'utf8'), ids: readIds() };
+  // The schema checks ids against ids.generated.ts: append the new ids first, restore both on failure.
+  writeText(`content/${CONTENT_FILE.species}`, JSON.stringify(value));
+  regenerateIds();
+  invalidate();
+  const bad = invalid(await writeContent(load, CONTENT_FILE.species, '/content/schemas/farm/species.ts', 'speciesFileSchema', value));
+  if (bad) {
+    writeText(`content/${CONTENT_FILE.species}`, before.species);
+    writeIds(before.ids);
+    return bad;
+  }
   writeText(MANIFEST, appendPigRowsText(readFileSync(MANIFEST, 'utf8'), newArt));
-  writeText(TABLE, speciesTableText(rows));
   return { status: 200, body: { ok: true, rows: rows.length, manifestAdded: newArt.length } };
 }
 
-/** DN: validated settings → the admin block of dayNight.ts (the game reloads with them). */
-function saveDayNight(settings: DayNightSettings): Result {
+/** DN: validated settings → content/shared/daynight.json (the game reloads with them). */
+async function saveDayNight(settings: DayNightSettings, load: (p: string) => Promise<Mod>): Promise<Result> {
   const issues = dayNightIssues(settings);
   if (issues.length > 0) return { status: 400, body: { error: issues.join('\n') } };
-  writeText(DAY_NIGHT_FILE, replaceDayNightBlock(readFileSync(DAY_NIGHT_FILE, 'utf8'), settings));
-  return { status: 200, body: { ok: true } };
+  const written = await writeContent(load, CONTENT_FILE.dayNight, '/content/schemas/shared/dayNight.ts', 'dayNightFileSchema', settings);
+  return invalid(written) ?? { status: 200, body: { ok: true } };
 }
 
 /** Manifest ids of every non-pig row (what products and placements may point at). */
@@ -136,8 +142,8 @@ async function saveProducts(rows: ProductRow[], load: (p: string) => Promise<Mod
     }),
   );
   if (bad) return bad;
-  writeText(PRODUCTS_FILE, replaceBlock(readFileSync(PRODUCTS_FILE, 'utf8'), 'products', productsBlock(rows as never)));
-  return { status: 200, body: { ok: true, rows: rows.length } };
+  const written = await writeContent(load, CONTENT_FILE.shop, '/content/schemas/shared/shop.ts', 'shopFileSchema', { products: rows });
+  return invalid(written) ?? { status: 200, body: { ok: true, rows: rows.length } };
 }
 
 async function savePairs(rows: PairRuleRow[], load: (p: string) => Promise<Mod>): Promise<Result> {
@@ -149,8 +155,9 @@ async function savePairs(rows: PairRuleRow[], load: (p: string) => Promise<Mod>)
     }),
   );
   if (bad) return bad;
-  writeText(PAIRS_FILE, replaceBlock(readFileSync(PAIRS_FILE, 'utf8'), 'breedingPairs', pairsBlock(rows as never)));
-  return { status: 200, body: { ok: true, rows: rows.length } };
+  const breeding = { ...readContent(CONTENT_FILE.breeding), pairs: rows };
+  const written = await writeContent(load, CONTENT_FILE.breeding, '/content/schemas/farm/breeding.ts', 'breedingFileSchema', breeding);
+  return invalid(written) ?? { status: 200, body: { ok: true, rows: rows.length } };
 }
 
 interface GeneticsBody {
@@ -177,12 +184,9 @@ async function saveGenetics(b: GeneticsBody, load: (p: string) => Promise<Mod>):
   if (!(g.base > 0) || [g.sameTheme, g.relatedTheme, g.perGeneTag, g.geneTagCap].some((v) => !(v >= 0)))
     issues.push('gene pool: base > 0, các điểm cộng ≥ 0');
   if (issues.length) return { status: 400, body: { error: issues.join('\n') } };
-  let rules = readFileSync(RULES_FILE, 'utf8');
-  rules = replaceBlock(rules, 'genetics', geneticsBlock(b.genetics));
-  rules = replaceBlock(rules, 'mutations', mutationsBlock(b.mutations));
-  writeText(RULES_FILE, rules);
-  writeText(GENE_FILE, replaceBlock(readFileSync(GENE_FILE, 'utf8'), 'geneBonuses', geneBonusesBlock(g)));
-  return { status: 200, body: { ok: true, recipes: b.mutations.length } };
+  const breeding = { ...readContent(CONTENT_FILE.breeding), genetics: b.genetics, mutations: b.mutations, geneBonuses: g };
+  const written = await writeContent(load, CONTENT_FILE.breeding, '/content/schemas/farm/breeding.ts', 'breedingFileSchema', breeding);
+  return invalid(written) ?? { status: 200, body: { ok: true, recipes: b.mutations.length } };
 }
 
 /** MU-2: seasonal FX tuning (on / off, density, spawn rate), validated by the engine. */
@@ -190,8 +194,8 @@ async function saveSeasonFx(tuning: SeasonFxTuning, load: (p: string) => Promise
   const fx = await load('/src/core/engine/seasonFx.ts');
   const issues = (fx.seasonFxIssues as (t: SeasonFxTuning) => string[])(tuning);
   if (issues.length) return { status: 400, body: { error: issues.join('; ') } };
-  writeText(SEASON_FX_FILE, replaceBlock(readFileSync(SEASON_FX_FILE, 'utf8'), 'seasonFx', seasonFxBlock(tuning)));
-  return { status: 200, body: { ok: true } };
+  const written = await writeContent(load, CONTENT_FILE.seasonFx, '/content/schemas/farm/seasonFx.ts', 'seasonFxFileSchema', tuning);
+  return invalid(written) ?? { status: 200, body: { ok: true } };
 }
 
 async function saveLayout(placements: PlacementRow[], load: (p: string) => Promise<Mod>): Promise<Result> {
@@ -239,7 +243,9 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
     case 'GET /files':
       return { status: 200, body: filesPayload() };
     case 'POST /species':
-      return saveSpecies((await body<{ rows: SpeciesRowData[] }>()).rows, await loadRules(load));
+      return saveSpecies((await body<{ rows: SpeciesRowData[] }>()).rows, await loadRules(load), load, () =>
+        server.moduleGraph.invalidateAll(),
+      );
     case 'POST /import-art':
       return importArt(await body());
     case 'POST /upload-art':
@@ -247,7 +253,7 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
     case 'POST /register-art':
       return registerExisting(await body());
     case 'POST /day-night':
-      return saveDayNight((await body<{ settings: DayNightSettings }>()).settings);
+      return saveDayNight((await body<{ settings: DayNightSettings }>()).settings, load);
     case 'GET /saves':
       return { status: 200, body: { root: savesRoot(), profiles: listProfiles() } };
     case 'GET /saves/read':

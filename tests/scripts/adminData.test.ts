@@ -1,11 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import {
-  addBreedIdsText,
-  appendPigRowsText,
-  speciesTableText,
-  type SpeciesRowData,
-} from '../../scripts/admin/speciesText';
+import { appendPigRowsText, type SpeciesRowData } from '../../scripts/admin/speciesText';
+import { readContent, speciesFileValue } from '../../scripts/admin/contentFiles';
+import { contentJson } from '../../scripts/content/format';
 import { artState, validateSpecies, type PigArtRow, type ValidateInput } from '../../scripts/admin/validate';
 import { BALANCE } from '../../src/core/config/balance';
 import { FAMILY_VALUES, RARITY_TIER } from '../../src/core/config/breeds';
@@ -33,16 +30,15 @@ const withRow = (id: string, patch: Partial<SpeciesRowData>) =>
   rows.map((r) => (r.id === id ? { ...r, ...patch } : r));
 
 describe('admin species text', () => {
-  it('re-renders the species table byte for byte (admin saves leave no noise)', () => {
-    const file = readFileSync('src/core/config/speciesTable.ts', 'utf8').replace(/\r\n/g, '\n');
-    expect(speciesTableText(rows)).toBe(file);
+  it('re-renders content/farm/species.json byte for byte (admin saves leave no noise)', () => {
+    const file = readFileSync('content/farm/species.json', 'utf8').replace(/\r\n/g, '\n');
+    expect(contentJson(speciesFileValue(rows, readContent('farm/species.json')))).toBe(file);
   });
 
-  it('adds new breed ids once', () => {
-    const text = "export const BREED_ID_VALUES = [\n  'PIG_A',\n] as const;\n";
-    const once = addBreedIdsText(text, ['PIG_A', 'PIG_B']);
-    expect(once).toBe("export const BREED_ID_VALUES = [\n  'PIG_A',\n  'PIG_B',\n] as const;\n");
-    expect(addBreedIdsText(once, ['PIG_B'])).toBe(once);
+  it('a new species gets no traits; existing ones keep theirs', () => {
+    const value = speciesFileValue([...rows, { ...rows[0]!, id: 'PIG_ZZ', artId: 'pig_zz' }], readContent('farm/species.json'));
+    expect(value.species.at(-1)).toMatchObject({ id: 'PIG_ZZ', traits: [] });
+    expect(value.species[0]!.traits).toEqual(['pink', 'farm']);
   });
 
   it('appends manifest pig rows that parse and keep the other sections', () => {

@@ -1,0 +1,12 @@
+{
+  "REWARDS": [
+    { "gold": 100, "food": 0, "medicine": 0 },
+    { "gold": 150, "food": 5, "medicine": 0 },
+    { "gold": 200, "food": 0, "medicine": 0 },
+    { "gold": 250, "food": 10, "medicine": 0 },
+    { "gold": 300, "food": 0, "medicine": 0 },
+    { "gold": 400, "food": 0, "medicine": 1 },
+    { "gold": 800, "food": 15, "medicine": 1 }
+  ],
+  "XP": 5
+}

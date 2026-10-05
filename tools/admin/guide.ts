@@ -29,7 +29,7 @@ const SECTIONS: Section[] = [
   },
   {
     id: 'pigs', icon: '🐷', title: 'Quản lý heo',
-    purpose: 'Danh sách species (src/core/config/speciesTable.ts): tên, độ hiếm, nhóm, giá, thời gian lớn, ảnh. Heo bán trong shop cũng chỉnh ở đây (Giá mua, Cấp mở khoá).',
+    purpose: 'Danh sách species (content/farm/species.json): tên, độ hiếm, nhóm, giá, thời gian lớn, ảnh. Heo bán trong shop cũng chỉnh ở đây (Giá mua, Cấp mở khoá).',
     steps: ['Tìm / lọc theo nhóm, độ hiếm, trạng thái; sắp xếp theo tên, độ hiếm, giá.', '＋ Thêm heo → chọn Ảnh (art id) trong danh sách ảnh trống → điền tên, ID, độ hiếm, nhóm.', '“Thêm vào danh sách” chỉ vào bản nháp — bấm 💾 Lưu vào game ở đầu trang.'],
     example: ['Asset nguồn → Nhập pig_cyborg_v2 thành pig_cyborg_v3 → tự mở “Tạo heo mới” với ảnh đó → đặt tên “Heo Cyborg Mk3”, EPIC, SCIFI → Lưu.'],
     notes: ['Không xoá species đã phát hành (save cũ đang giữ) — bỏ chọn “Đang dùng” để tắt.', 'Hiếm hơn phải bán đắt hơn và lớn lâu hơn; chỉ LEGENDARY không lai được.'],
@@ -57,14 +57,14 @@ const SECTIONS: Section[] = [
   },
   {
     id: 'shop', icon: '🛒', title: 'Cửa hàng / Sản phẩm',
-    purpose: 'Sản phẩm tab Vật phẩm của shop (src/core/config/products.ts): gói của một vật phẩm game với giá, số lượng, icon, danh mục, thứ tự, trạng thái bán.',
+    purpose: 'Sản phẩm tab Vật phẩm của shop (content/shared/shop.json): gói của một vật phẩm game với giá, số lượng, icon, danh mục, thứ tự, trạng thái bán.',
     steps: ['＋ Thêm sản phẩm → ID, tên, mô tả, vật phẩm nhận được, số lượng mỗi lần mua, giá, icon → xem trước thẻ shop.', 'Ngừng bán / Bán lại bằng nút trên dòng.', '💾 Lưu sản phẩm vào game → mở shop trong game.'],
     example: ['Gói “Thức ăn ×10” giá 230: vật phẩm FOOD_BASIC, số lượng 10, giá 230, thứ tự 15 → hiện giữa Thức ăn và Thuốc.'],
     notes: ['Sản phẩm đã phát hành không xoá được (lịch sử giao dịch trỏ tới) — dùng Ngừng bán.', 'Giá đổ máng vẫn theo giá gốc vật phẩm, không theo gói.', 'Heo bán trong shop chỉnh ở Quản lý heo (Giá mua, Cấp mở khoá).'],
   },
   {
     id: 'breeding', icon: '🧬', title: 'Phối giống',
-    purpose: 'Ba tab trên cùng một dữ liệu phối giống của game: 🧬 Sơ đồ phả hệ (heo xếp theo thế hệ, bấm một heo để thấy bố mẹ, tổ tiên, hậu duệ), 📐 Luật đang chạy (sửa được: Random Genetics theo độ hiếm, Gene Pool, Công thức đặc biệt; kiểm tra dữ liệu; thử một cặp với random seed) và ✏️ Bảng ghi đè cặp: Heo A + Heo B → các kết quả với tỷ lệ % (src/core/config/breedingPairs.ts). Cặp không có luật ghi đè: công thức đặc biệt lấy đúng % của nó trước, random genetics chia phần còn lại (bố mẹ > cùng bậc / bậc giữa > lên 1 bậc) — mọi cặp hợp lệ đều sinh được con.',
+    purpose: 'Ba tab trên cùng một dữ liệu phối giống của game: 🧬 Sơ đồ phả hệ (heo xếp theo thế hệ, bấm một heo để thấy bố mẹ, tổ tiên, hậu duệ), 📐 Luật đang chạy (sửa được: Random Genetics theo độ hiếm, Gene Pool, Công thức đặc biệt; kiểm tra dữ liệu; thử một cặp với random seed) và ✏️ Bảng ghi đè cặp: Heo A + Heo B → các kết quả với tỷ lệ % (content/farm/breeding.json). Cặp không có luật ghi đè: công thức đặc biệt lấy đúng % của nó trước, random genetics chia phần còn lại (bố mẹ > cùng bậc / bậc giữa > lên 1 bậc) — mọi cặp hợp lệ đều sinh được con.',
     steps: ['Sơ đồ phả hệ: bấm heo (hoặc chọn ở ô Tìm heo) → sơ đồ tự cuộn tới, đường hồng = tổ tiên, xanh = hậu duệ, viền nét đứt = chỉ lai ra được bằng đường hiếm (< 5 %).', '＋ Thêm luật → chọn Heo A, Heo B (chỉ heo lai được).', 'Form tự điền tỷ lệ hiện tại của game; thêm/bớt kết quả, sửa %.', 'Tổng phải đúng 100 % (nút ⚖ chia lại cho đủ). Trùng cặp (A+B = B+A) bị chặn.', '💾 Lưu luật vào game — hộp thoại phối giống trong game hiện đúng tỷ lệ này.'],
     example: ['Heo Hồng + Heo Đen: Heo Hồng 60 %, Heo Đen 25 %, Heo Gấu Trúc 10 %, Heo Galaxy 5 % → Lưu.'],
     notes: ['Thế hệ 0 = heo bán ở cửa hàng; thế hệ n = lai ra (tỷ lệ ≥ 5 %) từ hai heo thế hệ trước. Sơ đồ đọc trực tiếp luật + công thức + bảng ghi đè, không có dữ liệu riêng.', 'Tắt luật để quay về tỷ lệ mặc định mà vẫn giữ luật.', 'Kết quả là heo đang tắt bị bỏ qua khi chơi; phần còn lại tự chia lại cho đủ 100 %.'],
@@ -79,7 +79,7 @@ const SECTIONS: Section[] = [
     purpose: 'Bật / tắt, mật độ và tốc độ sinh của hiệu ứng môi trường theo mùa (cánh hoa, bướm, tia nắng, bụi nắng, đom đóm đêm hè, lá rơi, sương ấm, tuyết, gió xoáy) và bảng art công trình theo mùa (thiếu mùa → art mặc định).',
     steps: ['Chỉnh Bật / Mật độ × / Tốc độ sinh × từng hiệu ứng (hoặc mật độ chung).', '💾 Lưu hiệu ứng vào game.', 'Xem trước mùa: Bố cục nông trại → Mùa, hoặc game dev với ?season=winter; pha ngày/đêm: trang Ngày / Đêm.'],
     example: ['Tuyết quá dày → winter_snow mật độ 0,6.'],
-    notes: ['Điều kiện ngày/đêm (đom đóm chỉ đêm hè) và chuyển động nằm trong src/core/config/seasonFx.ts.', 'Hiệu ứng không bấm được, không đổi vị trí / va chạm / camera; tắt khi "Giảm chuyển động".'],
+    notes: ['Điều kiện ngày/đêm (đom đóm chỉ đêm hè) và chuyển động nằm trong src/core/config/seasonFxTable.ts (bật/tắt, mật độ: content/farm/season-fx.json).', 'Hiệu ứng không bấm được, không đổi vị trí / va chạm / camera; tắt khi "Giảm chuyển động".'],
   },
   {
     id: 'desktop', icon: '🎮', title: 'Desktop Game',

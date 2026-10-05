@@ -1,0 +1,6 @@
+{
+  "items": [
+    { "id": "FOOD_BASIC", "priceGold": 25, "hungerRestore": 50, "curesSickness": false },
+    { "id": "MEDICINE_COMMON", "priceGold": 100, "hungerRestore": 0, "curesSickness": true }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "phases": {
+    "dawn": "05:00",
+    "morning": "07:00",
+    "day": "10:00",
+    "afternoon": "16:00",
+    "sunset": "18:00",
+    "night": "20:00"
+  },
+  "blendMinutes": 60,
+  "transitionMs": 3000
+}

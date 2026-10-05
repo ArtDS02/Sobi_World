@@ -5,7 +5,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { pngSize } from '../../scripts/admin/artFiles';
-import { pairsBlock, productsBlock, replaceBlock, replacePlacementsText } from '../../scripts/admin/configBlocks';
+import { replacePlacementsText } from '../../scripts/admin/layoutText';
+import { schemaProblems } from '../../scripts/admin/contentFiles';
+import { shopFileSchema } from '../../content/schemas/shared/shop';
+import { breedingFileSchema } from '../../content/schemas/farm/breeding';
+import { CONTENT } from '../../src/core/config/content';
 import { layoutIssues, pairIssues, productIssues, type PairRuleRow, type ProductRow } from '../../scripts/admin/rules';
 import { archiveProfile, listProfiles, readProfile, writeProfile } from '../../scripts/admin/saves';
 import { appendPigRowsText } from '../../scripts/admin/speciesText';
@@ -71,9 +75,9 @@ describe('product rules', () => {
     expect(bad({ id: rows[0]!.id })).toMatch(/Trùng/);
     expect(errors(rows.slice(1)).map((i) => i.text).join()).toMatch(/Không được xoá/);
   });
-  it('rewrites the PRODUCTS block byte for byte', () => {
-    const src = readFileSync('src/core/config/products.ts', 'utf8').replace(/\r\n/g, '\n');
-    expect(replaceBlock(src, 'products', productsBlock(PRODUCTS))).toBe(src);
+  it('the dashboard rows are a valid shop file; the schema refuses a bad one', () => {
+    expect(schemaProblems(shopFileSchema, { products: PRODUCTS })).toEqual([]);
+    expect(schemaProblems(shopFileSchema, { products: [{ ...PRODUCTS[0], itemId: 'GOLDEN_APPLE' }] }).join()).toMatch(/itemId/);
   });
 });
 
@@ -95,11 +99,11 @@ describe('breeding pair rules', () => {
     const legend = BREED_IDS.find((id) => !BREEDS[id].breedable)!;
     expect(errs([r('PAIR_001', legend, 'PIG_BLACK', [['PIG_WHITE', 100]])]).join()).toMatch(/không lai được/);
   });
-  it('rewrites the PAIR_RULES block byte for byte and as parseable rows', () => {
-    const src = readFileSync('src/core/config/breedingPairs.ts', 'utf8').replace(/\r\n/g, '\n');
-    expect(replaceBlock(src, 'breedingPairs', pairsBlock(PAIR_RULES))).toBe(src);
-    const one = pairsBlock([{ id: 'PAIR_001', parents: ['PIG_WHITE', 'PIG_BLACK'], outcomes: [{ breed: 'PIG_PANDA', percent: 100 }], active: true, note: 'x"y' }]);
-    expect(one).toContain('{ id: "PAIR_001", parents: ["PIG_WHITE", "PIG_BLACK"], outcomes: [{ breed: "PIG_PANDA", percent: 100 }], active: true, note: "x\\"y" }');
+  it('a pair row is a valid breeding file entry; unknown species are refused by the schema', () => {
+    const one = { id: 'PAIR_001', parents: ['PIG_WHITE', 'PIG_BLACK'], outcomes: [{ breed: 'PIG_PANDA', percent: 100 }], active: true, note: 'x"y' };
+    expect(schemaProblems(breedingFileSchema, { ...CONTENT.breeding, pairs: [...PAIR_RULES, one] })).toEqual([]);
+    const bad = { ...one, parents: ['PIG_NOPE', 'PIG_BLACK'] };
+    expect(schemaProblems(breedingFileSchema, { ...CONTENT.breeding, pairs: [bad] })).not.toEqual([]);
   });
 });
 

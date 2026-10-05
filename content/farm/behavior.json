@@ -1,0 +1,64 @@
+{
+  "needs": {
+    "hunger": { "enabled": true },
+    "cleanliness": { "enabled": true },
+    "health": { "enabled": true },
+    "sleepiness": { "enabled": true },
+    "thirst": { "enabled": false }
+  },
+  "life": {
+    "tickMs": 500,
+    "auto": { "feed": true, "drink": false, "sleep": true },
+    "sleep": {
+      "levelMin": { "awake": 0, "tired": 31, "sleepy": 61, "verySleepy": 81 },
+      "dayRisePerHour": 6,
+      "nightRisePerMin": 10,
+      "napRecoverPerMin": 3,
+      "nightRecoverPerHour": 8,
+      "nightSleepAt": 70,
+      "daySleepAt": 85,
+      "napWakeAt": 40,
+      "wakeSpreadMs": 90000,
+      "morningMs": 3600000,
+      "morningLevel": 10,
+      "loadCap": 60
+    },
+    "feed": {
+      "eatMsPerMeal": 3000,
+      "maxEatMs": 9000,
+      "runSpeed": 1.4,
+      "driveSpeed": 0.5,
+      "maxReactMs": 1500,
+      "maxSeekMs": 30000,
+      "spots": [
+        { "u": 0.25, "v": 0.05 },
+        { "u": 0.75, "v": 0.05 },
+        { "u": 1.3, "v": 0.45 },
+        { "u": 1.2, "v": -0.25 },
+        { "u": 0.5, "v": -0.4 },
+        { "u": -0.05, "v": -0.35 },
+        { "u": 0.95, "v": -0.7 },
+        { "u": 1.6, "v": 0.05 }
+      ],
+      "rowBackPx": 60
+    },
+    "idle": {
+      "restMinMs": 1500,
+      "restMaxMs": 5000,
+      "mopeRest": 1.8,
+      "weights": { "wander": 0.5, "lookAround": 0.2, "idle": 0.3 },
+      "lookAroundMs": 1400,
+      "restInPlaceMs": 4000
+    },
+    "social": {
+      "chance": 0.35,
+      "cooldownMs": 40000,
+      "rangePx": 520,
+      "sideGapPx": 125,
+      "holdMinMs": 3000,
+      "holdMaxMs": 6000
+    },
+    "personality": { "spread": 0.35 },
+    "sleepArea": { "radius": 0.72, "spacingPx": 95 }
+  }
+}

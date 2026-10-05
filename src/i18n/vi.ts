@@ -2,6 +2,7 @@ export const vi = {
   app: {
     title: "Sobi Farm",
     loading: "Đang tải...",
+    startupError: "Dữ liệu game bị lỗi nên không mở được. Hãy báo nhà phát triển.",
   },
 
   nav: {

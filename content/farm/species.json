@@ -1,0 +1,701 @@
+{
+  "tiers": {
+    "COMMON": {
+      "sellGold": 1200,
+      "growthSec": 7200,
+      "pregnancySec": 3600,
+      "maxWeight": 50,
+      "breedable": true
+    },
+    "UNCOMMON": {
+      "sellGold": 3000,
+      "growthSec": 14400,
+      "pregnancySec": 5400,
+      "maxWeight": 80,
+      "breedable": true
+    },
+    "RARE": {
+      "sellGold": 12000,
+      "growthSec": 28800,
+      "pregnancySec": 10800,
+      "maxWeight": 120,
+      "breedable": true
+    },
+    "EPIC": {
+      "sellGold": 24000,
+      "growthSec": 57600,
+      "pregnancySec": 18000,
+      "maxWeight": 180,
+      "breedable": true
+    },
+    "LEGENDARY": {
+      "sellGold": 50000,
+      "growthSec": 86400,
+      "pregnancySec": null,
+      "maxWeight": 250,
+      "breedable": false
+    }
+  },
+  "species": [
+    {
+      "id": "PIG_EARTH_PINK",
+      "nameVi": "Heo Hồng Đất",
+      "rarity": "COMMON",
+      "family": "FARM",
+      "buyGold": 500,
+      "artId": "pig_classic",
+      "color": "#f7a8b8",
+      "traits": ["pink", "farm"]
+    },
+    {
+      "id": "PIG_WHITE",
+      "nameVi": "Heo Trắng",
+      "rarity": "COMMON",
+      "family": "FARM",
+      "buyGold": 500,
+      "artId": "pig_white",
+      "color": "#fff4ea",
+      "traits": ["white", "farm"]
+    },
+    {
+      "id": "PIG_BLACK",
+      "nameVi": "Heo Đen",
+      "rarity": "COMMON",
+      "family": "FARM",
+      "buyGold": 500,
+      "artId": "pig_black",
+      "color": "#3d3540",
+      "traits": ["black", "farm", "dark"]
+    },
+    {
+      "id": "PIG_BROWN",
+      "nameVi": "Heo Nâu",
+      "rarity": "COMMON",
+      "family": "FARM",
+      "buyGold": 500,
+      "unlockLevel": 2,
+      "artId": "pig_brown",
+      "color": "#b9744f",
+      "traits": ["brown", "farm"]
+    },
+    {
+      "id": "PIG_SPOTTED",
+      "nameVi": "Heo Đốm",
+      "rarity": "COMMON",
+      "family": "FARM",
+      "buyGold": 500,
+      "unlockLevel": 3,
+      "artId": "pig_spotted",
+      "color": "#f2c4b0",
+      "traits": ["brown", "white", "farm"]
+    },
+    {
+      "id": "PIG_FARMER",
+      "nameVi": "Heo Nông Dân",
+      "rarity": "COMMON",
+      "family": "VIETNAM",
+      "buyGold": 500,
+      "unlockLevel": 2,
+      "artId": "pig_farmer",
+      "color": "#f2b48c",
+      "traits": ["farm", "vietnam", "plant", "job"]
+    },
+    {
+      "id": "PIG_ICECREAM",
+      "nameVi": "Heo Kem",
+      "rarity": "COMMON",
+      "family": "FOOD",
+      "buyGold": 500,
+      "unlockLevel": 2,
+      "artId": "pig_icecream",
+      "color": "#f9c6d3",
+      "traits": ["sweet", "food", "ice", "pink"]
+    },
+    {
+      "id": "PIG_CHEF",
+      "nameVi": "Heo Đầu Bếp",
+      "rarity": "COMMON",
+      "family": "JOB",
+      "buyGold": 500,
+      "unlockLevel": 3,
+      "artId": "pig_chef",
+      "color": "#fce4e4",
+      "traits": ["food", "job", "white"]
+    },
+    {
+      "id": "PIG_SLEEPY",
+      "nameVi": "Heo Buồn Ngủ",
+      "rarity": "COMMON",
+      "family": "FUNNY",
+      "buyGold": 500,
+      "unlockLevel": 3,
+      "artId": "pig_sleepy",
+      "color": "#84b4e4",
+      "traits": ["cozy", "blue", "funny"]
+    },
+    {
+      "id": "PIG_GHOST",
+      "nameVi": "Heo Ma",
+      "rarity": "COMMON",
+      "family": "HORROR",
+      "buyGold": 500,
+      "unlockLevel": 4,
+      "artId": "pig_ghost",
+      "color": "#f4f4f8",
+      "traits": ["spooky", "white", "dark"]
+    },
+    {
+      "id": "PIG_TEACHER",
+      "nameVi": "Heo Giáo Viên",
+      "rarity": "COMMON",
+      "family": "JOB",
+      "buyGold": 500,
+      "unlockLevel": 4,
+      "artId": "pig_teacher",
+      "color": "#b48454",
+      "traits": ["job", "brown"]
+    },
+    {
+      "id": "PIG_KNIGHT",
+      "nameVi": "Heo Hiệp Sĩ",
+      "rarity": "COMMON",
+      "family": "ADVENTURE",
+      "buyGold": 500,
+      "unlockLevel": 5,
+      "artId": "pig_knight",
+      "color": "#b8c0cc",
+      "traits": ["warrior", "metal", "hero"]
+    },
+    {
+      "id": "PIG_DETECTIVE",
+      "nameVi": "Heo Thám Tử",
+      "rarity": "COMMON",
+      "family": "JOB",
+      "artId": "pig_detective",
+      "color": "#9c9c9c",
+      "traits": ["job", "gray"]
+    },
+    {
+      "id": "PIG_BUSINESS",
+      "nameVi": "Heo Doanh Nhân",
+      "rarity": "COMMON",
+      "family": "JOB",
+      "artId": "pig_business",
+      "color": "#8a5a40",
+      "traits": ["job", "gold"]
+    },
+    {
+      "id": "PIG_BOBA",
+      "nameVi": "Heo Trà Sữa",
+      "rarity": "COMMON",
+      "family": "FOOD",
+      "artId": "pig_boba",
+      "color": "#fcccb4",
+      "traits": ["food", "sweet", "brown"]
+    },
+    {
+      "id": "PIG_LAZY",
+      "nameVi": "Heo Lười",
+      "rarity": "COMMON",
+      "family": "FUNNY",
+      "artId": "pig_lazy",
+      "color": "#fcb4b4",
+      "traits": ["cozy", "funny", "pink"]
+    },
+    {
+      "id": "PIG_ANGRY",
+      "nameVi": "Heo Cáu",
+      "rarity": "COMMON",
+      "family": "FUNNY",
+      "artId": "pig_angry",
+      "color": "#e46c54",
+      "traits": ["funny", "red", "fire"]
+    },
+    {
+      "id": "PIG_CRYBABY",
+      "nameVi": "Heo Mít Ướt",
+      "rarity": "COMMON",
+      "family": "FUNNY",
+      "artId": "pig_crybaby",
+      "color": "#fcb4c4",
+      "traits": ["funny", "water", "pink"]
+    },
+    {
+      "id": "PIG_GRANDPA",
+      "nameVi": "Heo Ông",
+      "rarity": "COMMON",
+      "family": "FUNNY",
+      "artId": "pig_grandpa",
+      "color": "#b4846c",
+      "traits": ["funny", "cozy", "gray"]
+    },
+    {
+      "id": "PIG_PARTY",
+      "nameVi": "Heo Quẩy",
+      "rarity": "COMMON",
+      "family": "FUNNY",
+      "artId": "pig_party",
+      "color": "#f7a8c8",
+      "traits": ["funny", "festive"]
+    },
+    {
+      "id": "PIG_STRIPED_MELON",
+      "nameVi": "Heo Sọc Dưa",
+      "rarity": "UNCOMMON",
+      "family": "MEADOW",
+      "artId": "pig_watermelon",
+      "color": "#8fd18a",
+      "traits": ["green", "fruit", "plant"]
+    },
+    {
+      "id": "PIG_BOAR",
+      "nameVi": "Heo Rừng",
+      "rarity": "UNCOMMON",
+      "family": "WILD",
+      "buyGold": 1500,
+      "unlockLevel": 3,
+      "artId": "pig_boar",
+      "color": "#7a6250",
+      "traits": ["brown", "wild", "animal"]
+    },
+    {
+      "id": "PIG_SHEEP",
+      "nameVi": "Heo Cừu",
+      "rarity": "UNCOMMON",
+      "family": "MEADOW",
+      "buyGold": 1500,
+      "unlockLevel": 4,
+      "artId": "pig_sheep",
+      "color": "#f5ebdd",
+      "traits": ["white", "animal", "cozy"]
+    },
+    {
+      "id": "PIG_BEE",
+      "nameVi": "Heo Ong",
+      "rarity": "UNCOMMON",
+      "family": "MEADOW",
+      "artId": "pig_bee",
+      "color": "#f6c944",
+      "traits": ["gold", "insect", "flower"]
+    },
+    {
+      "id": "PIG_PENGUIN",
+      "nameVi": "Heo Cánh Cụt",
+      "rarity": "UNCOMMON",
+      "family": "WATER",
+      "buyGold": 1800,
+      "unlockLevel": 5,
+      "artId": "pig_penguin",
+      "color": "#33415c",
+      "traits": ["black", "white", "water", "ice"]
+    },
+    {
+      "id": "PIG_BUFFALO",
+      "nameVi": "Heo Trâu",
+      "rarity": "UNCOMMON",
+      "family": "FARM",
+      "buyGold": 1500,
+      "unlockLevel": 4,
+      "artId": "pig_buffalo",
+      "color": "#767e8c",
+      "traits": ["gray", "farm", "animal", "horns"]
+    },
+    {
+      "id": "PIG_DEER",
+      "nameVi": "Heo Hươu Sao",
+      "rarity": "UNCOMMON",
+      "family": "MEADOW",
+      "artId": "pig_deer",
+      "color": "#ce8a52",
+      "traits": ["brown", "wild", "animal", "horns"]
+    },
+    {
+      "id": "PIG_PUMPKIN",
+      "nameVi": "Heo Bí Ngô",
+      "rarity": "UNCOMMON",
+      "family": "MEADOW",
+      "artId": "pig_pumpkin",
+      "color": "#f28c28",
+      "traits": ["orange", "plant", "fruit", "spooky"]
+    },
+    {
+      "id": "PIG_AO_DAI",
+      "nameVi": "Heo Áo Dài",
+      "rarity": "UNCOMMON",
+      "family": "VIETNAM",
+      "artId": "pig_ao_dai",
+      "color": "#d8443a",
+      "traits": ["vietnam", "red", "festive"]
+    },
+    {
+      "id": "PIG_TET",
+      "nameVi": "Heo Tết",
+      "rarity": "UNCOMMON",
+      "family": "VIETNAM",
+      "artId": "pig_tet",
+      "color": "#e0453a",
+      "traits": ["vietnam", "red", "festive", "gold"]
+    },
+    {
+      "id": "PIG_LAN",
+      "nameVi": "Heo Lân",
+      "rarity": "UNCOMMON",
+      "family": "VIETNAM",
+      "artId": "pig_lan",
+      "color": "#b46c54",
+      "traits": ["vietnam", "festive", "myth"]
+    },
+    {
+      "id": "PIG_BANH_CHUNG",
+      "nameVi": "Heo Bánh Chưng",
+      "rarity": "UNCOMMON",
+      "family": "VIETNAM",
+      "artId": "pig_banh_chung",
+      "color": "#54843c",
+      "traits": ["vietnam", "food", "green", "festive"]
+    },
+    {
+      "id": "PIG_ASTRONAUT",
+      "nameVi": "Heo Phi Hành Gia",
+      "rarity": "UNCOMMON",
+      "family": "JOB",
+      "artId": "pig_astronaut",
+      "color": "#eef0f4",
+      "traits": ["space", "job", "white", "tech"]
+    },
+    {
+      "id": "PIG_PIRATE",
+      "nameVi": "Heo Cướp Biển",
+      "rarity": "UNCOMMON",
+      "family": "ADVENTURE",
+      "artId": "pig_pirate",
+      "color": "#5a3a2a",
+      "traits": ["warrior", "water"]
+    },
+    {
+      "id": "PIG_NINJA",
+      "nameVi": "Heo Ninja",
+      "rarity": "UNCOMMON",
+      "family": "ADVENTURE",
+      "artId": "pig_ninja",
+      "color": "#3c3c54",
+      "traits": ["warrior", "black", "dark"]
+    },
+    {
+      "id": "PIG_WITCH",
+      "nameVi": "Heo Phù Thủy",
+      "rarity": "UNCOMMON",
+      "family": "ADVENTURE",
+      "artId": "pig_witch",
+      "color": "#6a3fa0",
+      "traits": ["magic", "purple", "spooky"]
+    },
+    {
+      "id": "PIG_SURFER",
+      "nameVi": "Heo Lướt Sóng",
+      "rarity": "UNCOMMON",
+      "family": "ADVENTURE",
+      "artId": "pig_surfer",
+      "color": "#3c3c3c",
+      "traits": ["water", "blue"]
+    },
+    {
+      "id": "PIG_DIVER",
+      "nameVi": "Heo Thợ Lặn",
+      "rarity": "UNCOMMON",
+      "family": "ADVENTURE",
+      "artId": "pig_diver",
+      "color": "#3c546c",
+      "traits": ["water", "blue", "tech"]
+    },
+    {
+      "id": "PIG_ALIEN",
+      "nameVi": "Heo Ngoài Hành Tinh",
+      "rarity": "UNCOMMON",
+      "family": "SCIFI",
+      "buyGold": 1800,
+      "unlockLevel": 6,
+      "artId": "pig_alien",
+      "color": "#cc9ce4",
+      "traits": ["space", "purple"]
+    },
+    {
+      "id": "PIG_MECHA",
+      "nameVi": "Heo Mecha",
+      "rarity": "UNCOMMON",
+      "family": "SCIFI",
+      "artId": "pig_mecha",
+      "color": "#9c6c54",
+      "traits": ["tech", "metal", "warrior", "green"]
+    },
+    {
+      "id": "PIG_CYBORG",
+      "nameVi": "Heo Cyborg",
+      "rarity": "UNCOMMON",
+      "family": "SCIFI",
+      "artId": "pig_cyborg",
+      "color": "#b8c0cc",
+      "traits": ["tech", "metal", "red"]
+    },
+    {
+      "id": "PIG_DRAGON",
+      "nameVi": "Heo Rồng",
+      "rarity": "UNCOMMON",
+      "family": "FANTASY",
+      "buyGold": 1800,
+      "unlockLevel": 7,
+      "artId": "pig_dragon",
+      "color": "#fcb454",
+      "traits": ["myth", "gold", "horns", "fire"]
+    },
+    {
+      "id": "PIG_ONI",
+      "nameVi": "Heo Oni",
+      "rarity": "UNCOMMON",
+      "family": "FANTASY",
+      "artId": "pig_oni",
+      "color": "#e46c6c",
+      "traits": ["spooky", "red", "horns", "myth"]
+    },
+    {
+      "id": "PIG_VAMPIRE",
+      "nameVi": "Heo Ma Cà Rồng",
+      "rarity": "UNCOMMON",
+      "family": "HORROR",
+      "artId": "pig_vampire",
+      "color": "#b49ccc",
+      "traits": ["spooky", "purple", "dark"]
+    },
+    {
+      "id": "PIG_ZOMBIE",
+      "nameVi": "Heo Zombie",
+      "rarity": "UNCOMMON",
+      "family": "HORROR",
+      "artId": "pig_zombie",
+      "color": "#9cb484",
+      "traits": ["spooky", "green"]
+    },
+    {
+      "id": "PIG_DONUT",
+      "nameVi": "Heo Donut",
+      "rarity": "UNCOMMON",
+      "family": "FOOD",
+      "artId": "pig_donut",
+      "color": "#fc9cb4",
+      "traits": ["sweet", "food", "pink"]
+    },
+    {
+      "id": "PIG_BURGER",
+      "nameVi": "Heo Burger",
+      "rarity": "UNCOMMON",
+      "family": "FOOD",
+      "artId": "pig_burger",
+      "color": "#e49c3c",
+      "traits": ["food", "orange"]
+    },
+    {
+      "id": "PIG_RICH",
+      "nameVi": "Heo Đại Gia",
+      "rarity": "UNCOMMON",
+      "family": "FUNNY",
+      "artId": "pig_rich",
+      "color": "#fccc9c",
+      "traits": ["gold", "funny", "royal"]
+    },
+    {
+      "id": "PIG_SUPERMAN",
+      "nameVi": "Heo Siêu Nhân",
+      "rarity": "RARE",
+      "family": "HERO",
+      "artId": "pig_superhero",
+      "color": "#7fa8f0",
+      "traits": ["hero", "purple", "sky"]
+    },
+    {
+      "id": "PIG_TIGER",
+      "nameVi": "Heo Hổ",
+      "rarity": "RARE",
+      "family": "WILD",
+      "buyGold": 7000,
+      "unlockLevel": 6,
+      "artId": "pig_tiger",
+      "color": "#f29a4a",
+      "traits": ["orange", "wild", "animal"]
+    },
+    {
+      "id": "PIG_PANDA",
+      "nameVi": "Heo Gấu Trúc",
+      "rarity": "RARE",
+      "family": "WILD",
+      "artId": "pig_panda",
+      "color": "#f4f1ee",
+      "traits": ["white", "black", "wild", "animal"]
+    },
+    {
+      "id": "PIG_AXOLOTL",
+      "nameVi": "Heo Kỳ Giông",
+      "rarity": "RARE",
+      "family": "WATER",
+      "buyGold": 7000,
+      "unlockLevel": 7,
+      "artId": "pig_axolotl",
+      "color": "#ffc4d6",
+      "traits": ["pink", "water", "animal"]
+    },
+    {
+      "id": "PIG_SUNFLOWER",
+      "nameVi": "Heo Hướng Dương",
+      "rarity": "RARE",
+      "family": "MEADOW",
+      "artId": "pig_sunflower",
+      "color": "#f6c62e",
+      "traits": ["gold", "flower", "plant", "light"]
+    },
+    {
+      "id": "PIG_HEDGEHOG",
+      "nameVi": "Heo Nhím",
+      "rarity": "RARE",
+      "family": "WILD",
+      "buyGold": 7000,
+      "unlockLevel": 8,
+      "artId": "pig_hedgehog",
+      "color": "#8a5a3c",
+      "traits": ["brown", "wild", "animal"]
+    },
+    {
+      "id": "PIG_TURTLE",
+      "nameVi": "Heo Rùa",
+      "rarity": "RARE",
+      "family": "WATER",
+      "artId": "pig_turtle",
+      "color": "#6a9f56",
+      "traits": ["green", "water", "animal"]
+    },
+    {
+      "id": "PIG_BATTLEBOT",
+      "nameVi": "Heo Battlebot",
+      "rarity": "RARE",
+      "family": "SCIFI",
+      "artId": "pig_battlebot",
+      "color": "#9cb4b4",
+      "traits": ["tech", "metal", "warrior"]
+    },
+    {
+      "id": "PIG_UFO",
+      "nameVi": "Heo UFO",
+      "rarity": "RARE",
+      "family": "SCIFI",
+      "artId": "pig_ufo",
+      "color": "#b4cce4",
+      "traits": ["space", "tech", "sky"]
+    },
+    {
+      "id": "PIG_KITSUNE",
+      "nameVi": "Heo Hồ Ly",
+      "rarity": "RARE",
+      "family": "FANTASY",
+      "artId": "pig_kitsune",
+      "color": "#f2a35a",
+      "traits": ["myth", "magic", "orange"]
+    },
+    {
+      "id": "PIG_PEGASUS",
+      "nameVi": "Heo Pegasus",
+      "rarity": "RARE",
+      "family": "FANTASY",
+      "artId": "pig_pegasus",
+      "color": "#fcfce4",
+      "traits": ["myth", "sky", "wings", "light", "white"]
+    },
+    {
+      "id": "PIG_ZEUS",
+      "nameVi": "Heo Zeus",
+      "rarity": "RARE",
+      "family": "FANTASY",
+      "artId": "pig_zeus",
+      "color": "#f6d36a",
+      "traits": ["myth", "light", "royal", "gold", "sky"]
+    },
+    {
+      "id": "PIG_VALKYRIE",
+      "nameVi": "Heo Valkyrie",
+      "rarity": "RARE",
+      "family": "FANTASY",
+      "artId": "pig_valkyrie",
+      "color": "#d9b45a",
+      "traits": ["myth", "warrior", "wings", "gold"]
+    },
+    {
+      "id": "PIG_THOR",
+      "nameVi": "Heo Thor",
+      "rarity": "RARE",
+      "family": "FANTASY",
+      "artId": "pig_thor",
+      "color": "#8a94a6",
+      "traits": ["myth", "warrior", "metal", "sky"]
+    },
+    {
+      "id": "PIG_KOI",
+      "nameVi": "Heo Cá Chép",
+      "rarity": "EPIC",
+      "family": "WATER",
+      "artId": "pig_koi",
+      "color": "#e8573e",
+      "traits": ["water", "red", "gold"]
+    },
+    {
+      "id": "PIG_DRAGONLING",
+      "nameVi": "Heo Rồng Con",
+      "rarity": "EPIC",
+      "family": "MYTHIC",
+      "artId": "pig_dragonling",
+      "color": "#5fc2a0",
+      "traits": ["myth", "green", "wings", "horns"]
+    },
+    {
+      "id": "PIG_GALAXY",
+      "nameVi": "Heo Ngân Hà",
+      "rarity": "EPIC",
+      "family": "MYTHIC",
+      "artId": "pig_galaxy",
+      "color": "#3b3a78",
+      "traits": ["space", "purple", "dark", "magic"]
+    },
+    {
+      "id": "PIG_ROBOT",
+      "nameVi": "Heo Robot",
+      "rarity": "EPIC",
+      "family": "HERO",
+      "artId": "pig_robot",
+      "color": "#9aa4b4",
+      "traits": ["tech", "metal", "hero"]
+    },
+    {
+      "id": "PIG_UNICORN",
+      "nameVi": "Heo Kỳ Lân",
+      "rarity": "EPIC",
+      "family": "MYTHIC",
+      "artId": "pig_unicorn",
+      "color": "#ffd6e4",
+      "traits": ["myth", "magic", "light", "horns"]
+    },
+    {
+      "id": "PIG_MYTHICAL",
+      "nameVi": "Heo Thần Thoại",
+      "rarity": "LEGENDARY",
+      "family": "MYTHIC",
+      "artId": "pig_thienlong",
+      "color": "#c9a0f0",
+      "traits": ["myth", "gold", "wings", "royal", "light"]
+    },
+    {
+      "id": "PIG_PHOENIX",
+      "nameVi": "Heo Phượng Hoàng",
+      "rarity": "LEGENDARY",
+      "family": "MYTHIC",
+      "artId": "pig_phoenix",
+      "color": "#f07a3e",
+      "traits": ["myth", "fire", "wings", "red", "light"]
+    }
+  ]
+}

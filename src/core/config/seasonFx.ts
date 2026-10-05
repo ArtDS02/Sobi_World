@@ -7,8 +7,9 @@
 //   layer 'ground': just under every actor (pigs, buildings, props) — never covers a pig;
 //   layer 'air': over the world, under the day / night tint — small, sparse falling particles;
 //   layer 'glow': light sources over the night tint (like the window glows) — fireflies.
-// TUNABLE; the admin block at the bottom (enable / density / spawn rate) is written by the admin
-// dashboard (→ Bố cục farm → Mùa).
+// TUNABLE; the tuning (enable / density / spawn rate) is content/farm/season-fx.json, written by the
+// admin dashboard (→ Bố cục farm → Mùa).
+import { CONTENT } from './content';
 import type { DayPhase } from './dayNight';
 
 export const SEASON_FX_ART_IDS = [
@@ -91,10 +92,4 @@ export interface SeasonFxTuning {
 
 export const SEASON_FX_LIMITS = { densityMax: 2, spawnRateMin: 0.25, spawnRateMax: 4, maxActiveCap: 60 } as const;
 
-// <admin:seasonFx>
-export const SEASON_FX_TUNING: SeasonFxTuning = {
-  enabled: true,
-  density: 1,
-  emitters: {},
-};
-// </admin:seasonFx>
+export const SEASON_FX_TUNING: SeasonFxTuning = CONTENT.seasonFx;

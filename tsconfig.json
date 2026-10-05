@@ -19,6 +19,6 @@
     "noUncheckedIndexedAccess": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "tests", "tools"],
+  "include": ["src", "content", "tests", "tools"],
   "exclude": ["tests/electron", "tests/scripts"]
 }

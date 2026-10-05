@@ -1,0 +1,33 @@
+{
+  "achievements": [
+    { "id": "FIRST_PIG", "metric": "pigsBought", "target": 1, "gold": 100, "xp": 10 },
+    { "id": "FIRST_SALE", "metric": "pigsSold", "target": 1, "gold": 100, "xp": 10 },
+    { "id": "SELLER_10", "metric": "pigsSold", "target": 10, "gold": 500, "xp": 30 },
+    { "id": "SELLER_50", "metric": "pigsSold", "target": 50, "gold": 2000, "xp": 80 },
+    { "id": "SELLER_200", "metric": "pigsSold", "target": 200, "gold": 6000, "xp": 150 },
+    { "id": "FIRST_BREEDING", "metric": "breedings", "target": 1, "gold": 150, "xp": 10 },
+    { "id": "FIRST_BIRTH", "metric": "births", "target": 1, "gold": 200, "xp": 20 },
+    { "id": "BIRTHS_25", "metric": "births", "target": 25, "gold": 1500, "xp": 60 },
+    { "id": "BIRTHS_100", "metric": "births", "target": 100, "gold": 5000, "xp": 150 },
+    { "id": "ORDERS_1", "metric": "ordersFulfilled", "target": 1, "gold": 150, "xp": 10 },
+    { "id": "ORDERS_20", "metric": "ordersFulfilled", "target": 20, "gold": 1200, "xp": 50 },
+    { "id": "ORDERS_100", "metric": "ordersFulfilled", "target": 100, "gold": 5000, "xp": 150 },
+    { "id": "GIFTS_10", "metric": "giftsOpened", "target": 10, "gold": 500, "xp": 30 },
+    { "id": "GIFTS_50", "metric": "giftsOpened", "target": 50, "gold": 2000, "xp": 80 },
+    { "id": "CLEAN_100", "metric": "pigsCleaned", "target": 100, "gold": 400, "xp": 30 },
+    { "id": "TREAT_10", "metric": "pigsTreated", "target": 10, "gold": 400, "xp": 30 },
+    { "id": "EARN_100K", "metric": "goldEarned", "target": 100000, "gold": 3000, "xp": 100 },
+    { "id": "EARN_1M", "metric": "goldEarned", "target": 1000000, "gold": 10000, "xp": 200 },
+    { "id": "COLLECT_10", "metric": "discovered", "target": 10, "gold": 800, "xp": 40 },
+    { "id": "COLLECT_25", "metric": "discovered", "target": 25, "gold": 2500, "xp": 80 },
+    { "id": "COLLECT_50", "metric": "discovered", "target": 50, "gold": 6000, "xp": 150 },
+    { "id": "COLLECT_ALL", "metric": "discovered", "target": "ALL", "gold": 15000, "xp": 300 },
+    { "id": "LEVEL_5", "metric": "level", "target": 5, "gold": 500, "xp": 0 },
+    { "id": "LEVEL_10", "metric": "level", "target": 10, "gold": 2000, "xp": 0 },
+    { "id": "SLOTS_12", "metric": "slots", "target": 12, "gold": 1500, "xp": 50 },
+    { "id": "SLOTS_24", "metric": "slots", "target": 24, "gold": 6000, "xp": 150 },
+    { "id": "DECOR_1", "metric": "decor", "target": 1, "gold": 200, "xp": 10 },
+    { "id": "DECOR_ALL", "metric": "decor", "target": "ALL", "gold": 3000, "xp": 100 },
+    { "id": "STREAK_7", "metric": "bestStreak", "target": 7, "gold": 1000, "xp": 50 }
+  ]
+}

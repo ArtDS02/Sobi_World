@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.core.json && tsc -p tsconfig.electron.json && tsc -p tsconfig.scripts.json",
     "lint": "eslint .",
     "guard": "node scripts/guard/check-architecture.mjs",
+    "content:ids": "tsx scripts/content/generateIds.ts",
     "check": "npm run typecheck && npm run lint && npm run guard && npm run assets:check && npm run test",
     "icon": "node scripts/make-icon.mjs",
     "assets:placeholders": "tsx scripts/make-placeholders.ts",
