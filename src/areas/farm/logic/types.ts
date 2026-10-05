@@ -5,10 +5,11 @@ import type { Gender, ItemId } from '../../../core/config/ids';
 import type { BreedId, DecorId, StatId, TransactionType } from './config/ids';
 import type { Currency } from '../../../core/save/world';
 import type { ActionResultOf } from '../../../core/types';
+import type { Creature } from '../../../systems/creature/types';
 import type { GameEvent } from './events';
 
 export type { BreedId, DecorId, Gender, ItemId, StatId, TransactionType };
-export type GrowthStage = 'BABY' | 'YOUNG' | 'ADULT'; // derived, never stored
+export type { GrowthStage } from '../../../systems/creature/types';
 
 export interface FarmGame {
   schemaVersion: 7;
@@ -66,32 +67,13 @@ export interface Pregnancy {
   childGeneration?: number; // parents' highest generation + 1 (PS-2); absent in old saves = 2
 }
 
-export interface Pig {
-  id: string;
+/** A pig: the shared creature model (systems/creature, species = pig) plus its pen slot and litter. */
+export interface Pig extends Creature {
+  breed: BreedId; // its look is BREEDS[breed].artId
   slotIndex: number; // unique, 0 <= slotIndex < unlockedSlots
-  breed: BreedId; // species; its look is BREEDS[breed].artId
-  name: string; // 1-16 chars
-  gender: Gender;
-  growthProgress: number; // 0-100
-  hunger: number; // 0-100, float internally
-  cleanliness: number; // 0-100
-  isSick: boolean;
   pregnancy: Pregnancy | null;
-  lastTickedAt: number;
-  createdAt: number;
-  /** 1 = bought / starter, n + 1 = child of a generation-n parent (PS-2). Absent = 1. */
-  generation?: number;
   /** Who bred it (BR-1); absent for shop pigs and pigs born before save v7. */
   parents?: PigParents;
-  // NH-1 care & disease history. All optional: absent = never happened (older saves).
-  lastFedAt?: number; // last manual feed
-  lastCleanedAt?: number;
-  lastSickAt?: number; // start of the latest disease episode
-  /** Game day of lastSickAt and the episodes started on it (per-day limit). */
-  sickDay?: number;
-  sickEpisodes?: number;
-  /** After medicine: no new episode before this time (Recovering). */
-  recoveringUntil?: number;
 }
 
 /** Genealogy of a bred pig: ids (the parents may be sold later) and their species. */

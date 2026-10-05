@@ -1,16 +1,15 @@
-// Happiness (spec §5.4, D18). Derived, never stored.
+// Happiness (spec §5.4, D18): the shared care mood (systems/creature) with the farm's weights.
+// Derived, never stored.
+import { careMood, type MoodRules } from '../../../systems/creature/mood';
 import { BALANCE } from './config/balance';
 import type { Pig } from './types';
 
-const clamp = (v: number, min: number, max: number): number => Math.min(max, Math.max(min, v));
+const MOOD: MoodRules = {
+  cleanWeight: BALANCE.HAPPY_CLEAN_WEIGHT,
+  hungerWeight: BALANCE.HAPPY_HUNGER_WEIGHT,
+  sickPenalty: BALANCE.HAPPY_SICK_PENALTY,
+};
 
-/** `decorBonus`: the farm's decoration bonus (§5.4 reserved term, engine/decor.ts). */
-export function happiness(
-  pig: Pick<Pig, 'cleanliness' | 'hunger' | 'isSick'>,
-  decorBonus = 0,
-): number {
-  const care = Math.round(
-    BALANCE.HAPPY_CLEAN_WEIGHT * pig.cleanliness + BALANCE.HAPPY_HUNGER_WEIGHT * pig.hunger,
-  );
-  return clamp(care - (pig.isSick ? BALANCE.HAPPY_SICK_PENALTY : 0) + decorBonus, 0, 100);
-}
+/** `decorBonus`: the farm's decoration bonus (§5.4 reserved term, decor.ts). */
+export const happiness = (pig: Pick<Pig, 'cleanliness' | 'hunger' | 'isSick'>, decorBonus = 0): number =>
+  careMood(pig, MOOD, decorBonus);

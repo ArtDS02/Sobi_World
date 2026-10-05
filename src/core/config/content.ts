@@ -7,6 +7,7 @@ import dayNightRaw from '../../../content/shared/daynight.json';
 import inventoryRaw from '../../../content/shared/inventory.json';
 import itemsRaw from '../../../content/shared/items.json';
 import progressionRaw from '../../../content/shared/progression.json';
+import qualityRaw from '../../../content/shared/quality.json';
 import shopRaw from '../../../content/shared/shop.json';
 import { achievementsFileSchema } from '../../../content/schemas/shared/achievements';
 import { dailyFileSchema } from '../../../content/schemas/shared/daily';
@@ -14,6 +15,7 @@ import { dayNightFileSchema } from '../../../content/schemas/shared/dayNight';
 import { inventoryFileSchema } from '../../../content/schemas/shared/inventory';
 import { itemsFileSchema } from '../../../content/schemas/shared/items';
 import { progressionFileSchema } from '../../../content/schemas/shared/progression';
+import { qualityFileSchema } from '../../../content/schemas/shared/quality';
 import { shopFileSchema } from '../../../content/schemas/shared/shop';
 import { ContentError, loadContent } from '../content/load';
 
@@ -21,6 +23,7 @@ export const CONTENT = {
   items: loadContent('shared/items.json', itemsFileSchema, itemsRaw),
   inventory: loadContent('shared/inventory.json', inventoryFileSchema, inventoryRaw),
   progression: loadContent('shared/progression.json', progressionFileSchema, progressionRaw),
+  quality: loadContent('shared/quality.json', qualityFileSchema, qualityRaw),
   shop: loadContent('shared/shop.json', shopFileSchema, shopRaw),
   achievements: loadContent('shared/achievements.json', achievementsFileSchema, achievementsRaw),
   daily: loadContent('shared/daily.json', dailyFileSchema, dailyRaw),

@@ -1,0 +1,5 @@
+{
+  "minMood": { "PERFECT": 90, "EXCELLENT": 75, "GREAT": 60, "GOOD": 40 },
+  "priceFactor": { "NORMAL": 1, "GOOD": 1.2, "GREAT": 1.5, "EXCELLENT": 2, "PERFECT": 3 },
+  "bond": { "minHearts": 3, "upgradeChance": 0.2 }
+}

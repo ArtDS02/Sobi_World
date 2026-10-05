@@ -1,19 +1,17 @@
 // Derived values that are never stored (spec §5.4). Happiness and price live in their own modules.
+import { displayWeight, growthStage as creatureGrowthStage } from '../../../systems/creature/growth';
 import { BALANCE } from './config/balance';
 import { BREEDS } from './config/breeds';
 import { levelFromXp } from './config/levels';
 import type { GrowthStage, Pig, FarmGame } from './types';
 
-/** D3: BABY < 30 <= YOUNG < 100 = ADULT. */
-export function growthStage(growthProgress: number): GrowthStage {
-  if (growthProgress >= 100) return 'ADULT';
-  return growthProgress >= BALANCE.STAGE_YOUNG_AT ? 'YOUNG' : 'BABY';
-}
+/** D3: BABY < STAGE_YOUNG_AT <= YOUNG < 100 = ADULT (systems/creature). */
+export const growthStage = (growthProgress: number): GrowthStage =>
+  creatureGrowthStage(growthProgress, BALANCE.STAGE_YOUNG_AT);
 
 /** Display-only weight in kg. */
-export function weight(pig: Pick<Pig, 'breed' | 'growthProgress'>): number {
-  return 1 + ((BREEDS[pig.breed].maxWeight - 1) * pig.growthProgress) / 100;
-}
+export const weight = (pig: Pick<Pig, 'breed' | 'growthProgress'>): number =>
+  displayWeight(pig.growthProgress, BREEDS[pig.breed].maxWeight);
 
 /** D13: level is derived from xp. */
 export const level = (state: Pick<FarmGame, 'player'>): number => levelFromXp(state.player.xp);

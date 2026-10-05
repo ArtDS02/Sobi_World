@@ -47,3 +47,7 @@ export type DayPhase = (typeof DAY_PHASES)[number];
 /** Care levels of hunger / cleanliness (NH-1), best first. */
 export const NEED_LEVELS = ['good', 'normal', 'low', 'veryLow', 'critical'] as const;
 export type NeedLevel = (typeof NEED_LEVELS)[number];
+
+/** Care quality tiers (spec §6 Quality), worst first. Separate from rarity. */
+export const QUALITY_VALUES = ['NORMAL', 'GOOD', 'GREAT', 'EXCELLENT', 'PERFECT'] as const;
+export type Quality = (typeof QUALITY_VALUES)[number];

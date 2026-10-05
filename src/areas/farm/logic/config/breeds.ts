@@ -2,6 +2,7 @@
 // rarity tier; a species row only overrides what makes it different. Adding a species = one row
 // there + `npm run content:ids` + one manifest row — the admin dashboard does all three (DECISIONS A7-1).
 import { FAMILY_VALUES, type Family } from "../../../../../content/schemas/vocab";
+import { careBudget } from "../../../../systems/creature/needs";
 import { BALANCE } from "./balance";
 import { FARM_CONTENT } from "./content";
 import type { BreedId } from "./ids";
@@ -39,17 +40,13 @@ export const RARITY_TIER: Record<
 export type SpeciesRow = Pick<BreedDef, "id" | "nameVi" | "rarity" | "family" | "artId" | "color"> &
   Partial<Pick<BreedDef, "buyGold" | "unlockLevel" | "enabled" | keyof (typeof RARITY_TIER)[Rarity]>>;
 
-/** Care budget (NH-1): derived from growth time with a floor, never hand-tuned per species. */
-const budget = (growthSec: number, ratio: number, minSec: number): number =>
-  Math.max(minSec, growthSec * ratio);
-
 /** Tier stats + row overrides, then D16 / NH-1: care budgets derived from growth time. */
 const species = (row: SpeciesRow): BreedDef => {
   const b = { buyGold: null, unlockLevel: 1, enabled: true, ...RARITY_TIER[row.rarity], ...row };
   return {
     ...b,
-    hungerFullSec: budget(b.growthSec, BALANCE.CARE_HUNGER_GROWTH_RATIO, BALANCE.CARE_HUNGER_MIN_SEC),
-    cleanFullSec: budget(b.growthSec, BALANCE.CARE_CLEAN_GROWTH_RATIO, BALANCE.CARE_CLEAN_MIN_SEC),
+    hungerFullSec: careBudget(b.growthSec, BALANCE.CARE_HUNGER_GROWTH_RATIO, BALANCE.CARE_HUNGER_MIN_SEC),
+    cleanFullSec: careBudget(b.growthSec, BALANCE.CARE_CLEAN_GROWTH_RATIO, BALANCE.CARE_CLEAN_MIN_SEC),
   };
 };
 
