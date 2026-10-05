@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { advancePig } from '../../src/areas/farm/logic/advancePig';
 import { advanceWithTrough } from '../../src/areas/farm/logic/trough';
 import { mulberry32, sequenceRng, type Rng } from '../../src/core/rng';
-import type { Pig } from '../../src/core/types';
+import type { Pig } from '../../src/areas/farm/logic/types';
 import { makePig } from './pigFactory';
 
 const SEC = 1000;

@@ -1,7 +1,7 @@
 // Inventory (DECISIONS Q7): items, quantities and a quick use. Food quick-use fills the trough.
 import { ITEM_IDS } from '../../../../core/config/items';
 import type { AssetRegistry } from '../../../../core/assets/registry';
-import type { NurseryPig, SaveGame } from '../../../../core/types';
+import type { NurseryPig, FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
 import type { UiIcon } from '../../../../core/config/assetIds';
 import type { ItemId } from '../../../../core/config/ids';
@@ -18,7 +18,7 @@ export interface InventoryHandlers {
 }
 
 export function renderInventoryScreen(
-  save: SaveGame,
+  save: FarmGame,
   on: InventoryHandlers,
   assets?: AssetRegistry,
 ): HTMLElement {

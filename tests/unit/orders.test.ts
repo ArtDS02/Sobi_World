@@ -7,7 +7,7 @@ import { RARITY_ORDER_WEIGHT } from '../../src/core/config/rarity';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { generateOrder, orderWindowIndex, refreshOrders } from '../../src/areas/farm/logic/orders';
 import { mulberry32, orderSeed } from '../../src/core/rng';
-import type { Order, SaveGame } from '../../src/core/types';
+import type { Order, FarmGame } from '../../src/areas/farm/logic/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
 
@@ -16,7 +16,7 @@ const WIN = 122000; // a realistic window index (Sept 2025)
 const T = WIN * W + 1000; // inside window WIN
 const PINK_MELON: BreedId[] = ['PIG_EARTH_PINK', 'PIG_STRIPED_MELON'];
 
-const discovered = (breeds: BreedId[], patch: Partial<SaveGame> = {}): SaveGame => {
+const discovered = (breeds: BreedId[], patch: Partial<FarmGame> = {}): FarmGame => {
   const s = farm([], patch);
   return { ...s, collection: { ...s.collection, discoveredBreeds: breeds } };
 };
@@ -144,7 +144,7 @@ describe('fulfillOrder (§8.14, §14.5)', () => {
     const s = discovered(['PIG_EARTH_PINK'], { orders: [order], pigs: [p] });
     return { ...s, trough: { ...s.trough, lastResolvedAt: T } };
   };
-  const run = (s: SaveGame, now = T) =>
+  const run = (s: FarmGame, now = T) =>
     fulfillOrder(s, { orderId: order.id, pigId: 'pig-1' }, ctx(now));
 
   it('removes the pig, pays rewardGold + XP, records ORDER_REWARD, emits ORDER_FULFILLED', () => {

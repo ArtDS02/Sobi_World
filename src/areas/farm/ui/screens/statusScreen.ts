@@ -1,5 +1,5 @@
 // Full-screen states before the farm can be shown: loading, recovery (§9.2), save too new.
-import type { StoreStatus } from '../../../../core/world/gameStore';
+import type { StoreStatus } from '../../store';
 import { vi } from '../../../../i18n/vi';
 import { el } from '../../../../ui/dom';
 import type { SettingsVm } from '../settingsVm';

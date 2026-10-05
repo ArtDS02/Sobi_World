@@ -3,12 +3,12 @@
 import { DECORS } from '../../../../core/config/decor';
 import type { DecorId } from '../../../../core/config/ids';
 import { levelFromXp } from '../../../../core/config/levels';
-import { changeGold } from '../../../../core/engine/gold';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import { changeGold } from '../gold';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 export function buyDecor(
-  state: SaveGame,
+  state: FarmGame,
   args: { decorId: DecorId },
   ctx: ActionContext,
 ): ActionResult {
@@ -19,7 +19,7 @@ export function buyDecor(
     if (levelFromXp(s.player.xp) < def.unlockLevel) return { ok: false, error: 'LEVEL_TOO_LOW' };
     const paid = changeGold(s, -def.priceGold, 'DECOR_PURCHASE', ctx, { refId: def.id });
     if (!paid.ok) return paid;
-    const next: SaveGame = { ...paid.state, decor: [...paid.state.decor, def.id] };
+    const next: FarmGame = { ...paid.state, decor: [...paid.state.decor, def.id] };
     return ok(next, [{ type: 'DECOR_BOUGHT', decorId: def.id, gold: -def.priceGold }]);
   });
 }

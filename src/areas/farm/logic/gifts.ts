@@ -6,7 +6,7 @@ import { BREEDS } from '../../../core/config/breeds';
 import { GIFTS } from '../../../core/config/gifts';
 import type { GameEvent } from '../../../core/events';
 import { mulberry32 } from '../../../core/rng';
-import type { GiftBox, Pig, SaveGame } from '../../../core/types';
+import type { GiftBox, Pig, FarmGame } from './types';
 
 /** Wait until the next spawn for this herd (null without pigs). */
 export function giftInterval(pigs: readonly Pig[]): number | null {
@@ -55,9 +55,9 @@ export const giftsPerSpawn = (pigCount: number): number =>
  * A clock set back simply finds nextAt in the future. Idempotent for the same `now`.
  */
 export function resolveGifts(
-  state: SaveGame,
+  state: FarmGame,
   now: number,
-): { state: SaveGame; events: GameEvent[] } {
+): { state: FarmGame; events: GameEvent[] } {
   const interval = giftInterval(state.pigs);
   const { gifts } = state;
   if (interval === null) {
@@ -86,8 +86,8 @@ export function resolveGifts(
   return { state: withGifts(state, nextAt, boxes), events };
 }
 
-const withGifts = (state: SaveGame, nextAt: number | null, boxes: GiftBox[]): SaveGame => ({
+const withGifts = (state: FarmGame, nextAt: number | null, boxes: GiftBox[]): FarmGame => ({
   ...state,
   gifts: { nextAt, boxes },
 });
-const off = (state: SaveGame) => withGifts(state, null, state.gifts.boxes);
+const off = (state: FarmGame) => withGifts(state, null, state.gifts.boxes);

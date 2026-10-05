@@ -6,9 +6,9 @@ import { DECOR_IDS } from '../../../core/config/decor';
 import type { StatId } from '../../../core/config/ids';
 import { levelFromXp } from '../../../core/config/levels';
 import type { GameEvent } from '../../../core/events';
-import type { SaveGame } from '../../../core/types';
+import type { FarmGame } from './types';
 
-export const statOf = (state: Pick<SaveGame, 'progress'>, id: StatId): number =>
+export const statOf = (state: Pick<FarmGame, 'progress'>, id: StatId): number =>
   state.progress.stats[id] ?? 0;
 
 /** Stat deltas of one event (bestStreak is a maximum, handled apart). */
@@ -36,8 +36,8 @@ function deltas(e: GameEvent): Partial<Record<StatId, number>> {
 }
 
 /** Adds the events' counters to save.progress.stats; unchanged state when nothing counts. */
-export function trackEvents(state: SaveGame, events: readonly GameEvent[]): SaveGame {
-  let stats: SaveGame['progress']['stats'] | null = null;
+export function trackEvents(state: FarmGame, events: readonly GameEvent[]): FarmGame {
+  let stats: FarmGame['progress']['stats'] | null = null;
   const bump = (id: StatId, value: number, max = false) => {
     stats ??= { ...state.progress.stats };
     const old = stats[id] ?? 0;
@@ -52,7 +52,7 @@ export function trackEvents(state: SaveGame, events: readonly GameEvent[]): Save
 
 const playable = () => BREED_IDS.filter((id) => BREEDS[id].enabled);
 
-export function metric(state: SaveGame, m: AchievementMetric): number {
+export function metric(state: FarmGame, m: AchievementMetric): number {
   switch (m) {
     case 'discovered': {
       const found = new Set(state.collection.discoveredBreeds);
@@ -74,11 +74,11 @@ export function targetOf(def: AchievementDef): number {
   return def.metric === 'decor' ? DECOR_IDS.length : playable().length;
 }
 
-export const isReached = (state: SaveGame, def: AchievementDef): boolean =>
+export const isReached = (state: FarmGame, def: AchievementDef): boolean =>
   metric(state, def.metric) >= targetOf(def);
 
 /** Reached, not yet claimed: what the achievements panel offers and the dock dot counts. */
-export const claimable = (state: SaveGame): AchievementDef[] =>
+export const claimable = (state: FarmGame): AchievementDef[] =>
   ACHIEVEMENTS.filter((d) => state.progress.claimed[d.id] === undefined && isReached(state, d));
 
 /**
@@ -86,10 +86,10 @@ export const claimable = (state: SaveGame): AchievementDef[] =>
  * result but not in `before`. Pure and idempotent: the same transition never reports twice.
  */
 export function progressStep(
-  before: SaveGame,
-  after: SaveGame,
+  before: FarmGame,
+  after: FarmGame,
   events: readonly GameEvent[],
-): { state: SaveGame; events: GameEvent[] } {
+): { state: FarmGame; events: GameEvent[] } {
   const state = trackEvents(after, events);
   const reached: GameEvent[] = ACHIEVEMENTS.filter(
     (d) =>

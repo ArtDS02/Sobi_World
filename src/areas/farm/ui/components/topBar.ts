@@ -2,7 +2,7 @@
 // gold → history, trough gauge → fill dialog, pig count / capacity → shop), settings top-right, and the bottom dock with the
 // menu nav (the same popups as the world objects, reachable by keyboard).
 import { readyOrderCount } from '../../logic/actions/fulfillOrder';
-import type { SaveGame } from '../../../../core/types';
+import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
 import type { UiIcon } from '../../../../core/config/assetIds';
 import { el } from '../../../../ui/dom';
@@ -31,7 +31,7 @@ const bar = (progress: number, mod: string) =>
   );
 
 export function renderTopBar(
-  save: SaveGame,
+  save: FarmGame,
   now: number,
   on: {
     settings: () => void;

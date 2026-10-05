@@ -1,6 +1,6 @@
 // Happiness (spec §5.4, D18). Derived, never stored.
 import { BALANCE } from '../../../core/config/balance';
-import type { Pig } from '../../../core/types';
+import type { Pig } from './types';
 
 const clamp = (v: number, min: number, max: number): number => Math.min(max, Math.max(min, v));
 

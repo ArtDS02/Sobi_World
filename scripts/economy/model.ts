@@ -7,7 +7,7 @@ import { ITEMS } from '../../src/core/config/items';
 import { advanceWithTrough } from '../../src/areas/farm/logic/trough';
 import { sellPrice } from '../../src/areas/farm/logic/pricing';
 import { sequenceRng } from '../../src/core/rng';
-import type { Pig } from '../../src/core/types';
+import type { Pig } from '../../src/areas/farm/logic/types';
 
 export const HAPPINESS_LEVELS = [0, 50, 100] as const;
 export type HappinessLevel = (typeof HAPPINESS_LEVELS)[number];

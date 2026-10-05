@@ -10,7 +10,7 @@ import { freeSlots, pigCapacity, waitingPigs } from '../logic/derived';
 import { BREEDS } from '../../../core/config/breeds';
 import type { Rarity } from '../../../core/config/rarity';
 import type { ErrorCode } from '../../../core/config/errors';
-import type { Pig, SaveGame } from '../../../core/types';
+import type { Pig, FarmGame } from '../logic/types';
 import { formatDuration, formatInt, formatPercent, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { probe, reasonFor, type ActionVm } from './actionsVm';
@@ -129,7 +129,7 @@ function childTiles(outcomes: readonly BreedingOutcome[], seen: ReadonlySet<stri
   return { children, other: rest > 0 ? t(vi.breed.otherChance, { n: formatPercent(rest) }) : null };
 }
 
-export function breedingVm(save: SaveGame, pig: Pig, now: number): BreedingVm {
+export function breedingVm(save: FarmGame, pig: Pig, now: number): BreedingVm {
   const partners: PartnerVm[] = [];
   const seen = new Set<string>([...save.collection.discoveredBreeds, ...save.pigs.map((p) => p.breed)]);
   const bredPairs = new Set(save.breedingRecords.map((r) => [r.motherBreed, r.fatherBreed].sort().join('+')));

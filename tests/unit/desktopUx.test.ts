@@ -1,17 +1,18 @@
 // R11: away summary, tutorial, settings / recovery view-models, store catch-up + backup restore.
+import { createFarmGameStore, world } from './worldKit';
 import { describe, expect, it } from 'vitest';
 import { setSetting } from '../../src/areas/farm/logic/actions/setSetting';
 import { fakeClock } from '../../src/core/clock';
 import { SAVE } from '../../src/core/config/save';
 import type { GameEvent } from '../../src/core/events';
 import { mulberry32 } from '../../src/core/rng';
-import { newGame } from '../../src/core/save/newGame';
+import { newGame } from '../../src/areas/farm/logic/save/newFarm';
 import type { BackupStore, InstanceGuard, LoadResult, SaveStorage } from '../../src/core/save/port';
-import type { SaveGame } from '../../src/core/types';
+import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { createFeedbackDirector } from '../../src/areas/farm/scene/feedback/FeedbackDirector';
 import { formatTime } from '../../src/i18n/format';
 import { vi } from '../../src/i18n/vi';
-import { createGameStore, type CatchupInfo } from '../../src/app/gameStore';
+import { type CatchupInfo } from '../../src/app/gameStore';
 import { awayVm } from '../../src/areas/farm/ui/awayVm';
 import { backupsVm, creditLines, exportReminderDue } from '../../src/areas/farm/ui/settingsVm';
 import { tutorialVm } from '../../src/areas/farm/ui/tutorialVm';
@@ -113,21 +114,23 @@ describe('settings view-model (spec §9.3)', () => {
 });
 
 /** In-memory platform with backups. */
-function platform(start: LoadResult, backup: SaveGame | null) {
+function platform(start: LoadResult, backup: FarmGame | null) {
+  const backupWorld = backup && world(backup);
   let current = start;
   const storage: SaveStorage = {
     load: async () => current,
     save: async (s) => {
-      current = { kind: 'ok', save: s, source: 'primary' };
+      current = { kind: 'ok', save: s, source: 'primary', fromVersion: 8 };
     },
   };
   const backups: BackupStore = {
     list: async () => (backup ? [{ name: 'b1', at: T0 }] : []),
     restore: async (name) => {
-      if (name !== 'b1' || !backup) throw new Error('missing');
-      current = { kind: 'ok', save: backup, source: 'primary' };
+      if (name !== 'b1' || !backupWorld) throw new Error('missing');
+      current = { kind: 'ok', save: backupWorld, source: 'primary', fromVersion: 8 };
     },
     backupBeforeReset: async () => {},
+    backupBeforeMigration: async () => {},
   };
   const instanceGuard: InstanceGuard = {
     start: async () => true,
@@ -148,8 +151,8 @@ describe('store: catch-up info and backup restore (spec §9.2, §9.5)', () => {
   it('the load catch-up reports how long the world slept, even with no events', async () => {
     const save = newGame({ now: T0, rng: mulberry32(1) });
     const clock = fakeClock(T0 + 20 * MIN);
-    const p = platform({ kind: 'ok', save, source: 'primary' }, null);
-    const store = createGameStore({ ...p, ...quiet, clock, rng: mulberry32(2) });
+    const p = platform({ kind: 'ok', save: world(save), source: 'primary', fromVersion: 8 }, null);
+    const store = createFarmGameStore({ ...p, ...quiet, clock, rng: mulberry32(2) });
     const seen: [number, CatchupInfo | undefined][] = [];
     store.onEvents((events, origin, info) => {
       if (origin === 'catchup') seen.push([events.length, info]);
@@ -160,8 +163,8 @@ describe('store: catch-up info and backup restore (spec §9.2, §9.5)', () => {
 
   it('a short catch-up with nothing to say stays silent', async () => {
     const save = newGame({ now: T0, rng: mulberry32(1) });
-    const p = platform({ kind: 'ok', save, source: 'primary' }, null);
-    const store = createGameStore({
+    const p = platform({ kind: 'ok', save: world(save), source: 'primary', fromVersion: 8 }, null);
+    const store = createFarmGameStore({
       ...p,
       ...quiet,
       clock: fakeClock(T0 + MIN),
@@ -176,7 +179,7 @@ describe('store: catch-up info and backup restore (spec §9.2, §9.5)', () => {
   it('recovery → restore a backup → ready; a failing restore is rejected', async () => {
     const backup = newGame({ now: T0, rng: mulberry32(3) });
     const p = platform({ kind: 'recovery' }, backup);
-    const store = createGameStore({ ...p, ...quiet, clock: fakeClock(T0), rng: mulberry32(2) });
+    const store = createFarmGameStore({ ...p, ...quiet, clock: fakeClock(T0), rng: mulberry32(2) });
     const errors: string[] = [];
     store.onReject((e) => errors.push(e));
     expect(await store.init()).toBe('recovery');
@@ -189,8 +192,8 @@ describe('store: catch-up info and backup restore (spec §9.2, §9.5)', () => {
 
   it('without platform backups, restore is refused', async () => {
     const save = newGame({ now: T0, rng: mulberry32(1) });
-    const p = platform({ kind: 'ok', save, source: 'primary' }, null);
-    const store = createGameStore({
+    const p = platform({ kind: 'ok', save: world(save), source: 'primary', fromVersion: 8 }, null);
+    const store = createFarmGameStore({
       ...p,
       ...quiet,
       backups: null,
@@ -239,15 +242,15 @@ describe('store: play again (DECISIONS PG-4)', () => {
   };
 
   it('backs the farm up first, then starts a new farm and writes it', async () => {
-    const p = platform({ kind: 'ok', save: rich(), source: 'primary' }, null);
+    const p = platform({ kind: 'ok', save: world(rich()), source: 'primary', fromVersion: 8 }, null);
     const order: string[] = [];
     const save = p.storage.save;
     p.storage.save = async (s) => {
-      order.push(`save:${s.player.gold}`);
+      order.push(`save:${s.wallet.coins}`);
       await save(s);
     };
     p.backups.backupBeforeReset = async () => void order.push('backup');
-    const store = createGameStore({ ...p, ...quiet, clock: fakeClock(T0), rng: mulberry32(2) });
+    const store = createFarmGameStore({ ...p, ...quiet, clock: fakeClock(T0), rng: mulberry32(2) });
     await store.init();
     order.length = 0;
     expect(await store.resetGame()).toBe(true);
@@ -258,11 +261,11 @@ describe('store: play again (DECISIONS PG-4)', () => {
   });
 
   it('a failed backup keeps the current farm', async () => {
-    const p = platform({ kind: 'ok', save: rich(), source: 'primary' }, null);
+    const p = platform({ kind: 'ok', save: world(rich()), source: 'primary', fromVersion: 8 }, null);
     p.backups.backupBeforeReset = async () => {
       throw new Error('disk full');
     };
-    const store = createGameStore({ ...p, ...quiet, clock: fakeClock(T0), rng: mulberry32(2) });
+    const store = createFarmGameStore({ ...p, ...quiet, clock: fakeClock(T0), rng: mulberry32(2) });
     const errors: string[] = [];
     store.onReject((e) => errors.push(e));
     await store.init();

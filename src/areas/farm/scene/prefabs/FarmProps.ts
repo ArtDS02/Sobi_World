@@ -1,7 +1,7 @@
 // Save-driven state of static farm props: the trough's fill texture and which decorations show
 // (spec §20.2, DECISIONS PG-3). The scene creates the images; this only toggles them.
 import type * as Phaser from 'phaser';
-import type { SaveGame } from '../../../../core/types';
+import type { FarmGame } from '../../logic/types';
 import { FALLBACK_PROP_KEY, troughTextureKey } from '../view/textureKeys';
 
 type Visible = Phaser.GameObjects.Components.Visible;
@@ -17,7 +17,7 @@ export class FarmProps {
   sync(
     textures: Phaser.Textures.TextureManager,
     trough: Phaser.GameObjects.Image | null,
-    save: SaveGame | null,
+    save: FarmGame | null,
   ) {
     const owned = new Set<string>(save?.decor ?? []);
     for (const d of this.decor) for (const part of d.parts) part.setVisible(owned.has(d.id));

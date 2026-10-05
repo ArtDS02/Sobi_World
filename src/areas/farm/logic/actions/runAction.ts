@@ -2,12 +2,12 @@
 import { advanceWorld } from '../advanceWorld';
 import { progressStep } from '../progress';
 import type { GameEvent } from '../../../../core/events';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 
 /** Action body: runs on the caught-up state; must return an error without side effects. */
-export type ActionBody = (state: SaveGame, ctx: ActionContext) => ActionResult;
+export type ActionBody = (state: FarmGame, ctx: ActionContext) => ActionResult;
 
-export function runAction(state: SaveGame, ctx: ActionContext, body: ActionBody): ActionResult {
+export function runAction(state: FarmGame, ctx: ActionContext, body: ActionBody): ActionResult {
   const world = advanceWorld(state, ctx.now, ctx.rng, ctx.dayOffsetMs);
   const result = body(world.state, ctx);
   if (!result.ok) return result;
@@ -20,7 +20,7 @@ export function runAction(state: SaveGame, ctx: ActionContext, body: ActionBody)
 }
 
 /** Collects events from chained steps. */
-export const ok = (state: SaveGame, ...events: GameEvent[][]): ActionResult => ({
+export const ok = (state: FarmGame, ...events: GameEvent[][]): ActionResult => ({
   ok: true,
   state,
   events: events.flat(),

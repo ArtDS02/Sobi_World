@@ -3,9 +3,9 @@
 // summary and the recovery screen. State here is never saved, except through actions.
 import type { GameEvent } from '../../../core/events';
 import { setSetting } from '../logic/actions/setSetting';
-import type { SaveGame } from '../../../core/types';
+import type { FarmGame } from '../logic/types';
 import { vi } from '../../../i18n/vi';
-import type { BoundAction, GameStore, StoreSnapshot } from '../../../core/world/gameStore';
+import type { BoundAction, FarmStore, FarmSnapshot } from '../store';
 import { awayVm } from './awayVm';
 import { openAwayDialog } from './components/awayDialog';
 import { openConfirmDialog } from '../../../ui/components/dialog';
@@ -27,7 +27,7 @@ import type { AssetManifest } from '../../../core/assets/manifestSchema';
 const RECOVERED_NOTICE_MS = 4000;
 
 export interface SessionDeps {
-  store: Pick<GameStore, 'getSnapshot' | 'listBackups' | 'startNewGame'>;
+  store: Pick<FarmStore, 'getSnapshot' | 'listBackups' | 'startNewGame'>;
   now: () => number;
   act: (run: BoundAction) => void;
   dialogHost: HTMLElement;
@@ -60,10 +60,10 @@ export function createSession(d: SessionDeps) {
   return {
     loadBackups,
 
-    settingsVm: (save: SaveGame): SettingsVm => settingsVm(save, backups, d.manifest, d.version),
+    settingsVm: (save: FarmGame): SettingsVm => settingsVm(save, backups, d.manifest, d.version),
 
     /** §10.3: coach card while the tutorial is not done (never on a read-only instance). */
-    coach(snap: StoreSnapshot): HTMLElement | null {
+    coach(snap: FarmSnapshot): HTMLElement | null {
       if (!snap.save || snap.readOnly) return null;
       const vm = tutorialVm(snap.save, step);
       if (!vm) return null;
@@ -80,7 +80,7 @@ export function createSession(d: SessionDeps) {
     },
 
     /** §9.2 save banner (persistent while failing, brief "recovered"), §9.3 export reminder. */
-    banners(snap: StoreSnapshot): HTMLElement | null {
+    banners(snap: FarmSnapshot): HTMLElement | null {
       if (lastSaveError && !snap.saveError) {
         recoveredUntil = d.now() + RECOVERED_NOTICE_MS;
         setTimeout(d.rerender, RECOVERED_NOTICE_MS + 50);

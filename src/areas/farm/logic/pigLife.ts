@@ -2,7 +2,7 @@
 // picks what a pig does next. Pure and deterministic — `now` arrives as elapsed ms, randomness as
 // rolls derived from the pig id; the farm view (game/state/pigBrain.ts) plays the result.
 import { PIG_LIFE, SLEEP_LEVELS, type SleepLevel } from '../../../core/config/pigLife';
-import type { Pig } from '../../../core/types';
+import type { Pig } from './types';
 import { needLevel, needRank } from './pigHealth';
 
 const S = PIG_LIFE.sleep;

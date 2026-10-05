@@ -23,10 +23,10 @@ import { decorBonus } from '../logic/decor';
 import { productById, shopProducts } from '../logic/shopProducts';
 import { sellMultiplier } from '../logic/pricing';
 import { mulberry32 } from '../../../core/rng';
-import type { SaveGame } from '../../../core/types';
+import type { FarmGame } from '../logic/types';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import type { BoundAction } from '../../../core/world/gameStore';
+import type { BoundAction } from '../store';
 
 export interface ActionVm {
   label: string;
@@ -53,18 +53,18 @@ export function reasonFor(error: ErrorCode, missingItem?: string): string {
 }
 
 /** Dry-runs `run` with a throwaway rng; the real dispatch uses the store's rng and clock. */
-export function probe(save: SaveGame, run: BoundAction, now: number): ErrorCode | null {
+export function probe(save: FarmGame, run: BoundAction, now: number): ErrorCode | null {
   const r = run(save, { now, rng: mulberry32(0) });
   return r.ok ? null : r.error;
 }
 
-function vm(save: SaveGame, now: number, label: string, run: BoundAction, item?: string): ActionVm {
+function vm(save: FarmGame, now: number, label: string, run: BoundAction, item?: string): ActionVm {
   const error = probe(save, run, now);
   return { label, run, reason: error ? reasonFor(error, item) : null };
 }
 
 /** Panel buttons for one pig (§10.2). Breeding and orders arrive in later phases. */
-export function pigActions(save: SaveGame, pigId: string, now: number) {
+export function pigActions(save: FarmGame, pigId: string, now: number) {
   const args = { pigId };
   return {
     feed: vm(save, now, vi.action.feed, (s, c) => feedPig(s, args, c), vi.disabled.noFood),
@@ -75,7 +75,7 @@ export function pigActions(save: SaveGame, pigId: string, now: number) {
 }
 
 /** Farm toolbar: clean all. Buying moved to the shop (R03). */
-export function farmActions(save: SaveGame, now: number) {
+export function farmActions(save: FarmGame, now: number) {
   return { cleanAll: vm(save, now, vi.action.cleanAll, (s, c) => cleanAll(s, c)) };
 }
 
@@ -85,7 +85,7 @@ const goldText = (amount: number) => t(vi.hud.gold, { amount: formatInt(amount) 
  * Shop pigs tab: every species with a shop price, commonest first (stable in config order), one
  * button per gender. The level lock reads better than "not enough gold" when both fail.
  */
-export function shopPigs(save: SaveGame, now: number, assets: AssetRegistry | null = null) {
+export function shopPigs(save: FarmGame, now: number, assets: AssetRegistry | null = null) {
   const buyable = BREED_IDS.filter((id) => BREEDS[id].buyGold !== null && BREEDS[id].enabled).sort(
     (a, b) => rarityRank(BREEDS[a].rarity) - rarityRank(BREEDS[b].rarity),
   );
@@ -114,7 +114,7 @@ export function shopPigs(save: SaveGame, now: number, assets: AssetRegistry | nu
 
 /** Shop items tab rows; the quantity is chosen in the buy dialog (itemPurchase). */
 /** Shop item tab: the active products (DECISIONS AD-1), in their admin order. */
-export function shopItems(save: SaveGame) {
+export function shopItems(save: FarmGame) {
   return shopProducts().map((p) => ({
     id: p.id,
     icon: p.icon,
@@ -126,7 +126,7 @@ export function shopItems(save: SaveGame) {
 }
 
 /** Buy dialog for `count` packs of one product (§8.10). */
-export function productPurchase(save: SaveGame, productId: string, count: number, now: number) {
+export function productPurchase(save: FarmGame, productId: string, count: number, now: number) {
   const p = productById(productId);
   return {
     name: p?.nameVi ?? productId,
@@ -138,7 +138,7 @@ export function productPurchase(save: SaveGame, productId: string, count: number
 }
 
 /** Shop slots tab: the next slot, its price and level gate (§8.11); null when all are open. */
-export function shopSlot(save: SaveGame, now: number) {
+export function shopSlot(save: FarmGame, now: number) {
   const n = save.player.unlockedSlots + 1;
   const unlock = slotUnlock(n);
   if (!unlock) return null;
@@ -158,7 +158,7 @@ export function shopSlot(save: SaveGame, now: number) {
 }
 
 /** Shop decorations tab (PG-3): every decoration, owned ones marked; total bonus on top. */
-export function shopDecor(save: SaveGame, now: number) {
+export function shopDecor(save: FarmGame, now: number) {
   const items = DECOR_IDS.map((id) => {
     const def = DECORS[id];
     const run: BoundAction = (s, c) => buyDecor(s, { decorId: id }, c);
@@ -185,7 +185,7 @@ export function shopDecor(save: SaveGame, now: number) {
 }
 
 /** Fill dialog breakdown and confirm button for `units` (§8.6). */
-export function troughFill(save: SaveGame, units: number, now: number) {
+export function troughFill(save: FarmGame, units: number, now: number) {
   const fromInventory = Math.min(save.inventory.FOOD_BASIC, Math.max(0, units));
   const toBuy = Math.max(0, units - fromInventory);
   return {
@@ -200,5 +200,5 @@ export function troughFill(save: SaveGame, units: number, now: number) {
 }
 
 /** Free space in the trough: the default amount the fill dialog offers. */
-export const troughSpace = (save: SaveGame): number =>
+export const troughSpace = (save: FarmGame): number =>
   Math.max(0, save.trough.capacity - save.trough.food);

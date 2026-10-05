@@ -11,7 +11,7 @@ import {
 } from '../../../../core/config/assetIds';
 import { FARM_VIEW } from '../../../../core/config/farmView';
 import { readyOrderCount } from '../../logic/actions/fulfillOrder';
-import type { StoreSnapshot } from '../../../../core/world/gameStore';
+import type { FarmSnapshot } from '../../store';
 import { SCENE_KEYS } from '../config/phaser';
 import type { FarmBridge, FarmDeps } from '../farmView';
 import { noEffects } from '../feedback/effects';
@@ -209,7 +209,7 @@ export class MainFarmScene extends Phaser.Scene {
     this.plates.update((id) => this.pigs.get(id)?.plateAnchor() ?? null);
   }
 
-  private sync(snap: StoreSnapshot) {
+  private sync(snap: FarmSnapshot) {
     const save = snap.save;
     if (!this.sys.isActive()) return;
     this.ambient.sync();

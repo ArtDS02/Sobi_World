@@ -1,14 +1,14 @@
 // claimRelief (DECISIONS PG-1): the neighbour's help, only while the farm is stuck (engine/relief).
-import { changeGold } from '../../../../core/engine/gold';
+import { changeGold } from '../gold';
 import { reliefNeed } from '../relief';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
-export function claimRelief(state: SaveGame, _args: object, ctx: ActionContext): ActionResult {
+export function claimRelief(state: FarmGame, _args: object, ctx: ActionContext): ActionResult {
   return runAction(state, ctx, (s) => {
     const need = reliefNeed(s);
     if (!need) return { ok: false, error: 'NOT_STUCK' };
-    let next: SaveGame = {
+    let next: FarmGame = {
       ...s,
       inventory: {
         ...s.inventory,

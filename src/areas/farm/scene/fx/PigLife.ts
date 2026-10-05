@@ -6,7 +6,7 @@
 import { PIG_HOUSE_PROP_ID } from '../../../../core/config/assetIds';
 import { PIG_LIFE } from '../../../../core/config/pigLife';
 import type { GameEvent } from '../../../../core/events';
-import type { Pig } from '../../../../core/types';
+import type { Pig } from '../../logic/types';
 import type { PigSprite } from '../prefabs/PigSprite';
 import { othersOf } from '../prefabs/crowd';
 import { msSinceDawn } from './DayNightDirector';

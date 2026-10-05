@@ -17,8 +17,8 @@ import { PAIR_RULES } from '../../src/core/config/breedingPairs';
 import { ITEM_ID_VALUES } from '../../src/core/config/ids';
 import { CURRENCY_VALUES, PRODUCT_CATEGORY_VALUES, PRODUCTS } from '../../src/core/config/products';
 import { mulberry32 } from '../../src/core/rng';
-import { parseSave } from '../../src/core/save/migrate';
-import { newGame } from '../../src/core/save/newGame';
+import { parseFarmSave } from '../../src/areas/farm/logic/save/legacy';
+import { newGame } from '../../src/areas/farm/logic/save/newFarm';
 import { History, add, duplicate, reorder, type Placement } from '../../tools/admin/layoutModel';
 import { activeCount, byText, emptyState, facetCounts, fold, runQuery } from '../../tools/admin/listQuery';
 import * as E from '../../tools/admin/userEdits';
@@ -150,7 +150,7 @@ describe('user (save) edits', () => {
     expect(() => E.apply({ ...withPig, player: { ...withPig.player, unlockedSlots: 1 } }, E.addPig('PIG_EARTH_PINK', 'MALE', 'B', 1, 'p2'))).toThrow(/chuồng/);
     const reset = E.apply(withPig, E.resetSave(5, rng));
     expect(reset.pigs).toEqual([]);
-    expect(parseSave(JSON.stringify(reset)).ok).toBe(true);
+    expect(parseFarmSave(JSON.stringify(reset)).ok).toBe(true);
   });
 });
 

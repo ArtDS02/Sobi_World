@@ -1,15 +1,18 @@
-// zod schema for SaveGame (spec §5.1) plus the §5.5 invariants (orders cap per DECISIONS C1).
+// zod schemas of the farm (spec §5.1) plus the §5.5 invariants (orders cap per DECISIONS C1):
+// farmGameSchema = a whole Sobi Farm v7 save (legacy import, admin checks of the farm view),
+// farmAreaSchema = the farm's slice of the world save v8 (`areas.sobi_farm`).
 import { z } from 'zod';
-import { BALANCE } from '../config/balance';
-import { GIFTS } from '../config/gifts';
+import { CURRENCY_VALUES } from '../../../../core/save/world';
+import { BALANCE } from '../../../../core/config/balance';
+import { GIFTS } from '../../../../core/config/gifts';
 import {
   BREED_ID_VALUES,
   DECOR_ID_VALUES,
   GENDER_VALUES,
   ITEM_ID_VALUES,
   TRANSACTION_TYPE_VALUES,
-} from '../config/ids';
-import { SAVE } from '../config/save';
+} from '../../../../core/config/ids';
+import { SAVE } from '../../../../core/config/save';
 
 const breedId = z.enum(BREED_ID_VALUES);
 const gender = z.enum(GENDER_VALUES);
@@ -80,6 +83,7 @@ const orderSchema = z.object({
 
 const transactionSchema = z.object({
   id: z.string(),
+  currency: z.enum(CURRENCY_VALUES).optional(), // the farm view of a world save (v8)
   at: time,
   type: z.enum(TRANSACTION_TYPE_VALUES),
   amount: z.number().finite(),
@@ -145,19 +149,41 @@ const shapeSchema = z.object({
   }),
 });
 
-/** Cross-field invariants of §5.5 (field ranges are enforced by the shape above). */
-export const saveGameSchema = shapeSchema.superRefine((s, ctx) => {
+type FarmFields = Pick<FarmArea, 'unlockedSlots' | 'pigs' | 'nursery' | 'trough' | 'orders' | 'gifts'>;
+
+/** Cross-field invariants of §5.5 (field ranges are enforced by the shapes). */
+function farmInvariants(s: FarmFields, ctx: z.core.$RefinementCtx): void {
   const issue = (message: string) => ctx.addIssue({ code: 'custom', message });
   const slots = s.pigs.map((p) => p.slotIndex);
   if (new Set(slots).size !== slots.length) issue('slotIndex must be unique');
-  if (slots.some((i) => i >= s.player.unlockedSlots)) issue('slotIndex must be < unlockedSlots');
+  if (slots.some((i) => i >= s.unlockedSlots)) issue('slotIndex must be < unlockedSlots');
   if (s.trough.food > s.trough.capacity) issue('trough.food must be <= trough.capacity');
   // BR-1: a pregnancy no longer holds a pen slot (the child waits in the nursery).
-  if (s.pigs.length > s.player.unlockedSlots) issue('pigs exceed slots');
+  if (s.pigs.length > s.unlockedSlots) issue('pigs exceed slots');
   const ids = [...s.pigs, ...s.nursery].map((p) => p.id);
   if (new Set(ids).size !== ids.length) issue('pig ids must be unique (farm + nursery)');
   if (s.orders.length > BALANCE.ORDER_MAX_ACTIVE) issue('too many orders');
   if (s.gifts.boxes.length > GIFTS.MAX_ON_FARM) issue('too many gift boxes');
+}
+
+export const farmGameSchema = shapeSchema.superRefine((s, ctx) =>
+  farmInvariants({ ...s, unlockedSlots: s.player.unlockedSlots }, ctx),
+);
+
+export type FarmGameParsed = z.infer<typeof farmGameSchema>;
+
+/** The farm's slice of the world save (v8): its own state; money, items, xp… are world fields. */
+const farmAreaShape = z.object({
+  unlockedSlots: z.number().int().min(1),
+  pigs: z.array(pigSchema),
+  nursery: z.array(nurseryPigSchema),
+  trough: z.object({ food: nonNeg, capacity: nonNeg, lastResolvedAt: time }),
+  orders: z.array(orderSchema),
+  gifts: z.object({ nextAt: time.nullable(), boxes: z.array(giftSchema) }),
+  decor: z.array(z.enum(DECOR_ID_VALUES)),
+  breedingRecords: z.array(breedingRecordSchema),
 });
 
-export type SaveGameParsed = z.infer<typeof saveGameSchema>;
+export const farmAreaSchema = farmAreaShape.superRefine(farmInvariants);
+
+export type FarmArea = z.infer<typeof farmAreaShape>;

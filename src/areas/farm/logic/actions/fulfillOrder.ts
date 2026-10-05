@@ -1,9 +1,9 @@
 // fulfillOrder (spec §8.14): the pig is sold into the order for rewardGold + rewardXp.
 import { decorBonus } from '../decor';
-import { changeGold } from '../../../../core/engine/gold';
+import { changeGold } from '../gold';
 import { happiness } from '../happiness';
-import { addXP } from '../../../../core/engine/xp';
-import type { ActionContext, ActionResult, Order, Pig, SaveGame } from '../../../../core/types';
+import { addXP } from '../xp';
+import type { ActionContext, ActionResult, Order, Pig, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 /** Whether `pig` satisfies every requirement of `order` (ADULT, not pregnant, breed, gender, mood). */
@@ -18,7 +18,7 @@ export function pigMeetsOrder(pig: Pig, order: Order, bonus = 0): boolean {
 }
 
 /** Open orders (not expired, not fulfilled) that at least one pig can fill right now. */
-export function readyOrderCount(state: SaveGame, now: number): number {
+export function readyOrderCount(state: FarmGame, now: number): number {
   return state.orders.filter(
     (o) =>
       o.fulfilledAt === null &&
@@ -28,7 +28,7 @@ export function readyOrderCount(state: SaveGame, now: number): number {
 }
 
 export function fulfillOrder(
-  state: SaveGame,
+  state: FarmGame,
   args: { orderId: string; pigId: string },
   ctx: ActionContext,
 ): ActionResult {
@@ -40,7 +40,7 @@ export function fulfillOrder(
     if (!pig) return { ok: false, error: 'PIG_NOT_FOUND' };
     if (!pigMeetsOrder(pig, order, decorBonus(s))) return { ok: false, error: 'ORDER_REQUIREMENTS_NOT_MET' };
 
-    const done: SaveGame = {
+    const done: FarmGame = {
       ...s,
       pigs: s.pigs.filter((p) => p.id !== pig.id),
       orders: s.orders.map((o) => (o.id === order.id ? { ...o, fulfilledAt: ctx.now } : o)),

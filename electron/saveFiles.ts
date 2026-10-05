@@ -9,7 +9,7 @@ import type {
   SaveCandidateSource,
 } from '../src/platform/desktop/bridge';
 
-export const BACKUP_KEEP = 10;
+export const BACKUP_KEEP = 5; // ARCHITECTURE §9: the 5 latest, plus permanent before-migration copies
 export const BACKUP_SPACING_MS = 15 * 60 * 1000;
 const RENAME_RETRIES = 5;
 const RENAME_RETRY_MS = 50;
@@ -239,6 +239,17 @@ export function createSaveFiles(opts: SaveFilesOptions) {
         if (!(await exists(savePath))) return;
         await backupCurrent();
         await fsp.copyFile(savePath, join(dir, await freeName(dir, 'before-reset-')));
+      }),
+
+    /**
+     * Before the first write of a save read in an older format (ARCHITECTURE §9): a permanent copy
+     * saves/before-migration-v<from>-*.json, outside the rotation, so a bad migration never costs a farm.
+     */
+    backupBeforeMigration: (fromVersion: number) =>
+      serial(async () => {
+        if (!Number.isInteger(fromVersion) || fromVersion < 1) throw new Error(`invalid version: ${fromVersion}`);
+        if (!(await exists(savePath))) return;
+        await fsp.copyFile(savePath, join(dir, await freeName(dir, `before-migration-v${fromVersion}-`)));
       }),
 
     /**

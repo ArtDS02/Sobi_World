@@ -7,8 +7,8 @@ import { DAY_PHASES, type DayPhase } from '../../../core/config/dayNight';
 import { SEASON_IDS, type SeasonId } from '../../../core/config/seasons';
 import { parseSeason } from '../../../core/engine/season';
 import { randomId } from '../../../core/rng';
-import type { Pig } from '../../../core/types';
-import type { BoundAction } from '../../../core/world/gameStore';
+import type { Pig } from '../logic/types';
+import type { BoundAction } from '../store';
 import { el } from '../../../ui/dom';
 
 const HOUR = 3_600_000;

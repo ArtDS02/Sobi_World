@@ -4,7 +4,7 @@
 import * as Phaser from 'phaser';
 import { GIFT_PROP_ID } from '../../../../core/config/assetIds';
 import { FEEDBACK } from '../../../../core/config/feedback';
-import type { GiftBox } from '../../../../core/types';
+import type { GiftBox } from '../../logic/types';
 import type { Point } from '../view/giftPlacement';
 import { FALLBACK_PROP_KEY, textureKey } from '../view/textureKeys';
 

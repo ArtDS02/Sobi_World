@@ -9,10 +9,10 @@ import { rollChild } from '../../src/areas/farm/logic/breeding';
 import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';
 import { freeSlots } from '../../src/areas/farm/logic/derived';
 import { mulberry32, sequenceRng } from '../../src/core/rng';
-import type { Pig, SaveGame } from '../../src/core/types';
+import type { Pig, FarmGame } from '../../src/areas/farm/logic/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
-import type { NurseryPig } from '../../src/core/types';
+import type { NurseryPig } from '../../src/areas/farm/logic/types';
 
 const nurseryPig = (id: string): NurseryPig => ({
   id,
@@ -28,18 +28,18 @@ const SEC = 1000;
 const adult = (o: Partial<Pig>) => makePig({ growthProgress: 100, ...o });
 const mom = (o: Partial<Pig> = {}) => adult({ id: 'mom', slotIndex: 0, gender: 'FEMALE', ...o });
 const dad = (o: Partial<Pig> = {}) => adult({ id: 'dad', slotIndex: 1, gender: 'MALE', ...o });
-const pair = (m: Partial<Pig> = {}, d: Partial<Pig> = {}, patch: Partial<SaveGame> = {}) =>
+const pair = (m: Partial<Pig> = {}, d: Partial<Pig> = {}, patch: Partial<FarmGame> = {}) =>
   farm([mom(m), dad(d)], patch);
 const breed =
   (a = 'mom', b = 'dad') =>
-  (s: SaveGame) =>
+  (s: FarmGame) =>
     breedPigs(s, { pigAId: a, pigBId: b }, ctx(0));
 
 /** Bred at t=0, pregnancy fixed by `rng`. */
-function bred(m: Partial<Pig> = {}, d: Partial<Pig> = {}, rng = mulberry32(3)): SaveGame {
+function bred(m: Partial<Pig> = {}, d: Partial<Pig> = {}, rng = mulberry32(3)): FarmGame {
   return expectOk(breedPigs(pair(m, d), { pigAId: 'dad', pigBId: 'mom' }, ctx(0, rng))).state;
 }
-const mother = (s: SaveGame) => s.pigs.find((p) => p.id === 'mom')!;
+const mother = (s: FarmGame) => s.pigs.find((p) => p.id === 'mom')!;
 
 describe('breeding outcome (§6.5 as rules, U00-1 D4)', () => {
   it('A+B resolves like B+A', () => {

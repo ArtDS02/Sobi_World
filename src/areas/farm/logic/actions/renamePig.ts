@@ -1,6 +1,6 @@
 // renamePig (spec §8.12).
 import { BALANCE } from '../../../../core/config/balance';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 const CONTROL_CHARS = /\p{Cc}/gu;
@@ -14,7 +14,7 @@ export function cleanPigName(raw: unknown): string | null {
 }
 
 export function renamePig(
-  state: SaveGame,
+  state: FarmGame,
   args: { pigId: string; name: string },
   ctx: ActionContext,
 ): ActionResult {

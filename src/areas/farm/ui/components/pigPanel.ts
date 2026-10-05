@@ -4,9 +4,9 @@ import { decorBonus } from '../../logic/decor';
 import { BREEDS } from '../../../../core/config/breeds';
 import type { UiIcon } from '../../../../core/config/assetIds';
 import { happiness } from '../../logic/happiness';
-import type { Pig, SaveGame } from '../../../../core/types';
+import type { Pig, FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
-import type { BoundAction } from '../../../../core/world/gameStore';
+import type { BoundAction } from '../../store';
 import { pigActions, type ActionVm } from '../actionsVm';
 import { breedingVm } from '../breedVm';
 import { el } from '../../../../ui/dom';
@@ -47,7 +47,7 @@ const stat = (label: string, value: string, iconName: UiIcon, bar: number | null
 const chip = (text: string, cls = '') => el('span', { class: `pig-panel__chip ${cls}`.trim(), text });
 
 export function renderPigPanel(
-  save: SaveGame,
+  save: FarmGame,
   pig: Pig,
   now: number,
   on: PigPanelHandlers,

@@ -3,7 +3,7 @@
 import type { AudioKey, FxId } from '../../../../core/config/assetIds';
 import { FEEDBACK } from '../../../../core/config/feedback';
 import type { GameEvent } from '../../../../core/events';
-import type { EventOrigin } from '../../../../core/world/gameStore';
+import type { EventOrigin } from '../../store';
 import { formatInt, t } from '../../../../i18n/format';
 import { vi } from '../../../../i18n/vi';
 import { FEEDBACK_TABLE, type AnimationId } from './feedbackTable';

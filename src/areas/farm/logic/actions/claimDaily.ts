@@ -1,18 +1,18 @@
 // claimDaily (DECISIONS PG-2): once per local day. `day` is the local day number computed outside
 // core (ui/localDay.ts); consecutive days grow the streak, a gap restarts it at 1.
 import { DAILY, dailyReward } from '../../../../core/config/daily';
-import { changeGold } from '../../../../core/engine/gold';
-import { addXP } from '../../../../core/engine/xp';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import { changeGold } from '../gold';
+import { addXP } from '../xp';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 /** The streak a claim on `day` would reach. */
-export function nextStreak(daily: SaveGame['progress']['daily'], day: number): number {
+export function nextStreak(daily: FarmGame['progress']['daily'], day: number): number {
   return daily.lastDay === day - 1 ? daily.streak + 1 : 1;
 }
 
 export function claimDaily(
-  state: SaveGame,
+  state: FarmGame,
   args: { day: number },
   ctx: ActionContext,
 ): ActionResult {
@@ -25,7 +25,7 @@ export function claimDaily(
     }
     const streak = nextStreak(daily, args.day);
     const reward = dailyReward(streak);
-    const stocked: SaveGame = {
+    const stocked: FarmGame = {
       ...s,
       inventory: {
         ...s.inventory,

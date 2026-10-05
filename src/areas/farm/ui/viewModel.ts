@@ -1,4 +1,4 @@
-// Pure view-models: SaveGame → display strings. No DOM, so they are unit-tested directly.
+// Pure view-models: FarmGame → display strings. No DOM, so they are unit-tested directly.
 import { BALANCE } from '../../../core/config/balance';
 import { BREEDS } from '../../../core/config/breeds';
 import { DAY_NIGHT } from '../../../core/config/dayNight';
@@ -15,7 +15,7 @@ import {
 import { happiness } from '../logic/happiness';
 import { diseaseState, type DiseaseState } from '../logic/pigHealth';
 import { sellMultiplier } from '../logic/pricing';
-import type { Pig, SaveGame } from '../../../core/types';
+import type { Pig, FarmGame } from '../logic/types';
 import { formatDateTime, formatDec, formatDuration, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 
@@ -39,7 +39,7 @@ export interface TopBarVm {
   troughEmpty: boolean;
 }
 
-export function topBarVm(save: SaveGame): TopBarVm {
+export function topBarVm(save: FarmGame): TopBarVm {
   const { xp, gold } = save.player;
   const level = levelFromXp(xp);
   const next = BALANCE.LEVEL_XP[Math.min(level, BALANCE.MAX_LEVEL - 1)] ?? xp;
@@ -62,7 +62,7 @@ export function topBarVm(save: SaveGame): TopBarVm {
   };
 }
 
-function pigsVm(save: SaveGame): Pick<TopBarVm, 'pigs' | 'pigsTitle' | 'pigsFull'> {
+function pigsVm(save: FarmGame): Pick<TopBarVm, 'pigs' | 'pigsTitle' | 'pigsFull'> {
   const count = save.pigs.length;
   const max = pigCapacity(save);
   const reserved = waitingPigs(save);
@@ -167,7 +167,7 @@ export interface HistoryRowVm {
 }
 
 /** Transactions newest first (the save keeps them newest first, at most 200; DECISIONS Q7). */
-export function historyVm(save: SaveGame): HistoryRowVm[] {
+export function historyVm(save: FarmGame): HistoryRowVm[] {
   return save.transactions.map((tx) => ({
     id: tx.id,
     label: vi.history[tx.type],

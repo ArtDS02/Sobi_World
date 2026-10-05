@@ -3,7 +3,7 @@
 import { setSetting } from '../logic/actions/setSetting';
 import { exportSave } from '../../../core/save/exportImport';
 import type { FileDialogs } from '../../../core/save/port';
-import type { BoundAction, GameStore } from '../../../core/world/gameStore';
+import type { BoundAction, FarmStore } from '../store';
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { openConfirmDialog } from '../../../ui/components/dialog';
@@ -11,7 +11,7 @@ import { openImportDialog } from './dialogs';
 import type { SettingsHandlers } from './screens/settingsScreen';
 
 export interface SettingsDeps {
-  store: Pick<GameStore, 'getSnapshot' | 'markExported' | 'importSave' | 'restoreBackup' | 'resetGame'>;
+  store: Pick<FarmStore, 'getSnapshot' | 'worldSave' | 'markExported' | 'importSave' | 'restoreBackup' | 'resetGame'>;
   now: () => number;
   act: (run: BoundAction) => void;
   /** Host of modal dialogs. */
@@ -29,7 +29,7 @@ export function settingsHandlers(d: SettingsDeps): SettingsHandlers {
   return {
     toggle: (key, value) => d.act((s, c) => setSetting(s, { key, value }, c)),
     exportSave: () => {
-      const save = d.store.getSnapshot().save;
+      const save = d.store.worldSave();
       if (!save || !files) return;
       const at = d.now();
       const out = exportSave(save, new Date(at));

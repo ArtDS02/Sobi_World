@@ -1,7 +1,7 @@
 // Settings (spec §9.3, §10.4, §12): sound and motion toggles, export / import / open the save
 // folder, backups with restore, credits and version.
 import type { SettingKey } from '../../logic/actions/setSetting';
-import type { SaveGame } from '../../../../core/types';
+import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
 import { el } from '../../../../ui/dom';
 import type { SettingsVm } from '../settingsVm';
@@ -42,7 +42,7 @@ const section = (title: string, ...children: (HTMLElement | null)[]) =>
   );
 
 function toggle(
-  settings: SaveGame['settings'],
+  settings: FarmGame['settings'],
   key: SettingKey,
   label: string,
   h: SettingsHandlers,
@@ -62,7 +62,7 @@ function toggle(
 }
 
 export function renderSettingsScreen(
-  save: SaveGame,
+  save: FarmGame,
   vm: SettingsVm,
   h: SettingsHandlers,
 ): HTMLElement {

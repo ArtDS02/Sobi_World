@@ -3,7 +3,7 @@
 import { NEED_NOTIFY_FROM } from '../../../core/config/care';
 import type { GameEvent, PigNeed } from '../../../core/events';
 import type { Rng } from '../../../core/rng';
-import type { Pig, SaveGame } from '../../../core/types';
+import type { Pig, FarmGame } from './types';
 import { resolveBirths } from './breeding';
 import { resolveGifts } from './gifts';
 import { refreshOrders } from './orders';
@@ -12,7 +12,7 @@ import { needLevel, needRank } from './pigHealth';
 import { advanceWithTrough } from './trough';
 
 export interface WorldResult {
-  state: SaveGame;
+  state: FarmGame;
   events: GameEvent[];
 }
 
@@ -20,10 +20,10 @@ export interface WorldResult {
  * Idempotent for the same `now`; the caller persists when `events` is non-empty (§7.4 step 6).
  * `dayOffsetMs` (local time minus UTC) places game-day boundaries (NH-1).
  */
-export function advanceWorld(state: SaveGame, now: number, rng: Rng, dayOffsetMs = 0): WorldResult {
+export function advanceWorld(state: FarmGame, now: number, rng: Rng, dayOffsetMs = 0): WorldResult {
   // Steps 1-2: resolveTrough then advancePig for every pig (DECISIONS S04A-1).
   const win = advanceWithTrough({ pigs: state.pigs, trough: state.trough }, now, rng, dayOffsetMs);
-  let next: SaveGame = { ...state, pigs: win.pigs, trough: win.trough };
+  let next: FarmGame = { ...state, pigs: win.pigs, trough: win.trough };
   const events: GameEvent[] = [];
 
   if (win.report.emptiedAt !== null)

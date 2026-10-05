@@ -6,7 +6,7 @@ import { advancePig } from '../../src/areas/farm/logic/advancePig';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { advanceWithTrough, resolveTrough, type Trough } from '../../src/areas/farm/logic/trough';
 import { sequenceRng, type Rng } from '../../src/core/rng';
-import type { Pig } from '../../src/core/types';
+import type { Pig } from '../../src/areas/farm/logic/types';
 import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';
 

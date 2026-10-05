@@ -2,12 +2,12 @@
 import { BALANCE } from '../../../../core/config/balance';
 import type { ItemId } from '../../../../core/config/ids';
 import { ITEMS } from '../../../../core/config/items';
-import { changeGold } from '../../../../core/engine/gold';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import { changeGold } from '../gold';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 export function buyItem(
-  state: SaveGame,
+  state: FarmGame,
   args: { itemId: ItemId; quantity: number },
   ctx: ActionContext,
 ): ActionResult {

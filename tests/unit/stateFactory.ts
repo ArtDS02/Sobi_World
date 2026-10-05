@@ -1,7 +1,7 @@
-import type { Pig, SaveGame } from '../../src/core/types';
+import type { Pig, FarmGame } from '../../src/areas/farm/logic/types';
 
 /** Minimal valid save at t=0 with the given pigs and trough food. */
-export function makeState(pigs: Pig[] = [], troughFood = 0): SaveGame {
+export function makeState(pigs: Pig[] = [], troughFood = 0): FarmGame {
   return {
     schemaVersion: 7,
     createdAt: 0,

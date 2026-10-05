@@ -2,12 +2,12 @@
 // product's item at the product's price. Inactive or unknown products are refused.
 import { BALANCE } from '../../../../core/config/balance';
 import { productById } from '../shopProducts';
-import { changeGold } from '../../../../core/engine/gold';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import { changeGold } from '../gold';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 export function buyProduct(
-  state: SaveGame,
+  state: FarmGame,
   args: { productId: string; count: number },
   ctx: ActionContext,
 ): ActionResult {

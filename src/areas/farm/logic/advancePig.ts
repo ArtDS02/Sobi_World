@@ -2,7 +2,7 @@
 import { BALANCE } from '../../../core/config/balance';
 import { BREEDS } from '../../../core/config/breeds';
 import type { Rng } from '../../../core/rng';
-import type { Pig } from '../../../core/types';
+import type { Pig } from './types';
 import { onsetFields, sickBlockedUntil } from './pigHealth';
 
 /** Snap threshold so float drift cannot leave a grown pig at 99.9999...% (spec §7.2). */

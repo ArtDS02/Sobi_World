@@ -3,9 +3,9 @@
 // Also the two sounds that are not game events: a pig tap and a DOM button press (§12).
 import { SAVE } from '../../../../core/config/save';
 import type { GameEvent } from '../../../../core/events';
-import type { SaveGame } from '../../../../core/types';
+import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
-import type { GameStore } from '../../../../core/world/gameStore';
+import type { FarmStore } from '../../store';
 import type { AudioPort } from '../audio/audioPort';
 import type { FarmEffects } from './effects';
 import { tapSound } from '../audio/tapSound';
@@ -14,7 +14,7 @@ import { REJECT_ROW } from './feedbackTable';
 import { toastText } from './toastText';
 
 export interface FeedbackDeps {
-  store: Pick<GameStore, 'getSnapshot' | 'subscribe' | 'onEvents' | 'onReject'>;
+  store: Pick<FarmStore, 'getSnapshot' | 'subscribe' | 'onEvents' | 'onReject'>;
   effects: () => FarmEffects;
   audio: AudioPort;
   toast: (message: string) => void;
@@ -32,8 +32,8 @@ export interface FeedbackDirector {
 
 export function createFeedbackDirector(deps: FeedbackDeps): FeedbackDirector {
   // The state before the latest change, so a sold pig can still be named in its toast.
-  let current: SaveGame | null = deps.store.getSnapshot().save;
-  let previous: SaveGame | null = current;
+  let current: FarmGame | null = deps.store.getSnapshot().save;
+  let previous: FarmGame | null = current;
   const offState = deps.store.subscribe((snap) => {
     if (snap.save === current) return;
     previous = current;

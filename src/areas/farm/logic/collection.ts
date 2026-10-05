@@ -1,18 +1,18 @@
 // Collection book discoveries (spec §8.15): append-only, bonus gold + XP on first sighting.
-import { BALANCE } from '../config/balance';
-import type { BreedId } from '../config/ids';
-import type { GameEvent } from '../events';
-import type { ActionContext, SaveGame } from '../types';
+import { BALANCE } from '../../../core/config/balance';
+import type { BreedId } from '../../../core/config/ids';
+import type { GameEvent } from '../../../core/events';
+import type { ActionContext, FarmGame } from './types';
 import { changeGold } from './gold';
 import { addXP } from './xp';
 
-type Discovered = { state: SaveGame; events: GameEvent[] };
+type Discovered = { state: FarmGame; events: GameEvent[] };
 
 /** Records `breed` as discovered if new (bonus gold + XP once); otherwise returns the state unchanged. */
-export function discoverBreed(state: SaveGame, breed: BreedId, ctx: ActionContext): Discovered {
+export function discoverBreed(state: FarmGame, breed: BreedId, ctx: ActionContext): Discovered {
   const { discoveredBreeds } = state.collection;
   if (discoveredBreeds.includes(breed)) return { state, events: [] };
-  const noted: SaveGame = {
+  const noted: FarmGame = {
     ...state,
     collection: { ...state.collection, discoveredBreeds: [...discoveredBreeds, breed] },
   };

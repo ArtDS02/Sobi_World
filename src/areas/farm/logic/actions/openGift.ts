@@ -1,18 +1,18 @@
 // openGift (U06): claims a box once — it leaves the save in the same step that pays it.
-import { changeGold } from '../../../../core/engine/gold';
-import { addXP } from '../../../../core/engine/xp';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import { changeGold } from '../gold';
+import { addXP } from '../xp';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 export function openGift(
-  state: SaveGame,
+  state: FarmGame,
   args: { giftId: string },
   ctx: ActionContext,
 ): ActionResult {
   return runAction(state, ctx, (s) => {
     const box = s.gifts.boxes.find((b) => b.id === args.giftId);
     if (!box) return { ok: false, error: 'GIFT_NOT_FOUND' };
-    const taken: SaveGame = {
+    const taken: FarmGame = {
       ...s,
       gifts: { ...s.gifts, boxes: s.gifts.boxes.filter((b) => b.id !== box.id) },
     };

@@ -3,36 +3,30 @@
 import { SAVE } from '../config/save';
 import type { GameEvent } from '../events';
 import { importSave as parseImport } from '../save/exportImport';
-import { newGame } from '../save/newGame';
+import { WORLD_SAVE_VERSION, type WorldSave } from '../save/world';
 import { isSaveChangedExternally, type LoadSource } from '../save/port';
 import type { ErrorCode } from '../config/errors';
-import type { ActionContext, ActionResult, SaveGame } from '../types';
+import type { ActionContext, ActionResultOf } from '../types';
 import { actionContext, type StoreDeps } from './storeDeps';
+import type {
+  BoundAction,
+  CatchupInfo,
+  EventListener,
+  EventOrigin,
+  StoreSnapshot,
+  StoreStatus,
+} from './storeTypes';
 
-export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew';
+type ActionResult = ActionResultOf<WorldSave>;
 
-/**
- * Where events came from (spec §11.3): a player action, a visible tick, or the catch-up tick
- * right after load / import / the window becoming visible again (never animated, §9.5).
- */
-export type EventOrigin = 'action' | 'tick' | 'catchup';
-/** Catch-up only: how long the world was not ticked (§9.5 away summary). */
-export interface CatchupInfo { awayMs: number }
-export type EventListener = (events: GameEvent[], origin: EventOrigin, catchup?: CatchupInfo) => void;
-
-export interface StoreSnapshot {
-  status: StoreStatus;
-  save: SaveGame | null;
-  /** Another tab owns the save (§9.4): show vi.multiTab, refuse actions, never persist. */
-  readOnly: boolean;
-  loadSource: LoadSource | null;
-  /** The last write failed (§9.2): banner shown, retrying with backoff, memory state kept. */
-  saveError: boolean;
-}
-
-/** An action bound to its arguments, e.g. `(s, c) => buyPig(s, args, c)`. */
-export type BoundAction = (state: SaveGame, ctx: ActionContext) => ActionResult;
-
+export type {
+  BoundAction,
+  CatchupInfo,
+  EventListener,
+  EventOrigin,
+  StoreSnapshot,
+  StoreStatus,
+} from './storeTypes';
 export type { PageLike, StoreDeps, WorldAdvance } from './storeDeps';
 
 /** Every dependency is injected (app/gameStore.ts fills the browser defaults). */
@@ -55,6 +49,7 @@ export function createWorldStore(deps: StoreDeps) {
   let retryScheduled = false;
   let disposed = false;
   let reloading = false; // AM-1: adopting a save another program wrote; nothing is persisted
+  let migratedFrom: number | null = null; // the loaded save was migrated: back it up before the first write
   const unlisten: (() => void)[] = [];
 
   const set = (patch: Partial<StoreSnapshot>) => {
@@ -76,10 +71,14 @@ export function createWorldStore(deps: StoreDeps) {
   const canWrite = () => snapshot.status === 'ready' && !guard.isReadOnly() && !reloading;
 
   /** One write; a failure is surfaced as `saveError` and retried, never swallowed (§9.2). */
-  async function write(save: SaveGame): Promise<void> {
+  async function write(save: WorldSave): Promise<void> {
     if (reloading) return; // queued before the reload: stale, the file now holds the newer save
     try {
-      await deps.storage.save(save);
+      // ARCHITECTURE §9: the old file is copied away before a migrated save first replaces it. A
+      // failed copy fails the write (retried): the migrated farm is never written without it.
+      if (migratedFrom !== null && deps.backups) await deps.backups.backupBeforeMigration(migratedFrom);
+      migratedFrom = null;
+      await deps.storage.save({ ...save, meta: { ...save.meta, lastSavedAt: deps.clock.now() } });
       retryStep = 0;
       if (snapshot.saveError) set({ saveError: false });
     } catch (e) {
@@ -115,8 +114,7 @@ export function createWorldStore(deps: StoreDeps) {
   function tick(origin: EventOrigin = 'tick'): GameEvent[] {
     if (snapshot.status !== 'ready' || !snapshot.save) return [];
     const now = deps.clock.now();
-    // The trough is resolved on every tick: its stamp is when the world last ran.
-    const awayMs = Math.max(0, now - snapshot.save.trough.lastResolvedAt);
+    const awayMs = Math.max(0, now - deps.lastSimulatedAt(snapshot.save));
     const world = deps.advanceWorld(snapshot.save, now, deps.rng, ctx(now).dayOffsetMs ?? 0);
     set({ save: world.state });
     if (world.events.length > 0 || now - lastPersistAt >= SAVE.AUTOSAVE_MS) void persist();
@@ -134,10 +132,14 @@ export function createWorldStore(deps: StoreDeps) {
 
   /** Read chain → ready / recovery / tooNew, or a new game on first launch. */
   async function load() {
+    migratedFrom = null;
     const loaded = await deps.storage.load();
     if (loaded.kind === 'tooNew') set({ status: 'tooNew', loadSource: loaded.source });
     else if (loaded.kind === 'recovery') set({ status: 'recovery', save: null });
-    else if (loaded.kind === 'ok') becomeReady(loaded.save, loaded.source);
+    else if (loaded.kind === 'ok') {
+      migratedFrom = loaded.fromVersion < WORLD_SAVE_VERSION ? loaded.fromVersion : null;
+      becomeReady(loaded.save, loaded.source);
+    }
     else {
       becomeReady(fresh(), null);
       await persist();
@@ -153,9 +155,9 @@ export function createWorldStore(deps: StoreDeps) {
     await load().finally(() => (reloading = false));
   }
 
-  const fresh = () => newGame(ctx(), { reduceMotion: deps.prefersReducedMotion() }); // new farm
+  const fresh = () => deps.codec.newWorld(ctx(), { reduceMotion: deps.prefersReducedMotion() });
 
-  function becomeReady(save: SaveGame, loadSource: LoadSource | null) {
+  function becomeReady(save: WorldSave, loadSource: LoadSource | null) {
     lastPersistAt = deps.clock.now();
     set({ status: 'ready', save, loadSource });
     tick('catchup'); // away catch-up; its events build the away summary (§9.5)
@@ -257,7 +259,7 @@ export function createWorldStore(deps: StoreDeps) {
       if (snapshot.status === 'tooNew' || guard.isReadOnly()) {
         return reject({ ok: false, error: 'INVALID_REQUEST' });
       }
-      const parsed = parseImport(json);
+      const parsed = parseImport(json, deps.codec);
       if (!parsed.ok) return reject(parsed);
       stopLoop();
       becomeReady(parsed.save, null);

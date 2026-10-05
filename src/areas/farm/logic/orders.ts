@@ -7,7 +7,7 @@ import { BREED_ID_VALUES, GENDER_VALUES, type BreedId } from '../../../core/conf
 import { RARITY_ORDER_WEIGHT } from '../../../core/config/rarity';
 import type { GameEvent } from '../../../core/events';
 import { mulberry32, orderSeed, pick } from '../../../core/rng';
-import type { Order, SaveGame } from '../../../core/types';
+import type { Order, FarmGame } from './types';
 import { weightedPick } from './breeding';
 
 const MIN_HAPPINESS = [0, 50, 75] as const;
@@ -51,9 +51,9 @@ export function generateOrder(
  * orders (ORDER_NEW). An id already in state is never generated again (Q2). Idempotent for `now`.
  */
 export function refreshOrders(
-  state: SaveGame,
+  state: FarmGame,
   now: number,
-): { state: SaveGame; events: GameEvent[] } {
+): { state: FarmGame; events: GameEvent[] } {
   const events: GameEvent[] = [];
   const kept = state.orders.filter((o) => {
     if (o.expiresAt > now) return true;

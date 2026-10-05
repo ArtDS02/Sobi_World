@@ -1,8 +1,8 @@
 // Achievements panel (spec §20.4, DECISIONS PG-2): the daily reward strip on top, then every
 // achievement with a progress bar and a claim button.
-import type { SaveGame } from '../../../../core/types';
+import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
-import type { BoundAction } from '../../../../core/world/gameStore';
+import type { BoundAction } from '../../store';
 import { el } from '../../../../ui/dom';
 import { achievementsVm, dailyVm } from '../progressVm';
 
@@ -14,7 +14,7 @@ const button = (text: string, onClick: () => void, variant = '') =>
     on: { click: onClick },
   });
 
-function dailySection(save: SaveGame, now: number, act: (run: BoundAction) => void) {
+function dailySection(save: FarmGame, now: number, act: (run: BoundAction) => void) {
   const vm = dailyVm(save, now);
   return el(
     'section',
@@ -45,7 +45,7 @@ function dailySection(save: SaveGame, now: number, act: (run: BoundAction) => vo
 }
 
 export function renderAchievementsScreen(
-  save: SaveGame,
+  save: FarmGame,
   now: number,
   act: (run: BoundAction) => void,
 ): HTMLElement {

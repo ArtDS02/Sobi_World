@@ -4,7 +4,7 @@ import { decorBonus } from '../logic/decor';
 import { fulfillOrder, pigMeetsOrder } from '../logic/actions/fulfillOrder';
 import { BREEDS } from '../../../core/config/breeds';
 import { happiness } from '../logic/happiness';
-import type { SaveGame } from '../../../core/types';
+import type { FarmGame } from '../logic/types';
 import { formatDuration, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import type { ActionVm } from './actionsVm';
@@ -25,7 +25,7 @@ export interface OrderCardVm {
   choices: ActionVm[];
 }
 
-export function ordersVm(save: SaveGame, now: number): OrderCardVm[] {
+export function ordersVm(save: FarmGame, now: number): OrderCardVm[] {
   const bonus = decorBonus(save);
   return [...save.orders]
     .filter((o) => o.expiresAt > now)

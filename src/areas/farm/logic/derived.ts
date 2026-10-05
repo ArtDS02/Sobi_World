@@ -2,7 +2,7 @@
 import { BALANCE } from '../../../core/config/balance';
 import { BREEDS } from '../../../core/config/breeds';
 import { levelFromXp } from '../../../core/config/levels';
-import type { GrowthStage, Pig, SaveGame } from '../../../core/types';
+import type { GrowthStage, Pig, FarmGame } from './types';
 
 /** D3: BABY < 30 <= YOUNG < 100 = ADULT. */
 export function growthStage(growthProgress: number): GrowthStage {
@@ -16,13 +16,13 @@ export function weight(pig: Pick<Pig, 'breed' | 'growthProgress'>): number {
 }
 
 /** D13: level is derived from xp. */
-export const level = (state: Pick<SaveGame, 'player'>): number => levelFromXp(state.player.xp);
+export const level = (state: Pick<FarmGame, 'player'>): number => levelFromXp(state.player.xp);
 
 /**
  * Max pigs on the farm (capacity, PS-1): the pen slots the player unlocked (start slots + slot
  * upgrades, spec §8). The one place to add any future capacity source (building, bonus).
  */
-export function pigCapacity(state: Pick<SaveGame, 'player'>): number {
+export function pigCapacity(state: Pick<FarmGame, 'player'>): number {
   return state.player.unlockedSlots;
 }
 
@@ -30,12 +30,12 @@ export function pigCapacity(state: Pick<SaveGame, 'player'>): number {
  * Newborns waiting in the nursery plus unborn ones (BR-1). They hold no pen slot: a child joins
  * the farm only when the player raises it (adoptPig), which needs a free slot then.
  */
-export function waitingPigs(state: Pick<SaveGame, 'pigs' | 'nursery'>): number {
+export function waitingPigs(state: Pick<FarmGame, 'pigs' | 'nursery'>): number {
   return state.nursery.length + state.pigs.filter((p) => p.pregnancy !== null).length;
 }
 
 /** free = capacity − pigs (BR-1 replaces D8's reservation). Every action that adds a pig needs 1. */
-export function freeSlots(state: Pick<SaveGame, 'player' | 'pigs'>): number {
+export function freeSlots(state: Pick<FarmGame, 'player' | 'pigs'>): number {
   return pigCapacity(state) - state.pigs.length;
 }
 

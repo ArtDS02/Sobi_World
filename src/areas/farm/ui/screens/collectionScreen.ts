@@ -1,6 +1,6 @@
 // Collection book (spec §8.15): every species, undiscovered ones as silhouettes.
 import type { AssetRegistry } from '../../../../core/assets/registry';
-import type { SaveGame } from '../../../../core/types';
+import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
 import { rarityBadge } from '../../../../ui/components/rarityBadge';
 import { thumb } from '../../../../ui/components/thumb';
@@ -29,7 +29,7 @@ const heading = (title: string, progress: string) =>
     el('span', { class: 'collection__progress', text: progress }),
   );
 
-export function renderCollectionScreen(save: SaveGame, assets: AssetRegistry | null): HTMLElement {
+export function renderCollectionScreen(save: FarmGame, assets: AssetRegistry | null): HTMLElement {
   const vm = collectionVm(save, assets);
   return el(
     'section',

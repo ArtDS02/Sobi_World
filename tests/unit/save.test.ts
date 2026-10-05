@@ -2,7 +2,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import v1Fixture from '../fixtures/save-v1.json';
 import { BALANCE } from '../../src/core/config/balance';
 import { SAVE, V3_SKIN_REFUND_GOLD, V5_OUTFIT_PRICES } from '../../src/core/config/save';
-import { changeGold } from '../../src/core/engine/gold';
+import { changeGold } from '../../src/areas/farm/logic/gold';
 import { mulberry32 } from '../../src/core/rng';
 import {
   exportFileName,
@@ -10,30 +10,32 @@ import {
   exportSave,
   importSave,
 } from '../../src/core/save/exportImport';
-import { migrate, parseSave } from '../../src/core/save/migrate';
-import { newGame } from '../../src/core/save/newGame';
-import { saveGameSchema, type SaveGameParsed } from '../../src/core/save/schema';
-import type { SaveGame } from '../../src/core/types';
+import { migrateFarmSave, parseFarmSave } from '../../src/areas/farm/logic/save/legacy';
+import { newGame } from '../../src/areas/farm/logic/save/newFarm';
+import { farmGameSchema, type FarmGameParsed } from '../../src/areas/farm/logic/save/farmSchema';
+import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';
+import { world } from './worldKit';
+import { SAVE_CODEC } from '../../src/app/saveCodec';
 
 const ctx = (now = 1_000) => ({ now, rng: mulberry32(1) });
-const valid = (s: unknown) => saveGameSchema.safeParse(s).success;
+const valid = (s: unknown) => farmGameSchema.safeParse(s).success;
 
 describe('schema (§5.1, §5.5)', () => {
-  it('matches the SaveGame type', () => {
-    expectTypeOf<SaveGameParsed>().toEqualTypeOf<SaveGame>();
+  it('matches the FarmGame type', () => {
+    expectTypeOf<FarmGameParsed>().toEqualTypeOf<FarmGame>();
   });
 
   it('accepts a valid save and round-trips through JSON', () => {
     const s = makeState([makePig()], 5);
     expect(valid(s)).toBe(true);
-    const back = parseSave(JSON.stringify(s));
+    const back = parseFarmSave(JSON.stringify(s));
     expect(back).toEqual({ ok: true, save: s });
   });
 
   const base = () => makeState([makePig()], 5);
-  it.each<[string, (s: SaveGame) => void]>([
+  it.each<[string, (s: FarmGame) => void]>([
     ['negative gold', (s) => (s.player.gold = -1)],
     ['negative inventory', (s) => (s.inventory.FOOD_BASIC = -1)],
     ['negative trough food', (s) => (s.trough.food = -1)],
@@ -102,7 +104,7 @@ const order = (i: number) => ({
 
 describe('migrate (§9.2)', () => {
   it('v1 (v3 save) → current adds trough, orders, collection, reduceMotion; no skin fields', () => {
-    const res = migrate(structuredClone(v1Fixture));
+    const res = migrateFarmSave(structuredClone(v1Fixture));
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     const s = res.save;
@@ -125,7 +127,7 @@ describe('migrate (§9.2)', () => {
 
   it('the current version passes through unchanged', () => {
     const s = makeState([makePig()], 3);
-    expect(migrate(structuredClone(s))).toEqual({ ok: true, save: s });
+    expect(migrateFarmSave(structuredClone(s))).toEqual({ ok: true, save: s });
   });
 
   /** A pig as saves before v5 stored it: with skin and cosmetic fields. */
@@ -157,7 +159,7 @@ describe('migrate (§9.2)', () => {
     };
 
     it('a pink pig wearing a species skin becomes that species; others keep theirs', () => {
-      const res = migrate(v2());
+      const res = migrateFarmSave(v2());
       expect(res.ok).toBe(true);
       if (!res.ok) return;
       const breed = (id: string) => res.save.pigs.find((p) => p.id === id)!;
@@ -167,7 +169,7 @@ describe('migrate (§9.2)', () => {
     });
 
     it('owned species skins become discovered species', () => {
-      const res = migrate(v2());
+      const res = migrateFarmSave(v2());
       if (!res.ok) throw new Error(res.error);
       expect([...res.save.collection.discoveredBreeds].sort()).toEqual(
         ['PIG_BLACK', 'PIG_BROWN', 'PIG_EARTH_PINK', 'PIG_STRIPED_MELON', 'PIG_WHITE'].sort(),
@@ -175,7 +177,7 @@ describe('migrate (§9.2)', () => {
     });
 
     it('unworn species skin (v3) and the outfit (v5) are refunded once, through transactions', () => {
-      const res = migrate(v2());
+      const res = migrateFarmSave(v2());
       if (!res.ok) throw new Error(res.error);
       expect(res.save.player.gold).toBe(1000 + V3_SKIN_REFUND_GOLD + V5_OUTFIT_PRICES.pig_farmer!);
       const refunds = res.save.transactions.filter((t) => t.type === 'SKIN_REFUND');
@@ -187,7 +189,7 @@ describe('migrate (§9.2)', () => {
       );
       expect(refunds).toHaveLength(2);
       // Loading the migrated save again changes nothing.
-      expect(migrate(structuredClone(res.save))).toEqual(res);
+      expect(migrateFarmSave(structuredClone(res.save))).toEqual(res);
     });
   });
 
@@ -212,7 +214,7 @@ describe('migrate (§9.2)', () => {
     };
 
     it('a pink pig in a body outfit becomes that species; other pigs keep theirs', () => {
-      const res = migrate(v4());
+      const res = migrateFarmSave(v4());
       if (!res.ok) throw new Error(res.error);
       expect(res.save.pigs.map((p) => p.breed)).toEqual(['PIG_ROBOT', 'PIG_WHITE', 'PIG_TIGER']);
       for (const p of res.save.pigs) {
@@ -226,17 +228,17 @@ describe('migrate (§9.2)', () => {
     });
 
     it('every other owned outfit is refunded at its price, once', () => {
-      const res = migrate(v4());
+      const res = migrateFarmSave(v4());
       if (!res.ok) throw new Error(res.error);
       expect(res.save.player.gold).toBe(1000 + 6000 + 6000); // unicorn (worn by a white pig) + ninja
       const refunds = res.save.transactions.filter((t) => t.type === 'SKIN_REFUND');
       expect(refunds.map((t) => t.refId).sort()).toEqual(['pig_ninja', 'pig_unicorn']);
-      expect(migrate(structuredClone(res.save))).toEqual(res);
+      expect(migrateFarmSave(structuredClone(res.save))).toEqual(res);
     });
   });
 
   it('future schemaVersion → SAVE_TOO_NEW', () => {
-    expect(migrate({ ...makeState(), schemaVersion: SAVE.SCHEMA_VERSION + 1 })).toEqual({
+    expect(migrateFarmSave({ ...makeState(), schemaVersion: SAVE.SCHEMA_VERSION + 1 })).toEqual({
       ok: false,
       error: 'SAVE_TOO_NEW',
     });
@@ -252,7 +254,7 @@ describe('migrate (§9.2)', () => {
     { schemaVersion: 1.5 },
     { schemaVersion: 1 },
   ])('garbage %j → SAVE_CORRUPT', (raw) => {
-    expect(migrate(raw)).toEqual({ ok: false, error: 'SAVE_CORRUPT' });
+    expect(migrateFarmSave(raw)).toEqual({ ok: false, error: 'SAVE_CORRUPT' });
   });
 });
 
@@ -299,21 +301,21 @@ describe('export / import (§9.3)', () => {
 
   it('export stamps lastExportAt and the JSON imports back to the same save', () => {
     const at = new Date(2026, 0, 2, 13, 45);
-    const out = exportSave(makeState([makePig()], 2), at);
+    const out = exportSave(world(makeState([makePig()], 2)), at);
     expect(out.save.settings.lastExportAt).toBe(at.getTime());
-    expect(importSave(out.json)).toEqual({ ok: true, save: out.save });
+    expect(importSave(out.json, SAVE_CODEC)).toEqual({ ok: true, save: out.save, fromVersion: 8 });
   });
 
   it('import rejects invalid JSON and invalid schema', () => {
-    expect(importSave('{not json')).toEqual({ ok: false, error: 'SAVE_CORRUPT' });
-    expect(importSave(JSON.stringify({ ...makeState(), player: null }))).toEqual({
+    expect(importSave('{not json', SAVE_CODEC)).toEqual({ ok: false, error: 'SAVE_CORRUPT' });
+    expect(importSave(JSON.stringify({ ...makeState(), player: null }), SAVE_CODEC)).toEqual({
       ok: false,
       error: 'SAVE_CORRUPT',
     });
   });
 
   it('export reminder after 7 days', () => {
-    const s = makeState();
+    const s = world(makeState());
     expect(exportReminderDue(s, 0)).toBe(true);
     const day = 24 * 3600 * 1000;
     s.settings.lastExportAt = 0;

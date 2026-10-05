@@ -1,10 +1,10 @@
 // Transaction history (DECISIONS Q7): newest first, at most 200, type label + signed gold.
-import type { SaveGame } from '../../../../core/types';
+import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
 import { el } from '../../../../ui/dom';
 import { historyVm } from '../viewModel';
 
-export function renderHistoryScreen(save: SaveGame): HTMLElement {
+export function renderHistoryScreen(save: FarmGame): HTMLElement {
   const rows = historyVm(save);
   return el(
     'section',

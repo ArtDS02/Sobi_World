@@ -1,12 +1,11 @@
 // AM-1: a save replaced by another program (the admin dashboard) is adopted, never overwritten.
+import { createFarmGameStore, parseWorldSave } from './worldKit';
 import { describe, expect, it } from 'vitest';
 import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
 import { fakeClock } from '../../src/core/clock';
 import { mulberry32 } from '../../src/core/rng';
-import { parseSave } from '../../src/core/save/migrate';
 import { SAVE_CHANGED_EXTERNALLY, type SaveStorage } from '../../src/core/save/port';
-import type { SaveGame } from '../../src/core/types';
-import { createGameStore } from '../../src/app/gameStore';
+import type { WorldSave } from '../../src/core/save/world';
 
 /** A save file with the desktop rules: a write after an outside edit is refused until re-read. */
 function fileStorage() {
@@ -18,8 +17,8 @@ function fileStorage() {
     async load() {
       known = version;
       if (file === null) return { kind: 'empty' };
-      const r = parseSave(file);
-      return r.ok ? { kind: 'ok', save: r.save, source: 'primary' } : { kind: 'recovery' };
+      const r = parseWorldSave(file);
+      return r.ok ? { kind: 'ok', save: r.save, source: 'primary', fromVersion: r.fromVersion } : { kind: 'recovery' };
     },
     async save(s) {
       if (known !== version) throw new Error(SAVE_CHANGED_EXTERNALLY);
@@ -30,11 +29,11 @@ function fileStorage() {
   };
   return {
     storage,
-    gold: () => (JSON.parse(file!) as SaveGame).player.gold,
+    gold: () => (JSON.parse(file!) as WorldSave).wallet.coins,
     /** The admin dashboard writes the file; `watch` = the file watcher noticed it. */
     adminSetGold(gold: number, watch: boolean) {
-      const s = JSON.parse(file!) as SaveGame;
-      file = JSON.stringify({ ...s, player: { ...s.player, gold } });
+      const s = JSON.parse(file!) as WorldSave;
+      file = JSON.stringify({ ...s, wallet: { ...s.wallet, coins: gold } });
       version++;
       if (watch) notify?.();
     },
@@ -45,7 +44,7 @@ const settle = () => new Promise((r) => setTimeout(r, 0));
 const guard = { start: async () => true, isReadOnly: () => false, close: () => {} };
 
 function makeStore(f: ReturnType<typeof fileStorage>) {
-  return createGameStore({
+  return createFarmGameStore({
     storage: f.storage,
     instanceGuard: guard,
     clock: fakeClock(1_700_000_000_000),

@@ -1,6 +1,6 @@
 // Pig visual state (spec §11, art standard §3): derived from the pig, the feedback animation that
 // is playing and whether the pig is wandering — never stored. Pure, so the priority is tested.
-import type { Pig } from '../../../../core/types';
+import type { Pig } from '../../logic/types';
 import type { AnimationId } from '../feedback/feedbackTable';
 
 export type VisualState =

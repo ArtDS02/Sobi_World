@@ -3,13 +3,13 @@ import { BALANCE } from '../../../../core/config/balance';
 import { BREEDS } from '../../../../core/config/breeds';
 import { levelFromXp } from '../../../../core/config/levels';
 import { GENDER_VALUES, type BreedId, type Gender } from '../../../../core/config/ids';
-import { discoverBreed } from '../../../../core/engine/collection';
+import { discoverBreed } from '../collection';
 import { lowestFreeSlot } from '../breeding';
 import { freeSlots } from '../derived';
-import { changeGold } from '../../../../core/engine/gold';
+import { changeGold } from '../gold';
 import { pickPigName } from '../pigNames';
 import { randomId } from '../../../../core/rng';
-import type { ActionContext, ActionResult, Pig, SaveGame } from '../../../../core/types';
+import type { ActionContext, ActionResult, Pig, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 export interface BuyPigArgs {
@@ -17,7 +17,7 @@ export interface BuyPigArgs {
   gender: Gender;
 }
 
-export function buyPig(state: SaveGame, args: BuyPigArgs, ctx: ActionContext): ActionResult {
+export function buyPig(state: FarmGame, args: BuyPigArgs, ctx: ActionContext): ActionResult {
   return runAction(state, ctx, (s) => {
     const def = BREEDS[args.breed] as (typeof BREEDS)[BreedId] | undefined;
     if (!def || def.buyGold === null || !def.enabled) return { ok: false, error: 'INVALID_REQUEST' };

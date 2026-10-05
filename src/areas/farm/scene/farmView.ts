@@ -5,7 +5,7 @@ import type { AssetRegistry } from '../../../core/assets/registry';
 import type { FarmAction } from '../../../core/config/assetIds';
 import type { DayPhase } from '../../../core/config/dayNight';
 import type { SeasonId } from '../../../core/config/seasons';
-import type { GameStore } from '../../../core/world/gameStore';
+import type { FarmStore } from '../store';
 import { phaserConfig } from './config/phaser';
 import { noEffects, type FarmEffects } from './feedback/effects';
 import { BootScene } from './scenes/BootScene';
@@ -13,7 +13,7 @@ import { MainFarmScene } from './scenes/MainFarmScene';
 import { PreloadScene } from './scenes/PreloadScene';
 
 export interface FarmDeps {
-  store: GameStore;
+  store: FarmStore;
   assets: AssetRegistry;
   now: () => number;
   /** Every canvas click: a pig, a world object with an `action`, or empty ground. */

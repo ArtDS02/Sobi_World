@@ -4,14 +4,14 @@
 import { BALANCE } from '../../../../core/config/balance';
 import { lowestFreeSlot } from '../breeding';
 import { freeSlots } from '../derived';
-import type { ActionContext, ActionResult, Pig, SaveGame } from '../../../../core/types';
+import type { ActionContext, ActionResult, Pig, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 export interface AdoptPigArgs {
   nurseryId: string;
 }
 
-export function adoptPig(state: SaveGame, args: AdoptPigArgs, ctx: ActionContext): ActionResult {
+export function adoptPig(state: FarmGame, args: AdoptPigArgs, ctx: ActionContext): ActionResult {
   return runAction(state, ctx, (s) => {
     const baby = s.nursery.find((p) => p.id === args.nurseryId);
     if (!baby) return { ok: false, error: 'PIG_NOT_FOUND' };

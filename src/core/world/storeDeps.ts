@@ -3,7 +3,9 @@
 import type { Clock } from '../clock';
 import type { Rng } from '../rng';
 import type { BackupStore, InstanceGuard, SaveStorage } from '../save/port';
-import type { ActionContext, SaveGame } from '../types';
+import type { SaveCodec } from '../save/migrate';
+import type { WorldSave } from '../save/world';
+import type { ActionContext } from '../types';
 import type { GameEvent } from '../events';
 
 export interface PageLike {
@@ -13,14 +15,18 @@ export interface PageLike {
 
 /** Catches the world up to `now` (the farm's advanceWorld until the Area registry, GĐ1 step 6). */
 export type WorldAdvance = (
-  state: SaveGame,
+  state: WorldSave,
   now: number,
   rng: Rng,
   dayOffsetMs: number,
-) => { state: SaveGame; events: GameEvent[] };
+) => { state: WorldSave; events: GameEvent[] };
 
 export interface StoreDeps {
   advanceWorld: WorldAdvance;
+  /** When the world was last simulated up to: the start of the away summary (§9.5). */
+  lastSimulatedAt: (state: WorldSave) => number;
+  /** New worlds, imports: this build's save format and Areas. */
+  codec: SaveCodec;
   storage: SaveStorage;
   instanceGuard: InstanceGuard;
   clock: Clock;

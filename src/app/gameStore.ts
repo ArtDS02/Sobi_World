@@ -1,9 +1,10 @@
 // The game store with its real browser dependencies (spec §4, §7.1). The store itself is world-level
 // and pure (core/world/gameStore.ts); this file supplies the clock, rng, timers, page visibility and
 // the world tick. Tests and main.ts override what they need.
-import { advanceWorld } from '../areas/farm/logic/advanceWorld';
+import { advanceFarmWorld, farmSimulatedAt } from '../areas/farm/logic/world';
 import { createWorldStore, type PageLike, type StoreDeps } from '../core/world/gameStore';
 import { defaultRng, realClock } from './runtime';
+import { SAVE_CODEC } from './saveCodec';
 
 export type {
   BoundAction,
@@ -33,7 +34,9 @@ type DefaultDeps = Omit<StoreDeps, 'storage' | 'instanceGuard'>;
 
 export function defaultDeps(): DefaultDeps {
   return {
-    advanceWorld,
+    advanceWorld: advanceFarmWorld,
+    lastSimulatedAt: farmSimulatedAt,
+    codec: SAVE_CODEC,
     clock: realClock,
     rng: defaultRng,
     every: (fn, ms) => globalThis.setInterval(fn, ms),

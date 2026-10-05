@@ -3,7 +3,7 @@
 
 /**
  * Route prefix: GET load · POST write {json} · POST markCorrupt {source} · GET backups ·
- * POST restore {name} · POST backupBeforeReset.
+ * POST restore {name} · POST backupBeforeReset · POST backupBeforeMigration {fromVersion}.
  */
 export const DEV_SAVE_ROUTE = '/__unin/save/';
 /** Vite HMR custom event: save.json was replaced by another program (admin dashboard). */

@@ -2,10 +2,10 @@
 import { BALANCE } from '../../../core/config/balance';
 import { BREEDS } from '../../../core/config/breeds';
 import type { Rng } from '../../../core/rng';
-import type { Pig, SaveGame } from '../../../core/types';
+import type { Pig, FarmGame } from './types';
 import { advancePig } from './advancePig';
 
-export type Trough = SaveGame['trough'];
+export type Trough = FarmGame['trough'];
 
 export interface FarmWindow {
   pigs: Pig[];

@@ -5,10 +5,10 @@ import { BREEDS } from '../../../core/config/breeds';
 import { happiness } from '../logic/happiness';
 import { sellMultiplier, sellPrice } from '../logic/pricing';
 import { freeSlots, pigCapacity } from '../logic/derived';
-import type { NurseryPig, Pig, SaveGame } from '../../../core/types';
+import type { NurseryPig, Pig, FarmGame } from '../logic/types';
 import { formatDec, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import type { BoundAction } from '../../../core/world/gameStore';
+import type { BoundAction } from '../store';
 import { productPurchase, troughFill, troughSpace, type ActionVm } from './actionsVm';
 import type { OrderCardVm } from './ordersVm';
 import { actionButton } from './components/actionButton';
@@ -73,7 +73,7 @@ export function openRenameDialog(host: HTMLElement, pig: Pig, act: Act) {
 /** §8.6: fill from inventory first, shortfall bought with gold. `units` presets the amount. */
 export function openTroughDialog(
   host: HTMLElement,
-  save: SaveGame,
+  save: FarmGame,
   now: number,
   act: Act,
   units = troughSpace(save),
@@ -127,7 +127,7 @@ export function openTroughDialog(
 /** §8.10: quantity 1–99 packs of a shop product, total updates live; reason from the real action. */
 export function openBuyItemDialog(
   host: HTMLElement,
-  save: SaveGame,
+  save: FarmGame,
   productId: string,
   now: number,
   act: Act,
@@ -190,7 +190,7 @@ export function openOrderDialog(host: HTMLElement, card: OrderCardVm, act: Act) 
  * rejects with NO_PIG_SLOT, the error toast explains and the newborn stays in the nursery).
  * No → just closes.
  */
-export function openAdoptDialog(host: HTMLElement, save: SaveGame, baby: NurseryPig, act: Act) {
+export function openAdoptDialog(host: HTMLElement, save: FarmGame, baby: NurseryPig, act: Act) {
   const d = openDialog(host, vi.nursery.askTitle, vi.nursery.no);
   const free = Math.max(0, freeSlots(save));
   d.body.append(

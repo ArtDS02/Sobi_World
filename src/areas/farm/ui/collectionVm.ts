@@ -4,7 +4,7 @@ import type { AssetRegistry } from '../../../core/assets/registry';
 import { BREEDS } from '../../../core/config/breeds';
 import { BREED_ID_VALUES } from '../../../core/config/ids';
 import { RARITY_VALUES, type Rarity } from '../../../core/config/rarity';
-import type { SaveGame } from '../../../core/types';
+import type { FarmGame } from '../logic/types';
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 
@@ -29,7 +29,7 @@ export interface CollectionVm {
   breedProgress: string;
 }
 
-export function collectionVm(save: SaveGame, assets: AssetRegistry | null): CollectionVm {
+export function collectionVm(save: FarmGame, assets: AssetRegistry | null): CollectionVm {
   const { discoveredBreeds } = save.collection;
   const breeds = BREED_ID_VALUES.map((b): BookEntryVm => {
     const found = discoveredBreeds.includes(b);

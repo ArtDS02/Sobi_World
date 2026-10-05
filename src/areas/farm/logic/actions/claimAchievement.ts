@@ -1,13 +1,13 @@
 // claimAchievement (DECISIONS PG-2): pays a reached achievement once.
 import { ACHIEVEMENTS } from '../../../../core/config/achievements';
-import { changeGold } from '../../../../core/engine/gold';
+import { changeGold } from '../gold';
 import { isReached } from '../progress';
-import { addXP } from '../../../../core/engine/xp';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import { addXP } from '../xp';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 export function claimAchievement(
-  state: SaveGame,
+  state: FarmGame,
   args: { id: string },
   ctx: ActionContext,
 ): ActionResult {
@@ -16,7 +16,7 @@ export function claimAchievement(
     if (!def) return { ok: false, error: 'INVALID_REQUEST' };
     if (s.progress.claimed[def.id] !== undefined) return { ok: false, error: 'ALREADY_CLAIMED' };
     if (!isReached(s, def)) return { ok: false, error: 'ACHIEVEMENT_LOCKED' };
-    const marked: SaveGame = {
+    const marked: FarmGame = {
       ...s,
       progress: { ...s.progress, claimed: { ...s.progress.claimed, [def.id]: ctx.now } },
     };

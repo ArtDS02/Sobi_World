@@ -207,10 +207,10 @@ async function saveLayout(placements: PlacementRow[], load: (p: string) => Promi
   return { status: 200, body: { ok: true, placements: placements.length } };
 }
 
-/** Core's own parser (migrate + schema + invariants): the admin can only write what the game reads. */
+/** The game's own parser (migrate + world and Area schemas): the admin can only write what the game reads. */
 async function saveValidator(load: (p: string) => Promise<Mod>) {
-  const migrate = await load('/src/core/save/migrate.ts');
-  const parseSave = migrate.parseSave as (json: string) => { ok: boolean; error?: string };
+  const codec = await load('/src/app/saveCodec.ts');
+  const parseSave = codec.parseWorldSave as (json: string) => { ok: boolean; error?: string };
   return (json: string) => {
     const r = parseSave(json);
     return r.ok ? null : (r.error ?? 'SAVE_CORRUPT');

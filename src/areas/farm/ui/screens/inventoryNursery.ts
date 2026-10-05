@@ -3,7 +3,7 @@
 import type { AssetRegistry } from '../../../../core/assets/registry';
 import { BALANCE } from '../../../../core/config/balance';
 import { BREEDS } from '../../../../core/config/breeds';
-import type { NurseryPig, SaveGame } from '../../../../core/types';
+import type { NurseryPig, FarmGame } from '../../logic/types';
 import { t } from '../../../../i18n/format';
 import { vi } from '../../../../i18n/vi';
 import { rarityBadge } from '../../../../ui/components/rarityBadge';
@@ -11,7 +11,7 @@ import { thumb } from '../../../../ui/components/thumb';
 import { el } from '../../../../ui/dom';
 
 export function renderNursery(
-  save: SaveGame,
+  save: FarmGame,
   raise: (baby: NurseryPig) => void,
   assets?: AssetRegistry,
 ): HTMLElement {

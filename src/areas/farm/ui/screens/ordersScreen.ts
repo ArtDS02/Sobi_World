@@ -1,6 +1,6 @@
 // Orders board (spec §8.14): opened from prop_order_board. Each card lists requirements and reward;
 // "Giao đơn" opens a picker of the pigs that fit.
-import type { SaveGame } from '../../../../core/types';
+import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
 import { actionButton } from '../components/actionButton';
 import { art, icon } from '../../../../ui/components/icon';
@@ -11,7 +11,7 @@ export interface OrdersHandlers {
   deliver: (card: OrderCardVm) => void;
 }
 
-export function renderOrdersScreen(save: SaveGame, now: number, on: OrdersHandlers): HTMLElement {
+export function renderOrdersScreen(save: FarmGame, now: number, on: OrdersHandlers): HTMLElement {
   const cards = ordersVm(save, now);
   return el(
     'section',

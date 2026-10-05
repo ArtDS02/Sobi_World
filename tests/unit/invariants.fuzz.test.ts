@@ -17,9 +17,9 @@ import { GENDER_VALUES, ITEM_ID_VALUES } from '../../src/core/config/ids';
 import { ITEMS } from '../../src/core/config/items';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { mulberry32, pick, type Rng } from '../../src/core/rng';
-import { newGame } from '../../src/core/save/newGame';
-import { saveGameSchema } from '../../src/core/save/schema';
-import type { ActionContext, ActionResult, Pig, SaveGame } from '../../src/core/types';
+import { newGame } from '../../src/areas/farm/logic/save/newFarm';
+import { farmGameSchema } from '../../src/areas/farm/logic/save/farmSchema';
+import type { ActionContext, ActionResult, Pig, FarmGame } from '../../src/areas/farm/logic/types';
 
 const STEPS = 1000;
 const MIDGAME_GOLD = 100_000;
@@ -32,27 +32,27 @@ const ABSENCES = [60 * MIN, 4 * 60 * MIN, 12 * 60 * MIN, 3 * 24 * 60 * MIN];
 const ABSENCE_CHANCE = 0.05;
 const jump = (r: Rng) => pick(r, r.next() < ABSENCE_CHANCE ? ABSENCES : SESSION_JUMPS);
 
-type Step = (s: SaveGame, c: ActionContext, r: Rng) => ActionResult;
+type Step = (s: FarmGame, c: ActionContext, r: Rng) => ActionResult;
 const anyInt = (r: Rng, max: number) => Math.floor(r.next() * (max + 1));
-const adults = (s: SaveGame) => s.pigs.filter((p) => p.growthProgress >= 100 && !p.pregnancy);
+const adults = (s: FarmGame) => s.pigs.filter((p) => p.growthProgress >= 100 && !p.pregnancy);
 
 /**
  * Half the time an argument is drawn from the candidates that could succeed, otherwise from all
  * pigs (or a missing id), so both the accept and the reject paths keep getting hit.
  */
-function target(s: SaveGame, r: Rng, good: Pig[] = s.pigs): string {
+function target(s: FarmGame, r: Rng, good: Pig[] = s.pigs): string {
   if (good.length > 0 && r.next() < 0.5) return pick(r, good).id;
   return s.pigs.length > 0 && r.next() < 0.9 ? pick(r, s.pigs).id : 'missing';
 }
 
-function breed(s: SaveGame, c: ActionContext, r: Rng): ActionResult {
+function breed(s: FarmGame, c: ActionContext, r: Rng): ActionResult {
   const pool = adults(s).filter((p) => !p.isSick);
   const males = pool.filter((p) => p.gender === 'MALE');
   const females = pool.filter((p) => p.gender === 'FEMALE');
   return breedPigs(s, { pigAId: target(s, r, males), pigBId: target(s, r, females) }, c);
 }
 
-function fulfill(s: SaveGame, c: ActionContext, r: Rng): ActionResult {
+function fulfill(s: FarmGame, c: ActionContext, r: Rng): ActionResult {
   const open = s.orders.filter((o) => o.fulfilledAt === null);
   const order = open.length > 0 && r.next() < 0.8 ? pick(r, open) : null;
   const fits = order ? s.pigs.filter((p) => pigMeetsOrder(p, order)) : [];
@@ -134,7 +134,7 @@ const care: Step = (s, c) => {
   return fillTrough(s, { units: Math.min(s.trough.capacity - s.trough.food, affordable) }, c);
 };
 
-function choose(s: SaveGame, r: Rng): [string, Step] {
+function choose(s: FarmGame, r: Rng): [string, Step] {
   const [name, run] = pickAction(r);
   const needsCare =
     (s.trough.food < s.trough.capacity / 2 || s.pigs.some((p) => p.isSick)) && r.next() < 0.5;
@@ -145,8 +145,8 @@ function choose(s: SaveGame, r: Rng): [string, Step] {
   return needsCare || broke || crowded ? ['care', care] : [name, run];
 }
 
-function expectValid(s: SaveGame, step: number, what: string) {
-  const r = saveGameSchema.safeParse(s);
+function expectValid(s: FarmGame, step: number, what: string) {
+  const r = farmGameSchema.safeParse(s);
   if (!r.success) throw new Error(`step ${step} (${what}): ${r.error.message}`);
 }
 
@@ -158,7 +158,7 @@ describe('§5.5 invariants under random play (fuzz)', () => {
     // A mid-game farm: a random player loses money, so a starter farm goes broke before it
     // ever breeds. Everything after this point happens only through actions.
     const start = newGame({ now, rng: gameRng });
-    let state: SaveGame = {
+    let state: FarmGame = {
       ...start,
       player: { ...start.player, gold: MIDGAME_GOLD, xp: BALANCE.LEVEL_XP[4]! },
     };

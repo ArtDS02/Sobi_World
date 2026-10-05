@@ -1,9 +1,9 @@
 // Shop (spec §10.1): pig species, items, slots and decorations (PG-3).
 import type { AssetRegistry } from '../../../../core/assets/registry';
 import type { Rarity } from '../../../../core/config/rarity';
-import type { SaveGame } from '../../../../core/types';
+import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
-import type { BoundAction } from '../../../../core/world/gameStore';
+import type { BoundAction } from '../../store';
 import { shopDecor, shopItems, shopPigs, shopSlot } from '../actionsVm';
 import { actionButton } from '../components/actionButton';
 import { rarityBadge } from '../../../../ui/components/rarityBadge';
@@ -36,7 +36,7 @@ const line = (cls: string, text: string) => el('p', { class: `shop__${cls}`, tex
 const price = (text: string) => el('p', { class: 'shop__price' }, icon('gold'), text);
 
 /** Species cards, one heading row per rarity (U04). */
-function pigsTab(save: SaveGame, now: number, on: ShopHandlers, assets: AssetRegistry | null) {
+function pigsTab(save: FarmGame, now: number, on: ShopHandlers, assets: AssetRegistry | null) {
   const rows: HTMLElement[] = [];
   let group: Rarity | null = null;
   for (const p of shopPigs(save, now, assets)) {
@@ -70,7 +70,7 @@ function pigsTab(save: SaveGame, now: number, on: ShopHandlers, assets: AssetReg
   return rows;
 }
 
-function itemsTab(save: SaveGame, on: ShopHandlers) {
+function itemsTab(save: FarmGame, on: ShopHandlers) {
   return shopItems(save).map((item) =>
     card(
       art(item.icon, 'c-icon'),
@@ -88,7 +88,7 @@ function itemsTab(save: SaveGame, on: ShopHandlers) {
   );
 }
 
-function slotsTab(save: SaveGame, now: number, on: ShopHandlers) {
+function slotsTab(save: FarmGame, now: number, on: ShopHandlers) {
   const slot = shopSlot(save, now);
   if (!slot) return [el('li', { class: 'c-empty', text: vi.error.MAX_SLOTS_REACHED })];
   return [
@@ -101,7 +101,7 @@ function slotsTab(save: SaveGame, now: number, on: ShopHandlers) {
   ];
 }
 
-function decorTab(save: SaveGame, now: number, on: ShopHandlers) {
+function decorTab(save: FarmGame, now: number, on: ShopHandlers) {
   const vm = shopDecor(save, now);
   return [
     el('li', { class: 'shop__group shop__group--note', text: vm.total }),
@@ -124,7 +124,7 @@ function decorTab(save: SaveGame, now: number, on: ShopHandlers) {
 }
 
 export function renderShopScreen(
-  save: SaveGame,
+  save: FarmGame,
   now: number,
   tab: ShopTab,
   on: ShopHandlers,

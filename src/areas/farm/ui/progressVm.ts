@@ -5,10 +5,10 @@ import { claimDaily, nextStreak } from '../logic/actions/claimDaily';
 import { ACHIEVEMENTS } from '../../../core/config/achievements';
 import { DAILY, dailyReward } from '../../../core/config/daily';
 import { claimable, metric, targetOf } from '../logic/progress';
-import type { SaveGame } from '../../../core/types';
+import type { FarmGame } from '../logic/types';
 import { formatInt, rewardText, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import type { BoundAction } from '../../../core/world/gameStore';
+import type { BoundAction } from '../store';
 import { probe } from './actionsVm';
 import { localDay } from '../../../ui/localDay';
 
@@ -37,7 +37,7 @@ export interface AchievementVm {
   claim: BoundAction;
 }
 
-export function dailyVm(save: SaveGame, now: number): DailyVm {
+export function dailyVm(save: FarmGame, now: number): DailyVm {
   const day = localDay(now);
   const claim: BoundAction = (s, c) => claimDaily(s, { day }, c);
   const open = probe(save, claim, now) === null;
@@ -60,7 +60,7 @@ export function dailyVm(save: SaveGame, now: number): DailyVm {
 
 const NAMES = vi.achievements as Record<string, string>;
 
-export function achievementsVm(save: SaveGame): { summary: string; items: AchievementVm[] } {
+export function achievementsVm(save: FarmGame): { summary: string; items: AchievementVm[] } {
   const items = ACHIEVEMENTS.map((d): AchievementVm => {
     const target = targetOf(d);
     const current = Math.min(metric(save, d.metric), target);
@@ -86,7 +86,7 @@ export function achievementsVm(save: SaveGame): { summary: string; items: Achiev
 }
 
 /** Dock dot: rewards waiting (today's gift + reached achievements). */
-export function progressDot(save: SaveGame, now: number): number {
+export function progressDot(save: FarmGame, now: number): number {
   const daily = probe(save, (s, c) => claimDaily(s, { day: localDay(now) }, c), now) === null;
   return claimable(save).length + (daily ? 1 : 0);
 }

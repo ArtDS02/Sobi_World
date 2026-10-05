@@ -1,7 +1,7 @@
 // "Trong lúc bạn vắng mặt" (spec §9.5): built from the catch-up events only. The trough line
 // comes first — it is the one that teaches the player to stock up before logging off. Pure.
 import type { GameEvent } from '../../../core/events';
-import type { SaveGame } from '../../../core/types';
+import type { FarmGame } from '../logic/types';
 import { formatDuration, formatTime, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 
@@ -21,7 +21,7 @@ const count = (events: readonly GameEvent[], type: GameEvent['type']) =>
 /** `after` is the save after the catch-up; `now` its time; `awayMs` how long the world slept. */
 export function awayVm(
   events: readonly GameEvent[],
-  after: SaveGame,
+  after: FarmGame,
   now: number,
   awayMs: number,
 ): AwayVm {

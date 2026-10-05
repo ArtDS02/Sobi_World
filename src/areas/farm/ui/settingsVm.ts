@@ -3,14 +3,14 @@
 import type { AssetManifest } from '../../../core/assets/manifestSchema';
 import { SAVE } from '../../../core/config/save';
 import type { BackupInfo } from '../../../core/save/port';
-import type { SaveGame } from '../../../core/types';
+import type { FarmGame } from '../logic/types';
 import { formatDateTime, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 
 const DAY_MS = 24 * 3600 * 1000;
 
 /** §9.3: more than 7 days since the last export (or since the farm began, if never). */
-export function exportReminderDue(save: SaveGame, now: number): boolean {
+export function exportReminderDue(save: FarmGame, now: number): boolean {
   const since = save.settings.lastExportAt ?? save.createdAt;
   return now - since > SAVE.EXPORT_REMINDER_DAYS * DAY_MS;
 }
@@ -56,7 +56,7 @@ export function backupsVm(backups: BackupsState): Pick<SettingsVm, 'backups' | '
 }
 
 export function settingsVm(
-  save: SaveGame,
+  save: FarmGame,
   backups: BackupsState,
   manifest: AssetManifest | null,
   version: string | null,

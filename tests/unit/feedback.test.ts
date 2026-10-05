@@ -2,13 +2,13 @@
 import { describe, expect, it } from 'vitest';
 import type { ErrorCode } from '../../src/core/config/errors';
 import { GAME_EVENT_TYPES, type GameEvent } from '../../src/core/events';
-import type { SaveGame } from '../../src/core/types';
+import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { createFeedbackDirector } from '../../src/areas/farm/scene/feedback/FeedbackDirector';
 import { feedbackPlan } from '../../src/areas/farm/scene/feedback/feedbackPlan';
 import { FEEDBACK_TABLE, REJECT_ROW } from '../../src/areas/farm/scene/feedback/feedbackTable';
 import { toastText } from '../../src/areas/farm/scene/feedback/toastText';
 import { vi } from '../../src/i18n/vi';
-import type { EventListener, EventOrigin, StoreSnapshot } from '../../src/app/gameStore';
+import type { EventListener, EventOrigin, FarmSnapshot as StoreSnapshot } from '../../src/areas/farm/store';
 import { farm } from './actionKit';
 import { makePig } from './pigFactory';
 
@@ -130,7 +130,7 @@ describe('feedbackPlan', () => {
 });
 
 /** Minimal store double: push snapshots, events and rejections by hand. */
-function fakeStore(save: SaveGame) {
+function fakeStore(save: FarmGame) {
   let snap = { save } as StoreSnapshot;
   const subs = new Set<(s: StoreSnapshot) => void>();
   const evs = new Set<EventListener>();
@@ -146,7 +146,7 @@ function fakeStore(save: SaveGame) {
     subscribe: on(subs),
     onEvents: on(evs),
     onReject: on(rejs),
-    set(next: SaveGame) {
+    set(next: FarmGame) {
       snap = { save: next } as StoreSnapshot;
       subs.forEach((f) => f(snap));
     },
@@ -155,7 +155,7 @@ function fakeStore(save: SaveGame) {
   };
 }
 
-function director(save: SaveGame) {
+function director(save: FarmGame) {
   const store = fakeStore(save);
   const log: string[] = [];
   const d = createFeedbackDirector({

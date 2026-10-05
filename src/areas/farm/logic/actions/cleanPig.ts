@@ -1,18 +1,18 @@
 // cleanPig (spec §8.3) and cleanAll (§8.4). Cleaning never cures sickness.
 import { BALANCE } from '../../../../core/config/balance';
 import type { GameEvent } from '../../../../core/events';
-import { addXP } from '../../../../core/engine/xp';
-import type { ActionContext, ActionResult, Pig, SaveGame } from '../../../../core/types';
+import { addXP } from '../xp';
+import type { ActionContext, ActionResult, Pig, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 /** Cleans the given dirty pigs; XP per pig only when cleanliness was <= 70 (D11). */
 function cleanPigs(
-  s: SaveGame,
+  s: FarmGame,
   dirty: readonly Pig[],
   now: number,
-): { state: SaveGame; events: GameEvent[] } {
+): { state: FarmGame; events: GameEvent[] } {
   const ids = new Set(dirty.map((p) => p.id));
-  const cleaned: SaveGame = {
+  const cleaned: FarmGame = {
     ...s,
     pigs: s.pigs.map((p) =>
       ids.has(p.id) ? { ...p, cleanliness: BALANCE.CLEAN_MAX, lastCleanedAt: now } : p,
@@ -27,7 +27,7 @@ function cleanPigs(
 }
 
 export function cleanPig(
-  state: SaveGame,
+  state: FarmGame,
   args: { pigId: string },
   ctx: ActionContext,
 ): ActionResult {
@@ -41,7 +41,7 @@ export function cleanPig(
 }
 
 /** Never errors; a clean farm returns ok with PIG_CLEANED { pigIds: [] } (§8.0: ≥ 1 event). */
-export function cleanAll(state: SaveGame, ctx: ActionContext): ActionResult {
+export function cleanAll(state: FarmGame, ctx: ActionContext): ActionResult {
   return runAction(state, ctx, (s) => {
     const r = cleanPigs(
       s,

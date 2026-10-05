@@ -1,13 +1,13 @@
 // The single place gold changes (spec §8.16): every delta writes a Transaction.
-import { SAVE } from '../config/save';
-import type { ErrorCode } from '../config/errors';
-import { randomId } from '../rng';
-import type { ActionContext, SaveGame, TransactionType } from '../types';
+import { SAVE } from '../../../core/config/save';
+import type { ErrorCode } from '../../../core/config/errors';
+import { randomId } from '../../../core/rng';
+import type { ActionContext, FarmGame, TransactionType } from './types';
 
-export type GoldResult = { ok: true; state: SaveGame } | { ok: false; error: ErrorCode };
+export type GoldResult = { ok: true; state: FarmGame } | { ok: false; error: ErrorCode };
 
 export function changeGold(
-  state: SaveGame,
+  state: FarmGame,
   amount: number,
   type: TransactionType,
   ctx: ActionContext,

@@ -2,9 +2,9 @@
 // opened by clicking world objects, toasts, dialogs. Re-renders on store notify.
 import { openGift } from '../logic/actions/openGift';
 import { decorBonus } from '../logic/decor';
-import type { NurseryPig, Pig, SaveGame } from '../../../core/types';
+import type { NurseryPig, Pig, FarmGame } from '../logic/types';
 import { vi } from '../../../i18n/vi';
-import type { BoundAction, GameStore, StoreSnapshot } from '../../../core/world/gameStore';
+import type { BoundAction, FarmStore, FarmSnapshot } from '../store';
 import { troughSpace, type ActionVm } from './actionsVm';
 import {
   closePopupShell,
@@ -48,7 +48,7 @@ export type { AppOptions, FarmCanvas, FarmPick, FarmPickAction, MountedApp } fro
 
 export function mountApp(
   root: HTMLElement,
-  store: GameStore,
+  store: FarmStore,
   now: () => number,
   opts: AppOptions = {},
 ): MountedApp {
@@ -174,7 +174,7 @@ export function mountApp(
   document.addEventListener('keydown', onKey);
 
   /** Body of the open popup, or null when it cannot show (e.g. the selected pig was sold). */
-  function renderPanel(save: SaveGame, panel: PanelId): HTMLElement | null {
+  function renderPanel(save: FarmGame, panel: PanelId): HTMLElement | null {
     switch (panel) {
       case 'pig': {
         const pig = save.pigs.find((p) => p.id === ui.selectedPigId);
@@ -201,7 +201,7 @@ export function mountApp(
     }
   }
 
-  function renderPopup(save: SaveGame | null) {
+  function renderPopup(save: FarmGame | null) {
     const body = save && ui.panel ? renderPanel(save, ui.panel) : null;
     if (!body || !ui.panel) {
       if (ui.panel) ui.panel = null; // nothing left to show
@@ -218,7 +218,7 @@ export function mountApp(
     patch(popup.body, body);
   }
 
-  function render(snap: StoreSnapshot) {
+  function render(snap: FarmSnapshot) {
     const ready = snap.status === 'ready' && !!snap.save;
     appEl.classList.toggle('is-ready', ready);
     appEl.classList.toggle('is-reduced-motion', !!snap.save?.settings.reduceMotion);

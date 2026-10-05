@@ -1,7 +1,7 @@
 // Dev browser adapter (spec §9.1, §9.2): IndexedDB primary + localStorage mirror + backup.
 import { openDB, type IDBPDatabase } from 'idb';
 import { SAVE } from '../../core/config/save';
-import { parseSave } from '../../core/save/migrate';
+import type { MigrateResult } from '../../core/save/migrate';
 import type { LoadSource, SaveStorage } from '../../core/save/port';
 
 export type { LoadResult, LoadSource, SaveStorage } from '../../core/save/port';
@@ -13,11 +13,14 @@ export interface KeyValueStore {
 }
 
 export interface StorageOptions {
+  /** JSON text → migrated, validated world save (core parseSave + the build's codec). */
+  parseSave: (json: string) => MigrateResult;
   local?: KeyValueStore;
   dbName?: string;
 }
 
-export function createSaveStorage(opts: StorageOptions = {}): SaveStorage {
+export function createSaveStorage(opts: StorageOptions): SaveStorage {
+  const { parseSave } = opts;
   const local = opts.local ?? globalThis.localStorage;
   const dbName = opts.dbName ?? SAVE.IDB_NAME;
   let dbPromise: Promise<IDBPDatabase> | null = null;
@@ -62,7 +65,7 @@ export function createSaveStorage(opts: StorageOptions = {}): SaveStorage {
         const parsed = parseSave(json);
         if (parsed.ok) {
           lastGoodJson = JSON.stringify(parsed.save);
-          return { kind: 'ok', save: parsed.save, source };
+          return { kind: 'ok', save: parsed.save, source, fromVersion: parsed.fromVersion };
         }
         if (parsed.error === 'SAVE_TOO_NEW') {
           locked = true; // an older copy would silently lose the newer progress

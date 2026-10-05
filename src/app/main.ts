@@ -12,6 +12,8 @@ import { createFeedbackDirector, type FeedbackDirector } from '../areas/farm/sce
 import { createPlatform } from '../platform';
 import { loadAssetRegistry } from '../platform/assetSource';
 import { createGameStore } from './gameStore';
+import { parseWorldSave } from './saveCodec';
+import { farmStore } from '../areas/farm/store';
 import { realClock } from './runtime';
 import { mountApp, type AppOptions } from '../areas/farm/ui/app';
 import { renderManifestError } from '../areas/farm/ui/screens/statusScreen';
@@ -55,13 +57,15 @@ async function start(root: HTMLElement) {
     };
   }
 
-  const platform = createPlatform();
-  const store = createGameStore({
+  const platform = createPlatform(parseWorldSave);
+  const world = createGameStore({
     clock,
     storage: platform.storage,
     instanceGuard: platform.instanceGuard,
     backups: platform.backups,
   });
+  // Sobi Farm is the world's only Area until the Area registry (GĐ1 step 6).
+  const store = farmStore(world);
   platform.onFlushRequest(() => store.persistNow());
   // §12: the desktop shell allows autoplay; the browser build waits for the first gesture.
   const audio = new AudioManager(audioTracks(assets.registry), {

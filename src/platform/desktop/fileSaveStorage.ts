@@ -1,6 +1,6 @@
-// Desktop adapter (spec §9.1, §9.2): the read chain runs here with core's parseSave; main only
-// moves files. A candidate that fails to parse is renamed save.corrupt-* (never deleted).
-import { parseSave } from '../../core/save/migrate';
+// Desktop adapter (spec §9.1, §9.2): the read chain runs here with the injected parser (core's
+// parseSave + this build's save codec); main only moves files. A candidate that fails to parse is renamed save.corrupt-* (never deleted).
+import type { MigrateResult } from '../../core/save/migrate';
 import {
   isSaveChangedExternally,
   SAVE_CHANGED_EXTERNALLY,
@@ -14,7 +14,10 @@ const loadSource = (s: SaveCandidateSource): LoadSource => (s === 'save' ? 'prim
 /** The file calls a save storage needs: window.unin.save, or the dev server's twin (AM-1). */
 export type SaveFileBridge = Pick<UninBridge['save'], 'load' | 'write' | 'markCorrupt' | 'onExternalChange'>;
 
-export function createFileSaveStorage(bridge: SaveFileBridge): SaveStorage {
+/** JSON text → migrated, validated world save. */
+export type SaveParser = (json: string) => MigrateResult;
+
+export function createFileSaveStorage(bridge: SaveFileBridge, parseSave: SaveParser): SaveStorage {
   let locked = false; // a newer-version save exists somewhere in the chain
 
   return {
@@ -23,7 +26,9 @@ export function createFileSaveStorage(bridge: SaveFileBridge): SaveStorage {
       if (candidates.length === 0) return { kind: 'empty' };
       for (const { source, json } of candidates) {
         const parsed = parseSave(json);
-        if (parsed.ok) return { kind: 'ok', save: parsed.save, source: loadSource(source) };
+        if (parsed.ok) {
+          return { kind: 'ok', save: parsed.save, source: loadSource(source), fromVersion: parsed.fromVersion };
+        }
         if (parsed.error === 'SAVE_TOO_NEW') {
           locked = true; // an older copy would silently lose the newer progress
           return { kind: 'tooNew', source: loadSource(source) };

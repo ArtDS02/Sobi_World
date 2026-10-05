@@ -2,10 +2,10 @@
 // popup (clean all), the empty-farm hint and the neighbour's help card (DECISIONS PG-1). The farm itself is drawn and clicked in src/game.
 import { claimRelief } from '../../logic/actions/claimRelief';
 import { reliefNeed } from '../../logic/relief';
-import type { Pig, SaveGame } from '../../../../core/types';
+import type { Pig, FarmGame } from '../../logic/types';
 import { rewardText } from '../../../../i18n/format';
 import { vi } from '../../../../i18n/vi';
-import type { BoundAction } from '../../../../core/world/gameStore';
+import type { BoundAction } from '../../store';
 import { farmActions } from '../actionsVm';
 import { actionButton } from '../components/actionButton';
 import { renderPigPanel, type PigPanelHandlers } from '../components/pigPanel';
@@ -13,7 +13,7 @@ import { art } from '../../../../ui/components/icon';
 import { el } from '../../../../ui/dom';
 
 export function renderPigPopup(
-  save: SaveGame,
+  save: FarmGame,
   pig: Pig,
   now: number,
   on: PigPanelHandlers,
@@ -22,7 +22,7 @@ export function renderPigPopup(
 }
 
 export function renderWellPopup(
-  save: SaveGame,
+  save: FarmGame,
   now: number,
   act: (run: BoundAction) => void,
 ): HTMLElement {
@@ -45,7 +45,7 @@ export function renderWellPopup(
  * empty-farm hint.
  */
 export function renderFarmHint(
-  save: SaveGame,
+  save: FarmGame,
   goShop: () => void,
   act: (run: BoundAction) => void,
 ): HTMLElement | null {

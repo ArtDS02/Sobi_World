@@ -10,8 +10,8 @@ import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { dayStart, diseaseState, gameDay, needLevel } from '../../src/areas/farm/logic/pigHealth';
 import type { GameEvent } from '../../src/core/events';
 import { sequenceRng, type Rng } from '../../src/core/rng';
-import { parseSave } from '../../src/core/save/migrate';
-import type { ActionResult, Pig, SaveGame } from '../../src/core/types';
+import { parseFarmSave } from '../../src/areas/farm/logic/save/legacy';
+import type { ActionResult, Pig, FarmGame } from '../../src/areas/farm/logic/types';
 import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';
 
@@ -23,7 +23,7 @@ const alwaysSick = (): Rng => sequenceRng([0]);
 /** Dirty enough that exposure starts at once; rng 0 makes the onset immediate. */
 const dirty = (o: Partial<Pig> = {}) => makePig({ cleanliness: 0, growthProgress: 100, ...o });
 
-const okState = (r: ActionResult): SaveGame => {
+const okState = (r: ActionResult): FarmGame => {
   if (!r.ok) throw new Error(r.error);
   return r.state;
 };
@@ -184,8 +184,8 @@ describe('disease lifecycle: Healthy → Ill → Recovering, max 1 episode / gam
 });
 
 describe('save / load keeps needs and disease state', () => {
-  const roundTrip = (s: SaveGame): SaveGame => {
-    const r = parseSave(JSON.stringify(s));
+  const roundTrip = (s: FarmGame): FarmGame => {
+    const r = parseFarmSave(JSON.stringify(s));
     if (!r.ok) throw new Error(r.error);
     return r.save;
   };

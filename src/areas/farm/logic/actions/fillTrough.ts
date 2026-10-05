@@ -1,11 +1,11 @@
 // fillTrough (spec §8.6): inventory first, shortfall bought at shop price in the same action.
 import { ITEMS } from '../../../../core/config/items';
-import { changeGold } from '../../../../core/engine/gold';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import { changeGold } from '../gold';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 export function fillTrough(
-  state: SaveGame,
+  state: FarmGame,
   args: { units: number },
   ctx: ActionContext,
 ): ActionResult {

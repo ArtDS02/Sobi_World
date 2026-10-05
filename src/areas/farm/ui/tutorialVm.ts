@@ -1,7 +1,7 @@
 // First-run tutorial (spec §10.3): 5 skippable steps. Steps 1–2 wait for the real thing (a pig,
 // food in the trough); the rest only explain. The step index lives in the UI, `tutorialDone` in
 // the save. Pure.
-import type { SaveGame } from '../../../core/types';
+import type { FarmGame } from '../logic/types';
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 
@@ -14,7 +14,7 @@ export const TUTORIAL_STEPS = [
 ] as const;
 
 /** Whether step `i` is done in this save (only steps that ask for an action check anything). */
-function stepDone(save: SaveGame, i: number): boolean {
+function stepDone(save: FarmGame, i: number): boolean {
   if (i === 0) return save.pigs.length > 0;
   if (i === 1) return save.trough.food > 0;
   return true;
@@ -29,7 +29,7 @@ export interface TutorialVm {
   last: boolean;
 }
 
-export function tutorialVm(save: SaveGame, step: number): TutorialVm | null {
+export function tutorialVm(save: FarmGame, step: number): TutorialVm | null {
   if (save.settings.tutorialDone || step >= TUTORIAL_STEPS.length) return null;
   const last = step === TUTORIAL_STEPS.length - 1;
   return {

@@ -7,10 +7,10 @@ import { SAVE } from '../../../../core/config/save';
 import type { ErrorCode } from '../../../../core/config/errors';
 import { rollChild } from '../breeding';
 import { generationOf, waitingPigs } from '../derived';
-import { changeGold } from '../../../../core/engine/gold';
-import { addXP } from '../../../../core/engine/xp';
+import { changeGold } from '../gold';
+import { addXP } from '../xp';
 import { randomId } from '../../../../core/rng';
-import type { ActionContext, ActionResult, BreedingRecord, Pig, SaveGame } from '../../../../core/types';
+import type { ActionContext, ActionResult, BreedingRecord, Pig, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 export interface BreedPigsArgs {
@@ -20,7 +20,7 @@ export interface BreedPigsArgs {
 
 /** First failing rule of §8.8 steps 1–7 for a pair, or null; the gold check (8) is changeGold. */
 export function breedingError(
-  s: SaveGame,
+  s: FarmGame,
   a: Pig | undefined,
   b: Pig | undefined,
 ): ErrorCode | null {
@@ -35,7 +35,7 @@ export function breedingError(
   return null;
 }
 
-export function breedPigs(state: SaveGame, args: BreedPigsArgs, ctx: ActionContext): ActionResult {
+export function breedPigs(state: FarmGame, args: BreedPigsArgs, ctx: ActionContext): ActionResult {
   return runAction(state, ctx, (s) => {
     const a = s.pigs.find((p) => p.id === args.pigAId);
     const b = s.pigs.find((p) => p.id === args.pigBId);
@@ -67,7 +67,7 @@ export function breedPigs(state: SaveGame, args: BreedPigsArgs, ctx: ActionConte
       childGeneration,
       bornAt: null,
     };
-    const bred: SaveGame = {
+    const bred: FarmGame = {
       ...paid.state,
       pigs: paid.state.pigs.map((p) =>
         p.id === mother.id

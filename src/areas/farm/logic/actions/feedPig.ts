@@ -1,11 +1,11 @@
 // feedPig (spec §8.2) — manual fallback to the trough.
 import { BALANCE } from '../../../../core/config/balance';
-import { addXP } from '../../../../core/engine/xp';
-import type { ActionContext, ActionResult, SaveGame } from '../../../../core/types';
+import { addXP } from '../xp';
+import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 export function feedPig(
-  state: SaveGame,
+  state: FarmGame,
   args: { pigId: string },
   ctx: ActionContext,
 ): ActionResult {
@@ -16,7 +16,7 @@ export function feedPig(
     if (s.inventory.FOOD_BASIC < 1) return { ok: false, error: 'INSUFFICIENT_ITEM' };
 
     const hunger = Math.min(BALANCE.HUNGER_MAX, pig.hunger + BALANCE.FOOD_HUNGER_RESTORE);
-    const fed: SaveGame = {
+    const fed: FarmGame = {
       ...s,
       inventory: { ...s.inventory, FOOD_BASIC: s.inventory.FOOD_BASIC - 1 },
       pigs: s.pigs.map((p) => (p.id === pig.id ? { ...p, hunger, lastFedAt: ctx.now } : p)),

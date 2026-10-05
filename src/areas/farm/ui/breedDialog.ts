@@ -1,7 +1,7 @@
 // Breeding dialog (spec §10.2): the pair as portraits (this pig ♥ the chosen partner, compatibility
 // hearts), the valid partners as picture tiles, then the child chances as tiles (unseen species
 // stay a "?" mystery), pregnancy time, fee and space. Data: breedVm.ts; style: features/_breed.scss.
-import type { Pig, SaveGame } from '../../../core/types';
+import type { Pig, FarmGame } from '../logic/types';
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { breedingVm, type ChildChanceVm, type PigCardVm } from './breedVm';
@@ -59,7 +59,7 @@ function childTile(c: ChildChanceVm): HTMLElement {
  */
 export function openBreedDialog(
   host: HTMLElement,
-  save: SaveGame,
+  save: FarmGame,
   pig: Pig,
   now: number,
   act: Act,

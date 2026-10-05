@@ -1,7 +1,7 @@
 // Sell price (spec §5.4, D18): base sell scaled by a happiness multiplier in [0.7, 1.2].
 import { BALANCE } from '../../../core/config/balance';
 import { BREEDS } from '../../../core/config/breeds';
-import type { Pig } from '../../../core/types';
+import type { Pig } from './types';
 import { happiness } from './happiness';
 
 /** Price multiplier for an integer happiness 0..100. */

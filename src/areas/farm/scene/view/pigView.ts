@@ -4,7 +4,7 @@ import type { AssetManifest } from '../../../../core/assets/manifestSchema';
 import type { AssetRegistry } from '../../../../core/assets/registry';
 import { SLEEP_FALLBACK_FX, type FxId } from '../../../../core/config/assetIds';
 import { FARM_VIEW } from '../../../../core/config/farmView';
-import type { Pig } from '../../../../core/types';
+import type { Pig } from '../../logic/types';
 import { pigVisualState, type VisualState } from '../state/pigVisualState';
 import { fallbackPigKey, textureKey } from './textureKeys';
 

@@ -2,12 +2,12 @@
 import { BREEDS } from '../../../../core/config/breeds';
 import type { DecorId } from '../../../../core/config/ids';
 import type { GameEvent } from '../../../../core/events';
-import type { Pig, SaveGame } from '../../../../core/types';
+import type { Pig, FarmGame } from '../../logic/types';
 import { formatDuration, formatInt, rewardText, t } from '../../../../i18n/format';
 import { vi } from '../../../../i18n/vi';
 
 /** When the mother's pregnancy started (the dispatch time), so the toast shows the full length. */
-const pregnancyStart = (s: SaveGame, motherId: string): number =>
+const pregnancyStart = (s: FarmGame, motherId: string): number =>
   s.pigs.find((p) => p.id === motherId)?.pregnancy?.startedAt ?? 0;
 
 const achievementName = (id: string): string =>
@@ -19,8 +19,8 @@ const achievementName = (id: string): string =>
  */
 export function toastText(
   event: GameEvent,
-  after: SaveGame,
-  before: SaveGame,
+  after: FarmGame,
+  before: FarmGame,
 ): string | null {
   const nameOf = (id: string) =>
     [...after.pigs, ...after.nursery, ...before.pigs, ...before.nursery].find((p) => p.id === id)

@@ -2,7 +2,7 @@
 // day offset is injected (core never reads the time zone).
 import { BALANCE } from '../../../core/config/balance';
 import { NEED_LEVEL_MIN, NEED_LEVELS, type NeedLevel } from '../../../core/config/care';
-import type { Pig } from '../../../core/types';
+import type { Pig } from './types';
 
 const DAY_MS = 86_400_000;
 

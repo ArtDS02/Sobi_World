@@ -4,8 +4,8 @@ import { BREEDS } from '../../../core/config/breeds';
 import type { BreedId, Gender } from '../../../core/config/ids';
 import type { GameEvent } from '../../../core/events';
 import { mulberry32, randomId, type Rng } from '../../../core/rng';
-import type { NurseryPig, Pig, SaveGame } from '../../../core/types';
-import { discoverBreed } from '../../../core/engine/collection';
+import type { NurseryPig, Pig, FarmGame } from './types';
+import { discoverBreed } from './collection';
 import { pickPigName } from './pigNames';
 
 /** Weighted pick over relative weights. rng.next() in [0, 1). */
@@ -46,7 +46,7 @@ export function lowestFreeSlot(pigs: readonly Pig[]): number {
  * One birth (§8.9 steps 1–4) for a mother whose pregnancy has ended. BR-1: the newborn is its own
  * pig instance with its genealogy, put in the inventory nursery — never straight onto the farm.
  */
-function giveBirth(state: SaveGame, mother: Pig, now: number, rng: Rng) {
+function giveBirth(state: FarmGame, mother: Pig, now: number, rng: Rng) {
   const preg = mother.pregnancy!;
   const father = state.pigs.find((p) => p.id === preg.fatherId);
   const record = state.breedingRecords.find(
@@ -67,7 +67,7 @@ function giveBirth(state: SaveGame, mother: Pig, now: number, rng: Rng) {
       fatherBreed: father?.breed ?? record?.fatherBreed ?? mother.breed,
     },
   };
-  const born: SaveGame = {
+  const born: FarmGame = {
     ...state,
     pigs: state.pigs.map((p) => (p.id === mother.id ? { ...p, pregnancy: null } : p)),
     nursery: [...state.nursery, newborn],
@@ -90,10 +90,10 @@ function giveBirth(state: SaveGame, mother: Pig, now: number, rng: Rng) {
  * `pregnancy`, so a second run never duplicates a child (§8.9). Earliest due first.
  */
 export function resolveBirths(
-  state: SaveGame,
+  state: FarmGame,
   now: number,
   rng: Rng,
-): { state: SaveGame; events: GameEvent[] } {
+): { state: FarmGame; events: GameEvent[] } {
   const due = state.pigs
     .filter((p) => p.pregnancy !== null && now >= p.pregnancy.endsAt)
     .sort((a, b) => a.pregnancy!.endsAt - b.pregnancy!.endsAt);

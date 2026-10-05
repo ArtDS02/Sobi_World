@@ -1,4 +1,4 @@
-import type { Pig } from '../../src/core/types';
+import type { Pig } from '../../src/areas/farm/logic/types';
 
 /** §14.1 baseline: PINK baby, progress 0, hunger 100, cleanliness 100, ticked at t=0. */
 export function makePig(overrides: Partial<Pig> = {}): Pig {

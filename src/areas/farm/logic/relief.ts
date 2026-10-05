@@ -4,7 +4,7 @@ import { BREEDS, BREED_IDS } from '../../../core/config/breeds';
 import { ITEMS } from '../../../core/config/items';
 import { levelFromXp } from '../../../core/config/levels';
 import { RELIEF } from '../../../core/config/relief';
-import type { SaveGame } from '../../../core/types';
+import type { FarmGame } from './types';
 
 export interface ReliefNeed {
   gold: number;
@@ -13,7 +13,7 @@ export interface ReliefNeed {
 }
 
 /** Cheapest pig the shop sells at the player's level (null: none). */
-function cheapestPig(state: SaveGame): number | null {
+function cheapestPig(state: FarmGame): number | null {
   const level = levelFromXp(state.player.xp);
   const prices = BREED_IDS.map((id) => BREEDS[id])
     .filter((b) => b.enabled && b.buyGold !== null && b.unlockLevel <= level)
@@ -21,7 +21,7 @@ function cheapestPig(state: SaveGame): number | null {
   return prices.length > 0 ? Math.min(...prices) : null;
 }
 
-export function reliefNeed(state: SaveGame): ReliefNeed | null {
+export function reliefNeed(state: FarmGame): ReliefNeed | null {
   const { gold } = state.player;
   const coming =
     state.gifts.boxes.length > 0 ||

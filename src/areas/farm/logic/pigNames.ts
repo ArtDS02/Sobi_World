@@ -1,7 +1,7 @@
 // Default pig names (DECISIONS Q8): unused pool name, else the smallest free numeric suffix.
 import { PIG_NAME_POOL } from '../../../core/config/names';
 import { pick, type Rng } from '../../../core/rng';
-import type { Pig } from '../../../core/types';
+import type { Pig } from './types';
 
 export function pickPigName(rng: Rng, living: readonly Pick<Pig, 'name'>[]): string {
   const taken = new Set(living.map((p) => p.name));
