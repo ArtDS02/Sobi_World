@@ -6,15 +6,15 @@ import { parseManifest, type AssetManifest } from '../../src/core/assets/manifes
 import { createAssetRegistry } from '../../src/core/assets/registry';
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
 import { DAY_PHASES } from '../../src/core/config/dayNight';
-import { pigVisualState } from '../../src/game/state/pigVisualState';
+import { pigVisualState } from '../../src/areas/farm/scene/state/pigVisualState';
 import {
   initialRest,
   isAwake,
   isSleepPhase,
   restFrame,
   type PigRestState,
-} from '../../src/game/state/sleepCycle';
-import { frameLook } from '../../src/game/view/pigView';
+} from '../../src/areas/farm/scene/state/sleepCycle';
+import { frameLook } from '../../src/areas/farm/scene/view/pigView';
 
 function manifest(): AssetManifest {
   const r = parseManifest(structuredClone(manifestJson));

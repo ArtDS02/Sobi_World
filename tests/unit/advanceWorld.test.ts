@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { advanceWorld } from '../../src/core/engine/advanceWorld';
+import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { mulberry32, sequenceRng, type Rng } from '../../src/core/rng';
 import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';

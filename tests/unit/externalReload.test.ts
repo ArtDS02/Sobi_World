@@ -1,12 +1,12 @@
 // AM-1: a save replaced by another program (the admin dashboard) is adopted, never overwritten.
 import { describe, expect, it } from 'vitest';
-import { buyPig } from '../../src/core/actions/buyPig';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
 import { fakeClock } from '../../src/core/clock';
 import { mulberry32 } from '../../src/core/rng';
 import { parseSave } from '../../src/core/save/migrate';
 import { SAVE_CHANGED_EXTERNALLY, type SaveStorage } from '../../src/core/save/port';
 import type { SaveGame } from '../../src/core/types';
-import { createGameStore } from '../../src/store/gameStore';
+import { createGameStore } from '../../src/app/gameStore';
 
 /** A save file with the desktop rules: a write after an outside edit is refused until re-read. */
 function fileStorage() {

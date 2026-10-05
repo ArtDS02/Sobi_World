@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { cleanAll, cleanPig } from '../../src/core/actions/cleanPig';
-import { feedPig } from '../../src/core/actions/feedPig';
-import { fillTrough } from '../../src/core/actions/fillTrough';
-import { treatPig } from '../../src/core/actions/treatPig';
+import { cleanAll, cleanPig } from '../../src/areas/farm/logic/actions/cleanPig';
+import { feedPig } from '../../src/areas/farm/logic/actions/feedPig';
+import { fillTrough } from '../../src/areas/farm/logic/actions/fillTrough';
+import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
 import { troughCapacityForLevel } from '../../src/core/config/levels';
 import type { SaveGame } from '../../src/core/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';

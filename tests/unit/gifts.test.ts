@@ -1,10 +1,10 @@
 // U06: timed gift boxes — one farm timer, offline catch-up, rarity, cap, claim once, save.
 import { describe, expect, it } from 'vitest';
-import { openGift } from '../../src/core/actions/openGift';
+import { openGift } from '../../src/areas/farm/logic/actions/openGift';
 import { BALANCE } from '../../src/core/config/balance';
 import { GIFTS } from '../../src/core/config/gifts';
-import { advanceWorld } from '../../src/core/engine/advanceWorld';
-import { giftInterval, giftsPerSpawn, makeGift, resolveGifts } from '../../src/core/engine/gifts';
+import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
+import { giftInterval, giftsPerSpawn, makeGift, resolveGifts } from '../../src/areas/farm/logic/gifts';
 import { mulberry32 } from '../../src/core/rng';
 import { migrate } from '../../src/core/save/migrate';
 import type { Pig, SaveGame } from '../../src/core/types';

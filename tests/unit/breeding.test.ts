@@ -1,13 +1,13 @@
 // Spec §14.4 breeding tests (§6.5, §8.8, §8.9, D8, D22).
 import { describe, expect, it } from 'vitest';
-import { breedPigs } from '../../src/core/actions/breedPigs';
-import { buyPig } from '../../src/core/actions/buyPig';
+import { breedPigs } from '../../src/areas/farm/logic/actions/breedPigs';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
 import { BREEDS } from '../../src/core/config/breeds';
 import type { BreedId } from '../../src/core/config/ids';
-import { advanceWorld } from '../../src/core/engine/advanceWorld';
-import { rollChild } from '../../src/core/engine/breeding';
-import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
-import { freeSlots } from '../../src/core/engine/derived';
+import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
+import { rollChild } from '../../src/areas/farm/logic/breeding';
+import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';
+import { freeSlots } from '../../src/areas/farm/logic/derived';
 import { mulberry32, sequenceRng } from '../../src/core/rng';
 import type { Pig, SaveGame } from '../../src/core/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';

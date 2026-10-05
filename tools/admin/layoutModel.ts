@@ -3,7 +3,7 @@
 // (layout.ts) only calls these and keeps an undo history of whole lists.
 import type { Placement } from '../../src/core/assets/manifestSchema';
 import { FARM_VIEW } from '../../src/core/config/farmView';
-import { placementDepth } from '../../src/game/view/sceneLayout';
+import { placementDepth } from '../../src/areas/farm/scene/view/sceneLayout';
 
 export type { Placement };
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../../src/core/config/balance';
 import { PIG_LIFE } from '../../src/core/config/pigLife';
-import { advanceWorld } from '../../src/core/engine/advanceWorld';
+import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import {
   chooseBehavior,
   freeChoice,
@@ -15,7 +15,7 @@ import {
   traitScale,
   wakeDelayMs,
   wantsSleep,
-} from '../../src/core/engine/pigLife';
+} from '../../src/areas/farm/logic/pigLife';
 import { sequenceRng } from '../../src/core/rng';
 import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';

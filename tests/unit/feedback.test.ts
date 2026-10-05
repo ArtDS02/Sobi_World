@@ -3,12 +3,12 @@ import { describe, expect, it } from 'vitest';
 import type { ErrorCode } from '../../src/core/config/errors';
 import { GAME_EVENT_TYPES, type GameEvent } from '../../src/core/events';
 import type { SaveGame } from '../../src/core/types';
-import { createFeedbackDirector } from '../../src/game/feedback/FeedbackDirector';
-import { feedbackPlan } from '../../src/game/feedback/feedbackPlan';
-import { FEEDBACK_TABLE, REJECT_ROW } from '../../src/game/feedback/feedbackTable';
-import { toastText } from '../../src/game/feedback/toastText';
+import { createFeedbackDirector } from '../../src/areas/farm/scene/feedback/FeedbackDirector';
+import { feedbackPlan } from '../../src/areas/farm/scene/feedback/feedbackPlan';
+import { FEEDBACK_TABLE, REJECT_ROW } from '../../src/areas/farm/scene/feedback/feedbackTable';
+import { toastText } from '../../src/areas/farm/scene/feedback/toastText';
 import { vi } from '../../src/i18n/vi';
-import type { EventListener, EventOrigin, StoreSnapshot } from '../../src/store/gameStore';
+import type { EventListener, EventOrigin, StoreSnapshot } from '../../src/app/gameStore';
 import { farm } from './actionKit';
 import { makePig } from './pigFactory';
 

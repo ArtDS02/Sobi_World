@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../../src/core/config/balance';
-import { buyItem } from '../../src/core/actions/buyItem';
-import { buyPig } from '../../src/core/actions/buyPig';
-import { buySlot } from '../../src/core/actions/buySlot';
-import { renamePig } from '../../src/core/actions/renamePig';
-import { sellPig } from '../../src/core/actions/sellPig';
+import { buyItem } from '../../src/areas/farm/logic/actions/buyItem';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
+import { buySlot } from '../../src/areas/farm/logic/actions/buySlot';
+import { renamePig } from '../../src/areas/farm/logic/actions/renamePig';
+import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
 import { PIG_NAME_POOL } from '../../src/core/config/names';
-import { pickPigName } from '../../src/core/engine/pigNames';
+import { pickPigName } from '../../src/areas/farm/logic/pigNames';
 import { addXP } from '../../src/core/engine/xp';
 import { mulberry32, type Rng } from '../../src/core/rng';
 import { newGame } from '../../src/core/save/newGame';

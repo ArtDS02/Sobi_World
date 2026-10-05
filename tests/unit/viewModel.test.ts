@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { formatDuration, t } from '../../src/i18n/format';
 import { vi } from '../../src/i18n/vi';
-import { historyVm, pigCardVm, pigPanelVm, signedGold, topBarVm } from '../../src/ui/viewModel';
-import { toastText as eventToast } from '../../src/game/feedback/toastText';
+import { historyVm, pigCardVm, pigPanelVm, signedGold, topBarVm } from '../../src/areas/farm/ui/viewModel';
+import { toastText as eventToast } from '../../src/areas/farm/scene/feedback/toastText';
 import { farm } from './actionKit';
 import { makePig } from './pigFactory';
 

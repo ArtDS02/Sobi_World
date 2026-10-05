@@ -1,8 +1,8 @@
 import 'fake-indexeddb/auto';
 import { IDBFactory } from 'fake-indexeddb';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { buyPig } from '../../src/core/actions/buyPig';
-import { sellPig } from '../../src/core/actions/sellPig';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
+import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
 import { fakeClock, type FakeClock } from '../../src/core/clock';
 import { SAVE } from '../../src/core/config/save';
 import type { GameEvent } from '../../src/core/events';
@@ -12,7 +12,7 @@ import {
   type KeyValueStore,
   type SaveStorage,
 } from '../../src/platform/web/idbSaveStorage';
-import { createGameStore, type PageLike, type StoreDeps } from '../../src/store/gameStore';
+import { createGameStore, type PageLike, type StoreDeps } from '../../src/app/gameStore';
 import { createWebInstanceGuard, type ChannelLike } from '../../src/platform/web/tabGuard';
 
 const SEC = 1000;

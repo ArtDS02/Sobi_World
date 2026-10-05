@@ -13,7 +13,7 @@ import {
   reasonFor,
   troughFill,
   troughSpace,
-} from '../../src/ui/actionsVm';
+} from '../../src/areas/farm/ui/actionsVm';
 import { farm } from './actionKit';
 import { makePig } from './pigFactory';
 

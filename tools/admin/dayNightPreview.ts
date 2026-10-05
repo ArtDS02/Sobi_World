@@ -8,9 +8,9 @@ import {
 } from '../../src/core/assets/registry';
 import type { AssetManifest } from '../../src/core/assets/manifestSchema';
 import { DAY_NIGHT_VIEW, type PhaseLook } from '../../src/core/config/dayNight';
-import { paintBackdrop } from '../../src/game/view/backdropPaint';
-import { placementTransform, placementView, visibleLayout } from '../../src/game/view/sceneLayout';
-import { cssColor, paintSky } from '../../src/game/view/skyPaint';
+import { paintBackdrop } from '../../src/areas/farm/scene/view/backdropPaint';
+import { placementTransform, placementView, visibleLayout } from '../../src/areas/farm/scene/view/sceneLayout';
+import { cssColor, paintSky } from '../../src/areas/farm/scene/view/skyPaint';
 
 type Registry = AssetRegistry;
 

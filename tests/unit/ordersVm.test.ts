@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../../src/core/config/balance';
 import type { Order } from '../../src/core/types';
 import { vi } from '../../src/i18n/vi';
-import { ordersVm } from '../../src/ui/ordersVm';
+import { ordersVm } from '../../src/areas/farm/ui/ordersVm';
 import { ctx, farm } from './actionKit';
 import { makePig } from './pigFactory';
 

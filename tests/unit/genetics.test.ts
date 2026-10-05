@@ -5,7 +5,7 @@ import { GENETICS, MUTATIONS, type Mutation } from '../../src/core/config/breedi
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
 import type { BreedId } from '../../src/core/config/ids';
 import { rarityRank, RARITY_VALUES } from '../../src/core/config/rarity';
-import { rollChildSeeded } from '../../src/core/engine/breeding';
+import { rollChildSeeded } from '../../src/areas/farm/logic/breeding';
 import {
   breedingLayer,
   breedingOutcomes,
@@ -13,8 +13,8 @@ import {
   geneticsCase,
   geneticsIssues,
   recipeIssues,
-} from '../../src/core/engine/breedingOdds';
-import { geneProfile, geneWeight, themesRelated } from '../../src/core/engine/genePool';
+} from '../../src/areas/farm/logic/breedingOdds';
+import { geneProfile, geneWeight, themesRelated } from '../../src/areas/farm/logic/genePool';
 
 const BREEDABLE = BREED_IDS.filter((id) => BREEDS[id].enabled && BREEDS[id].breedable);
 const rank = (id: BreedId) => rarityRank(BREEDS[id].rarity);

@@ -7,7 +7,7 @@ import type { BreedId } from '../../src/core/config/ids';
 import { levelFromXp, troughCapacityForLevel } from '../../src/core/config/levels';
 import { RARITY_VALUES, rarityRank } from '../../src/core/config/rarity';
 import { MUTATIONS } from '../../src/core/config/breedingRules';
-import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
+import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';
 import { vi } from '../../src/i18n/vi';
 
 const V1: BreedId[] = ['PIG_EARTH_PINK', 'PIG_STRIPED_MELON', 'PIG_SUPERMAN', 'PIG_MYTHICAL'];

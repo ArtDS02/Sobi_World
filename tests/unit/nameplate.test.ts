@@ -1,6 +1,6 @@
 // U05: pig name plates never overlap while there is room to shift.
 import { describe, expect, it } from 'vitest';
-import { layoutNameplates, type PlateRequest } from '../../src/game/view/nameplateLayout';
+import { layoutNameplates, type PlateRequest } from '../../src/areas/farm/scene/view/nameplateLayout';
 
 const plate = (id: string, x: number, y: number): PlateRequest => ({ id, x, y, w: 80, h: 20 });
 

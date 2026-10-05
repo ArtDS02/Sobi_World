@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest } from '../../src/core/assets/manifestSchema';
 import { FARM_VIEW } from '../../src/core/config/farmView';
-import { giftSpot, type Rect } from '../../src/game/view/giftPlacement';
+import { giftSpot, type Rect } from '../../src/areas/farm/scene/view/giftPlacement';
 
 const parsed = parseManifest(manifestJson);
 if (!parsed.ok) throw new Error(parsed.message);

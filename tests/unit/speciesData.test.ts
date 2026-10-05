@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { BREED_IDS, BREEDS, FAMILY_VALUES } from '../../src/core/config/breeds';
 import { BREED_ID_VALUES, type BreedId } from '../../src/core/config/ids';
 import { SPECIES_ROWS } from '../../src/core/config/speciesTable';
-import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
-import { buyPig } from '../../src/core/actions/buyPig';
-import { shopPigs } from '../../src/ui/actionsVm';
+import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
+import { shopPigs } from '../../src/areas/farm/ui/actionsVm';
 import { ctx } from './actionKit';
 import { makeState } from './stateFactory';
 

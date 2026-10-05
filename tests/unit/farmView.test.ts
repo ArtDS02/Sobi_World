@@ -5,15 +5,15 @@ import { parseManifest, type AssetManifest } from '../../src/core/assets/manifes
 import { createAssetRegistry } from '../../src/core/assets/registry';
 import { DEFAULT_ANCHORS, FARM_ACTIONS, PIG_FEET_Y } from '../../src/core/config/assetIds';
 import { FARM_VIEW } from '../../src/core/config/farmView';
-import { pigScale, pigSpot, pigView } from '../../src/game/view/pigView';
-import { groundLineY, placementDepth, placementView } from '../../src/game/view/sceneLayout';
+import { pigScale, pigSpot, pigView } from '../../src/areas/farm/scene/view/pigView';
+import { groundLineY, placementDepth, placementView } from '../../src/areas/farm/scene/view/sceneLayout';
 import {
   farmLoadList,
   fallbackPigKey,
   artLoadList,
   textureKey,
   troughTextureKey,
-} from '../../src/game/view/textureKeys';
+} from '../../src/areas/farm/scene/view/textureKeys';
 import { makePig } from './pigFactory';
 
 function manifest(): AssetManifest {

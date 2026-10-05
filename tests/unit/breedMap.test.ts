@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { BREEDING_RULES, MUTATIONS } from '../../src/core/config/breedingRules';
 import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
-import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
-import { breedMap, lineage } from '../../src/core/engine/breedMap';
+import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';
+import { breedMap, lineage } from '../../src/areas/farm/logic/breedMap';
 
 const map = breedMap();
 const node = (id: string) => map.nodes.find((n) => n.id === id)!;

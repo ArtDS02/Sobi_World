@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { PIG_SLEEP } from '../../src/core/config/dayNight';
 import { PIG_LIFE } from '../../src/core/config/pigLife';
-import type { AiState, BrainCommand, BrainWorld, Point } from '../../src/game/state/brainWorld';
-import { PigBrain } from '../../src/game/state/pigBrain';
+import type { AiState, BrainCommand, BrainWorld, Point } from '../../src/areas/farm/scene/state/brainWorld';
+import { PigBrain } from '../../src/areas/farm/scene/state/pigBrain';
 
 const TROUGH: Point = { x: 260, y: 840 };
 const BED: Point = { x: 560, y: 480 };

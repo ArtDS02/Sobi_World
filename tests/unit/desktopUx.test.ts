@@ -1,6 +1,6 @@
 // R11: away summary, tutorial, settings / recovery view-models, store catch-up + backup restore.
 import { describe, expect, it } from 'vitest';
-import { setSetting } from '../../src/core/actions/setSetting';
+import { setSetting } from '../../src/areas/farm/logic/actions/setSetting';
 import { fakeClock } from '../../src/core/clock';
 import { SAVE } from '../../src/core/config/save';
 import type { GameEvent } from '../../src/core/events';
@@ -8,13 +8,13 @@ import { mulberry32 } from '../../src/core/rng';
 import { newGame } from '../../src/core/save/newGame';
 import type { BackupStore, InstanceGuard, LoadResult, SaveStorage } from '../../src/core/save/port';
 import type { SaveGame } from '../../src/core/types';
-import { createFeedbackDirector } from '../../src/game/feedback/FeedbackDirector';
+import { createFeedbackDirector } from '../../src/areas/farm/scene/feedback/FeedbackDirector';
 import { formatTime } from '../../src/i18n/format';
 import { vi } from '../../src/i18n/vi';
-import { createGameStore, type CatchupInfo } from '../../src/store/gameStore';
-import { awayVm } from '../../src/ui/awayVm';
-import { backupsVm, creditLines, exportReminderDue } from '../../src/ui/settingsVm';
-import { tutorialVm } from '../../src/ui/tutorialVm';
+import { createGameStore, type CatchupInfo } from '../../src/app/gameStore';
+import { awayVm } from '../../src/areas/farm/ui/awayVm';
+import { backupsVm, creditLines, exportReminderDue } from '../../src/areas/farm/ui/settingsVm';
+import { tutorialVm } from '../../src/areas/farm/ui/tutorialVm';
 import { ctx, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
 

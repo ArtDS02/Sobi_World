@@ -1,21 +1,21 @@
 // Fuzz (spec §5.5): 1000 random actions with a fixed seed — including breeding and orders —
 // interleaved with time jumps; after every step the save must pass the §5.5 schema.
 import { describe, expect, it } from 'vitest';
-import { breedPigs } from '../../src/core/actions/breedPigs';
-import { buyItem } from '../../src/core/actions/buyItem';
-import { buyPig } from '../../src/core/actions/buyPig';
-import { buySlot } from '../../src/core/actions/buySlot';
-import { cleanAll, cleanPig } from '../../src/core/actions/cleanPig';
-import { feedPig } from '../../src/core/actions/feedPig';
-import { fillTrough } from '../../src/core/actions/fillTrough';
-import { fulfillOrder, pigMeetsOrder } from '../../src/core/actions/fulfillOrder';
-import { renamePig } from '../../src/core/actions/renamePig';
-import { sellPig } from '../../src/core/actions/sellPig';
-import { treatPig } from '../../src/core/actions/treatPig';
+import { breedPigs } from '../../src/areas/farm/logic/actions/breedPigs';
+import { buyItem } from '../../src/areas/farm/logic/actions/buyItem';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
+import { buySlot } from '../../src/areas/farm/logic/actions/buySlot';
+import { cleanAll, cleanPig } from '../../src/areas/farm/logic/actions/cleanPig';
+import { feedPig } from '../../src/areas/farm/logic/actions/feedPig';
+import { fillTrough } from '../../src/areas/farm/logic/actions/fillTrough';
+import { fulfillOrder, pigMeetsOrder } from '../../src/areas/farm/logic/actions/fulfillOrder';
+import { renamePig } from '../../src/areas/farm/logic/actions/renamePig';
+import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
+import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
 import { BALANCE } from '../../src/core/config/balance';
 import { GENDER_VALUES, ITEM_ID_VALUES } from '../../src/core/config/ids';
 import { ITEMS } from '../../src/core/config/items';
-import { advanceWorld } from '../../src/core/engine/advanceWorld';
+import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { mulberry32, pick, type Rng } from '../../src/core/rng';
 import { newGame } from '../../src/core/save/newGame';
 import { saveGameSchema } from '../../src/core/save/schema';

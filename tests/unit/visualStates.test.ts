@@ -2,7 +2,7 @@
 // layer (pigView, visual state, wandering) never touches the save.
 import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
-import { buyPig } from '../../src/core/actions/buyPig';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
 import type { Anchors } from '../../src/core/assets/anchors';
 import { parseManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
@@ -11,11 +11,11 @@ import { mulberry32 } from '../../src/core/rng';
 import { newGame } from '../../src/core/save/newGame';
 import type { InstanceGuard, LoadResult, SaveStorage } from '../../src/core/save/port';
 import type { SaveGame } from '../../src/core/types';
-import { pigVisualState } from '../../src/game/state/pigVisualState';
-import { wanderTarget } from '../../src/game/state/wander';
-import { overlayLayout } from '../../src/game/view/overlayLayout';
-import { pigView, sleepLook } from '../../src/game/view/pigView';
-import { createGameStore } from '../../src/store/gameStore';
+import { pigVisualState } from '../../src/areas/farm/scene/state/pigVisualState';
+import { wanderTarget } from '../../src/areas/farm/scene/state/wander';
+import { overlayLayout } from '../../src/areas/farm/scene/view/overlayLayout';
+import { pigView, sleepLook } from '../../src/areas/farm/scene/view/pigView';
+import { createGameStore } from '../../src/app/gameStore';
 import { makePig } from './pigFactory';
 
 const parsed = parseManifest(structuredClone(manifestJson));

@@ -7,7 +7,7 @@ import { BREEDS } from '../../src/core/config/breeds';
 import { DECORS } from '../../src/core/config/decor';
 import type { BreedId, DecorId, Gender, ItemId, StatId } from '../../src/core/config/ids';
 import { levelFromXp, troughCapacityForLevel } from '../../src/core/config/levels';
-import { happiness } from '../../src/core/engine/happiness';
+import { happiness } from '../../src/areas/farm/logic/happiness';
 import { changeGold } from '../../src/core/engine/gold';
 import { saveGameSchema } from '../../src/core/save/schema';
 import { newGame } from '../../src/core/save/newGame';

@@ -1,14 +1,14 @@
 // Game side of the admin-edited data (DECISIONS AD-1): shop products, the breeding pair table and
 // the layout editor's placement fields are what the game actually plays.
 import { describe, expect, it } from 'vitest';
-import { buyProduct } from '../../src/core/actions/buyProduct';
+import { buyProduct } from '../../src/areas/farm/logic/actions/buyProduct';
 import { BREEDS } from '../../src/core/config/breeds';
 import { ITEMS } from '../../src/core/config/items';
 import { PRODUCTS, type ProductDef } from '../../src/core/config/products';
 import type { PairRule } from '../../src/core/config/breedingPairs';
-import { breedingOutcomes, pairRuleFor } from '../../src/core/engine/breedingOdds';
-import { shopProducts } from '../../src/core/engine/shopProducts';
-import { placementTransform, visibleLayout } from '../../src/game/view/sceneLayout';
+import { breedingOutcomes, pairRuleFor } from '../../src/areas/farm/logic/breedingOdds';
+import { shopProducts } from '../../src/areas/farm/logic/shopProducts';
+import { placementTransform, visibleLayout } from '../../src/areas/farm/scene/view/sceneLayout';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 
 describe('shop products', () => {

@@ -9,7 +9,7 @@ import { renderBreedMap, type PigLook } from './breedMap';
 import { renderBreedRules } from './breedRules';
 import type { BreedId } from '../../src/core/config/ids';
 import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from '../../src/core/config/breedingPairs';
-import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
+import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';
 import { outcomeTotal, pairIssues, type Issue } from '../../scripts/admin/rules';
 import { RARITY_LABEL, esc, rarityBadge } from './labels';
 import { mountList } from './listKit';

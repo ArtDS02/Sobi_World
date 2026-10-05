@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest } from '../../src/core/assets/manifestSchema';
 import { FARM_VIEW } from '../../src/core/config/farmView';
-import { FEEDBACK_TABLE } from '../../src/game/feedback/feedbackTable';
+import { FEEDBACK_TABLE } from '../../src/areas/farm/scene/feedback/feedbackTable';
 import {
   FEEDBACK_STATE,
   canWander,
   pigVisualState,
   type ActiveFeedback,
-} from '../../src/game/state/pigVisualState';
+} from '../../src/areas/farm/scene/state/pigVisualState';
 import {
   clampToEllipse,
   facesLeft,
@@ -17,7 +17,7 @@ import {
   walkEllipse,
   walkMs,
   wanderTarget,
-} from '../../src/game/state/wander';
+} from '../../src/areas/farm/scene/state/wander';
 
 const parsed = parseManifest(structuredClone(manifestJson));
 if (!parsed.ok) throw new Error(parsed.message);

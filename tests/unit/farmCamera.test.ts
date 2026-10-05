@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { backdropRect, farmCamera } from '../../src/game/view/farmCamera';
+import { backdropRect, farmCamera } from '../../src/areas/farm/scene/view/farmCamera';
 
 describe('farmCamera (responsive layout)', () => {
   it('shows the whole design frame on any screen, centred', () => {

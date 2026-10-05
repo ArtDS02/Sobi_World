@@ -8,7 +8,7 @@ import { ACHIEVEMENTS } from '../../src/core/config/achievements';
 import { DECORS } from '../../src/core/config/decor';
 import { DECOR_ID_VALUES, GENDER_VALUES, ITEM_ID_VALUES, STAT_ID_VALUES, type BreedId, type Gender, type ItemId } from '../../src/core/config/ids';
 import { randomId } from '../../src/core/rng';
-import { happiness } from '../../src/core/engine/happiness';
+import { happiness } from '../../src/areas/farm/logic/happiness';
 import { esc, gold, rarityBadge, rowImage } from './labels';
 import { bindPigCardGrid, pigCardGrid } from './pigCards';
 import { confirmDanger, openModal } from './modal';

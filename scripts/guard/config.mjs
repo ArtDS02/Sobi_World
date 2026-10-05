@@ -1,6 +1,6 @@
 // Architecture guard config (ARCHITECTURE.md §3): app → areas/* → systems/* → core/*; ui is shared by
-// app and areas; an Area never imports another Area (`isolate`). Legacy Sobi Farm layers (store, game)
-// stay listed until GĐ1 step 1 moves them into app/ and areas/farm/.
+// app and areas; an Area never imports another Area (`isolate`). The store is world-level (core/world);
+// app/ supplies its real dependencies.
 const PURE = [
   /Date\.now\(/, /Math\.random\(/, /new Date\(\)/, /window\./, /document\./, /localStorage/,
   /indexedDB/, /from 'idb'/, /navigator\./, /fetch\(/, /require\(/, /from 'node:/,
@@ -13,13 +13,10 @@ export default {
     { name: 'core', dir: 'src/core', mayImport: [] },
     { name: 'systems', dir: 'src/systems', mayImport: ['core'] },
     { name: 'areas', dir: 'src/areas', isolate: true, mayImport: ['core', 'systems', 'ui', 'i18n'] },
-    { name: 'ui', dir: 'src/ui', mayImport: ['core', 'systems', 'i18n', 'store'] },
+    { name: 'ui', dir: 'src/ui', mayImport: ['core', 'systems', 'i18n'] },
     { name: 'app', dir: 'src/app', mayImport: ['core', 'systems', 'areas', 'ui', 'platform', 'i18n'] },
     { name: 'platform', dir: 'src/platform', mayImport: ['core'] },
     { name: 'i18n', dir: 'src/i18n', mayImport: [] },
-    // Legacy (Sobi Farm): removed once moved.
-    { name: 'store', dir: 'src/store', mayImport: ['core'] },
-    { name: 'game', dir: 'src/game', mayImport: ['core', 'store', 'i18n'] },
   ],
   forbidden: [
     { dir: 'src/core', patterns: PURE },

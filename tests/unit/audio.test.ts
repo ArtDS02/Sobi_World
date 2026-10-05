@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
-import { setSetting } from '../../src/core/actions/setSetting';
+import { setSetting } from '../../src/areas/farm/logic/actions/setSetting';
 import { parseManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
 import { AUDIO_KEYS, type AudioKey } from '../../src/core/config/assetIds';
@@ -10,10 +10,10 @@ import {
   audioTracks,
   type AudioClip,
   type AudioTrack,
-} from '../../src/game/audio/AudioManager';
-import { tapSound } from '../../src/game/audio/tapSound';
-import { feedbackPlan } from '../../src/game/feedback/feedbackPlan';
-import { REJECT_ROW } from '../../src/game/feedback/feedbackTable';
+} from '../../src/areas/farm/scene/audio/AudioManager';
+import { tapSound } from '../../src/areas/farm/scene/audio/tapSound';
+import { feedbackPlan } from '../../src/areas/farm/scene/feedback/feedbackPlan';
+import { REJECT_ROW } from '../../src/areas/farm/scene/feedback/feedbackTable';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 
 const parsed = parseManifest(structuredClone(manifestJson));

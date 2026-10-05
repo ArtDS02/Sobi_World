@@ -1,13 +1,13 @@
 // NH-1: pig needs & health — game-time decay, care levels, disease lifecycle, save round trip.
 import { describe, expect, it } from 'vitest';
-import { cleanPig } from '../../src/core/actions/cleanPig';
-import { feedPig } from '../../src/core/actions/feedPig';
-import { treatPig } from '../../src/core/actions/treatPig';
+import { cleanPig } from '../../src/areas/farm/logic/actions/cleanPig';
+import { feedPig } from '../../src/areas/farm/logic/actions/feedPig';
+import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
 import { BALANCE } from '../../src/core/config/balance';
 import { BREEDS } from '../../src/core/config/breeds';
-import { advancePig } from '../../src/core/engine/advancePig';
-import { advanceWorld } from '../../src/core/engine/advanceWorld';
-import { dayStart, diseaseState, gameDay, needLevel } from '../../src/core/engine/pigHealth';
+import { advancePig } from '../../src/areas/farm/logic/advancePig';
+import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
+import { dayStart, diseaseState, gameDay, needLevel } from '../../src/areas/farm/logic/pigHealth';
 import type { GameEvent } from '../../src/core/events';
 import { sequenceRng, type Rng } from '../../src/core/rng';
 import { parseSave } from '../../src/core/save/migrate';

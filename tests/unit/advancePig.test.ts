@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { advancePig } from '../../src/core/engine/advancePig';
-import { advanceWithTrough } from '../../src/core/engine/trough';
+import { advancePig } from '../../src/areas/farm/logic/advancePig';
+import { advanceWithTrough } from '../../src/areas/farm/logic/trough';
 import { mulberry32, sequenceRng, type Rng } from '../../src/core/rng';
 import type { Pig } from '../../src/core/types';
 import { makePig } from './pigFactory';

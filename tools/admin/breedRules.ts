@@ -8,8 +8,8 @@ import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
 import { GENE_BONUSES, THEME_RELATIONS, type GeneBonuses } from '../../src/core/config/genePool';
 import type { BreedId } from '../../src/core/config/ids';
 import { RARITY_VALUES, rarityRank } from '../../src/core/config/rarity';
-import { weightedPick } from '../../src/core/engine/breeding';
-import { breedingCoverage } from '../../src/core/engine/breedingCoverage';
+import { weightedPick } from '../../src/areas/farm/logic/breeding';
+import { breedingCoverage } from '../../src/areas/farm/logic/breedingCoverage';
 import {
   breedingLayer,
   breedingOutcomes,
@@ -18,7 +18,7 @@ import {
   geneticsIssues,
   recipeIssues,
   type BreedingData,
-} from '../../src/core/engine/breedingOdds';
+} from '../../src/areas/farm/logic/breedingOdds';
 import { mulberry32 } from '../../src/core/rng';
 import { RARITY_LABEL, esc, rarityBadge } from './labels';
 import type { PigLook } from './breedMap';

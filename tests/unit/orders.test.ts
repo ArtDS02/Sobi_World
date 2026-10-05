@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { fulfillOrder } from '../../src/core/actions/fulfillOrder';
+import { fulfillOrder } from '../../src/areas/farm/logic/actions/fulfillOrder';
 import { BALANCE } from '../../src/core/config/balance';
 import { BREEDS } from '../../src/core/config/breeds';
 import { BREED_ID_VALUES, type BreedId } from '../../src/core/config/ids';
 import { RARITY_ORDER_WEIGHT } from '../../src/core/config/rarity';
-import { advanceWorld } from '../../src/core/engine/advanceWorld';
-import { generateOrder, orderWindowIndex, refreshOrders } from '../../src/core/engine/orders';
+import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
+import { generateOrder, orderWindowIndex, refreshOrders } from '../../src/areas/farm/logic/orders';
 import { mulberry32, orderSeed } from '../../src/core/rng';
 import type { Order, SaveGame } from '../../src/core/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';

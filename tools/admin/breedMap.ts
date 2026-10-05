@@ -5,7 +5,7 @@
 import { MUTATIONS } from '../../src/core/config/breedingRules';
 import { BREEDS } from '../../src/core/config/breeds';
 import type { BreedId } from '../../src/core/config/ids';
-import { breedMap, lineage, type BreedMap, type BreedMapEdge } from '../../src/core/engine/breedMap';
+import { breedMap, lineage, type BreedMap, type BreedMapEdge } from '../../src/areas/farm/logic/breedMap';
 import { RARITY_LABEL, esc, rarityBadge } from './labels';
 
 const COL_W = 240;

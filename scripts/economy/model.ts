@@ -4,8 +4,8 @@ import { BALANCE } from '../../src/core/config/balance';
 import { BREEDS } from '../../src/core/config/breeds';
 import type { BreedId } from '../../src/core/config/ids';
 import { ITEMS } from '../../src/core/config/items';
-import { advanceWithTrough } from '../../src/core/engine/trough';
-import { sellPrice } from '../../src/core/engine/pricing';
+import { advanceWithTrough } from '../../src/areas/farm/logic/trough';
+import { sellPrice } from '../../src/areas/farm/logic/pricing';
 import { sequenceRng } from '../../src/core/rng';
 import type { Pig } from '../../src/core/types';
 

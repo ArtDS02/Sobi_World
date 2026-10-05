@@ -2,7 +2,7 @@
 // Usage: npm run breeding:report [-- --all]   (exit 1 when the data is not clean)
 import { BREEDS } from '../src/core/config/breeds';
 import { RARITY_VALUES } from '../src/core/config/rarity';
-import { breedingCoverage, WEAK_ROUTE_PERCENT } from '../src/core/engine/breedingCoverage';
+import { breedingCoverage, WEAK_ROUTE_PERCENT } from '../src/areas/farm/logic/breedingCoverage';
 
 const c = breedingCoverage();
 const all = process.argv.includes('--all');
