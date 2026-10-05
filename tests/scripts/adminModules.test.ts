@@ -10,7 +10,7 @@ import { replacePlacementsText } from '../../scripts/admin/layoutText';
 import { schemaProblems } from '../../scripts/admin/contentFiles';
 import { shopFileSchema } from '../../content/schemas/shared/shop';
 import { breedingFileSchema } from '../../content/schemas/farm/breeding';
-import { CONTENT } from '../../src/core/config/content';
+import { FARM_CONTENT } from '../../src/areas/farm/logic/config/content';
 import { layoutIssues, pairIssues, productIssues, type PairRuleRow, type ProductRow } from '../../scripts/admin/rules';
 import { archiveProfile, listProfiles, readProfile, writeProfile } from '../../scripts/admin/saves';
 import { appendPigRowsText } from '../../scripts/admin/speciesText';
@@ -102,9 +102,9 @@ describe('breeding pair rules', () => {
   });
   it('a pair row is a valid breeding file entry; unknown species are refused by the schema', () => {
     const one = { id: 'PAIR_001', parents: ['PIG_WHITE', 'PIG_BLACK'], outcomes: [{ breed: 'PIG_PANDA', percent: 100 }], active: true, note: 'x"y' };
-    expect(schemaProblems(breedingFileSchema, { ...CONTENT.breeding, pairs: [...PAIR_RULES, one] })).toEqual([]);
+    expect(schemaProblems(breedingFileSchema, { ...FARM_CONTENT.breeding, pairs: [...PAIR_RULES, one] })).toEqual([]);
     const bad = { ...one, parents: ['PIG_NOPE', 'PIG_BLACK'] };
-    expect(schemaProblems(breedingFileSchema, { ...CONTENT.breeding, pairs: [bad] })).not.toEqual([]);
+    expect(schemaProblems(breedingFileSchema, { ...FARM_CONTENT.breeding, pairs: [bad] })).not.toEqual([]);
   });
 });
 

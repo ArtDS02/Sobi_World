@@ -7,6 +7,7 @@ import { IDS_FILE, idsText, listIn } from '../../scripts/content/ids';
 import { speciesFileSchema } from '../../content/schemas/farm/species';
 import { ContentError, loadContent } from '../../src/core/content/load';
 import { CONTENT } from '../../src/core/config/content';
+import { FARM_CONTENT } from '../../src/areas/farm/logic/config/content';
 
 const files = ['shared', 'farm'].flatMap((dir) =>
   readdirSync(`content/${dir}`)
@@ -21,7 +22,7 @@ describe('content files', () => {
   });
 
   it('every file loads (the game validates them at start)', () => {
-    expect(Object.keys(CONTENT).length).toBe(files.length);
+    expect(Object.keys(CONTENT).length + Object.keys(FARM_CONTENT).length).toBe(files.length);
   });
 
   it('ids.generated.ts is up to date (npm run content:ids)', () => {
@@ -49,6 +50,6 @@ describe('content files', () => {
 
   it('colours are hex strings in the file and numbers in the game', () => {
     expect(hexColor(0xf7a8b8)).toBe('#f7a8b8');
-    expect(CONTENT.species.species[0]!.color).toBe(0xf7a8b8);
+    expect(FARM_CONTENT.species.species[0]!.color).toBe(0xf7a8b8);
   });
 });
