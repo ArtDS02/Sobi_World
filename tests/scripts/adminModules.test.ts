@@ -156,7 +156,7 @@ describe('user (save) edits', () => {
 
 describe('save folders', () => {
   const root = mkdtempSync(join(tmpdir(), 'unin-admin-'));
-  const dir = join(root, 'Un In Homemade Dev', 'saves');
+  const dir = join(root, 'SobiWorld Dev', 'saves');
   mkdirSync(dir, { recursive: true });
   const save = newGame({ now: 1, rng: mulberry32(1) });
   writeFileSync(join(dir, 'save.json'), JSON.stringify(save));
@@ -165,7 +165,7 @@ describe('save folders', () => {
   it('lists only the game folders and reads a save', () => {
     const [p, ...rest] = listProfiles(root);
     expect(rest).toEqual([]);
-    expect(p!.app).toBe('Un In Homemade Dev');
+    expect(p!.app).toBe('SobiWorld Dev');
     expect((readProfile(p!.id, root).body as { json: string }).json).toBe(JSON.stringify(save));
     expect(readProfile(Buffer.from('../../etc/saves').toString('base64url'), root).status).toBe(404);
   });

@@ -1,22 +1,20 @@
 // `npm run dev` (browser) plays the same save file as `npm run dev:desktop` (DECISIONS AM-1): a
-// dev-only Vite plugin (`apply: 'serve'`) that serves %APPDATA%\Un In Homemade Dev\saves through the
+// dev-only Vite plugin (`apply: 'serve'`) that serves %APPDATA%\SobiWorld Dev\saves through the
 // very module Electron uses (electron/saveFiles.ts). Never part of a build: the shipped game has no
 // server and reads its save through Electron IPC only.
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import type { Plugin } from 'vite';
-import { devUserDataDir } from '../../electron/dataDir';
+import { adoptLegacySaves, devUserDataDir, LEGACY_DATA_DIR_NAME } from '../../electron/dataDir';
 import { createSaveFiles, SAVE_CHANGED_EXTERNALLY } from '../../electron/saveFiles';
 import type { SaveCandidateSource } from '../../src/platform/desktop/bridge';
 import { DEV_SAVE_EVENT, DEV_SAVE_META, DEV_SAVE_ROUTE } from '../../src/platform/web/devSaveApi';
 
+const appData = () => process.env.APPDATA ?? join(homedir(), 'AppData', 'Roaming');
+
 /** saves/ of the dev farm (UNIN_USER_DATA overrides, like the Electron main process). */
-export const devSavesDir = () =>
-  join(
-    devUserDataDir(process.env.APPDATA ?? join(homedir(), 'AppData', 'Roaming'), process.env.UNIN_USER_DATA),
-    'saves',
-  );
+export const devSavesDir = () => join(devUserDataDir(appData(), process.env.UNIN_USER_DATA), 'saves');
 
 function readBody(req: IncomingMessage): Promise<Record<string, unknown>> {
   return new Promise((resolve, reject) => {
@@ -56,6 +54,12 @@ export function devSaveApi(dir = devSavesDir()): Plugin {
     apply: (_config, env) => env.command === 'serve' && !process.env.VITEST, // not in tests
     transformIndexHtml: () => [{ tag: 'meta', attrs: { name: DEV_SAVE_META, content: dir }, injectTo: 'head' }],
     async configureServer(server) {
+      // Sobi Farm's dev farm is copied over once (never with UNIN_USER_DATA, never deleted).
+      if (!process.env.UNIN_USER_DATA) {
+        await adoptLegacySaves(join(appData(), LEGACY_DATA_DIR_NAME.dev), join(dir, '..')).catch((e: unknown) =>
+          server.config.logger.error(`could not copy the Sobi Farm dev save: ${String(e)}`),
+        );
+      }
       const stop = await saves.watch(() => server.ws.send({ type: 'custom', event: DEV_SAVE_EVENT }));
       server.httpServer?.once('close', stop);
       server.middlewares.use(DEV_SAVE_ROUTE, (req, res) => {

@@ -45,7 +45,14 @@ export const users = {
 
 /** Which run mode plays a save folder (electron/dataDir.ts, DECISIONS AM-1). */
 export const appLabel = (app: string, folder: string) =>
-  `${app === 'Un In Homemade' ? 'Bản cài đặt (Sobi Farm)' : app === 'Un In Homemade Dev' ? 'Bản dev (npm run dev + npm run dev:desktop)' : app}${folder === 'saves' ? '' : ` · ${folder}`}`;
+  `${APP_LABELS[app] ?? app}${folder === 'saves' ? '' : ` · ${folder}`}`;
+
+const APP_LABELS: Record<string, string> = {
+  SobiWorld: 'Bản cài đặt (Sobi World)',
+  'SobiWorld Dev': 'Bản dev (npm run dev + npm run dev:desktop)',
+  'Un In Homemade': 'Sobi Farm cũ — bản cài (đã chép sang SobiWorld)',
+  'Un In Homemade Dev': 'Sobi Farm cũ — bản dev (đã chép sang SobiWorld Dev)',
+};
 
 /** A save file as the world (v8, older saves migrated) and the farm view the editor works on. */
 function parse(text: string): { save: FarmGame | null; world: WorldSave | null; error: string | null } {
@@ -188,7 +195,7 @@ export function renderUsers(root: HTMLElement, rerender: () => void) {
     openModal({
       title: 'Thư mục quét save',
       submit: 'Quét thư mục này',
-      body: `<label class="field"><span>Thư mục chứa các thư mục “Un In Homemade…” (để trống = mặc định %APPDATA%)</span>
+      body: `<label class="field"><span>Thư mục chứa các thư mục “SobiWorld…” / “Un In Homemade…” (để trống = mặc định %APPDATA%)</span>
         <input name="path" value="${esc(users.root)}" placeholder="C:\\Users\\ten\\AppData\\Roaming" /></label>`,
       onSubmit: async (f) => {
         await post('/__admin/saves/root', { path: String(new FormData(f).get('path') ?? '') });

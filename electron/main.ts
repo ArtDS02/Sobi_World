@@ -14,7 +14,7 @@ import {
 import * as fsp from 'node:fs/promises';
 import { extname, join, normalize, sep } from 'node:path';
 import type { IpcChannel, SaveCandidateSource } from '../src/platform/desktop/bridge';
-import { DATA_DIR_NAME, devUserDataDir } from './dataDir';
+import { adoptLegacySaves, DATA_DIR_NAME, devUserDataDir, LEGACY_DATA_DIR_NAME } from './dataDir';
 import { createSaveFiles, type SaveFiles } from './saveFiles';
 import { readWindowState, WINDOW_MIN, writeWindowState } from './windowState';
 
@@ -50,9 +50,10 @@ const MIME: Record<string, string> = {
   '.woff2': 'font/woff2',
 };
 
-// Saves live in %APPDATA%\Un In Homemade\ whatever the product name ("Sobi Farm") is (§9.1, AM-2).
-// An unpackaged run (dev:desktop) uses the dev folder — the same farm `npm run dev` plays (AM-1) —
-// so it never touches the player's farm. The e2e smoke test (§14.8) points it at a temp folder.
+// Saves live in %APPDATA%\SobiWorld\ whatever the product name is (§9.1, ARCHITECTURE §9); Sobi Farm's
+// folder is copied over on the first run. An unpackaged run (dev:desktop) uses the dev folder — the
+// same farm `npm run dev` plays (AM-1) — so it never touches the player's farm. The e2e smoke test
+// (§14.8) points it at a temp folder.
 app.setPath(
   'userData',
   app.isPackaged
@@ -94,6 +95,13 @@ if (!app.requestSingleInstanceLock()) {
   });
 
   void app.whenReady().then(async () => {
+    // A temp folder (UNIN_USER_DATA, e2e) never adopts a farm.
+    if (app.isPackaged || !process.env.UNIN_USER_DATA) {
+      const legacy = app.isPackaged ? LEGACY_DATA_DIR_NAME.installed : LEGACY_DATA_DIR_NAME.dev;
+      await adoptLegacySaves(join(app.getPath('appData'), legacy), app.getPath('userData')).catch(
+        (e: unknown) => console.error('could not copy the Sobi Farm save', e),
+      );
+    }
     saves = createSaveFiles({ dir: join(app.getPath('userData'), 'saves'), now: Date.now });
     registerProtocol();
     lockDownSession();
