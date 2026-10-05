@@ -1,11 +1,17 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** Chuẩn bị xong · chưa bắt đầu GĐ1
-**Nhánh:** `main` (bản gốc Sobi Farm + tài liệu Sobi World) · GĐ1 làm trên `phase-01-world-foundation`
-**Bước tiếp theo:** GĐ1 Bước 1 — kiểm tra code, viết `docs/AUDIT_AND_PLAN.md`, dừng chờ chủ dự án duyệt.
+**Giai đoạn:** GĐ1 — Bước 1 (kiểm tra) xong, **chờ chủ dự án duyệt** `docs/AUDIT_AND_PLAN.md`
+**Nhánh:** `phase-01-world-foundation`
+**Bước tiếp theo:** sau khi duyệt (và trả lời 10 câu hỏi mục g) → GĐ1 Bước 2, bắt đầu 1.1 guard mới.
 
 ## Nhật ký
+
+### 2026-10-05 — GĐ1 Bước 1: kiểm tra code Sobi Farm
+✅ Đã làm: đọc toàn bộ code (core, store, game, ui, platform, electron, admin, guard), viết `docs/AUDIT_AND_PLAN.md`
+(bản đồ code → core/systems/areas/content/admin, chỗ hard-code, so số với GAME_BALANCE, save v8 + migration,
+đóng gói, kế hoạch 9 bước, rủi ro, 10 câu hỏi). Chưa sửa code.
+⚠️ Phát hiện: GAME_BALANCE §6 (thức ăn 6 Coins) mâu thuẫn thang tiền Sobi Farm (thức ăn 25) — câu hỏi 5.
 
 ### 2026-10-04 — Tạo repo Sobi World
 ✅ Đã làm:
