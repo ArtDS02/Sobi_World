@@ -1,16 +1,10 @@
 // Sobi Farm save import (spec §9.2): sequential vN -> vN+1 migrations up to v7 with schema validation,
 // then v7 -> the world save v8 (farmToWorld).
-import { BREEDS } from '../../../../core/config/breeds';
+import { BREEDS } from '../config/breeds';
 import type { ErrorCode } from '../../../../core/config/errors';
-import type { BreedId } from '../../../../core/config/ids';
-import { levelFromXp, troughCapacityForLevel } from '../../../../core/config/levels';
-import {
-  SAVE,
-  V3_SKIN_REFUND_GOLD,
-  V3_SPECIES_SKINS,
-  V5_BODY_OUTFITS,
-  V5_OUTFIT_PRICES,
-} from '../../../../core/config/save';
+import type { BreedId } from '../config/ids';
+import { levelFromXp, troughCapacityForLevel } from '../config/levels';
+import { V3_SKIN_REFUND_GOLD, V3_SPECIES_SKINS, V5_BODY_OUTFITS, V5_OUTFIT_PRICES, FARM_DOC_VERSION } from './legacyConfig';
 import { changeGold } from '../gold';
 import { mulberry32 } from '../../../../core/rng';
 import type { FarmGame } from '../types';
@@ -207,11 +201,11 @@ export function migrateFarmSave(input: unknown): MigrateResult {
   if (typeof version !== 'number' || !Number.isInteger(version) || version < 1) {
     return { ok: false, error: 'SAVE_CORRUPT' };
   }
-  if (version > SAVE.SCHEMA_VERSION) return { ok: false, error: 'SAVE_TOO_NEW' };
+  if (version > FARM_DOC_VERSION) return { ok: false, error: 'SAVE_TOO_NEW' };
 
   let raw: Raw = input;
   const refunds: Refund[] = [];
-  while (version < SAVE.SCHEMA_VERSION) {
+  while (version < FARM_DOC_VERSION) {
     const step = MIGRATIONS[version];
     if (!step) return { ok: false, error: 'SAVE_CORRUPT' };
     refunds.push(...(REFUNDS[version]?.(raw) ?? []));

@@ -1,6 +1,6 @@
 // Pig management page: searchable, filterable, sortable card grid with pagination (listKit).
 // A card opens the editor drawer.
-import { FAMILY_VALUES } from '../../src/core/config/breeds';
+import { FAMILY_VALUES } from '../../src/areas/farm/logic/config/breeds';
 import { RARITY_VALUES, rarityRank } from '../../src/core/config/rarity';
 import {
   FAMILY_LABEL,

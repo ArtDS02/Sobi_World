@@ -2,8 +2,8 @@
 // row (BREEDS[breed].artId), the trough with the state matching its food.
 import type { AssetRegistry, ArtTexture } from '../../../../core/assets/registry';
 import { TROUGH_PROP_ID, type TroughState } from '../../../../core/config/assetIds';
-import { BREEDS } from '../../../../core/config/breeds';
-import type { BreedId } from '../../../../core/config/ids';
+import { BREEDS } from '../../logic/config/breeds';
+import type { BreedId } from '../../logic/config/ids';
 
 export const pigArtId = (breed: BreedId): string => BREEDS[breed].artId;
 

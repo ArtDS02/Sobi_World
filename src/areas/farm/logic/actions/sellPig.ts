@@ -1,5 +1,5 @@
 // sellPig (spec §8.7): price uses the happiness multiplier after advanceWorld (D18).
-import { BALANCE } from '../../../../core/config/balance';
+import { BALANCE } from '../config/balance';
 import { decorBonus } from '../decor';
 import { changeGold } from '../gold';
 import { happiness } from '../happiness';

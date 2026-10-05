@@ -1,7 +1,7 @@
 // Pig needs & health rules (NH-1): care levels, game day, disease lifecycle. Pure; the local
 // day offset is injected (core never reads the time zone).
-import { BALANCE } from '../../../core/config/balance';
-import { NEED_LEVEL_MIN, NEED_LEVELS, type NeedLevel } from '../../../core/config/care';
+import { BALANCE } from './config/balance';
+import { NEED_LEVEL_MIN, NEED_LEVELS, type NeedLevel } from './config/care';
 import type { Pig } from './types';
 
 const DAY_MS = 86_400_000;

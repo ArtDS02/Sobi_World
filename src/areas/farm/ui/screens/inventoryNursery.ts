@@ -2,8 +2,8 @@
 // instances; clicking one asks whether to raise it now (dialogs.openAdoptDialog).
 import { pigTexture } from '../../scene/view/farmArt';
 import type { AssetRegistry } from '../../../../core/assets/registry';
-import { BALANCE } from '../../../../core/config/balance';
-import { BREEDS } from '../../../../core/config/breeds';
+import { BALANCE } from '../../logic/config/balance';
+import { BREEDS } from '../../logic/config/breeds';
 import type { NurseryPig, FarmGame } from '../../logic/types';
 import { t } from '../../../../i18n/format';
 import { vi } from '../../../../i18n/vi';

@@ -1,6 +1,6 @@
 // Ambient motion rules (spec §11.1, R12A): which placements move, and how a cloud drifts. Pure.
 import { AMBIENT_DRIFT_PREFIX, AMBIENT_SWAY_IDS } from '../../../../core/config/assetIds';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 
 export type AmbientKind = 'drift' | 'sway' | null;
 

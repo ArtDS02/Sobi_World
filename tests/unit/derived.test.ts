@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { freeSlots, growthStage, level, waitingPigs, weight } from '../../src/areas/farm/logic/derived';
 import { happiness } from '../../src/areas/farm/logic/happiness';
 import { sellPrice } from '../../src/areas/farm/logic/pricing';

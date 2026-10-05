@@ -10,7 +10,7 @@
 //      rest rescale, so no rarity is invented and nothing jumps more than one tier.
 // Inside a bucket the gene pool (engine/genePool.ts) weights species. Pure and deterministic: the
 // same pair always gives the same table; the rng only draws from it.
-import { PAIR_RULES, type PairRule } from '../../../core/config/breedingPairs';
+import { PAIR_RULES, type PairRule } from './config/breedingPairs';
 import {
   BREEDING_RULES,
   GENETICS,
@@ -18,11 +18,11 @@ import {
   type GeneticsBuckets,
   type GeneticsRules,
   type Mutation,
-} from '../../../core/config/breedingRules';
-import { BREED_IDS, BREEDS } from '../../../core/config/breeds';
-import type { BreedId } from '../../../core/config/ids';
+} from './config/breedingRules';
+import { BREED_IDS, BREEDS } from './config/breeds';
+import type { BreedId } from './config/ids';
 import { rarityRank, RARITY_VALUES } from '../../../core/config/rarity';
-import { SPECIES_TRAITS, type Trait } from '../../../core/config/speciesTraits';
+import { SPECIES_TRAITS, type Trait } from './config/speciesTraits';
 import { geneWeight, type GeneticsContext } from './genePool';
 
 export interface BreedingOutcome {

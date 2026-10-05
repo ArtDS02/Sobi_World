@@ -2,7 +2,7 @@
 // time left and the pigs that can fill it. Pure, so it is unit-tested directly.
 import { decorBonus } from '../logic/decor';
 import { fulfillOrder, pigMeetsOrder } from '../logic/actions/fulfillOrder';
-import { BREEDS } from '../../../core/config/breeds';
+import { BREEDS } from '../logic/config/breeds';
 import { happiness } from '../logic/happiness';
 import type { FarmGame } from '../logic/types';
 import { formatDuration, formatInt, t } from '../../../i18n/format';

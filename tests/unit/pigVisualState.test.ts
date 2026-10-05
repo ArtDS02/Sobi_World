@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest } from '../../src/core/assets/manifestSchema';
-import { FARM_VIEW } from '../../src/core/config/farmView';
+import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import { FEEDBACK_TABLE } from '../../src/areas/farm/scene/feedback/feedbackTable';
 import {
   FEEDBACK_STATE,

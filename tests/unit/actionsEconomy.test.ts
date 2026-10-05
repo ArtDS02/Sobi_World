@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { BALANCE } from '../../src/core/config/balance';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
 import { buyItem } from '../../src/areas/farm/logic/actions/buyItem';
 import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
 import { buySlot } from '../../src/areas/farm/logic/actions/buySlot';
 import { renamePig } from '../../src/areas/farm/logic/actions/renamePig';
 import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
-import { PIG_NAME_POOL } from '../../src/core/config/names';
+import { PIG_NAME_POOL } from '../../src/areas/farm/logic/config/names';
 import { pickPigName } from '../../src/areas/farm/logic/pigNames';
 import { addXP } from '../../src/areas/farm/logic/xp';
 import { mulberry32, type Rng } from '../../src/core/rng';

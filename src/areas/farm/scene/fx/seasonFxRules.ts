@@ -1,7 +1,7 @@
 // Seasonal FX maths (DECISIONS MU-2), pure: which emitters run for a season + day / night phase,
 // their effective limits after admin tuning, and each particle's spawn and motion. The Phaser side
 // (game/fx/SeasonFxLayer.ts) only pools sprites and copies these numbers onto them.
-import type { DayPhase } from '../config/dayNight';
+import type { DayPhase } from '../../../../core/config/dayNight';
 import {
   SEASON_FX_LIMITS,
   SEASON_FX_TUNING,
@@ -10,8 +10,8 @@ import {
   type SeasonFxTuning,
 } from '../config/seasonFx';
 import { SEASON_FX } from '../config/seasonFxTable';
-import type { SeasonId } from '../config/seasons';
-import type { Rng } from '../rng';
+import type { SeasonId } from '../../../../core/config/seasons';
+import type { Rng } from '../../../../core/rng';
 
 /** An emitter after tuning: the spawn chance and cap actually used. */
 export interface ActiveEmitter {

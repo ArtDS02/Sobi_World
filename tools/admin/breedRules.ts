@@ -3,10 +3,10 @@
 // editable here, saved into content/farm/breeding.json by the dev API), plus an odds explorer
 // with a seeded sampler. Every number shown comes from src/core (draft edits preview through the
 // same engine functions; no copy of the rules lives here).
-import { GENETICS, MUTATIONS, type GeneticsBuckets, type GeneticsRules, type Mutation } from '../../src/core/config/breedingRules';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
-import { GENE_BONUSES, THEME_RELATIONS, type GeneBonuses } from '../../src/core/config/genePool';
-import type { BreedId } from '../../src/core/config/ids';
+import { GENETICS, MUTATIONS, type GeneticsBuckets, type GeneticsRules, type Mutation } from '../../src/areas/farm/logic/config/breedingRules';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import { GENE_BONUSES, THEME_RELATIONS, type GeneBonuses } from '../../src/areas/farm/logic/config/genePool';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { RARITY_VALUES, rarityRank } from '../../src/core/config/rarity';
 import { weightedPick } from '../../src/areas/farm/logic/breeding';
 import { breedingCoverage } from '../../src/areas/farm/logic/breedingCoverage';

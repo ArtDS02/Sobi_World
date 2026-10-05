@@ -1,9 +1,9 @@
 // Special recipe → random genetics (DECISIONS MU-1): bucket priorities, rarity bounds, recipe
 // priority, every pair breeds, gene pool as a bonus only, seeded rolls, config validation.
 import { describe, expect, it } from 'vitest';
-import { GENETICS, MUTATIONS, type Mutation } from '../../src/core/config/breedingRules';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
-import type { BreedId } from '../../src/core/config/ids';
+import { GENETICS, MUTATIONS, type Mutation } from '../../src/areas/farm/logic/config/breedingRules';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { rarityRank, RARITY_VALUES } from '../../src/core/config/rarity';
 import { rollChildSeeded } from '../../src/areas/farm/logic/breeding';
 import {

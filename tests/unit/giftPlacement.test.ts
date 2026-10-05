@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest } from '../../src/core/assets/manifestSchema';
-import { FARM_VIEW } from '../../src/core/config/farmView';
+import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import { giftSpot, type Rect } from '../../src/areas/farm/scene/view/giftPlacement';
 
 const parsed = parseManifest(manifestJson);

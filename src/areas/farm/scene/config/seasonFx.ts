@@ -9,8 +9,8 @@
 //   layer 'glow': light sources over the night tint (like the window glows) — fireflies.
 // TUNABLE; the tuning (enable / density / spawn rate) is content/farm/season-fx.json, written by the
 // admin dashboard (→ Bố cục farm → Mùa).
-import { CONTENT } from './content';
-import type { DayPhase } from './dayNight';
+import { FARM_CONTENT } from '../../logic/config/content';
+import type { DayPhase } from '../../../../core/config/dayNight';
 
 export const SEASON_FX_ART_IDS = [
   'fx_env_petals',
@@ -92,4 +92,4 @@ export interface SeasonFxTuning {
 
 export const SEASON_FX_LIMITS = { densityMax: 2, spawnRateMin: 0.25, spawnRateMax: 4, maxActiveCap: 60 } as const;
 
-export const SEASON_FX_TUNING: SeasonFxTuning = CONTENT.seasonFx;
+export const SEASON_FX_TUNING: SeasonFxTuning = FARM_CONTENT.seasonFx;

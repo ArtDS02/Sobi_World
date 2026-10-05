@@ -1,8 +1,9 @@
 // buyPig (spec §8.1); species above the player's level stay locked (BreedDef.unlockLevel).
-import { BALANCE } from '../../../../core/config/balance';
-import { BREEDS } from '../../../../core/config/breeds';
-import { levelFromXp } from '../../../../core/config/levels';
-import { GENDER_VALUES, type BreedId, type Gender } from '../../../../core/config/ids';
+import { BALANCE } from '../config/balance';
+import { BREEDS } from '../config/breeds';
+import { levelFromXp } from '../config/levels';
+import { GENDER_VALUES, type Gender } from '../../../../core/config/ids';
+import { type BreedId } from '../config/ids';
 import { discoverBreed } from '../collection';
 import { lowestFreeSlot } from '../breeding';
 import { freeSlots } from '../derived';

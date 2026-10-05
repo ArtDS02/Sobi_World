@@ -3,11 +3,11 @@
 // Hidden discovery (PS-2): a species not yet in the collection shows as "???" + its rarity, and
 // the pair's compatibility shows as hearts; the engine (breedingOdds) decides, the UI only shows.
 import { breedPigs } from '../logic/actions/breedPigs';
-import { BALANCE } from '../../../core/config/balance';
-import { BREEDING_RULES } from '../../../core/config/breedingRules';
+import { BALANCE } from '../logic/config/balance';
+import { BREEDING_RULES } from '../logic/config/breedingRules';
 import { breedingOutcomes, compatibility, type BreedingOutcome } from '../logic/breedingOdds';
 import { freeSlots, pigCapacity, waitingPigs } from '../logic/derived';
-import { BREEDS } from '../../../core/config/breeds';
+import { BREEDS } from '../logic/config/breeds';
 import type { Rarity } from '../../../core/config/rarity';
 import type { ErrorCode } from '../../../core/config/errors';
 import type { Pig, FarmGame } from '../logic/types';

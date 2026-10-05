@@ -37,9 +37,9 @@ import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, reg
 import { buildInfo, openFolder } from './buildInfo';
 import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
 import { replacePlacementsText } from './layoutText';
-import type { GeneticsRules, Mutation } from '../../src/core/config/breedingRules';
-import type { GeneBonuses } from '../../src/core/config/genePool';
-import type { SeasonFxTuning } from '../../src/core/config/seasonFx';
+import type { GeneticsRules, Mutation } from '../../src/areas/farm/logic/config/breedingRules';
+import type { GeneBonuses } from '../../src/areas/farm/logic/config/genePool';
+import type { SeasonFxTuning } from '../../src/areas/farm/scene/config/seasonFx';
 import { layoutIssues, pairIssues, productIssues, type PairRuleRow, type PlacementRow, type ProductRow } from './rules';
 
 const LAYOUT_DEFAULT = 'scripts/admin/layoutDefault.json';

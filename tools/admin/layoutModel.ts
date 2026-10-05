@@ -2,7 +2,7 @@
 // manifest `layout.placements` rows (x, y normalised to the 1600×900 design frame); the editor UI
 // (layout.ts) only calls these and keeps an undo history of whole lists.
 import type { Placement } from '../../src/core/assets/manifestSchema';
-import { FARM_VIEW } from '../../src/core/config/farmView';
+import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import { placementDepth } from '../../src/areas/farm/scene/view/sceneLayout';
 
 export type { Placement };

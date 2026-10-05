@@ -4,7 +4,7 @@ import { anchorOffset, anchorPoint, parseAnchors } from '../../src/core/assets/a
 import { parseManifest, type AssetManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
 import { DEFAULT_ANCHORS, FARM_ACTIONS, PIG_FEET_Y } from '../../src/core/config/assetIds';
-import { FARM_VIEW } from '../../src/core/config/farmView';
+import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import { pigScale, pigSpot, pigView } from '../../src/areas/farm/scene/view/pigView';
 import { groundLineY, placementDepth, placementView } from '../../src/areas/farm/scene/view/sceneLayout';
 import {

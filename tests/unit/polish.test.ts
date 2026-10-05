@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FARM_VIEW } from '../../src/core/config/farmView';
+import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import { UI_ICON } from '../../src/core/config/assetIds';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { mixTint } from '../../src/areas/farm/scene/prefabs/SickTint';

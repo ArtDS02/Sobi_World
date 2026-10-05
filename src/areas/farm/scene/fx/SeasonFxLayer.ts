@@ -7,7 +7,7 @@
 import * as Phaser from 'phaser';
 import type { AssetRegistry } from '../../../../core/assets/registry';
 import { DAY_NIGHT_VIEW, type DayPhase } from '../../../../core/config/dayNight';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { SEASON_VIEW, type SeasonId } from '../../../../core/config/seasons';
 import {
   activeEmitters,
@@ -16,7 +16,7 @@ import {
   type ActiveEmitter,
   type FxAnchor,
   type FxParticle,
-} from '../../../../core/engine/seasonFx';
+} from './seasonFxRules';
 import { mulberry32, type Rng } from '../../../../core/rng';
 import { textureKey } from '../view/textureKeys';
 

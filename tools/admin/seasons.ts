@@ -4,10 +4,10 @@
 // day / night condition) are config/seasonFx.ts; "Lưu" writes only its admin block through the dev
 // API. Season preview of the farm: Bố cục nông trại → Mùa, or the game's ?season= dev flag.
 import type { DayPhase } from '../../src/core/config/dayNight';
-import { SEASON_FX_LIMITS, SEASON_FX_TUNING, type SeasonFxTuning } from '../../src/core/config/seasonFx';
-import { SEASON_FX } from '../../src/core/config/seasonFxTable';
+import { SEASON_FX_LIMITS, SEASON_FX_TUNING, type SeasonFxTuning } from '../../src/areas/farm/scene/config/seasonFx';
+import { SEASON_FX } from '../../src/areas/farm/scene/config/seasonFxTable';
 import { SEASON_IDS, type SeasonId } from '../../src/core/config/seasons';
-import { seasonFxIssues } from '../../src/core/engine/seasonFx';
+import { seasonFxIssues } from '../../src/areas/farm/scene/fx/seasonFxRules';
 import { esc } from './labels';
 import { json, post, rememberMessage, state } from './store';
 

@@ -2,8 +2,8 @@
 import { describe, expect, it } from 'vitest';
 import { breedPigs } from '../../src/areas/farm/logic/actions/breedPigs';
 import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
-import { BREEDS } from '../../src/core/config/breeds';
-import type { BreedId } from '../../src/core/config/ids';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { rollChild } from '../../src/areas/farm/logic/breeding';
 import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';

@@ -3,16 +3,11 @@
 // farmAreaSchema = the farm's slice of the world save v8 (`areas.sobi_farm`).
 import { z } from 'zod';
 import { CURRENCY_VALUES } from '../../../../core/save/world';
-import { BALANCE } from '../../../../core/config/balance';
-import { GIFTS } from '../../../../core/config/gifts';
-import {
-  BREED_ID_VALUES,
-  DECOR_ID_VALUES,
-  GENDER_VALUES,
-  ITEM_ID_VALUES,
-  TRANSACTION_TYPE_VALUES,
-} from '../../../../core/config/ids';
-import { SAVE } from '../../../../core/config/save';
+import { BALANCE } from '../config/balance';
+import { GIFTS } from '../config/gifts';
+import { GENDER_VALUES, ITEM_ID_VALUES } from '../../../../core/config/ids';
+import { BREED_ID_VALUES, DECOR_ID_VALUES, TRANSACTION_TYPE_VALUES } from '../config/ids';
+import { FARM_DOC_VERSION } from './legacyConfig';
 
 const breedId = z.enum(BREED_ID_VALUES);
 const gender = z.enum(GENDER_VALUES);
@@ -113,7 +108,7 @@ const giftSchema = z.object({
 });
 
 const shapeSchema = z.object({
-  schemaVersion: z.literal(SAVE.SCHEMA_VERSION),
+  schemaVersion: z.literal(FARM_DOC_VERSION),
   createdAt: time,
   updatedAt: time,
   player: z.object({

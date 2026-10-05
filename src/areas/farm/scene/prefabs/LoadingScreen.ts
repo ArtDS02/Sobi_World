@@ -4,8 +4,8 @@
 // percent, carrot and corn, and a tip with a pig icon. Progress is real: PreloadScene feeds the steps
 // and the file loader's progress.
 import * as Phaser from 'phaser';
-import { LOADING_SCREEN as L, LOADING_STEPS, type LoadingStepId } from '../../../../core/config/loadingScreen';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { LOADING_SCREEN as L, LOADING_STEPS, type LoadingStepId } from '../config/loadingScreen';
+import { FARM_VIEW } from '../config/farmView';
 import type { SeasonId } from '../../../../core/config/seasons';
 import { t } from '../../../../i18n/format';
 import { vi } from '../../../../i18n/vi';

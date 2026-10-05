@@ -1,8 +1,8 @@
 // Collection book view-model (spec §8.15): every species, grouped by rarity (U04). Thumbnails come
 // from the manifest registry; undiscovered species show as silhouettes.
 import type { AssetRegistry } from '../../../core/assets/registry';
-import { BREEDS } from '../../../core/config/breeds';
-import { BREED_ID_VALUES } from '../../../core/config/ids';
+import { BREEDS } from '../logic/config/breeds';
+import { BREED_ID_VALUES } from '../logic/config/ids';
 import { RARITY_VALUES, type Rarity } from '../../../core/config/rarity';
 import type { FarmGame } from '../logic/types';
 import { t } from '../../../i18n/format';

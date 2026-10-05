@@ -3,8 +3,8 @@
 // sign, a vignette and a green-gold swirl carrying leaves and vegetables around the sign. Shapes only
 // (nothing is loaded yet); every motion is skipped with reduceMotion.
 import * as Phaser from 'phaser';
-import { FARM_VIEW } from '../../../../core/config/farmView';
-import { LOADING_SCREEN as L } from '../../../../core/config/loadingScreen';
+import { FARM_VIEW } from '../config/farmView';
+import { LOADING_SCREEN as L } from '../config/loadingScreen';
 import { SEASON_LOOKS, type SeasonId } from '../../../../core/config/seasons';
 import { fitCamera } from '../config/phaser';
 import { backdropRect, type WorldRect } from '../view/farmCamera';

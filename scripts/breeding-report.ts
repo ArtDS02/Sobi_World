@@ -1,6 +1,6 @@
 // Breeding coverage report (DECISIONS PS-2): every species, its routes and the rule checks.
 // Usage: npm run breeding:report [-- --all]   (exit 1 when the data is not clean)
-import { BREEDS } from '../src/core/config/breeds';
+import { BREEDS } from '../src/areas/farm/logic/config/breeds';
 import { RARITY_VALUES } from '../src/core/config/rarity';
 import { breedingCoverage, WEAK_ROUTE_PERCENT } from '../src/areas/farm/logic/breedingCoverage';
 

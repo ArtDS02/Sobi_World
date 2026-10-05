@@ -1,7 +1,7 @@
 // Asset library page: every pig image the game can use (public/assets/pigs/base/), with its manifest
 // registration, the species using it, size and date. Unregistered files (imported before AD-1) can
 // be registered here; unused art opens "Tạo heo mới" preselected.
-import { FAMILY_VALUES } from '../../src/core/config/breeds';
+import { FAMILY_VALUES } from '../../src/areas/farm/logic/config/breeds';
 import { FAMILY_LABEL, esc } from './labels';
 import { mountList } from './listKit';
 import { byNumber, byText, reverse } from './listQuery';

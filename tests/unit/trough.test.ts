@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { fillTrough } from '../../src/areas/farm/logic/actions/fillTrough';
-import { BALANCE } from '../../src/core/config/balance';
-import { BREEDS } from '../../src/core/config/breeds';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { advancePig } from '../../src/areas/farm/logic/advancePig';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { advanceWithTrough, resolveTrough, type Trough } from '../../src/areas/farm/logic/trough';

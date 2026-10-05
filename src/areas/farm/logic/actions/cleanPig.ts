@@ -1,5 +1,5 @@
 // cleanPig (spec §8.3) and cleanAll (§8.4). Cleaning never cures sickness.
-import { BALANCE } from '../../../../core/config/balance';
+import { BALANCE } from '../config/balance';
 import type { GameEvent } from '../events';
 import { addXP } from '../xp';
 import type { ActionContext, ActionResult, Pig, FarmGame } from '../types';

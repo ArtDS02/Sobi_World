@@ -1,5 +1,5 @@
 // Level and slot tables (spec §6.4, §8.16). Level is derived from xp (D13).
-import { levelFromXp as coreLevelFromXp, type LevelTable } from '../progression/levels';
+import { levelFromXp as coreLevelFromXp, type LevelTable } from '../../../../core/progression/levels';
 import { BALANCE } from './balance';
 
 /** The farm's level table (Sobi Farm's: LEVEL_XP, MAX_LEVEL in content/farm/balance.json). */

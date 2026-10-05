@@ -11,8 +11,8 @@ import {
   TROUGH_PROP_ID,
   TROUGH_STATES,
 } from '../../src/core/config/assetIds';
-import { BREEDS } from '../../src/core/config/breeds';
-import { SEASON_FX_ART_IDS } from '../../src/core/config/seasonFx';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import { SEASON_FX_ART_IDS } from '../../src/areas/farm/scene/config/seasonFx';
 import {
   MANIFEST_SECTIONS,
   parseManifest,

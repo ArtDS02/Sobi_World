@@ -1,7 +1,7 @@
 // Ambient life on the farm (spec §11.1, R12A): clouds drift and wrap around, trees and the grass
 // sway gently. Visual only; everything stops while reduceMotion is on (spec §10.4).
 import * as Phaser from 'phaser';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { ambientKind, driftX } from '../view/ambientMotion';
 
 type Placed = Phaser.GameObjects.Image | Phaser.GameObjects.TileSprite;

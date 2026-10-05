@@ -2,7 +2,7 @@
 // A change to the shape bumps `version` here and in the file in the same commit.
 import { z } from 'zod';
 import { ANCHOR_NAMES, FARM_ACTIONS } from '../config/assetIds';
-import { DECOR_ID_VALUES } from '../config/ids';
+import { DECOR_ID_VALUES } from '../../../content/schemas/ids.generated';
 import { SEASON_IDS } from '../config/seasons';
 
 export const MANIFEST_VERSION = 3;

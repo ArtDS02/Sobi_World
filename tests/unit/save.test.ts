@@ -1,7 +1,8 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 import v1Fixture from '../fixtures/save-v1.json';
-import { BALANCE } from '../../src/core/config/balance';
-import { SAVE, V3_SKIN_REFUND_GOLD, V5_OUTFIT_PRICES } from '../../src/core/config/save';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { SAVE } from '../../src/core/config/save';
+import { V3_SKIN_REFUND_GOLD, V5_OUTFIT_PRICES, FARM_DOC_VERSION } from '../../src/areas/farm/logic/save/legacyConfig';
 import { changeGold } from '../../src/areas/farm/logic/gold';
 import { mulberry32 } from '../../src/core/rng';
 import {
@@ -108,7 +109,7 @@ describe('migrate (§9.2)', () => {
     expect(res.ok).toBe(true);
     if (!res.ok) return;
     const s = res.save;
-    expect(s.schemaVersion).toBe(SAVE.SCHEMA_VERSION);
+    expect(s.schemaVersion).toBe(FARM_DOC_VERSION);
     expect(s.player).not.toHaveProperty('ownedSkins');
     expect(s.trough).toEqual({ food: 0, capacity: 30, lastResolvedAt: v1Fixture.updatedAt }); // xp 120 → level 2
     expect(s.orders).toEqual([]);
@@ -238,7 +239,7 @@ describe('migrate (§9.2)', () => {
   });
 
   it('future schemaVersion → SAVE_TOO_NEW', () => {
-    expect(migrateFarmSave({ ...makeState(), schemaVersion: SAVE.SCHEMA_VERSION + 1 })).toEqual({
+    expect(migrateFarmSave({ ...makeState(), schemaVersion: FARM_DOC_VERSION + 1 })).toEqual({
       ok: false,
       error: 'SAVE_TOO_NEW',
     });

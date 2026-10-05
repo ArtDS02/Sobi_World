@@ -1,6 +1,6 @@
 // treatPig (spec §8.5): medicine cures sickness only; no XP. NH-1: then Recovering (immune).
 import { takeFromBag } from '../../../../core/inventory/bag';
-import { BALANCE } from '../../../../core/config/balance';
+import { BALANCE } from '../config/balance';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 

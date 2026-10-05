@@ -1,5 +1,5 @@
 // claimAchievement (DECISIONS PG-2): pays a reached achievement once.
-import { ACHIEVEMENTS } from '../../../../core/config/achievements';
+import { ACHIEVEMENTS } from '../config/achievements';
 import { changeGold } from '../gold';
 import { isReached } from '../progress';
 import { addXP } from '../xp';

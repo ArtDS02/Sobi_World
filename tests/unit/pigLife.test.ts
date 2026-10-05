@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { BALANCE } from '../../src/core/config/balance';
-import { PIG_LIFE } from '../../src/core/config/pigLife';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { PIG_LIFE } from '../../src/areas/farm/logic/config/pigLife';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import {
   chooseBehavior,

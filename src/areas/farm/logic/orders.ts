@@ -1,10 +1,10 @@
 // NPC orders (spec §8.14, D20): derived from the clock, so the same window always yields the same
 // orders and no seed is stored. DECISIONS C1 (cap 6), U04-1 (breed weighted by rarity, was Q1),
 // Q2 (no regen), Q3 (hash).
-import { BALANCE } from '../../../core/config/balance';
-import { BREEDS } from '../../../core/config/breeds';
-import { BREED_ID_VALUES, GENDER_VALUES, type BreedId } from '../../../core/config/ids';
-import { RARITY_ORDER_WEIGHT } from '../../../core/config/rarity';
+import { BALANCE, RARITY_ORDER_WEIGHT } from './config/balance';
+import { BREEDS } from './config/breeds';
+import { GENDER_VALUES } from '../../../core/config/ids';
+import { BREED_ID_VALUES, type BreedId } from './config/ids';
 import type { GameEvent } from './events';
 import { mulberry32, orderSeed, pick } from '../../../core/rng';
 import type { Order, FarmGame } from './types';

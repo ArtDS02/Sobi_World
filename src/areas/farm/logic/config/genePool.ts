@@ -4,7 +4,7 @@
 // Extension point for later genetics (parent traits, dominant / recessive, mutation): see
 // engine/genePool.ts `GeneticsContext`. Every number is TUNABLE; 0 turns a bonus off.
 import type { Family } from './breeds';
-import { CONTENT } from './content';
+import { FARM_CONTENT } from './content';
 
 export interface GeneBonuses {
   /** Weight every candidate starts with (the discovery tail; must be > 0). */
@@ -18,7 +18,7 @@ export interface GeneBonuses {
   geneTagCap: number;
 }
 
-export const GENE_BONUSES: GeneBonuses = CONTENT.breeding.geneBonuses;
+export const GENE_BONUSES: GeneBonuses = FARM_CONTENT.breeding.geneBonuses;
 
 /** Related themes (unordered pairs): a candidate of a related theme gets `relatedTheme` extra weight. */
-export const THEME_RELATIONS: readonly (readonly [Family, Family])[] = CONTENT.breeding.themeRelations;
+export const THEME_RELATIONS: readonly (readonly [Family, Family])[] = FARM_CONTENT.breeding.themeRelations;

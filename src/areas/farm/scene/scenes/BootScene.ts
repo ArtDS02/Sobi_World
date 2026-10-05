@@ -2,11 +2,11 @@
 // picture of the loading screen (its pig, AM-2) and generates the fallback textures so every later
 // lookup can render something.
 import * as Phaser from 'phaser';
-import { BREED_ID_VALUES } from '../../../../core/config/ids';
-import { BREEDS } from '../../../../core/config/breeds';
+import { BREED_ID_VALUES } from '../../logic/config/ids';
+import { BREEDS } from '../../logic/config/breeds';
 import { PIG_FEET_Y } from '../../../../core/config/assetIds';
-import { FARM_FALLBACK } from '../../../../core/config/farmView';
-import { LOADING_PIG_BREED } from '../../../../core/config/loadingScreen';
+import { FARM_FALLBACK } from '../config/farmView';
+import { LOADING_PIG_BREED } from '../config/loadingScreen';
 import type { AssetRegistry } from '../../../../core/assets/registry';
 import { LOADING_PIG_KEY } from '../prefabs/LoadingScreen';
 import { SCENE_KEYS } from '../config/phaser';

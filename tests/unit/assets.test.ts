@@ -4,8 +4,8 @@ import { parseManifest, type AssetManifest } from '../../src/core/assets/manifes
 import { createAssetRegistry } from '../../src/core/assets/registry';
 import { pigTexture, troughState, troughUrl } from '../../src/areas/farm/scene/view/farmArt';
 import { AUDIO_KEYS, FX_IDS } from '../../src/core/config/assetIds';
-import { SEASON_FX_ART_IDS } from '../../src/core/config/seasonFx';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
+import { SEASON_FX_ART_IDS } from '../../src/areas/farm/scene/config/seasonFx';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { loadAssetRegistry, MANIFEST_URL } from '../../src/platform/assetSource';
 
 function manifest(): AssetManifest {

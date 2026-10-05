@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest, type AssetManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { DAY_PHASES } from '../../src/core/config/dayNight';
 import { pigVisualState } from '../../src/areas/farm/scene/state/pigVisualState';
 import {

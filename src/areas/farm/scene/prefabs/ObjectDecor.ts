@@ -1,7 +1,7 @@
 // World object dressing (farm layout rework): a soft shadow at the feet, the hover "boing" on
 // clickable objects and the pulsing notification badge. Visual only.
 import * as Phaser from 'phaser';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { SHADOW_LIGHT_KEY } from './DayNightLayer';
 
 /** Flat ellipse under the object's feet, just below it in depth. */

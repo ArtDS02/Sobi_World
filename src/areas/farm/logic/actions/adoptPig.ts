@@ -1,7 +1,7 @@
 // adoptPig (DECISIONS BR-1): raise a newborn from the inventory nursery — it moves onto the farm as
 // a baby, keeping its id, name, generation and parents. Needs a free pen slot; when the farm is
 // full it fails with NO_PIG_SLOT and the newborn stays in the nursery (never lost).
-import { BALANCE } from '../../../../core/config/balance';
+import { BALANCE } from '../config/balance';
 import { lowestFreeSlot } from '../breeding';
 import { freeSlots } from '../derived';
 import type { ActionContext, ActionResult, Pig, FarmGame } from '../types';

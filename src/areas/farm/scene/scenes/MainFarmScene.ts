@@ -9,7 +9,7 @@ import {
   type AnchorName,
   type FxId,
 } from '../../../../core/config/assetIds';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { readyOrderCount } from '../../logic/actions/fulfillOrder';
 import type { FarmSnapshot } from '../../store';
 import { SCENE_KEYS } from '../config/phaser';

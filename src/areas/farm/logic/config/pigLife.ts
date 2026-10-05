@@ -2,11 +2,11 @@
 // the behaviour timings of the farm's pigs. Data needs (hunger, cleanliness, sickness) keep their
 // own rules in balance.ts / care.ts; this file only says how pigs BEHAVE about them. All TUNABLE in
 // content/farm/behavior.json.
-import { CONTENT } from './content';
+import { FARM_CONTENT } from './content';
 
 /** Needs the life simulation knows. `enabled: false` = no data or no farm object for it yet (thirst:
  * no water trough in the game yet — ready, not simulated). */
-export const LIFE_NEEDS = CONTENT.behavior.needs;
+export const LIFE_NEEDS = FARM_CONTENT.behavior.needs;
 
 /** Sleepiness levels (lowest value, inclusive), best first. */
 export const SLEEP_LEVELS = ['awake', 'tired', 'sleepy', 'verySleepy'] as const;
@@ -19,4 +19,4 @@ export type SleepLevel = (typeof SLEEP_LEVELS)[number];
  * friends (social); personality spread (each trait scales a behaviour by at most ±spread); the sleep
  * area near the pig house.
  */
-export const PIG_LIFE = CONTENT.behavior.life;
+export const PIG_LIFE = FARM_CONTENT.behavior.life;

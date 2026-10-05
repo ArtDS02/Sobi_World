@@ -4,11 +4,11 @@
 // Extension point: future genetics (parent instance traits, dominant / recessive genes, mutation,
 // a per-birth seed) plugs in through GeneticsContext — today only species-level data is used, and a
 // species without gene tags simply breeds on rarity and parent type.
-import { BREEDS, type Family } from '../../../core/config/breeds';
-import { GENE_BONUSES, THEME_RELATIONS, type GeneBonuses } from '../../../core/config/genePool';
-import type { BreedId } from '../../../core/config/ids';
+import { BREEDS, type Family } from './config/breeds';
+import { GENE_BONUSES, THEME_RELATIONS, type GeneBonuses } from './config/genePool';
+import type { BreedId } from './config/ids';
 import type { Rarity } from '../../../core/config/rarity';
-import { SPECIES_TRAITS, type Trait } from '../../../core/config/speciesTraits';
+import { SPECIES_TRAITS, type Trait } from './config/speciesTraits';
 
 export interface GeneProfile {
   pigType: BreedId;

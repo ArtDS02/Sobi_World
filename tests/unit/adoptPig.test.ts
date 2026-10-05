@@ -1,7 +1,7 @@
 // BR-1: breeding result → nursery (inventory) → raised onto the farm only when the player says so.
 import { describe, expect, it } from 'vitest';
 import { adoptPig } from '../../src/areas/farm/logic/actions/adoptPig';
-import { BALANCE } from '../../src/core/config/balance';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
 import type { NurseryPig, Pig, FarmGame } from '../../src/areas/farm/logic/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';

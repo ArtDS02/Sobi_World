@@ -1,7 +1,7 @@
 // Event + origin + reduceMotion → the concrete feedback steps (spec §11.3). Pure, unit tested;
 // the director only executes the plan.
 import type { AudioKey, FxId } from '../../../../core/config/assetIds';
-import { FEEDBACK } from '../../../../core/config/feedback';
+import { FEEDBACK } from '../config/feedback';
 import type { GameEvent } from '../../logic/events';
 import type { EventOrigin } from '../../store';
 import { formatInt, t } from '../../../../i18n/format';

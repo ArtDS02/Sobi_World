@@ -4,7 +4,7 @@
 import * as Phaser from 'phaser';
 import type { Anchors } from '../../../../core/assets/anchors';
 import type { AnchorName, FxId } from '../../../../core/config/assetIds';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { overlayLayout } from '../view/overlayLayout';
 import { FALLBACK_FX_KEY, fxAnimKey } from '../view/textureKeys';
 

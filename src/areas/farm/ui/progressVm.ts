@@ -2,8 +2,8 @@
 // its progress. Pure (no DOM); availability comes from dry-running the real actions.
 import { claimAchievement } from '../logic/actions/claimAchievement';
 import { claimDaily, nextStreak } from '../logic/actions/claimDaily';
-import { ACHIEVEMENTS } from '../../../core/config/achievements';
-import { DAILY, dailyReward } from '../../../core/config/daily';
+import { ACHIEVEMENTS } from '../logic/config/achievements';
+import { DAILY, dailyReward } from '../logic/config/daily';
 import { claimable, metric, targetOf } from '../logic/progress';
 import type { FarmGame } from '../logic/types';
 import { formatInt, rewardText, t } from '../../../i18n/format';

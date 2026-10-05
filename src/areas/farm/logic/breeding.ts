@@ -1,7 +1,8 @@
 // Breeding outcome and births (spec §6.5, §8.8, §8.9).
 import { breedingOutcomes, type BreedingOutcome } from './breedingOdds';
-import { BREEDS } from '../../../core/config/breeds';
-import type { BreedId, Gender } from '../../../core/config/ids';
+import { BREEDS } from './config/breeds';
+import type { Gender } from '../../../core/config/ids';
+import type { BreedId } from './config/ids';
 import type { GameEvent } from './events';
 import { mulberry32, randomId, type Rng } from '../../../core/rng';
 import type { NurseryPig, Pig, FarmGame } from './types';

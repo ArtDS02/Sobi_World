@@ -1,6 +1,6 @@
 // World catch-up (spec §7.4): trough → pigs → births → orders → gifts (U06), then diff into events,
 // then achievement progress (PG-2).
-import { NEED_NOTIFY_FROM } from '../../../core/config/care';
+import { NEED_NOTIFY_FROM } from './config/care';
 import type { GameEvent, PigNeed } from './events';
 import type { Rng } from '../../../core/rng';
 import type { Pig, FarmGame } from './types';

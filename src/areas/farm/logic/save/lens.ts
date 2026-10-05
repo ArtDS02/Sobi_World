@@ -3,7 +3,7 @@
 // view back: farm-only fields go to `areas.sobi_farm`, money / items / xp / achievements / collection /
 // settings to their world fields. Untouched world data (other Areas, other items, gems) is kept.
 import { ITEM_ID_VALUES } from '../../../../core/config/ids';
-import { SAVE } from '../../../../core/config/save';
+import { FARM_DOC_VERSION } from './legacyConfig';
 import type { WorldSave } from '../../../../core/save/world';
 import type { FarmGame } from '../types';
 import type { FarmArea } from './farmSchema';
@@ -25,7 +25,7 @@ export function farmOf(world: WorldSave): FarmGame {
   const area = farmArea(world);
   const { items } = world.inventory;
   const farm: FarmGame = {
-    schemaVersion: SAVE.SCHEMA_VERSION,
+    schemaVersion: FARM_DOC_VERSION,
     createdAt: world.meta.createdAt,
     updatedAt: world.meta.updatedAt,
     player: {

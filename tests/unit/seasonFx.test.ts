@@ -1,10 +1,10 @@
 // Seasonal FX (DECISIONS MU-2): emitters per season + day / night, tuning, spawn and motion.
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { SEASON_FX_ART_IDS, SEASON_FX_LIMITS, SEASON_FX_TUNING } from '../../src/core/config/seasonFx';
-import { SEASON_FX } from '../../src/core/config/seasonFxTable';
+import { SEASON_FX_ART_IDS, SEASON_FX_LIMITS, SEASON_FX_TUNING } from '../../src/areas/farm/scene/config/seasonFx';
+import { SEASON_FX } from '../../src/areas/farm/scene/config/seasonFxTable';
 import { SEASON_IDS } from '../../src/core/config/seasons';
-import { activeEmitters, particlePose, seasonFxIssues, spawnParticle } from '../../src/core/engine/seasonFx';
+import { activeEmitters, particlePose, seasonFxIssues, spawnParticle } from '../../src/areas/farm/scene/fx/seasonFxRules';
 import { seededRng } from '../../src/core/rng';
 
 const ids = (season: (typeof SEASON_IDS)[number], phase: Parameters<typeof activeEmitters>[1]) =>

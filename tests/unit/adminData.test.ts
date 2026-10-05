@@ -2,10 +2,10 @@
 // the layout editor's placement fields are what the game actually plays.
 import { describe, expect, it } from 'vitest';
 import { buyProduct } from '../../src/areas/farm/logic/actions/buyProduct';
-import { BREEDS } from '../../src/core/config/breeds';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { ITEMS } from '../../src/core/config/items';
 import { PRODUCTS, type ProductDef } from '../../src/core/config/products';
-import type { PairRule } from '../../src/core/config/breedingPairs';
+import type { PairRule } from '../../src/areas/farm/logic/config/breedingPairs';
 import { breedingOutcomes, pairRuleFor } from '../../src/areas/farm/logic/breedingOdds';
 import { shopProducts } from '../../src/areas/farm/logic/shopProducts';
 import { placementTransform, visibleLayout } from '../../src/areas/farm/scene/view/sceneLayout';

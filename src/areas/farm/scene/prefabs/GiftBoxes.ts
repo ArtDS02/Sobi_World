@@ -3,7 +3,7 @@
 // A box gone from the save stays as "leaving" until its open animation ends (like a sold pig).
 import * as Phaser from 'phaser';
 import { GIFT_PROP_ID } from '../../../../core/config/assetIds';
-import { FEEDBACK } from '../../../../core/config/feedback';
+import { FEEDBACK } from '../config/feedback';
 import type { GiftBox } from '../../logic/types';
 import type { Point } from '../view/giftPlacement';
 import { FALLBACK_PROP_KEY, textureKey } from '../view/textureKeys';

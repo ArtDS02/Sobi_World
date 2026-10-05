@@ -2,7 +2,7 @@
 // product's item at the product's price. Inactive or unknown products are refused.
 import { INVENTORY } from '../../../../core/config/inventory';
 import { addToBag } from '../../../../core/inventory/bag';
-import { BALANCE } from '../../../../core/config/balance';
+import { BALANCE } from '../config/balance';
 import { productById } from '../shopProducts';
 import { changeGold } from '../gold';
 import type { ActionContext, ActionResult, FarmGame } from '../types';

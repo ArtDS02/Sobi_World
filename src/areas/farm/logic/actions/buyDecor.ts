@@ -1,8 +1,8 @@
 // buyDecor (spec §20.2, DECISIONS PG-3): a one-time purchase; it shows on the farm and adds its
 // happiness bonus to every pig (engine/decor.ts).
-import { DECORS } from '../../../../core/config/decor';
-import type { DecorId } from '../../../../core/config/ids';
-import { levelFromXp } from '../../../../core/config/levels';
+import { DECORS } from '../config/decor';
+import type { DecorId } from '../config/ids';
+import { levelFromXp } from '../config/levels';
 import { changeGold } from '../gold';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';

@@ -1,7 +1,7 @@
 // Pig name plates under the feet (U05). One Phaser text per pig, created once; positions follow
 // the pigs every frame through layoutNameplates (no overlap between plates).
 import * as Phaser from 'phaser';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { layoutNameplates, type PlateRequest } from '../view/nameplateLayout';
 
 /** Where a pig's plate hangs right now; null while it has no position or is leaving. */

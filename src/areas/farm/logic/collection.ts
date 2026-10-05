@@ -1,6 +1,6 @@
 // Collection book discoveries (spec §8.15): append-only, bonus gold + XP on first sighting.
-import { BALANCE } from '../../../core/config/balance';
-import type { BreedId } from '../../../core/config/ids';
+import { BALANCE } from './config/balance';
+import type { BreedId } from './config/ids';
 import type { GameEvent } from './events';
 import type { ActionContext, FarmGame } from './types';
 import { changeGold } from './gold';

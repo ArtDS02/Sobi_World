@@ -1,7 +1,7 @@
 // Sell confirmation, rename, trough-fill and order dialogs (spec §10.1, §10.2); breeding: breedDialog.ts.
 import { adoptPig } from '../logic/actions/adoptPig';
 import { renamePig, cleanPigName } from '../logic/actions/renamePig';
-import { BREEDS } from '../../../core/config/breeds';
+import { BREEDS } from '../logic/config/breeds';
 import { happiness } from '../logic/happiness';
 import { sellMultiplier, sellPrice } from '../logic/pricing';
 import { freeSlots, pigCapacity } from '../logic/derived';

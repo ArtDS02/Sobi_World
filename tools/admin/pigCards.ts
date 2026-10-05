@@ -2,7 +2,7 @@
 // name, id, rarity, theme, how the game gets it — with search, rarity/theme filters and sorting.
 // The list is the species table the dashboard edits (state.rows) + the manifest art: a pig created
 // from a new asset shows up here as soon as it is saved to the game; a draft is shown but locked.
-import { BREED_ID_VALUES } from '../../src/core/config/ids';
+import { BREED_ID_VALUES } from '../../src/areas/farm/logic/config/ids';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import type { SpeciesRowData } from '../../scripts/admin/speciesText';
 import { FAMILY_LABEL, RARITY_LABEL, esc, gold, rarityBadge, rowImage, stats } from './labels';

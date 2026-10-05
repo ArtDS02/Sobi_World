@@ -6,10 +6,10 @@
 //   strong route is left, the rest join through their best (weaker) route — rare discovery branches.
 //   Edges: each species' chosen route (both parents → child), every named recipe and every active
 //   pair-table outcome of that strength. Pure and deterministic.
-import { PAIR_RULES, type PairRule } from '../../../core/config/breedingPairs';
-import { BREEDING_RULES, MUTATIONS, type Mutation } from '../../../core/config/breedingRules';
-import { BREED_IDS, BREEDS } from '../../../core/config/breeds';
-import type { BreedId } from '../../../core/config/ids';
+import { PAIR_RULES, type PairRule } from './config/breedingPairs';
+import { BREEDING_RULES, MUTATIONS, type Mutation } from './config/breedingRules';
+import { BREED_IDS, BREEDS } from './config/breeds';
+import type { BreedId } from './config/ids';
 import { rarityRank } from '../../../core/config/rarity';
 import { breedingOutcomes } from './breedingOdds';
 

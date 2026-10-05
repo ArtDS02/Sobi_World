@@ -3,8 +3,8 @@
 import * as Phaser from 'phaser';
 import { anchorOffset, type Anchors } from '../../../../core/assets/anchors';
 import { PIG_FEET_Y, type AnchorName, type FxId } from '../../../../core/config/assetIds';
-import { FARM_VIEW } from '../../../../core/config/farmView';
-import { FEEDBACK } from '../../../../core/config/feedback';
+import { FARM_VIEW } from '../config/farmView';
+import { FEEDBACK } from '../config/feedback';
 import type { AnimationId } from '../feedback/feedbackTable';
 import {
   FEEDBACK_STATE,

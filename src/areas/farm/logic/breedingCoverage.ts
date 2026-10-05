@@ -1,10 +1,10 @@
 // Breeding coverage validation (DECISIONS PS-2): the breeding data as a graph — pair → child —
 // checked for orphans (species no route reaches), invalid / duplicate rules and probability
 // errors. Run by tests (must stay clean) and printed by `npm run breeding:report`.
-import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from '../../../core/config/breedingPairs';
-import { GENETICS, MUTATIONS, type GeneticsRules, type Mutation } from '../../../core/config/breedingRules';
-import { BREED_IDS, BREEDS } from '../../../core/config/breeds';
-import type { BreedId } from '../../../core/config/ids';
+import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from './config/breedingPairs';
+import { GENETICS, MUTATIONS, type GeneticsRules, type Mutation } from './config/breedingRules';
+import { BREED_IDS, BREEDS } from './config/breeds';
+import type { BreedId } from './config/ids';
 import { RARITY_VALUES, type Rarity } from '../../../core/config/rarity';
 import { breedingOutcomes, geneticsIssues, recipeIssues } from './breedingOdds';
 

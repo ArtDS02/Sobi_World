@@ -2,11 +2,12 @@
 // currency, inventory, pigs, progress, game state. Pure functions on a FarmGame: gold only moves
 // through core's changeGold (an ADMIN_ADJUST transaction), XP keeps the trough capacity rule, and
 // every result is checked with the game's own save schema before it can be written.
-import { BALANCE } from '../../src/core/config/balance';
-import { BREEDS } from '../../src/core/config/breeds';
-import { DECORS } from '../../src/core/config/decor';
-import type { BreedId, DecorId, Gender, ItemId, StatId } from '../../src/core/config/ids';
-import { levelFromXp, troughCapacityForLevel } from '../../src/core/config/levels';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import { DECORS } from '../../src/areas/farm/logic/config/decor';
+import type { Gender, ItemId } from '../../src/core/config/ids';
+import type { BreedId, DecorId, StatId } from '../../src/areas/farm/logic/config/ids';
+import { levelFromXp, troughCapacityForLevel } from '../../src/areas/farm/logic/config/levels';
 import { happiness } from '../../src/areas/farm/logic/happiness';
 import { changeGold } from '../../src/areas/farm/logic/gold';
 import { farmGameSchema } from '../../src/areas/farm/logic/save/farmSchema';

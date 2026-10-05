@@ -12,7 +12,7 @@ import { fulfillOrder, pigMeetsOrder } from '../../src/areas/farm/logic/actions/
 import { renamePig } from '../../src/areas/farm/logic/actions/renamePig';
 import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
 import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
-import { BALANCE } from '../../src/core/config/balance';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
 import { GENDER_VALUES, ITEM_ID_VALUES } from '../../src/core/config/ids';
 import { ITEMS } from '../../src/core/config/items';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';

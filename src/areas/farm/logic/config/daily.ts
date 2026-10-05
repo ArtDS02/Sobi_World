@@ -1,6 +1,6 @@
 // Daily login reward (DECISIONS PG-2): a cycle (content/shared/daily.json); missing a day restarts at
 // day 1. TUNABLE.
-import { CONTENT } from './content';
+import { CONTENT } from '../../../../core/config/content';
 
 export interface DailyReward {
   gold: number;

@@ -1,6 +1,7 @@
 // Game events returned by advanceWorld (spec §7.4) and by actions.
-import type { NeedLevel } from '../../../core/config/care';
-import type { BreedId, DecorId, ItemId } from '../../../core/config/ids';
+import type { NeedLevel } from './config/care';
+import type { ItemId } from '../../../core/config/ids';
+import type { BreedId, DecorId } from './config/ids';
 
 export type PigNeed = 'hunger' | 'clean';
 

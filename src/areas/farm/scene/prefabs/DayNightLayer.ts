@@ -4,7 +4,7 @@
 // DayNightDirector. No per-frame work: a look is applied once, or per frame only while it tweens.
 import * as Phaser from 'phaser';
 import { DAY_NIGHT_VIEW, SKY_ART, type PhaseLook } from '../../../../core/config/dayNight';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import type { DayBlend } from '../../../../core/engine/dayNight';
 import { mixLook, sameLook } from '../../../../core/engine/dayNight';
 import { SKY_BOTTOM_Y } from '../view/backdropPaint';

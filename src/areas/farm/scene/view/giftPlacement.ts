@@ -1,7 +1,7 @@
 // Where a gift box sits (U06). Pure: seed → candidate points inside the walk area; a point is
 // valid when it is clear of world objects, pig homes and other gifts. Limited retries, then the
 // candidate with the most room wins. The save keeps only the seed, so a box stays put on reload.
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { mulberry32 } from '../../../../core/rng';
 import type { FarmLayout } from './pigView';
 

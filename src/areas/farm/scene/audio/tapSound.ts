@@ -2,7 +2,7 @@
 // a pig that is neither stays quiet. Pure.
 import { happiness } from '../../logic/happiness';
 import type { AudioKey } from '../../../../core/config/assetIds';
-import { FEEDBACK } from '../../../../core/config/feedback';
+import { FEEDBACK } from '../config/feedback';
 import type { Pig } from '../../logic/types';
 
 export function tapSound(pig: Pick<Pig, 'hunger' | 'cleanliness' | 'isSick'>): AudioKey | null {

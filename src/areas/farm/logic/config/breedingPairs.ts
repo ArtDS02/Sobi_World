@@ -2,7 +2,7 @@
 // of breedingRules.ts. When an active row exists for a pair (order of parents ignored), its
 // outcomes ARE the pair's odds; every other pair keeps the rule system. Percents sum to 100.
 // content/farm/breeding.json `pairs`, edited by the admin dashboard (→ Phối giống).
-import { CONTENT } from './content';
+import { FARM_CONTENT } from './content';
 import type { BreedId } from './ids';
 
 export interface PairOutcome {
@@ -21,4 +21,4 @@ export interface PairRule {
 /** Tolerance of the 100 % check (decimals typed in the dashboard). */
 export const PAIR_PERCENT_EPSILON = 0.01;
 
-export const PAIR_RULES: readonly PairRule[] = CONTENT.breeding.pairs;
+export const PAIR_RULES: readonly PairRule[] = FARM_CONTENT.breeding.pairs;

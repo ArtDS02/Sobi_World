@@ -4,8 +4,8 @@
 // the tweens off. No timers of its own and nothing reaches the store or the save; the position
 // lives only in this object.
 import * as Phaser from 'phaser';
-import { FEEDBACK } from '../../../../core/config/feedback';
-import { PIG_LIFE } from '../../../../core/config/pigLife';
+import { FEEDBACK } from '../config/feedback';
+import { PIG_LIFE } from '../../logic/config/pigLife';
 import { playRestPose } from '../fx/restPoses';
 import type { PigMotion } from '../state/pigVisualState';
 import { isAwake, type PigRestState } from '../state/sleepCycle';

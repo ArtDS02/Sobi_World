@@ -1,7 +1,7 @@
 // What a canvas click hit (spec §11.2): the top game object under the pointer → FarmPick.
 import type * as Phaser from 'phaser';
 import type { FarmAction } from '../../../../core/config/assetIds';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { vi } from '../../../../i18n/vi';
 import type { FarmPick } from '../farmView';
 import { GIFT_ID_DATA } from '../prefabs/GiftBoxes';

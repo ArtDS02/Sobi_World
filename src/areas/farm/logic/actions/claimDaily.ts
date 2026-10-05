@@ -2,7 +2,7 @@
 // core (ui/localDay.ts); consecutive days grow the streak, a gap restarts it at 1.
 import { INVENTORY } from '../../../../core/config/inventory';
 import { addAllToBag } from '../../../../core/inventory/bag';
-import { DAILY, dailyReward } from '../../../../core/config/daily';
+import { DAILY, dailyReward } from '../config/daily';
 import { changeGold } from '../gold';
 import { addXP } from '../xp';
 import type { ActionContext, ActionResult, FarmGame } from '../types';

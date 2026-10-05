@@ -1,6 +1,6 @@
 // Toast text per event (spec §10.2, §11.3). Pure; the FeedbackDirector decides when it shows.
-import { BREEDS } from '../../../../core/config/breeds';
-import type { DecorId } from '../../../../core/config/ids';
+import { BREEDS } from '../../logic/config/breeds';
+import type { DecorId } from '../../logic/config/ids';
 import type { GameEvent } from '../../logic/events';
 import type { Pig, FarmGame } from '../../logic/types';
 import { formatDuration, formatInt, rewardText, t } from '../../../../i18n/format';

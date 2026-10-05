@@ -1,7 +1,7 @@
 // Feedback animations of one pig (spec §11 table, §11.3): tweens on the pig's motion offsets.
 // eat / clean / happy are visual states (state/pigVisualState.ts); the sprite holds them.
 import type * as Phaser from 'phaser';
-import { FEEDBACK } from '../../../../core/config/feedback';
+import { FEEDBACK } from '../config/feedback';
 import type { AnimationId } from '../feedback/feedbackTable';
 import type { PigMover } from '../prefabs/PigMover';
 

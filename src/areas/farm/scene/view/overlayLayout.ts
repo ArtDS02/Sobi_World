@@ -2,7 +2,7 @@
 // the pig's facing (x' = 1 - x, R05A), stacked overlays spread around it.
 import { anchorOffset, type Anchors } from '../../../../core/assets/anchors';
 import type { AnchorName, FxId } from '../../../../core/config/assetIds';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 
 export interface OverlayInput {
   fx: readonly FxId[];

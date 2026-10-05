@@ -1,7 +1,7 @@
 // buyItem (spec §8.10).
 import { INVENTORY } from '../../../../core/config/inventory';
 import { addToBag } from '../../../../core/inventory/bag';
-import { BALANCE } from '../../../../core/config/balance';
+import { BALANCE } from '../config/balance';
 import type { ItemId } from '../../../../core/config/ids';
 import { ITEMS } from '../../../../core/config/items';
 import { changeGold } from '../gold';

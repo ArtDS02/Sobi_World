@@ -3,7 +3,7 @@ import { cleanAll, cleanPig } from '../../src/areas/farm/logic/actions/cleanPig'
 import { feedPig } from '../../src/areas/farm/logic/actions/feedPig';
 import { fillTrough } from '../../src/areas/farm/logic/actions/fillTrough';
 import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
-import { troughCapacityForLevel } from '../../src/core/config/levels';
+import { troughCapacityForLevel } from '../../src/areas/farm/logic/config/levels';
 import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';

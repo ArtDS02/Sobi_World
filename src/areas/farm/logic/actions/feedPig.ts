@@ -1,6 +1,6 @@
 // feedPig (spec §8.2) — manual fallback to the trough.
 import { takeFromBag } from '../../../../core/inventory/bag';
-import { BALANCE } from '../../../../core/config/balance';
+import { BALANCE } from '../config/balance';
 import { addXP } from '../xp';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';

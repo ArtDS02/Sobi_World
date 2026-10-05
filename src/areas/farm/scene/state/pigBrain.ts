@@ -3,7 +3,7 @@
 // priority come from core/engine/pigLife.ts; this file only sequences the activities, holds the
 // target and keeps behaviour from flickering (an activity runs until it is done or out-ranked).
 import { PIG_SLEEP } from '../../../../core/config/dayNight';
-import { PIG_LIFE } from '../../../../core/config/pigLife';
+import { PIG_LIFE } from '../../logic/config/pigLife';
 import {
   behaviorRank,
   chooseBehavior,

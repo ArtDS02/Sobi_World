@@ -1,13 +1,13 @@
 // Starter state (D7) with an INITIAL_GOLD transaction (spec §9.1).
-import { BALANCE } from '../../../../core/config/balance';
-import { SAVE } from '../../../../core/config/save';
+import { BALANCE } from '../config/balance';
+import { FARM_DOC_VERSION } from './legacyConfig';
 import { changeGold } from '../gold';
 import type { ActionContext, FarmGame } from '../types';
 
 /** `reduceMotion`: the OS preference at first launch (prefers-reduced-motion, read by the store). */
 export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {}): FarmGame {
   const empty: FarmGame = {
-    schemaVersion: SAVE.SCHEMA_VERSION,
+    schemaVersion: FARM_DOC_VERSION,
     createdAt: ctx.now,
     updatedAt: ctx.now,
     player: {

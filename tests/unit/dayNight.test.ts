@@ -5,7 +5,7 @@ import {
   PHASE_LOOKS,
   type DayNightSettings,
 } from '../../src/core/config/dayNight';
-import { FARM_VIEW } from '../../src/core/config/farmView';
+import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import {
   blendAt,
   dayNightIssues,

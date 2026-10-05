@@ -1,8 +1,8 @@
 // Pure view-models: FarmGame → display strings. No DOM, so they are unit-tested directly.
-import { BALANCE } from '../../../core/config/balance';
-import { BREEDS } from '../../../core/config/breeds';
+import { BALANCE } from '../logic/config/balance';
+import { BREEDS } from '../logic/config/breeds';
 import { DAY_NIGHT } from '../../../core/config/dayNight';
-import { levelFromXp } from '../../../core/config/levels';
+import { levelFromXp } from '../logic/config/levels';
 import { formatHm, minuteOf, phaseAt } from '../../../core/engine/dayNight';
 import {
   freeSlots,

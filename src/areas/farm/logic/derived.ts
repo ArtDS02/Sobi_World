@@ -1,7 +1,7 @@
 // Derived values that are never stored (spec §5.4). Happiness and price live in their own modules.
-import { BALANCE } from '../../../core/config/balance';
-import { BREEDS } from '../../../core/config/breeds';
-import { levelFromXp } from '../../../core/config/levels';
+import { BALANCE } from './config/balance';
+import { BREEDS } from './config/breeds';
+import { levelFromXp } from './config/levels';
 import type { GrowthStage, Pig, FarmGame } from './types';
 
 /** D3: BABY < 30 <= YOUNG < 100 = ADULT. */

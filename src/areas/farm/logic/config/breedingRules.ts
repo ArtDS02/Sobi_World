@@ -7,7 +7,7 @@
 // Inside a bucket the gene pool (genePool.ts: theme + gene tags) only shapes which species of that
 // bucket comes out. Adding a species needs no row here. Every number is TUNABLE, in
 // content/farm/breeding.json (admin dashboard → Phối giống).
-import { CONTENT } from './content';
+import { FARM_CONTENT } from './content';
 import type { BreedId } from './ids';
 
 /** Percent buckets of one random-genetics case; a bucket with no species is dropped, the rest rescale. */
@@ -36,7 +36,7 @@ export interface GeneticsRules {
   compatScale: { min: number; max: number };
 }
 
-export const GENETICS: GeneticsRules = CONTENT.breeding.genetics;
+export const GENETICS: GeneticsRules = FARM_CONTENT.breeding.genetics;
 
 /**
  * COMPAT: compatibility 0..1 of a pair (shown as hearts; scales the one-tier-up chance): base, same
@@ -44,7 +44,7 @@ export const GENETICS: GeneticsRules = CONTENT.breeding.genetics;
  * CHANCES_SHOWN: breed dialog lines before the rest are summed. MAP_STRONG / MAP_WEAK_PERCENT: the
  * admin breed map (DECISIONS BR-2) places a species after its parents from these route odds.
  */
-export const BREEDING_RULES = CONTENT.breeding.rules;
+export const BREEDING_RULES = FARM_CONTENT.breeding.rules;
 
 /** A special recipe: this unordered pair gives `result` with `weight` percent, before any random genetics. */
 export interface Mutation {
@@ -54,4 +54,4 @@ export interface Mutation {
   weight: number;
 }
 
-export const MUTATIONS: readonly Mutation[] = CONTENT.breeding.mutations;
+export const MUTATIONS: readonly Mutation[] = FARM_CONTENT.breeding.mutations;

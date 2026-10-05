@@ -4,7 +4,7 @@
 // it (dust puffs, sparkles); inside a cream panel the title (= current loading step), a leafy progress
 // bar with the percent, carrots and corn, and a tip with a pig icon. Design px on the 1600×900 frame
 // (the camera always shows the whole frame; wider/taller windows see more scenery).
-import type { BreedId } from './ids';
+import type { BreedId } from '../../logic/config/ids';
 
 /** Loading steps in order; `at` = overall progress when the step starts (see game/scenes/PreloadScene). */
 export const LOADING_STEPS = [

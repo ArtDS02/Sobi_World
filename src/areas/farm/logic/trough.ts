@@ -1,6 +1,6 @@
 // Feed trough auto-feeding, closed form (spec §7.3, D17). Pure: `now` and `rng` are injected.
-import { BALANCE } from '../../../core/config/balance';
-import { BREEDS } from '../../../core/config/breeds';
+import { BALANCE } from './config/balance';
+import { BREEDS } from './config/breeds';
 import type { Rng } from '../../../core/rng';
 import type { Pig, FarmGame } from './types';
 import { advancePig } from './advancePig';

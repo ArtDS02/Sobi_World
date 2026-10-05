@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { adoptPig } from '../../src/areas/farm/logic/actions/adoptPig';
 import { breedPigs } from '../../src/areas/farm/logic/actions/breedPigs';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
-import type { BreedId } from '../../src/core/config/ids';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { rarityRank } from '../../src/core/config/rarity';
-import { SPECIES_TRAITS, TRAIT_VALUES } from '../../src/core/config/speciesTraits';
+import { SPECIES_TRAITS, TRAIT_VALUES } from '../../src/areas/farm/logic/config/speciesTraits';
 import { resolveBirths } from '../../src/areas/farm/logic/breeding';
 import { breedingCoverage } from '../../src/areas/farm/logic/breedingCoverage';
 import { breedingOutcomes, compatibility, rarityOdds } from '../../src/areas/farm/logic/breedingOdds';

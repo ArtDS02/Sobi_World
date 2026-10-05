@@ -3,12 +3,12 @@
 // odds explorer) and the pair table of content/farm/breeding.json — a rule = parents A + B
 // (order ignored) → children with percents summing to 100; pairs without an active rule keep the
 // rule system (content/farm/breeding.json), and the editor can start from those odds.
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import { renderBreedMap, type PigLook } from './breedMap';
 import { renderBreedRules } from './breedRules';
-import type { BreedId } from '../../src/core/config/ids';
-import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from '../../src/core/config/breedingPairs';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
+import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from '../../src/areas/farm/logic/config/breedingPairs';
 import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';
 import { outcomeTotal, pairIssues, type Issue } from '../../scripts/admin/rules';
 import { RARITY_LABEL, esc, rarityBadge } from './labels';

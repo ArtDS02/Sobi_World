@@ -1,8 +1,8 @@
 // breedPigs (spec §8.8): validation in the spec's exact order; the child (breed + gender) is
 // drawn now from the injected rng and stored on the mother, so it can never change later.
-import { BALANCE } from '../../../../core/config/balance';
+import { BALANCE } from '../config/balance';
 import { breedingOutcomes } from '../breedingOdds';
-import { BREEDS } from '../../../../core/config/breeds';
+import { BREEDS } from '../config/breeds';
 import { SAVE } from '../../../../core/config/save';
 import type { ErrorCode } from '../../../../core/config/errors';
 import { rollChild } from '../breeding';

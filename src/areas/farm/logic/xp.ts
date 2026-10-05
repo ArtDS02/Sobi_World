@@ -1,5 +1,5 @@
 // XP and level-up (spec §8.16). Level is derived from xp (D13).
-import { levelFromXp, troughCapacityForLevel } from '../../../core/config/levels';
+import { levelFromXp, troughCapacityForLevel } from './config/levels';
 import type { GameEvent } from './events';
 import type { FarmGame } from './types';
 

@@ -1,9 +1,9 @@
 // Seasonal environment FX table (DECISIONS MU-2): the emitters of each season (model and admin
 // tuning: seasonFx.ts). Spring: petals, butterflies, pollen · summer: sunbeams, sun dust, night
 // fireflies · autumn: leaves, warm haze · winter: snow, wind swirls. TUNABLE.
-import type { DayPhase } from './dayNight';
+import type { DayPhase } from '../../../../core/config/dayNight';
 import type { FxEmitter } from './seasonFx';
-import type { SeasonId } from './seasons';
+import type { SeasonId } from '../../../../core/config/seasons';
 
 const DAYTIME: readonly DayPhase[] = ['morning', 'day', 'afternoon'];
 const NIGHT: readonly DayPhase[] = ['night'];

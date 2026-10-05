@@ -1,5 +1,5 @@
 // renamePig (spec §8.12).
-import { BALANCE } from '../../../../core/config/balance';
+import { BALANCE } from '../config/balance';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 

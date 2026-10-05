@@ -1,8 +1,8 @@
 // Dev-only time travel (?dev=1 in `npm run dev`). Callers gate on import.meta.env.DEV, so a
 // production build drops this module.
-import { BALANCE } from '../../../core/config/balance';
-import { DECOR_IDS } from '../../../core/config/decor';
-import { BREED_IDS } from '../../../core/config/breeds';
+import { BALANCE } from '../logic/config/balance';
+import { DECOR_IDS } from '../logic/config/decor';
+import { BREED_IDS } from '../logic/config/breeds';
 import { DAY_PHASES, type DayPhase } from '../../../core/config/dayNight';
 import { SEASON_IDS, type SeasonId } from '../../../core/config/seasons';
 import { parseSeason } from '../../../core/engine/season';

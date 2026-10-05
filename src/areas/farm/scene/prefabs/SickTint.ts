@@ -1,7 +1,7 @@
 // Sick tint of one pig (spec §11 table: green tint; §11.3 PIG_TREATED: the tint fades): full at
 // once when the pig falls ill, fading out after a cure (instantly with reduceMotion).
 import type * as Phaser from 'phaser';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 
 /** White (no tint) blended toward `tint` by `t` in 0..1, per channel. Pure. */
 export function mixTint(tint: number, t: number): number {

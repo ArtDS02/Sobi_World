@@ -1,7 +1,7 @@
 // Selected pig panel (spec §10.2): portrait column (art, name → rename, breed / gender / stage
 // chips) beside the care column (stat bars, happiness → price multiplier, actions with reasons).
 import { decorBonus } from '../../logic/decor';
-import { BREEDS } from '../../../../core/config/breeds';
+import { BREEDS } from '../../logic/config/breeds';
 import type { UiIcon } from '../../../../core/config/assetIds';
 import { happiness } from '../../logic/happiness';
 import type { Pig, FarmGame } from '../../logic/types';

@@ -1,7 +1,7 @@
 // Phaser game config (spec §10.4, §11): the canvas is resized to the .app__stage container by
 // createFarmView; scenes keep design coordinates and fit them with the camera (fitCamera).
 import * as Phaser from 'phaser';
-import { FARM_FALLBACK } from '../../../../core/config/farmView';
+import { FARM_FALLBACK } from './farmView';
 import { farmCamera, type WorldRect } from '../view/farmCamera';
 import type { FarmLayout } from '../view/pigView';
 

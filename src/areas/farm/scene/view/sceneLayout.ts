@@ -1,6 +1,6 @@
 // Manifest layout → design-pixel positions and depth bands for the farm scene (spec §11.1). Pure.
 import type { Placement } from '../../../../core/assets/manifestSchema';
-import { FARM_FALLBACK, FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_FALLBACK, FARM_VIEW } from '../config/farmView';
 import type { FarmLayout } from './pigView';
 
 export const ACTOR_LAYER = 4;

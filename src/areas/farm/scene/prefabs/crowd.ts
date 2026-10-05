@@ -1,6 +1,6 @@
 // Pigs on the farm as a crowd: where the others are (strolls keep clear) and the gentle push that
 // separates pigs standing too close (names never stack). Visual only.
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { separation } from '../state/wander';
 import type { PigSprite } from './PigSprite';
 

@@ -1,6 +1,6 @@
 // Wandering targets (spec §11, art standard §2.4): visual only, anywhere in the ellipse inscribed
 // in layout.walkArea. Deterministic per (pig id, step) so tests and replays agree; never saved.
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { hashId, type FarmLayout } from '../view/pigView';
 
 const unit = (pigId: string, step: number, salt: number) =>

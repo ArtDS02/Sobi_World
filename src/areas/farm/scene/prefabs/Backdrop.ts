@@ -2,7 +2,7 @@
 // camera view on resize (painter: view/backdropPaint.ts). The sky above it is the day / night
 // layer (DN), which gets the same view rect.
 import * as Phaser from 'phaser';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { fitCamera } from '../config/phaser';
 import { backdropRect, type WorldRect } from '../view/farmCamera';
 import type { FarmLayout } from '../view/pigView';

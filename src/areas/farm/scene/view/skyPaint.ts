@@ -2,7 +2,7 @@
 // Phaser — the farm scene paints the gradient into a thin texture and draws stars / moon as shapes;
 // the admin preview paints everything with `paintSky`.
 import { DAY_NIGHT_VIEW, type PhaseLook } from '../../../../core/config/dayNight';
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { SKY_BOTTOM_Y } from './backdropPaint';
 import type { WorldRect } from './farmCamera';
 import { hashId } from './pigView';

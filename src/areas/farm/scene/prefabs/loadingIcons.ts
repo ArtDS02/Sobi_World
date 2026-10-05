@@ -2,7 +2,7 @@
 // size ~1 = 40 px: carrot, corn, tomato, cabbage, leaf, flower, sparkle, butterfly wing. Shared by the
 // scenery (crop beds), the progress bar ornaments and the swirl particles.
 import type * as Phaser from 'phaser';
-import { LOADING_SCREEN } from '../../../../core/config/loadingScreen';
+import { LOADING_SCREEN } from '../config/loadingScreen';
 
 type G = Phaser.GameObjects.Graphics;
 const C = LOADING_SCREEN.icons;

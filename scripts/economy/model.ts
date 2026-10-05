@@ -1,8 +1,8 @@
 // Economy model for `npm run sim:economy` (spec §6.4, §14.7). Pure: runs the real core engine
 // (trough + advancePig + pricing) on synthetic farms, so a balance edit shows up here unchanged.
-import { BALANCE } from '../../src/core/config/balance';
-import { BREEDS } from '../../src/core/config/breeds';
-import type { BreedId } from '../../src/core/config/ids';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { ITEMS } from '../../src/core/config/items';
 import { advanceWithTrough } from '../../src/areas/farm/logic/trough';
 import { sellPrice } from '../../src/areas/farm/logic/pricing';

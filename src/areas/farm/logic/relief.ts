@@ -1,9 +1,9 @@
 // Neighbour's help (DECISIONS PG-1): what the farm needs to get unstuck, or null when it can still
 // progress on its own (something to sell, a litter or a gift coming, or money for food / a pig).
-import { BREEDS, BREED_IDS } from '../../../core/config/breeds';
+import { BREEDS, BREED_IDS } from './config/breeds';
 import { ITEMS } from '../../../core/config/items';
-import { levelFromXp } from '../../../core/config/levels';
-import { RELIEF } from '../../../core/config/relief';
+import { levelFromXp } from './config/levels';
+import { RELIEF } from './config/relief';
 import type { FarmGame } from './types';
 
 export interface ReliefNeed {

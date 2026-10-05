@@ -11,8 +11,8 @@ export default {
   maxFileLinesExceptions: ['src/i18n/vi.ts', 'src/core/config/breeds.ts'],
   layers: [
     { name: 'core', dir: 'src/core', mayImport: ['content'] },
-    { name: 'systems', dir: 'src/systems', mayImport: ['core'] },
-    { name: 'areas', dir: 'src/areas', isolate: true, mayImport: ['core', 'systems', 'ui', 'i18n'] },
+    { name: 'systems', dir: 'src/systems', mayImport: ['core', 'content'] },
+    { name: 'areas', dir: 'src/areas', isolate: true, mayImport: ['core', 'systems', 'ui', 'i18n', 'content'] },
     { name: 'ui', dir: 'src/ui', mayImport: ['core', 'systems', 'i18n'] },
     { name: 'app', dir: 'src/app', mayImport: ['core', 'systems', 'areas', 'ui', 'platform', 'i18n'] },
     { name: 'platform', dir: 'src/platform', mayImport: ['core'] },

@@ -3,8 +3,8 @@
 import * as Phaser from 'phaser';
 import type { FxId } from '../../../../core/config/assetIds';
 import type { GameEvent } from '../../logic/events';
-import { FARM_VIEW } from '../../../../core/config/farmView';
-import { FEEDBACK } from '../../../../core/config/feedback';
+import { FARM_VIEW } from '../config/farmView';
+import { FEEDBACK } from '../config/feedback';
 import type { FarmEffects } from '../feedback/effects';
 import type { FeedbackTarget } from '../feedback/feedbackPlan';
 import type { AnimationId } from '../feedback/feedbackTable';

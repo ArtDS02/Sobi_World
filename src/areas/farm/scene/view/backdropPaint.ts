@@ -2,7 +2,7 @@
 // oval where the pigs roam, the back fence and a few small flowers, in world coordinates on a 2D
 // canvas. The sky above the hills stays transparent — the day / night sky layer shows through.
 // No Phaser: the admin day / night preview paints with it too.
-import { FARM_VIEW } from '../../../../core/config/farmView';
+import { FARM_VIEW } from '../config/farmView';
 import { SEASON_LOOKS, type BackdropPalette } from '../../../../core/config/seasons';
 import type { WorldRect } from './farmCamera';
 import { hashId } from './pigView';

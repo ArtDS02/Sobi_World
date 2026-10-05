@@ -1,7 +1,8 @@
 // Farm domain types (spec §5). FarmGame is the farm's working state: the Sobi Farm v7 save shape every
 // farm rule is written against; the world save v8 stores it split (save/lens.ts maps both ways).
 // Derived values (§5.4) are never stored.
-import type { BreedId, DecorId, Gender, ItemId, StatId, TransactionType } from '../../../core/config/ids';
+import type { Gender, ItemId } from '../../../core/config/ids';
+import type { BreedId, DecorId, StatId, TransactionType } from './config/ids';
 import type { Currency } from '../../../core/save/world';
 import type { ActionResultOf } from '../../../core/types';
 import type { GameEvent } from './events';

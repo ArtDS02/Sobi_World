@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ERRORS } from '../../src/core/config/errors';
-import { BALANCE } from '../../src/core/config/balance';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { rarityRank } from '../../src/core/config/rarity';
 import { vi } from '../../src/i18n/vi';
 import {

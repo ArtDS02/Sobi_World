@@ -3,8 +3,8 @@
 // by main.ts) → farm files → pig art (file loader progress) → building the world → ready.
 // Failed files fall back later.
 import * as Phaser from 'phaser';
-import { BREEDS } from '../../../../core/config/breeds';
-import { LOADING_FILES_SPAN } from '../../../../core/config/loadingScreen';
+import { BREEDS } from '../../logic/config/breeds';
+import { LOADING_FILES_SPAN } from '../config/loadingScreen';
 import { SCENE_KEYS } from '../config/phaser';
 import { LoadingScreen } from '../prefabs/LoadingScreen';
 import { artLoadList, farmLoadList, fxAnimKey, type LoadList, type SheetItem } from '../view/textureKeys';

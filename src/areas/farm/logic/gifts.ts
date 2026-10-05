@@ -2,8 +2,8 @@
 // timestamps, so offline time counts and no setInterval decides anything. Rewards and seeds come
 // from a hash of the spawn time (like orders, Q3): no injected rng is consumed and replaying the
 // same `now` never changes the result.
-import { BREEDS } from '../../../core/config/breeds';
-import { GIFTS } from '../../../core/config/gifts';
+import { BREEDS } from './config/breeds';
+import { GIFTS } from './config/gifts';
 import type { GameEvent } from './events';
 import { mulberry32 } from '../../../core/rng';
 import type { GiftBox, Pig, FarmGame } from './types';

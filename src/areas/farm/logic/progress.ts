@@ -1,10 +1,10 @@
 // Achievement progress (spec §20.4, DECISIONS PG-2): counters fed by game events, metrics read from
 // the save, and the "reached" diff. Rewards are claimed by the player (actions/claimAchievement).
-import { ACHIEVEMENTS, type AchievementDef, type AchievementMetric } from '../../../core/config/achievements';
-import { BREEDS, BREED_IDS } from '../../../core/config/breeds';
-import { DECOR_IDS } from '../../../core/config/decor';
-import type { StatId } from '../../../core/config/ids';
-import { levelFromXp } from '../../../core/config/levels';
+import { ACHIEVEMENTS, type AchievementDef, type AchievementMetric } from './config/achievements';
+import { BREEDS, BREED_IDS } from './config/breeds';
+import { DECOR_IDS } from './config/decor';
+import type { StatId } from './config/ids';
+import { levelFromXp } from './config/levels';
 import type { GameEvent } from './events';
 import type { FarmGame } from './types';
 
