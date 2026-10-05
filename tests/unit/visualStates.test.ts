@@ -1,5 +1,6 @@
 // R09B: sleep / sick / pregnant rendering rules, reduceMotion seeding, and proof that the visual
 // layer (pigView, visual state, wandering) never touches the save.
+import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
 import { createFarmGameStore, world } from './worldKit';
 import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
@@ -24,7 +25,7 @@ if (!parsed.ok) throw new Error(parsed.message);
 parsed.manifest.pigs.find((p) => p.id === 'pig_classic')!.sleepAsset =
   'pigs/base/pig_classic_sleep.png';
 const reg = createAssetRegistry(parsed.manifest);
-const layout = parsed.manifest.layout;
+const layout = FARM_LAYOUT;
 
 describe('sleep look (spec §11.4, DECISIONS Q5)', () => {
   const classic = pigView(makePig(), 0, layout, reg);

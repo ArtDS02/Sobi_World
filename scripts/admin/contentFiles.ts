@@ -11,6 +11,7 @@ export const CONTENT_FILE = {
   species: 'farm/species.json',
   breeding: 'farm/breeding.json',
   seasonFx: 'farm/season-fx.json',
+  layout: 'farm/layout.json',
   shop: 'shared/shop.json',
   dayNight: 'shared/daynight.json',
 } as const;

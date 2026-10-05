@@ -1,8 +1,9 @@
 // Entry point of the farm canvas (spec §4, §11): mounts Phaser into the DOM stage host and exposes
 // the small handle the DOM shell needs (selection in, visibility). Phaser draws the world only.
+import { FARM_LAYOUT } from './config/layout';
 import * as Phaser from 'phaser';
 import type { AssetRegistry } from '../../../core/assets/registry';
-import type { FarmAction } from '../../../core/config/assetIds';
+import type { FarmAction } from './config/layout';
 import type { DayPhase } from '../../../core/config/dayNight';
 import type { SeasonId } from '../../../core/config/seasons';
 import type { FarmStore } from '../store';
@@ -67,7 +68,7 @@ export function createFarmView(host: HTMLElement, deps: FarmDeps): FarmView {
   };
   host.dataset.farmLoading = ''; // HUD hidden over the loading screen (styles/core/_layout.scss)
   const scenes = [new BootScene(deps.assets), new PreloadScene(deps, bridge), new MainFarmScene(deps, bridge)];
-  const game = new Phaser.Game(phaserConfig(host, deps.assets.manifest.layout, scenes));
+  const game = new Phaser.Game(phaserConfig(host, FARM_LAYOUT, scenes));
   let visible = true;
   // The canvas takes the host's size (never 0: a hidden host keeps the last size).
   const fitHost = () => {

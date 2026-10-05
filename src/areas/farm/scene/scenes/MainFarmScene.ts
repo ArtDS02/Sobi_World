@@ -3,12 +3,8 @@
 // Feedback (§11.3) arrives through bridge.effects (SceneEffects), never from diffing snapshots.
 import * as Phaser from 'phaser';
 import { parseAnchors, type Anchors } from '../../../../core/assets/anchors';
-import {
-  SEASON_UNSIGNED_IDS,
-  TROUGH_PROP_ID,
-  type AnchorName,
-  type FxId,
-} from '../../../../core/config/assetIds';
+import { SEASON_UNSIGNED_IDS, TROUGH_PROP_ID, type AnchorName, type FxId } from '../../../../core/config/assetIds';
+import { FARM_LAYOUT } from '../config/layout';
 import { FARM_VIEW } from '../config/farmView';
 import { readyOrderCount } from '../../logic/actions/fulfillOrder';
 import type { FarmSnapshot } from '../../store';
@@ -73,7 +69,7 @@ export class MainFarmScene extends Phaser.Scene {
   }
 
   create() {
-    this.layout = visibleLayout(this.deps.assets.manifest.layout);
+    this.layout = visibleLayout(FARM_LAYOUT);
     this.pigEnv = {
       layout: this.layout,
       troughX: () => this.trough?.x ?? null,

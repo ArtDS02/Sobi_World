@@ -1,7 +1,7 @@
 // (pig, now, layout) → what the farm canvas draws for one pig (spec §11, §11.2). Pure: Phaser
 // code only applies the result. Position is derived from the slot and id, never stored.
 import { pigFrame, pigTexture } from './farmArt';
-import type { AssetManifest } from '../../../../core/assets/manifestSchema';
+import type { FarmLayout } from '../config/layout';
 import type { AssetRegistry } from '../../../../core/assets/registry';
 import { SLEEP_FALLBACK_FX, type FxId } from '../../../../core/config/assetIds';
 import { FARM_VIEW } from '../config/farmView';
@@ -9,7 +9,7 @@ import type { Pig } from '../../logic/types';
 import { pigVisualState, type VisualState } from '../state/pigVisualState';
 import { fallbackPigKey, textureKey } from './textureKeys';
 
-export type FarmLayout = AssetManifest['layout'];
+export type { FarmLayout };
 
 export interface PigView {
   /** Texture to draw; `fallbackId` when it is not loaded (spec §11.4). */

@@ -1,6 +1,6 @@
 // Property panel of the layout editor (DECISIONS AD-1): position, size, layer, transform, state,
 // asset and interaction of the selected placement, and the form → placement patch.
-import { FARM_ACTIONS } from '../../src/core/config/assetIds';
+import { FARM_ACTIONS } from '../../src/areas/farm/scene/config/layout';
 import { vi } from '../../src/i18n/vi';
 import { esc } from './labels';
 import type { Design, Placement } from './layoutModel';

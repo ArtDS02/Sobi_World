@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
+import { placementsInOrder } from '../../src/systems/layout/placements';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest, type AssetManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
@@ -46,7 +48,7 @@ describe('manifest v2 (art standard §7.2)', () => {
     expect(m.pigs.length).toBeGreaterThanOrEqual(BREED_IDS.length);
     expect(m.fx.map((f) => f.id).sort()).toEqual([...FX_IDS, ...SEASON_FX_ART_IDS].sort());
     expect(m.audio.map((a) => a.id)).toEqual([...AUDIO_KEYS]);
-    expect(m.layout.designSize).toEqual({ width: 1600, height: 900 });
+    expect(FARM_LAYOUT.designSize).toEqual({ width: 1600, height: 900 });
   });
 });
 
@@ -110,20 +112,20 @@ describe('asset registry (spec §11.4)', () => {
       expect(reg.url(row.id, row.asset ? 'asset' : 'full'), row.id).not.toBeNull();
     }
     for (const id of ['prop_red_tree', 'prop_sunflower', 'prop_bush', 'prop_mushroom'])
-      expect(m.layout.placements.some((p) => p.id === id), id).toBe(true);
+      expect(FARM_LAYOUT.placements.some((p) => p.id === id), id).toBe(true);
   });
 
   it('a painted sign replaces the text tag only on clickable objects (A4)', () => {
-    for (const p of reg.placements().filter((x) => x.signed)) expect(p.action, p.id).toBeDefined();
+    for (const p of placementsInOrder(FARM_LAYOUT.placements).filter((x) => x.signed)) expect(p.action, p.id).toBeDefined();
     // The pig house art (user art, farm layout rework) carries its own "Chuồng Heo" sign.
-    expect(reg.placements().find((p) => p.id === 'prop_pig_house')?.signed).toBe(true);
+    expect(FARM_LAYOUT.placements.find((p) => p.id === 'prop_pig_house')?.signed).toBe(true);
   });
 
   it('placements sorted back to front, filterable by layer, roles present', () => {
-    const layers = reg.placements().map((p) => p.layer);
+    const layers = placementsInOrder(FARM_LAYOUT.placements).map((p) => p.layer);
     expect(layers).toEqual([...layers].sort((a, b) => a - b));
-    expect(reg.placements(0).every((p) => p.layer === 0)).toBe(true);
-    expect(reg.placements().find((p) => p.role === 'trough')?.id).toBe('prop_feed_trough');
+    expect(placementsInOrder(FARM_LAYOUT.placements, 0).every((p) => p.layer === 0)).toBe(true);
+    expect(FARM_LAYOUT.placements.find((p) => p.role === 'trough')?.id).toBe('prop_feed_trough');
   });
 
   it('every species has an art row; pig rows are species art only (DECISIONS A2-1)', () => {

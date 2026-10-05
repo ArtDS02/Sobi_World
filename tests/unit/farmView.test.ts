@@ -3,7 +3,9 @@ import manifestJson from '../../public/assets/manifest/assets.json';
 import { anchorOffset, anchorPoint, parseAnchors } from '../../src/core/assets/anchors';
 import { parseManifest, type AssetManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
-import { DEFAULT_ANCHORS, FARM_ACTIONS, PIG_FEET_Y } from '../../src/core/config/assetIds';
+import { DEFAULT_ANCHORS, PIG_FEET_Y } from '../../src/core/config/assetIds';
+import { FARM_ACTIONS, FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
+import { layoutFileSchema } from '../../content/schemas/farm/layout';
 import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import { pigScale, pigSpot, pigView } from '../../src/areas/farm/scene/view/pigView';
 import { groundLineY, placementDepth, placementView } from '../../src/areas/farm/scene/view/sceneLayout';
@@ -22,7 +24,7 @@ function manifest(): AssetManifest {
   return r.manifest;
 }
 const reg = createAssetRegistry(manifest());
-const layout = reg.manifest.layout;
+const layout = FARM_LAYOUT;
 
 describe('pigView (spec §11.2)', () => {
   it('idle pig: own species texture, feet inside the walk area, depth = y', () => {
@@ -194,8 +196,8 @@ describe('clickable world objects (DECISIONS R05C-1)', () => {
   });
 
   it('rejects an unknown action', () => {
-    const bad = structuredClone(manifestJson) as { layout: { placements: { action?: string }[] } };
-    bad.layout.placements[0]!.action = 'teleport';
-    expect(parseManifest(bad).ok).toBe(false);
+    const bad = structuredClone(FARM_LAYOUT) as { placements: { action?: string }[] };
+    bad.placements[0]!.action = 'teleport';
+    expect(layoutFileSchema.safeParse(bad).success).toBe(false);
   });
 });

@@ -6,6 +6,7 @@ import behaviorRaw from '../../../../../content/farm/behavior.json';
 import breedingRaw from '../../../../../content/farm/breeding.json';
 import decorRaw from '../../../../../content/farm/decor.json';
 import giftsRaw from '../../../../../content/farm/gifts.json';
+import layoutRaw from '../../../../../content/farm/layout.json';
 import namesRaw from '../../../../../content/farm/names.json';
 import seasonFxRaw from '../../../../../content/farm/season-fx.json';
 import speciesRaw from '../../../../../content/farm/species.json';
@@ -14,6 +15,7 @@ import { behaviorFileSchema } from '../../../../../content/schemas/farm/behavior
 import { breedingFileSchema } from '../../../../../content/schemas/farm/breeding';
 import { decorFileSchema } from '../../../../../content/schemas/farm/decor';
 import { giftsFileSchema } from '../../../../../content/schemas/farm/gifts';
+import { layoutFileSchema } from '../../../../../content/schemas/farm/layout';
 import { namesFileSchema } from '../../../../../content/schemas/farm/names';
 import { seasonFxFileSchema } from '../../../../../content/schemas/farm/seasonFx';
 import { speciesFileSchema } from '../../../../../content/schemas/farm/species';
@@ -28,4 +30,5 @@ export const FARM_CONTENT = {
   names: loadContent('farm/names.json', namesFileSchema, namesRaw),
   behavior: loadContent('farm/behavior.json', behaviorFileSchema, behaviorRaw),
   seasonFx: loadContent('farm/season-fx.json', seasonFxFileSchema, seasonFxRaw),
+  layout: loadContent('farm/layout.json', layoutFileSchema, layoutRaw),
 };

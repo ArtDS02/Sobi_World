@@ -2,6 +2,7 @@
 // species, behind the loading screen. Progress is real (AM-1): config (manifest + save already read
 // by main.ts) → farm files → pig art (file loader progress) → building the world → ready.
 // Failed files fall back later.
+import { FARM_LAYOUT } from '../config/layout';
 import * as Phaser from 'phaser';
 import { BREEDS } from '../../logic/config/breeds';
 import { LOADING_FILES_SPAN } from '../config/loadingScreen';
@@ -56,7 +57,7 @@ export class PreloadScene extends Phaser.Scene {
   preload() {
     const season = farmSeason(this.deps.now(), this.bridge.seasonPreview);
     const reduceMotion = this.deps.store.getSnapshot().save?.settings.reduceMotion ?? false;
-    const screen = new LoadingScreen(this, this.deps.assets.manifest.layout, season, reduceMotion);
+    const screen = new LoadingScreen(this, FARM_LAYOUT, season, reduceMotion);
     this.screen = screen;
     warnLoadErrors(this.load);
 

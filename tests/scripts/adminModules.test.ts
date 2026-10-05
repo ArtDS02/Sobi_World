@@ -6,7 +6,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { pngSize } from '../../scripts/admin/artFiles';
-import { replacePlacementsText } from '../../scripts/admin/layoutText';
+import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
+import { layoutFileSchema } from '../../content/schemas/farm/layout';
 import { schemaProblems } from '../../scripts/admin/contentFiles';
 import { shopFileSchema } from '../../content/schemas/shared/shop';
 import { breedingFileSchema } from '../../content/schemas/farm/breeding';
@@ -109,15 +110,14 @@ describe('breeding pair rules', () => {
 });
 
 describe('layout', () => {
-  const list = manifest.layout.placements;
-  it('the shipped layout is valid and its placements text round-trips byte for byte', () => {
+  const list = [...FARM_LAYOUT.placements];
+  it('the shipped layout is valid', () => {
     expect(layoutIssues(list, { assetIds: artIds, troughId: TROUGH_PROP_ID }).filter((i) => i.level === 'error')).toEqual([]);
-    expect(replacePlacementsText(manifestText, list)).toBe(manifestText);
   });
-  it('writes edited placements that the manifest schema still parses', () => {
+  it('edited placements still pass the layout schema the game loads', () => {
     const next = add(list, 'prop_rock', 800, 600, { width: 1600, height: 900 }, 4, 90).map((p, i) => (i === 0 ? { ...p, rotation: 12, flipX: true, visible: false } : p));
-    const text = replacePlacementsText(manifestText, next);
-    expect(manifestSchema.parse(JSON.parse(text)).layout.placements).toHaveLength(list.length + 1);
+    expect(schemaProblems(layoutFileSchema, { ...FARM_LAYOUT, placements: next })).toEqual([]);
+    expect(schemaProblems(layoutFileSchema, { ...FARM_LAYOUT, placements: [{ ...next[0], layer: 9 }] })).not.toEqual([]);
   });
   it('duplicate drops unique roles; a second trough is an error', () => {
     const t = list.findIndex((p) => p.role === 'trough');

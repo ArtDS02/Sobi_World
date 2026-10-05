@@ -9,7 +9,6 @@ import {
   type AssetManifest,
   type AssetStatus,
   type ManifestSection,
-  type Placement,
 } from './manifestSchema';
 
 /** Public URL prefix of every manifest path; relative so it works in dev and under app://. */
@@ -91,15 +90,6 @@ export function createAssetRegistry(manifest: AssetManifest) {
     /** File key to draw for `id` in `season`: its seasonal variant, else the default `asset`. */
     seasonalFile: (id: string, season: SeasonId): string =>
       entries.get(id)?.files[seasonFile(season)] ? seasonFile(season) : 'asset',
-
-    /** Placements back to front (stable within a layer); `layer` filters one layer. */
-    placements(layer?: number): Placement[] {
-      return manifest.layout.placements
-        .map((p, i) => ({ p, i }))
-        .filter(({ p }) => layer === undefined || p.layer === layer)
-        .sort((a, b) => a.p.layer - b.p.layer || a.i - b.i)
-        .map(({ p }) => p);
-    },
 
     /** Every row, for the dev gallery and the checker. */
     entries: (): AssetEntry[] => [...entries.values()],

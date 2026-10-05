@@ -1,4 +1,5 @@
 // U06: gift boxes land inside the farm, clear of objects, pigs and each other.
+import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
 import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest } from '../../src/core/assets/manifestSchema';
@@ -7,7 +8,7 @@ import { giftSpot, type Rect } from '../../src/areas/farm/scene/view/giftPlaceme
 
 const parsed = parseManifest(manifestJson);
 if (!parsed.ok) throw new Error(parsed.message);
-const layout = parsed.manifest.layout;
+const layout = FARM_LAYOUT;
 const { width, height } = layout.designSize;
 
 describe('giftSpot (U06)', () => {

@@ -14,7 +14,7 @@
 //   POST /breeding-pairs { rows }            → farm/breeding.json `pairs`
 //   POST /breeding-genetics { genetics, mutations, geneBonuses } → farm/breeding.json (MU-1)
 //   POST /season-fx      { tuning }          → farm/season-fx.json (MU-2)
-//   GET  /layout-default · POST /layout { placements } → manifest layout.placements
+//   GET  /layout-default · POST /layout { placements } → farm/layout.json placements
 //   GET  /build-info · POST /open-folder { which } → desktop build status + guide data (AM-1)
 import { readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -36,7 +36,6 @@ import { validateSpecies, type ValidateInput } from './validate';
 import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, registerExisting, uploadArt } from './artFiles';
 import { buildInfo, openFolder } from './buildInfo';
 import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
-import { replacePlacementsText } from './layoutText';
 import type { GeneticsRules, Mutation } from '../../src/areas/farm/logic/config/breedingRules';
 import type { GeneBonuses } from '../../src/areas/farm/logic/config/genePool';
 import type { SeasonFxTuning } from '../../src/areas/farm/scene/config/seasonFx';
@@ -199,7 +198,7 @@ async function saveSeasonFx(tuning: SeasonFxTuning, load: (p: string) => Promise
 }
 
 async function saveLayout(placements: PlacementRow[], load: (p: string) => Promise<Mod>): Promise<Result> {
-  const [schema, assetIds] = await Promise.all([load('/src/core/assets/manifestSchema.ts'), load('/src/core/config/assetIds.ts')]);
+  const [schema, assetIds] = await Promise.all([load('/content/schemas/farm/layout.ts'), load('/src/core/config/assetIds.ts')]);
   const parse = schema.placementSchema as { safeParse: (v: unknown) => { success: boolean; error?: { message: string } } };
   for (const [i, p] of placements.entries()) {
     const r = parse.safeParse(p);
@@ -207,8 +206,9 @@ async function saveLayout(placements: PlacementRow[], load: (p: string) => Promi
   }
   const bad = refuse(layoutIssues(placements, { assetIds: artIds(), troughId: assetIds.TROUGH_PROP_ID as string }));
   if (bad) return bad;
-  writeText(MANIFEST, replacePlacementsText(readFileSync(MANIFEST, 'utf8'), placements));
-  return { status: 200, body: { ok: true, placements: placements.length } };
+  const layout = { ...readContent(CONTENT_FILE.layout), placements };
+  const written = await writeContent(load, CONTENT_FILE.layout, '/content/schemas/farm/layout.ts', 'layoutFileSchema', layout);
+  return invalid(written) ?? { status: 200, body: { ok: true, placements: placements.length } };
 }
 
 /** The game's own parser (migrate + world and Area schemas): the admin can only write what the game reads. */
