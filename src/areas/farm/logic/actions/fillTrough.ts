@@ -1,4 +1,5 @@
 // fillTrough (spec §8.6): inventory first, shortfall bought at shop price in the same action.
+import { takeFromBag } from '../../../../core/inventory/bag';
 import { ITEMS } from '../../../../core/config/items';
 import { changeGold } from '../gold';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
@@ -22,10 +23,12 @@ export function fillTrough(
       note: `x${units} inventory ${fromInventory} bought ${shortfall}`,
     });
     if (!paid.ok) return paid;
+    const bag = takeFromBag(paid.state.inventory, 'FOOD_BASIC', fromInventory);
+    if (!bag.ok) return bag;
     return ok(
       {
         ...paid.state,
-        inventory: { ...paid.state.inventory, FOOD_BASIC: s.inventory.FOOD_BASIC - fromInventory },
+        inventory: bag.items,
         trough: { ...paid.state.trough, food: s.trough.food + units },
       },
       [{ type: 'TROUGH_FILLED', units, fromInventory, gold }],

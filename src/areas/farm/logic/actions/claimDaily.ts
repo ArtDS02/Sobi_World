@@ -1,5 +1,7 @@
 // claimDaily (DECISIONS PG-2): once per local day. `day` is the local day number computed outside
 // core (ui/localDay.ts); consecutive days grow the streak, a gap restarts it at 1.
+import { INVENTORY } from '../../../../core/config/inventory';
+import { addAllToBag } from '../../../../core/inventory/bag';
 import { DAILY, dailyReward } from '../../../../core/config/daily';
 import { changeGold } from '../gold';
 import { addXP } from '../xp';
@@ -25,13 +27,11 @@ export function claimDaily(
     }
     const streak = nextStreak(daily, args.day);
     const reward = dailyReward(streak);
+    const bag = addAllToBag(s.inventory, { FOOD_BASIC: reward.food, MEDICINE_COMMON: reward.medicine }, INVENTORY);
+    if (!bag.ok) return bag;
     const stocked: FarmGame = {
       ...s,
-      inventory: {
-        ...s.inventory,
-        FOOD_BASIC: s.inventory.FOOD_BASIC + reward.food,
-        MEDICINE_COMMON: s.inventory.MEDICINE_COMMON + reward.medicine,
-      },
+      inventory: bag.items,
       progress: { ...s.progress, daily: { lastDay: args.day, streak } },
     };
     const paid = changeGold(stocked, reward.gold, 'DAILY_REWARD', ctx, { note: `day ${streak}` });

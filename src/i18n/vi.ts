@@ -129,6 +129,7 @@ export const vi = {
     ALREADY_CLAIMED: "Đã nhận thưởng rồi.",
     ALREADY_OWNED: "Bạn đã có món này.",
     NURSERY_FULL: "Kho heo con đã đầy. Hãy đưa bớt heo con ra trại trước.",
+    INVENTORY_FULL: "Túi đồ đã đầy chỗ. Hãy dùng bớt vật phẩm trước.",
   },
 
   // Shown on a disabled button so the player knows why, not just that.

@@ -4,7 +4,9 @@
 import achievementsRaw from '../../../content/shared/achievements.json';
 import dailyRaw from '../../../content/shared/daily.json';
 import dayNightRaw from '../../../content/shared/daynight.json';
+import inventoryRaw from '../../../content/shared/inventory.json';
 import itemsRaw from '../../../content/shared/items.json';
+import progressionRaw from '../../../content/shared/progression.json';
 import shopRaw from '../../../content/shared/shop.json';
 import farmBalanceRaw from '../../../content/farm/balance.json';
 import behaviorRaw from '../../../content/farm/behavior.json';
@@ -17,7 +19,9 @@ import speciesRaw from '../../../content/farm/species.json';
 import { achievementsFileSchema } from '../../../content/schemas/shared/achievements';
 import { dailyFileSchema } from '../../../content/schemas/shared/daily';
 import { dayNightFileSchema } from '../../../content/schemas/shared/dayNight';
+import { inventoryFileSchema } from '../../../content/schemas/shared/inventory';
 import { itemsFileSchema } from '../../../content/schemas/shared/items';
+import { progressionFileSchema } from '../../../content/schemas/shared/progression';
 import { shopFileSchema } from '../../../content/schemas/shared/shop';
 import { farmBalanceFileSchema } from '../../../content/schemas/farm/balance';
 import { behaviorFileSchema } from '../../../content/schemas/farm/behavior';
@@ -31,6 +35,8 @@ import { ContentError, loadContent } from '../content/load';
 
 export const CONTENT = {
   items: loadContent('shared/items.json', itemsFileSchema, itemsRaw),
+  inventory: loadContent('shared/inventory.json', inventoryFileSchema, inventoryRaw),
+  progression: loadContent('shared/progression.json', progressionFileSchema, progressionRaw),
   shop: loadContent('shared/shop.json', shopFileSchema, shopRaw),
   achievements: loadContent('shared/achievements.json', achievementsFileSchema, achievementsRaw),
   daily: loadContent('shared/daily.json', dailyFileSchema, dailyRaw),

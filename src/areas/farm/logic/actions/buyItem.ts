@@ -1,4 +1,6 @@
 // buyItem (spec §8.10).
+import { INVENTORY } from '../../../../core/config/inventory';
+import { addToBag } from '../../../../core/inventory/bag';
 import { BALANCE } from '../../../../core/config/balance';
 import type { ItemId } from '../../../../core/config/ids';
 import { ITEMS } from '../../../../core/config/items';
@@ -23,8 +25,9 @@ export function buyItem(
       note: `x${q}`,
     });
     if (!paid.ok) return paid;
-    const inventory = { ...paid.state.inventory, [item.id]: paid.state.inventory[item.id] + q };
-    return ok({ ...paid.state, inventory }, [
+    const bag = addToBag(paid.state.inventory, item.id, q, INVENTORY);
+    if (!bag.ok) return bag;
+    return ok({ ...paid.state, inventory: bag.items }, [
       { type: 'ITEM_BOUGHT', itemId: item.id, quantity: q, gold },
     ]);
   });

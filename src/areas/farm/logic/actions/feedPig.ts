@@ -1,4 +1,5 @@
 // feedPig (spec §8.2) — manual fallback to the trough.
+import { takeFromBag } from '../../../../core/inventory/bag';
 import { BALANCE } from '../../../../core/config/balance';
 import { addXP } from '../xp';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
@@ -13,12 +14,13 @@ export function feedPig(
     const pig = s.pigs.find((p) => p.id === args.pigId);
     if (!pig) return { ok: false, error: 'PIG_NOT_FOUND' };
     if (pig.hunger >= BALANCE.HUNGER_MAX) return { ok: false, error: 'ALREADY_FULL' };
-    if (s.inventory.FOOD_BASIC < 1) return { ok: false, error: 'INSUFFICIENT_ITEM' };
+    const bag = takeFromBag(s.inventory, 'FOOD_BASIC', 1);
+    if (!bag.ok) return bag;
 
     const hunger = Math.min(BALANCE.HUNGER_MAX, pig.hunger + BALANCE.FOOD_HUNGER_RESTORE);
     const fed: FarmGame = {
       ...s,
-      inventory: { ...s.inventory, FOOD_BASIC: s.inventory.FOOD_BASIC - 1 },
+      inventory: bag.items,
       pigs: s.pigs.map((p) => (p.id === pig.id ? { ...p, hunger, lastFedAt: ctx.now } : p)),
     };
     // D11: XP only when the feed was actually needed.
