@@ -1,7 +1,7 @@
 // The presentation contract (spec §11.3) as data: one row per GameEvent type. Adding an event is
 // one row here. Order per event is fixed by the director: animation → VFX → sound → toast.
 import type { AudioKey, FxId } from '../../../../core/config/assetIds';
-import type { GameEventType } from '../../../../core/events';
+import type { GameEventType } from '../../logic/events';
 
 export type AnimationId =
   | 'bounce'

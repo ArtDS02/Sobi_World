@@ -5,7 +5,7 @@ import { BREEDS, BREED_IDS } from '../../../core/config/breeds';
 import { DECOR_IDS } from '../../../core/config/decor';
 import type { StatId } from '../../../core/config/ids';
 import { levelFromXp } from '../../../core/config/levels';
-import type { GameEvent } from '../../../core/events';
+import type { GameEvent } from './events';
 import type { FarmGame } from './types';
 
 export const statOf = (state: Pick<FarmGame, 'progress'>, id: StatId): number =>

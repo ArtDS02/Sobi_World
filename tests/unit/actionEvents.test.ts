@@ -9,7 +9,7 @@ import { fillTrough } from '../../src/areas/farm/logic/actions/fillTrough';
 import { renamePig } from '../../src/areas/farm/logic/actions/renamePig';
 import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
 import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
-import { GAME_EVENT_TYPES } from '../../src/core/events';
+import { GAME_EVENT_TYPES } from '../../src/areas/farm/logic/events';
 import type { ActionResult } from '../../src/areas/farm/logic/types';
 import { ctx, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';

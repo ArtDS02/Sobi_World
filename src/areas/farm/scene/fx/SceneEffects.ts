@@ -2,7 +2,7 @@
 // one-shot particle bursts from the fx_* textures (placeholder art works the same).
 import * as Phaser from 'phaser';
 import type { FxId } from '../../../../core/config/assetIds';
-import type { GameEvent } from '../../../../core/events';
+import type { GameEvent } from '../../logic/events';
 import { FARM_VIEW } from '../../../../core/config/farmView';
 import { FEEDBACK } from '../../../../core/config/feedback';
 import type { FarmEffects } from '../feedback/effects';

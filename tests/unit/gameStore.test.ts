@@ -7,7 +7,7 @@ import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
 import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
 import { fakeClock, type FakeClock } from '../../src/core/clock';
 import { SAVE } from '../../src/core/config/save';
-import type { GameEvent } from '../../src/core/events';
+import type { GameEvent } from '../../src/areas/farm/logic/events';
 import { mulberry32, randomId } from '../../src/core/rng';
 import {
   createSaveStorage,

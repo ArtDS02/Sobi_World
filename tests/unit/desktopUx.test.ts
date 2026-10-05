@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { setSetting } from '../../src/areas/farm/logic/actions/setSetting';
 import { fakeClock } from '../../src/core/clock';
 import { SAVE } from '../../src/core/config/save';
-import type { GameEvent } from '../../src/core/events';
+import type { GameEvent } from '../../src/areas/farm/logic/events';
 import { mulberry32 } from '../../src/core/rng';
 import { newGame } from '../../src/areas/farm/logic/save/newFarm';
 import type { BackupStore, InstanceGuard, LoadResult, SaveStorage } from '../../src/core/save/port';

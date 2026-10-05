@@ -4,6 +4,7 @@
 import type { BreedId, DecorId, Gender, ItemId, StatId, TransactionType } from '../../../core/config/ids';
 import type { Currency } from '../../../core/save/world';
 import type { ActionResultOf } from '../../../core/types';
+import type { GameEvent } from './events';
 
 export type { BreedId, DecorId, Gender, ItemId, StatId, TransactionType };
 export type GrowthStage = 'BABY' | 'YOUNG' | 'ADULT'; // derived, never stored
@@ -158,4 +159,4 @@ export interface BreedingRecord {
 
 // Action contract (spec §8): the shared one, on the farm's working state.
 export type { ActionContext } from '../../../core/types';
-export type ActionResult = ActionResultOf<FarmGame>;
+export type ActionResult = ActionResultOf<FarmGame, GameEvent>;

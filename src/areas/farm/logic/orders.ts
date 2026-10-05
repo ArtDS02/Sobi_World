@@ -5,7 +5,7 @@ import { BALANCE } from '../../../core/config/balance';
 import { BREEDS } from '../../../core/config/breeds';
 import { BREED_ID_VALUES, GENDER_VALUES, type BreedId } from '../../../core/config/ids';
 import { RARITY_ORDER_WEIGHT } from '../../../core/config/rarity';
-import type { GameEvent } from '../../../core/events';
+import type { GameEvent } from './events';
 import { mulberry32, orderSeed, pick } from '../../../core/rng';
 import type { Order, FarmGame } from './types';
 import { weightedPick } from './breeding';

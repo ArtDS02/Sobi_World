@@ -5,7 +5,7 @@
 // PigSprite calls. World events (a trough meal) arrive through the FeedbackDirector (`onEvent`).
 import { PIG_HOUSE_PROP_ID } from '../../../../core/config/assetIds';
 import { PIG_LIFE } from '../../../../core/config/pigLife';
-import type { GameEvent } from '../../../../core/events';
+import type { GameEvent } from '../../logic/events';
 import type { Pig } from '../../logic/types';
 import type { PigSprite } from '../prefabs/PigSprite';
 import { othersOf } from '../prefabs/crowd';

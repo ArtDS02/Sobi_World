@@ -6,7 +6,7 @@ import type { BackupStore, InstanceGuard, SaveStorage } from '../save/port';
 import type { SaveCodec } from '../save/migrate';
 import type { WorldSave } from '../save/world';
 import type { ActionContext } from '../types';
-import type { GameEvent } from '../events';
+import type { EventBase, WorldEvent } from '../events';
 
 export interface PageLike {
   isVisible(): boolean;
@@ -19,10 +19,12 @@ export type WorldAdvance = (
   now: number,
   rng: Rng,
   dayOffsetMs: number,
-) => { state: WorldSave; events: GameEvent[] };
+) => { state: WorldSave; events: EventBase[] };
 
 export interface StoreDeps {
   advanceWorld: WorldAdvance;
+  /** The standard world events (ARCHITECTURE §7) of an Area's events, published on the world bus. */
+  toWorldEvents: (events: readonly EventBase[]) => WorldEvent[];
   /** When the world was last simulated up to: the start of the away summary (§9.5). */
   lastSimulatedAt: (state: WorldSave) => number;
   /** New worlds, imports: this build's save format and Areas. */

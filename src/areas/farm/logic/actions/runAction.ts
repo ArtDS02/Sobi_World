@@ -1,7 +1,7 @@
 // Shared action pipeline (spec §8): advanceWorld first, then the action's validate + apply.
 import { advanceWorld } from '../advanceWorld';
 import { progressStep } from '../progress';
-import type { GameEvent } from '../../../../core/events';
+import type { GameEvent } from '../events';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
 
 /** Action body: runs on the caught-up state; must return an error without side effects. */

@@ -4,7 +4,7 @@ import { setSetting } from '../../src/areas/farm/logic/actions/setSetting';
 import { parseManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
 import { AUDIO_KEYS, type AudioKey } from '../../src/core/config/assetIds';
-import type { GameEvent } from '../../src/core/events';
+import type { GameEvent } from '../../src/areas/farm/logic/events';
 import {
   AudioManager,
   audioTracks,

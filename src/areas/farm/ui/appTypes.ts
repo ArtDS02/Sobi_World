@@ -1,6 +1,6 @@
 // What the app shell takes from main.ts and gives back (spec §4: main.ts is the composition root).
 import type { AssetRegistry } from '../../../core/assets/registry';
-import type { GameEvent } from '../../../core/events';
+import type { GameEvent } from '../logic/events';
 import type { FileDialogs } from '../../../core/save/port';
 
 export interface AppOptions {

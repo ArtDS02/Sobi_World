@@ -1,5 +1,5 @@
 // Public types of the world store (spec §4, §9, §11.3).
-import type { GameEvent } from '../events';
+import type { EventBase } from '../events';
 import type { LoadSource } from '../save/port';
 import type { WorldSave } from '../save/world';
 import type { ActionContext, ActionResultOf } from '../types';
@@ -13,7 +13,7 @@ export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew';
 export type EventOrigin = 'action' | 'tick' | 'catchup';
 /** Catch-up only: how long the world was not ticked (§9.5 away summary). */
 export interface CatchupInfo { awayMs: number }
-export type EventListener = (events: GameEvent[], origin: EventOrigin, catchup?: CatchupInfo) => void;
+export type EventListener = (events: EventBase[], origin: EventOrigin, catchup?: CatchupInfo) => void;
 
 export interface StoreSnapshot {
   status: StoreStatus;

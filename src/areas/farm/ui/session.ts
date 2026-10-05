@@ -1,7 +1,7 @@
 // Per-session UI around the farm (spec §9.2, §9.3, §9.5, §10.3): the tutorial step, the export
 // reminder (once per session), the save error / recovered banner, the backup list, the away
 // summary and the recovery screen. State here is never saved, except through actions.
-import type { GameEvent } from '../../../core/events';
+import type { GameEvent } from '../logic/events';
 import { setSetting } from '../logic/actions/setSetting';
 import type { FarmGame } from '../logic/types';
 import { vi } from '../../../i18n/vi';

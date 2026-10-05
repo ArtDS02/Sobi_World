@@ -1,32 +1,18 @@
 // Game store (spec §4 data flow, §7.1, §9): owns the save, the clock, the rng and the one loop.
 // dispatch: deps.advanceWorld → action → persist → notify subscribers + emit events.
 import { SAVE } from '../config/save';
-import type { GameEvent } from '../events';
+import { createEventBus, type EventBase } from '../events';
 import { importSave as parseImport } from '../save/exportImport';
 import { WORLD_SAVE_VERSION, type WorldSave } from '../save/world';
 import { isSaveChangedExternally, type LoadSource } from '../save/port';
 import type { ErrorCode } from '../config/errors';
 import type { ActionContext, ActionResultOf } from '../types';
 import { actionContext, type StoreDeps } from './storeDeps';
-import type {
-  BoundAction,
-  CatchupInfo,
-  EventListener,
-  EventOrigin,
-  StoreSnapshot,
-  StoreStatus,
-} from './storeTypes';
+import type { BoundAction, CatchupInfo, EventListener, EventOrigin, StoreSnapshot, StoreStatus } from './storeTypes';
 
 type ActionResult = ActionResultOf<WorldSave>;
 
-export type {
-  BoundAction,
-  CatchupInfo,
-  EventListener,
-  EventOrigin,
-  StoreSnapshot,
-  StoreStatus,
-} from './storeTypes';
+export type { BoundAction, CatchupInfo, EventListener, EventOrigin, StoreSnapshot, StoreStatus } from './storeTypes';
 export type { PageLike, StoreDeps, WorldAdvance } from './storeDeps';
 
 /** Every dependency is injected (app/gameStore.ts fills the browser defaults). */
@@ -41,6 +27,8 @@ export function createWorldStore(deps: StoreDeps) {
   const subscribers = new Set<(s: StoreSnapshot) => void>();
   const listen = <F>(set: Set<F>, fn: F) => (set.add(fn), () => void set.delete(fn));
   const eventListeners = new Set<EventListener>();
+  /** Standard world events for other Areas and world systems (ARCHITECTURE §7). */
+  const bus = createEventBus();
   const rejectListeners = new Set<(error: ErrorCode) => void>();
   let interval: unknown = null;
   let lastPersistAt = 0;
@@ -56,11 +44,12 @@ export function createWorldStore(deps: StoreDeps) {
     snapshot = { ...snapshot, ...patch };
     for (const fn of subscribers) fn(snapshot);
   };
-  const emit = (events: GameEvent[], origin: EventOrigin, catchup?: CatchupInfo) => {
+  const emit = (events: EventBase[], origin: EventOrigin, catchup?: CatchupInfo) => {
     // A long catch-up is announced even when nothing happened (away summary, §9.5).
     const away = catchup && catchup.awayMs >= SAVE.AWAY_SUMMARY_MIN_MS;
     if (events.length === 0 && !away) return;
     for (const fn of eventListeners) fn(events, origin, catchup);
+    bus.emit(deps.toWorldEvents(events));
   };
   const reject = (result: Extract<ActionResult, { ok: false }>): ActionResult => {
     for (const fn of rejectListeners) fn(result.error);
@@ -111,7 +100,7 @@ export function createWorldStore(deps: StoreDeps) {
   }
 
   /** Catch up time. Persists immediately when anything happened (§7.4 step 6). */
-  function tick(origin: EventOrigin = 'tick'): GameEvent[] {
+  function tick(origin: EventOrigin = 'tick'): EventBase[] {
     if (snapshot.status !== 'ready' || !snapshot.save) return [];
     const now = deps.clock.now();
     const awayMs = Math.max(0, now - deps.lastSimulatedAt(snapshot.save));
@@ -170,6 +159,9 @@ export function createWorldStore(deps: StoreDeps) {
     subscribe: (fn: (s: StoreSnapshot) => void): (() => void) => listen(subscribers, fn),
 
     onEvents: (fn: EventListener): (() => void) => listen(eventListeners, fn),
+
+    /** Standard world events (`item.added`, `creature.sold`…) of every Area, or '*'. */
+    onWorldEvent: bus.on,
 
     /** Rejected actions and imports (`ok: false`): feedback is `ui_error` + a toast (§11.3). */
     onReject: (fn: (error: ErrorCode) => void): (() => void) => listen(rejectListeners, fn),

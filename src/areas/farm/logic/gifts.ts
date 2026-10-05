@@ -4,7 +4,7 @@
 // same `now` never changes the result.
 import { BREEDS } from '../../../core/config/breeds';
 import { GIFTS } from '../../../core/config/gifts';
-import type { GameEvent } from '../../../core/events';
+import type { GameEvent } from './events';
 import { mulberry32 } from '../../../core/rng';
 import type { GiftBox, Pig, FarmGame } from './types';
 

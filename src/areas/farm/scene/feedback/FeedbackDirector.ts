@@ -2,7 +2,7 @@
 // animation → VFX → sound → toast, from the data table. Rejections → ui_error + reason toast.
 // Also the two sounds that are not game events: a pig tap and a DOM button press (§12).
 import { SAVE } from '../../../../core/config/save';
-import type { GameEvent } from '../../../../core/events';
+import type { GameEvent } from '../../logic/events';
 import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
 import type { FarmStore } from '../../store';

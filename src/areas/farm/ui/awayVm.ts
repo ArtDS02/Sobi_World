@@ -1,6 +1,6 @@
 // "Trong lúc bạn vắng mặt" (spec §9.5): built from the catch-up events only. The trough line
 // comes first — it is the one that teaches the player to stock up before logging off. Pure.
-import type { GameEvent } from '../../../core/events';
+import type { GameEvent } from '../logic/events';
 import type { FarmGame } from '../logic/types';
 import { formatDuration, formatTime, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';

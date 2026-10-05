@@ -2,7 +2,7 @@
 import { breedingOutcomes, type BreedingOutcome } from './breedingOdds';
 import { BREEDS } from '../../../core/config/breeds';
 import type { BreedId, Gender } from '../../../core/config/ids';
-import type { GameEvent } from '../../../core/events';
+import type { GameEvent } from './events';
 import { mulberry32, randomId, type Rng } from '../../../core/rng';
 import type { NurseryPig, Pig, FarmGame } from './types';
 import { discoverBreed } from './collection';

@@ -8,7 +8,7 @@ import { BREEDS } from '../../src/core/config/breeds';
 import { advancePig } from '../../src/areas/farm/logic/advancePig';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { dayStart, diseaseState, gameDay, needLevel } from '../../src/areas/farm/logic/pigHealth';
-import type { GameEvent } from '../../src/core/events';
+import type { GameEvent } from '../../src/areas/farm/logic/events';
 import { sequenceRng, type Rng } from '../../src/core/rng';
 import { parseFarmSave } from '../../src/areas/farm/logic/save/legacy';
 import type { ActionResult, Pig, FarmGame } from '../../src/areas/farm/logic/types';

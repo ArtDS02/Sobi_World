@@ -2,6 +2,7 @@
 // and pure (core/world/gameStore.ts); this file supplies the clock, rng, timers, page visibility and
 // the world tick. Tests and main.ts override what they need.
 import { advanceFarmWorld, farmSimulatedAt } from '../areas/farm/logic/world';
+import { farmEventsToWorld } from '../areas/farm/logic/worldEvents';
 import { createWorldStore, type PageLike, type StoreDeps } from '../core/world/gameStore';
 import { defaultRng, realClock } from './runtime';
 import { SAVE_CODEC } from './saveCodec';
@@ -36,6 +37,7 @@ export function defaultDeps(): DefaultDeps {
   return {
     advanceWorld: advanceFarmWorld,
     lastSimulatedAt: farmSimulatedAt,
+    toWorldEvents: farmEventsToWorld,
     codec: SAVE_CODEC,
     clock: realClock,
     rng: defaultRng,

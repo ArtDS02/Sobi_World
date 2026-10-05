@@ -1,7 +1,7 @@
 // What the director asks of the farm scene. MainFarmScene implements it; until the scene runs,
 // the no-op version is used so early events never throw.
 import type { FxId } from '../../../../core/config/assetIds';
-import type { GameEvent } from '../../../../core/events';
+import type { GameEvent } from '../../logic/events';
 import type { FeedbackTarget } from './feedbackPlan';
 import type { AnimationId } from './feedbackTable';
 

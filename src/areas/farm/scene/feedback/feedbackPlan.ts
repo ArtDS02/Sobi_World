@@ -2,7 +2,7 @@
 // the director only executes the plan.
 import type { AudioKey, FxId } from '../../../../core/config/assetIds';
 import { FEEDBACK } from '../../../../core/config/feedback';
-import type { GameEvent } from '../../../../core/events';
+import type { GameEvent } from '../../logic/events';
 import type { EventOrigin } from '../../store';
 import { formatInt, t } from '../../../../i18n/format';
 import { vi } from '../../../../i18n/vi';

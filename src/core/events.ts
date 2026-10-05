@@ -1,88 +1,83 @@
-// Game events returned by advanceWorld (spec §7.4) and by actions.
-import type { NeedLevel } from './config/care';
-import type { BreedId, DecorId, ItemId } from './config/ids';
+// World events (ARCHITECTURE §7): the standard events every Area speaks, and the bus that carries
+// them between Areas and world systems (goals, codex, achievements…). An Area keeps its own detailed
+// events for its screens (the farm's PIG_*), and maps them to these at the boundary. A new standard
+// event is added here and to ARCHITECTURE §7.
+import type { Currency } from './save/world';
 
-export type PigNeed = 'hunger' | 'clean';
+/** Anything the store carries: an Area's own events or world events. */
+export interface EventBase {
+  readonly type: string;
+}
 
-export type GameEvent =
-  // `at` (epoch ms) and `stalled` (not yet adult) feed the away summary (§9.5).
-  | { type: 'PIG_HUNGRY_ZERO'; pigId: string; at: number; stalled: boolean }
-  | { type: 'PIG_BECAME_SICK'; pigId: string }
-  // NH-1: hunger / cleanliness fell into a worse care level (low or below), once per drop.
-  | { type: 'PIG_NEED_DROPPED'; pigId: string; need: PigNeed; level: NeedLevel }
-  | { type: 'PIG_BECAME_ADULT'; pigId: string }
-  // PL-1: the trough fed this pig (auto-feeding); the farm shows it walking over to eat.
-  | { type: 'PIG_ATE_FROM_TROUGH'; pigId: string; meals: number; hungerBefore: number }
-  | { type: 'BIRTH'; motherId: string; childId: string; childBreed: BreedId }
-  | { type: 'TROUGH_EMPTY'; at: number } // when the last unit was eaten
-  | { type: 'ORDER_NEW'; orderId: string }
-  | { type: 'ORDER_EXPIRED'; orderId: string }
-  | { type: 'LEVEL_UP'; level: number }
-  | { type: 'DISCOVERY'; kind: 'BREED'; id: string; gold: number }
-  // Action feedback (spec §8.0, D25). Gold is signed as in the transaction.
-  | { type: 'PIG_BOUGHT'; pigId: string; breed: BreedId }
-  | { type: 'PIG_ADOPTED'; pigId: string; breed: BreedId } // a newborn raised from the nursery (BR-1)
-  | { type: 'PIG_FED'; pigId: string }
-  | { type: 'PIG_CLEANED'; pigIds: string[] }
-  | { type: 'PIG_TREATED'; pigId: string }
-  | { type: 'TROUGH_FILLED'; units: number; fromInventory: number; gold: number }
-  | { type: 'ITEM_BOUGHT'; itemId: ItemId; quantity: number; gold: number }
-  | { type: 'PIG_RENAMED'; pigId: string }
-  | { type: 'PIG_SOLD'; pigId: string; gold: number }
-  | { type: 'BREEDING_STARTED'; motherId: string; fatherId: string; endsAt: number }
-  | { type: 'SLOT_BOUGHT'; slots: number; gold: number } // gold signed as in the transaction (§8.0)
-  | { type: 'ORDER_FULFILLED'; orderId: string; gold: number }
-  | { type: 'GIFT_SPAWNED'; giftId: string }
-  | { type: 'GIFT_OPENED'; giftId: string; gold: number; xp: number }
-  // PG-1..3: neighbour's help, daily reward, achievements, decorations.
-  | { type: 'RELIEF_CLAIMED'; gold: number; food: number; medicine: number }
-  | { type: 'DAILY_CLAIMED'; streak: number; gold: number; food: number; medicine: number }
-  | { type: 'ACHIEVEMENT_REACHED'; id: string } // reward waits in the achievements panel
-  | { type: 'ACHIEVEMENT_CLAIMED'; id: string; gold: number; xp: number }
-  | { type: 'DECOR_BOUGHT'; decorId: DecorId; gold: number }
-  | {
-      type: 'SETTING_CHANGED';
-      key: 'musicOn' | 'sfxOn' | 'reduceMotion' | 'tutorialDone';
-      value: boolean;
-    };
+export type WorldEvent =
+  | { type: 'item.added'; area: string; itemId: string; quantity: number }
+  | { type: 'item.removed'; area: string; itemId: string; quantity: number }
+  | { type: 'currency.changed'; area: string; currency: Currency; amount: number }
+  | { type: 'creature.born'; area: string; creatureId: string; breed: string }
+  | { type: 'creature.sold'; area: string; creatureId: string; amount: number }
+  | { type: 'creature.sick'; area: string; creatureId: string }
+  | { type: 'creature.critical'; area: string; creatureId: string }
+  | { type: 'creature.died'; area: string; creatureId: string }
+  | { type: 'creature.levelUp'; area: string; creatureId: string; level: number }
+  | { type: 'crop.planted'; area: string; plotId: string; cropId: string }
+  | { type: 'crop.harvested'; area: string; plotId: string; cropId: string; quantity: number }
+  | { type: 'recipe.completed'; area: string; recipeId: string }
+  | { type: 'order.completed'; area: string; orderId: string }
+  | { type: 'area.unlocked'; area: string }
+  | { type: 'area.levelUp'; area: string; level: number }
+  | { type: 'codex.discovered'; area: string; kind: string; id: string }
+  | { type: 'achievement.unlocked'; area: string; achievementId: string }
+  | { type: 'adventure.finished'; area: string; zoneId: string; won: boolean }
+  | { type: 'time.dayChanged'; day: number };
 
-export type GameEventType = GameEvent['type'];
+export type WorldEventType = WorldEvent['type'];
 
-/** Every event type at runtime, for totality tests (feedback table, toasts). */
-export const GAME_EVENT_TYPES = [
-  'PIG_HUNGRY_ZERO',
-  'PIG_BECAME_SICK',
-  'PIG_NEED_DROPPED',
-  'PIG_BECAME_ADULT',
-  'PIG_ATE_FROM_TROUGH',
-  'BIRTH',
-  'TROUGH_EMPTY',
-  'ORDER_NEW',
-  'ORDER_EXPIRED',
-  'LEVEL_UP',
-  'DISCOVERY',
-  'PIG_BOUGHT',
-  'PIG_ADOPTED',
-  'PIG_FED',
-  'PIG_CLEANED',
-  'PIG_TREATED',
-  'TROUGH_FILLED',
-  'ITEM_BOUGHT',
-  'PIG_RENAMED',
-  'PIG_SOLD',
-  'BREEDING_STARTED',
-  'SLOT_BOUGHT',
-  'ORDER_FULFILLED',
-  'GIFT_SPAWNED',
-  'GIFT_OPENED',
-  'RELIEF_CLAIMED',
-  'DAILY_CLAIMED',
-  'ACHIEVEMENT_REACHED',
-  'ACHIEVEMENT_CLAIMED',
-  'DECOR_BOUGHT',
-  'SETTING_CHANGED',
-] as const satisfies readonly GameEventType[];
+/** Every standard event type at runtime (totality tests). */
+export const WORLD_EVENT_TYPES = [
+  'item.added',
+  'item.removed',
+  'currency.changed',
+  'creature.born',
+  'creature.sold',
+  'creature.sick',
+  'creature.critical',
+  'creature.died',
+  'creature.levelUp',
+  'crop.planted',
+  'crop.harvested',
+  'recipe.completed',
+  'order.completed',
+  'area.unlocked',
+  'area.levelUp',
+  'codex.discovered',
+  'achievement.unlocked',
+  'adventure.finished',
+  'time.dayChanged',
+] as const satisfies readonly WorldEventType[];
 
-// Compile-time check that the list above is complete.
-type Missing = Exclude<GameEventType, (typeof GAME_EVENT_TYPES)[number]>;
-export const GAME_EVENT_TYPES_COMPLETE: Missing extends never ? true : Missing = true;
+type Missing = Exclude<WorldEventType, (typeof WORLD_EVENT_TYPES)[number]>;
+export const WORLD_EVENT_TYPES_COMPLETE: Missing extends never ? true : Missing = true;
+
+export type WorldEventListener = (event: WorldEvent) => void;
+
+/** A synchronous publish / subscribe bus; listeners run in subscription order. */
+export function createEventBus() {
+  const byType = new Map<string, Set<WorldEventListener>>();
+  const all = new Set<WorldEventListener>();
+  return {
+    /** Listens to one event type, or to every event with '*'. Returns the unsubscribe. */
+    on(type: WorldEventType | '*', fn: WorldEventListener): () => void {
+      const set = type === '*' ? all : (byType.get(type) ?? byType.set(type, new Set()).get(type)!);
+      set.add(fn);
+      return () => void set.delete(fn);
+    },
+    emit(events: readonly WorldEvent[]): void {
+      for (const e of events) {
+        for (const fn of byType.get(e.type) ?? []) fn(e);
+        for (const fn of all) fn(e);
+      }
+    },
+  };
+}
+
+export type EventBus = ReturnType<typeof createEventBus>;

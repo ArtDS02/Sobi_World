@@ -1,7 +1,7 @@
 // FeedbackDirector contract (spec §11.3, D25).
 import { describe, expect, it } from 'vitest';
 import type { ErrorCode } from '../../src/core/config/errors';
-import { GAME_EVENT_TYPES, type GameEvent } from '../../src/core/events';
+import { GAME_EVENT_TYPES, type GameEvent } from '../../src/areas/farm/logic/events';
 import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { createFeedbackDirector } from '../../src/areas/farm/scene/feedback/FeedbackDirector';
 import { feedbackPlan } from '../../src/areas/farm/scene/feedback/feedbackPlan';
