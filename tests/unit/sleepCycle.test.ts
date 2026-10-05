@@ -1,4 +1,5 @@
 import { existsSync } from 'node:fs';
+import { pigFrame } from '../../src/areas/farm/scene/view/farmArt';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
@@ -75,7 +76,7 @@ describe('sleep / wake frames cover every species (PS-1)', () => {
     const missing: string[] = [];
     for (const id of BREED_IDS) {
       for (const frame of ['sleep', 'wake'] as const) {
-        const url = assets.pigFrame(id, frame);
+        const url = pigFrame(assets, id, frame);
         const file = url && join('public', url);
         if (!file || !existsSync(file)) missing.push(`${id} (${BREEDS[id].artId}) ${frame}`);
       }

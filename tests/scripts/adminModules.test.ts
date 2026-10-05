@@ -1,5 +1,6 @@
 // Admin dashboard modules (DECISIONS AD-1): list query, validation rules, source-block writers,
 // layout model, user (save) edits, save folders and the asset → species → game texture chain.
+import { pigTexture } from '../../src/areas/farm/scene/view/farmArt';
 import { mkdtempSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -198,6 +199,6 @@ describe('asset → species → game texture', () => {
     const text = appendPigRowsText(manifestText, [{ id: 'pig_test_new', nameVi: 'Heo Thử', asset: 'pigs/base/pig_test_new.png', tags: ['species', 'new'] }]);
     const reg = createAssetRegistry(manifestSchema.parse(JSON.parse(text)));
     expect(reg.resolve('pig_test_new')?.files.asset).toBe('pigs/base/pig_test_new.png');
-    for (const id of BREED_IDS) expect(reg.pigTexture(id).url, id).not.toBeNull();
+    for (const id of BREED_IDS) expect(pigTexture(reg, id).url, id).not.toBeNull();
   });
 });

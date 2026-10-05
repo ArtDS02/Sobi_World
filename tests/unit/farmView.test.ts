@@ -82,7 +82,7 @@ describe('pigView (spec §11.2)', () => {
 
   it('species art texture; no art at all → breed fallback texture', () => {
     expect(pigView(makePig(), 0, layout, reg).textureId).toBe('pig_classic');
-    const none = { pigTexture: () => ({ artId: 'x', url: null, overlay: null }) };
+    const none = { artTexture: () => ({ artId: 'x', url: null, overlay: null }) };
     expect(pigView(makePig({ breed: 'PIG_MYTHICAL' }), 0, layout, none).textureId).toBe(
       fallbackPigKey('PIG_MYTHICAL'),
     );

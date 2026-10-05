@@ -1,5 +1,6 @@
 // (pig, now, layout) → what the farm canvas draws for one pig (spec §11, §11.2). Pure: Phaser
 // code only applies the result. Position is derived from the slot and id, never stored.
+import { pigFrame, pigTexture } from './farmArt';
 import type { AssetManifest } from '../../../../core/assets/manifestSchema';
 import type { AssetRegistry } from '../../../../core/assets/registry';
 import { SLEEP_FALLBACK_FX, type FxId } from '../../../../core/config/assetIds';
@@ -114,18 +115,18 @@ export function pigView(
   pig: Pig,
   _now: number,
   layout: FarmLayout,
-  textures: Pick<AssetRegistry, 'pigTexture'> & Partial<Pick<AssetRegistry, 'pigFrame'>>,
+  textures: Pick<AssetRegistry, 'artTexture'> & Partial<Pick<AssetRegistry, 'artFrame'>>,
 ): PigView {
   const visualState = pigVisualState(pig, 0, null);
-  const tex = textures.pigTexture(pig.breed, false);
+  const tex = pigTexture(textures, pig.breed, false);
   const fallbackId = fallbackPigKey(pig.breed);
   const textureId = tex.url === null ? fallbackId : textureKey(tex.artId);
   // No sleep row in the manifest → the registry answers with the fx_zzz overlay instead.
-  const asleep = textures.pigTexture(pig.breed, true);
+  const asleep = pigTexture(textures, pig.breed, true);
   const sleepTextureId =
     asleep.url === null || asleep.overlay ? null : textureKey(asleep.artId, 'sleep');
 
-  const wake = textures.pigFrame?.(pig.breed, 'wake') ?? null;
+  const wake = textures.artFrame ? pigFrame({ artFrame: textures.artFrame }, pig.breed, 'wake') : null;
   const wakeTextureId = wake === null ? null : textureKey(tex.artId, 'wake');
 
   const overlays: FxId[] = [];

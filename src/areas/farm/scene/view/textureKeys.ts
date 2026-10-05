@@ -1,7 +1,7 @@
 // Phaser texture / cache keys for manifest files, and the preload list (spec §11, §11.4).
 // Pure: no Phaser import, so it is unit tested.
 import type { AssetRegistry } from '../../../../core/assets/registry';
-import { troughState } from '../../../../core/assets/registry';
+import { troughState } from './farmArt';
 import { TROUGH_PROP_ID } from '../../../../core/config/assetIds';
 import type { BreedId } from '../../../../core/config/ids';
 import type { SeasonId } from '../../../../core/config/seasons';

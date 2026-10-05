@@ -1,5 +1,6 @@
 // Nursery part of the inventory (DECISIONS BR-1): newborns from breeding wait here as their own pig
 // instances; clicking one asks whether to raise it now (dialogs.openAdoptDialog).
+import { pigTexture } from '../../scene/view/farmArt';
 import type { AssetRegistry } from '../../../../core/assets/registry';
 import { BALANCE } from '../../../../core/config/balance';
 import { BREEDS } from '../../../../core/config/breeds';
@@ -31,7 +32,7 @@ export function renderNursery(
         data: { nursery: baby.id },
         on: { click: () => raise(baby) },
       },
-      thumb(assets?.pigTexture(baby.breed).url ?? null, BREEDS[baby.breed].nameVi),
+      thumb(assets ? pigTexture(assets, baby.breed).url : null, BREEDS[baby.breed].nameVi),
       el(
         'span',
         { class: 'inventory__text' },
