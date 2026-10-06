@@ -27,7 +27,7 @@ describe('topBarVm (§10.1)', () => {
     expect(vm.level).toBe('Cấp 3');
     expect(vm.xp).toBe('320/500 KN');
     expect(vm.xpProgress).toBe(28); // (320-250)/(500-250)
-    expect(vm.gold).toBe('8.420 vàng');
+    expect(vm.gold).toBe('8.420 Coins');
     expect(vm.trough).toBe(vi.hud.troughEmpty);
     expect(vm.troughEmpty).toBe(true);
   });
@@ -97,7 +97,7 @@ describe('toastText', () => {
     [{ type: 'TROUGH_EMPTY', at: 0 } as const, vi.event.troughEmpty],
     [
       { type: 'DISCOVERY', kind: 'BREED', id: 'PIG_EARTH_PINK', gold: 500 } as const,
-      'Khám phá mới: Heo Hồng Đất! +500 vàng',
+      'Khám phá mới: Heo Hồng Đất! +500 Coins',
     ],
   ])('%j', (event, text) => {
     expect(eventToast(event, s, s)).toBe(text);
@@ -106,16 +106,16 @@ describe('toastText', () => {
   it('a sold pig is named from the previous state', () => {
     const after = farm();
     expect(eventToast({ type: 'PIG_SOLD', pigId: 'pig-1', gold: 1440 }, after, s)).toBe(
-      'Đã bán Ủn Hồng được 1.440 vàng.',
+      'Đã bán Ủn Hồng được 1.440 Coins.',
     );
   });
 });
 
 describe('history (DECISIONS Q7)', () => {
   it('signed gold', () => {
-    expect(signedGold(500)).toBe('+500 vàng');
-    expect(signedGold(-2000)).toBe('-2.000 vàng');
-    expect(signedGold(0)).toBe('0 vàng');
+    expect(signedGold(500)).toBe('+500 Coins');
+    expect(signedGold(-2000)).toBe('-2.000 Coins');
+    expect(signedGold(0)).toBe('0 Coins');
   });
 
   it('rows keep the save order (newest first) with type labels', () => {
@@ -126,8 +126,8 @@ describe('history (DECISIONS Q7)', () => {
     ];
     const rows = historyVm({ ...s, transactions });
     expect(rows.map((r) => [r.id, r.label, r.amount, r.tone])).toEqual([
-      ['b', 'Mở chuồng', '-2.000 vàng', 'minus'],
-      ['a', 'Bán heo', '+1.200 vàng', 'plus'],
+      ['b', 'Mở chuồng', '-2.000 Coins', 'minus'],
+      ['a', 'Bán heo', '+1.200 Coins', 'plus'],
     ]);
   });
 });

@@ -105,7 +105,7 @@ describe('feedbackPlan', () => {
     expect(feedbackPlan(SAMPLES.GIFT_SPAWNED, 'catchup', false).animations).toEqual([]);
     const open = feedbackPlan(SAMPLES.GIFT_OPENED, 'action', false);
     expect(open.floats).toEqual([
-      { lines: ['+120 vàng', '+35 KN'], target: { kind: 'gift', giftId: 'g1' }, delayMs: 0 },
+      { lines: ['+120 Coins', '+35 KN'], target: { kind: 'gift', giftId: 'g1' }, delayMs: 0 },
     ]);
     expect(open.toast).toBe(false);
     const still = feedbackPlan(SAMPLES.GIFT_OPENED, 'action', true);
@@ -205,7 +205,7 @@ describe('FeedbackDirector', () => {
     const { store, log } = director(farm([makePig()]));
     store.set(farm());
     store.emit([SAMPLES.PIG_SOLD], 'action');
-    expect(log.at(-1)).toBe('toast:Đã bán Ủn Hồng được 1.200 vàng.');
+    expect(log.at(-1)).toBe('toast:Đã bán Ủn Hồng được 1.200 Coins.');
   });
 
   it('reject → ui_error + toast with the reason', () => {

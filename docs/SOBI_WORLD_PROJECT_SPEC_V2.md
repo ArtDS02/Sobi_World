@@ -125,7 +125,7 @@ Cả ba chế độ phải cho ra **cùng một kết quả số liệu**. Khôn
 | Hệ thống | Mô tả ngắn |
 |---|---|
 | Inventory | Một túi đồ chung cho toàn thế giới. Có giới hạn ô, nâng cấp bằng Kho. |
-| Tiền tệ | **Coins** (kiếm bằng bán, xuất chuồng, đơn hàng), **Gems** (thành tựu, loot hiếm), **Event Tokens** (sự kiện). |
+| Tiền tệ | **Sobi Coin** (kiếm bằng bán, xuất chuồng, đơn hàng), **Gems** (thành tựu, loot hiếm), **Event Tokens** (sự kiện). |
 | Item | Định nghĩa bằng dữ liệu. Mỗi item có category, rarity, giá bán, công dụng. |
 | Quality | Normal / Good / Great / Excellent / Perfect. Phản ánh mức chăm sóc. |
 | Rarity | Common / Uncommon / Rare / Epic / Legendary / Mythic. Phản ánh độ hiếm. Quality và Rarity luôn là hai hệ thống riêng. |

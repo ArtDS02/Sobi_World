@@ -98,13 +98,13 @@ describe('shop (R03)', () => {
     const tiger = rows.find((p) => p.breed === 'PIG_TIGER')!;
     expect(tiger.male.reason).toBe('Cần cấp 6');
     expect(rows.find((p) => p.breed === 'PIG_EARTH_PINK')!.male.reason).toBeNull();
-    expect(tiger.sell).toBe('Bán tới 14.400 vàng');
+    expect(tiger.sell).toBe('Bán tới 14.400 Coins');
   });
 
   it('item purchase: live total, invalid quantity and gold shortfall disable the button', () => {
     const s = farm();
     const vm = productPurchase(s, 'FOOD_BASIC', 4, NOW);
-    expect(vm.total).toBe('Tổng: 100 vàng');
+    expect(vm.total).toBe('Tổng: 100 Coins');
     expect(vm.confirm.reason).toBeNull();
     expect(productPurchase(s, 'FOOD_BASIC', 0, NOW).confirm.reason).toBe(vi.error.INVALID_REQUEST);
     const broke = { ...s, player: { ...s.player, gold: 99 } };
@@ -117,7 +117,7 @@ describe('shop (R03)', () => {
     const s = farm();
     const low = shopSlot({ ...s, player: { ...s.player, xp: 0, gold: 99_999 } }, NOW)!;
     expect(low.title).toBe('Chuồng thứ 5');
-    expect(low.price).toBe('2.000 vàng');
+    expect(low.price).toBe('2.000 Coins');
     expect(low.buy.reason).toBe('Cần cấp 2');
     expect(
       shopSlot({ ...s, player: { ...s.player, xp: 100, gold: 2000 } }, NOW)!.buy.reason,
@@ -138,7 +138,7 @@ describe('trough fill dialog', () => {
     expect(troughSpace(s)).toBe(20);
     const vm = troughFill(s, 14, NOW);
     expect(vm.fromInventory).toBe('Lấy từ kho: 10');
-    expect(vm.toBuy).toBe('Mua thêm: 4 (100 vàng)');
+    expect(vm.toBuy).toBe('Mua thêm: 4 (100 Coins)');
     expect(vm.confirm.label).toBe('Đổ 14 phần');
     expect(vm.confirm.reason).toBeNull();
   });
