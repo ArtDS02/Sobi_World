@@ -1,0 +1,11 @@
+{
+  "id": "sobi_garden",
+  "name": { "vi": "Sobi Garden" },
+  "portalInPlaza": "garden_gate",
+  "unlock": { "areaLevels": { "sobi_farm": 3 } },
+  "planned": true,
+  "buildings": [],
+  "produces": [],
+  "consumes": [],
+  "icon": "prop_garden_gate"
+}

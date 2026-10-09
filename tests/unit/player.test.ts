@@ -19,8 +19,8 @@ describe('player in the world save', () => {
 
   it('a v8 save gains the character and keeps everything else', () => {
     const w = world(makeState());
-    const { player: _player, ...rest } = w;
-    const v8 = { ...rest, schemaVersion: 8 };
+    const v8: Record<string, unknown> = { ...w, schemaVersion: 8 };
+    delete v8.player;
     const r = migrate(v8, SAVE_CODEC);
     expect(r.ok).toBe(true);
     if (!r.ok) return;

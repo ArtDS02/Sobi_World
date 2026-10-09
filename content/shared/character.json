@@ -1,0 +1,10 @@
+{
+  "assetId": "chr_player",
+  "speed": 280,
+  "feetHalfWidth": 16,
+  "feetHalfHeight": 7,
+  "displayHeight": 150,
+  "walkFps": 8,
+  "arriveDistance": 10,
+  "restSaveMs": 1500
+}

@@ -1,0 +1,64 @@
+{
+  "designSize": { "width": 1600, "height": 900 },
+  "walkArea": { "x": 0.03, "y": 0.5, "width": 0.94, "height": 0.47 },
+  "spawn": { "x": 0.5, "y": 0.86 },
+  "palette": { "sky": "#bfe3f5", "grass": "#8cc66e", "path": "#e8d9b0" },
+  "floor": { "x": 0.2, "y": 0.52, "width": 0.6, "height": 0.42 },
+  "portalReach": 170,
+  "placements": [
+    { "id": "env_cloud_1", "layer": 0, "x": 0.2, "y": 0.04, "originY": 0 },
+    { "id": "env_cloud_2", "layer": 0, "x": 0.76, "y": 0.1, "originY": 0 },
+    {
+      "id": "prop_garden_gate",
+      "layer": 4,
+      "x": 0.27,
+      "y": 0.5,
+      "width": 300,
+      "portal": "garden_gate",
+      "solid": true
+    },
+    {
+      "id": "prop_sea_dock",
+      "layer": 4,
+      "x": 0.5,
+      "y": 0.45,
+      "width": 380,
+      "portal": "sea_dock",
+      "solid": true
+    },
+    {
+      "id": "prop_sky_tree",
+      "layer": 4,
+      "x": 0.76,
+      "y": 0.5,
+      "width": 270,
+      "portal": "sky_tree",
+      "solid": true
+    },
+    {
+      "id": "prop_pig_house",
+      "layer": 4,
+      "x": 0.1,
+      "y": 0.72,
+      "width": 300,
+      "portal": "pig_barn",
+      "solid": true
+    },
+    {
+      "id": "prop_portal_gate",
+      "layer": 4,
+      "x": 0.9,
+      "y": 0.72,
+      "width": 250,
+      "portal": "portal_gate",
+      "solid": true
+    },
+    { "id": "prop_red_tree", "layer": 4, "x": 0.4, "y": 0.52, "width": 130, "solid": true },
+    { "id": "prop_bush", "layer": 4, "x": 0.62, "y": 0.53, "width": 150, "solid": true },
+    { "id": "prop_rock", "layer": 4, "x": 0.2, "y": 0.9, "width": 100, "solid": true },
+    { "id": "prop_sunflower", "layer": 4, "x": 0.8, "y": 0.93, "width": 110 },
+    { "id": "prop_mushroom", "layer": 4, "x": 0.36, "y": 0.95, "width": 60 },
+    { "id": "prop_fence_section", "layer": 4, "x": 0.06, "y": 0.52, "width": 150 },
+    { "id": "prop_fence_section", "layer": 4, "x": 0.94, "y": 0.52, "width": 150, "flipX": true }
+  ]
+}

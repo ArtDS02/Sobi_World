@@ -11,6 +11,7 @@ import {
   type AssetManifest,
   type ManifestSection,
 } from '../src/core/assets/manifestSchema';
+import { drawCharacter } from './assets/drawCharacter';
 import { colourFor, Raster, shade, type Rgba } from './assets/raster';
 import { placeholderSize } from './assets/sizes';
 
@@ -84,6 +85,15 @@ function drawUi(r: Raster, colour: Rgba) {
   r.ellipse(r.width / 2, r.height / 2, r.width * 0.22, r.height * 0.22, shade(colour, 0.7));
 }
 
+/** A padlock: the plaza marks an Area that is not open yet with it. */
+function drawLock(r: Raster) {
+  const iron: Rgba = [96, 96, 112, 255];
+  r.roundRect(r.width * 0.3, r.height * 0.12, r.width * 0.4, r.height * 0.5, 22, iron);
+  r.roundRect(r.width * 0.4, r.height * 0.22, r.width * 0.2, r.height * 0.4, 10, CLEAR);
+  r.roundRect(r.width * 0.2, r.height * 0.45, r.width * 0.6, r.height * 0.42, 14, [244, 196, 80, 255]);
+  r.ellipse(r.width / 2, r.height * 0.62, 8, 8, iron);
+}
+
 /** Silent MPEG-1 Layer III, mono 44.1 kHz 128 kbps: zeroed side info decodes as silence. */
 export function silentMp3(frames = 10): Buffer {
   const frame = Buffer.alloc(417);
@@ -101,7 +111,9 @@ function render(
   const r = new Raster(size.width, size.height);
   r.rect(0, 0, r.width, r.height, CLEAR);
   const colour = PIG_COLOURS[id] ?? colourFor(id);
-  if (section === 'pigs') drawPig(r, colour, key === 'sleep');
+  if (id === 'chr_player') drawCharacter(r, key);
+  else if (id === 'ui_icon_lock') drawLock(r);
+  else if (section === 'pigs') drawPig(r, colour, key === 'sleep');
   else if (section === 'fx') drawFx(r, colour, frames);
   else if (section === 'environment') drawEnvironment(r, id);
   else if (section === 'ui') drawUi(r, colour);

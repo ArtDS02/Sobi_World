@@ -1,0 +1,11 @@
+{
+  "id": "sobi_cloud",
+  "name": { "vi": "Sobi Cloud" },
+  "portalInPlaza": "sky_tree",
+  "unlock": { "areaLevels": { "sobi_garden": 6, "sobi_aquarium": 3 }, "worldDevelopment": 15 },
+  "planned": true,
+  "buildings": [],
+  "produces": [],
+  "consumes": [],
+  "icon": "prop_sky_tree"
+}
