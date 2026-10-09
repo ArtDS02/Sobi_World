@@ -125,3 +125,49 @@ describe('offline cap and clock safety', () => {
     expect(reg.simulatedAt(jitter.state)).toBe(T0);
   });
 });
+
+describe('neglect over days (the GĐ2 acceptance walk)', () => {
+  const neglected = () => at0({ ...world({ ...makeState([makePig({ lastTickedAt: T0, createdAt: T0 })], 0), createdAt: T0 }), meta: { ...world(makeState([])).meta, createdAt: T0 } } as WorldSave);
+
+  it('left alone and unfed: protected for 72 h, then ill, then critical after 48 h, then dead after 72 h of illness', () => {
+    let w = neglected();
+    let sickAt: number | null = null;
+    let criticalAt: number | null = null;
+    let diedAt: number | null = null;
+    for (let t = T0 + MIN; t <= T0 + 12 * DAY_MS; t += MIN) {
+      const r = reg.advance(w, t, healthy(), 0, 'online');
+      w = r.state;
+      for (const e of r.events) {
+        if (e.type === 'PIG_BECAME_SICK') sickAt = t;
+        if (e.type === 'PIG_BECAME_CRITICAL') criticalAt = t;
+        if (e.type === 'PIG_DIED') diedAt = t;
+      }
+      if (diedAt !== null) break;
+    }
+    expect(sickAt).not.toBeNull();
+    expect(sickAt!).toBeGreaterThanOrEqual(T0 + 72 * HOUR_MS); // the new-world protection
+    expect(criticalAt! - sickAt!).toBeGreaterThanOrEqual(48 * HOUR_MS);
+    expect(criticalAt! - sickAt!).toBeLessThan(48 * HOUR_MS + 2 * MIN);
+    expect(diedAt! - sickAt!).toBeGreaterThanOrEqual(72 * HOUR_MS);
+    expect(diedAt! - sickAt!).toBeLessThan(72 * HOUR_MS + 2 * MIN);
+    expect(farmOf(w).pigs).toEqual([]);
+  });
+
+  it('the same farm after the game was closed for 12 days: alive and critical, then a 12 h grace', () => {
+    const closed = reg.advance(neglected(), T0 + 12 * DAY_MS, healthy(), 0, 'offline');
+    const farm = farmOf(closed.state);
+    expect(farm.pigs).toHaveLength(1);
+    expect(farm.pigs[0]!.isSick).toBe(true);
+    expect(farm.graceUntil).toBe(T0 + 12 * DAY_MS + 12 * HOUR_MS);
+    const open = reg.advance(closed.state, T0 + 12 * DAY_MS + 13 * HOUR_MS, healthy(), 0, 'online');
+    expect(open.events.some((e) => e.type === 'PIG_DIED')).toBe(true);
+  });
+
+  it('1 minute and 10 minute catch-ups find the pig ill at the same moment', () => {
+    const sickTime = (mode: 'online' | 'offline') => {
+      const r = reg.advance(neglected(), T0 + 5 * DAY_MS, healthy(), 0, mode);
+      return farmOf(r.state).pigs[0]!.lastSickAt;
+    };
+    expect(sickTime('online')).toBe(sickTime('offline'));
+  });
+});
