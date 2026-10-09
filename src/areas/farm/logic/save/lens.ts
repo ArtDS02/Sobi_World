@@ -48,6 +48,9 @@ export function farmOf(world: WorldSave): FarmGame {
       daily: world.progression.daily,
     },
     decor: area.decor,
+    ...(area.manure === undefined ? {} : { manure: area.manure }),
+    ...(area.graceUntil === undefined ? {} : { graceUntil: area.graceUntil }),
+    ...(area.memorials === undefined ? {} : { memorials: area.memorials }),
     settings: world.settings,
   };
   views.set(world, farm);
@@ -66,6 +69,9 @@ export function withFarm(world: WorldSave, farm: FarmGame): WorldSave {
     gifts: farm.gifts,
     decor: farm.decor,
     breedingRecords: farm.breedingRecords,
+    ...(farm.manure === undefined ? {} : { manure: farm.manure }),
+    ...(farm.graceUntil === undefined ? {} : { graceUntil: farm.graceUntil }),
+    ...(farm.memorials === undefined ? {} : { memorials: farm.memorials }),
   };
   const next: WorldSave = {
     ...world,

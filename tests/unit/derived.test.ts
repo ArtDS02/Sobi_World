@@ -36,21 +36,24 @@ describe('sellPrice (§5.4, §6.4 table)', () => {
   });
 });
 
-describe('growthStage (D3)', () => {
+describe('growthStage (GAME_BALANCE §2.1)', () => {
   it.each([
     [0, 'BABY'],
-    [29.999, 'BABY'],
-    [30, 'YOUNG'],
-    [99.999, 'YOUNG'],
-    [100, 'ADULT'],
+    [12.499, 'BABY'],
+    [12.5, 'YOUNG'],
+    [49.999, 'YOUNG'],
+    [50, 'ADULT'],
+    [99.999, 'ADULT'],
+    [100, 'MATURE'],
   ])('progress %s → %s', (p, stage) => {
     expect(growthStage(p)).toBe(stage);
   });
 });
 
 describe('weight, level, freeSlots', () => {
-  it('weight goes 1 kg → maxWeight', () => {
+  it('weight goes 1 kg → maxWeight, by stage (2 % newborn, 60 % at Adult, 100 % Mature)', () => {
     expect(weight(makePig({ growthProgress: 0 }))).toBe(1);
+    expect(weight(makePig({ growthProgress: 50 }))).toBe(30);
     expect(weight(makePig({ growthProgress: 100 }))).toBe(50);
   });
 

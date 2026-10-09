@@ -52,6 +52,8 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   // PL-1: no sound / toast; the life simulation walks the pig to the trough and plays eating.
   PIG_ATE_FROM_TROUGH: { ...row(null, [], null, false), life: true },
   PIG_BECAME_SICK: row(null, ['fx_sick'], 'notify', true),
+  PIG_BECAME_CRITICAL: row(null, ['fx_sick'], 'notify', true),
+  PIG_DIED: row(null, [], 'notify', true),
   LEVEL_UP: row(null, ['fx_sparkle'], 'level_up', true),
   TROUGH_EMPTY: row('wiggle', [], 'notify', true),
   ORDER_NEW: row('wiggle', [], 'notify', true),

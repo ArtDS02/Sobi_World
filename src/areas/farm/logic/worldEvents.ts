@@ -21,6 +21,10 @@ export function farmWorldEvents(e: GameEvent): WorldEvent[] {
       return [{ type: 'creature.sold', area, creatureId: e.pigId, amount: e.gold }, ...coins(e.gold)];
     case 'PIG_BECAME_SICK':
       return [{ type: 'creature.sick', area, creatureId: e.pigId }];
+    case 'PIG_BECAME_CRITICAL':
+      return [{ type: 'creature.critical', area, creatureId: e.pigId }];
+    case 'PIG_DIED':
+      return [{ type: 'creature.died', area, creatureId: e.pigId }];
     case 'LEVEL_UP':
       return [{ type: 'area.levelUp', area, level: e.level }];
     case 'DISCOVERY':

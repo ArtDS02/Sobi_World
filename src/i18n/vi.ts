@@ -35,6 +35,8 @@ export const vi = {
       births: "{count} heo con chào đời",
       grown: "{count} heo đã trưởng thành",
       sick: "{count} heo bị bệnh",
+      critical: "{count} heo đang nguy kịch",
+      died: "{count} heo đã mất",
       orders: "{count} đơn hàng mới",
       gifts: "{count} hộp quà mới",
     },
@@ -68,7 +70,8 @@ export const vi = {
   stage: {
     BABY: "Heo con",
     YOUNG: "Heo choai",
-    ADULT: "Trưởng thành",
+    ADULT: "Heo lớn",
+    MATURE: "Trưởng thành",
   },
 
   gender: {
@@ -163,6 +166,8 @@ export const vi = {
   event: {
     becameAdult: "{name} đã trưởng thành!",
     becameSick: "{name} bị bệnh rồi!",
+    becameCritical: "{name} đang nguy kịch! Hãy chữa ngay.",
+    died: "{name} đã không qua khỏi...",
     hungryZero: "{name} đói lả, ngừng lớn.",
     // NH-1: shown once when a pig drops into a worse care level.
     needDropped: {

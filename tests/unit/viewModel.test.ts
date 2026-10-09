@@ -61,12 +61,12 @@ describe('topBarVm (§10.1)', () => {
 
 describe('pig view-models (§10.2)', () => {
   it('card shows name, breed, stage, floored percentages, health', () => {
-    const vm = pigCardVm(makePig({ growthProgress: 55.9, hunger: 49.99, isSick: true }));
+    const vm = pigCardVm(makePig({ growthProgress: 25.9, hunger: 49.99, isSick: true }));
     expect(vm).toMatchObject({
       name: 'Ủn Hồng',
       breed: 'Heo Hồng Đất',
       stage: 'Heo choai',
-      growth: '55%',
+      growth: '25%',
       hunger: '49%',
       cleanliness: '100%',
       health: vi.stat.sick,

@@ -1,5 +1,6 @@
 // Per-breed care decay rates (spec §6.2, D16), derived from the growth-based budgets in BREEDS.
 import { NEED_LEVELS, type NeedLevel } from '../../../../../content/schemas/vocab';
+import { HEALTH } from '../../../../core/config/health';
 import { BALANCE } from './balance';
 import { FARM_CONTENT } from './content';
 import { BREEDS } from './breeds';
@@ -8,7 +9,7 @@ import type { BreedId } from './ids';
 export interface CareRates {
   hungerPerSec: number;
   cleanPerSec: number;
-  /** Seconds from full cleanliness until the sickness threshold is crossed. */
+  /** Seconds from full cleanliness until the pen counts as dirty (illness risk starts). */
   sickRiskStartSec: number;
 }
 
@@ -18,7 +19,7 @@ export function careRates(breed: BreedId): CareRates {
   return {
     hungerPerSec: BALANCE.HUNGER_MAX / hungerFullSec,
     cleanPerSec,
-    sickRiskStartSec: (BALANCE.CLEAN_MAX - BALANCE.SICK_CLEAN_THRESHOLD) / cleanPerSec,
+    sickRiskStartSec: (BALANCE.CLEAN_MAX - HEALTH.risk.dirtyBelow) / cleanPerSec,
   };
 }
 

@@ -9,6 +9,9 @@ export type GameEvent =
   // `at` (epoch ms) and `stalled` (not yet adult) feed the away summary (§9.5).
   | { type: 'PIG_HUNGRY_ZERO'; pigId: string; at: number; stalled: boolean }
   | { type: 'PIG_BECAME_SICK'; pigId: string }
+  // GĐ2 health: an untreated illness turned critical; later, fatal (the pig leaves the farm).
+  | { type: 'PIG_BECAME_CRITICAL'; pigId: string }
+  | { type: 'PIG_DIED'; pigId: string; name: string; breed: BreedId }
   // NH-1: hunger / cleanliness fell into a worse care level (low or below), once per drop.
   | { type: 'PIG_NEED_DROPPED'; pigId: string; need: PigNeed; level: NeedLevel }
   | { type: 'PIG_BECAME_ADULT'; pigId: string }
@@ -53,6 +56,8 @@ export type GameEventType = GameEvent['type'];
 export const GAME_EVENT_TYPES = [
   'PIG_HUNGRY_ZERO',
   'PIG_BECAME_SICK',
+  'PIG_BECAME_CRITICAL',
+  'PIG_DIED',
   'PIG_NEED_DROPPED',
   'PIG_BECAME_ADULT',
   'PIG_ATE_FROM_TROUGH',

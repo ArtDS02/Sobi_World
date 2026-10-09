@@ -157,6 +157,12 @@ Mỗi Area gồm **manifest dữ liệu** (`content/areas/<id>.json`) và **modu
 - AI di chuyển và animation chỉ chạy ở Area đang xem. Khi người chơi rời Area, vị trí sinh vật được giữ nguyên. Khi quay lại, AI tiếp tục từ trạng thái số liệu hiện tại.
 - Bù offline 30 ngày phải xong dưới **3 giây** trên máy trung bình. Nếu chậm, tối ưu bằng cách gộp bước khi không có sự kiện.
 
+**Cách làm (GĐ2, `core/simulation`):** khoảng thời gian được chia thành **lát** dài tối đa một bước (1 phút online, 10 phút offline); ranh giới lát nằm trên
+lưới của *giờ địa phương* nên mốc buổi (05/10/17/20 giờ) luôn là ranh giới lát. Mỗi lát gọi `simulate` của từng Area; bên trong lát công thức vẫn là
+dạng đóng (giải tích). Quy tắc rời rạc không được phụ thuộc cỡ lát: bệnh dùng *ngân sách rủi ro tích lũy* với ngưỡng seed theo (id, lần bệnh), không bốc
+từ dòng `rng`. Chỗ duy nhất lát "lấy mẫu" là số đống phân (tính từ đầu lát) nên kết quả hai chế độ lệch cỡ vài phút, không hơn (test `simulation.test.ts`).
+Trần 30 ngày: mô phỏng 30 ngày đầu rồi `rebase` mốc thời gian Area về hiện tại. Giờ máy lùi quá dung sai: không mô phỏng, store báo `clockRewound`.
+
 ---
 
 ## 7. Sự kiện chuẩn (event bus)

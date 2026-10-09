@@ -15,6 +15,8 @@ const COUNTED: readonly [GameEvent['type'], string][] = [
   ['BIRTH', 'summary.farm.births'],
   ['PIG_BECAME_ADULT', 'summary.farm.grown'],
   ['PIG_BECAME_SICK', 'summary.farm.sick'],
+  ['PIG_BECAME_CRITICAL', 'summary.farm.critical'],
+  ['PIG_DIED', 'summary.farm.died'],
   ['ORDER_NEW', 'summary.farm.orders'],
   ['GIFT_SPAWNED', 'summary.farm.gifts'],
 ];
@@ -31,8 +33,8 @@ export const farmArea: AreaModule = {
   manifest: FARM_CONTENT.area,
   save: farmSaveSpec,
   init: initFarm,
-  // One formula for every mode (ARCHITECTURE §6); Sobi Farm's rules have no death to hold back.
-  simulate: (world, now, rng, dayOffsetMs) => advanceFarmWorld(world, now, rng, dayOffsetMs),
+  // One formula for every mode (ARCHITECTURE §6); the mode only holds back death during a catch-up.
+  simulate: (world, now, rng, dayOffsetMs, mode) => advanceFarmWorld(world, now, rng, dayOffsetMs, mode),
   simulatedAt: farmSimulatedAt,
   rebase: rebaseFarm,
   level: (world) => levelFromXp(areaXp(world, FARM_AREA_ID)),

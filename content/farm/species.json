@@ -2,35 +2,35 @@
   "tiers": {
     "COMMON": {
       "sellGold": 1200,
-      "growthSec": 7200,
+      "growthSec": 172800,
       "pregnancySec": 3600,
       "maxWeight": 50,
       "breedable": true
     },
     "UNCOMMON": {
       "sellGold": 3000,
-      "growthSec": 14400,
+      "growthSec": 216000,
       "pregnancySec": 5400,
       "maxWeight": 80,
       "breedable": true
     },
     "RARE": {
       "sellGold": 12000,
-      "growthSec": 28800,
+      "growthSec": 259200,
       "pregnancySec": 10800,
       "maxWeight": 120,
       "breedable": true
     },
     "EPIC": {
       "sellGold": 24000,
-      "growthSec": 57600,
+      "growthSec": 345600,
       "pregnancySec": 18000,
       "maxWeight": 180,
       "breedable": true
     },
     "LEGENDARY": {
       "sellGold": 50000,
-      "growthSec": 86400,
+      "growthSec": 432000,
       "pregnancySec": null,
       "maxWeight": 250,
       "breedable": false

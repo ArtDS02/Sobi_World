@@ -14,7 +14,8 @@ export type HappinessLevel = (typeof HAPPINESS_LEVELS)[number];
 
 /** Seconds per simulated tick: the store ticks every second, 60 s keeps the sim fast and exact. */
 const STEP_SEC = 60;
-/** An rng that never rolls sickness, so the run measures feeding alone. */
+/** The run measures feeding alone: the world is always "new", so the new-world protection keeps every pig from falling ill. */
+const ALWAYS_NEW_WORLD = 1e15;
 const NO_SICKNESS = () => sequenceRng([0.999999]);
 
 const baby = (breed: BreedId): Pig => ({
@@ -44,7 +45,7 @@ export function foodToAdult(breed: BreedId): number {
   const rng = NO_SICKNESS();
   const lastTick = BREEDS[breed].growthSec + STEP_SEC;
   for (let t = STEP_SEC; t <= lastTick; t += STEP_SEC) {
-    ({ pigs, trough } = advanceWithTrough({ pigs, trough }, t * 1000, rng));
+    ({ pigs, trough } = advanceWithTrough({ pigs, trough }, t * 1000, rng, 0, 0, ALWAYS_NEW_WORLD));
   }
   if (pigs[0]!.growthProgress < 100) throw new Error(`${breed} not adult on a full trough`);
   return start - trough.food;
@@ -55,7 +56,7 @@ export function stallGrowth(breed: BreedId): number {
   const pigs = [baby(breed)];
   const trough = { food: 0, capacity: BALANCE.START_TROUGH_CAPACITY, lastResolvedAt: 0 };
   const end = BREEDS[breed].growthSec * 2 * 1000;
-  return advanceWithTrough({ pigs, trough }, end, NO_SICKNESS()).pigs[0]!.growthProgress;
+  return advanceWithTrough({ pigs, trough }, end, NO_SICKNESS(), 0, 0, ALWAYS_NEW_WORLD).pigs[0]!.growthProgress;
 }
 
 /** Sell price at a happiness level, through the real pricing (hunger = cleanliness = level). */

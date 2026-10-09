@@ -4,6 +4,7 @@
 import achievementsRaw from '../../../content/shared/achievements.json';
 import dailyRaw from '../../../content/shared/daily.json';
 import dayNightRaw from '../../../content/shared/daynight.json';
+import healthRaw from '../../../content/shared/health.json';
 import inventoryRaw from '../../../content/shared/inventory.json';
 import itemsRaw from '../../../content/shared/items.json';
 import progressionRaw from '../../../content/shared/progression.json';
@@ -13,6 +14,7 @@ import timeRaw from '../../../content/shared/time.json';
 import { achievementsFileSchema } from '../../../content/schemas/shared/achievements';
 import { dailyFileSchema } from '../../../content/schemas/shared/daily';
 import { dayNightFileSchema } from '../../../content/schemas/shared/dayNight';
+import { healthFileSchema } from '../../../content/schemas/shared/health';
 import { inventoryFileSchema } from '../../../content/schemas/shared/inventory';
 import { itemsFileSchema } from '../../../content/schemas/shared/items';
 import { progressionFileSchema } from '../../../content/schemas/shared/progression';
@@ -30,6 +32,7 @@ export const CONTENT = {
   achievements: loadContent('shared/achievements.json', achievementsFileSchema, achievementsRaw),
   daily: loadContent('shared/daily.json', dailyFileSchema, dailyRaw),
   dayNight: loadContent('shared/daynight.json', dayNightFileSchema, dayNightRaw),
+  health: loadContent('shared/health.json', healthFileSchema, healthRaw),
   time: loadContent('shared/time.json', timeFileSchema, timeRaw),
 };
 

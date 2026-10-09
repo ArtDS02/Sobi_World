@@ -178,10 +178,10 @@ describe('sellPig (§8.7)', () => {
   });
 
   it('price is computed after advanceWorld (D18)', () => {
-    // 3,600 s unattended, no trough (NH-1 budgets): clean 80, hunger 50 → happiness 67
-    // → floor(1200 * 1.035).
+    // 3,600 s unattended, no trough (GĐ2 rates): clean 96, hunger 92 → happiness 94
+    // → floor(1200 * 1.17).
     const r = expectOk(sellPig(withPigs([adult()]), { pigId: 'pig-1' }, ctx(3600 * SEC)));
-    expect(r.state.transactions[0]!.amount).toBe(1242);
+    expect(r.state.transactions[0]!.amount).toBe(1404);
   });
 
   const sell = (s: FarmGame) => sellPig(s, { pigId: 'pig-1' }, ctx());

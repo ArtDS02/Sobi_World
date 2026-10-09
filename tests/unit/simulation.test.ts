@@ -57,19 +57,35 @@ describe('one formula for every step size (online 1 min vs offline 10 min)', () 
           makePig({ id: 'b', slotIndex: 1, lastTickedAt: T0, createdAt: T0, hunger: 60, cleanliness: 70, growthProgress: 55 }),
           makePig({ id: 'c', slotIndex: 2, breed: 'PIG_EARTH_PINK', lastTickedAt: T0, createdAt: T0, hunger: 30, cleanliness: 90, growthProgress: 100 }),
         ],
-        12,
+        100,
       ),
     );
   const start = () => at0(farm());
 
-  it('24 hours give the same needs, growth and trough', () => {
+  // Needs, growth and meals are closed-form per slice, so the slice size does not matter for them. The
+  // one thing a slice samples is the pile count (a pile made mid-slice counts from the next slice on),
+  // which moves cleanliness, and so the moment a pig turns dirty, by a minute or two over a day.
+  it('a day gives the same needs, growth and trough, within what pile counting can move', () => {
     const online = farmOf(reg.advance(start(), T0 + DAY_MS, healthy(), 0, 'online').state);
     const offline = farmOf(reg.advance(start(), T0 + DAY_MS, healthy(), 0, 'offline').state);
     expect(online.trough.food).toBe(offline.trough.food);
+    expect(online.manure).toBe(offline.manure);
     for (const [i, p] of online.pigs.entries()) {
       const q = offline.pigs[i]!;
-      for (const key of ['hunger', 'cleanliness', 'growthProgress'] as const) {
-        expect(q[key], `${p.id}.${key}`).toBeCloseTo(p[key], 6);
+      expect(q.hunger, `${p.id}.hunger`).toBeCloseTo(p.hunger, 6);
+      expect(Math.abs(q.cleanliness - p.cleanliness), `${p.id}.cleanliness`).toBeLessThan(0.5);
+      expect(Math.abs(q.growthProgress - p.growthProgress), `${p.id}.growth`).toBeLessThan(0.25);
+    }
+  });
+
+  it('a pen without manure (babies only) matches to the last digit', () => {
+    const babies = at0(world(makeState([makePig({ id: 'a', lastTickedAt: T0, createdAt: T0 }), makePig({ id: 'b', slotIndex: 1, lastTickedAt: T0, createdAt: T0, hunger: 60 })], 100)));
+    const span = 5 * HOUR_MS; // young at 6 h: no manure yet
+    const online = farmOf(reg.advance(babies, T0 + span, healthy(), 0, 'online').state);
+    const offline = farmOf(reg.advance(babies, T0 + span, healthy(), 0, 'offline').state);
+    for (const [i, p] of online.pigs.entries()) {
+      for (const key of ['hunger', 'cleanliness', 'growthProgress', 'energy'] as const) {
+        expect(offline.pigs[i]![key], `${p.id}.${key}`).toBeCloseTo(p[key]!, 9);
       }
     }
   });

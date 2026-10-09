@@ -3,6 +3,7 @@
 import type { WorldSave } from '../../../core/save/world';
 import type { ActionContext, ActionResultOf } from '../../../core/types';
 import type { Rng } from '../../../core/rng';
+import type { SimMode } from '../../../core/simulation/simulate';
 import { advanceWorld } from './advanceWorld';
 import { farmArea, farmOf, withFarm } from './save/lens';
 import type { ActionResult, FarmGame } from './types';
@@ -18,8 +19,8 @@ export function liftFarmAction(action: FarmAction): WorldAction {
   };
 }
 
-export function advanceFarmWorld(world: WorldSave, now: number, rng: Rng, dayOffsetMs: number) {
-  const result = advanceWorld(farmOf(world), now, rng, dayOffsetMs);
+export function advanceFarmWorld(world: WorldSave, now: number, rng: Rng, dayOffsetMs: number, mode: SimMode = 'online') {
+  const result = advanceWorld(farmOf(world), now, rng, dayOffsetMs, mode);
   return { state: withFarm(world, result.state), events: result.events };
 }
 

@@ -28,7 +28,7 @@ const flat = { ...mid, energy: 0.5, laziness: 0.5, social: 0.5, curiosity: 0.5, 
 
 describe('PL-1 trough meals as events', () => {
   it('a pig fed by the trough raises PIG_ATE_FROM_TROUGH once, with its hunger before the meal', () => {
-    const state = makeState([makePig({ id: 'a', hunger: 50.5, lastTickedAt: 0 })], 5);
+    const state = makeState([makePig({ id: 'a', hunger: 40.05, lastTickedAt: 0 })], 5);
     const out = advanceWorld(state, 60_000, neverSick());
     const ate = out.events.filter((e) => e.type === 'PIG_ATE_FROM_TROUGH');
     expect(ate).toHaveLength(1);

@@ -55,7 +55,7 @@ describe('relief (PG-1)', () => {
     let s = broke({ pigs: [makePig({ hunger: 0 })] });
     s = expectOk(claimRelief(s, {}, ctx())).state;
     s = expectOk(fillTrough(s, { units: RELIEF.FOOD }, ctx())).state;
-    const later = 3 * 3_600_000; // a COMMON pig grows in 2 h of fed time
+    const later = 50 * 3_600_000; // a COMMON pig takes 48 h of fed time to grow up
     s = advanceWorld(s, later, mulberry32(3)).state;
     expect(s.pigs[0]!.growthProgress).toBe(100);
     const sold = expectOk(sellPig(s, { pigId: 'pig-1' }, ctx(later)));

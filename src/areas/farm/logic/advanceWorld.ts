@@ -10,6 +10,9 @@ import { refreshOrders } from './orders';
 import { progressStep } from './progress';
 import { needLevel, needRank } from './pigHealth';
 import { advanceWithTrough } from './trough';
+import { criticalEvents, resolveMortality } from './mortality';
+import type { SimMode } from '../../../core/simulation/simulate';
+import { BALANCE } from './config/balance';
 
 export interface WorldResult {
   state: FarmGame;
@@ -20,10 +23,11 @@ export interface WorldResult {
  * Idempotent for the same `now`; the caller persists when `events` is non-empty (§7.4 step 6).
  * `dayOffsetMs` (local time minus UTC) places game-day boundaries (NH-1).
  */
-export function advanceWorld(state: FarmGame, now: number, rng: Rng, dayOffsetMs = 0): WorldResult {
+export function advanceWorld(state: FarmGame, now: number, rng: Rng, dayOffsetMs = 0, mode: SimMode = 'online'): WorldResult {
   // Steps 1-2: resolveTrough then advancePig for every pig (DECISIONS S04A-1).
-  const win = advanceWithTrough({ pigs: state.pigs, trough: state.trough }, now, rng, dayOffsetMs);
-  let next: FarmGame = { ...state, pigs: win.pigs, trough: win.trough };
+  const piles = state.manure ?? 0;
+  const win = advanceWithTrough({ pigs: state.pigs, trough: state.trough }, now, rng, dayOffsetMs, piles, state.createdAt);
+  let next: FarmGame = { ...state, pigs: win.pigs, trough: win.trough, ...manureAfter(piles, state.pigs, win.pigs) };
   const events: GameEvent[] = [];
 
   if (win.report.emptiedAt !== null)
@@ -32,6 +36,10 @@ export function advanceWorld(state: FarmGame, now: number, rng: Rng, dayOffsetMs
     events.push({ type: 'PIG_ATE_FROM_TROUGH', pigId, ...m });
   }
   events.push(...diffPigs(state.pigs, win.pigs, win.report.hungerZeroAt));
+  events.push(...criticalEvents(state.pigs, win.pigs, now));
+  const mortality = resolveMortality(next, now, mode);
+  next = mortality.state;
+  events.push(...mortality.events);
 
   // Step 3: pregnancies (S10).
   const births = resolveBirths(next, now, rng);
@@ -52,6 +60,16 @@ export function advanceWorld(state: FarmGame, now: number, rng: Rng, dayOffsetMs
   if (events.length === 0) return { state: next, events };
   const progress = progressStep(state, next, events);
   return { state: progress.state, events: [...events, ...progress.events] };
+}
+
+/** The pen's manure after the window: every whole pile a pig made (systems/creature `poopProgress`) is added, up to the cap. */
+function manureAfter(piles: number, before: readonly Pig[], after: readonly Pig[]): { manure?: number } {
+  // The epsilon keeps a pile due at exactly this instant from being lost to float dust in the sum.
+  const made1 = (p: Pig) => Math.floor((p.poopProgress ?? 0) + 1e-9);
+  const was = new Map(before.map((p) => [p.id, made1(p)]));
+  const made = after.reduce((n, p) => n + Math.max(0, made1(p) - (was.get(p.id) ?? 0)), 0);
+  const manure = Math.min(BALANCE.MANURE_MAX, piles + made);
+  return manure === 0 && piles === 0 ? {} : { manure };
 }
 
 function diffPigs(

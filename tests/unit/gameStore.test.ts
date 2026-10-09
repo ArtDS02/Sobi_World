@@ -193,10 +193,10 @@ describe('gameStore', () => {
     await store.dispatch(buy);
     expect(timers.live()).toBe(1);
     const writes = counter.saves;
-    clock.advance(7200 * SEC); // PINK hunger reaches 0 → PIG_HUNGRY_ZERO (NH-1 budget)
+    clock.advance(7 * 3600 * SEC); // hunger 100 → 44: drops into the "low" care level → PIG_NEED_DROPPED
     timers.fire();
     await store.flush();
-    expect(store.getSnapshot().save!.pigs[0]!.hunger).toBeCloseTo(0, 9); // sliced: float dust, not exactly 0
+    expect(store.getSnapshot().save!.pigs[0]!.hunger).toBeCloseTo(44, 6);
     expect(counter.saves).toBe(writes + 1);
     for (let i = 0; i < 10; i++) timers.fire();
     expect(timers.created()).toBe(1);
@@ -226,13 +226,13 @@ describe('gameStore', () => {
     expect(timers.live()).toBe(0);
     expect(counter.saves).toBe(writes + 1);
 
-    clock.advance(3600 * SEC); // half the PINK hunger budget (NH-1)
+    clock.advance(3600 * SEC); // one hour: -8 hunger
     page.visible = true;
     page.emit('visibilitychange'); // > 30 s since the last write → autosave
     await store.flush();
     expect(counter.saves).toBe(writes + 2);
     expect(timers.live()).toBe(1);
-    expect(store.getSnapshot().save!.pigs[0]!.hunger).toBeCloseTo(50, 6);
+    expect(store.getSnapshot().save!.pigs[0]!.hunger).toBeCloseTo(92, 6);
 
     page.emit('pagehide');
     await store.flush();

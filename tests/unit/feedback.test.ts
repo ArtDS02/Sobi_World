@@ -17,6 +17,8 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   PIG_HUNGRY_ZERO: { type: 'PIG_HUNGRY_ZERO', pigId: 'pig-1', at: 0, stalled: true },
   PIG_BECAME_SICK: { type: 'PIG_BECAME_SICK', pigId: 'pig-1' },
   PIG_NEED_DROPPED: { type: 'PIG_NEED_DROPPED', pigId: 'pig-1', need: 'hunger', level: 'low' },
+  PIG_BECAME_CRITICAL: { type: 'PIG_BECAME_CRITICAL', pigId: 'pig-1' },
+  PIG_DIED: { type: 'PIG_DIED', pigId: 'pig-1', name: 'Ủn Hồng', breed: 'PIG_EARTH_PINK' },
   PIG_BECAME_ADULT: { type: 'PIG_BECAME_ADULT', pigId: 'pig-1' },
   PIG_ATE_FROM_TROUGH: { type: 'PIG_ATE_FROM_TROUGH', pigId: 'pig-1', meals: 1, hungerBefore: 50 },
   BIRTH: { type: 'BIRTH', motherId: 'pig-1', childId: 'pig-1', childBreed: 'PIG_EARTH_PINK' },

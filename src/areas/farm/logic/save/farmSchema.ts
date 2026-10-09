@@ -51,6 +51,9 @@ const pigSchema = z.object({
   hunger: pct,
   cleanliness: pct,
   isSick: z.boolean(),
+  energy: pct.optional(),
+  poopProgress: nonNeg.optional(),
+  illRisk: nonNeg.optional(),
   pregnancy: pregnancySchema.nullable(),
   lastTickedAt: time,
   createdAt: time,
@@ -177,6 +180,11 @@ const farmAreaShape = z.object({
   gifts: z.object({ nextAt: time.nullable(), boxes: z.array(giftSchema) }),
   decor: z.array(z.enum(DECOR_ID_VALUES)),
   breedingRecords: z.array(breedingRecordSchema),
+  /** Piles of manure lying in the pen (absent = none; GĐ2). */
+  manure: z.number().int().min(0).optional(),
+  /** No pig dies before this time (a catch-up skipped a death, decision 004). */
+  graceUntil: time.optional(),
+  memorials: z.array(z.object({ id: z.string(), name: z.string(), breed: breedId, diedAt: time })).optional(),
 });
 
 export const farmAreaSchema = farmAreaShape.superRefine(farmInvariants);

@@ -16,6 +16,12 @@ export interface Creature {
   hunger: number;
   cleanliness: number;
   isSick: boolean;
+  /** 0-100; falls awake, recovers asleep (GAME_BALANCE §2.2). Absent = full (older saves). */
+  energy?: number;
+  /** Hours-worth of manure made so far, in pile units: its integer part is the piles dropped (monotonic). */
+  poopProgress?: number;
+  /** Illness hazard accumulated towards the next episode (systems/health/risk); resets when one starts. */
+  illRisk?: number;
   /** Time the numbers were last simulated up to (epoch ms). */
   lastTickedAt: number;
   createdAt: number;
@@ -36,4 +42,5 @@ export interface Creature {
 /** What care-based mood and value read. */
 export type CreatureCare = Pick<Creature, 'hunger' | 'cleanliness' | 'isSick'>;
 
-export type GrowthStage = 'BABY' | 'YOUNG' | 'ADULT'; // derived, never stored
+/** BABY → YOUNG → ADULT (can be shipped out) → MATURE (can breed); derived, never stored. */
+export type GrowthStage = 'BABY' | 'YOUNG' | 'ADULT' | 'MATURE';
