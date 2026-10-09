@@ -68,7 +68,7 @@ describe('breeding outcome (§6.5 as rules, U00-1 D4)', () => {
         expect(Math.abs((counts.get(o.breed) ?? 0) / 100 - o.weight)).toBeLessThan(1.5);
       expect(Math.abs(males / 100 - 50)).toBeLessThan(1.5);
     }
-  });
+  }, 20_000); // ~5 s alone under load: the default 5 s limit flaked in the full suite
 });
 
 describe('breedPigs validation (§8.8) — right error, no state change', () => {

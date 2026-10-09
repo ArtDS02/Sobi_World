@@ -127,6 +127,15 @@
       gap: $sp-2;
     }
 
+    // An ill pig: when it turns critical, or how long it has left.
+    &__warning {
+      padding: $sp-2 $sp-3;
+      font-weight: $fw-bold;
+      color: $c-danger;
+      background: $c-danger-soft;
+      border-radius: $radius-sm;
+    }
+
     &__stat {
       display: grid;
       grid-template-columns: 1fr auto;

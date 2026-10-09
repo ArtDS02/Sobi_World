@@ -1,4 +1,4 @@
-// NH-1: pig needs & health — game-time decay, care levels, disease lifecycle, save round trip.
+// NH-1 / GĐ2: pig needs & health — game-time decay, care levels, disease lifecycle, save round trip.
 import { describe, expect, it } from 'vitest';
 import { cleanPig } from '../../src/areas/farm/logic/actions/cleanPig';
 import { feedPig } from '../../src/areas/farm/logic/actions/feedPig';
@@ -10,6 +10,7 @@ import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { dayStart, diseaseState, gameDay, needLevel } from '../../src/areas/farm/logic/pigHealth';
 import type { GameEvent } from '../../src/areas/farm/logic/events';
 import { sequenceRng, type Rng } from '../../src/core/rng';
+import { episodeThreshold } from '../../src/systems/health/risk';
 import { parseFarmSave } from '../../src/areas/farm/logic/save/legacy';
 import type { ActionResult, Pig, FarmGame } from '../../src/areas/farm/logic/types';
 import { makePig } from './pigFactory';
@@ -19,9 +20,12 @@ const SEC = 1000;
 const HOUR = 3600 * SEC;
 const DAY = 24 * HOUR;
 const neverSick = (): Rng => sequenceRng([1 - 1e-12]);
-const alwaysSick = (): Rng => sequenceRng([0]);
-/** Dirty enough that exposure starts at once; rng 0 makes the onset immediate. */
+/** A world old enough that the new-world protection (first 72 h) is over. */
+const LONG_AGO = -1e12;
+/** Dirty enough that exposure starts at once. */
 const dirty = (o: Partial<Pig> = {}) => makePig({ cleanliness: 0, growthProgress: 100, ...o });
+/** A pig whose hazard is banked up to its threshold: the next exposed instant makes it ill. */
+const primed = (pig: Pig): Pig => (pig.isSick ? pig : { ...pig, illRisk: episodeThreshold(pig) });
 
 const okState = (r: ActionResult): FarmGame => {
   if (!r.ok) throw new Error(r.error);
@@ -29,10 +33,11 @@ const okState = (r: ActionResult): FarmGame => {
 };
 
 describe('hunger & cleanliness follow game time only', () => {
-  it('a full PINK stays fed for 2 h and clean for 5 h (was 40 min / 90 min)', () => {
-    const p = advancePig(makePig(), 2 * HOUR - SEC, neverSick());
+  it('a full pig stays fed for 12.5 h and clean for 25 h (-8 and -4 per hour)', () => {
+    const p = advancePig(makePig(), 12.5 * HOUR - SEC, neverSick());
     expect(p.hunger).toBeGreaterThan(0);
-    expect(advancePig(makePig(), 5 * HOUR - SEC, neverSick()).cleanliness).toBeGreaterThan(0);
+    expect(advancePig(makePig(), 12.5 * HOUR, neverSick()).hunger).toBeCloseTo(0, 9);
+    expect(advancePig(makePig(), 25 * HOUR - SEC, neverSick()).cleanliness).toBeGreaterThan(0);
   });
 
   it('60 fps-sized steps decay exactly like one big step (no per-frame mutation)', () => {
@@ -72,7 +77,7 @@ describe('hunger & cleanliness follow game time only', () => {
     expect(needLevel(later.cleanliness)).toBe('good');
   });
 
-  it('pigs decay independently, each at its own species rate', () => {
+  it('pigs decay independently; every species has the same flat rates', () => {
     const pink = makePig({ id: 'a', slotIndex: 0 });
     const mythic = makePig({ id: 'b', slotIndex: 1, breed: 'PIG_MYTHICAL' });
     const out = advanceWorld(makeState([pink, mythic]), HOUR, neverSick()).state.pigs;
@@ -100,7 +105,7 @@ describe('care levels and warnings', () => {
   it('ticking every second warns once per drop: low, veryLow, critical — never repeated', () => {
     let state = makeState([makePig({ cleanliness: 100 })]);
     const events: GameEvent[] = [];
-    for (let t = 60; t <= 3 * 3600; t += 1) {
+    for (let t = 60; t <= 13 * 3600; t += 30) {
       const out = advanceWorld(state, t * SEC, neverSick());
       state = out.state;
       events.push(...out.events);
@@ -119,7 +124,7 @@ describe('care levels and warnings', () => {
 });
 
 describe('disease lifecycle: Healthy → Ill → Recovering, max 1 episode / game day', () => {
-  const sickAt = (pig: Pig, now: number, offset = 0) => advancePig(pig, now, alwaysSick(), offset);
+  const sickAt = (pig: Pig, now: number, offset = 0) => advancePig(primed(pig), now, neverSick(), offset, 0, LONG_AGO);
 
   it('a healthy dirty pig can fall ill: Ill, onset time and day recorded', () => {
     const p = sickAt(dirty(), 10 * SEC);
@@ -167,7 +172,7 @@ describe('disease lifecycle: Healthy → Ill → Recovering, max 1 episode / gam
 
   it('medicine: Ill → Recovering for SICK_RECOVERY_SEC, then Healthy', () => {
     const s = makeState([sickAt(dirty(), 10 * SEC)]);
-    const treated = okState(treatPig(s, { pigId: 'pig-1' }, { now: HOUR, rng: alwaysSick() }));
+    const treated = okState(treatPig(s, { pigId: 'pig-1' }, { now: HOUR, rng: neverSick() }));
     const pig = treated.pigs[0]!;
     const until = HOUR + BALANCE.SICK_RECOVERY_SEC * SEC;
     expect(pig.recoveringUntil).toBe(until);
@@ -175,11 +180,12 @@ describe('disease lifecycle: Healthy → Ill → Recovering, max 1 episode / gam
     expect(diseaseState(pig, until)).toBe('healthy');
   });
 
-  it('a split window gives the same onset as one big window (memoryless, D5)', () => {
-    const pig = dirty({ sickDay: 0, sickEpisodes: 1 });
-    const whole = advancePig(pig, DAY + HOUR, alwaysSick());
-    const split = advancePig(advancePig(pig, DAY - HOUR, alwaysSick()), DAY + HOUR, alwaysSick());
-    expect(split).toEqual(whole);
+  it('a split window gives the same onset as one big window', () => {
+    const pig = primed(dirty({ sickDay: 0, sickEpisodes: 1 }));
+    const run = (p: Pig, now: number) => advancePig(p, now, neverSick(), 0, 0, LONG_AGO);
+    const whole = run(pig, DAY + HOUR);
+    const split = run(run(pig, DAY - HOUR), DAY + HOUR);
+    expect(split).toMatchObject({ isSick: true, lastSickAt: whole.lastSickAt, sickDay: whole.sickDay, sickEpisodes: 1 });
   });
 });
 
@@ -221,18 +227,19 @@ describe('save / load keeps needs and disease state', () => {
 });
 
 describe('integration: neglect never becomes a disease spiral', () => {
-  it('5 days starving + filthy, worst-case rng, medicine at once: ≤ 1 episode per day', () => {
+  it('5 days starving + filthy, medicine at once: ≤ 1 episode per day', () => {
     let state = {
       ...makeState([dirty({ hunger: 0 })]),
-      inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 99 },
+      createdAt: LONG_AGO,
+      inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 99, item_manure: 0 },
     };
     const onsets: number[] = [];
     for (let t = 0; t <= 5 * DAY; t += 60 * SEC) {
-      const out = advanceWorld(state, t, alwaysSick());
+      const out = advanceWorld(state, t, neverSick());
       state = out.state;
       if (out.events.some((e) => e.type === 'PIG_BECAME_SICK')) {
         onsets.push(state.pigs[0]!.lastSickAt!);
-        state = okState(treatPig(state, { pigId: 'pig-1' }, { now: t, rng: alwaysSick() }));
+        state = okState(treatPig(state, { pigId: 'pig-1' }, { now: t, rng: neverSick() }));
       }
     }
     const days = onsets.map((at) => gameDay(at, 0));

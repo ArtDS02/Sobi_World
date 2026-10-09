@@ -9,6 +9,8 @@ export const itemSchema = z.strictObject({
   rarity: z.enum(RARITY_VALUES),
   /** Unit price at the shop (shop.json may sell packs at other prices). */
   priceGold: nonNeg,
+  /** What the shop pays for one; absent = cannot be sold. */
+  sellGold: nonNeg.optional(),
   /** Hunger restored when a creature eats it; 0 = not food. */
   hungerRestore: nonNeg,
   curesSickness: z.boolean(),

@@ -5,13 +5,13 @@ import { BREEDS } from './config/breeds';
 import { levelFromXp } from './config/levels';
 import type { GrowthStage, Pig, FarmGame } from './types';
 
-/** D3: BABY < STAGE_YOUNG_AT <= YOUNG < 100 = ADULT (systems/creature). */
+/** BABY < STAGE_YOUNG_AT <= YOUNG < STAGE_ADULT_AT <= ADULT < 100 = MATURE (systems/creature). */
 export const growthStage = (growthProgress: number): GrowthStage =>
-  creatureGrowthStage(growthProgress, BALANCE.STAGE_YOUNG_AT);
+  creatureGrowthStage(growthProgress, BALANCE.STAGE_YOUNG_AT, BALANCE.STAGE_ADULT_AT);
 
 /** Display-only weight in kg. */
 export const weight = (pig: Pick<Pig, 'breed' | 'growthProgress'>): number =>
-  displayWeight(pig.growthProgress, BREEDS[pig.breed].maxWeight);
+  displayWeight(pig.growthProgress, BREEDS[pig.breed].maxWeight, BALANCE.WEIGHT_AT_PROGRESS);
 
 /** D13: level is derived from xp. */
 export const level = (state: Pick<FarmGame, 'player'>): number => levelFromXp(state.player.xp);

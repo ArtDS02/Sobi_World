@@ -33,7 +33,7 @@ const broke = (patch: Partial<FarmGame> = {}): FarmGame => {
   return {
     ...s,
     player: { ...s.player, gold: 10 },
-    inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 0 },
+    inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 0, item_manure: 0 },
     trough: { ...s.trough, food: 0 },
     ...patch,
   };
@@ -55,7 +55,7 @@ describe('relief (PG-1)', () => {
     let s = broke({ pigs: [makePig({ hunger: 0 })] });
     s = expectOk(claimRelief(s, {}, ctx())).state;
     s = expectOk(fillTrough(s, { units: RELIEF.FOOD }, ctx())).state;
-    const later = 3 * 3_600_000; // a COMMON pig grows in 2 h of fed time
+    const later = 50 * 3_600_000; // a COMMON pig takes 48 h of fed time to grow up
     s = advanceWorld(s, later, mulberry32(3)).state;
     expect(s.pigs[0]!.growthProgress).toBe(100);
     const sold = expectOk(sellPig(s, { pigId: 'pig-1' }, ctx(later)));
@@ -185,7 +185,10 @@ describe('decorations (PG-3)', () => {
     const bonus = decorBonus(r.state);
     expect(bonus).toBe(DECORS.DECOR_HAY_BALE.happyBonus);
     expect(happiness(pig, bonus)).toBe(happiness(pig) + bonus);
-    expect(sellPrice(pig, bonus)).toBeGreaterThan(sellPrice(pig));
+    // Decorations lift the mood a pig lives in, and with it the Quality it ships at.
+    const ordinary = makePig({ growthProgress: 100, hunger: 59, cleanliness: 59, energy: 59 }); // mood 59: Good, 60 with decorations: Great
+    const at = { now: 0, dayOffsetMs: 0 };
+    expect(sellPrice(ordinary, { ...at, decorBonus: bonus })).toBeGreaterThan(sellPrice(ordinary, { ...at, decorBonus: 0 }));
   });
 
   it('happiness with a bonus is still capped at 100', () => {

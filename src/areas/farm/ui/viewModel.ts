@@ -13,8 +13,12 @@ import {
   weight,
 } from '../logic/derived';
 import { happiness } from '../logic/happiness';
-import { diseaseState, type DiseaseState } from '../logic/pigHealth';
-import { sellMultiplier } from '../logic/pricing';
+import { diseaseState } from '../logic/pigHealth';
+import { pigStage } from '../logic/mortality';
+import { HEALTH } from '../../../core/config/health';
+import type { HealthStage } from '../../../systems/health/disease';
+import { pigQuality } from '../logic/pricing';
+import { QUALITY_RULES } from '../../../systems/quality/quality';
 import type { Pig, FarmGame } from '../logic/types';
 import { formatDateTime, formatDec, formatDuration, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
@@ -37,9 +41,20 @@ export interface TopBarVm {
   pigsTitle: string;
   pigsFull: boolean;
   troughEmpty: boolean;
+  /** Pigs that are ill: the worst-first pig to look at and the text of the HUD alert (null = all well). */
+  alert: { text: string; critical: boolean; pigId: string } | null;
 }
 
-export function topBarVm(save: FarmGame): TopBarVm {
+/** The HUD alert for ill pigs (GĐ2): critical ones first. `now` defaults to the pigs' last tick. */
+function alertVm(save: FarmGame, now: number): TopBarVm['alert'] {
+  const ill = save.pigs.filter((p) => p.isSick);
+  if (ill.length === 0) return null;
+  const critical = ill.filter((p) => pigStage(p, now) !== 'ill');
+  if (critical.length > 0) return { text: t(vi.hud.alertCritical, { count: critical.length }), critical: true, pigId: critical[0]!.id };
+  return { text: t(vi.hud.alertSick, { count: ill.length }), critical: false, pigId: ill[0]!.id };
+}
+
+export function topBarVm(save: FarmGame, now = Math.max(0, ...save.pigs.map((p) => p.lastTickedAt))): TopBarVm {
   const { xp, gold } = save.player;
   const level = levelFromXp(xp);
   const next = BALANCE.LEVEL_XP[Math.min(level, BALANCE.MAX_LEVEL - 1)] ?? xp;
@@ -58,6 +73,7 @@ export function topBarVm(save: FarmGame): TopBarVm {
     troughShort: t(vi.hud.troughShort, { food, capacity }),
     troughProgress: capacity > 0 ? Math.round((food / capacity) * 100) : 0,
     troughEmpty: food <= 0,
+    alert: alertVm(save, now),
     ...pigsVm(save),
   };
 }
@@ -93,10 +109,12 @@ export interface PigCardVm {
 }
 
 /** lastTickedAt is the last world tick (≤ 1 s old), good enough for a label. */
-const HEALTH_TEXT: Record<DiseaseState, string> = {
+const HEALTH_TEXT: Record<HealthStage, string> = {
   healthy: vi.stat.healthy,
   ill: vi.stat.sick,
   recovering: vi.stat.recovering,
+  critical: vi.stat.critical,
+  dead: vi.stat.critical, // past its time but held back by the catch-up grace: still treatable
 };
 
 const pct = (n: number) => t(vi.ui.percent, { n: Math.floor(n) });
@@ -110,7 +128,7 @@ export function pigCardVm(pig: Pig): PigCardVm {
     growth: pct(pig.growthProgress),
     hunger: pct(pig.hunger),
     cleanliness: pct(pig.cleanliness),
-    health: HEALTH_TEXT[diseaseState(pig, pig.lastTickedAt)],
+    health: HEALTH_TEXT[pigStage(pig, pig.lastTickedAt) === 'healthy' ? diseaseState(pig, pig.lastTickedAt) : pigStage(pig, pig.lastTickedAt)],
     isSick: pig.isSick,
     isPregnant: pig.pregnancy !== null,
   };
@@ -125,11 +143,20 @@ export interface PigPanelVm extends PigCardVm {
   /** "Con của Heo Trắng × Heo Đen" for a bred pig (BR-1), null for shop pigs. */
   parents: string | null;
   happiness: string;
-  priceMultiplier: string;
+  quality: string;
   pregnancy: string | null;
+  /** A warning for an ill pig: when it turns critical, or how long it has left (null = well). */
+  warning: string | null;
 }
 
 /** `decorBonus`: the farm's decoration bonus (engine/decor.ts), part of happiness (PG-3). */
+function warningText(pig: Pig, now: number): string | null {
+  if (!pig.isSick || pig.lastSickAt === undefined) return null;
+  const ill = now - pig.lastSickAt;
+  if (ill < HEALTH.criticalAfterMs) return t(vi.stat.warnSick, { time: formatDuration(HEALTH.criticalAfterMs - ill) });
+  return t(vi.stat.warnCritical, { time: formatDuration(Math.max(0, HEALTH.deathAfterMs - ill)) });
+}
+
 export function pigPanelVm(pig: Pig, now: number, decorBonus = 0): PigPanelVm {
   const happy = happiness(pig, decorBonus);
   return {
@@ -145,10 +172,11 @@ export function pigPanelVm(pig: Pig, now: number, decorBonus = 0): PigPanelVm {
         })
       : null,
     happiness: String(happy),
-    priceMultiplier: t(vi.stat.priceMultiplier, { mult: formatDec(sellMultiplier(happy)) }),
+    quality: ((q) => t(vi.stat.quality, { quality: vi.quality[q], mult: formatDec(QUALITY_RULES.priceFactor[q]) }))(pigQuality(pig, decorBonus)),
     pregnancy: pig.pregnancy
       ? t(vi.stat.pregnantLeft, { time: formatDuration(pig.pregnancy.endsAt - now) })
       : null,
+    warning: warningText(pig, now),
   };
 }
 

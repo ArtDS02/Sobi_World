@@ -1,7 +1,8 @@
 // Inventory (DECISIONS Q7): items, quantities and a quick use. Food quick-use fills the trough.
-import { ITEM_IDS } from '../../../../core/config/items';
+import { ITEMS, ITEM_IDS } from '../../../../core/config/items';
 import type { AssetRegistry } from '../../../../core/assets/registry';
 import type { NurseryPig, FarmGame } from '../../logic/types';
+import { formatInt, t } from '../../../../i18n/format';
 import { vi } from '../../../../i18n/vi';
 import type { UiIcon } from '../../../../core/config/assetIds';
 import type { ItemId } from '../../../../core/config/ids';
@@ -9,10 +10,12 @@ import { icon } from '../../../../ui/components/icon';
 import { el } from '../../../../ui/dom';
 import { renderNursery } from './inventoryNursery';
 
-const ITEM_ICON: Record<ItemId, UiIcon> = { FOOD_BASIC: 'fillTrough', MEDICINE_COMMON: 'treat' };
+const ITEM_ICON: Record<ItemId, UiIcon> = { FOOD_BASIC: 'fillTrough', MEDICINE_COMMON: 'treat', item_manure: 'cleanAll' };
 
 export interface InventoryHandlers {
   fillTrough: () => void;
+  /** Sell every unit of a sellable item (Sobi Coin). */
+  sellItem: (id: ItemId, quantity: number) => void;
   /** A newborn in the nursery was clicked: ask whether to raise it now (BR-1). */
   raise: (baby: NurseryPig) => void;
 }
@@ -29,7 +32,7 @@ export function renderInventoryScreen(
     el(
       'ul',
       { class: 'inventory__list' },
-      ...ITEM_IDS.map((id) =>
+      ...ITEM_IDS.filter((id) => save.inventory[id] > 0 || ITEMS[id].sellGold === undefined).map((id) =>
         el(
           'li',
           { class: 'inventory__row' },
@@ -48,6 +51,13 @@ export function renderInventoryScreen(
                 { class: 'c-button', attrs: { type: 'button' }, on: { click: on.fillTrough } },
                 icon('fillTrough'),
                 vi.action.fillTrough,
+              )
+            : null,
+          ITEMS[id].sellGold !== undefined
+            ? el(
+                'button',
+                { class: 'c-button', attrs: { type: 'button' }, on: { click: () => on.sellItem(id, save.inventory[id]) } },
+                t(vi.inventory.sellAll, { gold: formatInt(ITEMS[id].sellGold! * save.inventory[id]) }),
               )
             : null,
         ),

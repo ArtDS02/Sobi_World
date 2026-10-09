@@ -2,7 +2,9 @@
 // world store and the save format are built from the registry, so adding an Area touches no world
 // code. Pure: time, randomness and the day offset come in as arguments.
 import type { AreaManifest } from '../../../content/schemas/area';
+import type { TimeRules } from '../clock';
 import type { EventBase, WorldEvent } from '../events';
+import { simulateWorld, type SimMode, type SimulationResult } from '../simulation/simulate';
 import { unlockGaps, worldDevelopment, type UnlockGap, type WorldDevelopmentRules } from '../progression/levels';
 import type { Rng } from '../rng';
 import type { AreaSaveSpec, LegacyResult, Raw, SaveCodec } from '../save/migrate';
@@ -11,12 +13,7 @@ import type { ActionContext } from '../types';
 
 export type { AreaManifest };
 
-/**
- * How time is being simulated (ARCHITECTURE §6): `online` = the game is open (the Area on screen or
- * in the background), `offline` = catching up after the game was closed. One formula for both; the
- * mode only switches rules like "no death during the catch-up" (DECISIONS 004).
- */
-export type SimMode = 'online' | 'offline';
+export type { SimMode };
 
 export interface AreaModule {
   manifest: AreaManifest;
@@ -28,12 +25,14 @@ export interface AreaModule {
   simulate(world: WorldSave, now: number, rng: Rng, dayOffsetMs: number, mode: SimMode): { state: WorldSave; events: EventBase[] };
   /** Time the Area was last simulated up to. */
   simulatedAt(world: WorldSave): number;
+  /** Moves its time stamps to `to` without simulating: the part of a long absence past the offline cap is skipped. */
+  rebase(world: WorldSave, to: number): WorldSave;
   /** The Area's level (its XP in progression.areas, its own level table). */
   level(world: WorldSave): number;
   /** Its events as standard world events (ARCHITECTURE §7); [] for events that are not its own. */
   toWorldEvents(events: readonly EventBase[]): WorldEvent[];
-  /** Lines for the "while you were away" screen (spec §5): string-table keys with parameters. */
-  getSummary?(events: readonly EventBase[]): SummaryLine[];
+  /** Lines for the "while you were away" screen (spec §5): what happened (the events) and what needs the player now (the world), as string-table keys with parameters. */
+  getSummary?(events: readonly EventBase[], world: WorldSave, now: number): SummaryLine[];
   /** Presentation hooks (scene, AI, animation) for the Area on screen; GĐ3 drives them. */
   onEnter?(): void;
   onExit?(): void;
@@ -43,6 +42,10 @@ export interface AreaModule {
 export interface SummaryLine {
   key: string;
   params?: Readonly<Record<string, string | number>>;
+  /** `alert` = needs the player now and is urgent, `warn` = needs care soon. */
+  tone?: 'warn' | 'alert';
+  /** Where a button on the line leads; the Area's own UI interprets it. */
+  goto?: { target: string; id?: string };
 }
 
 export interface AreaInfo {
@@ -53,7 +56,7 @@ export interface AreaInfo {
   gaps: UnlockGap[];
 }
 
-export function createAreaRegistry(modules: readonly AreaModule[], rules: WorldDevelopmentRules) {
+export function createAreaRegistry(modules: readonly AreaModule[], rules: WorldDevelopmentRules, time: TimeRules) {
   const ids = modules.map((m) => m.manifest.id);
   const dup = ids.find((id, i) => ids.indexOf(id) !== i);
   if (dup) throw new Error(`area ${dup} registered twice`);
@@ -80,16 +83,9 @@ export function createAreaRegistry(modules: readonly AreaModule[], rules: WorldD
     get: (id: string): AreaModule | undefined => byId.get(id),
     newWorld,
 
-    /** Every Area with state catches up to `now`, in registration order (ARCHITECTURE §6). */
-    advance(world: WorldSave, now: number, rng: Rng, dayOffsetMs: number, mode: SimMode = 'online') {
-      const events: EventBase[] = [];
-      let state = world;
-      for (const m of present(world)) {
-        const r = m.simulate(state, now, rng, dayOffsetMs, mode);
-        state = r.state;
-        events.push(...r.events);
-      }
-      return { state, events };
+    /** Every Area with state catches up to `now`, slice by slice (core/simulation; ARCHITECTURE §6). */
+    advance(world: WorldSave, now: number, rng: Rng, dayOffsetMs: number, mode: SimMode = 'online'): SimulationResult {
+      return simulateWorld(present(world), world, now, rng, dayOffsetMs, mode, time);
     },
 
     /** The world was simulated up to the earliest of its Areas. */
@@ -97,7 +93,8 @@ export function createAreaRegistry(modules: readonly AreaModule[], rules: WorldD
 
     toWorldEvents: (events: readonly EventBase[]): WorldEvent[] => modules.flatMap((m) => m.toWorldEvents(events)),
 
-    summary: (events: readonly EventBase[]): SummaryLine[] => modules.flatMap((m) => m.getSummary?.(events) ?? []),
+    summary: (events: readonly EventBase[], world: WorldSave, now: number): SummaryLine[] =>
+      modules.flatMap((m) => (m.manifest.id in world.areas ? (m.getSummary?.(events, world, now) ?? []) : [])),
 
     levels,
 

@@ -1,4 +1,4 @@
-// Needs (spec §7): care levels of a 0-100 need and the care budget (full → 0 time) of a species.
+// Needs (spec §7): the care level of a 0-100 need.
 import { NEED_LEVELS, type NeedLevel } from '../../../content/schemas/vocab';
 
 export { NEED_LEVELS, type NeedLevel };
@@ -11,6 +11,3 @@ export function needLevel(value: number, levelMin: Readonly<Record<NeedLevel, nu
 /** 0 = best. */
 export const needRank = (level: NeedLevel): number => NEED_LEVELS.indexOf(level);
 
-/** Seconds a full need lasts (NH-1): derived from growth time with a floor, never hand-tuned. */
-export const careBudget = (growthSec: number, ratio: number, minSec: number): number =>
-  Math.max(minSec, growthSec * ratio);

@@ -12,7 +12,11 @@ export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew';
  */
 export type EventOrigin = 'action' | 'tick' | 'catchup';
 /** Catch-up only: how long the world was not ticked (§9.5 away summary). */
-export interface CatchupInfo { awayMs: number }
+export interface CatchupInfo {
+  awayMs: number;
+  /** The absence was longer than the offline cap: only its first part was caught up (GAME_BALANCE §1). */
+  capped?: boolean;
+}
 export type EventListener = (events: EventBase[], origin: EventOrigin, catchup?: CatchupInfo) => void;
 
 export interface StoreSnapshot {
@@ -23,6 +27,8 @@ export interface StoreSnapshot {
   loadSource: LoadSource | null;
   /** The last write failed (§9.2): banner shown, retrying with backoff, memory state kept. */
   saveError: boolean;
+  /** The device clock is set back past the last simulated time: time does not run backwards, nothing advances. */
+  clockRewound: boolean;
 }
 
 /** An action bound to its arguments, e.g. `(s, c) => buyPig(s, args, c)`. */

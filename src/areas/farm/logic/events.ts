@@ -9,6 +9,9 @@ export type GameEvent =
   // `at` (epoch ms) and `stalled` (not yet adult) feed the away summary (§9.5).
   | { type: 'PIG_HUNGRY_ZERO'; pigId: string; at: number; stalled: boolean }
   | { type: 'PIG_BECAME_SICK'; pigId: string }
+  // GĐ2 health: an untreated illness turned critical; later, fatal (the pig leaves the farm).
+  | { type: 'PIG_BECAME_CRITICAL'; pigId: string }
+  | { type: 'PIG_DIED'; pigId: string; name: string; breed: BreedId }
   // NH-1: hunger / cleanliness fell into a worse care level (low or below), once per drop.
   | { type: 'PIG_NEED_DROPPED'; pigId: string; need: PigNeed; level: NeedLevel }
   | { type: 'PIG_BECAME_ADULT'; pigId: string }
@@ -26,9 +29,13 @@ export type GameEvent =
   | { type: 'PIG_FED'; pigId: string }
   | { type: 'PIG_CLEANED'; pigIds: string[] }
   | { type: 'PIG_TREATED'; pigId: string }
+  | { type: 'TROUGH_UPGRADED'; level: number; capacity: number; gold: number }
   | { type: 'TROUGH_FILLED'; units: number; fromInventory: number; gold: number }
   | { type: 'ITEM_BOUGHT'; itemId: ItemId; quantity: number; gold: number }
   | { type: 'PIG_RENAMED'; pigId: string }
+  // GĐ2: the pen raked (piles → item_manure kept in the bag); items sold from the bag.
+  | { type: 'MANURE_CLEANED'; piles: number; kept: number }
+  | { type: 'ITEM_SOLD'; itemId: ItemId; quantity: number; gold: number }
   | { type: 'PIG_SOLD'; pigId: string; gold: number }
   | { type: 'BREEDING_STARTED'; motherId: string; fatherId: string; endsAt: number }
   | { type: 'SLOT_BOUGHT'; slots: number; gold: number } // gold signed as in the transaction (§8.0)
@@ -53,6 +60,8 @@ export type GameEventType = GameEvent['type'];
 export const GAME_EVENT_TYPES = [
   'PIG_HUNGRY_ZERO',
   'PIG_BECAME_SICK',
+  'PIG_BECAME_CRITICAL',
+  'PIG_DIED',
   'PIG_NEED_DROPPED',
   'PIG_BECAME_ADULT',
   'PIG_ATE_FROM_TROUGH',
@@ -67,9 +76,12 @@ export const GAME_EVENT_TYPES = [
   'PIG_FED',
   'PIG_CLEANED',
   'PIG_TREATED',
+  'TROUGH_UPGRADED',
   'TROUGH_FILLED',
   'ITEM_BOUGHT',
   'PIG_RENAMED',
+  'MANURE_CLEANED',
+  'ITEM_SOLD',
   'PIG_SOLD',
   'BREEDING_STARTED',
   'SLOT_BOUGHT',

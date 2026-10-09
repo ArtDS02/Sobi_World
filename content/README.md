@@ -1,6 +1,6 @@
 # content/ — nội dung và số liệu game (JSON)
 
-- `shared/` — dùng chung mọi Area: item, shop, túi đồ, tiến trình, quality, thành tích, quà hằng ngày, ngày/đêm.
+- `shared/` — dùng chung mọi Area: item, shop, túi đồ, tiến trình, quality, thành tích, quà hằng ngày, ngày/đêm, `time.json` (4 buổi, bước mô phỏng, trần offline), `health.json` (bệnh, nguy kịch, chết, ân hạn, bảo vệ người mới).
 - `farm/` — của Sobi Farm: giống heo, lai giống, balance, hành vi, trang trí, quà, tên, FX mùa, layout, `area.json` (manifest Area).
 - `schemas/` — zod schema cho từng file, từ vựng đóng (`vocab.ts`), id sinh tự động (`ids.generated.ts`).
 

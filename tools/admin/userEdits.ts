@@ -2,12 +2,12 @@
 // currency, inventory, pigs, progress, game state. Pure functions on a FarmGame: gold only moves
 // through core's changeGold (an ADMIN_ADJUST transaction), XP keeps the trough capacity rule, and
 // every result is checked with the game's own save schema before it can be written.
+import { levelFromXp } from '../../src/areas/farm/logic/config/levels';
 import { BALANCE } from '../../src/areas/farm/logic/config/balance';
 import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { DECORS } from '../../src/areas/farm/logic/config/decor';
 import type { Gender, ItemId } from '../../src/core/config/ids';
 import type { BreedId, DecorId, StatId } from '../../src/areas/farm/logic/config/ids';
-import { levelFromXp, troughCapacityForLevel } from '../../src/areas/farm/logic/config/levels';
 import { happiness } from '../../src/areas/farm/logic/happiness';
 import { changeGold } from '../../src/areas/farm/logic/gold';
 import { farmGameSchema } from '../../src/areas/farm/logic/save/farmSchema';
@@ -59,12 +59,8 @@ export const setGold = (target: number, now: number, rng: Rng): Edit => (s) => {
   return r.state;
 };
 
-/** Progress: XP (level follows), trough capacity matches the new level, food is clamped to it. */
-export const setXp = (xp: number): Edit => (s) => {
-  const v = int(xp, 0);
-  const capacity = troughCapacityForLevel(levelFromXp(v));
-  return { ...s, player: { ...s.player, xp: v }, trough: { ...s.trough, capacity, food: Math.min(s.trough.food, capacity) } };
-};
+/** Progress: XP (the level follows). The trough has its own levels and is not touched. */
+export const setXp = (xp: number): Edit => (s) => ({ ...s, player: { ...s.player, xp: int(xp, 0) } });
 
 /** Progress: unlocked slots, never below the pigs + pregnancies they hold or a used slot index. */
 export const setSlots = (n: number): Edit => (s) => {
@@ -185,3 +181,46 @@ export function apply(s: FarmGame, edit: Edit): FarmGame {
   if (problems.length) throw new Error(problems.slice(0, 3).join('\n'));
   return next;
 }
+
+const DAY = 86_400_000;
+
+/**
+ * Time travel (GĐ2): the save looks as if the player left `ms` ago. Every moment in it moves back by
+ * `ms` (pigs' clocks, the trough, pregnancies, orders, gifts, history, the game day counters), so the
+ * game catches up the missed time the next time it opens — the same as really leaving it closed.
+ */
+export const rewind = (ms: number): Edit => (s) => {
+  const back = int(ms, 0);
+  const days = Math.round(back / DAY);
+  const t = <T extends number | null | undefined>(v: T): T => (typeof v === 'number' ? ((v - back) as T) : v);
+  const day = <T extends number | null | undefined>(v: T): T => (typeof v === 'number' ? ((v - days) as T) : v);
+  /** Shifts only the keys that exist: an absent field stays absent. */
+  const shift = <O extends object>(o: O, time: readonly (keyof O)[], dayKeys: readonly (keyof O)[] = []): O => {
+    const out = { ...o };
+    for (const k of time) if (out[k] !== undefined) out[k] = t(out[k] as number | null | undefined) as O[keyof O];
+    for (const k of dayKeys) if (out[k] !== undefined) out[k] = day(out[k] as number | null | undefined) as O[keyof O];
+    return out;
+  };
+  return {
+    ...s,
+    createdAt: t(s.createdAt),
+    updatedAt: t(s.updatedAt),
+    pigs: s.pigs.map((p) => ({
+      ...shift(p, ['lastTickedAt', 'createdAt', 'lastFedAt', 'lastCleanedAt', 'lastSickAt', 'recoveringUntil'], ['sickDay']),
+      ...(p.pregnancy ? { pregnancy: shift(p.pregnancy, ['startedAt', 'endsAt']) } : {}),
+    })),
+    nursery: s.nursery.map((n) => shift(n, ['bornAt'])),
+    trough: shift(s.trough, ['lastResolvedAt']),
+    orders: s.orders.map((o) => shift(o, ['createdAt', 'expiresAt', 'fulfilledAt'])),
+    gifts: { nextAt: t(s.gifts.nextAt), boxes: s.gifts.boxes.map((b) => shift(b, ['spawnedAt'])) },
+    transactions: s.transactions.map((x) => shift(x, ['at'])),
+    breedingRecords: s.breedingRecords.map((r) => shift(r, ['at', 'bornAt'])),
+    progress: {
+      ...s.progress,
+      claimed: Object.fromEntries(Object.entries(s.progress.claimed).map(([k, v]) => [k, t(v)])),
+      daily: { ...s.progress.daily, lastDay: day(s.progress.daily.lastDay) },
+    },
+    ...(s.graceUntil !== undefined ? { graceUntil: t(s.graceUntil) } : {}),
+    ...(s.memorials ? { memorials: s.memorials.map((m) => shift(m, ['diedAt'])) } : {}),
+  };
+};

@@ -2,14 +2,14 @@
 import { adoptPig } from '../logic/actions/adoptPig';
 import { renamePig, cleanPigName } from '../logic/actions/renamePig';
 import { BREEDS } from '../logic/config/breeds';
-import { happiness } from '../logic/happiness';
-import { sellMultiplier, sellPrice } from '../logic/pricing';
+import { sellQuote } from '../logic/pricing';
+import { localOffsetMs } from '../../../ui/localDay';
 import { freeSlots, pigCapacity } from '../logic/derived';
 import type { NurseryPig, Pig, FarmGame } from '../logic/types';
 import { formatDec, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import type { BoundAction } from '../store';
-import { productPurchase, troughFill, troughSpace, type ActionVm } from './actionsVm';
+import { productPurchase, troughFill, troughSpace, troughUpgrade, type ActionVm } from './actionsVm';
 import type { OrderCardVm } from './ordersVm';
 import { actionButton } from './components/actionButton';
 import { openConfirmDialog, openDialog } from '../../../ui/components/dialog';
@@ -27,18 +27,17 @@ export function openSellDialog(
   sell: ActionVm,
   act: Act,
   bonus = 0,
+  now = Date.now(),
 ) {
-  const happy = happiness(pig, bonus);
+  const quote = sellQuote(pig, { now, dayOffsetMs: localOffsetMs(now), decorBonus: bonus });
   const d = openDialog(host, t(vi.sell.title, { name: pig.name }), undefined, 'gold');
   d.body.append(
     el('p', { text: t(vi.sell.base, { gold: formatInt(BREEDS[pig.breed].sellGold) }) }),
-    el('p', {
-      text: t(vi.sell.multiplier, { happiness: happy, mult: formatDec(sellMultiplier(happy)) }),
-    }),
-    el('p', {
-      class: 'c-dialog__strong',
-      text: t(vi.sell.final, { gold: formatInt(sellPrice(pig, bonus)) }),
-    }),
+    el('p', { text: t(vi.sell.quality, { quality: vi.quality[quote.quality], mult: formatDec(quote.qualityFactor) }) }),
+    el('p', { text: t(vi.sell.weight, { kg: formatInt(quote.weightKg), mult: formatDec(quote.weightFactor) }) }),
+    quote.healthFactor < 1 ? el('p', { class: 'c-dialog__warn', text: t(vi.sell.health, { mult: formatDec(quote.healthFactor) }) }) : '',
+    el('p', { text: t(vi.sell.market, { mult: formatDec(quote.marketFactor) }) }),
+    el('p', { class: 'c-dialog__strong', text: t(vi.sell.final, { gold: formatInt(quote.price) }) }),
     RARE.has(pig.breed) ? el('p', { class: 'c-dialog__warn', text: vi.sell.warning }) : '',
   );
   d.footer.append(
@@ -80,6 +79,7 @@ export function openTroughDialog(
 ) {
   const d = openDialog(host, vi.trough.title, undefined, 'trough');
   const space = troughSpace(save);
+  const up = troughUpgrade(save, now);
   const input = el('input', {
     class: 'c-input',
     attrs: { type: 'number', min: '1', max: String(Math.max(1, space)), value: String(units) },
@@ -111,6 +111,7 @@ export function openTroughDialog(
   input.addEventListener('input', refresh);
   d.body.append(
     el('p', { class: 'c-dialog__hint', text: vi.trough.hint }),
+    el('p', { text: up.level }),
     el(
       'div',
       { class: 'c-dialog__presets' },
@@ -121,6 +122,10 @@ export function openTroughDialog(
     info,
   );
   d.footer.append(slot);
+  if (up.upgrade) {
+    const upgrade = up.upgrade;
+    d.footer.append(actionButton(upgrade, () => void act(upgrade.run).then(d.close)));
+  }
   refresh();
 }
 

@@ -1,11 +1,83 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ1 hoàn thành, đã merge `main`, tag `phase-01` (2026-10-09)
-**Nhánh:** `main`
-**Bước tiếp theo:** GĐ2 (thang thời gian, bệnh/chết, giá trị, kinh tế, bù offline 30 ngày). Đã chốt: một Sobi World Level chung (decision 007).
+**Giai đoạn:** GĐ2 — Thời gian thật và thế giới sống: xong việc 1–11, **chờ chủ dự án duyệt** để merge `main` + tag `phase-02`
+**Nhánh:** `phase-02-real-time`
+**Bước tiếp theo:** duyệt GĐ2 → GĐ3 (Nhân vật và Sảnh Sobi).
 
 ## Nhật ký
+
+### 2026-10-09 — GĐ2 hoàn thành việc 5–11 (chờ duyệt để merge `main` + tag `phase-02`)
+✅ Đã làm:
+5. **Xuất chuồng** thay "Bán" (UI, lịch sử giao dịch; id nội bộ `sellPig`/`PIG_SOLD`/`PIG_SELL` giữ nguyên): từ giai đoạn Adult (≥ 50% lớn). Giá = giá gốc giống × Quality (tâm trạng
+   trung bình suốt đời: ×1 / 1,2 / 1,5 / 2 / 3) × cân nặng (/ chuẩn của giống) × sức khỏe (−10%/ngày bệnh, tối đa −30%, khỏi là hồi đủ) × chợ (0,9 / 1,0 / 1,2 theo ngày). Hộp thoại
+   xuất chuồng liệt kê từng hệ số. Decision 009.
+6. **Dọn phân**: nút "Dọn phân" ở Giếng nước; mỗi đống thành 1 `item_manure` trong túi đồ chung (túi đầy thì bỏ phần dư), 2 KN/đống; bán được (6 Sobi Coin/cái) ở màn Túi đồ.
+7. **Máng có cấp** 30 / 80 / 200 phần (giá nâng 0 / 1.200 / 4.000 Sobi Coin), nâng trong hộp thoại máng; sức chứa không còn theo cấp người chơi. Save cũ: cấp suy ra từ sức chứa.
+8. **Màn hình "Trong lúc bạn vắng mặt"** dựng từ `getSummary(events, world, now)` của Area: số liệu đã xảy ra (sinh, lớn, bệnh, nguy kịch, mất, đơn, quà) + việc cần làm ngay
+   (heo nguy kịch / bệnh, phân chưa dọn) kèm nút đi tới chỗ cần xử lý (heo, giếng, máng).
+9. **Cảnh báo**: nút ⚠ ở thanh trên ("N heo bệnh" / "N heo nguy kịch!", đỏ nhấp nháy) mở heo cần chăm; thẻ heo ghi "Nguy kịch"; bảng heo ghi thời gian còn lại trước khi nguy kịch / mất heo.
+10. **Admin**: ⏩ Tua thời gian (+1 giờ / +1 ngày / +7 ngày: lùi mọi mốc thời gian của save, lần mở game kế tiếp bù đúng khoảng đó); trang **Số liệu** sửa mọi con số của
+    thời gian, sức khỏe, giá trị, chất lượng, túi đồ và cân bằng Nông trại (chỉ số; server kiểm bằng schema của game trước khi ghi).
+11. **Test**: tổng ~855 unit/script test + 4 e2e. Mới: nhất quán 1 phút vs 10 phút; bù 30 ngày (nhẹ: ~0,2 giây; nặng 24 heo bỏ bê: dưới 3 giây); bệnh → nguy kịch → chết đúng mốc;
+    bảo vệ 72 giờ; chống lùi giờ; ân hạn 12 giờ; Xuất chuồng (từng hệ số giá); phân và máng; màn vắng nhà; cảnh báo; tua thời gian của Admin; e2e "bỏ nông trại 3 ngày".
+🧪 Đã kiểm tra: `npm run check` xanh; `npm run test:e2e` 4/4 (build web + Electron); Admin chạy thật (`/numbers` nhận số đúng, từ chối dữ liệu sai / sửa chữ / file lạ);
+   `npm run sim:economy` OK. Chưa kiểm: `npm run dist:win` (GĐ4), chơi bằng tay lâu dài.
+⚠️ Quyết định tự đưa ra:
+- Hệ số rarity của spec (1/1,5/2,5/4/7) **không nhân thêm** vì giá gốc từng bậc (`sellGold`) đã mang bậc hiếm (decision 009); Quality ×3 làm heo chăm tốt có giá cao hơn Sobi Farm nhiều
+  (PINK 48 giờ: lãi 525 / 765 / 2.925 Sobi Coin cho Thường / Tốt / Hoàn hảo): tiến trình mở chuồng nhanh hơn; cân lại khi có Garden (thức ăn tự làm).
+- Máng cấp 3 giá 4.000 chưa kèm vật liệu Adventure (spec ghi "4.000 + vật liệu"): chờ GĐ có Adventure.
+- Trần Quality không đặt cho máng tự động (luật "tự động tối đa Good" của Lore) — chưa có cơ chế phân biệt chăm tay / máng: để GĐ6+ khi thêm Bond và vuốt ve.
+- Bond, vuốt ve, thức ăn cao cấp / cỏ / món yêu thích (GAME_BALANCE §2.3) chưa làm: không thuộc 11 việc của GĐ2.
+- Đơn hàng vẫn đo "vui vẻ" cũ (đói + sạch); chỉ giá không còn dùng nó.
+⚠️ Còn mở: xem "Vấn đề còn mở" bên dưới.
+👉 Bạn cần: chơi thử (tua bằng Admin 1 ngày và 4 ngày sau 72 giờ bảo vệ), duyệt để merge `main` + tag `phase-02`.
+
+### 2026-10-09 — GĐ2 việc 1–4 xong, **dừng chờ duyệt** trước việc 5–11
+✅ Đã làm:
+1. `core/clock`: 4 buổi (`content/shared/time.json`), `awayWindow` (trần 30 ngày, giờ máy lùi). Store: `snapshot.clockRewound`, `CatchupInfo.capped`.
+2. `core/simulation`: lát ≤ 1 phút (online) / 10 phút (offline) trên lưới giờ địa phương; `registry.advance` dùng nó; hook mới `AreaModule.rebase`. Xem decision 008.
+3. Farm.simulate theo thang GĐ2: đói −8/giờ, sạch −4/giờ (−1/giờ mỗi đống phân, tối đa 4), năng lượng −5/giờ thức / +12/giờ ngủ (ngủ ở buổi Đêm), lớn
+   48 giờ × hệ số rarity (1 / 1,25 / 1,5 / 2 / 2,5) với 4 giai đoạn Baby <12,5% · Young <50% · Adult <100% · Mature = 100%, chỉ lớn khi đói > 30 và không bệnh,
+   cân nặng theo giai đoạn, phân 1 đống / 8 giờ / heo từ Young (tối đa 12 đống), máng tự ăn khi đói < 40. Trường mới (tùy chọn, không cần migration): `energy`,
+   `poopProgress`, `illRisk` trên heo; `manure`, `graceUntil`, `memorials` trên Farm.
+4. `systems/health`: bệnh theo giờ (`content/shared/health.json`: đói 0 +15%, sạch < 20 +10%, tâm trạng < 20 +5%), nguy kịch sau 48 giờ bệnh, chết sau 72 giờ,
+   không chết khi bù offline + ân hạn 12 giờ, thuốc chữa ngay + miễn bệnh 6 giờ, 72 giờ đầu của save mới không bệnh; sự kiện `PIG_BECAME_CRITICAL`, `PIG_DIED`
+   (→ `creature.critical`, `creature.died`), toast + tóm tắt vắng nhà; heo chết để lại dòng kỷ niệm (`memorials`).
+🧪 Đã kiểm tra: `npm run check` xanh (67 file, ~820 test); `npm run test:e2e` 3/3; `npm run sim:economy` OK. Test mới: `clock`, `simulation` (lát, nhất quán 1 phút vs 10 phút
+   trong 1 ngày, bù 30 ngày < 3 giây, trần 30 ngày, lùi giờ, đi bộ bỏ mặc: bảo vệ 72 giờ → bệnh → nguy kịch +48 giờ → chết +72 giờ, bù offline 12 ngày), `mortality`
+   (nguy kịch, chết, ân hạn, thuốc kịp thời, phân, ngủ), rủi ro bệnh (`systems.test`).
+⚠️ Quyết định tự đưa ra (ghi để duyệt):
+- Chia lát thay vì sửa thành "bước cố định": giữ công thức giải tích sẵn có; bệnh đổi sang ngân sách rủi ro tích lũy để hai chế độ ra cùng kết quả (decision 008).
+- Giữ giá thức ăn 25 / +50 đói, thuốc 100 và hệ số giá rarity cũ; `sim:economy` vẫn qua (PINK: 7 phần ăn = 175 Sobi Coin / 48 giờ, lãi 165–765). Tính lại cùng công thức giá ở việc 5.
+- Cân nặng = tỉ lệ × `maxWeight` của hạng (2% / 5% / 60% / 100% tại 0 / 12,5 / 50 / 100%), chưa dùng cho giá (việc 5).
+- Mood cho rủi ro bệnh = trung bình (đói, sạch, năng lượng); "hạnh phúc" dùng cho giá/đơn hàng chưa đổi (đổi cùng công thức giá ở việc 5).
+- Việc bán/đơn hàng vẫn yêu cầu Mature (100%) như cũ; việc 5 chuyển sang Adult (≥ 50%) khi đổi thành "Xuất chuồng".
+- Nhãn giai đoạn: Adult = "Heo lớn", Mature = "Trưởng thành".
+⚠️ Hệ quả cần biết:
+- Heo trong save Sobi Farm cũ giữ nguyên `growthProgress`; vì thang mới dài hơn 24 lần nên heo đang ở 50% lúc đó sẽ thành "Adult" (bằng 24 giờ lớn). Không mất heo/tiền.
+- Máng và nhu cầu đã chậm lại nhiều (đói đầy → 0 sau 12,5 giờ thay vì 2 giờ).
+- Bù offline dài sinh sự kiện theo từng lát (mỗi đơn hàng/quà/lần bệnh một sự kiện); màn hình "vắng nhà" (việc 8) sẽ gom lại cho gọn.
+👉 Bạn cần duyệt: thang số trên, cách xử lý chết/ân hạn, và có làm tiếp việc 5–11 không.
+
+### 2026-10-09 — GĐ2 kế hoạch (trước khi code)
+**Hiện trạng đã đọc:** mô phỏng Farm là *giải tích* (`advanceWorld` → `advancePig` → `systems/creature/advance`): một lời gọi
+đúng cho 1 giây hay 30 ngày; máng tự ăn tính đóng (`trough.ts`); bệnh = hazard không nhớ (5%/10 phút khi sạch < 30, ×2 khi đói 0, 1 lần/ngày),
+không có chết; store tick mỗi 1 giây và gọi `catchup` khi mở/hiện lại; không có trần 30 ngày, không chống lùi giờ.
+**Giữ:** công thức giải tích trong lát cắt, `Clock` inject, `rng` inject, store/persist, các sự kiện `PIG_*`.
+**Thêm theo bước:**
+1. `core/clock`: 4 buổi (`content/shared/time.json`: Sáng 05–10, Ngày 10–17, Chiều 17–20, Đêm 20–05), `awayWindow` (trần 30 ngày, phát hiện lùi giờ).
+   Store dùng nó: lùi giờ → không mô phỏng ngược, báo `clockRewound` trong snapshot; trần 30 ngày → mô phỏng 30 ngày đầu rồi `rebase` mốc Area về `now`.
+2. `core/simulation`: chia khoảng thời gian thành lát ≤ bước (online 60 giây, offline 10 phút), lát **canh theo lưới giờ địa phương** để mốc buổi
+   (05/10/17/20 giờ) luôn trùng ranh giới lát; gọi `simulate` của từng Area theo lát. `registry.advance` dùng nó. Hook mới của Area: `rebase`.
+3. `Farm.simulate`: đói −8/giờ, sạch −4/giờ (+ −1/giờ mỗi đống phân, tối đa −4), năng lượng −5/giờ thức, +12/giờ ngủ (ngủ ban đêm),
+   lớn theo 4 giai đoạn (Baby/Young/Adult/Mature, hệ số rarity 1/1,25/1,5/2/2,5, chỉ lớn khi đói > 30 và không bệnh), cân nặng, phân 1 đống/8 giờ (Young+),
+   máng tự ăn khi đói < 40. Save: farm slice v1 → v2 (thêm `energy`, `poopAcc`, `manure`).
+4. `systems/health`: nguy cơ bệnh theo giờ (đói 0 +15%, sạch < 20 +10%, tâm trạng < 20 +5%) dưới dạng **ngân sách rủi ro tích lũy** (bệnh khi
+   tích lũy ≥ ngưỡng lấy từ rng seed theo id + số lần bệnh) để kết quả không phụ thuộc cỡ lát; nguy kịch 48 giờ, chết 72 giờ, không chết trong bù offline
+   và ân hạn 12 giờ sau khi mở game, thuốc chữa ngay + miễn bệnh 6 giờ, 72 giờ đầu của save mới không bệnh.
+**Quyết định tạm (hỏi lại nếu bạn muốn khác):** giữ giá thức ăn 25 / +50 đói và hệ số giá rarity cũ ở bước 1–4 (đổi cùng công thức giá ở việc 5, bằng `sim:economy`).
+**Điểm dừng:** sau 1–4 báo cáo, chờ duyệt rồi mới làm 5–11.
 
 ### 2026-10-09 — GĐ1: khôi phục, đối chiếu spec mới, hoàn tất bước 7–9
 ✅ Đã làm:

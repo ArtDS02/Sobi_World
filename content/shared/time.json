@@ -1,0 +1,11 @@
+{
+  "periods": [
+    { "id": "morning", "fromHour": 5 },
+    { "id": "day", "fromHour": 10 },
+    { "id": "evening", "fromHour": 17 },
+    { "id": "night", "fromHour": 20 }
+  ],
+  "stepMs": { "online": 60000, "offline": 600000 },
+  "offlineMaxMs": 2592000000,
+  "rewindToleranceMs": 120000
+}

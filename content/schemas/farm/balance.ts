@@ -11,34 +11,45 @@ const balanceSchema = z.strictObject({
   START_GOLD: nonNeg,
   START_SLOTS: posInt,
   START_INVENTORY: z.record(itemId, int.min(0)),
-  START_TROUGH_CAPACITY: nonNeg,
+  /** The auto-feeding trough by level (GAME_BALANCE §2.6): food it holds and the price to reach the level (level 1 is free). */
+  TROUGH_LEVELS: z.array(z.strictObject({ capacity: posInt, cost: nonNeg })).min(1),
   HUNGER_MAX: posInt,
   CLEAN_MAX: posInt,
+  /** Growth progress (%) at which a creature is Young / Adult; 100 = Mature (GAME_BALANCE §2.1). */
   STAGE_YOUNG_AT: z.number().min(0).max(100),
-  SICK_CLEAN_THRESHOLD: z.number().min(0).max(100),
-  SICK_CHANCE_PER_INTERVAL: unit,
-  SICK_INTERVAL_SEC: seconds,
-  SICK_STARVING_MULTIPLIER: nonNeg,
+  STAGE_ADULT_AT: z.number().min(0).max(100),
+  /** Weight as a share of the species' max weight at growth progress (%), linear in between. */
+  WEIGHT_AT_PROGRESS: z.array(z.tuple([z.number().min(0).max(100), unit])).min(2),
+  /** Illness itself is world content (content/shared/health.json); these are the farm's treatment rules. */
   SICK_MAX_EPISODES_PER_DAY: int.min(0),
+  /** After medicine a pig cannot fall ill again for this long (GAME_BALANCE §2.4: 6 h). */
   SICK_RECOVERY_SEC: seconds,
-  CARE_HUNGER_GROWTH_RATIO: nonNeg,
-  CARE_HUNGER_MIN_SEC: seconds,
-  CARE_CLEAN_GROWTH_RATIO: nonNeg,
-  CARE_CLEAN_MIN_SEC: seconds,
+  /** Memorial lines kept for pigs that died (newest first). */
+  MEMORIALS_MAX: posInt,
+  /** Need decay (GAME_BALANCE §2.2): hunger and cleanliness per hour, the same for every species. */
+  HUNGER_PER_HOUR: nonNeg,
+  CLEAN_PER_HOUR: nonNeg,
+  /** Each unraked pile of manure adds this much cleanliness decay per hour, up to CLEAN_PILES_COUNTED piles. */
+  CLEAN_PER_PILE_PER_HOUR: nonNeg,
+  CLEAN_PILES_COUNTED: int.min(0),
+  /** Energy per hour: lost awake, regained asleep (creatures sleep in the night period). */
+  ENERGY_AWAKE_PER_HOUR: nonNeg,
+  ENERGY_ASLEEP_PER_HOUR: nonNeg,
+  /** A creature only grows while hunger is above this. */
+  GROWTH_MIN_HUNGER: z.number().min(0).max(100),
+  /** A creature at least Young drops one pile of manure this often; piles stop at MANURE_MAX. */
+  POOP_INTERVAL_SEC: seconds,
+  MANURE_MAX: posInt,
   TROUGH_AUTO_FEED_AT: z.number().min(0).max(100),
-  TROUGH_CAPACITY_PER_LEVEL: nonNeg,
-  TROUGH_CAPACITY_MAX: nonNeg,
   HAPPY_CLEAN_WEIGHT: unit,
   HAPPY_HUNGER_WEIGHT: unit,
   HAPPY_SICK_PENALTY: nonNeg,
-  SELL_MULT_MIN: nonNeg,
-  SELL_MULT_SPAN: nonNeg,
   BREEDING_FEE: nonNeg,
   SHOP_MAX_QUANTITY: posInt,
   PIG_NAME_MAX: posInt,
   XP_EFFECTIVE_FEED_MAX_HUNGER: z.number().min(0).max(100),
   XP_EFFECTIVE_CLEAN_MAX_CLEAN: z.number().min(0).max(100),
-  XP: z.strictObject({ FEED: nonNeg, CLEAN: nonNeg, SELL: nonNeg, BREED: nonNeg, ORDER: nonNeg, DISCOVERY: nonNeg }),
+  XP: z.strictObject({ FEED: nonNeg, CLEAN: nonNeg, MANURE: nonNeg, SELL: nonNeg, BREED: nonNeg, ORDER: nonNeg, DISCOVERY: nonNeg }),
   MAX_LEVEL: posInt,
   /** XP needed for level n + 1 at index n (index 0 = level 1 = 0 XP). */
   LEVEL_XP: z.array(int.min(0)).min(1),
@@ -74,6 +85,10 @@ export const farmBalanceFileSchema = z
     const issue = (message: string) => ctx.addIssue({ code: 'custom', message });
     if (b.LEVEL_XP.length !== b.MAX_LEVEL) issue('balance.LEVEL_XP needs one entry per level (MAX_LEVEL)');
     if (b.LEVEL_XP.some((x, i) => i > 0 && x <= b.LEVEL_XP[i - 1]!)) issue('balance.LEVEL_XP must increase');
+    if (b.TROUGH_LEVELS.some((l, i) => i > 0 && l.capacity <= b.TROUGH_LEVELS[i - 1]!.capacity)) issue('balance.TROUGH_LEVELS capacity must grow with the level');
+    if (b.STAGE_YOUNG_AT >= b.STAGE_ADULT_AT) issue('balance.STAGE_YOUNG_AT must be below STAGE_ADULT_AT');
+    const kg = b.WEIGHT_AT_PROGRESS;
+    if (kg[0]![0] !== 0 || kg[kg.length - 1]![0] !== 100 || kg.some((k, i) => i > 0 && k[0] <= kg[i - 1]![0])) issue('balance.WEIGHT_AT_PROGRESS must run from 0 to 100, ascending');
     if (b.START_SLOTS > b.MAX_SLOTS) issue('balance.START_SLOTS > MAX_SLOTS');
     for (let slot = b.START_SLOTS + 1; slot <= b.MAX_SLOTS; slot++) {
       if (!b.SLOT_UNLOCKS[String(slot)]) issue(`balance.SLOT_UNLOCKS has no slot ${slot}`);

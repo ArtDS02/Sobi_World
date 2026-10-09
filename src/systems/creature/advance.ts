@@ -1,74 +1,104 @@
-// Piecewise time simulation of one creature (spec §7.2): needs decay, growth while fed and healthy,
-// memoryless sickness onset. Closed form over [lastTickedAt, now], so one call covers a 1 s tick or
-// a 30-day absence alike (ARCHITECTURE §5: one formula for every mode). Pure: `now` and `rng` injected.
-import type { Rng } from '../../core/rng';
+// Piecewise time simulation of one creature (spec §7.2): needs decay, energy and sleep, growth while
+// fed and healthy, manure, illness onset. Closed form over [lastTickedAt, now], so one call covers a
+// 1 s tick or a 30-day absence alike (ARCHITECTURE §5: one formula for every mode). Pure.
+import { episodeThreshold, needsMood, riskOver, type RiskRules } from '../health/risk';
 import { GROWN_SNAP } from './growth';
+import { energyAfter, type EnergyRates, type SleepRules } from './sleep';
 import type { Creature } from './types';
 
 export interface CreatureRates {
   hungerPerSec: number;
+  /** Cleanliness lost per second, including whatever the Area adds (the farm: unraked manure). */
   cleanPerSec: number;
   /** Seconds from 0 to grown at full care. */
   growthSec: number;
+  energy: EnergyRates;
+  /** Growth needs hunger above this. */
+  growthMinHunger: number;
+  /** A creature at or past this growth progress (%) makes one pile of manure every `poopSec`. */
+  poopFromProgress: number;
+  poopSec: number;
+  /** Points the Area adds to the mood its creatures live in (the farm: decorations); counts for Quality, not for illness. */
+  moodBonus: number;
 }
 
-export interface SicknessRules {
-  /** Exposure starts once cleanliness is at or below this. */
-  cleanThreshold: number;
-  /** Constant hazard (per second of exposure) of the memoryless onset (D5). */
-  lambda: number;
-  /** Hazard multiplier while starving (hunger 0). */
-  starvingMultiplier: number;
+export interface IllnessRules {
+  risk: RiskRules;
+  /** Nothing falls ill before this time (a new world's first hours). */
+  protectedUntil: number;
   /** Earliest epoch ms an episode may start (recovery, per-day limit). */
   blockedUntil(c: Creature): number;
   /** Fields written when an episode starts at `at`. */
   onset(c: Creature, at: number): Partial<Pick<Creature, 'isSick' | 'lastSickAt' | 'sickDay' | 'sickEpisodes'>>;
 }
 
-/** `c` simulated up to `now`. Hunger and cleanliness floor at 0; growth only while fed and healthy. */
-export function advanceCreature<C extends Creature>(c: C, now: number, rng: Rng, rates: CreatureRates, sick: SicknessRules): C {
+/**
+ * `c` simulated up to `now`. Hunger and cleanliness floor at 0; energy follows sleep; growth only
+ * while fed (hunger above the minimum) and healthy; manure accrues while Young or older; illness
+ * starts when the accumulated risk reaches the creature's episode threshold.
+ */
+export function advanceCreature<C extends Creature>(c: C, now: number, rates: CreatureRates, health: IllnessRules, sleep: SleepRules): C {
   const dt = (now - c.lastTickedAt) / 1000;
   if (dt <= 0) return { ...c, lastTickedAt: now }; // D14: never backwards
 
-  // Seconds from lastTickedAt at which thresholds are crossed.
-  const tHungerZero = c.hunger / rates.hungerPerSec;
-  const tCleanBelow = c.cleanliness > sick.cleanThreshold ? (c.cleanliness - sick.cleanThreshold) / rates.cleanPerSec : 0;
+  const hunger = Math.max(0, c.hunger - rates.hungerPerSec * dt);
+  const cleanliness = Math.max(0, c.cleanliness - rates.cleanPerSec * dt);
+  const energy = energyAfter(c.energy ?? 100, c.lastTickedAt, now, rates.energy, sleep);
 
-  // D5 — memoryless sickness onset; starving multiplies the hazard (D21). NH-1: exposure only
-  // counts once recovery is over and the day's episode budget is free again.
-  let tSick = Infinity;
+  const mood0 = needsMood({ ...c, energy: c.energy ?? 100 });
+  const mood1 = needsMood({ hunger, cleanliness, energy });
+
+  // Illness: exposure counts once protection, recovery and the day's episode budget are over.
+  let onsetAt: number | null = null;
+  let illRisk = c.illRisk ?? 0;
   if (!c.isSick) {
-    const tFrom = Math.max(tCleanBelow, (sick.blockedUntil(c) - c.lastTickedAt) / 1000);
-    const exposure = dt - tFrom;
-    if (exposure > 0) {
-      // `<=` (spec writes `<`): a creature already at hunger 0 is starving even when exposure
-      // starts immediately. See DECISIONS S03-1.
-      const starving = tHungerZero <= tFrom;
-      const lambda = sick.lambda * (starving ? sick.starvingMultiplier : 1);
-      const sample = -Math.log(1 - rng.next()) / lambda; // rng.next() in [0, 1)
-      if (sample < exposure) tSick = tFrom + sample;
-    }
+    const from = Math.max(0, (Math.max(health.blockedUntil(c), health.protectedUntil) - c.lastTickedAt) / 1000);
+    const risk = riskOver(
+      {
+        dt,
+        from,
+        hunger0: c.hunger,
+        hungerPerSec: rates.hungerPerSec,
+        clean0: c.cleanliness,
+        cleanPerSec: rates.cleanPerSec,
+        mood0,
+        mood1,
+      },
+      health.risk,
+      Math.max(0, episodeThreshold(c) - illRisk),
+    );
+    onsetAt = risk.onsetAt;
+    illRisk = onsetAt === null ? illRisk + risk.hazard : 0;
   }
-  const onset = tSick <= dt ? sick.onset(c, Math.round(c.lastTickedAt + tSick * 1000)) : {};
+  const tSick = onsetAt ?? Infinity;
+  const onset = onsetAt === null ? {} : health.onset(c, Math.round(c.lastTickedAt + onsetAt * 1000));
 
-  // Growth only while fed, healthy and not yet grown.
+  // Growth only while fed (hunger above the minimum), healthy and not yet grown.
   let growthSeconds = 0;
   if (!c.isSick && c.growthProgress < 100) {
     const tToGrown = ((100 - c.growthProgress) * rates.growthSec) / 100;
-    growthSeconds = Math.min(dt, tHungerZero, tSick, tToGrown);
+    const tFed = c.hunger > rates.growthMinHunger ? (c.hunger - rates.growthMinHunger) / rates.hungerPerSec : 0;
+    growthSeconds = Math.min(dt, tFed, tSick, tToGrown);
   }
   const growthProgress = Math.min(100, c.growthProgress + (growthSeconds * 100) / rates.growthSec);
 
   return {
     ...c,
-    hunger: Math.max(0, c.hunger - rates.hungerPerSec * dt),
-    cleanliness: Math.max(0, c.cleanliness - rates.cleanPerSec * dt),
+    hunger,
+    cleanliness,
     growthProgress: growthProgress > GROWN_SNAP ? 100 : growthProgress,
     isSick: c.isSick,
+    energy,
+    poopProgress: (c.poopProgress ?? 0) + (c.growthProgress >= rates.poopFromProgress ? dt / rates.poopSec : 0),
+    illRisk,
+    ...lifeMood(c, dt, Math.min(100, (mood0 + mood1) / 2 + rates.moodBonus)),
     ...onset,
     lastTickedAt: now,
   };
 }
 
-/** Constant hazard per second for a chance `p` per interval of `intervalSec` (D5). */
-export const hazardPerSec = (p: number, intervalSec: number): number => -Math.log(1 - p) / intervalSec;
+/** The time-weighted average mood of a life, with `dt` more seconds spent at `mood`. */
+function lifeMood(c: Creature, dt: number, mood: number): { moodAvg: number; moodSec: number } {
+  const sec = c.moodSec ?? 0;
+  return { moodAvg: ((c.moodAvg ?? mood) * sec + mood * dt) / (sec + dt), moodSec: sec + dt };
+}

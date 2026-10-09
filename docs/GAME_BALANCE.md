@@ -92,6 +92,8 @@ hệSốChợ    = 0.9 / 1.0 / 1.2 tùy ngày
 | Legendary | 7 | | Perfect | 3.0 |
 | Mythic | 12 | | | |
 
+> Triển khai GĐ2 (decision 009): hệ số rarity đã nằm sẵn trong giá gốc từng bậc (`sellGold`), không nhân lần hai; xuất chuồng được từ Adult.
+
 **Quality** tính từ tâm trạng trung bình suốt đời: ≥90 Perfect, ≥75 Excellent, ≥60 Great, ≥40 Good, còn lại Normal. Bond 3 tim trở lên: 20% cơ hội lên thêm 1 bậc.
 
 Sobi Farm hiện có 5 bậc (Common → Legendary); **Mythic để dành**, chưa dùng.
@@ -104,7 +106,7 @@ Sobi Farm hiện có 5 bậc (Common → Legendary); **Mythic để dành**, ch�
 |---|---|---|---|---|
 | Chuồng (số heo) | 6 | 12 | 20 | 30 |
 | Giá nâng cấp chuồng | — | 800 | 3.000 | 10.000 + vật liệu Adventure |
-| Máng tự động (sức chứa thức ăn) | 30 | 80 | 200 | — |
+| Máng tự động (sức chứa thức ăn) | 30 | 80 | 200 | — |  <!-- GĐ2: content/farm/balance.json TROUGH_LEVELS, giá nâng 1.200 / 4.000 -->
 | Giá máng | 300 | 1.200 | 4.000 + vật liệu | — |
 
 Máng Lv1 phải đủ cho chuồng đầu ăn ~2 ngày; cấp cao nhất 5–7 ngày. Giá chuồng/máng quy đổi sang thang tiền Sobi Farm ở GĐ2

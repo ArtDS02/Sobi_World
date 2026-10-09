@@ -15,6 +15,9 @@ const time = z.number().finite();
 const nonNeg = z.number().finite().min(0);
 const pct = z.number().finite().min(0).max(100);
 
+const withEveryItem = (v: unknown): unknown =>
+  v && typeof v === 'object' ? { ...Object.fromEntries(ITEM_ID_VALUES.map((id) => [id, 0])), ...v } : v;
+
 const pregnancySchema = z.object({
   startedAt: time,
   endsAt: time,
@@ -51,6 +54,11 @@ const pigSchema = z.object({
   hunger: pct,
   cleanliness: pct,
   isSick: z.boolean(),
+  energy: pct.optional(),
+  poopProgress: nonNeg.optional(),
+  illRisk: nonNeg.optional(),
+  moodAvg: pct.optional(),
+  moodSec: nonNeg.optional(),
   pregnancy: pregnancySchema.nullable(),
   lastTickedAt: time,
   createdAt: time,
@@ -119,8 +127,9 @@ const shapeSchema = z.object({
   }),
   pigs: z.array(pigSchema),
   nursery: z.array(nurseryPigSchema),
-  trough: z.object({ food: nonNeg, capacity: nonNeg, lastResolvedAt: time }),
-  inventory: z.record(z.enum(ITEM_ID_VALUES), nonNeg),
+  trough: z.object({ food: nonNeg, capacity: nonNeg, level: z.number().int().min(1).optional(), lastResolvedAt: time }),
+  // Items added after a save was written are missing from it: they count as none.
+  inventory: z.preprocess(withEveryItem, z.record(z.enum(ITEM_ID_VALUES), nonNeg)),
   orders: z.array(orderSchema),
   collection: z.object({
     discoveredBreeds: z.array(breedId),
@@ -172,11 +181,16 @@ const farmAreaShape = z.object({
   unlockedSlots: z.number().int().min(1),
   pigs: z.array(pigSchema),
   nursery: z.array(nurseryPigSchema),
-  trough: z.object({ food: nonNeg, capacity: nonNeg, lastResolvedAt: time }),
+  trough: z.object({ food: nonNeg, capacity: nonNeg, level: z.number().int().min(1).optional(), lastResolvedAt: time }),
   orders: z.array(orderSchema),
   gifts: z.object({ nextAt: time.nullable(), boxes: z.array(giftSchema) }),
   decor: z.array(z.enum(DECOR_ID_VALUES)),
   breedingRecords: z.array(breedingRecordSchema),
+  /** Piles of manure lying in the pen (absent = none; GĐ2). */
+  manure: z.number().int().min(0).optional(),
+  /** No pig dies before this time (a catch-up skipped a death, decision 004). */
+  graceUntil: time.optional(),
+  memorials: z.array(z.object({ id: z.string(), name: z.string(), breed: breedId, diedAt: time })).optional(),
 });
 
 export const farmAreaSchema = farmAreaShape.superRefine(farmInvariants);

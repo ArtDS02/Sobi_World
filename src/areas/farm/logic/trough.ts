@@ -82,19 +82,22 @@ export function resolveTrough(win: FarmWindow, now: number): ResolvedWindow {
   };
 }
 
-/** One window: resolveTrough THEN advancePig for every pig (mandatory order, §7.3). */
+/** One window: resolveTrough THEN advancePig for every pig (mandatory order, §7.3). `piles`: manure in the pen; `createdAt`: when the world began (new-world protection). */
 export function advanceWithTrough(
   win: FarmWindow,
   now: number,
   rng: Rng,
   dayOffsetMs = 0,
+  piles = 0,
+  createdAt = 0,
+  moodBonus = 0,
 ): ResolvedWindow {
   const resolved = resolveTrough(win, now);
   const hungerZeroAt: Record<string, number> = {};
   // rng is consumed in slotIndex order so results do not depend on array order.
   const advanced = new Map(
     bySlot(resolved.pigs).map((p) => {
-      const next = advancePig(p, now, rng, dayOffsetMs);
+      const next = advancePig(p, now, rng, dayOffsetMs, piles, createdAt, moodBonus);
       if (p.hunger > 0 && next.hunger === 0 && now > p.lastTickedAt) {
         hungerZeroAt[p.id] = Math.round(p.lastTickedAt + (p.hunger / hungerRate(p)) * 1000);
       }

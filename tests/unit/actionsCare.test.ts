@@ -149,7 +149,7 @@ describe('fillTrough (§8.6)', () => {
   });
 
   it('beyond capacity → TROUGH_FULL and nothing changes', () => {
-    expectError(fill(21), farm(), 'TROUGH_FULL');
+    expectError(fill(31), farm(), 'TROUGH_FULL'); // a new trough holds 30
     const s = farm([], { trough: { food: 15, capacity: 20, lastResolvedAt: 0 } });
     expectError(fill(6), s, 'TROUGH_FULL');
     expect(expectOk(fill(5)(s)).state.trough.food).toBe(20);
@@ -165,7 +165,7 @@ describe('fillTrough (§8.6)', () => {
     expectError(fill(units), farm(), 'INVALID_REQUEST');
   });
 
-  it('capacity = min(120, 20 + (level-1) * 10)', () => {
+  it('the old capacity rule (migrations): min(120, 20 + (level-1) * 10)', () => {
     expect(troughCapacityForLevel(1)).toBe(20);
     expect(troughCapacityForLevel(10)).toBe(110);
     expect(troughCapacityForLevel(15)).toBe(120);

@@ -2,64 +2,69 @@ import { describe, expect, it } from 'vitest';
 import { advancePig } from '../../src/areas/farm/logic/advancePig';
 import { advanceWithTrough } from '../../src/areas/farm/logic/trough';
 import { mulberry32, sequenceRng, type Rng } from '../../src/core/rng';
+import { episodeThreshold } from '../../src/systems/health/risk';
 import type { Pig } from '../../src/areas/farm/logic/types';
 import { makePig } from './pigFactory';
 
 const SEC = 1000;
-/** rng.next() just below 1: sample ~323,000 s fed / ~161,000 s starving, so never sick in these tests. */
+/** Sickness is seeded per pig, not drawn from the rng; this stands in where a stream is required. */
 const neverSick = (): Rng => sequenceRng([1 - 1e-12]);
+/** A world old enough that the new-world protection (first 72 h) is over. */
+const LONG_AGO = -1e12;
 const advance = (pig: Pig, seconds: number, rng: Rng = neverSick()) =>
-  advancePig(pig, pig.lastTickedAt + seconds * SEC, rng);
+  advancePig(pig, pig.lastTickedAt + seconds * SEC, rng, 0, 0, LONG_AGO);
 
-// NH-1 rebalance: PINK hunger budget 7,200 s, cleanliness 18,000 s (was 2,400 / 5,400, D16).
-describe('§14.1 golden values (PINK baby, progress 0, hunger 100, clean 100) — NH-1 budgets', () => {
-  it('G1 advance 3,600 s → hunger 50, cleanliness 80, progress 50', () => {
+// GĐ2 timescale (decision 003): hunger -8/h, cleanliness -4/h, a Common pig takes 172,800 s (48 h) to Mature.
+describe('§14.1 golden values (PINK baby, progress 0, hunger 100, clean 100) — GĐ2 rates', () => {
+  it('G1 advance 3,600 s → hunger 92, cleanliness 96, progress 2.0833', () => {
     const p = advance(makePig(), 3600);
-    expect(p.hunger).toBeCloseTo(50, 6);
-    expect(p.cleanliness).toBeCloseTo(80, 6);
-    expect(p.growthProgress).toBeCloseTo(50, 6);
+    expect(p.hunger).toBeCloseTo(92, 6);
+    expect(p.cleanliness).toBeCloseTo(96, 6);
+    expect(p.growthProgress).toBeCloseTo(100 / 48, 6);
   });
 
-  it('G2 advance 7,200 s → hunger 0, cleanliness 60, progress 100', () => {
-    const p = advance(makePig(), 7200);
-    expect(p.hunger).toBeCloseTo(0, 6);
-    expect(p.cleanliness).toBeCloseTo(60, 6);
-    expect(p.growthProgress).toBe(100);
-  });
-
-  it('G3 hunger 50, advance 7,200 s, no trough → hunger 0, progress 50 (growth stopped at t=3,600)', () => {
-    const p = advance(makePig({ hunger: 50 }), 7200);
+  it('G2 advance 48 h fed by hand-equivalent: hunger runs out at 12.5 h, growth stops at hunger 30', () => {
+    const p = advance(makePig(), 48 * 3600);
     expect(p.hunger).toBe(0);
-    expect(p.growthProgress).toBeCloseTo(50, 6);
+    expect(p.cleanliness).toBeCloseTo(0, 6); // 100 - 4 x 48 < 0: floors at 0
+    expect(p.growthProgress).toBeCloseTo(((100 - 30) / 8 / 48) * 100, 6); // grew for the 8.75 h hunger was above 30
   });
 
-  it('G4 MELON advance 14,400 s: no trough → 25 %; trough stocked with 10 → adult, trough food 6', () => {
-    const melon = () => makePig({ breed: 'PIG_STRIPED_MELON', hunger: 50 });
-    expect(advance(melon(), 14_400).growthProgress).toBeCloseTo(25, 6);
+  it('G3 hunger 40, advance 7,200 s, no trough → hunger 24, growth stopped at hunger 30 (t=4,500)', () => {
+    const p = advance(makePig({ hunger: 40 }), 7200);
+    expect(p.hunger).toBeCloseTo(24, 6);
+    expect(p.growthProgress).toBeCloseTo((4500 / 172_800) * 100, 6);
+  });
+
+  it('G3b a pig at hunger 30 or below does not grow at all', () => {
+    expect(advance(makePig({ hunger: 30 }), 3600).growthProgress).toBe(0);
+    expect(advance(makePig({ hunger: 10 }), 3600).growthProgress).toBe(0);
+  });
+
+  it('G4 MELON (Uncommon, 60 h to Mature) advance 24 h: no trough → grows until hunger 30; trough stocked with 20 → 40 %, 3 meals', () => {
+    const melon = () => makePig({ breed: 'PIG_STRIPED_MELON' });
+    expect(advance(melon(), 24 * 3600).growthProgress).toBeCloseTo((8.75 / 60) * 100, 6);
     const out = advanceWithTrough(
-      {
-        pigs: [makePig({ breed: 'PIG_STRIPED_MELON' })],
-        trough: { food: 10, capacity: 20, lastResolvedAt: 0 },
-      },
-      14_400 * SEC,
+      { pigs: [melon()], trough: { food: 20, capacity: 20, lastResolvedAt: 0 } },
+      24 * 3600 * SEC,
       neverSick(),
     );
-    expect(out.pigs[0]!.growthProgress).toBe(100);
-    expect(out.trough.food).toBe(6);
+    expect(out.pigs[0]!.growthProgress).toBeCloseTo(40, 6); // fed all day: 24 h of 60 h
+    expect(out.trough.food).toBe(17); // first meal at hunger 40 (7.5 h), then every 6.25 h
   });
 
-  it('G5 cleanliness crosses 30 exactly at t = 12,600 s', () => {
-    expect(advance(makePig(), 12_600).cleanliness).toBeCloseTo(30, 9);
-    expect(advance(makePig(), 12_599).cleanliness).toBeGreaterThan(30);
-    expect(advance(makePig(), 12_601).cleanliness).toBeLessThan(30);
+  it('G5 cleanliness crosses 30 exactly at t = 63,000 s (17.5 h)', () => {
+    expect(advance(makePig(), 63_000).cleanliness).toBeCloseTo(30, 9);
+    expect(advance(makePig(), 62_999).cleanliness).toBeGreaterThan(30);
+    expect(advance(makePig(), 63_001).cleanliness).toBeLessThan(30);
   });
 
   it('G6 sick pig advance → growth unchanged; hunger and cleanliness still decay', () => {
     const sick = makePig({ isSick: true, growthProgress: 20 });
     const p = advance(sick, 3600);
     expect(p.growthProgress).toBe(20);
-    expect(p.hunger).toBeCloseTo(50, 6);
-    expect(p.cleanliness).toBeCloseTo(80, 6);
+    expect(p.hunger).toBeCloseTo(92, 6);
+    expect(p.cleanliness).toBeCloseTo(96, 6);
     expect(p.isSick).toBe(true);
   });
 
@@ -81,38 +86,52 @@ describe('§14.1 golden values (PINK baby, progress 0, hunger 100, clean 100) �
     expectSamePig(split, whole);
   });
 
-  it('G9 sickness, rng.next() = 0 → sick the moment cleanliness drops below 30', () => {
-    expect(advance(makePig(), 12_600, sequenceRng([0])).isSick).toBe(false);
-    expect(advance(makePig(), 12_600.001, sequenceRng([0])).isSick).toBe(true);
+  // Illness (GAME_BALANCE §2.4): hourly risk 15 % starving / 10 % dirty (< 20) / 5 % low mood, banked as hazard.
+  const LAMBDA = (p: number) => -Math.log(1 - p) / 3600;
+
+  it('G9 a starving pig banks the starving hazard second by second', () => {
+    const p = advance(makePig({ hunger: 0 }), 3000);
+    expect(p.isSick).toBe(false);
+    expect(p.illRisk).toBeCloseTo(LAMBDA(0.15) * 3000, 9);
   });
 
-  it('G10 sickness, rng.next() = 0.9999 → not sick within 1 h of exposure', () => {
-    expect(advance(makePig(), 12_600 + 3600, sequenceRng([0.9999])).isSick).toBe(false);
+  it('G10 dirtiness counts from cleanliness 20 only: 25 falls to 17 at -4 per hour', () => {
+    const p = advance(makePig({ cleanliness: 25 }), 2 * 3600); // below 20 from 1.25 h on
+    expect(p.illRisk).toBeCloseTo(LAMBDA(0.1) * (2 * 3600 - 4500), 9);
   });
 
-  // Fixed seed, N runs over one stream. Binomial σ = sqrt(p(1-p)/N).
-  const N = 20_000;
-  const sickRate = (start: Partial<Pig>, seed: number): number => {
-    const rng = mulberry32(seed);
-    let sick = 0;
-    for (let i = 0; i < N; i++) if (advance(makePig(start), 600, rng).isSick) sick++;
-    return sick / N;
-  };
-  // Exposure from t=0: cleanliness already at the threshold.
-  const FED = { cleanliness: 30, hunger: 100 };
-  const STARVING = { cleanliness: 30, hunger: 0 };
-
-  it('G11 sickness statistics: ~5% of 600 s exposures → tolerance ±0.006 (≈3.9σ), N=20,000, seed 12345', () => {
-    expect(Math.abs(sickRate(FED, 12345) - 0.05)).toBeLessThan(0.006);
+  it('G10b a well-kept pig banks nothing', () => {
+    expect(advance(makePig(), 10 * 3600).illRisk).toBe(0);
   });
 
-  it('G12 starving hazard: rate ≈ 2x fed → hazard ratio 2 ± 0.25, N=20,000 each, seeds 777/778', () => {
-    const fed = sickRate(FED, 777);
-    const starving = sickRate(STARVING, 778);
-    // Exact: 1 - 0.95^2 = 0.0975; tolerance ±0.008 (≈3.8σ).
-    expect(Math.abs(starving - 0.0975)).toBeLessThan(0.008);
-    const hazardRatio = Math.log(1 - starving) / Math.log(1 - fed);
-    expect(Math.abs(hazardRatio - 2)).toBeLessThan(0.25);
+  it('G10c the first 72 hours of a world are protected: no illness, no hazard banked', () => {
+    const starving = makePig({ hunger: 0 });
+    const protectedPig = advancePig(starving, 60 * 3600 * SEC, neverSick(), 0, 0, 0);
+    expect(protectedPig.isSick).toBe(false);
+    expect(protectedPig.illRisk).toBe(0);
+    // from 70 h: protection ends at 72 h, so only the last 2 h of the 4 h count
+    const late = { ...starving, lastTickedAt: 70 * 3600 * SEC };
+    const after = advancePig(late, 74 * 3600 * SEC, neverSick(), 0, 0, 0);
+    expect(after.illRisk).toBeCloseTo(LAMBDA(0.15) * 2 * 3600, 9);
+  });
+
+  it('G11 the pig falls ill exactly when its banked hazard reaches its own threshold', () => {
+    const pig = makePig({ hunger: 0 });
+    const onsetS = episodeThreshold(pig) / LAMBDA(0.15);
+    // mood stays above 20 for a long while here (cleanliness and energy are high), so only starving counts
+    expect(onsetS).toBeGreaterThan(3600);
+    expect(advance(pig, onsetS - 1).isSick).toBe(false);
+    const sick = advance(pig, onsetS + 1);
+    expect(sick.isSick).toBe(true);
+    expect(sick.lastSickAt).toBe(Math.round(onsetS * 1000));
+    expect(sick.illRisk).toBe(0); // the next episode starts from zero
+  });
+
+  it('G12 the share of pigs that fall ill within an hour of starving is ~15 %', () => {
+    const N = 4000;
+    let ill = 0;
+    for (let i = 0; i < N; i++) if (advance(makePig({ id: `pig-${i}`, hunger: 0 }), 3600).isSick) ill++;
+    expect(Math.abs(ill / N - 0.15)).toBeLessThan(0.03);
   });
 });
 
@@ -168,15 +187,17 @@ describe('invariants', () => {
   });
 
   it('a fed pig reaches exactly 100 progress', () => {
-    const p = advance(makePig({ growthProgress: 90, hunger: 100 }), 720);
+    const p = advance(makePig({ growthProgress: 90, hunger: 100 }), 17_280);
     expect(p.growthProgress).toBe(100);
   });
 
-  it('sickness onset freezes growth at tSick', () => {
-    // Fed pig (big hunger budget via SUPERMAN), dirty, rng=0 → sick at t=0 of exposure.
-    const pig = makePig({ breed: 'PIG_SUPERMAN', cleanliness: 30, growthProgress: 10 });
-    const p = advance(pig, 1000, sequenceRng([0]));
+  it('sickness onset freezes growth at the onset', () => {
+    // A fed, filthy pig that is 0.001 of hazard short of its threshold falls ill after ~34 s.
+    const base = makePig({ cleanliness: 0, growthProgress: 10 });
+    const pig = { ...base, illRisk: episodeThreshold(base) - 0.001 };
+    const onsetS = 0.001 / (-Math.log(0.9) / 3600);
+    const p = advance(pig, 1000);
     expect(p.isSick).toBe(true);
-    expect(p.growthProgress).toBe(10);
+    expect(p.growthProgress).toBeCloseTo(10 + (onsetS / 172_800) * 100, 6);
   });
 });

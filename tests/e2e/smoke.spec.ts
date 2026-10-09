@@ -51,7 +51,7 @@ test('first launch, buy, fill, relaunch, export — offline', async () => {
       .locator('.c-dialog button', { hasText: /^Đổ \d+ phần$/ })
       .last()
       .click();
-    await expect(page.locator('.c-gauge')).toHaveText(/20\/20/);
+    await expect(page.locator('.c-gauge')).toHaveText(/30\/30/);
 
     // Quit (main flushes the save first) and relaunch.
     await app.close();
@@ -59,7 +59,7 @@ test('first launch, buy, fill, relaunch, export — offline', async () => {
     app = await launch(userData);
     page = await app.firstWindow();
     await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
-    await expect(page.locator('.c-gauge')).toHaveAttribute('aria-label', /Máng ăn \d+\/20/);
+    await expect(page.locator('.c-gauge')).toHaveAttribute('aria-label', /Máng ăn \d+\/30/);
     await expect(page.locator('.app__hint')).toHaveCount(0); // "no pig yet" hint is gone
     const after = readSave(userData);
     expect(after.pigs).toHaveLength(1);

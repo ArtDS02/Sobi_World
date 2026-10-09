@@ -10,7 +10,6 @@ import { MUTATIONS } from '../../src/areas/farm/logic/config/breedingRules';
 import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';
 import { vi } from '../../src/i18n/vi';
 
-const V1: BreedId[] = ['PIG_EARTH_PINK', 'PIG_STRIPED_MELON', 'PIG_SUPERMAN', 'PIG_MYTHICAL'];
 const BREEDABLE = BREED_IDS.filter((b) => BREEDS[b].breedable);
 const odds = (a: BreedId, b: BreedId) =>
   Object.fromEntries(breedingOutcomes(a, b)!.map((o) => [o.breed, o.weight]));
@@ -91,37 +90,26 @@ describe('breeding rules (§6.5 as rules, U00-1 D4)', () => {
   });
 });
 
-describe('care budgets (§6.2, D16 → NH-1)', () => {
-  // NH-1: budget = max(floor, growthSec * ratio); the table is the check, the formula the truth.
-  const table: Partial<Record<BreedId, [number, number, number, number, number]>> = {
-    PIG_EARTH_PINK: [7200, 0.013889, 18000, 0.005556, 12600],
-    PIG_STRIPED_MELON: [7200, 0.013889, 18000, 0.005556, 12600],
-    PIG_SUPERMAN: [14400, 0.006944, 28800, 0.003472, 20160],
-    PIG_MYTHICAL: [43200, 0.002315, 86400, 0.001157, 60480],
-  };
-
-  it.each(V1)('%s follows the growthSec formula', (id) => {
-    const b = BREEDS[id];
-    const [hungerFull, hungerPerSec, cleanFull, cleanPerSec, sickAt] = table[id]!;
-    expect(b.hungerFullSec).toBe(
-      Math.max(BALANCE.CARE_HUNGER_MIN_SEC, b.growthSec * BALANCE.CARE_HUNGER_GROWTH_RATIO),
-    );
-    expect(b.cleanFullSec).toBe(
-      Math.max(BALANCE.CARE_CLEAN_MIN_SEC, b.growthSec * BALANCE.CARE_CLEAN_GROWTH_RATIO),
-    );
-    expect(b.hungerFullSec).toBe(hungerFull);
-    expect(b.cleanFullSec).toBe(cleanFull);
-    const rates = careRates(id);
-    expect(rates.hungerPerSec).toBeCloseTo(hungerPerSec, 6);
-    expect(rates.cleanPerSec).toBeCloseTo(cleanPerSec, 6);
-    expect(rates.sickRiskStartSec).toBeCloseTo(sickAt, 6);
+describe('needs and growth (GAME_BALANCE §2.1–2.2, decision 003)', () => {
+  it('every species loses 8 hunger and 4 cleanliness per hour: ~12.5 h and 25 h from full', () => {
+    for (const id of BREED_IDS) {
+      expect(BREEDS[id].hungerFullSec).toBe(45_000);
+      expect(BREEDS[id].cleanFullSec).toBe(90_000);
+      const rates = careRates(id);
+      expect(rates.hungerPerSec * 3600).toBeCloseTo(8, 9);
+      expect(rates.cleanPerSec * 3600).toBeCloseTo(4, 9);
+      expect(rates.sickRiskStartSec).toBeCloseTo(((100 - 20) / 4) * 3600, 6); // dirty below 20
+    }
   });
 
-  it('no species gets hungry within 2 h or dirty within 5 h of a full meal / bath', () => {
-    for (const id of BREED_IDS) {
-      expect(BREEDS[id].hungerFullSec).toBeGreaterThanOrEqual(2 * 3600);
-      expect(BREEDS[id].cleanFullSec).toBeGreaterThanOrEqual(5 * 3600);
-    }
+  it('growth to Mature takes 48 h × the rarity factor (Common 1, Uncommon 1.25, Rare 1.5, Epic 2, Legendary 2.5)', () => {
+    const factor = { COMMON: 1, UNCOMMON: 1.25, RARE: 1.5, EPIC: 2, LEGENDARY: 2.5 } as const;
+    for (const id of BREED_IDS) expect(BREEDS[id].growthSec, id).toBe(48 * 3600 * factor[BREEDS[id].rarity]);
+  });
+
+  it('Young from 6 h and Adult from 24 h of a Common pig (12.5 % and 50 % of its growth)', () => {
+    expect(BALANCE.STAGE_YOUNG_AT).toBe(12.5);
+    expect(BALANCE.STAGE_ADULT_AT).toBe(50);
   });
 });
 
@@ -134,9 +122,13 @@ describe('levels (§6.4)', () => {
     expect(levelFromXp(999999)).toBe(BALANCE.MAX_LEVEL);
   });
 
-  it('trough capacity grows 10 per level, max 110 (DECISIONS Q6)', () => {
-    expect(troughCapacityForLevel(1)).toBe(BALANCE.START_TROUGH_CAPACITY);
+  it('the old per-player-level trough rule survives for migrations only: 20 + 10 per level, max 120 (Q6)', () => {
+    expect(troughCapacityForLevel(1)).toBe(20);
     expect(troughCapacityForLevel(BALANCE.MAX_LEVEL)).toBe(110);
+  });
+
+  it('the trough levels hold 30 / 80 / 200 and cost 0 / 1,200 / 4,000 (GAME_BALANCE §2.6)', () => {
+    expect(BALANCE.TROUGH_LEVELS).toEqual([{ capacity: 30, cost: 0 }, { capacity: 80, cost: 1200 }, { capacity: 200, cost: 4000 }]);
   });
 });
 

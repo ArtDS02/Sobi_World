@@ -7,3 +7,5 @@
 - `store.ts` — gắn Farm vào game store.
 
 Area không import Area khác (guard: `npm run guard`).
+
+GĐ2: mô phỏng theo lát (`core/simulation`), sức khỏe/chết (`logic/mortality.ts`), giá xuất chuồng (`logic/pricing.ts`), tóm tắt vắng nhà (`logic/summary.ts`), máng có cấp (`logic/troughLevel.ts`), dọn phân (`logic/actions/cleanManure.ts`). Số liệu ở `content/farm/balance.json` và `content/shared/{time,health,valuation,quality}.json` (Admin → Số liệu).

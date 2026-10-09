@@ -41,8 +41,11 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   PIG_BOUGHT: row('bounce', ['fx_sparkle'], 'ui_click', true),
   PIG_ADOPTED: row('bounce', ['fx_heart', 'fx_sparkle'], 'birth_fanfare', true), // BR-1
   PIG_FED: row('eat', ['fx_crumb'], 'feed_munch', false),
+  TROUGH_UPGRADED: row('shake', ['fx_sparkle'], 'level_up', true),
   TROUGH_FILLED: row('shake', ['fx_crumb'], 'feed_munch', false),
   PIG_CLEANED: row('clean', ['fx_bubble'], 'water_splash', false, true),
+  MANURE_CLEANED: row(null, ['fx_bubble'], 'water_splash', true),
+  ITEM_SOLD: row(null, ['fx_coin'], 'coin_collect', true),
   PIG_TREATED: row('happy', ['fx_sparkle'], 'ui_click', true),
   PIG_SOLD: row('exit', ['fx_coin'], 'coin_collect', true),
   BREEDING_STARTED: row('happy', ['fx_heart'], 'breed_chime', true),
@@ -52,6 +55,8 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   // PL-1: no sound / toast; the life simulation walks the pig to the trough and plays eating.
   PIG_ATE_FROM_TROUGH: { ...row(null, [], null, false), life: true },
   PIG_BECAME_SICK: row(null, ['fx_sick'], 'notify', true),
+  PIG_BECAME_CRITICAL: row(null, ['fx_sick'], 'notify', true),
+  PIG_DIED: row(null, [], 'notify', true),
   LEVEL_UP: row(null, ['fx_sparkle'], 'level_up', true),
   TROUGH_EMPTY: row('wiggle', [], 'notify', true),
   ORDER_NEW: row('wiggle', [], 'notify', true),

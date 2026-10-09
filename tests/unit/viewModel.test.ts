@@ -61,12 +61,12 @@ describe('topBarVm (§10.1)', () => {
 
 describe('pig view-models (§10.2)', () => {
   it('card shows name, breed, stage, floored percentages, health', () => {
-    const vm = pigCardVm(makePig({ growthProgress: 55.9, hunger: 49.99, isSick: true }));
+    const vm = pigCardVm(makePig({ growthProgress: 25.9, hunger: 49.99, isSick: true }));
     expect(vm).toMatchObject({
       name: 'Ủn Hồng',
       breed: 'Heo Hồng Đất',
       stage: 'Heo choai',
-      growth: '55%',
+      growth: '25%',
       hunger: '49%',
       cleanliness: '100%',
       health: vi.stat.sick,
@@ -83,7 +83,7 @@ describe('pig view-models (§10.2)', () => {
     };
     const vm = pigPanelVm(makePig({ growthProgress: 100, pregnancy }), 0);
     expect(vm.happiness).toBe('100');
-    expect(vm.priceMultiplier).toBe('Giá bán x1,20');
+    expect(vm.quality).toBe('Chất lượng Hoàn hảo → giá x3,00');
     expect(vm.pregnancy).toBe('Còn 42 phút nữa sinh');
     expect(vm.weight).toBe('50 kg');
   });
@@ -127,7 +127,39 @@ describe('history (DECISIONS Q7)', () => {
     const rows = historyVm({ ...s, transactions });
     expect(rows.map((r) => [r.id, r.label, r.amount, r.tone])).toEqual([
       ['b', 'Mở chuồng', '-2.000 Sobi Coin', 'minus'],
-      ['a', 'Bán heo', '+1.200 Sobi Coin', 'plus'],
+      ['a', 'Xuất chuồng', '+1.200 Sobi Coin', 'plus'],
     ]);
+  });
+});
+
+describe('warnings for ill pigs (GĐ2)', () => {
+  const H = 3_600_000;
+  const now = 100 * H;
+  const ill = (id: string, hoursIll: number) =>
+    makePig({ id, slotIndex: id === 'a' ? 0 : 1, isSick: true, lastSickAt: now - hoursIll * H, lastTickedAt: now });
+
+  it('no alert while every pig is well', () => {
+    expect(topBarVm(farm([makePig()]), now).alert).toBeNull();
+  });
+
+  it('the HUD alert counts ill pigs and points at one', () => {
+    expect(topBarVm(farm([ill('a', 5)]), now).alert).toEqual({ text: '1 heo bệnh', critical: false, pigId: 'a' });
+  });
+
+  it('a critical pig outranks the ill ones in the alert', () => {
+    const vm = topBarVm(farm([ill('a', 5), ill('b', 50)]), now);
+    expect(vm.alert).toEqual({ text: '1 heo nguy kịch!', critical: true, pigId: 'b' });
+  });
+
+  it('the card says Nguy kịch from 48 h of illness', () => {
+    expect(pigCardVm(ill('a', 47)).health).toBe('Đang bệnh');
+    expect(pigCardVm(ill('a', 49)).health).toBe('Nguy kịch');
+    expect(pigCardVm(makePig({ lastTickedAt: now })).health).toBe('Khỏe mạnh');
+  });
+
+  it('the panel warns with the time left: until critical, then until the pig is lost', () => {
+    expect(pigPanelVm(ill('a', 40), now).warning).toBe('Heo đang bệnh. Sau 8 giờ nữa sẽ nguy kịch — cho uống thuốc nhé.');
+    expect(pigPanelVm(ill('a', 60), now).warning).toBe('Heo đang nguy kịch! Không chữa thì sau 12 giờ nữa sẽ mất heo.');
+    expect(pigPanelVm(makePig(), now).warning).toBeNull();
   });
 });

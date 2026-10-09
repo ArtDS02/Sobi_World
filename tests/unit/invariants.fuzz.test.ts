@@ -59,7 +59,7 @@ function fulfill(s: FarmGame, c: ActionContext, r: Rng): ActionResult {
   return fulfillOrder(s, { orderId: order?.id ?? 'none', pigId: target(s, r, fits) }, c);
 }
 
-/** Weighted so the farm grows: care actions often, rare systems regularly. */
+/** Weighted so the farm grows: care actions often, rare systems regularly (selling is rare: a pig takes 48 h to mature, so adults are scarce). */
 const ACTIONS: [string, number, Step][] = [
   [
     'buyPig',
@@ -91,7 +91,7 @@ const ACTIONS: [string, number, Step][] = [
     2,
     (s, c, r) => buyItem(s, { itemId: pick(r, ITEM_ID_VALUES), quantity: anyInt(r, 6) - 1 }, c),
   ],
-  ['sellPig', 3, (s, c, r) => sellPig(s, { pigId: target(s, r, adults(s)) }, c)],
+  ['sellPig', 1, (s, c, r) => sellPig(s, { pigId: target(s, r, adults(s)) }, c)],
   [
     'renamePig',
     1,
@@ -99,7 +99,7 @@ const ACTIONS: [string, number, Step][] = [
       renamePig(s, { pigId: target(s, r), name: pick(r, ['Ủn', '', ' x ', 'A'.repeat(40)]) }, c),
   ],
   ['buySlot', 1, (s, c) => buySlot(s, {}, c)],
-  ['breedPigs', 4, breed],
+  ['breedPigs', 10, breed],
   ['fulfillOrder', 4, fulfill],
 ];
 const TOTAL_WEIGHT = ACTIONS.reduce((n, [, w]) => n + w, 0);

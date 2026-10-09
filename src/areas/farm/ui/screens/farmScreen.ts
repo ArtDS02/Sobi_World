@@ -36,6 +36,7 @@ export function renderWellPopup(
       'div',
       { class: 'farm__toolbar' },
       actionButton(a.cleanAll, () => act(a.cleanAll.run), '', 'cleanAll'),
+      actionButton(a.cleanManure, () => act(a.cleanManure.run), '', 'clean'),
     ),
   );
 }

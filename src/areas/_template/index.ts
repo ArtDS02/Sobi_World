@@ -24,6 +24,7 @@ export function createTemplateArea(manifest: AreaManifest): AreaModule {
       return { state: { ...world, areas: { ...world.areas, [id]: r.state } }, events: r.events };
     },
     simulatedAt: (world) => slice(world).lastTickedAt,
+    rebase: (world, to) => ({ ...world, areas: { ...world.areas, [id]: { ...slice(world), lastTickedAt: to } } }),
     level: (world) => levelFromXp(areaXp(world, id), LEVELS),
     toWorldEvents: (events): WorldEvent[] =>
       events.filter(isOwn).map((e) => ({ type: 'crop.harvested', area: id, plotId: 'template', cropId: 'template', quantity: e.count })),

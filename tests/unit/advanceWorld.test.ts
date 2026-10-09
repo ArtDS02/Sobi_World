@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { mulberry32, sequenceRng, type Rng } from '../../src/core/rng';
+import { episodeThreshold } from '../../src/systems/health/risk';
 import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';
 
@@ -9,9 +10,9 @@ const neverSick = (): Rng => sequenceRng([1 - 1e-12]);
 
 describe('advanceWorld (§7.4)', () => {
   it('twice with the same now consumes food only once and emits nothing the second time', () => {
-    const state = makeState([makePig({ hunger: 50 })], 5);
-    const first = advanceWorld(state, 7200 * SEC, mulberry32(1));
-    const second = advanceWorld(first.state, 7200 * SEC, mulberry32(2));
+    const state = makeState([makePig({ hunger: 40 })], 5);
+    const first = advanceWorld(state, 45_000 * SEC, mulberry32(1));
+    const second = advanceWorld(first.state, 45_000 * SEC, mulberry32(2));
     expect(first.state.trough.food).toBe(2);
     expect(second.state.trough.food).toBe(2);
     expect(second.state).toEqual(first.state);
@@ -43,10 +44,10 @@ describe('advanceWorld (§7.4)', () => {
   });
 
   it('TROUGH_EMPTY carries the time of the last meal', () => {
-    // PINK at hunger 100, 2 units: meals at 3,600 s and 7,200 s, then dry (NH-1 budgets).
-    const out = advanceWorld(makeState([makePig()], 2), 21_600 * SEC, neverSick());
+    // PINK at hunger 100, 2 units: meals at 27,000 s (hunger 40) and 49,500 s, then dry (a third was due at 72,000 s).
+    const out = advanceWorld(makeState([makePig()], 2), 86_400 * SEC, neverSick());
     expect(out.state.trough.food).toBe(0);
-    expect(out.events).toContainEqual({ type: 'TROUGH_EMPTY', at: 7200 * SEC });
+    expect(out.events).toContainEqual({ type: 'TROUGH_EMPTY', at: 49_500 * SEC });
   });
 
   it('TROUGH_EMPTY with short food over several pigs uses the latest meal (slot order)', () => {
@@ -54,10 +55,10 @@ describe('advanceWorld (§7.4)', () => {
       makePig({ id: 'a', slotIndex: 0 }),
       makePig({ id: 'b', slotIndex: 1, hunger: 50 }),
     ];
-    // Slot 0 eats all 3 units at 3,600 / 7,200 / 10,800 s; slot 1 is deprived.
-    const out = advanceWorld(makeState(pigs, 3), 21_600 * SEC, neverSick());
+    // Slot 0 eats all 3 units at 27,000 / 49,500 / 72,000 s; slot 1 is deprived.
+    const out = advanceWorld(makeState(pigs, 3), 86_400 * SEC, neverSick());
     expect(out.events.filter((e) => e.type === 'TROUGH_EMPTY')).toEqual([
-      { type: 'TROUGH_EMPTY', at: 10_800 * SEC },
+      { type: 'TROUGH_EMPTY', at: 72_000 * SEC },
     ]);
   });
 
@@ -68,49 +69,49 @@ describe('advanceWorld (§7.4)', () => {
     expect(
       advanceWorld(makeState([makePig()], 0), 7200 * SEC, neverSick()).events,
     ).not.toContainEqual(expect.objectContaining({ type: 'TROUGH_EMPTY' }));
-    // Exactly enough: 6 meals in 21,600 s, nobody left wanting.
+    // Exactly enough: 3 meals in 86,400 s, nobody left wanting.
     expect(
-      advanceWorld(makeState([makePig()], 6), 21_600 * SEC, neverSick()).events,
+      advanceWorld(makeState([makePig()], 3), 86_400 * SEC, neverSick()).events,
     ).not.toContainEqual(expect.objectContaining({ type: 'TROUGH_EMPTY' }));
   });
 
   it('PIG_HUNGRY_ZERO reports when growth stopped', () => {
-    // SUPERMAN (growth 28,800 s, hunger 14,400 s): 1 meal at 7,200 s → hunger 150 credited →
-    // zero at 21,600 s; stalled for 7,200 s of the window.
+    // SUPERMAN (Rare: 259,200 s to Mature): 1 meal at 27,000 s → hunger 150 credited → zero at
+    // 67,500 s; it grew while hunger was above 30 (until 54,000 s) and was stalled after.
     const out = advanceWorld(
       makeState([makePig({ breed: 'PIG_SUPERMAN' })], 1),
-      28_800 * SEC,
+      90_000 * SEC,
       neverSick(),
     );
     expect(out.events).toContainEqual({
       type: 'PIG_HUNGRY_ZERO',
       pigId: 'pig-1',
-      at: 21_600 * SEC,
+      at: 67_500 * SEC,
       stalled: true,
     });
-    expect(out.state.pigs[0]!.growthProgress).toBeCloseTo(75, 6);
+    expect(out.state.pigs[0]!.growthProgress).toBeCloseTo((54_000 / 259_200) * 100, 6);
   });
 
   it('PIG_HUNGRY_ZERO only on the crossing, not while already at 0', () => {
-    const once = advanceWorld(makeState([makePig()]), 9000 * SEC, neverSick());
+    const once = advanceWorld(makeState([makePig()]), 50_000 * SEC, neverSick());
     expect(once.events.filter((e) => e.type === 'PIG_HUNGRY_ZERO')).toHaveLength(1);
-    const again = advanceWorld(once.state, 12_000 * SEC, neverSick());
+    const again = advanceWorld(once.state, 60_000 * SEC, neverSick());
     expect(again.events.filter((e) => e.type === 'PIG_HUNGRY_ZERO')).toHaveLength(0);
   });
 
   it('emits PIG_BECAME_ADULT and PIG_BECAME_SICK on the transition only', () => {
-    const pig = makePig({ growthProgress: 90, cleanliness: 30 });
-    const out = advanceWorld(makeState([pig], 10), 720 * SEC, sequenceRng([0.5]));
+    const pig = makePig({ growthProgress: 90 });
+    const out = advanceWorld(makeState([pig], 10), 17_280 * SEC, neverSick());
     expect(out.state.pigs[0]!.growthProgress).toBe(100);
     expect(out.events).toContainEqual({ type: 'PIG_BECAME_ADULT', pigId: 'pig-1' });
 
-    const sick = advanceWorld(
-      makeState([makePig({ cleanliness: 30 })]),
-      600 * SEC,
-      sequenceRng([0]),
-    );
+    // A filthy pig whose banked hazard has reached its threshold falls ill on the first exposed instant
+    // (the world is old enough to be past the new-world protection).
+    const dirtyPig = makePig({ cleanliness: 0 });
+    const old = { ...makeState([{ ...dirtyPig, illRisk: episodeThreshold(dirtyPig) }]), createdAt: -1e12 };
+    const sick = advanceWorld(old, 600 * SEC, neverSick());
     expect(sick.events).toContainEqual({ type: 'PIG_BECAME_SICK', pigId: 'pig-1' });
-    const later = advanceWorld(sick.state, 1200 * SEC, sequenceRng([0]));
+    const later = advanceWorld(sick.state, 1200 * SEC, neverSick());
     expect(later.events.filter((e) => e.type === 'PIG_BECAME_SICK')).toHaveLength(0);
   });
 

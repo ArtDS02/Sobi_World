@@ -45,7 +45,7 @@ describe('disabled reasons (§10.2)', () => {
 
   it('missing items name the item', () => {
     const base = farm([makePig({ hunger: 20, isSick: true })]);
-    const s = { ...base, inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 0 } };
+    const s = { ...base, inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 0, item_manure: 0 } };
     const a = pigActions(s, 'pig-1', NOW);
     expect(a.feed.reason).toBe(vi.disabled.noFood);
     expect(a.treat.reason).toBe(vi.disabled.noMedicine);
@@ -98,7 +98,7 @@ describe('shop (R03)', () => {
     const tiger = rows.find((p) => p.breed === 'PIG_TIGER')!;
     expect(tiger.male.reason).toBe('Cần cấp 6');
     expect(rows.find((p) => p.breed === 'PIG_EARTH_PINK')!.male.reason).toBeNull();
-    expect(tiger.sell).toBe('Bán tới 14.400 Sobi Coin');
+    expect(tiger.sell).toBe('Xuất chuồng tới 43.200 Sobi Coin');
   });
 
   it('item purchase: live total, invalid quantity and gold shortfall disable the button', () => {
@@ -135,7 +135,7 @@ describe('shop (R03)', () => {
 describe('trough fill dialog', () => {
   it('breakdown takes inventory first then prices the shortfall', () => {
     const s = farm();
-    expect(troughSpace(s)).toBe(20);
+    expect(troughSpace(s)).toBe(30);
     const vm = troughFill(s, 14, NOW);
     expect(vm.fromInventory).toBe('Lấy từ kho: 10');
     expect(vm.toBuy).toBe('Mua thêm: 4 (100 Sobi Coin)');
@@ -144,6 +144,6 @@ describe('trough fill dialog', () => {
   });
 
   it('over capacity → TROUGH_FULL reason', () => {
-    expect(troughFill(farm(), 21, NOW).confirm.reason).toBe(vi.error.TROUGH_FULL);
+    expect(troughFill(farm(), 31, NOW).confirm.reason).toBe(vi.error.TROUGH_FULL);
   });
 });

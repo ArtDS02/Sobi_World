@@ -35,6 +35,12 @@ export const vi = {
       births: "{count} heo con chào đời",
       grown: "{count} heo đã trưởng thành",
       sick: "{count} heo bị bệnh",
+      critical: "{count} heo đã nguy kịch",
+      died: "{count} heo đã mất",
+      ordersExpired: "{count} đơn hàng đã hết hạn",
+      needCritical: "{count} heo đang nguy kịch — chữa ngay!",
+      needTreat: "{count} heo đang bệnh, cần thuốc",
+      needRake: "{count} đống phân chưa dọn",
       orders: "{count} đơn hàng mới",
       gifts: "{count} hộp quà mới",
     },
@@ -52,6 +58,8 @@ export const vi = {
     pigsTitle: "Heo trong trại: {count}/{max}",
     pigsReserved: "{n} heo con đang chờ trong Kho",
     pigsFull: "Trại đã đầy — mua thêm chỗ hoặc bán bớt heo",
+    alertSick: "{count} heo bệnh",
+    alertCritical: "{count} heo nguy kịch!",
     pigsIcon: "🐷",
   },
 
@@ -65,10 +73,20 @@ export const vi = {
     night: { icon: "🌙", name: "Ban đêm" },
   },
 
+  // Quality tiers (spec §6): how well a creature was cared for over its life. Not rarity.
+  quality: {
+    NORMAL: "Thường",
+    GOOD: "Tốt",
+    GREAT: "Rất tốt",
+    EXCELLENT: "Xuất sắc",
+    PERFECT: "Hoàn hảo",
+  },
+
   stage: {
     BABY: "Heo con",
     YOUNG: "Heo choai",
-    ADULT: "Trưởng thành",
+    ADULT: "Heo lớn",
+    MATURE: "Trưởng thành",
   },
 
   gender: {
@@ -87,18 +105,23 @@ export const vi = {
     healthy: "Khỏe mạnh",
     sick: "Đang bệnh",
     recovering: "Đang hồi phục",
+    critical: "Nguy kịch",
+    warnSick: "Heo đang bệnh. Sau {time} nữa sẽ nguy kịch — cho uống thuốc nhé.",
+    warnCritical: "Heo đang nguy kịch! Không chữa thì sau {time} nữa sẽ mất heo.",
     pregnant: "Đang mang thai",
     pregnantLeft: "Còn {time} nữa sinh",
-    priceMultiplier: "Giá bán x{mult}",
+    quality: "Chất lượng {quality} → giá x{mult}",
   },
 
   action: {
     feed: "Cho ăn",
     clean: "Tắm",
     cleanAll: "Tắm tất cả",
+    cleanManure: "Dọn phân",
+    sellItem: "Bán hết",
     treat: "Chữa bệnh",
     breed: "Phối giống",
-    sell: "Bán",
+    sell: "Xuất chuồng",
     fulfillOrder: "Giao đơn",
     buy: "Mua",
     fillTrough: "Đổ máng",
@@ -140,6 +163,8 @@ export const vi = {
     ALREADY_CLAIMED: "Đã nhận thưởng rồi.",
     ALREADY_OWNED: "Bạn đã có món này.",
     NURSERY_FULL: "Kho heo con đã đầy. Hãy đưa bớt heo con ra trại trước.",
+    NO_MANURE: "Chuồng đang sạch phân.",
+    TROUGH_MAX_LEVEL: "Máng ăn đã ở cấp cao nhất.",
     INVENTORY_FULL: "Túi đồ đã đầy chỗ. Hãy dùng bớt vật phẩm trước.",
   },
 
@@ -163,6 +188,11 @@ export const vi = {
   event: {
     becameAdult: "{name} đã trưởng thành!",
     becameSick: "{name} bị bệnh rồi!",
+    becameCritical: "{name} đang nguy kịch! Hãy chữa ngay.",
+    died: "{name} đã không qua khỏi...",
+    troughUpgraded: "Máng ăn lên cấp {level}! Chứa được {capacity} phần.",
+    manureCleaned: "Đã dọn {piles} đống phân, thu được {kept} phân bón.",
+    itemSold: "Đã bán {quantity} {name} được {gold} Sobi Coin.",
     hungryZero: "{name} đói lả, ngừng lớn.",
     // NH-1: shown once when a pig drops into a worse care level.
     needDropped: {
@@ -208,17 +238,15 @@ export const vi = {
   away: {
     title: "Trong lúc bạn vắng mặt",
     duration: "Bạn đã đi vắng {time}.",
-    grewUp: "{count} heo đã trưởng thành",
-    gotSick: "{count} heo bị bệnh",
-    born: "{count} heo con chào đời",
     troughRanOut: "Máng ăn hết lúc {time}, {count} heo ngừng lớn trong {duration}",
     troughOk: "Máng ăn vẫn còn thức ăn. Heo lớn bình thường.",
     nothing: "Mọi thứ vẫn ổn.",
-    // Not in Appendix B (§9.5 lists expired and new orders).
-    ordersNew: "{count} đơn hàng mới",
-    ordersExpired: "{count} đơn hàng đã hết hạn",
-    gifts: "{count} hộp quà đang chờ bạn mở",
     ok: "Vào nông trại",
+    // Buttons that lead to the place that needs care.
+    goPig: "Xem heo",
+    goWell: "Dọn phân",
+    goTrough: "Đổ máng",
+    goOrders: "Xem đơn",
   },
 
   shop: {
@@ -231,12 +259,14 @@ export const vi = {
     FOOD_BASIC_desc: "Tăng 50 độ no. Cũng là đơn vị đổ vào máng ăn.",
     MEDICINE_COMMON: "Thuốc",
     MEDICINE_COMMON_desc: "Chữa khỏi bệnh cho một con heo.",
+    item_manure: "Phân bón",
+    item_manure_desc: "Phân heo đã dọn. Bán lấy ít tiền; sau này dùng cho vườn.",
     slotNext: "Chuồng thứ {n}",
     slotLocked: "Cần cấp {level}",
     quantity: "Số lượng",
     total: "Tổng: {gold} Sobi Coin",
     owned: "Đã sở hữu",
-    sellUpTo: "Bán tới {gold} Sobi Coin",
+    sellUpTo: "Xuất chuồng tới {gold} Sobi Coin",
   },
 
   trough: {
@@ -246,6 +276,9 @@ export const vi = {
     toBuy: "Mua thêm: {n} ({gold} Sobi Coin)",
     hint: "Heo tự ăn từ máng kể cả khi bạn tắt game. Đổ đầy trước khi nghỉ.",
     fill: "Đổ {n} phần",
+    level: "Máng ăn cấp {level} (chứa {capacity} phần)",
+    upgrade: "Nâng lên cấp {level}: chứa {capacity} phần ({gold} Sobi Coin)",
+    maxLevel: "Máng ăn đã ở cấp cao nhất.",
   },
 
   breed: {
@@ -266,11 +299,14 @@ export const vi = {
   },
 
   sell: {
-    title: "Bán {name}?",
-    base: "Giá gốc: {gold}",
-    multiplier: "Vui vẻ {happiness} → x{mult}",
+    title: "Xuất chuồng {name}?",
+    base: "Giá gốc giống: {gold}",
+    quality: "Chất lượng {quality} → x{mult}",
+    weight: "Cân nặng {kg} kg → x{mult}",
+    health: "Đang bệnh → x{mult}",
+    market: "Chợ hôm nay → x{mult}",
     final: "Nhận được: {gold} Sobi Coin",
-    warning: "Heo quý! Bán rồi không lấy lại được.",
+    warning: "Heo quý! Xuất chuồng rồi không lấy lại được.",
   },
 
   order: {
@@ -310,7 +346,9 @@ export const vi = {
     INITIAL_GOLD: "Vốn ban đầu",
     SHOP_PURCHASE: "Mua hàng",
     PIG_PURCHASE: "Mua heo",
-    PIG_SELL: "Bán heo",
+    PIG_SELL: "Xuất chuồng",
+    ITEM_SELL: "Bán vật phẩm",
+    TROUGH_UPGRADE: "Nâng cấp máng",
     BREEDING_FEE: "Phí phối giống",
     SLOT_PURCHASE: "Mở chuồng",
     TROUGH_FILL: "Đổ máng",
@@ -429,6 +467,10 @@ export const vi = {
   },
 
   // BR-1: newborns wait in the inventory until the player raises them.
+  inventory: {
+    sellAll: "Bán hết ({gold})",
+  },
+
   nursery: {
     title: "Heo con mới sinh ({n}/{max})",
     empty: "Chưa có heo con nào. Heo con phối giống sinh ra sẽ chờ ở đây.",

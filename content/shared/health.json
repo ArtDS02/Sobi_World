@@ -1,0 +1,11 @@
+{
+  "risk": {
+    "perHour": { "starving": 0.15, "dirty": 0.1, "lowMood": 0.05 },
+    "dirtyBelow": 20,
+    "lowMoodBelow": 20
+  },
+  "criticalAfterMs": 172800000,
+  "deathAfterMs": 259200000,
+  "deathGraceMs": 43200000,
+  "newPlayerProtectionMs": 259200000
+}

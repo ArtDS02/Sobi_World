@@ -3,6 +3,7 @@
 import type { WorldSave } from '../../../core/save/world';
 import type { ActionContext, ActionResultOf } from '../../../core/types';
 import type { Rng } from '../../../core/rng';
+import type { SimMode } from '../../../core/simulation/simulate';
 import { advanceWorld } from './advanceWorld';
 import { farmArea, farmOf, withFarm } from './save/lens';
 import type { ActionResult, FarmGame } from './types';
@@ -18,10 +19,20 @@ export function liftFarmAction(action: FarmAction): WorldAction {
   };
 }
 
-export function advanceFarmWorld(world: WorldSave, now: number, rng: Rng, dayOffsetMs: number) {
-  const result = advanceWorld(farmOf(world), now, rng, dayOffsetMs);
+export function advanceFarmWorld(world: WorldSave, now: number, rng: Rng, dayOffsetMs: number, mode: SimMode = 'online') {
+  const result = advanceWorld(farmOf(world), now, rng, dayOffsetMs, mode);
   return { state: withFarm(world, result.state), events: result.events };
 }
 
 /** The trough is resolved on every farm tick: its stamp is when the farm last ran. */
 export const farmSimulatedAt = (world: WorldSave): number => farmArea(world).trough.lastResolvedAt;
+
+/** Moves the farm's clocks to `to` without simulating (the part of an absence past the offline cap). */
+export function rebaseFarm(world: WorldSave, to: number): WorldSave {
+  const farm = farmOf(world);
+  return withFarm(world, {
+    ...farm,
+    pigs: farm.pigs.map((p) => (p.lastTickedAt >= to ? p : { ...p, lastTickedAt: to })),
+    trough: { ...farm.trough, lastResolvedAt: Math.max(farm.trough.lastResolvedAt, to) },
+  });
+}

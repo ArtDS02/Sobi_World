@@ -162,12 +162,12 @@ describe('fulfillOrder (§8.14, §14.5)', () => {
     expect(r.events).toContainEqual({ type: 'ORDER_FULFILLED', orderId: order.id, gold: 2160 });
   });
 
-  it('rejects wrong breed, wrong gender, low happiness, a baby and a pregnant sow', () => {
+  it('rejects wrong breed, wrong gender, low happiness, a pig not yet Adult and a pregnant sow', () => {
     const bad = [
       pig({ breed: 'PIG_STRIPED_MELON' }),
       pig({ gender: 'FEMALE' }),
       pig({ hunger: 0, cleanliness: 0 }),
-      pig({ growthProgress: 50 }),
+      pig({ growthProgress: 49 }),
       pig({
         pregnancy: {
           fatherId: 'x',

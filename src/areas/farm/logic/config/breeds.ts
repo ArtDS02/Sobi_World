@@ -2,7 +2,6 @@
 // rarity tier; a species row only overrides what makes it different. Adding a species = one row
 // there + `npm run content:ids` + one manifest row — the admin dashboard does all three (DECISIONS A7-1).
 import { FAMILY_VALUES, type Family } from "../../../../../content/schemas/vocab";
-import { careBudget } from "../../../../systems/creature/needs";
 import { BALANCE } from "./balance";
 import { FARM_CONTENT } from "./content";
 import type { BreedId } from "./ids";
@@ -27,8 +26,8 @@ export interface BreedDef {
   enabled: boolean;            // false = retired: not sold, never bred; pigs already owned stay
   artId: string;         // its artwork; the manifest row with this id (§6.6)
   color: number;               // flat fill when the artwork is missing (§11.4)
-  hungerFullSec: number;       // derived, D16 / NH-1
-  cleanFullSec: number;        // derived, D16 / NH-1
+  hungerFullSec: number;       // derived: full → 0 at the flat decay rate
+  cleanFullSec: number;        // derived: full → 0 at the flat decay rate (without manure)
 }
 
 /** Per-rarity stats (content/farm/species.json `tiers`), TUNABLE. */
@@ -40,13 +39,13 @@ export const RARITY_TIER: Record<
 export type SpeciesRow = Pick<BreedDef, "id" | "nameVi" | "rarity" | "family" | "artId" | "color"> &
   Partial<Pick<BreedDef, "buyGold" | "unlockLevel" | "enabled" | keyof (typeof RARITY_TIER)[Rarity]>>;
 
-/** Tier stats + row overrides, then D16 / NH-1: care budgets derived from growth time. */
+/** Tier stats + row overrides; how long a full need lasts follows from the flat decay rates. */
 const species = (row: SpeciesRow): BreedDef => {
   const b = { buyGold: null, unlockLevel: 1, enabled: true, ...RARITY_TIER[row.rarity], ...row };
   return {
     ...b,
-    hungerFullSec: careBudget(b.growthSec, BALANCE.CARE_HUNGER_GROWTH_RATIO, BALANCE.CARE_HUNGER_MIN_SEC),
-    cleanFullSec: careBudget(b.growthSec, BALANCE.CARE_CLEAN_GROWTH_RATIO, BALANCE.CARE_CLEAN_MIN_SEC),
+    hungerFullSec: (BALANCE.HUNGER_MAX / BALANCE.HUNGER_PER_HOUR) * 3600,
+    cleanFullSec: (BALANCE.CLEAN_MAX / BALANCE.CLEAN_PER_HOUR) * 3600,
   };
 };
 

@@ -23,6 +23,7 @@ export function createWorldStore(deps: StoreDeps) {
     readOnly: false,
     loadSource: null,
     saveError: false,
+    clockRewound: false,
   };
   const subscribers = new Set<(s: StoreSnapshot) => void>();
   const listen = <F>(set: Set<F>, fn: F) => (set.add(fn), () => void set.delete(fn));
@@ -106,9 +107,12 @@ export function createWorldStore(deps: StoreDeps) {
     const awayMs = Math.max(0, now - deps.lastSimulatedAt(snapshot.save));
     const mode = origin === 'catchup' ? 'offline' : 'online';
     const world = deps.advanceWorld(snapshot.save, now, deps.rng, ctx(now).dayOffsetMs ?? 0, mode);
+    const rewound = world.rewound === true;
+    if (rewound !== snapshot.clockRewound) set({ clockRewound: rewound });
+    if (rewound) return []; // GAME_BALANCE §1: never simulate backwards, the stamps stay
     set({ save: world.state });
     if (world.events.length > 0 || now - lastPersistAt >= SAVE.AUTOSAVE_MS) void persist();
-    emit(world.events, origin, origin === 'catchup' ? { awayMs } : undefined);
+    emit(world.events, origin, origin === 'catchup' ? (world.capped ? { awayMs, capped: true } : { awayMs }) : undefined);
     return world.events;
   }
 

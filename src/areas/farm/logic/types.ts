@@ -26,6 +26,8 @@ export interface FarmGame {
   trough: {
     food: number;
     capacity: number;
+    /** 1..TROUGH_LEVELS.length; absent in older saves (derived from the capacity, trough.ts). */
+    level?: number | undefined;
     lastResolvedAt: number;
   };
   inventory: Record<ItemId, number>;
@@ -49,6 +51,12 @@ export interface FarmGame {
     };
   };
   decor: DecorId[]; // owned farm decorations (save v6, PG-3)
+  /** Piles of manure in the pen (GAME_BALANCE §2.2); absent = none. */
+  manure?: number | undefined;
+  /** No pig dies before this time: set after a catch-up that skipped a death (decision 004). */
+  graceUntil?: number | undefined;
+  /** Pigs that died, newest first (the Codex keeps a line of memory for each). */
+  memorials?: Memorial[] | undefined;
   settings: {
     musicOn: boolean;
     sfxOn: boolean;
@@ -56,6 +64,14 @@ export interface FarmGame {
     tutorialDone: boolean;
     lastExportAt: number | null;
   };
+}
+
+/** A line of memory for a pig that died. */
+export interface Memorial {
+  id: string;
+  name: string;
+  breed: BreedId;
+  diedAt: number;
 }
 
 export interface Pregnancy {
