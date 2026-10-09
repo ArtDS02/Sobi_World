@@ -56,5 +56,5 @@ Chưa kiểm: `npm run dist:win` (installer), chạy Electron thủ công, thử
 - Giá chuồng/máng trong GAME_BALANCE §2.6 viết theo thang 360 Coins; quy đổi sang thang tiền Sobi Farm (heo 500).
 
 ## Vấn đề còn mở
-- (Đã xử lý ở GĐ1) skill `spec-to-source` đã xóa, guard nằm ở `scripts/guard/`; thư mục save đã chuyển sang `%APPDATA%SobiWorld` kèm sao chép save cũ.
+- (Đã xử lý ở GĐ1) skill `spec-to-source` đã xóa, guard nằm ở `scripts/guard/`; thư mục save đã chuyển sang `%APPDATA%\SobiWorld` kèm sao chép save cũ.
 - `npm ci` báo vài cảnh báo `npm audit` (thư viện dev) — chưa xử lý.
