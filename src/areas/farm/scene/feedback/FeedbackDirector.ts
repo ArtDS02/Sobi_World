@@ -27,6 +27,8 @@ export interface FeedbackDirector {
   pigTapped(pigId: string): void;
   /** Any DOM button was pressed (spec §12: ui_click). */
   uiClick(): void;
+  /** The player tried something that does nothing (a closed door): ui_error. */
+  denied(): void;
   dispose(): void;
 }
 
@@ -73,6 +75,7 @@ export function createFeedbackDirector(deps: FeedbackDeps): FeedbackDirector {
       if (key) deps.audio.play(key);
     },
     uiClick: () => deps.audio.play('ui_click'),
+    denied: () => deps.audio.play('ui_error'),
     dispose() {
       offState();
       offEvents();

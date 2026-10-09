@@ -3,7 +3,9 @@
 import type { SettingKey } from '../../logic/actions/setSetting';
 import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
+import { renderKeySettings } from '../../../../ui/components/keySettingsView';
 import { el } from '../../../../ui/dom';
+import type { KeySettings } from '../../../../ui/world/keySettings';
 import type { SettingsVm } from '../settingsVm';
 
 export interface SettingsHandlers {
@@ -65,6 +67,7 @@ export function renderSettingsScreen(
   save: FarmGame,
   vm: SettingsVm,
   h: SettingsHandlers,
+  keys?: KeySettings,
 ): HTMLElement {
   return el(
     'section',
@@ -73,6 +76,7 @@ export function renderSettingsScreen(
       vi.settings.sound,
       ...TOGGLES.map(([key, label]) => toggle(save.settings, key, label, h)),
     ),
+    keys ? renderKeySettings(keys) : null,
     section(
       vi.settings.saveFile,
       el('p', { class: 'settings__hint', text: vm.lastExport }),

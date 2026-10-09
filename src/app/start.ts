@@ -5,17 +5,30 @@ import '@fontsource/baloo-2/700.css';
 import type { Clock } from '../core/clock';
 import type { DayPhase } from '../core/config/dayNight';
 import type { SeasonId } from '../core/config/seasons';
+import { PLAZA_LAYOUT } from '../areas/plaza/logic/config/content';
+import { portalViews, type PortalView } from '../areas/plaza/logic/portals';
+import { PlazaScene, PLAZA_SCENE_KEY } from '../areas/plaza/scene/PlazaScene';
 import { AudioManager, audioTracks, type AudioClip } from '../areas/farm/scene/audio/AudioManager';
 import { createFarmView, type FarmView } from '../areas/farm/scene/farmView';
 import { noEffects } from '../areas/farm/scene/feedback/effects';
 import { createFeedbackDirector, type FeedbackDirector } from '../areas/farm/scene/feedback/FeedbackDirector';
+import { CHARACTER } from '../core/config/character';
+import { newPlayer, PLAZA_ID, setPlayerSpot } from '../core/player/player';
+import { createSettingsStore } from '../core/settings/settings';
+import { renderWorldPrompt } from '../ui/components/worldPrompt';
+import { el, patch } from '../ui/dom';
+import { createControlInput } from '../ui/world/controlInput';
+import type { WorldHost, WorldPrompt } from '../ui/world/host';
+import { createKeySettings } from '../ui/world/keySettings';
 import { createPlatform } from '../platform';
 import { loadAssetRegistry } from '../platform/assetSource';
+import { AREAS } from './areas';
+import { createAreaFlow } from './areaFlow';
 import { createGameStore } from './gameStore';
 import { parseWorldSave } from './saveCodec';
 import { farmStore } from '../areas/farm/store';
 import { realClock } from './runtime';
-import { mountApp, type AppOptions } from '../areas/farm/ui/app';
+import { mountApp, type AppOptions, type MountedApp } from '../areas/farm/ui/app';
 import { renderManifestError } from '../areas/farm/ui/screens/statusScreen';
 
 export async function start(root: HTMLElement) {
@@ -67,6 +80,57 @@ export async function start(root: HTMLElement) {
   // The farm's screens and scene see the world through the farm facade (areas/farm/store.ts).
   const store = farmStore(world);
   platform.onFlushRequest(() => store.persistNow());
+
+  // Player settings (keys) live in their own file, apart from the save (spec §4).
+  const settings = createSettingsStore(platform.settings);
+  await settings.init();
+  const keys = () => settings.getSnapshot().settings.keys;
+  const input = createControlInput(document, keys);
+  const keySettings = createKeySettings(settings, input);
+  // The key hint over the world: scenes report it, the DOM shows it with the player's own keys.
+  const promptHost = el('div', { class: 'world-prompt-host' });
+  let prompt: WorldPrompt | null = null;
+  const showPrompt = () => patch(promptHost, renderWorldPrompt(prompt, keys()));
+  settings.subscribe(showPrompt);
+  // The plaza's doors from the save; the same object while nothing about them changed.
+  let doors: { signature: string; views: ReadonlyMap<string, PortalView> } = { signature: '', views: new Map() };
+  const portals = (): ReadonlyMap<string, PortalView> => {
+    const save = world.getSnapshot().save;
+    if (!save) return doors.views;
+    const codex = Object.values(save.collection.discovered).reduce((n, ids) => n + ids.length, 0);
+    const views = portalViews(AREAS.areas(save, codex));
+    const signature = JSON.stringify([...views.values()]);
+    if (signature !== doors.signature) doors = { signature, views };
+    return doors.views;
+  };
+  let app: MountedApp | null = null;
+  let director: FeedbackDirector | null = null;
+  const host: WorldHost = {
+    input,
+    setPrompt(next) {
+      prompt = next;
+      showPrompt();
+    },
+    go: (place) => void flow.go(place),
+    remember: (spot) => void world.dispatch((s, c) => setPlayerSpot(s, spot, c)),
+    player: () => world.getSnapshot().save?.player ?? newPlayer(),
+    paused: () => app?.isModalOpen() ?? false,
+    denied: () => director?.denied(),
+  };
+  const flow = createAreaFlow({
+    plaza: {
+      enter: (from) => farmView?.showScene(PLAZA_SCENE_KEY, { from }),
+      exit: () => farmView?.sleepScene(PLAZA_SCENE_KEY),
+    },
+    area: (id) => AREAS.get(id),
+    changed: (to) => {
+      prompt = null;
+      showPrompt();
+      app?.setPlace(to === PLAZA_ID ? 'plaza' : 'area');
+      // Leaving through a door keeps that Area as the place: the game reopens in front of its door.
+      if (to !== PLAZA_ID) void world.dispatch((s, c) => setPlayerSpot(s, { area: to, x: null, y: null, facing: 'down' }, c));
+    },
+  });
   // §12: the desktop shell allows autoplay; the browser build waits for the first gesture.
   const audio = new AudioManager(audioTracks(assets.registry), {
     createClip: (url): AudioClip => new Audio(url),
@@ -83,35 +147,54 @@ export async function start(root: HTMLElement) {
     document.addEventListener('pointerdown', unlock, { once: true, capture: true });
     document.addEventListener('keydown', unlock, { once: true, capture: true });
   }
-  let director: FeedbackDirector | null = null;
   let farmView: FarmView | null = null;
-  const app = mountApp(root, store, () => clock.now(), {
+  const mounted = mountApp(root, store, () => clock.now(), {
     ...opts,
+    input,
+    keySettings,
     onPigTap: (pigId) => director?.pigTapped(pigId),
     dialogs: platform.dialogs,
     assets: assets.registry,
     saveFolder: platform.kind === 'desktop',
     version: platform.version,
     hasBackups: platform.backups !== null,
-    farm: (host, onPick) => {
-      farmView = createFarmView(host, {
-        store,
+    farm: (stage, onPick) => {
+      const plaza = new PlazaScene({
+        layout: PLAZA_LAYOUT,
+        character: CHARACTER,
         assets: assets.registry,
-        now: () => clock.now(),
-        onPick,
+        host,
+        portals,
       });
+      farmView = createFarmView(
+        stage,
+        {
+          store,
+          assets: assets.registry,
+          now: () => clock.now(),
+          onPick,
+          host,
+          character: CHARACTER,
+          // The game opens in the plaza (spec §3.1).
+          firstScene: () => ({ key: PLAZA_SCENE_KEY, from: null }),
+        },
+        [plaza],
+      );
       if (devPhase) farmView.previewPhase(devPhase);
       if (devSeason) farmView.previewSeason(devSeason);
       return farmView;
     },
   });
+  app = mounted;
+  app.setPlace('plaza');
+  root.append(promptHost);
   // §11.3: every event and rejection becomes presentation here, and only here.
   director = createFeedbackDirector({
     store,
     effects: () => farmView?.effects() ?? noEffects,
     audio,
-    toast: app.toast,
-    away: app.showAway,
+    toast: mounted.toast,
+    away: mounted.showAway,
   });
   // §12: ui_click for every DOM button, through one delegated listener.
   root.addEventListener('click', (e) => {

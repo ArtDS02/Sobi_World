@@ -2,6 +2,8 @@
 import type { AssetRegistry } from '../../../core/assets/registry';
 import type { GameEvent } from '../logic/events';
 import type { FileDialogs } from '../../../core/save/port';
+import type { ControlInput } from '../../../ui/world/controlInput';
+import type { KeySettings } from '../../../ui/world/keySettings';
 
 export interface AppOptions {
   /** Dev-only toolbar (time travel), injected by main.ts behind import.meta.env.DEV. */
@@ -18,11 +20,16 @@ export interface AppOptions {
   version?: string | null;
   /** The platform keeps save backups to list and restore (desktop). */
   hasBackups?: boolean;
+  /** Keyboard controls (spec §4): the bag, Codex and menu keys open their screens. Absent in DOM tests. */
+  input?: ControlInput;
+  /** Changing the keys, shown in the settings screen. */
+  keySettings?: KeySettings;
   /** Mounts the Phaser farm into the stage (main.ts injects src/game; absent in DOM tests). */
   farm?: (host: HTMLElement, onPick: (pick: FarmPick) => void) => FarmCanvas;
 }
 
 /** World object actions (manifest layout.placements[].action). */
+/** (`plaza`, the way out, is handled by the scene and never reaches the panels.) */
 export type FarmPickAction = 'shop' | 'inventory' | 'orders' | 'collection' | 'trough' | 'cleanAll';
 /** A click on the canvas: a pig, a gift box (U06), a world object, or empty ground. */
 export type FarmPick =
@@ -31,7 +38,14 @@ export type FarmPick =
   | { kind: 'action'; action: FarmPickAction }
   | { kind: 'ground' };
 
+/** Where the player is: the plaza shows a lighter HUD (the farm's gauges belong to the farm). */
+export type Place = 'plaza' | 'area';
+
 export interface MountedApp {
+  /** Tells the shell which place is on screen. */
+  setPlace: (place: Place) => void;
+  /** A panel or dialog covers the world (the character stands still then). */
+  isModalOpen: () => boolean;
   /** The DOM toast host; only the FeedbackDirector calls it (§11.3). */
   toast: (message: string) => void;
   /** §9.5 away summary; only the FeedbackDirector calls it, for a long catch-up. */

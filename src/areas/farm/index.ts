@@ -7,6 +7,7 @@ import { levelFromXp } from './logic/config/levels';
 import type { GameEvent } from './logic/events';
 import { farmSaveSpec, initFarm } from './logic/save/farmSave';
 import { FARM_AREA_ID, farmOf } from './logic/save/lens';
+import { farmStage } from './stage';
 import { farmSummaryLines } from './logic/summary';
 import { advanceFarmWorld, farmSimulatedAt, rebaseFarm } from './logic/world';
 import { farmEventsToWorld } from './logic/worldEvents';
@@ -22,4 +23,7 @@ export const farmArea: AreaModule = {
   level: (world) => levelFromXp(areaXp(world, FARM_AREA_ID)),
   toWorldEvents: farmEventsToWorld,
   getSummary: (events, world, now) => farmSummaryLines(events as GameEvent[], farmOf(world), now),
+  // Presentation only (GĐ3): the numbers run the same whether the player is here or not.
+  onEnter: farmStage.enter,
+  onExit: farmStage.exit,
 };
