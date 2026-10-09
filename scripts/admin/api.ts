@@ -15,6 +15,7 @@
 //   POST /breeding-genetics { genetics, mutations, geneBonuses } → farm/breeding.json (MU-1)
 //   POST /season-fx      { tuning }          → farm/season-fx.json (MU-2)
 //   GET  /layout-default · POST /layout { placements } → farm/layout.json placements
+//   GET  /numbers · POST /numbers { file, value } → the numbers of time / health / valuation / quality / farm balance (only numbers change)
 //   GET  /build-info · POST /open-folder { which } → desktop build status + guide data (AM-1)
 import { readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -35,6 +36,7 @@ import { dayNightIssues } from '../../src/core/engine/dayNight';
 import { validateSpecies, type ValidateInput } from './validate';
 import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, registerExisting, uploadArt } from './artFiles';
 import { buildInfo, openFolder } from './buildInfo';
+import { readNumbers, saveNumbers } from './numbers';
 import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
 import type { GeneticsRules, Mutation } from '../../src/areas/farm/logic/config/breedingRules';
 import type { GeneBonuses } from '../../src/areas/farm/logic/config/genePool';
@@ -276,6 +278,10 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
       return { status: 200, body: { placements: JSON.parse(readFileSync(LAYOUT_DEFAULT, 'utf8')) } };
     case 'POST /layout':
       return saveLayout((await body<{ placements: PlacementRow[] }>()).placements, load);
+    case 'GET /numbers':
+      return { status: 200, body: { files: readNumbers() } };
+    case 'POST /numbers':
+      return saveNumbers(await body<{ file: string; value: unknown }>(), load);
     case 'GET /build-info':
       return buildInfo();
     case 'POST /open-folder':

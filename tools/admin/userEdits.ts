@@ -181,3 +181,46 @@ export function apply(s: FarmGame, edit: Edit): FarmGame {
   if (problems.length) throw new Error(problems.slice(0, 3).join('\n'));
   return next;
 }
+
+const DAY = 86_400_000;
+
+/**
+ * Time travel (GĐ2): the save looks as if the player left `ms` ago. Every moment in it moves back by
+ * `ms` (pigs' clocks, the trough, pregnancies, orders, gifts, history, the game day counters), so the
+ * game catches up the missed time the next time it opens — the same as really leaving it closed.
+ */
+export const rewind = (ms: number): Edit => (s) => {
+  const back = int(ms, 0);
+  const days = Math.round(back / DAY);
+  const t = <T extends number | null | undefined>(v: T): T => (typeof v === 'number' ? ((v - back) as T) : v);
+  const day = <T extends number | null | undefined>(v: T): T => (typeof v === 'number' ? ((v - days) as T) : v);
+  /** Shifts only the keys that exist: an absent field stays absent. */
+  const shift = <O extends object>(o: O, time: readonly (keyof O)[], dayKeys: readonly (keyof O)[] = []): O => {
+    const out = { ...o };
+    for (const k of time) if (out[k] !== undefined) out[k] = t(out[k] as number | null | undefined) as O[keyof O];
+    for (const k of dayKeys) if (out[k] !== undefined) out[k] = day(out[k] as number | null | undefined) as O[keyof O];
+    return out;
+  };
+  return {
+    ...s,
+    createdAt: t(s.createdAt),
+    updatedAt: t(s.updatedAt),
+    pigs: s.pigs.map((p) => ({
+      ...shift(p, ['lastTickedAt', 'createdAt', 'lastFedAt', 'lastCleanedAt', 'lastSickAt', 'recoveringUntil'], ['sickDay']),
+      ...(p.pregnancy ? { pregnancy: shift(p.pregnancy, ['startedAt', 'endsAt']) } : {}),
+    })),
+    nursery: s.nursery.map((n) => shift(n, ['bornAt'])),
+    trough: shift(s.trough, ['lastResolvedAt']),
+    orders: s.orders.map((o) => shift(o, ['createdAt', 'expiresAt', 'fulfilledAt'])),
+    gifts: { nextAt: t(s.gifts.nextAt), boxes: s.gifts.boxes.map((b) => shift(b, ['spawnedAt'])) },
+    transactions: s.transactions.map((x) => shift(x, ['at'])),
+    breedingRecords: s.breedingRecords.map((r) => shift(r, ['at', 'bornAt'])),
+    progress: {
+      ...s.progress,
+      claimed: Object.fromEntries(Object.entries(s.progress.claimed).map(([k, v]) => [k, t(v)])),
+      daily: { ...s.progress.daily, lastDay: day(s.progress.daily.lastDay) },
+    },
+    ...(s.graceUntil !== undefined ? { graceUntil: t(s.graceUntil) } : {}),
+    ...(s.memorials ? { memorials: s.memorials.map((m) => shift(m, ['diedAt'])) } : {}),
+  };
+};

@@ -1,9 +1,10 @@
 // Admin dashboard entry (admin.html, `npm run admin`). Hash routes (DECISIONS A7-1, AD-1):
 // #/ overview · #/users[/<id>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
-// #/assets (source) · #/library · #/layout · #/products · #/breeding · #/daynight · #/seasons · #/desktop · #/guide[/<section>]
+// #/assets (source) · #/library · #/layout · #/products · #/breeding · #/daynight · #/numbers · #/seasons · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
 import { breedingDirty, renderBreeding } from './breeding';
 import { renderDayNight } from './dayNight';
+import { renderNumbers } from './numbers';
 import { renderSeasons } from './seasons';
 import { renderEditor } from './editor';
 import { renderDesktop } from './desktop';
@@ -25,7 +26,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
   [null, [['', '🏡', 'Tổng quan', 'overview'], ['users', '👤', 'Người chơi', 'users']]],
   ['Heo', [['pigs', '🐷', 'Quản lý heo', 'pigs'], ['validation', '🩺', 'Kiểm tra dữ liệu', 'pigs']]],
   ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
-  ['Game', [['layout', '🗺️', 'Bố cục nông trại', 'layout'], ['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['seasons', '🍂', 'Mùa & hiệu ứng', 'seasons']]],
+  ['Game', [['layout', '🗺️', 'Bố cục nông trại', 'layout'], ['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['numbers', '🔢', 'Số liệu', 'numbers'], ['seasons', '🍂', 'Mùa & hiệu ứng', 'seasons']]],
   ['Cửa hàng', [['products', '🛒', 'Sản phẩm', 'shop']]],
   ['Phối giống', [['breeding', '🧬', 'Luật phối giống', 'breeding']]],
   ['Hệ thống / Hướng dẫn', [['desktop', '🎮', 'Desktop Game', 'desktop'], ['guide', '📘', 'Hướng dẫn quản trị', 'overview']]],
@@ -106,6 +107,7 @@ function render() {
     library: () => renderLibrary(content),
     daynight: () => renderDayNight(content, state.apiOnline),
     seasons: () => renderSeasons(content, render),
+    numbers: () => renderNumbers(content, state.apiOnline, render),
     users: () => (id ? renderUserDetail(content, id, render) : renderUsers(content, render)),
     products: () => renderProducts(content, render),
     breeding: () => renderBreeding(content, render),
