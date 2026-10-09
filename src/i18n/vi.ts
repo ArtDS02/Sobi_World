@@ -58,6 +58,8 @@ export const vi = {
     pigsTitle: "Heo trong trại: {count}/{max}",
     pigsReserved: "{n} heo con đang chờ trong Kho",
     pigsFull: "Trại đã đầy — mua thêm chỗ hoặc bán bớt heo",
+    alertSick: "{count} heo bệnh",
+    alertCritical: "{count} heo nguy kịch!",
     pigsIcon: "🐷",
   },
 
@@ -103,6 +105,9 @@ export const vi = {
     healthy: "Khỏe mạnh",
     sick: "Đang bệnh",
     recovering: "Đang hồi phục",
+    critical: "Nguy kịch",
+    warnSick: "Heo đang bệnh. Sau {time} nữa sẽ nguy kịch — cho uống thuốc nhé.",
+    warnCritical: "Heo đang nguy kịch! Không chữa thì sau {time} nữa sẽ mất heo.",
     pregnant: "Đang mang thai",
     pregnantLeft: "Còn {time} nữa sinh",
     quality: "Chất lượng {quality} → giá x{mult}",

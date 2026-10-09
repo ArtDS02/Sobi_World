@@ -94,6 +94,7 @@ export function renderPigPanel(
     el(
       'div',
       { class: 'pig-panel__care' },
+      vm.warning ? el('p', { class: 'pig-panel__warning', text: vm.warning, attrs: { role: 'alert' } }) : null,
       stat(vi.stat.growth, vm.growth, 'growth', pig.growthProgress),
       stat(vi.stat.hunger, vm.hunger, 'hunger', pig.hunger),
       stat(vi.stat.cleanliness, vm.cleanliness, 'cleanliness', pig.cleanliness),

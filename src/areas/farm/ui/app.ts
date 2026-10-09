@@ -258,6 +258,10 @@ export function mountApp(
         trough: () => openTrough(),
         history: () => go('history'),
         nav: (panel) => go(panel),
+        pig: (pigId) => {
+          ui.selectedPigId = pigId;
+          go('pig');
+        },
       }),
     );
     patch(coach, session.coach(snap));

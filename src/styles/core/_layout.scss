@@ -309,6 +309,19 @@
     }
   }
 
+  // Ill pigs (GĐ2): a gold warning, red and pulsing when one is critical.
+  &.topbar__alert {
+    padding: 0 $sp-3;
+    color: $c-gold;
+    cursor: pointer;
+
+    &.is-critical {
+      color: $c-danger;
+      background: $c-danger-soft;
+      animation: topbar-alert-pulse 1.6s ease-in-out infinite;
+    }
+  }
+
   &.c-gauge {
     min-height: 0;
     background: $c-pill;
@@ -368,4 +381,16 @@
 
 .is-reduced-motion .c-dot {
   animation: none;
+}
+
+@keyframes topbar-alert-pulse {
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar__alert.is-critical {
+    animation: none;
+  }
 }

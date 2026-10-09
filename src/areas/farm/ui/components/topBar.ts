@@ -38,9 +38,11 @@ export function renderTopBar(
     trough: () => void;
     history: () => void;
     nav: (panel: PanelId) => void;
+    /** The HUD alert for ill pigs: open this pig's panel. */
+    pig: (pigId: string) => void;
   },
 ): HTMLElement {
-  const vm = topBarVm(save);
+  const vm = topBarVm(save, now);
   const clock = clockVm(now);
   const dots: Partial<Record<(typeof NAV)[number], number>> = {
     orders: readyOrderCount(save, now),
@@ -106,6 +108,18 @@ export function renderTopBar(
         el('span', { class: 'topbar__pigs-icon', text: vi.hud.pigsIcon, attrs: { 'aria-hidden': 'true' } }),
         el('b', { text: vm.pigs }),
       ),
+      vm.alert
+        ? el(
+            'button',
+            {
+              class: `hud-pill topbar__alert${vm.alert.critical ? ' is-critical' : ''}`,
+              attrs: { type: 'button', 'aria-label': vm.alert.text },
+              on: { click: () => on.pig(vm.alert!.pigId) },
+            },
+            el('span', { text: '⚠', attrs: { 'aria-hidden': 'true' } }),
+            el('b', { text: vm.alert.text }),
+          )
+        : null,
       clock
         ? el(
             'span',
