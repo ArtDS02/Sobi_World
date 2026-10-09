@@ -23,6 +23,10 @@ const unin: UninBridge = {
       ipcRenderer.on(channel('unin:save:changed'), () => fn());
     },
   },
+  settings: {
+    load: () => invoke('unin:settings:load'),
+    write: (json) => invoke('unin:settings:write', json),
+  },
   app: {
     version: ipcRenderer.sendSync(channel('unin:app:version')) as string,
     onFlushRequest(flush) {
