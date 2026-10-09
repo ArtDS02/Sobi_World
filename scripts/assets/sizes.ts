@@ -33,7 +33,6 @@ export const CATALOGUE_SIZES: Record<string, Size> = {
   prop_sea_dock: { width: 420, height: 300 },
   prop_sky_tree: { width: 340, height: 520 },
   prop_portal_gate: { width: 320, height: 360 },
-  prop_plaza_signpost: { width: 160, height: 200 },
   prop_fence_section: { width: 208, height: 128 },
   prop_water_bowl: { width: 192, height: 136 },
   prop_mud_puddle: { width: 256, height: 128 },

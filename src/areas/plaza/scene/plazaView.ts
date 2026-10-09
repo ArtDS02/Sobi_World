@@ -6,14 +6,14 @@ export const PLAZA_VIEW = {
   /** The grass starts this far above the walk area's top edge. */
   horizonAbove: 90,
   skyDepth: -10_000,
-  floorDepth: -9_000,
-  floorStroke: 6,
-  floorStrokeColor: 0xb89b64,
+  groundDepth: -9_000,
+  /** Outline of a painted ellipse (the cobbled square, the shore). */
+  edgeWidth: 6,
   /** Pixels with alpha above this count as a hit on a door. */
   hitAlpha: 20,
   /** Data key marking a door image for pointer picking. */
   doorData: 'plazaDoor',
-  closedTint: 0x8a8f9c,
+  closedTint: 0xaeb2bf,
   /** A click on a door walks until within this share of its reach. */
   clickArriveShare: 0.45,
   /** The padlock on a closed door: size, and where on the art (share of its height from the top). */

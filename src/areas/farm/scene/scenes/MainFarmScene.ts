@@ -18,7 +18,6 @@ import { SceneEffects } from '../fx/SceneEffects';
 import { Backdrop } from '../prefabs/Backdrop';
 import { DayNightLayer } from '../prefabs/DayNightLayer';
 import { FarmProps } from '../prefabs/FarmProps';
-import { FarmWalker } from '../prefabs/FarmWalker';
 import { PigArt } from '../prefabs/PigArt';
 import { spreadCrowd } from '../prefabs/crowd';
 import { GiftBoxes } from '../prefabs/GiftBoxes';
@@ -30,7 +29,7 @@ import { giftSpot, type Rect } from '../view/giftPlacement';
 import { pigView, type FarmLayout } from '../view/pigView';
 import { placementTransform, placementView, visibleLayout } from '../view/sceneLayout';
 import { FALLBACK_PROP_KEY, textureKey, troughTextureKey } from '../view/textureKeys';
-import { makeClickable } from './farmPick';
+import { makeClickable, pickOf } from './farmPick';
 import { warnLoadErrors } from './PreloadScene';
 
 export class MainFarmScene extends Phaser.Scene {
@@ -50,7 +49,6 @@ export class MainFarmScene extends Phaser.Scene {
   private dayClock!: DayNightDirector;
   private season!: SeasonDirector; // seasonal art, backdrop palette, environment FX (SE-1, MU-2)
   private life!: PigLife; // the pigs' needs-driven behaviour (PL-1)
-  private walker!: FarmWalker; // the player's character (GĐ3)
   private readonly obstacles: Rect[] = []; // world object bounds; gift boxes keep clear (U06)
   private readonly props = new FarmProps(); // trough texture + owned decorations (PG-3)
 
@@ -78,15 +76,6 @@ export class MainFarmScene extends Phaser.Scene {
     const seasonPreview = () => this.bridge.seasonPreview;
     const phase = () => this.dayClock?.phase() ?? 'day';
     this.season = new SeasonDirector(this, this.deps.assets, backdrop, this.deps.now, seasonPreview, phase);
-    this.walker = new FarmWalker(this, {
-      layout: this.layout,
-      character: this.deps.character,
-      host: this.deps.host,
-      activate: (pick) => this.deps.onPick(pick),
-      pigs: () => this.pigs,
-      pigName: (id) => this.deps.store.getSnapshot().save?.pigs.find((p) => p.id === id)?.name,
-      gifts: () => this.gifts,
-    });
     this.drawPlacements();
     this.season.update();
     const preview = () => this.bridge.phasePreview;
@@ -104,6 +93,10 @@ export class MainFarmScene extends Phaser.Scene {
     this.bridge.loaded();
     // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
     if (!this.pigEnv.reduceMotion()) this.cameras.main.fadeIn(FARM_VIEW.AMBIENT.fadeInMs);
+    // Spec §4: the farm is played with clicks (the character walks only in the plaza and Sobi Adventure).
+    this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
+      this.deps.onPick(pickOf(over[0]));
+    });
     // The numbers kept running while the scene slept (the player was in the plaza): draw them now.
     this.events.on(Phaser.Scenes.Events.WAKE, () => this.sync(this.deps.store.getSnapshot()));
     const off = this.deps.store.subscribe((s) => this.sync(s));
@@ -117,7 +110,6 @@ export class MainFarmScene extends Phaser.Scene {
     });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       off();
-      this.walker.destroy();
       this.plates.destroy();
       this.gifts.destroy();
       this.dayNight.destroy();
@@ -187,8 +179,6 @@ export class MainFarmScene extends Phaser.Scene {
     }
     this.dayNight.addLight(img, p.action);
     this.obstacles.push(img.getBounds());
-    this.walker.addObstacle(img);
-    if (p.action) this.walker.addObject(img, p.action);
     const seasonTag = !!p.signed && SEASON_UNSIGNED_IDS.includes(p.id);
     let tag: Phaser.GameObjects.Text | null = null;
     if (p.action) {
@@ -203,7 +193,6 @@ export class MainFarmScene extends Phaser.Scene {
     this.ambient.update(delta);
     this.season.tick(time);
     this.life.update(delta);
-    this.walker.update(delta);
     spreadCrowd(this.pigs, delta);
     this.plates.update((id) => this.pigs.get(id)?.plateAnchor() ?? null);
   }

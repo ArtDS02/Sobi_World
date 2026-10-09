@@ -1,36 +1,27 @@
-// The walking layouts (GĐ3): from the spawn the character can stand next to every door of the plaza and
-// every usable object of the farm, and the farm's way out is among them. Art sizes come from the real PNGs.
+// The plaza is a place to walk (GĐ3): from the spawn the character can reach every door, is stopped by the
+// objects and the sea, and never stands inside anything. Art sizes come from the real PNGs. The farm is played
+// with clicks (spec §4): it has no walking and no test here.
 import { readFileSync } from 'node:fs';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
-import { PLAZA_LAYOUT } from '../../src/areas/plaza/logic/config/content';
-import { plazaWalkable } from '../../src/areas/plaza/logic/walkable';
-import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
 import { placementTransform } from '../../src/areas/farm/scene/view/sceneLayout';
-import { farmSpawn, farmWalkable } from '../../src/areas/farm/scene/view/playerArea';
 import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
+import { PLAZA_LAYOUT } from '../../src/areas/plaza/logic/config/content';
+import { plazaObstacles, plazaWalkable } from '../../src/areas/plaza/logic/walkable';
+import type { AssetManifest } from '../../src/core/assets/manifestSchema';
 import { CHARACTER } from '../../src/core/config/character';
 import { canStand, settle, type Rect, type Vec, type Walkable } from '../../src/systems/character';
-import { footprintOf, frontOf } from '../../src/systems/layout/footprint';
-import type { AssetManifest } from '../../src/core/assets/manifestSchema';
+import { frontOf } from '../../src/systems/layout/footprint';
 
 const manifest = JSON.parse(readFileSync('public/assets/manifest/assets.json', 'utf8')) as AssetManifest;
 const rows = [...manifest.props, ...manifest.buildings, ...manifest.environment];
 const sizeOfArt = (id: string) => {
-  const row = rows.find((r) => r.id === id);
-  const r = row as { asset?: string; states?: Record<string, string> } | undefined;
-  const path = r?.asset ?? Object.values(r?.states ?? {})[0];
+  const row = rows.find((r) => r.id === id) as { asset?: string; states?: Record<string, string> } | undefined;
+  const path = row?.asset ?? Object.values(row?.states ?? {})[0];
   if (!path) throw new Error(`no file for ${id}`);
   const png = PNG.sync.read(readFileSync(`public/assets/${path}`));
   return { w: png.width, h: png.height };
 };
-
-interface Item {
-  id: string;
-  rect: Rect;
-  solid: boolean;
-  usable: boolean;
-}
 
 /** Where a placement is drawn: origin (0.5, 1) by default, width / height scaled like the scenes do. */
 function boundsOf(p: { id: string; x: number; y: number; width?: number; height?: number; originX?: number; originY?: number }, W: number, H: number): Rect {
@@ -46,7 +37,7 @@ function boundsOf(p: { id: string; x: number; y: number; width?: number; height?
 const feet = { halfW: CHARACTER.feetHalfWidth, halfH: CHARACTER.feetHalfHeight };
 
 /** Flood fill over a grid of standable cells from `from`. */
-function reachable(from: Vec, walk: Walkable, step = 12): (p: Vec, within: number) => boolean {
+function reachable(from: Vec, walk: Walkable, step = 12): { has: (p: Vec, within: number) => boolean; cells: number } {
   const start = settle(from, walk);
   const seen = new Map<string, Vec>();
   const queue: Vec[] = [start];
@@ -61,16 +52,16 @@ function reachable(from: Vec, walk: Walkable, step = 12): (p: Vec, within: numbe
       queue.push(n);
     }
   }
-  return (p, within) => [...seen.values()].some((c) => Math.hypot(c.x - p.x, c.y - p.y) <= within);
+  return { has: (p, within) => [...seen.values()].some((c) => Math.hypot(c.x - p.x, c.y - p.y) <= within), cells: seen.size };
 }
 
-describe('plaza layout', () => {
+describe('plaza terrain', () => {
   const { width: W, height: H } = PLAZA_LAYOUT.designSize;
-  const items: Item[] = PLAZA_LAYOUT.placements
-    .filter((p) => p.visible !== false && sizeOfArt(p.id))
-    .map((p) => ({ id: p.portal ?? p.id, rect: boundsOf(p, W, H), solid: p.solid === true, usable: p.portal !== undefined }));
-  const walk = plazaWalkable(PLAZA_LAYOUT, items.filter((i) => i.solid).map((i) => footprintOf(i.rect)), feet);
+  const art = PLAZA_LAYOUT.placements.map((p) => (p.visible === false ? null : boundsOf(p, W, H)));
+  const obstacles = plazaObstacles(PLAZA_LAYOUT, (i) => art[i] ?? null);
+  const walk = plazaWalkable(PLAZA_LAYOUT, obstacles, feet);
   const spawn = { x: PLAZA_LAYOUT.spawn.x * W, y: PLAZA_LAYOUT.spawn.y * H };
+  const doors = PLAZA_LAYOUT.placements.flatMap((p, i) => (p.portal ? [{ id: p.portal, rect: art[i]! }] : []));
 
   it('the spawn is on free ground', () => {
     expect(canStand(spawn, walk)).toBe(true);
@@ -78,32 +69,25 @@ describe('plaza layout', () => {
 
   it('every door can be reached and used from the spawn', () => {
     const reach = reachable(spawn, walk);
-    for (const door of items.filter((i) => i.usable)) {
-      expect(reach(frontOf(door.rect), PLAZA_LAYOUT.portalReach), door.id).toBe(true);
-    }
-  });
-});
-
-describe('farm layout', () => {
-  const { width: W, height: H } = FARM_LAYOUT.designSize;
-  const placed = FARM_LAYOUT.placements.filter((p) => p.visible !== false && !p.decor && sizeOfArt(p.id));
-  const things = placed.filter((p) => p.action).map((p) => ({ action: p.action!, rect: boundsOf(p, W, H) }));
-  const walk = farmWalkable(
-    FARM_LAYOUT,
-    placed.filter((p) => !p.id.startsWith('env_')).map((p) => footprintOf(boundsOf(p, W, H))),
-    feet,
-  );
-
-  it('the entrance is on free ground', () => {
-    expect(canStand(farmSpawn(FARM_LAYOUT), walk)).toBe(true);
+    for (const door of doors) expect(reach.has(frontOf(door.rect), PLAZA_LAYOUT.portalReach), door.id).toBe(true);
   });
 
-  it('has exactly one way out to the plaza, and every usable object can be reached and used', () => {
-    expect(things.filter((t) => t.action === 'plaza')).toHaveLength(1);
-    const reach = reachable(farmSpawn(FARM_LAYOUT), walk);
-    for (const t of things) {
-      const range = Math.max(FARM_VIEW.REACH.objectMin, t.rect.width * FARM_VIEW.REACH.objectPerWidth);
-      expect(reach(frontOf(t.rect), range), t.action).toBe(true);
+  it('objects and the sea stop the character: their foot and the water are not standable', () => {
+    for (const [i, p] of PLAZA_LAYOUT.placements.entries()) {
+      if (!p.solid) continue;
+      const b = art[i]!;
+      expect(canStand({ x: b.x + b.width / 2, y: b.y + b.height - 3 }, walk), `${p.id} #${i}`).toBe(false);
     }
+    const sea = PLAZA_LAYOUT.ground.find((g) => g.kind === 'ellipse' && g.blocks);
+    expect(sea).toBeDefined();
+    if (sea?.kind === 'ellipse') {
+      expect(canStand({ x: sea.x * W + 40, y: sea.y * H - 40 }, walk)).toBe(false);
+    }
+  });
+
+  it('a good part of the square stays walkable (the layout is not a maze)', () => {
+    const reach = reachable(spawn, walk);
+    const area = walk.bounds.width * walk.bounds.height;
+    expect(reach.cells * 12 * 12).toBeGreaterThan(area * 0.45);
   });
 });

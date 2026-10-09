@@ -25,8 +25,6 @@ export const vi = {
     trough: "Máng ăn",
     cleanAll: "Giếng nước",
     plaza: "Ra Sảnh",
-    pig: "Chăm sóc {name}",
-    gift: "Mở hộp quà",
     wellHint: "Múc nước tắm cho cả đàn heo.",
     giftGold: "+{n} Sobi Coin",
     giftXp: "+{n} KN",

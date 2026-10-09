@@ -107,8 +107,8 @@ describe('asset registry (spec §11.4)', () => {
 
   it('buildings and props: every row has its file, decor cut at catalogue size (A4)', () => {
     const m = manifest();
-    // GĐ3 art that is still a placeholder (docs/ASSET_TODO.md): the character and the doors of Areas not built yet.
-    const todo = ['chr_player', 'prop_garden_gate', 'prop_sea_dock', 'prop_sky_tree', 'prop_portal_gate', 'prop_plaza_signpost'];
+    // GĐ3 art that is still a placeholder (docs/ASSET_TODO.md).
+    const todo = ['prop_plaza_signpost'];
     for (const row of [...m.buildings, ...m.props]) {
       if (!todo.includes(row.id)) expect(row.status, row.id).not.toBe('placeholder');
       if (row.id !== 'chr_player') expect(reg.url(row.id, row.asset ? 'asset' : 'full'), row.id).not.toBeNull();

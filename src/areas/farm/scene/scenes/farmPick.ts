@@ -3,14 +3,14 @@ import type * as Phaser from 'phaser';
 import type { FarmAction } from '../config/layout';
 import { FARM_VIEW } from '../config/farmView';
 import { vi } from '../../../../i18n/vi';
-import type { ScenePick } from '../farmView';
+import type { FarmPick } from '../farmView';
 import { GIFT_ID_DATA } from '../prefabs/GiftBoxes';
 import { PIG_ID_DATA } from '../prefabs/PigSprite';
 
 export const ACTION_DATA = 'farmAction';
 
 /** The top object under the pointer → what was clicked. */
-export function pickOf(top: Phaser.GameObjects.GameObject | undefined): ScenePick {
+export function pickOf(top: Phaser.GameObjects.GameObject | undefined): FarmPick {
   const pigId: unknown = top?.getData(PIG_ID_DATA);
   if (typeof pigId === 'string') return { kind: 'pig', pigId };
   const giftId: unknown = top?.getData(GIFT_ID_DATA);

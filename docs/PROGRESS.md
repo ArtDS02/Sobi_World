@@ -8,9 +8,18 @@
 
 ## Nhật ký
 
+### 2026-10-09 — GĐ3 cập nhật theo yêu cầu: nhân vật chỉ đi ở Sảnh/Adventure, Sảnh đẹp hơn
+✅ Đã làm:
+- **Nhân vật chỉ di chuyển ở Sảnh và Sobi Adventure.** Farm (và Garden, Aquarium, Cloud sau này) chơi bằng click; đã gỡ nhân vật, gợi ý phím và đi bộ khỏi Farm. Về Sảnh bằng nút "Ra Sảnh" ở HUD (không thêm art vào Farm). Manifest Area có `movement: click | character` (Adventure = `character`).
+- **Địa hình Sảnh:** nhà, cây, đá, bụi, hàng rào, ghế, đèn, đài phun nước, rương, rơm đều chắn đường (chắn phần chân, chỉnh `footprint` từng vật); biển chắn đường; đường đất, quảng trường lát đá, bãi cát. Test: chân mọi vật `solid` và nước không đứng được, vẫn tới được mọi cổng, ≥ 45% mặt bằng đi được.
+- **Art từ ảnh tham khảo** `asset/reference/sobi_world` (script `scripts/cut-plaza.ts`): nhân vật Sobi 12 khung, 4 cổng Area, đài phun nước, ghế, đèn, thuyền, cây, rương, rơm, biển gỗ; bố cục Sảnh theo ảnh `sobi_world_lobby.png`. Art Sobi Farm không đụng.
+- **Giao diện:** gợi ý phím thành "biển gỗ" nhỏ có mũi chỉ, phím bấm như phím bàn phím; nút "Ra Sảnh" ở HUD; màn đổi phím có phím dạng nút bấm, báo lỗi rõ; hợp màn hẹp và `prefers-reduced-motion`.
+🧪 `npm run check` xanh, e2e 6/6 (đã sửa theo luồng mới).
+⚠️ Lưu ý: ảnh tham khảo là ảnh mô phỏng nên art cắt ra là bản tạm; thư mục `asset/` bạn đang sắp xếp lại (chưa commit) không bị đụng. Admin sửa được vật, cổng, vùng đi, điểm xuất hiện của Sảnh; đường/biển (`ground`) sửa trong `content/plaza/layout.json`.
+
 ### 2026-10-09 — GĐ3 hoàn thành: nhân vật và Sảnh Sobi
 ✅ Đã làm:
-1. `systems/character` (thuần, có test): đi 8 hướng (chéo không nhanh hơn), hộp chân va chạm, trượt dọc tường, không xuyên vật mỏng khi frame chậm, `settle` đẩy ra khỏi vật cản, tầm với để tương tác. Số liệu `content/shared/character.json`.
+1. (đã đổi, xem mục cập nhật phía trên: nhân vật chỉ ở Sảnh/Adventure) `systems/character` (thuần, có test): đi 8 hướng (chéo không nhanh hơn), hộp chân va chạm, trượt dọc tường, không xuyên vật mỏng khi frame chậm, `settle` đẩy ra khỏi vật cản, tầm với để tương tác. Số liệu `content/shared/character.json`.
 2. Tương tác: gần vật → gợi ý phím (`[E] Vào Sobi Farm`), bấm E dùng vật gần nhất. Bấm chuột vào vật = nhân vật đi tới rồi dùng.
 3. `core/settings` + màn **Phím điều khiển** trong Cài đặt: WASD/mũi tên, E, I, C, Esc; 2 phím mỗi hành động, kiểm tra trùng và phím hệ thống, bấm ô rồi nhấn phím; lưu `settings.json` riêng (desktop: ghi tạm rồi đổi tên; web: localStorage); file hỏng → mặc định; lỗi ghi hiện ra.
 4. Sảnh Sobi (`src/areas/plaza`, `content/plaza/layout.json`): 5 cổng (Chuồng heo, Khu vườn, Biển, Cây cao, Cổng dịch chuyển). Chuồng heo mở; 4 cổng còn lại khóa, đứng gần hiện "Sắp ra mắt" + điều kiện mở (Farm Lv3…), ổ khóa trên cổng, bấm E phát tiếng lỗi. Area chưa làm khai báo bằng `planned: true`.

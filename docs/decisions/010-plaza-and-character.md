@@ -10,9 +10,10 @@ Spec V2 §3.1, §4: game mở ở Sảnh; một nhân vật đi bộ, đứng g�
 - **`onEnter/onExit` của AreaModule** do `app/areaFlow.ts` gọi; Farm nối chúng vào canvas qua `areas/farm/stage.ts`.
 - **Mở game luôn ở Sảnh.** Save giữ `player {area, x, y, facing}` (world save v9, migration v8→v9): thoát trong Sảnh → mở lại đúng chỗ; thoát trong một Area → mở lại ngay trước cửa Area đó.
 - **Phím** = `KeyboardEvent.code`, 2 phím mỗi hành động, không trùng, không dùng phím hệ thống. File `settings.json` riêng (desktop: ghi tạm rồi đổi tên; web: localStorage); file hỏng → phím mặc định, không chặn game. Lỗi ghi được báo, không nuốt.
-- **Chuột vẫn chơi được:** bấm một vật = nhân vật đi tới rồi dùng (cùng đường với phím E). Thao tác hàng loạt (đổ máng, mua…) vẫn ở UI.
-- **Nhân vật:** `systems/character` (thuần): 8 hướng, hộp chân va chạm, trượt dọc tường, vật thể chỉ chắn phần chân (`systems/layout/footprint`). Con số ở `content/shared/character.json`.
-- **Art:** nhân vật và 4 cổng chưa có là placeholder đã đăng ký trong manifest (`status: placeholder`), danh sách ở `docs/ASSET_TODO.md`.
+- **Nhân vật chỉ đi ở Sảnh và Sobi Adventure** (chủ dự án, 2026-10-09). Sobi Farm, Garden, Aquarium, Cloud chơi bằng click như Sobi Farm cũ, không có nhân vật. Manifest Area có `movement: click | character`. Từ Farm về Sảnh: nút "Ra Sảnh" trên HUD. Ở Sảnh bấm chuột vào cổng hoặc mặt đất cũng làm nhân vật đi tới.
+- **Địa hình Sảnh:** vật `solid` chắn phần chân (nhà, cây, đá, hàng rào, ghế, đèn, đài phun nước…, `footprint` chỉnh từng vật); biển chắn đường (`ground[].blocks`, xấp xỉ bằng các dải chữ nhật). Đường đất, quảng trường, bãi cát chỉ để vẽ. Cùng hàm `plazaObstacles` cho scene và test.
+- **Nhân vật:** `systems/character` (thuần): 8 hướng, hộp chân va chạm, trượt dọc tường. Con số ở `content/shared/character.json`.
+- **Art Sảnh:** cắt từ ảnh tham khảo `asset/reference/sobi_world` bằng `scripts/cut-plaza.ts` (nhân vật Sobi 12 khung, cổng dịch chuyển, vườn, bể cá, cây đậu thần, đài phun nước, ghế, đèn, thuyền, cây, rương, rơm, biển gỗ). Art Sobi Farm không đổi. Còn thiếu: xem `docs/ASSET_TODO.md`.
 
 ## Hệ quả
 - Cổng mở = Area đã code **và** đã mở khóa; hiện chỉ Farm. `unlockedAreas` chưa tự mở theo cấp: làm cùng Garden (GĐ5).

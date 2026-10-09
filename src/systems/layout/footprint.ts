@@ -28,3 +28,18 @@ export const frontOf = (bounds: Rect): { x: number; y: number } => ({
   x: bounds.x + bounds.width / 2,
   y: bounds.y + bounds.height,
 });
+
+/**
+ * Rectangles that cover an ellipse (centre, radii) in horizontal strips `step` high: water the character
+ * cannot enter, as the same kind of obstacle as an object's foot.
+ */
+export function ellipseBlockers(cx: number, cy: number, rx: number, ry: number, step: number): Rect[] {
+  const out: Rect[] = [];
+  for (let y = cy - ry; y < cy + ry; y += step) {
+    // The widest row of the strip: the one closest to the centre line.
+    const near = y + step < cy ? y + step : y > cy ? y : cy;
+    const half = rx * Math.sqrt(Math.max(0, 1 - ((near - cy) / ry) ** 2));
+    if (half > 0) out.push({ x: cx - half, y, width: half * 2, height: step });
+  }
+  return out;
+}

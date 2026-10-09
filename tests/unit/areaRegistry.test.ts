@@ -21,6 +21,7 @@ const ctx = (now = T0) => ({ now, rng: mulberry32(5) });
 const manifest = (patch: Partial<AreaManifest> = {}): AreaManifest => ({
   id: 'test_garden',
   name: { vi: 'Vườn thử' },
+  movement: 'click',
   portalInPlaza: 'garden_gate',
   unlock: {},
   buildings: [],

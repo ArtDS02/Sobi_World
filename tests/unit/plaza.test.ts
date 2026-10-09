@@ -7,8 +7,7 @@ import { arrivalSpot, DOOR_STEP_PX } from '../../src/areas/plaza/logic/arrival';
 import { PLAZA_LAYOUT } from '../../src/areas/plaza/logic/config/content';
 import { portalPrompt, portalViews } from '../../src/areas/plaza/logic/portals';
 import { plazaWalkable } from '../../src/areas/plaza/logic/walkable';
-import { footprintOf } from '../../src/systems/layout/footprint';
-import { canStand, directionTo, nearestInteractable, stepCharacter } from '../../src/systems/character';
+import { canStand } from '../../src/systems/character';
 import { vi } from '../../src/i18n/vi';
 import { makeState } from './stateFactory';
 import { world } from './worldKit';
@@ -93,45 +92,15 @@ describe('arrival', () => {
   });
 });
 
-describe('layout is walkable', () => {
-  // The scene draws art at the layout's width; these tests use the same placement boxes with a
-  // nominal aspect (height = 1.1 × width), enough to prove spawn and doors are not walled in.
-  const boxes = PLAZA_LAYOUT.placements.map((p) => {
-    const width = p.width ?? 200;
-    const height = p.height ?? width * 1.1;
-    const x = p.x * PLAZA_LAYOUT.designSize.width;
-    const y = p.y * PLAZA_LAYOUT.designSize.height;
-    return { p, rect: { x: x - width / 2, y: y - height, width, height } };
-  });
-  const walk = plazaWalkable(
-    PLAZA_LAYOUT,
-    boxes.filter((b) => b.p.solid).map((b) => footprintOf(b.rect)),
-    feet,
-  );
-
-  it('the spawn is standable', () => {
-    const a = arrivalSpot(PLAZA_LAYOUT, walk, areaOf, newPlayer(), null);
-    expect(canStand(a, walk)).toBe(true);
-  });
-
-  it('from the spawn the character can reach every door and use it', () => {
-    for (const b of boxes.filter((x) => x.p.portal)) {
-      const door = { id: b.p.portal!, x: b.rect.x + b.rect.width / 2, y: b.rect.y + b.rect.height, reach: PLAZA_LAYOUT.portalReach };
-      let s = { ...arrivalSpot(PLAZA_LAYOUT, walk, areaOf, newPlayer(), null), moving: false };
-      for (let i = 0; i < 4000 && !nearestInteractable([door], s); i++) {
-        const dir = directionTo(s, { x: door.x, y: door.y + 30 }, 5);
-        s = stepCharacter(s, dir, 16, 280, walk);
-        // Walls: nudge sideways when stuck against an object in front of the door.
-        if (!s.moving && i % 7 === 0) s = stepCharacter(s, { x: 1, y: 0 }, 16, 280, walk);
-      }
-      expect(nearestInteractable([door], s), `door ${door.id} reachable`).not.toBeNull();
-    }
-  });
-
-  it('the door fronts are not blocked: a character stands right below each door', () => {
-    for (const b of boxes.filter((x) => x.p.portal)) {
-      const front = { x: b.rect.x + b.rect.width / 2, y: b.rect.y + b.rect.height + DOOR_STEP_PX };
-      expect(canStand(front, walk), `front of ${b.p.portal}`).toBe(true);
-    }
+describe('how the player acts (spec §4)', () => {
+  it('only the plaza and Sobi Adventure have a walking character; every other Area is played with clicks', () => {
+    const movement = Object.fromEntries(AREAS.areas(world(makeState())).map((a) => [a.manifest.id, a.manifest.movement]));
+    expect(movement).toEqual({
+      sobi_farm: 'click',
+      sobi_garden: 'click',
+      sobi_aquarium: 'click',
+      sobi_cloud: 'click',
+      sobi_adventure: 'character',
+    });
   });
 });

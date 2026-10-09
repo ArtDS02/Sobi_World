@@ -7,14 +7,14 @@ import type { CharacterConfig } from '../../../core/config/character';
 import type { AssetRegistry } from '../../../core/assets/registry';
 import { PLAZA_ID } from '../../../core/player/player';
 import type { Rect } from '../../../systems/character';
-import { footprintOf, frontOf } from '../../../systems/layout/footprint';
+import { frontOf } from '../../../systems/layout/footprint';
 import { CharacterActor, type ActorThing } from '../../../ui/world/CharacterActor';
 import { fitCamera } from '../../../ui/world/fitCamera';
 import type { WorldHost } from '../../../ui/world/host';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { arrivalSpot } from '../logic/arrival';
 import { portalPrompt, type PortalView } from '../logic/portals';
-import { plazaWalkable } from '../logic/walkable';
+import { plazaObstacles, plazaWalkable } from '../logic/walkable';
 import { PLAZA_VIEW } from './plazaView';
 
 export const PLAZA_SCENE_KEY = 'plaza';
@@ -33,7 +33,9 @@ type Door = ActorThing<string>;
 
 export class PlazaScene extends Phaser.Scene {
   private actor!: CharacterActor<string>;
-  private readonly obstacles: Rect[] = [];
+  private obstacles: Rect[] = [];
+  /** Where each placement is drawn, by index in the layout. */
+  private readonly drawn = new Map<number, Rect>();
   private readonly doors: Door[] = [];
   private readonly doorArt = new Map<string, Phaser.GameObjects.Image>();
   private readonly doorBadges = new Map<string, Phaser.GameObjects.Image>();
@@ -51,6 +53,7 @@ export class PlazaScene extends Phaser.Scene {
     fitCamera(this, layout.designSize);
     this.paintGround();
     layout.placements.forEach((p, i) => this.drawPlacement(p, i));
+    this.obstacles = plazaObstacles(layout, (i) => this.drawn.get(i) ?? null);
     this.actor = new CharacterActor<string>(
       this,
       this.deps.character,
@@ -127,6 +130,7 @@ export class PlazaScene extends Phaser.Scene {
     }
   }
 
+  /** Sky, grass, then the ground shapes of the layout back to front (sand, sea, paths, the square). */
   private paintGround() {
     const { layout } = this.deps;
     const { width, height } = layout.designSize;
@@ -135,11 +139,23 @@ export class PlazaScene extends Phaser.Scene {
     const wide = width * v.bleed;
     this.add.rectangle(width / 2, horizon - wide / 2, wide, wide, layout.palette.sky).setDepth(v.skyDepth);
     this.add.rectangle(width / 2, horizon + wide / 2, wide, wide, layout.palette.grass).setDepth(v.skyDepth);
-    const f = layout.floor;
-    this.add
-      .ellipse((f.x + f.width / 2) * width, (f.y + f.height / 2) * height, f.width * width, f.height * height, layout.palette.path)
-      .setStrokeStyle(v.floorStroke, v.floorStrokeColor, 0.5)
-      .setDepth(v.floorDepth);
+    const g = this.add.graphics().setDepth(v.groundDepth);
+    for (const shape of layout.ground) {
+      g.fillStyle(shape.color, 1);
+      if (shape.kind === 'ellipse') {
+        g.fillEllipse(shape.x * width, shape.y * height, shape.width * width, shape.height * height);
+        if (shape.stroke !== undefined) {
+          g.lineStyle(v.edgeWidth, shape.stroke, 1).strokeEllipse(shape.x * width, shape.y * height, shape.width * width, shape.height * height);
+        }
+        continue;
+      }
+      // A path: a thick line with round joints, so the bends are smooth.
+      g.lineStyle(shape.width, shape.color, 1);
+      g.beginPath();
+      shape.points.forEach(([x, y], i) => (i === 0 ? g.moveTo(x * width, y * height) : g.lineTo(x * width, y * height)));
+      g.strokePath();
+      for (const [x, y] of shape.points) g.fillCircle(x * width, y * height, shape.width / 2);
+    }
   }
 
   private drawPlacement(p: PlazaPlacement, index: number) {
@@ -159,7 +175,7 @@ export class PlazaScene extends Phaser.Scene {
     const environment = assets.resolve(p.id)?.section === 'environment';
     img.setDepth(environment ? PLAZA_VIEW.skyDepth + 1 + index : p.y * height);
     const bounds = img.getBounds();
-    if (p.solid) this.obstacles.push(footprintOf(bounds));
+    this.drawn.set(index, bounds);
     if (!p.portal) return;
     const front = frontOf(bounds);
     this.doors.push({ id: p.portal, x: front.x, y: front.y, reach: layout.portalReach, payload: p.portal });

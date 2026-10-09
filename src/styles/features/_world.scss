@@ -1,104 +1,242 @@
-// The walking world (GĐ3): the key hint over the canvas, the plaza's lighter HUD and the key settings.
+// The walking world (GĐ3): the key hint over the canvas, the HUD of the plaza and of the Areas, the key settings.
 @use '../core' as *;
+
+$sign-wood: #e9c27d;
+$sign-wood-light: #f6dfae;
+$sign-edge: #8a5a2b;
 
 // The farm's own gauges stay out of the plaza: they belong to the farm.
 .app.is-plaza {
   .c-gauge,
   .topbar__pigs,
-  .topbar__alert {
+  .topbar__alert,
+  .topbar__home {
     display: none;
   }
 }
 
-// "[E] Vào Sobi Farm": centred above the bottom dock, over the canvas, under the popups.
+// Inside an Area the way back to the plaza sits next to the settings gear.
+.app:not(.is-plaza) .topbar__pills {
+  right: 13rem;
+}
+
+.topbar__home {
+  position: absolute;
+  top: $sp-3;
+  right: calc(#{$sp-3} + #{$hud-pill-h} + #{$sp-2});
+  display: inline-flex;
+  gap: $sp-2;
+  align-items: center;
+  height: $hud-pill-h;
+  padding: 0 $sp-4 0 $sp-3;
+  font: inherit;
+  font-weight: $fw-bold;
+  color: $c-wood-dark;
+  cursor: pointer;
+  background: linear-gradient(180deg, $sign-wood-light, $sign-wood);
+  border: 3px solid #fff;
+  border-radius: 9999px;
+  box-shadow: $hud-shadow;
+  pointer-events: auto;
+  transition:
+    transform $dur-fast ease-out,
+    filter $dur-fast ease-out;
+
+  &::before {
+    font-size: $fs-lg;
+    content: '\2190'; // ←
+  }
+
+  &:hover {
+    filter: brightness(1.05);
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid $c-primary;
+    outline-offset: 2px;
+  }
+}
+
+// "[E] Vào Sobi Farm": a little wooden sign above the bottom dock, over the canvas, under the popups.
 .world-prompt-host {
   position: fixed;
   inset-inline: 0;
-  bottom: 7.5rem;
+  bottom: 7.75rem;
   z-index: 5;
   display: flex;
   justify-content: center;
+  padding-inline: $sp-3;
   pointer-events: none;
 }
 
 .world-prompt {
+  position: relative;
   display: flex;
   gap: $sp-3;
   align-items: center;
-  max-width: min(28rem, calc(100vw - 2rem));
-  padding: $sp-2 $sp-4;
-  color: $c-text;
-  background: $c-cream;
-  border: 2px solid $c-wood;
-  border-radius: $radius-card;
-  box-shadow: $hud-shadow;
+  max-width: min(30rem, 100%);
+  padding: $sp-2 $sp-4 $sp-2 $sp-3;
+  color: $c-wood-dark;
+  background: linear-gradient(180deg, $sign-wood-light, $sign-wood);
+  border: 3px solid $sign-edge;
+  border-radius: 1rem;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.55),
+    0 4px 0 rgba(122, 79, 42, 0.35),
+    0 10px 18px rgba(59, 42, 38, 0.22);
+  animation: world-prompt-in 160ms ease-out;
+
+  // The post under the sign.
+  &::after {
+    position: absolute;
+    bottom: -0.6rem;
+    left: 50%;
+    width: 0.9rem;
+    height: 0.9rem;
+    content: '';
+    background: $sign-wood;
+    border-right: 3px solid $sign-edge;
+    border-bottom: 3px solid $sign-edge;
+    transform: translateX(-50%) rotate(45deg);
+  }
 
   &.is-closed {
-    color: $c-text-muted;
-    background: #eceae6;
-    border-color: #b9b4ab;
+    color: #4a4f5c;
+    background: linear-gradient(180deg, #eceef2, #cfd3dc);
+    border-color: #7b8090;
+
+    &::after {
+      background: #cfd3dc;
+      border-color: #7b8090;
+    }
   }
 
   &__key {
     display: grid;
     flex: none;
-    min-width: 2.25rem;
-    height: 2.25rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
     padding: 0 $sp-2;
     font-family: inherit;
-    font-weight: 700;
+    font-size: $fs-lg;
+    font-weight: 800;
     color: $c-on-primary;
     background: $c-primary;
-    border-bottom: 3px solid $c-primary-strong;
-    border-radius: 0.5rem;
+    border-bottom: 4px solid $c-primary-strong;
+    border-radius: 0.6rem;
+    box-shadow: 0 2px 0 rgba(59, 42, 38, 0.2);
     place-items: center;
   }
 
   &__lock {
     flex: none;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
 
   &__text {
     display: grid;
     gap: 0.125rem;
     font-size: $fs-sm;
+    line-height: 1.25;
 
     b {
       font-size: $fs-md;
+      line-height: 1.2;
     }
   }
 }
 
-// Key settings: label, two key slots, "remove second key".
+@keyframes world-prompt-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// Key settings: label, two key caps, "remove second key".
 .keys {
   &__grid {
     display: grid;
-    gap: $sp-2;
+    gap: $sp-2 $sp-3;
     align-items: center;
     grid-template-columns: 1fr repeat(3, auto);
   }
 
+  // A key cap: the slot shows the key as a little keyboard key; waiting for a key it pulses.
   &__slot {
     min-width: 5.5rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-bottom-width: 4px;
+    border-radius: 0.6rem;
 
     &.is-listening {
       color: $c-on-primary;
       background: $c-primary;
       border-color: $c-primary-strong;
+      animation: keys-listen 1s ease-in-out infinite;
     }
+  }
+
+  &__clear {
+    font-size: $fs-sm;
   }
 
   &__message {
     padding: $sp-2 $sp-3;
+    font-weight: $fw-bold;
     color: $c-danger;
     background: $c-danger-soft;
     border-radius: $radius-card;
   }
 }
 
+@keyframes keys-listen {
+  50% {
+    filter: brightness(1.12);
+  }
+}
+
+@media (max-width: 40rem) {
+  .world-prompt-host {
+    bottom: 6.5rem;
+  }
+
+  .keys__grid {
+    grid-template-columns: 1fr auto auto;
+  }
+
+  .keys__clear {
+    display: none;
+  }
+
+  .app:not(.is-plaza) .topbar__pills {
+    right: 3.5rem;
+  }
+
+  .topbar__home {
+    top: auto;
+    right: auto;
+    bottom: 5.75rem;
+    left: $sp-3;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .world-prompt {
+  .world-prompt,
+  .keys__slot.is-listening {
+    animation: none;
+  }
+
+  .topbar__home {
     transition: none;
   }
 }

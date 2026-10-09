@@ -6,8 +6,6 @@ import type { AssetRegistry } from '../../../core/assets/registry';
 import type { FarmAction } from './config/layout';
 import type { DayPhase } from '../../../core/config/dayNight';
 import type { SeasonId } from '../../../core/config/seasons';
-import type { CharacterConfig } from '../../../core/config/character';
-import type { WorldHost } from '../../../ui/world/host';
 import type { FarmStore } from '../store';
 import { phaserConfig, SCENE_KEYS } from './config/phaser';
 import { bindFarmStage } from '../stage';
@@ -20,24 +18,19 @@ export interface FarmDeps {
   store: FarmStore;
   assets: AssetRegistry;
   now: () => number;
-  /** A thing used by the character (key, or a click that walked there): a pig, a world object with an `action`, or empty ground. */
+  /** Every canvas click: a pig, a world object with an `action`, or empty ground. */
   onPick: (pick: FarmPick) => void;
-  /** The player's character (GĐ3): keys, key hint, trips to the plaza. */
-  host: WorldHost;
-  character: CharacterConfig;
   /** The scene to open once loaded: the plaza on a normal start (the app decides). */
   firstScene: () => { key: string; from: string | null };
 }
 
-/** What the farm UI is told about (the way out, `plaza`, is the scene's own business). */
+/** What the farm UI is told about. */
 export type FarmPick =
   | { kind: 'pig'; pigId: string }
   | { kind: 'gift'; giftId: string }
-  | { kind: 'action'; action: Exclude<FarmAction, 'plaza'> }
+  | { kind: 'action'; action: FarmAction }
   | { kind: 'ground' };
 
-/** A click or use inside the scene, before the way out is split off. */
-export type ScenePick = FarmPick | { kind: 'action'; action: 'plaza' };
 
 /** Shared between the handle and MainFarmScene. */
 export interface FarmBridge {
