@@ -22,7 +22,8 @@ import { ITEMS } from '../../../core/config/items';
 import { DECOR_IDS, DECORS } from '../logic/config/decor';
 import { decorBonus } from '../logic/decor';
 import { productById, shopProducts } from '../logic/shopProducts';
-import { sellMultiplier } from '../logic/pricing';
+import { QUALITY_RULES } from '../../../systems/quality/quality';
+import { CONTENT } from '../../../core/config/content';
 import { mulberry32 } from '../../../core/rng';
 import type { FarmGame } from '../logic/types';
 import { formatInt, t } from '../../../i18n/format';
@@ -105,7 +106,7 @@ export function shopPigs(save: FarmGame, now: number, assets: AssetRegistry | nu
       thumb: assets?.url(def.artId) ?? null,
       price: goldText(def.buyGold ?? 0),
       sell: t(vi.shop.sellUpTo, {
-        gold: formatInt(Math.floor(def.sellGold * sellMultiplier(100))),
+        gold: formatInt(Math.floor(def.sellGold * QUALITY_RULES.priceFactor.PERFECT * Math.max(...CONTENT.valuation.market.map((m) => m.factor)))),
       }),
       male: buy('MALE'),
       female: buy('FEMALE'),

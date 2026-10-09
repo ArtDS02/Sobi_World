@@ -22,6 +22,9 @@ export interface Creature {
   poopProgress?: number;
   /** Illness hazard accumulated towards the next episode (systems/health/risk); resets when one starts. */
   illRisk?: number;
+  /** Mood averaged over the creature's life, weighted by time (it decides its Quality), and the seconds counted. */
+  moodAvg?: number;
+  moodSec?: number;
   /** Time the numbers were last simulated up to (epoch ms). */
   lastTickedAt: number;
   createdAt: number;

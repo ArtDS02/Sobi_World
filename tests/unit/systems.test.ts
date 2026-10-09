@@ -28,6 +28,7 @@ const rates = (r: { hungerPerSec: number; cleanPerSec: number; growthSec: number
   growthMinHunger: 0,
   poopFromProgress: 100,
   poopSec: 1e9,
+  moodBonus: 0,
 });
 const RISK_OFF = { perHour: { starving: 0, dirty: 0, lowMood: 0 }, dirtyBelow: 20, lowMoodBelow: 20 };
 const noSickness = {
@@ -250,5 +251,23 @@ describe('illness risk (GAME_BALANCE §2.4, GĐ2)', () => {
   it('a well-kept creature never falls ill', () => {
     const fine = advanceCreature({ ...fish, hunger: 100, cleanliness: 100 }, 20 * H, rates({ hungerPerSec: 0, cleanPerSec: 0, growthSec: 1e9 }), illness(), awake);
     expect(fine.isSick).toBe(false);
+  });
+});
+
+describe('lifetime mood (decides Quality)', () => {
+  const r = rates({ hungerPerSec: 0, cleanPerSec: 0, growthSec: 1e9 });
+  it('is the time-weighted average of the mood lived in', () => {
+    const calm = { ...fish, hunger: 100, cleanliness: 100, energy: 100 }; // mood 100
+    const a = advanceCreature(calm, 2 * H, r, noSickness, awake);
+    expect(a).toMatchObject({ moodAvg: 100, moodSec: 7200 });
+    const sad = { ...a, hunger: 10, cleanliness: 10, energy: 10 }; // mood 10 for the next 6 h
+    const b = advanceCreature(sad, 8 * H, r, noSickness, awake);
+    expect(b.moodAvg).toBeCloseTo((100 * 2 + 10 * 6) / 8, 9);
+    expect(b.moodSec).toBe(8 * 3600);
+  });
+  it('a bonus (decorations) lifts it but never past 100', () => {
+    const c = advanceCreature({ ...fish, hunger: 90, cleanliness: 90, energy: 90 }, H, { ...r, moodBonus: 5 }, noSickness, awake);
+    expect(c.moodAvg).toBeCloseTo(95, 9);
+    expect(advanceCreature(fish, H, { ...r, moodBonus: 50 }, noSickness, awake).moodAvg).toBe(100);
   });
 });

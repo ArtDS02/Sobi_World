@@ -101,7 +101,7 @@ export function renderPigPanel(
       // The line that makes care legible: happiness and the resulting price multiplier.
       stat(
         vi.stat.happiness,
-        `${vm.happiness} → ${vm.priceMultiplier}`,
+        `${vm.happiness} · ${vm.quality}`,
         'happiness',
         happiness(pig, bonus),
         'is-key',

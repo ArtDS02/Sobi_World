@@ -91,7 +91,7 @@ export function mountApp(
     act: (run: BoundAction) => void act(run),
     sell: (pig: Pig, vm: ActionVm) => {
       const save = store.getSnapshot().save;
-      openSellDialog(dialogs, pig, vm, act, save ? decorBonus(save) : 0);
+      openSellDialog(dialogs, pig, vm, act, save ? decorBonus(save) : 0, now());
     },
     rename: (pig: Pig) => openRenameDialog(dialogs, pig, act),
     breed: (pig: Pig) => {

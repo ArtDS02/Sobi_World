@@ -67,6 +67,15 @@ export const vi = {
     night: { icon: "🌙", name: "Ban đêm" },
   },
 
+  // Quality tiers (spec §6): how well a creature was cared for over its life. Not rarity.
+  quality: {
+    NORMAL: "Thường",
+    GOOD: "Tốt",
+    GREAT: "Rất tốt",
+    EXCELLENT: "Xuất sắc",
+    PERFECT: "Hoàn hảo",
+  },
+
   stage: {
     BABY: "Heo con",
     YOUNG: "Heo choai",
@@ -92,7 +101,7 @@ export const vi = {
     recovering: "Đang hồi phục",
     pregnant: "Đang mang thai",
     pregnantLeft: "Còn {time} nữa sinh",
-    priceMultiplier: "Giá bán x{mult}",
+    quality: "Chất lượng {quality} → giá x{mult}",
   },
 
   action: {
@@ -101,7 +110,7 @@ export const vi = {
     cleanAll: "Tắm tất cả",
     treat: "Chữa bệnh",
     breed: "Phối giống",
-    sell: "Bán",
+    sell: "Xuất chuồng",
     fulfillOrder: "Giao đơn",
     buy: "Mua",
     fillTrough: "Đổ máng",
@@ -241,7 +250,7 @@ export const vi = {
     quantity: "Số lượng",
     total: "Tổng: {gold} Sobi Coin",
     owned: "Đã sở hữu",
-    sellUpTo: "Bán tới {gold} Sobi Coin",
+    sellUpTo: "Xuất chuồng tới {gold} Sobi Coin",
   },
 
   trough: {
@@ -271,11 +280,14 @@ export const vi = {
   },
 
   sell: {
-    title: "Bán {name}?",
-    base: "Giá gốc: {gold}",
-    multiplier: "Vui vẻ {happiness} → x{mult}",
+    title: "Xuất chuồng {name}?",
+    base: "Giá gốc giống: {gold}",
+    quality: "Chất lượng {quality} → x{mult}",
+    weight: "Cân nặng {kg} kg → x{mult}",
+    health: "Đang bệnh → x{mult}",
+    market: "Chợ hôm nay → x{mult}",
     final: "Nhận được: {gold} Sobi Coin",
-    warning: "Heo quý! Bán rồi không lấy lại được.",
+    warning: "Heo quý! Xuất chuồng rồi không lấy lại được.",
   },
 
   order: {
@@ -315,7 +327,7 @@ export const vi = {
     INITIAL_GOLD: "Vốn ban đầu",
     SHOP_PURCHASE: "Mua hàng",
     PIG_PURCHASE: "Mua heo",
-    PIG_SELL: "Bán heo",
+    PIG_SELL: "Xuất chuồng",
     BREEDING_FEE: "Phí phối giống",
     SLOT_PURCHASE: "Mở chuồng",
     TROUGH_FILL: "Đổ máng",

@@ -98,7 +98,7 @@ describe('shop (R03)', () => {
     const tiger = rows.find((p) => p.breed === 'PIG_TIGER')!;
     expect(tiger.male.reason).toBe('Cần cấp 6');
     expect(rows.find((p) => p.breed === 'PIG_EARTH_PINK')!.male.reason).toBeNull();
-    expect(tiger.sell).toBe('Bán tới 14.400 Sobi Coin');
+    expect(tiger.sell).toBe('Xuất chuồng tới 43.200 Sobi Coin');
   });
 
   it('item purchase: live total, invalid quantity and gold shortfall disable the button', () => {

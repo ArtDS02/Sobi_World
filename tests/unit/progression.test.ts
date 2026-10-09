@@ -185,7 +185,10 @@ describe('decorations (PG-3)', () => {
     const bonus = decorBonus(r.state);
     expect(bonus).toBe(DECORS.DECOR_HAY_BALE.happyBonus);
     expect(happiness(pig, bonus)).toBe(happiness(pig) + bonus);
-    expect(sellPrice(pig, bonus)).toBeGreaterThan(sellPrice(pig));
+    // Decorations lift the mood a pig lives in, and with it the Quality it ships at.
+    const ordinary = makePig({ growthProgress: 100, hunger: 59, cleanliness: 59, energy: 59 }); // mood 59: Good, 60 with decorations: Great
+    const at = { now: 0, dayOffsetMs: 0 };
+    expect(sellPrice(ordinary, { ...at, decorBonus: bonus })).toBeGreaterThan(sellPrice(ordinary, { ...at, decorBonus: 0 }));
   });
 
   it('happiness with a bonus is still capped at 100', () => {

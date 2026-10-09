@@ -1,5 +1,5 @@
 // npm run sim:economy (spec §14.7): per-breed economy table, unlock affordability, and the
-// build gate "net gold per hour at happiness 100 >= 2x at happiness 0". Imports only src/core.
+// build gate "net gold per hour at care 100 >= 2x at care 0". Imports only src/core.
 import { BALANCE } from '../src/areas/farm/logic/config/balance';
 import { ACHIEVEMENTS } from '../src/areas/farm/logic/config/achievements';
 import { DAILY } from '../src/areas/farm/logic/config/daily';
@@ -27,7 +27,7 @@ const rows = BREED_ID_VALUES.map(breedEconomy);
 console.log('Breeds (net gold/h per slot = (sell - acquire - food) / growth hours)\n');
 console.log(
   table(
-    ['breed', 'sell', 'growth h', 'food', 'food $', 'acquire', 'h=0', 'h=50', 'h=100', 'x', 'gate'],
+    ['breed', 'sell', 'growth h', 'food', 'food $', 'acquire', 'care 0', 'care 50', 'care 100', 'x', 'gate'],
     rows.map((r) => [
       r.breed,
       n0(r.sellGold),
@@ -45,7 +45,7 @@ console.log(
 );
 console.log(`\nPINK empty-trough stall: ${stallGrowth('PIG_EARTH_PINK').toFixed(2)}% growth`);
 
-console.log('\nSlot unlocks (hours of PINK at happiness 100 on the slots already open)\n');
+console.log('\nSlot unlocks (hours of PINK at care 100 on the slots already open)\n');
 console.log(
   table(
     ['slot', 'level', 'cost', 'hours'],
@@ -72,7 +72,7 @@ const decorBonus = decors.reduce((n, d) => n + d.happyBonus, 0);
 console.log('\nFree gold and sinks (DECISIONS PG-2, PG-3)\n');
 console.log(
   table(
-    ['source', 'gold', 'PINK hours (1 slot, h=100)'],
+    ['source', 'gold', 'PINK hours (1 slot, care 100)'],
     [
       ['daily, 7-day cycle (items at shop price)', n0(dailyWeek), n1(hoursToAfford(dailyWeek, 1))],
       ['all achievements, once', n0(achievementGold), n1(hoursToAfford(achievementGold, 1))],
@@ -85,7 +85,7 @@ const failed = gateFailures(rows);
 if (failed.length > 0) {
   for (const r of failed) {
     console.error(
-      `\nFAIL ${r.breed}: ${n0(r.perHour[100])}/h at happiness 100 < ${CARE_RATIO_MIN}x ${n0(r.perHour[0])}/h at 0`,
+      `\nFAIL ${r.breed}: ${n0(r.perHour[100])}/h at care 100 < ${CARE_RATIO_MIN}x ${n0(r.perHour[0])}/h at care 0`,
     );
   }
   process.exit(1);

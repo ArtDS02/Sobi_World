@@ -14,7 +14,8 @@ import {
 } from '../logic/derived';
 import { happiness } from '../logic/happiness';
 import { diseaseState, type DiseaseState } from '../logic/pigHealth';
-import { sellMultiplier } from '../logic/pricing';
+import { pigQuality } from '../logic/pricing';
+import { QUALITY_RULES } from '../../../systems/quality/quality';
 import type { Pig, FarmGame } from '../logic/types';
 import { formatDateTime, formatDec, formatDuration, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
@@ -125,7 +126,7 @@ export interface PigPanelVm extends PigCardVm {
   /** "Con của Heo Trắng × Heo Đen" for a bred pig (BR-1), null for shop pigs. */
   parents: string | null;
   happiness: string;
-  priceMultiplier: string;
+  quality: string;
   pregnancy: string | null;
 }
 
@@ -145,7 +146,7 @@ export function pigPanelVm(pig: Pig, now: number, decorBonus = 0): PigPanelVm {
         })
       : null,
     happiness: String(happy),
-    priceMultiplier: t(vi.stat.priceMultiplier, { mult: formatDec(sellMultiplier(happy)) }),
+    quality: ((q) => t(vi.stat.quality, { quality: vi.quality[q], mult: formatDec(QUALITY_RULES.priceFactor[q]) }))(pigQuality(pig, decorBonus)),
     pregnancy: pig.pregnancy
       ? t(vi.stat.pregnantLeft, { time: formatDuration(pig.pregnancy.endsAt - now) })
       : null,

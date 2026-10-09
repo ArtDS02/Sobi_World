@@ -54,6 +54,8 @@ const pigSchema = z.object({
   energy: pct.optional(),
   poopProgress: nonNeg.optional(),
   illRisk: nonNeg.optional(),
+  moodAvg: pct.optional(),
+  moodSec: nonNeg.optional(),
   pregnancy: pregnancySchema.nullable(),
   lastTickedAt: time,
   createdAt: time,

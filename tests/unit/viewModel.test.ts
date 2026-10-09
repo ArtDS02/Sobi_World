@@ -83,7 +83,7 @@ describe('pig view-models (§10.2)', () => {
     };
     const vm = pigPanelVm(makePig({ growthProgress: 100, pregnancy }), 0);
     expect(vm.happiness).toBe('100');
-    expect(vm.priceMultiplier).toBe('Giá bán x1,20');
+    expect(vm.quality).toBe('Chất lượng Hoàn hảo → giá x3,00');
     expect(vm.pregnancy).toBe('Còn 42 phút nữa sinh');
     expect(vm.weight).toBe('50 kg');
   });
@@ -127,7 +127,7 @@ describe('history (DECISIONS Q7)', () => {
     const rows = historyVm({ ...s, transactions });
     expect(rows.map((r) => [r.id, r.label, r.amount, r.tone])).toEqual([
       ['b', 'Mở chuồng', '-2.000 Sobi Coin', 'minus'],
-      ['a', 'Bán heo', '+1.200 Sobi Coin', 'plus'],
+      ['a', 'Xuất chuồng', '+1.200 Sobi Coin', 'plus'],
     ]);
   });
 });

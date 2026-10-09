@@ -23,10 +23,11 @@ export const farmSleep = (dayOffsetMs: number): SleepRules => ({
  * `dayOffsetMs`: local time minus UTC, for the day periods and the per-day disease limit (NH-1).
  * `piles`: piles of manure in the pen at the start of the window; each one makes the pen dirtier.
  * `createdAt`: when the world began, for the new-world protection from illness.
+ * `moodBonus`: the farm's decoration bonus, which lifts the mood that decides Quality.
  * `_rng`: sickness is seeded per pig and episode (systems/health/risk), not drawn from the stream;
  * the parameter stays so that every caller keeps one signature.
  */
-export function advancePig(pig: Pig, now: number, _rng: Rng, dayOffsetMs = 0, piles = 0, createdAt = 0): Pig {
+export function advancePig(pig: Pig, now: number, _rng: Rng, dayOffsetMs = 0, piles = 0, createdAt = 0, moodBonus = 0): Pig {
   const counted = Math.min(piles, BALANCE.CLEAN_PILES_COUNTED);
   return advanceCreature(
     pig,
@@ -39,6 +40,7 @@ export function advancePig(pig: Pig, now: number, _rng: Rng, dayOffsetMs = 0, pi
       growthMinHunger: BALANCE.GROWTH_MIN_HUNGER,
       poopFromProgress: BALANCE.STAGE_YOUNG_AT,
       poopSec: BALANCE.POOP_INTERVAL_SEC,
+      moodBonus,
     },
     {
       risk: HEALTH.risk,

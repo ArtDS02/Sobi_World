@@ -5,10 +5,12 @@ import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { ITEMS } from '../../src/core/config/items';
 import { advanceWithTrough } from '../../src/areas/farm/logic/trough';
-import { sellPrice } from '../../src/areas/farm/logic/pricing';
+import { QUALITY_RULES, qualityFromMood } from '../../src/systems/quality/quality';
+import { valueOf } from '../../src/systems/valuation/value';
 import { sequenceRng } from '../../src/core/rng';
 import type { Pig } from '../../src/areas/farm/logic/types';
 
+/** Care levels = the lifetime average mood a pig lived at: 0 → Normal quality, 50 → Good, 100 → Perfect. */
 export const HAPPINESS_LEVELS = [0, 50, 100] as const;
 export type HappinessLevel = (typeof HAPPINESS_LEVELS)[number];
 
@@ -59,9 +61,9 @@ export function stallGrowth(breed: BreedId): number {
   return advanceWithTrough({ pigs, trough }, end, NO_SICKNESS(), 0, 0, ALWAYS_NEW_WORLD).pigs[0]!.growthProgress;
 }
 
-/** Sell price at a happiness level, through the real pricing (hunger = cleanliness = level). */
+/** Shipping price of a full-grown, healthy pig at a care level, on a market-1.0 day (pricing.ts without the day). */
 export const priceAt = (breed: BreedId, happy: HappinessLevel): number =>
-  sellPrice({ breed, hunger: happy, cleanliness: happy, isSick: false });
+  valueOf(BREEDS[breed].sellGold, { quality: QUALITY_RULES.priceFactor[qualityFromMood(happy, QUALITY_RULES)] });
 
 /** What a pig costs to get: shop price, or the breeding fee for breeds that can only be bred. */
 export const acquireCost = (breed: BreedId): number =>

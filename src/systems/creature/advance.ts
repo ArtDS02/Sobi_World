@@ -18,6 +18,8 @@ export interface CreatureRates {
   /** A creature at or past this growth progress (%) makes one pile of manure every `poopSec`. */
   poopFromProgress: number;
   poopSec: number;
+  /** Points the Area adds to the mood its creatures live in (the farm: decorations); counts for Quality, not for illness. */
+  moodBonus: number;
 }
 
 export interface IllnessRules {
@@ -43,6 +45,9 @@ export function advanceCreature<C extends Creature>(c: C, now: number, rates: Cr
   const cleanliness = Math.max(0, c.cleanliness - rates.cleanPerSec * dt);
   const energy = energyAfter(c.energy ?? 100, c.lastTickedAt, now, rates.energy, sleep);
 
+  const mood0 = needsMood({ ...c, energy: c.energy ?? 100 });
+  const mood1 = needsMood({ hunger, cleanliness, energy });
+
   // Illness: exposure counts once protection, recovery and the day's episode budget are over.
   let onsetAt: number | null = null;
   let illRisk = c.illRisk ?? 0;
@@ -56,8 +61,8 @@ export function advanceCreature<C extends Creature>(c: C, now: number, rates: Cr
         hungerPerSec: rates.hungerPerSec,
         clean0: c.cleanliness,
         cleanPerSec: rates.cleanPerSec,
-        mood0: needsMood({ ...c, energy: c.energy ?? 100 }),
-        mood1: needsMood({ hunger, cleanliness, energy }),
+        mood0,
+        mood1,
       },
       health.risk,
       Math.max(0, episodeThreshold(c) - illRisk),
@@ -86,7 +91,14 @@ export function advanceCreature<C extends Creature>(c: C, now: number, rates: Cr
     energy,
     poopProgress: (c.poopProgress ?? 0) + (c.growthProgress >= rates.poopFromProgress ? dt / rates.poopSec : 0),
     illRisk,
+    ...lifeMood(c, dt, Math.min(100, (mood0 + mood1) / 2 + rates.moodBonus)),
     ...onset,
     lastTickedAt: now,
   };
+}
+
+/** The time-weighted average mood of a life, with `dt` more seconds spent at `mood`. */
+function lifeMood(c: Creature, dt: number, mood: number): { moodAvg: number; moodSec: number } {
+  const sec = c.moodSec ?? 0;
+  return { moodAvg: ((c.moodAvg ?? mood) * sec + mood * dt) / (sec + dt), moodSec: sec + dt };
 }

@@ -45,8 +45,6 @@ const balanceSchema = z.strictObject({
   HAPPY_CLEAN_WEIGHT: unit,
   HAPPY_HUNGER_WEIGHT: unit,
   HAPPY_SICK_PENALTY: nonNeg,
-  SELL_MULT_MIN: nonNeg,
-  SELL_MULT_SPAN: nonNeg,
   BREEDING_FEE: nonNeg,
   SHOP_MAX_QUANTITY: posInt,
   PIG_NAME_MAX: posInt,

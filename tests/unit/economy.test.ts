@@ -26,17 +26,17 @@ describe('economy sanity (§6.4)', () => {
     }
   });
 
-  it('PINK sell price 840 / 1,140 / 1,440 and net profit 165 / 465 / 765 at happiness 0 / 50 / 100', () => {
+  it('PINK ships for 1,200 / 1,440 / 3,600 (Normal / Good / Perfect) and nets 525 / 765 / 2,925 per pig', () => {
     expect([
       priceAt('PIG_EARTH_PINK', 0),
       priceAt('PIG_EARTH_PINK', 50),
       priceAt('PIG_EARTH_PINK', 100),
-    ]).toEqual([840, 1140, 1440]);
+    ]).toEqual([1200, 1440, 3600]);
     const e = breedEconomy('PIG_EARTH_PINK');
     expect(
       [0, 50, 100].map((h) => Math.round(e.perHour[h as 0 | 50 | 100] * e.growthHours)),
-    ).toEqual([165, 465, 765]);
-    expect(e.careRatio).toBeCloseTo(765 / 165, 10); // care still worth > 4x the margin
+    ).toEqual([525, 765, 2925]);
+    expect(e.careRatio).toBeCloseTo(2925 / 525, 10); // care is worth > 5x the margin
   });
 
   it('an unfed baby stops growing when hunger reaches 30: PINK (48 h) 18.2 %, MELON (60 h) 14.6 %', () => {

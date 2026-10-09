@@ -157,12 +157,13 @@ describe('pig names (DECISIONS Q8)', () => {
 });
 
 describe('sellPig (§8.7)', () => {
-  // dt = 0 so advanceWorld changes nothing and happiness is exactly as set.
+  // dt = 0 so advanceWorld changes nothing and the needs are exactly as set. Mood = (hunger + clean +
+  // energy 100) / 3 → Normal / Great / Perfect; day 0 of the epoch has a 1.2 market.
   it.each([
-    [0, 840],
-    [50, 1140],
-    [100, 1440],
-  ])('happiness %s → %s gold, +10 XP, PIG_SELL transaction', (h, price) => {
+    [0, 1440],
+    [50, 2160],
+    [100, 4320],
+  ])('care %s → %s gold, +10 XP, PIG_SELL transaction', (h, price) => {
     const s = withPigs([adult({ cleanliness: h, hunger: h })], 1000);
     const r = expectOk(sellPig(s, { pigId: 'pig-1' }, ctx()));
     expect(r.state.pigs).toEqual([]);
@@ -172,19 +173,24 @@ describe('sellPig (§8.7)', () => {
       type: 'PIG_SELL',
       amount: price,
       refId: 'pig-1',
-      note: `PIG_EARTH_PINK happiness ${h}`,
+      note: expect.stringMatching(/^PIG_EARTH_PINK (NORMAL|GREAT|PERFECT) 50 kg$/),
     });
     expect(r.events).toContainEqual({ type: 'PIG_SOLD', pigId: 'pig-1', gold: price });
   });
 
   it('price is computed after advanceWorld (D18)', () => {
-    // 3,600 s unattended, no trough (GĐ2 rates): clean 96, hunger 92 → happiness 94
-    // → floor(1200 * 1.17).
+    // 3,600 s unattended, no trough (GĐ2 rates): hunger 92, clean 96, energy ~95 → Perfect, market 1.2.
     const r = expectOk(sellPig(withPigs([adult()]), { pigId: 'pig-1' }, ctx(3600 * SEC)));
-    expect(r.state.transactions[0]!.amount).toBe(1404);
+    expect(r.state.transactions[0]!.amount).toBe(4320);
   });
 
   const sell = (s: FarmGame) => sellPig(s, { pigId: 'pig-1' }, ctx());
+  it('ships out from Adult (50 %) on, not before; a young pig fetches its share of the weight', () => {
+    expectError(sell, withPigs([makePig({ growthProgress: 49.9 })]), 'PIG_NOT_MATURE');
+    const r = expectOk(sell(withPigs([makePig({ growthProgress: 50 })], 1000)));
+    expect(r.state.transactions[0]!.amount).toBe(Math.floor(1200 * 3 * 0.6 * 1.2)); // Perfect, 60 % weight, day-0 market
+  });
+
   it('baby → PIG_NOT_MATURE', () => expectError(sell, withPigs([makePig()]), 'PIG_NOT_MATURE'));
 
   it('pregnant → PIG_IS_PREGNANT', () => {
