@@ -8,7 +8,7 @@ import { CONTENT } from './content';
 import type { ItemId } from './ids';
 
 export { PRODUCT_CATEGORY_VALUES, type ProductCategory };
-/** Coins (shown as gold until step 7) are the only price currency (spec §8.16). */
+/** Sobi Coin (the wallet's coins) are the only price currency (spec §8.16). */
 export const CURRENCY_VALUES = PRICE_CURRENCY_VALUES;
 export type Currency = PriceCurrency;
 

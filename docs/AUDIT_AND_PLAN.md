@@ -1,6 +1,6 @@
 # AUDIT AND PLAN — GĐ1: Nền móng thế giới
 
-**Ngày:** 2026-10-05 · **Nhánh:** `phase-01-world-foundation` · **Trạng thái:** chờ chủ dự án duyệt (Bước 1 xong, chưa sửa code)
+**Ngày:** 2026-10-05 · **Nhánh:** `phase-01-world-foundation` · **Trạng thái:** kế hoạch đã thực hiện xong bước 1–9 (xem `PROGRESS.md` 2026-10-09 cho chênh lệch so với kế hoạch)
 
 Điểm xuất phát: tag `sobi-farm-final` (`npm run check` xanh: 57 file test, 667 test).
 

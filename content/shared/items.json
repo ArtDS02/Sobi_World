@@ -1,6 +1,20 @@
 {
   "items": [
-    { "id": "FOOD_BASIC", "priceGold": 25, "hungerRestore": 50, "curesSickness": false },
-    { "id": "MEDICINE_COMMON", "priceGold": 100, "hungerRestore": 0, "curesSickness": true }
+    {
+      "id": "FOOD_BASIC",
+      "category": "FOOD",
+      "rarity": "COMMON",
+      "priceGold": 25,
+      "hungerRestore": 50,
+      "curesSickness": false
+    },
+    {
+      "id": "MEDICINE_COMMON",
+      "category": "MEDICINE",
+      "rarity": "COMMON",
+      "priceGold": 100,
+      "hungerRestore": 0,
+      "curesSickness": true
+    }
   ]
 }
