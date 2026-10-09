@@ -1,11 +1,37 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ2 — Thời gian thật và thế giới sống: việc 1–4 xong, **chờ chủ dự án duyệt** trước việc 5–11
+**Giai đoạn:** GĐ2 — Thời gian thật và thế giới sống: xong việc 1–11, **chờ chủ dự án duyệt** để merge `main` + tag `phase-02`
 **Nhánh:** `phase-02-real-time`
-**Bước tiếp theo:** sau khi duyệt → GĐ2 việc 5 (Xuất chuồng thay harvest), 6 (phân thành item_manure), 7 (máng có cấp), 8 (màn hình vắng nhà), 9 (cảnh báo), 10 (Admin tua giờ), 11 (test).
+**Bước tiếp theo:** duyệt GĐ2 → GĐ3 (Nhân vật và Sảnh Sobi).
 
 ## Nhật ký
+
+### 2026-10-09 — GĐ2 hoàn thành việc 5–11 (chờ duyệt để merge `main` + tag `phase-02`)
+✅ Đã làm:
+5. **Xuất chuồng** thay "Bán" (UI, lịch sử giao dịch; id nội bộ `sellPig`/`PIG_SOLD`/`PIG_SELL` giữ nguyên): từ giai đoạn Adult (≥ 50% lớn). Giá = giá gốc giống × Quality (tâm trạng
+   trung bình suốt đời: ×1 / 1,2 / 1,5 / 2 / 3) × cân nặng (/ chuẩn của giống) × sức khỏe (−10%/ngày bệnh, tối đa −30%, khỏi là hồi đủ) × chợ (0,9 / 1,0 / 1,2 theo ngày). Hộp thoại
+   xuất chuồng liệt kê từng hệ số. Decision 009.
+6. **Dọn phân**: nút "Dọn phân" ở Giếng nước; mỗi đống thành 1 `item_manure` trong túi đồ chung (túi đầy thì bỏ phần dư), 2 KN/đống; bán được (6 Sobi Coin/cái) ở màn Túi đồ.
+7. **Máng có cấp** 30 / 80 / 200 phần (giá nâng 0 / 1.200 / 4.000 Sobi Coin), nâng trong hộp thoại máng; sức chứa không còn theo cấp người chơi. Save cũ: cấp suy ra từ sức chứa.
+8. **Màn hình "Trong lúc bạn vắng mặt"** dựng từ `getSummary(events, world, now)` của Area: số liệu đã xảy ra (sinh, lớn, bệnh, nguy kịch, mất, đơn, quà) + việc cần làm ngay
+   (heo nguy kịch / bệnh, phân chưa dọn) kèm nút đi tới chỗ cần xử lý (heo, giếng, máng).
+9. **Cảnh báo**: nút ⚠ ở thanh trên ("N heo bệnh" / "N heo nguy kịch!", đỏ nhấp nháy) mở heo cần chăm; thẻ heo ghi "Nguy kịch"; bảng heo ghi thời gian còn lại trước khi nguy kịch / mất heo.
+10. **Admin**: ⏩ Tua thời gian (+1 giờ / +1 ngày / +7 ngày: lùi mọi mốc thời gian của save, lần mở game kế tiếp bù đúng khoảng đó); trang **Số liệu** sửa mọi con số của
+    thời gian, sức khỏe, giá trị, chất lượng, túi đồ và cân bằng Nông trại (chỉ số; server kiểm bằng schema của game trước khi ghi).
+11. **Test**: tổng ~855 unit/script test + 4 e2e. Mới: nhất quán 1 phút vs 10 phút; bù 30 ngày (nhẹ: ~0,2 giây; nặng 24 heo bỏ bê: dưới 3 giây); bệnh → nguy kịch → chết đúng mốc;
+    bảo vệ 72 giờ; chống lùi giờ; ân hạn 12 giờ; Xuất chuồng (từng hệ số giá); phân và máng; màn vắng nhà; cảnh báo; tua thời gian của Admin; e2e "bỏ nông trại 3 ngày".
+🧪 Đã kiểm tra: `npm run check` xanh; `npm run test:e2e` 4/4 (build web + Electron); Admin chạy thật (`/numbers` nhận số đúng, từ chối dữ liệu sai / sửa chữ / file lạ);
+   `npm run sim:economy` OK. Chưa kiểm: `npm run dist:win` (GĐ4), chơi bằng tay lâu dài.
+⚠️ Quyết định tự đưa ra:
+- Hệ số rarity của spec (1/1,5/2,5/4/7) **không nhân thêm** vì giá gốc từng bậc (`sellGold`) đã mang bậc hiếm (decision 009); Quality ×3 làm heo chăm tốt có giá cao hơn Sobi Farm nhiều
+  (PINK 48 giờ: lãi 525 / 765 / 2.925 Sobi Coin cho Thường / Tốt / Hoàn hảo): tiến trình mở chuồng nhanh hơn; cân lại khi có Garden (thức ăn tự làm).
+- Máng cấp 3 giá 4.000 chưa kèm vật liệu Adventure (spec ghi "4.000 + vật liệu"): chờ GĐ có Adventure.
+- Trần Quality không đặt cho máng tự động (luật "tự động tối đa Good" của Lore) — chưa có cơ chế phân biệt chăm tay / máng: để GĐ6+ khi thêm Bond và vuốt ve.
+- Bond, vuốt ve, thức ăn cao cấp / cỏ / món yêu thích (GAME_BALANCE §2.3) chưa làm: không thuộc 11 việc của GĐ2.
+- Đơn hàng vẫn đo "vui vẻ" cũ (đói + sạch); chỉ giá không còn dùng nó.
+⚠️ Còn mở: xem "Vấn đề còn mở" bên dưới.
+👉 Bạn cần: chơi thử (tua bằng Admin 1 ngày và 4 ngày sau 72 giờ bảo vệ), duyệt để merge `main` + tag `phase-02`.
 
 ### 2026-10-09 — GĐ2 việc 1–4 xong, **dừng chờ duyệt** trước việc 5–11
 ✅ Đã làm:

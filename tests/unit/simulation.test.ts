@@ -171,3 +171,22 @@ describe('neglect over days (the GĐ2 acceptance walk)', () => {
     expect(sickTime('online')).toBe(sickTime('offline'));
   });
 });
+
+describe('a hard 30 days (every system busy)', () => {
+  it('24 neglected pigs for 30 days: sickness, orders, gifts, manure — under 3 s, nobody dies while closed', () => {
+    const pigs = Array.from({ length: 24 }, (_, i) =>
+      makePig({ id: `p${i}`, slotIndex: i, lastTickedAt: T0, createdAt: T0, growthProgress: (i * 4) % 100, gender: i % 2 ? 'MALE' : 'FEMALE' }),
+    );
+    const base = world({ ...makeState(pigs, 0), createdAt: T0 - 90 * DAY_MS, player: { gold: 5000, xp: 0, unlockedSlots: 24 } });
+    const w = at0({ ...base, meta: { ...base.meta, createdAt: T0 - 90 * DAY_MS } } as WorldSave);
+    const t = performance.now();
+    const r = reg.advance(w, T0 + 30 * DAY_MS, healthy(), 0, 'offline');
+    const ms = performance.now() - t;
+    expect(ms).toBeLessThan(3000);
+    const farm = farmOf(r.state);
+    expect(farm.pigs).toHaveLength(24); // a catch-up never kills
+    expect(farm.pigs.filter((p) => p.isSick).length).toBeGreaterThan(0);
+    expect(farm.graceUntil).toBe(T0 + 30 * DAY_MS + 12 * HOUR_MS);
+    expect(farm.manure).toBe(12);
+  });
+});
