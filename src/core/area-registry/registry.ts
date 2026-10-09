@@ -1,0 +1,133 @@
+// Area registry (ARCHITECTURE §5 Area Contract): every Area registers a module (manifest + hooks); the
+// world store and the save format are built from the registry, so adding an Area touches no world
+// code. Pure: time, randomness and the day offset come in as arguments.
+import type { AreaManifest } from '../../../content/schemas/area';
+import type { EventBase, WorldEvent } from '../events';
+import { unlockGaps, worldDevelopment, type UnlockGap, type WorldDevelopmentRules } from '../progression/levels';
+import type { Rng } from '../rng';
+import type { AreaSaveSpec, LegacyResult, Raw, SaveCodec } from '../save/migrate';
+import { emptyWorld, type WorldSave, type WorldSettings } from '../save/world';
+import type { ActionContext } from '../types';
+
+export type { AreaManifest };
+
+/**
+ * How time is being simulated (ARCHITECTURE §6): `online` = the game is open (the Area on screen or
+ * in the background), `offline` = catching up after the game was closed. One formula for both; the
+ * mode only switches rules like "no death during the catch-up" (DECISIONS 004).
+ */
+export type SimMode = 'online' | 'offline';
+
+export interface AreaModule {
+  manifest: AreaManifest;
+  /** Schema and migrations of its slice `areas[manifest.id]`. */
+  save: AreaSaveSpec;
+  /** First state of the Area: its slice and anything it gives the world (starter items, coins). */
+  init(world: WorldSave, ctx: ActionContext): WorldSave;
+  /** Numbers over time up to `now` — the same call for every mode (pure, deterministic per rng). */
+  simulate(world: WorldSave, now: number, rng: Rng, dayOffsetMs: number, mode: SimMode): { state: WorldSave; events: EventBase[] };
+  /** Time the Area was last simulated up to. */
+  simulatedAt(world: WorldSave): number;
+  /** The Area's level (its XP in progression.areas, its own level table). */
+  level(world: WorldSave): number;
+  /** Its events as standard world events (ARCHITECTURE §7); [] for events that are not its own. */
+  toWorldEvents(events: readonly EventBase[]): WorldEvent[];
+  /** Lines for the "while you were away" screen (spec §5): string-table keys with parameters. */
+  getSummary?(events: readonly EventBase[]): SummaryLine[];
+  /** Presentation hooks (scene, AI, animation) for the Area on screen; GĐ3 drives them. */
+  onEnter?(): void;
+  onExit?(): void;
+  updateActive?(dtMs: number): void;
+}
+
+export interface SummaryLine {
+  key: string;
+  params?: Readonly<Record<string, string | number>>;
+}
+
+export interface AreaInfo {
+  manifest: AreaManifest;
+  unlocked: boolean;
+  level: number;
+  /** What it still needs to open (empty when unlocked or open from the start). */
+  gaps: UnlockGap[];
+}
+
+export function createAreaRegistry(modules: readonly AreaModule[], rules: WorldDevelopmentRules) {
+  const ids = modules.map((m) => m.manifest.id);
+  const dup = ids.find((id, i) => ids.indexOf(id) !== i);
+  if (dup) throw new Error(`area ${dup} registered twice`);
+  if (modules.length === 0) throw new Error('no area registered');
+  const byId = new Map(modules.map((m) => [m.manifest.id, m]));
+  /** Areas with state in this world, in registration order. */
+  const present = (world: WorldSave) => modules.filter((m) => m.manifest.id in world.areas);
+  const opensAtStart = (m: AreaModule) => !m.manifest.unlock.areaLevels && m.manifest.unlock.worldDevelopment === undefined;
+
+  const levels = (world: WorldSave): Record<string, number> =>
+    Object.fromEntries(present(world).map((m) => [m.manifest.id, m.level(world)]));
+
+  /** A new world: every Area open from the start initialised in order; the first is current. */
+  function newWorld(ctx: ActionContext, settings: WorldSettings): WorldSave {
+    const starting = modules.filter(opensAtStart);
+    const first = starting[0] ?? modules[0]!;
+    const shell = emptyWorld(ctx.now, settings, first.manifest.id);
+    const world = starting.reduce((w, m) => m.init(w, ctx), shell);
+    return { ...world, world: { ...world.world, unlockedAreas: starting.map((m) => m.manifest.id) } };
+  }
+
+  return {
+    modules,
+    get: (id: string): AreaModule | undefined => byId.get(id),
+    newWorld,
+
+    /** Every Area with state catches up to `now`, in registration order (ARCHITECTURE §6). */
+    advance(world: WorldSave, now: number, rng: Rng, dayOffsetMs: number, mode: SimMode = 'online') {
+      const events: EventBase[] = [];
+      let state = world;
+      for (const m of present(world)) {
+        const r = m.simulate(state, now, rng, dayOffsetMs, mode);
+        state = r.state;
+        events.push(...r.events);
+      }
+      return { state, events };
+    },
+
+    /** The world was simulated up to the earliest of its Areas. */
+    simulatedAt: (world: WorldSave): number => Math.min(...present(world).map((m) => m.simulatedAt(world))),
+
+    toWorldEvents: (events: readonly EventBase[]): WorldEvent[] => modules.flatMap((m) => m.toWorldEvents(events)),
+
+    summary: (events: readonly EventBase[]): SummaryLine[] => modules.flatMap((m) => m.getSummary?.(events) ?? []),
+
+    levels,
+
+    worldDevelopment: (world: WorldSave, codexEntries: number, buildingsLv3 = 0): number =>
+      worldDevelopment({ areaLevels: levels(world), codexEntries, buildingsLv3 }, rules),
+
+    /** Every registered Area with its lock state (the plaza shows locked ones with their conditions). */
+    areas(world: WorldSave, codexEntries = 0): AreaInfo[] {
+      const lv = levels(world);
+      const wd = worldDevelopment({ areaLevels: lv, codexEntries, buildingsLv3: 0 }, rules);
+      return modules.map((m) => {
+        const unlocked = world.world.unlockedAreas.includes(m.manifest.id);
+        return {
+          manifest: m.manifest,
+          unlocked,
+          level: lv[m.manifest.id] ?? 0,
+          gaps: unlocked ? [] : unlockGaps(m.manifest.unlock, lv, wd),
+        };
+      });
+    },
+
+    /** The save format of this build: Sobi Farm import + one slice spec per Area. */
+    codec(legacy: (input: Raw) => LegacyResult, settings: (opts: { reduceMotion?: boolean }) => WorldSettings): SaveCodec {
+      return {
+        legacy,
+        areas: Object.fromEntries(modules.map((m) => [m.manifest.id, m.save])),
+        newWorld: (ctx, opts = {}) => newWorld(ctx, settings(opts)),
+      };
+    },
+  };
+}
+
+export type AreaRegistry = ReturnType<typeof createAreaRegistry>;

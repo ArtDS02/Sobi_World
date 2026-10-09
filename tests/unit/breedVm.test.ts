@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { vi } from '../../src/i18n/vi';
-import { breedingVm } from '../../src/ui/breedVm';
+import { breedingVm } from '../../src/areas/farm/ui/breedVm';
 import { ctx, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
 

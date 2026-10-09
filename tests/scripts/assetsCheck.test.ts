@@ -21,7 +21,8 @@ beforeEach(() => {
 afterEach(() => rmSync(root, { recursive: true, force: true }));
 
 describe('assets:check (art standard §7.4)', () => {
-  it('the shipped assets pass', () => {
+  // Reads every PNG on disk: slower than a unit test once the whole suite runs in parallel.
+  it('the shipped assets pass', { timeout: 20_000 }, () => {
     expect(checkAssets('public/assets')).toEqual([]);
   });
 
@@ -50,9 +51,12 @@ describe('assets:check (art standard §7.4)', () => {
     m.pigs = m.pigs.filter((p: Json) => p.id !== 'pig_superhero');
     m.audio = m.audio.filter((a: Json) => a.id !== 'notify');
     delete m.props[0].states.half;
-    m.layout.placements.push({ id: 'env_rainbow', layer: 0, x: 0.5, y: 0.1 });
     writeManifest(m);
-    const errors = checkAssets(root).join('\n');
+    const layout = JSON.parse(readFileSync('content/farm/layout.json', 'utf8')) as Json;
+    layout.placements.push({ id: 'env_rainbow', layer: 0, x: 0.5, y: 0.1 });
+    const layoutPath = join(root, 'layout.json');
+    writeFileSync(layoutPath, JSON.stringify(layout));
+    const errors = checkAssets(root, layoutPath).join('\n');
     expect(errors).toContain('pig_superhero: missing pigs row');
     expect(errors).toContain('notify: missing audio row');
     expect(errors).toContain('prop_feed_trough: missing state "half"');

@@ -3,7 +3,7 @@
 import type { BackupStore, FileDialogs, InstanceGuard, SaveStorage } from '../core/save/port';
 import type { UninBridge } from './desktop/bridge';
 import { createDesktopFileDialogs, desktopInstanceGuard } from './desktop/fileDialogs';
-import { createFileSaveStorage } from './desktop/fileSaveStorage';
+import { createFileSaveStorage, type SaveParser } from './desktop/fileSaveStorage';
 import { createDevFileSaveStorage, devBackups, hasDevSaveApi } from './web/devFileSaves';
 import { createWebFileDialogs } from './web/fileDialogs';
 import { createSaveStorage } from './web/idbSaveStorage';
@@ -21,12 +21,13 @@ export interface Platform {
   backups: BackupStore | null;
 }
 
-export function createPlatform(): Platform {
+/** `parseSave`: JSON → migrated world save (core parseSave with this build's codec). */
+export function createPlatform(parseSave: SaveParser): Platform {
   const bridge = (globalThis as { unin?: UninBridge }).unin;
   if (bridge) {
     return {
       kind: 'desktop',
-      storage: createFileSaveStorage(bridge.save),
+      storage: createFileSaveStorage(bridge.save, parseSave),
       dialogs: createDesktopFileDialogs(bridge.save),
       instanceGuard: desktopInstanceGuard,
       onFlushRequest: (flush) => bridge.app.onFlushRequest(flush),
@@ -35,6 +36,7 @@ export function createPlatform(): Platform {
         list: () => bridge.save.listBackups(),
         restore: (n) => bridge.save.restoreBackup(n),
         backupBeforeReset: () => bridge.save.backupBeforeReset(),
+        backupBeforeMigration: (v) => bridge.save.backupBeforeMigration(v),
       },
     };
   }
@@ -43,7 +45,9 @@ export function createPlatform(): Platform {
   const devFiles = import.meta.env.DEV && hasDevSaveApi();
   return {
     kind: 'web',
-    storage: devFiles ? createDevFileSaveStorage(createSaveStorage()) : createSaveStorage(),
+    storage: devFiles
+      ? createDevFileSaveStorage(createSaveStorage({ parseSave }), parseSave)
+      : createSaveStorage({ parseSave }),
     dialogs: createWebFileDialogs(),
     instanceGuard: createWebInstanceGuard(browserChannel(), crypto.randomUUID(), sleep),
     onFlushRequest: () => {},

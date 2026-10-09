@@ -1,11 +1,11 @@
 // Ports between the store and the platform (spec §4, §9.1–9.4). Types (+ one error code): adapters
 // live in src/platform/{web,desktop}/ and move JSON; parsing, validation and migration stay in core.
-import type { SaveGame } from '../types';
+import type { WorldSave } from './world';
 
 export type LoadSource = 'primary' | 'mirror' | 'backup';
 
 export type LoadResult =
-  | { kind: 'ok'; save: SaveGame; source: LoadSource }
+  | { kind: 'ok'; save: WorldSave; source: LoadSource; /** Version on disk (< current = migrated). */ fromVersion: number }
   | { kind: 'empty' } // first launch: caller creates newGame
   | { kind: 'tooNew'; source: LoadSource } // SAVE_TOO_NEW: never overwrite
   | { kind: 'recovery' }; // all copies invalid: recovery screen, nothing deleted
@@ -25,7 +25,7 @@ export interface SaveStorage {
    * Writes the whole save. Rejects on failure; the store surfaces it as `saveError`, or reloads
    * when the error is SAVE_CHANGED_EXTERNALLY.
    */
-  save(save: SaveGame): Promise<void>;
+  save(save: WorldSave): Promise<void>;
   /** File storages: the save was replaced by another program while the game runs (AM-1). */
   onExternalChange?(fn: () => void): void;
 }
@@ -54,6 +54,8 @@ export interface BackupStore {
   restore(name: string): Promise<void>;
   /** Before "play again" (PG-4): the current save is kept as a backup the player can restore. */
   backupBeforeReset(): Promise<void>;
+  /** Before the first write of a save that was migrated from `fromVersion` (ARCHITECTURE §9). */
+  backupBeforeMigration(fromVersion: number): Promise<void>;
 }
 
 /** One writer per save (§9.4): tab guard in the browser, single-instance lock on desktop. */

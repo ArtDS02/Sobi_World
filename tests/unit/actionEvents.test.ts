@@ -1,16 +1,16 @@
 // Spec §8.0 (D25): every successful action returns its own feedback event.
 import { describe, expect, it } from 'vitest';
-import { buyItem } from '../../src/core/actions/buyItem';
-import { buyPig } from '../../src/core/actions/buyPig';
-import { buySlot } from '../../src/core/actions/buySlot';
-import { cleanAll, cleanPig } from '../../src/core/actions/cleanPig';
-import { feedPig } from '../../src/core/actions/feedPig';
-import { fillTrough } from '../../src/core/actions/fillTrough';
-import { renamePig } from '../../src/core/actions/renamePig';
-import { sellPig } from '../../src/core/actions/sellPig';
-import { treatPig } from '../../src/core/actions/treatPig';
-import { GAME_EVENT_TYPES } from '../../src/core/events';
-import type { ActionResult } from '../../src/core/types';
+import { buyItem } from '../../src/areas/farm/logic/actions/buyItem';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
+import { buySlot } from '../../src/areas/farm/logic/actions/buySlot';
+import { cleanAll, cleanPig } from '../../src/areas/farm/logic/actions/cleanPig';
+import { feedPig } from '../../src/areas/farm/logic/actions/feedPig';
+import { fillTrough } from '../../src/areas/farm/logic/actions/fillTrough';
+import { renamePig } from '../../src/areas/farm/logic/actions/renamePig';
+import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
+import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
+import { GAME_EVENT_TYPES } from '../../src/areas/farm/logic/events';
+import type { ActionResult } from '../../src/areas/farm/logic/types';
 import { ctx, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
 

@@ -1,6 +1,6 @@
 // Pig management page: searchable, filterable, sortable card grid with pagination (listKit).
 // A card opens the editor drawer.
-import { FAMILY_VALUES } from '../../src/core/config/breeds';
+import { FAMILY_VALUES } from '../../src/areas/farm/logic/config/breeds';
 import { RARITY_VALUES, rarityRank } from '../../src/core/config/rarity';
 import {
   FAMILY_LABEL,
@@ -53,7 +53,7 @@ function cardHtml(r: Row) {
 }
 
 export function renderPigList(root: HTMLElement, onOpen: (id: string | null) => void) {
-  root.innerHTML = `<p class="muted">Mỗi heo = 1 dòng <code>speciesTable.ts</code> + 1 ảnh đã đăng ký manifest.</p><div data-list></div>`;
+  root.innerHTML = `<p class="muted">Mỗi heo = 1 dòng <code>content/farm/species.json</code> + 1 ảnh đã đăng ký manifest.</p><div data-list></div>`;
   mountList(root.querySelector<HTMLElement>('[data-list]')!, {
     id: 'pigs',
     items: () => state.rows,

@@ -11,8 +11,8 @@ import {
   TROUGH_PROP_ID,
   TROUGH_STATES,
 } from '../../src/core/config/assetIds';
-import { BREEDS } from '../../src/core/config/breeds';
-import { SEASON_FX_ART_IDS } from '../../src/core/config/seasonFx';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import { SEASON_FX_ART_IDS } from '../../src/areas/farm/scene/config/seasonFx';
 import {
   MANIFEST_SECTIONS,
   parseManifest,
@@ -20,6 +20,7 @@ import {
   type ManifestSection,
 } from '../../src/core/assets/manifestSchema';
 import { requiredSize } from './sizes';
+import { layoutFileSchema } from '../../content/schemas/farm/layout';
 
 const FEET_TOLERANCE = 0.02;
 const OPAQUE = 16; // alpha above this counts as painted
@@ -108,8 +109,8 @@ function defaultSize(root: string, row: Row): { width: number; height: number } 
   return { width: png.width, height: png.height };
 }
 
-/** `root` is the public/assets directory. */
-export function checkAssets(root: string): string[] {
+/** `root` is the public/assets directory; `layoutPath` the farm layout placing its art. */
+export function checkAssets(root: string, layoutPath = 'content/farm/layout.json'): string[] {
   const errors: string[] = [];
   const manifestPath = join(root, 'manifest', 'assets.json');
   let raw: unknown;
@@ -149,12 +150,15 @@ export function checkAssets(root: string): string[] {
     if (trough && !trough.states?.[state])
       errors.push(`${TROUGH_PROP_ID}: missing state "${state}"`);
   }
-  for (const p of manifest.layout.placements) {
+  // content/farm/layout.json: every placed object is an art row; trough and order board placed.
+  const layout = layoutFileSchema.safeParse(JSON.parse(readFileSync(layoutPath, 'utf8')));
+  if (!layout.success) errors.push(`${layoutPath}: ${layout.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`);
+  const placements = layout.success ? layout.data.placements : [];
+  for (const p of placements) {
     if (!ids.has(p.id)) errors.push(`layout: placement "${p.id}" has no manifest row`);
   }
   for (const role of ['trough', 'orderBoard'] as const) {
-    if (!manifest.layout.placements.some((p) => p.role === role))
-      errors.push(`layout: no "${role}" placement`);
+    if (!placements.some((p) => p.role === role)) errors.push(`layout: no "${role}" placement`);
   }
 
   // Files: existence, naming, size, alpha, feet line.

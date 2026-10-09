@@ -225,4 +225,26 @@ describe('saveFiles: save.json replaced by another program (AM-1)', () => {
     stop();
     expect(fired).toBeGreaterThanOrEqual(1);
   });
+
+  it('keeps the 5 newest backups (ARCHITECTURE §9)', () => {
+    expect(BACKUP_KEEP).toBe(5);
+  });
+
+  it('backupBeforeMigration keeps the old-format file permanently, outside rotation', async () => {
+    const f = files();
+    await f.backupBeforeMigration(7); // no save yet: nothing to copy
+    expect((await readdir(dir)).filter((n) => n.startsWith('before-migration-'))).toEqual([]);
+    await writeFile(join(dir, 'save.json'), '{"schemaVersion":7}');
+    await f.backupBeforeMigration(7);
+    const kept = (await readdir(dir)).filter((n) => n.startsWith('before-migration-v7-'));
+    expect(kept).toHaveLength(1);
+    expect(await read(kept[0]!)).toBe('{"schemaVersion":7}');
+    for (let i = 0; i < BACKUP_KEEP + 2; i++) {
+      t += BACKUP_SPACING_MS;
+      await f.write(`{"v":${i}}`);
+    }
+    expect((await readdir(dir)).filter((n) => n.startsWith('before-migration-'))).toHaveLength(1);
+    expect((await f.listBackups()).map((b) => b.name)).not.toContain(kept[0]);
+    await expect(f.backupBeforeMigration(0)).rejects.toThrow('invalid version');
+  });
 });

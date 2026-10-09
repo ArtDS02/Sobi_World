@@ -1,15 +1,15 @@
 // Breeding page (DECISIONS AD-1, BR-2). Three views of the ONE breeding data set the game uses:
 // the breed map (generation graph + lineage), the rule system as it runs (numbers, recipes, audit,
-// odds explorer) and the pair table of src/core/config/breedingPairs.ts — a rule = parents A + B
+// odds explorer) and the pair table of content/farm/breeding.json — a rule = parents A + B
 // (order ignored) → children with percents summing to 100; pairs without an active rule keep the
-// rule system (breedingRules.ts), and the editor can start from those odds.
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
+// rule system (content/farm/breeding.json), and the editor can start from those odds.
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import { renderBreedMap, type PigLook } from './breedMap';
 import { renderBreedRules } from './breedRules';
-import type { BreedId } from '../../src/core/config/ids';
-import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from '../../src/core/config/breedingPairs';
-import { breedingOutcomes } from '../../src/core/engine/breedingOdds';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
+import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from '../../src/areas/farm/logic/config/breedingPairs';
+import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';
 import { outcomeTotal, pairIssues, type Issue } from '../../scripts/admin/rules';
 import { RARITY_LABEL, esc, rarityBadge } from './labels';
 import { mountList } from './listKit';
@@ -280,7 +280,7 @@ function renderPairTable(root: HTMLElement, rerender: () => void) {
     try {
       await post('/__admin/breeding-pairs', { rows: draft.rows.map(({ note, ...r }) => (note ? { ...r, note } : r)) });
       draft.dirty = false;
-      rememberMessage(`Đã lưu ${draft.rows.length} luật phối giống vào game (src/core/config/breedingPairs.ts).`);
+      rememberMessage(`Đã lưu ${draft.rows.length} luật phối giống vào game (content/farm/breeding.json).`);
     } catch (e) {
       state.message = { kind: 'error', text: (e as Error).message };
     }

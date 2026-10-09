@@ -32,16 +32,6 @@ export const FX_IDS = [
 ] as const;
 export type FxId = (typeof FX_IDS)[number];
 
-/** What clicking a world placement opens (layout.placements[].action, DECISIONS R05C-1). */
-export const FARM_ACTIONS = [
-  'shop',
-  'inventory',
-  'orders',
-  'collection',
-  'trough',
-  'cleanAll',
-] as const;
-export type FarmAction = (typeof FARM_ACTIONS)[number];
 
 export const TROUGH_PROP_ID = 'prop_feed_trough';
 /** Pigs sleep in a cluster on the side of the walk area toward this prop (PL-1). */

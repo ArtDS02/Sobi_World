@@ -10,6 +10,7 @@ export const ERRORS = [
   "NOT_STUCK", "DAILY_ALREADY_CLAIMED", "ACHIEVEMENT_LOCKED", "ALREADY_CLAIMED",
   "ALREADY_OWNED",
   "NURSERY_FULL",
+  "INVENTORY_FULL",
 ] as const;
 
 export type ErrorCode = (typeof ERRORS)[number];

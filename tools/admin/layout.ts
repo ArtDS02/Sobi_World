@@ -1,6 +1,7 @@
 // Game layout editor page (DECISIONS AD-1): asset library → drag onto the farm frame → edit
-// properties → save into the manifest `layout.placements` the game draws (no code change needed).
+// properties → save into content/farm/layout.json, the layout the game draws (no code change needed).
 // Keyboard: arrows nudge (Shift ×10), Delete, Ctrl+D duplicate, Ctrl+Z / Ctrl+Y, Esc.
+import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
 import { TROUGH_PROP_ID } from '../../src/core/config/assetIds';
 import { SEASON_IDS, SEASON_LOOKS, type SeasonId } from '../../src/core/config/seasons';
 import { parseSeason } from '../../src/core/engine/season';
@@ -50,10 +51,11 @@ const issues = () => layoutIssues(ed.list, { assetIds: new Set(state.art.map((a)
 
 async function load() {
   const m = await json<Manifest>(`/assets/manifest/assets.json?t=${Date.now()}`);
-  ed.design = m.layout.designSize;
-  ed.walk = m.layout.walkArea;
-  ed.list = m.layout.placements;
-  ed.saved = [...m.layout.placements];
+  // content/farm/layout.json: a save rewrites it and Vite reloads the page with the new module.
+  ed.design = FARM_LAYOUT.designSize;
+  ed.walk = FARM_LAYOUT.walkArea;
+  ed.list = [...FARM_LAYOUT.placements];
+  ed.saved = [...FARM_LAYOUT.placements];
   ed.seasons = new Map([...m.props, ...m.buildings].filter((r) => r.seasons).map((r) => [r.id, r.seasons!]));
   ed.history.clear();
   ed.sel = null;

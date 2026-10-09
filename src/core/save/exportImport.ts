@@ -1,7 +1,7 @@
 // JSON export/import (spec §9.3). Pure: the export time is passed in, never read from a clock.
 import { SAVE } from '../config/save';
-import type { SaveGame } from '../types';
-import { parseSave, type MigrateResult } from './migrate';
+import { parseSave, type MigrateResult, type SaveCodec } from './migrate';
+import type { WorldSave } from './world';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -13,9 +13,9 @@ export function exportFileName(at: Date): string {
 
 /** Stamps settings.lastExportAt and returns the file to download plus the updated save. */
 export function exportSave(
-  save: SaveGame,
+  save: WorldSave,
   at: Date,
-): { fileName: string; json: string; save: SaveGame } {
+): { fileName: string; json: string; save: WorldSave } {
   const stamped = { ...save, settings: { ...save.settings, lastExportAt: at.getTime() } };
   return { fileName: exportFileName(at), json: JSON.stringify(stamped), save: stamped };
 }
@@ -24,12 +24,12 @@ export function exportSave(
  * Validates an imported file. Never touches storage: the caller confirms the overwrite and
  * persists only on `ok: true` (the previous save then goes to the backup key).
  */
-export function importSave(text: string): MigrateResult {
-  return parseSave(text);
+export function importSave(text: string, codec: SaveCodec): MigrateResult {
+  return parseSave(text, codec);
 }
 
 /** True when the reminder to export should be shown (no export yet, or older than 7 days). */
-export function exportReminderDue(save: SaveGame, now: number): boolean {
+export function exportReminderDue(save: WorldSave, now: number): boolean {
   const last = save.settings.lastExportAt;
   return last === null || now - last > SAVE.EXPORT_REMINDER_DAYS * 24 * 3600 * 1000;
 }

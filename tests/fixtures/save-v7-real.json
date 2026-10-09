@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 7,
+  "createdAt": 1790839228876,
+  "updatedAt": 1790839257889,
+  "player": {
+    "gold": 4875,
+    "xp": 30,
+    "unlockedSlots": 4
+  },
+  "pigs": [
+    {
+      "id": "e3fe6dfa-511b-4e94-9414-96d13b989c66",
+      "slotIndex": 0,
+      "breed": "PIG_EARTH_PINK",
+      "name": "Bánh Bao",
+      "gender": "FEMALE",
+      "growthProgress": 100,
+      "hunger": 0,
+      "cleanliness": 0,
+      "isSick": true,
+      "pregnancy": null,
+      "lastTickedAt": 1791168333676,
+      "createdAt": 1790839248294,
+      "lastSickAt": 1790858293895,
+      "sickDay": 20727,
+      "sickEpisodes": 1
+    }
+  ],
+  "nursery": [],
+  "trough": {
+    "food": 0,
+    "capacity": 20,
+    "lastResolvedAt": 1791168333676
+  },
+  "inventory": {
+    "FOOD_BASIC": 0,
+    "MEDICINE_COMMON": 1
+  },
+  "orders": [
+    {
+      "id": "124386:0",
+      "createdAt": 1791158400000,
+      "expiresAt": 1791187200000,
+      "wantBreed": "PIG_EARTH_PINK",
+      "wantGender": "FEMALE",
+      "minHappiness": 75,
+      "rewardGold": 2640,
+      "rewardXp": 25,
+      "fulfilledAt": null
+    },
+    {
+      "id": "124386:1",
+      "createdAt": 1791158400000,
+      "expiresAt": 1791187200000,
+      "wantBreed": "PIG_EARTH_PINK",
+      "wantGender": "MALE",
+      "minHappiness": 0,
+      "rewardGold": 1800,
+      "rewardXp": 25,
+      "fulfilledAt": null
+    },
+    {
+      "id": "124386:2",
+      "createdAt": 1791158400000,
+      "expiresAt": 1791187200000,
+      "wantBreed": "PIG_EARTH_PINK",
+      "wantGender": "MALE",
+      "minHappiness": 50,
+      "rewardGold": 2160,
+      "rewardXp": 25,
+      "fulfilledAt": null
+    }
+  ],
+  "collection": {
+    "discoveredBreeds": [
+      "PIG_EARTH_PINK"
+    ]
+  },
+  "transactions": [
+    {
+      "id": "6b23e93b-fe76-4200-a1df-976a8a051d34",
+      "at": 1790839257889,
+      "type": "TROUGH_FILL",
+      "amount": 0,
+      "note": "x15 inventory 15 bought 0"
+    },
+    {
+      "id": "5ac2fd46-2e90-42ca-a2cb-e21c014c78c0",
+      "at": 1790839249211,
+      "type": "SHOP_PURCHASE",
+      "amount": -125,
+      "refId": "FOOD_BASIC",
+      "note": "x5"
+    },
+    {
+      "id": "a8e9b97c-dc89-4cdb-98e4-2a86c2a90968",
+      "at": 1790839248294,
+      "type": "DISCOVERY_BONUS",
+      "amount": 500,
+      "refId": "PIG_EARTH_PINK"
+    },
+    {
+      "id": "5786fe46-a912-4c34-97c6-3595c6dcbad6",
+      "at": 1790839248294,
+      "type": "PIG_PURCHASE",
+      "amount": -500,
+      "refId": "e3fe6dfa-511b-4e94-9414-96d13b989c66"
+    },
+    {
+      "id": "3129aefa-b303-4fff-9a38-e63617bd5865",
+      "at": 1790839228876,
+      "type": "INITIAL_GOLD",
+      "amount": 5000
+    }
+  ],
+  "breedingRecords": [],
+  "gifts": {
+    "nextAt": 1791182579665,
+    "boxes": [
+      {
+        "id": "1791065831853:0",
+        "spawnedAt": 1791065831853,
+        "seed": 740442823,
+        "gold": 50,
+        "xp": 5
+      },
+      {
+        "id": "1791080231853:0",
+        "spawnedAt": 1791080231853,
+        "seed": 1903041159,
+        "gold": 50,
+        "xp": 5
+      },
+      {
+        "id": "1791094631853:0",
+        "spawnedAt": 1791094631853,
+        "seed": 1479887175,
+        "gold": 50,
+        "xp": 5
+      }
+    ]
+  },
+  "progress": {
+    "stats": {},
+    "claimed": {},
+    "daily": {
+      "lastDay": null,
+      "streak": 0
+    }
+  },
+  "decor": [],
+  "settings": {
+    "musicOn": true,
+    "sfxOn": true,
+    "reduceMotion": false,
+    "tutorialDone": false,
+    "lastExportAt": null
+  }
+}

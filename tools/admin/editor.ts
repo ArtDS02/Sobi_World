@@ -1,9 +1,9 @@
 // Pig detail / editor drawer: preview (adult/baby, four directions, sleep) and the gameplay fields
 // the game really has. An empty stat field inherits the rarity tier (same rule as breeds.ts).
 import type { SpeciesRowData } from '../../scripts/admin/speciesText';
-import { BALANCE } from '../../src/core/config/balance';
-import { FAMILY_VALUES, RARITY_TIER } from '../../src/core/config/breeds';
-import { FARM_VIEW } from '../../src/core/config/farmView';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { FAMILY_VALUES, RARITY_TIER } from '../../src/areas/farm/logic/config/breeds';
+import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import { FAMILY_LABEL, RARITY_LABEL, art, assetUrl, esc, gold, hexColor, hours, rowImage, stats } from './labels';
 import { openPicker, pickButton, type PickItem } from './picker';

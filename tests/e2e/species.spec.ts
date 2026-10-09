@@ -75,7 +75,7 @@ async function withTemp(run: (dir: string) => Promise<void>) {
   }
 }
 
-test('v4 save with outfits: refunded, robot body becomes a species, written back as v7', async () => {
+test('v4 save with outfits: refunded, robot body becomes a species, written back as the world save v8', async () => {
   await withTemp(async (dir) => {
     const v4 = base(4, 4);
     seed(dir, {
@@ -99,10 +99,10 @@ test('v4 save with outfits: refunded, robot body becomes a species, written back
     await page.keyboard.press('Escape');
     await app.close();
     const s = readSave(dir);
-    expect(s.schemaVersion).toBe(7);
-    expect(s.decor).toEqual([]);
-    expect(s.pigs.map((p: { breed: string }) => p.breed)).toEqual(['PIG_ROBOT', 'PIG_EARTH_PINK']);
-    expect(s.player.gold).toBe(9000);
+    expect(s.schemaVersion).toBe(8);
+    expect(s.areas.sobi_farm.decor).toEqual([]);
+    expect(s.areas.sobi_farm.pigs.map((p: { breed: string }) => p.breed)).toEqual(['PIG_ROBOT', 'PIG_EARTH_PINK']);
+    expect(s.wallet.coins).toBe(9000);
     expect(JSON.stringify(s)).not.toMatch(/skinId|ownedSkins|cosmetics|discoveredSkins/);
   });
 });
@@ -147,6 +147,6 @@ test('new species render on the farm, fill the collection and survive a restart'
     page = await app.firstWindow();
     await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
     await app.close();
-    expect(readSave(dir).pigs.map((p: { breed: string }) => p.breed)).toEqual(breeds);
+    expect(readSave(dir).areas.sobi_farm.pigs.map((p: { breed: string }) => p.breed)).toEqual(breeds);
   });
 });

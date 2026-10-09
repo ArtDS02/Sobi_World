@@ -1,6 +1,7 @@
 // Day / night preview canvas of the admin (DN): the farm frame painted with the game's own painters
 // (sky, backdrop, layout placements, one sample pig) under the look's multiply tint and warm glows.
 // A still picture — it never touches the game's save or clock.
+import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
 import {
   ASSET_URL_BASE,
   createAssetRegistry,
@@ -8,9 +9,9 @@ import {
 } from '../../src/core/assets/registry';
 import type { AssetManifest } from '../../src/core/assets/manifestSchema';
 import { DAY_NIGHT_VIEW, type PhaseLook } from '../../src/core/config/dayNight';
-import { paintBackdrop } from '../../src/game/view/backdropPaint';
-import { placementTransform, placementView, visibleLayout } from '../../src/game/view/sceneLayout';
-import { cssColor, paintSky } from '../../src/game/view/skyPaint';
+import { paintBackdrop } from '../../src/areas/farm/scene/view/backdropPaint';
+import { placementTransform, placementView, visibleLayout } from '../../src/areas/farm/scene/view/sceneLayout';
+import { cssColor, paintSky } from '../../src/areas/farm/scene/view/skyPaint';
 
 type Registry = AssetRegistry;
 
@@ -45,7 +46,7 @@ const fileUrl = (reg: Registry, id: string) => reg.url(id, 'asset') ?? reg.url(i
 /** Paints the farm at `look` into `canvas` (any size; the 1600×900 frame is scaled to fit). */
 export async function paintPreview(canvas: HTMLCanvasElement, look: PhaseLook) {
   const reg = await loadRegistry();
-  const layout = visibleLayout(reg.manifest.layout);
+  const layout = visibleLayout(FARM_LAYOUT);
   const { width: W, height: H } = layout.designSize;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;

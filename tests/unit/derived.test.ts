@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
-import { freeSlots, growthStage, level, waitingPigs, weight } from '../../src/core/engine/derived';
-import { happiness } from '../../src/core/engine/happiness';
-import { sellPrice } from '../../src/core/engine/pricing';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import { freeSlots, growthStage, level, waitingPigs, weight } from '../../src/areas/farm/logic/derived';
+import { happiness } from '../../src/areas/farm/logic/happiness';
+import { sellPrice } from '../../src/areas/farm/logic/pricing';
 import { makePig } from './pigFactory';
 
 describe('happiness (§5.4)', () => {

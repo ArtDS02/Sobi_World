@@ -1,20 +1,21 @@
 import { existsSync } from 'node:fs';
+import { pigFrame } from '../../src/areas/farm/scene/view/farmArt';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest, type AssetManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { DAY_PHASES } from '../../src/core/config/dayNight';
-import { pigVisualState } from '../../src/game/state/pigVisualState';
+import { pigVisualState } from '../../src/areas/farm/scene/state/pigVisualState';
 import {
   initialRest,
   isAwake,
   isSleepPhase,
   restFrame,
   type PigRestState,
-} from '../../src/game/state/sleepCycle';
-import { frameLook } from '../../src/game/view/pigView';
+} from '../../src/areas/farm/scene/state/sleepCycle';
+import { frameLook } from '../../src/areas/farm/scene/view/pigView';
 
 function manifest(): AssetManifest {
   const r = parseManifest(structuredClone(manifestJson));
@@ -75,7 +76,7 @@ describe('sleep / wake frames cover every species (PS-1)', () => {
     const missing: string[] = [];
     for (const id of BREED_IDS) {
       for (const frame of ['sleep', 'wake'] as const) {
-        const url = assets.pigFrame(id, frame);
+        const url = pigFrame(assets, id, frame);
         const file = url && join('public', url);
         if (!file || !existsSync(file)) missing.push(`${id} (${BREEDS[id].artId}) ${frame}`);
       }

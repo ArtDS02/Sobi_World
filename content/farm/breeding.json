@@ -1,0 +1,75 @@
+{
+  "rules": {
+    "COMPAT": {
+      "base": 0.35,
+      "sameFamily": 0.3,
+      "perSharedTrait": 0.1,
+      "traitCap": 3,
+      "perRarityGap": 0.08,
+      "recipe": 0.25
+    },
+    "CHANCES_SHOWN": 4,
+    "MAP_STRONG_PERCENT": 5,
+    "MAP_WEAK_PERCENT": 1
+  },
+  "genetics": {
+    "sameRarity": {
+      "parentTypeChance": 66,
+      "sameRarityTypeChance": 26,
+      "middleRarityChance": 0,
+      "higherRarityChance": 8
+    },
+    "differentRarity": {
+      "parentTypeChance": 60,
+      "sameRarityTypeChance": 0,
+      "middleRarityChance": 28,
+      "higherRarityChance": 12
+    },
+    "adjacentRarity": {
+      "parentTypeChance": 62,
+      "sameRarityTypeChance": 26,
+      "middleRarityChance": 0,
+      "higherRarityChance": 12
+    },
+    "compatScale": { "min": 0.5, "max": 1.5 }
+  },
+  "mutations": [
+    { "parents": ["PIG_WHITE", "PIG_BLACK"], "result": "PIG_PANDA", "weight": 3 },
+    { "parents": ["PIG_WHITE", "PIG_BLACK"], "result": "PIG_PENGUIN", "weight": 6 },
+    { "parents": ["PIG_WHITE", "PIG_WHITE"], "result": "PIG_SHEEP", "weight": 6 },
+    { "parents": ["PIG_EARTH_PINK", "PIG_EARTH_PINK"], "result": "PIG_STRIPED_MELON", "weight": 5 },
+    { "parents": ["PIG_BROWN", "PIG_BROWN"], "result": "PIG_BOAR", "weight": 6 },
+    { "parents": ["PIG_BROWN", "PIG_BOAR"], "result": "PIG_TIGER", "weight": 5 },
+    { "parents": ["PIG_BOAR", "PIG_BOAR"], "result": "PIG_TIGER", "weight": 4 },
+    { "parents": ["PIG_STRIPED_MELON", "PIG_SHEEP"], "result": "PIG_BEE", "weight": 8 },
+    { "parents": ["PIG_STRIPED_MELON", "PIG_STRIPED_MELON"], "result": "PIG_SUPERMAN", "weight": 4 },
+    { "parents": ["PIG_PENGUIN", "PIG_EARTH_PINK"], "result": "PIG_AXOLOTL", "weight": 4 },
+    { "parents": ["PIG_AXOLOTL", "PIG_WHITE"], "result": "PIG_KOI", "weight": 3 },
+    { "parents": ["PIG_TIGER", "PIG_SUPERMAN"], "result": "PIG_DRAGONLING", "weight": 4 },
+    { "parents": ["PIG_BLACK", "PIG_DRAGONLING"], "result": "PIG_GALAXY", "weight": 4 },
+    { "parents": ["PIG_SUPERMAN", "PIG_PENGUIN"], "result": "PIG_ROBOT", "weight": 4 },
+    { "parents": ["PIG_SHEEP", "PIG_SUPERMAN"], "result": "PIG_UNICORN", "weight": 4 },
+    { "parents": ["PIG_BLACK", "PIG_BOAR"], "result": "PIG_BUFFALO", "weight": 5 },
+    { "parents": ["PIG_SPOTTED", "PIG_BROWN"], "result": "PIG_DEER", "weight": 6 },
+    { "parents": ["PIG_EARTH_PINK", "PIG_STRIPED_MELON"], "result": "PIG_PUMPKIN", "weight": 6 },
+    { "parents": ["PIG_BEE", "PIG_PUMPKIN"], "result": "PIG_SUNFLOWER", "weight": 5 },
+    { "parents": ["PIG_BOAR", "PIG_SHEEP"], "result": "PIG_HEDGEHOG", "weight": 5 },
+    { "parents": ["PIG_PENGUIN", "PIG_STRIPED_MELON"], "result": "PIG_TURTLE", "weight": 5 },
+    { "parents": ["PIG_KOI", "PIG_DRAGONLING"], "result": "PIG_MYTHICAL", "weight": 3 },
+    { "parents": ["PIG_DRAGONLING", "PIG_GALAXY"], "result": "PIG_PHOENIX", "weight": 2 }
+  ],
+  "pairs": [],
+  "geneBonuses": { "base": 1, "sameTheme": 8, "relatedTheme": 3, "perGeneTag": 4, "geneTagCap": 3 },
+  "themeRelations": [
+    ["FARM", "MEADOW"],
+    ["MEADOW", "WILD"],
+    ["WILD", "WATER"],
+    ["HERO", "ADVENTURE"],
+    ["MYTHIC", "FANTASY"],
+    ["SCIFI", "JOB"],
+    ["HORROR", "FANTASY"],
+    ["FOOD", "FARM"],
+    ["FUNNY", "FOOD"],
+    ["VIETNAM", "FARM"]
+  ]
+}

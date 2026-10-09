@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { FARM_VIEW } from '../../src/core/config/farmView';
+import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import { UI_ICON } from '../../src/core/config/assetIds';
 import manifestJson from '../../public/assets/manifest/assets.json';
-import { mixTint } from '../../src/game/prefabs/SickTint';
-import { ambientKind, driftX } from '../../src/game/view/ambientMotion';
+import { mixTint } from '../../src/areas/farm/scene/prefabs/SickTint';
+import { ambientKind, driftX } from '../../src/areas/farm/scene/view/ambientMotion';
 
 describe('ambient motion (R12A)', () => {
   it('clouds drift, trees and grass sway, the rest stays still', () => {

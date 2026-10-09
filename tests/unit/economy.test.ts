@@ -6,9 +6,9 @@ import {
   priceAt,
   stallGrowth,
 } from '../../scripts/economy/model';
-import { BALANCE } from '../../src/core/config/balance';
-import { BREEDS } from '../../src/core/config/breeds';
-import { BREED_ID_VALUES } from '../../src/core/config/ids';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import { BREED_ID_VALUES } from '../../src/areas/farm/logic/config/ids';
 
 // Spec §6.4 sanity table, reproduced through the real engine (§14.7, Appendix C "Balance sanity").
 describe('economy sanity (§6.4)', () => {

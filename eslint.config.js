@@ -41,7 +41,8 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/core/**/*.ts'],
+    // Pure layers: core, systems and every Area's logic (simulate() is shared by all modes).
+    files: ['src/core/**/*.ts', 'src/systems/**/*.ts', 'src/areas/*/logic/**/*.ts'],
     rules: {
       'no-restricted-syntax': ['error', ...coreRestrictedSyntax, mathRandom],
       'no-restricted-globals': ['error', ...coreRestrictedGlobals],
@@ -51,7 +52,7 @@ export default tseslint.config(
           patterns: [
             {
               regex: '(^|/)(game|ui|store|platform)(/|$)',
-              message: 'src/core must not import from game/, ui/, store/ or platform/.',
+              message: 'pure layers must not import from game/, ui/, store/ or platform/.',
             },
             {
               regex: '^(idb|electron|node:.*)$',

@@ -25,11 +25,11 @@ async function launch(userData: string): Promise<ElectronApplication> {
 }
 
 const savePath = (userData: string) => join(userData, 'saves', 'save.json');
+/** The farm's slice of the world save v8. */
 const readSave = (userData: string) =>
-  JSON.parse(readFileSync(savePath(userData), 'utf8')) as {
-    pigs: unknown[];
-    trough: { food: number };
-  };
+  (JSON.parse(readFileSync(savePath(userData), 'utf8')) as {
+    areas: { sobi_farm: { pigs: unknown[]; trough: { food: number } } };
+  }).areas.sobi_farm;
 
 test('first launch, buy, fill, relaunch, export — offline', async () => {
   const userData = mkdtempSync(join(tmpdir(), 'unin-e2e-'));
@@ -73,7 +73,7 @@ test('first launch, buy, fill, relaunch, export — offline', async () => {
     await page.getByRole('button', { name: 'Cài đặt' }).click();
     await page.getByRole('button', { name: 'Xuất file lưu' }).click();
     await expect.poll(() => existsSync(exportPath)).toBe(true);
-    expect(JSON.parse(readFileSync(exportPath, 'utf8')).pigs).toHaveLength(1);
+    expect(JSON.parse(readFileSync(exportPath, 'utf8')).areas.sobi_farm.pigs).toHaveLength(1);
 
     await app.close();
     expect(network).toEqual([]);

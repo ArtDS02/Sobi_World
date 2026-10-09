@@ -4,7 +4,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { PIG_FEET_Y } from '../src/core/config/assetIds';
-import { BREEDS } from '../src/core/config/breeds';
+import { BREEDS } from '../src/areas/farm/logic/config/breeds';
 import {
   MANIFEST_SECTIONS,
   parseManifest,

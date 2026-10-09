@@ -1,7 +1,8 @@
 export const vi = {
   app: {
-    title: "Sobi Farm",
+    title: "Sobi World",
     loading: "Đang tải...",
+    startupError: "Dữ liệu game bị lỗi nên không mở được. Hãy báo nhà phát triển.",
   },
 
   nav: {
@@ -24,17 +25,28 @@ export const vi = {
     trough: "Máng ăn",
     cleanAll: "Giếng nước",
     wellHint: "Múc nước tắm cho cả đàn heo.",
-    giftGold: "+{n} vàng",
+    giftGold: "+{n} Sobi Coin",
     giftXp: "+{n} KN",
+  },
+
+  // Away-screen lines of each Area (AreaModule.getSummary keys: summary.<area>.<line>).
+  summary: {
+    farm: {
+      births: "{count} heo con chào đời",
+      grown: "{count} heo đã trưởng thành",
+      sick: "{count} heo bị bệnh",
+      orders: "{count} đơn hàng mới",
+      gifts: "{count} hộp quà mới",
+    },
   },
 
   hud: {
     level: "Cấp {level}",
     xp: "{current}/{next} KN",
-    gold: "{amount} vàng",
+    gold: "{amount} Sobi Coin",
     trough: "Máng ăn {food}/{capacity}",
     troughEmpty: "Máng ăn trống!",
-    goldUnit: "vàng",
+    goldUnit: "Sobi Coin",
     troughShort: "{food}/{capacity}",
     pigs: "{count}/{max}",
     pigsTitle: "Heo trong trại: {count}/{max}",
@@ -102,7 +114,7 @@ export const vi = {
   error: {
     INVALID_REQUEST: "Yêu cầu không hợp lệ.",
     PIG_NOT_FOUND: "Không tìm thấy heo này.",
-    INSUFFICIENT_GOLD: "Không đủ vàng.",
+    INSUFFICIENT_GOLD: "Không đủ Sobi Coin.",
     INSUFFICIENT_ITEM: "Không đủ vật phẩm.",
     PIG_NOT_MATURE: "Heo chưa trưởng thành.",
     PIG_IS_SICK: "Heo đang bệnh.",
@@ -128,6 +140,7 @@ export const vi = {
     ALREADY_CLAIMED: "Đã nhận thưởng rồi.",
     ALREADY_OWNED: "Bạn đã có món này.",
     NURSERY_FULL: "Kho heo con đã đầy. Hãy đưa bớt heo con ra trại trước.",
+    INVENTORY_FULL: "Túi đồ đã đầy chỗ. Hãy dùng bớt vật phẩm trước.",
   },
 
   // Shown on a disabled button so the player knows why, not just that.
@@ -172,11 +185,11 @@ export const vi = {
     adopted: "{name} đã về nông trại!",
     troughEmpty: "Máng ăn đã hết. Heo sẽ ngừng lớn.",
     levelUp: "Lên cấp {level}!",
-    discovery: "Khám phá mới: {name}! +{gold} vàng",
+    discovery: "Khám phá mới: {name}! +{gold} Sobi Coin",
     orderNew: "Có đơn hàng mới.",
     orderExpired: "Một đơn hàng đã hết hạn.",
-    sold: "Đã bán {name} được {gold} vàng.",
-    orderFulfilled: "Giao đơn thành công! +{gold} vàng",
+    sold: "Đã bán {name} được {gold} Sobi Coin.",
+    orderFulfilled: "Giao đơn thành công! +{gold} Sobi Coin",
     // Action toasts (spec §11.3, DECISIONS R05B-1); not in Appendix B.
     bought: "Chào mừng {name} về nông trại!",
     treated: "{name} đã khỏi bệnh.",
@@ -184,11 +197,11 @@ export const vi = {
     renamed: "Đã đổi tên thành {name}.",
     slotBought: "Đã mở thêm chuồng! Giờ có {slots} chỗ.",
     breedingStarted: "{name} đã mang thai! Sinh sau {time}.",
-    giftOpened: "Mở quà: +{gold} vàng, +{xp} KN",
+    giftOpened: "Mở quà: +{gold} Sobi Coin, +{xp} KN",
     reliefClaimed: "Bác hàng xóm gửi giúp: {what}",
     dailyClaimed: "Quà ngày {streak}: {what}",
     achievementReached: "Đạt thành tích: {name}! Vào Thành tích để nhận thưởng.",
-    achievementClaimed: "Nhận thưởng {name}: +{gold} vàng",
+    achievementClaimed: "Nhận thưởng {name}: +{gold} Sobi Coin",
     decorBought: "Đã đặt {name} lên nông trại. Heo vui hơn!",
   },
 
@@ -221,23 +234,23 @@ export const vi = {
     slotNext: "Chuồng thứ {n}",
     slotLocked: "Cần cấp {level}",
     quantity: "Số lượng",
-    total: "Tổng: {gold} vàng",
+    total: "Tổng: {gold} Sobi Coin",
     owned: "Đã sở hữu",
-    sellUpTo: "Bán tới {gold} vàng",
+    sellUpTo: "Bán tới {gold} Sobi Coin",
   },
 
   trough: {
     title: "Đổ máng ăn",
     current: "Hiện có {food}/{capacity}",
     fromInventory: "Lấy từ kho: {n}",
-    toBuy: "Mua thêm: {n} ({gold} vàng)",
+    toBuy: "Mua thêm: {n} ({gold} Sobi Coin)",
     hint: "Heo tự ăn từ máng kể cả khi bạn tắt game. Đổ đầy trước khi nghỉ.",
     fill: "Đổ {n} phần",
   },
 
   breed: {
     title: "Chọn bạn phối",
-    fee: "Phí phối giống: {gold} vàng",
+    fee: "Phí phối giống: {gold} Sobi Coin",
     chances: "Tỉ lệ ra giống con",
     otherChance: "Giống khác {n}%",
     unknown: "??? ({rarity})",
@@ -256,7 +269,7 @@ export const vi = {
     title: "Bán {name}?",
     base: "Giá gốc: {gold}",
     multiplier: "Vui vẻ {happiness} → x{mult}",
-    final: "Nhận được: {gold} vàng",
+    final: "Nhận được: {gold} Sobi Coin",
     warning: "Heo quý! Bán rồi không lấy lại được.",
   },
 
@@ -265,7 +278,7 @@ export const vi = {
     want: "Cần: {breed}",
     wantGender: "Giới tính: {gender}",
     minHappiness: "Vui vẻ tối thiểu: {value}",
-    reward: "Thưởng: {gold} vàng + {xp} KN",
+    reward: "Thưởng: {gold} Sobi Coin + {xp} KN",
     expiresIn: "Còn {time}",
     fulfilled: "Đã giao",
     empty: "Chưa có đơn hàng nào. Đơn mới xuất hiện mỗi 4 tiếng.",
@@ -431,10 +444,10 @@ export const vi = {
   // PG-1: neighbour's help when the farm is stuck.
   relief: {
     title: "Bác hàng xóm ghé thăm",
-    food: "Hết thức ăn, hết vàng mà chưa có heo nào bán được? Bác gửi tặng ít đồ để nông trại chạy tiếp.",
-    start: "Chưa đủ vàng mua heo con? Bác cho mượn vốn để bắt đầu lại.",
+    food: "Hết thức ăn, hết Sobi Coin mà chưa có heo nào bán được? Bác gửi tặng ít đồ để nông trại chạy tiếp.",
+    start: "Chưa đủ Sobi Coin mua heo con? Bác cho mượn vốn để bắt đầu lại.",
     claim: "Nhận giúp đỡ",
-    gold: "{n} vàng",
+    gold: "{n} Sobi Coin",
     foodUnits: "{n} thức ăn",
     medicine: "{n} thuốc",
   },
@@ -453,8 +466,8 @@ export const vi = {
     claim: "Nhận",
     claimed: "Đã nhận",
     progress: "{current}/{target}",
-    reward: "+{gold} vàng",
-    rewardXp: "+{gold} vàng, +{xp} KN",
+    reward: "+{gold} Sobi Coin",
+    rewardXp: "+{gold} Sobi Coin, +{xp} KN",
     summary: "Đã đạt {done}/{total}",
     FIRST_PIG: "Chủ trại mới — mua heo đầu tiên",
     FIRST_SALE: "Mối hàng đầu tiên — bán 1 heo",
@@ -472,8 +485,8 @@ export const vi = {
     GIFTS_50: "Ông già Noel — mở 50 hộp quà",
     CLEAN_100: "Sạch sẽ thơm tho — tắm 100 lượt heo",
     TREAT_10: "Bác sĩ thú y — chữa 10 heo",
-    EARN_100K: "Khá giả — kiếm 100.000 vàng",
-    EARN_1M: "Triệu phú heo — kiếm 1.000.000 vàng",
+    EARN_100K: "Khá giả — kiếm 100.000 Sobi Coin",
+    EARN_1M: "Triệu phú heo — kiếm 1.000.000 Sobi Coin",
     COLLECT_10: "Nhà sưu tầm — khám phá 10 giống",
     COLLECT_25: "Bảo tàng heo — khám phá 25 giống",
     COLLECT_50: "Bách khoa heo — khám phá 50 giống",

@@ -11,7 +11,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { PNG } from 'pngjs';
-import { SEASON_FX_ART } from '../src/core/config/seasonFx';
+import { SEASON_FX_ART } from '../src/areas/farm/scene/config/seasonFx';
 
 const SHEET = 'asset/building/building_season/environment.png';
 const OUT_DIR = 'public/assets/fx/env';

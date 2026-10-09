@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { SAVE } from '../../src/core/config/save';
+import { WORLD_SAVE_VERSION } from '../../src/core/save/world';
+import { parseWorldSave, world } from './worldKit';
 import type { SaveCandidate, UninBridge } from '../../src/platform/desktop/bridge';
 import { createFileSaveStorage } from '../../src/platform/desktop/fileSaveStorage';
 import { makePig } from './pigFactory';
@@ -19,6 +20,7 @@ function fakeBridge(candidates: SaveCandidate[], failWrites = false) {
     listBackups: async () => [],
     restoreBackup: async () => {},
     backupBeforeReset: async () => {},
+    backupBeforeMigration: async () => {},
     exportTo: async () => true,
     importFrom: async () => null,
     openFolder: async () => {},
@@ -31,20 +33,20 @@ const good = (gold: number) => {
   const s = makeState([makePig()]);
   return JSON.stringify({ ...s, player: { ...s.player, gold } });
 };
-const future = JSON.stringify({ schemaVersion: SAVE.SCHEMA_VERSION + 1 });
+const future = JSON.stringify({ schemaVersion: WORLD_SAVE_VERSION + 1 });
 const B1 = 'backup:save-20261001-120000.json' as const;
 const B2 = 'backup:save-20261001-110000.json' as const;
 
 describe('FileSaveStorage', () => {
   it('no files → empty', async () => {
-    expect(await createFileSaveStorage(fakeBridge([]).bridge).load()).toEqual({ kind: 'empty' });
+    expect(await createFileSaveStorage(fakeBridge([]).bridge, parseWorldSave).load()).toEqual({ kind: 'empty' });
   });
 
   it('valid save.json → ok from primary', async () => {
     const f = fakeBridge([{ source: 'save', json: good(7) }]);
-    const r = await createFileSaveStorage(f.bridge).load();
-    expect(r).toMatchObject({ kind: 'ok', source: 'primary' });
-    expect(r.kind === 'ok' && r.save.player.gold).toBe(7);
+    const r = await createFileSaveStorage(f.bridge, parseWorldSave).load();
+    expect(r).toMatchObject({ kind: 'ok', source: 'primary', fromVersion: 7 });
+    expect(r.kind === 'ok' && r.save.wallet.coins).toBe(7);
   });
 
   it('corrupt save.json falls back to the newest valid backup; bad files are marked corrupt', async () => {
@@ -53,9 +55,9 @@ describe('FileSaveStorage', () => {
       { source: B1, json: '{"nope":1}' },
       { source: B2, json: good(42) },
     ]);
-    const r = await createFileSaveStorage(f.bridge).load();
+    const r = await createFileSaveStorage(f.bridge, parseWorldSave).load();
     expect(r).toMatchObject({ kind: 'ok', source: 'backup' });
-    expect(r.kind === 'ok' && r.save.player.gold).toBe(42);
+    expect(r.kind === 'ok' && r.save.wallet.coins).toBe(42);
     expect(f.corrupt).toEqual(['save', B1]);
   });
 
@@ -64,7 +66,7 @@ describe('FileSaveStorage', () => {
       { source: 'save', json: '{broken' },
       { source: B1, json: '[]' },
     ]);
-    expect(await createFileSaveStorage(f.bridge).load()).toEqual({ kind: 'recovery' });
+    expect(await createFileSaveStorage(f.bridge, parseWorldSave).load()).toEqual({ kind: 'recovery' });
     expect(f.corrupt).toHaveLength(2);
     expect(f.writes).toEqual([]);
   });
@@ -74,22 +76,22 @@ describe('FileSaveStorage', () => {
       { source: 'save', json: future },
       { source: B1, json: good(1) },
     ]);
-    const storage = createFileSaveStorage(f.bridge);
+    const storage = createFileSaveStorage(f.bridge, parseWorldSave);
     expect(await storage.load()).toEqual({ kind: 'tooNew', source: 'primary' });
     expect(f.corrupt).toEqual([]); // a newer save is not corrupt
-    await expect(storage.save(makeState())).rejects.toThrow('SAVE_TOO_NEW');
+    await expect(storage.save(world(makeState()))).rejects.toThrow('SAVE_TOO_NEW');
     expect(f.writes).toEqual([]);
   });
 
   it('a failed write rejects so the store can surface saveError', async () => {
-    const storage = createFileSaveStorage(fakeBridge([], true).bridge);
-    await expect(storage.save(makeState())).rejects.toThrow('EACCES');
+    const storage = createFileSaveStorage(fakeBridge([], true).bridge, parseWorldSave);
+    await expect(storage.save(world(makeState()))).rejects.toThrow('EACCES');
   });
 
   it('save writes the JSON string unchanged', async () => {
     const f = fakeBridge([]);
-    const s = makeState([makePig()]);
-    await createFileSaveStorage(f.bridge).save(s);
+    const s = world(makeState([makePig()]));
+    await createFileSaveStorage(f.bridge, parseWorldSave).save(s);
     expect(f.writes).toEqual([JSON.stringify(s)]);
   });
 });

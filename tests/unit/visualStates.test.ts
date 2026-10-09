@@ -1,21 +1,22 @@
 // R09B: sleep / sick / pregnant rendering rules, reduceMotion seeding, and proof that the visual
 // layer (pigView, visual state, wandering) never touches the save.
+import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
+import { createFarmGameStore, world } from './worldKit';
 import { describe, expect, it } from 'vitest';
 import manifestJson from '../../public/assets/manifest/assets.json';
-import { buyPig } from '../../src/core/actions/buyPig';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
 import type { Anchors } from '../../src/core/assets/anchors';
 import { parseManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
 import { fakeClock } from '../../src/core/clock';
 import { mulberry32 } from '../../src/core/rng';
-import { newGame } from '../../src/core/save/newGame';
+import { newGame } from '../../src/areas/farm/logic/save/newFarm';
 import type { InstanceGuard, LoadResult, SaveStorage } from '../../src/core/save/port';
-import type { SaveGame } from '../../src/core/types';
-import { pigVisualState } from '../../src/game/state/pigVisualState';
-import { wanderTarget } from '../../src/game/state/wander';
-import { overlayLayout } from '../../src/game/view/overlayLayout';
-import { pigView, sleepLook } from '../../src/game/view/pigView';
-import { createGameStore } from '../../src/store/gameStore';
+import type { FarmGame } from '../../src/areas/farm/logic/types';
+import { pigVisualState } from '../../src/areas/farm/scene/state/pigVisualState';
+import { wanderTarget } from '../../src/areas/farm/scene/state/wander';
+import { overlayLayout } from '../../src/areas/farm/scene/view/overlayLayout';
+import { pigView, sleepLook } from '../../src/areas/farm/scene/view/pigView';
 import { makePig } from './pigFactory';
 
 const parsed = parseManifest(structuredClone(manifestJson));
@@ -24,7 +25,7 @@ if (!parsed.ok) throw new Error(parsed.message);
 parsed.manifest.pigs.find((p) => p.id === 'pig_classic')!.sleepAsset =
   'pigs/base/pig_classic_sleep.png';
 const reg = createAssetRegistry(parsed.manifest);
-const layout = parsed.manifest.layout;
+const layout = FARM_LAYOUT;
 
 describe('sleep look (spec §11.4, DECISIONS Q5)', () => {
   const classic = pigView(makePig(), 0, layout, reg);
@@ -87,12 +88,12 @@ describe('sick / pregnant overlays (spec §11 table)', () => {
 });
 
 /** In-memory platform: counts writes. */
-function memoryPlatform(initial: SaveGame | null) {
-  let stored = initial;
+function memoryPlatform(initial: FarmGame | null) {
+  let stored = initial && world(initial);
   const writes = { count: 0 };
   const storage: SaveStorage = {
     load: async (): Promise<LoadResult> =>
-      stored ? { kind: 'ok', save: stored, source: 'primary' } : { kind: 'empty' },
+      stored ? { kind: 'ok', save: stored, source: 'primary', fromVersion: 8 } : { kind: 'empty' },
     save: async (s) => {
       writes.count += 1;
       stored = s;
@@ -112,7 +113,7 @@ describe('settings.reduceMotion (spec §11.3)', () => {
   for (const prefers of [true, false]) {
     it(`a new game takes prefers-reduced-motion = ${prefers}`, async () => {
       const p = memoryPlatform(null);
-      const store = createGameStore({
+      const store = createFarmGameStore({
         ...p,
         ...storeDeps,
         clock: fakeClock(0),
@@ -136,7 +137,7 @@ describe('the visual layer never writes the save', () => {
     );
     if (!start.ok) throw new Error(start.error);
     const p = memoryPlatform(start.state);
-    const store = createGameStore({
+    const store = createFarmGameStore({
       ...p,
       ...storeDeps,
       clock,

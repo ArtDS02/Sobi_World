@@ -1,15 +1,15 @@
 // Breeding system page (DECISIONS BR-2, MU-1): what the game actually runs and where it is tuned —
 // coverage audit, the random-genetics percents, gene-pool bonuses and the special recipes (all
-// editable here, saved into breedingRules.ts / genePool.ts by the dev API), plus an odds explorer
+// editable here, saved into content/farm/breeding.json by the dev API), plus an odds explorer
 // with a seeded sampler. Every number shown comes from src/core (draft edits preview through the
 // same engine functions; no copy of the rules lives here).
-import { GENETICS, MUTATIONS, type GeneticsBuckets, type GeneticsRules, type Mutation } from '../../src/core/config/breedingRules';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
-import { GENE_BONUSES, THEME_RELATIONS, type GeneBonuses } from '../../src/core/config/genePool';
-import type { BreedId } from '../../src/core/config/ids';
+import { GENETICS, MUTATIONS, type GeneticsBuckets, type GeneticsRules, type Mutation } from '../../src/areas/farm/logic/config/breedingRules';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import { GENE_BONUSES, THEME_RELATIONS, type GeneBonuses } from '../../src/areas/farm/logic/config/genePool';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { RARITY_VALUES, rarityRank } from '../../src/core/config/rarity';
-import { weightedPick } from '../../src/core/engine/breeding';
-import { breedingCoverage } from '../../src/core/engine/breedingCoverage';
+import { weightedPick } from '../../src/areas/farm/logic/breeding';
+import { breedingCoverage } from '../../src/areas/farm/logic/breedingCoverage';
 import {
   breedingLayer,
   breedingOutcomes,
@@ -18,7 +18,7 @@ import {
   geneticsIssues,
   recipeIssues,
   type BreedingData,
-} from '../../src/core/engine/breedingOdds';
+} from '../../src/areas/farm/logic/breedingOdds';
 import { mulberry32 } from '../../src/core/rng';
 import { RARITY_LABEL, esc, rarityBadge } from './labels';
 import type { PigLook } from './breedMap';

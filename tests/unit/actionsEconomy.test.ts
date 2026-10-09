@@ -1,22 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import { BALANCE } from '../../src/core/config/balance';
-import { buyItem } from '../../src/core/actions/buyItem';
-import { buyPig } from '../../src/core/actions/buyPig';
-import { buySlot } from '../../src/core/actions/buySlot';
-import { renamePig } from '../../src/core/actions/renamePig';
-import { sellPig } from '../../src/core/actions/sellPig';
-import { PIG_NAME_POOL } from '../../src/core/config/names';
-import { pickPigName } from '../../src/core/engine/pigNames';
-import { addXP } from '../../src/core/engine/xp';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { buyItem } from '../../src/areas/farm/logic/actions/buyItem';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
+import { buySlot } from '../../src/areas/farm/logic/actions/buySlot';
+import { renamePig } from '../../src/areas/farm/logic/actions/renamePig';
+import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
+import { PIG_NAME_POOL } from '../../src/areas/farm/logic/config/names';
+import { pickPigName } from '../../src/areas/farm/logic/pigNames';
+import { addXP } from '../../src/areas/farm/logic/xp';
 import { mulberry32, type Rng } from '../../src/core/rng';
-import { newGame } from '../../src/core/save/newGame';
-import type { ActionResult, Pig, SaveGame } from '../../src/core/types';
+import { newGame } from '../../src/areas/farm/logic/save/newFarm';
+import type { ActionResult, Pig, FarmGame } from '../../src/areas/farm/logic/types';
 import { makePig } from './pigFactory';
 
 const SEC = 1000;
 const ctx = (now = 0, rng: Rng = mulberry32(7)) => ({ now, rng });
-const start = (): SaveGame => newGame(ctx());
-const withPigs = (pigs: Pig[], gold = 5000): SaveGame => {
+const start = (): FarmGame => newGame(ctx());
+const withPigs = (pigs: Pig[], gold = 5000): FarmGame => {
   const s = start();
   return { ...s, pigs, player: { ...s.player, gold } };
 };
@@ -28,7 +28,7 @@ function expectOk(r: ActionResult): Extract<ActionResult, { ok: true }> {
 }
 
 /** Failure must leave the input untouched and return only the error. */
-function expectError(run: (s: SaveGame) => ActionResult, s: SaveGame, error: string) {
+function expectError(run: (s: FarmGame) => ActionResult, s: FarmGame, error: string) {
   const before = structuredClone(s);
   expect(run(s)).toEqual({ ok: false, error });
   expect(s).toEqual(before);
@@ -83,7 +83,7 @@ describe('buyPig (§8.1)', () => {
     expect(r.state.pigs.find((p) => p.id !== 'a' && p.id !== 'b')!.slotIndex).toBe(1);
   });
 
-  const buy = (s: SaveGame) => buyPig(s, { breed: 'PIG_EARTH_PINK', gender: 'MALE' }, ctx());
+  const buy = (s: FarmGame) => buyPig(s, { breed: 'PIG_EARTH_PINK', gender: 'MALE' }, ctx());
   it('NO_PIG_SLOT when slots are full', () => {
     expectError(
       buy,
@@ -108,7 +108,7 @@ describe('buyPig (§8.1)', () => {
   });
 
   it('new shop species (A3): level gate, then bought at its price and discovered', () => {
-    const run = (s: SaveGame) => buyPig(s, { breed: 'PIG_HEDGEHOG', gender: 'FEMALE' }, ctx());
+    const run = (s: FarmGame) => buyPig(s, { breed: 'PIG_HEDGEHOG', gender: 'FEMALE' }, ctx());
     expectError(run, withPigs([], 10_000), 'LEVEL_TOO_LOW');
     const s = withPigs([], 10_000);
     const leveled = { ...s, player: { ...s.player, xp: BALANCE.LEVEL_XP[7]! } }; // level 8
@@ -184,7 +184,7 @@ describe('sellPig (§8.7)', () => {
     expect(r.state.transactions[0]!.amount).toBe(1242);
   });
 
-  const sell = (s: SaveGame) => sellPig(s, { pigId: 'pig-1' }, ctx());
+  const sell = (s: FarmGame) => sellPig(s, { pigId: 'pig-1' }, ctx());
   it('baby → PIG_NOT_MATURE', () => expectError(sell, withPigs([makePig()]), 'PIG_NOT_MATURE'));
 
   it('pregnant → PIG_IS_PREGNANT', () => {
@@ -235,7 +235,7 @@ describe('buyItem (§8.10)', () => {
 });
 
 describe('buySlot (§8.11)', () => {
-  const at = (xp: number, gold: number, unlockedSlots = 4): SaveGame => {
+  const at = (xp: number, gold: number, unlockedSlots = 4): FarmGame => {
     const s = start();
     return { ...s, player: { ...s.player, xp, gold, unlockedSlots } };
   };
@@ -266,7 +266,7 @@ describe('buySlot (§8.11)', () => {
 });
 
 describe('renamePig (§8.12)', () => {
-  const rename = (name: string) => (s: SaveGame) => renamePig(s, { pigId: 'pig-1', name }, ctx());
+  const rename = (name: string) => (s: FarmGame) => renamePig(s, { pigId: 'pig-1', name }, ctx());
 
   it('trims and strips control characters', () => {
     const r = expectOk(rename('  \u0007Ủn\n Vàng  ')(withPigs([makePig()])));
@@ -341,7 +341,7 @@ describe('gold never changes without a transaction (§8.16, §14.3)', () => {
     expect(state.transactions.length).toBeGreaterThan(20);
   });
 
-  it('no source file outside engine/gold.ts writes player.gold', () => {
+  it('no source file outside the farm gold.ts writes player.gold (the ledger posts every change)', () => {
     const sources = import.meta.glob<string>('/src/**/*.ts', {
       query: '?raw',
       import: 'default',
@@ -349,7 +349,7 @@ describe('gold never changes without a transaction (§8.16, §14.3)', () => {
     });
     const writes = /\.gold\s*(\+\+|--|[-+*/]?=(?!=))|\bgold\s*:\s*[^,}\n]*player\.gold\b/;
     const offenders = Object.entries(sources)
-      .filter(([f, text]) => !f.endsWith('/src/core/engine/gold.ts') && writes.test(text))
+      .filter(([f, text]) => !f.endsWith('/src/areas/farm/logic/gold.ts') && writes.test(text))
       .map(([f]) => f);
     expect(Object.keys(sources).length).toBeGreaterThan(20);
     expect(offenders).toEqual([]);

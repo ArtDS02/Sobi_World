@@ -1,18 +1,20 @@
+import { createFarmGameStore, farmOf, parseWorldSave } from './worldKit';
+import { WORLD_SAVE_VERSION } from '../../src/core/save/world';
 import 'fake-indexeddb/auto';
 import { IDBFactory } from 'fake-indexeddb';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { buyPig } from '../../src/core/actions/buyPig';
-import { sellPig } from '../../src/core/actions/sellPig';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
+import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
 import { fakeClock, type FakeClock } from '../../src/core/clock';
 import { SAVE } from '../../src/core/config/save';
-import type { GameEvent } from '../../src/core/events';
+import type { GameEvent } from '../../src/areas/farm/logic/events';
 import { mulberry32, randomId } from '../../src/core/rng';
 import {
   createSaveStorage,
   type KeyValueStore,
   type SaveStorage,
 } from '../../src/platform/web/idbSaveStorage';
-import { createGameStore, type PageLike, type StoreDeps } from '../../src/store/gameStore';
+import { type PageLike, type StoreDeps } from '../../src/app/gameStore';
 import { createWebInstanceGuard, type ChannelLike } from '../../src/platform/web/tabGuard';
 
 const SEC = 1000;
@@ -26,7 +28,7 @@ class MemoryStore implements KeyValueStore {
 
 /** Counts writes on top of a real (fake-indexeddb) storage. */
 function countingStorage(local: KeyValueStore) {
-  const inner = createSaveStorage({ local });
+  const inner = createSaveStorage({ local, parseSave: parseWorldSave });
   const counter = { saves: 0 };
   const storage: SaveStorage = {
     load: () => inner.load(),
@@ -107,7 +109,7 @@ function makeStore({ channel = null, ...extra }: MakeStoreExtra = {}) {
   const page = fakePage();
   const rng = extra.rng ?? mulberry32(11);
   const sleep = () => new Promise<void>((r) => setTimeout(r, 0));
-  const store = createGameStore({
+  const store = createFarmGameStore({
     storage,
     instanceGuard: createWebInstanceGuard(channel, randomId(rng), sleep),
     clock,
@@ -248,7 +250,7 @@ describe('gameStore', () => {
   });
 
   it('too-new save → refuses actions and never overwrites', async () => {
-    const future = JSON.stringify({ schemaVersion: SAVE.SCHEMA_VERSION + 1 });
+    const future = JSON.stringify({ schemaVersion: WORLD_SAVE_VERSION + 1 });
     local.setItem(SAVE.MIRROR_KEY, future);
     const { store, counter } = makeStore();
     expect(await store.init()).toBe('tooNew');
@@ -269,7 +271,9 @@ describe('gameStore', () => {
     const other = { ...current, pigs: [], player: { ...current.player, gold: 42 } };
     expect((await store.importSave(JSON.stringify(other))).ok).toBe(true);
     expect(store.getSnapshot().save!.player.gold).toBe(42);
-    expect(local.getItem(SAVE.BACKUP_KEY)).toBe(JSON.stringify(current));
+    // The backup key holds the world save as it was before the import.
+    const backup = parseWorldSave(local.getItem(SAVE.BACKUP_KEY)!);
+    expect(backup.ok && farmOf(backup.save)).toEqual(current);
   });
 
   it('a failed write sets saveError, keeps state, retries 1 s → 5 s → 30 s, clears on success', async () => {

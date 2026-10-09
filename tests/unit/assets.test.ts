@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
+import { placementsInOrder } from '../../src/systems/layout/placements';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest, type AssetManifest } from '../../src/core/assets/manifestSchema';
-import { createAssetRegistry, troughState } from '../../src/core/assets/registry';
+import { createAssetRegistry } from '../../src/core/assets/registry';
+import { pigTexture, troughState, troughUrl } from '../../src/areas/farm/scene/view/farmArt';
 import { AUDIO_KEYS, FX_IDS } from '../../src/core/config/assetIds';
-import { SEASON_FX_ART_IDS } from '../../src/core/config/seasonFx';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
+import { SEASON_FX_ART_IDS } from '../../src/areas/farm/scene/config/seasonFx';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { loadAssetRegistry, MANIFEST_URL } from '../../src/platform/assetSource';
 
 function manifest(): AssetManifest {
@@ -45,7 +48,7 @@ describe('manifest v2 (art standard §7.2)', () => {
     expect(m.pigs.length).toBeGreaterThanOrEqual(BREED_IDS.length);
     expect(m.fx.map((f) => f.id).sort()).toEqual([...FX_IDS, ...SEASON_FX_ART_IDS].sort());
     expect(m.audio.map((a) => a.id)).toEqual([...AUDIO_KEYS]);
-    expect(m.layout.designSize).toEqual({ width: 1600, height: 900 });
+    expect(FARM_LAYOUT.designSize).toEqual({ width: 1600, height: 900 });
   });
 });
 
@@ -60,7 +63,7 @@ describe('asset registry (spec §11.4)', () => {
   });
 
   it('pig texture is the species art row', () => {
-    const t = reg.pigTexture('PIG_STRIPED_MELON');
+    const t = pigTexture(reg, 'PIG_STRIPED_MELON');
     expect(t.artId).toBe('pig_watermelon');
     expect(t.url).toBe(reg.url('pig_watermelon'));
   });
@@ -68,7 +71,7 @@ describe('asset registry (spec §11.4)', () => {
   it('missing art row → url null (flat fill)', () => {
     const m = manifest();
     m.pigs = m.pigs.filter((p) => p.id !== 'pig_watermelon');
-    expect(createAssetRegistry(m).pigTexture('PIG_STRIPED_MELON')).toMatchObject({
+    expect(pigTexture(createAssetRegistry(m), 'PIG_STRIPED_MELON')).toMatchObject({
       artId: 'pig_watermelon',
       url: null,
     });
@@ -79,7 +82,7 @@ describe('asset registry (spec §11.4)', () => {
     withSleep.pigs.find((p) => p.id === 'pig_classic')!.sleepAsset =
       'pigs/base/pig_classic_sleep.png';
     expect(
-      createAssetRegistry(withSleep).pigTexture('PIG_EARTH_PINK', true),
+      pigTexture(createAssetRegistry(withSleep), 'PIG_EARTH_PINK', true),
     ).toEqual({
       artId: 'pig_classic',
       url: 'assets/pigs/base/pig_classic_sleep.png',
@@ -89,17 +92,17 @@ describe('asset registry (spec §11.4)', () => {
     const m = manifest();
     m.pigs.find((p) => p.id === 'pig_white')!.sleepAsset = null;
     const noSleep = createAssetRegistry(m);
-    const white = noSleep.pigTexture('PIG_WHITE', true);
+    const white = pigTexture(noSleep, 'PIG_WHITE', true);
     expect(white.url).toBe(noSleep.url('pig_white'));
     expect(white.overlay).toBe('fx_zzz');
-    expect(noSleep.pigTexture('PIG_WHITE').overlay).toBeNull();
+    expect(pigTexture(noSleep, 'PIG_WHITE').overlay).toBeNull();
   });
 
   it('trough state by food: 0 → empty, ≤ half → half, else full', () => {
     expect(troughState(0, 20)).toBe('empty');
     expect(troughState(10, 20)).toBe('half');
     expect(troughState(11, 20)).toBe('full');
-    expect(reg.troughUrl(0, 20)).toBe('assets/props/prop_feed_trough_empty.png');
+    expect(troughUrl(reg, 0, 20)).toBe('assets/props/prop_feed_trough_empty.png');
   });
 
   it('buildings and props: every row has its file, decor cut at catalogue size (A4)', () => {
@@ -109,20 +112,20 @@ describe('asset registry (spec §11.4)', () => {
       expect(reg.url(row.id, row.asset ? 'asset' : 'full'), row.id).not.toBeNull();
     }
     for (const id of ['prop_red_tree', 'prop_sunflower', 'prop_bush', 'prop_mushroom'])
-      expect(m.layout.placements.some((p) => p.id === id), id).toBe(true);
+      expect(FARM_LAYOUT.placements.some((p) => p.id === id), id).toBe(true);
   });
 
   it('a painted sign replaces the text tag only on clickable objects (A4)', () => {
-    for (const p of reg.placements().filter((x) => x.signed)) expect(p.action, p.id).toBeDefined();
+    for (const p of placementsInOrder(FARM_LAYOUT.placements).filter((x) => x.signed)) expect(p.action, p.id).toBeDefined();
     // The pig house art (user art, farm layout rework) carries its own "Chuồng Heo" sign.
-    expect(reg.placements().find((p) => p.id === 'prop_pig_house')?.signed).toBe(true);
+    expect(FARM_LAYOUT.placements.find((p) => p.id === 'prop_pig_house')?.signed).toBe(true);
   });
 
   it('placements sorted back to front, filterable by layer, roles present', () => {
-    const layers = reg.placements().map((p) => p.layer);
+    const layers = placementsInOrder(FARM_LAYOUT.placements).map((p) => p.layer);
     expect(layers).toEqual([...layers].sort((a, b) => a - b));
-    expect(reg.placements(0).every((p) => p.layer === 0)).toBe(true);
-    expect(reg.placements().find((p) => p.role === 'trough')?.id).toBe('prop_feed_trough');
+    expect(placementsInOrder(FARM_LAYOUT.placements, 0).every((p) => p.layer === 0)).toBe(true);
+    expect(FARM_LAYOUT.placements.find((p) => p.role === 'trough')?.id).toBe('prop_feed_trough');
   });
 
   it('every species has an art row; pig rows are species art only (DECISIONS A2-1)', () => {

@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { fillTrough } from '../../src/core/actions/fillTrough';
-import { BALANCE } from '../../src/core/config/balance';
-import { BREEDS } from '../../src/core/config/breeds';
-import { advancePig } from '../../src/core/engine/advancePig';
-import { advanceWorld } from '../../src/core/engine/advanceWorld';
-import { advanceWithTrough, resolveTrough, type Trough } from '../../src/core/engine/trough';
+import { fillTrough } from '../../src/areas/farm/logic/actions/fillTrough';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import { advancePig } from '../../src/areas/farm/logic/advancePig';
+import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
+import { advanceWithTrough, resolveTrough, type Trough } from '../../src/areas/farm/logic/trough';
 import { sequenceRng, type Rng } from '../../src/core/rng';
-import type { Pig } from '../../src/core/types';
+import type { Pig } from '../../src/areas/farm/logic/types';
 import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';
 

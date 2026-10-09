@@ -1,0 +1,30 @@
+{
+  "products": [
+    {
+      "id": "FOOD_BASIC",
+      "nameVi": "Thức ăn",
+      "descVi": "Tăng 50 độ no. Cũng là đơn vị đổ vào máng ăn.",
+      "category": "FOOD",
+      "currency": "GOLD",
+      "itemId": "FOOD_BASIC",
+      "quantity": 1,
+      "priceGold": 25,
+      "icon": "ui_btn_fill_trough",
+      "sortOrder": 10,
+      "active": true
+    },
+    {
+      "id": "MEDICINE_COMMON",
+      "nameVi": "Thuốc",
+      "descVi": "Chữa khỏi bệnh cho một con heo.",
+      "category": "MEDICINE",
+      "currency": "GOLD",
+      "itemId": "MEDICINE_COMMON",
+      "quantity": 1,
+      "priceGold": 100,
+      "icon": "ui_btn_heal",
+      "sortOrder": 20,
+      "active": true
+    }
+  ]
+}

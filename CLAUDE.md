@@ -8,5 +8,5 @@ Bắt đầu mỗi phiên: đọc `docs/AGENT_RULES.md` rồi `docs/PROGRESS.md`
 - Mọi action thành công phát GameEvent; animation/VFX/âm thanh/toast chỉ qua FeedbackDirector.
 - Không HTTP server/port/mạng trong bản ship. Save = file qua SaveStorage port; lỗi ghi không được nuốt. Không làm mất save người chơi.
 - Cổng chất lượng: `npm run check` xanh trước khi commit. File LF (`.gitattributes`).
-- Skill `.claude/skills/spec-to-source` là quy trình của Sobi Farm (trỏ tới tài liệu đã lưu trữ) — không dùng; quy trình hiện tại là `docs/AGENT_RULES.md`. Skill `image-to-asset` vẫn dùng cho art.
+- Skill `image-to-asset` dùng cho art. Guard kiến trúc: `scripts/guard/` (`npm run guard`).
 - Comment code tiếng Anh. Trả lời tiếng Việt, báo cáo theo mẫu trong AGENT_RULES §7.

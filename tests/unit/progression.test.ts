@@ -1,34 +1,34 @@
 // PG-1 relief, PG-2 daily reward + achievements, PG-3 decorations, save v5 -> v6.
 import { describe, expect, it } from 'vitest';
-import { buyDecor } from '../../src/core/actions/buyDecor';
-import { claimAchievement } from '../../src/core/actions/claimAchievement';
-import { claimDaily } from '../../src/core/actions/claimDaily';
-import { claimRelief } from '../../src/core/actions/claimRelief';
-import { fillTrough } from '../../src/core/actions/fillTrough';
-import { sellPig } from '../../src/core/actions/sellPig';
-import { ACHIEVEMENTS } from '../../src/core/config/achievements';
-import { DAILY } from '../../src/core/config/daily';
-import { DECORS } from '../../src/core/config/decor';
-import { RELIEF } from '../../src/core/config/relief';
-import { BALANCE } from '../../src/core/config/balance';
-import { advanceWorld } from '../../src/core/engine/advanceWorld';
-import { decorBonus } from '../../src/core/engine/decor';
-import { happiness } from '../../src/core/engine/happiness';
-import { claimable, progressStep, statOf } from '../../src/core/engine/progress';
-import { reliefNeed } from '../../src/core/engine/relief';
-import { sellPrice } from '../../src/core/engine/pricing';
+import { buyDecor } from '../../src/areas/farm/logic/actions/buyDecor';
+import { claimAchievement } from '../../src/areas/farm/logic/actions/claimAchievement';
+import { claimDaily } from '../../src/areas/farm/logic/actions/claimDaily';
+import { claimRelief } from '../../src/areas/farm/logic/actions/claimRelief';
+import { fillTrough } from '../../src/areas/farm/logic/actions/fillTrough';
+import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
+import { ACHIEVEMENTS } from '../../src/areas/farm/logic/config/achievements';
+import { DAILY } from '../../src/areas/farm/logic/config/daily';
+import { DECORS } from '../../src/areas/farm/logic/config/decor';
+import { RELIEF } from '../../src/areas/farm/logic/config/relief';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
+import { decorBonus } from '../../src/areas/farm/logic/decor';
+import { happiness } from '../../src/areas/farm/logic/happiness';
+import { claimable, progressStep, statOf } from '../../src/areas/farm/logic/progress';
+import { reliefNeed } from '../../src/areas/farm/logic/relief';
+import { sellPrice } from '../../src/areas/farm/logic/pricing';
 import { mulberry32 } from '../../src/core/rng';
 import { vi } from '../../src/i18n/vi';
 import { localDay } from '../../src/ui/localDay';
-import { achievementsVm, dailyVm, progressDot } from '../../src/ui/progressVm';
-import { migrate } from '../../src/core/save/migrate';
-import { saveGameSchema } from '../../src/core/save/schema';
-import type { SaveGame } from '../../src/core/types';
+import { achievementsVm, dailyVm, progressDot } from '../../src/areas/farm/ui/progressVm';
+import { migrateFarmSave } from '../../src/areas/farm/logic/save/legacy';
+import { farmGameSchema } from '../../src/areas/farm/logic/save/farmSchema';
+import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';
 
-const broke = (patch: Partial<SaveGame> = {}): SaveGame => {
+const broke = (patch: Partial<FarmGame> = {}): FarmGame => {
   const s = farm([makePig({ hunger: 0 })]);
   return {
     ...s,
@@ -210,7 +210,7 @@ describe('save v5 -> v6', () => {
     const v5: Record<string, unknown> = { ...s, schemaVersion: 5, breedingRecords: [record] };
     delete v5.progress;
     delete v5.decor;
-    const res = migrate(v5);
+    const res = migrateFarmSave(v5);
     if (!res.ok) throw new Error(res.error);
     expect(res.save.schemaVersion).toBe(7);
     expect(res.save.nursery).toEqual([]); // v6 -> v7 (BR-1)
@@ -220,8 +220,8 @@ describe('save v5 -> v6', () => {
       daily: { lastDay: null, streak: 0 },
     });
     expect(res.save.decor).toEqual([]);
-    expect(saveGameSchema.safeParse(res.save).success).toBe(true);
-    expect(migrate(structuredClone(res.save))).toEqual(res);
+    expect(farmGameSchema.safeParse(res.save).success).toBe(true);
+    expect(migrateFarmSave(structuredClone(res.save))).toEqual(res);
   });
 });
 

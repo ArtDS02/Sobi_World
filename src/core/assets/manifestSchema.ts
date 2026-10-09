@@ -1,8 +1,7 @@
 // zod schema for public/assets/manifest/assets.json, manifest v2 (art standard §7.2, DECISIONS R00-7).
 // A change to the shape bumps `version` here and in the file in the same commit.
 import { z } from 'zod';
-import { ANCHOR_NAMES, FARM_ACTIONS } from '../config/assetIds';
-import { DECOR_ID_VALUES } from '../config/ids';
+import { ANCHOR_NAMES } from '../config/assetIds';
 import { SEASON_IDS } from '../config/seasons';
 
 export const MANIFEST_VERSION = 3;
@@ -17,7 +16,6 @@ const assetPath = z
     /^[a-z0-9_]+(\/[a-z0-9_]+)*(\.anchors(?=\.json$))?\.(png|ogg|mp3|json)$/,
     'path must be relative snake_case',
   );
-const unit = z.number().min(0).max(1);
 /** Seasonal files of a building / prop (DECISIONS SE-1); a missing season uses the default file. */
 const seasonFiles = z.partialRecord(z.enum(SEASON_IDS), assetPath).optional();
 
@@ -89,45 +87,6 @@ export const audioRowSchema = z.object({
   volume: z.number().min(0).max(1).optional(),
 });
 
-export const placementSchema = z.object({
-  id: assetIdSchema,
-  layer: z.number().int().min(0).max(5),
-  x: z.number(),
-  y: z.number(),
-  originX: unit.optional(),
-  originY: unit.optional(),
-  role: z.enum(['trough', 'orderBoard']).optional(),
-  /** Clicking the placement opens this (optional, additive: v2 files stay valid). */
-  action: z.enum(FARM_ACTIONS).optional(),
-  /** The art carries its own name sign: no text label is drawn over it (A4). */
-  signed: z.boolean().optional(),
-  /** On-screen width in design px; the art keeps its aspect ratio (absent: native size). */
-  width: z.number().positive().optional(),
-  /** Notification badge drawn on the object (farm layout v4.1 rework). */
-  badge: z.enum(['orders']).optional(),
-  // Layout editor fields (admin dashboard, DECISIONS AD-1), all optional and additive.
-  /** On-screen height in design px; absent = from width and the art's aspect ratio. */
-  height: z.number().positive().optional(),
-  /** Degrees, clockwise. */
-  rotation: z.number().min(-360).max(360).optional(),
-  flipX: z.boolean().optional(),
-  /** false = kept in the data but not drawn. */
-  visible: z.boolean().optional(),
-  /** Editor-only: the placement cannot be dragged in the layout editor. */
-  locked: z.boolean().optional(),
-  /** Editor-only display name. */
-  label: z.string().max(40).optional(),
-  /** Shown only while the save owns this decoration (DECISIONS PG-3; additive, no version bump). */
-  decor: z.enum(DECOR_ID_VALUES).optional(),
-});
-
-export const layoutSchema = z.object({
-  designSize: z.object({ width: z.number().int().positive(), height: z.number().int().positive() }),
-  walkArea: z.object({ x: unit, y: unit, width: unit, height: unit }),
-  pigScaleByY: z.object({ min: z.number().positive(), max: z.number().positive() }),
-  placements: z.array(placementSchema),
-});
-
 export const manifestSchema = z.object({
   version: z.literal(MANIFEST_VERSION),
   pigs: z.array(pigRowSchema),
@@ -137,7 +96,6 @@ export const manifestSchema = z.object({
   environment: z.array(environmentRowSchema),
   ui: z.array(uiRowSchema),
   audio: z.array(audioRowSchema),
-  layout: layoutSchema,
 });
 
 export type AssetManifest = z.infer<typeof manifestSchema>;
@@ -145,9 +103,8 @@ export type PigRow = z.infer<typeof pigRowSchema>;
 export type FxRow = z.infer<typeof fxRowSchema>;
 export type PropRow = z.infer<typeof propRowSchema>;
 export type AudioRow = z.infer<typeof audioRowSchema>;
-export type Placement = z.infer<typeof placementSchema>;
 export type AssetStatus = PigRow['status'];
-export type ManifestSection = Exclude<keyof AssetManifest, 'version' | 'layout'>;
+export type ManifestSection = Exclude<keyof AssetManifest, 'version'>;
 export const MANIFEST_SECTIONS: ManifestSection[] = [
   'pigs',
   'fx',

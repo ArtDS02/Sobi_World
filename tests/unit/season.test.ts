@@ -4,7 +4,7 @@ import { parseManifest, type AssetManifest } from '../../src/core/assets/manifes
 import { createAssetRegistry } from '../../src/core/assets/registry';
 import { SEASON_BY_MONTH, SEASON_IDS, SEASON_LOOKS } from '../../src/core/config/seasons';
 import { activeSeason, parseSeason, seasonFile, seasonOfMonth } from '../../src/core/engine/season';
-import { farmLoadList, seasonLoadList, seasonalTextureKey } from '../../src/game/view/textureKeys';
+import { farmLoadList, seasonLoadList, seasonalTextureKey } from '../../src/areas/farm/scene/view/textureKeys';
 
 function manifest(): AssetManifest {
   const r = parseManifest(structuredClone(manifestJson));

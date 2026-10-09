@@ -2,9 +2,9 @@
 // one the admin dashboard edits (DECISIONS AM-1). Talks to the dev-only Vite plugin
 // (scripts/dev/saveApi.ts); the shipped desktop game uses window.unin instead.
 import { SAVE_CHANGED_EXTERNALLY, type BackupStore, type SaveStorage } from '../../core/save/port';
-import type { SaveGame } from '../../core/types';
+import type { WorldSave } from '../../core/save/world';
 import type { BackupInfo, SaveCandidate } from '../desktop/bridge';
-import { createFileSaveStorage, type SaveFileBridge } from '../desktop/fileSaveStorage';
+import { createFileSaveStorage, type SaveFileBridge, type SaveParser } from '../desktop/fileSaveStorage';
 import { DEV_SAVE_EVENT, DEV_SAVE_META, DEV_SAVE_ROUTE } from './devSaveApi';
 
 /** True when index.html came from the dev server with the save API. */
@@ -33,10 +33,11 @@ export const devBackups: BackupStore = {
   list: () => call<BackupInfo[]>('backups'),
   restore: (name) => call<void>('restore', { name }),
   backupBeforeReset: () => call<void>('backupBeforeReset', {}),
+  backupBeforeMigration: (fromVersion) => call<void>('backupBeforeMigration', { fromVersion }),
 };
 
-/** Last action or last world tick (the trough is resolved on every tick). */
-const lastPlayed = (s: SaveGame) => Math.max(s.updatedAt, s.trough.lastResolvedAt);
+/** Last action or last write (every world tick that changed something is written). */
+const lastPlayed = (s: WorldSave) => Math.max(s.meta.updatedAt, s.meta.lastSavedAt ?? 0);
 
 const MIGRATED_KEY = 'unin:dev-file-save-migrated';
 const flag = {
@@ -61,8 +62,12 @@ const flag = {
  * carried over when it is newer than the file (or there is no file); the file copy it replaces is
  * kept in saves/backups/ by the first write of the session. Nothing is deleted.
  */
-export function createDevFileSaveStorage(legacy: SaveStorage, migrated = flag): SaveStorage {
-  const files = createFileSaveStorage(bridge);
+export function createDevFileSaveStorage(
+  legacy: SaveStorage,
+  parseSave: SaveParser,
+  migrated = flag,
+): SaveStorage {
+  const files = createFileSaveStorage(bridge, parseSave);
   return {
     ...files,
     async load() {

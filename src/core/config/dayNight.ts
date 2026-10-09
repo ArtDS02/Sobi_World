@@ -1,9 +1,10 @@
 // Day / night presentation (DN task): phases follow the player's local clock. Visual only — no
-// gameplay number depends on it. The DAY_NIGHT block between the admin markers is rewritten by the
-// admin dashboard (`npm run admin` → Ngày/Đêm); keep it a plain object literal.
+// gameplay number depends on it. DAY_NIGHT is content/shared/daynight.json, edited by the admin
+// dashboard (`npm run admin` → Ngày/Đêm).
+import { DAY_PHASES, type DayPhase } from '../../../content/schemas/vocab';
+import { CONTENT } from './content';
 
-export const DAY_PHASES = ['dawn', 'morning', 'day', 'afternoon', 'sunset', 'night'] as const;
-export type DayPhase = (typeof DAY_PHASES)[number];
+export { DAY_PHASES, type DayPhase };
 
 export interface DayNightSettings {
   /** Off: the farm always shows the `day` look and the HUD clock is hidden. */
@@ -16,21 +17,7 @@ export interface DayNightSettings {
   transitionMs: number;
 }
 
-// <admin:dayNight>
-export const DAY_NIGHT: DayNightSettings = {
-  enabled: true,
-  phases: {
-    dawn: '05:00',
-    morning: '07:00',
-    day: '10:00',
-    afternoon: '16:00',
-    sunset: '18:00',
-    night: '20:00',
-  },
-  blendMinutes: 60,
-  transitionMs: 3000,
-};
-// </admin:dayNight>
+export const DAY_NIGHT: DayNightSettings = CONTENT.dayNight;
 
 /** Admin limits for DAY_NIGHT (validated by dayNightIssues). */
 export const DAY_NIGHT_LIMITS = { blendMaxMinutes: 120, transitionMaxMs: 20000 } as const;

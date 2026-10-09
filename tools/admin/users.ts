@@ -1,9 +1,11 @@
 // User management (DECISIONS AD-1): the game is single-player and offline, so a "user" is one save —
 // a desktop save folder found by the dev API, or a .json file exported from the game (web/dev or
 // another machine). This module loads/saves them; userDetail.ts draws the editor.
-import { parseSave } from '../../src/core/save/migrate';
+import { parseWorldSave } from '../../src/app/saveCodec';
+import { farmOf, withFarm } from '../../src/areas/farm/logic/save/lens';
+import type { WorldSave } from '../../src/core/save/world';
 import { exportFileName } from '../../src/core/save/exportImport';
-import type { SaveGame } from '../../src/core/types';
+import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { esc, gold } from './labels';
 import { mountList } from './listKit';
 import { byNumber, reverse } from './listQuery';
@@ -23,7 +25,9 @@ export interface Profile {
 
 interface Loaded {
   profile: Profile;
-  save: SaveGame | null;
+  save: FarmGame | null;
+  /** The world save the farm view `save` was read from (written back with the edits). */
+  world: WorldSave | null;
   error: string | null;
 }
 
@@ -33,7 +37,7 @@ export const users = {
   loaded: false,
   /** The save being edited: `file` = opened from a .json (saved back by download). */
   open: null as null | {
-    id: string; source: 'disk' | 'file'; label: string; original: SaveGame; draft: SaveGame; baseModifiedAt: number; dirty: boolean;
+    id: string; source: 'disk' | 'file'; label: string; world: WorldSave; original: FarmGame; draft: FarmGame; baseModifiedAt: number; dirty: boolean;
     /** Edits applied to `original` since it was opened: replayed on a newer save the game wrote meanwhile. */
     edits: Edit[];
   },
@@ -41,11 +45,19 @@ export const users = {
 
 /** Which run mode plays a save folder (electron/dataDir.ts, DECISIONS AM-1). */
 export const appLabel = (app: string, folder: string) =>
-  `${app === 'Un In Homemade' ? 'Bản cài đặt (Sobi Farm)' : app === 'Un In Homemade Dev' ? 'Bản dev (npm run dev + npm run dev:desktop)' : app}${folder === 'saves' ? '' : ` · ${folder}`}`;
+  `${APP_LABELS[app] ?? app}${folder === 'saves' ? '' : ` · ${folder}`}`;
 
-function parse(text: string): { save: SaveGame | null; error: string | null } {
-  const r = parseSave(text);
-  return r.ok ? { save: r.save, error: null } : { save: null, error: r.error };
+const APP_LABELS: Record<string, string> = {
+  SobiWorld: 'Bản cài đặt (Sobi World)',
+  'SobiWorld Dev': 'Bản dev (npm run dev + npm run dev:desktop)',
+  'Un In Homemade': 'Sobi Farm cũ — bản cài (đã chép sang SobiWorld)',
+  'Un In Homemade Dev': 'Sobi Farm cũ — bản dev (đã chép sang SobiWorld Dev)',
+};
+
+/** A save file as the world (v8, older saves migrated) and the farm view the editor works on. */
+function parse(text: string): { save: FarmGame | null; world: WorldSave | null; error: string | null } {
+  const r = parseWorldSave(text);
+  return r.ok ? { save: farmOf(r.save), world: r.save, error: null } : { save: null, world: null, error: r.error };
 }
 
 export async function loadUsers() {
@@ -64,20 +76,20 @@ export async function openProfile(id: string) {
   if (users.open?.id === id) return;
   const r = await json<{ profile: Profile; json: string }>(`/__admin/saves/read?id=${encodeURIComponent(id)}`);
   const p = parse(r.json);
-  if (!p.save) throw new Error(`Save không đọc được (${p.error}) — game sẽ tự lấy bản backup gần nhất.`);
-  users.open = { id, source: 'disk', label: appLabel(r.profile.app, r.profile.folder), original: p.save, draft: p.save, baseModifiedAt: r.profile.modifiedAt, dirty: false, edits: [] };
+  if (!p.save || !p.world) throw new Error(`Save không đọc được (${p.error}) — game sẽ tự lấy bản backup gần nhất.`);
+  users.open = { id, source: 'disk', label: appLabel(r.profile.app, r.profile.folder), world: p.world, original: p.save, draft: p.save, baseModifiedAt: r.profile.modifiedAt, dirty: false, edits: [] };
 }
 
 export async function openFile(file: File) {
   const p = parse(await file.text());
-  if (!p.save) throw new Error(`File không phải save hợp lệ (${p.error})`);
-  users.open = { id: 'file', source: 'file', label: file.name, original: p.save, draft: p.save, baseModifiedAt: 0, dirty: false, edits: [] };
+  if (!p.save || !p.world) throw new Error(`File không phải save hợp lệ (${p.error})`);
+  users.open = { id: 'file', source: 'file', label: file.name, world: p.world, original: p.save, draft: p.save, baseModifiedAt: 0, dirty: false, edits: [] };
 }
 
 /** Writes the draft: disk saves through the API (backup first), files as a download for import. */
 export async function saveOpen(): Promise<string> {
   const o = users.open!;
-  const text = JSON.stringify(o.draft);
+  const text = JSON.stringify(withFarm(o.world, o.draft));
   if (o.source === 'file') {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
@@ -96,12 +108,14 @@ export async function saveOpen(): Promise<string> {
     // The running game autosaved meanwhile: replay these edits on its newer save (AM-1).
     const fresh = await json<{ profile: Profile; json: string }>(`/__admin/saves/read?id=${encodeURIComponent(o.id)}`);
     const p = parse(fresh.json);
-    if (!p.save) throw new Error(`Save trên đĩa không đọc được (${p.error})`, { cause: e });
+    if (!p.save || !p.world) throw new Error(`Save trên đĩa không đọc được (${p.error})`, { cause: e });
+    o.world = p.world;
     o.draft = o.edits.reduce(apply, p.save);
     o.baseModifiedAt = fresh.profile.modifiedAt;
-    r = await write(JSON.stringify(o.draft));
+    r = await write(JSON.stringify(withFarm(o.world, o.draft)));
     replayed = true;
   }
+  o.world = withFarm(o.world, o.draft);
   o.original = o.draft;
   o.edits = [];
   o.baseModifiedAt = r.modifiedAt;
@@ -181,7 +195,7 @@ export function renderUsers(root: HTMLElement, rerender: () => void) {
     openModal({
       title: 'Thư mục quét save',
       submit: 'Quét thư mục này',
-      body: `<label class="field"><span>Thư mục chứa các thư mục “Un In Homemade…” (để trống = mặc định %APPDATA%)</span>
+      body: `<label class="field"><span>Thư mục chứa các thư mục “SobiWorld…” / “Un In Homemade…” (để trống = mặc định %APPDATA%)</span>
         <input name="path" value="${esc(users.root)}" placeholder="C:\\Users\\ten\\AppData\\Roaming" /></label>`,
       onSubmit: async (f) => {
         await post('/__admin/saves/root', { path: String(new FormData(f).get('path') ?? '') });

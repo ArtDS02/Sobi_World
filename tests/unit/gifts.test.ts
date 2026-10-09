@@ -1,13 +1,13 @@
 // U06: timed gift boxes — one farm timer, offline catch-up, rarity, cap, claim once, save.
 import { describe, expect, it } from 'vitest';
-import { openGift } from '../../src/core/actions/openGift';
-import { BALANCE } from '../../src/core/config/balance';
-import { GIFTS } from '../../src/core/config/gifts';
-import { advanceWorld } from '../../src/core/engine/advanceWorld';
-import { giftInterval, giftsPerSpawn, makeGift, resolveGifts } from '../../src/core/engine/gifts';
+import { openGift } from '../../src/areas/farm/logic/actions/openGift';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { GIFTS } from '../../src/areas/farm/logic/config/gifts';
+import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
+import { giftInterval, giftsPerSpawn, makeGift, resolveGifts } from '../../src/areas/farm/logic/gifts';
 import { mulberry32 } from '../../src/core/rng';
-import { migrate } from '../../src/core/save/migrate';
-import type { Pig, SaveGame } from '../../src/core/types';
+import { migrateFarmSave } from '../../src/areas/farm/logic/save/legacy';
+import type { Pig, FarmGame } from '../../src/areas/farm/logic/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
 
@@ -16,12 +16,12 @@ const herd = (n: number, o: Partial<Pig> = {}) =>
   Array.from({ length: n }, (_, i) =>
     makePig({ id: `p${i}`, slotIndex: i, growthProgress: 100, ...o }),
   );
-const withHerd = (n: number, o: Partial<Pig> = {}): SaveGame => ({
+const withHerd = (n: number, o: Partial<Pig> = {}): FarmGame => ({
   ...farm(herd(n, o)),
   player: { ...farm().player, unlockedSlots: BALANCE.MAX_SLOTS },
 });
 /** Timer started at t=0. */
-const started = (s: SaveGame) => resolveGifts(s, 0).state;
+const started = (s: FarmGame) => resolveGifts(s, 0).state;
 
 describe('gift timer (U06)', () => {
   it('no pigs: no timer, no boxes', () => {
@@ -132,14 +132,14 @@ describe('gift save (U06)', () => {
   it('boxes and the timer survive save → load', () => {
     const s = withHerd(2);
     const saved = resolveGifts(started(s), GIFTS.BASE_INTERVAL_MS).state;
-    const loaded = migrate(JSON.parse(JSON.stringify(saved)));
+    const loaded = migrateFarmSave(JSON.parse(JSON.stringify(saved)));
     expect(loaded.ok && loaded.save.gifts).toEqual(saved.gifts);
   });
 
   it('v3 saves load with gifts off; the first tick with pigs starts the timer', () => {
     const v3 = { ...withHerd(2), schemaVersion: 3 } as Record<string, unknown>;
     delete v3.gifts;
-    const r = migrate(v3);
+    const r = migrateFarmSave(v3);
     expect(r.ok && r.save.gifts).toEqual({ nextAt: null, boxes: [] });
   });
 });

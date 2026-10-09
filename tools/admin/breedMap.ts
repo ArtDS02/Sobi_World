@@ -2,10 +2,10 @@
 // from the same breedingOutcomes / MUTATIONS / pair table the game uses) as generation columns.
 // Clicking a pig pans to it, highlights it, dims everything unrelated and lights up its whole
 // lineage — parents, ancestors (pink "DNA" lines) and descendants (green).
-import { MUTATIONS } from '../../src/core/config/breedingRules';
-import { BREEDS } from '../../src/core/config/breeds';
-import type { BreedId } from '../../src/core/config/ids';
-import { breedMap, lineage, type BreedMap, type BreedMapEdge } from '../../src/core/engine/breedMap';
+import { MUTATIONS } from '../../src/areas/farm/logic/config/breedingRules';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
+import { breedMap, lineage, type BreedMap, type BreedMapEdge } from '../../src/areas/farm/logic/breedMap';
 import { RARITY_LABEL, esc, rarityBadge } from './labels';
 
 const COL_W = 240;

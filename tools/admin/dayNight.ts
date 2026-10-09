@@ -1,6 +1,6 @@
 // Admin page "Ngày / Đêm" (DN): edit the DAY_NIGHT settings (enabled, phase start times, blend,
 // transition) and preview any phase or time of day. Previews are pictures only — they never change
-// the player's clock or save. "Lưu" writes src/core/config/dayNight.ts through the dev API.
+// the player's clock or save. "Lưu" writes content/shared/daynight.json through the dev API.
 import {
   DAY_NIGHT,
   DAY_PHASES,

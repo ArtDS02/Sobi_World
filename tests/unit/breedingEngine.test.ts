@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { adoptPig } from '../../src/core/actions/adoptPig';
-import { breedPigs } from '../../src/core/actions/breedPigs';
-import { BREED_IDS, BREEDS } from '../../src/core/config/breeds';
-import type { BreedId } from '../../src/core/config/ids';
+import { adoptPig } from '../../src/areas/farm/logic/actions/adoptPig';
+import { breedPigs } from '../../src/areas/farm/logic/actions/breedPigs';
+import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { rarityRank } from '../../src/core/config/rarity';
-import { SPECIES_TRAITS, TRAIT_VALUES } from '../../src/core/config/speciesTraits';
-import { resolveBirths } from '../../src/core/engine/breeding';
-import { breedingCoverage } from '../../src/core/engine/breedingCoverage';
-import { breedingOutcomes, compatibility, rarityOdds } from '../../src/core/engine/breedingOdds';
-import { generationOf } from '../../src/core/engine/derived';
-import { parseSave } from '../../src/core/save/migrate';
+import { SPECIES_TRAITS, TRAIT_VALUES } from '../../src/areas/farm/logic/config/speciesTraits';
+import { resolveBirths } from '../../src/areas/farm/logic/breeding';
+import { breedingCoverage } from '../../src/areas/farm/logic/breedingCoverage';
+import { breedingOutcomes, compatibility, rarityOdds } from '../../src/areas/farm/logic/breedingOdds';
+import { generationOf } from '../../src/areas/farm/logic/derived';
+import { parseFarmSave } from '../../src/areas/farm/logic/save/legacy';
 import { ctx, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
 
@@ -124,7 +124,7 @@ describe('generation (PS-2)', () => {
     const born = resolveBirths(bred.state, preg.endsAt, ctx().rng).state;
     const child = born.nursery[0]!; // BR-1: the newborn waits in the nursery
     expect(child.generation).toBe(4);
-    const round = parseSave(JSON.stringify(born));
+    const round = parseFarmSave(JSON.stringify(born));
     expect(round.ok && round.save.nursery.find((p) => p.id === child.id)?.generation).toBe(4);
     const raised = expectOk(adoptPig(born, { nurseryId: child.id }, ctx(preg.endsAt)));
     expect(generationOf(raised.state.pigs.find((p) => p.id === child.id)!)).toBe(4);

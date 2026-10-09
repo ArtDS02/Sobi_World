@@ -2,11 +2,11 @@
 // the files on disk. Edits stay in the draft until save() posts them to the dev API.
 import { validateSpecies, type Issue, type PigArtRow } from '../../scripts/admin/validate';
 import type { SpeciesRowData } from '../../scripts/admin/speciesText';
-import { BALANCE } from '../../src/core/config/balance';
-import { FAMILY_VALUES, RARITY_TIER } from '../../src/core/config/breeds';
-import { BREED_ID_VALUES } from '../../src/core/config/ids';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { FAMILY_VALUES, RARITY_TIER } from '../../src/areas/farm/logic/config/breeds';
+import { BREED_ID_VALUES } from '../../src/areas/farm/logic/config/ids';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
-import { SPECIES_ROWS } from '../../src/core/config/speciesTable';
+import { SPECIES_ROWS } from '../../src/areas/farm/logic/config/speciesTable';
 
 export interface InventoryItem {
   name: string;

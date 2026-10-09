@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { cleanAll, cleanPig } from '../../src/core/actions/cleanPig';
-import { feedPig } from '../../src/core/actions/feedPig';
-import { fillTrough } from '../../src/core/actions/fillTrough';
-import { treatPig } from '../../src/core/actions/treatPig';
-import { troughCapacityForLevel } from '../../src/core/config/levels';
-import type { SaveGame } from '../../src/core/types';
+import { cleanAll, cleanPig } from '../../src/areas/farm/logic/actions/cleanPig';
+import { feedPig } from '../../src/areas/farm/logic/actions/feedPig';
+import { fillTrough } from '../../src/areas/farm/logic/actions/fillTrough';
+import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
+import { troughCapacityForLevel } from '../../src/areas/farm/logic/config/levels';
+import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
 
@@ -12,7 +12,7 @@ import { makePig } from './pigFactory';
 const pigWith = (o: Parameters<typeof makePig>[0]) => farm([makePig(o)]);
 
 describe('feedPig (§8.2)', () => {
-  const feed = (s: SaveGame) => feedPig(s, { pigId: 'pig-1' }, ctx());
+  const feed = (s: FarmGame) => feedPig(s, { pigId: 'pig-1' }, ctx());
 
   it('ALREADY_FULL at 100', () => expectError(feed, pigWith({ hunger: 100 }), 'ALREADY_FULL'));
 
@@ -45,7 +45,7 @@ describe('feedPig (§8.2)', () => {
 });
 
 describe('cleanPig (§8.3)', () => {
-  const clean = (s: SaveGame) => cleanPig(s, { pigId: 'pig-1' }, ctx());
+  const clean = (s: FarmGame) => cleanPig(s, { pigId: 'pig-1' }, ctx());
 
   it('ALREADY_CLEAN at 100', () =>
     expectError(clean, pigWith({ cleanliness: 100 }), 'ALREADY_CLEAN'));
@@ -107,7 +107,7 @@ describe('cleanAll (§8.4)', () => {
 });
 
 describe('treatPig (§8.5)', () => {
-  const treat = (s: SaveGame) => treatPig(s, { pigId: 'pig-1' }, ctx());
+  const treat = (s: FarmGame) => treatPig(s, { pigId: 'pig-1' }, ctx());
 
   it('cures, consumes 1 medicine, no XP, hunger/cleanliness unchanged', () => {
     const r = expectOk(treat(pigWith({ isSick: true, hunger: 33, cleanliness: 12 })));
@@ -129,7 +129,7 @@ describe('treatPig (§8.5)', () => {
 });
 
 describe('fillTrough (§8.6)', () => {
-  const fill = (units: number) => (s: SaveGame) => fillTrough(s, { units }, ctx());
+  const fill = (units: number) => (s: FarmGame) => fillTrough(s, { units }, ctx());
 
   it('all from inventory → one TROUGH_FILL transaction of 0 gold', () => {
     const r = expectOk(fill(6)(farm()));

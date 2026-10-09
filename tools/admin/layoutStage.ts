@@ -3,8 +3,8 @@
 // and stacking as the Phaser scene), drag to move, corner handle to resize, drop from the library.
 import { PHASE_LOOKS } from '../../src/core/config/dayNight';
 import type { BackdropPalette } from '../../src/core/config/seasons';
-import { paintBackdrop } from '../../src/game/view/backdropPaint';
-import { paintSky } from '../../src/game/view/skyPaint';
+import { paintBackdrop } from '../../src/areas/farm/scene/view/backdropPaint';
+import { paintSky } from '../../src/areas/farm/scene/view/skyPaint';
 import { esc } from './labels';
 import { boxOf, drawOrder, type Design, type Placement } from './layoutModel';
 

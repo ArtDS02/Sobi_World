@@ -1,29 +1,30 @@
 // User (save) edits of the admin dashboard (DECISIONS AD-1), grouped like the editor tabs: profile,
-// currency, inventory, pigs, progress, game state. Pure functions on a SaveGame: gold only moves
+// currency, inventory, pigs, progress, game state. Pure functions on a FarmGame: gold only moves
 // through core's changeGold (an ADMIN_ADJUST transaction), XP keeps the trough capacity rule, and
 // every result is checked with the game's own save schema before it can be written.
-import { BALANCE } from '../../src/core/config/balance';
-import { BREEDS } from '../../src/core/config/breeds';
-import { DECORS } from '../../src/core/config/decor';
-import type { BreedId, DecorId, Gender, ItemId, StatId } from '../../src/core/config/ids';
-import { levelFromXp, troughCapacityForLevel } from '../../src/core/config/levels';
-import { happiness } from '../../src/core/engine/happiness';
-import { changeGold } from '../../src/core/engine/gold';
-import { saveGameSchema } from '../../src/core/save/schema';
-import { newGame } from '../../src/core/save/newGame';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import { DECORS } from '../../src/areas/farm/logic/config/decor';
+import type { Gender, ItemId } from '../../src/core/config/ids';
+import type { BreedId, DecorId, StatId } from '../../src/areas/farm/logic/config/ids';
+import { levelFromXp, troughCapacityForLevel } from '../../src/areas/farm/logic/config/levels';
+import { happiness } from '../../src/areas/farm/logic/happiness';
+import { changeGold } from '../../src/areas/farm/logic/gold';
+import { farmGameSchema } from '../../src/areas/farm/logic/save/farmSchema';
+import { newGame } from '../../src/areas/farm/logic/save/newFarm';
 import type { Rng } from '../../src/core/rng';
-import type { Pig, SaveGame } from '../../src/core/types';
+import type { Pig, FarmGame } from '../../src/areas/farm/logic/types';
 
-export type Edit = (s: SaveGame) => SaveGame;
+export type Edit = (s: FarmGame) => FarmGame;
 
 /** Problems the game's save parser would reject, as readable lines (empty = writable). */
-export function saveProblems(s: SaveGame): string[] {
-  const r = saveGameSchema.safeParse(s);
+export function saveProblems(s: FarmGame): string[] {
+  const r = farmGameSchema.safeParse(s);
   if (r.success) return [];
   return r.error.issues.map((i) => `${i.path.join('.') || 'save'}: ${i.message}`);
 }
 
-export function summary(s: SaveGame) {
+export function summary(s: FarmGame) {
   const level = levelFromXp(s.player.xp);
   const nextXp = BALANCE.LEVEL_XP[level] ?? null;
   return {
@@ -168,7 +169,7 @@ export const setDaily = (streak: number, lastDay: number | null): Edit => (s) =>
 });
 
 /** Profile / settings switches. */
-export const setSettings = (patch: Partial<SaveGame['settings']>): Edit => (s) => ({ ...s, settings: { ...s.settings, ...patch } });
+export const setSettings = (patch: Partial<FarmGame['settings']>): Edit => (s) => ({ ...s, settings: { ...s.settings, ...patch } });
 
 /** Game state: open orders / gift boxes cleared (the game spawns new ones on schedule). */
 export const clearOrders: Edit = (s) => ({ ...s, orders: [] });
@@ -178,7 +179,7 @@ export const clearGifts: Edit = (s) => ({ ...s, gifts: { nextAt: null, boxes: []
 export const resetSave = (now: number, rng: Rng): Edit => (s) => newGame({ now, rng }, { reduceMotion: s.settings.reduceMotion });
 
 /** Applies an edit and refuses results the game could not load. */
-export function apply(s: SaveGame, edit: Edit): SaveGame {
+export function apply(s: FarmGame, edit: Edit): FarmGame {
   const next = edit(s);
   const problems = saveProblems(next);
   if (problems.length) throw new Error(problems.slice(0, 3).join('\n'));

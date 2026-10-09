@@ -1,10 +1,10 @@
 // npm run sim:economy (spec §14.7): per-breed economy table, unlock affordability, and the
 // build gate "net gold per hour at happiness 100 >= 2x at happiness 0". Imports only src/core.
-import { BALANCE } from '../src/core/config/balance';
-import { ACHIEVEMENTS } from '../src/core/config/achievements';
-import { DAILY } from '../src/core/config/daily';
-import { DECORS } from '../src/core/config/decor';
-import { BREED_ID_VALUES } from '../src/core/config/ids';
+import { BALANCE } from '../src/areas/farm/logic/config/balance';
+import { ACHIEVEMENTS } from '../src/areas/farm/logic/config/achievements';
+import { DAILY } from '../src/areas/farm/logic/config/daily';
+import { DECORS } from '../src/areas/farm/logic/config/decor';
+import { BREED_ID_VALUES } from '../src/areas/farm/logic/config/ids';
 import { ITEMS } from '../src/core/config/items';
 import {
   CARE_RATIO_MIN,

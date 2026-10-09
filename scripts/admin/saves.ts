@@ -1,5 +1,5 @@
 // Player saves for the admin dashboard's user management (DECISIONS AD-1). The game is single-player
-// and offline: a "user" is one desktop save folder (%APPDATA%\Un In Homemade*\saves*\save.json,
+// and offline: a "user" is one desktop save folder (%APPDATA%\SobiWorld*\saves*\save.json and Sobi Farm's %APPDATA%\Un In Homemade*\…,
 // spec §9.1). Writes follow the game's own rules: the current save is copied into backups/ first
 // (a name the in-game restore lists), then tmp → rename. Nothing is ever hard-deleted.
 import { existsSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -10,7 +10,7 @@ type Result = { status: number; body: unknown };
 
 export interface SaveProfile {
   id: string;
-  app: string; // "Un In Homemade" (installed) | "Un In Homemade Dev" (npm run dev:desktop)
+  app: string; // "SobiWorld" (installed) | "SobiWorld Dev" (npm run dev) | Sobi Farm's "Un In Homemade[ Dev]"
   folder: string; // saves | saves-<test>
   path: string;
   modifiedAt: number;
@@ -18,7 +18,9 @@ export interface SaveProfile {
   backups: number;
 }
 
-const APP_PREFIX = 'Un In Homemade';
+/** Game folders: Sobi World's, and Sobi Farm's (read-only history, still editable). */
+const APP_PREFIXES = ['SobiWorld', 'Un In Homemade'];
+const isAppDir = (name: string) => APP_PREFIXES.some((p) => name.startsWith(p));
 const SAVE = 'save.json';
 
 let rootOverride: string | null = null;
@@ -27,7 +29,7 @@ let rootOverride: string | null = null;
 export const savesRoot = () =>
   rootOverride ?? process.env.UNIN_ADMIN_SAVES_ROOT ?? process.env.APPDATA ?? join(homedir(), 'AppData', 'Roaming');
 
-/** Dashboard "Đổi thư mục quét": a folder holding the "Un In Homemade*" folders; empty = default. */
+/** Dashboard "Đổi thư mục quét": a folder holding the game folders; empty = default. */
 export function setSavesRoot(path: string): Result {
   const p = path.trim().replace(/^"|"$/g, '');
   if (!p) {
@@ -45,7 +47,7 @@ const encode = (rel: string) => Buffer.from(rel, 'utf8').toString('base64url');
 function folderOf(root: string, id: string): string | null {
   const rel = Buffer.from(id, 'base64url').toString('utf8');
   const [app, folder, ...rest] = rel.split('/');
-  if (!app?.startsWith(APP_PREFIX) || !folder || !/^saves[\w-]*$/.test(folder) || rest.length) return null;
+  if (!app || !isAppDir(app) || !folder || !/^saves[\w-]*$/.test(folder) || rest.length) return null;
   const dir = resolve(root, app, folder);
   return dir.startsWith(resolve(root) + sep) ? dir : null;
 }
@@ -55,7 +57,7 @@ const dirs = (path: string) =>
 
 export function listProfiles(root = savesRoot()): SaveProfile[] {
   const out: SaveProfile[] = [];
-  for (const app of dirs(root).filter((d) => d.startsWith(APP_PREFIX))) {
+  for (const app of dirs(root).filter(isAppDir)) {
     for (const folder of dirs(join(root, app)).filter((d) => /^saves[\w-]*$/.test(d))) {
       const path = join(root, app, folder, SAVE);
       if (!existsSync(path)) continue;

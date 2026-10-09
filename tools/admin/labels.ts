@@ -2,7 +2,7 @@
 // lives here, not in src/i18n, which is the game's).
 import { effectiveStats, artState, type ArtState } from '../../scripts/admin/validate';
 import type { SpeciesRowData } from '../../scripts/admin/speciesText';
-import { RARITY_TIER } from '../../src/core/config/breeds';
+import { RARITY_TIER } from '../../src/areas/farm/logic/config/breeds';
 import { state } from './store';
 
 export const RARITY_LABEL: Record<string, string> = {

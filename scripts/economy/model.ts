@@ -1,13 +1,13 @@
 // Economy model for `npm run sim:economy` (spec §6.4, §14.7). Pure: runs the real core engine
 // (trough + advancePig + pricing) on synthetic farms, so a balance edit shows up here unchanged.
-import { BALANCE } from '../../src/core/config/balance';
-import { BREEDS } from '../../src/core/config/breeds';
-import type { BreedId } from '../../src/core/config/ids';
+import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
+import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { ITEMS } from '../../src/core/config/items';
-import { advanceWithTrough } from '../../src/core/engine/trough';
-import { sellPrice } from '../../src/core/engine/pricing';
+import { advanceWithTrough } from '../../src/areas/farm/logic/trough';
+import { sellPrice } from '../../src/areas/farm/logic/pricing';
 import { sequenceRng } from '../../src/core/rng';
-import type { Pig } from '../../src/core/types';
+import type { Pig } from '../../src/areas/farm/logic/types';
 
 export const HAPPINESS_LEVELS = [0, 50, 100] as const;
 export type HappinessLevel = (typeof HAPPINESS_LEVELS)[number];

@@ -6,7 +6,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PNG } from 'pngjs';
-import { SPECIES_ROWS } from '../src/core/config/speciesTable';
+import { SPECIES_ROWS } from '../src/areas/farm/logic/config/speciesTable';
 import {
   closeEye,
   detectEyes,

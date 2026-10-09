@@ -1,9 +1,9 @@
 // Overview page: totals, asset completion, distribution by rarity and family, open issues.
-import { FAMILY_VALUES } from '../../src/core/config/breeds';
+import { FAMILY_VALUES } from '../../src/areas/farm/logic/config/breeds';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import { FAMILY_LABEL, RARITY_LABEL, art, esc, isNew } from './labels';
 import { PRODUCTS } from '../../src/core/config/products';
-import { PAIR_RULES } from '../../src/core/config/breedingPairs';
+import { PAIR_RULES } from '../../src/areas/farm/logic/config/breedingPairs';
 import { state } from './store';
 
 function card(icon: string, label: string, value: number | string, tone = '', href = '') {
