@@ -23,6 +23,8 @@ import {
   openTroughDialog,
 } from './dialogs';
 import { openBreedDialog } from './breedDialog';
+import { sellItem } from '../logic/actions/sellItem';
+import type { ItemId } from '../../../core/config/ids';
 import type { AppOptions, FarmPick, MountedApp } from './appTypes';
 import { setIconSource } from '../../../ui/components/icon';
 import { el, patch } from '../../../ui/dom';
@@ -136,6 +138,7 @@ export function mountApp(
       const save = store.getSnapshot().save;
       if (save) openTrough(Math.min(save.inventory.FOOD_BASIC, troughSpace(save)));
     },
+    sellItem: (itemId: ItemId, quantity: number) => act((s, c) => sellItem(s, { itemId, quantity }, c)),
     raise: (baby: NurseryPig) => {
       const save = store.getSnapshot().save;
       if (save) openAdoptDialog(dialogs, save, baby, act);

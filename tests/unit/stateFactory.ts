@@ -14,7 +14,7 @@ export function makeState(pigs: Pig[] = [], troughFood = 0): FarmGame {
     pigs,
     nursery: [],
     trough: { food: troughFood, capacity: 20, lastResolvedAt: 0 },
-    inventory: { FOOD_BASIC: 10, MEDICINE_COMMON: 1 },
+    inventory: { FOOD_BASIC: 10, MEDICINE_COMMON: 1, item_manure: 0 },
     orders: [],
     collection: { discoveredBreeds: [] },
     transactions: [],

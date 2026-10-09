@@ -9,6 +9,15 @@
       "curesSickness": false
     },
     {
+      "id": "item_manure",
+      "category": "MATERIAL",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 6,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
       "id": "MEDICINE_COMMON",
       "category": "MEDICINE",
       "rarity": "COMMON",

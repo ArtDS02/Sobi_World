@@ -72,7 +72,7 @@ describe('inventory: the shared bag', () => {
   });
 
   it('a farm purchase that would overflow the bag is refused without spending', () => {
-    const full = { ...makeState(), inventory: { FOOD_BASIC: INVENTORY.slots * INVENTORY.stack, MEDICINE_COMMON: 0 } };
+    const full = { ...makeState(), inventory: { FOOD_BASIC: INVENTORY.slots * INVENTORY.stack, MEDICINE_COMMON: 0, item_manure: 0 } };
     expect(buyItem(full, { itemId: 'FOOD_BASIC', quantity: 1 }, ctx())).toEqual({ ok: false, error: 'INVENTORY_FULL' });
   });
 });

@@ -76,6 +76,7 @@ export const BREED_ID_VALUES = [
 export const ITEM_ID_VALUES = [
   'FOOD_BASIC',
   'MEDICINE_COMMON',
+  'item_manure',
 ] as const;
 
 export const DECOR_ID_VALUES = [

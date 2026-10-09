@@ -23,6 +23,7 @@ export const TRANSACTION_TYPE_VALUES = [
   'DAILY_REWARD', // daily login reward (PG-2)
   'ACHIEVEMENT_REWARD', // achievement claimed (PG-2)
   'DECOR_PURCHASE', // farm decoration bought (PG-3)
+  'ITEM_SELL', // items sold from the bag (GĐ2: manure)
 ] as const;
 
 export type BreedId = (typeof BREED_ID_VALUES)[number];

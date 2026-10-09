@@ -15,6 +15,9 @@ const time = z.number().finite();
 const nonNeg = z.number().finite().min(0);
 const pct = z.number().finite().min(0).max(100);
 
+const withEveryItem = (v: unknown): unknown =>
+  v && typeof v === 'object' ? { ...Object.fromEntries(ITEM_ID_VALUES.map((id) => [id, 0])), ...v } : v;
+
 const pregnancySchema = z.object({
   startedAt: time,
   endsAt: time,
@@ -125,7 +128,8 @@ const shapeSchema = z.object({
   pigs: z.array(pigSchema),
   nursery: z.array(nurseryPigSchema),
   trough: z.object({ food: nonNeg, capacity: nonNeg, lastResolvedAt: time }),
-  inventory: z.record(z.enum(ITEM_ID_VALUES), nonNeg),
+  // Items added after a save was written are missing from it: they count as none.
+  inventory: z.preprocess(withEveryItem, z.record(z.enum(ITEM_ID_VALUES), nonNeg)),
   orders: z.array(orderSchema),
   collection: z.object({
     discoveredBreeds: z.array(breedId),

@@ -32,6 +32,9 @@ export type GameEvent =
   | { type: 'TROUGH_FILLED'; units: number; fromInventory: number; gold: number }
   | { type: 'ITEM_BOUGHT'; itemId: ItemId; quantity: number; gold: number }
   | { type: 'PIG_RENAMED'; pigId: string }
+  // GĐ2: the pen raked (piles → item_manure kept in the bag); items sold from the bag.
+  | { type: 'MANURE_CLEANED'; piles: number; kept: number }
+  | { type: 'ITEM_SOLD'; itemId: ItemId; quantity: number; gold: number }
   | { type: 'PIG_SOLD'; pigId: string; gold: number }
   | { type: 'BREEDING_STARTED'; motherId: string; fatherId: string; endsAt: number }
   | { type: 'SLOT_BOUGHT'; slots: number; gold: number } // gold signed as in the transaction (§8.0)
@@ -75,6 +78,8 @@ export const GAME_EVENT_TYPES = [
   'TROUGH_FILLED',
   'ITEM_BOUGHT',
   'PIG_RENAMED',
+  'MANURE_CLEANED',
+  'ITEM_SOLD',
   'PIG_SOLD',
   'BREEDING_STARTED',
   'SLOT_BOUGHT',

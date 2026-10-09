@@ -32,7 +32,7 @@ const breedImage = (id: string) => {
 const DAY_MS = 86_400_000;
 const today = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 60_000) / DAY_MS);
 const thumb = (url: string | null) => (url ? `<img class="thumb" src="${esc(url)}" alt="" />` : '');
-const ITEM_NAME: Record<ItemId, string> = { FOOD_BASIC: vi.shop.FOOD_BASIC, MEDICINE_COMMON: vi.shop.MEDICINE_COMMON };
+const ITEM_NAME: Record<ItemId, string> = { FOOD_BASIC: vi.shop.FOOD_BASIC, MEDICINE_COMMON: vi.shop.MEDICINE_COMMON, item_manure: vi.shop.item_manure };
 
 function edit(e: E.Edit, rerender: () => void) {
   const o = users.open!;

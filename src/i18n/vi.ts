@@ -108,6 +108,8 @@ export const vi = {
     feed: "Cho ăn",
     clean: "Tắm",
     cleanAll: "Tắm tất cả",
+    cleanManure: "Dọn phân",
+    sellItem: "Bán hết",
     treat: "Chữa bệnh",
     breed: "Phối giống",
     sell: "Xuất chuồng",
@@ -152,6 +154,7 @@ export const vi = {
     ALREADY_CLAIMED: "Đã nhận thưởng rồi.",
     ALREADY_OWNED: "Bạn đã có món này.",
     NURSERY_FULL: "Kho heo con đã đầy. Hãy đưa bớt heo con ra trại trước.",
+    NO_MANURE: "Chuồng đang sạch phân.",
     INVENTORY_FULL: "Túi đồ đã đầy chỗ. Hãy dùng bớt vật phẩm trước.",
   },
 
@@ -177,6 +180,8 @@ export const vi = {
     becameSick: "{name} bị bệnh rồi!",
     becameCritical: "{name} đang nguy kịch! Hãy chữa ngay.",
     died: "{name} đã không qua khỏi...",
+    manureCleaned: "Đã dọn {piles} đống phân, thu được {kept} phân bón.",
+    itemSold: "Đã bán {quantity} {name} được {gold} Sobi Coin.",
     hungryZero: "{name} đói lả, ngừng lớn.",
     // NH-1: shown once when a pig drops into a worse care level.
     needDropped: {
@@ -245,6 +250,8 @@ export const vi = {
     FOOD_BASIC_desc: "Tăng 50 độ no. Cũng là đơn vị đổ vào máng ăn.",
     MEDICINE_COMMON: "Thuốc",
     MEDICINE_COMMON_desc: "Chữa khỏi bệnh cho một con heo.",
+    item_manure: "Phân bón",
+    item_manure_desc: "Phân heo đã dọn. Bán lấy ít tiền; sau này dùng cho vườn.",
     slotNext: "Chuồng thứ {n}",
     slotLocked: "Cần cấp {level}",
     quantity: "Số lượng",
@@ -328,6 +335,7 @@ export const vi = {
     SHOP_PURCHASE: "Mua hàng",
     PIG_PURCHASE: "Mua heo",
     PIG_SELL: "Xuất chuồng",
+    ITEM_SELL: "Bán vật phẩm",
     BREEDING_FEE: "Phí phối giống",
     SLOT_PURCHASE: "Mở chuồng",
     TROUGH_FILL: "Đổ máng",
@@ -446,6 +454,10 @@ export const vi = {
   },
 
   // BR-1: newborns wait in the inventory until the player raises them.
+  inventory: {
+    sellAll: "Bán hết ({gold})",
+  },
+
   nursery: {
     title: "Heo con mới sinh ({n}/{max})",
     empty: "Chưa có heo con nào. Heo con phối giống sinh ra sẽ chờ ở đây.",

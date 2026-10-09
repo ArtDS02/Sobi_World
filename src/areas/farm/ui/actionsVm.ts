@@ -4,6 +4,7 @@ import { buyDecor } from '../logic/actions/buyDecor';
 import { buyPig } from '../logic/actions/buyPig';
 import { buyProduct } from '../logic/actions/buyProduct';
 import { buySlot } from '../logic/actions/buySlot';
+import { cleanManure } from '../logic/actions/cleanManure';
 import { cleanAll, cleanPig } from '../logic/actions/cleanPig';
 import { feedPig } from '../logic/actions/feedPig';
 import { fillTrough } from '../logic/actions/fillTrough';
@@ -76,9 +77,12 @@ export function pigActions(save: FarmGame, pigId: string, now: number) {
   };
 }
 
-/** Farm toolbar: clean all. Buying moved to the shop (R03). */
+/** Farm toolbar: bathe all, rake the pen. Buying moved to the shop (R03). */
 export function farmActions(save: FarmGame, now: number) {
-  return { cleanAll: vm(save, now, vi.action.cleanAll, (s, c) => cleanAll(s, c)) };
+  return {
+    cleanAll: vm(save, now, vi.action.cleanAll, (s, c) => cleanAll(s, c)),
+    cleanManure: vm(save, now, vi.action.cleanManure, (s, c) => cleanManure(s, c)),
+  };
 }
 
 const goldText = (amount: number) => t(vi.hud.gold, { amount: formatInt(amount) });

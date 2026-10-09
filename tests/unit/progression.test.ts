@@ -33,7 +33,7 @@ const broke = (patch: Partial<FarmGame> = {}): FarmGame => {
   return {
     ...s,
     player: { ...s.player, gold: 10 },
-    inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 0 },
+    inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 0, item_manure: 0 },
     trough: { ...s.trough, food: 0 },
     ...patch,
   };

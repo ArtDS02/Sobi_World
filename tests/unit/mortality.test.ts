@@ -1,6 +1,9 @@
 // GĐ2 health: ill → critical (48 h) → dead (72 h); nothing dies while the game is closed; the grace
 // period after a catch-up (decisions 002 and 004); medicine in time saves the pig.
 import { describe, expect, it } from 'vitest';
+import { cleanManure } from '../../src/areas/farm/logic/actions/cleanManure';
+import { sellItem } from '../../src/areas/farm/logic/actions/sellItem';
+import { INVENTORY } from '../../src/core/config/inventory';
 import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { pigStage } from '../../src/areas/farm/logic/mortality';
@@ -18,7 +21,7 @@ const rng = () => sequenceRng([1 - 1e-12]);
 const sickFarm = (extra: Partial<FarmGame> = {}): FarmGame => ({
   ...makeState([makePig({ isSick: true, lastSickAt: 0, growthProgress: 100, hunger: 100, cleanliness: 100 })], 50),
   createdAt: -1e12,
-  inventory: { FOOD_BASIC: 10, MEDICINE_COMMON: 3 },
+  inventory: { FOOD_BASIC: 10, MEDICINE_COMMON: 3, item_manure: 0 },
   ...extra,
 });
 const types = (events: { type: string }[]) => events.map((e) => e.type);
@@ -151,5 +154,50 @@ describe('sleep', () => {
   it('crossing the evening: awake until 20:00, asleep after', () => {
     expect(energyAfter(at(19), at(21))).toBeCloseTo(50 - 5 + 12, 9);
     expect(energyAfter(at(4), at(6))).toBeCloseTo(50 + 12 - 5, 9); // night until 05:00
+  });
+});
+
+describe('raking the pen: Dọn phân → item_manure, then sold', () => {
+  const ctx = { now: 0, rng: rng() };
+  const withPiles = (manure: number, items: Partial<FarmGame['inventory']> = {}): FarmGame => ({
+    ...makeState([makePig()], 0),
+    manure,
+    inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 0, item_manure: 0, ...items },
+  });
+
+  it('every pile becomes one item_manure; the pen is clean; 2 XP a pile', () => {
+    const r = cleanManure(withPiles(5), ctx);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.state.manure).toBe(0);
+    expect(r.state.inventory.item_manure).toBe(5);
+    expect(r.state.player.xp).toBe(10);
+    expect(r.events).toContainEqual({ type: 'MANURE_CLEANED', piles: 5, kept: 5 });
+    expect(farmWorldEvents(r.events[0]!)).toEqual([{ type: 'item.added', area: 'sobi_farm', itemId: 'item_manure', quantity: 5 }]);
+  });
+
+  it('a clean pen is refused', () => {
+    expect(cleanManure(withPiles(0), ctx)).toEqual({ ok: false, error: 'NO_MANURE' });
+    expect(cleanManure(makeState([makePig()], 0), ctx)).toEqual({ ok: false, error: 'NO_MANURE' });
+  });
+
+  it('a full bag keeps what fits and throws the rest away, but the pen is still raked', () => {
+    // 39 full slots of food + a slot of manure with room for 2 more
+    const r = cleanManure(withPiles(4, { FOOD_BASIC: (INVENTORY.slots - 1) * INVENTORY.stack, item_manure: INVENTORY.stack - 2 }), ctx);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.state.manure).toBe(0);
+    expect(r.state.inventory.item_manure).toBe(INVENTORY.stack);
+    expect(r.events).toContainEqual({ type: 'MANURE_CLEANED', piles: 4, kept: 2 });
+  });
+
+  it('manure sells for 6 each; other items cannot be sold; no more than you have', () => {
+    const s = withPiles(0, { item_manure: 10 });
+    const r = sellItem(s, { itemId: 'item_manure', quantity: 4 }, ctx);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.state.inventory.item_manure).toBe(6);
+    expect(r.state.player.gold).toBe(s.player.gold + 24);
+    expect(r.state.transactions[0]).toMatchObject({ type: 'ITEM_SELL', amount: 24, refId: 'item_manure' });
+    expect(sellItem(s, { itemId: 'FOOD_BASIC', quantity: 1 }, ctx)).toEqual({ ok: false, error: 'INVALID_REQUEST' });
+    expect(sellItem(s, { itemId: 'item_manure', quantity: 11 }, ctx)).toEqual({ ok: false, error: 'INSUFFICIENT_ITEM' });
+    expect(sellItem(s, { itemId: 'item_manure', quantity: 0 }, ctx)).toEqual({ ok: false, error: 'INVALID_REQUEST' });
   });
 });

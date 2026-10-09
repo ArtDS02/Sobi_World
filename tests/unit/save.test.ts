@@ -265,7 +265,7 @@ describe('newGame (D7)', () => {
     expect(valid(s)).toBe(true);
     expect(s.player).toMatchObject({ gold: 5000, xp: 0, unlockedSlots: 4 });
     expect(s.pigs).toEqual([]);
-    expect(s.inventory).toEqual({ FOOD_BASIC: 10, MEDICINE_COMMON: 1 });
+    expect(s.inventory).toEqual({ FOOD_BASIC: 10, MEDICINE_COMMON: 1, item_manure: 0 });
     expect(s.trough).toEqual({ food: 0, capacity: 20, lastResolvedAt: 5_000 });
     expect(s.transactions).toEqual([
       { id: expect.any(String), at: 5_000, type: 'INITIAL_GOLD', amount: 5000 },

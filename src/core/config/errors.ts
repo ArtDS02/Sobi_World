@@ -11,6 +11,7 @@ export const ERRORS = [
   "ALREADY_OWNED",
   "NURSERY_FULL",
   "INVENTORY_FULL",
+  "NO_MANURE",
 ] as const;
 
 export type ErrorCode = (typeof ERRORS)[number];

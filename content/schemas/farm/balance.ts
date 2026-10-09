@@ -50,7 +50,7 @@ const balanceSchema = z.strictObject({
   PIG_NAME_MAX: posInt,
   XP_EFFECTIVE_FEED_MAX_HUNGER: z.number().min(0).max(100),
   XP_EFFECTIVE_CLEAN_MAX_CLEAN: z.number().min(0).max(100),
-  XP: z.strictObject({ FEED: nonNeg, CLEAN: nonNeg, SELL: nonNeg, BREED: nonNeg, ORDER: nonNeg, DISCOVERY: nonNeg }),
+  XP: z.strictObject({ FEED: nonNeg, CLEAN: nonNeg, MANURE: nonNeg, SELL: nonNeg, BREED: nonNeg, ORDER: nonNeg, DISCOVERY: nonNeg }),
   MAX_LEVEL: posInt,
   /** XP needed for level n + 1 at index n (index 0 = level 1 = 0 XP). */
   LEVEL_XP: z.array(int.min(0)).min(1),

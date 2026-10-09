@@ -8,6 +8,8 @@ export interface ItemDef {
   category: ItemCategory;
   rarity: Rarity;
   priceGold: number;
+  /** What the shop pays for one; absent = cannot be sold. */
+  sellGold?: number | undefined;
   hungerRestore: number; // 0 = no hunger effect
   curesSickness: boolean;
 }

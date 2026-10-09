@@ -231,7 +231,7 @@ describe('integration: neglect never becomes a disease spiral', () => {
     let state = {
       ...makeState([dirty({ hunger: 0 })]),
       createdAt: LONG_AGO,
-      inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 99 },
+      inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 99, item_manure: 0 },
     };
     const onsets: number[] = [];
     for (let t = 0; t <= 5 * DAY; t += 60 * SEC) {
