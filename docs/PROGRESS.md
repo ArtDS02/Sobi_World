@@ -1,9 +1,9 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ1 — Nền móng thế giới: hoàn thành về code, chờ chủ dự án duyệt trước khi merge `main` + tag `phase-01`
-**Nhánh:** `phase-01-world-foundation`
-**Bước tiếp theo:** chủ dự án duyệt GĐ1 → GĐ2 (thang thời gian, bệnh/chết, giá trị, kinh tế).
+**Giai đoạn:** GĐ1 hoàn thành, đã merge `main`, tag `phase-01` (2026-10-09)
+**Nhánh:** `main`
+**Bước tiếp theo:** GĐ2 (thang thời gian, bệnh/chết, giá trị, kinh tế, bù offline 30 ngày). Đã chốt: một Sobi World Level chung (decision 007).
 
 ## Nhật ký
 
