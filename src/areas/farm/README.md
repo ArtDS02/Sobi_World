@@ -9,3 +9,5 @@
 Area không import Area khác (guard: `npm run guard`).
 
 GĐ2: mô phỏng theo lát (`core/simulation`), sức khỏe/chết (`logic/mortality.ts`), giá xuất chuồng (`logic/pricing.ts`), tóm tắt vắng nhà (`logic/summary.ts`), máng có cấp (`logic/troughLevel.ts`), dọn phân (`logic/actions/cleanManure.ts`). Số liệu ở `content/farm/balance.json` và `content/shared/{time,health,valuation,quality}.json` (Admin → Số liệu).
+
+GĐ3: nhân vật đi trong Farm (`scene/prefabs/FarmWalker.ts`, vùng đi và lối ra Sảnh ở `content/farm/layout.json` → `player`); `stage.ts` nối hook `onEnter/onExit` với canvas; phím I/C/menu ở `ui/hotkeys.ts`.

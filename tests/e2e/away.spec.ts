@@ -4,6 +4,7 @@ import { _electron as electron, expect, test } from '@playwright/test';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { enterFarm } from './world';
 
 const root = process.cwd();
 const DAY = 86_400_000;
@@ -20,7 +21,7 @@ test('a farm left for 3 days: away screen, hungry pig, button to the trough', as
   try {
     let app = await launch(userData);
     let page = await app.firstWindow();
-    await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
+    await enterFarm(page);
     await page.getByRole('button', { name: 'Bỏ qua' }).click();
     await page.locator('.topbar__nav').getByRole('button', { name: 'Cửa hàng' }).click();
     await page.locator('.shop__actions button').first().click(); // one pig; the trough stays empty

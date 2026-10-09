@@ -14,7 +14,10 @@ const ACTION_LABEL: Record<string, string> = { ...vi.farm };
 const field = (label: string, name: string, value: unknown, type = 'number', attrs = '') =>
   `<label class="field"><span>${label}</span><input type="${type}" name="${name}" value="${esc(value ?? '')}" ${attrs} /></label>`;
 
-export function properties(list: readonly Placement[], i: number | null, design: Design): string {
+/** The plaza's doors the property panel offers: portal id → name of its Area. */
+export type PortalChoices = readonly (readonly [string, string])[];
+
+export function properties(list: readonly Placement[], i: number | null, design: Design, portals?: PortalChoices): string {
   const p = i === null ? null : list[i];
   if (!p || i === null) return '<p class="muted">Chọn một vật trên khung để sửa. Kéo asset từ thư viện bên trái vào khung để thêm.</p>';
   const nat = sizeOf(urlOf(p.id));
@@ -43,22 +46,26 @@ export function properties(list: readonly Placement[], i: number | null, design:
     <div class="form-grid">
       ${field('Tên trong editor', 'label', p.label ?? '', 'text', 'maxlength="40"')}
       <div class="field span-2"><span>Asset hiện tại → thay</span>${pickButton('id', p.id, urlOf(p.id), p.id)}</div>
-      <label class="field"><span>Bấm vào mở</span><select name="action">${opt(FARM_ACTIONS, p.action, '— không —')}</select></label>
-      <label class="check"><input type="checkbox" name="signed" ${p.signed ? 'checked' : ''} /> Ảnh có sẵn biển tên</label>
+      ${portals
+        ? `<label class="field"><span>Cổng dẫn tới</span><select name="portal"><option value="">— không phải cổng —</option>${portals.map(([id, name]) => `<option value="${id}"${id === p.portal ? ' selected' : ''}>${esc(name)}</option>`).join('')}</select></label>
+      <label class="check"><input type="checkbox" name="solid" ${p.solid ? 'checked' : ''} /> Chặn đường (nhân vật không đi xuyên)</label>`
+        : `<label class="field"><span>Bấm vào mở</span><select name="action">${opt(FARM_ACTIONS, p.action, '— không —')}</select></label>
+      <label class="check"><input type="checkbox" name="signed" ${p.signed ? 'checked' : ''} /> Ảnh có sẵn biển tên</label>`}
     </div>
     <p class="muted">${p.role ? `Vai trò: <b>${esc(p.role)}</b> (duy nhất, giữ nguyên). ` : ''}Lớp 4 được game xếp theo Y cùng heo.</p>
     <div class="dn__buttons"><button type="button" class="btn btn-small" data-dup>⧉ Nhân bản</button><button type="button" class="btn btn-small btn-danger" data-del>🗑 Xoá khỏi layout</button></div>
   </form>`;
 }
 
-export function readProps(f: HTMLFormElement, design: Design): Partial<Placement> {
+export function readProps(f: HTMLFormElement, design: Design, plaza = false): Partial<Placement> {
   const d = new FormData(f);
   const n = (k: string) => (String(d.get(k) ?? '').trim() === '' ? undefined : Number(d.get(k)));
   const s = (k: string) => String(d.get(k) ?? '').trim() || undefined;
   return {
     x: (n('x') ?? 0) / design.width, y: (n('y') ?? 0) / design.height, width: n('width'), height: n('height'),
     layer: Number(d.get('layer')), rotation: n('rotation') ?? 0, flipX: d.get('flipX') === 'on', visible: d.get('visible') === 'on',
-    locked: d.get('locked') === 'on', label: s('label'), id: String(d.get('id')), action: s('action') as Placement['action'], signed: d.get('signed') === 'on',
+    locked: d.get('locked') === 'on', label: s('label'), id: String(d.get('id')),
+    ...(plaza ? { portal: s('portal'), solid: d.get('solid') === 'on' } : { action: s('action') as Placement['action'], signed: d.get('signed') === 'on' }),
   };
 }
 

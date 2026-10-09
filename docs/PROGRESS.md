@@ -1,11 +1,29 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ2 — Thời gian thật và thế giới sống: xong việc 1–11, **chờ chủ dự án duyệt** để merge `main` + tag `phase-02`
-**Nhánh:** `phase-02-real-time`
-**Bước tiếp theo:** duyệt GĐ2 → GĐ3 (Nhân vật và Sảnh Sobi).
+**Giai đoạn:** GĐ3 — Nhân vật và Sảnh Sobi: xong việc 1–10. GĐ2 đã merge `main` + tag `phase-02` (chủ dự án duyệt 2026-10-09).
+**Nhánh:** `phase-03-character-hub`
+**Quy ước mới (chủ dự án, 2026-10-09):** xong giai đoạn nào thì tự merge vào `main`, gắn tag `phase-XX` và push, không hỏi từng lượt.
+**Bước tiếp theo:** GĐ4 — Bản cài desktop đầu tiên.
 
 ## Nhật ký
+
+### 2026-10-09 — GĐ3 hoàn thành: nhân vật và Sảnh Sobi
+✅ Đã làm:
+1. `systems/character` (thuần, có test): đi 8 hướng (chéo không nhanh hơn), hộp chân va chạm, trượt dọc tường, không xuyên vật mỏng khi frame chậm, `settle` đẩy ra khỏi vật cản, tầm với để tương tác. Số liệu `content/shared/character.json`.
+2. Tương tác: gần vật → gợi ý phím (`[E] Vào Sobi Farm`), bấm E dùng vật gần nhất. Bấm chuột vào vật = nhân vật đi tới rồi dùng.
+3. `core/settings` + màn **Phím điều khiển** trong Cài đặt: WASD/mũi tên, E, I, C, Esc; 2 phím mỗi hành động, kiểm tra trùng và phím hệ thống, bấm ô rồi nhấn phím; lưu `settings.json` riêng (desktop: ghi tạm rồi đổi tên; web: localStorage); file hỏng → mặc định; lỗi ghi hiện ra.
+4. Sảnh Sobi (`src/areas/plaza`, `content/plaza/layout.json`): 5 cổng (Chuồng heo, Khu vườn, Biển, Cây cao, Cổng dịch chuyển). Chuồng heo mở; 4 cổng còn lại khóa, đứng gần hiện "Sắp ra mắt" + điều kiện mở (Farm Lv3…), ổ khóa trên cổng, bấm E phát tiếng lỗi. Area chưa làm khai báo bằng `planned: true`.
+5. Chuyển cảnh Sảnh ↔ Farm (`app/areaFlow.ts`): gọi `onExit/onEnter` của Area; Farm ngủ/thức theo scene, số liệu vẫn chạy cùng công thức. Farm có biển "Ra Sảnh".
+6. Farm: mọi thao tác qua nhân vật (máng, giếng, cửa hàng, kho, bảng đơn, sưu tập, heo, hộp quà); thao tác hàng loạt vẫn bằng chuột qua UI. Phím I/C/Esc mở Kho/Sưu tập/Cài đặt.
+7. Mở game luôn ở Sảnh; save v9 giữ `player` (vị trí, hướng), migration v8→v9. Thoát trong Area → mở lại trước cửa Area đó.
+8. Art placeholder đã đăng ký manifest (nhân vật 12 khung, 4 cổng, biển chỉ đường, ổ khóa); danh sách ở `docs/ASSET_TODO.md`.
+9. Admin: Bố cục có chọn **Nông trại / Sảnh Sobi**; Sảnh sửa được vật, cổng (id Area, chặn đường), vùng đi, điểm xuất hiện, tầm với; luật: mỗi Area đúng 1 cổng đang hiện; Farm cần đúng 1 lối ra.
+10. Test: ~25 test mới (phím, settings, nhân vật, cổng/điều kiện, vị trí xuất hiện, save v9, flow, **đi lại giữa các nơi không đổi số liệu**, layout đi được tới mọi cổng/vật), e2e Sảnh→Farm→Sảnh + đổi phím + nhớ vị trí; e2e cũ sửa theo luồng mới.
+🧪 Đã kiểm tra: `npm run check` xanh; `npm run test:e2e`; chạy bản build bằng Playwright-Electron (đi, vào Farm, gợi ý phím, chụp màn hình). Chưa kiểm: chơi tay lâu dài, `dist:win` (GĐ4).
+⚠️ Quyết định tự đưa ra (decision 010): Sảnh không là AreaModule; một canvas nhiều scene; phím theo `KeyboardEvent.code`; cổng Area `planned` không bao giờ mở dù đủ điều kiện; HUD Sảnh = HUD Farm ẩn máng/đàn heo/cảnh báo; tutorial chỉ trong Farm; mở game ở Sảnh dù lần trước thoát trong Farm.
+⚠️ Còn mở: art thật (ASSET_TODO); chuyển cảnh chưa có hiệu ứng mờ dần; `unlockedAreas` chưa tự mở theo cấp (GĐ5); Bảng đơn hàng/Chợ/NPC ở Sảnh thuộc GĐ6.
+👉 Bạn cần: chơi thử đi lại ở Sảnh và Farm, đổi phím trong Cài đặt, xem Admin → Bố cục → Sảnh Sobi.
 
 ### 2026-10-09 — GĐ2 hoàn thành việc 5–11 (chờ duyệt để merge `main` + tag `phase-02`)
 ✅ Đã làm:

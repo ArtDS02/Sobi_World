@@ -123,11 +123,14 @@ export interface PlacementRow {
   role?: string;
   action?: string;
   visible?: boolean;
+  portal?: string;
 }
 
 export interface LayoutRules {
   assetIds: ReadonlySet<string>; // non-pig manifest rows
   troughId: string;
+  /** The plaza's layout (GĐ3): the doors it must hold, one for each of these portal ids. */
+  plaza?: { portals: readonly string[] };
 }
 
 export function layoutIssues(rows: readonly PlacementRow[], r: LayoutRules): Issue[] {
@@ -145,6 +148,7 @@ export function layoutIssues(rows: readonly PlacementRow[], r: LayoutRules): Iss
     if (p.rotation !== undefined && !(Math.abs(p.rotation) <= 360)) push('error', 'Góc xoay phải trong ±360°');
     if (p.visible === false && p.action) push('warn', 'Đang ẩn nhưng có hành động — người chơi không bấm được');
   });
+  if (r.plaza) return sortIssues([...issues, ...plazaIssues(rows, r.plaza.portals)]);
   const troughs = rows.filter((p) => p.role === 'trough' || p.id === r.troughId);
   if (troughs.length > 1) issues.push({ level: 'error', speciesId: null, text: 'Chỉ được 1 máng ăn trong layout' });
   if (troughs.filter((p) => p.visible !== false).length === 0)
@@ -154,7 +158,23 @@ export function layoutIssues(rows: readonly PlacementRow[], r: LayoutRules): Iss
   const actions = new Map<string, number>();
   for (const p of rows) if (p.action && p.visible !== false) actions.set(p.action, (actions.get(p.action) ?? 0) + 1);
   for (const [a, n] of actions) if (n > 1) issues.push({ level: 'warn', speciesId: null, text: `${n} vật cùng mở "${a}"` });
+  const exits = rows.filter((p) => p.action === 'plaza' && p.visible !== false).length;
+  if (exits !== 1) issues.push({ level: 'error', speciesId: null, text: `Cần đúng 1 lối ra Sảnh (action "plaza") đang hiện, đang có ${exits} — nếu không người chơi bị kẹt trong nông trại` });
   return sortIssues(issues);
+}
+
+/** The plaza has one visible door for every Area (spec §3.1) and no door the game does not know. */
+function plazaIssues(rows: readonly PlacementRow[], portals: readonly string[]): Issue[] {
+  const issues: Issue[] = [];
+  const doors = rows.filter((p) => p.portal !== undefined);
+  for (const id of portals) {
+    const n = doors.filter((p) => p.portal === id && p.visible !== false).length;
+    if (n !== 1) issues.push({ level: 'error', speciesId: null, text: `Cổng "${id}" phải có đúng 1 vật đang hiện, đang có ${n}` });
+  }
+  for (const p of doors) {
+    if (!portals.includes(p.portal!)) issues.push({ level: 'error', speciesId: `${p.id}`, text: `Cổng "${p.portal}" không thuộc Area nào` });
+  }
+  return issues;
 }
 
 function sortIssues(issues: Issue[]): Issue[] {

@@ -5,6 +5,7 @@ import { _electron as electron, expect, test, type ElectronApplication } from '@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { enterFarm } from './world';
 
 const root = process.cwd();
 
@@ -75,7 +76,7 @@ async function withTemp(run: (dir: string) => Promise<void>) {
   }
 }
 
-test('v4 save with outfits: refunded, robot body becomes a species, written back as the world save v8', async () => {
+test('v4 save with outfits: refunded, robot body becomes a species, written back as the world save v9', async () => {
   await withTemp(async (dir) => {
     const v4 = base(4, 4);
     seed(dir, {
@@ -99,7 +100,7 @@ test('v4 save with outfits: refunded, robot body becomes a species, written back
     await page.keyboard.press('Escape');
     await app.close();
     const s = readSave(dir);
-    expect(s.schemaVersion).toBe(8);
+    expect(s.schemaVersion).toBe(9);
     expect(s.areas.sobi_farm.decor).toEqual([]);
     expect(s.areas.sobi_farm.pigs.map((p: { breed: string }) => p.breed)).toEqual(['PIG_ROBOT', 'PIG_EARTH_PINK']);
     expect(s.wallet.coins).toBe(9000);
@@ -133,8 +134,8 @@ test('new species render on the farm, fill the collection and survive a restart'
     page.on('console', (m) => {
       if (m.type() === 'error') errors.push(m.text());
     });
-    await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
-    await page.waitForTimeout(2500); // preload + scene fade-in
+    await enterFarm(page); // the game opens in the plaza
+    await page.waitForTimeout(2500); // the farm scene's first frames
     await page.screenshot({ path: 'test-results/a5-farm-species.png' });
     await page.locator('.topbar__nav').getByRole('button', { name: 'Bộ sưu tập' }).click();
     for (const name of ['Heo Trâu', 'Heo Nhím', 'Heo Rùa', 'Heo Kỳ Lân', 'Heo Phượng Hoàng'])

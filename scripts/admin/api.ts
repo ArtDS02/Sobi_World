@@ -14,7 +14,7 @@
 //   POST /breeding-pairs { rows }            → farm/breeding.json `pairs`
 //   POST /breeding-genetics { genetics, mutations, geneBonuses } → farm/breeding.json (MU-1)
 //   POST /season-fx      { tuning }          → farm/season-fx.json (MU-2)
-//   GET  /layout-default · POST /layout { placements } → farm/layout.json placements
+//   GET  /layout-default · POST /layout { placements, target?, plaza? } → farm/layout.json placements, or (target "plaza") plaza/layout.json: placements, walk area, spawn
 //   GET  /numbers · POST /numbers { file, value } → the numbers of time / health / valuation / quality / farm balance (only numbers change)
 //   GET  /build-info · POST /open-folder { which } → desktop build status + guide data (AM-1)
 import { readFileSync } from 'node:fs';
@@ -199,15 +199,35 @@ async function saveSeasonFx(tuning: SeasonFxTuning, load: (p: string) => Promise
   return invalid(written) ?? { status: 200, body: { ok: true } };
 }
 
-async function saveLayout(placements: PlacementRow[], load: (p: string) => Promise<Mod>): Promise<Result> {
-  const [schema, assetIds] = await Promise.all([load('/content/schemas/farm/layout.ts'), load('/src/core/config/assetIds.ts')]);
-  const parse = schema.placementSchema as { safeParse: (v: unknown) => { success: boolean; error?: { message: string } } };
+/** The `portalInPlaza` of every Area manifest (built or planned): the plaza must hold one door for each. */
+const portalIds = (): string[] =>
+  ['farm', 'garden', 'aquarium', 'cloud', 'adventure'].map((d) => readContent<{ portalInPlaza: string }>(`${d}/area.json`).portalInPlaza);
+
+interface PlazaMeta {
+  walkArea?: Record<string, number>;
+  spawn?: Record<string, number>;
+  portalReach?: number;
+}
+
+async function saveLayout(body: { placements: PlacementRow[]; target?: string; plaza?: PlazaMeta }, load: (p: string) => Promise<Mod>): Promise<Result> {
+  const { placements } = body;
+  const plaza = body.target === 'plaza';
+  const [schema, assetIds] = await Promise.all([
+    load(plaza ? '/content/schemas/plaza/layout.ts' : '/content/schemas/farm/layout.ts'),
+    load('/src/core/config/assetIds.ts'),
+  ]);
+  const parse = (plaza ? schema.plazaPlacementSchema : schema.placementSchema) as { safeParse: (v: unknown) => { success: boolean; error?: { message: string } } };
   for (const [i, p] of placements.entries()) {
     const r = parse.safeParse(p);
     if (!r.success) return { status: 400, body: { error: `Vị trí #${i + 1} (${p.id}) sai định dạng: ${r.error?.message}` } };
   }
-  const bad = refuse(layoutIssues(placements, { assetIds: artIds(), troughId: assetIds.TROUGH_PROP_ID as string }));
+  const bad = refuse(layoutIssues(placements, { assetIds: artIds(), troughId: assetIds.TROUGH_PROP_ID as string, ...(plaza ? { plaza: { portals: portalIds() } } : {}) }));
   if (bad) return bad;
+  if (plaza) {
+    const next = { ...readContent(CONTENT_FILE.plazaLayout), ...body.plaza, placements };
+    const done = await writeContent(load, CONTENT_FILE.plazaLayout, '/content/schemas/plaza/layout.ts', 'plazaLayoutSchema', next);
+    return invalid(done) ?? { status: 200, body: { ok: true, placements: placements.length } };
+  }
   const layout = { ...readContent(CONTENT_FILE.layout), placements };
   const written = await writeContent(load, CONTENT_FILE.layout, '/content/schemas/farm/layout.ts', 'layoutFileSchema', layout);
   return invalid(written) ?? { status: 200, body: { ok: true, placements: placements.length } };
@@ -277,7 +297,7 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
     case 'GET /layout-default':
       return { status: 200, body: { placements: JSON.parse(readFileSync(LAYOUT_DEFAULT, 'utf8')) } };
     case 'POST /layout':
-      return saveLayout((await body<{ placements: PlacementRow[] }>()).placements, load);
+      return saveLayout(await body<{ placements: PlacementRow[]; target?: string; plaza?: PlazaMeta }>(), load);
     case 'GET /numbers':
       return { status: 200, body: { files: readNumbers() } };
     case 'POST /numbers':

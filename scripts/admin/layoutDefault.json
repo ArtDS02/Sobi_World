@@ -132,5 +132,13 @@
     "x": 0.7625,
     "y": 0.9833,
     "width": 160
+  },
+  {
+    "id": "prop_plaza_signpost",
+    "layer": 4,
+    "x": 0.965,
+    "y": 0.86,
+    "width": 120,
+    "action": "plaza"
   }
 ]

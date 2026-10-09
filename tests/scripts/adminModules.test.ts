@@ -8,6 +8,8 @@ import { describe, expect, it } from 'vitest';
 import { pngSize } from '../../scripts/admin/artFiles';
 import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
 import { layoutFileSchema } from '../../content/schemas/farm/layout';
+import { plazaLayoutSchema } from '../../content/schemas/plaza/layout';
+import { PLAZA_LAYOUT } from '../../src/areas/plaza/logic/config/content';
 import { schemaProblems } from '../../scripts/admin/contentFiles';
 import { shopFileSchema } from '../../content/schemas/shared/shop';
 import { breedingFileSchema } from '../../content/schemas/farm/breeding';
@@ -106,6 +108,37 @@ describe('breeding pair rules', () => {
     expect(schemaProblems(breedingFileSchema, { ...FARM_CONTENT.breeding, pairs: [...PAIR_RULES, one] })).toEqual([]);
     const bad = { ...one, parents: ['PIG_NOPE', 'PIG_BLACK'] };
     expect(schemaProblems(breedingFileSchema, { ...FARM_CONTENT.breeding, pairs: [bad] })).not.toEqual([]);
+  });
+});
+
+describe('plaza layout (GĐ3)', () => {
+  const rows = [...PLAZA_LAYOUT.placements];
+  const portals = ['pig_barn', 'garden_gate', 'sea_dock', 'sky_tree', 'portal_gate'];
+  const errorsOf = (list: typeof rows) => layoutIssues(list, { assetIds: artIds, troughId: TROUGH_PROP_ID, plaza: { portals } }).filter((i) => i.level === 'error').map((i) => i.text);
+
+  it('the shipped plaza is valid and holds one door per Area', () => {
+    expect(errorsOf(rows)).toEqual([]);
+  });
+  it('a missing, doubled or unknown door is an error', () => {
+    const gate = rows.findIndex((p) => p.portal === 'garden_gate');
+    expect(errorsOf(rows.filter((_, i) => i !== gate)).join()).toMatch(/garden_gate/);
+    expect(errorsOf([...rows, rows[gate]!]).join()).toMatch(/garden_gate/);
+    expect(errorsOf(rows.map((p, i) => (i === gate ? { ...p, portal: 'moon_door' } : p))).length).toBeGreaterThan(0);
+    expect(errorsOf(rows.map((p, i) => (i === gate ? { ...p, visible: false } : p))).join()).toMatch(/garden_gate/);
+  });
+  it('the layout schema accepts edits and refuses a bad door id or a farm action', () => {
+    const file = JSON.parse(readFileSync('content/plaza/layout.json', 'utf8')) as typeof PLAZA_LAYOUT;
+    expect(schemaProblems(plazaLayoutSchema, file)).toEqual([]);
+    expect(schemaProblems(plazaLayoutSchema, { ...file, placements: [{ ...file.placements[0], portal: 'Bad Id' }] })).not.toEqual([]);
+    expect(schemaProblems(plazaLayoutSchema, { ...file, spawn: { x: 2, y: 0.5 } })).not.toEqual([]);
+  });
+  it('the farm needs exactly one way out to the plaza', () => {
+    const list = [...FARM_LAYOUT.placements];
+    const out = list.findIndex((p) => p.action === 'plaza');
+    expect(out).toBeGreaterThan(-1);
+    const bad = (l: typeof list) => layoutIssues(l, { assetIds: artIds, troughId: TROUGH_PROP_ID }).filter((i) => i.level === 'error').map((i) => i.text);
+    expect(bad(list.filter((_, i) => i !== out)).join()).toMatch(/lối ra Sảnh/);
+    expect(bad([...list, list[out]!]).join()).toMatch(/lối ra Sảnh/);
   });
 });
 

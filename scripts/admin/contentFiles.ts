@@ -12,6 +12,7 @@ export const CONTENT_FILE = {
   breeding: 'farm/breeding.json',
   seasonFx: 'farm/season-fx.json',
   layout: 'farm/layout.json',
+  plazaLayout: 'plaza/layout.json',
   shop: 'shared/shop.json',
   dayNight: 'shared/daynight.json',
 } as const;
