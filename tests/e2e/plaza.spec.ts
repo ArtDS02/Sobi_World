@@ -1,5 +1,5 @@
 // The walking world (GĐ3), on the production build: the game opens in the plaza, the character walks to the
-// barn, goes in, walks to the way out and comes back; the key settings are saved in settings.json and
+// barn, goes in (a farm played with clicks), comes back by the HUD button; the key settings are saved in settings.json and
 // obeyed after a restart; the spot in the plaza is kept.
 import { _electron as electron, expect, test } from '@playwright/test';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
@@ -39,22 +39,21 @@ test('plaza → barn → farm → way out → plaza; the spot is kept', async ()
     await enterFarm(page);
     // In the farm the character stands at the entrance, away from every thing; the farm HUD is up.
     await expect(page.locator('.c-gauge')).toBeVisible();
-    // Walk to the way out (right edge) and use it.
-    const out = page.locator('.world-prompt', { hasText: 'Ra Sảnh' });
-    for (let i = 0; i < 8 && !(await out.count()); i++) await hold(page, 'KeyD', 250);
-    await expect(out).toBeVisible();
-    await page.keyboard.press('KeyE');
+    // The farm is played with clicks (spec §4): no character, no key hint; the way out is the HUD button.
+    await expect(page.locator('.world-prompt')).toHaveCount(0);
+    await hold(page, 'KeyD', 300); // walking keys do nothing in the farm
+    await page.locator('.topbar__home').click();
     await expect(page.locator('.app.is-plaza')).toBeVisible();
     // Back in the plaza in front of the barn door: the hint of the door is there.
     await expect(page.locator('.world-prompt', { hasText: 'Vào Sobi Farm' })).toBeVisible();
 
     // Walk away and rest; the spot is written to the save.
-    await hold(page, 'KeyD', 800);
+    await hold(page, 'KeyA', 800);
     await page.waitForTimeout(2500);
     await app.close();
     const spot = readWorld(dir).player;
     expect(spot.area).toBe('plaza');
-    expect(spot.x).toBeGreaterThan(300); // walked right of the barn door (x = 160)
+    expect(spot.x).toBeLessThan(1300); // walked left of the barn door (x = 1376)
 
     // Next launch: the same spot.
     app = await launch(dir);
@@ -93,8 +92,8 @@ test('key settings: rebinding the interact key is saved in settings.json and obe
     await page.waitForTimeout(1500);
     const hint = page.locator('.world-prompt', { hasText: 'Vào Sobi Farm' });
     for (let i = 0; i < 6 && !(await hint.count()); i++) {
-      await hold(page, 'KeyA', i === 0 ? 2300 : 250);
-      await hold(page, 'KeyW', i === 0 ? 350 : 150);
+      await hold(page, 'KeyD', i === 0 ? 1900 : 250);
+      await hold(page, 'KeyW', i === 0 ? 100 : 150);
     }
     await expect(hint.locator('kbd')).toHaveText('F'); // the hint shows the new key
     await page.keyboard.press('KeyE'); // the old key does nothing now

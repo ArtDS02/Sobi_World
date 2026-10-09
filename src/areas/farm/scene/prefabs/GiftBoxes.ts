@@ -25,11 +25,6 @@ export class GiftBoxes {
     return [...this.boxes.values()].map((b) => ({ x: b.x, y: b.y }));
   }
 
-  /** The boxes lying on the farm now (not the ones playing their open animation). */
-  entries(): [string, Phaser.GameObjects.Image][] {
-    return [...this.boxes];
-  }
-
   get(id: string): Phaser.GameObjects.Image | undefined {
     return this.boxes.get(id) ?? this.leaving.get(id);
   }

@@ -35,6 +35,8 @@ export function renderTopBar(
   now: number,
   on: {
     settings: () => void;
+    /** Back to the plaza; absent in DOM tests. */
+    home?: () => void;
     trough: () => void;
     history: () => void;
     nav: (panel: PanelId) => void;
@@ -129,6 +131,14 @@ export function renderTopBar(
           )
         : null,
     ),
+    on.home
+      ? el('button', {
+          class: 'topbar__home',
+          text: vi.farm.plaza,
+          attrs: { type: 'button', 'aria-label': vi.farm.plaza },
+          on: { click: on.home },
+        })
+      : null,
     el('button', {
       class: 'topbar__settings',
       text: '⚙',

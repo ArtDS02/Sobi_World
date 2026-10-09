@@ -22,6 +22,8 @@ export interface AppOptions {
   hasBackups?: boolean;
   /** Keyboard controls (spec §4): the bag, Codex and menu keys open their screens. Absent in DOM tests. */
   input?: ControlInput;
+  /** The HUD button back to the plaza (the farm is played with clicks; spec §4). */
+  leave?: () => void;
   /** Changing the keys, shown in the settings screen. */
   keySettings?: KeySettings;
   /** Mounts the Phaser farm into the stage (main.ts injects src/game; absent in DOM tests). */
@@ -29,7 +31,6 @@ export interface AppOptions {
 }
 
 /** World object actions (manifest layout.placements[].action). */
-/** (`plaza`, the way out, is handled by the scene and never reaches the panels.) */
 export type FarmPickAction = 'shop' | 'inventory' | 'orders' | 'collection' | 'trough' | 'cleanAll';
 /** A click on the canvas: a pig, a gift box (U06), a world object, or empty ground. */
 export type FarmPick =

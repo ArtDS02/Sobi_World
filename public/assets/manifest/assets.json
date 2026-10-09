@@ -1015,7 +1015,7 @@
     },
     {
       "id": "chr_player",
-      "status": "placeholder",
+      "status": "production",
       "states": {
         "down_idle": "props/chr_player_down_idle.png",
         "down_walk1": "props/chr_player_down_walk1.png",
@@ -1030,6 +1030,76 @@
         "right_walk1": "props/chr_player_right_walk1.png",
         "right_walk2": "props/chr_player_right_walk2.png"
       }
+    },
+    {
+      "id": "prop_fountain",
+      "status": "production",
+      "asset": "props/prop_fountain.png"
+    },
+    {
+      "id": "prop_bench_wood",
+      "status": "production",
+      "asset": "props/prop_bench_wood.png"
+    },
+    {
+      "id": "prop_bench_side",
+      "status": "production",
+      "asset": "props/prop_bench_side.png"
+    },
+    {
+      "id": "prop_lamp_post",
+      "status": "production",
+      "asset": "props/prop_lamp_post.png"
+    },
+    {
+      "id": "prop_lamp_post_b",
+      "status": "production",
+      "asset": "props/prop_lamp_post_b.png"
+    },
+    {
+      "id": "prop_boat",
+      "status": "production",
+      "asset": "props/prop_boat.png"
+    },
+    {
+      "id": "prop_tree_round",
+      "status": "production",
+      "asset": "props/prop_tree_round.png"
+    },
+    {
+      "id": "prop_tree_round_b",
+      "status": "production",
+      "asset": "props/prop_tree_round_b.png"
+    },
+    {
+      "id": "prop_tree_pine",
+      "status": "production",
+      "asset": "props/prop_tree_pine.png"
+    },
+    {
+      "id": "prop_tree_pine_b",
+      "status": "production",
+      "asset": "props/prop_tree_pine_b.png"
+    },
+    {
+      "id": "prop_crate_wood",
+      "status": "production",
+      "asset": "props/prop_crate_wood.png"
+    },
+    {
+      "id": "prop_hay_stack",
+      "status": "production",
+      "asset": "props/prop_hay_stack.png"
+    },
+    {
+      "id": "prop_signboard",
+      "status": "production",
+      "asset": "props/prop_signboard.png"
+    },
+    {
+      "id": "prop_signboard_arrow",
+      "status": "production",
+      "asset": "props/prop_signboard_arrow.png"
     }
   ],
   "buildings": [
@@ -1095,28 +1165,23 @@
     },
     {
       "id": "prop_garden_gate",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/prop_garden_gate.png"
     },
     {
       "id": "prop_sea_dock",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/prop_sea_dock.png"
     },
     {
       "id": "prop_sky_tree",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/prop_sky_tree.png"
     },
     {
       "id": "prop_portal_gate",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/prop_portal_gate.png"
-    },
-    {
-      "id": "prop_plaza_signpost",
-      "status": "placeholder",
-      "asset": "buildings/prop_plaza_signpost.png"
     }
   ],
   "environment": [

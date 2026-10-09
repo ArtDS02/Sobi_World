@@ -152,6 +152,7 @@ export async function start(root: HTMLElement) {
     ...opts,
     input,
     keySettings,
+    leave: () => void flow.go(PLAZA_ID),
     onPigTap: (pigId) => director?.pigTapped(pigId),
     dialogs: platform.dialogs,
     assets: assets.registry,
@@ -173,8 +174,6 @@ export async function start(root: HTMLElement) {
           assets: assets.registry,
           now: () => clock.now(),
           onPick,
-          host,
-          character: CHARACTER,
           // The game opens in the plaza (spec §3.1).
           firstScene: () => ({ key: PLAZA_SCENE_KEY, from: null }),
         },

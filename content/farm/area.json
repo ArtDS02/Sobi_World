@@ -1,6 +1,7 @@
 {
   "id": "sobi_farm",
   "name": { "vi": "Sobi Farm" },
+  "movement": "click",
   "portalInPlaza": "pig_barn",
   "unlock": {},
   "layout": "farm/layout.json",

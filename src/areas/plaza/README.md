@@ -4,6 +4,6 @@
 
 - `logic/portals.ts` — trạng thái từng cổng (mở / khóa / sắp ra mắt) và điều kiện mở, từ `AreaInfo` của registry.
 - `logic/arrival.ts` — nhân vật xuất hiện ở đâu (chỗ đã lưu, trước cửa Area vừa rời, hoặc điểm xuất hiện).
-- `logic/walkable.ts` — mặt đất đi được + vật cản.
+- `logic/walkable.ts` — mặt đất đi được + vật cản (chân các vật `solid`, biển).
 - `scene/PlazaScene.ts` — cảnh Phaser; chỉ vẽ và đi. Phím, gợi ý phím, đổi chỗ đi qua `WorldHost` (`src/ui/world/host.ts`).
 - Nội dung: `content/plaza/layout.json` (sửa bằng Admin → Bố cục → Sảnh Sobi).

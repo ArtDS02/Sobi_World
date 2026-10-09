@@ -132,14 +132,6 @@ describe('plaza layout (GĐ3)', () => {
     expect(schemaProblems(plazaLayoutSchema, { ...file, placements: [{ ...file.placements[0], portal: 'Bad Id' }] })).not.toEqual([]);
     expect(schemaProblems(plazaLayoutSchema, { ...file, spawn: { x: 2, y: 0.5 } })).not.toEqual([]);
   });
-  it('the farm needs exactly one way out to the plaza', () => {
-    const list = [...FARM_LAYOUT.placements];
-    const out = list.findIndex((p) => p.action === 'plaza');
-    expect(out).toBeGreaterThan(-1);
-    const bad = (l: typeof list) => layoutIssues(l, { assetIds: artIds, troughId: TROUGH_PROP_ID }).filter((i) => i.level === 'error').map((i) => i.text);
-    expect(bad(list.filter((_, i) => i !== out)).join()).toMatch(/lối ra Sảnh/);
-    expect(bad([...list, list[out]!]).join()).toMatch(/lối ra Sảnh/);
-  });
 });
 
 describe('layout', () => {

@@ -158,8 +158,6 @@ export function layoutIssues(rows: readonly PlacementRow[], r: LayoutRules): Iss
   const actions = new Map<string, number>();
   for (const p of rows) if (p.action && p.visible !== false) actions.set(p.action, (actions.get(p.action) ?? 0) + 1);
   for (const [a, n] of actions) if (n > 1) issues.push({ level: 'warn', speciesId: null, text: `${n} vật cùng mở "${a}"` });
-  const exits = rows.filter((p) => p.action === 'plaza' && p.visible !== false).length;
-  if (exits !== 1) issues.push({ level: 'error', speciesId: null, text: `Cần đúng 1 lối ra Sảnh (action "plaza") đang hiện, đang có ${exits} — nếu không người chơi bị kẹt trong nông trại` });
   return sortIssues(issues);
 }
 

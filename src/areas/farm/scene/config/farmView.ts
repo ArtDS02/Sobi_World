@@ -31,8 +31,6 @@ export const FARM_VIEW = {
     stroke: 0xe8708a,
     strokeWidth: 2,
   },
-  /** The player's character (GĐ3): how near it must stand to use things, and click-to-walk. */
-  REACH: { pig: 140, gift: 120, objectMin: 150, objectPerWidth: 0.6, clickArriveShare: 0.5 },
   /**
    * Small name plate on top of each clickable world object (R05C-1, U05). Drawn just above its
    * object in depth, so pigs walking in front cover the plate instead of the plate covering them.

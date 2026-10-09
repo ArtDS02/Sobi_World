@@ -260,6 +260,7 @@ export function mountApp(
       topbar,
       renderTopBar(save, now(), {
         settings: () => go('settings'),
+        ...(opts.leave ? { home: opts.leave } : {}),
         trough: () => openTrough(),
         history: () => go('history'),
         nav: (panel) => go(panel),
@@ -283,9 +284,7 @@ export function mountApp(
     showAway: session.showAway,
     setPlace(place) {
       if (ui.place === place) return;
-      ui.place = place;
-      ui.selectedPigId = null;
-      if (ui.panel === 'pig' || ui.panel === 'well') ui.panel = null;
+      Object.assign(ui, { place, selectedPigId: null, panel: ui.panel === 'pig' || ui.panel === 'well' ? null : ui.panel });
       rerender();
     },
     isModalOpen: () => ui.panel !== null || dialogs.childElementCount > 0,
