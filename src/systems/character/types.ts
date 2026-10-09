@@ -1,7 +1,9 @@
 // Character types (ARCHITECTURE systems/character): the player's position is the point between the
 // feet, in design pixels of the Area they are in.
-export type Facing = 'down' | 'up' | 'left' | 'right';
-export const FACINGS: readonly Facing[] = ['down', 'up', 'left', 'right'];
+import { FACING_VALUES, type Facing } from '../../core/player/player';
+
+export type { Facing };
+export const FACINGS: readonly Facing[] = FACING_VALUES;
 
 export interface Vec {
   x: number;

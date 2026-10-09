@@ -84,7 +84,7 @@ describe('world save v8: migration', () => {
     expect(r.save.transactions).toHaveLength(realV7.transactions.length);
   });
 
-  it('a v1 save goes through every Sobi Farm step and lands in v8', () => {
+  it('a v1 save goes through every Sobi Farm step and lands in the current version', () => {
     const legacy = migrateFarmSave(v1Fixture);
     const r = migrate(v1Fixture, SAVE_CODEC);
     expect(legacy.ok && r.ok).toBe(true);
@@ -94,9 +94,9 @@ describe('world save v8: migration', () => {
     expect(r.save.wallet.coins).toBe(legacy.save.player.gold);
   });
 
-  it('a v8 save round-trips through JSON unchanged', () => {
+  it('a current-version save round-trips through JSON unchanged', () => {
     const w = world(richFarm());
-    expect(parseSave(JSON.stringify(w), SAVE_CODEC)).toEqual({ ok: true, save: w, fromVersion: 8 });
+    expect(parseSave(JSON.stringify(w), SAVE_CODEC)).toEqual({ ok: true, save: w, fromVersion: WORLD_SAVE_VERSION });
   });
 
   it('refuses newer, broken and invalid saves', () => {
@@ -182,7 +182,7 @@ describe('store: backup before the first write of a migrated save (ARCHITECTURE 
     await store.init();
     await store.dispatch((s, c) => buyPig(s, { breed: 'PIG_EARTH_PINK', gender: 'MALE' }, c));
     await store.persistNow();
-    expect(p.log).toEqual(['backup:v7', 'write:v8', 'write:v8']);
+    expect(p.log).toEqual(['backup:v7', 'write:v9', 'write:v9']);
   });
 
   it('a failed copy fails the write: the migrated save is never written without it', async () => {
@@ -195,9 +195,9 @@ describe('store: backup before the first write of a migrated save (ARCHITECTURE 
     expect(store.getSnapshot().saveError).toBe(true);
   });
 
-  it('a save already in v8 is written without a migration copy; lastSavedAt is stamped', async () => {
+  it('a save already in the current version is written without a migration copy; lastSavedAt is stamped', async () => {
     const w = world(newGame(ctx()));
-    const p = platform({ kind: 'ok', save: w, source: 'primary', fromVersion: 8 });
+    const p = platform({ kind: 'ok', save: w, source: 'primary', fromVersion: WORLD_SAVE_VERSION });
     const writes: WorldSave[] = [];
     p.storage.save = async (s) => void writes.push(s);
     const store = createFarmGameStore({ ...p, ...quiet, clock: fakeClock(T0 + 5000), rng: mulberry32(2) });

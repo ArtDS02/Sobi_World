@@ -3,6 +3,7 @@
 import type { z } from 'zod';
 import type { ErrorCode } from '../config/errors';
 import type { ActionContext } from '../types';
+import { newPlayer } from '../player/player';
 import { WORLD_SAVE_VERSION, worldSaveSchema, type WorldSave } from './world';
 
 export type Raw = Record<string, unknown>;
@@ -24,7 +25,7 @@ export interface AreaSaveSpec {
 }
 
 export interface SaveCodec {
-  /** Upgrades a save written before the world format (Sobi Farm v1–v7) to a v8 document. */
+  /** Upgrades a save written before the world format (Sobi Farm v1–v7) to a world document (v8 or later; later steps follow). */
   legacy(input: Raw): LegacyResult;
   areas: Record<string, AreaSaveSpec>;
   /** A fresh world (first launch, "play again"). */
@@ -32,7 +33,10 @@ export interface SaveCodec {
 }
 
 /** WORLD_MIGRATIONS[n] upgrades a world document from version n to n + 1 (n >= 8). */
-const WORLD_MIGRATIONS: Record<number, (raw: Raw) => Raw> = {};
+const WORLD_MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
+  // v9: the character. Everyone starts in the plaza at its entrance (GĐ3).
+  8: (raw) => ({ ...raw, schemaVersion: 9, player: raw.player ?? newPlayer() }),
+};
 
 const isObject = (v: unknown): v is Raw => typeof v === 'object' && v !== null && !Array.isArray(v);
 

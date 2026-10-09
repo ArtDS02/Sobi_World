@@ -56,7 +56,7 @@ describe('storage (§9.1, §9.2, §14.6)', () => {
   it('round-trip equality; mirror holds the same JSON string', async () => {
     const s = storage();
     await s.save(A);
-    expect(await storage().load()).toEqual({ kind: 'ok', save: A, source: 'primary', fromVersion: 8 });
+    expect(await storage().load()).toEqual({ kind: 'ok', save: A, source: 'primary', fromVersion: WORLD_SAVE_VERSION });
     expect(local.getItem(SAVE.MIRROR_KEY)).toBe(JSON.stringify(A));
     expect(await readPrimary()).toBe(JSON.stringify(A));
   });
@@ -74,19 +74,19 @@ describe('storage (§9.1, §9.2, §14.6)', () => {
     local.setItem(SAVE.MIRROR_KEY, JSON.stringify(B));
     local.setItem(SAVE.BACKUP_KEY, JSON.stringify(A));
     await writePrimary('{broken');
-    expect(await storage().load()).toEqual({ kind: 'ok', save: B, source: 'mirror', fromVersion: 8 });
+    expect(await storage().load()).toEqual({ kind: 'ok', save: B, source: 'mirror', fromVersion: WORLD_SAVE_VERSION });
   });
 
   it('IndexedDB wiped (no primary) → mirror', async () => {
     local.setItem(SAVE.MIRROR_KEY, JSON.stringify(B));
-    expect(await storage().load()).toEqual({ kind: 'ok', save: B, source: 'mirror', fromVersion: 8 });
+    expect(await storage().load()).toEqual({ kind: 'ok', save: B, source: 'mirror', fromVersion: WORLD_SAVE_VERSION });
   });
 
   it('corrupt primary and mirror → backup', async () => {
     await writePrimary(JSON.stringify({ ...A, wallet: { ...A.wallet, coins: -5 } }));
     local.setItem(SAVE.MIRROR_KEY, 'nope');
     local.setItem(SAVE.BACKUP_KEY, JSON.stringify(A));
-    expect(await storage().load()).toEqual({ kind: 'ok', save: A, source: 'backup', fromVersion: 8 });
+    expect(await storage().load()).toEqual({ kind: 'ok', save: A, source: 'backup', fromVersion: WORLD_SAVE_VERSION });
   });
 
   it('everything corrupt → recovery, nothing deleted or rewritten', async () => {
