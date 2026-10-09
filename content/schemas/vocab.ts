@@ -55,3 +55,7 @@ export type NeedLevel = (typeof NEED_LEVELS)[number];
 /** Care quality tiers (spec §6 Quality), worst first. Separate from rarity. */
 export const QUALITY_VALUES = ['NORMAL', 'GOOD', 'GREAT', 'EXCELLENT', 'PERFECT'] as const;
 export type Quality = (typeof QUALITY_VALUES)[number];
+
+/** The four periods of the day (GAME_BALANCE §1): the rhythm of the world's life (sleep, markets). */
+export const DAY_PERIOD_VALUES = ['morning', 'day', 'evening', 'night'] as const;
+export type DayPeriod = (typeof DAY_PERIOD_VALUES)[number];

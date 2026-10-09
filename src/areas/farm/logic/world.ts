@@ -25,3 +25,13 @@ export function advanceFarmWorld(world: WorldSave, now: number, rng: Rng, dayOff
 
 /** The trough is resolved on every farm tick: its stamp is when the farm last ran. */
 export const farmSimulatedAt = (world: WorldSave): number => farmArea(world).trough.lastResolvedAt;
+
+/** Moves the farm's clocks to `to` without simulating (the part of an absence past the offline cap). */
+export function rebaseFarm(world: WorldSave, to: number): WorldSave {
+  const farm = farmOf(world);
+  return withFarm(world, {
+    ...farm,
+    pigs: farm.pigs.map((p) => (p.lastTickedAt >= to ? p : { ...p, lastTickedAt: to })),
+    trough: { ...farm.trough, lastResolvedAt: Math.max(farm.trough.lastResolvedAt, to) },
+  });
+}

@@ -1,5 +1,6 @@
 // Area registry (ARCHITECTURE §5): a fake Area built from src/areas/_template registers next to the
 // farm and gets a save slice, migrations, simulation, events, levels and lock state with no world code.
+import { TIME } from '../../src/core/config/time';
 import { describe, expect, it } from 'vitest';
 import { createTemplateArea } from '../../src/areas/_template';
 import { farmArea } from '../../src/areas/farm';
@@ -26,12 +27,12 @@ const manifest = (patch: Partial<AreaManifest> = {}): AreaManifest => ({
   ...patch,
 });
 const registry = (patch?: Partial<AreaManifest>) =>
-  createAreaRegistry([farmArea, createTemplateArea(manifest(patch))], WORLD_DEVELOPMENT);
+  createAreaRegistry([farmArea, createTemplateArea(manifest(patch))], WORLD_DEVELOPMENT, TIME);
 
 describe('area registry', () => {
   it('refuses duplicate ids and an empty build', () => {
-    expect(() => createAreaRegistry([farmArea, farmArea], WORLD_DEVELOPMENT)).toThrow(/twice/);
-    expect(() => createAreaRegistry([], WORLD_DEVELOPMENT)).toThrow(/no area/);
+    expect(() => createAreaRegistry([farmArea, farmArea], WORLD_DEVELOPMENT, TIME)).toThrow(/twice/);
+    expect(() => createAreaRegistry([], WORLD_DEVELOPMENT, TIME)).toThrow(/no area/);
   });
 
   it('a new world starts every open Area; the first one is current', () => {
@@ -61,9 +62,9 @@ describe('area registry', () => {
     expect((r.state.areas.test_garden as { harvests: number }).harvests).toBe(2);
     expect(farmOf(r.state).trough.lastResolvedAt).toBe(T0 + 5 * H);
     expect(reg.simulatedAt(r.state)).toBe(T0 + 5 * H);
-    expect(reg.toWorldEvents(r.events)).toContainEqual({
-      type: 'crop.harvested', area: 'test_garden', plotId: 'template', cropId: 'template', quantity: 2,
-    });
+    // The catch-up runs in slices: the harvests arrive as several events that add up to the total.
+    const harvested = reg.toWorldEvents(r.events).filter((e) => e.type === 'crop.harvested');
+    expect(harvested.reduce((n, e) => n + (e.type === 'crop.harvested' ? e.quantity : 0), 0)).toBe(2);
     expect(reg.summary(r.events)).toContainEqual({ key: 'summary.template.harvests', params: { count: 2 } });
   });
 
@@ -89,7 +90,7 @@ describe('area registry', () => {
   });
 
   it('an Area this build does not know keeps its data in the save', () => {
-    const farmOnly = createAreaRegistry([farmArea], WORLD_DEVELOPMENT);
+    const farmOnly = createAreaRegistry([farmArea], WORLD_DEVELOPMENT, TIME);
     const w = registry().newWorld(ctx(), defaultSettings());
     const r = parseSave(JSON.stringify(w), farmOnly.codec(legacyToWorld, defaultSettings));
     expect(r.ok && r.save.areas.test_garden).toEqual(w.areas.test_garden);

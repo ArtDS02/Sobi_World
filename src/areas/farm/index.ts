@@ -8,7 +8,7 @@ import { levelFromXp } from './logic/config/levels';
 import type { GameEvent } from './logic/events';
 import { farmSaveSpec, initFarm } from './logic/save/farmSave';
 import { FARM_AREA_ID } from './logic/save/lens';
-import { advanceFarmWorld, farmSimulatedAt } from './logic/world';
+import { advanceFarmWorld, farmSimulatedAt, rebaseFarm } from './logic/world';
 import { farmEventsToWorld } from './logic/worldEvents';
 
 const COUNTED: readonly [GameEvent['type'], string][] = [
@@ -34,6 +34,7 @@ export const farmArea: AreaModule = {
   // One formula for every mode (ARCHITECTURE §6); Sobi Farm's rules have no death to hold back.
   simulate: (world, now, rng, dayOffsetMs) => advanceFarmWorld(world, now, rng, dayOffsetMs),
   simulatedAt: farmSimulatedAt,
+  rebase: rebaseFarm,
   level: (world) => levelFromXp(areaXp(world, FARM_AREA_ID)),
   toWorldEvents: farmEventsToWorld,
   getSummary: farmSummary,

@@ -3,5 +3,6 @@
 import { farmArea } from '../areas/farm';
 import { createAreaRegistry } from '../core/area-registry/registry';
 import { WORLD_DEVELOPMENT } from '../core/config/progression';
+import { TIME } from '../core/config/time';
 
-export const AREAS = createAreaRegistry([farmArea], WORLD_DEVELOPMENT);
+export const AREAS = createAreaRegistry([farmArea], WORLD_DEVELOPMENT, TIME);

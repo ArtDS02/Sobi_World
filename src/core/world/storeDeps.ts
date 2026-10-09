@@ -21,7 +21,7 @@ export type WorldAdvance = (
   dayOffsetMs: number,
   /** `offline` for the catch-up after load / a hidden window (DECISIONS 004), else `online`. */
   mode: 'online' | 'offline',
-) => { state: WorldSave; events: EventBase[] };
+) => { state: WorldSave; events: EventBase[]; rewound?: boolean; capped?: boolean };
 
 export interface StoreDeps {
   advanceWorld: WorldAdvance;
