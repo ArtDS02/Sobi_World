@@ -31,8 +31,8 @@ export interface AreaModule {
   level(world: WorldSave): number;
   /** Its events as standard world events (ARCHITECTURE §7); [] for events that are not its own. */
   toWorldEvents(events: readonly EventBase[]): WorldEvent[];
-  /** Lines for the "while you were away" screen (spec §5): string-table keys with parameters. */
-  getSummary?(events: readonly EventBase[]): SummaryLine[];
+  /** Lines for the "while you were away" screen (spec §5): what happened (the events) and what needs the player now (the world), as string-table keys with parameters. */
+  getSummary?(events: readonly EventBase[], world: WorldSave, now: number): SummaryLine[];
   /** Presentation hooks (scene, AI, animation) for the Area on screen; GĐ3 drives them. */
   onEnter?(): void;
   onExit?(): void;
@@ -42,6 +42,10 @@ export interface AreaModule {
 export interface SummaryLine {
   key: string;
   params?: Readonly<Record<string, string | number>>;
+  /** `alert` = needs the player now and is urgent, `warn` = needs care soon. */
+  tone?: 'warn' | 'alert';
+  /** Where a button on the line leads; the Area's own UI interprets it. */
+  goto?: { target: string; id?: string };
 }
 
 export interface AreaInfo {
@@ -89,7 +93,8 @@ export function createAreaRegistry(modules: readonly AreaModule[], rules: WorldD
 
     toWorldEvents: (events: readonly EventBase[]): WorldEvent[] => modules.flatMap((m) => m.toWorldEvents(events)),
 
-    summary: (events: readonly EventBase[]): SummaryLine[] => modules.flatMap((m) => m.getSummary?.(events) ?? []),
+    summary: (events: readonly EventBase[], world: WorldSave, now: number): SummaryLine[] =>
+      modules.flatMap((m) => (m.manifest.id in world.areas ? (m.getSummary?.(events, world, now) ?? []) : [])),
 
     levels,
 

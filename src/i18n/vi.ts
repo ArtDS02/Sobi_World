@@ -35,8 +35,12 @@ export const vi = {
       births: "{count} heo con chào đời",
       grown: "{count} heo đã trưởng thành",
       sick: "{count} heo bị bệnh",
-      critical: "{count} heo đang nguy kịch",
+      critical: "{count} heo đã nguy kịch",
       died: "{count} heo đã mất",
+      ordersExpired: "{count} đơn hàng đã hết hạn",
+      needCritical: "{count} heo đang nguy kịch — chữa ngay!",
+      needTreat: "{count} heo đang bệnh, cần thuốc",
+      needRake: "{count} đống phân chưa dọn",
       orders: "{count} đơn hàng mới",
       gifts: "{count} hộp quà mới",
     },
@@ -229,17 +233,15 @@ export const vi = {
   away: {
     title: "Trong lúc bạn vắng mặt",
     duration: "Bạn đã đi vắng {time}.",
-    grewUp: "{count} heo đã trưởng thành",
-    gotSick: "{count} heo bị bệnh",
-    born: "{count} heo con chào đời",
     troughRanOut: "Máng ăn hết lúc {time}, {count} heo ngừng lớn trong {duration}",
     troughOk: "Máng ăn vẫn còn thức ăn. Heo lớn bình thường.",
     nothing: "Mọi thứ vẫn ổn.",
-    // Not in Appendix B (§9.5 lists expired and new orders).
-    ordersNew: "{count} đơn hàng mới",
-    ordersExpired: "{count} đơn hàng đã hết hạn",
-    gifts: "{count} hộp quà đang chờ bạn mở",
     ok: "Vào nông trại",
+    // Buttons that lead to the place that needs care.
+    goPig: "Xem heo",
+    goWell: "Dọn phân",
+    goTrough: "Đổ máng",
+    goOrders: "Xem đơn",
   },
 
   shop: {

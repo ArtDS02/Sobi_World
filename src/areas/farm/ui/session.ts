@@ -7,6 +7,7 @@ import type { FarmGame } from '../logic/types';
 import { vi } from '../../../i18n/vi';
 import type { BoundAction, FarmStore, FarmSnapshot } from '../store';
 import { awayVm } from './awayVm';
+import type { FarmGoto } from '../logic/summary';
 import { openAwayDialog } from './components/awayDialog';
 import { openConfirmDialog } from '../../../ui/components/dialog';
 import { renderTutorialCard } from './components/tutorialCard';
@@ -30,6 +31,8 @@ export interface SessionDeps {
   store: Pick<FarmStore, 'getSnapshot' | 'listBackups' | 'startNewGame'>;
   now: () => number;
   act: (run: BoundAction) => void;
+  /** The place a line of the away screen leads to (a pig's panel, the trough, the well, the orders). */
+  goto: (goto: FarmGoto) => void;
   dialogHost: HTMLElement;
   rerender: () => void;
   settings: SettingsHandlers;
@@ -115,7 +118,7 @@ export function createSession(d: SessionDeps) {
     /** §9.5: one summary modal for a long catch-up. */
     showAway(events: GameEvent[], awayMs: number) {
       const save = d.store.getSnapshot().save;
-      if (save) openAwayDialog(d.dialogHost, awayVm(events, save, d.now(), awayMs));
+      if (save) openAwayDialog(d.dialogHost, awayVm(events, save, d.now(), awayMs), d.goto);
     },
 
     recovery(): HTMLElement {

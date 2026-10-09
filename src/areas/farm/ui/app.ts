@@ -24,6 +24,7 @@ import {
 } from './dialogs';
 import { openBreedDialog } from './breedDialog';
 import { sellItem } from '../logic/actions/sellItem';
+import type { FarmGoto } from '../logic/summary';
 import type { ItemId } from '../../../core/config/ids';
 import type { AppOptions, FarmPick, MountedApp } from './appTypes';
 import { setIconSource } from '../../../ui/components/icon';
@@ -157,6 +158,13 @@ export function mountApp(
     store,
     now,
     act: handlers.act,
+    goto: (to: FarmGoto) => {
+      if (to.target === 'pig') {
+        ui.selectedPigId = to.id;
+        go('pig');
+      } else if (to.target === 'trough') openTrough();
+      else go(to.target === 'well' ? 'well' : 'orders');
+    },
     dialogHost: dialogs,
     rerender,
     settings,

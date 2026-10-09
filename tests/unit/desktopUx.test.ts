@@ -46,20 +46,38 @@ describe('away summary (spec §9.5)', () => {
         .replace('{count}', '2')
         .replace('{duration}', '4 giờ'),
     );
-    expect(vm.lines).toEqual(['1 heo đã trưởng thành', '1 đơn hàng mới']);
+    expect(vm.lines.map((l) => l.text)).toEqual(['1 heo đã trưởng thành', '1 đơn hàng mới']);
+    expect(vm.troughAction).toEqual({ label: 'Đổ máng', goto: { target: 'trough' } });
   });
 
   it('a full trough says so; a quiet absence says "Mọi thứ vẫn ổn."', () => {
     const vm = awayVm([], farm([makePig({ hunger: 80 })]), now, 2 * HOUR);
     expect(vm.troughRanOut).toBe(false);
     expect(vm.trough).toBe(vi.away.troughOk);
-    expect(vm.lines).toEqual([vi.away.nothing]);
+    expect(vm.lines).toEqual([{ text: vi.away.nothing, tone: 'info' }]);
+    expect(vm.troughAction).toBeUndefined();
   });
 
   it('pigs already starving at departure count, from the departure time', () => {
     const vm = awayVm([], farm([starving('a', 0)]), now, 3 * HOUR);
     expect(vm.troughRanOut).toBe(true);
     expect(vm.trough).toContain('1 heo ngừng lớn trong 3 giờ');
+  });
+});
+
+describe('away summary: what needs care now, with a way there (GĐ2)', () => {
+  const now = T0 + 30 * HOUR;
+  it('a critical pig, an ill one and manure each get a line with a button to the place; the worst first', () => {
+    const critical = makePig({ id: 'c', slotIndex: 0, isSick: true, lastSickAt: now - 50 * HOUR, growthProgress: 100 });
+    const ill = makePig({ id: 'i', slotIndex: 1, isSick: true, lastSickAt: now - 2 * HOUR, growthProgress: 100 });
+    const after = { ...farm([ill, critical]), manure: 4 };
+    const vm = awayVm([{ type: 'PIG_BECAME_CRITICAL', pigId: 'c' }], after, now, 30 * HOUR);
+    expect(vm.lines.map((l) => [l.text, l.tone, l.action?.label, l.action?.goto])).toEqual([
+      ['1 heo đang nguy kịch — chữa ngay!', 'alert', 'Xem heo', { target: 'pig', id: 'c' }],
+      ['1 heo đang bệnh, cần thuốc', 'warn', 'Xem heo', { target: 'pig', id: 'i' }],
+      ['4 đống phân chưa dọn', 'info', 'Dọn phân', { target: 'well' }],
+      ['1 heo đã nguy kịch', 'info', undefined, undefined],
+    ]);
   });
 });
 
