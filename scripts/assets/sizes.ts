@@ -48,9 +48,11 @@ export const CATALOGUE_SIZES: Record<string, Size> = {
   prop_mushroom: { width: 88, height: 100 },
 };
 
-for (const facing of ['down', 'up', 'left', 'right']) {
-  for (const frame of ['idle', 'walk1', 'walk2']) {
-    CATALOGUE_SIZES[`chr_player_${facing}_${frame}`] = { width: 96, height: 144 };
+for (const who of ['so', 'bi']) {
+  for (const facing of ['down', 'up', 'left', 'right']) {
+    for (const frame of ['idle', 'walk1', 'walk2']) {
+      CATALOGUE_SIZES[`chr_${who}_${facing}_${frame}`] = { width: 96, height: 144 };
+    }
   }
 }
 

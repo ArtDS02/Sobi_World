@@ -3,6 +3,7 @@ import type { AssetRegistry } from '../../../core/assets/registry';
 import type { GameEvent } from '../logic/events';
 import type { FileDialogs } from '../../../core/save/port';
 import type { ControlInput } from '../../../ui/world/controlInput';
+import type { CharacterChoice } from '../../../ui/components/characterPicker';
 import type { KeySettings } from '../../../ui/world/keySettings';
 
 export interface AppOptions {
@@ -26,6 +27,10 @@ export interface AppOptions {
   leave?: () => void;
   /** Changing the keys, shown in the settings screen. */
   keySettings?: KeySettings;
+  /** Which character to walk as, shown in the settings screen. */
+  characterChoice?: CharacterChoice;
+  /** Gems of the wallet (the farm's own state has none); null when unknown. */
+  gems?: () => number | null;
   /** Mounts the Phaser farm into the stage (main.ts injects src/game; absent in DOM tests). */
   farm?: (host: HTMLElement, onPick: (pick: FarmPick) => void) => FarmCanvas;
 }

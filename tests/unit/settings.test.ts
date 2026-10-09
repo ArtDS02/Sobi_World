@@ -90,8 +90,14 @@ describe('settings file', () => {
   it('round-trips a rebinding', () => {
     const r = rebind(DEFAULT_KEYS, 'inventory', 0, 'KeyB');
     if (!r.ok) throw new Error('rebind failed');
-    const text = serializeSettings({ version: 1, keys: r.keys });
+    const text = serializeSettings({ version: 1, keys: r.keys, character: 'so' });
     expect(parseSettings(text).keys.inventory).toEqual(['KeyB', null]);
+  });
+
+  it('keeps the chosen character, and falls back to So on a bad value', () => {
+    expect(parseSettings(null).character).toBe('so');
+    expect(parseSettings(JSON.stringify({ character: 'bi' })).character).toBe('bi');
+    expect(parseSettings(JSON.stringify({ character: 'nobody' })).character).toBe('so');
   });
 
   it.each([

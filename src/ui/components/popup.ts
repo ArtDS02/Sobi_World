@@ -14,6 +14,7 @@ export const PANELS = [
   'achievements',
   'history',
   'settings',
+  'menu',
   'pig',
   'well',
 ] as const;
@@ -28,6 +29,7 @@ const PANEL_ICON: Record<PanelId, UiIcon | null> = {
   achievements: 'xp',
   history: 'gold',
   settings: null,
+  menu: null,
   pig: null,
   well: 'cleanAll',
 };

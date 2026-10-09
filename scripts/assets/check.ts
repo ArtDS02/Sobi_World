@@ -173,11 +173,13 @@ export function checkAssets(
   for (const p of plaza.success ? plaza.data.placements : []) {
     if (!ids.has(p.id)) errors.push(`plaza layout: placement "${p.id}" has no manifest row`);
   }
-  const player = manifest.props.find((p) => p.id === characterRaw.assetId);
-  if (!player) errors.push(`${characterRaw.assetId}: missing props row (the player character)`);
-  for (const facing of ['down', 'up', 'left', 'right']) {
-    for (const frame of ['idle', 'walk1', 'walk2']) {
-      if (player && !player.states?.[`${facing}_${frame}`]) errors.push(`${player.id}: missing state "${facing}_${frame}"`);
+  for (const assetId of Object.values(characterRaw.assets)) {
+    const player = manifest.props.find((p) => p.id === assetId);
+    if (!player) errors.push(`${assetId}: missing props row (a player character)`);
+    for (const facing of ['down', 'up', 'left', 'right']) {
+      for (const frame of ['idle', 'walk1', 'walk2']) {
+        if (player && !player.states?.[`${facing}_${frame}`]) errors.push(`${player.id}: missing state "${facing}_${frame}"`);
+      }
     }
   }
 

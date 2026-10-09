@@ -13,7 +13,7 @@ import {
   type PopupShell,
 } from '../../../ui/components/popup';
 import { createToaster } from '../../../ui/components/toast';
-import { renderTopBar } from './components/topBar';
+import { renderHud } from './components/hud';
 import {
   openAdoptDialog,
   openBuyItemDialog,
@@ -36,6 +36,7 @@ import { renderAchievementsScreen } from './screens/achievementsScreen';
 import { renderCollectionScreen } from './screens/collectionScreen';
 import { renderOrdersScreen } from './screens/ordersScreen';
 import { renderSettingsScreen } from './screens/settingsScreen';
+import { renderMenuScreen } from './screens/menuScreen';
 import { settingsHandlers } from './settingsHandlers';
 import { renderShopScreen, type ShopHandlers, type ShopTab } from './screens/shopScreen';
 import { renderMultiTabBanner, renderStatusScreen } from './screens/statusScreen';
@@ -186,7 +187,7 @@ export function mountApp(
     dialogOpen: () => dialogs.childElementCount > 0,
     go,
   });
-  const offKeySettings = opts.keySettings?.subscribe(() => ui.panel === 'settings' && rerender());
+  const offSettings = [opts.keySettings, opts.characterChoice].map((c) => c?.subscribe(() => ui.panel === 'settings' && rerender()));
 
   /** Body of the open popup, or null when it cannot show (e.g. the selected pig was sold). */
   function renderPanel(save: FarmGame, panel: PanelId): HTMLElement | null {
@@ -208,7 +209,9 @@ export function mountApp(
           deliver: (card) => openOrderDialog(dialogs, card, act),
         });
       case 'settings':
-        return renderSettingsScreen(save, session.settingsVm(save), settings, opts.keySettings);
+        return renderSettingsScreen(save, session.settingsVm(save), settings, opts.keySettings, opts.characterChoice);
+      case 'menu':
+        return renderMenuScreen(go);
       case 'collection':
         return renderCollectionScreen(save, assets);
       case 'achievements':
@@ -258,16 +261,9 @@ export function mountApp(
     const save = snap.save;
     patch(
       topbar,
-      renderTopBar(save, now(), {
-        settings: () => go('settings'),
-        ...(opts.leave ? { home: opts.leave } : {}),
-        trough: () => openTrough(),
-        history: () => go('history'),
-        nav: (panel) => go(panel),
-        pig: (pigId) => {
-          ui.selectedPigId = pigId;
-          go('pig');
-        },
+      renderHud(save, {
+        place: ui.place, now: now(), gems: opts.gems?.() ?? null, go, leave: opts.leave, openTrough: () => openTrough(),
+        selectPig: (pigId) => { ui.selectedPigId = pigId; go('pig'); },
       }),
     );
     patch(coach, ui.place === 'plaza' ? null : session.coach(snap));
@@ -290,7 +286,7 @@ export function mountApp(
     isModalOpen: () => ui.panel !== null || dialogs.childElementCount > 0,
     dispose: () => {
       offState();
-      offKeySettings?.();
+      for (const off of offSettings) off?.();
       offHotkeys();
       farm?.destroy();
     },

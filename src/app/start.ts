@@ -114,6 +114,9 @@ export async function start(root: HTMLElement) {
     go: (place) => void flow.go(place),
     remember: (spot) => void world.dispatch((s, c) => setPlayerSpot(s, spot, c)),
     player: () => world.getSnapshot().save?.player ?? newPlayer(),
+    character: () => settings.getSnapshot().settings.character,
+    now: () => clock.now(),
+    reduceMotion: () => store.getSnapshot().save?.settings.reduceMotion ?? false,
     paused: () => app?.isModalOpen() ?? false,
     denied: () => director?.denied(),
   };
@@ -152,6 +155,13 @@ export async function start(root: HTMLElement) {
     ...opts,
     input,
     keySettings,
+    gems: () => world.getSnapshot().save?.wallet.gems ?? null,
+    characterChoice: {
+      current: () => settings.getSnapshot().settings.character,
+      choose: (id) => void settings.setCharacter(id),
+      preview: (id) => assets.registry.url(CHARACTER.assets[id], 'down_idle'),
+      subscribe: (fn) => settings.subscribe(fn),
+    },
     leave: () => void flow.go(PLAZA_ID),
     onPigTap: (pigId) => director?.pigTapped(pigId),
     dialogs: platform.dialogs,

@@ -5,7 +5,7 @@ import { _electron as electron, expect, test, type ElectronApplication } from '@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { enterFarm } from './world';
+import { enterFarm, openFromMenu } from './world';
 
 const root = process.cwd();
 
@@ -93,9 +93,9 @@ test('v4 save with outfits: refunded, robot body becomes a species, written back
     });
     const app = await launch(dir);
     const page = await app.firstWindow();
-    await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('.plazabar, .topbar__nav').first()).toBeVisible({ timeout: 30_000 });
     await expect(page.locator('.topbar')).toContainText('9.000'); // 1000 + 2000 + 6000 refunded
-    await page.locator('.topbar__nav').getByRole('button', { name: 'Cửa hàng' }).click();
+    await openFromMenu(page, 'Cửa hàng');
     await expect(page.locator('.shop__tab')).toHaveText(['Heo giống', 'Vật phẩm', 'Chuồng', 'Trang trí']);
     await page.keyboard.press('Escape');
     await app.close();
@@ -146,7 +146,7 @@ test('new species render on the farm, fill the collection and survive a restart'
 
     app = await launch(dir);
     page = await app.firstWindow();
-    await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('.plazabar, .topbar__nav').first()).toBeVisible({ timeout: 30_000 });
     await app.close();
     expect(readSave(dir).areas.sobi_farm.pigs.map((p: { breed: string }) => p.breed)).toEqual(breeds);
   });

@@ -6,17 +6,24 @@ import type { SettingsStorage } from './port';
 
 export const SETTINGS_VERSION = 1;
 
+/** The two characters the player can walk as: Bi (boy) and So (girl). */
+export const CHARACTER_IDS = ['so', 'bi'] as const;
+export type CharacterId = (typeof CHARACTER_IDS)[number];
+export const DEFAULT_CHARACTER: CharacterId = 'so';
+
 export interface GameSettings {
   version: typeof SETTINGS_VERSION;
   keys: KeyBindings;
+  character: CharacterId;
 }
 
-export const defaultGameSettings = (): GameSettings => ({ version: SETTINGS_VERSION, keys: DEFAULT_KEYS });
+export const defaultGameSettings = (): GameSettings => ({ version: SETTINGS_VERSION, keys: DEFAULT_KEYS, character: DEFAULT_CHARACTER });
 
 const slot = z.string().min(1).max(40).nullable();
 const fileSchema = z.object({
   version: z.number().int().optional(),
   keys: z.record(z.string(), z.tuple([slot, slot])).optional(),
+  character: z.enum(CHARACTER_IDS).optional(),
 });
 
 /**
@@ -38,7 +45,8 @@ export function parseSettings(text: string | null): GameSettings {
     const slots = file.data.keys?.[c];
     if (slots && slots.length === KEY_SLOTS) keys[c] = slots;
   }
-  return validKeys(keys) ? { version: SETTINGS_VERSION, keys } : defaultGameSettings();
+  const character = file.data.character ?? DEFAULT_CHARACTER;
+  return validKeys(keys) ? { version: SETTINGS_VERSION, keys, character } : { ...defaultGameSettings(), character };
 }
 
 export const serializeSettings = (s: GameSettings): string => `${JSON.stringify(s, null, 2)}\n`;
@@ -87,6 +95,13 @@ export function createSettingsStore(storage: SettingsStorage) {
     setKeys(keys: KeyBindings): Promise<void> {
       if (!validKeys(keys)) return Promise.resolve();
       const settings = { ...snap.settings, keys };
+      set({ ...snap, settings });
+      return persist(settings);
+    },
+    /** The character the player walks as (kept in settings.json, not in the world save). */
+    setCharacter(character: CharacterId): Promise<void> {
+      if (snap.settings.character === character) return Promise.resolve();
+      const settings = { ...snap.settings, character };
       set({ ...snap, settings });
       return persist(settings);
     },

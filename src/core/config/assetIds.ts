@@ -61,6 +61,13 @@ export const UI_ICON = {
   breed: 'ui_btn_breed',
   shop: 'ui_btn_shop',
   fillTrough: 'ui_btn_fill_trough',
+  coin: 'ui_icon_coin',
+  gem: 'ui_icon_gem',
+  energy: 'ui_icon_energy',
+  hub: 'ui_btn_hub',
+  map: 'ui_btn_map',
+  menu: 'ui_btn_menu',
+  items: 'ui_btn_items',
 } as const;
 export type UiIcon = keyof typeof UI_ICON;
 

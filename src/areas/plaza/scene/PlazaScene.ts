@@ -1,6 +1,7 @@
 // The plaza on screen (spec §3.1): a painted square with the five doors, the character and the key hint
 // near a door. Draws and walks only — the doors' state, the keys and the trip to an Area come from the app
-// through WorldHost, so the scene never reaches the store or another Area.
+// through WorldHost, so the scene never reaches the store or another Area. What moves by itself lives in
+// PlazaAmbient, the evening light in PlazaLight, the fade behind buildings in FadeBehind.
 import * as Phaser from 'phaser';
 import type { PlazaLayout, PlazaPlacement } from '../../../../content/schemas/plaza/layout';
 import type { CharacterConfig } from '../../../core/config/character';
@@ -12,9 +13,16 @@ import { CharacterActor, type ActorThing } from '../../../ui/world/CharacterActo
 import { fitCamera } from '../../../ui/world/fitCamera';
 import type { WorldHost } from '../../../ui/world/host';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
+import { ensureSoftTextures } from '../../../ui/world/softTextures';
 import { arrivalSpot } from '../logic/arrival';
+import { groundKindAt } from '../logic/groundKind';
 import { portalPrompt, type PortalView } from '../logic/portals';
 import { plazaObstacles, plazaWalkable } from '../logic/walkable';
+import { FadeBehind } from './FadeBehind';
+import { paintGround } from './GroundPainter';
+import { PlazaAmbient, type DrawnPlacement } from './PlazaAmbient';
+import { PlazaLight } from './PlazaLight';
+import { PLAZA_AMBIENT } from './ambientConfig';
 import { PLAZA_VIEW } from './plazaView';
 
 export const PLAZA_SCENE_KEY = 'plaza';
@@ -33,9 +41,13 @@ type Door = ActorThing<string>;
 
 export class PlazaScene extends Phaser.Scene {
   private actor!: CharacterActor<string>;
+  private ambient!: PlazaAmbient;
+  private light!: PlazaLight;
+  private readonly fade = new FadeBehind();
   private obstacles: Rect[] = [];
   /** Where each placement is drawn, by index in the layout. */
   private readonly drawn = new Map<number, Rect>();
+  private readonly drawnAll: DrawnPlacement[] = [];
   private readonly doors: Door[] = [];
   private readonly doorArt = new Map<string, Phaser.GameObjects.Image>();
   private readonly doorBadges = new Map<string, Phaser.GameObjects.Image>();
@@ -51,7 +63,8 @@ export class PlazaScene extends Phaser.Scene {
   create(data?: { from?: string | null }) {
     const { layout } = this.deps;
     fitCamera(this, layout.designSize);
-    this.paintGround();
+    ensureSoftTextures(this);
+    paintGround(this, layout);
     layout.placements.forEach((p, i) => this.drawPlacement(p, i));
     this.obstacles = plazaObstacles(layout, (i) => this.drawn.get(i) ?? null);
     this.actor = new CharacterActor<string>(
@@ -62,21 +75,40 @@ export class PlazaScene extends Phaser.Scene {
         things: () => this.doors,
         onFocus: (door) => this.onFocus(door),
         onInteract: (door) => this.useDoor(door.payload),
+        onStride: (x, y) => {
+          if (groundKindAt(layout, x, y) === 'dirt') this.ambient.puff(x, y);
+        },
       },
       this.deps.host,
       FALLBACK_PROP_KEY,
     );
+    this.ambient = new PlazaAmbient(
+      this,
+      {
+        layout,
+        nameOf: (portal) => this.deps.portals().get(portal)?.name,
+        calm: () => this.deps.host.reduceMotion(),
+      },
+      this.drawnAll,
+    );
+    this.light = new PlazaLight(this, layout.designSize, () => this.deps.host.now(), (level) => {
+      this.ambient.setLampLevel(level.lights);
+      this.actor.setShadowStrength(PLAZA_AMBIENT.shadow.alpha * level.shadow);
+    });
     this.input.on(
       Phaser.Input.Events.POINTER_DOWN,
       (p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => this.onPointer(p, over),
     );
-    this.events.on(Phaser.Scenes.Events.WAKE, (_sys: Phaser.Scenes.Systems, d?: { from?: string | null }) =>
-      this.arrive(d?.from ?? null),
-    );
+    this.events.on(Phaser.Scenes.Events.WAKE, (_sys: Phaser.Scenes.Systems, d?: { from?: string | null }) => {
+      this.arrive(d?.from ?? null);
+      this.light.refresh(true);
+    });
     this.events.on(Phaser.Scenes.Events.SLEEP, () => this.leave());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.leave();
       this.actor.destroy();
+      this.ambient.destroy();
+      this.light.destroy();
     });
     this.arrive(data?.from ?? null);
   }
@@ -84,6 +116,10 @@ export class PlazaScene extends Phaser.Scene {
   override update(_time: number, delta: number) {
     this.syncDoors();
     this.actor.update(delta);
+    this.ambient.update(delta);
+    const feet = this.actor.position();
+    const c = this.deps.character;
+    this.fade.update(delta, feet, { halfWidth: c.feetHalfWidth * 1.4, height: c.displayHeight });
     this.rememberWhenResting(delta);
   }
 
@@ -110,6 +146,8 @@ export class PlazaScene extends Phaser.Scene {
       this.actor.halt();
       if (this.dirty) this.deps.host.remember(this.actor.snapshot(PLAZA_ID));
     }
+    this.fade.reset();
+    this.ambient?.setNear(null);
     this.dirty = false;
     this.focus = null;
     this.deps.host.setPrompt(null);
@@ -130,37 +168,9 @@ export class PlazaScene extends Phaser.Scene {
     }
   }
 
-  /** Sky, grass, then the ground shapes of the layout back to front (sand, sea, paths, the square). */
-  private paintGround() {
-    const { layout } = this.deps;
-    const { width, height } = layout.designSize;
-    const v = PLAZA_VIEW;
-    const horizon = layout.walkArea.y * height - v.horizonAbove;
-    const wide = width * v.bleed;
-    this.add.rectangle(width / 2, horizon - wide / 2, wide, wide, layout.palette.sky).setDepth(v.skyDepth);
-    this.add.rectangle(width / 2, horizon + wide / 2, wide, wide, layout.palette.grass).setDepth(v.skyDepth);
-    const g = this.add.graphics().setDepth(v.groundDepth);
-    for (const shape of layout.ground) {
-      g.fillStyle(shape.color, 1);
-      if (shape.kind === 'ellipse') {
-        g.fillEllipse(shape.x * width, shape.y * height, shape.width * width, shape.height * height);
-        if (shape.stroke !== undefined) {
-          g.lineStyle(v.edgeWidth, shape.stroke, 1).strokeEllipse(shape.x * width, shape.y * height, shape.width * width, shape.height * height);
-        }
-        continue;
-      }
-      // A path: a thick line with round joints, so the bends are smooth.
-      g.lineStyle(shape.width, shape.color, 1);
-      g.beginPath();
-      shape.points.forEach(([x, y], i) => (i === 0 ? g.moveTo(x * width, y * height) : g.lineTo(x * width, y * height)));
-      g.strokePath();
-      for (const [x, y] of shape.points) g.fillCircle(x * width, y * height, shape.width / 2);
-    }
-  }
-
   private drawPlacement(p: PlazaPlacement, index: number) {
     if (p.visible === false) return;
-    const { layout, assets } = this.deps;
+    const { layout } = this.deps;
     const { width, height } = layout.designSize;
     const key = textureKey(p.id);
     const img = this.add
@@ -172,31 +182,17 @@ export class PlazaScene extends Phaser.Scene {
       img.setScale(sx, sy ?? sx);
     }
     img.setFlipX(p.flipX ?? false).setAngle(p.rotation ?? 0);
-    const environment = assets.resolve(p.id)?.section === 'environment';
-    img.setDepth(environment ? PLAZA_VIEW.skyDepth + 1 + index : p.y * height);
+    img.setDepth(p.y * height);
     const bounds = img.getBounds();
     this.drawn.set(index, bounds);
+    this.drawnAll.push({ p, img, bounds });
+    if (p.fade) this.fade.add(img, bounds);
     if (!p.portal) return;
     const front = frontOf(bounds);
     this.doors.push({ id: p.portal, x: front.x, y: front.y, reach: layout.portalReach, payload: p.portal });
     this.doorArt.set(p.portal, img);
     img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: PLAZA_VIEW.hitAlpha });
     img.setData(PLAZA_VIEW.doorData, p.portal);
-    const view = this.deps.portals().get(p.portal);
-    if (view) {
-      const l = PLAZA_VIEW.label;
-      this.add
-        .text(front.x, front.y + l.offsetY, view.name, {
-          color: l.color,
-          backgroundColor: l.background,
-          fontSize: `${l.fontPx}px`,
-          fontFamily: l.fontFamily,
-          fontStyle: 'bold',
-          padding: { x: l.padX, y: l.padY },
-        })
-        .setOrigin(0.5, 0)
-        .setDepth(img.depth + 1);
-    }
     const lockKey = this.textures.exists(LOCK_ICON) ? LOCK_ICON : FALLBACK_PROP_KEY;
     this.doorBadges.set(
       p.portal,
@@ -223,6 +219,7 @@ export class PlazaScene extends Phaser.Scene {
 
   private onFocus(door: Door | null) {
     this.focus = door;
+    this.ambient?.setNear(door?.payload ?? null);
     const view = door ? this.deps.portals().get(door.payload) : undefined;
     if (!door || !view) return this.deps.host.setPrompt(null);
     const prompt = portalPrompt(view);

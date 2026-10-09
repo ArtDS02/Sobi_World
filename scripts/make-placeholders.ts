@@ -111,7 +111,7 @@ function render(
   const r = new Raster(size.width, size.height);
   r.rect(0, 0, r.width, r.height, CLEAR);
   const colour = PIG_COLOURS[id] ?? colourFor(id);
-  if (id === 'chr_player') drawCharacter(r, key);
+  if (id.startsWith('chr_')) drawCharacter(r, key);
   else if (id === 'ui_icon_lock') drawLock(r);
   else if (section === 'pigs') drawPig(r, colour, key === 'sleep');
   else if (section === 'fx') drawFx(r, colour, frames);

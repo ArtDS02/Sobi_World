@@ -14,6 +14,19 @@ export const vi = {
     history: "Lịch sử",
     settings: "Cài đặt",
     achievements: "Thành tích",
+    menu: "Menu",
+  },
+
+  // The plaza's top bar (spec §3.1): currencies and the four buttons.
+  plazaBar: {
+    coins: "Sobi Coin",
+    gems: "Ngọc",
+    hub: "Sảnh",
+    map: "Bản đồ",
+    menu: "Menu",
+    items: "Vật phẩm",
+    hubHere: "Bạn đang ở Sảnh",
+    mapSoon: "Bản đồ sắp ra mắt",
   },
 
   // Labels of clickable world objects on the farm canvas (DECISIONS R05C-1).
@@ -52,6 +65,13 @@ export const vi = {
     inventory: "Túi đồ",
     codex: "Codex",
     menu: "Menu",
+  },
+
+  character: {
+    title: "Nhân vật",
+    hint: "Chọn nhân vật đi lại ở Sảnh và Sobi Adventure.",
+    so: "So (nữ)",
+    bi: "Bi (nam)",
   },
 
   keys: {

@@ -4,8 +4,8 @@ import { z } from 'zod';
 import { assetId, posInt } from '../fields';
 
 export const characterFileSchema = z.strictObject({
-  /** Manifest prop row holding the frames: `<facing>_idle`, `<facing>_walk1`, `<facing>_walk2`. */
-  assetId,
+  /** Manifest prop row of each character holding the frames: `<facing>_idle`, `<facing>_walk1`, `<facing>_walk2`. */
+  assets: z.strictObject({ so: assetId, bi: assetId }),
   /** Design pixels per second. */
   speed: z.number().positive(),
   /** Half width / half height of the feet box, design px. */

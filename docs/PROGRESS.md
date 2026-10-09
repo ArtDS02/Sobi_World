@@ -8,6 +8,23 @@
 
 ## Nhật ký
 
+### 2026-10-09 — Nâng cấp Sảnh: bố cục theo ảnh mẫu, Bi/So, thanh trên mới, hiệu ứng sống
+✅ Đã làm:
+- **Bố cục Sảnh** dựng lại theo `sobi_world_lobby.png` (`content/plaza/layout.json`): nền cỏ lát từ ô cỏ của sheet, đường đất, quảng trường đá cuội, bãi cát + biển (chặn đường), cổng Adventure, vườn Garden, bể Aquarium, cây đậu thần trong mây (Cloud), chuồng Farm (trại + heo), nhà chính, đài phun nước, ghế, đèn, thuyền, cây. Mỗi cổng có biển gỗ ghi tên (thay nhãn cũ). Nền vẽ một lần vào canvas (`GroundPainter`); sky phía trên, ngoài khung tiếp tục bằng màu phẳng.
+- **Chọn nhân vật Bi (nam) / So (nữ)**: ô chọn trong Cài đặt, lưu ở `settings.json` (không đụng save thế giới); mỗi người có 12 khung riêng (`chr_so`, `chr_bi`), đổi là thấy ngay ở Sảnh/Adventure. `chr_player` được thay.
+- **Thanh trên của Sảnh** (`plazaBar`): Sobi Coin + Ngọc lấy từ ví thật; nút Sảnh (đang ở đây, tắt), Bản đồ (chưa có màn → tắt, ghi "sắp ra mắt"), Menu (popup mới: Cửa hàng, Đơn hàng, Bộ sưu tập, Thành tích, Lịch sử, Cài đặt), Vật phẩm (Kho). Hover phóng nhẹ, nhấn thu nhỏ, tắt có style riêng. Khu vực (Farm…) giữ thanh cũ.
+- **Hiệu ứng** (`PlazaAmbient` + `ambientConfig.ts`): mây mới trôi, sóng bọt + lấp lánh ở bờ biển, nước đài phun, cổng Adventure phát sáng + hạt tím (mạnh hơn khi lại gần), biển gỗ đung đưa và nảy khi lại gần, bướm bay quanh vườn (đổi hướng mềm, đập cánh), gà/heo/cừu/vịt/lạc đà có idle, đèn đường sáng dần về tối, ánh sáng ngày/chiều/tối theo giờ máy (dùng chung cấu hình day-night của Farm, `PlazaLight`), bóng mềm dưới chân, bụi khi đi trên đường đất, vật lớn mờ ~50% khi nhân vật đứng sau (`fade`, `FadeBehind`). Giảm chuyển động (cài đặt) tắt chuyển động nền.
+- Walk cycle chạy theo quãng đường thực đi (không trượt chân khi cọ tường).
+- Cắt art mới từ sheet bằng `scripts/cut-plaza.ts` (có tự đăng ký manifest).
+🧪 `npm run check` xanh (931 test), `npm run test:e2e` 6/6; chạy dev trong trình duyệt: Sảnh hiển thị, đi bộ, đổi Bi/So, mở Menu → Cài đặt, không lỗi console.
+⚠️ Quyết định / giới hạn:
+- **Không có thanh Năng lượng** (48/100 của ảnh mẫu): game chưa có hệ thống năng lượng người chơi, không đặt số giả; thêm khi có hệ thống.
+- Sheet chỉ có 2 khung/hướng (đứng + bước); khung bước thứ hai là bản lật (lên/xuống). Tên nam trên sheet là "Kai", game gọi là Bi.
+- Ô cỏ của sheet có tông hơi khác nhau: đã chỉnh về cùng màu trung bình và pha nhẹ với màu nền.
+- Chưa kiểm tay: hiệu ứng buổi tối (cần đổi giờ máy), nhấn chuột phải cổng khóa, Electron `dist:win`.
+- Không thêm tiếng click riêng cho nút mới (dùng `ui_click` chung của mọi nút DOM).
+👉 Bạn cần: chơi thử Sảnh (đi quanh, lại gần từng biển/cổng), đổi giờ máy sang chiều/tối xem ánh sáng, chọn Bi trong Cài đặt.
+
 ### 2026-10-09 — GĐ3 cập nhật theo yêu cầu: nhân vật chỉ đi ở Sảnh/Adventure, Sảnh đẹp hơn
 ✅ Đã làm:
 - **Nhân vật chỉ di chuyển ở Sảnh và Sobi Adventure.** Farm (và Garden, Aquarium, Cloud sau này) chơi bằng click; đã gỡ nhân vật, gợi ý phím và đi bộ khỏi Farm. Về Sảnh bằng nút "Ra Sảnh" ở HUD (không thêm art vào Farm). Manifest Area có `movement: click | character` (Adventure = `character`).
