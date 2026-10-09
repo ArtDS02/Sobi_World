@@ -41,18 +41,18 @@ export function simulateWorld(
   rules: TimeRules,
 ): SimulationResult {
   const last = Math.min(...areas.map((a) => a.simulatedAt(world)));
-  const window = awayWindow(last, now, rules);
-  if (window.rewound) return { state: world, events: [], rewound: true, capped: false };
+  const span = awayWindow(last, now, rules);
+  if (span.rewound) return { state: world, events: [], rewound: true, capped: false };
 
   const events: EventBase[] = [];
   let state = world;
-  for (const end of sliceEnds(window.from, window.to, dayOffsetMs, rules.stepMs[mode])) {
+  for (const end of sliceEnds(span.from, span.to, dayOffsetMs, rules.stepMs[mode])) {
     for (const area of areas) {
       const r = area.simulate(state, end, rng, dayOffsetMs, mode);
       state = r.state;
       events.push(...r.events);
     }
   }
-  if (window.capped) state = areas.reduce((s, a) => a.rebase(s, now), state);
-  return { state, events, rewound: false, capped: window.capped };
+  if (span.capped) state = areas.reduce((s, a) => a.rebase(s, now), state);
+  return { state, events, rewound: false, capped: span.capped };
 }
