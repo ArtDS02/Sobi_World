@@ -42,6 +42,12 @@ export interface UninBridge {
     /** save.json was replaced by another program while the game runs (AM-1). */
     onExternalChange(fn: () => void): void;
   };
+  settings: {
+    /** settings.json next to the saves folder; null when there is none yet. */
+    load(): Promise<string | null>;
+    /** Atomic write of the whole file (tmp → flush → rename). Rejects on failure. */
+    write(json: string): Promise<void>;
+  };
   app: {
     version: string;
     /** Main asks for a flush before the window closes; it waits at most 3 s for the promise. */
@@ -65,6 +71,8 @@ export type IpcChannel =
   | 'unin:save:importFrom'
   | 'unin:save:openFolder'
   | 'unin:save:changed'
+  | 'unin:settings:load'
+  | 'unin:settings:write'
   | 'unin:app:version'
   | 'unin:app:flushRequest'
   | 'unin:app:flushDone';

@@ -19,6 +19,7 @@ import { makePig } from './pigFactory';
 import { makeState } from './stateFactory';
 import { world } from './worldKit';
 import { SAVE_CODEC } from '../../src/app/saveCodec';
+import { WORLD_SAVE_VERSION } from '../../src/core/save/world';
 
 const ctx = (now = 1_000) => ({ now, rng: mulberry32(1) });
 const valid = (s: unknown) => farmGameSchema.safeParse(s).success;
@@ -304,7 +305,7 @@ describe('export / import (§9.3)', () => {
     const at = new Date(2026, 0, 2, 13, 45);
     const out = exportSave(world(makeState([makePig()], 2)), at);
     expect(out.save.settings.lastExportAt).toBe(at.getTime());
-    expect(importSave(out.json, SAVE_CODEC)).toEqual({ ok: true, save: out.save, fromVersion: 8 });
+    expect(importSave(out.json, SAVE_CODEC)).toEqual({ ok: true, save: out.save, fromVersion: WORLD_SAVE_VERSION });
   });
 
   it('import rejects invalid JSON and invalid schema', () => {

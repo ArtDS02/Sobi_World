@@ -6,3 +6,5 @@
 
 Quy tắc: không hard-code số liệu trong code; sửa nội dung bằng Admin (`npm run admin`) hoặc sửa JSON rồi chạy test.
 Sau khi thêm/xóa id: `npm run content:ids`. Id đã phát hành không bị xóa (decision 006). Game đọc qua `src/core/config/content.ts`.
+
+GĐ3: `plaza/layout.json` (Sảnh), `shared/character.json` (nhân vật), `<area>/area.json` có `planned: true` cho Area chưa làm (Garden, Aquarium, Cloud, Adventure).

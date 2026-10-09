@@ -24,9 +24,52 @@ export const vi = {
     collection: "Bộ sưu tập",
     trough: "Máng ăn",
     cleanAll: "Giếng nước",
+    plaza: "Ra Sảnh",
+    pig: "Chăm sóc {name}",
+    gift: "Mở hộp quà",
     wellHint: "Múc nước tắm cho cả đàn heo.",
     giftGold: "+{n} Sobi Coin",
     giftXp: "+{n} KN",
+  },
+
+  // The plaza (spec §3.1): doors to the Areas and the hints shown near them.
+  plaza: {
+    title: "Sảnh Sobi",
+    enter: "Vào {name}",
+    locked: "{name} chưa mở",
+    soon: "Sắp ra mắt",
+    conditions: "Điều kiện mở:",
+    needAreaLevel: "{area} cấp {need} (hiện {have})",
+    needWorldDevelopment: "Phát triển thế giới {need} (hiện {have})",
+    unknownArea: "một khu khác",
+  },
+
+  // Names of the controls (spec §4) for hints and the key settings.
+  controls: {
+    moveUp: "Đi lên",
+    moveDown: "Đi xuống",
+    moveLeft: "Đi sang trái",
+    moveRight: "Đi sang phải",
+    interact: "Tương tác",
+    inventory: "Túi đồ",
+    codex: "Codex",
+    menu: "Menu",
+  },
+
+  keys: {
+    title: "Phím điều khiển",
+    hint: "Bấm vào một ô rồi nhấn phím mới. Mỗi hành động có hai phím; một phím không dùng cho hai hành động.",
+    primary: "Phím chính",
+    secondary: "Phím phụ",
+    empty: "Trống",
+    press: "Nhấn một phím…",
+    cancelHint: "Esc để hủy",
+    clear: "Bỏ phím",
+    reset: "Phím mặc định",
+    taken: "Phím này đang dùng cho \"{control}\".",
+    reserved: "Phím này không dùng được.",
+    invalid: "Không đặt được phím này.",
+    saveError: "Không lưu được cài đặt phím. Thay đổi vẫn có hiệu lực đến khi tắt game.",
   },
 
   // Away-screen lines of each Area (AreaModule.getSummary keys: summary.<area>.<line>).

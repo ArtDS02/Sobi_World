@@ -85,6 +85,17 @@ export class PreloadScene extends Phaser.Scene {
     this.screen?.setStep('ready');
     // Dev only: `?loading=hold` keeps the loading screen up to look at it (AM-2).
     if (import.meta.env.DEV && new URLSearchParams(location.search).get('loading') === 'hold') return;
-    this.scene.start(SCENE_KEYS.farm);
+    this.bridge.loaded(); // the loading screen is done
+    // The first scene reads the saved player, so it waits for the save (a recovery screen may come first).
+    const open = () => {
+      const first = this.deps.firstScene();
+      this.scene.start(first.key, { from: first.from });
+    };
+    if (this.deps.store.getSnapshot().status === 'ready') return open();
+    const off = this.deps.store.subscribe((s) => {
+      if (s.status !== 'ready') return;
+      off();
+      open();
+    });
   }
 }

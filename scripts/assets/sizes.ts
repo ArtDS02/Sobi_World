@@ -28,6 +28,12 @@ export const CATALOGUE_SIZES: Record<string, Size> = {
   prop_water_well: { width: 304, height: 280 },
   prop_shop_stall: { width: 328, height: 344 },
   prop_windmill: { width: 272, height: 328 },
+  // The plaza (GĐ3): doors to the Areas that have no art yet, the farm's exit sign, the character.
+  prop_garden_gate: { width: 320, height: 300 },
+  prop_sea_dock: { width: 420, height: 300 },
+  prop_sky_tree: { width: 340, height: 520 },
+  prop_portal_gate: { width: 320, height: 360 },
+  prop_plaza_signpost: { width: 160, height: 200 },
   prop_fence_section: { width: 208, height: 128 },
   prop_water_bowl: { width: 192, height: 136 },
   prop_mud_puddle: { width: 256, height: 128 },
@@ -42,6 +48,12 @@ export const CATALOGUE_SIZES: Record<string, Size> = {
   prop_sunflower: { width: 160, height: 152 },
   prop_mushroom: { width: 88, height: 100 },
 };
+
+for (const facing of ['down', 'up', 'left', 'right']) {
+  for (const frame of ['idle', 'walk1', 'walk2']) {
+    CATALOGUE_SIZES[`chr_player_${facing}_${frame}`] = { width: 96, height: 144 };
+  }
+}
 
 type Row = AssetManifest[ManifestSection][number];
 

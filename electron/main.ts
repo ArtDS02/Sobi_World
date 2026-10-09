@@ -16,6 +16,7 @@ import { extname, join, normalize, sep } from 'node:path';
 import type { IpcChannel, SaveCandidateSource } from '../src/platform/desktop/bridge';
 import { adoptLegacySaves, DATA_DIR_NAME, devUserDataDir, LEGACY_DATA_DIR_NAME } from './dataDir';
 import { createSaveFiles, type SaveFiles } from './saveFiles';
+import { createSettingsFile, type SettingsFile } from './settingsFile';
 import { readWindowState, WINDOW_MIN, writeWindowState } from './windowState';
 
 const FLUSH_TIMEOUT_MS = 3000;
@@ -106,6 +107,7 @@ if (!app.requestSingleInstanceLock()) {
     registerProtocol();
     lockDownSession();
     registerSaveIpc(saves, () => win);
+    registerSettingsIpc(createSettingsFile(join(app.getPath('userData'), 'settings.json')));
     if (app.isPackaged) Menu.setApplicationMenu(null);
     win = await createWindow();
     // AM-1: save.json replaced by another program (admin dashboard) → the renderer reloads it.
@@ -197,6 +199,11 @@ function registerSaveIpc(saves: SaveFiles, getWin: () => BrowserWindow | null) {
     await fsp.mkdir(dir, { recursive: true });
     await shell.openPath(dir);
   });
+}
+
+function registerSettingsIpc(settings: SettingsFile) {
+  handle('unin:settings:load', () => settings.read());
+  handle('unin:settings:write', (json: string) => settings.write(json));
 }
 
 async function createWindow(): Promise<BrowserWindow> {

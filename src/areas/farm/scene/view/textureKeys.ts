@@ -7,14 +7,13 @@ import type { BreedId } from '../../logic/config/ids';
 import type { SeasonId } from '../../../../core/config/seasons';
 import { isSeasonFile, seasonFile } from '../../../../core/engine/season';
 
-/** `asset` → the id itself; any other file of the row → `${id}_${file}` (e.g. pig_classic_sleep). */
-export const textureKey = (id: string, file = 'asset'): string =>
-  file === 'asset' ? id : `${id}_${file}`;
+import { FALLBACK_PROP_KEY, textureKey } from '../../../../ui/world/keys';
+
+export { FALLBACK_PROP_KEY, textureKey };
 
 export const anchorsKey = (artId: string): string => textureKey(artId, 'anchors');
 
 export const fallbackPigKey = (breed: BreedId): string => `fallback_pig_${breed.toLowerCase()}`;
-export const FALLBACK_PROP_KEY = 'fallback_prop';
 export const FALLBACK_FX_KEY = 'fallback_fx';
 
 /** Animation key of a multi-frame fx (manifest `frames`, e.g. fx_zzz). */

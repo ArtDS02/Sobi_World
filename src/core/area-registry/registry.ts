@@ -50,14 +50,22 @@ export interface SummaryLine {
 
 export interface AreaInfo {
   manifest: AreaManifest;
+  /** Its code is not written yet (a later phase): shown in the plaza, closed, with the conditions. */
+  planned: boolean;
   unlocked: boolean;
   level: number;
   /** What it still needs to open (empty when unlocked or open from the start). */
   gaps: UnlockGap[];
 }
 
-export function createAreaRegistry(modules: readonly AreaModule[], rules: WorldDevelopmentRules, time: TimeRules) {
-  const ids = modules.map((m) => m.manifest.id);
+/** `planned`: manifests of Areas that are not built yet; they take no part in the simulation or the save. */
+export function createAreaRegistry(
+  modules: readonly AreaModule[],
+  rules: WorldDevelopmentRules,
+  time: TimeRules,
+  planned: readonly AreaManifest[] = [],
+) {
+  const ids = [...modules.map((m) => m.manifest.id), ...planned.map((m) => m.id)];
   const dup = ids.find((id, i) => ids.indexOf(id) !== i);
   if (dup) throw new Error(`area ${dup} registered twice`);
   if (modules.length === 0) throw new Error('no area registered');
@@ -101,19 +109,25 @@ export function createAreaRegistry(modules: readonly AreaModule[], rules: WorldD
     worldDevelopment: (world: WorldSave, codexEntries: number, buildingsLv3 = 0): number =>
       worldDevelopment({ areaLevels: levels(world), codexEntries, buildingsLv3 }, rules),
 
-    /** Every registered Area with its lock state (the plaza shows locked ones with their conditions). */
+    /** Every Area, built or planned, with its lock state (the plaza shows locked ones with their conditions). */
     areas(world: WorldSave, codexEntries = 0): AreaInfo[] {
       const lv = levels(world);
       const wd = worldDevelopment({ areaLevels: lv, codexEntries, buildingsLv3: 0 }, rules);
-      return modules.map((m) => {
+      const built = modules.map((m): AreaInfo => {
         const unlocked = world.world.unlockedAreas.includes(m.manifest.id);
         return {
           manifest: m.manifest,
+          planned: false,
           unlocked,
           level: lv[m.manifest.id] ?? 0,
           gaps: unlocked ? [] : unlockGaps(m.manifest.unlock, lv, wd),
         };
       });
+      // A planned Area cannot be open, whatever its conditions: there is nothing to enter yet.
+      const soon = planned.map(
+        (manifest): AreaInfo => ({ manifest, planned: true, unlocked: false, level: 0, gaps: unlockGaps(manifest.unlock, lv, wd) }),
+      );
+      return [...built, ...soon];
     },
 
     /** The save format of this build: Sobi Farm import + one slice spec per Area. */

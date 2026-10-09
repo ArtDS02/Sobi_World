@@ -1,8 +1,9 @@
-// World save document v8 (ARCHITECTURE §9, AUDIT_AND_PLAN §d): world-level state shared by every Area,
+// World save document v9 (ARCHITECTURE §9, AUDIT_AND_PLAN §d): world-level state shared by every Area,
 // plus one opaque slice per Area under `areas` that the Area's own schema validates.
 import { z } from 'zod';
+import { newPlayer, playerSchema, type PlayerSave } from '../player/player';
 
-export const WORLD_SAVE_VERSION = 8;
+export const WORLD_SAVE_VERSION = 9;
 
 export const CURRENCY_VALUES = ['coins', 'gems', 'eventTokens'] as const;
 export type Currency = (typeof CURRENCY_VALUES)[number];
@@ -35,6 +36,8 @@ export interface WorldSave {
     lastSavedAt: number | null;
   };
   world: { currentArea: string; unlockedAreas: string[] };
+  /** Where the character stands (v9; the spot is kept, the game still opens in the plaza). */
+  player: PlayerSave;
   wallet: Record<Currency, number>;
   /** One shared bag; keys are item ids from content (an unknown id never breaks a save). */
   inventory: { items: Record<string, number> };
@@ -59,6 +62,7 @@ export const worldSaveSchema = z.object({
   schemaVersion: z.literal(WORLD_SAVE_VERSION),
   meta: z.object({ createdAt: time, updatedAt: time, lastSavedAt: time.nullable() }),
   world: z.object({ currentArea: z.string().min(1), unlockedAreas: z.array(z.string().min(1)) }),
+  player: playerSchema,
   wallet: z.object({ coins: nonNeg, gems: nonNeg, eventTokens: nonNeg }),
   inventory: z.object({ items: z.record(z.string(), nonNeg) }),
   transactions: z.array(
@@ -95,6 +99,7 @@ export function emptyWorld(now: number, settings: WorldSettings, firstArea: stri
     schemaVersion: WORLD_SAVE_VERSION,
     meta: { createdAt: now, updatedAt: now, lastSavedAt: null },
     world: { currentArea: firstArea, unlockedAreas: [firstArea] },
+    player: newPlayer(),
     wallet: { coins: 0, gems: 0, eventTokens: 0 },
     inventory: { items: {} },
     transactions: [],

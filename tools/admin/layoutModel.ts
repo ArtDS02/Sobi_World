@@ -1,11 +1,12 @@
 // Farm layout editing as pure list operations (DECISIONS AD-1), unit-tested. Placements are the
 // manifest `layout.placements` rows (x, y normalised to the 1600×900 design frame); the editor UI
 // (layout.ts) only calls these and keeps an undo history of whole lists.
-import type { Placement } from '../../src/areas/farm/scene/config/layout';
+import type { Placement as FarmPlacement } from '../../src/areas/farm/scene/config/layout';
 import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import { placementDepth } from '../../src/areas/farm/scene/view/sceneLayout';
 
-export type { Placement };
+/** A placement of the farm or of the plaza (the plaza adds `portal` and `solid`). */
+export type Placement = FarmPlacement & { portal?: string; solid?: boolean };
 
 export interface Design {
   width: number;
@@ -48,6 +49,8 @@ export const patch = (list: readonly Placement[], i: number, next: Partial<Place
     if (out.flipX === false) delete out.flipX;
     if (out.visible === true) delete out.visible;
     if (out.locked === false) delete out.locked;
+    if (out.solid === false) delete out.solid;
+    if (out.signed === false) delete out.signed;
     if (out.signed === false) delete out.signed;
     return out as Placement;
   });

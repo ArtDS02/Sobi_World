@@ -1,0 +1,104 @@
+// The walking world (GĐ3): the key hint over the canvas, the plaza's lighter HUD and the key settings.
+@use '../core' as *;
+
+// The farm's own gauges stay out of the plaza: they belong to the farm.
+.app.is-plaza {
+  .c-gauge,
+  .topbar__pigs,
+  .topbar__alert {
+    display: none;
+  }
+}
+
+// "[E] Vào Sobi Farm": centred above the bottom dock, over the canvas, under the popups.
+.world-prompt-host {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 7.5rem;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.world-prompt {
+  display: flex;
+  gap: $sp-3;
+  align-items: center;
+  max-width: min(28rem, calc(100vw - 2rem));
+  padding: $sp-2 $sp-4;
+  color: $c-text;
+  background: $c-cream;
+  border: 2px solid $c-wood;
+  border-radius: $radius-card;
+  box-shadow: $hud-shadow;
+
+  &.is-closed {
+    color: $c-text-muted;
+    background: #eceae6;
+    border-color: #b9b4ab;
+  }
+
+  &__key {
+    display: grid;
+    flex: none;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 $sp-2;
+    font-family: inherit;
+    font-weight: 700;
+    color: $c-on-primary;
+    background: $c-primary;
+    border-bottom: 3px solid $c-primary-strong;
+    border-radius: 0.5rem;
+    place-items: center;
+  }
+
+  &__lock {
+    flex: none;
+    font-size: 1.5rem;
+  }
+
+  &__text {
+    display: grid;
+    gap: 0.125rem;
+    font-size: $fs-sm;
+
+    b {
+      font-size: $fs-md;
+    }
+  }
+}
+
+// Key settings: label, two key slots, "remove second key".
+.keys {
+  &__grid {
+    display: grid;
+    gap: $sp-2;
+    align-items: center;
+    grid-template-columns: 1fr repeat(3, auto);
+  }
+
+  &__slot {
+    min-width: 5.5rem;
+
+    &.is-listening {
+      color: $c-on-primary;
+      background: $c-primary;
+      border-color: $c-primary-strong;
+    }
+  }
+
+  &__message {
+    padding: $sp-2 $sp-3;
+    color: $c-danger;
+    background: $c-danger-soft;
+    border-radius: $radius-card;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-prompt {
+    transition: none;
+  }
+}

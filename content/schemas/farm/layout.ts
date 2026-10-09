@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { DECOR_ID_VALUES } from '../ids.generated';
 import { assetId, unit } from '../fields';
 
-/** What clicking a placement opens (farm panels). */
+/** What clicking a placement opens (farm panels), or leaves the farm (`plaza`). */
 export const FARM_ACTIONS = [
   'shop',
   'inventory',
@@ -13,6 +13,8 @@ export const FARM_ACTIONS = [
   'collection',
   'trough',
   'cleanAll',
+  /** The way back to the plaza (GĐ3): the character leaves the farm here. */
+  'plaza',
 ] as const;
 export type FarmAction = (typeof FARM_ACTIONS)[number];
 
@@ -52,6 +54,11 @@ export const layoutFileSchema = z.strictObject({
   designSize: z.strictObject({ width: z.number().int().positive(), height: z.number().int().positive() }),
   walkArea: z.strictObject({ x: unit, y: unit, width: unit, height: unit }),
   pigScaleByY: z.strictObject({ min: z.number().positive(), max: z.number().positive() }),
+  /** Where the player's character walks (GĐ3): the ground, and where they stand on arriving (fractions). */
+  player: z.strictObject({
+    area: z.strictObject({ x: unit, y: unit, width: unit, height: unit }),
+    spawn: z.strictObject({ x: unit, y: unit }),
+  }),
   placements: z.array(placementSchema),
 });
 

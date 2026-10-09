@@ -2,7 +2,6 @@
 // a Map<pigId, PigSprite> reconciled with every store snapshot. Draws only; selection goes to DOM.
 // Feedback (§11.3) arrives through bridge.effects (SceneEffects), never from diffing snapshots.
 import * as Phaser from 'phaser';
-import { parseAnchors, type Anchors } from '../../../../core/assets/anchors';
 import { SEASON_UNSIGNED_IDS, TROUGH_PROP_ID, type AnchorName, type FxId } from '../../../../core/config/assetIds';
 import { FARM_LAYOUT } from '../config/layout';
 import { FARM_VIEW } from '../config/farmView';
@@ -19,6 +18,8 @@ import { SceneEffects } from '../fx/SceneEffects';
 import { Backdrop } from '../prefabs/Backdrop';
 import { DayNightLayer } from '../prefabs/DayNightLayer';
 import { FarmProps } from '../prefabs/FarmProps';
+import { FarmWalker } from '../prefabs/FarmWalker';
+import { PigArt } from '../prefabs/PigArt';
 import { spreadCrowd } from '../prefabs/crowd';
 import { GiftBoxes } from '../prefabs/GiftBoxes';
 import { Nameplates } from '../prefabs/Nameplates';
@@ -28,24 +29,15 @@ import { PigSprite } from '../prefabs/PigSprite';
 import { giftSpot, type Rect } from '../view/giftPlacement';
 import { pigView, type FarmLayout } from '../view/pigView';
 import { placementTransform, placementView, visibleLayout } from '../view/sceneLayout';
-import {
-  anchorsKey,
-  FALLBACK_PROP_KEY,
-  artLoadList,
-  artTextureKeys,
-  textureKey,
-  troughTextureKey,
-} from '../view/textureKeys';
-import { makeClickable, pickOf } from './farmPick';
-import { queueLoadList, warnLoadErrors } from './PreloadScene';
+import { FALLBACK_PROP_KEY, textureKey, troughTextureKey } from '../view/textureKeys';
+import { makeClickable } from './farmPick';
+import { warnLoadErrors } from './PreloadScene';
 
 export class MainFarmScene extends Phaser.Scene {
   private readonly pigs = new Map<string, PigSprite>();
   /** Pigs gone from the save but still playing their exit tween (bursts can still find them). */
   private readonly leaving = new Map<string, PigSprite>();
-  private readonly anchors = new Map<string, Anchors>();
-  /** Pig art rows whose files were requested after preload (loaded once, failures fall back). */
-  private readonly requested = new Set<string>();
+  private art!: PigArt; // pig art loaded after preload, anchors, freeing (R12A)
   private trough: Phaser.GameObjects.Image | null = null;
   private board: Phaser.GameObjects.Image | null = null;
   private ordersBadge: Badge | null = null;
@@ -58,6 +50,7 @@ export class MainFarmScene extends Phaser.Scene {
   private dayClock!: DayNightDirector;
   private season!: SeasonDirector; // seasonal art, backdrop palette, environment FX (SE-1, MU-2)
   private life!: PigLife; // the pigs' needs-driven behaviour (PL-1)
+  private walker!: FarmWalker; // the player's character (GĐ3)
   private readonly obstacles: Rect[] = []; // world object bounds; gift boxes keep clear (U06)
   private readonly props = new FarmProps(); // trough texture + owned decorations (PG-3)
 
@@ -70,6 +63,7 @@ export class MainFarmScene extends Phaser.Scene {
 
   create() {
     this.layout = visibleLayout(FARM_LAYOUT);
+    this.art = new PigArt(this, this.deps.assets, () => this.bridge.refresh());
     this.pigEnv = {
       layout: this.layout,
       troughX: () => this.trough?.x ?? null,
@@ -84,6 +78,15 @@ export class MainFarmScene extends Phaser.Scene {
     const seasonPreview = () => this.bridge.seasonPreview;
     const phase = () => this.dayClock?.phase() ?? 'day';
     this.season = new SeasonDirector(this, this.deps.assets, backdrop, this.deps.now, seasonPreview, phase);
+    this.walker = new FarmWalker(this, {
+      layout: this.layout,
+      character: this.deps.character,
+      host: this.deps.host,
+      activate: (pick) => this.deps.onPick(pick),
+      pigs: () => this.pigs,
+      pigName: (id) => this.deps.store.getSnapshot().save?.pigs.find((p) => p.id === id)?.name,
+      gifts: () => this.gifts,
+    });
     this.drawPlacements();
     this.season.update();
     const preview = () => this.bridge.phasePreview;
@@ -101,12 +104,8 @@ export class MainFarmScene extends Phaser.Scene {
     this.bridge.loaded();
     // R12A: the farm fades in after the preload screen (skipped with reduceMotion).
     if (!this.pigEnv.reduceMotion()) this.cameras.main.fadeIn(FARM_VIEW.AMBIENT.fadeInMs);
-    this.input.on(
-      Phaser.Input.Events.POINTER_DOWN,
-      (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
-        this.deps.onPick(pickOf(over[0]));
-      },
-    );
+    // The numbers kept running while the scene slept (the player was in the plaza): draw them now.
+    this.events.on(Phaser.Scenes.Events.WAKE, () => this.sync(this.deps.store.getSnapshot()));
     const off = this.deps.store.subscribe((s) => this.sync(s));
     this.bridge.refresh = () => this.sync(this.deps.store.getSnapshot());
     this.bridge.effects = new SceneEffects(this, {
@@ -118,6 +117,7 @@ export class MainFarmScene extends Phaser.Scene {
     });
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       off();
+      this.walker.destroy();
       this.plates.destroy();
       this.gifts.destroy();
       this.dayNight.destroy();
@@ -187,6 +187,8 @@ export class MainFarmScene extends Phaser.Scene {
     }
     this.dayNight.addLight(img, p.action);
     this.obstacles.push(img.getBounds());
+    this.walker.addObstacle(img);
+    if (p.action) this.walker.addObject(img, p.action);
     const seasonTag = !!p.signed && SEASON_UNSIGNED_IDS.includes(p.id);
     let tag: Phaser.GameObjects.Text | null = null;
     if (p.action) {
@@ -201,6 +203,7 @@ export class MainFarmScene extends Phaser.Scene {
     this.ambient.update(delta);
     this.season.tick(time);
     this.life.update(delta);
+    this.walker.update(delta);
     spreadCrowd(this.pigs, delta);
     this.plates.update((id) => this.pigs.get(id)?.plateAnchor() ?? null);
   }
@@ -219,7 +222,7 @@ export class MainFarmScene extends Phaser.Scene {
     for (const pig of save?.pigs ?? []) {
       seen.add(pig.id);
       const view = pigView(pig, now, this.layout, this.deps.assets);
-      if (!this.textures.exists(view.textureId)) this.requestArt(view.artId);
+      if (!this.textures.exists(view.textureId)) this.art.request(view.artId);
       let sprite = this.pigs.get(pig.id);
       if (!sprite) {
         sprite = new PigSprite(this, pig.id, view, this.pigEnv, this.life.add(pig.id));
@@ -227,7 +230,7 @@ export class MainFarmScene extends Phaser.Scene {
       }
       sprite.apply(
         view,
-        this.anchorsOf(view.artId),
+        this.art.anchorsOf(view.artId),
         pig.id === this.bridge.selectedId,
         this.fxAnchor,
       );
@@ -249,47 +252,9 @@ export class MainFarmScene extends Phaser.Scene {
       this.leaving.set(id, sprite);
       sprite.leave(reduceMotion, () => this.leaving.delete(id));
     }
-    this.releaseArt();
-  }
-
-  /**
-   * R12A: pig art loaded after preload (missed by the preload list) is freed once no pig, staying or
-   * leaving, wears it; wearing it again reloads it. Preloaded breed defaults are kept.
-   */
-  private releaseArt() {
-    if (this.requested.size === 0) return;
-    const sprites = [...this.pigs.values(), ...this.leaving.values()];
-    const worn = new Set(sprites.map((s) => s.artId));
-    for (const artId of this.requested) {
-      if (worn.has(artId)) continue;
-      for (const key of artTextureKeys(artId)) if (this.textures.exists(key)) this.textures.remove(key);
-      this.cache.json.remove(anchorsKey(artId));
-      this.anchors.delete(artId);
-      this.requested.delete(artId);
-    }
-  }
-
-  private anchorsOf(artId: string): Anchors {
-    const cached = this.anchors.get(artId);
-    if (cached) return cached;
-    const raw: unknown = this.cache.json.get(anchorsKey(artId));
-    const parsed = parseAnchors(raw);
-    // Only cache once the json is in (or the art row has none), so a late load still applies.
-    if (raw !== undefined || !this.deps.assets.url(artId, 'anchors')) {
-      this.anchors.set(artId, parsed);
-    }
-    return parsed;
+    this.art.release(new Set([...this.pigs.values(), ...this.leaving.values()].flatMap((sprite) => (sprite.artId ? [sprite.artId] : []))));
   }
 
   private readonly fxAnchor = (fx: FxId): AnchorName =>
     this.deps.assets.manifest.fx.find((r) => r.id === fx)?.anchor ?? 'fx_above';
-
-  /** Pig art missing after preload: load it once, then re-sync. */
-  private requestArt(artId: string) {
-    if (this.requested.has(artId)) return;
-    this.requested.add(artId);
-    if (queueLoadList(this.load, artLoadList(this.deps.assets, artId)) === 0) return;
-    this.load.once(Phaser.Loader.Events.COMPLETE, () => this.bridge.refresh());
-    this.load.start();
-  }
 }

@@ -10,3 +10,4 @@ Chỉ import `core/`. Area dùng systems, không ngược lại.
 | `valuation/` | giá trị = tích các hệ số; cấu hình hiện tại cho ra đúng giá Sobi Farm |
 | `behavior-ai/` | luật chọn hành vi chung; hành vi cụ thể là cấu hình |
 | `layout/` | hình học vùng đi được, vị trí vật thể |
+| `character/` | nhân vật người chơi: đi 8 hướng, va chạm hộp chân, tương tác theo tầm với (GĐ3) |

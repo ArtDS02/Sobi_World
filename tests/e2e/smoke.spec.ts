@@ -5,6 +5,7 @@ import { _electron as electron, expect, test, type ElectronApplication } from '@
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { enterFarm } from './world';
 
 const root = process.cwd(); // npm run test:e2e runs from the repo root
 const network: string[] = [];
@@ -37,7 +38,7 @@ test('first launch, buy, fill, relaunch, export — offline', async () => {
     // First launch: a new farm.
     let app = await launch(userData);
     let page = await app.firstWindow();
-    await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
+    await enterFarm(page); // the game opens in the plaza: walk to the barn
     await page.getByRole('button', { name: 'Bỏ qua' }).click(); // tutorial
 
     // Buy a pig (choose gender).

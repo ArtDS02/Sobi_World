@@ -2,6 +2,9 @@
 // properties → save into content/farm/layout.json, the layout the game draws (no code change needed).
 // Keyboard: arrows nudge (Shift ×10), Delete, Ctrl+D duplicate, Ctrl+Z / Ctrl+Y, Esc.
 import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
+import { FARM_CONTENT } from '../../src/areas/farm/logic/config/content';
+import { PLAZA_LAYOUT } from '../../src/areas/plaza/logic/config/content';
+import { PLANNED_AREAS } from '../../src/core/config/plannedAreas';
 import { TROUGH_PROP_ID } from '../../src/core/config/assetIds';
 import { SEASON_IDS, SEASON_LOOKS, type SeasonId } from '../../src/core/config/seasons';
 import { parseSeason } from '../../src/core/engine/season';
@@ -13,7 +16,7 @@ import { History, add, duplicate, moveTo, patch, remove, reorder, type Design, t
 import { mountStage, preloadSizes, sizeOf } from './layoutStage';
 import { confirmDanger } from './modal';
 import { openPicker } from './picker';
-import { LAYER_LABEL, properties as propsForm, readProps as readPropsForm } from './layoutProps';
+import { LAYER_LABEL, properties as propsForm, readProps as readPropsForm, type PortalChoices } from './layoutProps';
 import { artUrl, json, post, state } from './store';
 
 type SeasonFiles = Partial<Record<SeasonId, string>>;
@@ -23,8 +26,20 @@ interface Manifest {
   layout: { designSize: Design; walkArea: { x: number; y: number; width: number; height: number }; placements: Placement[] };
 }
 
+/** Which layout the editor edits: the farm's, or the plaza's (GĐ3: its objects, its doors, where the character walks and appears). */
+type Target = 'farm' | 'plaza';
+const TARGET_LABEL: Record<Target, string> = { farm: '🐷 Nông trại', plaza: '🏛️ Sảnh Sobi' };
+const AREAS_WITH_DOORS = [FARM_CONTENT.area, ...PLANNED_AREAS];
+/** Every door of the plaza: portal id → the name of the Area it leads to. */
+const PORTALS: PortalChoices = AREAS_WITH_DOORS.map((m) => [m.portalInPlaza, `${m.name.vi} (${m.portalInPlaza})`] as const);
+interface PlazaMeta { walkArea: { x: number; y: number; width: number; height: number }; spawn: { x: number; y: number }; portalReach: number }
+const plazaMetaOf = (): PlazaMeta => ({ walkArea: { ...PLAZA_LAYOUT.walkArea }, spawn: { ...PLAZA_LAYOUT.spawn }, portalReach: PLAZA_LAYOUT.portalReach });
+
 let refocus = false;
 const ed = {
+  target: 'farm' as Target,
+  meta: plazaMetaOf(),
+  savedMeta: plazaMetaOf(),
   loaded: false,
   design: { width: 1600, height: 900 } as Design,
   walk: { x: 0, y: 0, width: 1, height: 1 },
@@ -46,16 +61,20 @@ const urlOf = (id: string) => {
   const path = ed.season ? ed.seasons.get(id)?.[ed.season] : undefined;
   return path ? `/assets/${path}` : artUrl(id);
 };
-const dirty = () => JSON.stringify(ed.list) !== JSON.stringify(ed.saved);
-const issues = () => layoutIssues(ed.list, { assetIds: new Set(state.art.map((a) => a.id)), troughId: TROUGH_PROP_ID });
+const dirty = () => JSON.stringify(ed.list) !== JSON.stringify(ed.saved) || (ed.target === 'plaza' && JSON.stringify(ed.meta) !== JSON.stringify(ed.savedMeta));
+const issues = () =>
+  layoutIssues(ed.list, { assetIds: new Set(state.art.map((a) => a.id)), troughId: TROUGH_PROP_ID, ...(ed.target === 'plaza' ? { plaza: { portals: PORTALS.map(([id]) => id) } } : {}) });
 
 async function load() {
   const m = await json<Manifest>(`/assets/manifest/assets.json?t=${Date.now()}`);
   // content/farm/layout.json: a save rewrites it and Vite reloads the page with the new module.
-  ed.design = FARM_LAYOUT.designSize;
-  ed.walk = FARM_LAYOUT.walkArea;
-  ed.list = [...FARM_LAYOUT.placements];
-  ed.saved = [...FARM_LAYOUT.placements];
+  const source = ed.target === 'plaza' ? PLAZA_LAYOUT : FARM_LAYOUT;
+  ed.design = source.designSize;
+  ed.meta = plazaMetaOf();
+  ed.savedMeta = plazaMetaOf();
+  ed.walk = ed.target === 'plaza' ? ed.meta.walkArea : FARM_LAYOUT.walkArea;
+  ed.list = [...source.placements];
+  ed.saved = [...source.placements];
   ed.seasons = new Map([...m.props, ...m.buildings].filter((r) => r.seasons).map((r) => [r.id, r.seasons!]));
   ed.history.clear();
   ed.sel = null;
@@ -82,22 +101,24 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
   const errors = all.filter((x) => x.level === 'error');
   root.innerHTML = `
     <div class="savebar">
+      <label class="field inline"><span>Layout</span><select data-target>${(Object.keys(TARGET_LABEL) as Target[]).map((t) => `<option value="${t}"${t === ed.target ? ' selected' : ''}>${TARGET_LABEL[t]}</option>`).join('')}</select></label>
       <button class="btn btn-small" data-undo ${ed.history.canUndo ? '' : 'disabled'}>↶ Hoàn tác</button>
       <button class="btn btn-small" data-redo ${ed.history.canRedo ? '' : 'disabled'}>↷ Làm lại</button>
       <label class="check"><input type="checkbox" data-opt="preview" ${ed.preview ? 'checked' : ''} /> Xem trước</label>
-      <label class="check"><input type="checkbox" data-opt="walk" ${ed.showWalk ? 'checked' : ''} /> Vùng heo đi</label>
+      <label class="check"><input type="checkbox" data-opt="walk" ${ed.showWalk ? 'checked' : ''} /> ${ed.target === 'plaza' ? 'Vùng nhân vật đi' : 'Vùng heo đi'}</label>
       <label class="field inline"><span>Lưới</span><select data-snap>${[1, 5, 10, 20].map((g) => `<option value="${g}"${g === ed.snap ? ' selected' : ''}>${g === 1 ? 'tắt' : `${g}px`}</option>`).join('')}</select></label>
       <label class="field inline"><span>Mùa</span><select data-season><option value="">Mặc định</option>${SEASON_IDS.map((s) => `<option value="${s}"${s === ed.season ? ' selected' : ''}>${SEASON_LABEL[s]}</option>`).join('')}</select></label>
       <span class="spacer"></span>
-      <button class="btn btn-small" data-reset>↺ Về layout mặc định</button>
+      ${ed.target === 'farm' ? '<button class="btn btn-small" data-reset>↺ Về layout mặc định</button>' : ''}
       ${dirty() ? '<span class="badge status-warn">Chưa lưu</span><button class="btn btn-small" data-discard>Huỷ thay đổi</button>' : ''}
       <button class="btn btn-primary" data-save ${!dirty() || errors.length || !state.apiOnline ? 'disabled' : ''}>💾 Lưu layout vào game</button>
     </div>
     ${all.filter((x) => x.level !== 'info').length ? `<ul class="issues">${all.filter((x) => x.level !== 'info').map((x) => `<li class="issue ${x.level}">${esc(x.speciesId ?? 'Layout')} — ${esc(x.text)}</li>`).join('')}</ul>` : ''}
+    ${ed.target === 'plaza' ? plazaMetaForm() : ''}
     <div class="layout-editor">
       <aside class="panel lib" data-lib></aside>
       <section class="layout-editor__center"><div data-stage></div><h3>Vật trong layout</h3><div data-placements></div></section>
-      <aside class="panel" data-props-host>${propsForm(ed.list, ed.sel, ed.design)}</aside>
+      <aside class="panel" data-props-host>${propsForm(ed.list, ed.sel, ed.design, ed.target === 'plaza' ? PORTALS : undefined)}</aside>
     </div>`;
 
   const stage = mountStage(root.querySelector<HTMLElement>('[data-stage]')!, ed.design, {
@@ -106,7 +127,7 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
     select: (i) => {
       ed.sel = i;
       stage.draw();
-      root.querySelector<HTMLElement>('[data-props-host]')!.innerHTML = propsForm(ed.list, ed.sel, ed.design);
+      root.querySelector<HTMLElement>('[data-props-host]')!.innerHTML = propsForm(ed.list, ed.sel, ed.design, ed.target === 'plaza' ? PORTALS : undefined);
       bindProps();
     },
     live: (i, next) => {
@@ -137,7 +158,7 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
     if (!f || ed.sel === null) return;
     const i = ed.sel;
     f.addEventListener('change', act(() => {
-      const next = readPropsForm(f, ed.design);
+      const next = readPropsForm(f, ed.design, ed.target === 'plaza');
       const p = ed.list[i]!;
       // Keep the stored fraction when the shown pixel did not change (no drift from rounding).
       const W = ed.design.width;
@@ -255,6 +276,19 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
   root.querySelectorAll<HTMLInputElement>('[data-opt]').forEach((c) =>
     c.addEventListener('change', act(() => (c.dataset.opt === 'preview' ? (ed.preview = c.checked) : (ed.showWalk = c.checked)))),
   );
+  root.querySelector<HTMLSelectElement>('[data-target]')?.addEventListener('change', (e) => {
+    const next = (e.target as HTMLSelectElement).value as Target;
+    if (dirty()) {
+      state.message = { kind: 'error', text: 'Lưu hoặc huỷ thay đổi của layout hiện tại trước khi chuyển sang layout khác.' };
+    } else {
+      ed.target = next;
+      ed.loaded = false;
+    }
+    rerender();
+  });
+  root.querySelectorAll<HTMLInputElement>('[data-meta]').forEach((input) =>
+    input.addEventListener('change', act(() => setMeta(input.dataset.meta!, Number(input.value)))),
+  );
   root.querySelector<HTMLSelectElement>('[data-snap]')?.addEventListener('change', (e) => (ed.snap = Number((e.target as HTMLSelectElement).value)));
   root.querySelector<HTMLSelectElement>('[data-season]')?.addEventListener('change', (e) => {
     ed.season = parseSeason((e.target as HTMLSelectElement).value);
@@ -262,9 +296,10 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
   });
   root.querySelector('[data-save]')?.addEventListener('click', async () => {
     try {
-      await post('/__admin/layout', { placements: ed.list });
+      await post('/__admin/layout', { placements: ed.list, target: ed.target, ...(ed.target === 'plaza' ? { plaza: ed.meta } : {}) });
       ed.saved = [...ed.list];
-      state.message = { kind: 'ok', text: `Đã lưu layout (${ed.list.length} vật) vào manifest. Game đọc layout mới khi tải lại (F5 / mở lại).` };
+      ed.savedMeta = JSON.parse(JSON.stringify(ed.meta)) as PlazaMeta;
+      state.message = { kind: 'ok', text: `Đã lưu layout ${TARGET_LABEL[ed.target]} (${ed.list.length} vật). Game đọc layout mới khi tải lại (F5 / mở lại).` };
     } catch (e) {
       state.message = { kind: 'error', text: (e as Error).message };
     }
@@ -297,6 +332,28 @@ function onKey(e: KeyboardEvent, rerender: () => void) {
     change(moveTo(ed.list, i, p.x * ed.design.width + v[0], p.y * ed.design.height + v[1], ed.design));
     done();
   }
+}
+
+/** Walk area, spawn and door reach of the plaza as pixels in the form; stored as fractions of the frame. */
+function plazaMetaForm(): string {
+  const { width: W, height: H } = ed.design;
+  const f = (label: string, key: string, value: number) =>
+    `<label class="field"><span>${label}</span><input type="number" data-meta="${key}" value="${Math.round(value)}" /></label>`;
+  const w = ed.meta.walkArea;
+  return `<div class="panel form-grid" data-plaza-meta><h4>Sảnh: chỗ nhân vật đi và xuất hiện (px)</h4>
+    ${f('Vùng đi: X', 'walk.x', w.x * W)}${f('Y', 'walk.y', w.y * H)}${f('Rộng', 'walk.width', w.width * W)}${f('Cao', 'walk.height', w.height * H)}
+    ${f('Xuất hiện: X', 'spawn.x', ed.meta.spawn.x * W)}${f('Y', 'spawn.y', ed.meta.spawn.y * H)}${f('Tầm với cổng', 'reach', ed.meta.portalReach)}</div>`;
+}
+
+function setMeta(key: string, value: number) {
+  const { width: W, height: H } = ed.design;
+  if (!Number.isFinite(value)) return;
+  const unit = (v: number, size: number) => Math.min(1, Math.max(0, Math.round((v / size) * 10000) / 10000));
+  const [group, field] = key.split('.') as [string, 'x' | 'y' | 'width' | 'height'];
+  if (key === 'reach') ed.meta.portalReach = Math.max(1, Math.round(value));
+  else if (group === 'walk') ed.meta.walkArea[field] = unit(value, field === 'x' || field === 'width' ? W : H);
+  else if (group === 'spawn') ed.meta.spawn[field as 'x' | 'y'] = unit(value, field === 'x' ? W : H);
+  ed.walk = ed.meta.walkArea;
 }
 
 export const layoutDirty = () => ed.loaded && dirty();

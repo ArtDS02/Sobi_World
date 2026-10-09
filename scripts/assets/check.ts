@@ -21,6 +21,8 @@ import {
 } from '../../src/core/assets/manifestSchema';
 import { requiredSize } from './sizes';
 import { layoutFileSchema } from '../../content/schemas/farm/layout';
+import { plazaLayoutSchema } from '../../content/schemas/plaza/layout';
+import characterRaw from '../../content/shared/character.json';
 
 const FEET_TOLERANCE = 0.02;
 const OPAQUE = 16; // alpha above this counts as painted
@@ -110,7 +112,11 @@ function defaultSize(root: string, row: Row): { width: number; height: number } 
 }
 
 /** `root` is the public/assets directory; `layoutPath` the farm layout placing its art. */
-export function checkAssets(root: string, layoutPath = 'content/farm/layout.json'): string[] {
+export function checkAssets(
+  root: string,
+  layoutPath = 'content/farm/layout.json',
+  plazaPath = 'content/plaza/layout.json',
+): string[] {
   const errors: string[] = [];
   const manifestPath = join(root, 'manifest', 'assets.json');
   let raw: unknown;
@@ -159,6 +165,20 @@ export function checkAssets(root: string, layoutPath = 'content/farm/layout.json
   }
   for (const role of ['trough', 'orderBoard'] as const) {
     if (!placements.some((p) => p.role === role)) errors.push(`layout: no "${role}" placement`);
+  }
+
+  // content/plaza/layout.json and the character: every art id is a manifest row, the character has all its frames.
+  const plaza = plazaLayoutSchema.safeParse(JSON.parse(readFileSync(plazaPath, 'utf8')));
+  if (!plaza.success) errors.push(`${plazaPath}: ${plaza.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`);
+  for (const p of plaza.success ? plaza.data.placements : []) {
+    if (!ids.has(p.id)) errors.push(`plaza layout: placement "${p.id}" has no manifest row`);
+  }
+  const player = manifest.props.find((p) => p.id === characterRaw.assetId);
+  if (!player) errors.push(`${characterRaw.assetId}: missing props row (the player character)`);
+  for (const facing of ['down', 'up', 'left', 'right']) {
+    for (const frame of ['idle', 'walk1', 'walk2']) {
+      if (player && !player.states?.[`${facing}_${frame}`]) errors.push(`${player.id}: missing state "${facing}_${frame}"`);
+    }
   }
 
   // Files: existence, naming, size, alpha, feet line.

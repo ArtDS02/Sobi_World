@@ -690,7 +690,8 @@
       "sleepAsset": "pigs/base/pig_thor_sleep.png",
       "tags": ["species", "fantasy", "new"],
       "wakeAsset": "pigs/base/pig_thor_wake.png"
-    },
+    }
+,
     {
       "id": "pig_alien_v3",
       "status": "production",
@@ -1011,6 +1012,24 @@
         "autumn": "props/prop_mushroom_autumn.png",
         "winter": "props/prop_mushroom_winter.png"
       }
+    },
+    {
+      "id": "chr_player",
+      "status": "placeholder",
+      "states": {
+        "down_idle": "props/chr_player_down_idle.png",
+        "down_walk1": "props/chr_player_down_walk1.png",
+        "down_walk2": "props/chr_player_down_walk2.png",
+        "up_idle": "props/chr_player_up_idle.png",
+        "up_walk1": "props/chr_player_up_walk1.png",
+        "up_walk2": "props/chr_player_up_walk2.png",
+        "left_idle": "props/chr_player_left_idle.png",
+        "left_walk1": "props/chr_player_left_walk1.png",
+        "left_walk2": "props/chr_player_left_walk2.png",
+        "right_idle": "props/chr_player_right_idle.png",
+        "right_walk1": "props/chr_player_right_walk1.png",
+        "right_walk2": "props/chr_player_right_walk2.png"
+      }
     }
   ],
   "buildings": [
@@ -1073,6 +1092,31 @@
       "id": "prop_windmill",
       "status": "production",
       "asset": "buildings/prop_windmill.png"
+    },
+    {
+      "id": "prop_garden_gate",
+      "status": "placeholder",
+      "asset": "buildings/prop_garden_gate.png"
+    },
+    {
+      "id": "prop_sea_dock",
+      "status": "placeholder",
+      "asset": "buildings/prop_sea_dock.png"
+    },
+    {
+      "id": "prop_sky_tree",
+      "status": "placeholder",
+      "asset": "buildings/prop_sky_tree.png"
+    },
+    {
+      "id": "prop_portal_gate",
+      "status": "placeholder",
+      "asset": "buildings/prop_portal_gate.png"
+    },
+    {
+      "id": "prop_plaza_signpost",
+      "status": "placeholder",
+      "asset": "buildings/prop_plaza_signpost.png"
     }
   ],
   "environment": [
@@ -1193,6 +1237,11 @@
       "id": "ui_btn_fill_trough",
       "status": "production",
       "asset": "ui/ui_btn_fill_trough.png"
+    },
+    {
+      "id": "ui_icon_lock",
+      "status": "placeholder",
+      "asset": "ui/ui_icon_lock.png"
     }
   ],
   "audio": [

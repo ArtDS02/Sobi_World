@@ -83,6 +83,7 @@ describe('layout editor fields in the scene', () => {
 
   it('hidden placements are not drawn', () => {
     const layout = { designSize: { width: 1600, height: 900 }, walkArea: { x: 0, y: 0, width: 1, height: 1 }, pigScaleByY: { min: 1, max: 1 },
+      player: { area: { x: 0, y: 0, width: 1, height: 1 }, spawn: { x: 0.5, y: 0.5 } },
       placements: [base, { ...base, visible: false }, { ...base, visible: true }] };
     expect(visibleLayout(layout).placements).toHaveLength(2);
   });

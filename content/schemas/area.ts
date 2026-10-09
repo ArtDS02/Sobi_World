@@ -15,6 +15,8 @@ export const areaManifestSchema = z.strictObject({
     areaLevels: z.record(z.string(), z.number().int().min(1)).optional(),
     worldDevelopment: z.number().int().min(0).optional(),
   }),
+  /** true = the Area's code is not written yet (a later phase): the plaza shows its door closed with the conditions. */
+  planned: z.boolean().optional(),
   /** Content file of its scene layout, relative to content/. */
   layout: z.string().regex(/^[a-z_]+\/[a-z0-9_-]+\.json$/).optional(),
   buildings: z.array(z.string().regex(/^[a-z][a-z0-9_]*$/)),

@@ -11,7 +11,7 @@ import { createAreaRegistry, type AreaManifest } from '../../src/core/area-regis
 import { WORLD_DEVELOPMENT } from '../../src/core/config/progression';
 import { mulberry32 } from '../../src/core/rng';
 import { parseSave } from '../../src/core/save/migrate';
-import { defaultSettings, type WorldSave } from '../../src/core/save/world';
+import { defaultSettings, WORLD_SAVE_VERSION, type WorldSave } from '../../src/core/save/world';
 import { vi as strings } from '../../src/i18n/vi';
 
 const H = 3_600_000;
@@ -82,7 +82,7 @@ describe('area registry', () => {
     const reg = registry();
     const codec = reg.codec(legacyToWorld, defaultSettings);
     const w = reg.newWorld(ctx(), defaultSettings());
-    expect(parseSave(JSON.stringify(w), codec)).toEqual({ ok: true, save: w, fromVersion: 8 });
+    expect(parseSave(JSON.stringify(w), codec)).toEqual({ ok: true, save: w, fromVersion: WORLD_SAVE_VERSION });
     // A v1 slice of the template (`done` counter) migrates to v2 (`harvests`).
     const v1 = { ...w, areas: { ...w.areas, test_garden: { version: 1, growth: 10, done: 3, lastTickedAt: T0 } } };
     const r = parseSave(JSON.stringify(v1), codec);
