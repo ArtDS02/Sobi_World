@@ -2,12 +2,12 @@
 // currency, inventory, pigs, progress, game state. Pure functions on a FarmGame: gold only moves
 // through core's changeGold (an ADMIN_ADJUST transaction), XP keeps the trough capacity rule, and
 // every result is checked with the game's own save schema before it can be written.
+import { levelFromXp } from '../../src/areas/farm/logic/config/levels';
 import { BALANCE } from '../../src/areas/farm/logic/config/balance';
 import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { DECORS } from '../../src/areas/farm/logic/config/decor';
 import type { Gender, ItemId } from '../../src/core/config/ids';
 import type { BreedId, DecorId, StatId } from '../../src/areas/farm/logic/config/ids';
-import { levelFromXp, troughCapacityForLevel } from '../../src/areas/farm/logic/config/levels';
 import { happiness } from '../../src/areas/farm/logic/happiness';
 import { changeGold } from '../../src/areas/farm/logic/gold';
 import { farmGameSchema } from '../../src/areas/farm/logic/save/farmSchema';
@@ -59,12 +59,8 @@ export const setGold = (target: number, now: number, rng: Rng): Edit => (s) => {
   return r.state;
 };
 
-/** Progress: XP (level follows), trough capacity matches the new level, food is clamped to it. */
-export const setXp = (xp: number): Edit => (s) => {
-  const v = int(xp, 0);
-  const capacity = troughCapacityForLevel(levelFromXp(v));
-  return { ...s, player: { ...s.player, xp: v }, trough: { ...s.trough, capacity, food: Math.min(s.trough.food, capacity) } };
-};
+/** Progress: XP (the level follows). The trough has its own levels and is not touched. */
+export const setXp = (xp: number): Edit => (s) => ({ ...s, player: { ...s.player, xp: int(xp, 0) } });
 
 /** Progress: unlocked slots, never below the pigs + pregnancies they hold or a used slot index. */
 export const setSlots = (n: number): Edit => (s) => {

@@ -122,9 +122,13 @@ describe('levels (§6.4)', () => {
     expect(levelFromXp(999999)).toBe(BALANCE.MAX_LEVEL);
   });
 
-  it('trough capacity grows 10 per level, max 110 (DECISIONS Q6)', () => {
-    expect(troughCapacityForLevel(1)).toBe(BALANCE.START_TROUGH_CAPACITY);
+  it('the old per-player-level trough rule survives for migrations only: 20 + 10 per level, max 120 (Q6)', () => {
+    expect(troughCapacityForLevel(1)).toBe(20);
     expect(troughCapacityForLevel(BALANCE.MAX_LEVEL)).toBe(110);
+  });
+
+  it('the trough levels hold 30 / 80 / 200 and cost 0 / 1,200 / 4,000 (GAME_BALANCE §2.6)', () => {
+    expect(BALANCE.TROUGH_LEVELS).toEqual([{ capacity: 30, cost: 0 }, { capacity: 80, cost: 1200 }, { capacity: 200, cost: 4000 }]);
   });
 });
 

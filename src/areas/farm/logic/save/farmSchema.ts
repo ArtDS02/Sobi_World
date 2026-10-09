@@ -127,7 +127,7 @@ const shapeSchema = z.object({
   }),
   pigs: z.array(pigSchema),
   nursery: z.array(nurseryPigSchema),
-  trough: z.object({ food: nonNeg, capacity: nonNeg, lastResolvedAt: time }),
+  trough: z.object({ food: nonNeg, capacity: nonNeg, level: z.number().int().min(1).optional(), lastResolvedAt: time }),
   // Items added after a save was written are missing from it: they count as none.
   inventory: z.preprocess(withEveryItem, z.record(z.enum(ITEM_ID_VALUES), nonNeg)),
   orders: z.array(orderSchema),
@@ -181,7 +181,7 @@ const farmAreaShape = z.object({
   unlockedSlots: z.number().int().min(1),
   pigs: z.array(pigSchema),
   nursery: z.array(nurseryPigSchema),
-  trough: z.object({ food: nonNeg, capacity: nonNeg, lastResolvedAt: time }),
+  trough: z.object({ food: nonNeg, capacity: nonNeg, level: z.number().int().min(1).optional(), lastResolvedAt: time }),
   orders: z.array(orderSchema),
   gifts: z.object({ nextAt: time.nullable(), boxes: z.array(giftSchema) }),
   decor: z.array(z.enum(DECOR_ID_VALUES)),

@@ -155,6 +155,7 @@ export const vi = {
     ALREADY_OWNED: "Bạn đã có món này.",
     NURSERY_FULL: "Kho heo con đã đầy. Hãy đưa bớt heo con ra trại trước.",
     NO_MANURE: "Chuồng đang sạch phân.",
+    TROUGH_MAX_LEVEL: "Máng ăn đã ở cấp cao nhất.",
     INVENTORY_FULL: "Túi đồ đã đầy chỗ. Hãy dùng bớt vật phẩm trước.",
   },
 
@@ -180,6 +181,7 @@ export const vi = {
     becameSick: "{name} bị bệnh rồi!",
     becameCritical: "{name} đang nguy kịch! Hãy chữa ngay.",
     died: "{name} đã không qua khỏi...",
+    troughUpgraded: "Máng ăn lên cấp {level}! Chứa được {capacity} phần.",
     manureCleaned: "Đã dọn {piles} đống phân, thu được {kept} phân bón.",
     itemSold: "Đã bán {quantity} {name} được {gold} Sobi Coin.",
     hungryZero: "{name} đói lả, ngừng lớn.",
@@ -267,6 +269,9 @@ export const vi = {
     toBuy: "Mua thêm: {n} ({gold} Sobi Coin)",
     hint: "Heo tự ăn từ máng kể cả khi bạn tắt game. Đổ đầy trước khi nghỉ.",
     fill: "Đổ {n} phần",
+    level: "Máng ăn cấp {level} (chứa {capacity} phần)",
+    upgrade: "Nâng lên cấp {level}: chứa {capacity} phần ({gold} Sobi Coin)",
+    maxLevel: "Máng ăn đã ở cấp cao nhất.",
   },
 
   breed: {
@@ -336,6 +341,7 @@ export const vi = {
     PIG_PURCHASE: "Mua heo",
     PIG_SELL: "Xuất chuồng",
     ITEM_SELL: "Bán vật phẩm",
+    TROUGH_UPGRADE: "Nâng cấp máng",
     BREEDING_FEE: "Phí phối giống",
     SLOT_PURCHASE: "Mở chuồng",
     TROUGH_FILL: "Đổ máng",

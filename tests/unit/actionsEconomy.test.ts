@@ -291,11 +291,11 @@ describe('renamePig (§8.12)', () => {
 });
 
 describe('addXP (§8.16)', () => {
-  it('level-up emits LEVEL_UP and recomputes trough capacity', () => {
+  it('level-up emits LEVEL_UP; the trough has its own levels and does not change', () => {
     const s = start();
     const r = addXP({ ...s, player: { ...s.player, xp: 90 } }, 10);
     expect(r.events).toEqual([{ type: 'LEVEL_UP', level: 2 }]);
-    expect(r.state.trough.capacity).toBe(30);
+    expect(r.state.trough.capacity).toBe(s.trough.capacity);
   });
 
   it('never lowers XP', () => {

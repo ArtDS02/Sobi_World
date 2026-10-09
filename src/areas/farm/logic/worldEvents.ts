@@ -48,6 +48,7 @@ export function farmWorldEvents(e: GameEvent): WorldEvent[] {
     case 'DAILY_CLAIMED':
     case 'RELIEF_CLAIMED':
       return [...added('FOOD_BASIC', e.food), ...added('MEDICINE_COMMON', e.medicine), ...coins(e.gold)];
+    case 'TROUGH_UPGRADED':
     case 'GIFT_OPENED':
     case 'ACHIEVEMENT_CLAIMED':
     case 'SLOT_BOUGHT':

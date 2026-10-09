@@ -26,6 +26,8 @@ export interface FarmGame {
   trough: {
     food: number;
     capacity: number;
+    /** 1..TROUGH_LEVELS.length; absent in older saves (derived from the capacity, trough.ts). */
+    level?: number | undefined;
     lastResolvedAt: number;
   };
   inventory: Record<ItemId, number>;

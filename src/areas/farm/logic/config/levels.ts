@@ -8,12 +8,11 @@ export const FARM_LEVELS: LevelTable = { xp: BALANCE.LEVEL_XP, maxLevel: BALANCE
 /** Farm level: highest level whose xp threshold <= xp, capped at MAX_LEVEL (core/progression). */
 export const levelFromXp = (xp: number): number => coreLevelFromXp(xp, FARM_LEVELS);
 
-/** Trough capacity for a level: min(MAX, START + (level-1) * PER_LEVEL) (§8.6). */
-export const troughCapacityForLevel = (level: number): number =>
-  Math.min(
-    BALANCE.TROUGH_CAPACITY_MAX,
-    BALANCE.START_TROUGH_CAPACITY + (level - 1) * BALANCE.TROUGH_CAPACITY_PER_LEVEL,
-  );
+/**
+ * Sobi Farm's old trough rule (v1-v7): 20 food + 10 per player level, at most 120. Kept for the save
+ * migrations only; since GĐ2 the trough has its own levels (TROUGH_LEVELS).
+ */
+export const troughCapacityForLevel = (level: number): number => Math.min(120, 20 + (level - 1) * 10);
 
 /** Cost and level gate for unlocking slot number `slot` (5..MAX_SLOTS), or undefined. */
 export const slotUnlock = (slot: number): { cost: number; level: number } | undefined =>

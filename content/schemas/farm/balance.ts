@@ -11,7 +11,8 @@ const balanceSchema = z.strictObject({
   START_GOLD: nonNeg,
   START_SLOTS: posInt,
   START_INVENTORY: z.record(itemId, int.min(0)),
-  START_TROUGH_CAPACITY: nonNeg,
+  /** The auto-feeding trough by level (GAME_BALANCE §2.6): food it holds and the price to reach the level (level 1 is free). */
+  TROUGH_LEVELS: z.array(z.strictObject({ capacity: posInt, cost: nonNeg })).min(1),
   HUNGER_MAX: posInt,
   CLEAN_MAX: posInt,
   /** Growth progress (%) at which a creature is Young / Adult; 100 = Mature (GAME_BALANCE §2.1). */
@@ -40,8 +41,6 @@ const balanceSchema = z.strictObject({
   POOP_INTERVAL_SEC: seconds,
   MANURE_MAX: posInt,
   TROUGH_AUTO_FEED_AT: z.number().min(0).max(100),
-  TROUGH_CAPACITY_PER_LEVEL: nonNeg,
-  TROUGH_CAPACITY_MAX: nonNeg,
   HAPPY_CLEAN_WEIGHT: unit,
   HAPPY_HUNGER_WEIGHT: unit,
   HAPPY_SICK_PENALTY: nonNeg,
@@ -86,6 +85,7 @@ export const farmBalanceFileSchema = z
     const issue = (message: string) => ctx.addIssue({ code: 'custom', message });
     if (b.LEVEL_XP.length !== b.MAX_LEVEL) issue('balance.LEVEL_XP needs one entry per level (MAX_LEVEL)');
     if (b.LEVEL_XP.some((x, i) => i > 0 && x <= b.LEVEL_XP[i - 1]!)) issue('balance.LEVEL_XP must increase');
+    if (b.TROUGH_LEVELS.some((l, i) => i > 0 && l.capacity <= b.TROUGH_LEVELS[i - 1]!.capacity)) issue('balance.TROUGH_LEVELS capacity must grow with the level');
     if (b.STAGE_YOUNG_AT >= b.STAGE_ADULT_AT) issue('balance.STAGE_YOUNG_AT must be below STAGE_ADULT_AT');
     const kg = b.WEIGHT_AT_PROGRESS;
     if (kg[0]![0] !== 0 || kg[kg.length - 1]![0] !== 100 || kg.some((k, i) => i > 0 && k[0] <= kg[i - 1]![0])) issue('balance.WEIGHT_AT_PROGRESS must run from 0 to 100, ascending');

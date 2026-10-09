@@ -9,7 +9,7 @@ import type { NurseryPig, Pig, FarmGame } from '../logic/types';
 import { formatDec, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import type { BoundAction } from '../store';
-import { productPurchase, troughFill, troughSpace, type ActionVm } from './actionsVm';
+import { productPurchase, troughFill, troughSpace, troughUpgrade, type ActionVm } from './actionsVm';
 import type { OrderCardVm } from './ordersVm';
 import { actionButton } from './components/actionButton';
 import { openConfirmDialog, openDialog } from '../../../ui/components/dialog';
@@ -79,6 +79,7 @@ export function openTroughDialog(
 ) {
   const d = openDialog(host, vi.trough.title, undefined, 'trough');
   const space = troughSpace(save);
+  const up = troughUpgrade(save, now);
   const input = el('input', {
     class: 'c-input',
     attrs: { type: 'number', min: '1', max: String(Math.max(1, space)), value: String(units) },
@@ -110,6 +111,7 @@ export function openTroughDialog(
   input.addEventListener('input', refresh);
   d.body.append(
     el('p', { class: 'c-dialog__hint', text: vi.trough.hint }),
+    el('p', { text: up.level }),
     el(
       'div',
       { class: 'c-dialog__presets' },
@@ -120,6 +122,10 @@ export function openTroughDialog(
     info,
   );
   d.footer.append(slot);
+  if (up.upgrade) {
+    const upgrade = up.upgrade;
+    d.footer.append(actionButton(upgrade, () => void act(upgrade.run).then(d.close)));
+  }
   refresh();
 }
 

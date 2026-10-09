@@ -29,6 +29,7 @@ export type GameEvent =
   | { type: 'PIG_FED'; pigId: string }
   | { type: 'PIG_CLEANED'; pigIds: string[] }
   | { type: 'PIG_TREATED'; pigId: string }
+  | { type: 'TROUGH_UPGRADED'; level: number; capacity: number; gold: number }
   | { type: 'TROUGH_FILLED'; units: number; fromInventory: number; gold: number }
   | { type: 'ITEM_BOUGHT'; itemId: ItemId; quantity: number; gold: number }
   | { type: 'PIG_RENAMED'; pigId: string }
@@ -75,6 +76,7 @@ export const GAME_EVENT_TYPES = [
   'PIG_FED',
   'PIG_CLEANED',
   'PIG_TREATED',
+  'TROUGH_UPGRADED',
   'TROUGH_FILLED',
   'ITEM_BOUGHT',
   'PIG_RENAMED',

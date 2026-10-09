@@ -2,6 +2,8 @@
 // period after a catch-up (decisions 002 and 004); medicine in time saves the pig.
 import { describe, expect, it } from 'vitest';
 import { cleanManure } from '../../src/areas/farm/logic/actions/cleanManure';
+import { upgradeTrough } from '../../src/areas/farm/logic/actions/upgradeTrough';
+import { nextTroughLevel, troughLevel } from '../../src/areas/farm/logic/troughLevel';
 import { sellItem } from '../../src/areas/farm/logic/actions/sellItem';
 import { INVENTORY } from '../../src/core/config/inventory';
 import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
@@ -199,5 +201,41 @@ describe('raking the pen: Dọn phân → item_manure, then sold', () => {
     expect(sellItem(s, { itemId: 'FOOD_BASIC', quantity: 1 }, ctx)).toEqual({ ok: false, error: 'INVALID_REQUEST' });
     expect(sellItem(s, { itemId: 'item_manure', quantity: 11 }, ctx)).toEqual({ ok: false, error: 'INSUFFICIENT_ITEM' });
     expect(sellItem(s, { itemId: 'item_manure', quantity: 0 }, ctx)).toEqual({ ok: false, error: 'INVALID_REQUEST' });
+  });
+});
+
+describe('trough levels (GAME_BALANCE §2.6)', () => {
+  const ctx = { now: 0, rng: rng() };
+  const farmWith = (trough: FarmGame['trough'], gold = 100_000): FarmGame => ({ ...makeState([], 0), trough, player: { gold, xp: 0, unlockedSlots: 4 } });
+
+  it('a new farm has a level-1 trough of 30', () => {
+    const t = makeState([], 0).trough;
+    expect(troughLevel({ capacity: 30 })).toBe(1);
+    expect(nextTroughLevel(t)).toEqual({ level: 2, capacity: 80, cost: 1200 });
+  });
+
+  it('upgrading costs each level costs its price and raises the capacity; the food stays', () => {
+    const s = farmWith({ food: 12, capacity: 30, level: 1, lastResolvedAt: 0 }, 9000);
+    const r = upgradeTrough(s, ctx);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.state.trough).toEqual({ food: 12, capacity: 80, level: 2, lastResolvedAt: 0 });
+    expect(r.state.player.gold).toBe(7800);
+    expect(r.state.transactions[0]).toMatchObject({ type: 'TROUGH_UPGRADE', amount: -1200 });
+    expect(r.events).toContainEqual({ type: 'TROUGH_UPGRADED', level: 2, capacity: 80, gold: -1200 });
+    const r3 = upgradeTrough(r.state, ctx);
+    if (!r3.ok) throw new Error(r3.error);
+    expect(r3.state.trough).toMatchObject({ capacity: 200, level: 3 });
+    expect(r3.state.player.gold).toBe(7800 - 4000);
+  });
+
+  it('refused without the gold, and at the top level', () => {
+    expect(upgradeTrough(farmWith({ food: 0, capacity: 30, level: 1, lastResolvedAt: 0 }, 1199), ctx)).toEqual({ ok: false, error: 'INSUFFICIENT_GOLD' });
+    expect(upgradeTrough(farmWith({ food: 0, capacity: 200, level: 3, lastResolvedAt: 0 }), ctx)).toEqual({ ok: false, error: 'TROUGH_MAX_LEVEL' });
+  });
+
+  it('a save from before levels gets the level its capacity reaches (Sobi Farm capacity 110 → level 2)', () => {
+    expect(troughLevel({ capacity: 20 })).toBe(1);
+    expect(troughLevel({ capacity: 110 })).toBe(2);
+    expect(troughLevel({ capacity: 200 })).toBe(3);
   });
 });

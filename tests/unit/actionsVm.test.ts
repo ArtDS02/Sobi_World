@@ -135,7 +135,7 @@ describe('shop (R03)', () => {
 describe('trough fill dialog', () => {
   it('breakdown takes inventory first then prices the shortfall', () => {
     const s = farm();
-    expect(troughSpace(s)).toBe(20);
+    expect(troughSpace(s)).toBe(30);
     const vm = troughFill(s, 14, NOW);
     expect(vm.fromInventory).toBe('Lấy từ kho: 10');
     expect(vm.toBuy).toBe('Mua thêm: 4 (100 Sobi Coin)');
@@ -144,6 +144,6 @@ describe('trough fill dialog', () => {
   });
 
   it('over capacity → TROUGH_FULL reason', () => {
-    expect(troughFill(farm(), 21, NOW).confirm.reason).toBe(vi.error.TROUGH_FULL);
+    expect(troughFill(farm(), 31, NOW).confirm.reason).toBe(vi.error.TROUGH_FULL);
   });
 });

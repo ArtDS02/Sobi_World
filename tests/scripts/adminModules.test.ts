@@ -139,13 +139,13 @@ describe('layout', () => {
 describe('user (save) edits', () => {
   const rng = mulberry32(3);
   const s0 = newGame({ now: 1000, rng });
-  it('gold moves through one ADMIN_ADJUST transaction; XP keeps the trough rule', () => {
+  it('gold moves through one ADMIN_ADJUST transaction; XP follows the level and leaves the trough alone', () => {
     const s = E.apply(s0, E.setGold(12345, 2000, rng));
     expect(s.player.gold).toBe(12345);
     expect(s.transactions[0]).toMatchObject({ type: 'ADMIN_ADJUST', amount: 12345 - s0.player.gold });
     const lv = E.apply(s, E.setXp(5700));
     expect(E.summary(lv).level).toBe(10);
-    expect(lv.trough.capacity).toBeGreaterThan(s0.trough.capacity);
+    expect(lv.trough.capacity).toBe(s0.trough.capacity);
   });
   it('refuses edits the game could not load', () => {
     const withPig = E.apply(s0, E.addPig('PIG_EARTH_PINK', 'FEMALE', 'Mít', 1, 'p1'));

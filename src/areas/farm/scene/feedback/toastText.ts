@@ -28,6 +28,8 @@ export function toastText(
   switch (event.type) {
     case 'PIG_BECAME_SICK':
       return t(vi.event.becameSick, { name: nameOf(event.pigId) });
+    case 'TROUGH_UPGRADED':
+      return t(vi.event.troughUpgraded, { level: event.level, capacity: event.capacity });
     case 'MANURE_CLEANED':
       return t(vi.event.manureCleaned, { piles: event.piles, kept: event.kept });
     case 'ITEM_SOLD':

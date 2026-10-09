@@ -3,7 +3,11 @@
     "START_GOLD": 5000,
     "START_SLOTS": 4,
     "START_INVENTORY": { "FOOD_BASIC": 10, "MEDICINE_COMMON": 1, "item_manure": 0 },
-    "START_TROUGH_CAPACITY": 20,
+    "TROUGH_LEVELS": [
+      { "capacity": 30, "cost": 0 },
+      { "capacity": 80, "cost": 1200 },
+      { "capacity": 200, "cost": 4000 }
+    ],
     "HUNGER_MAX": 100,
     "CLEAN_MAX": 100,
     "STAGE_YOUNG_AT": 12.5,
@@ -22,8 +26,6 @@
     "POOP_INTERVAL_SEC": 28800,
     "MANURE_MAX": 12,
     "TROUGH_AUTO_FEED_AT": 40,
-    "TROUGH_CAPACITY_PER_LEVEL": 10,
-    "TROUGH_CAPACITY_MAX": 120,
     "HAPPY_CLEAN_WEIGHT": 0.55,
     "HAPPY_HUNGER_WEIGHT": 0.45,
     "HAPPY_SICK_PENALTY": 40,

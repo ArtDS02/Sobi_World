@@ -12,6 +12,7 @@ export const ERRORS = [
   "NURSERY_FULL",
   "INVENTORY_FULL",
   "NO_MANURE",
+  "TROUGH_MAX_LEVEL",
 ] as const;
 
 export type ErrorCode = (typeof ERRORS)[number];

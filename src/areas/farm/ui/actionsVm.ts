@@ -5,6 +5,8 @@ import { buyPig } from '../logic/actions/buyPig';
 import { buyProduct } from '../logic/actions/buyProduct';
 import { buySlot } from '../logic/actions/buySlot';
 import { cleanManure } from '../logic/actions/cleanManure';
+import { upgradeTrough } from '../logic/actions/upgradeTrough';
+import { nextTroughLevel, troughLevel } from '../logic/troughLevel';
 import { cleanAll, cleanPig } from '../logic/actions/cleanPig';
 import { feedPig } from '../logic/actions/feedPig';
 import { fillTrough } from '../logic/actions/fillTrough';
@@ -202,6 +204,17 @@ export function troughFill(save: FarmGame, units: number, now: number) {
       gold: formatInt(toBuy * ITEMS.FOOD_BASIC.priceGold),
     }),
     confirm: vm(save, now, t(vi.trough.fill, { n: units }), (s, c) => fillTrough(s, { units }, c)),
+  };
+}
+
+/** The trough's level line and its upgrade button (GAME_BALANCE §2.6); null upgrade at the top level. */
+export function troughUpgrade(save: FarmGame, now: number) {
+  const next = nextTroughLevel(save.trough);
+  return {
+    level: t(vi.trough.level, { level: troughLevel(save.trough), capacity: save.trough.capacity }),
+    upgrade: next
+      ? vm(save, now, t(vi.trough.upgrade, { level: next.level, capacity: next.capacity, gold: formatInt(next.cost) }), (s, c) => upgradeTrough(s, c))
+      : null,
   };
 }
 

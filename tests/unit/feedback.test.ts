@@ -17,6 +17,7 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   PIG_HUNGRY_ZERO: { type: 'PIG_HUNGRY_ZERO', pigId: 'pig-1', at: 0, stalled: true },
   PIG_BECAME_SICK: { type: 'PIG_BECAME_SICK', pigId: 'pig-1' },
   PIG_NEED_DROPPED: { type: 'PIG_NEED_DROPPED', pigId: 'pig-1', need: 'hunger', level: 'low' },
+  TROUGH_UPGRADED: { type: 'TROUGH_UPGRADED', level: 2, capacity: 80, gold: -1200 },
   MANURE_CLEANED: { type: 'MANURE_CLEANED', piles: 3, kept: 3 },
   ITEM_SOLD: { type: 'ITEM_SOLD', itemId: 'item_manure', quantity: 3, gold: 18 },
   PIG_BECAME_CRITICAL: { type: 'PIG_BECAME_CRITICAL', pigId: 'pig-1' },

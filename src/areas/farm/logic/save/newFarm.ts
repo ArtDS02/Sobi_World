@@ -17,7 +17,7 @@ export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {
     },
     pigs: [],
     nursery: [],
-    trough: { food: 0, capacity: BALANCE.START_TROUGH_CAPACITY, lastResolvedAt: ctx.now },
+    trough: { food: 0, capacity: BALANCE.TROUGH_LEVELS[0]!.capacity, level: 1, lastResolvedAt: ctx.now },
     inventory: { ...BALANCE.START_INVENTORY },
     orders: [],
     collection: { discoveredBreeds: [] },

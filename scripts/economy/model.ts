@@ -56,7 +56,7 @@ export function foodToAdult(breed: BreedId): number {
 /** Growth reached with an empty trough and no feeding (spec §6.4: PINK stalls at 33.33%). */
 export function stallGrowth(breed: BreedId): number {
   const pigs = [baby(breed)];
-  const trough = { food: 0, capacity: BALANCE.START_TROUGH_CAPACITY, lastResolvedAt: 0 };
+  const trough = { food: 0, capacity: BALANCE.TROUGH_LEVELS[0]!.capacity, lastResolvedAt: 0 };
   const end = BREEDS[breed].growthSec * 2 * 1000;
   return advanceWithTrough({ pigs, trough }, end, NO_SICKNESS(), 0, 0, ALWAYS_NEW_WORLD).pigs[0]!.growthProgress;
 }
