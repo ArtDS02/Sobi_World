@@ -267,6 +267,21 @@ describe('what its events say', () => {
   });
 });
 
+describe('the Codex of fish', () => {
+  it('lists every species; an unmet one gives a clue (rarity, when it bites), never its name', () => {
+    const kind = aquariumArea.codex?.().find((k) => k.id === 'fish');
+    expect(kind?.entries.map((e) => e.id)).toEqual(FISH_LIST.map((f) => f.id));
+    for (const e of kind!.entries) {
+      const species = FISH_LIST.find((f) => f.id === e.id)!;
+      expect(e.hint).toContain('Chưa khám phá');
+      expect(e.hint).not.toContain(species.nameVi);
+      expect(e.hint).toContain(species.nightOnly ? 'tối' : 'bến');
+      expect(e.detail).toContain(species.nameVi.length > 0 ? species.descVi : '');
+      expect(e.artId).toBe(species.art);
+    }
+  });
+});
+
 describe('admin time travel and art', () => {
   it('moves every clock of the tank back, nothing else', () => {
     const w = base([fish({ isSick: true, lastSickAt: T0, breedReadyAt: T0 + H })], {});

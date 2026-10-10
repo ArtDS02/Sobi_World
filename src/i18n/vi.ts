@@ -187,7 +187,12 @@ export const vi = {
     xp: "{current}/{next} KN",
     xpMax: "Cấp cao nhất",
     close: "Đóng",
-    codex: { hintDay: "Một loài cá, câu được ở bến", hintNight: "Một loài cá chỉ cắn câu về đêm" },
+    codex: {
+      hintUnknown: "Chưa khám phá · cá {rarity} · {when}",
+      whenDay: "câu được ở bến",
+      whenNight: "chỉ cắn câu lúc tối",
+      detail: "{rarity} · {desc} Nuôi lớn trong {hours} giờ.",
+    },
     // The bar under the scene.
     bar: {
       fish: "Câu cá",

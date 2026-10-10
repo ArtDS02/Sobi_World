@@ -4,6 +4,7 @@ import type { AreaModule } from '../../core/area-registry/registry';
 import { addToBag } from '../../core/inventory/bag';
 import { INVENTORY } from '../../core/config/inventory';
 import { pick, randomId } from '../../core/rng';
+import { t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 import { AB, AQUARIUM_CONTENT, FEED_ITEM, FISH, FISH_LIST, FISH_NAMES } from './logic/config/content';
 import { advanceAquariumWorld } from './logic/simulate';
@@ -48,8 +49,9 @@ export const aquariumArea: AreaModule = {
         name: f.nameVi,
         artId: f.art,
         rarity: f.rarity,
-        hint: f.nightOnly ? vi.aquarium.codex.hintNight : vi.aquarium.codex.hintDay,
-        detail: f.descVi,
+        // An unmet species gives a clue (rarity and when it bites); a met one tells what it is and how it grows.
+        hint: t(vi.aquarium.codex.hintUnknown, { rarity: vi.rarity[f.rarity], when: f.nightOnly ? vi.aquarium.codex.whenNight : vi.aquarium.codex.whenDay }),
+        detail: t(vi.aquarium.codex.detail, { rarity: vi.rarity[f.rarity], desc: f.descVi, hours: f.growHours }),
       })),
     },
   ],
