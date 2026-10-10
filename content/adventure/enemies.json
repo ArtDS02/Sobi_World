@@ -1,0 +1,99 @@
+{
+  "enemies": [
+    {
+      "id": "enemy_mossling",
+      "nameVi": "Rêu Con",
+      "element": "EARTH",
+      "stats": { "hp": 55, "atk": 11, "def": 4, "spd": 7, "crit": 3 },
+      "skills": [],
+      "exp": 8,
+      "coins": 8,
+      "drops": [{ "itemId": "item_forest_herb", "chance": 0.5, "min": 1, "max": 2 }],
+      "art": "enemy_mossling"
+    },
+    {
+      "id": "enemy_thorn_sprout",
+      "nameVi": "Mầm Gai",
+      "element": "EARTH",
+      "stats": { "hp": 48, "atk": 14, "def": 3, "spd": 9, "crit": 4 },
+      "skills": ["skill_rock_smash"],
+      "exp": 10,
+      "coins": 10,
+      "drops": [{ "itemId": "item_forest_herb", "chance": 0.4, "min": 1, "max": 2 }],
+      "art": "enemy_thorn_sprout"
+    },
+    {
+      "id": "enemy_gale_sparrow",
+      "nameVi": "Chim Sẻ Gió",
+      "element": "WIND",
+      "stats": { "hp": 42, "atk": 13, "def": 3, "spd": 14, "crit": 8 },
+      "skills": ["skill_gust_strike"],
+      "exp": 10,
+      "coins": 10,
+      "drops": [{ "itemId": "item_forest_herb", "chance": 0.25, "min": 1, "max": 1 }],
+      "art": "enemy_gale_sparrow"
+    },
+    {
+      "id": "enemy_ember_fox",
+      "nameVi": "Cáo Lửa",
+      "element": "FIRE",
+      "stats": { "hp": 50, "atk": 16, "def": 4, "spd": 11, "crit": 6 },
+      "skills": ["skill_ember_slash"],
+      "exp": 12,
+      "coins": 12,
+      "drops": [{ "itemId": "item_beast_fang", "chance": 0.3, "min": 1, "max": 1 }],
+      "art": "enemy_ember_fox"
+    },
+    {
+      "id": "enemy_dew_frog",
+      "nameVi": "Ếch Sương",
+      "element": "WATER",
+      "stats": { "hp": 60, "atk": 12, "def": 5, "spd": 8, "crit": 4 },
+      "skills": ["skill_bubble_shot", "skill_soothing_splash"],
+      "exp": 11,
+      "coins": 11,
+      "drops": [{ "itemId": "item_forest_herb", "chance": 0.4, "min": 1, "max": 2 }],
+      "art": "enemy_dew_frog"
+    },
+    {
+      "id": "enemy_forest_wolf",
+      "nameVi": "Sói Rừng",
+      "element": "EARTH",
+      "stats": { "hp": 85, "atk": 18, "def": 6, "spd": 12, "crit": 8 },
+      "skills": ["skill_rock_smash"],
+      "exp": 18,
+      "coins": 16,
+      "drops": [{ "itemId": "item_beast_fang", "chance": 0.6, "min": 1, "max": 2 }],
+      "art": "enemy_forest_wolf"
+    },
+    {
+      "id": "enemy_bramble_boar",
+      "nameVi": "Heo Rừng Gai",
+      "element": "EARTH",
+      "stats": { "hp": 130, "atk": 20, "def": 10, "spd": 8, "crit": 5 },
+      "skills": ["skill_rock_smash", "skill_stone_skin"],
+      "exp": 24,
+      "coins": 22,
+      "drops": [
+        { "itemId": "item_beast_fang", "chance": 0.7, "min": 1, "max": 2 },
+        { "itemId": "item_equip_wood_sword", "chance": 0.12, "min": 1, "max": 1 }
+      ],
+      "art": "enemy_bramble_boar"
+    },
+    {
+      "id": "enemy_old_treant",
+      "nameVi": "Cổ Thụ Giận Dữ",
+      "element": "EARTH",
+      "stats": { "hp": 420, "atk": 24, "def": 12, "spd": 9, "crit": 5 },
+      "skills": ["skill_boulder_toss", "skill_earth_wall", "skill_quake"],
+      "exp": 90,
+      "coins": 150,
+      "drops": [
+        { "itemId": "item_beast_fang", "chance": 1, "min": 2, "max": 3 },
+        { "itemId": "item_forest_herb", "chance": 1, "min": 3, "max": 5 }
+      ],
+      "art": "enemy_old_treant",
+      "boss": true
+    }
+  ]
+}

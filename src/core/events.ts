@@ -33,6 +33,7 @@ export type WorldEvent =
   | { type: 'area.levelUp'; area: string; level: number }
   | { type: 'codex.discovered'; area: string; kind: string; id: string }
   | { type: 'achievement.unlocked'; area: string; achievementId: string }
+  | { type: 'battle.won'; area: string; zoneId: string; enemies: number }
   | { type: 'adventure.finished'; area: string; zoneId: string; won: boolean }
   | { type: 'time.dayChanged'; day: number };
 
@@ -63,6 +64,7 @@ export const WORLD_EVENT_TYPES = [
   'area.levelUp',
   'codex.discovered',
   'achievement.unlocked',
+  'battle.won',
   'adventure.finished',
   'time.dayChanged',
 ] as const satisfies readonly WorldEventType[];

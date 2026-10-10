@@ -406,6 +406,105 @@
       "sellGold": 160,
       "hungerRestore": 0,
       "curesSickness": false
+    },
+    {
+      "id": "item_equip_wood_sword",
+      "category": "EQUIPMENT",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 30,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_iron_sword",
+      "category": "EQUIPMENT",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 90,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_flame_blade",
+      "category": "EQUIPMENT",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 260,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_leaf_vest",
+      "category": "EQUIPMENT",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 30,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_bark_armor",
+      "category": "EQUIPMENT",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 90,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_moss_plate",
+      "category": "EQUIPMENT",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 260,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_lucky_clover",
+      "category": "EQUIPMENT",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 30,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_wind_feather",
+      "category": "EQUIPMENT",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 90,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_sun_amulet",
+      "category": "EQUIPMENT",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 260,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_forest_herb",
+      "category": "MATERIAL",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 18,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_beast_fang",
+      "category": "MATERIAL",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 45,
+      "hungerRestore": 0,
+      "curesSickness": false
     }
   ]
 }

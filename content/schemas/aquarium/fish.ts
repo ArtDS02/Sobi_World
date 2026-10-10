@@ -24,6 +24,8 @@ export const fishSchema = z.strictObject({
   scaleHours: z.number().finite().positive(),
   /** Pairs of this species can have eggs. */
   breedable: z.boolean(),
+  /** Can be raised for the Adventure (GĐ10: its fighting style is content/adventure/archetypes.json). */
+  fighter: z.boolean().optional(),
   /** Art id: the picture of the fish swimming (`<art>`). */
   art: assetId,
 });
