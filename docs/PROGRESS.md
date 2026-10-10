@@ -21,9 +21,9 @@
 9. **Admin**: Số liệu sửa kẻ địch, kỹ năng, kiểu đánh, vùng, trang bị, cân bằng; trang **Mô phỏng trận**; tua thời gian dịch cả Adventure.
 10. **Test**: combat (21), Adventure (22 + 13 cho UI / liên kết / mô phỏng), roster, quà tặng; `npm run check` xanh (1.265 test).
 📁 File chính: `src/systems/combat/`, `src/systems/equipment/`, `src/areas/adventure/`, `content/adventure/` + `content/schemas/adventure/`, `tools/admin/adventure.ts`, `src/areas/farm/logic/roster.ts`, `src/areas/aquarium/logic/roster.ts`, `docs/decisions/018-adventure.md`; hook mới `roster` và `receiveGift` ở `core/area-registry`.
-🧪 Đã kiểm tra: `npm run check` xanh (1.265 test); chạy thật trong trình duyệt (sandbox): sảnh, chọn đội, bản đồ, trận đánh (chọn mục tiêu, kỹ năng, Tự động, x2), thua trùm, tổng kết, nhận thưởng, kiệt sức; chuyến lưu giữa trận rồi tải lại chơi tiếp được.
+🧪 Đã kiểm tra: `npm run check` xanh (1.265 test); `npm run test:e2e` 9/9 (có `adventure.spec.ts`); `npm run dist:win` + verify:build + verify:installer (`release/SobiWorld-Setup-0.10.0.exe`); chạy thật trong trình duyệt (sandbox): sảnh, chọn đội, bản đồ, trận đánh (chọn mục tiêu, kỹ năng, Tự động, x2), thua trùm, tổng kết, nhận thưởng, kiệt sức; chuyến lưu giữa trận rồi tải lại chơi tiếp được.
 ⚠️ Quyết định tự đưa ra (decision 018): ×0,75 khi bị kháng nguyên tố; năng lượng phiêu lưu riêng của Adventure (không trừ năng lượng nuôi của heo); kiểu đánh theo họ; trùm hạ 420 → 340 máu; thua vẫn giữ KN và loot; máu mang theo giữa điểm dừng.
-⚠️ Chưa làm: bot `sim:week` chưa có routine Adventure (GĐ11); Codex kẻ địch / trang bị; nhân vật đi trên bản đồ; art, animation, âm thanh (GĐ14, `docs/ASSET_TODO.md`); chưa chạy `dist:win` và e2e cho Adventure; chưa chơi nhiều ngày.
+⚠️ Chưa làm: bot `sim:week` chưa có routine Adventure (GĐ11); Codex kẻ địch / trang bị; nhân vật đi trên bản đồ; art, animation, âm thanh (GĐ14, `docs/ASSET_TODO.md`); chưa chơi nhiều ngày.
 👉 Bạn cần: chơi thử (cần Sobi World cấp 8 và Phát triển thế giới 20, hoặc sửa save): nhận heo của Hiệp Sĩ, đánh vài chuyến, xem các kiểu đánh có khác nhau rõ, thua có bị phạt nặng không, trận có dài không; rồi merge, tag `phase-10`, push.
 
 ### 2026-10-11 — Điều chỉnh roadmap: gameplay trước, art sau (decision 017)
