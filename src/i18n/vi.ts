@@ -714,6 +714,8 @@ export const vi = {
     step3: "Tắm cho heo. Heo bẩn lâu sẽ đổ bệnh và ngừng lớn.",
     step4: "Heo lớn dần theo thời gian thật. Quay lại sau nhé.",
     step5: "Heo càng vui vẻ, bán càng được giá. Chăm kỹ là lời nhiều.",
+    step6: "Vuốt ve heo để tăng tim Gắn kết. Heo thân thiết cho giá xuất chuồng tốt hơn.",
+    step7: "Ra Sảnh, ghé Bảng đơn hàng để nhận việc và thưởng. Khung \"Việc tiếp theo\" luôn gợi ý bạn nên làm gì.",
     // R11 (not in Appendix B).
     title: "Hướng dẫn",
     progress: "Bước {n}/{total}",

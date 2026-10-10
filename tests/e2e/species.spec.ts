@@ -76,7 +76,7 @@ async function withTemp(run: (dir: string) => Promise<void>) {
   }
 }
 
-test('v4 save with outfits: refunded, robot body becomes a species, written back as the world save v9', async () => {
+test('v4 save with outfits: refunded, robot body becomes a species, written back as the world save v10', async () => {
   await withTemp(async (dir) => {
     const v4 = base(4, 4);
     seed(dir, {
@@ -100,7 +100,7 @@ test('v4 save with outfits: refunded, robot body becomes a species, written back
     await page.keyboard.press('Escape');
     await app.close();
     const s = readSave(dir);
-    expect(s.schemaVersion).toBe(9);
+    expect(s.schemaVersion).toBe(10);
     expect(s.areas.sobi_farm.decor).toEqual([]);
     expect(s.areas.sobi_farm.pigs.map((p: { breed: string }) => p.breed)).toEqual(['PIG_ROBOT', 'PIG_EARTH_PINK']);
     expect(s.wallet.coins).toBe(9000);

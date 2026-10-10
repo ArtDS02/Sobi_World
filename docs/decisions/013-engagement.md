@@ -18,3 +18,10 @@ Codex nhiều loại, chợ theo ngày, NPC và hướng dẫn.
 - **Hệ quả cân bằng:** bảng mới dốc hơn bảng cũ của Farm (cấp 3: 383 KN thay 250; cấp 10: 11.106 thay 5.700). Rà lại ở bước 9.
 
 (Các mục sau được ghi khi làm xong từng bước.)
+
+### Hướng dẫn (bước 8, đã làm)
+- Tutorial 10 phút đầu thêm 2 bước chỉ giải thích (vuốt ve / Gắn kết; Bảng đơn ở Sảnh + chip "Việc tiếp theo"): tổng 7 bước, vẫn bỏ qua được, `tutorialDone` nằm trong save như cũ.
+- NPC Farm / Garden gợi ý từ `nextStep` (Farm, Garden, phần thưởng thế giới, đơn, mục tiêu).
+
+### Còn chờ
+- Số liệu cân bằng (xem báo cáo `npm run sim:week` trong PROGRESS) chờ chủ dự án duyệt.

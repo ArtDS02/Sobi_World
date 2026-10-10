@@ -1,4 +1,4 @@
-// First-run tutorial (spec §10.3): 5 skippable steps. Steps 1–2 wait for the real thing (a pig,
+// First-run tutorial (spec §10.3): 7 skippable steps. Steps 1–2 wait for the real thing (a pig,
 // food in the trough); the rest only explain. The step index lives in the UI, `tutorialDone` in
 // the save. Pure.
 import type { FarmGame } from '../logic/types';
@@ -11,6 +11,8 @@ export const TUTORIAL_STEPS = [
   vi.tutorial.step3, // clean
   vi.tutorial.step4, // see growth
   vi.tutorial.step5, // read the happiness → price line
+  vi.tutorial.step6, // pet the pig (Bond)
+  vi.tutorial.step7, // plaza order board + next-step chip
 ] as const;
 
 /** Whether step `i` is done in this save (only steps that ask for an action check anything). */

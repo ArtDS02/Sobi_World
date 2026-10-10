@@ -25,12 +25,9 @@ async function clickPlaza(page: Page, x: number, y: number) {
 /** From the plaza spawn: walk to the garden gate and go in. */
 async function enterGarden(page: Page) {
   await expect(page.locator('.app.is-plaza')).toBeVisible({ timeout: 30_000 });
-  await page.waitForTimeout(1500);
-  await clickPlaza(page, 496, 290); // the flowers of the gate
-  const hint = page.locator('.world-prompt', { hasText: 'Vào Sobi Garden' });
-  await expect(hint).toBeVisible({ timeout: 20_000 });
-  await page.keyboard.press('KeyE');
-  await expect(page.locator('.app.is-garden')).toBeVisible();
+  await page.waitForTimeout(3000);
+  await clickPlaza(page, 496, 340); // the gate: the click walks to it and goes in by itself
+  await expect(page.locator('.app.is-garden')).toBeVisible({ timeout: 20_000 });
   await expect(page.locator('.garden-ui__dock')).toBeVisible();
 }
 

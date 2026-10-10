@@ -90,8 +90,8 @@ describe('tutorial (spec §10.3)', () => {
     expect(tutorialVm(withPig, 1)?.next.reason).toBe(vi.tutorial.waiting);
     const fed = { ...withPig, trough: { ...withPig.trough, food: 5 } };
     expect(tutorialVm(fed, 1)?.next.reason).toBeNull();
-    expect(tutorialVm(fed, 4)).toMatchObject({ last: true, progress: 'Bước 5/5' });
-    expect(tutorialVm(fed, 5)).toBeNull();
+    expect(tutorialVm(fed, 6)).toMatchObject({ last: true, progress: 'Bước 7/7' });
+    expect(tutorialVm(fed, 7)).toBeNull();
   });
 
   it('tutorialDone (skip or finish) hides it, stored in the save', () => {

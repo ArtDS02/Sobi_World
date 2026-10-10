@@ -7,3 +7,4 @@
 - `logic/walkable.ts` — mặt đất đi được + vật cản (chân các vật `solid`, biển).
 - `scene/PlazaScene.ts` — cảnh Phaser; chỉ vẽ và đi. Phím, gợi ý phím, đổi chỗ đi qua `WorldHost` (`src/ui/world/host.ts`).
 - Nội dung: `content/plaza/layout.json` (sửa bằng Admin → Bố cục → Sảnh Sobi).
+- Trạm (`station`, ví dụ Bảng đơn hàng `prop_order_board`, GĐ6): vật đứng chung gợi ý và phím E với cổng, nhưng mở một bảng thay vì đổi Area.
