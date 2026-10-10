@@ -1,0 +1,26 @@
+{
+  "recipeTemplates": [
+    "Nghe đồn: một con heo {rarity} chỉ ra đời khi {parentA} gặp {parentB}...",
+    "Bà con kể rằng {parentA} mà ghép với {parentB} thì có điều lạ lắm. Con sinh ra thuộc nhóm {rarity}, nghe nói mang dáng vẻ {theme}.",
+    "Tối qua mình nằm mơ thấy {parentA} và {parentB} cùng nhau đẻ ra một chú heo {rarity}. Không biết có phải điềm không nhỉ?",
+    "Có người bảo thấy một chú heo {rarity} theo kiểu {theme} trong chuồng nọ, bố mẹ là {parentA} và {parentB}. Mình không dám chắc."
+  ],
+  "rarityWords": {
+    "COMMON": "khá quen mặt",
+    "UNCOMMON": "ít gặp",
+    "RARE": "hiếm",
+    "EPIC": "rất hiếm",
+    "LEGENDARY": "huyền thoại"
+  },
+  "noNews": [
+    "Hôm nay chưa có tin đồn nào mới. Bạn cứ thử ghép vài cặp lạ xem sao.",
+    "Mình nghe hết tin rồi, giờ đến lượt bạn đi khám phá."
+  ],
+  "tips": [
+    "Con có tính trạng hiếm thì nên giữ làm giống, tính trạng sẽ truyền cho đời sau.",
+    "Chăm con heo đến 5 tim sẽ lộ ra tính trạng ẩn của nó đó.",
+    "Ghép mãi mà chưa ra con hiếm? Cứ kiên nhẫn, vận may sẽ dồn lại cho bạn.",
+    "Hai con cùng họ hay chung dáng vẻ thường hợp nhau hơn.",
+    "Thỉnh thoảng có đột biến: con sinh ra mang tính trạng mà bố mẹ không có."
+  ]
+}
