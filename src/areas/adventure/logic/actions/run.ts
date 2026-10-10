@@ -2,22 +2,22 @@
 // A lost run only exhausts the party for a few real hours — nobody dies, nothing is taken. Every random draw comes from the
 // run's seed and the node, so a saved run plays on the same way.
 import type { RosterEntry } from '../../../../core/area-registry/registry';
+import { cloneData } from '../../../../core/clone';
 import type { ErrorCode } from '../../../../core/config/errors';
 import { WORLD_LEVELS } from '../../../../core/config/progression';
 import { worldLevel } from '../../../../core/progression/levels';
 import { hashSeed, mulberry32, type Rng } from '../../../../core/rng';
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
-import { act, chooseAction, current, startBattle } from '../../../../systems/combat/engine';
+import { act, chooseAction, current, startBattle } from '../../../../systems/combat';
 import { addExp } from '../../../../systems/combat/stats';
-import type { BattleAction, BattleEvent, BattleState, CombatantInit } from '../../../../systems/combat/types';
+import type { BattleAction, BattleState } from '../../../../systems/combat/types';
 import { AB, BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, EVENTS, HOUR_MS, LEVEL_RULES, LOOT_TABLES, ZONES, archetypeOf, type Zone } from '../config/content';
 import type { AdventureEvent } from '../events';
 import { energyOf, memberOf, newFighter, whyNotReady } from '../fighters';
 import type { AdventureState, Fighter, Run, RunMember } from '../state';
+import { addCount, allyInit, enemyIdOf, enemyInits, pickGroup, playEnemies, rollTable } from '../encounter';
 import { countOf, credit, put, runAdventure, take, type AdventureResult } from './kit';
-
-type LootTable = (typeof LOOT_TABLES)[string];
 
 /** Working copy of one step: the world, the slice, the run, what happened and the XP earned. */
 interface Step {
@@ -27,59 +27,6 @@ interface Step {
   events: AdventureEvent[];
   xp: number;
   ctx: ActionContext;
-}
-
-const randInt = (rng: Rng, range: readonly [number, number]): number => range[0] + Math.floor(rng.next() * (range[1] - range[0] + 1));
-
-const addCount = (into: Record<string, number>, id: string, n: number) => {
-  into[id] = (into[id] ?? 0) + n;
-};
-
-/** A loot table drawn: items by weight, coins, and now and then gems. */
-function rollTable(rng: Rng, table: LootTable): { items: Record<string, number>; coins: number; gems: number } {
-  const items: Record<string, number> = {};
-  const total = table.entries.reduce((n, e) => n + e.weight, 0);
-  for (let i = 0; i < table.rolls && total > 0; i += 1) {
-    let r = rng.next() * total;
-    const entry = table.entries.find((e) => (r -= e.weight) < 0) ?? table.entries.at(-1)!;
-    addCount(items, entry.itemId, randInt(rng, [entry.min, entry.max]));
-  }
-  const gems = rng.next() < table.gemChance ? randInt(rng, table.gems) : 0;
-  return { items, coins: randInt(rng, table.coins), gems };
-}
-
-/** The zone's enemies of a battle node: one group drawn from the pool by weight. */
-function pickGroup(rng: Rng, pool: readonly { weight: number; enemies: readonly string[] }[]): readonly string[] {
-  const total = pool.reduce((n, p) => n + p.weight, 0);
-  let r = rng.next() * total;
-  return (pool.find((p) => (r -= p.weight) < 0) ?? pool.at(-1)!).enemies;
-}
-
-const allyInit = (m: RunMember): CombatantInit => ({ id: m.key, side: 'ally', name: m.name, element: m.element, stats: m.stats, skills: m.skills, hp: m.hp });
-
-export const enemyInits = (ids: readonly string[]): CombatantInit[] =>
-  ids.map((id, i) => {
-    const e = ENEMIES[id]!;
-    return { id: `${id}#${i}`, side: 'enemy', name: e.nameVi, element: e.element, stats: e.stats, skills: e.skills };
-  });
-
-/** The enemies of a combatant id list (`enemy_x#0` → `enemy_x`). */
-export const enemyIdOf = (combatantId: string): string => combatantId.split('#')[0]!;
-
-/** The enemies play until it is an ally's turn again (or the battle is over); what they did is appended to `events`. */
-function playEnemies(state: BattleState, events: BattleEvent[]): BattleState {
-  let s = state;
-  for (let guard = 0; guard < 200 && !s.outcome; guard += 1) {
-    const cur = current(s);
-    if (!cur || cur.side === 'ally') break;
-    const action = chooseAction(s, COMBAT_CONTEXT);
-    if (!action) break;
-    const r = act(s, action, COMBAT_CONTEXT);
-    if (!r.ok) break;
-    s = r.state;
-    events.push(...r.events);
-  }
-  return s;
 }
 
 function zoneOf(run: Run): Zone {
@@ -176,7 +123,7 @@ function commit(st: Step) {
 }
 
 const stepOf = (w: WorldSave, a: AdventureState, ctx: ActionContext): Step | null =>
-  a.run ? { w, a, run: structuredClone(a.run) as Run, events: [], xp: 0, ctx } : null;
+  a.run ? { w, a, run: cloneData(a.run) as Run, events: [], xp: 0, ctx } : null;
 
 /** Starts a run of `zoneId` with the fighters `keys` (1 to 3 creatures of `roster`): each pays the energy cost. */
 export function startRun(world: WorldSave, args: { zoneId: string; keys: string[]; roster: readonly RosterEntry[] }, ctx: ActionContext): AdventureResult {

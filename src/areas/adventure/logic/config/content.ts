@@ -19,7 +19,7 @@ import type { RosterEntry } from '../../../../core/area-registry/registry';
 import { ITEMS } from '../../../../core/config/items';
 import type { ItemId } from '../../../../core/config/ids';
 import type { BattleItemDef, CombatRules, SkillDef } from '../../../../systems/combat/types';
-import type { CombatContext } from '../../../../systems/combat/engine';
+import type { CombatContext } from '../../../../systems/combat';
 import type { LevelRules, StatRules } from '../../../../systems/combat/stats';
 import type { EquipmentDef } from '../../../../systems/equipment';
 

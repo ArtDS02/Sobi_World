@@ -4,7 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { SAVE_CODEC, parseWorldSave } from '../../src/app/saveCodec';
 import { adventureArea } from '../../src/areas/adventure';
 import { claimStarter, collectLoot, equipItem, starterGift, unequipSlotOf } from '../../src/areas/adventure/logic/actions/camp';
-import { battleAct, closeRun, enemyIdOf, enemyInits, enterNode, retreat, startRun } from '../../src/areas/adventure/logic/actions/run';
+import { battleAct, closeRun, enterNode, retreat, startRun } from '../../src/areas/adventure/logic/actions/run';
+import { enemyIdOf, enemyInits } from '../../src/areas/adventure/logic/encounter';
 import { AB, ARCHETYPE_LIST, COMBAT_CONTEXT, ENEMY_LIST, EQUIPMENT_DEFS, SKILL_LIST, ZONES, ZONE_LIST, archetypeOf, contentProblems } from '../../src/areas/adventure/logic/config/content';
 import { energyOf, exhaustedLeft, fighterSkills, fighterStats, msToEnergy, whyNotReady } from '../../src/areas/adventure/logic/fighters';
 import { rewindAdventure } from '../../src/areas/adventure/logic/rewind';
@@ -19,7 +20,7 @@ import { ITEMS } from '../../src/core/config/items';
 import { mulberry32 } from '../../src/core/rng';
 import type { WorldSave } from '../../src/core/save/world';
 import type { ActionContext } from '../../src/core/types';
-import { autoPlay, startBattle } from '../../src/systems/combat/engine';
+import { autoPlay, startBattle } from '../../src/systems/combat';
 
 const H = 3_600_000;
 const T0 = 20_000 * 86_400_000;

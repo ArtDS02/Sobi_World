@@ -1,7 +1,7 @@
 // systems/combat, systems/equipment: turn order, damage and elements, skills (energy, cooldown), statuses, items,
 // determinism of a saved battle, stats and levels, equipment.
 import { describe, expect, it } from 'vitest';
-import { act, autoPlay, beats, chooseAction, current, effectiveSpeed, elementMultiplier, startBattle, usableSkills, type CombatContext } from '../../src/systems/combat/engine';
+import { act, autoPlay, beats, chooseAction, current, effectiveSpeed, elementMultiplier, startBattle, usableSkills, type CombatContext } from '../../src/systems/combat';
 import { addExp, deriveStats, expToNext, skillsAtLevel } from '../../src/systems/combat/stats';
 import type { BattleItemDef, CombatantInit, CombatRules, SkillDef } from '../../src/systems/combat/types';
 import { equipPiece, loadoutBonus, unequipSlot, type EquipmentDef } from '../../src/systems/equipment';
