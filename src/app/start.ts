@@ -29,6 +29,8 @@ import { createGameStore } from './gameStore';
 import { parseWorldSave } from './saveCodec';
 import { AquariumScene, AQUARIUM_SCENE_KEY } from '../areas/aquarium/scene/AquariumScene';
 import { bindAquariumStage } from '../areas/aquarium/stage';
+import { CloudScene, CLOUD_SCENE_KEY } from '../areas/cloud/scene/CloudScene';
+import { bindCloudStage } from '../areas/cloud/stage';
 import { farmStore } from '../areas/farm/store';
 import { GardenScene, GARDEN_SCENE_KEY } from '../areas/garden/scene/GardenScene';
 import { bindGardenStage } from '../areas/garden/stage';
@@ -226,6 +228,12 @@ export async function start(root: HTMLElement) {
         reduceMotion: () => host.reduceMotion(),
         paused: () => host.paused(),
       });
+      const cloud = new CloudScene({
+        read: () => overlays.cloudUi.sceneState(),
+        onPick: (pick) => overlays.cloudUi.pick(pick),
+        reduceMotion: () => host.reduceMotion(),
+        paused: () => host.paused(),
+      });
       farmView = createFarmView(
         stage,
         {
@@ -236,11 +244,12 @@ export async function start(root: HTMLElement) {
           // The game opens in the plaza (spec §3.1).
           firstScene: () => ({ key: PLAZA_SCENE_KEY, from: null }),
         },
-        [plaza, garden, aquarium],
+        [plaza, garden, aquarium, cloud],
       );
       const view = farmView;
       bindGardenStage({ enter: () => view.showScene(GARDEN_SCENE_KEY), exit: () => view.sleepScene(GARDEN_SCENE_KEY) });
       bindAquariumStage({ enter: () => view.showScene(AQUARIUM_SCENE_KEY), exit: () => view.sleepScene(AQUARIUM_SCENE_KEY) });
+      bindCloudStage({ enter: () => view.showScene(CLOUD_SCENE_KEY), exit: () => view.sleepScene(CLOUD_SCENE_KEY) });
       if (devPhase) farmView.previewPhase(devPhase);
       if (devSeason) farmView.previewSeason(devSeason);
       return farmView;
