@@ -1,6 +1,6 @@
 // What the screens show about traits, the family tree and the Breeder's rumours (GĐ7). Pure view-models:
 // the rules live in systems/breeding and logic/heredity.ts.
-import { formatDec, t } from '../../../i18n/format';
+import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { gameDay } from '../../../systems/health/disease';
 import { BREEDING_RULES_DEFAULT, flattenAncestors, mutationChance, rumorsOfDay, TRAITS, type Ancestor, type Rumor, type TraitDef } from '../../../systems/breeding';
@@ -22,9 +22,12 @@ export interface TraitChipVm {
   hidden: 'open' | 'locked' | null;
 }
 
+/** 1,1 / 25 / 3,5: up to two decimals, none trailing (Vietnamese comma). */
+const num = (n: number): string => String(Math.round(n * 100) / 100).replace('.', ',');
+
 const effectText = (d: TraitDef): string =>
   (Object.entries(d.effects) as [keyof TraitDef['effects'], number][])
-    .map(([k, n]) => t(vi.heredity.effect[k], { n: formatDec(n) }))
+    .map(([k, n]) => t(vi.heredity.effect[k], { n: num(n) }))
     .join(' · ');
 
 const chipOf = (id: string, hidden: TraitChipVm['hidden']): TraitChipVm => {
@@ -123,8 +126,8 @@ export function breedingExtras(save: FarmGame, a: Pig, b: Pig): BreedingExtrasVm
   const pity = save.breedingPity ?? 0;
   const names = (p: Pig) => [...(p.traits ?? []).map((id) => TRAITS.get(id)?.nameVi ?? id), ...(p.hiddenTrait ? [`${TRAITS.get(p.hiddenTrait)?.nameVi ?? '???'} (${vi.heredity.hiddenTag})`] : [])];
   return {
-    mutation: t(vi.heredity.mutation, { n: formatDec(chance) }),
-    pity: pity > 0 ? t(vi.heredity.pity, { n: formatDec(pity) }) : null,
+    mutation: t(vi.heredity.mutation, { n: num(chance) }),
+    pity: pity > 0 ? t(vi.heredity.pity, { n: num(pity) }) : null,
     mother: names(a),
     father: names(b),
   };

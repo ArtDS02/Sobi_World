@@ -113,3 +113,32 @@ describe('Số liệu: the numbers editor', () => {
     expect(schemaProblems(mod[exportName], { ...value, risk: { ...value.risk, perHour: { starving: 0.6, dirty: 0.3, lowMood: 0.2 } } })).not.toEqual([]);
   });
 });
+
+describe('Số liệu: advanced breeding (GĐ7)', () => {
+  it('the trait table, the breeding rules and the Breeder gossip are editable', () => {
+    for (const file of ['breeding/traits.json', 'breeding/balance.json', 'breeding/rumors.json']) {
+      expect(Object.keys(NUMBER_FILES), file).toContain(file);
+    }
+  });
+
+  it('trait names, descriptions and rumour sentences can change; ids, tiers and structure cannot', () => {
+    const traits = JSON.parse(readFileSync('content/breeding/traits.json', 'utf8')) as { traits: { id: string; nameVi: string; descVi: string; tier: string; weight: number }[] };
+    const edited = structuredClone(traits);
+    edited.traits[0]!.nameVi = 'Tên khác';
+    edited.traits[0]!.descVi = 'Mô tả khác';
+    edited.traits[0]!.weight = 99;
+    expect(onlyNumbersDiffer(traits, edited, '', true)).toBeNull();
+    const retier = structuredClone(traits);
+    retier.traits[0]!.tier = 'EPIC';
+    expect(onlyNumbersDiffer(traits, retier, '', true)).toMatch(/tier/);
+    const rumors = JSON.parse(readFileSync('content/breeding/rumors.json', 'utf8')) as { recipeTemplates: string[]; tips: string[]; rarityWords: Record<string, string> };
+    const words = structuredClone(rumors);
+    words.recipeTemplates[0] = 'Câu mới {parentA} {parentB}';
+    words.tips[0] = 'Mẹo mới';
+    words.rarityWords.RARE = 'hiếm lắm';
+    expect(onlyNumbersDiffer(rumors, words, '', true)).toBeNull();
+    const extra = structuredClone(rumors);
+    extra.tips.push('thêm câu');
+    expect(onlyNumbersDiffer(rumors, extra, '', true)).toMatch(/số phần tử/);
+  });
+});

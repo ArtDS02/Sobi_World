@@ -26,10 +26,17 @@ const FILE_TITLE: Record<string, string> = {
   'shared/codex.json': '📖 Codex (thưởng khám phá, mốc sưu tầm)',
   'farm/decor.json': '🌻 Trang trí (giá, cấp mở, vui vẻ, số chỗ đặt)',
   'shared/npcs.json': '💬 NPC hướng dẫn (lời của từng NPC; sửa được cả chữ)',
+  'breeding/traits.json': '🧬 Tính trạng (hiệu ứng, trọng số; sửa được cả tên và mô tả)',
+  'breeding/balance.json': '🍀 Lai giống nâng cao (di truyền, đột biến, vận may, phả hệ)',
+  'breeding/rumors.json': '🗣️ Tin đồn của Nhà lai giống (câu mẫu; sửa được chữ)',
 };
 
 /** Files whose words can be edited as well (the server allows it for the same files). */
-const TEXT_FILES = new Set(['shared/npcs.json']);
+const TEXT_FILES = new Set(['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json']);
+
+/** Same rule as the server (scripts/admin/numbers.ts isWordPath). */
+const isWordPath = (path: string): boolean =>
+  /Vi$/.test(path) || /^(recipeTemplates|noNews|tips)\[\d+\]$/.test(path) || /^rarityWords\.[A-Z]+$/.test(path);
 
 /** Friendly names by the last part(s) of a path; the rest show their key. */
 const LABEL: Record<string, string> = {
@@ -141,6 +148,26 @@ const LABEL: Record<string, string> = {
   cost: 'Giá nâng cấp',
   slots: 'Số ô',
   stack: 'Số lượng mỗi ô',
+  // Advanced breeding (GĐ7)
+  maxTraits: 'Số tính trạng tối đa mỗi con (cả tính trạng ẩn)',
+  inheritChance: 'Mỗi tính trạng của mỗi bố/mẹ truyền cho con (%)',
+  newTraitChance: 'Cơ hội xuất hiện thêm một tính trạng thường mới (%)',
+  hiddenChance: 'Cơ hội tính trạng hiếm bị ẩn (%)',
+  'mutation.base': 'Đột biến cơ bản (%)',
+  'mutation.epicShare': 'Trong đột biến, tỉ lệ ra tính trạng Sử thi (%)',
+  'mutation.cap': 'Đột biến tối đa, dù có cộng thêm (%)',
+  'pity.step': 'Vận may: cộng thêm sau mỗi lần trượt Rare+ (điểm %)',
+  'pity.cap': 'Vận may tối đa (điểm %)',
+  lineageDepth: 'Số đời tổ tiên giữ trong phả hệ',
+  'rumors.perDay': 'Số tin đồn mỗi ngày (tin cuối là mẹo)',
+  'effects.growth': 'Hiệu ứng: tốc độ lớn (x)',
+  'effects.sellValue': 'Hiệu ứng: giá xuất chuồng (x)',
+  'effects.bondGain': 'Hiệu ứng: thân thiết nhận được (x)',
+  'effects.mutation': 'Hiệu ứng: cộng đột biến (điểm %)',
+  descVi: 'Mô tả',
+  recipeTemplates: 'Câu tin đồn công thức',
+  noNews: 'Câu khi hết tin',
+  tips: 'Mẹo',
 };
 
 interface Leaf {
@@ -152,7 +179,7 @@ interface Leaf {
 
 function leaves(value: unknown, texts: boolean, path = '', owner = ''): Leaf[] {
   if (typeof value === 'number') return [{ path, value, owner }];
-  if (texts && typeof value === 'string' && /Vi$/.test(path)) return [{ path, value, owner }];
+  if (texts && typeof value === 'string' && isWordPath(path)) return [{ path, value, owner }];
   if (Array.isArray(value)) return value.flatMap((v, i) => leaves(v, texts, `${path}[${i}]`, owner));
   if (value && typeof value === 'object') {
     const row = value as { id?: unknown; itemId?: unknown; nameVi?: unknown };

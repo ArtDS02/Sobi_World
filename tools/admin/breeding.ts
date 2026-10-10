@@ -7,6 +7,7 @@ import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import { renderBreedMap, type PigLook } from './breedMap';
 import { renderBreedRules } from './breedRules';
+import { renderBreedSim } from './breedSim';
 import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { PAIR_PERCENT_EPSILON, PAIR_RULES, type PairRule } from '../../src/areas/farm/logic/config/breedingPairs';
 import { breedingOutcomes } from '../../src/areas/farm/logic/breedingOdds';
@@ -35,12 +36,13 @@ const img = (id: string) => {
 };
 const look: PigLook = { name: nameOf, img: imgUrl };
 
-type View = 'map' | 'rules' | 'pairs';
+type View = 'map' | 'rules' | 'pairs' | 'sim';
 let view: View = 'map';
 const VIEWS: readonly (readonly [View, string])[] = [
   ['map', '🧬 Sơ đồ phả hệ'],
   ['rules', '📐 Luật đang chạy'],
   ['pairs', '✏️ Bảng ghi đè cặp'],
+  ['sim', '🧪 Mô phỏng lai'],
 ];
 
 export function renderBreeding(root: HTMLElement, rerender: () => void) {
@@ -57,6 +59,7 @@ export function renderBreeding(root: HTMLElement, rerender: () => void) {
   const host = root.querySelector<HTMLElement>('[data-view-host]')!;
   if (view === 'map') renderBreedMap(host, look);
   else if (view === 'rules') renderBreedRules(host, look);
+  else if (view === 'sim') renderBreedSim(host);
   else renderPairTable(host, rerender);
 }
 

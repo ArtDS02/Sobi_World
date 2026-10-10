@@ -29,10 +29,18 @@ export const NUMBER_FILES: Record<string, { schemaPath: string; exportName: stri
   'shared/codex.json': { schemaPath: '/content/schemas/shared/codex.ts', exportName: 'codexFileSchema' },
   'farm/decor.json': { schemaPath: '/content/schemas/farm/decor.ts', exportName: 'decorFileSchema' },
   'shared/npcs.json': { schemaPath: '/content/schemas/shared/npcs.ts', exportName: 'npcsFileSchema' },
+  // Advanced breeding (GĐ7): the traits (effects, weights), the rules (inheritance, mutation, pity), the Breeder's gossip.
+  'breeding/traits.json': { schemaPath: '/content/schemas/breeding/traits.ts', exportName: 'traitsFileSchema' },
+  'breeding/balance.json': { schemaPath: '/content/schemas/breeding/balance.ts', exportName: 'breedingBalanceFileSchema' },
+  'breeding/rumors.json': { schemaPath: '/content/schemas/breeding/rumors.ts', exportName: 'rumorsFileSchema' },
 };
 
 /** Files whose words (the strings ending in `Vi`) can be edited as well as their numbers: the NPCs' lines. */
-export const TEXT_FILES: readonly string[] = ['shared/npcs.json'];
+export const TEXT_FILES: readonly string[] = ['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json'];
+
+/** A path that holds words the dashboard may edit: keys ending in `Vi`, and the rumour sentences. */
+export const isWordPath = (path: string): boolean =>
+  /Vi$/.test(path) || /^(recipeTemplates|noNews|tips)\[\d+\]$/.test(path) || /^rarityWords\.[A-Z]+$/.test(path);
 
 export const readNumbers = (): Record<string, unknown> =>
   Object.fromEntries(Object.keys(NUMBER_FILES).map((file) => [file, readContent(file)]));
@@ -40,7 +48,7 @@ export const readNumbers = (): Record<string, unknown> =>
 /** Same shape and same non-number values; only numbers may differ (and, with `texts`, the words of keys ending in `Vi`). */
 export function onlyNumbersDiffer(before: unknown, after: unknown, path = '', texts = false): string | null {
   if (typeof before === 'number') return typeof after === 'number' && Number.isFinite(after) ? null : `${path}: phải là số`;
-  if (texts && typeof before === 'string' && /Vi$/.test(path)) return typeof after === 'string' && after.trim().length > 0 ? null : `${path}: không để trống`;
+  if (texts && typeof before === 'string' && isWordPath(path)) return typeof after === 'string' && after.trim().length > 0 ? null : `${path}: không để trống`;
   if (Array.isArray(before)) {
     if (!Array.isArray(after) || after.length !== before.length) return `${path}: không đổi số phần tử`;
     for (const [i, v] of before.entries()) {
