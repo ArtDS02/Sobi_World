@@ -1,5 +1,5 @@
 {
-  "assetId": "chr_player",
+  "assets": { "so": "chr_so", "bi": "chr_bi" },
   "speed": 280,
   "feetHalfWidth": 16,
   "feetHalfHeight": 7,

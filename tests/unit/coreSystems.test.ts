@@ -1,18 +1,18 @@
 // Shared world modules (GĐ1 step 4): economy ledger, the bag, item lookups, progression.
 import { describe, expect, it } from 'vitest';
 import { INVENTORY } from '../../src/core/config/inventory';
-import { WORLD_DEVELOPMENT } from '../../src/core/config/progression';
+import { WORLD_DEVELOPMENT, WORLD_LEVELS } from '../../src/core/config/progression';
 import { changeCurrency, postTransaction, type TransactionRecord } from '../../src/core/economy/ledger';
 
 const none: TransactionRecord[] = [];
 import { addAllToBag, addToBag, countOf, takeFromBag, usedSlots } from '../../src/core/inventory/bag';
 import { isFood, itemDef } from '../../src/core/items/catalog';
-import { levelFromXp, nextLevelXp, unlockGaps, worldDevelopment } from '../../src/core/progression/levels';
+import { levelFromXp, levelProgress, nextLevelXp, unlockGaps, worldDevelopment, worldLevel, worldXp } from '../../src/core/progression/levels';
 import { SAVE } from '../../src/core/config/save';
 import { mulberry32 } from '../../src/core/rng';
 import { emptyWorld } from '../../src/core/save/world';
 import { buyItem } from '../../src/areas/farm/logic/actions/buyItem';
-import { makeState } from './stateFactory';
+import { inv, makeState } from './stateFactory';
 
 const ctx = (now = 1_000) => ({ now, rng: mulberry32(7) });
 const settings = { musicOn: true, sfxOn: true, reduceMotion: false, tutorialDone: false, lastExportAt: null };
@@ -72,7 +72,7 @@ describe('inventory: the shared bag', () => {
   });
 
   it('a farm purchase that would overflow the bag is refused without spending', () => {
-    const full = { ...makeState(), inventory: { FOOD_BASIC: INVENTORY.slots * INVENTORY.stack, MEDICINE_COMMON: 0, item_manure: 0 } };
+    const full = { ...makeState(), inventory: inv({ FOOD_BASIC: INVENTORY.slots * INVENTORY.stack }) };
     expect(buyItem(full, { itemId: 'FOOD_BASIC', quantity: 1 }, ctx())).toEqual({ ok: false, error: 'INVENTORY_FULL' });
   });
 });
@@ -95,18 +95,33 @@ describe('progression', () => {
     expect(nextLevelXp(3, table)).toBeNull();
   });
 
-  it('World Development = area levels + codex / 10 + Lv3 buildings', () => {
-    const wd = worldDevelopment({ areaLevels: { sobi_farm: 3, sobi_garden: 2 }, codexEntries: 25, buildingsLv3: 1 }, WORLD_DEVELOPMENT);
+  it('World Development = world level + codex / 10 + Lv3 buildings', () => {
+    const wd = worldDevelopment({ worldLevel: 5, codexEntries: 25, buildingsLv3: 1 }, WORLD_DEVELOPMENT);
     expect(wd).toBe(5 + 2 + 1);
   });
 
+  it('the world level table follows GAME_BALANCE §7: the step from level n is 100 x n^1.5', () => {
+    const xp = WORLD_LEVELS.xp;
+    expect(xp[0]).toBe(0);
+    xp.slice(1).forEach((x, i) => expect(x - xp[i]!).toBe(Math.round(100 * (i + 1) ** 1.5)));
+    expect(WORLD_LEVELS.maxLevel).toBe(xp.length);
+  });
+
+  it('World XP adds every Area, and the bar shows progress to the next level', () => {
+    const progression = { areas: { sobi_farm: { xp: 300 }, sobi_garden: { xp: 83 } } };
+    expect(worldXp({ progression })).toBe(383);
+    expect(worldLevel({ progression }, WORLD_LEVELS)).toBe(3);
+    expect(levelProgress(243, WORLD_LEVELS)).toEqual({ level: 2, floor: 100, next: 383, percent: 50 });
+    expect(levelProgress(10 ** 7, WORLD_LEVELS)).toMatchObject({ level: WORLD_LEVELS.maxLevel, next: null, percent: 100 });
+  });
+
   it('lists what an Area still needs to open', () => {
-    const rule = { areaLevels: { sobi_farm: 6, sobi_garden: 4 }, worldDevelopment: 15 };
-    expect(unlockGaps(rule, { sobi_farm: 6, sobi_garden: 2 }, 9)).toEqual([
-      { kind: 'areaLevel', areaId: 'sobi_garden', need: 4, have: 2 },
+    const rule = { worldLevel: 8, worldDevelopment: 15 };
+    expect(unlockGaps(rule, { worldLevel: 5, worldDevelopment: 9 })).toEqual([
+      { kind: 'worldLevel', need: 8, have: 5 },
       { kind: 'worldDevelopment', need: 15, have: 9 },
     ]);
-    expect(unlockGaps(rule, { sobi_farm: 8, sobi_garden: 4 }, 15)).toEqual([]);
-    expect(unlockGaps({}, {}, 0)).toEqual([]);
+    expect(unlockGaps(rule, { worldLevel: 8, worldDevelopment: 15 })).toEqual([]);
+    expect(unlockGaps({}, { worldLevel: 1, worldDevelopment: 0 })).toEqual([]);
   });
 });

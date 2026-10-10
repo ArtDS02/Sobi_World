@@ -1,0 +1,82 @@
+{
+  "npcs": [
+    {
+      "id": "npc_farmer",
+      "area": "sobi_farm",
+      "nameVi": "Cô Cừu Mơ",
+      "artId": "prop_animal_sheep",
+      "greetingVi": "Chào bạn! Mình là Mơ, trông coi nông trại này. Cần gì cứ hỏi mình nhé.",
+      "topics": [
+        {
+          "id": "feed",
+          "titleVi": "Cho heo ăn",
+          "textVi": "Heo đói thì ngừng lớn và dễ bệnh. Đổ thức ăn vào máng: heo tự ăn khi đói. Có thức ăn cao cấp hay cỏ từ Sobi Garden thì cho ăn tay để heo vui hơn."
+        },
+        {
+          "id": "care",
+          "titleVi": "Chăm sóc và thân thiết",
+          "textVi": "Tắm cho heo, dọn phân ở Giếng nước, và vuốt ve mỗi ngày (tối đa 2 lần mỗi con). Mỗi con có một món yêu thích: cho ăn đúng món sẽ được thêm tim thân thiết. Từ 3 tim, heo có cơ hội được lên một bậc chất lượng khi xuất chuồng."
+        },
+        {
+          "id": "sick",
+          "titleVi": "Heo bị bệnh",
+          "textVi": "Heo đói hoặc bẩn lâu dễ bệnh. Bệnh 2 ngày thì nguy kịch, 3 ngày thì không qua khỏi, nhưng game luôn báo sớm. Cho uống thuốc là khỏi ngay."
+        },
+        {
+          "id": "purpose",
+          "titleVi": "Mục đích nuôi",
+          "textVi": "Heo lớn rồi bạn chọn mục đích: Xuất chuồng để bán, Giống để phối giống, hoặc Thú cưng để yêu thương (không bán, làm cả chuồng vui hơn). Đổi ý lúc nào cũng được."
+        },
+        {
+          "id": "orders",
+          "titleVi": "Đơn hàng",
+          "textVi": "Bảng đơn ở Sảnh cần nông sản và vật liệu, thưởng nhiều hơn bán lẻ. Đơn của trại thì cần đúng loại heo. Mục tiêu hằng ngày nhẹ nhàng, không bắt buộc."
+        },
+        {
+          "id": "market",
+          "titleVi": "Chợ theo ngày",
+          "textVi": "Mỗi ngày vài nhóm hàng được giá, một nhóm rớt giá. Mở Chợ ở Menu xem hôm nay bán gì lợi nhất."
+        },
+        {
+          "id": "decor",
+          "titleVi": "Trang trí",
+          "textVi": "Đồ trang trí đặt ra làm heo vui hơn, cất đi thì không cộng. Mỗi món có vài chỗ để dời qua lại."
+        }
+      ]
+    },
+    {
+      "id": "npc_gardener",
+      "area": "sobi_garden",
+      "nameVi": "Bác Vịt Cần",
+      "artId": "prop_animal_duck",
+      "greetingVi": "Quạc! Mình là Cần, chuyên trồng trọt ở đây. Hỏi gì cũng được.",
+      "topics": [
+        {
+          "id": "plant",
+          "titleVi": "Gieo và tưới",
+          "textVi": "Chọn hạt rồi bấm vào ô trống để gieo. Cây khô thì lớn chậm một nửa: tưới tay (có tác dụng 3 giờ) hoặc mua Vòi tưới để vườn tự tưới."
+        },
+        {
+          "id": "ripe",
+          "titleVi": "Thu hoạch",
+          "textVi": "Cây chín nhớ hái sớm: để quá 48 giờ cây héo và hụt một nửa sản lượng. Game vẫn tính giờ khi bạn tắt máy."
+        },
+        {
+          "id": "fertilizer",
+          "titleVi": "Phân bón",
+          "textVi": "Dọn phân heo ở Farm, ủ với cỏ ở Thùng ủ thành phân bón. Bón cho cây lớn nhanh hơn và được thêm sản lượng."
+        },
+        {
+          "id": "mill",
+          "titleVi": "Máy xay thức ăn",
+          "textVi": "Bắp, lúa mì, cà rốt xay thành thức ăn heo (rẻ hơn mua) và thức ăn cao cấp (no lâu, heo vui). Máy chạy theo giờ thật, làm nhiều mẻ một lúc cũng được."
+        },
+        {
+          "id": "loop",
+          "titleVi": "Vòng Farm và Garden",
+          "textVi": "Heo cho phân, phân thành phân bón, phân bón nuôi cây, cây thành thức ăn cho heo. Cà rốt và bắp còn là món yêu thích của heo, và là hàng cho Bảng đơn."
+        }
+      ]
+    }
+  ]
+}

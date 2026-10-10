@@ -16,6 +16,7 @@ import {
 } from '../../src/areas/farm/ui/actionsVm';
 import { farm } from './actionKit';
 import { makePig } from './pigFactory';
+import { inv } from './stateFactory';
 
 const NOW = 0;
 
@@ -45,7 +46,7 @@ describe('disabled reasons (§10.2)', () => {
 
   it('missing items name the item', () => {
     const base = farm([makePig({ hunger: 20, isSick: true })]);
-    const s = { ...base, inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 0, item_manure: 0 } };
+    const s = { ...base, inventory: inv() };
     const a = pigActions(s, 'pig-1', NOW);
     expect(a.feed.reason).toBe(vi.disabled.noFood);
     expect(a.treat.reason).toBe(vi.disabled.noMedicine);

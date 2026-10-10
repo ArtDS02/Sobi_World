@@ -59,7 +59,7 @@ test('first launch, buy, fill, relaunch, export — offline', async () => {
     expect(readSave(userData).pigs).toHaveLength(1);
     app = await launch(userData);
     page = await app.firstWindow();
-    await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
+    await enterFarm(page); // the game reopens in the plaza
     await expect(page.locator('.c-gauge')).toHaveAttribute('aria-label', /Máng ăn \d+\/30/);
     await expect(page.locator('.app__hint')).toHaveCount(0); // "no pig yet" hint is gone
     const after = readSave(userData);

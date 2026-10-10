@@ -2,6 +2,7 @@
 // to go, what to remember. The app implements it (src/app/start.ts); scenes never reach the store or the
 // DOM themselves, so an Area scene stays a drawing of its Area.
 import type { PlayerSave } from '../../core/player/player';
+import type { CharacterId } from '../../core/settings/settings';
 import type { Control } from '../../core/settings/keys';
 import type { ControlInput } from './controlInput';
 
@@ -24,6 +25,12 @@ export interface WorldHost {
   remember(spot: PlayerSave): void;
   /** The player's saved character. */
   player(): PlayerSave;
+  /** Which character the player chose (settings), read every frame. */
+  character(): CharacterId;
+  /** The game clock (the day's light follows the player's local time). */
+  now(): number;
+  /** The player asked for less motion: ambient movement stops. */
+  reduceMotion(): boolean;
   /** A panel or dialog covers the world: the character stands still, the interact key is left alone. */
   paused(): boolean;
   /** An interaction that did nothing (a closed door): the error feedback. */

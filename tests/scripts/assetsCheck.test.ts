@@ -37,7 +37,7 @@ describe('assets:check (art standard §7.4)', () => {
     rmSync(join(root, 'pigs'), { recursive: true });
     makePlaceholders(parsed.manifest, root);
     expect(checkAssets(root)).toEqual([]);
-  });
+  }, 60_000); // draws every placeholder PNG: ~8 s on a busy machine, past the 5 s default
 
   it('schema failure is reported with its path', () => {
     const m = readManifest();

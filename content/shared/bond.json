@@ -1,0 +1,10 @@
+{
+  "maxBond": 100,
+  "perHeart": 20,
+  "pet": { "gain": 3, "perDay": 2 },
+  "favorite": { "gain": 2, "hunger": 20 },
+  "care": { "gain": 5 },
+  "moodBoost": { "hours": 3, "byItem": { "FOOD_PREMIUM": 10, "item_grass": 3 } },
+  "favorites": ["item_carrot", "item_corn", "item_wheat", "item_potato"],
+  "petPurpose": { "perPet": 1, "max": 5 }
+}

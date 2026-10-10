@@ -2,6 +2,8 @@
 // farmGameSchema = a whole Sobi Farm v7 save (legacy import, admin checks of the farm view),
 // farmAreaSchema = the farm's slice of the world save v8 (`areas.sobi_farm`).
 import { z } from 'zod';
+import { PURPOSE_VALUES } from '../../../../../content/schemas/vocab';
+import { BOND } from '../../../../core/config/bond';
 import { CURRENCY_VALUES } from '../../../../core/save/world';
 import { BALANCE } from '../config/balance';
 import { GIFTS } from '../config/gifts';
@@ -70,6 +72,11 @@ const pigSchema = z.object({
   sickDay: z.number().int().optional(),
   sickEpisodes: z.number().int().min(0).optional(),
   recoveringUntil: time.optional(),
+  purpose: z.enum(PURPOSE_VALUES).optional(),
+  bond: z.number().finite().min(0).max(BOND.maxBond).optional(),
+  petDay: z.number().int().optional(),
+  petCount: z.number().int().min(0).optional(),
+  moodBoost: z.object({ amount: nonNeg, until: time }).optional(),
 });
 
 const orderSchema = z.object({
@@ -115,6 +122,8 @@ const giftSchema = z.object({
   xp: nonNeg,
 });
 
+const decorPlanSchema = z.partialRecord(z.enum(DECOR_ID_VALUES), z.object({ spot: z.number().int().min(0), stored: z.boolean() }));
+
 const shapeSchema = z.object({
   schemaVersion: z.literal(FARM_DOC_VERSION),
   createdAt: time,
@@ -144,6 +153,7 @@ const shapeSchema = z.object({
     daily: z.object({ lastDay: z.number().int().nullable(), streak: z.number().int().min(0) }),
   }),
   decor: z.array(z.enum(DECOR_ID_VALUES)),
+  decorPlan: decorPlanSchema.optional(),
   settings: z.object({
     musicOn: z.boolean(),
     sfxOn: z.boolean(),
@@ -185,6 +195,7 @@ const farmAreaShape = z.object({
   orders: z.array(orderSchema),
   gifts: z.object({ nextAt: time.nullable(), boxes: z.array(giftSchema) }),
   decor: z.array(z.enum(DECOR_ID_VALUES)),
+  decorPlan: decorPlanSchema.optional(),
   breedingRecords: z.array(breedingRecordSchema),
   /** Piles of manure lying in the pen (absent = none; GĐ2). */
   manure: z.number().int().min(0).optional(),

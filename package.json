@@ -1,9 +1,9 @@
 {
-  "name": "un-in-homemade",
+  "name": "sobi-world",
   "private": true,
-  "version": "1.0.0",
-  "description": "Sobi Farm — game nuôi heo offline cho Windows",
-  "author": "Sobi Farm",
+  "version": "0.6.0",
+  "description": "Sobi World — game nuôi heo cozy, chơi đơn, offline cho Windows",
+  "author": "Sobi World",
   "type": "module",
   "main": "dist-electron/main.cjs",
   "scripts": {
@@ -11,7 +11,7 @@
     "dev:desktop": "node scripts/dev-desktop.mjs",
     "admin": "vite --config vite.admin.config.ts",
     "build": "npm run typecheck && vite build && vite build --config vite.electron.config.ts",
-    "dist:win": "npm run build && electron-builder --win nsis",
+    "dist:win": "npm run build && electron-builder --win nsis && npm run verify:build && npm run verify:installer",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.core.json && tsc -p tsconfig.electron.json && tsc -p tsconfig.scripts.json",
@@ -31,8 +31,12 @@
     "art:sleep": "tsx scripts/sleep-frames.ts",
     "breeding:report": "tsx scripts/breeding-report.ts",
     "sim:economy": "tsx scripts/simulate-economy.ts",
+    "sim:week": "tsx scripts/simulate-week.ts",
     "test:e2e": "npm run build && playwright test",
-    "assets:release": "tsx scripts/assets-check.ts --release"
+    "assets:release": "tsx scripts/assets-check.ts --release",
+    "verify:build": "tsx scripts/verify-build.ts",
+    "verify:installer": "tsx scripts/verify-installer.ts",
+    "dev:sandbox": "node scripts/dev/sandbox.mjs"
   },
   "dependencies": {
     "@fontsource/baloo-2": "^5.3.0",
@@ -62,9 +66,9 @@
     "vitest": "^5.0.3"
   },
   "build": {
-    "appId": "com.uninhomemade.game",
-    "productName": "Sobi Farm",
-    "executableName": "SobiFarm",
+    "appId": "com.sobiworld.game",
+    "productName": "Sobi World",
+    "executableName": "SobiWorld",
     "electronDist": "node_modules/electron/dist",
     "directories": {
       "output": "release",
@@ -86,9 +90,11 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Sobi Farm",
+      "shortcutName": "Sobi World",
       "deleteAppDataOnUninstall": false,
-      "artifactName": "SobiFarm-Setup-${version}.${ext}"
-    }
+      "artifactName": "SobiWorld-Setup-${version}.${ext}",
+      "uninstallDisplayName": "Sobi World"
+    },
+    "copyright": "Sobi World"
   }
 }

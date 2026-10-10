@@ -11,6 +11,7 @@ import { canStand } from '../../src/systems/character';
 import { vi } from '../../src/i18n/vi';
 import { makeState } from './stateFactory';
 import { world } from './worldKit';
+import { mulberry32 } from '../../src/core/rng';
 
 const infos = () => AREAS.areas(world(makeState()));
 const views = () => portalViews(infos());
@@ -31,25 +32,31 @@ describe('portals', () => {
   it('the farm is open; the others are closed with their conditions (GAME_BALANCE §7)', () => {
     const v = views();
     expect(v.get('pig_barn')).toMatchObject({ status: 'open', conditions: [] });
-    expect(v.get('garden_gate')).toMatchObject({ status: 'soon', name: 'Sobi Garden' });
-    expect(v.get('garden_gate')?.conditions).toEqual(['Sobi Farm cấp 3 (hiện 1)']);
-    expect(v.get('sea_dock')?.conditions).toHaveLength(2);
-    expect(v.get('sky_tree')?.conditions).toHaveLength(3);
-    expect(v.get('portal_gate')?.conditions).toEqual(['Sobi Farm cấp 8 (hiện 1)', 'Phát triển thế giới 20 (hiện 1)']);
+    expect(v.get('garden_gate')).toMatchObject({ status: 'locked', name: 'Sobi Garden' });
+    expect(v.get('sea_dock')).toMatchObject({ status: 'soon', name: 'Sobi Aquarium' });
+    expect(v.get('garden_gate')?.conditions).toEqual(['Sobi World cấp 3 (hiện 1)']);
+    expect(v.get('sea_dock')?.conditions).toEqual(['Sobi World cấp 6 (hiện 1)']);
+    expect(v.get('sky_tree')?.conditions).toHaveLength(2);
+    expect(v.get('portal_gate')?.conditions).toEqual(['Sobi World cấp 8 (hiện 1)', 'Phát triển thế giới 20 (hiện 1)']);
   });
 
   it('shows the farm level as it grows (the numbers come from the save)', () => {
     const rich = world(makeState());
     const leveled = { ...rich, progression: { ...rich.progression, areas: { ...rich.progression.areas, sobi_farm: { xp: 100_000 } } } };
     const v = portalViews(AREAS.areas(leveled));
-    expect(v.get('garden_gate')?.conditions).toEqual([]); // conditions met, but the Area is not built
-    expect(v.get('garden_gate')?.status).toBe('soon');
+    expect(v.get('garden_gate')?.conditions).toEqual([]); // conditions met; the world opens the door on its next step
+    expect(v.get('garden_gate')?.status).toBe('locked');
+    const opened = AREAS.advance(leveled, leveled.meta.updatedAt, mulberry32(1), 0);
+    expect(opened.events).toEqual([{ type: 'AREA_UNLOCKED', areaId: 'sobi_garden' }]);
+    expect(opened.state.world.unlockedAreas).toContain('sobi_garden');
+    expect(portalViews(AREAS.areas(opened.state)).get('garden_gate')?.status).toBe('open');
+    expect(AREAS.advance(opened.state, opened.state.meta.updatedAt, mulberry32(1), 0).events).toEqual([]); // once
   });
 
   it('prompts: an open door has an action, a closed one only the reason', () => {
     const v = views();
     expect(portalPrompt(v.get('pig_barn')!)).toEqual({ action: 'Vào Sobi Farm', title: 'Vào Sobi Farm', lines: [] });
-    const closed = portalPrompt(v.get('garden_gate')!);
+    const closed = portalPrompt(v.get('sea_dock')!);
     expect(closed.action).toBeNull();
     expect(closed.title).toContain(vi.plaza.soon);
     expect(closed.lines[0]).toBe(vi.plaza.conditions);

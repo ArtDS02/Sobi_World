@@ -23,10 +23,10 @@ describe('format', () => {
 describe('topBarVm (§10.1)', () => {
   it('shows level, xp to next level, grouped gold and trough', () => {
     const s = farm();
-    const vm = topBarVm({ ...s, player: { ...s.player, xp: 320, gold: 8420 } });
+    const vm = topBarVm({ ...s, player: { ...s.player, xp: 500, gold: 8420 } });
     expect(vm.level).toBe('Cấp 3');
-    expect(vm.xp).toBe('320/500 KN');
-    expect(vm.xpProgress).toBe(28); // (320-250)/(500-250)
+    expect(vm.xp).toBe('500/903 KN');
+    expect(vm.xpProgress).toBe(22); // (500-383)/(903-383)
     expect(vm.gold).toBe('8.420 Sobi Coin');
     expect(vm.trough).toBe(vi.hud.troughEmpty);
     expect(vm.troughEmpty).toBe(true);
@@ -53,8 +53,8 @@ describe('topBarVm (§10.1)', () => {
     const s = farm([], { trough: { food: 12, capacity: 30, lastResolvedAt: 0 } });
     const vm = topBarVm({ ...s, player: { ...s.player, xp: 99_999 } });
     expect(vm.trough).toBe('Máng ăn 12/30');
-    expect(vm.level).toBe('Cấp 10');
-    expect(vm.xp).toBe('5.700/5.700 KN');
+    expect(vm.level).toBe('Cấp 20');
+    expect(vm.xp).toBe('67.135/67.135 KN');
     expect(vm.xpProgress).toBe(100);
   });
 });

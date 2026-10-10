@@ -7,7 +7,7 @@ import { pigStage } from './mortality';
 import type { FarmGame } from './types';
 
 /** Where a line's button leads (the farm UI interprets it). */
-export type FarmGoto = { target: 'pig'; id: string } | { target: 'trough' } | { target: 'well' } | { target: 'orders' };
+export type FarmGoto = { target: 'pig'; id: string } | { target: 'trough' } | { target: 'well' } | { target: 'orders' } | { target: 'garden' };
 
 const COUNTED: readonly [GameEvent['type'], string][] = [
   ['BIRTH', 'summary.farm.births'],

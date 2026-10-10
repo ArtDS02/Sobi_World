@@ -24,11 +24,12 @@ describe('action feedback events (§8.0)', () => {
     expect(r.events.map((e) => e.type)).toContain('DISCOVERY');
   });
 
-  it('feedPig → PIG_FED { pigId }', () => {
+  it('feedPig → PIG_FED { pigId, itemId }', () => {
     const s = farm([makePig({ hunger: 10 })]);
     expect(actionEvents(feedPig(s, { pigId: 'pig-1' }, ctx()))).toContainEqual({
       type: 'PIG_FED',
       pigId: 'pig-1',
+      itemId: 'FOOD_BASIC',
     });
   });
 

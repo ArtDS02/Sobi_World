@@ -2,6 +2,7 @@
 import type { NeedLevel } from './config/care';
 import type { ItemId } from '../../../core/config/ids';
 import type { BreedId, DecorId } from './config/ids';
+import type { Purpose } from '../../../systems/creature/types';
 
 export type PigNeed = 'hunger' | 'clean';
 
@@ -26,7 +27,10 @@ export type GameEvent =
   // Action feedback (spec §8.0, D25). Gold is signed as in the transaction.
   | { type: 'PIG_BOUGHT'; pigId: string; breed: BreedId }
   | { type: 'PIG_ADOPTED'; pigId: string; breed: BreedId } // a newborn raised from the nursery (BR-1)
-  | { type: 'PIG_FED'; pigId: string }
+  | { type: 'PIG_FED'; pigId: string; itemId?: string; favorite?: boolean }
+  // GĐ6: petting raises bond (hearts = whole hearts after it); the purpose a pig is raised for.
+  | { type: 'PIG_PETTED'; pigId: string; bond: number; hearts: number }
+  | { type: 'PIG_PURPOSE_SET'; pigId: string; purpose: Purpose }
   | { type: 'PIG_CLEANED'; pigIds: string[] }
   | { type: 'PIG_TREATED'; pigId: string }
   | { type: 'TROUGH_UPGRADED'; level: number; capacity: number; gold: number }
@@ -42,12 +46,10 @@ export type GameEvent =
   | { type: 'ORDER_FULFILLED'; orderId: string; gold: number }
   | { type: 'GIFT_SPAWNED'; giftId: string }
   | { type: 'GIFT_OPENED'; giftId: string; gold: number; xp: number }
-  // PG-1..3: neighbour's help, daily reward, achievements, decorations.
+  // PG-1..3: neighbour's help, decorations (the daily reward and achievements are the world's, core/goals).
   | { type: 'RELIEF_CLAIMED'; gold: number; food: number; medicine: number }
-  | { type: 'DAILY_CLAIMED'; streak: number; gold: number; food: number; medicine: number }
-  | { type: 'ACHIEVEMENT_REACHED'; id: string } // reward waits in the achievements panel
-  | { type: 'ACHIEVEMENT_CLAIMED'; id: string; gold: number; xp: number }
   | { type: 'DECOR_BOUGHT'; decorId: DecorId; gold: number }
+  | { type: 'DECOR_ARRANGED'; decorId: DecorId; op: 'place' | 'store' | 'move' }
   | {
       type: 'SETTING_CHANGED';
       key: 'musicOn' | 'sfxOn' | 'reduceMotion' | 'tutorialDone';
@@ -74,6 +76,8 @@ export const GAME_EVENT_TYPES = [
   'PIG_BOUGHT',
   'PIG_ADOPTED',
   'PIG_FED',
+  'PIG_PETTED',
+  'PIG_PURPOSE_SET',
   'PIG_CLEANED',
   'PIG_TREATED',
   'TROUGH_UPGRADED',
@@ -89,10 +93,8 @@ export const GAME_EVENT_TYPES = [
   'GIFT_SPAWNED',
   'GIFT_OPENED',
   'RELIEF_CLAIMED',
-  'DAILY_CLAIMED',
-  'ACHIEVEMENT_REACHED',
-  'ACHIEVEMENT_CLAIMED',
   'DECOR_BOUGHT',
+  'DECOR_ARRANGED',
   'SETTING_CHANGED',
 ] as const satisfies readonly GameEventType[];
 

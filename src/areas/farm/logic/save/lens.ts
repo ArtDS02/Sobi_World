@@ -3,6 +3,7 @@
 // view back: farm-only fields go to `areas.sobi_farm`, money / items / xp / achievements / collection /
 // settings to their world fields. Untouched world data (other Areas, other items, gems) is kept.
 import { ITEM_ID_VALUES } from '../../../../core/config/ids';
+import { areaXp, worldXp } from '../../../../core/progression/levels';
 import { FARM_DOC_VERSION } from './legacyConfig';
 import type { WorldSave } from '../../../../core/save/world';
 import type { FarmGame } from '../types';
@@ -30,7 +31,7 @@ export function farmOf(world: WorldSave): FarmGame {
     updatedAt: world.meta.updatedAt,
     player: {
       gold: world.wallet.coins,
-      xp: world.progression.areas[FARM_AREA_ID]?.xp ?? 0,
+      xp: worldXp(world), // the one Sobi World XP (decision 007): every Area's XP added up
       unlockedSlots: area.unlockedSlots,
     },
     pigs: area.pigs,
@@ -48,6 +49,7 @@ export function farmOf(world: WorldSave): FarmGame {
       daily: world.progression.daily,
     },
     decor: area.decor,
+    ...(area.decorPlan === undefined ? {} : { decorPlan: area.decorPlan }),
     ...(area.manure === undefined ? {} : { manure: area.manure }),
     ...(area.graceUntil === undefined ? {} : { graceUntil: area.graceUntil }),
     ...(area.memorials === undefined ? {} : { memorials: area.memorials }),
@@ -68,6 +70,7 @@ export function withFarm(world: WorldSave, farm: FarmGame): WorldSave {
     orders: farm.orders,
     gifts: farm.gifts,
     decor: farm.decor,
+    ...(farm.decorPlan === undefined ? {} : { decorPlan: farm.decorPlan }),
     breedingRecords: farm.breedingRecords,
     ...(farm.manure === undefined ? {} : { manure: farm.manure }),
     ...(farm.graceUntil === undefined ? {} : { graceUntil: farm.graceUntil }),
@@ -82,12 +85,13 @@ export function withFarm(world: WorldSave, farm: FarmGame): WorldSave {
     transactions: farm.transactions.map((t) => ({ ...t, currency: t.currency ?? 'coins' })),
     progression: {
       ...world.progression,
-      areas: { ...world.progression.areas, [FARM_AREA_ID]: { xp: farm.player.xp } },
+      // The farm sees the world's XP: what it gained goes to its own entry, the other Areas keep theirs.
+      areas: { ...world.progression.areas, [FARM_AREA_ID]: { xp: Math.max(0, farm.player.xp - (worldXp(world) - areaXp(world, FARM_AREA_ID))) } },
       stats: farm.progress.stats,
       claimed: farm.progress.claimed,
       daily: farm.progress.daily,
     },
-    collection: { discovered: { ...world.collection.discovered, breed: farm.collection.discoveredBreeds } },
+    collection: { ...world.collection, discovered: { ...world.collection.discovered, breed: farm.collection.discoveredBreeds } },
     settings: farm.settings,
     areas: { ...world.areas, [FARM_AREA_ID]: area },
   };

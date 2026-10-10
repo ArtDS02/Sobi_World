@@ -11,6 +11,7 @@ import {
   TROUGH_PROP_ID,
   TROUGH_STATES,
 } from '../../src/core/config/assetIds';
+import { gardenArtIds } from '../../src/areas/garden/logic/art';
 import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { SEASON_FX_ART_IDS } from '../../src/areas/farm/scene/config/seasonFx';
 import {
@@ -148,6 +149,10 @@ export function checkAssets(
   for (const id of FX_IDS) need(id, 'fx', 'shared fx set');
   for (const id of SEASON_FX_ART_IDS) need(id, 'fx', 'seasonal FX (MU-2)');
   for (const id of AUDIO_KEYS) need(id, 'audio', 'spec §12 audio key');
+  for (const id of gardenArtIds()) {
+    const section = id.startsWith('ui_') ? 'ui' : id.startsWith('bld_') ? 'buildings' : 'props';
+    need(id, section, 'Sobi Garden art (GĐ5)');
+  }
   need(ORDER_BOARD_PROP_ID, 'props', 'order board');
   need(GIFT_PROP_ID, 'props', 'gift box (U06)');
   need(TROUGH_PROP_ID, 'props', 'trough');
@@ -173,11 +178,13 @@ export function checkAssets(
   for (const p of plaza.success ? plaza.data.placements : []) {
     if (!ids.has(p.id)) errors.push(`plaza layout: placement "${p.id}" has no manifest row`);
   }
-  const player = manifest.props.find((p) => p.id === characterRaw.assetId);
-  if (!player) errors.push(`${characterRaw.assetId}: missing props row (the player character)`);
-  for (const facing of ['down', 'up', 'left', 'right']) {
-    for (const frame of ['idle', 'walk1', 'walk2']) {
-      if (player && !player.states?.[`${facing}_${frame}`]) errors.push(`${player.id}: missing state "${facing}_${frame}"`);
+  for (const assetId of Object.values(characterRaw.assets)) {
+    const player = manifest.props.find((p) => p.id === assetId);
+    if (!player) errors.push(`${assetId}: missing props row (a player character)`);
+    for (const facing of ['down', 'up', 'left', 'right']) {
+      for (const frame of ['idle', 'walk1', 'walk2']) {
+        if (player && !player.states?.[`${facing}_${frame}`]) errors.push(`${player.id}: missing state "${facing}_${frame}"`);
+      }
     }
   }
 

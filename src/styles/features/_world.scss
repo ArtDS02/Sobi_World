@@ -240,3 +240,76 @@ $sign-edge: #8a5a2b;
     transition: none;
   }
 }
+
+// The plaza's top bar: wooden pills for the money, four icon buttons that grow on hover.
+.app.is-plaza {
+  .topbar__nav { display: none; }
+}
+.plazabar {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  &__pills {
+    position: absolute;
+    top: $sp-3;
+    left: $sp-3;
+    display: flex;
+    gap: $sp-2;
+  }
+
+  &__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: $sp-2;
+    height: 2.6rem;
+    min-width: 7.5rem;
+    padding: 0 $sp-4 0 $sp-2;
+    color: #fff6e2;
+    background: linear-gradient(180deg, #a8743d, #7d5128);
+    border: 3px solid #5a3a1c;
+    border-radius: 0.9rem;
+    box-shadow: 0 3px 0 rgba(60, 36, 16, 0.45);
+    pointer-events: auto;
+    b { font-size: $fs-lg; text-shadow: 0 1px 0 rgba(60, 36, 16, 0.6); }
+  }
+
+  &__pill-icon .c-icon { width: 1.9rem; height: 1.9rem; image-rendering: pixelated; }
+
+  &__buttons {
+    position: absolute;
+    top: $sp-2;
+    right: $sp-3;
+    display: flex;
+    gap: $sp-2;
+  }
+
+  &__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 4.2rem;
+    padding: 0;
+    font: inherit;
+    color: #fff6e2;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    pointer-events: auto;
+    transition: transform $dur-fast ease-out, filter $dur-fast ease-out;
+
+    &:hover { transform: scale(1.1); filter: brightness(1.12); }
+    &:active { transform: scale(0.94); filter: brightness(0.9); }
+    &:focus-visible { outline: 3px solid $c-primary; outline-offset: 2px; border-radius: 0.8rem; }
+    &.is-disabled { cursor: default; filter: grayscale(0.6) opacity(0.75); &:hover, &:active { transform: none; } }
+  }
+
+  &__btn-icon .c-icon { width: 3.2rem; height: 3.2rem; image-rendering: pixelated; filter: drop-shadow(0 2px 0 rgba(60, 36, 16, 0.5)); }
+  &__btn-label { font-size: $fs-sm; font-weight: $fw-bold; text-shadow: 0 1px 2px rgba(60, 36, 16, 0.9); }
+}
+
+.menu-screen {
+  display: grid;
+  gap: $sp-2;
+  &__item { width: 100%; }
+}

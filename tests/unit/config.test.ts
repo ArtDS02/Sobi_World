@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { careRates } from '../../src/areas/farm/logic/config/care';
 import { ERRORS } from '../../src/core/config/errors';
@@ -118,13 +119,14 @@ describe('levels (§6.4)', () => {
     expect(levelFromXp(0)).toBe(1);
     expect(levelFromXp(99)).toBe(1);
     expect(levelFromXp(100)).toBe(2);
-    expect(levelFromXp(5700)).toBe(10);
-    expect(levelFromXp(999999)).toBe(BALANCE.MAX_LEVEL);
+    expect(levelFromXp(383)).toBe(3); // GAME_BALANCE §7: step n = 100 x n^1.5
+    expect(levelFromXp(6143)).toBe(8);
+    expect(levelFromXp(999999)).toBe(WORLD_LEVELS.maxLevel);
   });
 
   it('the old per-player-level trough rule survives for migrations only: 20 + 10 per level, max 120 (Q6)', () => {
     expect(troughCapacityForLevel(1)).toBe(20);
-    expect(troughCapacityForLevel(BALANCE.MAX_LEVEL)).toBe(110);
+    expect(troughCapacityForLevel(10)).toBe(110);
   });
 
   it('the trough levels hold 30 / 80 / 200 and cost 0 / 1,200 / 4,000 (GAME_BALANCE §2.6)', () => {

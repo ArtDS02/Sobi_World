@@ -1,40 +1,52 @@
 {
   "decor": [
-    { "id": "DECOR_HAY_BALE", "artId": "prop_hay_bale", "priceGold": 1500, "unlockLevel": 2, "happyBonus": 1 },
+    {
+      "id": "DECOR_HAY_BALE",
+      "artId": "prop_hay_bale",
+      "priceGold": 1500,
+      "unlockLevel": 2,
+      "happyBonus": 1,
+      "spots": 3
+    },
     {
       "id": "DECOR_WHEELBARROW",
       "artId": "prop_wheelbarrow",
       "priceGold": 2500,
       "unlockLevel": 3,
-      "happyBonus": 1
+      "happyBonus": 1,
+      "spots": 3
     },
     {
       "id": "DECOR_SUNFLOWERS",
       "artId": "prop_sunflower",
       "priceGold": 3000,
       "unlockLevel": 4,
-      "happyBonus": 1
+      "happyBonus": 1,
+      "spots": 3
     },
     {
       "id": "DECOR_FENCE",
       "artId": "prop_fence_section",
       "priceGold": 4000,
       "unlockLevel": 5,
-      "happyBonus": 2
+      "happyBonus": 2,
+      "spots": 3
     },
     {
       "id": "DECOR_VEGGIE_PATCH",
       "artId": "prop_veggie_patch",
       "priceGold": 6000,
       "unlockLevel": 6,
-      "happyBonus": 2
+      "happyBonus": 2,
+      "spots": 3
     },
     {
       "id": "DECOR_WINDMILL",
       "artId": "prop_windmill",
       "priceGold": 15000,
       "unlockLevel": 8,
-      "happyBonus": 3
+      "happyBonus": 3,
+      "spots": 3
     }
   ]
 }

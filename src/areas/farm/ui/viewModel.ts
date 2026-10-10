@@ -1,8 +1,8 @@
 // Pure view-models: FarmGame → display strings. No DOM, so they are unit-tested directly.
-import { BALANCE } from '../logic/config/balance';
 import { BREEDS } from '../logic/config/breeds';
 import { DAY_NIGHT } from '../../../core/config/dayNight';
-import { levelFromXp } from '../logic/config/levels';
+import { WORLD_LEVELS } from '../../../core/config/progression';
+import { levelProgress } from '../../../core/progression/levels';
 import { formatHm, minuteOf, phaseAt } from '../../../core/engine/dayNight';
 import {
   freeSlots,
@@ -56,12 +56,9 @@ function alertVm(save: FarmGame, now: number): TopBarVm['alert'] {
 
 export function topBarVm(save: FarmGame, now = Math.max(0, ...save.pigs.map((p) => p.lastTickedAt))): TopBarVm {
   const { xp, gold } = save.player;
-  const level = levelFromXp(xp);
-  const next = BALANCE.LEVEL_XP[Math.min(level, BALANCE.MAX_LEVEL - 1)] ?? xp;
-  const shownXp = level >= BALANCE.MAX_LEVEL ? next : xp; // displays as capped (§8.16)
-  const floor = BALANCE.LEVEL_XP[level - 1] ?? 0;
-  const xpProgress =
-    level >= BALANCE.MAX_LEVEL ? 100 : Math.floor(((xp - floor) / (next - floor)) * 100);
+  const { level, floor, next: nextXp, percent: xpProgress } = levelProgress(xp, WORLD_LEVELS);
+  const next = nextXp ?? floor; // displays as capped (§8.16): the bar reads full at the top level
+  const shownXp = nextXp === null ? floor : xp;
   const { food, capacity } = save.trough;
   return {
     level: t(vi.hud.level, { level }),

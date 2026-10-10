@@ -1,0 +1,33 @@
+{
+  "startPlots": 6,
+  "plotExpansions": [
+    { "plots": 9, "price": 200 },
+    { "plots": 12, "price": 500 },
+    { "plots": 15, "price": 1200 },
+    { "plots": 18, "price": 3000 },
+    { "plots": 21, "price": 7000 },
+    { "plots": 24, "price": 15000 }
+  ],
+  "dryGrowthRate": 0.5,
+  "waterHours": 3,
+  "fertilizer": { "timeFactor": 0.75, "bonusYield": 1 },
+  "witherAfterHours": 48,
+  "witherYieldFactor": 0.5,
+  "sprinkler": [{ "plots": 6, "price": 500 }, { "plots": 12, "price": 1500 }, { "plots": 24, "price": 4000 }],
+  "buildings": {
+    "mill": {
+      "nameVi": "Máy xay",
+      "descVi": "Xay bắp, lúa mì, cà rốt thành thức ăn cho heo.",
+      "price": 400,
+      "art": "bld_feed_mill"
+    },
+    "composter": {
+      "nameVi": "Thùng ủ",
+      "descVi": "Ủ phân heo và cỏ thành phân bón.",
+      "price": 300,
+      "art": "bld_composter"
+    }
+  },
+  "maxBatches": 10,
+  "xp": { "plant": 1, "water": 0, "harvest": 2, "craft": 3, "fertilize": 1 }
+}

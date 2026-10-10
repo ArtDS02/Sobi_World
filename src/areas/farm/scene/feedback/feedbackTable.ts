@@ -66,14 +66,15 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   GIFT_SPAWNED: row('giftSpawn', ['fx_smoke'], 'notify', false),
   GIFT_OPENED: { ...row('giftOpen', ['fx_sparkle'], 'coin_collect', false), float: true },
   SLOT_BOUGHT: row(null, [], 'ui_click', true),
-  // PG-1..3: panel rewards; the toast names what arrived.
+  // PG-1..3: panel rewards; the toast names what arrived (the goals' own are in ui/goals/feedback.ts).
   RELIEF_CLAIMED: row(null, [], 'coin_collect', true),
-  DAILY_CLAIMED: row(null, [], 'coin_collect', true),
-  ACHIEVEMENT_REACHED: row(null, [], 'level_up', true),
-  ACHIEVEMENT_CLAIMED: row(null, [], 'coin_collect', true),
   DECOR_BOUGHT: row(null, [], 'ui_click', true),
+  DECOR_ARRANGED: row(null, [], 'ui_click', true),
   ITEM_BOUGHT: row(null, [], 'ui_click', true),
   PIG_RENAMED: row(null, [], 'ui_click', true),
+  // GĐ6: a pet is a small joy (hearts rise); the purpose is a quiet choice.
+  PIG_PETTED: row('happy', ['fx_heart'], 'ui_click', true),
+  PIG_PURPOSE_SET: row(null, [], 'ui_click', true),
   // The toggle itself is the feedback (the button's ui_click; music starts / stops).
   SETTING_CHANGED: row(null, [], null, false),
   // Not in the §11.3 table: toast only, as before (DECISIONS R05B-1).

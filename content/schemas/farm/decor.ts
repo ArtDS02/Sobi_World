@@ -11,8 +11,10 @@ export const decorFileSchema = z.strictObject({
       artId: assetId,
       priceGold: nonNeg,
       unlockLevel: posInt,
-      /** Happiness points added to every pig while owned. */
+      /** Happiness points added to every pig of the pen while it stands there (not while stored). */
       happyBonus: nonNeg,
+      /** Places it can stand: the layout has one placement of it per spot (`spot` 0..spots-1). */
+      spots: posInt,
     }),
   ),
 });

@@ -10,9 +10,6 @@ import { vi } from '../../../../i18n/vi';
 const pregnancyStart = (s: FarmGame, motherId: string): number =>
   s.pigs.find((p) => p.id === motherId)?.pregnancy?.startedAt ?? 0;
 
-const achievementName = (id: string): string =>
-  (vi.achievements as Record<string, string>)[id] ?? id;
-
 /**
  * Toast text for an event, or null when it has none. `before` is the state before the dispatch
  * so a sold pig can still be named.
@@ -71,6 +68,10 @@ export function toastText(
       return t(vi.event.treated, { name: nameOf(event.pigId) });
     case 'ITEM_BOUGHT':
       return t(vi.event.itemBought, { quantity: event.quantity, item: vi.shop[event.itemId] });
+    case 'PIG_PETTED':
+      return t(vi.event.petted, { name: nameOf(event.pigId), hearts: event.hearts });
+    case 'PIG_PURPOSE_SET':
+      return t(vi.event.purposeSet, { name: nameOf(event.pigId), purpose: vi.purpose[event.purpose].name });
     case 'PIG_RENAMED':
       return t(vi.event.renamed, { name: nameOf(event.pigId) });
     case 'BREEDING_STARTED':
@@ -84,15 +85,8 @@ export function toastText(
       return t(vi.event.giftOpened, { gold: formatInt(event.gold), xp: formatInt(event.xp) });
     case 'RELIEF_CLAIMED':
       return t(vi.event.reliefClaimed, { what: rewardText(event) });
-    case 'DAILY_CLAIMED':
-      return t(vi.event.dailyClaimed, { streak: event.streak, what: rewardText(event) });
-    case 'ACHIEVEMENT_REACHED':
-      return t(vi.event.achievementReached, { name: achievementName(event.id) });
-    case 'ACHIEVEMENT_CLAIMED':
-      return t(vi.event.achievementClaimed, {
-        name: achievementName(event.id),
-        gold: formatInt(event.gold),
-      });
+    case 'DECOR_ARRANGED':
+      return t(vi.decor.arranged[event.op], { name: vi.decor[event.decorId as DecorId] });
     case 'DECOR_BOUGHT':
       return t(vi.event.decorBought, { name: vi.decor[event.decorId as DecorId] });
     case 'GIFT_SPAWNED': // the box itself appears on the farm

@@ -174,7 +174,7 @@ export class MainFarmScene extends Phaser.Scene {
     const shadow = p.layer > 2 ? addShadow(this, img) : null;
     if (shadow) this.dayNight.addShadow(shadow);
     if (p.decor) {
-      this.props.addDecor(p.decor, img, shadow); // no click, light or obstacle
+      this.props.addDecor(p.decor, p.spot ?? 0, img, shadow); // no click, light or obstacle
       return null;
     }
     this.dayNight.addLight(img, p.action);

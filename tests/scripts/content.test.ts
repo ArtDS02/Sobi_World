@@ -9,6 +9,7 @@ import { ContentError, loadContent } from '../../src/core/content/load';
 import { CONTENT } from '../../src/core/config/content';
 import { PLANNED_AREAS } from '../../src/core/config/plannedAreas';
 import { FARM_CONTENT } from '../../src/areas/farm/logic/config/content';
+import { GARDEN_CONTENT } from '../../src/areas/garden/logic/config/content';
 import { PLAZA_LAYOUT } from '../../src/areas/plaza/logic/config/content';
 
 const files = ['shared', 'farm', 'plaza', 'garden', 'aquarium', 'cloud', 'adventure'].flatMap((dir) =>
@@ -24,7 +25,7 @@ describe('content files', () => {
   });
 
   it('every file loads (the game validates them at start)', () => {
-    expect(Object.keys(CONTENT).length + Object.keys(FARM_CONTENT).length + [PLAZA_LAYOUT].length + PLANNED_AREAS.length).toBe(files.length);
+    expect(Object.keys(CONTENT).length + Object.keys(FARM_CONTENT).length + Object.keys(GARDEN_CONTENT).length + [PLAZA_LAYOUT].length + PLANNED_AREAS.length).toBe(files.length);
   });
 
   it('ids.generated.ts is up to date (npm run content:ids)', () => {

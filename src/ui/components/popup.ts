@@ -12,8 +12,10 @@ export const PANELS = [
   'orders',
   'collection',
   'achievements',
+  'market',
   'history',
   'settings',
+  'menu',
   'pig',
   'well',
 ] as const;
@@ -26,8 +28,10 @@ const PANEL_ICON: Record<PanelId, UiIcon | null> = {
   orders: 'orders',
   collection: 'collection',
   achievements: 'xp',
+  market: 'gold',
   history: 'gold',
   settings: null,
+  menu: null,
   pig: null,
   well: 'cleanAll',
 };

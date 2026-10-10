@@ -6,15 +6,28 @@ import { color, unit } from '../fields';
 import { placementSchema } from '../farm/layout';
 
 export const plazaPlacementSchema = placementSchema
-  .omit({ action: true, role: true, badge: true, decor: true, signed: true })
+  .omit({ action: true, role: true, badge: true, decor: true, spot: true, signed: true })
   .extend({
     /** The door to an Area: its manifest `portalInPlaza`. */
     portal: z.string().regex(/^[a-z][a-z0-9_]*$/).optional(),
+    /** A place to do something instead of a door to an Area: the order board, the market (GĐ6). Same hint and key as a door. */
+    station: z.enum(['orders', 'market']).optional(),
     /** The character cannot walk through it (its footprint is the bottom part of the art). */
     solid: z.boolean().optional(),
     /** The blocking part of a solid object: share of its height from the bottom, share of its width from the middle. */
     footprint: z.strictObject({ depth: unit.min(0.02), width: unit.min(0.05) }).optional(),
+    /** Turns see-through (about half) while the character stands behind it (houses, big trees). */
+    fade: z.boolean().optional(),
+    /** A lamp: gives a soft glow that grows towards the evening. */
+    glow: z.boolean().optional(),
+    /** A small idle movement of a living thing (an animal). */
+    idle: z.enum(['breathe', 'peck', 'hop', 'sway']).optional(),
+    /** A signpost that names this door (a `portal` id): the door's name is written on its board. */
+    sign: z.string().regex(/^[a-z][a-z0-9_]*$/).optional(),
   });
+
+/** What a ground shape is painted with: the sheet's tiles, or a flat colour when absent. */
+export const GROUND_FILLS = ['dirt', 'stone', 'sand', 'water'] as const;
 
 /** Ground painted under everything, back to front: sand, sea, paths, the cobbled square. */
 export const groundShapeSchema = z.discriminatedUnion('kind', [
@@ -27,12 +40,14 @@ export const groundShapeSchema = z.discriminatedUnion('kind', [
     width: z.number().positive(),
     height: z.number().positive(),
     stroke: color.optional(),
+    fill: z.enum(GROUND_FILLS).optional(),
     /** The character cannot walk on it (water). */
     blocks: z.boolean().optional(),
   }),
   z.strictObject({
     kind: z.literal('path'),
     color,
+    fill: z.enum(GROUND_FILLS).optional(),
     /** Line width in design px; points are fractions of the frame, joined in order. */
     width: z.number().positive(),
     points: z.array(z.tuple([z.number(), z.number()])).min(2),
@@ -45,6 +60,8 @@ export const plazaLayoutSchema = z.strictObject({
   walkArea: z.strictObject({ x: unit, y: unit, width: unit, height: unit }),
   /** Where a new character appears, and where they arrive when no door is involved. */
   spawn: z.strictObject({ x: unit, y: unit }),
+  /** Where the grass starts (fraction of the frame height); above it is sky. Default: just over the walk area. */
+  horizon: unit.optional(),
   /** Flat colours behind the art (the plaza is painted, no photo backdrop). */
   palette: z.strictObject({ sky: color, grass: color }),
   ground: z.array(groundShapeSchema),

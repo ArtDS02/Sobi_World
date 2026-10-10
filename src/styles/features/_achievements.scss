@@ -29,6 +29,11 @@
     display: grid;
     gap: $sp-2;
     justify-items: center;
+
+    > .achievements__list,
+    > .achievements__item {
+      width: 100%;
+    }
   }
 
   .achievements__days {

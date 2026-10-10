@@ -1,17 +1,16 @@
-// Achievement progress (spec §20.4, DECISIONS PG-2): counters fed by game events, metrics read from
-// the save, and the "reached" diff. Rewards are claimed by the player (actions/claimAchievement).
-import { ACHIEVEMENTS, type AchievementDef, type AchievementMetric } from './config/achievements';
-import { BREEDS, BREED_IDS } from './config/breeds';
-import { DECOR_IDS } from './config/decor';
+// The farm's counters (progression.stats): game events in, numbers out. Achievements, daily goals and the Codex read
+// them at world level (core/goals); each stat id has exactly one owner (content/schemas/vocab.ts STAT_ID_VALUES), and
+// these ones are the farm's. Pure.
+import { BOND } from '../../../core/config/bond';
+import { heartsOf } from '../../../systems/bond/bond';
 import type { StatId } from './config/ids';
-import { levelFromXp } from './config/levels';
 import type { GameEvent } from './events';
 import type { FarmGame } from './types';
 
 export const statOf = (state: Pick<FarmGame, 'progress'>, id: StatId): number =>
   state.progress.stats[id] ?? 0;
 
-/** Stat deltas of one event (bestStreak is a maximum, handled apart). */
+/** Stat deltas of one event (bestStreak, slotsOwned and maxHearts are maxima, handled apart). */
 function deltas(e: GameEvent): Partial<Record<StatId, number>> {
   switch (e.type) {
     case 'PIG_BOUGHT':
@@ -30,12 +29,23 @@ function deltas(e: GameEvent): Partial<Record<StatId, number>> {
       return { pigsTreated: 1 };
     case 'BREEDING_STARTED':
       return { breedings: 1 };
+    case 'PIG_PETTED':
+      return { pigsPetted: 1 };
+    case 'PIG_FED':
+      return { feeds: 1 };
+    case 'MANURE_CLEANED':
+      return { manureCollected: e.kept };
+    case 'DECOR_BOUGHT':
+      return { decorOwned: 1 };
     default:
       return {};
   }
 }
 
-/** Adds the events' counters to save.progress.stats; unchanged state when nothing counts. */
+/**
+ * Adds the events' counters to progress.stats; the unchanged state when nothing counts. `maxHearts` is the most
+ * hearts any pig has right now or had before (a bond never falls).
+ */
 export function trackEvents(state: FarmGame, events: readonly GameEvent[]): FarmGame {
   let stats: FarmGame['progress']['stats'] | null = null;
   const bump = (id: StatId, value: number, max = false) => {
@@ -43,57 +53,12 @@ export function trackEvents(state: FarmGame, events: readonly GameEvent[]): Farm
     const old = stats[id] ?? 0;
     stats[id] = max ? Math.max(old, value) : old + value;
   };
+  let bonded = false;
   for (const e of events) {
     for (const [id, n] of Object.entries(deltas(e)) as [StatId, number][]) bump(id, n);
-    if (e.type === 'DAILY_CLAIMED') bump('bestStreak', e.streak, true);
+    if (e.type === 'SLOT_BOUGHT') bump('slotsOwned', e.slots, true);
+    if (e.type === 'PIG_PETTED' || e.type === 'PIG_FED' || e.type === 'PIG_TREATED') bonded = true;
   }
+  if (bonded) bump('maxHearts', Math.max(0, ...state.pigs.map((p) => heartsOf(p.bond, BOND))), true);
   return stats ? { ...state, progress: { ...state.progress, stats } } : state;
-}
-
-const playable = () => BREED_IDS.filter((id) => BREEDS[id].enabled);
-
-export function metric(state: FarmGame, m: AchievementMetric): number {
-  switch (m) {
-    case 'discovered': {
-      const found = new Set(state.collection.discoveredBreeds);
-      return playable().filter((id) => found.has(id)).length;
-    }
-    case 'level':
-      return levelFromXp(state.player.xp);
-    case 'slots':
-      return state.player.unlockedSlots;
-    case 'decor':
-      return state.decor.length;
-    default:
-      return statOf(state, m);
-  }
-}
-
-export function targetOf(def: AchievementDef): number {
-  if (def.target !== 'ALL') return def.target;
-  return def.metric === 'decor' ? DECOR_IDS.length : playable().length;
-}
-
-export const isReached = (state: FarmGame, def: AchievementDef): boolean =>
-  metric(state, def.metric) >= targetOf(def);
-
-/** Reached, not yet claimed: what the achievements panel offers and the dock dot counts. */
-export const claimable = (state: FarmGame): AchievementDef[] =>
-  ACHIEVEMENTS.filter((d) => state.progress.claimed[d.id] === undefined && isReached(state, d));
-
-/**
- * Tracks `events` on `after`, then emits ACHIEVEMENT_REACHED for each achievement reached in the
- * result but not in `before`. Pure and idempotent: the same transition never reports twice.
- */
-export function progressStep(
-  before: FarmGame,
-  after: FarmGame,
-  events: readonly GameEvent[],
-): { state: FarmGame; events: GameEvent[] } {
-  const state = trackEvents(after, events);
-  const reached: GameEvent[] = ACHIEVEMENTS.filter(
-    (d) =>
-      state.progress.claimed[d.id] === undefined && isReached(state, d) && !isReached(before, d),
-  ).map((d) => ({ type: 'ACHIEVEMENT_REACHED', id: d.id }));
-  return { state, events: reached };
 }

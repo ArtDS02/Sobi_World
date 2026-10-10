@@ -1,7 +1,8 @@
 // sellPig = "Xuất chuồng" (spec §8.7, GAME_BALANCE §2.5): from Adult on; the price (pricing.ts) is read after
 // advanceWorld, so it is the one the pig has now.
 import { BALANCE } from '../config/balance';
-import { decorBonus } from '../decor';
+import { isPet } from '../bond';
+import { penMood } from '../decor';
 import { changeGold } from '../gold';
 import { sellQuote } from '../pricing';
 import { addXP } from '../xp';
@@ -18,8 +19,9 @@ export function sellPig(
     if (!pig) return { ok: false, error: 'PIG_NOT_FOUND' };
     if (pig.growthProgress < BALANCE.STAGE_ADULT_AT) return { ok: false, error: 'PIG_NOT_MATURE' }; // shipped out from Adult on
     if (pig.pregnancy !== null) return { ok: false, error: 'PIG_IS_PREGNANT' };
+    if (isPet(pig)) return { ok: false, error: 'PIG_IS_PET' };
 
-    const bonus = decorBonus(s);
+    const bonus = penMood(s);
     const quote = sellQuote(pig, { now: ctx.now, dayOffsetMs: ctx.dayOffsetMs ?? 0, decorBonus: bonus });
     const price = quote.price;
     const removed: FarmGame = { ...s, pigs: s.pigs.filter((p) => p.id !== pig.id) };

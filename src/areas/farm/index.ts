@@ -1,13 +1,15 @@
 // Sobi Farm as an Area (ARCHITECTURE §5 Area Contract): manifest (content/farm/area.json) and hooks.
 // The app registers it in core/area-registry; nothing outside this folder knows how pigs work.
 import type { AreaModule } from '../../core/area-registry/registry';
-import { areaXp } from '../../core/progression/levels';
+import { BREEDS, BREED_IDS } from './logic/config/breeds';
+import { vi } from '../../i18n/vi';
 import { FARM_CONTENT } from './logic/config/content';
-import { levelFromXp } from './logic/config/levels';
+import { DECOR_IDS } from './logic/config/decor';
 import type { GameEvent } from './logic/events';
 import { farmSaveSpec, initFarm } from './logic/save/farmSave';
-import { FARM_AREA_ID, farmOf } from './logic/save/lens';
+import { farmOf } from './logic/save/lens';
 import { farmStage } from './stage';
+import { farmSuggestions } from './logic/suggest';
 import { farmSummaryLines } from './logic/summary';
 import { advanceFarmWorld, farmSimulatedAt, rebaseFarm } from './logic/world';
 import { farmEventsToWorld } from './logic/worldEvents';
@@ -20,7 +22,15 @@ export const farmArea: AreaModule = {
   simulate: (world, now, rng, dayOffsetMs, mode) => advanceFarmWorld(world, now, rng, dayOffsetMs, mode),
   simulatedAt: farmSimulatedAt,
   rebase: rebaseFarm,
-  level: (world) => levelFromXp(areaXp(world, FARM_AREA_ID)),
+  codex: () => [
+    {
+      id: 'breed',
+      name: vi.codex.kinds.breed,
+      entries: BREED_IDS.filter((id) => BREEDS[id].enabled).map((id) => ({ id, name: BREEDS[id].nameVi, artId: BREEDS[id].artId, rarity: BREEDS[id].rarity })),
+    },
+  ],
+  totals: () => ({ decorOwned: DECOR_IDS.length }),
+  suggest: (world, now, dayOffsetMs) => farmSuggestions(farmOf(world), now, dayOffsetMs),
   toWorldEvents: farmEventsToWorld,
   getSummary: (events, world, now) => farmSummaryLines(events as GameEvent[], farmOf(world), now),
   // Presentation only (GĐ3): the numbers run the same whether the player is here or not.

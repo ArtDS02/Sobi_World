@@ -34,6 +34,7 @@ const BUTTON: Record<FarmGoto['target'], string> = {
   well: vi.away.goWell,
   trough: vi.away.goTrough,
   orders: vi.away.goOrders,
+  garden: vi.away.goGarden,
 };
 
 /** `summary.farm.sick` → the string in the table. */
@@ -50,7 +51,8 @@ function lineVm(line: SummaryLine): AwayLine {
 }
 
 /** `after` is the save after the catch-up; `now` its time; `awayMs` how long the world slept. */
-export function awayVm(events: readonly GameEvent[], after: FarmGame, now: number, awayMs: number): AwayVm {
+/** `others`: lines of the other Areas (the Garden), appended after the farm's own. */
+export function awayVm(events: readonly GameEvent[], after: FarmGame, now: number, awayMs: number, others: readonly SummaryLine[] = []): AwayVm {
   const left = now - awayMs;
   const zeroAts = events.flatMap((e) => (e.type === 'PIG_HUNGRY_ZERO' && e.stalled ? [e.at] : []));
   const emptiedAt = events.find((e) => e.type === 'TROUGH_EMPTY')?.at ?? null;
@@ -66,7 +68,7 @@ export function awayVm(events: readonly GameEvent[], after: FarmGame, now: numbe
       })
     : vi.away.troughOk;
 
-  const lines = farmSummaryLines(events, after, now).map(lineVm);
+  const lines = [...farmSummaryLines(events, after, now), ...others].map(lineVm);
   if (lines.length === 0) lines.push({ text: vi.away.nothing, tone: 'info' });
 
   return {

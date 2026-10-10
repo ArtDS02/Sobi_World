@@ -29,3 +29,20 @@ export const PLAZA_VIEW = {
     offsetY: 6,
   },
 } as const;
+
+/** The ground texture: which sheet tiles are painted where, and the colours around them. */
+export const PLAZA_GROUND = {
+  grassTiles: ['env_tile_grass_a', 'env_tile_grass_b', 'env_tile_grass_c', 'env_tile_grass_d'],
+  /** How strongly a grass tile is laid over the average grass colour (0..1). */
+  tileStrength: 0.55,
+  dirtTile: 'env_tile_dirt',
+  waterTile: 'env_tile_water',
+  /** Grass blades drawn at the edge of a path, and the colour of that fringe. */
+  pathEdge: '#6fae4a',
+  pathEdgePx: 7,
+  /** Stones of the square: colours, size range (px) and the mortar between them. */
+  stones: { colors: ['#d8d3c2', '#cbc5b0', '#bdb7a2', '#d2cdb9', '#c2bca6'], mortar: '#a39c85', minW: 24, maxW: 40, minH: 17, maxH: 26 },
+  /** Foam at the water's edge. */
+  foam: '#ffffff',
+  seed: 20260507,
+} as const;

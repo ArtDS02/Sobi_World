@@ -1,6 +1,7 @@
 // Per-session UI around the farm (spec §9.2, §9.3, §9.5, §10.3): the tutorial step, the export
 // reminder (once per session), the save error / recovered banner, the backup list, the away
 // summary and the recovery screen. State here is never saved, except through actions.
+import type { SummaryLine } from '../../../core/area-registry/registry';
 import type { GameEvent } from '../logic/events';
 import { setSetting } from '../logic/actions/setSetting';
 import type { FarmGame } from '../logic/types';
@@ -40,6 +41,8 @@ export interface SessionDeps {
   version: string | null;
   /** The platform keeps backups (desktop). */
   hasBackups: boolean;
+  /** The away-screen lines of the other Areas (the Garden); none in DOM tests. */
+  areaLines?: (events: GameEvent[]) => SummaryLine[];
 }
 
 export function createSession(d: SessionDeps) {
@@ -118,7 +121,7 @@ export function createSession(d: SessionDeps) {
     /** §9.5: one summary modal for a long catch-up. */
     showAway(events: GameEvent[], awayMs: number) {
       const save = d.store.getSnapshot().save;
-      if (save) openAwayDialog(d.dialogHost, awayVm(events, save, d.now(), awayMs), d.goto);
+      if (save) openAwayDialog(d.dialogHost, awayVm(events, save, d.now(), awayMs, d.areaLines?.(events)), d.goto);
     },
 
     recovery(): HTMLElement {

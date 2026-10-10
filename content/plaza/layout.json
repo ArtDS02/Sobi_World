@@ -1,113 +1,245 @@
 {
   "designSize": { "width": 1600, "height": 900 },
-  "walkArea": { "x": 0.02, "y": 0.48, "width": 0.96, "height": 0.5 },
-  "spawn": { "x": 0.5, "y": 0.86 },
+  "walkArea": { "x": 0.02, "y": 0.2, "width": 0.96, "height": 0.78 },
+  "horizon": 0.09,
+  "spawn": { "x": 0.5, "y": 0.6 },
   "palette": { "sky": "#bfe3f5", "grass": "#86c768" },
   "portalReach": 170,
   "ground": [
-    { "kind": "ellipse", "color": "#f0dca8", "x": 0.02, "y": 1, "width": 0.66, "height": 0.62 },
+    { "kind": "ellipse", "color": "#f0dca8", "fill": "sand", "x": 0, "y": 1, "width": 0.92, "height": 0.72 },
     {
       "kind": "ellipse",
       "color": "#46b4e6",
-      "x": -0.02,
+      "fill": "water",
+      "x": 0,
       "y": 1,
-      "width": 0.5,
-      "height": 0.5,
+      "width": 0.72,
+      "height": 0.6,
       "stroke": "#ffffff",
       "blocks": true
     },
-    { "kind": "path", "color": "#d9a766", "width": 62, "points": [[0.5, 0.72], [0.42, 0.62], [0.31, 0.55]] },
     {
       "kind": "path",
       "color": "#d9a766",
-      "width": 62,
-      "points": [[0.5, 0.72], [0.34, 0.7], [0.2, 0.67], [0.12, 0.66]]
+      "fill": "dirt",
+      "width": 64,
+      "points": [[0.5, 0.57], [0.37, 0.56], [0.24, 0.54], [0.13, 0.58]]
     },
-    { "kind": "path", "color": "#d9a766", "width": 62, "points": [[0.5, 0.72], [0.62, 0.62], [0.73, 0.55]] },
-    { "kind": "path", "color": "#d9a766", "width": 62, "points": [[0.5, 0.72], [0.38, 0.82], [0.27, 0.88]] },
-    { "kind": "path", "color": "#d9a766", "width": 62, "points": [[0.5, 0.72], [0.66, 0.78], [0.84, 0.84]] },
+    {
+      "kind": "path",
+      "color": "#d9a766",
+      "fill": "dirt",
+      "width": 64,
+      "points": [[0.5, 0.57], [0.42, 0.5], [0.33, 0.46], [0.31, 0.5]]
+    },
+    {
+      "kind": "path",
+      "color": "#d9a766",
+      "fill": "dirt",
+      "width": 64,
+      "points": [[0.5, 0.57], [0.58, 0.5], [0.66, 0.46], [0.72, 0.46]]
+    },
+    {
+      "kind": "path",
+      "color": "#d9a766",
+      "fill": "dirt",
+      "width": 64,
+      "points": [[0.72, 0.46], [0.82, 0.41], [0.9, 0.38]]
+    },
+    {
+      "kind": "path",
+      "color": "#d9a766",
+      "fill": "dirt",
+      "width": 64,
+      "points": [[0.5, 0.57], [0.62, 0.65], [0.74, 0.76], [0.8, 0.88]]
+    },
+    {
+      "kind": "path",
+      "color": "#d9a766",
+      "fill": "dirt",
+      "width": 64,
+      "points": [[0.5, 0.57], [0.42, 0.66], [0.36, 0.74], [0.31, 0.77]]
+    },
+    {
+      "kind": "path",
+      "color": "#d9a766",
+      "fill": "dirt",
+      "width": 64,
+      "points": [[0.5, 0.57], [0.5, 0.76], [0.55, 0.99]]
+    },
     {
       "kind": "ellipse",
       "color": "#cfc7b1",
+      "fill": "stone",
       "x": 0.5,
-      "y": 0.72,
-      "width": 0.3,
-      "height": 0.26,
+      "y": 0.57,
+      "width": 0.21,
+      "height": 0.2,
       "stroke": "#a89f86"
     }
   ],
   "placements": [
-    { "id": "env_cloud_1", "layer": 0, "x": 0.2, "y": 0.04, "originY": 0 },
-    { "id": "env_cloud_2", "layer": 0, "x": 0.76, "y": 0.1, "originY": 0 },
-    { "id": "prop_tree_pine_b", "layer": 4, "x": 0.04, "y": 0.47, "width": 120 },
-    { "id": "prop_tree_round", "layer": 4, "x": 0.15, "y": 0.47, "width": 130 },
-    { "id": "prop_tree_pine", "layer": 4, "x": 0.42, "y": 0.47, "width": 110 },
-    { "id": "prop_tree_round_b", "layer": 4, "x": 0.55, "y": 0.47, "width": 125 },
-    { "id": "prop_tree_pine_b", "layer": 4, "x": 0.9, "y": 0.47, "width": 125 },
-    { "id": "prop_tree_round", "layer": 4, "x": 0.97, "y": 0.5, "width": 140 },
     {
       "id": "prop_portal_gate",
       "layer": 4,
-      "x": 0.1,
-      "y": 0.64,
-      "width": 260,
-      "portal": "portal_gate",
+      "x": 0.13,
+      "y": 0.53,
+      "width": 250,
       "solid": true,
-      "footprint": { "depth": 0.3, "width": 0.85 }
+      "footprint": { "depth": 0.3, "width": 0.85 },
+      "portal": "portal_gate",
+      "fade": true
     },
     {
       "id": "prop_garden_gate",
       "layer": 4,
-      "x": 0.3,
-      "y": 0.53,
-      "width": 340,
-      "portal": "garden_gate",
+      "x": 0.31,
+      "y": 0.43,
+      "width": 420,
       "solid": true,
-      "footprint": { "depth": 0.45, "width": 0.95 }
+      "footprint": { "depth": 0.45, "width": 0.95 },
+      "portal": "garden_gate",
+      "fade": true
     },
     {
       "id": "prop_sky_tree",
       "layer": 4,
-      "x": 0.74,
-      "y": 0.53,
-      "width": 190,
-      "portal": "sky_tree",
+      "x": 0.717,
+      "y": 0.4,
+      "width": 200,
       "solid": true,
-      "footprint": { "depth": 0.1, "width": 0.5 }
+      "footprint": { "depth": 0.12, "width": 0.4 },
+      "portal": "sky_tree",
+      "fade": true
+    },
+    {
+      "id": "env_cloud_g",
+      "layer": 4,
+      "x": 0.693,
+      "y": 0.403,
+      "width": 150,
+      "originY": 0.6,
+      "idle": "breathe"
+    },
+    {
+      "id": "env_cloud_e",
+      "layer": 4,
+      "x": 0.745,
+      "y": 0.406,
+      "width": 130,
+      "originY": 0.6,
+      "idle": "breathe"
+    },
+    {
+      "id": "env_cloud_d",
+      "layer": 4,
+      "x": 0.718,
+      "y": 0.412,
+      "width": 120,
+      "originY": 0.6,
+      "idle": "breathe"
     },
     {
       "id": "prop_sea_dock",
       "layer": 4,
-      "x": 0.25,
-      "y": 0.86,
-      "width": 150,
-      "portal": "sea_dock",
+      "x": 0.305,
+      "y": 0.71,
+      "width": 140,
       "solid": true,
-      "footprint": { "depth": 0.4, "width": 0.9 }
+      "footprint": { "depth": 0.4, "width": 0.9 },
+      "portal": "sea_dock"
     },
     {
-      "id": "prop_pig_house",
+      "id": "prop_farm_yard",
       "layer": 4,
-      "x": 0.86,
-      "y": 0.8,
-      "width": 300,
+      "x": 0.865,
+      "y": 0.86,
+      "width": 470,
+      "solid": true,
+      "footprint": { "depth": 0.35, "width": 0.95 },
       "portal": "pig_barn",
-      "solid": true
+      "fade": true
+    },
+    { "id": "prop_signboard", "layer": 4, "x": 0.095, "y": 0.63, "width": 150, "sign": "portal_gate" },
+    { "id": "prop_signboard", "layer": 4, "x": 0.345, "y": 0.5, "width": 150, "sign": "garden_gate" },
+    { "id": "prop_signboard", "layer": 4, "x": 0.665, "y": 0.5, "width": 150, "sign": "sky_tree" },
+    { "id": "prop_signboard", "layer": 4, "x": 0.2, "y": 0.735, "width": 150, "sign": "sea_dock" },
+    { "id": "prop_signboard", "layer": 4, "x": 0.655, "y": 0.86, "width": 150, "sign": "pig_barn" },
+    {
+      "id": "prop_main_house",
+      "layer": 4,
+      "x": 0.915,
+      "y": 0.33,
+      "width": 220,
+      "solid": true,
+      "footprint": { "depth": 0.35, "width": 0.8 },
+      "fade": true
     },
     {
       "id": "prop_fountain",
       "layer": 4,
       "x": 0.5,
-      "y": 0.69,
-      "width": 130,
+      "y": 0.39,
+      "width": 120,
       "solid": true,
       "footprint": { "depth": 0.35, "width": 0.8 }
     },
     {
+      "id": "prop_order_board",
+      "layer": 4,
+      "x": 0.395,
+      "y": 0.58,
+      "width": 120,
+      "station": "orders",
+      "solid": true,
+      "footprint": { "depth": 0.1, "width": 0.8 },
+      "label": "Bảng đơn hàng"
+    },
+    {
+      "id": "prop_lamp_post",
+      "layer": 4,
+      "x": 0.455,
+      "y": 0.74,
+      "width": 38,
+      "solid": true,
+      "footprint": { "depth": 0.1, "width": 0.7 },
+      "glow": true
+    },
+    {
+      "id": "prop_lamp_post_b",
+      "layer": 4,
+      "x": 0.545,
+      "y": 0.74,
+      "width": 38,
+      "solid": true,
+      "footprint": { "depth": 0.1, "width": 0.7 },
+      "glow": true
+    },
+    {
+      "id": "prop_lamp_post",
+      "layer": 4,
+      "x": 0.625,
+      "y": 0.5,
+      "width": 38,
+      "solid": true,
+      "footprint": { "depth": 0.1, "width": 0.7 },
+      "glow": true
+    },
+    {
+      "id": "prop_lamp_post_b",
+      "layer": 4,
+      "x": 0.55,
+      "y": 0.43,
+      "width": 38,
+      "solid": true,
+      "footprint": { "depth": 0.1, "width": 0.7 },
+      "glow": true
+    },
+    {
       "id": "prop_bench_wood",
       "layer": 4,
-      "x": 0.4,
-      "y": 0.8,
+      "x": 0.42,
+      "y": 0.72,
       "width": 100,
       "solid": true,
       "footprint": { "depth": 0.4, "width": 0.9 }
@@ -115,71 +247,214 @@
     {
       "id": "prop_bench_side",
       "layer": 4,
-      "x": 0.6,
-      "y": 0.8,
+      "x": 0.585,
+      "y": 0.72,
       "width": 90,
       "solid": true,
       "footprint": { "depth": 0.4, "width": 0.9 }
     },
     {
-      "id": "prop_lamp_post",
+      "id": "prop_bench_side",
       "layer": 4,
-      "x": 0.37,
-      "y": 0.7,
-      "width": 38,
+      "x": 0.595,
+      "y": 0.49,
+      "width": 90,
       "solid": true,
-      "footprint": { "depth": 0.1, "width": 0.7 }
-    },
-    {
-      "id": "prop_lamp_post_b",
-      "layer": 4,
-      "x": 0.63,
-      "y": 0.7,
-      "width": 38,
-      "solid": true,
-      "footprint": { "depth": 0.1, "width": 0.7 }
-    },
-    {
-      "id": "prop_tree_round_b",
-      "layer": 4,
-      "x": 0.45,
-      "y": 0.58,
-      "width": 120,
-      "solid": true,
-      "footprint": { "depth": 0.12, "width": 0.3 }
-    },
-    {
-      "id": "prop_tree_pine",
-      "layer": 4,
-      "x": 0.6,
-      "y": 0.57,
-      "width": 105,
-      "solid": true,
-      "footprint": { "depth": 0.12, "width": 0.3 }
+      "footprint": { "depth": 0.4, "width": 0.9 }
     },
     {
       "id": "prop_tree_round",
       "layer": 4,
-      "x": 0.05,
-      "y": 0.88,
-      "width": 125,
+      "x": 0.03,
+      "y": 0.3,
+      "width": 130,
       "solid": true,
-      "footprint": { "depth": 0.12, "width": 0.3 }
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
     },
     {
       "id": "prop_tree_pine_b",
       "layer": 4,
-      "x": 0.58,
-      "y": 0.96,
+      "x": 0.07,
+      "y": 0.21,
+      "width": 125,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_round_b",
+      "layer": 4,
+      "x": 0.15,
+      "y": 0.23,
+      "width": 130,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_pine",
+      "layer": 4,
+      "x": 0.22,
+      "y": 0.2,
+      "width": 110,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_round",
+      "layer": 4,
+      "x": 0.42,
+      "y": 0.28,
+      "width": 130,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_pine_b",
+      "layer": 4,
+      "x": 0.46,
+      "y": 0.2,
       "width": 120,
       "solid": true,
-      "footprint": { "depth": 0.1, "width": 0.3 }
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_round_b",
+      "layer": 4,
+      "x": 0.58,
+      "y": 0.26,
+      "width": 140,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_pine",
+      "layer": 4,
+      "x": 0.64,
+      "y": 0.2,
+      "width": 110,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_round",
+      "layer": 4,
+      "x": 0.8,
+      "y": 0.22,
+      "width": 130,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_pine_b",
+      "layer": 4,
+      "x": 0.97,
+      "y": 0.5,
+      "width": 125,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_pine",
+      "layer": 4,
+      "x": 0.93,
+      "y": 0.62,
+      "width": 120,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_round_b",
+      "layer": 4,
+      "x": 0.03,
+      "y": 0.55,
+      "width": 125,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_pine_b",
+      "layer": 4,
+      "x": 0.05,
+      "y": 0.43,
+      "width": 120,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_round",
+      "layer": 4,
+      "x": 0.4,
+      "y": 0.88,
+      "width": 125,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_pine",
+      "layer": 4,
+      "x": 0.47,
+      "y": 0.96,
+      "width": 115,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_round_b",
+      "layer": 4,
+      "x": 0.62,
+      "y": 0.96,
+      "width": 130,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_tree_pine_b",
+      "layer": 4,
+      "x": 0.72,
+      "y": 0.6,
+      "width": 115,
+      "solid": true,
+      "footprint": { "depth": 0.12, "width": 0.3 },
+      "fade": true
+    },
+    {
+      "id": "prop_bush",
+      "layer": 4,
+      "x": 0.2,
+      "y": 0.66,
+      "width": 120,
+      "solid": true,
+      "footprint": { "depth": 0.4, "width": 0.85 }
+    },
+    {
+      "id": "prop_bush",
+      "layer": 4,
+      "x": 0.66,
+      "y": 0.58,
+      "width": 120,
+      "solid": true,
+      "footprint": { "depth": 0.4, "width": 0.85 }
     },
     {
       "id": "prop_rock",
       "layer": 4,
       "x": 0.2,
-      "y": 0.75,
+      "y": 0.46,
       "width": 90,
       "solid": true,
       "footprint": { "depth": 0.55, "width": 0.9 }
@@ -188,87 +463,41 @@
       "id": "prop_rock",
       "layer": 4,
       "x": 0.78,
-      "y": 0.68,
+      "y": 0.6,
       "width": 80,
       "solid": true,
       "footprint": { "depth": 0.55, "width": 0.9 }
     },
-    {
-      "id": "prop_bush",
-      "layer": 4,
-      "x": 0.66,
-      "y": 0.64,
-      "width": 130,
-      "solid": true,
-      "footprint": { "depth": 0.4, "width": 0.85 }
-    },
-    {
-      "id": "prop_bush",
-      "layer": 4,
-      "x": 0.18,
-      "y": 0.58,
-      "width": 120,
-      "solid": true,
-      "footprint": { "depth": 0.4, "width": 0.85 }
-    },
-    {
-      "id": "prop_fence_section",
-      "layer": 4,
-      "x": 0.74,
-      "y": 0.9,
-      "width": 150,
-      "solid": true,
-      "footprint": { "depth": 0.3, "width": 0.95 }
-    },
-    {
-      "id": "prop_fence_section",
-      "layer": 4,
-      "x": 0.84,
-      "y": 0.96,
-      "width": 150,
-      "solid": true,
-      "footprint": { "depth": 0.3, "width": 0.95 }
-    },
-    {
-      "id": "prop_fence_section",
-      "layer": 4,
-      "x": 0.94,
-      "y": 0.93,
-      "width": 150,
-      "solid": true,
-      "flipX": true,
-      "footprint": { "depth": 0.3, "width": 0.95 }
-    },
-    {
-      "id": "prop_fence_section",
-      "layer": 4,
-      "x": 0.96,
-      "y": 0.74,
-      "width": 140,
-      "solid": true,
-      "flipX": true,
-      "footprint": { "depth": 0.3, "width": 0.95 }
-    },
+    { "id": "prop_boat", "layer": 4, "x": 0.09, "y": 0.88, "width": 150 },
+    { "id": "prop_coral_purple", "layer": 4, "x": 0.27, "y": 0.93, "width": 44 },
+    { "id": "prop_star_orange", "layer": 4, "x": 0.3, "y": 0.9, "width": 36 },
+    { "id": "prop_coral_red", "layer": 4, "x": 0.33, "y": 0.97, "width": 40 },
+    { "id": "prop_star_blue", "layer": 4, "x": 0.24, "y": 0.84, "width": 30 },
+    { "id": "prop_seashell_red", "layer": 4, "x": 0.36, "y": 0.86, "width": 28 },
+    { "id": "prop_seashell_conch", "layer": 4, "x": 0.38, "y": 0.93, "width": 32 },
+    { "id": "prop_flowers_tiny", "layer": 4, "x": 0.36, "y": 0.6, "width": 150 },
+    { "id": "prop_flowers_tiny", "layer": 4, "x": 0.63, "y": 0.72, "width": 150 },
+    { "id": "prop_flowers_tiny", "layer": 4, "x": 0.46, "y": 0.5, "width": 130 },
+    { "id": "prop_flowers_tiny", "layer": 4, "x": 0.2, "y": 0.55, "width": 140 },
+    { "id": "prop_pebbles", "layer": 4, "x": 0.52, "y": 0.82, "width": 130 },
+    { "id": "prop_wheelbarrow_hay", "layer": 4, "x": 0.79, "y": 0.74, "width": 80 },
     {
       "id": "prop_crate_wood",
       "layer": 4,
-      "x": 0.93,
-      "y": 0.8,
-      "width": 70,
+      "x": 0.95,
+      "y": 0.76,
+      "width": 60,
       "solid": true,
       "footprint": { "depth": 0.5, "width": 0.9 }
     },
-    {
-      "id": "prop_hay_stack",
-      "layer": 4,
-      "x": 0.76,
-      "y": 0.8,
-      "width": 80,
-      "solid": true,
-      "footprint": { "depth": 0.5, "width": 0.9 }
-    },
-    { "id": "prop_boat", "layer": 4, "x": 0.1, "y": 0.95, "width": 140 },
-    { "id": "prop_sunflower", "layer": 4, "x": 0.34, "y": 0.95, "width": 100 },
-    { "id": "prop_mushroom", "layer": 4, "x": 0.45, "y": 0.96, "width": 56 }
+    { "id": "prop_animal_sheep", "layer": 4, "x": 0.68, "y": 0.7, "width": 52, "idle": "breathe" },
+    { "id": "prop_animal_llama", "layer": 4, "x": 0.27, "y": 0.4, "width": 48, "idle": "sway" },
+    { "id": "prop_animal_duck", "layer": 4, "x": 0.3, "y": 0.72, "width": 36, "idle": "sway" },
+    { "id": "prop_animal_hen_brown", "layer": 4, "x": 0.7, "y": 0.93, "width": 32, "idle": "peck" },
+    { "id": "prop_animal_hen_white", "layer": 4, "x": 0.76, "y": 0.96, "width": 34, "idle": "peck" },
+    { "id": "prop_animal_hen_cream", "layer": 4, "x": 0.74, "y": 0.91, "width": 34, "idle": "peck" },
+    { "id": "prop_animal_pig_a", "layer": 4, "x": 0.82, "y": 0.94, "width": 40, "idle": "hop" },
+    { "id": "prop_animal_pig_b", "layer": 4, "x": 0.89, "y": 0.96, "width": 40, "idle": "breathe" },
+    { "id": "prop_animal_pig_c", "layer": 4, "x": 0.95, "y": 0.93, "width": 40, "idle": "hop" }
   ]
 }

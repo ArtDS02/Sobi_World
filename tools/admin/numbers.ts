@@ -14,7 +14,22 @@ const FILE_TITLE: Record<string, string> = {
   'shared/quality.json': '⭐ Chất lượng (ngưỡng tâm trạng, hệ số giá)',
   'shared/inventory.json': '🎒 Túi đồ chung',
   'farm/balance.json': '🐷 Cân bằng Nông trại',
+  'garden/crops.json': '🌱 Cây trồng (giờ lớn, sản lượng)',
+  'garden/balance.json': '🥕 Cân bằng Sobi Garden (ô đất, tưới, héo, công trình)',
+  'shared/recipes.json': '⚙️ Recipe (nguyên liệu, thành phẩm, thời gian)',
+  'shared/items.json': '📦 Vật phẩm (giá mua, giá bán, độ no)',
+  'shared/progression.json': '📈 Cấp Sobi World (KN từng cấp) và Phát triển thế giới',
+  'shared/bond.json': '💕 Thân thiết (vuốt ve, món yêu thích, tâm trạng món ăn vặt)',
+  'shared/orders.json': '📋 Bảng đơn hàng (ô, thời gian, thưởng, vật phẩm được đặt)',
+  'shared/goals.json': '🎯 Mục tiêu hằng ngày (mẫu, thưởng, bonus)',
+  'shared/achievements.json': '🏆 Thành tựu (đích, Ngọc, KN)',
+  'shared/codex.json': '📖 Codex (thưởng khám phá, mốc sưu tầm)',
+  'farm/decor.json': '🌻 Trang trí (giá, cấp mở, vui vẻ, số chỗ đặt)',
+  'shared/npcs.json': '💬 NPC hướng dẫn (lời của từng NPC; sửa được cả chữ)',
 };
+
+/** Files whose words can be edited as well (the server allows it for the same files). */
+const TEXT_FILES = new Set(['shared/npcs.json']);
 
 /** Friendly names by the last part(s) of a path; the rest show their key. */
 const LABEL: Record<string, string> = {
@@ -34,6 +49,49 @@ const LABEL: Record<string, string> = {
   deathGraceMs: 'Ân hạn sau khi bù offline (ms)',
   newPlayerProtectionMs: 'Bảo vệ người mới, không bệnh (ms)',
   weightCap: 'Hệ số cân nặng tối đa',
+  'up.count': 'Số nhóm hàng được giá mỗi ngày',
+  'up.factor': 'Hệ số nhóm được giá',
+  'down.count': 'Số nhóm hàng rớt giá mỗi ngày',
+  'down.factor': 'Hệ số nhóm rớt giá',
+  maxBond: 'Thân thiết tối đa (5 tim)',
+  perHeart: 'Thân thiết mỗi tim',
+  'pet.gain': 'Vuốt ve: thân thiết nhận được',
+  'pet.perDay': 'Vuốt ve: số lần mỗi ngày mỗi heo',
+  'favorite.gain': 'Món yêu thích: thân thiết nhận được',
+  'favorite.hunger': 'Món yêu thích: độ no hồi lại',
+  'care.gain': 'Cho thuốc khi bệnh: thân thiết nhận được',
+  'moodBoost.hours': 'Món ăn vặt nâng tâm trạng bao nhiêu giờ',
+  'petPurpose.perPet': 'Mỗi thú cưng cộng vui vẻ cho cả chuồng',
+  'petPurpose.max': 'Cộng vui vẻ tối đa từ thú cưng',
+  fromWorldDevelopment: 'Từ Phát triển thế giới',
+  count: 'Số ô / số mục tiêu',
+  spawnEveryMs: 'Bao lâu có một đơn mới (ms)',
+  rewardMultiplier: 'Thưởng = giá trị vật phẩm x',
+  'xp.coinsPerXp': 'Bao nhiêu Sobi Coin thưởng thì được 1 KN',
+  'bonus.chance': 'Cơ hội kèm vật phẩm thưởng (0–1)',
+  'bonus.quantity': 'Số vật phẩm thưởng kèm',
+  rerollGems: 'Giá đổi đơn (Ngọc)',
+  fromWorldLevel: 'Từ cấp Sobi World',
+  max: 'Tối đa',
+  min: 'Tối thiểu',
+  coins: 'Thưởng Sobi Coin',
+  'bonus.coins': 'Xong cả 3 mục tiêu: Sobi Coin',
+  'bonus.xp': 'Xong cả 3 mục tiêu: KN',
+  gems: 'Thưởng Ngọc',
+  target: 'Đích cần đạt',
+  entries: 'Số mục khám phá',
+  spots: 'Số chỗ đặt được',
+  unlockLevel: 'Cấp Sobi World để mua',
+  happyBonus: 'Vui vẻ cộng cho cả chuồng',
+  maxLevel: 'Cấp tối đa',
+  'worldLevel.xp': 'KN cần cho cấp tiếp theo',
+  'worldDevelopment.perWorldLevel': 'Phát triển thế giới: mỗi cấp được',
+  'worldDevelopment.codexEntriesPerPoint': 'Phát triển thế giới: mỗi bao nhiêu mục Codex được 1',
+  'worldDevelopment.perBuildingLv3': 'Phát triển thế giới: mỗi công trình Lv3',
+  nameVi: 'Tên',
+  greetingVi: 'Lời chào',
+  titleVi: 'Tên chủ đề',
+  textVi: 'Lời giải thích',
   'healthPenalty.perDay': 'Giảm giá mỗi ngày bệnh (0–1)',
   'healthPenalty.floor': 'Hệ số sức khỏe thấp nhất (0–1)',
   factor: 'Hệ số chợ',
@@ -52,6 +110,33 @@ const LABEL: Record<string, string> = {
   TROUGH_AUTO_FEED_AT: 'Máng tự cho ăn khi đói dưới',
   SICK_RECOVERY_SEC: 'Miễn bệnh sau khi uống thuốc (giây)',
   SICK_MAX_EPISODES_PER_DAY: 'Số lần bệnh tối đa mỗi ngày',
+  growHours: 'Giờ lớn (khi đủ nước)',
+  yield: 'Sản lượng mỗi lần thu',
+  startPlots: 'Số ô đất ban đầu',
+  'plotExpansions.plots': 'Mở lên tổng số ô',
+  'plotExpansions.price': 'Giá mở ô',
+  dryGrowthRate: 'Tốc độ lớn khi khô (0–1)',
+  waterHours: 'Tưới có tác dụng bao nhiêu giờ',
+  'fertilizer.timeFactor': 'Phân bón: hệ số thời gian (0,75 = nhanh 25%)',
+  'fertilizer.bonusYield': 'Phân bón: thêm sản lượng',
+  witherAfterHours: 'Chín bao lâu thì héo (giờ)',
+  witherYieldFactor: 'Sản lượng khi héo (0–1)',
+  'sprinkler.plots': 'Vòi tưới: số ô đầu được tưới',
+  'sprinkler.price': 'Vòi tưới: giá cấp này',
+  'mill.price': 'Giá xây Máy xay',
+  'composter.price': 'Giá xây Thùng ủ',
+  maxBatches: 'Số mẻ tối đa mỗi lần',
+  'xp.plant': 'KN khi gieo',
+  'xp.water': 'KN khi tưới',
+  'xp.harvest': 'KN khi thu hoạch',
+  'xp.craft': 'KN mỗi mẻ chế biến',
+  'xp.fertilize': 'KN khi bón phân',
+  'levels.xp': 'KN cần cho cấp tiếp theo',
+  'levels.maxLevel': 'Cấp tối đa',
+  durationMin: 'Thời gian một mẻ (phút)',
+  priceGold: 'Giá mua (Sobi Coin)',
+  sellGold: 'Giá bán (Sobi Coin)',
+  hungerRestore: 'Độ no hồi lại',
   capacity: 'Sức chứa',
   cost: 'Giá nâng cấp',
   slots: 'Số ô',
@@ -60,14 +145,19 @@ const LABEL: Record<string, string> = {
 
 interface Leaf {
   path: string;
-  value: number;
+  value: number | string;
+  /** The id or name of the row the number belongs to (a crop, an item, a recipe). */
+  owner: string;
 }
 
-function leaves(value: unknown, path = ''): Leaf[] {
-  if (typeof value === 'number') return [{ path, value }];
-  if (Array.isArray(value)) return value.flatMap((v, i) => leaves(v, `${path}[${i}]`));
+function leaves(value: unknown, texts: boolean, path = '', owner = ''): Leaf[] {
+  if (typeof value === 'number') return [{ path, value, owner }];
+  if (texts && typeof value === 'string' && /Vi$/.test(path)) return [{ path, value, owner }];
+  if (Array.isArray(value)) return value.flatMap((v, i) => leaves(v, texts, `${path}[${i}]`, owner));
   if (value && typeof value === 'object') {
-    return Object.entries(value).flatMap(([k, v]) => leaves(v, path ? `${path}.${k}` : k));
+    const row = value as { id?: unknown; itemId?: unknown; nameVi?: unknown };
+    const own = typeof row.id === 'string' ? row.id : typeof row.itemId === 'string' ? row.itemId : typeof row.nameVi === 'string' ? row.nameVi : owner;
+    return Object.entries(value).flatMap(([k, v]) => leaves(v, texts, path ? `${path}.${k}` : k, own));
   }
   return [];
 }
@@ -83,7 +173,7 @@ function labelOf(path: string): string {
 }
 
 /** `value` with the number at `path` replaced (a deep copy). */
-function setAt(value: unknown, path: string, n: number): unknown {
+function setAt(value: unknown, path: string, n: number | string): unknown {
   const copy = structuredClone(value) as Record<string, unknown>;
   const keys = path.split(/\.|\[|\]/).filter(Boolean);
   let at: Record<string, unknown> = copy;
@@ -112,10 +202,10 @@ export function renderNumbers(root: HTMLElement, apiOnline: boolean, rerender: (
     ${Object.entries(files)
       .map(
         ([file, value]) => `<form class="panel tab-form" data-file="${esc(file)}"><h3>${esc(FILE_TITLE[file] ?? file)}</h3>
-        <div class="form-grid">${leaves(value)
+        <div class="form-grid">${leaves(value, TEXT_FILES.has(file))
           .map(
-            (l) => `<label class="field"><span>${esc(labelOf(l.path))}</span>
-              <input type="number" step="any" name="${esc(l.path)}" value="${l.value}" /><small class="muted">${esc(l.path)}</small></label>`,
+            (l) => `<label class="field${typeof l.value === 'string' ? ' span-2' : ''}"><span>${esc(l.owner ? `${l.owner}: ${labelOf(l.path)}` : labelOf(l.path))}</span>
+              ${typeof l.value === 'string' ? `<textarea name="${esc(l.path)}" data-text="1" rows="2">${esc(l.value)}</textarea>` : `<input type="number" step="any" name="${esc(l.path)}" value="${l.value}" />`}<small class="muted">${esc(l.path)}</small></label>`,
           )
           .join('')}</div>
         <div class="form-actions"><button class="btn btn-primary" ${apiOnline ? '' : 'disabled title="Chạy npm run admin để lưu"'}>💾 Lưu ${esc(file)}</button></div></form>`,
@@ -126,7 +216,9 @@ export function renderNumbers(root: HTMLElement, apiOnline: boolean, rerender: (
       e.preventDefault();
       const file = f.dataset.file!;
       let value: unknown = files[file];
-      for (const input of f.querySelectorAll<HTMLInputElement>('input[name]')) value = setAt(value, input.name, Number(input.value));
+      for (const input of f.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[name], textarea[name]')) {
+        value = setAt(value, input.name, input instanceof HTMLTextAreaElement ? input.value : Number(input.value));
+      }
       json('/__admin/numbers', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ file, value }) }).then(
         () => {
           files[file] = value;

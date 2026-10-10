@@ -9,6 +9,8 @@ import { upgradeTrough } from '../logic/actions/upgradeTrough';
 import { nextTroughLevel, troughLevel } from '../logic/troughLevel';
 import { cleanAll, cleanPig } from '../logic/actions/cleanPig';
 import { feedPig } from '../logic/actions/feedPig';
+import { petPig } from '../logic/actions/petPig';
+import { pigFavorite } from '../logic/bond';
 import { fillTrough } from '../logic/actions/fillTrough';
 import { sellPig } from '../logic/actions/sellPig';
 import { treatPig } from '../logic/actions/treatPig';
@@ -23,7 +25,8 @@ import { rarityRank } from '../../../core/config/rarity';
 import type { AssetRegistry } from '../../../core/assets/registry';
 import { ITEMS } from '../../../core/config/items';
 import { DECOR_IDS, DECORS } from '../logic/config/decor';
-import { decorBonus } from '../logic/decor';
+import { arrangeDecor } from '../logic/actions/arrangeDecor';
+import { decorBonus, planOf } from '../logic/decor';
 import { productById, shopProducts } from '../logic/shopProducts';
 import { QUALITY_RULES } from '../../../systems/quality/quality';
 import { CONTENT } from '../../../core/config/content';
@@ -49,6 +52,7 @@ const SHORT_REASON: Partial<Record<ErrorCode, string>> = {
   PIG_IS_SICK: vi.disabled.isSick,
   NO_PIG_SLOT: vi.disabled.noSlot,
   NURSERY_FULL: vi.disabled.nurseryFull,
+  PET_LIMIT_REACHED: vi.disabled.petLimit,
 };
 
 /** Error code → short disabled reason; INSUFFICIENT_ITEM names the missing item. */
@@ -73,6 +77,18 @@ export function pigActions(save: FarmGame, pigId: string, now: number) {
   const args = { pigId };
   return {
     feed: vm(save, now, vi.action.feed, (s, c) => feedPig(s, args, c), vi.disabled.noFood),
+    /** The Garden's foods, offered only while the bag holds some. */
+    feedPremium: save.inventory.FOOD_PREMIUM > 0 ? vm(save, now, t(vi.action.feedPremium, { count: save.inventory.FOOD_PREMIUM }), (s, c) => feedPig(s, { ...args, itemId: 'FOOD_PREMIUM' }, c)) : null,
+    feedGrass: save.inventory.item_grass > 0 ? vm(save, now, t(vi.action.feedGrass, { count: save.inventory.item_grass }), (s, c) => feedPig(s, { ...args, itemId: 'item_grass' }, c)) : null,
+    pet: vm(save, now, vi.action.pet, (s, c) => petPig(s, args, c)),
+    /** Its favourite crop, offered only while the bag holds one. */
+    feedFavorite: (() => {
+      const pig = save.pigs.find((p) => p.id === pigId);
+      const item = pig ? pigFavorite(pig) : null;
+      return item && save.inventory[item] > 0
+        ? vm(save, now, t(vi.action.feedFavorite, { item: vi.shop[item], count: save.inventory[item] }), (s, c) => feedPig(s, { ...args, itemId: item }, c))
+        : null;
+    })(),
     clean: vm(save, now, vi.action.clean, (s, c) => cleanPig(s, args, c)),
     treat: vm(save, now, vi.action.treat, (s, c) => treatPig(s, args, c), vi.disabled.noMedicine),
     sell: vm(save, now, vi.action.sell, (s, c) => sellPig(s, args, c)),
@@ -112,7 +128,7 @@ export function shopPigs(save: FarmGame, now: number, assets: AssetRegistry | nu
       thumb: assets?.url(def.artId) ?? null,
       price: goldText(def.buyGold ?? 0),
       sell: t(vi.shop.sellUpTo, {
-        gold: formatInt(Math.floor(def.sellGold * QUALITY_RULES.priceFactor.PERFECT * Math.max(...CONTENT.valuation.market.map((m) => m.factor)))),
+        gold: formatInt(Math.floor(def.sellGold * QUALITY_RULES.priceFactor.PERFECT * CONTENT.valuation.market.up.factor)),
       }),
       male: buy('MALE'),
       female: buy('FEMALE'),
@@ -179,14 +195,21 @@ export function shopDecor(save: FarmGame, now: number) {
           : error
             ? reasonFor(error)
             : null;
+    const owned = save.decor.includes(id);
+    const stored = owned && planOf(save, id).stored;
+    const arrange = (op: 'place' | 'store' | 'move', label: string): ActionVm => vm(save, now, label, (s, c) => arrangeDecor(s, { decorId: id, op }, c));
     return {
       id,
       artId: def.artId,
       name: vi.decor[id],
       bonus: t(vi.decor.bonus, { n: def.happyBonus }),
       price: goldText(def.priceGold),
-      owned: save.decor.includes(id),
+      owned,
+      stored,
       buy: { label: vi.action.buy, reason, run } satisfies ActionVm,
+      /** Put out / store it, and move it to its next spot: only for a decoration the player owns. */
+      toggle: owned ? (stored ? arrange('place', vi.decor.place) : arrange('store', vi.decor.store)) : null,
+      move: owned && def.spots > 1 ? arrange('move', vi.decor.move) : null,
     };
   });
   return { total: t(vi.decor.total, { n: decorBonus(save) }), items };

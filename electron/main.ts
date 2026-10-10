@@ -23,6 +23,9 @@ const FLUSH_TIMEOUT_MS = 3000;
 const SCHEME = 'app';
 const ORIGIN = `${SCHEME}://game`;
 const DEV_URL = app.isPackaged ? null : process.env.UNIN_DEV_URL || null; // empty = unset
+// SOBIWORLD_APPDATA replaces %APPDATA% (installer check, tests): the packed exe can then run on a
+// throw-away folder instead of the player's own saves. Unset for players.
+const APP_DATA = process.env.SOBIWORLD_APPDATA || app.getPath('appData');
 const DIST_DIR = join(__dirname, '..', 'dist');
 const CSP = [
   "default-src 'self'",
@@ -58,8 +61,8 @@ const MIME: Record<string, string> = {
 app.setPath(
   'userData',
   app.isPackaged
-    ? join(app.getPath('appData'), DATA_DIR_NAME.installed)
-    : devUserDataDir(app.getPath('appData'), process.env.UNIN_USER_DATA),
+    ? join(APP_DATA, DATA_DIR_NAME.installed)
+    : devUserDataDir(APP_DATA, process.env.UNIN_USER_DATA),
 );
 protocol.registerSchemesAsPrivileged([
   {
@@ -99,7 +102,7 @@ if (!app.requestSingleInstanceLock()) {
     // A temp folder (UNIN_USER_DATA, e2e) never adopts a farm.
     if (app.isPackaged || !process.env.UNIN_USER_DATA) {
       const legacy = app.isPackaged ? LEGACY_DATA_DIR_NAME.installed : LEGACY_DATA_DIR_NAME.dev;
-      await adoptLegacySaves(join(app.getPath('appData'), legacy), app.getPath('userData')).catch(
+      await adoptLegacySaves(join(APP_DATA, legacy), app.getPath('userData')).catch(
         (e: unknown) => console.error('could not copy the Sobi Farm save', e),
       );
     }

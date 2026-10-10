@@ -1,6 +1,7 @@
 // breedPigs (spec §8.8): validation in the spec's exact order; the child (breed + gender) is
 // drawn now from the injected rng and stored on the mother, so it can never change later.
 import { BALANCE } from '../config/balance';
+import { isPet } from '../bond';
 import { breedingOutcomes } from '../breedingOdds';
 import { BREEDS } from '../config/breeds';
 import { SAVE } from '../../../../core/config/save';
@@ -25,6 +26,7 @@ export function breedingError(
   b: Pig | undefined,
 ): ErrorCode | null {
   if (!a || !b || a.id === b.id) return 'INVALID_BREEDING_PARTNERS';
+  if (isPet(a) || isPet(b)) return 'PIG_IS_PET';
   if (a.growthProgress < 100 || b.growthProgress < 100) return 'PIG_NOT_MATURE';
   if (a.isSick || b.isSick) return 'PIG_IS_SICK';
   if (a.pregnancy || b.pregnancy) return 'PIG_IS_PREGNANT';

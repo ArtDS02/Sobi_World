@@ -1,7 +1,7 @@
 // Pig detail / editor drawer: preview (adult/baby, four directions, sleep) and the gameplay fields
 // the game really has. An empty stat field inherits the rarity tier (same rule as breeds.ts).
 import type { SpeciesRowData } from '../../scripts/admin/speciesText';
-import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { FAMILY_VALUES, RARITY_TIER } from '../../src/areas/farm/logic/config/breeds';
 import { FARM_VIEW } from '../../src/areas/farm/scene/config/farmView';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
@@ -12,7 +12,7 @@ import { freeArtIds, state, updateRow } from './store';
 const NUMBERS = ['buyGold', 'unlockLevel', 'sellGold', 'growthSec', 'pregnancySec', 'maxWeight'] as const;
 const FIELD_LABEL: Record<(typeof NUMBERS)[number], string> = {
   buyGold: 'Giá mua (trống = không bán, chỉ lai)',
-  unlockLevel: `Cấp mở khoá shop (1–${BALANCE.MAX_LEVEL})`,
+  unlockLevel: `Cấp mở khoá shop (1–${WORLD_LEVELS.maxLevel})`,
   sellGold: 'Giá bán gốc',
   growthSec: 'Thời gian trưởng thành (giây)',
   pregnancySec: 'Thời gian mang thai (giây)',

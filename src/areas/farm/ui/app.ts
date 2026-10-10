@@ -1,11 +1,11 @@
 // App shell (DECISIONS R05C-1): top bar, the farm canvas filling the window, one popup at a time
 // opened by clicking world objects, toasts, dialogs. Re-renders on store notify.
 import { openGift } from '../logic/actions/openGift';
-import { decorBonus } from '../logic/decor';
-import type { NurseryPig, Pig, FarmGame } from '../logic/types';
+import { penMood } from '../logic/decor';
+import type { Pig, FarmGame } from '../logic/types';
 import { vi } from '../../../i18n/vi';
 import type { BoundAction, FarmStore, FarmSnapshot } from '../store';
-import { troughSpace, type ActionVm } from './actionsVm';
+import type { ActionVm } from './actionsVm';
 import {
   closePopupShell,
   createPopupShell,
@@ -13,31 +13,22 @@ import {
   type PopupShell,
 } from '../../../ui/components/popup';
 import { createToaster } from '../../../ui/components/toast';
-import { renderTopBar } from './components/topBar';
-import {
-  openAdoptDialog,
-  openBuyItemDialog,
-  openOrderDialog,
-  openRenameDialog,
-  openSellDialog,
-  openTroughDialog,
-} from './dialogs';
+import { renderHud } from './components/hud';
 import { openBreedDialog } from './breedDialog';
-import { sellItem } from '../logic/actions/sellItem';
 import type { FarmGoto } from '../logic/summary';
-import type { ItemId } from '../../../core/config/ids';
 import type { AppOptions, FarmPick, MountedApp, Place } from './appTypes';
 import { setIconSource } from '../../../ui/components/icon';
 import { el, patch } from '../../../ui/dom';
-import { renderFarmHint, renderPigPopup, renderWellPopup } from './screens/farmScreen';
-import { renderHistoryScreen } from './screens/historyScreen';
-import { renderInventoryScreen } from './screens/inventoryScreen';
-import { renderAchievementsScreen } from './screens/achievementsScreen';
-import { renderCollectionScreen } from './screens/collectionScreen';
-import { renderOrdersScreen } from './screens/ordersScreen';
-import { renderSettingsScreen } from './screens/settingsScreen';
+import { goalsDot } from '../../../ui/goals/goalsVm';
+import { createGuideLayer } from '../../../ui/goals/guideLayer';
+import type { OrdersTab } from '../../../ui/goals/panels';
+import { localDay } from '../../../ui/localDay';
+import { openRenameDialog, openSellDialog, openTroughDialog } from './dialogs';
+import { renderFarmHint } from './screens/farmScreen';
+import type { ShopTab } from './screens/shopScreen';
 import { settingsHandlers } from './settingsHandlers';
-import { renderShopScreen, type ShopHandlers, type ShopTab } from './screens/shopScreen';
+import { panelHandlers } from './panelHandlers';
+import { renderPanel, type PanelCtx } from './panels';
 import { renderMultiTabBanner, renderStatusScreen } from './screens/statusScreen';
 import { bindHotkeys } from './hotkeys';
 import { createSession } from './session';
@@ -47,6 +38,8 @@ interface UiState {
   panel: PanelId | null;
   selectedPigId: string | null;
   shopTab: ShopTab;
+  /** The orders panel: the plaza's board or the farm's pig orders. */
+  ordersTab: OrdersTab;
 }
 
 export type { AppOptions, FarmCanvas, FarmPick, FarmPickAction, MountedApp } from './appTypes';
@@ -59,7 +52,7 @@ export function mountApp(
 ): MountedApp {
   document.title = vi.app.title;
   setIconSource(opts.assets ? (id) => opts.assets?.url(id) ?? null : null);
-  const ui: UiState = { place: 'area', panel: null, selectedPigId: null, shopTab: 'pigs' };
+  const ui: UiState = { place: 'area', panel: null, selectedPigId: null, shopTab: 'pigs', ordersTab: 'board' };
   const topbar = el('header', { class: 'topbar' });
   const banner = el('div', { class: 'app__banner' });
   const saveBanner = el('div', { class: 'app__banner' });
@@ -68,6 +61,7 @@ export function mountApp(
   const hint = el('div', { class: 'app__hint-host' });
   const coach = el('div', { class: 'app__coach-host' });
   const appEl = el('div', { class: 'app' });
+  const worldEl = el('div', { class: 'app__world' }, stage, opts.overlay ?? '', topbar, hint, coach);
   // Status screens (loading / recovery) only; the game itself is the canvas plus popups.
   const main = el('main', { class: 'app__main' });
   const popupHost = el('div', { class: 'app__popup' });
@@ -79,7 +73,7 @@ export function mountApp(
     banner,
     saveBanner,
     opts.devTools ?? '',
-    el('div', { class: 'app__world' }, stage, topbar, hint, coach),
+    worldEl,
     main,
     popupHost,
     toasts,
@@ -96,7 +90,7 @@ export function mountApp(
     act: (run: BoundAction) => void act(run),
     sell: (pig: Pig, vm: ActionVm) => {
       const save = store.getSnapshot().save;
-      openSellDialog(dialogs, pig, vm, act, save ? decorBonus(save) : 0, now());
+      openSellDialog(dialogs, pig, vm, act, save ? penMood(save) : 0, now());
     },
     rename: (pig: Pig) => openRenameDialog(dialogs, pig, act),
     breed: (pig: Pig) => {
@@ -125,28 +119,18 @@ export function mountApp(
     const save = store.getSnapshot().save;
     if (save) openTroughDialog(dialogs, save, now(), act, units);
   };
-  const shop: ShopHandlers = {
-    act: handlers.act,
-    tab: (tab) => {
+  const { shop, inventory } = panelHandlers({
+    store,
+    dialogs,
+    now,
+    act,
+    fire: handlers.act,
+    openTrough,
+    setShopTab: (tab) => {
       ui.shopTab = tab;
       rerender();
     },
-    buyItem: (productId) => {
-      const save = store.getSnapshot().save;
-      if (save) openBuyItemDialog(dialogs, save, productId, now(), act);
-    },
-  };
-  const inventory = {
-    fillTrough: () => {
-      const save = store.getSnapshot().save;
-      if (save) openTrough(Math.min(save.inventory.FOOD_BASIC, troughSpace(save)));
-    },
-    sellItem: (itemId: ItemId, quantity: number) => act((s, c) => sellItem(s, { itemId, quantity }, c)),
-    raise: (baby: NurseryPig) => {
-      const save = store.getSnapshot().save;
-      if (save) openAdoptDialog(dialogs, save, baby, act);
-    },
-  };
+  });
   const settings = settingsHandlers({
     store,
     now,
@@ -165,9 +149,11 @@ export function mountApp(
         ui.selectedPigId = to.id;
         go('pig');
       } else if (to.target === 'trough') openTrough();
+      else if (to.target === 'garden') opts.goPlace?.('sobi_garden');
       else go(to.target === 'well' ? 'well' : 'orders');
     },
     dialogHost: dialogs,
+    ...(opts.areaLines ? { areaLines: opts.areaLines } : {}),
     rerender,
     settings,
     manifest: assets?.manifest ?? null,
@@ -186,38 +172,32 @@ export function mountApp(
     dialogOpen: () => dialogs.childElementCount > 0,
     go,
   });
-  const offKeySettings = opts.keySettings?.subscribe(() => ui.panel === 'settings' && rerender());
+  const offSettings = [opts.keySettings, opts.characterChoice].map((c) => c?.subscribe(() => ui.panel === 'settings' && rerender()));
 
-  /** Body of the open popup, or null when it cannot show (e.g. the selected pig was sold). */
-  function renderPanel(save: FarmGame, panel: PanelId): HTMLElement | null {
-    switch (panel) {
-      case 'pig': {
-        const pig = save.pigs.find((p) => p.id === ui.selectedPigId);
-        return pig ? renderPigPopup(save, pig, now(), handlers) : null;
-      }
-      case 'well':
-        return renderWellPopup(save, now(), handlers.act);
-      case 'shop':
-        return renderShopScreen(save, now(), ui.shopTab, shop, assets);
-      case 'inventory':
-        return renderInventoryScreen(save, inventory, assets ?? undefined);
-      case 'history':
-        return renderHistoryScreen(save);
-      case 'orders':
-        return renderOrdersScreen(save, now(), {
-          deliver: (card) => openOrderDialog(dialogs, card, act),
-        });
-      case 'settings':
-        return renderSettingsScreen(save, session.settingsVm(save), settings, opts.keySettings);
-      case 'collection':
-        return renderCollectionScreen(save, assets);
-      case 'achievements':
-        return renderAchievementsScreen(save, now(), handlers.act);
-    }
-  }
+  // The guide: the "next step" chip and the Area's NPC (absent in DOM tests of the farm alone).
+  const guide = opts.world && createGuideLayer({
+    now,
+    world: () => opts.world!.save(),
+    goals: opts.world.goals,
+    suggest: opts.world.suggest,
+    nextLocked: opts.world.nextLocked,
+    place: () => ui.place,
+    dialogs,
+    covered: () => ui.panel !== null || dialogs.childElementCount > 0 || !!opts.overlayModal?.(),
+    go: (to) => {
+      if (to.target === 'panel') go(to.id as PanelId);
+      else if (to.target === 'pig' && to.id) { ui.selectedPigId = to.id; go('pig'); }
+      else if (to.target === 'trough') openTrough();
+      else if (to.target === 'well') go('well');
+      else if (to.target === 'garden') opts.goPlace?.('sobi_garden');
+    },
+  });
+  if (guide) worldEl.append(guide.host);
+
+  const panelCtx: PanelCtx = { now, assets, opts, ui, pig: handlers, shop, inventory, session, settings, dialogs, act, go, rerender };
 
   function renderPopup(save: FarmGame | null) {
-    const body = save && ui.panel ? renderPanel(save, ui.panel) : null;
+    const body = save && ui.panel ? renderPanel(panelCtx, save, ui.panel) : null;
     if (!body || !ui.panel) {
       if (ui.panel) ui.panel = null; // nothing left to show
       if (popup) closePopupShell(popup, appEl.classList.contains('is-reduced-motion'));
@@ -237,6 +217,7 @@ export function mountApp(
     const ready = snap.status === 'ready' && !!snap.save;
     appEl.classList.toggle('is-ready', ready);
     appEl.classList.toggle('is-plaza', ui.place === 'plaza');
+    appEl.classList.toggle('is-garden', ui.place === 'garden');
     appEl.classList.toggle('is-reduced-motion', !!snap.save?.settings.reduceMotion);
     farm?.setSelected(ui.selectedPigId);
     patch(banner, snap.readOnly ? renderMultiTabBanner() : null);
@@ -253,28 +234,24 @@ export function mountApp(
           : renderStatusScreen(snap.status === 'ready' ? 'loading' : snap.status),
       );
       farm?.setVisible(false);
+      guide?.sync();
       return;
     }
     const save = snap.save;
     patch(
       topbar,
-      renderTopBar(save, now(), {
-        settings: () => go('settings'),
-        ...(opts.leave ? { home: opts.leave } : {}),
-        trough: () => openTrough(),
-        history: () => go('history'),
-        nav: (panel) => go(panel),
-        pig: (pigId) => {
-          ui.selectedPigId = pigId;
-          go('pig');
-        },
+      ui.place === 'garden' ? null : renderHud(save, {
+        place: ui.place, now: now(), gems: opts.gems?.() ?? null, go, leave: opts.leave, openTrough: () => openTrough(),
+        selectPig: (pigId) => { ui.selectedPigId = pigId; go('pig'); },
+        goalsDot: opts.world && opts.world.save() ? goalsDot(opts.world.save()!, opts.world.goals, localDay(now())) : 0,
       }),
     );
-    patch(coach, ui.place === 'plaza' ? null : session.coach(snap));
+    patch(coach, ui.place === 'area' ? session.coach(snap) : null);
     patch(main, null);
     farm?.setVisible(true); // after main is emptied, so the canvas measures its final host
-    patch(hint, ui.place === 'plaza' ? null : renderFarmHint(save, () => go('shop'), handlers.act));
+    patch(hint, ui.place === 'area' ? renderFarmHint(save, () => go('shop'), handlers.act) : null);
     renderPopup(save);
+    guide?.sync();
   }
 
   const offState = store.subscribe(render);
@@ -287,10 +264,11 @@ export function mountApp(
       Object.assign(ui, { place, selectedPigId: null, panel: ui.panel === 'pig' || ui.panel === 'well' ? null : ui.panel });
       rerender();
     },
-    isModalOpen: () => ui.panel !== null || dialogs.childElementCount > 0,
+    openPanel: (panel) => go(panel),
+    isModalOpen: () => ui.panel !== null || dialogs.childElementCount > 0 || !!opts.overlayModal?.(),
     dispose: () => {
       offState();
-      offKeySettings?.();
+      for (const off of offSettings) off?.();
       offHotkeys();
       farm?.destroy();
     },

@@ -5,7 +5,7 @@ import { _electron as electron, expect, test } from '@playwright/test';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { enterFarm, hold } from './world';
+import { enterFarm, hold, walkToBarn } from './world';
 
 const root = process.cwd();
 const launch = (userData: string) => {
@@ -32,7 +32,7 @@ test('plaza → barn → farm → way out → plaza; the spot is kept', async ()
   await withTemp(async (dir) => {
     let app = await launch(dir);
     let page = await app.firstWindow();
-    await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('.plazabar, .topbar__nav').first()).toBeVisible({ timeout: 30_000 });
     await expect(page.locator('.app.is-plaza')).toBeVisible(); // the game opens in the plaza
     await expect(page.locator('.world-prompt')).toHaveCount(0); // nothing near the spawn
 
@@ -69,7 +69,7 @@ test('key settings: rebinding the interact key is saved in settings.json and obe
   await withTemp(async (dir) => {
     let app = await launch(dir);
     let page = await app.firstWindow();
-    await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('.plazabar, .topbar__nav').first()).toBeVisible({ timeout: 30_000 });
     await page.keyboard.press('Escape'); // the menu key opens the settings
     await expect(page.locator('[data-section="keys"]')).toBeVisible();
     const row = (name: string) => page.locator('[data-section="keys"] button', { hasText: name });
@@ -88,13 +88,9 @@ test('key settings: rebinding the interact key is saved in settings.json and obe
 
     app = await launch(dir);
     page = await app.firstWindow();
-    await expect(page.locator('.topbar__nav')).toBeVisible({ timeout: 30_000 });
-    await page.waitForTimeout(1500);
+    await expect(page.locator('.plazabar, .topbar__nav').first()).toBeVisible({ timeout: 30_000 });
+    await walkToBarn(page);
     const hint = page.locator('.world-prompt', { hasText: 'Vào Sobi Farm' });
-    for (let i = 0; i < 6 && !(await hint.count()); i++) {
-      await hold(page, 'KeyD', i === 0 ? 1900 : 250);
-      await hold(page, 'KeyW', i === 0 ? 100 : 150);
-    }
     await expect(hint.locator('kbd')).toHaveText('F'); // the hint shows the new key
     await page.keyboard.press('KeyE'); // the old key does nothing now
     await expect(page.locator('.app.is-plaza')).toBeVisible();

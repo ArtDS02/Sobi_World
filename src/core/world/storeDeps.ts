@@ -23,8 +23,22 @@ export type WorldAdvance = (
   mode: 'online' | 'offline',
 ) => { state: WorldSave; events: EventBase[]; rewound?: boolean; capped?: boolean };
 
+/**
+ * The world systems' turn after an action or a tick (goals, Codex): `before` is the save before it, `after` the one the
+ * action or the tick made; `worldEvents` are the standard events of what the Areas did. Returns the settled save and any
+ * events of its own (a new order, a goal reached).
+ */
+export type WorldSettle = (
+  before: WorldSave,
+  after: WorldSave,
+  worldEvents: readonly WorldEvent[],
+  ctx: ActionContext,
+) => { state: WorldSave; events: EventBase[] };
+
 export interface StoreDeps {
   advanceWorld: WorldAdvance;
+  /** Optional: absent = no world systems (the store alone, in tests of other layers). */
+  settle?: WorldSettle;
   /** The standard world events (ARCHITECTURE §7) of an Area's events, published on the world bus. */
   toWorldEvents: (events: readonly EventBase[]) => WorldEvent[];
   /** When the world was last simulated up to: the start of the away summary (§9.5). */

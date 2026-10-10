@@ -1,6 +1,7 @@
 // fulfillOrder (spec §8.14): the pig is sold into the order for rewardGold + rewardXp.
 import { BALANCE } from '../config/balance';
-import { decorBonus } from '../decor';
+import { isPet } from '../bond';
+import { penMood } from '../decor';
 import { changeGold } from '../gold';
 import { happiness } from '../happiness';
 import { addXP } from '../xp';
@@ -11,6 +12,7 @@ import { ok, runAction } from './runAction';
 export function pigMeetsOrder(pig: Pig, order: Order, bonus = 0): boolean {
   return (
     pig.growthProgress >= BALANCE.STAGE_ADULT_AT &&
+    !isPet(pig) &&
     pig.pregnancy === null &&
     pig.breed === order.wantBreed &&
     (order.wantGender === null || pig.gender === order.wantGender) &&
@@ -24,7 +26,7 @@ export function readyOrderCount(state: FarmGame, now: number): number {
     (o) =>
       o.fulfilledAt === null &&
       o.expiresAt > now &&
-      state.pigs.some((p) => pigMeetsOrder(p, o, decorBonus(state))),
+      state.pigs.some((p) => pigMeetsOrder(p, o, penMood(state))),
   ).length;
 }
 
@@ -39,7 +41,7 @@ export function fulfillOrder(
     if (ctx.now >= order.expiresAt) return { ok: false, error: 'ORDER_EXPIRED' };
     const pig = s.pigs.find((p) => p.id === args.pigId);
     if (!pig) return { ok: false, error: 'PIG_NOT_FOUND' };
-    if (!pigMeetsOrder(pig, order, decorBonus(s))) return { ok: false, error: 'ORDER_REQUIREMENTS_NOT_MET' };
+    if (!pigMeetsOrder(pig, order, penMood(s))) return { ok: false, error: 'ORDER_REQUIREMENTS_NOT_MET' };
 
     const done: FarmGame = {
       ...s,
@@ -48,7 +50,7 @@ export function fulfillOrder(
     };
     const paid = changeGold(done, order.rewardGold, 'ORDER_REWARD', ctx, {
       refId: order.id,
-      note: `${pig.breed} happiness ${happiness(pig, decorBonus(s))}`,
+      note: `${pig.breed} happiness ${happiness(pig, penMood(s))}`,
     });
     if (!paid.ok) return paid;
     const xp = addXP(paid.state, order.rewardXp);

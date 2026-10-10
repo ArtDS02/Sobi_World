@@ -48,9 +48,20 @@ export const CATALOGUE_SIZES: Record<string, Size> = {
   prop_mushroom: { width: 88, height: 100 },
 };
 
-for (const facing of ['down', 'up', 'left', 'right']) {
-  for (const frame of ['idle', 'walk1', 'walk2']) {
-    CATALOGUE_SIZES[`chr_player_${facing}_${frame}`] = { width: 96, height: 144 };
+// Sobi Garden (GĐ5): a plot, a crop on it (feet at the bottom), the sprinkler and the two workshops.
+for (const plot of ['plot_soil', 'plot_soil_wet', 'plot_locked']) CATALOGUE_SIZES[plot] = { width: 152, height: 108 };
+for (const crop of ['grass', 'wheat', 'corn', 'potato', 'carrot']) {
+  for (const stage of ['sprout', 'grow', 'ripe', 'wilt']) CATALOGUE_SIZES[`crop_${crop}_${stage}`] = { width: 152, height: 132 };
+}
+CATALOGUE_SIZES.bld_sprinkler = { width: 120, height: 200 };
+CATALOGUE_SIZES.bld_feed_mill = { width: 260, height: 260 };
+CATALOGUE_SIZES.bld_composter = { width: 220, height: 200 };
+
+for (const who of ['so', 'bi']) {
+  for (const facing of ['down', 'up', 'left', 'right']) {
+    for (const frame of ['idle', 'walk1', 'walk2']) {
+      CATALOGUE_SIZES[`chr_${who}_${facing}_${frame}`] = { width: 96, height: 144 };
+    }
   }
 }
 

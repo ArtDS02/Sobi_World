@@ -690,8 +690,7 @@
       "sleepAsset": "pigs/base/pig_thor_sleep.png",
       "tags": ["species", "fantasy", "new"],
       "wakeAsset": "pigs/base/pig_thor_wake.png"
-    }
-,
+    },
     {
       "id": "pig_alien_v3",
       "status": "production",
@@ -1014,24 +1013,6 @@
       }
     },
     {
-      "id": "chr_player",
-      "status": "production",
-      "states": {
-        "down_idle": "props/chr_player_down_idle.png",
-        "down_walk1": "props/chr_player_down_walk1.png",
-        "down_walk2": "props/chr_player_down_walk2.png",
-        "up_idle": "props/chr_player_up_idle.png",
-        "up_walk1": "props/chr_player_up_walk1.png",
-        "up_walk2": "props/chr_player_up_walk2.png",
-        "left_idle": "props/chr_player_left_idle.png",
-        "left_walk1": "props/chr_player_left_walk1.png",
-        "left_walk2": "props/chr_player_left_walk2.png",
-        "right_idle": "props/chr_player_right_idle.png",
-        "right_walk1": "props/chr_player_right_walk1.png",
-        "right_walk2": "props/chr_player_right_walk2.png"
-      }
-    },
-    {
       "id": "prop_fountain",
       "status": "production",
       "asset": "props/prop_fountain.png"
@@ -1100,6 +1081,282 @@
       "id": "prop_signboard_arrow",
       "status": "production",
       "asset": "props/prop_signboard_arrow.png"
+    },
+    {
+      "id": "prop_wheelbarrow_hay",
+      "status": "production",
+      "asset": "props/prop_wheelbarrow_hay.png"
+    },
+    {
+      "id": "prop_star_orange",
+      "status": "production",
+      "asset": "props/prop_star_orange.png"
+    },
+    {
+      "id": "prop_star_blue",
+      "status": "production",
+      "asset": "props/prop_star_blue.png"
+    },
+    {
+      "id": "prop_coral_purple",
+      "status": "production",
+      "asset": "props/prop_coral_purple.png"
+    },
+    {
+      "id": "prop_coral_red",
+      "status": "production",
+      "asset": "props/prop_coral_red.png"
+    },
+    {
+      "id": "prop_seashell_red",
+      "status": "production",
+      "asset": "props/prop_seashell_red.png"
+    },
+    {
+      "id": "prop_seashell_conch",
+      "status": "production",
+      "asset": "props/prop_seashell_conch.png"
+    },
+    {
+      "id": "prop_pebbles",
+      "status": "production",
+      "asset": "props/prop_pebbles.png"
+    },
+    {
+      "id": "prop_flowers_tiny",
+      "status": "production",
+      "asset": "props/prop_flowers_tiny.png"
+    },
+    {
+      "id": "prop_animal_sheep",
+      "status": "production",
+      "asset": "props/prop_animal_sheep.png"
+    },
+    {
+      "id": "prop_animal_llama",
+      "status": "production",
+      "asset": "props/prop_animal_llama.png"
+    },
+    {
+      "id": "prop_animal_duck",
+      "status": "production",
+      "asset": "props/prop_animal_duck.png"
+    },
+    {
+      "id": "prop_animal_hen_brown",
+      "status": "production",
+      "asset": "props/prop_animal_hen_brown.png"
+    },
+    {
+      "id": "prop_animal_hen_white",
+      "status": "production",
+      "asset": "props/prop_animal_hen_white.png"
+    },
+    {
+      "id": "prop_animal_hen_cream",
+      "status": "production",
+      "asset": "props/prop_animal_hen_cream.png"
+    },
+    {
+      "id": "prop_animal_pig_a",
+      "status": "production",
+      "asset": "props/prop_animal_pig_a.png"
+    },
+    {
+      "id": "prop_animal_pig_b",
+      "status": "production",
+      "asset": "props/prop_animal_pig_b.png"
+    },
+    {
+      "id": "prop_animal_pig_c",
+      "status": "production",
+      "asset": "props/prop_animal_pig_c.png"
+    },
+    {
+      "id": "prop_animal_pig_d",
+      "status": "production",
+      "asset": "props/prop_animal_pig_d.png"
+    },
+    {
+      "id": "prop_butterfly_blue",
+      "status": "production",
+      "asset": "props/prop_butterfly_blue.png"
+    },
+    {
+      "id": "prop_butterfly_violet",
+      "status": "production",
+      "asset": "props/prop_butterfly_violet.png"
+    },
+    {
+      "id": "prop_butterfly_orange",
+      "status": "production",
+      "asset": "props/prop_butterfly_orange.png"
+    },
+    {
+      "id": "prop_butterfly_azure",
+      "status": "production",
+      "asset": "props/prop_butterfly_azure.png"
+    },
+    {
+      "id": "prop_butterfly_white",
+      "status": "production",
+      "asset": "props/prop_butterfly_white.png"
+    },
+    {
+      "id": "prop_butterfly_red",
+      "status": "production",
+      "asset": "props/prop_butterfly_red.png"
+    },
+    {
+      "id": "chr_so",
+      "status": "production",
+      "states": {
+        "up_idle": "props/chr_so_up_idle.png",
+        "up_walk1": "props/chr_so_up_walk1.png",
+        "up_walk2": "props/chr_so_up_walk2.png",
+        "down_idle": "props/chr_so_down_idle.png",
+        "down_walk1": "props/chr_so_down_walk1.png",
+        "down_walk2": "props/chr_so_down_walk2.png",
+        "left_idle": "props/chr_so_left_idle.png",
+        "left_walk1": "props/chr_so_left_walk1.png",
+        "left_walk2": "props/chr_so_left_walk2.png",
+        "right_idle": "props/chr_so_right_idle.png",
+        "right_walk1": "props/chr_so_right_walk1.png",
+        "right_walk2": "props/chr_so_right_walk2.png"
+      }
+    },
+    {
+      "id": "chr_bi",
+      "status": "production",
+      "states": {
+        "up_idle": "props/chr_bi_up_idle.png",
+        "up_walk1": "props/chr_bi_up_walk1.png",
+        "up_walk2": "props/chr_bi_up_walk2.png",
+        "down_idle": "props/chr_bi_down_idle.png",
+        "down_walk1": "props/chr_bi_down_walk1.png",
+        "down_walk2": "props/chr_bi_down_walk2.png",
+        "left_idle": "props/chr_bi_left_idle.png",
+        "left_walk1": "props/chr_bi_left_walk1.png",
+        "left_walk2": "props/chr_bi_left_walk2.png",
+        "right_idle": "props/chr_bi_right_idle.png",
+        "right_walk1": "props/chr_bi_right_walk1.png",
+        "right_walk2": "props/chr_bi_right_walk2.png"
+      }
+    },
+    {
+      "id": "plot_soil",
+      "status": "placeholder",
+      "asset": "props/plot_soil.png"
+    },
+    {
+      "id": "plot_soil_wet",
+      "status": "placeholder",
+      "asset": "props/plot_soil_wet.png"
+    },
+    {
+      "id": "plot_locked",
+      "status": "placeholder",
+      "asset": "props/plot_locked.png"
+    },
+    {
+      "id": "crop_grass_sprout",
+      "status": "placeholder",
+      "asset": "props/crop_grass_sprout.png"
+    },
+    {
+      "id": "crop_grass_grow",
+      "status": "placeholder",
+      "asset": "props/crop_grass_grow.png"
+    },
+    {
+      "id": "crop_grass_ripe",
+      "status": "placeholder",
+      "asset": "props/crop_grass_ripe.png"
+    },
+    {
+      "id": "crop_grass_wilt",
+      "status": "placeholder",
+      "asset": "props/crop_grass_wilt.png"
+    },
+    {
+      "id": "crop_wheat_sprout",
+      "status": "placeholder",
+      "asset": "props/crop_wheat_sprout.png"
+    },
+    {
+      "id": "crop_wheat_grow",
+      "status": "placeholder",
+      "asset": "props/crop_wheat_grow.png"
+    },
+    {
+      "id": "crop_wheat_ripe",
+      "status": "placeholder",
+      "asset": "props/crop_wheat_ripe.png"
+    },
+    {
+      "id": "crop_wheat_wilt",
+      "status": "placeholder",
+      "asset": "props/crop_wheat_wilt.png"
+    },
+    {
+      "id": "crop_corn_sprout",
+      "status": "placeholder",
+      "asset": "props/crop_corn_sprout.png"
+    },
+    {
+      "id": "crop_corn_grow",
+      "status": "placeholder",
+      "asset": "props/crop_corn_grow.png"
+    },
+    {
+      "id": "crop_corn_ripe",
+      "status": "placeholder",
+      "asset": "props/crop_corn_ripe.png"
+    },
+    {
+      "id": "crop_corn_wilt",
+      "status": "placeholder",
+      "asset": "props/crop_corn_wilt.png"
+    },
+    {
+      "id": "crop_potato_sprout",
+      "status": "placeholder",
+      "asset": "props/crop_potato_sprout.png"
+    },
+    {
+      "id": "crop_potato_grow",
+      "status": "placeholder",
+      "asset": "props/crop_potato_grow.png"
+    },
+    {
+      "id": "crop_potato_ripe",
+      "status": "placeholder",
+      "asset": "props/crop_potato_ripe.png"
+    },
+    {
+      "id": "crop_potato_wilt",
+      "status": "placeholder",
+      "asset": "props/crop_potato_wilt.png"
+    },
+    {
+      "id": "crop_carrot_sprout",
+      "status": "placeholder",
+      "asset": "props/crop_carrot_sprout.png"
+    },
+    {
+      "id": "crop_carrot_grow",
+      "status": "placeholder",
+      "asset": "props/crop_carrot_grow.png"
+    },
+    {
+      "id": "crop_carrot_ripe",
+      "status": "placeholder",
+      "asset": "props/crop_carrot_ripe.png"
+    },
+    {
+      "id": "crop_carrot_wilt",
+      "status": "placeholder",
+      "asset": "props/crop_carrot_wilt.png"
     }
   ],
   "buildings": [
@@ -1182,6 +1439,31 @@
       "id": "prop_portal_gate",
       "status": "production",
       "asset": "buildings/prop_portal_gate.png"
+    },
+    {
+      "id": "prop_farm_yard",
+      "status": "production",
+      "asset": "buildings/prop_farm_yard.png"
+    },
+    {
+      "id": "prop_main_house",
+      "status": "production",
+      "asset": "buildings/prop_main_house.png"
+    },
+    {
+      "id": "bld_sprinkler",
+      "status": "placeholder",
+      "asset": "buildings/bld_sprinkler.png"
+    },
+    {
+      "id": "bld_feed_mill",
+      "status": "placeholder",
+      "asset": "buildings/bld_feed_mill.png"
+    },
+    {
+      "id": "bld_composter",
+      "status": "placeholder",
+      "asset": "buildings/bld_composter.png"
     }
   ],
   "environment": [
@@ -1215,6 +1497,71 @@
       "status": "production",
       "asset": "environment/env_ground_grass.png",
       "tile": true
+    },
+    {
+      "id": "env_cloud_a",
+      "status": "production",
+      "asset": "environment/env_cloud_a.png"
+    },
+    {
+      "id": "env_cloud_b",
+      "status": "production",
+      "asset": "environment/env_cloud_b.png"
+    },
+    {
+      "id": "env_cloud_c",
+      "status": "production",
+      "asset": "environment/env_cloud_c.png"
+    },
+    {
+      "id": "env_cloud_d",
+      "status": "production",
+      "asset": "environment/env_cloud_d.png"
+    },
+    {
+      "id": "env_cloud_e",
+      "status": "production",
+      "asset": "environment/env_cloud_e.png"
+    },
+    {
+      "id": "env_cloud_f",
+      "status": "production",
+      "asset": "environment/env_cloud_f.png"
+    },
+    {
+      "id": "env_cloud_g",
+      "status": "production",
+      "asset": "environment/env_cloud_g.png"
+    },
+    {
+      "id": "env_tile_grass_a",
+      "status": "production",
+      "asset": "environment/env_tile_grass_a.png"
+    },
+    {
+      "id": "env_tile_grass_b",
+      "status": "production",
+      "asset": "environment/env_tile_grass_b.png"
+    },
+    {
+      "id": "env_tile_grass_c",
+      "status": "production",
+      "asset": "environment/env_tile_grass_c.png"
+    },
+    {
+      "id": "env_tile_grass_d",
+      "status": "production",
+      "asset": "environment/env_tile_grass_d.png"
+    },
+    {
+      "id": "env_tile_dirt",
+      "status": "production",
+      "asset": "environment/env_tile_dirt.png"
+    },
+    {
+      "id": "env_tile_water",
+      "status": "production",
+      "asset": "environment/env_tile_water.png"
     }
   ],
   "ui": [
@@ -1307,6 +1654,101 @@
       "id": "ui_icon_lock",
       "status": "placeholder",
       "asset": "ui/ui_icon_lock.png"
+    },
+    {
+      "id": "ui_icon_coin",
+      "status": "production",
+      "asset": "ui/ui_icon_coin.png"
+    },
+    {
+      "id": "ui_icon_gem",
+      "status": "production",
+      "asset": "ui/ui_icon_gem.png"
+    },
+    {
+      "id": "ui_icon_energy",
+      "status": "production",
+      "asset": "ui/ui_icon_energy.png"
+    },
+    {
+      "id": "ui_btn_hub",
+      "status": "production",
+      "asset": "ui/ui_btn_hub.png"
+    },
+    {
+      "id": "ui_btn_map",
+      "status": "production",
+      "asset": "ui/ui_btn_map.png"
+    },
+    {
+      "id": "ui_btn_menu",
+      "status": "production",
+      "asset": "ui/ui_btn_menu.png"
+    },
+    {
+      "id": "ui_btn_items",
+      "status": "production",
+      "asset": "ui/ui_btn_items.png"
+    },
+    {
+      "id": "ui_item_seed_grass",
+      "status": "placeholder",
+      "asset": "ui/ui_item_seed_grass.png"
+    },
+    {
+      "id": "ui_item_seed_wheat",
+      "status": "placeholder",
+      "asset": "ui/ui_item_seed_wheat.png"
+    },
+    {
+      "id": "ui_item_seed_corn",
+      "status": "placeholder",
+      "asset": "ui/ui_item_seed_corn.png"
+    },
+    {
+      "id": "ui_item_seed_potato",
+      "status": "placeholder",
+      "asset": "ui/ui_item_seed_potato.png"
+    },
+    {
+      "id": "ui_item_seed_carrot",
+      "status": "placeholder",
+      "asset": "ui/ui_item_seed_carrot.png"
+    },
+    {
+      "id": "ui_item_grass",
+      "status": "placeholder",
+      "asset": "ui/ui_item_grass.png"
+    },
+    {
+      "id": "ui_item_wheat",
+      "status": "placeholder",
+      "asset": "ui/ui_item_wheat.png"
+    },
+    {
+      "id": "ui_item_corn",
+      "status": "placeholder",
+      "asset": "ui/ui_item_corn.png"
+    },
+    {
+      "id": "ui_item_potato",
+      "status": "placeholder",
+      "asset": "ui/ui_item_potato.png"
+    },
+    {
+      "id": "ui_item_carrot",
+      "status": "placeholder",
+      "asset": "ui/ui_item_carrot.png"
+    },
+    {
+      "id": "ui_item_food_premium",
+      "status": "placeholder",
+      "asset": "ui/ui_item_food_premium.png"
+    },
+    {
+      "id": "ui_item_fertilizer",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fertilizer.png"
     }
   ],
   "audio": [

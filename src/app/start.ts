@@ -6,7 +6,7 @@ import type { Clock } from '../core/clock';
 import type { DayPhase } from '../core/config/dayNight';
 import type { SeasonId } from '../core/config/seasons';
 import { PLAZA_LAYOUT } from '../areas/plaza/logic/config/content';
-import { portalViews, type PortalView } from '../areas/plaza/logic/portals';
+import { portalViews, stationViews, type PortalView } from '../areas/plaza/logic/portals';
 import { PlazaScene, PLAZA_SCENE_KEY } from '../areas/plaza/scene/PlazaScene';
 import { AudioManager, audioTracks, type AudioClip } from '../areas/farm/scene/audio/AudioManager';
 import { createFarmView, type FarmView } from '../areas/farm/scene/farmView';
@@ -15,6 +15,7 @@ import { createFeedbackDirector, type FeedbackDirector } from '../areas/farm/sce
 import { CHARACTER } from '../core/config/character';
 import { newPlayer, PLAZA_ID, setPlayerSpot } from '../core/player/player';
 import { createSettingsStore } from '../core/settings/settings';
+import type { PanelId } from '../ui/components/popup';
 import { renderWorldPrompt } from '../ui/components/worldPrompt';
 import { el, patch } from '../ui/dom';
 import { createControlInput } from '../ui/world/controlInput';
@@ -27,6 +28,17 @@ import { createAreaFlow } from './areaFlow';
 import { createGameStore } from './gameStore';
 import { parseWorldSave } from './saveCodec';
 import { farmStore } from '../areas/farm/store';
+import { gardenArea } from '../areas/garden';
+import { gardenPresentation } from '../areas/garden/feedback';
+import { GARDEN_AREA_ID } from '../areas/garden/logic/config/content';
+import { hasGarden } from '../areas/garden/logic/save/lens';
+import { GardenScene, GARDEN_SCENE_KEY } from '../areas/garden/scene/GardenScene';
+import { bindGardenStage } from '../areas/garden/stage';
+import { createGardenUi } from '../areas/garden/ui/gardenUi';
+import { vi } from '../i18n/vi';
+import { t } from '../i18n/format';
+import { goalsPresentation } from '../ui/goals/feedback';
+import { GOALS } from './goals';
 import { realClock } from './runtime';
 import { mountApp, type AppOptions, type MountedApp } from '../areas/farm/ui/app';
 import { renderManifestError } from '../areas/farm/ui/screens/statusScreen';
@@ -97,13 +109,21 @@ export async function start(root: HTMLElement) {
   const portals = (): ReadonlyMap<string, PortalView> => {
     const save = world.getSnapshot().save;
     if (!save) return doors.views;
-    const codex = Object.values(save.collection.discovered).reduce((n, ids) => n + ids.length, 0);
-    const views = portalViews(AREAS.areas(save, codex));
+    const views = new Map([...portalViews(AREAS.areas(save)), ...stationViews()]);
     const signature = JSON.stringify([...views.values()]);
     if (signature !== doors.signature) doors = { signature, views };
     return doors.views;
   };
   let app: MountedApp | null = null;
+  // The Garden's DOM layer lives in an overlay the shell places over the world; its HUD shows only in the Garden.
+  const gardenHost = el('div', { class: 'garden-host' });
+  const gardenUi = createGardenUi({
+    world,
+    now: () => clock.now(),
+    host: gardenHost,
+    leave: () => void flow.go(PLAZA_ID),
+    openPanel: (panel) => app?.openPanel(panel),
+  });
   let director: FeedbackDirector | null = null;
   const host: WorldHost = {
     input,
@@ -111,9 +131,13 @@ export async function start(root: HTMLElement) {
       prompt = next;
       showPrompt();
     },
-    go: (place) => void flow.go(place),
+    // A station leads to a panel (`panel:orders`), a door to a place.
+    go: (place) => (place.startsWith('panel:') ? app?.openPanel(place.slice(6) as PanelId) : void flow.go(place)),
     remember: (spot) => void world.dispatch((s, c) => setPlayerSpot(s, spot, c)),
     player: () => world.getSnapshot().save?.player ?? newPlayer(),
+    character: () => settings.getSnapshot().settings.character,
+    now: () => clock.now(),
+    reduceMotion: () => store.getSnapshot().save?.settings.reduceMotion ?? false,
     paused: () => app?.isModalOpen() ?? false,
     denied: () => director?.denied(),
   };
@@ -126,7 +150,8 @@ export async function start(root: HTMLElement) {
     changed: (to) => {
       prompt = null;
       showPrompt();
-      app?.setPlace(to === PLAZA_ID ? 'plaza' : 'area');
+      app?.setPlace(to === PLAZA_ID ? 'plaza' : to === GARDEN_AREA_ID ? 'garden' : 'area');
+      gardenUi.setActive(to === GARDEN_AREA_ID);
       // Leaving through a door keeps that Area as the place: the game reopens in front of its door.
       if (to !== PLAZA_ID) void world.dispatch((s, c) => setPlayerSpot(s, { area: to, x: null, y: null, facing: 'down' }, c));
     },
@@ -152,7 +177,37 @@ export async function start(root: HTMLElement) {
     ...opts,
     input,
     keySettings,
+    gems: () => world.getSnapshot().save?.wallet.gems ?? null,
+    world: {
+      save: () => world.getSnapshot().save,
+      act: (run) => void world.dispatch(run),
+      goals: GOALS,
+      codexKinds: () => GOALS.codexKinds(),
+      suggest: (now, dayOffsetMs) => {
+        const save = world.getSnapshot().save;
+        return save ? AREAS.suggest(save, now, dayOffsetMs) : [];
+      },
+      nextLocked: () => {
+        const save = world.getSnapshot().save;
+        const gap = save ? AREAS.areas(save).find((a) => !a.unlocked && a.gaps.some((g) => g.kind === 'worldLevel')) : undefined;
+        const need = gap?.gaps.find((g) => g.kind === 'worldLevel');
+        return gap && need ? { name: gap.manifest.name.vi, level: need.need } : null;
+      },
+    },
+    characterChoice: {
+      current: () => settings.getSnapshot().settings.character,
+      choose: (id) => void settings.setCharacter(id),
+      preview: (id) => assets.registry.url(CHARACTER.assets[id], 'down_idle'),
+      subscribe: (fn) => settings.subscribe(fn),
+    },
     leave: () => void flow.go(PLAZA_ID),
+    goPlace: (place) => void flow.go(place),
+    overlay: gardenHost,
+    overlayModal: () => gardenUi.isModalOpen(),
+    areaLines: (events) => {
+      const save = world.getSnapshot().save;
+      return save && hasGarden(save) ? (gardenArea.getSummary?.(events, save, clock.now()) ?? []) : [];
+    },
     onPigTap: (pigId) => director?.pigTapped(pigId),
     dialogs: platform.dialogs,
     assets: assets.registry,
@@ -167,6 +222,12 @@ export async function start(root: HTMLElement) {
         host,
         portals,
       });
+      const garden = new GardenScene({
+        read: () => gardenUi.sceneState(),
+        onPick: (pick) => gardenUi.pick(pick),
+        reduceMotion: () => host.reduceMotion(),
+        paused: () => host.paused(),
+      });
       farmView = createFarmView(
         stage,
         {
@@ -177,8 +238,10 @@ export async function start(root: HTMLElement) {
           // The game opens in the plaza (spec §3.1).
           firstScene: () => ({ key: PLAZA_SCENE_KEY, from: null }),
         },
-        [plaza],
+        [plaza, garden],
       );
+      const view = farmView;
+      bindGardenStage({ enter: () => view.showScene(GARDEN_SCENE_KEY), exit: () => view.sleepScene(GARDEN_SCENE_KEY) });
       if (devPhase) farmView.previewPhase(devPhase);
       if (devSeason) farmView.previewSeason(devSeason);
       return farmView;
@@ -194,6 +257,14 @@ export async function start(root: HTMLElement) {
     audio,
     toast: mounted.toast,
     away: mounted.showAway,
+    other: (event, origin) => {
+      if (event.type === 'AREA_UNLOCKED' && origin !== 'catchup') {
+        const name = AREAS.get((event as unknown as { areaId: string }).areaId)?.manifest.name.vi ?? '';
+        return { sound: 'level_up', toast: t(vi.plaza.opened, { name }) };
+      }
+      const nameOf = (kind: string, id: string) => GOALS.codexKinds().find((k) => k.id === kind)?.entries.find((e) => e.id === id)?.name ?? id;
+      return goalsPresentation(event, origin, nameOf) ?? gardenPresentation(event, origin);
+    },
   });
   // §12: ui_click for every DOM button, through one delegated listener.
   root.addEventListener('click', (e) => {

@@ -2,6 +2,11 @@
 // §8). The config modules next to this one expose them under their game names (ITEMS, PRODUCTS…);
 // each Area loads its own files the same way. Vite bundles the JSON: nothing is fetched at runtime.
 import achievementsRaw from '../../../content/shared/achievements.json';
+import bondRaw from '../../../content/shared/bond.json';
+import codexRaw from '../../../content/shared/codex.json';
+import goalsRaw from '../../../content/shared/goals.json';
+import npcsRaw from '../../../content/shared/npcs.json';
+import ordersRaw from '../../../content/shared/orders.json';
 import characterRaw from '../../../content/shared/character.json';
 import dailyRaw from '../../../content/shared/daily.json';
 import dayNightRaw from '../../../content/shared/daynight.json';
@@ -9,11 +14,17 @@ import healthRaw from '../../../content/shared/health.json';
 import inventoryRaw from '../../../content/shared/inventory.json';
 import itemsRaw from '../../../content/shared/items.json';
 import progressionRaw from '../../../content/shared/progression.json';
+import recipesRaw from '../../../content/shared/recipes.json';
 import qualityRaw from '../../../content/shared/quality.json';
 import shopRaw from '../../../content/shared/shop.json';
 import valuationRaw from '../../../content/shared/valuation.json';
 import timeRaw from '../../../content/shared/time.json';
 import { achievementsFileSchema } from '../../../content/schemas/shared/achievements';
+import { bondFileSchema } from '../../../content/schemas/shared/bond';
+import { codexFileSchema } from '../../../content/schemas/shared/codex';
+import { goalsFileSchema } from '../../../content/schemas/shared/goals';
+import { npcsFileSchema } from '../../../content/schemas/shared/npcs';
+import { ordersFileSchema } from '../../../content/schemas/shared/orders';
 import { characterFileSchema } from '../../../content/schemas/shared/character';
 import { dailyFileSchema } from '../../../content/schemas/shared/daily';
 import { dayNightFileSchema } from '../../../content/schemas/shared/dayNight';
@@ -21,6 +32,7 @@ import { healthFileSchema } from '../../../content/schemas/shared/health';
 import { inventoryFileSchema } from '../../../content/schemas/shared/inventory';
 import { itemsFileSchema } from '../../../content/schemas/shared/items';
 import { progressionFileSchema } from '../../../content/schemas/shared/progression';
+import { recipesFileSchema } from '../../../content/schemas/shared/recipes';
 import { qualityFileSchema } from '../../../content/schemas/shared/quality';
 import { shopFileSchema } from '../../../content/schemas/shared/shop';
 import { valuationFileSchema } from '../../../content/schemas/shared/valuation';
@@ -31,8 +43,14 @@ export const CONTENT = {
   items: loadContent('shared/items.json', itemsFileSchema, itemsRaw),
   inventory: loadContent('shared/inventory.json', inventoryFileSchema, inventoryRaw),
   progression: loadContent('shared/progression.json', progressionFileSchema, progressionRaw),
+  recipes: loadContent('shared/recipes.json', recipesFileSchema, recipesRaw),
   quality: loadContent('shared/quality.json', qualityFileSchema, qualityRaw),
   shop: loadContent('shared/shop.json', shopFileSchema, shopRaw),
+  bond: loadContent('shared/bond.json', bondFileSchema, bondRaw),
+  codex: loadContent('shared/codex.json', codexFileSchema, codexRaw),
+  goals: loadContent('shared/goals.json', goalsFileSchema, goalsRaw),
+  orders: loadContent('shared/orders.json', ordersFileSchema, ordersRaw),
+  npcs: loadContent('shared/npcs.json', npcsFileSchema, npcsRaw),
   achievements: loadContent('shared/achievements.json', achievementsFileSchema, achievementsRaw),
   daily: loadContent('shared/daily.json', dailyFileSchema, dailyRaw),
   dayNight: loadContent('shared/daynight.json', dayNightFileSchema, dayNightRaw),

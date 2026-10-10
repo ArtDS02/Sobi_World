@@ -46,6 +46,8 @@ export const placementSchema = z.object({
   label: z.string().max(40).optional(),
   /** Shown only while the save owns this decoration (DECISIONS PG-3). */
   decor: z.enum(DECOR_ID_VALUES).optional(),
+  /** Which spot of that decoration this placement is (0 = the first; GĐ6: the player moves a decoration between its spots). */
+  spot: z.number().int().min(0).optional(),
 });
 
 export const layoutFileSchema = z.strictObject({

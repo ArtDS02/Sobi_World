@@ -3,7 +3,7 @@
   "name": { "vi": "Sobi Adventure" },
   "movement": "character",
   "portalInPlaza": "portal_gate",
-  "unlock": { "areaLevels": { "sobi_farm": 8 }, "worldDevelopment": 20 },
+  "unlock": { "worldLevel": 8, "worldDevelopment": 20 },
   "planned": true,
   "buildings": [],
   "produces": [],

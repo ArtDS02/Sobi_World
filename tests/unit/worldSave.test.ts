@@ -17,6 +17,7 @@ import { WORLD_SAVE_VERSION, type WorldSave } from '../../src/core/save/world';
 import { mulberry32 } from '../../src/core/rng';
 import { makePig } from './pigFactory';
 import { createFarmGameStore, world } from './worldKit';
+import { inv } from './stateFactory';
 
 const T0 = 1_700_000_000_000;
 const ctx = (now = T0) => ({ now, rng: mulberry32(3) });
@@ -35,7 +36,7 @@ function richFarm(): FarmGame {
     pigs: s.pigs.map((p) => ({ ...p, growthProgress: 100, hunger: 90, cleanliness: 90 })),
     decor: ['DECOR_HAY_BALE'],
     progress: { stats: { pigsBought: 2, births: 3 }, claimed: { FIRST_PIG: T0 }, daily: { lastDay: 19000, streak: 4 } },
-    inventory: { FOOD_BASIC: 7, MEDICINE_COMMON: 2, item_manure: 0 },
+    inventory: inv({ FOOD_BASIC: 7, MEDICINE_COMMON: 2 }),
   };
   const bred = breedPigs(grown, { pigAId: grown.pigs[0]!.id, pigBId: grown.pigs[1]!.id }, ctx());
   if (!bred.ok) throw new Error(bred.error);
@@ -54,7 +55,8 @@ describe('world save v8: migration', () => {
     expect(w.wallet).toEqual({ coins: farm.player.gold, gems: 0, eventTokens: 0 });
     expect(w.inventory.items).toEqual(farm.inventory);
     expect(w.progression.areas[FARM_AREA_ID]).toEqual({ xp: farm.player.xp });
-    expect(w.progression.stats).toEqual(farm.progress.stats);
+    // The counters stay, and the ones the world reads for achievements now (v10) are seeded from what the farm owns.
+    expect(w.progression.stats).toEqual({ ...farm.progress.stats, slotsOwned: farm.player.unlockedSlots, decorOwned: farm.decor.length });
     expect(w.progression.claimed).toEqual(farm.progress.claimed);
     expect(w.progression.daily).toEqual(farm.progress.daily);
     expect(w.collection.discovered.breed).toEqual(farm.collection.discoveredBreeds);
@@ -67,7 +69,7 @@ describe('world save v8: migration', () => {
     // Read back through the lens, the farm is exactly what was saved (pregnancy, records included).
     const { transactions, ...rest } = farmOf(w);
     const { transactions: before, ...farmRest } = farm;
-    expect(rest).toEqual(farmRest);
+    expect(rest).toEqual({ ...farmRest, progress: { ...farmRest.progress, stats: w.progression.stats } }); // the stats gained the v10 seeds
     expect(transactions.map(({ currency: _c, ...t }) => t)).toEqual(before);
   });
 
@@ -79,7 +81,7 @@ describe('world save v8: migration', () => {
     expect(r.save.wallet.coins).toBe(realV7.player.gold);
     expect(farm.player.xp).toBe(realV7.player.xp);
     expect(farm.pigs.map((p) => [p.id, p.name, p.breed])).toEqual(realV7.pigs.map((p) => [p.id, p.name, p.breed]));
-    expect(farm.inventory).toEqual({ ...realV7.inventory, item_manure: 0 }) // items added since count as none;
+    expect(farm.inventory).toEqual(inv({ ...realV7.inventory })) // items added since count as none;
     expect(farm.orders).toEqual(realV7.orders);
     expect(r.save.transactions).toHaveLength(realV7.transactions.length);
   });
@@ -115,8 +117,8 @@ describe('world save v8: migration', () => {
     const extended: WorldSave = {
       ...w,
       wallet: { ...w.wallet, gems: 12 },
-      inventory: { items: { ...w.inventory.items, item_carrot: 5 } },
-      areas: { ...w.areas, sobi_garden: { plots: [1, 2] } },
+      inventory: { items: { ...w.inventory.items, item_future: 5 } },
+      areas: { ...w.areas, sobi_future: { plots: [1, 2] } },
     };
     const r = parseSave(JSON.stringify(extended), SAVE_CODEC);
     expect(r.ok && r.save).toEqual(extended);
@@ -182,7 +184,7 @@ describe('store: backup before the first write of a migrated save (ARCHITECTURE 
     await store.init();
     await store.dispatch((s, c) => buyPig(s, { breed: 'PIG_EARTH_PINK', gender: 'MALE' }, c));
     await store.persistNow();
-    expect(p.log).toEqual(['backup:v7', 'write:v9', 'write:v9']);
+    expect(p.log).toEqual(['backup:v7', `write:v${WORLD_SAVE_VERSION}`, `write:v${WORLD_SAVE_VERSION}`]);
   });
 
   it('a failed copy fails the write: the migrated save is never written without it', async () => {

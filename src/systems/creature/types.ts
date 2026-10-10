@@ -2,6 +2,9 @@
 // (the farm's pigs: content/farm/species.json); an Area extends the model with its own fields (the
 // farm: pen slot, pregnancy). Fields of later phases (bond, traits, combat…) are added when used.
 import type { Gender } from '../../core/config/ids';
+import type { Purpose } from '../../../content/schemas/vocab';
+
+export type { Purpose };
 
 export interface Creature {
   id: string;
@@ -25,6 +28,15 @@ export interface Creature {
   /** Mood averaged over the creature's life, weighted by time (it decides its Quality), and the seconds counted. */
   moodAvg?: number;
   moodSec?: number;
+  /** Why it is raised; absent = not chosen yet (shipping and breeding both work). Chosen from Adult on. */
+  purpose?: Purpose;
+  /** Bond 0-100 (5 hearts, systems/bond); absent = 0. */
+  bond?: number;
+  /** Game day of the last pets and how many that day (a creature can be petted twice a day). */
+  petDay?: number;
+  petCount?: number;
+  /** Mood a snack lifts until `until` (epoch ms): premium feed, grass. */
+  moodBoost?: { amount: number; until: number };
   /** Time the numbers were last simulated up to (epoch ms). */
   lastTickedAt: number;
   createdAt: number;

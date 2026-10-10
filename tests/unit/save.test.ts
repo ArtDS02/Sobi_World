@@ -16,7 +16,7 @@ import { newGame } from '../../src/areas/farm/logic/save/newFarm';
 import { farmGameSchema, type FarmGameParsed } from '../../src/areas/farm/logic/save/farmSchema';
 import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { makePig } from './pigFactory';
-import { makeState } from './stateFactory';
+import { inv, makeState } from './stateFactory';
 import { world } from './worldKit';
 import { SAVE_CODEC } from '../../src/app/saveCodec';
 import { WORLD_SAVE_VERSION } from '../../src/core/save/world';
@@ -266,7 +266,7 @@ describe('newGame (D7)', () => {
     expect(valid(s)).toBe(true);
     expect(s.player).toMatchObject({ gold: 5000, xp: 0, unlockedSlots: 4 });
     expect(s.pigs).toEqual([]);
-    expect(s.inventory).toEqual({ FOOD_BASIC: 10, MEDICINE_COMMON: 1, item_manure: 0 });
+    expect(s.inventory).toEqual(inv({ FOOD_BASIC: 10, MEDICINE_COMMON: 1 }));
     expect(s.trough).toEqual({ food: 0, capacity: 30, level: 1, lastResolvedAt: 5_000 });
     expect(s.transactions).toEqual([
       { id: expect.any(String), at: 5_000, type: 'INITIAL_GOLD', amount: 5000 },

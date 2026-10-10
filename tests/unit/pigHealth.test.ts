@@ -14,7 +14,7 @@ import { episodeThreshold } from '../../src/systems/health/risk';
 import { parseFarmSave } from '../../src/areas/farm/logic/save/legacy';
 import type { ActionResult, Pig, FarmGame } from '../../src/areas/farm/logic/types';
 import { makePig } from './pigFactory';
-import { makeState } from './stateFactory';
+import { inv, makeState } from './stateFactory';
 
 const SEC = 1000;
 const HOUR = 3600 * SEC;
@@ -231,7 +231,7 @@ describe('integration: neglect never becomes a disease spiral', () => {
     let state = {
       ...makeState([dirty({ hunger: 0 })]),
       createdAt: LONG_AGO,
-      inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 99, item_manure: 0 },
+      inventory: inv({ MEDICINE_COMMON: 99 }),
     };
     const onsets: number[] = [];
     for (let t = 0; t <= 5 * DAY; t += 60 * SEC) {

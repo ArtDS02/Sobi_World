@@ -12,6 +12,9 @@ export { farmOf, parseWorldSave };
 /** A farm state as a world save (the farm is the only Area). */
 export const world = (farm: FarmGame): WorldSave => farmToWorld(farm);
 
-/** The real store, seen through the farm facade like the farm's screens see it. */
-export const createFarmGameStore = (...args: Parameters<typeof createGameStore>) =>
-  farmStore(createGameStore(...args));
+/**
+ * The real store, seen through the farm facade like the farm's screens see it. The world systems (goals, Codex) are off by
+ * default so these tests keep counting only what the store and the farm do; tests/unit/goals.test.ts covers the goals.
+ */
+export const createFarmGameStore = (deps: Parameters<typeof createGameStore>[0]) =>
+  farmStore(createGameStore({ settle: (_before, after) => ({ state: after, events: [] }), ...deps }));

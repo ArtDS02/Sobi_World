@@ -1,9 +1,10 @@
 // World save document v9 (ARCHITECTURE §9, AUDIT_AND_PLAN §d): world-level state shared by every Area,
 // plus one opaque slice per Area under `areas` that the Area's own schema validates.
 import { z } from 'zod';
+import { goalsSchema, initialGoals, type GoalsState } from '../goals/state';
 import { newPlayer, playerSchema, type PlayerSave } from '../player/player';
 
-export const WORLD_SAVE_VERSION = 9;
+export const WORLD_SAVE_VERSION = 10;
 
 export const CURRENCY_VALUES = ['coins', 'gems', 'eventTokens'] as const;
 export type Currency = (typeof CURRENCY_VALUES)[number];
@@ -48,8 +49,10 @@ export interface WorldSave {
     claimed: Record<string, number>; // achievement id -> claimed at
     daily: { lastDay: number | null; streak: number };
   };
-  /** Discovered ids per kind (`breed`, later `crop`, `fish`…). */
-  collection: { discovered: Record<string, string[]> };
+  /** Discovered ids per kind (`breed`, `crop`, `item`, later `fish`…) and the Codex milestones already claimed (v10). */
+  collection: { discovered: Record<string, string[]>; claimed: string[] };
+  /** The Order Board and the daily goals (v10). */
+  goals: GoalsState;
   settings: WorldSettings;
   /** Area id -> that Area's state; validated by the Area's save spec. */
   areas: Record<string, unknown>;
@@ -82,7 +85,8 @@ export const worldSaveSchema = z.object({
     claimed: z.record(z.string(), time),
     daily: z.object({ lastDay: z.number().int().nullable(), streak: z.number().int().min(0) }),
   }),
-  collection: z.object({ discovered: z.record(z.string(), z.array(z.string())) }),
+  collection: z.object({ discovered: z.record(z.string(), z.array(z.string())), claimed: z.array(z.string()) }),
+  goals: goalsSchema,
   settings: z.object({
     musicOn: z.boolean(),
     sfxOn: z.boolean(),
@@ -104,7 +108,8 @@ export function emptyWorld(now: number, settings: WorldSettings, firstArea: stri
     inventory: { items: {} },
     transactions: [],
     progression: { areas: {}, stats: {}, claimed: {}, daily: { lastDay: null, streak: 0 } },
-    collection: { discovered: {} },
+    collection: { discovered: {}, claimed: [] },
+    goals: initialGoals(now),
     settings,
     areas: {},
   };

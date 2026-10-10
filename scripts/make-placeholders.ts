@@ -85,6 +85,74 @@ function drawUi(r: Raster, colour: Rgba) {
   r.ellipse(r.width / 2, r.height / 2, r.width * 0.22, r.height * 0.22, shade(colour, 0.7));
 }
 
+const CROP_COLOURS: Record<string, Rgba> = {
+  grass: [96, 182, 78, 255],
+  wheat: [232, 192, 84, 255],
+  corn: [246, 212, 72, 255],
+  potato: [196, 154, 104, 255],
+  carrot: [242, 132, 52, 255],
+};
+
+/** A crop on its plot, feet at the bottom: a sprout, a growing plant, the ripe plant with its produce, a wilted one. */
+function drawCrop(r: Raster, id: string) {
+  const [, name, stage] = id.split('_') as [string, string, string];
+  const leaf: Rgba = [84, 164, 70, 255];
+  const feet = r.height - 10;
+  const cx = r.width / 2;
+  const produce = CROP_COLOURS[name] ?? [200, 200, 200, 255];
+  if (stage === 'sprout') {
+    r.ellipse(cx - 12, feet - 16, 12, 22, leaf);
+    r.ellipse(cx + 12, feet - 20, 12, 24, shade(leaf, 0.9));
+  } else if (stage === 'grow') {
+    for (const dx of [-30, 0, 30]) r.roundRect(cx + dx - 6, feet - 70, 12, 70, 6, leaf);
+    for (const dx of [-30, 30]) r.ellipse(cx + dx, feet - 74, 16, 12, shade(leaf, 0.85));
+  } else if (stage === 'ripe') {
+    for (const dx of [-32, 0, 32]) r.roundRect(cx + dx - 6, feet - 80, 12, 80, 6, leaf);
+    for (const dx of [-32, 0, 32]) r.ellipse(cx + dx, feet - 84, 20, 20, produce);
+  } else {
+    const dry: Rgba = [150, 120, 70, 255];
+    for (const dx of [-32, 0, 32]) r.roundRect(cx + dx - 6, feet - 44, 12, 44, 6, dry);
+    for (const dx of [-32, 0, 32]) r.ellipse(cx + dx + 8, feet - 44, 16, 10, shade(dry, 0.8));
+  }
+}
+
+/** A tilled plot: dry, watered (darker) or locked (grey, with a plus). */
+function drawPlot(r: Raster, id: string) {
+  const soil: Rgba = id === 'plot_soil_wet' ? [92, 62, 40, 255] : id === 'plot_locked' ? [150, 146, 140, 200] : [140, 100, 64, 255];
+  r.roundRect(4, r.height * 0.18, r.width - 8, r.height * 0.74, 20, shade(soil, 0.78));
+  r.roundRect(8, r.height * 0.14, r.width - 16, r.height * 0.7, 18, soil);
+  if (id === 'plot_locked') {
+    r.rect(r.width / 2 - 4, r.height * 0.3, 8, r.height * 0.4, [240, 236, 228, 255]);
+    r.rect(r.width / 2 - r.height * 0.2, r.height * 0.5 - 4, r.height * 0.4, 8, [240, 236, 228, 255]);
+  }
+}
+
+/** The Garden's three structures, simple but readable: a mill with sails, a composting bin, a sprinkler on a post. */
+function drawGardenBuilding(r: Raster, id: string) {
+  const w = r.width;
+  const h = r.height;
+  const wood: Rgba = [168, 118, 70, 255];
+  const roof: Rgba = [196, 84, 70, 255];
+  const stone: Rgba = [214, 206, 190, 255];
+  r.ellipse(w / 2, h * 0.93, w * 0.42, h * 0.06, [0, 0, 0, 60]); // shadow
+  if (id === 'bld_feed_mill') {
+    r.roundRect(w * 0.22, h * 0.34, w * 0.56, h * 0.58, 14, stone);
+    for (let i = 0; i < 10; i += 1) r.rect(w * (0.16 + i * 0.012), h * (0.2 + i * 0.014), w * (0.68 - i * 0.024), h * 0.016, roof); // stepped roof
+    r.roundRect(w * 0.43, h * 0.62, w * 0.14, h * 0.3, 8, wood); // door
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]] as const) r.ellipse(w * 0.5 + dx * w * 0.2, h * 0.3 + dy * h * 0.12, w * 0.1, h * 0.04, shade(wood, 1.15));
+    r.ellipse(w * 0.5, h * 0.3, w * 0.04, w * 0.04, shade(wood, 0.6));
+  } else if (id === 'bld_composter') {
+    r.roundRect(w * 0.14, h * 0.32, w * 0.72, h * 0.6, 18, wood);
+    for (const y of [0.45, 0.6, 0.75]) r.rect(w * 0.14, h * y, w * 0.72, h * 0.03, shade(wood, 0.7));
+    r.roundRect(w * 0.1, h * 0.24, w * 0.8, h * 0.12, 10, shade(wood, 0.85));
+    r.ellipse(w * 0.5, h * 0.22, w * 0.3, h * 0.07, [92, 70, 44, 255]); // the heap
+  } else {
+    r.roundRect(w * 0.44, h * 0.3, w * 0.12, h * 0.62, 6, [120, 130, 140, 255]); // post
+    r.ellipse(w * 0.5, h * 0.26, w * 0.26, h * 0.1, [90, 170, 220, 255]); // head
+    for (const dx of [-0.3, -0.15, 0, 0.15, 0.3]) r.ellipse(w * (0.5 + dx), h * (0.1 + Math.abs(dx) * 0.2), 5, 8, [150, 210, 245, 220]); // drops
+  }
+}
+
 /** A padlock: the plaza marks an Area that is not open yet with it. */
 function drawLock(r: Raster) {
   const iron: Rgba = [96, 96, 112, 255];
@@ -111,8 +179,11 @@ function render(
   const r = new Raster(size.width, size.height);
   r.rect(0, 0, r.width, r.height, CLEAR);
   const colour = PIG_COLOURS[id] ?? colourFor(id);
-  if (id === 'chr_player') drawCharacter(r, key);
+  if (id.startsWith('chr_')) drawCharacter(r, key);
   else if (id === 'ui_icon_lock') drawLock(r);
+  else if (id.startsWith('crop_')) drawCrop(r, id);
+  else if (id.startsWith('plot_')) drawPlot(r, id);
+  else if (id.startsWith('bld_')) drawGardenBuilding(r, id);
   else if (section === 'pigs') drawPig(r, colour, key === 'sleep');
   else if (section === 'fx') drawFx(r, colour, frames);
   else if (section === 'environment') drawEnvironment(r, id);

@@ -19,6 +19,8 @@ export type WorldEvent =
   | { type: 'creature.critical'; area: string; creatureId: string }
   | { type: 'creature.died'; area: string; creatureId: string }
   | { type: 'creature.levelUp'; area: string; creatureId: string; level: number }
+  | { type: 'creature.petted'; area: string; creatureId: string; hearts: number }
+  | { type: 'creature.purposeSet'; area: string; creatureId: string; purpose: string }
   | { type: 'crop.planted'; area: string; plotId: string; cropId: string }
   | { type: 'crop.harvested'; area: string; plotId: string; cropId: string; quantity: number }
   | { type: 'recipe.completed'; area: string; recipeId: string }
@@ -43,6 +45,8 @@ export const WORLD_EVENT_TYPES = [
   'creature.critical',
   'creature.died',
   'creature.levelUp',
+  'creature.petted',
+  'creature.purposeSet',
   'crop.planted',
   'crop.harvested',
   'recipe.completed',

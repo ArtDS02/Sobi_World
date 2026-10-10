@@ -3,6 +3,7 @@
 // another machine). This module loads/saves them; userDetail.ts draws the editor.
 import { parseWorldSave } from '../../src/app/saveCodec';
 import { farmOf, withFarm } from '../../src/areas/farm/logic/save/lens';
+import { rewindGardenInWorld } from '../../src/areas/garden/logic/rewind';
 import type { WorldSave } from '../../src/core/save/world';
 import { exportFileName } from '../../src/core/save/exportImport';
 import type { FarmGame } from '../../src/areas/farm/logic/types';
@@ -38,6 +39,8 @@ export const users = {
   /** The save being edited: `file` = opened from a .json (saved back by download). */
   open: null as null | {
     id: string; source: 'disk' | 'file'; label: string; world: WorldSave; original: FarmGame; draft: FarmGame; baseModifiedAt: number; dirty: boolean;
+    /** Total time travel applied since it was opened: the Garden's clocks move by it when the world is written. */
+    rewindMs: number;
     /** Edits applied to `original` since it was opened: replayed on a newer save the game wrote meanwhile. */
     edits: Edit[];
   },
@@ -77,19 +80,22 @@ export async function openProfile(id: string) {
   const r = await json<{ profile: Profile; json: string }>(`/__admin/saves/read?id=${encodeURIComponent(id)}`);
   const p = parse(r.json);
   if (!p.save || !p.world) throw new Error(`Save không đọc được (${p.error}) — game sẽ tự lấy bản backup gần nhất.`);
-  users.open = { id, source: 'disk', label: appLabel(r.profile.app, r.profile.folder), world: p.world, original: p.save, draft: p.save, baseModifiedAt: r.profile.modifiedAt, dirty: false, edits: [] };
+  users.open = { id, source: 'disk', label: appLabel(r.profile.app, r.profile.folder), world: p.world, original: p.save, draft: p.save, baseModifiedAt: r.profile.modifiedAt, dirty: false, rewindMs: 0, edits: [] };
 }
 
 export async function openFile(file: File) {
   const p = parse(await file.text());
   if (!p.save || !p.world) throw new Error(`File không phải save hợp lệ (${p.error})`);
-  users.open = { id: 'file', source: 'file', label: file.name, world: p.world, original: p.save, draft: p.save, baseModifiedAt: 0, dirty: false, edits: [] };
+  users.open = { id: 'file', source: 'file', label: file.name, world: p.world, original: p.save, draft: p.save, baseModifiedAt: 0, dirty: false, rewindMs: 0, edits: [] };
 }
+
+/** The world the draft makes: the farm view written back, the Garden's clocks moved with the time travel. */
+const worldOf = (o: NonNullable<typeof users.open>): WorldSave => rewindGardenInWorld(withFarm(o.world, o.draft), o.rewindMs);
 
 /** Writes the draft: disk saves through the API (backup first), files as a download for import. */
 export async function saveOpen(): Promise<string> {
   const o = users.open!;
-  const text = JSON.stringify(withFarm(o.world, o.draft));
+  const text = JSON.stringify(worldOf(o));
   if (o.source === 'file') {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
@@ -112,12 +118,13 @@ export async function saveOpen(): Promise<string> {
     o.world = p.world;
     o.draft = o.edits.reduce(apply, p.save);
     o.baseModifiedAt = fresh.profile.modifiedAt;
-    r = await write(JSON.stringify(withFarm(o.world, o.draft)));
+    r = await write(JSON.stringify(worldOf(o)));
     replayed = true;
   }
-  o.world = withFarm(o.world, o.draft);
+  o.world = worldOf(o);
   o.original = o.draft;
   o.edits = [];
+  o.rewindMs = 0;
   o.baseModifiedAt = r.modifiedAt;
   o.dirty = false;
   await loadUsers();

@@ -17,14 +17,7 @@ export type { PageLike, StoreDeps, WorldAdvance } from './storeDeps';
 
 /** Every dependency is injected (app/gameStore.ts fills the browser defaults). */
 export function createWorldStore(deps: StoreDeps) {
-  let snapshot: StoreSnapshot = {
-    status: 'loading',
-    save: null,
-    readOnly: false,
-    loadSource: null,
-    saveError: false,
-    clockRewound: false,
-  };
+  let snapshot: StoreSnapshot = { status: 'loading', save: null, readOnly: false, loadSource: null, saveError: false, clockRewound: false };
   const subscribers = new Set<(s: StoreSnapshot) => void>();
   const listen = <F>(set: Set<F>, fn: F) => (set.add(fn), () => void set.delete(fn));
   const eventListeners = new Set<EventListener>();
@@ -100,6 +93,9 @@ export function createWorldStore(deps: StoreDeps) {
     return persistQueue;
   }
 
+  /** The world systems' turn (goals, Codex); a no-op without `deps.settle`. */
+  const settle = (before: WorldSave, after: WorldSave, events: readonly EventBase[], c: ActionContext) =>
+    deps.settle ? deps.settle(before, after, deps.toWorldEvents(events), c) : { state: after, events: [] as EventBase[] };
   /** Catch up time. Persists immediately when anything happened (§7.4 step 6). */
   function tick(origin: EventOrigin = 'tick'): EventBase[] {
     if (snapshot.status !== 'ready' || !snapshot.save) return [];
@@ -110,10 +106,12 @@ export function createWorldStore(deps: StoreDeps) {
     const rewound = world.rewound === true;
     if (rewound !== snapshot.clockRewound) set({ clockRewound: rewound });
     if (rewound) return []; // GAME_BALANCE §1: never simulate backwards, the stamps stay
-    set({ save: world.state });
-    if (world.events.length > 0 || now - lastPersistAt >= SAVE.AUTOSAVE_MS) void persist();
-    emit(world.events, origin, origin === 'catchup' ? (world.capped ? { awayMs, capped: true } : { awayMs }) : undefined);
-    return world.events;
+    const settled = settle(snapshot.save, world.state, world.events, ctx(now));
+    const events = [...world.events, ...settled.events];
+    set({ save: settled.state });
+    if (events.length > 0 || now - lastPersistAt >= SAVE.AUTOSAVE_MS) void persist();
+    emit(events, origin, origin === 'catchup' ? (world.capped ? { awayMs, capped: true } : { awayMs }) : undefined);
+    return events;
   }
 
   const startLoop = () => {
@@ -223,12 +221,15 @@ export function createWorldStore(deps: StoreDeps) {
     /** Runs an action; persists and notifies only on success. */
     async dispatch(action: BoundAction): Promise<ActionResult> {
       if (!snapshot.save || !canWrite()) return reject({ ok: false, error: 'INVALID_REQUEST' });
-      const result = action(snapshot.save, ctx());
+      const c = ctx();
+      const result = action(snapshot.save, c);
       if (!result.ok) return reject(result);
-      set({ save: result.state });
+      const settled = settle(snapshot.save, result.state, result.events, c);
+      const done = { ...result, state: settled.state, events: [...result.events, ...settled.events] };
+      set({ save: done.state });
       await persist();
-      emit(result.events, 'action');
-      return result;
+      emit(done.events, 'action');
+      return done;
     },
 
     /** Recovery screen "start new", after the player's explicit confirmation (§9.2). */

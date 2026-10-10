@@ -28,15 +28,27 @@ export const TRAIT_VALUES = [
 ] as const;
 export type Trait = (typeof TRAIT_VALUES)[number];
 
+/** Groups of goods the daily market moves together (spec V2 §9): shipped pigs, farm crops, feed, materials. */
+export const MARKET_GROUP_VALUES = ['PIGS', 'CROPS', 'FOOD', 'MATERIALS'] as const;
+export type MarketGroup = (typeof MARKET_GROUP_VALUES)[number];
+
+/** Why a creature is raised (spec V2 §7): shipped out, kept to breed, kept as a pet, or sent adventuring (GĐ10). */
+export const PURPOSE_VALUES = ['SHIP', 'BREED', 'PET', 'ADVENTURE'] as const;
+export type Purpose = (typeof PURPOSE_VALUES)[number];
+
 /** Counters kept in the save's progression.stats (PG-2). */
 export const STAT_ID_VALUES = [
   'pigsBought', 'pigsSold', 'births', 'ordersFulfilled', 'giftsOpened',
-  'pigsCleaned', 'pigsTreated', 'breedings', 'goldEarned', 'bestStreak',
+  'pigsCleaned', 'pigsTreated', 'breedings', 'goldEarned', 'bestStreak', 'pigsPetted',
+  // GĐ6: kept by the Farm's tracker (feeds, manureCollected, slotsOwned, decorOwned, maxHearts) and by the world's
+  // (core/goals/stats.ts: cropsPlanted, cropsHarvested, crafts, boardOrders, dailyGoalsDone); each id has one owner.
+  'feeds', 'manureCollected', 'slotsOwned', 'decorOwned', 'maxHearts',
+  'cropsPlanted', 'cropsHarvested', 'crafts', 'boardOrders', 'dailyGoalsDone',
 ] as const;
 export type StatId = (typeof STAT_ID_VALUES)[number];
 
-/** Item categories of the shared bag (spec V2 §6 Item). Seeds, essences, materials... join with their Area. */
-export const ITEM_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'MATERIAL'] as const;
+/** Item categories of the shared bag (spec V2 §6 Item). Seeds and crops joined with the Garden; essences and more come with their Area. */
+export const ITEM_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'MATERIAL', 'SEED', 'CROP'] as const;
 export type ItemCategory = (typeof ITEM_CATEGORY_VALUES)[number];
 
 export const PRODUCT_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'SUPPLY', 'SPECIAL'] as const;

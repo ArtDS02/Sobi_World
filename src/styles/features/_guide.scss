@@ -1,0 +1,137 @@
+// The guide over the world (GĐ6): the "next step" chip and the Area's NPC. Owns `.guide*`, `.next-step*`, `.npc*`.
+@use '../core' as *;
+
+.guide {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+
+  > * > * {
+    pointer-events: auto;
+  }
+}
+
+.guide__chip-host {
+  position: absolute;
+  top: 4.6rem;
+  left: 50%;
+  display: flex;
+  justify-content: center;
+  width: min(34rem, 92%);
+  transform: translateX(-50%);
+}
+
+.next-step {
+  display: flex;
+  gap: $sp-2;
+  align-items: center;
+  padding: $sp-1 $sp-2 $sp-1 $sp-3;
+  font-size: $fs-sm;
+  color: $c-wood-dark;
+  background: #fffdf5;
+  border: 2px solid $c-honey;
+  border-radius: 9999px;
+  box-shadow: 0 3px 0 $c-border;
+
+  &.is-warn {
+    border-color: #e8a13a;
+  }
+
+  &.is-alert {
+    color: $c-danger;
+    background: $c-danger-soft;
+    border-color: $c-danger;
+  }
+}
+
+.next-step__text {
+  font-weight: $fw-bold;
+}
+
+.next-step__more {
+  font-size: $fs-xs;
+  color: $c-text-muted;
+}
+
+.next-step__go {
+  padding: 0 $sp-3;
+}
+
+.next-step__hide {
+  padding: 0 $sp-1;
+  font: inherit;
+  color: $c-text-muted;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.guide__npc-host {
+  position: absolute;
+  bottom: 5.5rem;
+  left: $sp-3;
+}
+
+.npc-button {
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  padding: $sp-1;
+  font: inherit;
+  cursor: pointer;
+  background: #fffdf5;
+  border: 3px solid $c-honey;
+  border-radius: $radius-card;
+  box-shadow: 0 3px 0 $c-border;
+}
+
+.npc-button__art {
+  width: 3.2rem;
+  height: 3.2rem;
+  object-fit: contain;
+}
+
+.npc-button__name {
+  font-size: $fs-xs;
+  font-weight: $fw-bold;
+  color: $c-wood-dark;
+}
+
+.npc {
+  display: grid;
+  gap: $sp-3;
+}
+
+.npc__head {
+  display: flex;
+  gap: $sp-3;
+  align-items: center;
+}
+
+.npc__art {
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
+}
+
+.npc__answer {
+  flex: 1;
+  padding: $sp-2 $sp-3;
+  background: #fff;
+  border: 2px solid $c-border;
+  border-radius: $radius-md;
+}
+
+.npc__next {
+  padding: $sp-2 $sp-3;
+  font-weight: $fw-bold;
+  background: #fff4cc;
+  border-radius: $radius-md;
+}
+
+.npc__topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $sp-2;
+}

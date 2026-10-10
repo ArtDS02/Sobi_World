@@ -1,12 +1,13 @@
 // Level and slot tables (spec §6.4, §8.16). Level is derived from xp (D13).
-import { levelFromXp as coreLevelFromXp, type LevelTable } from '../../../../core/progression/levels';
+import { WORLD_LEVELS } from '../../../../core/config/progression';
+import { levelFromXp as coreLevelFromXp } from '../../../../core/progression/levels';
 import { BALANCE } from './balance';
 
-/** The farm's level table (Sobi Farm's: LEVEL_XP, MAX_LEVEL in content/farm/balance.json). */
-export const FARM_LEVELS: LevelTable = { xp: BALANCE.LEVEL_XP, maxLevel: BALANCE.MAX_LEVEL };
-
-/** Farm level: highest level whose xp threshold <= xp, capped at MAX_LEVEL (core/progression). */
-export const levelFromXp = (xp: number): number => coreLevelFromXp(xp, FARM_LEVELS);
+/**
+ * The Sobi World Level (decision 007, 013). The farm's `player.xp` is the world's XP (see save/lens.ts),
+ * so the level the farm gates on is the one level of the whole world.
+ */
+export const levelFromXp = (xp: number): number => coreLevelFromXp(xp, WORLD_LEVELS);
 
 /**
  * Sobi Farm's old trough rule (v1-v7): 20 food + 10 per player level, at most 120. Kept for the save

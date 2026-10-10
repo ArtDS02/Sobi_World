@@ -5,6 +5,7 @@ Không import `systems/`, `areas/`, `ui/`, `app/`; không DOM, Node API, `Date.n
 | Thư mục | Việc |
 |---|---|
 | `save/` | save world v8, migration v1→v8, mã hóa/xuất nhập |
+| `production/` | công việc của công trình theo thời gian thật (`ProductionJob`): một mẻ mỗi `durationMs`, dạng đóng của `now`; recipe ở `content/shared/recipes.json` (GĐ5) |
 | `clock.ts` | `Clock` inject, 4 buổi trong ngày, cửa sổ vắng nhà (trần 30 ngày, giờ máy lùi) |
 | `world/` | game store: vòng lặp, autosave, bù offline, ghi save (lỗi ghi không bị nuốt) |
 | `area-registry/` | đăng ký Area bằng manifest; hook init/simulate/migrations |

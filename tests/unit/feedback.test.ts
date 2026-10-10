@@ -38,6 +38,8 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   TROUGH_FILLED: { type: 'TROUGH_FILLED', units: 5, fromInventory: 5, gold: 0 },
   ITEM_BOUGHT: { type: 'ITEM_BOUGHT', itemId: 'FOOD_BASIC', quantity: 2, gold: -50 },
   PIG_RENAMED: { type: 'PIG_RENAMED', pigId: 'pig-1' },
+  PIG_PETTED: { type: 'PIG_PETTED', pigId: 'pig-1', bond: 3, hearts: 0 },
+  PIG_PURPOSE_SET: { type: 'PIG_PURPOSE_SET', pigId: 'pig-1', purpose: 'PET' },
   PIG_SOLD: { type: 'PIG_SOLD', pigId: 'pig-1', gold: 1200 },
   BREEDING_STARTED: {
     type: 'BREEDING_STARTED',
@@ -51,10 +53,8 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   GIFT_SPAWNED: { type: 'GIFT_SPAWNED', giftId: 'g1' },
   GIFT_OPENED: { type: 'GIFT_OPENED', giftId: 'g1', gold: 120, xp: 35 },
   RELIEF_CLAIMED: { type: 'RELIEF_CLAIMED', gold: 0, food: 12, medicine: 1 },
-  DAILY_CLAIMED: { type: 'DAILY_CLAIMED', streak: 2, gold: 150, food: 5, medicine: 0 },
-  ACHIEVEMENT_REACHED: { type: 'ACHIEVEMENT_REACHED', id: 'FIRST_SALE' },
-  ACHIEVEMENT_CLAIMED: { type: 'ACHIEVEMENT_CLAIMED', id: 'FIRST_SALE', gold: 100, xp: 10 },
   DECOR_BOUGHT: { type: 'DECOR_BOUGHT', decorId: 'DECOR_HAY_BALE', gold: -1500 },
+  DECOR_ARRANGED: { type: 'DECOR_ARRANGED', decorId: 'DECOR_HAY_BALE', op: 'move' },
 };
 
 describe('feedback table (§11.3)', () => {

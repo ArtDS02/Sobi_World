@@ -1,0 +1,30 @@
+{
+  "slots": [{ "fromWorldDevelopment": 0, "count": 3 }, { "fromWorldDevelopment": 10, "count": 4 }],
+  "spawnEveryMs": 10800000,
+  "rewardMultiplier": 1.4,
+  "xp": { "min": 15, "max": 40, "coinsPerXp": 10 },
+  "bonus": { "chance": 0.05, "itemId": "item_seed_carrot", "quantity": 3 },
+  "rerollGems": 5,
+  "lines": [
+    { "fromWorldLevel": 1, "max": 1 },
+    { "fromWorldLevel": 5, "max": 2 },
+    { "fromWorldLevel": 8, "max": 3 }
+  ],
+  "requests": [
+    { "itemId": "item_manure", "area": "sobi_farm", "fromWorldLevel": 1, "min": 3, "max": 8, "weight": 4 },
+    { "itemId": "item_grass", "area": "sobi_garden", "fromWorldLevel": 3, "min": 8, "max": 20, "weight": 2 },
+    { "itemId": "item_wheat", "area": "sobi_garden", "fromWorldLevel": 3, "min": 4, "max": 10, "weight": 3 },
+    { "itemId": "item_corn", "area": "sobi_garden", "fromWorldLevel": 3, "min": 4, "max": 10, "weight": 3 },
+    { "itemId": "item_potato", "area": "sobi_garden", "fromWorldLevel": 3, "min": 3, "max": 8, "weight": 2 },
+    { "itemId": "item_carrot", "area": "sobi_garden", "fromWorldLevel": 4, "min": 2, "max": 6, "weight": 2 },
+    {
+      "itemId": "item_fertilizer",
+      "area": "sobi_garden",
+      "fromWorldLevel": 4,
+      "min": 1,
+      "max": 4,
+      "weight": 2
+    },
+    { "itemId": "FOOD_PREMIUM", "area": "sobi_garden", "fromWorldLevel": 5, "min": 1, "max": 3, "weight": 1 }
+  ]
+}

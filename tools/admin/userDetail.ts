@@ -4,7 +4,7 @@
 // Each tab edits only its own group through userEdits.ts (validated against the game's save
 // schema); "Lưu" writes the whole draft once. Dangerous actions ask for confirmation.
 import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
-import { ACHIEVEMENTS } from '../../src/areas/farm/logic/config/achievements';
+import { ACHIEVEMENTS } from '../../src/core/config/goals';
 import { DECORS } from '../../src/areas/farm/logic/config/decor';
 import { GENDER_VALUES, ITEM_ID_VALUES, type Gender, type ItemId } from '../../src/core/config/ids';
 import { DECOR_ID_VALUES, STAT_ID_VALUES, type BreedId } from '../../src/areas/farm/logic/config/ids';
@@ -32,13 +32,14 @@ const breedImage = (id: string) => {
 const DAY_MS = 86_400_000;
 const today = () => Math.floor((Date.now() - new Date().getTimezoneOffset() * 60_000) / DAY_MS);
 const thumb = (url: string | null) => (url ? `<img class="thumb" src="${esc(url)}" alt="" />` : '');
-const ITEM_NAME: Record<ItemId, string> = { FOOD_BASIC: vi.shop.FOOD_BASIC, MEDICINE_COMMON: vi.shop.MEDICINE_COMMON, item_manure: vi.shop.item_manure };
+const ITEM_NAME = Object.fromEntries(ITEM_ID_VALUES.map((id) => [id, vi.shop[id]])) as Record<ItemId, string>;
 
 function edit(e: E.Edit, rerender: () => void) {
   const o = users.open!;
   try {
     o.draft = E.apply(o.draft, e);
     o.edits.push(e);
+    o.rewindMs += (e as Partial<E.RewindEdit>).rewindMs ?? 0;
     o.dirty = true;
     state.message = null;
   } catch (x) {
