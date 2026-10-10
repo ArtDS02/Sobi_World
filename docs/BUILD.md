@@ -15,6 +15,7 @@ Node.js 22+ và `npm ci` đã chạy. Build cần mạng **một lần** để `
 | `npm run verify:build` | Chỉ kiểm `dist/`, `dist-electron/`: không Admin, không dấu vết dev, không URL ngoài. |
 | `npm run verify:installer` | Kiểm `release/win-unpacked` (cần `dist:win` trước): nội dung `app.asar` + chạy `SobiWorld.exe` trên thư mục dữ liệu tạm. |
 | `npm run test:e2e` | Build + chạy thử game thật bằng Playwright-Electron (mua heo, lưu, mở lại, đi lại ở Sảnh…). |
+| `npm run dev:sandbox` | Chạy game trên trình duyệt với thư mục dữ liệu tạm (`%TEMP%\sobiworld-sandbox`, đổi bằng `SOBIWORLD_SANDBOX`): thử mà không đụng save dev. Đặt sẵn `saves\save.json` để bắt đầu từ thế giới có sẵn. |
 | `npm run icon` | Vẽ lại icon tạm (`build/icon.png`, `build/icon.ico`). |
 
 ## File ra ở đâu (thư mục `release/`, không commit)

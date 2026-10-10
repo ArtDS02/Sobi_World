@@ -23,6 +23,7 @@ import { INVENTORY } from '../../src/core/config/inventory';
 import { mulberry32 } from '../../src/core/rng';
 import { WORLD_SAVE_VERSION, type WorldSave } from '../../src/core/save/world';
 import type { ActionContext } from '../../src/core/types';
+import { pigActions } from '../../src/areas/farm/ui/actionsVm';
 import { makePig } from './pigFactory';
 
 const H = 3_600_000;
@@ -245,6 +246,20 @@ describe('workshops', () => {
     expect(items(r).FOOD_BASIC).toBe(INVENTORY.slots * INVENTORY.stack);
     expect(gardenOf(r).jobs.mill).toMatchObject({ batches: 2, collected: 1 }); // the other batch waits in the workshop
     expect(collectCraft(r, { building: 'mill' }, ctxAt(T0 + 30 * MIN))).toEqual({ ok: false, error: 'INVENTORY_FULL' });
+  });
+});
+
+describe('the pig panel offers the garden foods', () => {
+  it('premium feed and grass buttons appear only while the bag holds them', () => {
+    const pig = makePig({ hunger: 10 });
+    const with0 = withFarm(gardenWorld({}), { ...farmOf(gardenWorld({})), pigs: [pig] });
+    const none = pigActions(farmOf(with0), pig.id, T0);
+    expect(none.feedPremium).toBeNull();
+    expect(none.feedGrass).toBeNull();
+    const stocked = withFarm(with0, { ...farmOf(with0), inventory: { ...farmOf(with0).inventory, FOOD_PREMIUM: 2, item_grass: 5 } });
+    const some = pigActions(farmOf(stocked), pig.id, T0);
+    expect(some.feedPremium).toMatchObject({ label: 'Ăn cao cấp (x2)', reason: null });
+    expect(some.feedGrass).toMatchObject({ label: 'Ăn cỏ (x5)', reason: null });
   });
 });
 

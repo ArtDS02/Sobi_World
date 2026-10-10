@@ -1,29 +1,48 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ4 — Bản cài desktop đầu tiên: xong, chờ chủ dự án thử trên máy sạch. GĐ3 đã merge `main` + tag `phase-03`.
-**Nhánh:** `phase-04-desktop-installer` (tách từ đầu nhánh `phase-03-character-hub`, nên mang theo commit nâng cấp Sảnh `3b10d83` chưa vào `main`).
+**Giai đoạn:** GĐ5 — Sobi Garden và sản xuất: xong 10 việc, chờ chủ dự án chơi thử. GĐ4 (bản cài desktop) xong, chờ chủ dự án thử trên máy sạch rồi merge.
+**Nhánh:** `phase-05-garden` (tách từ `phase-04-desktop-installer`, chưa merge `main`; mang theo commit Sảnh `3b10d83` và GĐ4).
 **Quy ước (chủ dự án, 2026-10-10):** chủ dự án tự merge, gắn tag `phase-XX` và push sau mỗi giai đoạn; agent chỉ commit trên nhánh giai đoạn.
-**Bước tiếp theo:** GĐ5 — Sobi Garden và sản xuất.
+**Bước tiếp theo:** chơi thử Garden; rồi GĐ6 — Gắn kết (Vertical slice).
 
 ## Nhật ký
 
+### 2026-10-10 — GĐ5 hoàn thành: Sobi Garden và sản xuất
+✅ Đã làm (10 việc của prompt GĐ5):
+1. **Area Garden** từ `_template` (`src/areas/garden`, decision 012). `core` chỉ đổi 3 chỗ, đều nhỏ: registry thêm `unlockReady` (tự mở Area đủ điều kiện), danh mục item thêm `SEED`/`CROP`, 9 mã lỗi mới.
+2. **`systems/plants`**: gieo, tưới (khô = lớn chậm một nửa), phân bón (−25% thời gian, +1 sản lượng), chín, héo (quá 48 giờ: ×0,5). Dạng đóng nên online / nền / offline cho cùng kết quả (test lát 1 phút = 10 phút = 1 giờ = nhảy một lần; 30 ngày bù trong < 3 giây).
+3. **5 cây** theo GAME_BALANCE §5 (`content/garden/crops.json`): cỏ, lúa mì, bắp, khoai tây, cà rốt.
+4. **Ô đất**: 6 ô, mở thêm 3 ô tới 24 ô (200 → 15.000); **Vòi tưới** (Lv1 6 ô, 500). Gieo / tưới / bón / thu hoạch làm cho nhiều ô một lần (nút "Gieo kín ô trống", "Tưới cả vườn", "Thu hoạch hết").
+5. **`core/production`** + **Máy xay** và **Thùng ủ** với 3 recipe khởi điểm (thức ăn heo, thức ăn cao cấp, phân bón; `content/shared/recipes.json`), chạy theo giờ thật, làm tới 10 mẻ một lần.
+6. **Heo ăn thức ăn cao cấp (+70 no) và cỏ (+14)**: nút mới trong bảng heo (chỉ hiện khi túi có), `feedPig` nhận `itemId`.
+7. **Mở Garden ở Farm Lv3**: registry tự mở (kể cả save cũ đã đủ cấp), cổng Khu vườn ở Sảnh mở, toast "Sobi Garden đã mở cửa!".
+8. **Tóm tắt vắng mặt có phần Garden**: cây đã chín / héo, mẻ xong, việc cần làm (hái, nhận, tưới) kèm nút "Vào vườn".
+9. **Admin**: Số liệu có thêm cây, cân bằng Garden, recipe, vật phẩm (chỉ sửa số, kiểm schema); ⏩ Tua thời gian dịch cả đồng hồ Garden.
+10. **Test**: vòng lặp phân → phân bón → cây → thức ăn → heo (online và offline), 24 test Garden, 16 test màn hình/VM, 19 test plants/production, e2e `garden.spec.ts` (mở vườn, gieo, tắt 5 giờ, màn vắng mặt, thu hoạch).
+Giao diện: cảnh Phaser `GardenScene` (ruộng, vòi tưới, 2 công trình) + HUD / bảng hạt / hộp thoại DOM; Sảnh ↔ Garden đi qua cổng như Farm.
+🧪 Đã kiểm tra: `npm run check` xanh (1.001 test); `npm run test:e2e` 7/7; `npm run sim:economy` OK; chạy thật bằng `npm run dev:sandbox` trong trình duyệt (vào vườn, gieo, tưới, xây Máy xay, làm mẻ, mở Kho); `npm run dist:win` + verify.
+⚠️ Quyết định tự đưa ra (decision 012): giá xây Máy xay 400 / Thùng ủ 300; Vòi tưới cấp 2–3 (12 / 24 ô, 1.500 / 4.000); mở ô chỉ tính Sobi Coin (bản cập nhật Garden cần Ngọc trai / vật liệu cổ chưa có); thức ăn cao cấp +70 vì Farm giữ thang +50; thức ăn cao cấp 60 / phân bón 50 chưa bán ở cửa hàng; tưới tay có hiệu lực 3 giờ và chỉ tưới ô đang khô.
+⚠️ Chưa làm (ngoài 10 việc): tâm trạng +10 / +3 của thức ăn cao cấp / cỏ (cần Bond, GĐ6); luân canh, đất Ẩm / Nước, cửa sổ khát, Life Essence, 7 cây còn lại của spec Garden chi tiết; cửa hàng hạt riêng; art thật (toàn placeholder, `ASSET_TODO.md`); âm thanh riêng; thử tay lâu dài.
+⚠️ Cân bằng cần chơi thử: hạt bắp 5 → 3 bắp bán 4 (12): tự làm thức ăn rẻ hơn mua (25) rất nhiều; nếu quá dễ, chỉnh ở Admin → Số liệu.
+👉 Bạn cần: chơi thử `npm run dev:sandbox` hoặc bản cài (Farm cấp 3 để mở vườn — tua Admin hoặc cho heo lớn), xuất chuồng / dọn phân → ủ phân bón → trồng → xay thức ăn → cho heo ăn; tua Admin 1 ngày xem cây chín và héo; xem Admin → Số liệu. Rồi merge `main`, tag `phase-05`, push.
+
 ### 2026-10-10 — GĐ4 hoàn thành: bản cài desktop Sobi World
 ✅ Đã làm:
-1. Đổi tên: `productName` "Sobi World", `appId` `com.sobiworld.game`, `SobiWorld.exe`, `SobiWorld-Setup-0.4.0.exe`, shortcut Desktop + Start Menu "Sobi World"; gói npm `sobi-world` 0.4.0. Giữ Electron + NSIS (decision 011, bổ sung 005).
+1. Đổi tên: `productName` "Sobi World", `appId` `com.sobiworld.game`, `SobiWorld.exe`, `SobiWorld-Setup-0.5.0.exe`, shortcut Desktop + Start Menu "Sobi World"; gói npm `sobi-world` 0.4.0. Giữ Electron + NSIS (decision 011, bổ sung 005).
 2. Save/settings ở `%APPDATA%\SobiWorld\` (đã có từ GĐ1); gỡ cài đặt không xóa save.
 3. Kiểm bản người chơi tự động, nằm trong `npm run dist:win`: `verify:build` (dist + dist-electron: không Admin, không dấu vết dev, không file thừa, không URL ngoài) và `verify:installer` (mở `app.asar` thật, chạy `SobiWorld.exe` trên thư mục dữ liệu tạm: cửa sổ "Sobi World", ghi được save, không request mạng). Luật thuần ở `scripts/build/checks.ts` + `tests/scripts/buildChecks.test.ts` (7 test, trong `npm run check`).
 4. Biến `SOBIWORLD_APPDATA` thay `%APPDATA%` cho kiểm thử (phát hiện khi chạy thử: đặt `APPDATA` không đủ, lần chạy đầu của tôi đã tạo `%APPDATA%\SobiWorld` thật; thư mục chỉ chứa một thế giới mới tinh do chính lần chạy đó tạo, không có dữ liệu của bạn, tôi đã xóa).
 5. Tài liệu: `docs/BUILD.md`, `docs/TEST_MAY_SACH.md`, `electron/README.md`, `docs/ASSET_TODO.md` (icon).
 6. Sửa test `assetsCheck` (vẽ lại toàn bộ placeholder, ~8 giây) vượt hạn 5 giây mặc định làm `npm run check` đỏ: nâng hạn 60 giây.
-🧪 Đã kiểm tra: `npm run check` xanh (938 test); `npm run test:e2e` 6/6; `npm run dist:win` ra `release/SobiWorld-Setup-0.4.0.exe` (~145 MB) và qua `verify:build` + `verify:installer`; cài thử im lặng vào thư mục tạm: có `SobiWorld.exe`, shortcut "Sobi World" ở Desktop và Start Menu; gỡ im lặng: sạch exe + shortcut (shortcut "Sobi Farm" cũ của bạn không bị đụng).
+🧪 Đã kiểm tra: `npm run check` xanh (938 test); `npm run test:e2e` 6/6; `npm run dist:win` ra `release/SobiWorld-Setup-0.5.0.exe` (~145 MB) và qua `verify:build` + `verify:installer`; cài thử im lặng vào thư mục tạm: có `SobiWorld.exe`, shortcut "Sobi World" ở Desktop và Start Menu; gỡ im lặng: sạch exe + shortcut (shortcut "Sobi Farm" cũ của bạn không bị đụng).
 ⚠️ Quyết định / giới hạn:
 - Chỉ Windows x64; macOS không làm (cần máy Mac + chữ ký Apple), mã không chặn việc thêm sau.
 - Chưa ký số: SmartScreen hiện "Unknown publisher" (hướng dẫn trong TEST_MAY_SACH).
 - Icon vẫn là mặt heo hồng vẽ bằng script (ASSET_TODO).
 - `npm audit`: 9 cảnh báo (8 vừa, 1 cao), tất cả trong công cụ build (`electron-builder`…), không nằm trong game. Sửa cần `--force` nâng bản lớn, để dành.
 - Chưa kiểm: máy sạch thật (không phải máy lập trình), tắt mạng thật khi cài, nâng cấp đè lên bản cài cũ.
-👉 Bạn cần: chép `release\SobiWorld-Setup-0.4.0.exe` sang máy khác và làm theo `docs/TEST_MAY_SACH.md`; rồi merge `main`, tag `phase-04`, push.
+👉 Bạn cần: chép `release\SobiWorld-Setup-0.5.0.exe` sang máy khác và làm theo `docs/TEST_MAY_SACH.md`; rồi merge `main`, tag `phase-04`, push.
 
 ### 2026-10-09 — Nâng cấp Sảnh: bố cục theo ảnh mẫu, Bi/So, thanh trên mới, hiệu ứng sống
 ✅ Đã làm:

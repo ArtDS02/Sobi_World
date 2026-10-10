@@ -127,6 +127,32 @@ function drawPlot(r: Raster, id: string) {
   }
 }
 
+/** The Garden's three structures, simple but readable: a mill with sails, a composting bin, a sprinkler on a post. */
+function drawGardenBuilding(r: Raster, id: string) {
+  const w = r.width;
+  const h = r.height;
+  const wood: Rgba = [168, 118, 70, 255];
+  const roof: Rgba = [196, 84, 70, 255];
+  const stone: Rgba = [214, 206, 190, 255];
+  r.ellipse(w / 2, h * 0.93, w * 0.42, h * 0.06, [0, 0, 0, 60]); // shadow
+  if (id === 'bld_feed_mill') {
+    r.roundRect(w * 0.22, h * 0.34, w * 0.56, h * 0.58, 14, stone);
+    for (let i = 0; i < 10; i += 1) r.rect(w * (0.16 + i * 0.012), h * (0.2 + i * 0.014), w * (0.68 - i * 0.024), h * 0.016, roof); // stepped roof
+    r.roundRect(w * 0.43, h * 0.62, w * 0.14, h * 0.3, 8, wood); // door
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]] as const) r.ellipse(w * 0.5 + dx * w * 0.2, h * 0.3 + dy * h * 0.12, w * 0.1, h * 0.04, shade(wood, 1.15));
+    r.ellipse(w * 0.5, h * 0.3, w * 0.04, w * 0.04, shade(wood, 0.6));
+  } else if (id === 'bld_composter') {
+    r.roundRect(w * 0.14, h * 0.32, w * 0.72, h * 0.6, 18, wood);
+    for (const y of [0.45, 0.6, 0.75]) r.rect(w * 0.14, h * y, w * 0.72, h * 0.03, shade(wood, 0.7));
+    r.roundRect(w * 0.1, h * 0.24, w * 0.8, h * 0.12, 10, shade(wood, 0.85));
+    r.ellipse(w * 0.5, h * 0.22, w * 0.3, h * 0.07, [92, 70, 44, 255]); // the heap
+  } else {
+    r.roundRect(w * 0.44, h * 0.3, w * 0.12, h * 0.62, 6, [120, 130, 140, 255]); // post
+    r.ellipse(w * 0.5, h * 0.26, w * 0.26, h * 0.1, [90, 170, 220, 255]); // head
+    for (const dx of [-0.3, -0.15, 0, 0.15, 0.3]) r.ellipse(w * (0.5 + dx), h * (0.1 + Math.abs(dx) * 0.2), 5, 8, [150, 210, 245, 220]); // drops
+  }
+}
+
 /** A padlock: the plaza marks an Area that is not open yet with it. */
 function drawLock(r: Raster) {
   const iron: Rgba = [96, 96, 112, 255];
@@ -157,6 +183,7 @@ function render(
   else if (id === 'ui_icon_lock') drawLock(r);
   else if (id.startsWith('crop_')) drawCrop(r, id);
   else if (id.startsWith('plot_')) drawPlot(r, id);
+  else if (id.startsWith('bld_')) drawGardenBuilding(r, id);
   else if (section === 'pigs') drawPig(r, colour, key === 'sleep');
   else if (section === 'fx') drawFx(r, colour, frames);
   else if (section === 'environment') drawEnvironment(r, id);
