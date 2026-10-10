@@ -384,7 +384,8 @@
       "sellGold": 120,
       "hungerRestore": 0,
       "curesSickness": true,
-      "moodBoost": 20
+      "moodBoost": 20,
+      "moodHours": 6
     },
     {
       "id": "item_potion_mood",
@@ -394,7 +395,8 @@
       "sellGold": 60,
       "hungerRestore": 0,
       "curesSickness": false,
-      "moodBoost": 40
+      "moodBoost": 40,
+      "moodHours": 12
     },
     {
       "id": "item_potion_battle",

@@ -2,6 +2,8 @@
 // grown and well fed, lay an egg. The child (gender, traits, family tree) is drawn now and kept on the egg, so it
 // never changes; the egg hatches when its time comes and the tank has room (logic/simulate.ts).
 import type { ErrorCode } from '../../../../core/config/errors';
+import type { ItemId } from '../../../../core/config/ids';
+import { ITEMS } from '../../../../core/config/items';
 import { hashSeed, mulberry32, randomId } from '../../../../core/rng';
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
@@ -27,7 +29,14 @@ export function pairError(a: AquariumState, x: Fish | undefined, y: Fish | undef
   return null;
 }
 
-export function breedFish(world: WorldSave, args: { fishAId: string; fishBId: string }, ctx: ActionContext): AquariumResult {
+/** The mutation boost of a flower (or anything) the player adds to a breeding, in percentage points; null when it has none. */
+export const boostOf = (itemId: string): number | null => {
+  const boost = ITEMS[itemId as ItemId]?.mutationBoost ?? 0;
+  return boost > 0 ? boost : null;
+};
+
+/** `boostItem`: an item with a `mutationBoost` (a rare flower) used up to raise the mutation chance of this egg. */
+export function breedFish(world: WorldSave, args: { fishAId: string; fishBId: string; boostItem?: string }, ctx: ActionContext): AquariumResult {
   return runAquarium(world, ctx, (w, a) => {
     const x = a.fish.find((f) => f.id === args.fishAId);
     const y = a.fish.find((f) => f.id === args.fishBId);
@@ -35,11 +44,15 @@ export function breedFish(world: WorldSave, args: { fishAId: string; fishBId: st
     if (error || !x || !y) return { ok: false, error: error ?? 'NOT_A_PAIR' };
     const mother = x.gender === 'FEMALE' ? x : y;
     const father = mother === x ? y : x;
-    const taken = take(w, FEED_ITEM, AB.breeding.feed);
+    const boost = args.boostItem === undefined ? 0 : boostOf(args.boostItem);
+    if (boost === null) return { ok: false, error: 'INVALID_REQUEST' };
+    const fed = take(w, FEED_ITEM, AB.breeding.feed);
+    if (!fed.ok) return fed;
+    const taken = args.boostItem === undefined ? fed : take(fed.world, args.boostItem, 1);
     if (!taken.ok) return taken;
     // The draw is seeded by the pair and the time, so it never consumes the shared rng stream.
     const rng = mulberry32(hashSeed('fish-traits', mother.id, father.id, ctx.now));
-    const traits = rollChildTraits(rng, [parentTraits(mother), parentTraits(father)], TRAITS, BREEDING_RULES_DEFAULT);
+    const traits = rollChildTraits(rng, [parentTraits(mother), parentTraits(father)], TRAITS, BREEDING_RULES_DEFAULT, { mutationBoost: boost });
     const egg: FishEgg = {
       id: randomId(ctx.rng),
       species: mother.breed,
@@ -58,7 +71,7 @@ export function breedFish(world: WorldSave, args: { fishAId: string; fishBId: st
     return {
       ok: true,
       world: put(taken.world, tank),
-      events: [{ type: 'AQUARIUM_EGGS_LAID', speciesId: egg.species, eggId: egg.id, mutated: traits.mutated }],
+      events: [{ type: 'AQUARIUM_EGGS_LAID', speciesId: egg.species, eggId: egg.id, mutated: traits.mutated, ...(args.boostItem === undefined ? {} : { boostItem: args.boostItem }) }],
       xp: AB.xp.breed,
     };
   });

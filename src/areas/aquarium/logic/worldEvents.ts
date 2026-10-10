@@ -19,6 +19,8 @@ export function aquariumWorldEvents(e: AquariumEvent): WorldEvent[] {
       return [{ type: 'creature.petted', area, creatureId: e.fishId, hearts: e.hearts }];
     case 'AQUARIUM_FISH_TREATED':
       return removed(MEDICINE_ITEM, 1);
+    case 'AQUARIUM_FISH_POTION':
+      return removed(e.itemId, 1);
     case 'AQUARIUM_WATER_CHANGED':
       return [{ type: 'tank.cleaned', area }];
     case 'AQUARIUM_CAST': {
@@ -41,7 +43,7 @@ export function aquariumWorldEvents(e: AquariumEvent): WorldEvent[] {
       return [...coins(-e.gold), ...materials];
     }
     case 'AQUARIUM_EGGS_LAID':
-      return removed(FEED_ITEM, AB.breeding.feed);
+      return [...removed(FEED_ITEM, AB.breeding.feed), ...(e.boostItem ? removed(e.boostItem, 1) : [])];
     case 'AQUARIUM_EGG_HATCHED':
       return [{ type: 'creature.born', area, creatureId: e.fishId, breed: e.speciesId }];
     case 'AQUARIUM_FISH_SICK':

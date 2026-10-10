@@ -30,6 +30,8 @@ export function aquariumPresentation(e: EventBase, origin: 'action' | 'tick' | '
       return { sound: 'pig_oink_happy', toast: null };
     case 'AQUARIUM_FISH_TREATED':
       return { sound: 'level_up', toast: null };
+    case 'AQUARIUM_FISH_POTION':
+      return { sound: 'level_up', toast: t(e.cured ? T.potionCured : T.potionMood, { potion: itemName(e.itemId) }) };
     case 'AQUARIUM_TRAIT_REVEALED':
       return { sound: 'notify', toast: t(T.trait, { name: e.name, trait: TRAITS.get(e.traitId)?.nameVi ?? e.traitId }) };
     case 'AQUARIUM_WATER_CHANGED':

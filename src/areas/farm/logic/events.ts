@@ -35,6 +35,8 @@ export type GameEvent =
   | { type: 'PIG_TRAIT_REVEALED'; pigId: string; traitId: string }
   | { type: 'PIG_CLEANED'; pigIds: string[] }
   | { type: 'PIG_TREATED'; pigId: string }
+  // GĐ9: a Cloud potion taken (cured = it also ended an illness).
+  | { type: 'PIG_POTION_USED'; pigId: string; itemId: ItemId; cured: boolean }
   | { type: 'TROUGH_UPGRADED'; level: number; capacity: number; gold: number }
   | { type: 'TROUGH_FILLED'; units: number; fromInventory: number; gold: number }
   | { type: 'ITEM_BOUGHT'; itemId: ItemId; quantity: number; gold: number }
@@ -43,7 +45,7 @@ export type GameEvent =
   | { type: 'MANURE_CLEANED'; piles: number; kept: number }
   | { type: 'ITEM_SOLD'; itemId: ItemId; quantity: number; gold: number }
   | { type: 'PIG_SOLD'; pigId: string; gold: number }
-  | { type: 'BREEDING_STARTED'; motherId: string; fatherId: string; endsAt: number }
+  | { type: 'BREEDING_STARTED'; motherId: string; fatherId: string; endsAt: number; /** A flower used for its mutation boost. */ boostItem?: ItemId }
   | { type: 'SLOT_BOUGHT'; slots: number; gold: number } // gold signed as in the transaction (§8.0)
   | { type: 'ORDER_FULFILLED'; orderId: string; gold: number }
   | { type: 'GIFT_SPAWNED'; giftId: string }
@@ -83,6 +85,7 @@ export const GAME_EVENT_TYPES = [
   'PIG_TRAIT_REVEALED',
   'PIG_CLEANED',
   'PIG_TREATED',
+  'PIG_POTION_USED',
   'TROUGH_UPGRADED',
   'TROUGH_FILLED',
   'ITEM_BOUGHT',

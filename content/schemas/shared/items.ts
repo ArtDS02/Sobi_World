@@ -14,8 +14,9 @@ export const itemSchema = z.strictObject({
   /** Hunger restored when a creature eats it; 0 = not food. */
   hungerRestore: nonNeg,
   curesSickness: z.boolean(),
-  /** Points added to hunger, cleanliness and energy when a creature takes it (the mood is their mean); absent = 0 (GĐ9 potions). */
+  /** Mood points a potion lifts a creature by (systems/bond withMoodBoost), for `moodHours` hours (default: the Bond rule's); absent = 0 (GĐ9 potions). */
   moodBoost: nonNeg.optional(),
+  moodHours: nonNeg.optional(),
   /** Percentage points added to the mutation chance when it goes into a breeding (GĐ9 flowers); absent = 0. */
   mutationBoost: nonNeg.optional(),
 });

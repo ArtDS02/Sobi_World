@@ -35,6 +35,7 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   PIG_FED: { type: 'PIG_FED', pigId: 'pig-1' },
   PIG_CLEANED: { type: 'PIG_CLEANED', pigIds: ['pig-1', 'pig-2'] },
   PIG_TREATED: { type: 'PIG_TREATED', pigId: 'pig-1' },
+  PIG_POTION_USED: { type: 'PIG_POTION_USED', pigId: 'pig-1', itemId: 'item_potion_mood', cured: false },
   TROUGH_FILLED: { type: 'TROUGH_FILLED', units: 5, fromInventory: 5, gold: 0 },
   ITEM_BOUGHT: { type: 'ITEM_BOUGHT', itemId: 'FOOD_BASIC', quantity: 2, gold: -50 },
   PIG_RENAMED: { type: 'PIG_RENAMED', pigId: 'pig-1' },

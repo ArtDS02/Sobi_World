@@ -333,6 +333,8 @@ export const vi = {
       feedBought: "Mua thêm {count} thức ăn cá: -{gold} Sobi Coin",
       petted: "{name} thích lắm!",
       treated: "Đã chữa cho {name}",
+      potionCured: "Cá uống {potion} và khỏi bệnh, vui hẳn lên",
+      potionMood: "Cá uống {potion}, tâm trạng tốt hẳn",
       water: "Nước bể trong veo",
       cast: "Câu được {name}!",
       castOyster: "Câu được {name}!",
@@ -723,6 +725,8 @@ export const vi = {
     // Action toasts (spec §11.3, DECISIONS R05B-1); not in Appendix B.
     bought: "Chào mừng {name} về nông trại!",
     treated: "{name} đã khỏi bệnh.",
+    potionCured: "{name} uống {potion} và khỏi bệnh, vui hẳn lên.",
+    potionMood: "{name} uống {potion}, tâm trạng tốt hẳn.",
     itemBought: "Đã mua {quantity} {item}.",
     renamed: "Đã đổi tên thành {name}.",
     slotBought: "Đã mở thêm chuồng! Giờ có {slots} chỗ.",
