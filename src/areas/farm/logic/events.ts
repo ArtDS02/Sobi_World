@@ -2,6 +2,7 @@
 import type { NeedLevel } from './config/care';
 import type { ItemId } from '../../../core/config/ids';
 import type { BreedId, DecorId } from './config/ids';
+import type { Purpose } from '../../../systems/creature/types';
 
 export type PigNeed = 'hunger' | 'clean';
 
@@ -26,7 +27,10 @@ export type GameEvent =
   // Action feedback (spec §8.0, D25). Gold is signed as in the transaction.
   | { type: 'PIG_BOUGHT'; pigId: string; breed: BreedId }
   | { type: 'PIG_ADOPTED'; pigId: string; breed: BreedId } // a newborn raised from the nursery (BR-1)
-  | { type: 'PIG_FED'; pigId: string; itemId?: string }
+  | { type: 'PIG_FED'; pigId: string; itemId?: string; favorite?: boolean }
+  // GĐ6: petting raises bond (hearts = whole hearts after it); the purpose a pig is raised for.
+  | { type: 'PIG_PETTED'; pigId: string; bond: number; hearts: number }
+  | { type: 'PIG_PURPOSE_SET'; pigId: string; purpose: Purpose }
   | { type: 'PIG_CLEANED'; pigIds: string[] }
   | { type: 'PIG_TREATED'; pigId: string }
   | { type: 'TROUGH_UPGRADED'; level: number; capacity: number; gold: number }
@@ -74,6 +78,8 @@ export const GAME_EVENT_TYPES = [
   'PIG_BOUGHT',
   'PIG_ADOPTED',
   'PIG_FED',
+  'PIG_PETTED',
+  'PIG_PURPOSE_SET',
   'PIG_CLEANED',
   'PIG_TREATED',
   'TROUGH_UPGRADED',

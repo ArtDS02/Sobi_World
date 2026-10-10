@@ -43,6 +43,10 @@ export function farmWorldEvents(e: GameEvent): WorldEvent[] {
       return [...removed(e.itemId, e.quantity), ...coins(e.gold)];
     case 'PIG_FED':
       return removed(e.itemId ?? 'FOOD_BASIC', 1);
+    case 'PIG_PETTED':
+      return [{ type: 'creature.petted', area, creatureId: e.pigId, hearts: e.hearts }];
+    case 'PIG_PURPOSE_SET':
+      return [{ type: 'creature.purposeSet', area, creatureId: e.pigId, purpose: e.purpose }];
     case 'PIG_TREATED':
       return removed('MEDICINE_COMMON', 1);
     case 'DAILY_CLAIMED':

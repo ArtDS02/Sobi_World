@@ -278,6 +278,9 @@ export const vi = {
 
   action: {
     feed: "Cho ăn",
+    pet: "Vuốt ve",
+    feedFavorite: "Món yêu thích: {item} (x{count})",
+    purpose: "Mục đích nuôi",
     feedPremium: "Ăn cao cấp (x{count})",
     feedGrass: "Ăn cỏ (x{count})",
     clean: "Tắm",
@@ -296,6 +299,23 @@ export const vi = {
     close: "Đóng",
     skip: "Bỏ qua",
     next: "Tiếp",
+  },
+
+  // Bond and what a pig is raised for (GĐ6, spec V2 §7).
+  bond: {
+    title: "Thân thiết",
+    hearts: "{hearts}/5 tim",
+    favorite: "Món yêu thích: {item}",
+    qualityLift: "Thân thiết nâng một bậc chất lượng",
+  },
+  purpose: {
+    title: "Mục đích nuôi",
+    none: "Chưa chọn",
+    SHIP: { name: "xuất chuồng", desc: "Nuôi để bán: cân nặng và chất lượng quyết định giá." },
+    BREED: { name: "giống", desc: "Giữ lại để phối giống." },
+    PET: { name: "thú cưng", desc: "Không bán, không phối; làm cả chuồng vui hơn." },
+    ADVENTURE: { name: "phiêu lưu", desc: "Sắp ra mắt cùng Sobi Adventure." },
+    needAdult: "Cần lớn tới giai đoạn heo lớn",
   },
 
   // Every code in ERRORS must appear here. A test asserts the mapping is total.
@@ -339,11 +359,16 @@ export const vi = {
     NOTHING_TO_DO: "Không có gì để làm ở đây.",
     NOTHING_TO_COLLECT: "Chưa có thành phẩm nào.",
     MAX_LEVEL_REACHED: "Đã ở mức cao nhất.",
+    PET_LIMIT_REACHED: "Hôm nay heo đã được vuốt ve đủ rồi. Mai quay lại nhé!",
+    PIG_IS_PET: "Đây là thú cưng, không xuất chuồng hay phối giống.",
+    PURPOSE_LOCKED: "Mục đích này sắp ra mắt cùng Sobi Adventure.",
     INVENTORY_FULL: "Túi đồ đã đầy chỗ. Hãy dùng bớt vật phẩm trước.",
   },
 
   // Shown on a disabled button so the player knows why, not just that.
   disabled: {
+    petLimit: "Hôm nay đủ rồi",
+    noFavorite: "Hết món yêu thích",
     notMature: "Chưa trưởng thành",
     isSick: "Đang bệnh",
     isPregnant: "Đang mang thai",
@@ -387,6 +412,8 @@ export const vi = {
     },
     birth: "{mother} vừa sinh {child}! Heo con đang chờ trong Kho.",
     adopted: "{name} đã về nông trại!",
+    petted: "{name} thích lắm! Thân thiết {hearts}/5 tim.",
+    purposeSet: "{name} sẽ là heo {purpose}.",
     troughEmpty: "Máng ăn đã hết. Heo sẽ ngừng lớn.",
     levelUp: "Lên cấp {level}!",
     discovery: "Khám phá mới: {name}! +{gold} Sobi Coin",

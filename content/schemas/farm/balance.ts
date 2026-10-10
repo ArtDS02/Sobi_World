@@ -49,7 +49,7 @@ const balanceSchema = z.strictObject({
   PIG_NAME_MAX: posInt,
   XP_EFFECTIVE_FEED_MAX_HUNGER: z.number().min(0).max(100),
   XP_EFFECTIVE_CLEAN_MAX_CLEAN: z.number().min(0).max(100),
-  XP: z.strictObject({ FEED: nonNeg, CLEAN: nonNeg, MANURE: nonNeg, SELL: nonNeg, BREED: nonNeg, ORDER: nonNeg, DISCOVERY: nonNeg }),
+  XP: z.strictObject({ FEED: nonNeg, CLEAN: nonNeg, MANURE: nonNeg, SELL: nonNeg, BREED: nonNeg, ORDER: nonNeg, DISCOVERY: nonNeg, PET: nonNeg }),
   NURSERY_MAX: posInt,
   MAX_SLOTS: posInt,
   /** Slot number (as a string key) -> its unlock. */

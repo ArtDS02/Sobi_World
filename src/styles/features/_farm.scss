@@ -184,6 +184,60 @@
       height: 0.55rem;
     }
 
+    // Bond: hearts, favourite food; purpose pills.
+    &__bond,
+    &__purpose {
+      display: flex;
+      flex-wrap: wrap;
+      gap: $sp-1 $sp-2;
+      align-items: center;
+      padding: $sp-2 $sp-3;
+      font-size: $fs-sm;
+      background: #fff;
+      border: 2px solid $c-border;
+      border-radius: $radius-card;
+    }
+
+    &__hearts {
+      font-size: 1.15rem;
+      color: $c-pig-line;
+      letter-spacing: 0.1em;
+    }
+
+    &__fav,
+    &__lift {
+      font-size: $fs-xs;
+      color: $c-text-muted;
+    }
+
+    &__lift {
+      font-weight: $fw-bold;
+      color: $c-success;
+    }
+
+    &__pill {
+      padding: 0 $sp-2;
+      font: inherit;
+      font-size: $fs-xs;
+      font-weight: $fw-bold;
+      color: $c-wood-dark;
+      cursor: pointer;
+      background: #fff;
+      border: 2px solid $c-border;
+      border-radius: 9999px;
+
+      &.is-active {
+        color: #fff;
+        background: $c-pig-line;
+        border-color: $c-pig-line;
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+    }
+
     &__actions {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));

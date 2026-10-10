@@ -2,6 +2,7 @@
 // §8). The config modules next to this one expose them under their game names (ITEMS, PRODUCTS…);
 // each Area loads its own files the same way. Vite bundles the JSON: nothing is fetched at runtime.
 import achievementsRaw from '../../../content/shared/achievements.json';
+import bondRaw from '../../../content/shared/bond.json';
 import characterRaw from '../../../content/shared/character.json';
 import dailyRaw from '../../../content/shared/daily.json';
 import dayNightRaw from '../../../content/shared/daynight.json';
@@ -15,6 +16,7 @@ import shopRaw from '../../../content/shared/shop.json';
 import valuationRaw from '../../../content/shared/valuation.json';
 import timeRaw from '../../../content/shared/time.json';
 import { achievementsFileSchema } from '../../../content/schemas/shared/achievements';
+import { bondFileSchema } from '../../../content/schemas/shared/bond';
 import { characterFileSchema } from '../../../content/schemas/shared/character';
 import { dailyFileSchema } from '../../../content/schemas/shared/daily';
 import { dayNightFileSchema } from '../../../content/schemas/shared/dayNight';
@@ -36,6 +38,7 @@ export const CONTENT = {
   recipes: loadContent('shared/recipes.json', recipesFileSchema, recipesRaw),
   quality: loadContent('shared/quality.json', qualityFileSchema, qualityRaw),
   shop: loadContent('shared/shop.json', shopFileSchema, shopRaw),
+  bond: loadContent('shared/bond.json', bondFileSchema, bondRaw),
   achievements: loadContent('shared/achievements.json', achievementsFileSchema, achievementsRaw),
   daily: loadContent('shared/daily.json', dailyFileSchema, dailyRaw),
   dayNight: loadContent('shared/daynight.json', dayNightFileSchema, dayNightRaw),

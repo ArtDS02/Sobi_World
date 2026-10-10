@@ -3,7 +3,10 @@
 // The species' own base (content `sellGold`, set per rarity tier) already carries the rarity step of the
 // 69 species, so the rarity multiplier of the spec is not applied a second time (decision 009).
 import { gameDay } from '../../../systems/health/disease';
-import { qualityFromMood, QUALITY_RULES, type Quality } from '../../../systems/quality/quality';
+import { BOND } from '../../../core/config/bond';
+import { hashSeed, mulberry32 } from '../../../core/rng';
+import { heartsOf } from '../../../systems/bond/bond';
+import { qualityFromMood, QUALITY_RULES, withBond, type Quality } from '../../../systems/quality/quality';
 import { needsMood } from '../../../systems/health/risk';
 import { marketFactor } from '../../../systems/valuation/market';
 import { healthFactor, valueOf, weightFactor } from '../../../systems/valuation/value';
@@ -25,6 +28,8 @@ export interface PriceContext {
 export interface Quote {
   base: number;
   quality: Quality;
+  /** Bond raised the quality one tier. */
+  bondLift: boolean;
   qualityFactor: number;
   weightKg: number;
   weightFactor: number;
@@ -35,13 +40,25 @@ export interface Quote {
 }
 
 type Priced = Pick<Pig, 'breed' | 'growthProgress' | 'hunger' | 'cleanliness' | 'isSick'> &
-  Partial<Pick<Pig, 'energy' | 'moodAvg' | 'moodSec' | 'lastSickAt'>>;
+  Partial<Pick<Pig, 'id' | 'bond' | 'energy' | 'moodAvg' | 'moodSec' | 'lastSickAt'>>;
 
-/** Quality of a pig: its lifetime average mood (a pig with no history yet counts its mood now). */
-export function pigQuality(pig: Priced, decorBonus = 0): Quality {
+/** Tier its lifetime average mood earns (a pig with no history yet counts its mood now), before Bond. */
+function moodQuality(pig: Priced, decorBonus: number): Quality {
   const avg = (pig.moodSec ?? 0) > 0 ? pig.moodAvg! : Math.min(100, needsMood(pig) + decorBonus);
   return qualityFromMood(avg, QUALITY_RULES);
 }
+
+/**
+ * Quality of a pig: its mood tier, lifted one tier by Bond (3 hearts: 20% chance, GAME_BALANCE §2.5). The roll is seeded
+ * by the pig's id, so the pig either has the lift or not for good: the quote and the sale always agree.
+ */
+export function pigQuality(pig: Priced, decorBonus = 0): Quality {
+  const q = moodQuality(pig, decorBonus);
+  return withBond(q, heartsOf(pig.bond, BOND), mulberry32(hashSeed(pig.id ?? '', 'bond-quality')), QUALITY_RULES);
+}
+
+/** Whether Bond lifted the pig's Quality by a tier (the sale dialog says so). */
+export const bondLifted = (pig: Priced, decorBonus = 0): boolean => pigQuality(pig, decorBonus) !== moodQuality(pig, decorBonus);
 
 export function sellQuote(pig: Priced, ctx: PriceContext): Quote {
   const base = BREEDS[pig.breed].sellGold;
@@ -57,6 +74,7 @@ export function sellQuote(pig: Priced, ctx: PriceContext): Quote {
   return {
     base,
     quality,
+    bondLift: bondLifted(pig, ctx.decorBonus),
     qualityFactor: factors.quality,
     weightKg: kg,
     weightFactor: factors.weight,

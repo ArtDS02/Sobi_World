@@ -9,6 +9,8 @@ import { upgradeTrough } from '../logic/actions/upgradeTrough';
 import { nextTroughLevel, troughLevel } from '../logic/troughLevel';
 import { cleanAll, cleanPig } from '../logic/actions/cleanPig';
 import { feedPig } from '../logic/actions/feedPig';
+import { petPig } from '../logic/actions/petPig';
+import { pigFavorite } from '../logic/bond';
 import { fillTrough } from '../logic/actions/fillTrough';
 import { sellPig } from '../logic/actions/sellPig';
 import { treatPig } from '../logic/actions/treatPig';
@@ -49,6 +51,7 @@ const SHORT_REASON: Partial<Record<ErrorCode, string>> = {
   PIG_IS_SICK: vi.disabled.isSick,
   NO_PIG_SLOT: vi.disabled.noSlot,
   NURSERY_FULL: vi.disabled.nurseryFull,
+  PET_LIMIT_REACHED: vi.disabled.petLimit,
 };
 
 /** Error code → short disabled reason; INSUFFICIENT_ITEM names the missing item. */
@@ -76,6 +79,15 @@ export function pigActions(save: FarmGame, pigId: string, now: number) {
     /** The Garden's foods, offered only while the bag holds some. */
     feedPremium: save.inventory.FOOD_PREMIUM > 0 ? vm(save, now, t(vi.action.feedPremium, { count: save.inventory.FOOD_PREMIUM }), (s, c) => feedPig(s, { ...args, itemId: 'FOOD_PREMIUM' }, c)) : null,
     feedGrass: save.inventory.item_grass > 0 ? vm(save, now, t(vi.action.feedGrass, { count: save.inventory.item_grass }), (s, c) => feedPig(s, { ...args, itemId: 'item_grass' }, c)) : null,
+    pet: vm(save, now, vi.action.pet, (s, c) => petPig(s, args, c)),
+    /** Its favourite crop, offered only while the bag holds one. */
+    feedFavorite: (() => {
+      const pig = save.pigs.find((p) => p.id === pigId);
+      const item = pig ? pigFavorite(pig) : null;
+      return item && save.inventory[item] > 0
+        ? vm(save, now, t(vi.action.feedFavorite, { item: vi.shop[item], count: save.inventory[item] }), (s, c) => feedPig(s, { ...args, itemId: item }, c))
+        : null;
+    })(),
     clean: vm(save, now, vi.action.clean, (s, c) => cleanPig(s, args, c)),
     treat: vm(save, now, vi.action.treat, (s, c) => treatPig(s, args, c), vi.disabled.noMedicine),
     sell: vm(save, now, vi.action.sell, (s, c) => sellPig(s, args, c)),

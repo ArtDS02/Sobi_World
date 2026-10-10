@@ -28,10 +28,14 @@ export const TRAIT_VALUES = [
 ] as const;
 export type Trait = (typeof TRAIT_VALUES)[number];
 
+/** Why a creature is raised (spec V2 §7): shipped out, kept to breed, kept as a pet, or sent adventuring (GĐ10). */
+export const PURPOSE_VALUES = ['SHIP', 'BREED', 'PET', 'ADVENTURE'] as const;
+export type Purpose = (typeof PURPOSE_VALUES)[number];
+
 /** Counters kept in the save's progression.stats (PG-2). */
 export const STAT_ID_VALUES = [
   'pigsBought', 'pigsSold', 'births', 'ordersFulfilled', 'giftsOpened',
-  'pigsCleaned', 'pigsTreated', 'breedings', 'goldEarned', 'bestStreak',
+  'pigsCleaned', 'pigsTreated', 'breedings', 'goldEarned', 'bestStreak', 'pigsPetted',
 ] as const;
 export type StatId = (typeof STAT_ID_VALUES)[number];
 

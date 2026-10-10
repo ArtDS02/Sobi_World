@@ -2,6 +2,8 @@
 // farmGameSchema = a whole Sobi Farm v7 save (legacy import, admin checks of the farm view),
 // farmAreaSchema = the farm's slice of the world save v8 (`areas.sobi_farm`).
 import { z } from 'zod';
+import { PURPOSE_VALUES } from '../../../../../content/schemas/vocab';
+import { BOND } from '../../../../core/config/bond';
 import { CURRENCY_VALUES } from '../../../../core/save/world';
 import { BALANCE } from '../config/balance';
 import { GIFTS } from '../config/gifts';
@@ -70,6 +72,11 @@ const pigSchema = z.object({
   sickDay: z.number().int().optional(),
   sickEpisodes: z.number().int().min(0).optional(),
   recoveringUntil: time.optional(),
+  purpose: z.enum(PURPOSE_VALUES).optional(),
+  bond: z.number().finite().min(0).max(BOND.maxBond).optional(),
+  petDay: z.number().int().optional(),
+  petCount: z.number().int().min(0).optional(),
+  moodBoost: z.object({ amount: nonNeg, until: time }).optional(),
 });
 
 const orderSchema = z.object({

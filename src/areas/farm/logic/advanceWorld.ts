@@ -10,7 +10,7 @@ import { refreshOrders } from './orders';
 import { progressStep } from './progress';
 import { needLevel, needRank } from './pigHealth';
 import { advanceWithTrough } from './trough';
-import { decorBonus } from './decor';
+import { penMood } from './decor';
 import { criticalEvents, resolveMortality } from './mortality';
 import type { SimMode } from '../../../core/simulation/simulate';
 import { BALANCE } from './config/balance';
@@ -27,7 +27,7 @@ export interface WorldResult {
 export function advanceWorld(state: FarmGame, now: number, rng: Rng, dayOffsetMs = 0, mode: SimMode = 'online'): WorldResult {
   // Steps 1-2: resolveTrough then advancePig for every pig (DECISIONS S04A-1).
   const piles = state.manure ?? 0;
-  const win = advanceWithTrough({ pigs: state.pigs, trough: state.trough }, now, rng, dayOffsetMs, piles, state.createdAt, decorBonus(state));
+  const win = advanceWithTrough({ pigs: state.pigs, trough: state.trough }, now, rng, dayOffsetMs, piles, state.createdAt, penMood(state));
   let next: FarmGame = { ...state, pigs: win.pigs, trough: win.trough, ...manureAfter(piles, state.pigs, win.pigs) };
   const events: GameEvent[] = [];
 

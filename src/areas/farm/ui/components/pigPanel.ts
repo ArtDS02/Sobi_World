@@ -1,6 +1,6 @@
 // Selected pig panel (spec §10.2): portrait column (art, name → rename, breed / gender / stage
 // chips) beside the care column (stat bars, happiness → price multiplier, actions with reasons).
-import { decorBonus } from '../../logic/decor';
+import { penMood } from '../../logic/decor';
 import { BREEDS } from '../../logic/config/breeds';
 import type { UiIcon } from '../../../../core/config/assetIds';
 import { happiness } from '../../logic/happiness';
@@ -8,6 +8,7 @@ import type { Pig, FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
 import type { BoundAction } from '../../store';
 import { pigActions, type ActionVm } from '../actionsVm';
+import { bondVm } from '../bondVm';
 import { breedingVm } from '../breedVm';
 import { el } from '../../../../ui/dom';
 import { pigPanelVm } from '../viewModel';
@@ -52,10 +53,11 @@ export function renderPigPanel(
   now: number,
   on: PigPanelHandlers,
 ): HTMLElement {
-  const bonus = decorBonus(save);
+  const bonus = penMood(save);
   const vm = pigPanelVm(pig, now, bonus);
   const actions = pigActions(save, pig.id, now);
   const breeding = breedingVm(save, pig, now);
+  const bond = bondVm(save, pig, now, bonus);
   const def = BREEDS[pig.breed];
   return el(
     'section',
@@ -107,10 +109,35 @@ export function renderPigPanel(
         happiness(pig, bonus),
         'is-key',
       ),
+      // Bond: hearts, the favourite food and the quality tier it lifts.
+      el(
+        'div',
+        { class: 'pig-panel__bond', attrs: { title: bond.favorite } },
+        el('span', { class: 'pig-panel__label', text: vi.bond.title }),
+        el('span', { class: 'pig-panel__hearts', text: bond.heartsText, attrs: { 'aria-label': bond.summary } }),
+        el('span', { class: 'pig-panel__fav', text: bond.favorite }),
+        bond.qualityLift ? el('span', { class: 'pig-panel__lift', text: bond.qualityLift }) : null,
+      ),
+      // What the pig is raised for: a choice from Adult on.
+      el(
+        'div',
+        { class: 'pig-panel__purpose', attrs: { role: 'group', 'aria-label': vi.purpose.title } },
+        el('span', { class: 'pig-panel__label', text: vi.purpose.title }),
+        ...bond.purposes.map((p) =>
+          el('button', {
+            class: `pig-panel__pill${p.active ? ' is-active' : ''}`,
+            text: p.label,
+            attrs: { type: 'button', title: p.reason ?? p.title, 'aria-pressed': String(p.active), ...(p.reason !== null ? { disabled: '' } : {}) },
+            on: { click: () => on.act(p.run) },
+          }),
+        ),
+      ),
       el(
         'div',
         { class: 'pig-panel__actions' },
+        actionButton(actions.pet, () => on.act(actions.pet.run), '', 'happiness'),
         actionButton(actions.feed, () => on.act(actions.feed.run), '', 'feed'),
+        actions.feedFavorite ? actionButton(actions.feedFavorite, () => on.act(actions.feedFavorite!.run), '', 'feed') : null,
         actions.feedPremium ? actionButton(actions.feedPremium, () => on.act(actions.feedPremium!.run), '', 'feed') : null,
         actions.feedGrass ? actionButton(actions.feedGrass, () => on.act(actions.feedGrass!.run), '', 'feed') : null,
         actionButton(actions.clean, () => on.act(actions.clean.run), '', 'clean'),

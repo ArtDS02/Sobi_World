@@ -28,6 +28,8 @@ function deltas(e: GameEvent): Partial<Record<StatId, number>> {
       return { pigsCleaned: e.pigIds.length };
     case 'PIG_TREATED':
       return { pigsTreated: 1 };
+    case 'PIG_PETTED':
+      return { pigsPetted: 1 };
     case 'BREEDING_STARTED':
       return { breedings: 1 };
     default:

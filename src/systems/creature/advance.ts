@@ -2,6 +2,7 @@
 // fed and healthy, manure, illness onset. Closed form over [lastTickedAt, now], so one call covers a
 // 1 s tick or a 30-day absence alike (ARCHITECTURE §5: one formula for every mode). Pure.
 import { episodeThreshold, needsMood, riskOver, type RiskRules } from '../health/risk';
+import { moodBoostOver } from '../bond/bond';
 import { GROWN_SNAP } from './growth';
 import { energyAfter, type EnergyRates, type SleepRules } from './sleep';
 import type { Creature } from './types';
@@ -91,7 +92,7 @@ export function advanceCreature<C extends Creature>(c: C, now: number, rates: Cr
     energy,
     poopProgress: (c.poopProgress ?? 0) + (c.growthProgress >= rates.poopFromProgress ? dt / rates.poopSec : 0),
     illRisk,
-    ...lifeMood(c, dt, Math.min(100, (mood0 + mood1) / 2 + rates.moodBonus)),
+    ...lifeMood(c, dt, Math.min(100, (mood0 + mood1) / 2 + rates.moodBonus + moodBoostOver(c, c.lastTickedAt, now))),
     ...onset,
     lastTickedAt: now,
   };

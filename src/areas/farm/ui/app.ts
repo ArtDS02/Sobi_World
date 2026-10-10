@@ -1,7 +1,7 @@
 // App shell (DECISIONS R05C-1): top bar, the farm canvas filling the window, one popup at a time
 // opened by clicking world objects, toasts, dialogs. Re-renders on store notify.
 import { openGift } from '../logic/actions/openGift';
-import { decorBonus } from '../logic/decor';
+import { penMood } from '../logic/decor';
 import type { NurseryPig, Pig, FarmGame } from '../logic/types';
 import { vi } from '../../../i18n/vi';
 import type { BoundAction, FarmStore, FarmSnapshot } from '../store';
@@ -97,7 +97,7 @@ export function mountApp(
     act: (run: BoundAction) => void act(run),
     sell: (pig: Pig, vm: ActionVm) => {
       const save = store.getSnapshot().save;
-      openSellDialog(dialogs, pig, vm, act, save ? decorBonus(save) : 0, now());
+      openSellDialog(dialogs, pig, vm, act, save ? penMood(save) : 0, now());
     },
     rename: (pig: Pig) => openRenameDialog(dialogs, pig, act),
     breed: (pig: Pig) => {

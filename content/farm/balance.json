@@ -34,7 +34,16 @@
     "PIG_NAME_MAX": 16,
     "XP_EFFECTIVE_FEED_MAX_HUNGER": 80,
     "XP_EFFECTIVE_CLEAN_MAX_CLEAN": 70,
-    "XP": { "FEED": 2, "CLEAN": 2, "MANURE": 2, "SELL": 10, "BREED": 15, "ORDER": 25, "DISCOVERY": 30 },
+    "XP": {
+      "FEED": 2,
+      "CLEAN": 2,
+      "MANURE": 2,
+      "SELL": 10,
+      "BREED": 15,
+      "ORDER": 25,
+      "DISCOVERY": 30,
+      "PET": 1
+    },
     "NURSERY_MAX": 12,
     "MAX_SLOTS": 24,
     "SLOT_UNLOCKS": {

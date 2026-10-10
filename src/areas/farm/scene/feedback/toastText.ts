@@ -71,6 +71,10 @@ export function toastText(
       return t(vi.event.treated, { name: nameOf(event.pigId) });
     case 'ITEM_BOUGHT':
       return t(vi.event.itemBought, { quantity: event.quantity, item: vi.shop[event.itemId] });
+    case 'PIG_PETTED':
+      return t(vi.event.petted, { name: nameOf(event.pigId), hearts: event.hearts });
+    case 'PIG_PURPOSE_SET':
+      return t(vi.event.purposeSet, { name: nameOf(event.pigId), purpose: vi.purpose[event.purpose].name });
     case 'PIG_RENAMED':
       return t(vi.event.renamed, { name: nameOf(event.pigId) });
     case 'BREEDING_STARTED':

@@ -1,6 +1,6 @@
 // Orders view-model (spec §8.14, §10.1): one card per live order with its requirements, reward,
 // time left and the pigs that can fill it. Pure, so it is unit-tested directly.
-import { decorBonus } from '../logic/decor';
+import { penMood } from '../logic/decor';
 import { fulfillOrder, pigMeetsOrder } from '../logic/actions/fulfillOrder';
 import { BREEDS } from '../logic/config/breeds';
 import { happiness } from '../logic/happiness';
@@ -26,7 +26,7 @@ export interface OrderCardVm {
 }
 
 export function ordersVm(save: FarmGame, now: number): OrderCardVm[] {
-  const bonus = decorBonus(save);
+  const bonus = penMood(save);
   return [...save.orders]
     .filter((o) => o.expiresAt > now)
     .sort((a, b) => a.createdAt - b.createdAt || a.id.localeCompare(b.id))
