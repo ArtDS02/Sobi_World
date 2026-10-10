@@ -11,8 +11,10 @@ export interface DecorDef {
   artId: string;
   priceGold: number;
   unlockLevel: number;
-  /** Happiness points added to every pig while owned. */
+  /** Happiness points added to every pig of the pen while it stands there. */
   happyBonus: number;
+  /** Places it can stand (the layout has a placement per spot). */
+  spots: number;
 }
 
 export const DECORS: Record<DecorId, DecorDef> = byId('farm/decor.json', FARM_CONTENT.decor.decor, DECOR_ID_VALUES);

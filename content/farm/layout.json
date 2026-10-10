@@ -71,15 +71,32 @@
     { "id": "prop_rock", "layer": 4, "x": 0.8406, "y": 0.8889, "width": 90 },
     { "id": "prop_mushroom", "layer": 4, "x": 0.6844, "y": 0.9778, "width": 62 },
     { "id": "prop_bush", "layer": 4, "x": 0.7625, "y": 0.9833, "width": 160 },
-    { "id": "prop_windmill", "layer": 4, "x": 0.5313, "y": 0.3667, "width": 170, "decor": "DECOR_WINDMILL" },
-    { "id": "prop_fence_section", "layer": 4, "x": 0.5625, "y": 0.9778, "width": 150, "decor": "DECOR_FENCE" },
+    {
+      "id": "prop_windmill",
+      "layer": 4,
+      "x": 0.5313,
+      "y": 0.3667,
+      "width": 170,
+      "decor": "DECOR_WINDMILL",
+      "spot": 0
+    },
+    {
+      "id": "prop_fence_section",
+      "layer": 4,
+      "x": 0.5625,
+      "y": 0.9778,
+      "width": 150,
+      "decor": "DECOR_FENCE",
+      "spot": 0
+    },
     {
       "id": "prop_veggie_patch",
       "layer": 4,
       "x": 0.4063,
       "y": 0.9889,
       "width": 200,
-      "decor": "DECOR_VEGGIE_PATCH"
+      "decor": "DECOR_VEGGIE_PATCH",
+      "spot": 0
     },
     {
       "id": "prop_sunflower",
@@ -87,7 +104,8 @@
       "x": 0.2938,
       "y": 0.9778,
       "width": 100,
-      "decor": "DECOR_SUNFLOWERS"
+      "decor": "DECOR_SUNFLOWERS",
+      "spot": 0
     },
     {
       "id": "prop_wheelbarrow",
@@ -95,8 +113,125 @@
       "x": 0.0688,
       "y": 0.8,
       "width": 120,
-      "decor": "DECOR_WHEELBARROW"
+      "decor": "DECOR_WHEELBARROW",
+      "spot": 0
     },
-    { "id": "prop_hay_bale", "layer": 4, "x": 0.9313, "y": 0.7889, "width": 110, "decor": "DECOR_HAY_BALE" }
+    {
+      "id": "prop_hay_bale",
+      "layer": 4,
+      "x": 0.9313,
+      "y": 0.7889,
+      "width": 110,
+      "decor": "DECOR_HAY_BALE",
+      "spot": 0
+    },
+    {
+      "id": "prop_windmill",
+      "layer": 4,
+      "x": 0.12,
+      "y": 0.55,
+      "width": 170,
+      "decor": "DECOR_WINDMILL",
+      "spot": 1
+    },
+    {
+      "id": "prop_windmill",
+      "layer": 4,
+      "x": 0.9,
+      "y": 0.52,
+      "width": 170,
+      "decor": "DECOR_WINDMILL",
+      "spot": 2
+    },
+    {
+      "id": "prop_fence_section",
+      "layer": 4,
+      "x": 0.12,
+      "y": 0.7,
+      "width": 150,
+      "decor": "DECOR_FENCE",
+      "spot": 1
+    },
+    {
+      "id": "prop_fence_section",
+      "layer": 4,
+      "x": 0.88,
+      "y": 0.88,
+      "width": 150,
+      "decor": "DECOR_FENCE",
+      "spot": 2
+    },
+    {
+      "id": "prop_veggie_patch",
+      "layer": 4,
+      "x": 0.62,
+      "y": 0.99,
+      "width": 200,
+      "decor": "DECOR_VEGGIE_PATCH",
+      "spot": 1
+    },
+    {
+      "id": "prop_veggie_patch",
+      "layer": 4,
+      "x": 0.85,
+      "y": 0.7,
+      "width": 200,
+      "decor": "DECOR_VEGGIE_PATCH",
+      "spot": 2
+    },
+    {
+      "id": "prop_sunflower",
+      "layer": 4,
+      "x": 0.8,
+      "y": 0.98,
+      "width": 100,
+      "decor": "DECOR_SUNFLOWERS",
+      "spot": 1
+    },
+    {
+      "id": "prop_sunflower",
+      "layer": 4,
+      "x": 0.06,
+      "y": 0.96,
+      "width": 100,
+      "decor": "DECOR_SUNFLOWERS",
+      "spot": 2
+    },
+    {
+      "id": "prop_wheelbarrow",
+      "layer": 4,
+      "x": 0.93,
+      "y": 0.62,
+      "width": 120,
+      "decor": "DECOR_WHEELBARROW",
+      "spot": 1
+    },
+    {
+      "id": "prop_wheelbarrow",
+      "layer": 4,
+      "x": 0.5,
+      "y": 0.62,
+      "width": 120,
+      "decor": "DECOR_WHEELBARROW",
+      "spot": 2
+    },
+    {
+      "id": "prop_hay_bale",
+      "layer": 4,
+      "x": 0.07,
+      "y": 0.62,
+      "width": 110,
+      "decor": "DECOR_HAY_BALE",
+      "spot": 1
+    },
+    {
+      "id": "prop_hay_bale",
+      "layer": 4,
+      "x": 0.7,
+      "y": 0.7,
+      "width": 110,
+      "decor": "DECOR_HAY_BALE",
+      "spot": 2
+    }
   ]
 }

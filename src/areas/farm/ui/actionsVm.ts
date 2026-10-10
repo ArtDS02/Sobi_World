@@ -25,7 +25,8 @@ import { rarityRank } from '../../../core/config/rarity';
 import type { AssetRegistry } from '../../../core/assets/registry';
 import { ITEMS } from '../../../core/config/items';
 import { DECOR_IDS, DECORS } from '../logic/config/decor';
-import { decorBonus } from '../logic/decor';
+import { arrangeDecor } from '../logic/actions/arrangeDecor';
+import { decorBonus, planOf } from '../logic/decor';
 import { productById, shopProducts } from '../logic/shopProducts';
 import { QUALITY_RULES } from '../../../systems/quality/quality';
 import { CONTENT } from '../../../core/config/content';
@@ -194,14 +195,21 @@ export function shopDecor(save: FarmGame, now: number) {
           : error
             ? reasonFor(error)
             : null;
+    const owned = save.decor.includes(id);
+    const stored = owned && planOf(save, id).stored;
+    const arrange = (op: 'place' | 'store' | 'move', label: string): ActionVm => vm(save, now, label, (s, c) => arrangeDecor(s, { decorId: id, op }, c));
     return {
       id,
       artId: def.artId,
       name: vi.decor[id],
       bonus: t(vi.decor.bonus, { n: def.happyBonus }),
       price: goldText(def.priceGold),
-      owned: save.decor.includes(id),
+      owned,
+      stored,
       buy: { label: vi.action.buy, reason, run } satisfies ActionVm,
+      /** Put out / store it, and move it to its next spot: only for a decoration the player owns. */
+      toggle: owned ? (stored ? arrange('place', vi.decor.place) : arrange('store', vi.decor.store)) : null,
+      move: owned && def.spots > 1 ? arrange('move', vi.decor.move) : null,
     };
   });
   return { total: t(vi.decor.total, { n: decorBonus(save) }), items };

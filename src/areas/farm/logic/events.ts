@@ -49,6 +49,7 @@ export type GameEvent =
   // PG-1..3: neighbour's help, decorations (the daily reward and achievements are the world's, core/goals).
   | { type: 'RELIEF_CLAIMED'; gold: number; food: number; medicine: number }
   | { type: 'DECOR_BOUGHT'; decorId: DecorId; gold: number }
+  | { type: 'DECOR_ARRANGED'; decorId: DecorId; op: 'place' | 'store' | 'move' }
   | {
       type: 'SETTING_CHANGED';
       key: 'musicOn' | 'sfxOn' | 'reduceMotion' | 'tutorialDone';
@@ -93,6 +94,7 @@ export const GAME_EVENT_TYPES = [
   'GIFT_OPENED',
   'RELIEF_CLAIMED',
   'DECOR_BOUGHT',
+  'DECOR_ARRANGED',
   'SETTING_CHANGED',
 ] as const satisfies readonly GameEventType[];
 

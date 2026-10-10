@@ -133,3 +133,10 @@
     margin-top: $sp-1;
   }
 }
+
+// Where a bought decoration stands: put it out or store it, move it to its next spot (GĐ6).
+.shop__arrange {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

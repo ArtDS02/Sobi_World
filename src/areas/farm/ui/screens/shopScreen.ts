@@ -115,8 +115,16 @@ function decorTab(save: FarmGame, now: number, on: ShopHandlers) {
           { class: 'shop__info' },
           el('h3', { class: 'shop__name', text: d.name }),
           line('desc', d.bonus),
+          d.stored ? line('desc', vi.decor.stored) : null,
           price(d.price),
-          actionButton(d.buy, () => on.act(d.buy.run)),
+          d.owned
+            ? el(
+                'div',
+                { class: 'shop__arrange' },
+                d.toggle ? actionButton(d.toggle, () => on.act(d.toggle!.run)) : null,
+                d.move ? actionButton(d.move, () => on.act(d.move!.run)) : null,
+              )
+            : actionButton(d.buy, () => on.act(d.buy.run)),
         ),
       ),
     ),

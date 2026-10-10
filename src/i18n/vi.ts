@@ -879,8 +879,17 @@ export const vi = {
     DECOR_VEGGIE_PATCH: "Luống rau",
     DECOR_WINDMILL: "Cối xay gió",
     bonus: "Heo vui +{n}",
-    total: "Trang trí đang cộng +{n} vui vẻ cho mọi heo.",
-    owned: "Đã đặt",
+    total: "Trang trí đang đặt cộng +{n} vui vẻ cho mọi heo.",
+    owned: "Đã mua",
+    place: "Đặt ra",
+    store: "Cất vào kho",
+    move: "Dời chỗ",
+    stored: "Đang cất (không cộng vui vẻ)",
+    arranged: {
+      place: "Đã đặt {name} ra nông trại.",
+      store: "Đã cất {name} vào kho.",
+      move: "Đã dời {name} sang chỗ khác.",
+    },
   },
 
   time: {

@@ -69,6 +69,7 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   // PG-1..3: panel rewards; the toast names what arrived (the goals' own are in ui/goals/feedback.ts).
   RELIEF_CLAIMED: row(null, [], 'coin_collect', true),
   DECOR_BOUGHT: row(null, [], 'ui_click', true),
+  DECOR_ARRANGED: row(null, [], 'ui_click', true),
   ITEM_BOUGHT: row(null, [], 'ui_click', true),
   PIG_RENAMED: row(null, [], 'ui_click', true),
   // GĐ6: a pet is a small joy (hearts rise); the purpose is a quiet choice.

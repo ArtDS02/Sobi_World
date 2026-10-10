@@ -6,7 +6,7 @@ import { color, unit } from '../fields';
 import { placementSchema } from '../farm/layout';
 
 export const plazaPlacementSchema = placementSchema
-  .omit({ action: true, role: true, badge: true, decor: true, signed: true })
+  .omit({ action: true, role: true, badge: true, decor: true, spot: true, signed: true })
   .extend({
     /** The door to an Area: its manifest `portalInPlaza`. */
     portal: z.string().regex(/^[a-z][a-z0-9_]*$/).optional(),

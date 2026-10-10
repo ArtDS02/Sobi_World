@@ -122,6 +122,8 @@ const giftSchema = z.object({
   xp: nonNeg,
 });
 
+const decorPlanSchema = z.partialRecord(z.enum(DECOR_ID_VALUES), z.object({ spot: z.number().int().min(0), stored: z.boolean() }));
+
 const shapeSchema = z.object({
   schemaVersion: z.literal(FARM_DOC_VERSION),
   createdAt: time,
@@ -151,6 +153,7 @@ const shapeSchema = z.object({
     daily: z.object({ lastDay: z.number().int().nullable(), streak: z.number().int().min(0) }),
   }),
   decor: z.array(z.enum(DECOR_ID_VALUES)),
+  decorPlan: decorPlanSchema.optional(),
   settings: z.object({
     musicOn: z.boolean(),
     sfxOn: z.boolean(),
@@ -192,6 +195,7 @@ const farmAreaShape = z.object({
   orders: z.array(orderSchema),
   gifts: z.object({ nextAt: time.nullable(), boxes: z.array(giftSchema) }),
   decor: z.array(z.enum(DECOR_ID_VALUES)),
+  decorPlan: decorPlanSchema.optional(),
   breedingRecords: z.array(breedingRecordSchema),
   /** Piles of manure lying in the pen (absent = none; GĐ2). */
   manure: z.number().int().min(0).optional(),

@@ -85,6 +85,8 @@ export function toastText(
       return t(vi.event.giftOpened, { gold: formatInt(event.gold), xp: formatInt(event.xp) });
     case 'RELIEF_CLAIMED':
       return t(vi.event.reliefClaimed, { what: rewardText(event) });
+    case 'DECOR_ARRANGED':
+      return t(vi.decor.arranged[event.op], { name: vi.decor[event.decorId as DecorId] });
     case 'DECOR_BOUGHT':
       return t(vi.event.decorBought, { name: vi.decor[event.decorId as DecorId] });
     case 'GIFT_SPAWNED': // the box itself appears on the farm
