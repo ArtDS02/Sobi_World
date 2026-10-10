@@ -3,9 +3,11 @@
 import { BOND } from '../../../core/config/bond';
 import type { ItemId } from '../../../core/config/ids';
 import { favoriteOf } from '../../../systems/bond/bond';
+import { BREEDS } from './config/breeds';
 import type { FarmGame, Pig } from './types';
 
-export const pigFavorite = (pig: Pick<Pig, 'id'>): ItemId => favoriteOf(pig.id, BOND) as ItemId;
+/** The species' own favourite when it has one (GĐ7), else one drawn from the Bond pool by the pig's id. */
+export const pigFavorite = (pig: Pick<Pig, 'id' | 'breed'>): ItemId => BREEDS[pig.breed].favorite ?? (favoriteOf(pig.id, BOND) as ItemId);
 
 /** Pigs kept as pets (not for sale, not for breeding). */
 export const isPet = (pig: Pick<Pig, 'purpose'>): boolean => pig.purpose === 'PET';

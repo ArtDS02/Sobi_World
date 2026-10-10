@@ -77,6 +77,41 @@
           "textVi": "Heo cho phân, phân thành phân bón, phân bón nuôi cây, cây thành thức ăn cho heo. Cà rốt và bắp còn là món yêu thích của heo, và là hàng cho Bảng đơn."
         }
       ]
+    },
+    {
+      "id": "npc_breeder",
+      "area": "sobi_farm",
+      "nameVi": "Bà Ngan Lai",
+      "station": "breeding",
+      "artId": "prop_animal_duck",
+      "greetingVi": "Chào bạn! Mình là Lai, chuyên để ý chuyện phối giống. Có tin gì mình kể bạn nghe, nhưng kể chuyện thì phải kể nửa vời mới vui.",
+      "topics": [
+        {
+          "id": "traits",
+          "titleVi": "Tính trạng",
+          "textVi": "Mỗi con heo mang tối đa 3 tính trạng và truyền cho con với tỉ lệ nửa nửa. Có lúc con sinh ra mang tính trạng hiếm mà bố mẹ không có: đó là đột biến."
+        },
+        {
+          "id": "hidden",
+          "titleVi": "Tính trạng ẩn",
+          "textVi": "Tính trạng hiếm đôi khi giấu kín. Chăm heo đến 5 tim thì nó lộ ra. Còn chưa lộ thì nó vẫn truyền cho đời sau, nên đừng vội bán heo con của dòng quý."
+        },
+        {
+          "id": "luck",
+          "titleVi": "Vận may",
+          "textVi": "Phối mãi không ra heo hiếm thì vận may tích lại, lần sau dễ trúng hơn. Ra heo hiếm rồi thì vận may về lại từ đầu."
+        },
+        {
+          "id": "pedigree",
+          "titleVi": "Phả hệ",
+          "textVi": "Mở bảng heo rồi bấm Phả hệ để xem bố mẹ, ông bà của con heo. Heo đời đầu thì chưa có phả hệ."
+        },
+        {
+          "id": "codex",
+          "titleVi": "Giống chưa gặp",
+          "textVi": "Trong Sổ sưu tầm, ô dấu ba chấm là giống bạn chưa gặp. Ô đó cho biết độ hiếm và họ của giống, đủ để đoán cặp bố mẹ nên thử."
+        }
+      ]
     }
   ]
 }

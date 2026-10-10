@@ -10,3 +10,5 @@ Sau khi thêm/xóa id: `npm run content:ids`. Id đã phát hành không bị x�
 GĐ5: `garden/` — `crops.json` (5 cây: hạt, giờ lớn, sản lượng), `balance.json` (ô đất, tưới, héo, phân bón, vòi tưới, Máy xay / Thùng ủ, bảng cấp), `area.json`; `shared/recipes.json` (recipe của công trình); `shared/items.json` có thêm hạt, nông sản, thức ăn cao cấp, phân bón. Tất cả sửa được ở Admin → Số liệu.
 
 GĐ3: `plaza/layout.json` (Sảnh), `shared/character.json` (nhân vật), `<area>/area.json` có `planned: true` cho Area chưa làm (Garden, Aquarium, Cloud, Adventure).
+
+GĐ7: `breeding/` — `traits.json` (tính trạng: hiệu ứng, trọng số), `balance.json` (di truyền, đột biến, vận may, phả hệ), `rumors.json` (câu tin đồn của Nhà lai giống). Bảng cặp và công thức đặc biệt vẫn ở `farm/breeding.json`; `farm/species.json` thêm `signatureTrait`, `favorite`; `shared/npcs.json` thêm NPC `station`.

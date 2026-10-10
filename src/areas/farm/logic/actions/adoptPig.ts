@@ -4,6 +4,7 @@
 import { BALANCE } from '../config/balance';
 import { lowestFreeSlot } from '../breeding';
 import { freeSlots } from '../derived';
+import { heredityFields } from '../heredity';
 import type { ActionContext, ActionResult, Pig, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
@@ -32,6 +33,7 @@ export function adoptPig(state: FarmGame, args: AdoptPigArgs, ctx: ActionContext
       createdAt: ctx.now,
       generation: baby.generation,
       parents: baby.parents,
+      ...heredityFields(baby),
     };
     const next = {
       ...s,

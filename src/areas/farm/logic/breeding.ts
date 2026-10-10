@@ -5,6 +5,8 @@ import type { Gender } from '../../../core/config/ids';
 import type { BreedId } from './config/ids';
 import type { GameEvent } from './events';
 import { mulberry32, randomId, type Rng } from '../../../core/rng';
+import { applyPity } from '../../../systems/breeding';
+import { heredityFields, isRareBreed } from './heredity';
 import type { NurseryPig, Pig, FarmGame } from './types';
 import { discoverBreed } from './collection';
 import { pickPigName } from './pigNames';
@@ -20,13 +22,23 @@ export function weightedPick(rng: Rng, outcomes: readonly BreedingOutcome[]): Br
   return outcomes[outcomes.length - 1]!.breed;
 }
 
-/** Child breed (weighted, matrix) then gender (50/50), in that rng order. */
-export function rollChild(rng: Rng, a: BreedId, b: BreedId): { breed: BreedId; gender: Gender } {
-  const outcomes = breedingOutcomes(a, b);
-  if (!outcomes) throw new Error(`no breeding outcomes for ${a} x ${b}`);
+/**
+ * Child breed (weighted, matrix; `pity` percentage points moved to the Rare+ outcomes, GĐ7) then gender
+ * (50/50), in that rng order. `rareChance` is the Rare+ share the roll used and `couldBeRare` whether the
+ * pair can give one at all (pity only counts then).
+ */
+export function rollChild(
+  rng: Rng,
+  a: BreedId,
+  b: BreedId,
+  pity = 0,
+): { breed: BreedId; gender: Gender; couldBeRare: boolean } {
+  const base = breedingOutcomes(a, b);
+  if (!base) throw new Error(`no breeding outcomes for ${a} x ${b}`);
+  const outcomes = pity > 0 ? applyPity(base, (id) => isRareBreed(id as BreedId), pity) : base;
   const breed = weightedPick(rng, outcomes);
   const gender: Gender = rng.next() < 0.5 ? 'MALE' : 'FEMALE';
-  return { breed, gender };
+  return { breed, gender, couldBeRare: base.some((o) => o.weight > 0 && isRareBreed(o.breed)) };
 }
 
 /**
@@ -67,6 +79,7 @@ function giveBirth(state: FarmGame, mother: Pig, now: number, rng: Rng) {
       // The father may be sold before the birth: the breeding record still knows his species.
       fatherBreed: father?.breed ?? record?.fatherBreed ?? mother.breed,
     },
+    ...heredityFields({ traits: preg.childTraits, hiddenTrait: preg.childHidden, lineage: preg.childLineage }),
   };
   const born: FarmGame = {
     ...state,
@@ -82,6 +95,7 @@ function giveBirth(state: FarmGame, mother: Pig, now: number, rng: Rng) {
     motherId: mother.id,
     childId: newborn.id,
     childBreed: newborn.breed,
+    ...(preg.childMutated ? { mutated: true } : {}),
   };
   return { state: found.state, events: [birth, ...found.events] };
 }

@@ -3,6 +3,9 @@
 // each Area loads its own files the same way. Vite bundles the JSON: nothing is fetched at runtime.
 import achievementsRaw from '../../../content/shared/achievements.json';
 import bondRaw from '../../../content/shared/bond.json';
+import breedingBalanceRaw from '../../../content/breeding/balance.json';
+import breedingRumorsRaw from '../../../content/breeding/rumors.json';
+import breedingTraitsRaw from '../../../content/breeding/traits.json';
 import codexRaw from '../../../content/shared/codex.json';
 import goalsRaw from '../../../content/shared/goals.json';
 import npcsRaw from '../../../content/shared/npcs.json';
@@ -21,6 +24,9 @@ import valuationRaw from '../../../content/shared/valuation.json';
 import timeRaw from '../../../content/shared/time.json';
 import { achievementsFileSchema } from '../../../content/schemas/shared/achievements';
 import { bondFileSchema } from '../../../content/schemas/shared/bond';
+import { breedingBalanceFileSchema } from '../../../content/schemas/breeding/balance';
+import { rumorsFileSchema } from '../../../content/schemas/breeding/rumors';
+import { traitsFileSchema } from '../../../content/schemas/breeding/traits';
 import { codexFileSchema } from '../../../content/schemas/shared/codex';
 import { goalsFileSchema } from '../../../content/schemas/shared/goals';
 import { npcsFileSchema } from '../../../content/schemas/shared/npcs';
@@ -58,6 +64,9 @@ export const CONTENT = {
   valuation: loadContent('shared/valuation.json', valuationFileSchema, valuationRaw),
   time: loadContent('shared/time.json', timeFileSchema, timeRaw),
   character: loadContent('shared/character.json', characterFileSchema, characterRaw),
+  breedingBalance: loadContent('breeding/balance.json', breedingBalanceFileSchema, breedingBalanceRaw),
+  breedingTraits: loadContent('breeding/traits.json', traitsFileSchema, breedingTraitsRaw),
+  breedingRumors: loadContent('breeding/rumors.json', rumorsFileSchema, breedingRumorsRaw),
 };
 
 /**

@@ -56,7 +56,13 @@
     { "parents": ["PIG_BOAR", "PIG_SHEEP"], "result": "PIG_HEDGEHOG", "weight": 5 },
     { "parents": ["PIG_PENGUIN", "PIG_STRIPED_MELON"], "result": "PIG_TURTLE", "weight": 5 },
     { "parents": ["PIG_KOI", "PIG_DRAGONLING"], "result": "PIG_MYTHICAL", "weight": 3 },
-    { "parents": ["PIG_DRAGONLING", "PIG_GALAXY"], "result": "PIG_PHOENIX", "weight": 2 }
+    { "parents": ["PIG_DRAGONLING", "PIG_GALAXY"], "result": "PIG_PHOENIX", "weight": 2 },
+    { "parents": ["PIG_PUMPKIN", "PIG_DEER"], "result": "PIG_MUSHROOM", "weight": 6 },
+    { "parents": ["PIG_MUSHROOM", "PIG_BEE"], "result": "PIG_FIREFLY", "weight": 5 },
+    { "parents": ["PIG_SHEEP", "PIG_PEGASUS"], "result": "PIG_CLOUD", "weight": 4 },
+    { "parents": ["PIG_TURTLE", "PIG_AXOLOTL"], "result": "PIG_CORAL", "weight": 5 },
+    { "parents": ["PIG_CORAL", "PIG_UNICORN"], "result": "PIG_CRYSTAL", "weight": 3 },
+    { "parents": ["PIG_CLOUD", "PIG_FIREFLY"], "result": "PIG_AURORA", "weight": 3 }
   ],
   "pairs": [],
   "geneBonuses": { "base": 1, "sameTheme": 8, "relatedTheme": 3, "perGeneTag": 4, "geneTagCap": 3 },

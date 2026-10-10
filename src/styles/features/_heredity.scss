@@ -1,0 +1,151 @@
+// GĐ7: trait chips, the family tree and the Breeder's panel. Owns `.traits*`, `.pedigree*`, `.breeder*`.
+@use '../core' as *;
+
+.traits {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: $sp-1;
+  align-items: center;
+}
+
+.traits--empty {
+  color: $c-text-muted;
+  font-size: 0.85rem;
+}
+
+.traits__chip {
+  padding: 2px 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: $c-text;
+  background: $c-pill;
+  border: 2px solid $c-border;
+  border-radius: 999px;
+
+  &.is-rare {
+    border-color: map-get($c-rarity, rare);
+    color: darken(map-get($c-rarity, rare), 8%);
+  }
+
+  &.is-epic {
+    border-color: map-get($c-rarity, epic);
+    color: darken(map-get($c-rarity, epic), 8%);
+  }
+
+  &.is-hidden-open {
+    background: #fff3d6;
+  }
+
+  &.is-hidden-locked {
+    color: $c-text-muted;
+    border-style: dashed;
+  }
+}
+
+.pedigree {
+  display: grid;
+  gap: $sp-2;
+}
+
+.pedigree__level {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $sp-2;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pedigree__title {
+  margin: 0;
+  text-align: center;
+  color: $c-text-muted;
+  font-size: 0.9rem;
+}
+
+.pedigree__empty {
+  margin: 0;
+  text-align: center;
+  color: $c-text-muted;
+}
+
+.pedigree__card {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-width: 7rem;
+  max-width: 9rem;
+  padding: $sp-2;
+  text-align: center;
+  background: $c-surface;
+  border: 2px solid $c-border;
+  border-radius: $radius-card;
+
+  &.is-female {
+    border-color: #ffc8d8;
+  }
+
+  &.is-male {
+    border-color: #bfe3f7;
+  }
+}
+
+.pedigree__art {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: 2rem;
+}
+
+.pedigree__img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.pedigree__breed,
+.pedigree__gen {
+  font-size: 0.8rem;
+  color: $c-text-muted;
+}
+
+.pedigree__traits {
+  font-size: 0.75rem;
+  color: $c-primary-strong;
+}
+
+.breeder__heading {
+  margin: $sp-3 0 $sp-1;
+}
+
+.breeder__rumors {
+  display: grid;
+  gap: $sp-2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.breeder__rumor {
+  padding: $sp-2 $sp-3;
+  background: $c-cream;
+  border: 2px solid $c-border;
+  border-radius: $radius-card;
+
+  &.is-tip {
+    background: $c-surface;
+    font-style: italic;
+  }
+}
+
+.c-breed__hint {
+  margin: 2px 0;
+  font-size: 0.85rem;
+  color: $c-text-muted;
+}
+
+.c-breed__pity {
+  color: $c-success;
+  font-weight: 700;
+}

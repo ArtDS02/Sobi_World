@@ -1,0 +1,10 @@
+{
+  "maxTraits": 3,
+  "inheritChance": 50,
+  "newTraitChance": 12,
+  "hiddenChance": 50,
+  "mutation": { "base": 2, "epicShare": 20, "cap": 25 },
+  "pity": { "step": 2, "cap": 30, "fromRarity": "RARE" },
+  "lineageDepth": 3,
+  "rumors": { "perDay": 2 }
+}

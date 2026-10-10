@@ -1,7 +1,7 @@
 {
   "name": "sobi-world",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Sobi World — game nuôi heo cozy, chơi đơn, offline cho Windows",
   "author": "Sobi World",
   "type": "module",

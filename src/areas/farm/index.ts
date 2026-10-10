@@ -2,6 +2,7 @@
 // The app registers it in core/area-registry; nothing outside this folder knows how pigs work.
 import type { AreaModule } from '../../core/area-registry/registry';
 import { BREEDS, BREED_IDS } from './logic/config/breeds';
+import { codexTexts } from './logic/codexText';
 import { vi } from '../../i18n/vi';
 import { FARM_CONTENT } from './logic/config/content';
 import { DECOR_IDS } from './logic/config/decor';
@@ -26,7 +27,7 @@ export const farmArea: AreaModule = {
     {
       id: 'breed',
       name: vi.codex.kinds.breed,
-      entries: BREED_IDS.filter((id) => BREEDS[id].enabled).map((id) => ({ id, name: BREEDS[id].nameVi, artId: BREEDS[id].artId, rarity: BREEDS[id].rarity })),
+      entries: BREED_IDS.filter((id) => BREEDS[id].enabled).map((id) => ({ id, name: BREEDS[id].nameVi, artId: BREEDS[id].artId, rarity: BREEDS[id].rarity, ...codexTexts(id) })),
     },
   ],
   totals: () => ({ decorOwned: DECOR_IDS.length }),

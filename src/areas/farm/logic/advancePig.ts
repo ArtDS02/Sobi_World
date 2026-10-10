@@ -8,6 +8,7 @@ import { advanceCreature } from '../../../systems/creature/advance';
 import type { SleepRules } from '../../../systems/creature/sleep';
 import { BALANCE } from './config/balance';
 import { BREEDS } from './config/breeds';
+import { pigTraitFactor } from './heredity';
 import { onsetFields, sickBlockedUntil } from './pigHealth';
 import type { Pig } from './types';
 
@@ -35,7 +36,7 @@ export function advancePig(pig: Pig, now: number, _rng: Rng, dayOffsetMs = 0, pi
     {
       hungerPerSec: perSec(BALANCE.HUNGER_PER_HOUR),
       cleanPerSec: perSec(BALANCE.CLEAN_PER_HOUR + counted * BALANCE.CLEAN_PER_PILE_PER_HOUR),
-      growthSec: BREEDS[pig.breed].growthSec,
+      growthSec: BREEDS[pig.breed].growthSec / pigTraitFactor(pig, 'growth'),
       energy: { awakePerSec: perSec(BALANCE.ENERGY_AWAKE_PER_HOUR), asleepPerSec: perSec(BALANCE.ENERGY_ASLEEP_PER_HOUR) },
       growthMinHunger: BALANCE.GROWTH_MIN_HUNGER,
       poopFromProgress: BALANCE.STAGE_YOUNG_AT,

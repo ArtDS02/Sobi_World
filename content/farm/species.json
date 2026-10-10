@@ -503,6 +503,18 @@
       "traits": ["gold", "funny", "royal"]
     },
     {
+      "id": "PIG_MUSHROOM",
+      "nameVi": "Heo Nấm",
+      "rarity": "UNCOMMON",
+      "family": "MEADOW",
+      "sellGold": 3600,
+      "signatureTrait": "trait_sweet",
+      "favorite": "item_potato",
+      "artId": "pig_mushroom",
+      "color": "#c97a5a",
+      "traits": ["brown", "plant", "cozy"]
+    },
+    {
       "id": "PIG_SUPERMAN",
       "nameVi": "Heo Siêu Nhân",
       "rarity": "RARE",
@@ -635,6 +647,42 @@
       "traits": ["myth", "warrior", "metal", "sky"]
     },
     {
+      "id": "PIG_FIREFLY",
+      "nameVi": "Heo Đom Đóm",
+      "rarity": "RARE",
+      "family": "MEADOW",
+      "sellGold": 15000,
+      "signatureTrait": "trait_lucky_star",
+      "favorite": "item_corn",
+      "artId": "pig_firefly",
+      "color": "#e8d96a",
+      "traits": ["gold", "insect", "light"]
+    },
+    {
+      "id": "PIG_CLOUD",
+      "nameVi": "Heo Mây",
+      "rarity": "RARE",
+      "family": "MYTHIC",
+      "sellGold": 14000,
+      "signatureTrait": "trait_swift_growth",
+      "favorite": "item_wheat",
+      "artId": "pig_cloud",
+      "color": "#dfe9f5",
+      "traits": ["white", "sky", "cozy"]
+    },
+    {
+      "id": "PIG_CORAL",
+      "nameVi": "Heo San Hô",
+      "rarity": "RARE",
+      "family": "WATER",
+      "sellGold": 13000,
+      "signatureTrait": "trait_cuddly",
+      "favorite": "item_carrot",
+      "artId": "pig_coral",
+      "color": "#f08a7a",
+      "traits": ["red", "water", "animal"]
+    },
+    {
       "id": "PIG_KOI",
       "nameVi": "Heo Cá Chép",
       "rarity": "EPIC",
@@ -678,6 +726,30 @@
       "artId": "pig_unicorn",
       "color": "#ffd6e4",
       "traits": ["myth", "magic", "light", "horns"]
+    },
+    {
+      "id": "PIG_CRYSTAL",
+      "nameVi": "Heo Pha Lê",
+      "rarity": "EPIC",
+      "family": "MYTHIC",
+      "sellGold": 30000,
+      "signatureTrait": "trait_golden_hoof",
+      "favorite": "item_potato",
+      "artId": "pig_crystal",
+      "color": "#a9d8ee",
+      "traits": ["blue", "magic", "light"]
+    },
+    {
+      "id": "PIG_AURORA",
+      "nameVi": "Heo Cực Quang",
+      "rarity": "EPIC",
+      "family": "MYTHIC",
+      "sellGold": 38000,
+      "signatureTrait": "trait_star_born",
+      "favorite": "item_carrot",
+      "artId": "pig_aurora",
+      "color": "#8fe0c0",
+      "traits": ["green", "sky", "magic", "light"]
     },
     {
       "id": "PIG_MYTHICAL",

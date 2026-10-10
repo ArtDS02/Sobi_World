@@ -5,6 +5,7 @@ import type { Gender, ItemId } from '../../../core/config/ids';
 import type { BreedId, DecorId, StatId, TransactionType } from './config/ids';
 import type { Currency } from '../../../core/save/world';
 import type { ActionResultOf } from '../../../core/types';
+import type { Ancestor } from '../../../systems/breeding/types';
 import type { Creature } from '../../../systems/creature/types';
 import type { GameEvent } from './events';
 
@@ -57,6 +58,8 @@ export interface FarmGame {
   manure?: number | undefined;
   /** No pig dies before this time: set after a catch-up that skipped a death (decision 004). */
   graceUntil?: number | undefined;
+  /** Pity of the breeding station (systems/breeding/pity): percentage points added to the Rare+ chance; absent = 0. */
+  breedingPity?: number | undefined;
   /** Pigs that died, newest first (the Codex keeps a line of memory for each). */
   memorials?: Memorial[] | undefined;
   settings: {
@@ -89,6 +92,11 @@ export interface Pregnancy {
   childBreed: BreedId; // decided at breeding time
   childGender: Gender; // decided at breeding time
   childGeneration?: number; // parents' highest generation + 1 (PS-2); absent in old saves = 2
+  /** Traits and family tree drawn at breeding time with the species (GĐ7); absent = none. */
+  childTraits?: string[] | undefined;
+  childHidden?: string | undefined;
+  childMutated?: boolean | undefined;
+  childLineage?: { mother?: Ancestor | undefined; father?: Ancestor | undefined } | undefined;
 }
 
 /** A pig: the shared creature model (systems/creature, species = pig) plus its pen slot and litter. */
@@ -117,6 +125,9 @@ export interface NurseryPig {
   generation: number;
   bornAt: number;
   parents: PigParents;
+  traits?: string[] | undefined;
+  hiddenTrait?: string | undefined;
+  lineage?: { mother?: Ancestor | undefined; father?: Ancestor | undefined } | undefined;
 }
 
 /** A gift lying on the farm. Its reward is fixed when it spawns; `seed` places it (view only). */
@@ -161,6 +172,8 @@ export interface BreedingRecord {
   childBreed: BreedId;
   childGender: Gender;
   childGeneration?: number; // PS-2, absent in old saves
+  /** A mutation gave the child a rare trait (GĐ7). */
+  mutated?: boolean | undefined;
   bornAt: number | null; // null until birth
 }
 

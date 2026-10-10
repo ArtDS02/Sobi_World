@@ -708,6 +708,66 @@
       "asset": "pigs/base/pig_cyborg_v3.png",
       "sleepAsset": null,
       "tags": ["species", "new"]
+    },
+    {
+      "id": "pig_mushroom",
+      "status": "placeholder",
+      "nameVi": "Heo Nấm",
+      "collection": "species",
+      "asset": "pigs/base/pig_mushroom.png",
+      "sleepAsset": "pigs/base/pig_mushroom_sleep.png",
+      "tags": ["species", "new"],
+      "wakeAsset": "pigs/base/pig_mushroom_wake.png"
+    },
+    {
+      "id": "pig_firefly",
+      "status": "placeholder",
+      "nameVi": "Heo Đom Đóm",
+      "collection": "species",
+      "asset": "pigs/base/pig_firefly.png",
+      "sleepAsset": "pigs/base/pig_firefly_sleep.png",
+      "tags": ["species", "new"],
+      "wakeAsset": "pigs/base/pig_firefly_wake.png"
+    },
+    {
+      "id": "pig_cloud",
+      "status": "placeholder",
+      "nameVi": "Heo Mây",
+      "collection": "species",
+      "asset": "pigs/base/pig_cloud.png",
+      "sleepAsset": "pigs/base/pig_cloud_sleep.png",
+      "tags": ["species", "new"],
+      "wakeAsset": "pigs/base/pig_cloud_wake.png"
+    },
+    {
+      "id": "pig_coral",
+      "status": "placeholder",
+      "nameVi": "Heo San Hô",
+      "collection": "species",
+      "asset": "pigs/base/pig_coral.png",
+      "sleepAsset": "pigs/base/pig_coral_sleep.png",
+      "tags": ["species", "new"],
+      "wakeAsset": "pigs/base/pig_coral_wake.png"
+    },
+    {
+      "id": "pig_crystal",
+      "status": "placeholder",
+      "nameVi": "Heo Pha Lê",
+      "collection": "species",
+      "asset": "pigs/base/pig_crystal.png",
+      "sleepAsset": "pigs/base/pig_crystal_sleep.png",
+      "tags": ["species", "new"],
+      "wakeAsset": "pigs/base/pig_crystal_wake.png"
+    },
+    {
+      "id": "pig_aurora",
+      "status": "placeholder",
+      "nameVi": "Heo Cực Quang",
+      "collection": "species",
+      "asset": "pigs/base/pig_aurora.png",
+      "sleepAsset": "pigs/base/pig_aurora_sleep.png",
+      "tags": ["species", "new"],
+      "wakeAsset": "pigs/base/pig_aurora_wake.png"
     }
   ],
   "fx": [

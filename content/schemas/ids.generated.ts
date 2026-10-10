@@ -71,6 +71,12 @@ export const BREED_ID_VALUES = [
   'PIG_ZEUS',
   'PIG_VALKYRIE',
   'PIG_THOR',
+  'PIG_MUSHROOM',
+  'PIG_FIREFLY',
+  'PIG_CLOUD',
+  'PIG_CORAL',
+  'PIG_CRYSTAL',
+  'PIG_AURORA',
 ] as const;
 
 export const ITEM_ID_VALUES = [

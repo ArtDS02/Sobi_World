@@ -4,6 +4,7 @@
 import { z } from 'zod';
 import { PURPOSE_VALUES } from '../../../../../content/schemas/vocab';
 import { BOND } from '../../../../core/config/bond';
+import type { Ancestor } from '../../../../systems/breeding/types';
 import { CURRENCY_VALUES } from '../../../../core/save/world';
 import { BALANCE } from '../config/balance';
 import { GIFTS } from '../config/gifts';
@@ -20,6 +21,19 @@ const pct = z.number().finite().min(0).max(100);
 const withEveryItem = (v: unknown): unknown =>
   v && typeof v === 'object' ? { ...Object.fromEntries(ITEM_ID_VALUES.map((id) => [id, 0])), ...v } : v;
 
+const ancestorSchema: z.ZodType<Ancestor> = z.lazy(() =>
+  z.object({
+    name: z.string(),
+    breed: z.string(),
+    gender,
+    generation: z.number().int().min(1),
+    traits: z.array(z.string()).optional(),
+    mother: ancestorSchema.optional(),
+    father: ancestorSchema.optional(),
+  }),
+);
+const lineageSchema = z.object({ mother: ancestorSchema.optional(), father: ancestorSchema.optional() });
+
 const pregnancySchema = z.object({
   startedAt: time,
   endsAt: time,
@@ -27,6 +41,10 @@ const pregnancySchema = z.object({
   childBreed: breedId,
   childGender: gender,
   childGeneration: z.number().int().min(1).optional(),
+  childTraits: z.array(z.string()).optional(),
+  childHidden: z.string().optional(),
+  childMutated: z.boolean().optional(),
+  childLineage: lineageSchema.optional(),
 });
 
 const parentsSchema = z.object({
@@ -44,6 +62,9 @@ const nurseryPigSchema = z.object({
   generation: z.number().int().min(1),
   bornAt: time,
   parents: parentsSchema,
+  traits: z.array(z.string()).optional(),
+  hiddenTrait: z.string().optional(),
+  lineage: lineageSchema.optional(),
 });
 
 const pigSchema = z.object({
@@ -66,6 +87,9 @@ const pigSchema = z.object({
   createdAt: time,
   generation: z.number().int().min(1).optional(),
   parents: parentsSchema.optional(),
+  traits: z.array(z.string()).optional(),
+  hiddenTrait: z.string().optional(),
+  lineage: lineageSchema.optional(),
   lastFedAt: time.optional(),
   lastCleanedAt: time.optional(),
   lastSickAt: time.optional(),
@@ -111,6 +135,7 @@ const breedingRecordSchema = z.object({
   childBreed: breedId,
   childGender: gender,
   childGeneration: z.number().int().min(1).optional(),
+  mutated: z.boolean().optional(),
   bornAt: time.nullable(),
 });
 
@@ -202,6 +227,8 @@ const farmAreaShape = z.object({
   /** No pig dies before this time (a catch-up skipped a death, decision 004). */
   graceUntil: time.optional(),
   memorials: z.array(z.object({ id: z.string(), name: z.string(), breed: breedId, diedAt: time })).optional(),
+  /** Pity of the breeding station (GĐ7); absent = 0. */
+  breedingPity: z.number().finite().min(0).optional(),
 });
 
 export const farmAreaSchema = farmAreaShape.superRefine(farmInvariants);

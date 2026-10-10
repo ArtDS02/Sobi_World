@@ -9,6 +9,8 @@ export const npcSchema = z.strictObject({
   /** The Area it guides: its dialog opens in that Area. */
   area: z.string().regex(/^[a-z][a-z0-9_]*$/),
   nameVi: text,
+  /** A station NPC stands at one place instead of guiding the whole Area (the Breeder, at the breeding station). */
+  station: z.enum(['breeding']).optional(),
   /** Its picture (a manifest id). */
   artId: assetId,
   greetingVi: text,

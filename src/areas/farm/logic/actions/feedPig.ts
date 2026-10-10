@@ -7,6 +7,7 @@ import { takeFromBag } from '../../../../core/inventory/bag';
 import { raiseBond, withMoodBoost } from '../../../../systems/bond/bond';
 import { BALANCE } from '../config/balance';
 import { pigFavorite } from '../bond';
+import { bondGainFor, revealEvents } from '../heredity';
 import type { ItemId } from '../types';
 import { addXP } from '../xp';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
@@ -33,7 +34,7 @@ export function feedPig(
 
     const hunger = Math.min(BALANCE.HUNGER_MAX, pig.hunger + (favorite ? BOND.favorite.hunger : ITEMS[itemId].hungerRestore));
     const fed = withMoodBoost({ ...pig, hunger, lastFedAt: ctx.now }, BOND.moodBoost.byItem[itemId] ?? 0, ctx.now, BOND);
-    const loved = favorite ? { ...fed, bond: raiseBond(fed.bond, BOND.favorite.gain, BOND) } : fed;
+    const loved = favorite ? { ...fed, bond: raiseBond(fed.bond, bondGainFor(fed, BOND.favorite.gain), BOND) } : fed;
     const next: FarmGame = {
       ...s,
       inventory: bag.items,
@@ -42,6 +43,6 @@ export function feedPig(
     // D11: XP only when the feed was actually needed.
     const effective = pig.hunger <= BALANCE.XP_EFFECTIVE_FEED_MAX_HUNGER;
     const xp = addXP(next, effective ? BALANCE.XP.FEED : 0);
-    return ok(xp.state, [{ type: 'PIG_FED', pigId: pig.id, itemId, ...(favorite ? { favorite } : {}) }], xp.events);
+    return ok(xp.state, [{ type: 'PIG_FED', pigId: pig.id, itemId, ...(favorite ? { favorite } : {}) }, ...revealEvents(pig, loved)], xp.events);
   });
 }

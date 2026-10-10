@@ -18,7 +18,7 @@ export type GameEvent =
   | { type: 'PIG_BECAME_ADULT'; pigId: string }
   // PL-1: the trough fed this pig (auto-feeding); the farm shows it walking over to eat.
   | { type: 'PIG_ATE_FROM_TROUGH'; pigId: string; meals: number; hungerBefore: number }
-  | { type: 'BIRTH'; motherId: string; childId: string; childBreed: BreedId }
+  | { type: 'BIRTH'; motherId: string; childId: string; childBreed: BreedId; mutated?: boolean }
   | { type: 'TROUGH_EMPTY'; at: number } // when the last unit was eaten
   | { type: 'ORDER_NEW'; orderId: string }
   | { type: 'ORDER_EXPIRED'; orderId: string }
@@ -31,6 +31,8 @@ export type GameEvent =
   // GĐ6: petting raises bond (hearts = whole hearts after it); the purpose a pig is raised for.
   | { type: 'PIG_PETTED'; pigId: string; bond: number; hearts: number }
   | { type: 'PIG_PURPOSE_SET'; pigId: string; purpose: Purpose }
+  // GĐ7: 5 hearts opened the pig's hidden trait.
+  | { type: 'PIG_TRAIT_REVEALED'; pigId: string; traitId: string }
   | { type: 'PIG_CLEANED'; pigIds: string[] }
   | { type: 'PIG_TREATED'; pigId: string }
   | { type: 'TROUGH_UPGRADED'; level: number; capacity: number; gold: number }
@@ -78,6 +80,7 @@ export const GAME_EVENT_TYPES = [
   'PIG_FED',
   'PIG_PETTED',
   'PIG_PURPOSE_SET',
+  'PIG_TRAIT_REVEALED',
   'PIG_CLEANED',
   'PIG_TREATED',
   'TROUGH_UPGRADED',

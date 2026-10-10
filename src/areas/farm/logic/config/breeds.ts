@@ -5,6 +5,7 @@ import { FAMILY_VALUES, type Family } from "../../../../../content/schemas/vocab
 import { BALANCE } from "./balance";
 import { FARM_CONTENT } from "./content";
 import type { BreedId } from "./ids";
+import type { ItemId } from "../../../../core/config/ids";
 import type { Rarity } from "../../../../core/config/rarity";
 import { SPECIES_ROWS } from "./speciesTable";
 
@@ -23,6 +24,10 @@ export interface BreedDef {
   pregnancySec: number | null; // null = cannot breed (D10)
   maxWeight: number;           // display only
   breedable: boolean;
+  /** Trait every pig of the species is born with (GĐ7). */
+  signatureTrait?: string | undefined;
+  /** Food its pigs love; absent = per-pig draw from the Bond pool (GĐ7). */
+  favorite?: ItemId | undefined;
   enabled: boolean;            // false = retired: not sold, never bred; pigs already owned stay
   artId: string;         // its artwork; the manifest row with this id (§6.6)
   color: number;               // flat fill when the artwork is missing (§11.4)
@@ -36,7 +41,7 @@ export const RARITY_TIER: Record<
   Pick<BreedDef, "sellGold" | "growthSec" | "pregnancySec" | "maxWeight" | "breedable">
 > = FARM_CONTENT.species.tiers;
 
-export type SpeciesRow = Pick<BreedDef, "id" | "nameVi" | "rarity" | "family" | "artId" | "color"> &
+export type SpeciesRow = Pick<BreedDef, "id" | "nameVi" | "rarity" | "family" | "artId" | "color" | "signatureTrait" | "favorite"> &
   Partial<Pick<BreedDef, "buyGold" | "unlockLevel" | "enabled" | keyof (typeof RARITY_TIER)[Rarity]>>;
 
 /** Tier stats + row overrides; how long a full need lasts follows from the flat decay rates. */

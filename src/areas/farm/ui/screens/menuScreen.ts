@@ -3,7 +3,7 @@ import { vi } from '../../../../i18n/vi';
 import type { PanelId } from '../../../../ui/components/popup';
 import { el } from '../../../../ui/dom';
 
-const ENTRIES = ['shop', 'market', 'orders', 'collection', 'achievements', 'history', 'settings'] as const;
+const ENTRIES = ['shop', 'market', 'orders', 'collection', 'breeder', 'achievements', 'history', 'settings'] as const;
 
 export function renderMenuScreen(open: (panel: PanelId) => void): HTMLElement {
   return el(

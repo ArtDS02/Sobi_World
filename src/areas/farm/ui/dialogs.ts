@@ -37,6 +37,7 @@ export function openSellDialog(
     quote.bondLift ? el('p', { class: 'c-dialog__hint', text: vi.bond.qualityLift }) : '',
     el('p', { text: t(vi.sell.weight, { kg: formatInt(quote.weightKg), mult: formatDec(quote.weightFactor) }) }),
     quote.healthFactor < 1 ? el('p', { class: 'c-dialog__warn', text: t(vi.sell.health, { mult: formatDec(quote.healthFactor) }) }) : '',
+    quote.traitFactor !== 1 ? el('p', { text: t(vi.sell.trait, { mult: formatDec(quote.traitFactor) }) }) : '',
     el('p', { text: t(vi.sell.market, { mult: formatDec(quote.marketFactor) }) }),
     el('p', { class: 'c-dialog__strong', text: t(vi.sell.final, { gold: formatInt(quote.price) }) }),
     RARE.has(pig.breed) ? el('p', { class: 'c-dialog__warn', text: vi.sell.warning }) : '',

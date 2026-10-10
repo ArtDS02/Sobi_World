@@ -1,5 +1,6 @@
 // Toast text per event (spec §10.2, §11.3). Pure; the FeedbackDirector decides when it shows.
 import { BREEDS } from '../../logic/config/breeds';
+import { TRAITS } from '../../../../systems/breeding';
 import type { DecorId } from '../../logic/config/ids';
 import type { GameEvent } from '../../logic/events';
 import type { Pig, FarmGame } from '../../logic/types';
@@ -42,7 +43,9 @@ export function toastText(
     case 'PIG_HUNGRY_ZERO':
       return event.stalled ? t(vi.event.hungryZero, { name: nameOf(event.pigId) }) : null;
     case 'BIRTH':
-      return t(vi.event.birth, { mother: nameOf(event.motherId), child: nameOf(event.childId) });
+      return t(event.mutated ? vi.heredity.birthMutated : vi.event.birth, { mother: nameOf(event.motherId), child: nameOf(event.childId) });
+    case 'PIG_TRAIT_REVEALED':
+      return t(vi.heredity.revealed, { name: nameOf(event.pigId), trait: TRAITS.get(event.traitId)?.nameVi ?? event.traitId });
     case 'TROUGH_EMPTY':
       return vi.event.troughEmpty;
     case 'LEVEL_UP':

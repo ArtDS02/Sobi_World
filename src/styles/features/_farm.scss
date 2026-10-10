@@ -184,8 +184,9 @@
       height: 0.55rem;
     }
 
-    // Bond: hearts, favourite food; purpose pills.
+    // Bond: hearts, favourite food; traits (GĐ7); purpose pills.
     &__bond,
+    &__traits,
     &__purpose {
       display: flex;
       flex-wrap: wrap;
