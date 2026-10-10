@@ -1,12 +1,30 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ9 đã nghiệm thu về gameplay và đã merge vào `main` (tag `phase-09`, đã push; số liệu Cloud vẫn chờ chủ dự án chơi thử). Đang bắt đầu GĐ10 — Adventure nền tảng.
-**Chiến lược (decision 017):** gameplay trước, art sau. GĐ10–GĐ13 dùng placeholder; art/animation/VFX/âm thanh làm ở GĐ14; GĐ15 phát hành. Không quay lại phase đã nghiệm thu chỉ vì art/polish.
-**Git:** `main` có đủ tag `phase-01`…`phase-09` (phase-07 gắn ngày 2026-10-11 vào commit merge `189fa62`). `v1.0.0` là của Sobi Farm; bản phát hành Sobi World sẽ dùng `sobi-world-v1.0.0`.
-**Bước tiếp theo:** GĐ10 (nhánh `phase-10-adventure`).
+**Giai đoạn:** GĐ10 — Sobi Adventure: xong phần code (gameplay), chờ chủ dự án chơi thử và duyệt số (`content/adventure/`); phiên bản 0.10.0. GĐ9 đã merge `main` (tag `phase-09`).
+**Chiến lược (decision 017):** gameplay trước, art sau. GĐ10–GĐ13 dùng placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
+**Nhánh:** `phase-10-adventure` (tách từ `main` sau GĐ9). Chủ dự án (hoặc agent khi được nhờ) merge, gắn tag `phase-10`, push.
+**Bước tiếp theo:** chơi thử Adventure (Admin → Phiêu lưu → Mô phỏng trận; Số liệu → Sobi Adventure); rồi GĐ11 — Adventure liên hệ thống.
 
 ## Nhật ký
+
+### 2026-10-11 — GĐ10 hoàn thành: Sobi Adventure
+✅ Đã làm (10 việc của prompt GĐ10; quyết định ở `docs/decisions/018-adventure.md`):
+1. **`systems/combat`**: thứ tự theo Tốc độ, đòn thường, kỹ năng (năng lượng trận + hồi chiêu), dùng vật phẩm, 4 nguyên tố (×1,5 khắc chế), chí mạng, 7 trạng thái, AI (kẻ địch và nút Tự động); thuần, có seed, lưu giữa chừng rồi chơi tiếp ra cùng kết quả.
+2. **Cấp / KN / chỉ số** theo cấp, độ hiếm, tim Bond và trang bị; kỹ năng mở ở cấp 1, 1, 10, 20.
+3. **`systems/equipment`**: 3 ô (vũ khí, giáp, bùa), 9 món là vật phẩm `EQUIPMENT`.
+4. **8 kiểu đánh × 4 kỹ năng riêng, 20 kỹ năng** (5 mỗi nguyên tố); 14 họ heo và 6 loài cá đánh được.
+5. **Vùng Rừng Thì Thầm**: 5 điểm dừng + trùm, loot, sự kiện nhỏ, 8 loại kẻ địch.
+6. **Thua = Kiệt sức 4 giờ thật**, không mất gì; bệnh không vào được; rút lui giữa hai điểm dừng không phạt.
+7. **Heo khởi đầu** từ Hiệp Sĩ Heo (tặng qua registry, không import Farm); mục đích Phiêu lưu mở ở Farm và Aquarium (loài đánh được).
+8. **UI**: sảnh (chọn đội, thanh KN và năng lượng, trang bị), bản đồ chuyến, trận đánh với **Tự động** và **tốc độ x2**, tổng kết.
+9. **Admin**: Số liệu sửa kẻ địch, kỹ năng, kiểu đánh, vùng, trang bị, cân bằng; trang **Mô phỏng trận**; tua thời gian dịch cả Adventure.
+10. **Test**: combat (21), Adventure (22 + 13 cho UI / liên kết / mô phỏng), roster, quà tặng; `npm run check` xanh (1.265 test).
+📁 File chính: `src/systems/combat/`, `src/systems/equipment/`, `src/areas/adventure/`, `content/adventure/` + `content/schemas/adventure/`, `tools/admin/adventure.ts`, `src/areas/farm/logic/roster.ts`, `src/areas/aquarium/logic/roster.ts`, `docs/decisions/018-adventure.md`; hook mới `roster` và `receiveGift` ở `core/area-registry`.
+🧪 Đã kiểm tra: `npm run check` xanh (1.265 test); chạy thật trong trình duyệt (sandbox): sảnh, chọn đội, bản đồ, trận đánh (chọn mục tiêu, kỹ năng, Tự động, x2), thua trùm, tổng kết, nhận thưởng, kiệt sức; chuyến lưu giữa trận rồi tải lại chơi tiếp được.
+⚠️ Quyết định tự đưa ra (decision 018): ×0,75 khi bị kháng nguyên tố; năng lượng phiêu lưu riêng của Adventure (không trừ năng lượng nuôi của heo); kiểu đánh theo họ; trùm hạ 420 → 340 máu; thua vẫn giữ KN và loot; máu mang theo giữa điểm dừng.
+⚠️ Chưa làm: bot `sim:week` chưa có routine Adventure (GĐ11); Codex kẻ địch / trang bị; nhân vật đi trên bản đồ; art, animation, âm thanh (GĐ14, `docs/ASSET_TODO.md`); chưa chạy `dist:win` và e2e cho Adventure; chưa chơi nhiều ngày.
+👉 Bạn cần: chơi thử (cần Sobi World cấp 8 và Phát triển thế giới 20, hoặc sửa save): nhận heo của Hiệp Sĩ, đánh vài chuyến, xem các kiểu đánh có khác nhau rõ, thua có bị phạt nặng không, trận có dài không; rồi merge, tag `phase-10`, push.
 
 ### 2026-10-11 — Điều chỉnh roadmap: gameplay trước, art sau (decision 017)
 ✅ Đã làm: rà AGENT_RULES, ROADMAP, HUONG_DAN, ASSET_TODO, decisions; roadmap cũ trộn art/âm thanh vào GĐ13 → tách: GĐ13 Tích hợp và nghiệm thu gameplay (freeze), GĐ14 art/animation/VFX/âm thanh, GĐ15 phát hành; thêm bảng phụ thuộc và nghiệm thu; AGENT_RULES §8; ASSET_TODO đặt là backlog GĐ14; prompt GĐ13–15 trong HUONG_DAN; `CLAUDE.md`. Lịch sử GĐ1–GĐ9 và đặc tả gameplay không đổi.

@@ -1,0 +1,26 @@
+# 018 — Sobi Adventure: đánh theo lượt, trang bị, vùng Rừng (GĐ10)
+
+**Ngày:** 2026-10-11 · **Trạng thái:** Đã làm, số liệu chờ chủ dự án chơi thử
+
+## Bối cảnh
+GĐ10 (spec V2 §7, §8.5, §13; GAME_BALANCE §9) thêm Area thứ năm qua Cổng dịch chuyển. Theo decision 017 (gameplay trước, art sau) mọi art là placeholder; UI chỉ cần đủ để chơi.
+Thách thức kiến trúc: chiến binh là **sinh vật của Farm và Aquarium**, mà Area không được import Area khác.
+
+## Lựa chọn
+- **Luật đánh ở `systems/combat`** (thuần, có seed): vòng theo Tốc độ (đồng tốc: bên mình trước), đòn thường (+1 năng lượng trận), kỹ năng (tốn năng lượng trận: bắt đầu 3, +2 mỗi lượt, tối đa 10; có hồi chiêu), dùng vật phẩm, 4 nguyên tố (Lửa > Gió > Đất > Nước > Lửa: ×1,5 khi khắc chế, ×0,75 khi bị kháng — GAME_BALANCE chỉ ghi ×1,5, ×0,75 là quyết định tự đưa ra), chí mạng ×1,5, 7 trạng thái (tăng công, tăng thủ, tăng tốc, chậm, bỏng, choáng, khiên). Công thức: `công × sức mạnh × K/(K+thủ) × nguyên tố × ngẫu nhiên ±10% × chí mạng`. Mọi lần bốc của một hành động sinh từ `(seed trận, số hành động)`: một trận lưu giữa chừng chơi tiếp ra đúng kết quả. AI chấm điểm từng lựa chọn và bốc trong nhóm điểm cao; dùng cho kẻ địch và cho nút **Tự động**.
+- **Chiến binh = sinh vật của Area khác, thấy qua registry.** `AreaModule.roster(world)` (Farm, Aquarium) cho danh sách {key, loài, họ, độ hiếm, tim Bond, bệnh, đã lớn, mục đích}; `AreaModule.receiveGift` cho phép Adventure tặng heo cho Farm. Adventure chỉ giữ **hồ sơ chiến đấu** (`fighters[key]`: cấp, KN, trang bị, năng lượng, kiệt sức) và không sửa heo / cá. Hệ quả: **năng lượng phiêu lưu là của riêng Adventure** (GAME_BALANCE nói "30 Năng lượng của sinh vật"; ở đây mỗi chiến binh có thanh năng lượng phiêu lưu riêng, tối đa 100, +10 mỗi giờ thật, tốn 30 mỗi chuyến) vì Adventure không được trừ năng lượng nuôi của heo.
+- **Kiểu đánh theo họ.** 8 kiểu (Chiến binh, Hộ vệ, Thích khách, Pháp sư nước, Pháp sư lửa, Triệu bão, Man lực, Quỷ kế), mỗi kiểu một nguyên tố, chỉ số gốc và **bộ 4 kỹ năng riêng** (hai có từ đầu, một mở ở cấp 10, một ở cấp 20); 14 họ heo ánh xạ sang kiểu (override theo từng giống được, để trống); chỉ 6 loài cá đánh được (`fighter: true` trong `fish.json`). 20 kỹ năng, 5 mỗi nguyên tố. Chỉ số = gốc × (1 + 0,1/cấp) × hệ số độ hiếm × (1 + 3%/tim) + trang bị (tốc độ lớn nửa tốc). Tối đa cấp 30; KN lên cấp `30 × cấp^1,5`.
+- **Trang bị** (`systems/equipment`): 3 ô (vũ khí, giáp, bùa), 9 món (Thường / Khá / Hiếm) là **vật phẩm** loại `EQUIPMENT` trong túi; mặc thì món rời túi, mặc món khác thì món cũ về túi; không đổi trang bị khi đang có chuyến.
+- **Vùng Rừng Thì Thầm**: 5 điểm dừng (trận, rương, trận, sự kiện nhỏ, trận) và trùm Cổ Thụ Giận Dữ; nhóm kẻ địch bốc theo trọng số, mọi lần bốc từ seed của chuyến. Máu **mang theo** giữa các điểm dừng (suối và thuốc hồi); mỗi chuyến mới đầy máu. Loot: bảng rương, rơi từ kẻ địch, tiền, Ngọc hiếm (3% mỗi rương, 10% rương trùm). Chiến lợi phẩm vào hàng chờ, nhận vào túi khi còn chỗ (không mất).
+- **Thua không chết**: cả đội kiệt sức 4 giờ thật, giữ KN và loot đã nhặt; **rút lui** giữa hai điểm dừng không bị phạt. Kiệt sức và năng lượng là **thời gian** (đọc từ dấu thời gian) nên Admin tua thời gian xử lý được.
+- **Heo khởi đầu**: Hiệp Sĩ Heo (NPC) cho một Heo Hiệp Sĩ đã lớn, mục đích Phiêu lưu, kèm Kiếm Gỗ và Áo Lá; cần một chỗ trống trong chuồng, nếu không báo lỗi và không mất gì. Mục đích Phiêu lưu mở ở Farm khi Area mở (cờ dẫn xuất `adventureOpen`) và ở Aquarium cho loài `fighter`.
+- **Liên kết**: potion cho trận (Healing hồi nửa máu, Chiến Đấu tăng công và thủ 4 lượt) dùng trong trận, trừ từ túi; vật liệu mới `Thảo Mộc Rừng`, `Nanh Thú` bán được và có trong đơn hàng; sự kiện chuẩn mới `battle.won`; 2 mục tiêu ngày, 4 thành tựu, NPC có 6 chủ đề.
+- **UI** (placeholder-friendly): sảnh (vùng, chiến binh với thanh KN / năng lượng, chọn đội, trang bị), bản đồ chuyến, trận đánh (hai hàng đơn vị, thanh hành động, chọn mục tiêu, **Tự động**, **tốc độ x2**, nhật ký bằng chữ), tổng kết. Manifest ghi `movement: character` (phiên bản sau có thể cho nhân vật đi trên bản đồ); GĐ10 điều khiển bằng chuột.
+- **Admin**: Số liệu sửa kẻ địch, kỹ năng, kiểu đánh, vùng (loot, sự kiện), trang bị, cân bằng; trang **Mô phỏng trận** chơi cả chuyến N lần (cấp, trang bị, đội) để xem tỉ lệ thắng, số vòng mỗi trận, máu còn lại, và điểm dừng nào hay chết; tua thời gian dịch cả Adventure.
+- **Save**: slice `areas.sobi_adventure` v1; không đổi world save; mở tự động khi đủ điều kiện (registry).
+
+## Cân bằng (mô phỏng `battleSim`, đội 3 gồm Chiến binh, Hộ vệ, Pháp sư nước, độ hiếm Thường, tim 0)
+Thắng cả Rừng: cấp 1–2: 0%; cấp 3: ~50%; cấp 4: ~96%; cấp 5 trở lên: ~100%. Một trận trung bình 8–15 vòng (x2 và Tự động để xem nhanh). Trùm bị hạ máu (420 → 340) vì cấp 1 không có đường thắng nhưng cấp 3 quá khó. Mỗi chuyến cho ~100 KN mỗi bạn (trước trùm): cấp 4 cần ~5 chuyến, mất ~2 ngày thật vì năng lượng. Số cần chủ dự án chơi thử: nhịp lên cấp, cảm giác trùm, độ dài trận, có muốn thêm nút bỏ qua.
+
+## Để sau
+Vùng Núi và Tàn tích, vật liệu cổ nâng công trình, công nghệ trang trại, Bond ảnh hưởng chỉ số nhiều hơn, buff từ thức ăn (GĐ11); Codex trang bị / kẻ địch; nhân vật đi trên bản đồ; art và âm thanh thật (GĐ14, `docs/ASSET_TODO.md`); bot `sim:week` chưa có routine Adventure (làm ở GĐ11 cùng cân bằng 14 ngày).
