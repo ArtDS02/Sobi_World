@@ -199,7 +199,8 @@ describe('old saves', () => {
       ...s,
       pigs: s.pigs.map((p) => {
         if (!p.pregnancy) return p;
-        const { childTraits: _a, childHidden: _b, childMutated: _c, childLineage: _d, ...rest } = p.pregnancy;
+        const rest = { ...p.pregnancy };
+        for (const k of ['childTraits', 'childHidden', 'childMutated', 'childLineage'] as const) delete rest[k];
         return { ...p, pregnancy: rest };
       }),
     };
