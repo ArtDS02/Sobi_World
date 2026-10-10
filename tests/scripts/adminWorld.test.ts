@@ -81,6 +81,30 @@ describe('Số liệu: the numbers editor', () => {
     expect(onlyNumbersDiffer(before, { a: Number.NaN, list: [{ n: 2, label: 'x' }], flag: true })).toMatch(/phải là số/);
   });
 
+  it('the GĐ6 files are editable: the orders, goals, achievements, Codex, decorations, bond and the world level', () => {
+    for (const file of ['shared/orders.json', 'shared/goals.json', 'shared/achievements.json', 'shared/codex.json', 'farm/decor.json', 'shared/bond.json', 'shared/progression.json', 'shared/npcs.json']) {
+      expect(Object.keys(NUMBER_FILES), file).toContain(file);
+    }
+  });
+
+  it('the NPC words can change but their structure cannot; other files stay numbers-only', () => {
+    const before = JSON.parse(readFileSync('content/shared/npcs.json', 'utf8')) as { npcs: { nameVi: string; id: string; topics: { textVi: string }[] }[] };
+    const after = structuredClone(before);
+    after.npcs[0]!.topics[0]!.textVi = 'Lời mới';
+    after.npcs[0]!.nameVi = 'Tên mới';
+    expect(onlyNumbersDiffer(before, after, '', true)).toBeNull();
+    expect(onlyNumbersDiffer(before, after)).toMatch(/chỉ sửa được số/); // not for a numbers-only file
+    const renamed = structuredClone(before);
+    renamed.npcs[0]!.id = 'npc_other';
+    expect(onlyNumbersDiffer(before, renamed, '', true)).toMatch(/.id/); // an id is never a word
+    const blank = structuredClone(before);
+    blank.npcs[0]!.nameVi = '  ';
+    expect(onlyNumbersDiffer(before, blank, '', true)).toMatch(/không để trống/);
+    const fewer = structuredClone(before);
+    fewer.npcs[0]!.topics.pop();
+    expect(onlyNumbersDiffer(before, fewer, '', true)).toMatch(/số phần tử/);
+  });
+
   it('a number the schema forbids is caught before anything is written', async () => {
     const { schemaPath, exportName } = NUMBER_FILES['shared/health.json']!;
     const mod = (await import(/* @vite-ignore */ `../..${schemaPath}`)) as Record<string, unknown>;
