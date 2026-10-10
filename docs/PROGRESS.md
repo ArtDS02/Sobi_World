@@ -1,7 +1,7 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ5 — Sobi Garden và sản xuất: xong 10 việc, chờ chủ dự án chơi thử. GĐ4 (bản cài desktop) xong, chờ chủ dự án thử trên máy sạch rồi merge.
+**Giai đoạn:** GĐ6 — Gắn kết: xong, số cân bằng đã duyệt, bản cài 0.6.0 chờ chơi thử nhiều ngày.
 **Nhánh:** `phase-05-garden` (tách từ `phase-04-desktop-installer`, chưa merge `main`; mang theo commit Sảnh `3b10d83` và GĐ4).
 **Quy ước (chủ dự án, 2026-10-10):** chủ dự án tự merge, gắn tag `phase-XX` và push sau mỗi giai đoạn; agent chỉ commit trên nhánh giai đoạn.
 **Bước tiếp theo:** chơi thử Garden; rồi GĐ6 — Gắn kết (Vertical slice).
@@ -211,7 +211,9 @@ Chưa kiểm: `npm run dist:win` (installer), chạy Electron thủ công, thử
 - (Đã xử lý ở GĐ1) skill `spec-to-source` đã xóa, guard nằm ở `scripts/guard/`; thư mục save đã chuyển sang `%APPDATA%\SobiWorld` kèm sao chép save cũ.
 - `npm ci` báo vài cảnh báo `npm audit` (thư viện dev) — chưa xử lý.
 
-### 2026-10-10 — GĐ6 đang làm (nhánh `phase-06-engagement`, chưa xong, chưa duyệt số)
+### 2026-10-10 — GĐ6 hoàn tất (số cân bằng đã được chủ dự án duyệt; v0.6.0, `release/SobiWorld-Setup-0.6.0.exe` qua verify:build + verify:installer; chờ chơi thử nhiều ngày, rồi merge `main`, tag `phase-06`)
+(ghi chú tiến độ trước đó:)
+### GĐ6 đang làm (nhánh `phase-06-engagement`, chưa xong, chưa duyệt số)
 ✅ Đã làm: World Level chung (decision 007/013, bảng 100·n^1,5, 20 cấp); Bond (vuốt ve, món yêu thích, tim nâng Quality, tâm trạng món ăn vặt); mục đích nuôi (Xuất chuồng/Giống/Thú cưng); `core/goals` (Bảng đơn Sảnh, mục tiêu ngày, thành tựu trả Ngọc, quà đăng nhập), Codex + mốc thưởng, save world v10 (migration từ v9), bước `settle` trong store; Chợ theo ngày; trang trí đặt/cất/dời; chip "việc tiếp theo" + NPC Farm/Garden; trạm Bảng đơn ở Sảnh; Admin Số liệu mở rộng; script `npm run sim:week`.
 ✅ Đã bổ sung (phiên 2): tutorial thêm 2 bước (vuốt ve/Bond; Bảng đơn + chip Việc tiếp theo, tổng 7 bước), decision 013 ghi bước 8, README cho core/goals, core/collection, systems/bond, plaza; sửa e2e theo save v10 và click cổng Garden tự vào.
 ⚠️ Còn lại: **chủ dự án duyệt số cân bằng** (`npm run sim:week`: Garden mở ~ngày 4,5, cấp 5 ở ngày 7; cấp chậm hơn Sobi Farm cũ) — điểm dừng của prompt GĐ6; sau đó mới tăng version và build bản desktop (`npm run dist:win`). Chưa chơi tay các màn mới ngoài thử nhanh trong trình duyệt; vị trí trang trí thay thế chưa nhìn.
