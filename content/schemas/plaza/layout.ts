@@ -10,6 +10,8 @@ export const plazaPlacementSchema = placementSchema
   .extend({
     /** The door to an Area: its manifest `portalInPlaza`. */
     portal: z.string().regex(/^[a-z][a-z0-9_]*$/).optional(),
+    /** A place to do something instead of a door to an Area: the order board, the market (GĐ6). Same hint and key as a door. */
+    station: z.enum(['orders', 'market']).optional(),
     /** The character cannot walk through it (its footprint is the bottom part of the art). */
     solid: z.boolean().optional(),
     /** The blocking part of a solid object: share of its height from the bottom, share of its width from the middle. */

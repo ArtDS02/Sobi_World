@@ -16,7 +16,7 @@ import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { ensureSoftTextures } from '../../../ui/world/softTextures';
 import { arrivalSpot } from '../logic/arrival';
 import { groundKindAt } from '../logic/groundKind';
-import { portalPrompt, type PortalView } from '../logic/portals';
+import { portalPrompt, stationDoorId, type PortalView } from '../logic/portals';
 import { plazaObstacles, plazaWalkable } from '../logic/walkable';
 import { FadeBehind } from './FadeBehind';
 import { paintGround } from './GroundPainter';
@@ -187,15 +187,16 @@ export class PlazaScene extends Phaser.Scene {
     this.drawn.set(index, bounds);
     this.drawnAll.push({ p, img, bounds });
     if (p.fade) this.fade.add(img, bounds);
-    if (!p.portal) return;
+    const door = p.portal ?? (p.station ? stationDoorId(p.station) : undefined);
+    if (!door) return;
     const front = frontOf(bounds);
-    this.doors.push({ id: p.portal, x: front.x, y: front.y, reach: layout.portalReach, payload: p.portal });
-    this.doorArt.set(p.portal, img);
+    this.doors.push({ id: door, x: front.x, y: front.y, reach: layout.portalReach, payload: door });
+    this.doorArt.set(door, img);
     img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: PLAZA_VIEW.hitAlpha });
-    img.setData(PLAZA_VIEW.doorData, p.portal);
+    img.setData(PLAZA_VIEW.doorData, door);
     const lockKey = this.textures.exists(LOCK_ICON) ? LOCK_ICON : FALLBACK_PROP_KEY;
     this.doorBadges.set(
-      p.portal,
+      door,
       this.add
         .image(front.x, bounds.y + bounds.height * PLAZA_VIEW.lock.at, lockKey)
         .setDisplaySize(PLAZA_VIEW.lock.size, PLAZA_VIEW.lock.size)

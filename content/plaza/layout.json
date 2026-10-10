@@ -185,6 +185,17 @@
       "footprint": { "depth": 0.35, "width": 0.8 }
     },
     {
+      "id": "prop_order_board",
+      "layer": 4,
+      "x": 0.395,
+      "y": 0.58,
+      "width": 120,
+      "station": "orders",
+      "solid": true,
+      "footprint": { "depth": 0.1, "width": 0.8 },
+      "label": "Bảng đơn hàng"
+    },
+    {
       "id": "prop_lamp_post",
       "layer": 4,
       "x": 0.455,

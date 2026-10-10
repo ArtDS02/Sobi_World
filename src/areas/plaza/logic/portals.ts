@@ -7,7 +7,12 @@ import { vi } from '../../../i18n/vi';
 
 export type PortalStatus = 'open' | 'locked' | 'soon';
 
+/** The key of a station (the order board…) among the plaza's doors: stations and Area doors share one set of views. */
+export const stationDoorId = (station: string): string => `station:${station}`;
+
 export interface PortalView {
+  /** A door to an Area, or a station that opens one of the world's panels. */
+  kind: 'door' | 'station';
   /** The `portalInPlaza` id of the layout placement. */
   portal: string;
   areaId: string;
@@ -29,6 +34,7 @@ export function portalViews(infos: readonly AreaInfo[]): Map<string, PortalView>
       info.manifest.portalInPlaza,
       {
         portal: info.manifest.portalInPlaza,
+        kind: 'door',
         areaId: info.manifest.id,
         name: info.manifest.name.vi,
         status: info.planned ? 'soon' : info.unlocked ? 'open' : 'locked',
@@ -36,6 +42,15 @@ export function portalViews(infos: readonly AreaInfo[]): Map<string, PortalView>
       },
     ]),
   );
+}
+
+/** The plaza's stations: always open, they lead to a panel (`areaId` = `panel:<id>`, see start.ts). */
+export function stationViews(): Map<string, PortalView> {
+  const station = (key: string, panel: string, name: string): [string, PortalView] => [
+    stationDoorId(key),
+    { portal: stationDoorId(key), kind: 'station', areaId: `panel:${panel}`, name, status: 'open', conditions: [] },
+  ];
+  return new Map([station('orders', 'orders', vi.plaza.orderBoard), station('market', 'market', vi.plaza.market)]);
 }
 
 export interface PortalPrompt {
@@ -49,7 +64,8 @@ export interface PortalPrompt {
 
 export function portalPrompt(view: PortalView): PortalPrompt {
   if (view.status === 'open') {
-    return { action: t(vi.plaza.enter, { name: view.name }), title: t(vi.plaza.enter, { name: view.name }), lines: [] };
+    const text = t(view.kind === 'station' ? vi.plaza.see : vi.plaza.enter, { name: view.name });
+    return { action: text, title: text, lines: [] };
   }
   const lines = view.conditions.length > 0 ? [vi.plaza.conditions, ...view.conditions] : [];
   const title = view.status === 'soon' ? `${view.name} — ${vi.plaza.soon}` : t(vi.plaza.locked, { name: view.name });

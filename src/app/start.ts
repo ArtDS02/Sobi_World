@@ -6,7 +6,7 @@ import type { Clock } from '../core/clock';
 import type { DayPhase } from '../core/config/dayNight';
 import type { SeasonId } from '../core/config/seasons';
 import { PLAZA_LAYOUT } from '../areas/plaza/logic/config/content';
-import { portalViews, type PortalView } from '../areas/plaza/logic/portals';
+import { portalViews, stationViews, type PortalView } from '../areas/plaza/logic/portals';
 import { PlazaScene, PLAZA_SCENE_KEY } from '../areas/plaza/scene/PlazaScene';
 import { AudioManager, audioTracks, type AudioClip } from '../areas/farm/scene/audio/AudioManager';
 import { createFarmView, type FarmView } from '../areas/farm/scene/farmView';
@@ -15,6 +15,7 @@ import { createFeedbackDirector, type FeedbackDirector } from '../areas/farm/sce
 import { CHARACTER } from '../core/config/character';
 import { newPlayer, PLAZA_ID, setPlayerSpot } from '../core/player/player';
 import { createSettingsStore } from '../core/settings/settings';
+import type { PanelId } from '../ui/components/popup';
 import { renderWorldPrompt } from '../ui/components/worldPrompt';
 import { el, patch } from '../ui/dom';
 import { createControlInput } from '../ui/world/controlInput';
@@ -108,7 +109,7 @@ export async function start(root: HTMLElement) {
   const portals = (): ReadonlyMap<string, PortalView> => {
     const save = world.getSnapshot().save;
     if (!save) return doors.views;
-    const views = portalViews(AREAS.areas(save));
+    const views = new Map([...portalViews(AREAS.areas(save)), ...stationViews()]);
     const signature = JSON.stringify([...views.values()]);
     if (signature !== doors.signature) doors = { signature, views };
     return doors.views;
@@ -130,7 +131,8 @@ export async function start(root: HTMLElement) {
       prompt = next;
       showPrompt();
     },
-    go: (place) => void flow.go(place),
+    // A station leads to a panel (`panel:orders`), a door to a place.
+    go: (place) => (place.startsWith('panel:') ? app?.openPanel(place.slice(6) as PanelId) : void flow.go(place)),
     remember: (spot) => void world.dispatch((s, c) => setPlayerSpot(s, spot, c)),
     player: () => world.getSnapshot().save?.player ?? newPlayer(),
     character: () => settings.getSnapshot().settings.character,

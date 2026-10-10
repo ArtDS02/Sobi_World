@@ -48,6 +48,9 @@ export const vi = {
   plaza: {
     title: "Sảnh Sobi",
     enter: "Vào {name}",
+    see: "Xem {name}",
+    orderBoard: "Bảng đơn hàng",
+    market: "Chợ hôm nay",
     locked: "{name} chưa mở",
     soon: "Sắp ra mắt",
     opened: "{name} đã mở cửa!",
