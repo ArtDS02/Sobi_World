@@ -97,7 +97,7 @@ export function mountApp(
     pedigree: (pig: Pig) => openPedigreeDialog(dialogs, pig),
     breed: (pig: Pig) => {
       const save = store.getSnapshot().save;
-      if (save) openBreedDialog(dialogs, save, pig, now(), act);
+      if (save) openBreedDialog(dialogs, save, pig, now(), act, () => go('breeder'));
     },
   };
   // Canvas click: a pig opens its panel, a world object its popup, empty ground deselects (§11.2).

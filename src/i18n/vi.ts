@@ -393,7 +393,7 @@ export const vi = {
   breeder: {
     today: "Tin đồn hôm nay",
     topics: "Hỏi thêm",
-    clue: "{rarity} họ {family}",
+    clue: "heo {rarity} họ {family}",
   },
   purpose: {
     title: "Mục đích nuôi",

@@ -2,6 +2,13 @@
 
 `npm run assets:release` chỉ qua khi hết hàng `placeholder`. Art Sobi Farm đã ổn, không đụng tới.
 
+## GĐ7 — Lai giống nâng cao
+| Việc | Ghi chú |
+|---|---|
+| 6 giống heo mới: `pig_mushroom`, `pig_firefly`, `pig_cloud`, `pig_coral`, `pig_crystal`, `pig_aurora` (mỗi giống 3 ảnh: đứng, ngủ, thức, như các giống khác) | Placeholder sinh bằng `npm run assets:placeholders` (màu theo giống). Heo Nấm, Đom Đóm, Mây, San Hô, Pha Lê, Cực Quang; mô tả ngoại hình trong `docs/decisions/014-advanced-breeding.md`. |
+| Icon cho tính trạng | Hiện là chip chữ; chưa có icon riêng cho 11 tính trạng. |
+| Ảnh bà Ngan Lai (Nhà lai giống) | Đang dùng ảnh vịt của bác Vịt Cần (`prop_animal_duck`). |
+
 ## GĐ5 — Sobi Garden
 Tất cả là placeholder sinh bằng `npm run assets:placeholders` (chưa có ảnh tham khảo `asset/reference/sobi_garden`):
 | Việc | Ghi chú |

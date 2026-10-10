@@ -12,3 +12,4 @@ Chỉ import `core/`. Area dùng systems, không ngược lại.
 | `layout/` | hình học vùng đi được, vị trí vật thể |
 | `plants/` | một ô đất theo thời gian thật: gieo, tưới (lớn nhanh gấp đôi khi khô), phân bón, chín, héo; dạng đóng nên 3 chế độ mô phỏng ra cùng kết quả (GĐ5) |
 | `character/` | nhân vật người chơi: đi 8 hướng, va chạm hộp chân, tương tác theo tầm với (GĐ3) |
+| `breeding/` | lai giống nâng cao: tính trạng, di truyền, đột biến, vận may, phả hệ, tin đồn của Nhà lai giống (GĐ7) |

@@ -65,8 +65,20 @@ export function openBreedDialog(
   pig: Pig,
   now: number,
   act: Act,
+  /** Opens the Breeder's panel (gossip about recipes); the dialog closes first. */
+  askBreeder?: () => void,
 ) {
   const d = openDialog(host, vi.breed.title, undefined, 'breed');
+  if (askBreeder) {
+    d.footer.append(
+      el('button', {
+        class: 'c-button c-button--ghost',
+        text: vi.heredity.asked,
+        attrs: { type: 'button' },
+        on: { click: () => { d.close(); askBreeder(); } },
+      }),
+    );
+  }
   d.body.parentElement?.classList.add('c-dialog__panel--wide');
   d.body.classList.add('c-breed');
   const vm = breedingVm(save, pig, now);
