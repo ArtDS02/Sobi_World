@@ -1,0 +1,11 @@
+{
+  "discovery": { "crop": { "coins": 50, "xp": 10 }, "item": { "coins": 0, "xp": 2 } },
+  "milestones": [
+    { "id": "CODEX_5", "entries": 5, "coins": 300, "gems": 0, "xp": 20 },
+    { "id": "CODEX_10", "entries": 10, "coins": 0, "gems": 5, "xp": 40 },
+    { "id": "CODEX_25", "entries": 25, "coins": 1000, "gems": 8, "xp": 80 },
+    { "id": "CODEX_50", "entries": 50, "coins": 0, "gems": 15, "xp": 150 },
+    { "id": "CODEX_75", "entries": 75, "coins": 5000, "gems": 20, "xp": 250 },
+    { "id": "CODEX_100", "entries": 100, "coins": 0, "gems": 30, "xp": 400 }
+  ]
+}

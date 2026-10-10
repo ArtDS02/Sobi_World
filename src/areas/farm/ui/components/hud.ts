@@ -12,6 +12,8 @@ export interface HudDeps {
   leave: (() => void) | undefined;
   openTrough: () => void;
   selectPig: (pigId: string) => void;
+  /** Rewards waiting in the goals panel (the dock dot); absent = none. */
+  goalsDot?: number | undefined;
 }
 
 export function renderHud(save: FarmGame, d: HudDeps): HTMLElement {
@@ -23,5 +25,6 @@ export function renderHud(save: FarmGame, d: HudDeps): HTMLElement {
     history: () => d.go('history'),
     nav: d.go,
     pig: d.selectPig,
+    goalsDot: d.goalsDot ?? 0,
   });
 }

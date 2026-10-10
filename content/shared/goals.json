@@ -1,0 +1,89 @@
+{
+  "daily": {
+    "count": 3,
+    "bonus": { "xp": 20, "coins": 100 },
+    "templates": [
+      {
+        "id": "feed",
+        "metric": "feeds",
+        "area": "sobi_farm",
+        "fromWorldLevel": 1,
+        "min": 3,
+        "max": 6,
+        "coins": [50, 80]
+      },
+      {
+        "id": "pet",
+        "metric": "pigsPetted",
+        "area": "sobi_farm",
+        "fromWorldLevel": 1,
+        "min": 2,
+        "max": 4,
+        "coins": [50, 70]
+      },
+      {
+        "id": "clean",
+        "metric": "pigsCleaned",
+        "area": "sobi_farm",
+        "fromWorldLevel": 1,
+        "min": 3,
+        "max": 6,
+        "coins": [50, 80]
+      },
+      {
+        "id": "manure",
+        "metric": "manureCollected",
+        "area": "sobi_farm",
+        "fromWorldLevel": 1,
+        "min": 3,
+        "max": 8,
+        "coins": [60, 90]
+      },
+      {
+        "id": "ship",
+        "metric": "pigsSold",
+        "area": "sobi_farm",
+        "fromWorldLevel": 2,
+        "min": 1,
+        "max": 2,
+        "coins": [100, 150]
+      },
+      {
+        "id": "plant",
+        "metric": "cropsPlanted",
+        "area": "sobi_garden",
+        "fromWorldLevel": 3,
+        "min": 6,
+        "max": 12,
+        "coins": [50, 80]
+      },
+      {
+        "id": "harvest",
+        "metric": "cropsHarvested",
+        "area": "sobi_garden",
+        "fromWorldLevel": 3,
+        "min": 6,
+        "max": 15,
+        "coins": [60, 100]
+      },
+      {
+        "id": "craft",
+        "metric": "crafts",
+        "area": "sobi_garden",
+        "fromWorldLevel": 3,
+        "min": 1,
+        "max": 3,
+        "coins": [70, 110]
+      },
+      {
+        "id": "board",
+        "metric": "boardOrders",
+        "area": "sobi_farm",
+        "fromWorldLevel": 1,
+        "min": 1,
+        "max": 1,
+        "coins": [100, 130]
+      }
+    ]
+  }
+}

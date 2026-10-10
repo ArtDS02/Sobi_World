@@ -89,7 +89,7 @@ export function withFarm(world: WorldSave, farm: FarmGame): WorldSave {
       claimed: farm.progress.claimed,
       daily: farm.progress.daily,
     },
-    collection: { discovered: { ...world.collection.discovered, breed: farm.collection.discoveredBreeds } },
+    collection: { ...world.collection, discovered: { ...world.collection.discovered, breed: farm.collection.discoveredBreeds } },
     settings: farm.settings,
     areas: { ...world.areas, [FARM_AREA_ID]: area },
   };

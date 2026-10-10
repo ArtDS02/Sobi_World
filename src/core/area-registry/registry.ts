@@ -3,6 +3,7 @@
 // code. Pure: time, randomness and the day offset come in as arguments.
 import type { AreaManifest } from '../../../content/schemas/area';
 import type { TimeRules } from '../clock';
+import type { CodexKind } from '../collection/codex';
 import type { EventBase, WorldEvent } from '../events';
 import { simulateWorld, type SimMode, type SimulationResult } from '../simulation/simulate';
 import { unlockGaps, worldDevelopment, worldLevel, type LevelTable, type UnlockGap, type WorldDevelopmentRules } from '../progression/levels';
@@ -27,6 +28,10 @@ export interface AreaModule {
   simulatedAt(world: WorldSave): number;
   /** Moves its time stamps to `to` without simulating: the part of a long absence past the offline cap is skipped. */
   rebase(world: WorldSave, to: number): WorldSave;
+  /** What it adds to the Codex (its breeds, its crops…): every entry the player can discover. */
+  codex?(): readonly CodexKind[];
+  /** How many entries its 'ALL' achievements ask for besides the Codex's (the farm: its decorations). */
+  totals?(): Readonly<Record<string, number>>;
   /** Its events as standard world events (ARCHITECTURE §7); [] for events that are not its own. */
   toWorldEvents(events: readonly EventBase[]): WorldEvent[];
   /** Lines for the "while you were away" screen (spec §5): what happened (the events) and what needs the player now (the world), as string-table keys with parameters. */
@@ -141,6 +146,12 @@ export function createAreaRegistry(
 
     summary: (events: readonly EventBase[], world: WorldSave, now: number): SummaryLine[] =>
       modules.flatMap((m) => (m.manifest.id in world.areas ? (m.getSummary?.(events, world, now) ?? []) : [])),
+
+    /** Every Codex kind the Areas offer (the world's own kinds are added by the app). */
+    codexKinds: (): CodexKind[] => modules.flatMap((m) => m.codex?.() ?? []),
+
+    /** Totals the Areas add for the 'ALL' achievements. */
+    extraTotals: (): Record<string, number> => Object.assign({}, ...modules.map((m) => m.totals?.() ?? {})),
 
     /** The one Sobi World Level of this world. */
     worldLevel: levelOf,

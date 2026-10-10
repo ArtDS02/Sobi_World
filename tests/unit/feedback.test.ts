@@ -53,9 +53,6 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   GIFT_SPAWNED: { type: 'GIFT_SPAWNED', giftId: 'g1' },
   GIFT_OPENED: { type: 'GIFT_OPENED', giftId: 'g1', gold: 120, xp: 35 },
   RELIEF_CLAIMED: { type: 'RELIEF_CLAIMED', gold: 0, food: 12, medicine: 1 },
-  DAILY_CLAIMED: { type: 'DAILY_CLAIMED', streak: 2, gold: 150, food: 5, medicine: 0 },
-  ACHIEVEMENT_REACHED: { type: 'ACHIEVEMENT_REACHED', id: 'FIRST_SALE' },
-  ACHIEVEMENT_CLAIMED: { type: 'ACHIEVEMENT_CLAIMED', id: 'FIRST_SALE', gold: 100, xp: 10 },
   DECOR_BOUGHT: { type: 'DECOR_BOUGHT', decorId: 'DECOR_HAY_BALE', gold: -1500 },
 };
 

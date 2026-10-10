@@ -36,6 +36,8 @@ import { bindGardenStage } from '../areas/garden/stage';
 import { createGardenUi } from '../areas/garden/ui/gardenUi';
 import { vi } from '../i18n/vi';
 import { t } from '../i18n/format';
+import { goalsPresentation } from '../ui/goals/feedback';
+import { GOALS } from './goals';
 import { realClock } from './runtime';
 import { mountApp, type AppOptions, type MountedApp } from '../areas/farm/ui/app';
 import { renderManifestError } from '../areas/farm/ui/screens/statusScreen';
@@ -174,6 +176,12 @@ export async function start(root: HTMLElement) {
     input,
     keySettings,
     gems: () => world.getSnapshot().save?.wallet.gems ?? null,
+    world: {
+      save: () => world.getSnapshot().save,
+      act: (run) => void world.dispatch(run),
+      goals: GOALS,
+      codexKinds: () => GOALS.codexKinds(),
+    },
     characterChoice: {
       current: () => settings.getSnapshot().settings.character,
       choose: (id) => void settings.setCharacter(id),
@@ -242,7 +250,8 @@ export async function start(root: HTMLElement) {
         const name = AREAS.get((event as unknown as { areaId: string }).areaId)?.manifest.name.vi ?? '';
         return { sound: 'level_up', toast: t(vi.plaza.opened, { name }) };
       }
-      return gardenPresentation(event, origin);
+      const nameOf = (kind: string, id: string) => GOALS.codexKinds().find((k) => k.id === kind)?.entries.find((e) => e.id === id)?.name ?? id;
+      return goalsPresentation(event, origin, nameOf) ?? gardenPresentation(event, origin);
     },
   });
   // §12: ui_click for every DOM button, through one delegated listener.

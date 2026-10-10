@@ -66,11 +66,8 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   GIFT_SPAWNED: row('giftSpawn', ['fx_smoke'], 'notify', false),
   GIFT_OPENED: { ...row('giftOpen', ['fx_sparkle'], 'coin_collect', false), float: true },
   SLOT_BOUGHT: row(null, [], 'ui_click', true),
-  // PG-1..3: panel rewards; the toast names what arrived.
+  // PG-1..3: panel rewards; the toast names what arrived (the goals' own are in ui/goals/feedback.ts).
   RELIEF_CLAIMED: row(null, [], 'coin_collect', true),
-  DAILY_CLAIMED: row(null, [], 'coin_collect', true),
-  ACHIEVEMENT_REACHED: row(null, [], 'level_up', true),
-  ACHIEVEMENT_CLAIMED: row(null, [], 'coin_collect', true),
   DECOR_BOUGHT: row(null, [], 'ui_click', true),
   ITEM_BOUGHT: row(null, [], 'ui_click', true),
   PIG_RENAMED: row(null, [], 'ui_click', true),

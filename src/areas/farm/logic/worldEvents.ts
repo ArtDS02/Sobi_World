@@ -29,8 +29,6 @@ export function farmWorldEvents(e: GameEvent): WorldEvent[] {
       return [{ type: 'area.levelUp', area, level: e.level }];
     case 'DISCOVERY':
       return [{ type: 'codex.discovered', area, kind: 'breed', id: e.id }, ...coins(e.gold)];
-    case 'ACHIEVEMENT_REACHED':
-      return [{ type: 'achievement.unlocked', area, achievementId: e.id }];
     case 'ORDER_FULFILLED':
       return [{ type: 'order.completed', area, orderId: e.orderId }, ...coins(e.gold)];
     case 'ITEM_BOUGHT':
@@ -49,12 +47,10 @@ export function farmWorldEvents(e: GameEvent): WorldEvent[] {
       return [{ type: 'creature.purposeSet', area, creatureId: e.pigId, purpose: e.purpose }];
     case 'PIG_TREATED':
       return removed('MEDICINE_COMMON', 1);
-    case 'DAILY_CLAIMED':
     case 'RELIEF_CLAIMED':
       return [...added('FOOD_BASIC', e.food), ...added('MEDICINE_COMMON', e.medicine), ...coins(e.gold)];
     case 'TROUGH_UPGRADED':
     case 'GIFT_OPENED':
-    case 'ACHIEVEMENT_CLAIMED':
     case 'SLOT_BOUGHT':
     case 'DECOR_BOUGHT':
       return coins(e.gold);

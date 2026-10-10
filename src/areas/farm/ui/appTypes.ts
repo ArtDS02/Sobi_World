@@ -7,8 +7,21 @@ import type { FileDialogs } from '../../../core/save/port';
 import type { ControlInput } from '../../../ui/world/controlInput';
 import type { CharacterChoice } from '../../../ui/components/characterPicker';
 import type { KeySettings } from '../../../ui/world/keySettings';
+import type { CodexKind } from '../../../core/collection/codex';
+import type { Goals, WorldAction } from '../../../core/goals/api';
+import type { WorldSave } from '../../../core/save/world';
+
+/** The world's own screens (orders of the plaza, goals, Codex) reach the world through this (spec V2 §9). */
+export interface WorldUi {
+  save(): WorldSave | null;
+  act(run: WorldAction): void;
+  goals: Goals;
+  codexKinds(): readonly CodexKind[];
+}
 
 export interface AppOptions {
+  /** The world's goals and Codex; absent in DOM tests of the farm alone. */
+  world?: WorldUi;
   /** Dev-only toolbar (time travel), injected by main.ts behind import.meta.env.DEV. */
   devTools?: HTMLElement;
   /** Platform export/import dialogs (§9.3). */

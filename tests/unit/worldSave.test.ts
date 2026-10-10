@@ -55,7 +55,8 @@ describe('world save v8: migration', () => {
     expect(w.wallet).toEqual({ coins: farm.player.gold, gems: 0, eventTokens: 0 });
     expect(w.inventory.items).toEqual(farm.inventory);
     expect(w.progression.areas[FARM_AREA_ID]).toEqual({ xp: farm.player.xp });
-    expect(w.progression.stats).toEqual(farm.progress.stats);
+    // The counters stay, and the ones the world reads for achievements now (v10) are seeded from what the farm owns.
+    expect(w.progression.stats).toEqual({ ...farm.progress.stats, slotsOwned: farm.player.unlockedSlots, decorOwned: farm.decor.length });
     expect(w.progression.claimed).toEqual(farm.progress.claimed);
     expect(w.progression.daily).toEqual(farm.progress.daily);
     expect(w.collection.discovered.breed).toEqual(farm.collection.discoveredBreeds);
@@ -68,7 +69,7 @@ describe('world save v8: migration', () => {
     // Read back through the lens, the farm is exactly what was saved (pregnancy, records included).
     const { transactions, ...rest } = farmOf(w);
     const { transactions: before, ...farmRest } = farm;
-    expect(rest).toEqual(farmRest);
+    expect(rest).toEqual({ ...farmRest, progress: { ...farmRest.progress, stats: w.progression.stats } }); // the stats gained the v10 seeds
     expect(transactions.map(({ currency: _c, ...t }) => t)).toEqual(before);
   });
 
@@ -183,7 +184,7 @@ describe('store: backup before the first write of a migrated save (ARCHITECTURE 
     await store.init();
     await store.dispatch((s, c) => buyPig(s, { breed: 'PIG_EARTH_PINK', gender: 'MALE' }, c));
     await store.persistNow();
-    expect(p.log).toEqual(['backup:v7', 'write:v9', 'write:v9']);
+    expect(p.log).toEqual(['backup:v7', `write:v${WORLD_SAVE_VERSION}`, `write:v${WORLD_SAVE_VERSION}`]);
   });
 
   it('a failed copy fails the write: the migrated save is never written without it', async () => {

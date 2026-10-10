@@ -3,6 +3,7 @@
 import type { z } from 'zod';
 import type { ErrorCode } from '../config/errors';
 import type { ActionContext } from '../types';
+import { initialGoals } from '../goals/state';
 import { newPlayer } from '../player/player';
 import { WORLD_SAVE_VERSION, worldSaveSchema, type WorldSave } from './world';
 
@@ -36,6 +37,31 @@ export interface SaveCodec {
 const WORLD_MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
   // v9: the character. Everyone starts in the plaza at its entrance (GĐ3).
   8: (raw) => ({ ...raw, schemaVersion: 9, player: raw.player ?? newPlayer() }),
+  // v10 (GĐ6): the Order Board, the daily goals and the Codex milestones. Counters the achievements now read from
+  // progression.stats (slots and decorations owned) are seeded from the farm, so no earned achievement is lost.
+  9: (raw) => {
+    const meta = isObject(raw.meta) ? raw.meta : {};
+    const since = typeof meta.lastSavedAt === 'number' ? meta.lastSavedAt : typeof meta.updatedAt === 'number' ? meta.updatedAt : 0;
+    const areas = isObject(raw.areas) ? raw.areas : {};
+    const farm = isObject(areas.sobi_farm) ? areas.sobi_farm : {};
+    const progression = isObject(raw.progression) ? raw.progression : {};
+    const stats = isObject(progression.stats) ? progression.stats : {};
+    const collection = isObject(raw.collection) ? raw.collection : {};
+    return {
+      ...raw,
+      schemaVersion: 10,
+      progression: {
+        ...progression,
+        stats: {
+          ...stats,
+          slotsOwned: typeof farm.unlockedSlots === 'number' ? farm.unlockedSlots : 0,
+          decorOwned: Array.isArray(farm.decor) ? farm.decor.length : 0,
+        },
+      },
+      collection: { ...collection, claimed: [] },
+      goals: raw.goals ?? initialGoals(since),
+    };
+  },
 };
 
 const isObject = (v: unknown): v is Raw => typeof v === 'object' && v !== null && !Array.isArray(v);

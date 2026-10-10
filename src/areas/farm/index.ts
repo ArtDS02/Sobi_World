@@ -1,7 +1,10 @@
 // Sobi Farm as an Area (ARCHITECTURE §5 Area Contract): manifest (content/farm/area.json) and hooks.
 // The app registers it in core/area-registry; nothing outside this folder knows how pigs work.
 import type { AreaModule } from '../../core/area-registry/registry';
+import { BREEDS, BREED_IDS } from './logic/config/breeds';
+import { vi } from '../../i18n/vi';
 import { FARM_CONTENT } from './logic/config/content';
+import { DECOR_IDS } from './logic/config/decor';
 import type { GameEvent } from './logic/events';
 import { farmSaveSpec, initFarm } from './logic/save/farmSave';
 import { farmOf } from './logic/save/lens';
@@ -18,6 +21,14 @@ export const farmArea: AreaModule = {
   simulate: (world, now, rng, dayOffsetMs, mode) => advanceFarmWorld(world, now, rng, dayOffsetMs, mode),
   simulatedAt: farmSimulatedAt,
   rebase: rebaseFarm,
+  codex: () => [
+    {
+      id: 'breed',
+      name: vi.codex.kinds.breed,
+      entries: BREED_IDS.filter((id) => BREEDS[id].enabled).map((id) => ({ id, name: BREEDS[id].nameVi, artId: BREEDS[id].artId, rarity: BREEDS[id].rarity })),
+    },
+  ],
+  totals: () => ({ decorOwned: DECOR_IDS.length }),
   toWorldEvents: farmEventsToWorld,
   getSummary: (events, world, now) => farmSummaryLines(events as GameEvent[], farmOf(world), now),
   // Presentation only (GĐ3): the numbers run the same whether the player is here or not.

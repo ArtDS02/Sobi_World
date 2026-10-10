@@ -4,7 +4,7 @@
 // Each tab edits only its own group through userEdits.ts (validated against the game's save
 // schema); "Lưu" writes the whole draft once. Dangerous actions ask for confirmation.
 import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
-import { ACHIEVEMENTS } from '../../src/areas/farm/logic/config/achievements';
+import { ACHIEVEMENTS } from '../../src/core/config/goals';
 import { DECORS } from '../../src/areas/farm/logic/config/decor';
 import { GENDER_VALUES, ITEM_ID_VALUES, type Gender, type ItemId } from '../../src/core/config/ids';
 import { DECOR_ID_VALUES, STAT_ID_VALUES, type BreedId } from '../../src/areas/farm/logic/config/ids';

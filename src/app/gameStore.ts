@@ -4,6 +4,8 @@
 import { createWorldStore, type PageLike, type StoreDeps } from '../core/world/gameStore';
 import { defaultRng, realClock } from './runtime';
 import { AREAS } from './areas';
+import { GOALS } from './goals';
+import { goalsEventsToWorld } from '../core/goals/events';
 import { SAVE_CODEC } from './saveCodec';
 
 export type {
@@ -36,7 +38,8 @@ export function defaultDeps(): DefaultDeps {
   return {
     advanceWorld: AREAS.advance,
     lastSimulatedAt: AREAS.simulatedAt,
-    toWorldEvents: AREAS.toWorldEvents,
+    settle: GOALS.settle,
+    toWorldEvents: (events) => [...AREAS.toWorldEvents(events), ...goalsEventsToWorld(events)],
     codec: SAVE_CODEC,
     clock: realClock,
     rng: defaultRng,

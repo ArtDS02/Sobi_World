@@ -36,6 +36,10 @@ export type Purpose = (typeof PURPOSE_VALUES)[number];
 export const STAT_ID_VALUES = [
   'pigsBought', 'pigsSold', 'births', 'ordersFulfilled', 'giftsOpened',
   'pigsCleaned', 'pigsTreated', 'breedings', 'goldEarned', 'bestStreak', 'pigsPetted',
+  // GĐ6: kept by the Farm's tracker (feeds, manureCollected, slotsOwned, decorOwned, maxHearts) and by the world's
+  // (core/goals/stats.ts: cropsPlanted, cropsHarvested, crafts, boardOrders, dailyGoalsDone); each id has one owner.
+  'feeds', 'manureCollected', 'slotsOwned', 'decorOwned', 'maxHearts',
+  'cropsPlanted', 'cropsHarvested', 'crafts', 'boardOrders', 'dailyGoalsDone',
 ] as const;
 export type StatId = (typeof STAT_ID_VALUES)[number];
 

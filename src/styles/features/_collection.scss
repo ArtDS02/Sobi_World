@@ -23,6 +23,38 @@
     font-size: $fs-sm;
   }
 
+  // Milestones of the Codex (GĐ6): total entries and what claiming pays.
+  .collection__milestones {
+    display: grid;
+    gap: $sp-2;
+    list-style: none;
+  }
+
+  .collection__milestone {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+    align-items: center;
+    justify-content: space-between;
+    padding: $sp-2 $sp-3;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: $radius-md;
+
+    &.is-claimable {
+      background: $c-cream;
+      border-color: $c-honey;
+    }
+
+    &.is-claimed {
+      opacity: 0.65;
+    }
+  }
+
+  .collection__milestone-label {
+    font-weight: $fw-bold;
+  }
+
   .collection__progress {
     color: $c-text-muted;
   }

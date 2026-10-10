@@ -1,5 +1,5 @@
 // World catch-up (spec §7.4): trough → pigs → births → orders → gifts (U06), then diff into events,
-// then achievement progress (PG-2).
+// then the counters (PG-2).
 import { NEED_NOTIFY_FROM } from './config/care';
 import type { GameEvent, PigNeed } from './events';
 import type { Rng } from '../../../core/rng';
@@ -7,7 +7,7 @@ import type { Pig, FarmGame } from './types';
 import { resolveBirths } from './breeding';
 import { resolveGifts } from './gifts';
 import { refreshOrders } from './orders';
-import { progressStep } from './progress';
+import { trackEvents } from './progress';
 import { needLevel, needRank } from './pigHealth';
 import { advanceWithTrough } from './trough';
 import { penMood } from './decor';
@@ -57,10 +57,8 @@ export function advanceWorld(state: FarmGame, now: number, rng: Rng, dayOffsetMs
   next = gifts.state;
   events.push(...gifts.events);
 
-  // Step 6: achievement counters and newly reached achievements (PG-2).
-  if (events.length === 0) return { state: next, events };
-  const progress = progressStep(state, next, events);
-  return { state: progress.state, events: [...events, ...progress.events] };
+  // Step 6: the farm's counters (goals and achievements read them at world level, core/goals).
+  return events.length === 0 ? { state: next, events } : { state: trackEvents(next, events), events };
 }
 
 /** The pen's manure after the window: every whole pile a pig made (systems/creature `poopProgress`) is added, up to the cap. */

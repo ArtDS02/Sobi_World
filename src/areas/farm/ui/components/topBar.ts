@@ -8,7 +8,6 @@ import type { UiIcon } from '../../../../core/config/assetIds';
 import { el } from '../../../../ui/dom';
 import { icon } from '../../../../ui/components/icon';
 import type { PanelId } from '../../../../ui/components/popup';
-import { progressDot } from '../progressVm';
 import { clockVm, topBarVm } from '../viewModel';
 
 const NAV = ['shop', 'inventory', 'orders', 'collection', 'achievements'] as const;
@@ -42,13 +41,15 @@ export function renderTopBar(
     nav: (panel: PanelId) => void;
     /** The HUD alert for ill pigs: open this pig's panel. */
     pig: (pigId: string) => void;
+    /** Rewards waiting in the goals panel. */
+    goalsDot?: number;
   },
 ): HTMLElement {
   const vm = topBarVm(save, now);
   const clock = clockVm(now);
   const dots: Partial<Record<(typeof NAV)[number], number>> = {
     orders: readyOrderCount(save, now),
-    achievements: progressDot(save, now),
+    achievements: on.goalsDot ?? 0,
   };
   const navButton = (panel: (typeof NAV)[number]) =>
     el(

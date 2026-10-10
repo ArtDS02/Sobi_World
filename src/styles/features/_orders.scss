@@ -88,4 +88,76 @@
     font-weight: $fw-bold;
     color: $c-success;
   }
+
+  // The plaza's board and its tabs (GĐ6).
+  .orders__tabs {
+    display: flex;
+    gap: $sp-2;
+    justify-content: center;
+  }
+
+  .orders__tab.is-active {
+    box-shadow: inset 0 0 0 2px $c-honey;
+  }
+
+  .orders__hint {
+    font-size: $fs-sm;
+    color: $c-text-muted;
+    text-align: center;
+  }
+
+  .orders__board {
+    display: grid;
+    gap: $sp-3;
+  }
+
+  .orders__card--board {
+    justify-items: stretch;
+    text-align: left;
+  }
+
+  .orders__card--empty {
+    justify-items: center;
+    color: $c-text-muted;
+    background: transparent;
+    border-style: dashed;
+    box-shadow: none;
+  }
+
+  .orders__lines {
+    display: grid;
+    gap: $sp-1;
+    list-style: none;
+  }
+
+  .orders__line {
+    display: flex;
+    gap: $sp-2;
+    align-items: center;
+    padding: $sp-1 $sp-2;
+    background: #fff;
+    border: 1px solid $c-border;
+    border-radius: $radius-sm;
+
+    &.is-enough .orders__line-have {
+      color: $c-success;
+    }
+  }
+
+  .orders__item {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+  }
+
+  .orders__line-name {
+    flex: 1;
+    font-weight: $fw-bold;
+    color: $c-wood-dark;
+  }
+
+  .orders__line-have {
+    font-size: $fs-sm;
+    color: $c-danger;
+  }
 }

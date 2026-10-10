@@ -3,6 +3,9 @@
 // each Area loads its own files the same way. Vite bundles the JSON: nothing is fetched at runtime.
 import achievementsRaw from '../../../content/shared/achievements.json';
 import bondRaw from '../../../content/shared/bond.json';
+import codexRaw from '../../../content/shared/codex.json';
+import goalsRaw from '../../../content/shared/goals.json';
+import ordersRaw from '../../../content/shared/orders.json';
 import characterRaw from '../../../content/shared/character.json';
 import dailyRaw from '../../../content/shared/daily.json';
 import dayNightRaw from '../../../content/shared/daynight.json';
@@ -17,6 +20,9 @@ import valuationRaw from '../../../content/shared/valuation.json';
 import timeRaw from '../../../content/shared/time.json';
 import { achievementsFileSchema } from '../../../content/schemas/shared/achievements';
 import { bondFileSchema } from '../../../content/schemas/shared/bond';
+import { codexFileSchema } from '../../../content/schemas/shared/codex';
+import { goalsFileSchema } from '../../../content/schemas/shared/goals';
+import { ordersFileSchema } from '../../../content/schemas/shared/orders';
 import { characterFileSchema } from '../../../content/schemas/shared/character';
 import { dailyFileSchema } from '../../../content/schemas/shared/daily';
 import { dayNightFileSchema } from '../../../content/schemas/shared/dayNight';
@@ -39,6 +45,9 @@ export const CONTENT = {
   quality: loadContent('shared/quality.json', qualityFileSchema, qualityRaw),
   shop: loadContent('shared/shop.json', shopFileSchema, shopRaw),
   bond: loadContent('shared/bond.json', bondFileSchema, bondRaw),
+  codex: loadContent('shared/codex.json', codexFileSchema, codexRaw),
+  goals: loadContent('shared/goals.json', goalsFileSchema, goalsRaw),
+  orders: loadContent('shared/orders.json', ordersFileSchema, ordersRaw),
   achievements: loadContent('shared/achievements.json', achievementsFileSchema, achievementsRaw),
   daily: loadContent('shared/daily.json', dailyFileSchema, dailyRaw),
   dayNight: loadContent('shared/daynight.json', dayNightFileSchema, dayNightRaw),

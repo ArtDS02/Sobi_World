@@ -2,10 +2,10 @@
 // opened by clicking world objects, toasts, dialogs. Re-renders on store notify.
 import { openGift } from '../logic/actions/openGift';
 import { penMood } from '../logic/decor';
-import type { NurseryPig, Pig, FarmGame } from '../logic/types';
+import type { Pig, FarmGame } from '../logic/types';
 import { vi } from '../../../i18n/vi';
 import type { BoundAction, FarmStore, FarmSnapshot } from '../store';
-import { troughSpace, type ActionVm } from './actionsVm';
+import type { ActionVm } from './actionsVm';
 import {
   closePopupShell,
   createPopupShell,
@@ -15,30 +15,28 @@ import {
 import { createToaster } from '../../../ui/components/toast';
 import { renderHud } from './components/hud';
 import {
-  openAdoptDialog,
-  openBuyItemDialog,
   openOrderDialog,
   openRenameDialog,
   openSellDialog,
   openTroughDialog,
 } from './dialogs';
 import { openBreedDialog } from './breedDialog';
-import { sellItem } from '../logic/actions/sellItem';
 import type { FarmGoto } from '../logic/summary';
-import type { ItemId } from '../../../core/config/ids';
 import type { AppOptions, FarmPick, MountedApp, Place } from './appTypes';
 import { setIconSource } from '../../../ui/components/icon';
 import { el, patch } from '../../../ui/dom';
 import { renderFarmHint, renderPigPopup, renderWellPopup } from './screens/farmScreen';
 import { renderHistoryScreen } from './screens/historyScreen';
 import { renderInventoryScreen } from './screens/inventoryScreen';
-import { renderAchievementsScreen } from './screens/achievementsScreen';
-import { renderCollectionScreen } from './screens/collectionScreen';
+import { goalsDot } from '../../../ui/goals/goalsVm';
+import { renderCodexPanel, renderGoalsPanel, renderOrdersPanel, type OrdersTab, type WorldPanelDeps } from '../../../ui/goals/panels';
+import { localDay } from '../../../ui/localDay';
 import { renderOrdersScreen } from './screens/ordersScreen';
 import { renderSettingsScreen } from './screens/settingsScreen';
 import { renderMenuScreen } from './screens/menuScreen';
 import { settingsHandlers } from './settingsHandlers';
-import { renderShopScreen, type ShopHandlers, type ShopTab } from './screens/shopScreen';
+import { renderShopScreen, type ShopTab } from './screens/shopScreen';
+import { panelHandlers } from './panelHandlers';
 import { renderMultiTabBanner, renderStatusScreen } from './screens/statusScreen';
 import { bindHotkeys } from './hotkeys';
 import { createSession } from './session';
@@ -48,6 +46,8 @@ interface UiState {
   panel: PanelId | null;
   selectedPigId: string | null;
   shopTab: ShopTab;
+  /** The orders panel: the plaza's board or the farm's pig orders. */
+  ordersTab: OrdersTab;
 }
 
 export type { AppOptions, FarmCanvas, FarmPick, FarmPickAction, MountedApp } from './appTypes';
@@ -60,7 +60,7 @@ export function mountApp(
 ): MountedApp {
   document.title = vi.app.title;
   setIconSource(opts.assets ? (id) => opts.assets?.url(id) ?? null : null);
-  const ui: UiState = { place: 'area', panel: null, selectedPigId: null, shopTab: 'pigs' };
+  const ui: UiState = { place: 'area', panel: null, selectedPigId: null, shopTab: 'pigs', ordersTab: 'board' };
   const topbar = el('header', { class: 'topbar' });
   const banner = el('div', { class: 'app__banner' });
   const saveBanner = el('div', { class: 'app__banner' });
@@ -126,28 +126,18 @@ export function mountApp(
     const save = store.getSnapshot().save;
     if (save) openTroughDialog(dialogs, save, now(), act, units);
   };
-  const shop: ShopHandlers = {
-    act: handlers.act,
-    tab: (tab) => {
+  const { shop, inventory } = panelHandlers({
+    store,
+    dialogs,
+    now,
+    act,
+    fire: handlers.act,
+    openTrough,
+    setShopTab: (tab) => {
       ui.shopTab = tab;
       rerender();
     },
-    buyItem: (productId) => {
-      const save = store.getSnapshot().save;
-      if (save) openBuyItemDialog(dialogs, save, productId, now(), act);
-    },
-  };
-  const inventory = {
-    fillTrough: () => {
-      const save = store.getSnapshot().save;
-      if (save) openTrough(Math.min(save.inventory.FOOD_BASIC, troughSpace(save)));
-    },
-    sellItem: (itemId: ItemId, quantity: number) => act((s, c) => sellItem(s, { itemId, quantity }, c)),
-    raise: (baby: NurseryPig) => {
-      const save = store.getSnapshot().save;
-      if (save) openAdoptDialog(dialogs, save, baby, act);
-    },
-  };
+  });
   const settings = settingsHandlers({
     store,
     now,
@@ -191,7 +181,15 @@ export function mountApp(
   });
   const offSettings = [opts.keySettings, opts.characterChoice].map((c) => c?.subscribe(() => ui.panel === 'settings' && rerender()));
 
-  /** Body of the open popup, or null when it cannot show (e.g. the selected pig was sold). */
+  // What the world's own popups need (null in DOM tests of the farm alone).
+  const worldDeps = (): WorldPanelDeps | null => {
+    const world = opts.world?.save();
+    return opts.world && world
+      ? { world, goals: opts.world.goals, codexKinds: opts.world.codexKinds(), assets, now: now(), act: (run) => opts.world!.act(run) }
+      : null;
+  };
+
+  /** Body of the open popup, or null when it cannot show (the pig was sold…). */
   function renderPanel(save: FarmGame, panel: PanelId): HTMLElement | null {
     switch (panel) {
       case 'pig': {
@@ -206,18 +204,19 @@ export function mountApp(
         return renderInventoryScreen(save, inventory, assets ?? undefined);
       case 'history':
         return renderHistoryScreen(save);
-      case 'orders':
-        return renderOrdersScreen(save, now(), {
-          deliver: (card) => openOrderDialog(dialogs, card, act),
-        });
+      case 'orders': {
+        const farmOrders = renderOrdersScreen(save, now(), { deliver: (card) => openOrderDialog(dialogs, card, act) });
+        const w = worldDeps();
+        return w ? renderOrdersPanel(w, ui.ordersTab, (tab) => { ui.ordersTab = tab; rerender(); }, farmOrders) : farmOrders;
+      }
       case 'settings':
         return renderSettingsScreen(save, session.settingsVm(save), settings, opts.keySettings, opts.characterChoice);
       case 'menu':
         return renderMenuScreen(go);
       case 'collection':
-        return renderCollectionScreen(save, assets);
+        return worldDeps() ? renderCodexPanel(worldDeps()!) : null;
       case 'achievements':
-        return renderAchievementsScreen(save, now(), handlers.act);
+        return worldDeps() ? renderGoalsPanel(worldDeps()!) : null;
     }
   }
 
@@ -267,6 +266,7 @@ export function mountApp(
       ui.place === 'garden' ? null : renderHud(save, {
         place: ui.place, now: now(), gems: opts.gems?.() ?? null, go, leave: opts.leave, openTrough: () => openTrough(),
         selectPig: (pigId) => { ui.selectedPigId = pigId; go('pig'); },
+        goalsDot: opts.world && opts.world.save() ? goalsDot(opts.world.save()!, opts.world.goals, localDay(now())) : 0,
       }),
     );
     patch(coach, ui.place === 'area' ? session.coach(snap) : null);
