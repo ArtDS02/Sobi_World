@@ -51,7 +51,7 @@ export const regenerateIds = () => writeText(IDS_FILE, idsText());
 export const readIds = () => readFileSync(IDS_FILE, 'utf8');
 export const writeIds = (text: string) => writeText(IDS_FILE, text);
 
-const OPTIONAL = ['buyGold', 'unlockLevel', 'sellGold', 'growthSec', 'pregnancySec', 'maxWeight', 'breedable', 'enabled'] as const;
+const OPTIONAL = ['buyGold', 'unlockLevel', 'sellGold', 'growthSec', 'pregnancySec', 'maxWeight', 'breedable', 'enabled', 'signatureTrait', 'favorite'] as const;
 
 interface SpeciesFile {
   tiers: unknown;

@@ -12,7 +12,7 @@ import { FARM_CONTENT } from '../../src/areas/farm/logic/config/content';
 import { GARDEN_CONTENT } from '../../src/areas/garden/logic/config/content';
 import { PLAZA_LAYOUT } from '../../src/areas/plaza/logic/config/content';
 
-const files = ['shared', 'farm', 'plaza', 'garden', 'aquarium', 'cloud', 'adventure'].flatMap((dir) =>
+const files = ['shared', 'breeding', 'farm', 'plaza', 'garden', 'aquarium', 'cloud', 'adventure'].flatMap((dir) =>
   readdirSync(`content/${dir}`)
     .filter((f) => f.endsWith('.json'))
     .map((f) => `content/${dir}/${f}`),

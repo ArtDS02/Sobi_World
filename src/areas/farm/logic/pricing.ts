@@ -14,6 +14,7 @@ import { CONTENT } from '../../../core/config/content';
 import { DAY_MS } from '../../../core/clock';
 import { BREEDS } from './config/breeds';
 import { weight } from './derived';
+import { pigTraitFactor } from './heredity';
 import type { Pig } from './types';
 
 const V = CONTENT.valuation;
@@ -36,11 +37,13 @@ export interface Quote {
   /** 1 unless the pig is ill right now. */
   healthFactor: number;
   marketFactor: number;
+  /** Traits that raise the price (1 without). */
+  traitFactor: number;
   price: number;
 }
 
 type Priced = Pick<Pig, 'breed' | 'growthProgress' | 'hunger' | 'cleanliness' | 'isSick'> &
-  Partial<Pick<Pig, 'id' | 'bond' | 'energy' | 'moodAvg' | 'moodSec' | 'lastSickAt'>>;
+  Partial<Pick<Pig, 'id' | 'bond' | 'energy' | 'moodAvg' | 'moodSec' | 'lastSickAt' | 'traits' | 'hiddenTrait'>>;
 
 /** Tier its lifetime average mood earns (a pig with no history yet counts its mood now), before Bond. */
 function moodQuality(pig: Priced, decorBonus: number): Quality {
@@ -70,6 +73,7 @@ export function sellQuote(pig: Priced, ctx: PriceContext): Quote {
     weight: weightFactor(kg, BREEDS[pig.breed].maxWeight, V.weightCap),
     health: healthFactor(daysIll, V.healthPenalty.perDay, V.healthPenalty.floor),
     market: dailyMarket(gameDay(ctx.now, ctx.dayOffsetMs), V.market).factors.PIGS,
+    trait: pigTraitFactor(pig, 'sellValue'),
   };
   return {
     base,
@@ -80,6 +84,7 @@ export function sellQuote(pig: Priced, ctx: PriceContext): Quote {
     weightFactor: factors.weight,
     healthFactor: factors.health,
     marketFactor: factors.market,
+    traitFactor: factors.trait,
     price: valueOf(base, factors),
   };
 }

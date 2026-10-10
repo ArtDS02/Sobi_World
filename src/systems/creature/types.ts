@@ -3,6 +3,7 @@
 // farm: pen slot, pregnancy). Fields of later phases (bond, traits, combat…) are added when used.
 import type { Gender } from '../../core/config/ids';
 import type { Purpose } from '../../../content/schemas/vocab';
+import type { Ancestor } from '../breeding/types';
 
 export type { Purpose };
 
@@ -37,6 +38,10 @@ export interface Creature {
   petCount?: number;
   /** Mood a snack lifts until `until` (epoch ms): premium feed, grass. */
   moodBoost?: { amount: number; until: number };
+  /** Inherited traits (systems/breeding): the visible ones, the hidden one (open from 5 hearts of Bond), and the frozen family tree. */
+  traits?: string[] | undefined;
+  hiddenTrait?: string | undefined;
+  lineage?: { mother?: Ancestor | undefined; father?: Ancestor | undefined } | undefined;
   /** Time the numbers were last simulated up to (epoch ms). */
   lastTickedAt: number;
   createdAt: number;

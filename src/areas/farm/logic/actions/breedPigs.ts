@@ -7,12 +7,17 @@ import { BREEDS } from '../config/breeds';
 import { SAVE } from '../../../../core/config/save';
 import type { ErrorCode } from '../../../../core/config/errors';
 import { rollChild } from '../breeding';
+import { bornHeredity, isRareBreed } from '../heredity';
+import { BREEDING_RULES_DEFAULT, nextPity } from '../../../../systems/breeding';
 import { generationOf, waitingPigs } from '../derived';
 import { changeGold } from '../gold';
 import { addXP } from '../xp';
 import { randomId } from '../../../../core/rng';
 import type { ActionContext, ActionResult, BreedingRecord, Pig, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
+
+/** Pity is stored only while it is above zero (absent = 0): a save that never missed a Rare+ stays as it was. */
+const pityField = (pity: number) => (pity > 0 ? { breedingPity: pity } : { breedingPity: undefined });
 
 export interface BreedPigsArgs {
   pigAId: string;
@@ -54,7 +59,9 @@ export function breedPigs(state: FarmGame, args: BreedPigsArgs, ctx: ActionConte
     });
     if (!paid.ok) return paid;
 
-    const child = rollChild(ctx.rng, mother.breed, father.breed);
+    const pity = paid.state.breedingPity ?? 0;
+    const child = rollChild(ctx.rng, mother.breed, father.breed, pity);
+    const heredity = bornHeredity(mother, father, child.breed, ctx.now);
     const endsAt = ctx.now + pregnancySec * 1000; // D22: the mother's breed
     const childGeneration = Math.max(generationOf(mother), generationOf(father)) + 1;
     const record: BreedingRecord = {
@@ -67,6 +74,7 @@ export function breedPigs(state: FarmGame, args: BreedPigsArgs, ctx: ActionConte
       childBreed: child.breed,
       childGender: child.gender,
       childGeneration,
+      ...(heredity.mutated ? { mutated: true } : {}),
       bornAt: null,
     };
     const bred: FarmGame = {
@@ -82,11 +90,16 @@ export function breedPigs(state: FarmGame, args: BreedPigsArgs, ctx: ActionConte
                 childBreed: child.breed,
                 childGender: child.gender,
                 childGeneration,
+                childTraits: heredity.traits,
+                ...(heredity.hiddenTrait ? { childHidden: heredity.hiddenTrait } : {}),
+                ...(heredity.mutated ? { childMutated: true } : {}),
+                childLineage: heredity.lineage,
               },
             }
           : p,
       ),
       breedingRecords: [record, ...paid.state.breedingRecords].slice(0, SAVE.BREEDING_RECORDS_MAX),
+      ...pityField(nextPity(pity, BREEDING_RULES_DEFAULT, child.couldBeRare, isRareBreed(child.breed))),
     };
     const xp = addXP(bred, BALANCE.XP.BREED);
     return ok(

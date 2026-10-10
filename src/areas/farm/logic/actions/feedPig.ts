@@ -7,6 +7,7 @@ import { takeFromBag } from '../../../../core/inventory/bag';
 import { raiseBond, withMoodBoost } from '../../../../systems/bond/bond';
 import { BALANCE } from '../config/balance';
 import { pigFavorite } from '../bond';
+import { bondGainFor } from '../heredity';
 import type { ItemId } from '../types';
 import { addXP } from '../xp';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
@@ -33,7 +34,7 @@ export function feedPig(
 
     const hunger = Math.min(BALANCE.HUNGER_MAX, pig.hunger + (favorite ? BOND.favorite.hunger : ITEMS[itemId].hungerRestore));
     const fed = withMoodBoost({ ...pig, hunger, lastFedAt: ctx.now }, BOND.moodBoost.byItem[itemId] ?? 0, ctx.now, BOND);
-    const loved = favorite ? { ...fed, bond: raiseBond(fed.bond, BOND.favorite.gain, BOND) } : fed;
+    const loved = favorite ? { ...fed, bond: raiseBond(fed.bond, bondGainFor(fed, BOND.favorite.gain), BOND) } : fed;
     const next: FarmGame = {
       ...s,
       inventory: bag.items,

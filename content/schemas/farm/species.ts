@@ -3,7 +3,8 @@
 // content:ids` + one manifest row (the admin dashboard does all three, DECISIONS A7-1).
 import { z } from 'zod';
 import { FAMILY_VALUES, RARITY_VALUES, TRAIT_VALUES } from '../vocab';
-import { assetId, breedId, color, nonNeg, posInt, text } from '../fields';
+import { assetId, breedId, color, itemId, nonNeg, posInt, text } from '../fields';
+import { traitId } from '../breeding/traits';
 
 const tierSchema = z.strictObject({
   sellGold: nonNeg,
@@ -29,6 +30,10 @@ const speciesRowSchema = z.strictObject({
   unlockLevel: posInt.optional(),
   /** false = retired: not sold, never bred; pigs already owned stay. */
   enabled: z.boolean().optional(),
+  /** The trait every pig of this species is born with (content/breeding/traits.json); absent = none (GĐ7). */
+  signatureTrait: traitId.optional(),
+  /** The food its pigs love; absent = drawn per pig from the Bond pool (GĐ7). */
+  favorite: itemId.optional(),
   /** Gene tags (DECISIONS PS-2); empty = rarity and family alone. */
   traits: z.array(z.enum(TRAIT_VALUES)),
   ...tierSchema.partial().shape,

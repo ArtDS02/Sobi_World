@@ -34,7 +34,7 @@ export interface Ancestor {
   gender: Gender;
   generation: number;
   /** Visible traits only: a hidden trait is the owner's secret until revealed. */
-  traits?: string[];
-  mother?: Ancestor;
-  father?: Ancestor;
+  traits?: string[] | undefined;
+  mother?: Ancestor | undefined;
+  father?: Ancestor | undefined;
 }

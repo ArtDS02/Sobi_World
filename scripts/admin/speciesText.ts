@@ -15,6 +15,9 @@ export interface SpeciesRowData {
   maxWeight?: number;
   breedable?: boolean;
   enabled?: boolean;
+  /** Trait every pig of the species is born with, and its favourite food (GĐ7). */
+  signatureTrait?: string;
+  favorite?: string;
   artId: string;
   color: number;
 }
