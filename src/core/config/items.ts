@@ -23,3 +23,9 @@ export interface ItemDef {
 export const ITEMS: Record<ItemId, ItemDef> = byId('shared/items.json', CONTENT.items.items, ITEM_ID_VALUES);
 
 export const ITEM_IDS = Object.keys(ITEMS) as ItemId[];
+
+/** Potions a creature can take (they cure an illness or lift its mood): the Cloud's Healing and mood potions. */
+export const CREATURE_POTION_IDS: readonly ItemId[] = ITEM_IDS.filter((id) => ITEMS[id].category === 'POTION' && (ITEMS[id].curesSickness || (ITEMS[id].moodBoost ?? 0) > 0));
+
+/** Items that raise the mutation chance when added to a breeding (rare flowers), strongest first. */
+export const MUTATION_BOOST_IDS: readonly ItemId[] = ITEM_IDS.filter((id) => (ITEMS[id].mutationBoost ?? 0) > 0).sort((a, b) => (ITEMS[b].mutationBoost ?? 0) - (ITEMS[a].mutationBoost ?? 0));

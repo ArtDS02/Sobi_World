@@ -1,9 +1,12 @@
 // Breeding dialog (spec §10.2): the pair as portraits (this pig ♥ the chosen partner, compatibility
 // hearts), the valid partners as picture tiles, then the child chances as tiles (unseen species
 // stay a "?" mystery), pregnancy time, fee and space. Data: breedVm.ts; style: features/_breed.scss.
-import type { Pig, FarmGame } from '../logic/types';
+import type { ItemId, Pig, FarmGame } from '../logic/types';
+import type { ActionVm } from './actionsVm';
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
+import { boostOptions, boostPicker } from '../../../ui/components/boostPicker';
+import { breedPigs } from '../logic/actions/breedPigs';
 import { breedingVm, type ChildChanceVm, type PigCardVm } from './breedVm';
 import { actionButton } from './components/actionButton';
 import { openDialog } from '../../../ui/components/dialog';
@@ -95,7 +98,11 @@ export function openBreedDialog(
   const grid = el('div', { class: 'c-breed__partners', attrs: { role: 'listbox' } });
   const result = el('div', { class: 'c-breed__result' });
   const slot = el('div');
+  const boosts = boostOptions(save.inventory);
+  let boost: string | undefined;
+  let current = 0;
   const select = (i: number) => {
+    current = i;
     const p = vm.partners[i]!;
     [...grid.children].forEach((b, j) => b.setAttribute('aria-selected', String(i === j)));
     partnerSlot.replaceChildren(breedCard(p.card, 'partner'));
@@ -105,7 +112,7 @@ export function openBreedDialog(
       el('span', { class: 'c-breed__heart-label', text: vi.breed.compatLabel }),
     );
     const partnerPig = save.pigs.find((x) => x.id === p.pigId);
-    const extras = partnerPig ? breedingExtras(save, pig, partnerPig) : null;
+    const extras = partnerPig ? breedingExtras(save, pig, partnerPig, boosts.find((o) => o.itemId === boost)?.percent ?? 0) : null;
     result.replaceChildren(
       ...(partnerPig && extras
         ? [
@@ -135,7 +142,15 @@ export function openBreedDialog(
         el('span', { class: 'c-breed__fact', text: `🏡 ${vm.capacity}` }),
       ),
     );
-    slot.replaceChildren(actionButton(p.confirm, () => void act(p.confirm.run).then(d.close)));
+    const run: ActionVm['run'] = (st, c) => breedPigs(st, { pigAId: pig.id, pigBId: p.pigId, ...(boost ? { boostItem: boost as ItemId } : {}) }, c);
+    const confirm = { ...p.confirm, run };
+    slot.replaceChildren(
+      boostPicker(boosts, boost, (next) => {
+        boost = next;
+        select(current);
+      }) ?? '',
+      actionButton(confirm, () => void act(run).then(d.close)),
+    );
   };
   vm.partners.forEach((p, i) =>
     grid.append(

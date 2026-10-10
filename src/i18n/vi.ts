@@ -417,6 +417,7 @@ export const vi = {
     tankFull: "Bể đã đầy cá",
     // Breeding.
     breedTitle: "Cho cá đẻ",
+    potion: "{name} (x{count})",
     breedHint: "Hai cá cùng loài, một đực một cái, đã lớn hẳn và khỏe. Mỗi lần tốn {feed} thức ăn cá; trứng nở sau {hours} giờ.",
     breedPick: "Chọn cặp cá",
     breedNone: "Chưa có cặp nào đủ điều kiện. Cần hai cá cùng loài (loài đẻ được), một đực một cái.",
@@ -620,6 +621,7 @@ export const vi = {
     feedFavorite: "Món yêu thích: {item} (x{count})",
     purpose: "Mục đích nuôi",
     feedPremium: "Ăn cao cấp (x{count})",
+    potion: "{name} (x{count})",
     feedGrass: "Ăn cỏ (x{count})",
     clean: "Tắm",
     cleanAll: "Tắm tất cả",
@@ -972,6 +974,9 @@ export const vi = {
 
   breed: {
     title: "Chọn bạn phối",
+    boostTitle: "Thêm một bông hoa để tăng đột biến (tùy chọn)",
+    boostNone: "Không thêm",
+    boostChip: "{name} +{percent}% (có {count})",
     fee: "Phí phối giống: {gold} Sobi Coin",
     chances: "Tỉ lệ ra giống con",
     otherChance: "Giống khác {n}%",
