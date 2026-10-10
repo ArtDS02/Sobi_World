@@ -10,9 +10,10 @@
         {
           "type": "battle",
           "pool": [
+            { "weight": 3, "enemies": ["enemy_mossling"] },
+            { "weight": 2, "enemies": ["enemy_dew_frog"] },
             { "weight": 2, "enemies": ["enemy_mossling", "enemy_mossling"] },
-            { "weight": 2, "enemies": ["enemy_thorn_sprout", "enemy_gale_sparrow"] },
-            { "weight": 1, "enemies": ["enemy_mossling", "enemy_dew_frog"] }
+            { "weight": 1, "enemies": ["enemy_thorn_sprout", "enemy_gale_sparrow"] }
           ]
         },
         { "type": "chest", "table": "chest_forest" },
@@ -44,7 +45,7 @@
   "tables": {
     "chest_forest": {
       "rolls": 2,
-      "coins": [40, 80],
+      "coins": [25, 50],
       "gemChance": 0.03,
       "gems": [1, 3],
       "entries": [
@@ -63,7 +64,7 @@
     },
     "chest_forest_boss": {
       "rolls": 3,
-      "coins": [120, 220],
+      "coins": [90, 160],
       "gemChance": 0.1,
       "gems": [1, 3],
       "entries": [
@@ -121,7 +122,7 @@
       "textVi": "Cả đội cầu nguyện ở miếu cổ và học được điều mới.",
       "healPct": 0,
       "damagePct": 0,
-      "exp": 20,
+      "exp": 12,
       "table": null
     }
   ]

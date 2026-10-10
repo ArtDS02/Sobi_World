@@ -6,6 +6,7 @@ import { adventureArea } from '../../src/areas/adventure';
 import { claimStarter, collectLoot, starterGift } from '../../src/areas/adventure/logic/actions/camp';
 import { battleAct, enterNode, startRun } from '../../src/areas/adventure/logic/actions/run';
 import { simulateRuns, GEAR_TIERS } from '../../src/areas/adventure/logic/battleSim';
+import { ARCHETYPE_LIST } from '../../src/areas/adventure/logic/config/content';
 import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
 import { fighterCardVm, hubVm, startReason } from '../../src/areas/adventure/ui/adventureVm';
 import { battleVm, logLine, mapVm, resultVm } from '../../src/areas/adventure/ui/battleVm';
@@ -205,4 +206,44 @@ describe('the Admin simulation', () => {
     expect(() => simulateRuns({ zoneId: 'zone_forest', level: 1, team: [{ archetypeId: 'nope' }], gear: 'none', samples: 1, seed: 1 })).toThrow();
   });
 
+});
+
+describe('Adventure balance guard (GĐ10 playtest numbers)', () => {
+  const run = (archetypeIds: string[], level: number, gear: (typeof GEAR_TIERS)[number] = 'common') =>
+    simulateRuns({ zoneId: 'zone_forest', level, team: archetypeIds.map((archetypeId) => ({ archetypeId })), gear, samples: 80, seed: 21 });
+  const classic = ['bruiser', 'guardian', 'mystic'];
+
+  it('is out of reach at level 1, a fair fight in the middle and comfortable by level 8', () => {
+    expect(run(classic, 1).winPercent).toBeLessThan(5);
+    const mid = run(classic, 5).winPercent;
+    expect(mid).toBeGreaterThan(40);
+    expect(mid).toBeLessThan(95);
+    expect(run(classic, 8).winPercent).toBeGreaterThan(90);
+  });
+
+  it('a lone level 1 fighter can still win the opening fight, so a first run is never wasted', () => {
+    expect(run(['bruiser'], 1).reachedPercent[1]!).toBeGreaterThan(40);
+  });
+
+  it('no style carries and no style is dead weight: every one adds to a team within a band', () => {
+    const ids = ARCHETYPE_LIST.map((a) => a.id);
+    const mean = (id: string) => {
+      const mates = ids.filter((x) => x !== id);
+      const wins = [[0, 1], [2, 3], [4, 5], [1, 4]].map(([i, j]) => run([id, mates[i!]!, mates[j!]!], 4).winPercent);
+      return wins.reduce((n, w) => n + w, 0) / wins.length;
+    };
+    const means = ids.map(mean);
+    expect(Math.max(...means) - Math.min(...means)).toBeLessThan(30);
+    expect(Math.min(...means)).toBeGreaterThan(15);
+  });
+
+  it('three of the same style is worse than a mixed team (compositions matter)', () => {
+    expect(run(['trickster', 'trickster', 'trickster'], 5).winPercent).toBeLessThan(run(classic, 5).winPercent);
+    expect(run(['stormcaller', 'stormcaller', 'stormcaller'], 5).winPercent).toBeLessThan(run(classic, 5).winPercent);
+  });
+
+  it('gear helps without replacing levels: a full rare set at level 1 does not clear the forest like level 6 does', () => {
+    expect(run(classic, 1, 'rare').winPercent).toBeLessThan(run(classic, 6, 'common').winPercent);
+    expect(run(classic, 3, 'uncommon').winPercent).toBeGreaterThan(run(classic, 3, 'none').winPercent);
+  });
 });

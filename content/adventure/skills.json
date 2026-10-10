@@ -30,10 +30,10 @@
       "descVi": "Nổ lửa vào mọi kẻ địch, có thể gây bỏng.",
       "element": "FIRE",
       "target": "allEnemies",
-      "power": 0.9,
+      "power": 0.75,
       "healPct": 0,
       "cost": 4,
-      "cooldown": 2,
+      "cooldown": 3,
       "statuses": [{ "status": "burn", "turns": 2, "chance": 0.5 }]
     },
     {
@@ -94,7 +94,7 @@
       "power": 0,
       "healPct": 0,
       "cost": 3,
-      "cooldown": 3,
+      "cooldown": 4,
       "statuses": [{ "status": "haste", "turns": 3 }]
     },
     {
@@ -103,10 +103,10 @@
       "descVi": "Cuốn mọi kẻ địch, có thể làm chậm.",
       "element": "WIND",
       "target": "allEnemies",
-      "power": 0.9,
+      "power": 0.75,
       "healPct": 0,
       "cost": 4,
-      "cooldown": 2,
+      "cooldown": 3,
       "statuses": [{ "status": "slow", "turns": 2, "chance": 0.6 }]
     },
     {
@@ -176,7 +176,7 @@
       "descVi": "Ném một tảng đá lớn vào một kẻ địch.",
       "element": "EARTH",
       "target": "enemy",
-      "power": 2.1,
+      "power": 1.9,
       "healPct": 0,
       "cost": 4,
       "cooldown": 2,
@@ -201,7 +201,7 @@
       "element": "WATER",
       "target": "ally",
       "power": 0,
-      "healPct": 0.4,
+      "healPct": 0.3,
       "cost": 3,
       "cooldown": 1,
       "statuses": []
@@ -213,7 +213,7 @@
       "element": "WATER",
       "target": "allAllies",
       "power": 0,
-      "healPct": 0.25,
+      "healPct": 0.18,
       "cost": 5,
       "cooldown": 3,
       "statuses": []

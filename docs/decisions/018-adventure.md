@@ -1,6 +1,6 @@
 # 018 — Sobi Adventure: đánh theo lượt, trang bị, vùng Rừng (GĐ10)
 
-**Ngày:** 2026-10-11 · **Trạng thái:** Đã làm, số liệu chờ chủ dự án chơi thử
+**Ngày:** 2026-10-11 · **Trạng thái:** Đã làm; số liệu đã chơi thử và chỉnh bằng mô phỏng (xem Cân bằng)
 
 ## Bối cảnh
 GĐ10 (spec V2 §7, §8.5, §13; GAME_BALANCE §9) thêm Area thứ năm qua Cổng dịch chuyển. Theo decision 017 (gameplay trước, art sau) mọi art là placeholder; UI chỉ cần đủ để chơi.
@@ -19,8 +19,14 @@ Thách thức kiến trúc: chiến binh là **sinh vật của Farm và Aquariu
 - **Admin**: Số liệu sửa kẻ địch, kỹ năng, kiểu đánh, vùng (loot, sự kiện), trang bị, cân bằng; trang **Mô phỏng trận** chơi cả chuyến N lần (cấp, trang bị, đội) để xem tỉ lệ thắng, số vòng mỗi trận, máu còn lại, và điểm dừng nào hay chết; tua thời gian dịch cả Adventure.
 - **Save**: slice `areas.sobi_adventure` v1; không đổi world save; mở tự động khi đủ điều kiện (registry).
 
-## Cân bằng (mô phỏng `battleSim`, đội 3 gồm Chiến binh, Hộ vệ, Pháp sư nước, độ hiếm Thường, tim 0)
-Thắng cả Rừng: cấp 1–2: 0%; cấp 3: ~50%; cấp 4: ~96%; cấp 5 trở lên: ~100%. Một trận trung bình 8–15 vòng (x2 và Tự động để xem nhanh). Trùm bị hạ máu (420 → 340) vì cấp 1 không có đường thắng nhưng cấp 3 quá khó. Mỗi chuyến cho ~100 KN mỗi bạn (trước trùm): cấp 4 cần ~5 chuyến, mất ~2 ngày thật vì năng lượng. Số cần chủ dự án chơi thử: nhịp lên cấp, cảm giác trùm, độ dài trận, có muốn thêm nút bỏ qua.
+## Cân bằng (chơi thử bằng mô phỏng, phiên nghiệm thu GĐ10; chạy lại: `npm run sim:adventure`)
+Đo bằng `battleSim` (Rừng, 80–300 lần/ô, bộ đồ Thường). Bản đầu cho thấy: trận chỉ 2–3 vòng (quá ngắn để có chiến thuật), cấp 4 trở lên thắng ~100%, và hai kiểu (Triệu bão, Pháp sư lửa) hơn hẳn trong khi Quỷ kế gần như vô dụng (Rừng nặng hệ Đất: Nước bị kháng). Đã chỉnh:
+- **Kẻ địch**: máu ×1,8, công ×1,25, thủ ×1,2 (trùm 340 → 612 máu). Hệ chia đều để mọi hệ vừa khắc vừa bị khắc: Đất (Rêu Con, Heo Rừng Gai, Cổ Thụ), Gió (Chim Sẻ, Sói), Lửa (Cáo, Mầm Gai), Nước (Ếch). Điểm dừng đầu có thêm nhóm 1 kẻ địch để một chiến binh cấp 1 vẫn thắng trận đầu và có KN.
+- **Kiểu đánh**: Triệu bão (công 18, tốc độ 12, Lốc xoáy và Gió thuận hồi chiêu 3 / 4), Pháp sư lửa (công 20, máu 78; Bùng cháy hồi chiêu 3, sức mạnh 0,75) bớt trội; Man lực, Hộ vệ, Chiến binh, Quỷ kế, Pháp sư nước chỉnh để mọi kiểu đứng trong một dải (xem bảng); hồi máu 0,4 → 0,3 (đơn) và 0,25 → 0,18 (cả đội); Ném đá 2,1 → 1,9.
+- **Trang bị** yếu đi (Kiếm Gỗ +3 … Gươm Lửa +7; Áo Lá +15 … Giáp Rêu Đá +28 / +4): trước đây bộ Hiếm làm cấp 1 thắng 100%; giờ bộ Hiếm ≈ +4 cấp, bộ Khá ≈ +2 cấp, bộ Thường ≈ +1 cấp.
+- **Nhịp lên cấp**: KN kẻ địch ×0,55 (trùm 90 → 55, miếu 20 → 12) vì cấp 4 chỉ sau 1 chuyến là quá nhanh; tiền ×0,6 (rương 25–50, rương trùm 90–160).
+Kết quả (đội 3: Chiến binh, Hộ vệ, Pháp sư nước, thắng cả Rừng): cấp 1: 0%; cấp 3: ~10%; cấp 4: ~35–55%; cấp 5: ~70%; cấp 6: ~95%; cấp 8+: ~100%. Một trận trung bình 4–5 vòng; một chuyến cho ~90 KN mỗi bạn nếu thắng (cấp 5 sau ~8 chuyến, ~2 ngày thật; cấp 8 sau ~22 chuyến, ~5 ngày). Thua: mất 30 năng lượng và kiệt sức 4 giờ, giữ KN và loot (đủ nhẹ để thử lại, đủ tốn để không bấm bừa).
+Đa dạng chiến thuật: ở cấp 4 mọi kiểu trong đội hỗn hợp thắng 26–39% (chênh dưới 15 điểm); ba con cùng một kiểu luôn yếu hơn đội hỗn hợp, riêng nhóm ba Thích khách / Pháp sư nước là đường tắt mạnh nhất nhưng vẫn thua đội đủ vai trò ở cấp 6+. Điểm mạnh yếu có lý do: Pháp sư nước / Quỷ kế mạnh nhờ hệ Nước khắc Lửa và hồi / khiên, nhưng chậm; Pháp sư lửa dọn đám đông nhưng giòn; Thích khách ra đòn đầu và chí mạng, mỏng máu; Hộ vệ / Man lực chịu đòn và choáng nhưng ít sát thương. Thay đổi vùng tiếp theo (GĐ11) nên đổi cơ cấu hệ để chiến thuật xoay vòng. Có test giữ đường cong này (, "balance guard").
 
 ## Để sau
 Vùng Núi và Tàn tích, vật liệu cổ nâng công trình, công nghệ trang trại, Bond ảnh hưởng chỉ số nhiều hơn, buff từ thức ăn (GĐ11); Codex trang bị / kẻ địch; nhân vật đi trên bản đồ; art và âm thanh thật (GĐ14, `docs/ASSET_TODO.md`); bot `sim:week` chưa có routine Adventure (làm ở GĐ11 cùng cân bằng 14 ngày).

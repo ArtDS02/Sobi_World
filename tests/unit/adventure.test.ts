@@ -17,6 +17,7 @@ import { adventureEventsToWorld } from '../../src/areas/adventure/logic/worldEve
 import { adventureArtIds } from '../../src/areas/adventure/logic/art';
 import type { CreatureGift, RosterEntry } from '../../src/core/area-registry/registry';
 import { ITEMS } from '../../src/core/config/items';
+import { unlockGaps } from '../../src/core/progression/levels';
 import { mulberry32 } from '../../src/core/rng';
 import type { WorldSave } from '../../src/core/save/world';
 import type { ActionContext } from '../../src/core/types';
@@ -121,7 +122,7 @@ describe('fighters', () => {
     const base = { level: 1, exp: 0, loadout: {}, energy: 100, energyAt: 0, exhaustedUntil: null };
     expect(fighterStats(base, entry('x'), a)).toEqual(a.stats);
     expect(fighterStats({ ...base, level: 11 }, entry('x'), a).atk).toBe(a.stats.atk * 2);
-    expect(fighterStats({ ...base, loadout: { weapon: 'item_equip_iron_sword' } }, entry('x'), a).atk).toBe(a.stats.atk + 8);
+    expect(fighterStats({ ...base, loadout: { weapon: 'item_equip_iron_sword' } }, entry('x'), a).atk).toBe(a.stats.atk + 5);
     expect(fighterStats(base, entry('x', { hearts: 5, rarity: 'RARE' }), a).hp).toBeGreaterThan(a.stats.hp * 1.28);
     expect(fighterSkills({ level: 1 }, a)).toHaveLength(2);
     expect(fighterSkills({ level: 10 }, a)).toHaveLength(3);
@@ -388,5 +389,16 @@ describe('the forest is beatable and not trivial', () => {
     expect(rate(8, true)).toBeGreaterThan(0.6);
     expect(rate(1, false)).toBeLessThan(0.3);
     expect(enemyIdOf('enemy_mossling#2')).toBe('enemy_mossling');
+  });
+});
+
+describe('opening threshold (GĐ10 acceptance)', () => {
+  it('needs both Sobi World level 8 and World Development 20', () => {
+    const rule = adventureArea.manifest.unlock;
+    const gaps = (worldLevel: number, worldDevelopment: number) => unlockGaps(rule, { worldLevel, worldDevelopment }).map((g) => g.kind);
+    expect(gaps(7, 20)).toEqual(['worldLevel']);
+    expect(gaps(8, 19)).toEqual(['worldDevelopment']);
+    expect(gaps(1, 0).sort()).toEqual(['worldDevelopment', 'worldLevel']);
+    expect(gaps(8, 20)).toEqual([]);
   });
 });
