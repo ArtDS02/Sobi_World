@@ -37,6 +37,7 @@ const BUTTON: Record<FarmGoto['target'], string> = {
   garden: vi.away.goGarden,
   aquarium: vi.away.goAquarium,
   cloud: vi.away.goCloud,
+  adventure: vi.away.goAdventure,
 };
 
 /** `summary.farm.sick` → the string in the table. */

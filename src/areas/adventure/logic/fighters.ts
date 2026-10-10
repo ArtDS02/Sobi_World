@@ -46,7 +46,7 @@ export function whyNotReady(entry: RosterEntry | undefined, f: Fighter | undefin
 /** The member of a run: its numbers frozen for the run, full HP. */
 export function memberOf(key: string, f: Fighter, entry: RosterEntry, archetype: Archetype): RunMember {
   const stats = fighterStats(f, entry, archetype);
-  return { key, name: entry.name, element: archetype.element, stats, hp: stats.hp, skills: fighterSkills(f, archetype) };
+  return { key, name: entry.name, art: entry.artId, element: archetype.element, stats, hp: stats.hp, skills: fighterSkills(f, archetype) };
 }
 
 export const archetypeById = (id: string): Archetype | undefined => ARCHETYPES[id];

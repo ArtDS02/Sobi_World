@@ -7,7 +7,7 @@ export type AdventureEvent =
   | { type: 'ADVENTURE_BATTLE_WON'; zoneId: string; boss: boolean; enemies: number; exp: number; coins: number }
   | { type: 'ADVENTURE_CHEST_OPENED'; items: Readonly<Record<string, number>>; coins: number; gems: number }
   | { type: 'ADVENTURE_EVENT'; eventId: string }
-  | { type: 'ADVENTURE_LEVEL_UP'; key: string; level: number }
+  | { type: 'ADVENTURE_LEVEL_UP'; key: string; name: string; level: number }
   | { type: 'ADVENTURE_RUN_ENDED'; zoneId: string; result: 'win' | 'lose' | 'retreat' }
   | { type: 'ADVENTURE_EXHAUSTED'; keys: string[] }
   | { type: 'ADVENTURE_LOOT_COLLECTED'; items: Readonly<Record<string, number>>; left: number }

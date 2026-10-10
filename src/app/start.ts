@@ -29,6 +29,8 @@ import { createGameStore } from './gameStore';
 import { parseWorldSave } from './saveCodec';
 import { AquariumScene, AQUARIUM_SCENE_KEY } from '../areas/aquarium/scene/AquariumScene';
 import { bindAquariumStage } from '../areas/aquarium/stage';
+import { AdventureScene, ADVENTURE_SCENE_KEY } from '../areas/adventure/scene/AdventureScene';
+import { bindAdventureStage } from '../areas/adventure/stage';
 import { CloudScene, CLOUD_SCENE_KEY } from '../areas/cloud/scene/CloudScene';
 import { bindCloudStage } from '../areas/cloud/stage';
 import { farmStore } from '../areas/farm/store';
@@ -121,6 +123,8 @@ export async function start(root: HTMLElement) {
     now: () => clock.now(),
     leave: () => void flow.go(PLAZA_ID),
     openPanel: (panel) => app?.openPanel(panel),
+    roster: (save) => AREAS.roster(save),
+    give: (save, gift, ctx) => AREAS.give(save, gift, ctx),
   });
   let director: FeedbackDirector | null = null;
   const host: WorldHost = {
@@ -228,6 +232,7 @@ export async function start(root: HTMLElement) {
         reduceMotion: () => host.reduceMotion(),
         paused: () => host.paused(),
       });
+      const adventure = new AdventureScene();
       const cloud = new CloudScene({
         read: () => overlays.cloudUi.sceneState(),
         onPick: (pick) => overlays.cloudUi.pick(pick),
@@ -244,11 +249,12 @@ export async function start(root: HTMLElement) {
           // The game opens in the plaza (spec §3.1).
           firstScene: () => ({ key: PLAZA_SCENE_KEY, from: null }),
         },
-        [plaza, garden, aquarium, cloud],
+        [plaza, garden, aquarium, cloud, adventure],
       );
       const view = farmView;
       bindGardenStage({ enter: () => view.showScene(GARDEN_SCENE_KEY), exit: () => view.sleepScene(GARDEN_SCENE_KEY) });
       bindAquariumStage({ enter: () => view.showScene(AQUARIUM_SCENE_KEY), exit: () => view.sleepScene(AQUARIUM_SCENE_KEY) });
+      bindAdventureStage({ enter: () => view.showScene(ADVENTURE_SCENE_KEY), exit: () => view.sleepScene(ADVENTURE_SCENE_KEY) });
       bindCloudStage({ enter: () => view.showScene(CLOUD_SCENE_KEY), exit: () => view.sleepScene(CLOUD_SCENE_KEY) });
       if (devPhase) farmView.previewPhase(devPhase);
       if (devSeason) farmView.previewSeason(devSeason);

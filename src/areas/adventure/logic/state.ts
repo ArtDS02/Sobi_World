@@ -32,6 +32,8 @@ const statsSchema = z.strictObject({ hp: nonNeg, atk: nonNeg, def: nonNeg, spd: 
 const memberSchema = z.strictObject({
   key: z.string().min(1),
   name: z.string().min(1),
+  /** The creature's picture (its own Area's art id). */
+  art: z.string(),
   element: z.enum(ELEMENT_VALUES),
   stats: statsSchema,
   /** HP it carries from node to node. */

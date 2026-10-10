@@ -102,7 +102,7 @@ function giveExp(st: Step, exp: number) {
     setFighter(st, m.key, { level: next.level, exp: next.exp });
     if (next.levelsGained > 0) {
       if (!st.run.levelUps.includes(m.key)) st.run.levelUps.push(m.key);
-      st.events.push({ type: 'ADVENTURE_LEVEL_UP', key: m.key, level: next.level });
+      st.events.push({ type: 'ADVENTURE_LEVEL_UP', key: m.key, name: m.name, level: next.level });
     }
   }
 }

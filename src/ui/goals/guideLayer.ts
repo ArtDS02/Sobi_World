@@ -11,10 +11,10 @@ import { el, patch } from '../dom';
 import { localDay, localOffsetMs } from '../localDay';
 import { nextStepVm, type NextGoto, type NextStepVm } from './nextStep';
 
-export type GuidePlace = 'plaza' | 'area' | 'garden' | 'aquarium' | 'cloud';
+export type GuidePlace = 'plaza' | 'area' | 'garden' | 'aquarium' | 'cloud' | 'adventure';
 
 /** The Area whose guide shows in each place (the plaza has none). */
-const AREA_OF: Record<GuidePlace, string | null> = { plaza: null, area: 'sobi_farm', garden: 'sobi_garden', aquarium: 'sobi_aquarium', cloud: 'sobi_cloud' };
+const AREA_OF: Record<GuidePlace, string | null> = { plaza: null, area: 'sobi_farm', garden: 'sobi_garden', aquarium: 'sobi_aquarium', cloud: 'sobi_cloud', adventure: 'sobi_adventure' };
 
 export interface GuideDeps {
   now: () => number;

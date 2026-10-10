@@ -26,7 +26,7 @@ export interface NextStepInput {
   goals: Goals;
   /** The Areas' own suggestions (registry.suggest), most urgent first. */
   area: readonly Suggestion[];
-  place: 'plaza' | 'area' | 'garden' | 'aquarium' | 'cloud';
+  place: 'plaza' | 'area' | 'garden' | 'aquarium' | 'cloud' | 'adventure';
   /** The local day number, for today's login reward. */
   day: number;
   /** The next locked Area and what it needs, null when every Area is open. */
