@@ -167,7 +167,7 @@ Trần 30 ngày: mô phỏng 30 ngày đầu rồi `rebase` mốc thời gian Ar
 
 ## 7. Sự kiện chuẩn (event bus)
 
-`item.added`, `item.removed`, `currency.changed`, `creature.born`, `creature.sold`, `creature.sick`, `creature.critical`, `creature.died`, `creature.levelUp`, `creature.petted`, `creature.purposeSet`, `crop.planted`, `crop.harvested`, `fish.caught` (GĐ8: một lần câu được cá), `tank.cleaned` (GĐ8: thay nước bể cá), `recipe.completed`, `order.completed`, `area.unlocked`, `area.levelUp`, `codex.discovered`, `achievement.unlocked`, `adventure.finished`, `time.dayChanged`.
+`item.added`, `item.removed`, `currency.changed`, `creature.born`, `creature.sold`, `creature.sick`, `creature.critical`, `creature.died`, `creature.levelUp`, `creature.petted`, `creature.purposeSet`, `crop.planted`, `crop.harvested`, `fish.caught` (GĐ8: một lần câu được cá), `tank.cleaned` (GĐ8: thay nước bể cá), `flower.harvested` (GĐ9: hái hoa), `potion.brewed` (GĐ9: nấu xong potion), `recipe.completed`, `order.completed`, `area.unlocked`, `area.levelUp`, `codex.discovered`, `achievement.unlocked`, `adventure.finished`, `time.dayChanged`.
 
 Area mới có thể thêm sự kiện riêng, phải ghi vào bảng này.
 

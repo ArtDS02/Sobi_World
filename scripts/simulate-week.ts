@@ -20,6 +20,7 @@ console.log('\nTime to each world level');
 for (const [level, hour] of Object.entries(r.levelAtHour)) console.log(`  level ${level.padStart(2)}: ${h1(hour)}`);
 console.log(`\nSobi Garden opens: ${h1(r.gardenOpenAtHour)}`);
 console.log(`Sobi Aquarium opens: ${h1(r.aquariumOpenAtHour)}; fish illnesses ${r.fishSick}, fish lost ${r.fishDied}`);
+console.log(`Sobi Cloud opens: ${h1(r.cloudOpenAtHour)}; flowers picked ${r.flowersHarvested}, potions brewed ${r.potionsBrewed}`);
 console.log('\nCoins by activity (+ in, - out)');
 for (const [label, v] of Object.entries(r.ledger).sort((a, b) => b[1] - a[1])) console.log(`  ${label.padEnd(18)} ${n0(v).padStart(10)}`);
 console.log(`\nAchievements claimed: ${r.achievementsClaimed}; Gems earned: ${r.gemsEarned}`);

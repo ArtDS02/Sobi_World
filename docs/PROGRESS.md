@@ -1,13 +1,28 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ8 — Sobi Aquarium: xong phần code, chờ chủ dự án chơi thử và duyệt số (`content/aquarium/`); bản cài 0.8.0.
-**Nhánh:** `phase-08-aquarium` (tách từ `main` sau khi merge GĐ7 vào `main` — chủ dự án chưa tag `phase-07` / chưa push).
-**Quy ước (chủ dự án, 2026-10-10):** chủ dự án tự merge, gắn tag `phase-XX` và push sau mỗi giai đoạn; agent chỉ commit trên nhánh giai đoạn.
-**Bước tiếp theo:** chơi thử Aquarium (Admin → Số liệu → Cân bằng Sobi Aquarium); rồi GĐ9 — Sobi Cloud.
+**Giai đoạn:** GĐ9 — Sobi Cloud: xong phần code, chờ chủ dự án chơi thử và duyệt số (`content/cloud/`); phiên bản 0.9.0.
+**Nhánh:** `phase-09-cloud` (tách từ `main` sau khi merge GĐ8; tag `phase-08` đã gắn và push). Chưa có tag `phase-07`.
+**Quy ước:** chủ dự án gắn tag `phase-XX` và push sau mỗi giai đoạn (lần GĐ8 chủ dự án nhờ agent làm).
+**Bước tiếp theo:** chơi thử Cloud (Admin → Số liệu → Cân bằng Sobi Cloud); rồi merge, tag `phase-09`; GĐ10 — Adventure nền tảng.
 
 ## Nhật ký
 
+### 2026-10-11 — GĐ9 hoàn thành: Sobi Cloud
+✅ Đã làm (8 việc của prompt GĐ9; quyết định ở `docs/decisions/016-cloud.md`):
+1. **Area `sobi_cloud`** từ `_template` (`src/areas/cloud`), phong cách pastel trên mây, hoa dùng `systems/plants`; mở bằng Cây cao chọc trời ở Sảnh (cấp 8 + Phát triển thế giới 15).
+2. **Nước tinh khiết** từ Suối mây (3 cấp), **6 hoa**: thường, hiếm, đêm (hái lúc tối ×2).
+3. **Potion** ở Vạc nấu: Healing Potion (chữa heo/cá kể cả nguy kịch, tâm trạng +20), Potion Vui Vẻ, Potion Chiến Đấu (cho GĐ10). Hành động `usePotion`, `useFishPotion`; nút trong bảng heo và hộp thoại cá.
+4. **Hoa tăng đột biến** khi lai: `mutationBoost` trên item, `breedPigs`/`breedFish` nhận `boostItem`, hàng chọn hoa trong hộp thoại phối giống.
+5. Mỗi hoa ≥ 2 công dụng (test); đơn hàng (10 dòng), 2 mục tiêu ngày, 5 thành tựu, Codex `flower`.
+6. **NPC Bác Cú Giả Kim** (5 chủ đề).
+7. **Admin**: Số liệu sửa hoa, cân bằng Cloud, vật phẩm (potion/hoa), recipe; tua thời gian dịch cả Cloud.
+8. **Cân bằng**: `npm run sim:week -- 7 40` (bot có routine Cloud): xem decision 016 mục "Cân bằng".
+📁 File chính: `src/areas/cloud/`, `content/cloud/` + `content/schemas/cloud/`, `tests/unit/cloud.test.ts`, `docs/decisions/016-cloud.md`; đổi ở core (events, goals, codex), Farm (`usePotion`, `breedPigs`), Aquarium (`useFishPotion`, `breedFish`), `ui/components/boostPicker.ts`, shell (`areaOverlays`, `start`, `Place` 'cloud').
+🧪 Đã kiểm tra: `npm run check` xanh; chạy thật trong trình duyệt (sandbox): vào từ Sảnh, HUD, hái hoa, mở Vạc nấu, xây vạc, danh sách recipe.
+⚠️ Quyết định tự đưa ra: điều kiện mở (giữ manifest có sẵn), con số hoa/suối/vạc, hoa đêm ×2 khi hái, mood potion dùng cơ chế mood boost có sẵn (theo giờ), Cloud không phải nguồn tiền chính.
+⚠️ Chưa làm: Potion Chiến Đấu chưa dùng (GĐ10), thời tiết cầu vồng, art/âm thanh thật, chưa kiểm `dist:win`, chưa thử tay nhiều ngày; chưa test UI hộp thoại phối giống có chọn hoa bằng tay.
+👉 Bạn cần: chơi thử Cloud (cấp 8 + dev 15, hoặc sửa save/Admin), xem Cloud mở ngày ~27 có muộn; nước có quá khan; Healing Potion có cứu được heo nguy kịch; hoa có làm lai thú vị hơn; rồi merge, tag `phase-09`, push.
 ### 2026-10-10 — GĐ8 hoàn thành: Sobi Aquarium
 ✅ Đã làm (9 việc của prompt GĐ8; quyết định ở `docs/decisions/015-aquarium.md`):
 1. **Area `sobi_aquarium`** từ `_template` (`src/areas/aquarium`). Cá = `Creature` chung: `advanceCreature` (đói −5/giờ, lớn 6–24 giờ), `systems/health` (bệnh → nguy kịch 48 giờ → chết 72 giờ, ân hạn sau offline), `bond` (vuốt ve, món yêu thích từ Garden, 5 tim mở tính trạng ẩn), `quality`, `breeding` (tính trạng, phả hệ). Mở ở Sobi World cấp 6 (decision 007).

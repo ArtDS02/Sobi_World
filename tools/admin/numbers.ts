@@ -16,8 +16,8 @@ const FILE_TITLE: Record<string, string> = {
   'farm/balance.json': '🐷 Cân bằng Nông trại',
   'garden/crops.json': '🌱 Cây trồng (giờ lớn, sản lượng)',
   'garden/balance.json': '🥕 Cân bằng Sobi Garden (ô đất, tưới, héo, công trình)',
-  'shared/recipes.json': '⚙️ Recipe (nguyên liệu, thành phẩm, thời gian)',
-  'shared/items.json': '📦 Vật phẩm (giá mua, giá bán, độ no)',
+  'shared/recipes.json': '⚙️ Recipe (nguyên liệu, thành phẩm, thời gian; gồm công thức potion của Vạc nấu)',
+  'shared/items.json': '📦 Vật phẩm (giá mua, giá bán, độ no; potion: tâm trạng, giờ; hoa: tăng đột biến)',
   'shared/progression.json': '📈 Cấp Sobi World (KN từng cấp) và Phát triển thế giới',
   'shared/bond.json': '💕 Thân thiết (vuốt ve, món yêu thích, tâm trạng món ăn vặt)',
   'shared/orders.json': '📋 Bảng đơn hàng (ô, thời gian, thưởng, vật phẩm được đặt)',
@@ -28,13 +28,15 @@ const FILE_TITLE: Record<string, string> = {
   'shared/npcs.json': '💬 NPC hướng dẫn (lời của từng NPC; sửa được cả chữ)',
   'aquarium/fish.json': '🐟 Loài cá (giờ lớn, giá, độ hay cắn câu, vảy; sửa được cả tên và mô tả)',
   'aquarium/balance.json': '🪣 Cân bằng Sobi Aquarium (bể, nước, cá, cần câu, đẻ trứng)',
+  'cloud/flowers.json': '🌸 Hoa của Sobi Cloud (giờ lớn, sản lượng; sửa được cả tên)',
+  'cloud/balance.json': '☁️ Cân bằng Sobi Cloud (ô hoa, tưới, suối nước tinh khiết, vạc nấu)',
   'breeding/traits.json': '🧬 Tính trạng (hiệu ứng, trọng số; sửa được cả tên và mô tả)',
   'breeding/balance.json': '🍀 Lai giống nâng cao (di truyền, đột biến, vận may, phả hệ)',
   'breeding/rumors.json': '🗣️ Tin đồn của Nhà lai giống (câu mẫu; sửa được chữ)',
 };
 
 /** Files whose words can be edited as well (the server allows it for the same files). */
-const TEXT_FILES = new Set(['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json']);
+const TEXT_FILES = new Set(['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json']);
 
 /** Same rule as the server (scripts/admin/numbers.ts isWordPath). */
 const isWordPath = (path: string): boolean =>
@@ -150,6 +152,18 @@ const LABEL: Record<string, string> = {
   cost: 'Giá nâng cấp',
   slots: 'Số ô',
   stack: 'Số lượng mỗi ô',
+  // Sobi Cloud (GĐ9)
+  moodBoost: 'Potion: tâm trạng cộng thêm (điểm)',
+  moodHours: 'Potion: tâm trạng giữ bao nhiêu giờ',
+  mutationBoost: 'Hoa: tăng đột biến khi phối giống (điểm %)',
+  nightYieldFactor: 'Hoa đêm hái lúc tối: nhân sản lượng',
+  'spring.levels.intervalMin': 'Suối: bao nhiêu phút ra một Nước tinh khiết',
+  'spring.levels.capacity': 'Suối: chứa tối đa',
+  'spring.levels.price': 'Suối: giá nâng lên cấp này',
+  'cauldron.price': 'Giá xây Vạc nấu',
+  'cauldron.maxBatches': 'Vạc nấu: số mẻ tối đa mỗi lần',
+  'start.water': 'Nước tinh khiết tặng khi mở khu',
+  'xp.spring': 'KN khi hứng nước',
   // Sobi Aquarium (GĐ8)
   tankGold: 'Giá bán cá lớn trong bể (Sobi Coin)',
   catchWeight: 'Độ hay cắn câu (tỉ trọng; 0 = không câu được)',
