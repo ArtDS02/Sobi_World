@@ -3,6 +3,17 @@
 `npm run assets:release` chỉ qua khi hết hàng `placeholder`. Art Sobi Farm đã ổn, không đụng tới.
 
 ## GĐ9 — Sobi Cloud
+Ảnh tham khảo (do chủ dự án cấp): `docs/reference-assets/sobi-cloud/` (`item-assets.png`, `environment-assets.png`, `asset-design.png`).
+| Thứ cần ở GĐ9 | Có trong ảnh tham khảo | Ghi chú |
+|---|---|---|
+| Hạt (`ui_item_seed_*`) | "Hạt Giống" (gói hạt Economy / Item / Material / Mystery) | Dùng kiểu gói hạt, đổi hình hoa trên gói theo từng loài. |
+| Hoa (`flower_*` 4 giai đoạn) | "Cây Hoa" (mầm → cây → nở, trong chậu), hoa trên các Tầng mây | Bản tham khảo là cây trong chậu; cần vẽ lại theo từng loài (Cúc, Bồ Công Anh, Hồng, Lan, Huệ, Chuông) và ô mây trống. |
+| Potion (`ui_item_potion_*`) | Lọ thuốc ở "Dụng cụ và tiêu dùng" (Phân Bón Đặc Biệt), "Túi Nước May Mắn" | Lấy dáng lọ; cần 3 màu (xanh lá / hồng / tím). |
+| Nước tinh khiết, suối mây | Không có đúng hình ("Túi Nước May Mắn" gần nhất) | Cần vẽ mới. |
+| Vạc nấu (`bld_cauldron`) | "Chậu Lửa Rồng", "Forged Pots" (gần nhất) | Cần vẽ mới theo phong cách đó. |
+| Ô mây (`plot_cloud`), nền (`bg_cloud`) | "Tầng 1 / Tầng 2" các tầng mây | Dùng được cho ô mây và nền. |
+| NPC Cú Giả Kim | Không có ("Thương Gia Chim Mây" cùng phong cách) | Cần vẽ mới. |
+Ngoài phạm vi GĐ9 (để dành sau): chậu hoa 4 bậc hiếm, tầng mây theo mùa, Cửa hàng / Lò Rèn / Viện Nghiên Cứu / Kho, sóc và chim gõ kiến trợ thủ, hiệu ứng thời tiết (cầu vồng, mưa, tuyết), Tháp Viễn Vọng, Trạm Hơi Nước, thợ rèn.
 Tất cả là placeholder sinh bằng `npm run assets:placeholders`:
 | Việc | Ghi chú |
 |---|---|
