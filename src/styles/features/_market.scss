@@ -1,0 +1,64 @@
+// The market of the day (GĐ6). Owns `.market*` inside [data-screen="market"].
+@use '../core' as *;
+
+[data-screen='market'] {
+  display: grid;
+  gap: $sp-3;
+
+  .market__hint {
+    font-size: $fs-sm;
+    color: $c-text-muted;
+    text-align: center;
+  }
+
+  .market__list {
+    display: grid;
+    gap: $sp-2;
+    list-style: none;
+  }
+
+  .market__group {
+    display: grid;
+    gap: $sp-1;
+    padding: $sp-2 $sp-3;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: $radius-md;
+
+    &.is-up {
+      background: #effbe3;
+      border-color: $c-leaf;
+    }
+
+    &.is-down {
+      background: #fff1ee;
+      border-color: $c-danger;
+    }
+  }
+
+  .market__head {
+    display: flex;
+    gap: $sp-2;
+    align-items: baseline;
+  }
+
+  .market__factor {
+    font-weight: $fw-bold;
+    color: $c-wood-dark;
+  }
+
+  .market__label {
+    margin-left: auto;
+    font-size: $fs-sm;
+    font-weight: $fw-bold;
+  }
+
+  .market__goods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-1 $sp-3;
+    font-size: $fs-sm;
+    color: $c-text-muted;
+    list-style: none;
+  }
+}

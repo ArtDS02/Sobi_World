@@ -28,6 +28,10 @@ export const TRAIT_VALUES = [
 ] as const;
 export type Trait = (typeof TRAIT_VALUES)[number];
 
+/** Groups of goods the daily market moves together (spec V2 §9): shipped pigs, farm crops, feed, materials. */
+export const MARKET_GROUP_VALUES = ['PIGS', 'CROPS', 'FOOD', 'MATERIALS'] as const;
+export type MarketGroup = (typeof MARKET_GROUP_VALUES)[number];
+
 /** Why a creature is raised (spec V2 §7): shipped out, kept to breed, kept as a pet, or sent adventuring (GĐ10). */
 export const PURPOSE_VALUES = ['SHIP', 'BREED', 'PET', 'ADVENTURE'] as const;
 export type Purpose = (typeof PURPOSE_VALUES)[number];

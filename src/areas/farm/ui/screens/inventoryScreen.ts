@@ -10,6 +10,8 @@ import { itemArtId } from '../../../../core/config/assetIds';
 import { art, icon } from '../../../../ui/components/icon';
 import { el } from '../../../../ui/dom';
 import { renderNursery } from './inventoryNursery';
+import { localOffsetMs } from '../../../../ui/localDay';
+import { itemSalePrice } from '../../../../systems/valuation/itemPrice';
 
 const ITEM_ICON: Partial<Record<ItemId, UiIcon>> = { FOOD_BASIC: 'fillTrough', MEDICINE_COMMON: 'treat', item_manure: 'cleanAll' };
 /** Shown even when the bag holds none: the trough food and the medicine are always at hand. */
@@ -27,6 +29,8 @@ export function renderInventoryScreen(
   save: FarmGame,
   on: InventoryHandlers,
   assets?: AssetRegistry,
+  /** When the shop prices the items (the day's market moves them); the plain price when absent. */
+  now?: number,
 ): HTMLElement {
   return el(
     'section',
@@ -60,7 +64,7 @@ export function renderInventoryScreen(
             ? el(
                 'button',
                 { class: 'c-button', attrs: { type: 'button' }, on: { click: () => on.sellItem(id, save.inventory[id]) } },
-                t(vi.inventory.sellAll, { gold: formatInt(ITEMS[id].sellGold! * save.inventory[id]) }),
+                t(vi.inventory.sellAll, { gold: formatInt(now === undefined ? ITEMS[id].sellGold! * save.inventory[id] : itemSalePrice(ITEMS[id], save.inventory[id], now, localOffsetMs(now))) }),
               )
             : null,
         ),

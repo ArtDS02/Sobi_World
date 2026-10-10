@@ -14,29 +14,20 @@ import {
 } from '../../../ui/components/popup';
 import { createToaster } from '../../../ui/components/toast';
 import { renderHud } from './components/hud';
-import {
-  openOrderDialog,
-  openRenameDialog,
-  openSellDialog,
-  openTroughDialog,
-} from './dialogs';
 import { openBreedDialog } from './breedDialog';
 import type { FarmGoto } from '../logic/summary';
 import type { AppOptions, FarmPick, MountedApp, Place } from './appTypes';
 import { setIconSource } from '../../../ui/components/icon';
 import { el, patch } from '../../../ui/dom';
-import { renderFarmHint, renderPigPopup, renderWellPopup } from './screens/farmScreen';
-import { renderHistoryScreen } from './screens/historyScreen';
-import { renderInventoryScreen } from './screens/inventoryScreen';
 import { goalsDot } from '../../../ui/goals/goalsVm';
-import { renderCodexPanel, renderGoalsPanel, renderOrdersPanel, type OrdersTab, type WorldPanelDeps } from '../../../ui/goals/panels';
+import type { OrdersTab } from '../../../ui/goals/panels';
 import { localDay } from '../../../ui/localDay';
-import { renderOrdersScreen } from './screens/ordersScreen';
-import { renderSettingsScreen } from './screens/settingsScreen';
-import { renderMenuScreen } from './screens/menuScreen';
+import { openRenameDialog, openSellDialog, openTroughDialog } from './dialogs';
+import { renderFarmHint } from './screens/farmScreen';
+import type { ShopTab } from './screens/shopScreen';
 import { settingsHandlers } from './settingsHandlers';
-import { renderShopScreen, type ShopTab } from './screens/shopScreen';
 import { panelHandlers } from './panelHandlers';
+import { renderPanel, type PanelCtx } from './panels';
 import { renderMultiTabBanner, renderStatusScreen } from './screens/statusScreen';
 import { bindHotkeys } from './hotkeys';
 import { createSession } from './session';
@@ -181,47 +172,10 @@ export function mountApp(
   });
   const offSettings = [opts.keySettings, opts.characterChoice].map((c) => c?.subscribe(() => ui.panel === 'settings' && rerender()));
 
-  // What the world's own popups need (null in DOM tests of the farm alone).
-  const worldDeps = (): WorldPanelDeps | null => {
-    const world = opts.world?.save();
-    return opts.world && world
-      ? { world, goals: opts.world.goals, codexKinds: opts.world.codexKinds(), assets, now: now(), act: (run) => opts.world!.act(run) }
-      : null;
-  };
-
-  /** Body of the open popup, or null when it cannot show (the pig was sold…). */
-  function renderPanel(save: FarmGame, panel: PanelId): HTMLElement | null {
-    switch (panel) {
-      case 'pig': {
-        const pig = save.pigs.find((p) => p.id === ui.selectedPigId);
-        return pig ? renderPigPopup(save, pig, now(), handlers) : null;
-      }
-      case 'well':
-        return renderWellPopup(save, now(), handlers.act);
-      case 'shop':
-        return renderShopScreen(save, now(), ui.shopTab, shop, assets);
-      case 'inventory':
-        return renderInventoryScreen(save, inventory, assets ?? undefined);
-      case 'history':
-        return renderHistoryScreen(save);
-      case 'orders': {
-        const farmOrders = renderOrdersScreen(save, now(), { deliver: (card) => openOrderDialog(dialogs, card, act) });
-        const w = worldDeps();
-        return w ? renderOrdersPanel(w, ui.ordersTab, (tab) => { ui.ordersTab = tab; rerender(); }, farmOrders) : farmOrders;
-      }
-      case 'settings':
-        return renderSettingsScreen(save, session.settingsVm(save), settings, opts.keySettings, opts.characterChoice);
-      case 'menu':
-        return renderMenuScreen(go);
-      case 'collection':
-        return worldDeps() ? renderCodexPanel(worldDeps()!) : null;
-      case 'achievements':
-        return worldDeps() ? renderGoalsPanel(worldDeps()!) : null;
-    }
-  }
+  const panelCtx: PanelCtx = { now, assets, opts, ui, pig: handlers, shop, inventory, session, settings, dialogs, act, go, rerender };
 
   function renderPopup(save: FarmGame | null) {
-    const body = save && ui.panel ? renderPanel(save, ui.panel) : null;
+    const body = save && ui.panel ? renderPanel(panelCtx, save, ui.panel) : null;
     if (!body || !ui.panel) {
       if (ui.panel) ui.panel = null; // nothing left to show
       if (popup) closePopupShell(popup, appEl.classList.contains('is-reduced-motion'));

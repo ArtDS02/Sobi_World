@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import type { Pig } from '../../src/areas/farm/logic/types';
 import { CONTENT } from '../../src/core/config/content';
-import { marketFactor } from '../../src/systems/valuation/market';
+import { dailyMarket, marketGroupOf, MARKET_GROUP_VALUES } from '../../src/systems/valuation/market';
+import { itemSalePrice } from '../../src/systems/valuation/itemPrice';
+import { ITEMS } from '../../src/core/config/items';
 import { freeSlots, growthStage, level, waitingPigs, weight } from '../../src/areas/farm/logic/derived';
 import { happiness } from '../../src/areas/farm/logic/happiness';
 import { pigQuality, sellPrice, sellQuote } from '../../src/areas/farm/logic/pricing';
@@ -26,7 +28,7 @@ describe('shipping price (GAME_BALANCE §2.5)', () => {
   const V = CONTENT.valuation;
   const DAY = 86_400_000;
   /** A day on which the market pays the plain price, and one that pays more / less. */
-  const dayWith = (factor: number) => Array.from({ length: 60 }, (_, d) => d).find((d) => marketFactor(d, V.market) === factor)!;
+  const dayWith = (factor: number) => Array.from({ length: 60 }, (_, d) => d).find((d) => dailyMarket(d, V.market).factors.PIGS === factor)!;
   const ctx = (day = dayWith(1), decorBonus = 0) => ({ now: day * DAY + 12 * 3_600_000, dayOffsetMs: 0, decorBonus });
   /** A full-grown pig that lived at mood `mood` all its life. */
   const grown = (mood: number, over: Partial<Pig> = {}) => makePig({ growthProgress: 100, moodAvg: mood, moodSec: 1e6, ...over });
@@ -58,14 +60,31 @@ describe('shipping price (GAME_BALANCE §2.5)', () => {
     expect(sellQuote(grown(10, { isSick: false, lastSickAt: c.now - 3 * DAY }), c).healthFactor).toBe(1);
   });
 
-  it('the market of a day is 0.9, 1.0 or 1.2, the same all day and in every run', () => {
-    const factors = Array.from({ length: 200 }, (_, d) => marketFactor(d, V.market));
-    expect(new Set(factors)).toEqual(new Set([0.9, 1, 1.2]));
-    expect(marketFactor(7, V.market)).toBe(marketFactor(7, V.market));
-    const share = (f: number) => factors.filter((x) => x === f).length / factors.length;
-    expect(share(1)).toBeGreaterThan(0.4); // weights 1 : 2 : 1
+  it('each day two groups of goods pay 1.2, one pays 0.9 and one the plain price; the same all day and in every run', () => {
+    for (let d = 0; d < 200; d += 1) {
+      const m = dailyMarket(d, V.market);
+      expect(m.up).toHaveLength(2);
+      expect(m.down).toHaveLength(1);
+      expect(Object.values(m.factors).sort()).toEqual([0.9, 1, 1.2, 1.2]);
+      expect(dailyMarket(d, V.market)).toEqual(m);
+    }
+    // Every group is up on some days and down on others (nothing is always rich or poor).
+    for (const g of MARKET_GROUP_VALUES) {
+      const factors = new Set(Array.from({ length: 200 }, (_, d) => dailyMarket(d, V.market).factors[g]));
+      expect(factors).toEqual(new Set([0.9, 1, 1.2]));
+    }
     const p = (f: number) => sellPrice(grown(10), ctx(dayWith(f)));
     expect([p(0.9), p(1), p(1.2)]).toEqual([1080, 1200, 1440]);
+  });
+
+  it('items sell at their price times the market of the day of their group; seeds and medicine do not move', () => {
+    const day = (g: 'CROPS', f: number) => Array.from({ length: 60 }, (_, d) => d).find((d) => dailyMarket(d, V.market).factors[g] === f)!;
+    const at = (d: number) => d * DAY + 3_600_000;
+    expect(itemSalePrice(ITEMS.item_carrot, 10, at(day('CROPS', 1.2)), 0)).toBe(120);
+    expect(itemSalePrice(ITEMS.item_carrot, 10, at(day('CROPS', 0.9)), 0)).toBe(90);
+    expect(itemSalePrice(ITEMS.item_carrot, 10, at(day('CROPS', 1)), 0)).toBe(100);
+    expect(marketGroupOf(ITEMS.item_seed_corn.category)).toBeNull();
+    expect(marketGroupOf(ITEMS.item_manure.category)).toBe('MATERIALS');
   });
 
   it('the price is the product of the factors, floored', () => {

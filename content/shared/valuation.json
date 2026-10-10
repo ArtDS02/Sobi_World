@@ -1,5 +1,5 @@
 {
   "weightCap": 1.1,
   "healthPenalty": { "perDay": 0.1, "floor": 0.7 },
-  "market": [{ "factor": 0.9, "weight": 1 }, { "factor": 1, "weight": 2 }, { "factor": 1.2, "weight": 1 }]
+  "market": { "up": { "count": 2, "factor": 1.2 }, "down": { "count": 1, "factor": 0.9 } }
 }

@@ -2,6 +2,7 @@
 import { takeFromBag } from '../../../../core/inventory/bag';
 import type { ItemId } from '../../../../core/config/ids';
 import { ITEMS } from '../../../../core/config/items';
+import { itemSalePrice } from '../../../../systems/valuation/itemPrice';
 import { changeGold } from '../gold';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
@@ -19,7 +20,7 @@ export function sellItem(
     }
     const bag = takeFromBag(s.inventory, item.id, q);
     if (!bag.ok) return bag;
-    const gold = item.sellGold * q;
+    const gold = itemSalePrice(item, q, ctx.now, ctx.dayOffsetMs ?? 0);
     const paid = changeGold({ ...s, inventory: bag.items }, gold, 'ITEM_SELL', ctx, { refId: item.id, note: `x${q}` });
     if (!paid.ok) return paid;
     return ok(paid.state, [{ type: 'ITEM_SOLD', itemId: item.id, quantity: q, gold }]);

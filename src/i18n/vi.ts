@@ -14,6 +14,7 @@ export const vi = {
     history: "Lịch sử",
     settings: "Cài đặt",
     achievements: "Thành tích",
+    market: "Chợ",
     menu: "Menu",
   },
 
@@ -865,6 +866,8 @@ export const vi = {
     normal: "Bình thường",
     groups: { PIGS: "Heo", CROPS: "Nông sản", FOOD: "Thức ăn", MATERIALS: "Vật liệu" },
     today: "Hôm nay",
+    pigsGood: "Heo xuất chuồng",
+    good: "{name}: {gold} Sobi Coin",
   },
 
   // PG-3: farm decorations.

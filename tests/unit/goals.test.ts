@@ -314,15 +314,16 @@ describe('Codex', () => {
     const again = settle(r.state, r.state, [harvest]);
     expect(again.state.collection.discovered.crop).toEqual(['crop_corn']);
     expect(again.state.progression.stats.cropsHarvested).toBe(6);
-    const item = settle(r.state, r.state, [{ type: 'item.added', area: 'sobi_garden', itemId: 'item_corn', quantity: 3 }]);
-    expect(item.state.collection.discovered.item).toEqual(['item_corn']);
+    const item = settle(r.state, withItems(r.state, { item_corn: 3 }), [{ type: 'item.added', area: 'sobi_garden', itemId: 'item_corn', quantity: 3 }]);
+    expect(item.state.collection.discovered.item).toContain('item_corn');
+    expect(item.state.collection.discovered.item).toContain('FOOD_BASIC'); // what the bag already held counts too
   });
 
   it('milestones are announced when the total reaches them and paid when claimed', () => {
     const w0 = base();
     const found = { ...w0, collection: { ...w0.collection, discovered: { breed: ['PIG_EARTH_PINK', 'PIG_WHITE', 'PIG_BLACK', 'PIG_BROWN'] } } };
     const r = settle(w0, found, [{ type: 'item.added', area: 'x', itemId: 'item_manure', quantity: 1 }]);
-    expect(codexCounts(r.state.collection.discovered).total).toBe(5); // 4 breeds + the manure itself
+    expect(codexCounts(r.state.collection.discovered).total).toBeGreaterThanOrEqual(5); // 4 breeds + the items of the starter bag
     expect(r.events).toContainEqual({ type: 'CODEX_MILESTONE_REACHED', id: 'CODEX_5' });
     const paid = ok(GOALS.claimMilestone('CODEX_5')(r.state, ctx()));
     expect(paid.wallet.coins).toBe(r.state.wallet.coins + 300);

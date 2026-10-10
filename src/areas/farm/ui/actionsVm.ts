@@ -127,7 +127,7 @@ export function shopPigs(save: FarmGame, now: number, assets: AssetRegistry | nu
       thumb: assets?.url(def.artId) ?? null,
       price: goldText(def.buyGold ?? 0),
       sell: t(vi.shop.sellUpTo, {
-        gold: formatInt(Math.floor(def.sellGold * QUALITY_RULES.priceFactor.PERFECT * Math.max(...CONTENT.valuation.market.map((m) => m.factor)))),
+        gold: formatInt(Math.floor(def.sellGold * QUALITY_RULES.priceFactor.PERFECT * CONTENT.valuation.market.up.factor)),
       }),
       male: buy('MALE'),
       female: buy('FEMALE'),
