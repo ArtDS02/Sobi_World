@@ -1,12 +1,30 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ7 — Lai giống nâng cao: xong, chờ chủ dự án chơi thử và duyệt số (`content/breeding/`); bản cài 0.7.0.
-**Nhánh:** `phase-07-breeding` (tách từ `main` sau khi GĐ6 đã merge, tag `phase-06`).
+**Giai đoạn:** GĐ8 — Sobi Aquarium: xong phần code, chờ chủ dự án chơi thử và duyệt số (`content/aquarium/`); bản cài 0.8.0.
+**Nhánh:** `phase-08-aquarium` (tách từ `main` sau khi merge GĐ7 vào `main` — chủ dự án chưa tag `phase-07` / chưa push).
 **Quy ước (chủ dự án, 2026-10-10):** chủ dự án tự merge, gắn tag `phase-XX` và push sau mỗi giai đoạn; agent chỉ commit trên nhánh giai đoạn.
-**Bước tiếp theo:** chơi thử lai giống (Admin → Luật phối giống → Mô phỏng lai để xem tỉ lệ); rồi GĐ8 — Sobi Aquarium.
+**Bước tiếp theo:** chơi thử Aquarium (Admin → Số liệu → Cân bằng Sobi Aquarium); rồi GĐ9 — Sobi Cloud.
 
 ## Nhật ký
+
+### 2026-10-10 — GĐ8 hoàn thành: Sobi Aquarium
+✅ Đã làm (9 việc của prompt GĐ8; quyết định ở `docs/decisions/015-aquarium.md`):
+1. **Area `sobi_aquarium`** từ `_template` (`src/areas/aquarium`). Cá = `Creature` chung: `advanceCreature` (đói −5/giờ, lớn 6–24 giờ), `systems/health` (bệnh → nguy kịch 48 giờ → chết 72 giờ, ân hạn sau offline), `bond` (vuốt ve, món yêu thích từ Garden, 5 tim mở tính trạng ẩn), `quality`, `breeding` (tính trạng, phả hệ). Mở ở Sobi World cấp 6 (decision 007).
+2. **Bể cá**: 4 cấp (5 / 8 / 12 / 16 cá), độ trong của nước (đục dần theo thời gian và số cá, **Thay nước** miễn phí), vảy rụng vào bể, nâng cấp bằng Sobi Coin + vảy + ngọc trai.
+3. **Câu cá** ở bến: mini-game căn phao (cần nghỉ 2 phút, cá tuột chỉ nghỉ nửa), điểm càng cao càng dễ ra cá hiếm, **4 loài chỉ cắn lúc tối**, trai ngọc cho ngọc trai.
+4. **12 loài** (3 Common, 4 Uncommon, 3 Rare, 2 Epic), mỗi loài ≥ 2 công dụng: bán / nuôi lớn bán giá cao / Codex / đơn hàng / vảy / lai (6 loài đẻ được) / phiêu lưu sau này.
+5. **Thức ăn cá** từ khoai tây Garden qua `recipe_fish_feed` ở Máy xay; thiếu thì mua phần thiếu (20 Sobi Coin) trong cùng hành động.
+6. **Vảy và ngọc trai** nâng bể (cấp 3–4) và **Vòi tưới của Garden** (cấp 2: 10 vảy; cấp 3: 20 vảy + 3 ngọc trai).
+7. **Đơn hàng** (9 dòng có cá / vảy / ngọc trai / thức ăn cá), mục tiêu hằng ngày (câu cá, thay nước), 5 thành tựu, Codex loài cá (`discovery.fish`), NPC cô Gà Mơ Màng; sự kiện chuẩn mới `fish.caught`, `tank.cleaned`.
+8. **Admin**: Số liệu sửa được cá (giờ lớn, giá, độ hay cắn, vảy, tên, mô tả) và cân bằng bể / nước / cần câu / đẻ trứng; tua thời gian dịch cả bể.
+9. **Cân bằng 7 ngày có Aquarium**: `npm run sim:week -- 7 17` (bot đã có routine Aquarium: `scripts/economy/aquarium.ts`): xem decision 015 mục "Cân bằng".
+✅ Thêm: cá đẻ trứng với tính trạng di truyền (GĐ7, "tính trạng cho cá"), cảnh Phaser (cá bơi, trứng, đống vảy, bến, đêm, nước đục), HUD + 6 hộp thoại, `app/areaOverlays.ts` (Garden và Aquarium chung một overlay), placeholder art 30 ảnh.
+📁 File chính: `src/areas/aquarium/`, `content/aquarium/` + `content/schemas/aquarium/`, `tests/unit/aquarium.test.ts`, `aquariumUi.test.ts`, `docs/decisions/015-aquarium.md`; đổi nhỏ ở core (`events`, `goals/stats|settle|achievements|api`, `collection/codex`, `config/errors`), `vocab.ts`, Garden (`sprinkler.materials`), shell (`Place` 'aquarium', `areaOverlays`).
+🧪 Đã kiểm tra: `npm run check` xanh (1.168 test: 48 mới cho Aquarium, mô phỏng giống nhau với mọi cỡ lát); chạy thật trong trình duyệt (`sandbox-aquarium`): vào từ cửa Biển ở Sảnh, màn "vắng mặt" có dòng cá, cá bơi / click mở hộp thoại, bến câu + mini-game, cá trong túi (thả vào bể, bán), hộp thoại bể, đêm; `npm run test:e2e`.
+⚠️ Quyết định tự đưa ra (decision 015): điều kiện mở theo cấp Sobi World 6 (GAME_BALANCE §7 cũ nói Farm Lv6 + Garden Lv4); giá cá, giá bể, vật liệu; mini-game; cá chỉ đẻ cùng loài, không có vận may; cho ăn tự mua phần thiếu; lớp phủ Aquarium dùng chung overlay với Garden.
+⚠️ Chưa làm: cá phiêu lưu (GĐ10), Healing Potion (GĐ9), lai khác loài, đổi tên cá trong UI, art / âm thanh thật (`docs/ASSET_TODO.md`), chưa thử tay nhiều ngày; chưa kiểm `dist:win` trên máy sạch.
+👉 Bạn cần: chơi thử (mở Aquarium ở cấp 6, hoặc Admin tua thời gian / sửa save), câu vài lần xem mini-game có vui, xem cân bằng (giá cá hiếm, trai ngọc ~2%, tốc độ rụng vảy; bể lên đủ cấp sau ~10 ngày), rồi merge `main`, tag `phase-08`, push.
 
 ### 2026-10-10 — GĐ7 hoàn thành: lai giống nâng cao
 ✅ Đã làm (7 việc của prompt GĐ7; quyết định ở `docs/decisions/014-advanced-breeding.md`):

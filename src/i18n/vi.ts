@@ -201,7 +201,7 @@ export const vi = {
     // Reasons a button is off.
     noFish: "Bể chưa có cá",
     allFull: "Cá đều no",
-    noFeed: "Hết thức ăn cá",
+    noFeed: "Hết thức ăn cá, không đủ Sobi Coin để mua",
     waterClear: "Nước đang trong",
     noScales: "Chưa có vảy",
     bagEmpty: "Túi chưa có cá",
@@ -296,6 +296,7 @@ export const vi = {
     // Toasts.
     toast: {
       fed: "Đã cho {count} cá ăn",
+      feedBought: "Mua thêm {count} thức ăn cá: -{gold} Sobi Coin",
       petted: "{name} thích lắm!",
       treated: "Đã chữa cho {name}",
       water: "Nước bể trong veo",

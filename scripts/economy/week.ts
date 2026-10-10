@@ -19,6 +19,7 @@ import { farmOf } from '../../src/areas/farm/logic/save/lens';
 import { liftFarmAction, type WorldAction } from '../../src/areas/farm/logic/world';
 import { buildWorkshop, buyPlots, collectCraft, startCraft, upgradeSprinkler } from '../../src/areas/garden/logic/actions/buildings';
 import { fertilizePlots, harvestPlots, plantCrops, waterPlots } from '../../src/areas/garden/logic/actions/plants';
+import { aquariumOf, hasAquarium } from '../../src/areas/aquarium/logic/save/lens';
 import { gardenOf, hasGarden } from '../../src/areas/garden/logic/save/lens';
 import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { WORLD_LEVELS } from '../../src/core/config/progression';
@@ -29,6 +30,7 @@ import type { WorldSave } from '../../src/core/save/world';
 import { defaultSettings } from '../../src/core/save/world';
 import type { EventBase } from '../../src/core/events';
 import { ITEMS } from '../../src/core/config/items';
+import { aquariumRoutine } from './aquarium';
 
 /** When a day's sessions happen (hour of the local day) — a person who plays morning, noon and evening. */
 export const SESSION_HOURS = [8, 13, 20] as const;
@@ -47,6 +49,10 @@ export interface DayRow {
   orders: number;
   goals: number;
   plots: number;
+  /** Fish in the tank, rod casts so far, fish sold out of the tank so far. */
+  fish: number;
+  casts: number;
+  fishSold: number;
 }
 
 export interface WeekReport {
@@ -54,6 +60,9 @@ export interface WeekReport {
   /** Hours since the start at which each world level was reached (index = level). */
   levelAtHour: Record<number, number>;
   gardenOpenAtHour: number | null;
+  aquariumOpenAtHour: number | null;
+  fishSick: number;
+  fishDied: number;
   /** Coins in (+) and out (-) by what the bot was doing. */
   ledger: Record<string, number>;
   /** Hours of play time each Area had (sessions only). */
@@ -61,7 +70,7 @@ export interface WeekReport {
   gemsEarned: number;
 }
 
-class Bot {
+export class Bot {
   world: WorldSave;
   now: number;
   readonly rng: Rng;
@@ -69,6 +78,12 @@ class Bot {
   ledger: Record<string, number> = {};
   levelAt: Record<number, number> = { 1: 0 };
   gardenAt: number | null = null;
+  aquariumAt: number | null = null;
+  casts = 0;
+  fishSold = 0;
+  /** Illnesses and deaths of fish, counted from the events. */
+  fishSick = 0;
+  fishDied = 0;
   shipped = 0;
   orders = 0;
   goals = 0;
@@ -95,6 +110,8 @@ class Bot {
   }
 
   private settle(before: WorldSave, events: readonly EventBase[]) {
+    this.fishSick += events.filter((e) => e.type === 'AQUARIUM_FISH_SICK').length;
+    this.fishDied += events.filter((e) => e.type === 'AQUARIUM_FISH_DIED').length;
     const s = GOALS.settle(before, this.world, AREAS.toWorldEvents(events), this.ctx());
     this.world = s.state;
     this.mark();
@@ -104,6 +121,7 @@ class Bot {
     const level = levelFromXp(worldXp(this.world), { xp: WORLD_LEVELS.xp, maxLevel: WORLD_LEVELS.maxLevel });
     for (let l = 2; l <= level; l += 1) this.levelAt[l] ??= (this.now - this.start) / HOUR_MS;
     if (this.gardenAt === null && this.world.world.unlockedAreas.includes('sobi_garden')) this.gardenAt = (this.now - this.start) / HOUR_MS;
+    if (this.aquariumAt === null && this.world.world.unlockedAreas.includes('sobi_aquarium')) this.aquariumAt = (this.now - this.start) / HOUR_MS;
   }
 
   /** Runs an action; its coin change is booked under `label`. False when it was refused. */
@@ -196,13 +214,17 @@ function gardenRoutine(b: Bot) {
   const rest = empty.slice(split[0]! + split[1]!);
   if (corn.length > 0) b.act('seeds', (w, c) => plantCrops(w, { cropId: 'crop_corn', plots: corn }, c));
   if (wheat.length > 0) b.act('seeds', (w, c) => plantCrops(w, { cropId: 'crop_wheat', plots: wheat }, c));
-  if (rest.length > 0) b.act('seeds', (w, c) => plantCrops(w, { cropId: b.bag('item_grass') < 3 ? 'crop_grass' : 'crop_carrot', plots: rest }, c));
+  // With the Aquarium open the rest also grows the potatoes its fish feed is made of.
+  const restCrop = hasAquarium(b.world) && b.bag('item_potato') < 24 ? 'crop_potato' : b.bag('item_grass') < 3 ? 'crop_grass' : 'crop_carrot';
+  if (rest.length > 0) b.act('seeds', (w, c) => plantCrops(w, { cropId: restCrop, plots: rest }, c));
   b.act('garden', (w, c) => waterPlots(w, {}, c));
   const growing = gardenOf(b.world).plots.flatMap((p, i) => (p.cropId !== null && p.ripeAt === null && !p.fertilized ? [i] : []));
   if (growing.length > 0 && b.bag('item_fertilizer') >= growing.length) b.act('garden', (w, c) => fertilizePlots(w, { plots: growing }, c));
   // The workshops: feed from corn and wheat, fertilizer from manure and grass.
   const feedBatches = Math.min(10, Math.floor(b.bag('item_corn') / 2), b.bag('item_wheat'));
   if (feedBatches >= 1) b.act('garden', (w, c) => startCraft(w, { building: 'mill', recipeId: 'recipe_pig_feed', batches: feedBatches }, c));
+  const fishFeedBatches = hasAquarium(b.world) && b.bag('FOOD_FISH') < 16 ? Math.min(10, Math.floor(b.bag('item_potato') / 2)) : 0;
+  if (fishFeedBatches >= 1) b.act('garden', (w, c) => startCraft(w, { building: 'mill', recipeId: 'recipe_fish_feed', batches: fishFeedBatches }, c));
   const compostBatches = Math.min(10, Math.floor(b.bag('item_manure') / 3), b.bag('item_grass'));
   if (compostBatches >= 1) b.act('garden', (w, c) => startCraft(w, { building: 'composter', recipeId: 'recipe_fertilizer', batches: compostBatches }, c));
 }
@@ -217,6 +239,7 @@ export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7): WeekR
       claimEverything(b, Math.floor(b.now / DAY_MS));
       farmRoutine(b);
       gardenRoutine(b);
+      aquariumRoutine(b);
       claimEverything(b, Math.floor(b.now / DAY_MS));
     }
     const farm = b.farm();
@@ -232,7 +255,10 @@ export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7): WeekR
       orders: b.orders,
       goals: b.goals,
       plots: hasGarden(b.world) ? gardenOf(b.world).plots.length : 0,
+      fish: hasAquarium(b.world) ? aquariumOf(b.world).fish.length : 0,
+      casts: b.casts,
+      fishSold: b.fishSold,
     });
   }
-  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems };
+  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems };
 }

@@ -12,7 +12,9 @@ const removed = (itemId: string, quantity: number): WorldEvent[] => (quantity > 
 export function aquariumWorldEvents(e: AquariumEvent): WorldEvent[] {
   switch (e.type) {
     case 'AQUARIUM_FISH_FED':
-      return removed(e.itemId, 1);
+      return e.bought ? [] : removed(e.itemId, 1);
+    case 'AQUARIUM_FEED_BOUGHT':
+      return coins(-e.gold);
     case 'AQUARIUM_FISH_PETTED':
       return [{ type: 'creature.petted', area, creatureId: e.fishId, hearts: e.hearts }];
     case 'AQUARIUM_FISH_TREATED':

@@ -13,7 +13,7 @@ import type { AquariumEvent } from '../events';
 import { fishFavorite } from '../favorite';
 import { fishHearts, fishTraitFactor, isAdult, recoveryMs } from '../fishLife';
 import type { Fish } from '../state';
-import { mapFish, put, runAquarium, take, type AquariumResult } from './kit';
+import { mapFish, pay, put, runAquarium, take, type AquariumResult } from './kit';
 
 /** Bond points scaled by the fish's `bondGain` traits, in whole points. */
 const bondGainFor = (f: Fish, gain: number): number => Math.round(gain * fishTraitFactor(f, 'bondGain'));
@@ -38,22 +38,30 @@ export function feedFish(world: WorldSave, args: { fishIds: string[]; itemId?: s
     if (hungry.length === 0) return { ok: false, error: 'ALREADY_FULL' };
     const wanted = hungry.filter((f) => itemId === FEED_ITEM || itemId === fishFavorite(f));
     if (wanted.length === 0) return { ok: false, error: 'INVALID_REQUEST' };
-    const fed = wanted.slice(0, w.inventory.items[itemId] ?? 0);
-    if (fed.length === 0) return { ok: false, error: 'INSUFFICIENT_ITEM' };
-    const taken = take(w, itemId, fed.length);
+    // Fish feed the bag lacks is bought at its price (like the Garden's seeds): a fish never starves for want of the mill.
+    const have = w.inventory.items[itemId] ?? 0;
+    const price = ITEMS[itemId as ItemId].priceGold;
+    const buyable = itemId === FEED_ITEM && price > 0 ? Math.floor(w.wallet.coins / price) : 0;
+    const fed = wanted.slice(0, have + buyable);
+    if (fed.length === 0) return { ok: false, error: itemId === FEED_ITEM && price > 0 ? 'INSUFFICIENT_GOLD' : 'INSUFFICIENT_ITEM' };
+    const bought = Math.max(0, fed.length - have);
+    const paid = bought > 0 ? pay(w, -bought * price, 'AQUARIUM_FEED', ctx, { refId: itemId, note: `x${bought}` }) : { ok: true as const, state: w };
+    if (!paid.ok) return paid;
+    const taken = take(paid.state, itemId, fed.length - bought);
     if (!taken.ok) return taken;
     const favorite = itemId !== FEED_ITEM;
     let tank = a;
     const events: AquariumEvent[] = [];
     let needed = 0;
-    for (const f of fed) {
+    for (const [i, f] of fed.entries()) {
       const hunger = Math.min(100, f.hunger + (favorite ? BOND.favorite.hunger : ITEMS[itemId as ItemId].hungerRestore));
       const eaten = withMoodBoost({ ...f, hunger, lastFedAt: ctx.now }, BOND.moodBoost.byItem[itemId as ItemId] ?? 0, ctx.now, BOND);
       const after: Fish = favorite ? { ...eaten, bond: raiseBond(eaten.bond, bondGainFor(eaten, BOND.favorite.gain), BOND) } : eaten;
       tank = mapFish(tank, f.id, () => after);
-      events.push({ type: 'AQUARIUM_FISH_FED', fishId: f.id, itemId, ...(favorite ? { favorite } : {}) }, ...revealEvents(f, after));
+      events.push({ type: 'AQUARIUM_FISH_FED', fishId: f.id, itemId, ...(favorite ? { favorite } : {}), ...(i >= fed.length - bought ? { bought: true } : {}) }, ...revealEvents(f, after));
       if (f.hunger <= 80) needed += 1;
     }
+    if (bought > 0) events.push({ type: 'AQUARIUM_FEED_BOUGHT', quantity: bought, gold: bought * price });
     return { ok: true, world: put(taken.world, tank), events, xp: needed * AB.xp.feed };
   });
 }

@@ -15,7 +15,7 @@ import { actionButton, needBar, type DialogKit } from './dialogKit';
 export function tankDialogs(k: DialogKit) {
   function openBag() {
     k.open(vi.aquarium.bagTitle, (w, close) => {
-      const rows = bagVm(w);
+      const rows = bagVm(w, k.now(), k.offset());
       if (rows.length === 0) {
         close();
         return null;

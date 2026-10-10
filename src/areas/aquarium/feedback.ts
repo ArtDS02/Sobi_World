@@ -24,6 +24,8 @@ export function aquariumPresentation(e: EventBase, origin: 'action' | 'tick' | '
   switch (e.type) {
     case 'AQUARIUM_FISH_FED':
       return { sound: 'feed_munch', toast: null };
+    case 'AQUARIUM_FEED_BOUGHT':
+      return { sound: 'coin_collect', toast: t(T.feedBought, { count: e.quantity, gold: formatInt(e.gold) }) };
     case 'AQUARIUM_FISH_PETTED':
       return { sound: 'pig_oink_happy', toast: null };
     case 'AQUARIUM_FISH_TREATED':

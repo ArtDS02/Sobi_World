@@ -1,7 +1,8 @@
 // The Aquarium's own events (the screens and the FeedbackDirector read these; world systems get the
 // standard ones through worldEvents.ts).
 export type AquariumEvent =
-  | { type: 'AQUARIUM_FISH_FED'; fishId: string; itemId: string; favorite?: boolean }
+  | { type: 'AQUARIUM_FISH_FED'; fishId: string; itemId: string; favorite?: boolean; /** Fed with feed bought on the spot, not from the bag. */ bought?: boolean }
+  | { type: 'AQUARIUM_FEED_BOUGHT'; quantity: number; gold: number }
   | { type: 'AQUARIUM_FISH_PETTED'; fishId: string; hearts: number }
   | { type: 'AQUARIUM_FISH_TREATED'; fishId: string }
   | { type: 'AQUARIUM_TRAIT_REVEALED'; fishId: string; name: string; traitId: string }
@@ -22,7 +23,7 @@ export type AquariumEvent =
   | { type: 'AQUARIUM_LEVEL_UP'; level: number };
 
 export const AQUARIUM_EVENT_TYPES = [
-  'AQUARIUM_FISH_FED', 'AQUARIUM_FISH_PETTED', 'AQUARIUM_FISH_TREATED', 'AQUARIUM_TRAIT_REVEALED', 'AQUARIUM_WATER_CHANGED',
+  'AQUARIUM_FISH_FED', 'AQUARIUM_FEED_BOUGHT', 'AQUARIUM_FISH_PETTED', 'AQUARIUM_FISH_TREATED', 'AQUARIUM_TRAIT_REVEALED', 'AQUARIUM_WATER_CHANGED',
   'AQUARIUM_CAST', 'AQUARIUM_RELEASED', 'AQUARIUM_FISH_SOLD', 'AQUARIUM_CATCH_SOLD', 'AQUARIUM_SCALES_COLLECTED', 'AQUARIUM_SCALES_SHED',
   'AQUARIUM_TANK_UPGRADED', 'AQUARIUM_EGGS_LAID', 'AQUARIUM_EGG_HATCHED', 'AQUARIUM_FISH_SICK', 'AQUARIUM_FISH_CRITICAL',
   'AQUARIUM_FISH_DIED', 'AQUARIUM_PURPOSE_SET', 'AQUARIUM_LEVEL_UP',

@@ -9,16 +9,17 @@ const h1 = (v: number | null | undefined) => (v === null || v === undefined ? 'n
 
 const r = simulateWeek(seed, undefined, days);
 console.log(`A bot plays ${days} days (3 sessions a day), seed ${seed}\n`);
-console.log('day | coins    | gems | level | xp      | pigs/slots | shipped | board orders | daily goals | plots');
-console.log('----|----------|------|-------|---------|------------|---------|--------------|-------------|------');
+console.log('day | coins    | gems | level | xp      | pigs/slots | shipped | board orders | daily goals | plots | fish | casts | fish sold');
+console.log('----|----------|------|-------|---------|------------|---------|--------------|-------------|-------|------|-------|----------');
 for (const d of r.days) {
   console.log(
-    `${String(d.day).padStart(3)} | ${n0(d.coins).padStart(8)} | ${String(d.gems).padStart(4)} | ${String(d.level).padStart(5)} | ${n0(d.xp).padStart(7)} | ${`${d.pigs}/${d.slots}`.padStart(10)} | ${String(d.shipped).padStart(7)} | ${String(d.orders).padStart(12)} | ${String(d.goals).padStart(11)} | ${d.plots}`,
+    `${String(d.day).padStart(3)} | ${n0(d.coins).padStart(8)} | ${String(d.gems).padStart(4)} | ${String(d.level).padStart(5)} | ${n0(d.xp).padStart(7)} | ${`${d.pigs}/${d.slots}`.padStart(10)} | ${String(d.shipped).padStart(7)} | ${String(d.orders).padStart(12)} | ${String(d.goals).padStart(11)} | ${String(d.plots).padStart(5)} | ${String(d.fish).padStart(4)} | ${String(d.casts).padStart(5)} | ${String(d.fishSold).padStart(9)}`,
   );
 }
 console.log('\nTime to each world level');
 for (const [level, hour] of Object.entries(r.levelAtHour)) console.log(`  level ${level.padStart(2)}: ${h1(hour)}`);
 console.log(`\nSobi Garden opens: ${h1(r.gardenOpenAtHour)}`);
+console.log(`Sobi Aquarium opens: ${h1(r.aquariumOpenAtHour)}; fish illnesses ${r.fishSick}, fish lost ${r.fishDied}`);
 console.log('\nCoins by activity (+ in, - out)');
 for (const [label, v] of Object.entries(r.ledger).sort((a, b) => b[1] - a[1])) console.log(`  ${label.padEnd(18)} ${n0(v).padStart(10)}`);
 console.log(`\nAchievements claimed: ${r.achievementsClaimed}; Gems earned: ${r.gemsEarned}`);

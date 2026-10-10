@@ -15,6 +15,7 @@ import { cleanTank, feedFish } from '../logic/actions/care';
 import { upgradeTank } from '../logic/actions/trade';
 import { AB, FEED_ITEM, FISH, FISH_LIST, fishOfItem, tankCapacity } from '../logic/config/content';
 import { castCooldownLeft, nextTankLevel, tankFree } from '../logic/derived';
+import { itemSalePrice } from '../../../systems/valuation/itemPrice';
 import { aquariumOf } from '../logic/save/lens';
 import { scalesCap } from '../logic/simulate';
 import { button, gold, nameOfItem, probe, reasonFor, type AquariumRun, type ButtonVm } from './vmKit';
@@ -73,7 +74,7 @@ export function barVm(world: WorldSave, now: number, dayOffsetMs: number): BarVm
     fish: { label: vi.aquarium.bar.fish, reason: cool > 0 ? t(vi.aquarium.fishing.rest, { time: formatDuration(cool) }) : null },
     feedAll: {
       label: vi.aquarium.bar.feedAll,
-      reason: a.fish.length === 0 ? vi.aquarium.noFish : hungry === 0 ? vi.aquarium.allFull : feed === 0 ? vi.aquarium.noFeed : null,
+      reason: a.fish.length === 0 ? vi.aquarium.noFish : hungry === 0 ? vi.aquarium.allFull : feed === 0 && world.wallet.coins < ITEMS.FOOD_FISH.priceGold ? vi.aquarium.noFeed : null,
     },
     water: button(vi.aquarium.bar.water, probe(world, (w, c) => cleanTank(w, {}, c), now, dayOffsetMs), { WATER_CLEAN: vi.aquarium.waterClear }),
     scales: { label: t(vi.aquarium.bar.scales, { count: a.tank.scales }), reason: a.tank.scales === 0 ? vi.aquarium.noScales : null },
@@ -144,10 +145,10 @@ export interface BagFishRow {
   sellAll: ButtonVm;
 }
 
-export function bagVm(world: WorldSave): BagFishRow[] {
+export function bagVm(world: WorldSave, now = 0, dayOffsetMs = 0): BagFishRow[] {
   const a = aquariumOf(world);
   return bagFish(world).map((r) => {
-    const price = ITEMS[r.itemId as ItemId].sellGold ?? 0;
+    const item = ITEMS[r.itemId as ItemId];
     const isFish = fishOfItem(r.itemId) !== undefined;
     return {
       itemId: r.itemId,
@@ -155,8 +156,8 @@ export function bagVm(world: WorldSave): BagFishRow[] {
       art: itemArtId(r.itemId),
       count: r.count,
       release: isFish ? { label: vi.aquarium.release, reason: tankFree(a) <= 0 ? vi.aquarium.tankFull : null } : null,
-      sellOne: { label: t(vi.aquarium.sellOne, { gold: gold(price) }), reason: null },
-      sellAll: { label: t(vi.aquarium.sellAll, { gold: gold(price * r.count) }), reason: null },
+      sellOne: { label: t(vi.aquarium.sellOne, { gold: gold(itemSalePrice(item, 1, now, dayOffsetMs)) }), reason: null },
+      sellAll: { label: t(vi.aquarium.sellAll, { gold: gold(itemSalePrice(item, r.count, now, dayOffsetMs)) }), reason: null },
     };
   });
 }

@@ -17,7 +17,9 @@ import { aquariumEventsToWorld } from '../../src/areas/aquarium/logic/worldEvent
 import { breedFish, pairError } from '../../src/areas/aquarium/logic/actions/breed';
 import { cleanTank, feedFish, petFish, setFishPurpose, treatFish } from '../../src/areas/aquarium/logic/actions/care';
 import { castLine, releaseFish } from '../../src/areas/aquarium/logic/actions/fishing';
-import { collectScales, sellFish, upgradeTank } from '../../src/areas/aquarium/logic/actions/trade';
+import { collectScales, sellCatch, sellFish, upgradeTank } from '../../src/areas/aquarium/logic/actions/trade';
+import { ITEMS } from '../../src/core/config/items';
+import { itemSalePrice } from '../../src/systems/valuation/itemPrice';
 import { mulberry32, sequenceRng } from '../../src/core/rng';
 import type { WorldSave } from '../../src/core/save/world';
 import type { ActionContext } from '../../src/core/types';
@@ -185,12 +187,17 @@ describe('the tank over time', () => {
 });
 
 describe('care', () => {
-  it('feeds the hungry with fish feed, as many as the bag allows; a full tank of fish refuses', () => {
-    const w = tankWorld([fish({ hunger: 20 }), fish({ id: 'f2', hunger: 30 }), fish({ id: 'f3', hunger: 40 })], { FOOD_FISH: 2 });
+  it('feeds the hungry with fish feed from the bag, buying the shortfall at its price; a full fish refuses', () => {
+    const w = tankWorld([fish({ hunger: 20 }), fish({ id: 'f2', hunger: 30 }), fish({ id: 'f3', hunger: 40 })], { FOOD_FISH: 2 }, 1_000);
     const fed = ok(feedFish(w, { fishIds: ['f1', 'f2', 'f3'] }, ctxAt(T0)));
     expect(fed.inventory.items.FOOD_FISH).toBe(0);
-    expect(tank(fed).fish.map((f) => f.hunger)).toEqual([70, 80, 40]);
-    expect(fail(feedFish(fed, { fishIds: ['f3'] }, ctxAt(T0)))).toBe('INSUFFICIENT_ITEM');
+    expect(tank(fed).fish.map((f) => f.hunger)).toEqual([70, 80, 90]);
+    expect(fed.wallet.coins).toBe(1_000 - ITEMS.FOOD_FISH.priceGold); // one meal was bought
+    expect(fed.transactions[0]).toMatchObject({ type: 'AQUARIUM_FEED', amount: -ITEMS.FOOD_FISH.priceGold });
+    // No feed and no coins: nothing to eat. Feed but few coins: as many as the bag and the purse allow.
+    expect(fail(feedFish(tankWorld([fish({ hunger: 20 })], {}, 0), { fishIds: ['f1'] }, ctxAt(T0)))).toBe('INSUFFICIENT_GOLD');
+    const few = ok(feedFish(tankWorld([fish({ hunger: 20 }), fish({ id: 'f2', hunger: 20 })], {}, ITEMS.FOOD_FISH.priceGold), { fishIds: ['f1', 'f2'] }, ctxAt(T0)));
+    expect(tank(few).fish.map((f) => f.hunger)).toEqual([70, 20]);
     expect(fail(feedFish(tankWorld([fish()], { FOOD_FISH: 3 }), { fishIds: ['f1'] }, ctxAt(T0)))).toBe('ALREADY_FULL');
     expect(fail(feedFish(w, { fishIds: ['nope'] }, ctxAt(T0)))).toBe('FISH_NOT_FOUND');
     expect(fail(feedFish(w, { fishIds: ['f1'], itemId: 'FOOD_BASIC' }, ctxAt(T0)))).toBe('INVALID_REQUEST'); // pig feed is not fish feed
@@ -320,6 +327,21 @@ describe('selling, scales and the tank upgrade', () => {
     expect(tank(sold).fish.map((f) => f.id)).toEqual(['baby']);
     expect(sold.transactions[0]).toMatchObject({ type: 'AQUARIUM_FISH_SELL', amount: price });
     expect(fail(sellFish(sold, { fishId: 'baby' }, ctxAt(T0)))).toBe('FISH_NOT_MATURE');
+  });
+
+  it('a catch in the bag sells at the price the shop pays today; only its own items can be sold this way', () => {
+    const w = tankWorld([fish()], { item_fish_betta: 3, item_pearl: 2, FOOD_BASIC: 1 }, 0);
+    const fishSold = ok(sellCatch(w, { itemId: 'item_fish_betta', quantity: 2 }, ctxAt(T0)));
+    expect(fishSold.wallet.coins).toBe(2 * ITEMS.item_fish_betta.sellGold!); // fish do not move with the market
+    expect(fishSold.inventory.items.item_fish_betta).toBe(1);
+    for (let day = 0; day < 6; day += 1) {
+      const at = T0 + day * 86_400_000;
+      const pearls = ok(sellCatch(w, { itemId: 'item_pearl', quantity: 2 }, ctxAt(at)));
+      expect(pearls.wallet.coins).toBe(itemSalePrice(ITEMS.item_pearl, 2, at, 0)); // materials do
+    }
+    expect(fail(sellCatch(w, { itemId: 'item_fish_betta', quantity: 9 }, ctxAt(T0)))).toBe('INSUFFICIENT_ITEM');
+    expect(fail(sellCatch(w, { itemId: 'FOOD_BASIC', quantity: 1 }, ctxAt(T0)))).toBe('INVALID_REQUEST');
+    expect(fail(sellCatch(w, { itemId: 'item_pearl', quantity: 0 }, ctxAt(T0)))).toBe('INVALID_REQUEST');
   });
 
   it('scales go to the bag as far as it has room; the rest stay in the tank', () => {

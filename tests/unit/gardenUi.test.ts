@@ -139,10 +139,10 @@ describe('workshop card', () => {
     // Levels 2 and 3 take the Aquarium's materials: coins alone are not enough.
     const rich = { ...w, wallet: { ...w.wallet, coins: 100_000 } };
     expect(sprinklerVm(rich).next?.reason).toContain('Vảy cá');
-    w = { ...rich, inventory: { items: { ...rich.inventory.items, item_scale: 30, item_pearl: 5 } } };
+    w = { ...rich, inventory: { items: { ...rich.inventory.items, item_scale: 40, item_pearl: 5 } } };
     w = ok(upgradeSprinkler(ok(upgradeSprinkler(w, ctxAt(T0))), ctxAt(T0)));
-    expect(w.inventory.items.item_scale).toBe(30 - 8 - 15);
-    expect(w.inventory.items.item_pearl).toBe(5 - 2);
+    expect(w.inventory.items.item_scale).toBe(40 - 10 - 20);
+    expect(w.inventory.items.item_pearl).toBe(5 - 3);
     expect(sprinklerVm(w).next).toBeNull();
   });
 });

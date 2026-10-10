@@ -63,10 +63,12 @@ describe('hud and bar', () => {
     expect(empty.bag.reason).toBe('Túi chưa có cá');
     expect(empty.breed.reason).not.toBeNull();
     expect(empty.fish.reason).toBeNull(); // never cast
-    const hungry = barVm(base([fish({ hunger: 30 })], {}), NOON, 0);
-    expect(hungry.feedAll.reason).toBe('Hết thức ăn cá');
+    const hungry = barVm(base([fish({ hunger: 30 })], {}, 0), NOON, 0);
+    expect(hungry.feedAll.reason).toBe('Hết thức ăn cá, không đủ Sobi Coin để mua');
     const fed = barVm(base([fish({ hunger: 30 })], { FOOD_FISH: 2 }), NOON, 0);
     expect(fed.feedAll.reason).toBeNull();
+    expect(barVm(base([fish({ hunger: 30 })], {}, 0), NOON, 0).feedAll.reason).toBe('Hết thức ăn cá, không đủ Sobi Coin để mua');
+    expect(barVm(base([fish({ hunger: 30 })], {}, 100), NOON, 0).feedAll.reason).toBeNull(); // the shortfall is bought
     expect(barVm(base([fish({ hunger: 100 })], { FOOD_FISH: 2 }), NOON, 0).feedAll.reason).toBe('Cá đều no');
     expect(barVm(withAquarium(base(), { ...aquariumOf(base()), lastCastAt: NOON - 30_000 }), NOON, 0).fish.reason).toContain('nghỉ');
     expect(barVm(base([fish({ cleanliness: 100 })]), T0, 0).water.reason).toBe('Nước đang trong');
@@ -123,7 +125,7 @@ describe('the tank, the dock, the bag, breeding', () => {
     expect(poor.upgrade?.reason).toBe('Thiếu Sobi Coin');
     const lvl3 = tankVm(withAquarium(w, { ...aquariumOf(w), tank: { ...aquariumOf(w).tank, level: 2 } }), NOON, 0);
     expect(lvl3.upgrade?.reason).toContain('Vảy cá');
-    expect(lvl3.upgradeNeeds).toEqual([{ name: 'Vảy cá', have: 0, need: 8 }]);
+    expect(lvl3.upgradeNeeds).toEqual([{ name: 'Vảy cá', have: 0, need: 10 }]);
     const top = tankVm(withAquarium(w, { ...aquariumOf(w), tank: { ...aquariumOf(w).tank, level: 4 } }), NOON, 0);
     expect(top.upgrade).toBeNull();
     expect(top.maxText).toBe('Bể đã ở cấp cao nhất.');
@@ -224,6 +226,7 @@ describe('the scene', () => {
 describe('what its events say', () => {
   const sample: Record<AquariumEvent['type'], AquariumEvent> = {
     AQUARIUM_FISH_FED: { type: 'AQUARIUM_FISH_FED', fishId: 'a', itemId: 'FOOD_FISH' },
+    AQUARIUM_FEED_BOUGHT: { type: 'AQUARIUM_FEED_BOUGHT', quantity: 2, gold: 40 },
     AQUARIUM_FISH_PETTED: { type: 'AQUARIUM_FISH_PETTED', fishId: 'a', hearts: 1 },
     AQUARIUM_FISH_TREATED: { type: 'AQUARIUM_FISH_TREATED', fishId: 'a' },
     AQUARIUM_TRAIT_REVEALED: { type: 'AQUARIUM_TRAIT_REVEALED', fishId: 'a', name: 'Sóng', traitId: 'trait_sweet' },

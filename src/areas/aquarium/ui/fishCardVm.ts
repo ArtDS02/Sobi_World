@@ -4,6 +4,7 @@ import type { Purpose } from '../../../../content/schemas/vocab';
 import { itemArtId } from '../../../core/config/assetIds';
 import { BOND } from '../../../core/config/bond';
 import { HEALTH } from '../../../core/config/health';
+import { ITEMS } from '../../../core/config/items';
 import type { WorldSave } from '../../../core/save/world';
 import { formatDuration, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
@@ -114,7 +115,7 @@ export function fishCardVm(world: WorldSave, fishId: string, now: number, dayOff
       ? t(vi.aquarium.warnCritical, { time: formatDuration(Math.max(0, (HEALTH.deathAfterMs ?? 0) - ill)) })
       : t(vi.aquarium.warnSick, { time: formatDuration(Math.max(0, (HEALTH.criticalAfterMs ?? 0) - ill)) });
 
-  const feedError = f.hunger >= 100 ? vi.aquarium.full : feedHave === 0 ? vi.aquarium.noFeed : null;
+  const feedError = f.hunger >= 100 ? vi.aquarium.full : feedHave === 0 && world.wallet.coins < ITEMS.FOOD_FISH.priceGold ? vi.aquarium.noFeed : null;
   const favError = f.hunger >= 100 ? vi.aquarium.full : favHave === 0 ? vi.aquarium.noFavorite : null;
   const sellError = run((w, c) => sellFish(w, { fishId }, c));
 
