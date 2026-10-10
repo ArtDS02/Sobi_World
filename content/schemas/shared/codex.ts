@@ -7,7 +7,7 @@ const reward = z.strictObject({ coins: nonNeg, xp: nonNeg });
 
 export const codexFileSchema = z
   .strictObject({
-    discovery: z.strictObject({ crop: reward, item: reward }),
+    discovery: z.strictObject({ crop: reward, item: reward, fish: reward }),
     milestones: z.array(
       z.strictObject({
         id: z.string().regex(/^CODEX_[0-9A-Z_]+$/),

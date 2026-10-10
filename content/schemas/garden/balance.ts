@@ -1,7 +1,7 @@
 // content/garden/balance.json — the Garden's numbers (GAME_BALANCE §5, §7): plots, watering, wilting,
 // the sprinkler, the two workshops and the level table.
 import { z } from 'zod';
-import { assetId, int, nonNeg, posInt, text, unit } from '../fields';
+import { assetId, int, itemId, nonNeg, posInt, text, unit } from '../fields';
 
 const building = z.strictObject({ nameVi: text, descVi: text, price: nonNeg, art: assetId });
 
@@ -22,8 +22,8 @@ export const gardenBalanceFileSchema = z
     /** A ripe crop left this long wilts: its yield drops (it is never lost). */
     witherAfterHours: z.number().finite().positive(),
     witherYieldFactor: unit,
-    /** Sprinkler levels: plots watered automatically (the first N plots) and the price to reach it. */
-    sprinkler: z.array(z.strictObject({ plots: posInt, price: nonNeg })).min(1),
+    /** Sprinkler levels: plots watered automatically (the first N plots), the price to reach it and the materials (the Aquarium's scales and pearls) it takes. */
+    sprinkler: z.array(z.strictObject({ plots: posInt, price: nonNeg, materials: z.partialRecord(itemId, posInt).optional() })).min(1),
     buildings: z.strictObject({ mill: building, composter: building }),
     /** Most batches of one recipe queued at once. */
     maxBatches: posInt,

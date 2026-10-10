@@ -1417,6 +1417,66 @@
       "id": "crop_carrot_wilt",
       "status": "placeholder",
       "asset": "props/crop_carrot_wilt.png"
+    },
+    {
+      "id": "fish_goldfish",
+      "status": "placeholder",
+      "asset": "props/fish_goldfish.png"
+    },
+    {
+      "id": "fish_perch",
+      "status": "placeholder",
+      "asset": "props/fish_perch.png"
+    },
+    {
+      "id": "fish_carp",
+      "status": "placeholder",
+      "asset": "props/fish_carp.png"
+    },
+    {
+      "id": "fish_clownfish",
+      "status": "placeholder",
+      "asset": "props/fish_clownfish.png"
+    },
+    {
+      "id": "fish_pufferfish",
+      "status": "placeholder",
+      "asset": "props/fish_pufferfish.png"
+    },
+    {
+      "id": "fish_angelfish",
+      "status": "placeholder",
+      "asset": "props/fish_angelfish.png"
+    },
+    {
+      "id": "fish_glowfish",
+      "status": "placeholder",
+      "asset": "props/fish_glowfish.png"
+    },
+    {
+      "id": "fish_betta",
+      "status": "placeholder",
+      "asset": "props/fish_betta.png"
+    },
+    {
+      "id": "fish_lanternfish",
+      "status": "placeholder",
+      "asset": "props/fish_lanternfish.png"
+    },
+    {
+      "id": "fish_seahorse",
+      "status": "placeholder",
+      "asset": "props/fish_seahorse.png"
+    },
+    {
+      "id": "fish_dragon_koi",
+      "status": "placeholder",
+      "asset": "props/fish_dragon_koi.png"
+    },
+    {
+      "id": "fish_moonfish",
+      "status": "placeholder",
+      "asset": "props/fish_moonfish.png"
     }
   ],
   "buildings": [
@@ -1524,6 +1584,16 @@
       "id": "bld_composter",
       "status": "placeholder",
       "asset": "buildings/bld_composter.png"
+    },
+    {
+      "id": "bld_fish_tank",
+      "status": "placeholder",
+      "asset": "buildings/bld_fish_tank.png"
+    },
+    {
+      "id": "bld_fish_dock",
+      "status": "placeholder",
+      "asset": "buildings/bld_fish_dock.png"
     }
   ],
   "environment": [
@@ -1622,6 +1692,11 @@
       "id": "env_tile_water",
       "status": "production",
       "asset": "environment/env_tile_water.png"
+    },
+    {
+      "id": "bg_aquarium",
+      "status": "placeholder",
+      "asset": "environment/bg_aquarium.png"
     }
   ],
   "ui": [
@@ -1809,6 +1884,81 @@
       "id": "ui_item_fertilizer",
       "status": "placeholder",
       "asset": "ui/ui_item_fertilizer.png"
+    },
+    {
+      "id": "ui_item_fish_goldfish",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_goldfish.png"
+    },
+    {
+      "id": "ui_item_fish_perch",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_perch.png"
+    },
+    {
+      "id": "ui_item_fish_carp",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_carp.png"
+    },
+    {
+      "id": "ui_item_fish_clownfish",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_clownfish.png"
+    },
+    {
+      "id": "ui_item_fish_pufferfish",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_pufferfish.png"
+    },
+    {
+      "id": "ui_item_fish_angelfish",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_angelfish.png"
+    },
+    {
+      "id": "ui_item_fish_glowfish",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_glowfish.png"
+    },
+    {
+      "id": "ui_item_fish_betta",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_betta.png"
+    },
+    {
+      "id": "ui_item_fish_lanternfish",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_lanternfish.png"
+    },
+    {
+      "id": "ui_item_fish_seahorse",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_seahorse.png"
+    },
+    {
+      "id": "ui_item_fish_dragon_koi",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_dragon_koi.png"
+    },
+    {
+      "id": "ui_item_fish_moonfish",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fish_moonfish.png"
+    },
+    {
+      "id": "ui_item_scale",
+      "status": "placeholder",
+      "asset": "ui/ui_item_scale.png"
+    },
+    {
+      "id": "ui_item_pearl",
+      "status": "placeholder",
+      "asset": "ui/ui_item_pearl.png"
+    },
+    {
+      "id": "ui_item_food_fish",
+      "status": "placeholder",
+      "asset": "ui/ui_item_food_fish.png"
     }
   ],
   "audio": [

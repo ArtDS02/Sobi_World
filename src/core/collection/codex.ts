@@ -44,7 +44,7 @@ type AddXp = (w: WorldSave, xp: number) => { state: WorldSave; events: WorldLeve
 /** Records `id` of `kind` if it is new, with its first-discovery bonus; the same world otherwise. */
 export function discover(
   world: WorldSave,
-  kind: 'crop' | 'item',
+  kind: 'crop' | 'item' | 'fish',
   id: string,
   rules: CodexRules,
   ctx: ActionContext,

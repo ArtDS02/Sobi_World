@@ -51,11 +51,11 @@ export interface AppOptions {
   characterChoice?: CharacterChoice;
   /** Gems of the wallet (the farm's own state has none); null when unknown. */
   gems?: () => number | null;
-  /** The away-screen lines of the other Areas (the Garden). */
+  /** The away-screen lines of the other Areas (the Garden, the Aquarium). */
   areaLines?: (events: GameEvent[]) => SummaryLine[];
   /** Goes to another place (the away screen's button to the Garden). */
   goPlace?: (placeId: string) => void;
-  /** A layer over the world that the app owns (the Garden's HUD); the shell only places it. */
+  /** A layer over the world that the app owns (the Garden's and the Aquarium's HUDs); the shell only places it. */
   overlay?: HTMLElement;
   /** A dialog of the overlay is open: the world stands still like under a panel. */
   overlayModal?: () => boolean;
@@ -73,7 +73,7 @@ export type FarmPick =
   | { kind: 'ground' };
 
 /** Where the player is: the plaza shows a lighter HUD (the farm's gauges belong to the farm). */
-export type Place = 'plaza' | 'area' | 'garden';
+export type Place = 'plaza' | 'area' | 'garden' | 'aquarium';
 
 export interface MountedApp {
   /** Tells the shell which place is on screen. */

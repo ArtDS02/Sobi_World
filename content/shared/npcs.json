@@ -112,6 +112,40 @@
           "textVi": "Trong Sổ sưu tầm, ô dấu ba chấm là giống bạn chưa gặp. Ô đó cho biết độ hiếm và họ của giống, đủ để đoán cặp bố mẹ nên thử."
         }
       ]
+    },
+    {
+      "id": "npc_fisher",
+      "area": "sobi_aquarium",
+      "nameVi": "Cô Gà Mơ Màng",
+      "artId": "prop_animal_hen_cream",
+      "greetingVi": "Cục tác... Chào bạn! Mình là Mơ Màng, trông coi bể cá và bến câu này.",
+      "topics": [
+        {
+          "id": "fishing",
+          "titleVi": "Câu cá",
+          "textVi": "Ra bến, bấm Câu cá rồi nhấn đúng lúc phao chạm vùng xanh. Càng đúng, càng có cơ hội gặp cá hiếm. Cần câu nghỉ 2 phút giữa hai lần. Có cá chỉ cắn câu về đêm đấy."
+        },
+        {
+          "id": "tank",
+          "titleVi": "Chăm bể cá",
+          "textVi": "Cá đói thì ngừng lớn, nước đục thì dễ bệnh. Cho ăn bằng thức ăn cá (xay từ khoai tây ở Máy xay Garden), thay nước khi đục, vuốt ve để cá quen tay bạn."
+        },
+        {
+          "id": "release",
+          "titleVi": "Thả cá vào bể",
+          "textVi": "Cá câu được nằm trong túi. Thả vào bể để nuôi lớn (cá nuôi lớn bán được giá hơn nhiều), hoặc bán luôn, hoặc giữ cho đơn hàng và Codex."
+        },
+        {
+          "id": "scales",
+          "titleVi": "Vảy và ngọc trai",
+          "textVi": "Cá lớn rụng vảy theo thời gian, bạn thu vảy trong bể. Ngọc trai thì nằm trong trai ngọc, thỉnh thoảng cắn câu. Cả hai dùng để nâng cấp bể và Vòi tưới ở Garden."
+        },
+        {
+          "id": "breed",
+          "titleVi": "Cá đẻ trứng",
+          "textVi": "Hai cá cùng loài, một đực một cái, đủ lớn và khỏe thì cho ra trứng. Trứng nở thành cá con, thừa hưởng tính trạng của bố mẹ. Chỉ một số loài đẻ được."
+        }
+      ]
     }
   ]
 }

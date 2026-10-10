@@ -5,7 +5,7 @@ import { STAT_ID_VALUES } from '../vocab';
 import { nonNeg, posInt } from '../fields';
 
 /** A stat counter of progression.stats, or a value of the world: its level or its Codex. */
-export const ACHIEVEMENT_METRIC_VALUES = [...STAT_ID_VALUES, 'worldLevel', 'codex', 'codexBreed', 'codexCrop', 'codexItem'] as const;
+export const ACHIEVEMENT_METRIC_VALUES = [...STAT_ID_VALUES, 'worldLevel', 'codex', 'codexBreed', 'codexCrop', 'codexItem', 'codexFish'] as const;
 
 export const achievementSchema = z.strictObject({
   id: z.string().regex(/^[A-Z][A-Z0-9_]*$/),

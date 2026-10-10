@@ -61,6 +61,6 @@ describe('the starter recipes (GAME_BALANCE §6)', () => {
     expect(RECIPES.recipe_pig_feed).toMatchObject({ building: 'mill', inputs: { item_corn: 2, item_wheat: 1 }, outputs: { FOOD_BASIC: 4 }, durationMs: 10 * MIN });
     expect(RECIPES.recipe_premium_feed).toMatchObject({ inputs: { item_corn: 2, item_carrot: 1 }, outputs: { FOOD_PREMIUM: 2 }, durationMs: 20 * MIN });
     expect(RECIPES.recipe_fertilizer).toMatchObject({ building: 'composter', inputs: { item_manure: 3, item_grass: 1 }, outputs: { item_fertilizer: 2 }, durationMs: 30 * MIN });
-    expect(recipesOf('mill').map((r) => r.id)).toEqual(['recipe_pig_feed', 'recipe_premium_feed']);
+    expect(recipesOf('mill').map((r) => r.id)).toEqual(['recipe_pig_feed', 'recipe_premium_feed', 'recipe_fish_feed']);
   });
 });

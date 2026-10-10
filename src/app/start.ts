@@ -27,14 +27,12 @@ import { AREAS } from './areas';
 import { createAreaFlow } from './areaFlow';
 import { createGameStore } from './gameStore';
 import { parseWorldSave } from './saveCodec';
+import { AquariumScene, AQUARIUM_SCENE_KEY } from '../areas/aquarium/scene/AquariumScene';
+import { bindAquariumStage } from '../areas/aquarium/stage';
 import { farmStore } from '../areas/farm/store';
-import { gardenArea } from '../areas/garden';
-import { gardenPresentation } from '../areas/garden/feedback';
-import { GARDEN_AREA_ID } from '../areas/garden/logic/config/content';
-import { hasGarden } from '../areas/garden/logic/save/lens';
 import { GardenScene, GARDEN_SCENE_KEY } from '../areas/garden/scene/GardenScene';
 import { bindGardenStage } from '../areas/garden/stage';
-import { createGardenUi } from '../areas/garden/ui/gardenUi';
+import { createAreaOverlays } from './areaOverlays';
 import { vi } from '../i18n/vi';
 import { t } from '../i18n/format';
 import { goalsPresentation } from '../ui/goals/feedback';
@@ -115,12 +113,10 @@ export async function start(root: HTMLElement) {
     return doors.views;
   };
   let app: MountedApp | null = null;
-  // The Garden's DOM layer lives in an overlay the shell places over the world; its HUD shows only in the Garden.
-  const gardenHost = el('div', { class: 'garden-host' });
-  const gardenUi = createGardenUi({
+  // The Areas' DOM layers live in one overlay the shell places over the world; each HUD shows only in its own Area.
+  const overlays = createAreaOverlays({
     world,
     now: () => clock.now(),
-    host: gardenHost,
     leave: () => void flow.go(PLAZA_ID),
     openPanel: (panel) => app?.openPanel(panel),
   });
@@ -150,8 +146,7 @@ export async function start(root: HTMLElement) {
     changed: (to) => {
       prompt = null;
       showPrompt();
-      app?.setPlace(to === PLAZA_ID ? 'plaza' : to === GARDEN_AREA_ID ? 'garden' : 'area');
-      gardenUi.setActive(to === GARDEN_AREA_ID);
+      app?.setPlace(overlays.enter(to));
       // Leaving through a door keeps that Area as the place: the game reopens in front of its door.
       if (to !== PLAZA_ID) void world.dispatch((s, c) => setPlayerSpot(s, { area: to, x: null, y: null, facing: 'down' }, c));
     },
@@ -202,12 +197,9 @@ export async function start(root: HTMLElement) {
     },
     leave: () => void flow.go(PLAZA_ID),
     goPlace: (place) => void flow.go(place),
-    overlay: gardenHost,
-    overlayModal: () => gardenUi.isModalOpen(),
-    areaLines: (events) => {
-      const save = world.getSnapshot().save;
-      return save && hasGarden(save) ? (gardenArea.getSummary?.(events, save, clock.now()) ?? []) : [];
-    },
+    overlay: overlays.root,
+    overlayModal: overlays.isModalOpen,
+    areaLines: (events) => overlays.summaryLines(events, world.getSnapshot().save),
     onPigTap: (pigId) => director?.pigTapped(pigId),
     dialogs: platform.dialogs,
     assets: assets.registry,
@@ -223,8 +215,14 @@ export async function start(root: HTMLElement) {
         portals,
       });
       const garden = new GardenScene({
-        read: () => gardenUi.sceneState(),
-        onPick: (pick) => gardenUi.pick(pick),
+        read: () => overlays.gardenUi.sceneState(),
+        onPick: (pick) => overlays.gardenUi.pick(pick),
+        reduceMotion: () => host.reduceMotion(),
+        paused: () => host.paused(),
+      });
+      const aquarium = new AquariumScene({
+        read: () => overlays.aquariumUi.sceneState(),
+        onPick: (pick) => overlays.aquariumUi.pick(pick),
         reduceMotion: () => host.reduceMotion(),
         paused: () => host.paused(),
       });
@@ -238,10 +236,11 @@ export async function start(root: HTMLElement) {
           // The game opens in the plaza (spec §3.1).
           firstScene: () => ({ key: PLAZA_SCENE_KEY, from: null }),
         },
-        [plaza, garden],
+        [plaza, garden, aquarium],
       );
       const view = farmView;
       bindGardenStage({ enter: () => view.showScene(GARDEN_SCENE_KEY), exit: () => view.sleepScene(GARDEN_SCENE_KEY) });
+      bindAquariumStage({ enter: () => view.showScene(AQUARIUM_SCENE_KEY), exit: () => view.sleepScene(AQUARIUM_SCENE_KEY) });
       if (devPhase) farmView.previewPhase(devPhase);
       if (devSeason) farmView.previewSeason(devSeason);
       return farmView;
@@ -263,7 +262,7 @@ export async function start(root: HTMLElement) {
         return { sound: 'level_up', toast: t(vi.plaza.opened, { name }) };
       }
       const nameOf = (kind: string, id: string) => GOALS.codexKinds().find((k) => k.id === kind)?.entries.find((e) => e.id === id)?.name ?? id;
-      return goalsPresentation(event, origin, nameOf) ?? gardenPresentation(event, origin);
+      return goalsPresentation(event, origin, nameOf) ?? overlays.presentation(event, origin);
     },
   });
   // §12: ui_click for every DOM button, through one delegated listener.

@@ -27,12 +27,21 @@ export function upgradeSprinkler(world: WorldSave, ctx: ActionContext): GardenRe
   return runGarden(world, ctx, (w, g) => {
     const next = nextSprinkler(g);
     if (!next) return { ok: false, error: 'MAX_LEVEL_REACHED' };
+    // The higher levels also take the Aquarium's materials (scales, pearls) from the bag.
+    const needs = Object.entries(next.materials).filter((e): e is [string, number] => (e[1] ?? 0) > 0);
+    if (needs.some(([id, n]) => (w.inventory.items[id] ?? 0) < n)) return { ok: false, error: 'INSUFFICIENT_ITEM' };
     const paid = pay(w, -next.price, 'GARDEN_SPRINKLER', ctx, { note: `level ${next.level}` });
     if (!paid.ok) return paid;
+    let bag = paid.state;
+    for (const [id, n] of needs) {
+      const taken = take(bag, id, n);
+      if (!taken.ok) return taken;
+      bag = taken.world;
+    }
     return {
       ok: true,
-      world: put(paid.state, { ...g, sprinkler: next.level }),
-      events: [{ type: 'GARDEN_SPRINKLER_BOUGHT', level: next.level, gold: next.price }],
+      world: put(bag, { ...g, sprinkler: next.level }),
+      events: [{ type: 'GARDEN_SPRINKLER_BOUGHT', level: next.level, gold: next.price, materials: next.materials }],
     };
   });
 }

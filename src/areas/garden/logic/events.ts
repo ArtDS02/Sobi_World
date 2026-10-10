@@ -10,7 +10,7 @@ export type GardenEvent =
   | { type: 'GARDEN_CROP_RIPE'; cropId: string; count: number }
   | { type: 'GARDEN_CROP_WILTED'; cropId: string; count: number }
   | { type: 'GARDEN_PLOTS_BOUGHT'; plots: number; gold: number }
-  | { type: 'GARDEN_SPRINKLER_BOUGHT'; level: number; gold: number }
+  | { type: 'GARDEN_SPRINKLER_BOUGHT'; level: number; gold: number; materials?: Readonly<Record<string, number | undefined>> }
   | { type: 'GARDEN_BUILT'; building: BuildingId; gold: number }
   | { type: 'GARDEN_CRAFT_STARTED'; building: BuildingId; recipeId: string; batches: number }
   | { type: 'GARDEN_BATCH_DONE'; building: BuildingId; recipeId: string; batches: number }

@@ -29,6 +29,9 @@ export const NUMBER_FILES: Record<string, { schemaPath: string; exportName: stri
   'shared/codex.json': { schemaPath: '/content/schemas/shared/codex.ts', exportName: 'codexFileSchema' },
   'farm/decor.json': { schemaPath: '/content/schemas/farm/decor.ts', exportName: 'decorFileSchema' },
   'shared/npcs.json': { schemaPath: '/content/schemas/shared/npcs.ts', exportName: 'npcsFileSchema' },
+  // Sobi Aquarium (GĐ8): the fish (growth, prices, how often they bite, names and descriptions), the tank, the rod, the eggs.
+  'aquarium/fish.json': { schemaPath: '/content/schemas/aquarium/fish.ts', exportName: 'fishFileSchema' },
+  'aquarium/balance.json': { schemaPath: '/content/schemas/aquarium/balance.ts', exportName: 'aquariumBalanceFileSchema' },
   // Advanced breeding (GĐ7): the traits (effects, weights), the rules (inheritance, mutation, pity), the Breeder's gossip.
   'breeding/traits.json': { schemaPath: '/content/schemas/breeding/traits.ts', exportName: 'traitsFileSchema' },
   'breeding/balance.json': { schemaPath: '/content/schemas/breeding/balance.ts', exportName: 'breedingBalanceFileSchema' },
@@ -36,7 +39,7 @@ export const NUMBER_FILES: Record<string, { schemaPath: string; exportName: stri
 };
 
 /** Files whose words (the strings ending in `Vi`) can be edited as well as their numbers: the NPCs' lines. */
-export const TEXT_FILES: readonly string[] = ['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json'];
+export const TEXT_FILES: readonly string[] = ['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json'];
 
 /** A path that holds words the dashboard may edit: keys ending in `Vi`, and the rumour sentences. */
 export const isWordPath = (path: string): boolean =>

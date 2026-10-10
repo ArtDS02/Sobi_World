@@ -60,8 +60,12 @@ describe('opening the garden', () => {
     expect(advance(fresh, T0 + H).events.some((e) => e.type === 'AREA_UNLOCKED')).toBe(false);
 
     const opened = advance(farmLevel3(fresh), T0 + H);
-    expect(opened.events.filter((e) => e.type === 'AREA_UNLOCKED')).toEqual([{ type: 'AREA_UNLOCKED', areaId: 'sobi_garden' }]);
-    expect(opened.state.world.unlockedAreas).toEqual(['sobi_farm', 'sobi_garden']);
+    // 100,000 farm XP is also past the Aquarium's level (6): both open in the same step, in registration order.
+    expect(opened.events.filter((e) => e.type === 'AREA_UNLOCKED')).toEqual([
+      { type: 'AREA_UNLOCKED', areaId: 'sobi_garden' },
+      { type: 'AREA_UNLOCKED', areaId: 'sobi_aquarium' },
+    ]);
+    expect(opened.state.world.unlockedAreas).toEqual(['sobi_farm', 'sobi_garden', 'sobi_aquarium']);
     expect(gardenOf(opened.state).plots).toHaveLength(GB.startPlots);
     expect(advance(opened.state, T0 + 2 * H).events.some((e) => e.type === 'AREA_UNLOCKED')).toBe(false);
     expect(AREAS.toWorldEvents(opened.events)).toContainEqual({ type: 'area.unlocked', area: 'sobi_garden' });

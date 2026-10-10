@@ -4,9 +4,24 @@
   "movement": "click",
   "portalInPlaza": "sea_dock",
   "unlock": { "worldLevel": 6 },
-  "planned": true,
-  "buildings": [],
-  "produces": [],
-  "consumes": [],
-  "icon": "prop_sea_dock"
+  "buildings": ["tank", "dock"],
+  "produces": [
+    "item_fish_goldfish",
+    "item_fish_perch",
+    "item_fish_carp",
+    "item_fish_clownfish",
+    "item_fish_pufferfish",
+    "item_fish_angelfish",
+    "item_fish_glowfish",
+    "item_fish_betta",
+    "item_fish_lanternfish",
+    "item_fish_seahorse",
+    "item_fish_dragon_koi",
+    "item_fish_moonfish",
+    "item_scale",
+    "item_pearl"
+  ],
+  "consumes": ["FOOD_FISH", "MEDICINE_COMMON"],
+  "icon": "prop_sea_dock",
+  "npc": "npc_fisher"
 }

@@ -2,6 +2,16 @@
 
 `npm run assets:release` chỉ qua khi hết hàng `placeholder`. Art Sobi Farm đã ổn, không đụng tới.
 
+## GĐ8 — Sobi Aquarium
+Tất cả là placeholder sinh bằng `npm run assets:placeholders` (chưa có ảnh tham khảo dùng được ở `asset/reference/sobi_aquarium`):
+| Việc | Ghi chú |
+|---|---|
+| 12 cá `fish_<loài>` (192×120, nhìn ngang, quay sang phải) | Cá Vàng, Rô, Chép, Hề, Nóc, Thiên Thần, Phát Sáng, Betta, Đèn Lồng, Ngựa, Koi Rồng, Trăng; mỗi loài một màu. Nên có thêm biến thể bệnh / đói nếu muốn. |
+| `bld_fish_tank` (640×400), `bld_fish_dock` (520×300), `bg_aquarium` (1600×900) | Bể kính, bến câu (cây cần vẽ trên bến), nền biển. Vị trí nước trong bể ở `scene/aquariumView.ts` (`water`) phải khớp art thật. |
+| 15 icon vật phẩm `ui_item_fish_*`, `ui_item_scale`, `ui_item_pearl`, `ui_item_food_fish` (128×128) | Icon cá hiện là hình cá cùng màu. |
+| Ảnh cô Gà Mơ Màng (`npc_fisher`) | Đang dùng ảnh gà kem `prop_animal_hen_cream`. |
+| Cây cần câu, phao, hiệu ứng nước bắn khi câu được; âm thanh riêng (nước, câu) | Chưa có: dùng bộ âm có sẵn (`water_splash`, `coin_collect`). |
+
 ## GĐ7 — Lai giống nâng cao
 | Việc | Ghi chú |
 |---|---|

@@ -153,6 +153,58 @@ function drawGardenBuilding(r: Raster, id: string) {
   }
 }
 
+/** Body colours of the fish placeholders (one per species of content/aquarium/fish.json). */
+const FISH_COLOURS: Record<string, Rgba> = {
+  fish_goldfish: [244, 150, 60, 255],
+  fish_perch: [120, 160, 96, 255],
+  fish_carp: [200, 168, 120, 255],
+  fish_clownfish: [248, 120, 40, 255],
+  fish_pufferfish: [232, 210, 120, 255],
+  fish_angelfish: [190, 200, 230, 255],
+  fish_glowfish: [120, 230, 200, 255],
+  fish_betta: [200, 70, 140, 255],
+  fish_lanternfish: [70, 90, 160, 255],
+  fish_seahorse: [240, 190, 90, 255],
+  fish_dragon_koi: [236, 190, 50, 255],
+  fish_moonfish: [226, 232, 244, 255],
+};
+
+/** A fish seen from the side, facing right: oval body, tail, fin, eye. Also the icon of the caught fish. */
+function drawFish(r: Raster, id: string) {
+  const colour = FISH_COLOURS[id] ?? [150, 190, 230, 255];
+  const w = r.width;
+  const h = r.height;
+  const dark = shade(colour, 0.72);
+  r.ellipse(w * 0.2, h * 0.5, w * 0.16, h * 0.3, dark); // tail
+  r.ellipse(w * 0.5, h * 0.5, w * 0.34, h * 0.32, colour); // body
+  r.ellipse(w * 0.5, h * 0.3, w * 0.12, h * 0.12, dark); // top fin
+  r.ellipse(w * 0.72, h * 0.44, w * 0.04, h * 0.05, [255, 255, 255, 255]); // eye
+  r.ellipse(w * 0.73, h * 0.44, w * 0.02, h * 0.025, [30, 30, 40, 255]);
+}
+
+/** The tank (glass box with water, sand and a plant), the dock (planks on posts) and the sea backdrop. */
+function drawAquariumScenery(r: Raster, id: string) {
+  const w = r.width;
+  const h = r.height;
+  if (id === 'bg_aquarium') {
+    r.gradient([186, 226, 246, 255], [96, 170, 214, 255]);
+    r.rect(0, h * 0.62, w, h * 0.38, [244, 226, 176, 255]); // the shore
+    return;
+  }
+  if (id === 'bld_fish_tank') {
+    r.roundRect(w * 0.04, h * 0.06, w * 0.92, h * 0.86, 28, [150, 160, 176, 255]); // frame
+    r.roundRect(w * 0.07, h * 0.1, w * 0.86, h * 0.78, 22, [150, 214, 240, 255]); // water
+    r.rect(w * 0.07, h * 0.76, w * 0.86, h * 0.12, [236, 214, 160, 255]); // sand
+    for (const x of [0.2, 0.28, 0.76]) r.roundRect(w * x, h * 0.5, w * 0.02, h * 0.28, 6, [86, 170, 96, 255]); // plants
+    return;
+  }
+  // The dock.
+  const wood: Rgba = [176, 128, 84, 255];
+  r.roundRect(w * 0.04, h * 0.3, w * 0.92, h * 0.16, 10, wood);
+  for (const x of [0.08, 0.34, 0.6, 0.86]) r.roundRect(w * x, h * 0.44, w * 0.05, h * 0.5, 8, shade(wood, 0.7));
+  r.roundRect(w * 0.7, h * 0.05, w * 0.012, h * 0.3, 4, [120, 90, 60, 255]); // the rod
+}
+
 /** A padlock: the plaza marks an Area that is not open yet with it. */
 function drawLock(r: Raster) {
   const iron: Rgba = [96, 96, 112, 255];
@@ -183,6 +235,8 @@ function render(
   else if (id === 'ui_icon_lock') drawLock(r);
   else if (id.startsWith('crop_')) drawCrop(r, id);
   else if (id.startsWith('plot_')) drawPlot(r, id);
+  else if (id.startsWith('fish_') || id.startsWith('ui_item_fish_')) drawFish(r, id.replace('ui_item_fish_', 'fish_'));
+  else if (id === 'bg_aquarium' || id.startsWith('bld_fish_')) drawAquariumScenery(r, id);
   else if (id.startsWith('bld_')) drawGardenBuilding(r, id);
   else if (section === 'pigs') drawPig(r, colour, key === 'sleep');
   else if (section === 'fx') drawFx(r, colour, frames);

@@ -1,0 +1,50 @@
+{
+  "start": { "fish": "fish_goldfish", "feed": 6 },
+  "tank": {
+    "levels": [
+      { "capacity": 5, "price": 0, "materials": {}, "waterFactor": 1 },
+      { "capacity": 8, "price": 800, "materials": {}, "waterFactor": 0.85 },
+      { "capacity": 12, "price": 2500, "materials": { "item_scale": 10 }, "waterFactor": 0.7 },
+      {
+        "capacity": 16,
+        "price": 8000,
+        "materials": { "item_scale": 20, "item_pearl": 3 },
+        "waterFactor": 0.6
+      }
+    ],
+    "waterPerHour": 1.2,
+    "waterPerFishPerHour": 0.5,
+    "scalesPerSlot": 2
+  },
+  "life": {
+    "hungerPerHour": 5,
+    "growthMinHunger": 20,
+    "stageYoungAt": 12.5,
+    "stageAdultAt": 50,
+    "caughtProgress": 30,
+    "recoverHours": 6,
+    "sickMaxPerDay": 1,
+    "nameMax": 16
+  },
+  "fishing": {
+    "cooldownSec": 120,
+    "missBelow": 0.25,
+    "scoreLuck": 0.6,
+    "missCooldownShare": 0.5,
+    "oyster": { "item": "item_pearl", "weight": 3 }
+  },
+  "breeding": { "cooldownHours": 12, "eggHours": 6, "maxEggs": 2, "minHunger": 50, "feed": 2 },
+  "sell": { "minShare": 0.4 },
+  "xp": {
+    "feed": 1,
+    "clean": 2,
+    "catch": 3,
+    "release": 1,
+    "pet": 1,
+    "sell": 8,
+    "breed": 10,
+    "treat": 2,
+    "collect": 1,
+    "upgrade": 20
+  }
+}

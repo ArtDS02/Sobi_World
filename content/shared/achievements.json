@@ -48,6 +48,11 @@
     { "id": "FEED_100", "metric": "feeds", "target": 100, "gems": 8, "xp": 30 },
     { "id": "MANURE_50", "metric": "manureCollected", "target": 50, "gems": 8, "xp": 30 },
     { "id": "CODEX_CROPS", "metric": "codexCrop", "target": "ALL", "gems": 15, "xp": 60 },
-    { "id": "CODEX_ITEMS", "metric": "codexItem", "target": "ALL", "gems": 20, "xp": 80 }
+    { "id": "CODEX_ITEMS", "metric": "codexItem", "target": "ALL", "gems": 20, "xp": 80 },
+    { "id": "FISH_10", "metric": "fishCaught", "target": 10, "gems": 5, "xp": 20 },
+    { "id": "FISH_100", "metric": "fishCaught", "target": 100, "gems": 12, "xp": 60 },
+    { "id": "FISH_500", "metric": "fishCaught", "target": 500, "gems": 25, "xp": 150 },
+    { "id": "TANK_20", "metric": "tanksCleaned", "target": 20, "gems": 8, "xp": 30 },
+    { "id": "CODEX_FISH", "metric": "codexFish", "target": "ALL", "gems": 25, "xp": 120 }
   ]
 }

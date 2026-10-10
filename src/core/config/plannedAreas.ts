@@ -2,13 +2,11 @@
 // shows their doors closed, with the conditions to open them (spec §3.1). Moves out of here into
 // src/app/areas.ts when the Area is built.
 import adventureRaw from '../../../content/adventure/area.json';
-import aquariumRaw from '../../../content/aquarium/area.json';
 import cloudRaw from '../../../content/cloud/area.json';
 import { areaManifestSchema, type AreaManifest } from '../../../content/schemas/area';
 import { loadContent } from '../content/load';
 
 export const PLANNED_AREAS: readonly AreaManifest[] = [
-  loadContent('aquarium/area.json', areaManifestSchema, aquariumRaw),
   loadContent('cloud/area.json', areaManifestSchema, cloudRaw),
   loadContent('adventure/area.json', areaManifestSchema, adventureRaw),
 ];
