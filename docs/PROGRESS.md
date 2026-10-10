@@ -1,12 +1,19 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ10 — Sobi Adventure: xong phần code (gameplay), chờ chủ dự án chơi thử và duyệt số (`content/adventure/`); phiên bản 0.10.0. GĐ9 đã merge `main` (tag `phase-09`).
+**Giai đoạn:** GĐ10 — Sobi Adventure: **nghiệm thu xong, đã merge `main`, tag `phase-10`**; phiên bản 0.10.0. Số liệu đã chơi thử bằng mô phỏng và chỉnh (decision 018). GĐ9 tag `phase-09`.
 **Chiến lược (decision 017):** gameplay trước, art sau. GĐ10–GĐ13 dùng placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
-**Nhánh:** `phase-10-adventure` (tách từ `main` sau GĐ9). Chủ dự án (hoặc agent khi được nhờ) merge, gắn tag `phase-10`, push.
-**Bước tiếp theo:** chơi thử Adventure (Admin → Phiêu lưu → Mô phỏng trận; Số liệu → Sobi Adventure); rồi GĐ11 — Adventure liên hệ thống.
+**Nhánh:** `main` (GĐ10 đã merge). GĐ11 tách nhánh `phase-11-*` từ `main` trong session riêng.
+**Bước tiếp theo:** GĐ11 — Adventure liên hệ thống (chưa bắt đầu; chủ dự án sẽ ra lệnh riêng).
 
 ## Nhật ký
+
+### 2026-10-11 — Nghiệm thu GĐ10: chơi thử bằng mô phỏng và chỉnh cân bằng
+✅ Đã làm: kiểm thử Adventure ở ngưỡng mở (Sobi World cấp 8 + Phát triển thế giới 20: test biên 7/20, 8/19, 8/20), đo bằng mô phỏng (`npm run sim:adventure`, mới) rồi chỉnh. Phát hiện bản đầu: trận chỉ 2–3 vòng; cấp 4+ thắng ~100%; Triệu bão / Pháp sư lửa hơn hẳn, Quỷ kế gần vô dụng (Rừng nặng hệ Đất); bộ trang bị Hiếm làm cấp 1 thắng 100%; cấp 4 sau 1 chuyến.
+Đã chỉnh (chi tiết ở decision 018, mục Cân bằng): kẻ địch máu ×1,8 / công ×1,25 / thủ ×1,2 và hệ chia đều; kiểu đánh (Triệu bão, Pháp sư lửa bớt trội; Quỷ kế, Pháp sư nước, Hộ vệ, Man lực, Chiến binh chỉnh); hồi máu giảm; trang bị yếu đi; KN kẻ địch ×0,55, tiền ×0,6; điểm dừng đầu có nhóm 1 kẻ địch cho đội một heo cấp 1.
+Kết quả: đội 3 (Chiến binh, Hộ vệ, Pháp sư nước): cấp 1 0% · cấp 3 ~10% · cấp 4 ~35–55% · cấp 5 ~70% · cấp 6 ~95% · cấp 8 ~100%; trận 4–5 vòng; thua = −30 năng lượng và kiệt sức 4 giờ, giữ KN và loot. Cấp 5 sau ~2 ngày, cấp 8 sau ~5 ngày chơi.
+🧪 `npm run check` xanh (1.271 test, thêm 6: ngưỡng mở + "balance guard"); `npm run test:e2e` 9/9.
+⚠️ Còn lại: chưa có người chơi tay nhiều ngày (số là từ mô phỏng, AI đánh cho cả hai bên); Rừng chỉ có một vùng nên đội ba con cùng kiểu Pháp sư nước / Thích khách hơi nhỉnh; vùng mới ở GĐ11 nên đổi cơ cấu hệ. Bot  chưa có routine Adventure (GĐ11). Art / animation / âm thanh ở GĐ14.
 
 ### 2026-10-11 — GĐ10 hoàn thành: Sobi Adventure
 ✅ Đã làm (10 việc của prompt GĐ10; quyết định ở `docs/decisions/018-adventure.md`):
