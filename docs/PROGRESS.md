@@ -1,12 +1,29 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ6 — Gắn kết: xong, số cân bằng đã duyệt, bản cài 0.6.0 chờ chơi thử nhiều ngày.
-**Nhánh:** `phase-05-garden` (tách từ `phase-04-desktop-installer`, chưa merge `main`; mang theo commit Sảnh `3b10d83` và GĐ4).
+**Giai đoạn:** GĐ7 — Lai giống nâng cao: xong, chờ chủ dự án chơi thử và duyệt số (`content/breeding/`); bản cài 0.7.0.
+**Nhánh:** `phase-07-breeding` (tách từ `main` sau khi GĐ6 đã merge, tag `phase-06`).
 **Quy ước (chủ dự án, 2026-10-10):** chủ dự án tự merge, gắn tag `phase-XX` và push sau mỗi giai đoạn; agent chỉ commit trên nhánh giai đoạn.
-**Bước tiếp theo:** chơi thử Garden; rồi GĐ6 — Gắn kết (Vertical slice).
+**Bước tiếp theo:** chơi thử lai giống (Admin → Luật phối giống → Mô phỏng lai để xem tỉ lệ); rồi GĐ8 — Sobi Aquarium.
 
 ## Nhật ký
+
+### 2026-10-10 — GĐ7 hoàn thành: lai giống nâng cao
+✅ Đã làm (7 việc của prompt GĐ7; quyết định ở `docs/decisions/014-advanced-breeding.md`):
+1. **`systems/breeding`** (thuần, có test): tính trạng (tối đa 3, mỗi tính trạng 50% từ mỗi bố/mẹ), tính trạng ẩn (Hiếm/Sử thi, lộ ở 5 tim: lúc đó mới hiện và mới có hiệu ứng; chưa lộ vẫn truyền),
+   đột biến (2% + tính trạng bố mẹ + nguồn ngoài, trần 25%), tính trạng riêng của loài, vận may (+2 điểm % mỗi lần lỡ Rare+ khi cặp có thể ra, về 0 khi trúng, trần 30), phả hệ 3 đời, tin đồn.
+   Nối vào Farm: con được định lúc bắt đầu mang thai (tính trạng, ẩn, phả hệ nằm trong `pregnancy.child*`) → sinh → nhận nuôi. 4 hiệu ứng thật: lớn nhanh, giá xuất chuồng (có dòng trong hộp thoại), Bond mỗi lần chăm, cộng đột biến.
+2. **`content/breeding/`** (`traits.json` 11 tính trạng, `balance.json`, `rumors.json`) + **6 giống mới** (75 giống): Nấm, Đom Đóm, Mây, San Hô, Pha Lê, Cực Quang; hai nhánh khám phá nối ở Cực Quang; mỗi giống có tính trạng riêng, món yêu thích, giá riêng. Art placeholder.
+3. **Phả hệ**: nút "Phả hệ" ở bảng heo, hộp thoại cây tổ tiên (bố mẹ → ông bà → cụ), giữ nguyên khi bán / mất bố mẹ.
+4. **Nhà lai giống** (Bà Ngan Lai): mở từ Menu hoặc nút "Hỏi Nhà lai giống" trong hộp thoại phối giống; mỗi ngày 1 tin đồn gợi ý công thức chưa khám phá (nêu bậc hiếm và họ, không gọi tên loài) + 1 mẹo; cố định theo ngày.
+5. **Codex**: ô chưa khám phá hiện "???" + bậc hiếm + gợi ý họ; ô đã khám phá có tooltip (họ, tính trạng riêng, món yêu thích).
+6. **Admin**: tab "🧪 Mô phỏng lai" (N lần lai với seed, tính trạng cha mẹ, vận may, đột biến cộng thêm); "Số liệu" sửa được tính trạng, cân bằng lai, câu tin đồn; Admin species giữ `signatureTrait` / `favorite`.
+7. **Test**: `breedingSystem` (tỉ lệ di truyền, đột biến, giới hạn 3, ẩn, pity, phả hệ, tin đồn), `breedingHeredity` (qua thai kỳ → sinh → nhận nuôi, pity trong Farm, hiệu ứng, 6 giống, save cũ), `heredityVm`, `breedingSim` (50.000 lần lai: tỉ lệ loài trong 1 điểm), Admin.
+🧪 Đã kiểm tra: `npm run check` xanh (1.117 test); `npm run test:e2e`; Admin chạy thật (Mô phỏng 1.000 lần lai, nhập số liệu mới); dựng bảng heo, phả hệ, hộp thoại phối giống và bảng Nhà lai giống trong trình duyệt bằng `dev:sandbox` (không vào được Farm bằng tay vì trình duyệt chậm nên mô phỏng từng màn từ mã thật).
+⚠️ Quyết định tự đưa ra: xem decision 014. Điểm đáng chú ý: tính trạng chỉ đến từ lai giống (heo mua / khởi đầu không có); tính trạng ẩn chỉ có hiệu ứng khi lộ; vận may tính theo cả trang trại (không theo cặp), trần 30 điểm %; rng của phần tính trạng sinh từ (mẹ, bố, thời điểm) để không đổi kết quả loài / giới tính cũ.
+⚠️ Cân bằng cần chơi thử: tỉ lệ tính trạng quanh heo mới thấp (0,16 tính trạng / con khi bố mẹ chưa có gì); vận may +30 điểm % ở trần có thể quá mạnh với cặp ra Rare+ khó (Admin → Mô phỏng lai để xem, chỉnh ở Số liệu → "Lai giống nâng cao").
+⚠️ Chưa làm: nguồn cộng đột biến (hoa Cloud, cầu vồng; đã có tham số), tính trạng cho cá (GĐ8), icon tính trạng, art thật 6 giống, ảnh riêng Nhà lai giống (`docs/ASSET_TODO.md`); chưa thử tay lâu dài; chưa kiểm `dist:win` trên máy sạch.
+👉 Bạn cần: chơi thử (Admin → Luật phối giống → Mô phỏng lai trước), lai vài cặp xem tính trạng và phả hệ, xem tin đồn qua vài ngày (Admin tua thời gian), rồi merge `main`, tag `phase-07`, push.
 
 ### 2026-10-10 — GĐ5 hoàn thành: Sobi Garden và sản xuất
 ✅ Đã làm (10 việc của prompt GĐ5):
