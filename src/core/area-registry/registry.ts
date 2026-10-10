@@ -5,7 +5,7 @@ import type { AreaManifest } from '../../../content/schemas/area';
 import type { TimeRules } from '../clock';
 import type { EventBase, WorldEvent } from '../events';
 import { simulateWorld, type SimMode, type SimulationResult } from '../simulation/simulate';
-import { unlockGaps, worldDevelopment, type UnlockGap, type WorldDevelopmentRules } from '../progression/levels';
+import { unlockGaps, worldDevelopment, worldLevel, type LevelTable, type UnlockGap, type WorldDevelopmentRules } from '../progression/levels';
 import type { Rng } from '../rng';
 import type { AreaSaveSpec, LegacyResult, Raw, SaveCodec } from '../save/migrate';
 import { emptyWorld, type WorldSave, type WorldSettings } from '../save/world';
@@ -27,8 +27,6 @@ export interface AreaModule {
   simulatedAt(world: WorldSave): number;
   /** Moves its time stamps to `to` without simulating: the part of a long absence past the offline cap is skipped. */
   rebase(world: WorldSave, to: number): WorldSave;
-  /** The Area's level (its XP in progression.areas, its own level table). */
-  level(world: WorldSave): number;
   /** Its events as standard world events (ARCHITECTURE §7); [] for events that are not its own. */
   toWorldEvents(events: readonly EventBase[]): WorldEvent[];
   /** Lines for the "while you were away" screen (spec §5): what happened (the events) and what needs the player now (the world), as string-table keys with parameters. */
@@ -59,15 +57,20 @@ export interface AreaInfo {
   /** Its code is not written yet (a later phase): shown in the plaza, closed, with the conditions. */
   planned: boolean;
   unlocked: boolean;
-  level: number;
   /** What it still needs to open (empty when unlocked or open from the start). */
   gaps: UnlockGap[];
 }
 
 /** `planned`: manifests of Areas that are not built yet; they take no part in the simulation or the save. */
+/** The one level table and the World Development weights (decision 007, 013). */
+export interface ProgressionRules {
+  levels: LevelTable;
+  development: WorldDevelopmentRules;
+}
+
 export function createAreaRegistry(
   modules: readonly AreaModule[],
-  rules: WorldDevelopmentRules,
+  rules: ProgressionRules,
   time: TimeRules,
   planned: readonly AreaManifest[] = [],
 ) {
@@ -78,10 +81,14 @@ export function createAreaRegistry(
   const byId = new Map(modules.map((m) => [m.manifest.id, m]));
   /** Areas with state in this world, in registration order. */
   const present = (world: WorldSave) => modules.filter((m) => m.manifest.id in world.areas);
-  const opensAtStart = (m: AreaModule) => !m.manifest.unlock.areaLevels && m.manifest.unlock.worldDevelopment === undefined;
+  const opensAtStart = (m: AreaModule) => m.manifest.unlock.worldLevel === undefined && m.manifest.unlock.worldDevelopment === undefined;
 
-  const levels = (world: WorldSave): Record<string, number> =>
-    Object.fromEntries(present(world).map((m) => [m.manifest.id, m.level(world)]));
+  const levelOf = (world: WorldSave): number => worldLevel(world, rules.levels);
+  const codexOf = (world: WorldSave): number => Object.values(world.collection.discovered).reduce((n, ids) => n + ids.length, 0);
+  /** World Development: the level + Codex entries + buildings Lv3+ (no building reports its level yet). */
+  const developmentOf = (world: WorldSave, codexEntries = codexOf(world), buildingsLv3 = 0): number =>
+    worldDevelopment({ worldLevel: levelOf(world), codexEntries, buildingsLv3 }, rules.development);
+  const gapsOf = (world: WorldSave, m: AreaManifest) => unlockGaps(m.unlock, { worldLevel: levelOf(world), worldDevelopment: developmentOf(world) });
 
   /** A new world: every Area open from the start initialised in order; the first is current. */
   function newWorld(ctx: ActionContext, settings: WorldSettings): WorldSave {
@@ -94,13 +101,11 @@ export function createAreaRegistry(
 
   /** Opens every built Area that is closed and meets its conditions: its first state, its id in `unlockedAreas`. */
   function unlockReady(world: WorldSave, ctx: ActionContext): { state: WorldSave; events: AreaUnlockedEvent[] } {
-    const codex = Object.values(world.collection.discovered).reduce((n, ids) => n + ids.length, 0);
-    const wd = worldDevelopment({ areaLevels: levels(world), codexEntries: codex, buildingsLv3: 0 }, rules);
     let state = world;
     const events: AreaUnlockedEvent[] = [];
     for (const m of modules) {
       const id = m.manifest.id;
-      if (state.world.unlockedAreas.includes(id) || unlockGaps(m.manifest.unlock, levels(state), wd).length > 0) continue;
+      if (state.world.unlockedAreas.includes(id) || gapsOf(state, m.manifest).length > 0) continue;
       const created = id in state.areas ? state : m.init(state, ctx);
       state = { ...created, world: { ...created.world, unlockedAreas: [...created.world.unlockedAreas, id] } };
       events.push({ type: 'AREA_UNLOCKED', areaId: id });
@@ -137,28 +142,25 @@ export function createAreaRegistry(
     summary: (events: readonly EventBase[], world: WorldSave, now: number): SummaryLine[] =>
       modules.flatMap((m) => (m.manifest.id in world.areas ? (m.getSummary?.(events, world, now) ?? []) : [])),
 
-    levels,
+    /** The one Sobi World Level of this world. */
+    worldLevel: levelOf,
 
-    worldDevelopment: (world: WorldSave, codexEntries: number, buildingsLv3 = 0): number =>
-      worldDevelopment({ areaLevels: levels(world), codexEntries, buildingsLv3 }, rules),
+    worldDevelopment: developmentOf,
 
     /** Every Area, built or planned, with its lock state (the plaza shows locked ones with their conditions). */
-    areas(world: WorldSave, codexEntries = 0): AreaInfo[] {
-      const lv = levels(world);
-      const wd = worldDevelopment({ areaLevels: lv, codexEntries, buildingsLv3: 0 }, rules);
+    areas(world: WorldSave): AreaInfo[] {
       const built = modules.map((m): AreaInfo => {
         const unlocked = world.world.unlockedAreas.includes(m.manifest.id);
         return {
           manifest: m.manifest,
           planned: false,
           unlocked,
-          level: lv[m.manifest.id] ?? 0,
-          gaps: unlocked ? [] : unlockGaps(m.manifest.unlock, lv, wd),
+          gaps: unlocked ? [] : gapsOf(world, m.manifest),
         };
       });
       // A planned Area cannot be open, whatever its conditions: there is nothing to enter yet.
       const soon = planned.map(
-        (manifest): AreaInfo => ({ manifest, planned: true, unlocked: false, level: 0, gaps: unlockGaps(manifest.unlock, lv, wd) }),
+        (manifest): AreaInfo => ({ manifest, planned: true, unlocked: false, gaps: gapsOf(world, manifest) }),
       );
       return [...built, ...soon];
     },

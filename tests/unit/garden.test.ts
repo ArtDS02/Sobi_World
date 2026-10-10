@@ -6,7 +6,7 @@ import { SAVE_CODEC, parseWorldSave } from '../../src/app/saveCodec';
 import { feedPig } from '../../src/areas/farm/logic/actions/feedPig';
 import { cleanManure } from '../../src/areas/farm/logic/actions/cleanManure';
 import { farmOf, withFarm } from '../../src/areas/farm/logic/save/lens';
-import { CROPS, GARDEN_AREA_ID, GB, gardenLevel } from '../../src/areas/garden/logic/config/content';
+import { CROPS, GARDEN_AREA_ID, GB } from '../../src/areas/garden/logic/config/content';
 import { plotViews, nextExpansion, nextSprinkler } from '../../src/areas/garden/logic/derived';
 import { gardenOf } from '../../src/areas/garden/logic/save/lens';
 import {
@@ -20,6 +20,8 @@ import { fertilizePlots, harvestPlots, plantCrops, waterPlots } from '../../src/
 import { gardenSummaryLines } from '../../src/areas/garden/logic/summary';
 import { gardenArea } from '../../src/areas/garden';
 import { INVENTORY } from '../../src/core/config/inventory';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
+import { worldLevel } from '../../src/core/progression/levels';
 import { mulberry32 } from '../../src/core/rng';
 import { WORLD_SAVE_VERSION, type WorldSave } from '../../src/core/save/world';
 import type { ActionContext } from '../../src/core/types';
@@ -377,10 +379,10 @@ describe('the away summary', () => {
 });
 
 describe('levels', () => {
-  it('rise with XP from the garden table', () => {
-    expect(gardenLevel(0)).toBe(1);
-    expect(gardenLevel(100)).toBe(2);
-    expect(gardenLevel(1_000_000)).toBe(GB.levels.maxLevel);
-    expect(gardenArea.level(gardenWorld())).toBe(1);
+  it('the Garden feeds the one world XP: its XP counts towards the Sobi World Level', () => {
+    const w = gardenWorld();
+    expect(worldLevel(w, WORLD_LEVELS)).toBe(1);
+    const more = { ...w, progression: { ...w.progression, areas: { ...w.progression.areas, [GARDEN_AREA_ID]: { xp: 100 } } } };
+    expect(worldLevel(more, WORLD_LEVELS)).toBe(2);
   });
 });

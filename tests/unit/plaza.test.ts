@@ -34,10 +34,10 @@ describe('portals', () => {
     expect(v.get('pig_barn')).toMatchObject({ status: 'open', conditions: [] });
     expect(v.get('garden_gate')).toMatchObject({ status: 'locked', name: 'Sobi Garden' });
     expect(v.get('sea_dock')).toMatchObject({ status: 'soon', name: 'Sobi Aquarium' });
-    expect(v.get('garden_gate')?.conditions).toEqual(['Sobi Farm cấp 3 (hiện 1)']);
-    expect(v.get('sea_dock')?.conditions).toHaveLength(2);
-    expect(v.get('sky_tree')?.conditions).toHaveLength(3);
-    expect(v.get('portal_gate')?.conditions).toEqual(['Sobi Farm cấp 8 (hiện 1)', 'Phát triển thế giới 20 (hiện 1)']);
+    expect(v.get('garden_gate')?.conditions).toEqual(['Sobi World cấp 3 (hiện 1)']);
+    expect(v.get('sea_dock')?.conditions).toEqual(['Sobi World cấp 6 (hiện 1)']);
+    expect(v.get('sky_tree')?.conditions).toHaveLength(2);
+    expect(v.get('portal_gate')?.conditions).toEqual(['Sobi World cấp 8 (hiện 1)', 'Phát triển thế giới 20 (hiện 1)']);
   });
 
   it('shows the farm level as it grows (the numbers come from the save)', () => {

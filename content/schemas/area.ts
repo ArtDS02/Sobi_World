@@ -10,9 +10,9 @@ export const areaManifestSchema = z.strictObject({
   name: z.strictObject({ vi: text }),
   /** The plaza object that leads here (GĐ3). */
   portalInPlaza: z.string().regex(/^[a-z][a-z0-9_]*$/),
-  /** Empty = open from the start; otherwise levels of other Areas and World Development. */
+  /** Empty = open from the start; otherwise the Sobi World Level (decision 007) and World Development. */
   unlock: z.strictObject({
-    areaLevels: z.record(z.string(), z.number().int().min(1)).optional(),
+    worldLevel: z.number().int().min(1).optional(),
     worldDevelopment: z.number().int().min(0).optional(),
   }),
   /** How the player acts inside it (spec §4): `click` = mouse only (Farm, Garden, Aquarium, Cloud); `character` = the character walks (the plaza, Adventure). */

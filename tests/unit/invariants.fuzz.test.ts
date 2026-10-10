@@ -12,7 +12,7 @@ import { fulfillOrder, pigMeetsOrder } from '../../src/areas/farm/logic/actions/
 import { renamePig } from '../../src/areas/farm/logic/actions/renamePig';
 import { sellPig } from '../../src/areas/farm/logic/actions/sellPig';
 import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
-import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { GENDER_VALUES, ITEM_ID_VALUES } from '../../src/core/config/ids';
 import { ITEMS } from '../../src/core/config/items';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
@@ -160,7 +160,7 @@ describe('§5.5 invariants under random play (fuzz)', () => {
     const start = newGame({ now, rng: gameRng });
     let state: FarmGame = {
       ...start,
-      player: { ...start.player, gold: MIDGAME_GOLD, xp: BALANCE.LEVEL_XP[4]! },
+      player: { ...start.player, gold: MIDGAME_GOLD, xp: WORLD_LEVELS.xp[4]! },
     };
     const ok = new Map<string, number>();
     expectValid(state, 0, 'newGame');

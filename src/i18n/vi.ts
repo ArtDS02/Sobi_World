@@ -51,9 +51,8 @@ export const vi = {
     soon: "Sắp ra mắt",
     opened: "{name} đã mở cửa!",
     conditions: "Điều kiện mở:",
-    needAreaLevel: "{area} cấp {need} (hiện {have})",
+    needWorldLevel: "Sobi World cấp {need} (hiện {have})",
     needWorldDevelopment: "Phát triển thế giới {need} (hiện {have})",
-    unknownArea: "một khu khác",
   },
 
   // Names of the controls (spec §4) for hints and the key settings.
@@ -206,7 +205,7 @@ export const vi = {
       started: "{name}: bắt đầu {batches} mẻ",
       batchDone: "{name} xong {batches} mẻ",
       collected: "Nhận {items}",
-      levelUp: "Sobi Garden lên cấp {level}!",
+      levelUp: "Sobi World lên cấp {level}!",
     },
   },
 

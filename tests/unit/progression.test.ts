@@ -10,7 +10,7 @@ import { ACHIEVEMENTS } from '../../src/areas/farm/logic/config/achievements';
 import { DAILY } from '../../src/areas/farm/logic/config/daily';
 import { DECORS } from '../../src/areas/farm/logic/config/decor';
 import { RELIEF } from '../../src/areas/farm/logic/config/relief';
-import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { advanceWorld } from '../../src/areas/farm/logic/advanceWorld';
 import { decorBonus } from '../../src/areas/farm/logic/decor';
 import { happiness } from '../../src/areas/farm/logic/happiness';
@@ -150,7 +150,7 @@ describe('achievements (PG-2)', () => {
 
   it('state metrics (level, slots) are reached without a counter', () => {
     const s = farm();
-    const rich = { ...s, player: { ...s.player, xp: 1400, unlockedSlots: 12 } };
+    const rich = { ...s, player: { ...s.player, xp: WORLD_LEVELS.xp[4]!, unlockedSlots: 12 } };
     const step = progressStep(s, rich, []);
     expect(step.events.map((e) => (e.type === 'ACHIEVEMENT_REACHED' ? e.id : ''))).toEqual([
       'LEVEL_5',
@@ -174,7 +174,7 @@ describe('decorations (PG-3)', () => {
   };
 
   it('buying spends gold once, needs the level, and raises happiness and price', () => {
-    const s = rich(BALANCE.LEVEL_XP[1]!); // level 2
+    const s = rich(WORLD_LEVELS.xp[1]!); // level 2
     expectError((x) => buyDecor(x, { decorId: 'DECOR_WINDMILL' }, ctx()), s, 'LEVEL_TOO_LOW');
     const r = expectOk(buyDecor(s, { decorId: 'DECOR_HAY_BALE' }, ctx()));
     expect(r.state.player.gold).toBe(100_000 - DECORS.DECOR_HAY_BALE.priceGold);

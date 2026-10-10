@@ -8,7 +8,7 @@ import { legacyToWorld } from '../../src/areas/farm/logic/save/legacy';
 import { farmOf, withFarm } from '../../src/areas/farm/logic/save/lens';
 import { makePig as makeFarmPig0 } from './pigFactory';
 import { createAreaRegistry, type AreaManifest } from '../../src/core/area-registry/registry';
-import { WORLD_DEVELOPMENT } from '../../src/core/config/progression';
+import { PROGRESSION } from '../../src/core/config/progression';
 import { mulberry32 } from '../../src/core/rng';
 import { parseSave } from '../../src/core/save/migrate';
 import { defaultSettings, WORLD_SAVE_VERSION, type WorldSave } from '../../src/core/save/world';
@@ -30,12 +30,12 @@ const manifest = (patch: Partial<AreaManifest> = {}): AreaManifest => ({
   ...patch,
 });
 const registry = (patch?: Partial<AreaManifest>) =>
-  createAreaRegistry([farmArea, createTemplateArea(manifest(patch))], WORLD_DEVELOPMENT, TIME);
+  createAreaRegistry([farmArea, createTemplateArea(manifest(patch))], PROGRESSION, TIME);
 
 describe('area registry', () => {
   it('refuses duplicate ids and an empty build', () => {
-    expect(() => createAreaRegistry([farmArea, farmArea], WORLD_DEVELOPMENT, TIME)).toThrow(/twice/);
-    expect(() => createAreaRegistry([], WORLD_DEVELOPMENT, TIME)).toThrow(/no area/);
+    expect(() => createAreaRegistry([farmArea, farmArea], PROGRESSION, TIME)).toThrow(/twice/);
+    expect(() => createAreaRegistry([], PROGRESSION, TIME)).toThrow(/no area/);
   });
 
   it('a new world starts every open Area; the first one is current', () => {
@@ -47,13 +47,13 @@ describe('area registry', () => {
   });
 
   it('a locked Area stays out of the save and shows what it needs', () => {
-    const reg = registry({ unlock: { areaLevels: { sobi_farm: 3 }, worldDevelopment: 2 } });
+    const reg = registry({ unlock: { worldLevel: 3, worldDevelopment: 2 } });
     const w = reg.newWorld(ctx(), defaultSettings());
     expect(Object.keys(w.areas)).toEqual(['sobi_farm']);
     const garden = reg.areas(w).find((a) => a.manifest.id === 'test_garden')!;
     expect(garden.unlocked).toBe(false);
     expect(garden.gaps).toEqual([
-      { kind: 'areaLevel', areaId: 'sobi_farm', need: 3, have: 1 },
+      { kind: 'worldLevel', need: 3, have: 1 },
       { kind: 'worldDevelopment', need: 2, have: 1 },
     ]);
   });
@@ -71,12 +71,12 @@ describe('area registry', () => {
     expect(reg.summary(r.events, r.state, T0 + 5 * H)).toContainEqual({ key: 'summary.template.harvests', params: { count: 2 } });
   });
 
-  it('levels and World Development come from every Area', () => {
+  it('the world level is one level for every Area: their XP adds up (decision 007)', () => {
     const reg = registry();
     const w = reg.newWorld(ctx(), defaultSettings());
     const leveled: WorldSave = { ...w, progression: { ...w.progression, areas: { sobi_farm: { xp: 600 }, test_garden: { xp: 150 } } } };
-    expect(reg.levels(leveled)).toEqual({ sobi_farm: 4, test_garden: 2 });
-    expect(reg.worldDevelopment(leveled, 25)).toBe(4 + 2 + 2);
+    expect(reg.worldLevel(leveled)).toBe(3); // 750 XP: level 3 starts at 383, level 4 at 903
+    expect(reg.worldDevelopment(leveled, 25)).toBe(3 + 2);
   });
 
   it('the save codec validates and migrates each Area slice', () => {
@@ -93,7 +93,7 @@ describe('area registry', () => {
   });
 
   it('an Area this build does not know keeps its data in the save', () => {
-    const farmOnly = createAreaRegistry([farmArea], WORLD_DEVELOPMENT, TIME);
+    const farmOnly = createAreaRegistry([farmArea], PROGRESSION, TIME);
     const w = registry().newWorld(ctx(), defaultSettings());
     const r = parseSave(JSON.stringify(w), farmOnly.codec(legacyToWorld, defaultSettings));
     expect(r.ok && r.save.areas.test_garden).toEqual(w.areas.test_garden);

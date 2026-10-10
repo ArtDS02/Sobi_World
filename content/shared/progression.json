@@ -1,1 +1,28 @@
-{ "worldDevelopment": { "perAreaLevel": 1, "codexEntriesPerPoint": 10, "perBuildingLv3": 1 } }
+{
+  "worldLevel": {
+    "maxLevel": 20,
+    "xp": [
+      0,
+      100,
+      383,
+      903,
+      1703,
+      2821,
+      4291,
+      6143,
+      8406,
+      11106,
+      14268,
+      17916,
+      22073,
+      26760,
+      31998,
+      37807,
+      44207,
+      51216,
+      58853,
+      67135
+    ]
+  },
+  "worldDevelopment": { "perWorldLevel": 1, "codexEntriesPerPoint": 10, "perBuildingLv3": 1 }
+}

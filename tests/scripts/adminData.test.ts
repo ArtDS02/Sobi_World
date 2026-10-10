@@ -4,7 +4,7 @@ import { appendPigRowsText, type SpeciesRowData } from '../../scripts/admin/spec
 import { readContent, speciesFileValue } from '../../scripts/admin/contentFiles';
 import { contentJson } from '../../scripts/content/format';
 import { artState, validateSpecies, type PigArtRow, type ValidateInput } from '../../scripts/admin/validate';
-import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { FAMILY_VALUES, RARITY_TIER } from '../../src/areas/farm/logic/config/breeds';
 import { BREED_ID_VALUES } from '../../src/areas/farm/logic/config/ids';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
@@ -22,7 +22,7 @@ const input = (patch: Partial<ValidateInput> = {}): ValidateInput => ({
   rarities: RARITY_VALUES,
   families: FAMILY_VALUES,
   tiers: RARITY_TIER,
-  maxLevel: BALANCE.MAX_LEVEL,
+  maxLevel: WORLD_LEVELS.maxLevel,
   ...patch,
 });
 const errors = (i: ValidateInput) => validateSpecies(i).filter((x) => x.level === 'error');

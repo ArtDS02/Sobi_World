@@ -6,7 +6,8 @@ import { itemArtId } from '../../../core/config/assetIds';
 import { ITEMS } from '../../../core/config/items';
 import type { ItemId } from '../../../core/config/ids';
 import { RECIPES, recipesOf } from '../../../core/config/recipes';
-import { areaXp, nextLevelXp } from '../../../core/progression/levels';
+import { WORLD_LEVELS } from '../../../core/config/progression';
+import { levelProgress, worldXp } from '../../../core/progression/levels';
 import { affordableBatches, batchesDone, batchesReady, nextBatchAt, jobEndsAt, type Recipe } from '../../../core/production/production';
 import type { WorldSave } from '../../../core/save/world';
 import { mulberry32 } from '../../../core/rng';
@@ -17,10 +18,7 @@ import { msToRipe, plotStage } from '../../../systems/plants/plot';
 import {
   CROP_LIST,
   CROPS,
-  GARDEN_AREA_ID,
-  GARDEN_LEVELS,
   GB,
-  gardenLevel,
   PLOT_RULES,
   type BuildingId,
 } from '../logic/config/content';
@@ -53,15 +51,13 @@ export interface HudVm {
 }
 
 export function hudVm(world: WorldSave): HudVm {
-  const xp = areaXp(world, GARDEN_AREA_ID);
-  const level = gardenLevel(xp);
-  const next = nextLevelXp(level, GARDEN_LEVELS);
-  const from = GB.levels.xp[level - 1] ?? 0;
+  const xp = worldXp(world);
+  const { level, next, percent } = levelProgress(xp, WORLD_LEVELS);
   return {
     coins: gold(world.wallet.coins),
     level: t(vi.garden.level, { level }),
     xp: next === null ? vi.garden.xpMax : t(vi.garden.xp, { current: gold(xp), next: gold(next) }),
-    xpProgress: next === null ? 100 : Math.round(((xp - from) / (next - from)) * 100),
+    xpProgress: percent,
   };
 }
 

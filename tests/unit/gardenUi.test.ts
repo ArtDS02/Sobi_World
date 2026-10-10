@@ -42,8 +42,8 @@ describe('hud and palette', () => {
     const w = { ...base(), progression: { ...base().progression, areas: { sobi_garden: { xp: 150 } } } };
     const v = hudVm(w);
     expect(v.level).toBe('Cấp 2');
-    expect(v.xp).toBe('150/283 KN');
-    expect(v.xpProgress).toBe(27); // (150 − 100) / (283 − 100)
+    expect(v.xp).toBe('150/383 KN');
+    expect(v.xpProgress).toBe(17); // (150 − 100) / (383 − 100)
     expect(hudVm({ ...w, progression: { ...w.progression, areas: { sobi_garden: { xp: 99_999 } } } }).xp).toBe('Cấp cao nhất');
   });
 
@@ -179,7 +179,7 @@ describe('presentation of the Garden events', () => {
     expect(gardenPresentation({ type: 'GARDEN_CROP_RIPE', cropId: 'crop_corn', count: 4 } as never, 'tick')).toEqual({ sound: 'notify', toast: '4 cây đã chín!' });
     expect(gardenPresentation({ type: 'GARDEN_CROP_RIPE', cropId: 'crop_corn', count: 4 } as never, 'catchup')).toBeNull();
     expect(gardenPresentation({ type: 'PIG_FED' } as never, 'action')).toBeNull();
-    expect(gardenPresentation({ type: 'GARDEN_LEVEL_UP', level: 2 } as never, 'action')).toEqual({ sound: 'level_up', toast: 'Sobi Garden lên cấp 2!' });
+    expect(gardenPresentation({ type: 'GARDEN_LEVEL_UP', level: 2 } as never, 'action')).toEqual({ sound: 'level_up', toast: 'Sobi World lên cấp 2!' });
   });
 });
 

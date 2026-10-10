@@ -6,7 +6,7 @@ import { farmOf } from '../../src/areas/farm/logic/save/lens';
 import { DAY_MS, HOUR_MS } from '../../src/core/clock';
 import { TIME } from '../../src/core/config/time';
 import { createAreaRegistry } from '../../src/core/area-registry/registry';
-import { WORLD_DEVELOPMENT } from '../../src/core/config/progression';
+import { PROGRESSION } from '../../src/core/config/progression';
 import { sequenceRng } from '../../src/core/rng';
 import { sliceEnds } from '../../src/core/simulation/slices';
 import { makePig } from './pigFactory';
@@ -16,7 +16,7 @@ import { world } from './worldKit';
 
 const MIN = 60_000;
 const T0 = 20_000 * DAY_MS; // local midnight at offset 0
-const reg = createAreaRegistry([farmArea], WORLD_DEVELOPMENT, TIME);
+const reg = createAreaRegistry([farmArea], PROGRESSION, TIME);
 /** The farm of a test world, its trough clock set to T0 (makeState starts at t = 0). */
 const at0 = (w: WorldSave): WorldSave => {
   const f = farmOf(w);

@@ -17,20 +17,13 @@ export interface PortalView {
   conditions: string[];
 }
 
-function conditionLine(gap: UnlockGap, names: ReadonlyMap<string, string>): string {
-  if (gap.kind === 'worldDevelopment') {
-    return t(vi.plaza.needWorldDevelopment, { need: gap.need, have: gap.have });
-  }
-  return t(vi.plaza.needAreaLevel, {
-    area: names.get(gap.areaId) ?? vi.plaza.unknownArea,
-    need: gap.need,
-    have: gap.have,
-  });
+function conditionLine(gap: UnlockGap): string {
+  const key = gap.kind === 'worldLevel' ? vi.plaza.needWorldLevel : vi.plaza.needWorldDevelopment;
+  return t(key, { need: gap.need, have: gap.have });
 }
 
 /** The doors by portal id. */
 export function portalViews(infos: readonly AreaInfo[]): Map<string, PortalView> {
-  const names = new Map(infos.map((i) => [i.manifest.id, i.manifest.name.vi]));
   return new Map(
     infos.map((info): [string, PortalView] => [
       info.manifest.portalInPlaza,
@@ -39,7 +32,7 @@ export function portalViews(infos: readonly AreaInfo[]): Map<string, PortalView>
         areaId: info.manifest.id,
         name: info.manifest.name.vi,
         status: info.planned ? 'soon' : info.unlocked ? 'open' : 'locked',
-        conditions: info.unlocked ? [] : info.gaps.map((g) => conditionLine(g, names)),
+        conditions: info.unlocked ? [] : info.gaps.map(conditionLine),
       },
     ]),
   );

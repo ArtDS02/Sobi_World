@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { buyItem } from '../../src/areas/farm/logic/actions/buyItem';
 import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
 import { buySlot } from '../../src/areas/farm/logic/actions/buySlot';
@@ -111,7 +112,7 @@ describe('buyPig (§8.1)', () => {
     const run = (s: FarmGame) => buyPig(s, { breed: 'PIG_HEDGEHOG', gender: 'FEMALE' }, ctx());
     expectError(run, withPigs([], 10_000), 'LEVEL_TOO_LOW');
     const s = withPigs([], 10_000);
-    const leveled = { ...s, player: { ...s.player, xp: BALANCE.LEVEL_XP[7]! } }; // level 8
+    const leveled = { ...s, player: { ...s.player, xp: WORLD_LEVELS.xp[7]! } }; // level 8
     const r = expectOk(run(leveled));
     expect(r.state.pigs[0]?.breed).toBe('PIG_HEDGEHOG');
     expect(r.state.player.gold).toBe(10_000 - 7000 + BALANCE.DISCOVERY_BONUS_GOLD);
@@ -255,16 +256,16 @@ describe('buySlot (§8.11)', () => {
   });
 
   it('level gate before gold: LEVEL_TOO_LOW, then INSUFFICIENT_GOLD', () => {
-    expectError((s) => buySlot(s, {}, ctx()), at(99, 1_000_000), 'LEVEL_TOO_LOW');
-    expectError((s) => buySlot(s, {}, ctx()), at(100, 1999), 'INSUFFICIENT_GOLD');
+    expectError((s) => buySlot(s, {}, ctx()), at(WORLD_LEVELS.xp[1]! - 1, 1_000_000), 'LEVEL_TOO_LOW');
+    expectError((s) => buySlot(s, {}, ctx()), at(WORLD_LEVELS.xp[1]!, 1999), 'INSUFFICIENT_GOLD');
   });
 
   it('slot 12 needs level 9; slots past 12 need level 10; nothing past MAX_SLOTS (U05)', () => {
-    expectError((s) => buySlot(s, {}, ctx()), at(3000, 1_000_000, 11), 'LEVEL_TOO_LOW');
-    const r = expectOk(buySlot(at(4200, 80_000, 11), {}, ctx()));
+    expectError((s) => buySlot(s, {}, ctx()), at(WORLD_LEVELS.xp[7]!, 1_000_000, 11), 'LEVEL_TOO_LOW');
+    const r = expectOk(buySlot(at(WORLD_LEVELS.xp[8]!, 80_000, 11), {}, ctx()));
     expect(r.state.player.unlockedSlots).toBe(12);
     expectError((s) => buySlot(s, {}, ctx()), r.state, 'LEVEL_TOO_LOW');
-    const last = at(5700, 10_000_000, BALANCE.MAX_SLOTS - 1);
+    const last = at(WORLD_LEVELS.xp[9]!, 10_000_000, BALANCE.MAX_SLOTS - 1);
     const full = expectOk(buySlot(last, {}, ctx()));
     expect(full.state.player.unlockedSlots).toBe(BALANCE.MAX_SLOTS);
     expectError((s) => buySlot(s, {}, ctx()), full.state, 'MAX_SLOTS_REACHED');

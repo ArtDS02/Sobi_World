@@ -106,8 +106,7 @@ export async function start(root: HTMLElement) {
   const portals = (): ReadonlyMap<string, PortalView> => {
     const save = world.getSnapshot().save;
     if (!save) return doors.views;
-    const codex = Object.values(save.collection.discovered).reduce((n, ids) => n + ids.length, 0);
-    const views = portalViews(AREAS.areas(save, codex));
+    const views = portalViews(AREAS.areas(save));
     const signature = JSON.stringify([...views.values()]);
     if (signature !== doors.signature) doors = { signature, views };
     return doors.views;

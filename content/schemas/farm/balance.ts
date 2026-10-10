@@ -50,9 +50,6 @@ const balanceSchema = z.strictObject({
   XP_EFFECTIVE_FEED_MAX_HUNGER: z.number().min(0).max(100),
   XP_EFFECTIVE_CLEAN_MAX_CLEAN: z.number().min(0).max(100),
   XP: z.strictObject({ FEED: nonNeg, CLEAN: nonNeg, MANURE: nonNeg, SELL: nonNeg, BREED: nonNeg, ORDER: nonNeg, DISCOVERY: nonNeg }),
-  MAX_LEVEL: posInt,
-  /** XP needed for level n + 1 at index n (index 0 = level 1 = 0 XP). */
-  LEVEL_XP: z.array(int.min(0)).min(1),
   NURSERY_MAX: posInt,
   MAX_SLOTS: posInt,
   /** Slot number (as a string key) -> its unlock. */
@@ -83,8 +80,6 @@ export const farmBalanceFileSchema = z
   .superRefine((f, ctx) => {
     const b = f.balance;
     const issue = (message: string) => ctx.addIssue({ code: 'custom', message });
-    if (b.LEVEL_XP.length !== b.MAX_LEVEL) issue('balance.LEVEL_XP needs one entry per level (MAX_LEVEL)');
-    if (b.LEVEL_XP.some((x, i) => i > 0 && x <= b.LEVEL_XP[i - 1]!)) issue('balance.LEVEL_XP must increase');
     if (b.TROUGH_LEVELS.some((l, i) => i > 0 && l.capacity <= b.TROUGH_LEVELS[i - 1]!.capacity)) issue('balance.TROUGH_LEVELS capacity must grow with the level');
     if (b.STAGE_YOUNG_AT >= b.STAGE_ADULT_AT) issue('balance.STAGE_YOUNG_AT must be below STAGE_ADULT_AT');
     const kg = b.WEIGHT_AT_PROGRESS;

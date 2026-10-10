@@ -3,7 +3,7 @@
   "name": { "vi": "Sobi Aquarium" },
   "movement": "click",
   "portalInPlaza": "sea_dock",
-  "unlock": { "areaLevels": { "sobi_farm": 6, "sobi_garden": 4 } },
+  "unlock": { "worldLevel": 6 },
   "planned": true,
   "buildings": [],
   "produces": [],

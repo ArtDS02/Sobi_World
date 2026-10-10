@@ -58,16 +58,16 @@ type Rules = Pick<ValidateInput, 'rarities' | 'families' | 'tiers' | 'maxLevel'>
 const loader = (server: ViteDevServer) => (p: string) => server.ssrLoadModule(p) as Promise<Mod>;
 
 async function loadRules(load: (p: string) => Promise<Mod>): Promise<Rules> {
-  const [breeds, rarity, balance] = await Promise.all([
+  const [breeds, rarity, progression] = await Promise.all([
     load('/src/core/config/breeds.ts'),
     load('/src/core/config/rarity.ts'),
-    load('/src/core/config/balance.ts'),
+    load('/src/core/config/progression.ts'),
   ]);
   return {
     rarities: rarity.RARITY_VALUES as string[],
     families: breeds.FAMILY_VALUES as string[],
     tiers: breeds.RARITY_TIER as Rules['tiers'],
-    maxLevel: (balance.BALANCE as { MAX_LEVEL: number }).MAX_LEVEL,
+    maxLevel: (progression.WORLD_LEVELS as { maxLevel: number }).maxLevel,
   };
 }
 

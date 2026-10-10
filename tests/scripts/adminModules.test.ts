@@ -5,6 +5,7 @@ import { mkdtempSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileS
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { pngSize } from '../../scripts/admin/artFiles';
 import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
 import { layoutFileSchema } from '../../content/schemas/farm/layout';
@@ -168,7 +169,7 @@ describe('user (save) edits', () => {
     const s = E.apply(s0, E.setGold(12345, 2000, rng));
     expect(s.player.gold).toBe(12345);
     expect(s.transactions[0]).toMatchObject({ type: 'ADMIN_ADJUST', amount: 12345 - s0.player.gold });
-    const lv = E.apply(s, E.setXp(5700));
+    const lv = E.apply(s, E.setXp(WORLD_LEVELS.xp[9]!));
     expect(E.summary(lv).level).toBe(10);
     expect(lv.trough.capacity).toBe(s0.trough.capacity);
   });

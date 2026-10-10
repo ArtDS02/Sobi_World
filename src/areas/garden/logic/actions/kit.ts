@@ -4,10 +4,11 @@ import type { ErrorCode } from '../../../../core/config/errors';
 import { INVENTORY } from '../../../../core/config/inventory';
 import { changeCurrency } from '../../../../core/economy/ledger';
 import { addAllToBag, addToBag, takeFromBag } from '../../../../core/inventory/bag';
-import { areaXp } from '../../../../core/progression/levels';
+import { WORLD_LEVELS } from '../../../../core/config/progression';
+import { areaXp, worldLevel } from '../../../../core/progression/levels';
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext, ActionResultOf } from '../../../../core/types';
-import { GARDEN_AREA_ID, gardenLevel } from '../config/content';
+import { GARDEN_AREA_ID } from '../config/content';
 import type { GardenEvent } from '../events';
 import { advanceGardenWorld } from '../simulate';
 import { gardenOf, withGarden } from '../save/lens';
@@ -26,10 +27,12 @@ export function runGarden(world: WorldSave, ctx: ActionContext, body: (w: WorldS
   let next = r.world;
   const gain = r.xp ?? 0;
   if (gain > 0) {
-    const before = areaXp(next, GARDEN_AREA_ID);
-    next = { ...next, progression: { ...next.progression, areas: { ...next.progression.areas, [GARDEN_AREA_ID]: { xp: before + gain } } } };
-    const level = gardenLevel(before + gain);
-    if (level > gardenLevel(before)) events.push({ type: 'GARDEN_LEVEL_UP', level });
+    const before = worldLevel(next, WORLD_LEVELS);
+    const xp = areaXp(next, GARDEN_AREA_ID) + gain;
+    next = { ...next, progression: { ...next.progression, areas: { ...next.progression.areas, [GARDEN_AREA_ID]: { xp } } } };
+    // The level is the world's (decision 007): any Area's XP can raise it.
+    const level = worldLevel(next, WORLD_LEVELS);
+    if (level > before) events.push({ type: 'GARDEN_LEVEL_UP', level });
   }
   return { ok: true, state: { ...next, meta: { ...next.meta, updatedAt: ctx.now } }, events };
 }

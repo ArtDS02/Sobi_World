@@ -4,6 +4,7 @@
 // every result is checked with the game's own save schema before it can be written.
 import { levelFromXp } from '../../src/areas/farm/logic/config/levels';
 import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { DECORS } from '../../src/areas/farm/logic/config/decor';
 import type { Gender, ItemId } from '../../src/core/config/ids';
@@ -26,7 +27,7 @@ export function saveProblems(s: FarmGame): string[] {
 
 export function summary(s: FarmGame) {
   const level = levelFromXp(s.player.xp);
-  const nextXp = BALANCE.LEVEL_XP[level] ?? null;
+  const nextXp = WORLD_LEVELS.xp[level] ?? null;
   return {
     gold: s.player.gold,
     xp: s.player.xp,

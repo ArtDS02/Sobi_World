@@ -29,6 +29,5 @@
     }
   },
   "maxBatches": 10,
-  "xp": { "plant": 1, "water": 0, "harvest": 2, "craft": 3, "fertilize": 1 },
-  "levels": { "maxLevel": 10, "xp": [0, 100, 283, 520, 800, 1118, 1470, 1850, 2260, 2700] }
+  "xp": { "plant": 1, "water": 0, "harvest": 2, "craft": 3, "fertilize": 1 }
 }

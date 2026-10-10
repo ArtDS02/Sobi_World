@@ -4,8 +4,8 @@
 import { farmArea } from '../areas/farm';
 import { gardenArea } from '../areas/garden';
 import { createAreaRegistry } from '../core/area-registry/registry';
-import { WORLD_DEVELOPMENT } from '../core/config/progression';
+import { PROGRESSION } from '../core/config/progression';
 import { PLANNED_AREAS } from '../core/config/plannedAreas';
 import { TIME } from '../core/config/time';
 
-export const AREAS = createAreaRegistry([farmArea, gardenArea], WORLD_DEVELOPMENT, TIME, PLANNED_AREAS);
+export const AREAS = createAreaRegistry([farmArea, gardenArea], PROGRESSION, TIME, PLANNED_AREAS);

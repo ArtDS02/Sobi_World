@@ -2,7 +2,7 @@
 // the files on disk. Edits stay in the draft until save() posts them to the dev API.
 import { validateSpecies, type Issue, type PigArtRow } from '../../scripts/admin/validate';
 import type { SpeciesRowData } from '../../scripts/admin/speciesText';
-import { BALANCE } from '../../src/areas/farm/logic/config/balance';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { FAMILY_VALUES, RARITY_TIER } from '../../src/areas/farm/logic/config/breeds';
 import { BREED_ID_VALUES } from '../../src/areas/farm/logic/config/ids';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
@@ -71,7 +71,7 @@ export function emit() {
     rarities: RARITY_VALUES,
     families: FAMILY_VALUES,
     tiers: RARITY_TIER,
-    maxLevel: BALANCE.MAX_LEVEL,
+    maxLevel: WORLD_LEVELS.maxLevel,
   });
   for (const fn of listeners) fn();
 }

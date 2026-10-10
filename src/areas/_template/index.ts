@@ -3,12 +3,9 @@
 // rename the types, register the module in src/app/areas.ts. See README.md.
 import type { AreaManifest, AreaModule } from '../../core/area-registry/registry';
 import type { EventBase, WorldEvent } from '../../core/events';
-import { areaXp, levelFromXp } from '../../core/progression/levels';
 import type { WorldSave } from '../../core/save/world';
 import { simulateTemplate, type TemplateEvent } from './logic/simulate';
 import { initialState, TEMPLATE_MIGRATIONS, TEMPLATE_STATE_VERSION, templateStateSchema, type TemplateState } from './logic/state';
-
-const LEVELS = { xp: [0, 100, 300], maxLevel: 3 };
 
 export function createTemplateArea(manifest: AreaManifest): AreaModule {
   const id = manifest.id;
@@ -25,7 +22,6 @@ export function createTemplateArea(manifest: AreaManifest): AreaModule {
     },
     simulatedAt: (world) => slice(world).lastTickedAt,
     rebase: (world, to) => ({ ...world, areas: { ...world.areas, [id]: { ...slice(world), lastTickedAt: to } } }),
-    level: (world) => levelFromXp(areaXp(world, id), LEVELS),
     toWorldEvents: (events): WorldEvent[] =>
       events.filter(isOwn).map((e) => ({ type: 'crop.harvested', area: id, plotId: 'template', cropId: 'template', quantity: e.count })),
     getSummary: (events) => {

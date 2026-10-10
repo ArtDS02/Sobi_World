@@ -28,7 +28,6 @@ export const gardenBalanceFileSchema = z
     /** Most batches of one recipe queued at once. */
     maxBatches: posInt,
     xp: z.strictObject({ plant: nonNeg, water: nonNeg, harvest: nonNeg, craft: nonNeg, fertilize: nonNeg }),
-    levels: z.strictObject({ maxLevel: posInt, xp: z.array(int.min(0)).min(1) }),
   })
   .superRefine((b, ctx) => {
     const steps = [b.startPlots, ...b.plotExpansions.map((e) => e.plots)];

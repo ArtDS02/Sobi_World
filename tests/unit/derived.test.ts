@@ -98,7 +98,7 @@ describe('weight, level, freeSlots', () => {
   });
 
   it('level derives from xp', () => {
-    expect(level({ player: { gold: 0, xp: 250, unlockedSlots: 4 } })).toBe(3);
+    expect(level({ player: { gold: 0, xp: 383, unlockedSlots: 4 } })).toBe(3);
   });
 
   it('a pregnancy holds no slot; waiting = nursery + unborn (BR-1)', () => {

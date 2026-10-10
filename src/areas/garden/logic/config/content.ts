@@ -7,7 +7,6 @@ import { areaManifestSchema } from '../../../../../content/schemas/area';
 import { gardenBalanceFileSchema } from '../../../../../content/schemas/garden/balance';
 import { cropsFileSchema } from '../../../../../content/schemas/garden/crops';
 import { loadContent } from '../../../../core/content/load';
-import { levelFromXp as coreLevel, type LevelTable } from '../../../../core/progression/levels';
 import type { CropRule, PlotRules } from '../../../../systems/plants/plot';
 
 export const GARDEN_CONTENT = {
@@ -49,8 +48,6 @@ export const PLOT_RULES: PlotRules = {
 };
 export const WATER_MS = GB.waterHours * HOUR;
 
-export const GARDEN_LEVELS: LevelTable = { xp: GB.levels.xp, maxLevel: GB.levels.maxLevel };
-export const gardenLevel = (xp: number): number => coreLevel(xp, GARDEN_LEVELS);
 
 export type BuildingId = 'mill' | 'composter';
 export const BUILDING_IDS: readonly BuildingId[] = ['mill', 'composter'];
