@@ -8,7 +8,7 @@ import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
 import { heartsOf, petsLeft, petted, raiseBond, withMoodBoost } from '../../../../systems/bond/bond';
 import { gameDay } from '../../../../systems/health/disease';
-import { AB, FEED_ITEM, MEDICINE_ITEM } from '../config/content';
+import { AB, FEED_ITEM, FISH, MEDICINE_ITEM } from '../config/content';
 import type { AquariumEvent } from '../events';
 import { fishFavorite } from '../favorite';
 import { fishHearts, fishTraitFactor, isAdult, recoveryMs } from '../fishLife';
@@ -147,7 +147,7 @@ export function setFishPurpose(world: WorldSave, args: { fishId: string; purpose
   return runAquarium(world, ctx, (w, a) => {
     const fish = a.fish.find((f) => f.id === args.fishId);
     if (!fish) return { ok: false, error: 'FISH_NOT_FOUND' };
-    if (args.purpose === 'ADVENTURE') return { ok: false, error: 'PURPOSE_LOCKED' };
+    if (args.purpose === 'ADVENTURE' && (!w.world.unlockedAreas.includes('sobi_adventure') || !FISH[fish.breed]?.fighter)) return { ok: false, error: 'PURPOSE_LOCKED' };
     if (!isAdult(fish)) return { ok: false, error: 'FISH_NOT_MATURE' };
     return {
       ok: true,

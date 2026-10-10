@@ -1,0 +1,13 @@
+{
+  "equipment": [
+    { "id": "item_equip_wood_sword", "slot": "weapon", "stats": { "atk": 3 } },
+    { "id": "item_equip_iron_sword", "slot": "weapon", "stats": { "atk": 5 } },
+    { "id": "item_equip_flame_blade", "slot": "weapon", "stats": { "atk": 7, "crit": 3 } },
+    { "id": "item_equip_leaf_vest", "slot": "armor", "stats": { "hp": 15 } },
+    { "id": "item_equip_bark_armor", "slot": "armor", "stats": { "hp": 22, "def": 3 } },
+    { "id": "item_equip_moss_plate", "slot": "armor", "stats": { "hp": 28, "def": 4 } },
+    { "id": "item_equip_lucky_clover", "slot": "charm", "stats": { "crit": 4 } },
+    { "id": "item_equip_wind_feather", "slot": "charm", "stats": { "spd": 3 } },
+    { "id": "item_equip_sun_amulet", "slot": "charm", "stats": { "atk": 3, "hp": 14, "spd": 1 } }
+  ]
+}

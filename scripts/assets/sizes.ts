@@ -74,6 +74,11 @@ CATALOGUE_SIZES.bld_cloud_spring = { width: 220, height: 240 };
 CATALOGUE_SIZES.bld_cauldron = { width: 220, height: 220 };
 CATALOGUE_SIZES.bg_cloud = { width: 1600, height: 900 };
 
+// Sobi Adventure (GĐ10): the enemies (facing left) and the forest backdrop.
+for (const enemy of ['mossling', 'thorn_sprout', 'gale_sparrow', 'ember_fox', 'dew_frog', 'forest_wolf', 'bramble_boar']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 192, height: 192 };
+CATALOGUE_SIZES.enemy_old_treant = { width: 320, height: 360 };
+CATALOGUE_SIZES.bg_adventure_forest = { width: 1600, height: 900 };
+
 for (const who of ['so', 'bi']) {
   for (const facing of ['down', 'up', 'left', 'right']) {
     for (const frame of ['idle', 'walk1', 'walk2']) {

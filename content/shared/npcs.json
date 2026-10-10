@@ -180,6 +180,45 @@
           "textVi": "Khi phối giống, bạn có thể cho thêm một bông hoa hiếm vào: tỉ lệ đột biến tăng, con non dễ có tính trạng quý hơn. Hồng Cầu Vồng và Lan Sao mạnh nhất."
         }
       ]
+    },
+    {
+      "id": "npc_knight",
+      "area": "sobi_adventure",
+      "nameVi": "Hiệp Sĩ Heo Dũng Cảm",
+      "artId": "prop_animal_pig_a",
+      "greetingVi": "Ủn ỉn! Chào bạn, ta là Hiệp Sĩ Heo. Rừng Thì Thầm đang chờ những chiến binh dũng cảm!",
+      "topics": [
+        {
+          "id": "start",
+          "titleVi": "Bắt đầu phiêu lưu",
+          "textVi": "Nhận chú heo khởi đầu của ta ở trên bảng. Muốn một con heo hay cá khác đi cùng thì cho nó lớn, rồi chọn mục đích \"Phiêu lưu\" trong bảng thông tin của nó."
+        },
+        {
+          "id": "team",
+          "titleVi": "Lập đội",
+          "textVi": "Mỗi chuyến đi tối đa 3 bạn đồng hành, mỗi bạn tốn 30 năng lượng phiêu lưu. Năng lượng tự hồi theo giờ thật. Con đang bệnh hoặc kiệt sức thì chưa đi được."
+        },
+        {
+          "id": "battle",
+          "titleVi": "Đánh theo lượt",
+          "textVi": "Ai nhanh hơn đánh trước. Lửa thắng Gió, Gió thắng Đất, Đất thắng Nước, Nước thắng Lửa: đòn khắc chế mạnh thêm một nửa. Kỹ năng tốn năng lượng trận và cần nghỉ giữa các lần dùng. Có nút Tự động và tốc độ x2 nếu bạn muốn xem cho nhanh."
+        },
+        {
+          "id": "gear",
+          "titleVi": "Trang bị",
+          "textVi": "Mỗi bạn đồng hành mặc một vũ khí, một giáp và một bùa. Trang bị nhặt được ở rương và từ thú dữ; đồ hiếm mạnh hơn nhiều."
+        },
+        {
+          "id": "lose",
+          "titleVi": "Khi thua",
+          "textVi": "Không ai bị mất cả! Cả đội chỉ kiệt sức 4 giờ thật. Chiến lợi phẩm đã nhặt vẫn giữ. Bạn cũng có thể rút lui giữa hai điểm dừng."
+        },
+        {
+          "id": "bond",
+          "titleVi": "Thân thiết giúp mạnh hơn",
+          "textVi": "Con càng thân thiết với bạn (nhiều tim) càng khỏe hơn khi phiêu lưu. Vuốt ve và cho ăn món yêu thích thường xuyên nhé."
+        }
+      ]
     }
   ]
 }

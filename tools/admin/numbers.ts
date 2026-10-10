@@ -30,13 +30,19 @@ const FILE_TITLE: Record<string, string> = {
   'aquarium/balance.json': '🪣 Cân bằng Sobi Aquarium (bể, nước, cá, cần câu, đẻ trứng)',
   'cloud/flowers.json': '🌸 Hoa của Sobi Cloud (giờ lớn, sản lượng; sửa được cả tên)',
   'cloud/balance.json': '☁️ Cân bằng Sobi Cloud (ô hoa, tưới, suối nước tinh khiết, vạc nấu)',
+  'adventure/enemies.json': '👾 Kẻ địch (máu, công, thủ, tốc, KN, rơi đồ; sửa được cả tên)',
+  'adventure/skills.json': '✨ Kỹ năng (sức mạnh, năng lượng, hồi chiêu, hiệu ứng; sửa được cả tên và mô tả)',
+  'adventure/archetypes.json': '🛡️ Kiểu đánh (chỉ số gốc, bộ 4 kỹ năng; sửa được cả tên và mô tả)',
+  'adventure/zones.json': '🌲 Vùng phiêu lưu (điểm dừng, bảng loot, sự kiện nhỏ; sửa được cả tên)',
+  'adventure/equipment.json': '🗡️ Trang bị (chỉ số cộng thêm)',
+  'adventure/balance.json': '⚔️ Cân bằng Sobi Adventure (luật đánh, cấp, năng lượng, kiệt sức, vật phẩm dùng trong trận)',
   'breeding/traits.json': '🧬 Tính trạng (hiệu ứng, trọng số; sửa được cả tên và mô tả)',
   'breeding/balance.json': '🍀 Lai giống nâng cao (di truyền, đột biến, vận may, phả hệ)',
   'breeding/rumors.json': '🗣️ Tin đồn của Nhà lai giống (câu mẫu; sửa được chữ)',
 };
 
 /** Files whose words can be edited as well (the server allows it for the same files). */
-const TEXT_FILES = new Set(['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json']);
+const TEXT_FILES = new Set(['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json']);
 
 /** Same rule as the server (scripts/admin/numbers.ts isWordPath). */
 const isWordPath = (path: string): boolean =>
@@ -152,6 +158,38 @@ const LABEL: Record<string, string> = {
   cost: 'Giá nâng cấp',
   slots: 'Số ô',
   stack: 'Số lượng mỗi ô',
+  // Sobi Adventure (GĐ10)
+  exp: 'KN cho mỗi bạn khi hạ',
+  'enemies.coins': 'Sobi Coin rơi ra',
+  'stats.hp': 'Máu',
+  'stats.atk': 'Công',
+  'stats.def': 'Thủ',
+  'stats.spd': 'Tốc độ',
+  'stats.crit': 'Chí mạng (%)',
+  power: 'Sức mạnh (bội số công)',
+  healPct: 'Hồi máu (tỉ lệ máu tối đa)',
+  'skills.cost': 'Năng lượng trận tốn',
+  cooldown: 'Hồi chiêu (lượt)',
+  critBonus: 'Cộng chí mạng (%)',
+  'combat.counter': 'Khắc chế nguyên tố: nhân sát thương',
+  'combat.resisted': 'Bị kháng nguyên tố: nhân sát thương',
+  'combat.critMultiplier': 'Chí mạng nhân sát thương',
+  'combat.defenseK': 'Hằng số phòng thủ (sát thương = công × K / (K + thủ))',
+  'combat.energyStart': 'Năng lượng trận lúc đầu',
+  'combat.energyMax': 'Năng lượng trận tối đa',
+  'combat.energyPerTurn': 'Năng lượng hồi mỗi lượt',
+  'combat.maxRounds': 'Số vòng tối đa của một trận',
+  'levels.skillUnlockLevels': 'Cấp mở từng kỹ năng',
+  'levels.expBase': 'KN lên cấp: hệ số',
+  'levels.expExponent': 'KN lên cấp: số mũ',
+  'run.energyCost': 'Năng lượng phiêu lưu tốn mỗi lần vào vùng',
+  'run.energyPerHour': 'Năng lượng phiêu lưu hồi mỗi giờ',
+  'run.exhaustHours': 'Kiệt sức bao nhiêu giờ khi thua',
+  'xp.battleWin': 'KN Sobi World mỗi trận thắng',
+  'xp.zoneClear': 'KN Sobi World khi hạ trùm',
+  rolls: 'Số lần bốc đồ',
+  gemChance: 'Cơ hội ra Ngọc',
+  chance: 'Cơ hội rơi',
   // Sobi Cloud (GĐ9)
   moodBoost: 'Potion: tâm trạng cộng thêm (điểm)',
   moodHours: 'Potion: tâm trạng giữ bao nhiêu giờ',

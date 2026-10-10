@@ -1,7 +1,7 @@
 {
   "name": "sobi-world",
   "private": true,
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Sobi World — game nuôi heo cozy, chơi đơn, offline cho Windows",
   "author": "Sobi World",
   "type": "module",
@@ -32,6 +32,7 @@
     "breeding:report": "tsx scripts/breeding-report.ts",
     "sim:economy": "tsx scripts/simulate-economy.ts",
     "sim:week": "tsx scripts/simulate-week.ts",
+    "sim:adventure": "tsx scripts/sim-adventure.ts",
     "test:e2e": "npm run build && playwright test",
     "assets:release": "tsx scripts/assets-check.ts --release",
     "verify:build": "tsx scripts/verify-build.ts",

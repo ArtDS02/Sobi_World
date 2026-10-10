@@ -126,6 +126,17 @@ export const ITEM_ID_VALUES = [
   'item_potion_healing',
   'item_potion_mood',
   'item_potion_battle',
+  'item_equip_wood_sword',
+  'item_equip_iron_sword',
+  'item_equip_flame_blade',
+  'item_equip_leaf_vest',
+  'item_equip_bark_armor',
+  'item_equip_moss_plate',
+  'item_equip_lucky_clover',
+  'item_equip_wind_feather',
+  'item_equip_sun_amulet',
+  'item_forest_herb',
+  'item_beast_fang',
 ] as const;
 
 export const DECOR_ID_VALUES = [

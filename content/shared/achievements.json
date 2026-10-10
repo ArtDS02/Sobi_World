@@ -58,6 +58,10 @@
     { "id": "FLOWER_300", "metric": "flowersHarvested", "target": 300, "gems": 15, "xp": 90 },
     { "id": "POTION_10", "metric": "potionsBrewed", "target": 10, "gems": 8, "xp": 40 },
     { "id": "POTION_100", "metric": "potionsBrewed", "target": 100, "gems": 20, "xp": 120 },
-    { "id": "CODEX_FLOWERS", "metric": "codexFlower", "target": "ALL", "gems": 25, "xp": 120 }
+    { "id": "CODEX_FLOWERS", "metric": "codexFlower", "target": "ALL", "gems": 25, "xp": 120 },
+    { "id": "BATTLE_10", "metric": "battlesWon", "target": 10, "gems": 6, "xp": 30 },
+    { "id": "BATTLE_100", "metric": "battlesWon", "target": 100, "gems": 18, "xp": 120 },
+    { "id": "FOREST_1", "metric": "adventuresCleared", "target": 1, "gems": 8, "xp": 50 },
+    { "id": "FOREST_10", "metric": "adventuresCleared", "target": 10, "gems": 20, "xp": 150 }
   ]
 }

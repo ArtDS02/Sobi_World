@@ -1,0 +1,93 @@
+{
+  "archetypes": [
+    {
+      "id": "bruiser",
+      "nameVi": "Chiến binh",
+      "descVi": "Tấn công mạnh, máu khá. Hô cả đội cùng đánh.",
+      "element": "FIRE",
+      "stats": { "hp": 108, "atk": 22, "def": 6, "spd": 10, "crit": 8 },
+      "skills": ["skill_ember_slash", "skill_battle_cry", "skill_fire_burst", "skill_blazing_charge"]
+    },
+    {
+      "id": "guardian",
+      "nameVi": "Hộ vệ",
+      "descVi": "Máu dày, phòng thủ cao, che chắn cho cả đội.",
+      "element": "EARTH",
+      "stats": { "hp": 140, "atk": 15, "def": 11, "spd": 7, "crit": 4 },
+      "skills": ["skill_rock_smash", "skill_stone_skin", "skill_earth_wall", "skill_quake"]
+    },
+    {
+      "id": "skirmisher",
+      "nameVi": "Thích khách",
+      "descVi": "Nhanh và hay chí mạng, nhưng mỏng máu.",
+      "element": "WIND",
+      "stats": { "hp": 85, "atk": 17, "def": 5, "spd": 15, "crit": 14 },
+      "skills": ["skill_gust_strike", "skill_swift_flurry", "skill_tailwind", "skill_razor_gale"]
+    },
+    {
+      "id": "mystic",
+      "nameVi": "Pháp sư nước",
+      "descVi": "Hồi máu và làm chậm kẻ địch.",
+      "element": "WATER",
+      "stats": { "hp": 90, "atk": 15, "def": 7, "spd": 10, "crit": 6 },
+      "skills": ["skill_bubble_shot", "skill_soothing_splash", "skill_healing_rain", "skill_tidal_wave"]
+    },
+    {
+      "id": "pyromancer",
+      "nameVi": "Pháp sư lửa",
+      "descVi": "Sát thương bùng nổ, bỏng diện rộng, nhưng giòn.",
+      "element": "FIRE",
+      "stats": { "hp": 78, "atk": 20, "def": 4, "spd": 9, "crit": 10 },
+      "skills": ["skill_scorch_tail", "skill_fire_burst", "skill_cyclone", "skill_blazing_charge"]
+    },
+    {
+      "id": "stormcaller",
+      "nameVi": "Triệu bão",
+      "descVi": "Tốc độ cao, làm chậm và đánh diện rộng.",
+      "element": "WIND",
+      "stats": { "hp": 90, "atk": 18, "def": 6, "spd": 12, "crit": 10 },
+      "skills": ["skill_cyclone", "skill_gust_strike", "skill_tailwind", "skill_tidal_wave"]
+    },
+    {
+      "id": "brute",
+      "nameVi": "Man lực",
+      "descVi": "Đánh nặng bằng đá, choáng và hô cả đội.",
+      "element": "EARTH",
+      "stats": { "hp": 112, "atk": 18, "def": 9, "spd": 8, "crit": 6 },
+      "skills": ["skill_boulder_toss", "skill_battle_cry", "skill_rock_smash", "skill_quake"]
+    },
+    {
+      "id": "trickster",
+      "nameVi": "Quỷ kế",
+      "descVi": "Khiên cho cả đội, đòn nhanh, làm chậm.",
+      "element": "WATER",
+      "stats": { "hp": 88, "atk": 16, "def": 8, "spd": 12, "crit": 12 },
+      "skills": ["skill_bubble_shot", "skill_mist_veil", "skill_swift_flurry", "skill_tidal_wave"]
+    }
+  ],
+  "families": {
+    "ADVENTURE": "bruiser",
+    "HERO": "bruiser",
+    "FARM": "guardian",
+    "MEADOW": "guardian",
+    "FUNNY": "skirmisher",
+    "JOB": "skirmisher",
+    "WATER": "mystic",
+    "VIETNAM": "mystic",
+    "FANTASY": "pyromancer",
+    "FOOD": "pyromancer",
+    "SCIFI": "stormcaller",
+    "MYTHIC": "stormcaller",
+    "WILD": "brute",
+    "HORROR": "trickster"
+  },
+  "species": {},
+  "fish": {
+    "fish_pufferfish": "trickster",
+    "fish_angelfish": "mystic",
+    "fish_betta": "skirmisher",
+    "fish_glowfish": "stormcaller",
+    "fish_dragon_koi": "bruiser",
+    "fish_moonfish": "mystic"
+  }
+}

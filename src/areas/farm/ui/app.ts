@@ -154,6 +154,7 @@ export function mountApp(
       else if (to.target === 'garden') opts.goPlace?.('sobi_garden');
       else if (to.target === 'aquarium') opts.goPlace?.('sobi_aquarium');
       else if (to.target === 'cloud') opts.goPlace?.('sobi_cloud');
+      else if (to.target === 'adventure') opts.goPlace?.('sobi_adventure');
       else go(to.target === 'well' ? 'well' : 'orders');
     },
     dialogHost: dialogs,
@@ -196,6 +197,7 @@ export function mountApp(
       else if (to.target === 'garden') opts.goPlace?.('sobi_garden');
       else if (to.target === 'aquarium') opts.goPlace?.('sobi_aquarium');
       else if (to.target === 'cloud') opts.goPlace?.('sobi_cloud');
+      else if (to.target === 'adventure') opts.goPlace?.('sobi_adventure');
     },
   });
   if (guide) worldEl.append(guide.host);
@@ -226,6 +228,7 @@ export function mountApp(
     appEl.classList.toggle('is-garden', ui.place === 'garden');
     appEl.classList.toggle('is-aquarium', ui.place === 'aquarium');
     appEl.classList.toggle('is-cloud', ui.place === 'cloud');
+    appEl.classList.toggle('is-adventure', ui.place === 'adventure');
     appEl.classList.toggle('is-reduced-motion', !!snap.save?.settings.reduceMotion);
     farm?.setSelected(ui.selectedPigId);
     patch(banner, snap.readOnly ? renderMultiTabBanner() : null);
@@ -248,7 +251,7 @@ export function mountApp(
     const save = snap.save;
     patch(
       topbar,
-      ui.place === 'garden' || ui.place === 'aquarium' || ui.place === 'cloud' ? null : renderHud(save, {
+      ui.place === 'garden' || ui.place === 'aquarium' || ui.place === 'cloud' || ui.place === 'adventure' ? null : renderHud(save, {
         place: ui.place, now: now(), gems: opts.gems?.() ?? null, go, leave: opts.leave, openTrough: () => openTrough(),
         selectPig: (pigId) => { ui.selectedPigId = pigId; go('pig'); },
         goalsDot: opts.world && opts.world.save() ? goalsDot(opts.world.save()!, opts.world.goals, localDay(now())) : 0,

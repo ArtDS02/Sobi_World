@@ -221,7 +221,7 @@ Gems không được mua lợi thế lớn về sức mạnh (không pay-to-win,
 | Câu cá | 1 lần / 2 phút, thành công theo mini thao tác đơn giản (GĐ8: căn phao trong vùng xanh; điểm càng cao càng dễ ra cá hiếm) |
 | Hoa Cloud | 4–12 giờ, cần Nước tinh khiết (GĐ9 chốt 6 hoa, suối 3 cấp, vạc: `content/cloud/`, decision 016) |
 | Healing Potion | Hoa hiếm ×1 + Nước tinh khiết ×1 → chữa bệnh + Tâm trạng +20 |
-| Đội Adventure | Tối đa 3 sinh vật |
+| Đội Adventure | Tối đa 3 sinh vật (GĐ10 chốt kiểu đánh, kỹ năng, trang bị, vùng Rừng, năng lượng phiêu lưu riêng mỗi chiến binh: `content/adventure/`, decision 018) |
 | Nguyên tố | Lửa > Gió > Đất > Nước > Lửa (khắc chế: ×1.5 sát thương) |
 | Skill | Mỗi sinh vật: đòn thường + 2 skill (mở thêm ở level 10, 20) |
 | Kiệt sức khi thua | Nghỉ 4 giờ |

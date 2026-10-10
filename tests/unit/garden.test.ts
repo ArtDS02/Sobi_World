@@ -65,8 +65,9 @@ describe('opening the garden', () => {
       { type: 'AREA_UNLOCKED', areaId: 'sobi_garden' },
       { type: 'AREA_UNLOCKED', areaId: 'sobi_aquarium' },
       { type: 'AREA_UNLOCKED', areaId: 'sobi_cloud' },
+      { type: 'AREA_UNLOCKED', areaId: 'sobi_adventure' },
     ]);
-    expect(opened.state.world.unlockedAreas).toEqual(['sobi_farm', 'sobi_garden', 'sobi_aquarium', 'sobi_cloud']);
+    expect(opened.state.world.unlockedAreas).toEqual(['sobi_farm', 'sobi_garden', 'sobi_aquarium', 'sobi_cloud', 'sobi_adventure']);
     expect(gardenOf(opened.state).plots).toHaveLength(GB.startPlots);
     expect(advance(opened.state, T0 + 2 * H).events.some((e) => e.type === 'AREA_UNLOCKED')).toBe(false);
     expect(AREAS.toWorldEvents(opened.events)).toContainEqual({ type: 'area.unlocked', area: 'sobi_garden' });

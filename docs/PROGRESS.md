@@ -1,12 +1,37 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ9 đã nghiệm thu về gameplay và đã merge vào `main` (tag `phase-09`, đã push; số liệu Cloud vẫn chờ chủ dự án chơi thử). Đang bắt đầu GĐ10 — Adventure nền tảng.
-**Chiến lược (decision 017):** gameplay trước, art sau. GĐ10–GĐ13 dùng placeholder; art/animation/VFX/âm thanh làm ở GĐ14; GĐ15 phát hành. Không quay lại phase đã nghiệm thu chỉ vì art/polish.
-**Git:** `main` có đủ tag `phase-01`…`phase-09` (phase-07 gắn ngày 2026-10-11 vào commit merge `189fa62`). `v1.0.0` là của Sobi Farm; bản phát hành Sobi World sẽ dùng `sobi-world-v1.0.0`.
-**Bước tiếp theo:** GĐ10 (nhánh `phase-10-adventure`).
+**Giai đoạn:** GĐ10 — Sobi Adventure: **nghiệm thu xong, đã merge `main`, tag `phase-10`**; phiên bản 0.10.0. Số liệu đã chơi thử bằng mô phỏng và chỉnh (decision 018). GĐ9 tag `phase-09`.
+**Chiến lược (decision 017):** gameplay trước, art sau. GĐ10–GĐ13 dùng placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
+**Nhánh:** `main` (GĐ10 đã merge). GĐ11 tách nhánh `phase-11-*` từ `main` trong session riêng.
+**Bước tiếp theo:** GĐ11 — Adventure liên hệ thống (chưa bắt đầu; chủ dự án sẽ ra lệnh riêng).
 
 ## Nhật ký
+
+### 2026-10-11 — Nghiệm thu GĐ10: chơi thử bằng mô phỏng và chỉnh cân bằng
+✅ Đã làm: kiểm thử Adventure ở ngưỡng mở (Sobi World cấp 8 + Phát triển thế giới 20: test biên 7/20, 8/19, 8/20), đo bằng mô phỏng (`npm run sim:adventure`, mới) rồi chỉnh. Phát hiện bản đầu: trận chỉ 2–3 vòng; cấp 4+ thắng ~100%; Triệu bão / Pháp sư lửa hơn hẳn, Quỷ kế gần vô dụng (Rừng nặng hệ Đất); bộ trang bị Hiếm làm cấp 1 thắng 100%; cấp 4 sau 1 chuyến.
+Đã chỉnh (chi tiết ở decision 018, mục Cân bằng): kẻ địch máu ×1,8 / công ×1,25 / thủ ×1,2 và hệ chia đều; kiểu đánh (Triệu bão, Pháp sư lửa bớt trội; Quỷ kế, Pháp sư nước, Hộ vệ, Man lực, Chiến binh chỉnh); hồi máu giảm; trang bị yếu đi; KN kẻ địch ×0,55, tiền ×0,6; điểm dừng đầu có nhóm 1 kẻ địch cho đội một heo cấp 1.
+Kết quả: đội 3 (Chiến binh, Hộ vệ, Pháp sư nước): cấp 1 0% · cấp 3 ~10% · cấp 4 ~35–55% · cấp 5 ~70% · cấp 6 ~95% · cấp 8 ~100%; trận 4–5 vòng; thua = −30 năng lượng và kiệt sức 4 giờ, giữ KN và loot. Cấp 5 sau ~2 ngày, cấp 8 sau ~5 ngày chơi.
+🧪 `npm run check` xanh (1.271 test, thêm 6: ngưỡng mở + "balance guard"); `npm run test:e2e` 9/9.
+⚠️ Còn lại: chưa có người chơi tay nhiều ngày (số là từ mô phỏng, AI đánh cho cả hai bên); Rừng chỉ có một vùng nên đội ba con cùng kiểu Pháp sư nước / Thích khách hơi nhỉnh; vùng mới ở GĐ11 nên đổi cơ cấu hệ. Bot  chưa có routine Adventure (GĐ11). Art / animation / âm thanh ở GĐ14.
+
+### 2026-10-11 — GĐ10 hoàn thành: Sobi Adventure
+✅ Đã làm (10 việc của prompt GĐ10; quyết định ở `docs/decisions/018-adventure.md`):
+1. **`systems/combat`**: thứ tự theo Tốc độ, đòn thường, kỹ năng (năng lượng trận + hồi chiêu), dùng vật phẩm, 4 nguyên tố (×1,5 khắc chế), chí mạng, 7 trạng thái, AI (kẻ địch và nút Tự động); thuần, có seed, lưu giữa chừng rồi chơi tiếp ra cùng kết quả.
+2. **Cấp / KN / chỉ số** theo cấp, độ hiếm, tim Bond và trang bị; kỹ năng mở ở cấp 1, 1, 10, 20.
+3. **`systems/equipment`**: 3 ô (vũ khí, giáp, bùa), 9 món là vật phẩm `EQUIPMENT`.
+4. **8 kiểu đánh × 4 kỹ năng riêng, 20 kỹ năng** (5 mỗi nguyên tố); 14 họ heo và 6 loài cá đánh được.
+5. **Vùng Rừng Thì Thầm**: 5 điểm dừng + trùm, loot, sự kiện nhỏ, 8 loại kẻ địch.
+6. **Thua = Kiệt sức 4 giờ thật**, không mất gì; bệnh không vào được; rút lui giữa hai điểm dừng không phạt.
+7. **Heo khởi đầu** từ Hiệp Sĩ Heo (tặng qua registry, không import Farm); mục đích Phiêu lưu mở ở Farm và Aquarium (loài đánh được).
+8. **UI**: sảnh (chọn đội, thanh KN và năng lượng, trang bị), bản đồ chuyến, trận đánh với **Tự động** và **tốc độ x2**, tổng kết.
+9. **Admin**: Số liệu sửa kẻ địch, kỹ năng, kiểu đánh, vùng, trang bị, cân bằng; trang **Mô phỏng trận**; tua thời gian dịch cả Adventure.
+10. **Test**: combat (21), Adventure (22 + 13 cho UI / liên kết / mô phỏng), roster, quà tặng; `npm run check` xanh (1.265 test).
+📁 File chính: `src/systems/combat/`, `src/systems/equipment/`, `src/areas/adventure/`, `content/adventure/` + `content/schemas/adventure/`, `tools/admin/adventure.ts`, `src/areas/farm/logic/roster.ts`, `src/areas/aquarium/logic/roster.ts`, `docs/decisions/018-adventure.md`; hook mới `roster` và `receiveGift` ở `core/area-registry`.
+🧪 Đã kiểm tra: `npm run check` xanh (1.265 test); `npm run test:e2e` 9/9 (có `adventure.spec.ts`); `npm run dist:win` + verify:build + verify:installer (`release/SobiWorld-Setup-0.10.0.exe`); chạy thật trong trình duyệt (sandbox): sảnh, chọn đội, bản đồ, trận đánh (chọn mục tiêu, kỹ năng, Tự động, x2), thua trùm, tổng kết, nhận thưởng, kiệt sức; chuyến lưu giữa trận rồi tải lại chơi tiếp được.
+⚠️ Quyết định tự đưa ra (decision 018): ×0,75 khi bị kháng nguyên tố; năng lượng phiêu lưu riêng của Adventure (không trừ năng lượng nuôi của heo); kiểu đánh theo họ; trùm hạ 420 → 340 máu; thua vẫn giữ KN và loot; máu mang theo giữa điểm dừng.
+⚠️ Chưa làm: bot `sim:week` chưa có routine Adventure (GĐ11); Codex kẻ địch / trang bị; nhân vật đi trên bản đồ; art, animation, âm thanh (GĐ14, `docs/ASSET_TODO.md`); chưa chơi nhiều ngày.
+👉 Bạn cần: chơi thử (cần Sobi World cấp 8 và Phát triển thế giới 20, hoặc sửa save): nhận heo của Hiệp Sĩ, đánh vài chuyến, xem các kiểu đánh có khác nhau rõ, thua có bị phạt nặng không, trận có dài không; rồi merge, tag `phase-10`, push.
 
 ### 2026-10-11 — Điều chỉnh roadmap: gameplay trước, art sau (decision 017)
 ✅ Đã làm: rà AGENT_RULES, ROADMAP, HUONG_DAN, ASSET_TODO, decisions; roadmap cũ trộn art/âm thanh vào GĐ13 → tách: GĐ13 Tích hợp và nghiệm thu gameplay (freeze), GĐ14 art/animation/VFX/âm thanh, GĐ15 phát hành; thêm bảng phụ thuộc và nghiệm thu; AGENT_RULES §8; ASSET_TODO đặt là backlog GĐ14; prompt GĐ13–15 trong HUONG_DAN; `CLAUDE.md`. Lịch sử GĐ1–GĐ9 và đặc tả gameplay không đổi.

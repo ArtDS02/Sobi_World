@@ -3,6 +3,7 @@
 // code. Pure: time, randomness and the day offset come in as arguments.
 import type { AreaManifest } from '../../../content/schemas/area';
 import type { TimeRules } from '../clock';
+import type { ErrorCode } from '../config/errors';
 import type { CodexKind } from '../collection/codex';
 import type { EventBase, WorldEvent } from '../events';
 import { simulateWorld, type SimMode, type SimulationResult } from '../simulation/simulate';
@@ -15,6 +16,39 @@ import type { ActionContext } from '../types';
 export type { AreaManifest };
 
 export type { SimMode };
+
+/** One creature an Area lets another Area use (Adventure picks its fighters from every Area's roster; ARCHITECTURE: Areas never import each other). */
+export interface RosterEntry {
+  /** `<areaId>:<creatureId>`, unique in the world. */
+  key: string;
+  areaId: string;
+  id: string;
+  kind: 'pig' | 'fish';
+  name: string;
+  /** Breed id (pig) or fish species id. */
+  speciesId: string;
+  /** The pig's family; null for a fish. */
+  family: string | null;
+  rarity: string;
+  /** Whole hearts of Bond. */
+  hearts: number;
+  sick: boolean;
+  /** Grown enough to be given a purpose. */
+  adult: boolean;
+  /** Why it is raised; null = not chosen yet. */
+  purpose: string | null;
+  artId: string;
+}
+
+/** What one Area gives to another: a creature of a species, raised for a purpose. */
+export interface CreatureGift {
+  kind: 'creature';
+  area: string;
+  species: string;
+  purpose: string;
+}
+
+export type GiftResult = { ok: true; state: WorldSave } | { ok: false; error: ErrorCode };
 
 export interface AreaModule {
   manifest: AreaManifest;
@@ -34,6 +68,10 @@ export interface AreaModule {
   totals?(): Readonly<Record<string, number>>;
   /** What the player could do in it now, most urgent first or not (the registry sorts). */
   suggest?(world: WorldSave, now: number, dayOffsetMs: number): Suggestion[];
+  /** The creatures it lets the other Areas use (Adventure's fighters). */
+  roster?(world: WorldSave): RosterEntry[];
+  /** Takes a gift from another Area (a creature); an error when it cannot. */
+  receiveGift?(world: WorldSave, gift: CreatureGift, ctx: ActionContext): GiftResult;
   /** Its events as standard world events (ARCHITECTURE §7); [] for events that are not its own. */
   toWorldEvents(events: readonly EventBase[]): WorldEvent[];
   /** Lines for the "while you were away" screen (spec §5): what happened (the events) and what needs the player now (the world), as string-table keys with parameters. */
@@ -167,6 +205,16 @@ export function createAreaRegistry(
         .filter((m) => m.manifest.id in world.areas)
         .flatMap((m) => m.suggest?.(world, now, dayOffsetMs) ?? [])
         .sort((a, b) => b.priority - a.priority),
+
+    /** Every creature the open Areas let others use. */
+    roster: (world: WorldSave): RosterEntry[] => modules.filter((m) => m.manifest.id in world.areas).flatMap((m) => m.roster?.(world) ?? []),
+
+    /** A gift to the Area it names. */
+    give(world: WorldSave, gift: CreatureGift, ctx: ActionContext): GiftResult {
+      const to = byId.get(gift.area);
+      if (!to?.receiveGift || !(gift.area in world.areas)) return { ok: false, error: 'INVALID_REQUEST' };
+      return to.receiveGift(world, gift, ctx);
+    },
 
     /** Every Codex kind the Areas offer (the world's own kinds are added by the app). */
     codexKinds: (): CodexKind[] => modules.flatMap((m) => m.codex?.() ?? []),

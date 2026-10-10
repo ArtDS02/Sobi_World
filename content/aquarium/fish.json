@@ -68,7 +68,8 @@
       "nightOnly": false,
       "scaleHours": 10,
       "breedable": false,
-      "art": "fish_pufferfish"
+      "art": "fish_pufferfish",
+      "fighter": true
     },
     {
       "id": "fish_angelfish",
@@ -82,7 +83,8 @@
       "nightOnly": false,
       "scaleHours": 10,
       "breedable": true,
-      "art": "fish_angelfish"
+      "art": "fish_angelfish",
+      "fighter": true
     },
     {
       "id": "fish_glowfish",
@@ -96,7 +98,8 @@
       "nightOnly": true,
       "scaleHours": 10,
       "breedable": false,
-      "art": "fish_glowfish"
+      "art": "fish_glowfish",
+      "fighter": true
     },
     {
       "id": "fish_betta",
@@ -110,7 +113,8 @@
       "nightOnly": false,
       "scaleHours": 8,
       "breedable": true,
-      "art": "fish_betta"
+      "art": "fish_betta",
+      "fighter": true
     },
     {
       "id": "fish_lanternfish",
@@ -152,7 +156,8 @@
       "nightOnly": false,
       "scaleHours": 6,
       "breedable": true,
-      "art": "fish_dragon_koi"
+      "art": "fish_dragon_koi",
+      "fighter": true
     },
     {
       "id": "fish_moonfish",
@@ -166,7 +171,8 @@
       "nightOnly": true,
       "scaleHours": 6,
       "breedable": false,
-      "art": "fish_moonfish"
+      "art": "fish_moonfish",
+      "fighter": true
     }
   ]
 }

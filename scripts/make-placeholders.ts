@@ -274,6 +274,45 @@ function drawCloudScenery(r: Raster, id: string) {
   for (const dx of [-0.22, 0.22]) r.roundRect(w * (0.5 + dx) - 6, h * 0.82, 12, h * 0.1, 4, [70, 64, 88, 255]); // legs
 }
 
+/** Body colours of the enemy placeholders by element (one blob with eyes per enemy of content/adventure/enemies.json). */
+const ENEMY_COLOURS: Record<string, Rgba> = {
+  enemy_mossling: [96, 150, 84, 255],
+  enemy_thorn_sprout: [110, 170, 80, 255],
+  enemy_gale_sparrow: [150, 200, 220, 255],
+  enemy_ember_fox: [236, 120, 60, 255],
+  enemy_dew_frog: [90, 170, 210, 255],
+  enemy_forest_wolf: [130, 120, 110, 255],
+  enemy_bramble_boar: [140, 100, 70, 255],
+  enemy_old_treant: [100, 84, 60, 255],
+};
+
+/** An enemy: a round body with two eyes and a frown; the treant is taller with a leafy crown. */
+function drawEnemy(r: Raster, id: string) {
+  const colour = ENEMY_COLOURS[id] ?? [150, 150, 150, 255];
+  const w = r.width;
+  const h = r.height;
+  r.ellipse(w / 2, h * 0.94, w * 0.34, h * 0.04, [0, 0, 0, 60]);
+  if (id === 'enemy_old_treant') {
+    r.roundRect(w * 0.3, h * 0.3, w * 0.4, h * 0.62, 24, colour);
+    r.ellipse(w * 0.5, h * 0.2, w * 0.36, h * 0.16, [84, 150, 84, 255]);
+  } else r.ellipse(w / 2, h * 0.58, w * 0.32, h * 0.32, colour);
+  for (const dx of [-0.1, 0.1]) {
+    r.ellipse(w * (0.5 + dx), h * 0.5, w * 0.05, w * 0.05, [255, 255, 255, 255]);
+    r.ellipse(w * (0.5 + dx), h * 0.5, w * 0.022, w * 0.022, [30, 30, 40, 255]);
+  }
+  r.rect(w * 0.44, h * 0.62, w * 0.12, h * 0.014, [40, 30, 30, 255]);
+}
+
+/** The forest backdrop: sky, far hills, a trail. */
+function drawForestBackdrop(r: Raster) {
+  const w = r.width;
+  const h = r.height;
+  r.gradient([170, 214, 200, 255], [88, 150, 96, 255]);
+  for (let i = 0; i < 9; i += 1) r.ellipse(w * (0.06 + i * 0.12), h * 0.56, w * 0.07, h * 0.2, [60, 120, 70, 255]);
+  r.rect(0, h * 0.7, w, h * 0.3, [96, 140, 76, 255]);
+  r.rect(0, h * 0.82, w, h * 0.06, [196, 170, 120, 255]);
+}
+
 /** A padlock: the plaza marks an Area that is not open yet with it. */
 function drawLock(r: Raster) {
   const iron: Rgba = [96, 96, 112, 255];
@@ -303,6 +342,8 @@ function render(
   if (id.startsWith('chr_')) drawCharacter(r, key);
   else if (id === 'ui_icon_lock') drawLock(r);
   else if (id.startsWith('crop_')) drawCrop(r, id);
+  else if (id.startsWith('enemy_')) drawEnemy(r, id);
+  else if (id === 'bg_adventure_forest') drawForestBackdrop(r);
   else if (id.startsWith('flower_')) drawFlower(r, id);
   else if (id === 'plot_cloud' || id === 'bg_cloud' || id === 'bld_cloud_spring' || id === 'bld_cauldron') drawCloudScenery(r, id);
   else if (id.startsWith('plot_')) drawPlot(r, id);

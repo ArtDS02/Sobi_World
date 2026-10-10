@@ -1,6 +1,7 @@
 // The Areas of this build, in registration order (the first open Area is where a new world starts).
 // Adding an Area = one module in src/areas/<id>/ (copy src/areas/_template) + one line here (and its
 // planned manifest moves out of core/config/plannedAreas.ts).
+import { adventureArea } from '../areas/adventure';
 import { aquariumArea } from '../areas/aquarium';
 import { cloudArea } from '../areas/cloud';
 import { farmArea } from '../areas/farm';
@@ -10,4 +11,4 @@ import { PROGRESSION } from '../core/config/progression';
 import { PLANNED_AREAS } from '../core/config/plannedAreas';
 import { TIME } from '../core/config/time';
 
-export const AREAS = createAreaRegistry([farmArea, gardenArea, aquariumArea, cloudArea], PROGRESSION, TIME, PLANNED_AREAS);
+export const AREAS = createAreaRegistry([farmArea, gardenArea, aquariumArea, cloudArea, adventureArea], PROGRESSION, TIME, PLANNED_AREAS);

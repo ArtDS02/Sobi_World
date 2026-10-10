@@ -48,11 +48,13 @@ export const STAT_ID_VALUES = [
   'fishCaught', 'tanksCleaned',
   // GĐ9: world counters of the Cloud's standard events (flower.harvested, potion.brewed).
   'flowersHarvested', 'potionsBrewed',
+  // GĐ10: world counters of the Adventure's standard events (battle.won, adventure.finished).
+  'battlesWon', 'adventuresCleared',
 ] as const;
 export type StatId = (typeof STAT_ID_VALUES)[number];
 
 /** Item categories of the shared bag (spec V2 §6 Item). Seeds and crops joined with the Garden, fish with the Aquarium; essences and more come with their Area. */
-export const ITEM_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'MATERIAL', 'SEED', 'CROP', 'FISH', 'FLOWER', 'POTION'] as const;
+export const ITEM_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'MATERIAL', 'SEED', 'CROP', 'FISH', 'FLOWER', 'POTION', 'EQUIPMENT'] as const;
 export type ItemCategory = (typeof ITEM_CATEGORY_VALUES)[number];
 
 export const PRODUCT_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'SUPPLY', 'SPECIAL'] as const;

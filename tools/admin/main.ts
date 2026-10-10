@@ -2,6 +2,7 @@
 // #/ overview · #/users[/<id>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
 // #/assets (source) · #/library · #/layout · #/products · #/breeding · #/daynight · #/numbers · #/seasons · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
+import { renderAdventure } from './adventure';
 import { breedingDirty, renderBreeding } from './breeding';
 import { renderDayNight } from './dayNight';
 import { renderNumbers } from './numbers';
@@ -29,6 +30,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
   ['Game', [['layout', '🗺️', 'Bố cục nông trại', 'layout'], ['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['numbers', '🔢', 'Số liệu', 'numbers'], ['seasons', '🍂', 'Mùa & hiệu ứng', 'seasons']]],
   ['Cửa hàng', [['products', '🛒', 'Sản phẩm', 'shop']]],
   ['Phối giống', [['breeding', '🧬', 'Luật phối giống', 'breeding']]],
+  ['Phiêu lưu', [['adventure', '⚔️', 'Mô phỏng trận', 'numbers']]],
   ['Hệ thống / Hướng dẫn', [['desktop', '🎮', 'Desktop Game', 'desktop'], ['guide', '📘', 'Hướng dẫn quản trị', 'overview']]],
 ];
 const ALL = NAV.flatMap(([, items]) => items);
@@ -111,6 +113,7 @@ function render() {
     users: () => (id ? renderUserDetail(content, id, render) : renderUsers(content, render)),
     products: () => renderProducts(content, render),
     breeding: () => renderBreeding(content, render),
+    adventure: () => renderAdventure(content),
     layout: () => renderLayout(content, render),
     desktop: () => renderDesktop(content),
     guide: () => renderGuide(content, id),

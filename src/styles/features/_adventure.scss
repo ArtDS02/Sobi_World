@@ -1,0 +1,259 @@
+// Sobi Adventure's DOM layer (GĐ10): the HUD, the hub (zones, fighters, team), the map of a run, the battle and the summary.
+// The layer ignores clicks, its pieces take them (same idea as the Garden's layer). Placeholder-friendly: nothing here depends
+// on final art (decision 017), the pictures are <img> on soft cards.
+@use '../core/tokens' as *;
+@use '../core/mixins' as *;
+
+.adventure-host {
+  position: absolute;
+  inset: 0;
+  z-index: $z-bars;
+  display: none;
+  pointer-events: none;
+
+  &.is-active { display: block; }
+
+  // The layer ignores clicks, but a dialog opened inside it must take them.
+  .c-dialog { pointer-events: auto; }
+}
+
+.adventure-ui {
+  &__hud, &__inner { display: contents; }
+
+  &__pills {
+    position: absolute;
+    top: $sp-3;
+    left: $sp-3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+  }
+
+  &__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: $sp-2;
+    min-height: 2.6rem;
+    padding: 0 $sp-4;
+    color: #fff6e2;
+    background: linear-gradient(180deg, #5f9a60, #3f7442);
+    border: 3px solid #2c5230;
+    border-radius: 0.9rem;
+    box-shadow: 0 3px 0 rgba(30, 60, 32, 0.45);
+    pointer-events: auto;
+
+    b { font-size: $fs-lg; text-shadow: 0 1px 0 rgba(30, 60, 32, 0.6); }
+    small { font-size: $fs-xs; opacity: 0.9; }
+  }
+
+  &__bar { width: 6rem; height: $bar-height; }
+
+  &__nav {
+    position: absolute;
+    top: $sp-3;
+    right: $sp-3;
+    display: flex;
+    gap: $sp-2;
+  }
+
+  &__btn {
+    min-height: $sp-touch-min;
+    padding: 0 $sp-4;
+    font: inherit;
+    font-weight: $fw-bold;
+    color: #fff6e2;
+    cursor: pointer;
+    background: linear-gradient(180deg, #5f9a60, #3f7442);
+    border: 3px solid #2c5230;
+    border-radius: 0.9rem;
+    box-shadow: 0 3px 0 rgba(30, 60, 32, 0.45);
+    pointer-events: auto;
+    transition: transform $dur-fast ease-out, filter $dur-fast ease-out;
+
+    &:hover { transform: scale(1.06); filter: brightness(1.1); }
+    &:active { transform: scale(0.95); }
+    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
+  }
+
+  // The content card under the HUD.
+  &__main {
+    position: absolute;
+    top: 4.2rem;
+    right: $sp-3;
+    bottom: $sp-3;
+    left: $sp-3;
+    padding: $sp-3 $sp-4;
+    overflow-y: auto;
+    pointer-events: auto;
+    color: $c-text;
+    background: rgba(255, 250, 240, 0.94);
+    border: 3px solid $c-wood-dark;
+    border-radius: $radius-md;
+    box-shadow: $hud-shadow;
+
+    h3, h4 { margin: $sp-2 0; }
+  }
+
+  &__chip {
+    display: inline-block;
+    padding: 0 $sp-2;
+    font-size: $fs-xs;
+    color: $c-on-primary;
+    background: $c-danger;
+    border-radius: 999px;
+  }
+
+  // ---- hub
+  &__zones { display: flex; flex-wrap: wrap; gap: $sp-3; }
+
+  &__zone {
+    display: grid;
+    gap: $sp-1;
+    min-width: 14rem;
+    padding: $sp-3;
+    font: inherit;
+    color: $c-text;
+    text-align: left;
+    cursor: pointer;
+    background: $c-surface;
+    border: 3px solid $c-border;
+    border-radius: $radius-md;
+
+    &.is-selected { background: #e9f7d8; border-color: $c-leaf; box-shadow: 0 0 0 2px $c-leaf; }
+    &.is-off { opacity: 0.6; }
+  }
+
+  &__nodes { letter-spacing: 0.2em; }
+  &__quest { display: flex; flex-wrap: wrap; gap: $sp-3; align-items: center; margin-top: $sp-2; }
+
+  &__fighters { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: $sp-3; }
+
+  &__fighter {
+    display: grid;
+    gap: $sp-1;
+    padding: $sp-2;
+    background: $c-surface;
+    border: 3px solid $c-border;
+    border-radius: $radius-md;
+
+    &.is-selected { background: #e9f7d8; border-color: $c-leaf; box-shadow: 0 0 0 2px $c-leaf; }
+    &.is-off { opacity: 0.75; }
+  }
+
+  &__fighter-pick {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    padding: $sp-1;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+
+    &:disabled { cursor: not-allowed; }
+    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
+  }
+
+  &__fighter-art, &__member-art, &__unit-art, &__loot-icon { width: 4.2rem; height: 4.2rem; object-fit: contain; }
+
+  &__meters { display: grid; grid-template-columns: 1fr; gap: 2px; }
+  &__meter { display: block; width: 100%; min-width: 6rem; height: 0.6rem; }
+  &__meter--energy .c-bar__fill { background: $c-honey; }
+  &__meter--exp .c-bar__fill { background: $c-level; }
+  &__meter--hp .c-bar__fill { background: $c-leaf; }
+  &__hearts { color: $c-pig-line; }
+  &__stats { color: $c-text-muted; }
+  &__skills { margin: 0; padding-left: $sp-4; font-size: $fs-xs; li.is-locked { color: $c-text-muted; } }
+
+  &__start { display: flex; flex-wrap: wrap; gap: $sp-3; align-items: center; margin-top: $sp-3; }
+
+  // ---- map
+  &__path { display: flex; flex-wrap: wrap; gap: $sp-3; padding: 0; margin: $sp-3 0; list-style: none; }
+
+  &__node {
+    display: grid;
+    justify-items: center;
+    min-width: 5rem;
+    padding: $sp-2;
+    background: $c-surface;
+    border: 3px solid $c-border;
+    border-radius: $radius-md;
+
+    span { font-size: 1.8rem; }
+    &.is-done { opacity: 0.45; }
+    &.is-now { border-color: $c-leaf; box-shadow: 0 0 0 3px $c-leaf; }
+  }
+
+  &__event { padding: $sp-2 $sp-3; margin: $sp-2 0; background: #fff3d6; border: 2px solid $c-honey; border-radius: $radius-md; p { margin: 0; } }
+  &__team { display: flex; flex-wrap: wrap; gap: $sp-3; }
+  &__member { display: grid; justify-items: center; gap: 2px; min-width: 8rem; &.is-down { opacity: 0.5; filter: grayscale(1); } }
+  &__map-actions { display: flex; flex-wrap: wrap; gap: $sp-3; align-items: center; margin-top: $sp-3; }
+
+  // ---- battle
+  &__round { font-weight: $fw-bold; }
+  &__row { display: flex; flex-wrap: wrap; gap: $sp-3; justify-content: center; margin: $sp-2 0; }
+
+  &__unit {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    min-width: 8.5rem;
+    padding: $sp-2;
+    font: inherit;
+    color: $c-text;
+    background: $c-surface;
+    border: 3px solid $c-border;
+    border-radius: $radius-md;
+    transition: transform 0.2s ease-out;
+
+    &:disabled { cursor: default; opacity: 1; }
+    &--enemy { background: #fdeeee; }
+    &.is-active { border-color: $c-honey; box-shadow: 0 0 0 3px $c-honey; transform: translateY(-4px); }
+    &.is-down { opacity: 0.4; filter: grayscale(1); }
+    &.is-boss { min-width: 11rem; border-color: $c-danger; }
+    &.is-aimable { cursor: pointer; border-color: $c-primary; box-shadow: 0 0 0 3px $c-primary; animation: adventure-aim 0.9s ease-in-out infinite alternate; }
+  }
+
+  &__unit-art { width: 5rem; height: 5rem; }
+  &__pips { color: $c-honey; }
+  &__actions { display: grid; gap: $sp-2; padding: $sp-2; margin-top: $sp-2; background: $c-surface-alt; border-radius: $radius-md; }
+  &__action-bar, &__modes { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: center; }
+  &__menu { display: grid; gap: $sp-1; }
+  &__menu-row { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: center; small { color: $c-text-muted; } }
+  &__log { max-height: 10rem; padding-left: $sp-4; margin: $sp-2 0 0; overflow-y: auto; font-size: $fs-sm; }
+  &__battle.is-fast &__unit { transition-duration: 0.08s; }
+  .c-button.is-on { background: $c-leaf; color: #fff; }
+
+  // ---- summary
+  &__done {
+    display: grid;
+    gap: $sp-2;
+    justify-items: start;
+
+    &.is-win h3 { color: $c-success; }
+    &.is-lose h3 { color: $c-danger; }
+  }
+
+  &__loot ul { display: flex; flex-wrap: wrap; gap: $sp-3; padding: 0; margin: $sp-1 0; list-style: none; li { display: flex; gap: $sp-1; align-items: center; } }
+}
+
+.adventure-dialog {
+  display: grid;
+  gap: $sp-3;
+
+  &__slot { display: grid; gap: $sp-1; padding-bottom: $sp-2; border-bottom: 2px dashed $c-border; }
+  &__worn { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: center; }
+  &__icon { width: 2.4rem; height: 2.4rem; object-fit: contain; }
+  &__pieces { display: grid; gap: $sp-1; padding: 0; margin: 0; list-style: none; li { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: center; } }
+}
+
+@keyframes adventure-aim {
+  from { transform: translateY(0); }
+  to { transform: translateY(-3px); }
+}
+
+@include mq-short {
+  .adventure-ui__main { top: 3.6rem; }
+  .adventure-ui__unit-art { width: 3.4rem; height: 3.4rem; }
+}

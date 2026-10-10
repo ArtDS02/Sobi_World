@@ -54,6 +54,8 @@ export interface FarmGame {
   decor: DecorId[]; // owned farm decorations (save v6, PG-3)
   /** Where each owned decoration stands (GĐ6); absent = on its first spot, placed. */
   decorPlan?: Partial<Record<DecorId, DecorPlan>> | undefined;
+  /** Sobi Adventure is open in this world (derived from the world save, never stored by the farm): a pig may be raised for it (GĐ10). */
+  adventureOpen?: boolean | undefined;
   /** Piles of manure in the pen (GAME_BALANCE §2.2); absent = none. */
   manure?: number | undefined;
   /** No pig dies before this time: set after a catch-up that skipped a death (decision 004). */

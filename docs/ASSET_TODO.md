@@ -4,6 +4,17 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `docs/reference-assets/` và `asset/reference/`.
 
+## GĐ10 — Sobi Adventure
+Tất cả là placeholder sinh bằng `npm run assets:placeholders` (decision 017: làm art ở GĐ14):
+| Việc | Ghi chú |
+|---|---|
+| 8 kẻ địch `enemy_*` (192×192, trùm Cổ Thụ 320×360, nhìn sang trái) | Rêu Con, Mầm Gai, Chim Sẻ Gió, Cáo Lửa, Ếch Sương, Sói Rừng, Heo Rừng Gai, Cổ Thụ Giận Dữ. Ảnh tham khảo: `docs/reference-assets/` (chưa có bộ kẻ địch). |
+| `bg_adventure_forest` (1600×900) | Nền Rừng Thì Thầm (cảnh chỉ vẽ nền, UI ở DOM). |
+| 11 icon `ui_item_equip_*`, `ui_item_forest_herb`, `ui_item_beast_fang` (128×128) | 9 trang bị (vũ khí, giáp, bùa × 3 bậc) và 2 vật liệu. |
+| Ảnh Hiệp Sĩ Heo (`npc_knight`) | Đang dùng ảnh heo `prop_animal_pig_a`. |
+| Animation trận đánh, VFX đòn / nguyên tố / trạng thái, âm thanh | Hiện chỉ có chữ nhật ký và âm UI có sẵn. |
+| Bản đồ chuyến có nhân vật đi | Manifest ghi `movement: character`; GĐ10 dùng chuỗi nút. |
+
 ## GĐ9 — Sobi Cloud
 Ảnh tham khảo (do chủ dự án cấp): `docs/reference-assets/sobi-cloud/` (`item-assets.png`, `environment-assets.png`, `asset-design.png`).
 | Thứ cần ở GĐ9 | Có trong ảnh tham khảo | Ghi chú |

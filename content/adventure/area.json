@@ -4,9 +4,21 @@
   "movement": "character",
   "portalInPlaza": "portal_gate",
   "unlock": { "worldLevel": 8, "worldDevelopment": 20 },
-  "planned": true,
-  "buildings": [],
-  "produces": [],
-  "consumes": [],
-  "icon": "prop_portal_gate"
+  "buildings": ["hub"],
+  "produces": [
+    "item_forest_herb",
+    "item_beast_fang",
+    "item_equip_wood_sword",
+    "item_equip_iron_sword",
+    "item_equip_flame_blade",
+    "item_equip_leaf_vest",
+    "item_equip_bark_armor",
+    "item_equip_moss_plate",
+    "item_equip_lucky_clover",
+    "item_equip_wind_feather",
+    "item_equip_sun_amulet"
+  ],
+  "consumes": ["item_potion_healing", "item_potion_battle"],
+  "icon": "prop_portal_gate",
+  "npc": "npc_knight"
 }

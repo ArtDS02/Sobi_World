@@ -4,6 +4,7 @@
 import { parseWorldSave } from '../../src/app/saveCodec';
 import { farmOf, withFarm } from '../../src/areas/farm/logic/save/lens';
 import { rewindAquariumInWorld } from '../../src/areas/aquarium/logic/rewind';
+import { rewindAdventureInWorld } from '../../src/areas/adventure/logic/rewind';
 import { rewindCloudInWorld } from '../../src/areas/cloud/logic/rewind';
 import { rewindGardenInWorld } from '../../src/areas/garden/logic/rewind';
 import type { WorldSave } from '../../src/core/save/world';
@@ -92,7 +93,7 @@ export async function openFile(file: File) {
 }
 
 /** The world the draft makes: the farm view written back, the Garden's and the Aquarium's clocks moved with the time travel. */
-const worldOf = (o: NonNullable<typeof users.open>): WorldSave => rewindCloudInWorld(rewindAquariumInWorld(rewindGardenInWorld(withFarm(o.world, o.draft), o.rewindMs), o.rewindMs), o.rewindMs);
+const worldOf = (o: NonNullable<typeof users.open>): WorldSave => rewindAdventureInWorld(rewindCloudInWorld(rewindAquariumInWorld(rewindGardenInWorld(withFarm(o.world, o.draft), o.rewindMs), o.rewindMs), o.rewindMs), o.rewindMs);
 
 /** Writes the draft: disk saves through the API (backup first), files as a download for import. */
 export async function saveOpen(): Promise<string> {

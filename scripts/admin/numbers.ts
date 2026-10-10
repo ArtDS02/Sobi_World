@@ -35,6 +35,13 @@ export const NUMBER_FILES: Record<string, { schemaPath: string; exportName: stri
   // Sobi Cloud (GĐ9): the flowers (growth, yield, names), the plots, the spring and the cauldron. Potions are items and recipes (above).
   'cloud/flowers.json': { schemaPath: '/content/schemas/cloud/flowers.ts', exportName: 'flowersFileSchema' },
   'cloud/balance.json': { schemaPath: '/content/schemas/cloud/balance.ts', exportName: 'cloudBalanceFileSchema' },
+  // Sobi Adventure (GĐ10): the enemies, the skills, the fighting styles, the zones with their loot and events, the equipment, the rules.
+  'adventure/enemies.json': { schemaPath: '/content/schemas/adventure/enemies.ts', exportName: 'enemiesFileSchema' },
+  'adventure/skills.json': { schemaPath: '/content/schemas/adventure/skills.ts', exportName: 'skillsFileSchema' },
+  'adventure/archetypes.json': { schemaPath: '/content/schemas/adventure/archetypes.ts', exportName: 'archetypesFileSchema' },
+  'adventure/zones.json': { schemaPath: '/content/schemas/adventure/zones.ts', exportName: 'zonesFileSchema' },
+  'adventure/equipment.json': { schemaPath: '/content/schemas/adventure/equipment.ts', exportName: 'equipmentFileSchema' },
+  'adventure/balance.json': { schemaPath: '/content/schemas/adventure/balance.ts', exportName: 'adventureBalanceFileSchema' },
   // Advanced breeding (GĐ7): the traits (effects, weights), the rules (inheritance, mutation, pity), the Breeder's gossip.
   'breeding/traits.json': { schemaPath: '/content/schemas/breeding/traits.ts', exportName: 'traitsFileSchema' },
   'breeding/balance.json': { schemaPath: '/content/schemas/breeding/balance.ts', exportName: 'breedingBalanceFileSchema' },
@@ -42,7 +49,7 @@ export const NUMBER_FILES: Record<string, { schemaPath: string; exportName: stri
 };
 
 /** Files whose words (the strings ending in `Vi`) can be edited as well as their numbers: the NPCs' lines. */
-export const TEXT_FILES: readonly string[] = ['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json'];
+export const TEXT_FILES: readonly string[] = ['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json'];
 
 /** A path that holds words the dashboard may edit: keys ending in `Vi`, and the rumour sentences. */
 export const isWordPath = (path: string): boolean =>

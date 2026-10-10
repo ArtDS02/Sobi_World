@@ -12,4 +12,6 @@ Chỉ import `core/`. Area dùng systems, không ngược lại.
 | `layout/` | hình học vùng đi được, vị trí vật thể |
 | `plants/` | một ô đất theo thời gian thật: gieo, tưới (lớn nhanh gấp đôi khi khô), phân bón, chín, héo; dạng đóng nên 3 chế độ mô phỏng ra cùng kết quả (GĐ5) |
 | `character/` | nhân vật người chơi: đi 8 hướng, va chạm hộp chân, tương tác theo tầm với (GĐ3) |
+| `combat/` | trận đánh theo lượt: thứ tự theo Tốc độ, đòn thường, kỹ năng (năng lượng, hồi chiêu), vật phẩm, nguyên tố khắc chế, chí mạng, trạng thái; AI chọn đòn; chỉ số theo cấp, kinh nghiệm; hàm thuần, có seed, lưu giữa hai hành động rồi chơi tiếp vẫn ra cùng kết quả (GĐ10) |
+| `equipment/` | ba ô trang bị (vũ khí, giáp, bùa), cộng chỉ số, mặc / tháo (GĐ10) |
 | `breeding/` | lai giống nâng cao: tính trạng, di truyền, đột biến, vận may, phả hệ, tin đồn của Nhà lai giống (GĐ7) |
