@@ -210,3 +210,7 @@ Chưa kiểm: `npm run dist:win` (installer), chạy Electron thủ công, thử
 ## Vấn đề còn mở
 - (Đã xử lý ở GĐ1) skill `spec-to-source` đã xóa, guard nằm ở `scripts/guard/`; thư mục save đã chuyển sang `%APPDATA%\SobiWorld` kèm sao chép save cũ.
 - `npm ci` báo vài cảnh báo `npm audit` (thư viện dev) — chưa xử lý.
+
+### 2026-10-10 — GĐ6 đang làm (nhánh `phase-06-engagement`, chưa xong, chưa duyệt số)
+✅ Đã làm: World Level chung (decision 007/013, bảng 100·n^1,5, 20 cấp); Bond (vuốt ve, món yêu thích, tim nâng Quality, tâm trạng món ăn vặt); mục đích nuôi (Xuất chuồng/Giống/Thú cưng); `core/goals` (Bảng đơn Sảnh, mục tiêu ngày, thành tựu trả Ngọc, quà đăng nhập), Codex + mốc thưởng, save world v10 (migration từ v9), bước `settle` trong store; Chợ theo ngày; trang trí đặt/cất/dời; chip "việc tiếp theo" + NPC Farm/Garden; trạm Bảng đơn ở Sảnh; Admin Số liệu mở rộng; script `npm run sim:week`.
+⚠️ Còn lại: báo cáo cân bằng (chạy `npm run sim:week`: Garden mở ~ngày 4,5, cấp 5 ở ngày 7; cấp chậm hơn Sobi Farm cũ, cần chủ dự án duyệt số), tutorial Sảnh, tài liệu decision 013 đầy đủ, e2e, version/build, README thư mục mới. Chưa chơi tay các màn mới ngoài thử nhanh trong trình duyệt; vị trí trang trí thay thế chưa nhìn.
