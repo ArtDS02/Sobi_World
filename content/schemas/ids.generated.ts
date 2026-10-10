@@ -110,6 +110,22 @@ export const ITEM_ID_VALUES = [
   'item_scale',
   'item_pearl',
   'FOOD_FISH',
+  'item_seed_cloud_daisy',
+  'item_seed_dandelion',
+  'item_seed_rainbow_rose',
+  'item_seed_star_orchid',
+  'item_seed_moon_lily',
+  'item_seed_dream_bell',
+  'item_flower_cloud_daisy',
+  'item_flower_dandelion',
+  'item_flower_rainbow_rose',
+  'item_flower_star_orchid',
+  'item_flower_moon_lily',
+  'item_flower_dream_bell',
+  'item_pure_water',
+  'item_potion_healing',
+  'item_potion_mood',
+  'item_potion_battle',
 ] as const;
 
 export const DECOR_ID_VALUES = [

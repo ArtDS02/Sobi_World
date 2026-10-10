@@ -1,4 +1,4 @@
-// The DOM layers of the Areas that are played with clicks (the Garden, the Aquarium): one overlay the shell places over
+// The DOM layers of the Areas that are played with clicks (the Garden, the Aquarium, the Cloud): one overlay the shell places over
 // the world, each Area's HUD showing only while the player is in it, plus what the app asks of them as a group — the
 // place the shell should show, the away-screen lines and the presentation of their events.
 import { aquariumArea } from '../areas/aquarium';
@@ -6,6 +6,11 @@ import { aquariumPresentation } from '../areas/aquarium/feedback';
 import { AQUARIUM_AREA_ID } from '../areas/aquarium/logic/config/content';
 import { hasAquarium } from '../areas/aquarium/logic/save/lens';
 import { createAquariumUi } from '../areas/aquarium/ui/aquariumUi';
+import { cloudArea } from '../areas/cloud';
+import { cloudPresentation } from '../areas/cloud/feedback';
+import { CLOUD_AREA_ID } from '../areas/cloud/logic/config/content';
+import { hasCloud } from '../areas/cloud/logic/save/lens';
+import { createCloudUi } from '../areas/cloud/ui/cloudUi';
 import type { Place } from '../areas/farm/ui/appTypes';
 import { gardenArea } from '../areas/garden';
 import { gardenPresentation } from '../areas/garden/feedback';
@@ -30,7 +35,8 @@ export interface AreaOverlaysDeps {
 export function createAreaOverlays(d: AreaOverlaysDeps) {
   const gardenHost = el('div', { class: 'garden-host' });
   const aquariumHost = el('div', { class: 'aquarium-host' });
-  const root = el('div', { class: 'area-overlays' }, gardenHost, aquariumHost);
+  const cloudHost = el('div', { class: 'cloud-host' });
+  const root = el('div', { class: 'area-overlays' }, gardenHost, aquariumHost, cloudHost);
   const common = { world: d.world, now: d.now, leave: d.leave, openPanel: d.openPanel };
   const gardenUi = createGardenUi({ ...common, host: gardenHost });
   const aquariumUi = createAquariumUi({
@@ -41,17 +47,21 @@ export function createAreaOverlays(d: AreaOverlaysDeps) {
       return () => window.clearInterval(id);
     },
   });
+  const cloudUi = createCloudUi({ ...common, host: cloudHost });
   return {
     root,
     gardenUi,
     aquariumUi,
+    cloudUi,
     /** The player moved to `to`: the shell's place, and whose HUD shows. */
     enter(to: string): Place {
       gardenUi.setActive(to === GARDEN_AREA_ID);
       aquariumUi.setActive(to === AQUARIUM_AREA_ID);
-      return to === PLAZA_ID ? 'plaza' : to === GARDEN_AREA_ID ? 'garden' : to === AQUARIUM_AREA_ID ? 'aquarium' : 'area';
+      cloudUi.setActive(to === CLOUD_AREA_ID);
+      if (to === PLAZA_ID) return 'plaza';
+      return to === GARDEN_AREA_ID ? 'garden' : to === AQUARIUM_AREA_ID ? 'aquarium' : to === CLOUD_AREA_ID ? 'cloud' : 'area';
     },
-    isModalOpen: () => gardenUi.isModalOpen() || aquariumUi.isModalOpen(),
+    isModalOpen: () => gardenUi.isModalOpen() || aquariumUi.isModalOpen() || cloudUi.isModalOpen(),
     /** The lines of the "while you were away" screen that belong to these Areas. */
     summaryLines(events: readonly EventBase[], save: WorldSave | null): SummaryLine[] {
       if (!save) return [];
@@ -59,8 +69,9 @@ export function createAreaOverlays(d: AreaOverlaysDeps) {
       return [
         ...(hasGarden(save) ? (gardenArea.getSummary?.(events, save, now) ?? []) : []),
         ...(hasAquarium(save) ? (aquariumArea.getSummary?.(events, save, now) ?? []) : []),
+        ...(hasCloud(save) ? (cloudArea.getSummary?.(events, save, now) ?? []) : []),
       ];
     },
-    presentation: (event: EventBase, origin: 'action' | 'tick' | 'catchup') => gardenPresentation(event, origin) ?? aquariumPresentation(event, origin),
+    presentation: (event: EventBase, origin: 'action' | 'tick' | 'catchup') => gardenPresentation(event, origin) ?? aquariumPresentation(event, origin) ?? cloudPresentation(event, origin),
   };
 }

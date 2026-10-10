@@ -121,8 +121,9 @@ export interface BreedingExtrasVm {
 }
 
 /** The extra lines of the breeding dialog: parents' traits, the mutation chance of the pair and the saved pity. */
-export function breedingExtras(save: FarmGame, a: Pig, b: Pig): BreedingExtrasVm {
-  const chance = mutationChance([parentTraits(a), parentTraits(b)], TRAITS, BREEDING_RULES_DEFAULT);
+/** `boost`: percentage points a flower added to the breeding gives (0 = none). */
+export function breedingExtras(save: FarmGame, a: Pig, b: Pig, boost = 0): BreedingExtrasVm {
+  const chance = mutationChance([parentTraits(a), parentTraits(b)], TRAITS, BREEDING_RULES_DEFAULT, boost);
   const pity = save.breedingPity ?? 0;
   const names = (p: Pig) => [...(p.traits ?? []).map((id) => TRAITS.get(id)?.nameVi ?? id), ...(p.hiddenTrait ? [`${TRAITS.get(p.hiddenTrait)?.nameVi ?? '???'} (${vi.heredity.hiddenTag})`] : [])];
   return {

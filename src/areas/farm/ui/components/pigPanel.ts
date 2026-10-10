@@ -158,6 +158,7 @@ export function renderPigPanel(
         actions.feedGrass ? actionButton(actions.feedGrass, () => on.act(actions.feedGrass!.run), '', 'feed') : null,
         actionButton(actions.clean, () => on.act(actions.clean.run), '', 'clean'),
         actionButton(actions.treat, () => on.act(actions.treat.run), '', 'treat'),
+        ...actions.potions.map((potion) => actionButton(potion, () => on.act(potion.run), '', 'treat')),
         actionButton(breeding.button, () => on.breed(pig), '', 'breed'),
         actionButton(actions.sell, () => on.sell(pig, actions.sell), 'c-button--warn', 'gold'),
       ),

@@ -260,6 +260,152 @@
       "priceGold": 20,
       "hungerRestore": 50,
       "curesSickness": false
+    },
+    {
+      "id": "item_seed_cloud_daisy",
+      "category": "SEED",
+      "rarity": "COMMON",
+      "priceGold": 12,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_seed_dandelion",
+      "category": "SEED",
+      "rarity": "COMMON",
+      "priceGold": 16,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_seed_rainbow_rose",
+      "category": "SEED",
+      "rarity": "RARE",
+      "priceGold": 120,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_seed_star_orchid",
+      "category": "SEED",
+      "rarity": "EPIC",
+      "priceGold": 150,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_seed_moon_lily",
+      "category": "SEED",
+      "rarity": "UNCOMMON",
+      "priceGold": 36,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_seed_dream_bell",
+      "category": "SEED",
+      "rarity": "UNCOMMON",
+      "priceGold": 56,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_flower_cloud_daisy",
+      "category": "FLOWER",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 12,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_flower_dandelion",
+      "category": "FLOWER",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 14,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_flower_rainbow_rose",
+      "category": "FLOWER",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 85,
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "mutationBoost": 5
+    },
+    {
+      "id": "item_flower_star_orchid",
+      "category": "FLOWER",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 220,
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "mutationBoost": 8
+    },
+    {
+      "id": "item_flower_moon_lily",
+      "category": "FLOWER",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 22,
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "mutationBoost": 3
+    },
+    {
+      "id": "item_flower_dream_bell",
+      "category": "FLOWER",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 34,
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "mutationBoost": 4
+    },
+    {
+      "id": "item_pure_water",
+      "category": "MATERIAL",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 6,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_potion_healing",
+      "category": "POTION",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 120,
+      "hungerRestore": 0,
+      "curesSickness": true,
+      "moodBoost": 20,
+      "moodHours": 6
+    },
+    {
+      "id": "item_potion_mood",
+      "category": "POTION",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 60,
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "moodBoost": 40,
+      "moodHours": 12
+    },
+    {
+      "id": "item_potion_battle",
+      "category": "POTION",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 160,
+      "hungerRestore": 0,
+      "curesSickness": false
     }
   ]
 }

@@ -11,6 +11,7 @@ import {
   TROUGH_PROP_ID,
   TROUGH_STATES,
 } from '../../src/core/config/assetIds';
+import { cloudArtIds } from '../../src/areas/cloud/logic/art';
 import { aquariumArtIds } from '../../src/areas/aquarium/logic/art';
 import { gardenArtIds } from '../../src/areas/garden/logic/art';
 import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
@@ -157,6 +158,10 @@ export function checkAssets(
   for (const id of aquariumArtIds()) {
     const section = id.startsWith('ui_') ? 'ui' : id.startsWith('bld_') ? 'buildings' : id.startsWith('bg_') ? 'environment' : 'props';
     need(id, section, 'Sobi Aquarium art (GĐ8)');
+  }
+  for (const id of cloudArtIds()) {
+    const section = id.startsWith('ui_') ? 'ui' : id.startsWith('bld_') ? 'buildings' : id.startsWith('bg_') ? 'environment' : 'props';
+    need(id, section, 'Sobi Cloud art (GĐ9)');
   }
   need(ORDER_BOARD_PROP_ID, 'props', 'order board');
   need(GIFT_PROP_ID, 'props', 'gift box (U06)');

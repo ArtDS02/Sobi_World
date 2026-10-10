@@ -65,6 +65,15 @@ CATALOGUE_SIZES.bld_fish_tank = { width: 640, height: 400 };
 CATALOGUE_SIZES.bld_fish_dock = { width: 520, height: 300 };
 CATALOGUE_SIZES.bg_aquarium = { width: 1600, height: 900 };
 
+// Sobi Cloud (GĐ9): a flower on its plot (feet at the bottom), the cloud plot, the spring, the cauldron and the sky backdrop.
+for (const flower of ['cloud_daisy', 'dandelion', 'rainbow_rose', 'star_orchid', 'moon_lily', 'dream_bell']) {
+  for (const stage of ['sprout', 'grow', 'ripe', 'wilt']) CATALOGUE_SIZES[`flower_${flower}_${stage}`] = { width: 152, height: 132 };
+}
+CATALOGUE_SIZES.plot_cloud = { width: 152, height: 108 };
+CATALOGUE_SIZES.bld_cloud_spring = { width: 220, height: 240 };
+CATALOGUE_SIZES.bld_cauldron = { width: 220, height: 220 };
+CATALOGUE_SIZES.bg_cloud = { width: 1600, height: 900 };
+
 for (const who of ['so', 'bi']) {
   for (const facing of ['down', 'up', 'left', 'right']) {
     for (const frame of ['idle', 'walk1', 'walk2']) {

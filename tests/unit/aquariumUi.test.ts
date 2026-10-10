@@ -229,6 +229,7 @@ describe('what its events say', () => {
     AQUARIUM_FEED_BOUGHT: { type: 'AQUARIUM_FEED_BOUGHT', quantity: 2, gold: 40 },
     AQUARIUM_FISH_PETTED: { type: 'AQUARIUM_FISH_PETTED', fishId: 'a', hearts: 1 },
     AQUARIUM_FISH_TREATED: { type: 'AQUARIUM_FISH_TREATED', fishId: 'a' },
+    AQUARIUM_FISH_POTION: { type: 'AQUARIUM_FISH_POTION', fishId: 'a', itemId: 'item_potion_healing', cured: true },
     AQUARIUM_TRAIT_REVEALED: { type: 'AQUARIUM_TRAIT_REVEALED', fishId: 'a', name: 'Sóng', traitId: 'trait_sweet' },
     AQUARIUM_WATER_CHANGED: { type: 'AQUARIUM_WATER_CHANGED' },
     AQUARIUM_CAST: { type: 'AQUARIUM_CAST', speciesId: 'fish_betta', itemId: 'item_fish_betta', quantity: 1, score: 0.9, night: false },

@@ -31,6 +31,38 @@
       "inputs": { "item_potato": 2 },
       "outputs": { "FOOD_FISH": 4 },
       "durationMin": 10
+    },
+    {
+      "id": "recipe_potion_healing",
+      "nameVi": "Healing Potion",
+      "building": "cauldron",
+      "inputs": { "item_flower_rainbow_rose": 1, "item_pure_water": 1 },
+      "outputs": { "item_potion_healing": 1 },
+      "durationMin": 20
+    },
+    {
+      "id": "recipe_potion_mood",
+      "nameVi": "Potion Vui Vẻ",
+      "building": "cauldron",
+      "inputs": { "item_flower_cloud_daisy": 2, "item_flower_dandelion": 1, "item_pure_water": 1 },
+      "outputs": { "item_potion_mood": 1 },
+      "durationMin": 15
+    },
+    {
+      "id": "recipe_potion_mood_night",
+      "nameVi": "Potion Vui Vẻ (Huệ Trăng)",
+      "building": "cauldron",
+      "inputs": { "item_flower_moon_lily": 1, "item_pure_water": 1 },
+      "outputs": { "item_potion_mood": 1 },
+      "durationMin": 15
+    },
+    {
+      "id": "recipe_potion_battle",
+      "nameVi": "Potion Chiến Đấu",
+      "building": "cauldron",
+      "inputs": { "item_flower_star_orchid": 1, "item_flower_dream_bell": 1, "item_pure_water": 1 },
+      "outputs": { "item_potion_battle": 1 },
+      "durationMin": 30
     }
   ]
 }

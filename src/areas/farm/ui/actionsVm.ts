@@ -14,6 +14,8 @@ import { pigFavorite } from '../logic/bond';
 import { fillTrough } from '../logic/actions/fillTrough';
 import { sellPig } from '../logic/actions/sellPig';
 import { treatPig } from '../logic/actions/treatPig';
+import { usePotion } from '../logic/actions/usePotion';
+import { CREATURE_POTION_IDS } from '../../../core/config/items';
 import { BREEDS } from '../logic/config/breeds';
 import type { ErrorCode } from '../../../core/config/errors';
 import { BALANCE } from '../logic/config/balance';
@@ -91,6 +93,10 @@ export function pigActions(save: FarmGame, pigId: string, now: number) {
     })(),
     clean: vm(save, now, vi.action.clean, (s, c) => cleanPig(s, args, c)),
     treat: vm(save, now, vi.action.treat, (s, c) => treatPig(s, args, c), vi.disabled.noMedicine),
+    /** The Cloud's potions, offered only while the bag holds some (a healing potion works on an ill pig, a mood potion on any). */
+    potions: CREATURE_POTION_IDS.filter((id) => save.inventory[id] > 0).map((itemId) =>
+      vm(save, now, t(vi.action.potion, { name: vi.shop[itemId], count: save.inventory[itemId] }), (s, c) => usePotion(s, { ...args, itemId }, c)),
+    ),
     sell: vm(save, now, vi.action.sell, (s, c) => sellPig(s, args, c)),
   };
 }

@@ -4,9 +4,29 @@
   "movement": "click",
   "portalInPlaza": "sky_tree",
   "unlock": { "worldLevel": 8, "worldDevelopment": 15 },
-  "planned": true,
-  "buildings": [],
-  "produces": [],
-  "consumes": [],
-  "icon": "prop_sky_tree"
+  "buildings": ["plots", "spring", "cauldron"],
+  "produces": [
+    "item_pure_water",
+    "item_flower_cloud_daisy",
+    "item_flower_dandelion",
+    "item_flower_rainbow_rose",
+    "item_flower_star_orchid",
+    "item_flower_moon_lily",
+    "item_flower_dream_bell",
+    "item_potion_healing",
+    "item_potion_mood",
+    "item_potion_battle"
+  ],
+  "consumes": [
+    "item_seed_cloud_daisy",
+    "item_seed_dandelion",
+    "item_seed_rainbow_rose",
+    "item_seed_star_orchid",
+    "item_seed_moon_lily",
+    "item_seed_dream_bell",
+    "item_fertilizer",
+    "item_pearl"
+  ],
+  "icon": "prop_sky_tree",
+  "npc": "npc_alchemist"
 }

@@ -31,6 +31,7 @@ import { defaultSettings } from '../../src/core/save/world';
 import type { EventBase } from '../../src/core/events';
 import { ITEMS } from '../../src/core/config/items';
 import { aquariumRoutine } from './aquarium';
+import { cloudRoutine } from './cloud';
 
 /** When a day's sessions happen (hour of the local day) — a person who plays morning, noon and evening. */
 export const SESSION_HOURS = [8, 13, 20] as const;
@@ -61,6 +62,10 @@ export interface WeekReport {
   levelAtHour: Record<number, number>;
   gardenOpenAtHour: number | null;
   aquariumOpenAtHour: number | null;
+  cloudOpenAtHour: number | null;
+  /** Flowers picked and potions brewed by the end (world counters). */
+  flowersHarvested: number;
+  potionsBrewed: number;
   fishSick: number;
   fishDied: number;
   /** Coins in (+) and out (-) by what the bot was doing. */
@@ -79,6 +84,7 @@ export class Bot {
   levelAt: Record<number, number> = { 1: 0 };
   gardenAt: number | null = null;
   aquariumAt: number | null = null;
+  cloudAt: number | null = null;
   casts = 0;
   fishSold = 0;
   /** Illnesses and deaths of fish, counted from the events. */
@@ -122,6 +128,7 @@ export class Bot {
     for (let l = 2; l <= level; l += 1) this.levelAt[l] ??= (this.now - this.start) / HOUR_MS;
     if (this.gardenAt === null && this.world.world.unlockedAreas.includes('sobi_garden')) this.gardenAt = (this.now - this.start) / HOUR_MS;
     if (this.aquariumAt === null && this.world.world.unlockedAreas.includes('sobi_aquarium')) this.aquariumAt = (this.now - this.start) / HOUR_MS;
+    if (this.cloudAt === null && this.world.world.unlockedAreas.includes('sobi_cloud')) this.cloudAt = (this.now - this.start) / HOUR_MS;
   }
 
   /** Runs an action; its coin change is booked under `label`. False when it was refused. */
@@ -240,6 +247,7 @@ export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7): WeekR
       farmRoutine(b);
       gardenRoutine(b);
       aquariumRoutine(b);
+      cloudRoutine(b);
       claimEverything(b, Math.floor(b.now / DAY_MS));
     }
     const farm = b.farm();
@@ -260,5 +268,5 @@ export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7): WeekR
       fishSold: b.fishSold,
     });
   }
-  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems };
+  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, cloudOpenAtHour: b.cloudAt, flowersHarvested: b.world.progression.stats.flowersHarvested ?? 0, potionsBrewed: b.world.progression.stats.potionsBrewed ?? 0, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems };
 }

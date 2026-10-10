@@ -6,6 +6,8 @@ import { breedingOutcomes } from '../breedingOdds';
 import { BREEDS } from '../config/breeds';
 import { SAVE } from '../../../../core/config/save';
 import type { ErrorCode } from '../../../../core/config/errors';
+import { ITEMS } from '../../../../core/config/items';
+import { takeFromBag } from '../../../../core/inventory/bag';
 import { rollChild } from '../breeding';
 import { bornHeredity, isRareBreed } from '../heredity';
 import { BREEDING_RULES_DEFAULT, nextPity } from '../../../../systems/breeding';
@@ -13,7 +15,7 @@ import { generationOf, waitingPigs } from '../derived';
 import { changeGold } from '../gold';
 import { addXP } from '../xp';
 import { randomId } from '../../../../core/rng';
-import type { ActionContext, ActionResult, BreedingRecord, Pig, FarmGame } from '../types';
+import type { ActionContext, ActionResult, BreedingRecord, ItemId, Pig, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
 
 /** Pity is stored only while it is above zero (absent = 0): a save that never missed a Rare+ stays as it was. */
@@ -22,6 +24,8 @@ const pityField = (pity: number) => (pity > 0 ? { breedingPity: pity } : { breed
 export interface BreedPigsArgs {
   pigAId: string;
   pigBId: string;
+  /** An item with a `mutationBoost` (a rare flower of the Cloud) used up to raise this litter's mutation chance. */
+  boostItem?: ItemId;
 }
 
 /** First failing rule of §8.8 steps 1–7 for a pair, or null; the gold check (8) is changeGold. */
@@ -53,15 +57,20 @@ export function breedPigs(state: FarmGame, args: BreedPigsArgs, ctx: ActionConte
     const pregnancySec = BREEDS[mother.breed].pregnancySec;
     if (pregnancySec === null) return { ok: false, error: 'BREEDING_COMBINATION_NOT_SUPPORTED' };
 
+    const boost = args.boostItem === undefined ? 0 : (ITEMS[args.boostItem]?.mutationBoost ?? 0);
+    if (args.boostItem !== undefined && boost <= 0) return { ok: false, error: 'INVALID_REQUEST' };
     const paid = changeGold(s, -BALANCE.BREEDING_FEE, 'BREEDING_FEE', ctx, {
       refId: mother.id,
       note: `${mother.breed} x ${father.breed}`,
     });
     if (!paid.ok) return paid;
+    const bag = args.boostItem === undefined ? null : takeFromBag(paid.state.inventory, args.boostItem, 1);
+    if (bag && !bag.ok) return bag;
+    const base: FarmGame = bag ? { ...paid.state, inventory: bag.items } : paid.state;
 
-    const pity = paid.state.breedingPity ?? 0;
+    const pity = base.breedingPity ?? 0;
     const child = rollChild(ctx.rng, mother.breed, father.breed, pity);
-    const heredity = bornHeredity(mother, father, child.breed, ctx.now);
+    const heredity = bornHeredity(mother, father, child.breed, ctx.now, boost);
     const endsAt = ctx.now + pregnancySec * 1000; // D22: the mother's breed
     const childGeneration = Math.max(generationOf(mother), generationOf(father)) + 1;
     const record: BreedingRecord = {
@@ -78,8 +87,8 @@ export function breedPigs(state: FarmGame, args: BreedPigsArgs, ctx: ActionConte
       bornAt: null,
     };
     const bred: FarmGame = {
-      ...paid.state,
-      pigs: paid.state.pigs.map((p) =>
+      ...base,
+      pigs: base.pigs.map((p) =>
         p.id === mother.id
           ? {
               ...p,
@@ -98,13 +107,13 @@ export function breedPigs(state: FarmGame, args: BreedPigsArgs, ctx: ActionConte
             }
           : p,
       ),
-      breedingRecords: [record, ...paid.state.breedingRecords].slice(0, SAVE.BREEDING_RECORDS_MAX),
+      breedingRecords: [record, ...base.breedingRecords].slice(0, SAVE.BREEDING_RECORDS_MAX),
       ...pityField(nextPity(pity, BREEDING_RULES_DEFAULT, child.couldBeRare, isRareBreed(child.breed))),
     };
     const xp = addXP(bred, BALANCE.XP.BREED);
     return ok(
       xp.state,
-      [{ type: 'BREEDING_STARTED', motherId: mother.id, fatherId: father.id, endsAt }],
+      [{ type: 'BREEDING_STARTED', motherId: mother.id, fatherId: father.id, endsAt, ...(args.boostItem === undefined ? {} : { boostItem: args.boostItem }) }],
       xp.events,
     );
   });

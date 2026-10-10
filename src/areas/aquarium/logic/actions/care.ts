@@ -115,6 +115,33 @@ export function treatFish(world: WorldSave, args: { fishId: string }, ctx: Actio
   });
 }
 
+/**
+ * Gives a fish a potion of the Cloud (GĐ9): a healing potion cures an ill fish (even a critical one) like medicine, a potion
+ * with a mood lift lifts its mood for some hours. What a potion does is data of its item.
+ */
+export function useFishPotion(world: WorldSave, args: { fishId: string; itemId: ItemId }, ctx: ActionContext): AquariumResult {
+  return runAquarium(world, ctx, (w, a) => {
+    const item = ITEMS[args.itemId];
+    if (!item || item.category !== 'POTION' || (!item.curesSickness && (item.moodBoost ?? 0) <= 0)) return { ok: false, error: 'INVALID_REQUEST' };
+    const fish = a.fish.find((f) => f.id === args.fishId);
+    if (!fish) return { ok: false, error: 'FISH_NOT_FOUND' };
+    if (item.curesSickness && !fish.isSick) return { ok: false, error: 'FISH_NOT_SICK' };
+    const lifted = withMoodBoost(fish, item.moodBoost ?? 0, ctx.now, { moodBoost: { hours: item.moodHours ?? BOND.moodBoost.hours, byItem: {} } });
+    if (!item.curesSickness && lifted === fish) return { ok: false, error: 'NOTHING_TO_DO' };
+    const taken = take(w, args.itemId, 1);
+    if (!taken.ok) return taken;
+    const cured = item.curesSickness && fish.isSick;
+    const after: Fish = cured
+      ? { ...lifted, isSick: false, recoveringUntil: ctx.now + recoveryMs, bond: raiseBond(lifted.bond, bondGainFor(lifted, BOND.care.gain), BOND) }
+      : lifted;
+    return {
+      ok: true,
+      world: put(taken.world, mapFish(a, fish.id, () => after)),
+      events: [{ type: 'AQUARIUM_FISH_POTION', fishId: fish.id, itemId: args.itemId, cured }, ...revealEvents(fish, after)],
+    };
+  });
+}
+
 /** Chooses why a fish is kept: sold (SHIP), bred (BREED) or loved (PET, never sold or bred). From adult size on. */
 export function setFishPurpose(world: WorldSave, args: { fishId: string; purpose: Purpose }, ctx: ActionContext): AquariumResult {
   return runAquarium(world, ctx, (w, a) => {

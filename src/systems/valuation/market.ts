@@ -36,6 +36,7 @@ export function dailyMarket(day: number, rules: MarketRules): DayMarket {
 export function marketGroupOf(category: string): MarketGroup | null {
   switch (category) {
     case 'CROP':
+    case 'FLOWER':
       return 'CROPS';
     case 'FOOD':
       return 'FOOD';

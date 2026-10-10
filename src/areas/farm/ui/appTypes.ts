@@ -73,7 +73,7 @@ export type FarmPick =
   | { kind: 'ground' };
 
 /** Where the player is: the plaza shows a lighter HUD (the farm's gauges belong to the farm). */
-export type Place = 'plaza' | 'area' | 'garden' | 'aquarium';
+export type Place = 'plaza' | 'area' | 'garden' | 'aquarium' | 'cloud';
 
 export interface MountedApp {
   /** Tells the shell which place is on screen. */

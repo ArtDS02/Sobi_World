@@ -25,6 +25,8 @@ export type WorldEvent =
   | { type: 'crop.harvested'; area: string; plotId: string; cropId: string; quantity: number }
   | { type: 'fish.caught'; area: string; speciesId: string; itemId: string }
   | { type: 'tank.cleaned'; area: string }
+  | { type: 'flower.harvested'; area: string; flowerId: string; itemId: string; quantity: number }
+  | { type: 'potion.brewed'; area: string; itemId: string; quantity: number }
   | { type: 'recipe.completed'; area: string; recipeId: string }
   | { type: 'order.completed'; area: string; orderId: string }
   | { type: 'area.unlocked'; area: string }
@@ -53,6 +55,8 @@ export const WORLD_EVENT_TYPES = [
   'crop.harvested',
   'fish.caught',
   'tank.cleaned',
+  'flower.harvested',
+  'potion.brewed',
   'recipe.completed',
   'order.completed',
   'area.unlocked',

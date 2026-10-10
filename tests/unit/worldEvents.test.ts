@@ -24,7 +24,7 @@ describe('event bus', () => {
   });
 
   it('lists every standard event of ARCHITECTURE §7', () => {
-    expect(WORLD_EVENT_TYPES).toHaveLength(23);
+    expect(WORLD_EVENT_TYPES).toHaveLength(25);
   });
 });
 

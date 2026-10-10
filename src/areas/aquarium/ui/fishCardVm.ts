@@ -4,7 +4,8 @@ import type { Purpose } from '../../../../content/schemas/vocab';
 import { itemArtId } from '../../../core/config/assetIds';
 import { BOND } from '../../../core/config/bond';
 import { HEALTH } from '../../../core/config/health';
-import { ITEMS } from '../../../core/config/items';
+import type { ItemId } from '../../../core/config/ids';
+import { CREATURE_POTION_IDS, ITEMS } from '../../../core/config/items';
 import type { WorldSave } from '../../../core/save/world';
 import { formatDuration, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
@@ -12,7 +13,7 @@ import { heartsOf, petsLeft } from '../../../systems/bond/bond';
 import { TRAITS, type TraitDef } from '../../../systems/breeding';
 import { gameDay } from '../../../systems/health/disease';
 import { sellFish } from '../logic/actions/trade';
-import { setFishPurpose } from '../logic/actions/care';
+import { setFishPurpose, useFishPotion } from '../logic/actions/care';
 import { FEED_ITEM, FISH } from '../logic/config/content';
 import { fishFavorite } from '../logic/favorite';
 import { fishHealth, fishStage } from '../logic/fishLife';
@@ -83,6 +84,8 @@ export interface FishCardVm {
   feedFavorite: ButtonVm;
   pet: ButtonVm;
   treat: ButtonVm;
+  /** The Cloud's potions the bag holds (a healing potion works on an ill fish, a mood potion on any). */
+  potions: (ButtonVm & { itemId: ItemId })[];
   sell: ButtonVm;
   purposes: PurposeChip[];
   quote: { lines: string[]; price: number };
@@ -146,6 +149,10 @@ export function fishCardVm(world: WorldSave, fishId: string, now: number, dayOff
     feedFavorite: { label: t(vi.aquarium.feedFavorite, { count: favHave }), reason: favError },
     pet: { label: vi.aquarium.pet, reason: petsLeft(f, day, BOND) <= 0 ? vi.aquarium.petLimit : null },
     treat: { label: vi.aquarium.treat, reason: !f.isSick ? vi.aquarium.notSick : (world.inventory.items.MEDICINE_COMMON ?? 0) === 0 ? vi.aquarium.noMedicine : null },
+    potions: CREATURE_POTION_IDS.filter((id) => (world.inventory.items[id] ?? 0) > 0).map((itemId) => {
+      const error = run((w, c) => useFishPotion(w, { fishId, itemId }, c));
+      return { itemId, label: t(vi.aquarium.potion, { name: nameOfItem(itemId), count: world.inventory.items[itemId] ?? 0 }), reason: error === 'FISH_NOT_SICK' ? vi.aquarium.notSick : error ? reasonFor(error) : null };
+    }),
     sell: { label: t(vi.aquarium.sellFor, { gold: gold(quote.price) }), reason: sellError === 'FISH_NOT_MATURE' ? vi.aquarium.needAdult : sellError === 'FISH_IS_PET' ? vi.aquarium.isPet : sellError ? reasonFor(sellError) : null },
     purposes: PURPOSES.map((id): PurposeChip => {
       const r: AquariumRun = (w, c) => setFishPurpose(w, { fishId, purpose: id }, c);

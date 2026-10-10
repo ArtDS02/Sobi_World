@@ -27,6 +27,8 @@ function deltas(e: GameEvent): Partial<Record<StatId, number>> {
       return { pigsCleaned: e.pigIds.length };
     case 'PIG_TREATED':
       return { pigsTreated: 1 };
+    case 'PIG_POTION_USED':
+      return e.cured ? { pigsTreated: 1 } : {};
     case 'BREEDING_STARTED':
       return { breedings: 1 };
     case 'PIG_PETTED':
@@ -57,7 +59,7 @@ export function trackEvents(state: FarmGame, events: readonly GameEvent[]): Farm
   for (const e of events) {
     for (const [id, n] of Object.entries(deltas(e)) as [StatId, number][]) bump(id, n);
     if (e.type === 'SLOT_BOUGHT') bump('slotsOwned', e.slots, true);
-    if (e.type === 'PIG_PETTED' || e.type === 'PIG_FED' || e.type === 'PIG_TREATED') bonded = true;
+    if (e.type === 'PIG_PETTED' || e.type === 'PIG_FED' || e.type === 'PIG_TREATED' || e.type === 'PIG_POTION_USED') bonded = true;
   }
   if (bonded) bump('maxHearts', Math.max(0, ...state.pigs.map((p) => heartsOf(p.bond, BOND))), true);
   return stats ? { ...state, progress: { ...state.progress, stats } } : state;

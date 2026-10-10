@@ -3,6 +3,7 @@ import { art } from '../../../ui/components/icon';
 import { el } from '../../../ui/dom';
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
+import { boostOptions, boostPicker } from '../../../ui/components/boostPicker';
 import { breedFish } from '../logic/actions/breed';
 import { cleanTank } from '../logic/actions/care';
 import { releaseFish } from '../logic/actions/fishing';
@@ -73,12 +74,19 @@ export function tankDialogs(k: DialogKit) {
   }
 
   function openBreed() {
+    let boost: string | undefined;
     k.open(vi.aquarium.breedTitle, (w, close) => {
       const pairs = breedablePairs(w, k.now());
+      const options = boostOptions(w.inventory.items);
+      if (boost !== undefined && !options.some((o) => o.itemId === boost)) boost = undefined;
       return el(
         'div',
         { class: 'aquarium-dialog' },
         el('p', { class: 'c-dialog__hint', text: t(vi.aquarium.breedHint, { feed: AB.breeding.feed, hours: AB.breeding.eggHours }) }),
+        boostPicker(options, boost, (next) => {
+          boost = next;
+          k.redraw();
+        }),
         pairs.length === 0
           ? el('p', { text: vi.aquarium.breedNone })
           : el(
@@ -91,7 +99,7 @@ export function tankDialogs(k: DialogKit) {
                   art(p.art, 'aquarium-dialog__bag-icon'),
                   el('div', {}, el('b', { text: `${p.speciesName}: ${p.label}` }), p.traitNames.length > 0 ? el('small', { text: `${vi.heredity.traits}: ${p.traitNames.join(', ')}` }) : null),
                   actionButton({ label: vi.aquarium.breedGo, reason: breedReason(w, p, k.now(), k.offset()) }, () => {
-                    k.run((s, c) => breedFish(s, { fishAId: p.aId, fishBId: p.bId }, c));
+                    k.run((s, c) => breedFish(s, { fishAId: p.aId, fishBId: p.bId, ...(boost ? { boostItem: boost } : {}) }, c));
                     close();
                   }),
                 ),

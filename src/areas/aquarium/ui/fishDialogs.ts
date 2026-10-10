@@ -3,7 +3,7 @@ import { art } from '../../../ui/components/icon';
 import { el } from '../../../ui/dom';
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import { feedFish, petFish, treatFish } from '../logic/actions/care';
+import { feedFish, petFish, treatFish, useFishPotion } from '../logic/actions/care';
 import { sellFish } from '../logic/actions/trade';
 import { aquariumOf } from '../logic/save/lens';
 import { fishCardVm, quoteLines, type FishCardVm } from './fishCardVm';
@@ -103,6 +103,7 @@ export function fishDialogs(k: DialogKit) {
           actionButton(card.feedFavorite, () => k.run((s, c) => feedFish(s, { fishIds: [fishId], itemId: card.favorite.itemId }, c))),
           actionButton(card.pet, () => k.run((s, c) => petFish(s, { fishId }, c))),
           actionButton(card.treat, () => k.run((s, c) => treatFish(s, { fishId }, c))),
+          ...card.potions.map((potion) => actionButton(potion, () => k.run((s, c) => useFishPotion(s, { fishId, itemId: potion.itemId }, c)))),
           actionButton(card.sell, () => openSell(fishId), 'c-button--ghost'),
         ),
       );
