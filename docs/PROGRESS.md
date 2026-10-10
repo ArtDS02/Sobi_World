@@ -1,12 +1,17 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ9 — Sobi Cloud: xong phần code, chờ chủ dự án chơi thử và duyệt số (`content/cloud/`); phiên bản 0.9.0.
-**Nhánh:** `phase-09-cloud` (tách từ `main` sau khi merge GĐ8; tag `phase-08` đã gắn và push). Chưa có tag `phase-07`.
-**Quy ước:** chủ dự án gắn tag `phase-XX` và push sau mỗi giai đoạn (lần GĐ8 chủ dự án nhờ agent làm).
-**Bước tiếp theo:** chơi thử Cloud (Admin → Số liệu → Cân bằng Sobi Cloud); rồi merge, tag `phase-09`; GĐ10 — Adventure nền tảng.
+**Giai đoạn:** GĐ9 đã nghiệm thu về gameplay và đã merge vào `main` (tag `phase-09`, đã push; số liệu Cloud vẫn chờ chủ dự án chơi thử). Đang bắt đầu GĐ10 — Adventure nền tảng.
+**Chiến lược (decision 017):** gameplay trước, art sau. GĐ10–GĐ13 dùng placeholder; art/animation/VFX/âm thanh làm ở GĐ14; GĐ15 phát hành. Không quay lại phase đã nghiệm thu chỉ vì art/polish.
+**Git:** `main` có đủ tag `phase-01`…`phase-09` (phase-07 gắn ngày 2026-10-11 vào commit merge `189fa62`). `v1.0.0` là của Sobi Farm; bản phát hành Sobi World sẽ dùng `sobi-world-v1.0.0`.
+**Bước tiếp theo:** GĐ10 (nhánh `phase-10-adventure`).
 
 ## Nhật ký
+
+### 2026-10-11 — Điều chỉnh roadmap: gameplay trước, art sau (decision 017)
+✅ Đã làm: rà AGENT_RULES, ROADMAP, HUONG_DAN, ASSET_TODO, decisions; roadmap cũ trộn art/âm thanh vào GĐ13 → tách: GĐ13 Tích hợp và nghiệm thu gameplay (freeze), GĐ14 art/animation/VFX/âm thanh, GĐ15 phát hành; thêm bảng phụ thuộc và nghiệm thu; AGENT_RULES §8; ASSET_TODO đặt là backlog GĐ14; prompt GĐ13–15 trong HUONG_DAN; `CLAUDE.md`. Lịch sử GĐ1–GĐ9 và đặc tả gameplay không đổi.
+✅ Nghiệm thu GĐ9 (gameplay): `npm run check` xanh, test Cloud (Healing Potion cứu heo nguy kịch, hoa tăng đột biến khi lai, ≥ 2 công dụng mỗi hoa), build chạy; art placeholder không chặn. Tag: kiểm tra trước khi gắn, `phase-07` và `phase-09` mới, không trùng, không force-push.
+⚠️ Còn lại của GĐ9: art Cloud (ASSET_TODO, làm ở GĐ14), chủ dự án chơi thử số liệu Cloud.
 
 ### 2026-10-11 — GĐ9 hoàn thành: Sobi Cloud
 ✅ Đã làm (8 việc của prompt GĐ9; quyết định ở `docs/decisions/016-cloud.md`):

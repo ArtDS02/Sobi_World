@@ -2,6 +2,8 @@
 
 Mỗi giai đoạn kết thúc khi **game chạy được, save cũ tải được, test qua, Admin cập nhật**. Không bắt đầu giai đoạn sau khi giai đoạn trước chưa đạt.
 
+**Chiến lược (decision 017, 2026-10-11): gameplay trước, art sau.** Các giai đoạn gameplay (GĐ1–GĐ12) và giai đoạn tích hợp (GĐ13) dùng placeholder cho art, animation, VFX, âm thanh; UI vẫn phải đủ để chơi và kiểm thử. Toàn bộ art/animation/VFX/âm thanh làm một lần ở **GĐ14**, sau khi gameplay đã nghiệm thu. Không quay lại giai đoạn đã nghiệm thu chỉ để thêm art hay polish (việc đó vào `docs/ASSET_TODO.md` và GĐ14); chỉ sửa lại khi có lỗi gameplay, kiến trúc hoặc tích hợp thật, và phải ghi vào `PROGRESS.md`.
+
 ## Tổng quan
 
 | # | Giai đoạn | Mốc |
@@ -18,11 +20,14 @@ Mỗi giai đoạn kết thúc khi **game chạy được, save cũ tải đư�
 | 10 | Adventure nền tảng (đánh theo lượt) | |
 | 11 | Adventure liên hệ thống, công nghệ trang trại | **Vòng lặp thế giới đầy đủ** |
 | 12 | Thế giới động: thời tiết, sự kiện, chợ | |
-| 13 | Hoàn thiện và phát hành | **Bản phát hành 1.0** |
+| 13 | Tích hợp, kiểm thử toàn bộ gameplay, nghiệm thu | **Gameplay freeze** (hết đổi cơ chế) |
+| 14 | Hoàn thiện art, animation, VFX, âm thanh | Hết `placeholder` trong manifest |
+| 15 | Phát hành | **Bản phát hành 1.0** |
 
 **Lý do thứ tự:**
 - Thời gian thật (GĐ2) ảnh hưởng mọi hệ thống, phải có trước khi thêm Area.
 - Đóng gói desktop làm sớm (GĐ4) để phát hiện lỗi cài đặt khi dự án còn nhỏ. Sau đó mỗi giai đoạn đều phải build được.
+- Gameplay trước, art sau (decision 017): art làm khi cơ chế đã đứng yên thì không phải vẽ lại; asset đi qua id → manifest nên thay placeholder không đụng logic.
 - Sau GĐ6, **dừng lại chơi thử vài ngày thật**. Nếu vòng lặp Farm + Garden chưa vui, chỉnh trước khi làm tiếp. Thêm Area không cứu được vòng lặp lõi kém.
 
 ---
@@ -71,5 +76,28 @@ Mỗi giai đoạn kết thúc khi **game chạy được, save cũ tải đư�
 ## GĐ12 — Thế giới động
 **Kết quả:** Thời tiết theo ngày; sự kiện mùa với Event Tokens; NPC Thương nhân; cân bằng lại kinh tế tổng thể.
 
-## GĐ13 — Hoàn thiện và phát hành
-**Kết quả:** Âm thanh và nhạc; hiệu ứng; trợ năng (cỡ chữ, chế độ màu); ngôn ngữ Việt/Anh; tối ưu hiệu năng; kiểm thử toàn bộ; installer cuối cùng.
+## GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu (gameplay freeze)
+**Phụ thuộc:** GĐ1–GĐ12 đã nghiệm thu.
+**Kết quả:** UI chức năng hoàn chỉnh cho mọi luồng (placeholder art vẫn được); trợ năng chức năng (cỡ chữ, chế độ màu dễ nhìn, tắt rung màn hình); ngôn ngữ Việt/Anh từ bảng chuỗi; đo và tối ưu hiệu năng (FPS, bù offline); rà "không tài nguyên chết" toàn bộ item; chơi thử đủ các luồng chính trên bản cài; kiểm save/migration từ mọi phiên bản save trước; sửa lỗi gameplay/kiến trúc; chốt cân bằng; danh sách nghiệm thu từng Area.
+**Xong khi:** mọi tiêu chí nghiệm thu gameplay của GĐ1–GĐ12 chạy đúng trên bản cài; `npm run check` và e2e xanh; chủ dự án chơi thử ≥ 7 ngày thật và duyệt; **sau đó không đổi cơ chế nữa** (chỉ sửa lỗi). Art placeholder không chặn nghiệm thu.
+
+## GĐ14 — Hoàn thiện art, animation, VFX, âm thanh
+**Phụ thuộc:** GĐ13 đã nghiệm thu (gameplay freeze).
+**Kết quả:** thay toàn bộ `placeholder` bằng art cuối theo `docs/ASSET_TODO.md` (art từng Area, vật phẩm, NPC, UI); animation nhân vật/sinh vật/cảnh; VFX (lên cấp, mở khóa, khám phá Codex, thời tiết, sự kiện); nhạc nền mỗi Area + Sảnh và âm thanh tương tác; polish UI. Làm theo từng Area, qua skill `image-to-asset` và `npm run assets:check`.
+**Xong khi:** `npm run assets:release` qua (hết `placeholder`); không đổi logic, content hay save (nếu buộc đổi thì ghi decision); test và e2e vẫn xanh; kích thước và hiệu năng không tụt; chủ dự án duyệt hình và âm thanh.
+
+## GĐ15 — Phát hành
+**Phụ thuộc:** GĐ14 xong.
+**Kết quả:** rà lần cuối (lỗi, chữ, giao diện); kiểm save/migration từ mọi phiên bản; installer cuối cùng, phiên bản 1.0.0, ghi chú phát hành ngắn.
+**Xong khi:** cài và chơi từ đầu trên máy sạch, đổi ngôn ngữ, chỉnh âm lượng; save từ các bản thử cũ mở được; tag `sobi-world-v1.0.0` (tag `v1.0.0` đã thuộc Sobi Farm).
+
+## Phụ thuộc và nghiệm thu các giai đoạn còn lại
+
+| Giai đoạn | Cần có trước | Nghiệm thu (tóm tắt) |
+|---|---|---|
+| GĐ10 Adventure nền tảng | GĐ1–GĐ9 (creature, health, bond, items, potion) | Trận theo lượt đúng luật; ≥ 12 skill; thua chỉ Kiệt sức 4 giờ; mô phỏng 100 trận ra tỉ lệ thắng hợp lý |
+| GĐ11 Adventure liên hệ thống | GĐ10 | Loot nâng công trình và công nghệ; mọi item ≥ 2 công dụng; cân bằng 14 ngày; chủ dự án duyệt |
+| GĐ12 Thế giới động | GĐ11 | Thời tiết theo seed (nhất quán mọi chế độ mô phỏng), 4 sự kiện, Thương nhân, Admin bật thử; kinh tế tổng thể cân bằng |
+| GĐ13 Tích hợp | GĐ12 | Như mục GĐ13 |
+| GĐ14 Art | GĐ13 | Như mục GĐ14 |
+| GĐ15 Phát hành | GĐ14 | Như mục GĐ15 |

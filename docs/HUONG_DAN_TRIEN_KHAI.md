@@ -12,6 +12,7 @@
 
 ## B. Cách dùng
 
+- **Gameplay trước, art sau (decision 017):** từ nay mọi giai đoạn gameplay (GĐ10–GĐ13) dùng placeholder cho art, animation, VFX, âm thanh và ghi nhu cầu vào `docs/ASSET_TODO.md`; art làm ở GĐ14. Không quay lại phase đã nghiệm thu chỉ để thêm art.
 - **Mỗi giai đoạn mở một phiên agent mới.** Copy nguyên khối prompt của giai đoạn đó.
 - Agent sẽ dừng ở **điểm dừng** để bạn duyệt. Đọc báo cáo, trả lời "Đồng ý, tiếp tục" hoặc yêu cầu sửa.
 - Xong giai đoạn: làm danh sách **"Bạn kiểm tra"** bên dưới mỗi prompt. Đạt thì mới sang giai đoạn sau.
@@ -362,23 +363,71 @@ KẾT THÚC: cập nhật PROGRESS.md, báo cáo theo mẫu, build lại.
 
 ---
 
-### GĐ13 — Hoàn thiện và phát hành
+### GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu
+
+```
+Bạn là lập trình viên chính kiêm QA của dự án Sobi World.
+
+ĐỌC TRƯỚC: docs/AGENT_RULES.md (đặc biệt §8), docs/PROGRESS.md, docs/ROADMAP.md (GĐ13), docs/decisions/017-gameplay-first-art-later.md, docs/BUILD.md.
+
+NHIỆM VỤ: Giai đoạn 13 — chốt toàn bộ gameplay. Art vẫn là placeholder; KHÔNG làm art, animation, VFX, âm thanh ở giai đoạn này.
+
+VIỆC CẦN LÀM:
+1. Lập danh sách nghiệm thu từng Area và hệ thống chung (từ ROADMAP và spec), chạy từng mục, ghi kết quả vào PROGRESS.md.
+2. UI chức năng: mọi luồng thao tác được, nút nói lý do khi tắt; không dựa vào art.
+3. Trợ năng chức năng: cỡ chữ, chế độ màu dễ nhìn, tắt rung màn hình.
+4. Ngôn ngữ: hoàn thiện tiếng Việt, thêm tiếng Anh từ bảng chuỗi, chọn trong Cài đặt.
+5. Hiệu năng: đo FPS và thời gian bù offline; tối ưu chỗ chậm.
+6. Rà "không tài nguyên chết" cho toàn bộ item; kiểm save/migration từ mọi phiên bản save trước.
+7. Chơi thử các luồng chính trên bản cài (dist:win), sửa lỗi gameplay/kiến trúc thật; chạy sim:week dài để xem cân bằng.
+8. Chốt gameplay freeze: ghi danh sách những gì đã đóng băng.
+
+ĐIỂM DỪNG: sau bước 8, gửi báo cáo và chờ tôi duyệt (chơi thử ≥ 7 ngày thật).
+
+KẾT THÚC: cập nhật PROGRESS.md, báo cáo theo mẫu, build lại.
+```
+
+**Bạn kiểm tra:** Chơi từ đầu trên máy sạch, đủ luồng Farm → Garden → Aquarium → Cloud → Adventure; không còn lỗi chặn; cân bằng ổn.
+
+---
+
+### GĐ14 — Hoàn thiện art, animation, VFX, âm thanh
+
+```
+Bạn là art director kiêm lập trình viên của dự án Sobi World.
+
+ĐỌC TRƯỚC: docs/AGENT_RULES.md, docs/PROGRESS.md, docs/ROADMAP.md (GĐ14), docs/ASSET_TODO.md, docs/decisions/017-gameplay-first-art-later.md; skill image-to-asset.
+
+NHIỆM VỤ: Giai đoạn 14 — thay toàn bộ placeholder bằng art cuối. Không đổi logic, content hay save.
+
+VIỆC CẦN LÀM (làm theo từng Area, báo cáo sau mỗi Area):
+1. Art theo ASSET_TODO.md và ảnh tham khảo trong docs/reference-assets/ và asset/reference/.
+2. Animation nhân vật, sinh vật, cảnh; VFX (lên cấp, mở khóa, Codex, thời tiết, sự kiện).
+3. Nhạc nền mỗi Area và Sảnh; âm thanh tương tác; chỉnh âm lượng đã có ở Cài đặt.
+4. Polish UI (bố cục, chuyển cảnh, khoảng cách).
+5. npm run assets:check và npm run assets:release phải qua; test và e2e xanh.
+
+ĐIỂM DỪNG: sau mỗi Area, gửi ảnh chụp và chờ tôi duyệt.
+
+KẾT THÚC: cập nhật PROGRESS.md, ASSET_TODO.md, báo cáo theo mẫu, build lại.
+```
+
+**Bạn kiểm tra:** Xem từng Area, từng vật phẩm, nghe âm thanh; hình khớp phong cách; game vẫn mượt.
+
+---
+
+### GĐ15 — Phát hành
 
 ```
 Bạn là lập trình viên chính của dự án Sobi World.
 
-ĐỌC TRƯỚC: docs/AGENT_RULES.md, docs/PROGRESS.md, docs/ROADMAP.md (GĐ13), docs/BUILD.md.
+ĐỌC TRƯỚC: docs/AGENT_RULES.md, docs/PROGRESS.md, docs/ROADMAP.md (GĐ15), docs/BUILD.md.
 
-NHIỆM VỤ: Giai đoạn 13 — chuẩn bị bản phát hành 1.0.
+NHIỆM VỤ: Giai đoạn 15 — chuẩn bị bản phát hành 1.0.
 
 VIỆC CẦN LÀM:
-1. Âm thanh: nhạc nền mỗi Area và Sảnh, hiệu ứng âm thanh tương tác; chỉnh âm lượng trong Cài đặt. Liệt kê âm thanh cần có vào docs/ASSET_TODO.md nếu chưa có file.
-2. Hiệu ứng nhỏ: lên cấp, mở khóa, khám phá Codex.
-3. Trợ năng: cỡ chữ, chế độ màu dễ nhìn, tắt rung màn hình.
-4. Ngôn ngữ: hoàn thiện tiếng Việt, thêm tiếng Anh từ bảng chuỗi, chọn trong Cài đặt.
-5. Hiệu năng: đo FPS và thời gian bù offline; tối ưu chỗ chậm.
-6. Rà toàn bộ: lỗi, chữ, giao diện, save/migration từ mọi phiên bản save trước.
-7. Installer cuối cùng, phiên bản 1.0.0, ghi chú phát hành ngắn.
+1. Rà lần cuối: lỗi, chữ, giao diện; kiểm save/migration từ mọi phiên bản save trước.
+2. Installer cuối cùng, phiên bản 1.0.0, ghi chú phát hành ngắn, tag sobi-world-v1.0.0 (v1.0.0 đã thuộc Sobi Farm, không tạo trùng).
 
 KẾT THÚC: cập nhật PROGRESS.md, báo cáo theo mẫu, đường dẫn file cài 1.0.0.
 ```

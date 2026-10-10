@@ -2,6 +2,8 @@
 
 `npm run assets:release` chỉ qua khi hết hàng `placeholder`. Art Sobi Farm đã ổn, không đụng tới.
 
+> **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `docs/reference-assets/` và `asset/reference/`.
+
 ## GĐ9 — Sobi Cloud
 Ảnh tham khảo (do chủ dự án cấp): `docs/reference-assets/sobi-cloud/` (`item-assets.png`, `environment-assets.png`, `asset-design.png`).
 | Thứ cần ở GĐ9 | Có trong ảnh tham khảo | Ghi chú |

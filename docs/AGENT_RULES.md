@@ -50,3 +50,10 @@ Cuối mỗi bước lớn và cuối giai đoạn, báo theo mẫu:
 👉 Chủ dự án cần kiểm tra:
 ➡️ Bước tiếp theo:
 ```
+
+## 8. Gameplay trước, art sau (decision 017)
+- Giai đoạn gameplay dùng **placeholder** cho art, animation, VFX, âm thanh; UI chức năng vẫn đủ để chơi và kiểm thử. Placeholder không chặn merge nếu gameplay đạt tiêu chí nghiệm thu.
+- Asset luôn đi qua id → manifest, nên thay placeholder bằng art cuối không được đụng logic.
+- Nhu cầu art mới ghi vào `docs/ASSET_TODO.md`; **không làm art/animation/VFX/polish UI ngoài GĐ14** và không quay lại phase đã nghiệm thu chỉ vì việc đó.
+- Vẫn được sửa phase cũ khi có **lỗi gameplay, lỗi kiến trúc hoặc vấn đề tích hợp thật**: đánh giá ảnh hưởng, sửa phần cần thiết, ghi vào `PROGRESS.md`. Không dùng nguyên tắc này để bỏ qua lỗi.
+- Khi gắn tag hoặc merge: kiểm tra tag đã tồn tại chưa, không force-push, không tạo tag trùng.
