@@ -12,7 +12,7 @@ import { SAVE } from '../../src/core/config/save';
 import { mulberry32 } from '../../src/core/rng';
 import { emptyWorld } from '../../src/core/save/world';
 import { buyItem } from '../../src/areas/farm/logic/actions/buyItem';
-import { makeState } from './stateFactory';
+import { inv, makeState } from './stateFactory';
 
 const ctx = (now = 1_000) => ({ now, rng: mulberry32(7) });
 const settings = { musicOn: true, sfxOn: true, reduceMotion: false, tutorialDone: false, lastExportAt: null };
@@ -72,7 +72,7 @@ describe('inventory: the shared bag', () => {
   });
 
   it('a farm purchase that would overflow the bag is refused without spending', () => {
-    const full = { ...makeState(), inventory: { FOOD_BASIC: INVENTORY.slots * INVENTORY.stack, MEDICINE_COMMON: 0, item_manure: 0 } };
+    const full = { ...makeState(), inventory: inv({ FOOD_BASIC: INVENTORY.slots * INVENTORY.stack }) };
     expect(buyItem(full, { itemId: 'FOOD_BASIC', quantity: 1 }, ctx())).toEqual({ ok: false, error: 'INVENTORY_FULL' });
   });
 });

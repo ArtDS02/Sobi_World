@@ -111,6 +111,8 @@ export function renderPigPanel(
         'div',
         { class: 'pig-panel__actions' },
         actionButton(actions.feed, () => on.act(actions.feed.run), '', 'feed'),
+        actions.feedPremium ? actionButton(actions.feedPremium, () => on.act(actions.feedPremium!.run), '', 'feed') : null,
+        actions.feedGrass ? actionButton(actions.feedGrass, () => on.act(actions.feedGrass!.run), '', 'feed') : null,
         actionButton(actions.clean, () => on.act(actions.clean.run), '', 'clean'),
         actionButton(actions.treat, () => on.act(actions.treat.run), '', 'treat'),
         actionButton(breeding.button, () => on.breed(pig), '', 'breed'),

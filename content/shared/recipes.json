@@ -1,0 +1,28 @@
+{
+  "recipes": [
+    {
+      "id": "recipe_pig_feed",
+      "nameVi": "Thức ăn heo",
+      "building": "mill",
+      "inputs": { "item_corn": 2, "item_wheat": 1 },
+      "outputs": { "FOOD_BASIC": 4 },
+      "durationMin": 10
+    },
+    {
+      "id": "recipe_premium_feed",
+      "nameVi": "Thức ăn cao cấp",
+      "building": "mill",
+      "inputs": { "item_corn": 2, "item_carrot": 1 },
+      "outputs": { "FOOD_PREMIUM": 2 },
+      "durationMin": 20
+    },
+    {
+      "id": "recipe_fertilizer",
+      "nameVi": "Phân bón",
+      "building": "composter",
+      "inputs": { "item_manure": 3, "item_grass": 1 },
+      "outputs": { "item_fertilizer": 2 },
+      "durationMin": 30
+    }
+  ]
+}

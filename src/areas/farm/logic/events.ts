@@ -26,7 +26,7 @@ export type GameEvent =
   // Action feedback (spec §8.0, D25). Gold is signed as in the transaction.
   | { type: 'PIG_BOUGHT'; pigId: string; breed: BreedId }
   | { type: 'PIG_ADOPTED'; pigId: string; breed: BreedId } // a newborn raised from the nursery (BR-1)
-  | { type: 'PIG_FED'; pigId: string }
+  | { type: 'PIG_FED'; pigId: string; itemId?: string }
   | { type: 'PIG_CLEANED'; pigIds: string[] }
   | { type: 'PIG_TREATED'; pigId: string }
   | { type: 'TROUGH_UPGRADED'; level: number; capacity: number; gold: number }

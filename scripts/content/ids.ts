@@ -21,7 +21,7 @@ export function listIn(text: string, name: string): string[] {
   const start = text.indexOf(`export const ${name} = [`);
   if (start < 0) return [];
   const body = text.slice(start, text.indexOf('] as const;', start));
-  return [...body.matchAll(/'([A-Z0-9_]+)'/g)].map((m) => m[1]!);
+  return [...body.matchAll(/'([A-Za-z0-9_]+)'/g)].map((m) => m[1]!);
 }
 
 /** Text of ids.generated.ts: `previous` order kept, new content ids appended; throws on a removed id. */

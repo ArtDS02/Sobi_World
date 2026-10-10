@@ -42,7 +42,7 @@ export function farmWorldEvents(e: GameEvent): WorldEvent[] {
     case 'ITEM_SOLD':
       return [...removed(e.itemId, e.quantity), ...coins(e.gold)];
     case 'PIG_FED':
-      return removed('FOOD_BASIC', 1);
+      return removed(e.itemId ?? 'FOOD_BASIC', 1);
     case 'PIG_TREATED':
       return removed('MEDICINE_COMMON', 1);
     case 'DAILY_CLAIMED':

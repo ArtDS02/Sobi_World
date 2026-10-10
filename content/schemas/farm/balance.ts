@@ -10,7 +10,7 @@ const ms = nonNeg;
 const balanceSchema = z.strictObject({
   START_GOLD: nonNeg,
   START_SLOTS: posInt,
-  START_INVENTORY: z.record(itemId, int.min(0)),
+  START_INVENTORY: z.partialRecord(itemId, int.min(0)),
   /** The auto-feeding trough by level (GAME_BALANCE §2.6): food it holds and the price to reach the level (level 1 is free). */
   TROUGH_LEVELS: z.array(z.strictObject({ capacity: posInt, cost: nonNeg })).min(1),
   HUNGER_MAX: posInt,

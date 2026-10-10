@@ -35,8 +35,8 @@ export const STAT_ID_VALUES = [
 ] as const;
 export type StatId = (typeof STAT_ID_VALUES)[number];
 
-/** Item categories of the shared bag (spec V2 §6 Item). Seeds, essences, materials... join with their Area. */
-export const ITEM_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'MATERIAL'] as const;
+/** Item categories of the shared bag (spec V2 §6 Item). Seeds and crops joined with the Garden; essences and more come with their Area. */
+export const ITEM_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'MATERIAL', 'SEED', 'CROP'] as const;
 export type ItemCategory = (typeof ITEM_CATEGORY_VALUES)[number];
 
 export const PRODUCT_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'SUPPLY', 'SPECIAL'] as const;

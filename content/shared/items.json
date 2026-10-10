@@ -24,6 +24,108 @@
       "priceGold": 100,
       "hungerRestore": 0,
       "curesSickness": true
+    },
+    {
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 2,
+      "id": "item_seed_grass",
+      "category": "SEED"
+    },
+    {
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 4,
+      "id": "item_seed_wheat",
+      "category": "SEED"
+    },
+    {
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 5,
+      "id": "item_seed_corn",
+      "category": "SEED"
+    },
+    {
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 6,
+      "id": "item_seed_potato",
+      "category": "SEED"
+    },
+    {
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 8,
+      "id": "item_seed_carrot",
+      "category": "SEED"
+    },
+    {
+      "hungerRestore": 14,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "id": "item_grass",
+      "category": "CROP",
+      "sellGold": 1
+    },
+    {
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "id": "item_wheat",
+      "category": "CROP",
+      "sellGold": 3
+    },
+    {
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "id": "item_corn",
+      "category": "CROP",
+      "sellGold": 4
+    },
+    {
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "id": "item_potato",
+      "category": "CROP",
+      "sellGold": 5
+    },
+    {
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "id": "item_carrot",
+      "category": "CROP",
+      "sellGold": 10
+    },
+    {
+      "hungerRestore": 70,
+      "curesSickness": false,
+      "rarity": "UNCOMMON",
+      "priceGold": 60,
+      "id": "FOOD_PREMIUM",
+      "category": "FOOD"
+    },
+    {
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "rarity": "COMMON",
+      "priceGold": 50,
+      "id": "item_fertilizer",
+      "category": "MATERIAL",
+      "sellGold": 12
     }
   ]
 }

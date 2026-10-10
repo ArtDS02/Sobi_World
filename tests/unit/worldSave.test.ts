@@ -17,6 +17,7 @@ import { WORLD_SAVE_VERSION, type WorldSave } from '../../src/core/save/world';
 import { mulberry32 } from '../../src/core/rng';
 import { makePig } from './pigFactory';
 import { createFarmGameStore, world } from './worldKit';
+import { inv } from './stateFactory';
 
 const T0 = 1_700_000_000_000;
 const ctx = (now = T0) => ({ now, rng: mulberry32(3) });
@@ -35,7 +36,7 @@ function richFarm(): FarmGame {
     pigs: s.pigs.map((p) => ({ ...p, growthProgress: 100, hunger: 90, cleanliness: 90 })),
     decor: ['DECOR_HAY_BALE'],
     progress: { stats: { pigsBought: 2, births: 3 }, claimed: { FIRST_PIG: T0 }, daily: { lastDay: 19000, streak: 4 } },
-    inventory: { FOOD_BASIC: 7, MEDICINE_COMMON: 2, item_manure: 0 },
+    inventory: inv({ FOOD_BASIC: 7, MEDICINE_COMMON: 2 }),
   };
   const bred = breedPigs(grown, { pigAId: grown.pigs[0]!.id, pigBId: grown.pigs[1]!.id }, ctx());
   if (!bred.ok) throw new Error(bred.error);
@@ -79,7 +80,7 @@ describe('world save v8: migration', () => {
     expect(r.save.wallet.coins).toBe(realV7.player.gold);
     expect(farm.player.xp).toBe(realV7.player.xp);
     expect(farm.pigs.map((p) => [p.id, p.name, p.breed])).toEqual(realV7.pigs.map((p) => [p.id, p.name, p.breed]));
-    expect(farm.inventory).toEqual({ ...realV7.inventory, item_manure: 0 }) // items added since count as none;
+    expect(farm.inventory).toEqual(inv({ ...realV7.inventory })) // items added since count as none;
     expect(farm.orders).toEqual(realV7.orders);
     expect(r.save.transactions).toHaveLength(realV7.transactions.length);
   });
@@ -115,8 +116,8 @@ describe('world save v8: migration', () => {
     const extended: WorldSave = {
       ...w,
       wallet: { ...w.wallet, gems: 12 },
-      inventory: { items: { ...w.inventory.items, item_carrot: 5 } },
-      areas: { ...w.areas, sobi_garden: { plots: [1, 2] } },
+      inventory: { items: { ...w.inventory.items, item_future: 5 } },
+      areas: { ...w.areas, sobi_future: { plots: [1, 2] } },
     };
     const r = parseSave(JSON.stringify(extended), SAVE_CODEC);
     expect(r.ok && r.save).toEqual(extended);

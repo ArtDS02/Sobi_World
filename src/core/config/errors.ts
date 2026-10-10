@@ -13,6 +13,8 @@ export const ERRORS = [
   "INVENTORY_FULL",
   "NO_MANURE",
   "TROUGH_MAX_LEVEL",
+  "PLOT_NOT_FOUND", "PLOT_OCCUPIED", "PLOT_EMPTY", "NOT_RIPE", "NOT_BUILT", "BUILDING_BUSY",
+  "NOTHING_TO_DO", "NOTHING_TO_COLLECT", "MAX_LEVEL_REACHED",
 ] as const;
 
 export type ErrorCode = (typeof ERRORS)[number];

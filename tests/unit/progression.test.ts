@@ -26,14 +26,14 @@ import { farmGameSchema } from '../../src/areas/farm/logic/save/farmSchema';
 import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';
 import { makePig } from './pigFactory';
-import { makeState } from './stateFactory';
+import { inv, makeState } from './stateFactory';
 
 const broke = (patch: Partial<FarmGame> = {}): FarmGame => {
   const s = farm([makePig({ hunger: 0 })]);
   return {
     ...s,
     player: { ...s.player, gold: 10 },
-    inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 0, item_manure: 0 },
+    inventory: inv(),
     trough: { ...s.trough, food: 0 },
     ...patch,
   };

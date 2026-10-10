@@ -1,4 +1,5 @@
 // Starter state (D7) with an INITIAL_GOLD transaction (spec §9.1).
+import { ITEM_ID_VALUES } from '../../../../core/config/ids';
 import { BALANCE } from '../config/balance';
 import { FARM_DOC_VERSION } from './legacyConfig';
 import { changeGold } from '../gold';
@@ -18,7 +19,7 @@ export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {
     pigs: [],
     nursery: [],
     trough: { food: 0, capacity: BALANCE.TROUGH_LEVELS[0]!.capacity, level: 1, lastResolvedAt: ctx.now },
-    inventory: { ...BALANCE.START_INVENTORY },
+    inventory: Object.fromEntries(ITEM_ID_VALUES.map((id) => [id, BALANCE.START_INVENTORY[id] ?? 0])) as FarmGame['inventory'],
     orders: [],
     collection: { discoveredBreeds: [] },
     transactions: [],

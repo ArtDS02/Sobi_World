@@ -77,6 +77,18 @@ export const ITEM_ID_VALUES = [
   'FOOD_BASIC',
   'MEDICINE_COMMON',
   'item_manure',
+  'item_seed_grass',
+  'item_seed_wheat',
+  'item_seed_corn',
+  'item_seed_potato',
+  'item_seed_carrot',
+  'item_grass',
+  'item_wheat',
+  'item_corn',
+  'item_potato',
+  'item_carrot',
+  'FOOD_PREMIUM',
+  'item_fertilizer',
 ] as const;
 
 export const DECOR_ID_VALUES = [

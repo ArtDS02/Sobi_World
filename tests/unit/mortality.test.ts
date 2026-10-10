@@ -14,7 +14,7 @@ import { farmWorldEvents } from '../../src/areas/farm/logic/worldEvents';
 import { HEALTH } from '../../src/core/config/health';
 import { sequenceRng } from '../../src/core/rng';
 import { makePig } from './pigFactory';
-import { makeState } from './stateFactory';
+import { inv, makeState } from './stateFactory';
 
 const SEC = 1000;
 const H = 3_600 * SEC;
@@ -23,7 +23,7 @@ const rng = () => sequenceRng([1 - 1e-12]);
 const sickFarm = (extra: Partial<FarmGame> = {}): FarmGame => ({
   ...makeState([makePig({ isSick: true, lastSickAt: 0, growthProgress: 100, hunger: 100, cleanliness: 100 })], 50),
   createdAt: -1e12,
-  inventory: { FOOD_BASIC: 10, MEDICINE_COMMON: 3, item_manure: 0 },
+  inventory: inv({ FOOD_BASIC: 10, MEDICINE_COMMON: 3 }),
   ...extra,
 });
 const types = (events: { type: string }[]) => events.map((e) => e.type);
@@ -164,7 +164,7 @@ describe('raking the pen: Dọn phân → item_manure, then sold', () => {
   const withPiles = (manure: number, items: Partial<FarmGame['inventory']> = {}): FarmGame => ({
     ...makeState([makePig()], 0),
     manure,
-    inventory: { FOOD_BASIC: 0, MEDICINE_COMMON: 0, item_manure: 0, ...items },
+    inventory: inv(items),
   });
 
   it('every pile becomes one item_manure; the pen is clean; 2 XP a pile', () => {

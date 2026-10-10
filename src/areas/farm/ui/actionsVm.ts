@@ -73,6 +73,9 @@ export function pigActions(save: FarmGame, pigId: string, now: number) {
   const args = { pigId };
   return {
     feed: vm(save, now, vi.action.feed, (s, c) => feedPig(s, args, c), vi.disabled.noFood),
+    /** The Garden's foods, offered only while the bag holds some. */
+    feedPremium: save.inventory.FOOD_PREMIUM > 0 ? vm(save, now, t(vi.action.feedPremium, { count: save.inventory.FOOD_PREMIUM }), (s, c) => feedPig(s, { ...args, itemId: 'FOOD_PREMIUM' }, c)) : null,
+    feedGrass: save.inventory.item_grass > 0 ? vm(save, now, t(vi.action.feedGrass, { count: save.inventory.item_grass }), (s, c) => feedPig(s, { ...args, itemId: 'item_grass' }, c)) : null,
     clean: vm(save, now, vi.action.clean, (s, c) => cleanPig(s, args, c)),
     treat: vm(save, now, vi.action.treat, (s, c) => treatPig(s, args, c), vi.disabled.noMedicine),
     sell: vm(save, now, vi.action.sell, (s, c) => sellPig(s, args, c)),

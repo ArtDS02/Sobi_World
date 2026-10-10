@@ -42,6 +42,9 @@ export const GIFT_PROP_ID = 'prop_gift_box'; // U06
 export const SEASON_UNSIGNED_IDS: readonly string[] = ['prop_water_well'];
 export const SLEEP_FALLBACK_FX: FxId = 'fx_zzz'; // DECISIONS Q5
 
+/** Icon of an item without a UI icon of its own: `item_corn` → `ui_item_corn`, `FOOD_PREMIUM` → `ui_item_food_premium`. */
+export const itemArtId = (itemId: string): string => `ui_item_${itemId.replace(/^item_/, '').toLowerCase()}`;
+
 /** DOM icons (spec §11.1 DOM layer: ui_*), by what they label. Resolved through the manifest. */
 export const UI_ICON = {
   gold: 'ui_icon_gold',

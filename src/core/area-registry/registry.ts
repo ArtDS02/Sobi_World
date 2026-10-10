@@ -39,6 +39,12 @@ export interface AreaModule {
   updateActive?(dtMs: number): void;
 }
 
+/** An Area just opened (its conditions were met): the world's own event, not an Area's. */
+export interface AreaUnlockedEvent extends EventBase {
+  type: 'AREA_UNLOCKED';
+  areaId: string;
+}
+
 export interface SummaryLine {
   key: string;
   params?: Readonly<Record<string, string | number>>;
@@ -86,20 +92,47 @@ export function createAreaRegistry(
     return { ...world, world: { ...world.world, unlockedAreas: starting.map((m) => m.manifest.id) } };
   }
 
+  /** Opens every built Area that is closed and meets its conditions: its first state, its id in `unlockedAreas`. */
+  function unlockReady(world: WorldSave, ctx: ActionContext): { state: WorldSave; events: AreaUnlockedEvent[] } {
+    const codex = Object.values(world.collection.discovered).reduce((n, ids) => n + ids.length, 0);
+    const wd = worldDevelopment({ areaLevels: levels(world), codexEntries: codex, buildingsLv3: 0 }, rules);
+    let state = world;
+    const events: AreaUnlockedEvent[] = [];
+    for (const m of modules) {
+      const id = m.manifest.id;
+      if (state.world.unlockedAreas.includes(id) || unlockGaps(m.manifest.unlock, levels(state), wd).length > 0) continue;
+      const created = id in state.areas ? state : m.init(state, ctx);
+      state = { ...created, world: { ...created.world, unlockedAreas: [...created.world.unlockedAreas, id] } };
+      events.push({ type: 'AREA_UNLOCKED', areaId: id });
+    }
+    return { state, events };
+  }
+
   return {
     modules,
     get: (id: string): AreaModule | undefined => byId.get(id),
     newWorld,
 
-    /** Every Area with state catches up to `now`, slice by slice (core/simulation; ARCHITECTURE §6). */
+    /**
+     * Every Area with state catches up to `now`, slice by slice (core/simulation; ARCHITECTURE §6); then any
+     * Area whose conditions are met opens (its state is created, `AREA_UNLOCKED` is reported).
+     */
     advance(world: WorldSave, now: number, rng: Rng, dayOffsetMs: number, mode: SimMode = 'online'): SimulationResult {
-      return simulateWorld(present(world), world, now, rng, dayOffsetMs, mode, time);
+      const r = simulateWorld(present(world), world, now, rng, dayOffsetMs, mode, time);
+      if (r.rewound) return r;
+      const opened = unlockReady(r.state, { now, rng, dayOffsetMs });
+      return opened.events.length === 0 ? r : { ...r, state: opened.state, events: [...r.events, ...opened.events] };
     },
+
+    unlockReady,
 
     /** The world was simulated up to the earliest of its Areas. */
     simulatedAt: (world: WorldSave): number => Math.min(...present(world).map((m) => m.simulatedAt(world))),
 
-    toWorldEvents: (events: readonly EventBase[]): WorldEvent[] => modules.flatMap((m) => m.toWorldEvents(events)),
+    toWorldEvents: (events: readonly EventBase[]): WorldEvent[] => [
+      ...events.filter((e): e is AreaUnlockedEvent => e.type === 'AREA_UNLOCKED').map((e): WorldEvent => ({ type: 'area.unlocked', area: e.areaId })),
+      ...modules.flatMap((m) => m.toWorldEvents(events)),
+    ],
 
     summary: (events: readonly EventBase[], world: WorldSave, now: number): SummaryLine[] =>
       modules.flatMap((m) => (m.manifest.id in world.areas ? (m.getSummary?.(events, world, now) ?? []) : [])),

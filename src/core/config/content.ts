@@ -9,6 +9,7 @@ import healthRaw from '../../../content/shared/health.json';
 import inventoryRaw from '../../../content/shared/inventory.json';
 import itemsRaw from '../../../content/shared/items.json';
 import progressionRaw from '../../../content/shared/progression.json';
+import recipesRaw from '../../../content/shared/recipes.json';
 import qualityRaw from '../../../content/shared/quality.json';
 import shopRaw from '../../../content/shared/shop.json';
 import valuationRaw from '../../../content/shared/valuation.json';
@@ -21,6 +22,7 @@ import { healthFileSchema } from '../../../content/schemas/shared/health';
 import { inventoryFileSchema } from '../../../content/schemas/shared/inventory';
 import { itemsFileSchema } from '../../../content/schemas/shared/items';
 import { progressionFileSchema } from '../../../content/schemas/shared/progression';
+import { recipesFileSchema } from '../../../content/schemas/shared/recipes';
 import { qualityFileSchema } from '../../../content/schemas/shared/quality';
 import { shopFileSchema } from '../../../content/schemas/shared/shop';
 import { valuationFileSchema } from '../../../content/schemas/shared/valuation';
@@ -31,6 +33,7 @@ export const CONTENT = {
   items: loadContent('shared/items.json', itemsFileSchema, itemsRaw),
   inventory: loadContent('shared/inventory.json', inventoryFileSchema, inventoryRaw),
   progression: loadContent('shared/progression.json', progressionFileSchema, progressionRaw),
+  recipes: loadContent('shared/recipes.json', recipesFileSchema, recipesRaw),
   quality: loadContent('shared/quality.json', qualityFileSchema, qualityRaw),
   shop: loadContent('shared/shop.json', shopFileSchema, shopRaw),
   achievements: loadContent('shared/achievements.json', achievementsFileSchema, achievementsRaw),

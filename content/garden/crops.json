@@ -1,0 +1,49 @@
+{
+  "crops": [
+    {
+      "id": "crop_grass",
+      "nameVi": "Cỏ",
+      "seedItem": "item_seed_grass",
+      "produceItem": "item_grass",
+      "growHours": 1,
+      "yield": 3,
+      "art": "crop_grass"
+    },
+    {
+      "id": "crop_wheat",
+      "nameVi": "Lúa mì",
+      "seedItem": "item_seed_wheat",
+      "produceItem": "item_wheat",
+      "growHours": 3,
+      "yield": 3,
+      "art": "crop_wheat"
+    },
+    {
+      "id": "crop_corn",
+      "nameVi": "Bắp",
+      "seedItem": "item_seed_corn",
+      "produceItem": "item_corn",
+      "growHours": 4,
+      "yield": 3,
+      "art": "crop_corn"
+    },
+    {
+      "id": "crop_potato",
+      "nameVi": "Khoai tây",
+      "seedItem": "item_seed_potato",
+      "produceItem": "item_potato",
+      "growHours": 5,
+      "yield": 3,
+      "art": "crop_potato"
+    },
+    {
+      "id": "crop_carrot",
+      "nameVi": "Cà rốt",
+      "seedItem": "item_seed_carrot",
+      "produceItem": "item_carrot",
+      "growHours": 6,
+      "yield": 2,
+      "art": "crop_carrot"
+    }
+  ]
+}
