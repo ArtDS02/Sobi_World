@@ -5,6 +5,7 @@ import achievementsRaw from '../../../content/shared/achievements.json';
 import bondRaw from '../../../content/shared/bond.json';
 import codexRaw from '../../../content/shared/codex.json';
 import goalsRaw from '../../../content/shared/goals.json';
+import npcsRaw from '../../../content/shared/npcs.json';
 import ordersRaw from '../../../content/shared/orders.json';
 import characterRaw from '../../../content/shared/character.json';
 import dailyRaw from '../../../content/shared/daily.json';
@@ -22,6 +23,7 @@ import { achievementsFileSchema } from '../../../content/schemas/shared/achievem
 import { bondFileSchema } from '../../../content/schemas/shared/bond';
 import { codexFileSchema } from '../../../content/schemas/shared/codex';
 import { goalsFileSchema } from '../../../content/schemas/shared/goals';
+import { npcsFileSchema } from '../../../content/schemas/shared/npcs';
 import { ordersFileSchema } from '../../../content/schemas/shared/orders';
 import { characterFileSchema } from '../../../content/schemas/shared/character';
 import { dailyFileSchema } from '../../../content/schemas/shared/daily';
@@ -48,6 +50,7 @@ export const CONTENT = {
   codex: loadContent('shared/codex.json', codexFileSchema, codexRaw),
   goals: loadContent('shared/goals.json', goalsFileSchema, goalsRaw),
   orders: loadContent('shared/orders.json', ordersFileSchema, ordersRaw),
+  npcs: loadContent('shared/npcs.json', npcsFileSchema, npcsRaw),
   achievements: loadContent('shared/achievements.json', achievementsFileSchema, achievementsRaw),
   daily: loadContent('shared/daily.json', dailyFileSchema, dailyRaw),
   dayNight: loadContent('shared/daynight.json', dayNightFileSchema, dayNightRaw),

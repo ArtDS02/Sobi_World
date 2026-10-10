@@ -32,6 +32,8 @@ export interface AreaModule {
   codex?(): readonly CodexKind[];
   /** How many entries its 'ALL' achievements ask for besides the Codex's (the farm: its decorations). */
   totals?(): Readonly<Record<string, number>>;
+  /** What the player could do in it now, most urgent first or not (the registry sorts). */
+  suggest?(world: WorldSave, now: number, dayOffsetMs: number): Suggestion[];
   /** Its events as standard world events (ARCHITECTURE §7); [] for events that are not its own. */
   toWorldEvents(events: readonly EventBase[]): WorldEvent[];
   /** Lines for the "while you were away" screen (spec §5): what happened (the events) and what needs the player now (the world), as string-table keys with parameters. */
@@ -46,6 +48,18 @@ export interface AreaModule {
 export interface AreaUnlockedEvent extends EventBase {
   type: 'AREA_UNLOCKED';
   areaId: string;
+}
+
+/** One thing the player could do now, from an Area (the "next step" chip, spec V2 §13: always know what to do next). */
+export interface Suggestion {
+  /** String-table key `suggest.<area>.<what>` and its parameters. */
+  key: string;
+  params?: Readonly<Record<string, string | number>>;
+  /** 0-100: how urgent (≥ 80 = care that cannot wait). */
+  priority: number;
+  tone?: 'warn' | 'alert';
+  /** Where doing it leads: a panel of the shell, a pig, or a place. */
+  goto?: { target: string; id?: string };
 }
 
 export interface SummaryLine {
@@ -146,6 +160,13 @@ export function createAreaRegistry(
 
     summary: (events: readonly EventBase[], world: WorldSave, now: number): SummaryLine[] =>
       modules.flatMap((m) => (m.manifest.id in world.areas ? (m.getSummary?.(events, world, now) ?? []) : [])),
+
+    /** What the player could do now across the open Areas, most urgent first. */
+    suggest: (world: WorldSave, now: number, dayOffsetMs = 0): Suggestion[] =>
+      modules
+        .filter((m) => m.manifest.id in world.areas)
+        .flatMap((m) => m.suggest?.(world, now, dayOffsetMs) ?? [])
+        .sort((a, b) => b.priority - a.priority),
 
     /** Every Codex kind the Areas offer (the world's own kinds are added by the app). */
     codexKinds: (): CodexKind[] => modules.flatMap((m) => m.codex?.() ?? []),

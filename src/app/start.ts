@@ -181,6 +181,16 @@ export async function start(root: HTMLElement) {
       act: (run) => void world.dispatch(run),
       goals: GOALS,
       codexKinds: () => GOALS.codexKinds(),
+      suggest: (now, dayOffsetMs) => {
+        const save = world.getSnapshot().save;
+        return save ? AREAS.suggest(save, now, dayOffsetMs) : [];
+      },
+      nextLocked: () => {
+        const save = world.getSnapshot().save;
+        const gap = save ? AREAS.areas(save).find((a) => !a.unlocked && a.gaps.some((g) => g.kind === 'worldLevel')) : undefined;
+        const need = gap?.gaps.find((g) => g.kind === 'worldLevel');
+        return gap && need ? { name: gap.manifest.name.vi, level: need.need } : null;
+      },
     },
     characterChoice: {
       current: () => settings.getSnapshot().settings.character,

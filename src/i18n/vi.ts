@@ -91,6 +91,42 @@ export const vi = {
     saveError: "Không lưu được cài đặt phím. Thay đổi vẫn có hiệu lực đến khi tắt game.",
   },
 
+  // The "next step" chip (spec V2 §13): what the player could do now, keys suggest.<area>.<what>.
+  suggest: {
+    farm: {
+      buyPig: "Mua con heo đầu tiên ở Cửa hàng",
+      critical: "{name} đang nguy kịch! Chữa ngay",
+      treat: "{name} bị bệnh, cho uống thuốc",
+      fillTrough: "Máng ăn hết rồi, đổ thức ăn",
+      troughLow: "Máng ăn sắp hết, đổ thêm",
+      nursery: "{count} heo con đang chờ, đưa ra trại",
+      rake: "Có {count} đống phân, dọn ở Giếng nước",
+      ship: "{name} đã lớn, có thể xuất chuồng",
+      gift: "Có hộp quà trên nông trại",
+      pet: "Vuốt ve {name} để thân thiết hơn",
+    },
+    garden: {
+      harvest: "{count} ô cây đã chín, ra vườn thu hoạch",
+      collect: "{count} mẻ đã xong, nhận thành phẩm",
+      water: "{count} ô cây đang khô, tưới nước",
+      plant: "{count} ô đất còn trống, gieo hạt",
+      buildMill: "Xây Máy xay để làm thức ăn cho heo",
+    },
+    world: {
+      login: "Nhận quà hằng ngày",
+      reward: "Có thưởng đang chờ nhận",
+      deliver: "Có đơn ở Bảng đơn Sảnh giao được ngay",
+      goal: "Mục tiêu hôm nay: {text} ({progress})",
+      unlock: "Lên cấp {level} để mở {area}",
+      enterFarm: "Vào Chuồng heo (phím E) để bắt đầu",
+      explore: "Dạo quanh Sảnh hoặc vào một khu để chơi",
+      done: "Hôm nay mọi việc đã ổn, nghỉ ngơi nhé",
+    },
+    go: "Đi",
+    others: "+{count} việc khác",
+    hide: "Ẩn gợi ý",
+  },
+
   // Away-screen lines of each Area (AreaModule.getSummary keys: summary.<area>.<line>).
   summary: {
     farm: {

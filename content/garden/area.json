@@ -22,5 +22,6 @@
     "item_seed_potato",
     "item_seed_carrot"
   ],
+  "npc": "npc_gardener",
   "icon": "prop_garden_gate"
 }

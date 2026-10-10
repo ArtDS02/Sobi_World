@@ -7,6 +7,7 @@ import type { FileDialogs } from '../../../core/save/port';
 import type { ControlInput } from '../../../ui/world/controlInput';
 import type { CharacterChoice } from '../../../ui/components/characterPicker';
 import type { KeySettings } from '../../../ui/world/keySettings';
+import type { Suggestion } from '../../../core/area-registry/registry';
 import type { CodexKind } from '../../../core/collection/codex';
 import type { Goals, WorldAction } from '../../../core/goals/api';
 import type { WorldSave } from '../../../core/save/world';
@@ -17,6 +18,10 @@ export interface WorldUi {
   act(run: WorldAction): void;
   goals: Goals;
   codexKinds(): readonly CodexKind[];
+  /** What the Areas suggest now (most urgent first). */
+  suggest(now: number, dayOffsetMs: number): Suggestion[];
+  /** The next Area still closed and the world level it needs; null when every Area is open. */
+  nextLocked(): { name: string; level: number } | null;
 }
 
 export interface AppOptions {

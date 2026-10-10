@@ -20,6 +20,7 @@ import type { AppOptions, FarmPick, MountedApp, Place } from './appTypes';
 import { setIconSource } from '../../../ui/components/icon';
 import { el, patch } from '../../../ui/dom';
 import { goalsDot } from '../../../ui/goals/goalsVm';
+import { createGuideLayer } from '../../../ui/goals/guideLayer';
 import type { OrdersTab } from '../../../ui/goals/panels';
 import { localDay } from '../../../ui/localDay';
 import { openRenameDialog, openSellDialog, openTroughDialog } from './dialogs';
@@ -60,6 +61,7 @@ export function mountApp(
   const hint = el('div', { class: 'app__hint-host' });
   const coach = el('div', { class: 'app__coach-host' });
   const appEl = el('div', { class: 'app' });
+  const worldEl = el('div', { class: 'app__world' }, stage, opts.overlay ?? '', topbar, hint, coach);
   // Status screens (loading / recovery) only; the game itself is the canvas plus popups.
   const main = el('main', { class: 'app__main' });
   const popupHost = el('div', { class: 'app__popup' });
@@ -71,7 +73,7 @@ export function mountApp(
     banner,
     saveBanner,
     opts.devTools ?? '',
-    el('div', { class: 'app__world' }, stage, opts.overlay ?? '', topbar, hint, coach),
+    worldEl,
     main,
     popupHost,
     toasts,
@@ -172,6 +174,26 @@ export function mountApp(
   });
   const offSettings = [opts.keySettings, opts.characterChoice].map((c) => c?.subscribe(() => ui.panel === 'settings' && rerender()));
 
+  // The guide: the "next step" chip and the Area's NPC (absent in DOM tests of the farm alone).
+  const guide = opts.world && createGuideLayer({
+    now,
+    world: () => opts.world!.save(),
+    goals: opts.world.goals,
+    suggest: opts.world.suggest,
+    nextLocked: opts.world.nextLocked,
+    place: () => ui.place,
+    dialogs,
+    covered: () => ui.panel !== null || dialogs.childElementCount > 0 || !!opts.overlayModal?.(),
+    go: (to) => {
+      if (to.target === 'panel') go(to.id as PanelId);
+      else if (to.target === 'pig' && to.id) { ui.selectedPigId = to.id; go('pig'); }
+      else if (to.target === 'trough') openTrough();
+      else if (to.target === 'well') go('well');
+      else if (to.target === 'garden') opts.goPlace?.('sobi_garden');
+    },
+  });
+  if (guide) worldEl.append(guide.host);
+
   const panelCtx: PanelCtx = { now, assets, opts, ui, pig: handlers, shop, inventory, session, settings, dialogs, act, go, rerender };
 
   function renderPopup(save: FarmGame | null) {
@@ -212,6 +234,7 @@ export function mountApp(
           : renderStatusScreen(snap.status === 'ready' ? 'loading' : snap.status),
       );
       farm?.setVisible(false);
+      guide?.sync();
       return;
     }
     const save = snap.save;
@@ -228,6 +251,7 @@ export function mountApp(
     farm?.setVisible(true); // after main is emptied, so the canvas measures its final host
     patch(hint, ui.place === 'area' ? renderFarmHint(save, () => go('shop'), handlers.act) : null);
     renderPopup(save);
+    guide?.sync();
   }
 
   const offState = store.subscribe(render);

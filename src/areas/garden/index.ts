@@ -7,6 +7,7 @@ import { gardenStage } from './stage';
 import { advanceGardenWorld } from './logic/simulate';
 import { gardenOf, withGarden } from './logic/save/lens';
 import { GARDEN_MIGRATIONS, GARDEN_STATE_VERSION, gardenStateSchema, initialGarden } from './logic/state';
+import { gardenSuggestions } from './logic/suggest';
 import { gardenSummaryLines } from './logic/summary';
 import { gardenEventsToWorld } from './logic/worldEvents';
 
@@ -19,6 +20,7 @@ export const gardenArea: AreaModule = {
   simulatedAt: (world) => gardenOf(world).lastTickedAt,
   rebase: (world, to) => withGarden(world, { ...gardenOf(world), lastTickedAt: to }),
   codex: () => [{ id: 'crop', name: vi.codex.kinds.crop, entries: CROP_LIST.map((c) => ({ id: c.id, name: c.nameVi, artId: c.art })) }],
+  suggest: (world, now) => gardenSuggestions(gardenOf(world), now),
   toWorldEvents: gardenEventsToWorld,
   getSummary: (events, world, now) => gardenSummaryLines(events, gardenOf(world), now),
   // Presentation only: the numbers run the same whether the player is here or not.
