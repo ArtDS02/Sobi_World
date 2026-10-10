@@ -228,6 +228,8 @@ export interface CodexEntryVm {
   thumb: string | null;
   found: boolean;
   rarity: string | null;
+  /** Tooltip: what a found entry is, a clue for an undiscovered one. */
+  title: string | null;
 }
 
 export interface CodexKindVm {
@@ -270,6 +272,7 @@ export function codexVm(world: WorldSave, goals: Goals, kinds: readonly CodexKin
           thumb: e.artId ? (assets?.url(e.artId) ?? null) : null,
           found: got.has(e.id),
           rarity: e.rarity ?? null,
+          title: (got.has(e.id) ? e.detail : e.hint) ?? null,
         })),
       };
     }),

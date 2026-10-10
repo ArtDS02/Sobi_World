@@ -15,6 +15,7 @@ import {
 import { createToaster } from '../../../ui/components/toast';
 import { renderHud } from './components/hud';
 import { openBreedDialog } from './breedDialog';
+import { openPedigreeDialog } from './heredityViews';
 import type { FarmGoto } from '../logic/summary';
 import type { AppOptions, FarmPick, MountedApp, Place } from './appTypes';
 import { setIconSource } from '../../../ui/components/icon';
@@ -93,6 +94,7 @@ export function mountApp(
       openSellDialog(dialogs, pig, vm, act, save ? penMood(save) : 0, now());
     },
     rename: (pig: Pig) => openRenameDialog(dialogs, pig, act),
+    pedigree: (pig: Pig) => openPedigreeDialog(dialogs, pig),
     breed: (pig: Pig) => {
       const save = store.getSnapshot().save;
       if (save) openBreedDialog(dialogs, save, pig, now(), act);

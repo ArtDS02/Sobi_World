@@ -31,6 +31,8 @@ export type GameEvent =
   // GĐ6: petting raises bond (hearts = whole hearts after it); the purpose a pig is raised for.
   | { type: 'PIG_PETTED'; pigId: string; bond: number; hearts: number }
   | { type: 'PIG_PURPOSE_SET'; pigId: string; purpose: Purpose }
+  // GĐ7: 5 hearts opened the pig's hidden trait.
+  | { type: 'PIG_TRAIT_REVEALED'; pigId: string; traitId: string }
   | { type: 'PIG_CLEANED'; pigIds: string[] }
   | { type: 'PIG_TREATED'; pigId: string }
   | { type: 'TROUGH_UPGRADED'; level: number; capacity: number; gold: number }
@@ -78,6 +80,7 @@ export const GAME_EVENT_TYPES = [
   'PIG_FED',
   'PIG_PETTED',
   'PIG_PURPOSE_SET',
+  'PIG_TRAIT_REVEALED',
   'PIG_CLEANED',
   'PIG_TREATED',
   'TROUGH_UPGRADED',

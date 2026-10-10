@@ -17,6 +17,9 @@ export interface CodexEntry {
   name: string;
   artId?: string;
   rarity?: string;
+  /** Said under an undiscovered entry's "???" (a clue, never the answer) and, once found, what the entry is. */
+  hint?: string;
+  detail?: string;
 }
 
 /** Everything of one kind the world offers; the Areas list theirs (`AreaModule.codex`). */

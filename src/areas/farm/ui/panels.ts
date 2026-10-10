@@ -11,6 +11,7 @@ import { openOrderDialog, type Act } from './dialogs';
 import type { InventoryHandlers } from './screens/inventoryScreen';
 import { renderInventoryScreen } from './screens/inventoryScreen';
 import { renderHistoryScreen } from './screens/historyScreen';
+import { renderBreederPanel } from './heredityViews';
 import { renderMenuScreen } from './screens/menuScreen';
 import { renderOrdersScreen } from './screens/ordersScreen';
 import { renderPigPopup, renderWellPopup } from './screens/farmScreen';
@@ -67,6 +68,8 @@ export function renderPanel(c: PanelCtx, save: FarmGame, panel: PanelId): HTMLEl
       return renderSettingsScreen(save, c.session.settingsVm(save), c.settings, c.opts.keySettings, c.opts.characterChoice);
     case 'market':
       return renderMarketScreen(now, localOffsetMs(now));
+    case 'breeder':
+      return renderBreederPanel(save, now, localOffsetMs(now));
     case 'menu':
       return renderMenuScreen(c.go);
     case 'collection':

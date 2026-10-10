@@ -10,6 +10,8 @@ import { openDialog } from '../../../ui/components/dialog';
 import { art } from '../../../ui/components/icon';
 import { rarityBadge } from '../../../ui/components/rarityBadge';
 import type { Act } from './dialogs';
+import { breedingExtras, traitChips } from './heredityVm';
+import { traitChipsEl } from './heredityViews';
 import { el } from '../../../ui/dom';
 
 /** Portrait card of one side of the pair: art on a soft round stage, name, species, gender. */
@@ -90,7 +92,21 @@ export function openBreedDialog(
       el('span', { class: 'c-breed__hearts', text: '♥'.repeat(p.hearts) + '♡'.repeat(5 - p.hearts) }),
       el('span', { class: 'c-breed__heart-label', text: vi.breed.compatLabel }),
     );
+    const partnerPig = save.pigs.find((x) => x.id === p.pigId);
+    const extras = partnerPig ? breedingExtras(save, pig, partnerPig) : null;
     result.replaceChildren(
+      ...(partnerPig && extras
+        ? [
+            el(
+              'div',
+              { class: 'c-breed__traits' },
+              el('p', { class: 'c-breed__hint', text: vi.heredity.parentTraits }),
+              traitChipsEl([...traitChips(pig), ...traitChips(partnerPig)]),
+              el('p', { class: 'c-breed__hint', text: extras.mutation }),
+              ...(extras.pity ? [el('p', { class: 'c-breed__hint c-breed__pity', text: `🍀 ${extras.pity}` })] : []),
+            ),
+          ]
+        : []),
       el('p', { class: 'c-breed__heading', text: vi.breed.chances }),
       ...(p.known ? [el('p', { class: 'c-breed__known', text: `✨ ${p.known}` })] : []),
       el(

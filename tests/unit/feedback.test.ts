@@ -40,6 +40,7 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   PIG_RENAMED: { type: 'PIG_RENAMED', pigId: 'pig-1' },
   PIG_PETTED: { type: 'PIG_PETTED', pigId: 'pig-1', bond: 3, hearts: 0 },
   PIG_PURPOSE_SET: { type: 'PIG_PURPOSE_SET', pigId: 'pig-1', purpose: 'PET' },
+  PIG_TRAIT_REVEALED: { type: 'PIG_TRAIT_REVEALED', pigId: 'pig-1', traitId: 'trait_golden_hoof' },
   PIG_SOLD: { type: 'PIG_SOLD', pigId: 'pig-1', gold: 1200 },
   BREEDING_STARTED: {
     type: 'BREEDING_STARTED',

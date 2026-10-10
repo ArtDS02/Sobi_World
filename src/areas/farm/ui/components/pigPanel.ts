@@ -10,6 +10,8 @@ import type { BoundAction } from '../../store';
 import { pigActions, type ActionVm } from '../actionsVm';
 import { bondVm } from '../bondVm';
 import { breedingVm } from '../breedVm';
+import { traitChipsEl } from '../heredityViews';
+import { traitChips } from '../heredityVm';
 import { el } from '../../../../ui/dom';
 import { pigPanelVm } from '../viewModel';
 import { actionButton } from './actionButton';
@@ -21,6 +23,7 @@ export interface PigPanelHandlers {
   sell: (pig: Pig, vm: ActionVm) => void;
   rename: (pig: Pig) => void;
   breed: (pig: Pig) => void;
+  pedigree: (pig: Pig) => void;
 }
 
 /** One stat line: icon + label + value, with a 0-100 bar when the stat is a gauge. */
@@ -117,6 +120,19 @@ export function renderPigPanel(
         el('span', { class: 'pig-panel__hearts', text: bond.heartsText, attrs: { 'aria-label': bond.summary } }),
         el('span', { class: 'pig-panel__fav', text: bond.favorite }),
         bond.qualityLift ? el('span', { class: 'pig-panel__lift', text: bond.qualityLift }) : null,
+      ),
+      // Traits (GĐ7): visible ones, the hidden one once 5 hearts opened it, and the family tree.
+      el(
+        'div',
+        { class: 'pig-panel__traits' },
+        el('span', { class: 'pig-panel__label', text: vi.heredity.traits }),
+        traitChipsEl(traitChips(pig)),
+        el('button', {
+          class: 'pig-panel__pill',
+          text: vi.heredity.pedigree,
+          attrs: { type: 'button', title: vi.heredity.pedigree },
+          on: { click: () => on.pedigree(pig) },
+        }),
       ),
       // What the pig is raised for: a choice from Adult on.
       el(

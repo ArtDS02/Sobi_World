@@ -7,7 +7,7 @@ import { takeFromBag } from '../../../../core/inventory/bag';
 import { raiseBond, withMoodBoost } from '../../../../systems/bond/bond';
 import { BALANCE } from '../config/balance';
 import { pigFavorite } from '../bond';
-import { bondGainFor } from '../heredity';
+import { bondGainFor, revealEvents } from '../heredity';
 import type { ItemId } from '../types';
 import { addXP } from '../xp';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
@@ -43,6 +43,6 @@ export function feedPig(
     // D11: XP only when the feed was actually needed.
     const effective = pig.hunger <= BALANCE.XP_EFFECTIVE_FEED_MAX_HUNGER;
     const xp = addXP(next, effective ? BALANCE.XP.FEED : 0);
-    return ok(xp.state, [{ type: 'PIG_FED', pigId: pig.id, itemId, ...(favorite ? { favorite } : {}) }], xp.events);
+    return ok(xp.state, [{ type: 'PIG_FED', pigId: pig.id, itemId, ...(favorite ? { favorite } : {}) }, ...revealEvents(pig, loved)], xp.events);
   });
 }

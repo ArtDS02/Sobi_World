@@ -189,10 +189,10 @@ export function renderCodex(vm: CodexVm, act: Act): HTMLElement {
         ...k.entries.map((e) =>
           el(
             'li',
-            { class: `collection__entry${e.found ? '' : ' is-hidden'}`, data: { entry: e.id } },
+            { class: `collection__entry${e.found ? '' : ' is-hidden'}`, data: { entry: e.id }, ...(e.title ? { attrs: { title: e.title } } : {}) },
             thumb(e.thumb, e.name, !e.found),
             el('span', { class: 'collection__name', text: e.name }),
-            e.found && e.rarity ? rarityBadge(e.rarity as Rarity) : null,
+            e.rarity ? rarityBadge(e.rarity as Rarity) : null, // an undiscovered entry still shows its rarity: a clue worth chasing
           ),
         ),
       ),

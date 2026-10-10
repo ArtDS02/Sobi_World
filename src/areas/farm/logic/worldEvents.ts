@@ -45,6 +45,8 @@ export function farmWorldEvents(e: GameEvent): WorldEvent[] {
       return [{ type: 'creature.petted', area, creatureId: e.pigId, hearts: e.hearts }];
     case 'PIG_PURPOSE_SET':
       return [{ type: 'creature.purposeSet', area, creatureId: e.pigId, purpose: e.purpose }];
+    case 'PIG_TRAIT_REVEALED':
+      return [];
     case 'PIG_TREATED':
       return removed('MEDICINE_COMMON', 1);
     case 'RELIEF_CLAIMED':

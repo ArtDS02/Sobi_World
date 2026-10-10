@@ -17,6 +17,7 @@ import {
 } from '../../../systems/breeding';
 import { BREEDS } from './config/breeds';
 import type { BreedId } from './config/ids';
+import type { GameEvent } from './events';
 import type { Pig, NurseryPig } from './types';
 
 /** Whole hearts of a pig's Bond. */
@@ -42,6 +43,12 @@ export const bondGainFor = (pig: Heredity & Pick<Pig, 'bond'>, gain: number): nu
 /** Species of this rarity or above count as "Rare+" for pity. */
 export const isRareBreed = (breed: BreedId): boolean =>
   rarityRank(BREEDS[breed].rarity) >= rarityRank(BREEDING_RULES_DEFAULT.pity.fromRarity);
+
+/** The hidden trait opens when Bond reaches 5 hearts: the event for a pig whose bond just crossed that line. */
+export function revealEvents(before: Pig, after: Pig): GameEvent[] {
+  if (!after.hiddenTrait || pigHearts(before) >= 5 || pigHearts(after) < 5) return [];
+  return [{ type: 'PIG_TRAIT_REVEALED', pigId: after.id, traitId: after.hiddenTrait }];
+}
 
 /** Whether the pig holds a trait it has not shown yet (a hidden trait still closed). */
 export const hasClosedTrait = (pig: Heredity & Pick<Pig, 'bond'>): boolean => !!pig.hiddenTrait && pigHearts(pig) < 5;
