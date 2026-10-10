@@ -4,6 +4,7 @@ import { CONTENT } from './content';
 
 export const RECIPE_LIST: readonly Recipe[] = CONTENT.recipes.recipes.map((r) => ({
   id: r.id,
+  name: r.nameVi,
   building: r.building,
   inputs: r.inputs,
   outputs: r.outputs,

@@ -34,7 +34,8 @@
     "test:e2e": "npm run build && playwright test",
     "assets:release": "tsx scripts/assets-check.ts --release",
     "verify:build": "tsx scripts/verify-build.ts",
-    "verify:installer": "tsx scripts/verify-installer.ts"
+    "verify:installer": "tsx scripts/verify-installer.ts",
+    "dev:sandbox": "node scripts/dev/sandbox.mjs"
   },
   "dependencies": {
     "@fontsource/baloo-2": "^5.3.0",

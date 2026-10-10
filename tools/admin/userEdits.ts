@@ -189,7 +189,12 @@ const DAY = 86_400_000;
  * `ms` (pigs' clocks, the trough, pregnancies, orders, gifts, history, the game day counters), so the
  * game catches up the missed time the next time it opens — the same as really leaving it closed.
  */
-export const rewind = (ms: number): Edit => (s) => {
+export const rewind = (ms: number): RewindEdit => Object.assign(rewindFarm(ms), { rewindMs: int(ms, 0) });
+
+/** An edit that also moves the other Areas' clocks (the Garden): the dashboard adds `rewindMs` when it writes the world. */
+export type RewindEdit = Edit & { rewindMs: number };
+
+const rewindFarm = (ms: number): Edit => (s) => {
   const back = int(ms, 0);
   const days = Math.round(back / DAY);
   const t = <T extends number | null | undefined>(v: T): T => (typeof v === 'number' ? ((v - back) as T) : v);

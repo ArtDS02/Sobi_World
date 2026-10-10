@@ -85,6 +85,48 @@ function drawUi(r: Raster, colour: Rgba) {
   r.ellipse(r.width / 2, r.height / 2, r.width * 0.22, r.height * 0.22, shade(colour, 0.7));
 }
 
+const CROP_COLOURS: Record<string, Rgba> = {
+  grass: [96, 182, 78, 255],
+  wheat: [232, 192, 84, 255],
+  corn: [246, 212, 72, 255],
+  potato: [196, 154, 104, 255],
+  carrot: [242, 132, 52, 255],
+};
+
+/** A crop on its plot, feet at the bottom: a sprout, a growing plant, the ripe plant with its produce, a wilted one. */
+function drawCrop(r: Raster, id: string) {
+  const [, name, stage] = id.split('_') as [string, string, string];
+  const leaf: Rgba = [84, 164, 70, 255];
+  const feet = r.height - 10;
+  const cx = r.width / 2;
+  const produce = CROP_COLOURS[name] ?? [200, 200, 200, 255];
+  if (stage === 'sprout') {
+    r.ellipse(cx - 12, feet - 16, 12, 22, leaf);
+    r.ellipse(cx + 12, feet - 20, 12, 24, shade(leaf, 0.9));
+  } else if (stage === 'grow') {
+    for (const dx of [-30, 0, 30]) r.roundRect(cx + dx - 6, feet - 70, 12, 70, 6, leaf);
+    for (const dx of [-30, 30]) r.ellipse(cx + dx, feet - 74, 16, 12, shade(leaf, 0.85));
+  } else if (stage === 'ripe') {
+    for (const dx of [-32, 0, 32]) r.roundRect(cx + dx - 6, feet - 80, 12, 80, 6, leaf);
+    for (const dx of [-32, 0, 32]) r.ellipse(cx + dx, feet - 84, 20, 20, produce);
+  } else {
+    const dry: Rgba = [150, 120, 70, 255];
+    for (const dx of [-32, 0, 32]) r.roundRect(cx + dx - 6, feet - 44, 12, 44, 6, dry);
+    for (const dx of [-32, 0, 32]) r.ellipse(cx + dx + 8, feet - 44, 16, 10, shade(dry, 0.8));
+  }
+}
+
+/** A tilled plot: dry, watered (darker) or locked (grey, with a plus). */
+function drawPlot(r: Raster, id: string) {
+  const soil: Rgba = id === 'plot_soil_wet' ? [92, 62, 40, 255] : id === 'plot_locked' ? [150, 146, 140, 200] : [140, 100, 64, 255];
+  r.roundRect(4, r.height * 0.18, r.width - 8, r.height * 0.74, 20, shade(soil, 0.78));
+  r.roundRect(8, r.height * 0.14, r.width - 16, r.height * 0.7, 18, soil);
+  if (id === 'plot_locked') {
+    r.rect(r.width / 2 - 4, r.height * 0.3, 8, r.height * 0.4, [240, 236, 228, 255]);
+    r.rect(r.width / 2 - r.height * 0.2, r.height * 0.5 - 4, r.height * 0.4, 8, [240, 236, 228, 255]);
+  }
+}
+
 /** A padlock: the plaza marks an Area that is not open yet with it. */
 function drawLock(r: Raster) {
   const iron: Rgba = [96, 96, 112, 255];
@@ -113,6 +155,8 @@ function render(
   const colour = PIG_COLOURS[id] ?? colourFor(id);
   if (id.startsWith('chr_')) drawCharacter(r, key);
   else if (id === 'ui_icon_lock') drawLock(r);
+  else if (id.startsWith('crop_')) drawCrop(r, id);
+  else if (id.startsWith('plot_')) drawPlot(r, id);
   else if (section === 'pigs') drawPig(r, colour, key === 'sleep');
   else if (section === 'fx') drawFx(r, colour, frames);
   else if (section === 'environment') drawEnvironment(r, id);

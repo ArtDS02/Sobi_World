@@ -4,6 +4,8 @@
 
 export interface Recipe {
   id: string;
+  /** Display name (content nameVi). */
+  name: string;
   /** The building that cooks it. */
   building: string;
   inputs: Readonly<Record<string, number>>;

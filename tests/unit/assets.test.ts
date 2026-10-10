@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { FARM_LAYOUT } from '../../src/areas/farm/scene/config/layout';
 import { placementsInOrder } from '../../src/systems/layout/placements';
+import { gardenArtIds } from '../../src/areas/garden/logic/art';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest, type AssetManifest } from '../../src/core/assets/manifestSchema';
 import { createAssetRegistry } from '../../src/core/assets/registry';
@@ -108,7 +109,8 @@ describe('asset registry (spec §11.4)', () => {
   it('buildings and props: every row has its file, decor cut at catalogue size (A4)', () => {
     const m = manifest();
     // GĐ3 art that is still a placeholder (docs/ASSET_TODO.md).
-    const todo = ['prop_plaza_signpost'];
+    // Placeholders that wait for real art (docs/ASSET_TODO.md): the plaza's signpost and the Garden's (GĐ5).
+    const todo = ['prop_plaza_signpost', ...gardenArtIds()];
     for (const row of [...m.buildings, ...m.props]) {
       if (!todo.includes(row.id)) expect(row.status, row.id).not.toBe('placeholder');
       if (!row.id.startsWith('chr_')) expect(reg.url(row.id, row.asset ? 'asset' : 'full'), row.id).not.toBeNull();

@@ -15,7 +15,7 @@ import {
 import { RECIPES, recipesOf } from '../../src/core/config/recipes';
 
 const MIN = 60_000;
-const recipe: Recipe = { id: 'r', building: 'mill', inputs: { a: 2, b: 1 }, outputs: { c: 4 }, durationMs: 10 * MIN };
+const recipe: Recipe = { id: 'r', name: 'R', building: 'mill', inputs: { a: 2, b: 1 }, outputs: { c: 4 }, durationMs: 10 * MIN };
 const job: ProductionJob = { recipeId: 'r', batches: 3, startedAt: 1000, collected: 0 };
 
 describe('production job', () => {

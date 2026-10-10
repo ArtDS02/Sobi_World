@@ -14,6 +14,10 @@ const FILE_TITLE: Record<string, string> = {
   'shared/quality.json': '⭐ Chất lượng (ngưỡng tâm trạng, hệ số giá)',
   'shared/inventory.json': '🎒 Túi đồ chung',
   'farm/balance.json': '🐷 Cân bằng Nông trại',
+  'garden/crops.json': '🌱 Cây trồng (giờ lớn, sản lượng)',
+  'garden/balance.json': '🥕 Cân bằng Sobi Garden (ô đất, tưới, héo, công trình)',
+  'shared/recipes.json': '⚙️ Recipe (nguyên liệu, thành phẩm, thời gian)',
+  'shared/items.json': '📦 Vật phẩm (giá mua, giá bán, độ no)',
 };
 
 /** Friendly names by the last part(s) of a path; the rest show their key. */
@@ -52,6 +56,33 @@ const LABEL: Record<string, string> = {
   TROUGH_AUTO_FEED_AT: 'Máng tự cho ăn khi đói dưới',
   SICK_RECOVERY_SEC: 'Miễn bệnh sau khi uống thuốc (giây)',
   SICK_MAX_EPISODES_PER_DAY: 'Số lần bệnh tối đa mỗi ngày',
+  growHours: 'Giờ lớn (khi đủ nước)',
+  yield: 'Sản lượng mỗi lần thu',
+  startPlots: 'Số ô đất ban đầu',
+  'plotExpansions.plots': 'Mở lên tổng số ô',
+  'plotExpansions.price': 'Giá mở ô',
+  dryGrowthRate: 'Tốc độ lớn khi khô (0–1)',
+  waterHours: 'Tưới có tác dụng bao nhiêu giờ',
+  'fertilizer.timeFactor': 'Phân bón: hệ số thời gian (0,75 = nhanh 25%)',
+  'fertilizer.bonusYield': 'Phân bón: thêm sản lượng',
+  witherAfterHours: 'Chín bao lâu thì héo (giờ)',
+  witherYieldFactor: 'Sản lượng khi héo (0–1)',
+  'sprinkler.plots': 'Vòi tưới: số ô đầu được tưới',
+  'sprinkler.price': 'Vòi tưới: giá cấp này',
+  'mill.price': 'Giá xây Máy xay',
+  'composter.price': 'Giá xây Thùng ủ',
+  maxBatches: 'Số mẻ tối đa mỗi lần',
+  'xp.plant': 'KN khi gieo',
+  'xp.water': 'KN khi tưới',
+  'xp.harvest': 'KN khi thu hoạch',
+  'xp.craft': 'KN mỗi mẻ chế biến',
+  'xp.fertilize': 'KN khi bón phân',
+  'levels.xp': 'KN cần cho cấp tiếp theo',
+  'levels.maxLevel': 'Cấp tối đa',
+  durationMin: 'Thời gian một mẻ (phút)',
+  priceGold: 'Giá mua (Sobi Coin)',
+  sellGold: 'Giá bán (Sobi Coin)',
+  hungerRestore: 'Độ no hồi lại',
   capacity: 'Sức chứa',
   cost: 'Giá nâng cấp',
   slots: 'Số ô',
@@ -61,13 +92,17 @@ const LABEL: Record<string, string> = {
 interface Leaf {
   path: string;
   value: number;
+  /** The id or name of the row the number belongs to (a crop, an item, a recipe). */
+  owner: string;
 }
 
-function leaves(value: unknown, path = ''): Leaf[] {
-  if (typeof value === 'number') return [{ path, value }];
-  if (Array.isArray(value)) return value.flatMap((v, i) => leaves(v, `${path}[${i}]`));
+function leaves(value: unknown, path = '', owner = ''): Leaf[] {
+  if (typeof value === 'number') return [{ path, value, owner }];
+  if (Array.isArray(value)) return value.flatMap((v, i) => leaves(v, `${path}[${i}]`, owner));
   if (value && typeof value === 'object') {
-    return Object.entries(value).flatMap(([k, v]) => leaves(v, path ? `${path}.${k}` : k));
+    const row = value as { id?: unknown; nameVi?: unknown };
+    const own = typeof row.id === 'string' ? row.id : typeof row.nameVi === 'string' ? row.nameVi : owner;
+    return Object.entries(value).flatMap(([k, v]) => leaves(v, path ? `${path}.${k}` : k, own));
   }
   return [];
 }
@@ -114,7 +149,7 @@ export function renderNumbers(root: HTMLElement, apiOnline: boolean, rerender: (
         ([file, value]) => `<form class="panel tab-form" data-file="${esc(file)}"><h3>${esc(FILE_TITLE[file] ?? file)}</h3>
         <div class="form-grid">${leaves(value)
           .map(
-            (l) => `<label class="field"><span>${esc(labelOf(l.path))}</span>
+            (l) => `<label class="field"><span>${esc(l.owner ? `${l.owner}: ${labelOf(l.path)}` : labelOf(l.path))}</span>
               <input type="number" step="any" name="${esc(l.path)}" value="${l.value}" /><small class="muted">${esc(l.path)}</small></label>`,
           )
           .join('')}</div>

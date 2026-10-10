@@ -115,13 +115,13 @@ describe('growing, watering, harvesting', () => {
 
   it('refreshing the water keeps a plot at full speed', () => {
     let w = sown();
-    for (let t = 0; t < 4; t += 2) w = ok(waterPlots(w, {}, ctxAt(T0 + t * H)));
+    for (let t = 0; t < 4; t += 3) w = ok(waterPlots(w, {}, ctxAt(T0 + t * H)));
     expect(plotViews(gardenOf(advance(w, T0 + 4 * H).state), T0 + 4 * H).every((v) => v.stage === 'ripe')).toBe(true);
   });
 
   it('harvesting gives the yield, empties the plot, pays XP and tells the world', () => {
     let w = ok(waterPlots(sown(), {}, ctxAt(T0)));
-    w = ok(waterPlots(w, {}, ctxAt(T0 + 2 * H)));
+    w = ok(waterPlots(w, {}, ctxAt(T0 + 3 * H)));
     const r = harvestPlots(w, { plots: [0, 1] }, ctxAt(T0 + 4 * H));
     expect(r.ok).toBe(true);
     if (!r.ok) return;

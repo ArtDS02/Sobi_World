@@ -1,5 +1,5 @@
 // Admin "Số liệu": the numbers of the content files that tune the world (time, health, valuation,
-// quality, the farm's balance). The dashboard edits numbers only — it sends the whole file back and the
+// quality, the farm's balance, the Garden). The dashboard edits numbers only — it sends the whole file back and the
 // server refuses any change that is not a number, then validates it with the game's own schema
 // (content/schemas) before writing, in the stable layout of scripts/content/format.ts.
 import { readContent, writeContent } from './contentFiles';
@@ -15,6 +15,11 @@ export const NUMBER_FILES: Record<string, { schemaPath: string; exportName: stri
   'shared/quality.json': { schemaPath: '/content/schemas/shared/quality.ts', exportName: 'qualityFileSchema' },
   'shared/inventory.json': { schemaPath: '/content/schemas/shared/inventory.ts', exportName: 'inventoryFileSchema' },
   'farm/balance.json': { schemaPath: '/content/schemas/farm/balance.ts', exportName: 'farmBalanceFileSchema' },
+  // Sobi Garden (GĐ5): the plants, the workshops and sprinkler, the recipes, the prices of the items.
+  'garden/crops.json': { schemaPath: '/content/schemas/garden/crops.ts', exportName: 'cropsFileSchema' },
+  'garden/balance.json': { schemaPath: '/content/schemas/garden/balance.ts', exportName: 'gardenBalanceFileSchema' },
+  'shared/recipes.json': { schemaPath: '/content/schemas/shared/recipes.ts', exportName: 'recipesFileSchema' },
+  'shared/items.json': { schemaPath: '/content/schemas/shared/items.ts', exportName: 'itemsFileSchema' },
 };
 
 export const readNumbers = (): Record<string, unknown> =>

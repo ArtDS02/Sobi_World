@@ -27,6 +27,15 @@ import { createAreaFlow } from './areaFlow';
 import { createGameStore } from './gameStore';
 import { parseWorldSave } from './saveCodec';
 import { farmStore } from '../areas/farm/store';
+import { gardenArea } from '../areas/garden';
+import { gardenPresentation } from '../areas/garden/feedback';
+import { GARDEN_AREA_ID } from '../areas/garden/logic/config/content';
+import { hasGarden } from '../areas/garden/logic/save/lens';
+import { GardenScene, GARDEN_SCENE_KEY } from '../areas/garden/scene/GardenScene';
+import { bindGardenStage } from '../areas/garden/stage';
+import { createGardenUi } from '../areas/garden/ui/gardenUi';
+import { vi } from '../i18n/vi';
+import { t } from '../i18n/format';
 import { realClock } from './runtime';
 import { mountApp, type AppOptions, type MountedApp } from '../areas/farm/ui/app';
 import { renderManifestError } from '../areas/farm/ui/screens/statusScreen';
@@ -104,6 +113,15 @@ export async function start(root: HTMLElement) {
     return doors.views;
   };
   let app: MountedApp | null = null;
+  // The Garden's DOM layer lives in an overlay the shell places over the world; its HUD shows only in the Garden.
+  const gardenHost = el('div', { class: 'garden-host' });
+  const gardenUi = createGardenUi({
+    world,
+    now: () => clock.now(),
+    host: gardenHost,
+    leave: () => void flow.go(PLAZA_ID),
+    openPanel: (panel) => app?.openPanel(panel),
+  });
   let director: FeedbackDirector | null = null;
   const host: WorldHost = {
     input,
@@ -129,7 +147,8 @@ export async function start(root: HTMLElement) {
     changed: (to) => {
       prompt = null;
       showPrompt();
-      app?.setPlace(to === PLAZA_ID ? 'plaza' : 'area');
+      app?.setPlace(to === PLAZA_ID ? 'plaza' : to === GARDEN_AREA_ID ? 'garden' : 'area');
+      gardenUi.setActive(to === GARDEN_AREA_ID);
       // Leaving through a door keeps that Area as the place: the game reopens in front of its door.
       if (to !== PLAZA_ID) void world.dispatch((s, c) => setPlayerSpot(s, { area: to, x: null, y: null, facing: 'down' }, c));
     },
@@ -163,6 +182,13 @@ export async function start(root: HTMLElement) {
       subscribe: (fn) => settings.subscribe(fn),
     },
     leave: () => void flow.go(PLAZA_ID),
+    goPlace: (place) => void flow.go(place),
+    overlay: gardenHost,
+    overlayModal: () => gardenUi.isModalOpen(),
+    areaLines: (events) => {
+      const save = world.getSnapshot().save;
+      return save && hasGarden(save) ? (gardenArea.getSummary?.(events, save, clock.now()) ?? []) : [];
+    },
     onPigTap: (pigId) => director?.pigTapped(pigId),
     dialogs: platform.dialogs,
     assets: assets.registry,
@@ -177,6 +203,12 @@ export async function start(root: HTMLElement) {
         host,
         portals,
       });
+      const garden = new GardenScene({
+        read: () => gardenUi.sceneState(),
+        onPick: (pick) => gardenUi.pick(pick),
+        reduceMotion: () => host.reduceMotion(),
+        paused: () => host.paused(),
+      });
       farmView = createFarmView(
         stage,
         {
@@ -187,8 +219,10 @@ export async function start(root: HTMLElement) {
           // The game opens in the plaza (spec §3.1).
           firstScene: () => ({ key: PLAZA_SCENE_KEY, from: null }),
         },
-        [plaza],
+        [plaza, garden],
       );
+      const view = farmView;
+      bindGardenStage({ enter: () => view.showScene(GARDEN_SCENE_KEY), exit: () => view.sleepScene(GARDEN_SCENE_KEY) });
       if (devPhase) farmView.previewPhase(devPhase);
       if (devSeason) farmView.previewSeason(devSeason);
       return farmView;
@@ -204,6 +238,13 @@ export async function start(root: HTMLElement) {
     audio,
     toast: mounted.toast,
     away: mounted.showAway,
+    other: (event, origin) => {
+      if (event.type === 'AREA_UNLOCKED' && origin !== 'catchup') {
+        const name = AREAS.get((event as unknown as { areaId: string }).areaId)?.manifest.name.vi ?? '';
+        return { sound: 'level_up', toast: t(vi.plaza.opened, { name }) };
+      }
+      return gardenPresentation(event, origin);
+    },
   });
   // §12: ui_click for every DOM button, through one delegated listener.
   root.addEventListener('click', (e) => {

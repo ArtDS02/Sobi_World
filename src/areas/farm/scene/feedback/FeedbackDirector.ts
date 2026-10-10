@@ -5,12 +5,14 @@ import { SAVE } from '../../../../core/config/save';
 import type { GameEvent } from '../../logic/events';
 import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
+import type { EventBase } from '../../../../core/events';
+import type { AudioKey } from '../../../../core/config/assetIds';
 import type { FarmStore } from '../../store';
 import type { AudioPort } from '../audio/audioPort';
 import type { FarmEffects } from './effects';
 import { tapSound } from '../audio/tapSound';
 import { feedbackPlan } from './feedbackPlan';
-import { REJECT_ROW } from './feedbackTable';
+import { FEEDBACK_TABLE, REJECT_ROW } from './feedbackTable';
 import { toastText } from './toastText';
 
 export interface FeedbackDeps {
@@ -20,6 +22,11 @@ export interface FeedbackDeps {
   toast: (message: string) => void;
   /** A catch-up of SAVE.AWAY_SUMMARY_MIN_MS or more: one summary instead of toasts (§9.5). */
   away?: (events: GameEvent[], awayMs: number) => void;
+  /**
+   * Feedback of events that are not the farm's (an Area's own events, the world's): the Area gives their sound and
+   * toast text; null = nothing to show. Still the one place that turns events into presentation.
+   */
+  other?: (event: EventBase, origin: 'action' | 'tick' | 'catchup') => { sound: AudioKey | null; toast: string | null } | null;
 }
 
 export interface FeedbackDirector {
@@ -52,6 +59,12 @@ export function createFeedbackDirector(deps: FeedbackDeps): FeedbackDirector {
     const reduceMotion = after.settings.reduceMotion;
     const fx = deps.effects();
     for (const event of events) {
+      if (!(event.type in FEEDBACK_TABLE)) {
+        const extra = deps.other?.(event, origin);
+        if (extra?.sound) deps.audio.play(extra.sound);
+        if (extra?.toast) deps.toast(extra.toast);
+        continue;
+      }
       const plan = feedbackPlan(event, origin, reduceMotion);
       for (const a of plan.animations) fx.animate(a.animation, a.target, a.delayMs, a.from);
       for (const v of plan.vfx) fx.burst(v.fx, v.target, v.delayMs);

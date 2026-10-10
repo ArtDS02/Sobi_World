@@ -80,7 +80,7 @@ export function mountApp(
     banner,
     saveBanner,
     opts.devTools ?? '',
-    el('div', { class: 'app__world' }, stage, topbar, hint, coach),
+    el('div', { class: 'app__world' }, stage, opts.overlay ?? '', topbar, hint, coach),
     main,
     popupHost,
     toasts,
@@ -166,9 +166,11 @@ export function mountApp(
         ui.selectedPigId = to.id;
         go('pig');
       } else if (to.target === 'trough') openTrough();
+      else if (to.target === 'garden') opts.goPlace?.('sobi_garden');
       else go(to.target === 'well' ? 'well' : 'orders');
     },
     dialogHost: dialogs,
+    ...(opts.areaLines ? { areaLines: opts.areaLines } : {}),
     rerender,
     settings,
     manifest: assets?.manifest ?? null,
@@ -240,6 +242,7 @@ export function mountApp(
     const ready = snap.status === 'ready' && !!snap.save;
     appEl.classList.toggle('is-ready', ready);
     appEl.classList.toggle('is-plaza', ui.place === 'plaza');
+    appEl.classList.toggle('is-garden', ui.place === 'garden');
     appEl.classList.toggle('is-reduced-motion', !!snap.save?.settings.reduceMotion);
     farm?.setSelected(ui.selectedPigId);
     patch(banner, snap.readOnly ? renderMultiTabBanner() : null);
@@ -261,15 +264,15 @@ export function mountApp(
     const save = snap.save;
     patch(
       topbar,
-      renderHud(save, {
+      ui.place === 'garden' ? null : renderHud(save, {
         place: ui.place, now: now(), gems: opts.gems?.() ?? null, go, leave: opts.leave, openTrough: () => openTrough(),
         selectPig: (pigId) => { ui.selectedPigId = pigId; go('pig'); },
       }),
     );
-    patch(coach, ui.place === 'plaza' ? null : session.coach(snap));
+    patch(coach, ui.place === 'area' ? session.coach(snap) : null);
     patch(main, null);
     farm?.setVisible(true); // after main is emptied, so the canvas measures its final host
-    patch(hint, ui.place === 'plaza' ? null : renderFarmHint(save, () => go('shop'), handlers.act));
+    patch(hint, ui.place === 'area' ? renderFarmHint(save, () => go('shop'), handlers.act) : null);
     renderPopup(save);
   }
 
@@ -283,7 +286,8 @@ export function mountApp(
       Object.assign(ui, { place, selectedPigId: null, panel: ui.panel === 'pig' || ui.panel === 'well' ? null : ui.panel });
       rerender();
     },
-    isModalOpen: () => ui.panel !== null || dialogs.childElementCount > 0,
+    openPanel: (panel) => go(panel),
+    isModalOpen: () => ui.panel !== null || dialogs.childElementCount > 0 || !!opts.overlayModal?.(),
     dispose: () => {
       offState();
       for (const off of offSettings) off?.();

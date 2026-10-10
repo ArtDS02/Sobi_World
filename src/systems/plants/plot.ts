@@ -86,3 +86,16 @@ export const isDry = (plot: PlotState, covered: boolean, now: number): boolean =
 
 /** Time the crop wilts, or null (not ripe yet / empty). */
 export const witherAt = (plot: PlotState, rules: PlotRules): number | null => (plot.ripeAt === null ? null : plot.ripeAt + rules.witherAfterMs);
+
+/**
+ * Milliseconds until the crop is ripe if nothing changes (watered until `wetUntil`, then dry; a covered plot always
+ * watered); 0 when ripe, Infinity for an empty plot or a crop that cannot grow dry.
+ */
+export function msToRipe(plot: PlotState, crop: CropRule | undefined, rules: PlotRules, covered: boolean, now: number): number {
+  if (!plot.cropId || !crop) return Infinity;
+  if (plot.ripeAt !== null) return 0;
+  const left = Math.max(0, requiredMs(plot, crop, rules) - plot.grown);
+  const wet = covered ? Infinity : Math.max(0, plot.wetUntil - now);
+  if (left <= wet) return left;
+  return rules.dryRate > 0 ? wet + (left - wet) / rules.dryRate : Infinity;
+}

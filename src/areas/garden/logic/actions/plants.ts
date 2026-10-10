@@ -6,7 +6,7 @@ import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
 import { emptyPlot, harvestYield, plotStage, settlePlot, sow } from '../../../../systems/plants/plot';
 import { CROPS, GB, PLOT_RULES, WATER_MS } from '../config/content';
-import { isCovered } from '../derived';
+import { isCovered, needsWater } from '../derived';
 import type { GardenEvent } from '../events';
 import { countOf, fits, give, pay, put, runGarden, take, type GardenResult } from './kit';
 
@@ -37,15 +37,12 @@ export function plantCrops(world: WorldSave, args: { cropId: string; plots: numb
   });
 }
 
-/** Waters every growing plot of `plots` (all of them when absent) that the sprinkler does not already water. */
+/** Waters every growing plot of `plots` (all of them when absent) that is dry: not under the sprinkler, not wet already. */
 export function waterPlots(world: WorldSave, args: { plots?: number[] }, ctx: ActionContext): GardenResult {
   return runGarden(world, ctx, (w, g) => {
     const wanted = args.plots ? distinct(args.plots) : g.plots.map((_, i) => i);
     if (args.plots && !valid(wanted, g.plots.length)) return { ok: false, error: 'INVALID_REQUEST' };
-    const todo = wanted.filter((i) => {
-      const p = g.plots[i]!;
-      return p.cropId !== null && p.ripeAt === null && !isCovered(g, i);
-    });
+    const todo = wanted.filter((i) => needsWater(g.plots[i]!, isCovered(g, i), ctx.now));
     if (todo.length === 0) return { ok: false, error: 'NOTHING_TO_DO' };
     const plots = g.plots.map((p, i) => (todo.includes(i) ? { ...p, wetUntil: ctx.now + WATER_MS } : p));
     return { ok: true, world: put(w, { ...g, plots }), events: [{ type: 'GARDEN_WATERED', plots: todo.length }], xp: todo.length * GB.xp.water };

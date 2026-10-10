@@ -39,6 +39,7 @@ function edit(e: E.Edit, rerender: () => void) {
   try {
     o.draft = E.apply(o.draft, e);
     o.edits.push(e);
+    o.rewindMs += (e as Partial<E.RewindEdit>).rewindMs ?? 0;
     o.dirty = true;
     state.message = null;
   } catch (x) {

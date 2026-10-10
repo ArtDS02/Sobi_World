@@ -1242,6 +1242,121 @@
         "right_walk1": "props/chr_bi_right_walk1.png",
         "right_walk2": "props/chr_bi_right_walk2.png"
       }
+    },
+    {
+      "id": "plot_soil",
+      "status": "placeholder",
+      "asset": "props/plot_soil.png"
+    },
+    {
+      "id": "plot_soil_wet",
+      "status": "placeholder",
+      "asset": "props/plot_soil_wet.png"
+    },
+    {
+      "id": "plot_locked",
+      "status": "placeholder",
+      "asset": "props/plot_locked.png"
+    },
+    {
+      "id": "crop_grass_sprout",
+      "status": "placeholder",
+      "asset": "props/crop_grass_sprout.png"
+    },
+    {
+      "id": "crop_grass_grow",
+      "status": "placeholder",
+      "asset": "props/crop_grass_grow.png"
+    },
+    {
+      "id": "crop_grass_ripe",
+      "status": "placeholder",
+      "asset": "props/crop_grass_ripe.png"
+    },
+    {
+      "id": "crop_grass_wilt",
+      "status": "placeholder",
+      "asset": "props/crop_grass_wilt.png"
+    },
+    {
+      "id": "crop_wheat_sprout",
+      "status": "placeholder",
+      "asset": "props/crop_wheat_sprout.png"
+    },
+    {
+      "id": "crop_wheat_grow",
+      "status": "placeholder",
+      "asset": "props/crop_wheat_grow.png"
+    },
+    {
+      "id": "crop_wheat_ripe",
+      "status": "placeholder",
+      "asset": "props/crop_wheat_ripe.png"
+    },
+    {
+      "id": "crop_wheat_wilt",
+      "status": "placeholder",
+      "asset": "props/crop_wheat_wilt.png"
+    },
+    {
+      "id": "crop_corn_sprout",
+      "status": "placeholder",
+      "asset": "props/crop_corn_sprout.png"
+    },
+    {
+      "id": "crop_corn_grow",
+      "status": "placeholder",
+      "asset": "props/crop_corn_grow.png"
+    },
+    {
+      "id": "crop_corn_ripe",
+      "status": "placeholder",
+      "asset": "props/crop_corn_ripe.png"
+    },
+    {
+      "id": "crop_corn_wilt",
+      "status": "placeholder",
+      "asset": "props/crop_corn_wilt.png"
+    },
+    {
+      "id": "crop_potato_sprout",
+      "status": "placeholder",
+      "asset": "props/crop_potato_sprout.png"
+    },
+    {
+      "id": "crop_potato_grow",
+      "status": "placeholder",
+      "asset": "props/crop_potato_grow.png"
+    },
+    {
+      "id": "crop_potato_ripe",
+      "status": "placeholder",
+      "asset": "props/crop_potato_ripe.png"
+    },
+    {
+      "id": "crop_potato_wilt",
+      "status": "placeholder",
+      "asset": "props/crop_potato_wilt.png"
+    },
+    {
+      "id": "crop_carrot_sprout",
+      "status": "placeholder",
+      "asset": "props/crop_carrot_sprout.png"
+    },
+    {
+      "id": "crop_carrot_grow",
+      "status": "placeholder",
+      "asset": "props/crop_carrot_grow.png"
+    },
+    {
+      "id": "crop_carrot_ripe",
+      "status": "placeholder",
+      "asset": "props/crop_carrot_ripe.png"
+    },
+    {
+      "id": "crop_carrot_wilt",
+      "status": "placeholder",
+      "asset": "props/crop_carrot_wilt.png"
     }
   ],
   "buildings": [
@@ -1334,6 +1449,21 @@
       "id": "prop_main_house",
       "status": "production",
       "asset": "buildings/prop_main_house.png"
+    },
+    {
+      "id": "bld_sprinkler",
+      "status": "placeholder",
+      "asset": "buildings/bld_sprinkler.png"
+    },
+    {
+      "id": "bld_feed_mill",
+      "status": "placeholder",
+      "asset": "buildings/bld_feed_mill.png"
+    },
+    {
+      "id": "bld_composter",
+      "status": "placeholder",
+      "asset": "buildings/bld_composter.png"
     }
   ],
   "environment": [
@@ -1559,6 +1689,66 @@
       "id": "ui_btn_items",
       "status": "production",
       "asset": "ui/ui_btn_items.png"
+    },
+    {
+      "id": "ui_item_seed_grass",
+      "status": "placeholder",
+      "asset": "ui/ui_item_seed_grass.png"
+    },
+    {
+      "id": "ui_item_seed_wheat",
+      "status": "placeholder",
+      "asset": "ui/ui_item_seed_wheat.png"
+    },
+    {
+      "id": "ui_item_seed_corn",
+      "status": "placeholder",
+      "asset": "ui/ui_item_seed_corn.png"
+    },
+    {
+      "id": "ui_item_seed_potato",
+      "status": "placeholder",
+      "asset": "ui/ui_item_seed_potato.png"
+    },
+    {
+      "id": "ui_item_seed_carrot",
+      "status": "placeholder",
+      "asset": "ui/ui_item_seed_carrot.png"
+    },
+    {
+      "id": "ui_item_grass",
+      "status": "placeholder",
+      "asset": "ui/ui_item_grass.png"
+    },
+    {
+      "id": "ui_item_wheat",
+      "status": "placeholder",
+      "asset": "ui/ui_item_wheat.png"
+    },
+    {
+      "id": "ui_item_corn",
+      "status": "placeholder",
+      "asset": "ui/ui_item_corn.png"
+    },
+    {
+      "id": "ui_item_potato",
+      "status": "placeholder",
+      "asset": "ui/ui_item_potato.png"
+    },
+    {
+      "id": "ui_item_carrot",
+      "status": "placeholder",
+      "asset": "ui/ui_item_carrot.png"
+    },
+    {
+      "id": "ui_item_food_premium",
+      "status": "placeholder",
+      "asset": "ui/ui_item_food_premium.png"
+    },
+    {
+      "id": "ui_item_fertilizer",
+      "status": "placeholder",
+      "asset": "ui/ui_item_fertilizer.png"
     }
   ],
   "audio": [

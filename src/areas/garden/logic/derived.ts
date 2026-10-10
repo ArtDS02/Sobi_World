@@ -1,7 +1,9 @@
 // What the Garden's screens and scene read off its state (derived, never stored).
 import type { PlotStage } from '../../../systems/plants/plot';
 import { growthShare, harvestYield, plotStage } from '../../../systems/plants/plot';
-import { CROPS, GB, PLOT_RULES, MAX_PLOTS } from './config/content';
+import { RECIPES } from '../../../core/config/recipes';
+import { batchesReady } from '../../../core/production/production';
+import { CROPS, GB, PLOT_RULES, MAX_PLOTS, type BuildingId } from './config/content';
 import type { GardenState } from './state';
 
 /** Plots a sprinkler of this level waters (0 = no sprinkler). */
@@ -17,6 +19,10 @@ export const nextSprinkler = (g: Pick<GardenState, 'sprinkler'>): { level: numbe
   const next = GB.sprinkler[g.sprinkler];
   return next ? { level: g.sprinkler + 1, plots: next.plots, price: next.price } : null;
 };
+
+/** A growing plot that the player's hand can water now: not ripe, not under the sprinkler, not wet already. */
+export const needsWater = (plot: Pick<GardenState['plots'][number], 'cropId' | 'ripeAt' | 'wetUntil'>, covered: boolean, now: number): boolean =>
+  plot.cropId !== null && plot.ripeAt === null && !covered && plot.wetUntil <= now;
 
 export interface PlotView {
   index: number;
@@ -48,3 +54,32 @@ export function plotViews(g: GardenState, now: number): PlotView[] {
     };
   });
 }
+
+/** One workshop as the scene and the HUD show it. */
+export interface WorkshopView {
+  built: boolean;
+  /** A job is running or waiting to be collected. */
+  busy: boolean;
+  /** Finished batches waiting. */
+  ready: number;
+}
+
+export interface SceneState {
+  plots: PlotView[];
+  sprinkler: number;
+  mill: WorkshopView;
+  composter: WorkshopView;
+}
+
+export function workshopView(g: GardenState, building: BuildingId, now: number): WorkshopView {
+  const job = g.jobs[building];
+  const recipe = job ? RECIPES[job.recipeId] : undefined;
+  return { built: g.built[building], busy: job !== null, ready: job && recipe ? batchesReady(job, recipe, now) : 0 };
+}
+
+export const sceneState = (g: GardenState, now: number): SceneState => ({
+  plots: plotViews(g, now),
+  sprinkler: g.sprinkler,
+  mill: workshopView(g, 'mill', now),
+  composter: workshopView(g, 'composter', now),
+});
