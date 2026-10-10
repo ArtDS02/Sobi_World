@@ -71,6 +71,7 @@ export function settleWorld(
     const seen = [
       ...worldEvents.flatMap((e) => (e.type === 'crop.harvested' ? [['crop', e.cropId] as const] : [])),
       ...worldEvents.flatMap((e) => (e.type === 'fish.caught' ? [['fish', e.speciesId] as const] : [])),
+      ...worldEvents.flatMap((e) => (e.type === 'flower.harvested' ? [['flower', e.flowerId] as const] : [])),
       ...Object.entries(world.inventory.items).filter(([, n]) => n > 0).map(([id]) => ['item', id] as const),
     ];
     for (const [kind, id] of seen) {

@@ -146,6 +146,40 @@
           "textVi": "Hai cá cùng loài, một đực một cái, đủ lớn và khỏe thì cho ra trứng. Trứng nở thành cá con, thừa hưởng tính trạng của bố mẹ. Chỉ một số loài đẻ được."
         }
       ]
+    },
+    {
+      "id": "npc_alchemist",
+      "area": "sobi_cloud",
+      "nameVi": "Bác Cú Giả Kim",
+      "artId": "prop_animal_hen_cream",
+      "greetingVi": "Hú hú... Chào bạn! Bác là Cú Giả Kim, trông vườn hoa và cái vạc trên mây này.",
+      "topics": [
+        {
+          "id": "water",
+          "titleVi": "Nước tinh khiết",
+          "textVi": "Suối mây nhỏ ra Nước tinh khiết, đầy thì ngừng nên nhớ ghé hứng. Tưới hoa bằng nước này thì hoa lớn nhanh gấp bốn lần tưới thường. Nâng cấp suối để chảy nhanh và chứa nhiều hơn."
+        },
+        {
+          "id": "flowers",
+          "titleVi": "Hoa thường và hoa hiếm",
+          "textVi": "Hoa thường (Cúc Mây, Bồ Công Anh) lớn nhanh và dễ bán. Hoa hiếm (Hồng Cầu Vồng, Lan Sao) lớn chậm, sản lượng ít nhưng là nguyên liệu quý cho potion và cho việc lai giống."
+        },
+        {
+          "id": "night",
+          "titleVi": "Hoa đêm",
+          "textVi": "Huệ Trăng và Chuông Mộng nở đẹp nhất về đêm: hái lúc trời tối bạn được gấp đôi số hoa. Hái ban ngày vẫn được, chỉ là ít hơn."
+        },
+        {
+          "id": "potions",
+          "titleVi": "Nấu potion",
+          "textVi": "Vạc ở góc vườn nấu potion từ hoa và Nước tinh khiết. Healing Potion chữa heo hay cá đang ốm (cả khi nguy kịch) và nâng tâm trạng. Potion Vui Vẻ chỉ nâng tâm trạng. Potion Chiến Đấu để dành cho chuyến phiêu lưu sau này."
+        },
+        {
+          "id": "mutation",
+          "titleVi": "Hoa và việc lai giống",
+          "textVi": "Khi phối giống, bạn có thể cho thêm một bông hoa hiếm vào: tỉ lệ đột biến tăng, con non dễ có tính trạng quý hơn. Hồng Cầu Vồng và Lan Sao mạnh nhất."
+        }
+      ]
     }
   ]
 }

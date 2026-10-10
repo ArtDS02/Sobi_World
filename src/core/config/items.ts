@@ -12,6 +12,10 @@ export interface ItemDef {
   sellGold?: number | undefined;
   hungerRestore: number; // 0 = no hunger effect
   curesSickness: boolean;
+  /** Added to hunger, cleanliness and energy of the creature that takes it (0 = none). */
+  moodBoost?: number | undefined;
+  /** Percentage points added to the mutation chance of a breeding that uses it (0 = none). */
+  mutationBoost?: number | undefined;
 }
 
 /** FOOD_BASIC is also the unit the trough consumes. */

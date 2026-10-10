@@ -50,6 +50,7 @@ describe('portals', () => {
     expect(opened.events).toEqual([
       { type: 'AREA_UNLOCKED', areaId: 'sobi_garden' },
       { type: 'AREA_UNLOCKED', areaId: 'sobi_aquarium' },
+      { type: 'AREA_UNLOCKED', areaId: 'sobi_cloud' },
     ]);
     expect(opened.state.world.unlockedAreas).toContain('sobi_garden');
     expect(portalViews(AREAS.areas(opened.state)).get('garden_gate')?.status).toBe('open');
@@ -59,7 +60,7 @@ describe('portals', () => {
   it('prompts: an open door has an action, a closed one only the reason', () => {
     const v = views();
     expect(portalPrompt(v.get('pig_barn')!)).toEqual({ action: 'Vào Sobi Farm', title: 'Vào Sobi Farm', lines: [] });
-    const closed = portalPrompt(v.get('sky_tree')!); // Cloud is still planned: closed, "coming soon"
+    const closed = portalPrompt(v.get('portal_gate')!); // Adventure is still planned: closed, "coming soon"
     expect(closed.action).toBeNull();
     expect(closed.title).toContain(vi.plaza.soon);
     expect(closed.lines[0]).toBe(vi.plaza.conditions);

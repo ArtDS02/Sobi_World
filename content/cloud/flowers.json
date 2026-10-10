@@ -1,0 +1,64 @@
+{
+  "flowers": [
+    {
+      "id": "flower_cloud_daisy",
+      "nameVi": "Cúc Mây",
+      "kind": "COMMON",
+      "seedItem": "item_seed_cloud_daisy",
+      "produceItem": "item_flower_cloud_daisy",
+      "growHours": 4,
+      "yield": 3,
+      "art": "flower_cloud_daisy"
+    },
+    {
+      "id": "flower_dandelion",
+      "nameVi": "Bồ Công Anh Mây",
+      "kind": "COMMON",
+      "seedItem": "item_seed_dandelion",
+      "produceItem": "item_flower_dandelion",
+      "growHours": 5,
+      "yield": 3,
+      "art": "flower_dandelion"
+    },
+    {
+      "id": "flower_rainbow_rose",
+      "nameVi": "Hồng Cầu Vồng",
+      "kind": "RARE",
+      "seedItem": "item_seed_rainbow_rose",
+      "produceItem": "item_flower_rainbow_rose",
+      "growHours": 10,
+      "yield": 2,
+      "art": "flower_rainbow_rose"
+    },
+    {
+      "id": "flower_star_orchid",
+      "nameVi": "Lan Sao",
+      "kind": "RARE",
+      "seedItem": "item_seed_star_orchid",
+      "produceItem": "item_flower_star_orchid",
+      "growHours": 12,
+      "yield": 1,
+      "art": "flower_star_orchid"
+    },
+    {
+      "id": "flower_moon_lily",
+      "nameVi": "Huệ Trăng",
+      "kind": "NIGHT",
+      "seedItem": "item_seed_moon_lily",
+      "produceItem": "item_flower_moon_lily",
+      "growHours": 8,
+      "yield": 2,
+      "art": "flower_moon_lily"
+    },
+    {
+      "id": "flower_dream_bell",
+      "nameVi": "Chuông Mộng",
+      "kind": "NIGHT",
+      "seedItem": "item_seed_dream_bell",
+      "produceItem": "item_flower_dream_bell",
+      "growHours": 10,
+      "yield": 2,
+      "art": "flower_dream_bell"
+    }
+  ]
+}

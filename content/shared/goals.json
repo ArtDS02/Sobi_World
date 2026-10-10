@@ -101,6 +101,24 @@
         "min": 1,
         "max": 2,
         "coins": [50, 70]
+      },
+      {
+        "id": "flower",
+        "metric": "flowersHarvested",
+        "area": "sobi_cloud",
+        "fromWorldLevel": 8,
+        "min": 4,
+        "max": 10,
+        "coins": [80, 130]
+      },
+      {
+        "id": "potion",
+        "metric": "potionsBrewed",
+        "area": "sobi_cloud",
+        "fromWorldLevel": 8,
+        "min": 1,
+        "max": 2,
+        "coins": [90, 140]
       }
     ]
   }

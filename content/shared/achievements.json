@@ -53,6 +53,11 @@
     { "id": "FISH_100", "metric": "fishCaught", "target": 100, "gems": 12, "xp": 60 },
     { "id": "FISH_500", "metric": "fishCaught", "target": 500, "gems": 25, "xp": 150 },
     { "id": "TANK_20", "metric": "tanksCleaned", "target": 20, "gems": 8, "xp": 30 },
-    { "id": "CODEX_FISH", "metric": "codexFish", "target": "ALL", "gems": 25, "xp": 120 }
+    { "id": "CODEX_FISH", "metric": "codexFish", "target": "ALL", "gems": 25, "xp": 120 },
+    { "id": "FLOWER_30", "metric": "flowersHarvested", "target": 30, "gems": 6, "xp": 25 },
+    { "id": "FLOWER_300", "metric": "flowersHarvested", "target": 300, "gems": 15, "xp": 90 },
+    { "id": "POTION_10", "metric": "potionsBrewed", "target": 10, "gems": 8, "xp": 40 },
+    { "id": "POTION_100", "metric": "potionsBrewed", "target": 100, "gems": 20, "xp": 120 },
+    { "id": "CODEX_FLOWERS", "metric": "codexFlower", "target": "ALL", "gems": 25, "xp": 120 }
   ]
 }

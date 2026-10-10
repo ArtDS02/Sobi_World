@@ -13,7 +13,7 @@ export const PLOT_ART = { soil: 'plot_soil', wet: 'plot_soil_wet', locked: 'plot
 export const SPRINKLER_ART = 'bld_sprinkler';
 
 /** Items the Garden introduced: each has its own icon (`ui_item_*`). */
-export const GARDEN_ITEM_IDS = ITEM_IDS.filter((id) => ITEMS[id].category === 'SEED' || ITEMS[id].category === 'CROP' || id === 'FOOD_PREMIUM' || id === 'item_fertilizer');
+export const GARDEN_ITEM_IDS = ITEM_IDS.filter((id) => CROP_LIST.some((c) => c.seedItem === id) || ITEMS[id].category === 'CROP' || id === 'FOOD_PREMIUM' || id === 'item_fertilizer');
 
 /** Every id the Garden needs in the manifest. */
 export const gardenArtIds = (): string[] => [

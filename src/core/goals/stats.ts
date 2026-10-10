@@ -14,6 +14,10 @@ export function statDeltas(e: WorldEvent): Readonly<Record<string, number>> {
       return { fishCaught: 1 };
     case 'tank.cleaned':
       return { tanksCleaned: 1 };
+    case 'flower.harvested':
+      return { flowersHarvested: e.quantity };
+    case 'potion.brewed':
+      return { potionsBrewed: e.quantity };
     case 'recipe.completed':
       return { crafts: 1 };
     default:

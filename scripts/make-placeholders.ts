@@ -205,6 +205,75 @@ function drawAquariumScenery(r: Raster, id: string) {
   r.roundRect(w * 0.7, h * 0.05, w * 0.012, h * 0.3, 4, [120, 90, 60, 255]); // the rod
 }
 
+/** Petal colours of the flower placeholders (one per flower of content/cloud/flowers.json). */
+const FLOWER_COLOURS: Record<string, Rgba> = {
+  cloud_daisy: [250, 250, 255, 255],
+  dandelion: [250, 224, 96, 255],
+  rainbow_rose: [236, 110, 170, 255],
+  star_orchid: [170, 130, 240, 255],
+  moon_lily: [200, 220, 255, 255],
+  dream_bell: [120, 150, 230, 255],
+};
+
+/** A flower on its plot, feet at the bottom: a sprout, a growing stem, the bloom, a wilted one. Id: flower_<name>_<stage>. */
+function drawFlower(r: Raster, id: string) {
+  const parts = id.split('_');
+  const stage = parts.pop()!;
+  const petal = FLOWER_COLOURS[parts.slice(1).join('_')] ?? [230, 200, 240, 255];
+  const stem: Rgba = [96, 176, 120, 255];
+  const feet = r.height - 10;
+  const cx = r.width / 2;
+  if (stage === 'sprout') {
+    r.ellipse(cx - 10, feet - 14, 10, 18, stem);
+    r.ellipse(cx + 10, feet - 18, 10, 20, shade(stem, 0.9));
+  } else if (stage === 'grow') {
+    for (const dx of [-26, 0, 26]) r.roundRect(cx + dx - 5, feet - 62, 10, 62, 5, stem);
+    for (const dx of [-26, 0, 26]) r.ellipse(cx + dx, feet - 66, 10, 10, shade(petal, 0.85));
+  } else if (stage === 'ripe') {
+    for (const dx of [-30, 0, 30]) {
+      r.roundRect(cx + dx - 5, feet - 74, 10, 74, 5, stem);
+      for (const [px, py] of [[-10, 0], [10, 0], [0, -10], [0, 10]] as const) r.ellipse(cx + dx + px, feet - 80 + py, 10, 10, petal);
+      r.ellipse(cx + dx, feet - 80, 7, 7, [250, 214, 90, 255]);
+    }
+  } else {
+    const dry: Rgba = [150, 124, 90, 255];
+    for (const dx of [-30, 0, 30]) {
+      r.roundRect(cx + dx - 5, feet - 40, 10, 40, 5, dry);
+      r.ellipse(cx + dx + 6, feet - 42, 12, 8, shade(dry, 0.8));
+    }
+  }
+}
+
+/** The cloud plot (a puffy white bed), the spring (a basin with a fall of water), the cauldron and the sky backdrop. */
+function drawCloudScenery(r: Raster, id: string) {
+  const w = r.width;
+  const h = r.height;
+  if (id === 'bg_cloud') {
+    r.gradient([196, 214, 248, 255], [255, 232, 240, 255]);
+    for (const [x, y, s] of [[0.2, 0.7, 0.2], [0.5, 0.8, 0.28], [0.8, 0.68, 0.22]] as const) r.ellipse(w * x, h * y, w * s, h * 0.12, [255, 255, 255, 235]);
+    return;
+  }
+  if (id === 'plot_cloud') {
+    r.ellipse(w * 0.5, h * 0.58, w * 0.46, h * 0.34, [214, 220, 240, 255]);
+    r.ellipse(w * 0.34, h * 0.5, w * 0.26, h * 0.3, [250, 250, 255, 255]);
+    r.ellipse(w * 0.64, h * 0.48, w * 0.28, h * 0.3, [250, 250, 255, 255]);
+    return;
+  }
+  r.ellipse(w / 2, h * 0.93, w * 0.4, h * 0.06, [0, 0, 0, 50]); // shadow
+  if (id === 'bld_cloud_spring') {
+    r.roundRect(w * 0.12, h * 0.56, w * 0.76, h * 0.34, 18, [214, 220, 240, 255]); // basin
+    r.roundRect(w * 0.18, h * 0.6, w * 0.64, h * 0.2, 14, [140, 200, 245, 255]); // water
+    r.roundRect(w * 0.44, h * 0.14, w * 0.12, h * 0.46, 8, [196, 204, 228, 255]); // spout
+    for (const dy of [0.2, 0.32, 0.44]) r.ellipse(w * 0.5, h * dy, 6, 10, [170, 216, 250, 230]);
+    return;
+  }
+  // The cauldron.
+  r.ellipse(w * 0.5, h * 0.62, w * 0.36, h * 0.3, [90, 84, 110, 255]);
+  r.ellipse(w * 0.5, h * 0.42, w * 0.3, h * 0.08, [150, 110, 220, 255]); // brew
+  for (const dx of [-0.2, 0, 0.2]) r.ellipse(w * (0.5 + dx), h * 0.3 - Math.abs(dx) * h * 0.1, 8, 12, [220, 190, 250, 200]); // steam
+  for (const dx of [-0.22, 0.22]) r.roundRect(w * (0.5 + dx) - 6, h * 0.82, 12, h * 0.1, 4, [70, 64, 88, 255]); // legs
+}
+
 /** A padlock: the plaza marks an Area that is not open yet with it. */
 function drawLock(r: Raster) {
   const iron: Rgba = [96, 96, 112, 255];
@@ -234,6 +303,8 @@ function render(
   if (id.startsWith('chr_')) drawCharacter(r, key);
   else if (id === 'ui_icon_lock') drawLock(r);
   else if (id.startsWith('crop_')) drawCrop(r, id);
+  else if (id.startsWith('flower_')) drawFlower(r, id);
+  else if (id === 'plot_cloud' || id === 'bg_cloud' || id === 'bld_cloud_spring' || id === 'bld_cauldron') drawCloudScenery(r, id);
   else if (id.startsWith('plot_')) drawPlot(r, id);
   else if (id.startsWith('fish_') || id.startsWith('ui_item_fish_')) drawFish(r, id.replace('ui_item_fish_', 'fish_'));
   else if (id === 'bg_aquarium' || id.startsWith('bld_fish_')) drawAquariumScenery(r, id);

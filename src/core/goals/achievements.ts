@@ -34,6 +34,8 @@ export function metricValue(metric: string, w: AchievementWorld): number {
       return w.codex.byKind.item ?? 0;
     case 'codexFish':
       return w.codex.byKind.fish ?? 0;
+    case 'codexFlower':
+      return w.codex.byKind.flower ?? 0;
     default:
       return w.stats[metric] ?? 0;
   }

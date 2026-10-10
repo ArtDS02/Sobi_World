@@ -1,0 +1,25 @@
+{
+  "startPlots": 6,
+  "plotExpansions": [
+    { "plots": 9, "price": 300 },
+    { "plots": 12, "price": 800 },
+    { "plots": 15, "price": 2000 },
+    { "plots": 18, "price": 5000 }
+  ],
+  "dryGrowthRate": 0.25,
+  "waterHours": 4,
+  "fertilizer": { "timeFactor": 0.75, "bonusYield": 1 },
+  "witherAfterHours": 48,
+  "witherYieldFactor": 0.5,
+  "nightYieldFactor": 2,
+  "spring": {
+    "levels": [
+      { "intervalMin": 20, "capacity": 6, "price": 0, "materials": {} },
+      { "intervalMin": 12, "capacity": 10, "price": 1500, "materials": {} },
+      { "intervalMin": 8, "capacity": 16, "price": 5000, "materials": { "item_pearl": 3 } }
+    ]
+  },
+  "cauldron": { "price": 600, "maxBatches": 5 },
+  "start": { "water": 6 },
+  "xp": { "plant": 2, "water": 0, "harvest": 3, "craft": 5, "fertilize": 1, "spring": 0 }
+}
