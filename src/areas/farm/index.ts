@@ -9,6 +9,7 @@ import { DECOR_IDS } from './logic/config/decor';
 import type { GameEvent } from './logic/events';
 import { farmSaveSpec, initFarm } from './logic/save/farmSave';
 import { farmOf } from './logic/save/lens';
+import { farmRoster, farmReceiveGift } from './logic/roster';
 import { farmStage } from './stage';
 import { farmSuggestions } from './logic/suggest';
 import { farmSummaryLines } from './logic/summary';
@@ -31,6 +32,8 @@ export const farmArea: AreaModule = {
     },
   ],
   totals: () => ({ decorOwned: DECOR_IDS.length }),
+  roster: farmRoster,
+  receiveGift: farmReceiveGift,
   suggest: (world, now, dayOffsetMs) => farmSuggestions(farmOf(world), now, dayOffsetMs),
   toWorldEvents: farmEventsToWorld,
   getSummary: (events, world, now) => farmSummaryLines(events as GameEvent[], farmOf(world), now),

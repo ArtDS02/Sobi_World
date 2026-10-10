@@ -9,6 +9,7 @@ import { vi } from '../../i18n/vi';
 import { AB, AQUARIUM_CONTENT, FEED_ITEM, FISH, FISH_LIST, FISH_NAMES } from './logic/config/content';
 import { advanceAquariumWorld } from './logic/simulate';
 import { aquariumOf, withAquarium } from './logic/save/lens';
+import { aquariumRoster } from './logic/roster';
 import { AQUARIUM_MIGRATIONS, AQUARIUM_STATE_VERSION, aquariumStateSchema, initialAquarium, type Fish } from './logic/state';
 import { aquariumSuggestions } from './logic/suggest';
 import { aquariumSummaryLines } from './logic/summary';
@@ -55,6 +56,7 @@ export const aquariumArea: AreaModule = {
       })),
     },
   ],
+  roster: aquariumRoster,
   suggest: (world, now) => aquariumSuggestions(aquariumOf(world), now),
   toWorldEvents: aquariumEventsToWorld,
   getSummary: (events, world, now) => aquariumSummaryLines(events, aquariumOf(world), now),

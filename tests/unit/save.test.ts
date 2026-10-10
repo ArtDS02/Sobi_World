@@ -26,7 +26,7 @@ const valid = (s: unknown) => farmGameSchema.safeParse(s).success;
 
 describe('schema (§5.1, §5.5)', () => {
   it('matches the FarmGame type', () => {
-    expectTypeOf<FarmGameParsed>().toEqualTypeOf<Omit<FarmGame, 'manure' | 'graceUntil' | 'memorials' | 'breedingPity'>>(); // the v7 import shape predates GĐ2
+    expectTypeOf<FarmGameParsed>().toEqualTypeOf<Omit<FarmGame, 'manure' | 'graceUntil' | 'memorials' | 'breedingPity' | 'adventureOpen'>>(); // the v7 import shape predates GĐ2 (adventureOpen is derived from the world, GĐ10)
   });
 
   it('accepts a valid save and round-trips through JSON', () => {

@@ -50,6 +50,7 @@ export function farmOf(world: WorldSave): FarmGame {
     },
     decor: area.decor,
     ...(area.decorPlan === undefined ? {} : { decorPlan: area.decorPlan }),
+    ...(world.world.unlockedAreas.includes('sobi_adventure') ? { adventureOpen: true } : {}),
     ...(area.manure === undefined ? {} : { manure: area.manure }),
     ...(area.graceUntil === undefined ? {} : { graceUntil: area.graceUntil }),
     ...(area.memorials === undefined ? {} : { memorials: area.memorials }),
