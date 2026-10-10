@@ -1,12 +1,29 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ3 — Nhân vật và Sảnh Sobi: xong việc 1–10. GĐ2 đã merge `main` + tag `phase-02` (chủ dự án duyệt 2026-10-09).
-**Nhánh:** `phase-03-character-hub`
-**Quy ước mới (chủ dự án, 2026-10-09):** xong giai đoạn nào thì tự merge vào `main`, gắn tag `phase-XX` và push, không hỏi từng lượt.
-**Bước tiếp theo:** GĐ4 — Bản cài desktop đầu tiên.
+**Giai đoạn:** GĐ4 — Bản cài desktop đầu tiên: xong, chờ chủ dự án thử trên máy sạch. GĐ3 đã merge `main` + tag `phase-03`.
+**Nhánh:** `phase-04-desktop-installer` (tách từ đầu nhánh `phase-03-character-hub`, nên mang theo commit nâng cấp Sảnh `3b10d83` chưa vào `main`).
+**Quy ước (chủ dự án, 2026-10-10):** chủ dự án tự merge, gắn tag `phase-XX` và push sau mỗi giai đoạn; agent chỉ commit trên nhánh giai đoạn.
+**Bước tiếp theo:** GĐ5 — Sobi Garden và sản xuất.
 
 ## Nhật ký
+
+### 2026-10-10 — GĐ4 hoàn thành: bản cài desktop Sobi World
+✅ Đã làm:
+1. Đổi tên: `productName` "Sobi World", `appId` `com.sobiworld.game`, `SobiWorld.exe`, `SobiWorld-Setup-0.4.0.exe`, shortcut Desktop + Start Menu "Sobi World"; gói npm `sobi-world` 0.4.0. Giữ Electron + NSIS (decision 011, bổ sung 005).
+2. Save/settings ở `%APPDATA%\SobiWorld\` (đã có từ GĐ1); gỡ cài đặt không xóa save.
+3. Kiểm bản người chơi tự động, nằm trong `npm run dist:win`: `verify:build` (dist + dist-electron: không Admin, không dấu vết dev, không file thừa, không URL ngoài) và `verify:installer` (mở `app.asar` thật, chạy `SobiWorld.exe` trên thư mục dữ liệu tạm: cửa sổ "Sobi World", ghi được save, không request mạng). Luật thuần ở `scripts/build/checks.ts` + `tests/scripts/buildChecks.test.ts` (7 test, trong `npm run check`).
+4. Biến `SOBIWORLD_APPDATA` thay `%APPDATA%` cho kiểm thử (phát hiện khi chạy thử: đặt `APPDATA` không đủ, lần chạy đầu của tôi đã tạo `%APPDATA%\SobiWorld` thật; thư mục chỉ chứa một thế giới mới tinh do chính lần chạy đó tạo, không có dữ liệu của bạn, tôi đã xóa).
+5. Tài liệu: `docs/BUILD.md`, `docs/TEST_MAY_SACH.md`, `electron/README.md`, `docs/ASSET_TODO.md` (icon).
+6. Sửa test `assetsCheck` (vẽ lại toàn bộ placeholder, ~8 giây) vượt hạn 5 giây mặc định làm `npm run check` đỏ: nâng hạn 60 giây.
+🧪 Đã kiểm tra: `npm run check` xanh (938 test); `npm run test:e2e` 6/6; `npm run dist:win` ra `release/SobiWorld-Setup-0.4.0.exe` (~145 MB) và qua `verify:build` + `verify:installer`; cài thử im lặng vào thư mục tạm: có `SobiWorld.exe`, shortcut "Sobi World" ở Desktop và Start Menu; gỡ im lặng: sạch exe + shortcut (shortcut "Sobi Farm" cũ của bạn không bị đụng).
+⚠️ Quyết định / giới hạn:
+- Chỉ Windows x64; macOS không làm (cần máy Mac + chữ ký Apple), mã không chặn việc thêm sau.
+- Chưa ký số: SmartScreen hiện "Unknown publisher" (hướng dẫn trong TEST_MAY_SACH).
+- Icon vẫn là mặt heo hồng vẽ bằng script (ASSET_TODO).
+- `npm audit`: 9 cảnh báo (8 vừa, 1 cao), tất cả trong công cụ build (`electron-builder`…), không nằm trong game. Sửa cần `--force` nâng bản lớn, để dành.
+- Chưa kiểm: máy sạch thật (không phải máy lập trình), tắt mạng thật khi cài, nâng cấp đè lên bản cài cũ.
+👉 Bạn cần: chép `release\SobiWorld-Setup-0.4.0.exe` sang máy khác và làm theo `docs/TEST_MAY_SACH.md`; rồi merge `main`, tag `phase-04`, push.
 
 ### 2026-10-09 — Nâng cấp Sảnh: bố cục theo ảnh mẫu, Bi/So, thanh trên mới, hiệu ứng sống
 ✅ Đã làm:
