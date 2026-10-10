@@ -126,6 +126,140 @@
       "id": "item_fertilizer",
       "category": "MATERIAL",
       "sellGold": 12
+    },
+    {
+      "id": "item_fish_goldfish",
+      "category": "FISH",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 20,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_perch",
+      "category": "FISH",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 24,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_carp",
+      "category": "FISH",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 28,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_clownfish",
+      "category": "FISH",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 60,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_pufferfish",
+      "category": "FISH",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 75,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_angelfish",
+      "category": "FISH",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 90,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_glowfish",
+      "category": "FISH",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 120,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_betta",
+      "category": "FISH",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 220,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_lanternfish",
+      "category": "FISH",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 280,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_seahorse",
+      "category": "FISH",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 380,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_dragon_koi",
+      "category": "FISH",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 800,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_fish_moonfish",
+      "category": "FISH",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 1200,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_scale",
+      "category": "MATERIAL",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 40,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_pearl",
+      "category": "MATERIAL",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 300,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "FOOD_FISH",
+      "category": "FOOD",
+      "rarity": "COMMON",
+      "priceGold": 20,
+      "hungerRestore": 50,
+      "curesSickness": false
     }
   ]
 }

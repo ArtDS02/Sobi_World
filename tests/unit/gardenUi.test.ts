@@ -119,7 +119,7 @@ describe('workshop card', () => {
     let w = ok(buildWorkshop(base({ item_corn: 4, item_wheat: 2 }), { building: 'mill' }, ctxAt(T0)));
     const idle = workshopVm(w, 'mill', T0);
     expect(idle.job).toBeNull();
-    expect(idle.recipes.map((r) => r.recipe.id)).toEqual(['recipe_pig_feed', 'recipe_premium_feed']);
+    expect(idle.recipes.map((r) => r.recipe.id)).toEqual(['recipe_pig_feed', 'recipe_premium_feed', 'recipe_fish_feed']);
     expect(idle.recipes[0]).toMatchObject({ maxBatches: 2, name: 'Thức ăn heo' });
     expect(idle.recipes[0]!.inputs).toEqual([{ name: 'Bắp', have: 4, need: 2 }, { name: 'Lúa mì', have: 2, need: 1 }]);
     expect(idle.recipes[1]!.maxBatches).toBe(0); // no carrot
@@ -136,7 +136,13 @@ describe('workshop card', () => {
     w = ok(upgradeSprinkler(w, ctxAt(T0)));
     expect(sprinklerVm(w).text).toContain('6 ô');
     expect(sprinklerVm(w).next).toMatchObject({ level: 2 });
-    w = ok(upgradeSprinkler(ok(upgradeSprinkler({ ...w, wallet: { ...w.wallet, coins: 100_000 } }, ctxAt(T0))), ctxAt(T0)));
+    // Levels 2 and 3 take the Aquarium's materials: coins alone are not enough.
+    const rich = { ...w, wallet: { ...w.wallet, coins: 100_000 } };
+    expect(sprinklerVm(rich).next?.reason).toContain('Vảy cá');
+    w = { ...rich, inventory: { items: { ...rich.inventory.items, item_scale: 30, item_pearl: 5 } } };
+    w = ok(upgradeSprinkler(ok(upgradeSprinkler(w, ctxAt(T0))), ctxAt(T0)));
+    expect(w.inventory.items.item_scale).toBe(30 - 8 - 15);
+    expect(w.inventory.items.item_pearl).toBe(5 - 2);
     expect(sprinklerVm(w).next).toBeNull();
   });
 });

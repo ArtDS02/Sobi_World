@@ -23,6 +23,14 @@
       "inputs": { "item_manure": 3, "item_grass": 1 },
       "outputs": { "item_fertilizer": 2 },
       "durationMin": 30
+    },
+    {
+      "id": "recipe_fish_feed",
+      "nameVi": "Thức ăn cá",
+      "building": "mill",
+      "inputs": { "item_potato": 2 },
+      "outputs": { "FOOD_FISH": 4 },
+      "durationMin": 10
     }
   ]
 }

@@ -95,6 +95,21 @@ export const ITEM_ID_VALUES = [
   'item_carrot',
   'FOOD_PREMIUM',
   'item_fertilizer',
+  'item_fish_goldfish',
+  'item_fish_perch',
+  'item_fish_carp',
+  'item_fish_clownfish',
+  'item_fish_pufferfish',
+  'item_fish_angelfish',
+  'item_fish_glowfish',
+  'item_fish_betta',
+  'item_fish_lanternfish',
+  'item_fish_seahorse',
+  'item_fish_dragon_koi',
+  'item_fish_moonfish',
+  'item_scale',
+  'item_pearl',
+  'FOOD_FISH',
 ] as const;
 
 export const DECOR_ID_VALUES = [

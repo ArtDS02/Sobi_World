@@ -57,6 +57,14 @@ CATALOGUE_SIZES.bld_sprinkler = { width: 120, height: 200 };
 CATALOGUE_SIZES.bld_feed_mill = { width: 260, height: 260 };
 CATALOGUE_SIZES.bld_composter = { width: 220, height: 200 };
 
+// Sobi Aquarium (GĐ8): the fish swimming (facing right), the tank, the dock and the sea backdrop.
+for (const fish of ['goldfish', 'perch', 'carp', 'clownfish', 'pufferfish', 'angelfish', 'glowfish', 'betta', 'lanternfish', 'seahorse', 'dragon_koi', 'moonfish']) {
+  CATALOGUE_SIZES[`fish_${fish}`] = { width: 192, height: 120 };
+}
+CATALOGUE_SIZES.bld_fish_tank = { width: 640, height: 400 };
+CATALOGUE_SIZES.bld_fish_dock = { width: 520, height: 300 };
+CATALOGUE_SIZES.bg_aquarium = { width: 1600, height: 900 };
+
 for (const who of ['so', 'bi']) {
   for (const facing of ['down', 'up', 'left', 'right']) {
     for (const frame of ['idle', 'walk1', 'walk2']) {

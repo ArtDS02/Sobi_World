@@ -25,8 +25,9 @@ export function gardenWorldEvents(e: GardenEvent): WorldEvent[] {
       const crop = CROPS[e.cropId];
       return [{ type: 'crop.harvested', area, plotId: 'garden', cropId: e.cropId, quantity: e.quantity }, ...(crop ? added(crop.produceItem, e.quantity) : [])];
     }
-    case 'GARDEN_PLOTS_BOUGHT':
     case 'GARDEN_SPRINKLER_BOUGHT':
+      return [...coins(-e.gold), ...Object.entries(e.materials ?? {}).flatMap(([id, n]) => removed(id, n ?? 0))];
+    case 'GARDEN_PLOTS_BOUGHT':
     case 'GARDEN_BUILT':
       return coins(-e.gold);
     case 'GARDEN_CRAFT_STARTED': {

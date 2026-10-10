@@ -223,6 +223,17 @@ export interface SprinklerVm {
   next: (ButtonVm & { level: number }) | null;
 }
 
+/** " + 8 Vảy cá" for the materials a level takes (empty when none). */
+const materialsText = (materials: Readonly<Record<string, number | undefined>>): string => {
+  const parts = Object.entries(materials).filter(([, n]) => (n ?? 0) > 0).map(([id, n]) => `${n} ${nameOfItem(id)}`);
+  return parts.length === 0 ? '' : ` + ${parts.join(', ')}`;
+};
+
+const missingMaterial = (world: WorldSave, materials: Readonly<Record<string, number | undefined>>): string | null => {
+  const lack = Object.entries(materials).find(([id, n]) => (world.inventory.items[id] ?? 0) < (n ?? 0));
+  return lack ? t(vi.garden.noMaterial, { name: nameOfItem(lack[0]) }) : null;
+};
+
 export function sprinklerVm(world: WorldSave): SprinklerVm {
   const g = gardenOf(world);
   const next = nextSprinkler(g);
@@ -233,8 +244,8 @@ export function sprinklerVm(world: WorldSave): SprinklerVm {
     next: next
       ? {
           level: next.level,
-          label: g.sprinkler === 0 ? t(vi.garden.sprinklerBuy, { gold: gold(next.price) }) : t(vi.garden.sprinklerUp, { level: next.level, plots: next.plots, gold: gold(next.price) }),
-          reason: world.wallet.coins < next.price ? vi.garden.noGold : null,
+          label: (g.sprinkler === 0 ? t(vi.garden.sprinklerBuy, { gold: gold(next.price) }) : t(vi.garden.sprinklerUp, { level: next.level, plots: next.plots, gold: gold(next.price) })) + materialsText(next.materials),
+          reason: world.wallet.coins < next.price ? vi.garden.noGold : missingMaterial(world, next.materials),
         }
       : null,
   };

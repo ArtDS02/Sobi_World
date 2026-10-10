@@ -13,7 +13,11 @@
   "fertilizer": { "timeFactor": 0.75, "bonusYield": 1 },
   "witherAfterHours": 48,
   "witherYieldFactor": 0.5,
-  "sprinkler": [{ "plots": 6, "price": 500 }, { "plots": 12, "price": 1500 }, { "plots": 24, "price": 4000 }],
+  "sprinkler": [
+    { "plots": 6, "price": 500 },
+    { "plots": 12, "price": 1500, "materials": { "item_scale": 8 } },
+    { "plots": 24, "price": 4000, "materials": { "item_scale": 15, "item_pearl": 2 } }
+  ],
   "buildings": {
     "mill": {
       "nameVi": "Máy xay",

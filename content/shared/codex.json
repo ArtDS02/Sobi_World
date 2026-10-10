@@ -1,5 +1,9 @@
 {
-  "discovery": { "crop": { "coins": 50, "xp": 10 }, "item": { "coins": 0, "xp": 2 } },
+  "discovery": {
+    "crop": { "coins": 50, "xp": 10 },
+    "item": { "coins": 0, "xp": 2 },
+    "fish": { "coins": 40, "xp": 8 }
+  },
   "milestones": [
     { "id": "CODEX_5", "entries": 5, "coins": 300, "gems": 0, "xp": 20 },
     { "id": "CODEX_10", "entries": 10, "coins": 0, "gems": 5, "xp": 40 },

@@ -44,11 +44,13 @@ export const STAT_ID_VALUES = [
   // (core/goals/stats.ts: cropsPlanted, cropsHarvested, crafts, boardOrders, dailyGoalsDone); each id has one owner.
   'feeds', 'manureCollected', 'slotsOwned', 'decorOwned', 'maxHearts',
   'cropsPlanted', 'cropsHarvested', 'crafts', 'boardOrders', 'dailyGoalsDone',
+  // GĐ8: world counters of the Aquarium's standard events (fish.caught, tank.cleaned).
+  'fishCaught', 'tanksCleaned',
 ] as const;
 export type StatId = (typeof STAT_ID_VALUES)[number];
 
-/** Item categories of the shared bag (spec V2 §6 Item). Seeds and crops joined with the Garden; essences and more come with their Area. */
-export const ITEM_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'MATERIAL', 'SEED', 'CROP'] as const;
+/** Item categories of the shared bag (spec V2 §6 Item). Seeds and crops joined with the Garden, fish with the Aquarium; essences and more come with their Area. */
+export const ITEM_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'MATERIAL', 'SEED', 'CROP', 'FISH'] as const;
 export type ItemCategory = (typeof ITEM_CATEGORY_VALUES)[number];
 
 export const PRODUCT_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'SUPPLY', 'SPECIAL'] as const;

@@ -15,9 +15,11 @@ export const nextExpansion = (g: Pick<GardenState, 'plots'>): { plots: number; p
   g.plots.length >= MAX_PLOTS ? null : (GB.plotExpansions.find((e) => e.plots > g.plots.length) ?? null);
 
 /** The next sprinkler level and its price, or null at the top. */
-export const nextSprinkler = (g: Pick<GardenState, 'sprinkler'>): { level: number; plots: number; price: number } | null => {
+export const nextSprinkler = (
+  g: Pick<GardenState, 'sprinkler'>,
+): { level: number; plots: number; price: number; materials: Readonly<Record<string, number | undefined>> } | null => {
   const next = GB.sprinkler[g.sprinkler];
-  return next ? { level: g.sprinkler + 1, plots: next.plots, price: next.price } : null;
+  return next ? { level: g.sprinkler + 1, plots: next.plots, price: next.price, materials: next.materials ?? {} } : null;
 };
 
 /** A growing plot that the player's hand can water now: not ripe, not under the sprinkler, not wet already. */

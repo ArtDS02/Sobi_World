@@ -50,6 +50,7 @@ export function createGoals(sources: GoalsSources) {
       codexBreed: byKind.breed ?? 0,
       codexCrop: byKind.crop ?? 0,
       codexItem: byKind.item ?? 0,
+      codexFish: byKind.fish ?? 0,
       ...sources.extraTotals(),
     };
   };

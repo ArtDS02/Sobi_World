@@ -23,6 +23,8 @@ export type WorldEvent =
   | { type: 'creature.purposeSet'; area: string; creatureId: string; purpose: string }
   | { type: 'crop.planted'; area: string; plotId: string; cropId: string }
   | { type: 'crop.harvested'; area: string; plotId: string; cropId: string; quantity: number }
+  | { type: 'fish.caught'; area: string; speciesId: string; itemId: string }
+  | { type: 'tank.cleaned'; area: string }
   | { type: 'recipe.completed'; area: string; recipeId: string }
   | { type: 'order.completed'; area: string; orderId: string }
   | { type: 'area.unlocked'; area: string }
@@ -49,6 +51,8 @@ export const WORLD_EVENT_TYPES = [
   'creature.purposeSet',
   'crop.planted',
   'crop.harvested',
+  'fish.caught',
+  'tank.cleaned',
   'recipe.completed',
   'order.completed',
   'area.unlocked',

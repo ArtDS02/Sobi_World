@@ -67,9 +67,10 @@ export function settleWorld(
   if (worldEvents.length > 0) {
     const stats = trackStats(world.progression.stats, worldEvents);
     if (stats) world = { ...world, progression: { ...world.progression, stats } };
-    // A crop is met by its first harvest; an item the first time the bag holds it (bought, harvested, made, given).
+    // A crop is met by its first harvest, a fish by its first catch; an item the first time the bag holds it (bought, harvested, made, given).
     const seen = [
       ...worldEvents.flatMap((e) => (e.type === 'crop.harvested' ? [['crop', e.cropId] as const] : [])),
+      ...worldEvents.flatMap((e) => (e.type === 'fish.caught' ? [['fish', e.speciesId] as const] : [])),
       ...Object.entries(world.inventory.items).filter(([, n]) => n > 0).map(([id]) => ['item', id] as const),
     ];
     for (const [kind, id] of seen) {
