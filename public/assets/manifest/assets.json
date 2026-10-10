@@ -1602,6 +1602,46 @@
       "id": "plot_cloud",
       "status": "placeholder",
       "asset": "props/plot_cloud.png"
+    },
+    {
+      "id": "enemy_mossling",
+      "status": "placeholder",
+      "asset": "props/enemy_mossling.png"
+    },
+    {
+      "id": "enemy_thorn_sprout",
+      "status": "placeholder",
+      "asset": "props/enemy_thorn_sprout.png"
+    },
+    {
+      "id": "enemy_gale_sparrow",
+      "status": "placeholder",
+      "asset": "props/enemy_gale_sparrow.png"
+    },
+    {
+      "id": "enemy_ember_fox",
+      "status": "placeholder",
+      "asset": "props/enemy_ember_fox.png"
+    },
+    {
+      "id": "enemy_dew_frog",
+      "status": "placeholder",
+      "asset": "props/enemy_dew_frog.png"
+    },
+    {
+      "id": "enemy_forest_wolf",
+      "status": "placeholder",
+      "asset": "props/enemy_forest_wolf.png"
+    },
+    {
+      "id": "enemy_bramble_boar",
+      "status": "placeholder",
+      "asset": "props/enemy_bramble_boar.png"
+    },
+    {
+      "id": "enemy_old_treant",
+      "status": "placeholder",
+      "asset": "props/enemy_old_treant.png"
     }
   ],
   "buildings": [
@@ -1837,6 +1877,11 @@
       "id": "bg_cloud",
       "status": "placeholder",
       "asset": "environment/bg_cloud.png"
+    },
+    {
+      "id": "bg_adventure_forest",
+      "status": "placeholder",
+      "asset": "environment/bg_adventure_forest.png"
     }
   ],
   "ui": [
@@ -2179,6 +2224,61 @@
       "id": "ui_item_potion_battle",
       "status": "placeholder",
       "asset": "ui/ui_item_potion_battle.png"
+    },
+    {
+      "id": "ui_item_equip_wood_sword",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_wood_sword.png"
+    },
+    {
+      "id": "ui_item_equip_iron_sword",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_iron_sword.png"
+    },
+    {
+      "id": "ui_item_equip_flame_blade",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_flame_blade.png"
+    },
+    {
+      "id": "ui_item_equip_leaf_vest",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_leaf_vest.png"
+    },
+    {
+      "id": "ui_item_equip_bark_armor",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_bark_armor.png"
+    },
+    {
+      "id": "ui_item_equip_moss_plate",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_moss_plate.png"
+    },
+    {
+      "id": "ui_item_equip_lucky_clover",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_lucky_clover.png"
+    },
+    {
+      "id": "ui_item_equip_wind_feather",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_wind_feather.png"
+    },
+    {
+      "id": "ui_item_equip_sun_amulet",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_sun_amulet.png"
+    },
+    {
+      "id": "ui_item_forest_herb",
+      "status": "placeholder",
+      "asset": "ui/ui_item_forest_herb.png"
+    },
+    {
+      "id": "ui_item_beast_fang",
+      "status": "placeholder",
+      "asset": "ui/ui_item_beast_fang.png"
     }
   ],
   "audio": [

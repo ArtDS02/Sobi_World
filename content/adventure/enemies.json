@@ -84,7 +84,7 @@
       "id": "enemy_old_treant",
       "nameVi": "Cổ Thụ Giận Dữ",
       "element": "EARTH",
-      "stats": { "hp": 420, "atk": 24, "def": 12, "spd": 9, "crit": 5 },
+      "stats": { "hp": 340, "atk": 22, "def": 10, "spd": 9, "crit": 5 },
       "skills": ["skill_boulder_toss", "skill_earth_wall", "skill_quake"],
       "exp": 90,
       "coins": 150,
