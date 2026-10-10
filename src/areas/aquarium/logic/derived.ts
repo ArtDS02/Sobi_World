@@ -30,6 +30,8 @@ export interface FishView {
   species: string;
   name: string;
   stage: ReturnType<typeof fishStage>;
+  /** Growth progress, 0-100. */
+  growth: number;
   hunger: number;
   cleanliness: number;
   sick: boolean;
@@ -55,6 +57,7 @@ export const fishView = (f: Fish, now: number): FishView => ({
   species: f.breed,
   name: f.name,
   stage: fishStage(f),
+  growth: f.growthProgress,
   hunger: f.hunger,
   cleanliness: f.cleanliness,
   sick: f.isSick,

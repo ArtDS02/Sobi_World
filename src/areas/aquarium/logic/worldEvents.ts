@@ -30,6 +30,8 @@ export function aquariumWorldEvents(e: AquariumEvent): WorldEvent[] {
     }
     case 'AQUARIUM_FISH_SOLD':
       return [{ type: 'creature.sold', area, creatureId: e.fishId, amount: e.gold }, ...coins(e.gold)];
+    case 'AQUARIUM_CATCH_SOLD':
+      return [...removed(e.itemId, e.quantity), ...coins(e.gold)];
     case 'AQUARIUM_SCALES_COLLECTED':
       return added(SCALE_ITEM, e.quantity);
     case 'AQUARIUM_TANK_UPGRADED': {

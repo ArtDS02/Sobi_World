@@ -1,7 +1,9 @@
 // Money and materials of the tank: selling a raised fish, collecting its scales, upgrading the tank.
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
-import { AB, SCALE_ITEM } from '../config/content';
+import type { ItemId } from '../../../../core/config/ids';
+import { ITEMS } from '../../../../core/config/items';
+import { AB, PEARL_ITEM, SCALE_ITEM, fishOfItem } from '../config/content';
 import { nextTankLevel } from '../derived';
 import { isAdult, isPet } from '../fishLife';
 import { fishQuote } from '../pricing';
@@ -23,6 +25,21 @@ export function sellFish(world: WorldSave, args: { fishId: string }, ctx: Action
       events: [{ type: 'AQUARIUM_FISH_SOLD', fishId: fish.id, speciesId: fish.breed, gold: quote.price }],
       xp: AB.xp.sell,
     };
+  });
+}
+
+/** Sells `quantity` of a caught fish (or any item the shop buys that the Aquarium made) straight from the bag at the item's own price. */
+export function sellCatch(world: WorldSave, args: { itemId: string; quantity: number }, ctx: ActionContext): AquariumResult {
+  return runAquarium(world, ctx, (w) => {
+    const price = ITEMS[args.itemId as ItemId]?.sellGold;
+    const sellable = fishOfItem(args.itemId) !== undefined || args.itemId === SCALE_ITEM || args.itemId === PEARL_ITEM;
+    if (!sellable || price === undefined || !Number.isInteger(args.quantity) || args.quantity < 1) return { ok: false, error: 'INVALID_REQUEST' };
+    const taken = take(w, args.itemId, args.quantity);
+    if (!taken.ok) return taken;
+    const gold = price * args.quantity;
+    const paid = pay(taken.world, gold, 'AQUARIUM_CATCH_SELL', ctx, { refId: args.itemId, note: `x${args.quantity}` });
+    if (!paid.ok) return paid;
+    return { ok: true, world: paid.state, events: [{ type: 'AQUARIUM_CATCH_SOLD', itemId: args.itemId, quantity: args.quantity, gold }] };
   });
 }
 

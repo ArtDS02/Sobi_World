@@ -58,8 +58,8 @@ function advanceSpan(a: AquariumState, end: number, dayOffsetMs: number, created
   const fish = a.fish.map((f) => {
     const next = advanceFish(f, end, rate, dayOffsetMs, createdAt);
     shed += Math.floor(next.poopProgress ?? 0) - Math.floor(f.poopProgress ?? 0);
-    if (!f.isSick && next.isSick) events.push({ type: 'AQUARIUM_FISH_SICK', fishId: f.id });
-    if (fishHealth(f, f.lastTickedAt) !== 'critical' && fishHealth(next, end) === 'critical') events.push({ type: 'AQUARIUM_FISH_CRITICAL', fishId: f.id });
+    if (!f.isSick && next.isSick) events.push({ type: 'AQUARIUM_FISH_SICK', fishId: f.id, name: f.name });
+    if (fishHealth(f, f.lastTickedAt) !== 'critical' && fishHealth(next, end) === 'critical') events.push({ type: 'AQUARIUM_FISH_CRITICAL', fishId: f.id, name: f.name });
     return next;
   });
   const cap = scalesCap(a.tank.level);

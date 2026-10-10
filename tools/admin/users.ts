@@ -3,6 +3,7 @@
 // another machine). This module loads/saves them; userDetail.ts draws the editor.
 import { parseWorldSave } from '../../src/app/saveCodec';
 import { farmOf, withFarm } from '../../src/areas/farm/logic/save/lens';
+import { rewindAquariumInWorld } from '../../src/areas/aquarium/logic/rewind';
 import { rewindGardenInWorld } from '../../src/areas/garden/logic/rewind';
 import type { WorldSave } from '../../src/core/save/world';
 import { exportFileName } from '../../src/core/save/exportImport';
@@ -89,8 +90,8 @@ export async function openFile(file: File) {
   users.open = { id: 'file', source: 'file', label: file.name, world: p.world, original: p.save, draft: p.save, baseModifiedAt: 0, dirty: false, rewindMs: 0, edits: [] };
 }
 
-/** The world the draft makes: the farm view written back, the Garden's clocks moved with the time travel. */
-const worldOf = (o: NonNullable<typeof users.open>): WorldSave => rewindGardenInWorld(withFarm(o.world, o.draft), o.rewindMs);
+/** The world the draft makes: the farm view written back, the Garden's and the Aquarium's clocks moved with the time travel. */
+const worldOf = (o: NonNullable<typeof users.open>): WorldSave => rewindAquariumInWorld(rewindGardenInWorld(withFarm(o.world, o.draft), o.rewindMs), o.rewindMs);
 
 /** Writes the draft: disk saves through the API (backup first), files as a download for import. */
 export async function saveOpen(): Promise<string> {

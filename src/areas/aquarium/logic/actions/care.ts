@@ -21,7 +21,7 @@ const bondGainFor = (f: Fish, gain: number): number => Math.round(gain * fishTra
 /** The event for a fish whose Bond just crossed the line that opens its hidden trait. */
 const revealEvents = (before: Fish, after: Fish): AquariumEvent[] =>
   after.hiddenTrait && fishHearts(before) < 5 && fishHearts(after) >= 5
-    ? [{ type: 'AQUARIUM_TRAIT_REVEALED', fishId: after.id, traitId: after.hiddenTrait }]
+    ? [{ type: 'AQUARIUM_TRAIT_REVEALED', fishId: after.id, name: after.name, traitId: after.hiddenTrait }]
     : [];
 
 /**

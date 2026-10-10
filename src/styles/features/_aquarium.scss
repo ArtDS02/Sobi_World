@@ -1,0 +1,203 @@
+// Sobi Aquarium's DOM layer (GĐ8): the HUD over the tank, the bar of buttons, the dialogs (a fish, the rod, the bag,
+// the tank, breeding). The layer ignores clicks, its pieces take them (same idea as the Garden's layer).
+@use '../core/tokens' as *;
+@use '../core/mixins' as *;
+
+// Both Areas' layers live in one overlay of the shell.
+.area-overlays {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.aquarium-host {
+  position: absolute;
+  inset: 0;
+  z-index: $z-bars;
+  display: none;
+  pointer-events: none;
+
+  &.is-active { display: block; }
+
+  // The layer ignores clicks, but a dialog opened inside it must take them.
+  .c-dialog { pointer-events: auto; }
+}
+
+.aquarium-ui {
+  &__hud, &__inner { display: contents; }
+
+  &__pills {
+    position: absolute;
+    top: $sp-3;
+    left: $sp-3;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+  }
+
+  &__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: $sp-2;
+    min-height: 2.6rem;
+    padding: 0 $sp-4;
+    color: #f2fbff;
+    background: linear-gradient(180deg, #3f93b8, #28678a);
+    border: 3px solid #1b4a66;
+    border-radius: 0.9rem;
+    box-shadow: 0 3px 0 rgba(16, 48, 66, 0.45);
+    pointer-events: auto;
+
+    b { font-size: $fs-lg; text-shadow: 0 1px 0 rgba(16, 48, 66, 0.6); }
+    small { font-size: $fs-xs; opacity: 0.9; }
+  }
+
+  &__bar { width: 6rem; height: $bar-height; }
+
+  &__nav {
+    position: absolute;
+    top: $sp-3;
+    right: $sp-3;
+    display: flex;
+    gap: $sp-2;
+  }
+
+  &__btn {
+    min-height: $sp-touch-min;
+    padding: 0 $sp-4;
+    font: inherit;
+    font-weight: $fw-bold;
+    color: #f2fbff;
+    cursor: pointer;
+    background: linear-gradient(180deg, #3f93b8, #28678a);
+    border: 3px solid #1b4a66;
+    border-radius: 0.9rem;
+    box-shadow: 0 3px 0 rgba(16, 48, 66, 0.45);
+    pointer-events: auto;
+    transition: transform $dur-fast ease-out, filter $dur-fast ease-out;
+
+    &:hover { transform: scale(1.06); filter: brightness(1.1); }
+    &:active { transform: scale(0.95); }
+    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
+  }
+
+  &__bottom {
+    position: absolute;
+    right: 0;
+    bottom: $sp-3;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0 $sp-3;
+  }
+
+  &__dock {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-3;
+    align-items: flex-end;
+    justify-content: center;
+    padding: $sp-2 $sp-3;
+    pointer-events: auto;
+    background: rgba(236, 248, 255, 0.92);
+    border: 3px solid #1b4a66;
+    border-radius: $radius-md;
+    box-shadow: $hud-shadow;
+  }
+
+  &__bulk { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: flex-start; justify-content: center; }
+}
+
+.aquarium-dialog {
+  display: grid;
+  gap: $sp-3;
+
+  &__head { display: flex; gap: $sp-3; align-items: center; p { margin: 0; } }
+  &__portrait { width: 6rem; height: 4rem; object-fit: contain; image-rendering: pixelated; }
+  &__ill { color: $c-danger; font-weight: $fw-bold; }
+  &__hearts { color: #e0654f; letter-spacing: 0.1em; }
+
+  &__need {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: $sp-2;
+    align-items: center;
+    font-size: $fs-sm;
+    .c-bar { height: $bar-height; }
+    .c-bar__fill.is-growth { background: $c-leaf; }
+    .c-bar__fill.is-low { background: $c-danger; }
+  }
+
+  &__traits { display: grid; gap: $sp-1; }
+  &__chips { display: flex; flex-wrap: wrap; gap: $sp-2; margin: 0; padding: 0; list-style: none; }
+  &__chip {
+    display: inline-flex;
+    flex-direction: column;
+    padding: $sp-1 $sp-3;
+    background: $c-surface;
+    border: 2px solid $c-border;
+    border-radius: $radius-md;
+
+    small { color: $c-text-muted; font-size: $fs-xs; }
+    &.is-rare { border-color: #5aa0e0; }
+    &.is-epic { border-color: #b070e0; }
+    &.is-locked { opacity: 0.7; border-style: dashed; }
+  }
+
+  &__purposes { display: flex; gap: $sp-2; }
+  &__purpose {
+    padding: $sp-1 $sp-3;
+    font: inherit;
+    color: $c-text;
+    cursor: pointer;
+    background: $c-surface;
+    border: 3px solid $c-border;
+    border-radius: $radius-md;
+
+    &.is-selected { background: #dff2fb; border-color: #3f93b8; }
+    &:disabled { cursor: not-allowed; opacity: 0.6; }
+    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
+  }
+
+  &__actions { display: flex; flex-wrap: wrap; gap: $sp-2; }
+  &__quote { margin: 0; padding-left: $sp-4; }
+
+  &__stage { display: grid; gap: $sp-2; justify-items: start; }
+  &__result { margin: 0; font-weight: $fw-bold; &.is-good { color: $c-leaf; } }
+
+  &__odds, &__bag {
+    display: grid;
+    gap: $sp-2;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: center; }
+    li.is-unknown { opacity: 0.65; }
+    small { color: $c-text-muted; }
+  }
+  &__odds-icon, &__bag-icon { width: 2.4rem; height: 1.6rem; object-fit: contain; image-rendering: pixelated; }
+  &__bag-icon { width: 3rem; height: 3rem; }
+}
+
+// The rod's mini-game: a marker sweeps the bar; pull while it is on the green spot.
+.aquarium-mini {
+  position: relative;
+  width: min(100%, 22rem);
+  height: 2rem;
+  overflow: hidden;
+  background: #cfe7f3;
+  border: 3px solid #1b4a66;
+  border-radius: 1rem;
+
+  &__zone { position: absolute; top: 0; bottom: 0; background: rgba(90, 190, 110, 0.75); }
+  &__marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0.5rem;
+    margin-left: -0.25rem;
+    background: #e0654f;
+    border-radius: 0.25rem;
+  }
+}
