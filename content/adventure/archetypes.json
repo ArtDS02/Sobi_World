@@ -21,7 +21,7 @@
       "nameVi": "Thích khách",
       "descVi": "Nhanh và hay chí mạng, nhưng mỏng máu.",
       "element": "WIND",
-      "stats": { "hp": 85, "atk": 17, "def": 5, "spd": 15, "crit": 14 },
+      "stats": { "hp": 98, "atk": 17, "def": 6, "spd": 15, "crit": 14 },
       "skills": ["skill_gust_strike", "skill_swift_flurry", "skill_tailwind", "skill_razor_gale"]
     },
     {
@@ -45,7 +45,7 @@
       "nameVi": "Triệu bão",
       "descVi": "Tốc độ cao, làm chậm và đánh diện rộng.",
       "element": "WIND",
-      "stats": { "hp": 90, "atk": 18, "def": 6, "spd": 12, "crit": 10 },
+      "stats": { "hp": 96, "atk": 18, "def": 6, "spd": 12, "crit": 10 },
       "skills": ["skill_cyclone", "skill_gust_strike", "skill_tailwind", "skill_tidal_wave"]
     },
     {

@@ -1,19 +1,23 @@
 // npm run sim:adventure (GĐ10 balance check): plays the Forest on the game's own combat rules for every archetype and team,
-// so a balance edit shows its effect on archetype diversity. Usage: npm run sim:adventure [-- <samples> <seed>]
+// so a balance edit shows its effect on archetype diversity. Usage: npm run sim:adventure [-- <samples> <seed> <zone> <gear>]
+// (GĐ11: zone_forest | zone_mountain | zone_ruins, gear none | common | uncommon | rare | epic; the default is the Forest in common gear).
 import { ARCHETYPES } from '../src/areas/adventure/logic/config/content';
 import { simulateRuns, type GearTier } from '../src/areas/adventure/logic/battleSim';
 
 const samples = Number(process.argv[2] ?? 300);
 const seed = Number(process.argv[3] ?? 11);
+const zone = process.argv[4] ?? 'zone_forest';
+const gearTier = (process.argv[5] ?? 'common') as GearTier;
+const LEVELS = zone === 'zone_forest' ? [1, 2, 3, 4, 5, 6, 8, 10] : zone === 'zone_mountain' ? [6, 8, 10, 12, 14, 16, 20, 24] : [8, 12, 14, 16, 18, 20, 24, 30];
 const ids = Object.keys(ARCHETYPES);
 const run = (team: string[], level: number, gear: GearTier) =>
-  simulateRuns({ zoneId: 'zone_forest', level, team: team.map((archetypeId) => ({ archetypeId })), gear, samples, seed });
+  simulateRuns({ zoneId: zone, level, team: team.map((archetypeId) => ({ archetypeId })), gear, samples, seed });
 
-console.log('Win % of a full Forest run by team level (gear: common), team of 3 of the same style');
-console.log('style'.padEnd(12), [1, 2, 3, 4, 5, 6, 8, 10].map((l) => `L${l}`.padStart(6)).join(''));
-for (const id of ids) console.log(id.padEnd(12), [1, 2, 3, 4, 5, 6, 8, 10].map((l) => String(run([id, id, id], l, 'common').winPercent).padStart(6)).join(''));
+console.log(`Win % of a full run of ${zone} by team level (gear: ${gearTier}), team of 3 of the same style`);
+console.log('style'.padEnd(12), LEVELS.map((l) => `L${l}`.padStart(6)).join(''));
+for (const id of ids) console.log(id.padEnd(12), LEVELS.map((l) => String(run([id, id, id], l, gearTier).winPercent).padStart(6)).join(''));
 
-for (const [level, gear] of [[3, 'none'], [4, 'common'], [6, 'common']] as const) {
+for (const [level, gear] of [[LEVELS[2]!, gearTier], [LEVELS[3]!, gearTier], [LEVELS[5]!, gearTier]] as const) {
   const rows = new Map<string, { sum: number; n: number; rounds: number; hp: number }>();
   let all = 0;
   let count = 0;

@@ -41,6 +41,8 @@ export interface AdventureStats {
   losses: number;
   /** Boss kills by zone id. */
   clears: Record<string, number>;
+  /** Hours since the start at which each zone's boss first fell. */
+  firstClearAtHour: Record<string, number>;
   eggsHatched: number;
   rationsEaten: number;
   /** Hours since the start at which each technology level was bought ("tech_x:2" → hour). */
@@ -49,7 +51,7 @@ export interface AdventureStats {
   gems: number;
 }
 
-export const newAdventureStats = (): AdventureStats => ({ openAtHour: null, runs: 0, wins: 0, losses: 0, clears: {}, eggsHatched: 0, rationsEaten: 0, techAtHour: {}, gems: 0 });
+export const newAdventureStats = (): AdventureStats => ({ openAtHour: null, runs: 0, wins: 0, losses: 0, clears: {}, firstClearAtHour: {}, eggsHatched: 0, rationsEaten: 0, techAtHour: {}, gems: 0 });
 
 const stat = (_b: Bot, item: string, slot: (typeof EQUIPMENT_SLOTS)[number]): number => {
   const d = EQUIPMENT_DEFS[item];
@@ -145,6 +147,7 @@ function goOut(b: Bot) {
     if (run?.result === 'win') {
       b.adv.wins += 1;
       b.adv.clears[run.zoneId] = (b.adv.clears[run.zoneId] ?? 0) + 1;
+      b.adv.firstClearAtHour[run.zoneId] ??= (b.now - b.start) / 3_600_000;
     } else if (run) b.adv.losses += 1;
     b.act('adventure', (w, c) => collectLoot(w, c));
     b.act('adventure', (w, c) => closeRun(w, c));

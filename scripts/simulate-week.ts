@@ -24,6 +24,7 @@ console.log(`Sobi Aquarium opens: ${h1(r.aquariumOpenAtHour)}; fish illnesses ${
 console.log(`Sobi Cloud opens: ${h1(r.cloudOpenAtHour)}; flowers picked ${r.flowersHarvested}, potions brewed ${r.potionsBrewed}`);
 const adv = r.adventure;
 console.log(`Sobi Adventure opens: ${h1(adv.openAtHour)}; ${adv.runs} runs (${adv.wins} cleared, ${adv.losses} lost), boss kills ${JSON.stringify(adv.clears)}, eggs hatched ${adv.eggsHatched}, rations eaten ${adv.rationsEaten}`);
+console.log(`First boss kills: ${Object.entries(adv.firstClearAtHour).map(([z, h]) => `${z} @ day ${(h / 24 + 1).toFixed(1)}`).join(', ') || 'none'}`);
 console.log(`Technologies: ${Object.entries(adv.techAtHour).map(([k, h]) => `${k} @ day ${(h / 24 + 1).toFixed(1)}`).join(', ') || 'none'}`);
 console.log('Bag at the end:', Object.entries(r.bag).filter(([, n]) => n > 0).map(([k, n]) => `${k.replace('item_', '')} ${n}`).join(', '));
 if (Object.keys(r.pendingLoot).length > 0) console.log('Loot still waiting:', JSON.stringify(r.pendingLoot));

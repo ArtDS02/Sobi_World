@@ -90,6 +90,7 @@ admin chỉ đọc/ghi content/ và save qua core.
 | `progression` | Level từng Area, World Development, điều kiện mở khóa |
 | `collection` | Codex, mốc thưởng |
 | `goals` | Bảng đơn hàng, mục tiêu hằng ngày, thành tựu |
+| `tech` | Công nghệ (GĐ11): nâng cấp mua bằng Sobi Coin và vật liệu cổ, hiệu quả đọc qua `techBonus` |
 | `events` | Event bus |
 | `content` | Load và validate toàn bộ `content/` khi khởi động |
 | `assets` | Asset registry, tra cứu asset theo id |

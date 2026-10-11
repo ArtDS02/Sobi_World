@@ -1,12 +1,29 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ10 — Sobi Adventure: **nghiệm thu xong, đã merge `main`, tag `phase-10`**; phiên bản 0.10.0. Số liệu đã chơi thử bằng mô phỏng và chỉnh (decision 018). GĐ9 tag `phase-09`.
+**Giai đoạn:** GĐ11 — Adventure liên hệ thống: xong phần code và cân bằng bằng bot (decision 019), **dừng chờ chủ dự án duyệt** (điểm dừng của prompt GĐ11: sau bước 6–7); phiên bản 0.11.0. GĐ10 đã merge `main` (tag `phase-10`).
 **Chiến lược (decision 017):** gameplay trước, art sau. GĐ10–GĐ13 dùng placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
-**Nhánh:** `main` (GĐ10 đã merge). GĐ11 tách nhánh `phase-11-*` từ `main` trong session riêng.
-**Bước tiếp theo:** GĐ11 — Adventure liên hệ thống (chưa bắt đầu; chủ dự án sẽ ra lệnh riêng).
+**Nhánh:** `phase-11-adventure-links` (tách từ `main` sau GĐ10). Chưa merge, chưa gắn tag `phase-11`.
+**Bước tiếp theo:** chủ dự án chơi thử vài ngày và duyệt số (decision 019); rồi merge, tag `phase-11`, push; sau đó GĐ12 — Thế giới động.
 
 ## Nhật ký
+
+### 2026-10-11 — GĐ11 hoàn thành phần code: Adventure liên hệ thống (chờ duyệt)
+✅ Đã làm (7 việc của prompt GĐ11; quyết định ở `docs/decisions/019-adventure-links.md`):
+1. **Loot quay về**: vật liệu cổ (Quặng Núi, Bánh Răng Cổ, Rune Cổ) mở công trình Lv3–Lv4 ở Farm (máng Lv3, chuồng thứ 17–24), Garden (vòi tưới Lv3), Aquarium (bể Lv4), Cloud (suối Lv3); hạt giống hiếm, cá hiếm, **Trứng Heo Hoang** (ấp ở Farm ra heo Hiếm: `hatchEgg`, nút "Ấp trứng" trong Kho).
+2. **Công nghệ** (`core/tech`, Menu → Công nghệ): Xưởng Cải Tiến (làm nhanh 15/30/45%), Lò Lớn (+5/+10/+20 mẻ), Bếp Dã Chiến (công thức khẩu phần + chỗ mang), Lều Trại (hồi năng lượng phiêu lưu +25/50/100%). Cấp lưu ở `progression.stats`, không đổi save; công thức có thể khóa theo công nghệ (`requiresTech`).
+3. **Chuẩn bị trước trận**: 3 khẩu phần làm ở Máy xay (từ cây Garden, thảo mộc / nanh Adventure, nước Cloud) chọn ở sảnh Adventure; Bond +5% chỉ số mỗi tim (trước 3%); potion Cloud vẫn dùng trong trận.
+4. **2 vùng mới** nối chuỗi: Núi Đá Vọng (cấp 10, sau trùm Rừng) và Tàn Tích Cổ (cấp 13, sau trùm Núi): 11 kẻ địch, 2 trùm, 7 sự kiện nhỏ, 3 trang bị Sử thi.
+5. **Gems** theo GAME_BALANCE §8 (rương 3–4%, trùm 8–12%, 1–3 Gems).
+6. **Luật "không tài nguyên chết"**: `npm run items:audit` (67 vật phẩm) + test chặn item < 2 công dụng. Sửa hạt giống (thêm bán lại); `FOOD_BASIC` và `MEDICINE_COMMON` có công dụng thứ hai trong code.
+7. **Cân bằng 14 ngày**: bot có routine Adventure (`scripts/economy/adventure.ts`); `npm run sim:week -- 7 45 adventure`. Bot chạm Phát triển thế giới 20 rất muộn (không nuôi/sưu tầm như người chơi) nên lệnh có chế độ `adventure` mở Adventure ngay khi đủ cấp 8 (ngày ~15).
+📁 File chính: `src/core/tech/`, `content/shared/tech.json`, `src/areas/adventure/logic/actions/start.ts`, `content/adventure/` (vùng, kẻ địch, trang bị, `prep`), `src/areas/farm/logic/actions/hatchEgg.ts` + `materials.ts`, `src/ui/goals/techPanel.ts` + `techVm.ts`, `core/production` (`durationMs` của job), `scripts/audit/itemUses.ts`, `scripts/economy/adventure.ts`, `tests/unit/phase11.test.ts`, `scripts/content/fmt.ts` (`npm run content:fmt`).
+🧪 Đã kiểm tra: `npm run check` xanh (1.296 test, 24 test mới của GĐ11 + balance guard); `npm run test:e2e` (có e2e công nghệ + khẩu phần); chạy thật trong Electron: Menu → Công nghệ → nâng Bếp Dã Chiến → chọn khẩu phần → xuất phát (ảnh chụp); `npm run dist:win`.
+📊 Bot 45 ngày (seed 7 và 11, cận trên: ~8 chuyến/ngày): Adventure mở ngày 15 → trùm Rừng ngày 19, Núi ngày 24, Tàn Tích ngày 31; công nghệ đầu ngày 23–24, đủ 12 cấp ngày 31–32; chiến binh cấp 17 sau 14 ngày; Adventure đưa ~3.800 Sobi Coin/ngày (Farm ~8.000) và ~3 Gems/ngày. Bản đầu quá rộng tay (vật liệu cổ gấp 10 lần nhu cầu, Adventure ngang Farm): đã giảm số rơi, tiền, giá bán, KN.
+⚠️ Quyết định tự đưa ra (decision 019): giá và hiệu quả công nghệ; mở vùng theo chuỗi (thêm `requiresCleared`); khẩu phần là vật phẩm (không là potion) và cộng cho cả đội cả chuyến; Bond 3% → 5%; `expBase` 30 → 40 (lên cấp chậm hơn ~33%); trang bị Hiếm / Sử thi rơi ít, bán rẻ (Kiếm Gỗ 15 … Kiếm Rune 150); Farm: chuồng thứ 17–24 và máng Lv3 cần vật liệu cổ; hạt giống sell = nửa giá mua.
+⚠️ Cần biết: (a) Phát triển thế giới 20 để mở Adventure vẫn rất xa với bot (`buildingsLv3` trong registry luôn 0, Codex mới chỉ tính mục khám phá); nên chốt ở GĐ13. (b) Bot hết nội dung sau ngày ~31 (cấp 30, mọi công nghệ, đủ 3 vùng). (c) Đội toàn kiểu giòn (Pháp sư lửa, Thích khách, Triệu bão) khó qua trùm Núi nếu thiếu hồi máu: cần khẩu phần / potion. (d) Gió yếu ở Núi (Lửa khắc Gió), nhỉnh ở Rừng. (e) Bot không dùng potion trong trận nên số thắng là sàn.
+⚠️ Chưa làm: potion trong chuẩn bị trước trận, nút bỏ qua trận, nhiệm vụ / thành tựu riêng cho công nghệ và vùng mới, Codex kẻ địch / trang bị, nâng cấp thêm công trình bằng vật liệu cổ, art (GĐ14, `docs/ASSET_TODO.md`), chơi tay nhiều ngày.
+👉 Bạn cần: chơi thử vài ngày (Admin: Số liệu → Công nghệ, Vùng; Mô phỏng trận có vùng mới, đồ Sử thi và khẩu phần): có cảm giác đi phiêu lưu để nâng cấp nhà, và chăm nhà để đi xa hơn không; duyệt các con số trong decision 019; xem Phát triển thế giới 20 có quá xa; rồi merge, tag `phase-11`, push.
 
 ### 2026-10-11 — Nghiệm thu GĐ10: chơi thử bằng mô phỏng và chỉnh cân bằng
 ✅ Đã làm: kiểm thử Adventure ở ngưỡng mở (Sobi World cấp 8 + Phát triển thế giới 20: test biên 7/20, 8/19, 8/20), đo bằng mô phỏng (`npm run sim:adventure`, mới) rồi chỉnh. Phát hiện bản đầu: trận chỉ 2–3 vòng; cấp 4+ thắng ~100%; Triệu bão / Pháp sư lửa hơn hẳn, Quỷ kế gần vô dụng (Rừng nặng hệ Đất); bộ trang bị Hiếm làm cấp 1 thắng 100%; cấp 4 sau 1 chuyến.

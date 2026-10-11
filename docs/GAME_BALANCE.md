@@ -227,3 +227,7 @@ Gems không được mua lợi thế lớn về sức mạnh (không pay-to-win,
 | Kiệt sức khi thua | Nghỉ 4 giờ |
 | Năng lượng phiêu lưu | Mỗi lần vào vùng tốn 30 Năng lượng của sinh vật |
 | Vùng đầu tiên | Rừng: 5 ô sự kiện + 1 trùm |
+| Vùng 2 và 3 (GĐ11) | Núi Đá Vọng (Sobi World cấp 10, sau trùm Rừng) và Tàn Tích Cổ (cấp 13, sau trùm Núi): 6 điểm dừng + 1 trùm; số kẻ địch, loot và cân bằng: `content/adventure/`, decision 019 |
+| Công nghệ (GĐ11) | 4 công nghệ × 3 cấp bằng Sobi Coin (1.000–16.000) + vật liệu cổ: `content/shared/tech.json`, decision 019 |
+| Khẩu phần (GĐ11) | Đầy Đặn +15% máu, Cay +12% công, Nhanh Nhẹn +2 tốc độ +3% chí mạng cho cả đội suốt chuyến; Bond +5% chỉ số mỗi tim |
+| Vật liệu cổ (GĐ11) | Bánh Răng Cổ và Rune Cổ cho công trình Lv3–Lv4 (máng Lv3, chuồng thứ 17–24, vòi tưới Lv3, bể cá Lv4, suối Cloud Lv3) và công nghệ cấp cao |
