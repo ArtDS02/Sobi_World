@@ -14,6 +14,7 @@ import { renderStartupError } from '../ui/startupError';
 async function applyChosenLanguage(): Promise<void> {
   const { language } = parseSettings(await readSettingsText());
   applyLanguage(language);
+  document.documentElement.lang = language;
   if (language === 'en') setContentLocalizer((file, raw) => localizeRaw(file, raw, contentTexts as ContentTexts));
 }
 

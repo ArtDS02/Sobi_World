@@ -77,6 +77,7 @@ Mỗi giai đoạn kết thúc khi **game chạy được, save cũ tải đư�
 **Kết quả:** Thời tiết theo ngày; sự kiện mùa với Event Tokens; NPC Thương nhân; cân bằng lại kinh tế tổng thể. *(Đã làm ở nhánh `phase-12-dynamic-world`, decision 020; chờ chủ dự án duyệt.)*
 
 ## GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu (gameplay freeze)
+*(Đã làm ở nhánh `phase-13-integration`, `docs/ACCEPTANCE.md` và decision 021; chờ chủ dự án chơi ≥ 7 ngày, chốt số mở Adventure và duyệt.)*
 **Phụ thuộc:** GĐ1–GĐ12 đã nghiệm thu.
 **Kết quả:** UI chức năng hoàn chỉnh cho mọi luồng (placeholder art vẫn được); trợ năng chức năng (cỡ chữ, chế độ màu dễ nhìn, tắt rung màn hình); ngôn ngữ Việt/Anh từ bảng chuỗi; đo và tối ưu hiệu năng (FPS, bù offline); rà "không tài nguyên chết" toàn bộ item; chơi thử đủ các luồng chính trên bản cài; kiểm save/migration từ mọi phiên bản save trước; sửa lỗi gameplay/kiến trúc; chốt cân bằng; danh sách nghiệm thu từng Area.
 **Xong khi:** mọi tiêu chí nghiệm thu gameplay của GĐ1–GĐ12 chạy đúng trên bản cài; `npm run check` và e2e xanh; chủ dự án chơi thử ≥ 7 ngày thật và duyệt; **sau đó không đổi cơ chế nữa** (chỉ sửa lỗi). Art placeholder không chặn nghiệm thu.
