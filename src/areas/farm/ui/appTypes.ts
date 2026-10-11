@@ -6,6 +6,7 @@ import type { PanelId } from '../../../ui/components/popup';
 import type { FileDialogs } from '../../../core/save/port';
 import type { ControlInput } from '../../../ui/world/controlInput';
 import type { CharacterChoice } from '../../../ui/components/characterPicker';
+import type { DisplayChoice } from '../../../ui/components/displaySettings';
 import type { KeySettings } from '../../../ui/world/keySettings';
 import type { Suggestion } from '../../../core/area-registry/registry';
 import type { CodexKind } from '../../../core/collection/codex';
@@ -49,6 +50,8 @@ export interface AppOptions {
   keySettings?: KeySettings;
   /** Which character to walk as, shown in the settings screen. */
   characterChoice?: CharacterChoice;
+  /** Text size, colors, screen shake and language, shown in the settings screen (GĐ13). */
+  displayChoice?: DisplayChoice;
   /** Gems of the wallet (the farm's own state has none); null when unknown. */
   gems?: () => number | null;
   /** The away-screen lines of the other Areas (the Garden, the Aquarium). */

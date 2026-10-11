@@ -6,14 +6,15 @@ $c-surface: #ffffff;
 $c-surface-alt: #ffe9e1;
 $c-border: #f0cfc4;
 $c-text: #3b2a26;
-$c-text-muted: #85706a;
+// Colours that the easy-to-see mode (GĐ13, settings.colorMode) replaces are CSS variables with the default as fallback.
+$c-text-muted: var(--c-text-muted, #85706a);
 $c-primary: #e8708a;
 $c-primary-strong: #c94d69;
 $c-on-primary: #ffffff;
 $c-gold: #b8860b;
-$c-success: #4f9d5d;
-$c-danger: #d64545;
-$c-danger-soft: #fde4e4;
+$c-success: var(--c-success, #4f9d5d);
+$c-danger: var(--c-danger, #d64545);
+$c-danger-soft: var(--c-danger-soft, #fde4e4);
 $c-farm-letterbox: #9ed36a; // matches FARM_VIEW.BACKDROP.grass, behind the letterboxed canvas
 // Farm HUD pastel palette (farm layout rework)
 $c-pig: #ffb6c4;
@@ -23,8 +24,8 @@ $c-wood-dark: #7a4f2a;
 $c-cream: #fff6e6;
 $c-pill: #fffaf0;
 $c-honey: #f7b733;
-$c-leaf: #6cc04a;
-$c-badge: #ff6b81;
+$c-leaf: var(--c-leaf, #6cc04a);
+$c-badge: var(--c-badge, #ff6b81);
 $c-level: #4fb3e8;
 $hud-shadow:
   0 4px 0 rgba(122, 79, 42, 0.18),

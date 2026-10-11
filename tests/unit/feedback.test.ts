@@ -92,6 +92,20 @@ describe('feedbackPlan', () => {
     }
   });
 
+  it('screen shake off drops only the shake animation (GĐ13)', () => {
+    const shaking = Object.values(SAMPLES).filter((e) => feedbackPlan(e, 'action', false).animations.some((a) => a.animation === 'shake'));
+    expect(shaking.length).toBeGreaterThan(0);
+    for (const e of shaking) {
+      const on = feedbackPlan(e, 'action', false, true);
+      const off = feedbackPlan(e, 'action', false, false);
+      expect(off.animations.some((a) => a.animation === 'shake')).toBe(false);
+      expect(off.vfx).toEqual(on.vfx);
+      expect(off.sound).toBe(on.sound);
+    }
+    const bounce = feedbackPlan(SAMPLES.PIG_BOUGHT, 'action', false, false);
+    expect(bounce.animations.map((a) => a.animation)).toContain('bounce');
+  });
+
   it('reduceMotion drops tweens and particles, keeps sound and toast', () => {
     const p = feedbackPlan(SAMPLES.PIG_BOUGHT, 'action', true);
     expect(p).toEqual({

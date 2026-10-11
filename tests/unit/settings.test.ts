@@ -12,7 +12,7 @@ import {
   validKeys,
 } from '../../src/core/settings/keys';
 import type { SettingsStorage } from '../../src/core/settings/port';
-import { createSettingsStore, parseSettings, serializeSettings } from '../../src/core/settings/settings';
+import { createSettingsStore, defaultGameSettings, parseSettings, serializeSettings } from '../../src/core/settings/settings';
 
 function memoryStorage(initial: string | null = null) {
   const s = { text: initial, writes: 0, fail: false };
@@ -90,7 +90,7 @@ describe('settings file', () => {
   it('round-trips a rebinding', () => {
     const r = rebind(DEFAULT_KEYS, 'inventory', 0, 'KeyB');
     if (!r.ok) throw new Error('rebind failed');
-    const text = serializeSettings({ version: 1, keys: r.keys, character: 'so' });
+    const text = serializeSettings({ ...defaultGameSettings(), keys: r.keys });
     expect(parseSettings(text).keys.inventory).toEqual(['KeyB', null]);
   });
 
@@ -158,5 +158,36 @@ describe('settings store', () => {
     const store = createSettingsStore({ load: () => Promise.reject(new Error('locked')), save: () => Promise.resolve() });
     await store.init();
     expect(store.getSnapshot().settings.keys).toEqual(DEFAULT_KEYS);
+  });
+});
+
+describe('display settings (GĐ13)', () => {
+  it('default to Vietnamese, normal text, default colors and shake on', () => {
+    expect(parseSettings(null)).toMatchObject({ language: 'vi', textSize: 'normal', colorMode: 'normal', screenShake: true });
+  });
+
+  it('read the file, and fall back to the default for a bad value', () => {
+    const got = parseSettings(JSON.stringify({ language: 'en', textSize: 'large', colorMode: 'easy', screenShake: false }));
+    expect(got).toMatchObject({ language: 'en', textSize: 'large', colorMode: 'easy', screenShake: false });
+    expect(parseSettings(JSON.stringify({ language: 'fr' }))).toEqual(defaultGameSettings());
+  });
+
+  it('survive clashing keys (only the keys go back to the default)', () => {
+    const got = parseSettings(JSON.stringify({ language: 'en', keys: { interact: ['KeyI', null] } }));
+    expect(got.keys).toEqual(DEFAULT_KEYS);
+    expect(got.language).toBe('en');
+  });
+
+  it('are written by the store and read back after a restart', async () => {
+    const { s, storage } = memoryStorage();
+    const store = createSettingsStore(storage);
+    await store.init();
+    await store.setDisplay('textSize', 'xlarge');
+    await store.setDisplay('screenShake', false);
+    await store.setDisplay('screenShake', false);
+    expect(s.writes).toBe(2);
+    const again = createSettingsStore(memoryStorage(s.text).storage);
+    await again.init();
+    expect(again.getSnapshot().settings).toMatchObject({ textSize: 'xlarge', screenShake: false });
   });
 });

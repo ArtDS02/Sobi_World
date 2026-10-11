@@ -1406,6 +1406,18 @@ export const vi = {
     creditsEmpty: "Hình và âm thanh hiện là bản tạm do game tự tạo.",
     credit: "{id}: {credit} ({license})",
     devVersion: "phát triển",
+    // GĐ13: accessibility and language, kept in settings.json (not in the save).
+    access: "Trợ năng",
+    textSize: "Cỡ chữ",
+    textSizes: { normal: "Vừa", large: "Lớn", xlarge: "Rất lớn" },
+    colorMode: "Màu sắc",
+    colorModes: { normal: "Mặc định", easy: "Dễ nhìn (cho người khó phân biệt màu, tương phản cao)" },
+    screenShake: "Rung màn hình",
+    shakeHint: "Tắt nếu rung làm bạn khó chịu. \"Giảm chuyển động\" tắt mọi chuyển động.",
+    language: "Ngôn ngữ",
+    languages: { vi: "Tiếng Việt", en: "English" },
+    languageHint: "Đổi ngôn ngữ sẽ tải lại màn hình game. Dữ liệu của bạn không bị đụng tới.",
+    settingsSaveError: "Không lưu được cài đặt hiển thị. Thay đổi vẫn có hiệu lực đến khi tắt game.",
   },
 
   recovery: {

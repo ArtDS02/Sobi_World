@@ -14,6 +14,7 @@ import { noEffects } from '../areas/farm/scene/feedback/effects';
 import { createFeedbackDirector, type FeedbackDirector } from '../areas/farm/scene/feedback/FeedbackDirector';
 import { CHARACTER } from '../core/config/character';
 import { newPlayer, PLAZA_ID, setPlayerSpot } from '../core/player/player';
+import { createDisplay } from './display';
 import { createSettingsStore } from '../core/settings/settings';
 import type { PanelId } from '../ui/components/popup';
 import { renderWorldPrompt } from '../ui/components/worldPrompt';
@@ -62,7 +63,6 @@ export async function start(root: HTMLElement) {
   let showDevFps: (() => void) | null = null;
   let devPhase: DayPhase | null = null;
   let devSeason: SeasonId | null = null;
-
   // Dev-only time travel: `npm run dev` + ?dev=1. Dead code in production builds.
   if (import.meta.env.DEV && new URLSearchParams(location.search).has('dev')) {
     const dev = await import('../areas/farm/ui/devTools');
@@ -96,11 +96,11 @@ export async function start(root: HTMLElement) {
   // The farm's screens and scene see the world through the farm facade (areas/farm/store.ts).
   const store = farmStore(world);
   platform.onFlushRequest(() => store.persistNow());
-
-  // Player settings (keys) live in their own file, apart from the save (spec §4).
+  // Player settings (keys, display, language) live in their own file, apart from the save (spec §4).
   const settings = createSettingsStore(platform.settings);
   await settings.init();
   const keys = () => settings.getSnapshot().settings.keys;
+  const displayChoice = createDisplay(settings, () => store.persistNow(), () => location.reload());
   const input = createControlInput(document, keys);
   const keySettings = createKeySettings(settings, input);
   // The key hint over the world: scenes report it, the DOM shows it with the player's own keys.
@@ -199,8 +199,8 @@ export async function start(root: HTMLElement) {
       },
       nextLocked: () => {
         const save = world.getSnapshot().save;
-        const gap = save ? AREAS.areas(save).find((a) => !a.unlocked && a.gaps.some((g) => g.kind === 'worldLevel')) : undefined;
-        const need = gap?.gaps.find((g) => g.kind === 'worldLevel');
+        const gap = save && AREAS.areas(save).find((a) => !a.unlocked && a.gaps.some((g) => g.kind === 'worldLevel'));
+        const need = gap && gap.gaps.find((g) => g.kind === 'worldLevel');
         return gap && need ? { name: gap.manifest.name.vi, level: need.need } : null;
       },
     },
@@ -210,6 +210,7 @@ export async function start(root: HTMLElement) {
       preview: (id) => assets.registry.url(CHARACTER.assets[id], 'down_idle'),
       subscribe: (fn) => settings.subscribe(fn),
     },
+    displayChoice,
     leave: () => void flow.go(PLAZA_ID),
     goPlace: (place) => void flow.go(place),
     overlay: overlays.root,
@@ -256,7 +257,6 @@ export async function start(root: HTMLElement) {
           assets: assets.registry,
           now: () => clock.now(),
           onPick,
-          // The game opens in the plaza (spec §3.1).
           firstScene: () => ({ key: PLAZA_SCENE_KEY, from: null }),
         },
         [plaza, garden, aquarium, cloud, adventure],
@@ -266,13 +266,13 @@ export async function start(root: HTMLElement) {
       bindAquariumStage({ enter: () => view.showScene(AQUARIUM_SCENE_KEY), exit: () => view.sleepScene(AQUARIUM_SCENE_KEY) });
       bindAdventureStage({ enter: () => view.showScene(ADVENTURE_SCENE_KEY), exit: () => view.sleepScene(ADVENTURE_SCENE_KEY) });
       bindCloudStage({ enter: () => view.showScene(CLOUD_SCENE_KEY), exit: () => view.sleepScene(CLOUD_SCENE_KEY) });
-      if (devPhase) farmView.previewPhase(devPhase);
-      if (devSeason) farmView.previewSeason(devSeason);
-      return farmView;
+      if (devPhase) view.previewPhase(devPhase);
+      if (devSeason) view.previewSeason(devSeason);
+      return view;
     },
   });
   app = mounted;
-  app.setPlace('plaza');
+  mounted.setPlace('plaza');
   root.append(promptHost);
   // §11.3: every event and rejection becomes presentation here, and only here.
   director = createFeedbackDirector({
@@ -281,6 +281,7 @@ export async function start(root: HTMLElement) {
     audio,
     toast: mounted.toast,
     away: mounted.showAway,
+    shake: () => settings.getSnapshot().settings.screenShake,
     other: (event, origin) => {
       if (event.type === 'AREA_UNLOCKED' && origin !== 'catchup') {
         const name = AREAS.get((event as unknown as { areaId: string }).areaId)?.manifest.name.vi ?? '';
@@ -292,8 +293,7 @@ export async function start(root: HTMLElement) {
   });
   // §12: ui_click for every DOM button, through one delegated listener.
   root.addEventListener('click', (e) => {
-    const button = e.target instanceof Element ? e.target.closest('button') : null;
-    if (button && !button.disabled) director?.uiClick();
+    if (e.target instanceof Element && e.target.closest('button:not(:disabled)')) director?.uiClick();
   });
   await store.init();
 }

@@ -82,6 +82,8 @@ export function feedbackPlan(
   e: GameEvent,
   origin: EventOrigin,
   reduceMotion: boolean,
+  /** Settings → screen shake: off drops the shake animation and keeps every other effect. */
+  shake = true,
 ): FeedbackPlan {
   const row = FEEDBACK_TABLE[e.type];
   // Catch-up events are never replayed as presentation (§9.5): the toast stays until the away
@@ -96,7 +98,7 @@ export function feedbackPlan(
 
   const targets = eventTargets(e);
   const delay = (i: number) => (row.stagger ? i * FEEDBACK.STAGGER_MS : 0);
-  const animation = row.animation;
+  const animation = row.animation === 'shake' && !shake ? null : row.animation;
   return {
     animations: animation
       ? targets.map((target, i) => ({
