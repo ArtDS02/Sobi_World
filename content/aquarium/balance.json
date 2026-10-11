@@ -8,7 +8,7 @@
       {
         "capacity": 16,
         "price": 8000,
-        "materials": { "item_scale": 20, "item_pearl": 3 },
+        "materials": { "item_scale": 20, "item_pearl": 3, "item_ancient_cog": 4 },
         "waterFactor": 0.6
       }
     ],

@@ -71,7 +71,7 @@ Mỗi giai đoạn kết thúc khi **game chạy được, save cũ tải đư�
 **Kết quả:** Area Adventure qua Cổng dịch chuyển; `systems/combat` theo lượt; skill, nguyên tố, level, EXP; trang bị; vùng Rừng; kiệt sức khi thua; heo phiêu lưu khởi đầu.
 
 ## GĐ11 — Adventure liên hệ thống (mốc Vòng lặp đầy đủ)
-**Kết quả:** Loot quay về các Area: vật liệu cổ nâng công trình Lv3–Lv4, hạt/cá/heo hiếm; công nghệ trang trại; potion và thức ăn hỗ trợ trận đánh; thêm 2 vùng phiêu lưu.
+**Kết quả:** Loot quay về các Area: vật liệu cổ nâng công trình Lv3–Lv4, hạt/cá/heo hiếm; công nghệ trang trại; potion và thức ăn hỗ trợ trận đánh; thêm 2 vùng phiêu lưu. *(Đã làm ở nhánh `phase-11-adventure-links`, decision 019; chờ chủ dự án duyệt.)*
 
 ## GĐ12 — Thế giới động
 **Kết quả:** Thời tiết theo ngày; sự kiện mùa với Event Tokens; NPC Thương nhân; cân bằng lại kinh tế tổng thể.

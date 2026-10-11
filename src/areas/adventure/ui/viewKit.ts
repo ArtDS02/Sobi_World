@@ -11,6 +11,8 @@ import type { AdventureRun } from './vmKit';
 export interface UiState {
   zoneId: string;
   selected: string[];
+  /** Rations the player chose to carry (item ids). */
+  prep: string[];
   auto: boolean;
   fast: boolean;
   menu: 'skills' | 'items' | null;

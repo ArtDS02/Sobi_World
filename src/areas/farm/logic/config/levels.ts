@@ -16,5 +16,5 @@ export const levelFromXp = (xp: number): number => coreLevelFromXp(xp, WORLD_LEV
 export const troughCapacityForLevel = (level: number): number => Math.min(120, 20 + (level - 1) * 10);
 
 /** Cost and level gate for unlocking slot number `slot` (5..MAX_SLOTS), or undefined. */
-export const slotUnlock = (slot: number): { cost: number; level: number } | undefined =>
+export const slotUnlock = (slot: number): { cost: number; level: number; materials?: Readonly<Partial<Record<string, number>>> } | undefined =>
   BALANCE.SLOT_UNLOCKS[String(slot)];

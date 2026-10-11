@@ -1,6 +1,7 @@
 // What the shop and the bag popups do when clicked: the dialogs they open and the actions they run. Split out of
 // app.ts, which only wires them to the shell (store, dialog host, the shell's own tab state).
 import type { ItemId } from '../../../core/config/ids';
+import { hatchEgg } from '../logic/actions/hatchEgg';
 import { sellItem } from '../logic/actions/sellItem';
 import type { NurseryPig } from '../logic/types';
 import type { FarmStore } from '../store';
@@ -35,6 +36,7 @@ export function panelHandlers(d: PanelHandlerDeps) {
       if (s) d.openTrough(Math.min(s.inventory.FOOD_BASIC, troughSpace(s)));
     },
     sellItem: (itemId: ItemId, quantity: number) => d.fire((s, c) => sellItem(s, { itemId, quantity }, c)),
+    hatch: (itemId: ItemId) => d.fire((s, c) => hatchEgg(s, { itemId }, c)),
     raise: (baby: NurseryPig) => {
       const s = save();
       if (s) openAdoptDialog(d.dialogs, s, baby, d.act);

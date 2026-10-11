@@ -11,6 +11,8 @@ export interface Recipe {
   inputs: Readonly<Record<string, number>>;
   outputs: Readonly<Record<string, number>>;
   durationMs: number;
+  /** A technology that must be bought first (GĐ11); absent = known from the start. */
+  requires?: { tech: string; level: number };
 }
 
 /** The job of one building. */
@@ -18,13 +20,21 @@ export interface ProductionJob {
   recipeId: string;
   batches: number;
   startedAt: number;
+  /** Milliseconds one batch takes in this job (set when it starts, so a technology bought later does not move it); absent = the recipe's. */
+  durationMs?: number;
   /** Batches whose outputs the player already took (the oldest ones). */
   collected: number;
 }
 
+/** What one batch of the job takes: the time fixed when it started, else the recipe's. */
+export const batchMs = (job: Pick<ProductionJob, 'durationMs'>, recipe: Pick<Recipe, 'durationMs'>): number => job.durationMs ?? recipe.durationMs;
+
+/** The time of a batch of `recipe` with a production speed bonus (0.15 = 15% faster); never under a minute. */
+export const sped = (recipe: Pick<Recipe, 'durationMs'>, speed: number): number => Math.max(60_000, Math.round(recipe.durationMs * (1 - Math.min(0.9, Math.max(0, speed)))));
+
 /** Batches finished by `now`. */
 export const batchesDone = (job: ProductionJob, recipe: Pick<Recipe, 'durationMs'>, now: number): number =>
-  Math.max(0, Math.min(job.batches, Math.floor((now - job.startedAt) / recipe.durationMs)));
+  Math.max(0, Math.min(job.batches, Math.floor((now - job.startedAt) / batchMs(job, recipe))));
 
 /** Finished and not yet collected. */
 export const batchesReady = (job: ProductionJob, recipe: Pick<Recipe, 'durationMs'>, now: number): number =>
@@ -35,12 +45,12 @@ export const batchesFinishedBetween = (job: ProductionJob, recipe: Pick<Recipe, 
   Math.max(0, batchesDone(job, recipe, to) - batchesDone(job, recipe, from));
 
 /** When the whole job is finished. */
-export const jobEndsAt = (job: ProductionJob, recipe: Pick<Recipe, 'durationMs'>): number => job.startedAt + job.batches * recipe.durationMs;
+export const jobEndsAt = (job: ProductionJob, recipe: Pick<Recipe, 'durationMs'>): number => job.startedAt + job.batches * batchMs(job, recipe);
 
 /** When the next batch finishes, or null when every batch is. */
 export function nextBatchAt(job: ProductionJob, recipe: Pick<Recipe, 'durationMs'>, now: number): number | null {
   const done = batchesDone(job, recipe, now);
-  return done >= job.batches ? null : job.startedAt + (done + 1) * recipe.durationMs;
+  return done >= job.batches ? null : job.startedAt + (done + 1) * batchMs(job, recipe);
 }
 
 /** The items `n` batches use or make. */

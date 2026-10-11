@@ -65,6 +65,8 @@ export function toastText(
       return t(vi.event.orderFulfilled, { gold: formatInt(event.gold) });
     case 'PIG_BOUGHT':
       return t(vi.event.bought, { name: nameOf(event.pigId) });
+    case 'PIG_HATCHED':
+      return t(vi.event.eggHatched, { breed: BREEDS[event.breed]?.nameVi ?? '' });
     case 'PIG_ADOPTED':
       return t(vi.event.adopted, { name: nameOf(event.pigId) });
     case 'PIG_TREATED':

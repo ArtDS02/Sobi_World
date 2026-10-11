@@ -1,6 +1,7 @@
 // buySlot (spec §8.11): next slot gated by level and gold, capped at MAX_SLOTS.
 import { BALANCE } from '../config/balance';
 import { levelFromXp, slotUnlock } from '../config/levels';
+import { takeMaterials } from '../materials';
 import { changeGold } from '../gold';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
@@ -11,7 +12,9 @@ export function buySlot(state: FarmGame, _args: object, ctx: ActionContext): Act
     const unlock = slotUnlock(slot);
     if (slot > BALANCE.MAX_SLOTS || !unlock) return { ok: false, error: 'MAX_SLOTS_REACHED' };
     if (levelFromXp(s.player.xp) < unlock.level) return { ok: false, error: 'LEVEL_TOO_LOW' };
-    const paid = changeGold(s, -unlock.cost, 'SLOT_PURCHASE', ctx, { note: `slot ${slot}` });
+    const bag = takeMaterials(s.inventory, unlock.materials);
+    if (!bag.ok) return bag;
+    const paid = changeGold({ ...s, inventory: bag.items }, -unlock.cost, 'SLOT_PURCHASE', ctx, { note: `slot ${slot}` });
     if (!paid.ok) return paid;
     const next = { ...paid.state, player: { ...paid.state.player, unlockedSlots: slot } };
     return ok(next, [{ type: 'SLOT_BOUGHT', slots: slot, gold: -unlock.cost }]);

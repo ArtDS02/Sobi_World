@@ -11,6 +11,8 @@ const coins = (amount: number): WorldEvent[] => (amount === 0 ? [] : [{ type: 'c
 
 export function adventureWorldEvents(e: AdventureEvent): WorldEvent[] {
   switch (e.type) {
+    case 'ADVENTURE_RUN_STARTED':
+      return e.prep.flatMap((id) => removed(id, 1));
     case 'ADVENTURE_BATTLE_WON':
       return [{ type: 'battle.won', area, zoneId: e.zoneId, enemies: e.enemies }, ...coins(e.coins)];
     case 'ADVENTURE_CHEST_OPENED':

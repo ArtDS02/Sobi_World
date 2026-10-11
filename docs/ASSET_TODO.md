@@ -4,6 +4,16 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `docs/reference-assets/` và `asset/reference/`.
 
+## GĐ11 — Adventure liên hệ thống
+Tất cả là placeholder sinh bằng `npm run assets:placeholders` (decision 017: làm art ở GĐ14):
+| Việc | Ghi chú |
+|---|---|
+| 11 kẻ địch mới `enemy_*` | Núi: Bọ Đá, Diều Hâu Vách Đá, Sa Giông Dung Nham, Dê Tuyết, Tượng Quặng (240×240), Rồng Dung Nham (trùm 320×360). Tàn Tích: Lính Gác Đá, Hồn Rune, Bóng Thủy Triều, Tượng Thần Lửa, Hộ Pháp Cổ Đại (trùm 320×360). |
+| `bg_adventure_mountain`, `bg_adventure_ruins` (1600×900) | Nền hai vùng mới. |
+| 10 icon `ui_item_*` (128×128) | Quặng Núi, Bánh Răng Cổ, Rune Cổ, 3 khẩu phần, Trứng Heo Hoang, 3 trang bị Sử thi (Kiếm Rune, Giáp Đá Cổ, Bùa Rune Cổ). |
+| Panel Công nghệ | Đang là danh sách thẻ chữ; cần icon cho 4 công nghệ (xưởng, lò, bếp, lều) và hiệu ứng khi nâng cấp. |
+| Quả trứng nở ở Nông trại | Chỉ có toast và tiếng `birth_fanfare`; cần animation trứng nở. |
+
 ## GĐ10 — Sobi Adventure
 Tất cả là placeholder sinh bằng `npm run assets:placeholders` (decision 017: làm art ở GĐ14):
 | Việc | Ghi chú |

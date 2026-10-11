@@ -54,7 +54,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
 
   let active = false;
   let busy = false;
-  const state: UiState = { zoneId: ZONE_LIST[0]!.id, selected: [], auto: false, fast: false, menu: null, aim: null };
+  const state: UiState = { zoneId: ZONE_LIST[0]!.id, selected: [], prep: [], auto: false, fast: false, menu: null, aim: null };
 
   const world = (): WorldSave | null => {
     const s = d.world.getSnapshot();

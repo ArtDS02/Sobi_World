@@ -1,0 +1,48 @@
+{
+  "techs": [
+    {
+      "id": "tech_workshop",
+      "nameVi": "Xưởng Cải Tiến",
+      "descVi": "Máy xay, thùng ủ và vạc nấu làm nhanh hơn.",
+      "effect": "productionSpeed",
+      "levels": [
+        { "value": 0.15, "coins": 1500, "items": { "item_mountain_ore": 8 } },
+        { "value": 0.3, "coins": 5000, "items": { "item_mountain_ore": 12, "item_ancient_cog": 4 } },
+        { "value": 0.45, "coins": 15000, "items": { "item_ancient_cog": 8, "item_ancient_rune": 2 } }
+      ]
+    },
+    {
+      "id": "tech_batch",
+      "nameVi": "Lò Lớn",
+      "descVi": "Mỗi lần làm được nhiều mẻ hơn ở máy xay, thùng ủ và vạc nấu.",
+      "effect": "maxBatches",
+      "levels": [
+        { "value": 5, "coins": 1200, "items": { "item_mountain_ore": 6 } },
+        { "value": 10, "coins": 4000, "items": { "item_mountain_ore": 10, "item_ancient_cog": 3 } },
+        { "value": 20, "coins": 12000, "items": { "item_ancient_cog": 6, "item_ancient_rune": 1 } }
+      ]
+    },
+    {
+      "id": "tech_kitchen",
+      "nameVi": "Bếp Dã Chiến",
+      "descVi": "Mở công thức khẩu phần mang theo khi đi phiêu lưu và thêm chỗ mang khẩu phần.",
+      "effect": "prepSlots",
+      "levels": [
+        { "value": 1, "coins": 1000, "items": { "item_mountain_ore": 5, "item_forest_herb": 10 } },
+        { "value": 2, "coins": 3500, "items": { "item_mountain_ore": 8, "item_beast_fang": 6 } },
+        { "value": 3, "coins": 9000, "items": { "item_ancient_cog": 5, "item_beast_fang": 10 } }
+      ]
+    },
+    {
+      "id": "tech_camp",
+      "nameVi": "Lều Trại",
+      "descVi": "Chiến binh hồi năng lượng phiêu lưu nhanh hơn.",
+      "effect": "adventureEnergy",
+      "levels": [
+        { "value": 0.25, "coins": 2000, "items": { "item_mountain_ore": 6, "item_forest_herb": 8 } },
+        { "value": 0.5, "coins": 6000, "items": { "item_ancient_cog": 3, "item_beast_fang": 8 } },
+        { "value": 1, "coins": 16000, "items": { "item_ancient_cog": 6, "item_ancient_rune": 2 } }
+      ]
+    }
+  ]
+}

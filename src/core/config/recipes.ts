@@ -9,6 +9,7 @@ export const RECIPE_LIST: readonly Recipe[] = CONTENT.recipes.recipes.map((r) =>
   inputs: r.inputs,
   outputs: r.outputs,
   durationMs: Math.round(r.durationMin * 60_000),
+  requires: r.requiresTech,
 }));
 
 export const RECIPES: Readonly<Record<string, Recipe>> = Object.fromEntries(RECIPE_LIST.map((r) => [r.id, r]));

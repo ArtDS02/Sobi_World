@@ -1642,6 +1642,61 @@
       "id": "enemy_old_treant",
       "status": "placeholder",
       "asset": "props/enemy_old_treant.png"
+    },
+    {
+      "id": "enemy_rock_beetle",
+      "status": "placeholder",
+      "asset": "props/enemy_rock_beetle.png"
+    },
+    {
+      "id": "enemy_cliff_hawk",
+      "status": "placeholder",
+      "asset": "props/enemy_cliff_hawk.png"
+    },
+    {
+      "id": "enemy_lava_newt",
+      "status": "placeholder",
+      "asset": "props/enemy_lava_newt.png"
+    },
+    {
+      "id": "enemy_snow_goat",
+      "status": "placeholder",
+      "asset": "props/enemy_snow_goat.png"
+    },
+    {
+      "id": "enemy_ore_golem",
+      "status": "placeholder",
+      "asset": "props/enemy_ore_golem.png"
+    },
+    {
+      "id": "enemy_magma_drake",
+      "status": "placeholder",
+      "asset": "props/enemy_magma_drake.png"
+    },
+    {
+      "id": "enemy_stone_sentinel",
+      "status": "placeholder",
+      "asset": "props/enemy_stone_sentinel.png"
+    },
+    {
+      "id": "enemy_rune_wisp",
+      "status": "placeholder",
+      "asset": "props/enemy_rune_wisp.png"
+    },
+    {
+      "id": "enemy_tide_wraith",
+      "status": "placeholder",
+      "asset": "props/enemy_tide_wraith.png"
+    },
+    {
+      "id": "enemy_ember_idol",
+      "status": "placeholder",
+      "asset": "props/enemy_ember_idol.png"
+    },
+    {
+      "id": "enemy_ancient_guardian",
+      "status": "placeholder",
+      "asset": "props/enemy_ancient_guardian.png"
     }
   ],
   "buildings": [
@@ -1882,6 +1937,16 @@
       "id": "bg_adventure_forest",
       "status": "placeholder",
       "asset": "environment/bg_adventure_forest.png"
+    },
+    {
+      "id": "bg_adventure_mountain",
+      "status": "placeholder",
+      "asset": "environment/bg_adventure_mountain.png"
+    },
+    {
+      "id": "bg_adventure_ruins",
+      "status": "placeholder",
+      "asset": "environment/bg_adventure_ruins.png"
     }
   ],
   "ui": [
@@ -2279,6 +2344,56 @@
       "id": "ui_item_beast_fang",
       "status": "placeholder",
       "asset": "ui/ui_item_beast_fang.png"
+    },
+    {
+      "id": "ui_item_mountain_ore",
+      "status": "placeholder",
+      "asset": "ui/ui_item_mountain_ore.png"
+    },
+    {
+      "id": "ui_item_ancient_cog",
+      "status": "placeholder",
+      "asset": "ui/ui_item_ancient_cog.png"
+    },
+    {
+      "id": "ui_item_ancient_rune",
+      "status": "placeholder",
+      "asset": "ui/ui_item_ancient_rune.png"
+    },
+    {
+      "id": "ui_item_ration_hearty",
+      "status": "placeholder",
+      "asset": "ui/ui_item_ration_hearty.png"
+    },
+    {
+      "id": "ui_item_ration_spicy",
+      "status": "placeholder",
+      "asset": "ui/ui_item_ration_spicy.png"
+    },
+    {
+      "id": "ui_item_ration_swift",
+      "status": "placeholder",
+      "asset": "ui/ui_item_ration_swift.png"
+    },
+    {
+      "id": "ui_item_pig_egg_wild",
+      "status": "placeholder",
+      "asset": "ui/ui_item_pig_egg_wild.png"
+    },
+    {
+      "id": "ui_item_equip_rune_blade",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_rune_blade.png"
+    },
+    {
+      "id": "ui_item_equip_golem_plate",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_golem_plate.png"
+    },
+    {
+      "id": "ui_item_equip_rune_charm",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_rune_charm.png"
     }
   ],
   "audio": [

@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { NEED_LEVELS, RARITY_VALUES } from '../vocab';
 import { int, itemId, nonNeg, posInt, unit } from '../fields';
 
+/** Adventure materials a Lv3–Lv4 upgrade also takes from the bag (GĐ11). */
+const materials = z.partialRecord(itemId, posInt);
 const seconds = nonNeg;
 const ms = nonNeg;
 
@@ -12,7 +14,7 @@ const balanceSchema = z.strictObject({
   START_SLOTS: posInt,
   START_INVENTORY: z.partialRecord(itemId, int.min(0)),
   /** The auto-feeding trough by level (GAME_BALANCE §2.6): food it holds and the price to reach the level (level 1 is free). */
-  TROUGH_LEVELS: z.array(z.strictObject({ capacity: posInt, cost: nonNeg })).min(1),
+  TROUGH_LEVELS: z.array(z.strictObject({ capacity: posInt, cost: nonNeg, materials: materials.optional() })).min(1),
   HUNGER_MAX: posInt,
   CLEAN_MAX: posInt,
   /** Growth progress (%) at which a creature is Young / Adult; 100 = Mature (GAME_BALANCE §2.1). */
@@ -53,7 +55,7 @@ const balanceSchema = z.strictObject({
   NURSERY_MAX: posInt,
   MAX_SLOTS: posInt,
   /** Slot number (as a string key) -> its unlock. */
-  SLOT_UNLOCKS: z.record(z.string().regex(/^\d+$/), z.strictObject({ cost: nonNeg, level: posInt })),
+  SLOT_UNLOCKS: z.record(z.string().regex(/^\d+$/), z.strictObject({ cost: nonNeg, level: posInt, materials: materials.optional() })),
   ORDER_WINDOW_MS: ms,
   ORDER_TTL_MS: ms,
   ORDER_SLOTS_PER_WINDOW: posInt,

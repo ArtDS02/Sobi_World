@@ -111,6 +111,10 @@ export function farmActions(save: FarmGame, now: number) {
 
 const goldText = (amount: number) => t(vi.hud.gold, { amount: formatInt(amount) });
 
+/** A price in coins and, for a Lv3–Lv4 upgrade, the Adventure materials it also takes (GĐ11). */
+const costText = (gold: number, materials: Readonly<Partial<Record<string, number>>> | undefined): string =>
+  [goldText(gold), ...Object.entries(materials ?? {}).map(([id, n]) => `${n} ${vi.shop[id as keyof typeof vi.shop] ?? id}`)].join(' + ');
+
 /**
  * Shop pigs tab: every species with a shop price, commonest first (stable in config order), one
  * button per gender. The level lock reads better than "not enough gold" when both fail.
@@ -182,7 +186,7 @@ export function shopSlot(save: FarmGame, now: number) {
         : null;
   return {
     title: t(vi.shop.slotNext, { n }),
-    price: goldText(unlock.cost),
+    price: costText(unlock.cost, unlock.materials),
     buy: { label: vi.action.buy, reason, run } satisfies ActionVm,
   };
 }
@@ -242,7 +246,7 @@ export function troughUpgrade(save: FarmGame, now: number) {
   return {
     level: t(vi.trough.level, { level: troughLevel(save.trough), capacity: save.trough.capacity }),
     upgrade: next
-      ? vm(save, now, t(vi.trough.upgrade, { level: next.level, capacity: next.capacity, gold: formatInt(next.cost) }), (s, c) => upgradeTrough(s, c))
+      ? vm(save, now, t(vi.trough.upgrade, { level: next.level, capacity: next.capacity, cost: costText(next.cost, next.materials) }), (s, c) => upgradeTrough(s, c))
       : null,
   };
 }

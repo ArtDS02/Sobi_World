@@ -158,7 +158,7 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
       recipeId = chosen.recipe.id;
       const most = Math.max(1, chosen.maxBatches);
       batches = Math.min(batches, most);
-      const start: ButtonVm = chosen.maxBatches < 1 ? { label: vi.garden.start, reason: vi.garden.missing } : { label: t(vi.garden.startBatches, { count: batches }), reason: null };
+      const start: ButtonVm = chosen.locked ? { label: vi.garden.start, reason: chosen.locked } : chosen.maxBatches < 1 ? { label: vi.garden.start, reason: vi.garden.missing } : { label: t(vi.garden.startBatches, { count: batches }), reason: null };
       return el(
         'div',
         { class: 'garden-dialog' },

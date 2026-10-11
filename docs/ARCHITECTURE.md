@@ -90,6 +90,7 @@ admin chỉ đọc/ghi content/ và save qua core.
 | `progression` | Level từng Area, World Development, điều kiện mở khóa |
 | `collection` | Codex, mốc thưởng |
 | `goals` | Bảng đơn hàng, mục tiêu hằng ngày, thành tựu |
+| `tech` | Công nghệ (GĐ11): nâng cấp mua bằng Sobi Coin và vật liệu cổ, hiệu quả đọc qua `techBonus` |
 | `events` | Event bus |
 | `content` | Load và validate toàn bộ `content/` khi khởi động |
 | `assets` | Asset registry, tra cứu asset theo id |
@@ -167,7 +168,7 @@ Trần 30 ngày: mô phỏng 30 ngày đầu rồi `rebase` mốc thời gian Ar
 
 ## 7. Sự kiện chuẩn (event bus)
 
-`item.added`, `item.removed`, `currency.changed`, `creature.born`, `creature.sold`, `creature.sick`, `creature.critical`, `creature.died`, `creature.levelUp`, `creature.petted`, `creature.purposeSet`, `crop.planted`, `crop.harvested`, `fish.caught` (GĐ8: một lần câu được cá), `tank.cleaned` (GĐ8: thay nước bể cá), `flower.harvested` (GĐ9: hái hoa), `potion.brewed` (GĐ9: nấu xong potion), `battle.won` (GĐ10: thắng một trận), `recipe.completed`, `order.completed`, `area.unlocked`, `area.levelUp`, `codex.discovered`, `achievement.unlocked`, `adventure.finished`, `time.dayChanged`.
+`item.added`, `item.removed`, `currency.changed`, `creature.born`, `creature.sold`, `creature.sick`, `creature.critical`, `creature.died`, `creature.levelUp`, `creature.petted`, `creature.purposeSet`, `crop.planted`, `crop.harvested`, `fish.caught` (GĐ8: một lần câu được cá), `tank.cleaned` (GĐ8: thay nước bể cá), `flower.harvested` (GĐ9: hái hoa), `potion.brewed` (GĐ9: nấu xong potion), `battle.won` (GĐ10: thắng một trận), `recipe.completed`, `order.completed`, `area.unlocked`, `area.levelUp`, `codex.discovered`, `achievement.unlocked`, `adventure.finished`, `tech.upgraded` (GĐ11: nâng cấp công nghệ), `creature.hatched` (GĐ11: ấp trứng ở Nông trại), `time.dayChanged`.
 
 Area mới có thể thêm sự kiện riêng, phải ghi vào bảng này.
 

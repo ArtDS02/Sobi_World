@@ -2,7 +2,7 @@
 // worldEvents.ts).
 export type AdventureEvent =
   | { type: 'ADVENTURE_STARTER_CLAIMED'; breed: string }
-  | { type: 'ADVENTURE_RUN_STARTED'; zoneId: string; team: string[] }
+  | { type: 'ADVENTURE_RUN_STARTED'; zoneId: string; team: string[]; prep: string[] }
   | { type: 'ADVENTURE_BATTLE_STARTED'; boss: boolean }
   | { type: 'ADVENTURE_BATTLE_WON'; zoneId: string; boss: boolean; enemies: number; exp: number; coins: number }
   | { type: 'ADVENTURE_CHEST_OPENED'; items: Readonly<Record<string, number>>; coins: number; gems: number }

@@ -1,6 +1,6 @@
-# src/areas/adventure — Sobi Adventure (GĐ10)
+# src/areas/adventure — Sobi Adventure (GĐ10, GĐ11)
 
-Area thứ năm: đưa tối đa 3 heo / cá (đã lớn, chọn mục đích Phiêu lưu) đi qua một vùng gồm chuỗi điểm dừng (trận đánh, rương, sự kiện nhỏ) và trùm cuối; đánh theo lượt. Thua không ai chết: cả đội kiệt sức 4 giờ thật. Decision `docs/decisions/018-adventure.md`.
+Area thứ năm: đưa tối đa 3 heo / cá (đã lớn, chọn mục đích Phiêu lưu) đi qua một vùng gồm chuỗi điểm dừng (trận đánh, rương, sự kiện nhỏ) và trùm cuối; đánh theo lượt. Thua không ai chết: cả đội kiệt sức 4 giờ thật. Decision `docs/decisions/018-adventure.md`. GĐ11 (decision `019-adventure-links.md`) khép vòng với các Area khác: 3 vùng nối chuỗi (Rừng → Núi Đá Vọng → Tàn Tích Cổ, `Zone.requiresCleared`, `cleared` trong state), vật liệu cổ cho công trình Lv3–Lv4, khẩu phần mang theo (`prep`, `actions/start.ts`), công nghệ (`core/tech`) ảnh hưởng năng lượng phiêu lưu và chỗ mang khẩu phần.
 
 - `index.ts` — module Area đăng ký với `core/area-registry` (manifest `content/adventure/area.json`; mở khi Sobi World cấp 8 và Phát triển thế giới ≥ 20).
 - `logic/` — thuần, có test (`tests/unit/adventure.test.ts`, `adventureUi.test.ts`):
@@ -8,7 +8,7 @@ Area thứ năm: đưa tối đa 3 heo / cá (đã lớn, chọn mục đích Ph
   - `state.ts` — slice `areas.sobi_adventure`: chiến binh (cấp, KN, trang bị, năng lượng phiêu lưu, kiệt sức), chuyến đang đi (cả trận đang đánh), loot chờ vào túi.
   - `fighters.ts` — chỉ số theo cấp / độ hiếm / Bond / trang bị, kỹ năng mở ở cấp 1, 1, 10, 20, ai được đi.
   - `encounter.ts` — bốc nhóm kẻ địch, bốc loot, lượt của kẻ địch.
-  - `actions/` — `run.ts` (xuất phát, bước vào điểm dừng, ra đòn / Tự động, rút lui, đóng chuyến), `camp.ts` (heo khởi đầu, mặc / tháo trang bị, nhận loot), `kit.ts`.
+  - `actions/` — `run.ts` (xuất phát, bước vào điểm dừng, ra đòn / Tự động, rút lui, đóng chuyến), `start.ts` (xuất phát: cổng vùng, khẩu phần, năng lượng), `camp.ts` (heo khởi đầu, mặc / tháo trang bị, nhận loot), `kit.ts`.
   - `battleSim.ts` — mô phỏng cả chuyến N lần (Admin).
   - `summary.ts`, `suggest.ts`, `worldEvents.ts` (`battle.won`, `adventure.finished`), `rewind.ts`, `art.ts`.
 - `scene/` — Phaser: `AdventureScene` chỉ vẽ nền; mọi thao tác ở lớp DOM.

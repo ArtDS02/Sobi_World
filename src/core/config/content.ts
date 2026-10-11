@@ -21,6 +21,7 @@ import recipesRaw from '../../../content/shared/recipes.json';
 import qualityRaw from '../../../content/shared/quality.json';
 import shopRaw from '../../../content/shared/shop.json';
 import valuationRaw from '../../../content/shared/valuation.json';
+import techRaw from '../../../content/shared/tech.json';
 import timeRaw from '../../../content/shared/time.json';
 import { achievementsFileSchema } from '../../../content/schemas/shared/achievements';
 import { bondFileSchema } from '../../../content/schemas/shared/bond';
@@ -42,6 +43,7 @@ import { recipesFileSchema } from '../../../content/schemas/shared/recipes';
 import { qualityFileSchema } from '../../../content/schemas/shared/quality';
 import { shopFileSchema } from '../../../content/schemas/shared/shop';
 import { valuationFileSchema } from '../../../content/schemas/shared/valuation';
+import { techFileSchema } from '../../../content/schemas/shared/tech';
 import { timeFileSchema } from '../../../content/schemas/shared/time';
 import { ContentError, loadContent } from '../content/load';
 
@@ -63,6 +65,7 @@ export const CONTENT = {
   health: loadContent('shared/health.json', healthFileSchema, healthRaw),
   valuation: loadContent('shared/valuation.json', valuationFileSchema, valuationRaw),
   time: loadContent('shared/time.json', timeFileSchema, timeRaw),
+  tech: loadContent('shared/tech.json', techFileSchema, techRaw),
   character: loadContent('shared/character.json', characterFileSchema, characterRaw),
   breedingBalance: loadContent('breeding/balance.json', breedingBalanceFileSchema, breedingBalanceRaw),
   breedingTraits: loadContent('breeding/traits.json', traitsFileSchema, breedingTraitsRaw),

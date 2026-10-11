@@ -70,3 +70,53 @@ test('the adventure: it opens, the knight gives a pig, the party enters the fore
     }
   }
 });
+
+test('technologies: the Menu has them, the field kitchen lets the party carry a ration into a run', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'unin-e2e-tech-'));
+  try {
+    let app = await launch(dir);
+    let page = await app.firstWindow();
+    await expect(page.locator('.plazabar')).toBeVisible({ timeout: 30_000 });
+    await app.close();
+    const seeded = read(dir);
+    seeded.progression.areas.sobi_farm = { xp: 100_000 };
+    seeded.wallet.coins = 20_000;
+    seeded.settings.tutorialDone = true;
+    seeded.inventory.items = { ...seeded.inventory.items, item_mountain_ore: 10, item_forest_herb: 20, item_ration_hearty: 2 };
+    writeFileSync(file(dir), JSON.stringify(seeded));
+
+    app = await launch(dir);
+    page = await app.firstWindow();
+    await expect(page.locator('.app.is-plaza')).toBeVisible({ timeout: 30_000 });
+    await page.waitForTimeout(3000);
+    await clickPlaza(page, 208, 440);
+    await expect(page.locator('.app.is-adventure')).toBeVisible({ timeout: 20_000 });
+    await page.getByRole('button', { name: 'Nhận heo phiêu lưu đầu tiên' }).click();
+    await expect(page.locator('.adventure-ui__prep')).toHaveCount(0); // no field kitchen yet: a hint instead
+    await page.getByRole('button', { name: 'Menu' }).first().click();
+    await page.getByRole('button', { name: 'Công nghệ' }).click();
+    const kitchen = page.locator('[data-tech="tech_kitchen"]');
+    await expect(kitchen).toBeVisible();
+    await kitchen.getByRole('button', { name: /Nâng cấp/ }).click();
+    await expect(kitchen).toContainText('Cấp 1/3');
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.adventure-ui__prep')).toBeVisible({ timeout: 10_000 });
+    await page.locator('.adventure-ui__prep-list button').first().click();
+    await page.locator('.adventure-ui__fighter-pick').first().click();
+    await page.getByRole('button', { name: /Xuất phát/ }).click();
+    await expect(page.getByRole('button', { name: 'Tiến lên' })).toBeVisible({ timeout: 10_000 });
+    await app.close();
+
+    const saved = read(dir);
+    expect(saved.progression.stats['tech.tech_kitchen']).toBe(1);
+    expect(saved.transactions.some((t: { type: string; amount: number }) => t.type === 'TECH_UPGRADE' && t.amount === -1000)).toBe(true);
+    expect(saved.inventory.items.item_ration_hearty).toBe(1);
+    expect(saved.areas.sobi_adventure.run.prep).toEqual(['item_ration_hearty']);
+  } finally {
+    try {
+      rmSync(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 300 });
+    } catch {
+      /* left in %TEMP% */
+    }
+  }
+});

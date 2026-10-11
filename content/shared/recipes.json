@@ -63,6 +63,33 @@
       "inputs": { "item_flower_star_orchid": 1, "item_flower_dream_bell": 1, "item_pure_water": 1 },
       "outputs": { "item_potion_battle": 1 },
       "durationMin": 30
+    },
+    {
+      "id": "recipe_ration_hearty",
+      "nameVi": "Khẩu Phần Đầy Đặn",
+      "building": "mill",
+      "inputs": { "item_potato": 2, "item_forest_herb": 2 },
+      "outputs": { "item_ration_hearty": 2 },
+      "durationMin": 15,
+      "requiresTech": { "tech": "tech_kitchen", "level": 1 }
+    },
+    {
+      "id": "recipe_ration_spicy",
+      "nameVi": "Khẩu Phần Cay",
+      "building": "mill",
+      "inputs": { "item_carrot": 2, "item_beast_fang": 1 },
+      "outputs": { "item_ration_spicy": 2 },
+      "durationMin": 15,
+      "requiresTech": { "tech": "tech_kitchen", "level": 2 }
+    },
+    {
+      "id": "recipe_ration_swift",
+      "nameVi": "Khẩu Phần Nhanh Nhẹn",
+      "building": "mill",
+      "inputs": { "item_wheat": 3, "item_forest_herb": 1, "item_pure_water": 1 },
+      "outputs": { "item_ration_swift": 2 },
+      "durationMin": 20,
+      "requiresTech": { "tech": "tech_kitchen", "level": 3 }
     }
   ]
 }

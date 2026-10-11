@@ -35,6 +35,8 @@ export type WorldEvent =
   | { type: 'achievement.unlocked'; area: string; achievementId: string }
   | { type: 'battle.won'; area: string; zoneId: string; enemies: number }
   | { type: 'adventure.finished'; area: string; zoneId: string; won: boolean }
+  | { type: 'tech.upgraded'; area: string; techId: string; level: number }
+  | { type: 'creature.hatched'; area: string; creatureId: string; breed: string }
   | { type: 'time.dayChanged'; day: number };
 
 export type WorldEventType = WorldEvent['type'];
@@ -66,6 +68,8 @@ export const WORLD_EVENT_TYPES = [
   'achievement.unlocked',
   'battle.won',
   'adventure.finished',
+  'tech.upgraded',
+  'creature.hatched',
   'time.dayChanged',
 ] as const satisfies readonly WorldEventType[];
 
