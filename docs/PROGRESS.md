@@ -1,10 +1,10 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ11 — Adventure liên hệ thống: xong phần code và cân bằng bằng bot (decision 019), **dừng chờ chủ dự án duyệt** (điểm dừng của prompt GĐ11: sau bước 6–7); phiên bản 0.11.0. GĐ10 đã merge `main` (tag `phase-10`).
+**Giai đoạn:** GĐ11 — Adventure liên hệ thống: đã duyệt, merge `main`, tag `phase-11` (decision 019); phiên bản 0.11.0. GĐ10 đã merge `main` (tag `phase-10`).
 **Chiến lược (decision 017):** gameplay trước, art sau. GĐ10–GĐ13 dùng placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
-**Nhánh:** `phase-11-adventure-links` (tách từ `main` sau GĐ10). Chưa merge, chưa gắn tag `phase-11`.
-**Bước tiếp theo:** chủ dự án chơi thử vài ngày và duyệt số (decision 019); rồi merge, tag `phase-11`, push; sau đó GĐ12 — Thế giới động.
+**Nhánh:** `main` (GĐ11 đã merge). GĐ12 tách nhánh `phase-12-*` từ `main`.
+**Bước tiếp theo:** GĐ12 — Thế giới động (chưa bắt đầu).
 
 ## Nhật ký
 
