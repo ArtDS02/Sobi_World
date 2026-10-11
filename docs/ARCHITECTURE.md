@@ -91,6 +91,7 @@ admin chỉ đọc/ghi content/ và save qua core.
 | `collection` | Codex, mốc thưởng |
 | `goals` | Bảng đơn hàng, mục tiêu hằng ngày, thành tựu |
 | `tech` | Công nghệ (GĐ11): nâng cấp mua bằng Sobi Coin và vật liệu cổ, hiệu quả đọc qua `techBonus` |
+| `live` | Thế giới động (GĐ12): lịch lễ hội, Vé Lễ Hội và cửa hàng, Thương nhân và đơn đặc biệt; lịch ghé của Thương nhân (`visit`) cho Chợ; trạng thái `live` của save v11 |
 | `events` | Event bus |
 | `content` | Load và validate toàn bộ `content/` khi khởi động |
 | `assets` | Asset registry, tra cứu asset theo id |
@@ -114,7 +115,7 @@ admin chỉ đọc/ghi content/ và save qua core.
 | `animation` | Animation theo dữ liệu |
 | `layout` | Bố cục Area, va chạm, vật thể tương tác |
 | `character` | Di chuyển nhân vật, tương tác |
-| `weather` | Thời tiết theo ngày (giai đoạn sau) |
+| `weather` | Thời tiết theo ngày (GĐ12): hàm thuần của số ngày, tác dụng lên cây, cá, phối giống |
 
 ---
 
@@ -188,7 +189,7 @@ Area mới có thể thêm sự kiện riêng, phải ghi vào bảng này.
 - Vị trí: thư mục dữ liệu người dùng của hệ điều hành (ví dụ `%APPDATA%/SobiWorld/` trên Windows).
 - **Chuyển save Sobi Farm:** lần chạy đầu, nếu chưa có save Sobi World mà có `%APPDATA%/Un In Homemade/saves/save.json` thì sao chép sang (không xóa bản cũ) rồi migrate.
 - File: `save.json` (world state), `settings.json` (cài đặt, phím).
-- Có `schemaVersion`. Khi tải save cũ, chạy chuỗi migration lần lượt.
+- Có `schemaVersion` (hiện **v11**: GĐ12 thêm `live`). Khi tải save cũ, chạy chuỗi migration lần lượt.
 - **Ghi an toàn:** ghi ra file tạm rồi đổi tên, để mất điện không làm hỏng save.
 - **Backup:** giữ 5 bản gần nhất, thêm 1 bản trước mỗi lần migration.
 - **Validation khi tải:** nếu save hỏng, tự thử bản backup gần nhất và báo cho người chơi.

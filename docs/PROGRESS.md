@@ -1,12 +1,28 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ11 — Adventure liên hệ thống: đã duyệt, merge `main`, tag `phase-11` (decision 019); phiên bản 0.11.0. GĐ10 đã merge `main` (tag `phase-10`).
+**Giai đoạn:** GĐ12 — Thế giới động: **xong phần code, chờ chủ dự án duyệt** (decision 020); phiên bản 0.12.0. GĐ11 đã merge `main` (tag `phase-11`, decision 019).
 **Chiến lược (decision 017):** gameplay trước, art sau. GĐ10–GĐ13 dùng placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
-**Nhánh:** `main` (GĐ11 đã merge). GĐ12 tách nhánh `phase-12-*` từ `main`.
-**Bước tiếp theo:** GĐ12 — Thế giới động (chưa bắt đầu).
+**Nhánh:** `phase-12-dynamic-world` (tách từ `main`, chưa merge). Save format **v11**.
+**Bước tiếp theo:** chủ dự án chơi thử + duyệt GĐ12 (merge `main`, tag `phase-12`, push); rồi GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu (freeze).
 
 ## Nhật ký
+
+### 2026-10-11 — GĐ12 hoàn thành phần code: Thế giới động (chờ duyệt)
+✅ Đã làm (6 việc của prompt GĐ12; quyết định ở `docs/decisions/020-living-world.md`):
+1. **Thời tiết** (`systems/weather`, `content/shared/weather.json`): nắng / mưa / sương mù / tuyết / cầu vồng là hàm thuần của **số ngày** (mùa theo lịch Việt, cầu vồng sau mưa), nên nhất quán mọi chế độ mô phỏng và **dự báo ngày mai chính xác**; không lưu gì. Tác dụng nhẹ, không phạt: **mưa** tưới mọi ô đất và cây lớn ×1,25 (`simulateGarden` cắt ở mỗi nửa đêm nên một cú nhảy dài = nhiều lát ngắn), **mưa đêm** cá hiếm dễ cắn ×1,8, **sương mù** +0,1 điểm câu, **cầu vồng** +3 điểm % đột biến khi phối giống (Farm và Aquarium). Nắng, tuyết chỉ là cảnh.
+2. **Hiệu ứng thời tiết** ở Area đang xem (`ui/live/skyLayer`): lớp CSS placeholder (tông, vệt mưa, tuyết, vòng cầu vồng, tắt khi giảm chuyển động) + chip ở góc trái; popup **Thời tiết** (hôm nay, ngày mai).
+3. **4 lễ hội** (Thu hoạch / Cá / Hoa / Heo, chu kỳ 28 ngày, mỗi lễ hội 4 ngày) với **Vé Lễ Hội** (`wallet.eventTokens`): hoạt động trả vé (trần 12/ngày) + quà 3 vé/ngày; **cửa hàng lễ hội** (4 món chung, 3–4 món theo chủ đề, giới hạn theo lần lễ hội; chỉ bán vật phẩm đã có).
+4. **Thương nhân** (`core/live/merchant`): ghé 40% số ngày, 3 đơn đặc biệt ×1,8 giá trị + 1 vé mỗi đơn, đơn giữ nguyên cả ngày; ngày ông ghé một nhóm hàng của **Chợ** được +0,15 hệ số.
+5. **Admin**: Số liệu có `weather.json`, `festivals.json`, `merchant.json`; Người chơi → Trạng thái game → "Thế giới sống (bật thử)": lịch 14 ngày, ép thời tiết / lễ hội / Thương nhân mọi ngày, cộng vé.
+6. **Cân bằng tổng thể**: bot có routine (`scripts/economy/live.ts`), `npm run sim:week -- <seed> 28 [plain]` so thế giới động với trước GĐ12: tiến trình nhanh hơn ≤ 0,8 ngày ở cấp 11, lễ hội ~6.000 Sobi Coin/28 ngày (~2–3% thu nhập), Thương nhân ~70 Sobi Coin/ngày. Số liệu đầy đủ trong decision 020.
+**Save v11** (migration 10 → 11, chỉ thêm `live`; test với save v10): `live.festival`, `live.merchant`, `live.dev` (công tắc thử của Admin).
+📁 File chính: `src/systems/weather/`, `src/core/live/` (`festival`, `merchant`, `visit`, `state`), `content/shared/weather.json` / `festivals.json` / `merchant.json` + schema, `src/ui/live/` (`skyLayer`, `liveVm`, `livePanels`), `src/styles/features/_sky.scss`, `src/systems/plants/plot.ts` (`PlotWeather`), `src/areas/garden/logic/simulate.ts`, `src/areas/aquarium/logic/{fishing,sky}.ts`, `src/systems/valuation/market.ts` (+ `marketRules.ts`), `core/goals/{settle,events,api}.ts`, `tools/admin/liveSection.ts`, `scripts/economy/live.ts`, `tests/unit/liveWorld.test.ts`, `tests/e2e/live.spec.ts`.
+🧪 Đã kiểm tra: `npm run check` xanh (1.324 test, 25 test mới của GĐ12: thời tiết, mưa trong Garden qua nửa đêm, cần câu, lễ hội, thương nhân, màn hình, save v11 + migration); `npm run test:e2e` (có `live.spec.ts`); chạy thật trong trình duyệt (sandbox): chip thời tiết / lễ hội / Thương nhân ở Sảnh, popup Sự kiện (nhận quà, đổi), Thương nhân (giao một đơn), vòng cầu vồng, Menu có 3 mục mới.
+⚠️ Quyết định tự đưa ra (decision 020): chu kỳ lễ hội 28 ngày theo số ngày (không theo tháng thật) để dễ thử và ai cũng gặp lễ hội trong ≤ 7 ngày; không tính vé cho thứ xảy ra khi vắng mặt; cửa hàng chỉ bán vật phẩm có sẵn (không tài nguyên chết); Thương nhân ghé theo xác suất cố định theo ngày; công tắc thử lưu trong save (`live.dev`); thời tiết không đổi Adventure; Nắng / tuyết chỉ là cảnh.
+⚠️ Chưa làm: art / animation / VFX thật, sạp hay NPC Thương nhân vẽ ở Sảnh, đồ trang trí độc quyền lễ hội, toast "lễ hội bắt đầu" và dòng lễ hội trong màn "vắng mặt" (`docs/ASSET_TODO.md`); công tắc Admin không đổi phần Chợ; chưa chơi tay nhiều ngày; chưa kiểm `dist:win` trên máy sạch.
+⚠️ Lưu ý khi thử: chạy `npm run dev` (không sandbox) trên nhánh này **nâng save dev** ở `%APPDATA%\SobiWorld Dev\saves` từ v10 lên v11 (có bản `before-migration-v10-*.json`); quay lại `main` thì game cũ báo save thuộc phiên bản mới hơn. Dùng `npm run dev:sandbox` để thử mà không đụng save dev.
+👉 Bạn cần: chơi thử vài ngày (Admin → Người chơi → Trạng thái game → "Thế giới sống" để bật thử từng thời tiết, từng lễ hội và Thương nhân); xem mưa có tạo cảm giác "thế giới sống" nhưng không ép; Vé Lễ Hội có đủ / quá nhiều; giá cửa hàng lễ hội (Admin → Số liệu → Lễ hội); rồi merge, tag `phase-12`, push.
 
 ### 2026-10-11 — GĐ11 hoàn thành phần code: Adventure liên hệ thống (chờ duyệt)
 ✅ Đã làm (7 việc của prompt GĐ11; quyết định ở `docs/decisions/019-adventure-links.md`):
