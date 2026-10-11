@@ -174,6 +174,7 @@ export const partD = {
     gender: "Gender",
     percent: "{n}%",
     weightKg: "{n} kg",
+    xpAmount: "{n} XP",
     generation: "Generation {n}",
   },
 

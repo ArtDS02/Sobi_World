@@ -57,6 +57,7 @@ export const aquariumArea: AreaModule = {
     },
   ],
   roster: aquariumRoster,
+  buildingLevels: (world) => [aquariumOf(world).tank.level],
   suggest: (world, now) => aquariumSuggestions(aquariumOf(world), now),
   toWorldEvents: aquariumEventsToWorld,
   getSummary: (events, world, now) => aquariumSummaryLines(events, aquariumOf(world), now),

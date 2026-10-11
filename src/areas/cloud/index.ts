@@ -46,6 +46,7 @@ export const cloudArea: AreaModule = {
       }),
     },
   ],
+  buildingLevels: (world) => [cloudOf(world).spring.level],
   suggest: (world, now, dayOffsetMs) => cloudSuggestions(cloudOf(world), now, dayOffsetMs),
   toWorldEvents: cloudEventsToWorld,
   getSummary: (events, world, now) => cloudSummaryLines(events, cloudOf(world), now),

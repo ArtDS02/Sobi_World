@@ -1008,6 +1008,7 @@ export const vi = {
     zoneNotCleared: "Hạ trùm {zone} trước",
     prepTitle: "Khẩu phần mang theo ({count}/{max})",
     prepHint: "Mỗi khẩu phần dùng một lần cho cả chuyến. Làm ở Máy xay của Sobi Garden.",
+    prepOut: "Hết khẩu phần này, làm thêm ở Máy xay.",
     prepNone: "Muốn mang khẩu phần? Nâng cấp Bếp Dã Chiến ở Menu → Công nghệ.",
     prepHave: "có {n}",
     prepHp: "+{n}% máu",
@@ -1485,6 +1486,7 @@ export const vi = {
     gender: "Giới tính",
     percent: "{n}%",
     weightKg: "{n} kg",
+    xpAmount: "{n} KN",
     generation: "Thế hệ {n}",
   },
 

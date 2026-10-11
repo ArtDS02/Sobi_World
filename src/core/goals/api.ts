@@ -39,6 +39,8 @@ export interface GoalsSources {
   codexKinds: () => readonly CodexKind[];
   /** Totals the 'ALL' achievements need besides the Codex's (decorations…). */
   extraTotals: () => Totals;
+  /** Buildings at level 3 or more in a world (World Development counts them); absent = none. */
+  buildingsLv3?: (world: WorldSave) => number;
 }
 
 export type WorldAction = (world: WorldSave, ctx: ActionContext) => ActionResultOf<WorldSave>;
@@ -59,7 +61,7 @@ export function createGoals(sources: GoalsSources) {
       ...sources.extraTotals(),
     };
   };
-  const deps: GoalsDeps = { rules: GOALS_RULES, value: itemValue, totals };
+  const deps: GoalsDeps = { rules: GOALS_RULES, value: itemValue, totals, ...(sources.buildingsLv3 ? { buildingsLv3: sources.buildingsLv3 } : {}) };
 
   return {
     rules: GOALS_RULES,
@@ -68,7 +70,7 @@ export function createGoals(sources: GoalsSources) {
     /** The turn of the world systems after an action or a tick (see settle.ts). */
     settle: (before: WorldSave, after: WorldSave, worldEvents: Parameters<typeof settleWorld>[2], ctx: ActionContext) =>
       settleWorld(before, after, worldEvents, ctx, deps),
-    view: (world: WorldSave) => worldView(world, GOALS_RULES),
+    view: (world: WorldSave) => worldView(world, GOALS_RULES, sources.buildingsLv3?.(world)),
     achievementView: (world: WorldSave) => achievementWorld(world, GOALS_RULES.levels),
     /** Achievements reached and not claimed, milestones of the Codex reached and not claimed. */
     claimableCount: (world: WorldSave): number =>
@@ -78,7 +80,7 @@ export function createGoals(sources: GoalsSources) {
 
     // Actions (bound to their numbers; the screens dry-run them to know why a button is off).
     deliver: (slot: number): WorldAction => (w, c) => deliverOrder(w, { slot }, c, ORDER_BOARD, addXp),
-    reroll: (slot: number): WorldAction => (w, c) => rerollOrder(w, { slot }, c, ORDER_BOARD, worldView(w, GOALS_RULES), itemValue),
+    reroll: (slot: number): WorldAction => (w, c) => rerollOrder(w, { slot }, c, ORDER_BOARD, worldView(w, GOALS_RULES, sources.buildingsLv3?.(w)), itemValue),
     claimGoal: (index: number): WorldAction => (w, c) => claimDailyGoal(w, { index }, c),
     claimBonus: (): WorldAction => (w, c) => claimDailyBonus(w, c, DAILY_GOALS, addXp),
     claimAchievement: (id: string): WorldAction => (w, c) =>

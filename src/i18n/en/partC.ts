@@ -108,6 +108,7 @@ export const partC = {
     zoneNotCleared: "Defeat the {zone} boss first",
     prepTitle: "Rations carried ({count}/{max})",
     prepHint: "Each ration is used once for the whole trip. Make them at the Mill in Sobi Garden.",
+    prepOut: "Out of this ration; make more at the Mill.",
     prepNone: "Want to carry rations? Upgrade the Field Kitchen in Menu → Technology.",
     prepHave: "have {n}",
     prepHp: "+{n}% health",

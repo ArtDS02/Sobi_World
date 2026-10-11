@@ -16,4 +16,5 @@ const itemKind = (): CodexKind => ({
 export const GOALS = createGoals({
   codexKinds: () => [...AREAS.codexKinds(), itemKind()],
   extraTotals: () => AREAS.extraTotals(),
+  buildingsLv3: (world) => AREAS.buildingsLv3(world),
 });
