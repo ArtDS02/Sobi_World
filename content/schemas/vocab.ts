@@ -32,6 +32,17 @@ export type Trait = (typeof TRAIT_VALUES)[number];
 export const MARKET_GROUP_VALUES = ['PIGS', 'CROPS', 'FOOD', 'MATERIALS'] as const;
 export type MarketGroup = (typeof MARKET_GROUP_VALUES)[number];
 
+/** The weather of a game day (spec V2 §10, GĐ12): `rainbow` follows a rainy day. */
+export const WEATHER_VALUES = ['sunny', 'rainy', 'foggy', 'snowy', 'rainbow'] as const;
+export type WeatherId = (typeof WEATHER_VALUES)[number];
+
+/** Standard world events a festival pays Event Tokens for (GĐ12): things the player does, never what happens while away. */
+export const FESTIVAL_EVENT_VALUES = [
+  'crop.harvested', 'order.completed', 'fish.caught', 'tank.cleaned', 'flower.harvested', 'potion.brewed',
+  'creature.hatched', 'creature.sold', 'creature.petted',
+] as const;
+export type FestivalEvent = (typeof FESTIVAL_EVENT_VALUES)[number];
+
 /** Why a creature is raised (spec V2 §7): shipped out, kept to breed, kept as a pet, or sent adventuring (GĐ10). */
 export const PURPOSE_VALUES = ['SHIP', 'BREED', 'PET', 'ADVENTURE'] as const;
 export type Purpose = (typeof PURPOSE_VALUES)[number];

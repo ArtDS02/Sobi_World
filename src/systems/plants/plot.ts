@@ -41,21 +41,40 @@ export const sow = (cropId: string): PlotState => ({ ...emptyPlot(), cropId });
 export const requiredMs = (plot: PlotState, crop: CropRule, rules: PlotRules): number =>
   crop.growMs * (plot.fertilized ? rules.fertilizerFactor : 1);
 
+/** What the weather does to the plots in a stretch of time (GĐ12): rain waters every plot and speeds the growth up. */
+export interface PlotWeather {
+  /** Growth speed as a multiple of the normal one. */
+  rate: number;
+  /** Every plot counts as watered. */
+  watered: boolean;
+}
+
+export const CLEAR_SKY: PlotWeather = { rate: 1, watered: false };
+
 /**
  * The plot after the time from `from` to `to`. `covered`: a sprinkler keeps it watered the whole time.
- * Ripeness is stamped at the moment it happened, not at `to`.
+ * Ripeness is stamped at the moment it happened, not at `to`. `weather`: the sky of this stretch (it must not change inside it).
  */
-export function advancePlot(plot: PlotState, crop: CropRule | undefined, rules: PlotRules, covered: boolean, from: number, to: number): PlotState {
+export function advancePlot(
+  plot: PlotState,
+  crop: CropRule | undefined,
+  rules: PlotRules,
+  covered: boolean,
+  from: number,
+  to: number,
+  weather: PlotWeather = CLEAR_SKY,
+): PlotState {
   if (!plot.cropId || !crop || plot.ripeAt !== null || to < from) return plot;
   const need = requiredMs(plot, crop, rules);
   const dt = to - from;
-  const wet = covered ? dt : Math.min(dt, Math.max(0, plot.wetUntil - from));
-  const rate = rules.dryRate;
-  const done = plot.grown + wet + rate * (dt - wet);
+  const wet = covered || weather.watered ? dt : Math.min(dt, Math.max(0, plot.wetUntil - from));
+  const dry = rules.dryRate;
+  const speed = weather.rate;
+  const done = plot.grown + speed * (wet + dry * (dt - wet));
   if (done < need) return { ...plot, grown: done };
-  // Ripe inside this interval: when? Watered time first (rate 1), then dry time at `rate`.
+  // Ripe inside this interval: when? Watered time first (speed `rate`), then dry time at `rate × dryRate`.
   const left = need - plot.grown;
-  const t = left <= wet ? left : wet + (rate > 0 ? (left - wet) / rate : Infinity);
+  const t = left <= speed * wet ? left / speed : wet + (dry > 0 ? (left - speed * wet) / (speed * dry) : Infinity);
   return { ...plot, grown: need, ripeAt: from + Math.max(0, Math.min(t, dt)) };
 }
 

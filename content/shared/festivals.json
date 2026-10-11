@@ -1,0 +1,166 @@
+{
+  "cycleDays": 28,
+  "lengthDays": 4,
+  "dailyGift": 3,
+  "dailyCap": 12,
+  "festivals": [
+    {
+      "id": "fest_harvest",
+      "nameVi": "Lễ hội thu hoạch",
+      "descVi": "Mùa màng bội thu! Thu hoạch cây trồng và giao đơn hàng để nhận Vé Lễ Hội.",
+      "area": "sobi_garden",
+      "artId": "prop_animal_duck",
+      "startDay": 0,
+      "earn": [
+        { "event": "crop.harvested", "per": 6, "tokens": 1 },
+        { "event": "order.completed", "per": 1, "tokens": 2 }
+      ]
+    },
+    {
+      "id": "fest_fish",
+      "nameVi": "Lễ hội cá",
+      "descVi": "Cả bến cùng ra khơi! Câu cá và thay nước bể để nhận Vé Lễ Hội.",
+      "area": "sobi_aquarium",
+      "artId": "prop_animal_hen_cream",
+      "startDay": 7,
+      "earn": [
+        { "event": "fish.caught", "per": 2, "tokens": 1 },
+        { "event": "tank.cleaned", "per": 1, "tokens": 1 }
+      ]
+    },
+    {
+      "id": "fest_flower",
+      "nameVi": "Lễ hội hoa",
+      "descVi": "Mây trời nở rộ! Hái hoa và nấu potion để nhận Vé Lễ Hội.",
+      "area": "sobi_cloud",
+      "artId": "prop_animal_hen_cream",
+      "startDay": 14,
+      "earn": [
+        { "event": "flower.harvested", "per": 3, "tokens": 1 },
+        { "event": "potion.brewed", "per": 1, "tokens": 1 }
+      ]
+    },
+    {
+      "id": "fest_pig",
+      "nameVi": "Lễ hội heo",
+      "descVi": "Cả chuồng rộn ràng! Vuốt ve heo, ấp trứng và xuất chuồng để nhận Vé Lễ Hội.",
+      "area": "sobi_farm",
+      "artId": "prop_animal_sheep",
+      "startDay": 21,
+      "earn": [
+        { "event": "creature.petted", "per": 3, "tokens": 1 },
+        { "event": "creature.hatched", "per": 1, "tokens": 2 },
+        { "event": "creature.sold", "per": 1, "tokens": 1 }
+      ]
+    }
+  ],
+  "shop": [
+    {
+      "id": "fs_fertilizer",
+      "reward": { "kind": "item", "itemId": "item_fertilizer", "quantity": 5 },
+      "cost": 3,
+      "festival": null
+    },
+    {
+      "id": "fs_premium_feed",
+      "reward": { "kind": "item", "itemId": "FOOD_PREMIUM", "quantity": 3 },
+      "cost": 4,
+      "festival": null
+    },
+    {
+      "id": "fs_potion_healing",
+      "reward": { "kind": "item", "itemId": "item_potion_healing", "quantity": 1 },
+      "cost": 5,
+      "festival": null
+    },
+    { "id": "fs_gem", "reward": { "kind": "gems", "amount": 1 }, "cost": 20, "festival": null, "limit": 2 },
+    {
+      "id": "fs_h_carrot",
+      "reward": { "kind": "item", "itemId": "item_seed_carrot", "quantity": 10 },
+      "cost": 3,
+      "festival": "fest_harvest"
+    },
+    {
+      "id": "fs_h_premium",
+      "reward": { "kind": "item", "itemId": "FOOD_PREMIUM", "quantity": 6 },
+      "cost": 8,
+      "festival": "fest_harvest"
+    },
+    {
+      "id": "fs_h_orchid",
+      "reward": { "kind": "item", "itemId": "item_seed_star_orchid", "quantity": 1 },
+      "cost": 8,
+      "festival": "fest_harvest",
+      "limit": 2
+    },
+    {
+      "id": "fs_f_feed",
+      "reward": { "kind": "item", "itemId": "FOOD_FISH", "quantity": 10 },
+      "cost": 5,
+      "festival": "fest_fish"
+    },
+    {
+      "id": "fs_f_scale",
+      "reward": { "kind": "item", "itemId": "item_scale", "quantity": 5 },
+      "cost": 5,
+      "festival": "fest_fish"
+    },
+    {
+      "id": "fs_f_pearl",
+      "reward": { "kind": "item", "itemId": "item_pearl", "quantity": 1 },
+      "cost": 15,
+      "festival": "fest_fish",
+      "limit": 2
+    },
+    {
+      "id": "fs_fl_rose",
+      "reward": { "kind": "item", "itemId": "item_seed_rainbow_rose", "quantity": 2 },
+      "cost": 6,
+      "festival": "fest_flower"
+    },
+    {
+      "id": "fs_fl_orchid",
+      "reward": { "kind": "item", "itemId": "item_seed_star_orchid", "quantity": 1 },
+      "cost": 8,
+      "festival": "fest_flower",
+      "limit": 2
+    },
+    {
+      "id": "fs_fl_water",
+      "reward": { "kind": "item", "itemId": "item_pure_water", "quantity": 10 },
+      "cost": 4,
+      "festival": "fest_flower"
+    },
+    {
+      "id": "fs_fl_mood",
+      "reward": { "kind": "item", "itemId": "item_potion_mood", "quantity": 2 },
+      "cost": 4,
+      "festival": "fest_flower"
+    },
+    {
+      "id": "fs_p_egg",
+      "reward": { "kind": "item", "itemId": "item_pig_egg_wild", "quantity": 1 },
+      "cost": 30,
+      "festival": "fest_pig",
+      "limit": 1
+    },
+    {
+      "id": "fs_p_medicine",
+      "reward": { "kind": "item", "itemId": "MEDICINE_COMMON", "quantity": 3 },
+      "cost": 6,
+      "festival": "fest_pig"
+    },
+    {
+      "id": "fs_p_premium",
+      "reward": { "kind": "item", "itemId": "FOOD_PREMIUM", "quantity": 6 },
+      "cost": 8,
+      "festival": "fest_pig"
+    },
+    {
+      "id": "fs_p_battle",
+      "reward": { "kind": "item", "itemId": "item_potion_battle", "quantity": 1 },
+      "cost": 5,
+      "festival": "fest_pig"
+    }
+  ]
+}

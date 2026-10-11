@@ -351,7 +351,7 @@ describe('settle', () => {
   });
 });
 
-describe('world save v10', () => {
+describe('world save v10 (migrated on to the current version)', () => {
   it('a v9 world gains the board, the goals and the Codex claims; nothing it had is lost', () => {
     const w = base();
     const v9 = JSON.parse(JSON.stringify({ ...w, schemaVersion: 9 })) as Record<string, unknown>;
@@ -362,7 +362,8 @@ describe('world save v10', () => {
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.fromVersion).toBe(9);
-    expect(r.save.schemaVersion).toBe(10);
+    expect(r.save.schemaVersion).toBe(WORLD_SAVE_VERSION);
+    expect(r.save.live.dev).toEqual({ weather: null, festival: null, merchant: null }); // v11 on top
     expect(r.save.goals.board.nextAt).not.toBeNull();
     expect(r.save.collection.claimed).toEqual([]);
     expect(r.save.progression.stats.slotsOwned).toBe(9); // seeded from the farm: SLOTS_* achievements stay reached

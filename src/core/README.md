@@ -5,6 +5,7 @@ Không import `systems/`, `areas/`, `ui/`, `app/`; không DOM, Node API, `Date.n
 | Thư mục | Việc |
 |---|---|
 | `save/` | save world v8, migration v1→v8, mã hóa/xuất nhập |
+| `live/` | thế giới động (GĐ12): lịch lễ hội + Vé Lễ Hội + cửa hàng (`festival`), Thương nhân và đơn đặc biệt (`merchant`), lịch ghé (`visit`), trạng thái `live` của save v11 (`state`) |
 | `tech/` | công nghệ mua bằng Sobi Coin và vật liệu Adventure, cấp lưu ở `progression.stats` (GĐ11, `content/shared/tech.json`) |
 | `production/` | công việc của công trình theo thời gian thật (`ProductionJob`): một mẻ mỗi `durationMs`, dạng đóng của `now`; recipe ở `content/shared/recipes.json` (GĐ5) |
 | `clock.ts` | `Clock` inject, 4 buổi trong ngày, cửa sổ vắng nhà (trần 30 ngày, giờ máy lùi) |

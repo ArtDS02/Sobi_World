@@ -1,0 +1,14 @@
+{
+  "nameVi": "Chú Lạc Đà Rong Ruổi",
+  "artId": "prop_animal_llama",
+  "greetingVi": "Chào bạn! Mình đi khắp nơi buôn đồ hay. Hôm nay mình ghé Sảnh một lát, bạn có đồ nào mình đang cần không?",
+  "linesVi": [
+    "Đường xa nên mình trả giá hậu hơn bảng đơn đấy nhé.",
+    "Mình đang tìm hàng cho khách ở xa, có gì bạn cứ mang tới.",
+    "Mai mình đi rồi, đơn nào xong thì xong nhé!",
+    "Nghe nói chợ hôm nay đang chuộng một nhóm hàng, bạn xem Chợ thử."
+  ],
+  "visitChance": 0.4,
+  "demandBonus": 0.15,
+  "offers": { "count": 3, "rewardMultiplier": 1.8, "tokens": 1 }
+}

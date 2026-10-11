@@ -20,7 +20,7 @@ export type GardenResult = ActionResultOf<WorldSave>;
 export type Body = { ok: true; world: WorldSave; events: GardenEvent[]; xp?: number } | { ok: false; error: ErrorCode };
 
 export function runGarden(world: WorldSave, ctx: ActionContext, body: (w: WorldSave, g: GardenState) => Body): GardenResult {
-  const caught = advanceGardenWorld(world, ctx.now);
+  const caught = advanceGardenWorld(world, ctx.now, ctx.dayOffsetMs ?? 0);
   const r = body(caught.state, gardenOf(caught.state));
   if (!r.ok) return r;
   const events: GardenEvent[] = [...caught.events, ...r.events];

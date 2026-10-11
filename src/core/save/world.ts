@@ -1,10 +1,11 @@
-// World save document v9 (ARCHITECTURE §9, AUDIT_AND_PLAN §d): world-level state shared by every Area,
+// World save document v11 (ARCHITECTURE §9, AUDIT_AND_PLAN §d): world-level state shared by every Area,
 // plus one opaque slice per Area under `areas` that the Area's own schema validates.
 import { z } from 'zod';
 import { goalsSchema, initialGoals, type GoalsState } from '../goals/state';
+import { initialLive, liveSchema, type LiveState } from '../live/state';
 import { newPlayer, playerSchema, type PlayerSave } from '../player/player';
 
-export const WORLD_SAVE_VERSION = 10;
+export const WORLD_SAVE_VERSION = 11;
 
 export const CURRENCY_VALUES = ['coins', 'gems', 'eventTokens'] as const;
 export type Currency = (typeof CURRENCY_VALUES)[number];
@@ -53,6 +54,8 @@ export interface WorldSave {
   collection: { discovered: Record<string, string[]>; claimed: string[] };
   /** The Order Board and the daily goals (v10). */
   goals: GoalsState;
+  /** The festival, the merchant and the test switches (v11). */
+  live: LiveState;
   settings: WorldSettings;
   /** Area id -> that Area's state; validated by the Area's save spec. */
   areas: Record<string, unknown>;
@@ -87,6 +90,7 @@ export const worldSaveSchema = z.object({
   }),
   collection: z.object({ discovered: z.record(z.string(), z.array(z.string())), claimed: z.array(z.string()) }),
   goals: goalsSchema,
+  live: liveSchema,
   settings: z.object({
     musicOn: z.boolean(),
     sfxOn: z.boolean(),
@@ -110,6 +114,7 @@ export function emptyWorld(now: number, settings: WorldSettings, firstArea: stri
     progression: { areas: {}, stats: {}, claimed: {}, daily: { lastDay: null, streak: 0 } },
     collection: { discovered: {}, claimed: [] },
     goals: initialGoals(now),
+    live: initialLive(),
     settings,
     areas: {},
   };

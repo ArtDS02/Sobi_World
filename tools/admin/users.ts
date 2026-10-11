@@ -7,6 +7,7 @@ import { rewindAquariumInWorld } from '../../src/areas/aquarium/logic/rewind';
 import { rewindAdventureInWorld } from '../../src/areas/adventure/logic/rewind';
 import { rewindCloudInWorld } from '../../src/areas/cloud/logic/rewind';
 import { rewindGardenInWorld } from '../../src/areas/garden/logic/rewind';
+import type { LiveState } from '../../src/core/live/state';
 import type { WorldSave } from '../../src/core/save/world';
 import { exportFileName } from '../../src/core/save/exportImport';
 import type { FarmGame } from '../../src/areas/farm/logic/types';
@@ -27,6 +28,12 @@ export interface Profile {
   backups: number;
 }
 
+/** What the Admin changes in the living world of an open save (GĐ12). */
+export interface LiveEdit {
+  dev: LiveState['dev'];
+  addTokens: number;
+}
+
 interface Loaded {
   profile: Profile;
   save: FarmGame | null;
@@ -44,6 +51,8 @@ export const users = {
     id: string; source: 'disk' | 'file'; label: string; world: WorldSave; original: FarmGame; draft: FarmGame; baseModifiedAt: number; dirty: boolean;
     /** Total time travel applied since it was opened: the Garden's clocks move by it when the world is written. */
     rewindMs: number;
+    /** The living world's test switches and the Event Tokens given, applied when the world is written (GĐ12). */
+    live: LiveEdit | null;
     /** Edits applied to `original` since it was opened: replayed on a newer save the game wrote meanwhile. */
     edits: Edit[];
   },
@@ -83,17 +92,21 @@ export async function openProfile(id: string) {
   const r = await json<{ profile: Profile; json: string }>(`/__admin/saves/read?id=${encodeURIComponent(id)}`);
   const p = parse(r.json);
   if (!p.save || !p.world) throw new Error(`Save không đọc được (${p.error}) — game sẽ tự lấy bản backup gần nhất.`);
-  users.open = { id, source: 'disk', label: appLabel(r.profile.app, r.profile.folder), world: p.world, original: p.save, draft: p.save, baseModifiedAt: r.profile.modifiedAt, dirty: false, rewindMs: 0, edits: [] };
+  users.open = { id, source: 'disk', label: appLabel(r.profile.app, r.profile.folder), world: p.world, original: p.save, draft: p.save, baseModifiedAt: r.profile.modifiedAt, dirty: false, rewindMs: 0, live: null, edits: [] };
 }
 
 export async function openFile(file: File) {
   const p = parse(await file.text());
   if (!p.save || !p.world) throw new Error(`File không phải save hợp lệ (${p.error})`);
-  users.open = { id: 'file', source: 'file', label: file.name, world: p.world, original: p.save, draft: p.save, baseModifiedAt: 0, dirty: false, rewindMs: 0, edits: [] };
+  users.open = { id: 'file', source: 'file', label: file.name, world: p.world, original: p.save, draft: p.save, baseModifiedAt: 0, dirty: false, rewindMs: 0, live: null, edits: [] };
 }
 
 /** The world the draft makes: the farm view written back, the Garden's and the Aquarium's clocks moved with the time travel. */
-const worldOf = (o: NonNullable<typeof users.open>): WorldSave => rewindAdventureInWorld(rewindCloudInWorld(rewindAquariumInWorld(rewindGardenInWorld(withFarm(o.world, o.draft), o.rewindMs), o.rewindMs), o.rewindMs), o.rewindMs);
+const withLiveEdit = (w: WorldSave, live: LiveEdit | null): WorldSave =>
+  live ? { ...w, live: { ...w.live, dev: live.dev }, wallet: { ...w.wallet, eventTokens: w.wallet.eventTokens + live.addTokens } } : w;
+
+const worldOf = (o: NonNullable<typeof users.open>): WorldSave =>
+  withLiveEdit(rewindAdventureInWorld(rewindCloudInWorld(rewindAquariumInWorld(rewindGardenInWorld(withFarm(o.world, o.draft), o.rewindMs), o.rewindMs), o.rewindMs), o.rewindMs), o.live);
 
 /** Writes the draft: disk saves through the API (backup first), files as a download for import. */
 export async function saveOpen(): Promise<string> {
@@ -128,6 +141,7 @@ export async function saveOpen(): Promise<string> {
   o.original = o.draft;
   o.edits = [];
   o.rewindMs = 0;
+  o.live = null;
   o.baseModifiedAt = r.modifiedAt;
   o.dirty = false;
   await loadUsers();

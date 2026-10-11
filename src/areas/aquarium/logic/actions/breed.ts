@@ -4,6 +4,9 @@
 import type { ErrorCode } from '../../../../core/config/errors';
 import type { ItemId } from '../../../../core/config/ids';
 import { ITEMS } from '../../../../core/config/items';
+import { WEATHER_RULES } from '../../../../core/config/weather';
+import { weatherNow } from '../../../../systems/weather/live';
+import { mutationWeather } from '../../../../systems/weather/weather';
 import { hashSeed, mulberry32, randomId } from '../../../../core/rng';
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
@@ -44,8 +47,10 @@ export function breedFish(world: WorldSave, args: { fishAId: string; fishBId: st
     if (error || !x || !y) return { ok: false, error: error ?? 'NOT_A_PAIR' };
     const mother = x.gender === 'FEMALE' ? x : y;
     const father = mother === x ? y : x;
-    const boost = args.boostItem === undefined ? 0 : boostOf(args.boostItem);
-    if (boost === null) return { ok: false, error: 'INVALID_REQUEST' };
+    const flower = args.boostItem === undefined ? 0 : boostOf(args.boostItem);
+    if (flower === null) return { ok: false, error: 'INVALID_REQUEST' };
+    // A rainbow in the sky adds to the flower's boost (GĐ12).
+    const boost = flower + mutationWeather(weatherNow(w, ctx.now, ctx.dayOffsetMs ?? 0), WEATHER_RULES);
     const fed = take(w, FEED_ITEM, AB.breeding.feed);
     if (!fed.ok) return fed;
     const taken = args.boostItem === undefined ? fed : take(fed.world, args.boostItem, 1);

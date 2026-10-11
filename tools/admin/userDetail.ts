@@ -16,6 +16,7 @@ import { confirmDanger, openModal } from './modal';
 import { artUrl, state } from './store';
 import * as E from './userEdits';
 import { archiveOpen, openProfile, saveOpen, users } from './users';
+import { bindLiveSection, liveSection } from './liveSection';
 import { vi } from '../../src/i18n/vi';
 
 const TABS = [['profile', 'Hồ sơ'], ['currency', 'Tiền tệ'], ['inventory', 'Kho đồ'], ['pigs', 'Heo'], ['progress', 'Tiến trình'], ['extras', 'Trang trí & thành tích'], ['state', 'Trạng thái game']] as const;
@@ -117,7 +118,7 @@ function tabBody(t: Tab): string {
           <dt>Hộp quà kế tiếp</dt><dd>${date(s.gifts.nextAt)}</dd><dt>Máng ăn tính tới</dt><dd>${date(s.trough.lastResolvedAt)}</dd></dl></section>`;
     }
     case 'state':
-      return `<section class="panel"><h3>⏩ Tua thời gian</h3>
+      return `${liveSection(users.open!)}<section class="panel"><h3>⏩ Tua thời gian</h3>
           <p class="muted">Làm như người chơi đã tắt game từ lâu: mọi mốc thời gian trong save lùi lại. Lần mở game kế tiếp sẽ bù đúng khoảng đó (đói, phân, bệnh, nguy kịch, chết, màn hình vắng nhà). Nhớ bấm Lưu và đóng game trước khi tua.</p>
           <p>${[['1 giờ', 3_600_000], ['1 ngày', 86_400_000], ['7 ngày', 7 * 86_400_000]].map(([label, ms]) => `<button class="btn" data-rewind="${ms}">+${label}</button>`).join(' ')}</p></section>
         <section class="panel"><h3>Đơn hàng đang mở (${s.orders.length})</h3><ul class="issues">${s.orders.map((o) => `<li class="issue info">${esc(breedName(o.wantBreed))} → ${gold(o.rewardGold)} vàng · hết hạn ${date(o.expiresAt)}</li>`).join('') || '<li class="issue info">Không có</li>'}</ul>
@@ -212,6 +213,7 @@ function bindTab(root: HTMLElement, rerender: () => void) {
     }, 'XOA'),
   };
   root.querySelectorAll<HTMLElement>('[data-rewind]').forEach((b) => b.addEventListener('click', () => edit(E.rewind(Number(b.dataset.rewind)), rerender)));
+  bindLiveSection(root, rerender);
   root.querySelectorAll<HTMLElement>('[data-act]').forEach((b) => b.addEventListener('click', () => act[b.dataset.act!]!()));
 }
 
@@ -251,6 +253,7 @@ export function renderUserDetail(root: HTMLElement, id: string, rerender: () => 
   root.querySelector('[data-undo]')?.addEventListener('click', () => {
     o.draft = o.original;
     o.edits = [];
+    o.live = null;
     o.dirty = false;
     rerender();
   });

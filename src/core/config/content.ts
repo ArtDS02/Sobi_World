@@ -22,6 +22,9 @@ import qualityRaw from '../../../content/shared/quality.json';
 import shopRaw from '../../../content/shared/shop.json';
 import valuationRaw from '../../../content/shared/valuation.json';
 import techRaw from '../../../content/shared/tech.json';
+import festivalsRaw from '../../../content/shared/festivals.json';
+import merchantRaw from '../../../content/shared/merchant.json';
+import weatherRaw from '../../../content/shared/weather.json';
 import timeRaw from '../../../content/shared/time.json';
 import { achievementsFileSchema } from '../../../content/schemas/shared/achievements';
 import { bondFileSchema } from '../../../content/schemas/shared/bond';
@@ -44,6 +47,9 @@ import { qualityFileSchema } from '../../../content/schemas/shared/quality';
 import { shopFileSchema } from '../../../content/schemas/shared/shop';
 import { valuationFileSchema } from '../../../content/schemas/shared/valuation';
 import { techFileSchema } from '../../../content/schemas/shared/tech';
+import { festivalsFileSchema } from '../../../content/schemas/shared/festivals';
+import { merchantFileSchema } from '../../../content/schemas/shared/merchant';
+import { weatherFileSchema } from '../../../content/schemas/shared/weather';
 import { timeFileSchema } from '../../../content/schemas/shared/time';
 import { ContentError, loadContent } from '../content/load';
 
@@ -66,6 +72,9 @@ export const CONTENT = {
   valuation: loadContent('shared/valuation.json', valuationFileSchema, valuationRaw),
   time: loadContent('shared/time.json', timeFileSchema, timeRaw),
   tech: loadContent('shared/tech.json', techFileSchema, techRaw),
+  weather: loadContent('shared/weather.json', weatherFileSchema, weatherRaw),
+  festivals: loadContent('shared/festivals.json', festivalsFileSchema, festivalsRaw),
+  merchant: loadContent('shared/merchant.json', merchantFileSchema, merchantRaw),
   character: loadContent('shared/character.json', characterFileSchema, characterRaw),
   breedingBalance: loadContent('breeding/balance.json', breedingBalanceFileSchema, breedingBalanceRaw),
   breedingTraits: loadContent('breeding/traits.json', traitsFileSchema, breedingTraitsRaw),

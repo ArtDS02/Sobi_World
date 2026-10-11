@@ -4,6 +4,7 @@ import type { Pig } from '../../src/areas/farm/logic/types';
 import { CONTENT } from '../../src/core/config/content';
 import { dailyMarket, marketGroupOf, MARKET_GROUP_VALUES } from '../../src/systems/valuation/market';
 import { itemSalePrice } from '../../src/systems/valuation/itemPrice';
+import { MARKET_RULES } from '../../src/systems/valuation/marketRules';
 import { ITEMS } from '../../src/core/config/items';
 import { freeSlots, growthStage, level, waitingPigs, weight } from '../../src/areas/farm/logic/derived';
 import { happiness } from '../../src/areas/farm/logic/happiness';
@@ -78,7 +79,7 @@ describe('shipping price (GAME_BALANCE §2.5)', () => {
   });
 
   it('items sell at their price times the market of the day of their group; seeds and medicine do not move', () => {
-    const day = (g: 'CROPS', f: number) => Array.from({ length: 60 }, (_, d) => d).find((d) => dailyMarket(d, V.market).factors[g] === f)!;
+    const day = (g: 'CROPS', f: number) => Array.from({ length: 60 }, (_, d) => d).find((d) => dailyMarket(d, MARKET_RULES).factors[g] === f)!;
     const at = (d: number) => d * DAY + 3_600_000;
     expect(itemSalePrice(ITEMS.item_carrot, 10, at(day('CROPS', 1.2)), 0)).toBe(120);
     expect(itemSalePrice(ITEMS.item_carrot, 10, at(day('CROPS', 0.9)), 0)).toBe(90);
