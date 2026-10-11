@@ -43,7 +43,8 @@ const coins = (w: WorldSave) => w.wallet.coins;
 function gardenWorld(bag: Record<string, number> = {}, gold = 10_000): WorldSave {
   const fresh = SAVE_CODEC.newWorld(ctxAt(T0));
   const opened = gardenArea.init(fresh, ctxAt(T0));
-  return { ...opened, wallet: { ...opened.wallet, coins: gold }, inventory: { items: { ...bag } } }; // the starter bag is left out: tests count exactly what they put in
+  // The starter bag is left out: tests count exactly what they put in. A clear sky: the numbers below are the plain ones (rain has its own tests).
+  return { ...opened, wallet: { ...opened.wallet, coins: gold }, inventory: { items: { ...bag } }, live: { ...opened.live, dev: { ...opened.live.dev, weather: 'sunny' } } };
 }
 const farmLevel3 = (w: WorldSave): WorldSave => ({
   ...w,
@@ -77,7 +78,7 @@ describe('opening the garden', () => {
     const w = ok(plantCrops(gardenWorld(), { cropId: 'crop_corn', plots: [0, 1] }, ctxAt(T0)));
     const parsed = parseWorldSave(JSON.stringify(w));
     expect(parsed.ok && parsed.save).toEqual(w);
-    expect(WORLD_SAVE_VERSION).toBe(10); // the garden is a slice: it needed no world migration of its own
+    expect(WORLD_SAVE_VERSION).toBe(11); // the garden is a slice: it needed no world migration of its own (v11 is the living world)
   });
 
   it('a corrupt garden slice is refused, not played', () => {

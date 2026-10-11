@@ -25,6 +25,8 @@ import { gardenOf, hasGarden } from '../../src/areas/garden/logic/save/lens';
 import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { DAY_MS, HOUR_MS } from '../../src/core/clock';
+import { FESTIVAL_RULES } from '../../src/core/config/live';
+import { liveFestival } from '../../src/core/live/festival';
 import { levelFromXp, worldXp } from '../../src/core/progression/levels';
 import { mulberry32, type Rng } from '../../src/core/rng';
 import type { WorldSave } from '../../src/core/save/world';
@@ -34,6 +36,7 @@ import { ITEMS } from '../../src/core/config/items';
 import { adventureRoutine, newAdventureStats, type AdventureStats } from './adventure';
 import { aquariumRoutine } from './aquarium';
 import { cloudRoutine } from './cloud';
+import { liveRoutine, newLiveStats, type LiveStats } from './live';
 
 /** When a day's sessions happen (hour of the local day) — a person who plays morning, noon and evening. */
 export const SESSION_HOURS = [8, 13, 20] as const;
@@ -82,6 +85,8 @@ export interface WeekReport {
   achievementsClaimed: number;
   gemsEarned: number;
   adventure: AdventureStats;
+  /** The living world (GĐ12): festival tokens and the merchant. */
+  live: LiveStats;
   /** The bag at the end, and the Adventure loot still waiting for room in it. */
   bag: Record<string, number>;
   pendingLoot: Record<string, number>;
@@ -108,6 +113,7 @@ export class Bot {
   achievements = 0;
   gems = 0;
   adv: AdventureStats = newAdventureStats();
+  live: LiveStats = newLiveStats();
   /**
    * Opens the Adventure as soon as Sobi World level 8 is reached, ignoring World Development 20: the bot does not breed or collect
    * the Codex the way a collector does, so it reaches 20 much later than a player who plays that way.
@@ -138,6 +144,9 @@ export class Bot {
     this.fishDied += events.filter((e) => e.type === 'AQUARIUM_FISH_DIED').length;
     const s = GOALS.settle(before, this.world, AREAS.toWorldEvents(events), this.ctx());
     this.world = s.state;
+    const tokens = this.world.wallet.eventTokens - before.wallet.eventTokens;
+    if (tokens > 0) this.live.tokensEarned += tokens;
+    else this.live.tokensSpent -= tokens;
     this.mark();
   }
 
@@ -255,22 +264,27 @@ function gardenRoutine(b: Bot) {
 }
 
 /** One bot, seven days. `start` is a local midnight. */
-export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7, options: { forceAdventure?: boolean } = {}): WeekReport {
+export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7, options: { forceAdventure?: boolean; living?: boolean } = {}): WeekReport {
   const b = new Bot(seed, start);
   b.forceAdventure = options.forceAdventure ?? false;
+  // `living: false` = the world before GĐ12 (a clear sky, no festival, no merchant): the baseline the report compares with.
+  if (options.living === false) b.world = { ...b.world, live: { ...b.world.live, dev: { weather: 'sunny', festival: 'none', merchant: false } } };
   const rows: DayRow[] = [];
   for (let d = 0; d < days; d += 1) {
     for (const hour of SESSION_HOURS) {
       b.advance(start + d * DAY_MS + hour * HOUR_MS);
       claimEverything(b, Math.floor(b.now / DAY_MS));
+      liveRoutine(b);
       farmRoutine(b);
       adventureRoutine(b);
       gardenRoutine(b);
       aquariumRoutine(b);
       cloudRoutine(b);
+      liveRoutine(b);
       claimEverything(b, Math.floor(b.now / DAY_MS));
     }
     const farm = b.farm();
+    if (liveFestival(Math.floor((start + d * DAY_MS) / DAY_MS), b.world.live.dev.festival, FESTIVAL_RULES)) b.live.festivalDays += 1;
     rows.push({
       day: d + 1,
       coins: b.coins(),
@@ -293,5 +307,5 @@ export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7, option
       runes: b.bag('item_ancient_rune'),
     });
   }
-  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, cloudOpenAtHour: b.cloudAt, flowersHarvested: b.world.progression.stats.flowersHarvested ?? 0, potionsBrewed: b.world.progression.stats.potionsBrewed ?? 0, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems, adventure: b.adv, bag: b.world.inventory.items, pendingLoot: hasAdventure(b.world) ? adventureOf(b.world).pending : {} };
+  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, cloudOpenAtHour: b.cloudAt, flowersHarvested: b.world.progression.stats.flowersHarvested ?? 0, potionsBrewed: b.world.progression.stats.potionsBrewed ?? 0, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems, adventure: b.adv, live: b.live, bag: b.world.inventory.items, pendingLoot: hasAdventure(b.world) ? adventureOf(b.world).pending : {} };
 }

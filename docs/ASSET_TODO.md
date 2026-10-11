@@ -4,6 +4,17 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `docs/reference-assets/` và `asset/reference/`.
 
+## GĐ12 — Thế giới động
+Tất cả là placeholder (CSS, ký tự) — làm art ở GĐ14 (decision 017):
+| Việc | Ghi chú |
+|---|---|
+| Hiệu ứng thời tiết | Lớp CSS `.sky__fx` (tông màu, vệt mưa, tuyết, vòng cầu vồng) phủ lên mọi Area; cần VFX thật theo từng Area (mưa trên ruộng và mặt nước gợn sóng, sương trên bến, tuyết đọng, cầu vồng thật), cùng tông ánh sáng ngày / đêm và âm thanh mưa, gió. |
+| Biểu tượng thời tiết (`WEATHER_GLYPH`) | Đang là ký tự (☀ ☂ ☁ ❄ 🌈); cần 5 icon cho chip, popup Thời tiết và dự báo. |
+| Lễ hội (4) | Chip chỉ là ★ + chữ; cần banner / cờ trang trí Sảnh và từng Area theo lễ hội (Thu hoạch, Cá, Hoa, Heo), icon Vé Lễ Hội (hiện dùng icon xu), `artId` của mỗi lễ hội đang mượn ảnh `prop_animal_*`. |
+| Đồ trang trí độc quyền lễ hội | Chưa có (cần art); cửa hàng lễ hội hiện chỉ bán vật phẩm sẵn có. |
+| Thương nhân | Dùng ảnh `prop_animal_llama`; cần sạp hàng trong Sảnh (chỉ hiện khi ông ghé), ảnh Thương nhân riêng, hiệu ứng đến / đi. |
+| Toast "lễ hội bắt đầu / Thương nhân đến" và dòng lễ hội trong màn "vắng mặt" | Chưa có (cần chữ và âm báo). |
+
 ## GĐ11 — Adventure liên hệ thống
 Tất cả là placeholder sinh bằng `npm run assets:placeholders` (decision 017: làm art ở GĐ14):
 | Việc | Ghi chú |

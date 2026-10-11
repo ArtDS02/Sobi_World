@@ -20,6 +20,9 @@ export const PANELS = [
   'well',
   'breeder',
   'tech',
+  'weather',
+  'festival',
+  'merchant',
 ] as const;
 export type PanelId = (typeof PANELS)[number];
 
@@ -38,6 +41,9 @@ const PANEL_ICON: Record<PanelId, UiIcon | null> = {
   well: 'cleanAll',
   breeder: 'breed',
   tech: 'shop',
+  weather: 'xp',
+  festival: 'gold',
+  merchant: 'orders',
 };
 
 export interface PopupShell {

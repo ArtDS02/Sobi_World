@@ -16,7 +16,7 @@ export const gardenArea: AreaModule = {
   save: { schema: gardenStateSchema, migrations: GARDEN_MIGRATIONS, version: GARDEN_STATE_VERSION },
   init: (world, ctx) => withGarden(world, initialGarden(ctx.now)),
   // One formula for every mode (ARCHITECTURE §6): the plots and workshops are closed forms of time.
-  simulate: (world, now) => advanceGardenWorld(world, now),
+  simulate: (world, now, _rng, dayOffsetMs) => advanceGardenWorld(world, now, dayOffsetMs),
   simulatedAt: (world) => gardenOf(world).lastTickedAt,
   rebase: (world, to) => withGarden(world, { ...gardenOf(world), lastTickedAt: to }),
   codex: () => [{ id: 'crop', name: vi.codex.kinds.crop, entries: CROP_LIST.map((c) => ({ id: c.id, name: c.nameVi, artId: c.art })) }],

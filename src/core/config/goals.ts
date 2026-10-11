@@ -2,6 +2,8 @@
 import { CONTENT } from './content';
 
 export const ORDER_BOARD = CONTENT.orders;
+export const FESTIVALS_RULES = CONTENT.festivals;
+export const MERCHANT = CONTENT.merchant;
 export const DAILY_GOALS = CONTENT.goals.daily;
 export const CODEX = CONTENT.codex;
 export const NPCS = CONTENT.npcs.npcs;

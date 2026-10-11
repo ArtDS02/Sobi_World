@@ -204,7 +204,7 @@ Giá mua ở chợ: Thức ăn heo 6, Thức ăn cao cấp 15, Phân bón 12.
 | Thành tựu | 5–30 Gems mỗi thành tựu |
 | Loot hiếm Adventure | 1–3 Gems, tỉ lệ 3% mỗi rương |
 | Gems dùng cho | Đồ trang trí độc quyền, đổi đơn hàng (5 Gems), mở rộng kho vượt mức tối đa, giống heo đặc biệt |
-| Chợ theo ngày | 2 nhóm hàng ×1.2, 1 nhóm ×0.9, chọn theo seed ngày |
+| Chợ theo ngày | 2 nhóm hàng ×1.2, 1 nhóm ×0.9, chọn theo seed ngày; ngày Thương nhân ghé, một nhóm hàng được cộng +0.15 (GĐ12, mục 10) |
 | Túi đồ | 40 ô, stack 99; mỗi cấp Kho +20 ô |
 
 Gems không được mua lợi thế lớn về sức mạnh (không pay-to-win, kể cả khi chưa có nạp tiền).
@@ -231,3 +231,19 @@ Gems không được mua lợi thế lớn về sức mạnh (không pay-to-win,
 | Công nghệ (GĐ11) | 4 công nghệ × 3 cấp bằng Sobi Coin (1.000–16.000) + vật liệu cổ: `content/shared/tech.json`, decision 019 |
 | Khẩu phần (GĐ11) | Đầy Đặn +15% máu, Cay +12% công, Nhanh Nhẹn +2 tốc độ +3% chí mạng cho cả đội suốt chuyến; Bond +5% chỉ số mỗi tim |
 | Vật liệu cổ (GĐ11) | Bánh Răng Cổ và Rune Cổ cho công trình Lv3–Lv4 (máng Lv3, chuồng thứ 17–24, vòi tưới Lv3, bể cá Lv4, suối Cloud Lv3) và công nghệ cấp cao |
+
+---
+
+## 10. Thế giới động (GĐ12, `content/shared/weather.json`, `festivals.json`, `merchant.json`; decision 020)
+
+| Mục | Giá trị |
+|---|---|
+| Thời tiết | Theo số ngày + mùa lịch Việt; mưa 17% (đông) – 38% (hè) số ngày, tuyết 26% mùa đông, cầu vồng 35% ngày nắng / sương mù sau ngày mưa; dự báo ngày mai chính xác |
+| Mưa | Mọi ô đất của Garden được tưới và cây lớn ×1.25 |
+| Mưa đêm | Cá từ Hiếm trở lên dễ cắn ×1.8 |
+| Sương mù | +0.1 vào điểm cú câu |
+| Cầu vồng | +3 điểm % đột biến khi phối giống (hoa Cloud cho 3–8) |
+| Lễ hội | 4 lễ hội, chu kỳ 28 ngày, mỗi lễ hội 4 ngày (bắt đầu ngày 0 / 7 / 14 / 21 của chu kỳ) |
+| Vé Lễ Hội | Hoạt động liên quan trả 1 vé mỗi 1–6 đơn vị (xem file), trần 12/ngày; quà 3 vé mỗi ngày lễ hội; không hết hạn |
+| Cửa hàng lễ hội | 2–40 vé mỗi món; Trứng Heo Hoang 30 vé (1/lễ hội), Ngọc 20 vé (2/lễ hội), ngọc trai 15 vé (2/lễ hội) |
+| Thương nhân | Ghé 40% số ngày; 3 đơn đặc biệt ×1.8 giá trị hàng + 1 Vé Lễ Hội mỗi đơn |

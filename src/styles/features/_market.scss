@@ -62,3 +62,8 @@
     list-style: none;
   }
 }
+
+// GĐ12: the group the visiting merchant pays extra for today.
+[data-screen='market'] .market__group.is-merchant {
+  border-style: dashed;
+}

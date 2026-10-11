@@ -62,7 +62,7 @@ export function mountApp(
   const hint = el('div', { class: 'app__hint-host' });
   const coach = el('div', { class: 'app__coach-host' });
   const appEl = el('div', { class: 'app' });
-  const worldEl = el('div', { class: 'app__world' }, stage, opts.overlay ?? '', topbar, hint, coach);
+  const worldEl = el('div', { class: 'app__world' }, stage, opts.sky ?? '', opts.overlay ?? '', topbar, hint, coach);
   // Status screens (loading / recovery) only; the game itself is the canvas plus popups.
   const main = el('main', { class: 'app__main' });
   const popupHost = el('div', { class: 'app__popup' });

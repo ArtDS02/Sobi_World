@@ -4,6 +4,7 @@ import type { WorldSave } from '../../../core/save/world';
 import type { ActionContext, ActionResultOf } from '../../../core/types';
 import type { Rng } from '../../../core/rng';
 import type { SimMode } from '../../../core/simulation/simulate';
+import { weatherNow } from '../../../systems/weather/live';
 import { advanceWorld } from './advanceWorld';
 import { farmArea, farmOf, withFarm } from './save/lens';
 import type { ActionResult, FarmGame } from './types';
@@ -14,7 +15,7 @@ export type WorldAction = (state: WorldSave, ctx: ActionContext) => ActionResult
 
 export function liftFarmAction(action: FarmAction): WorldAction {
   return (world, ctx) => {
-    const result = action(farmOf(world), ctx);
+    const result = action(farmOf(world), { ...ctx, weather: weatherNow(world, ctx.now, ctx.dayOffsetMs ?? 0) });
     return result.ok ? { ...result, state: withFarm(world, result.state) } : result;
   };
 }

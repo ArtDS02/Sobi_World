@@ -4,6 +4,7 @@ import type { WorldSave } from '../../../core/save/world';
 import { vi } from '../../../i18n/vi';
 import { castCooldownLeft, isNightNow } from '../logic/derived';
 import { catchOdds } from '../logic/fishing';
+import { skyForRod } from '../logic/sky';
 import { aquariumOf } from '../logic/save/lens';
 
 export interface OddsRow {
@@ -28,7 +29,7 @@ export function dockVm(world: WorldSave, now: number, dayOffsetMs: number, score
   const a = aquariumOf(world);
   const night = isNightNow(now, dayOffsetMs);
   const met = new Set(world.collection.discovered.fish ?? []);
-  const odds = catchOdds(score, night)
+  const odds = catchOdds(score, night, skyForRod(world, now, dayOffsetMs, night))
     .map((o): OddsRow => {
       if (o.species) {
         const known = met.has(o.species.id);

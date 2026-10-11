@@ -15,3 +15,4 @@ Chỉ import `core/`. Area dùng systems, không ngược lại.
 | `combat/` | trận đánh theo lượt: thứ tự theo Tốc độ, đòn thường, kỹ năng (năng lượng, hồi chiêu), vật phẩm, nguyên tố khắc chế, chí mạng, trạng thái; AI chọn đòn; chỉ số theo cấp, kinh nghiệm; hàm thuần, có seed, lưu giữa hai hành động rồi chơi tiếp vẫn ra cùng kết quả (GĐ10) |
 | `equipment/` | ba ô trang bị (vũ khí, giáp, bùa), cộng chỉ số, mặc / tháo (GĐ10) |
 | `breeding/` | lai giống nâng cao: tính trạng, di truyền, đột biến, vận may, phả hệ, tin đồn của Nhà lai giống (GĐ7) |
+| `weather/` | thời tiết theo số ngày (GĐ12): hàm thuần, dự báo, cắt thời gian ở nửa đêm (`daySegments`), tác dụng lên cây / cá / phối giống; `live.ts` đọc bầu trời của một save (kể cả công tắc Admin) |

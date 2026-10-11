@@ -48,5 +48,19 @@ export function goalsPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
       return { sound: 'level_up', toast: t(vi.event.levelUp, { level: e.level }) };
     case 'TECH_UPGRADED':
       return { sound: 'level_up', toast: t(vi.event.techUpgraded, { name: TECHS[e.techId]?.nameVi ?? e.techId, level: e.level }) };
+    case 'FESTIVAL_TOKENS':
+      return { sound: 'coin_collect', toast: t(vi.event.festivalTokens, { tokens: e.tokens }) };
+    case 'FESTIVAL_GIFT':
+      return { sound: 'coin_collect', toast: t(vi.event.festivalGift, { tokens: e.tokens }) };
+    case 'FESTIVAL_BOUGHT':
+      return {
+        sound: 'coin_collect',
+        toast: t(vi.event.festivalBought, {
+          what: e.reward.kind === 'item' ? `${e.reward.quantity} ${vi.shop[e.reward.itemId as keyof typeof vi.shop] ?? e.reward.itemId}` : t(vi.festival.gems, { amount: e.reward.amount }),
+          cost: e.cost,
+        }),
+      };
+    case 'MERCHANT_DELIVERED':
+      return { sound: 'coin_collect', toast: t(vi.event.merchantDelivered, { coins: formatInt(e.coins) }) };
   }
 }

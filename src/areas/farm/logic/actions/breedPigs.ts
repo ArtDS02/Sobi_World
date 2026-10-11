@@ -7,6 +7,8 @@ import { BREEDS } from '../config/breeds';
 import { SAVE } from '../../../../core/config/save';
 import type { ErrorCode } from '../../../../core/config/errors';
 import { ITEMS } from '../../../../core/config/items';
+import { WEATHER_RULES } from '../../../../core/config/weather';
+import { mutationWeather, type WeatherId } from '../../../../systems/weather/weather';
 import { takeFromBag } from '../../../../core/inventory/bag';
 import { rollChild } from '../breeding';
 import { bornHeredity, isRareBreed } from '../heredity';
@@ -57,8 +59,10 @@ export function breedPigs(state: FarmGame, args: BreedPigsArgs, ctx: ActionConte
     const pregnancySec = BREEDS[mother.breed].pregnancySec;
     if (pregnancySec === null) return { ok: false, error: 'BREEDING_COMBINATION_NOT_SUPPORTED' };
 
-    const boost = args.boostItem === undefined ? 0 : (ITEMS[args.boostItem]?.mutationBoost ?? 0);
-    if (args.boostItem !== undefined && boost <= 0) return { ok: false, error: 'INVALID_REQUEST' };
+    const flower = args.boostItem === undefined ? 0 : (ITEMS[args.boostItem]?.mutationBoost ?? 0);
+    if (args.boostItem !== undefined && flower <= 0) return { ok: false, error: 'INVALID_REQUEST' };
+    // A rainbow in the sky adds to the flower's boost (GĐ12).
+    const boost = flower + mutationWeather((ctx.weather ?? 'sunny') as WeatherId, WEATHER_RULES);
     const paid = changeGold(s, -BALANCE.BREEDING_FEE, 'BREEDING_FEE', ctx, {
       refId: mother.id,
       note: `${mother.breed} x ${father.breed}`,

@@ -40,14 +40,17 @@ const FILE_TITLE: Record<string, string> = {
   'breeding/traits.json': '🧬 Tính trạng (hiệu ứng, trọng số; sửa được cả tên và mô tả)',
   'breeding/balance.json': '🍀 Lai giống nâng cao (di truyền, đột biến, vận may, phả hệ)',
   'breeding/rumors.json': '🗣️ Tin đồn của Nhà lai giống (câu mẫu; sửa được chữ)',
+  'shared/weather.json': '🌦️ Thời tiết (tần suất theo mùa, cầu vồng sau mưa, mưa làm cây lớn nhanh, cá cắn câu, đột biến)',
+  'shared/festivals.json': '🎪 Lễ hội (chu kỳ, ngày bắt đầu, nguồn Vé Lễ Hội, giá và giới hạn cửa hàng; sửa được cả tên và mô tả)',
+  'shared/merchant.json': '🐪 Thương nhân (tần suất ghé, đơn đặc biệt, giá thu mua thêm ở chợ; sửa được cả lời)',
 };
 
 /** Files whose words can be edited as well (the server allows it for the same files). */
-const TEXT_FILES = new Set(['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json', 'shared/tech.json']);
+const TEXT_FILES = new Set(['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json', 'shared/tech.json', 'shared/festivals.json', 'shared/merchant.json']);
 
 /** Same rule as the server (scripts/admin/numbers.ts isWordPath). */
 const isWordPath = (path: string): boolean =>
-  /Vi$/.test(path) || /^(recipeTemplates|noNews|tips)\[\d+\]$/.test(path) || /^rarityWords\.[A-Z]+$/.test(path);
+  /Vi$/.test(path) || /^(recipeTemplates|noNews|tips|linesVi)\[\d+\]$/.test(path) || /^rarityWords\.[A-Z]+$/.test(path);
 
 /** Friendly names by the last part(s) of a path; the rest show their key. */
 const LABEL: Record<string, string> = {
@@ -195,6 +198,25 @@ const LABEL: Record<string, string> = {
   moodBoost: 'Potion: tâm trạng cộng thêm (điểm)',
   moodHours: 'Potion: tâm trạng giữ bao nhiêu giờ',
   mutationBoost: 'Hoa: tăng đột biến khi phối giống (điểm %)',
+  // The living world (GĐ12)
+  'rainbow.afterRainChance': 'Cầu vồng: cơ hội sau một ngày mưa (0–1)',
+  'rain.growthRate': 'Ngày mưa: cây lớn nhanh gấp (và được tưới)',
+  'rainNight.rareLuck': 'Đêm mưa: cá hiếm dễ cắn gấp',
+  'fog.biteBonus': 'Sương mù: cộng vào điểm câu (0–1)',
+  'rainbow.mutationBoost': 'Cầu vồng: tăng đột biến khi phối giống (điểm %)',
+  cycleDays: 'Chu kỳ lễ hội (ngày)',
+  lengthDays: 'Mỗi lễ hội kéo dài (ngày)',
+  dailyGift: 'Quà mỗi ngày lễ hội (vé)',
+  dailyCap: 'Vé tối đa từ hoạt động mỗi ngày',
+  startDay: 'Ngày bắt đầu trong chu kỳ (0 = đầu chu kỳ)',
+  per: 'Cứ bấy nhiêu đơn vị',
+  tokens: 'Được bấy nhiêu vé',
+  limit: 'Giới hạn mỗi lễ hội',
+  visitChance: 'Cơ hội Thương nhân ghé mỗi ngày (0–1)',
+  demandBonus: 'Nhóm hàng Thương nhân muốn: cộng vào hệ số chợ',
+  'offers.count': 'Số đơn đặc biệt mỗi lần ghé',
+  'offers.rewardMultiplier': 'Thưởng đơn đặc biệt: nhân giá trị hàng',
+  'offers.tokens': 'Vé Lễ Hội thêm cho mỗi đơn đặc biệt',
   nightYieldFactor: 'Hoa đêm hái lúc tối: nhân sản lượng',
   'spring.levels.intervalMin': 'Suối: bao nhiêu phút ra một Nước tinh khiết',
   'spring.levels.capacity': 'Suối: chứa tối đa',

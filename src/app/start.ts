@@ -37,12 +37,14 @@ import { farmStore } from '../areas/farm/store';
 import { GardenScene, GARDEN_SCENE_KEY } from '../areas/garden/scene/GardenScene';
 import { bindGardenStage } from '../areas/garden/stage';
 import { createAreaOverlays } from './areaOverlays';
+import { createSkyLayer } from '../ui/live/skyLayer';
 import { vi } from '../i18n/vi';
 import { t } from '../i18n/format';
 import { goalsPresentation } from '../ui/goals/feedback';
 import { GOALS } from './goals';
 import { realClock } from './runtime';
 import { mountApp, type AppOptions, type MountedApp } from '../areas/farm/ui/app';
+import type { Place } from '../areas/farm/ui/appTypes';
 import { renderManifestError } from '../areas/farm/ui/screens/statusScreen';
 
 export async function start(root: HTMLElement) {
@@ -117,6 +119,10 @@ export async function start(root: HTMLElement) {
     return doors.views;
   };
   let app: MountedApp | null = null;
+  // The sky of the day over the world, and the chips that open its panels (GĐ12).
+  let place: string = PLAZA_ID;
+  const sky = createSkyLayer({ save: () => world.getSnapshot().save, now: () => clock.now(), open: (panel) => app?.openPanel(panel) });
+  const showSky = () => sky.update(place, world.getSnapshot().save?.settings.reduceMotion ?? false);
   // The Areas' DOM layers live in one overlay the shell places over the world; each HUD shows only in its own Area.
   const overlays = createAreaOverlays({
     world,
@@ -152,7 +158,9 @@ export async function start(root: HTMLElement) {
     changed: (to) => {
       prompt = null;
       showPrompt();
-      app?.setPlace(overlays.enter(to));
+      place = overlays.enter(to);
+      app?.setPlace(place as Place);
+      showSky();
       // Leaving through a door keeps that Area as the place: the game reopens in front of its door.
       if (to !== PLAZA_ID) void world.dispatch((s, c) => setPlayerSpot(s, { area: to, x: null, y: null, facing: 'down' }, c));
     },
@@ -165,6 +173,7 @@ export async function start(root: HTMLElement) {
     ...(import.meta.env.DEV ? { warn: (m: string) => console.warn(m) } : {}),
   });
   store.subscribe(() => {
+    showSky();
     audio.sync();
     showDevFps?.();
   });
@@ -204,6 +213,7 @@ export async function start(root: HTMLElement) {
     leave: () => void flow.go(PLAZA_ID),
     goPlace: (place) => void flow.go(place),
     overlay: overlays.root,
+    sky: sky.root,
     overlayModal: overlays.isModalOpen,
     areaLines: (events) => overlays.summaryLines(events, world.getSnapshot().save),
     onPigTap: (pigId) => director?.pigTapped(pigId),

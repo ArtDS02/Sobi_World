@@ -4,13 +4,15 @@
 import type { CodexEvent } from '../collection/codex';
 import type { EventBase, WorldEvent } from '../events';
 import type { WorldLevelUp } from '../progression/xp';
+import type { FestivalEvent } from '../live/festival';
+import type { MerchantEvent } from '../live/merchant';
 import type { TechEvent } from '../tech/tech';
 import type { AchievementEvent } from './achievements';
 import type { DailyEvent } from './daily';
 import type { LoginEvent } from './loginReward';
 import type { BoardEvent } from './orders';
 
-export type GoalsEvent = BoardEvent | DailyEvent | AchievementEvent | CodexEvent | LoginEvent | WorldLevelUp | TechEvent;
+export type GoalsEvent = BoardEvent | DailyEvent | AchievementEvent | CodexEvent | LoginEvent | WorldLevelUp | TechEvent | FestivalEvent | MerchantEvent;
 
 export const GOALS_EVENT_TYPES = [
   'BOARD_ORDER_NEW',
@@ -27,6 +29,10 @@ export const GOALS_EVENT_TYPES = [
   'DAILY_CLAIMED',
   'WORLD_LEVEL_UP',
   'TECH_UPGRADED',
+  'FESTIVAL_TOKENS',
+  'FESTIVAL_GIFT',
+  'FESTIVAL_BOUGHT',
+  'MERCHANT_DELIVERED',
 ] as const satisfies readonly GoalsEvent['type'][];
 
 type Missing = Exclude<GoalsEvent['type'], (typeof GOALS_EVENT_TYPES)[number]>;
@@ -59,6 +65,21 @@ export function goalsWorldEvents(e: GoalsEvent): WorldEvent[] {
         { type: 'tech.upgraded', area: WORLD, techId: e.techId, level: e.level },
         ...coins(-e.coins),
         ...Object.entries(e.items).map(([itemId, quantity]): WorldEvent => ({ type: 'item.removed', area: WORLD, itemId, quantity })),
+      ];
+    case 'FESTIVAL_TOKENS':
+    case 'FESTIVAL_GIFT':
+      return [{ type: 'currency.changed', area: WORLD, currency: 'eventTokens', amount: e.tokens }];
+    case 'FESTIVAL_BOUGHT':
+      return [
+        { type: 'currency.changed', area: WORLD, currency: 'eventTokens', amount: -e.cost },
+        e.reward.kind === 'item'
+          ? { type: 'item.added', area: WORLD, itemId: e.reward.itemId, quantity: e.reward.quantity }
+          : { type: 'currency.changed', area: WORLD, currency: 'gems', amount: e.reward.amount },
+      ];
+    case 'MERCHANT_DELIVERED':
+      return [
+        ...coins(e.coins),
+        ...(e.tokens > 0 ? [{ type: 'currency.changed', area: WORLD, currency: 'eventTokens', amount: e.tokens } satisfies WorldEvent] : []),
       ];
     default:
       return [];

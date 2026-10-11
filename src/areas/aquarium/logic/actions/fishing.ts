@@ -6,6 +6,7 @@ import type { ActionContext } from '../../../../core/types';
 import { AB, FISH_NAMES, fishOfItem } from '../config/content';
 import { castCooldownLeft, isNightNow, tankFree } from '../derived';
 import { cast, cooldownAfter } from '../fishing';
+import { skyForRod } from '../sky';
 import type { Fish } from '../state';
 import { give, put, runAquarium, take, type AquariumResult } from './kit';
 
@@ -18,7 +19,7 @@ export function castLine(world: WorldSave, args: { score: number }, ctx: ActionC
     if (!Number.isFinite(args.score) || args.score < 0 || args.score > 1) return { ok: false, error: 'INVALID_REQUEST' };
     if (castCooldownLeft(a, ctx.now) > 0) return { ok: false, error: 'FISHING_COOLDOWN' };
     const night = isNightNow(ctx.now, ctx.dayOffsetMs ?? 0);
-    const result = cast(ctx.rng, args.score, night);
+    const result = cast(ctx.rng, args.score, night, skyForRod(w, ctx.now, ctx.dayOffsetMs ?? 0, night));
     // The cooldown is counted from `lastCastAt`: a miss is stamped earlier so only the rest of it is left.
     const lastCastAt = ctx.now - (AB.fishing.cooldownSec - cooldownAfter(result)) * 1000;
     if (result.kind === 'miss') {

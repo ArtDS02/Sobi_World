@@ -1,5 +1,5 @@
 // What the shop pays for items today: the item's sale price times the day's market of its group (spec V2 §9). Pure.
-import { CONTENT } from '../../core/config/content';
+import { MARKET_RULES } from './marketRules';
 import { gameDay } from '../health/disease';
 import { dailyMarket, marketGroupOf } from './market';
 
@@ -11,7 +11,7 @@ export interface Sellable {
 /** The market factor of an item today (1 when its category does not move). */
 export function itemMarketFactor(item: Pick<Sellable, 'category'>, now: number, dayOffsetMs: number): number {
   const group = marketGroupOf(item.category);
-  return group ? dailyMarket(gameDay(now, dayOffsetMs), CONTENT.valuation.market).factors[group] : 1;
+  return group ? dailyMarket(gameDay(now, dayOffsetMs), MARKET_RULES).factors[group] : 1;
 }
 
 /** Coins for `quantity` units sold at `now` (whole coins, never rounded up past the market). */

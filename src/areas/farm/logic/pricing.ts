@@ -9,6 +9,7 @@ import { heartsOf } from '../../../systems/bond/bond';
 import { qualityFromMood, QUALITY_RULES, withBond, type Quality } from '../../../systems/quality/quality';
 import { needsMood } from '../../../systems/health/risk';
 import { dailyMarket } from '../../../systems/valuation/market';
+import { MARKET_RULES } from '../../../systems/valuation/marketRules';
 import { healthFactor, valueOf, weightFactor } from '../../../systems/valuation/value';
 import { CONTENT } from '../../../core/config/content';
 import { DAY_MS } from '../../../core/clock';
@@ -72,7 +73,7 @@ export function sellQuote(pig: Priced, ctx: PriceContext): Quote {
     quality: QUALITY_RULES.priceFactor[quality],
     weight: weightFactor(kg, BREEDS[pig.breed].maxWeight, V.weightCap),
     health: healthFactor(daysIll, V.healthPenalty.perDay, V.healthPenalty.floor),
-    market: dailyMarket(gameDay(ctx.now, ctx.dayOffsetMs), V.market).factors.PIGS,
+    market: dailyMarket(gameDay(ctx.now, ctx.dayOffsetMs), MARKET_RULES).factors.PIGS,
     trait: pigTraitFactor(pig, 'sellValue'),
   };
   return {

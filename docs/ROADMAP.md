@@ -74,7 +74,7 @@ Mỗi giai đoạn kết thúc khi **game chạy được, save cũ tải đư�
 **Kết quả:** Loot quay về các Area: vật liệu cổ nâng công trình Lv3–Lv4, hạt/cá/heo hiếm; công nghệ trang trại; potion và thức ăn hỗ trợ trận đánh; thêm 2 vùng phiêu lưu. *(Đã làm ở nhánh `phase-11-adventure-links`, decision 019; chờ chủ dự án duyệt.)*
 
 ## GĐ12 — Thế giới động
-**Kết quả:** Thời tiết theo ngày; sự kiện mùa với Event Tokens; NPC Thương nhân; cân bằng lại kinh tế tổng thể.
+**Kết quả:** Thời tiết theo ngày; sự kiện mùa với Event Tokens; NPC Thương nhân; cân bằng lại kinh tế tổng thể. *(Đã làm ở nhánh `phase-12-dynamic-world`, decision 020; chờ chủ dự án duyệt.)*
 
 ## GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu (gameplay freeze)
 **Phụ thuộc:** GĐ1–GĐ12 đã nghiệm thu.

@@ -1,6 +1,7 @@
 // The market of a day (spec V2 §9, GAME_BALANCE §8): each game day two groups of goods pay more and one pays less,
 // drawn from the day's number alone — the same for every sale of that day and for every run of the game. Pure.
 import { MARKET_GROUP_VALUES, type MarketGroup } from '../../../content/schemas/vocab';
+import { merchantVisits, merchantWants } from '../../core/live/visit';
 import { hashSeed, mulberry32 } from '../../core/rng';
 
 export { MARKET_GROUP_VALUES, type MarketGroup };
@@ -8,12 +9,16 @@ export { MARKET_GROUP_VALUES, type MarketGroup };
 export interface MarketRules {
   up: { count: number; factor: number };
   down: { count: number; factor: number };
+  /** The visiting merchant (GĐ12): on a day he comes, the group he wants pays `demandBonus` more. */
+  merchant?: { visitChance: number; demandBonus: number };
 }
 
 export interface DayMarket {
   factors: Readonly<Record<MarketGroup, number>>;
   up: readonly MarketGroup[];
   down: readonly MarketGroup[];
+  /** The group the visiting merchant pays extra for today; null = he is not in the plaza. */
+  merchant: MarketGroup | null;
 }
 
 /** The market of game day `day`: groups shuffled by the day's seed, the first ones up, the next one(s) down. */
@@ -29,7 +34,9 @@ export function dailyMarket(day: number, rules: MarketRules): DayMarket {
   const factors = Object.fromEntries(
     MARKET_GROUP_VALUES.map((g) => [g, up.includes(g) ? rules.up.factor : down.includes(g) ? rules.down.factor : 1]),
   ) as Record<MarketGroup, number>;
-  return { factors, up, down };
+  const wanted = rules.merchant && merchantVisits(day, rules.merchant) ? merchantWants(day) : null;
+  if (wanted && rules.merchant) factors[wanted] += rules.merchant.demandBonus;
+  return { factors, up, down, merchant: wanted };
 }
 
 /** The group an item sells in (by its category); null = the market does not move its price. */

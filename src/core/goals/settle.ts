@@ -14,6 +14,8 @@ import { claimable, type AchievementDef, type AchievementWorld, type Totals } fr
 import { advanceDaily, type DailyRules } from './daily';
 import { advanceBoard, type ItemValue, type OrderRules } from './orders';
 import { trackStats } from './stats';
+import { earnTokens, type FestivalRules } from '../live/festival';
+import { advanceMerchant, type MerchantRules } from '../live/merchant';
 
 export interface GoalsRules {
   orders: OrderRules;
@@ -22,6 +24,8 @@ export interface GoalsRules {
   achievements: readonly AchievementDef[];
   levels: LevelTable;
   development: WorldDevelopmentRules;
+  festivals: FestivalRules;
+  merchant: MerchantRules;
 }
 
 export interface GoalsDeps {
@@ -96,6 +100,15 @@ export function settleWorld(
     world = { ...world, goals: board.goals };
     for (const o of board.spawned) events.push({ type: 'BOARD_ORDER_NEW', orderId: o.id });
   }
+
+  // 3b. The living world: what the player did pays festival tokens; the merchant's orders of the day are made.
+  if (worldEvents.length > 0) {
+    const earned = earnTokens(world, worldEvents, ctx, rules.festivals);
+    world = earned.state;
+    events.push(...earned.events);
+  }
+  const live = advanceMerchant(world.live, day, ctx.now, view, rules.orders, deps.value, rules.merchant);
+  if (live !== world.live) world = { ...world, live };
 
   // 4. What just became reachable: achievements and Codex milestones.
   if (worldEvents.length > 0 || daily.newDay) {

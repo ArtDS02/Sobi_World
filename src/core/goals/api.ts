@@ -1,6 +1,6 @@
 // The goals as the app uses them: the content's numbers bound to the pure functions, so the store, the screens
 // and the tests all go through one object. The Areas tell it what they offer (`totals`, the Codex kinds).
-import { ACHIEVEMENTS, CODEX, DAILY_GOALS, ORDER_BOARD } from '../config/goals';
+import { ACHIEVEMENTS, CODEX, DAILY_GOALS, FESTIVALS_RULES, MERCHANT, ORDER_BOARD } from '../config/goals';
 import { CONTENT } from '../config/content';
 import { PROGRESSION } from '../config/progression';
 import { claimMilestone, claimableMilestones, codexCounts, type CodexKind } from '../collection/codex';
@@ -10,6 +10,8 @@ import type { WorldSave } from '../save/world';
 import type { ActionContext, ActionResultOf } from '../types';
 import { claimAchievement, claimable, type Totals } from './achievements';
 import { claimDailyBonus, claimDailyGoal } from './daily';
+import { buyShopEntry, claimGift } from '../live/festival';
+import { deliverOffer } from '../live/merchant';
 import { claimLoginReward } from './loginReward';
 import { deliverOrder, rerollOrder, type ItemValue } from './orders';
 import { achievementWorld, settleWorld, worldView, type GoalsDeps, type GoalsRules } from './settle';
@@ -27,6 +29,8 @@ export const GOALS_RULES: GoalsRules = {
   achievements: ACHIEVEMENTS,
   levels: PROGRESSION.levels,
   development: PROGRESSION.development,
+  festivals: FESTIVALS_RULES,
+  merchant: MERCHANT,
 };
 
 /** What the Areas report to the goals. */
@@ -81,6 +85,9 @@ export function createGoals(sources: GoalsSources) {
       claimAchievement(w, { id }, c, ACHIEVEMENTS, achievementWorld(w, GOALS_RULES.levels), totals(), addXp),
     claimLogin: (day: number): WorldAction => (w, c) => claimLoginReward(w, { day }, c, CONTENT.daily, addXp),
     claimMilestone: (id: string): WorldAction => (w, c) => claimMilestone(w, { id }, c, CODEX, addXp),
+    claimFestivalGift: (): WorldAction => (w, c) => claimGift(w, c, FESTIVALS_RULES),
+    buyFestivalItem: (entryId: string): WorldAction => (w, c) => buyShopEntry(w, { entryId }, c, FESTIVALS_RULES),
+    deliverMerchant: (index: number): WorldAction => (w, c) => deliverOffer(w, { index }, c, MERCHANT, addXp),
   };
 }
 

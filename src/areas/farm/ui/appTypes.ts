@@ -57,6 +57,8 @@ export interface AppOptions {
   goPlace?: (placeId: string) => void;
   /** A layer over the world that the app owns (the Garden's and the Aquarium's HUDs); the shell only places it. */
   overlay?: HTMLElement;
+  /** The sky layer the app owns (GĐ12): weather over the world and its chips; the shell only places it under the HUD. */
+  sky?: HTMLElement;
   /** A dialog of the overlay is open: the world stands still like under a panel. */
   overlayModal?: () => boolean;
   /** Mounts the Phaser farm into the stage (main.ts injects src/game; absent in DOM tests). */

@@ -1,5 +1,5 @@
 // npm run sim:week (GĐ6 step 9): a bot plays a week on the real game logic; the report says how fast coins and levels come
-// and when the Garden opens, so a balance edit shows its effect on the pace. Usage: npm run sim:week [-- <seed> <days> [adventure]] ("adventure" opens the Adventure at Sobi World level 8, skipping World Development 20)
+// and when the Garden opens, so a balance edit shows its effect on the pace. Usage: npm run sim:week [-- <seed> <days> [adventure] [plain]] ("adventure" opens the Adventure at Sobi World level 8, skipping World Development 20)
 import { simulateWeek } from './economy/week';
 
 const seed = Number(process.argv[2] ?? 7);
@@ -7,8 +7,10 @@ const days = Number(process.argv[3] ?? 7);
 const n0 = (v: number) => Math.round(v).toLocaleString('en-US');
 const h1 = (v: number | null | undefined) => (v === null || v === undefined ? 'never' : `${v.toFixed(1)} h (day ${(v / 24 + 1).toFixed(1)})`);
 
-const forceAdventure = process.argv[4] === 'adventure';
-const r = simulateWeek(seed, undefined, days, { forceAdventure });
+const forceAdventure = process.argv.includes('adventure');
+// `plain` plays the world as it was before GĐ12 (a clear sky, no festival, no merchant) to compare the pace.
+const living = !process.argv.includes('plain');
+const r = simulateWeek(seed, undefined, days, { forceAdventure, living });
 console.log(`A bot plays ${days} days (3 sessions a day), seed ${seed}\n`);
 console.log('day | coins    | gems | level | xp      | pigs/slots | shipped | board orders | daily goals | plots | fish | casts | fish sold | fighter lv | runs | techs | cogs | runes');
 console.log('----|----------|------|-------|---------|------------|---------|--------------|-------------|-------|------|-------|-----------|------------|------|-------|------|------');
@@ -28,6 +30,8 @@ console.log(`First boss kills: ${Object.entries(adv.firstClearAtHour).map(([z, h
 console.log(`Technologies: ${Object.entries(adv.techAtHour).map(([k, h]) => `${k} @ day ${(h / 24 + 1).toFixed(1)}`).join(', ') || 'none'}`);
 console.log('Bag at the end:', Object.entries(r.bag).filter(([, n]) => n > 0).map(([k, n]) => `${k.replace('item_', '')} ${n}`).join(', '));
 if (Object.keys(r.pendingLoot).length > 0) console.log('Loot still waiting:', JSON.stringify(r.pendingLoot));
+const L = r.live;
+console.log(`\nThe living world: ${living ? 'on' : 'off (plain)'}; festival on ${L.festivalDays}/${days} days, ${L.gifts} gifts; tokens earned ${L.tokensEarned}, spent ${L.tokensSpent}; bought worth ~${n0(L.boughtWorth)} coins (${Object.entries(L.bought).map(([k, n]) => `${k.replace('fs_', '')} x${n}`).join(', ') || 'nothing'}); merchant: ${L.merchantDelivered} orders, ${n0(L.merchantCoins)} coins`);
 console.log('\nCoins by activity (+ in, - out)');
 for (const [label, v] of Object.entries(r.ledger).sort((a, b) => b[1] - a[1])) console.log(`  ${label.padEnd(18)} ${n0(v).padStart(10)}`);
 console.log(`\nAchievements claimed: ${r.achievementsClaimed}; Gems earned: ${r.gemsEarned}`);

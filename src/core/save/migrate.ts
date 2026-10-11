@@ -4,6 +4,7 @@ import type { z } from 'zod';
 import type { ErrorCode } from '../config/errors';
 import type { ActionContext } from '../types';
 import { initialGoals } from '../goals/state';
+import { initialLive } from '../live/state';
 import { newPlayer } from '../player/player';
 import { WORLD_SAVE_VERSION, worldSaveSchema, type WorldSave } from './world';
 
@@ -62,6 +63,8 @@ const WORLD_MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
       goals: raw.goals ?? initialGoals(since),
     };
   },
+  // v11 (GĐ12): the living world (festival bookkeeping, the merchant's orders, the Admin's switches). Nothing earned is touched.
+  10: (raw) => ({ ...raw, schemaVersion: 11, live: raw.live ?? initialLive() }),
 };
 
 const isObject = (v: unknown): v is Raw => typeof v === 'object' && v !== null && !Array.isArray(v);

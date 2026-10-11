@@ -47,14 +47,18 @@ export const NUMBER_FILES: Record<string, { schemaPath: string; exportName: stri
   'breeding/traits.json': { schemaPath: '/content/schemas/breeding/traits.ts', exportName: 'traitsFileSchema' },
   'breeding/balance.json': { schemaPath: '/content/schemas/breeding/balance.ts', exportName: 'breedingBalanceFileSchema' },
   'breeding/rumors.json': { schemaPath: '/content/schemas/breeding/rumors.ts', exportName: 'rumorsFileSchema' },
+  // The living world (GĐ12): the weather, the festivals and their shop, the visiting merchant.
+  'shared/weather.json': { schemaPath: '/content/schemas/shared/weather.ts', exportName: 'weatherFileSchema' },
+  'shared/festivals.json': { schemaPath: '/content/schemas/shared/festivals.ts', exportName: 'festivalsFileSchema' },
+  'shared/merchant.json': { schemaPath: '/content/schemas/shared/merchant.ts', exportName: 'merchantFileSchema' },
 };
 
 /** Files whose words (the strings ending in `Vi`) can be edited as well as their numbers: the NPCs' lines. */
-export const TEXT_FILES: readonly string[] = ['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json', 'shared/tech.json'];
+export const TEXT_FILES: readonly string[] = ['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json', 'shared/tech.json', 'shared/festivals.json', 'shared/merchant.json'];
 
 /** A path that holds words the dashboard may edit: keys ending in `Vi`, and the rumour sentences. */
 export const isWordPath = (path: string): boolean =>
-  /Vi$/.test(path) || /^(recipeTemplates|noNews|tips)\[\d+\]$/.test(path) || /^rarityWords\.[A-Z]+$/.test(path);
+  /Vi$/.test(path) || /^(recipeTemplates|noNews|tips|linesVi)\[\d+\]$/.test(path) || /^rarityWords\.[A-Z]+$/.test(path);
 
 export const readNumbers = (): Record<string, unknown> =>
   Object.fromEntries(Object.keys(NUMBER_FILES).map((file) => [file, readContent(file)]));
