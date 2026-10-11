@@ -18,3 +18,4 @@ Không import `systems/`, `areas/`, `ui/`, `app/`; không DOM, Node API, `Date.n
 | `progression/` | level theo Area, World Development, điều kiện mở khóa |
 | `assets/` | manifest asset (chỉ asset), tra theo id |
 | `config/` | cấu hình đọc từ `content/` |
+| `settings/` | `settings.json` riêng khỏi save: phím, nhân vật, ngôn ngữ, cỡ chữ, chế độ màu, rung màn hình (GĐ13) |
