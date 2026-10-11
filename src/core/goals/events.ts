@@ -4,12 +4,13 @@
 import type { CodexEvent } from '../collection/codex';
 import type { EventBase, WorldEvent } from '../events';
 import type { WorldLevelUp } from '../progression/xp';
+import type { TechEvent } from '../tech/tech';
 import type { AchievementEvent } from './achievements';
 import type { DailyEvent } from './daily';
 import type { LoginEvent } from './loginReward';
 import type { BoardEvent } from './orders';
 
-export type GoalsEvent = BoardEvent | DailyEvent | AchievementEvent | CodexEvent | LoginEvent | WorldLevelUp;
+export type GoalsEvent = BoardEvent | DailyEvent | AchievementEvent | CodexEvent | LoginEvent | WorldLevelUp | TechEvent;
 
 export const GOALS_EVENT_TYPES = [
   'BOARD_ORDER_NEW',
@@ -25,6 +26,7 @@ export const GOALS_EVENT_TYPES = [
   'CODEX_MILESTONE_CLAIMED',
   'DAILY_CLAIMED',
   'WORLD_LEVEL_UP',
+  'TECH_UPGRADED',
 ] as const satisfies readonly GoalsEvent['type'][];
 
 type Missing = Exclude<GoalsEvent['type'], (typeof GOALS_EVENT_TYPES)[number]>;
@@ -52,6 +54,12 @@ export function goalsWorldEvents(e: GoalsEvent): WorldEvent[] {
       return coins(e.coins);
     case 'DAILY_CLAIMED':
       return coins(e.gold);
+    case 'TECH_UPGRADED':
+      return [
+        { type: 'tech.upgraded', area: WORLD, techId: e.techId, level: e.level },
+        ...coins(-e.coins),
+        ...Object.entries(e.items).map(([itemId, quantity]): WorldEvent => ({ type: 'item.removed', area: WORLD, itemId, quantity })),
+      ];
     default:
       return [];
   }

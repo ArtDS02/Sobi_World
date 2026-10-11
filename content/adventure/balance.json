@@ -19,7 +19,7 @@
   },
   "stats": {
     "levelGrowth": 0.1,
-    "bondPerHeart": 0.03,
+    "bondPerHeart": 0.05,
     "rarity": { "COMMON": 1, "UNCOMMON": 1.12, "RARE": 1.28, "EPIC": 1.5, "LEGENDARY": 1.8 }
   },
   "levels": { "maxLevel": 30, "expBase": 30, "expExponent": 1.5, "skillUnlockLevels": [1, 1, 10, 20] },
@@ -27,6 +27,11 @@
   "run": { "energyCost": 30, "energyMax": 100, "energyPerHour": 10, "exhaustHours": 4 },
   "xp": { "battleWin": 6, "zoneClear": 40 },
   "starter": { "breed": "PIG_KNIGHT", "items": { "item_equip_wood_sword": 1, "item_equip_leaf_vest": 1 } },
+  "prep": [
+    { "itemId": "item_ration_hearty", "hpPct": 0.2, "atkPct": 0, "defPct": 0, "spd": 0, "crit": 0 },
+    { "itemId": "item_ration_spicy", "hpPct": 0, "atkPct": 0.15, "defPct": 0, "spd": 0, "crit": 0 },
+    { "itemId": "item_ration_swift", "hpPct": 0, "atkPct": 0, "defPct": 0, "spd": 3, "crit": 4 }
+  ],
   "battleItems": [
     { "itemId": "item_potion_healing", "target": "ally", "healPct": 0.5, "statuses": [] },
     {

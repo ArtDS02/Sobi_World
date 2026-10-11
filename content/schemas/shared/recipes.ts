@@ -13,6 +13,8 @@ export const recipeSchema = z.strictObject({
   outputs: itemCounts,
   /** Real minutes one batch takes. */
   durationMin: z.number().finite().positive(),
+  /** A technology level that must be bought first (GĐ11); absent = known from the start. */
+  requiresTech: z.strictObject({ tech: z.string().regex(/^tech_[a-z0-9_]+$/), level: posInt }).optional(),
 });
 
 export const recipesFileSchema = z.strictObject({ recipes: z.array(recipeSchema) }).superRefine((f, ctx) => {

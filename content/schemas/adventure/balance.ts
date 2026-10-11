@@ -50,5 +50,7 @@ export const adventureBalanceFileSchema = z.strictObject({
   /** Experience of the Area (it counts for the one Sobi World Level). */
   xp: z.strictObject({ battleWin: nonNeg, zoneClear: nonNeg }),
   starter: z.strictObject({ breed: z.string().regex(/^PIG_[A-Z0-9_]+$/), items: z.partialRecord(itemId, posInt) }),
+  /** Rations a party carries into a run (GĐ11): what each adds to every fighter for the whole run. */
+  prep: z.array(z.strictObject({ itemId, hpPct: nonNeg, atkPct: nonNeg, defPct: nonNeg, spd: nonNeg, crit: nonNeg })),
   battleItems: z.array(z.strictObject({ itemId, target: z.enum(['ally', 'allAllies']), healPct: unit, statuses: z.array(skillStatusSchema) })),
 });

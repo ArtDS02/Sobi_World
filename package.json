@@ -18,6 +18,7 @@
     "lint": "eslint .",
     "guard": "node scripts/guard/check-architecture.mjs",
     "content:ids": "tsx scripts/content/generateIds.ts",
+    "content:fmt": "tsx scripts/content/fmt.ts",
     "check": "npm run typecheck && npm run lint && npm run guard && npm run assets:check && npm run test",
     "icon": "node scripts/make-icon.mjs",
     "assets:placeholders": "tsx scripts/make-placeholders.ts",

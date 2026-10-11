@@ -137,6 +137,16 @@ export const ITEM_ID_VALUES = [
   'item_equip_sun_amulet',
   'item_forest_herb',
   'item_beast_fang',
+  'item_mountain_ore',
+  'item_ancient_cog',
+  'item_ancient_rune',
+  'item_ration_hearty',
+  'item_ration_spicy',
+  'item_ration_swift',
+  'item_pig_egg_wild',
+  'item_equip_rune_blade',
+  'item_equip_golem_plate',
+  'item_equip_rune_charm',
 ] as const;
 
 export const DECOR_ID_VALUES = [

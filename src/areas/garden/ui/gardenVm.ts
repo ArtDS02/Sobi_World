@@ -6,6 +6,8 @@ import { itemArtId } from '../../../core/config/assetIds';
 import { ITEMS } from '../../../core/config/items';
 import type { ItemId } from '../../../core/config/ids';
 import { RECIPES, recipesOf } from '../../../core/config/recipes';
+import { TECHS, recipeLocked, techBonus } from '../../../core/config/tech';
+import { sped } from '../../../core/production/production';
 import { WORLD_LEVELS } from '../../../core/config/progression';
 import { levelProgress, worldXp } from '../../../core/progression/levels';
 import { affordableBatches, batchesDone, batchesReady, nextBatchAt, jobEndsAt, type Recipe } from '../../../core/production/production';
@@ -169,6 +171,8 @@ export interface RecipeVm {
   duration: string;
   /** Most batches the bag allows (capped at the workshop's limit). */
   maxBatches: number;
+  /** Why the recipe cannot be made yet (a technology to buy), or null. */
+  locked: string | null;
 }
 
 export interface WorkshopVm {
@@ -199,8 +203,9 @@ export function workshopVm(world: WorldSave, building: BuildingId, now: number):
       name: recipe.name,
       inputs: Object.entries(recipe.inputs).map(([id, need]) => ({ name: nameOfItem(id), have: world.inventory.items[id] ?? 0, need })),
       outputs: Object.entries(recipe.outputs).map(([id, n]) => `${n} ${nameOfItem(id)}`).join(', '),
-      duration: t(vi.garden.perBatch, { time: formatDuration(recipe.durationMs) }),
-      maxBatches: Math.min(GB.maxBatches, affordableBatches(recipe, world.inventory.items)),
+      duration: t(vi.garden.perBatch, { time: formatDuration(sped(recipe, techBonus(world, 'productionSpeed'))) }),
+      maxBatches: Math.min(GB.maxBatches + techBonus(world, 'maxBatches'), affordableBatches(recipe, world.inventory.items)),
+      locked: recipeLocked(world, recipe) ? t(vi.tech.locked, { tech: TECHS[recipe.requires!.tech]?.nameVi ?? recipe.requires!.tech, level: recipe.requires!.level }) : null,
     })),
     job:
       j && jr

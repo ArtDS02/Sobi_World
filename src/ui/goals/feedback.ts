@@ -2,6 +2,7 @@
 // one place that turns events into presentation. A catch-up is never replayed (§9.5): the away summary covers it. Pure.
 import type { AudioKey } from '../../core/config/assetIds';
 import type { EventBase } from '../../core/events';
+import { TECHS } from '../../core/config/tech';
 import { isGoalsEvent } from '../../core/goals/events';
 import { formatInt, t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
@@ -45,5 +46,7 @@ export function goalsPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
       return { sound: 'coin_collect', toast: null };
     case 'WORLD_LEVEL_UP':
       return { sound: 'level_up', toast: t(vi.event.levelUp, { level: e.level }) };
+    case 'TECH_UPGRADED':
+      return { sound: 'level_up', toast: t(vi.event.techUpgraded, { name: TECHS[e.techId]?.nameVi ?? e.techId, level: e.level }) };
   }
 }

@@ -19,6 +19,8 @@ export const zoneSchema = z.strictObject({
   descVi: text,
   /** Sobi World level needed to enter. */
   fromWorldLevel: posInt,
+  /** The zone whose boss must have been beaten first (GĐ11); absent = open at that level. */
+  requiresCleared: z.string().regex(/^zone_[a-z0-9_]+$/).optional(),
   backdrop: assetId,
   nodes: z.array(nodeSchema).min(2),
 });
@@ -56,6 +58,8 @@ export const zonesFileSchema = z
   })
   .superRefine((f, ctx) => {
     const events = new Set(f.events.map((e) => e.id));
+    const zoneIds = new Set(f.zones.map((z) => z.id));
+    for (const z of f.zones) if (z.requiresCleared && !zoneIds.has(z.requiresCleared)) ctx.addIssue({ code: 'custom', message: `${z.id}: unknown zone ${z.requiresCleared}` });
     for (const z of f.zones) {
       if (z.nodes.at(-1)?.type !== 'boss') ctx.addIssue({ code: 'custom', message: `${z.id}: the last node must be the boss` });
       for (const n of z.nodes) {

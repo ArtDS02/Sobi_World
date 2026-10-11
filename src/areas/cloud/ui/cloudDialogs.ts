@@ -162,7 +162,7 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
       recipeId = chosen.recipe.id;
       const most = Math.max(1, chosen.maxBatches);
       batches = Math.min(batches, most);
-      const start: ButtonVm = chosen.maxBatches < 1 ? { label: vi.cloud.start, reason: vi.cloud.missing } : { label: t(vi.cloud.startBatches, { count: batches }), reason: null };
+      const start: ButtonVm = chosen.locked ? { label: vi.cloud.start, reason: chosen.locked } : chosen.maxBatches < 1 ? { label: vi.cloud.start, reason: vi.cloud.missing } : { label: t(vi.cloud.startBatches, { count: batches }), reason: null };
       return el(
         'div',
         { class: 'cloud-dialog' },

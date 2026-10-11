@@ -94,6 +94,138 @@
       ],
       "art": "enemy_old_treant",
       "boss": true
+    },
+    {
+      "id": "enemy_rock_beetle",
+      "nameVi": "Bọ Đá",
+      "element": "EARTH",
+      "stats": { "hp": 150, "atk": 26, "def": 14, "spd": 7, "crit": 4 },
+      "skills": ["skill_rock_smash"],
+      "exp": 28,
+      "coins": 20,
+      "drops": [{ "itemId": "item_mountain_ore", "chance": 0.5, "min": 1, "max": 2 }],
+      "art": "enemy_rock_beetle"
+    },
+    {
+      "id": "enemy_cliff_hawk",
+      "nameVi": "Diều Hâu Vách Đá",
+      "element": "WIND",
+      "stats": { "hp": 110, "atk": 28, "def": 8, "spd": 16, "crit": 10 },
+      "skills": ["skill_gust_strike", "skill_swift_flurry"],
+      "exp": 30,
+      "coins": 22,
+      "drops": [{ "itemId": "item_mountain_ore", "chance": 0.3, "min": 1, "max": 1 }],
+      "art": "enemy_cliff_hawk"
+    },
+    {
+      "id": "enemy_lava_newt",
+      "nameVi": "Sa Giông Dung Nham",
+      "element": "FIRE",
+      "stats": { "hp": 125, "atk": 30, "def": 9, "spd": 10, "crit": 6 },
+      "skills": ["skill_scorch_tail"],
+      "exp": 32,
+      "coins": 24,
+      "drops": [{ "itemId": "item_beast_fang", "chance": 0.4, "min": 1, "max": 2 }],
+      "art": "enemy_lava_newt"
+    },
+    {
+      "id": "enemy_snow_goat",
+      "nameVi": "Dê Tuyết",
+      "element": "WATER",
+      "stats": { "hp": 140, "atk": 24, "def": 11, "spd": 9, "crit": 5 },
+      "skills": ["skill_bubble_shot", "skill_soothing_splash"],
+      "exp": 30,
+      "coins": 22,
+      "drops": [{ "itemId": "item_mountain_ore", "chance": 0.4, "min": 1, "max": 2 }],
+      "art": "enemy_snow_goat"
+    },
+    {
+      "id": "enemy_ore_golem",
+      "nameVi": "Tượng Quặng",
+      "element": "EARTH",
+      "stats": { "hp": 240, "atk": 30, "def": 18, "spd": 6, "crit": 4 },
+      "skills": ["skill_stone_skin", "skill_quake"],
+      "exp": 55,
+      "coins": 40,
+      "drops": [
+        { "itemId": "item_mountain_ore", "chance": 0.8, "min": 2, "max": 4 },
+        { "itemId": "item_ancient_cog", "chance": 0.12, "min": 1, "max": 1 }
+      ],
+      "art": "enemy_ore_golem"
+    },
+    {
+      "id": "enemy_magma_drake",
+      "nameVi": "Rồng Dung Nham",
+      "element": "FIRE",
+      "stats": { "hp": 960, "atk": 36, "def": 14, "spd": 11, "crit": 6 },
+      "skills": ["skill_fire_burst", "skill_blazing_charge", "skill_battle_cry"],
+      "exp": 240,
+      "coins": 220,
+      "drops": [
+        { "itemId": "item_mountain_ore", "chance": 1, "min": 4, "max": 6 },
+        { "itemId": "item_ancient_cog", "chance": 1, "min": 1, "max": 2 }
+      ],
+      "art": "enemy_magma_drake",
+      "boss": true
+    },
+    {
+      "id": "enemy_stone_sentinel",
+      "nameVi": "Lính Gác Đá",
+      "element": "EARTH",
+      "stats": { "hp": 320, "atk": 40, "def": 24, "spd": 8, "crit": 4 },
+      "skills": ["skill_stone_skin", "skill_earth_wall"],
+      "exp": 85,
+      "coins": 55,
+      "drops": [{ "itemId": "item_ancient_cog", "chance": 0.3, "min": 1, "max": 1 }],
+      "art": "enemy_stone_sentinel"
+    },
+    {
+      "id": "enemy_rune_wisp",
+      "nameVi": "Hồn Rune",
+      "element": "WIND",
+      "stats": { "hp": 190, "atk": 44, "def": 12, "spd": 18, "crit": 10 },
+      "skills": ["skill_cyclone", "skill_razor_gale"],
+      "exp": 85,
+      "coins": 55,
+      "drops": [{ "itemId": "item_ancient_cog", "chance": 0.25, "min": 1, "max": 1 }],
+      "art": "enemy_rune_wisp"
+    },
+    {
+      "id": "enemy_tide_wraith",
+      "nameVi": "Bóng Thủy Triều",
+      "element": "WATER",
+      "stats": { "hp": 230, "atk": 40, "def": 14, "spd": 12, "crit": 6 },
+      "skills": ["skill_tidal_wave", "skill_healing_rain"],
+      "exp": 90,
+      "coins": 58,
+      "drops": [{ "itemId": "item_ancient_cog", "chance": 0.25, "min": 1, "max": 1 }],
+      "art": "enemy_tide_wraith"
+    },
+    {
+      "id": "enemy_ember_idol",
+      "nameVi": "Tượng Thần Lửa",
+      "element": "FIRE",
+      "stats": { "hp": 270, "atk": 46, "def": 16, "spd": 10, "crit": 6 },
+      "skills": ["skill_fire_burst", "skill_ember_slash"],
+      "exp": 95,
+      "coins": 60,
+      "drops": [{ "itemId": "item_ancient_rune", "chance": 0.15, "min": 1, "max": 1 }],
+      "art": "enemy_ember_idol"
+    },
+    {
+      "id": "enemy_ancient_guardian",
+      "nameVi": "Hộ Pháp Cổ Đại",
+      "element": "EARTH",
+      "stats": { "hp": 1650, "atk": 52, "def": 22, "spd": 10, "crit": 6 },
+      "skills": ["skill_quake", "skill_boulder_toss", "skill_earth_wall"],
+      "exp": 520,
+      "coins": 420,
+      "drops": [
+        { "itemId": "item_ancient_rune", "chance": 1, "min": 1, "max": 2 },
+        { "itemId": "item_ancient_cog", "chance": 1, "min": 2, "max": 4 }
+      ],
+      "art": "enemy_ancient_guardian",
+      "boss": true
     }
   ]
 }

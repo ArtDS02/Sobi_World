@@ -79,6 +79,13 @@ for (const enemy of ['mossling', 'thorn_sprout', 'gale_sparrow', 'ember_fox', 'd
 CATALOGUE_SIZES.enemy_old_treant = { width: 320, height: 360 };
 CATALOGUE_SIZES.bg_adventure_forest = { width: 1600, height: 900 };
 
+// Sobi Adventure (GĐ11): the mountain and the ruins.
+for (const enemy of ['rock_beetle', 'cliff_hawk', 'lava_newt', 'snow_goat', 'stone_sentinel', 'rune_wisp', 'tide_wraith', 'ember_idol']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 192, height: 192 };
+for (const enemy of ['ore_golem']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 240, height: 240 };
+for (const enemy of ['magma_drake', 'ancient_guardian']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 320, height: 360 };
+CATALOGUE_SIZES.bg_adventure_mountain = { width: 1600, height: 900 };
+CATALOGUE_SIZES.bg_adventure_ruins = { width: 1600, height: 900 };
+
 for (const who of ['so', 'bi']) {
   for (const facing of ['down', 'up', 'left', 'right']) {
     for (const frame of ['idle', 'walk1', 'walk2']) {

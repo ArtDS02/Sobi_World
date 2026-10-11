@@ -19,6 +19,8 @@ export const itemSchema = z.strictObject({
   moodHours: nonNeg.optional(),
   /** Percentage points added to the mutation chance when it goes into a breeding (GĐ9 flowers); absent = 0. */
   mutationBoost: nonNeg.optional(),
+  /** Hatches into a pig of this rarity at the Farm (GĐ11 Adventure eggs); absent = not an egg. */
+  hatchRarity: z.enum(RARITY_VALUES).optional(),
 });
 
 export const itemsFileSchema = z.strictObject({ items: z.array(itemSchema) });

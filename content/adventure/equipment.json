@@ -8,6 +8,9 @@
     { "id": "item_equip_moss_plate", "slot": "armor", "stats": { "hp": 28, "def": 4 } },
     { "id": "item_equip_lucky_clover", "slot": "charm", "stats": { "crit": 4 } },
     { "id": "item_equip_wind_feather", "slot": "charm", "stats": { "spd": 3 } },
-    { "id": "item_equip_sun_amulet", "slot": "charm", "stats": { "atk": 3, "hp": 14, "spd": 1 } }
+    { "id": "item_equip_sun_amulet", "slot": "charm", "stats": { "atk": 3, "hp": 14, "spd": 1 } },
+    { "id": "item_equip_rune_blade", "slot": "weapon", "stats": { "atk": 12, "crit": 4 } },
+    { "id": "item_equip_golem_plate", "slot": "armor", "stats": { "hp": 45, "def": 7 } },
+    { "id": "item_equip_rune_charm", "slot": "charm", "stats": { "atk": 5, "hp": 22, "spd": 2 } }
   ]
 }

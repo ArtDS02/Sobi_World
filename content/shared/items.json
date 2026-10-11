@@ -505,6 +505,97 @@
       "sellGold": 45,
       "hungerRestore": 0,
       "curesSickness": false
+    },
+    {
+      "id": "item_mountain_ore",
+      "category": "MATERIAL",
+      "rarity": "COMMON",
+      "priceGold": 0,
+      "sellGold": 25,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_ancient_cog",
+      "category": "MATERIAL",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 80,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_ancient_rune",
+      "category": "MATERIAL",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 300,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_ration_hearty",
+      "category": "MATERIAL",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 60,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_ration_spicy",
+      "category": "MATERIAL",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 60,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_ration_swift",
+      "category": "MATERIAL",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 60,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_pig_egg_wild",
+      "category": "MATERIAL",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 400,
+      "hungerRestore": 0,
+      "curesSickness": false,
+      "hatchRarity": "RARE"
+    },
+    {
+      "id": "item_equip_rune_blade",
+      "category": "EQUIPMENT",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 520,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_golem_plate",
+      "category": "EQUIPMENT",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 520,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_rune_charm",
+      "category": "EQUIPMENT",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 520,
+      "hungerRestore": 0,
+      "curesSickness": false
     }
   ]
 }

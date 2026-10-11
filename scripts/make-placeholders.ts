@@ -284,6 +284,17 @@ const ENEMY_COLOURS: Record<string, Rgba> = {
   enemy_forest_wolf: [130, 120, 110, 255],
   enemy_bramble_boar: [140, 100, 70, 255],
   enemy_old_treant: [100, 84, 60, 255],
+  enemy_rock_beetle: [120, 112, 104, 255],
+  enemy_cliff_hawk: [170, 190, 210, 255],
+  enemy_lava_newt: [220, 90, 50, 255],
+  enemy_snow_goat: [200, 220, 235, 255],
+  enemy_ore_golem: [110, 100, 120, 255],
+  enemy_magma_drake: [200, 60, 40, 255],
+  enemy_stone_sentinel: [150, 150, 140, 255],
+  enemy_rune_wisp: [150, 200, 240, 255],
+  enemy_tide_wraith: [70, 120, 190, 255],
+  enemy_ember_idol: [210, 110, 60, 255],
+  enemy_ancient_guardian: [130, 120, 90, 255],
 };
 
 /** An enemy: a round body with two eyes and a frown; the treant is taller with a leafy crown. */
@@ -292,7 +303,7 @@ function drawEnemy(r: Raster, id: string) {
   const w = r.width;
   const h = r.height;
   r.ellipse(w / 2, h * 0.94, w * 0.34, h * 0.04, [0, 0, 0, 60]);
-  if (id === 'enemy_old_treant') {
+  if (id === 'enemy_old_treant' || id === 'enemy_magma_drake' || id === 'enemy_ancient_guardian') {
     r.roundRect(w * 0.3, h * 0.3, w * 0.4, h * 0.62, 24, colour);
     r.ellipse(w * 0.5, h * 0.2, w * 0.36, h * 0.16, [84, 150, 84, 255]);
   } else r.ellipse(w / 2, h * 0.58, w * 0.32, h * 0.32, colour);
@@ -304,11 +315,11 @@ function drawEnemy(r: Raster, id: string) {
 }
 
 /** The forest backdrop: sky, far hills, a trail. */
-function drawForestBackdrop(r: Raster) {
+function drawForestBackdrop(r: Raster, top: Rgba = [170, 214, 200, 255], hill: Rgba = [60, 120, 70, 255]) {
   const w = r.width;
   const h = r.height;
-  r.gradient([170, 214, 200, 255], [88, 150, 96, 255]);
-  for (let i = 0; i < 9; i += 1) r.ellipse(w * (0.06 + i * 0.12), h * 0.56, w * 0.07, h * 0.2, [60, 120, 70, 255]);
+  r.gradient(top, [88, 150, 96, 255]);
+  for (let i = 0; i < 9; i += 1) r.ellipse(w * (0.06 + i * 0.12), h * 0.56, w * 0.07, h * 0.2, hill);
   r.rect(0, h * 0.7, w, h * 0.3, [96, 140, 76, 255]);
   r.rect(0, h * 0.82, w, h * 0.06, [196, 170, 120, 255]);
 }
@@ -344,6 +355,8 @@ function render(
   else if (id.startsWith('crop_')) drawCrop(r, id);
   else if (id.startsWith('enemy_')) drawEnemy(r, id);
   else if (id === 'bg_adventure_forest') drawForestBackdrop(r);
+  else if (id === 'bg_adventure_mountain') drawForestBackdrop(r, [196, 180, 170, 255], [120, 110, 120, 255]);
+  else if (id === 'bg_adventure_ruins') drawForestBackdrop(r, [180, 170, 200, 255], [110, 120, 110, 255]);
   else if (id.startsWith('flower_')) drawFlower(r, id);
   else if (id === 'plot_cloud' || id === 'bg_cloud' || id === 'bld_cloud_spring' || id === 'bld_cauldron') drawCloudScenery(r, id);
   else if (id.startsWith('plot_')) drawPlot(r, id);

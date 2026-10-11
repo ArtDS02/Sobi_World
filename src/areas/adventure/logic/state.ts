@@ -84,6 +84,8 @@ const runSchema = z.strictObject({
   expGained: nonNeg,
   /** Fighters that rose a level this run (keys). */
   levelUps: z.array(z.string()),
+  /** The rations carried into this run (item ids, GĐ11). */
+  prep: z.array(z.string()).default([]),
   /** The small event that just happened at an event node (its id), for the screen. */
   lastEvent: z.string().nullable(),
   /** The events of the last step of the battle, for the screen to play. */
@@ -100,6 +102,8 @@ export const adventureStateSchema = z.strictObject({
   /** Loot that did not fit in the bag yet. */
   pending: counts,
   starterClaimed: z.boolean(),
+  /** Times the boss of each zone has been beaten (GĐ11: a zone opens after the one before it). */
+  cleared: z.record(z.string(), z.number().int().min(1)).default({}),
   battlesWon: z.number().int().min(0),
   runsCleared: z.number().int().min(0),
   runsLost: z.number().int().min(0),
@@ -120,6 +124,7 @@ export const initialAdventure = (now: number): AdventureState => ({
   run: null,
   pending: {},
   starterClaimed: false,
+  cleared: {},
   battlesWon: 0,
   runsCleared: 0,
   runsLost: 0,

@@ -119,7 +119,7 @@ describe('workshop card', () => {
     let w = ok(buildWorkshop(base({ item_corn: 4, item_wheat: 2 }), { building: 'mill' }, ctxAt(T0)));
     const idle = workshopVm(w, 'mill', T0);
     expect(idle.job).toBeNull();
-    expect(idle.recipes.map((r) => r.recipe.id)).toEqual(['recipe_pig_feed', 'recipe_premium_feed', 'recipe_fish_feed']);
+    expect(idle.recipes.map((r) => r.recipe.id)).toEqual(['recipe_pig_feed', 'recipe_premium_feed', 'recipe_fish_feed', 'recipe_ration_hearty', 'recipe_ration_spicy', 'recipe_ration_swift']);
     expect(idle.recipes[0]).toMatchObject({ maxBatches: 2, name: 'Thức ăn heo' });
     expect(idle.recipes[0]!.inputs).toEqual([{ name: 'Bắp', have: 4, need: 2 }, { name: 'Lúa mì', have: 2, need: 1 }]);
     expect(idle.recipes[1]!.maxBatches).toBe(0); // no carrot

@@ -23,6 +23,8 @@ const jobSchema = z.strictObject({
   recipeId: z.string().min(1),
   batches: z.number().int().min(1),
   startedAt: time,
+  /** Milliseconds one batch takes, fixed when the job started (GĐ11 technology); absent = the recipe's. */
+  durationMs: z.number().finite().positive().optional(),
   collected: z.number().int().min(0),
 });
 

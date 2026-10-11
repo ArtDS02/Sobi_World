@@ -55,6 +55,9 @@ export type ZoneNode = Zone['nodes'][number];
 export const LOOT_TABLES = ADVENTURE_CONTENT.zones.tables;
 export const EVENTS = Object.fromEntries(ADVENTURE_CONTENT.zones.events.map((e) => [e.id, e]));
 
+/** The rations a party may carry, by item id (GĐ11). */
+export const PREP_ITEMS: Readonly<Record<string, (typeof AB.prep)[number]>> = Object.fromEntries(AB.prep.map((p) => [p.itemId, p]));
+
 export const COMBAT_RULES: CombatRules = AB.combat;
 export const STAT_RULES: StatRules = { levelGrowth: AB.stats.levelGrowth, bondPerHeart: AB.stats.bondPerHeart };
 export const LEVEL_RULES: LevelRules = { maxLevel: AB.levels.maxLevel, expBase: AB.levels.expBase, expExponent: AB.levels.expExponent };

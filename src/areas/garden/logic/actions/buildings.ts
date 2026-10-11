@@ -2,7 +2,8 @@
 import { RECIPES } from '../../../../core/config/recipes';
 import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
-import { affordableBatches, batchesReady, collectBatches, scaled } from '../../../../core/production/production';
+import { techBonus, recipeLocked } from '../../../../core/config/tech';
+import { affordableBatches, batchesReady, collectBatches, scaled, sped } from '../../../../core/production/production';
 import { emptyPlot } from '../../../../systems/plants/plot';
 import { type BuildingId, BUILDING_IDS, GB } from '../config/content';
 import { nextExpansion, nextSprinkler } from '../derived';
@@ -64,7 +65,8 @@ export function startCraft(world: WorldSave, args: { building: string; recipeId:
     const recipe = RECIPES[args.recipeId];
     const { building, batches } = args;
     if (!isBuilding(building) || !recipe || recipe.building !== building) return { ok: false, error: 'INVALID_REQUEST' };
-    if (!Number.isInteger(batches) || batches < 1 || batches > GB.maxBatches) return { ok: false, error: 'INVALID_REQUEST' };
+    if (!Number.isInteger(batches) || batches < 1 || batches > GB.maxBatches + techBonus(w, 'maxBatches')) return { ok: false, error: 'INVALID_REQUEST' };
+    if (recipeLocked(w, recipe)) return { ok: false, error: 'RECIPE_LOCKED' };
     if (!g.built[building]) return { ok: false, error: 'NOT_BUILT' };
     if (g.jobs[building]) return { ok: false, error: 'BUILDING_BUSY' };
     if (affordableBatches(recipe, w.inventory.items) < batches) return { ok: false, error: 'INSUFFICIENT_ITEM' };
@@ -74,7 +76,7 @@ export function startCraft(world: WorldSave, args: { building: string; recipeId:
       if (!taken.ok) return taken;
       bag = taken.world;
     }
-    const job = { recipeId: recipe.id, batches, startedAt: ctx.now, collected: 0 };
+    const job = { recipeId: recipe.id, batches, startedAt: ctx.now, durationMs: sped(recipe, techBonus(w, 'productionSpeed')), collected: 0 };
     return {
       ok: true,
       world: put(bag, { ...g, jobs: { ...g.jobs, [building]: job } }),

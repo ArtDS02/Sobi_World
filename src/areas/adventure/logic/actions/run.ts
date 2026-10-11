@@ -1,23 +1,21 @@
 // A run (spec V2 §8.5): the party picks a zone, walks its chain of nodes (battle, chest, small event) and meets the boss.
 // A lost run only exhausts the party for a few real hours — nobody dies, nothing is taken. Every random draw comes from the
 // run's seed and the node, so a saved run plays on the same way.
-import type { RosterEntry } from '../../../../core/area-registry/registry';
 import { cloneData } from '../../../../core/clone';
 import type { ErrorCode } from '../../../../core/config/errors';
-import { WORLD_LEVELS } from '../../../../core/config/progression';
-import { worldLevel } from '../../../../core/progression/levels';
 import { hashSeed, mulberry32, type Rng } from '../../../../core/rng';
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
 import { act, chooseAction, current, startBattle } from '../../../../systems/combat';
 import { addExp } from '../../../../systems/combat/stats';
 import type { BattleAction, BattleState } from '../../../../systems/combat/types';
-import { AB, BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, EVENTS, HOUR_MS, LEVEL_RULES, LOOT_TABLES, ZONES, archetypeOf, type Zone } from '../config/content';
+import { AB, BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, EVENTS, HOUR_MS, LEVEL_RULES, LOOT_TABLES, ZONES, type Zone } from '../config/content';
 import type { AdventureEvent } from '../events';
-import { energyOf, memberOf, newFighter, whyNotReady } from '../fighters';
-import type { AdventureState, Fighter, Run, RunMember } from '../state';
+import type { AdventureState, Fighter, Run } from '../state';
 import { addCount, allyInit, enemyIdOf, enemyInits, pickGroup, playEnemies, rollTable } from '../encounter';
 import { countOf, credit, put, runAdventure, take, type AdventureResult } from './kit';
+
+export { startRun } from './start';
 
 /** Working copy of one step: the world, the slice, the run, what happened and the XP earned. */
 interface Step {
@@ -64,7 +62,7 @@ function finish(st: Step, result: 'win' | 'lose' | 'retreat') {
   for (const [id, n] of Object.entries(run.loot)) addCount(pending, id, n);
   st.a = { ...st.a, pending };
   if (result === 'win') {
-    st.a = { ...st.a, runsCleared: st.a.runsCleared + 1 };
+    st.a = { ...st.a, runsCleared: st.a.runsCleared + 1, cleared: { ...st.a.cleared, [run.zoneId]: (st.a.cleared[run.zoneId] ?? 0) + 1 } };
     st.xp += AB.xp.zoneClear;
   } else if (result === 'lose') {
     st.a = { ...st.a, runsLost: st.a.runsLost + 1 };
@@ -124,49 +122,6 @@ function commit(st: Step) {
 
 const stepOf = (w: WorldSave, a: AdventureState, ctx: ActionContext): Step | null =>
   a.run ? { w, a, run: cloneData(a.run) as Run, events: [], xp: 0, ctx } : null;
-
-/** Starts a run of `zoneId` with the fighters `keys` (1 to 3 creatures of `roster`): each pays the energy cost. */
-export function startRun(world: WorldSave, args: { zoneId: string; keys: string[]; roster: readonly RosterEntry[] }, ctx: ActionContext): AdventureResult {
-  return runAdventure(world, ctx, (w, a) => {
-    if (a.run) return { ok: false, error: 'RUN_ACTIVE' };
-    const zone = ZONES[args.zoneId];
-    if (!zone) return { ok: false, error: 'INVALID_REQUEST' };
-    if (worldLevel(w, WORLD_LEVELS) < zone.fromWorldLevel) return { ok: false, error: 'ZONE_LOCKED' };
-    const keys = args.keys;
-    if (keys.length < 1 || keys.length > AB.team.max || new Set(keys).size !== keys.length) return { ok: false, error: 'TEAM_INVALID' };
-    const fighters = { ...a.fighters };
-    const team: RunMember[] = [];
-    for (const key of keys) {
-      const entry = args.roster.find((r) => r.key === key);
-      if (!entry) return { ok: false, error: 'TEAM_INVALID' };
-      const archetype = archetypeOf(entry);
-      const error: ErrorCode | null = whyNotReady(entry, fighters[key], ctx.now);
-      if (error || !archetype) return { ok: false, error: error ?? 'NOT_A_FIGHTER' };
-      const f = fighters[key] ?? newFighter(ctx.now);
-      // The energy is spent now; what is left keeps refilling from this moment.
-      fighters[key] = { ...f, energy: energyOf(f, ctx.now) - AB.run.energyCost, energyAt: ctx.now };
-      team.push(memberOf(key, fighters[key]!, entry, archetype));
-    }
-    const run: Run = {
-      zoneId: zone.id,
-      seed: Math.floor(ctx.rng.next() * 2 ** 31),
-      nodeIndex: 0,
-      team,
-      phase: 'map',
-      battle: null,
-      loot: {},
-      coins: 0,
-      gems: 0,
-      expGained: 0,
-      levelUps: [],
-      lastEvent: null,
-      log: [],
-      result: null,
-      startedAt: ctx.now,
-    };
-    return { ok: true, world: put(w, { ...a, fighters, run }), events: [{ type: 'ADVENTURE_RUN_STARTED', zoneId: zone.id, team: keys }] };
-  });
-}
 
 /** The party steps up to the next node: a fight starts, a chest opens, a small event happens. */
 export function enterNode(world: WorldSave, ctx: ActionContext): AdventureResult {
