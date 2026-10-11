@@ -12,6 +12,7 @@ import {
   type PanelId,
   type PopupShell,
 } from '../../../ui/components/popup';
+import { mountPlaceVeil } from '../../../ui/components/placeVeil';
 import { createToaster } from '../../../ui/components/toast';
 import { renderHud } from './components/hud';
 import { openBreedDialog } from './breedDialog';
@@ -69,6 +70,7 @@ export function mountApp(
   let popup: PopupShell | null = null;
   const toasts = el('div', { class: 'c-toast-host', attrs: { 'aria-live': 'polite' } });
   const dialogs = el('div', { class: 'app__dialogs' });
+  const veil = mountPlaceVeil(document.body);
   // The HUD floats over the farm (farm layout rework); banners stay above it in the flow.
   appEl.append(
     banner,
@@ -272,6 +274,7 @@ export function mountApp(
     showAway: session.showAway,
     setPlace(place) {
       if (ui.place === place) return;
+      veil.flash();
       Object.assign(ui, { place, selectedPigId: null, panel: ui.panel === 'pig' || ui.panel === 'well' ? null : ui.panel });
       rerender();
     },

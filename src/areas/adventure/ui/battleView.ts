@@ -6,6 +6,7 @@ import { el } from '../../../ui/dom';
 import { battleAct } from '../logic/actions/run';
 import { adventureOf } from '../logic/save/lens';
 import { actionButton } from './adventureDialogs';
+import { unitEffects, type HpMemory, type UnitFx } from './battleFx';
 import { battleVm, type BattleActionVm, type BattleVm, type UnitVm } from './battleVm';
 import { bar, toggle, type ViewCtx } from './viewKit';
 import { ELEMENT_ICON } from './vmKit';
@@ -32,13 +33,15 @@ function choose(action: BattleActionVm, vm: BattleVm, ctx: ViewCtx) {
   ctx.rerender();
 }
 
-function unitCard(u: UnitVm, ctx: ViewCtx): HTMLElement {
+const memory: HpMemory = new Map();
+
+function unitCard(u: UnitVm, ctx: ViewCtx, fx?: UnitFx): HTMLElement {
   const aim = ctx.state.aim;
   const aimable = !!aim && aim.side === u.side && !u.down;
   return el(
     'button',
     {
-      class: `adventure-ui__unit adventure-ui__unit--${u.side}${u.active ? ' is-active' : ''}${u.down ? ' is-down' : ''}${aimable ? ' is-aimable' : ''}${u.boss ? ' is-boss' : ''}`,
+      class: `adventure-ui__unit adventure-ui__unit--${u.side}${u.active ? ' is-active' : ''}${u.down ? ' is-down' : ''}${aimable ? ' is-aimable' : ''}${u.boss ? ' is-boss' : ''}${fx ? ` is-${fx}` : ''}`,
       attrs: { type: 'button', ...(aimable ? {} : { disabled: '' }), 'aria-label': u.name },
       on: { click: () => aimable && aim && act(aim.action, ctx, u.id) },
     },
@@ -54,6 +57,7 @@ function unitCard(u: UnitVm, ctx: ViewCtx): HTMLElement {
 export function renderBattle(ctx: ViewCtx): HTMLElement {
   const { state } = ctx;
   const vm = battleVm(ctx.world, adventureOf(ctx.world).run!)!;
+  const fx = unitEffects(memory, vm.units);
   const mine = vm.actor !== null && vm.units.find((u) => u.id === vm.actor)?.side === 'ally';
   const list = state.menu === 'skills' ? vm.actions.filter((a) => a.kind === 'skill') : state.menu === 'items' ? vm.actions.filter((a) => a.kind === 'item') : [];
   const attack = vm.actions.find((a) => a.kind === 'attack');
@@ -66,8 +70,8 @@ export function renderBattle(ctx: ViewCtx): HTMLElement {
     'div',
     { class: `adventure-ui__battle${state.fast ? ' is-fast' : ''}` },
     el('div', { class: 'adventure-ui__round', text: t(vi.adventure.round, { round: vm.round }) }),
-    el('div', { class: 'adventure-ui__row adventure-ui__row--enemy' }, ...vm.units.filter((u) => u.side === 'enemy').map((u) => unitCard(u, ctx))),
-    el('div', { class: 'adventure-ui__row adventure-ui__row--ally' }, ...vm.units.filter((u) => u.side === 'ally').map((u) => unitCard(u, ctx))),
+    el('div', { class: 'adventure-ui__row adventure-ui__row--enemy' }, ...vm.units.filter((u) => u.side === 'enemy').map((u) => unitCard(u, ctx, fx.get(u.id)))),
+    el('div', { class: 'adventure-ui__row adventure-ui__row--ally' }, ...vm.units.filter((u) => u.side === 'ally').map((u) => unitCard(u, ctx, fx.get(u.id)))),
     el(
       'div',
       { class: 'adventure-ui__actions' },

@@ -1,12 +1,20 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu: **xong phần việc, chờ chủ dự án duyệt** (chơi thử ≥ 7 ngày thật, chốt một số, rồi freeze: decision 021); phiên bản 0.13.0. GĐ12 đã merge `main` (tag `phase-12`, decision 020).
+**Giai đoạn:** GĐ14 đang làm (nhánh `phase-14-art`, mới xong 2 hiệu ứng code, art chờ); trước đó GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu: **xong phần việc, chờ chủ dự án duyệt** (chơi thử ≥ 7 ngày thật, chốt một số, rồi freeze: decision 021); phiên bản 0.13.0. GĐ12 đã merge `main` (tag `phase-12`, decision 020).
 **Chiến lược (decision 017):** gameplay trước, art sau. GĐ13 vẫn placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
 **Nhánh:** `phase-13-integration` (tách từ `main`, chưa merge). Save format **v11** (không đổi ở GĐ13).
 **Bước tiếp theo:** chủ dự án chơi thử + chốt "điều kiện mở Adventure" (decision 021) + duyệt GĐ13 (merge `main`, tag `phase-13`, push); rồi GĐ14 (art, animation, VFX, âm thanh).
 
 ## Nhật ký
+
+### 2026-10-11 — GĐ14 bắt đầu: phần code (art chờ chủ dự án)
+✅ Đã làm: chủ dự án chọn "làm phần code, art chờ bạn" vì phiên agent không có model tạo ảnh / âm thanh (162 asset còn `placeholder`, skill `image-to-asset` ở trạng thái BLOCKED cho backend X).
+1. **Hiệu ứng đòn trong trận Adventure** (`areas/adventure/ui/battleFx.ts`, SCSS `adventure-hit/heal/ko`): so máu từng đơn vị với lần vẽ trước → rung + nháy đỏ khi trúng đòn, vòng sáng khi hồi máu, mờ dần khi gục. Chỉ là trình bày; test `tests/unit/battleFx.test.ts`.
+2. **Màn mờ khi đổi nơi** Sảnh ↔ Area (`ui/components/placeVeil.ts`, gọi từ `setPlace`): kem nhạt tan trong 0,45 giây; tắt khi giảm chuyển động.
+🧪 `npm run check` xanh (1.370 test; `saveFiles` "rotation keeps the newest 5" từng đỏ một lần do EPERM của Windows khi đổi tên file, chạy lại thì qua: không liên quan).
+⚠️ Chưa làm (cần chủ dự án / model ảnh): toàn bộ 162 asset placeholder, nhạc nền từng Area, âm thanh riêng; chưa làm animation trứng nở, toast "lễ hội bắt đầu / Thương nhân đến", dòng lễ hội trong màn vắng mặt; `assets:release` chưa qua. Chưa chụp màn hình để duyệt (quy tắc: duyệt từng Area).
+👉 Bạn cần: cho biết nguồn art (tự tạo theo brief, hay cấp model ảnh cho phiên sau); mình sẽ soạn brief theo từng Area từ `ASSET_TODO.md`.
 
 ### 2026-10-11 — GĐ13 hoàn thành: tích hợp, nghiệm thu, freeze (chờ duyệt)
 ✅ Đã làm (8 việc của prompt GĐ13; danh sách nghiệm thu đầy đủ ở `docs/ACCEPTANCE.md`, freeze ở `docs/decisions/021-gameplay-freeze.md`):

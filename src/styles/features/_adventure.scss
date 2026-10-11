@@ -212,6 +212,9 @@
     &.is-active { border-color: $c-honey; box-shadow: 0 0 0 3px $c-honey; transform: translateY(-4px); }
     &.is-down { opacity: 0.4; filter: grayscale(1); }
     &.is-boss { min-width: 11rem; border-color: $c-danger; }
+    &.is-hit { animation: adventure-hit 0.35s ease-out; }
+    &.is-heal { animation: adventure-heal 0.5s ease-out; }
+    &.is-ko { animation: adventure-ko 0.5s ease-in; }
     &.is-aimable { cursor: pointer; border-color: $c-primary; box-shadow: 0 0 0 3px $c-primary; animation: adventure-aim 0.9s ease-in-out infinite alternate; }
   }
 
@@ -246,6 +249,24 @@
   &__worn { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: center; }
   &__icon { width: 2.4rem; height: 2.4rem; object-fit: contain; }
   &__pieces { display: grid; gap: $sp-1; padding: 0; margin: 0; list-style: none; li { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: center; } }
+}
+
+@keyframes adventure-hit {
+  0%, 100% { transform: translateX(0); background-color: $c-surface; }
+  20% { transform: translateX(-6px); background-color: #f9c9c9; }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+@keyframes adventure-heal {
+  0% { box-shadow: 0 0 0 0 rgba(108, 192, 74, 0.7); }
+  100% { box-shadow: 0 0 0 14px rgba(108, 192, 74, 0); }
+}
+
+@keyframes adventure-ko {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.92) translateY(6px); opacity: 0.4; }
 }
 
 @keyframes adventure-aim {

@@ -158,3 +158,20 @@
   animation: none !important;
   transition: none !important;
 }
+
+// Place change veil (GĐ14): a cream fade that clears over the new place. Off with reduceMotion (rule above).
+.place-veil {
+  position: fixed;
+  inset: 0;
+  z-index: $z-bars + 5;
+  pointer-events: none;
+  background: #fff6e0;
+  opacity: 0;
+
+  &.is-playing { animation: place-veil 0.45s ease-out; }
+}
+
+@keyframes place-veil {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
