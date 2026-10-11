@@ -1,4 +1,5 @@
-// Formatting helpers for vi.ts templates: "{name}" placeholders, numbers and durations.
+// Formatting helpers for the string table (vi.ts / en/): "{name}" placeholders, numbers and durations.
+import { currentLocale } from './locale';
 import { vi } from './vi';
 
 /** Replaces `{key}` placeholders; unknown keys are left as-is. */
@@ -8,20 +9,21 @@ export function t(template: string, params: Record<string, string | number> = {}
   );
 }
 
-const intFormat = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 });
-const decFormat = new Intl.NumberFormat('vi-VN', {
+const locale = currentLocale();
+const intFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+const decFormat = new Intl.NumberFormat(locale, {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
 
-const dateTimeFormat = new Intl.DateTimeFormat('vi-VN', {
+const dateTimeFormat = new Intl.DateTimeFormat(locale, {
   hour: '2-digit',
   minute: '2-digit',
   day: '2-digit',
   month: '2-digit',
 });
 
-const timeFormat = new Intl.DateTimeFormat('vi-VN', { hour: '2-digit', minute: '2-digit' });
+const timeFormat = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' });
 
 /** Local clock time of an epoch-ms timestamp, e.g. 03:20. */
 export const formatTime = (at: number): string => timeFormat.format(at);
@@ -32,7 +34,7 @@ export const formatDateTime = (at: number): string => dateTimeFormat.format(at);
 /** Grouped integer, e.g. 8.420. */
 export const formatInt = (n: number): string => intFormat.format(Math.floor(n));
 
-const pctFormat = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 });
+const pctFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
 
 /** Percent figure: one decimal below 10 (e.g. 0,6), whole above (e.g. 63). */
 export const formatPercent = (n: number): string => pctFormat.format(n < 10 ? n : Math.round(n));

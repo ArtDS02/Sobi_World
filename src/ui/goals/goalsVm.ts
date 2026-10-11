@@ -278,7 +278,7 @@ export function codexVm(world: WorldSave, goals: Goals, kinds: readonly CodexKin
     }),
     milestones: goals.rules.codex.milestones.map((m): MilestoneVm => {
       const claimed = world.collection.claimed.includes(m.id);
-      const parts = [m.coins > 0 ? `${formatInt(m.coins)} ${vi.plazaBar.coins}` : '', m.gems > 0 ? `${m.gems} ${vi.plazaBar.gems}` : '', m.xp > 0 ? `${m.xp} KN` : ''].filter(Boolean);
+      const parts = [m.coins > 0 ? `${formatInt(m.coins)} ${vi.plazaBar.coins}` : '', m.gems > 0 ? `${m.gems} ${vi.plazaBar.gems}` : '', m.xp > 0 ? t(vi.ui.xpAmount, { n: m.xp }) : ''].filter(Boolean);
       return {
         id: m.id,
         label: t(vi.codex.milestone, { entries: m.entries }),

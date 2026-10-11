@@ -70,7 +70,10 @@ function prepSection(hub: ReturnType<typeof hubVm>, ctx: ViewCtx): HTMLElement {
           state.prep = on ? state.prep.filter((id) => id !== p.itemId) : state.prep.length < hub.prepSlots ? [...state.prep, p.itemId] : state.prep;
           ctx.rerender();
         });
-        if (p.have < 1) btn.setAttribute('disabled', '');
+        if (p.have < 1) {
+          btn.setAttribute('disabled', '');
+          btn.setAttribute('title', vi.adventure.prepOut);
+        }
         return btn;
       }),
     ),

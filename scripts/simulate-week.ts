@@ -12,11 +12,11 @@ const forceAdventure = process.argv.includes('adventure');
 const living = !process.argv.includes('plain');
 const r = simulateWeek(seed, undefined, days, { forceAdventure, living });
 console.log(`A bot plays ${days} days (3 sessions a day), seed ${seed}\n`);
-console.log('day | coins    | gems | level | xp      | pigs/slots | shipped | board orders | daily goals | plots | fish | casts | fish sold | fighter lv | runs | techs | cogs | runes');
-console.log('----|----------|------|-------|---------|------------|---------|--------------|-------------|-------|------|-------|-----------|------------|------|-------|------|------');
+console.log('day | coins    | gems | level | xp      | pigs/slots | shipped | board orders | daily goals | plots | fish | casts | fish sold | fighter lv | runs | techs | cogs | runes | dev | codex');
+console.log('----|----------|------|-------|---------|------------|---------|--------------|-------------|-------|------|-------|-----------|------------|------|-------|------|------|-----|------');
 for (const d of r.days) {
   console.log(
-    `${String(d.day).padStart(3)} | ${n0(d.coins).padStart(8)} | ${String(d.gems).padStart(4)} | ${String(d.level).padStart(5)} | ${n0(d.xp).padStart(7)} | ${`${d.pigs}/${d.slots}`.padStart(10)} | ${String(d.shipped).padStart(7)} | ${String(d.orders).padStart(12)} | ${String(d.goals).padStart(11)} | ${String(d.plots).padStart(5)} | ${String(d.fish).padStart(4)} | ${String(d.casts).padStart(5)} | ${String(d.fishSold).padStart(9)} | ${String(d.advLevel).padStart(10)} | ${String(d.advRuns).padStart(4)} | ${String(d.techs).padStart(5)} | ${String(d.cogs).padStart(4)} | ${String(d.runes).padStart(5)}`,
+    `${String(d.day).padStart(3)} | ${n0(d.coins).padStart(8)} | ${String(d.gems).padStart(4)} | ${String(d.level).padStart(5)} | ${n0(d.xp).padStart(7)} | ${`${d.pigs}/${d.slots}`.padStart(10)} | ${String(d.shipped).padStart(7)} | ${String(d.orders).padStart(12)} | ${String(d.goals).padStart(11)} | ${String(d.plots).padStart(5)} | ${String(d.fish).padStart(4)} | ${String(d.casts).padStart(5)} | ${String(d.fishSold).padStart(9)} | ${String(d.advLevel).padStart(10)} | ${String(d.advRuns).padStart(4)} | ${String(d.techs).padStart(5)} | ${String(d.cogs).padStart(4)} | ${String(d.runes).padStart(5)} | ${String(d.development).padStart(3)} | ${String(d.codex).padStart(5)}`,
   );
 }
 console.log('\nTime to each world level');

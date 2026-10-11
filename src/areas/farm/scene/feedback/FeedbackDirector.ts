@@ -20,6 +20,8 @@ export interface FeedbackDeps {
   effects: () => FarmEffects;
   audio: AudioPort;
   toast: (message: string) => void;
+  /** Settings → screen shake; absent = on. */
+  shake?: () => boolean;
   /** A catch-up of SAVE.AWAY_SUMMARY_MIN_MS or more: one summary instead of toasts (§9.5). */
   away?: (events: GameEvent[], awayMs: number) => void;
   /**
@@ -65,7 +67,7 @@ export function createFeedbackDirector(deps: FeedbackDeps): FeedbackDirector {
         if (extra?.toast) deps.toast(extra.toast);
         continue;
       }
-      const plan = feedbackPlan(event, origin, reduceMotion);
+      const plan = feedbackPlan(event, origin, reduceMotion, deps.shake?.() ?? true);
       for (const a of plan.animations) fx.animate(a.animation, a.target, a.delayMs, a.from);
       for (const v of plan.vfx) fx.burst(v.fx, v.target, v.delayMs);
       for (const f of plan.floats) fx.float(f.lines, f.target, f.delayMs);

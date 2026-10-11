@@ -66,6 +66,8 @@ export interface AreaModule {
   codex?(): readonly CodexKind[];
   /** How many entries its 'ALL' achievements ask for besides the Codex's (the farm: its decorations). */
   totals?(): Readonly<Record<string, number>>;
+  /** The level of each building it has (trough, tank, spring…): the ones at level 3 or more count for World Development. */
+  buildingLevels?(world: WorldSave): readonly number[];
   /** What the player could do in it now, most urgent first or not (the registry sorts). */
   suggest?(world: WorldSave, now: number, dayOffsetMs: number): Suggestion[];
   /** The creatures it lets the other Areas use (Adventure's fighters). */
@@ -142,8 +144,11 @@ export function createAreaRegistry(
 
   const levelOf = (world: WorldSave): number => worldLevel(world, rules.levels);
   const codexOf = (world: WorldSave): number => Object.values(world.collection.discovered).reduce((n, ids) => n + ids.length, 0);
-  /** World Development: the level + Codex entries + buildings Lv3+ (no building reports its level yet). */
-  const developmentOf = (world: WorldSave, codexEntries = codexOf(world), buildingsLv3 = 0): number =>
+  /** Buildings at level 3 or more across the open Areas (decision 013: one point each in World Development). */
+  const buildingsLv3Of = (world: WorldSave): number =>
+    present(world).reduce((n, m) => n + (m.buildingLevels?.(world) ?? []).filter((level) => level >= 3).length, 0);
+  /** World Development: the level + Codex entries / 10 + buildings Lv3+. */
+  const developmentOf = (world: WorldSave, codexEntries = codexOf(world), buildingsLv3 = buildingsLv3Of(world)): number =>
     worldDevelopment({ worldLevel: levelOf(world), codexEntries, buildingsLv3 }, rules.development);
   const gapsOf = (world: WorldSave, m: AreaManifest) => unlockGaps(m.unlock, { worldLevel: levelOf(world), worldDevelopment: developmentOf(world) });
 
@@ -226,6 +231,8 @@ export function createAreaRegistry(
     worldLevel: levelOf,
 
     worldDevelopment: developmentOf,
+
+    buildingsLv3: buildingsLv3Of,
 
     /** Every Area, built or planned, with its lock state (the plaza shows locked ones with their conditions). */
     areas(world: WorldSave): AreaInfo[] {

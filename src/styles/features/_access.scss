@@ -1,0 +1,39 @@
+// Accessibility (GĐ13): text size and the easy-to-see colors, both chosen in Settings and set as data
+// attributes on <html> by app/start.ts. Sizes are in rem, so scaling the root scales the whole interface.
+html[data-text-size='large'] {
+  font-size: 112.5%;
+}
+
+html[data-text-size='xlarge'] {
+  font-size: 125%;
+}
+
+// Colors that do not rely on red against green: blue / vermillion pairs, a darker muted text, stronger
+// borders and focus. Rarity keeps its name in the badge text, so colour is never the only cue.
+html[data-color-mode='easy'] {
+  --c-success: #0066a8;
+  --c-danger: #b84a00;
+  --c-danger-shadow: #7a3000;
+  --c-danger-soft: #fbe3d3;
+  --c-text-muted: #4f403b;
+  --c-leaf: #0066a8;
+  --c-badge: #b84a00;
+  --c-rarity-common: #5f625e;
+  --c-rarity-uncommon: #00775a;
+  --c-rarity-rare: #0066a8;
+  --c-rarity-epic: #8a3a80;
+  --c-rarity-legendary: #a85d00;
+
+  :focus-visible {
+    outline-width: 4px;
+    outline-color: #1a1a1a;
+  }
+
+  .c-button {
+    border: 2px solid currentColor;
+  }
+
+  [role='switch'][aria-checked='true'] {
+    box-shadow: 0 3px 0 #00406b;
+  }
+}

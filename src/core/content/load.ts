@@ -17,9 +17,17 @@ export class ContentError extends Error {
 export const issueLines = (error: z.ZodError): string[] =>
   error.issues.map((i) => `${i.path.join('.') || '(file)'}: ${i.message}`);
 
+type Localizer = (file: string, raw: unknown) => unknown;
+let localizer: Localizer | null = null;
+
+/** Sets how the texts of content files are translated (the shell does it once, before the content loads). */
+export function setContentLocalizer(fn: Localizer | null): void {
+  localizer = fn;
+}
+
 /** `raw` (the imported JSON of content/`file`) validated by `schema`; throws ContentError. */
 export function loadContent<S extends z.ZodType>(file: string, schema: S, raw: unknown): z.output<S> {
-  const parsed = schema.safeParse(raw);
+  const parsed = schema.safeParse(localizer ? localizer(file, raw) : raw);
   if (!parsed.success) throw new ContentError(file, issueLines(parsed.error));
   return parsed.data;
 }

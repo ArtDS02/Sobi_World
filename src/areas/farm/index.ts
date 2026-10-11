@@ -11,6 +11,7 @@ import { farmSaveSpec, initFarm } from './logic/save/farmSave';
 import { farmOf } from './logic/save/lens';
 import { farmRoster, farmReceiveGift } from './logic/roster';
 import { farmStage } from './stage';
+import { troughLevel } from './logic/troughLevel';
 import { farmSuggestions } from './logic/suggest';
 import { farmSummaryLines } from './logic/summary';
 import { advanceFarmWorld, farmSimulatedAt, rebaseFarm } from './logic/world';
@@ -34,6 +35,7 @@ export const farmArea: AreaModule = {
   totals: () => ({ decorOwned: DECOR_IDS.length }),
   roster: farmRoster,
   receiveGift: farmReceiveGift,
+  buildingLevels: (world) => [troughLevel(farmOf(world).trough)],
   suggest: (world, now, dayOffsetMs) => farmSuggestions(farmOf(world), now, dayOffsetMs),
   toWorldEvents: farmEventsToWorld,
   getSummary: (events, world, now) => farmSummaryLines(events as GameEvent[], farmOf(world), now),

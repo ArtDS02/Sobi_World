@@ -65,6 +65,9 @@ export interface DayRow {
   techs: number;
   cogs: number;
   runes: number;
+  /** World Development (level + Codex entries / 10 + buildings Lv3) and the Codex entries found: what opens the Cloud and the Adventure. */
+  development: number;
+  codex: number;
 }
 
 export interface WeekReport {
@@ -90,6 +93,9 @@ export interface WeekReport {
   /** The bag at the end, and the Adventure loot still waiting for room in it. */
   bag: Record<string, number>;
   pendingLoot: Record<string, number>;
+  /** The world as the bot left it, and the clock at that moment (scripts/perf measures catch-up on it). */
+  world: WorldSave;
+  end: number;
 }
 
 export class Bot {
@@ -305,7 +311,9 @@ export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7, option
       techs: Object.entries(b.world.progression.stats).filter(([k]) => k.startsWith('tech.')).reduce((n, [, v]) => n + v, 0),
       cogs: b.bag('item_ancient_cog'),
       runes: b.bag('item_ancient_rune'),
+      development: AREAS.worldDevelopment(b.world),
+      codex: Object.values(b.world.collection.discovered).reduce((n, ids) => n + ids.length, 0),
     });
   }
-  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, cloudOpenAtHour: b.cloudAt, flowersHarvested: b.world.progression.stats.flowersHarvested ?? 0, potionsBrewed: b.world.progression.stats.potionsBrewed ?? 0, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems, adventure: b.adv, live: b.live, bag: b.world.inventory.items, pendingLoot: hasAdventure(b.world) ? adventureOf(b.world).pending : {} };
+  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, cloudOpenAtHour: b.cloudAt, flowersHarvested: b.world.progression.stats.flowersHarvested ?? 0, potionsBrewed: b.world.progression.stats.potionsBrewed ?? 0, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems, adventure: b.adv, live: b.live, bag: b.world.inventory.items, pendingLoot: hasAdventure(b.world) ? adventureOf(b.world).pending : {}, world: b.world, end: b.now };
 }

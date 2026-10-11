@@ -35,6 +35,13 @@ const SECTIONS: Section[] = [
     notes: ['Không thêm / bớt phần tử hay đổi chữ ở đây — chỉ con số.', 'Đổi số không đổi save đang có: heo đang bệnh giữ giờ bệnh cũ, thang giá mới áp ngay khi xuất chuồng.', 'Để thử nhanh một ngày vắng nhà dùng Người chơi → Trạng thái game → ⏩ Tua thời gian.'],
   },
   {
+    id: 'language', icon: '🌐', title: 'Ngôn ngữ (Việt / Anh)',
+    purpose: 'Game có hai ngôn ngữ chọn trong Cài đặt (GĐ13). Chữ giao diện nằm ở src/i18n/vi.ts và src/i18n/en/; chữ trong file content (tên giống heo, NPC, kỹ năng, cá, hoa…) vẫn viết tiếng Việt trong content/*.json và bản tiếng Anh nằm ở content/i18n/en.json, khoá theo đường dẫn của chữ.',
+    steps: ['Thêm một mục mới có chữ (giống heo, cá, kỹ năng…) ở các trang Admin khác như thường.', 'Chạy npm run content:i18n: liệt kê mọi chữ trong content/ chưa có bản tiếng Anh (kèm khoá và chữ Việt).', 'Thêm bản dịch vào content/i18n/en.json theo đúng khoá đó, giữ nguyên các {tham_số}.', 'npm run check phải xanh: bài test “i18n” báo thiếu, thừa hoặc sai tham số.'],
+    example: ['Thêm heo PIG_NEW: sau khi lưu, npm run content:i18n in dòng “farm/species.json  species/PIG_NEW/nameVi  Heo Mới”; thêm “species/PIG_NEW/nameVi”: “New Pig” vào nhóm farm/species.json của en.json.'],
+    notes: ['Đổi chữ Việt của một mục có sẵn không cần đổi gì ở en.json (khoá theo id, không theo chữ).', 'Mục chưa có bản dịch hiện chữ Việt khi chơi tiếng Anh; test chặn việc quên.', 'Ngôn ngữ, cỡ chữ, chế độ màu và rung màn hình là cài đặt theo máy (settings.json), không nằm trong save nên Admin không sửa.'],
+  },
+  {
     id: 'pigs', icon: '🐷', title: 'Quản lý heo',
     purpose: 'Danh sách species (content/farm/species.json): tên, độ hiếm, nhóm, giá, thời gian lớn, ảnh. Heo bán trong shop cũng chỉnh ở đây (Giá mua, Cấp mở khoá).',
     steps: ['Tìm / lọc theo nhóm, độ hiếm, trạng thái; sắp xếp theo tên, độ hiếm, giá.', '＋ Thêm heo → chọn Ảnh (art id) trong danh sách ảnh trống → điền tên, ID, độ hiếm, nhóm.', '“Thêm vào danh sách” chỉ vào bản nháp — bấm 💾 Lưu vào game ở đầu trang.'],

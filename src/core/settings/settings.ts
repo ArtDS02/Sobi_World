@@ -11,19 +11,46 @@ export const CHARACTER_IDS = ['so', 'bi'] as const;
 export type CharacterId = (typeof CHARACTER_IDS)[number];
 export const DEFAULT_CHARACTER: CharacterId = 'so';
 
-export interface GameSettings {
+/** Display and language preferences (GĐ13): per device, so they live here and not in the world save. */
+export const LANGUAGE_IDS = ['vi', 'en'] as const;
+export type LanguageId = (typeof LANGUAGE_IDS)[number];
+export const TEXT_SIZES = ['normal', 'large', 'xlarge'] as const;
+export type TextSize = (typeof TEXT_SIZES)[number];
+export const COLOR_MODES = ['normal', 'easy'] as const;
+export type ColorMode = (typeof COLOR_MODES)[number];
+
+export interface DisplayPrefs {
+  language: LanguageId;
+  textSize: TextSize;
+  colorMode: ColorMode;
+  /** Off removes the shake of objects after an action; "reduce motion" (in the save) removes all movement. */
+  screenShake: boolean;
+}
+
+export const DEFAULT_DISPLAY: DisplayPrefs = { language: 'vi', textSize: 'normal', colorMode: 'normal', screenShake: true };
+
+export interface GameSettings extends DisplayPrefs {
   version: typeof SETTINGS_VERSION;
   keys: KeyBindings;
   character: CharacterId;
 }
 
-export const defaultGameSettings = (): GameSettings => ({ version: SETTINGS_VERSION, keys: DEFAULT_KEYS, character: DEFAULT_CHARACTER });
+export const defaultGameSettings = (): GameSettings => ({
+  version: SETTINGS_VERSION,
+  keys: DEFAULT_KEYS,
+  character: DEFAULT_CHARACTER,
+  ...DEFAULT_DISPLAY,
+});
 
 const slot = z.string().min(1).max(40).nullable();
 const fileSchema = z.object({
   version: z.number().int().optional(),
   keys: z.record(z.string(), z.tuple([slot, slot])).optional(),
   character: z.enum(CHARACTER_IDS).optional(),
+  language: z.enum(LANGUAGE_IDS).optional(),
+  textSize: z.enum(TEXT_SIZES).optional(),
+  colorMode: z.enum(COLOR_MODES).optional(),
+  screenShake: z.boolean().optional(),
 });
 
 /**
@@ -46,7 +73,16 @@ export function parseSettings(text: string | null): GameSettings {
     if (slots && slots.length === KEY_SLOTS) keys[c] = slots;
   }
   const character = file.data.character ?? DEFAULT_CHARACTER;
-  return validKeys(keys) ? { version: SETTINGS_VERSION, keys, character } : { ...defaultGameSettings(), character };
+  const display: DisplayPrefs = {
+    language: file.data.language ?? DEFAULT_DISPLAY.language,
+    textSize: file.data.textSize ?? DEFAULT_DISPLAY.textSize,
+    colorMode: file.data.colorMode ?? DEFAULT_DISPLAY.colorMode,
+    screenShake: file.data.screenShake ?? DEFAULT_DISPLAY.screenShake,
+  };
+  // Clashing keys fall back to the defaults, but the player's character and display choices are kept.
+  return validKeys(keys)
+    ? { version: SETTINGS_VERSION, keys, character, ...display }
+    : { ...defaultGameSettings(), character, ...display };
 }
 
 export const serializeSettings = (s: GameSettings): string => `${JSON.stringify(s, null, 2)}\n`;
@@ -102,6 +138,13 @@ export function createSettingsStore(storage: SettingsStorage) {
     setCharacter(character: CharacterId): Promise<void> {
       if (snap.settings.character === character) return Promise.resolve();
       const settings = { ...snap.settings, character };
+      set({ ...snap, settings });
+      return persist(settings);
+    },
+    /** One display preference (language, text size, colors, shake); a same-value call writes nothing. */
+    setDisplay<K extends keyof DisplayPrefs>(key: K, value: DisplayPrefs[K]): Promise<void> {
+      if (snap.settings[key] === value) return Promise.resolve();
+      const settings = { ...snap.settings, [key]: value };
       set({ ...snap, settings });
       return persist(settings);
     },

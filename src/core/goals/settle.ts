@@ -33,6 +33,8 @@ export interface GoalsDeps {
   value: ItemValue;
   /** How many entries the Areas and the Codex offer for the achievements that ask for 'ALL'. */
   totals: () => Totals;
+  /** Buildings at level 3 or more (World Development counts them); absent = none. */
+  buildingsLv3?: (world: WorldSave) => number;
 }
 
 /** What the achievements read from a world. */
@@ -45,12 +47,12 @@ export function achievementWorld(world: WorldSave, levels: LevelTable): Achievem
 }
 
 /** The world level and World Development as the board and the daily goals see them. */
-export function worldView(world: WorldSave, rules: Pick<GoalsRules, 'levels' | 'development'>) {
+export function worldView(world: WorldSave, rules: Pick<GoalsRules, 'levels' | 'development'>, buildingsLv3 = 0) {
   const level = levelFromXp(worldXp(world), rules.levels);
   const entries = codexCounts(world.collection.discovered).total;
   return {
     worldLevel: level,
-    worldDevelopment: worldDevelopment({ worldLevel: level, codexEntries: entries, buildingsLv3: 0 }, rules.development),
+    worldDevelopment: worldDevelopment({ worldLevel: level, codexEntries: entries, buildingsLv3 }, rules.development),
     unlockedAreas: world.world.unlockedAreas,
   };
 }
@@ -86,7 +88,7 @@ export function settleWorld(
   }
 
   // 2. The day's goals (a new day at local midnight) and their progress.
-  const view = worldView(world, rules);
+  const view = worldView(world, rules, deps.buildingsLv3?.(world));
   const day = Math.floor((ctx.now + (ctx.dayOffsetMs ?? 0)) / DAY_MS);
   const daily = advanceDaily(world.goals, day, view, world.progression.stats, rules.daily);
   if (daily.goals !== world.goals) {

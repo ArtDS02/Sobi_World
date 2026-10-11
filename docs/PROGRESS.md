@@ -1,12 +1,31 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ12 — Thế giới động: **xong phần code, chờ chủ dự án duyệt** (decision 020); phiên bản 0.12.0. GĐ11 đã merge `main` (tag `phase-11`, decision 019).
-**Chiến lược (decision 017):** gameplay trước, art sau. GĐ10–GĐ13 dùng placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
-**Nhánh:** `phase-12-dynamic-world` (tách từ `main`, chưa merge). Save format **v11**.
-**Bước tiếp theo:** chủ dự án chơi thử + duyệt GĐ12 (merge `main`, tag `phase-12`, push); rồi GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu (freeze).
+**Giai đoạn:** GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu: **xong phần việc, chờ chủ dự án duyệt** (chơi thử ≥ 7 ngày thật, chốt một số, rồi freeze: decision 021); phiên bản 0.13.0. GĐ12 đã merge `main` (tag `phase-12`, decision 020).
+**Chiến lược (decision 017):** gameplay trước, art sau. GĐ13 vẫn placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
+**Nhánh:** `phase-13-integration` (tách từ `main`, chưa merge). Save format **v11** (không đổi ở GĐ13).
+**Bước tiếp theo:** chủ dự án chơi thử + chốt "điều kiện mở Adventure" (decision 021) + duyệt GĐ13 (merge `main`, tag `phase-13`, push); rồi GĐ14 (art, animation, VFX, âm thanh).
 
 ## Nhật ký
+
+### 2026-10-11 — GĐ13 hoàn thành: tích hợp, nghiệm thu, freeze (chờ duyệt)
+✅ Đã làm (8 việc của prompt GĐ13; danh sách nghiệm thu đầy đủ ở `docs/ACCEPTANCE.md`, freeze ở `docs/decisions/021-gameplay-freeze.md`):
+1. **Danh sách nghiệm thu** từng Area (GĐ1–GĐ12) và 13 hệ thống chung, mỗi mục có cách kiểm và kết quả; thêm `tests/scripts/acceptance.test.ts` (bot chơi 40 ngày qua đủ Farm → Garden → Aquarium → Cloud → Adventure + đơn, mục tiêu, Codex, lễ hội, Thương nhân; 9 khẳng định).
+2. **UI chức năng**: rà mã mọi nút tắt: đều đi qua dry-run và hiện lý do; sửa nút khẩu phần hết hàng. Lướt 12 màn hình của Menu bằng tiếng Anh ở cỡ chữ lớn nhất: không vỡ bố cục.
+3. **Trợ năng** (`settings.json`, theo máy, không vào save): cỡ chữ Vừa / Lớn / Rất lớn (gốc `rem`), màu **dễ nhìn** (xanh dương – cam thay xanh lá – đỏ, độ hiếm tương phản cao, viền và vòng focus đậm; màu ngữ nghĩa đổi sang biến CSS), **tắt rung màn hình** (chỉ bỏ rung, giữ VFX / âm thanh); giảm chuyển động có từ trước. `<html lang>` theo ngôn ngữ.
+4. **Ngôn ngữ Việt / Anh** chọn trong Cài đặt: bảng chuỗi tiếng Anh (`src/i18n/en/`, ~1.700 dòng, kiểu bắt buộc cùng khóa với `vi.ts`), chữ trong `content/*.json` (tên 75 giống heo, NPC, kỹ năng, cá, hoa, lễ hội… 413 chữ) dịch qua `content/i18n/en.json` (khóa theo id, hook `setContentLocalizer` trong `loadContent`); đổi ngôn ngữ lưu save rồi tải lại màn hình. Test chặn thiếu / thừa khóa, sai `{tham_số}`, lẫn chữ Việt.
+5. **Hiệu năng**: `npm run perf:catchup` (thế giới 45 ngày, 5 Area): một bước 1 giây của game **0,11 ms**, bù 30 ngày **0,45 giây**, 1 ngày 16 ms, save 57 KB; FPS trên Electron (build thật): Sảnh **54**, Nông trại **60** (`tests/e2e/perf.spec.ts`). Không cần tối ưu.
+6. **Rà tài nguyên chết và save**: `npm run items:audit`: 67 vật phẩm, 0 dưới 2 công dụng. `tests/unit/saveVersions.test.ts`: save v1, v7 (Sobi Farm) và v8, v9, v10 (save dev thật, thêm vào `tests/fixtures/`) đều mở được, giữ ví và heo, ghi → đọc lại đúng, chơi tiếp 30 ngày không lỗi; save bản mới hơn bị từ chối.
+7. **Chơi thử bằng máy**: `sim:week` 60 ngày nhiều seed; `npm run test:e2e` 13/13 (thêm `display` và `perf`); `npm run dist:win` + `verify:build` + `verify:installer` (`release/SobiWorld-Setup-0.13.0.exe`); xem tay trong trình duyệt bằng save cuối game (`npm run dev:rich-save`): màn "vắng mặt", 12 màn Menu, cỡ chữ, màu dễ nhìn, tiếng Anh.
+8. **Freeze** (decision 021): ghi những gì đóng băng, những gì còn được làm, và 1 số chờ chốt.
+🛠️ Lỗi tích hợp tìm thấy và đã sửa: (a) **World Development thiếu số hạng "công trình Lv3"** của decision 013 (registry luôn truyền 0): nối máng / vòi tưới / bể / suối (`AreaModule.buildingLevels`), cổng mở Area và Bảng đơn dùng cùng một số (`phase13.test.ts`); (b) chữ "KN" cứng trong thưởng Codex; (c) nút khẩu phần hết hàng không nói lý do.
+📁 File chính: `src/i18n/{en/,language.ts,locale.ts,contentText.ts}`, `content/i18n/en.json`, `src/core/settings/settings.ts` (+ `ui/components/displaySettings.ts`, `app/display.ts`, `platform/earlySettings.ts`, `app/main.ts`), `styles/features/_access.scss` + tokens, `feedbackPlan` (rung), `core/area-registry` (`buildingLevels`), `scripts/perf/catchup.ts`, `scripts/dev/richSave.ts`, `scripts/content/i18nDump.ts`, `tests/unit/{i18n,saveVersions,phase13}.test.ts`, `tests/scripts/acceptance.test.ts`, `tests/e2e/{display,perf}.spec.ts`, `docs/{ACCEPTANCE.md,decisions/021-gameplay-freeze.md}`.
+🧪 Đã kiểm tra: `npm run check` xanh (1.367 test, thêm 43 của GĐ13); `npm run test:e2e` 13/13; `dist:win` + verify xanh; `perf:catchup` trong ngân sách.
+⚠️ Quyết định tự đưa ra: chữ trong content dịch bằng lớp phủ (file content vẫn tiếng Việt, id không đổi) để Admin và save không đổi; cài đặt hiển thị lưu ở `settings.json` (theo máy) chứ không trong save nên không đổi định dạng save; màu "dễ nhìn" là một chế độ riêng chứ không đổi mặc định; không đổi số nào của gameplay.
+⚠️ **Cần chủ dự án quyết (chặn freeze): điều kiện mở Adventure.** Đang Phát triển thế giới 20. Bot không sưu tầm mở Adventure ngày **~47** (ngay cả sau khi nối công trình Lv3: các công trình cấp 3 cần vật liệu cổ của chính Adventure nên không giúp mở nó). Đo: 18 → ngày 31, 16 → ngày 23, 14 → ngày 18; Cloud (WD 15) mở ngày ~22. Đề xuất 16–18 (một số trong `content/adventure/area.json`, Admin sửa được). Chưa đổi vì là số đã chốt ở decision 013.
+⚠️ Chưa làm / giới hạn: chơi tay ≥ 7 ngày (điều kiện duyệt); bản cài trên **máy sạch thật** (`docs/TEST_MAY_SACH.md`); Admin không có màn dịch riêng (có mục hướng dẫn "Ngôn ngữ" và `npm run content:i18n`); thêm một mục content có chữ mà quên bản tiếng Anh thì test đỏ (cố ý); chưa có mẫu chữ cho tiếng Anh dạng số nhiều ("1 pigs": đã viết dạng "Label: {count}" để tránh); FPS chỉ đo trên máy dev có GPU; bot không ấp Trứng Heo Hoang (giới hạn của bot, không phải lỗi game).
+👉 Bạn cần: (1) chơi thử ≥ 7 ngày thật, thử đổi cỡ chữ / màu / tiếng Anh; (2) chốt WD mở Adventure (16–18?); (3) thử bản cài trên máy sạch; (4) nếu ổn: merge `main`, tag `phase-13`, push; freeze có hiệu lực.
+➡️ Tiếp theo: GĐ14 (art, animation, VFX, âm thanh theo `docs/ASSET_TODO.md`).
 
 ### 2026-10-11 — GĐ12 hoàn thành phần code: Thế giới động (chờ duyệt)
 ✅ Đã làm (6 việc của prompt GĐ12; quyết định ở `docs/decisions/020-living-world.md`):

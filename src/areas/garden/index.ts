@@ -20,6 +20,7 @@ export const gardenArea: AreaModule = {
   simulatedAt: (world) => gardenOf(world).lastTickedAt,
   rebase: (world, to) => withGarden(world, { ...gardenOf(world), lastTickedAt: to }),
   codex: () => [{ id: 'crop', name: vi.codex.kinds.crop, entries: CROP_LIST.map((c) => ({ id: c.id, name: c.nameVi, artId: c.art })) }],
+  buildingLevels: (world) => [gardenOf(world).sprinkler],
   suggest: (world, now) => gardenSuggestions(gardenOf(world), now),
   toWorldEvents: gardenEventsToWorld,
   getSummary: (events, world, now) => gardenSummaryLines(events, gardenOf(world), now),

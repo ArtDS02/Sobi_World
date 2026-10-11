@@ -8,7 +8,8 @@ const PURE = [
 
 export default {
   maxFileLines: 300,
-  maxFileLinesExceptions: ['src/i18n/vi.ts', 'src/core/config/breeds.ts'],
+  // The string tables are data: one long object per language (split by topic would only scatter the keys).
+  maxFileLinesExceptions: ['src/i18n/vi.ts', 'src/i18n/en/partA.ts', 'src/i18n/en/partB.ts', 'src/i18n/en/partC.ts', 'src/i18n/en/partD.ts', 'src/core/config/breeds.ts'],
   layers: [
     { name: 'core', dir: 'src/core', mayImport: ['content'] },
     { name: 'systems', dir: 'src/systems', mayImport: ['core', 'content'] },
