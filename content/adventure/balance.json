@@ -22,7 +22,7 @@
     "bondPerHeart": 0.05,
     "rarity": { "COMMON": 1, "UNCOMMON": 1.12, "RARE": 1.28, "EPIC": 1.5, "LEGENDARY": 1.8 }
   },
-  "levels": { "maxLevel": 30, "expBase": 30, "expExponent": 1.5, "skillUnlockLevels": [1, 1, 10, 20] },
+  "levels": { "maxLevel": 30, "expBase": 40, "expExponent": 1.5, "skillUnlockLevels": [1, 1, 10, 20] },
   "team": { "max": 3 },
   "run": { "energyCost": 30, "energyMax": 100, "energyPerHour": 10, "exhaustHours": 4 },
   "xp": { "battleWin": 6, "zoneClear": 40 },

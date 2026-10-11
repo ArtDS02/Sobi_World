@@ -31,7 +31,8 @@
       "rarity": "COMMON",
       "priceGold": 2,
       "id": "item_seed_grass",
-      "category": "SEED"
+      "category": "SEED",
+      "sellGold": 1
     },
     {
       "hungerRestore": 0,
@@ -39,7 +40,8 @@
       "rarity": "COMMON",
       "priceGold": 4,
       "id": "item_seed_wheat",
-      "category": "SEED"
+      "category": "SEED",
+      "sellGold": 2
     },
     {
       "hungerRestore": 0,
@@ -47,7 +49,8 @@
       "rarity": "COMMON",
       "priceGold": 5,
       "id": "item_seed_corn",
-      "category": "SEED"
+      "category": "SEED",
+      "sellGold": 2
     },
     {
       "hungerRestore": 0,
@@ -55,7 +58,8 @@
       "rarity": "COMMON",
       "priceGold": 6,
       "id": "item_seed_potato",
-      "category": "SEED"
+      "category": "SEED",
+      "sellGold": 3
     },
     {
       "hungerRestore": 0,
@@ -63,7 +67,8 @@
       "rarity": "COMMON",
       "priceGold": 8,
       "id": "item_seed_carrot",
-      "category": "SEED"
+      "category": "SEED",
+      "sellGold": 4
     },
     {
       "hungerRestore": 14,
@@ -267,7 +272,8 @@
       "rarity": "COMMON",
       "priceGold": 12,
       "hungerRestore": 0,
-      "curesSickness": false
+      "curesSickness": false,
+      "sellGold": 6
     },
     {
       "id": "item_seed_dandelion",
@@ -275,7 +281,8 @@
       "rarity": "COMMON",
       "priceGold": 16,
       "hungerRestore": 0,
-      "curesSickness": false
+      "curesSickness": false,
+      "sellGold": 8
     },
     {
       "id": "item_seed_rainbow_rose",
@@ -283,7 +290,8 @@
       "rarity": "RARE",
       "priceGold": 120,
       "hungerRestore": 0,
-      "curesSickness": false
+      "curesSickness": false,
+      "sellGold": 60
     },
     {
       "id": "item_seed_star_orchid",
@@ -291,7 +299,8 @@
       "rarity": "EPIC",
       "priceGold": 150,
       "hungerRestore": 0,
-      "curesSickness": false
+      "curesSickness": false,
+      "sellGold": 75
     },
     {
       "id": "item_seed_moon_lily",
@@ -299,7 +308,8 @@
       "rarity": "UNCOMMON",
       "priceGold": 36,
       "hungerRestore": 0,
-      "curesSickness": false
+      "curesSickness": false,
+      "sellGold": 18
     },
     {
       "id": "item_seed_dream_bell",
@@ -307,7 +317,8 @@
       "rarity": "UNCOMMON",
       "priceGold": 56,
       "hungerRestore": 0,
-      "curesSickness": false
+      "curesSickness": false,
+      "sellGold": 28
     },
     {
       "id": "item_flower_cloud_daisy",
@@ -412,7 +423,7 @@
       "category": "EQUIPMENT",
       "rarity": "COMMON",
       "priceGold": 0,
-      "sellGold": 30,
+      "sellGold": 15,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -421,7 +432,7 @@
       "category": "EQUIPMENT",
       "rarity": "UNCOMMON",
       "priceGold": 0,
-      "sellGold": 90,
+      "sellGold": 40,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -430,7 +441,7 @@
       "category": "EQUIPMENT",
       "rarity": "RARE",
       "priceGold": 0,
-      "sellGold": 260,
+      "sellGold": 100,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -439,7 +450,7 @@
       "category": "EQUIPMENT",
       "rarity": "COMMON",
       "priceGold": 0,
-      "sellGold": 30,
+      "sellGold": 15,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -448,7 +459,7 @@
       "category": "EQUIPMENT",
       "rarity": "UNCOMMON",
       "priceGold": 0,
-      "sellGold": 90,
+      "sellGold": 40,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -457,7 +468,7 @@
       "category": "EQUIPMENT",
       "rarity": "RARE",
       "priceGold": 0,
-      "sellGold": 260,
+      "sellGold": 100,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -466,7 +477,7 @@
       "category": "EQUIPMENT",
       "rarity": "COMMON",
       "priceGold": 0,
-      "sellGold": 30,
+      "sellGold": 15,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -475,7 +486,7 @@
       "category": "EQUIPMENT",
       "rarity": "UNCOMMON",
       "priceGold": 0,
-      "sellGold": 90,
+      "sellGold": 40,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -484,7 +495,7 @@
       "category": "EQUIPMENT",
       "rarity": "RARE",
       "priceGold": 0,
-      "sellGold": 260,
+      "sellGold": 100,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -511,7 +522,7 @@
       "category": "MATERIAL",
       "rarity": "COMMON",
       "priceGold": 0,
-      "sellGold": 25,
+      "sellGold": 15,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -520,7 +531,7 @@
       "category": "MATERIAL",
       "rarity": "UNCOMMON",
       "priceGold": 0,
-      "sellGold": 80,
+      "sellGold": 40,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -529,7 +540,7 @@
       "category": "MATERIAL",
       "rarity": "RARE",
       "priceGold": 0,
-      "sellGold": 300,
+      "sellGold": 120,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -565,7 +576,7 @@
       "category": "MATERIAL",
       "rarity": "RARE",
       "priceGold": 0,
-      "sellGold": 400,
+      "sellGold": 250,
       "hungerRestore": 0,
       "curesSickness": false,
       "hatchRarity": "RARE"
@@ -575,7 +586,7 @@
       "category": "EQUIPMENT",
       "rarity": "EPIC",
       "priceGold": 0,
-      "sellGold": 520,
+      "sellGold": 150,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -584,7 +595,7 @@
       "category": "EQUIPMENT",
       "rarity": "EPIC",
       "priceGold": 0,
-      "sellGold": 520,
+      "sellGold": 150,
       "hungerRestore": 0,
       "curesSickness": false
     },
@@ -593,7 +604,7 @@
       "category": "EQUIPMENT",
       "rarity": "EPIC",
       "priceGold": 0,
-      "sellGold": 520,
+      "sellGold": 150,
       "hungerRestore": 0,
       "curesSickness": false
     }

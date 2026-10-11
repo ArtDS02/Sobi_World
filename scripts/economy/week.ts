@@ -19,6 +19,7 @@ import { farmOf } from '../../src/areas/farm/logic/save/lens';
 import { liftFarmAction, type WorldAction } from '../../src/areas/farm/logic/world';
 import { buildWorkshop, buyPlots, collectCraft, startCraft, upgradeSprinkler } from '../../src/areas/garden/logic/actions/buildings';
 import { fertilizePlots, harvestPlots, plantCrops, waterPlots } from '../../src/areas/garden/logic/actions/plants';
+import { adventureOf, hasAdventure } from '../../src/areas/adventure/logic/save/lens';
 import { aquariumOf, hasAquarium } from '../../src/areas/aquarium/logic/save/lens';
 import { gardenOf, hasGarden } from '../../src/areas/garden/logic/save/lens';
 import { BREEDS } from '../../src/areas/farm/logic/config/breeds';
@@ -30,6 +31,7 @@ import type { WorldSave } from '../../src/core/save/world';
 import { defaultSettings } from '../../src/core/save/world';
 import type { EventBase } from '../../src/core/events';
 import { ITEMS } from '../../src/core/config/items';
+import { adventureRoutine, newAdventureStats, type AdventureStats } from './adventure';
 import { aquariumRoutine } from './aquarium';
 import { cloudRoutine } from './cloud';
 
@@ -54,6 +56,12 @@ export interface DayRow {
   fish: number;
   casts: number;
   fishSold: number;
+  /** Adventure (GĐ11): the best fighter level, runs so far, technology levels bought, ancient cogs and runes in the bag. */
+  advLevel: number;
+  advRuns: number;
+  techs: number;
+  cogs: number;
+  runes: number;
 }
 
 export interface WeekReport {
@@ -73,6 +81,10 @@ export interface WeekReport {
   /** Hours of play time each Area had (sessions only). */
   achievementsClaimed: number;
   gemsEarned: number;
+  adventure: AdventureStats;
+  /** The bag at the end, and the Adventure loot still waiting for room in it. */
+  bag: Record<string, number>;
+  pendingLoot: Record<string, number>;
 }
 
 export class Bot {
@@ -95,6 +107,12 @@ export class Bot {
   goals = 0;
   achievements = 0;
   gems = 0;
+  adv: AdventureStats = newAdventureStats();
+  /**
+   * Opens the Adventure as soon as Sobi World level 8 is reached, ignoring World Development 20: the bot does not breed or collect
+   * the Codex the way a collector does, so it reaches 20 much later than a player who plays that way.
+   */
+  forceAdventure = false;
 
   constructor(seed: number, start: number) {
     this.rng = mulberry32(seed);
@@ -182,7 +200,7 @@ function farmRoutine(b: Bot) {
     b.act('care', liftFarmAction((s, c) => petPig(s, { pigId: p.id }, c)));
   }
   // Ship what is fully grown.
-  for (const p of f().pigs.filter((x) => x.growthProgress >= 100 && x.pregnancy === null && x.purpose !== 'PET')) {
+  for (const p of f().pigs.filter((x) => x.growthProgress >= 100 && x.pregnancy === null && x.purpose !== 'PET' && x.purpose !== 'ADVENTURE')) {
     if (b.act('shipping', liftFarmAction((s, c) => sellPig(s, { pigId: p.id }, c)))) b.shipped += 1;
   }
   // Pens first (they raise how many pigs earn), then pigs to fill them.
@@ -237,14 +255,16 @@ function gardenRoutine(b: Bot) {
 }
 
 /** One bot, seven days. `start` is a local midnight. */
-export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7): WeekReport {
+export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7, options: { forceAdventure?: boolean } = {}): WeekReport {
   const b = new Bot(seed, start);
+  b.forceAdventure = options.forceAdventure ?? false;
   const rows: DayRow[] = [];
   for (let d = 0; d < days; d += 1) {
     for (const hour of SESSION_HOURS) {
       b.advance(start + d * DAY_MS + hour * HOUR_MS);
       claimEverything(b, Math.floor(b.now / DAY_MS));
       farmRoutine(b);
+      adventureRoutine(b);
       gardenRoutine(b);
       aquariumRoutine(b);
       cloudRoutine(b);
@@ -266,7 +286,12 @@ export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7): WeekR
       fish: hasAquarium(b.world) ? aquariumOf(b.world).fish.length : 0,
       casts: b.casts,
       fishSold: b.fishSold,
+      advLevel: hasAdventure(b.world) ? Math.max(1, ...Object.values(adventureOf(b.world).fighters).map((f) => f.level)) : 0,
+      advRuns: b.adv.runs,
+      techs: Object.entries(b.world.progression.stats).filter(([k]) => k.startsWith('tech.')).reduce((n, [, v]) => n + v, 0),
+      cogs: b.bag('item_ancient_cog'),
+      runes: b.bag('item_ancient_rune'),
     });
   }
-  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, cloudOpenAtHour: b.cloudAt, flowersHarvested: b.world.progression.stats.flowersHarvested ?? 0, potionsBrewed: b.world.progression.stats.potionsBrewed ?? 0, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems };
+  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, cloudOpenAtHour: b.cloudAt, flowersHarvested: b.world.progression.stats.flowersHarvested ?? 0, potionsBrewed: b.world.progression.stats.potionsBrewed ?? 0, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems, adventure: b.adv, bag: b.world.inventory.items, pendingLoot: hasAdventure(b.world) ? adventureOf(b.world).pending : {} };
 }
