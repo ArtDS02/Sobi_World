@@ -12,7 +12,7 @@ import { adventureOf } from '../logic/save/lens';
 import { actionButton } from './adventureDialogs';
 import { ELEMENT_ICON, hubVm, startReason, type FighterCardVm } from './adventureVm';
 import { mapVm, resultVm } from './battleVm';
-import { bar, type ViewCtx } from './viewKit';
+import { bar, toggle, type ViewCtx } from './viewKit';
 
 // ---- The hub ---------------------------------------------------------------------------------------------------
 
@@ -52,13 +52,39 @@ function fighterCard(c: FighterCardVm, ctx: ViewCtx): HTMLElement {
   );
 }
 
+/** The rations the party may carry (GĐ11): a toggle each, up to what the field kitchen allows. */
+function prepSection(hub: ReturnType<typeof hubVm>, ctx: ViewCtx): HTMLElement {
+  const { state } = ctx;
+  if (hub.prepSlots === 0) return el('p', { class: 'c-dialog__hint', text: vi.adventure.prepNone });
+  return el(
+    'section',
+    { class: 'adventure-ui__prep' },
+    el('h3', { text: t(vi.adventure.prepTitle, { count: state.prep.length, max: hub.prepSlots }) }),
+    el('p', { class: 'c-dialog__hint', text: vi.adventure.prepHint }),
+    el(
+      'div',
+      { class: 'adventure-ui__prep-list' },
+      ...hub.prep.map((p) => {
+        const on = state.prep.includes(p.itemId);
+        const btn = toggle(`${p.name} (${t(vi.adventure.prepHave, { n: p.have })}) — ${p.effect}`, on, () => {
+          state.prep = on ? state.prep.filter((id) => id !== p.itemId) : state.prep.length < hub.prepSlots ? [...state.prep, p.itemId] : state.prep;
+          ctx.rerender();
+        });
+        if (p.have < 1) btn.setAttribute('disabled', '');
+        return btn;
+      }),
+    ),
+  );
+}
+
 export function renderHub(ctx: ViewCtx): HTMLElement {
   const { world: w, now, roster, state } = ctx;
   const hub = hubVm(w, roster, now, { starter: (ww, c) => claimStarter(ww, { give: ctx.give }, c), loot: (ww, c) => collectLoot(ww, c) });
   const cards = hub.fighters;
   state.selected = state.selected.filter((k) => cards.some((c) => c.key === k && c.notReady === null));
   const zone = ZONES[state.zoneId]!;
-  const reason = startReason(w, roster, state.zoneId, state.selected, now);
+  state.prep = state.prep.filter((id) => hub.prep.some((p) => p.itemId === id && p.have > 0)).slice(0, hub.prepSlots);
+  const reason = startReason(w, roster, state.zoneId, state.selected, now, state.prep);
   return el(
     'div',
     { class: 'adventure-ui__hub' },
@@ -92,6 +118,7 @@ export function renderHub(ctx: ViewCtx): HTMLElement {
       hub.starter ? actionButton(hub.starter, () => ctx.dispatch((ww, c) => claimStarter(ww, { give: ctx.give }, c))) : null,
       hub.loot ? actionButton(hub.loot, () => ctx.dispatch((ww, c) => collectLoot(ww, c))) : null,
     ),
+    prepSection(hub, ctx),
     el('h3', { text: vi.adventure.fighters }),
     el('p', { class: 'c-dialog__hint', text: t(vi.adventure.fightersHint, { cost: AB.run.energyCost }) }),
     cards.length === 0 ? el('p', { text: vi.adventure.noFighters }) : el('div', { class: 'adventure-ui__fighters' }, ...cards.map((c) => fighterCard(c, ctx))),
@@ -103,8 +130,10 @@ export function renderHub(ctx: ViewCtx): HTMLElement {
       actionButton({ label: `${vi.adventure.start} — ${zone.nameVi}`, reason }, () => {
         const keys = state.selected;
         const zoneId = state.zoneId;
+        const prep = state.prep;
         state.selected = [];
-        ctx.dispatch((ww, c) => startRun(ww, { zoneId, keys, roster: ctx.roster }, c));
+        state.prep = [];
+        ctx.dispatch((ww, c) => startRun(ww, { zoneId, keys, roster: ctx.roster, prep }, c));
       }),
     ),
   );

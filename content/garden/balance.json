@@ -16,7 +16,7 @@
   "sprinkler": [
     { "plots": 6, "price": 500 },
     { "plots": 12, "price": 1500, "materials": { "item_scale": 10 } },
-    { "plots": 24, "price": 4000, "materials": { "item_scale": 20, "item_pearl": 3 } }
+    { "plots": 24, "price": 4000, "materials": { "item_scale": 20, "item_pearl": 3, "item_ancient_cog": 3 } }
   ],
   "buildings": {
     "mill": {

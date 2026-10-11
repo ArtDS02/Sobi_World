@@ -6,7 +6,7 @@
     "TROUGH_LEVELS": [
       { "capacity": 30, "cost": 0 },
       { "capacity": 80, "cost": 1200 },
-      { "capacity": 200, "cost": 4000 }
+      { "capacity": 200, "cost": 4000, "materials": { "item_ancient_cog": 3 } }
     ],
     "HUNGER_MAX": 100,
     "CLEAN_MAX": 100,
@@ -59,14 +59,14 @@
       "14": { "cost": 120000, "level": 10 },
       "15": { "cost": 145000, "level": 10 },
       "16": { "cost": 175000, "level": 10 },
-      "17": { "cost": 210000, "level": 10 },
-      "18": { "cost": 250000, "level": 10 },
-      "19": { "cost": 300000, "level": 10 },
-      "20": { "cost": 360000, "level": 10 },
-      "21": { "cost": 430000, "level": 10 },
-      "22": { "cost": 510000, "level": 10 },
-      "23": { "cost": 600000, "level": 10 },
-      "24": { "cost": 700000, "level": 10 }
+      "17": { "cost": 210000, "level": 10, "materials": { "item_ancient_cog": 2 } },
+      "18": { "cost": 250000, "level": 10, "materials": { "item_ancient_cog": 2 } },
+      "19": { "cost": 300000, "level": 10, "materials": { "item_ancient_cog": 2 } },
+      "20": { "cost": 360000, "level": 10, "materials": { "item_ancient_cog": 2 } },
+      "21": { "cost": 430000, "level": 10, "materials": { "item_ancient_cog": 3, "item_ancient_rune": 1 } },
+      "22": { "cost": 510000, "level": 10, "materials": { "item_ancient_cog": 3, "item_ancient_rune": 1 } },
+      "23": { "cost": 600000, "level": 10, "materials": { "item_ancient_cog": 3, "item_ancient_rune": 1 } },
+      "24": { "cost": 700000, "level": 10, "materials": { "item_ancient_cog": 3, "item_ancient_rune": 1 } }
     },
     "ORDER_WINDOW_MS": 14400000,
     "ORDER_TTL_MS": 28800000,

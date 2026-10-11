@@ -30,6 +30,7 @@ const FILE_TITLE: Record<string, string> = {
   'aquarium/balance.json': '🪣 Cân bằng Sobi Aquarium (bể, nước, cá, cần câu, đẻ trứng)',
   'cloud/flowers.json': '🌸 Hoa của Sobi Cloud (giờ lớn, sản lượng; sửa được cả tên)',
   'cloud/balance.json': '☁️ Cân bằng Sobi Cloud (ô hoa, tưới, suối nước tinh khiết, vạc nấu)',
+  'shared/tech.json': '🔧 Công nghệ (giá từng cấp bằng Sobi Coin và vật liệu Adventure, hiệu quả; sửa được cả tên và mô tả)',
   'adventure/enemies.json': '👾 Kẻ địch (máu, công, thủ, tốc, KN, rơi đồ; sửa được cả tên)',
   'adventure/skills.json': '✨ Kỹ năng (sức mạnh, năng lượng, hồi chiêu, hiệu ứng; sửa được cả tên và mô tả)',
   'adventure/archetypes.json': '🛡️ Kiểu đánh (chỉ số gốc, bộ 4 kỹ năng; sửa được cả tên và mô tả)',
@@ -42,7 +43,7 @@ const FILE_TITLE: Record<string, string> = {
 };
 
 /** Files whose words can be edited as well (the server allows it for the same files). */
-const TEXT_FILES = new Set(['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json']);
+const TEXT_FILES = new Set(['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json', 'shared/tech.json']);
 
 /** Same rule as the server (scripts/admin/numbers.ts isWordPath). */
 const isWordPath = (path: string): boolean =>

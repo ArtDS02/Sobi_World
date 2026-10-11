@@ -17,6 +17,8 @@ export interface ItemDef {
   moodHours?: number | undefined;
   /** Percentage points added to the mutation chance of a breeding that uses it (0 = none). */
   mutationBoost?: number | undefined;
+  /** An egg: hatches into a pig of this rarity at the Farm (GĐ11). */
+  hatchRarity?: Rarity | undefined;
 }
 
 /** FOOD_BASIC is also the unit the trough consumes. */

@@ -12,7 +12,7 @@ export function troughLevel(trough: Pick<FarmGame['trough'], 'capacity' | 'level
 }
 
 /** The next level's capacity and price, or null at the top. */
-export function nextTroughLevel(trough: Pick<FarmGame['trough'], 'capacity' | 'level'>): { level: number; capacity: number; cost: number } | null {
+export function nextTroughLevel(trough: Pick<FarmGame['trough'], 'capacity' | 'level'>): { level: number; capacity: number; cost: number; materials?: Readonly<Partial<Record<string, number>>> } | null {
   const level = troughLevel(trough) + 1;
   const row = LEVELS[level - 1];
   return row ? { level, ...row } : null;

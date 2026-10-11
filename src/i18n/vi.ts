@@ -924,6 +924,17 @@ export const vi = {
     // The hub.
     zones: "Chọn vùng",
     zoneLocked: "Cần Sobi World cấp {level}",
+    zoneNotCleared: "Hạ trùm {zone} trước",
+    prepTitle: "Khẩu phần mang theo ({count}/{max})",
+    prepHint: "Mỗi khẩu phần dùng một lần cho cả chuyến. Làm ở Máy xay của Sobi Garden.",
+    prepNone: "Muốn mang khẩu phần? Nâng cấp Bếp Dã Chiến ở Menu → Công nghệ.",
+    prepHave: "có {n}",
+    prepHp: "+{n}% máu",
+    prepAtk: "+{n}% tấn công",
+    prepDef: "+{n}% phòng thủ",
+    prepSpd: "+{n} tốc độ",
+    prepCrit: "+{n}% chí mạng",
+    prepCarried: "Mang theo: {items}",
     fighters: "Bạn đồng hành",
     fightersHint: "Chọn tối đa 3 bạn đồng hành cho một chuyến đi. Mỗi bạn tốn {cost} năng lượng phiêu lưu.",
     noFighters: "Chưa có bạn đồng hành nào. Nhận chú heo khởi đầu của Hiệp Sĩ Heo, hoặc chọn mục đích Phiêu lưu cho một con heo hay cá đã lớn.",
@@ -1166,11 +1177,11 @@ export const vi = {
     item_ancient_rune: "Rune Cổ",
     item_ancient_rune_desc: "Mảnh rune hiếm của Tàn Tích Cổ. Nâng cấp công trình cấp cao và công nghệ, hoặc bán.",
     item_ration_hearty: "Khẩu Phần Đầy Đặn",
-    item_ration_hearty_desc: "Mang theo khi đi phiêu lưu: cả đội +20% máu suốt chuyến. Bán được.",
+    item_ration_hearty_desc: "Mang theo khi đi phiêu lưu: cả đội +15% máu suốt chuyến. Bán được.",
     item_ration_spicy: "Khẩu Phần Cay",
-    item_ration_spicy_desc: "Mang theo khi đi phiêu lưu: cả đội +15% tấn công suốt chuyến. Bán được.",
+    item_ration_spicy_desc: "Mang theo khi đi phiêu lưu: cả đội +12% tấn công suốt chuyến. Bán được.",
     item_ration_swift: "Khẩu Phần Nhanh Nhẹn",
-    item_ration_swift_desc: "Mang theo khi đi phiêu lưu: cả đội +3 tốc độ và +4% chí mạng suốt chuyến. Bán được.",
+    item_ration_swift_desc: "Mang theo khi đi phiêu lưu: cả đội +2 tốc độ và +3% chí mạng suốt chuyến. Bán được.",
     item_pig_egg_wild: "Trứng Heo Hoang",
     item_pig_egg_wild_desc: "Quả trứng lạ nhặt được khi phiêu lưu. Ấp ở Nông trại ra một chú heo hiếm. Bán được.",
     slotNext: "Chuồng thứ {n}",
@@ -1189,7 +1200,7 @@ export const vi = {
     hint: "Heo tự ăn từ máng kể cả khi bạn tắt game. Đổ đầy trước khi nghỉ.",
     fill: "Đổ {n} phần",
     level: "Máng ăn cấp {level} (chứa {capacity} phần)",
-    upgrade: "Nâng lên cấp {level}: chứa {capacity} phần ({gold} Sobi Coin)",
+    upgrade: "Nâng lên cấp {level}: chứa {capacity} phần ({cost})",
     maxLevel: "Máng ăn đã ở cấp cao nhất.",
   },
 
@@ -1386,6 +1397,7 @@ export const vi = {
 
   // BR-1: newborns wait in the inventory until the player raises them.
   inventory: {
+    hatch: "Ấp trứng",
     sellAll: "Bán hết ({gold})",
   },
 

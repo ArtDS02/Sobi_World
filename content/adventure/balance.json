@@ -28,9 +28,9 @@
   "xp": { "battleWin": 6, "zoneClear": 40 },
   "starter": { "breed": "PIG_KNIGHT", "items": { "item_equip_wood_sword": 1, "item_equip_leaf_vest": 1 } },
   "prep": [
-    { "itemId": "item_ration_hearty", "hpPct": 0.2, "atkPct": 0, "defPct": 0, "spd": 0, "crit": 0 },
-    { "itemId": "item_ration_spicy", "hpPct": 0, "atkPct": 0.15, "defPct": 0, "spd": 0, "crit": 0 },
-    { "itemId": "item_ration_swift", "hpPct": 0, "atkPct": 0, "defPct": 0, "spd": 3, "crit": 4 }
+    { "itemId": "item_ration_hearty", "hpPct": 0.15, "atkPct": 0, "defPct": 0, "spd": 0, "crit": 0 },
+    { "itemId": "item_ration_spicy", "hpPct": 0, "atkPct": 0.12, "defPct": 0, "spd": 0, "crit": 0 },
+    { "itemId": "item_ration_swift", "hpPct": 0, "atkPct": 0, "defPct": 0, "spd": 2, "crit": 3 }
   ],
   "battleItems": [
     { "itemId": "item_potion_healing", "target": "ally", "healPct": 0.5, "statuses": [] },

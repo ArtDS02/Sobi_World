@@ -16,7 +16,12 @@
     "levels": [
       { "intervalMin": 20, "capacity": 6, "price": 0, "materials": {} },
       { "intervalMin": 12, "capacity": 10, "price": 1500, "materials": {} },
-      { "intervalMin": 8, "capacity": 16, "price": 5000, "materials": { "item_pearl": 3 } }
+      {
+        "intervalMin": 8,
+        "capacity": 16,
+        "price": 5000,
+        "materials": { "item_pearl": 3, "item_ancient_cog": 3 }
+      }
     ]
   },
   "cauldron": { "price": 600, "maxBatches": 5 },

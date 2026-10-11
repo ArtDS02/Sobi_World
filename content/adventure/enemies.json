@@ -157,8 +157,8 @@
       "id": "enemy_magma_drake",
       "nameVi": "Rồng Dung Nham",
       "element": "FIRE",
-      "stats": { "hp": 960, "atk": 36, "def": 14, "spd": 11, "crit": 6 },
-      "skills": ["skill_fire_burst", "skill_blazing_charge", "skill_battle_cry"],
+      "stats": { "hp": 820, "atk": 32, "def": 14, "spd": 11, "crit": 6 },
+      "skills": ["skill_ember_slash", "skill_blazing_charge", "skill_battle_cry"],
       "exp": 240,
       "coins": 220,
       "drops": [

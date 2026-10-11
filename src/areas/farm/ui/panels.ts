@@ -3,6 +3,7 @@
 import type { AssetRegistry } from '../../../core/assets/registry';
 import { renderMarketScreen } from '../../../ui/goals/marketScreen';
 import { renderCodexPanel, renderGoalsPanel, renderOrdersPanel, type OrdersTab, type WorldPanelDeps } from '../../../ui/goals/panels';
+import { renderTechPanel } from '../../../ui/goals/techPanel';
 import { localOffsetMs } from '../../../ui/localDay';
 import type { PanelId } from '../../../ui/components/popup';
 import type { FarmGame } from '../logic/types';
@@ -76,5 +77,7 @@ export function renderPanel(c: PanelCtx, save: FarmGame, panel: PanelId): HTMLEl
       return world ? renderCodexPanel(world) : null;
     case 'achievements':
       return world ? renderGoalsPanel(world) : null;
+    case 'tech':
+      return world ? renderTechPanel(world) : null;
   }
 }

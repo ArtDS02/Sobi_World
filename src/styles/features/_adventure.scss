@@ -257,3 +257,15 @@
   .adventure-ui__main { top: 3.6rem; }
   .adventure-ui__unit-art { width: 3.4rem; height: 3.4rem; }
 }
+
+// The technology popup (GĐ11) and the rations a party carries.
+.tech {
+  display: grid;
+  gap: $sp-3;
+
+  &__list { display: grid; gap: $sp-3; padding: 0; margin: 0; list-style: none; }
+  &__card { display: grid; gap: $sp-1; padding: $sp-3; border: 2px solid $c-border; border-radius: $radius-card; }
+  &__cost { display: flex; flex-wrap: wrap; gap: $sp-3; padding: 0; margin: $sp-1 0; list-style: none; .is-short { color: $c-danger; } }
+}
+
+.adventure-ui__prep-list { display: flex; flex-wrap: wrap; gap: $sp-2; }

@@ -266,6 +266,8 @@ describe('buySlot (§8.11)', () => {
     expect(r.state.player.unlockedSlots).toBe(12);
     expectError((s) => buySlot(s, {}, ctx()), r.state, 'LEVEL_TOO_LOW');
     const last = at(WORLD_LEVELS.xp[9]!, 10_000_000, BALANCE.MAX_SLOTS - 1);
+    expectError((s) => buySlot(s, {}, ctx()), last, 'INSUFFICIENT_ITEM'); // the last slots take ancient materials
+    last.inventory = { ...last.inventory, item_ancient_cog: 9, item_ancient_rune: 3 };
     const full = expectOk(buySlot(last, {}, ctx()));
     expect(full.state.player.unlockedSlots).toBe(BALANCE.MAX_SLOTS);
     expectError((s) => buySlot(s, {}, ctx()), full.state, 'MAX_SLOTS_REACHED');

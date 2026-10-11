@@ -21,6 +21,8 @@ export interface InventoryHandlers {
   fillTrough: () => void;
   /** Sell every unit of a sellable item (Sobi Coin). */
   sellItem: (id: ItemId, quantity: number) => void;
+  /** Hatch an egg of the Adventure into a pig (GĐ11). */
+  hatch: (id: ItemId) => void;
   /** A newborn in the nursery was clicked: ask whether to raise it now (BR-1). */
   raise: (baby: NurseryPig) => void;
 }
@@ -59,6 +61,9 @@ export function renderInventoryScreen(
                 icon('fillTrough'),
                 vi.action.fillTrough,
               )
+            : null,
+          ITEMS[id].hatchRarity
+            ? el('button', { class: 'c-button', attrs: { type: 'button' }, on: { click: () => on.hatch(id) } }, vi.inventory.hatch)
             : null,
           ITEMS[id].sellGold !== undefined
             ? el(

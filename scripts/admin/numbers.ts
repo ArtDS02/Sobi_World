@@ -36,6 +36,7 @@ export const NUMBER_FILES: Record<string, { schemaPath: string; exportName: stri
   'cloud/flowers.json': { schemaPath: '/content/schemas/cloud/flowers.ts', exportName: 'flowersFileSchema' },
   'cloud/balance.json': { schemaPath: '/content/schemas/cloud/balance.ts', exportName: 'cloudBalanceFileSchema' },
   // Sobi Adventure (GĐ10): the enemies, the skills, the fighting styles, the zones with their loot and events, the equipment, the rules.
+  'shared/tech.json': { schemaPath: '/content/schemas/shared/tech.ts', exportName: 'techFileSchema' },
   'adventure/enemies.json': { schemaPath: '/content/schemas/adventure/enemies.ts', exportName: 'enemiesFileSchema' },
   'adventure/skills.json': { schemaPath: '/content/schemas/adventure/skills.ts', exportName: 'skillsFileSchema' },
   'adventure/archetypes.json': { schemaPath: '/content/schemas/adventure/archetypes.ts', exportName: 'archetypesFileSchema' },
@@ -49,7 +50,7 @@ export const NUMBER_FILES: Record<string, { schemaPath: string; exportName: stri
 };
 
 /** Files whose words (the strings ending in `Vi`) can be edited as well as their numbers: the NPCs' lines. */
-export const TEXT_FILES: readonly string[] = ['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json'];
+export const TEXT_FILES: readonly string[] = ['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json', 'shared/tech.json'];
 
 /** A path that holds words the dashboard may edit: keys ending in `Vi`, and the rumour sentences. */
 export const isWordPath = (path: string): boolean =>

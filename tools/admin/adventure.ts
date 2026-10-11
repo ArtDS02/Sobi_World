@@ -2,7 +2,9 @@
 // game's own battle rules, with the AI choosing, and the page reads the win rate and how far the runs get. Nothing is saved;
 // the enemies, skills, zones and loot are edited under "Số liệu" (content/adventure/*.json) and tried here right after.
 import { simulateRuns, GEAR_TIERS, type GearTier, type SimResult } from '../../src/areas/adventure/logic/battleSim';
-import { ARCHETYPE_LIST, ZONE_LIST, ZONES } from '../../src/areas/adventure/logic/config/content';
+import { ARCHETYPE_LIST, PREP_ITEMS, ZONE_LIST, ZONES } from '../../src/areas/adventure/logic/config/content';
+import type { ItemId } from '../../src/core/config/ids';
+import { vi } from '../../src/i18n/vi';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import { RARITY_LABEL, esc } from './labels';
 
@@ -10,6 +12,8 @@ interface Form {
   zoneId: string;
   level: number;
   gear: GearTier;
+  /** Rations carried (GĐ11). */
+  prep: string[];
   team: { archetypeId: string; rarity: string; hearts: number }[];
   samples: number;
   seed: number;
@@ -19,6 +23,7 @@ const form: Form = {
   zoneId: ZONE_LIST[0]!.id,
   level: 5,
   gear: 'none',
+  prep: [],
   team: [
     { archetypeId: 'bruiser', rarity: 'COMMON', hearts: 0 },
     { archetypeId: 'guardian', rarity: 'COMMON', hearts: 0 },
@@ -28,7 +33,7 @@ const form: Form = {
   seed: 2024,
 };
 
-const GEAR_LABEL: Record<GearTier, string> = { none: 'Không trang bị', common: 'Trang bị thường', uncommon: 'Trang bị khá', rare: 'Trang bị hiếm' };
+const GEAR_LABEL: Record<GearTier, string> = { none: 'Không trang bị', common: 'Trang bị thường', uncommon: 'Trang bị khá', rare: 'Trang bị hiếm', epic: 'Trang bị sử thi (Tàn Tích)' };
 const pct = (n: number) => `${n.toLocaleString('vi-VN')}%`;
 
 function resultHtml(r: SimResult): string {
@@ -45,7 +50,7 @@ function resultHtml(r: SimResult): string {
 }
 
 function run(): string {
-  return resultHtml(simulateRuns({ zoneId: form.zoneId, level: form.level, team: form.team, gear: form.gear, samples: form.samples, seed: form.seed }));
+  return resultHtml(simulateRuns({ zoneId: form.zoneId, level: form.level, team: form.team, gear: form.gear, prep: form.prep, samples: form.samples, seed: form.seed }));
 }
 
 export function renderAdventure(root: HTMLElement) {
@@ -57,6 +62,7 @@ export function renderAdventure(root: HTMLElement) {
       <label class="field"><span>Vùng</span><select data-zone>${ZONE_LIST.map((z) => `<option value="${z.id}"${z.id === form.zoneId ? ' selected' : ''}>${esc(z.nameVi)}</option>`).join('')}</select></label>
       <label class="field"><span>Cấp của cả đội</span><input type="number" min="1" max="30" data-level value="${form.level}" /></label>
       <label class="field"><span>Trang bị</span><select data-gear>${GEAR_TIERS.map((g) => `<option value="${g}"${g === form.gear ? ' selected' : ''}>${esc(GEAR_LABEL[g])}</option>`).join('')}</select></label>
+      ${Object.values(PREP_ITEMS).map((p) => `<label class="field"><span>Mang ${esc(vi.shop[p.itemId as ItemId] ?? p.itemId)}</span><input type="checkbox" data-prep="${p.itemId}"${form.prep.includes(p.itemId) ? ' checked' : ''} /></label>`).join('')}
       <label class="field"><span>Số lượt chơi</span><input type="number" min="1" max="5000" data-samples value="${form.samples}" /></label>
       <label class="field"><span>Random seed</span><input type="number" data-seed value="${form.seed}" /></label>
     </div>
@@ -76,6 +82,7 @@ export function renderAdventure(root: HTMLElement) {
     });
   root.querySelector<HTMLSelectElement>('[data-zone]')!.addEventListener('change', (e) => { form.zoneId = (e.target as HTMLSelectElement).value; redo(); });
   root.querySelector<HTMLSelectElement>('[data-gear]')!.addEventListener('change', (e) => { form.gear = (e.target as HTMLSelectElement).value as GearTier; redo(); });
+  root.querySelectorAll<HTMLInputElement>('[data-prep]').forEach((box) => box.addEventListener('change', () => { form.prep = [...root.querySelectorAll<HTMLInputElement>('[data-prep]')].filter((b) => b.checked).map((b) => b.dataset.prep!); redo(); }));
   num('[data-level]', 1, 30, (n) => (form.level = n));
   num('[data-samples]', 1, 5000, (n) => (form.samples = n));
   num('[data-seed]', 0, 2 ** 31, (n) => (form.seed = n));

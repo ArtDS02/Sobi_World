@@ -130,7 +130,7 @@ describe('levels (§6.4)', () => {
   });
 
   it('the trough levels hold 30 / 80 / 200 and cost 0 / 1,200 / 4,000 (GAME_BALANCE §2.6)', () => {
-    expect(BALANCE.TROUGH_LEVELS).toEqual([{ capacity: 30, cost: 0 }, { capacity: 80, cost: 1200 }, { capacity: 200, cost: 4000 }]);
+    expect(BALANCE.TROUGH_LEVELS).toEqual([{ capacity: 30, cost: 0 }, { capacity: 80, cost: 1200 }, { capacity: 200, cost: 4000, materials: { item_ancient_cog: 3 } }]);
   });
 });
 

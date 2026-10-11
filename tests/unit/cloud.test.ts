@@ -224,8 +224,8 @@ describe('the spring of pure water', () => {
     expect(springStock(cloudOf(r), t)).toBe(3);
     expect(springStock(cloudOf(r), t + SPRING_LEVELS[1]!.intervalMs)).toBe(4);
     const lv2 = ok(upgradeSpring(w, ctxAt(t)));
-    expect(err(upgradeSpring(lv2, ctxAt(t)))).toBe('INSUFFICIENT_ITEM'); // level 3 needs pearls
-    const pearls = { ...lv2, inventory: { items: { item_pearl: 3 } } };
+    expect(err(upgradeSpring(lv2, ctxAt(t)))).toBe('INSUFFICIENT_ITEM'); // level 3 needs pearls and ancient cogs
+    const pearls = { ...lv2, inventory: { items: { item_pearl: 3, item_ancient_cog: 3 } } };
     expect(nextSpringLevel(cloudOf(pearls))!.level).toBe(3);
     expect(cloudOf(ok(upgradeSpring(pearls, ctxAt(t)))).spring.level).toBe(3);
     expect(err(upgradeSpring(ok(upgradeSpring(pearls, ctxAt(t))), ctxAt(t)))).toBe('MAX_LEVEL_REACHED');

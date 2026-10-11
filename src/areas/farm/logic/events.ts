@@ -27,6 +27,7 @@ export type GameEvent =
   // Action feedback (spec §8.0, D25). Gold is signed as in the transaction.
   | { type: 'PIG_BOUGHT'; pigId: string; breed: BreedId }
   | { type: 'PIG_ADOPTED'; pigId: string; breed: BreedId } // a newborn raised from the nursery (BR-1)
+  | { type: 'PIG_HATCHED'; pigId: string; breed: BreedId; itemId: string } // an Adventure egg hatched (GĐ11)
   | { type: 'PIG_FED'; pigId: string; itemId?: string; favorite?: boolean }
   // GĐ6: petting raises bond (hearts = whole hearts after it); the purpose a pig is raised for.
   | { type: 'PIG_PETTED'; pigId: string; bond: number; hearts: number }
@@ -79,6 +80,7 @@ export const GAME_EVENT_TYPES = [
   'DISCOVERY',
   'PIG_BOUGHT',
   'PIG_ADOPTED',
+  'PIG_HATCHED',
   'PIG_FED',
   'PIG_PETTED',
   'PIG_PURPOSE_SET',

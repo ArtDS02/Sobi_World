@@ -4,6 +4,7 @@
 import type { RosterEntry } from '../../../core/area-registry/registry';
 import type { ErrorCode } from '../../../core/config/errors';
 import { WORLD_LEVELS } from '../../../core/config/progression';
+import { techBonus } from '../../../core/config/tech';
 import { levelProgress, worldLevel, worldXp } from '../../../core/progression/levels';
 import type { WorldSave } from '../../../core/save/world';
 import { formatDuration, formatInt, t } from '../../../i18n/format';
@@ -11,7 +12,7 @@ import { vi } from '../../../i18n/vi';
 import type { Element, Stats } from '../../../systems/combat/types';
 import { EQUIPMENT_SLOTS, type EquipmentSlot } from '../../../systems/equipment';
 import { startRun } from '../logic/actions/run';
-import { AB, EQUIPMENT_DEFS, SKILLS, ZONE_LIST, ZONES, archetypeOf, type Archetype } from '../logic/config/content';
+import { AB, EQUIPMENT_DEFS, PREP_ITEMS, SKILLS, ZONE_LIST, ZONES, archetypeOf, type Archetype } from '../logic/config/content';
 import { energyOf, exhaustedLeft, expNeeded, fighterStats, msToEnergy, newFighter, whyNotReady } from '../logic/fighters';
 import { adventureOf } from '../logic/save/lens';
 import { nodeIcons } from './battleVm';
@@ -107,9 +108,9 @@ function skillLines(archetype: Archetype, level: number): SkillLineVm[] {
   });
 }
 
-function reasonText(error: ErrorCode, entry: RosterEntry, f: ReturnType<typeof newFighter>, now: number): string {
+function reasonText(error: ErrorCode, entry: RosterEntry, f: ReturnType<typeof newFighter>, now: number, boost: number): string {
   if (error === 'FIGHTER_EXHAUSTED') return t(vi.adventure.exhaustedFor, { time: formatDuration(exhaustedLeft(f, now)) });
-  if (error === 'NO_ADVENTURE_ENERGY') return t(vi.adventure.energyIn, { time: formatDuration(msToEnergy(f, now, AB.run.energyCost)) });
+  if (error === 'NO_ADVENTURE_ENERGY') return t(vi.adventure.energyIn, { time: formatDuration(msToEnergy(f, now, AB.run.energyCost, boost)) });
   if (error === 'NOT_A_FIGHTER') return entry.adult ? vi.adventure.notAdventure : vi.adventure.notGrown;
   return vi.error[error];
 }
@@ -120,8 +121,9 @@ export function fighterCardVm(world: WorldSave, entry: RosterEntry, now: number)
   const a = adventureOf(world);
   const fighter = a.fighters[entry.key] ?? newFighter(now);
   const need = expNeeded(fighter);
-  const energy = energyOf(fighter, now);
-  const error = whyNotReady(entry, a.fighters[entry.key], now);
+  const boost = techBonus(world, 'adventureEnergy');
+  const energy = energyOf(fighter, now, boost);
+  const error = whyNotReady(entry, a.fighters[entry.key], now, boost);
   return {
     key: entry.key,
     name: entry.name,
@@ -137,8 +139,8 @@ export function fighterCardVm(world: WorldSave, entry: RosterEntry, now: number)
     stats: fighterStats(fighter, entry, archetype),
     skills: skillLines(archetype, fighter.level),
     slots: slotVms(fighter.loadout),
-    notReady: error ? reasonText(error, entry, fighter, now) : null,
-    statusChip: error === 'FIGHTER_EXHAUSTED' || error === 'FIGHTER_SICK' || error === 'NO_ADVENTURE_ENERGY' ? reasonText(error, entry, fighter, now) : null,
+    notReady: error ? reasonText(error, entry, fighter, now, boost) : null,
+    statusChip: error === 'FIGHTER_EXHAUSTED' || error === 'FIGHTER_SICK' || error === 'NO_ADVENTURE_ENERGY' ? reasonText(error, entry, fighter, now, boost) : null,
   };
 }
 
@@ -152,17 +154,51 @@ export interface ZoneCardVm {
 
 export function zoneCards(world: WorldSave): ZoneCardVm[] {
   const level = worldLevel(world, WORLD_LEVELS);
+  const cleared = adventureOf(world).cleared;
   return ZONE_LIST.map((z) => ({
     id: z.id,
     name: z.nameVi,
     desc: z.descVi,
-    locked: level < z.fromWorldLevel ? t(vi.adventure.zoneLocked, { level: z.fromWorldLevel }) : null,
+    locked:
+      level < z.fromWorldLevel
+        ? t(vi.adventure.zoneLocked, { level: z.fromWorldLevel })
+        : z.requiresCleared && !cleared[z.requiresCleared]
+          ? t(vi.adventure.zoneNotCleared, { zone: ZONES[z.requiresCleared]?.nameVi ?? '' })
+          : null,
     nodes: nodeIcons(z).join(' '),
+  }));
+}
+
+/** A ration the party may carry (GĐ11): what it adds and how many are in the bag. */
+export interface PrepVm {
+  itemId: string;
+  name: string;
+  effect: string;
+  have: number;
+}
+
+export function prepVms(world: WorldSave): PrepVm[] {
+  return Object.values(PREP_ITEMS).map((p) => ({
+    itemId: p.itemId,
+    name: nameOfItem(p.itemId),
+    effect: [
+      p.hpPct > 0 ? t(vi.adventure.prepHp, { n: Math.round(p.hpPct * 100) }) : null,
+      p.atkPct > 0 ? t(vi.adventure.prepAtk, { n: Math.round(p.atkPct * 100) }) : null,
+      p.defPct > 0 ? t(vi.adventure.prepDef, { n: Math.round(p.defPct * 100) }) : null,
+      p.spd > 0 ? t(vi.adventure.prepSpd, { n: p.spd }) : null,
+      p.crit > 0 ? t(vi.adventure.prepCrit, { n: p.crit }) : null,
+    ]
+      .filter(Boolean)
+      .join(', '),
+    have: world.inventory.items[p.itemId] ?? 0,
   }));
 }
 
 export interface HubVm {
   zones: ZoneCardVm[];
+  /** Rations the party may carry, and how many it may take (the field kitchen technology). */
+  prep: PrepVm[];
+  prepSlots: number;
   fighters: FighterCardVm[];
   /** Pigs and fish that could fight but are not raised for the Adventure yet. */
   waiting: number;
@@ -179,6 +215,8 @@ export function hubVm(world: WorldSave, roster: readonly RosterEntry[], now: num
   const lootError = lootCount > 0 ? probe(world, run.loot, now) : null;
   return {
     zones: zoneCards(world),
+    prep: prepVms(world),
+    prepSlots: techBonus(world, 'prepSlots'),
     fighters,
     waiting,
     starter: a.starterClaimed ? null : { label: vi.adventure.claimStarter, reason: starterError ? vi.error[starterError] : null },
@@ -187,9 +225,9 @@ export function hubVm(world: WorldSave, roster: readonly RosterEntry[], now: num
 }
 
 /** Why this team cannot start the zone, or null. */
-export function startReason(world: WorldSave, roster: readonly RosterEntry[], zoneId: string, keys: string[], now: number): string | null {
+export function startReason(world: WorldSave, roster: readonly RosterEntry[], zoneId: string, keys: string[], now: number, prep: string[] = []): string | null {
   if (keys.length === 0) return vi.adventure.pickTeam;
-  const error = probe(world, (w, c) => startRun(w, { zoneId, keys, roster }, c), now);
+  const error = probe(world, (w, c) => startRun(w, { zoneId, keys, roster, prep }, c), now);
   if (!error) return null;
   if (error === 'ZONE_LOCKED') return t(vi.adventure.zoneLocked, { level: ZONES[zoneId]?.fromWorldLevel ?? 0 });
   return vi.error[error];

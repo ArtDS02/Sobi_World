@@ -7,10 +7,10 @@ import { deriveStats, skillsAtLevel } from '../../../systems/combat/stats';
 import type { CombatantInit } from '../../../systems/combat/types';
 import { loadoutBonus, type Loadout } from '../../../systems/equipment';
 import { AB, ARCHETYPES, COMBAT_CONTEXT, ENEMIES, EQUIPMENT_DEFS, EVENTS, STAT_RULES, ZONES } from './config/content';
-import { rarityMultiplier } from './fighters';
+import { rarityMultiplier, withPrep } from './fighters';
 import { enemyInits } from './encounter';
 
-export const GEAR_TIERS = ['none', 'common', 'uncommon', 'rare'] as const;
+export const GEAR_TIERS = ['none', 'common', 'uncommon', 'rare', 'epic'] as const;
 export type GearTier = (typeof GEAR_TIERS)[number];
 
 const GEAR: Record<GearTier, Loadout> = {
@@ -18,6 +18,7 @@ const GEAR: Record<GearTier, Loadout> = {
   common: { weapon: 'item_equip_wood_sword', armor: 'item_equip_leaf_vest', charm: 'item_equip_lucky_clover' },
   uncommon: { weapon: 'item_equip_iron_sword', armor: 'item_equip_bark_armor', charm: 'item_equip_wind_feather' },
   rare: { weapon: 'item_equip_flame_blade', armor: 'item_equip_moss_plate', charm: 'item_equip_sun_amulet' },
+  epic: { weapon: 'item_equip_rune_blade', armor: 'item_equip_golem_plate', charm: 'item_equip_rune_charm' },
 };
 
 export interface SimMember {
@@ -31,6 +32,8 @@ export interface SimInput {
   level: number;
   team: readonly SimMember[];
   gear: GearTier;
+  /** Rations carried (item ids of the field kitchen), GĐ11. */
+  prep?: readonly string[];
   samples: number;
   seed: number;
 }
@@ -54,7 +57,7 @@ export function simulateRuns(input: SimInput): SimResult {
   const members = input.team.map((m, i): CombatantInit => {
     const a = ARCHETYPES[m.archetypeId];
     if (!a) throw new Error(`unknown archetype ${m.archetypeId}`);
-    const stats = deriveStats(a.stats, { level: input.level, rarityMult: rarityMultiplier(m.rarity ?? 'COMMON'), hearts: m.hearts ?? 0 }, STAT_RULES, bonus);
+    const stats = withPrep(deriveStats(a.stats, { level: input.level, rarityMult: rarityMultiplier(m.rarity ?? 'COMMON'), hearts: m.hearts ?? 0 }, STAT_RULES, bonus), input.prep ?? []);
     return { id: `ally${i}`, side: 'ally', name: `${a.nameVi} ${i + 1}`, element: a.element, stats, skills: skillsAtLevel(a.skills, AB.levels.skillUnlockLevels, input.level) };
   });
   const reached = zone.nodes.map(() => 0);

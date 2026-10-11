@@ -222,8 +222,11 @@ describe('trough levels (GAME_BALANCE §2.6)', () => {
     expect(r.state.player.gold).toBe(7800);
     expect(r.state.transactions[0]).toMatchObject({ type: 'TROUGH_UPGRADE', amount: -1200 });
     expect(r.events).toContainEqual({ type: 'TROUGH_UPGRADED', level: 2, capacity: 80, gold: -1200 });
-    const r3 = upgradeTrough(r.state, ctx);
+    const noCogs = upgradeTrough(r.state, ctx);
+    expect(noCogs).toEqual({ ok: false, error: 'INSUFFICIENT_ITEM' }); // level 3 also takes 3 ancient cogs
+    const r3 = upgradeTrough({ ...r.state, inventory: { ...r.state.inventory, item_ancient_cog: 3 } }, ctx);
     if (!r3.ok) throw new Error(r3.error);
+    expect(r3.state.inventory.item_ancient_cog).toBe(0);
     expect(r3.state.trough).toMatchObject({ capacity: 200, level: 3 });
     expect(r3.state.player.gold).toBe(7800 - 4000);
   });
