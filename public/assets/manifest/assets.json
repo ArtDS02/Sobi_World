@@ -1480,127 +1480,127 @@
     },
     {
       "id": "flower_cloud_daisy_sprout",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_cloud_daisy_sprout.png"
     },
     {
       "id": "flower_cloud_daisy_grow",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_cloud_daisy_grow.png"
     },
     {
       "id": "flower_cloud_daisy_ripe",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_cloud_daisy_ripe.png"
     },
     {
       "id": "flower_cloud_daisy_wilt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_cloud_daisy_wilt.png"
     },
     {
       "id": "flower_dandelion_sprout",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_dandelion_sprout.png"
     },
     {
       "id": "flower_dandelion_grow",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_dandelion_grow.png"
     },
     {
       "id": "flower_dandelion_ripe",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_dandelion_ripe.png"
     },
     {
       "id": "flower_dandelion_wilt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_dandelion_wilt.png"
     },
     {
       "id": "flower_rainbow_rose_sprout",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_rainbow_rose_sprout.png"
     },
     {
       "id": "flower_rainbow_rose_grow",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_rainbow_rose_grow.png"
     },
     {
       "id": "flower_rainbow_rose_ripe",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_rainbow_rose_ripe.png"
     },
     {
       "id": "flower_rainbow_rose_wilt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_rainbow_rose_wilt.png"
     },
     {
       "id": "flower_star_orchid_sprout",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_star_orchid_sprout.png"
     },
     {
       "id": "flower_star_orchid_grow",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_star_orchid_grow.png"
     },
     {
       "id": "flower_star_orchid_ripe",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_star_orchid_ripe.png"
     },
     {
       "id": "flower_star_orchid_wilt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_star_orchid_wilt.png"
     },
     {
       "id": "flower_moon_lily_sprout",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_moon_lily_sprout.png"
     },
     {
       "id": "flower_moon_lily_grow",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_moon_lily_grow.png"
     },
     {
       "id": "flower_moon_lily_ripe",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_moon_lily_ripe.png"
     },
     {
       "id": "flower_moon_lily_wilt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_moon_lily_wilt.png"
     },
     {
       "id": "flower_dream_bell_sprout",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_dream_bell_sprout.png"
     },
     {
       "id": "flower_dream_bell_grow",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_dream_bell_grow.png"
     },
     {
       "id": "flower_dream_bell_ripe",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_dream_bell_ripe.png"
     },
     {
       "id": "flower_dream_bell_wilt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/flower_dream_bell_wilt.png"
     },
     {
       "id": "plot_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/plot_cloud.png"
     },
     {
@@ -1817,12 +1817,12 @@
     },
     {
       "id": "bld_cloud_spring",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/bld_cloud_spring.png"
     },
     {
       "id": "bld_cauldron",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/bld_cauldron.png"
     }
   ],
@@ -2212,82 +2212,82 @@
     },
     {
       "id": "ui_item_seed_cloud_daisy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_seed_cloud_daisy.png"
     },
     {
       "id": "ui_item_flower_cloud_daisy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_flower_cloud_daisy.png"
     },
     {
       "id": "ui_item_seed_dandelion",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_seed_dandelion.png"
     },
     {
       "id": "ui_item_flower_dandelion",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_flower_dandelion.png"
     },
     {
       "id": "ui_item_seed_rainbow_rose",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_seed_rainbow_rose.png"
     },
     {
       "id": "ui_item_flower_rainbow_rose",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_flower_rainbow_rose.png"
     },
     {
       "id": "ui_item_seed_star_orchid",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_seed_star_orchid.png"
     },
     {
       "id": "ui_item_flower_star_orchid",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_flower_star_orchid.png"
     },
     {
       "id": "ui_item_seed_moon_lily",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_seed_moon_lily.png"
     },
     {
       "id": "ui_item_flower_moon_lily",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_flower_moon_lily.png"
     },
     {
       "id": "ui_item_seed_dream_bell",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_seed_dream_bell.png"
     },
     {
       "id": "ui_item_flower_dream_bell",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_flower_dream_bell.png"
     },
     {
       "id": "ui_item_pure_water",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_pure_water.png"
     },
     {
       "id": "ui_item_potion_healing",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_potion_healing.png"
     },
     {
       "id": "ui_item_potion_mood",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_potion_mood.png"
     },
     {
       "id": "ui_item_potion_battle",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_potion_battle.png"
     },
     {

@@ -37,6 +37,8 @@ Tất cả là placeholder sinh bằng `npm run assets:placeholders` (decision 0
 | Bản đồ chuyến có nhân vật đi | Manifest ghi `movement: character`; GĐ10 dùng chuỗi nút. |
 
 ## GĐ9 — Sobi Cloud
+> **GĐ14 (2026-10-12):** 43/44 asset Cloud đã có art thật (hoa, icon, suối, vạc, ô mây; batch `cloud-0*`), chờ chủ dự án duyệt. Còn: `bg_cloud` (ảnh Gemini có watermark hiển thị, cần tạo lại) và nối ảnh nền vào CloudScene; ảnh riêng Bác Cú Giả Kim.
+
 Ảnh tham khảo (do chủ dự án cấp): `asset/reference/sobi_cloud/` (loại CONTENT: chỉ gợi ý hình dáng, phong cách theo Sobi Farm). Batch: `cloud-01-flowers`, `cloud-02-items`, `cloud-03-world`.
 | Thứ cần ở GĐ9 | Có trong ảnh tham khảo | Ghi chú |
 |---|---|---|

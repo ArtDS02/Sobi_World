@@ -12,9 +12,9 @@ Backend: **G** = Gemini vẽ sheet (chủ dự án dán prompt, lưu ảnh; còn
 
 | Area | Batch | Asset (số dòng) | Backend | Lượt Gemini | Trạng thái |
 |---|---|---|---|---|---|
-| Cloud | `cloud-01-flowers` | 6 hoa × 4 giai đoạn (24) | G, 3 sheet 2×4, cùng tỉ lệ | 3 | sẵn sàng |
-| Cloud | `cloud-02-items` | 6 hạt, 6 hoa, nước tinh khiết, 3 potion (16) | G, 3 sheet | 3 | sẵn sàng |
-| Cloud | `cloud-03-world` | `bld_cloud_spring`, `bld_cauldron`, `plot_cloud`, `bg_cloud` (4) | G, 1 sheet 1×3 + 1 nền | 2 | sẵn sàng |
+| Cloud | `cloud-01-flowers` | 6 hoa × 4 giai đoạn (24) | G, 3 sheet 2×4, cùng tỉ lệ | 3 | **production** (chờ duyệt) |
+| Cloud | `cloud-02-items` | 6 hạt, 6 hoa, nước tinh khiết, 3 potion (16) | G, 3 sheet | 3 | **production** (chờ duyệt) |
+| Cloud | `cloud-03-world` | `bld_cloud_spring`, `bld_cauldron`, `plot_cloud`, `bg_cloud` (4) | G, 1 sheet 1×3 + 1 nền | 2 | 3/4 production; `bg_cloud` chờ (ảnh có watermark Gemini) |
 | Garden | `garden-01-crops` | 5 cây × 4 giai đoạn (20) | G, 3 sheet | 3 | chưa viết |
 | Garden | `garden-02-items` | 5 hạt, 5 nông sản, thức ăn cao cấp, phân bón (12) | G, 2 sheet 2×3 | 2 | chưa viết |
 | Garden | `garden-03-world` | `plot_soil`, `_wet`, `plot_locked`, `bld_feed_mill`, `bld_composter`, `bld_sprinkler` (6) | G, 2 sheet 1×3 | 2 | chưa viết |

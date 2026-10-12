@@ -8,6 +8,13 @@
 
 ## Nhật ký
 
+### 2026-10-12 — GĐ14 Cloud: 43/44 asset art thật (chờ duyệt)
+✅ Đã làm: chủ dự án tạo 8 sheet Gemini theo `asset/batches/cloud-0*.md`; agent cắt (`batch.mjs cut`, cả 8 sheet khớp lưới), duyệt bảng ứng viên, giao 43 asset, `art:process` (status `production`), chạy game bằng save cuối game (`dev:rich-save` + `dev:sandbox`): vườn mây, suối, vạc, 6 gói hạt, icon hoa / potion trong Kho hiển thị đúng, không lỗi console.
+🧪 Đã kiểm tra: `npm run check` xanh (1.370 test), `assets:check` OK, `qa.mjs` không FAIL (T8 viền mờ ở cây thân mảnh do thu nhỏ ~0,5×: chấp nhận).
+⚠️ Chưa nhận: `bg_cloud` — ảnh Gemini có watermark ✦ hiển thị ở góc dưới phải, agent không tự xóa watermark → cần tạo lại (Google AI Studio) hoặc chủ dự án quyết; CloudScene vẫn tô trời bằng code (nối ảnh sau). Hoa lệch nhẹ phong cách: nét mảnh và nhạt hơn bộ Farm (nội dung, giai đoạn, tỉ lệ đúng) → chờ chủ dự án quyết giữ hay vẽ lại.
+👉 Bạn cần: duyệt ảnh chụp Cloud; chọn giữ hoa hay vẽ lại; tạo lại nền trời.
+➡️ Tiếp theo: sau khi duyệt → Garden (`garden-01..03`).
+
 ### 2026-10-12 — GĐ14: dựng quy trình art (skill + kế hoạch batch), Cloud sẵn sàng để vẽ
 ✅ Đã làm (decision 022): chủ dự án chốt **phong cách chuẩn = Sobi Farm**, **Area đầu tiên = Cloud**; nguồn ảnh = Gemini bản miễn phí do chủ dự án chạy (phiên agent không có model ảnh, không mua API).
 1. **Skill `image-to-asset` cho Sobi World**: backend **G** (`workflows/batch.md`): `scripts/batch.mjs` (`list` / `prep` / `cut` / `deliver`) sinh prompt + bảng phong cách + ảnh gợi ý, cắt sheet, ra ảnh duyệt; `scripts/cut-sheet.mjs` tách nền xám phẳng, chia lưới, cắt từng asset, giữ chung tỉ lệ cho các giai đoạn của cây (`fit shared`), có dự phòng cho vật thể nhiều mảnh; `references/families.md` (canvas, hướng nhìn, backend từng nhóm id), `references/style-boards.json` (bảng phong cách từ art Farm, khối prompt). `ref-check.mjs` quét thư mục con; registry thêm lớp `CONTENT` (mock-up Sobi World chỉ gợi ý hình dáng).
