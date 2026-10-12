@@ -1,12 +1,23 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ14 đang làm (nhánh `phase-14-art`, mới xong 2 hiệu ứng code, art chờ); trước đó GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu: **xong phần việc, chờ chủ dự án duyệt** (chơi thử ≥ 7 ngày thật, chốt một số, rồi freeze: decision 021); phiên bản 0.13.0. GĐ12 đã merge `main` (tag `phase-12`, decision 020).
+**Giai đoạn:** GĐ14 đang làm (nhánh `phase-14-art`: 2 hiệu ứng code; quy trình art + kế hoạch batch xong (decision 022), Cloud chờ chủ dự án tạo ảnh Gemini); trước đó GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu: **xong phần việc, chờ chủ dự án duyệt** (chơi thử ≥ 7 ngày thật, chốt một số, rồi freeze: decision 021); phiên bản 0.13.0. GĐ12 đã merge `main` (tag `phase-12`, decision 020).
 **Chiến lược (decision 017):** gameplay trước, art sau. GĐ13 vẫn placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
 **Nhánh:** `phase-13-integration` (tách từ `main`, chưa merge). Save format **v11** (không đổi ở GĐ13).
 **Bước tiếp theo:** chủ dự án chơi thử + chốt "điều kiện mở Adventure" (decision 021) + duyệt GĐ13 (merge `main`, tag `phase-13`, push); rồi GĐ14 (art, animation, VFX, âm thanh).
 
 ## Nhật ký
+
+### 2026-10-12 — GĐ14: dựng quy trình art (skill + kế hoạch batch), Cloud sẵn sàng để vẽ
+✅ Đã làm (decision 022): chủ dự án chốt **phong cách chuẩn = Sobi Farm**, **Area đầu tiên = Cloud**; nguồn ảnh = Gemini bản miễn phí do chủ dự án chạy (phiên agent không có model ảnh, không mua API).
+1. **Skill `image-to-asset` cho Sobi World**: backend **G** (`workflows/batch.md`): `scripts/batch.mjs` (`list` / `prep` / `cut` / `deliver`) sinh prompt + bảng phong cách + ảnh gợi ý, cắt sheet, ra ảnh duyệt; `scripts/cut-sheet.mjs` tách nền xám phẳng, chia lưới, cắt từng asset, giữ chung tỉ lệ cho các giai đoạn của cây (`fit shared`), có dự phòng cho vật thể nhiều mảnh; `references/families.md` (canvas, hướng nhìn, backend từng nhóm id), `references/style-boards.json` (bảng phong cách từ art Farm, khối prompt). `ref-check.mjs` quét thư mục con; registry thêm lớp `CONTENT` (mock-up Sobi World chỉ gợi ý hình dáng).
+2. **Kế hoạch 162 placeholder** → 17 batch, khoảng 39 lượt Gemini (`asset/batches/README.md`), cùng danh sách việc ngoài manifest (NPC, icon thời tiết / công nghệ / tính trạng, VFX, âm thanh). **Cloud**: 3 batch đã viết và `prep` (`cloud-01-flowers` 24, `cloud-02-items` 16, `cloud-03-world` 4: 8 lượt Gemini).
+3. **Ảnh tham khảo** gom về `asset/reference/<area>/` (+ README): đổi tên 5 ảnh Cloud theo nội dung, bỏ `docs/reference-assets/` (bản trùng).
+🛠️ Lỗi tích hợp tìm thấy và đã sửa: lần dời thư mục `asset/*/sobi_farm/` trước đây làm hỏng đường dẫn của `cut-reference`, `cut-buildings`, `cut-seasons`, `cut-season-fx`, trang Nguồn art của Admin (`scripts/admin/artFiles.ts`, `tools/admin/assets.ts`) và `resolve.mjs` của skill.
+🧪 Đã kiểm tra: `npm run check` xanh (1.370 test); `ref-check` "style profile current"; `cut-sheet` / `batch cut` chạy thử trên sheet giả (2×6, 2×4, vật thể nhiều mảnh, lưới sai báo lỗi đúng) rồi xóa dữ liệu thử.
+⚠️ Quyết định tự đưa ra: ngoại hình 6 hoa (spec không tả; màu theo placeholder), potion xanh lá / hồng / tím theo `ASSET_TODO`, nước tinh khiết là lọ giọt nước (khác dáng potion), công trình Cloud đứng trên mảng mây thay cỏ; animation làm bằng code, không vẽ nhiều khung. `bg_cloud` có trong manifest nhưng CloudScene vẫn tô trời bằng code: nối ảnh sau khi được duyệt.
+👉 Bạn cần: tạo 8 ảnh theo `asset/batches/cloud-0*.md` (thư mục làm việc `art_inbox/.batch/<batch>/`), lưu đúng tên; rồi bảo mình "cắt batch cloud".
+➡️ Tiếp theo: cắt → chọn → `art:process` → chạy game, chụp Cloud → chờ duyệt → Garden.
 
 ### 2026-10-11 — GĐ14 bắt đầu: phần code (art chờ chủ dự án)
 ✅ Đã làm: chủ dự án chọn "làm phần code, art chờ bạn" vì phiên agent không có model tạo ảnh / âm thanh (162 asset còn `placeholder`, skill `image-to-asset` ở trạng thái BLOCKED cho backend X).

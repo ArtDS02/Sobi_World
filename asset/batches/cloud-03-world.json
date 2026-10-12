@@ -1,0 +1,35 @@
+{
+  "id": "cloud-03-world",
+  "area": "cloud",
+  "title": "Cảnh Sobi Cloud: suối mây, vạc nấu, ô mây, nền trời",
+  "decisions": "Cloud buildings stand on a cloud patch instead of the Farm grass patch (same rule, Area material). bg_cloud is declared in the manifest (CLOUD_BACKDROP_ART) but CloudScene still paints its sky in code: wiring the image is an integration step after acceptance.",
+  "sheets": [
+    {
+      "name": "W",
+      "title": "Suối mây + vạc nấu + ô mây",
+      "board": "building",
+      "grid": [1, 3],
+      "fit": "each",
+      "views": ["building"],
+      "hints": [
+        { "from": "asset/reference/sobi_cloud/cloud_extra_items_env.png", "box": [760, 105, 170, 115], "what": "the Cloud Spring (a small pond sitting on a cloud)" },
+        { "from": "asset/reference/sobi_cloud/cloud_items_pots.png", "box": [1070, 105, 100, 100], "what": "the cauldron's round pot body" }
+      ],
+      "cells": [
+        { "stem": "bld_cloud_spring", "desc": "Cloud Spring: a small round basin of smooth pale stones on a cloud, crystal-clear sky-blue water, a thin stream falling into it from a little stone spout shaped like a cloud, a few lily pads; taller than wide" },
+        { "stem": "bld_cauldron", "desc": "Alchemist Cauldron: a round dark-iron cauldron on three short legs on a cloud, bubbling lilac potion inside with two soft bubbles, a wooden stirring spoon leaning in it, a tiny stack of firewood under it" },
+        { "stem": "plot_cloud", "desc": "Cloud Plot: a soft oval cloud cushion seen from above, wider than tall, with a shallow round bed of dark rich soil sunk in its top; this object IS the cloud, nothing stands on it" }
+      ]
+    },
+    {
+      "name": "B",
+      "title": "Nền trời Sobi Cloud",
+      "board": "sky",
+      "fit": "backdrop",
+      "views": ["backdrop"],
+      "cells": [
+        { "stem": "bg_cloud", "desc": "the sky garden of Sobi Cloud: a pastel morning sky (pale blue to warm peach near the horizon), a soft sun glow at the top left, a sea of fluffy clouds along the bottom, three or four small floating cloud islands with tiny trees far away, a faint rainbow arc in the distance" }
+      ]
+    }
+  ]
+}

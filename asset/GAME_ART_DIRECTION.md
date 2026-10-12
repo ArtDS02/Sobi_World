@@ -81,5 +81,6 @@ Measured on `pig_classic` (height ear-tip → hoof = H ≈ 330 px on the 512 can
 | Date | Change | Classification | Effect on this file |
 |---|---|---|---|
 | 2026-10-01 | Initial analysis of the 3 sheets | 2 CORE, 1 OUTLIER | Created |
+| 2026-10-12 | Sheets moved to `reference/sobi_farm/`; Sobi World mock-ups (`sobi_cloud/`, `sobi_world/`) registered. Owner decision: Sobi Farm is the canonical style for every Area | 9 CONTENT | None: §1–§5 unchanged; the mock-ups only hint at shapes/content |
 
 A new reference image is classified with `.claude/skills/image-to-asset/workflows/reference-analysis.md`. Only a CORE image may change §1–§5, and only by **adding** precision that the existing accepted pigs still satisfy (run `qa.mjs` on them after the edit) — never by moving the style.

@@ -1,0 +1,65 @@
+{
+  "id": "cloud-01-flowers",
+  "area": "cloud",
+  "title": "Hoa Sobi Cloud: 6 loài × 4 giai đoạn",
+  "decisions": "Spec has no flower looks; identity colours follow the placeholders (scripts/make-placeholders.ts). The flower stands alone (no pot, no plot): CloudScene draws it on plot_cloud, origin at the bottom.",
+  "sheets": [
+    {
+      "name": "F1",
+      "title": "Cúc Mây + Bồ Công Anh Mây",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages"],
+      "cells": [
+        { "stem": "flower_cloud_daisy_sprout", "desc": "Cloud Daisy sprout" },
+        { "stem": "flower_cloud_daisy_grow", "desc": "Cloud Daisy growing, closed white bud" },
+        { "stem": "flower_cloud_daisy_ripe", "desc": "Cloud Daisy in full bloom: three daisy heads with fluffy creamy-white petals shaped like little clouds, soft sky-blue petal tips, golden centre" },
+        { "stem": "flower_cloud_daisy_wilt", "desc": "Cloud Daisy wilted" },
+        { "stem": "flower_dandelion_sprout", "desc": "Cloud Dandelion sprout with jagged dandelion leaves" },
+        { "stem": "flower_dandelion_grow", "desc": "Cloud Dandelion growing, closed yellow bud" },
+        { "stem": "flower_dandelion_ripe", "desc": "Cloud Dandelion ripe: two round fluffy puffballs in warm pale yellow, soft like tiny clouds, on slim stems" },
+        { "stem": "flower_dandelion_wilt", "desc": "Cloud Dandelion wilted, puffballs half blown away" }
+      ]
+    },
+    {
+      "name": "F2",
+      "title": "Hồng Cầu Vồng + Lan Sao",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages"],
+      "cells": [
+        { "stem": "flower_rainbow_rose_sprout", "desc": "Rainbow Rose sprout with small rose leaves" },
+        { "stem": "flower_rainbow_rose_grow", "desc": "Rainbow Rose growing, closed pink bud" },
+        { "stem": "flower_rainbow_rose_ripe", "desc": "Rainbow Rose in full bloom: one big rose whose petals shade softly from pink outside to peach, butter yellow, mint and lilac in the centre (pastel, not neon)" },
+        { "stem": "flower_rainbow_rose_wilt", "desc": "Rainbow Rose wilted" },
+        { "stem": "flower_star_orchid_sprout", "desc": "Star Orchid sprout with two broad orchid leaves" },
+        { "stem": "flower_star_orchid_grow", "desc": "Star Orchid growing, arching stem with violet buds" },
+        { "stem": "flower_star_orchid_ripe", "desc": "Star Orchid in full bloom: an arching stem with two violet orchid flowers whose five petals form a rounded five-point star, small golden dot in each centre" },
+        { "stem": "flower_star_orchid_wilt", "desc": "Star Orchid wilted" }
+      ]
+    },
+    {
+      "name": "F3",
+      "title": "Huệ Trăng + Chuông Mộng (hoa đêm)",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages"],
+      "cells": [
+        { "stem": "flower_moon_lily_sprout", "desc": "Moon Lily sprout with long thin lily leaves" },
+        { "stem": "flower_moon_lily_grow", "desc": "Moon Lily growing, long closed pale bud" },
+        { "stem": "flower_moon_lily_ripe", "desc": "Moon Lily in full bloom: two trumpet lilies in pale silvery blue and moonlight cream, petal tips curling like small crescent moons" },
+        { "stem": "flower_moon_lily_wilt", "desc": "Moon Lily wilted" },
+        { "stem": "flower_dream_bell_sprout", "desc": "Dream Bell sprout with round leaves" },
+        { "stem": "flower_dream_bell_grow", "desc": "Dream Bell growing, arched stem with small green bell buds" },
+        { "stem": "flower_dream_bell_ripe", "desc": "Dream Bell in full bloom: an arched stem with three hanging bell flowers in periwinkle blue with lighter rims" },
+        { "stem": "flower_dream_bell_wilt", "desc": "Dream Bell wilted" }
+      ]
+    }
+  ]
+}

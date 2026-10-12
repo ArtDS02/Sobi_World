@@ -1,4 +1,4 @@
-// Seasonal variants of buildings and props (SE task) cut out of asset/building/building_season/
+// Seasonal variants of buildings and props (SE task) cut out of asset/building/sobi_farm/building_season/
 // building-<season>.png. The four sheets share one layout; their "transparent" checkerboard is baked
 // into opaque pixels, so the backdrop is flood-filled from the crop border through low-saturation
 // mid-grey pixels (painted greys inside an outline are never reached). Each cut is fitted onto the
@@ -12,7 +12,7 @@ import { PNG } from 'pngjs';
 import { SEASON_IDS, type SeasonId } from '../src/core/config/seasons';
 import { patchRowObject } from './assets/manifestText';
 
-const SHEETS = 'asset/building/building_season';
+const SHEETS = 'asset/building/sobi_farm/building_season';
 const ASSETS = 'public/assets';
 const MANIFEST = join(ASSETS, 'manifest', 'assets.json');
 /** Backdrop checker: max channel spread and luminance range (measured on the four sheets). */

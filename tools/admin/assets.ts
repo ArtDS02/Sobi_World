@@ -1,4 +1,4 @@
-// Asset source page: every image in asset/animals/asset/ with its concept and whether the game uses
+// Asset source page: every image in asset/animals/sobi_farm/asset/ with its concept and whether the game uses
 // it, plus uploads from the computer. Importing copies the image into pigs/base/ AND registers its
 // manifest row in one step (DECISIONS AD-1), so it is selectable in "Tạo heo mới" immediately.
 import { esc } from './labels';
@@ -45,7 +45,7 @@ function card(i: InventoryItem) {
         ? `<button class="btn btn-small" data-import="${esc(i.name)}">📥 Nhập vào game…</button>`
         : '';
   return `<div class="src-card">
-    <span class="src-card__imgs"><span class="compare"><img src="/asset/animals/asset/${esc(i.name)}" alt="" loading="lazy" /><small>nguồn</small></span>${compare}</span>
+    <span class="src-card__imgs"><span class="compare"><img src="/asset/animals/sobi_farm/asset/${esc(i.name)}" alt="" loading="lazy" /><small>nguồn</small></span>${compare}</span>
     <b>${esc(i.name)}</b>
     <small>Concept: ${esc(i.concept)}${i.version ? ` · v${esc(i.version)}` : ''}</small>
     <span class="badge ${TONE_CLASS[tone]}">${esc(label)}</span>
@@ -67,7 +67,7 @@ function openImport(i: InventoryItem) {
   openModal({
     title: `Nhập ${i.name}`,
     submit: 'Nhập vào game',
-    body: `<img class="modal__preview" src="/asset/animals/asset/${esc(i.name)}" alt="" />${idFields(artId, prettyName(artId))}`,
+    body: `<img class="modal__preview" src="/asset/animals/sobi_farm/asset/${esc(i.name)}" alt="" />${idFields(artId, prettyName(artId))}`,
     onSubmit: async (f) => {
       const d = new FormData(f);
       const id = String(d.get('artId')).trim();
@@ -122,7 +122,7 @@ export function renderAssets(root: HTMLElement) {
       <span class="badge status-ok">✓ ${used} đang dùng</span>
       <span class="badge status-warn">⚠ ${inv.length - used} chưa dùng / bản thay thế</span>
     </div>
-    <p class="muted">Ảnh trong <code>asset/animals/asset/</code>. “Nhập vào game” chép ảnh sang <code>public/assets/pigs/base/&lt;art id&gt;.png</code>
+    <p class="muted">Ảnh trong <code>asset/animals/sobi_farm/asset/</code>. “Nhập vào game” chép ảnh sang <code>public/assets/pigs/base/&lt;art id&gt;.png</code>
       <b>và đăng ký luôn dòng manifest</b> — ảnh chọn được ngay trong “Tạo heo mới”. Không bao giờ ghi đè ảnh đang có.</p>
     ${state.apiOnline ? '' : '<p class="empty">Cần chạy <code>npm run admin</code> để đọc thư mục nguồn.</p>'}
     <div data-list></div>`;

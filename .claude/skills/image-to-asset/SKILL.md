@@ -1,12 +1,12 @@
 ---
 name: image-to-asset
 description: >-
-  Art director + asset generator + visual QA for Sobi Farm (formerly Ủn Ỉn Homemade) game art. Turns an asset request
-  ("tạo Pig #42", "làm pig_pilot", "vẽ lại heo cao bồi", "tạo fx_heart / prop / icon") into a
-  production-ready PNG that matches asset/reference and the asset specs: resolve spec → pick
-  references → brief → generate → QA gate → refine → art_inbox → art:process → assets:check.
-  Also use to audit existing art against the reference style, or when a new image lands in
-  asset/reference. Not for code tasks (spec-to-source) or audio.
+  Art director + asset generator + visual QA for Sobi World game art (GĐ14), in the Sobi Farm style. Turns an
+  asset request ("tạo Pig #42", "làm pig_pilot", "làm art Sobi Cloud", "batch cloud-01", "tạo fx_heart / prop /
+  icon / enemy / flower") into production-ready PNGs that match the Farm style and the asset specs: resolve spec →
+  pick references → brief or batch → generate (Gemini sheets via the owner, backend G) → cut → QA gate → refine →
+  art_inbox → art:process → assets:check → in-game check. Also use to audit existing art against the reference
+  style, or when a new image lands in asset/reference. Not for code tasks (spec-to-source) or audio.
 ---
 
 # Image → Asset
@@ -22,15 +22,22 @@ Comment/script tiếng Anh, trả lời tiếng Việt.
 
 | Kind | Files | Decides |
 |---|---|---|
-| Specification (normative) | `asset/ASSET_PRODUCTION_STANDARD_v1.md` (format wins) · `asset/animals/PIG_CATALOGUE.md` (what exists) · `asset/AI_ASSET_GENERATION_PACK.md` (filled concepts + prompt blocks) · `asset/building/ENVIRONMENT_CATALOGUE.md` | subject, id, states, canvas, naming, path |
-| Visual reference | `asset/reference/*.png` (CORE / OUTLIER per registry) | style only — never content |
+| Specification (normative) | `asset/ASSET_PRODUCTION_STANDARD_v1.md` (format wins) · `asset/animals/sobi_farm/PIG_CATALOGUE.md` (what exists) · `asset/AI_ASSET_GENERATION_PACK.md` (filled concepts + prompt blocks) · `asset/building/ENVIRONMENT_CATALOGUE.md` | subject, id, states, canvas, naming, path |
+| Visual reference | `asset/reference/<area>/*.png` (CORE / OUTLIER / CONTENT per registry) | CORE = style; CONTENT (Sobi World mock-ups) = shape hints only |
+| Families, boards, batches | [references/families.md](references/families.md) · `references/style-boards.json` · `asset/batches/` (plan in its README) | canvas, view, backend per id prefix; prompt blocks |
 | Art direction (derived) | `asset/GAME_ART_DIRECTION.md` | measured style profile; replaces re-reading the images |
 | Pipeline | `scripts/cut-reference.ts`, `scripts/process-art.ts`, `scripts/assets-check.ts`, `public/assets/manifest/assets.json` | delivery |
 
 Routing per asset family, precedence and known spec conflicts: [references/spec-map.md](references/spec-map.md).
 Worked runs (R autonomous, X blocked-on-model, family audit): [examples/worked-runs.md](examples/worked-runs.md).
 
-## 2. Pipeline (one asset = one run)
+## 2. Pipeline
+
+**Many assets of one Area (GĐ14 default) → backend G batches: [workflows/batch.md](workflows/batch.md)**
+(`scripts/batch.mjs list | prep | cut | deliver`, `scripts/cut-sheet.mjs`). The single-asset run below stays
+for pigs and one-off fixes; steps 5–7 are shared.
+
+One asset = one run:
 
 ```text
 0 ref-check ─ 1 resolve ─ 2 references ─ 3 brief ─ 4 generate ─ 5 QA gate ─ 6 refine ↺ ─ 7 deliver
@@ -46,8 +53,8 @@ Worked runs (R autonomous, X blocked-on-model, family audit): [examples/worked-r
 3. **Brief** — fill [templates/asset-brief.md](templates/asset-brief.md) into `art_inbox/.briefs/<id>.md`
    from resolution + `GAME_ART_DIRECTION.md` (cite §, don't copy it). Short; this file is also the prompt source.
 4. **Generate** — pick the backend in [workflows/generation.md](workflows/generation.md):
-   `R` reference cut (concept exists in a CORE cell) → `X` image model with reference images → `K` code kit
-   (fx/ui/props only; pig rig currently fails S7). Output = `art_inbox/<stem>.png`.
+   `R` reference cut (concept exists in a CORE cell) → `G` Gemini sheet via the owner (batch.md) / `X` image
+   model in the session → `K` code kit (fx/ui/props only; pig rig currently fails S7). Output = `art_inbox/<stem>.png`.
 5. **QA gate** — [workflows/validation.md](workflows/validation.md): `scripts/qa.mjs` (technical T + measured
    style S) **and** look at the review sheet it writes (visual V + spec Q). Checklist:
    [references/quality-gate.md](references/quality-gate.md). Any FAIL → step 6. Never accept on numbers alone.
@@ -59,8 +66,9 @@ Worked runs (R autonomous, X blocked-on-model, family audit): [examples/worked-r
 
 ## 3. Hard rules
 
-- One direction: side view facing right (standard §2). A request for front/back/left views does **not**
+- Pigs: one direction, side view facing right (standard §2). A request for front/back/left views does **not**
   override it — state the rule, deliver side-right. States = `idle` (+ `sleep` for P0/P1) only (§3).
+  Other families: facing per [references/families.md](references/families.md) (fish right, enemies left).
 - Reference ≠ template: a new concept gets a new design in the reference's language. Copy a reference cell
   only when the registry marks it as that asset (`R`), and list every spec item the cell lacks.
 - No style drift: no generic "AI chibi sticker" look — frontal face, head ≈ body, flat vector, glossy 3D,
@@ -90,5 +98,5 @@ DONE
 - lệch spec còn lại (nếu có), ví dụ "cell thiếu áo yếm so với pack"
 NEXT: <asset tiếp theo hoặc bước user cần làm>
 ```
-`X` without an image model in the session → BLOCKED with `NEED:` = brief path + exact prompt + reference files
-to attach + where to save the candidates; on the next turn resume at step 5.
+`X` without an image model in the session → backend G: BLOCKED with `NEED:` = `asset/batches/<id>.md` (prompt +
+attachments + file names, prepared by `batch.mjs prep`); on the next turn resume at batch.md step 4.

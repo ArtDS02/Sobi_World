@@ -9,7 +9,7 @@ import { ART_ID, type PigArtRow } from './validate';
 
 export const ASSETS = 'public/assets';
 export const BASE = join(ASSETS, 'pigs', 'base');
-export const SOURCE = 'asset/animals/asset';
+export const SOURCE = 'asset/animals/sobi_farm/asset';
 export const MANIFEST = join(ASSETS, 'manifest', 'assets.json');
 /** Uploads above this are refused (a 512² art PNG is ~300 KB). */
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
@@ -57,7 +57,7 @@ export function library() {
   });
 }
 
-/** asset/animals/asset/ files: concept, whether the game uses it, and the game files it became. */
+/** asset/animals/sobi_farm/asset/ files: concept, whether the game uses it, and the game files it became. */
 export function inventory() {
   const baseHashes = new Map<string, string[]>();
   for (const f of pngs(BASE)) {

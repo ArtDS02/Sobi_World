@@ -11,7 +11,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
-const CATALOGUE = 'asset/animals/PIG_CATALOGUE.md';
+const CATALOGUE = 'asset/animals/sobi_farm/PIG_CATALOGUE.md';
 const PACK = 'asset/AI_ASSET_GENERATION_PACK.md';
 const MANIFEST = 'public/assets/manifest/assets.json';
 const REGISTRY = '.claude/skills/image-to-asset/references/reference-registry.json';
@@ -135,7 +135,7 @@ y('row', row ? `exists (status: ${row.status})` : 'MISSING — new shop skin, re
 if (!row)
   y('proposed_row', { id: p.id, status: 'placeholder', nameVi: p.nameVi, collection, rarity, priceGold: PRICE[rarity] ?? null, allowedBreeds: 'ALL', asset: `${dir}/${p.id}.png`, ...(wantsSleep ? { sleepAsset: `${dir}/${p.id}_sleep.png` } : {}), tags: [collection] }, '  ');
 console.log('reference_set:');
-y('style_anchor', 'public/assets/pigs/base/pig_classic.png (+ asset/reference/style_reference_pigs.png)', '  ');
+y('style_anchor', 'public/assets/pigs/base/pig_classic.png (+ asset/reference/sobi_farm/style_reference_pigs.png)', '  ');
 if (refHits.length) {
   console.log('  concept_cells:');
   for (const c of refHits)

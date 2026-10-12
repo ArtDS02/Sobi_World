@@ -1,4 +1,4 @@
-// Seasonal environment FX art (DECISIONS MU-2) from asset/building/building_season/environment.png.
+// Seasonal environment FX art (DECISIONS MU-2) from asset/building/sobi_farm/building_season/environment.png.
 // The sheet's "transparent" checkerboard is baked into opaque grey pixels, so every sprite is
 // UNMIXED from it: per pixel the smallest alpha that explains the colour as paint over the grey
 // backdrop (no grey halo, glows keep their soft edge), plus full alpha for saturated paint; solid
@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import { PNG } from 'pngjs';
 import { SEASON_FX_ART } from '../src/areas/farm/scene/config/seasonFx';
 
-const SHEET = 'asset/building/building_season/environment.png';
+const SHEET = 'asset/building/sobi_farm/building_season/environment.png';
 const OUT_DIR = 'public/assets/fx/env';
 const MANIFEST = 'public/assets/manifest/assets.json';
 /** Backdrop grey band: a pixel whose channels all stay inside it is backdrop (alpha 0). */

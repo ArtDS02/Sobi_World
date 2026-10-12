@@ -1,0 +1,29 @@
+{
+  "_doc": "No anchor may carry baked text (signs): image models copy it. Backend G (workflows/batch.md). A style board = accepted Sobi Farm production art composed into one image (image 1 of every Gemini prompt). Boards per family: references/families.md. Blocks are assembled by scripts/batch.mjs; {N} {R} {C} are filled per sheet. Background colour must stay flat: cut-sheet.mjs and art:process flood-fill it from the border.",
+  "background": [200, 200, 200],
+  "boards": {
+    "flora": ["public/assets/props/prop_sunflower.png", "public/assets/props/prop_mushroom.png", "public/assets/props/prop_bush.png", "public/assets/pigs/base/pig_classic.png"],
+    "item": ["public/assets/props/prop_gift_box.png", "public/assets/props/prop_mushroom.png", "public/assets/props/prop_water_bowl.png", "public/assets/props/prop_hay_bale.png"],
+    "building": ["public/assets/buildings/prop_windmill.png", "public/assets/props/prop_wheelbarrow.png", "public/assets/props/prop_water_bowl.png", "public/assets/environment/env_cloud_a.png"],
+    "creature": ["public/assets/pigs/base/pig_classic.png", "public/assets/props/prop_animal_duck.png", "public/assets/props/prop_animal_sheep.png", "public/assets/props/prop_mushroom.png"],
+    "sky": ["public/assets/environment/env_cloud_a.png", "public/assets/environment/env_cloud_1.png", "public/assets/buildings/prop_sky_tree.png", "public/assets/props/prop_sunflower.png"]
+  },
+  "blocks": {
+    "style": "Image 1 is the STYLE REFERENCE: finished art from my game. Copy its art style exactly: a dark warm-brown outline (never black) of even weight, soft cel shading with one shadow tone and one highlight tone, light from the top-left, warm pastel colours of medium saturation, a subtle painted texture, rounded chunky friendly shapes, low-to-medium detail. Do NOT copy the objects of image 1.",
+    "hint": "Image {K} only shows the SHAPE idea for {WHAT}. Ignore its style completely (its heavy outline, glossy look, cloud pedestal and captions are wrong for my game).",
+    "sheet": "Draw ONE image: a sheet of {N} separate game sprites in a clean grid of {R} row(s) x {C} column(s), in exactly this order, left to right, top to bottom:",
+    "layout": "Every object is fully visible and centred in its own cell, with wide empty gaps between objects; nothing touches, overlaps or crosses into another cell. Wide landscape image.",
+    "single": "Draw ONE image containing exactly one object, centred, fully visible, with empty space around it.",
+    "background": "Background: one plain flat light-grey colour (#C8C8C8) everywhere. No gradient, no texture, no floor, no cast shadow on the background.",
+    "negative": "No text, letters, numbers, labels, captions, watermark, logo, border or frame. Not glossy, not a 3D render, not flat vector, not pixel art. No glow, no sparkles, no floating particles."
+  },
+  "views": {
+    "flora": "Each plant is seen from the side and slightly above, standing upright; its stem ends at the bottom in a very small mound of soil. No pot, no grass patch, no ground, no cloud platform.",
+    "stages": "Each row is ONE plant in 4 growth stages drawn at the SAME scale: 1 sprout (tiny, two leaves), 2 growing (young leafy plant with a closed bud, about half height), 3 ripe (full bloom, tallest), 4 wilted (the ripe plant drooping, faded brownish petals, curled leaves, about the height of stage 2). Keep the same colours and leaf shape across the row.",
+    "item": "Each icon is front-on, centred and fills most of its cell; readable at 48 px. No ground, no shadow, no pedestal or cloud platform, no container, no button frame.",
+    "building": "Three-quarter view from slightly above. The object stands on its own small fluffy white cloud patch (like image 1's cloud) with a soft contact shadow, as in image 1.",
+    "creature_left": "Body in side view facing LEFT, head turned slightly toward the viewer (three-quarter head), standing calmly, all feet on one invisible ground line. Cute and friendly, not scary.",
+    "creature_right": "Body in side view facing RIGHT, head turned slightly toward the viewer (three-quarter head), standing calmly, all feet on one invisible ground line.",
+    "backdrop": "A full-bleed 16:9 landscape scene that fills the whole image edge to edge (this one has NO grey background). Soft, low-contrast, slightly desaturated so sprites stay readable on top; the lower 60 % is calm and mostly empty for gameplay."
+  }
+}

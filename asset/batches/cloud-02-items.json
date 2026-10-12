@@ -1,0 +1,59 @@
+{
+  "id": "cloud-02-items",
+  "area": "cloud",
+  "title": "Icon vật phẩm Sobi Cloud: 6 hạt, 6 hoa, nước tinh khiết, 3 potion",
+  "decisions": "Seeds use the paper seed-packet shape of the Cloud mock-up; potion colours from ASSET_TODO (healing green, mood pink, battle purple); pure water is a clear drop-shaped vial so it never reads as a potion.",
+  "sheets": [
+    {
+      "name": "S",
+      "title": "6 gói hạt",
+      "board": "item",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["item"],
+      "hints": [{ "from": "asset/reference/sobi_cloud/cloud_items_pots.png", "box": [85, 78, 555, 105], "what": "the seed packet (a small paper envelope with a flower picture printed on it)" }],
+      "notes": "All six are the same paper seed packet, slightly tilted, top edge folded; each shows a small picture of its flower and has its own soft packet colour. No writing on the packets.",
+      "cells": [
+        { "stem": "ui_item_seed_cloud_daisy", "desc": "sky-blue packet with a white cloud-like daisy" },
+        { "stem": "ui_item_seed_dandelion", "desc": "butter-yellow packet with a pale yellow dandelion puffball" },
+        { "stem": "ui_item_seed_rainbow_rose", "desc": "pink packet with a pastel rainbow rose" },
+        { "stem": "ui_item_seed_star_orchid", "desc": "lilac packet with a violet star-shaped orchid" },
+        { "stem": "ui_item_seed_moon_lily", "desc": "deep navy packet with a pale silvery-blue lily and a small crescent moon" },
+        { "stem": "ui_item_seed_dream_bell", "desc": "periwinkle packet with blue hanging bell flowers" }
+      ]
+    },
+    {
+      "name": "P",
+      "title": "6 hoa thu hoạch",
+      "board": "item",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["item"],
+      "notes": "Each is a small bouquet of 2-3 freshly picked flowers tied with a ribbon, lying slightly diagonal.",
+      "cells": [
+        { "stem": "ui_item_flower_cloud_daisy", "desc": "Cloud Daisy bouquet: creamy-white cloud-like daisies with sky-blue tips, golden centres, light blue ribbon" },
+        { "stem": "ui_item_flower_dandelion", "desc": "Cloud Dandelion bouquet: pale yellow fluffy puffballs, yellow ribbon" },
+        { "stem": "ui_item_flower_rainbow_rose", "desc": "Rainbow Rose bouquet: roses shading pink to peach, yellow, mint and lilac, pink ribbon" },
+        { "stem": "ui_item_flower_star_orchid", "desc": "Star Orchid bouquet: violet five-point star orchids, lilac ribbon" },
+        { "stem": "ui_item_flower_moon_lily", "desc": "Moon Lily bouquet: silvery-blue trumpet lilies with crescent-curled tips, navy ribbon" },
+        { "stem": "ui_item_flower_dream_bell", "desc": "Dream Bell bouquet: periwinkle hanging bell flowers, blue ribbon" }
+      ]
+    },
+    {
+      "name": "V",
+      "title": "Nước tinh khiết + 3 potion",
+      "board": "item",
+      "grid": [1, 4],
+      "fit": "each",
+      "views": ["item"],
+      "hints": [{ "from": "asset/reference/sobi_cloud/cloud_extra_items_env.png", "box": [250, 105, 90, 100], "what": "the round glass potion flask with a cork" }],
+      "notes": "Glass is drawn with soft painted highlights, not glossy chrome.",
+      "cells": [
+        { "stem": "ui_item_pure_water", "desc": "Pure Water: a small teardrop-shaped clear glass vial with a cork, filled with sparkling pale sky-blue water, a tiny white cloud painted on the glass" },
+        { "stem": "ui_item_potion_healing", "desc": "Healing Potion: a round glass flask with a cork, fresh green liquid, a small leaf tied to the neck" },
+        { "stem": "ui_item_potion_mood", "desc": "Cheer Potion: a round glass flask with a heart-shaped pink stopper, soft pink liquid" },
+        { "stem": "ui_item_potion_battle", "desc": "Battle Potion: a taller glass flask with a cork, deep purple liquid, a little golden star charm on a string" }
+      ]
+    }
+  ]
+}

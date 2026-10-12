@@ -16,6 +16,7 @@ without reopening.
 | CORE | Matches §1–§5 on every axis (3/4 head with far eye ≈ half, head:body ≈ 1:1.6, warm dark outline ≈ 2 % H, 1 shadow + 1 highlight soft cel, top-left light, warm pastel) | May add precision to §1–§5 and new cells to the registry |
 | VARIATION | Same style, adds new costumes/poses/props | Registry cells only (content evidence); §1–§5 unchanged |
 | OUTLIER | Differs on ≥ 1 axis clearly (painterly, glossy 3D, frontal faces, big head, black outline, other lighting) | Registry entry with the reason; never an input to a brief |
+| CONTENT | A mock-up sheet for a Sobi World Area in another style (sticker outline, cloud pedestals, baked captions) that still shows *what* the Area contains | Registry entry; a cropped object may be attached as a shape hint **after** the Farm anchors (`references/families.md`), never as a style source |
 
 For pig images also run `qa.mjs` on a cut-out of one pig (via a temporary `CUTS` entry or a manual crop into
 `art_inbox/.candidates/`) — S7 and S3 settle most borderline cases objectively.

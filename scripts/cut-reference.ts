@@ -1,4 +1,4 @@
-// Cuts pigs out of the concept sheets in asset/reference/ (user request: use the reference art
+// Cuts pigs out of the concept sheets in asset/reference/sobi_farm/ (user request: use the reference art
 // itself). The sheets already carry alpha (the coloured glow is RGB under ~transparent pixels), so
 // the character is the largest opaque blob of the crop, holes filled. Each pig is then
 // scaled by one factor per sheet (relative sizes stay as painted) and placed on the 512² canvas
@@ -40,8 +40,8 @@ interface Cut {
   trait?: keyof typeof TRAITS;
 }
 
-const ENV = 'asset/reference/style_reference_environment.png';
-const PIGS = 'asset/reference/style_reference_pigs.png';
+const ENV = 'asset/reference/sobi_farm/style_reference_environment.png';
+const PIGS = 'asset/reference/sobi_farm/style_reference_pigs.png';
 /** Grid cell of the pig sheet, widened so hats and hooves crossing the cell edge stay whole. */
 const cell = (c: number, r: number): [number, number, number, number] => {
   const m = 40,
@@ -76,7 +76,7 @@ export const CUTS: Cut[] = [
   { id: 'pig_superhero', sheet: ENV, box: [770, 50, 370, 300] },
   { id: 'pig_thienlong', sheet: ENV, box: [1140, 30, 390, 320] },
   { id: 'pig_black', sheet: PIGS, box: cell(4, 0) },
-  // farmer, chef, pirate, ninja: user art in asset/animals/asset/ now (A7-1) — never cut them again.
+  // farmer, chef, pirate, ninja: user art in asset/animals/sobi_farm/asset/ now (A7-1) — never cut them again.
   { id: 'pig_nerd', sheet: PIGS, box: cell(2, 2) },
   { id: 'pig_spotted', sheet: PIGS, box: cell(5, 0) },
   { id: 'pig_pilot', sheet: PIGS, box: cell(4, 1) },

@@ -50,7 +50,7 @@ const SECTIONS: Section[] = [
   },
   {
     id: 'asset-source', icon: '📥', title: 'Asset nguồn',
-    purpose: 'Ảnh gốc trong asset/animals/asset/ và ảnh tải lên từ máy. Đưa ảnh vào game để tạo heo.',
+    purpose: 'Ảnh gốc trong asset/animals/sobi_farm/asset/ và ảnh tải lên từ máy. Đưa ảnh vào game để tạo heo.',
     steps: ['Lọc “Chưa dùng” để thấy ảnh mới.', '📥 Nhập vào game… (hoặc ⬆ Tải ảnh lên) → kiểm art id + tên hiển thị.', 'Bấm Nhập: ảnh được chép vào public/assets/pigs/base/ VÀ đăng ký dòng manifest cùng lúc.', 'Ảnh có trạng thái “Đã nhập → …”; nút “🐷 Tạo heo từ ảnh này” mở form tạo heo với ảnh đã chọn sẵn.'],
     example: ['Upload pig_pilot.png (512×512) → art id pig_pilot, tên “Heo Phi Công” → Tải lên → form Tạo heo mở sẵn → Lưu vào game.'],
     notes: ['Asset chỉ dùng được khi có đủ file + dòng manifest (type/collection species, status production). Trước bản sửa AD-1, nhập chỉ chép file nên không chọn được khi tạo heo — dùng Thư viện asset → “Đăng ký” cho ảnh cũ.', 'Ảnh phải là PNG vuông, chuẩn 512×512 nền trong, heo nhìn sang phải. Không ghi đè ảnh đang có.'],

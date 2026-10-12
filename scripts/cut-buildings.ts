@@ -1,4 +1,4 @@
-// Cuts buildings and props out of asset/building/style_reference_building_new.png (A4). That sheet
+// Cuts buildings and props out of asset/building/sobi_farm/style_reference_building_new.png (A4). That sheet
 // is opaque on a near-black backdrop: alpha comes from each pixel's colour distance to the backdrop
 // (soft ramp, colour un-mixed), then the largest blob of the crop is kept, which drops the caption
 // text under each item. Older sheet (style_reference_building.png) already has alpha and provides
@@ -11,8 +11,8 @@ import { PNG } from 'pngjs';
 import { CATALOGUE_SIZES } from './assets/sizes';
 
 const INBOX = 'art_inbox';
-const SHEET = 'asset/building/style_reference_building_new.png';
-const OLD_SHEET = 'asset/building/style_reference_building.png';
+const SHEET = 'asset/building/sobi_farm/style_reference_building_new.png';
+const OLD_SHEET = 'asset/building/sobi_farm/style_reference_building.png';
 /** Sheet px → canvas px for every item (keeps the sheet's relative sizes). */
 export const WORLD_SCALE = 1.2;
 /** The older sheet is painted ~1.2× larger (its pig house is 374 px wide, the new one 310). */

@@ -15,7 +15,7 @@ Read **only** the rows/sections named here, by line range (`resolve.mjs` prints 
 | UI icons `ui_icon_*`, `ui_btn_*` | ENV catalogue §4 | AI pack §6 | 128², readable at 44 px | env sheet palette |
 | App icon `build/icon.png` | ENV catalogue §4.4 | — | 1024² | `pig_classic` |
 | Cosmetics `acc_*` | **Out of v1** (CLAUDE.md, game spec §20.7) | AI pack §7 | Standard §4.2 | — |
-| Crops | **Backlog** (ENV catalogue §5) | — | — | — |
+| Sobi World families: `flower_*`, `crop_*`, `plot_*`, `fish_*`, `enemy_*`, `bld_*`, `bg_*`, `ui_item_*`, `npc_*` | `docs/ASSET_TODO.md` row + `content/` (names, ids) + the Area's decision file | `asset/batches/<id>.json` (`decisions`) | `scripts/assets/sizes.ts`, [families.md](families.md) | style board ([families.md](families.md)) + CONTENT hint crops |
 
 ## 2. Precedence
 

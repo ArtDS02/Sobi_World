@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Reference change detection: hashes asset/reference/* against references/reference-registry.json.
+// Reference change detection: hashes asset/reference/** against references/reference-registry.json.
 // Exit 0 = style profile is current (do NOT re-analyse images). Exit 1 = NEW/CHANGED/MISSING files
-// need workflows/reference-analysis.md (classify CORE / VARIATION / OUTLIER) before any brief uses them.
+// need workflows/reference-analysis.md (classify CORE / VARIATION / OUTLIER / CONTENT) before any brief uses them.
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -13,11 +13,21 @@ const registry = JSON.parse(
   readFileSync(join(ROOT, '.claude/skills/image-to-asset/references/reference-registry.json'), 'utf8'),
 );
 const known = new Map(registry.files.map((f) => [f.file, f]));
+
+/** Every image under dir (recursive), as repo-relative posix paths. */
+function images(dir) {
+  const out = [];
+  for (const e of readdirSync(join(ROOT, dir), { withFileTypes: true })) {
+    const rel = `${dir}/${e.name}`;
+    if (e.isDirectory()) out.push(...images(rel));
+    else if (/\.(png|jpe?g|webp)$/i.test(e.name)) out.push(rel);
+  }
+  return out;
+}
+
 let dirty = 0;
 const seen = new Set();
-for (const name of readdirSync(join(ROOT, REF_DIR))) {
-  if (!/\.(png|jpe?g|webp)$/i.test(name)) continue;
-  const file = `${REF_DIR}/${name}`;
+for (const file of images(REF_DIR).sort()) {
   seen.add(file);
   const sha16 = createHash('sha256').update(readFileSync(join(ROOT, file))).digest('hex').slice(0, 16);
   const k = known.get(file);

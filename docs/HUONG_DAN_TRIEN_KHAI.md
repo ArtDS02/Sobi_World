@@ -401,7 +401,7 @@ Bạn là art director kiêm lập trình viên của dự án Sobi World.
 NHIỆM VỤ: Giai đoạn 14 — thay toàn bộ placeholder bằng art cuối. Không đổi logic, content hay save.
 
 VIỆC CẦN LÀM (làm theo từng Area, báo cáo sau mỗi Area):
-1. Art theo ASSET_TODO.md và ảnh tham khảo trong docs/reference-assets/ và asset/reference/.
+1. Art theo ASSET_TODO.md, kế hoạch asset/batches/README.md và ảnh tham khảo trong asset/reference/ (decision 022: phong cách Sobi Farm, Gemini vẽ sheet).
 2. Animation nhân vật, sinh vật, cảnh; VFX (lên cấp, mở khóa, Codex, thời tiết, sự kiện).
 3. Nhạc nền mỗi Area và Sảnh; âm thanh tương tác; chỉnh âm lượng đã có ở Cài đặt.
 4. Polish UI (bố cục, chuyển cảnh, khoảng cách).

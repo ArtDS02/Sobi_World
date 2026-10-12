@@ -5,6 +5,7 @@
 | **R** reference cut | Registry cell for this id is EXACT (or PARTIAL and the gap is acceptable/reported), `cuttable: true` | Identical to reference | Full |
 | **R+tint** | Plain recolour of a CORE pig (coat colour variants like `pig_white`, `pig_brown`) | Identical shading | Full |
 | **X** image model + references | New concept, PARTIAL gap not acceptable, any sleep frame, regenerating OUTLIER pigs | High if the anchor image is attached | Needs an image model: tool in session, else the user runs it |
+| **G** Gemini sheet via the owner | Every new painted asset of an Area (GĐ14): several of one family per image | High: style board attached, one hand per sheet | Owner pastes the prepared prompt; the rest is scripted — [batch.md](batch.md) |
 | **K** code kit (`scripts/art/*`) | fx, UI icons, props, env layers (existing source of those) | Medium; must still pass V | Full |
 
 **K is not allowed for pigs** until its rig passes S7/S5 on a `pig_classic` redraw — today it draws the frontal
