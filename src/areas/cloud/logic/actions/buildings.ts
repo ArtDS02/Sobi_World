@@ -3,21 +3,28 @@ import { RECIPES } from '../../../../core/config/recipes';
 import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
 import { techBonus, recipeLocked } from '../../../../core/config/tech';
+import { WORLD_LEVELS } from '../../../../core/config/progression';
+import { worldLevel } from '../../../../core/progression/levels';
 import { affordableBatches, batchesReady, collectBatches, scaled, sped } from '../../../../core/production/production';
 import { emptyPlot } from '../../../../systems/plants/plot';
 import { CAULDRON, CB, WATER_ITEM, springLevel } from '../config/content';
 import { nextExpansion, nextSpringLevel, springStock } from '../derived';
 import { fits, give, pay, put, runCloud, take, type CloudResult } from './kit';
 
-/** Opens the next plots. */
+/** Opens the next plots: more on the first tier, then a whole cloud tier at a time (decision 023). */
 export function buyPlots(world: WorldSave, ctx: ActionContext): CloudResult {
   return runCloud(world, ctx, (w, g) => {
     const next = nextExpansion(g);
     if (!next) return { ok: false, error: 'MAX_SLOTS_REACHED' };
+    if (worldLevel(w, WORLD_LEVELS) < next.level) return { ok: false, error: 'LEVEL_TOO_LOW' };
     const paid = pay(w, -next.price, 'CLOUD_PLOTS', ctx, { note: `${next.plots} plots` });
     if (!paid.ok) return paid;
     const plots = [...g.plots, ...Array.from({ length: next.plots - g.plots.length }, emptyPlot)];
-    return { ok: true, world: put(paid.state, { ...g, plots }), events: [{ type: 'CLOUD_PLOTS_BOUGHT', plots: next.plots, gold: next.price }] };
+    return {
+      ok: true,
+      world: put(paid.state, { ...g, plots }),
+      events: [{ type: 'CLOUD_PLOTS_BOUGHT', plots: next.plots, gold: next.price, ...(next.tier !== null ? { tier: next.tier } : {}) }],
+    };
   });
 }
 

@@ -1,10 +1,19 @@
 {
   "startPlots": 6,
+  "plotsPerTier": 15,
   "plotExpansions": [
     { "plots": 9, "price": 300 },
     { "plots": 12, "price": 800 },
     { "plots": 15, "price": 2000 },
-    { "plots": 18, "price": 5000 }
+    { "plots": 30, "price": 5000, "level": 9 },
+    { "plots": 45, "price": 8000, "level": 10 },
+    { "plots": 60, "price": 12000, "level": 11 },
+    { "plots": 75, "price": 18000, "level": 12 },
+    { "plots": 90, "price": 26000, "level": 14 },
+    { "plots": 105, "price": 36000, "level": 15 },
+    { "plots": 120, "price": 50000, "level": 17 },
+    { "plots": 135, "price": 70000, "level": 18 },
+    { "plots": 150, "price": 100000, "level": 20 }
   ],
   "dryGrowthRate": 0.25,
   "waterHours": 4,

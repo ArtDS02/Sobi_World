@@ -84,21 +84,22 @@
     padding: 0 $sp-3;
   }
 
+  // The dock follows the owner's layout mock-up (decision 023): a soft cream tray, white flower cards, coloured buttons.
   &__dock {
     display: flex;
     flex-wrap: wrap;
     gap: $sp-3;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
-    padding: $sp-2 $sp-3;
+    padding: $sp-2 $sp-4;
     pointer-events: auto;
-    background: rgba(250, 244, 255, 0.93);
-    border: 3px solid $c-wood-dark;
-    border-radius: $radius-md;
-    box-shadow: $hud-shadow;
+    background: linear-gradient(180deg, rgba(255, 252, 246, 0.97), rgba(255, 244, 236, 0.97));
+    border: 3px solid #f1d9c6;
+    border-radius: 2rem;
+    box-shadow: 0 6px 18px rgba(120, 90, 160, 0.25), inset 0 2px 0 #ffffff;
   }
 
-  &__palette { display: flex; gap: $sp-2; }
+  &__palette { display: flex; gap: $sp-2; padding-right: $sp-3; border-right: 2px solid #f1e0d2; }
 
   &__seed {
     display: flex;
@@ -109,20 +110,34 @@
     font: inherit;
     color: $c-text;
     cursor: pointer;
-    background: $c-surface;
-    border: 3px solid $c-border;
-    border-radius: $radius-md;
+    background: #ffffff;
+    border: 2px solid #f1dfd0;
+    border-radius: 1rem;
+    box-shadow: 0 3px 0 #f3e3d6;
+    transition: transform $dur-fast ease-out;
 
-    b { font-size: $fs-sm; }
+    b { font-size: $fs-sm; color: #4a3a5a; }
     small { font-size: $fs-xs; color: $c-text-muted; }
-    &:hover { filter: brightness(1.04); }
+    &:hover { transform: translateY(-2px); }
     &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
-    &.is-selected { background: #efe6ff; border-color: #8a6cd6; box-shadow: 0 0 0 2px #8a6cd6; }
+    &.is-selected { background: #f1eaff; border-color: #8a6cd6; box-shadow: 0 0 0 2px #8a6cd6, 0 3px 0 #c9b8f0; }
   }
 
-  &__seed-icon { width: 2.6rem; height: 2.6rem; image-rendering: pixelated; }
+  &__seed-icon { width: 3rem; height: 3rem; object-fit: contain; }
 
   &__bulk { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: flex-start; }
+}
+
+// Coloured bulk buttons (mock-up palette). Disabled ones keep the shared c-button look.
+.cloud-btn {
+  border-radius: 999px;
+  font-weight: $fw-bold;
+  &:not(:disabled) { border-color: transparent; box-shadow: 0 3px 0 rgba(90, 60, 80, 0.25); }
+  &--cream:not(:disabled) { color: #8a5a4a; background: #fbe6dc; }
+  &--rose:not(:disabled) { color: #ffffff; background: linear-gradient(180deg, #f6788c, #e5506a); }
+  &--sun:not(:disabled) { color: #7a4a24; background: linear-gradient(180deg, #ffe48a, #ffc94a); }
+  &--lilac:not(:disabled) { color: #4a3a82; background: linear-gradient(180deg, #e6e2ff, #c9c0f6); }
+  &--berry:not(:disabled) { color: #ffffff; background: linear-gradient(180deg, #f4677a, #d9405a); }
 }
 
 .cloud-dialog {

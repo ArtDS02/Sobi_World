@@ -8,6 +8,16 @@
 
 ## Nhật ký
 
+### 2026-10-12 — GĐ14 Cloud: làm lại cảnh theo ảnh mẫu + 10 tầng mây (decision 023)
+✅ Đã làm: chủ dự án không duyệt màn Cloud (bố cục placeholder: khối trắng, trời phẳng, nhãn chữ trần) và gửi ảnh mẫu bố cục; yêu cầu thêm tầng mây.
+1. **10 tầng mây × 15 ô** (mở theo cấp + vàng, chỉ thêm ô): content `plotsPerTier` + `plotExpansions.level`, `nextExpansion` trả `tier` / `level`, `buyPlots` chặn `LEVEL_TOO_LOW`, toast "Đã mở <tầng>!", **save Cloud v2** (18 ô cũ → mở trọn tầng 2), Admin có nhãn cho trường mới, chuỗi Việt / Anh cho 10 tên tầng.
+2. **Cảnh mới theo mẫu**: nền vẽ phủ kín màn hình rộng, lưới 5×3, suối / vạc bên trái, bảng gỗ nhãn, băng rôn tên tầng + nút lên / xuống, chim mây; thanh dưới hiện hình hoa, nút màu, icon không còn bị vỡ điểm ảnh. Sửa thêm: ảnh nạp muộn không còn kẹt ở ô vuông dự phòng.
+3. **Batch `cloud-04-scene`** (3 lượt Gemini): nền sạch sửa từ ảnh mẫu, bảng / băng rôn / nút, chim + Cú Giả Kim; `batch.mjs` hỗ trợ sheet "sửa ảnh" và gợi ý "giống y kiểu dáng". Ảnh mẫu lưu ở `asset/reference/sobi_cloud/cloud_layout_mock.png`.
+🧪 Đã kiểm tra: `npm run check` xanh (1.374 test, thêm 4 test tầng mây + migration); chụp màn Cloud 1916×949 bằng Edge chạy ẩn với save cuối game (save được nâng v2, mở tới tầng 8, hiển thị đúng; phần trang trí còn placeholder).
+⚠️ Lưu ý: bot kinh tế mở tới tầng 8 trong 45 ngày → cần chơi thử, chỉnh giá ở Admin nếu quá nhanh. Nền hiện là placeholder cho tới khi có ảnh Gemini.
+👉 Bạn cần: tạo 3 ảnh theo `asset/batches/cloud-04-scene.md` (nên dùng Google AI Studio để không có watermark), rồi báo "cắt batch cloud-04".
+➡️ Tiếp theo: cắt → đặt nền, căn lại vị trí theo nền thật → chụp lại → duyệt → Garden.
+
 ### 2026-10-12 — GĐ14 Cloud: 43/44 asset art thật (chờ duyệt)
 ✅ Đã làm: chủ dự án tạo 8 sheet Gemini theo `asset/batches/cloud-0*.md`; agent cắt (`batch.mjs cut`, cả 8 sheet khớp lưới), duyệt bảng ứng viên, giao 43 asset, `art:process` (status `production`), chạy game bằng save cuối game (`dev:rich-save` + `dev:sandbox`): vườn mây, suối, vạc, 6 gói hạt, icon hoa / potion trong Kho hiển thị đúng, không lỗi console.
 🧪 Đã kiểm tra: `npm run check` xanh (1.370 test), `assets:check` OK, `qa.mjs` không FAIL (T8 viền mờ ở cây thân mảnh do thu nhỏ ~0,5×: chấp nhận).

@@ -10,6 +10,7 @@
   },
   "blocks": {
     "style": "Image 1 is the STYLE REFERENCE: finished art from my game. Copy its art style exactly: a dark warm-brown outline (never black) of even weight, soft cel shading with one shadow tone and one highlight tone, light from the top-left, warm pastel colours of medium saturation, a subtle painted texture, rounded chunky friendly shapes, low-to-medium detail. Do NOT copy the objects of image 1.",
+    "lookHint": "Image {K} is the accepted look of {WHAT}: match its shape, colours and shading closely, but leave out any text or letters.",
     "hint": "Image {K} only shows the SHAPE idea for {WHAT}. Ignore its style completely (its heavy outline, glossy look, cloud pedestal and captions are wrong for my game).",
     "sheet": "Draw ONE image: a sheet of {N} separate game sprites in a clean grid of {R} row(s) x {C} column(s), in exactly this order, left to right, top to bottom:",
     "layout": "Every object is fully visible and centred in its own cell, with wide empty gaps between objects; nothing touches, overlaps or crosses into another cell. Wide landscape image.",

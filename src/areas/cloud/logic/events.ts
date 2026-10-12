@@ -7,7 +7,7 @@ export type CloudEvent =
   | { type: 'CLOUD_HARVESTED'; flowerId: string; quantity: number; plots: number; wilted: number; left: number; night: boolean }
   | { type: 'CLOUD_FLOWER_RIPE'; flowerId: string; count: number }
   | { type: 'CLOUD_FLOWER_WILTED'; flowerId: string; count: number }
-  | { type: 'CLOUD_PLOTS_BOUGHT'; plots: number; gold: number }
+  | { type: 'CLOUD_PLOTS_BOUGHT'; plots: number; gold: number; /** The tier it opened (0-based), if any. */ tier?: number }
   | { type: 'CLOUD_WATER_COLLECTED'; quantity: number; left: number }
   | { type: 'CLOUD_SPRING_UPGRADED'; level: number; gold: number; materials: Readonly<Record<string, number | undefined>> }
   | { type: 'CLOUD_CAULDRON_BUILT'; gold: number }

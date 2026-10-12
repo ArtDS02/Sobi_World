@@ -1,0 +1,112 @@
+{
+  "id": "cloud-04-scene",
+  "area": "cloud",
+  "title": "Cảnh Sobi Cloud theo mẫu của chủ dự án: nền đảo mây, bảng gỗ, băng rôn tầng, nút tầng, chim mây, Cú Giả Kim",
+  "decisions": "Decision 023: the owner's mock-up (asset/reference/sobi_cloud/cloud_layout_mock.png) is the accepted look of the Cloud scene. bg_cloud is that picture with everything interactive or written removed, so the game draws plots, buildings, labels and HUD at the same places. Planks and banner are blank: the game writes their text (Vietnamese / English).",
+  "sheets": [
+    {
+      "name": "E",
+      "title": "Nền đảo mây (sửa từ ảnh mẫu)",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "asset/reference/sobi_cloud/cloud_layout_mock.png",
+      "prompt": "Edit this game screenshot into a clean background picture for the game. Keep the exact same image size, framing, art style, colours and lighting. REMOVE completely and paint natural scenery in their place: every UI element (the top bar with coins, water, level and the three buttons at the top right; the 'Sương mù' chip; the whole bottom bar with flower cards and buttons; the chicken portrait at the bottom left), all text and every wooden label sign ('Suối mây', 'Vạc nấu', 'Vườn Trên Mây'), the 15 cloud plots with their soil and sprouts (the cream cloud field in the middle becomes empty, smooth and soft), the stone spring with its water, the black cauldron with its fire and firewood, and the flying white bird at the top. KEEP: the sky, floating islands, rainbow, hot-air balloon, the island shape and its cream field, the wooden fence, flowers, bushes, lanterns, the wooden bridge, the waterfall, the empty wooden signpost with the cloud on the right, and the two grassy flower banks at the left where the spring and the cauldron stood (keep them as empty grassy spots ready for a building).",
+      "cells": [
+        {
+          "stem": "bg_cloud",
+          "desc": "the sky island backdrop"
+        }
+      ]
+    },
+    {
+      "name": "D",
+      "title": "Bảng gỗ, băng rôn, 2 nút tầng",
+      "board": "item",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "item"
+      ],
+      "hints": [
+        {
+          "from": "asset/reference/sobi_cloud/cloud_layout_mock.png",
+          "box": [
+            300,
+            395,
+            170,
+            62
+          ],
+          "what": "the wooden label plank",
+          "look": true
+        },
+        {
+          "from": "asset/reference/sobi_cloud/cloud_layout_mock.png",
+          "box": [
+            720,
+            635,
+            345,
+            95
+          ],
+          "what": "the title banner plank with flowers",
+          "look": true
+        }
+      ],
+      "notes": "Match image 2 and image 3 closely; only leave their writing area empty. The two round buttons belong to the same set (same wood and cream).",
+      "cells": [
+        {
+          "stem": "prop_sign_plank",
+          "desc": "a blank horizontal rounded wooden plank sign, about 3 times wider than tall, with a small fluffy white cloud on its left end and an empty smooth area for text"
+        },
+        {
+          "stem": "prop_title_banner",
+          "desc": "a blank wide rounded wooden banner plank, about 3.5 times wider than tall, decorated at both ends with small clusters of yellow and white flowers and green leaves, a small white cloud at the left end, empty smooth centre for text"
+        },
+        {
+          "stem": "ui_btn_tier_up",
+          "desc": "a round cream button with a soft wooden rim and a chunky pastel-violet arrow pointing UP, a tiny white cloud under the arrow"
+        },
+        {
+          "stem": "ui_btn_tier_down",
+          "desc": "the same round cream button with the chunky pastel-violet arrow pointing DOWN, a tiny white cloud above the arrow"
+        }
+      ]
+    },
+    {
+      "name": "C",
+      "title": "Chim mây + Bác Cú Giả Kim",
+      "board": "creature",
+      "grid": [
+        1,
+        2
+      ],
+      "fit": "each",
+      "hints": [
+        {
+          "from": "asset/reference/sobi_cloud/cloud_layout_mock.png",
+          "box": [
+            1285,
+            70,
+            115,
+            95
+          ],
+          "what": "the little cloud bird",
+          "look": true
+        }
+      ],
+      "notes": "Two characters, both full body, cute and friendly, in the style of image 1.",
+      "cells": [
+        {
+          "stem": "prop_cloud_bird",
+          "desc": "the little round white cloud bird from image 2 flying, small wings spread, a green leaf hat with a pink flower, pink cheeks, facing left"
+        },
+        {
+          "stem": "prop_npc_alchemist",
+          "desc": "Old Owl the Alchemist: a plump kindly brown owl standing, round golden glasses, a lilac wizard scarf with little star dots, a small brown satchel with a potion bottle peeking out, nothing held in the wings, body facing right with the head turned toward the viewer"
+        }
+      ]
+    }
+  ]
+}

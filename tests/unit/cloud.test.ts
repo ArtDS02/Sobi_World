@@ -6,11 +6,14 @@ import { SAVE_CODEC, parseWorldSave } from '../../src/app/saveCodec';
 import { cloudArea } from '../../src/areas/cloud';
 import { buildCauldron, buyPlots, collectBrew, collectWater, startBrew, upgradeSpring } from '../../src/areas/cloud/logic/actions/buildings';
 import { fertilizePlots, harvestFlowers, plantFlowers, waterPlots } from '../../src/areas/cloud/logic/actions/plants';
-import { CB, CLOUD_AREA_ID, FLOWERS, FLOWER_LIST, SPRING_LEVELS } from '../../src/areas/cloud/logic/config/content';
+import { CB, CLOUD_AREA_ID, FLOWERS, FLOWER_LIST, PLOTS_PER_TIER, SPRING_LEVELS, TIER_COUNT } from '../../src/areas/cloud/logic/config/content';
+import { viewableTiers } from '../../src/areas/cloud/scene/cloudView';
+import { WORLD_LEVELS } from '../../src/core/config/progression';
+import { emptyPlot } from '../../src/systems/plants/plot';
 import { cauldronReady, msToNextWater, nextExpansion, nextSpringLevel, plotViews, springStock } from '../../src/areas/cloud/logic/derived';
 import { cloudOf, withCloud } from '../../src/areas/cloud/logic/save/lens';
 import { simulateCloud } from '../../src/areas/cloud/logic/simulate';
-import { cloudStateSchema } from '../../src/areas/cloud/logic/state';
+import { CLOUD_MIGRATIONS, cloudStateSchema } from '../../src/areas/cloud/logic/state';
 import { cloudSuggestions } from '../../src/areas/cloud/logic/suggest';
 import { cloudSummaryLines } from '../../src/areas/cloud/logic/summary';
 import { cloudEventsToWorld } from '../../src/areas/cloud/logic/worldEvents';
@@ -187,6 +190,63 @@ describe('flowers', () => {
     expect(cloudOf(r).plots).toHaveLength(next.plots);
     expect(r.wallet.coins).toBe(100_000 - next.price);
     expect(err(buyPlots(cloudWorld({}, 0), ctxAt(T0)))).toBe('INSUFFICIENT_GOLD');
+  });
+});
+
+describe('cloud tiers (decision 023)', () => {
+  /** `w` with `plots` owned plots and the world level `level`. */
+  const at = (w: WorldSave, plots: number, level: number): WorldSave => {
+    const xp = WORLD_LEVELS.xp[level - 1]!;
+    const g = cloudOf(w);
+    const grown = withCloud(w, { ...g, plots: Array.from({ length: plots }, (_, i) => g.plots[i] ?? emptyPlot()) });
+    return { ...grown, progression: { ...grown.progression, areas: { ...grown.progression.areas, world: { xp } } } };
+  };
+
+  it('content: ten tiers of fifteen plots, each later tier dearer and later', () => {
+    expect(PLOTS_PER_TIER).toBe(15);
+    expect(TIER_COUNT).toBe(10);
+    const tiers = CB.plotExpansions.filter((e) => e.plots > PLOTS_PER_TIER);
+    expect(tiers.map((e) => e.plots)).toEqual([30, 45, 60, 75, 90, 105, 120, 135, 150]);
+    tiers.forEach((e, i) => {
+      expect(e.level).toBeDefined();
+      if (i > 0) expect(e.price).toBeGreaterThan(tiers[i - 1]!.price);
+      if (i > 0) expect(e.level!).toBeGreaterThanOrEqual(tiers[i - 1]!.level!);
+    });
+  });
+
+  it('the first tier grows in steps, then a whole tier opens at once and needs its world level', () => {
+    const w = cloudWorld();
+    expect(nextExpansion(cloudOf(w))).toMatchObject({ plots: 9, tier: null, level: 1 });
+    const full = at(w, 15, 1);
+    const next = nextExpansion(cloudOf(full))!;
+    expect(next).toMatchObject({ plots: 30, tier: 1 });
+    expect(err(buyPlots(full, ctxAt(T0)))).toBe('LEVEL_TOO_LOW');
+    const r = buyPlots(at(w, 15, next.level), ctxAt(T0));
+    expect(r.ok).toBe(true);
+    const opened = (r as { state: WorldSave }).state;
+    expect(cloudOf(opened).plots).toHaveLength(30);
+    expect(opened.wallet.coins).toBe(100_000 - next.price);
+    expect((r as { events: unknown[] }).events).toContainEqual(expect.objectContaining({ type: 'CLOUD_PLOTS_BOUGHT', plots: 30, tier: 1 }));
+    expect(nextExpansion(cloudOf(at(w, 150, 20)))).toBeNull();
+  });
+
+  it('the scene may look at every owned tier and the next closed one', () => {
+    expect(viewableTiers(6, TIER_COUNT)).toBe(1);
+    expect(viewableTiers(15, TIER_COUNT)).toBe(2);
+    expect(viewableTiers(30, TIER_COUNT)).toBe(3);
+    expect(viewableTiers(150, TIER_COUNT)).toBe(10);
+  });
+
+  it('save v1 → v2: a half-open second tier (18 plots) is completed for free, crops kept', () => {
+    const w = cloudWorld();
+    const g = cloudOf(w);
+    const plots = Array.from({ length: 18 }, (_, i) => (i === 0 ? { ...emptyPlot(), cropId: FLOWER_LIST[0]!.id } : emptyPlot()));
+    const v1 = { ...g, version: 1, plots };
+    const migrated = cloudStateSchema.parse(CLOUD_MIGRATIONS[1]!(v1));
+    expect(migrated.version).toBe(2);
+    expect(migrated.plots).toHaveLength(30);
+    expect(migrated.plots[0]!.cropId).toBe(FLOWER_LIST[0]!.id);
+    expect(CLOUD_MIGRATIONS[1]!({ ...g, version: 1, plots: plots.slice(0, 12) }).plots).toHaveLength(12);
   });
 });
 

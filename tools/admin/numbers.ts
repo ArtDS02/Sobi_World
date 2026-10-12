@@ -136,6 +136,8 @@ const LABEL: Record<string, string> = {
   startPlots: 'Số ô đất ban đầu',
   'plotExpansions.plots': 'Mở lên tổng số ô',
   'plotExpansions.price': 'Giá mở ô',
+  'plotExpansions.level': 'Cấp thế giới cần (mở tầng mây)',
+  plotsPerTier: 'Số ô mỗi tầng mây',
   dryGrowthRate: 'Tốc độ lớn khi khô (0–1)',
   waterHours: 'Tưới có tác dụng bao nhiêu giờ',
   'fertilizer.timeFactor': 'Phân bón: hệ số thời gian (0,75 = nhanh 25%)',

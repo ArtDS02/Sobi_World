@@ -4,9 +4,9 @@ import { z } from 'zod';
 import type { Raw } from '../../../core/save/migrate';
 import type { ProductionJob } from '../../../core/production/production';
 import { emptyPlot, type PlotState } from '../../../systems/plants/plot';
-import { CB, MAX_SPRING_LEVEL } from './config/content';
+import { CB, MAX_PLOTS, MAX_SPRING_LEVEL, PLOTS_PER_TIER } from './config/content';
 
-export const CLOUD_STATE_VERSION = 1;
+export const CLOUD_STATE_VERSION = 2;
 
 const time = z.number().finite();
 
@@ -43,7 +43,15 @@ export type CloudState = z.infer<typeof cloudStateSchema>;
 export type CloudPlot = PlotState;
 export type CloudJob = ProductionJob;
 
-export const CLOUD_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {};
+export const CLOUD_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
+  // v2 (decision 023): plots stand on tiers of 15. The old last step (15 → 18 plots, 5 000 Sobi Coin) left a tier half open:
+  // it is completed for free, as the second tier now costs the same.
+  1: (slice) => {
+    const plots = Array.isArray(slice.plots) ? slice.plots : [];
+    const whole = plots.length > PLOTS_PER_TIER ? Math.min(MAX_PLOTS, Math.ceil(plots.length / PLOTS_PER_TIER) * PLOTS_PER_TIER) : plots.length;
+    return { ...slice, version: 2, plots: [...plots, ...Array.from({ length: whole - plots.length }, emptyPlot)] };
+  },
+};
 
 export const initialCloud = (now: number): CloudState => ({
   version: CLOUD_STATE_VERSION,

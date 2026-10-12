@@ -5,7 +5,7 @@ import { RECIPES } from '../../../core/config/recipes';
 import { batchesReady } from '../../../core/production/production';
 import type { PlotStage } from '../../../systems/plants/plot';
 import { growthShare, harvestYield, plotStage } from '../../../systems/plants/plot';
-import { CB, FLOWERS, MAX_PLOTS, MAX_SPRING_LEVEL, PLOT_RULES, SPRING_LEVELS, springLevel } from './config/content';
+import { CB, FLOWERS, MAX_PLOTS, MAX_SPRING_LEVEL, PLOTS_PER_TIER, PLOT_RULES, SPRING_LEVELS, springLevel, tierOf } from './config/content';
 import type { CloudState } from './state';
 
 /** Is it the night period (the night flowers give more then, the lights in the scene)? */
@@ -32,9 +32,27 @@ export function nextSpringLevel(g: Pick<CloudState, 'spring'>): { level: number;
   return { level: g.spring.level + 1, price: next.price, materials: next.materials };
 }
 
-/** The next plot expansion, or null at the top. */
-export const nextExpansion = (g: Pick<CloudState, 'plots'>): { plots: number; price: number } | null =>
-  g.plots.length >= MAX_PLOTS ? null : (CB.plotExpansions.find((e) => e.plots > g.plots.length) ?? null);
+export interface Expansion {
+  /** Plots owned after it. */
+  plots: number;
+  price: number;
+  /** World level it needs (1 = none). */
+  level: number;
+  /** The tier it opens (0-based), or null when it adds plots to the first tier. */
+  tier: number | null;
+}
+
+/** The next plot expansion (more plots on the first tier, then a whole new tier), or null at the top. */
+export function nextExpansion(g: Pick<CloudState, 'plots'>): Expansion | null {
+  if (g.plots.length >= MAX_PLOTS) return null;
+  const step = CB.plotExpansions.find((e) => e.plots > g.plots.length);
+  if (!step) return null;
+  const tier = step.plots > PLOTS_PER_TIER ? tierOf(step.plots - 1) : null;
+  return { plots: step.plots, price: step.price, level: step.level ?? 1, tier };
+}
+
+/** Tiers the player owns at least one plot on (1 or more). */
+export const ownedTiers = (g: Pick<CloudState, 'plots'>): number => tierOf(g.plots.length - 1) + 1;
 
 /** A growing plot that pure water helps now: not ripe and not wet already. */
 export const needsWater = (plot: Pick<CloudState['plots'][number], 'cropId' | 'ripeAt' | 'wetUntil'>, now: number): boolean =>

@@ -53,6 +53,10 @@ export const PLOT_RULES: PlotRules = {
 };
 export const WATER_MS = CB.waterHours * HOUR;
 export const MAX_PLOTS = CB.plotExpansions.at(-1)?.plots ?? CB.startPlots;
+/** Plots on one cloud tier; plot `index` stands on tier `tierOf(index)` (0-based). */
+export const PLOTS_PER_TIER = CB.plotsPerTier;
+export const TIER_COUNT = Math.ceil(MAX_PLOTS / PLOTS_PER_TIER);
+export const tierOf = (plotIndex: number): number => Math.floor(plotIndex / PLOTS_PER_TIER);
 
 export const WATER_ITEM = 'item_pure_water';
 export const FERTILIZER_ITEM = 'item_fertilizer';

@@ -322,7 +322,15 @@ export const vi = {
     harvest: "Hái hết",
     plantAll: "Gieo kín ô trống",
     expand: "Mở thêm ô ({gold})",
+    expandTier: "Mở tầng mây {n} ({gold})",
     expandMax: "Đã mở hết ô",
+    needLevel: "Cần cấp {level}",
+    // Cloud tiers (decision 023): one tier of 15 plots on screen at a time.
+    tierNames: ["Vườn Trên Mây", "Tầng Mây Cầu Vồng", "Tầng Mây Hoàng Hôn", "Tầng Mây Bồ Công Anh", "Tầng Mây Ngọc Bích", "Tầng Mây Hoa Anh Đào", "Tầng Mây Sao Băng", "Tầng Mây Ánh Trăng", "Tầng Mây Hoàng Kim", "Đỉnh Mây"],
+    tierTitle: "Tầng {n} · {name}",
+    tierUp: "Lên tầng trên",
+    tierDown: "Xuống tầng dưới",
+    tierLocked: "Tầng {n} chưa mở: cần cấp {level} và {gold}",
     // Reasons a button is off.
     noCrops: "Chưa có hoa",
     nothingRipe: "Chưa có hoa nở",
@@ -349,6 +357,8 @@ export const vi = {
     // Expanding.
     expandTitle: "Mở thêm ô hoa",
     expandBody: "Mở thêm {count} ô, lên {plots} ô.",
+    expandTierTitle: "Mở tầng mây mới",
+    expandTierBody: "Mở {name} (tầng {n}): thêm {count} ô hoa, lên {plots} ô.",
     buy: "Mua ({gold})",
     // Spring.
     springTitle: "Suối mây",
@@ -389,6 +399,7 @@ export const vi = {
       ripe: "{count} ô hoa đã nở!",
       wilted: "{count} ô hoa đã héo, sản lượng giảm một nửa",
       plots: "Đã mở lên {plots} ô",
+      tier: "Đã mở {name}!",
       water: "Hứng {quantity} Nước tinh khiết",
       waterLeft: "Hứng {quantity} Nước tinh khiết. Túi đồ đầy, còn {left} chưa lấy.",
       spring: "Suối mây lên cấp {level}",

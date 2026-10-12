@@ -10,7 +10,7 @@ import { fertilizePlots, harvestFlowers, waterPlots } from '../logic/actions/pla
 import { CB } from '../logic/config/content';
 import { nextExpansion } from '../logic/derived';
 import { cloudOf } from '../logic/save/lens';
-import { cauldronVm, plotCardVm, springVm, type ButtonVm, type CloudRun, type RecipeVm } from './cloudVm';
+import { cauldronVm, expandVm, plotCardVm, springVm, type ButtonVm, type CloudRun, type RecipeVm } from './cloudVm';
 
 /** A button that always says why it is off. */
 export function actionButton(vm: ButtonVm, onClick: () => void, variant = ''): HTMLElement {
@@ -55,14 +55,21 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
   const run = (action: CloudRun) => d.dispatch(action);
 
   function openExpand() {
-    openLive(vi.cloud.expandTitle, (w, close) => {
+    const now = d.world();
+    const first = now ? nextExpansion(cloudOf(now)) : null;
+    openLive(first?.tier != null ? vi.cloud.expandTierTitle : vi.cloud.expandTitle, (w, close) => {
       const next = nextExpansion(cloudOf(w));
       if (!next) return el('p', { text: vi.cloud.expandMax });
-      const vm: ButtonVm = { label: t(vi.cloud.buy, { gold: formatInt(next.price) }), reason: w.wallet.coins < next.price ? vi.cloud.noGold : null };
+      const vm: ButtonVm = { label: t(vi.cloud.buy, { gold: formatInt(next.price) }), reason: expandVm(w, next).reason };
+      const count = next.plots - cloudOf(w).plots.length;
+      const body =
+        next.tier !== null
+          ? t(vi.cloud.expandTierBody, { name: vi.cloud.tierNames[next.tier] ?? '', n: next.tier + 1, count, plots: next.plots })
+          : t(vi.cloud.expandBody, { count, plots: next.plots });
       return el(
         'div',
         { class: 'cloud-dialog' },
-        el('p', { text: t(vi.cloud.expandBody, { count: next.plots - cloudOf(w).plots.length, plots: next.plots }) }),
+        el('p', { text: body }),
         actionButton(vm, () => {
           run((s, c) => buyPlots(s, c));
           close();

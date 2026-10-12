@@ -9,7 +9,7 @@ import { RECIPES, recipesOf } from '../../../core/config/recipes';
 import { TECHS, recipeLocked, techBonus } from '../../../core/config/tech';
 import { sped } from '../../../core/production/production';
 import { WORLD_LEVELS } from '../../../core/config/progression';
-import { levelProgress, worldXp } from '../../../core/progression/levels';
+import { levelProgress, worldLevel, worldXp } from '../../../core/progression/levels';
 import { affordableBatches, batchesDone, batchesReady, nextBatchAt, jobEndsAt, type Recipe } from '../../../core/production/production';
 import type { WorldSave } from '../../../core/save/world';
 import { mulberry32 } from '../../../core/rng';
@@ -18,7 +18,7 @@ import { formatDuration, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { msToRipe, plotStage } from '../../../systems/plants/plot';
 import { CAULDRON, CB, FLOWER_LIST, FLOWERS, PLOT_RULES, WATER_ITEM, springLevel } from '../logic/config/content';
-import { msToNextWater, nextExpansion, nextSpringLevel, plotViews, springStock } from '../logic/derived';
+import { msToNextWater, nextExpansion, nextSpringLevel, plotViews, springStock, type Expansion } from '../logic/derived';
 import { cloudOf } from '../logic/save/lens';
 
 export type CloudRun = (world: WorldSave, ctx: ActionContext) => ActionResultOf<WorldSave>;
@@ -74,7 +74,8 @@ export function paletteVm(world: WorldSave, selected: string): SeedVm[] {
   return FLOWER_LIST.map((f) => ({
     flowerId: f.id,
     name: f.nameVi,
-    art: itemArtId(f.seedItem),
+    // The flower it grows (owner's layout mock-up): a picture reads faster than six look-alike seed packets.
+    art: itemArtId(f.produceItem),
     line: t(vi.cloud.seedLine, { price: gold(ITEMS[f.seedItem as ItemId].priceGold), count: world.inventory.items[f.seedItem] ?? 0 }),
     growsIn: t(vi.cloud.growsIn, { time: formatDuration(f.growMs) }),
     kind: vi.cloud.kind[f.kind],
@@ -111,10 +112,15 @@ export function bulkVm(world: WorldSave, now: number, selected: string, run: { c
       label: `${vi.cloud.plantAll}${FLOWERS[selected] ? ` (${FLOWERS[selected]!.nameVi})` : ''}`,
       reason: plantE ? reasonOf(plantE, vi.cloud.noEmpty) : null,
     },
-    expand: next
-      ? { label: t(vi.cloud.expand, { gold: gold(next.price) }), reason: world.wallet.coins < next.price ? vi.cloud.noGold : null }
-      : { label: vi.cloud.expandMax, reason: vi.cloud.expandMax },
+    expand: next ? expandVm(world, next) : { label: vi.cloud.expandMax, reason: vi.cloud.expandMax },
   };
+}
+
+/** The "open more plots" button: a whole tier past the first one, gated by the world level (decision 023). */
+export function expandVm(world: WorldSave, next: Expansion): ButtonVm {
+  const label = next.tier !== null ? t(vi.cloud.expandTier, { n: next.tier + 1, gold: gold(next.price) }) : t(vi.cloud.expand, { gold: gold(next.price) });
+  const reason = worldLevel(world, WORLD_LEVELS) < next.level ? t(vi.cloud.needLevel, { level: next.level }) : world.wallet.coins < next.price ? vi.cloud.noGold : null;
+  return { label, reason };
 }
 
 export interface PlotCardVm {

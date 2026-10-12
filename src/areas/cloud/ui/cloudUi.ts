@@ -124,11 +124,11 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
       el(
         'div',
         { class: 'cloud-ui__bulk' },
-        actionButton(bulk.collect, () => dispatch(runs.collect)),
-        actionButton(bulk.water, () => dispatch(runs.water)),
-        actionButton(bulk.harvest, () => dispatch(runs.harvest)),
-        actionButton(bulk.plantAll, () => dispatch(runs.plantAll)),
-        actionButton(bulk.expand, () => dialogs.openExpand()),
+        actionButton(bulk.collect, () => dispatch(runs.collect), 'cloud-btn cloud-btn--cream'),
+        actionButton(bulk.water, () => dispatch(runs.water), 'cloud-btn cloud-btn--rose'),
+        actionButton(bulk.harvest, () => dispatch(runs.harvest), 'cloud-btn cloud-btn--sun'),
+        actionButton(bulk.plantAll, () => dispatch(runs.plantAll), 'cloud-btn cloud-btn--lilac'),
+        actionButton(bulk.expand, () => dialogs.openExpand(), 'cloud-btn cloud-btn--berry'),
       ),
     );
   }

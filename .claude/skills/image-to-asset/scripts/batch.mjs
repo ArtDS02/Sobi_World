@@ -82,10 +82,12 @@ const gridOf = (sheet) => sheet.grid ?? [1, 1];
 /** The prompt text for one sheet (English: image models follow it best). */
 function promptOf(sheet) {
   const B = boards.blocks;
+  // An edit of an existing picture (the owner's mock-up): the prompt is the sheet's own text, image 1 is that picture.
+  if (sheet.editFrom) return [sheet.prompt, '', B.negative].join('\n');
   const [R, C] = gridOf(sheet);
   const n = sheet.cells.length;
   const lines = [B.style];
-  (sheet.hints ?? []).forEach((h, k) => lines.push(B.hint.replace('{K}', String(k + 2)).replace('{WHAT}', h.what)));
+  (sheet.hints ?? []).forEach((h, k) => lines.push((h.look ? B.lookHint : B.hint).replace('{K}', String(k + 2)).replace('{WHAT}', h.what)));
   lines.push('');
   if (n > 1) {
     lines.push(B.sheet.replace('{N}', n).replace('{R}', R).replace('{C}', C));
@@ -110,7 +112,7 @@ const attachName = (sheet, k) => `${sheet.name}_${k + 2}_hint.png`;
 function prep(b) {
   const dir = join(WORK, b.id);
   mkdirSync(dir, { recursive: true });
-  const boardsUsed = new Set(b.sheets.map((s) => s.board));
+  const boardsUsed = new Set(b.sheets.filter((s) => !s.editFrom).map((s) => s.board));
   for (const name of boardsUsed) {
     const files = boards.boards[name];
     if (!files) throw new Error(`unknown board ${name}`);
@@ -119,8 +121,10 @@ function prep(b) {
     files.forEach((f, k) => blit(im, load(join(ROOT, f)), (k % cols) * cell + 24, Math.floor(k / cols) * cell + 24, cell - 48, cell - 48, true));
     save(join(dir, `1_style_${name}.png`), im);
   }
-  for (const s of b.sheets)
+  for (const s of b.sheets) {
     (s.hints ?? []).forEach((h, k) => save(join(dir, attachName(s, k)), crop(load(join(ROOT, h.from)), h.box)));
+    if (s.editFrom) copyFileSync(join(ROOT, s.editFrom), join(dir, `${s.name}_1_edit.png`));
+  }
 
   const md = [
     `# Batch ${b.id} — ${b.title}`,
@@ -136,7 +140,11 @@ function prep(b) {
     const [R, C] = gridOf(s);
     md.push(`## Sheet ${s.name} — ${s.title}`, '');
     md.push(`- Lưu thành: \`art_inbox/.batch/${b.id}/${s.name}.png\``);
-    md.push(`- Đính kèm (theo thứ tự): \`1_style_${s.board}.png\`${(s.hints ?? []).map((_, k) => `, \`${attachName(s, k)}\``).join('')}`);
+    md.push(
+      s.editFrom
+        ? `- Đính kèm: \`${s.name}_1_edit.png\` (ảnh cần sửa). Nên dùng **Google AI Studio** để ảnh không có watermark.`
+        : `- Đính kèm (theo thứ tự): \`1_style_${s.board}.png\`${(s.hints ?? []).map((_, k) => `, \`${attachName(s, k)}\``).join('')}`,
+    );
     md.push(`- Kết quả: ${s.cells.length > 1 ? `lưới ${R}×${C}: ` : ''}${stemsOf(s).join(', ')}`, '');
     md.push('```text', promptOf(s), '```', '');
   }

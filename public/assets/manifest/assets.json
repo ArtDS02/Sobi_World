@@ -1604,6 +1604,26 @@
       "asset": "props/plot_cloud.png"
     },
     {
+      "id": "prop_sign_plank",
+      "status": "placeholder",
+      "asset": "props/prop_sign_plank.png"
+    },
+    {
+      "id": "prop_title_banner",
+      "status": "placeholder",
+      "asset": "props/prop_title_banner.png"
+    },
+    {
+      "id": "prop_cloud_bird",
+      "status": "placeholder",
+      "asset": "props/prop_cloud_bird.png"
+    },
+    {
+      "id": "prop_npc_alchemist",
+      "status": "placeholder",
+      "asset": "props/prop_npc_alchemist.png"
+    },
+    {
       "id": "enemy_mossling",
       "status": "placeholder",
       "asset": "props/enemy_mossling.png"
@@ -2039,6 +2059,16 @@
       "id": "ui_icon_lock",
       "status": "placeholder",
       "asset": "ui/ui_icon_lock.png"
+    },
+    {
+      "id": "ui_btn_tier_up",
+      "status": "placeholder",
+      "asset": "ui/ui_btn_tier_up.png"
+    },
+    {
+      "id": "ui_btn_tier_down",
+      "status": "placeholder",
+      "asset": "ui/ui_btn_tier_down.png"
     },
     {
       "id": "ui_icon_coin",

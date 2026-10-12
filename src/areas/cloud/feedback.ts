@@ -37,7 +37,7 @@ export function cloudPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
     case 'CLOUD_FLOWER_WILTED':
       return { sound: 'notify', toast: t(T.wilted, { count: e.count }) };
     case 'CLOUD_PLOTS_BOUGHT':
-      return { sound: 'level_up', toast: t(T.plots, { plots: e.plots }) };
+      return { sound: 'level_up', toast: e.tier !== undefined ? t(T.tier, { name: vi.cloud.tierNames[e.tier] ?? '' }) : t(T.plots, { plots: e.plots }) };
     case 'CLOUD_WATER_COLLECTED':
       return { sound: 'water_splash', toast: t(e.left > 0 ? T.waterLeft : T.water, { quantity: e.quantity, left: e.left }) };
     case 'CLOUD_SPRING_UPGRADED':
