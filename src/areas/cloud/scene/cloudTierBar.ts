@@ -12,7 +12,8 @@ type Img = Phaser.GameObjects.Image;
 export interface TierBarDeps {
   /** An image of fixed art (re-pointed by the scene when its texture arrives late). */
   fixed: (x: number, y: number, id: string) => Img;
-  hoverable: (img: Img) => void;
+  /** Hover press on an arrow. */
+  press: (img: Img) => void;
   float: (targets: Phaser.GameObjects.GameObject[], px: number) => void;
   paused: () => boolean;
   /** An arrow was clicked: −1 down, +1 up. */
@@ -46,7 +47,7 @@ export class CloudTierBar {
       const img = d.fixed(at.x, at.y, art).setDisplaySize(v.arrowSize, v.arrowSize).setDepth(v.depth.sign).setInteractive({ useHandCursor: true });
       img.setName(label);
       img.on(Phaser.Input.Events.POINTER_DOWN, () => !d.paused() && d.onStep(step));
-      d.hoverable(img);
+      d.press(img);
       d.float([img], 4);
       return img;
     };

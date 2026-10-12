@@ -8,6 +8,18 @@
 
 ## Nhật ký
 
+### 2026-10-12 — GĐ14 Cloud: sửa theo góp ý (hoa, ô mây, hover, chim bắt sâu, màu UI) — chờ duyệt
+✅ Đã làm:
+1. **Hoa nằm đúng lòng đất**: đo trên ảnh — lòng đất của `plot_cloud` cao hơn tâm ô 10,6 px, gốc hoa cách đáy canvas 6 px → `flowerOffsetY` = +1 (trước là +32: lệch xuống ~38 px).
+2. **Hoa đung đưa**: xoay quanh gốc, biên độ theo giai đoạn (mầm 1,6°, đang lớn 2,6°, nở 3,4°, héo 1°), mỗi cây một nhịp, cơn gió chung chậm; hoa nở vẫn "thở".
+3. **Ô mây trắng**: viền vàng là khe trong suốt giữa đám mây và một vòng viền rời (sót từ bóng khi cắt) → xoá vòng viền (morphological opening) trong `plot_cloud.png`. Hover ô: nhấc 3 px + sáng hơn 7% (không quầng vàng). Ô chưa mở: xanh xám nhạt, hơi trong (thay xám đậm).
+4. **Hover công trình riêng từng loại** (bỏ glow): suối bắn giọt nước, vạc nảy nhẹ + sủi bong bóng (lặp khi giữ chuột; rê vào bảng gỗ cũng vậy); bảng gỗ và nút tầng phóng nhẹ.
+5. **Chim mây** (`scene/cloudBird.ts`): nghỉ lơ lửng 4,5–9 s rồi bay đường cong tới điểm ngẫu nhiên trên đảo hoặc về chỗ đậu, quay đầu theo hướng bay, vỗ cánh nhanh khi bay. **Sâu trang trí** (vẽ bằng code, không gameplay, không save): 9–18 s một lần, tối đa 2 con, trên cây đang lớn / đã nở; chim chờ ~2,5 s rồi lần lượt bay tới mổ; sâu biến mất khi hoa được hái hoặc đổi tầng.
+6. **Màu UI dịu**: HUD trên (xu, nước, cấp, nút) nền trắng–tím nhạt chữ tím đậm; thanh dưới và 5 nút pastel chữ đậm, bỏ quầng vàng khi hover.
+🧪 Đã kiểm tra: `npm run check` xanh (1.374 test, guard OK); Edge ẩn 1916×949 với save cuối game: tầng cao → tầng 1, phóng to ô (gốc hoa trong đất), hover ô / suối / vạc, quan sát chim 45 s (dò màu thấy sâu ở khung 40–42, chim tới khung 43, sâu biến mất khung 44), bật "Giảm chuyển động" → 2 khung cách 1,5 s giống hệt; không lỗi console. Ảnh: `art_inbox/.qa/cloud-review/v3/final/`.
+⚠️ Quyết định tự đưa ra: sâu chỉ trang trí (không hại cây, không đổi gameplay/save — freeze); sprite sâu, giọt nước, bong bóng vẽ bằng code (không cần batch Gemini).
+👉 Bạn cần: duyệt lại màn Cloud.
+
 ### 2026-10-12 — GĐ14 Cloud: cắt batch cloud-04, cảnh theo nền thật, hiệu ứng (chờ duyệt)
 ✅ Đã làm:
 1. **Cắt `cloud-04-scene`** (3 ảnh Gemini của chủ dự án; `C.png` lưu nhầm ở `cloud-03-world`, đã chuyển): `bg_cloud` (nền đảo sửa từ ảnh mẫu, 1453×720 → 1816×900, phóng ×1,25), `prop_sign_plank`, `prop_title_banner`, `ui_btn_tier_up/down`, `prop_cloud_bird`, `prop_npc_alchemist` → `public/assets/`, status `production`. `cut-sheet.mjs` bỏ vạch chia khung do model vẽ; dấu ✦ của Gemini nằm ngoài vật thể nên không vào sprite. Kích thước khung chỉnh theo tỉ lệ art thật (bảng 300×110, băng rôn 520×198, cú 240×300). Bác Cú Giả Kim dùng ảnh cú (`npcs.json` `artId`).

@@ -1,17 +1,19 @@
 // The Cloud on screen (spec §8.4, decision 023): a painted sky island (bg_cloud) with one cloud tier of 5 × 3 flower plots
 // at a time, the spring of pure water and the cauldron on the grass banks at the left, wooden label planks, and the tier's
-// title banner with arrows to go up or down a tier. Motion is presentation only and stops with reduceMotion: slow idle
-// floating (never in step), a soft glow on what can be clicked, and a pass through the clouds when the tier changes.
+// title banner with arrows to go up or down a tier. Motion is presentation only and stops with reduceMotion: flowers sway in
+// a breeze, slow idle floating (never in step), light hover answers, the cloud bird and its caterpillars (cloudBird), and a
+// pass through the clouds when the tier changes.
 // Draws and reports clicks only — what a click does, and every number, comes from the app through CloudSceneDeps, so the
 // scene never reaches the store or another Area.
 import * as Phaser from 'phaser';
 import { fitCamera } from '../../../ui/world/fitCamera';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import type { WorldRect } from '../../../systems/layout/camera';
-import { CLOUD_BACKDROP_ART, CLOUD_DRESSING_ART, CLOUD_PLOT_ART, FLOWER_STAGES, flowerArtId } from '../logic/art';
+import { CLOUD_BACKDROP_ART, CLOUD_PLOT_ART, FLOWER_STAGES, flowerArtId, type FlowerStage } from '../logic/art';
 import { FLOWERS, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
 import type { SceneState } from '../logic/derived';
-import { animateBird, floatIdle, glowOf, hoverable, makeDrifts, makeVeil, moveDrifts, playTierMove, type Drift } from './cloudFx';
+import { CloudBird } from './cloudBird';
+import { brightOf, ensureFxTextures, floatIdle, makeDrifts, makeVeil, moveDrifts, playTierMove, pressable, setBright, swayFlowers, type Drift } from './cloudFx';
 import { CloudBuildings } from './cloudBuildings';
 import { CloudTierBar } from './cloudTierBar';
 import { CLOUD_DESIGN, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
@@ -34,10 +36,12 @@ export interface CloudSceneDeps {
   paused: () => boolean;
 }
 
-interface PlotSprites {
+export interface PlotSprites {
   bed: Phaser.GameObjects.Image;
   flower: Phaser.GameObjects.Image;
-  glow: Phaser.FX.Glow | null;
+  bright: Phaser.FX.ColorMatrix | null;
+  /** The picture on the plot (null: no flower), for the sway and the caterpillars. */
+  stage: FlowerStage | null;
   ripe: boolean;
 }
 
@@ -56,6 +60,7 @@ export class CloudScene extends Phaser.Scene {
   private veil: Phaser.GameObjects.Image[] = [];
   private drifts: Drift[] = [];
   private bar!: CloudTierBar;
+  private bird!: CloudBird;
   private view: WorldRect = { x: 0, y: 0, width: CLOUD_DESIGN.width, height: CLOUD_DESIGN.height };
   private skyNight: boolean | null = null;
   private shown = '';
@@ -73,6 +78,7 @@ export class CloudScene extends Phaser.Scene {
 
   create() {
     const v = CLOUD_VIEW;
+    ensureFxTextures(this);
     this.sky = this.add.graphics().setDepth(v.depth.sky);
     this.backdrop = this.fixed(CLOUD_DESIGN.width / 2, CLOUD_DESIGN.height / 2, CLOUD_BACKDROP_ART).setDepth(v.depth.ground);
     this.drifts = makeDrifts((x, y, art) => this.fixed(x, y, art));
@@ -87,21 +93,26 @@ export class CloudScene extends Phaser.Scene {
     this.plots = beds.map((bed, slot) => this.makeFlower(bed, slot));
     this.buildings = new CloudBuildings(this, {
       fixed: (x, y, id) => this.fixed(x, y, id),
-      hoverable: (img) => this.hoverable(img),
+      press: (img) => this.press(img),
       paused: () => this.deps.paused(),
       reduceMotion: () => this.deps.reduceMotion(),
       onPick: (building) => this.deps.onPick({ kind: 'building', building }),
     });
     this.bar = new CloudTierBar(this, this.field, {
       fixed: (x, y, id) => this.fixed(x, y, id),
-      hoverable: (img) => this.hoverable(img),
+      press: (img) => this.press(img),
       float: (targets, px) => this.float(targets, px),
       paused: () => this.deps.paused(),
       onStep: (step) => this.changeTier(step),
       onLocked: () => this.deps.onPick({ kind: 'locked' }),
     });
-    this.makeBird();
-    this.makeVeil();
+    this.bird = new CloudBird(this, {
+      fixed: (x, y, id) => this.fixed(x, y, id),
+      reduceMotion: () => this.deps.reduceMotion(),
+      busy: () => this.moving,
+      flowers: () => this.plots,
+    });
+    this.veil = makeVeil((x, y, art) => this.fixed(x, y, art));
     this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
       if (this.deps.paused() || over.length > 0) return;
       this.deps.onPick({ kind: 'ground' });
@@ -116,16 +127,13 @@ export class CloudScene extends Phaser.Scene {
     this.sync(true);
   }
 
-  override update(time: number) {
+  override update(time: number, delta: number) {
     this.sync(false);
     if (this.deps.reduceMotion()) return;
-    const { scale, periodMs } = CLOUD_VIEW.ripePulse;
-    const swing = CLOUD_VIEW.flowerScale * (1 + Math.sin((time / periodMs) * Math.PI * 2) * scale);
-    for (const p of this.plots) if (p.ripe) p.flower.setScale(swing);
+    swayFlowers(this.plots, time);
     moveDrifts(this.drifts, this.view, time);
+    this.bird.update(time, delta);
   }
-
-  // ---------- building blocks ----------
 
   /** An image of fixed art (see fixedArt). */
   private fixed(x: number, y: number, id: string): Phaser.GameObjects.Image {
@@ -134,9 +142,9 @@ export class CloudScene extends Phaser.Scene {
     return img;
   }
 
-  /** Hover feedback (glow + swell) on a clickable image. */
-  private hoverable(img: Phaser.GameObjects.Image) {
-    hoverable(this, img, { paused: () => this.deps.paused(), reduceMotion: () => this.deps.reduceMotion() });
+  /** Hover press (a small swell) on a plank or an arrow. */
+  private press(img: Phaser.GameObjects.Image) {
+    pressable(this, img, { paused: () => this.deps.paused(), reduceMotion: () => this.deps.reduceMotion() });
   }
 
   /** A slow float of its own rhythm (none when motion is reduced). */
@@ -154,10 +162,10 @@ export class CloudScene extends Phaser.Scene {
   private makeFlower(bed: Phaser.GameObjects.Image, slot: number): PlotSprites {
     const v = CLOUD_VIEW;
     const { x, y } = plotCentre(slot);
-    const flowerY = y + v.plotSize.height * 0.3;
+    const flowerY = y + v.flowerOffsetY;
     const flower = this.add.image(x, flowerY, FALLBACK_PROP_KEY).setOrigin(0.5, 1).setVisible(false);
     this.field.add(flower);
-    const sprites: PlotSprites = { bed, flower, glow: glowOf(bed), ripe: false };
+    const sprites: PlotSprites = { bed, flower, bright: brightOf(bed), stage: null, ripe: false };
     const lift = (dy: number) => {
       if (this.deps.reduceMotion()) return;
       this.tweens.add({ targets: bed, y: y - dy, duration: v.hover.ms, ease: 'Sine.easeOut' });
@@ -165,11 +173,11 @@ export class CloudScene extends Phaser.Scene {
     };
     bed.on(Phaser.Input.Events.POINTER_OVER, () => {
       if (this.deps.paused() || this.moving) return;
-      if (sprites.glow) sprites.glow.active = true;
+      setBright(sprites.bright, true);
       lift(v.hover.lift);
     });
     bed.on(Phaser.Input.Events.POINTER_OUT, () => {
-      if (sprites.glow) sprites.glow.active = false;
+      setBright(sprites.bright, false);
       lift(0);
     });
     bed.on(Phaser.Input.Events.POINTER_DOWN, () => {
@@ -179,17 +187,6 @@ export class CloudScene extends Phaser.Scene {
       this.deps.onPick(state && index < state.plots.length ? { kind: 'plot', index } : { kind: 'locked' });
     });
     return sprites;
-  }
-
-  /** The cloud bird over the island (scenery; still when motion is reduced). */
-  private makeBird() {
-    const b = CLOUD_VIEW.bird;
-    const bird = this.fixed(b.x, b.y, CLOUD_DRESSING_ART.bird).setDisplaySize(b.size, b.size * (150 / 180)).setDepth(CLOUD_VIEW.depth.sign - 1);
-    if (!this.deps.reduceMotion()) animateBird(this, bird, b);
-  }
-
-  private makeVeil() {
-    this.veil = makeVeil((x, y, art) => this.fixed(x, y, art));
   }
 
   // ---------- view, tiers ----------
@@ -226,7 +223,8 @@ export class CloudScene extends Phaser.Scene {
       return void this.sync(true);
     }
     this.moving = true;
-    for (const p of this.plots) if (p.glow) p.glow.active = false;
+    for (const p of this.plots) setBright(p.bright, false);
+    this.bird.clearPests();
     playTierMove(this, {
       field: this.field,
       backdrop: this.backdrop,
@@ -271,22 +269,25 @@ export class CloudScene extends Phaser.Scene {
     this.drawTierBar(owned);
     this.plots.forEach((sprites, slot) => {
       const view = state.plots[plotIndex(this.tier, slot)];
+      sprites.stage = null;
+      sprites.ripe = false;
       if (!view) {
-        sprites.bed.setTexture(KEY(CLOUD_PLOT_ART, this.textures)).setTint(CLOUD_VIEW.unbuiltTint);
+        sprites.bed.setTexture(KEY(CLOUD_PLOT_ART, this.textures)).setTint(CLOUD_VIEW.unbuilt.tint).setAlpha(CLOUD_VIEW.unbuilt.alpha);
         sprites.flower.setVisible(false);
-        sprites.ripe = false;
         return;
       }
-      sprites.bed.setTexture(KEY(CLOUD_PLOT_ART, this.textures)).setTint(view.watered ? 0xcfe6ff : 0xffffff);
+      sprites.bed.setTexture(KEY(CLOUD_PLOT_ART, this.textures)).setTint(view.watered ? 0xdcecff : 0xffffff).setAlpha(1);
       const flower = view.flowerId ? FLOWERS[view.flowerId] : undefined;
       sprites.ripe = view.stage === 'ripe';
       if (!flower) return void sprites.flower.setVisible(false);
       const stage = flowerStageOf(view);
       if (!FLOWER_STAGES.includes(stage)) return;
+      sprites.stage = stage;
       sprites.flower.setTexture(KEY(flowerArtId(flower, stage), this.textures)).setVisible(true).setScale(CLOUD_VIEW.flowerScale);
       sprites.flower.setTint(view.fertilized ? 0xf4ffd8 : 0xffffff);
     });
     this.buildings.draw(state);
+    this.bird.keepOnly(new Set(this.plots.flatMap((p, slot) => (p.stage === 'grow' || p.stage === 'ripe' ? [slot] : []))));
   }
 
   /** The tier bar and the tier's colour over the shared backdrop. */

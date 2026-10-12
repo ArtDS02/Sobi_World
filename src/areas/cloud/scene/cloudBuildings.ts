@@ -1,11 +1,13 @@
 // The Cloud's two buildings on the grass banks at the left (decision 023): the spring of pure water and the cauldron, each
 // with its wooden name plank and a round counter (water waiting, potions ready). A brewing cauldron swells gently.
+// Hover answers differ (owner's ask): drops jump out of the spring; the cauldron hops and bubbles. Hovering a plank wakes
+// its building too.
 // Draws and reports clicks; CloudScene decides what they do.
 import * as Phaser from 'phaser';
 import { vi } from '../../../i18n/vi';
 import { CLOUD_BUILDING_ART, CLOUD_DRESSING_ART } from '../logic/art';
 import type { SceneState } from '../logic/derived';
-import { drawBadge, type Badge } from './cloudFx';
+import { bubbles, drawBadge, splash, type Badge } from './cloudFx';
 import { signStyle } from './cloudTierBar';
 import { CLOUD_VIEW } from './cloudView';
 
@@ -14,7 +16,8 @@ export type BuildingId = 'spring' | 'cauldron';
 
 export interface BuildingsDeps {
   fixed: (x: number, y: number, id: string) => Img;
-  hoverable: (img: Img) => void;
+  /** Hover press on a plank. */
+  press: (img: Img) => void;
   paused: () => boolean;
   reduceMotion: () => boolean;
   onPick: (building: BuildingId) => void;
@@ -29,6 +32,8 @@ interface Building {
 export class CloudBuildings {
   private readonly list = new Map<BuildingId, Building>();
   private brew: Phaser.Tweens.Tween | null = null;
+  /** The building whose hover answer is repeating, and its timer. */
+  private hovered: { id: BuildingId; timer: Phaser.Time.TimerEvent } | null = null;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -47,7 +52,7 @@ export class CloudBuildings {
     if (spring) drawBadge(spring.badge, state.water > 0 ? `${state.water}` : '', state.water >= state.waterCapacity);
     const cauldron = this.list.get('cauldron');
     if (!cauldron) return;
-    cauldron.img.setTint(state.cauldron.built ? 0xffffff : CLOUD_VIEW.unbuiltTint);
+    cauldron.img.setTint(state.cauldron.built ? 0xffffff : CLOUD_VIEW.unbuilt.tint);
     const text = state.cauldron.ready > 0 ? `✓ ${state.cauldron.ready}` : state.cauldron.busy ? '…' : '';
     drawBadge(cauldron.badge, text, state.cauldron.ready > 0);
     this.setBrewing(cauldron, state.cauldron.busy);
@@ -58,7 +63,7 @@ export class CloudBuildings {
     const img = this.d.fixed(at.x, at.y, art).setOrigin(0.5, 1).setScale(at.scale).setDepth(v.depth.building + at.y * 0.01);
     img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: 20 });
     img.on(Phaser.Input.Events.POINTER_DOWN, () => !this.d.paused() && this.d.onPick(id));
-    this.d.hoverable(img);
+    this.hoverAnswer(img, id);
     const side = id === 'cauldron' ? -0.34 : 0.34;
     const box = this.scene.add.graphics().setDepth(v.depth.badge).setPosition(at.x + img.displayWidth * side, at.y - img.displayHeight * 0.8);
     const text = this.scene.add
@@ -73,11 +78,36 @@ export class CloudBuildings {
     const v = CLOUD_VIEW;
     const plank = this.d.fixed(at.x, at.y, CLOUD_DRESSING_ART.plank).setDisplaySize(v.plank.width, v.plank.height).setDepth(v.depth.sign).setInteractive({ useHandCursor: true });
     plank.on(Phaser.Input.Events.POINTER_DOWN, () => !this.d.paused() && this.d.onPick(id));
-    this.d.hoverable(plank);
+    this.d.press(plank);
+    this.hoverAnswer(plank, id);
     this.scene.add
       .text(at.x + v.plank.height * 0.22, at.y - 2, name, signStyle(v.label.fontPx, v.label.color, v.label.stroke, v.label.strokePx))
       .setOrigin(0.5)
       .setDepth(v.depth.sign + 1);
+  }
+
+  /** While `target` is hovered, its building answers now and every 1.1 s (nothing when motion is reduced). */
+  private hoverAnswer(target: Img, id: BuildingId) {
+    target.on(Phaser.Input.Events.POINTER_OVER, () => {
+      if (this.d.paused() || this.d.reduceMotion() || this.hovered?.id === id) return;
+      this.hovered?.timer.remove();
+      this.answer(id);
+      this.hovered = { id, timer: this.scene.time.addEvent({ delay: 1100, loop: true, callback: () => this.answer(id) }) };
+    });
+    target.on(Phaser.Input.Events.POINTER_OUT, () => {
+      if (this.hovered?.id !== id) return;
+      this.hovered.timer.remove();
+      this.hovered = null;
+    });
+  }
+
+  private answer(id: BuildingId) {
+    const b = this.list.get(id);
+    if (!b) return;
+    const top = b.img.y - b.img.displayHeight;
+    if (id === 'spring') return void splash(this.scene, b.img.x, top + b.img.displayHeight * 0.55);
+    bubbles(this.scene, b.img.x + b.img.displayWidth * 0.04, top + b.img.displayHeight * 0.3);
+    this.scene.tweens.add({ targets: b.img, y: b.img.y - 6, duration: 130, yoyo: true, ease: 'Quad.easeOut' });
   }
 
   /** A brewing cauldron swells gently, as if it bubbled; it rests when idle. */

@@ -14,6 +14,13 @@ export const CLOUD_VIEW = {
   plotSize: { width: 152, height: 108 },
   /** Flowers are drawn a little smaller than their canvas so a bloom does not hide the plot above it. */
   flowerScale: 0.88,
+  /**
+   * Where a flower's canvas bottom sits, from the plot's centre. Measured: the soil hollow of plot_cloud is centred 10.6 px
+   * above the plot's centre, the flower art's base is 6 px above its canvas bottom; +1 puts the base in the soil's middle.
+   */
+  flowerOffsetY: 1,
+  /** Flowers sway around their base like in a breeze: degrees by stage, each plant its own period and phase. */
+  sway: { sprout: 1.6, grow: 2.6, ripe: 3.4, wilt: 1, periodMs: [2200, 3400], gustMs: 9000, gust: 0.45 },
   /** Feet of the spring and the cauldron on the two grass banks at the left, and their drawing scale. */
   spring: { x: 286, y: 372, scale: 0.9 },
   cauldron: { x: 222, y: 662, scale: 0.82 },
@@ -28,8 +35,13 @@ export const CLOUD_VIEW = {
   /** Share of the banner's width the title may use (a long tier name shrinks to fit). */
   titleFit: 0.6,
   arrowSize: 78,
-  /** The ambient bird: where it hovers. */
-  bird: { x: 1257, y: 118, size: 124 },
+  /**
+   * The cloud bird: rests (hovering in place) at its perch, now and then flies to a random spot over the island, and goes
+   * after the caterpillars one by one. Flight is a smooth curve at `speed` design px per second.
+   */
+  bird: { x: 1257, y: 118, size: 116, speed: 230, restMs: [4500, 9000], area: { x0: 520, x1: 1420, y0: 150, y1: 560 }, catchMs: 520 },
+  /** Decorative caterpillars (no gameplay): one may appear on a growing flower now and then, at most `max` at a time. */
+  pest: { everyMs: [9000, 18000], max: 2, width: 30, height: 16, scale: 1.5, noticeMs: 2500 },
   /** Small clouds drifting across the sky behind the island (existing env art), each its own speed and height. */
   drift: [
     { art: 'env_cloud_a', y: 70, scale: 0.55, alpha: 0.9, seconds: 140, start: 0.15 },
@@ -42,15 +54,18 @@ export const CLOUD_VIEW = {
   tierTints: [0xffffff, 0xffeef8, 0xffe4d0, 0xfff8dc, 0xe0fff0, 0xffe6f0, 0xe8e6ff, 0xdde8ff, 0xfff0c0, 0xf0f8ff],
   /** Sky behind the backdrop (only seen if the image is missing). */
   sky: { dayTop: 0xc4d6f8, dayBottom: 0xffe8f0, nightTop: 0x2a2f5c, nightBottom: 0x6a5a98 },
-  unbuiltTint: 0x8c8c8c,
-  /** Hover: a soft warm glow and a small lift / swell (WebGL glow; the canvas renderer only swells). */
-  hover: { glow: 0xffe9a8, strength: 4.5, lift: 4, swell: 1.05, ms: 140 },
+  /** A plot that is not open yet: a soft blue-grey, half see-through (still clearly not usable). */
+  unbuilt: { tint: 0xc9cfdd, alpha: 0.72 },
+  /** Hover: plots lift a little and brighten a touch; planks and arrows press up; buildings answer in their own way. */
+  hover: { lift: 3, brighten: 1.07, swell: 1.04, ms: 140 },
   /** Changing tier: the field sinks (going up) or rises (going down) and fades, a cloud veil sweeps, the sky shifts. */
   tierMove: { outMs: 240, inMs: 340, shift: 60, sky: 16, veilAlpha: 0.92, veilScale: 1.25, veilBlur: 2, travel: 240 },
   /** Idle motion: slow, never in step (each object gets its own period and phase). */
   idle: { bobPx: 5, bobMs: [2600, 3400], swayDeg: 3, flapMs: 1700, brewSwell: 0.035 },
+  /** Building hover answers: spring droplets, cauldron bubbles (counts per hover). */
+  buildingFx: { drops: 9, dropScale: 1.6, bubbles: 8, bubbleScale: [1.3, 2] },
   /** Depths: sky below everything, then plots, flowers, buildings, signs, badges. */
-  depth: { sky: -2000, ground: -1000, drift: -990, plot: 10, building: 30, veil: 3500, sign: 4000, badge: 5000, night: 6000 },
+  depth: { sky: -2000, ground: -1000, drift: -990, plot: 10, building: 30, pest: 40, bird: 3000, veil: 3500, sign: 4000, badge: 5000, night: 6000 },
   label: {
     fontPx: 30,
     fontFamily: '"Baloo 2", system-ui, "Segoe UI", sans-serif',

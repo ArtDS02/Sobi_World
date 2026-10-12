@@ -2,11 +2,11 @@
 // drawn where. Presentation only: every function here is skipped or instant when motion is reduced, and none of it changes
 // what a click does.
 import * as Phaser from 'phaser';
+import type { WorldRect } from '../../../systems/layout/camera';
 import { PLOTS_PER_TIER } from '../logic/config/content';
 import { CLOUD_VIEW, plotCentre } from './cloudView';
 
 type Img = Phaser.GameObjects.Image;
-import type { WorldRect } from '../../../systems/layout/camera';
 
 /** A small cloud drifting across the sky behind the island. */
 export interface Drift {
@@ -33,31 +33,107 @@ function idleTiming(n: number): { duration: number; delay: number } {
   return { duration: Math.round(lo + (hi - lo) * f), delay: Math.round(f * hi) };
 }
 
-/** A soft glow (WebGL only; null on the canvas renderer), off until hovered. */
-export function glowOf(img: Img): Phaser.FX.Glow | null {
-  const h = CLOUD_VIEW.hover;
-  const glow = img.preFX?.addGlow(h.glow, h.strength, 0, false, 0.1, 12) ?? null;
-  if (glow) glow.active = false;
-  return glow;
+/** A brightness control (WebGL only; null on the canvas renderer), neutral until hovered. */
+export function brightOf(img: Img): Phaser.FX.ColorMatrix | null {
+  return img.preFX?.addColorMatrix() ?? null;
 }
 
-/** Hover feedback on a clickable image: glow + a small swell from its current scale. */
-export function hoverable(scene: Phaser.Scene, img: Img, opts: { paused: () => boolean; reduceMotion: () => boolean }) {
-  const glow = glowOf(img);
+/** Hover brightening of a plot: a touch lighter, never coloured. */
+export function setBright(fx: Phaser.FX.ColorMatrix | null, on: boolean) {
+  if (!fx) return;
+  if (on) fx.brightness(CLOUD_VIEW.hover.brighten);
+  else fx.reset();
+}
+
+/** Hover on a plank or an arrow: it presses up (a small swell from its current scale); no glow. */
+export function pressable(scene: Phaser.Scene, img: Img, opts: { paused: () => boolean; reduceMotion: () => boolean }) {
   const h = CLOUD_VIEW.hover;
   const base = { x: img.scaleX, y: img.scaleY };
   const to = (k: number) => {
     if (opts.reduceMotion()) return void img.setScale(base.x * k, base.y * k);
     scene.tweens.add({ targets: img, scaleX: base.x * k, scaleY: base.y * k, duration: h.ms, ease: 'Sine.easeOut' });
   };
-  img.on(Phaser.Input.Events.POINTER_OVER, () => {
-    if (opts.paused()) return;
-    if (glow) glow.active = true;
-    to(h.swell);
+  img.on(Phaser.Input.Events.POINTER_OVER, () => !opts.paused() && to(h.swell));
+  img.on(Phaser.Input.Events.POINTER_OUT, () => to(1));
+}
+
+/** Code-drawn textures of the scene's small effects: a water drop, a bubble, a caterpillar (K backend, no files). */
+export const FX_KEYS = { drop: 'cloud_fx_drop', bubble: 'cloud_fx_bubble', pest: 'cloud_fx_pest' } as const;
+
+export function ensureFxTextures(scene: Phaser.Scene) {
+  const make = (key: string, w: number, h: number, draw: (g: Phaser.GameObjects.Graphics) => void) => {
+    if (scene.textures.exists(key)) return;
+    const g = scene.make.graphics({ x: 0, y: 0 }, false);
+    draw(g);
+    g.generateTexture(key, w, h);
+    g.destroy();
+  };
+  make(FX_KEYS.drop, 12, 14, (g) => {
+    g.fillStyle(0x8fd3f4, 1).fillCircle(6, 8, 5).fillTriangle(2, 7, 10, 7, 6, 0);
+    g.fillStyle(0xffffff, 0.9).fillCircle(4.5, 7, 1.6);
   });
-  img.on(Phaser.Input.Events.POINTER_OUT, () => {
-    if (glow) glow.active = false;
-    to(1);
+  make(FX_KEYS.bubble, 14, 14, (g) => {
+    g.fillStyle(0xd9c4ff, 0.55).fillCircle(7, 7, 6);
+    g.lineStyle(1.5, 0xb08ce8, 0.9).strokeCircle(7, 7, 6);
+    g.fillStyle(0xffffff, 0.9).fillCircle(5, 5, 1.6);
+  });
+  const p = CLOUD_VIEW.pest;
+  make(FX_KEYS.pest, p.width, p.height, (g) => {
+    // A small green caterpillar facing right: four round segments, a darker outline, a head with an eye.
+    for (let k = 0; k < 4; k += 1) {
+      const x = 5 + k * 6;
+      g.fillStyle(0x5c8a3a, 1).fillCircle(x, 9, 5);
+      g.fillStyle(k === 3 ? 0x9bd36a : 0x86c95a, 1).fillCircle(x, 9, 4);
+    }
+    g.fillStyle(0x2f3a24, 1).fillCircle(25, 7.5, 1.2);
+    g.lineStyle(1, 0x5c8a3a, 1).lineBetween(24, 4, 26, 1);
+  });
+}
+
+/** Water drops jump out of the spring and fall back (hover answer of the spring). */
+export function splash(scene: Phaser.Scene, x: number, y: number) {
+  const n = CLOUD_VIEW.buildingFx.drops;
+  for (let k = 0; k < n; k += 1) {
+    const dx = (k - (n - 1) / 2) * 10 + Phaser.Math.Between(-4, 4);
+    const top = y - Phaser.Math.Between(40, 80);
+    const d = scene.add.image(x, y, FX_KEYS.drop).setDepth(CLOUD_VIEW.depth.building + 20).setScale(CLOUD_VIEW.buildingFx.dropScale);
+    scene.tweens.add({ targets: d, x: x + dx * 1.6, duration: 620, ease: 'Linear' });
+    scene.tweens.add({
+      targets: d,
+      y: top,
+      duration: 260,
+      delay: k * 25,
+      ease: 'Quad.easeOut',
+      onComplete: () => scene.tweens.add({ targets: d, y: y + 10, alpha: 0, duration: 360, ease: 'Quad.easeIn', onComplete: () => d.destroy() }),
+    });
+  }
+}
+
+/** Bubbles rise out of the cauldron, wobbling, and pop (hover answer of the cauldron). */
+export function bubbles(scene: Phaser.Scene, x: number, y: number) {
+  const n = CLOUD_VIEW.buildingFx.bubbles;
+  for (let k = 0; k < n; k += 1) {
+    const [lo, hi] = CLOUD_VIEW.buildingFx.bubbleScale;
+    const b = scene.add.image(x + Phaser.Math.Between(-30, 30), y, FX_KEYS.bubble).setDepth(CLOUD_VIEW.depth.building + 20).setScale(Phaser.Math.FloatBetween(lo, hi));
+    scene.tweens.add({ targets: b, y: y - Phaser.Math.Between(60, 110), alpha: 0, duration: Phaser.Math.Between(700, 1100), delay: k * 90, ease: 'Sine.easeOut', onComplete: () => b.destroy() });
+    scene.tweens.add({ targets: b, x: b.x + Phaser.Math.Between(-8, 8), duration: 260, yoyo: true, repeat: 2, delay: k * 90, ease: 'Sine.easeInOut' });
+  }
+}
+
+/**
+ * Flowers sway around their base in a light breeze: a small angle by stage, each plant its own period and phase, all of
+ * them stirred together by a slow gust; a ripe flower also breathes (a small scale swing).
+ */
+export function swayFlowers(plots: readonly { flower: Img; stage: string | null; ripe: boolean }[], time: number) {
+  const s = CLOUD_VIEW.sway;
+  const r = CLOUD_VIEW.ripePulse;
+  const gust = 1 + Math.sin((time / s.gustMs) * Math.PI * 2) * s.gust;
+  plots.forEach((p, k) => {
+    if (!p.stage) return;
+    const amp = (s as unknown as Record<string, number>)[p.stage] ?? 0;
+    const period = s.periodMs[0] + ((k * 0.618) % 1) * (s.periodMs[1] - s.periodMs[0]);
+    p.flower.setAngle(Math.sin((time / period) * Math.PI * 2 + k * 1.7) * amp * gust);
+    if (p.ripe) p.flower.setScale(CLOUD_VIEW.flowerScale * (1 + Math.sin((time / r.periodMs) * Math.PI * 2 + k) * r.scale));
   });
 }
 
@@ -65,15 +141,6 @@ export function hoverable(scene: Phaser.Scene, img: Img, opts: { paused: () => b
 export function floatIdle(scene: Phaser.Scene, targets: Phaser.GameObjects.GameObject[], px: number, n: number) {
   const { duration, delay } = idleTiming(n);
   scene.tweens.add({ targets, y: `-=${px}`, duration, delay, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-}
-
-/** The cloud bird floats, sways and beats its wings now and then. */
-export function animateBird(scene: Phaser.Scene, bird: Img, home: { x: number; y: number }) {
-  const i = CLOUD_VIEW.idle;
-  const sy = bird.scaleY;
-  scene.tweens.add({ targets: bird, y: home.y - 14, x: home.x - 10, duration: 3100, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-  scene.tweens.add({ targets: bird, angle: { from: -i.swayDeg, to: i.swayDeg }, duration: 2300, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-  scene.tweens.add({ targets: bird, scaleY: sy * 0.9, duration: 120, yoyo: true, repeat: -1, repeatDelay: i.flapMs, ease: 'Quad.easeOut' });
 }
 
 /** A round counter over a building: a white-rimmed pill and its text. */

@@ -34,14 +34,14 @@
     gap: $sp-2;
     min-height: 2.6rem;
     padding: 0 $sp-4;
-    color: #fdf6ff;
-    background: linear-gradient(180deg, #a98be0, #7a5cc2);
-    border: 3px solid #4a3a82;
+    color: #5a4a8a;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(238, 232, 255, 0.94));
+    border: 2px solid #cdbff0;
     border-radius: 0.9rem;
-    box-shadow: 0 3px 0 rgba(50, 36, 90, 0.45);
+    box-shadow: 0 3px 10px rgba(120, 100, 180, 0.18);
     pointer-events: auto;
 
-    b { font-size: $fs-lg; text-shadow: 0 1px 0 rgba(50, 36, 90, 0.6); }
+    b { font-size: $fs-lg; color: #4a3a7a; }
     small { font-size: $fs-xs; opacity: 0.9; }
   }
 
@@ -60,12 +60,12 @@
     padding: 0 $sp-4;
     font: inherit;
     font-weight: $fw-bold;
-    color: #fdf6ff;
+    color: #5a4a8a;
     cursor: pointer;
-    background: linear-gradient(180deg, #a98be0, #7a5cc2);
-    border: 3px solid #4a3a82;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(238, 232, 255, 0.94));
+    border: 2px solid #cdbff0;
     border-radius: 0.9rem;
-    box-shadow: 0 3px 0 rgba(50, 36, 90, 0.45);
+    box-shadow: 0 3px 10px rgba(120, 100, 180, 0.18);
     pointer-events: auto;
     transition: transform $dur-fast ease-out, filter $dur-fast ease-out;
 
@@ -94,9 +94,9 @@
     padding: $sp-2 $sp-4;
     pointer-events: auto;
     background: linear-gradient(180deg, rgba(255, 252, 246, 0.97), rgba(255, 244, 236, 0.97));
-    border: 3px solid #f1d9c6;
+    border: 2px solid #eadff5;
     border-radius: 2rem;
-    box-shadow: 0 6px 18px rgba(120, 90, 160, 0.25), inset 0 2px 0 #ffffff;
+    box-shadow: 0 6px 18px rgba(120, 100, 180, 0.16), inset 0 2px 0 #ffffff;
   }
 
   &__palette { display: flex; gap: $sp-2; padding-right: $sp-3; border-right: 2px solid #f1e0d2; }
@@ -118,9 +118,9 @@
 
     b { font-size: $fs-sm; color: #4a3a5a; }
     small { font-size: $fs-xs; color: $c-text-muted; }
-    &:hover { transform: translateY(-2px); box-shadow: 0 3px 0 #f3e3d6, 0 0 14px rgba(255, 226, 150, 0.75); }
+    &:hover { transform: translateY(-2px); border-color: #d9ccf3; }
     &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
-    &.is-selected { background: #f1eaff; border-color: #8a6cd6; box-shadow: 0 0 0 2px #8a6cd6, 0 3px 0 #c9b8f0; }
+    &.is-selected { background: #f4efff; border-color: #b6a2ea; box-shadow: 0 0 0 2px #cdbff0, 0 3px 0 #e2d8f7; }
   }
 
   &__seed-icon { width: 3rem; height: 3rem; object-fit: contain; }
@@ -132,15 +132,15 @@
 .cloud-btn {
   border-radius: 999px;
   font-weight: $fw-bold;
-  &:not(:disabled) { border-color: transparent; box-shadow: 0 3px 0 rgba(90, 60, 80, 0.25); }
-  &--cream:not(:disabled) { color: #8a5a4a; background: #fbe6dc; }
-  &--rose:not(:disabled) { color: #ffffff; background: linear-gradient(180deg, #f6788c, #e5506a); }
-  &--sun:not(:disabled) { color: #7a4a24; background: linear-gradient(180deg, #ffe48a, #ffc94a); }
-  &--lilac:not(:disabled) { color: #4a3a82; background: linear-gradient(180deg, #e6e2ff, #c9c0f6); }
-  &--berry:not(:disabled) { color: #ffffff; background: linear-gradient(180deg, #f4677a, #d9405a); }
+  &:not(:disabled) { border: 2px solid rgba(255, 255, 255, 0.8); box-shadow: 0 2px 6px rgba(120, 100, 160, 0.18); }
+  &--cream:not(:disabled) { color: #8a5a4a; background: #fbf0e8; }
+  &--rose:not(:disabled) { color: #9a3d55; background: #fde0e6; }
+  &--sun:not(:disabled) { color: #7a5420; background: #fff1c9; }
+  &--lilac:not(:disabled) { color: #5a4a8a; background: #ece6ff; }
+  &--berry:not(:disabled) { color: #9a3d55; background: #fbd3dc; }
   // Hover: a little brighter with a soft warm halo; pressed: settles back.
   transition: transform $dur-fast ease-out, filter $dur-fast ease-out, box-shadow $dur-fast ease-out;
-  &:not(:disabled):hover { transform: translateY(-1px); filter: brightness(1.06); box-shadow: 0 3px 0 rgba(90, 60, 80, 0.25), 0 0 16px rgba(255, 228, 160, 0.85); }
+  &:not(:disabled):hover { transform: translateY(-1px); filter: brightness(1.03) saturate(1.1); box-shadow: 0 4px 10px rgba(120, 100, 160, 0.22); }
   &:not(:disabled):active { transform: translateY(1px); }
 }
 
