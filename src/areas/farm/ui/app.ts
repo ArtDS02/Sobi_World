@@ -176,7 +176,8 @@ export function mountApp(
   const offHotkeys = bindHotkeys({
     input: opts.input,
     panel: () => ui.panel,
-    dialogOpen: () => dialogs.childElementCount > 0,
+    // Any dialog counts, the shell's and the ones an Area opens in its own layer (cloud, garden, aquarium…).
+    dialogOpen: () => dialogs.childElementCount > 0 || document.querySelector('.c-dialog') !== null,
     go,
   });
   const offSettings = [opts.keySettings, opts.characterChoice, opts.displayChoice].map((c) => c?.subscribe(() => ui.panel === 'settings' && rerender()));

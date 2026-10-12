@@ -1,16 +1,19 @@
 // The Cloud on screen (spec §8.4, decision 023): a painted sky island (bg_cloud) with one cloud tier of 5 × 3 flower plots
 // at a time, the spring of pure water and the cauldron on the grass banks at the left, wooden label planks, and the tier's
-// title banner with arrows to go up or down a tier. Draws and reports clicks only — what a click does, and every number,
-// comes from the app through CloudSceneDeps, so the scene never reaches the store or another Area.
+// title banner with arrows to go up or down a tier. Motion is presentation only and stops with reduceMotion: slow idle
+// floating (never in step), a soft glow on what can be clicked, and a pass through the clouds when the tier changes.
+// Draws and reports clicks only — what a click does, and every number, comes from the app through CloudSceneDeps, so the
+// scene never reaches the store or another Area.
 import * as Phaser from 'phaser';
-import { formatInt, t } from '../../../i18n/format';
-import { vi } from '../../../i18n/vi';
 import { fitCamera } from '../../../ui/world/fitCamera';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import type { WorldRect } from '../../../systems/layout/camera';
-import { CLOUD_BACKDROP_ART, CLOUD_BUILDING_ART, CLOUD_DRESSING_ART, CLOUD_PLOT_ART, FLOWER_STAGES, flowerArtId } from '../logic/art';
-import { CB, FLOWERS, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
+import { CLOUD_BACKDROP_ART, CLOUD_DRESSING_ART, CLOUD_PLOT_ART, FLOWER_STAGES, flowerArtId } from '../logic/art';
+import { FLOWERS, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
 import type { SceneState } from '../logic/derived';
+import { animateBird, floatIdle, glowOf, hoverable, makeDrifts, makeVeil, moveDrifts, playTierMove, type Drift } from './cloudFx';
+import { CloudBuildings } from './cloudBuildings';
+import { CloudTierBar } from './cloudTierBar';
 import { CLOUD_DESIGN, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
 
 export const CLOUD_SCENE_KEY = 'cloud';
@@ -34,6 +37,7 @@ export interface CloudSceneDeps {
 interface PlotSprites {
   bed: Phaser.GameObjects.Image;
   flower: Phaser.GameObjects.Image;
+  glow: Phaser.FX.Glow | null;
   ripe: boolean;
 }
 
@@ -42,26 +46,24 @@ const KEY = (id: string, textures: Phaser.Textures.TextureManager) => (textures.
 /** The tier a fresh look at the Cloud opens on: the highest one with an owned plot. */
 const topOwnedTier = (owned: number): number => Math.floor((owned - 1) / PLOTS_PER_TIER);
 
-/** The step that opens tier `tier` (0-based), for the closed tier's notice. */
-const tierStep = (tier: number) => CB.plotExpansions.find((e) => e.plots === (tier + 1) * PLOTS_PER_TIER);
-
 export class CloudScene extends Phaser.Scene {
   private plots: PlotSprites[] = [];
-  private buildings = new Map<'spring' | 'cauldron', { img: Phaser.GameObjects.Image; badge: Phaser.GameObjects.Text }>();
-  private hover!: Phaser.GameObjects.Rectangle;
+  private buildings!: CloudBuildings;
   private nightWash!: Phaser.GameObjects.Rectangle;
   private sky!: Phaser.GameObjects.Graphics;
   private backdrop!: Phaser.GameObjects.Image;
-  private titleText!: Phaser.GameObjects.Text;
-  private upArrow!: Phaser.GameObjects.Image;
-  private downArrow!: Phaser.GameObjects.Image;
-  private lockedNote!: Phaser.GameObjects.Text;
-  private bird!: Phaser.GameObjects.Image;
+  private field!: Phaser.GameObjects.Container;
+  private veil: Phaser.GameObjects.Image[] = [];
+  private drifts: Drift[] = [];
+  private bar!: CloudTierBar;
+  private view: WorldRect = { x: 0, y: 0, width: CLOUD_DESIGN.width, height: CLOUD_DESIGN.height };
   private skyNight: boolean | null = null;
   private shown = '';
-  /** The tier on screen (0-based) and the owned plot count it was chosen for. */
+  /** The tier on screen (0-based), the owned plot count it was chosen for, and whether a tier change is playing. */
   private tier = -1;
   private ownedSeen = 0;
+  private moving = false;
+  private idleCount = 0;
   /** Images whose art is fixed: re-pointed when their texture arrives after the scene was built (slow first load). */
   private fixedArt: [Phaser.GameObjects.Image, string][] = [];
 
@@ -73,23 +75,33 @@ export class CloudScene extends Phaser.Scene {
     const v = CLOUD_VIEW;
     this.sky = this.add.graphics().setDepth(v.depth.sky);
     this.backdrop = this.fixed(CLOUD_DESIGN.width / 2, CLOUD_DESIGN.height / 2, CLOUD_BACKDROP_ART).setDepth(v.depth.ground);
+    this.drifts = makeDrifts((x, y, art) => this.fixed(x, y, art));
     fitCamera(this, CLOUD_DESIGN, (view) => this.coverView(view));
     this.nightWash = this.add
       .rectangle(CLOUD_DESIGN.width / 2, CLOUD_DESIGN.height / 2, CLOUD_DESIGN.width * 3, CLOUD_DESIGN.height * 3, 0x1a1a40, v.nightAlpha)
       .setDepth(v.depth.night)
       .setVisible(false);
-    this.hover = this.add
-      .rectangle(0, 0, v.plotSize.width + 8, v.plotSize.height + 8)
-      .setStrokeStyle(4, v.hover, 0.9)
-      .setDepth(v.depth.plot + 1)
-      .setVisible(false);
-    for (let slot = 0; slot < PLOTS_PER_TIER; slot += 1) this.plots.push(this.makePlot(slot));
-    this.makeBuilding('spring', CLOUD_BUILDING_ART.spring, v.spring);
-    this.makeBuilding('cauldron', CLOUD_BUILDING_ART.cauldron, v.cauldron);
-    this.makePlank(v.springLabel, vi.cloud.spring, 'spring');
-    this.makePlank(v.cauldronLabel, vi.cloud.cauldron, 'cauldron');
-    this.makeTierBar();
+    // The field: beds first, then every flower above every bed; moved as one when the tier changes.
+    this.field = this.add.container(0, 0).setDepth(v.depth.plot);
+    const beds = Array.from({ length: PLOTS_PER_TIER }, (_, slot) => this.makeBed(slot));
+    this.plots = beds.map((bed, slot) => this.makeFlower(bed, slot));
+    this.buildings = new CloudBuildings(this, {
+      fixed: (x, y, id) => this.fixed(x, y, id),
+      hoverable: (img) => this.hoverable(img),
+      paused: () => this.deps.paused(),
+      reduceMotion: () => this.deps.reduceMotion(),
+      onPick: (building) => this.deps.onPick({ kind: 'building', building }),
+    });
+    this.bar = new CloudTierBar(this, this.field, {
+      fixed: (x, y, id) => this.fixed(x, y, id),
+      hoverable: (img) => this.hoverable(img),
+      float: (targets, px) => this.float(targets, px),
+      paused: () => this.deps.paused(),
+      onStep: (step) => this.changeTier(step),
+      onLocked: () => this.deps.onPick({ kind: 'locked' }),
+    });
     this.makeBird();
+    this.makeVeil();
     this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
       if (this.deps.paused() || over.length > 0) return;
       this.deps.onPick({ kind: 'ground' });
@@ -104,6 +116,17 @@ export class CloudScene extends Phaser.Scene {
     this.sync(true);
   }
 
+  override update(time: number) {
+    this.sync(false);
+    if (this.deps.reduceMotion()) return;
+    const { scale, periodMs } = CLOUD_VIEW.ripePulse;
+    const swing = CLOUD_VIEW.flowerScale * (1 + Math.sin((time / periodMs) * Math.PI * 2) * scale);
+    for (const p of this.plots) if (p.ripe) p.flower.setScale(swing);
+    moveDrifts(this.drifts, this.view, time);
+  }
+
+  // ---------- building blocks ----------
+
   /** An image of fixed art (see fixedArt). */
   private fixed(x: number, y: number, id: string): Phaser.GameObjects.Image {
     const img = this.add.image(x, y, KEY(id, this.textures));
@@ -111,19 +134,74 @@ export class CloudScene extends Phaser.Scene {
     return img;
   }
 
-  override update(time: number) {
-    this.sync(false);
-    if (this.deps.reduceMotion()) return;
-    const { scale, periodMs } = CLOUD_VIEW.ripePulse;
-    const swing = CLOUD_VIEW.flowerScale * (1 + Math.sin((time / periodMs) * Math.PI * 2) * scale);
-    for (const p of this.plots) if (p.ripe) p.flower.setScale(swing);
+  /** Hover feedback (glow + swell) on a clickable image. */
+  private hoverable(img: Phaser.GameObjects.Image) {
+    hoverable(this, img, { paused: () => this.deps.paused(), reduceMotion: () => this.deps.reduceMotion() });
   }
+
+  /** A slow float of its own rhythm (none when motion is reduced). */
+  private float(targets: Phaser.GameObjects.GameObject[], px: number) {
+    if (!this.deps.reduceMotion()) floatIdle(this, targets, px, this.idleCount++);
+  }
+
+  private makeBed(slot: number): Phaser.GameObjects.Image {
+    const { x, y } = plotCentre(slot);
+    const bed = this.add.image(x, y, KEY(CLOUD_PLOT_ART, this.textures)).setInteractive({ useHandCursor: true });
+    this.field.add(bed);
+    return bed;
+  }
+
+  private makeFlower(bed: Phaser.GameObjects.Image, slot: number): PlotSprites {
+    const v = CLOUD_VIEW;
+    const { x, y } = plotCentre(slot);
+    const flowerY = y + v.plotSize.height * 0.3;
+    const flower = this.add.image(x, flowerY, FALLBACK_PROP_KEY).setOrigin(0.5, 1).setVisible(false);
+    this.field.add(flower);
+    const sprites: PlotSprites = { bed, flower, glow: glowOf(bed), ripe: false };
+    const lift = (dy: number) => {
+      if (this.deps.reduceMotion()) return;
+      this.tweens.add({ targets: bed, y: y - dy, duration: v.hover.ms, ease: 'Sine.easeOut' });
+      this.tweens.add({ targets: flower, y: flowerY - dy, duration: v.hover.ms, ease: 'Sine.easeOut' });
+    };
+    bed.on(Phaser.Input.Events.POINTER_OVER, () => {
+      if (this.deps.paused() || this.moving) return;
+      if (sprites.glow) sprites.glow.active = true;
+      lift(v.hover.lift);
+    });
+    bed.on(Phaser.Input.Events.POINTER_OUT, () => {
+      if (sprites.glow) sprites.glow.active = false;
+      lift(0);
+    });
+    bed.on(Phaser.Input.Events.POINTER_DOWN, () => {
+      if (this.deps.paused() || this.moving) return;
+      const state = this.deps.read();
+      const index = plotIndex(this.tier, slot);
+      this.deps.onPick(state && index < state.plots.length ? { kind: 'plot', index } : { kind: 'locked' });
+    });
+    return sprites;
+  }
+
+  /** The cloud bird over the island (scenery; still when motion is reduced). */
+  private makeBird() {
+    const b = CLOUD_VIEW.bird;
+    const bird = this.fixed(b.x, b.y, CLOUD_DRESSING_ART.bird).setDisplaySize(b.size, b.size * (150 / 180)).setDepth(CLOUD_VIEW.depth.sign - 1);
+    if (!this.deps.reduceMotion()) animateBird(this, bird, b);
+  }
+
+  private makeVeil() {
+    this.veil = makeVeil((x, y, art) => this.fixed(x, y, art));
+  }
+
+  // ---------- view, tiers ----------
 
   /** The backdrop covers the whole visible view (wider or taller than the design frame), keeping its proportions. */
   private coverView(view: WorldRect) {
+    this.view = view;
     const { width, height } = CLOUD_VIEW.backdrop;
     const s = Math.max(view.width / width, view.height / height, CLOUD_DESIGN.height / height);
-    this.backdrop.setDisplaySize(width * s, height * s).setPosition(view.x + view.width / 2, view.y + view.height / 2);
+    // A little taller than the view so the sky can shift during a tier change without showing an edge.
+    const pad = 1 + (CLOUD_VIEW.tierMove.sky * 2) / (height * s);
+    this.backdrop.setDisplaySize(width * s * pad, height * s * pad).setPosition(view.x + view.width / 2, view.y + view.height / 2);
   }
 
   /** The flat sky behind the backdrop (seen only where the image does not reach). */
@@ -136,97 +214,32 @@ export class CloudScene extends Phaser.Scene {
     this.sky.fillStyle(night ? v.sky.nightBottom : v.sky.dayBottom, 1).fillRect(-bleed, height * 0.55, width + bleed * 2, height + bleed);
   }
 
-  private makePlot(slot: number): PlotSprites {
-    const { x, y } = plotCentre(slot);
-    const v = CLOUD_VIEW;
-    const bed = this.add.image(x, y, KEY(CLOUD_PLOT_ART, this.textures)).setDepth(v.depth.plot + slot * 0.01).setInteractive({ useHandCursor: true });
-    const flower = this.add.image(x, y + v.plotSize.height * 0.3, FALLBACK_PROP_KEY).setOrigin(0.5, 1).setDepth(v.depth.crop + slot * 0.01).setVisible(false);
-    bed.on(Phaser.Input.Events.POINTER_OVER, () => !this.deps.paused() && this.hover.setPosition(x, y).setVisible(true));
-    bed.on(Phaser.Input.Events.POINTER_OUT, () => this.hover.setVisible(false));
-    bed.on(Phaser.Input.Events.POINTER_DOWN, () => {
-      if (this.deps.paused()) return;
-      const state = this.deps.read();
-      const index = plotIndex(this.tier, slot);
-      this.deps.onPick(state && index < state.plots.length ? { kind: 'plot', index } : { kind: 'locked' });
-    });
-    return { bed, flower, ripe: false };
-  }
-
-  private makeBuilding(id: 'spring' | 'cauldron', art: string, at: { x: number; y: number }) {
-    const v = CLOUD_VIEW;
-    const img = this.fixed(at.x, at.y, art).setOrigin(0.5, 1).setDepth(v.depth.building + at.y * 0.01);
-    img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: 20 });
-    img.on(Phaser.Input.Events.POINTER_DOWN, () => !this.deps.paused() && this.deps.onPick({ kind: 'building', building: id }));
-    const l = v.label;
-    const badge = this.add
-      .text(at.x + img.displayWidth * (id === 'cauldron' ? -0.38 : 0.38), at.y - img.displayHeight + 6, '', { fontFamily: l.fontFamily, fontSize: `${v.badge.fontPx}px`, color: v.badge.color, backgroundColor: v.badge.background, padding: { x: 8, y: 2 } })
-      .setOrigin(0.5)
-      .setDepth(v.depth.badge)
-      .setVisible(false);
-    this.buildings.set(id, { img, badge });
-  }
-
-  /** A wooden plank with the building's name; clicking it is clicking the building. */
-  private makePlank(at: { x: number; y: number }, name: string, building: 'spring' | 'cauldron') {
-    const v = CLOUD_VIEW;
-    const plank = this.fixed(at.x, at.y, CLOUD_DRESSING_ART.plank)
-      .setDisplaySize(v.plank.width, v.plank.height)
-      .setDepth(v.depth.sign)
-      .setInteractive({ useHandCursor: true });
-    plank.on(Phaser.Input.Events.POINTER_DOWN, () => !this.deps.paused() && this.deps.onPick({ kind: 'building', building }));
-    this.add
-      .text(at.x + v.plank.height * 0.2, at.y, name, this.signStyle(v.label.fontPx, v.label.color, v.label.stroke, v.label.strokePx))
-      .setOrigin(0.5)
-      .setDepth(v.depth.sign + 1);
-  }
-
-  /** The tier's title banner at the bottom of the field, with the arrows that go down or up a tier. */
-  private makeTierBar() {
-    const v = CLOUD_VIEW;
-    this.fixed(v.title.x, v.title.y, CLOUD_DRESSING_ART.banner).setDisplaySize(v.title.width, v.title.height).setDepth(v.depth.sign);
-    const tt = v.titleText;
-    this.titleText = this.add.text(v.title.x, v.title.y + 6, '', this.signStyle(tt.fontPx, tt.color, tt.stroke, tt.strokePx)).setOrigin(0.5).setDepth(v.depth.sign + 1);
-    const arrow = (at: { x: number; y: number }, art: string, step: number, label: string) => {
-      const img = this.fixed(at.x, at.y, art).setDisplaySize(v.arrowSize, v.arrowSize).setDepth(v.depth.sign).setInteractive({ useHandCursor: true });
-      img.setName(label);
-      img.on(Phaser.Input.Events.POINTER_DOWN, () => !this.deps.paused() && this.showTier(this.tier + step));
-      return img;
-    };
-    this.downArrow = arrow(v.tierDown, CLOUD_DRESSING_ART.down, -1, vi.cloud.tierDown);
-    this.upArrow = arrow(v.tierUp, CLOUD_DRESSING_ART.up, 1, vi.cloud.tierUp);
-    const lt = v.lockedText;
-    const centre = plotCentre(Math.floor(PLOTS_PER_TIER / 2));
-    this.lockedNote = this.add
-      .text(centre.x, centre.y, '', { fontFamily: v.label.fontFamily, fontSize: `${lt.fontPx}px`, color: lt.color, backgroundColor: lt.background, padding: { x: 18, y: 8 }, align: 'center' })
-      .setOrigin(0.5)
-      .setDepth(v.depth.sign + 2)
-      .setVisible(false)
-      .setInteractive({ useHandCursor: true });
-    this.lockedNote.on(Phaser.Input.Events.POINTER_DOWN, () => !this.deps.paused() && this.deps.onPick({ kind: 'locked' }));
-  }
-
-  /** The bird that hovers over the island (scenery only; still when motion is reduced). */
-  private makeBird() {
-    const b = CLOUD_VIEW.bird;
-    this.bird = this.fixed(b.x, b.y, CLOUD_DRESSING_ART.bird).setDisplaySize(b.size, b.size * (150 / 180)).setDepth(CLOUD_VIEW.depth.sign - 1);
-    if (this.deps.reduceMotion()) return;
-    this.tweens.add({ targets: this.bird, y: b.y - b.drift, x: b.x + b.drift, duration: b.periodMs, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-  }
-
-  private signStyle(px: number, color: string, stroke: string, strokePx: number): Phaser.Types.GameObjects.Text.TextStyle {
-    return { fontFamily: CLOUD_VIEW.label.fontFamily, fontSize: `${px}px`, fontStyle: 'bold', color, stroke, strokeThickness: strokePx };
-  }
-
-  /** Puts tier `tier` on screen (clamped to the tiers the player may look at) and redraws. */
-  private showTier(tier: number) {
+  /** Goes `step` tiers up (+1) or down (−1): the field passes through the clouds (instant when motion is reduced). */
+  private changeTier(step: number) {
     const state = this.deps.read();
-    if (!state) return;
+    if (!state || this.moving) return;
     const max = viewableTiers(state.plots.length, TIER_COUNT) - 1;
-    const next = Math.min(Math.max(tier, 0), max);
+    const next = Math.min(Math.max(this.tier + step, 0), max);
     if (next === this.tier) return;
-    this.tier = next;
-    this.hover.setVisible(false);
-    this.sync(true);
+    if (this.deps.reduceMotion()) {
+      this.tier = next;
+      return void this.sync(true);
+    }
+    this.moving = true;
+    for (const p of this.plots) if (p.glow) p.glow.active = false;
+    playTierMove(this, {
+      field: this.field,
+      backdrop: this.backdrop,
+      veil: this.veil,
+      title: this.bar.title,
+      dir: Math.sign(next - this.tier),
+      swap: () => {
+        this.tier = next;
+        this.sync(true);
+        return this.bar.titleScale();
+      },
+      done: () => (this.moving = false),
+    });
   }
 
   /** Redraws what changed since the last call (the picture of a plot only changes now and then). */
@@ -273,27 +286,12 @@ export class CloudScene extends Phaser.Scene {
       sprites.flower.setTexture(KEY(flowerArtId(flower, stage), this.textures)).setVisible(true).setScale(CLOUD_VIEW.flowerScale);
       sprites.flower.setTint(view.fertilized ? 0xf4ffd8 : 0xffffff);
     });
-    const spring = this.buildings.get('spring');
-    if (spring) spring.badge.setText(state.water > 0 ? `${state.water}` : '').setBackgroundColor(state.water >= state.waterCapacity ? CLOUD_VIEW.badge.readyBackground : CLOUD_VIEW.badge.background).setVisible(state.water > 0);
-    const cauldron = this.buildings.get('cauldron');
-    if (cauldron) {
-      cauldron.img.setTint(state.cauldron.built ? 0xffffff : CLOUD_VIEW.unbuiltTint);
-      const text = state.cauldron.ready > 0 ? `✓ ${state.cauldron.ready}` : state.cauldron.busy ? '…' : '';
-      cauldron.badge.setText(text).setBackgroundColor(state.cauldron.ready > 0 ? CLOUD_VIEW.badge.readyBackground : CLOUD_VIEW.badge.background).setVisible(text !== '');
-    }
+    this.buildings.draw(state);
   }
 
-  /** Title, arrows, the tier's colour and the notice over a closed tier. */
+  /** The tier bar and the tier's colour over the shared backdrop. */
   private drawTierBar(owned: number) {
-    const name = vi.cloud.tierNames[this.tier] ?? '';
-    this.titleText.setText(this.tier === 0 ? name : t(vi.cloud.tierTitle, { n: this.tier + 1, name }));
-    const viewable = viewableTiers(owned, TIER_COUNT);
-    this.downArrow.setVisible(this.tier > 0);
-    this.upArrow.setVisible(this.tier < viewable - 1);
+    this.bar.draw(this.tier, owned);
     this.backdrop.setTint(CLOUD_VIEW.tierTints[this.tier] ?? 0xffffff);
-    const closed = plotIndex(this.tier, 0) >= owned;
-    const step = closed ? tierStep(this.tier) : undefined;
-    this.lockedNote.setVisible(Boolean(step));
-    if (step) this.lockedNote.setText(t(vi.cloud.tierLocked, { n: this.tier + 1, level: step.level ?? 1, gold: `${formatInt(step.price)} ${vi.cloud.coins}` }));
   }
 }

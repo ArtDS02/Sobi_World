@@ -8,6 +8,18 @@
 
 ## Nhật ký
 
+### 2026-10-12 — GĐ14 Cloud: cắt batch cloud-04, cảnh theo nền thật, hiệu ứng (chờ duyệt)
+✅ Đã làm:
+1. **Cắt `cloud-04-scene`** (3 ảnh Gemini của chủ dự án; `C.png` lưu nhầm ở `cloud-03-world`, đã chuyển): `bg_cloud` (nền đảo sửa từ ảnh mẫu, 1453×720 → 1816×900, phóng ×1,25), `prop_sign_plank`, `prop_title_banner`, `ui_btn_tier_up/down`, `prop_cloud_bird`, `prop_npc_alchemist` → `public/assets/`, status `production`. `cut-sheet.mjs` bỏ vạch chia khung do model vẽ; dấu ✦ của Gemini nằm ngoài vật thể nên không vào sprite. Kích thước khung chỉnh theo tỉ lệ art thật (bảng 300×110, băng rôn 520×198, cú 240×300). Bác Cú Giả Kim dùng ảnh cú (`npcs.json` `artId`).
+2. **Bố cục theo nền thật** (nền = ảnh mẫu thu nhỏ 0,815 → toạ độ đo trực tiếp): lưới 5×3, suối / vạc trên 2 thảm cỏ, bảng gỗ, băng rôn tên tầng tự co cho vừa, nút tầng hai bên, nhãn số là viên tròn viền trắng.
+3. **Hiệu ứng** (tắt hết khi "Giảm chuyển động"): mây nhỏ trôi qua trời mỗi đám một tốc độ; chim mây bay lơ lửng, đung đưa, vỗ cánh; băng rôn và nút tầng nổi nhẹ lệch nhịp; vạc phồng nhẹ khi đang nấu; hoa nở "thở" như cũ. Rê chuột: ô hoa sáng viền vàng + nhấc 4 px, suối / vạc / bảng / nút sáng + phóng 5%, thẻ hoa và nút ở thanh dưới có quầng ấm. Chuyển tầng: ô hoa trôi lên / xuống và mờ, dải mây mềm (blur) che rồi tách ra, nền trời dịch nhẹ (parallax), tên tầng bật lên. Cú nhún nhảy trong khung chân dung.
+4. Tách cảnh cho đúng guard (≤ 300 dòng): `cloudFx.ts`, `cloudTierBar.ts`, `cloudBuildings.ts`.
+🛠️ Lỗi tìm thấy và đã sửa: Esc đóng hộp thoại của Area (Cloud, Garden, Aquarium…) lại mở luôn Cài đặt (hotkey chỉ thấy hộp thoại của Farm) → `app.ts` `dialogOpen` nhận mọi `.c-dialog`; tên tầng co sai khi đang tween.
+🧪 Đã kiểm tra: `npm run check` xanh (1.374 test, guard OK); chạy game bằng Edge ẩn 1916×949 với save cuối game: tầng 8 → chuyển cảnh → tầng 1 → tầng 9 (khóa, thông báo cấp / giá, nút lên ẩn), rê chuột ô / nút, bấm bảng "Suối mây" mở hộp thoại, Esc chỉ đóng hộp thoại; không lỗi console, không 404. Ảnh: `art_inbox/.qa/cloud-review/v2/`.
+⚠️ Còn lại: nền là ảnh phóng ×1,25 (hơi mềm); 9 tầng cao dùng chung nền + màu phủ (đề xuất nền riêng từng tầng); HUD chung chưa đổi theo mẫu.
+👉 Bạn cần: duyệt ảnh Cloud (tầng 1, tầng cao, khi chuyển tầng).
+➡️ Tiếp theo: sau khi duyệt → HUD mới theo mẫu hoặc Garden.
+
 ### 2026-10-12 — GĐ14 Cloud: làm lại cảnh theo ảnh mẫu + 10 tầng mây (decision 023)
 ✅ Đã làm: chủ dự án không duyệt màn Cloud (bố cục placeholder: khối trắng, trời phẳng, nhãn chữ trần) và gửi ảnh mẫu bố cục; yêu cầu thêm tầng mây.
 1. **10 tầng mây × 15 ô** (mở theo cấp + vàng, chỉ thêm ô): content `plotsPerTier` + `plotExpansions.level`, `nextExpansion` trả `tier` / `level`, `buyPlots` chặn `LEVEL_TOO_LOW`, toast "Đã mở <tầng>!", **save Cloud v2** (18 ô cũ → mở trọn tầng 2), Admin có nhãn cho trường mới, chuỗi Việt / Anh cho 10 tên tầng.

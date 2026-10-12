@@ -118,7 +118,7 @@
 
     b { font-size: $fs-sm; color: #4a3a5a; }
     small { font-size: $fs-xs; color: $c-text-muted; }
-    &:hover { transform: translateY(-2px); }
+    &:hover { transform: translateY(-2px); box-shadow: 0 3px 0 #f3e3d6, 0 0 14px rgba(255, 226, 150, 0.75); }
     &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
     &.is-selected { background: #f1eaff; border-color: #8a6cd6; box-shadow: 0 0 0 2px #8a6cd6, 0 3px 0 #c9b8f0; }
   }
@@ -138,6 +138,24 @@
   &--sun:not(:disabled) { color: #7a4a24; background: linear-gradient(180deg, #ffe48a, #ffc94a); }
   &--lilac:not(:disabled) { color: #4a3a82; background: linear-gradient(180deg, #e6e2ff, #c9c0f6); }
   &--berry:not(:disabled) { color: #ffffff; background: linear-gradient(180deg, #f4677a, #d9405a); }
+  // Hover: a little brighter with a soft warm halo; pressed: settles back.
+  transition: transform $dur-fast ease-out, filter $dur-fast ease-out, box-shadow $dur-fast ease-out;
+  &:not(:disabled):hover { transform: translateY(-1px); filter: brightness(1.06); box-shadow: 0 3px 0 rgba(90, 60, 80, 0.25), 0 0 16px rgba(255, 228, 160, 0.85); }
+  &:not(:disabled):active { transform: translateY(1px); }
+}
+
+// Bác Cú Giả Kim breathes in his portrait (the shared guide button; only his art moves). Off with reduceMotion.
+.npc-button__art[src*='npc_alchemist'] {
+  transform-origin: 50% 100%;
+  animation: cloud-owl-idle 3.6s ease-in-out infinite;
+}
+
+.npc-button:hover .npc-button__art[src*='npc_alchemist'] { animation-duration: 1.8s; }
+
+@keyframes cloud-owl-idle {
+  0%, 100% { transform: translateY(0) rotate(0deg) scaleY(1); }
+  30% { transform: translateY(-2px) rotate(-3deg) scaleY(1.02); }
+  60% { transform: translateY(0) rotate(2deg) scaleY(0.99); }
 }
 
 .cloud-dialog {

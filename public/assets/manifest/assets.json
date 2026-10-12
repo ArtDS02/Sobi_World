@@ -1605,22 +1605,22 @@
     },
     {
       "id": "prop_sign_plank",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_sign_plank.png"
     },
     {
       "id": "prop_title_banner",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_title_banner.png"
     },
     {
       "id": "prop_cloud_bird",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_cloud_bird.png"
     },
     {
       "id": "prop_npc_alchemist",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_npc_alchemist.png"
     },
     {
@@ -1950,7 +1950,7 @@
     },
     {
       "id": "bg_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/bg_cloud.png"
     },
     {
@@ -2062,12 +2062,12 @@
     },
     {
       "id": "ui_btn_tier_up",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_btn_tier_up.png"
     },
     {
       "id": "ui_btn_tier_down",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_btn_tier_down.png"
     },
     {

@@ -15,7 +15,7 @@ Backend: **G** = Gemini vẽ sheet (chủ dự án dán prompt, lưu ảnh; còn
 | Cloud | `cloud-01-flowers` | 6 hoa × 4 giai đoạn (24) | G, 3 sheet 2×4, cùng tỉ lệ | 3 | **production** (chờ duyệt) |
 | Cloud | `cloud-02-items` | 6 hạt, 6 hoa, nước tinh khiết, 3 potion (16) | G, 3 sheet | 3 | **production** (chờ duyệt) |
 | Cloud | `cloud-03-world` | `bld_cloud_spring`, `bld_cauldron`, `plot_cloud`, `bg_cloud` (4) | G, 1 sheet 1×3 + 1 nền | 2 | 3/4 production; `bg_cloud` chờ (ảnh có watermark Gemini) |
-| Cloud | `cloud-04-scene` | nền đảo mây (sửa từ ảnh mẫu), bảng gỗ, băng rôn tầng, 2 nút tầng, chim mây, Cú Giả Kim (7, decision 023) | G: 1 ảnh sửa + 2 sheet | 3 | sẵn sàng |
+| Cloud | `cloud-04-scene` | nền đảo mây (sửa từ ảnh mẫu), bảng gỗ, băng rôn tầng, 2 nút tầng, chim mây, Cú Giả Kim (7, decision 023) | G: 1 ảnh sửa + 2 sheet | 3 | **production** (chờ duyệt) |
 | Garden | `garden-01-crops` | 5 cây × 4 giai đoạn (20) | G, 3 sheet | 3 | chưa viết |
 | Garden | `garden-02-items` | 5 hạt, 5 nông sản, thức ăn cao cấp, phân bón (12) | G, 2 sheet 2×3 | 2 | chưa viết |
 | Garden | `garden-03-world` | `plot_soil`, `_wet`, `plot_locked`, `bld_feed_mill`, `bld_composter`, `bld_sprinkler` (6) | G, 2 sheet 1×3 | 2 | chưa viết |

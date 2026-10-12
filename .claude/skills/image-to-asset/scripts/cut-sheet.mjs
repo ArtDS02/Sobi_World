@@ -107,7 +107,14 @@ for (let s = 0; s < N; s++) {
   comps.push(c);
 }
 const noise = Math.max(24, N * 0.00004);
-const real = comps.filter((c) => c.n >= noise).sort((a, b) => b.n - a.n);
+// Panel dividers: a thin line across (almost) the whole sheet, drawn by the model between cells. Not an object.
+const divider = (c) => {
+  const w = c.x1 - c.x0 + 1, h = c.y1 - c.y0 + 1;
+  return (h >= H * 0.9 && w <= W * 0.02) || (w >= W * 0.9 && h <= H * 0.02);
+};
+const dividers = comps.filter(divider);
+for (const c of dividers) console.log(`INFO ignored a panel divider at x${c.x0}–${c.x1} y${c.y0}–${c.y1}`);
+const real = comps.filter((c) => c.n >= noise && !divider(c)).sort((a, b) => b.n - a.n);
 if (!real.length) fail('no object found (background not flat? try --tol)');
 // Primaries: big enough to be one of the grid's objects (a sprout is much smaller than a bloom).
 const primaries = real.filter((c) => c.n >= real[0].n * 0.025);
