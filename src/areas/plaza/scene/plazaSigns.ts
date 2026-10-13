@@ -31,7 +31,7 @@ export function makeSign(scene: Phaser.Scene, d: DrawnPlacement, deps: AmbientDe
   if (name) {
     const [first, ...rest] = name.split(' ');
     const text = scene.add
-      .text(icon ? -width * 0.04 : 0, y, rest.length > 0 ? `${first}\n${rest.join(' ')}` : name, {
+      .text(icon ? -width * 0.06 : 0, y, rest.length > 0 ? `${first}\n${rest.join(' ')}` : name, {
         color: S.color,
         fontSize: `${board.fontPx}px`,
         fontFamily: S.fontFamily,

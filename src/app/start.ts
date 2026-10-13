@@ -12,8 +12,7 @@ import { AudioManager, audioTracks, type AudioClip } from '../areas/farm/scene/a
 import { createFarmView, type FarmView } from '../areas/farm/scene/farmView';
 import { noEffects } from '../areas/farm/scene/feedback/effects';
 import { createFeedbackDirector, type FeedbackDirector } from '../areas/farm/scene/feedback/FeedbackDirector';
-import { CHARACTER } from '../core/config/character';
-import { newPlayer, PLAZA_ID, setPlayerSpot } from '../core/player/player';
+import { PLAZA_ID } from '../core/player/player';
 import { createDisplay } from './display';
 import { createSettingsStore } from '../core/settings/settings';
 import type { PanelId } from '../ui/components/popup';
@@ -105,7 +104,16 @@ export async function start(root: HTMLElement) {
   // The key hint over the world: scenes report it, the DOM shows it with the player's own keys.
   const promptHost = el('div', { class: 'world-prompt-host' });
   let prompt: WorldPrompt | null = null;
-  const showPrompt = () => patch(promptHost, renderWorldPrompt(prompt, keys()));
+  /** An anchored hint never rises above this (px of the page): it stays under the HUD's top bar, fully on screen. */
+  const PROMPT_MIN_TOP = 190;
+  const showPrompt = () => {
+    // An anchored hint sits over its thing: canvas px + where the canvas is on the page.
+    const canvas = prompt?.anchor ? document.querySelector('.app__stage canvas')?.getBoundingClientRect() : undefined;
+    promptHost.classList.toggle('is-anchored', canvas !== undefined);
+    if (canvas && prompt?.anchor) promptHost.style.cssText = `left: ${canvas.left + prompt.anchor.x}px; top: ${Math.max(canvas.top + prompt.anchor.y, PROMPT_MIN_TOP)}px`;
+    else promptHost.style.cssText = '';
+    patch(promptHost, renderWorldPrompt(prompt, keys()));
+  };
   settings.subscribe(showPrompt);
   // The plaza's doors from the save; the same object while nothing about them changed.
   let doors: { signature: string; views: ReadonlyMap<string, PortalView> } = { signature: '', views: new Map() };
@@ -118,6 +126,8 @@ export async function start(root: HTMLElement) {
     return doors.views;
   };
   let app: MountedApp | null = null;
+  // The dock leads into an Area only once the plaza is drawn (before that the game is still loading its art).
+  let plazaUp = false;
   // The sky of the day over the world, and the chips that open its panels (GĐ12).
   let place: string = PLAZA_ID;
   const sky = createSkyLayer({ save: () => world.getSnapshot().save, now: () => clock.now(), open: (panel) => app?.openPanel(panel) });
@@ -133,16 +143,12 @@ export async function start(root: HTMLElement) {
   });
   let director: FeedbackDirector | null = null;
   const host: WorldHost = {
-    input,
     setPrompt(next) {
       prompt = next;
       showPrompt();
     },
     // A station leads to a panel (`panel:orders`), a door to a place.
     go: (place) => (place.startsWith('panel:') ? app?.openPanel(place.slice(6) as PanelId) : void flow.go(place)),
-    remember: (spot) => void world.dispatch((s, c) => setPlayerSpot(s, spot, c)),
-    player: () => world.getSnapshot().save?.player ?? newPlayer(),
-    character: () => settings.getSnapshot().settings.character,
     now: () => clock.now(),
     reduceMotion: () => store.getSnapshot().save?.settings.reduceMotion ?? false,
     paused: () => app?.isModalOpen() ?? false,
@@ -160,8 +166,6 @@ export async function start(root: HTMLElement) {
       place = overlays.enter(to);
       app?.setPlace(place as Place);
       showSky();
-      // Leaving through a door keeps that Area as the place: the game reopens in front of its door.
-      if (to !== PLAZA_ID) void world.dispatch((s, c) => setPlayerSpot(s, { area: to, x: null, y: null, facing: 'down' }, c));
     },
   });
   // §12: the desktop shell allows autoplay; the browser build waits for the first gesture.
@@ -203,16 +207,10 @@ export async function start(root: HTMLElement) {
         return gap && need ? { name: gap.manifest.name.vi, level: need.need } : null;
       },
     },
-    characterChoice: {
-      current: () => settings.getSnapshot().settings.character,
-      choose: (id) => void settings.setCharacter(id),
-      preview: (id) => assets.registry.url(CHARACTER.assets[id], 'down_idle'),
-      subscribe: (fn) => settings.subscribe(fn),
-    },
     displayChoice,
     leave: () => void flow.go(PLAZA_ID),
     goPlace: (place) => void flow.go(place),
-    plaza: { doors: () => plazaDoors(portals()), denied: () => director?.denied() },
+    plaza: { doors: () => (plazaUp ? plazaDoors(portals()) : []), denied: () => director?.denied() },
     overlay: overlays.root,
     sky: sky.root,
     overlayModal: overlays.isModalOpen,
@@ -226,10 +224,10 @@ export async function start(root: HTMLElement) {
     farm: (stage, onPick) => {
       const plaza = new PlazaScene({
         layout: PLAZA_LAYOUT,
-        character: CHARACTER,
         assets: assets.registry,
         host,
         portals,
+        ready: () => (plazaUp = true),
       });
       const garden = new GardenScene({
         read: () => overlays.gardenUi.sceneState(),

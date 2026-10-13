@@ -167,12 +167,6 @@ export const partA = {
     menu: "Menu",
   },
 
-  character: {
-    title: "Character",
-    hint: "Choose the character who walks in the Plaza and Sobi Adventure.",
-    so: "So (girl)",
-    bi: "Bi (boy)",
-  },
 
   keys: {
     title: "Controls",
@@ -239,8 +233,8 @@ export const partA = {
       deliver: "An order on the Plaza board can be delivered now",
       goal: "Today's goal: {text} ({progress})",
       unlock: "Reach level {level} to unlock {area}",
-      enterFarm: "Enter the Pig Pen (press E) to begin",
-      explore: "Stroll around the Plaza or enter an area to play",
+      enterFarm: "Click the Pig Pen to begin",
+      explore: "Click an area to play",
       done: "Everything is fine today, take a rest",
     },
     go: "Go",

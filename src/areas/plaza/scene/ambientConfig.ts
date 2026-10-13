@@ -1,5 +1,5 @@
 // The numbers of the plaza's living details (design px, ms, 0..1): clouds, water, the fountain, the portal,
-// butterflies, signs, lamps, dust, the fade behind buildings. Looks only; where things stand is the layout.
+// butterflies, signs, lamps and sparkles. Looks only; where things stand is the layout.
 export const PLAZA_AMBIENT = {
   clouds: {
     /** Cloud art ids (manifest rows), drifting right and wrapping round. */
@@ -26,7 +26,7 @@ export const PLAZA_AMBIENT = {
   },
   fountain: {
     /** Droplets from the top of the fountain art (share of its height from the top). */
-    spoutAt: 0.12,
+    spoutAt: 0.3,
     frequencyMs: 90,
     lifespanMs: 900,
     speed: [70, 130] as [number, number],
@@ -58,7 +58,7 @@ export const PLAZA_AMBIENT = {
     flapHz: 7,
   },
   signs: {
-    /** A gentle sway all the time; a bigger bounce when the character comes close. */
+    /** A gentle sway all the time; a bigger bounce when the pointer comes over its door. */
     swayDeg: 1.2,
     swayMs: 2200,
     nearBounceDeg: 5,
@@ -70,7 +70,7 @@ export const PLAZA_AMBIENT = {
      */
     boards: {
       prop_signboard: { centre: 0.27, width: 0.86, fontPx: 18, icon: null },
-      prop_plaza_sign: { centre: 0.34, width: 0.62, fontPx: 26, icon: { at: 0.36, size: 0.2 } },
+      prop_plaza_sign: { centre: 0.345, width: 0.6, fontPx: 26, icon: { at: 0.29, size: 0.17 } },
     } as Record<string, { centre: number; width: number; fontPx: number; icon: { at: number; size: number } | null }>,
     sparkles: 4,
   },
@@ -90,21 +90,13 @@ export const PLAZA_AMBIENT = {
     sway: { angle: 0.05, ms: 2000 },
   },
   dust: {
-    /** Each puff lives this long; at most this many alive at once. */
+    /** The sparkles of a door's plank: each lives this long; at most this many alive at once. */
     lifeMs: 520,
     color: 0xe9d3a6,
     maxAlive: 24,
   },
-  fade: {
-    /** Opacity of a building the character stands behind, and how fast it follows (per second). */
-    behindAlpha: 0.5,
-    ratePerSecond: 7,
-    /** The character counts as behind from this far over the art's left/right edges (px). */
-    marginPx: 6,
-  },
-  shadow: { alpha: 0.28 },
   light: {
-    /** The evening tint is a multiply layer over the world; this much of its strength is used (keeps the character readable). */
+    /** The evening tint is a multiply layer over the world; this much of its strength is used. */
     strength: 0.85,
     depth: 90_000,
     pollMs: 20_000,

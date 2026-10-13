@@ -1,7 +1,7 @@
 // Everything in the plaza that moves by itself (spec §3.1: a living world, never in the way): drifting clouds,
 // the sea's foam, the fountain's water, the portal's glow and sparkles, signs swaying, lamps glowing, butterflies,
-// animals, and the dust of footsteps. Built from the scene's drawn placements; it owns what it creates and
-// releases it in `destroy`. A door the character is near wakes up (`setNear`); with reduced motion it all calms.
+// animals, and the sparkles of a hovered plank. Built from the scene's drawn placements; it owns what it creates and
+// releases it in `destroy`. A hovered door wakes up (`setNear`); with reduced motion it all calms.
 import * as Phaser from 'phaser';
 import type { PlazaLayout, PlazaPlacement } from '../../../../content/schemas/plaza/layout';
 import type { Rect } from '../../../systems/character';
@@ -85,7 +85,7 @@ export class PlazaAmbient {
     this.butterflies?.update(dtMs, this.random);
   }
 
-  /** The door the character is close to (a `portal` id), or null. Wakes that door's sign and effects. */
+  /** The door under the pointer (a `portal` id), or null. Wakes that door's sign and effects. */
   setNear(portal: string | null) {
     if (portal === this.near) return;
     this.near = portal;
@@ -104,12 +104,6 @@ export class PlazaAmbient {
       onComplete: () => sign.box.setAngle(0),
     });
     this.dust.emitParticleAt(sign.box.x, sign.box.y - sign.box.height * 0.6, S.sparkles);
-  }
-
-  /** One footstep on dirt: a little puff. */
-  puff(x: number, y: number) {
-    if (this.deps.calm()) return;
-    this.dust.emitParticleAt(x, y, 2);
   }
 
   /** The day's light: how much the lamps shine (0..1). */

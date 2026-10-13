@@ -4,6 +4,7 @@ import { _electron as electron, expect, test, type Page } from '@playwright/test
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { clickPlaza } from './world';
 
 const root = process.cwd();
 const HOUR = 3_600_000;
@@ -15,18 +16,11 @@ const launch = (userData: string) => {
 const file = (dir: string) => join(dir, 'saves', 'save.json');
 const read = (dir: string) => JSON.parse(readFileSync(file(dir), 'utf8'));
 
-/** Clicks where a plaza object stands (design px → the canvas, which letterboxes the 1932 × 900 frame). */
-async function clickPlaza(page: Page, x: number, y: number) {
-  const box = (await page.locator('.app__stage canvas').boundingBox())!;
-  const zoom = Math.min(box.width / 1932, box.height / 900);
-  await page.mouse.click(box.x + box.width / 2 + (x - 966) * zoom, box.y + box.height / 2 + (y - 450) * zoom);
-}
-
-/** From the plaza spawn: walk to the garden gate and go in. */
+/** From the plaza: a click on the garden gate goes in. */
 async function enterGarden(page: Page) {
   await expect(page.locator('.app.is-plaza')).toBeVisible({ timeout: 30_000 });
-  await page.waitForTimeout(3000);
-  await clickPlaza(page, 680, 260); // the gate: the click walks to it and goes in by itself
+  await expect(page.locator('.plazabar__dock')).toBeVisible({ timeout: 30_000 }); // the plaza scene is up
+  await clickPlaza(page, 625, 230); // the garden gate
   await expect(page.locator('.app.is-garden')).toBeVisible({ timeout: 20_000 });
   await expect(page.locator('.garden-ui__dock')).toBeVisible();
 }

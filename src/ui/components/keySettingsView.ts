@@ -1,13 +1,16 @@
 // The key settings section (spec §4): one row per control, two key slots each; pressing a slot waits for
 // the next key. Drawn from the view the controller gives; the controller does the work.
-import { CONTROLS, KEY_SLOTS, keyLabel } from '../../core/settings/keys';
+import { KEY_SLOTS, keyLabel, type Control } from '../../core/settings/keys';
 import { vi } from '../../i18n/vi';
 import { el } from '../dom';
 import type { KeySettings } from '../world/keySettings';
 
+/** The controls that do something (decision 025: nobody walks, so the move and interact keys are kept in the settings but not shown). */
+const SHOWN: readonly Control[] = ['inventory', 'codex', 'menu'];
+
 export function renderKeySettings(ctl: KeySettings): HTMLElement {
   const view = ctl.view();
-  const slotButton = (control: (typeof CONTROLS)[number], slot: number) => {
+  const slotButton = (control: Control, slot: number) => {
     const code = view.keys[control][slot];
     const waiting = view.listening?.control === control && view.listening.slot === slot;
     return el('button', {
@@ -21,7 +24,7 @@ export function renderKeySettings(ctl: KeySettings): HTMLElement {
       on: { click: () => (waiting ? ctl.cancel() : ctl.listen(control, slot)) },
     });
   };
-  const clearButton = (control: (typeof CONTROLS)[number]) => {
+  const clearButton = (control: Control) => {
     const slot = view.keys[control][1] !== null ? 1 : -1;
     return el('button', {
       class: 'c-button c-button--ghost keys__clear',
@@ -38,7 +41,7 @@ export function renderKeySettings(ctl: KeySettings): HTMLElement {
     el(
       'div',
       { class: 'keys__grid' },
-      ...CONTROLS.flatMap((control) => [
+      ...SHOWN.flatMap((control) => [
         el('span', { class: 'settings__label', text: vi.controls[control] }),
         ...Array.from({ length: KEY_SLOTS }, (_, slot) => slotButton(control, slot)),
         clearButton(control),

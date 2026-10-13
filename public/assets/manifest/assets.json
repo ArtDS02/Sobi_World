@@ -1625,57 +1625,57 @@
     },
     {
       "id": "prop_plaza_tree_round",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_plaza_tree_round.png"
     },
     {
       "id": "prop_plaza_tree_pine",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_plaza_tree_pine.png"
     },
     {
       "id": "prop_plaza_bush",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_plaza_bush.png"
     },
     {
       "id": "prop_plaza_flowerbed",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_plaza_flowerbed.png"
     },
     {
       "id": "prop_plaza_lamp",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_plaza_lamp.png"
     },
     {
       "id": "prop_plaza_bench",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_plaza_bench.png"
     },
     {
       "id": "prop_plaza_planter",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_plaza_planter.png"
     },
     {
       "id": "prop_plaza_rock",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_plaza_rock.png"
     },
     {
       "id": "prop_plaza_sign",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_plaza_sign.png"
     },
     {
       "id": "prop_world_logo",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_world_logo.png"
     },
     {
       "id": "prop_sobi_mascot",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_sobi_mascot.png"
     },
     {
@@ -2010,7 +2010,7 @@
     },
     {
       "id": "bg_plaza",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/bg_plaza.png"
     },
     {
@@ -2132,52 +2132,52 @@
     },
     {
       "id": "ui_badge_level",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_badge_level.png"
     },
     {
       "id": "ui_area_adventure",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_area_adventure.png"
     },
     {
       "id": "ui_area_garden",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_area_garden.png"
     },
     {
       "id": "ui_area_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_area_cloud.png"
     },
     {
       "id": "ui_area_aquarium",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_area_aquarium.png"
     },
     {
       "id": "ui_area_farm",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_area_farm.png"
     },
     {
       "id": "ui_hud_hub",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_hud_hub.png"
     },
     {
       "id": "ui_hud_collection",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_hud_collection.png"
     },
     {
       "id": "ui_hud_menu",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_hud_menu.png"
     },
     {
       "id": "ui_hud_items",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_hud_items.png"
     },
     {

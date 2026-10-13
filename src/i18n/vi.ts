@@ -171,12 +171,6 @@ export const vi = {
     menu: "Menu",
   },
 
-  character: {
-    title: "Nhân vật",
-    hint: "Chọn nhân vật đi lại ở Sảnh và Sobi Adventure.",
-    so: "So (nữ)",
-    bi: "Bi (nam)",
-  },
 
   keys: {
     title: "Phím điều khiển",
@@ -244,8 +238,8 @@ export const vi = {
       deliver: "Có đơn ở Bảng đơn Sảnh giao được ngay",
       goal: "Mục tiêu hôm nay: {text} ({progress})",
       unlock: "Lên cấp {level} để mở {area}",
-      enterFarm: "Vào Chuồng heo (phím E) để bắt đầu",
-      explore: "Dạo quanh Sảnh hoặc vào một khu để chơi",
+      enterFarm: "Bấm vào Chuồng heo để bắt đầu",
+      explore: "Bấm vào một khu để chơi",
       done: "Hôm nay mọi việc đã ổn, nghỉ ngơi nhé",
     },
     go: "Đi",

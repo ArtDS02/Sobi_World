@@ -1,5 +1,5 @@
-// Plaza art that waits for batch world-01-scene (decision 024): placeholders in the manifest until the owner's
-// Gemini sheets are cut. The scene draws each placement's `fallback` meanwhile, and the code-painted ground
+// Plaza art of batch world-01-scene (decision 024; delivered 2026-10-13). While a row is still a placeholder (a new
+// row before its art arrives) the scene draws the placement's `fallback`, and the code-painted ground
 // until bg_plaza arrives.
 export const PLAZA_AREA_ICONS = ['adventure', 'garden', 'cloud', 'aquarium', 'farm'] as const;
 

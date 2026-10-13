@@ -3,7 +3,6 @@
 import type { SettingKey } from '../../logic/actions/setSetting';
 import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
-import { renderCharacterPicker, type CharacterChoice } from '../../../../ui/components/characterPicker';
 import { renderDisplaySettings, type DisplayChoice } from '../../../../ui/components/displaySettings';
 import { renderKeySettings } from '../../../../ui/components/keySettingsView';
 import { el } from '../../../../ui/dom';
@@ -70,7 +69,6 @@ export function renderSettingsScreen(
   vm: SettingsVm,
   h: SettingsHandlers,
   keys?: KeySettings,
-  character?: CharacterChoice,
   display?: DisplayChoice,
 ): HTMLElement {
   return el(
@@ -81,7 +79,6 @@ export function renderSettingsScreen(
       ...TOGGLES.map(([key, label]) => toggle(save.settings, key, label, h)),
     ),
     ...(display ? renderDisplaySettings(display) : []),
-    character ? renderCharacterPicker(character) : null,
     keys ? renderKeySettings(keys) : null,
     section(
       vi.settings.saveFile,

@@ -1,9 +1,10 @@
 // Sobi Adventure (GĐ10) on the production build: the door opens, the knight's starter pig comes to the farm, the party goes in,
 // fights the first battle (Auto, x2) and the run is saved mid-way.
-import { _electron as electron, expect, test, type Page } from '@playwright/test';
+import { _electron as electron, expect, test } from '@playwright/test';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { clickPlaza } from './world';
 
 const root = process.cwd();
 const launch = (userData: string) => {
@@ -13,13 +14,6 @@ const launch = (userData: string) => {
 };
 const file = (dir: string) => join(dir, 'saves', 'save.json');
 const read = (dir: string) => JSON.parse(readFileSync(file(dir), 'utf8'));
-
-/** Clicks where a plaza object stands (design px → the canvas, which letterboxes the 1932 × 900 frame). */
-async function clickPlaza(page: Page, x: number, y: number) {
-  const box = (await page.locator('.app__stage canvas').boundingBox())!;
-  const zoom = Math.min(box.width / 1932, box.height / 900);
-  await page.mouse.click(box.x + box.width / 2 + (x - 966) * zoom, box.y + box.height / 2 + (y - 450) * zoom);
-}
 
 test('the adventure: it opens, the knight gives a pig, the party enters the forest and fights', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'unin-e2e-adventure-'));
@@ -37,8 +31,8 @@ test('the adventure: it opens, the knight gives a pig, the party enters the fore
     app = await launch(dir);
     page = await app.firstWindow();
     await expect(page.locator('.app.is-plaza')).toBeVisible({ timeout: 30_000 });
-    await page.waitForTimeout(3000);
-    await clickPlaza(page, 358, 300);
+    await expect(page.locator('.plazabar__dock')).toBeVisible({ timeout: 30_000 }); // the plaza scene is up
+    await clickPlaza(page, 300, 380);
     await expect(page.locator('.app.is-adventure')).toBeVisible({ timeout: 20_000 });
     await page.getByRole('button', { name: 'Nhận heo phiêu lưu đầu tiên' }).click();
     const card = page.locator('.adventure-ui__fighter').first();
@@ -88,8 +82,8 @@ test('technologies: the Menu has them, the field kitchen lets the party carry a 
     app = await launch(dir);
     page = await app.firstWindow();
     await expect(page.locator('.app.is-plaza')).toBeVisible({ timeout: 30_000 });
-    await page.waitForTimeout(3000);
-    await clickPlaza(page, 358, 300);
+    await expect(page.locator('.plazabar__dock')).toBeVisible({ timeout: 30_000 }); // the plaza scene is up
+    await clickPlaza(page, 300, 380);
     await expect(page.locator('.app.is-adventure')).toBeVisible({ timeout: 20_000 });
     await page.getByRole('button', { name: 'Nhận heo phiêu lưu đầu tiên' }).click();
     await expect(page.locator('.adventure-ui__prep')).toHaveCount(0); // no field kitchen yet: a hint instead

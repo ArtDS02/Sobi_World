@@ -11,13 +11,15 @@ export const PLAZA_VIEW = {
   edgeWidth: 6,
   /** Pixels with alpha above this count as a hit on a door. */
   hitAlpha: 20,
-  /** Data key marking a door image for pointer picking. */
+  /** Data key marking a door image (or its name plank) for pointer picking. */
   doorData: 'plazaDoor',
+  /** Data key keeping a door's drawn scale (the hover swells from it). */
+  baseScaleData: 'plazaBaseScale',
+  /** Hover over a door: it swells this much from its foot. */
+  hover: { swell: 1.04, ms: 140 },
   closedTint: 0xaeb2bf,
   /** A fallback art of another shape is drawn this much smaller than the placement's width (the square old signboard vs the wide plank). */
   fallbackScale: { prop_signboard: 0.72 } as Record<string, number>,
-  /** A click on a door walks until within this share of its reach. */
-  clickArriveShare: 0.45,
   /** The padlock on a closed door: size, and where on the art (share of its height from the top). */
   lock: { size: 72, at: 0.35 },
   /** Door name under its art (same plate as the farm's object labels). */

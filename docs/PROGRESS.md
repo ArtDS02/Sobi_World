@@ -8,6 +8,17 @@
 
 ## Nhật ký
 
+### 2026-10-13 — GĐ14 Sảnh: art world-01-scene vào game, bỏ nhân vật ở Sảnh (chờ duyệt)
+✅ Đã làm:
+1. **Cắt batch `world-01-scene`** (9 ảnh Gemini của chủ dự án): 31 file → `public/assets/`, status `production`. Sheet P Gemini vẽ 4×2 (thay 2×4), sheet H vẽ 2 bộ trùng → cắt theo lưới thật, lấy bộ trên; không cần vẽ lại. `bg_plaza` 1511×704 → 1932×900.
+2. **Bố cục đo lại trên nền thật** (đường đi lệch ảnh mẫu một chút): 5 cổng, nhà, đài phun nước, cây, bụi, đèn, ghế, bồn hoa; bảng tên 160 px với icon khu vực; Bảng đơn hàng cạnh quảng trường; tia nước đài phun ở đỉnh tượng mây.
+3. **Bỏ nhân vật ở Sảnh** (yêu cầu của chủ dự án, decision 025): bấm vào công trình / bảng tên là vào khu; rê chuột: công trình phóng nhẹ, bảng nảy, gợi ý hiện ngay trên công trình (tên hoặc điều kiện mở); khu khóa: tối + ổ khóa + hiệu ứng từ chối. Thanh khu vực chỉ hiện khi Sảnh đã vẽ xong. Cài đặt: bỏ chọn nhân vật, phím chỉ còn Túi đồ / Codex / Menu. Gợi ý hướng dẫn "Vào Chuồng heo (phím E)" → "Bấm vào Chuồng heo để bắt đầu". Xóa code đi bộ của Sảnh; save không đổi.
+🛠️ Lỗi tìm thấy và đã sửa: bấm thanh khu vực khi game còn tải ảnh làm Farm tải trùng texture ("Texture key already in use") → thanh chỉ hiện khi Sảnh sẵn sàng.
+🧪 Đã kiểm tra: `npm run check` xanh (1.361 test); 14/14 e2e (Electron, bản build) xanh; chụp Sảnh 1837×856 và 1600×900, rê chuột lên cổng mở / cổng khóa.
+⚠️ Quyết định tự đưa ra (chủ dự án cho tự quyết HUD): giữ HUD như decision 024; trường đi bộ của layout (`walkArea`, `spawn`, `solid`…) để lại vì Admin còn ghi; `ui_icon_lock` vẫn là placeholder (batch `plaza-01-icons`).
+👉 Bạn cần: xem Sảnh trong game; duyệt.
+➡️ Tiếp theo: Garden (`garden-01..03`).
+
 ### 2026-10-13 — GĐ14 Sảnh: bố cục và HUD theo ảnh mẫu, batch world-01-scene (chờ chủ dự án tạo ảnh)
 ✅ Đã làm:
 1. **Ảnh mẫu** `art_inbox/.batch/world-01-scene/sobi-world-lobby.png` → `asset/reference/sobi_world/plaza_layout_mock.png` (CONTENT, đăng ký trong reference-registry). Decision 024.

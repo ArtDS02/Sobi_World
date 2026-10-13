@@ -70,6 +70,13 @@ $sign-edge: #8a5a2b;
   pointer-events: none;
 }
 
+// Over the hovered door (the plaza, decision 025): its top centre, the hint just above it.
+.world-prompt-host.is-anchored {
+  inset: auto;
+  padding: 0;
+  transform: translate(-50%, calc(-100% - 0.5rem));
+}
+
 .world-prompt {
   position: relative;
   display: flex;

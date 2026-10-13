@@ -29,7 +29,7 @@ Backend: **G** = Gemini vẽ sheet (chủ dự án dán prompt, lưu ảnh; còn
 | Adventure | `adventure-05-materials` | thảo mộc, nanh, quặng, bánh răng, rune, trứng heo hoang, 3 khẩu phần (9) | G, 2 sheet | 2 | chưa viết |
 | Adventure | `adventure-06-backdrops` | `bg_adventure_forest`, `_mountain`, `_ruins` (3) | G, 3 nền | 3 | chưa viết |
 | Farm | `farm-01-species` | 6 giống heo GĐ7: đứng (6) + ngủ, thức (từ ảnh đứng đã duyệt) | G sheet 2×3, rồi Gemini sửa ảnh | 3 | chưa viết |
-| Sảnh | `world-01-scene` | nền đảo trời (sửa từ ảnh mẫu), 7 công trình cổng, 8 đồ trang trí, bảng tên, logo, sao cấp, 5 icon khu vực, 4 icon HUD, linh vật Sobi (30, decision 024) | G: 1 ảnh sửa + 8 sheet | 9 | **chờ chủ dự án tạo ảnh** |
+| Sảnh | `world-01-scene` | nền đảo trời (sửa từ ảnh mẫu), 7 công trình cổng, 8 đồ trang trí, bảng tên, logo, sao cấp, 5 icon khu vực, 4 icon HUD, linh vật Sobi (30, decision 024) | G: 1 ảnh sửa + 8 sheet | 9 | **production** (chờ duyệt) |
 | Sảnh | `plaza-01-icons` | `ui_icon_lock` (1) | K | 0 | chưa viết |
 | | | **162** | | **~39** | |
 

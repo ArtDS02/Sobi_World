@@ -2,12 +2,8 @@
 // they should, and the layout is walkable (spawn, every door reachable).
 import { describe, expect, it } from 'vitest';
 import { AREAS } from '../../src/app/areas';
-import { PLAZA_ID, newPlayer } from '../../src/core/player/player';
-import { arrivalSpot, DOOR_STEP_PX } from '../../src/areas/plaza/logic/arrival';
 import { PLAZA_LAYOUT } from '../../src/areas/plaza/logic/config/content';
 import { portalPrompt, portalViews } from '../../src/areas/plaza/logic/portals';
-import { plazaWalkable } from '../../src/areas/plaza/logic/walkable';
-import { canStand } from '../../src/systems/character';
 import { vi } from '../../src/i18n/vi';
 import { makeState } from './stateFactory';
 import { world } from './worldKit';
@@ -15,8 +11,6 @@ import { mulberry32 } from '../../src/core/rng';
 
 const infos = () => AREAS.areas(world(makeState()));
 const views = () => portalViews(infos());
-const areaOf = (portal: string) => views().get(portal)?.areaId;
-const feet = { halfW: 16, halfH: 7 };
 
 describe('portals', () => {
   it('has a door for every Area of the roadmap, each placed once in the layout', () => {
@@ -65,42 +59,6 @@ describe('portals', () => {
     expect(closed.action).toBeNull();
     expect(closed.title).toContain('Sobi Adventure');
     expect(closed.lines[0]).toBe(vi.plaza.conditions);
-  });
-});
-
-describe('arrival', () => {
-  const walk = plazaWalkable(PLAZA_LAYOUT, [], feet);
-  const w = PLAZA_LAYOUT.designSize.width;
-  const h = PLAZA_LAYOUT.designSize.height;
-
-  it('a new character appears at the spawn', () => {
-    const a = arrivalSpot(PLAZA_LAYOUT, walk, areaOf, newPlayer(), null);
-    expect(a.x).toBeCloseTo(PLAZA_LAYOUT.spawn.x * w);
-    expect(a.y).toBeCloseTo(PLAZA_LAYOUT.spawn.y * h);
-  });
-
-  it('the game opens at the saved spot in the plaza', () => {
-    const a = arrivalSpot(PLAZA_LAYOUT, walk, areaOf, { area: PLAZA_ID, x: 300, y: 700, facing: 'left' }, null);
-    expect(a).toEqual({ x: 300, y: 700, facing: 'left' });
-  });
-
-  it('saved in an Area (closed while inside): the game opens in front of its door', () => {
-    const farmDoor = PLAZA_LAYOUT.placements.find((p) => p.portal === 'pig_barn')!;
-    const a = arrivalSpot(PLAZA_LAYOUT, walk, areaOf, { area: 'sobi_farm', x: 5, y: 5, facing: 'up' }, null);
-    expect(a.x).toBeCloseTo(farmDoor.x * w);
-    expect(a.y).toBeCloseTo(farmDoor.y * h + DOOR_STEP_PX);
-    expect(a.facing).toBe('down');
-  });
-
-  it('leaving an Area puts the character at its door, whatever was saved', () => {
-    const farmDoor = PLAZA_LAYOUT.placements.find((p) => p.portal === 'pig_barn')!;
-    const a = arrivalSpot(PLAZA_LAYOUT, walk, areaOf, { area: PLAZA_ID, x: 900, y: 800, facing: 'up' }, 'sobi_farm');
-    expect(a.x).toBeCloseTo(farmDoor.x * w);
-  });
-
-  it('a saved spot outside the ground is brought back in', () => {
-    const a = arrivalSpot(PLAZA_LAYOUT, walk, areaOf, { area: PLAZA_ID, x: -400, y: 99_999, facing: 'down' }, null);
-    expect(canStand(a, walk)).toBe(true);
   });
 });
 

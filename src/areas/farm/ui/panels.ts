@@ -67,7 +67,7 @@ export function renderPanel(c: PanelCtx, save: FarmGame, panel: PanelId): HTMLEl
       return world ? renderOrdersPanel(world, c.ui.ordersTab, (tab) => { c.ui.ordersTab = tab; c.rerender(); }, farmOrders) : farmOrders;
     }
     case 'settings':
-      return renderSettingsScreen(save, c.session.settingsVm(save), c.settings, c.opts.keySettings, c.opts.characterChoice, c.opts.displayChoice);
+      return renderSettingsScreen(save, c.session.settingsVm(save), c.settings, c.opts.keySettings, c.opts.displayChoice);
     case 'market':
       return renderMarketScreen(now, localOffsetMs(now));
     case 'breeder':

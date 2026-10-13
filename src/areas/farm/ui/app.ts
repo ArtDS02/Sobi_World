@@ -181,7 +181,7 @@ export function mountApp(
     dialogOpen: () => dialogs.childElementCount > 0 || document.querySelector('.c-dialog') !== null,
     go,
   });
-  const offSettings = [opts.keySettings, opts.characterChoice, opts.displayChoice].map((c) => c?.subscribe(() => ui.panel === 'settings' && rerender()));
+  const offSettings = [opts.keySettings, opts.displayChoice].map((c) => c?.subscribe(() => ui.panel === 'settings' && rerender()));
 
   // The guide: the "next step" chip and the Area's NPC (absent in DOM tests of the farm alone).
   const guide = opts.world && createGuideLayer({
