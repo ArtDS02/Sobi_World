@@ -62,11 +62,16 @@ export const PLAZA_AMBIENT = {
     swayDeg: 1.2,
     swayMs: 2200,
     nearBounceDeg: 5,
-    fontPx: 18,
     fontFamily: '"Baloo 2", system-ui, "Segoe UI", sans-serif',
     color: '#5a3a1c',
-    /** Where the writing goes on the sign art: the board's centre (share of the art's height from its top) and width. */
-    board: { centre: 0.27, width: 0.86 },
+    /**
+     * Where the writing goes on each sign art: the board's centre (share of the art's height from its top) and width, the
+     * font size, and where the area icon sits (share of the board's width right of its centre; the plank only).
+     */
+    boards: {
+      prop_signboard: { centre: 0.27, width: 0.86, fontPx: 18, icon: null },
+      prop_plaza_sign: { centre: 0.34, width: 0.62, fontPx: 26, icon: { at: 0.36, size: 0.2 } },
+    } as Record<string, { centre: number; width: number; fontPx: number; icon: { at: number; size: number } | null }>,
     sparkles: 4,
   },
   lamps: {

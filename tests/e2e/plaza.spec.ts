@@ -53,7 +53,7 @@ test('plaza → barn → farm → way out → plaza; the spot is kept', async ()
     await app.close();
     const spot = readWorld(dir).player;
     expect(spot.area).toBe('plaza');
-    expect(spot.x).toBeLessThan(1300); // walked left of the barn door (x = 1376)
+    expect(spot.x).toBeLessThan(1560); // walked left of the barn door (x = 1642)
 
     // Next launch: the same spot.
     app = await launch(dir);
@@ -96,6 +96,22 @@ test('key settings: rebinding the interact key is saved in settings.json and obe
     await expect(page.locator('.app.is-plaza')).toBeVisible();
     await page.keyboard.press('KeyF');
     await expect(page.locator('.app:not(.is-plaza)')).toBeVisible();
+    await app.close();
+  });
+});
+
+test('the plaza dock (decision 024): an open Area in one click, a closed one says why', async () => {
+  await withTemp(async (dir) => {
+    const app = await launch(dir);
+    const page = await app.firstWindow();
+    await expect(page.locator('.plazabar__dock')).toBeVisible({ timeout: 30_000 });
+    // A new world: the Cloud is still closed (aria-disabled, yet a click still tells why).
+    await page.locator('.plazabar__area--cloud').click({ force: true });
+    await expect(page.locator('.c-toast').last()).toContainText('Sobi Cloud');
+    await expect(page.locator('.app.is-plaza')).toBeVisible();
+    await page.locator('.plazabar__area--farm').click();
+    await expect(page.locator('.app:not(.is-plaza)')).toBeVisible();
+    await expect(page.locator('.c-gauge')).toBeVisible();
     await app.close();
   });
 });

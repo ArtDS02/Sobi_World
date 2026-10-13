@@ -7,7 +7,7 @@ export const hold = async (page: Page, code: string, ms: number) => {
   await page.keyboard.up(code);
 };
 
-/** Opens a screen from the plaza's Menu popup (the plaza has no dock). */
+/** Opens a screen from the plaza's Menu popup. */
 export async function openFromMenu(page: Page, name: string) {
   await page.locator('.plazabar__btn', { hasText: 'Menu' }).click();
   await page.locator('.menu-screen__item', { hasText: name }).click();

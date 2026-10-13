@@ -8,6 +8,18 @@
 
 ## Nhật ký
 
+### 2026-10-13 — GĐ14 Sảnh: bố cục và HUD theo ảnh mẫu, batch world-01-scene (chờ chủ dự án tạo ảnh)
+✅ Đã làm:
+1. **Ảnh mẫu** `art_inbox/.batch/world-01-scene/sobi-world-lobby.png` → `asset/reference/sobi_world/plaza_layout_mock.png` (CONTENT, đăng ký trong reference-registry). Decision 024.
+2. **Bố cục Sảnh** (`content/plaza/layout.json`) đo lại trên ảnh mẫu: khung 1932 × 900, 5 cổng, nhà, đài phun nước, cây, bụi, đèn, ghế, bồn hoa, đá, đường đất, quảng trường, biển. Bảng đơn hàng đặt cạnh quảng trường (ảnh mẫu không có).
+3. **Cảnh**: nền vẽ sẵn (`backdrop`, chỉ bật khi `bg_plaza` có ảnh thật, ngoài khung tô màu trời / mây), `fallback` cho từng vật (art cũ tới khi art mới về), `paintedGround` (thuyền, vỏ sò chỉ vẽ khi chưa có nền); bảng tên có chỗ cho icon khu vực.
+4. **HUD Sảnh** theo ảnh mẫu: thẻ hồ sơ + Sobi Coin, Ngọc, thanh Cấp thế giới có sao; nút Sảnh / Bộ sưu tập / Menu / Vật phẩm; thanh 5 khu vực (đi thẳng tới khu đã mở, khu khóa báo lý do); logo Sobi World. Chip thời tiết dời xuống dưới thẻ hồ sơ.
+5. **Batch `world-01-scene`** (`asset/batches/world-01-scene.json` + `.md`, file đính kèm có sẵn trong `art_inbox/.batch/world-01-scene/`): E (nền, sửa ảnh mẫu), A (cổng Adventure, bể cá, đài phun nước), B (nhà, cây đậu thần), F (vườn hoa, trại heo), P (8 đồ trang trí), D (bảng tên, logo, sao cấp), H (4 icon HUD), I (5 icon khu vực), C (linh vật Sobi). 23 dòng manifest mới (placeholder) + kích thước canvas.
+🧪 Đã kiểm tra: `npm run check` xanh; 13/13 e2e (Electron, bản build) xanh; chụp Sảnh ở 1837×856 và 1600×900 (art cũ, chưa có nền mới).
+⚠️ Quyết định tự đưa ra: bỏ nút "Bản đồ" (đang tắt) và thêm "Bộ sưu tập" như ảnh mẫu; không làm nút "quay lại" và "+" cạnh Ngọc (không có tính năng); thanh khu vực cho đi thẳng tới khu đã mở.
+👉 Bạn cần: tạo 9 ảnh Gemini theo `asset/batches/world-01-scene.md`, lưu vào `art_inbox/.batch/world-01-scene/` đúng tên (`E.png`, `A.png`, …); duyệt hướng HUD / thanh khu vực.
+➡️ Tiếp theo: `batch.mjs cut world-01-scene` → chọn → `deliver` → `art:process`, chỉnh chỗ chữ trên bảng tên / tia nước đài phun theo art thật, chụp duyệt.
+
 ### 2026-10-12 — GĐ14 Cloud: sửa theo góp ý (hoa, ô mây, hover, chim bắt sâu, màu UI) — chờ duyệt
 ✅ Đã làm:
 1. **Hoa nằm đúng lòng đất**: đo trên ảnh — lòng đất của `plot_cloud` cao hơn tâm ô 10,6 px, gốc hoa cách đáy canvas 6 px → `flowerOffsetY` = +1 (trước là +32: lệch xuống ~38 px).

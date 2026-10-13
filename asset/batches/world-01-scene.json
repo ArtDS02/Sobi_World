@@ -1,0 +1,187 @@
+{
+  "id": "world-01-scene",
+  "area": "plaza",
+  "title": "Sảnh Sobi World theo mẫu của chủ dự án: nền đảo trời, công trình 5 cổng, cây và đồ trang trí, bảng tên, logo, icon HUD và thanh khu vực, linh vật Sobi",
+  "decisions": "Decision 024: the owner's mock-up (asset/reference/sobi_world/plaza_layout_mock.png) is the accepted look of the plaza. bg_plaza is that picture with everything the game draws removed (HUD, text, signs, every building, tree, lamp, bench, bush and animal), so the character can walk behind the sprites and the doors can dim when closed. Door buildings keep their ids (plaza only) and are redrawn in the mock-up look; trees, bushes, lamps, benches get new prop_plaza_* ids because the Farm and the Aquarium share the old ones. Planks and the logo are blank: the game writes the names (Vietnamese / English). Hints are look hints cut from the mock-up; sheet A carries three because each door is its own object.",
+  "sheets": [
+    {
+      "name": "E",
+      "title": "Nền đảo trời của Sảnh (sửa từ ảnh mẫu)",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "asset/reference/sobi_world/plaza_layout_mock.png",
+      "prompt": "Edit this game screenshot into a clean background picture for the game. Keep the exact same image size, framing, art style, colours and lighting, and keep every path, the round stone square with the star in its middle, the sandy beach and the sea exactly where they are. REMOVE completely and paint natural ground in their place (grass, path or sand, continuing what is around): every UI element (the top bar with the portrait, coins, gems, level star and bar; the three buttons at the top right; the 'Sương mù' chip; the whole bottom bar with its five cards and the round back button; the 'Sobi World' logo with the white mascot at the bottom right), all text and every wooden name sign, the purple portal gate with its stone ruins, the flower garden with its fence and arch, the stone fountain, the giant beanstalk with its stairs and the small clouds at its foot, the house with the mailbox, the red barn with its fenced yard, crops, cart, crates and animals, the glass aquarium tank, every tree, every bush, every street lamp, every bench and flower planter, the grey rocks, and the sheep. KEEP: the sky, the floating islands with the windmills and the waterfall, the soft white clouds around the edges of the island, the island's grass, the dirt paths, the stone square with its star, the beach, the sea with its foam, the wooden pier and the rowing boat, the shells, starfish and coral on the sand, and the tiny flowers in the grass. The result is an empty, sunny floating island ready for buildings.",
+      "cells": [
+        {
+          "stem": "bg_plaza",
+          "desc": "the floating sky island backdrop of the plaza"
+        }
+      ]
+    },
+    {
+      "name": "A",
+      "title": "Cổng Adventure, bể Aquarium, đài phun nước",
+      "board": "building",
+      "grid": [1, 3],
+      "fit": "each",
+      "hints": [
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [200, 178, 285, 232], "what": "the portal gate of Sobi Adventure", "look": true },
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [526, 390, 184, 198], "what": "the aquarium tank of Sobi Aquarium", "look": true },
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [876, 138, 154, 172], "what": "the fountain", "look": true }
+      ],
+      "notes": "Match images 2, 3 and 4 closely, but without any trees, signs, text or the ground around them. Three-quarter view from slightly above; each object stands on a small patch of grass with a few flowers at its foot and a soft contact shadow.",
+      "cells": [
+        {
+          "stem": "prop_portal_gate",
+          "desc": "a stone arch portal gate with a glowing swirling violet portal inside, a golden star on top of the arch, small broken stone pillars and a stone step around it"
+        },
+        {
+          "stem": "prop_sea_dock",
+          "desc": "a glass aquarium tank with a light-blue frame on a low wooden stand, clear water, pink and purple coral, green seaweed, pebbles and two small fish inside"
+        },
+        {
+          "stem": "prop_fountain",
+          "desc": "a round two-tier stone fountain with light-blue water, topped by a small fluffy white cloud creature statue with pink cheeks, a ring of little flowers around its base"
+        }
+      ]
+    },
+    {
+      "name": "B",
+      "title": "Nhà chính, cây đậu thần (cổng Cloud)",
+      "board": "building",
+      "grid": [1, 2],
+      "fit": "each",
+      "hints": [
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [1415, 95, 265, 245], "what": "the main house", "look": true },
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [1205, 25, 215, 325], "what": "the giant beanstalk with stairs", "look": true }
+      ],
+      "notes": "Match images 2 and 3 closely, but without any signs, text, trees or other objects around them. Three-quarter view from slightly above; each stands on a small patch of grass with a soft contact shadow.",
+      "cells": [
+        {
+          "stem": "prop_main_house",
+          "desc": "a cosy two-storey cottage with a golden thatched roof, cream walls with wooden beams, flower boxes under the windows, a wooden door, a small wooden fence at its side and a mailbox"
+        },
+        {
+          "stem": "prop_sky_tree",
+          "desc": "a giant twisting green beanstalk rising tall with big leaves and curly tendrils, a wooden staircase winding up around it, and a few fluffy white clouds around its foot"
+        }
+      ]
+    },
+    {
+      "name": "F",
+      "title": "Vườn hoa (cổng Garden), trại heo (cổng Farm)",
+      "board": "building",
+      "grid": [2, 1],
+      "fit": "each",
+      "hints": [
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [432, 130, 440, 225], "what": "the flower garden", "look": true },
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [1285, 340, 550, 330], "what": "the farm with the barn", "look": true }
+      ],
+      "notes": "Match images 2 and 3 closely, but without any wooden name sign, text, outside trees or path. Three-quarter view from slightly above, the same scale for both, each on its own patch of grass.",
+      "cells": [
+        {
+          "stem": "prop_garden_gate",
+          "desc": "a wide flower garden: rows of tulips, sunflowers, hydrangeas and roses in many colours behind a low wooden fence, with a flowery wooden arch as its entrance at the front and a small stone path inside"
+        },
+        {
+          "stem": "prop_farm_yard",
+          "desc": "a red wooden barn with a golden thatched roof and hay bales, inside a fenced yard with a few round pink piglets, crates of vegetables, a hay cart and a small vegetable bed at the front corner"
+        }
+      ]
+    },
+    {
+      "name": "P",
+      "title": "Cây, bụi hoa, đèn, ghế, bồn hoa, đá",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "each",
+      "hints": [
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [990, 80, 190, 335], "what": "the round tree, the street lamp and the bench", "look": true },
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [740, 470, 180, 260], "what": "the flower planter and the round tree", "look": true }
+      ],
+      "notes": "All eight belong to one set (same hand, same scale between them), seen from slightly above. Each object stands alone with a soft contact shadow, no grass patch.",
+      "cells": [
+        { "stem": "prop_plaza_tree_round", "desc": "a round fluffy leafy green tree with a short brown trunk" },
+        { "stem": "prop_plaza_tree_pine", "desc": "a cone-shaped evergreen tree with layered rounded branches and a short trunk" },
+        { "stem": "prop_plaza_bush", "desc": "a round leafy bush dotted with small white and pink flowers" },
+        { "stem": "prop_plaza_flowerbed", "desc": "a low clump of pink, white and yellow flowers with leaves" },
+        { "stem": "prop_plaza_lamp", "desc": "a slim dark navy-blue street lamp post with a lantern head and a warm yellow glass" },
+        { "stem": "prop_plaza_bench", "desc": "a wooden park bench with a backrest, three-quarter view facing down-right" },
+        { "stem": "prop_plaza_planter", "desc": "a long wooden planter box on short legs full of purple, pink and white flowers" },
+        { "stem": "prop_plaza_rock", "desc": "two smooth grey rocks with a little grass tuft at their foot" }
+      ]
+    },
+    {
+      "name": "D",
+      "title": "Bảng tên khu vực, logo Sobi World, sao cấp",
+      "board": "item",
+      "grid": [1, 3],
+      "fit": "each",
+      "views": ["item"],
+      "hints": [
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [620, 250, 156, 104], "what": "the wooden name sign on its post", "look": true },
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [1528, 712, 300, 118], "what": "the Sobi World logo plank", "look": true }
+      ],
+      "notes": "Match image 2 and image 3 closely, only leave their writing area empty (no letters, no small icon on the plank, no mascot). The star is a big chunky golden star with an empty smooth centre for a number.",
+      "cells": [
+        { "stem": "prop_plaza_sign", "desc": "a blank rounded cream-wood plank sign, about twice as wide as tall, with a soft brown rim, standing on one short wooden post, an empty smooth area for two lines of text" },
+        { "stem": "prop_world_logo", "desc": "a blank wide rounded cream-wood plank, about 3 times wider than tall, framed by green leaves, small pink and white flowers and soft white clouds at both ends, empty smooth centre for a title" },
+        { "stem": "ui_badge_level", "desc": "a chunky five-pointed golden star badge with a soft orange rim and a smooth empty centre" }
+      ]
+    },
+    {
+      "name": "H",
+      "title": "Icon nút HUD: Sảnh, Bộ sưu tập, Menu, Vật phẩm",
+      "board": "item",
+      "grid": [1, 4],
+      "fit": "each",
+      "views": ["item"],
+      "hints": [
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [1535, 10, 285, 92], "what": "the house, book and menu button icons", "look": true }
+      ],
+      "notes": "Draw only the icon pictures of image 2, not the violet square buttons around them and not their captions. One set: same outline, same size.",
+      "cells": [
+        { "stem": "ui_hud_hub", "desc": "a small cosy house with an orange roof, cream walls and a round window" },
+        { "stem": "ui_hud_collection", "desc": "an open storybook with a warm orange cover and a red bookmark ribbon" },
+        { "stem": "ui_hud_menu", "desc": "three thick rounded cream-white horizontal bars stacked, with a soft violet outline" },
+        { "stem": "ui_hud_items", "desc": "a woven wicker basket with a handle, holding a red apple and a green leaf" }
+      ]
+    },
+    {
+      "name": "I",
+      "title": "Icon 5 khu vực cho thanh dưới",
+      "board": "item",
+      "grid": [1, 5],
+      "fit": "each",
+      "views": ["item"],
+      "hints": [
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [135, 742, 790, 96], "what": "the five area icons of the bottom bar", "look": true }
+      ],
+      "notes": "Draw only the five icon pictures of image 2, not the coloured cards behind them and not their captions. One set: same outline, same size.",
+      "cells": [
+        { "stem": "ui_area_adventure", "desc": "a short silver sword with a golden cross-guard and a violet grip, tilted" },
+        { "stem": "ui_area_garden", "desc": "a green sprout with two round leaves growing from a small mound of brown soil" },
+        { "stem": "ui_area_cloud", "desc": "a fluffy white cloud with a cute face, pink cheeks and a light-blue shadow" },
+        { "stem": "ui_area_aquarium", "desc": "a round light-blue fish with a white belly and small fins, facing right" },
+        { "stem": "ui_area_farm", "desc": "the round face of a cute pink pig with a big snout and pink cheeks" }
+      ]
+    },
+    {
+      "name": "C",
+      "title": "Linh vật Sobi (avatar và logo)",
+      "board": "creature",
+      "grid": [1, 1],
+      "fit": "each",
+      "hints": [
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [1608, 664, 150, 92], "what": "the white Sobi mascot peeking over the logo", "look": true },
+        { "from": "asset/reference/sobi_world/plaza_layout_mock.png", "box": [14, 6, 84, 76], "what": "the same mascot as a portrait", "look": true }
+      ],
+      "cells": [
+        {
+          "stem": "prop_sobi_mascot",
+          "desc": "Sobi, a round fluffy cream-white creature with small pointed pink-lined ears, pink cheeks, a tiny smile and two little paws, seen from the front and peeking over a soft white cloud that hides its lower body"
+        }
+      ]
+    }
+  ]
+}

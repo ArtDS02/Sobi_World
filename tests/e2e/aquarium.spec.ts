@@ -15,11 +15,11 @@ const launch = (userData: string) => {
 const file = (dir: string) => join(dir, 'saves', 'save.json');
 const read = (dir: string) => JSON.parse(readFileSync(file(dir), 'utf8'));
 
-/** Clicks where a plaza object stands (design px → the canvas, which letterboxes a 1600 × 900 frame). */
+/** Clicks where a plaza object stands (design px → the canvas, which letterboxes the 1932 × 900 frame). */
 async function clickPlaza(page: Page, x: number, y: number) {
   const box = (await page.locator('.app__stage canvas').boundingBox())!;
-  const zoom = Math.min(box.width / 1600, box.height / 900);
-  await page.mouse.click(box.x + box.width / 2 + (x - 800) * zoom, box.y + box.height / 2 + (y - 450) * zoom);
+  const zoom = Math.min(box.width / 1932, box.height / 900);
+  await page.mouse.click(box.x + box.width / 2 + (x - 966) * zoom, box.y + box.height / 2 + (y - 450) * zoom);
 }
 
 test('the aquarium: it opens, feed the fish, leave it for a day, collect the scales from the away screen', async () => {
@@ -41,7 +41,7 @@ test('the aquarium: it opens, feed the fish, leave it for a day, collect the sca
     page = await app.firstWindow();
     await expect(page.locator('.app.is-plaza')).toBeVisible({ timeout: 30_000 });
     await page.waitForTimeout(3000);
-    await clickPlaza(page, 488, 610);
+    await clickPlaza(page, 648, 510);
     await expect(page.locator('.app.is-aquarium')).toBeVisible({ timeout: 20_000 });
     await expect(page.locator('.aquarium-ui__dock')).toBeVisible();
     await page.getByRole('button', { name: 'Cho ăn cả bể' }).click();

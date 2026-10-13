@@ -25,6 +25,29 @@ export interface WorldUi {
   nextLocked(): { name: string; level: number } | null;
 }
 
+/** The world level as the plaza's HUD shows it. */
+export interface PlazaLevel {
+  level: number;
+  xp: number;
+  /** XP of the next level; null at the top level. */
+  next: number | null;
+  /** 0..100 */
+  percent: number;
+}
+
+/** One Area in the plaza's dock (the same doors as the plaza scene, decision 024). */
+export interface PlazaDoor {
+  areaId: string;
+  /** Short key (`garden`): the card's colour. */
+  key: string;
+  /** Manifest id of the card's icon. */
+  icon: string;
+  name: string;
+  status: 'open' | 'locked' | 'soon';
+  /** Why a closed door is closed (one line); empty when open. */
+  why: string;
+}
+
 export interface AppOptions {
   /** The world's goals and Codex; absent in DOM tests of the farm alone. */
   world?: WorldUi;
@@ -58,6 +81,8 @@ export interface AppOptions {
   areaLines?: (events: GameEvent[]) => SummaryLine[];
   /** Goes to another place (the away screen's button to the Garden). */
   goPlace?: (placeId: string) => void;
+  /** The plaza HUD's dock: its Areas in order, and the feedback when a closed one is asked for. */
+  plaza?: { doors: () => readonly PlazaDoor[]; denied: () => void };
   /** A layer over the world that the app owns (the Garden's and the Aquarium's HUDs); the shell only places it. */
   overlay?: HTMLElement;
   /** The sky layer the app owns (GĐ12): weather over the world and its chips; the shell only places it under the HUD. */

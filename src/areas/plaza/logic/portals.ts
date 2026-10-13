@@ -4,6 +4,7 @@ import type { AreaInfo } from '../../../core/area-registry/registry';
 import type { UnlockGap } from '../../../core/progression/levels';
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
+import { PLAZA_AREA_ICONS, areaIconId, areaKey } from './art';
 
 export type PortalStatus = 'open' | 'locked' | 'soon';
 
@@ -70,4 +71,22 @@ export function portalPrompt(view: PortalView): PortalPrompt {
   const lines = view.conditions.length > 0 ? [vi.plaza.conditions, ...view.conditions] : [];
   const title = view.status === 'soon' ? `${view.name} — ${vi.plaza.soon}` : t(vi.plaza.locked, { name: view.name });
   return { action: null, title, lines };
+}
+
+/** The Areas of the plaza HUD's dock (decision 024), in the owner's mock-up order; a closed one says why in one line. */
+export function plazaDoors(
+  views: ReadonlyMap<string, PortalView>,
+): { areaId: string; key: string; icon: string; name: string; status: PortalStatus; why: string }[] {
+  const doors = [...views.values()].filter((v) => v.kind === 'door');
+  const rank = (id: string) => {
+    const i = (PLAZA_AREA_ICONS as readonly string[]).indexOf(areaKey(id));
+    return i < 0 ? PLAZA_AREA_ICONS.length : i;
+  };
+  return doors
+    .sort((a, b) => rank(a.areaId) - rank(b.areaId))
+    .map((v) => {
+      const prompt = portalPrompt(v);
+      const why = v.status === 'open' ? '' : [prompt.title, ...prompt.lines.slice(1)].join(' ');
+      return { areaId: v.areaId, key: areaKey(v.areaId), icon: areaIconId(v.areaId), name: v.name, status: v.status, why };
+    });
 }

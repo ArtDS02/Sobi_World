@@ -15,6 +15,7 @@ import {
 import { mountPlaceVeil } from '../../../ui/components/placeVeil';
 import { createToaster } from '../../../ui/components/toast';
 import { renderHud } from './components/hud';
+import { plazaHud } from './plazaHud';
 import { openBreedDialog } from './breedDialog';
 import { openPedigreeDialog } from './heredityViews';
 import type { FarmGoto } from '../logic/summary';
@@ -258,6 +259,7 @@ export function mountApp(
         place: ui.place, now: now(), gems: opts.gems?.() ?? null, go, leave: opts.leave, openTrough: () => openTrough(),
         selectPig: (pigId) => { ui.selectedPigId = pigId; go('pig'); },
         goalsDot: opts.world && opts.world.save() ? goalsDot(opts.world.save()!, opts.world.goals, localDay(now())) : 0,
+        plaza: ui.place === 'plaza' ? plazaHud(opts, toast) : undefined,
       }),
     );
     patch(coach, ui.place === 'area' ? session.coach(snap) : null);

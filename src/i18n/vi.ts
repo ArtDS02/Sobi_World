@@ -123,6 +123,11 @@ export const vi = {
     items: "Vật phẩm",
     hubHere: "Bạn đang ở Sảnh",
     mapSoon: "Bản đồ sắp ra mắt",
+    collection: "Bộ sưu tập",
+    level: "Cấp {level}",
+    levelMax: "Cấp cao nhất",
+    xp: "{current} / {next} KN",
+    areas: "Các khu vực",
   },
 
   // Labels of clickable world objects on the farm canvas (DECISIONS R05C-1).

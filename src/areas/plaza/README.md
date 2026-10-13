@@ -8,3 +8,5 @@
 - `scene/PlazaScene.ts` — cảnh Phaser; chỉ vẽ và đi. Phím, gợi ý phím, đổi chỗ đi qua `WorldHost` (`src/ui/world/host.ts`).
 - Nội dung: `content/plaza/layout.json` (sửa bằng Admin → Bố cục → Sảnh Sobi).
 - Trạm (`station`, ví dụ Bảng đơn hàng `prop_order_board`, GĐ6): vật đứng chung gợi ý và phím E với cổng, nhưng mở một bảng thay vì đổi Area.
+- `logic/art.ts` — art Sảnh chờ batch `world-01-scene` (decision 024) và id icon khu vực (`ui_area_<khu>`).
+- Ảnh nền vẽ sẵn (`backdrop` trong layout) chỉ hiện khi art thật đã về; mỗi vật có thể có `fallback` (art cũ dùng tạm).

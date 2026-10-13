@@ -1624,6 +1624,61 @@
       "asset": "props/prop_npc_alchemist.png"
     },
     {
+      "id": "prop_plaza_tree_round",
+      "status": "placeholder",
+      "asset": "props/prop_plaza_tree_round.png"
+    },
+    {
+      "id": "prop_plaza_tree_pine",
+      "status": "placeholder",
+      "asset": "props/prop_plaza_tree_pine.png"
+    },
+    {
+      "id": "prop_plaza_bush",
+      "status": "placeholder",
+      "asset": "props/prop_plaza_bush.png"
+    },
+    {
+      "id": "prop_plaza_flowerbed",
+      "status": "placeholder",
+      "asset": "props/prop_plaza_flowerbed.png"
+    },
+    {
+      "id": "prop_plaza_lamp",
+      "status": "placeholder",
+      "asset": "props/prop_plaza_lamp.png"
+    },
+    {
+      "id": "prop_plaza_bench",
+      "status": "placeholder",
+      "asset": "props/prop_plaza_bench.png"
+    },
+    {
+      "id": "prop_plaza_planter",
+      "status": "placeholder",
+      "asset": "props/prop_plaza_planter.png"
+    },
+    {
+      "id": "prop_plaza_rock",
+      "status": "placeholder",
+      "asset": "props/prop_plaza_rock.png"
+    },
+    {
+      "id": "prop_plaza_sign",
+      "status": "placeholder",
+      "asset": "props/prop_plaza_sign.png"
+    },
+    {
+      "id": "prop_world_logo",
+      "status": "placeholder",
+      "asset": "props/prop_world_logo.png"
+    },
+    {
+      "id": "prop_sobi_mascot",
+      "status": "placeholder",
+      "asset": "props/prop_sobi_mascot.png"
+    },
+    {
       "id": "enemy_mossling",
       "status": "placeholder",
       "asset": "props/enemy_mossling.png"
@@ -1954,6 +2009,11 @@
       "asset": "environment/bg_cloud.png"
     },
     {
+      "id": "bg_plaza",
+      "status": "placeholder",
+      "asset": "environment/bg_plaza.png"
+    },
+    {
       "id": "bg_adventure_forest",
       "status": "placeholder",
       "asset": "environment/bg_adventure_forest.png"
@@ -2069,6 +2129,56 @@
       "id": "ui_btn_tier_down",
       "status": "production",
       "asset": "ui/ui_btn_tier_down.png"
+    },
+    {
+      "id": "ui_badge_level",
+      "status": "placeholder",
+      "asset": "ui/ui_badge_level.png"
+    },
+    {
+      "id": "ui_area_adventure",
+      "status": "placeholder",
+      "asset": "ui/ui_area_adventure.png"
+    },
+    {
+      "id": "ui_area_garden",
+      "status": "placeholder",
+      "asset": "ui/ui_area_garden.png"
+    },
+    {
+      "id": "ui_area_cloud",
+      "status": "placeholder",
+      "asset": "ui/ui_area_cloud.png"
+    },
+    {
+      "id": "ui_area_aquarium",
+      "status": "placeholder",
+      "asset": "ui/ui_area_aquarium.png"
+    },
+    {
+      "id": "ui_area_farm",
+      "status": "placeholder",
+      "asset": "ui/ui_area_farm.png"
+    },
+    {
+      "id": "ui_hud_hub",
+      "status": "placeholder",
+      "asset": "ui/ui_hud_hub.png"
+    },
+    {
+      "id": "ui_hud_collection",
+      "status": "placeholder",
+      "asset": "ui/ui_hud_collection.png"
+    },
+    {
+      "id": "ui_hud_menu",
+      "status": "placeholder",
+      "asset": "ui/ui_hud_menu.png"
+    },
+    {
+      "id": "ui_hud_items",
+      "status": "placeholder",
+      "asset": "ui/ui_hud_items.png"
     },
     {
       "id": "ui_icon_coin",

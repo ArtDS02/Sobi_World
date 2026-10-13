@@ -51,11 +51,12 @@ export function createSkyLayer(d: SkyDeps): SkyLayer {
       const festival = save ? liveFestival(day, save.live.dev.festival, FESTIVAL_RULES) : null;
       const merchant = save ? merchantVisits(day, MERCHANT_RULES, save.live.dev.merchant) : false;
       const gift = save !== null && festival !== null && canClaimGift(save, day, FESTIVAL_RULES);
-      const signature = [hidden, weather, festival?.id ?? '', merchant, gift, reduceMotion].join('|');
+      const signature = [place, hidden, weather, festival?.id ?? '', merchant, gift, reduceMotion].join('|');
       if (signature === shown) return;
       shown = signature;
       root.hidden = hidden;
       root.dataset.weather = weather;
+      root.dataset.place = place;
       root.classList.toggle('is-still', reduceMotion);
       chips.replaceChildren(
         chip(WEATHER_GLYPH[weather], vi.weather.names[weather], 'weather', 'weather'),

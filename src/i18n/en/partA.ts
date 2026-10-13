@@ -122,6 +122,11 @@ export const partA = {
     items: "Items",
     hubHere: "You are in the Plaza",
     mapSoon: "The map is coming soon",
+    collection: "Collection",
+    level: "Level {level}",
+    levelMax: "Top level",
+    xp: "{current} / {next} XP",
+    areas: "Areas",
   },
 
   farm: {

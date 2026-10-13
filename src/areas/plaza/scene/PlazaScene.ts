@@ -15,6 +15,7 @@ import type { WorldHost } from '../../../ui/world/host';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { ensureSoftTextures } from '../../../ui/world/softTextures';
 import { arrivalSpot } from '../logic/arrival';
+import { areaIconId } from '../logic/art';
 import { groundKindAt } from '../logic/groundKind';
 import { portalPrompt, stationDoorId, type PortalView } from '../logic/portals';
 import { plazaObstacles, plazaWalkable } from '../logic/walkable';
@@ -55,6 +56,8 @@ export class PlazaScene extends Phaser.Scene {
   private focus: Door | null = null;
   private restedMs = 0;
   private dirty = false;
+  /** The painted backdrop is shown (decision 024) instead of the code-painted ground. */
+  private painted = false;
 
   constructor(private readonly deps: PlazaDeps) {
     super(PLAZA_SCENE_KEY);
@@ -64,7 +67,8 @@ export class PlazaScene extends Phaser.Scene {
     const { layout } = this.deps;
     fitCamera(this, layout.designSize);
     ensureSoftTextures(this);
-    paintGround(this, layout);
+    this.painted = this.showBackdrop();
+    if (!this.painted) paintGround(this, layout);
     layout.placements.forEach((p, i) => this.drawPlacement(p, i));
     this.obstacles = plazaObstacles(layout, (i) => this.drawn.get(i) ?? null);
     this.actor = new CharacterActor<string>(
@@ -87,6 +91,8 @@ export class PlazaScene extends Phaser.Scene {
       {
         layout,
         nameOf: (portal) => this.deps.portals().get(portal)?.name,
+        iconOf: (portal) => this.areaIcon(portal),
+        painted: this.painted,
         calm: () => this.deps.host.reduceMotion(),
       },
       this.drawnAll,
@@ -168,11 +174,46 @@ export class PlazaScene extends Phaser.Scene {
     }
   }
 
+  /** Final art of `id` is loaded (not a placeholder of the manifest). */
+  private hasArt(id: string): boolean {
+    const entry = this.deps.assets.resolve(id);
+    return entry !== undefined && entry.status !== 'placeholder' && this.textures.exists(textureKey(id));
+  }
+
+  /** The owner's painted island over the whole frame, and flat colours round it for a window of another shape. */
+  private showBackdrop(): boolean {
+    const b = this.deps.layout.backdrop;
+    if (!b || !this.hasArt(b.art)) return false;
+    const { width, height } = this.deps.layout.designSize;
+    const far = width * PLAZA_VIEW.bleed;
+    const band = (x: number, y: number, w: number, h: number, color: number) =>
+      this.add.rectangle(x, y, w, h, color).setOrigin(0, 0).setDepth(PLAZA_VIEW.skyDepth);
+    band(-far, -far, width + far * 2, far, b.above);
+    band(-far, height, width + far * 2, far, b.below);
+    band(-far, 0, far, height, b.sides);
+    band(width, 0, far, height, b.sides);
+    this.add.image(0, 0, textureKey(b.art)).setOrigin(0, 0).setDisplaySize(width, height).setDepth(PLAZA_VIEW.groundDepth);
+    return true;
+  }
+
+  /** The art a placement shows: its own, or its fallback while its own is a placeholder. */
+  private artOf(p: PlazaPlacement): string {
+    return p.fallback && !this.hasArt(p.id) ? p.fallback : p.id;
+  }
+
+  /** The area icon on a door's plank (`ui_area_<area>`), once that art exists. */
+  private areaIcon(portal: string): string | null {
+    const area = this.deps.portals().get(portal)?.areaId;
+    const id = area ? areaIconId(area) : null;
+    return id && this.hasArt(id) ? textureKey(id) : null;
+  }
+
   private drawPlacement(p: PlazaPlacement, index: number) {
-    if (p.visible === false) return;
+    if (p.visible === false || (p.paintedGround && this.painted)) return;
     const { layout } = this.deps;
     const { width, height } = layout.designSize;
-    const key = textureKey(p.id);
+    const art = this.artOf(p);
+    const key = textureKey(art);
     const img = this.add
       .image(p.x * width, p.y * height, this.textures.exists(key) ? key : FALLBACK_PROP_KEY)
       .setOrigin(p.originX ?? 0.5, p.originY ?? 1);
@@ -181,11 +222,12 @@ export class PlazaScene extends Phaser.Scene {
       const sx = p.width ? p.width / img.width : (sy ?? 1);
       img.setScale(sx, sy ?? sx);
     }
+    if (art !== p.id) img.setScale(img.scaleX * (PLAZA_VIEW.fallbackScale[art] ?? 1), img.scaleY * (PLAZA_VIEW.fallbackScale[art] ?? 1));
     img.setFlipX(p.flipX ?? false).setAngle(p.rotation ?? 0);
     img.setDepth(p.y * height);
     const bounds = img.getBounds();
     this.drawn.set(index, bounds);
-    this.drawnAll.push({ p, img, bounds });
+    this.drawnAll.push({ p, art, img, bounds });
     if (p.fade) this.fade.add(img, bounds);
     const door = p.portal ?? (p.station ? stationDoorId(p.station) : undefined);
     if (!door) return;

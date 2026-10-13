@@ -24,6 +24,10 @@ export const plazaPlacementSchema = placementSchema
     idle: z.enum(['breathe', 'peck', 'hop', 'sway']).optional(),
     /** A signpost that names this door (a `portal` id): the door's name is written on its board. */
     sign: z.string().regex(/^[a-z][a-z0-9_]*$/).optional(),
+    /** Art drawn instead while this placement's own art is still a placeholder (GĐ14: new art lands without a layout change). */
+    fallback: z.string().regex(/^[a-z][a-z0-9_]*$/).optional(),
+    /** Drawn only on the code-painted ground: the painted backdrop already shows it (the boat, shells on the sand). */
+    paintedGround: z.boolean().optional(),
   });
 
 /** What a ground shape is painted with: the sheet's tiles, or a flat colour when absent. */
@@ -62,8 +66,14 @@ export const plazaLayoutSchema = z.strictObject({
   spawn: z.strictObject({ x: unit, y: unit }),
   /** Where the grass starts (fraction of the frame height); above it is sky. Default: just over the walk area. */
   horizon: unit.optional(),
-  /** Flat colours behind the art (the plaza is painted, no photo backdrop). */
+  /** Flat colours of the code-painted ground (used while there is no painted backdrop). */
   palette: z.strictObject({ sky: color, grass: color }),
+  /**
+   * A painted picture of the whole frame (decision 024): shown instead of the code-painted ground once its art is no longer a
+   * placeholder. The ground shapes still say where the water blocks and where the paths are. `above` / `below` / `sides` fill
+   * the view outside the frame (a window of another shape).
+   */
+  backdrop: z.strictObject({ art: z.string().regex(/^[a-z][a-z0-9_]*$/), above: color, below: color, sides: color }).optional(),
   ground: z.array(groundShapeSchema),
   placements: z.array(plazaPlacementSchema),
   /** How close to a door (design px, from the foot of the art) the character gets its key hint. */

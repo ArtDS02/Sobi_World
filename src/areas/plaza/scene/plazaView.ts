@@ -14,6 +14,8 @@ export const PLAZA_VIEW = {
   /** Data key marking a door image for pointer picking. */
   doorData: 'plazaDoor',
   closedTint: 0xaeb2bf,
+  /** A fallback art of another shape is drawn this much smaller than the placement's width (the square old signboard vs the wide plank). */
+  fallbackScale: { prop_signboard: 0.72 } as Record<string, number>,
   /** A click on a door walks until within this share of its reach. */
   clickArriveShare: 0.45,
   /** The padlock on a closed door: size, and where on the art (share of its height from the top). */

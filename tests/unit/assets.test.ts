@@ -4,6 +4,7 @@ import { placementsInOrder } from '../../src/systems/layout/placements';
 import { aquariumArtIds } from '../../src/areas/aquarium/logic/art';
 import { adventureArtIds } from '../../src/areas/adventure/logic/art';
 import { cloudArtIds } from '../../src/areas/cloud/logic/art';
+import { plazaArtIds } from '../../src/areas/plaza/logic/art';
 import { gardenArtIds } from '../../src/areas/garden/logic/art';
 import manifestJson from '../../public/assets/manifest/assets.json';
 import { parseManifest, type AssetManifest } from '../../src/core/assets/manifestSchema';
@@ -113,7 +114,7 @@ describe('asset registry (spec §11.4)', () => {
     const m = manifest();
     // GĐ3 art that is still a placeholder (docs/ASSET_TODO.md).
     // Placeholders that wait for real art (docs/ASSET_TODO.md): the plaza's signpost and the Garden's (GĐ5).
-    const todo = ['prop_plaza_signpost', ...gardenArtIds(), ...aquariumArtIds(), ...cloudArtIds(), ...adventureArtIds()];
+    const todo = ['prop_plaza_signpost', ...gardenArtIds(), ...aquariumArtIds(), ...cloudArtIds(), ...adventureArtIds(), ...plazaArtIds()];
     for (const row of [...m.buildings, ...m.props]) {
       if (!todo.includes(row.id)) expect(row.status, row.id).not.toBe('placeholder');
       if (!row.id.startsWith('chr_')) expect(reg.url(row.id, row.asset ? 'asset' : 'full'), row.id).not.toBeNull();

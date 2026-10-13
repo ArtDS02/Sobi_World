@@ -7,7 +7,7 @@ phân loại lại (`scripts/ref-check.mjs`).
 | Thư mục | Nội dung | Loại |
 |---|---|---|
 | `sobi_farm/` | 2 sheet heo + 1 sheet môi trường của Sobi Farm | **CORE**: phong cách chuẩn của cả game (`style_reference_pigs_alt.png` là OUTLIER, kiểu bị loại) |
-| `sobi_world/` | Mock-up Sảnh, props Sảnh, nhân vật đi | CONTENT: bố cục và hình dáng; `scripts/cut-plaza.ts` cắt từ đây |
+| `sobi_world/` | Mock-up Sảnh, props Sảnh, nhân vật đi; `plaza_layout_mock.png` = bố cục Sảnh mới của chủ dự án (decision 024) | CONTENT: bố cục và hình dáng; `scripts/cut-plaza.ts` cắt từ đây |
 | `sobi_cloud/` | Mock-up Cloud: hạt, chậu, cây hoa, tầng mây, công trình, vật phẩm | CONTENT: chỉ gợi ý hình dáng |
 
 Thêm ảnh mới: bỏ vào `sobi_<area>/` (ví dụ `sobi_adventure/`, `sobi_aquarium/`, `sobi_garden/`), đặt tên mô tả nội

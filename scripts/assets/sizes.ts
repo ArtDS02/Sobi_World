@@ -29,10 +29,6 @@ export const CATALOGUE_SIZES: Record<string, Size> = {
   prop_shop_stall: { width: 328, height: 344 },
   prop_windmill: { width: 272, height: 328 },
   // The plaza (GĐ3): doors to the Areas that have no art yet, the farm's exit sign, the character.
-  prop_garden_gate: { width: 320, height: 300 },
-  prop_sea_dock: { width: 420, height: 300 },
-  prop_sky_tree: { width: 340, height: 520 },
-  prop_portal_gate: { width: 320, height: 360 },
   prop_fence_section: { width: 208, height: 128 },
   prop_water_bowl: { width: 192, height: 136 },
   prop_mud_puddle: { width: 256, height: 128 },
@@ -79,6 +75,28 @@ CATALOGUE_SIZES.prop_sign_plank = { width: 300, height: 110 };
 CATALOGUE_SIZES.prop_title_banner = { width: 520, height: 198 };
 CATALOGUE_SIZES.prop_cloud_bird = { width: 180, height: 150 };
 CATALOGUE_SIZES.prop_npc_alchemist = { width: 240, height: 300 };
+
+// GĐ14 plaza on the owner's mock-up (decision 024, batch world-01-scene). The backdrop has the mock-up's own shape
+// (1837 × 856 → 1932 × 900) and is the plaza's design frame; the doors are redrawn at the mock-up's scale.
+CATALOGUE_SIZES.bg_plaza = { width: 1932, height: 900 };
+CATALOGUE_SIZES.prop_portal_gate = { width: 400, height: 320 };
+CATALOGUE_SIZES.prop_sea_dock = { width: 280, height: 300 };
+CATALOGUE_SIZES.prop_fountain = { width: 220, height: 240 };
+CATALOGUE_SIZES.prop_main_house = { width: 360, height: 350 };
+CATALOGUE_SIZES.prop_sky_tree = { width: 300, height: 460 };
+CATALOGUE_SIZES.prop_garden_gate = { width: 620, height: 320 };
+CATALOGUE_SIZES.prop_farm_yard = { width: 760, height: 460 };
+CATALOGUE_SIZES.prop_plaza_tree_round = { width: 260, height: 300 };
+CATALOGUE_SIZES.prop_plaza_tree_pine = { width: 220, height: 300 };
+CATALOGUE_SIZES.prop_plaza_bush = { width: 200, height: 140 };
+CATALOGUE_SIZES.prop_plaza_flowerbed = { width: 200, height: 120 };
+CATALOGUE_SIZES.prop_plaza_lamp = { width: 90, height: 260 };
+CATALOGUE_SIZES.prop_plaza_bench = { width: 200, height: 140 };
+CATALOGUE_SIZES.prop_plaza_planter = { width: 200, height: 150 };
+CATALOGUE_SIZES.prop_plaza_rock = { width: 180, height: 130 };
+CATALOGUE_SIZES.prop_plaza_sign = { width: 320, height: 250 };
+CATALOGUE_SIZES.prop_world_logo = { width: 560, height: 220 };
+CATALOGUE_SIZES.prop_sobi_mascot = { width: 256, height: 256 };
 
 // Sobi Adventure (GĐ10): the enemies (facing left) and the forest backdrop.
 for (const enemy of ['mossling', 'thorn_sprout', 'gale_sparrow', 'ember_fox', 'dew_frog', 'forest_wolf', 'bramble_boar']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 192, height: 192 };

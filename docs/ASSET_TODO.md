@@ -100,6 +100,6 @@ Còn thiếu:
 | `ui_icon_lock` (128×128) | Ổ khóa trên cổng chưa mở: vẫn là placeholder. |
 | Trạng thái khóa riêng của từng cổng | Hiện cổng khóa = ảnh cổng bị làm tối + ổ khóa. Spec §3.1: rào, mây che, cổng tắt. |
 | Nhân vật Kai (nam) | Có trong ảnh `sobi_world_character_moving.png`; game hiện chỉ dùng Sobi. |
-| Nền đất, đường, bãi cát, biển | Hiện vẽ bằng hình tô màu trong cảnh (`content/plaza/layout.json` → `ground`). Ảnh tham khảo có ô nền (cỏ, đá lát, đường đất, biển) để cắt thành tile. |
+| Sảnh theo ảnh mẫu mới (decision 024) | Batch `world-01-scene` (9 lượt Gemini): `bg_plaza` (sửa từ ảnh mẫu), 7 công trình cổng vẽ lại, cây / bụi / đèn / ghế / bồn hoa / đá `prop_plaza_*`, bảng tên `prop_plaza_sign`, logo `prop_world_logo`, linh vật `prop_sobi_mascot`, sao cấp, 5 icon khu vực, 4 icon nút HUD. Tới khi có ảnh: đất vẽ bằng code, mỗi vật dùng `fallback` (art cũ), HUD dùng icon cũ / ký tự. |
 | Bảng đơn hàng, Chợ, NPC ở Sảnh | GĐ6. |
 | Art Sobi Garden / Aquarium / Cloud / Adventure | Ảnh tham khảo ở `asset/reference/sobi_{garden,aquarium,cloud}`; làm cùng từng Area. |

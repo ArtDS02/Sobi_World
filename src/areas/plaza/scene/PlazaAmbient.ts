@@ -8,10 +8,13 @@ import type { Rect } from '../../../systems/character';
 import { DOT, SOFT_GLOW, ensureSoftTextures } from '../../../ui/world/softTextures';
 import { Butterflies, idleAnimal } from './ambientLife';
 import { Clouds, Shore } from './ambientSky';
+import { makeSign, type Sign } from './plazaSigns';
 import { PLAZA_AMBIENT } from './ambientConfig';
 
 export interface DrawnPlacement {
   p: PlazaPlacement;
+  /** The art drawn (the placement's own, or its fallback). */
+  art: string;
   img: Phaser.GameObjects.Image;
   bounds: Rect;
 }
@@ -20,15 +23,14 @@ export interface AmbientDeps {
   layout: PlazaLayout;
   /** The name written on a door's signpost. */
   nameOf: (portal: string) => string | undefined;
+  /** Texture key of the small area icon on a door's plank, or null (no art yet). */
+  iconOf: (portal: string) => string | null;
+  /** The painted backdrop is shown: its sea already has foam, so no code-drawn shore. */
+  painted: boolean;
   /** Reduced motion: movement and particles stop. */
   calm: () => boolean;
 }
 
-interface Sign {
-  portal: string;
-  box: Phaser.GameObjects.Container;
-  sway: Phaser.Tweens.Tween;
-}
 
 /** A small deterministic generator for the little random choices (starts, pauses, flight). */
 const seeded = (seed: number) => () => {
@@ -42,7 +44,7 @@ const seeded = (seed: number) => () => {
 export class PlazaAmbient {
   private readonly random = seeded(7919);
   private readonly clouds: Clouds;
-  private readonly shore: Shore;
+  private readonly shore: Shore | null;
   private butterflies: Butterflies | null = null;
   private readonly signs: Sign[] = [];
   private readonly lamps: Phaser.GameObjects.Image[] = [];
@@ -61,10 +63,10 @@ export class PlazaAmbient {
   ) {
     ensureSoftTextures(scene);
     this.clouds = new Clouds(scene, deps.layout);
-    this.shore = new Shore(scene, deps.layout);
+    this.shore = deps.painted ? null : new Shore(scene, deps.layout);
     this.dust = this.makeDust();
     for (const d of drawn) {
-      if (d.p.sign) this.makeSign(d);
+      if (d.p.sign) this.signs.push(makeSign(scene, d, deps, this.random));
       if (d.p.glow) this.makeLamp(d);
       if (d.p.idle) this.tweens.push(idleAnimal(scene, d.img, d.p.idle, this.random));
       if (d.p.id === 'prop_fountain') this.makeFountain(d);
@@ -119,7 +121,7 @@ export class PlazaAmbient {
 
   destroy() {
     this.clouds.destroy();
-    this.shore.destroy();
+    this.shore?.destroy();
     this.butterflies?.destroy();
     for (const t of this.tweens) t.stop();
     for (const s of this.signs) {
@@ -170,43 +172,6 @@ export class PlazaAmbient {
         maxAliveParticles: D.maxAlive,
       })
       .setDepth(5_000);
-  }
-
-  private makeSign(d: DrawnPlacement) {
-    const S = PLAZA_AMBIENT.signs;
-    const name = this.deps.nameOf(d.p.sign!);
-    // The board's text sits on the art; the whole sign sways about the foot of its post.
-    const box = this.scene.add.container(d.img.x, d.img.y).setDepth(d.img.depth);
-    const height = d.img.displayHeight;
-    d.img.setPosition(0, 0);
-    box.add(d.img);
-    box.setSize(d.img.displayWidth, height);
-    if (name) {
-      const [first, ...rest] = name.split(' ');
-      const text = this.scene.add
-        .text(0, -height * (1 - S.board.centre), rest.length > 0 ? `${first}\n${rest.join(' ')}` : name, {
-          color: S.color,
-          fontSize: `${S.fontPx}px`,
-          fontFamily: S.fontFamily,
-          fontStyle: 'bold',
-          align: 'center',
-          lineSpacing: -6,
-        })
-        .setOrigin(0.5);
-      const fit = (d.img.displayWidth * S.board.width) / Math.max(text.width, 1);
-      if (fit < 1) text.setScale(fit);
-      box.add(text);
-    }
-    const sway = this.scene.tweens.add({
-      targets: box,
-      angle: { from: -S.swayDeg, to: S.swayDeg },
-      duration: S.swayMs,
-      delay: this.random() * S.swayMs,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
-    this.signs.push({ portal: d.p.sign!, box, sway });
   }
 
   private makeLamp(d: DrawnPlacement) {

@@ -14,6 +14,7 @@
     { "file": "asset/reference/sobi_world/sobi_world_lobby.png", "sha16": "bc55f2d7a657b998", "size": [1408, 768], "class": "CONTENT", "role": "Plaza mock-up (layout source of content/plaza, scripts/cut-plaza.ts)." },
     { "file": "asset/reference/sobi_world/sobi_world_lobby_asset_1.png", "sha16": "d2357b555cd8b2c6", "size": [1408, 768], "class": "CONTENT", "role": "Plaza props sheet (cut by scripts/cut-plaza.ts)." },
     { "file": "asset/reference/sobi_world/sobi_world_lobby_asset_2.png", "sha16": "cf20921d7d5882b6", "size": [1408, 768], "class": "CONTENT", "role": "Plaza props sheet (cut by scripts/cut-plaza.ts)." },
+    { "file": "asset/reference/sobi_world/plaza_layout_mock.png", "sha16": "510ea899fadebdb2", "size": [1837, 856], "class": "CONTENT", "role": "Owner's layout target for the plaza (decision 024): floating sky island, door buildings, wooden name planks, HUD and area dock. Source of bg_plaza (edited) and of the look hints of batch world-01-scene; its look is the accepted look for those pieces." },
     { "file": "asset/reference/sobi_world/sobi_world_character_moving.png", "sha16": "e747ac699ecca57f", "size": [1408, 768], "class": "CONTENT", "role": "So / Bi / Kai walk frames (cut by scripts/cut-plaza.ts)." }
   ],
   "cells": [

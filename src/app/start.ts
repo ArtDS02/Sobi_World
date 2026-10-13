@@ -6,7 +6,7 @@ import type { Clock } from '../core/clock';
 import type { DayPhase } from '../core/config/dayNight';
 import type { SeasonId } from '../core/config/seasons';
 import { PLAZA_LAYOUT } from '../areas/plaza/logic/config/content';
-import { portalViews, stationViews, type PortalView } from '../areas/plaza/logic/portals';
+import { plazaDoors, portalViews, stationViews, type PortalView } from '../areas/plaza/logic/portals';
 import { PlazaScene, PLAZA_SCENE_KEY } from '../areas/plaza/scene/PlazaScene';
 import { AudioManager, audioTracks, type AudioClip } from '../areas/farm/scene/audio/AudioManager';
 import { createFarmView, type FarmView } from '../areas/farm/scene/farmView';
@@ -85,7 +85,6 @@ export async function start(root: HTMLElement) {
       store.tick();
     };
   }
-
   const platform = createPlatform(parseWorldSave);
   const world = createGameStore({
     clock,
@@ -213,6 +212,7 @@ export async function start(root: HTMLElement) {
     displayChoice,
     leave: () => void flow.go(PLAZA_ID),
     goPlace: (place) => void flow.go(place),
+    plaza: { doors: () => plazaDoors(portals()), denied: () => director?.denied() },
     overlay: overlays.root,
     sky: sky.root,
     overlayModal: overlays.isModalOpen,
