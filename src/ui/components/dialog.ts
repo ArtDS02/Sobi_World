@@ -1,4 +1,6 @@
-// Modal dialog. Rendered once when opened, outside the per-tick re-render, so inputs keep state.
+// Modal dialog. Rendered once when opened, outside the per-tick re-render, so inputs keep state. A wooden title strip,
+// a round close button in the corner (and Esc, and a click outside), a body that alone scrolls and the action bar
+// that stays at the bottom (decision 035).
 import type { UiIcon } from '../../core/config/assetIds';
 import { vi } from '../../i18n/vi';
 import { el } from '../dom';
@@ -35,7 +37,13 @@ export function openDialog(
     },
     el(
       'div',
-      { class: 'c-dialog__panel', attrs: { role: 'dialog', 'aria-modal': 'true' } },
+      { class: 'c-dialog__panel', attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-label': title } },
+      el('button', {
+        class: 'c-dialog__close',
+        text: '✕',
+        attrs: { type: 'button', 'aria-label': vi.action.close, title: vi.action.close },
+        on: { click: close },
+      }),
       el(
         'h2',
         { class: 'c-dialog__title' },
@@ -59,7 +67,7 @@ export function openDialog(
   );
   document.addEventListener('keydown', onKey);
   host.replaceChildren(overlay);
-  overlay.querySelector<HTMLElement>('button')?.focus(); // keyboard users land inside (§10.4)
+  overlay.querySelector<HTMLElement>('.c-dialog__bar button')?.focus({ preventScroll: true }); // keyboard users land inside (§10.4)
   return { close, body, footer };
 }
 

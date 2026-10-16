@@ -1,5 +1,6 @@
 // The Cloud's tier bar (decision 023): the wooden title banner with the tier's name under the field, the arrows that go down
 // or up a tier, and the notice over a tier that is not open yet. Draws and reports clicks; CloudScene decides what they do.
+import { setSignText } from '../../../ui/world/signText';
 import * as Phaser from 'phaser';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
@@ -72,7 +73,9 @@ export class CloudTierBar {
   /** Name of `tier`, which arrows show, and the notice when it is not open yet (`owned` plots). */
   draw(tier: number, owned: number) {
     const name = vi.cloud.tierNames[tier] ?? '';
-    this.title.setText(tier === 0 ? name : t(vi.cloud.tierTitle, { n: tier + 1, name }));
+    const tf = CLOUD_VIEW.titleFace;
+    const face = { x: CLOUD_VIEW.title.x + ((tf.from + tf.to) / 2 - 0.5) * CLOUD_VIEW.title.width, y: CLOUD_VIEW.title.y + tf.dy * CLOUD_VIEW.title.height, width: (tf.to - tf.from) * CLOUD_VIEW.title.width, height: tf.height * CLOUD_VIEW.title.height };
+    setSignText(this.title, face, tier === 0 ? name : t(vi.cloud.tierTitle, { n: tier + 1, name }), { fontFamily: CLOUD_VIEW.label.fontFamily, minPx: CLOUD_VIEW.signPx.title[0], maxPx: CLOUD_VIEW.signPx.title[1], look: 'ink' });
     this.title.setScale(this.titleScale());
     const viewable = viewableTiers(owned, TIER_COUNT);
     this.down.setVisible(tier > 0);

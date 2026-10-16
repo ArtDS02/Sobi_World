@@ -1095,6 +1095,10 @@ export const vi = {
     goAquarium: "Ra bể cá",
     goCloud: "Lên vườn mây",
     goAdventure: "Đi phiêu lưu",
+    // Cards by place (decision 035), the ones that need care first.
+    groups: { farm: "Nông trại", plaza: "Sảnh", garden: "Sobi Garden", aquarium: "Sobi Aquarium", cloud: "Sobi Cloud", adventure: "Sobi Adventure" },
+    urgent: "Cần làm ngay",
+    calm: "Ổn cả",
   },
 
   // Sobi Adventure (GĐ10).

@@ -461,6 +461,78 @@
   }
 }
 
+// Decision 035: every dialog (but an Area shop, which lays out its own head) gets the farm window's look — a wooden
+// title strip, a round close button on the corner, a body that alone scrolls, the action bar fixed at the bottom.
+.c-dialog__panel:not(.c-dialog__panel--shop) {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  overflow: visible;
+
+  > .c-dialog__title {
+    flex: none;
+    margin: 0;
+    padding: $sp-3 3.25rem $sp-3 $sp-4;
+    font-size: 1.35rem;
+    line-height: 1.2;
+    color: #fff;
+    text-shadow: 0 2px 0 $c-wood-dark;
+    background: linear-gradient($c-wood, color.adjust($c-wood, $lightness: -8%));
+    border-bottom: 3px solid $c-wood-dark;
+    border-radius: calc(#{$radius-window} - 4px) calc(#{$radius-window} - 4px) 0 0;
+
+    .c-dialog__badge { width: 2.4rem; height: 2.4rem; background: $c-cream; border: 3px solid #fff; }
+  }
+
+  > .c-dialog__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: $sp-3 $sp-4;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  > .c-dialog__bar {
+    flex: none;
+    padding: $sp-2 $sp-4 $sp-3;
+    background: color.adjust($c-cream, $lightness: -3%);
+    border-top: 2px solid rgba($c-wood, 0.25);
+    border-radius: 0 0 calc(#{$radius-window} - 4px) calc(#{$radius-window} - 4px);
+  }
+}
+
+.c-dialog__close {
+  position: absolute;
+  top: -0.7rem;
+  right: -0.7rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  font: inherit;
+  font-size: $fs-lg;
+  font-weight: $fw-bold;
+  line-height: 1;
+  color: #fff;
+  cursor: pointer;
+  background: $c-badge;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: $hud-shadow;
+  transition: transform $dur-fast ease-out;
+
+  &:hover { transform: rotate(90deg) scale(1.05); }
+  &:active { transform: rotate(90deg) scale(0.92); }
+  &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
+
+  // The Area shop has its own corner button.
+  .c-dialog__panel--shop > & { display: none; }
+}
+
 .c-devtools {
   display: flex;
   gap: $sp-2;

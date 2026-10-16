@@ -27,12 +27,17 @@ export const CLOUD_VIEW = {
   /** Wooden label planks (centre). */
   springLabel: { x: 284, y: 440 },
   cauldronLabel: { x: 340, y: 624 },
-  plank: { width: 220, height: 80 },
+  plank: { width: 230, height: 84 },
+  /** Where the name goes on the plank and on the tier banner (shares of the art, decision 035): right of the painted
+   *  cloud, inside the edges; `dy` moves the face down from the art's centre. */
+  plankFace: { from: 0.33, to: 0.93, dy: 0, height: 0.56 },
+  titleFace: { from: 0.31, to: 0.82, dy: 0.1, height: 0.42 },
+  signPx: { plank: [17, 27], title: [18, 30] } as const,
   /**
    * The tier's title banner (centre) on the green knoll under the field, and the arrows that change tier. Raised 26 px from
    * the knoll's centre (decision 031) so the arrows stay clear of the HUD's bottom tray in the smallest window (1024 × 640).
    */
-  title: { x: 800, y: 680, width: 430, height: 164 },
+  title: { x: 800, y: 680, width: 480, height: 183 },
   tierUp: { x: 1074, y: 686 },
   tierDown: { x: 526, y: 686 },
   /** Share of the banner's width the title may use (a long tier name shrinks to fit). */

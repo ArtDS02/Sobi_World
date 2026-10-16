@@ -23,12 +23,23 @@
   }
 }
 
+// "Trong lúc bạn vắng mặt" (decision 035): one card per place, the urgent ones first, a coloured edge by tone.
+.c-dialog__panel--away { max-width: 36rem; }
+
 .c-away {
+  &__duration { margin: 0; color: $c-text-muted; text-align: center; }
+
   &__trough {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
     padding: $sp-2 $sp-3;
     font-weight: $fw-bold;
-    background: $c-surface-alt;
-    border-radius: $radius-sm;
+    background: #eaf6e2;
+    border-radius: $radius-md;
 
     &.is-alert {
       color: $c-danger;
@@ -36,27 +47,76 @@
     }
   }
 
-  &__list {
-    display: grid;
-    gap: $sp-1;
-    padding-left: $sp-4;
-    list-style: disc;
+  &__cards { display: grid; gap: $sp-2; }
+
+  &__card {
+    padding: $sp-2 $sp-3;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-left-width: 6px;
+    border-radius: $radius-md;
+    box-shadow: 0 2px 0 rgba(122, 79, 42, 0.12);
+
+    &.is-alert { border-left-color: $c-danger; }
+    &.is-warn { border-left-color: #f0a830; }
+    &.is-info { border-left-color: $c-leaf; }
   }
 
-  // A line that needs care: the button to the place sits at its end.
-  &__line {
-    &.is-warn {
-      color: $c-gold;
-    }
+  &__head {
+    display: flex;
+    gap: $sp-2;
+    align-items: center;
 
-    &.is-alert {
-      color: $c-danger;
-      font-weight: $fw-bold;
-    }
+    b { font-size: $fs-md; }
   }
+
+  &__pic { width: 2rem; height: 2rem; object-fit: contain; &.is-emoji { display: grid; place-items: center; font-size: 1.3rem; } }
+
+  &__state {
+    padding: 0 $sp-2;
+    font-size: $fs-xs;
+    color: $c-text-muted;
+    background: #f5efe6;
+    border-radius: 999px;
+  }
+
+  &__card.is-alert &__state { color: #fff; background: $c-danger; }
+  &__card.is-warn &__state { color: #6b4300; background: #ffe2a6; }
 
   &__go {
-    margin-left: $sp-2;
+    min-height: 2.25rem;
+    margin-left: auto;
+    padding: 0 $sp-3;
+    font-size: $fs-sm;
+  }
+
+  &__list {
+    display: grid;
+    gap: 2px;
+    margin: $sp-1 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__line {
+    position: relative;
+    padding-left: 1rem;
+    font-size: $fs-sm;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0.5em;
+      left: 0.2rem;
+      width: 0.45rem;
+      height: 0.45rem;
+      background: $c-leaf;
+      border-radius: 50%;
+    }
+
+    &.is-warn::before { background: #f0a830; }
+    &.is-alert { color: $c-danger; font-weight: $fw-bold; }
+    &.is-alert::before { background: $c-danger; }
   }
 }
 

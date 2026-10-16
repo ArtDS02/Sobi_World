@@ -5,6 +5,7 @@
 // the look. Positions come from the place.
 import * as Phaser from 'phaser';
 import { stallKey } from '../../../ui/world/codeStall';
+import { setSignText } from '../../../ui/world/signText';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import type { SceneState } from '../logic/derived';
 import type { AquariumPick } from './AquariumScene';
@@ -75,7 +76,8 @@ export class AquariumProps {
     this.plaque.setPosition(place.plaque.x, place.plaque.y);
     this.shop.setPosition(place.shop.x, place.shop.y);
     this.dressShop();
-    this.plaqueText.setPosition(place.plaque.x, place.plaque.y + 1).setText(name);
+    const p = v.plaque;
+    setSignText(this.plaqueText, { x: place.plaque.x + ((p.face.from + p.face.to) / 2 - 0.5) * p.width, y: place.plaque.y, width: (p.face.to - p.face.from) * p.width, height: p.face.height * p.height }, name, { fontFamily: v.text.fontFamily, minPx: p.px[0], maxPx: p.px[1], look: 'carved' });
     const rod = place.rod;
     for (const part of this.rodParts()) {
       part.setVisible(Boolean(rod)).setRotation(0);

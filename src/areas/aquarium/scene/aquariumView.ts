@@ -140,7 +140,8 @@ export const aquariumPlace = (level: number): AquariumPlace => AQUARIUM_PLACES[M
 export const AQUARIUM_VIEW = {
   /** The painted backdrops: 1800 × 900, centred on the design frame (design x = backdrop x − offsetX). */
   backdrop: { width: 1800, height: 900, offsetX: 100 },
-  plaque: { art: 'prop_aqua_plaque', width: 330 },
+  /** The name goes between the nails (shares of the 420 × 114 art, decision 035). */
+  plaque: { art: 'prop_aqua_plaque', width: 330, height: 90, face: { from: 0.21, to: 0.79, height: 0.5 }, px: [16, 26] as const },
   /** The shop stall (art per place): its picture when painted, else the code stall (ui/world/codeStall.ts). */
   shop: { width: 230, colours: { stripe: 0x5aa6dc, stripe2: 0xfff6e2, goods: [0xe8774a, 0xf2c14e, 0x7fc6e8, 0xd98a3d] } },
   rod: { art: 'bld_fish_dock' },

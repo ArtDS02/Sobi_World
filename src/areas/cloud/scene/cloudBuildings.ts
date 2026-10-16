@@ -3,12 +3,12 @@
 // Hover answers differ (owner's ask): drops jump out of the spring; the cauldron hops and bubbles. Hovering a plank wakes
 // its building too.
 // Draws and reports clicks; CloudScene decides what they do.
+import { signText } from '../../../ui/world/signText';
 import * as Phaser from 'phaser';
 import { vi } from '../../../i18n/vi';
 import { CLOUD_BUILDING_ART, CLOUD_DRESSING_ART } from '../logic/art';
 import type { SceneState } from '../logic/derived';
 import { bubbles, drawBadge, splash, type Badge } from './cloudFx';
-import { signStyle } from './cloudTierBar';
 import { stallKey } from '../../../ui/world/codeStall';
 import { textureKey } from '../../../ui/world/keys';
 import { CLOUD_VIEW } from './cloudView';
@@ -86,10 +86,9 @@ export class CloudBuildings {
     plank.on(Phaser.Input.Events.POINTER_DOWN, () => !this.d.paused() && this.d.onPick(id));
     this.d.press(plank);
     this.hoverAnswer(plank, id);
-    this.scene.add
-      .text(at.x + v.plank.height * 0.22, at.y - 2, name, signStyle(v.label.fontPx, v.label.color, v.label.stroke, v.label.strokePx))
-      .setOrigin(0.5)
-      .setDepth(v.depth.sign + 1);
+    const f = v.plankFace;
+    const face = { x: at.x + ((f.from + f.to) / 2 - 0.5) * v.plank.width, y: at.y + f.dy * v.plank.height, width: (f.to - f.from) * v.plank.width, height: f.height * v.plank.height };
+    signText(this.scene, face, name, { fontFamily: v.label.fontFamily, minPx: v.signPx.plank[0], maxPx: v.signPx.plank[1], look: 'carved' }, v.depth.sign + 1);
   }
 
   /** While `target` is hovered, its building answers now and every 1.1 s (nothing when motion is reduced). */

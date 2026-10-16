@@ -91,6 +91,9 @@ export const partC = {
     goAquarium: "Go to the tank",
     goCloud: "Go to the cloud garden",
     goAdventure: "Go adventuring",
+    groups: { farm: "Farm", plaza: "Plaza", garden: "Sobi Garden", aquarium: "Sobi Aquarium", cloud: "Sobi Cloud", adventure: "Sobi Adventure" },
+    urgent: "Needs care now",
+    calm: "All fine",
   },
 
   adventure: {
