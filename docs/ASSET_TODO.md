@@ -76,7 +76,7 @@ Tất cả là placeholder sinh bằng `npm run assets:placeholders` (chưa có 
 | Ảnh bà Ngan Lai (Nhà lai giống) | Đang dùng ảnh vịt của bác Vịt Cần (`prop_animal_duck`). |
 
 ## GĐ5 — Sobi Garden
-Tất cả là placeholder sinh bằng `npm run assets:placeholders` (chưa có ảnh tham khảo `asset/reference/sobi_garden`):
+**GĐ14 (2026-10-16):** 38 dòng dưới đây đã có art thật (batch `garden-01..03`, status `production`, chờ duyệt). Còn lại: nền `bg_garden` + dựng lại cảnh theo ảnh mẫu của chủ dự án (`art_inbox/.batch/garden-01-scene/`), âm thanh riêng.
 | Việc | Ghi chú |
 |---|---|
 | Ô đất `plot_soil`, `plot_soil_wet`, `plot_locked` (152×108) | đất khô, đất ướt, ô chưa mở |
