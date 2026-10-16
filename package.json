@@ -42,7 +42,8 @@
     "dev:sandbox": "node scripts/dev/sandbox.mjs",
     "perf:catchup": "tsx scripts/perf/catchup.ts",
     "content:i18n": "tsx scripts/content/i18nDump.ts",
-    "dev:rich-save": "tsx scripts/dev/richSave.ts"
+    "dev:rich-save": "tsx scripts/dev/richSave.ts",
+    "dev:full-save": "tsx scripts/dev/fullResourceSave.ts"
   },
   "dependencies": {
     "@fontsource/baloo-2": "^5.3.0",
