@@ -10,6 +10,14 @@
 
 ## Nhật ký
 
+### 2026-10-16 — GĐ14: chuông thông báo; Aquarium sạp hàng, bấm cá, cá đói, mưa / đêm, trứng nở, cá nhảy vào túi (decision 034, chờ duyệt)
+✅ Đã làm (chủ dự án đồng ý 5 đề xuất của 033 + đổi khung gợi ý):
+1. **Chuông thông báo** thay khung "việc tiếp theo" ở mọi nơi: nút tròn tím dưới các nút HUD góc phải, huy hiệu đếm việc đang chờ (màu theo việc gấp nhất), bấm mở danh sách mọi thông báo, mỗi dòng có "Đi".
+2. Aquarium: sạp hàng trong cảnh (bấm mở cửa hàng); bấm cá → cá giật mình, cá thân nhả tim, rồi mở thẻ; cá đói lên mặt nước đớp; mưa / tuyết gợn mặt nước; đêm có đom đóm và ánh trăng (biển sâu: đốm phát sáng); trứng nở tách vỏ; cá câu được nhảy khỏi nước rồi bay vào túi.
+3. Prompt sheet S (sạp hàng + icon chuông) thêm vào `art_inbox/.batch/aquarium-03-fx/PROMPT.md`.
+🧪 Đã kiểm tra: xem cuối mục.
+👉 Bạn cần: xem chuông ở Farm / Sảnh / các Area; xem Aquarium; tạo ảnh sheet W, S.
+
 ### 2026-10-16 — GĐ14 Aquarium: góp ý lượt 2 — drone, cá vẫy đuôi, cá cắn câu, bỏ bảng "Bể cá" (decision 033, chờ duyệt)
 ✅ Đã làm:
 1. Bỏ bảng "Bể cá" trong cảnh (thẻ Bể vẫn mở bằng bảng tên nơi / thẻ "Bể cá").

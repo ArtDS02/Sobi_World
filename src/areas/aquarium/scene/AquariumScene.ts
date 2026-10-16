@@ -12,17 +12,19 @@ import { fitCamera } from '../../../ui/world/fitCamera';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { FISH } from '../logic/config/content';
 import type { SceneState } from '../logic/derived';
+import { AquariumAmbience } from './aquariumAmbience';
 import { AquariumCare } from './aquariumCare';
 import { AquariumFx } from './aquariumFx';
+import { AquariumMoments } from './aquariumMoments';
 import { AquariumProps } from './aquariumProps';
 import { FishBody } from './fishBody';
-import { Swimmer, type Mood } from './fishSwim';
-import { AQUARIUM_DESIGN, AQUARIUM_VIEW, aquariumPlace, fishIcon, fishScale, murkAlpha, type AquariumPlace } from './aquariumView';
+import { nextLeg, Swimmer, type Mood } from './fishSwim';
+import { AQUARIUM_DESIGN, AQUARIUM_VIEW, aquariumPlace, eggSpot, fishIcon, fishScale, murkAlpha, type AquariumPlace } from './aquariumView';
 
 export const AQUARIUM_SCENE_KEY = 'aquarium';
 
 /** What a click on the canvas was on. */
-export type AquariumPick = { kind: 'fish'; id: string } | { kind: 'tank' } | { kind: 'dock' } | { kind: 'scales' } | { kind: 'ground' };
+export type AquariumPick = { kind: 'fish'; id: string } | { kind: 'tank' } | { kind: 'dock' } | { kind: 'scales' } | { kind: 'shop' } | { kind: 'ground' };
 
 export interface AquariumSceneDeps {
   /** The tank now (null before the world is loaded or while the Aquarium is closed). */
@@ -31,6 +33,8 @@ export interface AquariumSceneDeps {
   reduceMotion: () => boolean;
   /** A panel or dialog covers the world: clicks on the canvas are ignored. */
   paused: () => boolean;
+  /** Art of what the rod just brought up (each leaps into the bag once the dialogs are closed). */
+  catches?: () => string[];
 }
 
 const KEY = (id: string, textures: Phaser.Textures.TextureManager) => (textures.exists(textureKey(id)) ? textureKey(id) : FALLBACK_PROP_KEY);
@@ -44,6 +48,11 @@ export class AquariumScene extends Phaser.Scene {
   private bubbles: { dot: Phaser.GameObjects.Arc; speed: number }[] = [];
   private fx!: AquariumFx;
   private care!: AquariumCare;
+  private moments!: AquariumMoments;
+  private ambience!: AquariumAmbience;
+  private weather = 'sunny';
+  /** Eggs drawn at the last look (-1 before the first): fewer now, with new fish, is a hatching. */
+  private eggsShown = -1;
   /** A cast is ready (a fish bites now and then) and when it next bites. */
   private castReady = false;
   private biteAt = 0;
@@ -84,6 +93,8 @@ export class AquariumScene extends Phaser.Scene {
       view: () => this.view,
       reduceMotion: () => this.deps.reduceMotion(),
     });
+    this.moments = new AquariumMoments(this);
+    this.ambience = new AquariumAmbience(this, mulberry32(hashSeed('aquarium-ambience')), (x, y, px) => this.fx.ripple(x, y, px));
     this.night = this.add.rectangle(width / 2, height / 2, width * 3, height * 3, v.night).setAlpha(0).setDepth(v.depth.night);
     const rng = mulberry32(hashSeed('bubbles'));
     for (let i = 0; i < 9; i += 1) {
@@ -119,6 +130,8 @@ export class AquariumScene extends Phaser.Scene {
     }
     const w = this.place.water;
     this.fx.update(time, delta, w);
+    this.ambience.update(time, this.weather);
+    if (!this.deps.paused()) for (const art of this.deps.catches?.() ?? []) this.leap(art);
     if (this.castReady && time >= this.biteAt) {
       const [lo, hi] = AQUARIUM_VIEW.bite.everyMs;
       this.biteAt = time + lo + this.biteRng.next() * (hi - lo);
@@ -137,6 +150,11 @@ export class AquariumScene extends Phaser.Scene {
         food = null;
       }
       s.update(time, delta, w, food, chaseFactor, hooks);
+      // A hungry fish at the surface nibbles at it.
+      if (s.mood === 'hungry' && this.place.surface && s.m.y < w.top + 26 && time >= s.nibbleAt) {
+        s.nibbleAt = time + AQUARIUM_VIEW.moments.nibbleMs;
+        this.fx.ripple(s.m.x + s.facing * s.img.displayWidth * 0.4, w.top + 4, 44);
+      }
     }
     for (const b of this.bubbles) {
       b.dot.y -= (b.speed * delta) / 1000;
@@ -166,6 +184,7 @@ export class AquariumScene extends Phaser.Scene {
       b.dot.y = p.water.top + (b.dot.getData('v') as number) * (p.water.bottom - p.water.top);
     }
     this.care.calmDown();
+    this.eggsShown = -1;
     for (const s of this.swimmers.values()) {
       const at = this.randomSpot(s.rng);
       s.place(at.x, at.y);
@@ -184,6 +203,8 @@ export class AquariumScene extends Phaser.Scene {
     if (state.level !== this.level) this.enterPlace(state.level);
     this.care.notice(state);
     this.castReady = state.castReady;
+    this.weather = state.weather;
+    this.ambience.set(this.place, state.night);
     const key = JSON.stringify([
       state.fish.map((f) => [f.id, f.species, Math.round(f.growth / 5), f.sick, f.hunger < 30]),
       Math.round(state.water / 5),
@@ -200,7 +221,9 @@ export class AquariumScene extends Phaser.Scene {
     if (!this.care.murkHeld && !this.tweens.isTweening(this.murk)) this.murk.setAlpha(murkAlpha(state.water));
     this.night.setAlpha(state.night ? 0.32 : 0);
     this.props.show(state);
-    // Fish: add the new, update the known, drop the gone.
+    // Fish: add the new (from a hatching egg when eggs went), update the known, drop the gone.
+    const hatched = this.eggsShown > state.eggs ? [...Array(this.eggsShown - state.eggs).keys()].map((i) => eggSpot(this.place, state.eggs + i)) : [];
+    this.eggsShown = state.eggs;
     const ids = new Set(state.fish.map((f) => f.id));
     for (const [id, s] of this.swimmers) {
       if (ids.has(id)) continue;
@@ -213,10 +236,12 @@ export class AquariumScene extends Phaser.Scene {
       const art = FISH[f.species]?.art ?? '';
       if (!s) {
         const rng = mulberry32(hashSeed('swim', f.id));
-        const { x, y } = this.randomSpot(rng);
+        const egg = hatched.shift();
+        const { x, y } = egg ? { x: egg.x, y: egg.y - 20 } : this.randomSpot(rng);
+        if (egg && !this.deps.reduceMotion()) this.moments.hatch(egg.x, egg.y);
         // Plain bounds, not pixel-perfect: a flipped, scaled fish is hard to hit pixel by pixel.
         const img = new FishBody(this, x, y, KEY(art, this.textures), v.depth.fish);
-        img.hit.on(Phaser.Input.Events.POINTER_DOWN, () => !this.deps.paused() && this.deps.onPick({ kind: 'fish', id: f.id }));
+        img.hit.on(Phaser.Input.Events.POINTER_DOWN, () => this.touch(f.id));
         const icon = this.add.text(x, y, '', { fontSize: '30px' }).setOrigin(0.5).setDepth(v.depth.badge - 2);
         s = new Swimmer(img, icon, rng, f.species);
         s.fedAt = f.fedAt;
@@ -227,11 +252,37 @@ export class AquariumScene extends Phaser.Scene {
         s.img.setTexture(KEY(art, this.textures));
       }
       s.mood = moodOf(f);
+      s.hearts = f.hearts;
       s.base = fishScale(f.growth);
       s.img.setTint(f.sick ? v.sickTint : 0xffffff);
       if (this.deps.reduceMotion()) s.still();
       s.icon.setText(fishIcon(f));
     }
+  }
+
+  /** A click on a fish: it startles and darts off, hearts float up if it is fond of you, then its card opens. */
+  private touch(id: string) {
+    if (this.deps.paused()) return;
+    const s = this.swimmers.get(id);
+    if (s && !this.deps.reduceMotion()) {
+      const m = AQUARIUM_VIEW.moments.startle;
+      s.hurry(this.time.now, m.factor, m.ms);
+      const leg = nextLeg(s.rng, s.m, this.place.water, s.mood);
+      s.tx = leg.x;
+      s.ty = leg.y;
+      if (s.hearts > 0) this.moments.hearts(s.m.x, s.m.y - s.img.displayHeight * 0.5, Math.min(3, s.hearts));
+      this.time.delayedCall(m.ms * 0.5, () => !this.deps.paused() && this.deps.onPick({ kind: 'fish', id }));
+      return;
+    }
+    this.deps.onPick({ kind: 'fish', id });
+  }
+
+  /** A catch leaps out of the water by the fishing spot and into the bag (the HUD's button at the top right). */
+  private leap(art: string) {
+    const p = this.place;
+    const from = p.surface ? { x: p.dock.x - 60, y: p.water.top + 6 } : { x: p.dock.x, y: p.dock.y + p.dock.height / 2 };
+    const bag = { x: this.view.x + this.view.width - 90, y: this.view.y + 50 };
+    this.moments.leap(art, from, bag, (x, y) => p.surface && this.fx.ripple(x, y, 120));
   }
 }
 

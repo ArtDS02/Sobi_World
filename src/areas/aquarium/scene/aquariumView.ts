@@ -22,12 +22,16 @@ export interface AquariumPlace {
   art: string;
   /** The water fish swim in. */
   water: Box;
+  /** The water has a surface to ring (rain, a nibbling fish) and air above it (fireflies); the deep sea has none. */
+  surface: boolean;
   /** Where the murk of dirty water shows (the glass of level 1, the whole sea below the surface elsewhere). */
   murk: Box;
   /** The sand the eggs lie on (first egg; the next ones step right). */
   eggs: Spot;
   /** The pile of scales (bottom centre). */
   scales: Spot;
+  /** The shop stall (bottom centre, decision 034): on the deck at level 1, on the sand under the water elsewhere. */
+  shop: Spot;
   /** The plaque with the place's name (centre): opens the tank card too. */
   plaque: Spot;
   /** The rod at the fishing spot (bottom of the handle), or null when the backdrop paints the spot itself. */
@@ -50,9 +54,11 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     // Level 1: the round glass tank on the wooden dock (the tank and the rod are painted in the backdrop).
     art: 'bg_aquarium',
     water: { left: 390, right: 1250, top: 305, bottom: 515 },
+    surface: true,
     murk: { left: 360, right: 1280, top: 290, bottom: 600 },
     eggs: { x: 480, y: 578 },
     scales: { x: 1110, y: 598 },
+    shop: { x: 1330, y: 735 },
     plaque: { x: 800, y: 643 },
     rod: null,
     bite: { x: 1585, y: 470, kind: 'ripple' },
@@ -63,9 +69,11 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     // Level 2: the rock pool by the shore, the pier at the top right.
     art: 'bg_aquarium_t2',
     water: { left: 290, right: 1340, top: 370, bottom: 630 },
+    surface: true,
     murk: { left: -400, right: 2000, top: 330, bottom: 1300 },
     eggs: { x: 560, y: 712 },
     scales: { x: 1130, y: 728 },
+    shop: { x: 1340, y: 772 },
     plaque: { x: 800, y: 700 },
     rod: { x: 1520, y: 318, scale: 0.85 },
     bite: null,
@@ -79,9 +87,11 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     // Level 3: the mangrove lagoon, coral at both sides.
     art: 'bg_aquarium_t3',
     water: { left: 290, right: 1340, top: 330, bottom: 615 },
+    surface: true,
     murk: { left: -400, right: 2000, top: 292, bottom: 1300 },
     eggs: { x: 560, y: 700 },
     scales: { x: 1060, y: 712 },
+    shop: { x: 1330, y: 768 },
     plaque: { x: 800, y: 700 },
     rod: { x: 1525, y: 282, scale: 0.85 },
     bite: null,
@@ -92,9 +102,11 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     // Level 4: the old ruins at sunset (the orange pearls, the pebble pile and the big clam are painted).
     art: 'bg_aquarium_t4',
     water: { left: 300, right: 1300, top: 325, bottom: 620 },
+    surface: true,
     murk: { left: -400, right: 2000, top: 288, bottom: 1300 },
     eggs: { x: 600, y: 718 },
     scales: { x: 1090, y: 728 },
+    shop: { x: 1330, y: 782 },
     plaque: { x: 800, y: 700 },
     rod: { x: 1505, y: 288, scale: 0.85 },
     bite: null,
@@ -105,9 +117,11 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     // Level 5: the deep sea, no surface; the fishing spot is the lantern hanging on its rope (painted).
     art: 'bg_aquarium_t5',
     water: { left: 290, right: 1340, top: 245, bottom: 620 },
+    surface: false,
     murk: { left: -400, right: 2000, top: -400, bottom: 1300 },
     eggs: { x: 620, y: 732 },
     scales: { x: 1110, y: 742 },
+    shop: { x: 1340, y: 790 },
     plaque: { x: 800, y: 700 },
     rod: null,
     bite: { x: 1485, y: 238, kind: 'glow' },
@@ -126,6 +140,8 @@ export const AQUARIUM_VIEW = {
   /** The painted backdrops: 1800 × 900, centred on the design frame (design x = backdrop x − offsetX). */
   backdrop: { width: 1800, height: 900, offsetX: 100 },
   plaque: { art: 'prop_aqua_plaque', width: 330 },
+  /** The shop stall: its art when painted, else the code stall (ui/world/codeStall.ts) in sea colours. */
+  shop: { art: 'bld_shop_aquarium', width: 210, colours: { stripe: 0x5aa6dc, stripe2: 0xfff6e2, goods: [0xe8774a, 0xf2c14e, 0x7fc6e8, 0xd98a3d] } },
   rod: { art: 'bld_fish_dock' },
   egg: { art: 'prop_fish_egg', width: 44, step: 50 },
   scalePile: { art: 'prop_scale_pile', width: 92 },
@@ -205,6 +221,16 @@ export const AQUARIUM_VIEW = {
     feedMs: 650,
     puffFeed: [0xd98a3d, 0xb5652a, 0xffd89a],
     puffWater: [0xcfeefe, 0xffffff, 0x9fd6f5],
+  },
+  /** Rain and snow on the surface (one ring every so often), fireflies over the water at night (or glowing specks in
+   *  the deep), the moon glinting on the surface. */
+  ambience: { rainMs: 140, snowMs: 420, fireflies: 12, fireflyBand: 160, glints: 4 },
+  /** Moments: a caught fish leaps (size, height, times), hearts for a fond fish, a hungry fish nibbling at the surface. */
+  moments: {
+    leap: { px: 110, height: 170, arcMs: 700, flyMs: 520 },
+    heartArt: 'fx_heart',
+    nibbleMs: 1600,
+    startle: { factor: 2.6, ms: 700 },
   },
   bubbleArt: 'fx_bubble',
   sparkleArt: 'fx_sparkle',

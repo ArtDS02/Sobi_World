@@ -3,7 +3,9 @@
 // store and acts through the Aquarium's actions; the canvas (AquariumScene) only reports clicks to `pick`. Mounted by
 // the app into the shell's overlay; the dialogs are aquariumDialogs.ts.
 import type { PanelId } from '../../../ui/components/popup';
-import { AREA_HUD_ART } from '../../../core/config/assetIds';
+import { AREA_HUD_ART, itemArtId } from '../../../core/config/assetIds';
+import { FISH } from '../logic/config/content';
+import type { AquariumEvent } from '../logic/events';
 import { areaDock, hudLevel, hudNav, hudPill, hudPills } from '../../../ui/components/areaHud';
 import { art } from '../../../ui/components/icon';
 import { el, patch } from '../../../ui/dom';
@@ -13,6 +15,7 @@ import type { WorldSave } from '../../../core/save/world';
 import { vi } from '../../../i18n/vi';
 import { cleanTank } from '../logic/actions/care';
 import { collectScales } from '../logic/actions/trade';
+import { weatherNow } from '../../../systems/weather/live';
 import { sceneState, type SceneState } from '../logic/derived';
 import { aquariumOf, hasAquarium } from '../logic/save/lens';
 import type { AquariumPick } from '../scene/AquariumScene';
@@ -39,6 +42,8 @@ export interface AquariumUi {
   /** A click on the canvas. */
   pick(pick: AquariumPick): void;
   isModalOpen(): boolean;
+  /** Art of what the rod brought up since the last call (the scene shows each one leaping into the bag). */
+  takeCatches(): string[];
   dispose(): void;
 }
 
@@ -55,7 +60,16 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
     const s = d.world.getSnapshot();
     return s.status === 'ready' && s.save && hasAquarium(s.save) ? s.save : null;
   };
-  const dispatch = (run: AquariumRun) => d.world.dispatch(run);
+  let catches: string[] = [];
+  const dispatch = async (run: AquariumRun) => {
+    const r = await d.world.dispatch(run);
+    for (const e of r.ok ? (r.events ?? []) : []) {
+      if (e.type !== 'AQUARIUM_CAST') continue;
+      const cast = e as Extract<AquariumEvent, { type: 'AQUARIUM_CAST' }>;
+      if (cast.itemId) catches.push(cast.speciesId ? (FISH[cast.speciesId]?.art ?? itemArtId(cast.itemId)) : itemArtId(cast.itemId));
+    }
+    return r;
+  };
   const dialogs = createAquariumDialogs({ host: dialogHost, world, now: d.now, dispatch, ...(d.frame ? { frame: d.frame } : {}) });
 
   function renderHud(w: WorldSave): HTMLElement {
@@ -134,6 +148,7 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
     if (p.kind === 'fish') return dialogs.openFish(p.id);
     if (p.kind === 'tank') return dialogs.openTank();
     if (p.kind === 'dock') return dialogs.openFishing();
+    if (p.kind === 'shop') return dialogs.openShop();
     if (p.kind === 'scales') return void dispatch((s, c) => collectScales(s, {}, c));
   }
 
@@ -149,12 +164,17 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
       if (!w) return null;
       const now = d.now();
       if (!sceneCache || sceneCache.world !== w || now - sceneCache.now > 1000) {
-        sceneCache = { world: w, now, state: sceneState(aquariumOf(w), now, localOffsetMs(now)) };
+        sceneCache = { world: w, now, state: sceneState(aquariumOf(w), now, localOffsetMs(now), weatherNow(w, now, localOffsetMs(now))) };
       }
       return sceneCache.state;
     },
     pick,
     isModalOpen: () => dialogs.isOpen(),
+    takeCatches: () => {
+      const out = catches;
+      catches = [];
+      return out;
+    },
     dispose: () => {
       off();
       dialogs.close();

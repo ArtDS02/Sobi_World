@@ -4,6 +4,7 @@
 // rings the water by its float or makes the deep sea's lantern glow — the eggs and the pile of scales on the sand, and pearls for
 // the look. Positions come from the place.
 import * as Phaser from 'phaser';
+import { stallKey } from '../../../ui/world/codeStall';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import type { SceneState } from '../logic/derived';
 import type { AquariumPick } from './AquariumScene';
@@ -18,6 +19,7 @@ export interface AquariumPropsDeps {
 
 export class AquariumProps {
   private plaque: Img;
+  private shop: Img;
   private plaqueText: Phaser.GameObjects.Text;
   /** The rod's picture in three cuts of the same texture: the rod and line above the float, the handle beside it,
    *  and the float, which can move on its own. All three share position, origin, scale and rotation. */
@@ -40,6 +42,8 @@ export class AquariumProps {
     const v = AQUARIUM_VIEW;
     const t = v.text;
     this.plaque = this.image(v.plaque.art, v.plaque.width).setDepth(v.depth.sign);
+    this.shop = this.image(v.shop.art, 0).setOrigin(0.5, 1).setDepth(v.depth.sign);
+    this.dressShop();
     this.plaqueText = scene.add
       .text(0, 0, '', { fontFamily: t.fontFamily, fontSize: `${t.plaquePx}px`, fontStyle: 'bold', color: t.color })
       .setOrigin(0.5)
@@ -58,6 +62,7 @@ export class AquariumProps {
 
     const tank = () => deps.onPick({ kind: 'tank' });
     this.clickable(this.plaque, tank, this.plaqueText);
+    this.clickable(this.shop, () => deps.onPick({ kind: 'shop' }));
     this.clickable(this.rod, () => deps.onPick({ kind: 'dock' }), undefined, [this.rodLow, this.rodFloat]);
     this.dock.setInteractive({ useHandCursor: true }).on(Phaser.Input.Events.POINTER_DOWN, () => deps.onPick({ kind: 'dock' }));
     this.clickable(this.pile, () => deps.onPick({ kind: 'scales' }));
@@ -69,6 +74,7 @@ export class AquariumProps {
     this.place = place;
     const v = AQUARIUM_VIEW;
     this.plaque.setPosition(place.plaque.x, place.plaque.y);
+    this.shop.setPosition(place.shop.x, place.shop.y);
     this.plaqueText.setPosition(place.plaque.x, place.plaque.y + 1).setText(name);
     const rod = place.rod;
     for (const part of this.rodParts()) {
@@ -149,6 +155,15 @@ export class AquariumProps {
       img.setScale((img.getData('scale') as number | undefined) ?? 1);
     }
     this.cutRod();
+    this.dressShop();
+  }
+
+  /** The stall: the painted one when loaded, else the code stall, drawn `shop.width` wide. */
+  private dressShop() {
+    const v = AQUARIUM_VIEW.shop;
+    if (!this.scene.textures.exists(textureKey(v.art))) this.shop.setTexture(stallKey(this.scene, v.art, v.colours));
+    const s = v.width / this.shop.width;
+    this.shop.setData('scale', s).setScale(s);
   }
 
   /** An image of `id` drawn `width` wide (0 = its own size, or the scale set later). */

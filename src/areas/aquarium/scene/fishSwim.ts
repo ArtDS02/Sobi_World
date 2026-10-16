@@ -46,6 +46,8 @@ export function nextLeg(rng: Rng, at: { y: number }, box: Box, mood: Mood): { x:
   const bottom = box.bottom - 30;
   const h = bottom - top;
   const [lo, hi] = mood === 'hungry' ? [top, top + h / 3] : mood === 'sick' ? [top + h / 2, bottom] : [top, bottom];
+  // A hungry fish goes up to the surface now and then, to nibble at it.
+  if (mood === 'hungry' && rng.next() < 0.35) return { x: box.left + 60 + rng.next() * (box.right - box.left - 120), y: box.top + 14 };
   const y = Math.min(hi, Math.max(lo, at.y + (rng.next() * 2 - 1) * climb));
   return { x: box.left + 60 + rng.next() * (box.right - box.left - 120), y };
 }
@@ -78,6 +80,10 @@ export class Swimmer {
   fedAt: number | null = null;
   /** Pellets this fish is still to eat after a meal. */
   appetite = 0;
+  /** Its Bond hearts (hearts float up when it is clicked). */
+  hearts = 0;
+  /** When it may nibble at the surface again. */
+  nibbleAt = 0;
 
   constructor(
     readonly img: FishBody,

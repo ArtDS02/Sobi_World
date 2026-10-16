@@ -1,5 +1,6 @@
 // What the Aquarium's screens and scene read off its state (derived, never stored).
 import { dayPeriod } from '../../../core/clock';
+import type { WeatherId } from '../../../../content/schemas/vocab';
 import { TIME } from '../../../core/config/time';
 import { AB, FISH, TANK_LEVELS, MAX_TANK_LEVEL, tankCapacity } from './config/content';
 import { fishHealth, fishStage, isAdult, isGrown, isPet } from './fishLife';
@@ -52,6 +53,8 @@ export interface SceneState {
   eggs: number;
   night: boolean;
   castReady: boolean;
+  /** Today's weather (rain rings the surface). */
+  weather: WeatherId;
 }
 
 export const fishView = (f: Fish, now: number): FishView => ({
@@ -71,7 +74,7 @@ export const fishView = (f: Fish, now: number): FishView => ({
   fedAt: f.lastFedAt ?? null,
 });
 
-export const sceneState = (a: AquariumState, now: number, dayOffsetMs: number): SceneState => ({
+export const sceneState = (a: AquariumState, now: number, dayOffsetMs: number, weather: WeatherId = 'sunny'): SceneState => ({
   fish: a.fish.map((f) => fishView(f, now)),
   water: a.tank.water,
   level: a.tank.level,
@@ -79,6 +82,7 @@ export const sceneState = (a: AquariumState, now: number, dayOffsetMs: number): 
   eggs: a.eggs.length,
   night: isNightNow(now, dayOffsetMs),
   castReady: castCooldownLeft(a, now) === 0,
+  weather,
 });
 
 /** Display name of a species (content). */

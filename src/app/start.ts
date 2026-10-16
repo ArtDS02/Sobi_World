@@ -238,6 +238,7 @@ export async function start(root: HTMLElement) {
       const aquarium = new AquariumScene({
         read: () => overlays.aquariumUi.sceneState(),
         onPick: (pick) => overlays.aquariumUi.pick(pick),
+        catches: () => overlays.aquariumUi.takeCatches(),
         reduceMotion: () => host.reduceMotion(),
         paused: () => host.paused(),
       });
