@@ -30,7 +30,7 @@ export function renderHud(save: FarmGame, d: HudDeps): HTMLElement {
     });
   }
   return renderTopBar(save, d.now, {
-    settings: () => d.go('settings'),
+    menu: () => d.go('menu'),
     ...(d.leave ? { home: d.leave } : {}),
     trough: d.openTrough,
     history: () => d.go('history'),

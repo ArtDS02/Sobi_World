@@ -1,82 +1,193 @@
-// An Area's shop (decision 029): a wide dialog of item cards with buy buttons; Garden in leafy greens and wood, Cloud in
-// lilac and white. Built by ui/components/shopGrid.ts.
+// An Area's shop (decision 029, laid out again by decision 031): a wide dialog with a fixed head (title, intro, the
+// Sobi Coin balance, a corner close button) over a grid of item cards that alone scrolls. Garden in leafy greens and
+// wood, Cloud in lilac and white. Built by ui/components/shopGrid.ts.
 @use '../core/tokens' as *;
+@use '../core/mixins' as *;
 
 .c-dialog__panel--shop {
-  max-width: 54rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: 60rem;
+  max-height: min(calc(100vh - 2rem), 46rem);
+  overflow: hidden;
+  padding: $sp-4 $sp-4 $sp-3;
+
+  .c-dialog__title { padding-right: 2.6rem; }
+  .c-dialog__body { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+  // The corner button and Esc close the shop; the bar's button stays as the one they press.
+  .c-dialog__bar { display: none; }
 }
 
 .c-shop {
-  --shop-rim: #e6d6bd;
+  --shop-rim: #eadcc4;
   --shop-card: #fffaf0;
   --shop-ink: #5a3a1c;
+  --shop-muted: #8a7462;
   --shop-btn: #7fbf5e;
   --shop-btn-ink: #ffffff;
   --shop-btn-edge: #5e9a44;
+  --shop-tag: #e9f5dc;
+  --shop-tag-ink: #4f7a34;
+  --shop-head: #fff3dc;
 
-  display: grid;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   gap: $sp-3;
+  min-height: 0;
 
-  &__intro { margin: 0; color: $c-text-muted; }
+  &__close {
+    position: absolute;
+    top: $sp-3;
+    right: $sp-3;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    font: inherit;
+    font-size: 1.4rem;
+    font-weight: $fw-bold;
+    line-height: 1;
+    color: var(--shop-ink);
+    cursor: pointer;
+    background: #ffffff;
+    border: 2px solid var(--shop-rim);
+    border-radius: 50%;
+    box-shadow: 0 2px 0 var(--shop-rim);
+    transition: transform $dur-fast ease-out, background $dur-fast ease-out;
 
+    &:hover { background: #fff1ec; transform: rotate(90deg); }
+    &:active { transform: rotate(90deg) scale(0.9); }
+    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
+  }
+
+  &__head {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: $sp-2 $sp-3;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__intro { flex: 1 1 14rem; margin: 0; font-size: $fs-sm; color: var(--shop-muted); }
+
+  &__balance {
+    display: inline-flex;
+    gap: $sp-2;
+    align-items: center;
+    padding: 0.2rem $sp-3 0.2rem $sp-2;
+    color: var(--shop-ink);
+    white-space: nowrap;
+    background: var(--shop-head);
+    border: 2px solid var(--shop-rim);
+    border-radius: 999px;
+
+    .c-icon { width: 1.5rem; height: 1.5rem; }
+    small { font-size: $fs-xs; font-weight: $fw-bold; color: var(--shop-muted); }
+    b { font-size: $fs-lg; line-height: 1.2; }
+  }
+
+  // Only this part scrolls; 4 columns on a desktop window, fewer as it narrows, never under two.
   &__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+    flex: 1;
+    grid-template-columns: repeat(auto-fill, minmax(min(12rem, calc(50% - #{$sp-3})), 1fr));
+    grid-auto-rows: min-content;
     gap: $sp-3;
+    min-height: 0;
+    padding: 0.3rem 0.3rem $sp-2;
+    margin: 0 -0.3rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
   }
 
   &__card {
-    display: grid;
-    grid-template-rows: auto auto 1fr auto auto;
-    gap: $sp-1;
-    padding: $sp-3;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    align-items: center;
+    min-width: 0;
+    padding: $sp-3 $sp-3 $sp-2;
     text-align: center;
     background: var(--shop-card);
     border: 2px solid var(--shop-rim);
     border-radius: 1.1rem;
     box-shadow: 0 3px 0 var(--shop-rim);
-    transition: transform $dur-fast ease-out;
+    transition: transform $dur-fast ease-out, box-shadow $dur-fast ease-out;
 
-    &:hover { transform: translateY(-2px); }
+    &:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--shop-rim), 0 8px 16px rgba(90, 60, 30, 0.08); }
   }
 
-  &__pic {
-    display: grid;
-    place-items: center;
-    height: 4.5rem;
+  &__tag, &__owned {
+    position: absolute;
+    top: $sp-2;
+    padding: 0 $sp-2;
+    font-size: 0.68rem;
+    font-weight: $fw-bold;
+    line-height: 1.5;
+    border-radius: 999px;
   }
 
-  &__art { max-width: 4.2rem; max-height: 4.2rem; }
+  &__tag { left: $sp-2; color: var(--shop-tag-ink); background: var(--shop-tag); }
+  &__card--fertilizer &__tag { color: #7a5420; background: #fbecd0; }
+  &__card--water &__tag { color: #2f6f9a; background: #e2f2fc; }
+  &__owned { right: $sp-2; color: var(--shop-muted); background: #ffffff; border: 1px solid var(--shop-rim); }
 
-  &__name { margin: 0; font-size: $fs-md; color: var(--shop-ink); }
-  &__line { margin: 0; font-size: $fs-xs; color: $c-text-muted; }
+  &__pic { display: grid; place-items: center; height: 4.4rem; margin-top: 1.1rem; }
+  &__art { max-width: 4.2rem; max-height: 4.2rem; object-fit: contain; }
 
-  &__meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: $sp-2;
-    padding-top: $sp-1;
-    border-top: 1px dashed var(--shop-rim);
+  &__name {
+    max-width: 100%;
+    margin: 0;
+    overflow: hidden;
+    font-size: $fs-md;
+    color: var(--shop-ink);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  &__each { font-size: $fs-sm; color: var(--shop-ink); }
-  &__owned { font-size: $fs-xs; color: $c-text-muted; }
+  &__line {
+    display: -webkit-box;
+    min-height: 2.3em;
+    margin: 0;
+    overflow: hidden;
+    font-size: $fs-xs;
+    line-height: 1.15;
+    color: var(--shop-muted);
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  &__each {
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+    margin: 0.1rem 0 0.2rem;
+    font-size: $fs-sm;
+    color: var(--shop-ink);
+
+    .c-icon { width: 1.1rem; height: 1.1rem; }
+  }
 
   &__buys {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: $sp-1;
+    gap: 0.3rem;
+    width: 100%;
+    margin-top: auto;
   }
 
   &__buy {
     display: grid;
     place-items: center;
-    min-height: 2.6rem;
-    padding: 0 $sp-1;
+    min-height: 2.7rem;
+    padding: 0.15rem 0.1rem;
     font: inherit;
-    font-size: $fs-xs;
-    font-weight: $fw-bold;
     line-height: 1.1;
     color: var(--shop-btn-ink);
     cursor: pointer;
@@ -84,14 +195,46 @@
     border: 0;
     border-radius: 0.7rem;
     box-shadow: 0 3px 0 var(--shop-btn-edge);
-    transition: transform $dur-fast ease-out, filter $dur-fast ease-out;
+    transition: transform $dur-fast ease-out, filter $dur-fast ease-out, box-shadow $dur-fast ease-out;
 
     &:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
     &:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--shop-btn-edge); }
-    &:disabled { cursor: default; opacity: 0.45; }
+    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
 
-    b { font-size: $fs-sm; }
-    small { font-size: 0.7rem; font-weight: $fw-bold; opacity: 0.92; }
+    // Off: flat and greyed; the card writes out why below the buttons.
+    &:disabled {
+      color: #9a8f86;
+      cursor: not-allowed;
+      background: #efe9e2;
+      box-shadow: none;
+    }
+
+    // Pressed and waiting for the world to answer: no second press.
+    &.is-busy { pointer-events: none; filter: brightness(0.92); }
+
+    b { font-size: $fs-sm; font-weight: $fw-bold; }
+
+    small {
+      display: inline-flex;
+      gap: 0.1rem;
+      align-items: center;
+      font-size: 0.68rem;
+      font-weight: $fw-bold;
+      opacity: 0.95;
+
+      .c-icon { width: 0.75rem; height: 0.75rem; }
+    }
+  }
+
+  &__off {
+    display: grid;
+    width: 100%;
+    margin: 0.15rem 0 0;
+    font-size: 0.68rem;
+    line-height: 1.2;
+    color: #a0543a;
+
+    span::before { content: '⚠ '; }
   }
 }
 
@@ -99,6 +242,14 @@
   --shop-rim: #e2d8f6;
   --shop-card: #ffffff;
   --shop-ink: #4a3a7a;
+  --shop-muted: #7f73a0;
   --shop-btn: #a98bdf;
   --shop-btn-edge: #7f63b8;
+  --shop-tag: #efe9ff;
+  --shop-tag-ink: #5a4a8a;
+  --shop-head: #f6f2ff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-shop__card, .c-shop__buy, .c-shop__close { transition: none; }
 }

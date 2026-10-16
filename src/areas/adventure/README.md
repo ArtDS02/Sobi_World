@@ -12,7 +12,7 @@ Area thứ năm: đưa tối đa 3 heo / cá (đã lớn, chọn mục đích Ph
   - `battleSim.ts` — mô phỏng cả chuyến N lần (Admin).
   - `summary.ts`, `suggest.ts`, `worldEvents.ts` (`battle.won`, `adventure.finished`), `rewind.ts`, `art.ts`.
 - `scene/` — Phaser: `AdventureScene` chỉ vẽ nền; mọi thao tác ở lớp DOM.
-- `ui/` — DOM: `adventureUi.ts` (bộ điều khiển, HUD, Tự động), `adventureViews.ts` (sảnh, bản đồ, tổng kết), `battleView.ts` (trận đánh), `adventureDialogs.ts` (trang bị), view-model thuần `adventureVm.ts`, `battleVm.ts`, `vmKit.ts`.
+- `ui/` — DOM: `adventureUi.ts` (bộ điều khiển, HUD dùng chung `ui/components/areaHud.ts` — decision 031, Tự động), `adventureViews.ts` (sảnh, bản đồ, tổng kết), `battleView.ts` (trận đánh), `adventureDialogs.ts` (trang bị), view-model thuần `adventureVm.ts`, `battleVm.ts`, `vmKit.ts`.
 - `feedback.ts`, `stage.ts` — như các Area khác.
 
 Chiến binh là sinh vật của Area khác: Adventure thấy chúng qua `AreaModule.roster` của registry và nhận heo khởi đầu qua `AreaModule.receiveGift`; nó không import Farm hay Aquarium (guard: `npm run guard`). `systems/combat` và `systems/equipment` là phần luật dùng chung.

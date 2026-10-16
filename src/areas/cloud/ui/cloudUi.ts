@@ -1,18 +1,22 @@
-// The Cloud's DOM layer (spec §10): the HUD over the beds, the seed palette and the bulk buttons. It reads the world
+// The Cloud's DOM layer (spec §10): the shared Area HUD over the beds (decision 031) — pills, square buttons and the
+// bottom tray with the flower palette and the bulk actions. It reads the world
 // through the store and acts through the Cloud's actions; the canvas (CloudScene) only reports clicks to `pick`.
 // Mounted by the app into the shell's overlay; the dialogs are cloudDialogs.ts.
-import { art } from '../../../ui/components/icon';
+import { AREA_HUD_ART } from '../../../core/config/assetIds';
+import { areaDock, hudLevel, hudNav, hudPill, hudPills } from '../../../ui/components/areaHud';
 import type { PanelId } from '../../../ui/components/popup';
 import { el, patch } from '../../../ui/dom';
 import type { GameStore } from '../../../core/world/gameStore';
 import type { WorldSave } from '../../../core/save/world';
+import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
+import { CLOUD_DOCK_ART } from '../logic/art';
 import { collectWater } from '../logic/actions/buildings';
 import { fertilizePlots, harvestFlowers, plantFlowers, waterPlots } from '../logic/actions/plants';
 import { sceneState, type SceneState } from '../logic/derived';
 import { cloudOf, hasCloud } from '../logic/save/lens';
 import type { CloudPick } from '../scene/CloudScene';
-import { actionButton, createCloudDialogs } from './cloudDialogs';
+import { createCloudDialogs } from './cloudDialogs';
 import { onViewedTier, viewedTier } from '../viewedTier';
 import { actingTier, emptyIn, unfertilizedIn } from './cloudTierVm';
 import { bulkVm, hudVm, paletteVm, type CloudRun } from './cloudVm';
@@ -40,8 +44,8 @@ export interface CloudUi {
 }
 
 export function createCloudUi(d: CloudUiDeps): CloudUi {
-  const hud = el('div', { class: 'cloud-ui__hud' });
-  const bottom = el('div', { class: 'cloud-ui__bottom' });
+  const hud = el('div', { class: 'cloud-ui__hud a-hud' });
+  const bottom = el('div', { class: 'cloud-ui__bottom a-hud__bottom' });
   const dialogHost = el('div', { class: 'app__dialogs' });
   d.host.classList.add('cloud-ui');
   d.host.append(hud, bottom, dialogHost);
@@ -65,76 +69,53 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     fertilizeAll: (w: WorldSave, c: Parameters<CloudRun>[1]) => fertilizePlots(w, { plots: unfertilizedIn(w, actingTier(w, viewedTier())) }, c),
   };
 
-  const navButton = (label: string, onClick: () => void) =>
-    el('button', { class: 'cloud-ui__btn', text: label, attrs: { type: 'button' }, on: { click: onClick } });
-
   function renderHud(w: WorldSave): HTMLElement {
     const v = hudVm(w, d.now());
     return el(
       'div',
       { class: 'cloud-ui__inner' },
-      el(
-        'div',
-        { class: 'cloud-ui__pills' },
-        el('span', { class: 'cloud-ui__pill', attrs: { title: vi.cloud.coins } }, el('b', { text: v.coins }), el('small', { text: vi.cloud.coins })),
-        el('span', { class: 'cloud-ui__pill', attrs: { title: vi.shop.item_pure_water } }, el('b', { text: v.water }), el('small', { text: vi.shop.item_pure_water })),
-        el(
-          'span',
-          { class: 'cloud-ui__pill cloud-ui__pill--level', attrs: { title: v.xp } },
-          el('b', { text: v.level }),
-          el('span', { class: 'c-bar cloud-ui__bar', attrs: { role: 'progressbar', 'aria-valuenow': String(v.xpProgress) } }, el('span', { class: 'c-bar__fill', attrs: { style: `width: ${v.xpProgress}%` } })),
-          el('small', { text: v.xp }),
-        ),
-      ),
-      el(
-        'nav',
-        { class: 'cloud-ui__nav', attrs: { 'aria-label': vi.cloud.title } },
-        navButton(vi.cloud.plaza, d.leave),
-        navButton(vi.cloud.shop, () => dialogs.openShop()),
-        navButton(vi.cloud.items, () => d.openPanel('inventory')),
-        navButton(vi.cloud.menu, () => d.openPanel('menu')),
-      ),
+      hudPills(hudPill(AREA_HUD_ART.coin, v.coins, vi.cloud.coins), hudPill(CLOUD_DOCK_ART.collect, v.water, vi.shop.item_pure_water), hudLevel(v)),
+      hudNav(vi.cloud.title, [
+        { icon: AREA_HUD_ART.plaza, label: vi.cloud.plaza, onClick: d.leave },
+        { icon: AREA_HUD_ART.shop, label: vi.cloud.shop, onClick: () => dialogs.openShop() },
+        { icon: AREA_HUD_ART.items, label: vi.cloud.items, onClick: () => d.openPanel('inventory') },
+        { icon: AREA_HUD_ART.menu, label: vi.cloud.menu, onClick: () => d.openPanel('menu') },
+      ]),
     );
   }
 
+  /** One row (decision 031): the flowers, then care, harvest & sow, and opening the next tier last and quieter. */
   function renderBottom(w: WorldSave): HTMLElement {
     const bulk = bulkVm(w, d.now(), selected, actingTier(w, viewedTier()), runs);
-    return el(
-      'div',
-      { class: 'cloud-ui__dock' },
-      el(
-        'div',
-        { class: 'cloud-ui__palette', attrs: { role: 'radiogroup', 'aria-label': vi.cloud.palette } },
-        ...paletteVm(w, selected).map((s) =>
-          el(
-            'button',
-            {
-              class: `cloud-ui__seed${s.selected ? ' is-selected' : ''}`,
-              attrs: { type: 'button', role: 'radio', 'aria-checked': String(s.selected), title: `${s.kind} · ${s.growsIn}` },
-              on: {
-                click: () => {
-                  selected = s.flowerId;
-                  refresh();
-                },
-              },
-            },
-            art(s.art, 'cloud-ui__seed-icon'),
-            el('b', { text: s.name }),
-            el('small', { text: s.line }),
-          ),
-        ),
-      ),
-      el(
-        'div',
-        { class: 'cloud-ui__bulk' },
-        actionButton(bulk.collect, () => dispatch(runs.collect), 'cloud-btn cloud-btn--cream'),
-        actionButton(bulk.water, () => dispatch(runs.water), 'cloud-btn cloud-btn--rose'),
-        actionButton(bulk.harvest, () => dispatch(runs.harvest), 'cloud-btn cloud-btn--sun'),
-        actionButton(bulk.plantAll, () => dispatch(runs.plantAll), 'cloud-btn cloud-btn--lilac'),
-        actionButton(bulk.fertilizeAll, () => dispatch(runs.fertilizeAll), 'cloud-btn cloud-btn--sun'),
-        actionButton(bulk.expand, () => dialogs.openExpand(), 'cloud-btn cloud-btn--berry'),
-      ),
-    );
+    const seeds = paletteVm(w, selected);
+    const chosen = seeds.find((s) => s.selected);
+    return areaDock({
+      prefix: 'cloud-ui',
+      seeds: seeds.map((s) => ({ id: s.flowerId, name: s.name, art: s.art, price: s.price, owned: s.owned, title: `${s.name} · ${s.kind} · ${s.growsIn}`, selected: s.selected })),
+      onPick: (id) => {
+        selected = id;
+        refresh();
+      },
+      strings: { palette: vi.cloud.palette, owned: (count) => t(vi.areaHud.owned, { count }), coins: vi.cloud.coins },
+      groups: [
+        {
+          label: vi.areaHud.groupCare,
+          actions: [
+            { ...bulk.collect, art: CLOUD_DOCK_ART.collect, onClick: () => dispatch(runs.collect) },
+            { ...bulk.water, art: CLOUD_DOCK_ART.water, onClick: () => dispatch(runs.water) },
+            { ...bulk.fertilizeAll, art: CLOUD_DOCK_ART.fertilize, onClick: () => dispatch(runs.fertilizeAll) },
+          ],
+        },
+        {
+          label: vi.areaHud.groupHarvest,
+          actions: [
+            { ...bulk.harvest, art: CLOUD_DOCK_ART.harvest, tone: 'main', onClick: () => dispatch(runs.harvest) },
+            { ...bulk.plantAll, label: vi.cloud.plantAll, art: chosen?.art ?? CLOUD_DOCK_ART.harvest, tone: 'main', onClick: () => dispatch(runs.plantAll) },
+          ],
+        },
+        { label: vi.areaHud.groupGrow, actions: [{ ...bulk.expand, art: CLOUD_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openExpand() }] },
+      ],
+    });
   }
 
   function refresh() {

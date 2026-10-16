@@ -10,7 +10,7 @@ Area thứ tư: vườn hoa phép trên mây. Gieo hoa, tưới bằng Nước t
   - `actions/` — `plants.ts` (gieo, tưới 1 Nước tinh khiết / ô, bón phân, hái), `buildings.ts` (mở ô, hứng nước, nâng suối, xây vạc, nấu, nhận), `kit.ts`.
   - `derived.ts`, `suggest.ts`, `summary.ts`, `worldEvents.ts` (`flower.harvested`, `potion.brewed`), `rewind.ts`, `art.ts`.
 - `scene/` — Phaser: `CloudScene` vẽ ô hoa trên mây, suối, vạc, ban đêm; `cloudView.ts` là số đo.
-- `ui/` — DOM: `cloudUi.ts` (HUD, bảng hạt, nút chung), `cloudDialogs.ts` (ô hoa, suối, vạc), `cloudVm.ts` (view-model thuần, thử chạy hành động thật để nút nói lý do).
+- `ui/` — DOM: `cloudUi.ts` (HUD dùng chung `ui/components/areaHud.ts` — decision 031: viên, nút vuông, khay dưới với bảng hoa và nút chung), `cloudDialogs.ts` (ô hoa, suối, vạc), `cloudVm.ts` (view-model thuần, thử chạy hành động thật để nút nói lý do).
 - `feedback.ts`, `stage.ts` — như các Area khác.
 
 Nối với Area khác chỉ qua vật phẩm (`content/shared/items.json`): Healing Potion / Potion Vui Vẻ (`curesSickness`, `moodBoost`, `moodHours`) dùng cho heo (`farm/actions/usePotion`) và cá (`aquarium/actions/care useFishPotion`); hoa hiếm (`mutationBoost`) thêm vào lúc phối giống (`breedPigs`, `breedFish` nhận `boostItem`). Potion Chiến Đấu chờ GĐ10.

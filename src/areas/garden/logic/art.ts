@@ -1,5 +1,5 @@
 // Asset ids the Garden draws (every id resolves through the manifest; `npm run assets:check` requires them).
-import { itemArtId } from '../../../core/config/assetIds';
+import { AREA_HUD_ART, itemArtId } from '../../../core/config/assetIds';
 import { ITEMS, ITEM_IDS } from '../../../core/config/items';
 import { CROP_LIST, GB, type Crop } from './config/content';
 
@@ -17,11 +17,16 @@ export const GARDEN_BACKDROP_ART = 'bg_garden';
 /** Items the Garden introduced: each has its own icon (`ui_item_*`). */
 export const GARDEN_ITEM_IDS = ITEM_IDS.filter((id) => CROP_LIST.some((c) => c.seedItem === id) || ITEMS[id].category === 'CROP' || id === 'FOOD_PREMIUM' || id === 'item_fertilizer');
 
+/** The icons on the bottom tray's action cards (decision 031); sowing shows the chosen seed instead. */
+export const GARDEN_DOCK_ART = { water: 'ui_icon_water', harvest: 'ui_item_wheat', fertilize: 'ui_item_fertilizer', expand: 'ui_icon_growth' } as const;
+
 /** Every id the Garden needs in the manifest. */
 export const gardenArtIds = (): string[] => [
   ...Object.values(PLOT_ART),
   SPRINKLER_ART,
   GARDEN_BACKDROP_ART,
+  ...Object.values(AREA_HUD_ART),
+  ...Object.values(GARDEN_DOCK_ART),
   GB.buildings.mill.art,
   GB.buildings.composter.art,
   ...CROP_LIST.flatMap((c) => CROP_STAGES.map((s) => cropArtId(c, s))),

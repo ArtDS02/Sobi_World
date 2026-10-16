@@ -28,10 +28,13 @@ export const CLOUD_VIEW = {
   springLabel: { x: 284, y: 440 },
   cauldronLabel: { x: 340, y: 624 },
   plank: { width: 220, height: 80 },
-  /** The tier's title banner (centre) on the green knoll under the field, and the arrows that change tier. */
-  title: { x: 800, y: 706, width: 430, height: 164 },
-  tierUp: { x: 1074, y: 712 },
-  tierDown: { x: 526, y: 712 },
+  /**
+   * The tier's title banner (centre) on the green knoll under the field, and the arrows that change tier. Raised 26 px from
+   * the knoll's centre (decision 031) so the arrows stay clear of the HUD's bottom tray in the smallest window (1024 × 640).
+   */
+  title: { x: 800, y: 680, width: 430, height: 164 },
+  tierUp: { x: 1074, y: 686 },
+  tierDown: { x: 526, y: 686 },
   /** Share of the banner's width the title may use (a long tier name shrinks to fit). */
   titleFit: 0.6,
   arrowSize: 78,

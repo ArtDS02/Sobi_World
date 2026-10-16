@@ -114,7 +114,8 @@
   }
 }
 
-// HUD floating over the farm (farm layout rework): the layer ignores clicks, its pieces take them.
+// HUD floating over the farm: the layer ignores clicks, its pieces take them. Its pills, square buttons and dock cards are
+// the Areas' shared HUD (features/_areahud.scss, decision 031); the farm adds the trough bar and the warning colours.
 .topbar {
   position: absolute;
   inset: 0;
@@ -125,233 +126,56 @@
     display: contents;
   }
 
-  &__pills {
-    position: absolute;
-    top: $sp-3;
-    left: $sp-3;
-    right: 5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: $sp-2;
-    pointer-events: none;
+  // The farm has more pills than an Area: they may use the whole row up to the square buttons (right, _world.scss).
+  .topbar__pills {
+    max-width: none; // beats .a-hud__pills (features/, loaded later)
 
     > * {
       pointer-events: auto;
     }
   }
 
-  &__settings {
-    position: absolute;
-    top: $sp-3;
-    right: $sp-3;
-    width: $hud-pill-h;
-    height: $hud-pill-h;
-    font-size: $fs-lg;
-    color: $c-wood-dark;
-    cursor: pointer;
-    background: $c-pill;
-    border: 3px solid #fff;
-    border-radius: 50%;
-    box-shadow: $hud-shadow;
-    pointer-events: auto;
-  }
-
-  // Bottom dock: big icon + label per button, lifts on hover.
-  &__nav {
-    position: absolute;
-    bottom: $sp-3;
-    left: 50%;
-    display: flex;
-    gap: $sp-1;
-    padding: $sp-1 $sp-2;
-    background: $c-pill;
-    border: 3px solid #fff;
-    border-radius: 1.5rem;
-    box-shadow: $hud-shadow;
-    transform: translateX(-50%);
-    pointer-events: auto;
-  }
-
-  &__nav-item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 5.5rem;
-    padding: $sp-1 $sp-2;
-    font-size: $fs-sm;
-    font-weight: $fw-bold;
-    line-height: 1.1;
-    color: $c-wood-dark;
-    cursor: pointer;
-    background: none;
-    border: 0;
-    border-radius: $radius-md;
-    transition: transform $dur-fast ease-out;
-
-    &:hover {
-      background: $c-cream;
-      transform: translateY(-4px);
-    }
-  }
-
-  &__nav-icon {
-    display: grid;
-    place-items: center;
-    width: $dock-icon;
-    height: $dock-icon;
-
-    .c-icon {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  @include mq-short {
-    &__pills {
-      top: $sp-1;
-      left: $sp-2;
-    }
-
-    &__settings {
-      top: $sp-1;
-      width: $hud-pill-h-short;
-      height: $hud-pill-h-short;
-      font-size: $fs-md;
-      border-width: 2px;
-    }
-
-    &__nav {
-      bottom: $sp-1;
-      padding: 2px $sp-1;
-    }
-
-    &__nav-item {
-      min-width: 4rem;
-      padding: 2px $sp-1;
-      font-size: 11px;
-    }
-
-    &__nav-icon {
-      width: $dock-icon-short;
-      height: $dock-icon-short;
-    }
-  }
-}
-
-// One rounded HUD "pill": cream, white rim, soft drop shadow.
-.hud-pill {
-  display: inline-flex;
-  gap: $sp-2;
-  align-items: center;
-  height: $hud-pill-h;
-  padding: 0 $sp-3 0 $sp-2;
-  font-size: $fs-md;
-  color: $c-wood-dark;
-  white-space: nowrap;
-  background: $c-pill;
-  border: 3px solid #fff;
-  border-radius: 9999px;
-  box-shadow: $hud-shadow;
-
-  &:is(button) {
-    cursor: pointer;
-  }
-
-  .c-icon {
-    width: 1.75rem;
-    height: 1.75rem;
-  }
-
-  &__star {
-    display: grid;
-    place-items: center;
-    width: 2rem;
-    height: 2rem;
-    color: #fff;
-    background: $c-level;
-    border-radius: 50%;
-  }
-
-  &__sub {
-    font-size: $fs-sm;
-    color: $c-text-muted;
+  .c-gauge {
+    min-height: 0;
   }
 
   &__bar {
-    width: 5.5rem;
-    height: 0.6rem;
-    background: $c-cream;
-    box-shadow: inset 0 0 0 1px rgba(122, 79, 42, 0.2);
-  }
+    width: 4rem;
+    height: 0.55rem;
+    background: #4a4eae;
+    border: 0;
 
-  &__bar--xp .c-bar__fill {
-    background: $c-leaf;
+    @include mq(lg) {
+      width: 5rem;
+    }
   }
 
   &__bar--trough .c-bar__fill {
-    background: $c-honey;
+    background: linear-gradient(180deg, #ffe08a, $c-honey);
   }
 
-  // Day / night clock (DN): small, fixed-width digits so it does not jitter each minute.
-  &.topbar__clock {
-    padding: 0 $sp-3;
+  // The trough is empty, the farm is full, a pig is ill: a rose pill instead of violet (and the words say it too).
+  .c-gauge.is-empty,
+  .topbar__pigs.is-full,
+  .topbar__alert {
+    background: linear-gradient(180deg, #f59aa8, #e46a80 60%, #c94d69);
+  }
+
+  .topbar__alert.is-critical {
+    animation: topbar-alert-pulse 1.6s ease-in-out infinite;
+  }
+
+  // Day / night clock and pig count: fixed-width digits so they do not jitter.
+  .topbar__clock,
+  .topbar__pigs {
     font-variant-numeric: tabular-nums;
   }
 
-  // Pig count / capacity (PS-1): turns red when the farm is full.
-  &.topbar__pigs {
-    padding: 0 $sp-3;
-    font-variant-numeric: tabular-nums;
-
-    &.is-full {
-      background: $c-danger-soft;
-    }
-  }
-
-  // Ill pigs (GĐ2): a gold warning, red and pulsing when one is critical.
-  &.topbar__alert {
-    padding: 0 $sp-3;
-    color: $c-gold;
-    cursor: pointer;
-
-    &.is-critical {
-      color: $c-danger;
-      background: $c-danger-soft;
-      animation: topbar-alert-pulse 1.6s ease-in-out infinite;
-    }
-  }
-
-  &.c-gauge {
-    min-height: 0;
-    background: $c-pill;
-    border: 3px solid #fff;
-
-    &.is-empty {
-      background: $c-danger-soft;
-    }
-  }
-
-  @include mq-short {
-    gap: $sp-1;
-    height: $hud-pill-h-short;
-    padding: 0 $sp-2 0 $sp-1;
-    font-size: $fs-sm;
-    border-width: 2px;
-
-    .c-icon,
-    &__star {
-      width: 1.4rem;
-      height: 1.4rem;
-    }
-
-    &__sub {
-      display: none;
-    }
-
-    &__bar {
-      width: 3.5rem;
-    }
+  &__nav {
+    position: absolute;
+    bottom: $sp-2;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 

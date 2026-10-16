@@ -17,6 +17,8 @@ import { cropStageOf, plotCentre, slotsToDraw, GARDEN_DESIGN } from '../../src/a
 import { bulkVm, hudVm, paletteVm, plotCardVm, sprinklerVm, workshopVm } from '../../src/areas/garden/ui/gardenVm';
 import { emptyIn, unfertilizedIn, zoneVm } from '../../src/areas/garden/ui/gardenZoneVm';
 import { gardenShopVm } from '../../src/areas/garden/ui/gardenShopVm';
+import { guardBuy } from '../../src/ui/components/shopGrid';
+import { ITEMS } from '../../src/core/config/items';
 import { buyShopItem } from '../../src/areas/garden/logic/actions/shop';
 import { emptyPlot } from '../../src/systems/plants/plot';
 import { mulberry32 } from '../../src/core/rng';
@@ -284,5 +286,30 @@ describe('area shops (decision 029)', () => {
     expect(wheat.buys.map((b) => b.count)).toEqual([1, 10, 50]);
     expect(wheat.buys.map((b) => b.reason)).toEqual([null, null, 'Thiếu Sobi Coin']);
     expect(lines.find((l) => l.itemId === 'item_fertilizer')!.buys[2]!.reason).toBe('Thiếu Sobi Coin');
+  });
+
+  it('tags each card with its kind of goods (decision 031)', () => {
+    const lines = gardenShopVm(base(), T0);
+    expect(lines.find((l) => l.itemId === 'item_seed_wheat')!.kind).toBe('seed');
+    expect(lines.find((l) => l.itemId === 'item_fertilizer')!.kind).toBe('fertilizer');
+  });
+
+  it('one press buys once: a second press within the gap is ignored, a later one goes through (decision 031)', () => {
+    let at = 0;
+    const bought: string[] = [];
+    const buy = guardBuy((itemId, count) => bought.push(`${itemId}×${count}`), () => at);
+    buy('item_seed_wheat', 10);
+    at = 120;
+    buy('item_seed_wheat', 10); // a double click
+    at = 450;
+    buy('item_seed_wheat', 50);
+    expect(bought).toEqual(['item_seed_wheat×10', 'item_seed_wheat×50']);
+  });
+
+  it('the seed palette carries the price of one seed and what the bag holds, and the hud the level number (decision 031)', () => {
+    const w = base({ item_seed_wheat: 7 });
+    const wheat = paletteVm(w, 'crop_wheat').find((s) => s.cropId === 'crop_wheat')!;
+    expect(wheat).toMatchObject({ owned: 7, price: String(ITEMS.item_seed_wheat.priceGold), selected: true });
+    expect(hudVm(w).levelNumber).toBeGreaterThanOrEqual(1);
   });
 });

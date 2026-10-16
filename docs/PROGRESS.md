@@ -4,11 +4,24 @@
 **Giai đoạn:** GĐ14 đang làm — art, animation, VFX, âm thanh (nhánh `phase-14-art`, tách từ `main`). GĐ13 đã merge `main` (gameplay freeze, decision 021); phiên bản 0.13.0.
 **Chiến lược (decision 017, 022):** gameplay trước, art sau; phong cách chuẩn Sobi Farm, chủ dự án tạo ảnh Gemini theo batch (`asset/batches/`), agent cắt và nối vào game. GĐ15 phát hành.
 **Tiến độ GĐ14:** 50 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
-**Chờ chủ dự án:** duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
+**Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023).
 **Bước tiếp theo:** chủ dự án duyệt cảnh + HUD Aquarium (và Garden); rồi Adventure.
 
 ## Nhật ký
+
+### 2026-10-16 — GĐ14: HUD dùng chung cho các Area, cửa hàng làm lại (decision 031, chờ duyệt)
+✅ Đã làm (chủ dự án yêu cầu, theo `art_inbox/.batch/hud-01/PROMPT.md`):
+1. **HUD chung** `ui/components/areaHud.ts` + `_areahud.scss` (bộ tím của Sảnh / Aquarium): viên xu, viên cấp có sao, nút vuông có icon. Garden, Cloud, Aquarium, Adventure dùng chung; bỏ CSS HUD lặp ở 4 file.
+2. **Khay dưới một hàng** chia nhóm có nhãn: chọn hạt / hoa (✓ + viền, giá có icon xu, "có n", cuộn ngang) → Chăm sóc → Thu hoạch & gieo (xanh lá) → Mở rộng (nhạt, cuối). Thẻ tắt ghi lý do ngay dưới nhãn. Cloud: khay từ 2 hàng (190 px) còn 1 hàng; thanh tên tầng nâng 26 px để mũi tên không bị che ở 1024 × 640.
+3. **Chip thời tiết / lễ hội / thương nhân** một hàng nhỏ; dưới 1280 px và (lễ hội, thương nhân) trong các khu chỉ hiện ký hiệu, rê chuột mở chữ.
+4. **Cửa hàng Garden / Cloud**: số dư, nút × ở góc, chỉ lưới cuộn, 4 cột, nhãn loại hàng, tổng tiền trên nút ×1/×10/×50, lý do tắt ghi trên thẻ, chặn bấm lặp 0,4 s (`guardBuy`). **Cửa hàng Farm**: tab + số dư dính trên đầu.
+🧪 Đã kiểm tra: `npm run check` xanh (1.372 test, thêm test `guardBuy`, nhãn loại hàng, giá / tồn của thẻ hạt); e2e 14/14 (bản build) xanh; sandbox 1600×900, 1280×720, 1024×640: Garden, Cloud, Aquarium, Adventure, Farm; mua ×10 → số dư và "Đang có" đổi ngay, toast "Đã mua 10 Hạt cỏ", bấm đúp chỉ mua một lần; thu hoạch hết → nút tự tắt kèm lý do; nút × đóng cửa hàng; không lỗi console.
+⚠️ Quyết định tự đưa ra: chưa làm lại màn chuẩn bị Adventure (để lượt art Adventure); nhãn nút gieo bỏ "(tên cây)" vì icon đã là hạt đang chọn. Chưa thử được trạng thái "thiếu xu" trong cửa hàng bằng tay (save sandbox đủ tiền) — có test VM.
+🛠️ Bổ sung (chủ dự án chọn đổi HUD Farm): thanh trên Farm sang bộ tím chung (viên hồng khi máng trống / trại đầy / heo bệnh), góc phải Ra Sảnh + Menu (Cài đặt trong Menu, Esc vẫn mở), dock thành 5 thẻ kem trên khay trắng; bỏ CSS `.hud-pill`. Test smoke e2e đi qua Menu → Cài đặt. Đã kiểm tra: `npm run check` (1.372 test) và e2e 14/14 xanh; sandbox 1600×900 và 1024×640: một hàng viên, bấm máng / Menu / Ra Sảnh đúng.
+👉 Bạn cần: duyệt HUD (cả Farm) + cửa hàng.
+➡️ Tiếp theo: Adventure.
+
 
 ### 2026-10-16 — GĐ14 Aquarium: HUD và thanh nút theo ảnh mẫu (decision 030, chờ duyệt)
 ✅ Đã làm (chủ dự án yêu cầu):

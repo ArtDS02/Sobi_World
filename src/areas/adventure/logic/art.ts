@@ -1,5 +1,5 @@
 // Asset ids the Adventure draws (every id resolves through the manifest; `npm run assets:check` requires them).
-import { itemArtId } from '../../../core/config/assetIds';
+import { AREA_HUD_ART, itemArtId } from '../../../core/config/assetIds';
 import { ITEMS, ITEM_IDS } from '../../../core/config/items';
 import { ENEMY_LIST, ZONE_LIST } from './config/content';
 
@@ -10,4 +10,4 @@ const ADVENTURE_MATERIALS = ['item_forest_herb', 'item_beast_fang', 'item_mounta
 export const ADVENTURE_ITEM_IDS = ITEM_IDS.filter((id) => ITEMS[id].category === 'EQUIPMENT' || ADVENTURE_MATERIALS.includes(id));
 
 /** Every id the Adventure needs in the manifest. */
-export const adventureArtIds = (): string[] => [...ENEMY_LIST.map((e) => e.art), ...ZONE_LIST.map((z) => z.backdrop), ...ADVENTURE_ITEM_IDS.map(itemArtId)];
+export const adventureArtIds = (): string[] => [...Object.values(AREA_HUD_ART), ...ENEMY_LIST.map((e) => e.art), ...ZONE_LIST.map((z) => z.backdrop), ...ADVENTURE_ITEM_IDS.map(itemArtId)];

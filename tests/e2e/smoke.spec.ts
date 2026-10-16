@@ -71,7 +71,9 @@ test('first launch, buy, fill, relaunch, export — offline', async () => {
     await app.evaluate(({ dialog }, file) => {
       dialog.showSaveDialog = (async () => ({ canceled: false, filePath: file })) as never;
     }, exportPath);
-    await page.getByRole('button', { name: 'Cài đặt' }).click();
+    // Settings live in the Menu, as in every Area (decision 031).
+    await page.locator('.topbar__menu').click();
+    await page.locator('.menu-screen__item', { hasText: 'Cài đặt' }).click();
     await page.getByRole('button', { name: 'Xuất file lưu' }).click();
     await expect.poll(() => existsSync(exportPath)).toBe(true);
     expect(JSON.parse(readFileSync(exportPath, 'utf8')).areas.sobi_farm.pigs).toHaveLength(1);

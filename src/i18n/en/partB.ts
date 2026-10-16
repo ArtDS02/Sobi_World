@@ -162,7 +162,7 @@ export const partB = {
     mill: "Mill",
     composter: "Composter",
     sprinkler: "Sprinkler",
-    palette: "Seeds",
+    palette: "Pick a seed",
     seedLine: "{price} Sobi Coin · you have {count}",
     growsIn: "Grows in {time}",
     water: "Water all",
@@ -272,6 +272,21 @@ export const partB = {
     alertSick: "Sick pigs: {count}",
     alertCritical: "Critical pigs: {count}!",
     pigsIcon: "🐷",
+  },
+
+  areaHud: {
+    owned: "{count} owned",
+    groupCare: "Care",
+    groupHarvest: "Harvest & sow",
+    groupGrow: "Grow",
+    groupTank: "Tank & fish",
+    balance: "Balance",
+    close: "Close",
+    tagSeed: "Seed",
+    tagFertilizer: "Fertilizer",
+    tagWater: "Water",
+    tagItem: "Item",
+    offFor: "{counts}: {reason}",
   },
 
   dayPhase: {

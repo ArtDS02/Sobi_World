@@ -10,7 +10,7 @@ Area thứ hai: trồng cây từ hạt, tưới, bón phân, thu hoạch; chế
   - `actions/` — `plants.ts` (gieo, tưới, bón, thu hoạch theo danh sách ô), `buildings.ts` (mua ô, vòi tưới, xây công trình, làm / nhận mẻ), `kit.ts` (đường ống chung: bù thời gian → hành động → KN).
   - `derived.ts`, `summary.ts` (dòng "vắng mặt"), `worldEvents.ts` (sự kiện chuẩn cho thế giới), `rewind.ts` (Admin tua thời gian), `art.ts` (id art cần có trong manifest).
 - `scene/` — Phaser: `GardenScene` chỉ vẽ ruộng và báo click, trên nền vẽ sẵn `bg_garden` (decision 027); `gardenView.ts` là số đo của cảnh, đo trên nền.
-- `ui/` — DOM: `gardenUi.ts` (HUD, bảng hạt, nút hàng loạt), `gardenDialogs.ts` (ô, công trình, vòi tưới, mở thêm ô), `gardenVm.ts` (dữ liệu hiển thị, thử hành động thật để biết nút tắt vì sao).
+- `ui/` — DOM: `gardenUi.ts` (HUD dùng chung `ui/components/areaHud.ts` — decision 031: viên, nút vuông, khay dưới với bảng hạt và nút hàng loạt; thanh khu), `gardenDialogs.ts` (ô, công trình, vòi tưới, mở thêm ô), `gardenVm.ts` (dữ liệu hiển thị, thử hành động thật để biết nút tắt vì sao).
 - `feedback.ts` — âm thanh + toast của sự kiện Garden, đưa cho FeedbackDirector.
 - `stage.ts` — nối hook `onEnter/onExit` với cảnh.
 

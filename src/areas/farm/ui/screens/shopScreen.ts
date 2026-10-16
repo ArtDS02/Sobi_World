@@ -2,6 +2,7 @@
 import type { AssetRegistry } from '../../../../core/assets/registry';
 import type { Rarity } from '../../../../core/config/rarity';
 import type { FarmGame } from '../../logic/types';
+import { formatInt } from '../../../../i18n/format';
 import { vi } from '../../../../i18n/vi';
 import type { BoundAction } from '../../store';
 import { shopDecor, shopItems, shopPigs, shopSlot } from '../actionsVm';
@@ -149,17 +150,23 @@ export function renderShopScreen(
   return el(
     'section',
     { class: 'shop', data: { screen: 'shop' } },
+    // The tabs and the Sobi Coin balance stay on top while the list scrolls (decision 031).
     el(
       'div',
-      { class: 'shop__tabs', attrs: { role: 'tablist' } },
-      ...TABS.map(([id, label]) =>
-        el('button', {
-          class: `shop__tab${id === tab ? ' is-active' : ''}`,
-          text: label,
-          attrs: { type: 'button', role: 'tab', 'aria-selected': String(id === tab) },
-          on: { click: () => on.tab(id) },
-        }),
+      { class: 'shop__head' },
+      el(
+        'div',
+        { class: 'shop__tabs', attrs: { role: 'tablist' } },
+        ...TABS.map(([id, label]) =>
+          el('button', {
+            class: `shop__tab${id === tab ? ' is-active' : ''}`,
+            text: label,
+            attrs: { type: 'button', role: 'tab', 'aria-selected': String(id === tab) },
+            on: { click: () => on.tab(id) },
+          }),
+        ),
       ),
+      el('span', { class: 'shop__balance', attrs: { title: vi.areaHud.balance } }, icon('gold'), el('small', { text: vi.areaHud.balance }), el('b', { text: formatInt(save.player.gold) })),
     ),
     el('ul', { class: 'shop__list' }, ...cards),
   );

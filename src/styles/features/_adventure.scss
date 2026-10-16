@@ -20,65 +20,13 @@
 .adventure-ui {
   &__hud, &__inner { display: contents; }
 
-  &__pills {
-    position: absolute;
-    top: $sp-3;
-    left: $sp-3;
-    display: flex;
-    flex-wrap: wrap;
-    gap: $sp-2;
-  }
-
-  &__pill {
-    display: inline-flex;
-    align-items: center;
-    gap: $sp-2;
-    min-height: 2.6rem;
-    padding: 0 $sp-4;
-    color: #fff6e2;
-    background: linear-gradient(180deg, #5f9a60, #3f7442);
-    border: 3px solid #2c5230;
-    border-radius: 0.9rem;
-    box-shadow: 0 3px 0 rgba(30, 60, 32, 0.45);
-    pointer-events: auto;
-
-    b { font-size: $fs-lg; text-shadow: 0 1px 0 rgba(30, 60, 32, 0.6); }
-    small { font-size: $fs-xs; opacity: 0.9; }
-  }
-
-  &__bar { width: 6rem; height: $bar-height; }
-
-  &__nav {
-    position: absolute;
-    top: $sp-3;
-    right: $sp-3;
-    display: flex;
-    gap: $sp-2;
-  }
-
-  &__btn {
-    min-height: $sp-touch-min;
-    padding: 0 $sp-4;
-    font: inherit;
-    font-weight: $fw-bold;
-    color: #fff6e2;
-    cursor: pointer;
-    background: linear-gradient(180deg, #5f9a60, #3f7442);
-    border: 3px solid #2c5230;
-    border-radius: 0.9rem;
-    box-shadow: 0 3px 0 rgba(30, 60, 32, 0.45);
-    pointer-events: auto;
-    transition: transform $dur-fast ease-out, filter $dur-fast ease-out;
-
-    &:hover { transform: scale(1.06); filter: brightness(1.1); }
-    &:active { transform: scale(0.95); }
-    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
-  }
+  // The pills and square buttons are the shared Area HUD (_areahud.scss, decision 031).
 
   // The content card under the HUD.
   &__main {
     position: absolute;
-    top: 4.2rem;
+    top: 4.9rem; // under the square buttons
+    @include mq(lg) { top: 5.5rem; }
     right: $sp-3;
     bottom: $sp-3;
     left: $sp-3;

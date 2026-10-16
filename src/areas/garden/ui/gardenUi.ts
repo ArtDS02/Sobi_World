@@ -1,17 +1,21 @@
-// The Garden's DOM layer (spec §10): the HUD over the field, the seed palette and the bulk buttons. It reads the world
+// The Garden's DOM layer (spec §10): the shared Area HUD over the field (decision 031) — pills, the zone switcher,
+// square buttons, and the bottom tray with the seed palette and the bulk actions. It reads the world
 // through the store and acts through the Garden's actions; the canvas (GardenScene) only reports clicks to `pick`.
 // Mounted by the app into the shell's overlay; the dialogs are gardenDialogs.ts.
-import { art } from '../../../ui/components/icon';
+import { AREA_HUD_ART } from '../../../core/config/assetIds';
+import { areaDock, hudLevel, hudNav, hudPill, hudPills } from '../../../ui/components/areaHud';
 import type { PanelId } from '../../../ui/components/popup';
 import { el, patch } from '../../../ui/dom';
 import type { GameStore } from '../../../core/world/gameStore';
 import type { WorldSave } from '../../../core/save/world';
+import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
+import { GARDEN_DOCK_ART } from '../logic/art';
 import { fertilizePlots, harvestPlots, plantCrops, waterPlots } from '../logic/actions/plants';
 import { ownedZones, sceneState, type SceneState } from '../logic/derived';
 import { hasGarden, gardenOf } from '../logic/save/lens';
 import type { GardenPick } from '../scene/GardenScene';
-import { actionButton, createGardenDialogs } from './gardenDialogs';
+import { createGardenDialogs } from './gardenDialogs';
 import { onViewedZone, setViewedZone, viewedZone } from '../viewedZone';
 import { bulkVm, hudVm, paletteVm, type GardenRun } from './gardenVm';
 import { emptyIn, unfertilizedIn, zoneVm } from './gardenZoneVm';
@@ -37,8 +41,8 @@ export interface GardenUi {
 }
 
 export function createGardenUi(d: GardenUiDeps): GardenUi {
-  const hud = el('div', { class: 'garden-ui__hud' });
-  const bottom = el('div', { class: 'garden-ui__bottom' });
+  const hud = el('div', { class: 'garden-ui__hud a-hud' });
+  const bottom = el('div', { class: 'garden-ui__bottom a-hud__bottom' });
   const dialogHost = el('div', { class: 'app__dialogs' });
   d.host.classList.add('garden-ui');
   d.host.append(hud, bottom, dialogHost);
@@ -90,75 +94,53 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
     );
   }
 
-  const navButton = (label: string, onClick: () => void) =>
-    el('button', { class: 'garden-ui__btn', text: label, attrs: { type: 'button' }, on: { click: onClick } });
-
   function renderHud(w: WorldSave): HTMLElement {
     const v = hudVm(w);
     return el(
       'div',
       { class: 'garden-ui__inner' },
-      el(
-        'div',
-        { class: 'garden-ui__pills' },
-        el('span', { class: 'garden-ui__pill', attrs: { title: vi.garden.coins } }, el('b', { text: v.coins }), el('small', { text: vi.garden.coins })),
-        el(
-          'span',
-          { class: 'garden-ui__pill garden-ui__pill--level', attrs: { title: v.xp } },
-          el('b', { text: v.level }),
-          el('span', { class: 'c-bar garden-ui__bar', attrs: { role: 'progressbar', 'aria-valuenow': String(v.xpProgress) } }, el('span', { class: 'c-bar__fill', attrs: { style: `width: ${v.xpProgress}%` } })),
-          el('small', { text: v.xp }),
-        ),
-      ),
+      hudPills(hudPill(AREA_HUD_ART.coin, v.coins, vi.garden.coins), hudLevel(v)),
       renderZones(w),
-      el(
-        'nav',
-        { class: 'garden-ui__nav', attrs: { 'aria-label': vi.garden.title } },
-        navButton(vi.garden.plaza, d.leave),
-        navButton(vi.garden.shop, () => dialogs.openShop()),
-        navButton(vi.garden.items, () => d.openPanel('inventory')),
-        navButton(vi.garden.menu, () => d.openPanel('menu')),
-      ),
+      hudNav(vi.garden.title, [
+        { icon: AREA_HUD_ART.plaza, label: vi.garden.plaza, onClick: d.leave },
+        { icon: AREA_HUD_ART.shop, label: vi.garden.shop, onClick: () => dialogs.openShop() },
+        { icon: AREA_HUD_ART.items, label: vi.garden.items, onClick: () => d.openPanel('inventory') },
+        { icon: AREA_HUD_ART.menu, label: vi.garden.menu, onClick: () => d.openPanel('menu') },
+      ]),
     );
   }
 
+  /** One row (decision 031): the seeds, then care, harvest & sow, and opening more ground last and quieter. */
   function renderBottom(w: WorldSave): HTMLElement {
     const bulk = bulkVm(w, d.now(), selected, zone(), runs);
-    return el(
-      'div',
-      { class: 'garden-ui__dock' },
-      el(
-        'div',
-        { class: 'garden-ui__palette', attrs: { role: 'radiogroup', 'aria-label': vi.garden.palette } },
-        ...paletteVm(w, selected).map((s) =>
-          el(
-            'button',
-            {
-              class: `garden-ui__seed${s.selected ? ' is-selected' : ''}`,
-              attrs: { type: 'button', role: 'radio', 'aria-checked': String(s.selected), title: s.growsIn },
-              on: {
-                click: () => {
-                  selected = s.cropId;
-                  refresh();
-                },
-              },
-            },
-            art(s.art, 'garden-ui__seed-icon'),
-            el('b', { text: s.name }),
-            el('small', { text: s.line }),
-          ),
-        ),
-      ),
-      el(
-        'div',
-        { class: 'garden-ui__bulk' },
-        actionButton(bulk.water, () => dispatch(runs.water)),
-        actionButton(bulk.harvest, () => dispatch(runs.harvest)),
-        actionButton(bulk.plantAll, () => dispatch(runs.plantAll)),
-        actionButton(bulk.fertilizeAll, () => dispatch(runs.fertilizeAll)),
-        actionButton(bulk.expand, () => dialogs.openExpand()),
-      ),
-    );
+    const seeds = paletteVm(w, selected);
+    const chosen = seeds.find((s) => s.selected);
+    return areaDock({
+      prefix: 'garden-ui',
+      seeds: seeds.map((s) => ({ id: s.cropId, name: s.name, art: s.art, price: s.price, owned: s.owned, title: `${s.name} · ${s.growsIn}`, selected: s.selected })),
+      onPick: (id) => {
+        selected = id;
+        refresh();
+      },
+      strings: { palette: vi.garden.palette, owned: (count) => t(vi.areaHud.owned, { count }), coins: vi.garden.coins },
+      groups: [
+        {
+          label: vi.areaHud.groupCare,
+          actions: [
+            { ...bulk.water, art: GARDEN_DOCK_ART.water, onClick: () => dispatch(runs.water) },
+            { ...bulk.fertilizeAll, art: GARDEN_DOCK_ART.fertilize, onClick: () => dispatch(runs.fertilizeAll) },
+          ],
+        },
+        {
+          label: vi.areaHud.groupHarvest,
+          actions: [
+            { ...bulk.harvest, art: GARDEN_DOCK_ART.harvest, tone: 'main', onClick: () => dispatch(runs.harvest) },
+            { ...bulk.plantAll, label: vi.garden.plantAll, art: chosen?.art ?? GARDEN_DOCK_ART.harvest, tone: 'main', onClick: () => dispatch(runs.plantAll) },
+          ],
+        },
+        { label: vi.areaHud.groupGrow, actions: [{ ...bulk.expand, art: GARDEN_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openExpand() }] },
+      ],
+    });
   }
 
   function refresh() {

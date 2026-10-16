@@ -508,5 +508,8 @@ describe('the Cloud shop (decision 029)', () => {
     const lines = cloudShopVm(w, T0);
     expect(lines.map((l) => l.itemId)).toEqual(CB.shop.map((l) => l.itemId));
     expect(lines.find((l) => l.itemId === 'item_pure_water')!.line).toBe('Tưới cho hoa lớn đủ nhanh');
+    expect(lines.find((l) => l.itemId === 'item_pure_water')!.kind).toBe('water');
+    expect(lines.find((l) => l.itemId === 'item_fertilizer')!.kind).toBe('fertilizer');
+    expect(lines.filter((l) => l.kind === 'seed').length).toBeGreaterThan(0);
   });
 });

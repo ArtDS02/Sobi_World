@@ -7,7 +7,7 @@ import type { ItemId } from '../../../core/config/ids';
 import type { WorldSave } from '../../../core/save/world';
 import { formatDuration, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import type { ShopLineVm } from '../../../ui/components/shopGrid';
+import type { ShopKind, ShopLineVm } from '../../../ui/components/shopGrid';
 import { buyShopItem } from '../logic/actions/shop';
 import { cropBySeed, GB } from '../logic/config/content';
 import { probe } from './gardenVm';
@@ -23,10 +23,14 @@ function lineOf(itemId: string): string {
   return itemId === 'item_fertilizer' ? vi.garden.shopFertilizerLine : '';
 }
 
+const kindOf = (itemId: string): ShopKind =>
+  cropBySeed(itemId) ? 'seed' : itemId === 'item_fertilizer' ? 'fertilizer' : itemId === 'item_pure_water' ? 'water' : 'item';
+
 export function gardenShopVm(world: WorldSave, now: number): ShopLineVm[] {
   return GB.shop.map((l) => ({
     itemId: l.itemId,
     name: vi.shop[l.itemId as ItemId] ?? l.itemId,
+    kind: kindOf(l.itemId),
     line: lineOf(l.itemId),
     art: itemArtId(l.itemId),
     each: t(vi.garden.shopEach, { gold: formatInt(l.price) }),

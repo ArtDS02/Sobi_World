@@ -1,5 +1,5 @@
 // Asset ids the Cloud draws (every id resolves through the manifest; `npm run assets:check` requires them).
-import { itemArtId } from '../../../core/config/assetIds';
+import { AREA_HUD_ART, itemArtId } from '../../../core/config/assetIds';
 import { ITEMS, ITEM_IDS } from '../../../core/config/items';
 import { FLOWER_LIST } from './config/content';
 
@@ -21,7 +21,12 @@ export const CLOUD_DRESSING_ART = { plank: 'prop_sign_plank', banner: 'prop_titl
 export const CLOUD_ITEM_IDS = ITEM_IDS.filter((id) => ITEMS[id].category === 'FLOWER' || ITEMS[id].category === 'POTION' || id === 'item_pure_water' || FLOWER_LIST.some((f) => f.seedItem === id));
 
 /** Every id the Cloud needs in the manifest. */
+/** The icons on the bottom tray's action cards (decision 031); sowing shows the chosen seed instead. */
+export const CLOUD_DOCK_ART = { collect: 'ui_item_pure_water', water: 'ui_icon_water', harvest: 'ui_item_flower_cloud_daisy', fertilize: 'ui_item_fertilizer', expand: 'ui_btn_tier_up' } as const;
+
 export const cloudArtIds = (): string[] => [
+  ...Object.values(AREA_HUD_ART),
+  ...Object.values(CLOUD_DOCK_ART),
   CLOUD_PLOT_ART,
   CLOUD_BACKDROP_ART,
   ...Object.values(CLOUD_BUILDING_ART),

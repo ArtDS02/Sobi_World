@@ -15,47 +15,9 @@ $sign-edge: #8a5a2b;
   }
 }
 
-// Inside an Area the way back to the plaza sits next to the settings gear.
+// Inside the farm the pills leave room for the square buttons at the top right (decision 031).
 .app:not(.is-plaza) .topbar__pills {
-  right: 13rem;
-}
-
-.topbar__home {
-  position: absolute;
-  top: $sp-3;
-  right: calc(#{$sp-3} + #{$hud-pill-h} + #{$sp-2});
-  display: inline-flex;
-  gap: $sp-2;
-  align-items: center;
-  height: $hud-pill-h;
-  padding: 0 $sp-4 0 $sp-3;
-  font: inherit;
-  font-weight: $fw-bold;
-  color: $c-wood-dark;
-  cursor: pointer;
-  background: linear-gradient(180deg, $sign-wood-light, $sign-wood);
-  border: 3px solid #fff;
-  border-radius: 9999px;
-  box-shadow: $hud-shadow;
-  pointer-events: auto;
-  transition:
-    transform $dur-fast ease-out,
-    filter $dur-fast ease-out;
-
-  &::before {
-    font-size: $fs-lg;
-    content: '\2190'; // ←
-  }
-
-  &:hover {
-    filter: brightness(1.05);
-    transform: translateY(-2px);
-  }
-
-  &:focus-visible {
-    outline: 3px solid $c-primary;
-    outline-offset: 2px;
-  }
+  right: 10.5rem;
 }
 
 // "[E] Vào Sobi Farm": a little wooden sign above the bottom dock, over the canvas, under the popups.
@@ -225,26 +187,12 @@ $sign-edge: #8a5a2b;
     display: none;
   }
 
-  .app:not(.is-plaza) .topbar__pills {
-    right: 3.5rem;
-  }
-
-  .topbar__home {
-    top: auto;
-    right: auto;
-    bottom: 5.75rem;
-    left: $sp-3;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .world-prompt,
   .keys__slot.is-listening {
     animation: none;
-  }
-
-  .topbar__home {
-    transition: none;
   }
 }
 

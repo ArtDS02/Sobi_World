@@ -42,6 +42,8 @@ const nameOfItem = (id: string) => vi.shop[id as ItemId] ?? id;
 export interface HudVm {
   coins: string;
   level: string;
+  /** The world level as a number (the star of the level pill). */
+  levelNumber: number;
   xp: string;
   /** 0..100 */
   xpProgress: number;
@@ -55,6 +57,7 @@ export function hudVm(world: WorldSave, now: number): HudVm {
   return {
     coins: gold(world.wallet.coins),
     level: t(vi.cloud.level, { level }),
+    levelNumber: level,
     xp: next === null ? vi.cloud.xpMax : t(vi.cloud.xp, { current: gold(xp), next: gold(next) }),
     xpProgress: percent,
     water: `${world.inventory.items[WATER_ITEM] ?? 0} + ${springStock(g, now)}`,
@@ -66,6 +69,10 @@ export interface SeedVm {
   name: string;
   art: string;
   line: string;
+  /** One seed's price ("12"). */
+  price: string;
+  /** Seeds in the bag. */
+  owned: number;
   growsIn: string;
   kind: string;
   selected: boolean;
@@ -78,6 +85,8 @@ export function paletteVm(world: WorldSave, selected: string): SeedVm[] {
     // The flower it grows (owner's layout mock-up): a picture reads faster than six look-alike seed packets.
     art: itemArtId(f.produceItem),
     line: t(vi.cloud.seedLine, { price: gold(ITEMS[f.seedItem as ItemId].priceGold), count: world.inventory.items[f.seedItem] ?? 0 }),
+    price: gold(ITEMS[f.seedItem as ItemId].priceGold),
+    owned: world.inventory.items[f.seedItem] ?? 0,
     growsIn: t(vi.cloud.growsIn, { time: formatDuration(f.growMs) }),
     kind: vi.cloud.kind[f.kind],
     selected: f.id === selected,

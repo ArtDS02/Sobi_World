@@ -313,7 +313,7 @@ export const vi = {
     cauldron: "Vạc nấu",
     close: "Đóng",
     // Seed palette and the bulk buttons under the field.
-    palette: "Hạt giống",
+    palette: "Chọn hoa",
     seedLine: "{price} Sobi Coin · có {count}",
     growsIn: "Lớn sau {time} khi đủ nước",
     kind: { COMMON: "Hoa thường", RARE: "Hoa hiếm", NIGHT: "Hoa đêm" },
@@ -606,7 +606,7 @@ export const vi = {
     composter: "Thùng ủ",
     sprinkler: "Vòi tưới",
     // Seed palette and the bulk buttons under the field.
-    palette: "Hạt giống",
+    palette: "Chọn hạt giống",
     seedLine: "{price} Sobi Coin · có {count}",
     growsIn: "Lớn sau {time}",
     water: "Tưới cả vườn",
@@ -724,6 +724,22 @@ export const vi = {
     alertSick: "{count} heo bệnh",
     alertCritical: "{count} heo nguy kịch!",
     pigsIcon: "🐷",
+  },
+
+  /** The HUD and shop every Area shares (decision 031). */
+  areaHud: {
+    owned: "có {count}",
+    groupCare: "Chăm sóc",
+    groupHarvest: "Thu hoạch & gieo",
+    groupGrow: "Mở rộng",
+    groupTank: "Bể & cá",
+    balance: "Số dư",
+    close: "Đóng",
+    tagSeed: "Hạt giống",
+    tagFertilizer: "Phân bón",
+    tagWater: "Nước",
+    tagItem: "Vật phẩm",
+    offFor: "{counts}: {reason}",
   },
 
   /** Day / night (DN): HUD clock icon + phase name per phase. */

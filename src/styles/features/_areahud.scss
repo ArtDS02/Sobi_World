@@ -1,0 +1,380 @@
+// The HUD every Area shares (decision 031; ui/components/areaHud.ts): violet pills and square icon buttons at the top
+// like the plaza's (decision 024), a one-row white tray at the bottom — seed cards that scroll sideways, then the
+// actions in small captioned groups. Compact by default (the smallest window is 1024 × 640), roomier from lg.
+@use '../core/tokens' as *;
+@use '../core/mixins' as *;
+
+$_ink: #4a3a7a;
+$_muted: #8a7aa8;
+$_rim: #ece4fb;
+$_main: #6cc04a;
+$_main-deep: #4f9a33;
+
+.a-hud {
+  &__pills {
+    position: absolute;
+    top: $sp-2;
+    left: $sp-3;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $sp-2;
+    max-width: calc(100% - 21rem); // clear of the square buttons
+
+    @include mq(lg) { gap: $sp-3; }
+  }
+
+  &__pill {
+    @include pz-pill;
+    display: inline-flex;
+    align-items: center;
+    gap: $sp-1;
+    height: 2.5rem;
+    padding: 0 $sp-3 0 $sp-2;
+    white-space: nowrap;
+
+    b { font-size: $fs-md; text-shadow: 0 1px 0 rgba(50, 40, 120, 0.45); }
+    small { font-size: $fs-xs; font-weight: $fw-bold; opacity: 0.9; }
+
+    @include mq(lg) {
+      height: 2.8rem;
+      gap: $sp-2;
+      padding: 0 $sp-4 0 $sp-3;
+      b { font-size: $fs-lg; }
+    }
+  }
+
+  &__pill-icon .c-icon { width: 1.6rem; height: 1.6rem; @include mq(lg) { width: 1.9rem; height: 1.9rem; } }
+
+  &__level {
+    @include pz-pill;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 2.6rem;
+    min-width: 11.5rem;
+    padding: 0 $sp-3 0 2.9rem;
+    margin-left: $sp-3;
+
+    @include mq(lg) { height: 2.9rem; min-width: 15rem; padding: 0 $sp-4 0 3.4rem; }
+  }
+
+  &__star {
+    position: absolute;
+    top: 50%;
+    left: -1rem;
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    transform: translateY(-50%);
+
+    b {
+      position: relative;
+      margin-top: 0.3rem;
+      font-size: $fs-sm;
+      color: #fff;
+      text-shadow: 0 1px 0 #b8701a, 0 0 3px #b8701a;
+    }
+
+    @include mq(lg) { width: 4rem; height: 4rem; b { font-size: $fs-md; } }
+  }
+
+  &__star-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  &__level-body { display: flex; flex: 1; flex-direction: column; gap: 0.2rem; min-width: 0; }
+
+  &__level-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $sp-2;
+    white-space: nowrap;
+
+    b { font-size: $fs-sm; }
+    small { font-size: 0.68rem; font-weight: $fw-bold; opacity: 0.9; }
+  }
+
+  &__bar {
+    height: 0.6rem;
+    background: #4a4eae;
+    border: 0;
+    .c-bar__fill { background: linear-gradient(180deg, #a8ee7a, #5fc23f); }
+  }
+
+  &__nav {
+    position: absolute;
+    top: $sp-2;
+    right: $sp-3;
+    display: flex;
+    gap: $sp-2;
+  }
+
+  &__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 3.9rem;
+    height: 3.9rem;
+    padding: 0.15rem 0 0;
+    font: inherit;
+    color: $pz-text-on-violet;
+    cursor: pointer;
+    background: linear-gradient(180deg, #9599f2, $pz-violet 60%, $pz-violet-deep);
+    border: 3px solid $pz-violet-rim;
+    border-radius: 1.1rem;
+    box-shadow: 0 3px 0 rgba(70, 72, 160, 0.35);
+    pointer-events: auto;
+    transition: transform $dur-fast ease-out, filter $dur-fast ease-out;
+
+    &:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    &:active { transform: translateY(1px) scale(0.96); filter: brightness(0.94); }
+    &:focus-visible { outline: $focus-ring solid #fff; outline-offset: 2px; }
+
+    @include mq(lg) { width: 4.5rem; height: 4.5rem; border-radius: 1.2rem; }
+  }
+
+  &__btn-icon .c-icon { width: 2rem; height: 2rem; filter: drop-shadow(0 2px 0 rgba(50, 40, 120, 0.35)); @include mq(lg) { width: 2.4rem; height: 2.4rem; } }
+  &__btn-label { font-size: 0.68rem; font-weight: $fw-bold; line-height: 1.2; text-shadow: 0 1px 1px rgba(50, 40, 120, 0.6); white-space: nowrap; @include mq(lg) { font-size: $fs-xs; } }
+
+  // The tray's place: centred at the bottom, clear of the keeper's portrait at the bottom left.
+  &__bottom {
+    position: absolute;
+    right: 0;
+    bottom: $sp-2;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0 $sp-3 0 6.5rem;
+    pointer-events: none;
+  }
+}
+
+.a-dock {
+  display: flex;
+  gap: $sp-2;
+  align-items: stretch;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.35rem $sp-2;
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #ffffff;
+  border-radius: 1.4rem;
+  box-shadow: 0 6px 18px rgba(80, 90, 170, 0.2);
+
+  @include mq(lg) { gap: $sp-3; padding: $sp-2 $sp-3; }
+
+  // A small caption over each part names what it is for (palette, care, harvest, grow).
+  &__caption {
+    display: block;
+    padding: 0 0.2rem 0.15rem;
+    font-size: 0.62rem;
+    font-weight: $fw-bold;
+    line-height: 1.1;
+    color: $_muted;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  &__palette-wrap { display: flex; flex: 0 1 auto; flex-direction: column; min-width: 0; }
+
+  &__palette {
+    display: flex;
+    gap: 0.35rem;
+    min-width: 0;
+    padding: 0.3rem 1rem 0.2rem 0.15rem;
+    overflow-x: auto;
+    // A soft fade at the right edge says there is more to scroll to (it only covers the padding when all fit).
+    mask-image: linear-gradient(to right, #000 calc(100% - 1rem), transparent);
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    scrollbar-color: #d9cdf5 transparent;
+  }
+
+  &__seed {
+    position: relative;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    width: 4.7rem;
+    padding: 0.3rem 0.25rem 0.25rem;
+    font: inherit;
+    color: $_ink;
+    cursor: pointer;
+    background: #ffffff;
+    border: 2px solid $_rim;
+    border-radius: 0.95rem;
+    box-shadow: 0 2px 0 #eee6fb;
+    scroll-snap-align: start;
+    transition: transform $dur-fast ease-out, border-color $dur-fast ease-out, box-shadow $dur-fast ease-out;
+
+    &:hover { transform: translateY(-2px); border-color: #d6c8f4; }
+    &:active { transform: translateY(0) scale(0.97); }
+    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 1px; }
+
+    &.is-selected {
+      background: #f1fbe8;
+      border-color: $_main;
+      box-shadow: 0 0 0 2px rgba(108, 192, 74, 0.35), 0 2px 0 #cfe9bd;
+      transform: translateY(-2px);
+    }
+
+    @include mq(lg) { width: 5.4rem; }
+  }
+
+  &__tick {
+    position: absolute;
+    top: -0.35rem;
+    left: -0.3rem;
+    display: grid;
+    place-items: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    font-size: 0.7rem;
+    font-weight: $fw-bold;
+    color: #fff;
+    background: $_main;
+    border: 2px solid #fff;
+    border-radius: 50%;
+  }
+
+  &__owned {
+    position: absolute;
+    top: 0.15rem;
+    right: 0.2rem;
+    padding: 0 0.3rem;
+    font-size: 0.6rem;
+    font-weight: $fw-bold;
+    line-height: 1.35;
+    color: #5a4a8a;
+    background: #efe9ff;
+    border-radius: 999px;
+
+    &.is-none { color: $_muted; background: #f5f2fb; }
+  }
+
+  &__seed-pic { display: grid; place-items: center; height: 2.2rem; @include mq(lg) { height: 2.6rem; } }
+  &__seed-icon { max-width: 2.2rem; max-height: 2.2rem; object-fit: contain; @include mq(lg) { max-width: 2.6rem; max-height: 2.6rem; } }
+
+  &__seed-name {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 0.72rem;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__price {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    font-size: 0.66rem;
+    font-weight: $fw-bold;
+    line-height: 1.2;
+    color: #8a6a2a;
+
+    .c-icon { width: 0.8rem; height: 0.8rem; }
+  }
+
+  // A group of actions: a thin divider before it, its caption above.
+  &__group {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    padding-left: $sp-2;
+    border-left: 2px solid #f1ebfb;
+
+    @include mq(lg) { padding-left: $sp-3; }
+  }
+
+  &__acts { display: flex; flex: 1; gap: 0.3rem; align-items: stretch; @include mq(lg) { gap: $sp-2; } }
+
+  &__act {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.05rem;
+    width: 4.8rem;
+    min-height: 4.2rem;
+    padding: 0.3rem 0.2rem 0.25rem;
+    font: inherit;
+    color: #6a4f2a;
+    cursor: pointer;
+    background: linear-gradient(180deg, #ffffff 0%, #fff6e8 60%, #fcebd2);
+    border: 2px solid #f3dcb8;
+    border-radius: 1rem;
+    box-shadow: 0 3px 0 rgba(170, 120, 60, 0.22);
+    transition: transform $dur-fast ease-out, filter $dur-fast ease-out, opacity $dur-fast ease-out;
+
+    &:hover { transform: translateY(-2px); filter: brightness(1.04); }
+    &:active { transform: translateY(1px) scale(0.97); box-shadow: 0 1px 0 rgba(170, 120, 60, 0.22); }
+    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
+
+    @include mq(lg) { width: 5.7rem; min-height: 4.6rem; }
+
+    // The everyday actions stand out in green while they can run.
+    &--main:not(.is-off) {
+      color: #ffffff;
+      background: linear-gradient(180deg, #9ad97a, $_main 60%, $_main-deep);
+      border-color: #c9ecb4;
+      box-shadow: 0 3px 0 rgba(60, 120, 40, 0.35);
+
+      .a-dock__act-label { text-shadow: 0 1px 1px rgba(40, 90, 30, 0.55); }
+    }
+
+    // Opening more ground: lilac, quieter than the care actions.
+    &--grow {
+      color: #5a4a8a;
+      background: linear-gradient(180deg, #ffffff, #f2edff);
+      border-color: #ddd2f6;
+      box-shadow: 0 3px 0 rgba(110, 90, 170, 0.2);
+    }
+
+    // Off: dimmed, still focusable and hoverable for its tooltip, with the reason written under the label.
+    &.is-off {
+      cursor: default;
+      filter: grayscale(0.7);
+      opacity: 0.72;
+      box-shadow: none;
+
+      &:hover, &:active { transform: none; filter: grayscale(0.7); }
+    }
+  }
+
+  &__act-icon { display: grid; place-items: center; height: 1.9rem; .c-icon { width: 1.9rem; height: 1.9rem; object-fit: contain; } @include mq(lg) { height: 2.2rem; .c-icon { width: 2.2rem; height: 2.2rem; } } }
+  &__act-label { max-width: 100%; font-size: 0.7rem; font-weight: $fw-bold; line-height: 1.12; text-align: center; overflow-wrap: anywhere; @include mq(lg) { font-size: $fs-xs; } }
+
+  &__act-reason {
+    display: -webkit-box;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 0.6rem;
+    line-height: 1.12;
+    color: #8a6a5a;
+    text-align: center;
+    -webkit-line-clamp: 1; // the whole reason is the card's tooltip
+    -webkit-box-orient: vertical;
+
+    &::before { content: '⊘ '; }
+    @include mq(lg) { -webkit-line-clamp: 2; }
+  }
+}
+
+// Landscape phones / very short windows: no captions, smaller cards.
+@include mq-short {
+  .a-dock__caption { display: none; }
+  .a-dock__seed { width: 4.2rem; }
+  .a-dock__act { width: 4.3rem; min-height: 3.6rem; }
+  .a-dock__act-reason { -webkit-line-clamp: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-hud__btn, .a-dock__seed, .a-dock__act { transition: none; }
+}

@@ -305,7 +305,7 @@ export const partA = {
     spring: "Cloud Spring",
     cauldron: "Cauldron",
     close: "Close",
-    palette: "Seeds",
+    palette: "Pick a flower",
     seedLine: "{price} Sobi Coin · you have {count}",
     growsIn: "Grows in {time} when watered",
     kind: { COMMON: "Common flower", RARE: "Rare flower", NIGHT: "Night flower" },

@@ -74,6 +74,16 @@ export const UI_ICON = {
 } as const;
 export type UiIcon = keyof typeof UI_ICON;
 
+/** The Areas' shared HUD (decision 031): pills, the level star and the square buttons. */
+export const AREA_HUD_ART = {
+  coin: 'ui_icon_coin',
+  star: 'ui_icon_star',
+  plaza: 'ui_hud_hub',
+  shop: 'ui_btn_shop',
+  items: 'ui_hud_bag',
+  menu: 'ui_hud_menu',
+} as const;
+
 /** Ambient life (spec §11.1 "clouds may drift slowly"): placements that drift or sway. */
 export const AMBIENT_DRIFT_PREFIX = 'env_cloud_';
 export const AMBIENT_SWAY_IDS: readonly string[] = ['env_trees_mid', 'env_ground_grass'];

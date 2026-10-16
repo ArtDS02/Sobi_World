@@ -21,6 +21,8 @@ import { ELEMENT_ICON, nameOfItem, probe, type AdventureRun, type ButtonVm } fro
 export interface HudVm {
   coins: string;
   level: string;
+  /** The world level as a number (the star of the level pill). */
+  levelNumber: number;
   xp: string;
   xpProgress: number;
 }
@@ -31,6 +33,7 @@ export function hudVm(world: WorldSave): HudVm {
   return {
     coins: formatInt(world.wallet.coins),
     level: t(vi.adventure.level, { level }),
+    levelNumber: level,
     xp: next === null ? vi.adventure.xpMax : t(vi.adventure.xp, { current: formatInt(xp), next: formatInt(next) }),
     xpProgress: percent,
   };

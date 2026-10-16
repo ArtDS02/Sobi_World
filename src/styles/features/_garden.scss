@@ -16,160 +16,65 @@
   .c-dialog { pointer-events: auto; }
 }
 
+// The pills, square buttons and bottom tray are the shared Area HUD (_areahud.scss, decision 031); the Garden adds
+// its zone switcher at the top centre.
 .garden-ui {
   &__hud, &__inner { display: contents; }
-
-  &__pills {
-    position: absolute;
-    top: $sp-3;
-    left: $sp-3;
-    display: flex;
-    flex-wrap: wrap;
-    gap: $sp-2;
-  }
-
-  &__pill {
-    display: inline-flex;
-    align-items: center;
-    gap: $sp-2;
-    min-height: 2.6rem;
-    padding: 0 $sp-4;
-    color: #5a4a8a;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(238, 232, 255, 0.94));
-    border: 2px solid #cdbff0;
-    border-radius: 0.9rem;
-    box-shadow: 0 3px 10px rgba(120, 100, 180, 0.18);
-    pointer-events: auto;
-
-    b { font-size: $fs-lg; color: #4a3a7a; }
-    small { font-size: $fs-xs; opacity: 0.9; }
-  }
-
-  &__bar { width: 6rem; height: $bar-height; }
 
   // The zone switcher (decision 028): ‹ Zone n · name › at the top centre; the next, unopened zone shows dimmed.
   &__zones {
     position: absolute;
-    top: $sp-3;
+    top: $sp-2;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     align-items: center;
-    gap: $sp-2;
-    min-height: 2.6rem;
-    padding: 0 $sp-2;
+    gap: $sp-1;
+    height: 2.6rem;
+    padding: 0 0.3rem;
     color: #4a3a7a;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(238, 232, 255, 0.94));
-    border: 2px solid #cdbff0;
+    background: rgba(255, 255, 255, 0.94);
+    border: 3px solid $pz-violet-rim;
     border-radius: 999px;
-    box-shadow: 0 3px 10px rgba(120, 100, 180, 0.18);
+    box-shadow: 0 3px 0 rgba(70, 72, 160, 0.2), 0 6px 14px rgba(70, 72, 160, 0.14);
     pointer-events: auto;
 
     &.is-locked .garden-ui__zone-title { opacity: 0.7; }
+    @include mq(lg) { height: 2.9rem; gap: $sp-2; }
   }
 
   &__zone-title {
-    min-width: 12rem;
+    min-width: 9rem;
+    max-width: 16rem;
+    overflow: hidden;
+    font-size: $fs-sm;
     font-weight: 700;
     text-align: center;
+    text-overflow: ellipsis;
     white-space: nowrap;
+
+    @include mq(lg) { min-width: 12rem; font-size: $fs-md; }
   }
 
   &__zone-arrow {
-    width: 2rem;
-    height: 2rem;
+    width: 1.9rem;
+    height: 1.9rem;
     font-size: $fs-lg;
     font-weight: 700;
     line-height: 1;
     color: #ffffff;
-    background: #a98bdf;
+    cursor: pointer;
+    background: linear-gradient(180deg, #9599f2, $pz-violet 60%, $pz-violet-deep);
     border: 0;
     border-radius: 50%;
-    box-shadow: 0 2px 0 #7f63b8;
-    cursor: pointer;
-
-    &:hover:not(:disabled) { filter: brightness(1.08); transform: scale(1.08); }
-    &:disabled { cursor: default; opacity: 0.35; }
-  }
-
-  &__nav {
-    position: absolute;
-    top: $sp-3;
-    right: $sp-3;
-    display: flex;
-    gap: $sp-2;
-  }
-
-  &__btn {
-    min-height: $sp-touch-min;
-    padding: 0 $sp-4;
-    font: inherit;
-    font-weight: $fw-bold;
-    color: #5a4a8a;
-    cursor: pointer;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(238, 232, 255, 0.94));
-    border: 2px solid #cdbff0;
-    border-radius: 0.9rem;
-    box-shadow: 0 3px 10px rgba(120, 100, 180, 0.18);
-    pointer-events: auto;
+    box-shadow: 0 2px 0 rgba(70, 72, 160, 0.35);
     transition: transform $dur-fast ease-out, filter $dur-fast ease-out;
 
-    &:hover { transform: scale(1.06); filter: brightness(1.1); }
-    &:active { transform: scale(0.95); }
+    &:hover:not(:disabled) { filter: brightness(1.08); transform: scale(1.08); }
+    &:active:not(:disabled) { transform: scale(0.94); }
+    &:disabled { cursor: default; opacity: 0.35; }
     &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
   }
-
-  &__bottom {
-    position: absolute;
-    right: 0;
-    bottom: $sp-3;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    padding: 0 $sp-3;
-  }
-
-  &__dock {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $sp-3;
-    align-items: flex-end;
-    justify-content: center;
-    padding: $sp-2 $sp-4;
-    pointer-events: auto;
-    background: linear-gradient(180deg, rgba(255, 252, 246, 0.97), rgba(255, 244, 236, 0.97));
-    border: 2px solid #eadff5;
-    border-radius: 2rem;
-    box-shadow: 0 6px 18px rgba(120, 100, 180, 0.16), inset 0 2px 0 #ffffff;
-  }
-
-  &__palette { display: flex; gap: $sp-2; padding-right: $sp-3; border-right: 2px solid #f1e0d2; }
-
-  &__seed {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 5.6rem;
-    padding: $sp-1 $sp-2;
-    font: inherit;
-    color: $c-text;
-    cursor: pointer;
-    background: #ffffff;
-    border: 2px solid #f1dfd0;
-    border-radius: 1rem;
-    box-shadow: 0 3px 0 #f3e3d6;
-    transition: transform $dur-fast ease-out;
-
-    b { font-size: $fs-sm; color: #4a3a5a; }
-    small { font-size: $fs-xs; color: $c-text-muted; }
-    &:hover { transform: translateY(-2px); }
-    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
-    &.is-selected { background: #e9f7d8; border-color: $c-leaf; box-shadow: 0 0 0 2px $c-leaf; }
-  }
-
-  &__seed-icon { width: 2.6rem; height: 2.6rem; image-rendering: pixelated; }
-
-  &__bulk { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: flex-start; }
 }
 
 .garden-dialog {
@@ -204,6 +109,5 @@
   &__job p { margin: 0; }
 }
 
-@include mq-short {
-  .garden-ui__seed { min-width: 4.4rem; small { display: none; } }
-}
+// The pills leave the top centre to the zone switcher.
+.garden-ui .a-hud__pills { max-width: calc(50% - 8rem); }

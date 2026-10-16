@@ -48,6 +48,8 @@ const nameOfItem = (id: string) => vi.shop[id as ItemId] ?? id;
 export interface HudVm {
   coins: string;
   level: string;
+  /** The world level as a number (the star of the level pill). */
+  levelNumber: number;
   xp: string;
   /** 0..100 */
   xpProgress: number;
@@ -59,6 +61,7 @@ export function hudVm(world: WorldSave): HudVm {
   return {
     coins: gold(world.wallet.coins),
     level: t(vi.garden.level, { level }),
+    levelNumber: level,
     xp: next === null ? vi.garden.xpMax : t(vi.garden.xp, { current: gold(xp), next: gold(next) }),
     xpProgress: percent,
   };
@@ -69,6 +72,10 @@ export interface SeedVm {
   name: string;
   art: string;
   line: string;
+  /** One seed's price ("12"). */
+  price: string;
+  /** Seeds in the bag. */
+  owned: number;
   growsIn: string;
   selected: boolean;
 }
@@ -79,6 +86,8 @@ export function paletteVm(world: WorldSave, selected: string): SeedVm[] {
     name: c.nameVi,
     art: itemArtId(c.seedItem),
     line: t(vi.garden.seedLine, { price: gold(ITEMS[c.seedItem as ItemId].priceGold), count: world.inventory.items[c.seedItem] ?? 0 }),
+    price: gold(ITEMS[c.seedItem as ItemId].priceGold),
+    owned: world.inventory.items[c.seedItem] ?? 0,
     growsIn: t(vi.garden.growsIn, { time: formatDuration(c.growMs) }),
     selected: c.id === selected,
   }));

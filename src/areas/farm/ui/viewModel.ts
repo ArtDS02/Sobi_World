@@ -25,6 +25,8 @@ import { vi } from '../../../i18n/vi';
 
 export interface TopBarVm {
   level: string;
+  /** The world level as a number (the star of the shared level pill, decision 031). */
+  levelNumber: number;
   xp: string;
   /** 0-100 progress from the current level's threshold to the next one. */
   xpProgress: number;
@@ -62,6 +64,7 @@ export function topBarVm(save: FarmGame, now = Math.max(0, ...save.pigs.map((p) 
   const { food, capacity } = save.trough;
   return {
     level: t(vi.hud.level, { level }),
+    levelNumber: level,
     xp: t(vi.hud.xp, { current: formatInt(shownXp), next: formatInt(next) }),
     xpProgress,
     gold: t(vi.hud.gold, { amount: formatInt(gold) }),

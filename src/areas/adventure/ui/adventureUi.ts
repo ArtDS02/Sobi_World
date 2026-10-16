@@ -6,7 +6,9 @@ import type { CreatureGift, GiftResult, RosterEntry } from '../../../core/area-r
 import type { GameStore } from '../../../core/world/gameStore';
 import type { WorldSave } from '../../../core/save/world';
 import type { ActionContext } from '../../../core/types';
+import { AREA_HUD_ART } from '../../../core/config/assetIds';
 import { vi } from '../../../i18n/vi';
+import { hudLevel, hudNav, hudPill, hudPills } from '../../../ui/components/areaHud';
 import type { PanelId } from '../../../ui/components/popup';
 import { el, patch } from '../../../ui/dom';
 import { battleAct } from '../logic/actions/run';
@@ -46,7 +48,7 @@ export interface AdventureUi {
 const AUTO_MS = 900;
 
 export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
-  const hud = el('div', { class: 'adventure-ui__hud' });
+  const hud = el('div', { class: 'adventure-ui__hud a-hud' });
   const main = el('div', { class: 'adventure-ui__main' });
   const dialogHost = el('div', { class: 'app__dialogs' });
   d.host.classList.add('adventure-ui');
@@ -68,32 +70,17 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
   };
   const dialogs = createAdventureDialogs({ host: dialogHost, world, now: d.now, dispatch: (run) => void dispatch(run), roster: d.roster });
 
-  const navButton = (label: string, onClick: () => void) => el('button', { class: 'adventure-ui__btn', text: label, attrs: { type: 'button' }, on: { click: onClick } });
-
   function renderHud(w: WorldSave): HTMLElement {
     const v = hudVm(w);
     return el(
       'div',
       { class: 'adventure-ui__inner' },
-      el(
-        'div',
-        { class: 'adventure-ui__pills' },
-        el('span', { class: 'adventure-ui__pill', attrs: { title: vi.adventure.coins } }, el('b', { text: v.coins }), el('small', { text: vi.adventure.coins })),
-        el(
-          'span',
-          { class: 'adventure-ui__pill adventure-ui__pill--level', attrs: { title: v.xp } },
-          el('b', { text: v.level }),
-          el('span', { class: 'c-bar adventure-ui__bar', attrs: { role: 'progressbar', 'aria-valuenow': String(v.xpProgress) } }, el('span', { class: 'c-bar__fill', attrs: { style: `width: ${v.xpProgress}%` } })),
-          el('small', { text: v.xp }),
-        ),
-      ),
-      el(
-        'nav',
-        { class: 'adventure-ui__nav', attrs: { 'aria-label': vi.adventure.title } },
-        navButton(vi.adventure.plaza, d.leave),
-        navButton(vi.adventure.items, () => d.openPanel('inventory')),
-        navButton(vi.adventure.menu, () => d.openPanel('menu')),
-      ),
+      hudPills(hudPill(AREA_HUD_ART.coin, v.coins, vi.adventure.coins), hudLevel(v)),
+      hudNav(vi.adventure.title, [
+        { icon: AREA_HUD_ART.plaza, label: vi.adventure.plaza, onClick: d.leave },
+        { icon: AREA_HUD_ART.items, label: vi.adventure.items, onClick: () => d.openPanel('inventory') },
+        { icon: AREA_HUD_ART.menu, label: vi.adventure.menu, onClick: () => d.openPanel('menu') },
+      ]),
     );
   }
 

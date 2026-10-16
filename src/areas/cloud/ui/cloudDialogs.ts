@@ -1,7 +1,7 @@
 // The Cloud's dialogs (plot, spring, cauldron, more plots): each body is rebuilt from the world while the dialog is open,
 // so its numbers (time left, what the bag holds) stay true without being closed and reopened.
 import { openDialog } from '../../../ui/components/dialog';
-import { dressShopDialog, shopGrid } from '../../../ui/components/shopGrid';
+import { dressShopDialog, guardBuy, shopGrid } from '../../../ui/components/shopGrid';
 import { el, patch } from '../../../ui/dom';
 import type { UiIcon } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
@@ -61,9 +61,10 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
 
   /** The Cloud's shop (decision 029). */
   function openShop() {
+    const buy = guardBuy((itemId, count) => run((s, c) => buyShopItem(s, { itemId, count }, c)));
     openLive(
       vi.cloud.shopTitle,
-      (w) => shopGrid(vi.cloud.shopIntro, cloudShopVm(w, d.now()), (itemId, count) => run((s, c) => buyShopItem(s, { itemId, count }, c))),
+      (w) => shopGrid(vi.cloud.shopIntro, cloudShopVm(w, d.now()), buy, { label: vi.areaHud.balance, value: formatInt(w.wallet.coins) }),
       (body) => dressShopDialog(body, 'cloud'),
       'shop',
     );
