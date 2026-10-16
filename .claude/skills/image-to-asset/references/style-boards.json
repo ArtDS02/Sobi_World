@@ -29,6 +29,7 @@
     "plot": "Three-quarter view from slightly above. The bed is the whole object: no grass patch, no cloud platform and nothing else under or around it, only a very soft contact shadow.",
     "creature_left": "Body in side view facing LEFT, head turned slightly toward the viewer (three-quarter head), standing calmly, all feet on one invisible ground line. Cute and friendly, not scary.",
     "creature_right": "Body in side view facing RIGHT, head turned slightly toward the viewer (three-quarter head), standing calmly, all feet on one invisible ground line.",
+    "fish": "Every fish: whole body in pure side view, FACING RIGHT, cute small eye with a white highlight and a tiny smile, no water, no bubbles, no shadow. All fish drawn in the same hand at a similar size, each filling most of its cell.",
     "backdrop": "A full-bleed 16:9 landscape scene that fills the whole image edge to edge (this one has NO grey background). Soft, low-contrast, slightly desaturated so sprites stay readable on top; the lower 60 % is calm and mostly empty for gameplay."
   }
 }

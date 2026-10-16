@@ -1,0 +1,24 @@
+{
+  "id": "aquarium-02-items",
+  "area": "aquarium",
+  "title": "Vật phẩm Sobi Aquarium: vảy, ngọc trai, thức ăn cá + trứng cá, đống vảy, phao câu",
+  "decisions": "Row 1 are the three manifest icons. Row 2 (prop_fish_egg, prop_scale_pile, prop_fishing_bobber) are scene props from asset/AQUARIUM_ART_PLAN.md §4.1 that need new manifest rows (plan §0.3): drawn now in the same sheet at no extra cost, added to the manifest when the scene is rebuilt. The pearl is white with a pink-lilac sheen so it is not confused with the owner's orange pearls (aquarium-01-scene sheet A).",
+  "sheets": [
+    {
+      "name": "P",
+      "title": "Vảy, ngọc trai, thức ăn cá, trứng cá, đống vảy, phao",
+      "board": "item",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["item"],
+      "cells": [
+        { "stem": "ui_item_scale", "desc": "Fish Scale: a single shiny fish scale, a rounded shell shape in pearly aqua and gold" },
+        { "stem": "ui_item_pearl", "desc": "Pearl: a single round white pearl with a soft pink-lilac sheen, resting in a small open pink clam shell" },
+        { "stem": "ui_item_food_fish", "desc": "Fish Food: a small cloth pouch tied with string, little brown-orange pellets spilling out" },
+        { "stem": "prop_fish_egg", "desc": "Fish Eggs: a small cluster of three round peach-coloured fish eggs with tiny dark dots inside" },
+        { "stem": "prop_scale_pile", "desc": "Scale Pile: a small heap of shiny aqua-gold fish scales" },
+        { "stem": "prop_fishing_bobber", "desc": "Fishing Float: a round red-and-white fishing float with a small top stick" }
+      ]
+    }
+  ]
+}

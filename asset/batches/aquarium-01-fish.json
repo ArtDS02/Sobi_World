@@ -1,0 +1,40 @@
+{
+  "id": "aquarium-01-fish",
+  "area": "aquarium",
+  "title": "12 loài cá Sobi Aquarium (theo content)",
+  "decisions": "Looks follow asset/AQUARIUM_ART_PLAN.md §5.4 and content/aquarium/fish.json (12 species, rarity common → epic: rarer fish get finer fins and richer colours). The 8 decorative fish of the owner's aquarium-01-scene sheet F are not these species and stay decoration. Fish icons ui_item_fish_* are K-derived from the accepted sprites (no extra sheet).",
+  "sheets": [
+    {
+      "name": "F1",
+      "title": "Cá Vàng, Cá Rô, Cá Chép, Cá Hề, Cá Nóc, Cá Thiên Thần",
+      "board": "creature",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["fish"],
+      "cells": [
+        { "stem": "fish_goldfish", "desc": "Goldfish: a round chubby orange goldfish with a soft flowing double tail and shiny orange scales" },
+        { "stem": "fish_perch", "desc": "Perch: a small quick olive-green perch with faint dark stripes and a spiky but soft back fin" },
+        { "stem": "fish_carp", "desc": "Carp: a calm plump golden-bronze carp with two tiny whiskers and big round scales" },
+        { "stem": "fish_clownfish", "desc": "Clownfish: a small orange clownfish with three white stripes edged in dark brown" },
+        { "stem": "fish_pufferfish", "desc": "Pufferfish: a round yellow-and-cream pufferfish, slightly puffed, with tiny soft spikes" },
+        { "stem": "fish_angelfish", "desc": "Angelfish: a tall silver-and-lilac angelfish with very long elegant trailing fins" }
+      ]
+    },
+    {
+      "name": "F2",
+      "title": "Cá Phát Sáng, Betta Lụa, Cá Đèn Lồng, Cá Ngựa, Koi Rồng, Cá Trăng",
+      "board": "creature",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["fish"],
+      "cells": [
+        { "stem": "fish_glowfish", "desc": "Glowfish: a small pale-mint fish with a soft turquoise belly and little light-coloured spots along its side (colour only, no glow effect)" },
+        { "stem": "fish_betta", "desc": "Silk Betta: a betta with huge silky flowing fins in ruby red fading to violet" },
+        { "stem": "fish_lanternfish", "desc": "Lanternfish: a round dark-blue fish with a tiny warm-yellow lantern hanging from a stalk on its head" },
+        { "stem": "fish_seahorse", "desc": "Seahorse: a cute coral-pink seahorse standing upright with its tail curled, its head and snout turned to the RIGHT" },
+        { "stem": "fish_dragon_koi", "desc": "Dragon Koi: a majestic long koi with gleaming golden scales, red-orange patches, flowing whisker barbels and a fluttering tail" },
+        { "stem": "fish_moonfish", "desc": "Moonfish: a round flat silver fish with a pearly sheen and pale-blue fin edges" }
+      ]
+    }
+  ]
+}
