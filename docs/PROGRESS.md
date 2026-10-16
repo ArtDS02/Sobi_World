@@ -8,6 +8,14 @@
 
 ## Nhật ký
 
+### 2026-10-13 — GĐ14 Aquarium: kế hoạch art + bộ prompt (chờ duyệt, chưa tạo ảnh)
+✅ Đã làm: `asset/AQUARIUM_ART_PLAN.md` — định hướng art, 4 cấp môi trường gắn 4 cấp bể có sẵn (Bể Kính Bên Bến / Hồ Đá Ven Bờ / Đầm San Hô Sinh Thái / Vịnh Ngọc Trai Cổ), layout 1800×900 chung, danh sách asset P0–P2, prompt Gemini (concept, mock từng cấp, sửa mock thành nền, sheet cá / vật / icon / tiền cảnh / NPC), quy trình.
+✅ Bổ sung: mục 5.2 tách thành prompt riêng cho từng cấp (prompt concept 5.1 gộp mọi vùng vào một ảnh); mực nước giữ 28% ở mọi cấp.
+✅ Chủ dự án chốt **cấp bể 5 "Đại Dương Sâu"** (decision 026): tài liệu đổi thành 5 cấp, thêm prompt mock T5, tiền cảnh AQ-FG5, sứa trang trí. Số của cấp 5 (20 cá; 20.000 + 40 vảy + 5 ngọc trai + 8 bánh răng cổ; nước ×0,5) chờ duyệt, **chưa sửa content**.
+✅ T5 sửa theo góp ý: chìm hẳn dưới nước, hùng vĩ hơn (cá voi, manta, hẻm vực nhiều lớp); chỗ câu là dây câu thả từ trên (`bld_fish_line_deep`, thêm vào sheet AQ-W1); prompt T5 có cách A (sửa từ mock v1) và cách B (vẽ mới).
+👉 Bạn cần: duyệt số cấp 5; chốt các điểm còn lại ở §0 (khung 2:1, dòng manifest mới, ảnh `npc_fisher`, sinh vật trang trí).
+➡️ Tiếp theo: tạo concept + mock T1–T4, rồi T5 (đính kèm mock T4) → duyệt → viết batch `aquarium-01..05`; thêm dòng cấp 5 vào `balance.json` sau khi số được duyệt.
+
 ### 2026-10-13 — GĐ14 Sảnh: art world-01-scene vào game, bỏ nhân vật ở Sảnh (chờ duyệt)
 ✅ Đã làm:
 1. **Cắt batch `world-01-scene`** (9 ảnh Gemini của chủ dự án): 31 file → `public/assets/`, status `production`. Sheet P Gemini vẽ 4×2 (thay 2×4), sheet H vẽ 2 bộ trùng → cắt theo lưới thật, lấy bộ trên; không cần vẽ lại. `bg_plaza` 1511×704 → 1932×900.
