@@ -253,20 +253,8 @@ $sign-edge: #8a5a2b;
   .topbar__nav { display: none; }
 }
 // The plaza HUD on the owner's mock-up (decision 024): soft violet pills, a star level bar, square buttons,
-// a white dock of coloured Area cards and the Sobi World logo in the corner.
-$pz-violet: #7479e0;
-$pz-violet-deep: #5a5ec8;
-$pz-violet-rim: #d6d8ff;
-$pz-text-on-violet: #ffffff;
-
-@mixin pz-pill {
-  color: $pz-text-on-violet;
-  background: linear-gradient(180deg, #8d92f0, $pz-violet 55%, $pz-violet-deep);
-  border: 3px solid $pz-violet-rim;
-  border-radius: 999px;
-  box-shadow: 0 3px 0 rgba(70, 72, 160, 0.35), 0 6px 14px rgba(70, 72, 160, 0.18);
-  pointer-events: auto;
-}
+// a white dock of coloured Area cards and the Sobi World logo in the corner. The violet set ($pz-*, pz-pill) is in
+// core/mixins: the Aquarium's HUD wears it too (decision 030).
 
 .plazabar {
   position: absolute;

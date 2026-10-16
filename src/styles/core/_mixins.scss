@@ -3,9 +3,10 @@
 $_breakpoints: (
   sm: $bp-sm,
   md: $bp-md,
+  lg: $bp-lg,
 );
 
-/// Min-width media query for a named breakpoint (sm | md). The only way to write @media.
+/// Min-width media query for a named breakpoint (sm | md | lg). The only way to write @media.
 @mixin mq($name) {
   @media (min-width: map-get($_breakpoints, $name)) {
     @content;
@@ -17,4 +18,19 @@ $_breakpoints: (
   @media (max-height: #{$bp-short - 1px}) {
     @content;
   }
+}
+
+// The violet HUD of the owner's mock-ups (plaza decision 024, Aquarium decision 030): pills, square buttons.
+$pz-violet: #7479e0;
+$pz-violet-deep: #5a5ec8;
+$pz-violet-rim: #d6d8ff;
+$pz-text-on-violet: #ffffff;
+
+@mixin pz-pill {
+  color: $pz-text-on-violet;
+  background: linear-gradient(180deg, #8d92f0, $pz-violet 55%, $pz-violet-deep);
+  border: 3px solid $pz-violet-rim;
+  border-radius: 999px;
+  box-shadow: 0 3px 0 rgba(70, 72, 160, 0.35), 0 6px 14px rgba(70, 72, 160, 0.18);
+  pointer-events: auto;
 }

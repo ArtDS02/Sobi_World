@@ -21,7 +21,7 @@ Backend: **G** = Gemini vẽ sheet (chủ dự án dán prompt, lưu ảnh; còn
 | Garden | `garden-03-world` | `plot_soil`, `_wet`, `plot_locked`, `bld_feed_mill`, `bld_composter`, `bld_sprinkler` (6) | G, 2 sheet 1×3 | 2 | **production** (chờ duyệt) |
 | Aquarium | `aquarium-01-fish` | 12 cá theo content, nhìn sang phải (12) | G, 2 sheet 2×3 | 2 | **production** (chờ duyệt) |
 | Aquarium | `aquarium-02-items` | 12 icon cá (K-derive) + vảy, ngọc trai, thức ăn cá; thêm trứng cá, đống vảy, phao (dòng manifest mới) (15) | K-derive + G 2×3 | 1 | **production** (chờ duyệt) |
-| Aquarium | `aquarium-01-scene` (soạn tay, không JSON) | 5 nền theo cấp bể, cần câu, 2 bảng gỗ, ngọc cam, đống ngọc (10; bỏ `bld_fish_tank`: bể vẽ liền trong nền cấp 1) | G sửa ảnh mẫu E1–E5 + sheet A, D; xoá watermark ✦ ở nền | 0 | **production** (chờ duyệt, decision 030); sheet C (Gà Mái, pixel art) loại; H, I (icon HUD) chưa dùng |
+| Aquarium | `aquarium-01-scene` (soạn tay, không JSON) | 5 nền theo cấp bể, cần câu, 2 bảng gỗ, ngọc cam, đống ngọc (10; bỏ `bld_fish_tank`: bể vẽ liền trong nền cấp 1) | G sửa ảnh mẫu E1–E5 + sheet A, D; xoá watermark ✦ ở nền | 0 | **production** (chờ duyệt, decision 030); sheet C (Gà Mái, pixel art) loại; H, I: 9 icon HUD / thanh nút |
 | Adventure | `adventure-01-forest` | 7 kẻ địch + trùm Cổ Thụ, nhìn sang trái (8) | G, 2 sheet + 1 ảnh trùm | 3 | chưa viết |
 | Adventure | `adventure-02-mountain` | 4 kẻ địch, Tượng Quặng, trùm Rồng Dung Nham (6) | G, 1 sheet + 2 ảnh đơn | 3 | chưa viết |
 | Adventure | `adventure-03-ruins` | 4 kẻ địch + trùm Hộ Pháp Cổ Đại (5) | G, 1 sheet + 1 ảnh trùm | 2 | chưa viết |

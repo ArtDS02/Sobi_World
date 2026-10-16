@@ -28,7 +28,8 @@ export interface AquariumPlace {
   eggs: Spot;
   /** The pile of scales (bottom centre). */
   scales: Spot;
-  /** The "Bể cá" sign on its post (bottom centre of the post): opens the tank card. */
+  /** The "Bể cá" sign on its post (bottom centre of the post): opens the tank card. Kept right of x ≈ 300 so the
+   *  shell's weather / festival chips at the top left never cover it. */
   sign: Spot;
   /** The plaque with the place's name (centre): opens the tank card too. */
   plaque: Spot;
@@ -94,7 +95,7 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     murk: { left: -400, right: 2000, top: 288, bottom: 1300 },
     eggs: { x: 600, y: 718 },
     scales: { x: 1090, y: 728 },
-    sign: { x: 235, y: 268 },
+    sign: { x: 330, y: 268 },
     plaque: { x: 800, y: 700 },
     rod: { x: 1505, y: 288, scale: 0.85 },
     dock: { x: 1540, y: 190, width: 190, height: 250 },
@@ -107,7 +108,7 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     murk: { left: -400, right: 2000, top: -400, bottom: 1300 },
     eggs: { x: 620, y: 732 },
     scales: { x: 1110, y: 742 },
-    sign: { x: 200, y: 300 },
+    sign: { x: 300, y: 318 },
     plaque: { x: 800, y: 700 },
     rod: null,
     dock: { x: 1485, y: 150, width: 120, height: 300 },

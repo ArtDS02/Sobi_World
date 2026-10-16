@@ -2276,6 +2276,51 @@
       "asset": "ui/ui_hud_items.png"
     },
     {
+      "id": "ui_hud_bag",
+      "status": "production",
+      "asset": "ui/ui_hud_bag.png"
+    },
+    {
+      "id": "ui_icon_water",
+      "status": "production",
+      "asset": "ui/ui_icon_water.png"
+    },
+    {
+      "id": "ui_icon_star",
+      "status": "production",
+      "asset": "ui/ui_icon_star.png"
+    },
+    {
+      "id": "ui_aqua_fish",
+      "status": "production",
+      "asset": "ui/ui_aqua_fish.png"
+    },
+    {
+      "id": "ui_aqua_seaweed",
+      "status": "production",
+      "asset": "ui/ui_aqua_seaweed.png"
+    },
+    {
+      "id": "ui_aqua_shell",
+      "status": "production",
+      "asset": "ui/ui_aqua_shell.png"
+    },
+    {
+      "id": "ui_aqua_treasure",
+      "status": "production",
+      "asset": "ui/ui_aqua_treasure.png"
+    },
+    {
+      "id": "ui_aqua_coral",
+      "status": "production",
+      "asset": "ui/ui_aqua_coral.png"
+    },
+    {
+      "id": "ui_aqua_flower",
+      "status": "production",
+      "asset": "ui/ui_aqua_flower.png"
+    },
+    {
       "id": "ui_icon_coin",
       "status": "production",
       "asset": "ui/ui_icon_coin.png"

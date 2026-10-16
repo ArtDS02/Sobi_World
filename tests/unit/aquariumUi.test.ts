@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { SAVE_CODEC } from '../../src/app/saveCodec';
 import { aquariumArea } from '../../src/areas/aquarium';
 import { aquariumPresentation } from '../../src/areas/aquarium/feedback';
-import { aquariumArtIds, TANK_ART } from '../../src/areas/aquarium/logic/art';
+import { aquariumArtIds, BAR_ART, HUD_ART, TANK_ART } from '../../src/areas/aquarium/logic/art';
 import { AB, FISH_LIST } from '../../src/areas/aquarium/logic/config/content';
 import { sceneState } from '../../src/areas/aquarium/logic/derived';
 import { AQUARIUM_EVENT_TYPES, type AquariumEvent } from '../../src/areas/aquarium/logic/events';
@@ -54,6 +54,19 @@ describe('hud and bar', () => {
     expect(v.level).toBe('Cấp 2');
     expect(v.xp).toBe('150/383 KN');
     expect(v.coins).toBe('10.000');
+    expect(v.levelNumber).toBe(2);
+  });
+
+  it('shows the water, the fish over the capacity and the eggs (decision 030)', () => {
+    const w = base([fish(), fish({ id: 'g' })], {});
+    const v = hudVm(w);
+    const tank = aquariumOf(w).tank;
+    expect(v.water).toBe(Math.round(tank.water));
+    expect(v.waterText).toBe(`${Math.round(tank.water)}%`);
+    expect(v.fishCount).toBe(`2/${AB.tank.levels[tank.level - 1]!.capacity} cá`);
+    expect(v.eggs).toBeNull();
+    expect(Object.values(BAR_ART).every((id) => aquariumArtIds().includes(id))).toBe(true);
+    expect(Object.values(HUD_ART).every((id) => aquariumArtIds().includes(id))).toBe(true);
   });
 
   it('every button says why it is off', () => {

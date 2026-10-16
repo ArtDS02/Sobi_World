@@ -3,12 +3,22 @@
 ## Trạng thái hiện tại
 **Giai đoạn:** GĐ14 đang làm — art, animation, VFX, âm thanh (nhánh `phase-14-art`, tách từ `main`). GĐ13 đã merge `main` (gameplay freeze, decision 021); phiên bản 0.13.0.
 **Chiến lược (decision 017, 022):** gameplay trước, art sau; phong cách chuẩn Sobi Farm, chủ dự án tạo ảnh Gemini theo batch (`asset/batches/`), agent cắt và nối vào game. GĐ15 phát hành.
-**Tiến độ GĐ14:** 50 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể: decision 030). Còn lại: Aquarium (HUD kiểu ảnh mẫu, ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
+**Tiến độ GĐ14:** 50 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023).
-**Bước tiếp theo:** chủ dự án duyệt cảnh Aquarium (và Garden); chọn có đổi HUD Aquarium sang kiểu ảnh mẫu không; rồi Adventure.
+**Bước tiếp theo:** chủ dự án duyệt cảnh + HUD Aquarium (và Garden); rồi Adventure.
 
 ## Nhật ký
+
+### 2026-10-16 — GĐ14 Aquarium: HUD và thanh nút theo ảnh mẫu (decision 030, chờ duyệt)
+✅ Đã làm (chủ dự án yêu cầu):
+1. **HUD trên** kiểu tím của Sảnh: viên Sobi Coin, viên độ trong nước %, viên cấp có ngôi sao + thanh KN; nút vuông tím có icon Ra Sảnh / Vật phẩm / Menu. Token tím (`$pz-*`, `pz-pill`) chuyển sang `styles/core/_mixins.scss` để Sảnh và Aquarium dùng chung.
+2. **Thanh dưới** trắng: ô trạng thái (cá / sức chứa, trứng, thanh nước) + 7 thẻ kem có icon (cá, rong, mây–giọt nước, vỏ sò, rương, san hô, hoa); thẻ tắt mờ và ghi lý do. Gọn ở cửa sổ nhỏ, to hơn từ 1280 px (breakpoint `lg` mới).
+3. **9 icon** cắt từ sheet H (ba lô, mây–giọt nước, sao; Gemini vẽ 2 hàng trùng → lấy hàng trên) và sheet I (bỏ bóng xám dưới chân). Bảng "Bể cá" cấp 4–5 dời phải khỏi chip thời tiết / lễ hội.
+🧪 Đã kiểm tra: `npm run check` xanh (1.369 test, thêm test HUD); sandbox 1600×900 và 1024×640: HUD hiện đủ, thẻ "Bể cá" mở thẻ Bể, nút Ra Sảnh về Sảnh, thanh dưới vừa cạnh chân dung NPC; không lỗi script.
+⚠️ Quyết định tự đưa ra: icon cho từng thẻ (rong = cho ăn, vỏ sò = thu vảy, rương = cá trong túi, san hô = bể, hoa = cho đẻ); không dùng icon quà và sao biển (không có tính năng); cửa sổ nhỏ thì chip thời tiết vẫn che một phần bảng "Bể cá" (vẫn mở được bằng thẻ "Bể cá" và bảng tên nơi).
+👉 Bạn cần: duyệt HUD + cảnh Aquarium.
+➡️ Tiếp theo: Adventure.
 
 ### 2026-10-16 — GĐ14 Aquarium: cảnh theo 5 ảnh mẫu, mỗi cấp bể một nơi (decision 030, chờ duyệt)
 ✅ Đã làm:

@@ -16,6 +16,7 @@ export const partB = {
       whenNight: "only bites at night",
       detail: "{rarity} · {desc} Grows up in {hours} hours.",
     },
+    hud: { water: "{percent}%", waterLabel: "Water clarity", fish: "{count}/{capacity} fish", eggs: "{count} eggs" },
     scene: {
       sign: "Fish tank",
       fishing: "Fishing spot",

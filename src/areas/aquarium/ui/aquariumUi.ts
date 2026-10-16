@@ -1,7 +1,9 @@
-// The Aquarium's DOM layer (spec V2 §10): the HUD over the tank and the bar of buttons. It reads the world through the
+// The Aquarium's DOM layer (spec V2 §10; the owner's mock-up, decision 030): violet pills and square buttons over
+// the scene, and a white bar with the tank's line and a card per action. It reads the world through the
 // store and acts through the Aquarium's actions; the canvas (AquariumScene) only reports clicks to `pick`. Mounted by
 // the app into the shell's overlay; the dialogs are aquariumDialogs.ts.
 import type { PanelId } from '../../../ui/components/popup';
+import { art, icon } from '../../../ui/components/icon';
 import { el, patch } from '../../../ui/dom';
 import { localOffsetMs } from '../../../ui/localDay';
 import type { GameStore } from '../../../core/world/gameStore';
@@ -12,8 +14,9 @@ import { collectScales } from '../logic/actions/trade';
 import { sceneState, type SceneState } from '../logic/derived';
 import { aquariumOf, hasAquarium } from '../logic/save/lens';
 import type { AquariumPick } from '../scene/AquariumScene';
-import { actionButton, createAquariumDialogs } from './aquariumDialogs';
-import { barVm, feedAllRun, hudVm, type AquariumRun } from './aquariumVm';
+import { BAR_ART, HUD_ART } from '../logic/art';
+import { createAquariumDialogs } from './aquariumDialogs';
+import { barVm, feedAllRun, hudVm, type AquariumRun, type ButtonVm } from './aquariumVm';
 
 export interface AquariumUiDeps {
   world: Pick<GameStore, 'getSnapshot' | 'subscribe' | 'dispatch'>;
@@ -53,8 +56,30 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
   const dispatch = (run: AquariumRun) => d.world.dispatch(run);
   const dialogs = createAquariumDialogs({ host: dialogHost, world, now: d.now, dispatch, ...(d.frame ? { frame: d.frame } : {}) });
 
-  const navButton = (label: string, onClick: () => void) =>
-    el('button', { class: 'aquarium-ui__btn', text: label, attrs: { type: 'button' }, on: { click: onClick } });
+  /** A square violet button with its icon (the owner's mock-up, decision 030). */
+  const navButton = (iconId: string, label: string, onClick: () => void) =>
+    el(
+      'button',
+      { class: 'aquarium-ui__btn', attrs: { type: 'button', title: label }, on: { click: onClick } },
+      el('span', { class: 'aquarium-ui__btn-icon' }, art(iconId, 'c-icon')),
+      el('span', { class: 'aquarium-ui__btn-label', text: label }),
+    );
+
+  /** A card of the bar: icon, label and, when it is off, why (also as its tooltip). */
+  const card = (iconId: string, vm: ButtonVm, onClick: () => void) => {
+    const off = vm.reason !== null;
+    return el(
+      'button',
+      {
+        class: `aquarium-ui__card${off ? ' is-off' : ''}`,
+        attrs: { type: 'button', ...(off ? { 'aria-disabled': 'true', title: vm.reason ?? '' } : { title: vm.label }) },
+        on: { click: () => !off && onClick() },
+      },
+      el('span', { class: 'aquarium-ui__card-icon' }, art(iconId, 'c-icon')),
+      el('span', { class: 'aquarium-ui__card-label', text: vm.label }),
+      off ? el('small', { class: 'aquarium-ui__card-reason', text: vm.reason ?? '' }) : null,
+    );
+  };
 
   function renderHud(w: WorldSave): HTMLElement {
     const v = hudVm(w);
@@ -64,40 +89,62 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
       el(
         'div',
         { class: 'aquarium-ui__pills' },
-        el('span', { class: 'aquarium-ui__pill', attrs: { title: vi.aquarium.coins } }, el('b', { text: v.coins }), el('small', { text: vi.aquarium.coins })),
+        el('span', { class: 'aquarium-ui__pill', attrs: { title: vi.aquarium.coins } }, icon('coin'), el('b', { text: v.coins })),
         el(
           'span',
-          { class: 'aquarium-ui__pill aquarium-ui__pill--level', attrs: { title: v.xp } },
-          el('b', { text: v.level }),
-          el('span', { class: 'c-bar aquarium-ui__bar', attrs: { role: 'progressbar', 'aria-valuenow': String(v.xpProgress) } }, el('span', { class: 'c-bar__fill', attrs: { style: `width: ${v.xpProgress}%` } })),
-          el('small', { text: v.xp }),
+          { class: 'aquarium-ui__pill', attrs: { title: vi.aquarium.hud.waterLabel } },
+          el('span', { class: 'aquarium-ui__pill-icon' }, art(HUD_ART.water, 'c-icon')),
+          el('b', { text: v.waterText }),
+        ),
+        el(
+          'span',
+          { class: 'aquarium-ui__level', attrs: { title: v.xp } },
+          el('span', { class: 'aquarium-ui__star' }, art(HUD_ART.star, 'aquarium-ui__star-art'), el('b', { text: String(v.levelNumber) })),
+          el(
+            'span',
+            { class: 'aquarium-ui__level-body' },
+            el('span', { class: 'aquarium-ui__level-row' }, el('b', { text: v.level }), el('small', { text: v.xp })),
+            el('span', { class: 'c-bar aquarium-ui__bar', attrs: { role: 'progressbar', 'aria-valuenow': String(v.xpProgress) } }, el('span', { class: 'c-bar__fill', attrs: { style: `width: ${v.xpProgress}%` } })),
+          ),
         ),
       ),
       el(
         'nav',
         { class: 'aquarium-ui__nav', attrs: { 'aria-label': vi.aquarium.title } },
-        navButton(vi.aquarium.plaza, d.leave),
-        navButton(vi.aquarium.items, () => d.openPanel('inventory')),
-        navButton(vi.aquarium.menu, () => d.openPanel('menu')),
+        navButton(HUD_ART.plaza, vi.aquarium.plaza, d.leave),
+        navButton(HUD_ART.items, vi.aquarium.items, () => d.openPanel('inventory')),
+        navButton(HUD_ART.menu, vi.aquarium.menu, () => d.openPanel('menu')),
       ),
     );
   }
 
   function renderBottom(w: WorldSave): HTMLElement {
     const bar = barVm(w, d.now(), localOffsetMs(d.now()));
+    const v = hudVm(w);
     return el(
       'div',
       { class: 'aquarium-ui__dock' },
       el(
         'div',
+        { class: 'aquarium-ui__status', attrs: { title: vi.aquarium.hud.waterLabel } },
+        el('span', { class: 'aquarium-ui__status-icon' }, art(HUD_ART.water, 'c-icon')),
+        el(
+          'span',
+          { class: 'aquarium-ui__status-body' },
+          el('span', { class: 'aquarium-ui__status-row' }, el('b', { text: v.fishCount }), v.eggs ? el('small', { text: v.eggs }) : null, el('small', { text: v.waterText })),
+          el('span', { class: 'c-bar aquarium-ui__water', attrs: { role: 'progressbar', 'aria-valuenow': String(v.water), 'aria-label': vi.aquarium.hud.waterLabel } }, el('span', { class: 'c-bar__fill', attrs: { style: `width: ${v.water}%` } })),
+        ),
+      ),
+      el(
+        'div',
         { class: 'aquarium-ui__bulk' },
-        actionButton(bar.fish, () => dialogs.openFishing()),
-        actionButton(bar.feedAll, () => void dispatch(feedAllRun(w))),
-        actionButton(bar.water, () => void dispatch((s, c) => cleanTank(s, {}, c))),
-        actionButton(bar.scales, () => void dispatch((s, c) => collectScales(s, {}, c))),
-        actionButton(bar.bag, () => dialogs.openBag()),
-        actionButton(bar.tank, () => dialogs.openTank()),
-        actionButton(bar.breed, () => dialogs.openBreed()),
+        card(BAR_ART.fish, bar.fish, () => dialogs.openFishing()),
+        card(BAR_ART.feedAll, bar.feedAll, () => void dispatch(feedAllRun(w))),
+        card(BAR_ART.water, bar.water, () => void dispatch((s, c) => cleanTank(s, {}, c))),
+        card(BAR_ART.scales, bar.scales, () => void dispatch((s, c) => collectScales(s, {}, c))),
+        card(BAR_ART.bag, bar.bag, () => dialogs.openBag()),
+        card(BAR_ART.tank, bar.tank, () => dialogs.openTank()),
+        card(BAR_ART.breed, bar.breed, () => dialogs.openBreed()),
       ),
     );
   }

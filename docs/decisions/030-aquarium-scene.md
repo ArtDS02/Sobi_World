@@ -16,4 +16,10 @@ Cảnh Aquarium còn vẽ bằng placeholder (bể kính, bến, nền biển). 
 ## Không dùng
 - Sheet C (Gà Mái, Gà Con): Gemini vẽ pixel art, lệch phong cách → loại; NPC vẫn mượn ảnh gà kem.
 - Sheet F (8 cá trang trí): content có 12 loài riêng (batch `aquarium-01-fish`).
-- Sheet H, I (icon HUD, icon thanh dưới): HUD Aquarium chưa đổi sang kiểu ảnh mẫu; làm khi chủ dự án duyệt hướng HUD (như HUD Garden, decision 029).
+- Sheet H ô quà (`ui_hud_gift`) và sheet I ô sao biển: không có tính năng tương ứng.
+
+## Bổ sung (chủ dự án yêu cầu, 2026-10-16): HUD theo ảnh mẫu
+- **HUD trên** dùng chung bộ tím của HUD Sảnh (decision 024; token `$pz-*` và `pz-pill` chuyển sang `styles/core/_mixins.scss`): viên Sobi Coin, viên **độ trong nước %** (icon mây–giọt nước), viên cấp có ngôi sao (icon sao) + thanh KN; ba nút vuông tím có icon: Ra Sảnh (`ui_hud_hub`), Vật phẩm (`ui_hud_bag`, ba lô hồng), Menu.
+- **Thanh dưới** trắng như ảnh mẫu: ô trạng thái (số cá / sức chứa, số trứng, thanh độ trong nước) + 7 thẻ kem có icon: Câu cá = cá, Cho ăn cả bể = rong, Thay nước = mây–giọt nước, Thu vảy = vỏ sò, Cá trong túi = rương, Bể cá = san hô, Cho đẻ = hoa. Thẻ tắt mờ đi và ghi lý do (dòng nhỏ + tooltip).
+- Mặc định gọn để vừa cửa sổ nhỏ nhất (1024 × 640) cạnh chân dung NPC; từ 1280 px (breakpoint mới `lg`) thẻ to hơn.
+- 9 dòng manifest `ui_*` mới (sheet H, I; bỏ bóng xám dưới chân icon khi cắt). Bảng "Bể cá" cấp 4–5 dời phải để chip thời tiết / lễ hội không che.

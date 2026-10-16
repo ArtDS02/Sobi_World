@@ -447,6 +447,8 @@ export const vi = {
       whenNight: "chỉ cắn câu lúc tối",
       detail: "{rarity} · {desc} Nuôi lớn trong {hours} giờ.",
     },
+    // The HUD (decision 030): the water pill and the tank's line in the bar.
+    hud: { water: "{percent}%", waterLabel: "Độ trong của nước", fish: "{count}/{capacity} cá", eggs: "{count} trứng" },
     // The scene: the sign, the fishing spot and the name of each place (one per tank level, decision 030).
     scene: {
       sign: "Bể cá",

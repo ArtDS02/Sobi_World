@@ -27,19 +27,34 @@ export { probe, reasonFor, type AquariumRun, type ButtonVm } from './vmKit';
 export interface HudVm {
   coins: string;
   level: string;
+  /** The world level alone (drawn on the star). */
+  levelNumber: number;
   xp: string;
   /** 0..100 */
   xpProgress: number;
+  /** Water clarity, 0..100, and as text. */
+  water: number;
+  waterText: string;
+  /** Fish in the tank over its capacity, and the eggs waiting, as text. */
+  fishCount: string;
+  eggs: string | null;
 }
 
 export function hudVm(world: WorldSave): HudVm {
   const xp = worldXp(world);
   const { level, next, percent } = levelProgress(xp, WORLD_LEVELS);
+  const a = aquariumOf(world);
+  const water = Math.round(a.tank.water);
   return {
     coins: gold(world.wallet.coins),
     level: t(vi.aquarium.level, { level }),
+    levelNumber: level,
     xp: next === null ? vi.aquarium.xpMax : t(vi.aquarium.xp, { current: gold(xp), next: gold(next) }),
     xpProgress: percent,
+    water,
+    waterText: t(vi.aquarium.hud.water, { percent: water }),
+    fishCount: t(vi.aquarium.hud.fish, { count: a.fish.length, capacity: tankCapacity(a.tank.level) }),
+    eggs: a.eggs.length > 0 ? t(vi.aquarium.hud.eggs, { count: a.eggs.length }) : null,
   };
 }
 
