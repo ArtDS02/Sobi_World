@@ -447,6 +447,13 @@ export const vi = {
       whenNight: "chỉ cắn câu lúc tối",
       detail: "{rarity} · {desc} Nuôi lớn trong {hours} giờ.",
     },
+    // The scene: the sign, the fishing spot and the name of each place (one per tank level, decision 030).
+    scene: {
+      sign: "Bể cá",
+      fishing: "Bến câu",
+      ready: "Cá đang cắn câu!",
+      places: ["Bể Kính Bên Bến", "Hồ Đá Ven Bờ", "Đầm San Hô", "Vịnh Ngọc Trai Cổ", "Đại Dương Sâu"],
+    },
     // The bar under the scene.
     bar: {
       fish: "Câu cá",

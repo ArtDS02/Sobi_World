@@ -69,9 +69,15 @@ CATALOGUE_SIZES.prop_fishing_bobber = { width: 64, height: 80 };
 for (const fish of ['goldfish', 'perch', 'carp', 'clownfish', 'pufferfish', 'angelfish', 'glowfish', 'betta', 'lanternfish', 'seahorse', 'dragon_koi', 'moonfish']) {
   CATALOGUE_SIZES[`fish_${fish}`] = { width: 192, height: 120 };
 }
-CATALOGUE_SIZES.bld_fish_tank = { width: 640, height: 400 };
-CATALOGUE_SIZES.bld_fish_dock = { width: 520, height: 300 };
-CATALOGUE_SIZES.bg_aquarium = { width: 1600, height: 900 };
+// GĐ14 (decision 030): one painted backdrop per tank level (sheets E1–E5 of aquarium-01-scene, 2:1 → 1800 × 900; the
+// glass tank of level 1 is painted in it), the rod that opens the fishing spot, the name signs and the pearls on the sand.
+CATALOGUE_SIZES.bg_aquarium = { width: 1800, height: 900 };
+for (const level of [2, 3, 4, 5]) CATALOGUE_SIZES[`bg_aquarium_t${level}`] = { width: 1800, height: 900 };
+CATALOGUE_SIZES.bld_fish_dock = { width: 200, height: 300 };
+CATALOGUE_SIZES.prop_aqua_sign = { width: 240, height: 156 };
+CATALOGUE_SIZES.prop_aqua_plaque = { width: 420, height: 114 };
+CATALOGUE_SIZES.prop_pearl_pile = { width: 128, height: 84 };
+CATALOGUE_SIZES.prop_orange_pearls = { width: 80, height: 56 };
 
 // Sobi Cloud (GĐ9): a flower on its plot (feet at the bottom), the cloud plot, the spring, the cauldron and the sky backdrop.
 for (const flower of ['cloud_daisy', 'dandelion', 'rainbow_rose', 'star_orchid', 'moon_lily', 'dream_bell']) {

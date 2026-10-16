@@ -3,12 +3,23 @@
 ## Trạng thái hiện tại
 **Giai đoạn:** GĐ14 đang làm — art, animation, VFX, âm thanh (nhánh `phase-14-art`, tách từ `main`). GĐ13 đã merge `main` (gameplay freeze, decision 021); phiên bản 0.13.0.
 **Chiến lược (decision 017, 022):** gameplay trước, art sau; phong cách chuẩn Sobi Farm, chủ dự án tạo ảnh Gemini theo batch (`asset/batches/`), agent cắt và nối vào game. GĐ15 phát hành.
-**Tiến độ GĐ14:** 53 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). Đang làm: **Aquarium** (12 cá + icon + vật phẩm đã có art; cảnh theo 5 ảnh mẫu chưa dựng). Còn lại: Aquarium (kế hoạch `asset/AQUARIUM_ART_PLAN.md`, cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
-**Chờ chủ dự án:** duyệt Cloud, Sảnh, Garden; duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
+**Tiến độ GĐ14:** 50 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể: decision 030). Còn lại: Aquarium (HUD kiểu ảnh mẫu, ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
+**Chờ chủ dự án:** duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023).
-**Bước tiếp theo:** chủ dự án duyệt cảnh Garden; tạo ảnh `aquarium-01-fish`, `aquarium-02-items` → cắt, dựng cảnh Aquarium theo 5 ảnh mẫu.
+**Bước tiếp theo:** chủ dự án duyệt cảnh Aquarium (và Garden); chọn có đổi HUD Aquarium sang kiểu ảnh mẫu không; rồi Adventure.
 
 ## Nhật ký
+
+### 2026-10-16 — GĐ14 Aquarium: cảnh theo 5 ảnh mẫu, mỗi cấp bể một nơi (decision 030, chờ duyệt)
+✅ Đã làm:
+1. **5 nền** từ sheet E1–E5 của `aquarium-01-scene` (đã có từ 13/10): `bg_aquarium` (bể kính trên bến), `bg_aquarium_t2..t5` (hồ đá, đầm san hô, vịnh tàn tích, biển sâu), 1800×900; xoá dấu ✦ watermark Gemini ở góc dưới phải (inpaint).
+2. **Sprite** cắt từ sheet A, D: cần câu (`bld_fish_dock`), bảng "Bể cá" trên cọc, bảng hoa ghi tên nơi, ngọc cam, đống ngọc; bỏ dòng `bld_fish_tank` (bể vẽ liền trong nền cấp 1). Placeholder 53 → 50.
+3. **Cảnh dựng lại** (`scene/`): mỗi cấp bể một nơi đo trên nền (`AQUARIUM_PLACES`): vùng cá bơi, chỗ trứng / vảy, bảng, cần câu hoặc vùng bấm trên chỗ câu vẽ sẵn (cấp 1, 5), dấu "!" khi câu được; nâng bể thì đổi nơi ngay. Trứng và đống vảy dùng ảnh thật (vảy có số). Cá nhỏ lại (tối đa 0,6). Tên 5 nơi trong bảng chuỗi Việt / Anh.
+🛠️ Lỗi tìm thấy khi chạy và đã sửa: nền phủ sai khung ở lần vẽ đầu (camera `worldView` chậm một frame) → cảnh nhớ khung nhìn do `fitCamera` báo.
+🧪 Đã kiểm tra: typecheck, lint, test (1.368) xanh; `assets:check` OK; sandbox 1600×900 và 1916×949 (save đang ở bể cấp 4): nền phủ kín, cá bơi, bấm bảng "Bể cá" mở thẻ Bể, bấm cần câu mở Bến câu, "!" cạnh cần câu; 5 cấp kiểm bằng ảnh ghép bố cục lên nền. Ảnh: `art_inbox/.qa/aquarium-review/`.
+⚠️ Quyết định tự đưa ra: giữ HUD / thanh nút hiện tại (sheet H, I chưa dùng); loại sheet C (Gà Mái vẽ pixel art); không dùng 8 cá trang trí của sheet F (content có 12 loài riêng); cấp 1–3 có ngọc trang trí trên cát (cấp 4 vẽ sẵn trong nền); cấp 5 chưa có trong content (chờ duyệt số) nhưng nền đã sẵn.
+👉 Bạn cần: duyệt cảnh Aquarium; quyết có đổi HUD Aquarium sang kiểu ảnh mẫu (tím–trắng, icon sheet H / I) không; duyệt số cấp bể 5.
+➡️ Tiếp theo: HUD Aquarium (nếu duyệt) hoặc Adventure.
 
 ### 2026-10-16 — GĐ14: art drone, sạp hàng, vòi tưới theo cấp, cá Aquarium (chờ duyệt)
 ✅ Đã làm:

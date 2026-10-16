@@ -12,7 +12,7 @@ Area thứ ba: nuôi cá trong bể (cho ăn, giữ nước trong, chữa bệnh
   - `pricing.ts` — giá cá nuôi lớn: giá loài × cỡ × chất lượng × sức khỏe × tính trạng.
   - `actions/` — `care.ts` (cho ăn, thay nước, vuốt ve, chữa, mục đích, đổi tên), `fishing.ts` (quăng cần, thả cá vào bể), `trade.ts` (bán cá, bán cá trong túi, thu vảy, nâng bể), `breed.ts` (cho đẻ), `kit.ts` (đường ống chung: bù thời gian → hành động → KN).
   - `derived.ts`, `suggest.ts` ("việc tiếp theo"), `summary.ts` (dòng "vắng mặt"), `worldEvents.ts` (sự kiện chuẩn cho thế giới), `rewind.ts` (Admin tua thời gian), `art.ts` (id art cần có trong manifest).
-- `scene/` — Phaser: `AquariumScene` chỉ vẽ bể, cá bơi, bến câu và báo click; `aquariumView.ts` là số đo của cảnh.
+- `scene/` — Phaser (decision 030): `AquariumScene` vẽ nơi của cấp bể hiện tại (5 nền vẽ sẵn), cá bơi, bong bóng, nước đục, đêm và báo click; `aquariumProps.ts` là bảng "Bể cá", bảng tên nơi, cần câu / vùng bấm chỗ câu (dấu "!" khi câu được), trứng, đống vảy, ngọc trang trí; `aquariumView.ts` là số đo của từng nơi (`AQUARIUM_PLACES`, đo trên nền: x thiết kế = x nền − 100).
 - `ui/` — DOM: `aquariumUi.ts` (HUD, thanh nút), `dialogKit.ts` (nút nói lý do, hộp thoại "sống"), `fishDialogs.ts`, `fishingDialog.ts`, `tankDialogs.ts`; dữ liệu hiển thị là view-model thuần (`aquariumVm.ts`, `fishCardVm.ts`, `dockVm.ts`, `vmKit.ts`), thử chạy hành động thật để biết nút tắt vì sao.
 - `feedback.ts` — âm thanh + toast của sự kiện Aquarium, đưa cho FeedbackDirector.
 - `stage.ts` — nối hook `onEnter/onExit` với cảnh.

@@ -5,13 +5,13 @@ import { describe, expect, it } from 'vitest';
 import { SAVE_CODEC } from '../../src/app/saveCodec';
 import { aquariumArea } from '../../src/areas/aquarium';
 import { aquariumPresentation } from '../../src/areas/aquarium/feedback';
-import { aquariumArtIds } from '../../src/areas/aquarium/logic/art';
+import { aquariumArtIds, TANK_ART } from '../../src/areas/aquarium/logic/art';
 import { AB, FISH_LIST } from '../../src/areas/aquarium/logic/config/content';
 import { sceneState } from '../../src/areas/aquarium/logic/derived';
 import { AQUARIUM_EVENT_TYPES, type AquariumEvent } from '../../src/areas/aquarium/logic/events';
 import { rewindAquarium, rewindAquariumInWorld } from '../../src/areas/aquarium/logic/rewind';
 import { aquariumOf, withAquarium } from '../../src/areas/aquarium/logic/save/lens';
-import { AQUARIUM_DESIGN, AQUARIUM_VIEW, eggSpot, fishIcon, fishScale } from '../../src/areas/aquarium/scene/aquariumView';
+import { AQUARIUM_DESIGN, AQUARIUM_PLACES, AQUARIUM_VIEW, aquariumPlace, eggSpot, fishIcon, fishScale } from '../../src/areas/aquarium/scene/aquariumView';
 import { barVm, bagVm, breedablePairs, hudVm, tankVm } from '../../src/areas/aquarium/ui/aquariumVm';
 import { dockVm, markerAt, MINI, scoreOf, zoneCentre } from '../../src/areas/aquarium/ui/dockVm';
 import { fishCardVm } from '../../src/areas/aquarium/ui/fishCardVm';
@@ -207,19 +207,30 @@ describe('the scene', () => {
 
   it('a fish grows on screen, shows its needs as an icon, and the eggs lie on the sand inside the tank', () => {
     expect(fishScale(0)).toBeLessThan(fishScale(50));
-    expect(fishScale(100)).toBeCloseTo(0.8, 9);
+    expect(fishScale(100)).toBeCloseTo(0.6, 9);
     expect(fishIcon({ sick: true, hunger: 90 })).toBe('🤒');
     expect(fishIcon({ sick: false, hunger: 10 })).toBe('🍽');
     expect(fishIcon({ sick: false, hunger: 90 })).toBe('');
-    const v = AQUARIUM_VIEW;
-    for (let i = 0; i < AB.breeding.maxEggs + 2; i += 1) {
-      const { x, y } = eggSpot(i);
-      expect(x).toBeGreaterThan(v.water.left);
-      expect(x).toBeLessThan(v.water.right);
-      expect(y).toBeGreaterThan(v.water.bottom);
+    // Every tank level has its own painted place: the eggs lie under the water, everything clickable is on the backdrop.
+    const { offsetX, width, height } = AQUARIUM_VIEW.backdrop;
+    expect(AQUARIUM_PLACES.length).toBeGreaterThanOrEqual(AB.tank.levels.length);
+    for (const place of AQUARIUM_PLACES) {
+      expect(TANK_ART.places).toContain(place.art);
+      for (let i = 0; i < AB.breeding.maxEggs + 2; i += 1) {
+        const { x, y } = eggSpot(place, i);
+        expect(x).toBeGreaterThan(place.water.left);
+        expect(x).toBeLessThan(place.water.right);
+        expect(y).toBeGreaterThan(place.water.bottom);
+      }
+      expect(place.water.right).toBeLessThan(AQUARIUM_DESIGN.width);
+      for (const spot of [place.sign, place.plaque, place.scales, place.dock]) {
+        expect(spot.x + offsetX).toBeGreaterThan(0);
+        expect(spot.x + offsetX).toBeLessThan(width);
+        expect(spot.y).toBeLessThan(height);
+      }
     }
-    expect(v.water.right).toBeLessThan(AQUARIUM_DESIGN.width);
-    expect(v.dock.x).toBeLessThan(AQUARIUM_DESIGN.width);
+    expect(aquariumPlace(1).art).toBe('bg_aquarium');
+    expect(aquariumPlace(99)).toBe(AQUARIUM_PLACES[AQUARIUM_PLACES.length - 1]);
   });
 });
 

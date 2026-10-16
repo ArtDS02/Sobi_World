@@ -16,6 +16,12 @@ export const partB = {
       whenNight: "only bites at night",
       detail: "{rarity} · {desc} Grows up in {hours} hours.",
     },
+    scene: {
+      sign: "Fish tank",
+      fishing: "Fishing spot",
+      ready: "The fish are biting!",
+      places: ["Glass Tank by the Pier", "Rock Pool by the Shore", "Coral Lagoon", "Old Pearl Bay", "Deep Ocean"],
+    },
     bar: {
       fish: "Fish",
       feedAll: "Feed the tank",

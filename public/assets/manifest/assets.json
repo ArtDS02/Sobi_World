@@ -1634,6 +1634,26 @@
       "asset": "props/prop_fishing_bobber.png"
     },
     {
+      "id": "prop_aqua_sign",
+      "status": "production",
+      "asset": "props/prop_aqua_sign.png"
+    },
+    {
+      "id": "prop_aqua_plaque",
+      "status": "production",
+      "asset": "props/prop_aqua_plaque.png"
+    },
+    {
+      "id": "prop_pearl_pile",
+      "status": "production",
+      "asset": "props/prop_pearl_pile.png"
+    },
+    {
+      "id": "prop_orange_pearls",
+      "status": "production",
+      "asset": "props/prop_orange_pearls.png"
+    },
+    {
       "id": "prop_title_banner",
       "status": "production",
       "asset": "props/prop_title_banner.png"
@@ -1936,13 +1956,8 @@
       "asset": "buildings/bld_sprinkler_l5.png"
     },
     {
-      "id": "bld_fish_tank",
-      "status": "placeholder",
-      "asset": "buildings/bld_fish_tank.png"
-    },
-    {
       "id": "bld_fish_dock",
-      "status": "placeholder",
+      "status": "production",
       "asset": "buildings/bld_fish_dock.png"
     },
     {
@@ -2055,8 +2070,28 @@
     },
     {
       "id": "bg_aquarium",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/bg_aquarium.png"
+    },
+    {
+      "id": "bg_aquarium_t2",
+      "status": "production",
+      "asset": "environment/bg_aquarium_t2.png"
+    },
+    {
+      "id": "bg_aquarium_t3",
+      "status": "production",
+      "asset": "environment/bg_aquarium_t3.png"
+    },
+    {
+      "id": "bg_aquarium_t4",
+      "status": "production",
+      "asset": "environment/bg_aquarium_t4.png"
+    },
+    {
+      "id": "bg_aquarium_t5",
+      "status": "production",
+      "asset": "environment/bg_aquarium_t5.png"
     },
     {
       "id": "bg_cloud",
