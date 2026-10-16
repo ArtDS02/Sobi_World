@@ -2,6 +2,7 @@
 // whole field is one container, so changing zone slides it out sideways and the next zone in. Draws and reports clicks.
 import * as Phaser from 'phaser';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
+import { opaqueSize } from '../../../ui/world/opaqueSize';
 import { CROP_STAGES, cropArtId, PLOT_ART, type CropStage } from '../logic/art';
 import { CROPS, PLOTS_PER_ZONE } from '../logic/config/content';
 import type { PlotView } from '../logic/derived';
@@ -14,6 +15,8 @@ interface Slot {
   crop: Img;
   stage: CropStage | null;
   ripe: boolean;
+  /** The crop's drawing scale: the shared crop scale, smaller for a drawing too big for its bed. */
+  scale: number;
 }
 
 export interface FieldDeps {
@@ -23,6 +26,13 @@ export interface FieldDeps {
 }
 
 const FERTILIZED_TINT = 0xf4ffd8;
+
+/** The crop scale for texture `art` at `stage`: the shared scale, smaller when the drawing is bigger than the stage allows. */
+function cropScaleFor(scene: Phaser.Scene, art: string, stage: CropStage): number {
+  const { cropScale, cropFit } = GARDEN_VIEW;
+  const drawn = opaqueSize(scene, art);
+  return cropScale * Math.min(1, cropFit.width / drawn.width, cropFit.height[stage] / drawn.height);
+}
 
 export class GardenField {
   readonly container: Phaser.GameObjects.Container;
@@ -51,7 +61,7 @@ export class GardenField {
       const { x, y } = plotCentre(slot);
       const crop = scene.add.image(x, y + v.cropBaseY * v.plotScale, FALLBACK_PROP_KEY).setOrigin(0.5, 1).setScale(v.cropScale).setVisible(false);
       this.container.add(crop);
-      this.slots.push({ soil, crop, stage: null, ripe: false });
+      this.slots.push({ soil, crop, stage: null, ripe: false, scale: v.cropScale });
     });
   }
 
@@ -87,7 +97,7 @@ export class GardenField {
   /** A crop that just ripened hops once. */
   hop(slot: number) {
     const s = this.slots[slot];
-    if (s?.crop.visible) this.scene.tweens.add({ targets: s.crop, scaleY: GARDEN_VIEW.cropScale * GARDEN_VIEW.ripen.hop, duration: 160, yoyo: true, ease: 'Quad.easeOut' });
+    if (s?.crop.visible) this.scene.tweens.add({ targets: s.crop, scaleY: s.scale * GARDEN_VIEW.ripen.hop, duration: 160, yoyo: true, ease: 'Quad.easeOut' });
   }
 
   /** Draws zone `zone` of the garden. */
@@ -111,7 +121,9 @@ export class GardenField {
       if (!CROP_STAGES.includes(stage)) return void s.crop.setVisible(false);
       s.stage = stage;
       s.ripe = view.stage === 'ripe';
-      s.crop.setTexture(key(cropArtId(crop, stage))).setVisible(true).setScale(GARDEN_VIEW.cropScale);
+      const art = key(cropArtId(crop, stage));
+      s.scale = cropScaleFor(this.scene, art, stage);
+      s.crop.setTexture(art).setVisible(true).setScale(s.scale);
       s.crop.setTint(view.fertilized && !this.waiting.has(slot) ? FERTILIZED_TINT : 0xffffff);
     });
   }
@@ -130,7 +142,7 @@ export class GardenField {
     const s = this.slots[slot];
     if (!s?.crop.visible) return;
     s.crop.setTint(FERTILIZED_TINT);
-    if (!reduceMotion) this.scene.tweens.add({ targets: s.crop, scaleY: GARDEN_VIEW.cropScale * 1.12, duration: 140, yoyo: true, ease: 'Quad.easeOut' });
+    if (!reduceMotion) this.scene.tweens.add({ targets: s.crop, scaleY: s.scale * 1.12, duration: 140, yoyo: true, ease: 'Quad.easeOut' });
   }
 
   releaseAll() {
@@ -147,7 +159,7 @@ export class GardenField {
       const amp = s[p.stage];
       const period = s.periodMs[0] + ((k * 0.618) % 1) * (s.periodMs[1] - s.periodMs[0]);
       p.crop.setAngle(Math.sin((time / period) * Math.PI * 2 + k * 1.7) * amp * gust);
-      if (p.ripe) p.crop.setScale(GARDEN_VIEW.cropScale * (1 + Math.sin((time / r.periodMs) * Math.PI * 2 + k) * r.scale));
+      if (p.ripe) p.crop.setScale(p.scale * (1 + Math.sin((time / r.periodMs) * Math.PI * 2 + k) * r.scale));
     });
   }
 

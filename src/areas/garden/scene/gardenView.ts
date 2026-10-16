@@ -21,6 +21,12 @@ export const GARDEN_VIEW = {
    */
   cropScale: 0.86,
   cropBaseY: 16,
+  /**
+   * The largest a crop's painted part may be, in plot-art px, by stage. Crop art shares one canvas but the drawing on it
+   * varies (a cabbage sprout fills it, a carrot sprout is a third of it): a drawing bigger than this is scaled down so
+   * every crop sits on its bed and a sprout stays small.
+   */
+  cropFit: { width: 112, height: { sprout: 58, grow: 92, ripe: 118, wilt: 88 } satisfies Record<CropStage, number> },
   /** Feet of the workshops and the sprinkler on the empty grass spots of the backdrop, and their drawing scale. */
   mill: { x: 185, y: 364, scale: 1 },
   composter: { x: 165, y: 615, scale: 1 },

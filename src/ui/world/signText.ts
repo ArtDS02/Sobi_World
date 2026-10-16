@@ -48,7 +48,7 @@ export function signText(scene: Phaser.Scene, face: SignFace, name: string, look
 /** Re-fits an existing sign text (a new name, a new face). */
 export function setSignText(text: Phaser.GameObjects.Text, face: SignFace, name: string, look: SignTextLook): void {
   const l = LOOK[look.look];
-  text.setScale(1).setText(name);
+  text.setScale(1).setText(name).setColor(l.color);
   const measure = (px: number) => {
     text.setFontSize(px).setStroke(l.stroke, Math.max(2, Math.round(px * l.strokeShare)));
     return text.width;
