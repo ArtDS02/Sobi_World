@@ -3,12 +3,23 @@
 ## Trạng thái hiện tại
 **Giai đoạn:** GĐ14 đang làm — art, animation, VFX, âm thanh (nhánh `phase-14-art`, tách từ `main`). GĐ13 đã merge `main` (gameplay freeze, decision 021); phiên bản 0.13.0.
 **Chiến lược (decision 017, 022):** gameplay trước, art sau; phong cách chuẩn Sobi Farm, chủ dự án tạo ảnh Gemini theo batch (`asset/batches/`), agent cắt và nối vào game. GĐ15 phát hành.
-**Tiến độ GĐ14:** 80 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** sprite (garden-01..03; cảnh theo ảnh mẫu chưa làm). Đang làm: **Aquarium** (aquarium-01-fish, aquarium-02-items chờ ảnh). Còn lại: Aquarium (kế hoạch `asset/AQUARIUM_ART_PLAN.md`, cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
+**Tiến độ GĐ14:** 80 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027). Đang làm: **Aquarium** (aquarium-01-fish, aquarium-02-items chờ ảnh). Còn lại: Aquarium (kế hoạch `asset/AQUARIUM_ART_PLAN.md`, cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt Cloud và Sảnh; duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023).
-**Bước tiếp theo:** chủ dự án tạo ảnh `aquarium-01-fish`, `aquarium-02-items`; duyệt Garden và chọn hướng dựng cảnh Garden theo ảnh mẫu.
+**Bước tiếp theo:** chủ dự án duyệt cảnh Garden; tạo ảnh `aquarium-01-fish`, `aquarium-02-items` → cắt, dựng cảnh Aquarium theo 5 ảnh mẫu.
 
 ## Nhật ký
+
+### 2026-10-16 — GĐ14 Garden: cảnh dựng lại theo ảnh mẫu (decision 027, chờ duyệt)
+✅ Đã làm:
+1. **Nền `bg_garden`** (sheet E của `garden-01-scene`, 1449×720 → 1812×900), phủ màn hình theo khung nhìn như Cloud; trời tô màu chỉ hiện khi ảnh chưa tải.
+2. **Bố cục đo trên nền**: ruộng 4 × 6 ô trên bãi cỏ trong lối đi (ô / cây tỉ lệ 0,86); Máy xay góc trên trái, Thùng ủ bãi cỏ tròn dưới trái, Vòi tưới bên phải. Nhãn: bảng gỗ trên cọc `prop_garden_sign` (cắt từ sheet L của `garden-01-scene`, dòng manifest mới) cho Máy xay / Vòi tưới; "Thùng ủ" viết lên tấm bảng trống vẽ sẵn trong nền, bấm vào bảng mở Thùng ủ.
+3. Rê chuột: ô đất nhấc 3 px + phóng nhẹ, công trình và bảng phóng nhẹ (tắt khi "Giảm chuyển động"). Ảnh nạp muộn được trỏ lại (như Cloud).
+🛠️ Lỗi tích hợp tìm thấy và đã sửa: dev server (Vite) sập với EBUSY khi chủ dự án đang tải ảnh Gemini vào `art_inbox/` (file `.crdownload` bị khóa) → `vite.config.ts` bỏ theo dõi `art_inbox/` và `asset/`.
+🧪 Đã kiểm tra: `npm run check` xanh (1.361 test); e2e Garden + display (bản build) xanh; sandbox với save cuối game ở 1600×900 và 1916×949: nền phủ kín, bấm Máy xay / bảng "Thùng ủ" mở đúng hộp thoại, Esc đóng. Ảnh: `art_inbox/.qa/garden-review/garden_v2_*.jpg`.
+⚠️ Quyết định tự đưa ra: 4 hàng ô thay vì 2 như ảnh mẫu (Garden có 24 ô); nhãn Thùng ủ dùng bảng vẽ sẵn trong nền để không chồng hai bảng; HUD Garden chưa đổi.
+👉 Bạn cần: duyệt cảnh Garden.
+➡️ Tiếp theo: Aquarium (cắt `aquarium-01-fish`, `aquarium-02-items` khi có ảnh; dựng cảnh theo 5 ảnh mẫu).
 
 ### 2026-10-16 — GĐ14 Garden: 38 sprite vào game; soạn batch Aquarium (chờ duyệt / chờ ảnh)
 ✅ Đã làm:

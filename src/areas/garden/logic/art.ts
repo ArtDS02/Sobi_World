@@ -11,6 +11,9 @@ export const cropArtId = (crop: Pick<Crop, 'art'>, stage: CropStage): string => 
 
 export const PLOT_ART = { soil: 'plot_soil', wet: 'plot_soil_wet', locked: 'plot_locked' } as const;
 export const SPRINKLER_ART = 'bld_sprinkler';
+/** The painted field (owner's mock-up, GĐ14) and the wooden name sign on a post that labels each building. */
+export const GARDEN_BACKDROP_ART = 'bg_garden';
+export const GARDEN_SIGN_ART = 'prop_garden_sign';
 
 /** Items the Garden introduced: each has its own icon (`ui_item_*`). */
 export const GARDEN_ITEM_IDS = ITEM_IDS.filter((id) => CROP_LIST.some((c) => c.seedItem === id) || ITEMS[id].category === 'CROP' || id === 'FOOD_PREMIUM' || id === 'item_fertilizer');
@@ -19,6 +22,8 @@ export const GARDEN_ITEM_IDS = ITEM_IDS.filter((id) => CROP_LIST.some((c) => c.s
 export const gardenArtIds = (): string[] => [
   ...Object.values(PLOT_ART),
   SPRINKLER_ART,
+  GARDEN_BACKDROP_ART,
+  GARDEN_SIGN_ART,
   GB.buildings.mill.art,
   GB.buildings.composter.art,
   ...CROP_LIST.flatMap((c) => CROP_STAGES.map((s) => cropArtId(c, s))),

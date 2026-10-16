@@ -153,7 +153,7 @@ export function checkAssets(
   for (const id of SEASON_FX_ART_IDS) need(id, 'fx', 'seasonal FX (MU-2)');
   for (const id of AUDIO_KEYS) need(id, 'audio', 'spec §12 audio key');
   for (const id of gardenArtIds()) {
-    const section = id.startsWith('ui_') ? 'ui' : id.startsWith('bld_') ? 'buildings' : 'props';
+    const section = id.startsWith('ui_') ? 'ui' : id.startsWith('bld_') ? 'buildings' : id.startsWith('bg_') ? 'environment' : 'props';
     need(id, section, 'Sobi Garden art (GĐ5)');
   }
   for (const id of aquariumArtIds()) {

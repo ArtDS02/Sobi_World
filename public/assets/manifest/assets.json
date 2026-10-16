@@ -1609,6 +1609,11 @@
       "asset": "props/prop_sign_plank.png"
     },
     {
+      "id": "prop_garden_sign",
+      "status": "production",
+      "asset": "props/prop_garden_sign.png"
+    },
+    {
       "id": "prop_title_banner",
       "status": "production",
       "asset": "props/prop_title_banner.png"
@@ -2007,6 +2012,11 @@
       "id": "bg_cloud",
       "status": "production",
       "asset": "environment/bg_cloud.png"
+    },
+    {
+      "id": "bg_garden",
+      "status": "production",
+      "asset": "environment/bg_garden.png"
     },
     {
       "id": "bg_plaza",
