@@ -160,7 +160,7 @@ export const partD = {
     step4: "Pigs grow in real time. Come back later.",
     step5: "The happier the pig, the better the price. Careful care pays off.",
     step6: "Pet the pig to raise its Bond hearts. Close pigs fetch better prices.",
-    step7: "Go to the Plaza and visit the Order Board for jobs and rewards. The \"Next step\" box always suggests what to do.",
+    step7: "Go to the Plaza and visit the Order Board for jobs and rewards. The bell 🔔 always lists what to do next.",
     title: "Guide",
     progress: "Step {n}/{total}",
     waiting: "Finish this step, then press Next",

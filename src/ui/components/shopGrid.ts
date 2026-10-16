@@ -1,4 +1,4 @@
-// An Area's shop (decision 029, laid out again by decision 031), shared by the Garden and the Cloud: a head with the
+// An Area's shop (decision 029, laid out again by decision 031), shared by the Garden, the Cloud and the Aquarium: a head with the
 // intro and the Sobi Coin balance, then a grid of cards — the item's picture, a tag (seed, fertilizer…), its name, what
 // it does, the price of one, what the bag holds — each with buy buttons for a few counts that show the total. Only the
 // grid scrolls. Every button says why it is off, and the card writes it out too. Plain DOM from view data; the Area
@@ -19,7 +19,7 @@ export interface ShopBuyVm {
   reason: string | null;
 }
 
-export type ShopKind = 'seed' | 'fertilizer' | 'water' | 'item';
+export type ShopKind = 'seed' | 'fertilizer' | 'water' | 'feed' | 'medicine' | 'fish' | 'item';
 
 export interface ShopLineVm {
   itemId: string;
@@ -42,8 +42,11 @@ export interface ShopBalance {
 }
 
 /** Read when drawn: the string table is filled with the chosen language in place. */
-const tagOf = (kind: ShopKind): string =>
-  kind === 'seed' ? vi.areaHud.tagSeed : kind === 'fertilizer' ? vi.areaHud.tagFertilizer : kind === 'water' ? vi.areaHud.tagWater : vi.areaHud.tagItem;
+function tagOf(kind: ShopKind): string {
+  const h = vi.areaHud;
+  const tags: Record<ShopKind, string> = { seed: h.tagSeed, fertilizer: h.tagFertilizer, water: h.tagWater, feed: h.tagFeed, medicine: h.tagMedicine, fish: h.tagFish, item: h.tagItem };
+  return tags[kind];
+}
 
 const coin = () => art(AREA_HUD_ART.coin, 'c-icon');
 
@@ -120,7 +123,7 @@ export function guardBuy(onBuy: (itemId: string, count: number) => void, clock: 
 }
 
 /** Dresses an open dialog as a wide shop panel in the Area's colours, with a small close button in its corner. */
-export function dressShopDialog(body: HTMLElement, theme: 'garden' | 'cloud') {
+export function dressShopDialog(body: HTMLElement, theme: 'garden' | 'cloud' | 'aquarium') {
   const panel = body.closest('.c-dialog__panel');
   if (!panel) return;
   panel.classList.add('c-dialog__panel--shop', `c-shop--${theme}`);

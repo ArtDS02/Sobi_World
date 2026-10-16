@@ -42,6 +42,8 @@ export function aquariumWorldEvents(e: AquariumEvent): WorldEvent[] {
       const materials = Object.entries(TANK_LEVELS[e.level - 1]?.materials ?? {}).flatMap(([id, n]) => removed(id, n ?? 0));
       return [...coins(-e.gold), ...materials];
     }
+    case 'AQUARIUM_SHOP_BOUGHT':
+      return [...coins(-e.gold), ...added(e.itemId, e.count)];
     case 'AQUARIUM_EGGS_LAID':
       return [...removed(FEED_ITEM, AB.breeding.feed), ...(e.boostItem ? removed(e.boostItem, 1) : [])];
     case 'AQUARIUM_EGG_HATCHED':

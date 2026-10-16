@@ -243,8 +243,8 @@ export const vi = {
       done: "Hôm nay mọi việc đã ổn, nghỉ ngơi nhé",
     },
     go: "Đi",
-    others: "+{count} việc khác",
-    hide: "Ẩn gợi ý",
+    bell: "Thông báo",
+    bellCount: "Thông báo: {count} việc đang chờ",
   },
 
   // Away-screen lines of each Area (AreaModule.getSummary keys: summary.<area>.<line>).
@@ -451,8 +451,8 @@ export const vi = {
     hud: { water: "{percent}%", waterLabel: "Độ trong của nước", fish: "{count}/{capacity} cá", eggs: "{count} trứng" },
     // The scene: the sign, the fishing spot and the name of each place (one per tank level, decision 030).
     scene: {
-      sign: "Bể cá",
       fishing: "Bến câu",
+      shop: "Cửa hàng",
       ready: "Cá đang cắn câu!",
       places: ["Bể Kính Bên Bến", "Hồ Đá Ven Bờ", "Đầm San Hô", "Vịnh Ngọc Trai Cổ", "Đại Dương Sâu"],
     },
@@ -487,6 +487,16 @@ export const vi = {
     upgrade: "Nâng lên cấp {level}: chứa {capacity} cá ({price})",
     upgradeMax: "Bể đã ở cấp cao nhất.",
     upgradeHint: "Bể lớn hơn chứa nhiều cá hơn và nước lâu đục hơn.",
+    // The shop (decision 032).
+    shop: "Cửa hàng",
+    shopTitle: "Tiệm Cá Bến Nước",
+    shopIntro: "Thức ăn cá, thuốc và cá giống để thả vào bể.",
+    shopOwned: "Đang có {count}",
+    shopEach: "{gold} / cái",
+    shopBuy: "×{count}",
+    shopFeedLine: "Tăng {hunger} độ no cho một con cá",
+    shopMedicineLine: "Chữa khỏi bệnh cho một con cá",
+    shopFishLine: "Thả vào bể, lớn hẳn sau {time}",
     // A fish card.
     stage: { BABY: "Cá con", YOUNG: "Cá choai", ADULT: "Cá lớn", MATURE: "Cá trưởng thành" },
     gender: { MALE: "Đực", FEMALE: "Cái" },
@@ -566,6 +576,7 @@ export const vi = {
     toast: {
       fed: "Đã cho {count} cá ăn",
       feedBought: "Mua thêm {count} thức ăn cá: -{gold} Sobi Coin",
+      bought: "Đã mua {count} {name}",
       petted: "{name} thích lắm!",
       treated: "Đã chữa cho {name}",
       potionCured: "Cá uống {potion} và khỏi bệnh, vui hẳn lên",
@@ -739,6 +750,9 @@ export const vi = {
     tagFertilizer: "Phân bón",
     tagWater: "Nước",
     tagItem: "Vật phẩm",
+    tagFeed: "Thức ăn",
+    tagMedicine: "Thuốc",
+    tagFish: "Cá giống",
     offFor: "{counts}: {reason}",
   },
 
@@ -1541,7 +1555,7 @@ export const vi = {
     step4: "Heo lớn dần theo thời gian thật. Quay lại sau nhé.",
     step5: "Heo càng vui vẻ, bán càng được giá. Chăm kỹ là lời nhiều.",
     step6: "Vuốt ve heo để tăng tim Gắn kết. Heo thân thiết cho giá xuất chuồng tốt hơn.",
-    step7: "Ra Sảnh, ghé Bảng đơn hàng để nhận việc và thưởng. Khung \"Việc tiếp theo\" luôn gợi ý bạn nên làm gì.",
+    step7: "Ra Sảnh, ghé Bảng đơn hàng để nhận việc và thưởng. Nút chuông 🔔 luôn có danh sách việc nên làm.",
     // R11 (not in Appendix B).
     title: "Hướng dẫn",
     progress: "Bước {n}/{total}",

@@ -40,6 +40,8 @@ export interface FishView {
   grown: boolean;
   pet: boolean;
   hearts: number;
+  /** When it last ate (the scene drops food for a fish that just did), null if never. */
+  fedAt: number | null;
 }
 
 export interface SceneState {
@@ -66,6 +68,7 @@ export const fishView = (f: Fish, now: number): FishView => ({
   grown: isGrown(f),
   pet: isPet(f),
   hearts: Math.floor((f.bond ?? 0) / 20),
+  fedAt: f.lastFedAt ?? null,
 });
 
 export const sceneState = (a: AquariumState, now: number, dayOffsetMs: number): SceneState => ({

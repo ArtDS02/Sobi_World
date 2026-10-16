@@ -14,7 +14,7 @@ import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { mulberry32 } from '../../src/core/rng';
 import type { WorldSave } from '../../src/core/save/world';
 import { vi } from '../../src/i18n/vi';
-import { nextStepVm } from '../../src/ui/goals/nextStep';
+import { nextStepVm, noticesVm } from '../../src/ui/goals/nextStep';
 import { farm } from './actionKit';
 import { makePig } from './pigFactory';
 import { inv } from './stateFactory';
@@ -89,6 +89,21 @@ describe('next step chip', () => {
     const vm = nextStepVm({ world: { ...w, goals: { ...w.goals, daily: { day: 20_000, goals: [], bonusClaimed: false } } }, goals: GOALS, area: [], place: 'area', day: 20_000, next: { name: 'Sobi Garden', level: 3 } })!;
     expect(vm.text).toContain('Sobi Garden');
     expect(vm.more).toBe(0);
+  });
+
+  it('the bell lists every notice, most urgent first, telling tasks from hints (decision 034)', () => {
+    const w = claimedLogin(base());
+    const care = [
+      { key: 'suggest.farm.critical', params: { name: 'Mít' }, priority: 95, tone: 'alert' as const, goto: { target: 'pig', id: 'a' } },
+      { key: 'suggest.farm.fillTrough', priority: 40, tone: 'warn' as const },
+    ];
+    const list = noticesVm({ world: w, goals: GOALS, area: care, place: 'area', day: 20_000, next: { name: 'Sobi Garden', level: 3 } });
+    expect(list[0]).toMatchObject({ tone: 'alert', task: true, goto: { target: 'pig', id: 'a' } });
+    expect(list[1]).toMatchObject({ text: vi.suggest.farm.fillTrough, task: true });
+    expect(list.at(-1)).toMatchObject({ task: false });
+    expect(list.filter((n) => n.task)).toHaveLength(nextStepVm({ world: w, goals: GOALS, area: care, place: 'area', day: 20_000, next: null })!.more + 1);
+    const calm = noticesVm({ world: { ...w, goals: { ...w.goals, daily: { day: 20_000, goals: [], bonusClaimed: false } } }, goals: GOALS, area: [], place: 'area', day: 20_000, next: null });
+    expect(calm).toEqual([expect.objectContaining({ id: 'done', task: false })]);
   });
 
   it('the registry gathers the open Areas\' suggestions, most urgent first', () => {

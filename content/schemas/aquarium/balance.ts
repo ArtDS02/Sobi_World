@@ -65,6 +65,8 @@ export const aquariumBalanceFileSchema = z
       /** Share of the price a half-grown fish fetches (linear up to full size). */
       minShare: unit,
     }),
+    /** The Area's shop (decision 032): what it sells and the price of one, in Sobi Coin. */
+    shop: z.array(z.strictObject({ itemId, price: posInt })).min(1),
     xp: z.strictObject({
       feed: nonNeg, clean: nonNeg, catch: nonNeg, release: nonNeg, pet: nonNeg, sell: nonNeg, breed: nonNeg, treat: nonNeg, collect: nonNeg, upgrade: nonNeg,
     }),

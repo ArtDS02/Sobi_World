@@ -10,6 +10,27 @@
 
 ## Nhật ký
 
+### 2026-10-16 — GĐ14 Aquarium: góp ý lượt 2 — drone, cá vẫy đuôi, cá cắn câu, bỏ bảng "Bể cá" (decision 033, chờ duyệt)
+✅ Đã làm:
+1. Bỏ bảng "Bể cá" trong cảnh (thẻ Bể vẫn mở bằng bảng tên nơi / thẻ "Bể cá").
+2. Bỏ dấu "!" trên cần câu: khi câu được, phao (cắt riêng từ ảnh cần câu) giật xuống và cần rung; cấp 1 gợn sóng quanh phao vẽ sẵn, cấp 5 đèn lồng loé sáng.
+3. Cá vẫy đuôi thật: thân cá vẽ thành dải 14 đoạn (Phaser Rope) uốn theo sóng, mạnh ở đuôi, nhanh hơn khi bơi nhanh / quay đầu.
+4. Drone: cho ăn → drone thức ăn bay tới rắc hạt, cá lao tới khi hạt rơi; thay nước → drone nước đổ nước từ bụng xuống, nước đục tan sau khi đổ. Đang mượn drone Garden / Cloud.
+5. Prompt sheet W (2 drone) thêm vào `art_inbox/.batch/aquarium-03-fx/PROMPT.md`.
+🧪 Đã kiểm tra: typecheck, lint, test; sandbox 1600×900 (bể cấp 4): cá uốn đuôi, cho ăn có drone + hạt, thay nước có drone + dòng nước, phao giật; không lỗi console. Xem `npm run check` ở cuối phiên.
+👉 Bạn cần: xem lại Aquarium; tạo ảnh sheet W (khuyên làm) và F (không bắt buộc).
+
+### 2026-10-16 — GĐ14 Aquarium: cửa hàng, cá bơi sống động, hiệu ứng cho ăn / thay nước (decision 032, chờ duyệt)
+✅ Đã làm (chủ dự án yêu cầu):
+1. **Cửa hàng Aquarium** (nút "Cửa hàng" trên HUD, lưới dùng chung tông xanh nước): Thức ăn cá 20, Thuốc 100, cá giống Cá Vàng 40 / Cá Rô 50 / Cá Chép 60 (`content/aquarium/balance.json` `shop`, Admin sửa được giá). Hành động `buyShopItem`, sổ cái `AQUARIUM_SHOP`, sự kiện `AQUARIUM_SHOP_BOUGHT`; nhãn loại hàng mới (Thức ăn, Thuốc, Cá giống). Không đổi save.
+2. **Cá bơi** (`scene/fishSwim.ts`): tăng / giảm tốc, đi cong, nghiêng thân theo hướng, vẫy đuôi theo tốc độ, quay đầu (thân hẹp rồi lật), nhấp nhô khi nghỉ, thỉnh thoảng lao nhanh và nhả bọt; cá đói bơi gần mặt nước, cá bệnh gần đáy.
+3. **Cho ăn**: hạt rơi xuống mặt nước (gợn sóng), chìm lắc lư; cá vừa được cho ăn bơi nhanh tới hạt gần nhất và đớp. **Thay nước**: dòng nước đổ vào, bọt dâng, dải sáng quét ngang, lớp đục tan dần, lấp lánh; cá bơi vui. Đọc từ trạng thái (`fedAt` mới, nước tăng), tắt khi "Giảm chuyển động".
+4. Prompt ảnh `art_inbox/.batch/aquarium-03-fx/PROMPT.md` (hạt thức ăn, gợn sóng; 1 lượt Gemini). Tới khi có ảnh, vẽ bằng code.
+🧪 Đã kiểm tra: `npm run check` xanh (1.381 test; mới: `aquariumShop.test.ts`, `aquariumSwim.test.ts`); sandbox 1600×900: mua ×10 thức ăn (0 → 10, toast), cho ăn cả bể (hạt rơi, 15 cá lao tới ăn), thay nước 18% → 100% (dòng nước, bọt, đục tan); không lỗi console.
+⚠️ Quyết định tự đưa ra: bán cá giống 3 loài Thường (giá cao hơn giá bán cá câu, không có vòng lời); chưa có sạp hàng trong cảnh; dòng nước giữ vẽ bằng code. Sau khi sửa cắt dải sáng theo vùng nước đục, chưa chạy lại thay nước bằng tay (save sandbox nước đã trong).
+👉 Bạn cần: xem cửa hàng + hiệu ứng; duyệt giá cá giống; tạo ảnh theo prompt (không bắt buộc).
+➡️ Tiếp theo: Adventure.
+
 ### 2026-10-16 — GĐ14: HUD dùng chung cho các Area, cửa hàng làm lại (decision 031, chờ duyệt)
 ✅ Đã làm (chủ dự án yêu cầu, theo `art_inbox/.batch/hud-01/PROMPT.md`):
 1. **HUD chung** `ui/components/areaHud.ts` + `_areahud.scss` (bộ tím của Sảnh / Aquarium): viên xu, viên cấp có sao, nút vuông có icon. Garden, Cloud, Aquarium, Adventure dùng chung; bỏ CSS HUD lặp ở 4 file.

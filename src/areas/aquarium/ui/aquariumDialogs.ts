@@ -1,9 +1,10 @@
-// The Aquarium's dialogs (a fish, the sale, the rod, the bag of fish, the tank, breeding): each body is rebuilt from the
+// The Aquarium's dialogs (a fish, the sale, the rod, the bag of fish, the tank, breeding, the shop): each body is rebuilt from the
 // world while the dialog is open, so its numbers (time left, what the bag holds) stay true without being closed and
 // reopened. The pieces live in fishDialogs.ts, fishingDialog.ts and tankDialogs.ts; this file composes them.
 import { createDialogKit, type AquariumDialogsDeps } from './dialogKit';
 import { fishDialogs } from './fishDialogs';
 import { openFishing } from './fishingDialog';
+import { openShop } from './shopDialog';
 import { tankDialogs } from './tankDialogs';
 
 export { actionButton, type AquariumDialogsDeps } from './dialogKit';
@@ -14,6 +15,7 @@ export function createAquariumDialogs(d: AquariumDialogsDeps) {
     ...fishDialogs(kit),
     ...tankDialogs(kit),
     openFishing: () => openFishing(kit),
+    openShop: () => openShop(kit),
     follow,
     close,
     isOpen,

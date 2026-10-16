@@ -250,6 +250,18 @@
   --shop-head: #f6f2ff;
 }
 
+.c-shop--aquarium .c-shop {
+  --shop-rim: #cfe4f6;
+  --shop-card: #ffffff;
+  --shop-ink: #2f4f7a;
+  --shop-muted: #6a86a8;
+  --shop-btn: #5aa6dc;
+  --shop-btn-edge: #3a7fb4;
+  --shop-tag: #e4f2fd;
+  --shop-tag-ink: #2f5f8a;
+  --shop-head: #f0f8ff;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .c-shop__card, .c-shop__buy, .c-shop__close { transition: none; }
 }

@@ -1,6 +1,7 @@
 // What the Aquarium's dialogs share: the button that says why it is off, the need bar, and the "live" dialog — one
 // open at a time, its body rebuilt from the world on every change so its numbers stay true.
 import { openDialog } from '../../../ui/components/dialog';
+import type { UiIcon } from '../../../core/config/assetIds';
 import { el, patch } from '../../../ui/dom';
 import { localOffsetMs } from '../../../ui/localDay';
 import type { EventBase } from '../../../core/events';
@@ -46,7 +47,8 @@ export interface AquariumDialogsDeps {
 
 /** What each dialog file gets to open itself and act. */
 export interface DialogKit {
-  open(title: string, render: (w: WorldSave, close: () => void) => HTMLElement | null): void;
+  /** `dress` restyles the fresh dialog (the shop's panel); `icon` goes in its title bar. */
+  open(title: string, render: (w: WorldSave, close: () => void) => HTMLElement | null, dress?: (body: HTMLElement) => void, icon?: UiIcon): void;
   world(): WorldSave | null;
   now(): number;
   offset(): number;
@@ -69,11 +71,12 @@ export function createDialogKit(d: AquariumDialogsDeps) {
   };
 
   const kit: DialogKit = {
-    open(title, render) {
+    open(title, render, dress, icon) {
       const w = d.world();
       if (!w) return;
       stop();
-      const handle = openDialog(d.host, title, vi.aquarium.close);
+      const handle = openDialog(d.host, title, vi.aquarium.close, icon);
+      dress?.(handle.body);
       const draw = (now: WorldSave) => render(now, handle.close);
       live = { body: handle.body, render: draw };
       patch(handle.body, draw(w));

@@ -236,7 +236,7 @@ describe('the scene', () => {
         expect(y).toBeGreaterThan(place.water.bottom);
       }
       expect(place.water.right).toBeLessThan(AQUARIUM_DESIGN.width);
-      for (const spot of [place.sign, place.plaque, place.scales, place.dock]) {
+      for (const spot of [place.plaque, place.scales, place.dock, ...(place.bite ? [place.bite] : [])]) {
         expect(spot.x + offsetX).toBeGreaterThan(0);
         expect(spot.x + offsetX).toBeLessThan(width);
         expect(spot.y).toBeLessThan(height);
@@ -263,6 +263,7 @@ describe('what its events say', () => {
     AQUARIUM_SCALES_COLLECTED: { type: 'AQUARIUM_SCALES_COLLECTED', quantity: 3, left: 0 },
     AQUARIUM_SCALES_SHED: { type: 'AQUARIUM_SCALES_SHED', count: 1 },
     AQUARIUM_TANK_UPGRADED: { type: 'AQUARIUM_TANK_UPGRADED', level: 2, gold: 800 },
+    AQUARIUM_SHOP_BOUGHT: { type: 'AQUARIUM_SHOP_BOUGHT', itemId: 'FOOD_FISH', count: 10, gold: 200 },
     AQUARIUM_EGGS_LAID: { type: 'AQUARIUM_EGGS_LAID', speciesId: 'fish_betta', eggId: 'e', mutated: false },
     AQUARIUM_EGG_HATCHED: { type: 'AQUARIUM_EGG_HATCHED', fishId: 'a', speciesId: 'fish_betta', name: 'Bé Bơi' },
     AQUARIUM_FISH_SICK: { type: 'AQUARIUM_FISH_SICK', fishId: 'a', name: 'Sóng' },

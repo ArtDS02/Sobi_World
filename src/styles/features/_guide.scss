@@ -1,4 +1,4 @@
-// The guide over the world (GĐ6): the "next step" chip and the Area's NPC. Owns `.guide*`, `.next-step*`, `.npc*`.
+// The guide over the world (GĐ6): the notice bell and its list (decision 034) and the Area's NPC. Owns `.guide*`, `.notice*`, `.npc*`.
 @use '../core' as *;
 
 .guide {
@@ -12,59 +12,144 @@
   }
 }
 
-.guide__chip-host {
+.guide__bell-host {
   position: absolute;
-  top: 4.6rem;
-  left: 50%;
-  display: flex;
-  justify-content: center;
-  width: min(34rem, 92%);
-  transform: translateX(-50%);
+  // Under the HUD's square buttons at the top right (they end near 5 rem in every place).
+  top: 5.8rem;
+  right: $sp-3;
 }
 
-.next-step {
+.notices {
+  position: relative;
+  display: grid;
+  justify-items: end;
+}
+
+// The bell: a round violet button like the HUD's, ringing a little while something urgent waits.
+.notices__bell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(180deg, #a98bdf, #7f63b8);
+  border: 2px solid #fff;
+  border-radius: 9999px;
+  box-shadow: 0 3px 0 #5b4590, 0 4px 10px rgb(60 40 110 / 25%);
+  transition: transform 0.12s ease, filter 0.12s ease;
+
+  &:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  &:active { transform: translateY(2px); box-shadow: 0 1px 0 #5b4590; }
+  &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
+  &.is-open { filter: brightness(1.12); }
+  &.has-tasks.is-alert .notices__icon { animation: notice-ring 1.6s ease-in-out infinite; transform-origin: 50% 15%; }
+}
+
+.notices__icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: #fff6d6;
+  stroke: #5b4590;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.notices__badge {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.35rem;
+  min-width: 1.3rem;
+  height: 1.3rem;
+  padding: 0 0.3rem;
+  font-size: 0.72rem;
+  font-weight: $fw-bold;
+  line-height: 1.3rem;
+  color: #fff;
+  text-align: center;
+  background: #4aa86b;
+  border: 2px solid #fff;
+  border-radius: 9999px;
+
+  .is-warn > & { background: #e8a13a; }
+  .is-alert > & { background: $c-danger; }
+}
+
+.notices__panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: min(24rem, 86vw);
+  max-height: min(26rem, 60vh);
+  padding: $sp-2;
+  overflow-y: auto;
+  background: #fffdf5;
+  border: 2px solid $c-honey;
+  border-radius: 1rem;
+  box-shadow: 0 4px 0 $c-border, 0 10px 24px rgb(60 40 20 / 18%);
+  animation: notice-open 0.14s ease-out;
+}
+
+.notices__title {
+  margin: 0 0 $sp-1;
+  padding: 0 $sp-1;
+  font-size: $fs-sm;
+  font-weight: $fw-bold;
+  color: $c-wood-dark;
+}
+
+.notices__list {
+  display: grid;
+  gap: $sp-1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.notice {
   display: flex;
   gap: $sp-2;
   align-items: center;
-  padding: $sp-1 $sp-2 $sp-1 $sp-3;
+  padding: $sp-1 $sp-2;
   font-size: $fs-sm;
   color: $c-wood-dark;
-  background: #fffdf5;
-  border: 2px solid $c-honey;
-  border-radius: 9999px;
-  box-shadow: 0 3px 0 $c-border;
+  background: #fff;
+  border: 1.5px solid #efe2c4;
+  border-left: 4px solid #4aa86b;
+  border-radius: 0.6rem;
 
-  &.is-warn {
-    border-color: #e8a13a;
-  }
-
-  &.is-alert {
-    color: $c-danger;
-    background: $c-danger-soft;
-    border-color: $c-danger;
-  }
+  &.is-warn { border-left-color: #e8a13a; }
+  &.is-alert { color: $c-danger; background: $c-danger-soft; border-left-color: $c-danger; }
+  &.is-hint { color: $c-text-muted; border-left-color: #d9cbb0; }
 }
 
-.next-step__text {
+.notice__text {
+  flex: 1;
   font-weight: $fw-bold;
+
+  .is-hint > & { font-weight: normal; }
 }
 
-.next-step__more {
-  font-size: $fs-xs;
-  color: $c-text-muted;
-}
-
-.next-step__go {
+.notice__go {
+  flex: none;
   padding: 0 $sp-3;
 }
 
-.next-step__hide {
-  padding: 0 $sp-1;
-  font: inherit;
-  color: $c-text-muted;
-  cursor: pointer;
-  background: none;
-  border: 0;
+@keyframes notice-ring {
+  0%, 60%, 100% { transform: rotate(0); }
+  10%, 30% { transform: rotate(14deg); }
+  20%, 40% { transform: rotate(-14deg); }
+}
+
+@keyframes notice-open {
+  from { opacity: 0; transform: translateY(-4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notices__bell, .notices__panel { transition: none; animation: none; }
+  .notices__icon { animation: none !important; }
 }
 
 .guide__npc-host {

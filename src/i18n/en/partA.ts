@@ -238,8 +238,8 @@ export const partA = {
       done: "Everything is fine today, take a rest",
     },
     go: "Go",
-    others: "+{count} more tasks",
-    hide: "Hide suggestions",
+    bell: "Notices",
+    bellCount: "Notices: {count} things waiting",
   },
 
   summary: {

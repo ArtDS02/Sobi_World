@@ -1,12 +1,12 @@
 // Asset ids the Aquarium draws (every id resolves through the manifest; `npm run assets:check` requires them).
-import { itemArtId } from '../../../core/config/assetIds';
+import { AREA_HUD_ART, itemArtId, UI_ICON } from '../../../core/config/assetIds';
 import { ITEMS, ITEM_IDS } from '../../../core/config/items';
 import { FISH_LIST } from './config/content';
 
-/** The scene's own pictures (GĐ14, decision 030): one painted place per tank level, the rod, the signs, the sand. */
+/** The scene's own pictures (GĐ14, decision 030): one painted place per tank level, the rod, the name plaque, the sand. */
 export const TANK_ART = {
   places: ['bg_aquarium', 'bg_aquarium_t2', 'bg_aquarium_t3', 'bg_aquarium_t4', 'bg_aquarium_t5'],
-  props: ['bld_fish_dock', 'prop_aqua_sign', 'prop_aqua_plaque', 'prop_fish_egg', 'prop_scale_pile', 'prop_orange_pearls', 'prop_pearl_pile'],
+  props: ['bld_fish_dock', 'prop_aqua_plaque', 'prop_fish_egg', 'prop_scale_pile', 'prop_orange_pearls', 'prop_pearl_pile'],
 } as const;
 
 /** The HUD's icons (decision 030): the water pill, the level star, the three buttons at the top right. */
@@ -32,7 +32,7 @@ export const AQUARIUM_ITEM_IDS = ITEM_IDS.filter(
 export const aquariumArtIds = (): string[] => [
   ...TANK_ART.places,
   ...TANK_ART.props,
-  ...new Set([...Object.values(HUD_ART), ...Object.values(BAR_ART)]),
+  ...new Set([...Object.values(HUD_ART), ...Object.values(BAR_ART), AREA_HUD_ART.shop, UI_ICON.treat]),
   ...FISH_LIST.map((f) => f.art),
   ...AQUARIUM_ITEM_IDS.map(itemArtId),
 ];

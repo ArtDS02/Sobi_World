@@ -35,6 +35,13 @@
   },
   "breeding": { "cooldownHours": 12, "eggHours": 6, "maxEggs": 2, "minHunger": 50, "feed": 2 },
   "sell": { "minShare": 0.4 },
+  "shop": [
+    { "itemId": "FOOD_FISH", "price": 20 },
+    { "itemId": "MEDICINE_COMMON", "price": 100 },
+    { "itemId": "item_fish_goldfish", "price": 40 },
+    { "itemId": "item_fish_perch", "price": 50 },
+    { "itemId": "item_fish_carp", "price": 60 }
+  ],
   "xp": {
     "feed": 1,
     "clean": 2,

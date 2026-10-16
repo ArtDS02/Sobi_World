@@ -66,6 +66,7 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
       hudPills(hudPill(AREA_HUD_ART.coin, v.coins, vi.aquarium.coins), hudPill(HUD_ART.water, v.waterText, vi.aquarium.hud.waterLabel), hudLevel(v)),
       hudNav(vi.aquarium.title, [
         { icon: HUD_ART.plaza, label: vi.aquarium.plaza, onClick: d.leave },
+        { icon: AREA_HUD_ART.shop, label: vi.aquarium.shop, onClick: () => dialogs.openShop() },
         { icon: HUD_ART.items, label: vi.aquarium.items, onClick: () => d.openPanel('inventory') },
         { icon: HUD_ART.menu, label: vi.aquarium.menu, onClick: () => d.openPanel('menu') },
       ]),

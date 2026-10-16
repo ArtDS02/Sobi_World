@@ -4,6 +4,13 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
+## GĐ14 — Aquarium: cho ăn / thay nước (decision 032)
+| Việc | Ghi chú |
+|---|---|
+| `fx_fish_pellet`, `fx_water_ripple` | Đang vẽ bằng code trong `aquariumFx.ts`; prompt `art_inbox/.batch/aquarium-03-fx/PROMPT.md`. Code tự dùng ảnh khi manifest có id. |
+| `prop_drone_aquarium`, `prop_drone_water` (decision 033) | Drone thức ăn / drone nước; đang mượn `prop_drone_garden` / `prop_drone_cloud`. Prompt sheet W cùng file. |
+| Sạp hàng Aquarium trong cảnh | Chưa có; cửa hàng mở bằng nút HUD. |
+
 ## GĐ12 — Thế giới động
 Tất cả là placeholder (CSS, ký tự) — làm art ở GĐ14 (decision 017):
 | Việc | Ghi chú |

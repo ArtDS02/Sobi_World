@@ -1,6 +1,8 @@
 // The Aquarium on screen (spec V2 §8.3, GĐ14 on the owner's mock-ups, decision 030): one painted place per tank level
 // (AquariumPlaces) with its fish swimming, the "Bể cá" sign and the name plaque, the rod at the fishing spot, the eggs
-// and the pile of scales on the sand. Draws and reports clicks only — what a click does, and every number, comes from
+// and the pile of scales on the sand. The fish swim (fishSwim.ts); feeding drops pellets the fed fish chase, a water
+// change pours fresh water in (aquariumFx.ts) — both read off the state (a new meal, the water rising), like the
+// Garden's harvest. Draws and reports clicks only — what a click does, and every number, comes from
 // the app through AquariumSceneDeps, so the scene never reaches the store or another Area.
 import * as Phaser from 'phaser';
 import type { WorldRect } from '../../../systems/layout/camera';
@@ -10,8 +12,12 @@ import { fitCamera } from '../../../ui/world/fitCamera';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { FISH } from '../logic/config/content';
 import type { SceneState } from '../logic/derived';
+import { AquariumCare } from './aquariumCare';
+import { AquariumFx } from './aquariumFx';
 import { AquariumProps } from './aquariumProps';
-import { AQUARIUM_DESIGN, AQUARIUM_VIEW, aquariumPlace, fishIcon, fishScale, type AquariumPlace } from './aquariumView';
+import { FishBody } from './fishBody';
+import { Swimmer, type Mood } from './fishSwim';
+import { AQUARIUM_DESIGN, AQUARIUM_VIEW, aquariumPlace, fishIcon, fishScale, murkAlpha, type AquariumPlace } from './aquariumView';
 
 export const AQUARIUM_SCENE_KEY = 'aquarium';
 
@@ -27,18 +33,6 @@ export interface AquariumSceneDeps {
   paused: () => boolean;
 }
 
-interface Swimmer {
-  img: Phaser.GameObjects.Image;
-  icon: Phaser.GameObjects.Text;
-  rng: Rng;
-  tx: number;
-  ty: number;
-  /** Time (scene ms) the fish rests until before choosing its next target. */
-  restUntil: number;
-  species: string;
-  sick: boolean;
-}
-
 const KEY = (id: string, textures: Phaser.Textures.TextureManager) => (textures.exists(textureKey(id)) ? textureKey(id) : FALLBACK_PROP_KEY);
 
 export class AquariumScene extends Phaser.Scene {
@@ -48,6 +42,12 @@ export class AquariumScene extends Phaser.Scene {
   private murk!: Phaser.GameObjects.Rectangle;
   private night!: Phaser.GameObjects.Rectangle;
   private bubbles: { dot: Phaser.GameObjects.Arc; speed: number }[] = [];
+  private fx!: AquariumFx;
+  private care!: AquariumCare;
+  /** A cast is ready (a fish bites now and then) and when it next bites. */
+  private castReady = false;
+  private biteAt = 0;
+  private readonly biteRng = mulberry32(hashSeed('aquarium-bite'));
   private place: AquariumPlace = aquariumPlace(1);
   private level = 0;
   private shown = '';
@@ -74,6 +74,16 @@ export class AquariumScene extends Phaser.Scene {
     const pick = (p: AquariumPick) => !this.deps.paused() && this.deps.onPick(p);
     this.props = new AquariumProps(this, { onPick: pick, reduceMotion: () => this.deps.reduceMotion() });
     this.murk = this.add.rectangle(0, 0, 1, 1, v.murk).setOrigin(0, 0).setAlpha(0).setDepth(v.depth.murk);
+    this.fx = new AquariumFx(this, mulberry32(hashSeed('aquarium-fx')));
+    this.care = new AquariumCare(this, {
+      fx: this.fx,
+      murk: this.murk,
+      swimmers: () => this.swimmers.values(),
+      fish: (id) => this.swimmers.get(id),
+      place: () => this.place,
+      view: () => this.view,
+      reduceMotion: () => this.deps.reduceMotion(),
+    });
     this.night = this.add.rectangle(width / 2, height / 2, width * 3, height * 3, v.night).setAlpha(0).setDepth(v.depth.night);
     const rng = mulberry32(hashSeed('bubbles'));
     for (let i = 0; i < 9; i += 1) {
@@ -97,14 +107,37 @@ export class AquariumScene extends Phaser.Scene {
     this.textures.on(Phaser.Textures.Events.ADD, onTexture);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.textures.off(Phaser.Textures.Events.ADD, onTexture));
     this.events.on(Phaser.Scenes.Events.WAKE, () => this.sync(true));
+    this.events.on(Phaser.Scenes.Events.SLEEP, () => this.care.calmDown());
     this.sync(true);
   }
 
   override update(time: number, delta: number) {
     this.sync(false);
-    if (this.deps.reduceMotion()) return;
+    if (this.deps.reduceMotion()) {
+      for (const s of this.swimmers.values()) s.still();
+      return;
+    }
     const w = this.place.water;
-    for (const s of this.swimmers.values()) this.swim(s, time, delta);
+    this.fx.update(time, delta, w);
+    if (this.castReady && time >= this.biteAt) {
+      const [lo, hi] = AQUARIUM_VIEW.bite.everyMs;
+      this.biteAt = time + lo + this.biteRng.next() * (hi - lo);
+      const spot = this.props.bite();
+      if (spot) this.fx.bite(spot, w);
+    }
+    const hooks = { bubble: (x: number, y: number) => this.fx.bubble(x, y, w, 8, 40) };
+    const { chaseFactor, eatPx } = AQUARIUM_VIEW.feed;
+    for (const [id, s] of this.swimmers) {
+      let food = s.appetite > 0 ? this.fx.claim(id, s.m.x, s.m.y) : null;
+      if (s.appetite > 0 && !food) s.appetite = 0;
+      if (food && this.fx.eat(id, s.m.x, s.m.y, eatPx + s.img.displayWidth * 0.25)) {
+        s.appetite -= 1;
+        s.gulp(time);
+        hooks.bubble(s.m.x + s.facing * s.img.displayWidth * 0.4, s.m.y);
+        food = null;
+      }
+      s.update(time, delta, w, food, chaseFactor, hooks);
+    }
     for (const b of this.bubbles) {
       b.dot.y -= (b.speed * delta) / 1000;
       if (b.dot.y < w.top) b.dot.y = w.bottom;
@@ -132,11 +165,10 @@ export class AquariumScene extends Phaser.Scene {
       b.dot.x = p.water.left + (b.dot.getData('u') as number) * (p.water.right - p.water.left);
       b.dot.y = p.water.top + (b.dot.getData('v') as number) * (p.water.bottom - p.water.top);
     }
+    this.care.calmDown();
     for (const s of this.swimmers.values()) {
       const at = this.randomSpot(s.rng);
-      s.img.setPosition(at.x, at.y);
-      s.tx = at.x;
-      s.ty = at.y;
+      s.place(at.x, at.y);
     }
   }
 
@@ -145,34 +177,13 @@ export class AquariumScene extends Phaser.Scene {
     return { x: w.left + 60 + rng.next() * (w.right - w.left - 120), y: w.top + 30 + rng.next() * (w.bottom - w.top - 60) };
   }
 
-  /** One step of a fish towards its target; at the target it rests, then picks another. */
-  private swim(s: Swimmer, time: number, delta: number) {
-    const { swim } = AQUARIUM_VIEW;
-    const dx = s.tx - s.img.x;
-    const dy = s.ty - s.img.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist < 6) {
-      if (time >= s.restUntil) {
-        const at = this.randomSpot(s.rng);
-        s.tx = at.x;
-        s.ty = at.y;
-        s.restUntil = time + swim.pauseMs[0] + s.rng.next() * (swim.pauseMs[1] - swim.pauseMs[0]);
-      }
-    } else {
-      const step = (swim.speed * (s.sick ? swim.sickFactor : 1) * s.img.scaleX * delta) / 1000;
-      const k = Math.min(1, Math.abs(step) / dist);
-      s.img.x += dx * k;
-      s.img.y += dy * k;
-      if (Math.abs(dx) > 4) s.img.setFlipX(dx < 0);
-    }
-    s.icon.setPosition(s.img.x, s.img.y - s.img.displayHeight * 0.6);
-  }
-
   /** Redraws what changed since the last call (the fish themselves move every frame, but who is there changes rarely). */
   private sync(force: boolean) {
     const state = this.deps.read();
     if (!state) return;
     if (state.level !== this.level) this.enterPlace(state.level);
+    this.care.notice(state);
+    this.castReady = state.castReady;
     const key = JSON.stringify([
       state.fish.map((f) => [f.id, f.species, Math.round(f.growth / 5), f.sick, f.hunger < 30]),
       Math.round(state.water / 5),
@@ -185,7 +196,8 @@ export class AquariumScene extends Phaser.Scene {
     if (!force && key === this.shown) return;
     this.shown = key;
     const v = AQUARIUM_VIEW;
-    this.murk.setAlpha(Math.min(0.5, Math.max(0, (1 - state.water / 100) * 0.55)));
+    // While a water change plays, its tween owns the murk.
+    if (!this.care.murkHeld && !this.tweens.isTweening(this.murk)) this.murk.setAlpha(murkAlpha(state.water));
     this.night.setAlpha(state.night ? 0.32 : 0);
     this.props.show(state);
     // Fish: add the new, update the known, drop the gone.
@@ -203,19 +215,25 @@ export class AquariumScene extends Phaser.Scene {
         const rng = mulberry32(hashSeed('swim', f.id));
         const { x, y } = this.randomSpot(rng);
         // Plain bounds, not pixel-perfect: a flipped, scaled fish is hard to hit pixel by pixel.
-        const img = this.add.image(x, y, KEY(art, this.textures)).setDepth(v.depth.fish).setInteractive({ useHandCursor: true });
-        img.on(Phaser.Input.Events.POINTER_DOWN, () => !this.deps.paused() && this.deps.onPick({ kind: 'fish', id: f.id }));
+        const img = new FishBody(this, x, y, KEY(art, this.textures), v.depth.fish);
+        img.hit.on(Phaser.Input.Events.POINTER_DOWN, () => !this.deps.paused() && this.deps.onPick({ kind: 'fish', id: f.id }));
         const icon = this.add.text(x, y, '', { fontSize: '30px' }).setOrigin(0.5).setDepth(v.depth.badge - 2);
-        s = { img, icon, rng, tx: x, ty: y, restUntil: 0, species: f.species, sick: f.sick };
+        s = new Swimmer(img, icon, rng, f.species);
+        s.fedAt = f.fedAt;
         this.swimmers.set(f.id, s);
       }
       if (s.species !== f.species) {
         s.species = f.species;
         s.img.setTexture(KEY(art, this.textures));
       }
-      s.sick = f.sick;
-      s.img.setScale(fishScale(f.growth)).setTint(f.sick ? v.sickTint : 0xffffff);
+      s.mood = moodOf(f);
+      s.base = fishScale(f.growth);
+      s.img.setTint(f.sick ? v.sickTint : 0xffffff);
+      if (this.deps.reduceMotion()) s.still();
       s.icon.setText(fishIcon(f));
     }
   }
 }
+
+
+const moodOf = (f: { sick: boolean; hunger: number }): Mood => (f.sick ? 'sick' : f.hunger < 30 ? 'hungry' : 'calm');

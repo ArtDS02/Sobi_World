@@ -1,8 +1,9 @@
-// The things standing in an Aquarium place (decision 030): the "Bể cá" sign and the name plaque (both open the tank
-// card), the rod at the fishing spot (or a hit area over the spot the backdrop paints) with a "!" while a cast is
-// ready, the eggs and the pile of scales on the sand, and pearls for the look. Positions come from the place.
+// The things standing in an Aquarium place (decision 030): the name plaque (opens the tank card), the rod at the
+// fishing spot (or a hit area over the spot the backdrop paints) — while a cast is ready a fish bites: the float is cut
+// out of the rod's picture and jerks down, the rod tugs (decision 033); where the backdrop paints the spot, the scene
+// rings the water by its float or makes the deep sea's lantern glow — the eggs and the pile of scales on the sand, and pearls for
+// the look. Positions come from the place.
 import * as Phaser from 'phaser';
-import { vi } from '../../../i18n/vi';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import type { SceneState } from '../logic/derived';
 import type { AquariumPick } from './AquariumScene';
@@ -16,13 +17,14 @@ export interface AquariumPropsDeps {
 }
 
 export class AquariumProps {
-  private sign: Img;
-  private signText: Phaser.GameObjects.Text;
   private plaque: Img;
   private plaqueText: Phaser.GameObjects.Text;
+  /** The rod's picture in three cuts of the same texture: the rod and line above the float, the handle beside it,
+   *  and the float, which can move on its own. All three share position, origin, scale and rotation. */
   private rod: Img;
+  private rodLow: Img;
+  private rodFloat: Img;
   private dock: Phaser.GameObjects.Zone;
-  private ready: Phaser.GameObjects.Text;
   private pile: Img;
   private pileBadge: Phaser.GameObjects.Text;
   private eggs: Img[] = [];
@@ -37,23 +39,16 @@ export class AquariumProps {
   ) {
     const v = AQUARIUM_VIEW;
     const t = v.text;
-    this.sign = this.image(v.sign.art, v.sign.width).setOrigin(0.5, 1).setDepth(v.depth.sign);
-    this.signText = scene.add
-      .text(0, 0, vi.aquarium.scene.sign, { fontFamily: t.fontFamily, fontSize: `${t.signPx}px`, fontStyle: 'bold', color: t.color })
-      .setOrigin(0.5)
-      .setDepth(v.depth.sign + 1);
     this.plaque = this.image(v.plaque.art, v.plaque.width).setDepth(v.depth.sign);
     this.plaqueText = scene.add
       .text(0, 0, '', { fontFamily: t.fontFamily, fontSize: `${t.plaquePx}px`, fontStyle: 'bold', color: t.color })
       .setOrigin(0.5)
       .setDepth(v.depth.sign + 1);
     this.rod = this.image(v.rod.art, 0).setOrigin(0.5, 1).setDepth(v.depth.dock);
+    this.rodLow = this.image(v.rod.art, 0).setOrigin(0.5, 1).setDepth(v.depth.dock);
+    this.rodFloat = this.image(v.rod.art, 0).setOrigin(0.5, 1).setDepth(v.depth.dock + 1);
+    this.cutRod();
     this.dock = scene.add.zone(0, 0, 1, 1).setDepth(v.depth.dock);
-    this.ready = scene.add
-      .text(0, 0, '!', { fontFamily: t.fontFamily, fontSize: `${v.ready.fontPx}px`, fontStyle: 'bold', color: v.ready.color, backgroundColor: v.ready.background, padding: { x: 12, y: 0 } })
-      .setOrigin(0.5)
-      .setDepth(v.depth.badge - 1)
-      .setVisible(false);
     this.pile = this.image(v.scalePile.art, v.scalePile.width).setOrigin(0.5, 1).setDepth(v.depth.egg).setVisible(false);
     this.pileBadge = scene.add
       .text(0, 0, '', { fontFamily: t.fontFamily, fontSize: `${v.badge.fontPx}px`, fontStyle: 'bold', color: v.badge.color, backgroundColor: v.badge.background, padding: { x: 8, y: 0 } })
@@ -62,11 +57,9 @@ export class AquariumProps {
       .setVisible(false);
 
     const tank = () => deps.onPick({ kind: 'tank' });
-    this.clickable(this.sign, tank, this.signText);
     this.clickable(this.plaque, tank, this.plaqueText);
-    this.clickable(this.rod, () => deps.onPick({ kind: 'dock' }));
+    this.clickable(this.rod, () => deps.onPick({ kind: 'dock' }), undefined, [this.rodLow, this.rodFloat]);
     this.dock.setInteractive({ useHandCursor: true }).on(Phaser.Input.Events.POINTER_DOWN, () => deps.onPick({ kind: 'dock' }));
-    this.ready.setInteractive({ useHandCursor: true }).on(Phaser.Input.Events.POINTER_DOWN, () => deps.onPick({ kind: 'dock' }));
     this.clickable(this.pile, () => deps.onPick({ kind: 'scales' }));
     this.pileBadge.setInteractive({ useHandCursor: true }).on(Phaser.Input.Events.POINTER_DOWN, () => deps.onPick({ kind: 'scales' }));
   }
@@ -75,13 +68,14 @@ export class AquariumProps {
   layout(place: AquariumPlace, name: string) {
     this.place = place;
     const v = AQUARIUM_VIEW;
-    this.sign.setPosition(place.sign.x, place.sign.y);
-    this.signText.setPosition(place.sign.x, place.sign.y - this.sign.displayHeight * 0.66);
     this.plaque.setPosition(place.plaque.x, place.plaque.y);
     this.plaqueText.setPosition(place.plaque.x, place.plaque.y + 1).setText(name);
     const rod = place.rod;
-    this.rod.setVisible(Boolean(rod));
-    if (rod) this.rod.setPosition(rod.x, rod.y).setScale(rod.scale).setData('scale', rod.scale);
+    for (const part of this.rodParts()) {
+      part.setVisible(Boolean(rod)).setRotation(0);
+      if (rod) part.setPosition(rod.x, rod.y).setScale(rod.scale).setData('scale', rod.scale);
+    }
+    this.cutRod();
     const d = place.dock;
     this.dock.setPosition(d.x, d.y).setSize(d.width, d.height);
     this.dock.input?.hitArea.setTo(0, 0, d.width, d.height);
@@ -93,7 +87,7 @@ export class AquariumProps {
     this.eggs.forEach((egg, i) => egg.setPosition(eggSpot(place, i).x, eggSpot(place, i).y));
   }
 
-  /** Shows what the state says: the scales and their count, the eggs, the "!" while a cast is ready. */
+  /** Shows what the state says: the scales and their count, the eggs. */
   show(state: SceneState) {
     const place = this.place;
     if (!place) return;
@@ -105,14 +99,45 @@ export class AquariumProps {
       this.eggs.push(this.image(v.egg.art, v.egg.width).setOrigin(0.5, 1).setPosition(at.x, at.y).setDepth(v.depth.egg));
     }
     this.eggs.forEach((egg, i) => egg.setVisible(i < state.eggs));
-    // Beside the fishing spot, not over it: the top-right corner belongs to the HUD buttons.
-    const x = place.dock.x - place.dock.width / 2 - 18;
-    const y = place.dock.y;
-    this.scene.tweens.killTweensOf(this.ready);
-    this.ready.setPosition(x, y).setVisible(state.castReady);
-    if (state.castReady && !this.deps.reduceMotion()) {
-      this.scene.tweens.add({ targets: this.ready, y: y - 8, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+  }
+
+  /**
+   * A fish bites (while a cast is ready): the float jerks down twice and the rod tugs on its handle. Where the backdrop
+   * paints the spot, the answer is where the scene rings the water or makes the lantern glow (null: nothing to add).
+   */
+  bite(): { x: number; y: number; kind: 'ripple' | 'glow' } | null {
+    const place = this.place;
+    if (!place) return null;
+    if (place.bite) return place.bite;
+    const rod = place.rod;
+    if (!rod) return null;
+    const b = AQUARIUM_VIEW.bite;
+    if (this.scene.tweens.isTweening(this.rodFloat)) return null;
+    const parts = this.rodParts();
+    this.scene.tweens.add({ targets: parts, rotation: b.tugRad, duration: 90, yoyo: true, repeat: 1, ease: 'Sine.easeInOut', onComplete: () => parts.forEach((p) => p.setRotation(0)) });
+    this.scene.tweens.add({ targets: this.rodFloat, y: rod.y + b.dipPx, duration: 110, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => this.rodFloat.setY(rod.y) });
+    return null;
+  }
+
+  private rodParts(): Img[] {
+    return [this.rod, this.rodLow, this.rodFloat];
+  }
+
+  /** Cuts the rod's texture into its three pieces (again when the real picture arrives late). */
+  private cutRod() {
+    const f = AQUARIUM_VIEW.bite.cut;
+    const w = this.rod.width;
+    const h = this.rod.height;
+    // Measured on the 200 × 300 picture; a stand-in texture of another size is just drawn whole.
+    if (w !== f.width || h !== f.height) {
+      this.rod.setCrop();
+      this.rodLow.setCrop(0, 0, 0, 0);
+      this.rodFloat.setCrop(0, 0, 0, 0);
+      return;
     }
+    this.rod.setCrop(0, 0, w, f.floatTop);
+    this.rodLow.setCrop(0, f.floatTop, f.floatLeft, h - f.floatTop);
+    this.rodFloat.setCrop(f.floatLeft, f.floatTop, w - f.floatLeft, h - f.floatTop);
   }
 
   /** A texture arrived: images still on the fallback take it. */
@@ -123,7 +148,7 @@ export class AquariumProps {
       if (width > 0) img.setData('scale', width / img.width);
       img.setScale((img.getData('scale') as number | undefined) ?? 1);
     }
-    if (this.place) this.signText.setY(this.place.sign.y - this.sign.displayHeight * 0.66);
+    this.cutRod();
   }
 
   /** An image of `id` drawn `width` wide (0 = its own size, or the scale set later). */
@@ -136,18 +161,20 @@ export class AquariumProps {
   }
 
   /** A click opens something; hover grows the image (and its label) a little. */
-  private clickable(img: Img, onClick: () => void, label?: Phaser.GameObjects.Text) {
-    img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: 20 });
-    img.on(Phaser.Input.Events.POINTER_DOWN, onClick);
+  private clickable(img: Img, onClick: () => void, label?: Phaser.GameObjects.Text, also: Img[] = []) {
+    for (const part of [img, ...also]) {
+      part.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: 20 });
+      part.on(Phaser.Input.Events.POINTER_DOWN, onClick);
+    }
     label?.setInteractive({ useHandCursor: true }).on(Phaser.Input.Events.POINTER_DOWN, onClick);
     const grow = (on: boolean) => {
       if (this.deps.reduceMotion()) return;
       const k = on ? AQUARIUM_VIEW.hoverScale : 1;
       const s = ((img.getData('scale') as number | undefined) ?? 1) * k;
-      this.scene.tweens.add({ targets: img, scaleX: s, scaleY: s, duration: 120 });
+      this.scene.tweens.add({ targets: [img, ...also], scaleX: s, scaleY: s, duration: 120 });
       if (label) this.scene.tweens.add({ targets: label, scale: k, duration: 120 });
     };
-    for (const target of label ? [img, label] : [img]) {
+    for (const target of label ? [img, label] : [img, ...also]) {
       target.on(Phaser.Input.Events.POINTER_OVER, () => grow(true));
       target.on(Phaser.Input.Events.POINTER_OUT, () => grow(false));
     }

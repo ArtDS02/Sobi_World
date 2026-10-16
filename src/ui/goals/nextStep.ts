@@ -1,5 +1,6 @@
-// The "next step" chip (spec V2 §13: always know what to do next): what the player could do now, from the Areas'
-// suggestions and the world's own rewards, most urgent first. Pure.
+// The notices (spec V2 §13: always know what to do next): what the player could do now, from the Areas' suggestions
+// and the world's own rewards, most urgent first. The guide shows them behind a bell (decision 034); the NPC quotes
+// the first. Pure.
 import type { Suggestion } from '../../core/area-registry/registry';
 import type { Goals } from '../../core/goals/api';
 import { missingLines } from '../../core/goals/orders';
@@ -8,7 +9,7 @@ import type { WorldSave } from '../../core/save/world';
 import { t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 
-/** Where the chip's button leads: a panel, a pig, a part of the farm or a place (the shell interprets it). */
+/** Where a notice's button leads: a panel, a pig, a part of the farm or a place (the shell interprets it). */
 export type NextGoto = { target: string; id?: string };
 
 export interface NextStepVm {
@@ -20,6 +21,19 @@ export interface NextStepVm {
   /** How many more things wait after this one. */
   more: number;
 }
+
+/** One line of the bell's list. */
+export interface NoticeVm {
+  id: string;
+  text: string;
+  tone: NextStepVm['tone'];
+  goto: NextGoto | null;
+  /** Something waiting to be done (counted on the bell), not just a hint. */
+  task: boolean;
+}
+
+/** Notices at or above this priority are things to do; below are hints (today's goal, the next Area, where to walk). */
+const TASK_PRIORITY = 10;
 
 export interface NextStepInput {
   world: WorldSave;
@@ -46,7 +60,22 @@ interface Candidate {
   priority: number;
 }
 
+/** Every notice, most urgent first; when nothing is left, the one "all is well" line. */
+export function noticesVm(input: NextStepInput): NoticeVm[] {
+  const list = candidates(input);
+  if (list.length === 0) return [{ id: 'done', text: text('suggest.world.done'), tone: 'info', goto: null, task: false }];
+  return list.map((c) => ({ id: c.id, text: c.text, tone: c.tone, goto: c.goto, task: c.priority >= TASK_PRIORITY }));
+}
+
+/** The most urgent notice, and how many more things wait after it. */
 export function nextStepVm(input: NextStepInput): NextStepVm | null {
+  const list = candidates(input);
+  const top = list[0];
+  if (!top) return { id: 'done', text: text('suggest.world.done'), tone: 'info', goto: null, more: 0 };
+  return { id: top.id, text: top.text, tone: top.tone, goto: top.goto, more: Math.max(0, list.filter((c) => c.priority >= TASK_PRIORITY).length - 1) };
+}
+
+function candidates(input: NextStepInput): Candidate[] {
   const { world, goals, day } = input;
   const out: Candidate[] = input.area.map(fromArea);
   const login = world.progression.daily;
@@ -73,8 +102,5 @@ export function nextStepVm(input: NextStepInput): NextStepVm | null {
     const fresh = !world.progression.stats.pigsBought;
     out.push({ id: fresh ? 'enterFarm' : 'explore', text: text(fresh ? 'suggest.world.enterFarm' : 'suggest.world.explore'), tone: 'info', goto: null, priority: fresh ? 92 : 1 });
   }
-  out.sort((a, b) => b.priority - a.priority);
-  const top = out[0];
-  if (!top) return { id: 'done', text: text('suggest.world.done'), tone: 'info', goto: null, more: 0 };
-  return { id: top.id, text: top.text, tone: top.tone, goto: top.goto, more: Math.max(0, out.filter((c) => c.priority >= 10).length - 1) };
+  return out.sort((a, b) => b.priority - a.priority);
 }

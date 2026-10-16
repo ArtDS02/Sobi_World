@@ -12,7 +12,7 @@ export const TUTORIAL_STEPS = [
   vi.tutorial.step4, // see growth
   vi.tutorial.step5, // read the happiness → price line
   vi.tutorial.step6, // pet the pig (Bond)
-  vi.tutorial.step7, // plaza order board + next-step chip
+  vi.tutorial.step7, // plaza order board + the notice bell
 ] as const;
 
 /** Whether step `i` is done in this save (only steps that ask for an action check anything). */

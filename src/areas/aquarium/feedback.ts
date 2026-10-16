@@ -51,6 +51,8 @@ export function aquariumPresentation(e: EventBase, origin: 'action' | 'tick' | '
       return { sound: null, toast: t(T.shed, { count: e.count }) };
     case 'AQUARIUM_TANK_UPGRADED':
       return { sound: 'level_up', toast: t(T.upgraded, { level: e.level }) };
+    case 'AQUARIUM_SHOP_BOUGHT':
+      return { sound: 'coin_collect', toast: t(T.bought, { count: formatInt(e.count), name: itemName(e.itemId) }) };
     case 'AQUARIUM_EGGS_LAID':
       return { sound: 'breed_chime', toast: e.mutated ? T.eggsMutated : T.eggs };
     case 'AQUARIUM_EGG_HATCHED':
