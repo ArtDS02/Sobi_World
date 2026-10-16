@@ -59,6 +59,9 @@ CATALOGUE_SIZES.prop_drone_garden = { width: 256, height: 180 };
 CATALOGUE_SIZES.prop_drone_cloud = { width: 256, height: 180 };
 CATALOGUE_SIZES.bld_shop_garden = { width: 260, height: 240 };
 CATALOGUE_SIZES.bld_shop_cloud = { width: 260, height: 240 };
+// Decision 034: the Aquarium's stalls, the dock one (tank level 1) and the undersea one (levels 2-5), batch aquarium-05-shop.
+CATALOGUE_SIZES.bld_shop_aquarium = { width: 300, height: 380 };
+CATALOGUE_SIZES.bld_shop_aquarium_sea = { width: 300, height: 380 };
 for (const level of [2, 3, 4, 5]) CATALOGUE_SIZES[`bld_sprinkler_l${level}`] = { width: 140, height: 220 };
 // Aquarium scene props (asset/AQUARIUM_ART_PLAN.md §4.1), drawn by the scene once it is rebuilt.
 CATALOGUE_SIZES.prop_fish_egg = { width: 64, height: 64 };

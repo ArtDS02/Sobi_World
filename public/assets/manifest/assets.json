@@ -1931,6 +1931,16 @@
       "asset": "buildings/bld_shop_garden.png"
     },
     {
+      "id": "bld_shop_aquarium",
+      "status": "production",
+      "asset": "buildings/bld_shop_aquarium.png"
+    },
+    {
+      "id": "bld_shop_aquarium_sea",
+      "status": "production",
+      "asset": "buildings/bld_shop_aquarium_sea.png"
+    },
+    {
       "id": "bld_shop_cloud",
       "status": "production",
       "asset": "buildings/bld_shop_cloud.png"

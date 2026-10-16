@@ -10,6 +10,11 @@
 
 ## Nhật ký
 
+### 2026-10-16 — GĐ14 Aquarium: art sạp hàng (batch aquarium-05-shop)
+✅ Đã làm: cắt sheet S (Gemini vẽ lưới 2×2 = 2 phiên bản mỗi sạp → lấy hàng trên): `bld_shop_aquarium` (sạp gỗ trên bến, cấp 1) và `bld_shop_aquarium_sea` (sạp vỏ sò dưới nước, cấp 2–5), canvas 300×380, vẽ rộng 230 px. Sạp gỗ có vùng nền xám kẹt giữa mái và quầy → xoá thêm các lỗ nền kín (sạp vỏ sò giữ bản cắt gốc để không mất lòng quả cầu thuỷ tinh và sỏi). Placeholder: 2 dòng mới vào thẳng production.
+🧪 Đã kiểm tra: `npm run check` xanh (1.383 test); ghép thử lên 5 nền; sandbox (bể cấp 4): sạp vỏ sò hiện, bấm mở cửa hàng. Cấp 1 chỉ kiểm bằng ảnh ghép (save sandbox ở cấp 4).
+⚠️ `art:process` chỉ chạy cho 2 file này (các ảnh khác trong `art_inbox/` tạm dời ra rồi trả lại) để không xử lý lại các nền đã chỉnh tay.
+
 ### 2026-10-16 — GĐ14: chuông thông báo; Aquarium sạp hàng, bấm cá, cá đói, mưa / đêm, trứng nở, cá nhảy vào túi (decision 034, chờ duyệt)
 ✅ Đã làm (chủ dự án đồng ý 5 đề xuất của 033 + đổi khung gợi ý):
 1. **Chuông thông báo** thay khung "việc tiếp theo" ở mọi nơi: nút tròn tím dưới các nút HUD góc phải, huy hiệu đếm việc đang chờ (màu theo việc gấp nhất), bấm mở danh sách mọi thông báo, mỗi dòng có "Đi".
