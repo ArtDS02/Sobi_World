@@ -7,7 +7,7 @@ Area thứ tư: vườn hoa phép trên mây. Gieo hoa, tưới bằng Nước t
   - `config/content.ts` — nạp `content/cloud/*.json`: hoa (`FLOWERS`), `CB` (cân bằng), các cấp suối.
   - `state.ts` — slice `areas.sobi_cloud`: ô hoa (dùng `systems/plants`), suối (cấp + mốc bắt đầu đầy), vạc (đã xây + mẻ đang nấu).
   - `simulate.ts` — hoa lớn / nở / héo, mẻ potion xong; dạng đóng, giống nhau cho mọi chế độ. Suối đọc thẳng từ `since` (không cần bước).
-  - `actions/` — `plants.ts` (gieo, tưới 1 Nước tinh khiết / ô, bón phân, hái), `buildings.ts` (mở ô, hứng nước, nâng suối, xây vạc, nấu, nhận), `kit.ts`.
+  - `actions/` — `plants.ts` (gieo, tưới 1 Nước tinh khiết / ô, bón phân, hái), `lab.ts` (Vườn lai hoa mây, `content/cloud/hybrids.json`, decision 035), `buildings.ts` (mở ô, hứng nước, nâng suối, xây vạc, nấu, nhận), `kit.ts`.
   - `derived.ts`, `suggest.ts`, `summary.ts`, `worldEvents.ts` (`flower.harvested`, `potion.brewed`), `rewind.ts`, `art.ts`.
 - `scene/` — Phaser: `CloudScene` vẽ ô hoa trên mây, suối, vạc, ban đêm; `cloudView.ts` là số đo.
 - `ui/` — DOM: `cloudUi.ts` (HUD dùng chung `ui/components/areaHud.ts` — decision 031: viên, nút vuông, khay dưới với bảng hoa và nút chung), `cloudDialogs.ts` (ô hoa, suối, vạc), `cloudVm.ts` (view-model thuần, thử chạy hành động thật để nút nói lý do).

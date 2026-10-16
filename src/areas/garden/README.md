@@ -7,7 +7,7 @@ Area thứ hai: trồng cây từ hạt, tưới, bón phân, thu hoạch; chế
   - `config/content.ts` — nạp `content/garden/*.json`, bảng cây (`CROPS`), luật ô (`PLOT_RULES`), bảng cấp.
   - `state.ts` — slice save `areas.sobi_garden` (ô đất, vòi tưới, công trình, công việc) + schema.
   - `simulate.ts` — cây lớn / chín / héo và mẻ chế biến xong theo thời gian (dạng đóng, dùng cho cả 3 chế độ).
-  - `actions/` — `plants.ts` (gieo, tưới, bón, thu hoạch theo danh sách ô), `buildings.ts` (mua ô, vòi tưới, xây công trình, làm / nhận mẻ), `kit.ts` (đường ống chung: bù thời gian → hành động → KN).
+  - `actions/` — `plants.ts` (gieo, tưới, bón, thu hoạch theo danh sách ô), `lab.ts` (Vườn lai giống: hai nông sản + phí → hạt loài mới, `content/garden/hybrids.json`, decision 035; màn hình dùng chung `ui/components/labView.ts`), `buildings.ts` (mua ô, vòi tưới, xây công trình, làm / nhận mẻ), `kit.ts` (đường ống chung: bù thời gian → hành động → KN).
   - `derived.ts`, `summary.ts` (dòng "vắng mặt"), `worldEvents.ts` (sự kiện chuẩn cho thế giới), `rewind.ts` (Admin tua thời gian), `art.ts` (id art cần có trong manifest).
 - `scene/` — Phaser: `GardenScene` chỉ vẽ ruộng và báo click, trên nền vẽ sẵn `bg_garden` (decision 027); `gardenView.ts` là số đo của cảnh, đo trên nền.
 - `ui/` — DOM: `gardenUi.ts` (HUD dùng chung `ui/components/areaHud.ts` — decision 031: viên, nút vuông, khay dưới với bảng hạt và nút hàng loạt; thanh khu), `gardenDialogs.ts` (ô, công trình, vòi tưới, mở thêm ô), `gardenVm.ts` (dữ liệu hiển thị, thử hành động thật để biết nút tắt vì sao).

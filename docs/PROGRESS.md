@@ -6,9 +6,20 @@
 **Tiến độ GĐ14:** 50 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023).
-**Bước tiếp theo:** chủ dự án duyệt cảnh + HUD Aquarium (và Garden); rồi Adventure.
+**Bước tiếp theo:** chủ dự án duyệt decision 035 (loài mới, lai giống, câu cá, popup); rồi Adventure.
 
 ## Nhật ký
+
+### 2026-10-17 — GĐ14: 46 loài mới, lai giống, kiểu bơi theo loài, câu cá ba nhịp, bảng tên, popup (decision 035, chờ duyệt)
+✅ Đã làm (chủ dự án yêu cầu a–f, cho tự quyết):
+1. Cắt 13 sheet (aquarium-04-fish, farm-02-pigs, garden-04-crops, cloud-05-flowers): 18 cá, 12 heo (kèm ngủ / thức), 8 cây, 8 hoa; 50 icon vật phẩm lấy từ sprite. Content, đơn hàng, chuỗi Anh.
+2. Lai giống: `systems/hybrid` + `content/<area>/hybrids.json`; Vườn lai giống ở Garden và Cloud (cây "chỉ lai" khóa tới lần lai đầu), cá hai loài đẻ trứng loài hiếm, 12 heo mới có công thức đột biến; bảo đảm loài nào cũng lai ra được.
+3. Aquarium: 10 kiểu bơi theo loài (sứa, bạch tuộc, rùa, đuối, cá ngựa, cá heo, chạch, cá hộp, cá nóc…).
+4. Câu cá: quăng chọn độ xa → chờ phao (rỉa giả) → giật → kéo cá; bóng cá, chuỗi câu; cần nghỉ 60 giây.
+5. Bảng tên Cloud / Aquarium: chữ đúng vùng, cỡ tự vừa. Dialog: đầu gỗ, nút ✕ góc, thân cuộn; popup vắng mặt thành thẻ theo khu.
+🧪 Đã kiểm tra: `npm run check` xanh (105 file, 1.406 test; mới: hybrids, polish035, kiểu bơi, mini-game câu); sandbox riêng 1600×900: lai cà chua thành công (thẻ "Giống mới!"), cá mới bơi trong bể, quăng cần / phao; bảng tên Cloud.
+⚠️ Chưa kiểm bằng tay: nhịp kéo cá (khung trình duyệt chạy ẩn nên vòng lặp khung hình bị chậm; có unit test), popup vắng mặt (có test nhóm). Ảnh heo mới nhỏ hơn 512 nên bị phóng (hơi mờ). Màn tải nông trại ở sandbox đứng lâu ở 11% khi khung trình duyệt chạy ẩn (không có lỗi tải ảnh nào; do vòng lặp khung hình bị chậm, không phải do heo mới).
+👉 Bạn cần: chơi thử lai giống, câu cá, xem kiểu bơi; duyệt tỉ lệ lai, phí lab, cá Huyền thoại, cần nghỉ 60 giây.
 
 ### 2026-10-16 — GĐ14 Aquarium: art sạp hàng (batch aquarium-05-shop)
 ✅ Đã làm: cắt sheet S (Gemini vẽ lưới 2×2 = 2 phiên bản mỗi sạp → lấy hàng trên): `bld_shop_aquarium` (sạp gỗ trên bến, cấp 1) và `bld_shop_aquarium_sea` (sạp vỏ sò dưới nước, cấp 2–5), canvas 300×380, vẽ rộng 230 px. Sạp gỗ có vùng nền xám kẹt giữa mái và quầy → xoá thêm các lỗ nền kín (sạp vỏ sò giữ bản cắt gốc để không mất lòng quả cầu thuỷ tinh và sỏi). Placeholder: 2 dòng mới vào thẳng production.
