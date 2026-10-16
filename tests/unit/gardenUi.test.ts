@@ -7,14 +7,16 @@ import { gardenArea } from '../../src/areas/garden';
 import { gardenPresentation } from '../../src/areas/garden/feedback';
 import { gardenArtIds } from '../../src/areas/garden/logic/art';
 import { buildWorkshop, startCraft, upgradeSprinkler } from '../../src/areas/garden/logic/actions/buildings';
-import { harvestPlots, plantCrops, waterPlots } from '../../src/areas/garden/logic/actions/plants';
+import { fertilizePlots, harvestPlots, plantCrops, waterPlots } from '../../src/areas/garden/logic/actions/plants';
 import { GB } from '../../src/areas/garden/logic/config/content';
 import { sceneState } from '../../src/areas/garden/logic/derived';
 import { rewindGarden, rewindGardenInWorld } from '../../src/areas/garden/logic/rewind';
-import { gardenOf } from '../../src/areas/garden/logic/save/lens';
+import { gardenOf, withGarden } from '../../src/areas/garden/logic/save/lens';
 import { simulateGarden } from '../../src/areas/garden/logic/simulate';
 import { cropStageOf, plotCentre, slotsToDraw, GARDEN_DESIGN } from '../../src/areas/garden/scene/gardenView';
 import { bulkVm, hudVm, paletteVm, plotCardVm, sprinklerVm, workshopVm } from '../../src/areas/garden/ui/gardenVm';
+import { emptyIn, unfertilizedIn, zoneVm } from '../../src/areas/garden/ui/gardenZoneVm';
+import { emptyPlot } from '../../src/systems/plants/plot';
 import { mulberry32 } from '../../src/core/rng';
 import type { WorldSave } from '../../src/core/save/world';
 import type { ActionContext } from '../../src/core/types';
@@ -35,6 +37,7 @@ const run = {
   water: (w: WorldSave, c: ActionContext) => waterPlots(w, {}, c),
   harvest: (w: WorldSave, c: ActionContext) => harvestPlots(w, {}, c),
   plantAll: (w: WorldSave, c: ActionContext) => plantCrops(w, { cropId: 'crop_wheat', plots: [0, 1, 2, 3, 4, 5] }, c),
+  fertilizeAll: (w: WorldSave, c: ActionContext) => fertilizePlots(w, { plots: [0] }, c),
 };
 
 describe('hud and palette', () => {
@@ -57,7 +60,7 @@ describe('hud and palette', () => {
 
 describe('bulk buttons say why they are off', () => {
   it('an empty garden: nothing to water or harvest, plant and expand work', () => {
-    const v = bulkVm(base(), T0, 'crop_wheat', run);
+    const v = bulkVm(base(), T0, 'crop_wheat', 0, run);
     expect(v.water.reason).toBe('Chưa có cây');
     expect(v.harvest.reason).toBe('Chưa có cây chín');
     expect(v.plantAll.reason).toBeNull();
@@ -66,11 +69,11 @@ describe('bulk buttons say why they are off', () => {
 
   it('a full, watered garden; a poor player', () => {
     const w = ok(waterPlots(ok(plantCrops(base(), { cropId: 'crop_wheat', plots: [0, 1, 2, 3, 4, 5] }, ctxAt(T0))), {}, ctxAt(T0)));
-    const v = bulkVm(w, T0, 'crop_wheat', run);
+    const v = bulkVm(w, T0, 'crop_wheat', 0, run);
     expect(v.water.reason).toBe('Cây đã đủ nước');
     expect(v.plantAll.reason).toBe('Không còn ô trống');
-    expect(bulkVm(base({}, 10), T0, 'crop_wheat', run).plantAll.reason).toBe('Thiếu Sobi Coin');
-    expect(bulkVm(base({}, 10), T0, 'crop_wheat', run).expand.reason).toBe('Thiếu Sobi Coin');
+    expect(bulkVm(base({}, 10), T0, 'crop_wheat', 0, run).plantAll.reason).toBe('Thiếu Sobi Coin');
+    expect(bulkVm(base({}, 10), T0, 'crop_wheat', 0, run).expand.reason).toBe('Thiếu Sobi Coin');
   });
 });
 
@@ -143,6 +146,10 @@ describe('workshop card', () => {
     w = ok(upgradeSprinkler(ok(upgradeSprinkler(w, ctxAt(T0))), ctxAt(T0)));
     expect(w.inventory.items.item_scale).toBe(40 - 10 - 20);
     expect(w.inventory.items.item_pearl).toBe(5 - 3);
+    // Levels 4 and 5 cover the later zones (decision 028).
+    expect(sprinklerVm(w).next).toMatchObject({ level: 4 });
+    w = { ...w, inventory: { items: { ...w.inventory.items, item_scale: 80, item_pearl: 13, item_ancient_cog: 13 } } };
+    w = ok(upgradeSprinkler(ok(upgradeSprinkler(w, ctxAt(T0))), ctxAt(T0)));
     expect(sprinklerVm(w).next).toBeNull();
   });
 });
@@ -213,5 +220,38 @@ describe('art', () => {
     expect(gardenArtIds()).toContain(GB.buildings.mill.art);
     expect(gardenArtIds()).toContain('crop_corn_ripe');
     expect(gardenArtIds()).toContain('ui_item_food_premium');
+  });
+});
+
+describe('zones on screen (decision 028)', () => {
+  const withPlots = (w: WorldSave, n: number): WorldSave => {
+    const g = gardenOf(w);
+    return withGarden(w, { ...g, plots: Array.from({ length: n }, (_, i) => g.plots[i] ?? emptyPlot()) });
+  };
+
+  it('sowing and fertilising take only the zone on screen', () => {
+    const w = withPlots(base({ item_fertilizer: 50 }), 48);
+    expect(emptyIn(w, 0)).toEqual(Array.from({ length: 24 }, (_, k) => k));
+    expect(emptyIn(w, 1)).toEqual(Array.from({ length: 24 }, (_, k) => 24 + k));
+    const sown = ok(plantCrops(w, { cropId: 'crop_wheat', plots: emptyIn(w, 1) }, ctxAt(T0)));
+    expect(emptyIn(sown, 0)).toHaveLength(24);
+    expect(emptyIn(sown, 1)).toHaveLength(0);
+    expect(unfertilizedIn(sown, 0)).toEqual([]);
+    expect(unfertilizedIn(sown, 1)).toHaveLength(24);
+    const fertRun = (z: number) => (s: WorldSave, c: ActionContext) => fertilizePlots(s, { plots: unfertilizedIn(s, z) }, c);
+    const runs = (z: number) => ({ ...run, plantAll: (s: WorldSave, c: ActionContext) => plantCrops(s, { cropId: 'crop_wheat', plots: emptyIn(s, z) }, c), fertilizeAll: fertRun(z) });
+    expect(bulkVm(sown, T0, 'crop_wheat', 0, runs(0))).toMatchObject({ plantAll: { reason: null }, fertilizeAll: { reason: 'Không có cây cần bón' } });
+    expect(bulkVm(sown, T0, 'crop_wheat', 1, runs(1))).toMatchObject({ plantAll: { reason: 'Không còn ô trống' }, fertilizeAll: { reason: null } });
+    const poor = { ...sown, inventory: { items: {} } };
+    expect(bulkVm(poor, T0, 'crop_wheat', 1, runs(1)).fertilizeAll.reason).toBe('Hết phân bón');
+  });
+
+  it('the switcher shows the owned zones and the next closed one; a closed zone shows every slot locked', () => {
+    expect(zoneVm(base(), 0)).toMatchObject({ title: 'Khu 1 · Vườn Nhà', viewable: 1, locked: null });
+    const full = withPlots(base(), 24);
+    expect(zoneVm(full, 1)).toMatchObject({ title: 'Khu 2 · Đồng Lúa Vàng', viewable: 2 });
+    expect(zoneVm(full, 1).locked).toContain('cần cấp 8');
+    expect(zoneVm(withPlots(base(), 96), 3)).toMatchObject({ viewable: 4, locked: null });
+    expect(slotsToDraw(0, 24)).toBe(24);
   });
 });

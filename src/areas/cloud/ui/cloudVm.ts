@@ -20,6 +20,7 @@ import { msToRipe, plotStage } from '../../../systems/plants/plot';
 import { CAULDRON, CB, FLOWER_LIST, FLOWERS, PLOT_RULES, WATER_ITEM, springLevel } from '../logic/config/content';
 import { msToNextWater, nextExpansion, nextSpringLevel, plotViews, springStock, type Expansion } from '../logic/derived';
 import { cloudOf } from '../logic/save/lens';
+import { emptyIn, unfertilizedIn } from './cloudTierVm';
 
 export type CloudRun = (world: WorldSave, ctx: ActionContext) => ActionResultOf<WorldSave>;
 
@@ -88,21 +89,29 @@ export interface BulkVm {
   water: ButtonVm;
   harvest: ButtonVm;
   plantAll: ButtonVm;
+  fertilizeAll: ButtonVm;
   expand: ButtonVm;
 }
 
 const reasonOf = (error: ErrorCode, fallback: string): string =>
   error === 'NOTHING_TO_DO' ? fallback : error === 'INSUFFICIENT_GOLD' ? vi.cloud.noGold : error === 'INSUFFICIENT_ITEM' ? vi.cloud.noWater : vi.error[error];
 
-export function bulkVm(world: WorldSave, now: number, selected: string, run: { collect: CloudRun; water: CloudRun; harvest: CloudRun; plantAll: CloudRun }): BulkVm {
+/** The buttons under the beds. Sowing and fertilising act on the tier on screen (decision 028); the rest on the whole cloud. */
+export function bulkVm(
+  world: WorldSave,
+  now: number,
+  selected: string,
+  tier: number,
+  run: { collect: CloudRun; water: CloudRun; harvest: CloudRun; plantAll: CloudRun; fertilizeAll: CloudRun },
+): BulkVm {
   const g = cloudOf(world);
   const views = plotViews(g, now);
   const growing = views.filter((v) => v.stage === 'growing').length;
   const waterE = probe(world, run.water, now);
   const collectE = probe(world, run.collect, now);
   const harvestE = probe(world, run.harvest, now);
-  const empty = views.filter((v) => v.stage === 'empty').length;
-  const plantE = empty === 0 ? 'NOTHING_TO_DO' : probe(world, run.plantAll, now);
+  const plantE = emptyIn(world, tier).length === 0 ? 'NOTHING_TO_DO' : probe(world, run.plantAll, now);
+  const fertE = unfertilizedIn(world, tier).length === 0 ? 'NOTHING_TO_DO' : probe(world, run.fertilizeAll, now);
   const next = nextExpansion(g);
   return {
     collect: { label: t(vi.cloud.collectWater, { count: springStock(g, now) }), reason: collectE ? (collectE === 'NOTHING_TO_COLLECT' ? vi.cloud.noWaterYet : vi.error[collectE]) : null },
@@ -111,6 +120,10 @@ export function bulkVm(world: WorldSave, now: number, selected: string, run: { c
     plantAll: {
       label: `${vi.cloud.plantAll}${FLOWERS[selected] ? ` (${FLOWERS[selected]!.nameVi})` : ''}`,
       reason: plantE ? reasonOf(plantE, vi.cloud.noEmpty) : null,
+    },
+    fertilizeAll: {
+      label: vi.cloud.fertilizeAll,
+      reason: fertE ? (fertE === 'INSUFFICIENT_ITEM' ? vi.cloud.noFertilizer : reasonOf(fertE, vi.cloud.noFertilizable)) : null,
     },
     expand: next ? expandVm(world, next) : { label: vi.cloud.expandMax, reason: vi.cloud.expandMax },
   };

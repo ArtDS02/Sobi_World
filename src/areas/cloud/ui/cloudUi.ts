@@ -8,11 +8,13 @@ import type { GameStore } from '../../../core/world/gameStore';
 import type { WorldSave } from '../../../core/save/world';
 import { vi } from '../../../i18n/vi';
 import { collectWater } from '../logic/actions/buildings';
-import { harvestFlowers, plantFlowers, waterPlots } from '../logic/actions/plants';
+import { fertilizePlots, harvestFlowers, plantFlowers, waterPlots } from '../logic/actions/plants';
 import { sceneState, type SceneState } from '../logic/derived';
 import { cloudOf, hasCloud } from '../logic/save/lens';
 import type { CloudPick } from '../scene/CloudScene';
 import { actionButton, createCloudDialogs } from './cloudDialogs';
+import { onViewedTier, viewedTier } from '../viewedTier';
+import { actingTier, emptyIn, unfertilizedIn } from './cloudTierVm';
 import { bulkVm, hudVm, paletteVm, type CloudRun } from './cloudVm';
 
 export interface CloudUiDeps {
@@ -59,8 +61,8 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     water: (w: WorldSave, c: Parameters<CloudRun>[1]) => waterPlots(w, {}, c),
     harvest: (w: WorldSave, c: Parameters<CloudRun>[1]) => harvestFlowers(w, {}, c),
     collect: (w: WorldSave, c: Parameters<CloudRun>[1]) => collectWater(w, c),
-    plantAll: (w: WorldSave, c: Parameters<CloudRun>[1]) =>
-      plantFlowers(w, { flowerId: selected, plots: cloudOf(w).plots.flatMap((p, i) => (p.cropId === null ? [i] : [])) }, c),
+    plantAll: (w: WorldSave, c: Parameters<CloudRun>[1]) => plantFlowers(w, { flowerId: selected, plots: emptyIn(w, actingTier(w, viewedTier())) }, c),
+    fertilizeAll: (w: WorldSave, c: Parameters<CloudRun>[1]) => fertilizePlots(w, { plots: unfertilizedIn(w, actingTier(w, viewedTier())) }, c),
   };
 
   const navButton = (label: string, onClick: () => void) =>
@@ -95,7 +97,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
   }
 
   function renderBottom(w: WorldSave): HTMLElement {
-    const bulk = bulkVm(w, d.now(), selected, runs);
+    const bulk = bulkVm(w, d.now(), selected, actingTier(w, viewedTier()), runs);
     return el(
       'div',
       { class: 'cloud-ui__dock' },
@@ -128,6 +130,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
         actionButton(bulk.water, () => dispatch(runs.water), 'cloud-btn cloud-btn--rose'),
         actionButton(bulk.harvest, () => dispatch(runs.harvest), 'cloud-btn cloud-btn--sun'),
         actionButton(bulk.plantAll, () => dispatch(runs.plantAll), 'cloud-btn cloud-btn--lilac'),
+        actionButton(bulk.fertilizeAll, () => dispatch(runs.fertilizeAll), 'cloud-btn cloud-btn--sun'),
         actionButton(bulk.expand, () => dialogs.openExpand(), 'cloud-btn cloud-btn--berry'),
       ),
     );
@@ -146,6 +149,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     dialogs.follow(w);
   }
   const off = d.world.subscribe(refresh);
+  const offTier = onViewedTier(() => refresh());
   refresh();
 
   function pick(p: CloudPick) {
@@ -179,6 +183,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     isModalOpen: () => dialogs.isOpen(),
     dispose: () => {
       off();
+      offTier();
       dialogs.close();
     },
   };

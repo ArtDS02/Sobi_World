@@ -37,7 +37,7 @@ export function gardenPresentation(e: EventBase, origin: 'action' | 'tick' | 'ca
     case 'GARDEN_CROP_WILTED':
       return { sound: 'notify', toast: t(T.wilted, { count: e.count }) };
     case 'GARDEN_PLOTS_BOUGHT':
-      return { sound: 'level_up', toast: t(T.plots, { plots: e.plots }) };
+      return { sound: 'level_up', toast: e.zone !== undefined ? t(T.zone, { name: vi.garden.zoneNames[e.zone] ?? '' }) : t(T.plots, { plots: e.plots }) };
     case 'GARDEN_SPRINKLER_BOUGHT':
       return { sound: 'level_up', toast: t(T.sprinkler, { level: e.level }) };
     case 'GARDEN_BUILT':

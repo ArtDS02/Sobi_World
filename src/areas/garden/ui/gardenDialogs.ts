@@ -10,7 +10,7 @@ import { fertilizePlots, harvestPlots, waterPlots } from '../logic/actions/plant
 import { GB, type BuildingId } from '../logic/config/content';
 import { nextExpansion } from '../logic/derived';
 import { gardenOf } from '../logic/save/lens';
-import { plotCardVm, sprinklerVm, workshopVm, type ButtonVm, type GardenRun, type RecipeVm } from './gardenVm';
+import { expandVm, plotCardVm, sprinklerVm, workshopVm, type ButtonVm, type GardenRun, type RecipeVm } from './gardenVm';
 
 /** A button that always says why it is off. */
 export function actionButton(vm: ButtonVm, onClick: () => void, variant = ''): HTMLElement {
@@ -54,14 +54,21 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
   const run = (action: GardenRun) => d.dispatch(action);
 
   function openExpand() {
-    openLive(vi.garden.expandTitle, (w, close) => {
+    const now = d.world();
+    const first = now ? nextExpansion(gardenOf(now)) : null;
+    openLive(first?.zone != null ? vi.garden.expandZoneTitle : vi.garden.expandTitle, (w, close) => {
       const next = nextExpansion(gardenOf(w));
       if (!next) return el('p', { text: vi.garden.expandMax });
-      const vm: ButtonVm = { label: t(vi.garden.buy, { gold: formatInt(next.price) }), reason: w.wallet.coins < next.price ? vi.garden.noGold : null };
+      const vm: ButtonVm = { label: t(vi.garden.buy, { gold: formatInt(next.price) }), reason: expandVm(w, next).reason };
+      const count = next.plots - gardenOf(w).plots.length;
+      const body =
+        next.zone !== null
+          ? t(vi.garden.expandZoneBody, { name: vi.garden.zoneNames[next.zone] ?? '', n: next.zone + 1, count, plots: next.plots })
+          : t(vi.garden.expandBody, { count, plots: next.plots });
       return el(
         'div',
         { class: 'garden-dialog' },
-        el('p', { text: t(vi.garden.expandBody, { count: next.plots - gardenOf(w).plots.length, plots: next.plots }) }),
+        el('p', { text: body }),
         actionButton(vm, () => {
           run((s, c) => buyPlots(s, c));
           close();

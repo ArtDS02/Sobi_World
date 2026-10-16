@@ -7,12 +7,14 @@ import { el, patch } from '../../../ui/dom';
 import type { GameStore } from '../../../core/world/gameStore';
 import type { WorldSave } from '../../../core/save/world';
 import { vi } from '../../../i18n/vi';
-import { harvestPlots, plantCrops, waterPlots } from '../logic/actions/plants';
-import { sceneState, type SceneState } from '../logic/derived';
+import { fertilizePlots, harvestPlots, plantCrops, waterPlots } from '../logic/actions/plants';
+import { ownedZones, sceneState, type SceneState } from '../logic/derived';
 import { hasGarden, gardenOf } from '../logic/save/lens';
 import type { GardenPick } from '../scene/GardenScene';
 import { actionButton, createGardenDialogs } from './gardenDialogs';
+import { onViewedZone, setViewedZone, viewedZone } from '../viewedZone';
 import { bulkVm, hudVm, paletteVm, type GardenRun } from './gardenVm';
+import { emptyIn, unfertilizedIn, zoneVm } from './gardenZoneVm';
 
 export interface GardenUiDeps {
   world: Pick<GameStore, 'getSnapshot' | 'subscribe' | 'dispatch'>;
@@ -43,6 +45,8 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
   let active = false;
   let selected = 'crop_wheat';
   let sceneCache: { world: WorldSave; now: number; state: SceneState } | null = null;
+  /** Owned zones at the last refresh: a newly opened zone is shown at once. */
+  let zonesSeen = 0;
 
   const world = (): WorldSave | null => {
     const s = d.world.getSnapshot();
@@ -54,9 +58,37 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
   const runs = {
     water: (w: WorldSave, c: Parameters<GardenRun>[1]) => waterPlots(w, {}, c),
     harvest: (w: WorldSave, c: Parameters<GardenRun>[1]) => harvestPlots(w, {}, c),
-    plantAll: (w: WorldSave, c: Parameters<GardenRun>[1]) =>
-      plantCrops(w, { cropId: selected, plots: gardenOf(w).plots.flatMap((p, i) => (p.cropId === null ? [i] : [])) }, c),
+    plantAll: (w: WorldSave, c: Parameters<GardenRun>[1]) => plantCrops(w, { cropId: selected, plots: emptyIn(w, zone()) }, c),
+    fertilizeAll: (w: WorldSave, c: Parameters<GardenRun>[1]) => fertilizePlots(w, { plots: unfertilizedIn(w, zone()) }, c),
   };
+  const zone = () => Math.max(0, viewedZone());
+
+  /** Keeps the zone on screen valid: first look and a newly opened zone go to the highest owned one. */
+  function settleZone(w: WorldSave) {
+    const owned = ownedZones(gardenOf(w));
+    const viewable = zoneVm(w, 0).viewable;
+    if (viewedZone() < 0 || viewedZone() >= viewable || (zonesSeen > 0 && owned > zonesSeen)) setViewedZone(owned - 1);
+    zonesSeen = owned;
+  }
+
+  function renderZones(w: WorldSave): HTMLElement {
+    const z = zone();
+    const v = zoneVm(w, z);
+    const arrow = (dir: -1 | 1) =>
+      el('button', {
+        class: `garden-ui__zone-arrow garden-ui__zone-arrow--${dir < 0 ? 'prev' : 'next'}`,
+        text: dir < 0 ? '‹' : '›',
+        attrs: { type: 'button', 'aria-label': dir < 0 ? vi.garden.zonePrev : vi.garden.zoneNext, ...(z + dir < 0 || z + dir >= v.viewable ? { disabled: '' } : {}) },
+        on: { click: () => setViewedZone(z + dir) },
+      });
+    return el(
+      'div',
+      { class: `garden-ui__zones${v.locked ? ' is-locked' : ''}`, attrs: { title: v.locked ?? v.title } },
+      arrow(-1),
+      el('span', { class: 'garden-ui__zone-title', text: v.title }),
+      arrow(1),
+    );
+  }
 
   const navButton = (label: string, onClick: () => void) =>
     el('button', { class: 'garden-ui__btn', text: label, attrs: { type: 'button' }, on: { click: onClick } });
@@ -78,6 +110,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
           el('small', { text: v.xp }),
         ),
       ),
+      renderZones(w),
       el(
         'nav',
         { class: 'garden-ui__nav', attrs: { 'aria-label': vi.garden.title } },
@@ -89,7 +122,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
   }
 
   function renderBottom(w: WorldSave): HTMLElement {
-    const bulk = bulkVm(w, d.now(), selected, runs);
+    const bulk = bulkVm(w, d.now(), selected, zone(), runs);
     return el(
       'div',
       { class: 'garden-ui__dock' },
@@ -121,6 +154,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
         actionButton(bulk.water, () => dispatch(runs.water)),
         actionButton(bulk.harvest, () => dispatch(runs.harvest)),
         actionButton(bulk.plantAll, () => dispatch(runs.plantAll)),
+        actionButton(bulk.fertilizeAll, () => dispatch(runs.fertilizeAll)),
         actionButton(bulk.expand, () => dialogs.openExpand()),
       ),
     );
@@ -134,11 +168,13 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
       patch(bottom, null);
       return;
     }
+    settleZone(w);
     patch(hud, renderHud(w));
     patch(bottom, renderBottom(w));
     dialogs.follow(w);
   }
   const off = d.world.subscribe(refresh);
+  const offZone = onViewedZone(() => refresh());
   refresh();
 
   function pick(p: GardenPick) {
@@ -172,6 +208,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
     isModalOpen: () => dialogs.isOpen(),
     dispose: () => {
       off();
+      offZone();
       dialogs.close();
     },
   };

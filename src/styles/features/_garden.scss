@@ -47,6 +47,51 @@
 
   &__bar { width: 6rem; height: $bar-height; }
 
+  // The zone switcher (decision 028): ‹ Zone n · name › at the top centre; the next, unopened zone shows dimmed.
+  &__zones {
+    position: absolute;
+    top: $sp-3;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: $sp-2;
+    min-height: 2.6rem;
+    padding: 0 $sp-2;
+    color: #fff6e2;
+    background: linear-gradient(180deg, #a8743d, #7d5128);
+    border: 3px solid #5a3a1c;
+    border-radius: 999px;
+    box-shadow: 0 3px 0 rgba(60, 36, 16, 0.45);
+    pointer-events: auto;
+
+    &.is-locked .garden-ui__zone-title { opacity: 0.7; }
+  }
+
+  &__zone-title {
+    min-width: 12rem;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    text-shadow: 0 1px 0 rgba(60, 36, 16, 0.6);
+  }
+
+  &__zone-arrow {
+    width: 2rem;
+    height: 2rem;
+    font-size: $fs-lg;
+    font-weight: 700;
+    line-height: 1;
+    color: #5a3a1c;
+    background: #fff1d6;
+    border: 2px solid #5a3a1c;
+    border-radius: 50%;
+    cursor: pointer;
+
+    &:hover:not(:disabled) { background: #ffffff; transform: scale(1.08); }
+    &:disabled { cursor: default; opacity: 0.35; }
+  }
+
   &__nav {
     position: absolute;
     top: $sp-3;

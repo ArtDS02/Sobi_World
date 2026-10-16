@@ -1,4 +1,5 @@
 import type { CropStage } from '../logic/art';
+import { PLOTS_PER_ZONE } from '../logic/config/content';
 import type { PlotView } from '../logic/derived';
 
 // Look of the Garden scene (design px, depths, colours, motion). What grows where is content and state; these are the
@@ -24,20 +25,25 @@ export const GARDEN_VIEW = {
   mill: { x: 185, y: 364, scale: 1 },
   composter: { x: 165, y: 615, scale: 1 },
   sprinkler: { x: 1530, y: 380, scale: 1.2 },
-  /** Feet of each building's name sign (a plank on a post), its drawn width, and where the name sits on the plank. */
-  signs: {
-    mill: { x: 318, y: 448 },
-    sprinkler: { x: 1530, y: 512 },
-  },
-  /** The composter's name goes on the blank sign painted in the backdrop by the lower path (face centre and size). */
-  paintedSign: { composter: { x: 371, y: 618, width: 104, height: 46 } },
-  sign: { canvas: { width: 220, height: 200 }, width: 150, textY: 0.6, maxText: 0.66 },
+  /** Crops sway around their base like in a breeze: degrees by stage, each plant its own period and phase. */
+  sway: { sprout: 1.4, grow: 2.2, ripe: 2.8, wilt: 0.8, periodMs: [2400, 3600], gustMs: 9000, gust: 0.4 },
+  /** Changing zone (decision 028): the field slides out sideways and the next one slides in. */
+  zoneMove: { px: 420, outMs: 260, inMs: 380 },
+  /** The building's name in a small bubble over it while hovered (no signs: owner's ask). */
+  tip: { fontPx: 22, padX: 12, padY: 5, gap: 10, background: 0xfff6e6, border: 0x8a5a2b, color: '#6b4423' },
+  /**
+   * The sprinkler at work: a burst of drops from its head every `everyMs`, and now and then a light mist on a few watered
+   * plots of the zone on screen.
+   */
+  spray: { everyMs: 1500, drops: 7, reach: [60, 120], headY: 0.93, mistEveryMs: 3200, mistPlots: 2 },
+  /** The fertiliser drone (decision 028): flies from the composter over each newly fertilised plot, then away. */
+  drone: { from: { x: 165, y: 470 }, exit: { x: 1700, y: -120 }, hoverY: 70, speed: 900, dropMs: 260, size: 130, art: 'prop_drone_garden' },
   /** The backdrop's own size (scripts/assets/sizes.ts): it is drawn to cover the visible view, centred on the frame. */
   backdrop: { width: 1812, height: 900 },
   /** Sky behind the backdrop (only seen while the image loads or if it is missing). */
   sky: { top: 0xa8d6f0, bottom: 0xe9f6ff },
-  /** Depths: sky, backdrop, then plots, crops, buildings, signs, badges. */
-  depth: { sky: -2000, ground: -1000, plot: 10, crop: 20, building: 30, sign: 40, badge: 5000 },
+  /** Depths: sky, backdrop, then the field (plots and crops), buildings, effects, the drone, tips and badges. */
+  depth: { sky: -2000, ground: -1000, plot: 10, building: 30, fx: 60, drone: 80, badge: 5000 },
   /** Unbuilt workshops are drawn greyer. */
   unbuiltTint: 0x8c8c8c,
   label: {
@@ -46,20 +52,27 @@ export const GARDEN_VIEW = {
     color: '#7a4f2a',
   },
   badge: { fontPx: 28, color: '#ffffff', background: '#e0654f', readyBackground: '#4aa86b' },
-  /** Hover: a plot lifts a little and swells a touch; buildings and signs swell. */
-  hover: { lift: 3, swell: 1.04, ms: 140 },
+  /** Hover: buildings swell a touch (plots do not: owner's ask). */
+  hover: { swell: 1.04, ms: 140 },
   /** A ripe crop breathes: scale swing and period. */
   ripePulse: { scale: 0.05, periodMs: 1400 },
 } as const;
 
-/** Where plot `index` stands (its centre) in design px. */
-export function plotCentre(index: number): { x: number; y: number } {
+/** Where slot `slot` of a zone stands (its centre) in design px. */
+export function plotCentre(slot: number): { x: number; y: number } {
   const { field, columns } = GARDEN_VIEW;
-  return { x: field.x + (index % columns) * field.stepX, y: field.y + Math.floor(index / columns) * field.stepY };
+  return { x: field.x + (slot % columns) * field.stepX, y: field.y + Math.floor(slot / columns) * field.stepY };
 }
 
-/** Plot slots drawn: the owned ones plus the next row's worth as locked ground (up to `max`). */
-export const slotsToDraw = (owned: number, max: number): number => Math.min(max, Math.ceil((owned + 1) / GARDEN_VIEW.columns) * GARDEN_VIEW.columns);
+/** The plot index of slot `slot` on zone `zone`. */
+export const plotIndex = (zone: number, slot: number): number => zone * PLOTS_PER_ZONE + slot;
+
+/**
+ * Slots drawn on a zone: the owned ones plus the next row's worth as locked ground (up to `max`). A zone not opened yet
+ * opens whole, so it shows every slot locked.
+ */
+export const slotsToDraw = (ownedInZone: number, max: number): number =>
+  ownedInZone <= 0 ? max : Math.min(max, Math.ceil((ownedInZone + 1) / GARDEN_VIEW.columns) * GARDEN_VIEW.columns);
 
 /** The picture of a crop at a stage of its growth. */
 export function cropStageOf(view: Pick<PlotView, 'stage' | 'share'>): CropStage {

@@ -18,6 +18,7 @@ import { cloudSuggestions } from '../../src/areas/cloud/logic/suggest';
 import { cloudSummaryLines } from '../../src/areas/cloud/logic/summary';
 import { cloudEventsToWorld } from '../../src/areas/cloud/logic/worldEvents';
 import { rewindCloud } from '../../src/areas/cloud/logic/rewind';
+import { actingTier, emptyIn, unfertilizedIn } from '../../src/areas/cloud/ui/cloudTierVm';
 import { aquariumArea } from '../../src/areas/aquarium';
 import { breedFish } from '../../src/areas/aquarium/logic/actions/breed';
 import { useFishPotion } from '../../src/areas/aquarium/logic/actions/care';
@@ -472,5 +473,23 @@ describe('flowers and breeding', () => {
     expect(items(r.state).item_flower_rainbow_rose ?? 0).toBe(0);
     expect(r.events.some((e) => e.type === 'AQUARIUM_EGGS_LAID' && 'boostItem' in e)).toBe(true);
     expect(err(breedFish(w, { fishAId: 'm', fishBId: 'f', boostItem: 'item_flower_cloud_daisy' }, ctxAt(T0)))).toBe('INVALID_REQUEST');
+  });
+});
+
+describe('cloud bulk buttons act on the tier on screen (decision 028)', () => {
+  it('sow and fertilise only the viewed tier; before the scene draws, the highest owned tier', () => {
+    const w0 = cloudWorld({ item_fertilizer: 40 });
+    const g = cloudOf(w0);
+    const w = withCloud(w0, { ...g, plots: Array.from({ length: 30 }, (_, i) => g.plots[i] ?? emptyPlot()) });
+    expect(actingTier(w, -1)).toBe(1);
+    expect(actingTier(w, 0)).toBe(0);
+    expect(emptyIn(w, 0)).toHaveLength(PLOTS_PER_TIER);
+    const sown = plantFlowers(w, { flowerId: 'flower_cloud_daisy', plots: emptyIn(w, 1) }, { now: T0, rng: mulberry32(1) });
+    expect(sown.ok).toBe(true);
+    const s = (sown as { state: WorldSave }).state;
+    expect(emptyIn(s, 0)).toHaveLength(PLOTS_PER_TIER);
+    expect(emptyIn(s, 1)).toHaveLength(0);
+    expect(unfertilizedIn(s, 1)).toHaveLength(PLOTS_PER_TIER);
+    expect(unfertilizedIn(s, 0)).toHaveLength(0);
   });
 });

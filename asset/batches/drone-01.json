@@ -1,0 +1,21 @@
+{
+  "id": "drone-01",
+  "area": "garden",
+  "title": "Drone bón phân: Sobi Garden + Sobi Cloud",
+  "decisions": "Decision 028: 'Fertilize all' sends a little drone over the plots. One drone per Area, same build, Area colours. Drawn flying, seen slightly from the side, so the game can tilt and bob it in code (no frames). Until the art arrives the game draws a simple code drone. Manifest rows (prop_drone_garden, prop_drone_cloud, props 256x160) are added when the art is delivered.",
+  "sheets": [
+    {
+      "name": "D",
+      "title": "2 drone bón phân",
+      "board": "building",
+      "grid": [1, 2],
+      "fit": "each",
+      "views": [],
+      "notes": "Both are the same cute little farm drone flying in the air, seen from the front-left and slightly from above, much wider than tall: a round friendly body with a small glass dome window, four short arms each ending in a spinning rotor drawn as a soft translucent disc, and a little sack hanging under the body on two short ropes. Rounded chunky toy-like shapes, no face on the drone. It floats: no ground, no grass patch, no cloud, no shadow under it.",
+      "cells": [
+        { "stem": "prop_drone_garden", "desc": "Garden drone: warm honey-wood body with green trim, a burlap sack of dark brown compost with a small green sprout on it" },
+        { "stem": "prop_drone_cloud", "desc": "Cloud drone: creamy white and soft lilac body with a little star charm, a pale lilac cloth sack of sparkly lilac-and-gold fertiliser" }
+      ]
+    }
+  ]
+}

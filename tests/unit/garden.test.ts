@@ -6,9 +6,10 @@ import { SAVE_CODEC, parseWorldSave } from '../../src/app/saveCodec';
 import { feedPig } from '../../src/areas/farm/logic/actions/feedPig';
 import { cleanManure } from '../../src/areas/farm/logic/actions/cleanManure';
 import { farmOf, withFarm } from '../../src/areas/farm/logic/save/lens';
-import { CROPS, GARDEN_AREA_ID, GB } from '../../src/areas/garden/logic/config/content';
-import { plotViews, nextExpansion, nextSprinkler } from '../../src/areas/garden/logic/derived';
-import { gardenOf } from '../../src/areas/garden/logic/save/lens';
+import { CROPS, GARDEN_AREA_ID, GB, PLOTS_PER_ZONE, ZONE_COUNT } from '../../src/areas/garden/logic/config/content';
+import { plotViews, nextExpansion, nextSprinkler, ownedZones, zonePlots } from '../../src/areas/garden/logic/derived';
+import { gardenOf, withGarden } from '../../src/areas/garden/logic/save/lens';
+import { emptyPlot } from '../../src/systems/plants/plot';
 import {
   buildWorkshop,
   buyPlots,
@@ -198,15 +199,46 @@ describe('the sprinkler and the plots', () => {
 
   it('opens three more plots at a time at the listed prices; the sprinkler has levels', () => {
     let w = gardenWorld();
-    expect(nextExpansion(gardenOf(w))).toEqual({ plots: 9, price: 200 });
+    expect(nextExpansion(gardenOf(w))).toEqual({ plots: 9, price: 200, level: 1, zone: null });
     w = ok(buyPlots(w, ctxAt(T0)));
     expect(gardenOf(w).plots).toHaveLength(9);
     expect(coins(w)).toBe(10_000 - 200);
     expect(nextSprinkler(gardenOf(w))).toMatchObject({ level: 1, plots: 6 });
     for (let i = 0; i < 5; i += 1) w = ok(buyPlots({ ...w, wallet: { ...w.wallet, coins: 1_000_000 } }, ctxAt(T0)));
     expect(gardenOf(w).plots).toHaveLength(24);
-    expect(buyPlots(w, ctxAt(T0))).toEqual({ ok: false, error: 'MAX_SLOTS_REACHED' });
-    expect(nextExpansion(gardenOf(w))).toBeNull();
+    // The first zone is full: the next step is a whole new zone, behind a world level (decision 028).
+    expect(nextExpansion(gardenOf(w))).toMatchObject({ plots: 48, zone: 1 });
+    expect(buyPlots({ ...w, wallet: { ...w.wallet, coins: 1_000_000 } }, ctxAt(T0))).toEqual({ ok: false, error: 'LEVEL_TOO_LOW' });
+  });
+
+  it('zones: four zones of 24 plots, each later zone dearer and later; a zone opens whole at its level', () => {
+    expect(PLOTS_PER_ZONE).toBe(24);
+    expect(ZONE_COUNT).toBe(4);
+    const zones = GB.plotExpansions.filter((e) => e.plots > PLOTS_PER_ZONE);
+    expect(zones.map((e) => e.plots)).toEqual([48, 72, 96]);
+    zones.forEach((e, i) => {
+      expect(e.level).toBeDefined();
+      if (i > 0) expect(e.price).toBeGreaterThan(zones[i - 1]!.price);
+      if (i > 0) expect(e.level!).toBeGreaterThan(zones[i - 1]!.level!);
+    });
+    // The sprinkler can grow to cover every zone.
+    expect(GB.sprinkler.at(-1)!.plots).toBe(96);
+    const at = (plots: number, level: number): WorldSave => {
+      const w = gardenWorld({}, 1_000_000);
+      const g = gardenOf(w);
+      const grown = withGarden(w, { ...g, plots: Array.from({ length: plots }, (_, i) => g.plots[i] ?? emptyPlot()) });
+      return { ...grown, progression: { ...grown.progression, areas: { ...grown.progression.areas, world: { xp: WORLD_LEVELS.xp[level - 1]! } } } };
+    };
+    const next = nextExpansion(gardenOf(at(24, 1)))!;
+    const r = buyPlots(at(24, next.level), ctxAt(T0));
+    expect(r.ok).toBe(true);
+    const opened = (r as { state: WorldSave }).state;
+    expect(gardenOf(opened).plots).toHaveLength(48);
+    expect(ownedZones(gardenOf(opened))).toBe(2);
+    expect(zonePlots(gardenOf(opened), 1)).toEqual(Array.from({ length: 24 }, (_, k) => 24 + k));
+    expect((r as { events: unknown[] }).events).toContainEqual(expect.objectContaining({ type: 'GARDEN_PLOTS_BOUGHT', plots: 48, zone: 1 }));
+    expect(nextExpansion(gardenOf(at(96, 20)))).toBeNull();
+    expect(buyPlots(at(96, 20), ctxAt(T0))).toEqual({ ok: false, error: 'MAX_SLOTS_REACHED' });
   });
 
   it('cannot afford what costs more than the wallet', () => {

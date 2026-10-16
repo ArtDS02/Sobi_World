@@ -312,6 +312,8 @@ export const partA = {
     water: "Water all",
     harvest: "Pick all",
     plantAll: "Sow all empty plots",
+    fertilizeAll: "Fertilize all",
+    noFertilizable: "No flowers need fertilizer",
     expand: "Open more plots ({gold})",
     expandMax: "All plots are open",
     expandTier: "Open cloud tier {n} ({gold})",

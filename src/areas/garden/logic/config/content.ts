@@ -52,3 +52,8 @@ export const WATER_MS = GB.waterHours * HOUR;
 export type BuildingId = 'mill' | 'composter';
 export const BUILDING_IDS: readonly BuildingId[] = ['mill', 'composter'];
 export const MAX_PLOTS = GB.plotExpansions.at(-1)?.plots ?? GB.startPlots;
+/** The field is shown one zone at a time (decision 028); a new zone opens whole. */
+export const PLOTS_PER_ZONE = GB.plotsPerZone;
+export const ZONE_COUNT = Math.ceil(MAX_PLOTS / PLOTS_PER_ZONE);
+/** The zone plot `index` lies in (0-based). */
+export const zoneOf = (index: number): number => Math.floor(index / PLOTS_PER_ZONE);

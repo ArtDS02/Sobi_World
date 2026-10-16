@@ -2,6 +2,8 @@
 import { RECIPES } from '../../../../core/config/recipes';
 import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
+import { WORLD_LEVELS } from '../../../../core/config/progression';
+import { worldLevel } from '../../../../core/progression/levels';
 import { techBonus, recipeLocked } from '../../../../core/config/tech';
 import { affordableBatches, batchesReady, collectBatches, scaled, sped } from '../../../../core/production/production';
 import { emptyPlot } from '../../../../systems/plants/plot';
@@ -11,15 +13,16 @@ import { give, pay, put, runGarden, take, type GardenResult } from './kit';
 
 const isBuilding = (id: string): id is BuildingId => (BUILDING_IDS as readonly string[]).includes(id);
 
-/** Opens the next three plots. */
+/** Opens the next plots: a row of the first zone, or a whole new zone (gated by the world level, decision 028). */
 export function buyPlots(world: WorldSave, ctx: ActionContext): GardenResult {
   return runGarden(world, ctx, (w, g) => {
     const next = nextExpansion(g);
     if (!next) return { ok: false, error: 'MAX_SLOTS_REACHED' };
+    if (worldLevel(w, WORLD_LEVELS) < next.level) return { ok: false, error: 'LEVEL_TOO_LOW' };
     const paid = pay(w, -next.price, 'GARDEN_PLOTS', ctx, { note: `${next.plots} plots` });
     if (!paid.ok) return paid;
     const plots = [...g.plots, ...Array.from({ length: next.plots - g.plots.length }, emptyPlot)];
-    return { ok: true, world: put(paid.state, { ...g, plots }), events: [{ type: 'GARDEN_PLOTS_BOUGHT', plots: next.plots, gold: next.price }] };
+    return { ok: true, world: put(paid.state, { ...g, plots }), events: [{ type: 'GARDEN_PLOTS_BOUGHT', plots: next.plots, gold: next.price, ...(next.zone !== null ? { zone: next.zone } : {}) }] };
   });
 }
 

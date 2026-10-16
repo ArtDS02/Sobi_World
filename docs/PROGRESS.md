@@ -3,12 +3,24 @@
 ## Trạng thái hiện tại
 **Giai đoạn:** GĐ14 đang làm — art, animation, VFX, âm thanh (nhánh `phase-14-art`, tách từ `main`). GĐ13 đã merge `main` (gameplay freeze, decision 021); phiên bản 0.13.0.
 **Chiến lược (decision 017, 022):** gameplay trước, art sau; phong cách chuẩn Sobi Farm, chủ dự án tạo ảnh Gemini theo batch (`asset/batches/`), agent cắt và nối vào game. GĐ15 phát hành.
-**Tiến độ GĐ14:** 80 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027). Đang làm: **Aquarium** (aquarium-01-fish, aquarium-02-items chờ ảnh). Còn lại: Aquarium (kế hoạch `asset/AQUARIUM_ART_PLAN.md`, cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
-**Chờ chủ dự án:** duyệt Cloud và Sảnh; duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
+**Tiến độ GĐ14:** 80 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). Đang làm: **Aquarium** (aquarium-01-fish, aquarium-02-items chờ ảnh). Còn lại: Aquarium (kế hoạch `asset/AQUARIUM_ART_PLAN.md`, cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
+**Chờ chủ dự án:** duyệt Cloud, Sảnh, Garden; duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028); ảnh drone (`drone-01`); duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023).
 **Bước tiếp theo:** chủ dự án duyệt cảnh Garden; tạo ảnh `aquarium-01-fish`, `aquarium-02-items` → cắt, dựng cảnh Aquarium theo 5 ảnh mẫu.
 
 ## Nhật ký
+
+### 2026-10-16 — GĐ14 Garden + Cloud: góp ý của chủ dự án (khu trồng, gieo/bón theo khu, drone, cảnh) — chờ duyệt
+✅ Đã làm (decision 028):
+1. **Garden 4 khu × 24 ô**: content `plotsPerZone`, bước mở khu 2–4 có cổng cấp (`LEVEL_TOO_LOW`), vòi tưới thêm cấp 4–5; save không đổi. Thanh "‹ Khu n · tên ›" trên HUD; đổi khu thì ruộng trượt ngang; mua khu mới tự chuyển sang, toast "Đã mở <tên khu>!". Admin có nhãn cho trường mới.
+2. **"Gieo kín ô trống" theo khu / tầng đang xem** cho Garden và Cloud (Cloud: cảnh ghi lại tầng, `viewedTier.ts`).
+3. **"Bón phân tất cả"** (Garden và Cloud) cho khu / tầng đang xem, dùng hành động bón phân có sẵn; **drone** bay qua từng ô vừa bón (vẽ bằng code tới khi có ảnh; batch `drone-01` đã viết).
+4. Cảnh Garden: bỏ hover ô, cây đung đưa, bỏ bảng tên (bong bóng tên khi rê chuột lên công trình), bỏ số trên vòi tưới, vòi phun nước + sương trên ô được tưới tự động.
+5. Tách code để giữ ≤ 300 dòng: `gardenField.ts`, `gardenFx.ts`, `gardenZoneVm.ts`, `cloudDrone.ts`, `cloudTierVm.ts`; nền/trời của Cloud chuyển sang `cloudFx.ts`.
+🧪 Đã kiểm tra: `npm run check` xanh (1.365 test); 14/14 e2e (bản build) xanh; test mới: mở khu theo cấp, 4 khu / vòi tưới 96 ô, gieo / bón chỉ trong khu (Garden) và tầng (Cloud), thanh khu. Chạy sandbox bằng Edge ẩn 1600×900: mua khu 2 → ruộng trượt sang, gieo kín đúng 24 ô của khu 2, về khu 1 (trượt), thu hoạch, gieo, bón phân tất cả → drone bay qua từng ô; Cloud: bón phân tất cả → drone; không lỗi script.
+⚠️ Quyết định tự đưa ra: khu mới mở trọn 24 ô một lần (như tầng mây); số giá / cấp đề xuất (xem decision 028); tưới / thu hoạch vẫn cho cả vườn; khu kế tiếp chỉ xem được khi khu cuối đã đầy (như Cloud); toast có thể che thanh khu vài giây.
+👉 Bạn cần: duyệt Garden (khu, drone, vòi phun) và Cloud (nút bón phân); duyệt số khu / vòi tưới; tạo ảnh `asset/batches/drone-01.md` (1 lượt Gemini).
+➡️ Tiếp theo: cắt `drone-01` khi có ảnh; Aquarium.
 
 ### 2026-10-16 — GĐ14 Garden: cảnh dựng lại theo ảnh mẫu (decision 027, chờ duyệt)
 ✅ Đã làm:

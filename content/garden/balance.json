@@ -1,12 +1,16 @@
 {
   "startPlots": 6,
+  "plotsPerZone": 24,
   "plotExpansions": [
     { "plots": 9, "price": 200 },
     { "plots": 12, "price": 500 },
     { "plots": 15, "price": 1200 },
     { "plots": 18, "price": 3000 },
     { "plots": 21, "price": 7000 },
-    { "plots": 24, "price": 15000 }
+    { "plots": 24, "price": 15000 },
+    { "plots": 48, "price": 25000, "level": 8 },
+    { "plots": 72, "price": 50000, "level": 12 },
+    { "plots": 96, "price": 90000, "level": 16 }
   ],
   "dryGrowthRate": 0.5,
   "waterHours": 3,
@@ -16,7 +20,9 @@
   "sprinkler": [
     { "plots": 6, "price": 500 },
     { "plots": 12, "price": 1500, "materials": { "item_scale": 10 } },
-    { "plots": 24, "price": 4000, "materials": { "item_scale": 20, "item_pearl": 3, "item_ancient_cog": 3 } }
+    { "plots": 24, "price": 4000, "materials": { "item_scale": 20, "item_pearl": 3, "item_ancient_cog": 3 } },
+    { "plots": 48, "price": 10000, "materials": { "item_scale": 30, "item_pearl": 5, "item_ancient_cog": 5 } },
+    { "plots": 96, "price": 25000, "materials": { "item_scale": 50, "item_pearl": 8, "item_ancient_cog": 8 } }
   ],
   "buildings": {
     "mill": {

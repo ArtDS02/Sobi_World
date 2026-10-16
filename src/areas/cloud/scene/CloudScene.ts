@@ -13,8 +13,10 @@ import { CLOUD_BACKDROP_ART, CLOUD_PLOT_ART, FLOWER_STAGES, flowerArtId, type Fl
 import { FLOWERS, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
 import type { SceneState } from '../logic/derived';
 import { CloudBird } from './cloudBird';
-import { brightOf, ensureFxTextures, floatIdle, makeDrifts, makeVeil, moveDrifts, playTierMove, pressable, setBright, swayFlowers, type Drift } from './cloudFx';
+import { brightOf, coverBackdrop, ensureFxTextures, paintSky, floatIdle, makeDrifts, makeVeil, moveDrifts, playTierMove, pressable, setBright, swayFlowers, type Drift } from './cloudFx';
+import { setViewedTier } from '../viewedTier';
 import { CloudBuildings } from './cloudBuildings';
+import { CloudDrone } from './cloudDrone';
 import { CloudTierBar } from './cloudTierBar';
 import { CLOUD_DESIGN, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
 
@@ -53,6 +55,7 @@ const topOwnedTier = (owned: number): number => Math.floor((owned - 1) / PLOTS_P
 export class CloudScene extends Phaser.Scene {
   private plots: PlotSprites[] = [];
   private buildings!: CloudBuildings;
+  private drone!: CloudDrone;
   private nightWash!: Phaser.GameObjects.Rectangle;
   private sky!: Phaser.GameObjects.Graphics;
   private backdrop!: Phaser.GameObjects.Image;
@@ -113,6 +116,12 @@ export class CloudScene extends Phaser.Scene {
       flowers: () => this.plots,
     });
     this.veil = makeVeil((x, y, art) => this.fixed(x, y, art));
+    this.drone = new CloudDrone(this, {
+      centre: (slot) => ({ x: plotCentre(slot).x + this.field.x, y: plotCentre(slot).y + this.field.y }),
+      reduceMotion: () => this.deps.reduceMotion(),
+      show: (slot) => this.plots[slot]?.flower.setTint(0xf4ffd8),
+    });
+    this.events.on(Phaser.Scenes.Events.SLEEP, () => this.drone.reset());
     this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
       if (this.deps.paused() || over.length > 0) return;
       this.deps.onPick({ kind: 'ground' });
@@ -194,21 +203,7 @@ export class CloudScene extends Phaser.Scene {
   /** The backdrop covers the whole visible view (wider or taller than the design frame), keeping its proportions. */
   private coverView(view: WorldRect) {
     this.view = view;
-    const { width, height } = CLOUD_VIEW.backdrop;
-    const s = Math.max(view.width / width, view.height / height, CLOUD_DESIGN.height / height);
-    // A little taller than the view so the sky can shift during a tier change without showing an edge.
-    const pad = 1 + (CLOUD_VIEW.tierMove.sky * 2) / (height * s);
-    this.backdrop.setDisplaySize(width * s * pad, height * s * pad).setPosition(view.x + view.width / 2, view.y + view.height / 2);
-  }
-
-  /** The flat sky behind the backdrop (seen only where the image does not reach). */
-  private paintSky(night: boolean) {
-    const { width, height } = CLOUD_DESIGN;
-    const v = CLOUD_VIEW;
-    const bleed = width * 2;
-    this.sky.clear();
-    this.sky.fillStyle(night ? v.sky.nightTop : v.sky.dayTop, 1).fillRect(-bleed, -bleed, width + bleed * 2, height + bleed * 2);
-    this.sky.fillStyle(night ? v.sky.nightBottom : v.sky.dayBottom, 1).fillRect(-bleed, height * 0.55, width + bleed * 2, height + bleed);
+    coverBackdrop(this.backdrop, view);
   }
 
   /** Goes `step` tiers up (+1) or down (−1): the field passes through the clouds (instant when motion is reduced). */
@@ -220,8 +215,10 @@ export class CloudScene extends Phaser.Scene {
     if (next === this.tier) return;
     if (this.deps.reduceMotion()) {
       this.tier = next;
+      this.drone.reset();
       return void this.sync(true);
     }
+    this.drone.reset();
     this.moving = true;
     for (const p of this.plots) setBright(p.bright, false);
     this.bird.clearPests();
@@ -251,9 +248,10 @@ export class CloudScene extends Phaser.Scene {
       force = true;
     }
     this.ownedSeen = owned;
+    setViewedTier(this.tier);
     if (state.night !== this.skyNight) {
       this.skyNight = state.night;
-      this.paintSky(state.night);
+      paintSky(this.sky, state.night);
       this.nightWash.setVisible(state.night);
     }
     const first = plotIndex(this.tier, 0);
@@ -266,6 +264,7 @@ export class CloudScene extends Phaser.Scene {
     ]);
     if (!force && key === this.shown) return;
     this.shown = key;
+    this.drone.check(state, this.tier, this.moving);
     this.drawTierBar(owned);
     this.plots.forEach((sprites, slot) => {
       const view = state.plots[plotIndex(this.tier, slot)];
@@ -284,7 +283,7 @@ export class CloudScene extends Phaser.Scene {
       if (!FLOWER_STAGES.includes(stage)) return;
       sprites.stage = stage;
       sprites.flower.setTexture(KEY(flowerArtId(flower, stage), this.textures)).setVisible(true).setScale(CLOUD_VIEW.flowerScale);
-      sprites.flower.setTint(view.fertilized ? 0xf4ffd8 : 0xffffff);
+      sprites.flower.setTint(view.fertilized && !this.drone.holding(slot) ? 0xf4ffd8 : 0xffffff);
     });
     this.buildings.draw(state);
     this.bird.keepOnly(new Set(this.plots.flatMap((p, slot) => (p.stage === 'grow' || p.stage === 'ripe' ? [slot] : []))));

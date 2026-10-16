@@ -52,10 +52,8 @@ for (const crop of ['grass', 'wheat', 'corn', 'potato', 'carrot']) {
 CATALOGUE_SIZES.bld_sprinkler = { width: 120, height: 200 };
 CATALOGUE_SIZES.bld_feed_mill = { width: 260, height: 260 };
 CATALOGUE_SIZES.bld_composter = { width: 220, height: 200 };
-// GĐ14 Garden scene on the owner's mock-up: the painted field (sheet E of garden-01-scene, ×1.25 like bg_cloud) and the
-// wooden name sign on a post (sheet L cell 3).
+// GĐ14 Garden scene on the owner's mock-up: the painted field (sheet E of garden-01-scene, ×1.25 like bg_cloud).
 CATALOGUE_SIZES.bg_garden = { width: 1812, height: 900 };
-CATALOGUE_SIZES.prop_garden_sign = { width: 220, height: 200 };
 
 // Sobi Aquarium (GĐ8): the fish swimming (facing right), the tank, the dock and the sea backdrop.
 for (const fish of ['goldfish', 'perch', 'carp', 'clownfish', 'pufferfish', 'angelfish', 'glowfish', 'betta', 'lanternfish', 'seahorse', 'dragon_koi', 'moonfish']) {

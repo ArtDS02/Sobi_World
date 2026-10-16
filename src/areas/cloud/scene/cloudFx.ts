@@ -4,7 +4,7 @@
 import * as Phaser from 'phaser';
 import type { WorldRect } from '../../../systems/layout/camera';
 import { PLOTS_PER_TIER } from '../logic/config/content';
-import { CLOUD_VIEW, plotCentre } from './cloudView';
+import { CLOUD_DESIGN, CLOUD_VIEW, plotCentre } from './cloudView';
 
 type Img = Phaser.GameObjects.Image;
 
@@ -211,4 +211,23 @@ export function playTierMove(scene: Phaser.Scene, t: TierMove) {
     );
     scene.tweens.add({ targets: t.title, scale: { from: fit * 0.85, to: fit }, duration: m.inMs, ease: 'Back.easeOut' });
   });
+}
+
+/** The backdrop covers the whole visible view (wider or taller than the design frame), keeping its proportions. */
+export function coverBackdrop(backdrop: Img, view: WorldRect) {
+  const { width, height } = CLOUD_VIEW.backdrop;
+  const s = Math.max(view.width / width, view.height / height, CLOUD_DESIGN.height / height);
+  // A little taller than the view so the sky can shift during a tier change without showing an edge.
+  const pad = 1 + (CLOUD_VIEW.tierMove.sky * 2) / (height * s);
+  backdrop.setDisplaySize(width * s * pad, height * s * pad).setPosition(view.x + view.width / 2, view.y + view.height / 2);
+}
+
+/** The flat sky behind the backdrop (seen only where the image does not reach). */
+export function paintSky(sky: Phaser.GameObjects.Graphics, night: boolean) {
+  const { width, height } = CLOUD_DESIGN;
+  const v = CLOUD_VIEW;
+  const bleed = width * 2;
+  sky.clear();
+  sky.fillStyle(night ? v.sky.nightTop : v.sky.dayTop, 1).fillRect(-bleed, -bleed, width + bleed * 2, height + bleed * 2);
+  sky.fillStyle(night ? v.sky.nightBottom : v.sky.dayBottom, 1).fillRect(-bleed, height * 0.55, width + bleed * 2, height + bleed);
 }

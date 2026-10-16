@@ -3,16 +3,38 @@ import type { PlotStage } from '../../../systems/plants/plot';
 import { growthShare, harvestYield, plotStage } from '../../../systems/plants/plot';
 import { RECIPES } from '../../../core/config/recipes';
 import { batchesReady } from '../../../core/production/production';
-import { CROPS, GB, PLOT_RULES, MAX_PLOTS, type BuildingId } from './config/content';
+import { CROPS, GB, PLOT_RULES, MAX_PLOTS, PLOTS_PER_ZONE, zoneOf, type BuildingId } from './config/content';
 import type { GardenState } from './state';
 
 /** Plots a sprinkler of this level waters (0 = no sprinkler). */
 export const sprinklerCoverage = (level: number): number => (level <= 0 ? 0 : (GB.sprinkler[Math.min(level, GB.sprinkler.length) - 1]?.plots ?? 0));
 export const isCovered = (g: Pick<GardenState, 'sprinkler'>, index: number): boolean => index < sprinklerCoverage(g.sprinkler);
 
+export interface Expansion {
+  plots: number;
+  price: number;
+  /** World level it needs (1 = none). */
+  level: number;
+  /** The new zone it opens (0-based), or null while it grows the first zone. */
+  zone: number | null;
+}
+
 /** The next plot expansion, or null at the top. */
-export const nextExpansion = (g: Pick<GardenState, 'plots'>): { plots: number; price: number } | null =>
-  g.plots.length >= MAX_PLOTS ? null : (GB.plotExpansions.find((e) => e.plots > g.plots.length) ?? null);
+export function nextExpansion(g: Pick<GardenState, 'plots'>): Expansion | null {
+  if (g.plots.length >= MAX_PLOTS) return null;
+  const step = GB.plotExpansions.find((e) => e.plots > g.plots.length);
+  if (!step) return null;
+  return { plots: step.plots, price: step.price, level: step.level ?? 1, zone: step.plots > PLOTS_PER_ZONE ? zoneOf(step.plots - 1) : null };
+}
+
+/** Zones the player owns at least one plot in (1 or more). */
+export const ownedZones = (g: Pick<GardenState, 'plots'>): number => zoneOf(g.plots.length - 1) + 1;
+
+/** The plot indexes of zone `zone` that the player owns. */
+export const zonePlots = (g: Pick<GardenState, 'plots'>, zone: number): number[] => {
+  const first = zone * PLOTS_PER_ZONE;
+  return g.plots.slice(first, first + PLOTS_PER_ZONE).map((_, k) => first + k);
+};
 
 /** The next sprinkler level and its price, or null at the top. */
 export const nextSprinkler = (

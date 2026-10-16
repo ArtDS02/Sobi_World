@@ -9,7 +9,7 @@ import { RECIPES, recipesOf } from '../../../core/config/recipes';
 import { TECHS, recipeLocked, techBonus } from '../../../core/config/tech';
 import { sped } from '../../../core/production/production';
 import { WORLD_LEVELS } from '../../../core/config/progression';
-import { levelProgress, worldXp } from '../../../core/progression/levels';
+import { levelProgress, worldLevel, worldXp } from '../../../core/progression/levels';
 import { affordableBatches, batchesDone, batchesReady, nextBatchAt, jobEndsAt, type Recipe } from '../../../core/production/production';
 import type { WorldSave } from '../../../core/save/world';
 import { mulberry32 } from '../../../core/rng';
@@ -24,7 +24,8 @@ import {
   PLOT_RULES,
   type BuildingId,
 } from '../logic/config/content';
-import { isCovered, nextExpansion, nextSprinkler, plotViews, sprinklerCoverage } from '../logic/derived';
+import { isCovered, nextExpansion, nextSprinkler, plotViews, sprinklerCoverage, type Expansion } from '../logic/derived';
+import { emptyIn, unfertilizedIn } from './gardenZoneVm';
 import { gardenOf } from '../logic/save/lens';
 
 export type GardenRun = (world: WorldSave, ctx: ActionContext) => ActionResultOf<WorldSave>;
@@ -87,19 +88,30 @@ export interface BulkVm {
   water: ButtonVm;
   harvest: ButtonVm;
   plantAll: ButtonVm;
+  fertilizeAll: ButtonVm;
   expand: ButtonVm;
 }
 
 const reasonOf = (error: ErrorCode, fallback: string): string => (error === 'NOTHING_TO_DO' ? fallback : error === 'INSUFFICIENT_GOLD' ? vi.garden.noGold : vi.error[error]);
 
-export function bulkVm(world: WorldSave, now: number, selected: string, run: { water: GardenRun; harvest: GardenRun; plantAll: GardenRun }): BulkVm {
+/**
+ * The buttons under the field. Sowing and fertilising act on the zone on screen (decision 028); watering and harvesting
+ * still take the whole garden.
+ */
+export function bulkVm(
+  world: WorldSave,
+  now: number,
+  selected: string,
+  zone: number,
+  run: { water: GardenRun; harvest: GardenRun; plantAll: GardenRun; fertilizeAll: GardenRun },
+): BulkVm {
   const g = gardenOf(world);
   const views = plotViews(g, now);
   const growing = views.filter((v) => v.stage === 'growing').length;
   const waterE = probe(world, run.water, now);
   const harvestE = probe(world, run.harvest, now);
-  const empty = views.filter((v) => v.stage === 'empty').length;
-  const plantE = empty === 0 ? 'NOTHING_TO_DO' : probe(world, run.plantAll, now);
+  const plantE = emptyIn(world, zone).length === 0 ? 'NOTHING_TO_DO' : probe(world, run.plantAll, now);
+  const fertE = unfertilizedIn(world, zone).length === 0 ? 'NOTHING_TO_DO' : probe(world, run.fertilizeAll, now);
   const next = nextExpansion(g);
   return {
     water: { label: vi.garden.water, reason: waterE ? reasonOf(waterE, growing === 0 ? vi.garden.noCrops : vi.garden.allWatered) : null },
@@ -108,10 +120,19 @@ export function bulkVm(world: WorldSave, now: number, selected: string, run: { w
       label: `${vi.garden.plantAll}${CROPS[selected] ? ` (${CROPS[selected]!.nameVi})` : ''}`,
       reason: plantE ? reasonOf(plantE, vi.garden.noEmpty) : null,
     },
-    expand: next
-      ? { label: t(vi.garden.expand, { gold: gold(next.price) }), reason: world.wallet.coins < next.price ? vi.garden.noGold : null }
-      : { label: vi.garden.expandMax, reason: vi.garden.expandMax },
+    fertilizeAll: {
+      label: vi.garden.fertilizeAll,
+      reason: fertE ? (fertE === 'INSUFFICIENT_ITEM' ? vi.garden.noFertilizer : reasonOf(fertE, vi.garden.noFertilizable)) : null,
+    },
+    expand: next ? expandVm(world, next) : { label: vi.garden.expandMax, reason: vi.garden.expandMax },
   };
+}
+
+/** The "open more plots" button: a whole zone past the first one, gated by the world level (decision 028). */
+export function expandVm(world: WorldSave, next: Expansion): ButtonVm {
+  const label = next.zone !== null ? t(vi.garden.expandZone, { n: next.zone + 1, gold: gold(next.price) }) : t(vi.garden.expand, { gold: gold(next.price) });
+  const reason = worldLevel(world, WORLD_LEVELS) < next.level ? t(vi.garden.needLevel, { level: next.level }) : world.wallet.coins < next.price ? vi.garden.noGold : null;
+  return { label, reason };
 }
 
 export interface PlotCardVm {

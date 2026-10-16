@@ -60,6 +60,8 @@ export const CLOUD_VIEW = {
   hover: { lift: 3, brighten: 1.07, swell: 1.04, ms: 140 },
   /** Changing tier: the field sinks (going up) or rises (going down) and fades, a cloud veil sweeps, the sky shifts. */
   tierMove: { outMs: 240, inMs: 340, shift: 60, sky: 16, veilAlpha: 0.92, veilScale: 1.25, veilBlur: 2, travel: 240 },
+  /** The fertiliser drone (decision 028): from the cauldron's bank over each newly fertilised flower, then away. */
+  drone: { from: { x: 222, y: 560 }, exit: { x: 1700, y: -120 }, hoverY: 70, speed: 900, dropMs: 260, size: 130, art: 'prop_drone_cloud' },
   /** Idle motion: slow, never in step (each object gets its own period and phase). */
   idle: { bobPx: 5, bobMs: [2600, 3400], swayDeg: 3, flapMs: 1700, brewSwell: 0.035 },
   /** Building hover answers: spring droplets, cauldron bubbles (counts per hover). */
