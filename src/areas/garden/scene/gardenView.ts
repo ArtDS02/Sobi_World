@@ -37,7 +37,7 @@ export const GARDEN_VIEW = {
    */
   spray: { everyMs: 1500, drops: 7, reach: [60, 120], headY: 0.93, mistEveryMs: 3200, mistPlots: 2 },
   /** The shop stall (decision 029) on the lawn at the lower right; drawn in code until bld_shop_garden is painted. */
-  shop: { x: 1440, y: 738, scale: 0.85, art: 'bld_shop_garden', colours: { stripe: 0x7fbf5e, stripe2: 0xfff6e2, goods: [0xe9c46a, 0xe07a5f, 0x8fbf6a, 0xb98a55] } },
+  shop: { x: 1497, y: 752, scale: 0.7, art: 'bld_shop_garden', colours: { stripe: 0x7fbf5e, stripe2: 0xfff6e2, goods: [0xe9c46a, 0xe07a5f, 0x8fbf6a, 0xb98a55] } },
   /** The sprinkler grows with its level: its art per level when painted, else the base art drawn a little bigger. */
   sprinklerGrow: 0.07,
   /** A soft colour over the backdrop per zone, so each zone feels its own (index = zone). */

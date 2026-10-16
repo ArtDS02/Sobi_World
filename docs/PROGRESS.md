@@ -3,12 +3,22 @@
 ## Trạng thái hiện tại
 **Giai đoạn:** GĐ14 đang làm — art, animation, VFX, âm thanh (nhánh `phase-14-art`, tách từ `main`). GĐ13 đã merge `main` (gameplay freeze, decision 021); phiên bản 0.13.0.
 **Chiến lược (decision 017, 022):** gameplay trước, art sau; phong cách chuẩn Sobi Farm, chủ dự án tạo ảnh Gemini theo batch (`asset/batches/`), agent cắt và nối vào game. GĐ15 phát hành.
-**Tiến độ GĐ14:** 80 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). Đang làm: **Aquarium** (aquarium-01-fish, aquarium-02-items chờ ảnh). Còn lại: Aquarium (kế hoạch `asset/AQUARIUM_ART_PLAN.md`, cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
-**Chờ chủ dự án:** duyệt Cloud, Sảnh, Garden; duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029); ảnh `drone-01`, `extras-01`; duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
+**Tiến độ GĐ14:** 53 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). Đang làm: **Aquarium** (12 cá + icon + vật phẩm đã có art; cảnh theo 5 ảnh mẫu chưa dựng). Còn lại: Aquarium (kế hoạch `asset/AQUARIUM_ART_PLAN.md`, cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
+**Chờ chủ dự án:** duyệt Cloud, Sảnh, Garden; duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023).
 **Bước tiếp theo:** chủ dự án duyệt cảnh Garden; tạo ảnh `aquarium-01-fish`, `aquarium-02-items` → cắt, dựng cảnh Aquarium theo 5 ảnh mẫu.
 
 ## Nhật ký
+
+### 2026-10-16 — GĐ14: art drone, sạp hàng, vòi tưới theo cấp, cá Aquarium (chờ duyệt)
+✅ Đã làm:
+1. **Cắt 4 batch** (6 ảnh Gemini của chủ dự án): `drone-01` (2 drone), `extras-01` (2 sạp hàng, vòi tưới cấp 2–5), `aquarium-01-fish` (12 cá), `aquarium-02-items` (vảy, ngọc trai, thức ăn cá, trứng cá, đống vảy, phao). 12 icon cá `ui_item_fish_*` lấy từ sprite cá (K-derive). 13 dòng manifest mới + kích thước canvas; placeholder 80 → 53.
+2. Gemini vẽ đảo vòi tưới cấp 3 và 4 so với mô tả → đổi lại khi giao (cấp 3 = đầu xoay bằng đồng, cấp 4 = có bể nước).
+3. Sạp Garden bằng art thật to hơn bản vẽ code → thu nhỏ (0,7) và dời sang phải để không đè ô góc dưới.
+🧪 Đã kiểm tra: QA không FAIL, `assets:check` OK; Edge ẩn 1600×900: drone art bay ở Garden và Cloud, sạp hai vùng, vòi tưới cấp 3 có art riêng; không lỗi script.
+⚠️ Còn lại ở Aquarium: `bld_fish_tank`, `bld_fish_dock`, `bg_aquarium` chờ dựng cảnh theo 5 ảnh mẫu (nền E1–E5 đã có trong `art_inbox/.batch/aquarium-01-scene/`); trứng cá / đống vảy / phao đã có ảnh, chờ cảnh mới dùng.
+👉 Bạn cần: duyệt art mới (ảnh chụp đã gửi).
+➡️ Tiếp theo: dựng cảnh Aquarium theo ảnh mẫu.
 
 ### 2026-10-16 — GĐ14 Garden + Cloud: cửa hàng từng vùng, vườn sống động, HUD Garden mới (decision 029) — chờ duyệt
 ✅ Đã làm:

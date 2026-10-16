@@ -19,8 +19,8 @@ Backend: **G** = Gemini vẽ sheet (chủ dự án dán prompt, lưu ảnh; còn
 | Garden | `garden-01-crops` | 5 cây × 4 giai đoạn (20) | G, 3 sheet | 3 | **production** (chờ duyệt) |
 | Garden | `garden-02-items` | 5 hạt, 5 nông sản, thức ăn cao cấp, phân bón (12) | G, 2 sheet 2×3 | 2 | **production** (chờ duyệt) |
 | Garden | `garden-03-world` | `plot_soil`, `_wet`, `plot_locked`, `bld_feed_mill`, `bld_composter`, `bld_sprinkler` (6) | G, 2 sheet 1×3 | 2 | **production** (chờ duyệt) |
-| Aquarium | `aquarium-01-fish` | 12 cá theo content, nhìn sang phải (12) | G, 2 sheet 2×3 | 2 | **đã viết**, chờ ảnh Gemini |
-| Aquarium | `aquarium-02-items` | 12 icon cá (K-derive) + vảy, ngọc trai, thức ăn cá; thêm trứng cá, đống vảy, phao (dòng manifest mới) (15) | K-derive + G 2×3 | 1 | **đã viết**, chờ ảnh Gemini |
+| Aquarium | `aquarium-01-fish` | 12 cá theo content, nhìn sang phải (12) | G, 2 sheet 2×3 | 2 | **production** (chờ duyệt) |
+| Aquarium | `aquarium-02-items` | 12 icon cá (K-derive) + vảy, ngọc trai, thức ăn cá; thêm trứng cá, đống vảy, phao (dòng manifest mới) (15) | K-derive + G 2×3 | 1 | **production** (chờ duyệt) |
 | Aquarium | `aquarium-03-world` | `bld_fish_tank`, `bld_fish_dock`, `bg_aquarium` (3) | nền E1–E5, bảng, cần câu, NPC, icon đã render trong `art_inbox/.batch/aquarium-01-scene/` (theo ảnh mẫu 5 cấp; bể kính vẽ liền trong nền) | 0 | chờ nối khi dựng lại cảnh |
 | Adventure | `adventure-01-forest` | 7 kẻ địch + trùm Cổ Thụ, nhìn sang trái (8) | G, 2 sheet + 1 ảnh trùm | 3 | chưa viết |
 | Adventure | `adventure-02-mountain` | 4 kẻ địch, Tượng Quặng, trùm Rồng Dung Nham (6) | G, 1 sheet + 2 ảnh đơn | 3 | chưa viết |
@@ -30,8 +30,8 @@ Backend: **G** = Gemini vẽ sheet (chủ dự án dán prompt, lưu ảnh; còn
 | Adventure | `adventure-06-backdrops` | `bg_adventure_forest`, `_mountain`, `_ruins` (3) | G, 3 nền | 3 | chưa viết |
 | Farm | `farm-01-species` | 6 giống heo GĐ7: đứng (6) + ngủ, thức (từ ảnh đứng đã duyệt) | G sheet 2×3, rồi Gemini sửa ảnh | 3 | chưa viết |
 | Sảnh | `world-01-scene` | nền đảo trời (sửa từ ảnh mẫu), 7 công trình cổng, 8 đồ trang trí, bảng tên, logo, sao cấp, 5 icon khu vực, 4 icon HUD, linh vật Sobi (30, decision 024) | G: 1 ảnh sửa + 8 sheet | 9 | **production** (chờ duyệt) |
-| Garden + Cloud | `drone-01` | drone bón phân `prop_drone_garden`, `prop_drone_cloud` (2, decision 028; dòng manifest thêm khi giao) | G, 1 sheet 1×2 | 1 | **đã viết**, chờ ảnh Gemini |
-| Garden + Cloud | `extras-01` | sạp cửa hàng `bld_shop_garden`, `bld_shop_cloud`; vòi tưới `bld_sprinkler_l2..l5` (6, decision 029; dòng manifest thêm khi giao) | G, 2 sheet (1×2, 1×4) | 2 | **đã viết**, chờ ảnh Gemini |
+| Garden + Cloud | `drone-01` | drone bón phân `prop_drone_garden`, `prop_drone_cloud` (2, decision 028; dòng manifest thêm khi giao) | G, 1 sheet 1×2 | 1 | **production** (chờ duyệt) |
+| Garden + Cloud | `extras-01` | sạp cửa hàng `bld_shop_garden`, `bld_shop_cloud`; vòi tưới `bld_sprinkler_l2..l5` (6, decision 029; dòng manifest thêm khi giao) | G, 2 sheet (1×2, 1×4) | 2 | **production** (chờ duyệt) |
 | Sảnh | `plaza-01-icons` | `ui_icon_lock` (1) | K | 0 | chưa viết |
 | | | **162** | | **~39** | |
 

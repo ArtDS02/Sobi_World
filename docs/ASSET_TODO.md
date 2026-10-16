@@ -76,7 +76,7 @@ Tất cả là placeholder sinh bằng `npm run assets:placeholders` (chưa có 
 | Ảnh bà Ngan Lai (Nhà lai giống) | Đang dùng ảnh vịt của bác Vịt Cần (`prop_animal_duck`). |
 
 ## GĐ5 — Sobi Garden
-**GĐ14 (2026-10-16):** 38 dòng dưới đây đã có art thật (batch `garden-01..03`, status `production`, chờ duyệt). Cảnh dựng lại theo ảnh mẫu (decision 027): nền `bg_garden`. Khu trồng, vòi phun, drone (decision 028). Cửa hàng + vườn sống động, HUD tông trắng–tím (decision 029). Còn lại: ảnh drone `prop_drone_garden` / `prop_drone_cloud` (batch `drone-01`), sạp `bld_shop_garden` / `bld_shop_cloud` và vòi tưới `bld_sprinkler_l2..l5` (batch `extras-01`) — đang vẽ bằng code / phóng ảnh gốc; âm thanh riêng.
+**GĐ14 (2026-10-16):** 38 dòng dưới đây đã có art thật (batch `garden-01..03`, status `production`, chờ duyệt). Cảnh dựng lại theo ảnh mẫu (decision 027): nền `bg_garden`. Khu trồng, vòi phun, drone (decision 028). Cửa hàng + vườn sống động, HUD tông trắng–tím (decision 029). Drone, sạp hàng, vòi tưới cấp 2–5 đã có art (batch `drone-01`, `extras-01`). Còn lại: âm thanh riêng.
 | Việc | Ghi chú |
 |---|---|
 | Ô đất `plot_soil`, `plot_soil_wet`, `plot_locked` (152×108) | đất khô, đất ướt, ô chưa mở |

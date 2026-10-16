@@ -54,6 +54,16 @@ CATALOGUE_SIZES.bld_feed_mill = { width: 260, height: 260 };
 CATALOGUE_SIZES.bld_composter = { width: 220, height: 200 };
 // GĐ14 Garden scene on the owner's mock-up: the painted field (sheet E of garden-01-scene, ×1.25 like bg_cloud).
 CATALOGUE_SIZES.bg_garden = { width: 1812, height: 900 };
+// GĐ14 decisions 028–029: the fertiliser drones, the Areas' shop stalls, the sprinkler's look per level.
+CATALOGUE_SIZES.prop_drone_garden = { width: 256, height: 180 };
+CATALOGUE_SIZES.prop_drone_cloud = { width: 256, height: 180 };
+CATALOGUE_SIZES.bld_shop_garden = { width: 260, height: 240 };
+CATALOGUE_SIZES.bld_shop_cloud = { width: 260, height: 240 };
+for (const level of [2, 3, 4, 5]) CATALOGUE_SIZES[`bld_sprinkler_l${level}`] = { width: 140, height: 220 };
+// Aquarium scene props (asset/AQUARIUM_ART_PLAN.md §4.1), drawn by the scene once it is rebuilt.
+CATALOGUE_SIZES.prop_fish_egg = { width: 64, height: 64 };
+CATALOGUE_SIZES.prop_scale_pile = { width: 128, height: 96 };
+CATALOGUE_SIZES.prop_fishing_bobber = { width: 64, height: 80 };
 
 // Sobi Aquarium (GĐ8): the fish swimming (facing right), the tank, the dock and the sea backdrop.
 for (const fish of ['goldfish', 'perch', 'carp', 'clownfish', 'pufferfish', 'angelfish', 'glowfish', 'betta', 'lanternfish', 'seahorse', 'dragon_koi', 'moonfish']) {

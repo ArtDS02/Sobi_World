@@ -1420,62 +1420,62 @@
     },
     {
       "id": "fish_goldfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_goldfish.png"
     },
     {
       "id": "fish_perch",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_perch.png"
     },
     {
       "id": "fish_carp",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_carp.png"
     },
     {
       "id": "fish_clownfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_clownfish.png"
     },
     {
       "id": "fish_pufferfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_pufferfish.png"
     },
     {
       "id": "fish_angelfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_angelfish.png"
     },
     {
       "id": "fish_glowfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_glowfish.png"
     },
     {
       "id": "fish_betta",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_betta.png"
     },
     {
       "id": "fish_lanternfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_lanternfish.png"
     },
     {
       "id": "fish_seahorse",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_seahorse.png"
     },
     {
       "id": "fish_dragon_koi",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_dragon_koi.png"
     },
     {
       "id": "fish_moonfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/fish_moonfish.png"
     },
     {
@@ -1607,6 +1607,31 @@
       "id": "prop_sign_plank",
       "status": "production",
       "asset": "props/prop_sign_plank.png"
+    },
+    {
+      "id": "prop_drone_garden",
+      "status": "production",
+      "asset": "props/prop_drone_garden.png"
+    },
+    {
+      "id": "prop_drone_cloud",
+      "status": "production",
+      "asset": "props/prop_drone_cloud.png"
+    },
+    {
+      "id": "prop_fish_egg",
+      "status": "production",
+      "asset": "props/prop_fish_egg.png"
+    },
+    {
+      "id": "prop_scale_pile",
+      "status": "production",
+      "asset": "props/prop_scale_pile.png"
+    },
+    {
+      "id": "prop_fishing_bobber",
+      "status": "production",
+      "asset": "props/prop_fishing_bobber.png"
     },
     {
       "id": "prop_title_banner",
@@ -1879,6 +1904,36 @@
       "id": "bld_composter",
       "status": "production",
       "asset": "buildings/bld_composter.png"
+    },
+    {
+      "id": "bld_shop_garden",
+      "status": "production",
+      "asset": "buildings/bld_shop_garden.png"
+    },
+    {
+      "id": "bld_shop_cloud",
+      "status": "production",
+      "asset": "buildings/bld_shop_cloud.png"
+    },
+    {
+      "id": "bld_sprinkler_l2",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_l2.png"
+    },
+    {
+      "id": "bld_sprinkler_l3",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_l3.png"
+    },
+    {
+      "id": "bld_sprinkler_l4",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_l4.png"
+    },
+    {
+      "id": "bld_sprinkler_l5",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_l5.png"
     },
     {
       "id": "bld_fish_tank",
@@ -2282,77 +2337,77 @@
     },
     {
       "id": "ui_item_fish_goldfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_goldfish.png"
     },
     {
       "id": "ui_item_fish_perch",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_perch.png"
     },
     {
       "id": "ui_item_fish_carp",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_carp.png"
     },
     {
       "id": "ui_item_fish_clownfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_clownfish.png"
     },
     {
       "id": "ui_item_fish_pufferfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_pufferfish.png"
     },
     {
       "id": "ui_item_fish_angelfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_angelfish.png"
     },
     {
       "id": "ui_item_fish_glowfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_glowfish.png"
     },
     {
       "id": "ui_item_fish_betta",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_betta.png"
     },
     {
       "id": "ui_item_fish_lanternfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_lanternfish.png"
     },
     {
       "id": "ui_item_fish_seahorse",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_seahorse.png"
     },
     {
       "id": "ui_item_fish_dragon_koi",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_dragon_koi.png"
     },
     {
       "id": "ui_item_fish_moonfish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_fish_moonfish.png"
     },
     {
       "id": "ui_item_scale",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_scale.png"
     },
     {
       "id": "ui_item_pearl",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_pearl.png"
     },
     {
       "id": "ui_item_food_fish",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_food_fish.png"
     },
     {
