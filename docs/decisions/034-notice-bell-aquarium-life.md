@@ -12,7 +12,7 @@
 - NPC vẫn trích thông báo đầu tiên. Icon chuông vẽ SVG trong code tới khi có `ui_hud_bell`.
 
 ## Aquarium
-- **Sạp hàng trong cảnh** (góc dưới phải của cả 5 nơi), bấm mở cửa hàng; vẽ bằng code tới khi có `bld_shop_aquarium`.
+- **Sạp hàng trong cảnh** (góc dưới phải của cả 5 nơi), bấm mở cửa hàng; 2 ảnh theo nơi đặt: `bld_shop_aquarium` (sạp gỗ trên bến, cấp 1), `bld_shop_aquarium_sea` (sạp vỏ sò dưới nước, cấp 2–5); vẽ bằng code tới khi có ảnh (prompt `art_inbox/.batch/aquarium-05-shop/PROMPT.md`).
 - **Bấm cá**: cá giật mình lao đi, cá thân (có tim) nhả tim lên, rồi thẻ cá mới mở (trễ ~0,35 giây).
 - **Cá đói** thỉnh thoảng bơi lên mặt nước đớp (vòng gợn nhỏ) — thấy cá đói mà không cần nhìn icon.
 - **Mưa / tuyết** gợn mặt nước; **đêm**: đom đóm bay trên mặt nước và ánh trăng lấp lánh trên mặt nước; biển sâu (cấp 5)

@@ -30,8 +30,9 @@ export interface AquariumPlace {
   eggs: Spot;
   /** The pile of scales (bottom centre). */
   scales: Spot;
-  /** The shop stall (bottom centre, decision 034): on the deck at level 1, on the sand under the water elsewhere. */
-  shop: Spot;
+  /** The shop stall (bottom centre, decision 034) and its picture: the wooden stall on the deck at level 1, the
+   *  undersea stall on the sand elsewhere. */
+  shop: Spot & { art: string };
   /** The plaque with the place's name (centre): opens the tank card too. */
   plaque: Spot;
   /** The rod at the fishing spot (bottom of the handle), or null when the backdrop paints the spot itself. */
@@ -58,7 +59,7 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     murk: { left: 360, right: 1280, top: 290, bottom: 600 },
     eggs: { x: 480, y: 578 },
     scales: { x: 1110, y: 598 },
-    shop: { x: 1330, y: 735 },
+    shop: { x: 1370, y: 735, art: 'bld_shop_aquarium' },
     plaque: { x: 800, y: 643 },
     rod: null,
     bite: { x: 1585, y: 470, kind: 'ripple' },
@@ -73,7 +74,7 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     murk: { left: -400, right: 2000, top: 330, bottom: 1300 },
     eggs: { x: 560, y: 712 },
     scales: { x: 1130, y: 728 },
-    shop: { x: 1340, y: 772 },
+    shop: { x: 1340, y: 772, art: 'bld_shop_aquarium_sea' },
     plaque: { x: 800, y: 700 },
     rod: { x: 1520, y: 318, scale: 0.85 },
     bite: null,
@@ -91,7 +92,7 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     murk: { left: -400, right: 2000, top: 292, bottom: 1300 },
     eggs: { x: 560, y: 700 },
     scales: { x: 1060, y: 712 },
-    shop: { x: 1330, y: 768 },
+    shop: { x: 1330, y: 768, art: 'bld_shop_aquarium_sea' },
     plaque: { x: 800, y: 700 },
     rod: { x: 1525, y: 282, scale: 0.85 },
     bite: null,
@@ -106,7 +107,7 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     murk: { left: -400, right: 2000, top: 288, bottom: 1300 },
     eggs: { x: 600, y: 718 },
     scales: { x: 1090, y: 728 },
-    shop: { x: 1330, y: 782 },
+    shop: { x: 1330, y: 782, art: 'bld_shop_aquarium_sea' },
     plaque: { x: 800, y: 700 },
     rod: { x: 1505, y: 288, scale: 0.85 },
     bite: null,
@@ -121,7 +122,7 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     murk: { left: -400, right: 2000, top: -400, bottom: 1300 },
     eggs: { x: 620, y: 732 },
     scales: { x: 1110, y: 742 },
-    shop: { x: 1340, y: 790 },
+    shop: { x: 1340, y: 790, art: 'bld_shop_aquarium_sea' },
     plaque: { x: 800, y: 700 },
     rod: null,
     bite: { x: 1485, y: 238, kind: 'glow' },
@@ -140,8 +141,8 @@ export const AQUARIUM_VIEW = {
   /** The painted backdrops: 1800 × 900, centred on the design frame (design x = backdrop x − offsetX). */
   backdrop: { width: 1800, height: 900, offsetX: 100 },
   plaque: { art: 'prop_aqua_plaque', width: 330 },
-  /** The shop stall: its art when painted, else the code stall (ui/world/codeStall.ts) in sea colours. */
-  shop: { art: 'bld_shop_aquarium', width: 210, colours: { stripe: 0x5aa6dc, stripe2: 0xfff6e2, goods: [0xe8774a, 0xf2c14e, 0x7fc6e8, 0xd98a3d] } },
+  /** The shop stall (art per place): its picture when painted, else the code stall (ui/world/codeStall.ts). */
+  shop: { width: 230, colours: { stripe: 0x5aa6dc, stripe2: 0xfff6e2, goods: [0xe8774a, 0xf2c14e, 0x7fc6e8, 0xd98a3d] } },
   rod: { art: 'bld_fish_dock' },
   egg: { art: 'prop_fish_egg', width: 44, step: 50 },
   scalePile: { art: 'prop_scale_pile', width: 92 },

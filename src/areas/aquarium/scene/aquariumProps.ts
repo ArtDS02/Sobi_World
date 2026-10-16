@@ -42,8 +42,7 @@ export class AquariumProps {
     const v = AQUARIUM_VIEW;
     const t = v.text;
     this.plaque = this.image(v.plaque.art, v.plaque.width).setDepth(v.depth.sign);
-    this.shop = this.image(v.shop.art, 0).setOrigin(0.5, 1).setDepth(v.depth.sign);
-    this.dressShop();
+    this.shop = scene.add.image(0, 0, FALLBACK_PROP_KEY).setOrigin(0.5, 1).setDepth(v.depth.sign);
     this.plaqueText = scene.add
       .text(0, 0, '', { fontFamily: t.fontFamily, fontSize: `${t.plaquePx}px`, fontStyle: 'bold', color: t.color })
       .setOrigin(0.5)
@@ -75,6 +74,7 @@ export class AquariumProps {
     const v = AQUARIUM_VIEW;
     this.plaque.setPosition(place.plaque.x, place.plaque.y);
     this.shop.setPosition(place.shop.x, place.shop.y);
+    this.dressShop();
     this.plaqueText.setPosition(place.plaque.x, place.plaque.y + 1).setText(name);
     const rod = place.rod;
     for (const part of this.rodParts()) {
@@ -161,7 +161,9 @@ export class AquariumProps {
   /** The stall: the painted one when loaded, else the code stall, drawn `shop.width` wide. */
   private dressShop() {
     const v = AQUARIUM_VIEW.shop;
-    if (!this.scene.textures.exists(textureKey(v.art))) this.shop.setTexture(stallKey(this.scene, v.art, v.colours));
+    const art = this.place?.shop.art;
+    if (!art) return;
+    this.shop.setTexture(this.scene.textures.exists(textureKey(art)) ? textureKey(art) : stallKey(this.scene, art, v.colours));
     const s = v.width / this.shop.width;
     this.shop.setData('scale', s).setScale(s);
   }

@@ -9,7 +9,8 @@
 |---|---|
 | `fx_fish_pellet`, `fx_water_ripple` | Đang vẽ bằng code trong `aquariumFx.ts`; prompt `art_inbox/.batch/aquarium-03-fx/PROMPT.md`. Code tự dùng ảnh khi manifest có id. |
 | `prop_drone_aquarium`, `prop_drone_water` (decision 033) | Drone thức ăn / drone nước; đang mượn `prop_drone_garden` / `prop_drone_cloud`. Prompt sheet W cùng file. |
-| `bld_shop_aquarium`, `ui_hud_bell` (decision 034) | Sạp hàng Aquarium (đang vẽ bằng code), icon chuông thông báo (đang là SVG trong `guideLayer.ts`). Prompt sheet S cùng file. |
+| `bld_shop_aquarium` (bến, cấp 1), `bld_shop_aquarium_sea` (dưới nước, cấp 2–5) | Sạp hàng Aquarium, đang vẽ bằng code. Prompt `art_inbox/.batch/aquarium-05-shop/PROMPT.md`. |
+| `ui_hud_bell` (decision 034) | Icon chuông thông báo, đang là SVG trong `guideLayer.ts`. Prompt sheet S của `aquarium-03-fx` (ô 2). |
 
 ## GĐ12 — Thế giới động
 Tất cả là placeholder (CSS, ký tự) — làm art ở GĐ14 (decision 017):
