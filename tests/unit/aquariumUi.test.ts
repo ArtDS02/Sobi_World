@@ -141,7 +141,7 @@ describe('the tank, the dock, the bag, breeding', () => {
     const lvl3 = tankVm(withAquarium(w, { ...aquariumOf(w), tank: { ...aquariumOf(w).tank, level: 2 } }), NOON, 0);
     expect(lvl3.upgrade?.reason).toContain('Vảy cá');
     expect(lvl3.upgradeNeeds).toEqual([{ name: 'Vảy cá', have: 0, need: 10 }]);
-    const top = tankVm(withAquarium(w, { ...aquariumOf(w), tank: { ...aquariumOf(w).tank, level: 4 } }), NOON, 0);
+    const top = tankVm(withAquarium(w, { ...aquariumOf(w), tank: { ...aquariumOf(w).tank, level: AB.tank.levels.length } }), NOON, 0);
     expect(top.upgrade).toBeNull();
     expect(top.maxText).toBe('Bể đã ở cấp cao nhất.');
     const dirty = tankVm(withAquarium(w, { ...aquariumOf(w), tank: { ...aquariumOf(w).tank, water: 20 } }), NOON, 0);

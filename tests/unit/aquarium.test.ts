@@ -372,6 +372,16 @@ describe('selling, scales and the tank upgrade', () => {
     const top = withAquarium(tankWorld(), { ...tank(w), tank: { ...tank(w).tank, level: AB.tank.levels.length } });
     expect(fail(upgradeTank(top, {}, ctxAt(T0)))).toBe('TANK_MAX_LEVEL');
   });
+
+  it('level 4 goes on to level 5, the deep ocean, which is the top (decision 026)', () => {
+    expect(AB.tank.levels).toHaveLength(5);
+    const lvl5 = AB.tank.levels[4]!;
+    const atFour = withAquarium(tankWorld([fish()], {}, lvl5.price), { ...tank(tankWorld()), tank: { ...tank(tankWorld()).tank, level: 4 } });
+    expect(nextTankLevel(tank(atFour))).toMatchObject({ level: 5, capacity: lvl5.capacity });
+    const up = ok(upgradeTank({ ...atFour, inventory: { items: { ...lvl5.materials } } }, {}, ctxAt(T0)));
+    expect(tank(up).tank.level).toBe(5);
+    expect(nextTankLevel(tank(up))).toBeNull();
+  });
 });
 
 describe('breeding fish', () => {

@@ -1,6 +1,6 @@
 # 026 — Sobi Aquarium: cấp bể 5 "Đại Dương Sâu" và 5 môi trường theo cấp bể
 
-**Ngày:** 2026-10-13 · **Trạng thái:** Chủ dự án đã chốt có cấp 5; con số của cấp 5 do agent đề xuất, chờ duyệt (sửa được ở Admin)
+**Ngày:** 2026-10-13 · **Trạng thái:** Đã thêm cấp 5 vào content (2026-10-17) với số đề xuất bên dưới; sửa được ở Admin
 
 ## Bối cảnh
 Kế hoạch art Aquarium (`asset/AQUARIUM_ART_PLAN.md`) cho mỗi cấp bể một môi trường riêng: Bể Kính Bên Bến → Hồ Đá Ven Bờ → Đầm San Hô Sinh Thái → Vịnh Ngọc Trai Cổ. Agent đề xuất dừng ở 4 cấp vì đang freeze gameplay (decision 021). Chủ dự án quyết định thêm cấp 5 "Đại Dương Sâu", tức là mở băng riêng cho phần này (giống Cloud ở decision 023).

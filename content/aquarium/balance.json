@@ -10,6 +10,12 @@
         "price": 8000,
         "materials": { "item_scale": 20, "item_pearl": 3, "item_ancient_cog": 4 },
         "waterFactor": 0.6
+      },
+      {
+        "capacity": 20,
+        "price": 20000,
+        "materials": { "item_scale": 40, "item_pearl": 5, "item_ancient_cog": 8 },
+        "waterFactor": 0.5
       }
     ],
     "waterPerHour": 1.2,
