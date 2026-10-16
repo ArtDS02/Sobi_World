@@ -31,8 +31,16 @@ lên xuống. Chỉ là trình bày, không đổi state.
 ## Câu cá ba nhịp (ui/fishingGame.ts)
 1. **Quăng**: thanh lực chạy qua lại, dừng ở Gần bờ / Giữa hồ / Xa khơi. Càng xa càng dễ gặp cá hiếm
    (`fishing.depthLuck` [0; 0,4; 0,9], `castLine` nhận `depth`) nhưng cá khỏe hơn.
-2. **Chờ cá cắn**: phao nổi, có cú **rỉa giả** (giật lúc này là hụt), phao chìm hẳn thì giật trong 0,9 giây.
-3. **Kéo cá**: giữ nút (hoặc phím Cách) để nâng vùng xanh, giữ cá trong vùng tới khi kéo đủ 100%.
+2. **Chờ cá cắn**: phao nổi, có cú **rỉa giả**, phao chìm hẳn thì giật trong 1,5 giây (bản đầu 0,9 giây). Giật sớm
+   chỉ làm cá giật mình, 1,3–2,4 giây sau mới cắn lại; tha 2 lần, lần thứ 3 cá bỏ đi (sửa 2026-10-17, chủ dự án thấy quá khó).
+3. **Kéo cá**: giữ nút (hoặc phím Cách) để nâng vùng xanh, giữ cá trong vùng tới khi kéo đủ 100%. Sửa 2026-10-17:
+   vùng xanh to hơn (42/36/30% thanh), cá bơi chậm và nhảy ngắn hơn, trận bắt đầu với cá nằm giữa vùng, tối đa 24 giây.
+   Mô phỏng người chơi trung bình (phản xạ 0,3 s): gần bờ và giữa hồ ~100%, xa khơi cá lớn ~80%, cá vàng ~60%
+   (bản đầu: xa khơi gần 0%); trận kéo 3–12 giây.
+- Giao diện: một khung cảnh nước (bến gỗ, cần câu, dây, phao, đảo xa) dùng cho mọi nhịp; khi ngắm, dải Gần bờ / Giữa
+  hồ / Xa khơi trong khung cảnh chính là thanh lực và vòng đích chạy trên mặt nước; chạm vào mặt nước cũng quăng / giật;
+  thanh bước 1-2-3; lúc cắn: dấu "!", nước bắn, dây căng, nút cam; lúc kéo: cột nước có bong bóng, vùng xanh sáng khi
+  cá ở trong, rung đỏ khi sắp tuột; thẻ kết quả có tia sáng.
 - Bóng cá cho biết cỡ (nhỏ / vừa / lớn / **vàng lấp lánh** hiếm); cá lớn khó kéo hơn nhưng cộng điểm. **Chuỗi câu** (câu
   được liền nhau, tối đa +5 bậc) cộng điểm. Điểm chuyển cho `castLine` như cũ (bảng bốc vẫn ở logic).
 - Cần câu nghỉ 120 → 60 giây (mỗi lần câu giờ dài hơn).

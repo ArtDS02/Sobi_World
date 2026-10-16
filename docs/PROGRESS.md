@@ -10,6 +10,22 @@
 
 ## Nhật ký
 
+### 2026-10-17 — Admin: làm lại cho cả Sobi World, sửa lỗi sửa item / người chơi (decision 036, chờ duyệt)
+✅ Đã làm (chủ dự án: "trang admin là bản cũ, nhiều lỗi khi sửa item, sửa user"):
+1. **Sửa lỗi:** API admin nạp 4 module ở đường dẫn cũ → lưu giống heo / luật cặp / di truyền / hiệu ứng mùa trả 500 (đã sửa, lưu lại không đổi byte nào). Trình sửa người chơi kiểm bằng schema Sobi Farm cũ → save có giao dịch Garden / Aquarium… bị báo lỗi, không lưu được (thay bằng kiểm save thế giới + schema từng khu). Trang tự tải lại khi ai đó sửa code làm mất bản nháp (tắt hot-reload cho admin).
+2. **Nội dung game** (thay "Số liệu"): mọi file `content/` (49 file sửa tại chỗ + 7 file dẫn sang trang riêng), form dựng từ zod schema của game: sửa số / chữ / công tắc / chọn id có tên, thêm / nhân bản / xoá / đổi thứ tự dòng, trường tuỳ chọn; tên vật phẩm, trang trí, thành tựu (Việt + Anh) sửa cạnh dòng. Server kiểm schema, chặn xoá id đã phát hành, sinh lại id, nạp lại toàn bộ content của game; lỗi thì khôi phục.
+3. **Người chơi** theo save thế giới: 12 tab (Tổng quan, Ví 3 loại tiền, Túi đồ có ảnh / lọc, Tiến trình & mở khu, Bộ sưu tập & thành tựu, mỗi khu một tab, Thế giới & thời gian — tua mọi khu, Nâng cao — JSON / reset / xoá vào backups). Đổi là áp ngay, lỗi hiện trên đầu và khoá Lưu.
+4. Giao diện mới (tím–kem, sáng / tối, menu nhóm có chấm "chưa lưu", Tổng quan theo 5 khu, vừa 375 px). Hướng dẫn trong admin cập nhật.
+🧪 Đã kiểm tra: `npm run check` xanh (105 file, 1.414 test; test mới: sửa save thế giới, mở / khoá khu, tua mọi khu, danh mục phủ đủ file content, chặn xoá id, bắt buộc tên, ghi bảng chuỗi, giá trị mặc định của form). Chạy thật `npm run admin` (save thử trong thư mục tạm, không đụng save thật): 49 file dựng form không lỗi, lưu Vật phẩm (diff đúng 1 dòng, đã trả lại), từ chối vật phẩm mới thiếu tên; người chơi: đổi tiền / túi / KN / dữ liệu Garden / sửa heo / tua 1 ngày → lưu → game đọc lại đúng; mọi trang không lỗi console; 375 px không tràn ngang.
+⚠️ Tự quyết: bỏ trang "Số liệu" (Nội dung game làm được hết); admin không hot-reload (sửa code admin thì F5); mở khu bằng tay tạo dữ liệu khởi đầu như game; tua thời gian giờ lùi cả Bảng đơn. Chưa làm: sửa chữ tiếng Anh của file content (`content/i18n/en.json`) trong form.
+👉 Bạn cần: chạy `npm run admin`, thử Nội dung game và một save người chơi; duyệt decision 036.
+
+### 2026-10-17 — GĐ14: câu cá dễ giật hơn, giao diện bến câu mới (decision 035, bổ sung)
+✅ Đã làm (chủ dự án: "khó giựt quá, giao diện chưa đẹp"): cửa sổ giật 0,9 → 1,5 giây; giật sớm chỉ làm cá giật mình (tha 2 lần); thanh lực chậm hơn; nhịp kéo dễ hơn (vùng xanh to, cá chậm, bắt đầu trong vùng) nhưng xa khơi vẫn thử thách. Giao diện: khung cảnh bến câu (cần, dây, phao, đảo), thanh lực nằm trên dải độ xa, bước 1-2-3, hiệu ứng cắn câu / sắp tuột, thẻ kết quả có tia sáng. Sửa lỗi cũ: sau màn kết quả phím Cách / Enter thôi hoạt động.
+🧪 Đã kiểm tra: unit test (giật sớm, trận bắt đầu trong vùng); mô phỏng 3 kiểu người chơi × 3 độ xa × 4 cỡ cá; sandbox: quăng, chờ, giật sớm, cắn câu.
+⚠️ Chưa kiểm bằng tay nhịp kéo và thẻ kết quả (khung trình duyệt chạy nền, chỉ ~2 khung hình/giây). Số mới đặt trong `ui/fishingGame.ts` (như trước), chưa đưa vào `content/`.
+👉 Bạn cần: chơi thử vài lượt câu (gần bờ và xa khơi), báo nếu còn khó / quá dễ.
+
 ### 2026-10-17 — GĐ14: 46 loài mới, lai giống, kiểu bơi theo loài, câu cá ba nhịp, bảng tên, popup (decision 035, chờ duyệt)
 ✅ Đã làm (chủ dự án yêu cầu a–f, cho tự quyết):
 1. Cắt 13 sheet (aquarium-04-fish, farm-02-pigs, garden-04-crops, cloud-05-flowers): 18 cá, 12 heo (kèm ngủ / thức), 8 cây, 8 hoa; 50 icon vật phẩm lấy từ sprite. Content, đơn hàng, chuỗi Anh.

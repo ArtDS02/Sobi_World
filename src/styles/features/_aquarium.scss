@@ -134,8 +134,15 @@
   &__bag-icon { width: 3rem; height: 3rem; }
 }
 
-// The rod's mini-game (decision 035, ui/fishingDialog.ts): a power bar to throw, the water with the bobber and the fish's
-// shadow, the fight (a bar with the catch zone and the fish, the reel meter, a big hold button), the catch card.
+// The rod's mini-game (decision 035, ui/fishingDialog.ts): the three beats as steps, one water scene (sky, the far isle,
+// the pier with the rod, the line, the bobber and the fish's shadow, three bands of water), the power bar, the fight (a
+// water column with the catch zone and the fish, the reel meter, a big hold button), the catch card.
+$rod-ink: #1b4a66;
+$rod-wood: #b9824f;
+$rod-wood-dark: #6e4423;
+$rod-hot: #f07a2a;
+$rod-waterline: 46%;
+
 .c-dialog__panel--rod { max-width: 34rem; }
 
 .aquarium-rod {
@@ -144,155 +151,394 @@
   justify-items: center;
   text-align: center;
 
-  &__status { margin: 0; font-weight: $fw-bold; color: #1b4a66; min-height: 1.4em; }
-  &__where { margin: 0; font-size: $fs-sm; color: $c-text-muted; }
+  &__status {
+    margin: 0;
+    min-height: 1.4em;
+    font-weight: $fw-bold;
+    color: $rod-ink;
+    transition: color 0.15s, transform 0.15s;
+
+    &.is-hot { color: $rod-hot; transform: scale(1.08); }
+  }
+  &__hint { max-width: 26rem; color: $c-text-muted; font-size: $fs-xs; line-height: 1.35; }
+  &__lead { max-width: 26rem; margin: 0; color: $c-text; font-size: $fs-sm; line-height: 1.4; }
 
   &__go { min-width: 12rem; min-height: $sp-touch-min; font-size: $fs-md; }
-  &__pull.is-hot { background: linear-gradient(180deg, #ffb347, #f07a2a); border-color: #b8501a; animation: rod-hot 0.35s ease-in-out infinite alternate; }
-
-  // Power bar: three bands (near / mid / far) and a swinging marker.
-  &__power {
-    position: relative;
-    display: flex;
-    width: min(100%, 24rem);
-    height: 2.4rem;
-    overflow: hidden;
-    border: 3px solid #1b4a66;
-    border-radius: 1.2rem;
+  &__pull.is-hot {
+    background: linear-gradient(180deg, #ffb347, $rod-hot);
+    border-color: #b8501a;
+    box-shadow: 0 0 0 4px rgba(255, 179, 71, 0.35);
+    animation: rod-hot 0.3s ease-in-out infinite alternate;
   }
-  &__band {
-    display: grid;
-    place-items: center;
+
+  // Throw → wait → reel.
+  &__steps {
+    display: flex;
+    gap: $sp-1;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: rod-step;
+
+    li {
+      display: inline-flex;
+      gap: 0.3rem;
+      align-items: center;
+      padding: 2px $sp-2 2px 2px;
+      font-size: $fs-xs;
+      font-weight: $fw-bold;
+      color: $c-text-muted;
+      background: rgba(27, 74, 102, 0.06);
+      border-radius: 999px;
+      counter-increment: rod-step;
+
+      &::before {
+        content: counter(rod-step);
+        display: grid;
+        place-items: center;
+        width: 1.2rem;
+        height: 1.2rem;
+        color: #fff;
+        background: #b9c6cf;
+        border-radius: 50%;
+      }
+      & + li { margin-left: 0.9rem; position: relative; }
+      & + li::after { content: '›'; position: absolute; left: -0.8rem; color: #b9c6cf; }
+      &.is-done::before { content: '✓'; background: $c-success; }
+      &.is-on { color: #fff; background: $c-level; box-shadow: 0 2px 0 rgba(27, 74, 102, 0.25); }
+      &.is-on::before { color: $c-level; background: #fff; }
+    }
+  }
+
+  &__tags { display: flex; flex-wrap: wrap; gap: $sp-1; justify-content: center; }
+  &__tag {
+    padding: 1px $sp-2;
     font-size: $fs-xs;
     font-weight: $fw-bold;
-    color: #fff;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    color: $rod-ink;
+    background: #e3f3fb;
+    border: 1px solid #b8dcef;
+    border-radius: 999px;
 
-    &.is-0 { background: #8fd3ec; }
-    &.is-1 { background: #3fa3d4; }
-    &.is-2 { background: #1d5f99; }
-  }
-  &__marker {
-    position: absolute;
-    top: -2px;
-    bottom: -2px;
-    width: 0.5rem;
-    margin-left: -0.25rem;
-    background: #ffde59;
-    border: 2px solid #8a5a00;
-    border-radius: 0.3rem;
-    box-shadow: 0 0 8px rgba(255, 222, 89, 0.9);
+    &.is-big { color: #7a3b00; background: #ffe7c8; border-color: #f5c48e; }
+    &.is-golden { color: #7a5600; background: linear-gradient(90deg, #fff1b8, #ffd45c, #fff1b8); border-color: #e0b02c; }
   }
 
-  // The water: lighter near the shore, deep blue far out; the bobber floats on it, the shadow swims under it.
-  &__water {
+  // The scene.
+  &__scene {
     position: relative;
-    width: min(100%, 24rem);
-    height: 9rem;
+    width: 100%;
+    max-width: 28rem;
+    height: 11.5rem;
     overflow: hidden;
-    background: linear-gradient(180deg, #cdeffd 0 28%, #6cc3e6 28% 100%);
-    border: 3px solid #1b4a66;
+    background:
+      linear-gradient(180deg, #a9dcf7 0%, #dff3fd $rod-waterline - 0.5%, transparent $rod-waterline),
+      linear-gradient(180deg, #7fd0ee $rod-waterline, #3a9fd6 75%, #2a78b8 100%);
+    border: 3px solid $rod-ink;
     border-radius: $radius-md;
+    box-shadow: inset 0 -10px 24px rgba(10, 40, 80, 0.25), 0 3px 0 rgba(27, 74, 102, 0.18);
+    transition: box-shadow 0.2s;
 
-    &.is-depth-1 { background: linear-gradient(180deg, #cdeffd 0 28%, #3c9fd0 28% 100%); }
-    &.is-depth-2 { background: linear-gradient(180deg, #cdeffd 0 28%, #1f5f99 28% 100%); }
+    > * { z-index: 1; }
+    &.is-live { cursor: pointer; }
+
+    // The sun, and the light glinting on the water.
+    &::before {
+      content: '';
+      position: absolute;
+      top: 10%;
+      right: 9%;
+      width: 2.2rem;
+      height: 2.2rem;
+      background: radial-gradient(circle, #fff7c2 40%, #ffe27a 60%, rgba(255, 226, 122, 0) 72%);
+      border-radius: 50%;
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      inset: $rod-waterline -70px 0 0;
+      background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.45) 0 12px, transparent 12px 46px) 0 6px / 100% 2px no-repeat,
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.3) 0 18px, transparent 18px 70px) 20px 26px / 100% 2px no-repeat,
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.22) 0 10px, transparent 10px 54px) 8px 50px / 100% 2px no-repeat;
+      animation: rod-waves 6s linear infinite;
+      pointer-events: none;
+    }
+
+    &.is-depth-1 { background: linear-gradient(180deg, #a9dcf7 0%, #dff3fd $rod-waterline - 0.5%, transparent $rod-waterline), linear-gradient(180deg, #6cc3e6 $rod-waterline, #2f8ccc 75%, #20609e 100%); }
+    &.is-depth-2 { background: linear-gradient(180deg, #a9dcf7 0%, #dff3fd $rod-waterline - 0.5%, transparent $rod-waterline), linear-gradient(180deg, #5bb2dc $rod-waterline, #24709f 70%, #173f73 100%); }
+    &.is-bite { box-shadow: inset 0 -10px 24px rgba(10, 40, 80, 0.25), 0 0 0 4px rgba(255, 166, 60, 0.75); }
+  }
+  // The far isle on the horizon.
+  &__isle {
+    position: absolute;
+    top: calc(#{$rod-waterline} - 9%);
+    right: 18%;
+    width: 22%;
+    height: 11%;
+    background: radial-gradient(ellipse at 50% 100%, #7cc35a 0 55%, #f3dfa6 56% 66%, transparent 67%);
+    opacity: 0.85;
+  }
+  // The pier: a deck at the waterline and its posts in the water.
+  &__pier {
+    position: absolute;
+    top: calc(#{$rod-waterline} - 4%);
+    left: 0;
+    width: 27%;
+    height: 62%;
+    background:
+      linear-gradient(180deg, #d59a62, $rod-wood 70%, $rod-wood-dark) top / 100% 0.85rem no-repeat,
+      linear-gradient(90deg, transparent 18%, $rod-wood-dark 18% 27%, transparent 27% 62%, $rod-wood-dark 62% 71%, transparent 71%) bottom / 100% calc(100% - 0.85rem) no-repeat;
+    border-radius: 0 4px 0 0;
+    filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.18));
+  }
+  &__line {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+
+    path { fill: none; stroke: rgba(255, 255, 255, 0.95); stroke-width: 1.5px; vector-effect: non-scaling-stroke; transition: d 0.15s; }
+    .is-rod { stroke: $rod-wood-dark; stroke-width: 5px; stroke-linecap: round; }
+  }
+  // Depth bands along the bottom of the water.
+  &__zones {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+    height: 1.3rem;
+
+    span {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      display: grid;
+      place-items: center;
+      font-size: 0.68rem;
+      font-weight: $fw-bold;
+      color: rgba(255, 255, 255, 0.75);
+      border-left: 1px dashed rgba(255, 255, 255, 0.45);
+    }
+    span.is-0 { border-left: 0; }
+    span.is-on { color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); background: rgba(255, 255, 255, 0.18); border-radius: 0.6rem; }
+
+    // Aiming, the bands are the power bar.
+    &.is-aim {
+      bottom: 8px;
+      height: 1.6rem;
+
+      span { color: #fff; font-size: -xs; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35); border: 2px solid -ink; border-left-width: 0; }
+      span.is-0 { background: #8fd3ec; border-left-width: 2px; border-radius: 0.8rem 0 0 0.8rem; }
+      span.is-1 { background: #3fa3d4; }
+      span.is-2 { background: linear-gradient(90deg, #1d5f99, #173f73); border-radius: 0 0.8rem 0.8rem 0; }
+    }
+  }
+  // Where the throw would land (aim): a ring on the water with an arrow over it.
+  &__target {
+    position: absolute;
+    top: $rod-waterline;
+    width: 2.6rem;
+    height: 0.9rem;
+    border: 3px dashed #ffde59;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 0 4px rgba(255, 222, 89, 0.9));
+
+    &::before {
+      content: '▼';
+      position: absolute;
+      left: 50%;
+      bottom: 0.9rem;
+      color: #ffde59;
+      font-size: 0.9rem;
+      transform: translateX(-50%);
+      text-shadow: 0 1px 0 #8a5a00;
+      animation: rod-bob 0.8s ease-in-out infinite;
+    }
   }
   &__bobber {
     position: absolute;
-    top: calc(28% - 14px);
-    left: 50%;
-    width: 22px;
-    height: 28px;
-    margin-left: -11px;
+    top: calc(#{$rod-waterline} - 19px);
+    width: 20px;
+    height: 26px;
+    margin-left: -10px;
     background: linear-gradient(180deg, #e34b3c 0 50%, #fff 50% 100%);
     border: 2px solid #5a2a1e;
     border-radius: 50% 50% 45% 45%;
     animation: rod-bob 1.6s ease-in-out infinite;
     transition: transform 0.12s ease-out;
+    z-index: 1;
 
-    &.is-nibble { transform: translateY(5px) rotate(-8deg); }
-    &.is-bite { transform: translateY(22px); animation: none; }
+    b {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      display: grid;
+      place-items: center;
+      width: 1.6rem;
+      height: 1.6rem;
+      color: #fff;
+      font-size: 1.1rem;
+      background: $rod-hot;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+      transform: translateX(-50%) scale(0);
+      transition: transform 0.15s cubic-bezier(0.2, 1.6, 0.4, 1);
+    }
+    &.is-nibble { transform: translateY(5px) rotate(-10deg); }
+    &.is-bite { transform: translateY(20px); animation: none; }
+    &.is-bite b { transform: translate(-50%, -6px) scale(1); animation: rod-alert 0.3s ease-in-out infinite alternate; }
   }
   &__ripple {
     position: absolute;
-    top: 28%;
-    left: 50%;
-    width: 60px;
+    top: $rod-waterline;
+    width: 56px;
     height: 10px;
-    margin: -5px 0 0 -30px;
+    margin: -5px 0 0 -28px;
     border: 2px solid rgba(255, 255, 255, 0.7);
     border-radius: 50%;
     animation: rod-ripple 1.6s ease-out infinite;
   }
+  .is-bite > &__ripple { border-color: #fff; animation-duration: 0.5s; }
+  // Droplets thrown up at the bite or by an early pull.
+  &__splash {
+    position: absolute;
+    top: $rod-waterline;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: -14px -6px 0 #fff, 14px -6px 0 #fff, -8px -14px 0 #e8f7ff, 8px -14px 0 #e8f7ff;
+  }
+  .is-bite > &__splash { animation: rod-splash 0.5s ease-out infinite; }
+  .is-startled > &__splash { animation: rod-splash 0.5s ease-out 2; }
   &__shadow {
     position: absolute;
-    top: 62%;
-    left: 30%;
-    width: 4rem;
-    height: 1.3rem;
-    background: rgba(10, 30, 60, 0.45);
+    top: 68%;
+    width: 3.6rem;
+    height: 1.2rem;
+    margin-left: -1.8rem;
+    background: rgba(10, 30, 60, 0.4);
     border-radius: 50% 40% 40% 50%;
     filter: blur(2px);
     animation: rod-shadow 3.2s ease-in-out infinite alternate;
 
     &.is-small { transform: scale(0.65); }
-    &.is-big { width: 6rem; height: 1.9rem; }
-    &.is-golden { width: 5.5rem; height: 1.8rem; background: rgba(255, 205, 60, 0.85); filter: blur(1px); box-shadow: 0 0 18px 6px rgba(255, 215, 80, 0.8); }
+    &.is-big { width: 5.6rem; height: 1.8rem; margin-left: -2.8rem; }
+    &.is-golden { width: 5rem; height: 1.7rem; margin-left: -2.5rem; background: rgba(255, 205, 60, 0.85); filter: blur(1px); box-shadow: 0 0 18px 6px rgba(255, 215, 80, 0.8); }
+  }
+  .is-bite > &__shadow { top: 56%; animation-duration: 0.4s; }
+  .is-startled > &__shadow { animation: rod-flee 1.6s ease-out; }
+
+  &__marker {
+    position: absolute;
+    top: -5px;
+    bottom: -5px;
+    width: 0.55rem;
+    margin-left: -0.275rem;
+    background: #ffde59;
+    border: 2px solid #8a5a00;
+    border-radius: 0.3rem;
+    box-shadow: 0 0 10px rgba(255, 222, 89, 0.95);
   }
 
   // The fight: hold to lift the green zone; keep the fish in it.
-  &__arena { display: flex; gap: $sp-3; align-items: stretch; justify-content: center; }
+  &__arena {
+    display: flex;
+    gap: $sp-4;
+    align-items: center;
+    justify-content: center;
+    padding: $sp-3 $sp-4;
+    background: linear-gradient(180deg, #eaf7fd, #d6eef9);
+    border: 2px solid #b8dcef;
+    border-radius: $radius-md;
+  }
   &__bar {
     position: relative;
-    width: 3rem;
+    width: 3.6rem;
     height: 15rem;
-    background: linear-gradient(180deg, #8fd3ec, #1d5f99);
-    border: 3px solid #1b4a66;
-    border-radius: 1rem;
     overflow: hidden;
+    background: linear-gradient(180deg, #8fd3ec, #2f8ccc 60%, #1d5f99);
+    border: 3px solid $rod-ink;
+    border-radius: 1.1rem;
+    box-shadow: inset 0 0 12px rgba(0, 20, 50, 0.35);
+    transition: border-color 0.15s;
+  }
+  &__bubbles {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 2px, transparent 3px) 10px 0 / 22px 40px,
+      radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 1.5px, transparent 2.5px) 0 14px / 18px 52px;
+    animation: rod-bubbles 3s linear infinite;
   }
   &__zone {
     position: absolute;
-    left: 2px;
-    right: 2px;
-    background: rgba(120, 220, 120, 0.65);
-    border: 2px solid #2f8a3a;
-    border-radius: 0.7rem;
+    left: 3px;
+    right: 3px;
+    background: linear-gradient(180deg, rgba(160, 240, 140, 0.55), rgba(90, 200, 100, 0.55));
+    border: 2px solid #3f9a48;
+    border-radius: 0.75rem;
+    transition: box-shadow 0.15s, background 0.15s;
   }
   &__fish {
     position: absolute;
     left: 50%;
-    font-size: 1.6rem;
+    font-size: 1.7rem;
     line-height: 1;
-    transform: translate(-50%, 50%);
+    transform: translate(-50%, 50%) scaleX(-1);
     filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.3));
-    transition: filter 0.15s;
 
-    &.is-in { filter: drop-shadow(0 0 6px #b6ff9e); }
-    &.is-big { font-size: 2rem; }
-    &.is-golden { font-size: 2rem; filter: sepia(1) saturate(4) hue-rotate(5deg) drop-shadow(0 0 8px gold); }
+    &.is-big { font-size: 2.1rem; }
+    &.is-golden { font-size: 2.1rem; filter: sepia(1) saturate(4) hue-rotate(5deg) drop-shadow(0 0 8px gold); }
   }
+  &__arena.is-in &__zone { background: linear-gradient(180deg, rgba(180, 255, 150, 0.7), rgba(100, 220, 110, 0.7)); box-shadow: 0 0 14px 2px rgba(182, 255, 158, 0.85); }
+  &__arena:not(.is-in) &__fish { animation: rod-wiggle 0.18s linear infinite; }
+  &__arena.is-slip &__bar { border-color: $c-danger; animation: rod-shake 0.25s linear infinite; }
   &__reel {
-    position: relative;
-    width: 0.9rem;
-    background: #e6ecf0;
-    border: 2px solid #1b4a66;
-    border-radius: 0.5rem;
-    overflow: hidden;
+    display: grid;
+    gap: $sp-1;
+    justify-items: center;
 
-    i { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(0deg, #f2b53b, #ffe08a); }
+    b { font-size: $fs-sm; color: $rod-ink; }
+  }
+  &__reel-track {
+    position: relative;
+    width: 1.3rem;
+    height: 13rem;
+    overflow: hidden;
+    background: #fff;
+    border: 2px solid $rod-ink;
+    border-radius: 0.7rem;
+
+    i { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(0deg, #f2a93b, #ffe08a); transition: height 0.1s linear; }
   }
   &__hold {
-    align-self: center;
-    width: 7rem;
-    height: 7rem;
+    display: grid;
+    gap: 2px;
+    place-items: center;
+    align-content: center;
+    width: 7.5rem;
+    height: 7.5rem;
+    padding: $sp-2;
+    font-size: $fs-sm;
+    line-height: 1.15;
     border-radius: 50%;
-    font-size: $fs-md;
+    box-shadow: 0 6px 0 $c-primary-strong, 0 8px 14px rgba(0, 0, 0, 0.15);
     touch-action: none;
     user-select: none;
+    transition: transform 0.08s, box-shadow 0.08s;
 
-    &:active { transform: scale(0.94); filter: brightness(1.1); }
+    &.is-held, &:active { transform: translateY(5px); box-shadow: 0 1px 0 $c-primary-strong, 0 2px 6px rgba(0, 0, 0, 0.15); filter: brightness(1.08); }
   }
+  &__hold-icon { font-size: 1.8rem; line-height: 1; }
+  &__hold.is-held &__hold-icon { animation: rod-reel 0.4s linear infinite; }
 
   // The catch card.
   &__result {
@@ -300,15 +546,17 @@
     display: grid;
     justify-items: center;
     gap: $sp-1;
-    width: min(100%, 24rem);
-    padding: $sp-3;
+    width: 100%;
+    max-width: 28rem;
+    padding: $sp-4 $sp-3;
     overflow: hidden;
-    background: #eef9ff;
+    background: linear-gradient(180deg, #eef9ff, #d8effb);
     border: 3px solid #fff;
     border-radius: $radius-md;
     box-shadow: 0 3px 0 rgba(27, 74, 102, 0.15);
     animation: c-pop-in 0.3s ease-out;
 
+    > :not(.aquarium-rod__rays) { position: relative; }
     &.is-good b { color: #2f7f3a; }
     &.is-miss { background: #f3f0ec; }
     &.is-rare { background: radial-gradient(circle, #fff6d6, #ffe7a3); }
@@ -321,13 +569,25 @@
       font-size: $fs-xs;
       font-weight: $fw-bold;
       color: #fff;
-      background: #e8708a;
+      background: $c-primary;
       transform: rotate(35deg);
     }
   }
+  &__rays {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 22rem;
+    height: 22rem;
+    margin: -12rem 0 0 -11rem;
+    background: repeating-conic-gradient(rgba(255, 255, 255, 0.55) 0 10deg, transparent 10deg 24deg);
+    border-radius: 50%;
+    mask-image: radial-gradient(circle, #000 20%, transparent 65%);
+    animation: rod-spin 14s linear infinite;
+  }
   &__catch {
-    width: 7rem;
-    height: 4.4rem;
+    width: 8rem;
+    height: 5rem;
     object-fit: contain;
     animation: rod-catch 0.6s cubic-bezier(0.2, 1.5, 0.4, 1);
 
@@ -354,7 +614,20 @@
 }
 
 @keyframes rod-bob { 50% { transform: translateY(3px); } }
-@keyframes rod-ripple { from { opacity: 0.9; transform: scale(0.5); } to { opacity: 0; transform: scale(1.4); } }
-@keyframes rod-shadow { to { left: 55%; } }
+@keyframes rod-ripple { from { opacity: 0.9; transform: scale(0.5); } to { opacity: 0; transform: scale(1.5); } }
+@keyframes rod-shadow { from { transform: translateX(-26px); } to { transform: translateX(22px); } }
+@keyframes rod-flee { 30% { transform: translateX(40px); opacity: 0.2; } }
 @keyframes rod-hot { to { transform: scale(1.06); } }
+@keyframes rod-alert { from { transform: translate(-50%, -6px) scale(1); } to { transform: translate(-50%, -10px) scale(1.15); } }
 @keyframes rod-catch { from { transform: translateY(30px) scale(0.4) rotate(-20deg); opacity: 0; } }
+@keyframes rod-waves { to { transform: translateX(-46px); } }
+@keyframes rod-splash { 0% { opacity: 1; transform: translateY(0) scale(0.6); } 100% { opacity: 0; transform: translateY(-14px) scale(1.2); } }
+@keyframes rod-bubbles { to { background-position: 10px -40px, 0 -38px; } }
+@keyframes rod-wiggle { 50% { transform: translate(-46%, 50%) scaleX(-1) rotate(10deg); } }
+@keyframes rod-shake { 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
+@keyframes rod-reel { to { transform: rotate(-30deg); } }
+@keyframes rod-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .aquarium-rod *, .aquarium-rod *::before, .aquarium-rod *::after, .aquarium-rod__scene::after { animation: none !important; }
+}

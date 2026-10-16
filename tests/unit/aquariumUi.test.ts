@@ -14,7 +14,7 @@ import { aquariumOf, withAquarium } from '../../src/areas/aquarium/logic/save/le
 import { AQUARIUM_DESIGN, AQUARIUM_PLACES, AQUARIUM_VIEW, aquariumPlace, eggSpot, fishIcon, fishScale } from '../../src/areas/aquarium/scene/aquariumView';
 import { barVm, bagVm, breedablePairs, hudVm, tankVm } from '../../src/areas/aquarium/ui/aquariumVm';
 import { dockVm } from '../../src/areas/aquarium/ui/dockVm';
-import { biteTimes, depthOf, fightOver, powerAt, reactionOf, ROD, rodScore, shadowOf, startFight, stepFight } from '../../src/areas/aquarium/ui/fishingGame';
+import { biteTimes, depthOf, earlyPull, fightOver, powerAt, reactionOf, ROD, rodScore, shadowOf, startFight, stepFight } from '../../src/areas/aquarium/ui/fishingGame';
 import { catchOdds } from '../../src/areas/aquarium/logic/fishing';
 import { fishCardVm } from '../../src/areas/aquarium/ui/fishCardVm';
 import { mulberry32 } from '../../src/core/rng';
@@ -202,6 +202,21 @@ describe('the rod\'s mini-game (decision 035)', () => {
     expect(shadowOf(0.05, 0)).not.toBe('golden');
     expect(shadowOf(0.05, 2)).toBe('golden');
     expect(shadowOf(0.99, 2)).toBe('small');
+  });
+
+  it('an early pull only startles the fish (the bite comes later) until the grace runs out', () => {
+    const first = earlyPull(1000, 1, 0);
+    expect(first).toEqual({ bite: 1000 + ROD.startleMs[0] });
+    expect(earlyPull(1000, ROD.earlyGrace, 1)).toEqual({ bite: 1000 + ROD.startleMs[1] });
+    expect(earlyPull(1000, ROD.earlyGrace + 1, 0.5)).toBe('gone');
+  });
+
+  it('the fight starts with the fish inside the catch zone', () => {
+    for (const depth of [0, 1, 2] as const) {
+      const f = startFight(depth);
+      expect(f.fish).toBeGreaterThanOrEqual(f.zone);
+      expect(f.fish).toBeLessThanOrEqual(f.zone + ROD.fight.zone[depth]);
+    }
   });
 
   it('holding keeps the zone on a still fish and lands it; letting go loses it', () => {

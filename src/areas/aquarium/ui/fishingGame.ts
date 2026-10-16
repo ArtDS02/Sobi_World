@@ -1,7 +1,8 @@
 // The rod's mini-game (decision 035), three beats instead of one tap:
 //   1. cast — a power bar swings; where it stops is how far the line lands (near shore, mid-lake, far out: further =
 //      rarer fish, castLine `depth`, and a harder fight);
-//   2. bite — the bobber floats, a fish nibbles (pulling then loses it), then bites: pull within the window;
+//   2. bite — the bobber floats, a fish nibbles, then bites: pull within the window. A pull too early only startles the
+//      fish (it comes back a little later); the third early pull scares it off;
 //   3. fight — hold to lift the catch zone and keep the fish's icon inside it until the line is reeled in.
 // A shadow under the water says how big the fish is (a golden one is rare and worth a lot). The score sent to castLine
 // mixes the reaction, the fight and the fish's size, plus a little for a streak of catches. Pure: time and randomness
@@ -9,29 +10,38 @@
 import type { CastDepth } from '../logic/fishing';
 
 export const ROD = {
-  powerPeriodMs: 1400,
+  powerPeriodMs: 2000,
   /** Power shares where mid-lake and far out begin. */
   depthAt: [0.4, 0.75] as const,
   /** The real bite comes this long after the line lands; nibbles may come before it. */
   biteMs: [1600, 4200] as const,
-  nibbleMs: 260,
+  nibbleMs: 320,
   /** How long the bobber stays down at the real bite. */
-  biteWindowMs: 900,
+  biteWindowMs: 1500,
+  /** A pull this quick after the bite reacts best. */
+  quickMs: 250,
+  /** Early pulls forgiven (the fish only startles); one more scares it off. */
+  earlyGrace: 2,
+  /** A startled fish comes back to bite this long after the early pull. */
+  startleMs: [1300, 2400] as const,
   fight: {
     /** Catch zone height (share of the bar) by depth. */
-    zone: [0.34, 0.28, 0.22] as const,
+    zone: [0.42, 0.36, 0.3] as const,
     /** Lift while held, fall when let go (share of the bar per s²), and the most speed either way. */
-    lift: 2.6,
-    gravity: 2.2,
-    maxSpeed: 1.25,
+    lift: 2.2,
+    gravity: 1.6,
+    maxSpeed: 0.95,
     /** Line reeled in per second while the fish is inside, lost per second while outside. */
-    gain: 0.34,
-    loss: 0.22,
-    start: 0.3,
+    gain: 0.24,
+    loss: 0.14,
+    start: 0.35,
     /** The fish darts to a new height this often (ms, shorter for bigger fish and further out). */
-    moveMs: [1100, 380] as const,
+    moveMs: [1300, 600] as const,
+    /** How far (share of the bar) and how fast the fish swims to a new height, before its size. */
+    reach: 0.3,
+    swim: 2.4,
     /** Most seconds a fight may last. */
-    limitSec: 16,
+    limitSec: 24,
   },
 } as const;
 
@@ -66,8 +76,17 @@ export function biteTimes(rollA: number, rollB: number): { bite: number; nibbles
   return { bite, nibbles };
 }
 
-/** 0..1: how quick the pull was after the bite (1 within 150 ms, 0 at the end of the window). */
-export const reactionOf = (ms: number): number => Math.max(0, Math.min(1, 1 - (ms - 150) / (ROD.biteWindowMs - 150)));
+/** 0..1: how quick the pull was after the bite (1 within ROD.quickMs, 0 at the end of the window). */
+export const reactionOf = (ms: number): number => Math.max(0, Math.min(1, 1 - (ms - ROD.quickMs) / (ROD.biteWindowMs - ROD.quickMs)));
+
+/**
+ * A pull before the bite, the `early`-th one (1 = the first). Within the grace the fish only startles: the bite moves to
+ * `startleMs` after the pull (`roll` 0..1 picks where) and the nibbles still to come are dropped. Past it the fish is gone.
+ */
+export function earlyPull(sinceMs: number, early: number, roll: number): { bite: number } | 'gone' {
+  if (early > ROD.earlyGrace) return 'gone';
+  return { bite: sinceMs + ROD.startleMs[0] + roll * (ROD.startleMs[1] - ROD.startleMs[0]) };
+}
 
 /** Size factor of a shadow: how hard the fish pulls, and what it adds to the score once landed. */
 export const SHADOW = {
@@ -92,7 +111,17 @@ export interface Fight {
   inside: number;
 }
 
-export const startFight = (): Fight => ({ zone: 0.1, zoneV: 0, fish: 0.5, fishTarget: 0.5, nextMoveAt: 0.6, progress: ROD.fight.start, time: 0, inside: 0 });
+/** The fight starts with the fish in the middle of the catch zone, so the first second is not already lost. */
+export const startFight = (depth: CastDepth = 0): Fight => ({
+  zone: 0.5 - ROD.fight.zone[depth] / 2,
+  zoneV: 0,
+  fish: 0.5,
+  fishTarget: 0.5,
+  nextMoveAt: 1,
+  progress: ROD.fight.start,
+  time: 0,
+  inside: 0,
+});
 
 /** One step of `dt` s. `roll` (0..1) picks the fish's next height when it is time to move. */
 export function stepFight(f: Fight, dt: number, holding: boolean, depth: CastDepth, size: ShadowSize, roll: number): Fight {
@@ -105,19 +134,19 @@ export function stepFight(f: Fight, dt: number, holding: boolean, depth: CastDep
     zone = Math.max(0, Math.min(1 - zoneH, zone));
     zoneV = 0;
   }
-  const pull = SHADOW[size].pull * (1 + depth * 0.2);
+  const pull = SHADOW[size].pull * (1 + depth * 0.15);
   let { fishTarget, nextMoveAt } = f;
   const time = f.time + dt;
   if (time >= nextMoveAt) {
     // A bigger fish jumps further and more often.
-    const reach = Math.min(1, 0.35 * pull);
+    const reach = Math.min(1, c.reach * pull);
     fishTarget = Math.max(0.04, Math.min(0.96, f.fish + (roll * 2 - 1) * reach));
     const gap = c.moveMs[0] - (c.moveMs[0] - c.moveMs[1]) * Math.min(1, (pull - 0.75) / 1.05);
     nextMoveAt = time + gap / 1000;
   }
-  const fish = f.fish + (fishTarget - f.fish) * Math.min(1, dt * 3.2 * pull);
+  const fish = f.fish + (fishTarget - f.fish) * Math.min(1, dt * c.swim * pull);
   const isIn = fish >= zone && fish <= zone + zoneH;
-  const progress = Math.max(0, Math.min(1, f.progress + (isIn ? c.gain / pull : -c.loss) * dt));
+  const progress = Math.max(0, Math.min(1, f.progress + (isIn ? c.gain / Math.sqrt(pull) : -c.loss) * dt));
   return { zone, zoneV, fish, fishTarget, nextMoveAt, progress, time, inside: f.inside + (isIn ? dt : 0) };
 }
 
