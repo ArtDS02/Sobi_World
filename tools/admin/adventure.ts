@@ -1,6 +1,6 @@
 // Admin "Mô phỏng trận" (GĐ10): a party of fighting styles at a level and a tier of gear plays a zone N times through the
 // game's own battle rules, with the AI choosing, and the page reads the win rate and how far the runs get. Nothing is saved;
-// the enemies, skills, zones and loot are edited under "Số liệu" (content/adventure/*.json) and tried here right after.
+// the enemies, skills, zones and loot are edited under "Nội dung game" (content/adventure/*.json) and tried here right after.
 import { simulateRuns, GEAR_TIERS, type GearTier, type SimResult } from '../../src/areas/adventure/logic/battleSim';
 import { ARCHETYPE_LIST, PREP_ITEMS, ZONE_LIST, ZONES } from '../../src/areas/adventure/logic/config/content';
 import type { ItemId } from '../../src/core/config/ids';
@@ -57,7 +57,7 @@ export function renderAdventure(root: HTMLElement) {
   const archetypeOptions = (cur: string) => ARCHETYPE_LIST.map((a) => `<option value="${a.id}"${a.id === cur ? ' selected' : ''}>${esc(a.nameVi)} (${a.element})</option>`).join('');
   const rarityOptions = (cur: string) => RARITY_VALUES.map((r) => `<option value="${r}"${r === cur ? ' selected' : ''}>${esc(RARITY_LABEL[r] ?? r)}</option>`).join('');
   root.innerHTML = `<h3>Mô phỏng trận (Sobi Adventure)</h3>
-    <p class="muted">Một đội chơi trọn một vùng nhiều lần bằng đúng luật đánh của game; cùng seed cho cùng kết quả. Dùng để xem tỉ lệ thắng sau khi sửa kẻ địch, kỹ năng, vùng ở "Số liệu". Không lưu gì.</p>
+    <p class="muted">Một đội chơi trọn một vùng nhiều lần bằng đúng luật đánh của game; cùng seed cho cùng kết quả. Dùng để xem tỉ lệ thắng sau khi sửa kẻ địch, kỹ năng, vùng ở "Nội dung game". Không lưu gì.</p>
     <div class="form-grid">
       <label class="field"><span>Vùng</span><select data-zone>${ZONE_LIST.map((z) => `<option value="${z.id}"${z.id === form.zoneId ? ' selected' : ''}>${esc(z.nameVi)}</option>`).join('')}</select></label>
       <label class="field"><span>Cấp của cả đội</span><input type="number" min="1" max="30" data-level value="${form.level}" /></label>

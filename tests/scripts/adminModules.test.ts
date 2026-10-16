@@ -26,11 +26,13 @@ import { PAIR_RULES } from '../../src/areas/farm/logic/config/breedingPairs';
 import { ITEM_ID_VALUES } from '../../src/core/config/ids';
 import { CURRENCY_VALUES, PRODUCT_CATEGORY_VALUES, PRODUCTS } from '../../src/core/config/products';
 import { mulberry32 } from '../../src/core/rng';
-import { parseFarmSave } from '../../src/areas/farm/logic/save/legacy';
 import { newGame } from '../../src/areas/farm/logic/save/newFarm';
 import { History, add, duplicate, reorder, type Placement } from '../../tools/admin/layoutModel';
 import { activeCount, byText, emptyState, facetCounts, fold, runQuery } from '../../tools/admin/listQuery';
-import * as E from '../../tools/admin/userEdits';
+import * as F from '../../tools/admin/farmEdits';
+import * as W from '../../tools/admin/worldEdits';
+import { SAVE_CODEC, parseWorldSave } from '../../src/app/saveCodec';
+import { farmOf } from '../../src/areas/farm/logic/save/lens';
 
 const MANIFEST = 'public/assets/manifest/assets.json';
 const manifestText = readFileSync(MANIFEST, 'utf8').replace(/\r\n/g, '\n');
@@ -162,26 +164,54 @@ describe('layout', () => {
   });
 });
 
-describe('user (save) edits', () => {
+describe('user (save) edits on the world', () => {
   const rng = mulberry32(3);
-  const s0 = newGame({ now: 1000, rng });
-  it('gold moves through one ADMIN_ADJUST transaction; XP follows the level and leaves the trough alone', () => {
-    const s = E.apply(s0, E.setGold(12345, 2000, rng));
-    expect(s.player.gold).toBe(12345);
-    expect(s.transactions[0]).toMatchObject({ type: 'ADMIN_ADJUST', amount: 12345 - s0.player.gold });
-    const lv = E.apply(s, E.setXp(WORLD_LEVELS.xp[9]!));
-    expect(E.summary(lv).level).toBe(10);
-    expect(lv.trough.capacity).toBe(s0.trough.capacity);
+  const w0 = SAVE_CODEC.newWorld({ now: 1000, rng, dayOffsetMs: 0 });
+  it('each currency moves through one ADMIN_ADJUST transaction of its own', () => {
+    const w = W.apply(W.apply(w0, W.setCurrency('coins', 12345, 2000, rng)), W.setCurrency('gems', 30, 2001, rng));
+    expect(w.wallet).toMatchObject({ coins: 12345, gems: 30 });
+    expect(w.transactions[0]).toMatchObject({ type: 'ADMIN_ADJUST', currency: 'gems', amount: 30 });
+    expect(w.transactions[1]).toMatchObject({ type: 'ADMIN_ADJUST', currency: 'coins', amount: 12345 - w0.wallet.coins });
+    expect(() => W.apply(w, W.setCurrency('coins', Number.NaN, 1, rng))).toThrow(/số/);
   });
-  it('refuses edits the game could not load', () => {
-    const withPig = E.apply(s0, E.addPig('PIG_EARTH_PINK', 'FEMALE', 'Mít', 1, 'p1'));
-    const two = E.apply(withPig, E.addPig('PIG_BLACK', 'MALE', 'Đen', 1, 'p2'));
-    expect(() => E.apply(two, E.setSlots(1))).toThrow(/ít nhất 2/);
-    expect(() => E.apply(withPig, E.patchPig('p1', { name: '' }))).toThrow();
-    expect(() => E.apply({ ...withPig, player: { ...withPig.player, unlockedSlots: 1 } }, E.addPig('PIG_EARTH_PINK', 'MALE', 'B', 1, 'p2'))).toThrow(/chuồng/);
-    const reset = E.apply(withPig, E.resetSave(5, rng));
-    expect(reset.pigs).toEqual([]);
-    expect(parseFarmSave(JSON.stringify(reset)).ok).toBe(true);
+  it('a save with transactions of every Area stays writable (the old farm-only check refused it)', () => {
+    const w = { ...w0, transactions: [{ id: 't', at: 1, currency: 'coins' as const, type: 'GARDEN_SHOP', amount: -5 }, ...w0.transactions] };
+    expect(W.saveProblems(w)).toEqual([]);
+    expect(W.apply(w, W.setItems({ FOOD_BASIC: 7, item_seed_wheat: 0 })).inventory.items.FOOD_BASIC).toBe(7);
+  });
+  it('the world level follows the Areas’ XP; a total below the other Areas is refused', () => {
+    const lv = W.apply(w0, W.setWorldXp(WORLD_LEVELS.xp[9]!));
+    expect(W.summary(lv).level).toBe(10);
+    const garden = W.apply(lv, W.setAreaXp('sobi_garden', 500));
+    expect(W.summary(garden).xp).toBe(WORLD_LEVELS.xp[9]! + 500);
+    expect(() => W.apply(garden, W.setWorldXp(100))).toThrow(/khu khác/);
+  });
+  it('opening an Area creates its starting state; closing keeps it', () => {
+    const open = W.apply(w0, W.setUnlockedAreas([...w0.world.unlockedAreas, 'sobi_cloud'], 5, rng));
+    expect(open.world.unlockedAreas).toContain('sobi_cloud');
+    expect(open.areas.sobi_cloud).toBeDefined();
+    const closed = W.apply(open, W.setUnlockedAreas(w0.world.unlockedAreas, 6, rng));
+    expect(closed.world.unlockedAreas).not.toContain('sobi_cloud');
+    expect(closed.areas.sobi_cloud).toEqual(open.areas.sobi_cloud);
+    expect(() => W.apply(w0, W.setUnlockedAreas([], 7, rng))).toThrow();
+  });
+  it('farm edits run on the farm view and refuse what the game could not load', () => {
+    const withPig = W.apply(w0, W.onFarm(F.addPig('PIG_EARTH_PINK', 'FEMALE', 'Mít', 1, 'p1')));
+    const two = W.apply(withPig, W.onFarm(F.addPig('PIG_BLACK', 'MALE', 'Đen', 1, 'p2')));
+    expect(() => W.apply(two, W.onFarm(F.setSlots(1)))).toThrow(/ít nhất 2/);
+    expect(() => W.apply(withPig, W.onFarm(F.patchPig('p1', { name: '' })))).toThrow();
+    const sick = W.apply(withPig, W.onFarm(F.patchPig('p1', { isSick: true, bond: 60, purpose: 'PET' }, 500)));
+    expect(farmOf(sick).pigs[0]).toMatchObject({ isSick: true, bond: 60, purpose: 'PET', lastSickAt: 500 });
+    const reset = W.apply(sick, W.resetWorld(5, rng));
+    expect(farmOf(reset).pigs).toEqual([]);
+    expect(parseWorldSave(JSON.stringify(reset)).ok).toBe(true);
+  });
+  it('a generic part edit and the raw JSON editor go through the same checks', () => {
+    const tank = W.apply(w0, W.setPart(['live', 'dev'], { ...w0.live.dev, weather: 'rainy' }));
+    expect(tank.live.dev.weather).toBe('rainy');
+    expect(() => W.apply(w0, W.setPart(['wallet'], { coins: -1, gems: 0, eventTokens: 0 }))).toThrow(/wallet/);
+    expect(() => W.apply(w0, W.replaceAll('{"nope":1}'))).toThrow(/JSON/);
+    expect(W.apply(w0, W.replaceAll(JSON.stringify(tank))).live.dev.weather).toBe('rainy');
   });
 });
 

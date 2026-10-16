@@ -1,59 +1,9 @@
-// Admin page "Số liệu": every number of the files that tune the world — time, health, valuation,
-// quality, the farm's balance — as a labelled field. Only numbers can change; the server checks that
-// and validates with the game's schema before writing. Times are shown as given (milliseconds or
-// seconds, see the unit in the label).
-import { esc } from './labels';
-import { json, rememberMessage } from './store';
+// Vietnamese labels of content and save fields for the schema-driven forms (decision 036). A path is labelled by
+// its last one or two keys (`stats.hp`, then `hp`); unknown keys are spelled out from their camelCase / SNAKE_CASE.
+// Dashboard text (a dev tool): it lives here, not in src/i18n.
+import { FAMILY_LABEL, RARITY_LABEL } from './labels';
 
-type Files = Record<string, unknown>;
-
-const FILE_TITLE: Record<string, string> = {
-  'shared/time.json': '🕒 Thời gian (buổi trong ngày, bước mô phỏng, trần offline)',
-  'shared/health.json': '🩺 Sức khỏe (bệnh, nguy kịch, chết, ân hạn, bảo vệ người mới)',
-  'shared/valuation.json': '💰 Giá trị (cân nặng, phạt bệnh, chợ theo ngày)',
-  'shared/quality.json': '⭐ Chất lượng (ngưỡng tâm trạng, hệ số giá)',
-  'shared/inventory.json': '🎒 Túi đồ chung',
-  'farm/balance.json': '🐷 Cân bằng Nông trại',
-  'garden/crops.json': '🌱 Cây trồng (giờ lớn, sản lượng)',
-  'garden/balance.json': '🥕 Cân bằng Sobi Garden (ô đất, tưới, héo, công trình)',
-  'shared/recipes.json': '⚙️ Recipe (nguyên liệu, thành phẩm, thời gian; gồm công thức potion của Vạc nấu)',
-  'shared/items.json': '📦 Vật phẩm (giá mua, giá bán, độ no; potion: tâm trạng, giờ; hoa: tăng đột biến)',
-  'shared/progression.json': '📈 Cấp Sobi World (KN từng cấp) và Phát triển thế giới',
-  'shared/bond.json': '💕 Thân thiết (vuốt ve, món yêu thích, tâm trạng món ăn vặt)',
-  'shared/orders.json': '📋 Bảng đơn hàng (ô, thời gian, thưởng, vật phẩm được đặt)',
-  'shared/goals.json': '🎯 Mục tiêu hằng ngày (mẫu, thưởng, bonus)',
-  'shared/achievements.json': '🏆 Thành tựu (đích, Ngọc, KN)',
-  'shared/codex.json': '📖 Codex (thưởng khám phá, mốc sưu tầm)',
-  'farm/decor.json': '🌻 Trang trí (giá, cấp mở, vui vẻ, số chỗ đặt)',
-  'shared/npcs.json': '💬 NPC hướng dẫn (lời của từng NPC; sửa được cả chữ)',
-  'aquarium/fish.json': '🐟 Loài cá (giờ lớn, giá, độ hay cắn câu, vảy; sửa được cả tên và mô tả)',
-  'aquarium/balance.json': '🪣 Cân bằng Sobi Aquarium (bể, nước, cá, cần câu, đẻ trứng)',
-  'cloud/flowers.json': '🌸 Hoa của Sobi Cloud (giờ lớn, sản lượng; sửa được cả tên)',
-  'cloud/balance.json': '☁️ Cân bằng Sobi Cloud (ô hoa, tưới, suối nước tinh khiết, vạc nấu)',
-  'shared/tech.json': '🔧 Công nghệ (giá từng cấp bằng Sobi Coin và vật liệu Adventure, hiệu quả; sửa được cả tên và mô tả)',
-  'adventure/enemies.json': '👾 Kẻ địch (máu, công, thủ, tốc, KN, rơi đồ; sửa được cả tên)',
-  'adventure/skills.json': '✨ Kỹ năng (sức mạnh, năng lượng, hồi chiêu, hiệu ứng; sửa được cả tên và mô tả)',
-  'adventure/archetypes.json': '🛡️ Kiểu đánh (chỉ số gốc, bộ 4 kỹ năng; sửa được cả tên và mô tả)',
-  'adventure/zones.json': '🌲 Vùng phiêu lưu (điểm dừng, bảng loot, sự kiện nhỏ; sửa được cả tên)',
-  'adventure/equipment.json': '🗡️ Trang bị (chỉ số cộng thêm)',
-  'adventure/balance.json': '⚔️ Cân bằng Sobi Adventure (luật đánh, cấp, năng lượng, kiệt sức, vật phẩm dùng trong trận)',
-  'breeding/traits.json': '🧬 Tính trạng (hiệu ứng, trọng số; sửa được cả tên và mô tả)',
-  'breeding/balance.json': '🍀 Lai giống nâng cao (di truyền, đột biến, vận may, phả hệ)',
-  'breeding/rumors.json': '🗣️ Tin đồn của Nhà lai giống (câu mẫu; sửa được chữ)',
-  'shared/weather.json': '🌦️ Thời tiết (tần suất theo mùa, cầu vồng sau mưa, mưa làm cây lớn nhanh, cá cắn câu, đột biến)',
-  'shared/festivals.json': '🎪 Lễ hội (chu kỳ, ngày bắt đầu, nguồn Vé Lễ Hội, giá và giới hạn cửa hàng; sửa được cả tên và mô tả)',
-  'shared/merchant.json': '🐪 Thương nhân (tần suất ghé, đơn đặc biệt, giá thu mua thêm ở chợ; sửa được cả lời)',
-};
-
-/** Files whose words can be edited as well (the server allows it for the same files). */
-const TEXT_FILES = new Set(['shared/npcs.json', 'breeding/traits.json', 'breeding/rumors.json', 'aquarium/fish.json', 'cloud/flowers.json', 'adventure/enemies.json', 'adventure/skills.json', 'adventure/archetypes.json', 'adventure/zones.json', 'shared/tech.json', 'shared/festivals.json', 'shared/merchant.json']);
-
-/** Same rule as the server (scripts/admin/numbers.ts isWordPath). */
-const isWordPath = (path: string): boolean =>
-  /Vi$/.test(path) || /^(recipeTemplates|noNews|tips|linesVi)\[\d+\]$/.test(path) || /^rarityWords\.[A-Z]+$/.test(path);
-
-/** Friendly names by the last part(s) of a path; the rest show their key. */
-const LABEL: Record<string, string> = {
+export const LABEL: Record<string, string> = {
   stepMs: 'Bước mô phỏng (ms)',
   'stepMs.online': 'Khi đang chơi (ms)',
   'stepMs.offline': 'Khi bù offline (ms)',
@@ -292,94 +242,130 @@ const LABEL: Record<string, string> = {
   tips: 'Mẹo',
 };
 
-interface Leaf {
-  path: string;
-  value: number | string;
-  /** The id or name of the row the number belongs to (a crop, an item, a recipe). */
-  owner: string;
+/** Common keys of many files (checked after LABEL). */
+const COMMON: Record<string, string> = {
+  id: 'Mã (id)',
+  name: 'Tên',
+  vi: 'Tiếng Việt',
+  en: 'Tiếng Anh',
+  rarity: 'Độ hiếm',
+  family: 'Nhóm',
+  category: 'Loại',
+  enabled: 'Đang dùng',
+  active: 'Đang bật',
+  artId: 'Ảnh (asset id)',
+  art: 'Ảnh (asset id)',
+  icon: 'Biểu tượng',
+  color: 'Màu',
+  itemId: 'Vật phẩm',
+  item: 'Vật phẩm',
+  items: 'Vật phẩm',
+  qty: 'Số lượng',
+  quantity: 'Số lượng',
+  amount: 'Số lượng',
+  price: 'Giá',
+  level: 'Cấp',
+  levels: 'Các cấp',
+  xp: 'KN',
+  curesSickness: 'Chữa bệnh',
+  hatchRarity: 'Nở ra heo độ hiếm',
+  parents: 'Bố mẹ',
+  result: 'Kết quả',
+  percent: 'Tỉ lệ (%)',
+  inputs: 'Nguyên liệu',
+  outputs: 'Thành phẩm',
+  output: 'Thành phẩm',
+  input: 'Nguyên liệu',
+  station: 'Nơi chế biến',
+  recipes: 'Công thức',
+  unlock: 'Điều kiện mở',
+  worldLevel: 'Cấp Sobi World',
+  worldDevelopment: 'Phát triển thế giới',
+  produces: 'Sản xuất ra',
+  consumes: 'Dùng tới',
+  buildings: 'Công trình',
+  npc: 'NPC',
+  movement: 'Cách di chuyển',
+  portalInPlaza: 'Cổng ở Sảnh',
+  element: 'Nguyên tố',
+  boss: 'Trùm',
+  drops: 'Rơi đồ',
+  loot: 'Bảng loot',
+  stops: 'Điểm dừng',
+  events: 'Sự kiện',
+  effects: 'Hiệu ứng',
+  effect: 'Hiệu ứng',
+  kind: 'Kiểu',
+  metric: 'Chỉ số đo',
+  reward: 'Thưởng',
+  rewards: 'Thưởng',
+  seasons: 'Mùa',
+  season: 'Mùa',
+  tier: 'Bậc',
+  tiers: 'Các bậc',
+  hidden: 'Ẩn',
+  signatureTrait: 'Tính trạng riêng',
+  favorite: 'Món yêu thích',
+  breedable: 'Phối giống được',
+  buyGold: 'Giá mua (Sobi Coin)',
+  growthSec: 'Thời gian lớn (giây)',
+  pregnancySec: 'Mang thai (giây)',
+  maxWeight: 'Cân nặng tối đa',
+  gold: 'Sobi Coin',
+  food: 'Thức ăn',
+  medicine: 'Thuốc',
+  speed: 'Tốc độ',
+  lab: 'Phòng lai',
+  seeds: 'Hạt giống',
+  consolation: 'Quà an ủi khi trượt',
+  pityAfter: 'Vận may sau bao nhiêu lần trượt',
+  pityStep: 'Vận may: cộng thêm mỗi lần (điểm %)',
+  area: 'Khu', stats: 'Chỉ số', enemies: 'Kẻ địch', nightOnly: 'Chỉ mọc ban đêm', skills: 'Kỹ năng', seedItem: 'Hạt giống (vật phẩm)',
+  produceItem: 'Thu được (vật phẩm)', statuses: 'Hiệu ứng trạng thái', materials: 'Vật liệu', type: 'Kiểu', table: 'Bảng loot',
+  festival: 'Lễ hội', status: 'Trạng thái', turns: 'Số lượt', value: 'Giá trị', hybrid: 'Chỉ lai ra được', slot: 'Ô trang bị',
+  building: 'Công trình', damagePct: 'Sát thương (%)', pool: 'Nhóm', event: 'Sự kiện', topics: 'Chủ đề', fighter: 'Chiến binh',
+  fish: 'Cá', shop: 'Cửa hàng', earn: 'Cách kiếm vé', requiresTech: 'Cần công nghệ', tech: 'Công nghệ', backdrop: 'Ảnh nền',
+  nodes: 'Điểm dừng', hpPct: 'Máu (%)', atkPct: 'Công (%)', defPct: 'Thủ (%)', care: 'Chăm sóc', bonus: 'Thưởng thêm', life: 'Vòng đời',
+  sleep: 'Giấc ngủ', idle: 'Lúc rảnh', weights: 'Tỉ trọng', plotExpansions: 'Mở rộng ô đất', fertilizer: 'Phân bón', start: 'Tặng khi mở khu',
+  requiresCleared: 'Cần hạ trùm vùng', rainbow: 'Cầu vồng', periods: 'Các buổi', risk: 'Nguy cơ', perHour: 'Mỗi giờ', favorites: 'Món yêu thích',
+  minMood: 'Tâm trạng tối thiểu', priceFactor: 'Hệ số giá', minHearts: 'Tim tối thiểu', upgradeChance: 'Cơ hội nâng bậc', lines: 'Câu thoại',
+  requests: 'Yêu cầu', templates: 'Mẫu', discovery: 'Thưởng khám phá', milestones: 'Mốc', assets: 'Ảnh', market: 'Chợ', techs: 'Công nghệ',
+  needs: 'Nhu cầu', tank: 'Bể', fishing: 'Câu cá', oyster: 'Trai ngọc', breeding: 'Sinh sản', names: 'Tên', cauldron: 'Vạc nấu', spring: 'Suối',
+  combat: 'Luật đánh', team: 'Đội', run: 'Chuyến phiêu lưu', starter: 'Khởi đầu', prep: 'Chuẩn bị', battleItems: 'Vật phẩm trong trận',
+  traits: 'Tính trạng', pity: 'Vận may', rumors: 'Tin đồn', offers: 'Đơn đặc biệt', zones: 'Vùng', crops: 'Cây trồng', flowers: 'Hoa',
+  species: 'Giống', equipment: 'Trang bị', archetypes: 'Kiểu đánh', decor: 'Trang trí', pigNames: 'Tên heo', festivals: 'Lễ hội',
+  tables: 'Bảng loot', personality: 'Tính cách', wander: 'Đi dạo', social: 'Giao lưu', sleepArea: 'Chỗ ngủ', layout: 'Bố cục',
+  sprinkler: 'Vòi tưới', mill: 'Máy xay', composter: 'Thùng ủ', health: 'Sức khỏe', hunger: 'Đói', cleanliness: 'Sạch sẽ', thirst: 'Khát',
+  sleepiness: 'Buồn ngủ', START_GOLD: 'Sobi Coin lúc bắt đầu', START_SLOTS: 'Chuồng lúc bắt đầu', START_INVENTORY: 'Túi đồ lúc bắt đầu',
+  START_FOOD: 'Thức ăn lúc bắt đầu', TROUGH_LEVELS: 'Các cấp máng', MAX_SLOTS: 'Chuồng tối đa', SLOT_UNLOCKS: 'Giá mở chuồng',
+  BREEDING_FEE: 'Phí phối giống', NURSERY_MAX: 'Heo con chờ tối đa', HUNGER_MAX: 'Độ no tối đa', CLEAN_MAX: 'Độ sạch tối đa',
+  PIG_NAME_MAX: 'Tên heo dài tối đa', SHOP_MAX_QUANTITY: 'Mua tối đa mỗi lần', MEDICINE_MAX: 'Thuốc tối đa', ORDER_TTL_MS: 'Đơn heo hết hạn sau (ms)',
+  ORDER_WINDOW_MS: 'Mỗi đợt đơn heo (ms)', DISCOVERY_BONUS_GOLD: 'Thưởng khám phá giống mới', BASE_INTERVAL_MS: 'Nhịp hộp quà (ms)',
+  MAX_ON_FARM: 'Hộp quà tối đa trên nông trại', MIN_GOLD: 'Quà tối thiểu (Sobi Coin)', MAX_GOLD: 'Quà tối đa (Sobi Coin)',
+};
+
+/** "growHours" → "Grow hours", "BASE_INTERVAL_MS" → "Base interval ms". */
+export function humanize(key: string): string {
+  const words = key.includes('_') && key === key.toUpperCase() ? key.toLowerCase().split('_') : key.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase().split(/[\s_]+/);
+  const text = words.filter(Boolean).join(' ');
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-function leaves(value: unknown, texts: boolean, path = '', owner = ''): Leaf[] {
-  if (typeof value === 'number') return [{ path, value, owner }];
-  if (texts && typeof value === 'string' && isWordPath(path)) return [{ path, value, owner }];
-  if (Array.isArray(value)) return value.flatMap((v, i) => leaves(v, texts, `${path}[${i}]`, owner));
-  if (value && typeof value === 'object') {
-    const row = value as { id?: unknown; itemId?: unknown; nameVi?: unknown };
-    const own = typeof row.id === 'string' ? row.id : typeof row.itemId === 'string' ? row.itemId : typeof row.nameVi === 'string' ? row.nameVi : owner;
-    return Object.entries(value).flatMap(([k, v]) => leaves(v, texts, path ? `${path}.${k}` : k, own));
+/** Label of the last key of `path` (array indices ignored). */
+export function fieldLabel(path: readonly (string | number)[]): string {
+  const keys = path.filter((k): k is string => typeof k === 'string');
+  for (let n = Math.min(2, keys.length); n >= 1; n--) {
+    const hit = LABEL[keys.slice(-n).join('.')];
+    if (hit) return hit;
   }
-  return [];
+  const last = keys[keys.length - 1] ?? '';
+  return COMMON[last] ?? humanize(last);
 }
 
-function labelOf(path: string): string {
-  const index = (path.match(/\[\d+\]/g) ?? []).join('');
-  const parts = path.replace(/\[\d+\]/g, '').split('.');
-  for (let n = Math.min(2, parts.length); n >= 1; n--) {
-    const hit = LABEL[parts.slice(-n).join('.')];
-    if (hit) return index ? `${hit} ${index}` : hit;
-  }
-  return path;
-}
-
-/** `value` with the number at `path` replaced (a deep copy). */
-function setAt(value: unknown, path: string, n: number | string): unknown {
-  const copy = structuredClone(value) as Record<string, unknown>;
-  const keys = path.split(/\.|\[|\]/).filter(Boolean);
-  let at: Record<string, unknown> = copy;
-  for (const k of keys.slice(0, -1)) at = at[k] as Record<string, unknown>;
-  at[keys[keys.length - 1]!] = n;
-  return copy;
-}
-
-const page = { files: null as Files | null, message: null as { kind: 'ok' | 'error'; text: string } | null };
-
-export function renderNumbers(root: HTMLElement, apiOnline: boolean, rerender: () => void) {
-  if (!page.files) {
-    root.innerHTML = '<p class="loading">Đang tải số liệu…</p>';
-    json<{ files: Files }>('/__admin/numbers').then(
-      (r) => {
-        page.files = r.files;
-        rerender();
-      },
-      (e: unknown) => (root.innerHTML = `<p class="empty">Không tải được: ${esc((e as Error).message)}</p>`),
-    );
-    return;
-  }
-  const files = page.files;
-  const msg = page.message ? `<div class="toast ${page.message.kind}"><pre>${esc(page.message.text)}</pre></div>` : '';
-  root.innerHTML = `${msg}<p class="muted">Chỉ sửa được con số; server kiểm tra bằng đúng schema của game trước khi ghi vào <code>content/</code>. Game đọc ngay lần chạy sau.</p>
-    ${Object.entries(files)
-      .map(
-        ([file, value]) => `<form class="panel tab-form" data-file="${esc(file)}"><h3>${esc(FILE_TITLE[file] ?? file)}</h3>
-        <div class="form-grid">${leaves(value, TEXT_FILES.has(file))
-          .map(
-            (l) => `<label class="field${typeof l.value === 'string' ? ' span-2' : ''}"><span>${esc(l.owner ? `${l.owner}: ${labelOf(l.path)}` : labelOf(l.path))}</span>
-              ${typeof l.value === 'string' ? `<textarea name="${esc(l.path)}" data-text="1" rows="2">${esc(l.value)}</textarea>` : `<input type="number" step="any" name="${esc(l.path)}" value="${l.value}" />`}<small class="muted">${esc(l.path)}</small></label>`,
-          )
-          .join('')}</div>
-        <div class="form-actions"><button class="btn btn-primary" ${apiOnline ? '' : 'disabled title="Chạy npm run admin để lưu"'}>💾 Lưu ${esc(file)}</button></div></form>`,
-      )
-      .join('')}`;
-  root.querySelectorAll<HTMLFormElement>('form[data-file]').forEach((f) =>
-    f.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const file = f.dataset.file!;
-      let value: unknown = files[file];
-      for (const input of f.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[name], textarea[name]')) {
-        value = setAt(value, input.name, input instanceof HTMLTextAreaElement ? input.value : Number(input.value));
-      }
-      json('/__admin/numbers', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ file, value }) }).then(
-        () => {
-          files[file] = value;
-          page.message = { kind: 'ok', text: `Đã lưu ${file}` };
-          rememberMessage(`Đã lưu ${file}`);
-          rerender();
-        },
-        (err: unknown) => {
-          page.message = { kind: 'error', text: (err as Error).message };
-          rerender();
-        },
-      );
-    }),
-  );
-}
+/** Labels of the values of a few shared enums. */
+export const ENUM_LABEL: Record<string, string> = {
+  ...RARITY_LABEL, MYTHIC: 'Thần thoại', ...FAMILY_LABEL, MALE: '♂ Đực', FEMALE: '♀ Cái',
+  // Item categories (shared/items.json) after the pig families: FOOD reads as food here.
+  FOOD: 'Thức ăn', MEDICINE: 'Thuốc', MATERIAL: 'Nguyên liệu', SEED: 'Hạt giống', CROP: 'Nông sản', FISH: 'Cá', FLOWER: 'Hoa', POTION: 'Potion', EQUIPMENT: 'Trang bị',
+  SUPPLY: 'Vật dụng', SPECIAL: 'Đặc biệt', SHIP: 'Xuất chuồng', BREED: 'Giống', PET: 'Thú cưng',
+};

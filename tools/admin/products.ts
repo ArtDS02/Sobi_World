@@ -84,7 +84,7 @@ function openEditor(existing: ProductDef | null, redraw: () => void) {
         <label class="field"><span>Loại tiền</span><select name="currency">${opt(CURRENCY_VALUES, { GOLD: 'Vàng' }, p.currency)}</select></label>
         <label class="field"><span>Vật phẩm nhận được</span><select name="itemId">${opt(ITEM_ID_VALUES, ITEM_LABEL, p.itemId)}</select></label>
         <label class="field"><span>Số lượng mỗi lần mua</span><input type="number" name="quantity" min="1" max="999" step="1" value="${p.quantity}" /></label>
-        <label class="field"><span>Giá (vàng)</span><input type="number" name="priceGold" min="1" step="1" value="${p.priceGold}" />
+        <label class="field"><span>Giá (Sobi Coin)</span><input type="number" name="priceGold" min="1" step="1" value="${p.priceGold}" />
           <span class="quick-row"><button type="button" class="btn btn-small" data-price="1">= giá gốc × SL</button><button type="button" class="btn btn-small" data-price="0.9">−10%</button><button type="button" class="btn btn-small" data-price="0.8">−20%</button></span></label>
         <label class="field"><span>Thứ tự hiển thị (nhỏ → trước)</span><input type="number" name="sortOrder" step="1" value="${p.sortOrder}" /></label>
         <div class="field span-2"><span>Icon / asset</span><span data-iconbtn>${pickButton('icon', p.icon, iconUrl(p.icon), p.icon)}</span></div>
@@ -110,7 +110,7 @@ function openEditor(existing: ProductDef | null, redraw: () => void) {
         p = readForm(f, existing ?? p);
         f.querySelector('[data-preview]')!.innerHTML = preview(p);
         const base = ITEMS[p.itemId]?.priceGold ?? 0;
-        f.querySelector('[data-unit]')!.textContent = `Giá gốc 1 ${p.itemId}: ${gold(base)} vàng (đổ máng tính theo giá gốc).`;
+        f.querySelector('[data-unit]')!.textContent = `Giá gốc 1 ${p.itemId}: ${gold(base)} Sobi Coin (đổ máng tính theo giá gốc).`;
       };
       f.addEventListener('input', update);
       // Quick prices: the item's base price × quantity, optionally discounted (bulk packs).

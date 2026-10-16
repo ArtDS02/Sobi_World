@@ -24,7 +24,7 @@ import { emptyPlot } from '../../src/systems/plants/plot';
 import { mulberry32 } from '../../src/core/rng';
 import type { WorldSave } from '../../src/core/save/world';
 import type { ActionContext } from '../../src/core/types';
-import { rewind } from '../../tools/admin/userEdits';
+import { rewind } from '../../tools/admin/worldEdits';
 
 const H = 3_600_000;
 const T0 = 20_000 * 86_400_000;
@@ -212,8 +212,8 @@ describe('admin time travel', () => {
     const caught = simulateGarden(gardenOf(away), T0);
     expect(caught.events.map((e) => e.type).sort()).toEqual(['GARDEN_BATCH_DONE', 'GARDEN_CROP_RIPE']);
     expect(rewindGardenInWorld(w, 0)).toBe(w);
-    // the dashboard's edit carries the time so it can move the garden when it writes the world
-    expect(rewind(3_600_000).rewindMs).toBe(3_600_000);
+    // the dashboard's time travel moves the garden's clocks with every other Area's
+    expect(gardenOf(rewind(H)(w)).lastTickedAt).toBe(T0 - H);
     expect(rewindGarden(gardenOf(w), H).plots[0]!.wetUntil).toBe(0);
   });
 });

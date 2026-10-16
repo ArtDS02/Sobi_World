@@ -10,6 +10,7 @@ import {
 import { dayNightIssues, dayScene, formatHm, minuteOf } from '../../src/core/engine/dayNight';
 import { paintPreview } from './dayNightPreview';
 import { esc } from './labels';
+import { reloadSoon } from './store';
 
 const PHASE_LABEL: Record<DayPhase, string> = {
   dawn: '🌅 Bình minh',
@@ -193,12 +194,13 @@ async function save(root: HTMLElement) {
     if (!res.ok) throw new Error(body.error ?? res.statusText);
     const text = `Đã lưu ngày/đêm: ${DAY_PHASES.map((p) => `${p} ${page.draft.phases[p]}`).join(', ')}.`;
     page.message = { kind: 'ok', text };
-    // The written config reloads the page (Vite); keep the confirmation across it.
+    // Kept across the reload that reads the new config.
     try {
       sessionStorage.setItem(SAVED_KEY, text);
     } catch {
       /* storage blocked */
     }
+    reloadSoon();
   } catch (e) {
     page.message = { kind: 'error', text: (e as Error).message };
   } finally {

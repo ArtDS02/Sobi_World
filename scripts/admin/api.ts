@@ -15,7 +15,9 @@
 //   POST /breeding-genetics { genetics, mutations, geneBonuses } → farm/breeding.json (MU-1)
 //   POST /season-fx      { tuning }          → farm/season-fx.json (MU-2)
 //   GET  /layout-default · POST /layout { placements, target?, plaza? } → farm/layout.json placements, or (target "plaza") plaza/layout.json: placements, walk area, spawn
-//   GET  /numbers · POST /numbers { file, value } → the numbers of time / health / valuation / quality / farm balance (only numbers change)
+//   GET  /content · POST /content { file, value, texts?, requestId? } → any file of "Nội dung game" (decision 036),
+//        checked by its schema and by the game loading every content module again; GET /content/result?id= → the outcome
+//        of a save whose response the page lost to Vite's reload (the written file reloads the dashboard)
 //   GET  /build-info · POST /open-folder { which } → desktop build status + guide data (AM-1)
 import { readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -36,7 +38,8 @@ import { dayNightIssues } from '../../src/core/engine/dayNight';
 import { validateSpecies, type ValidateInput } from './validate';
 import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, registerExisting, uploadArt } from './artFiles';
 import { buildInfo, openFolder } from './buildInfo';
-import { readNumbers, saveNumbers } from './numbers';
+import type { RowTexts } from './contentCatalog';
+import { readContentFiles, saveContentFile } from './contentSave';
 import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
 import type { GeneticsRules, Mutation } from '../../src/areas/farm/logic/config/breedingRules';
 import type { GeneBonuses } from '../../src/areas/farm/logic/config/genePool';
@@ -44,6 +47,13 @@ import type { SeasonFxTuning } from '../../src/areas/farm/scene/config/seasonFx'
 import { layoutIssues, pairIssues, productIssues, type PairRuleRow, type PlacementRow, type ProductRow } from './rules';
 
 const LAYOUT_DEFAULT = 'scripts/admin/layoutDefault.json';
+
+/** The last outcomes of content saves, by the page's request id (the page may reload before the response arrives). */
+const results = new Map<string, Result>();
+function remember(id: string, r: Result) {
+  results.set(id, r);
+  if (results.size > 50) results.delete(results.keys().next().value!);
+}
 
 type Result = { status: number; body: unknown };
 type Mod = Record<string, unknown>;
@@ -59,7 +69,7 @@ const loader = (server: ViteDevServer) => (p: string) => server.ssrLoadModule(p)
 
 async function loadRules(load: (p: string) => Promise<Mod>): Promise<Rules> {
   const [breeds, rarity, progression] = await Promise.all([
-    load('/src/core/config/breeds.ts'),
+    load('/src/areas/farm/logic/config/breeds.ts'),
     load('/src/core/config/rarity.ts'),
     load('/src/core/config/progression.ts'),
   ]);
@@ -148,7 +158,7 @@ async function saveProducts(rows: ProductRow[], load: (p: string) => Promise<Mod
 }
 
 async function savePairs(rows: PairRuleRow[], load: (p: string) => Promise<Mod>): Promise<Result> {
-  const [breeds, pairs] = await Promise.all([load('/src/core/config/breeds.ts'), load('/src/core/config/breedingPairs.ts')]);
+  const [breeds, pairs] = await Promise.all([load('/src/areas/farm/logic/config/breeds.ts'), load('/src/areas/farm/logic/config/breedingPairs.ts')]);
   const bad = refuse(
     pairIssues(rows, {
       breeds: breeds.BREEDS as Record<string, { breedable: boolean; enabled: boolean }>,
@@ -169,7 +179,7 @@ interface GeneticsBody {
 
 /** MU-1: random-genetics percents, special recipes and gene bonuses, validated by the engine itself. */
 async function saveGenetics(b: GeneticsBody, load: (p: string) => Promise<Mod>): Promise<Result> {
-  const [odds, breeds] = await Promise.all([load('/src/core/engine/breedingOdds.ts'), load('/src/core/config/breeds.ts')]);
+  const [odds, breeds] = await Promise.all([load('/src/areas/farm/logic/breedingOdds.ts'), load('/src/areas/farm/logic/config/breeds.ts')]);
   const known = breeds.BREEDS as Record<string, { breedable: boolean } | undefined>;
   const issues = [
     ...(odds.geneticsIssues as (g: GeneticsRules) => string[])(b.genetics),
@@ -192,7 +202,7 @@ async function saveGenetics(b: GeneticsBody, load: (p: string) => Promise<Mod>):
 
 /** MU-2: seasonal FX tuning (on / off, density, spawn rate), validated by the engine. */
 async function saveSeasonFx(tuning: SeasonFxTuning, load: (p: string) => Promise<Mod>): Promise<Result> {
-  const fx = await load('/src/core/engine/seasonFx.ts');
+  const fx = await load('/src/areas/farm/scene/fx/seasonFxRules.ts');
   const issues = (fx.seasonFxIssues as (t: SeasonFxTuning) => string[])(tuning);
   if (issues.length) return { status: 400, body: { error: issues.join('; ') } };
   const written = await writeContent(load, CONTENT_FILE.seasonFx, '/content/schemas/farm/seasonFx.ts', 'seasonFxFileSchema', tuning);
@@ -298,10 +308,18 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
       return { status: 200, body: { placements: JSON.parse(readFileSync(LAYOUT_DEFAULT, 'utf8')) } };
     case 'POST /layout':
       return saveLayout(await body<{ placements: PlacementRow[]; target?: string; plaza?: PlazaMeta }>(), load);
-    case 'GET /numbers':
-      return { status: 200, body: { files: readNumbers() } };
-    case 'POST /numbers':
-      return saveNumbers(await body<{ file: string; value: unknown }>(), load);
+    case 'GET /content':
+      return { status: 200, body: readContentFiles() };
+    case 'POST /content': {
+      const b = await body<{ file: string; value: unknown; texts?: RowTexts; requestId?: string }>();
+      const r = await saveContentFile(b, { load, invalidate: () => server.moduleGraph.invalidateAll() });
+      if (b.requestId) remember(b.requestId, r);
+      return r;
+    }
+    case 'GET /content/result': {
+      const r = results.get(url.searchParams.get('id') ?? '');
+      return r ?? { status: 404, body: { error: 'unknown request' } };
+    }
     case 'GET /build-info':
       return buildInfo();
     case 'POST /open-folder':

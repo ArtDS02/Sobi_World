@@ -7,6 +7,9 @@ export default defineConfig({
   plugins: [adminApi()],
   // Build output is not source: `npm run dist:win` locks files there (EBUSY crashed the watcher).
   server: {
+    // No hot reload: a code change elsewhere (another session, the game's dev) must never wipe an unsaved draft. The
+    // dashboard reloads itself after each save it makes (tools/admin/store.ts rememberMessage).
+    hmr: false,
     port: 5175,
     strictPort: false,
     open: '/admin.html',

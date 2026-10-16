@@ -1,6 +1,6 @@
 // Admin "Mô phỏng lai" (GĐ7): breed one pair N times through the game's own rules (species odds, pity, trait
 // inheritance, mutation) and read the rates. Nothing is saved; the numbers come from src/, so a draft of
-// content/breeding/*.json edited under "Số liệu" is the first thing to try here after saving it.
+// content/breeding/*.json edited under "Nội dung game" is the first thing to try here after saving it.
 import { BREED_IDS, BREEDS } from '../../src/areas/farm/logic/config/breeds';
 import type { BreedId } from '../../src/areas/farm/logic/config/ids';
 import { simulateBreeding, type SimResult } from '../../src/areas/farm/logic/breedingSim';

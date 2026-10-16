@@ -17,7 +17,7 @@ import { mountStage, preloadSizes, sizeOf } from './layoutStage';
 import { confirmDanger } from './modal';
 import { openPicker } from './picker';
 import { LAYER_LABEL, properties as propsForm, readProps as readPropsForm, type PortalChoices } from './layoutProps';
-import { artUrl, json, post, state } from './store';
+import { artUrl, json, post, rememberMessage, state } from './store';
 
 type SeasonFiles = Partial<Record<SeasonId, string>>;
 interface Manifest {
@@ -67,7 +67,7 @@ const issues = () =>
 
 async function load() {
   const m = await json<Manifest>(`/assets/manifest/assets.json?t=${Date.now()}`);
-  // content/farm/layout.json: a save rewrites it and Vite reloads the page with the new module.
+  // content/farm/layout.json: a save rewrites it and the dashboard reloads with the new module.
   const source = ed.target === 'plaza' ? PLAZA_LAYOUT : FARM_LAYOUT;
   ed.design = source.designSize;
   ed.meta = plazaMetaOf();
@@ -299,7 +299,7 @@ export function renderLayout(root: HTMLElement, rerender: () => void) {
       await post('/__admin/layout', { placements: ed.list, target: ed.target, ...(ed.target === 'plaza' ? { plaza: ed.meta } : {}) });
       ed.saved = [...ed.list];
       ed.savedMeta = JSON.parse(JSON.stringify(ed.meta)) as PlazaMeta;
-      state.message = { kind: 'ok', text: `Đã lưu layout ${TARGET_LABEL[ed.target]} (${ed.list.length} vật). Game đọc layout mới khi tải lại (F5 / mở lại).` };
+      rememberMessage(`Đã lưu layout ${TARGET_LABEL[ed.target]} (${ed.list.length} vật). Game đọc layout mới khi tải lại (F5 / mở lại).`);
     } catch (e) {
       state.message = { kind: 'error', text: (e as Error).message };
     }

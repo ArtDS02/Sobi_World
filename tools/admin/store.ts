@@ -103,7 +103,11 @@ export function artRows(manifest: Record<string, unknown>): ArtRow[] {
 /** Picture URL of a non-pig manifest row (props, buildings, ui…), null when none. */
 export const artUrl = (id: string) => state.art.find((a) => a.id === id)?.url ?? null;
 
-/** Keeps a confirmation across the full reload Vite does after a config file is written. */
+/**
+ * After a game file is written: the confirmation is kept and the page reloads so every module the dashboard imported
+ * (species, products, schemas…) is read again. The admin server does not hot-reload (vite.admin.config.ts): a code
+ * change elsewhere never wipes a draft, and this reload asks first (beforeunload) when another draft is unsaved.
+ */
 export function rememberMessage(text: string) {
   state.message = { kind: 'ok', text };
   try {
@@ -111,7 +115,11 @@ export function rememberMessage(text: string) {
   } catch {
     /* storage blocked: the message just won't survive the reload */
   }
+  reloadSoon();
 }
+
+/** Reloads once the caller has cleared its own dirty flag (the next task). */
+export const reloadSoon = () => setTimeout(() => location.reload(), 30);
 
 export async function load() {
   try {
@@ -164,13 +172,7 @@ export async function save() {
       body: JSON.stringify({ rows: state.rows }),
     });
     state.dirty = false;
-    state.message = { kind: 'ok', text: `Đã lưu ${r.rows} heo vào game (+${r.manifestAdded} dòng manifest).` };
-    // The written config reloads the page (Vite); keep the confirmation across it.
-    try {
-      sessionStorage.setItem(SAVED_KEY, state.message.text);
-    } catch {
-      /* storage blocked: the message just won't survive the reload */
-    }
+    rememberMessage(`Đã lưu ${r.rows} giống heo vào game (+${r.manifestAdded} dòng manifest).`);
   } catch (e) {
     state.message = { kind: 'error', text: (e as Error).message };
   } finally {

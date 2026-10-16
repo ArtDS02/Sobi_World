@@ -205,6 +205,8 @@ Area mới có thể thêm sự kiện riêng, phải ghi vào bảng này.
 - Admin sửa file trong `content/` và save test. Mọi thay đổi qua validation.
 - Có công cụ: tua thời gian, cộng tiền/đồ, tạo sinh vật, reset save test, xem log mô phỏng.
 - Mỗi giai đoạn thêm nội dung mới thì thêm màn hình admin tương ứng.
+- Từ decision 036: file content mới chỉ cần thêm một dòng vào `scripts/admin/contentCatalog.ts` (form dựng từ schema); save người chơi
+  sửa qua `tools/admin/worldEdits.ts`, kiểm bằng schema thế giới + schema save của từng Area. Xem `tools/admin/README.md`.
 
 ---
 
