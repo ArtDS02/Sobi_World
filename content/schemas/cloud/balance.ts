@@ -29,6 +29,8 @@ export const cloudBalanceFileSchema = z
     }),
     cauldron: z.strictObject({ price: nonNeg, maxBatches: posInt }),
     start: z.strictObject({ water: int.min(0) }),
+    /** The Area's shop (decision 029): what it sells and the price of one, in Sobi Coin. */
+    shop: z.array(z.strictObject({ itemId, price: posInt })).min(1),
     xp: z.strictObject({ plant: nonNeg, water: nonNeg, harvest: nonNeg, craft: nonNeg, fertilize: nonNeg, spring: nonNeg }),
   })
   .superRefine((b, ctx) => {

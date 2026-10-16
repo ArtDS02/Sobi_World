@@ -53,6 +53,8 @@ export function cloudPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
       const items = recipe ? Object.entries(recipe.outputs).map(([id, n]) => `${formatInt(n * e.batches)} ${itemName(id)}`).join(', ') : '';
       return { sound: 'coin_collect', toast: t(T.collected, { items }) };
     }
+    case 'CLOUD_SHOP_BOUGHT':
+      return { sound: 'coin_collect', toast: t(T.bought, { count: formatInt(e.count), name: itemName(e.itemId) }) };
     case 'CLOUD_LEVEL_UP':
       return { sound: 'level_up', toast: t(T.levelUp, { level: e.level }) };
   }

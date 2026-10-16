@@ -36,6 +36,33 @@ export const GARDEN_VIEW = {
    * plots of the zone on screen.
    */
   spray: { everyMs: 1500, drops: 7, reach: [60, 120], headY: 0.93, mistEveryMs: 3200, mistPlots: 2 },
+  /** The shop stall (decision 029) on the lawn at the lower right; drawn in code until bld_shop_garden is painted. */
+  shop: { x: 1440, y: 738, scale: 0.85, art: 'bld_shop_garden', colours: { stripe: 0x7fbf5e, stripe2: 0xfff6e2, goods: [0xe9c46a, 0xe07a5f, 0x8fbf6a, 0xb98a55] } },
+  /** The sprinkler grows with its level: its art per level when painted, else the base art drawn a little bigger. */
+  sprinklerGrow: 0.07,
+  /** A soft colour over the backdrop per zone, so each zone feels its own (index = zone). */
+  zoneTints: [0xffffff, 0xfff1d2, 0xffe6d2, 0xe4f5e0],
+  /** Garden life (decision 029): Farm animals strolling the path around the field. */
+  life: {
+    path: [
+      { x: 385, y: 222 },
+      { x: 1492, y: 222 },
+      { x: 1492, y: 662 },
+      { x: 385, y: 662 },
+    ],
+    behindBelowY: 250,
+    critters: [
+      { art: 'prop_animal_hen_cream', faceRight: true, height: 54, speed: 42, start: 0.1 },
+      { art: 'prop_animal_duck', faceRight: false, height: 58, speed: 34, start: 0.55 },
+    ],
+    stretch: [0.04, 0.12],
+    restMs: [1800, 5200],
+    peckChance: 0.6,
+  },
+  /** A harvest: the crop's icon flies to the bag button (top right) and "+n" rises over the plot. */
+  harvestFly: { to: { x: 1450, y: 36 }, ms: 760, icon: 64, textPx: 30, color: '#ffffff', stroke: '#6b4423' },
+  /** A crop that just ripened hops and sparkles once. */
+  ripen: { sparkles: 7, hop: 1.16 },
   /** The fertiliser drone (decision 028): flies from the composter over each newly fertilised plot, then away. */
   drone: { from: { x: 165, y: 470 }, exit: { x: 1700, y: -120 }, hoverY: 70, speed: 900, dropMs: 260, size: 130, art: 'prop_drone_garden' },
   /** The backdrop's own size (scripts/assets/sizes.ts): it is drawn to cover the visible view, centred on the frame. */

@@ -15,12 +15,13 @@ export type GardenEvent =
   | { type: 'GARDEN_CRAFT_STARTED'; building: BuildingId; recipeId: string; batches: number }
   | { type: 'GARDEN_BATCH_DONE'; building: BuildingId; recipeId: string; batches: number }
   | { type: 'GARDEN_CRAFT_COLLECTED'; building: BuildingId; recipeId: string; batches: number; kept: number }
+  | { type: 'GARDEN_SHOP_BOUGHT'; itemId: string; count: number; gold: number }
   | { type: 'GARDEN_LEVEL_UP'; level: number };
 
 export const GARDEN_EVENT_TYPES = [
   'GARDEN_PLANTED', 'GARDEN_WATERED', 'GARDEN_FERTILIZED', 'GARDEN_HARVESTED', 'GARDEN_CROP_RIPE', 'GARDEN_CROP_WILTED',
   'GARDEN_PLOTS_BOUGHT', 'GARDEN_SPRINKLER_BOUGHT', 'GARDEN_BUILT', 'GARDEN_CRAFT_STARTED', 'GARDEN_BATCH_DONE',
-  'GARDEN_CRAFT_COLLECTED', 'GARDEN_LEVEL_UP',
+  'GARDEN_CRAFT_COLLECTED', 'GARDEN_SHOP_BOUGHT', 'GARDEN_LEVEL_UP',
 ] as const satisfies readonly GardenEvent['type'][];
 
 export const isGardenEvent = (e: { type: string }): e is GardenEvent => (GARDEN_EVENT_TYPES as readonly string[]).includes(e.type);

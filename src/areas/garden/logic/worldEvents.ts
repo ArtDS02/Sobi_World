@@ -40,6 +40,8 @@ export function gardenWorldEvents(e: GardenEvent): WorldEvent[] {
       const recipe = RECIPES[e.recipeId];
       return recipe ? each(recipe.outputs, e.batches, added) : [];
     }
+    case 'GARDEN_SHOP_BOUGHT':
+      return [...coins(-e.gold), ...added(e.itemId, e.count)];
     case 'GARDEN_LEVEL_UP':
       return [{ type: 'area.levelUp', area, level: e.level }];
     default:

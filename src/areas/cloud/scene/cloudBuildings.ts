@@ -9,10 +9,12 @@ import { CLOUD_BUILDING_ART, CLOUD_DRESSING_ART } from '../logic/art';
 import type { SceneState } from '../logic/derived';
 import { bubbles, drawBadge, splash, type Badge } from './cloudFx';
 import { signStyle } from './cloudTierBar';
+import { stallKey } from '../../../ui/world/codeStall';
+import { textureKey } from '../../../ui/world/keys';
 import { CLOUD_VIEW } from './cloudView';
 
 type Img = Phaser.GameObjects.Image;
-export type BuildingId = 'spring' | 'cauldron';
+export type BuildingId = 'spring' | 'cauldron' | 'shop';
 
 export interface BuildingsDeps {
   fixed: (x: number, y: number, id: string) => Img;
@@ -42,8 +44,12 @@ export class CloudBuildings {
     const v = CLOUD_VIEW;
     this.make('spring', CLOUD_BUILDING_ART.spring, v.spring);
     this.make('cauldron', CLOUD_BUILDING_ART.cauldron, v.cauldron);
+    this.make('shop', v.shop.art, v.shop);
+    const shop = this.list.get('shop')!.img;
+    if (!scene.textures.exists(textureKey(v.shop.art))) shop.setTexture(stallKey(scene, v.shop.art, v.shop.colours));
     this.plank(v.springLabel, vi.cloud.spring, 'spring');
     this.plank(v.cauldronLabel, vi.cloud.cauldron, 'cauldron');
+    this.plank(v.shopLabel, vi.cloud.shop, 'shop');
   }
 
   /** Counters, the unbuilt cauldron's grey, and the brewing swell. */
@@ -106,7 +112,7 @@ export class CloudBuildings {
     if (!b) return;
     const top = b.img.y - b.img.displayHeight;
     if (id === 'spring') return void splash(this.scene, b.img.x, top + b.img.displayHeight * 0.55);
-    bubbles(this.scene, b.img.x + b.img.displayWidth * 0.04, top + b.img.displayHeight * 0.3);
+    if (id === 'cauldron') bubbles(this.scene, b.img.x + b.img.displayWidth * 0.04, top + b.img.displayHeight * 0.3);
     this.scene.tweens.add({ targets: b.img, y: b.img.y - 6, duration: 130, yoyo: true, ease: 'Quad.easeOut' });
   }
 

@@ -1,16 +1,20 @@
 // The Cloud's dialogs (plot, spring, cauldron, more plots): each body is rebuilt from the world while the dialog is open,
 // so its numbers (time left, what the bag holds) stay true without being closed and reopened.
 import { openDialog } from '../../../ui/components/dialog';
+import { dressShopDialog, shopGrid } from '../../../ui/components/shopGrid';
 import { el, patch } from '../../../ui/dom';
+import type { UiIcon } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { buildCauldron, buyPlots, collectBrew, collectWater, startBrew, upgradeSpring } from '../logic/actions/buildings';
 import { fertilizePlots, harvestFlowers, waterPlots } from '../logic/actions/plants';
+import { buyShopItem } from '../logic/actions/shop';
 import { CB } from '../logic/config/content';
 import { nextExpansion } from '../logic/derived';
 import { cloudOf } from '../logic/save/lens';
 import { cauldronVm, expandVm, plotCardVm, springVm, type ButtonVm, type CloudRun, type RecipeVm } from './cloudVm';
+import { cloudShopVm } from './cloudShopVm';
 
 /** A button that always says why it is off. */
 export function actionButton(vm: ButtonVm, onClick: () => void, variant = ''): HTMLElement {
@@ -43,16 +47,27 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
   /** The open dialog's body renderer; re-run on every world change. */
   let live: { body: HTMLElement; render: (w: WorldSave) => HTMLElement | null } | null = null;
 
-  function openLive(title: string, render: (w: WorldSave, close: () => void) => HTMLElement | null) {
+  function openLive(title: string, render: (w: WorldSave, close: () => void) => HTMLElement | null, dress?: (body: HTMLElement) => void, iconName?: UiIcon) {
     const w = d.world();
     if (!w) return;
-    const handle = openDialog(d.host, title, vi.cloud.close);
+    const handle = openDialog(d.host, title, vi.cloud.close, iconName);
+    dress?.(handle.body);
     const draw = (now: WorldSave) => render(now, handle.close);
     live = { body: handle.body, render: draw };
     patch(handle.body, draw(w));
   }
 
   const run = (action: CloudRun) => d.dispatch(action);
+
+  /** The Cloud's shop (decision 029). */
+  function openShop() {
+    openLive(
+      vi.cloud.shopTitle,
+      (w) => shopGrid(vi.cloud.shopIntro, cloudShopVm(w, d.now()), (itemId, count) => run((s, c) => buyShopItem(s, { itemId, count }, c))),
+      (body) => dressShopDialog(body, 'cloud'),
+      'shop',
+    );
+  }
 
   function openExpand() {
     const now = d.world();
@@ -204,6 +219,7 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
   }
 
   return {
+    openShop,
     openExpand,
     openSpring,
     openPlot,

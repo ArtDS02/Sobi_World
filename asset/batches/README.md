@@ -31,6 +31,7 @@ Backend: **G** = Gemini vẽ sheet (chủ dự án dán prompt, lưu ảnh; còn
 | Farm | `farm-01-species` | 6 giống heo GĐ7: đứng (6) + ngủ, thức (từ ảnh đứng đã duyệt) | G sheet 2×3, rồi Gemini sửa ảnh | 3 | chưa viết |
 | Sảnh | `world-01-scene` | nền đảo trời (sửa từ ảnh mẫu), 7 công trình cổng, 8 đồ trang trí, bảng tên, logo, sao cấp, 5 icon khu vực, 4 icon HUD, linh vật Sobi (30, decision 024) | G: 1 ảnh sửa + 8 sheet | 9 | **production** (chờ duyệt) |
 | Garden + Cloud | `drone-01` | drone bón phân `prop_drone_garden`, `prop_drone_cloud` (2, decision 028; dòng manifest thêm khi giao) | G, 1 sheet 1×2 | 1 | **đã viết**, chờ ảnh Gemini |
+| Garden + Cloud | `extras-01` | sạp cửa hàng `bld_shop_garden`, `bld_shop_cloud`; vòi tưới `bld_sprinkler_l2..l5` (6, decision 029; dòng manifest thêm khi giao) | G, 2 sheet (1×2, 1×4) | 2 | **đã viết**, chờ ảnh Gemini |
 | Sảnh | `plaza-01-icons` | `ui_icon_lock` (1) | K | 0 | chưa viết |
 | | | **162** | | **~39** | |
 

@@ -325,6 +325,16 @@ export const vi = {
     expand: "Mở thêm ô ({gold})",
     expandTier: "Mở tầng mây {n} ({gold})",
     expandMax: "Đã mở hết ô",
+    // Shop (decision 029).
+    shop: "Cửa hàng",
+    shopTitle: "Tiệm Mây của Cú Giả Kim",
+    shopIntro: "Hạt hoa mây, nước tinh khiết và phân bón.",
+    shopOwned: "Đang có {count}",
+    shopEach: "{gold} / cái",
+    shopBuy: "×{count}",
+    shopSeedLine: "Nở sau {time}, hái {yield}",
+    shopFertilizerLine: "Hoa nở nhanh hơn, thêm sản lượng",
+    shopWaterLine: "Tưới cho hoa lớn đủ nhanh",
     needLevel: "Cần cấp {level}",
     // Cloud tiers (decision 023): one tier of 15 plots on screen at a time.
     tierNames: ["Vườn Trên Mây", "Tầng Mây Cầu Vồng", "Tầng Mây Hoàng Hôn", "Tầng Mây Bồ Công Anh", "Tầng Mây Ngọc Bích", "Tầng Mây Hoa Anh Đào", "Tầng Mây Sao Băng", "Tầng Mây Ánh Trăng", "Tầng Mây Hoàng Kim", "Đỉnh Mây"],
@@ -392,6 +402,7 @@ export const vi = {
     // Toasts.
     toast: {
       planted: "Đã gieo {count} ô {name}",
+      bought: "Đã mua {count} {name}",
       watered: "Đã tưới {count} ô",
       fertilized: "Đã bón phân {count} ô",
       harvested: "Hái {quantity} {name}",
@@ -596,6 +607,15 @@ export const vi = {
     noFertilizable: "Không có cây cần bón",
     expand: "Mở thêm ô ({gold})",
     expandMax: "Đã mở hết ô đất",
+    // Shop (decision 029).
+    shop: "Cửa hàng",
+    shopTitle: "Cửa hàng Bác Vịt Cẩn",
+    shopIntro: "Hạt giống tươi và phân bón cho khu vườn.",
+    shopOwned: "Đang có {count}",
+    shopEach: "{gold} / cái",
+    shopBuy: "×{count}",
+    shopSeedLine: "Lớn sau {time}, thu {yield}",
+    shopFertilizerLine: "Cây chín nhanh hơn, thêm sản lượng",
     expandZone: "Mở khu {n} ({gold})",
     needLevel: "Cần cấp {level}",
     // Field zones (decision 028): one zone of 24 plots on screen at a time.
@@ -669,6 +689,7 @@ export const vi = {
       ripe: "{count} cây đã chín!",
       wilted: "{count} cây đã héo, sản lượng giảm một nửa",
       plots: "Đã mở lên {plots} ô đất",
+      bought: "Đã mua {count} {name}",
       zone: "Đã mở {name}!",
       sprinkler: "Vòi tưới cấp {level}",
       built: "Đã xây {name}",

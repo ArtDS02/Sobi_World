@@ -90,6 +90,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
         'nav',
         { class: 'cloud-ui__nav', attrs: { 'aria-label': vi.cloud.title } },
         navButton(vi.cloud.plaza, d.leave),
+        navButton(vi.cloud.shop, () => dialogs.openShop()),
         navButton(vi.cloud.items, () => d.openPanel('inventory')),
         navButton(vi.cloud.menu, () => d.openPanel('menu')),
       ),
@@ -156,7 +157,10 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     const w = world();
     if (!w || !active) return;
     if (p.kind === 'locked') return dialogs.openExpand();
-    if (p.kind === 'building') return p.building === 'spring' ? dialogs.openSpring() : dialogs.openCauldron();
+    if (p.kind === 'building') {
+      if (p.building === 'shop') return dialogs.openShop();
+      return p.building === 'spring' ? dialogs.openSpring() : dialogs.openCauldron();
+    }
     if (p.kind !== 'plot') return;
     const plot = cloudOf(w).plots[p.index];
     if (!plot) return;

@@ -44,6 +44,8 @@ export function cloudWorldEvents(e: CloudEvent): WorldEvent[] {
       const made: WorldEvent[] = Object.entries(recipe.outputs).map(([itemId, n]) => ({ type: 'potion.brewed', area, itemId, quantity: n * e.batches }));
       return [...each(recipe.outputs, e.batches, added), ...made];
     }
+    case 'CLOUD_SHOP_BOUGHT':
+      return [...coins(-e.gold), ...added(e.itemId, e.count)];
     case 'CLOUD_LEVEL_UP':
       return [{ type: 'area.levelUp', area, level: e.level }];
     default:

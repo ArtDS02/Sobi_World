@@ -19,6 +19,8 @@ import { cloudSummaryLines } from '../../src/areas/cloud/logic/summary';
 import { cloudEventsToWorld } from '../../src/areas/cloud/logic/worldEvents';
 import { rewindCloud } from '../../src/areas/cloud/logic/rewind';
 import { actingTier, emptyIn, unfertilizedIn } from '../../src/areas/cloud/ui/cloudTierVm';
+import { buyShopItem } from '../../src/areas/cloud/logic/actions/shop';
+import { cloudShopVm } from '../../src/areas/cloud/ui/cloudShopVm';
 import { aquariumArea } from '../../src/areas/aquarium';
 import { breedFish } from '../../src/areas/aquarium/logic/actions/breed';
 import { useFishPotion } from '../../src/areas/aquarium/logic/actions/care';
@@ -491,5 +493,20 @@ describe('cloud bulk buttons act on the tier on screen (decision 028)', () => {
     expect(emptyIn(s, 1)).toHaveLength(0);
     expect(unfertilizedIn(s, 1)).toHaveLength(PLOTS_PER_TIER);
     expect(unfertilizedIn(s, 0)).toHaveLength(0);
+  });
+});
+
+describe('the Cloud shop (decision 029)', () => {
+  it('sells seeds, pure water and fertiliser at its prices; cards explain each line', () => {
+    const w = cloudWorld({}, 1_000);
+    const r = buyShopItem(w, { itemId: 'item_pure_water', count: 5 }, { now: T0, rng: mulberry32(1) });
+    expect(r.ok).toBe(true);
+    const s = (r as { state: WorldSave }).state;
+    expect(s.inventory.items.item_pure_water).toBe((w.inventory.items.item_pure_water ?? 0) + 5);
+    expect(s.wallet.coins).toBe(1_000 - 5 * CB.shop.find((l) => l.itemId === 'item_pure_water')!.price);
+    expect(buyShopItem(w, { itemId: 'item_seed_wheat', count: 1 }, { now: T0, rng: mulberry32(1) })).toEqual({ ok: false, error: 'INVALID_REQUEST' });
+    const lines = cloudShopVm(w, T0);
+    expect(lines.map((l) => l.itemId)).toEqual(CB.shop.map((l) => l.itemId));
+    expect(lines.find((l) => l.itemId === 'item_pure_water')!.line).toBe('Tưới cho hoa lớn đủ nhanh');
   });
 });

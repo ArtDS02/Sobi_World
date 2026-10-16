@@ -1,16 +1,20 @@
 // The Garden's dialogs (plot, workshop, sprinkler, more plots): each body is rebuilt from the world while the dialog
 // is open, so its numbers (time left, what the bag holds) stay true without being closed and reopened.
 import { openDialog } from '../../../ui/components/dialog';
+import { dressShopDialog, shopGrid } from '../../../ui/components/shopGrid';
 import { el, patch } from '../../../ui/dom';
+import type { UiIcon } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { buildWorkshop, buyPlots, collectCraft, startCraft, upgradeSprinkler } from '../logic/actions/buildings';
 import { fertilizePlots, harvestPlots, waterPlots } from '../logic/actions/plants';
+import { buyShopItem } from '../logic/actions/shop';
 import { GB, type BuildingId } from '../logic/config/content';
 import { nextExpansion } from '../logic/derived';
 import { gardenOf } from '../logic/save/lens';
 import { expandVm, plotCardVm, sprinklerVm, workshopVm, type ButtonVm, type GardenRun, type RecipeVm } from './gardenVm';
+import { gardenShopVm } from './gardenShopVm';
 
 /** A button that always says why it is off. */
 export function actionButton(vm: ButtonVm, onClick: () => void, variant = ''): HTMLElement {
@@ -42,16 +46,27 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
   /** The open dialog's body renderer; re-run on every world change. */
   let live: { body: HTMLElement; render: (w: WorldSave) => HTMLElement | null } | null = null;
 
-  function openLive(title: string, render: (w: WorldSave, close: () => void) => HTMLElement | null) {
+  function openLive(title: string, render: (w: WorldSave, close: () => void) => HTMLElement | null, dress?: (body: HTMLElement) => void, iconName?: UiIcon) {
     const w = d.world();
     if (!w) return;
-    const handle = openDialog(d.host, title, vi.garden.close);
+    const handle = openDialog(d.host, title, vi.garden.close, iconName);
+    dress?.(handle.body);
     const draw = (now: WorldSave) => render(now, handle.close);
     live = { body: handle.body, render: draw };
     patch(handle.body, draw(w));
   }
 
   const run = (action: GardenRun) => d.dispatch(action);
+
+  /** The Garden's shop (decision 029). */
+  function openShop() {
+    openLive(
+      vi.garden.shopTitle,
+      (w) => shopGrid(vi.garden.shopIntro, gardenShopVm(w, d.now()), (itemId, count) => run((s, c) => buyShopItem(s, { itemId, count }, c))),
+      (body) => dressShopDialog(body, 'garden'),
+      'shop',
+    );
+  }
 
   function openExpand() {
     const now = d.world();
@@ -200,6 +215,7 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
   }
 
   return {
+    openShop,
     openExpand,
     openSprinkler,
     openPlot,

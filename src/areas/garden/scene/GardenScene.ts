@@ -6,15 +6,18 @@
 import * as Phaser from 'phaser';
 import type { WorldRect } from '../../../systems/layout/camera';
 import { vi } from '../../../i18n/vi';
-import { flyDrone } from '../../../ui/world/fertilizerDrone';
+import { itemArtId } from '../../../core/config/assetIds';
+import { stallKey } from '../../../ui/world/codeStall';
 import { fitCamera } from '../../../ui/world/fitCamera';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { GARDEN_BACKDROP_ART, SPRINKLER_ART } from '../logic/art';
-import { GB, PLOTS_PER_ZONE, type BuildingId } from '../logic/config/content';
+import { CROPS, GB, PLOTS_PER_ZONE, type BuildingId } from '../logic/config/content';
 import type { SceneState, WorkshopView } from '../logic/derived';
 import { onViewedZone, viewedZone } from '../viewedZone';
+import { GardenDrone } from './gardenDrone';
 import { GardenField } from './gardenField';
-import { mist, NameTip, sprayBurst } from './gardenFx';
+import { harvestFly, mist, NameTip, ripenSparkle, sprayBurst } from './gardenFx';
+import { GardenLife } from './gardenLife';
 import { GARDEN_DESIGN, GARDEN_VIEW, plotIndex } from './gardenView';
 
 export const GARDEN_SCENE_KEY = 'garden';
@@ -23,7 +26,7 @@ export const GARDEN_SCENE_KEY = 'garden';
 export type GardenPick =
   | { kind: 'plot'; index: number }
   | { kind: 'locked' }
-  | { kind: 'building'; building: BuildingId | 'sprinkler' }
+  | { kind: 'building'; building: BuildingId | 'sprinkler' | 'shop' }
   | { kind: 'ground' };
 
 export interface GardenSceneDeps {
@@ -36,22 +39,20 @@ export interface GardenSceneDeps {
 }
 
 type Img = Phaser.GameObjects.Image;
-type Place = BuildingId | 'sprinkler';
+type Place = BuildingId | 'sprinkler' | 'shop';
 
 const KEY = (id: string, textures: Phaser.Textures.TextureManager) => (textures.exists(textureKey(id)) ? textureKey(id) : FALLBACK_PROP_KEY);
 
 export class GardenScene extends Phaser.Scene {
   private field!: GardenField;
-  private workshops = new Map<Place, { img: Img; badge: Phaser.GameObjects.Text }>();
+  private workshops = new Map<Place, { img: Img; badge: Phaser.GameObjects.Text; scale: number }>();
   private backdrop!: Img;
   private tip!: NameTip;
   private shown = '';
   /** The zone drawn, and whether a zone change is playing. */
   private zone = 0;
   private moving = false;
-  /** Fertiliser seen per slot of the zone at the last draw: a plot that gained it calls the drone. */
-  private fertSeen = new Map<number, string>();
-  private stopDrone: (() => void) | null = null;
+  private drone!: GardenDrone;
   private turn = 0;
   /** Images whose art is fixed: re-pointed when their texture arrives after the scene was built (slow first load). */
   private fixedArt: [Img, string][] = [];
@@ -67,9 +68,14 @@ export class GardenScene extends Phaser.Scene {
     fitCamera(this, GARDEN_DESIGN, (view) => this.coverView(view));
     this.field = new GardenField(this, { paused: () => this.deps.paused(), onSlot: (slot) => this.pickSlot(slot) });
     this.tip = new NameTip(this);
+    this.drone = new GardenDrone(this, this.field, () => this.deps.reduceMotion());
     this.makeBuilding('mill', GB.buildings.mill.art, v.mill, vi.garden.mill);
     this.makeBuilding('composter', GB.buildings.composter.art, v.composter, vi.garden.composter);
     this.makeBuilding('sprinkler', SPRINKLER_ART, v.sprinkler, vi.garden.sprinkler);
+    this.makeBuilding('shop', v.shop.art, v.shop, vi.garden.shop);
+    const shop = this.workshops.get('shop')!.img;
+    if (!this.textures.exists(textureKey(v.shop.art))) shop.setTexture(stallKey(this, v.shop.art, v.shop.colours));
+    new GardenLife(this, () => this.deps.reduceMotion());
     this.zone = Math.max(0, viewedZone());
     this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
       if (this.deps.paused() || over.length > 0) return;
@@ -87,7 +93,7 @@ export class GardenScene extends Phaser.Scene {
       offZone();
     });
     this.events.on(Phaser.Scenes.Events.WAKE, () => this.sync(true));
-    this.events.on(Phaser.Scenes.Events.SLEEP, () => this.stopDrone?.());
+    this.events.on(Phaser.Scenes.Events.SLEEP, () => this.drone.reset());
     this.time.addEvent({ delay: v.spray.everyMs, loop: true, callback: () => this.spray() });
     this.time.addEvent({ delay: v.spray.mistEveryMs, loop: true, callback: () => this.mistPlots() });
     this.sync(true);
@@ -140,7 +146,8 @@ export class GardenScene extends Phaser.Scene {
     img.on(Phaser.Input.Events.POINTER_DOWN, () => !this.deps.paused() && this.deps.onPick({ kind: 'building', building: id }));
     const swell = (on: boolean) => {
       this.tweens.killTweensOf(img);
-      const scale = on ? at.scale * v.hover.swell : at.scale;
+      const base = this.workshops.get(id)?.scale ?? at.scale;
+      const scale = on ? base * v.hover.swell : base;
       if (this.deps.reduceMotion()) img.setScale(scale);
       else this.tweens.add({ targets: img, scale, duration: v.hover.ms, ease: 'Quad.easeOut' });
     };
@@ -165,13 +172,13 @@ export class GardenScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(v.depth.badge)
       .setVisible(false);
-    this.workshops.set(id, { img, badge });
+    this.workshops.set(id, { img, badge, scale: at.scale });
   }
 
   /** The UI chose another zone: the field slides there (at once when motion is reduced or on first look). */
   private changeZone(zone: number, from: number) {
-    this.stopDrone?.();
-    this.fertSeen.clear();
+    this.drone.reset();
+    this.field.forget();
     if (from < 0 || this.deps.reduceMotion() || this.moving) {
       this.zone = Math.max(0, zone);
       return void this.sync(true);
@@ -209,46 +216,6 @@ export class GardenScene extends Phaser.Scene {
     }
   }
 
-  /** Slots of the zone that gained fertiliser since the last draw (same crop, not a new sowing). */
-  private newlyFertilized(state: SceneState): number[] {
-    const fresh: number[] = [];
-    for (let slot = 0; slot < PLOTS_PER_ZONE; slot += 1) {
-      const p = state.plots[plotIndex(this.zone, slot)];
-      const now = p?.cropId ? `${p.cropId}:${p.fertilized ? 1 : 0}` : '';
-      if (p?.cropId && p.fertilized && this.fertSeen.get(slot) === `${p.cropId}:0`) fresh.push(slot);
-      this.fertSeen.set(slot, now);
-    }
-    return fresh;
-  }
-
-  /** The drone flies over `slots` in a snake order (row by row), showing each plot's fertiliser as it passes. */
-  private sendDrone(slots: number[]) {
-    const d = GARDEN_VIEW.drone;
-    const cols = GARDEN_VIEW.columns;
-    const order = [...slots].sort((a, b) => {
-      const ra = Math.floor(a / cols);
-      const rb = Math.floor(b / cols);
-      return ra !== rb ? ra - rb : ra % 2 === 0 ? a - b : b - a;
-    });
-    this.field.hold(order);
-    this.stopDrone = flyDrone(this, {
-      art: d.art,
-      from: d.from,
-      stops: order.map((slot) => this.field.centre(slot)),
-      exit: d.exit,
-      hoverY: d.hoverY,
-      speed: d.speed,
-      dropMs: d.dropMs,
-      size: d.size,
-      depth: GARDEN_VIEW.depth.drone,
-      onVisit: (k) => this.field.release(order[k]!, this.deps.reduceMotion()),
-      done: () => {
-        this.stopDrone = null;
-        this.field.releaseAll();
-      },
-    });
-  }
-
   /** Redraws what changed since the last call (the picture of a plot only changes now and then). */
   private sync(force: boolean) {
     const state = this.deps.read();
@@ -264,12 +231,40 @@ export class GardenScene extends Phaser.Scene {
     ]);
     if (!force && key === this.shown) return;
     this.shown = key;
-    const fresh = this.newlyFertilized(state);
-    if (fresh.length > 0 && !this.stopDrone && !this.deps.reduceMotion() && !this.moving) this.sendDrone(fresh);
+    const calm = this.deps.reduceMotion() || this.moving;
+    this.drone.check(state, this.zone, this.moving);
+    const { harvested, ripened } = this.field.changes(this.zone, state.plots);
     this.field.draw(this.zone, state.plots);
+    this.backdrop.setTint(GARDEN_VIEW.zoneTints[this.zone] ?? 0xffffff);
+    if (!calm) this.celebrate(harvested, ripened);
+    this.drawSprinkler(state.sprinkler);
     this.setWorkshop('mill', state.mill);
     this.setWorkshop('composter', state.composter);
-    this.workshops.get('sprinkler')?.img.setTint(state.sprinkler > 0 ? 0xffffff : GARDEN_VIEW.unbuiltTint);
+  }
+
+  /** Harvested crops fly to the bag; crops that just ripened hop and sparkle. */
+  private celebrate(harvested: { slot: number; cropId: string; amount: number }[], ripened: number[]) {
+    for (const h of harvested) {
+      const produce = CROPS[h.cropId]?.produceItem;
+      if (produce) harvestFly(this, this.field.centre(h.slot), KEY(itemArtId(produce), this.textures), h.amount);
+    }
+    for (const slot of ripened) {
+      this.field.hop(slot);
+      const c = this.field.centre(slot);
+      ripenSparkle(this, c.x, c.y - 40);
+    }
+  }
+
+  /** The sprinkler's look for its level: its own art when painted, else the base art a little bigger per level. */
+  private drawSprinkler(level: number) {
+    const s = this.workshops.get('sprinkler');
+    if (!s) return;
+    const v = GARDEN_VIEW;
+    const own = `${SPRINKLER_ART}_l${level}`;
+    const painted = level >= 2 && this.textures.exists(textureKey(own));
+    s.img.setTexture(KEY(painted ? own : SPRINKLER_ART, this.textures)).setTint(level > 0 ? 0xffffff : v.unbuiltTint);
+    s.scale = v.sprinkler.scale * (painted ? 1 : 1 + Math.max(0, level - 1) * v.sprinklerGrow);
+    if (!this.tweens.isTweening(s.img)) s.img.setScale(s.scale);
   }
 
   private setWorkshop(id: BuildingId, view: WorkshopView) {

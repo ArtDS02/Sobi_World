@@ -38,6 +38,14 @@
       "art": "bld_composter"
     }
   },
+  "shop": [
+    { "itemId": "item_seed_grass", "price": 2 },
+    { "itemId": "item_seed_wheat", "price": 4 },
+    { "itemId": "item_seed_corn", "price": 5 },
+    { "itemId": "item_seed_potato", "price": 6 },
+    { "itemId": "item_seed_carrot", "price": 8 },
+    { "itemId": "item_fertilizer", "price": 50 }
+  ],
   "maxBatches": 10,
   "xp": { "plant": 1, "water": 0, "harvest": 2, "craft": 3, "fertilize": 1 }
 }

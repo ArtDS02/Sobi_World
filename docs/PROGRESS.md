@@ -4,11 +4,22 @@
 **Giai đoạn:** GĐ14 đang làm — art, animation, VFX, âm thanh (nhánh `phase-14-art`, tách từ `main`). GĐ13 đã merge `main` (gameplay freeze, decision 021); phiên bản 0.13.0.
 **Chiến lược (decision 017, 022):** gameplay trước, art sau; phong cách chuẩn Sobi Farm, chủ dự án tạo ảnh Gemini theo batch (`asset/batches/`), agent cắt và nối vào game. GĐ15 phát hành.
 **Tiến độ GĐ14:** 80 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). Đang làm: **Aquarium** (aquarium-01-fish, aquarium-02-items chờ ảnh). Còn lại: Aquarium (kế hoạch `asset/AQUARIUM_ART_PLAN.md`, cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
-**Chờ chủ dự án:** duyệt Cloud, Sảnh, Garden; duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028); ảnh drone (`drone-01`); duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
+**Chờ chủ dự án:** duyệt Cloud, Sảnh, Garden; duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029); ảnh `drone-01`, `extras-01`; duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023).
 **Bước tiếp theo:** chủ dự án duyệt cảnh Garden; tạo ảnh `aquarium-01-fish`, `aquarium-02-items` → cắt, dựng cảnh Aquarium theo 5 ảnh mẫu.
 
 ## Nhật ký
+
+### 2026-10-16 — GĐ14 Garden + Cloud: cửa hàng từng vùng, vườn sống động, HUD Garden mới (decision 029) — chờ duyệt
+✅ Đã làm:
+1. **Cửa hàng Garden và Cloud**: danh sách hàng + giá trong balance của từng vùng (Admin sửa được giá), hành động `buyShopItem` (sổ cái `GARDEN_SHOP` / `CLOUD_SHOP`, sự kiện `*_SHOP_BOUGHT`), hộp thoại lưới thẻ dùng chung (`ui/components/shopGrid.ts`, nút ×1/×10/×50 luôn nói lý do tắt), nút "Cửa hàng" trên HUD, sạp hàng trong cảnh (vẽ bằng code tới khi có ảnh).
+2. **Đề xuất đã được duyệt**: gà và vịt đi dạo quanh ruộng; thu hoạch thì nông sản bay về túi kèm "+n"; cây vừa chín nảy và lấp lánh; mỗi khu phủ màu nhẹ; vòi tưới to dần theo cấp (dùng ảnh từng cấp khi có); HUD Garden tông trắng–tím như Cloud.
+3. **Batch `extras-01`** (2 lượt Gemini): 2 sạp hàng, vòi tưới cấp 2–5 (dùng ảnh vòi hiện tại làm mẫu hình dáng).
+4. Tách code: `gardenDrone.ts`, `gardenLife.ts`, `gardenShopVm.ts`, `cloudShopVm.ts`, `ui/world/codeStall.ts`.
+🧪 Đã kiểm tra: `npm run check` xanh (1.368 test); 14/14 e2e (bản build) xanh; test mới cho cửa hàng (giá, túi, từ chối hàng không bán / số lượng sai / thiếu tiền, sự kiện thế giới, thẻ hàng). Chạy sandbox bằng Edge ẩn 1600×900: thu hoạch → icon bay về túi; mở cửa hàng bằng nút HUD và bằng sạp; nút ×10 tắt đúng khi túi đầy; Cloud có sạp + bảng "Cửa hàng", cửa hàng tông tím; gà / vịt đi trên lối; không lỗi script.
+⚠️ Quyết định tự đưa ra: giá hạt giữ như giá hiện tại; phân bón 50, nước tinh khiết 15; không bán potion / nông sản (để Vạc nấu, Máy xay còn ý nghĩa); hiệu ứng thu hoạch / cây chín chỉ ở Garden.
+👉 Bạn cần: xem cửa hàng và vườn; tạo ảnh `asset/batches/extras-01.md` và `drone-01.md`.
+➡️ Tiếp theo: giao ảnh sạp / vòi / drone khi có; Aquarium.
 
 ### 2026-10-16 — GĐ14 Garden + Cloud: góp ý của chủ dự án (khu trồng, gieo/bón theo khu, drone, cảnh) — chờ duyệt
 ✅ Đã làm (decision 028):

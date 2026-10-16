@@ -16,6 +16,8 @@ import { simulateGarden } from '../../src/areas/garden/logic/simulate';
 import { cropStageOf, plotCentre, slotsToDraw, GARDEN_DESIGN } from '../../src/areas/garden/scene/gardenView';
 import { bulkVm, hudVm, paletteVm, plotCardVm, sprinklerVm, workshopVm } from '../../src/areas/garden/ui/gardenVm';
 import { emptyIn, unfertilizedIn, zoneVm } from '../../src/areas/garden/ui/gardenZoneVm';
+import { gardenShopVm } from '../../src/areas/garden/ui/gardenShopVm';
+import { buyShopItem } from '../../src/areas/garden/logic/actions/shop';
 import { emptyPlot } from '../../src/systems/plants/plot';
 import { mulberry32 } from '../../src/core/rng';
 import type { WorldSave } from '../../src/core/save/world';
@@ -253,5 +255,34 @@ describe('zones on screen (decision 028)', () => {
     expect(zoneVm(full, 1).locked).toContain('cần cấp 8');
     expect(zoneVm(withPlots(base(), 96), 3)).toMatchObject({ viewable: 4, locked: null });
     expect(slotsToDraw(0, 24)).toBe(24);
+  });
+});
+
+describe('area shops (decision 029)', () => {
+  it('the Garden shop sells its lines at their price, into the bag; it refuses what it does not sell', () => {
+    const w = base({}, 1_000);
+    const r = buyShopItem(w, { itemId: 'item_seed_corn', count: 10 }, ctxAt(T0));
+    expect(r.ok).toBe(true);
+    const after = ok(r);
+    expect(after.inventory.items.item_seed_corn).toBe(10);
+    expect(after.wallet.coins).toBe(1_000 - 10 * GB.shop.find((l) => l.itemId === 'item_seed_corn')!.price);
+    expect((r as { events: unknown[] }).events).toContainEqual(expect.objectContaining({ type: 'GARDEN_SHOP_BOUGHT', itemId: 'item_seed_corn', count: 10 }));
+    expect(gardenArea.toWorldEvents((r as { events: { type: string }[] }).events)).toEqual(
+      expect.arrayContaining([expect.objectContaining({ type: 'item.added', itemId: 'item_seed_corn', quantity: 10 })]),
+    );
+    expect(buyShopItem(w, { itemId: 'item_pearl', count: 1 }, ctxAt(T0))).toEqual({ ok: false, error: 'INVALID_REQUEST' });
+    expect(buyShopItem(w, { itemId: 'item_seed_corn', count: 0 }, ctxAt(T0))).toEqual({ ok: false, error: 'INVALID_REQUEST' });
+    expect(buyShopItem(base({}, 10), { itemId: 'item_fertilizer', count: 1 }, ctxAt(T0))).toEqual({ ok: false, error: 'INSUFFICIENT_GOLD' });
+  });
+
+  it('the shop cards say what each item does and why a buy button is off', () => {
+    const lines = gardenShopVm(base({ item_seed_wheat: 3 }, 100), T0);
+    expect(lines.map((l) => l.itemId)).toEqual(GB.shop.map((l) => l.itemId));
+    const wheat = lines.find((l) => l.itemId === 'item_seed_wheat')!;
+    expect(wheat).toMatchObject({ name: expect.any(String), owned: 'Đang có 3', art: 'ui_item_seed_wheat' });
+    expect(wheat.line).toContain('thu 3');
+    expect(wheat.buys.map((b) => b.count)).toEqual([1, 10, 50]);
+    expect(wheat.buys.map((b) => b.reason)).toEqual([null, null, 'Thiếu Sobi Coin']);
+    expect(lines.find((l) => l.itemId === 'item_fertilizer')!.buys[2]!.reason).toBe('Thiếu Sobi Coin');
   });
 });

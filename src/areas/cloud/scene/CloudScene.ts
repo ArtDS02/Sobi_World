@@ -26,7 +26,7 @@ export const CLOUD_SCENE_KEY = 'cloud';
 export type CloudPick =
   | { kind: 'plot'; index: number }
   | { kind: 'locked' }
-  | { kind: 'building'; building: 'spring' | 'cauldron' }
+  | { kind: 'building'; building: 'spring' | 'cauldron' | 'shop' }
   | { kind: 'ground' };
 
 export interface CloudSceneDeps {

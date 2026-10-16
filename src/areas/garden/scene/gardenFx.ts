@@ -82,3 +82,56 @@ export class NameTip {
     this.box.setVisible(false);
   }
 }
+
+const STAR = 'fx_garden_star';
+
+function ensureStar(scene: Phaser.Scene) {
+  if (scene.textures.exists(STAR)) return;
+  const g = scene.make.graphics({ x: 0, y: 0 }, false);
+  g.fillStyle(0xfff3a8, 1).fillPoints(
+    Array.from({ length: 8 }, (_, k) => {
+      const r = k % 2 === 0 ? 8 : 3;
+      const a = (k / 8) * Math.PI * 2 - Math.PI / 2;
+      return new Phaser.Geom.Point(8 + Math.cos(a) * r, 8 + Math.sin(a) * r);
+    }),
+    true,
+  );
+  g.generateTexture(STAR, 16, 16);
+  g.destroy();
+}
+
+/** A harvest: the crop's icon flies from the plot to the bag (top right) while "+n" rises over the plot. */
+export function harvestFly(scene: Phaser.Scene, from: { x: number; y: number }, iconKey: string, amount: number) {
+  const f = GARDEN_VIEW.harvestFly;
+  const icon = scene.add.image(from.x, from.y - 30, iconKey).setDepth(GARDEN_VIEW.depth.badge - 3);
+  icon.setScale(f.icon / (icon.width || f.icon));
+  const end = icon.scale * 0.5;
+  scene.tweens.add({ targets: icon, y: from.y - 80, duration: 240, ease: 'Quad.easeOut' });
+  scene.tweens.add({ targets: icon, x: f.to.x, y: f.to.y, scale: end, alpha: 0.6, duration: f.ms, delay: 240, ease: 'Cubic.easeIn', onComplete: () => icon.destroy() });
+  const text = scene.add
+    .text(from.x, from.y - 40, `+${amount}`, { fontFamily: GARDEN_VIEW.label.fontFamily, fontSize: `${f.textPx}px`, fontStyle: 'bold', color: f.color, stroke: f.stroke, strokeThickness: 5 })
+    .setOrigin(0.5)
+    .setDepth(GARDEN_VIEW.depth.badge - 2);
+  scene.tweens.add({ targets: text, y: from.y - 110, alpha: 0, duration: 1100, ease: 'Quad.easeOut', onComplete: () => text.destroy() });
+}
+
+/** Sparkles burst around a crop that just ripened. */
+export function ripenSparkle(scene: Phaser.Scene, x: number, y: number) {
+  ensureStar(scene);
+  const n = GARDEN_VIEW.ripen.sparkles;
+  for (let k = 0; k < n; k += 1) {
+    const a = (k / n) * Math.PI * 2;
+    const s = scene.add.image(x, y, STAR).setDepth(GARDEN_VIEW.depth.fx).setScale(0.4);
+    scene.tweens.add({
+      targets: s,
+      x: x + Math.cos(a) * Phaser.Math.Between(34, 52),
+      y: y + Math.sin(a) * Phaser.Math.Between(24, 40),
+      scale: { from: 0.9, to: 0.2 },
+      alpha: { from: 1, to: 0 },
+      angle: 120,
+      duration: 700,
+      ease: 'Quad.easeOut',
+      onComplete: () => s.destroy(),
+    });
+  }
+}

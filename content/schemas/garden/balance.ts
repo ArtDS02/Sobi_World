@@ -30,6 +30,8 @@ export const gardenBalanceFileSchema = z
     /** Sprinkler levels: plots watered automatically (the first N plots), the price to reach it and the materials (the Aquarium's scales and pearls) it takes. */
     sprinkler: z.array(z.strictObject({ plots: posInt, price: nonNeg, materials: z.partialRecord(itemId, posInt).optional() })).min(1),
     buildings: z.strictObject({ mill: building, composter: building }),
+    /** The Area's shop (decision 029): what it sells and the price of one, in Sobi Coin. */
+    shop: z.array(z.strictObject({ itemId, price: posInt })).min(1),
     /** Most batches of one recipe queued at once. */
     maxBatches: posInt,
     xp: z.strictObject({ plant: nonNeg, water: nonNeg, harvest: nonNeg, craft: nonNeg, fertilize: nonNeg }),

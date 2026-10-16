@@ -1,0 +1,37 @@
+{
+  "id": "extras-01",
+  "area": "garden",
+  "title": "Sạp cửa hàng Garden + Cloud, vòi tưới cấp 2–5",
+  "decisions": "Decision 029: each Area has a shop stall in its scene (bld_shop_garden on the Garden lawn, bld_shop_cloud on the Cloud island) and the sprinkler looks bigger at each level (bld_sprinkler_l2..l5, same design growing). Until the art arrives the game draws a code stall and scales the base sprinkler. Manifest rows are added when the art is delivered.",
+  "sheets": [
+    {
+      "name": "S",
+      "title": "2 sạp cửa hàng",
+      "board": "building",
+      "grid": [1, 2],
+      "fit": "each",
+      "views": [],
+      "notes": "Both are a small cosy market stall seen three-quarter from slightly above: a wooden counter with goods on it, two wooden posts and a scalloped striped cloth awning on top, a little hanging wooden sign with NO writing. A bit wider than tall. Each stands on its own small base patch with a soft contact shadow.",
+      "cells": [
+        { "stem": "bld_shop_garden", "desc": "Garden seed shop: green-and-cream striped awning, honey-wood counter with seed packets in a crate, a basket of carrots and corn, a small sack of compost, a watering can at its side; it stands on a small grass patch" },
+        { "stem": "bld_shop_cloud", "desc": "Cloud flower shop: lilac-and-white striped awning with a tiny star charm, creamy-white wooden counter with flower seed packets, little glass bottles of sky-blue pure water and a pot of pastel flowers; it stands on a small fluffy white cloud patch" }
+      ]
+    },
+    {
+      "name": "W",
+      "title": "Vòi tưới cấp 2–5",
+      "board": "building",
+      "grid": [1, 4],
+      "fit": "each",
+      "views": ["building_grass"],
+      "hints": [{ "look": true, "from": "public/assets/buildings/bld_sprinkler.png", "box": [0, 0, 120, 200], "what": "the level-1 sprinkler (the same design must grow level by level)" }],
+      "notes": "The same garden sprinkler as image 2, upgraded step by step from left to right; keep its blue pipe and wooden post. Each one is a little taller and richer than the one before. No water spray drawn (the game draws the water).",
+      "cells": [
+        { "stem": "bld_sprinkler_l2", "desc": "Level 2: a bit taller, a brass band on the pipe and a second small nozzle" },
+        { "stem": "bld_sprinkler_l3", "desc": "Level 3: taller again, a round brass rotating head with three nozzles and a small stone base" },
+        { "stem": "bld_sprinkler_l4", "desc": "Level 4: a sturdy tower sprinkler on a stone base with a small water tank on its side and four nozzles" },
+        { "stem": "bld_sprinkler_l5", "desc": "Level 5: a grand golden-and-blue sprinkler tower with a little roof, a water tank and a ring of nozzles, flowers at its foot" }
+      ]
+    }
+  ]
+}

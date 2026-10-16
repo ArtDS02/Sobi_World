@@ -35,5 +35,15 @@
   },
   "cauldron": { "price": 600, "maxBatches": 5 },
   "start": { "water": 6 },
+  "shop": [
+    { "itemId": "item_seed_cloud_daisy", "price": 12 },
+    { "itemId": "item_seed_dandelion", "price": 16 },
+    { "itemId": "item_seed_moon_lily", "price": 36 },
+    { "itemId": "item_seed_dream_bell", "price": 56 },
+    { "itemId": "item_seed_rainbow_rose", "price": 120 },
+    { "itemId": "item_seed_star_orchid", "price": 150 },
+    { "itemId": "item_pure_water", "price": 15 },
+    { "itemId": "item_fertilizer", "price": 50 }
+  ],
   "xp": { "plant": 2, "water": 0, "harvest": 3, "craft": 5, "fertilize": 1, "spring": 0 }
 }

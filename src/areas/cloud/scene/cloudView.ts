@@ -60,6 +60,9 @@ export const CLOUD_VIEW = {
   hover: { lift: 3, brighten: 1.07, swell: 1.04, ms: 140 },
   /** Changing tier: the field sinks (going up) or rises (going down) and fades, a cloud veil sweeps, the sky shifts. */
   tierMove: { outMs: 240, inMs: 340, shift: 60, sky: 16, veilAlpha: 0.92, veilScale: 1.25, veilBlur: 2, travel: 240 },
+  /** The shop stall (decision 029) on the island's right bank, with its name plank; drawn in code until bld_shop_cloud is painted. */
+  shop: { x: 1400, y: 560, scale: 0.85, art: 'bld_shop_cloud', colours: { stripe: 0xb59ad8, stripe2: 0xffffff, goods: [0xffe08a, 0xf6b6d2, 0x9fd8f0, 0xc8e6a0] } },
+  shopLabel: { x: 1400, y: 606 },
   /** The fertiliser drone (decision 028): from the cauldron's bank over each newly fertilised flower, then away. */
   drone: { from: { x: 222, y: 560 }, exit: { x: 1700, y: -120 }, hoverY: 70, speed: 900, dropMs: 260, size: 130, art: 'prop_drone_cloud' },
   /** Idle motion: slow, never in step (each object gets its own period and phase). */

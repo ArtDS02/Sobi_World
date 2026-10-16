@@ -29,6 +29,8 @@ export class GardenField {
   private readonly slots: Slot[] = [];
   /** Slots whose fertiliser look waits for the drone (shown plain until it passes). */
   private readonly waiting = new Set<number>();
+  /** Each slot's crop at the last look ("cropId:stage:yield"), to notice a harvest or a crop that just ripened. */
+  private readonly seen = new Map<number, string>();
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -57,6 +59,35 @@ export class GardenField {
   centre(slot: number): { x: number; y: number } {
     const c = plotCentre(slot);
     return { x: c.x + this.container.x, y: c.y + this.container.y };
+  }
+
+  /** Forget what the slots held (another zone is coming): nothing counts as harvested or ripened. */
+  forget() {
+    this.seen.clear();
+  }
+
+  /** What changed on zone `zone` since the last look: slots just harvested (crop, yield) and slots just ripened. */
+  changes(zone: number, plots: readonly PlotView[]): { harvested: { slot: number; cropId: string; amount: number }[]; ripened: number[] } {
+    const harvested: { slot: number; cropId: string; amount: number }[] = [];
+    const ripened: number[] = [];
+    for (let slot = 0; slot < PLOTS_PER_ZONE; slot += 1) {
+      const p = plots[plotIndex(zone, slot)];
+      const before = this.seen.get(slot);
+      const now = p?.cropId ? `${p.cropId}:${p.stage}:${p.yield}` : '';
+      if (before) {
+        const [cropId, stage, amount] = before.split(':');
+        if (!p?.cropId && (stage === 'ripe' || stage === 'wilted')) harvested.push({ slot, cropId: cropId!, amount: Number(amount) });
+        else if (p && p.cropId === cropId && p.stage === 'ripe' && stage === 'growing') ripened.push(slot);
+      }
+      this.seen.set(slot, now);
+    }
+    return { harvested, ripened };
+  }
+
+  /** A crop that just ripened hops once. */
+  hop(slot: number) {
+    const s = this.slots[slot];
+    if (s?.crop.visible) this.scene.tweens.add({ targets: s.crop, scaleY: GARDEN_VIEW.cropScale * GARDEN_VIEW.ripen.hop, duration: 160, yoyo: true, ease: 'Quad.easeOut' });
   }
 
   /** Draws zone `zone` of the garden. */

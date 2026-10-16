@@ -115,6 +115,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
         'nav',
         { class: 'garden-ui__nav', attrs: { 'aria-label': vi.garden.title } },
         navButton(vi.garden.plaza, d.leave),
+        navButton(vi.garden.shop, () => dialogs.openShop()),
         navButton(vi.garden.items, () => d.openPanel('inventory')),
         navButton(vi.garden.menu, () => d.openPanel('menu')),
       ),
@@ -181,7 +182,10 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
     const w = world();
     if (!w || !active) return;
     if (p.kind === 'locked') return dialogs.openExpand();
-    if (p.kind === 'building') return p.building === 'sprinkler' ? dialogs.openSprinkler() : dialogs.openWorkshop(p.building);
+    if (p.kind === 'building') {
+      if (p.building === 'shop') return dialogs.openShop();
+      return p.building === 'sprinkler' ? dialogs.openSprinkler() : dialogs.openWorkshop(p.building);
+    }
     if (p.kind !== 'plot') return;
     const plot = gardenOf(w).plots[p.index];
     if (!plot) return;
