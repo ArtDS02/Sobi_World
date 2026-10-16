@@ -82,6 +82,8 @@ export interface DockSeedVm {
   /** Tooltip: what it is, how long it grows. */
   title: string;
   selected: boolean;
+  /** Only bred and not found yet (decision 035): drawn locked, with this line instead of the price. */
+  locked?: string;
 }
 
 export interface DockActionVm {
@@ -113,7 +115,7 @@ function seedCard(s: DockSeedVm, onPick: (id: string) => void, cls: string, str:
   return el(
     'button',
     {
-      class: `a-dock__seed ${cls}${s.selected ? ' is-selected' : ''}`,
+      class: `a-dock__seed ${cls}${s.selected ? ' is-selected' : ''}${s.locked ? ' is-locked' : ''}`,
       attrs: { type: 'button', role: 'radio', 'aria-checked': String(s.selected), title: s.title },
       on: { click: () => onPick(s.id) },
     },
@@ -121,7 +123,9 @@ function seedCard(s: DockSeedVm, onPick: (id: string) => void, cls: string, str:
     el('span', { class: `a-dock__owned${s.owned > 0 ? '' : ' is-none'}`, text: str.owned(s.owned) }),
     el('span', { class: 'a-dock__seed-pic' }, art(s.art, 'a-dock__seed-icon')),
     el('b', { class: 'a-dock__seed-name', text: s.name }),
-    el('small', { class: 'a-dock__price', attrs: { 'aria-label': `${s.price} ${str.coins}` } }, art(AREA_HUD_ART.coin, 'c-icon'), s.price),
+    s.locked
+      ? el('small', { class: 'a-dock__price a-dock__price--locked' }, el('span', { attrs: { 'aria-hidden': 'true' }, text: '🔒' }), s.locked)
+      : el('small', { class: 'a-dock__price', attrs: { 'aria-label': `${s.price} ${str.coins}` } }, art(AREA_HUD_ART.coin, 'c-icon'), s.price),
   );
 }
 

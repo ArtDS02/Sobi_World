@@ -6,7 +6,7 @@ import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
 import { emptyPlot, harvestYield, plotStage, settlePlot, sow } from '../../../../systems/plants/plot';
 import { CROPS, GB, PLOT_RULES, WATER_MS } from '../config/content';
-import { isCovered, needsWater } from '../derived';
+import { isCovered, needsWater, seedUnlocked } from '../derived';
 import type { GardenEvent } from '../events';
 import { countOf, fits, give, pay, put, runGarden, take, type GardenResult } from './kit';
 
@@ -22,6 +22,7 @@ export function plantCrops(world: WorldSave, args: { cropId: string; plots: numb
     if (plots.some((i) => g.plots[i]!.cropId !== null)) return { ok: false, error: 'PLOT_OCCUPIED' };
     const fromBag = Math.min(countOf(w, crop.seedItem), plots.length);
     const bought = plots.length - fromBag;
+    if (bought > 0 && !seedUnlocked(g, crop.id)) return { ok: false, error: 'HYBRID_LOCKED' };
     const gold = bought * ITEMS[crop.seedItem as ItemId].priceGold;
     const taken = take(w, crop.seedItem, fromBag);
     if (!taken.ok) return taken;

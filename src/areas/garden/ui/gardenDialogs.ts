@@ -15,6 +15,9 @@ import { nextExpansion } from '../logic/derived';
 import { gardenOf } from '../logic/save/lens';
 import { expandVm, plotCardVm, sprinklerVm, workshopVm, type ButtonVm, type GardenRun, type RecipeVm } from './gardenVm';
 import { gardenShopVm } from './gardenShopVm';
+import { createLabController } from '../../../ui/components/labView';
+import { crossCrops } from '../logic/actions/lab';
+import { gardenLabInput, gardenReveal } from './gardenLabVm';
 
 /** A button that always says why it is off. */
 export function actionButton(vm: ButtonVm, onClick: () => void, variant = ''): HTMLElement {
@@ -38,6 +41,8 @@ export interface GardenDialogsDeps {
   world: () => WorldSave | null;
   now: () => number;
   dispatch: (run: GardenRun) => void;
+  /** Runs an action and hands back its result (the lab reads what a try gave). */
+  dispatchResult: (run: GardenRun) => Promise<ReturnType<GardenRun>>;
   /** Re-draws the whole UI (a choice inside a dialog changed). */
   refresh: () => void;
 }
@@ -215,8 +220,22 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
     });
   }
 
+  /** The crossing lab (decision 035); `start` pre-fills the two parents. */
+  function openLab(start: readonly [string | null, string | null] = [null, null]) {
+    const lab = createLabController(
+      async (a, b) => gardenReveal(await d.dispatchResult((s, c) => crossCrops(s, { a, b }, c))),
+      () => {
+        const w = d.world();
+        if (w && live) patch(live.body, live.render(w));
+      },
+      start,
+    );
+    openLive(vi.lab.gardenTitle, (w) => lab.render(gardenLabInput(w, d.now())), (body) => body.closest('.c-dialog__panel')?.classList.add('c-dialog__panel--lab'), 'breed');
+  }
+
   return {
     openShop,
+    openLab,
     openExpand,
     openSprinkler,
     openPlot,

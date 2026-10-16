@@ -11,5 +11,7 @@ export default defineConfig({
   server: { watch: { ignored: ['**/release/**', '**/dist/**', '**/dist-electron/**', '**/art_inbox/**', '**/asset/**'] } },
   test: {
     include: ['tests/unit/**/*.test.ts', 'tests/electron/**/*.test.ts', 'tests/scripts/**/*.test.ts'],
+    // The breeding-table sweeps walk every pair of 88 pig species (decision 035): ~1.5 s alone, slower when every file runs at once.
+    testTimeout: 20_000,
   },
 });

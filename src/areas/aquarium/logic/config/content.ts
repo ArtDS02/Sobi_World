@@ -3,10 +3,12 @@
 import areaRaw from '../../../../../content/aquarium/area.json';
 import balanceRaw from '../../../../../content/aquarium/balance.json';
 import fishRaw from '../../../../../content/aquarium/fish.json';
+import hybridsRaw from '../../../../../content/aquarium/hybrids.json';
 import namesRaw from '../../../../../content/aquarium/names.json';
 import { areaManifestSchema } from '../../../../../content/schemas/area';
 import { aquariumBalanceFileSchema } from '../../../../../content/schemas/aquarium/balance';
 import { fishFileSchema, fishNamesFileSchema, type FishRow } from '../../../../../content/schemas/aquarium/fish';
+import { hybridsFileSchema } from '../../../../../content/schemas/shared/hybrids';
 import { loadContent } from '../../../../core/content/load';
 import { rarityRank } from '../../../../core/config/rarity';
 
@@ -15,6 +17,7 @@ export const AQUARIUM_CONTENT = {
   balance: loadContent('aquarium/balance.json', aquariumBalanceFileSchema, balanceRaw),
   fish: loadContent('aquarium/fish.json', fishFileSchema, fishRaw),
   names: loadContent('aquarium/names.json', fishNamesFileSchema, namesRaw),
+  hybrids: loadContent('aquarium/hybrids.json', hybridsFileSchema, hybridsRaw),
 };
 
 export const AQUARIUM_AREA_ID = AQUARIUM_CONTENT.area.id;
@@ -24,6 +27,11 @@ export const HOUR_MS = 3_600_000;
 export type FishSpecies = FishRow;
 export const FISH_LIST: readonly FishSpecies[] = AQUARIUM_CONTENT.fish.fish;
 export const FISH: Readonly<Record<string, FishSpecies>> = Object.fromEntries(FISH_LIST.map((f) => [f.id, f]));
+/** Cross-breeding recipes (decision 035): a pair of two species may lay an egg of a rarer one. */
+export const FISH_HYBRIDS = AQUARIUM_CONTENT.hybrids;
+for (const r of FISH_HYBRIDS.recipes) {
+  for (const id of [...r.parents, r.result]) if (!(id in FISH)) throw new Error(`aquarium/hybrids.json ${r.id}: unknown fish ${id}`);
+}
 export const FISH_NAMES: readonly string[] = AQUARIUM_CONTENT.names.names;
 /** The species an item of the bag is the catch of. */
 export const fishOfItem = (itemId: string): FishSpecies | undefined => FISH_LIST.find((f) => f.item === itemId);

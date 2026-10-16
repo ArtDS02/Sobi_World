@@ -14,6 +14,9 @@ import { CB } from '../logic/config/content';
 import { nextExpansion } from '../logic/derived';
 import { cloudOf } from '../logic/save/lens';
 import { cauldronVm, expandVm, plotCardVm, springVm, type ButtonVm, type CloudRun, type RecipeVm } from './cloudVm';
+import { createLabController } from '../../../ui/components/labView';
+import { crossFlowers } from '../logic/actions/lab';
+import { cloudLabInput, cloudReveal } from './cloudLabVm';
 import { cloudShopVm } from './cloudShopVm';
 
 /** A button that always says why it is off. */
@@ -39,6 +42,8 @@ export interface CloudDialogsDeps {
   now: () => number;
   dayOffsetMs: () => number;
   dispatch: (run: CloudRun) => void;
+  /** Runs an action and hands back its result (the lab reads what a try gave). */
+  dispatchResult: (run: CloudRun) => Promise<ReturnType<CloudRun>>;
   /** Re-draws the whole UI (a choice inside a dialog changed). */
   refresh: () => void;
 }
@@ -219,8 +224,22 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
     });
   }
 
+  /** The crossing lab (decision 035); `start` pre-fills the two parents. */
+  function openLab(start: readonly [string | null, string | null] = [null, null]) {
+    const lab = createLabController(
+      async (a, b) => cloudReveal(await d.dispatchResult((s, c) => crossFlowers(s, { a, b }, c))),
+      () => {
+        const w = d.world();
+        if (w && live) patch(live.body, live.render(w));
+      },
+      start,
+    );
+    openLive(vi.lab.cloudTitle, (w) => lab.render(cloudLabInput(w, d.now())), (body) => body.closest('.c-dialog__panel')?.classList.add('c-dialog__panel--lab', 'c-dialog__panel--lab-cloud'), 'breed');
+  }
+
   return {
     openShop,
+    openLab,
     openExpand,
     openSpring,
     openPlot,

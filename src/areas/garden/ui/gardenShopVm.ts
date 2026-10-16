@@ -15,7 +15,7 @@ import { probe } from './gardenVm';
 /** Counts the buy buttons offer. */
 export const SHOP_COUNTS = [1, 10, 50] as const;
 
-const reasonOf = (e: ErrorCode): string => (e === 'INSUFFICIENT_GOLD' ? vi.garden.noGold : vi.error[e]);
+const reasonOf = (e: ErrorCode): string => (e === 'INSUFFICIENT_GOLD' ? vi.garden.noGold : e === 'HYBRID_LOCKED' ? vi.lab.lockedShop : vi.error[e]);
 
 function lineOf(itemId: string): string {
   const crop = cropBySeed(itemId);

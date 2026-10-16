@@ -1,0 +1,130 @@
+{
+  "pityAfter": 4,
+  "pityStep": 8,
+  "recipes": [
+    {
+      "id": "hy_clownfish",
+      "parents": ["fish_goldfish", "fish_guppy"],
+      "result": "fish_clownfish",
+      "percent": 30
+    },
+    {
+      "id": "hy_pufferfish",
+      "parents": ["fish_carp", "fish_catfish"],
+      "result": "fish_pufferfish",
+      "percent": 30
+    },
+    {
+      "id": "hy_angelfish",
+      "parents": ["fish_guppy", "fish_neon_tetra"],
+      "result": "fish_angelfish",
+      "percent": 30
+    },
+    {
+      "id": "hy_glowfish",
+      "parents": ["fish_neon_tetra", "fish_perch"],
+      "result": "fish_glowfish",
+      "percent": 28
+    },
+    { "id": "hy_gourami", "parents": ["fish_goldfish", "fish_carp"], "result": "fish_gourami", "percent": 30 },
+    { "id": "hy_molly", "parents": ["fish_catfish", "fish_perch"], "result": "fish_molly", "percent": 30 },
+    {
+      "id": "hy_butterflyfish",
+      "parents": ["fish_goldfish", "fish_neon_tetra"],
+      "result": "fish_butterflyfish",
+      "percent": 26
+    },
+    {
+      "id": "hy_boxfish",
+      "parents": ["fish_pufferfish", "fish_loach"],
+      "result": "fish_boxfish",
+      "percent": 26
+    },
+    {
+      "id": "hy_blue_tang",
+      "parents": ["fish_clownfish", "fish_neon_tetra"],
+      "result": "fish_blue_tang",
+      "percent": 26
+    },
+    { "id": "hy_betta", "parents": ["fish_angelfish", "fish_guppy"], "result": "fish_betta", "percent": 20 },
+    {
+      "id": "hy_lanternfish",
+      "parents": ["fish_glowfish", "fish_catfish"],
+      "result": "fish_lanternfish",
+      "percent": 20
+    },
+    {
+      "id": "hy_seahorse",
+      "parents": ["fish_loach", "fish_clownfish"],
+      "result": "fish_seahorse",
+      "percent": 20
+    },
+    {
+      "id": "hy_discus",
+      "parents": ["fish_angelfish", "fish_gourami"],
+      "result": "fish_discus",
+      "percent": 20
+    },
+    {
+      "id": "hy_lionfish",
+      "parents": ["fish_pufferfish", "fish_butterflyfish"],
+      "result": "fish_lionfish",
+      "percent": 18
+    },
+    {
+      "id": "hy_parrotfish",
+      "parents": ["fish_blue_tang", "fish_boxfish"],
+      "result": "fish_parrotfish",
+      "percent": 18
+    },
+    {
+      "id": "hy_jellyfish",
+      "parents": ["fish_glowfish", "fish_angelfish"],
+      "result": "fish_jellyfish",
+      "percent": 16
+    },
+    {
+      "id": "hy_octopus",
+      "parents": ["fish_seahorse", "fish_molly"],
+      "result": "fish_octopus",
+      "percent": 16
+    },
+    {
+      "id": "hy_sea_turtle",
+      "parents": ["fish_boxfish", "fish_gourami"],
+      "result": "fish_sea_turtle",
+      "percent": 15
+    },
+    {
+      "id": "hy_dragon_koi",
+      "parents": ["fish_carp", "fish_betta"],
+      "result": "fish_dragon_koi",
+      "percent": 12
+    },
+    {
+      "id": "hy_moonfish",
+      "parents": ["fish_lanternfish", "fish_discus"],
+      "result": "fish_moonfish",
+      "percent": 12
+    },
+    { "id": "hy_manta", "parents": ["fish_discus", "fish_parrotfish"], "result": "fish_manta", "percent": 12 },
+    {
+      "id": "hy_arowana",
+      "parents": ["fish_dragon_koi", "fish_gourami"],
+      "result": "fish_arowana",
+      "percent": 10
+    },
+    {
+      "id": "hy_dolphin",
+      "parents": ["fish_sea_turtle", "fish_manta"],
+      "result": "fish_dolphin",
+      "percent": 8
+    },
+    {
+      "id": "hy_dolphin_b",
+      "parents": ["fish_seahorse", "fish_octopus"],
+      "result": "fish_dolphin",
+      "percent": 6
+    }
+  ]
+}

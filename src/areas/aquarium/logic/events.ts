@@ -16,7 +16,7 @@ export type AquariumEvent =
   | { type: 'AQUARIUM_SCALES_SHED'; count: number }
   | { type: 'AQUARIUM_TANK_UPGRADED'; level: number; gold: number }
   | { type: 'AQUARIUM_SHOP_BOUGHT'; itemId: string; count: number; gold: number }
-  | { type: 'AQUARIUM_EGGS_LAID'; speciesId: string; eggId: string; mutated: boolean; /** A flower used for its mutation boost. */ boostItem?: string }
+  | { type: 'AQUARIUM_EGGS_LAID'; speciesId: string; eggId: string; mutated: boolean; /** A flower used for its mutation boost. */ boostItem?: string; /** The crossing tried, and whether it gave the rarer species (decision 035). */ cross?: { recipeId: string; success: boolean; chance: number } }
   | { type: 'AQUARIUM_EGG_HATCHED'; fishId: string; speciesId: string; name: string }
   | { type: 'AQUARIUM_FISH_SICK'; fishId: string; name: string }
   | { type: 'AQUARIUM_FISH_CRITICAL'; fishId: string; name: string }

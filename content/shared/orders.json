@@ -188,6 +188,216 @@
       "min": 1,
       "max": 1,
       "weight": 1
+    },
+    { "itemId": "item_tomato", "area": "sobi_garden", "fromWorldLevel": 4, "min": 3, "max": 8, "weight": 2 },
+    { "itemId": "item_cabbage", "area": "sobi_garden", "fromWorldLevel": 4, "min": 2, "max": 6, "weight": 2 },
+    {
+      "itemId": "item_sweet_potato",
+      "area": "sobi_garden",
+      "fromWorldLevel": 5,
+      "min": 2,
+      "max": 6,
+      "weight": 1.5
+    },
+    {
+      "itemId": "item_pumpkin",
+      "area": "sobi_garden",
+      "fromWorldLevel": 5,
+      "min": 1,
+      "max": 4,
+      "weight": 1.5
+    },
+    {
+      "itemId": "item_strawberry",
+      "area": "sobi_garden",
+      "fromWorldLevel": 6,
+      "min": 2,
+      "max": 6,
+      "weight": 1
+    },
+    {
+      "itemId": "item_sugarcane",
+      "area": "sobi_garden",
+      "fromWorldLevel": 6,
+      "min": 2,
+      "max": 6,
+      "weight": 1
+    },
+    {
+      "itemId": "item_watermelon",
+      "area": "sobi_garden",
+      "fromWorldLevel": 7,
+      "min": 1,
+      "max": 2,
+      "weight": 0.8
+    },
+    {
+      "itemId": "item_sunflower",
+      "area": "sobi_garden",
+      "fromWorldLevel": 8,
+      "min": 1,
+      "max": 3,
+      "weight": 0.6
+    },
+    {
+      "itemId": "item_flower_sun_tulip",
+      "area": "sobi_cloud",
+      "fromWorldLevel": 8,
+      "min": 2,
+      "max": 6,
+      "weight": 2
+    },
+    {
+      "itemId": "item_flower_rain_hydrangea",
+      "area": "sobi_cloud",
+      "fromWorldLevel": 8,
+      "min": 2,
+      "max": 6,
+      "weight": 2
+    },
+    {
+      "itemId": "item_flower_comet_lavender",
+      "area": "sobi_cloud",
+      "fromWorldLevel": 9,
+      "min": 1,
+      "max": 4,
+      "weight": 1
+    },
+    {
+      "itemId": "item_flower_sunset_hibiscus",
+      "area": "sobi_cloud",
+      "fromWorldLevel": 9,
+      "min": 1,
+      "max": 3,
+      "weight": 1
+    },
+    {
+      "itemId": "item_flower_thunder_iris",
+      "area": "sobi_cloud",
+      "fromWorldLevel": 10,
+      "min": 1,
+      "max": 3,
+      "weight": 0.8
+    },
+    {
+      "itemId": "item_flower_snow_camellia",
+      "area": "sobi_cloud",
+      "fromWorldLevel": 10,
+      "min": 1,
+      "max": 3,
+      "weight": 0.8
+    },
+    {
+      "itemId": "item_flower_crystal_peony",
+      "area": "sobi_cloud",
+      "fromWorldLevel": 11,
+      "min": 1,
+      "max": 2,
+      "weight": 0.5
+    },
+    {
+      "itemId": "item_flower_sky_lotus",
+      "area": "sobi_cloud",
+      "fromWorldLevel": 12,
+      "min": 1,
+      "max": 1,
+      "weight": 0.3
+    },
+    {
+      "itemId": "item_fish_guppy",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 6,
+      "min": 2,
+      "max": 5,
+      "weight": 2
+    },
+    {
+      "itemId": "item_fish_neon_tetra",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 6,
+      "min": 2,
+      "max": 5,
+      "weight": 2
+    },
+    {
+      "itemId": "item_fish_catfish",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 6,
+      "min": 2,
+      "max": 4,
+      "weight": 2
+    },
+    {
+      "itemId": "item_fish_loach",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 6,
+      "min": 2,
+      "max": 4,
+      "weight": 1.5
+    },
+    {
+      "itemId": "item_fish_gourami",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 7,
+      "min": 1,
+      "max": 3,
+      "weight": 1
+    },
+    {
+      "itemId": "item_fish_molly",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 7,
+      "min": 1,
+      "max": 3,
+      "weight": 1
+    },
+    {
+      "itemId": "item_fish_butterflyfish",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 7,
+      "min": 1,
+      "max": 3,
+      "weight": 1
+    },
+    {
+      "itemId": "item_fish_boxfish",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 8,
+      "min": 1,
+      "max": 2,
+      "weight": 0.8
+    },
+    {
+      "itemId": "item_fish_blue_tang",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 8,
+      "min": 1,
+      "max": 2,
+      "weight": 0.8
+    },
+    {
+      "itemId": "item_fish_discus",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 9,
+      "min": 1,
+      "max": 2,
+      "weight": 0.5
+    },
+    {
+      "itemId": "item_fish_lionfish",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 9,
+      "min": 1,
+      "max": 2,
+      "weight": 0.5
+    },
+    {
+      "itemId": "item_fish_parrotfish",
+      "area": "sobi_aquarium",
+      "fromWorldLevel": 9,
+      "min": 1,
+      "max": 2,
+      "weight": 0.5
     }
   ]
 }

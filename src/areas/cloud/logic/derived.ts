@@ -8,6 +8,12 @@ import { growthShare, harvestYield, plotStage } from '../../../systems/plants/pl
 import { CB, FLOWERS, MAX_PLOTS, MAX_SPRING_LEVEL, PLOTS_PER_TIER, PLOT_RULES, SPRING_LEVELS, springLevel, tierOf } from './config/content';
 import type { CloudState } from './state';
 
+/** The crossing lab of a save (decision 035); empty when the save predates it. */
+export const labOf = (g: Pick<CloudState, 'lab'>): NonNullable<CloudState['lab']> => g.lab ?? { found: [], misses: {} };
+
+/** Whether the seed of `flowerId` can be bought: a plain flower, or a hybrid the lab has given once. */
+export const seedUnlocked = (g: Pick<CloudState, 'lab'>, flowerId: string): boolean => !FLOWERS[flowerId]?.hybrid || labOf(g).found.includes(flowerId);
+
 /** Is it the night period (the night flowers give more then, the lights in the scene)? */
 export const isNightNow = (now: number, dayOffsetMs: number): boolean => dayPeriod(now, dayOffsetMs, TIME) === 'night';
 

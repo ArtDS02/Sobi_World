@@ -3,9 +3,11 @@
 import areaRaw from '../../../../../content/cloud/area.json';
 import balanceRaw from '../../../../../content/cloud/balance.json';
 import flowersRaw from '../../../../../content/cloud/flowers.json';
+import hybridsRaw from '../../../../../content/cloud/hybrids.json';
 import { areaManifestSchema } from '../../../../../content/schemas/area';
 import { cloudBalanceFileSchema } from '../../../../../content/schemas/cloud/balance';
 import { flowersFileSchema, type FLOWER_KIND_VALUES } from '../../../../../content/schemas/cloud/flowers';
+import { hybridsFileSchema } from '../../../../../content/schemas/shared/hybrids';
 import { loadContent } from '../../../../core/content/load';
 import type { CropRule, PlotRules } from '../../../../systems/plants/plot';
 
@@ -13,6 +15,7 @@ export const CLOUD_CONTENT = {
   area: loadContent('cloud/area.json', areaManifestSchema, areaRaw),
   balance: loadContent('cloud/balance.json', cloudBalanceFileSchema, balanceRaw),
   flowers: loadContent('cloud/flowers.json', flowersFileSchema, flowersRaw),
+  hybrids: loadContent('cloud/hybrids.json', hybridsFileSchema, hybridsRaw),
 };
 
 export const CLOUD_AREA_ID = CLOUD_CONTENT.area.id;
@@ -29,6 +32,8 @@ export interface Flower extends CropRule {
   seedItem: string;
   produceItem: string;
   art: string;
+  /** Only bred (decision 035): its seed is sold once the lab has given it. */
+  hybrid: boolean;
 }
 
 export const FLOWER_LIST: readonly Flower[] = CLOUD_CONTENT.flowers.flowers.map((f) => ({
@@ -38,6 +43,7 @@ export const FLOWER_LIST: readonly Flower[] = CLOUD_CONTENT.flowers.flowers.map(
   seedItem: f.seedItem,
   produceItem: f.produceItem,
   art: f.art,
+  hybrid: f.hybrid ?? false,
   growMs: f.growHours * HOUR,
   yield: f.yield,
 }));
@@ -52,6 +58,13 @@ export const PLOT_RULES: PlotRules = {
   witherYieldFactor: CB.witherYieldFactor,
 };
 export const WATER_MS = CB.waterHours * HOUR;
+
+/** The crossing lab (decision 035): recipes, pity and what a try costs. */
+export const CLOUD_HYBRIDS = CLOUD_CONTENT.hybrids;
+export const CLOUD_LAB = CLOUD_HYBRIDS.lab ?? { cost: 0, seeds: 1, consolation: 0, xp: 0 };
+for (const r of CLOUD_HYBRIDS.recipes) {
+  for (const id of [...r.parents, r.result]) if (!(id in FLOWERS)) throw new Error(`cloud/hybrids.json ${r.id}: unknown flower ${id}`);
+}
 export const MAX_PLOTS = CB.plotExpansions.at(-1)?.plots ?? CB.startPlots;
 /** Plots on one cloud tier; plot `index` stands on tier `tierOf(index)` (0-based). */
 export const PLOTS_PER_TIER = CB.plotsPerTier;

@@ -22,7 +22,7 @@ export const CLOUD_ITEM_IDS = ITEM_IDS.filter((id) => ITEMS[id].category === 'FL
 
 /** Every id the Cloud needs in the manifest. */
 /** The icons on the bottom tray's action cards (decision 031); sowing shows the chosen seed instead. */
-export const CLOUD_DOCK_ART = { collect: 'ui_item_pure_water', water: 'ui_icon_water', harvest: 'ui_item_flower_cloud_daisy', fertilize: 'ui_item_fertilizer', expand: 'ui_btn_tier_up' } as const;
+export const CLOUD_DOCK_ART = { collect: 'ui_item_pure_water', water: 'ui_icon_water', harvest: 'ui_item_flower_cloud_daisy', fertilize: 'ui_item_fertilizer', expand: 'ui_btn_tier_up', lab: 'ui_btn_breed' } as const;
 
 export const cloudArtIds = (): string[] => [
   ...Object.values(AREA_HUD_ART),

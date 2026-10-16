@@ -15,7 +15,7 @@ import { probe } from './cloudVm';
 /** Counts the buy buttons offer. */
 export const SHOP_COUNTS = [1, 10, 50] as const;
 
-const reasonOf = (e: ErrorCode): string => (e === 'INSUFFICIENT_GOLD' ? vi.cloud.noGold : vi.error[e]);
+const reasonOf = (e: ErrorCode): string => (e === 'INSUFFICIENT_GOLD' ? vi.cloud.noGold : e === 'HYBRID_LOCKED' ? vi.lab.lockedShop : vi.error[e]);
 
 function lineOf(itemId: string): string {
   const flower = flowerBySeed(itemId);

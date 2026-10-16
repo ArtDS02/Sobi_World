@@ -1,0 +1,46 @@
+{
+  "pityAfter": 4,
+  "pityStep": 10,
+  "lab": { "cost": 30, "seeds": 3, "consolation": 1, "xp": 4 },
+  "recipes": [
+    { "id": "hy_tomato", "parents": ["crop_wheat", "crop_carrot"], "result": "crop_tomato", "percent": 45 },
+    { "id": "hy_cabbage", "parents": ["crop_grass", "crop_potato"], "result": "crop_cabbage", "percent": 45 },
+    {
+      "id": "hy_sweet_potato",
+      "parents": ["crop_potato", "crop_carrot"],
+      "result": "crop_sweet_potato",
+      "percent": 35
+    },
+    { "id": "hy_pumpkin", "parents": ["crop_carrot", "crop_corn"], "result": "crop_pumpkin", "percent": 35 },
+    {
+      "id": "hy_strawberry",
+      "parents": ["crop_tomato", "crop_carrot"],
+      "result": "crop_strawberry",
+      "percent": 25
+    },
+    {
+      "id": "hy_sugarcane",
+      "parents": ["crop_sweet_potato", "crop_corn"],
+      "result": "crop_sugarcane",
+      "percent": 25
+    },
+    {
+      "id": "hy_watermelon",
+      "parents": ["crop_pumpkin", "crop_cabbage"],
+      "result": "crop_watermelon",
+      "percent": 20
+    },
+    {
+      "id": "hy_sunflower",
+      "parents": ["crop_watermelon", "crop_wheat"],
+      "result": "crop_sunflower",
+      "percent": 15
+    },
+    {
+      "id": "hy_sunflower_b",
+      "parents": ["crop_sugarcane", "crop_strawberry"],
+      "result": "crop_sunflower",
+      "percent": 15
+    }
+  ]
+}

@@ -44,6 +44,84 @@
       "growHours": 6,
       "yield": 2,
       "art": "crop_carrot"
+    },
+    {
+      "id": "crop_tomato",
+      "nameVi": "Cà chua",
+      "seedItem": "item_seed_tomato",
+      "produceItem": "item_tomato",
+      "growHours": 5,
+      "yield": 3,
+      "art": "crop_tomato"
+    },
+    {
+      "id": "crop_cabbage",
+      "nameVi": "Bắp cải",
+      "seedItem": "item_seed_cabbage",
+      "produceItem": "item_cabbage",
+      "growHours": 6,
+      "yield": 2,
+      "art": "crop_cabbage"
+    },
+    {
+      "id": "crop_sweet_potato",
+      "nameVi": "Khoai lang",
+      "seedItem": "item_seed_sweet_potato",
+      "produceItem": "item_sweet_potato",
+      "growHours": 7,
+      "yield": 3,
+      "art": "crop_sweet_potato",
+      "hybrid": true
+    },
+    {
+      "id": "crop_pumpkin",
+      "nameVi": "Bí ngô",
+      "seedItem": "item_seed_pumpkin",
+      "produceItem": "item_pumpkin",
+      "growHours": 8,
+      "yield": 2,
+      "art": "crop_pumpkin",
+      "hybrid": true
+    },
+    {
+      "id": "crop_strawberry",
+      "nameVi": "Dâu tây",
+      "seedItem": "item_seed_strawberry",
+      "produceItem": "item_strawberry",
+      "growHours": 9,
+      "yield": 3,
+      "art": "crop_strawberry",
+      "hybrid": true
+    },
+    {
+      "id": "crop_sugarcane",
+      "nameVi": "Mía",
+      "seedItem": "item_seed_sugarcane",
+      "produceItem": "item_sugarcane",
+      "growHours": 10,
+      "yield": 3,
+      "art": "crop_sugarcane",
+      "hybrid": true
+    },
+    {
+      "id": "crop_watermelon",
+      "nameVi": "Dưa hấu",
+      "seedItem": "item_seed_watermelon",
+      "produceItem": "item_watermelon",
+      "growHours": 12,
+      "yield": 1,
+      "art": "crop_watermelon",
+      "hybrid": true
+    },
+    {
+      "id": "crop_sunflower",
+      "nameVi": "Hướng dương",
+      "seedItem": "item_seed_sunflower",
+      "produceItem": "item_sunflower",
+      "growHours": 14,
+      "yield": 2,
+      "art": "crop_sunflower",
+      "hybrid": true
     }
   ]
 }

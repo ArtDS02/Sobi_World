@@ -28,6 +28,8 @@ const jobSchema = z.strictObject({
   collected: z.number().int().min(0),
 });
 
+const labSchema = z.strictObject({ found: z.array(z.string()), misses: z.record(z.string(), z.number().int().min(0)) });
+
 export const gardenStateSchema = z.strictObject({
   version: z.literal(GARDEN_STATE_VERSION),
   /** One entry per plot the player owns, in grid order. */
@@ -38,6 +40,8 @@ export const gardenStateSchema = z.strictObject({
   built: z.strictObject({ mill: z.boolean(), composter: z.boolean() }),
   /** A running or finished-but-not-collected job per workshop. */
   jobs: z.strictObject({ mill: jobSchema.nullable(), composter: jobSchema.nullable() }),
+  /** The crossing lab (decision 035): crops it has given (their seed is sold from then on) and failed tries per recipe. */
+  lab: labSchema.optional(),
   /** Time the slice was simulated up to (epoch ms). */
   lastTickedAt: time,
 });

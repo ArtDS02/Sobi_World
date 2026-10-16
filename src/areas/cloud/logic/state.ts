@@ -35,6 +35,8 @@ export const cloudStateSchema = z.strictObject({
   spring: z.strictObject({ level: z.number().int().min(1).max(MAX_SPRING_LEVEL), since: time }),
   /** Whether the cauldron stands, and its running or finished-but-not-collected job. */
   cauldron: z.strictObject({ built: z.boolean(), job: jobSchema.nullable() }),
+  /** The crossing lab (decision 035): flowers it has given (their seed is sold from then on) and failed tries per recipe. */
+  lab: z.strictObject({ found: z.array(z.string()), misses: z.record(z.string(), z.number().int().min(0)) }).optional(),
   /** Time the slice was simulated up to (epoch ms). */
   lastTickedAt: time,
 });

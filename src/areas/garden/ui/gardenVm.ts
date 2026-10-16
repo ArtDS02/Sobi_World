@@ -24,7 +24,7 @@ import {
   PLOT_RULES,
   type BuildingId,
 } from '../logic/config/content';
-import { isCovered, nextExpansion, nextSprinkler, plotViews, sprinklerCoverage, type Expansion } from '../logic/derived';
+import { isCovered, nextExpansion, nextSprinkler, plotViews, seedUnlocked, sprinklerCoverage, type Expansion } from '../logic/derived';
 import { emptyIn, unfertilizedIn } from './gardenZoneVm';
 import { gardenOf } from '../logic/save/lens';
 
@@ -78,9 +78,12 @@ export interface SeedVm {
   owned: number;
   growsIn: string;
   selected: boolean;
+  /** Only bred, never found and none in the bag (decision 035): it cannot be sown yet. */
+  locked: boolean;
 }
 
 export function paletteVm(world: WorldSave, selected: string): SeedVm[] {
+  const g = gardenOf(world);
   return CROP_LIST.map((c) => ({
     cropId: c.id,
     name: c.nameVi,
@@ -90,6 +93,7 @@ export function paletteVm(world: WorldSave, selected: string): SeedVm[] {
     owned: world.inventory.items[c.seedItem] ?? 0,
     growsIn: t(vi.garden.growsIn, { time: formatDuration(c.growMs) }),
     selected: c.id === selected,
+    locked: !seedUnlocked(g, c.id) && (world.inventory.items[c.seedItem] ?? 0) === 0,
   }));
 }
 

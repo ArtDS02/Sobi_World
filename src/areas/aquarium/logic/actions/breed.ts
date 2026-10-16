@@ -1,5 +1,6 @@
-// Fish breeding (spec V2 §8.3, "lai một số loài"): two fish of one breedable species, a male and a female, both fully
-// grown and well fed, lay an egg. The child (gender, traits, family tree) is drawn now and kept on the egg, so it
+// Fish breeding (spec V2 §8.3, "lai một số loài"): two fish of one breedable species, or of two species with a crossing
+// recipe (decision 035), a male and a female, both fully grown and well fed, lay an egg. A crossing gives the recipe's
+// rarer species with its chance (raised by each miss, systems/hybrid), otherwise the mother's species. The child (gender, traits, family tree) is drawn now and kept on the egg, so it
 // never changes; the egg hatches when its time comes and the tank has room (logic/simulate.ts).
 import type { ErrorCode } from '../../../../core/config/errors';
 import type { ItemId } from '../../../../core/config/ids';
@@ -10,8 +11,9 @@ import { mutationWeather } from '../../../../systems/weather/weather';
 import { hashSeed, mulberry32, randomId } from '../../../../core/rng';
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
+import { crossChance, nextMisses, recipeFor, rollCross } from '../../../../systems/hybrid';
 import { BREEDING_RULES_DEFAULT, TRAITS, lineageFor, rollChildTraits, type ParentTraits } from '../../../../systems/breeding';
-import { AB, FEED_ITEM, FISH, HOUR_MS } from '../config/content';
+import { AB, FEED_ITEM, FISH, FISH_HYBRIDS, HOUR_MS } from '../config/content';
 import { fishHearts, isGrown, isPet } from '../fishLife';
 import type { AquariumState, Fish, FishEgg } from '../state';
 import { mapFish, put, runAquarium, take, type AquariumResult } from './kit';
@@ -22,7 +24,9 @@ const source = (f: Fish) => ({ name: f.name, breed: f.breed, gender: f.gender, g
 /** The first rule a pair breaks (in the order the screen explains them), or null. */
 export function pairError(a: AquariumState, x: Fish | undefined, y: Fish | undefined, now: number): ErrorCode | null {
   if (!x || !y || x.id === y.id) return 'NOT_A_PAIR';
-  if (x.breed !== y.breed || x.gender === y.gender || !FISH[x.breed]?.breedable) return 'NOT_A_PAIR';
+  if (x.gender === y.gender) return 'NOT_A_PAIR';
+  const cross = recipeFor(FISH_HYBRIDS.recipes, x.breed, y.breed);
+  if (x.breed !== y.breed ? !cross : !FISH[x.breed]?.breedable && !cross) return 'NOT_A_PAIR';
   if (isPet(x) || isPet(y)) return 'FISH_IS_PET';
   if (!isGrown(x) || !isGrown(y)) return 'FISH_NOT_MATURE';
   if (x.isSick || y.isSick) return 'FISH_IS_SICK';
@@ -58,9 +62,15 @@ export function breedFish(world: WorldSave, args: { fishAId: string; fishBId: st
     // The draw is seeded by the pair and the time, so it never consumes the shared rng stream.
     const rng = mulberry32(hashSeed('fish-traits', mother.id, father.id, ctx.now));
     const traits = rollChildTraits(rng, [parentTraits(mother), parentTraits(father)], TRAITS, BREEDING_RULES_DEFAULT, { mutationBoost: boost });
+    // A crossing (decision 035): the recipe's chance, raised by the misses of this recipe, gives the rarer species.
+    const recipe = recipeFor(FISH_HYBRIDS.recipes, mother.breed, father.breed);
+    const misses = recipe ? (a.crossMisses?.[recipe.id] ?? 0) : 0;
+    const chance = recipe ? crossChance(recipe, misses, FISH_HYBRIDS) : 0;
+    const crossed = recipe ? rollCross(ctx.rng, recipe, misses, FISH_HYBRIDS) : false;
     const egg: FishEgg = {
       id: randomId(ctx.rng),
-      species: mother.breed,
+      species: crossed && recipe ? recipe.result : mother.breed,
+      ...(crossed ? { hybrid: true } : {}),
       startedAt: ctx.now,
       hatchAt: ctx.now + AB.breeding.eggHours * HOUR_MS,
       gender: ctx.rng.next() < 0.5 ? 'MALE' : 'FEMALE',
@@ -71,12 +81,12 @@ export function breedFish(world: WorldSave, args: { fishAId: string; fishBId: st
       lineage: lineageFor(source(mother), source(father), BREEDING_RULES_DEFAULT.lineageDepth),
     };
     const rest = ctx.now + AB.breeding.cooldownHours * HOUR_MS;
-    let tank: AquariumState = { ...a, eggs: [...a.eggs, egg] };
+    let tank: AquariumState = { ...a, eggs: [...a.eggs, egg], ...(recipe ? { crossMisses: { ...a.crossMisses, [recipe.id]: nextMisses(misses, crossed) } } : {}) };
     tank = mapFish(mapFish(tank, mother.id, (f) => ({ ...f, breedReadyAt: rest })), father.id, (f) => ({ ...f, breedReadyAt: rest }));
     return {
       ok: true,
       world: put(taken.world, tank),
-      events: [{ type: 'AQUARIUM_EGGS_LAID', speciesId: egg.species, eggId: egg.id, mutated: traits.mutated, ...(args.boostItem === undefined ? {} : { boostItem: args.boostItem }) }],
+      events: [{ type: 'AQUARIUM_EGGS_LAID', speciesId: egg.species, eggId: egg.id, mutated: traits.mutated, ...(args.boostItem === undefined ? {} : { boostItem: args.boostItem }), ...(recipe ? { cross: { recipeId: recipe.id, success: crossed, chance } } : {}) }],
       xp: AB.xp.breed,
     };
   });

@@ -1,0 +1,42 @@
+{
+  "id": "farm-02-pigs",
+  "area": "farm",
+  "title": "12 heo mới từ PIG_CATALOGUE (concept NOT DESIGNED), gắn với Aquarium / Garden / Cloud",
+  "decisions": "Expansion proposal 2026-10-16. All 12 are existing catalogue concepts marked NOT DESIGNED (asset/animals/sobi_farm/PIG_CATALOGUE.md), chosen so every other Area gets themed pigs: Aquarium (fisherman, mermaid, poseidon), Garden (gardener, strawberry, corn), Cloud (fairy, alchemist), Vietnamese (ong_dia, coffee), seasonal (snowman) and adventure (samurai). Idle only from this batch; sleep / wake are Gemini edits of each ACCEPTED idle (families.md). Species rows (content/farm/species.json) and shop skins only after approval.",
+  "sheets": [
+    {
+      "name": "P1",
+      "title": "Heo Ngư Dân, Heo Mỹ Nhân Ngư, Heo Poseidon, Heo Làm Vườn, Heo Dâu, Heo Bắp",
+      "board": "creature",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["creature_right"],
+      "notes": "Every character is the SAME chubby chibi pig body as the pink pig in image 1: round pink body, big head, short stubby legs, curly tail, round snout, small dot eyes with a white highlight, rosy cheeks. The theme is shown by costume, colour and one small prop only; the pig body and proportions never change.",
+      "cells": [
+        { "stem": "pig_fisherman", "desc": "Fisherman Pig: wearing a Vietnamese conical straw hat (non la) and a blue sleeveless vest, holding a short bamboo fishing rod with a tiny fish on the line" },
+        { "stem": "pig_mermaid", "desc": "Mermaid Pig: the front half a pink pig with a seashell hair clip and pearl necklace, the back legs replaced by a turquoise fish tail with soft fins, sitting on its tail" },
+        { "stem": "pig_poseidon", "desc": "Poseidon Pig: a sea-king pig with a small gold crown, a sea-green toga over one shoulder, a curly white beard and a small golden trident" },
+        { "stem": "pig_gardener", "desc": "Gardener Pig: wearing green overalls and a wide straw sun hat with a daisy, holding a small green watering can" },
+        { "stem": "pig_strawberry", "desc": "Strawberry Pig: a pig coloured strawberry-red with tiny cream seed dots on its body and a green leafy strawberry-calyx cap on its head" },
+        { "stem": "pig_corn", "desc": "Corn Pig: a buttery-yellow pig wearing a hood of green corn-husk leaves, a corn-silk tuft on top and a kernel pattern on its back" }
+      ]
+    },
+    {
+      "name": "P2",
+      "title": "Heo Tiên, Heo Giả Kim, Heo Ông Địa, Heo Cà Phê, Heo Người Tuyết, Heo Samurai",
+      "board": "creature",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["creature_right"],
+      "notes": "Every character is the SAME chubby chibi pig body as the pink pig in image 1: round pink body, big head, short stubby legs, curly tail, round snout, small dot eyes with a white highlight, rosy cheeks. The theme is shown by costume, colour and one small prop only; the pig body and proportions never change.",
+      "cells": [
+        { "stem": "pig_fairy", "desc": "Fairy Pig: a pale pink pig with small translucent pastel mint-and-pink fairy wings on its back, a flower crown and a tiny star wand" },
+        { "stem": "pig_alchemist", "desc": "Alchemist Pig: wearing a deep-purple hooded robe with gold trim and round goggles pushed up on its forehead, holding a small round flask of pink potion" },
+        { "stem": "pig_ong_dia", "desc": "Ong Dia Pig: a very round jolly pig like the Vietnamese earth god Ong Dia, big happy smile, an open orange-brown robe showing a round belly, holding a small palm-leaf fan" },
+        { "stem": "pig_coffee", "desc": "Coffee Pig: a warm coffee-brown pig with a cream belly, wearing a little barista apron, holding a Vietnamese phin coffee filter on a small glass" },
+        { "stem": "pig_snowman", "desc": "Snowman Pig: a snow-white pig with a red knitted scarf, a black mini top hat, a carrot-orange tip on its snout and two coal-black buttons on its chest" },
+        { "stem": "pig_samurai", "desc": "Samurai Pig: wearing red lacquered samurai armour plates and a small kabuto helmet with a gold crest, a wooden practice sword at its side" }
+      ]
+    }
+  ]
+}

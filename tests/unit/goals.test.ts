@@ -258,7 +258,7 @@ describe('achievements', () => {
   it("'ALL' targets come from what the Areas offer, and level / Codex metrics read the world", () => {
     const totals = GOALS.totals();
     expect(totals.codexBreed).toBeGreaterThan(50);
-    expect(totals.codexCrop).toBe(5);
+    expect(totals.codexCrop).toBe(13);
     expect(totals.codexItem).toBeGreaterThan(10);
     expect(totals.decorOwned).toBe(Object.keys(DECORS).length);
     const vm = achievementsVm(atLevel(base(), 5), GOALS);

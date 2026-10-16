@@ -59,6 +59,92 @@
       "growHours": 10,
       "yield": 2,
       "art": "flower_dream_bell"
+    },
+    {
+      "id": "flower_sun_tulip",
+      "nameVi": "Tulip Nắng",
+      "kind": "COMMON",
+      "seedItem": "item_seed_sun_tulip",
+      "produceItem": "item_flower_sun_tulip",
+      "growHours": 5,
+      "yield": 3,
+      "art": "flower_sun_tulip"
+    },
+    {
+      "id": "flower_rain_hydrangea",
+      "nameVi": "Cẩm Tú Cầu Mưa",
+      "kind": "COMMON",
+      "seedItem": "item_seed_rain_hydrangea",
+      "produceItem": "item_flower_rain_hydrangea",
+      "growHours": 6,
+      "yield": 3,
+      "art": "flower_rain_hydrangea"
+    },
+    {
+      "id": "flower_comet_lavender",
+      "nameVi": "Oải Hương Sao Chổi",
+      "kind": "NIGHT",
+      "seedItem": "item_seed_comet_lavender",
+      "produceItem": "item_flower_comet_lavender",
+      "growHours": 9,
+      "yield": 2,
+      "art": "flower_comet_lavender",
+      "hybrid": true
+    },
+    {
+      "id": "flower_sunset_hibiscus",
+      "nameVi": "Dâm Bụt Hoàng Hôn",
+      "kind": "RARE",
+      "seedItem": "item_seed_sunset_hibiscus",
+      "produceItem": "item_flower_sunset_hibiscus",
+      "growHours": 10,
+      "yield": 2,
+      "art": "flower_sunset_hibiscus",
+      "hybrid": true
+    },
+    {
+      "id": "flower_thunder_iris",
+      "nameVi": "Diên Vĩ Sấm",
+      "kind": "RARE",
+      "seedItem": "item_seed_thunder_iris",
+      "produceItem": "item_flower_thunder_iris",
+      "growHours": 11,
+      "yield": 2,
+      "art": "flower_thunder_iris",
+      "hybrid": true
+    },
+    {
+      "id": "flower_snow_camellia",
+      "nameVi": "Trà Tuyết",
+      "kind": "RARE",
+      "seedItem": "item_seed_snow_camellia",
+      "produceItem": "item_flower_snow_camellia",
+      "growHours": 11,
+      "yield": 2,
+      "art": "flower_snow_camellia",
+      "hybrid": true
+    },
+    {
+      "id": "flower_crystal_peony",
+      "nameVi": "Mẫu Đơn Pha Lê",
+      "kind": "RARE",
+      "seedItem": "item_seed_crystal_peony",
+      "produceItem": "item_flower_crystal_peony",
+      "growHours": 14,
+      "yield": 1,
+      "art": "flower_crystal_peony",
+      "hybrid": true
+    },
+    {
+      "id": "flower_sky_lotus",
+      "nameVi": "Sen Mây",
+      "kind": "NIGHT",
+      "seedItem": "item_seed_sky_lotus",
+      "produceItem": "item_flower_sky_lotus",
+      "growHours": 16,
+      "yield": 1,
+      "art": "flower_sky_lotus",
+      "hybrid": true
     }
   ]
 }

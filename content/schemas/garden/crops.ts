@@ -14,6 +14,8 @@ export const cropSchema = z.strictObject({
   growHours: z.number().finite().positive(),
   /** Items per harvest. */
   yield: posInt,
+  /** Bred, not bought (decision 035): its seed is sold only once a crossing at the lab has given it. */
+  hybrid: z.boolean().optional(),
   /** Art id stem: the scene looks for `<art>_sprout`, `<art>_grow`, `<art>_ripe`, `<art>_wilt`. */
   art: assetId,
 });

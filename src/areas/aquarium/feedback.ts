@@ -54,6 +54,8 @@ export function aquariumPresentation(e: EventBase, origin: 'action' | 'tick' | '
     case 'AQUARIUM_SHOP_BOUGHT':
       return { sound: 'coin_collect', toast: t(T.bought, { count: formatInt(e.count), name: itemName(e.itemId) }) };
     case 'AQUARIUM_EGGS_LAID':
+      if (e.cross?.success) return { sound: 'level_up', toast: t(T.eggsCrossed, { name: FISH[e.speciesId]?.nameVi ?? '' }) };
+      if (e.cross) return { sound: 'breed_chime', toast: t(T.eggsCrossMiss, { percent: Math.round(e.cross.chance) }) };
       return { sound: 'breed_chime', toast: e.mutated ? T.eggsMutated : T.eggs };
     case 'AQUARIUM_EGG_HATCHED':
       return { sound: 'birth_fanfare', toast: t(T.hatched, { name: e.name }) };

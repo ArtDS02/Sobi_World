@@ -1,0 +1,84 @@
+{
+  "id": "cloud-05-flowers",
+  "area": "cloud",
+  "title": "8 hoa mây mới cho Sobi Cloud: 8 loài × 4 giai đoạn (mở rộng)",
+  "decisions": "Expansion proposal 2026-10-16 (owner asked for more variety): 8 sky flowers beside the 6 of cloud-01-flowers, each tied to one sky element (sun, rain, thunder, snow, sunset, comet, crystal, lotus) so potions can use them. Same rules: the flower stands alone on a tiny soil mound, CloudScene draws it on plot_cloud, origin at the bottom; same 152x132 shared scale; magic shown by colour and shape only (no glow, no sparkles). Content rows (content/cloud/flowers.json), seeds, flower icons and manifest rows only after approval.",
+  "sheets": [
+    {
+      "name": "F5",
+      "title": "Tulip Nắng + Cẩm Tú Cầu Mưa",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages"],
+      "cells": [
+        { "stem": "flower_sun_tulip_sprout", "desc": "Sun Tulip sprout: two smooth pointed green leaves" },
+        { "stem": "flower_sun_tulip_grow", "desc": "Sun Tulip growing: a closed golden bud on a straight stem" },
+        { "stem": "flower_sun_tulip_ripe", "desc": "Sun Tulip in full bloom: three cup-shaped tulips in warm sunshine yellow fading to orange at the tips, petal tips shaped like soft sun rays" },
+        { "stem": "flower_sun_tulip_wilt", "desc": "Sun Tulip wilted" },
+        { "stem": "flower_rain_hydrangea_sprout", "desc": "Rain Hydrangea sprout with two broad serrated leaves" },
+        { "stem": "flower_rain_hydrangea_grow", "desc": "Rain Hydrangea growing: a leafy bush with a tight green bud cluster" },
+        { "stem": "flower_rain_hydrangea_ripe", "desc": "Rain Hydrangea in full bloom: two round pom-pom flower clusters in rain-blue and periwinkle, each tiny petal with a little raindrop-shaped pale highlight" },
+        { "stem": "flower_rain_hydrangea_wilt", "desc": "Rain Hydrangea wilted" }
+      ]
+    },
+    {
+      "name": "F6",
+      "title": "Diên Vĩ Sấm + Trà Tuyết",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages"],
+      "cells": [
+        { "stem": "flower_thunder_iris_sprout", "desc": "Thunder Iris sprout: two sword-shaped green leaves" },
+        { "stem": "flower_thunder_iris_grow", "desc": "Thunder Iris growing: tall sword leaves and a slim closed violet bud" },
+        { "stem": "flower_thunder_iris_ripe", "desc": "Thunder Iris in full bloom: two iris flowers in deep storm-violet with a zig-zag lightning-yellow stripe on each falling petal" },
+        { "stem": "flower_thunder_iris_wilt", "desc": "Thunder Iris wilted" },
+        { "stem": "flower_snow_camellia_sprout", "desc": "Snow Camellia sprout with two glossy dark-green oval leaves" },
+        { "stem": "flower_snow_camellia_grow", "desc": "Snow Camellia growing: a small glossy-leaved shrub with a round white bud" },
+        { "stem": "flower_snow_camellia_ripe", "desc": "Snow Camellia in full bloom: three layered round camellia flowers in snow white with icy pale-blue petal edges, golden centres, glossy dark leaves" },
+        { "stem": "flower_snow_camellia_wilt", "desc": "Snow Camellia wilted" }
+      ]
+    },
+    {
+      "name": "F7",
+      "title": "Dâm Bụt Hoàng Hôn + Oải Hương Sao Chổi",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages"],
+      "cells": [
+        { "stem": "flower_sunset_hibiscus_sprout", "desc": "Sunset Hibiscus sprout with two toothed oval leaves" },
+        { "stem": "flower_sunset_hibiscus_grow", "desc": "Sunset Hibiscus growing: a leafy stem with a twisted closed coral bud" },
+        { "stem": "flower_sunset_hibiscus_ripe", "desc": "Sunset Hibiscus in full bloom: two large open hibiscus flowers fading from peach-orange at the edges to deep rose-pink at the centre, a long golden stamen" },
+        { "stem": "flower_sunset_hibiscus_wilt", "desc": "Sunset Hibiscus wilted" },
+        { "stem": "flower_comet_lavender_sprout", "desc": "Comet Lavender sprout: a tiny tuft of narrow grey-green leaves" },
+        { "stem": "flower_comet_lavender_grow", "desc": "Comet Lavender growing: a clump of slim stems with closed pale lilac spikes" },
+        { "stem": "flower_comet_lavender_ripe", "desc": "Comet Lavender in full bloom: a clump of curved lavender spikes in deep lilac, each spike tip pale silver-white and curling like a little comet tail" },
+        { "stem": "flower_comet_lavender_wilt", "desc": "Comet Lavender wilted" }
+      ]
+    },
+    {
+      "name": "F8",
+      "title": "Mẫu Đơn Pha Lê + Sen Mây",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages"],
+      "cells": [
+        { "stem": "flower_crystal_peony_sprout", "desc": "Crystal Peony sprout with two deeply cut green leaves" },
+        { "stem": "flower_crystal_peony_grow", "desc": "Crystal Peony growing: a leafy bush with one round tight pink bud" },
+        { "stem": "flower_crystal_peony_ripe", "desc": "Crystal Peony in full bloom: one big ruffled peony in pale pink whose outer petals look like faceted translucent rose-quartz crystal, soft white highlights" },
+        { "stem": "flower_crystal_peony_wilt", "desc": "Crystal Peony wilted, a few crystal petals fallen" },
+        { "stem": "flower_sky_lotus_sprout", "desc": "Sky Lotus sprout: one small round lotus leaf unrolling on a short stem" },
+        { "stem": "flower_sky_lotus_grow", "desc": "Sky Lotus growing: two round lotus leaves and a pointed closed pink-white bud on a tall stem" },
+        { "stem": "flower_sky_lotus_ripe", "desc": "Sky Lotus in full bloom: one open lotus flower in white with soft pink tips and a golden seed-pod centre, resting on round leaves shaped like little puffy clouds" },
+        { "stem": "flower_sky_lotus_wilt", "desc": "Sky Lotus wilted" }
+      ]
+    }
+  ]
+}

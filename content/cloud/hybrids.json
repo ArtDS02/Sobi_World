@@ -1,0 +1,79 @@
+{
+  "pityAfter": 4,
+  "pityStep": 10,
+  "lab": { "cost": 60, "seeds": 2, "consolation": 1, "xp": 6 },
+  "recipes": [
+    {
+      "id": "hy_sun_tulip",
+      "parents": ["flower_cloud_daisy", "flower_dandelion"],
+      "result": "flower_sun_tulip",
+      "percent": 45
+    },
+    {
+      "id": "hy_rain_hydrangea",
+      "parents": ["flower_dandelion", "flower_moon_lily"],
+      "result": "flower_rain_hydrangea",
+      "percent": 45
+    },
+    {
+      "id": "hy_rainbow_rose",
+      "parents": ["flower_sun_tulip", "flower_rain_hydrangea"],
+      "result": "flower_rainbow_rose",
+      "percent": 30
+    },
+    {
+      "id": "hy_star_orchid",
+      "parents": ["flower_dream_bell", "flower_comet_lavender"],
+      "result": "flower_star_orchid",
+      "percent": 25
+    },
+    {
+      "id": "hy_comet_lavender",
+      "parents": ["flower_moon_lily", "flower_dream_bell"],
+      "result": "flower_comet_lavender",
+      "percent": 30
+    },
+    {
+      "id": "hy_sunset_hibiscus",
+      "parents": ["flower_sun_tulip", "flower_rainbow_rose"],
+      "result": "flower_sunset_hibiscus",
+      "percent": 25
+    },
+    {
+      "id": "hy_thunder_iris",
+      "parents": ["flower_rain_hydrangea", "flower_dream_bell"],
+      "result": "flower_thunder_iris",
+      "percent": 22
+    },
+    {
+      "id": "hy_snow_camellia",
+      "parents": ["flower_comet_lavender", "flower_cloud_daisy"],
+      "result": "flower_snow_camellia",
+      "percent": 22
+    },
+    {
+      "id": "hy_crystal_peony",
+      "parents": ["flower_rainbow_rose", "flower_star_orchid"],
+      "result": "flower_crystal_peony",
+      "percent": 15
+    },
+    {
+      "id": "hy_crystal_peony_b",
+      "parents": ["flower_thunder_iris", "flower_snow_camellia"],
+      "result": "flower_crystal_peony",
+      "percent": 15
+    },
+    {
+      "id": "hy_sky_lotus",
+      "parents": ["flower_crystal_peony", "flower_moon_lily"],
+      "result": "flower_sky_lotus",
+      "percent": 10
+    },
+    {
+      "id": "hy_sky_lotus_b",
+      "parents": ["flower_sunset_hibiscus", "flower_comet_lavender"],
+      "result": "flower_sky_lotus",
+      "percent": 10
+    }
+  ]
+}

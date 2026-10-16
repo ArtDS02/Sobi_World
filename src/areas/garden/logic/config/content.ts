@@ -3,9 +3,11 @@
 import areaRaw from '../../../../../content/garden/area.json';
 import balanceRaw from '../../../../../content/garden/balance.json';
 import cropsRaw from '../../../../../content/garden/crops.json';
+import hybridsRaw from '../../../../../content/garden/hybrids.json';
 import { areaManifestSchema } from '../../../../../content/schemas/area';
 import { gardenBalanceFileSchema } from '../../../../../content/schemas/garden/balance';
 import { cropsFileSchema } from '../../../../../content/schemas/garden/crops';
+import { hybridsFileSchema } from '../../../../../content/schemas/shared/hybrids';
 import { loadContent } from '../../../../core/content/load';
 import type { CropRule, PlotRules } from '../../../../systems/plants/plot';
 
@@ -13,6 +15,7 @@ export const GARDEN_CONTENT = {
   area: loadContent('garden/area.json', areaManifestSchema, areaRaw),
   balance: loadContent('garden/balance.json', gardenBalanceFileSchema, balanceRaw),
   crops: loadContent('garden/crops.json', cropsFileSchema, cropsRaw),
+  hybrids: loadContent('garden/hybrids.json', hybridsFileSchema, hybridsRaw),
 };
 
 export const GARDEN_AREA_ID = GARDEN_CONTENT.area.id;
@@ -25,6 +28,8 @@ export interface Crop extends CropRule {
   seedItem: string;
   produceItem: string;
   art: string;
+  /** Only bred (decision 035): its seed is sold once the lab has given it. */
+  hybrid: boolean;
 }
 
 export const CROP_LIST: readonly Crop[] = GARDEN_CONTENT.crops.crops.map((c) => ({
@@ -33,6 +38,7 @@ export const CROP_LIST: readonly Crop[] = GARDEN_CONTENT.crops.crops.map((c) => 
   seedItem: c.seedItem,
   produceItem: c.produceItem,
   art: c.art,
+  hybrid: c.hybrid ?? false,
   growMs: c.growHours * HOUR,
   yield: c.yield,
 }));
@@ -47,6 +53,13 @@ export const PLOT_RULES: PlotRules = {
   witherYieldFactor: GB.witherYieldFactor,
 };
 export const WATER_MS = GB.waterHours * HOUR;
+
+/** The crossing lab (decision 035): recipes, pity and what a try costs. */
+export const GARDEN_HYBRIDS = GARDEN_CONTENT.hybrids;
+export const GARDEN_LAB = GARDEN_HYBRIDS.lab ?? { cost: 0, seeds: 1, consolation: 0, xp: 0 };
+for (const r of GARDEN_HYBRIDS.recipes) {
+  for (const id of [...r.parents, r.result]) if (!(id in CROPS)) throw new Error(`garden/hybrids.json ${r.id}: unknown crop ${id}`);
+}
 
 
 export type BuildingId = 'mill' | 'composter';

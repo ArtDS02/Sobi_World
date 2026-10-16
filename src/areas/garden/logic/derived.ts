@@ -6,6 +6,12 @@ import { batchesReady } from '../../../core/production/production';
 import { CROPS, GB, PLOT_RULES, MAX_PLOTS, PLOTS_PER_ZONE, zoneOf, type BuildingId } from './config/content';
 import type { GardenState } from './state';
 
+/** The crossing lab of a save (decision 035); empty when the save predates it. */
+export const labOf = (g: Pick<GardenState, 'lab'>): NonNullable<GardenState['lab']> => g.lab ?? { found: [], misses: {} };
+
+/** Whether the seed of `cropId` can be bought: a plain crop, or a hybrid the lab has given once. */
+export const seedUnlocked = (g: Pick<GardenState, 'lab'>, cropId: string): boolean => !CROPS[cropId]?.hybrid || labOf(g).found.includes(cropId);
+
 /** Plots a sprinkler of this level waters (0 = no sprinkler). */
 export const sprinklerCoverage = (level: number): number => (level <= 0 ? 0 : (GB.sprinkler[Math.min(level, GB.sprinkler.length) - 1]?.plots ?? 0));
 export const isCovered = (g: Pick<GardenState, 'sprinkler'>, index: number): boolean => index < sprinklerCoverage(g.sprinkler);

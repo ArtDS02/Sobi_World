@@ -21,7 +21,7 @@ function idsUnder(value: unknown, props: readonly string[], into: Set<string>, u
 /** Uses that live in code, not in content (each has its own unit test): the trough takes the basic food, the Aquarium's medicine cures fish. */
 const CODE_USES: Partial<Record<string, readonly UseKind[]>> = { FOOD_BASIC: ['trough'], MEDICINE_COMMON: ['fishCure'] };
 
-export type UseKind = 'sell' | 'feed' | 'cure' | 'mood' | 'mutation' | 'plant' | 'recipe' | 'order' | 'upgrade' | 'technology' | 'equip' | 'battle' | 'ration' | 'hatch' | 'tank' | 'trough' | 'fishCure';
+export type UseKind = 'sell' | 'feed' | 'cure' | 'mood' | 'mutation' | 'plant' | 'recipe' | 'order' | 'upgrade' | 'technology' | 'equip' | 'battle' | 'ration' | 'hatch' | 'tank' | 'trough' | 'fishCure' | 'cross';
 
 export function itemUses(): Record<ItemId, UseKind[]> {
   const uses = Object.fromEntries(ITEM_IDS.map((id) => [id, new Set<UseKind>()])) as Record<ItemId, Set<UseKind>>;
@@ -40,6 +40,15 @@ export function itemUses(): Record<ItemId, UseKind[]> {
   for (const c of json('garden/crops.json').crops) mark(c.seedItem, 'plant');
   for (const f of json('cloud/flowers.json').flowers) mark(f.seedItem, 'plant');
   for (const f of json('aquarium/fish.json').fish) mark(f.item, 'tank');
+  // Crossing (decision 035): a parent's harvest goes into the Garden / Cloud lab; a parent fish breeds a rarer one.
+  const produceOf = new Map<string, string>([
+    ...json('garden/crops.json').crops.map((c: { id: string; produceItem: string }) => [c.id, c.produceItem] as const),
+    ...json('cloud/flowers.json').flowers.map((c: { id: string; produceItem: string }) => [c.id, c.produceItem] as const),
+    ...json('aquarium/fish.json').fish.map((c: { id: string; item: string }) => [c.id, c.item] as const),
+  ]);
+  for (const file of ['garden/hybrids.json', 'cloud/hybrids.json', 'aquarium/hybrids.json']) {
+    for (const r of json(file).recipes) for (const p of r.parents) mark(produceOf.get(p) ?? p, 'cross');
+  }
   for (const r of json('shared/recipes.json').recipes) for (const id of Object.keys(r.inputs)) mark(id, 'recipe');
   for (const r of json('shared/orders.json').requests) mark(r.itemId, 'order');
   for (const e of json('adventure/equipment.json').equipment) mark(e.id, 'equip');

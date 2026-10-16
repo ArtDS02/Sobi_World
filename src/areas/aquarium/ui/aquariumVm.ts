@@ -11,9 +11,10 @@ import { formatDuration, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { TRAITS } from '../../../systems/breeding';
 import { breedFish, pairError } from '../logic/actions/breed';
+import { crossChance, recipeFor } from '../../../systems/hybrid';
 import { cleanTank, feedFish } from '../logic/actions/care';
 import { upgradeTank } from '../logic/actions/trade';
-import { AB, FEED_ITEM, FISH, FISH_LIST, fishOfItem, tankCapacity } from '../logic/config/content';
+import { AB, FEED_ITEM, FISH, FISH_HYBRIDS, FISH_LIST, fishOfItem, tankCapacity } from '../logic/config/content';
 import { castCooldownLeft, nextTankLevel, tankFree } from '../logic/derived';
 import { itemSalePrice } from '../../../systems/valuation/itemPrice';
 import { aquariumOf } from '../logic/save/lens';
@@ -187,9 +188,35 @@ export interface PairVm {
   label: string;
   /** The traits the pair can pass on, names only. */
   traitNames: string[];
+  /** A crossing pair (decision 035): what it may hatch and the chance of it now. */
+  cross: { name: string; art: string; percent: number; mystery: boolean } | null;
 }
 
-/** Every male–female pair of one breedable species that the rules allow right now. */
+export interface FishBookRowVm {
+  recipeId: string;
+  parents: readonly [{ name: string; art: string; owned: boolean }, { name: string; art: string; owned: boolean }];
+  result: { name: string; art: string; mystery: boolean };
+  percent: number;
+}
+
+/** The fish crossing book: every recipe, the result hidden until its species is in the Codex. */
+export function fishBookVm(world: WorldSave): FishBookRowVm[] {
+  const a = aquariumOf(world);
+  const known = world.collection.discovered.fish ?? [];
+  const inTank = new Set(a.fish.map((f) => f.breed));
+  return FISH_HYBRIDS.recipes.map((r) => {
+    const p = (id: string) => ({ name: FISH[id]?.nameVi ?? id, art: FISH[id]?.art ?? '', owned: inTank.has(id) });
+    const mystery = !known.includes(r.result) && !inTank.has(r.result);
+    return {
+      recipeId: r.id,
+      parents: [p(r.parents[0]), p(r.parents[1])] as const,
+      result: { name: mystery ? vi.lab.unknown : (FISH[r.result]?.nameVi ?? r.result), art: FISH[r.result]?.art ?? '', mystery },
+      percent: Math.round(crossChance(r, a.crossMisses?.[r.id] ?? 0, FISH_HYBRIDS)),
+    };
+  });
+}
+
+/** Every male–female pair the rules allow right now: one breedable species, or two with a crossing recipe. */
 export function breedablePairs(world: WorldSave, now: number): PairVm[] {
   const a = aquariumOf(world);
   const out: PairVm[] = [];
@@ -198,9 +225,20 @@ export function breedablePairs(world: WorldSave, now: number): PairVm[] {
   for (const m of males) {
     for (const f of females) {
       if (pairError(a, m, f, now) !== null) continue;
-      const species = FISH[m.breed]!;
+      const species = FISH[f.breed]!;
+      const recipe = recipeFor(FISH_HYBRIDS.recipes, m.breed, f.breed);
+      const known = world.collection.discovered.fish ?? [];
+      const cross = recipe
+        ? {
+            name: known.includes(recipe.result) ? (FISH[recipe.result]?.nameVi ?? recipe.result) : vi.lab.unknown,
+            art: FISH[recipe.result]?.art ?? '',
+            percent: Math.round(crossChance(recipe, a.crossMisses?.[recipe.id] ?? 0, FISH_HYBRIDS)),
+            mystery: !known.includes(recipe.result),
+          }
+        : null;
       const names = [...new Set([...(m.traits ?? []), ...(f.traits ?? [])])].map((id) => TRAITS.get(id)?.nameVi ?? id);
-      out.push({ aId: m.id, bId: f.id, speciesName: species.nameVi, art: species.art, label: t(vi.aquarium.breedNote, { a: m.name, b: f.name }), traitNames: names });
+      const speciesName = m.breed === f.breed ? species.nameVi : `${FISH[m.breed]?.nameVi ?? m.breed} × ${species.nameVi}`;
+      out.push({ aId: m.id, bId: f.id, speciesName, art: species.art, label: t(vi.aquarium.breedNote, { a: m.name, b: f.name }), traitNames: names, cross });
     }
   }
   return out;

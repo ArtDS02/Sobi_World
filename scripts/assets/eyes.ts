@@ -20,6 +20,10 @@ const patch = (...box: Box): EyeSpec => ({ box, mode: 'patch' });
 
 export const EYE_OVERRIDES: Record<string, EyeOverride> = {
   pig_pumpkin: { closedInIdle: true },
+  pig_ong_dia: { closedInIdle: true },
+  pig_strawberry: { extra: [oval(410, 148, 436, 192)] },
+  pig_coffee: { drop: [[300, 280, 400, 360]] },
+  pig_snowman: { drop: [[300, 280, 400, 360]] },
   pig_crybaby: { closedInIdle: true },
   pig_party: { closedInIdle: true },
   pig_teacher: { eyes: [oval(296, 220, 316, 246), oval(370, 212, 388, 236)] },

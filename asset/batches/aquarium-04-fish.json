@@ -1,0 +1,57 @@
+{
+  "id": "aquarium-04-fish",
+  "area": "aquarium",
+  "title": "18 loài cá / sinh vật biển mới cho Sobi Aquarium (mở rộng)",
+  "decisions": "Expansion proposal 2026-10-16 (owner asked for more variety): 18 new species beside the 12 of aquarium-01-fish, same look rules (side view facing right, rarer = finer fins and richer colours). Sheet F3 = freshwater pond/home fish (COMMON/UNCOMMON, several Vietnamese), F4 = reef fish (UNCOMMON/RARE), F5 = sea friends incl. the baby dolphin (RARE/EPIC/LEGENDARY). Non-fish creatures still face right with their body trailing left. Content rows (content/aquarium/fish.json), manifest rows and K-derived ui_item_fish_* icons are added only after the owner approves the art; a LEGENDARY fish needs a balance decision.",
+  "sheets": [
+    {
+      "name": "F3",
+      "title": "Cá Bảy Màu, Cá Neon, Cá Trê, Cá Sặc Gấm, Cá Bình Tích, Cá Chạch",
+      "board": "creature",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["fish"],
+      "cells": [
+        { "stem": "fish_guppy", "desc": "Guppy: a tiny slim fish with a HUGE fan-shaped tail in sunset orange, pink and teal speckles" },
+        { "stem": "fish_neon_tetra", "desc": "Neon Tetra: a small slim fish with one bright turquoise-blue stripe along its side and a red lower half near the tail" },
+        { "stem": "fish_catfish", "desc": "Catfish: a chubby grey-brown catfish with a wide flat head, a cream belly and four long droopy whiskers like a moustache" },
+        { "stem": "fish_gourami", "desc": "Honey Gourami: an oval honey-gold fish with a pearly dotted pattern and two long thread-like feeler fins hanging under its chest" },
+        { "stem": "fish_molly", "desc": "Balloon Molly: a very round, balloon-bellied velvet-black molly with a big rounded tail and a soft silver sheen" },
+        { "stem": "fish_loach", "desc": "Loach: a long wiggly sand-coloured loach with soft dark spots and tiny whiskers, body in a gentle S-curve" }
+      ]
+    },
+    {
+      "name": "F4",
+      "title": "Cá Đuôi Gai Xanh, Cá Bướm, Cá Đĩa, Cá Mao Tiên, Cá Vẹt, Cá Hộp",
+      "board": "creature",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["fish"],
+      "cells": [
+        { "stem": "fish_blue_tang", "desc": "Blue Tang: an oval royal-blue fish with a dark curved stripe on its side and a bright yellow tail" },
+        { "stem": "fish_butterflyfish", "desc": "Butterflyfish: a flat round lemon-yellow fish with white bands, a pointed little snout and a dark eye-spot near its tail" },
+        { "stem": "fish_discus", "desc": "Discus: a perfectly round flat discus fish in turquoise with wavy red-orange lines, like a painted plate" },
+        { "stem": "fish_lionfish", "desc": "Lionfish: a cute lionfish with a red-and-cream striped body and soft feathery frilled fins fanning out like a mane (rounded, not sharp)" },
+        { "stem": "fish_parrotfish", "desc": "Parrotfish: a chunky mint-green and pink parrotfish with a rounded beak-like mouth and big colourful scales" },
+        { "stem": "fish_boxfish", "desc": "Boxfish: a cube-shaped yellow boxfish with black polka dots, tiny fins and a small pouting mouth" }
+      ]
+    },
+    {
+      "name": "F5",
+      "title": "Sứa Kẹo Bông, Rùa Biển Con, Cá Đuối Ó, Bạch Tuộc Con, Cá Rồng Kim Long, Cá Heo Con",
+      "board": "creature",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["fish"],
+      "notes": "Cells 1, 2, 3 and 4 are sea creatures, not fish, but follow the same rules: seen from the side, heading to the RIGHT, with a cute small eye and a tiny smile.",
+      "cells": [
+        { "stem": "fish_jellyfish", "desc": "Candy Jellyfish: a soft pastel pink-and-lilac jellyfish with a round dome bell and short wavy ribbon tentacles trailing to the left (colour only, no glow)" },
+        { "stem": "fish_sea_turtle", "desc": "Baby Sea Turtle: a small sea turtle swimming to the right, mint-green shell with honey-brown plates, flippers spread like wings" },
+        { "stem": "fish_manta", "desc": "Manta Ray: a gentle navy-blue manta ray with a cream belly edge, wide wing fins in a soft wave, heading right, thin tail trailing left" },
+        { "stem": "fish_octopus", "desc": "Baby Octopus: a round coral-orange baby octopus with a soft dome head and eight curly little tentacles trailing to the left, cream suction dots" },
+        { "stem": "fish_arowana", "desc": "Golden Arowana: a long majestic arowana with gleaming large gold scales, an upturned mouth with two small barbels and long flowing back fins" },
+        { "stem": "fish_dolphin", "desc": "Baby Dolphin: a chubby smiling baby dolphin in soft sky-blue with a cream belly, a rounded beak, a curved back fin and a tail fluke, leaping slightly upward to the right" }
+      ]
+    }
+  ]
+}

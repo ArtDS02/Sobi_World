@@ -18,7 +18,7 @@ import { formatDuration, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { msToRipe, plotStage } from '../../../systems/plants/plot';
 import { CAULDRON, CB, FLOWER_LIST, FLOWERS, PLOT_RULES, WATER_ITEM, springLevel } from '../logic/config/content';
-import { msToNextWater, nextExpansion, nextSpringLevel, plotViews, springStock, type Expansion } from '../logic/derived';
+import { msToNextWater, nextExpansion, nextSpringLevel, plotViews, seedUnlocked, springStock, type Expansion } from '../logic/derived';
 import { cloudOf } from '../logic/save/lens';
 import { emptyIn, unfertilizedIn } from './cloudTierVm';
 
@@ -76,6 +76,8 @@ export interface SeedVm {
   growsIn: string;
   kind: string;
   selected: boolean;
+  /** Only bred, never found and none in the bag (decision 035): it cannot be sown yet. */
+  locked: boolean;
 }
 
 export function paletteVm(world: WorldSave, selected: string): SeedVm[] {
@@ -90,6 +92,7 @@ export function paletteVm(world: WorldSave, selected: string): SeedVm[] {
     growsIn: t(vi.cloud.growsIn, { time: formatDuration(f.growMs) }),
     kind: vi.cloud.kind[f.kind],
     selected: f.id === selected,
+    locked: !seedUnlocked(cloudOf(world), f.id) && (world.inventory.items[f.seedItem] ?? 0) === 0,
   }));
 }
 

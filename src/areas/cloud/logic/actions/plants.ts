@@ -6,7 +6,7 @@ import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
 import { emptyPlot, plotStage, settlePlot, sow } from '../../../../systems/plants/plot';
 import { CB, FERTILIZER_ITEM, FLOWERS, PLOT_RULES, WATER_ITEM, WATER_MS } from '../config/content';
-import { isNightNow, needsWater, pickYield } from '../derived';
+import { isNightNow, needsWater, pickYield, seedUnlocked } from '../derived';
 import type { CloudEvent } from '../events';
 import { countOf, fits, give, pay, put, runCloud, take, type CloudResult } from './kit';
 
@@ -22,6 +22,7 @@ export function plantFlowers(world: WorldSave, args: { flowerId: string; plots: 
     if (plots.some((i) => g.plots[i]!.cropId !== null)) return { ok: false, error: 'PLOT_OCCUPIED' };
     const fromBag = Math.min(countOf(w, flower.seedItem), plots.length);
     const bought = plots.length - fromBag;
+    if (bought > 0 && !seedUnlocked(g, flower.id)) return { ok: false, error: 'HYBRID_LOCKED' };
     const gold = bought * ITEMS[flower.seedItem as ItemId].priceGold;
     const taken = take(w, flower.seedItem, fromBag);
     if (!taken.ok) return taken;

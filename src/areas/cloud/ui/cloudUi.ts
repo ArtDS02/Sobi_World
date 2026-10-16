@@ -20,6 +20,13 @@ import { createCloudDialogs } from './cloudDialogs';
 import { onViewedTier, viewedTier } from '../viewedTier';
 import { actingTier, emptyIn, unfertilizedIn } from './cloudTierVm';
 import { bulkVm, hudVm, paletteVm, type CloudRun } from './cloudVm';
+import { CLOUD_HYBRIDS } from '../logic/config/content';
+
+/** The parents of the first recipe that gives `flowerId`. */
+const firstRecipe = (flowerId: string): [string | null, string | null] => {
+  const r = CLOUD_HYBRIDS.recipes.find((x) => x.result === flowerId);
+  return r ? [r.parents[0], r.parents[1]] : [null, null];
+};
 
 export interface CloudUiDeps {
   world: Pick<GameStore, 'getSnapshot' | 'subscribe' | 'dispatch'>;
@@ -59,7 +66,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     return s.status === 'ready' && s.save && hasCloud(s.save) ? s.save : null;
   };
   const dispatch = (run: CloudRun) => void d.world.dispatch(run);
-  const dialogs = createCloudDialogs({ host: dialogHost, world, now: d.now, dayOffsetMs: offset, dispatch, refresh: () => refresh() });
+  const dialogs = createCloudDialogs({ host: dialogHost, world, now: d.now, dayOffsetMs: offset, dispatch, dispatchResult: (run) => d.world.dispatch(run), refresh: () => refresh() });
 
   const runs = {
     water: (w: WorldSave, c: Parameters<CloudRun>[1]) => waterPlots(w, {}, c),
@@ -91,8 +98,10 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     const chosen = seeds.find((s) => s.selected);
     return areaDock({
       prefix: 'cloud-ui',
-      seeds: seeds.map((s) => ({ id: s.flowerId, name: s.name, art: s.art, price: s.price, owned: s.owned, title: `${s.name} · ${s.kind} · ${s.growsIn}`, selected: s.selected })),
+      seeds: seeds.map((s) => ({ id: s.flowerId, name: s.name, art: s.art, price: s.price, owned: s.owned, title: s.locked ? `${s.name} · ${vi.lab.lockedSeed}` : `${s.name} · ${s.kind} · ${s.growsIn}`, selected: s.selected, ...(s.locked ? { locked: vi.lab.lockedSeed } : {}) })),
       onPick: (id) => {
+        // A locked hybrid opens the lab on its first recipe instead (decision 035).
+        if (seeds.find((s) => s.flowerId === id)?.locked) return dialogs.openLab(firstRecipe(id));
         selected = id;
         refresh();
       },
@@ -113,6 +122,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
             { ...bulk.plantAll, label: vi.cloud.plantAll, art: chosen?.art ?? CLOUD_DOCK_ART.harvest, tone: 'main', onClick: () => dispatch(runs.plantAll) },
           ],
         },
+        { label: vi.lab.group, actions: [{ label: vi.lab.open, reason: null, art: CLOUD_DOCK_ART.lab, tone: 'main', onClick: () => dialogs.openLab() }] },
         { label: vi.areaHud.groupGrow, actions: [{ ...bulk.expand, art: CLOUD_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openExpand() }] },
       ],
     });

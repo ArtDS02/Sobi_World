@@ -76,6 +76,8 @@ const eggSchema = z.strictObject({
   traits: z.array(z.string()),
   hiddenTrait: z.string().optional(),
   mutated: z.boolean().optional(),
+  /** The egg came from a crossing that gave its rarer species (decision 035). */
+  hybrid: z.boolean().optional(),
   lineage: lineageSchema.optional(),
 });
 
@@ -97,6 +99,8 @@ export const aquariumStateSchema = z.strictObject({
   /** No fish dies before this time: set after a catch-up that skipped a death (decision 004). */
   graceUntil: time.optional(),
   memorials: z.array(memorialSchema),
+  /** Failed tries per crossing recipe (decision 035): each raises the next one's chance. */
+  crossMisses: z.record(z.string(), z.number().int().min(0)).optional(),
   /** Time the slice was simulated up to (epoch ms). */
   lastTickedAt: time,
 });

@@ -46,7 +46,8 @@ export const CATALOGUE_SIZES: Record<string, Size> = {
 
 // Sobi Garden (GĐ5): a plot, a crop on it (feet at the bottom), the sprinkler and the two workshops.
 for (const plot of ['plot_soil', 'plot_soil_wet', 'plot_locked']) CATALOGUE_SIZES[plot] = { width: 152, height: 108 };
-for (const crop of ['grass', 'wheat', 'corn', 'potato', 'carrot']) {
+// Decision 035 adds 8 crops (batch garden-04-crops).
+for (const crop of ['grass', 'wheat', 'corn', 'potato', 'carrot', 'tomato', 'cabbage', 'pumpkin', 'sweet_potato', 'strawberry', 'watermelon', 'sugarcane', 'sunflower']) {
   for (const stage of ['sprout', 'grow', 'ripe', 'wilt']) CATALOGUE_SIZES[`crop_${crop}_${stage}`] = { width: 152, height: 132 };
 }
 CATALOGUE_SIZES.bld_sprinkler = { width: 120, height: 200 };
@@ -69,7 +70,12 @@ CATALOGUE_SIZES.prop_scale_pile = { width: 128, height: 96 };
 CATALOGUE_SIZES.prop_fishing_bobber = { width: 64, height: 80 };
 
 // Sobi Aquarium (GĐ8): the fish swimming (facing right), the tank, the dock and the sea backdrop.
-for (const fish of ['goldfish', 'perch', 'carp', 'clownfish', 'pufferfish', 'angelfish', 'glowfish', 'betta', 'lanternfish', 'seahorse', 'dragon_koi', 'moonfish']) {
+// Decision 035 adds 18 species (batch aquarium-04-fish).
+for (const fish of [
+  'goldfish', 'perch', 'carp', 'clownfish', 'pufferfish', 'angelfish', 'glowfish', 'betta', 'lanternfish', 'seahorse', 'dragon_koi', 'moonfish',
+  'guppy', 'neon_tetra', 'catfish', 'loach', 'gourami', 'molly', 'butterflyfish', 'boxfish', 'blue_tang', 'discus', 'lionfish', 'parrotfish',
+  'jellyfish', 'octopus', 'sea_turtle', 'manta', 'arowana', 'dolphin',
+]) {
   CATALOGUE_SIZES[`fish_${fish}`] = { width: 192, height: 120 };
 }
 // GĐ14 (decision 030): one painted backdrop per tank level (sheets E1–E5 of aquarium-01-scene, 2:1 → 1800 × 900; the
@@ -83,7 +89,11 @@ CATALOGUE_SIZES.prop_pearl_pile = { width: 128, height: 84 };
 CATALOGUE_SIZES.prop_orange_pearls = { width: 80, height: 56 };
 
 // Sobi Cloud (GĐ9): a flower on its plot (feet at the bottom), the cloud plot, the spring, the cauldron and the sky backdrop.
-for (const flower of ['cloud_daisy', 'dandelion', 'rainbow_rose', 'star_orchid', 'moon_lily', 'dream_bell']) {
+// Decision 035 adds 8 flowers (batch cloud-05-flowers).
+for (const flower of [
+  'cloud_daisy', 'dandelion', 'rainbow_rose', 'star_orchid', 'moon_lily', 'dream_bell',
+  'sun_tulip', 'rain_hydrangea', 'comet_lavender', 'sunset_hibiscus', 'thunder_iris', 'snow_camellia', 'crystal_peony', 'sky_lotus',
+]) {
   for (const stage of ['sprout', 'grow', 'ripe', 'wilt']) CATALOGUE_SIZES[`flower_${flower}_${stage}`] = { width: 152, height: 132 };
 }
 CATALOGUE_SIZES.plot_cloud = { width: 152, height: 108 };

@@ -768,6 +768,126 @@
       "sleepAsset": "pigs/base/pig_aurora_sleep.png",
       "tags": ["species", "new"],
       "wakeAsset": "pigs/base/pig_aurora_wake.png"
+    },
+    {
+      "id": "pig_fisherman",
+      "status": "production",
+      "nameVi": "Heo Ngư Dân",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_fisherman.png",
+      "sleepAsset": "pigs/base/pig_fisherman_sleep.png",
+      "wakeAsset": "pigs/base/pig_fisherman_wake.png"
+    },
+    {
+      "id": "pig_gardener",
+      "status": "production",
+      "nameVi": "Heo Làm Vườn",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_gardener.png",
+      "sleepAsset": "pigs/base/pig_gardener_sleep.png",
+      "wakeAsset": "pigs/base/pig_gardener_wake.png"
+    },
+    {
+      "id": "pig_strawberry",
+      "status": "production",
+      "nameVi": "Heo Dâu",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_strawberry.png",
+      "sleepAsset": "pigs/base/pig_strawberry_sleep.png",
+      "wakeAsset": "pigs/base/pig_strawberry_wake.png"
+    },
+    {
+      "id": "pig_corn",
+      "status": "production",
+      "nameVi": "Heo Bắp",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_corn.png",
+      "sleepAsset": "pigs/base/pig_corn_sleep.png",
+      "wakeAsset": "pigs/base/pig_corn_wake.png"
+    },
+    {
+      "id": "pig_coffee",
+      "status": "production",
+      "nameVi": "Heo Cà Phê",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_coffee.png",
+      "sleepAsset": "pigs/base/pig_coffee_sleep.png",
+      "wakeAsset": "pigs/base/pig_coffee_wake.png"
+    },
+    {
+      "id": "pig_snowman",
+      "status": "production",
+      "nameVi": "Heo Người Tuyết",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_snowman.png",
+      "sleepAsset": "pigs/base/pig_snowman_sleep.png",
+      "wakeAsset": "pigs/base/pig_snowman_wake.png"
+    },
+    {
+      "id": "pig_ong_dia",
+      "status": "production",
+      "nameVi": "Heo Ông Địa",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_ong_dia.png",
+      "sleepAsset": "pigs/base/pig_ong_dia_sleep.png",
+      "wakeAsset": "pigs/base/pig_ong_dia_wake.png"
+    },
+    {
+      "id": "pig_samurai",
+      "status": "production",
+      "nameVi": "Heo Samurai",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_samurai.png",
+      "sleepAsset": "pigs/base/pig_samurai_sleep.png",
+      "wakeAsset": "pigs/base/pig_samurai_wake.png"
+    },
+    {
+      "id": "pig_alchemist",
+      "status": "production",
+      "nameVi": "Heo Giả Kim",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_alchemist.png",
+      "sleepAsset": "pigs/base/pig_alchemist_sleep.png",
+      "wakeAsset": "pigs/base/pig_alchemist_wake.png"
+    },
+    {
+      "id": "pig_fairy",
+      "status": "production",
+      "nameVi": "Heo Tiên",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_fairy.png",
+      "sleepAsset": "pigs/base/pig_fairy_sleep.png",
+      "wakeAsset": "pigs/base/pig_fairy_wake.png"
+    },
+    {
+      "id": "pig_mermaid",
+      "status": "production",
+      "nameVi": "Heo Mỹ Nhân Ngư",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_mermaid.png",
+      "sleepAsset": "pigs/base/pig_mermaid_sleep.png",
+      "wakeAsset": "pigs/base/pig_mermaid_wake.png"
+    },
+    {
+      "id": "pig_poseidon",
+      "status": "production",
+      "nameVi": "Heo Poseidon",
+      "collection": "species",
+      "tags": ["species"],
+      "asset": "pigs/base/pig_poseidon.png",
+      "sleepAsset": "pigs/base/pig_poseidon_sleep.png",
+      "wakeAsset": "pigs/base/pig_poseidon_wake.png"
     }
   ],
   "fx": [
@@ -1419,6 +1539,166 @@
       "asset": "props/crop_carrot_wilt.png"
     },
     {
+      "id": "crop_tomato_sprout",
+      "status": "production",
+      "asset": "props/crop_tomato_sprout.png"
+    },
+    {
+      "id": "crop_tomato_grow",
+      "status": "production",
+      "asset": "props/crop_tomato_grow.png"
+    },
+    {
+      "id": "crop_tomato_ripe",
+      "status": "production",
+      "asset": "props/crop_tomato_ripe.png"
+    },
+    {
+      "id": "crop_tomato_wilt",
+      "status": "production",
+      "asset": "props/crop_tomato_wilt.png"
+    },
+    {
+      "id": "crop_cabbage_sprout",
+      "status": "production",
+      "asset": "props/crop_cabbage_sprout.png"
+    },
+    {
+      "id": "crop_cabbage_grow",
+      "status": "production",
+      "asset": "props/crop_cabbage_grow.png"
+    },
+    {
+      "id": "crop_cabbage_ripe",
+      "status": "production",
+      "asset": "props/crop_cabbage_ripe.png"
+    },
+    {
+      "id": "crop_cabbage_wilt",
+      "status": "production",
+      "asset": "props/crop_cabbage_wilt.png"
+    },
+    {
+      "id": "crop_sweet_potato_sprout",
+      "status": "production",
+      "asset": "props/crop_sweet_potato_sprout.png"
+    },
+    {
+      "id": "crop_sweet_potato_grow",
+      "status": "production",
+      "asset": "props/crop_sweet_potato_grow.png"
+    },
+    {
+      "id": "crop_sweet_potato_ripe",
+      "status": "production",
+      "asset": "props/crop_sweet_potato_ripe.png"
+    },
+    {
+      "id": "crop_sweet_potato_wilt",
+      "status": "production",
+      "asset": "props/crop_sweet_potato_wilt.png"
+    },
+    {
+      "id": "crop_pumpkin_sprout",
+      "status": "production",
+      "asset": "props/crop_pumpkin_sprout.png"
+    },
+    {
+      "id": "crop_pumpkin_grow",
+      "status": "production",
+      "asset": "props/crop_pumpkin_grow.png"
+    },
+    {
+      "id": "crop_pumpkin_ripe",
+      "status": "production",
+      "asset": "props/crop_pumpkin_ripe.png"
+    },
+    {
+      "id": "crop_pumpkin_wilt",
+      "status": "production",
+      "asset": "props/crop_pumpkin_wilt.png"
+    },
+    {
+      "id": "crop_strawberry_sprout",
+      "status": "production",
+      "asset": "props/crop_strawberry_sprout.png"
+    },
+    {
+      "id": "crop_strawberry_grow",
+      "status": "production",
+      "asset": "props/crop_strawberry_grow.png"
+    },
+    {
+      "id": "crop_strawberry_ripe",
+      "status": "production",
+      "asset": "props/crop_strawberry_ripe.png"
+    },
+    {
+      "id": "crop_strawberry_wilt",
+      "status": "production",
+      "asset": "props/crop_strawberry_wilt.png"
+    },
+    {
+      "id": "crop_sugarcane_sprout",
+      "status": "production",
+      "asset": "props/crop_sugarcane_sprout.png"
+    },
+    {
+      "id": "crop_sugarcane_grow",
+      "status": "production",
+      "asset": "props/crop_sugarcane_grow.png"
+    },
+    {
+      "id": "crop_sugarcane_ripe",
+      "status": "production",
+      "asset": "props/crop_sugarcane_ripe.png"
+    },
+    {
+      "id": "crop_sugarcane_wilt",
+      "status": "production",
+      "asset": "props/crop_sugarcane_wilt.png"
+    },
+    {
+      "id": "crop_watermelon_sprout",
+      "status": "production",
+      "asset": "props/crop_watermelon_sprout.png"
+    },
+    {
+      "id": "crop_watermelon_grow",
+      "status": "production",
+      "asset": "props/crop_watermelon_grow.png"
+    },
+    {
+      "id": "crop_watermelon_ripe",
+      "status": "production",
+      "asset": "props/crop_watermelon_ripe.png"
+    },
+    {
+      "id": "crop_watermelon_wilt",
+      "status": "production",
+      "asset": "props/crop_watermelon_wilt.png"
+    },
+    {
+      "id": "crop_sunflower_sprout",
+      "status": "production",
+      "asset": "props/crop_sunflower_sprout.png"
+    },
+    {
+      "id": "crop_sunflower_grow",
+      "status": "production",
+      "asset": "props/crop_sunflower_grow.png"
+    },
+    {
+      "id": "crop_sunflower_ripe",
+      "status": "production",
+      "asset": "props/crop_sunflower_ripe.png"
+    },
+    {
+      "id": "crop_sunflower_wilt",
+      "status": "production",
+      "asset": "props/crop_sunflower_wilt.png"
+    },
+    {
       "id": "fish_goldfish",
       "status": "production",
       "asset": "props/fish_goldfish.png"
@@ -1477,6 +1757,96 @@
       "id": "fish_moonfish",
       "status": "production",
       "asset": "props/fish_moonfish.png"
+    },
+    {
+      "id": "fish_guppy",
+      "status": "production",
+      "asset": "props/fish_guppy.png"
+    },
+    {
+      "id": "fish_neon_tetra",
+      "status": "production",
+      "asset": "props/fish_neon_tetra.png"
+    },
+    {
+      "id": "fish_catfish",
+      "status": "production",
+      "asset": "props/fish_catfish.png"
+    },
+    {
+      "id": "fish_loach",
+      "status": "production",
+      "asset": "props/fish_loach.png"
+    },
+    {
+      "id": "fish_gourami",
+      "status": "production",
+      "asset": "props/fish_gourami.png"
+    },
+    {
+      "id": "fish_molly",
+      "status": "production",
+      "asset": "props/fish_molly.png"
+    },
+    {
+      "id": "fish_butterflyfish",
+      "status": "production",
+      "asset": "props/fish_butterflyfish.png"
+    },
+    {
+      "id": "fish_boxfish",
+      "status": "production",
+      "asset": "props/fish_boxfish.png"
+    },
+    {
+      "id": "fish_blue_tang",
+      "status": "production",
+      "asset": "props/fish_blue_tang.png"
+    },
+    {
+      "id": "fish_discus",
+      "status": "production",
+      "asset": "props/fish_discus.png"
+    },
+    {
+      "id": "fish_lionfish",
+      "status": "production",
+      "asset": "props/fish_lionfish.png"
+    },
+    {
+      "id": "fish_parrotfish",
+      "status": "production",
+      "asset": "props/fish_parrotfish.png"
+    },
+    {
+      "id": "fish_jellyfish",
+      "status": "production",
+      "asset": "props/fish_jellyfish.png"
+    },
+    {
+      "id": "fish_octopus",
+      "status": "production",
+      "asset": "props/fish_octopus.png"
+    },
+    {
+      "id": "fish_sea_turtle",
+      "status": "production",
+      "asset": "props/fish_sea_turtle.png"
+    },
+    {
+      "id": "fish_manta",
+      "status": "production",
+      "asset": "props/fish_manta.png"
+    },
+    {
+      "id": "fish_arowana",
+      "status": "production",
+      "asset": "props/fish_arowana.png"
+    },
+    {
+      "id": "fish_dolphin",
+      "status": "production",
+      "asset": "props/fish_dolphin.png"
     },
     {
       "id": "flower_cloud_daisy_sprout",
@@ -1597,6 +1967,166 @@
       "id": "flower_dream_bell_wilt",
       "status": "production",
       "asset": "props/flower_dream_bell_wilt.png"
+    },
+    {
+      "id": "flower_sun_tulip_sprout",
+      "status": "production",
+      "asset": "props/flower_sun_tulip_sprout.png"
+    },
+    {
+      "id": "flower_sun_tulip_grow",
+      "status": "production",
+      "asset": "props/flower_sun_tulip_grow.png"
+    },
+    {
+      "id": "flower_sun_tulip_ripe",
+      "status": "production",
+      "asset": "props/flower_sun_tulip_ripe.png"
+    },
+    {
+      "id": "flower_sun_tulip_wilt",
+      "status": "production",
+      "asset": "props/flower_sun_tulip_wilt.png"
+    },
+    {
+      "id": "flower_rain_hydrangea_sprout",
+      "status": "production",
+      "asset": "props/flower_rain_hydrangea_sprout.png"
+    },
+    {
+      "id": "flower_rain_hydrangea_grow",
+      "status": "production",
+      "asset": "props/flower_rain_hydrangea_grow.png"
+    },
+    {
+      "id": "flower_rain_hydrangea_ripe",
+      "status": "production",
+      "asset": "props/flower_rain_hydrangea_ripe.png"
+    },
+    {
+      "id": "flower_rain_hydrangea_wilt",
+      "status": "production",
+      "asset": "props/flower_rain_hydrangea_wilt.png"
+    },
+    {
+      "id": "flower_comet_lavender_sprout",
+      "status": "production",
+      "asset": "props/flower_comet_lavender_sprout.png"
+    },
+    {
+      "id": "flower_comet_lavender_grow",
+      "status": "production",
+      "asset": "props/flower_comet_lavender_grow.png"
+    },
+    {
+      "id": "flower_comet_lavender_ripe",
+      "status": "production",
+      "asset": "props/flower_comet_lavender_ripe.png"
+    },
+    {
+      "id": "flower_comet_lavender_wilt",
+      "status": "production",
+      "asset": "props/flower_comet_lavender_wilt.png"
+    },
+    {
+      "id": "flower_sunset_hibiscus_sprout",
+      "status": "production",
+      "asset": "props/flower_sunset_hibiscus_sprout.png"
+    },
+    {
+      "id": "flower_sunset_hibiscus_grow",
+      "status": "production",
+      "asset": "props/flower_sunset_hibiscus_grow.png"
+    },
+    {
+      "id": "flower_sunset_hibiscus_ripe",
+      "status": "production",
+      "asset": "props/flower_sunset_hibiscus_ripe.png"
+    },
+    {
+      "id": "flower_sunset_hibiscus_wilt",
+      "status": "production",
+      "asset": "props/flower_sunset_hibiscus_wilt.png"
+    },
+    {
+      "id": "flower_thunder_iris_sprout",
+      "status": "production",
+      "asset": "props/flower_thunder_iris_sprout.png"
+    },
+    {
+      "id": "flower_thunder_iris_grow",
+      "status": "production",
+      "asset": "props/flower_thunder_iris_grow.png"
+    },
+    {
+      "id": "flower_thunder_iris_ripe",
+      "status": "production",
+      "asset": "props/flower_thunder_iris_ripe.png"
+    },
+    {
+      "id": "flower_thunder_iris_wilt",
+      "status": "production",
+      "asset": "props/flower_thunder_iris_wilt.png"
+    },
+    {
+      "id": "flower_snow_camellia_sprout",
+      "status": "production",
+      "asset": "props/flower_snow_camellia_sprout.png"
+    },
+    {
+      "id": "flower_snow_camellia_grow",
+      "status": "production",
+      "asset": "props/flower_snow_camellia_grow.png"
+    },
+    {
+      "id": "flower_snow_camellia_ripe",
+      "status": "production",
+      "asset": "props/flower_snow_camellia_ripe.png"
+    },
+    {
+      "id": "flower_snow_camellia_wilt",
+      "status": "production",
+      "asset": "props/flower_snow_camellia_wilt.png"
+    },
+    {
+      "id": "flower_crystal_peony_sprout",
+      "status": "production",
+      "asset": "props/flower_crystal_peony_sprout.png"
+    },
+    {
+      "id": "flower_crystal_peony_grow",
+      "status": "production",
+      "asset": "props/flower_crystal_peony_grow.png"
+    },
+    {
+      "id": "flower_crystal_peony_ripe",
+      "status": "production",
+      "asset": "props/flower_crystal_peony_ripe.png"
+    },
+    {
+      "id": "flower_crystal_peony_wilt",
+      "status": "production",
+      "asset": "props/flower_crystal_peony_wilt.png"
+    },
+    {
+      "id": "flower_sky_lotus_sprout",
+      "status": "production",
+      "asset": "props/flower_sky_lotus_sprout.png"
+    },
+    {
+      "id": "flower_sky_lotus_grow",
+      "status": "production",
+      "asset": "props/flower_sky_lotus_grow.png"
+    },
+    {
+      "id": "flower_sky_lotus_ripe",
+      "status": "production",
+      "asset": "props/flower_sky_lotus_ripe.png"
+    },
+    {
+      "id": "flower_sky_lotus_wilt",
+      "status": "production",
+      "asset": "props/flower_sky_lotus_wilt.png"
     },
     {
       "id": "plot_cloud",
@@ -2416,6 +2946,86 @@
       "asset": "ui/ui_item_carrot.png"
     },
     {
+      "id": "ui_item_seed_tomato",
+      "status": "production",
+      "asset": "ui/ui_item_seed_tomato.png"
+    },
+    {
+      "id": "ui_item_tomato",
+      "status": "production",
+      "asset": "ui/ui_item_tomato.png"
+    },
+    {
+      "id": "ui_item_seed_cabbage",
+      "status": "production",
+      "asset": "ui/ui_item_seed_cabbage.png"
+    },
+    {
+      "id": "ui_item_cabbage",
+      "status": "production",
+      "asset": "ui/ui_item_cabbage.png"
+    },
+    {
+      "id": "ui_item_seed_sweet_potato",
+      "status": "production",
+      "asset": "ui/ui_item_seed_sweet_potato.png"
+    },
+    {
+      "id": "ui_item_sweet_potato",
+      "status": "production",
+      "asset": "ui/ui_item_sweet_potato.png"
+    },
+    {
+      "id": "ui_item_seed_pumpkin",
+      "status": "production",
+      "asset": "ui/ui_item_seed_pumpkin.png"
+    },
+    {
+      "id": "ui_item_pumpkin",
+      "status": "production",
+      "asset": "ui/ui_item_pumpkin.png"
+    },
+    {
+      "id": "ui_item_seed_strawberry",
+      "status": "production",
+      "asset": "ui/ui_item_seed_strawberry.png"
+    },
+    {
+      "id": "ui_item_strawberry",
+      "status": "production",
+      "asset": "ui/ui_item_strawberry.png"
+    },
+    {
+      "id": "ui_item_seed_sugarcane",
+      "status": "production",
+      "asset": "ui/ui_item_seed_sugarcane.png"
+    },
+    {
+      "id": "ui_item_sugarcane",
+      "status": "production",
+      "asset": "ui/ui_item_sugarcane.png"
+    },
+    {
+      "id": "ui_item_seed_watermelon",
+      "status": "production",
+      "asset": "ui/ui_item_seed_watermelon.png"
+    },
+    {
+      "id": "ui_item_watermelon",
+      "status": "production",
+      "asset": "ui/ui_item_watermelon.png"
+    },
+    {
+      "id": "ui_item_seed_sunflower",
+      "status": "production",
+      "asset": "ui/ui_item_seed_sunflower.png"
+    },
+    {
+      "id": "ui_item_sunflower",
+      "status": "production",
+      "asset": "ui/ui_item_sunflower.png"
+    },
+    {
       "id": "ui_item_food_premium",
       "status": "production",
       "asset": "ui/ui_item_food_premium.png"
@@ -2486,6 +3096,96 @@
       "asset": "ui/ui_item_fish_moonfish.png"
     },
     {
+      "id": "ui_item_fish_guppy",
+      "status": "production",
+      "asset": "ui/ui_item_fish_guppy.png"
+    },
+    {
+      "id": "ui_item_fish_neon_tetra",
+      "status": "production",
+      "asset": "ui/ui_item_fish_neon_tetra.png"
+    },
+    {
+      "id": "ui_item_fish_catfish",
+      "status": "production",
+      "asset": "ui/ui_item_fish_catfish.png"
+    },
+    {
+      "id": "ui_item_fish_loach",
+      "status": "production",
+      "asset": "ui/ui_item_fish_loach.png"
+    },
+    {
+      "id": "ui_item_fish_gourami",
+      "status": "production",
+      "asset": "ui/ui_item_fish_gourami.png"
+    },
+    {
+      "id": "ui_item_fish_molly",
+      "status": "production",
+      "asset": "ui/ui_item_fish_molly.png"
+    },
+    {
+      "id": "ui_item_fish_butterflyfish",
+      "status": "production",
+      "asset": "ui/ui_item_fish_butterflyfish.png"
+    },
+    {
+      "id": "ui_item_fish_boxfish",
+      "status": "production",
+      "asset": "ui/ui_item_fish_boxfish.png"
+    },
+    {
+      "id": "ui_item_fish_blue_tang",
+      "status": "production",
+      "asset": "ui/ui_item_fish_blue_tang.png"
+    },
+    {
+      "id": "ui_item_fish_discus",
+      "status": "production",
+      "asset": "ui/ui_item_fish_discus.png"
+    },
+    {
+      "id": "ui_item_fish_lionfish",
+      "status": "production",
+      "asset": "ui/ui_item_fish_lionfish.png"
+    },
+    {
+      "id": "ui_item_fish_parrotfish",
+      "status": "production",
+      "asset": "ui/ui_item_fish_parrotfish.png"
+    },
+    {
+      "id": "ui_item_fish_jellyfish",
+      "status": "production",
+      "asset": "ui/ui_item_fish_jellyfish.png"
+    },
+    {
+      "id": "ui_item_fish_octopus",
+      "status": "production",
+      "asset": "ui/ui_item_fish_octopus.png"
+    },
+    {
+      "id": "ui_item_fish_sea_turtle",
+      "status": "production",
+      "asset": "ui/ui_item_fish_sea_turtle.png"
+    },
+    {
+      "id": "ui_item_fish_manta",
+      "status": "production",
+      "asset": "ui/ui_item_fish_manta.png"
+    },
+    {
+      "id": "ui_item_fish_arowana",
+      "status": "production",
+      "asset": "ui/ui_item_fish_arowana.png"
+    },
+    {
+      "id": "ui_item_fish_dolphin",
+      "status": "production",
+      "asset": "ui/ui_item_fish_dolphin.png"
+    },
+    {
       "id": "ui_item_scale",
       "status": "production",
       "asset": "ui/ui_item_scale.png"
@@ -2539,6 +3239,86 @@
       "id": "ui_item_flower_star_orchid",
       "status": "production",
       "asset": "ui/ui_item_flower_star_orchid.png"
+    },
+    {
+      "id": "ui_item_seed_sun_tulip",
+      "status": "production",
+      "asset": "ui/ui_item_seed_sun_tulip.png"
+    },
+    {
+      "id": "ui_item_flower_sun_tulip",
+      "status": "production",
+      "asset": "ui/ui_item_flower_sun_tulip.png"
+    },
+    {
+      "id": "ui_item_seed_rain_hydrangea",
+      "status": "production",
+      "asset": "ui/ui_item_seed_rain_hydrangea.png"
+    },
+    {
+      "id": "ui_item_flower_rain_hydrangea",
+      "status": "production",
+      "asset": "ui/ui_item_flower_rain_hydrangea.png"
+    },
+    {
+      "id": "ui_item_seed_comet_lavender",
+      "status": "production",
+      "asset": "ui/ui_item_seed_comet_lavender.png"
+    },
+    {
+      "id": "ui_item_flower_comet_lavender",
+      "status": "production",
+      "asset": "ui/ui_item_flower_comet_lavender.png"
+    },
+    {
+      "id": "ui_item_seed_sunset_hibiscus",
+      "status": "production",
+      "asset": "ui/ui_item_seed_sunset_hibiscus.png"
+    },
+    {
+      "id": "ui_item_flower_sunset_hibiscus",
+      "status": "production",
+      "asset": "ui/ui_item_flower_sunset_hibiscus.png"
+    },
+    {
+      "id": "ui_item_seed_thunder_iris",
+      "status": "production",
+      "asset": "ui/ui_item_seed_thunder_iris.png"
+    },
+    {
+      "id": "ui_item_flower_thunder_iris",
+      "status": "production",
+      "asset": "ui/ui_item_flower_thunder_iris.png"
+    },
+    {
+      "id": "ui_item_seed_snow_camellia",
+      "status": "production",
+      "asset": "ui/ui_item_seed_snow_camellia.png"
+    },
+    {
+      "id": "ui_item_flower_snow_camellia",
+      "status": "production",
+      "asset": "ui/ui_item_flower_snow_camellia.png"
+    },
+    {
+      "id": "ui_item_seed_crystal_peony",
+      "status": "production",
+      "asset": "ui/ui_item_seed_crystal_peony.png"
+    },
+    {
+      "id": "ui_item_flower_crystal_peony",
+      "status": "production",
+      "asset": "ui/ui_item_flower_crystal_peony.png"
+    },
+    {
+      "id": "ui_item_seed_sky_lotus",
+      "status": "production",
+      "asset": "ui/ui_item_seed_sky_lotus.png"
+    },
+    {
+      "id": "ui_item_flower_sky_lotus",
+      "status": "production",
+      "asset": "ui/ui_item_flower_sky_lotus.png"
     },
     {
       "id": "ui_item_seed_moon_lily",

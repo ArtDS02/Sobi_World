@@ -53,6 +53,12 @@ export function gardenPresentation(e: EventBase, origin: 'action' | 'tick' | 'ca
     }
     case 'GARDEN_SHOP_BOUGHT':
       return { sound: 'coin_collect', toast: t(T.bought, { count: formatInt(e.count), name: itemName(e.itemId) }) };
+    case 'GARDEN_CROSSED': {
+      const L = vi.lab.toast;
+      const name = CROPS[e.cropId]?.nameVi ?? '';
+      if (e.success) return { sound: 'level_up', toast: e.firstTime ? t(L.first, { name }) : t(L.success, { count: e.seeds, name: itemName(e.seedItem ?? '') }) };
+      return { sound: 'notify', toast: e.seeds > 0 && e.seedItem ? t(L.fail, { count: e.seeds, name: itemName(e.seedItem) }) : L.failEmpty };
+    }
     case 'GARDEN_LEVEL_UP':
       return { sound: 'level_up', toast: t(T.levelUp, { level: e.level }) };
   }

@@ -279,9 +279,11 @@ describe('the rod', () => {
   it('every species can be caught or bred, and has at least two uses', () => {
     expect(FISH_LIST.length).toBeGreaterThanOrEqual(10);
     const rarities = new Set(FISH_LIST.map((f) => f.rarity));
-    expect(rarities).toEqual(new Set(['COMMON', 'UNCOMMON', 'RARE', 'EPIC']));
+    expect(rarities).toEqual(new Set(['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY']));
     for (const f of FISH_LIST) {
-      expect(f.catchWeight).toBeGreaterThan(0); // bites the rod (Codex, orders)
+      // Bites the rod (Codex, orders), or only hatches from a crossing (decision 035: the Legendary dolphin).
+      if (f.catchWeight === 0) expect(f.rarity, f.id).toBe('LEGENDARY');
+      else expect(f.catchWeight).toBeGreaterThan(0);
       expect(f.tankGold).toBeGreaterThan(0); // raised and sold
       expect(f.scaleHours).toBeGreaterThan(0); // sheds scales
     }

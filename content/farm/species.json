@@ -768,6 +768,114 @@
       "artId": "pig_phoenix",
       "color": "#f07a3e",
       "traits": ["myth", "fire", "wings", "red", "light"]
+    },
+    {
+      "id": "PIG_FISHERMAN",
+      "nameVi": "Heo Ngư Dân",
+      "rarity": "UNCOMMON",
+      "family": "VIETNAM",
+      "artId": "pig_fisherman",
+      "color": "#5a8fc8",
+      "traits": ["vietnam", "water", "job"]
+    },
+    {
+      "id": "PIG_GARDENER",
+      "nameVi": "Heo Làm Vườn",
+      "rarity": "UNCOMMON",
+      "family": "JOB",
+      "artId": "pig_gardener",
+      "color": "#6aa84f",
+      "traits": ["farm", "plant", "green", "job"]
+    },
+    {
+      "id": "PIG_STRAWBERRY",
+      "nameVi": "Heo Dâu",
+      "rarity": "UNCOMMON",
+      "family": "FOOD",
+      "artId": "pig_strawberry",
+      "color": "#d8424a",
+      "traits": ["fruit", "red", "sweet", "food"]
+    },
+    {
+      "id": "PIG_CORN",
+      "nameVi": "Heo Bắp",
+      "rarity": "UNCOMMON",
+      "family": "FOOD",
+      "artId": "pig_corn",
+      "color": "#f0d060",
+      "traits": ["plant", "food", "gold", "farm"]
+    },
+    {
+      "id": "PIG_COFFEE",
+      "nameVi": "Heo Cà Phê",
+      "rarity": "UNCOMMON",
+      "family": "VIETNAM",
+      "artId": "pig_coffee",
+      "color": "#8a5a3c",
+      "traits": ["vietnam", "brown", "cozy", "food"]
+    },
+    {
+      "id": "PIG_SNOWMAN",
+      "nameVi": "Heo Người Tuyết",
+      "rarity": "UNCOMMON",
+      "family": "FUNNY",
+      "artId": "pig_snowman",
+      "color": "#f4f6fa",
+      "traits": ["white", "ice", "cozy", "festive"]
+    },
+    {
+      "id": "PIG_ONG_DIA",
+      "nameVi": "Heo Ông Địa",
+      "rarity": "RARE",
+      "family": "VIETNAM",
+      "artId": "pig_ong_dia",
+      "color": "#e08a3c",
+      "traits": ["vietnam", "festive", "gold", "funny"]
+    },
+    {
+      "id": "PIG_SAMURAI",
+      "nameVi": "Heo Samurai",
+      "rarity": "RARE",
+      "family": "ADVENTURE",
+      "artId": "pig_samurai",
+      "color": "#c8402e",
+      "traits": ["warrior", "red", "metal"]
+    },
+    {
+      "id": "PIG_ALCHEMIST",
+      "nameVi": "Heo Giả Kim",
+      "rarity": "RARE",
+      "family": "FANTASY",
+      "artId": "pig_alchemist",
+      "color": "#6a3fa0",
+      "traits": ["magic", "purple", "tech"]
+    },
+    {
+      "id": "PIG_FAIRY",
+      "nameVi": "Heo Tiên",
+      "rarity": "RARE",
+      "family": "FANTASY",
+      "artId": "pig_fairy",
+      "color": "#f6b8d0",
+      "traits": ["magic", "wings", "flower", "pink"]
+    },
+    {
+      "id": "PIG_MERMAID",
+      "nameVi": "Heo Mỹ Nhân Ngư",
+      "rarity": "EPIC",
+      "family": "WATER",
+      "artId": "pig_mermaid",
+      "color": "#4cc0b8",
+      "traits": ["water", "myth", "blue"]
+    },
+    {
+      "id": "PIG_POSEIDON",
+      "nameVi": "Heo Poseidon",
+      "rarity": "LEGENDARY",
+      "family": "MYTHIC",
+      "artId": "pig_poseidon",
+      "color": "#3f9a8a",
+      "traits": ["myth", "water", "royal", "gold"]
     }
   ]
 }

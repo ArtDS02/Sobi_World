@@ -56,7 +56,9 @@ describe('hud and palette', () => {
 
   it('lists the five seeds with their price, what the bag holds and the growth time', () => {
     const items = paletteVm(base({ item_seed_corn: 3 }), 'crop_corn');
-    expect(items.map((s) => s.name)).toEqual(['Cỏ', 'Lúa mì', 'Bắp', 'Khoai tây', 'Cà rốt']);
+    expect(items.map((s) => s.name).slice(0, 7)).toEqual(['Cỏ', 'Lúa mì', 'Bắp', 'Khoai tây', 'Cà rốt', 'Cà chua', 'Bắp cải']);
+    // The hybrid crops (decision 035) are listed locked until the lab has given them.
+    expect(items.filter((s) => s.locked).map((s) => s.cropId)).toEqual(['crop_sweet_potato', 'crop_pumpkin', 'crop_strawberry', 'crop_sugarcane', 'crop_watermelon', 'crop_sunflower']);
     expect(items.find((s) => s.cropId === 'crop_corn')).toMatchObject({ selected: true, line: '5 Sobi Coin · có 3', art: 'ui_item_seed_corn', growsIn: expect.stringContaining('4') });
     expect(items.filter((s) => s.selected)).toHaveLength(1);
   });

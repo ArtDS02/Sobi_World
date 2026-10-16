@@ -10,7 +10,8 @@ import { releaseFish } from '../logic/actions/fishing';
 import { collectScales, sellCatch, upgradeTank } from '../logic/actions/trade';
 import { AB } from '../logic/config/content';
 import { aquariumOf } from '../logic/save/lens';
-import { bagVm, breedablePairs, breedReason, tankVm } from './aquariumVm';
+import { bagVm, breedablePairs, breedReason, fishBookVm, tankVm } from './aquariumVm';
+import type { WorldSave } from '../../../core/save/world';
 import { actionButton, needBar, type DialogKit } from './dialogKit';
 
 export function tankDialogs(k: DialogKit) {
@@ -97,7 +98,13 @@ export function tankDialogs(k: DialogKit) {
                   'li',
                   {},
                   art(p.art, 'aquarium-dialog__bag-icon'),
-                  el('div', {}, el('b', { text: `${p.speciesName}: ${p.label}` }), p.traitNames.length > 0 ? el('small', { text: `${vi.heredity.traits}: ${p.traitNames.join(', ')}` }) : null),
+                  el(
+                    'div',
+                    {},
+                    el('b', { text: `${p.speciesName}: ${p.label}` }),
+                    p.cross ? el('small', { class: 'aquarium-dialog__cross', text: t(vi.lab.fish.pairHint, { name: p.cross.name, percent: p.cross.percent }) }) : null,
+                    p.traitNames.length > 0 ? el('small', { text: `${vi.heredity.traits}: ${p.traitNames.join(', ')}` }) : null,
+                  ),
                   actionButton({ label: vi.aquarium.breedGo, reason: breedReason(w, p, k.now(), k.offset()) }, () => {
                     k.run((s, c) => breedFish(s, { fishAId: p.aId, fishBId: p.bId, ...(boost ? { boostItem: boost } : {}) }, c));
                     close();
@@ -105,8 +112,38 @@ export function tankDialogs(k: DialogKit) {
                 ),
               ),
             ),
+        fishBook(w),
       );
     });
+  }
+
+  /** The fish crossing book (decision 035): parents → result, the result a silhouette until it is in the Codex. */
+  function fishBook(w: WorldSave): HTMLElement {
+    const rows = fishBookVm(w);
+    const chip = (pic: string, cls = '') => el('span', { class: `c-lab__chip ${cls}`.trim() }, art(pic, 'c-lab__chip-pic'));
+    return el(
+      'details',
+      { class: 'aquarium-dialog__book' },
+      el('summary', { text: `${vi.lab.fish.book} (${rows.filter((r) => !r.result.mystery).length}/${rows.length})` }),
+      el('p', { class: 'c-dialog__hint', text: vi.lab.fish.intro }),
+      el(
+        'div',
+        { class: 'c-lab__book' },
+        ...rows.map((r) =>
+          el(
+            'div',
+            { class: `c-lab__row${r.result.mystery ? '' : ' is-found'}` },
+            chip(r.parents[0].art, r.parents[0].owned ? '' : 'is-short'),
+            el('span', { class: 'c-lab__op', text: '+' }),
+            chip(r.parents[1].art, r.parents[1].owned ? '' : 'is-short'),
+            el('span', { class: 'c-lab__op', text: '→' }),
+            chip(r.result.art, `c-lab__chip--result${r.result.mystery ? ' is-mystery' : ''}`),
+            el('span', { class: 'c-lab__row-text' }, el('b', { text: r.result.name }), el('small', { text: `${r.parents[0].name} + ${r.parents[1].name}` })),
+            el('span', { class: 'c-lab__status', text: `${r.percent}%` }),
+          ),
+        ),
+      ),
+    );
   }
 
   return { openBag, openTank, openBreed };

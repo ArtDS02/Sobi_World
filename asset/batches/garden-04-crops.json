@@ -1,0 +1,84 @@
+{
+  "id": "garden-04-crops",
+  "area": "garden",
+  "title": "8 cây trồng mới cho Sobi Garden: 8 cây × 4 giai đoạn (mở rộng)",
+  "decisions": "Expansion proposal 2026-10-16 (owner asked for more variety): 8 crops beside the 5 of garden-01-crops, same rules (crop stands alone on a tiny soil mound, GardenScene draws it on plot_soil, origin at the bottom; same 152x132 shared scale). Mix of pig feed and Vietnamese crops: tomato, pumpkin, sweet potato, cabbage, strawberry, watermelon, sugarcane, sunflower. Root / ground crops show the crop at the base when ripe. Content rows (content/garden/crops.json), seeds, produce icons and manifest rows only after approval.",
+  "sheets": [
+    {
+      "name": "C4",
+      "title": "Cà chua + Bí ngô",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages_crop"],
+      "cells": [
+        { "stem": "crop_tomato_sprout", "desc": "Tomato sprout: two small fuzzy green seed leaves" },
+        { "stem": "crop_tomato_grow", "desc": "Tomato growing: a young bushy tomato plant tied to a short wooden stake, tiny yellow flowers, no fruit yet" },
+        { "stem": "crop_tomato_ripe", "desc": "Tomato ripe: a leafy tomato plant on a wooden stake with clusters of plump shiny red tomatoes with green star tops" },
+        { "stem": "crop_tomato_wilt", "desc": "Tomato wilted: the plant slumped on its stake, dry brown leaves, one shrivelled tomato" },
+        { "stem": "crop_pumpkin_sprout", "desc": "Pumpkin sprout: two round green seed leaves and one small curly tendril" },
+        { "stem": "crop_pumpkin_grow", "desc": "Pumpkin growing: a low vine with big round leaves and one yellow trumpet flower" },
+        { "stem": "crop_pumpkin_ripe", "desc": "Pumpkin ripe: a big round ribbed orange pumpkin sitting on the ground under broad green leaves and a curly vine" },
+        { "stem": "crop_pumpkin_wilt", "desc": "Pumpkin wilted: dry brown curled leaves over a small pale soft pumpkin" }
+      ]
+    },
+    {
+      "name": "C5",
+      "title": "Khoai lang + Bắp cải",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages_crop"],
+      "cells": [
+        { "stem": "crop_sweet_potato_sprout", "desc": "Sweet Potato sprout: a few small heart-shaped green-purple leaves" },
+        { "stem": "crop_sweet_potato_grow", "desc": "Sweet Potato growing: a low spreading vine of heart-shaped leaves with purple stems" },
+        { "stem": "crop_sweet_potato_ripe", "desc": "Sweet Potato ripe: a lush mound of heart-shaped leaves with two plump purple-red sweet potatoes peeking out of the soil at the base" },
+        { "stem": "crop_sweet_potato_wilt", "desc": "Sweet Potato wilted: the vine flat and yellow-brown" },
+        { "stem": "crop_cabbage_sprout", "desc": "Cabbage sprout: three small round pale-green leaves" },
+        { "stem": "crop_cabbage_grow", "desc": "Cabbage growing: a loose open rosette of wavy blue-green leaves" },
+        { "stem": "crop_cabbage_ripe", "desc": "Cabbage ripe: a big round tight pale-green cabbage head wrapped in wavy outer leaves" },
+        { "stem": "crop_cabbage_wilt", "desc": "Cabbage wilted: outer leaves yellowed and floppy, head smaller and dull" }
+      ]
+    },
+    {
+      "name": "C6",
+      "title": "Dâu tây + Dưa hấu",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages_crop"],
+      "cells": [
+        { "stem": "crop_strawberry_sprout", "desc": "Strawberry sprout: a tiny tuft of three-part toothed green leaves" },
+        { "stem": "crop_strawberry_grow", "desc": "Strawberry growing: a low leafy strawberry plant with small white five-petal flowers" },
+        { "stem": "crop_strawberry_ripe", "desc": "Strawberry ripe: a leafy strawberry plant with several plump glossy red strawberries hanging down, tiny yellow seeds" },
+        { "stem": "crop_strawberry_wilt", "desc": "Strawberry wilted: brown curled leaves and one shrivelled dark berry" },
+        { "stem": "crop_watermelon_sprout", "desc": "Watermelon sprout: two oval green seed leaves" },
+        { "stem": "crop_watermelon_grow", "desc": "Watermelon growing: a low vine with deeply lobed leaves, a small yellow flower and a tiny striped baby melon" },
+        { "stem": "crop_watermelon_ripe", "desc": "Watermelon ripe: a big oval dark-and-light-green striped watermelon on the ground under lobed leaves and curly tendrils" },
+        { "stem": "crop_watermelon_wilt", "desc": "Watermelon wilted: dry grey-brown vine over a dull small melon" }
+      ]
+    },
+    {
+      "name": "C7",
+      "title": "Mía + Hướng dương",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages_crop"],
+      "cells": [
+        { "stem": "crop_sugarcane_sprout", "desc": "Sugarcane sprout: two narrow green blade leaves from a short cane stub" },
+        { "stem": "crop_sugarcane_grow", "desc": "Sugarcane growing: three short green jointed canes with long arching leaves" },
+        { "stem": "crop_sugarcane_ripe", "desc": "Sugarcane ripe: a clump of three tall purple-brown jointed sugarcane stalks with ringed nodes and long green leaves arching from the top" },
+        { "stem": "crop_sugarcane_wilt", "desc": "Sugarcane wilted: stalks leaning, leaves dry and straw-coloured" },
+        { "stem": "crop_sunflower_sprout", "desc": "Sunflower sprout: two oval seed leaves on a short stem" },
+        { "stem": "crop_sunflower_grow", "desc": "Sunflower growing: a sturdy stem with big heart-shaped leaves and a closed green bud" },
+        { "stem": "crop_sunflower_ripe", "desc": "Sunflower ripe: one tall sturdy sunflower with a big round head of golden-yellow petals around a brown seed centre, big leaves" },
+        { "stem": "crop_sunflower_wilt", "desc": "Sunflower wilted: the head hanging down, petals brown and fallen, leaves curled" }
+      ]
+    }
+  ]
+}

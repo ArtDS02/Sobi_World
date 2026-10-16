@@ -18,6 +18,13 @@ import type { GardenPick } from '../scene/GardenScene';
 import { createGardenDialogs } from './gardenDialogs';
 import { onViewedZone, setViewedZone, viewedZone } from '../viewedZone';
 import { bulkVm, hudVm, paletteVm, type GardenRun } from './gardenVm';
+import { GARDEN_HYBRIDS } from '../logic/config/content';
+
+/** The parents of the first recipe that gives `cropId`. */
+const firstRecipe = (cropId: string): [string | null, string | null] => {
+  const r = GARDEN_HYBRIDS.recipes.find((x) => x.result === cropId);
+  return r ? [r.parents[0], r.parents[1]] : [null, null];
+};
 import { emptyIn, unfertilizedIn, zoneVm } from './gardenZoneVm';
 
 export interface GardenUiDeps {
@@ -57,7 +64,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
     return s.status === 'ready' && s.save && hasGarden(s.save) ? s.save : null;
   };
   const dispatch = (run: GardenRun) => void d.world.dispatch(run);
-  const dialogs = createGardenDialogs({ host: dialogHost, world, now: d.now, dispatch, refresh: () => refresh() });
+  const dialogs = createGardenDialogs({ host: dialogHost, world, now: d.now, dispatch, dispatchResult: (run) => d.world.dispatch(run), refresh: () => refresh() });
 
   const runs = {
     water: (w: WorldSave, c: Parameters<GardenRun>[1]) => waterPlots(w, {}, c),
@@ -117,8 +124,10 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
     const chosen = seeds.find((s) => s.selected);
     return areaDock({
       prefix: 'garden-ui',
-      seeds: seeds.map((s) => ({ id: s.cropId, name: s.name, art: s.art, price: s.price, owned: s.owned, title: `${s.name} · ${s.growsIn}`, selected: s.selected })),
+      seeds: seeds.map((s) => ({ id: s.cropId, name: s.name, art: s.art, price: s.price, owned: s.owned, title: s.locked ? `${s.name} · ${vi.lab.lockedSeed}` : `${s.name} · ${s.growsIn}`, selected: s.selected, ...(s.locked ? { locked: vi.lab.lockedSeed } : {}) })),
       onPick: (id) => {
+        // A locked hybrid opens the lab on its first recipe instead (decision 035).
+        if (seeds.find((s) => s.cropId === id)?.locked) return dialogs.openLab(firstRecipe(id));
         selected = id;
         refresh();
       },
@@ -138,6 +147,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
             { ...bulk.plantAll, label: vi.garden.plantAll, art: chosen?.art ?? GARDEN_DOCK_ART.harvest, tone: 'main', onClick: () => dispatch(runs.plantAll) },
           ],
         },
+        { label: vi.lab.group, actions: [{ label: vi.lab.open, reason: null, art: GARDEN_DOCK_ART.lab, tone: 'main', onClick: () => dialogs.openLab() }] },
         { label: vi.areaHud.groupGrow, actions: [{ ...bulk.expand, art: GARDEN_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openExpand() }] },
       ],
     });
