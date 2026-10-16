@@ -10,7 +10,8 @@ assets of one family in a grid, generated in **one** image so they share one han
 
 1. **Plan** — `asset/batches/README.md` lists every placeholder row → batch. Write the batch JSON:
    `sheets[]` with `name`, `title`, `board` (style-boards.json), `grid [R, C]`, `fit` (`each` | `shared` +
-   `size [W, H]` | `backdrop`), `views` (style-boards.json keys), optional `hints [{from, box, what}]` (crops of
+   `size [W, H]` | `backdrop`), `views` (style-boards.json keys), optional `hints [{from, box, what, look?, game?}]` (`game`: a crop of CORE game art, used for shape and
+   material in the same style; otherwise crops of
    CONTENT references, ≤ 2, never a style source), `notes`, `cells [{stem, desc}]` row-major. Sheets ≤ 8 cells;
    stage sets one plant per row. Record spec-silent choices in `decisions`.
 2. **Prep** — `node .claude/skills/image-to-asset/scripts/batch.mjs prep <id>` → `asset/batches/<id>.md` (prompt

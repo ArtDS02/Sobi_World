@@ -1,0 +1,61 @@
+{
+  "id": "garden-01-crops",
+  "area": "garden",
+  "title": "Cây trồng Sobi Garden: 5 cây × 4 giai đoạn",
+  "decisions": "No Garden reference images exist yet; crop looks follow the plain farm crops named in content/garden/crops.json (grass, wheat, corn, potato, carrot) in the Sobi Farm style. The crop stands alone (no pot, no plot, no soil patch): GardenScene draws it on plot_soil, origin at the bottom. Root crops show their tops above ground only (a hint of orange / tan at the base when ripe).",
+  "sheets": [
+    {
+      "name": "C1",
+      "title": "Cỏ + Lúa mì",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages_crop"],
+      "cells": [
+        { "stem": "crop_grass_sprout", "desc": "Forage Grass sprout: three tiny fresh green grass blades" },
+        { "stem": "crop_grass_grow", "desc": "Forage Grass growing: a small leafy tuft of bright green grass blades" },
+        { "stem": "crop_grass_ripe", "desc": "Forage Grass ripe: a thick lush round tuft of tall juicy green grass with a few soft seed tips, ready to cut for pigs" },
+        { "stem": "crop_grass_wilt", "desc": "Forage Grass wilted: the tuft drooping and straw-yellow" },
+        { "stem": "crop_wheat_sprout", "desc": "Wheat sprout: a few thin upright green shoots" },
+        { "stem": "crop_wheat_grow", "desc": "Wheat growing: a clump of tall green stalks with young green ears" },
+        { "stem": "crop_wheat_ripe", "desc": "Wheat ripe: a clump of golden stalks with five plump golden ears leaning slightly, warm honey colour" },
+        { "stem": "crop_wheat_wilt", "desc": "Wheat wilted: grey-brown stalks bent over, ears hanging down" }
+      ]
+    },
+    {
+      "name": "C2",
+      "title": "Bắp + Khoai tây",
+      "board": "flora",
+      "grid": [2, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages_crop"],
+      "cells": [
+        { "stem": "crop_corn_sprout", "desc": "Corn sprout: two broad green corn leaves" },
+        { "stem": "crop_corn_grow", "desc": "Corn growing: a young corn stalk with long arching leaves, no cobs yet" },
+        { "stem": "crop_corn_ripe", "desc": "Corn ripe: a tall corn stalk with two cobs, husks peeled open showing plump golden kernels, a tuft of silk on each, small tassel on top" },
+        { "stem": "crop_corn_wilt", "desc": "Corn wilted: a dry brown stalk with drooping leaves" },
+        { "stem": "crop_potato_sprout", "desc": "Potato sprout: a small cluster of round dark-green potato leaves" },
+        { "stem": "crop_potato_grow", "desc": "Potato growing: a bushy low potato plant with round leaves" },
+        { "stem": "crop_potato_ripe", "desc": "Potato ripe: a full bushy potato plant with a few small white-and-lilac flowers on top and three round tan potatoes peeking out at its base" },
+        { "stem": "crop_potato_wilt", "desc": "Potato wilted: the bush yellowed and flopped over" }
+      ]
+    },
+    {
+      "name": "C3",
+      "title": "Cà rốt",
+      "board": "flora",
+      "grid": [1, 4],
+      "fit": "shared",
+      "size": [152, 132],
+      "views": ["flora", "stages_crop"],
+      "cells": [
+        { "stem": "crop_carrot_sprout", "desc": "Carrot sprout: a few tiny feathery carrot leaves" },
+        { "stem": "crop_carrot_grow", "desc": "Carrot growing: a fluffy tuft of feathery carrot tops" },
+        { "stem": "crop_carrot_ripe", "desc": "Carrot ripe: two big fluffy feathery carrot tops with the round orange shoulders of two carrots showing at the base" },
+        { "stem": "crop_carrot_wilt", "desc": "Carrot wilted: the feathery tops limp and brown" }
+      ]
+    }
+  ]
+}

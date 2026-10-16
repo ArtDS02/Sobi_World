@@ -87,7 +87,7 @@ function promptOf(sheet) {
   const [R, C] = gridOf(sheet);
   const n = sheet.cells.length;
   const lines = [B.style];
-  (sheet.hints ?? []).forEach((h, k) => lines.push((h.look ? B.lookHint : B.hint).replace('{K}', String(k + 2)).replace('{WHAT}', h.what)));
+  (sheet.hints ?? []).forEach((h, k) => lines.push((h.look ? B.lookHint : h.game ? B.gameHint : B.hint).replace('{K}', String(k + 2)).replace('{WHAT}', h.what)));
   lines.push('');
   if (n > 1) {
     lines.push(B.sheet.replace('{N}', n).replace('{R}', R).replace('{C}', C));

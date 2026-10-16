@@ -1,0 +1,44 @@
+{
+  "id": "garden-02-items",
+  "area": "garden",
+  "title": "Icon vật phẩm Sobi Garden: 5 hạt, 5 nông sản, thức ăn cao cấp, phân bón",
+  "decisions": "Seeds reuse the paper seed-packet shape of the Cloud seeds (cloud-02-items) so every seed in the game reads the same. Premium feed is a burlap sack like the Farm food sack (style_reference_environment row 3) but with a richer corn-and-carrot mix and a small gold ribbon, so it is not mistaken for the normal feed; fertilizer is a small brown sack of dark compost with a green sprout on it.",
+  "sheets": [
+    {
+      "name": "S",
+      "title": "5 gói hạt + phân bón",
+      "board": "item",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["item"],
+      "hints": [{ "from": "asset/reference/sobi_cloud/cloud_items_pots.png", "box": [85, 78, 555, 105], "what": "the seed packet (a small paper envelope with a plant picture printed on it)" }],
+      "notes": "The five seed packets are the same paper seed packet, slightly tilted, top edge folded; each shows a small picture of its crop and has its own soft packet colour. No writing on the packets.",
+      "cells": [
+        { "stem": "ui_item_seed_grass", "desc": "light green packet with a green grass tuft" },
+        { "stem": "ui_item_seed_wheat", "desc": "wheat-gold packet with two golden wheat ears" },
+        { "stem": "ui_item_seed_corn", "desc": "sunny yellow packet with a golden corn cob" },
+        { "stem": "ui_item_seed_potato", "desc": "warm tan packet with a round potato and a leaf" },
+        { "stem": "ui_item_seed_carrot", "desc": "soft orange packet with a carrot and its green top" },
+        { "stem": "ui_item_fertilizer", "desc": "Fertilizer: a small tied brown burlap sack, open at the top, full of dark crumbly compost, a tiny green sprout poking out of the compost" }
+      ]
+    },
+    {
+      "name": "P",
+      "title": "5 nông sản + thức ăn cao cấp",
+      "board": "item",
+      "grid": [2, 3],
+      "fit": "each",
+      "views": ["item"],
+      "hints": [{ "game": true, "from": "asset/reference/sobi_farm/style_reference_environment.png", "box": [325, 685, 160, 175], "what": "the burlap feed sack full of corn" }],
+      "notes": "Freshly harvested produce, lying slightly diagonal, no basket or crate.",
+      "cells": [
+        { "stem": "ui_item_grass", "desc": "Forage Grass: a small bundle of fresh green grass tied with a straw band" },
+        { "stem": "ui_item_wheat", "desc": "Wheat: a small sheaf of three golden wheat stalks tied with twine" },
+        { "stem": "ui_item_corn", "desc": "Corn: one plump corn cob with golden kernels, green husk peeled back" },
+        { "stem": "ui_item_potato", "desc": "Potato: two round tan potatoes with small dark spots, one in front of the other" },
+        { "stem": "ui_item_carrot", "desc": "Carrot: two bright orange carrots with feathery green tops, crossed" },
+        { "stem": "ui_item_food_premium", "desc": "Premium Pig Feed: a burlap sack tied with a small golden ribbon, open at the top, overflowing with golden corn kernels mixed with orange carrot pieces, a little pig-face emblem on the sack" }
+      ]
+    }
+  ]
+}

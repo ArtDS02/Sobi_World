@@ -1,0 +1,38 @@
+{
+  "id": "garden-03-world",
+  "area": "garden",
+  "title": "Cảnh Sobi Garden: 3 ô đất, Vòi tưới, Máy xay, Thùng ủ",
+  "decisions": "The three plots are one bed in three states (shared fit, same scale): dry, watered, not yet unlocked; the bed shape follows the Farm veggie patch (wooden frame). Buildings stand on the Farm grass patch (same rule as Farm). The Feed Mill is a small wooden mill house with a millstone, not the Farm windmill, so the two never read as the same building; the Composter is a slatted wooden compost bin (it turns pig manure into fertilizer). GardenScene still paints its ground in code: a bg_garden backdrop is not in the manifest and not part of this batch.",
+  "sheets": [
+    {
+      "name": "L",
+      "title": "Ô đất: khô / ướt / chưa mở",
+      "board": "building",
+      "grid": [1, 3],
+      "fit": "shared",
+      "size": [152, 108],
+      "views": ["plot"],
+      "hints": [{ "game": true, "from": "asset/reference/sobi_farm/style_reference_environment.png", "box": [1265, 700, 250, 160], "what": "the garden bed with a low wooden frame (only the bed shape, not the cabbages)" }],
+      "notes": "All three are the same empty garden bed, the same size and shape: a soft rounded rectangle of tilled soil with three shallow furrows, a low wooden plank frame, seen three-quarter from above, wider than tall. Nothing grows on it; the bed IS the object.",
+      "cells": [
+        { "stem": "plot_soil", "desc": "Dry plot: light warm-brown crumbly soil" },
+        { "stem": "plot_soil_wet", "desc": "Watered plot: the same bed with dark rich brown damp soil, two small shiny water glints in the furrows" },
+        { "stem": "plot_locked", "desc": "Locked plot: the same bed overgrown with a few weed tufts and two small grey stones, soil dull and pale, one frame plank loose" }
+      ]
+    },
+    {
+      "name": "W",
+      "title": "Vòi tưới + Máy xay + Thùng ủ",
+      "board": "building",
+      "grid": [1, 3],
+      "fit": "each",
+      "views": ["building_grass"],
+      "hints": [{ "game": true, "from": "asset/reference/sobi_farm/style_reference_environment.png", "box": [700, 385, 200, 270], "what": "the blue water pump and stone well (colour and material of the water parts)" }],
+      "cells": [
+        { "stem": "bld_sprinkler", "desc": "Sprinkler: a slim tall garden sprinkler, a blue metal pipe on a little wooden post with a round rotating head on top spraying three soft arcs of water droplets; clearly taller than wide" },
+        { "stem": "bld_feed_mill", "desc": "Feed Mill: a small cosy wooden mill house with a red shingle roof, a big round grey millstone turning beside it under a little roof, a wooden chute pouring golden feed into a burlap sack, two grain sacks stacked by the door; about as wide as tall" },
+        { "stem": "bld_composter", "desc": "Composter: a sturdy wooden compost bin made of slatted planks with a hinged lid half open, dark compost and a few green leaf scraps inside, a small garden fork leaning on it and a little sprout growing at its foot; wider than tall" }
+      ]
+    }
+  ]
+}

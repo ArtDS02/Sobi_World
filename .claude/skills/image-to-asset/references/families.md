@@ -8,11 +8,11 @@ One row per id prefix. Canvas = `scripts/assets/sizes.ts` (catalogue) or the sta
 | Prefix | Canvas | View | Board | Fit (cut-sheet) | Backend | Notes |
 |---|---|---|---|---|---|---|
 | `pig_*` (species) | 512² | side right, 3/4 head (GAME_ART_DIRECTION §2) | creature | each → art:process ground line | G (sheet of idles), then sleep / wake from the **accepted idle** (Gemini edit) | qa.mjs S1–S7 apply; never the code kit |
-| `flower_<id>_<stage>`, `crop_<id>_<stage>` | 152×132 | side, slightly above, plant only, base at the bottom | flora | **shared** (one row = one plant, 4 stages) | G | Stages `sprout grow ripe wilt`; no pot / plot / grass (the scene draws `plot_*` under it) |
-| `plot_*` | 152×108 | three-quarter from above | building | shared when the sheet holds variants of one plot (`plot_soil`, `_wet`, `_locked`) | G | The bed itself; nothing stands on it |
+| `flower_<id>_<stage>`, `crop_<id>_<stage>` | 152×132 | side, slightly above, plant only, base at the bottom | flora | **shared** (one row = one plant, 4 stages) | G | Stages `sprout grow ripe wilt` (views `stages` for flowers, `stages_crop` for crops); no pot / plot / grass (the scene draws `plot_*` under it) |
+| `plot_*` | 152×108 | three-quarter from above | building | shared when the sheet holds variants of one plot (`plot_soil`, `_wet`, `_locked`) | G | The bed itself; nothing stands on it. Views: `plot` (Garden), `building` (cloud plot) |
 | `fish_*` | 192×120 | side view facing **right** | creature | each | G | No water, no bubbles |
 | `enemy_*` | 192² · 240² · bosses 320×360 | side view facing **left** (battle: party right, enemies left) | creature | each | G | Cute-not-scary; bosses one per sheet |
-| `bld_*`, scene props | sizes.ts | three-quarter from slightly above, own base patch + contact shadow (standard §4.3) | building | each | G | Base patch = the Area's ground (grass on Farm/Garden, cloud on Cloud, sand/plank on Aquarium) |
+| `bld_*`, scene props | sizes.ts | three-quarter from slightly above, own base patch + contact shadow (standard §4.3) | building | each | G | Base patch = the Area's ground (grass on Farm/Garden, cloud on Cloud, sand/plank on Aquarium). Views: `building` = cloud patch, `building_grass` = grass patch |
 | `bg_*` | 1600×900 | full-bleed scene | sky (Cloud) / building | backdrop (copied, art:process cover-fits) | G | Calm lower 60 %; image models give ~1344×768 → ×1.2 upscale is accepted for a soft backdrop |
 | `ui_item_*` | 128² | front-on, centred, readable at 48 px | item | each | G; **K-derive** when the item is a picture of an existing sprite (fish icons from `fish_*`) | No container / frame |
 | `ui_icon_*`, `ui_btn_*` | 128² | front-on | item | each | G or K (`scripts/art/icons.ts`) | Existing system icons stay |

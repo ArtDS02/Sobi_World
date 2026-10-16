@@ -1,12 +1,23 @@
 # PROGRESS — Sobi World
 
 ## Trạng thái hiện tại
-**Giai đoạn:** GĐ14 đang làm (nhánh `phase-14-art`: 2 hiệu ứng code; quy trình art + kế hoạch batch xong (decision 022), Cloud chờ chủ dự án tạo ảnh Gemini); trước đó GĐ13 — Tích hợp, kiểm thử gameplay, nghiệm thu: **xong phần việc, chờ chủ dự án duyệt** (chơi thử ≥ 7 ngày thật, chốt một số, rồi freeze: decision 021); phiên bản 0.13.0. GĐ12 đã merge `main` (tag `phase-12`, decision 020).
-**Chiến lược (decision 017):** gameplay trước, art sau. GĐ13 vẫn placeholder; art/animation/VFX/âm thanh ở GĐ14; GĐ15 phát hành.
-**Nhánh:** `phase-13-integration` (tách từ `main`, chưa merge). Save format **v11** (không đổi ở GĐ13).
-**Bước tiếp theo:** chủ dự án chơi thử + chốt "điều kiện mở Adventure" (decision 021) + duyệt GĐ13 (merge `main`, tag `phase-13`, push); rồi GĐ14 (art, animation, VFX, âm thanh).
+**Giai đoạn:** GĐ14 đang làm — art, animation, VFX, âm thanh (nhánh `phase-14-art`, tách từ `main`). GĐ13 đã merge `main` (gameplay freeze, decision 021); phiên bản 0.13.0.
+**Chiến lược (decision 017, 022):** gameplay trước, art sau; phong cách chuẩn Sobi Farm, chủ dự án tạo ảnh Gemini theo batch (`asset/batches/`), agent cắt và nối vào game. GĐ15 phát hành.
+**Tiến độ GĐ14:** 118/162 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025). Đang làm: **Garden** (garden-01..03). Còn lại: Aquarium (kế hoạch `asset/AQUARIUM_ART_PLAN.md`, cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
+**Chờ chủ dự án:** duyệt Cloud và Sảnh; duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
+**Save format:** v11 (Cloud save v2 từ decision 023).
+**Bước tiếp theo:** chủ dự án tạo ảnh Gemini cho `garden-01..03`.
 
 ## Nhật ký
+
+### 2026-10-16 — GĐ14 Garden: viết batch garden-01..03 (chờ chủ dự án tạo ảnh)
+✅ Đã làm:
+1. Commit tài liệu đang dở (kế hoạch art Aquarium, First Guardians, decision 026, skill `image-to-prompt`, ảnh tham khảo Adventure); viết lại phần "Trạng thái hiện tại" (đầu file đã cũ: còn ghi nhánh GĐ13).
+2. **3 batch Garden, 38 asset, 7 lượt Gemini**: `garden-01-crops` (5 cây × 4 giai đoạn, 3 sheet), `garden-02-items` (5 gói hạt + phân bón, 5 nông sản + thức ăn cao cấp), `garden-03-world` (3 ô đất cùng tỉ lệ; Vòi tưới, Máy xay, Thùng ủ). Đã `prep`, file đính kèm nằm trong `art_inbox/.batch/garden-0*/`.
+3. Skill `image-to-asset`: view mới `stages_crop` (giai đoạn "chín" cho cây trồng, thay "nở hoa"), `building_grass` (công trình đứng trên cỏ; `building` vẫn là mảng mây của Cloud), `plot` (luống đất không đế); gợi ý `game: true` cho ảnh cắt từ art Farm (dùng hình dáng + chất liệu, cùng phong cách) thay câu "bỏ qua phong cách". Prompt Cloud không đổi.
+⚠️ Quyết định tự đưa ra: gói hạt Garden cùng dáng gói hạt Cloud; luống đất theo luống rau trong ảnh môi trường Farm (khung gỗ thấp); Máy xay là nhà xay có cối đá (khác cối xay gió Farm); Thùng ủ là thùng gỗ nan; thức ăn cao cấp là bao tải buộc ruy băng vàng, có bắp + cà rốt. Garden chưa có ảnh mẫu bố cục và nền vẫn vẽ bằng code: batch này không có `bg_garden`.
+👉 Bạn cần: tạo 7 ảnh theo `asset/batches/garden-01-crops.md`, `garden-02-items.md`, `garden-03-world.md`, lưu đúng tên (`C1.png`, `S.png`, `L.png`…) vào thư mục làm việc; nếu muốn Garden làm lại cảnh như Cloud / Sảnh thì gửi ảnh mẫu bố cục.
+➡️ Tiếp theo: `batch.mjs cut garden-0*` → chọn → `deliver` → `art:process` → chạy game, chụp Garden → chờ duyệt.
 
 ### 2026-10-13 — GĐ14 Aquarium: kế hoạch art + bộ prompt (chờ duyệt, chưa tạo ảnh)
 ✅ Đã làm: `asset/AQUARIUM_ART_PLAN.md` — định hướng art, 4 cấp môi trường gắn 4 cấp bể có sẵn (Bể Kính Bên Bến / Hồ Đá Ven Bờ / Đầm San Hô Sinh Thái / Vịnh Ngọc Trai Cổ), layout 1800×900 chung, danh sách asset P0–P2, prompt Gemini (concept, mock từng cấp, sửa mock thành nền, sheet cá / vật / icon / tiền cảnh / NPC), quy trình.
