@@ -13,7 +13,9 @@ import { rewindAquarium, rewindAquariumInWorld } from '../../src/areas/aquarium/
 import { aquariumOf, withAquarium } from '../../src/areas/aquarium/logic/save/lens';
 import { AQUARIUM_DESIGN, AQUARIUM_PLACES, AQUARIUM_VIEW, aquariumPlace, eggSpot, fishIcon, fishScale } from '../../src/areas/aquarium/scene/aquariumView';
 import { barVm, bagVm, breedablePairs, hudVm, tankVm } from '../../src/areas/aquarium/ui/aquariumVm';
-import { dockVm, markerAt, MINI, scoreOf, zoneCentre } from '../../src/areas/aquarium/ui/dockVm';
+import { dockVm } from '../../src/areas/aquarium/ui/dockVm';
+import { biteTimes, depthOf, fightOver, powerAt, reactionOf, ROD, rodScore, shadowOf, startFight, stepFight } from '../../src/areas/aquarium/ui/fishingGame';
+import { catchOdds } from '../../src/areas/aquarium/logic/fishing';
 import { fishCardVm } from '../../src/areas/aquarium/ui/fishCardVm';
 import { mulberry32 } from '../../src/core/rng';
 import type { WorldSave } from '../../src/core/save/world';
@@ -181,30 +183,49 @@ describe('the tank, the dock, the bag, breeding', () => {
   });
 });
 
-describe('the rod\'s mini-game', () => {
-  it('the marker sweeps 0 → 1 → 0, the score is 1 on the green spot and 0 far away', () => {
-    expect(markerAt(0)).toBe(0);
-    expect(markerAt(MINI.periodMs / 2)).toBe(1);
-    expect(markerAt(MINI.periodMs)).toBeCloseTo(0, 9);
-    expect(markerAt(MINI.periodMs / 4)).toBeCloseTo(0.5, 9);
-    expect(scoreOf(0.5, 0.5)).toBe(1);
-    expect(scoreOf(0.5 + MINI.zoneHalf, 0.5)).toBeGreaterThan(AB.fishing.missBelow);
-    expect(scoreOf(0.5 + MINI.scoreSpan, 0.5)).toBe(0);
-    expect(scoreOf(0.95, 0.2)).toBe(0);
+describe('the rod\'s mini-game (decision 035)', () => {
+  it('the power bar sweeps 0 → 1 → 0 and sets how far the line lands', () => {
+    expect(powerAt(0)).toBe(0);
+    expect(powerAt(ROD.powerPeriodMs / 2)).toBe(1);
+    expect(depthOf(0.1)).toBe(0);
+    expect(depthOf(0.5)).toBe(1);
+    expect(depthOf(0.9)).toBe(2);
   });
 
-  it('the green spot is the same for a cast and stays inside the bar', () => {
-    for (let t = 0; t < 50; t += 1) {
-      const c = zoneCentre(T0 + t * 7919);
-      expect(c).toBeGreaterThanOrEqual(0.2);
-      expect(c).toBeLessThanOrEqual(0.8);
-      expect(zoneCentre(T0 + t * 7919)).toBe(c);
-    }
-    expect(new Set(Array.from({ length: 30 }, (_, i) => zoneCentre(T0 + i * 1000)))).not.toEqual(new Set([zoneCentre(T0)]));
+  it('nibbles come before the bite, a quick pull reacts best, golden shadows are rare and likelier far out', () => {
+    const b = biteTimes(0.5, 0.9);
+    expect(b.nibbles.length).toBe(2);
+    for (const n of b.nibbles) expect(n).toBeLessThan(b.bite);
+    expect(reactionOf(100)).toBe(1);
+    expect(reactionOf(ROD.biteWindowMs)).toBe(0);
+    expect(shadowOf(0.01, 0)).toBe('golden');
+    expect(shadowOf(0.05, 0)).not.toBe('golden');
+    expect(shadowOf(0.05, 2)).toBe('golden');
+    expect(shadowOf(0.99, 2)).toBe('small');
   });
 
-  it('the zone is wide enough that a pull inside it is never a miss', () => {
-    expect(scoreOf(0.5 + MINI.zoneHalf, 0.5)).toBeGreaterThan(AB.fishing.missBelow);
+  it('holding keeps the zone on a still fish and lands it; letting go loses it', () => {
+    let held = startFight();
+    let loose = startFight();
+    for (let i = 0; i < 400 && !fightOver(held); i += 1) held = stepFight(held, 0.05, held.zone + ROD.fight.zone[0] / 2 < held.fish, 0, 'small', 0.5);
+    for (let i = 0; i < 400 && !fightOver(loose); i += 1) loose = stepFight(loose, 0.05, false, 0, 'small', 0.5);
+    expect(fightOver(held)).toBe('landed');
+    expect(fightOver(loose)).toBe('escaped');
+  });
+
+  it('an escaped fish is a miss; a landed one scores above the miss line, more for a big fish and a streak', () => {
+    const f = { ...startFight(), time: 10, inside: 8 };
+    expect(rodScore('escaped', 1, f, 'golden', 5)).toBe(0);
+    const small = rodScore('landed', 0.5, f, 'small', 0);
+    expect(small).toBeGreaterThan(AB.fishing.missBelow);
+    expect(rodScore('landed', 0.5, f, 'big', 0)).toBeGreaterThan(small);
+    expect(rodScore('landed', 0.5, f, 'small', 3)).toBeGreaterThan(small);
+  });
+
+  it('far out the rare fish are likelier', () => {
+    const rare = (d: 0 | 1 | 2) => catchOdds(0.6, false, undefined, d).filter((o) => o.species && o.species.rarity !== 'COMMON').reduce((s, o) => s + o.share, 0);
+    expect(rare(2)).toBeGreaterThan(rare(1));
+    expect(rare(1)).toBeGreaterThan(rare(0));
   });
 });
 

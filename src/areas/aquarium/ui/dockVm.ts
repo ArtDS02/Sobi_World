@@ -1,9 +1,9 @@
-// The dock: the odds of a cast now, and the maths of the rod's mini-game. Pure.
+// The dock: the odds of a cast now (the rod's mini-game is fishingGame.ts). Pure.
 import { itemArtId } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import { vi } from '../../../i18n/vi';
 import { castCooldownLeft, isNightNow } from '../logic/derived';
-import { catchOdds } from '../logic/fishing';
+import { catchOdds, type CastDepth } from '../logic/fishing';
 import { skyForRod } from '../logic/sky';
 import { aquariumOf } from '../logic/save/lens';
 
@@ -25,11 +25,11 @@ export interface DockVm {
   odds: OddsRow[];
 }
 
-export function dockVm(world: WorldSave, now: number, dayOffsetMs: number, score = 0.6): DockVm {
+export function dockVm(world: WorldSave, now: number, dayOffsetMs: number, score = 0.6, depth: CastDepth = 0): DockVm {
   const a = aquariumOf(world);
   const night = isNightNow(now, dayOffsetMs);
   const met = new Set(world.collection.discovered.fish ?? []);
-  const odds = catchOdds(score, night, skyForRod(world, now, dayOffsetMs, night))
+  const odds = catchOdds(score, night, skyForRod(world, now, dayOffsetMs, night), depth)
     .map((o): OddsRow => {
       if (o.species) {
         const known = met.has(o.species.id);
@@ -41,20 +41,3 @@ export function dockVm(world: WorldSave, now: number, dayOffsetMs: number, score
   return { cooldownMs: castCooldownLeft(a, now), night, period: night ? vi.aquarium.fishing.night : vi.aquarium.fishing.day, odds };
 }
 
-/** The mini-game: a marker sweeps a bar back and forth; the score is how close it is to the green spot when pulled. */
-export const MINI = { periodMs: 1800, zoneHalf: 0.09, scoreSpan: 0.35 } as const;
-
-/** Marker position 0..1 `elapsed` ms after the cast (a triangle wave). */
-export function markerAt(elapsedMs: number): number {
-  const phase = ((elapsedMs / MINI.periodMs) % 1 + 1) % 1;
-  return phase < 0.5 ? phase * 2 : 2 - phase * 2;
-}
-
-/** The green spot's centre for a cast started at `startedAt` (it differs every cast, but not at random in the render). */
-export function zoneCentre(startedAt: number): number {
-  const h = Math.imul(Math.floor(startedAt / 1000) ^ 0x9e3779b1, 0x85ebca6b) >>> 0;
-  return 0.2 + ((h % 1000) / 1000) * 0.6;
-}
-
-/** 0..1: 1 on the centre of the zone, falling to 0 at `scoreSpan` away. */
-export const scoreOf = (marker: number, centre: number): number => Math.max(0, Math.min(1, 1 - Math.abs(marker - centre) / MINI.scoreSpan));

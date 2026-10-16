@@ -27,11 +27,12 @@
     "nameMax": 16
   },
   "fishing": {
-    "cooldownSec": 120,
+    "cooldownSec": 60,
     "missBelow": 0.25,
     "scoreLuck": 0.6,
     "missCooldownShare": 0.5,
-    "oyster": { "item": "item_pearl", "weight": 3 }
+    "oyster": { "item": "item_pearl", "weight": 3 },
+    "depthLuck": [0, 0.4, 0.9]
   },
   "breeding": { "cooldownHours": 12, "eggHours": 6, "maxEggs": 2, "minHunger": 50, "feed": 2 },
   "sell": { "minShare": 0.4 },

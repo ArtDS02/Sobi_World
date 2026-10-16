@@ -49,6 +49,11 @@ export const aquariumBalanceFileSchema = z
       missCooldownShare: unit,
       /** A pearl oyster is on the line sometimes (item and relative weight, like a fish). */
       oyster: z.strictObject({ item: itemId, weight: nonNeg }),
+      /**
+       * Where the line lands (decision 035): near the shore, mid-lake, far out. Each step further favours rarer fish:
+       * weight × (1 + depthLuck[depth] × rarity step).
+       */
+      depthLuck: z.tuple([nonNeg, nonNeg, nonNeg]),
     }),
     breeding: z.strictObject({
       /** Hours before a pair can have eggs again. */

@@ -134,24 +134,227 @@
   &__bag-icon { width: 3rem; height: 3rem; }
 }
 
-// The rod's mini-game: a marker sweeps the bar; pull while it is on the green spot.
-.aquarium-mini {
-  position: relative;
-  width: min(100%, 22rem);
-  height: 2rem;
-  overflow: hidden;
-  background: #cfe7f3;
-  border: 3px solid #1b4a66;
-  border-radius: 1rem;
+// The rod's mini-game (decision 035, ui/fishingDialog.ts): a power bar to throw, the water with the bobber and the fish's
+// shadow, the fight (a bar with the catch zone and the fish, the reel meter, a big hold button), the catch card.
+.c-dialog__panel--rod { max-width: 34rem; }
 
-  &__zone { position: absolute; top: 0; bottom: 0; background: rgba(90, 190, 110, 0.75); }
+.aquarium-rod {
+  display: grid;
+  gap: $sp-2;
+  justify-items: center;
+  text-align: center;
+
+  &__status { margin: 0; font-weight: $fw-bold; color: #1b4a66; min-height: 1.4em; }
+  &__where { margin: 0; font-size: $fs-sm; color: $c-text-muted; }
+
+  &__go { min-width: 12rem; min-height: $sp-touch-min; font-size: $fs-md; }
+  &__pull.is-hot { background: linear-gradient(180deg, #ffb347, #f07a2a); border-color: #b8501a; animation: rod-hot 0.35s ease-in-out infinite alternate; }
+
+  // Power bar: three bands (near / mid / far) and a swinging marker.
+  &__power {
+    position: relative;
+    display: flex;
+    width: min(100%, 24rem);
+    height: 2.4rem;
+    overflow: hidden;
+    border: 3px solid #1b4a66;
+    border-radius: 1.2rem;
+  }
+  &__band {
+    display: grid;
+    place-items: center;
+    font-size: $fs-xs;
+    font-weight: $fw-bold;
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+
+    &.is-0 { background: #8fd3ec; }
+    &.is-1 { background: #3fa3d4; }
+    &.is-2 { background: #1d5f99; }
+  }
   &__marker {
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: -2px;
+    bottom: -2px;
     width: 0.5rem;
     margin-left: -0.25rem;
-    background: #e0654f;
-    border-radius: 0.25rem;
+    background: #ffde59;
+    border: 2px solid #8a5a00;
+    border-radius: 0.3rem;
+    box-shadow: 0 0 8px rgba(255, 222, 89, 0.9);
+  }
+
+  // The water: lighter near the shore, deep blue far out; the bobber floats on it, the shadow swims under it.
+  &__water {
+    position: relative;
+    width: min(100%, 24rem);
+    height: 9rem;
+    overflow: hidden;
+    background: linear-gradient(180deg, #cdeffd 0 28%, #6cc3e6 28% 100%);
+    border: 3px solid #1b4a66;
+    border-radius: $radius-md;
+
+    &.is-depth-1 { background: linear-gradient(180deg, #cdeffd 0 28%, #3c9fd0 28% 100%); }
+    &.is-depth-2 { background: linear-gradient(180deg, #cdeffd 0 28%, #1f5f99 28% 100%); }
+  }
+  &__bobber {
+    position: absolute;
+    top: calc(28% - 14px);
+    left: 50%;
+    width: 22px;
+    height: 28px;
+    margin-left: -11px;
+    background: linear-gradient(180deg, #e34b3c 0 50%, #fff 50% 100%);
+    border: 2px solid #5a2a1e;
+    border-radius: 50% 50% 45% 45%;
+    animation: rod-bob 1.6s ease-in-out infinite;
+    transition: transform 0.12s ease-out;
+
+    &.is-nibble { transform: translateY(5px) rotate(-8deg); }
+    &.is-bite { transform: translateY(22px); animation: none; }
+  }
+  &__ripple {
+    position: absolute;
+    top: 28%;
+    left: 50%;
+    width: 60px;
+    height: 10px;
+    margin: -5px 0 0 -30px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    animation: rod-ripple 1.6s ease-out infinite;
+  }
+  &__shadow {
+    position: absolute;
+    top: 62%;
+    left: 30%;
+    width: 4rem;
+    height: 1.3rem;
+    background: rgba(10, 30, 60, 0.45);
+    border-radius: 50% 40% 40% 50%;
+    filter: blur(2px);
+    animation: rod-shadow 3.2s ease-in-out infinite alternate;
+
+    &.is-small { transform: scale(0.65); }
+    &.is-big { width: 6rem; height: 1.9rem; }
+    &.is-golden { width: 5.5rem; height: 1.8rem; background: rgba(255, 205, 60, 0.85); filter: blur(1px); box-shadow: 0 0 18px 6px rgba(255, 215, 80, 0.8); }
+  }
+
+  // The fight: hold to lift the green zone; keep the fish in it.
+  &__arena { display: flex; gap: $sp-3; align-items: stretch; justify-content: center; }
+  &__bar {
+    position: relative;
+    width: 3rem;
+    height: 15rem;
+    background: linear-gradient(180deg, #8fd3ec, #1d5f99);
+    border: 3px solid #1b4a66;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  &__zone {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    background: rgba(120, 220, 120, 0.65);
+    border: 2px solid #2f8a3a;
+    border-radius: 0.7rem;
+  }
+  &__fish {
+    position: absolute;
+    left: 50%;
+    font-size: 1.6rem;
+    line-height: 1;
+    transform: translate(-50%, 50%);
+    filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.3));
+    transition: filter 0.15s;
+
+    &.is-in { filter: drop-shadow(0 0 6px #b6ff9e); }
+    &.is-big { font-size: 2rem; }
+    &.is-golden { font-size: 2rem; filter: sepia(1) saturate(4) hue-rotate(5deg) drop-shadow(0 0 8px gold); }
+  }
+  &__reel {
+    position: relative;
+    width: 0.9rem;
+    background: #e6ecf0;
+    border: 2px solid #1b4a66;
+    border-radius: 0.5rem;
+    overflow: hidden;
+
+    i { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(0deg, #f2b53b, #ffe08a); }
+  }
+  &__hold {
+    align-self: center;
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50%;
+    font-size: $fs-md;
+    touch-action: none;
+    user-select: none;
+
+    &:active { transform: scale(0.94); filter: brightness(1.1); }
+  }
+
+  // The catch card.
+  &__result {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: $sp-1;
+    width: min(100%, 24rem);
+    padding: $sp-3;
+    overflow: hidden;
+    background: #eef9ff;
+    border: 3px solid #fff;
+    border-radius: $radius-md;
+    box-shadow: 0 3px 0 rgba(27, 74, 102, 0.15);
+    animation: c-pop-in 0.3s ease-out;
+
+    &.is-good b { color: #2f7f3a; }
+    &.is-miss { background: #f3f0ec; }
+    &.is-rare { background: radial-gradient(circle, #fff6d6, #ffe7a3); }
+    &.is-new::after {
+      content: 'NEW';
+      position: absolute;
+      top: 8px;
+      right: -26px;
+      padding: 2px 30px;
+      font-size: $fs-xs;
+      font-weight: $fw-bold;
+      color: #fff;
+      background: #e8708a;
+      transform: rotate(35deg);
+    }
+  }
+  &__catch {
+    width: 7rem;
+    height: 4.4rem;
+    object-fit: contain;
+    animation: rod-catch 0.6s cubic-bezier(0.2, 1.5, 0.4, 1);
+
+    &.is-empty { display: grid; place-items: center; font-size: 2.6rem; }
+  }
+  &__streak {
+    display: inline-flex;
+    gap: $sp-1;
+    align-items: center;
+    margin: 0;
+    padding: 2px $sp-3;
+    font-weight: $fw-bold;
+    color: #a24a0a;
+    background: #ffe7c8;
+    border-radius: 999px;
+  }
+  &__odds {
+    width: 100%;
+    margin-top: $sp-2;
+    text-align: left;
+
+    summary { cursor: pointer; font-weight: $fw-bold; }
   }
 }
+
+@keyframes rod-bob { 50% { transform: translateY(3px); } }
+@keyframes rod-ripple { from { opacity: 0.9; transform: scale(0.5); } to { opacity: 0; transform: scale(1.4); } }
+@keyframes rod-shadow { to { left: 55%; } }
+@keyframes rod-hot { to { transform: scale(1.06); } }
+@keyframes rod-catch { from { transform: translateY(30px) scale(0.4) rotate(-20deg); opacity: 0; } }

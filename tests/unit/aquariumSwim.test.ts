@@ -2,6 +2,8 @@
 // next leg stays in the water, mostly level, near the top for a hungry fish and near the bottom for a sick one.
 import { describe, expect, it } from 'vitest';
 import { bodyWave, nextLeg, steer } from '../../src/areas/aquarium/scene/fishSwim';
+import { bendAt, kindFrame, pulseAt, SPECIES_SWIM, SWIM_STYLES, swimStyleOf } from '../../src/areas/aquarium/scene/swimStyles';
+import { FISH_LIST } from '../../src/areas/aquarium/logic/config/content';
 import { AQUARIUM_VIEW } from '../../src/areas/aquarium/scene/aquariumView';
 import { mulberry32 } from '../../src/core/rng';
 
@@ -53,5 +55,36 @@ describe('fish swimming', () => {
     expect(peak(0.7)).toBeLessThan(0.5);
     expect(peak(1)).toBeLessThanOrEqual(1.2);
     expect(bodyWave(0, 1, 0)).toBe(0);
+  });
+});
+
+describe('each creature moves its own way (decision 035)', () => {
+  it('every species has a swim style, and the sea creatures are not plain fish', () => {
+    for (const f of FISH_LIST) expect(SWIM_STYLES[SPECIES_SWIM[f.id] ?? 'fish'], f.id).toBeDefined();
+    expect(swimStyleOf('fish_jellyfish').kind).toBe('jelly');
+    expect(swimStyleOf('fish_octopus').kind).toBe('octopus');
+    expect(swimStyleOf('fish_sea_turtle').kind).toBe('turtle');
+    expect(swimStyleOf('fish_manta').kind).toBe('ray');
+    expect(swimStyleOf('fish_seahorse').kind).toBe('seahorse');
+    expect(swimStyleOf('fish_dolphin').kind).toBe('dolphin');
+    expect(swimStyleOf('fish_loach').bend).toBe('body');
+    expect(swimStyleOf('fish_unknown')).toBe(SWIM_STYLES.fish);
+  });
+
+  it('bends where the body bends: a stiff body never, an eel along its whole length, tentacles only at the back', () => {
+    for (const u of [0, 0.3, 0.6, 1]) expect(bendAt('none', u, 1.2, 10)).toBe(0);
+    expect(Math.abs(bendAt('body', 0.9, 0.3, 10))).toBeGreaterThan(1);
+    expect(bendAt('tentacles', 0.8, 1, 10)).toBe(0);
+    expect(Math.abs(bendAt('tentacles', 0.1, 1, 10))).toBeGreaterThan(0);
+  });
+
+  it('a jellyfish rises while it pulses and sinks between pulses; a pufferfish puffs up near the end of its pulse', () => {
+    expect(kindFrame('jelly', 0.15, 0, 0).drift).toBeLessThan(0);
+    expect(kindFrame('jelly', 0.7, 0, 0).drift).toBeGreaterThan(0);
+    expect(kindFrame('jelly', 0.15, 0, 0).sx).toBeLessThan(1);
+    expect(kindFrame('puffer', 0.9, 0, 0).sx).toBeGreaterThan(1.2);
+    expect(kindFrame('puffer', 0.4, 0, 0).sx).toBe(1);
+    expect(kindFrame('octopus', 0.4, 0, 0).speed).toBeGreaterThan(kindFrame('octopus', 0.8, 0, 0).speed);
+    expect(pulseAt(1500, 1000, 0)).toBeCloseTo(0.5);
   });
 });

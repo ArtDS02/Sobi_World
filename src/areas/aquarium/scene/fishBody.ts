@@ -1,9 +1,10 @@
 // The picture of one fish (GĐ14): the sprite is drawn as a strip of segments (a Phaser Rope) so its body can bend — a
-// travelling wave that is strong at the tail and fades towards the head, like a fish beating its tail. On the Canvas
+// travelling wave that is strong at the tail and fades towards the head, like a fish beating its tail (or, by its
+// swim style, a whole-body ripple, curling tentacles, flapping wing tips — swimStyles.ts). On the Canvas
 // renderer (no Rope) it is a plain image. A zone over it takes the clicks (a bent strip has no simple hit shape).
 // The sprites face right: the tail is on the left of the texture.
 import * as Phaser from 'phaser';
-import { bodyWave } from './fishSwim';
+import { bendAt, type BendMode } from './swimStyles';
 
 const SEGMENTS = 14;
 
@@ -49,7 +50,7 @@ export class FishBody {
   }
 
   /** Places the fish: where, which way, tilt, size; `phase` and `bend` (0..1 of its height) shape the tail beat. */
-  pose(x: number, y: number, flip: boolean, rotation: number, sx: number, sy: number, phase: number, bend: number) {
+  pose(x: number, y: number, flip: boolean, rotation: number, sx: number, sy: number, phase: number, bend: number, mode: BendMode = 'tail') {
     this.obj.setPosition(x, y).setRotation(rotation).setScale(sx, sy);
     if (this.rope) {
       this.rope.setFlipX(flip);
@@ -58,7 +59,7 @@ export class FishBody {
       for (let i = 0; i <= last; i += 1) {
         // With the texture flipped the tail is on the right of the strip.
         const u = flip ? 1 - i / last : i / last;
-        pts[i]!.y = bodyWave(u, phase, bend * this.height);
+        pts[i]!.y = bendAt(mode, u, phase, bend * this.height);
       }
       this.rope.setDirty();
     } else {

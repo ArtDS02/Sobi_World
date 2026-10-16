@@ -249,9 +249,10 @@ describe('the rod', () => {
     const caught = Object.entries(got.inventory.items).filter(([, n]) => n > 0);
     expect(caught).toHaveLength(1);
     expect(castCooldownLeft(tank(got), NOON)).toBe(AB.fishing.cooldownSec * 1000);
-    expect(fail(castLine(got, { score: 0.9 }, ctxAt(NOON + 60_000)))).toBe('FISHING_COOLDOWN');
+    expect(fail(castLine(got, { score: 0.9 }, ctxAt(NOON + (AB.fishing.cooldownSec * 1000) / 2)))).toBe('FISHING_COOLDOWN');
     expect(ok(castLine(got, { score: 0.9 }, ctxAt(NOON + AB.fishing.cooldownSec * 1000))).meta.updatedAt).toBe(NOON + AB.fishing.cooldownSec * 1000);
     expect(fail(castLine(w, { score: 2 }, ctxAt(NOON)))).toBe('INVALID_REQUEST');
+    expect(fail(castLine(w, { score: 0.5, depth: 3 as never }, ctxAt(NOON)))).toBe('INVALID_REQUEST');
   });
 
   it('night fish bite only at night; a better score favours rarer fish', () => {

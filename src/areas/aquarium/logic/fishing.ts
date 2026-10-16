@@ -16,19 +16,28 @@ const RARE_RANK = 2; // RARE and above
 
 export type Catch = { kind: 'miss' } | { kind: 'fish'; species: FishSpecies } | { kind: 'oyster'; item: string };
 
-/** Relative chance of each catch for this score and time of day. */
-export function catchTable(score: number, night: boolean, sky: FishingSky = CLEAR_WATER): { species: FishSpecies; weight: number }[] {
+/** Where the line lands: 0 near the shore, 1 mid-lake, 2 far out (decision 035). */
+export type CastDepth = 0 | 1 | 2;
+export const isDepth = (d: unknown): d is CastDepth => d === 0 || d === 1 || d === 2;
+
+/** Relative chance of each catch for this score, time of day and depth. */
+export function catchTable(score: number, night: boolean, sky: FishingSky = CLEAR_WATER, depth: CastDepth = 0): { species: FishSpecies; weight: number }[] {
   const s = Math.min(1, score + sky.scoreBonus);
   return FISH_LIST.filter((f) => f.catchWeight > 0 && (night || !f.nightOnly)).map((species) => ({
     species,
     // A better cast favours rarer fish; at night the night fish are the point, so no penalty there. Rain at night lifts the rare ones.
-    weight: species.catchWeight * (1 + AB.fishing.scoreLuck * s * rarityStep(species)) * (rarityRank(species.rarity) >= RARE_RANK ? sky.rareLuck : 1),
+    // Far out, the rare ones are likelier still.
+    weight:
+      species.catchWeight *
+      (1 + AB.fishing.scoreLuck * s * rarityStep(species)) *
+      (1 + AB.fishing.depthLuck[depth] * rarityStep(species)) *
+      (rarityRank(species.rarity) >= RARE_RANK ? sky.rareLuck : 1),
   }));
 }
 
 /** Chance (0..1) of each outcome, for the screens and the balance report. */
-export function catchOdds(score: number, night: boolean, sky: FishingSky = CLEAR_WATER): { species: FishSpecies | null; item: string | null; share: number }[] {
-  const table = catchTable(score, night, sky);
+export function catchOdds(score: number, night: boolean, sky: FishingSky = CLEAR_WATER, depth: CastDepth = 0): { species: FishSpecies | null; item: string | null; share: number }[] {
+  const table = catchTable(score, night, sky, depth);
   const total = table.reduce((s, r) => s + r.weight, 0) + AB.fishing.oyster.weight;
   return [
     ...table.map((r) => ({ species: r.species, item: r.species.item, share: r.weight / total })),
@@ -37,9 +46,9 @@ export function catchOdds(score: number, night: boolean, sky: FishingSky = CLEAR
 }
 
 /** One cast: a score under `missBelow` loses the fish; otherwise a fish (or an oyster) is drawn. */
-export function cast(rng: Rng, score: number, night: boolean, sky: FishingSky = CLEAR_WATER): Catch {
+export function cast(rng: Rng, score: number, night: boolean, sky: FishingSky = CLEAR_WATER, depth: CastDepth = 0): Catch {
   if (score + sky.scoreBonus < AB.fishing.missBelow) return { kind: 'miss' };
-  const table = catchTable(score, night, sky);
+  const table = catchTable(score, night, sky, depth);
   const total = table.reduce((s, r) => s + r.weight, 0) + AB.fishing.oyster.weight;
   let roll = rng.next() * total;
   for (const r of table) {

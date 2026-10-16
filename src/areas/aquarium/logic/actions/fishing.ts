@@ -5,7 +5,7 @@ import { pick, randomId } from '../../../../core/rng';
 import type { ActionContext } from '../../../../core/types';
 import { AB, FISH_NAMES, fishOfItem } from '../config/content';
 import { castCooldownLeft, isNightNow, tankFree } from '../derived';
-import { cast, cooldownAfter } from '../fishing';
+import { cast, cooldownAfter, isDepth, type CastDepth } from '../fishing';
 import { skyForRod } from '../sky';
 import type { Fish } from '../state';
 import { give, put, runAquarium, take, type AquariumResult } from './kit';
@@ -14,12 +14,13 @@ import { give, put, runAquarium, take, type AquariumResult } from './kit';
  * Casts the rod. `score` (0..1) is how well the player timed the mini-game; the catch goes to the bag. The rod rests
  * `cooldownSec` after a catch and a part of it after a miss.
  */
-export function castLine(world: WorldSave, args: { score: number }, ctx: ActionContext): AquariumResult {
+export function castLine(world: WorldSave, args: { score: number; depth?: CastDepth }, ctx: ActionContext): AquariumResult {
   return runAquarium(world, ctx, (w, a) => {
     if (!Number.isFinite(args.score) || args.score < 0 || args.score > 1) return { ok: false, error: 'INVALID_REQUEST' };
+    if (args.depth !== undefined && !isDepth(args.depth)) return { ok: false, error: 'INVALID_REQUEST' };
     if (castCooldownLeft(a, ctx.now) > 0) return { ok: false, error: 'FISHING_COOLDOWN' };
     const night = isNightNow(ctx.now, ctx.dayOffsetMs ?? 0);
-    const result = cast(ctx.rng, args.score, night, skyForRod(w, ctx.now, ctx.dayOffsetMs ?? 0, night));
+    const result = cast(ctx.rng, args.score, night, skyForRod(w, ctx.now, ctx.dayOffsetMs ?? 0, night), args.depth ?? 0);
     // The cooldown is counted from `lastCastAt`: a miss is stamped earlier so only the rest of it is left.
     const lastCastAt = ctx.now - (AB.fishing.cooldownSec - cooldownAfter(result)) * 1000;
     if (result.kind === 'miss') {
