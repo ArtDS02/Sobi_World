@@ -131,7 +131,7 @@ export class GardenScene extends Phaser.Scene {
     const { x, y } = plotCentre(index);
     const v = GARDEN_VIEW;
     const soil = this.add.image(x, y, KEY(PLOT_ART.soil, this.textures)).setScale(v.plotScale).setDepth(v.depth.plot).setInteractive({ useHandCursor: true });
-    const cropY = y + v.plotSize.height * v.plotScale * v.cropOffset;
+    const cropY = y + v.cropBaseY * v.plotScale;
     const crop = this.add.image(x, cropY, FALLBACK_PROP_KEY).setOrigin(0.5, 1).setScale(v.cropScale).setDepth(v.depth.crop + index * 0.01).setVisible(false);
     this.hoverable(soil, () => ({ scale: v.plotScale, y }), v.hover.lift);
     soil.on(Phaser.Input.Events.POINTER_DOWN, () => {

@@ -13,9 +13,13 @@ export const GARDEN_VIEW = {
   /** Plot art canvas and the scale it is drawn at (four rows must fit the lawn; the mock-up shows two). */
   plotSize: { width: 152, height: 108 },
   plotScale: 0.86,
-  /** Crops share the plot's scale; their canvas bottom sits this share of the drawn plot height below its centre. */
+  /**
+   * Crops share the plot's scale. Where a crop's canvas bottom sits below the plot's centre, in plot-art px: measured, the
+   * soil of plot_soil is centred on the art's centre and a crop's soil mound ends at its canvas bottom; +16 puts the mound
+   * in the middle of the soil (the old +32 put it on the front frame).
+   */
   cropScale: 0.86,
-  cropOffset: 0.3,
+  cropBaseY: 16,
   /** Feet of the workshops and the sprinkler on the empty grass spots of the backdrop, and their drawing scale. */
   mill: { x: 185, y: 364, scale: 1 },
   composter: { x: 165, y: 615, scale: 1 },

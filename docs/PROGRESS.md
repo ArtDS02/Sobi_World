@@ -18,6 +18,7 @@
 🛠️ Lỗi tích hợp tìm thấy và đã sửa: dev server (Vite) sập với EBUSY khi chủ dự án đang tải ảnh Gemini vào `art_inbox/` (file `.crdownload` bị khóa) → `vite.config.ts` bỏ theo dõi `art_inbox/` và `asset/`.
 🧪 Đã kiểm tra: `npm run check` xanh (1.361 test); e2e Garden + display (bản build) xanh; sandbox với save cuối game ở 1600×900 và 1916×949: nền phủ kín, bấm Máy xay / bảng "Thùng ủ" mở đúng hộp thoại, Esc đóng. Ảnh: `art_inbox/.qa/garden-review/garden_v2_*.jpg`.
 ⚠️ Quyết định tự đưa ra: 4 hàng ô thay vì 2 như ảnh mẫu (Garden có 24 ô); nhãn Thùng ủ dùng bảng vẽ sẵn trong nền để không chồng hai bảng; HUD Garden chưa đổi.
+🛠️ Sửa theo góp ý: cây lệch xuống so với lòng đất (gốc đè lên khung gỗ trước). Đo trên ảnh: lòng đất của `plot_soil` ở giữa canvas, ụ đất của cây ở sát đáy canvas → đáy cây đặt thấp hơn tâm ô 16 px ảnh (`cropBaseY`, trước là 32 px).
 👉 Bạn cần: duyệt cảnh Garden.
 ➡️ Tiếp theo: Aquarium (cắt `aquarium-01-fish`, `aquarium-02-items` khi có ảnh; dựng cảnh theo 5 ảnh mẫu).
 
