@@ -33,6 +33,10 @@ lên xuống. Chỉ là trình bày, không đổi state.
    (`fishing.depthLuck` [0; 0,4; 0,9], `castLine` nhận `depth`) nhưng cá khỏe hơn.
 2. **Chờ cá cắn**: phao nổi, có cú **rỉa giả**, phao chìm hẳn thì giật trong 1,5 giây (bản đầu 0,9 giây). Giật sớm
    chỉ làm cá giật mình, 1,3–2,4 giây sau mới cắn lại; tha 2 lần, lần thứ 3 cá bỏ đi (sửa 2026-10-17, chủ dự án thấy quá khó).
+   Sửa lần 2 (2026-10-17, chủ dự án thấy cá "tự nhiên" chạy mất): bóng cá lượn quanh rồi **bơi thẳng tới phao** trong
+   1,4 giây trước khi cắn (cắn sớm nhất 2 giây sau khi phao rơi), nên nhìn là biết sắp cắn; lúc cắn có dấu "!" to,
+   vòng sóng quanh phao, dòng chữ nổi bật và thanh đếm ngược ở nút Giật. Thời gian giật 2,2 giây. **Không giật thì cá
+   tự mắc câu** và vào nhịp kéo, chỉ mất điểm phản xạ (cá kém đẹp hơn), không mất cá.
 3. **Kéo cá**: giữ nút (hoặc phím Cách) để nâng vùng xanh, giữ cá trong vùng tới khi kéo đủ 100%. Sửa 2026-10-17:
    vùng xanh to hơn (42/36/30% thanh), cá bơi chậm và nhảy ngắn hơn, trận bắt đầu với cá nằm giữa vùng, tối đa 24 giây.
    Mô phỏng người chơi trung bình (phản xạ 0,3 s): gần bờ và giữa hồ ~100%, xa khơi cá lớn ~80%, cá vàng ~60%

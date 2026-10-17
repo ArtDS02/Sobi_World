@@ -1,6 +1,6 @@
 // The rod (spec V2 §8.3, decision 035): the dock dialog with its three-beat mini-game (fishingGame.ts) — swing the power
-// bar to throw near or far, watch the bobber and pull at the real bite (an early pull only startles the fish, twice),
-// then hold to keep the fish in the green zone until it is reeled in. One water scene (the pier, the rod, the line and
+// bar to throw near or far, watch the shadow swim in and pull at the real bite (an early pull only startles the fish,
+// twice; no pull lets it hook itself, with no reaction to the score), then hold to keep the fish in the green zone until it is reeled in. One water scene (the pier, the rod, the line and
 // the bobber) shows where the line went. The score and the depth go to castLine; the catch is read from its events and
 // shown big. A streak of catches (kept for the session, presentation only) nudges the score up.
 import { art } from '../../../ui/components/icon';
@@ -12,9 +12,10 @@ import { FISH } from '../logic/config/content';
 import type { AquariumEvent } from '../logic/events';
 import type { CastDepth } from '../logic/fishing';
 import { dockVm } from './dockVm';
-import { linePath, rodScene, rodSteps as steps, rodTag as tag, waterX, type SceneParts } from './fishingScene';
+import { linePath, rodArena, rodScene, rodSteps as steps, rodTag as tag, waterX, type SceneParts } from './fishingScene';
 import { actionButton, type DialogKit } from './dialogKit';
 import {
+  biteLeft,
   biteTimes,
   depthOf,
   earlyPull,
@@ -23,6 +24,7 @@ import {
   reactionOf,
   ROD,
   rodScore,
+  shadowGap,
   shadowOf,
   startFight,
   stepFight,
@@ -34,14 +36,16 @@ type Phase =
   | { kind: 'idle' }
   | { kind: 'aim'; startedAt: number }
   | { kind: 'wait'; depth: CastDepth; power: number; size: ShadowSize; landedAt: number; bite: number; nibbles: number[]; early: number; startledAt: number | null }
-  | { kind: 'fight'; depth: CastDepth; power: number; size: ShadowSize; reaction: number; fight: Fight; last: number }
+  | { kind: 'fight'; depth: CastDepth; power: number; size: ShadowSize; reaction: number; fight: Fight; last: number; noteUntil: number }
   | { kind: 'result'; text: string; good: boolean; art: string | null; rare: boolean; isNew: boolean; size: ShadowSize | null };
 
 /** Catches in a row this session (presentation only). */
 let streak = 0;
 
-/** How long the "too early" note stays before the status goes back to the bobber. */
+/** How long the "too early" note (and the "it hooked itself" note in the fight) stays before the status moves on. */
 const STARTLE_NOTE_MS = 1800;
+/** How far (px) the shadow circles from the bobber before it swims in. */
+const SHADOW_GAP_PX = 70;
 
 export function openFishing(k: DialogKit) {
   const F = vi.aquarium.fishing;
@@ -52,6 +56,8 @@ export function openFishing(k: DialogKit) {
   let root: HTMLElement | null = null;
   /** The live parts the frame loop moves (re-found after every render). */
   let refs: Partial<SceneParts> & Partial<Record<'status' | 'pull' | 'arena' | 'zone' | 'fish' | 'reel' | 'reelText' | 'hold', HTMLElement>> = {};
+  /** True from a cast's end until castLine answers: the frame loop and the keys must not cast it again meanwhile. */
+  let landing = false;
 
   const set = (next: Phase) => {
     phase = next;
@@ -60,8 +66,11 @@ export function openFishing(k: DialogKit) {
   };
 
   async function land(score: number, depth: CastDepth, miss: string | null, size: ShadowSize | null) {
+    if (landing) return;
+    landing = true;
+    phase = { kind: 'idle' };
     const before = new Set(k.world()?.collection.discovered.fish ?? []);
-    const r = await k.dispatch((s, c) => castLine(s, { score, depth }, c));
+    const r = await k.dispatch((s, c) => castLine(s, { score, depth }, c)).finally(() => (landing = false));
     const cast = (r.events ?? []).find((e): e is AquariumEvent & { type: 'AQUARIUM_CAST' } => e.type === 'AQUARIUM_CAST');
     if (!r.ok || !cast) return set({ kind: 'idle' });
     if (cast.itemId === null) {
@@ -83,6 +92,13 @@ export function openFishing(k: DialogKit) {
       isNew,
       size,
     });
+  }
+
+  /** The fish is on: a pull `sinceBite` ms after the bite, or none at all (it hooked itself, reaction 0). */
+  function hook(p: Extract<Phase, { kind: 'wait' }>, sinceBite: number | null, now: number) {
+    const reaction = sinceBite === null ? 0 : reactionOf(sinceBite);
+    const noteUntil = sinceBite === null ? now + STARTLE_NOTE_MS : 0;
+    set({ kind: 'fight', depth: p.depth, power: p.power, size: p.size, reaction, fight: startFight(p.depth), last: now, noteUntil });
   }
 
   /** The button that does the beat's one thing (also Space / Enter). */
@@ -109,9 +125,8 @@ export function openFishing(k: DialogKit) {
           s.classList.add('is-startled');
         }
       }
-      // The frame loop may lag (a window in the background): a pull after the window is late all the same.
-      else if (since > phase.bite + ROD.biteWindowMs) void land(0, phase.depth, F.late, null);
-      else set({ kind: 'fight', depth: phase.depth, power: phase.power, size: phase.size, reaction: reactionOf(since - phase.bite), fight: startFight(phase.depth), last: now });
+      // The frame loop may lag (a window in the background): a pull after the window counts as no pull.
+      else hook(phase, since > phase.bite + ROD.biteWindowMs ? null : since - phase.bite, now);
     }
   }
 
@@ -127,6 +142,13 @@ export function openFishing(k: DialogKit) {
       const nibbling = phase.nibbles.some((n) => since >= n && since < n + ROD.nibbleMs);
       const biting = since >= phase.bite;
       const noting = phase.startledAt !== null && now - phase.startledAt < STARTLE_NOTE_MS;
+      // The shadow swims in from its circle as the bite nears, so the bite can be seen coming.
+      const gap = biting ? 0 : shadowGap(phase.bite - since, nibbling);
+      if (refs.shadow) {
+        refs.shadow.style.translate = `${Math.round(gap * SHADOW_GAP_PX)}px 0`;
+        refs.shadow.classList.toggle('is-coming', gap < 1);
+      }
+      refs.pull?.style.setProperty('--left', String(biting ? biteLeft(since - phase.bite) : 1));
       refs.bobber?.classList.toggle('is-nibble', nibbling);
       refs.bobber?.classList.toggle('is-bite', biting);
       refs.scene?.classList.toggle('is-bite', biting);
@@ -134,7 +156,7 @@ export function openFishing(k: DialogKit) {
       refs.line?.setAttribute('d', linePath(waterX(phase.power), biting));
       if (refs.status && (biting || !noting)) refs.status.textContent = biting ? F.bite : nibbling ? F.nibble : F.waiting;
       refs.status?.classList.toggle('is-hot', biting);
-      if (since > phase.bite + ROD.biteWindowMs) void land(0, phase.depth, F.late, null);
+      if (since > phase.bite + ROD.biteWindowMs) hook(phase, null, now);
     }
     if (phase.kind === 'fight') {
       const dt = Math.min(0.05, (now - phase.last) / 1000);
@@ -150,12 +172,12 @@ export function openFishing(k: DialogKit) {
       refs.hold?.classList.toggle('is-held', holding);
       if (refs.reel) refs.reel.style.height = `${fight.progress * 100}%`;
       if (refs.reelText) refs.reelText.textContent = `${Math.round(fight.progress * 100)}%`;
-      if (refs.status) refs.status.textContent = slipping ? F.slipping : t(F.reeled, { percent: Math.round(fight.progress * 100) });
-      refs.status?.classList.toggle('is-hot', slipping);
+      const noting = now < phase.noteUntil;
+      if (refs.status) refs.status.textContent = noting ? F.selfHooked : slipping ? F.slipping : t(F.reeled, { percent: Math.round(fight.progress * 100) });
+      refs.status?.classList.toggle('is-hot', slipping && !noting);
       const over = fightOver(fight);
       if (over) {
         const p = phase;
-        phase = { kind: 'idle' };
         void land(rodScore(over, p.reaction, p.fight, p.size, streak), p.depth, over === 'escaped' ? F.escaped : null, p.size);
       }
     }
@@ -207,44 +229,14 @@ export function openFishing(k: DialogKit) {
         refs.pull,
       );
     } else if (phase.kind === 'fight') {
-      const f = phase.fight;
-      refs.zone = el('span', { class: 'aquarium-rod__zone', attrs: { style: `bottom:${f.zone * 100}%;height:${ROD.fight.zone[phase.depth] * 100}%` } });
-      refs.fish = el('span', { class: `aquarium-rod__fish is-${phase.size}`, text: '🐟', attrs: { 'aria-hidden': 'true', style: `bottom:${f.fish * 100}%` } });
-      refs.reel = el('i', { attrs: { style: `height:${f.progress * 100}%` } });
-      refs.reelText = el('b', { text: `${Math.round(phase.fight.progress * 100)}%` });
-      const hold = (on: boolean) => (e: Event) => {
-        e.preventDefault();
-        holding = on;
-      };
-      refs.hold = el(
-        'button',
-        {
-          class: 'c-button aquarium-rod__hold',
-          attrs: { type: 'button' },
-          on: { pointerdown: hold(true), pointerup: hold(false), pointerleave: hold(false), pointercancel: hold(false), contextmenu: (e) => e.preventDefault() },
-        },
-        el('span', { class: 'aquarium-rod__hold-icon', text: '🎣', attrs: { 'aria-hidden': 'true' } }),
-        el('span', { text: F.hold }),
-      );
-      refs.arena = el(
-        'div',
-        { class: 'aquarium-rod__arena is-in' },
-        el('div', { class: 'aquarium-rod__bar' }, el('span', { class: 'aquarium-rod__bubbles', attrs: { 'aria-hidden': 'true' } }), refs.zone, refs.fish),
-        el(
-          'div',
-          { class: 'aquarium-rod__reel', attrs: { role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': '100' } },
-          el('span', { class: 'aquarium-rod__reel-track' }, refs.reel),
-          refs.reelText,
-        ),
-        refs.hold,
-      );
+      Object.assign(refs, rodArena(phase.fight, phase.depth, phase.size, (on) => (holding = on)));
       stage = el(
         'div',
         { class: 'aquarium-rod aquarium-rod--fight' },
         steps(2),
         el('div', { class: 'aquarium-rod__tags' }, tag(F.depth[phase.depth] ?? ''), tag(F.shadow[phase.size], `is-${phase.size}`)),
         refs.arena,
-        status(t(F.reeled, { percent: Math.round(phase.fight.progress * 100) })),
+        status(k.now() < phase.noteUntil ? F.selfHooked : t(F.reeled, { percent: Math.round(phase.fight.progress * 100) })),
         hint(F.fightHint),
       );
     } else {

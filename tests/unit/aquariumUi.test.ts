@@ -14,7 +14,7 @@ import { aquariumOf, withAquarium } from '../../src/areas/aquarium/logic/save/le
 import { AQUARIUM_DESIGN, AQUARIUM_PLACES, AQUARIUM_VIEW, aquariumPlace, eggSpot, fishIcon, fishScale } from '../../src/areas/aquarium/scene/aquariumView';
 import { barVm, bagVm, breedablePairs, hudVm, tankVm } from '../../src/areas/aquarium/ui/aquariumVm';
 import { dockVm } from '../../src/areas/aquarium/ui/dockVm';
-import { biteTimes, depthOf, earlyPull, fightOver, powerAt, reactionOf, ROD, rodScore, shadowOf, startFight, stepFight } from '../../src/areas/aquarium/ui/fishingGame';
+import { biteLeft, biteTimes, depthOf, earlyPull, fightOver, powerAt, reactionOf, ROD, rodScore, shadowGap, shadowOf, startFight, stepFight } from '../../src/areas/aquarium/ui/fishingGame';
 import { catchOdds } from '../../src/areas/aquarium/logic/fishing';
 import { fishCardVm } from '../../src/areas/aquarium/ui/fishCardVm';
 import { mulberry32 } from '../../src/core/rng';
@@ -202,6 +202,18 @@ describe('the rod\'s mini-game (decision 035)', () => {
     expect(shadowOf(0.05, 0)).not.toBe('golden');
     expect(shadowOf(0.05, 2)).toBe('golden');
     expect(shadowOf(0.99, 2)).toBe('small');
+  });
+
+  it('the shadow swims in before the bite (a nibble brings it halfway), and the pull bar runs out with the window', () => {
+    expect(shadowGap(ROD.approachMs * 2, false)).toBe(1);
+    expect(shadowGap(ROD.approachMs / 2, false)).toBe(0.5);
+    expect(shadowGap(ROD.approachMs * 2, true)).toBe(0.5);
+    expect(shadowGap(0, false)).toBe(0);
+    expect(biteLeft(0)).toBe(1);
+    expect(biteLeft(ROD.biteWindowMs / 2)).toBe(0.5);
+    expect(biteLeft(ROD.biteWindowMs * 2)).toBe(0);
+    // The bite never comes before the shadow could be seen swimming in.
+    expect(biteTimes(0, 0).bite).toBeGreaterThanOrEqual(ROD.approachMs);
   });
 
   it('an early pull only startles the fish (the bite comes later) until the grace runs out', () => {

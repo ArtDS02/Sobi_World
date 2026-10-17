@@ -1,8 +1,10 @@
 // The rod's mini-game (decision 035), three beats instead of one tap:
 //   1. cast — a power bar swings; where it stops is how far the line lands (near shore, mid-lake, far out: further =
 //      rarer fish, castLine `depth`, and a harder fight);
-//   2. bite — the bobber floats, a fish nibbles, then bites: pull within the window. A pull too early only startles the
-//      fish (it comes back a little later); the third early pull scares it off;
+//   2. bite — the bobber floats and the fish's shadow circles, then swims in (so the bite can be seen coming), nibbles,
+//      and bites: pull within the window for the best reaction. A pull too early only startles the fish (it comes back a
+//      little later); the third early pull scares it off. No pull at all is not a miss: the fish hooks itself, with no
+//      reaction to its score;
 //   3. fight — hold to lift the catch zone and keep the fish's icon inside it until the line is reeled in.
 // A shadow under the water says how big the fish is (a golden one is rare and worth a lot). The score sent to castLine
 // mixes the reaction, the fight and the fish's size, plus a little for a streak of catches. Pure: time and randomness
@@ -14,12 +16,14 @@ export const ROD = {
   /** Power shares where mid-lake and far out begin. */
   depthAt: [0.4, 0.75] as const,
   /** The real bite comes this long after the line lands; nibbles may come before it. */
-  biteMs: [1600, 4200] as const,
+  biteMs: [2000, 4200] as const,
   nibbleMs: 320,
-  /** How long the bobber stays down at the real bite. */
-  biteWindowMs: 1500,
+  /** The shadow leaves its circle and swims in to the bobber this long before the bite. */
+  approachMs: 1400,
+  /** How long the bobber stays down at the real bite; past it the fish hooks itself (reaction 0). */
+  biteWindowMs: 2200,
   /** A pull this quick after the bite reacts best. */
-  quickMs: 250,
+  quickMs: 350,
   /** Early pulls forgiven (the fish only startles); one more scares it off. */
   earlyGrace: 2,
   /** A startled fish comes back to bite this long after the early pull. */
@@ -75,6 +79,18 @@ export function biteTimes(rollA: number, rollB: number): { bite: number; nibbles
   const nibbles = Array.from({ length: count }, (_, i) => bite * ((i + 1) / (count + 1)) * (0.85 + rollB * 0.1));
   return { bite, nibbles };
 }
+
+/**
+ * How far the shadow is from the bobber, `toBite` ms before the bite: 1 while it circles, then down to 0 (under the
+ * bobber) over ROD.approachMs. A nibble brings it halfway in.
+ */
+export const shadowGap = (toBite: number, nibbling: boolean): number => {
+  const gap = Math.max(0, Math.min(1, toBite / ROD.approachMs));
+  return nibbling ? gap / 2 : gap;
+};
+
+/** 0..1: how much of the bite window is left `sinceBite` ms after the bite (the pull button's countdown). */
+export const biteLeft = (sinceBite: number): number => Math.max(0, Math.min(1, 1 - sinceBite / ROD.biteWindowMs));
 
 /** 0..1: how quick the pull was after the bite (1 within ROD.quickMs, 0 at the end of the window). */
 export const reactionOf = (ms: number): number => Math.max(0, Math.min(1, 1 - (ms - ROD.quickMs) / (ROD.biteWindowMs - ROD.quickMs)));

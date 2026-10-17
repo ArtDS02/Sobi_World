@@ -4,7 +4,7 @@
 import { el } from '../../../ui/dom';
 import { vi } from '../../../i18n/vi';
 import type { CastDepth } from '../logic/fishing';
-import { ROD, type ShadowSize } from './fishingGame';
+import { ROD, type Fight, type ShadowSize } from './fishingGame';
 
 /** Where on the water (percent of the scene's width) a throw of `power` lands: from the pier's end out to the horizon. */
 export const waterX = (power: number) => 27 + power * 66;
@@ -29,6 +29,7 @@ export interface SceneParts {
   power?: HTMLElement;
   target?: HTMLElement;
   bobber?: HTMLElement;
+  shadow?: HTMLElement;
   line?: SVGPathElement;
 }
 
@@ -69,8 +70,9 @@ export function rodScene(beat: SceneBeat, onTap: () => void): SceneParts {
     parts.line = line;
     const at = { 'aria-hidden': 'true', style: `left:${waterX(cast.power)}%` };
     parts.bobber = el('span', { class: `aquarium-rod__bobber${cast.kind === 'fight' ? ' is-bite' : ''}`, attrs: at }, el('b', { text: '!' }));
+    parts.shadow = el('span', { class: `aquarium-rod__shadow is-${cast.size}`, attrs: at });
     extra = [
-      el('span', { class: `aquarium-rod__shadow is-${cast.size}`, attrs: at }),
+      parts.shadow,
       el('span', { class: 'aquarium-rod__ripple', attrs: at }),
       el('span', { class: 'aquarium-rod__splash', attrs: at }),
       parts.bobber,
@@ -98,3 +100,48 @@ export const rodSteps = (at: number) =>
 
 /** A small pill: the depth, the shadow's size. */
 export const rodTag = (text: string, tone = '') => el('span', { class: `aquarium-rod__tag ${tone}`.trim(), text });
+
+/** The fight's live parts: the bar with the catch zone and the fish, the reel's progress, the hold button. */
+export interface ArenaParts {
+  arena: HTMLElement;
+  zone: HTMLElement;
+  fish: HTMLElement;
+  reel: HTMLElement;
+  reelText: HTMLElement;
+  hold: HTMLElement;
+}
+
+/** The fight beat's arena; `onHold` hears the hold button pressed and let go. */
+export function rodArena(f: Fight, depth: CastDepth, size: ShadowSize, onHold: (on: boolean) => void): ArenaParts {
+  const zone = el('span', { class: 'aquarium-rod__zone', attrs: { style: `bottom:${f.zone * 100}%;height:${ROD.fight.zone[depth] * 100}%` } });
+  const fish = el('span', { class: `aquarium-rod__fish is-${size}`, text: '🐟', attrs: { 'aria-hidden': 'true', style: `bottom:${f.fish * 100}%` } });
+  const reel = el('i', { attrs: { style: `height:${f.progress * 100}%` } });
+  const reelText = el('b', { text: `${Math.round(f.progress * 100)}%` });
+  const hold = (on: boolean) => (e: Event) => {
+    e.preventDefault();
+    onHold(on);
+  };
+  const button = el(
+    'button',
+    {
+      class: 'c-button aquarium-rod__hold',
+      attrs: { type: 'button' },
+      on: { pointerdown: hold(true), pointerup: hold(false), pointerleave: hold(false), pointercancel: hold(false), contextmenu: (e) => e.preventDefault() },
+    },
+    el('span', { class: 'aquarium-rod__hold-icon', text: '🎣', attrs: { 'aria-hidden': 'true' } }),
+    el('span', { text: vi.aquarium.fishing.hold }),
+  );
+  const arena = el(
+    'div',
+    { class: 'aquarium-rod__arena is-in' },
+    el('div', { class: 'aquarium-rod__bar' }, el('span', { class: 'aquarium-rod__bubbles', attrs: { 'aria-hidden': 'true' } }), zone, fish),
+    el(
+      'div',
+      { class: 'aquarium-rod__reel', attrs: { role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': '100' } },
+      el('span', { class: 'aquarium-rod__reel-track' }, reel),
+      reelText,
+    ),
+    button,
+  );
+  return { arena, zone, fish, reel, reelText, hold: button };
+}

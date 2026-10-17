@@ -158,17 +158,43 @@ $rod-waterline: 46%;
     color: $rod-ink;
     transition: color 0.15s, transform 0.15s;
 
-    &.is-hot { color: $rod-hot; transform: scale(1.08); }
+    &.is-hot {
+      padding: 0.15em 0.8em;
+      color: #fff;
+      font-size: $fs-md;
+      background: $rod-hot;
+      border-radius: 999px;
+      transform: scale(1.12);
+      animation: rod-hot 0.3s ease-in-out infinite alternate;
+    }
   }
   &__hint { max-width: 26rem; color: $c-text-muted; font-size: $fs-xs; line-height: 1.35; }
   &__lead { max-width: 26rem; margin: 0; color: $c-text; font-size: $fs-sm; line-height: 1.4; }
 
   &__go { min-width: 12rem; min-height: $sp-touch-min; font-size: $fs-md; }
+  // The pull button: lit at the bite, with a bar along its foot that runs out with the bite window.
+  &__pull {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: calc(var(--left, 1) * 100%);
+      height: 5px;
+      background: #fff6c2;
+      opacity: 0;
+    }
+  }
   &__pull.is-hot {
     background: linear-gradient(180deg, #ffb347, $rod-hot);
     border-color: #b8501a;
     box-shadow: 0 0 0 4px rgba(255, 179, 71, 0.35);
     animation: rod-hot 0.3s ease-in-out infinite alternate;
+
+    &::after { opacity: 1; }
   }
 
   // Throw → wait → reel.
@@ -378,10 +404,11 @@ $rod-waterline: 46%;
       left: 50%;
       display: grid;
       place-items: center;
-      width: 1.6rem;
-      height: 1.6rem;
+      width: 2.4rem;
+      height: 2.4rem;
       color: #fff;
-      font-size: 1.1rem;
+      font-size: 1.6rem;
+      font-weight: $fw-bold;
       background: $rod-hot;
       border: 2px solid #fff;
       border-radius: 50%;
@@ -391,6 +418,14 @@ $rod-waterline: 46%;
     }
     &.is-nibble { transform: translateY(5px) rotate(-10deg); }
     &.is-bite { transform: translateY(20px); animation: none; }
+    &.is-bite::before {
+      content: '';
+      position: absolute;
+      inset: -14px;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      animation: rod-ripple 0.5s ease-out infinite;
+    }
     &.is-bite b { transform: translate(-50%, -6px) scale(1); animation: rod-alert 0.3s ease-in-out infinite alternate; }
   }
   &__ripple {
@@ -428,6 +463,10 @@ $rod-waterline: 46%;
     border-radius: 50% 40% 40% 50%;
     filter: blur(2px);
     animation: rod-shadow 3.2s ease-in-out infinite alternate;
+    transition: translate 0.12s linear;
+
+    // Swimming in to the bobber: the circling wobble calms down.
+    &.is-coming { animation-duration: 1.2s; }
 
     &.is-small { transform: scale(0.65); }
     &.is-big { width: 5.6rem; height: 1.8rem; margin-left: -2.8rem; }
