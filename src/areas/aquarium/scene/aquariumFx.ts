@@ -122,6 +122,17 @@ export class AquariumFx {
     this.scene.tweens.add({ targets: img, scale: to, alpha: 0, duration: 650, ease: 'Sine.easeOut', onComplete: () => img.destroy() });
   }
 
+  /** A poke in the water at (x, y): rings spread from it under water and a few bubbles rise. */
+  poke(x: number, y: number, box: Box) {
+    const v = AQUARIUM_VIEW;
+    const t = v.moments.tease;
+    t.rings.forEach((px, i) => {
+      const ring = this.scene.add.circle(x, y, px / 2).setStrokeStyle(5, 0xffffff, 0.9).setDepth(v.depth.ripple).setScale(0.1);
+      this.scene.tweens.add({ targets: ring, scale: 1, alpha: { from: 1, to: 0 }, duration: t.ringMs, delay: i * 150, ease: 'Cubic.easeOut', onComplete: () => ring.destroy() });
+    });
+    for (let i = 0; i < t.bubbles; i += 1) this.bubble(x + (this.rng.next() * 2 - 1) * 16, y, box, 6 + this.rng.next() * 6, 80 + this.rng.next() * 40);
+  }
+
   /** A bubble rising from (x, y) to the top of `box`, wobbling, then popping. */
   bubble(x: number, y: number, box: Box, px = 10 + this.rng.next() * 8, speed = 50 + this.rng.next() * 40) {
     const v = AQUARIUM_VIEW;

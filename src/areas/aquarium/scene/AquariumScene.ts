@@ -18,7 +18,7 @@ import { AquariumFx } from './aquariumFx';
 import { AquariumMoments } from './aquariumMoments';
 import { AquariumProps } from './aquariumProps';
 import { FishBody } from './fishBody';
-import { nextLeg, Swimmer, type Mood } from './fishSwim';
+import { nextLeg, scatterFrom, Swimmer, type Mood } from './fishSwim';
 import { AQUARIUM_DESIGN, AQUARIUM_VIEW, aquariumPlace, eggSpot, fishIcon, fishScale, murkAlpha, type AquariumPlace } from './aquariumView';
 
 export const AQUARIUM_SCENE_KEY = 'aquarium';
@@ -102,8 +102,15 @@ export class AquariumScene extends Phaser.Scene {
       dot.setData('u', rng.next()).setData('v', rng.next());
       this.bubbles.push({ dot, speed: 18 + rng.next() * 26 });
     }
-    this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
+    this.input.on(Phaser.Input.Events.POINTER_DOWN, (p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
       if (this.deps.paused() || over.length > 0) return;
+      // Empty water: the poke rings out and the fish nearby dart off, teased.
+      const w = this.place.water;
+      const at = { x: p.worldX, y: p.worldY };
+      if (!this.deps.reduceMotion() && at.x >= w.left && at.x <= w.right && at.y >= w.top && at.y <= w.bottom) {
+        this.fx.poke(at.x, at.y, w);
+        scatterFrom(this.swimmers.values(), at, w, this.time.now);
+      }
       this.deps.onPick({ kind: 'ground' });
     });
     // Pictures that arrive after the scene was built (slow first load) replace their fallback.

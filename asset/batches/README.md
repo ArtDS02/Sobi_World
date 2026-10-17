@@ -37,7 +37,8 @@ Backend: **G** = Gemini vẽ sheet (chủ dự án dán prompt, lưu ảnh; còn
 | Farm | `farm-02-pigs` | **mở rộng**: 12 heo concept NOT DESIGNED của catalogue (idle; ngủ/thức sửa từ ảnh duyệt) | G, 2 sheet 2×3 | 2 | **production** (chờ duyệt, decision 035) |
 | Garden | `garden-04-crops` | **mở rộng**: 8 cây × 4 giai đoạn (cà chua, bí ngô, khoai lang, bắp cải, dâu, dưa hấu, mía, hướng dương) | G, 4 sheet 2×4 | 4 | **production** (chờ duyệt, decision 035) |
 | Cloud | `cloud-05-flowers` | **mở rộng**: 8 hoa × 4 giai đoạn (tulip nắng, cẩm tú cầu mưa, diên vĩ sấm, trà tuyết, dâm bụt hoàng hôn, oải hương sao chổi, mẫu đơn pha lê, sen mây) | G, 4 sheet 2×4 | 4 | **production** (chờ duyệt, decision 035) |
-| | | **162** | | **~39** | |
+| Aquarium | `aquarium-06-subs` | tàu ngầm cho ăn / thay nước ở cấp 5 Đại Dương Sâu `prop_sub_feed`, `prop_sub_water` (thay drone dưới đáy biển; dòng manifest thêm khi giao) | G, 1 sheet 1×2 | 1 | **chờ chủ dự án tạo ảnh** |
+| | | **164** | | **~40** | |
 
 Thứ tự làm: Cloud → (duyệt) → Garden → Aquarium → Adventure → Farm → Sảnh, mỗi Area dừng chờ duyệt ảnh chụp (GĐ14).
 

@@ -53,21 +53,29 @@ export class AquariumCare {
     this.waterByDrone(murkAlpha(before), murkAlpha(state.water));
   }
 
-  /** The drone at the art id when painted, else its stand-in (a drone of another Area). */
-  private droneArt(d: { art: string; stand: string }): string {
-    return this.scene.textures.exists(textureKey(d.art)) ? d.art : d.stand;
+  /**
+   * The craft that brings `job`: a drone over the surface, a submarine in the deep sea (no surface) — at its art id
+   * when painted, else its stand-in (a drone of another Area).
+   */
+  private droneArt(job: 'feed' | 'water'): string {
+    const d = AQUARIUM_VIEW.drone;
+    const c = this.d.place().surface ? d[job] : d.sub[job];
+    return this.scene.textures.exists(textureKey(c.art)) ? c.art : c.stand;
   }
 
   private fly(art: string, x: number, holdMs: number, puff: readonly number[], arrive: (at: { x: number; y: number }) => void) {
     const d = AQUARIUM_VIEW.drone;
     const w = this.d.place().water;
     const v = this.d.view();
-    const at = { x, y: w.top - d.hoverY };
+    // A drone comes in high and hovers over the surface; a submarine glides in level, under the top of the water.
+    const deep = !this.d.place().surface;
+    const top = deep ? w.top + d.sub.diveY + d.hoverY : w.top;
+    const at = { x, y: top - d.hoverY };
     const stop = flyDrone(this.scene, {
       art,
-      from: { x: v.x - d.size, y: w.top - d.hoverY - 120 },
-      stops: [{ x, y: w.top }],
-      exit: { x: v.x + v.width + d.size, y: w.top - d.hoverY - 160 },
+      from: { x: v.x - d.size, y: top - d.hoverY - (deep ? 0 : 120) },
+      stops: [{ x, y: top }],
+      exit: { x: v.x + v.width + d.size, y: top - d.hoverY - (deep ? 0 : 160) },
       hoverY: d.hoverY,
       speed: d.speed,
       dropMs: holdMs,
@@ -88,7 +96,7 @@ export class AquariumCare {
     const share = Math.max(1, Math.floor(Math.min(max, fed.length * perFish) / fed.length));
     const mid = fed.reduce((sum, s) => sum + s.m.x, 0) / fed.length;
     const x = Math.min(w.right - spread, Math.max(w.left + spread, mid));
-    this.fly(this.droneArt(d.feed), x, d.feedMs, d.puffFeed, (at) => {
+    this.fly(this.droneArt('feed'), x, d.feedMs, d.puffFeed, (at) => {
       this.d.fx.feed(fed.length, at.x, w, at.y + d.size * 0.3);
       for (const s of fed) s.appetite = share;
     });
@@ -101,7 +109,7 @@ export class AquariumCare {
     this.murkHeld = true;
     this.d.murk.setAlpha(from);
     const x = w.left + (w.right - w.left) * AQUARIUM_VIEW.water.pourAt;
-    this.fly(this.droneArt(d.water), x, AQUARIUM_VIEW.water.pourMs, d.puffWater, (at) => {
+    this.fly(this.droneArt('water'), x, AQUARIUM_VIEW.water.pourMs, d.puffWater, (at) => {
       this.murkHeld = false;
       this.d.murk.setAlpha(to);
       this.d.fx.changeWater(w, this.d.place().murk, this.d.murk, from, this.d.view(), at.y + d.size * 0.28);

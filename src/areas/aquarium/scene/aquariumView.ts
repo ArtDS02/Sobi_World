@@ -223,6 +223,9 @@ export const AQUARIUM_VIEW = {
     feedMs: 650,
     puffFeed: [0xd98a3d, 0xb5652a, 0xffd89a],
     puffWater: [0xcfeefe, 0xffffff, 0x9fd6f5],
+    /** The deep sea (no surface, decision 026) has submarines instead of drones: they glide in under the top of the
+     *  water, `diveY` below it. Until their art is painted they stand in with the drones above. */
+    sub: { feed: { art: 'prop_sub_feed', stand: 'prop_drone_garden' }, water: { art: 'prop_sub_water', stand: 'prop_drone_cloud' }, diveY: 40 },
   },
   /** Rain and snow on the surface (one ring every so often), fireflies over the water at night (or glowing specks in
    *  the deep), the moon glinting on the surface. */
@@ -233,6 +236,8 @@ export const AQUARIUM_VIEW = {
     heartArt: 'fx_heart',
     nibbleMs: 1600,
     startle: { factor: 2.6, ms: 700 },
+    /** A click on empty water teases the fish: a ring spreads there, and fish within `radius` dart `flee` px away. */
+    tease: { radius: 230, flee: 260, factor: 3, ms: 900, rings: [130, 230], ringMs: 900, bubbles: 5 },
   },
   bubbleArt: 'fx_bubble',
   sparkleArt: 'fx_sparkle',

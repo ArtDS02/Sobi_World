@@ -1,7 +1,7 @@
 // How a fish of the Aquarium swims (fishSwim.ts): the velocity eases towards the wish and slows near the spot, and the
 // next leg stays in the water, mostly level, near the top for a hungry fish and near the bottom for a sick one.
 import { describe, expect, it } from 'vitest';
-import { bodyWave, nextLeg, steer } from '../../src/areas/aquarium/scene/fishSwim';
+import { bodyWave, fleeFrom, nextLeg, scatterFrom, steer, type Swimmer } from '../../src/areas/aquarium/scene/fishSwim';
 import { bendAt, kindFrame, pulseAt, SPECIES_SWIM, SWIM_STYLES, swimStyleOf } from '../../src/areas/aquarium/scene/swimStyles';
 import { FISH_LIST } from '../../src/areas/aquarium/logic/config/content';
 import { AQUARIUM_VIEW } from '../../src/areas/aquarium/scene/aquariumView';
@@ -86,5 +86,34 @@ describe('each creature moves its own way (decision 035)', () => {
     expect(kindFrame('puffer', 0.4, 0, 0).sx).toBe(1);
     expect(kindFrame('octopus', 0.4, 0, 0).speed).toBeGreaterThan(kindFrame('octopus', 0.8, 0, 0).speed);
     expect(pulseAt(1500, 1000, 0)).toBeCloseTo(0.5);
+  });
+});
+
+describe('a click on empty water teases the fish', () => {
+  const box = { left: 0, right: 1000, top: 0, bottom: 600 };
+  const fake = (x: number, y: number) => {
+    const s = { m: { x, y, vx: 0, vy: 0 }, tx: x, ty: y, restUntil: 5000, boostUntil: 0, hurry(time: number, _f: number, ms: number) { s.boostUntil = time + ms; } };
+    return s;
+  };
+
+  it('a fish flees straight away from the poke and stays in the water', () => {
+    expect(fleeFrom({ x: 600, y: 300 }, { x: 500, y: 300 }, box, 200)).toEqual({ x: 800, y: 300 });
+    expect(fleeFrom({ x: 400, y: 300 }, { x: 500, y: 300 }, box, 200)).toEqual({ x: 200, y: 300 });
+    // Against the glass it stops at the edge.
+    expect(fleeFrom({ x: 950, y: 300 }, { x: 900, y: 300 }, box, 200).x).toBe(970);
+    // Poked on its nose it still bolts somewhere.
+    expect(fleeFrom({ x: 300, y: 300 }, { x: 300, y: 300 }, box, 200).x).toBe(100);
+  });
+
+  it('only the fish within reach dart off, quicker and without resting first', () => {
+    const t = AQUARIUM_VIEW.moments.tease;
+    const near = fake(500 + t.radius / 2, 300);
+    const far = fake(500 + t.radius * 2, 300);
+    expect(scatterFrom([near, far] as unknown as Swimmer[], { x: 500, y: 300 }, box, 1000)).toBe(1);
+    expect(near.tx).toBeGreaterThan(near.m.x);
+    expect(near.restUntil).toBe(0);
+    expect(near.boostUntil).toBe(1000 + t.ms);
+    expect(far.tx).toBe(far.m.x);
+    expect(far.restUntil).toBe(5000);
   });
 });

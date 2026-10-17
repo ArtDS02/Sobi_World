@@ -213,3 +213,32 @@ export class Swimmer {
     this.icon.setPosition(this.m.x, this.m.y - this.img.displayHeight * 0.6);
   }
 }
+
+/** Where a fish at `m` flees from a poke at `at`: straight away from it by `dist` px, kept inside `box`. */
+export function fleeFrom(m: { x: number; y: number }, at: { x: number; y: number }, box: Box, dist: number): { x: number; y: number } {
+  const dx = m.x - at.x;
+  const dy = m.y - at.y;
+  const len = Math.hypot(dx, dy);
+  // Poked right on its nose: it bolts sideways, the way it faces away from the middle of the water.
+  const [ux, uy] = len < 1 ? [m.x < (box.left + box.right) / 2 ? -1 : 1, 0] : [dx / len, dy / len];
+  return {
+    x: Math.min(box.right - 30, Math.max(box.left + 30, m.x + ux * dist)),
+    y: Math.min(box.bottom - 30, Math.max(box.top + 30, m.y + uy * dist * 0.6)),
+  };
+}
+
+/** A poke in the water at `at` (a click on empty water): the fish within reach dart away. Returns how many fled. */
+export function scatterFrom(swimmers: Iterable<Swimmer>, at: { x: number; y: number }, box: Box, time: number): number {
+  const t = AQUARIUM_VIEW.moments.tease;
+  let fled = 0;
+  for (const s of swimmers) {
+    if (Math.hypot(s.m.x - at.x, s.m.y - at.y) > t.radius) continue;
+    const to = fleeFrom(s.m, at, box, t.flee);
+    s.tx = to.x;
+    s.ty = to.y;
+    s.restUntil = 0;
+    s.hurry(time, t.factor, t.ms);
+    fled += 1;
+  }
+  return fled;
+}
