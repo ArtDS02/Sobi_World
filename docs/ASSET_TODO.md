@@ -4,6 +4,17 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
+## Adventure V2 (decision 037) — làm ở A7
+| Asset | Ghi chú |
+|---|---|
+| Nền 9 khu (3 vùng × 3 khu, cuộn ~1,5–2 màn hình) | Góc nhìn 3/4 từ trên, style Sobi Farm; vẽ khớp lưới 40 px (vách, nước = ô chặn). |
+| Đạo cụ bản đồ (cây, đá, nhà, tượng, cột, hàng rào…) | Mỗi loại có footprint `w × h` ô trong `content/adventure/props.json`; đế vật phải khớp footprint (test). |
+| Rương báu (đóng / mở / lấp lánh), cổng dịch chuyển (tắt / bật), 8 chướng ngại cổng nguyên tố, suối, bia lore, đền Guardian | |
+| Icon 9 nguyên tố, ~25 trạng thái, 6 phản ứng, icon ý định kẻ địch | |
+| VFX 9 hệ, phản ứng, cut-in Ultimate 9 dòng | |
+| So / Bi đi bộ (đã có `chr_so` / `chr_bi`, bản tạm) | Vẽ lại theo style chuẩn nếu cần. |
+| Sprite First Guardians / hậu duệ | Theo `asset/FIRST_GUARDIANS_ART_PLAN.md` (loài mới để sau). |
+
 ## GĐ14 — Aquarium: cho ăn / thay nước (decision 032)
 | Việc | Ghi chú |
 |---|---|

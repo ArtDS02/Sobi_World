@@ -222,8 +222,8 @@ Gems không được mua lợi thế lớn về sức mạnh (không pay-to-win,
 | Hoa Cloud | 4–12 giờ, cần Nước tinh khiết (GĐ9 chốt 6 hoa, suối 3 cấp, vạc: `content/cloud/`, decision 016) |
 | Healing Potion | Hoa hiếm ×1 + Nước tinh khiết ×1 → chữa bệnh + Tâm trạng +20 |
 | Đội Adventure | Tối đa 3 sinh vật (GĐ10 chốt kiểu đánh, kỹ năng, trang bị, vùng Rừng, năng lượng phiêu lưu riêng mỗi chiến binh: `content/adventure/`, decision 018) |
-| Nguyên tố | Lửa > Gió > Đất > Nước > Lửa (khắc chế: ×1.5 sát thương) |
-| Skill | Mỗi sinh vật: đòn thường + 2 skill (mở thêm ở level 10, 20) |
+| Nguyên tố | **Thay bởi decision 037**: 9 nguyên tố, ma trận Ngũ hành — xem `update_spec_sobi_adventure_gameplay_v1.md` §9 |
+| Skill | **Thay bởi decision 037**: 4 Unique + Class Skill Tree (loadout 3) + Ultimate — spec Adventure §6–7 |
 | Kiệt sức khi thua | Nghỉ 4 giờ |
 | Năng lượng phiêu lưu | Mỗi lần vào vùng tốn 30 Năng lượng của sinh vật |
 | Vùng đầu tiên | Rừng: 5 ô sự kiện + 1 trùm |

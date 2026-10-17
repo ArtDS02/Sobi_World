@@ -6,9 +6,14 @@
 **Tiến độ GĐ14:** 50 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023).
-**Bước tiếp theo:** chủ dự án duyệt decision 035 (loài mới, lai giống, câu cá, popup); rồi Adventure.
+**Bước tiếp theo:** Adventure V2 (decision 037, spec `docs/update_spec_sobi_adventure_gameplay_v1.md`): A0 tài liệu xong → A1 lõi combat V2.
 
 ## Nhật ký
+
+### 2026-10-17 — Adventure V2: A0 spec + decision 037 (chủ dự án đã duyệt hướng)
+✅ Đã làm: viết `docs/update_spec_sobi_adventure_gameplay_v1.md` (Combat V2 từ master prompt `UPDATE_SPEC_SOBI_ADVENTURE.md` + bản đồ khám phá) và decision 037. Chủ dự án chốt: mở băng cho Adventure; ma trận 9 nguyên tố theo Ngũ hành; Unique / Ultimate theo 9 dòng First Guardian; class đổi được, tẩy điểm; ý định kẻ địch, thanh lượt; Đi nhanh, đội hình lưu sẵn; WD 16 để mở Adventure; 30 loài hậu duệ để sau. Bản đồ kiểu Epic Battle Fantasy 3: So / Bi dẫn, 3 sinh vật theo sau, **chỉ phím mũi tên / WASD**, Space tương tác, rương báu ẩn mở 1 lần và luôn có đường tới, footprint vật phủ đúng đế (test), cổng dịch chuyển mỗi khu mở khi hạ trùm khu.
+⚠️ Tự quyết (ghi trong spec, chờ chủ dự án soát): số khởi điểm (SP +2/cấp, giá node 2/4/6, MP, Rage K 1,2, trạng thái, phản ứng); độ hiếm nén 1,00 → 1,20; mỗi vùng 3 khu, khu 1–2 có trùm khu; quái không đuổi, trận thường được bỏ chạy; tên 36 Unique + 9 Ultimate + 32 node cây class; `master prompt` nhắc file `SOBI_ADVENTURE_GAMEPLAY_SPEC.md` không tồn tại nên spec mới đặt tên theo kiểu spec các Area khác.
+👉 Bạn cần: đọc spec (nhất là §3 bản đồ, §6 dòng, §7 cây class, §9.3 ma trận), báo chỗ muốn đổi trước A1.
 
 ### 2026-10-17 — Admin: làm lại cho cả Sobi World, sửa lỗi sửa item / người chơi (decision 036, chờ duyệt)
 ✅ Đã làm (chủ dự án: "trang admin là bản cũ, nhiều lỗi khi sửa item, sửa user"):

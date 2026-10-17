@@ -2,6 +2,8 @@
 
 **Ngày:** 2026-10-11 · **Trạng thái:** Đề xuất, có hiệu lực **sau khi chủ dự án chơi thử ≥ 7 ngày thật và duyệt GĐ13**. Từ lúc đó hết đổi cơ chế; chỉ sửa lỗi (ROADMAP GĐ13, decision 017).
 
+> **Cập nhật 2026-10-17:** decision 037 mở băng cho riêng Adventure (Combat V2, bản đồ khám phá) và chốt WD 16 để mở Adventure.
+
 ## Bối cảnh
 GĐ1–GĐ12 đã xong phần gameplay với art placeholder. GĐ14 sẽ vẽ, làm animation, VFX, âm thanh; art chỉ thay được an toàn khi cơ chế đứng yên (decision 017). GĐ13 đã chạy nghiệm thu toàn bộ (`docs/ACCEPTANCE.md`), sửa các lỗi tích hợp tìm thấy và đo hiệu năng.
 

@@ -1,6 +1,8 @@
 # First Guardians & Combat Animal hậu duệ — Thiết kế + bộ prompt Gemini
 
 **Ngày:** 2026-10-14 · **Trạng thái:** đề xuất, chờ chủ dự án duyệt (các điểm cần chốt ở §0)
+
+> **Cập nhật 2026-10-17:** chủ dự án duyệt các điểm 1–7 §0 trong decision 037 (9 nguyên tố, Gió → Sấm, Heo Hiệp Sĩ hệ Kim loại); 30 loài hậu duệ mới để sau. Unique / Ultimate chốt theo `docs/update_spec_sobi_adventure_gameplay_v1.md` §6.
 **Nguồn:** lore `docs/lore/Lore_Sobi_World.md` (First Guardians, 9 Elements, Umbraflux), spec cập nhật `docs/UPDATE_SPEC_SOBI_ADVENTURE.md` §18–21 (9 nguyên tố, Poison là trạng thái, Void đặc biệt), dữ liệu combat hiện tại `content/adventure/{skills,archetypes}.json`, chuẩn hình `asset/GAME_ART_DIRECTION.md`.
 **Phạm vi:** chỉ art + mô tả. Không đổi content/code. Loài, nguyên tố, skill ở đây là **đề xuất**; vào game cần decision mới (hệ 9 nguyên tố chưa được đưa vào Spec V2).
 

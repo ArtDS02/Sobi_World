@@ -1,5 +1,7 @@
 # MASTER PROMPT — UPDATE SOBI ADVENTURE COMBAT SYSTEM v2
 
+> **Đã xử lý (2026-10-17):** kết quả của master prompt này là `docs/update_spec_sobi_adventure_gameplay_v1.md` (decision 037). Khi mâu thuẫn, spec đó thắng.
+
 ## 0. MỤC TIÊU
 
 Hãy đọc và kiểm tra toàn bộ `SOBI_ADVENTURE_GAMEPLAY_SPEC.md`, sau đó cập nhật lại SPEC để tích hợp toàn bộ hệ thống Combat mới bên dưới.
