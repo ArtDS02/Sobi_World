@@ -1,0 +1,62 @@
+{
+  "elements": [
+    { "id": "METAL", "nameVi": "Kim loại", "descVi": "Giáp đồng và thép. Khắc Thiên nhiên; bị Lửa khắc." },
+    {
+      "id": "NATURE",
+      "nameVi": "Thiên nhiên",
+      "descVi": "Cây cỏ, hoa và gai độc. Khắc Đất; bị Kim loại khắc."
+    },
+    { "id": "WATER", "nameVi": "Nước", "descVi": "Sóng, bong bóng và thủy triều. Khắc Lửa; bị Đất khắc." },
+    { "id": "FIRE", "nameVi": "Lửa", "descVi": "Lò rèn và dung nham. Khắc Kim loại; bị Nước khắc." },
+    {
+      "id": "EARTH",
+      "nameVi": "Đất",
+      "descVi": "Núi đá và mai rùa. Khắc Nước, chặn Sấm; bị Thiên nhiên khắc."
+    },
+    {
+      "id": "LIGHTNING",
+      "nameVi": "Sấm",
+      "descVi": "Tia chớp và mây giông. Khắc Nước và Kim loại; bị Đất chặn."
+    },
+    {
+      "id": "DARK",
+      "nameVi": "Bóng tối",
+      "descVi": "Đêm và giấc ngủ (không phải Umbra). Khắc Ánh sáng và bị Ánh sáng khắc."
+    },
+    {
+      "id": "LIGHT",
+      "nameVi": "Ánh sáng",
+      "descVi": "Lồng đèn và tia sáng đầu tiên. Khắc Bóng tối và bị Bóng tối khắc."
+    },
+    { "id": "VOID", "nameVi": "Hư Không", "descVi": "Sát thương thuần: không khắc, không bị khắc hệ nào." }
+  ],
+  "multipliers": { "STRONG": 1.5, "NEUTRAL": 1, "WEAK": 0.75, "RESIST": 0.5, "IMMUNE": 0 },
+  "chart": [
+    { "attacker": "METAL", "defender": "NATURE", "interaction": "STRONG" },
+    { "attacker": "NATURE", "defender": "METAL", "interaction": "WEAK" },
+    { "attacker": "NATURE", "defender": "EARTH", "interaction": "STRONG" },
+    { "attacker": "EARTH", "defender": "NATURE", "interaction": "WEAK" },
+    { "attacker": "EARTH", "defender": "WATER", "interaction": "STRONG" },
+    { "attacker": "WATER", "defender": "EARTH", "interaction": "WEAK" },
+    { "attacker": "WATER", "defender": "FIRE", "interaction": "STRONG" },
+    { "attacker": "FIRE", "defender": "WATER", "interaction": "WEAK" },
+    { "attacker": "FIRE", "defender": "METAL", "interaction": "STRONG" },
+    { "attacker": "METAL", "defender": "FIRE", "interaction": "WEAK" },
+    { "attacker": "METAL", "defender": "METAL", "interaction": "WEAK" },
+    { "attacker": "NATURE", "defender": "NATURE", "interaction": "WEAK" },
+    { "attacker": "WATER", "defender": "WATER", "interaction": "WEAK" },
+    { "attacker": "FIRE", "defender": "FIRE", "interaction": "WEAK" },
+    { "attacker": "EARTH", "defender": "EARTH", "interaction": "WEAK" },
+    { "attacker": "LIGHTNING", "defender": "LIGHTNING", "interaction": "WEAK" },
+    { "attacker": "DARK", "defender": "DARK", "interaction": "WEAK" },
+    { "attacker": "LIGHT", "defender": "LIGHT", "interaction": "WEAK" },
+    { "attacker": "LIGHTNING", "defender": "WATER", "interaction": "STRONG" },
+    { "attacker": "LIGHTNING", "defender": "METAL", "interaction": "STRONG" },
+    { "attacker": "LIGHTNING", "defender": "EARTH", "interaction": "RESIST" },
+    { "attacker": "EARTH", "defender": "LIGHTNING", "interaction": "STRONG" },
+    { "attacker": "LIGHT", "defender": "DARK", "interaction": "STRONG" },
+    { "attacker": "DARK", "defender": "LIGHT", "interaction": "STRONG" }
+  ],
+  "dualMin": 0.25,
+  "dualMax": 2
+}

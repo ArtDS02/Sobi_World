@@ -1,8 +1,9 @@
 // Sobi World admin dashboard entry (admin.html, `npm run admin`; decisions A7-1, AD-1, 036). Hash routes:
 // #/ overview · #/users[/<id>] · #/content[/<file>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
-// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/assets · #/library · #/desktop · #/guide[/<section>]
+// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-maps · #/assets · #/library · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
 import { renderAdventure } from './adventure';
+import { renderAdventureMaps } from './adventureMaps';
 import { breedingDirty, renderBreeding } from './breeding';
 import { contentDirty, renderContent } from './contentPage';
 import { renderDayNight } from './dayNight';
@@ -33,7 +34,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
     ['layout', '🗺️', 'Bố cục cảnh', 'layout'],
     ['seasons', '🍂', 'Mùa & hiệu ứng', 'seasons'],
   ]],
-  ['Thế giới', [['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['adventure', '⚔️', 'Mô phỏng trận', 'content']]],
+  ['Thế giới', [['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['adventure', '⚔️', 'Mô phỏng trận', 'content'], ['adventure-maps', '🗺️', 'Bản đồ khu', 'content']]],
   ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
   ['Hệ thống', [['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
 ];
@@ -127,6 +128,7 @@ function render() {
     products: () => renderProducts(content, render),
     breeding: () => renderBreeding(content, render),
     adventure: () => renderAdventure(content),
+    'adventure-maps': () => renderAdventureMaps(content),
     layout: () => renderLayout(content, render),
     desktop: () => renderDesktop(content),
     guide: () => renderGuide(content, id),

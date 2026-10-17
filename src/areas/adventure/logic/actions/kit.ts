@@ -70,3 +70,10 @@ export function credit(w: WorldSave, currency: 'coins' | 'gems', amount: number,
   const r = changeCurrency(w, currency, amount, { type, ...(note ? { note } : {}) }, ctx);
   return r.ok ? r.state : w;
 }
+
+/** Coins or gems out through the ledger, or the error when the wallet is short. */
+export function spend(w: WorldSave, currency: 'coins' | 'gems', amount: number, type: string, ctx: ActionContext, note?: string): Step {
+  if (amount <= 0) return { ok: true, world: w };
+  const r = changeCurrency(w, currency, -amount, { type, ...(note ? { note } : {}) }, ctx);
+  return r.ok ? { ok: true, world: r.state } : { ok: false, error: r.error };
+}

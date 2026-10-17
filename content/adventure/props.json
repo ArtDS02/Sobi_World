@@ -1,0 +1,196 @@
+{
+  "props": [
+    {
+      "id": "prop_adv_forest_oak",
+      "nameVi": "Cây sồi",
+      "art": "prop_adv_forest_oak",
+      "w": 2,
+      "h": 2,
+      "scale": 1.15
+    },
+    {
+      "id": "prop_adv_forest_round",
+      "nameVi": "Cây tán tròn",
+      "art": "prop_adv_forest_round",
+      "w": 2,
+      "h": 2,
+      "scale": 1.1
+    },
+    {
+      "id": "prop_adv_forest_bush",
+      "nameVi": "Bụi cây",
+      "art": "prop_adv_forest_bush",
+      "w": 1,
+      "h": 1,
+      "scale": 1.05
+    },
+    {
+      "id": "prop_adv_forest_boulder",
+      "nameVi": "Tảng đá rêu",
+      "art": "prop_adv_forest_boulder",
+      "w": 2,
+      "h": 2,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_forest_rock",
+      "nameVi": "Hòn đá",
+      "art": "prop_adv_forest_rock",
+      "w": 1,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_forest_log",
+      "nameVi": "Khúc gỗ",
+      "art": "prop_adv_forest_log",
+      "w": 2,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_forest_mushroom",
+      "nameVi": "Nấm to",
+      "art": "prop_adv_forest_mushroom",
+      "w": 1,
+      "h": 1,
+      "scale": 1.05
+    },
+    {
+      "id": "prop_adv_forest_stump",
+      "nameVi": "Gốc cây",
+      "art": "prop_adv_forest_stump",
+      "w": 1,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_forest_hut",
+      "nameVi": "Chòi thợ săn",
+      "art": "prop_adv_forest_hut",
+      "w": 3,
+      "h": 2,
+      "scale": 1.05
+    },
+    {
+      "id": "prop_adv_mountain_boulder",
+      "nameVi": "Tảng đá núi",
+      "art": "prop_adv_mountain_boulder",
+      "w": 2,
+      "h": 2,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_mountain_rock",
+      "nameVi": "Hòn đá",
+      "art": "prop_adv_mountain_rock",
+      "w": 1,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_mountain_pine",
+      "nameVi": "Cây thông",
+      "art": "prop_adv_mountain_pine",
+      "w": 2,
+      "h": 2,
+      "scale": 1.1
+    },
+    {
+      "id": "prop_adv_mountain_crystal",
+      "nameVi": "Tinh thể",
+      "art": "prop_adv_mountain_crystal",
+      "w": 1,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_mountain_vent",
+      "nameVi": "Miệng dung nham",
+      "art": "prop_adv_mountain_vent",
+      "w": 2,
+      "h": 2,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_mountain_cart",
+      "nameVi": "Xe goòng",
+      "art": "prop_adv_mountain_cart",
+      "w": 2,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_mountain_cabin",
+      "nameVi": "Lán thợ mỏ",
+      "art": "prop_adv_mountain_cabin",
+      "w": 3,
+      "h": 2,
+      "scale": 1.05
+    },
+    {
+      "id": "prop_adv_mountain_fence",
+      "nameVi": "Hàng rào",
+      "art": "prop_adv_mountain_fence",
+      "w": 1,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_ruins_pillar",
+      "nameVi": "Cột đá",
+      "art": "prop_adv_ruins_pillar",
+      "w": 1,
+      "h": 1,
+      "scale": 1.05
+    },
+    {
+      "id": "prop_adv_ruins_broken",
+      "nameVi": "Cột gãy",
+      "art": "prop_adv_ruins_broken",
+      "w": 1,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_ruins_statue",
+      "nameVi": "Tượng cổ",
+      "art": "prop_adv_ruins_statue",
+      "w": 2,
+      "h": 2,
+      "scale": 1.05
+    },
+    {
+      "id": "prop_adv_ruins_wall",
+      "nameVi": "Tường đổ",
+      "art": "prop_adv_ruins_wall",
+      "w": 3,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_ruins_brazier",
+      "nameVi": "Lư đồng",
+      "art": "prop_adv_ruins_brazier",
+      "w": 1,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_ruins_urn",
+      "nameVi": "Bình cổ",
+      "art": "prop_adv_ruins_urn",
+      "w": 1,
+      "h": 1,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_ruins_deadtree",
+      "nameVi": "Cây khô",
+      "art": "prop_adv_ruins_deadtree",
+      "w": 2,
+      "h": 2,
+      "scale": 1.1
+    }
+  ]
+}

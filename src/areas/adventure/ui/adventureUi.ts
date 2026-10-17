@@ -1,24 +1,29 @@
-// The Adventure's DOM layer (spec V2 §8.5, §10): the controller of the hub, the map of a run, the battle (with Auto and x2) and
-// the summary. It reads the world through the store and acts through the Adventure's actions; the roster of creatures and the
-// way to hand a creature over come from the app (the Areas never reach each other). The screens are adventureViews.ts, the
-// dialogs adventureDialogs.ts. Mounted by the app into the shell's overlay.
+// The Adventure's DOM layer (spec §17): the controller of the camp, the exploration HUD over the map, the battle (Auto, x2) and the
+// summary. It reads the world through the store and acts through the Adventure's actions; the map is the scene underneath, which reads
+// `sceneState()` and reports what the walker does (`scene`). The roster and the way to hand a creature over come from the app (the
+// Areas never reach each other). Mounted by the app into the shell's overlay.
 import type { CreatureGift, GiftResult, RosterEntry } from '../../../core/area-registry/registry';
-import type { GameStore } from '../../../core/world/gameStore';
+import { AREA_HUD_ART } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import type { ActionContext } from '../../../core/types';
-import { AREA_HUD_ART } from '../../../core/config/assetIds';
+import type { GameStore } from '../../../core/world/gameStore';
 import { vi } from '../../../i18n/vi';
 import { hudLevel, hudNav, hudPill, hudPills } from '../../../ui/components/areaHud';
 import type { PanelId } from '../../../ui/components/popup';
 import { el, patch } from '../../../ui/dom';
-import { battleAct } from '../logic/actions/run';
+import { battleAct } from '../logic/actions/battle';
+import { engage, interact, moveTo, takeExit } from '../logic/actions/explore';
 import { ZONE_LIST } from '../logic/config/content';
 import { adventureOf, hasAdventure } from '../logic/save/lens';
+import type { AdventureSceneState, SceneReport } from '../scene/sceneState';
 import { createAdventureDialogs } from './adventureDialogs';
-import { renderDone, renderHub, renderMap } from './adventureViews';
-import { renderBattle } from './battleView';
+import { renderBattle, choose } from './battleView';
+import { battleVm } from './battleVm';
+import { hudVm } from './campVm';
+import { renderCamp } from './campView';
+import { renderDone, renderExplore } from './exploreView';
+import { sceneVm } from './sceneVm';
 import type { UiState, ViewCtx } from './viewKit';
-import { hudVm } from './adventureVm';
 import type { AdventureRun } from './vmKit';
 
 export interface AdventureUiDeps {
@@ -28,20 +33,27 @@ export interface AdventureUiDeps {
   host: HTMLElement;
   leave: () => void;
   openPanel: (panel: PanelId) => void;
-  /** Every creature the Areas let the Adventure use (the registry's roster). */
   roster: (world: WorldSave) => RosterEntry[];
-  /** Hands a creature to the Area that keeps it (the registry's gift). */
   give: (world: WorldSave, gift: CreatureGift, ctx: ActionContext) => GiftResult;
   /** Frame timer for the Auto mode (absent in DOM tests, which step by hand). */
   frame?: (fn: () => void, ms: number) => () => void;
+  /** The label of the key bound to "interact" (Space by default). */
+  interactKey?: () => string;
+  /** Keyboard events (M for the map, digits in a battle); absent in tests. */
+  keys?: Pick<EventTarget, 'addEventListener' | 'removeEventListener'>;
+  /** A panel or dialog of the shell covers the world. */
+  paused?: () => boolean;
 }
 
 export interface AdventureUi {
-  /** Shown while the player is in the Adventure. */
   setActive(active: boolean): void;
   isModalOpen(): boolean;
   /** One step of the Auto mode (the timer calls it; tests too). */
   autoStep(): void;
+  /** What the scene draws now. */
+  sceneState(): AdventureSceneState | null;
+  /** What the scene reports. */
+  scene: SceneReport;
   dispose(): void;
 }
 
@@ -56,7 +68,8 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
 
   let active = false;
   let busy = false;
-  const state: UiState = { zoneId: ZONE_LIST[0]!.id, selected: [], prep: [], auto: false, fast: false, menu: null, aim: null };
+  let lastPos: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' } | null = null;
+  const state: UiState = { zoneId: ZONE_LIST[0]!.id, startMap: null, selected: [], prep: [], auto: false, fast: false, menu: null, aim: null, focus: null, showMap: false };
 
   const world = (): WorldSave | null => {
     const s = d.world.getSnapshot();
@@ -68,7 +81,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
       busy = false;
     });
   };
-  const dialogs = createAdventureDialogs({ host: dialogHost, world, now: d.now, dispatch: (run) => void dispatch(run), roster: d.roster });
+  const dialogs = createAdventureDialogs({ host: dialogHost, world, now: d.now, dispatch: (run) => void dispatch(run), roster: d.roster, position: () => lastPos });
 
   function renderHud(w: WorldSave): HTMLElement {
     const v = hudVm(w);
@@ -93,7 +106,9 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     dispatch: (run) => void dispatch(run),
     dispatchThen: (first, then) => void dispatch(first).then(() => dispatch(then)),
     give: d.give,
-    openGear: (key) => dialogs.openGear(key),
+    openSheet: (key) => dialogs.openSheet(key),
+    openPortal: () => dialogs.openPortal(),
+    interactKey: () => d.interactKey?.() ?? 'Space',
   });
 
   function render() {
@@ -109,9 +124,11 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
       state.aim = null;
       state.menu = null;
     }
+    const exploring = run?.phase === 'explore';
+    d.host.classList.toggle('is-exploring', exploring);
     patch(hud, renderHud(w));
     const ctx = ctxFor(w);
-    patch(main, run === null ? renderHub(ctx) : run.phase === 'map' ? renderMap(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx));
+    patch(main, run === null ? renderCamp(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx));
     main.scrollTop = top;
     dialogs.follow(w);
   }
@@ -136,6 +153,59 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     }
   }, 100);
 
+  const exploring = () => {
+    const w = world();
+    return w && adventureOf(w).run?.phase === 'explore' ? w : null;
+  };
+
+  const scene: SceneReport = {
+    move(pos) {
+      lastPos = pos;
+      if (exploring() && !busy) void dispatch((w, c) => moveTo(w, pos, c));
+    },
+    touch(groupId, pos) {
+      lastPos = pos;
+      if (exploring() && !busy && !dialogs.isOpen()) void dispatch((w, c) => engage(w, { ...pos, groupId }, c));
+    },
+    focus(thingId) {
+      state.focus = thingId;
+      if (active) render();
+    },
+    use(thingId, pos) {
+      lastPos = pos;
+      const w = exploring();
+      if (!w || busy) return;
+      const map = adventureOf(w).run!.mapId;
+      if (thingId === map) {
+        dialogs.openPortal();
+        return;
+      }
+      void dispatch((ww, c) => interact(ww, { ...pos, id: thingId }, c));
+    },
+    exit(exitId, pos) {
+      lastPos = pos;
+      if (exploring()) void dispatch((w, c) => takeExit(w, { ...pos, exitId }, c));
+    },
+  };
+
+  /** M toggles the small map; digits pick an action in a battle. */
+  const onKey = (ev: Event) => {
+    const e = ev as KeyboardEvent;
+    if (!active || dialogs.isOpen() || e.ctrlKey || e.altKey || e.metaKey) return;
+    const w = world();
+    const run = w ? adventureOf(w).run : null;
+    if (!w || !run) return;
+    if (run.phase === 'explore' && e.code === 'KeyM') {
+      state.showMap = !state.showMap;
+      render();
+    } else if (run.phase === 'battle' && /^Digit[1-9]$/.test(e.code) && !state.aim) {
+      const vm = battleVm(w, run);
+      const action = vm?.actions[Number(e.code.slice(5)) - 1];
+      if (vm && action) choose(action, vm, ctxFor(w));
+    }
+  };
+  d.keys?.addEventListener('keydown', onKey);
+
   return {
     setActive(next) {
       active = next;
@@ -148,9 +218,12 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     },
     isModalOpen: () => dialogs.isOpen(),
     autoStep,
+    sceneState: () => (active ? sceneVm(world(), d.now(), dialogs.isOpen() || (d.paused?.() ?? false), state.zoneId) : null),
+    scene,
     dispose: () => {
       off();
       stop?.();
+      d.keys?.removeEventListener('keydown', onKey);
       dialogs.close();
     },
   };

@@ -1,5 +1,5 @@
-// Sobi Adventure (GĐ10) on the production build: the door opens, the knight's starter pig comes to the farm, the party goes in,
-// fights the first battle (Auto, x2) and the run is saved mid-way.
+// Sobi Adventure (decision 037) on the production build: the door opens, the knight's starter pig comes to the farm, the party sets
+// off into the forest's first area, walks with the keys (the position is saved), goes back to the camp and takes the summary.
 import { _electron as electron, expect, test } from '@playwright/test';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -15,7 +15,7 @@ const launch = (userData: string) => {
 const file = (dir: string) => join(dir, 'saves', 'save.json');
 const read = (dir: string) => JSON.parse(readFileSync(file(dir), 'utf8'));
 
-test('the adventure: it opens, the knight gives a pig, the party enters the forest and fights', async () => {
+test('the adventure: it opens, the knight gives a pig, the party walks the forest and comes home', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'unin-e2e-adventure-'));
   try {
     let app = await launch(dir);
@@ -38,14 +38,31 @@ test('the adventure: it opens, the knight gives a pig, the party enters the fore
     const card = page.locator('.adventure-ui__fighter').first();
     await expect(card).toBeVisible({ timeout: 10_000 });
     await card.locator('.adventure-ui__fighter-pick').click();
-    await page.getByRole('button', { name: /Xuất phát/ }).click();
-    await expect(page.getByRole('button', { name: 'Tiến lên' })).toBeVisible({ timeout: 10_000 });
-    await page.getByRole('button', { name: 'Tiến lên' }).click();
-    await expect(page.locator('.adventure-ui__battle')).toBeVisible({ timeout: 10_000 });
-    await page.getByRole('button', { name: 'Tốc độ x2' }).click();
-    await page.getByRole('button', { name: 'Tự động' }).click();
-    // Auto plays the fight; the party either wins the node or the run ends — either way the battle screen goes away.
-    await expect(page.locator('.adventure-ui__battle')).toBeHidden({ timeout: 90_000 });
+    await page.getByRole('button', { name: /Lên đường/ }).click();
+    await expect(page.locator('.adventure-explore')).toBeVisible({ timeout: 10_000 });
+    const spawnY = (5 + 0.5) * 40; // the spawn tile (2, 5) of map_forest_edge
+    await page.locator('canvas').first().click({ position: { x: 5, y: 5 } }).catch(() => {});
+    await page.keyboard.down('KeyS');
+    await page.waitForTimeout(700);
+    await page.keyboard.up('KeyS');
+    await page.waitForTimeout(1500); // the walker rests, the scene saves where it stands
+    await app.close();
+    const walked = read(dir).areas.sobi_adventure.run;
+    expect(walked.mapId).toBe('map_forest_edge');
+    expect(walked.y).toBeGreaterThan(spawnY);
+
+    app = await launch(dir);
+    page = await app.firstWindow();
+    await expect(page.locator('.app.is-plaza, .app.is-adventure')).toBeVisible({ timeout: 30_000 });
+    if (await page.locator('.app.is-plaza').isVisible()) {
+      await expect(page.locator('.plazabar__dock')).toBeVisible({ timeout: 30_000 });
+      await clickPlaza(page, 300, 380);
+    }
+    await expect(page.locator('.adventure-explore')).toBeVisible({ timeout: 20_000 });
+    await page.getByRole('button', { name: 'Về Trại' }).click();
+    await expect(page.locator('.adventure-ui__done')).toBeVisible({ timeout: 10_000 });
+    await page.getByRole('button', { name: 'Nhận thưởng' }).click();
+    await expect(page.locator('.adventure-ui__hub')).toBeVisible({ timeout: 10_000 });
     await app.close();
 
     const saved = read(dir);
@@ -53,7 +70,8 @@ test('the adventure: it opens, the knight gives a pig, the party enters the fore
     const a = saved.areas.sobi_adventure;
     expect(a.starterClaimed).toBe(true);
     expect(Object.keys(a.fighters)).toHaveLength(1);
-    expect(a.battlesWon + a.runsLost).toBeGreaterThanOrEqual(1);
+    expect(a.run).toBeNull();
+    expect(Object.values(a.fighters as Record<string, { energy: number }>)[0]!.energy).toBeLessThan(100);
     expect(saved.areas.sobi_farm.pigs.some((p: { breed: string; purpose?: string }) => p.breed === 'PIG_KNIGHT' && p.purpose === 'ADVENTURE')).toBe(true);
     expect(saved.inventory.items.item_equip_wood_sword).toBe(1);
   } finally {
@@ -97,8 +115,8 @@ test('technologies: the Menu has them, the field kitchen lets the party carry a 
     await expect(page.locator('.adventure-ui__prep')).toBeVisible({ timeout: 10_000 });
     await page.locator('.adventure-ui__prep-list button').first().click();
     await page.locator('.adventure-ui__fighter-pick').first().click();
-    await page.getByRole('button', { name: /Xuất phát/ }).click();
-    await expect(page.getByRole('button', { name: 'Tiến lên' })).toBeVisible({ timeout: 10_000 });
+    await page.getByRole('button', { name: /Lên đường/ }).click();
+    await expect(page.locator('.adventure-explore')).toBeVisible({ timeout: 10_000 });
     await app.close();
 
     const saved = read(dir);

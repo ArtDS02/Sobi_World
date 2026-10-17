@@ -1,7 +1,7 @@
 // The Adventure's events as standard world events (ARCHITECTURE §7): what other Areas and world systems (goals, achievements)
 // may react to. The Adventure's screens keep using its own detailed events.
 import type { EventBase, WorldEvent } from '../../../core/events';
-import { ADVENTURE_AREA_ID, BATTLE_ITEMS } from './config/content';
+import { ADVENTURE_AREA_ID, BATTLE_ITEMS, SKILL_SCROLL } from './config/content';
 import { isAdventureEvent, type AdventureEvent } from './events';
 
 const area = ADVENTURE_AREA_ID;
@@ -18,11 +18,13 @@ export function adventureWorldEvents(e: AdventureEvent): WorldEvent[] {
     case 'ADVENTURE_CHEST_OPENED':
       return [...coins(e.coins), ...(e.gems > 0 ? [{ type: 'currency.changed', area, currency: 'gems', amount: e.gems } satisfies WorldEvent] : [])];
     case 'ADVENTURE_RUN_ENDED':
-      return e.result === 'retreat' ? [] : [{ type: 'adventure.finished', area, zoneId: e.zoneId, won: e.result === 'win' }];
+      return e.result === 'retreat' ? [] : [{ type: 'adventure.finished', area, zoneId: e.zoneId, won: e.result !== 'lose' }];
+    case 'ADVENTURE_SWEPT':
+      return coins(e.coins);
     case 'ADVENTURE_LOOT_COLLECTED':
       return Object.entries(e.items).flatMap(([id, n]) => added(id, n));
     case 'ADVENTURE_ITEM_USED':
-      return BATTLE_ITEMS[e.itemId] ? removed(e.itemId, 1) : [];
+      return BATTLE_ITEMS[e.itemId] || e.itemId === SKILL_SCROLL ? removed(e.itemId, 1) : [];
     case 'ADVENTURE_EQUIPPED':
       return removed(e.itemId, 1);
     case 'ADVENTURE_UNEQUIPPED':

@@ -21,7 +21,7 @@ function idsUnder(value: unknown, props: readonly string[], into: Set<string>, u
 /** Uses that live in code, not in content (each has its own unit test): the trough takes the basic food, the Aquarium's medicine cures fish. */
 const CODE_USES: Partial<Record<string, readonly UseKind[]>> = { FOOD_BASIC: ['trough'], MEDICINE_COMMON: ['fishCure'] };
 
-export type UseKind = 'sell' | 'feed' | 'cure' | 'mood' | 'mutation' | 'plant' | 'recipe' | 'order' | 'upgrade' | 'technology' | 'equip' | 'battle' | 'ration' | 'hatch' | 'tank' | 'trough' | 'fishCure' | 'cross';
+export type UseKind = 'sell' | 'feed' | 'cure' | 'mood' | 'mutation' | 'plant' | 'recipe' | 'order' | 'upgrade' | 'technology' | 'equip' | 'battle' | 'ration' | 'hatch' | 'tank' | 'trough' | 'fishCure' | 'cross' | 'skill';
 
 export function itemUses(): Record<ItemId, UseKind[]> {
   const uses = Object.fromEntries(ITEM_IDS.map((id) => [id, new Set<UseKind>()])) as Record<ItemId, Set<UseKind>>;
@@ -55,6 +55,8 @@ export function itemUses(): Record<ItemId, UseKind[]> {
   const adv = json('adventure/balance.json');
   for (const b of adv.battleItems) mark(b.itemId, 'battle');
   for (const p of adv.prep) mark(p.itemId, 'ration');
+  // A Skill Scroll gives SP to a companion (decision 037, growth.ts useScroll).
+  if (adv.sp.scroll > 0) mark('item_skill_scroll', 'skill');
   const upgrades = new Set<string>();
   for (const f of ['garden/balance.json', 'aquarium/balance.json', 'cloud/balance.json', 'farm/balance.json']) idsUnder(json(f), ['materials'], upgrades);
   for (const id of upgrades) mark(id, 'upgrade');

@@ -209,6 +209,16 @@ export const ITEM_ID_VALUES = [
   'item_flower_crystal_peony',
   'item_seed_sky_lotus',
   'item_flower_sky_lotus',
+  'item_equip_fire_staff',
+  'item_equip_tide_rod',
+  'item_equip_thunder_horn',
+  'item_equip_nature_ring',
+  'item_equip_stone_shield',
+  'item_equip_bronze_gauntlet',
+  'item_equip_moon_veil',
+  'item_equip_lantern_charm',
+  'item_equip_void_pearl',
+  'item_skill_scroll',
 ] as const;
 
 export const DECOR_ID_VALUES = [

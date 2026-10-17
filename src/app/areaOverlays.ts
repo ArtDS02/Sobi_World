@@ -1,6 +1,7 @@
 // The DOM layers of the Areas that are played with clicks (the Garden, the Aquarium, the Cloud): one overlay the shell places over
 // the world, each Area's HUD showing only while the player is in it, plus what the app asks of them as a group — the
 // place the shell should show, the away-screen lines and the presentation of their events.
+import { keyLabel, type KeyBindings } from '../core/settings/keys';
 import { adventureArea } from '../areas/adventure';
 import { adventurePresentation } from '../areas/adventure/feedback';
 import { ADVENTURE_AREA_ID } from '../areas/adventure/logic/config/content';
@@ -39,7 +40,12 @@ export interface AreaOverlaysDeps {
   /** The creatures of every Area the Adventure may use, and the way to hand one to the Area that keeps it. */
   roster: (world: WorldSave) => RosterEntry[];
   give: (world: WorldSave, gift: CreatureGift, ctx: ActionContext) => GiftResult;
+  /** The player's key bindings (the Adventure's map hint says which keys interact: Space and the bound ones). */
+  keys?: () => KeyBindings;
 }
+
+/** "Space / E": Space always interacts on the Adventure's map, plus the keys bound to "interact". */
+const interactLabel = (keys: KeyBindings): string => ['Space', ...keys.interact.filter((k): k is string => !!k && k !== 'Space').map(keyLabel)].join(' / ');
 
 export function createAreaOverlays(d: AreaOverlaysDeps) {
   const gardenHost = el('div', { class: 'garden-host' });
@@ -63,6 +69,8 @@ export function createAreaOverlays(d: AreaOverlaysDeps) {
     host: adventureHost,
     roster: d.roster,
     give: d.give,
+    ...(d.keys ? { interactKey: () => interactLabel(d.keys!()) } : {}),
+    keys: document,
     frame: (fn, ms) => {
       const id = window.setInterval(fn, ms);
       return () => window.clearInterval(id);

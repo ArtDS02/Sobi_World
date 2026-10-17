@@ -238,3 +238,143 @@
 }
 
 .adventure-ui__prep-list { display: flex; flex-wrap: wrap; gap: $sp-2; }
+
+// ---- Adventure V2 (decision 037): the camp, the exploration HUD over the map, the profile and the tree, the battle's new pieces.
+.adventure-host.is-exploring .adventure-ui__main {
+  // The map is the scene underneath: the HUD floats over it and leaves the middle free.
+  overflow: visible;
+  pointer-events: none;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.adventure-ui {
+  &__camp-title { margin: 0 0 $sp-2; }
+  &__zone-meta { color: $c-text-muted; }
+  &__elements { color: $c-text-muted; font-size: $fs-xs; }
+  &__card-actions { display: flex; flex-wrap: wrap; gap: $sp-1; }
+  &__leader, &__formations { display: flex; flex-wrap: wrap; gap: $sp-2; align-items: center; }
+  &__formation { display: inline-flex; flex-wrap: wrap; gap: $sp-1; align-items: center; padding: 2px $sp-2; background: $c-surface-alt; border-radius: $radius-md; }
+  &__start-at { display: inline-flex; gap: $sp-1; align-items: center; }
+  &__warnings { width: 100%; padding-left: $sp-4; margin: 0; color: $c-danger; font-size: $fs-sm; }
+
+  &__meter--mp .c-bar__fill { background: #6aa9e9; }
+  &__meter--rage .c-bar__fill { background: #e9746a; }
+  &__meter--rage.is-full .c-bar__fill { background: #f2b33d; animation: adventure-rage 0.8s ease-in-out infinite alternate; }
+
+  &__order { display: flex; flex-wrap: wrap; gap: $sp-1; align-items: center; font-size: $fs-xs; }
+  &__turn {
+    padding: 1px $sp-2;
+    border-radius: 999px;
+    background: #e3f2d6;
+    &.is-enemy { background: #fadcdc; }
+    &.is-next { opacity: 0.55; }
+    &.is-now { font-weight: $fw-bold; box-shadow: 0 0 0 2px $c-honey; }
+  }
+  &__intent { padding: 1px $sp-2; font-size: $fs-xs; color: #fff; background: #8a5a9e; border-radius: $radius-md; }
+  &__eff {
+    padding: 1px $sp-2;
+    font-size: $fs-xs;
+    font-weight: $fw-bold;
+    border-radius: $radius-md;
+    &.is-strong { color: #fff; background: $c-success; }
+    &.is-neutral { background: $c-surface-alt; }
+    &.is-weak, &.is-resist { color: #fff; background: #b08850; }
+    &.is-immune { color: #fff; background: $c-danger; }
+  }
+  &__unit.is-elite { border-color: #b98cf0; }
+  &__unit.is-corrupted &__unit-art { filter: drop-shadow(0 0 4px rgba(150, 40, 140, 0.55)); }
+  &__statuses { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; font-size: $fs-xs; i { font-style: normal; padding: 0 3px; border-radius: 6px; } .is-good { background: #dff3d2; } .is-bad { background: #f8dada; } }
+  .c-button--ultimate { color: #fff; background: #e0a12a; }
+}
+
+.adventure-explore {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  &__top { display: flex; flex-wrap: wrap; gap: $sp-2; justify-content: space-between; }
+  &__team, &__where, &__map, &__event, &__hint > * { pointer-events: auto; }
+  &__team { display: flex; flex-wrap: wrap; gap: $sp-2; }
+  &__member {
+    display: flex;
+    gap: $sp-1;
+    align-items: center;
+    padding: $sp-1 $sp-2;
+    background: rgba(255, 250, 240, 0.92);
+    border: 2px solid $c-wood-dark;
+    border-radius: $radius-md;
+    b { font-size: $fs-xs; }
+    .adventure-ui__meter { min-width: 5rem; height: 0.45rem; }
+    &.is-down { opacity: 0.55; filter: grayscale(1); }
+  }
+  &__face { width: 2.6rem; height: 2.6rem; object-fit: contain; }
+  &__where { display: grid; gap: 2px; justify-items: end; padding: $sp-1 $sp-2; background: rgba(255, 250, 240, 0.92); border: 2px solid $c-wood-dark; border-radius: $radius-md; }
+  &__bless { color: $c-success; }
+  &__buttons { display: flex; gap: $sp-1; }
+  &__map { position: absolute; top: 5.5rem; right: 0; width: min(28rem, 90vw); padding: $sp-2; background: rgba(255, 250, 240, 0.95); border: 2px solid $c-wood-dark; border-radius: $radius-md; }
+  &__event { position: absolute; bottom: 4rem; left: 50%; width: min(34rem, 92vw); padding: $sp-2 $sp-3; transform: translateX(-50%); background: #fff3d6; border: 2px solid $c-honey; border-radius: $radius-md; p { margin: 0; } }
+  &__hint { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); }
+  &__prompt, &__hint > small {
+    display: inline-flex;
+    gap: $sp-2;
+    align-items: center;
+    padding: $sp-1 $sp-3;
+    background: rgba(255, 250, 240, 0.95);
+    border: 2px solid $c-wood-dark;
+    border-radius: $radius-md;
+    kbd { padding: 0 $sp-1; font: inherit; font-weight: $fw-bold; background: $c-surface-alt; border: 1px solid $c-border; border-radius: 4px; }
+    &.is-off { opacity: 0.75; small { color: $c-danger; } }
+  }
+}
+
+.adventure-mini {
+  display: grid;
+  width: 100%;
+  margin-top: $sp-1;
+  background: #cfe8b4;
+  border: 1px solid $c-border;
+  i { display: block; }
+  &__me { background: #e0303a !important; border-radius: 50%; transform: scale(2); }
+}
+
+.adventure-sheet {
+  display: grid;
+  gap: $sp-2;
+  &__tabs { display: flex; flex-wrap: wrap; gap: $sp-1; }
+  &__art { width: 6rem; height: 6rem; object-fit: contain; }
+  &__stats dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px $sp-3; margin: 0; dd { margin: 0; font-weight: $fw-bold; } }
+  &__skills { display: grid; gap: $sp-1; padding: 0; margin: 0; list-style: none; }
+  &__skill { padding: $sp-1 $sp-2; background: $c-surface-alt; border-radius: $radius-md; p { margin: 2px 0 0; font-size: $fs-xs; } &.is-locked { opacity: 0.6; } &.is-ultimate { background: #fff1d0; } }
+  &__temple { display: grid; gap: $sp-2; justify-items: start; }
+}
+
+.adventure-tree {
+  display: grid;
+  gap: $sp-2;
+  &__sp { margin: 0; font-weight: $fw-bold; }
+  &__tier h4 { margin: $sp-1 0; }
+  &__row { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: $sp-2; }
+  &__node {
+    display: grid;
+    gap: 2px;
+    padding: $sp-2;
+    background: $c-surface;
+    border: 2px solid $c-border;
+    border-radius: $radius-md;
+    &.is-open { border-color: $c-leaf; }
+    &.is-ready { border-color: $c-honey; }
+    &.is-locked { opacity: 0.7; }
+    &.is-carried { box-shadow: 0 0 0 2px $c-primary; }
+  }
+  &__desc { color: $c-text-muted; font-size: $fs-xs; }
+  &__buttons { display: flex; flex-wrap: wrap; gap: $sp-1; }
+}
+
+.adventure-portal { justify-items: stretch; }
+
+@keyframes adventure-rage {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.35); }
+}

@@ -11,7 +11,7 @@ export function rewindAdventure(a: AdventureState, ms: number): AdventureState {
     fighters: Object.fromEntries(
       Object.entries(a.fighters).map(([key, f]) => [key, { ...f, energyAt: back(f.energyAt), exhaustedUntil: f.exhaustedUntil === null ? null : back(f.exhaustedUntil) }]),
     ),
-    run: a.run && { ...a.run, startedAt: back(a.run.startedAt) },
+    run: a.run && { ...a.run, startedAt: back(a.run.startedAt), graceUntil: a.run.graceUntil === null ? null : back(a.run.graceUntil) },
     lastTickedAt: back(a.lastTickedAt),
   };
 }

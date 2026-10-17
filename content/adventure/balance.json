@@ -1,44 +1,63 @@
 {
   "combat": {
-    "counter": 1.5,
-    "resisted": 0.75,
     "critMultiplier": 1.5,
     "variance": 0.1,
     "defenseK": 30,
-    "energyStart": 3,
-    "energyMax": 10,
-    "energyPerTurn": 2,
-    "basicEnergyGain": 1,
-    "burnPct": 0.06,
-    "slowFactor": 0.7,
-    "hasteFactor": 1.3,
-    "atkUpFactor": 1.3,
-    "defUpFactor": 1.4,
-    "shieldPct": 0.2,
-    "maxRounds": 40
+    "maxRounds": 40,
+    "mpTurnPct": 0.1,
+    "mpBasicPct": 0.08,
+    "mpGuardPct": 0.2,
+    "guardTaken": 0.5,
+    "rageK": 1.2,
+    "hitMin": 0.05,
+    "statusChanceCap": 0.95,
+    "elementDamageCap": 0.4,
+    "statusChanceBonusCap": 0.25,
+    "resistCap": 0.6,
+    "basicPower": 1,
+    "basicAccuracy": 95
   },
   "stats": {
     "levelGrowth": 0.1,
     "bondPerHeart": 0.05,
-    "rarity": { "COMMON": 1, "UNCOMMON": 1.12, "RARE": 1.28, "EPIC": 1.5, "LEGENDARY": 1.8 }
+    "rarity": { "COMMON": 1, "UNCOMMON": 1.05, "RARE": 1.1, "EPIC": 1.15, "LEGENDARY": 1.2 }
   },
-  "levels": { "maxLevel": 30, "expBase": 40, "expExponent": 1.5, "skillUnlockLevels": [1, 1, 10, 20] },
-  "team": { "max": 3 },
+  "levels": { "maxLevel": 30, "expBase": 40, "expExponent": 1.5, "uniqueUnlockLevels": [1, 1, 10, 20] },
+  "rage": { "max": 100 },
+  "sp": { "perLevel": 2, "bossFirstClear": 3, "scroll": 2 },
+  "tree": { "loadoutSlots": 3 },
+  "temple": { "classChangePerLevel": 100, "respecPerLevel": 50 },
+  "team": { "max": 3, "formations": 3 },
   "run": { "energyCost": 30, "energyMax": 100, "energyPerHour": 10, "exhaustHours": 4 },
+  "sweep": { "share": 0.7 },
+  "explore": {
+    "feetHalfWidth": 14,
+    "feetHalfHeight": 7,
+    "speed": 260,
+    "touch": 34,
+    "reach": 58,
+    "chestHint": 3,
+    "foeInfo": 4,
+    "graceMs": 2000,
+    "springPct": 0.5
+  },
   "xp": { "battleWin": 6, "zoneClear": 40 },
   "starter": { "breed": "PIG_KNIGHT", "items": { "item_equip_wood_sword": 1, "item_equip_leaf_vest": 1 } },
   "prep": [
-    { "itemId": "item_ration_hearty", "hpPct": 0.15, "atkPct": 0, "defPct": 0, "spd": 0, "crit": 0 },
-    { "itemId": "item_ration_spicy", "hpPct": 0, "atkPct": 0.12, "defPct": 0, "spd": 0, "crit": 0 },
-    { "itemId": "item_ration_swift", "hpPct": 0, "atkPct": 0, "defPct": 0, "spd": 2, "crit": 3 }
+    { "itemId": "item_ration_hearty", "shares": { "hp": 0.15 }, "flat": {} },
+    { "itemId": "item_ration_spicy", "shares": { "atk": 0.12, "matk": 0.12 }, "flat": {} },
+    { "itemId": "item_ration_swift", "shares": {}, "flat": { "spd": 2, "crit": 3 } }
   ],
   "battleItems": [
-    { "itemId": "item_potion_healing", "target": "ally", "healPct": 0.5, "statuses": [] },
+    { "itemId": "item_potion_healing", "target": "ally", "effects": [{ "kind": "heal", "pct": 0.5 }] },
     {
       "itemId": "item_potion_battle",
       "target": "allAllies",
-      "healPct": 0,
-      "statuses": [{ "status": "atkUp", "turns": 4 }, { "status": "defUp", "turns": 4 }]
+      "effects": [
+        { "kind": "status", "status": "atkUp", "turns": 4 },
+        { "kind": "status", "status": "defUp", "turns": 4 },
+        { "kind": "status", "status": "matkUp", "turns": 4 }
+      ]
     }
   ]
 }

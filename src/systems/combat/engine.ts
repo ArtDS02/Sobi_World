@@ -1,67 +1,31 @@
-// The battle engine (spec V2 §8.5): turn order by Speed, a basic attack, skills (energy and cooldown), items, element
-// advantage, critical hits, a few statuses. Pure: the random draws of an action come from (seed, action counter), so a
-// battle saved between two actions plays on to the same result, and a battle is the same in a test and in the game.
+// The battle engine V2 (decision 037, spec §15): turn order by Speed, start-of-turn statuses, control, a chosen action, its cost, the
+// hits (element chart, defence, guard, reactions, crit, spread), statuses, Rage from damage taken, KO and Auto-Revive, end of turn.
+// Pure: the random draws of an action come from (seed, action counter), so a battle saved between two actions plays on to the same
+// result, and a battle is the same in a test, in the game and in the Admin simulation.
 import { cloneData } from '../../core/clone';
-import { hashSeed, mulberry32, type Rng } from '../../core/rng';
+import { hashSeed, mulberry32 } from '../../core/rng';
+import { planIntents } from './ai';
+import { aimableFoes, alliesOf, current, find, foesOf, isAlive, levelOf, noSkills, skillMpCost, skipsTurn, stat, ultimateReady } from './rules';
+import { gainRage, hurt, removeStatus, settleKo, spread, strike } from './resolve';
+import { combatantOf } from './combatant';
+export { combatantOf, emptyMods } from './combatant';
+export { hitCategory } from './resolve';
+import { elementMultiplier } from './rules';
 import type {
   BattleAction,
   BattleEvent,
-  BattleItemDef,
   BattleState,
   Combatant,
   CombatantInit,
-  CombatRules,
-  Element,
+  CombatContext,
+  Effect,
   SkillDef,
-  SkillStatus,
   StatusId,
 } from './types';
-import { ELEMENTS } from './types';
 
-export interface CombatContext {
-  skills: Readonly<Record<string, SkillDef>>;
-  items: Readonly<Record<string, BattleItemDef>>;
-  rules: CombatRules;
-}
+export type StepError = 'BATTLE_OVER' | 'BAD_TARGET' | 'SKILL_UNAVAILABLE' | 'SKILL_DISABLED' | 'NOT_ENOUGH_MP' | 'ON_COOLDOWN' | 'ULTIMATE_NOT_READY' | 'UNKNOWN_ITEM';
 
-export type StepResult =
-  | { ok: true; state: BattleState; events: BattleEvent[] }
-  | { ok: false; error: 'BATTLE_OVER' | 'BAD_TARGET' | 'SKILL_UNAVAILABLE' | 'NOT_ENOUGH_ENERGY' | 'ON_COOLDOWN' | 'UNKNOWN_ITEM' };
-
-const isAlive = (c: Combatant) => c.hp > 0;
-const hasStatus = (c: Combatant, id: StatusId) => c.statuses.some((s) => s.id === id);
-const find = (s: BattleState, id: string) => s.combatants.find((c) => c.id === id);
-
-/** Does `a` beat `b`? Fire > Wind > Earth > Water > Fire. */
-export const beats = (a: Element, b: Element): boolean => (ELEMENTS.indexOf(a) + 1) % ELEMENTS.length === ELEMENTS.indexOf(b);
-
-/** Damage multiplier of an attack of `attack` on a target of `defender`. */
-export const elementMultiplier = (attack: Element, defender: Element, rules: Pick<CombatRules, 'counter' | 'resisted'>): number =>
-  beats(attack, defender) ? rules.counter : beats(defender, attack) ? rules.resisted : 1;
-
-export const effectiveSpeed = (c: Combatant, rules: Pick<CombatRules, 'slowFactor' | 'hasteFactor'>): number =>
-  c.spd * (hasStatus(c, 'haste') ? rules.hasteFactor : 1) * (hasStatus(c, 'slow') ? rules.slowFactor : 1);
-
-export const combatantOf = (init: CombatantInit, rules: Pick<CombatRules, 'energyStart'>): Combatant => ({
-  id: init.id,
-  side: init.side,
-  name: init.name,
-  element: init.element,
-  maxHp: Math.max(1, Math.round(init.stats.hp)),
-  hp: Math.max(0, Math.min(Math.round(init.stats.hp), Math.round(init.hp ?? init.stats.hp))),
-  atk: init.stats.atk,
-  def: init.stats.def,
-  spd: init.stats.spd,
-  crit: init.stats.crit,
-  energy: rules.energyStart,
-  skills: [...init.skills],
-  cooldowns: {},
-  statuses: [],
-});
-
-export const current = (s: BattleState): Combatant | null => (s.outcome ? null : (find(s, s.order[0] ?? '') ?? null));
-export const alliesOf = (s: BattleState, side: Combatant['side']) => s.combatants.filter((c) => c.side === side && isAlive(c));
-export const foesOf = (s: BattleState, side: Combatant['side']) => s.combatants.filter((c) => c.side !== side && isAlive(c));
+export type StepResult = { ok: true; state: BattleState; events: BattleEvent[] } | { ok: false; error: StepError };
 
 function outcomeOf(s: BattleState): 'win' | 'lose' | null {
   if (!s.combatants.some((c) => c.side === 'enemy' && isAlive(c))) return 'win';
@@ -69,50 +33,83 @@ function outcomeOf(s: BattleState): 'win' | 'lose' | null {
   return null;
 }
 
-/** Lowers HP through the shield first; returns what the shield took. */
-function hurt(c: Combatant, amount: number): number {
-  let left = amount;
-  let absorbed = 0;
-  const shield = c.statuses.find((x) => x.id === 'shield');
-  if (shield && shield.amount > 0) {
-    absorbed = Math.min(shield.amount, left);
-    shield.amount -= absorbed;
-    left -= absorbed;
-    if (shield.amount <= 0) c.statuses = c.statuses.filter((x) => x.id !== 'shield');
-  }
-  c.hp = Math.max(0, c.hp - left);
-  return absorbed;
-}
+// ---- Turns --------------------------------------------------------------------------------------------------------------
 
-function addStatus(target: Combatant, status: SkillStatus, rules: CombatRules) {
-  const existing = target.statuses.find((x) => x.id === status.status);
-  const amount = status.status === 'shield' ? Math.round(target.maxHp * rules.shieldPct) : 0;
-  if (existing) {
-    existing.turns = Math.max(existing.turns, status.turns);
-    existing.amount = Math.max(existing.amount, amount);
-  } else target.statuses.push({ id: status.status, turns: status.turns, amount });
-}
-
-/** Opens a new round: everyone alive, fastest first (allies before enemies on a tie). */
-function newRound(s: BattleState, rules: CombatRules, events: BattleEvent[]) {
+/** Opens a new round: everyone alive, fastest first (allies before enemies on a tie); the enemies say what they will do. */
+function newRound(s: BattleState, ctx: CombatContext, events: BattleEvent[]) {
   s.round += 1;
+  const index = new Map(s.combatants.map((c, i) => [c.id, i]));
   s.order = s.combatants
     .filter(isAlive)
-    .sort((a, b) => effectiveSpeed(b, rules) - effectiveSpeed(a, rules) || (a.side === b.side ? 0 : a.side === 'ally' ? -1 : 1) || a.id.localeCompare(b.id))
+    .sort((a, b) => stat(b, 'spd', ctx) - stat(a, 'spd', ctx) || (a.side === b.side ? 0 : a.side === 'ally' ? -1 : 1) || index.get(a.id)! - index.get(b.id)!)
     .map((c) => c.id);
   events.push({ type: 'round', round: s.round });
+  planIntents(s, ctx);
 }
 
-/** Brings the battle to the next actor that can act (burns, skipped stuns and defeats on the way). */
+/** The bearer's turn ends: immunities and statuses count down (Doom counts at the start of the turn instead). */
+function endTurn(c: Combatant, ctx: CombatContext) {
+  for (const id of Object.keys(c.immune) as StatusId[]) {
+    const left = (c.immune[id] ?? 0) - 1;
+    if (left > 0) c.immune[id] = left;
+    else delete c.immune[id];
+  }
+  const expired: StatusId[] = [];
+  for (const st of c.statuses) {
+    if (st.id === 'doom') continue;
+    st.turns -= 1;
+    if (st.turns <= 0) expired.push(st.id);
+  }
+  for (const id of expired) removeStatus(c, id, ctx);
+}
+
+/** Start of a turn (§15.1 step 2): damage over time, regen, Doom, MP, cooldowns. False when the actor fell. */
+function startTurn(actor: Combatant, ctx: CombatContext, events: BattleEvent[]): boolean {
+  actor.guarding = false;
+  for (const st of [...actor.statuses]) {
+    const def = ctx.statuses[st.id];
+    if (!def || def.kind !== 'dot' || !isAlive(actor)) continue;
+    const fire = def.sourceElement && st.id === 'burn' ? elementMultiplier(ctx, def.sourceElement, actor) : 1;
+    const amount = Math.max(1, Math.round(actor.stats.hp * def.tickPct * st.stacks * fire));
+    const { toHp } = hurt(actor, amount);
+    events.push({ type: 'tick', target: actor.id, status: st.id, amount });
+    gainRage(actor, toHp, ctx, events);
+    settleKo(actor, ctx, events);
+  }
+  if (!isAlive(actor)) return false;
+  const regen = actor.statuses.find((st) => st.id === 'regen');
+  if (regen) {
+    const n = Math.min(actor.stats.hp - actor.hp, Math.max(1, Math.round(actor.stats.hp * (ctx.statuses.regen?.tickPct ?? 0))));
+    if (n > 0) {
+      actor.hp += n;
+      events.push({ type: 'tick', target: actor.id, status: 'regen', amount: n });
+    }
+  }
+  const doom = actor.statuses.find((st) => st.id === 'doom');
+  if (doom) {
+    doom.turns -= 1;
+    events.push({ type: 'tick', target: actor.id, status: 'doom', amount: doom.turns });
+    if (doom.turns <= 0) {
+      actor.statuses = actor.statuses.filter((st) => st.id !== 'doom');
+      actor.hp = 0;
+      settleKo(actor, ctx, events);
+      if (!isAlive(actor)) return false;
+    }
+  }
+  actor.mp = Math.min(actor.stats.mp, actor.mp + Math.round(actor.stats.mp * ctx.rules.mpTurnPct));
+  for (const id of Object.keys(actor.cooldowns)) actor.cooldowns[id] = Math.max(0, actor.cooldowns[id]! - 1);
+  return true;
+}
+
+/** Brings the battle to the next actor that can act (statuses, skipped turns and defeats on the way). */
 function begin(s: BattleState, ctx: CombatContext, events: BattleEvent[]) {
-  const { rules } = ctx;
   while (!s.outcome) {
     if (s.order.length === 0) {
-      if (s.round >= rules.maxRounds) {
+      if (s.round >= ctx.rules.maxRounds) {
         s.outcome = 'lose';
         break;
       }
-      newRound(s, rules, events);
+      newRound(s, ctx, events);
     }
     const actor = find(s, s.order[0]!);
     if (!actor || !isAlive(actor)) {
@@ -120,22 +117,15 @@ function begin(s: BattleState, ctx: CombatContext, events: BattleEvent[]) {
       continue;
     }
     events.push({ type: 'turn', actor: actor.id });
-    for (const id of Object.keys(actor.cooldowns)) actor.cooldowns[id] = Math.max(0, actor.cooldowns[id]! - 1);
-    actor.energy = Math.min(rules.energyMax, actor.energy + rules.energyPerTurn);
-    if (hasStatus(actor, 'burn')) {
-      const amount = Math.max(1, Math.round(actor.maxHp * rules.burnPct));
-      hurt(actor, amount);
-      events.push({ type: 'burn', target: actor.id, amount });
-      if (!isAlive(actor)) {
-        events.push({ type: 'defeat', target: actor.id });
-        s.order.shift();
-        s.outcome = outcomeOf(s);
-        continue;
-      }
+    if (!startTurn(actor, ctx, events)) {
+      s.order.shift();
+      s.outcome = outcomeOf(s);
+      continue;
     }
-    if (hasStatus(actor, 'stun')) {
-      events.push({ type: 'skip', actor: actor.id });
-      endTurn(actor);
+    const skip = skipsTurn(actor, ctx);
+    if (skip === 'stun' || skip === 'freeze') {
+      events.push({ type: 'skip', actor: actor.id, reason: skip });
+      endTurn(actor, ctx);
       s.order.shift();
       continue;
     }
@@ -144,113 +134,139 @@ function begin(s: BattleState, ctx: CombatContext, events: BattleEvent[]) {
   if (s.outcome) events.push({ type: 'end', outcome: s.outcome });
 }
 
-/** A turn ends: every status of the actor has one turn less (a spent one goes away). */
-function endTurn(actor: Combatant) {
-  for (const st of actor.statuses) st.turns -= 1;
-  actor.statuses = actor.statuses.filter((st) => st.turns > 0);
-}
-
 /** A new battle, at the first action of the fastest fighter. */
 export function startBattle(seed: number, fighters: readonly CombatantInit[], ctx: CombatContext): { state: BattleState; events: BattleEvent[] } {
-  const state: BattleState = { seed, counter: 0, round: 0, order: [], combatants: fighters.map((f) => combatantOf(f, ctx.rules)), outcome: null };
+  const state: BattleState = { seed, counter: 0, round: 0, order: [], combatants: fighters.map(combatantOf), outcome: null };
   state.outcome = outcomeOf(state);
   const events: BattleEvent[] = [];
   begin(state, ctx, events);
   return { state, events };
 }
 
-function damageTo(rng: Rng, actor: Combatant, target: Combatant, power: number, element: Element, critBonus: number, ctx: CombatContext, skillId: string | null, events: BattleEvent[]) {
-  const { rules } = ctx;
-  const atk = actor.atk * (hasStatus(actor, 'atkUp') ? rules.atkUpFactor : 1);
-  const def = target.def * (hasStatus(target, 'defUp') ? rules.defUpFactor : 1);
-  const mult = elementMultiplier(element, target.element, rules);
-  const crit = rng.next() * 100 < actor.crit + critBonus;
-  const spread = 1 + (rng.next() * 2 - 1) * rules.variance;
-  const amount = Math.max(1, Math.round(((atk * power * rules.defenseK) / (rules.defenseK + def)) * mult * spread * (crit ? rules.critMultiplier : 1)));
-  const absorbed = hurt(target, amount);
-  events.push({ type: 'damage', actor: actor.id, target: target.id, amount, crit, mult, skillId, absorbed });
-  if (!isAlive(target)) events.push({ type: 'defeat', target: target.id });
-}
+// ---- Actions --------------------------------------------------------------------------------------------------------------
 
-function healTo(actor: Combatant, target: Combatant, pct: number, skillId: string | null, events: BattleEvent[]) {
-  const amount = Math.min(target.maxHp - target.hp, Math.max(1, Math.round(target.maxHp * pct)));
-  target.hp += amount;
-  events.push({ type: 'heal', actor: actor.id, target: target.id, amount, skillId });
-}
+type Resolved = { skill: SkillDef | null; level: number; effects: readonly Effect[]; targetKind: SkillDef['target'] | 'ally' | 'allAllies'; ultimate: boolean };
 
-function statusesTo(rng: Rng, actor: Combatant, target: Combatant, statuses: readonly SkillStatus[], skillId: string | null, ctx: CombatContext, events: BattleEvent[]) {
-  for (const st of statuses) {
-    if (st.chance !== undefined && st.chance < 1 && rng.next() >= st.chance) continue;
-    // Self buffs count the turn they are cast in, so they last for the turns the skill says.
-    addStatus(target, st, ctx.rules);
-    events.push({ type: 'status', actor: actor.id, target: target.id, status: st.status, skillId });
+function resolve(actor: Combatant, action: BattleAction, ctx: CombatContext): Resolved | StepError {
+  switch (action.kind) {
+    case 'attack':
+      return { skill: null, level: 1, effects: [], targetKind: 'enemy', ultimate: false };
+    case 'guard':
+      return { skill: null, level: 1, effects: [], targetKind: 'self', ultimate: false };
+    case 'item': {
+      const item = ctx.items[action.itemId];
+      return item ? { skill: null, level: 1, effects: item.effects, targetKind: item.target, ultimate: false } : 'UNKNOWN_ITEM';
+    }
+    case 'ultimate': {
+      const skill = actor.ultimate ? ctx.skills[actor.ultimate] : undefined;
+      if (!skill || !ultimateReady(actor)) return 'ULTIMATE_NOT_READY';
+      return { skill, level: 1, effects: skill.effects, targetKind: skill.target, ultimate: true };
+    }
+    case 'skill': {
+      const skill = ctx.skills[action.skillId];
+      if (!skill || !actor.skills.some((s) => s.id === skill.id)) return 'SKILL_UNAVAILABLE';
+      if (noSkills(actor, ctx)) return 'SKILL_DISABLED';
+      if ((actor.cooldowns[skill.id] ?? 0) > 0) return 'ON_COOLDOWN';
+      const level = levelOf(actor, skill.id);
+      if (actor.mp < skillMpCost(skill, level)) return 'NOT_ENOUGH_MP';
+      return { skill, level, effects: skill.effects, targetKind: skill.target, ultimate: false };
+    }
   }
 }
 
-/** The targets a skill or item reaches, or null when the one chosen is not allowed. */
-function targetsOf(s: BattleState, actor: Combatant, kind: SkillDef['target'] | BattleItemDef['target'], chosen: string | undefined): Combatant[] | null {
+/** The targets of an action, or null when the one chosen is not allowed. A Taunt pulls single-target attacks. */
+function targetsOf(s: BattleState, actor: Combatant, kind: Resolved['targetKind'], chosen: string | undefined, revive: boolean): Combatant[] | null {
   switch (kind) {
     case 'self':
       return [actor];
     case 'allEnemies':
+    case 'randomEnemies':
       return foesOf(s, actor.side);
     case 'allAllies':
       return alliesOf(s, actor.side);
+    case 'all':
+      return s.combatants.filter(isAlive);
     case 'enemy': {
+      const aimable = aimableFoes(s, actor);
       const t = chosen ? find(s, chosen) : undefined;
-      return t && isAlive(t) && t.side !== actor.side ? [t] : null;
+      if (!t || !isAlive(t) || t.side === actor.side) return null;
+      return [aimable.includes(t) ? t : aimable[0]!];
     }
     case 'ally': {
       const t = chosen ? find(s, chosen) : undefined;
-      return t && isAlive(t) && t.side === actor.side ? [t] : null;
+      return t && t.side === actor.side && (isAlive(t) || revive) ? [t] : null;
     }
   }
 }
 
-/** The current actor does `action`; the battle then moves to the next actor. */
+/** Why the current actor cannot do `action` now, or null when it can. */
+export function canAct(state: BattleState, action: BattleAction, ctx: CombatContext): StepError | null {
+  const actor = current(state);
+  if (!actor) return 'BATTLE_OVER';
+  const r = resolve(actor, action, ctx);
+  if (typeof r === 'string') return r;
+  const revive = r.effects.some((e) => e.kind === 'revive');
+  const target = 'target' in action ? action.target : undefined;
+  return targetsOf(state, actor, r.targetKind, target, revive) ? null : 'BAD_TARGET';
+}
+
+/** The current actor does `action` (§15.1 steps 4–17); the battle then moves to the next actor. */
 export function act(state: BattleState, action: BattleAction, ctx: CombatContext): StepResult {
   const actor0 = current(state);
   if (!actor0) return { ok: false, error: 'BATTLE_OVER' };
   const s = cloneData(state);
   const actor = find(s, actor0.id)!;
+  const r = resolve(actor, action, ctx);
+  if (typeof r === 'string') return { ok: false, error: r };
+  const revive = r.effects.some((e) => e.kind === 'revive');
+  const targets = targetsOf(s, actor, r.targetKind, 'target' in action ? action.target : undefined, revive);
+  if (!targets) return { ok: false, error: 'BAD_TARGET' };
   const events: BattleEvent[] = [];
   const rng = mulberry32(hashSeed('combat', s.seed, s.counter));
+  actor.intent = null;
 
-  if (action.kind === 'attack') {
-    const targets = targetsOf(s, actor, 'enemy', action.target);
-    if (!targets) return { ok: false, error: 'BAD_TARGET' };
-    damageTo(rng, actor, targets[0]!, 1, actor.element, 0, ctx, null, events);
-    actor.energy = Math.min(ctx.rules.energyMax, actor.energy + ctx.rules.basicEnergyGain);
-  } else if (action.kind === 'skill') {
-    const skill = ctx.skills[action.skillId];
-    if (!skill || !actor.skills.includes(skill.id)) return { ok: false, error: 'SKILL_UNAVAILABLE' };
-    if ((actor.cooldowns[skill.id] ?? 0) > 0) return { ok: false, error: 'ON_COOLDOWN' };
-    if (actor.energy < skill.cost) return { ok: false, error: 'NOT_ENOUGH_ENERGY' };
-    const targets = targetsOf(s, actor, skill.target, action.target);
-    if (!targets) return { ok: false, error: 'BAD_TARGET' };
-    actor.energy -= skill.cost;
-    if (skill.cooldown > 0) actor.cooldowns[skill.id] = skill.cooldown + 1;
-    for (const target of targets) {
-      if (!isAlive(target)) continue;
-      if (skill.power > 0) damageTo(rng, actor, target, skill.power, skill.element, skill.critBonus ?? 0, ctx, skill.id, events);
-      if (skill.healPct > 0) healTo(actor, target, skill.healPct, skill.id, events);
-      if (isAlive(target)) statusesTo(rng, actor, target, skill.statuses, skill.id, ctx, events);
-    }
+  if (action.kind === 'guard') {
+    actor.guarding = true;
+    actor.mp = Math.min(actor.stats.mp, actor.mp + Math.round(actor.stats.mp * ctx.rules.mpGuardPct));
+    events.push({ type: 'guard', actor: actor.id });
+  } else if (action.kind === 'attack') {
+    events.push({ type: 'use', actor: actor.id, skillId: null, ultimate: false });
+    strike(rng, s, actor, targets[0]!, { skill: null, level: 1 }, ctx, events);
+    actor.mp = Math.min(actor.stats.mp, actor.mp + Math.round(actor.stats.mp * ctx.rules.mpBasicPct));
+  } else if (action.kind === 'item') {
+    spread(rng, s, actor, targets, r.effects, null, 1, ctx, events);
   } else {
-    const item = ctx.items[action.itemId];
-    if (!item) return { ok: false, error: 'UNKNOWN_ITEM' };
-    const targets = targetsOf(s, actor, item.target, action.target);
-    if (!targets) return { ok: false, error: 'BAD_TARGET' };
-    for (const target of targets) {
-      if (item.healPct > 0) healTo(actor, target, item.healPct, null, events);
-      statusesTo(rng, actor, target, item.statuses, null, ctx, events);
+    const skill = r.skill!;
+    if (r.ultimate) {
+      actor.rage = 0;
+      actor.ultimateUsed = true;
+    } else {
+      actor.mp -= skillMpCost(skill, r.level);
+      if (skill.cooldown > 0) actor.cooldowns[skill.id] = skill.cooldown + 1;
     }
+    events.push({ type: 'use', actor: actor.id, skillId: skill.id, ultimate: r.ultimate });
+    const landed = new Set<string>();
+    if (skill.power > 0) {
+      if (skill.target === 'randomEnemies') {
+        for (let h = 0; h < skill.hits; h += 1) {
+          const pool = foesOf(s, actor.side);
+          if (pool.length === 0) break;
+          const t = pool[Math.floor(rng.next() * pool.length)]!;
+          if (strike(rng, s, actor, t, r, ctx, events)) landed.add(t.id);
+        }
+      } else {
+        for (const t of targets) for (let h = 0; h < skill.hits && isAlive(t); h += 1) if (strike(rng, s, actor, t, r, ctx, events)) landed.add(t.id);
+      }
+    }
+    // A damage skill's statuses stick only where a hit landed; a skill without damage always applies them.
+    const reached = skill.power > 0 ? (skill.target === 'randomEnemies' ? s.combatants.filter((c) => landed.has(c.id)) : targets.filter((t) => landed.has(t.id))) : targets;
+    spread(rng, s, actor, reached, r.effects, skill, r.level, ctx, events);
   }
 
   s.counter += 1;
   s.outcome = outcomeOf(s);
   if (!s.outcome) {
-    endTurn(actor);
+    if (isAlive(actor)) endTurn(actor, ctx);
     s.order.shift();
     begin(s, ctx, events);
   } else events.push({ type: 'end', outcome: s.outcome });

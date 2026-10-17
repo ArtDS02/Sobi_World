@@ -1,6 +1,7 @@
-// What a fighter's numbers are (spec V2 §7, §8.5): the archetype's base stats grow with level, rarity and Bond, plus what
-// the equipment adds; experience and the skills a level opens. Pure: the rules come in as arguments.
-import type { Stats } from './types';
+// What a fighter's numbers are (spec V2 §4.4): its class's base stats grow with level, rarity and Bond, plus what the gear and rations
+// add; experience and levels. Accuracy, evasion and crit are points that do not grow with level; speed and MP grow at half the rate
+// (a high level should not make everyone act twice). Pure: the rules come in as arguments.
+import { STAT_KEYS, type StatKey, type Stats } from './types';
 
 export interface StatRules {
   /** Stats grow by this share of the base for every level above 1. */
@@ -22,19 +23,30 @@ export interface StatInput {
   hearts: number;
 }
 
-/** Speed grows at half the rate of the other stats (a high level should not make everyone act twice). */
+const FLAT: readonly StatKey[] = ['acc', 'eva', 'crit'];
+const HALF: readonly StatKey[] = ['spd', 'mp'];
+
+export const zeroStats = (): Stats => Object.fromEntries(STAT_KEYS.map((k) => [k, 0])) as Stats;
+
 export function deriveStats(base: Stats, input: StatInput, rules: StatRules, bonus: Partial<Stats> = {}): Stats {
-  const growth = 1 + rules.levelGrowth * (input.level - 1);
-  const speedGrowth = 1 + (rules.levelGrowth / 2) * (input.level - 1);
   const bond = 1 + rules.bondPerHeart * input.hearts;
-  const scale = (v: number, g: number) => v * g * input.rarityMult * bond;
-  return {
-    hp: Math.round(scale(base.hp, growth)) + (bonus.hp ?? 0),
-    atk: Math.round(scale(base.atk, growth)) + (bonus.atk ?? 0),
-    def: Math.round(scale(base.def, growth)) + (bonus.def ?? 0),
-    spd: Math.round(scale(base.spd, speedGrowth)) + (bonus.spd ?? 0),
-    crit: base.crit + (bonus.crit ?? 0),
-  };
+  const out = zeroStats();
+  for (const k of STAT_KEYS) {
+    if (FLAT.includes(k)) {
+      out[k] = base[k] + (bonus[k] ?? 0);
+      continue;
+    }
+    const growth = 1 + (HALF.includes(k) ? rules.levelGrowth / 2 : rules.levelGrowth) * (input.level - 1);
+    out[k] = Math.round(base[k] * growth * input.rarityMult * bond) + (bonus[k] ?? 0);
+  }
+  return out;
+}
+
+/** Shares of some stats added (rations: +15% HP…) and flat points (speed, crit). */
+export function addShares(stats: Stats, shares: Partial<Stats>, flat: Partial<Stats> = {}): Stats {
+  const out = { ...stats };
+  for (const k of STAT_KEYS) out[k] = Math.round(stats[k] * (1 + (shares[k] ?? 0))) + (flat[k] ?? 0);
+  return out;
 }
 
 /** Experience to go from `level` to the next one (Infinity at the top). */
@@ -51,7 +63,3 @@ export function addExp(level: number, exp: number, gain: number, rules: LevelRul
   }
   return { level: l, exp: l >= rules.maxLevel ? 0 : e, levelsGained: l - level };
 }
-
-/** The skills a fighter of `level` may use: the first of `skills` whose unlock level is reached, in order. */
-export const skillsAtLevel = <T>(skills: readonly T[], unlockLevels: readonly number[], level: number): T[] =>
-  skills.filter((_, i) => level >= (unlockLevels[i] ?? Number.POSITIVE_INFINITY));

@@ -1,16 +1,134 @@
 {
   "equipment": [
     { "id": "item_equip_wood_sword", "slot": "weapon", "stats": { "atk": 3 } },
-    { "id": "item_equip_iron_sword", "slot": "weapon", "stats": { "atk": 5 } },
-    { "id": "item_equip_flame_blade", "slot": "weapon", "stats": { "atk": 7, "crit": 3 } },
-    { "id": "item_equip_leaf_vest", "slot": "armor", "stats": { "hp": 15 } },
-    { "id": "item_equip_bark_armor", "slot": "armor", "stats": { "hp": 22, "def": 3 } },
-    { "id": "item_equip_moss_plate", "slot": "armor", "stats": { "hp": 28, "def": 4 } },
+    { "id": "item_equip_iron_sword", "slot": "weapon", "levelReq": 5, "stats": { "atk": 5 } },
+    {
+      "id": "item_equip_flame_blade",
+      "slot": "weapon",
+      "levelReq": 10,
+      "stats": { "atk": 7, "crit": 3 },
+      "elementAffinity": { "element": "FIRE", "damagePct": 0.1, "resistPct": 0 },
+      "statusAffinity": { "status": "burn", "chancePct": 0.05 }
+    },
+    { "id": "item_equip_leaf_vest", "slot": "armor", "stats": { "hp": 15, "mdef": 2 } },
+    {
+      "id": "item_equip_bark_armor",
+      "slot": "armor",
+      "levelReq": 5,
+      "stats": { "hp": 22, "def": 3, "mdef": 2 }
+    },
+    {
+      "id": "item_equip_moss_plate",
+      "slot": "armor",
+      "levelReq": 10,
+      "stats": { "hp": 28, "def": 4, "mdef": 3 },
+      "elementResist": { "EARTH": 0.2 }
+    },
     { "id": "item_equip_lucky_clover", "slot": "charm", "stats": { "crit": 4 } },
-    { "id": "item_equip_wind_feather", "slot": "charm", "stats": { "spd": 3 } },
-    { "id": "item_equip_sun_amulet", "slot": "charm", "stats": { "atk": 3, "hp": 14, "spd": 1 } },
-    { "id": "item_equip_rune_blade", "slot": "weapon", "stats": { "atk": 12, "crit": 4 } },
-    { "id": "item_equip_golem_plate", "slot": "armor", "stats": { "hp": 45, "def": 7 } },
-    { "id": "item_equip_rune_charm", "slot": "charm", "stats": { "atk": 5, "hp": 22, "spd": 2 } }
+    {
+      "id": "item_equip_wind_feather",
+      "slot": "charm",
+      "levelReq": 5,
+      "stats": { "spd": 3 },
+      "elementAffinity": { "element": "LIGHTNING", "damagePct": 0.1, "resistPct": 0 }
+    },
+    {
+      "id": "item_equip_sun_amulet",
+      "slot": "charm",
+      "levelReq": 10,
+      "stats": { "atk": 3, "matk": 3, "hp": 14, "spd": 1 },
+      "elementAffinity": { "element": "LIGHT", "damagePct": 0.1, "resistPct": 0 }
+    },
+    {
+      "id": "item_equip_rune_blade",
+      "slot": "weapon",
+      "levelReq": 15,
+      "stats": { "atk": 12, "matk": 6, "crit": 4 },
+      "elementAffinity": { "element": "VOID", "damagePct": 0.1, "resistPct": 0 }
+    },
+    {
+      "id": "item_equip_golem_plate",
+      "slot": "armor",
+      "levelReq": 15,
+      "stats": { "hp": 45, "def": 7, "mdef": 5 },
+      "elementResist": { "METAL": 0.2 }
+    },
+    {
+      "id": "item_equip_rune_charm",
+      "slot": "charm",
+      "levelReq": 15,
+      "stats": { "atk": 5, "matk": 5, "hp": 22, "spd": 2 },
+      "elementAffinity": { "element": "METAL", "damagePct": 0.1, "resistPct": 0 }
+    },
+    {
+      "id": "item_equip_fire_staff",
+      "slot": "weapon",
+      "levelReq": 8,
+      "stats": { "matk": 6 },
+      "elementAffinity": { "element": "FIRE", "damagePct": 0.15, "resistPct": 0 },
+      "statusAffinity": { "status": "burn", "chancePct": 0.05 }
+    },
+    {
+      "id": "item_equip_tide_rod",
+      "slot": "weapon",
+      "levelReq": 8,
+      "stats": { "matk": 6, "mp": 10 },
+      "elementAffinity": { "element": "WATER", "damagePct": 0.15, "resistPct": 0 },
+      "statusAffinity": { "status": "freeze", "chancePct": 0.05 }
+    },
+    {
+      "id": "item_equip_thunder_horn",
+      "slot": "charm",
+      "levelReq": 8,
+      "stats": { "spd": 2 },
+      "elementAffinity": { "element": "LIGHTNING", "damagePct": 0.12, "resistPct": 0 },
+      "statusAffinity": { "status": "stun", "chancePct": 0.05 }
+    },
+    {
+      "id": "item_equip_nature_ring",
+      "slot": "charm",
+      "levelReq": 4,
+      "stats": { "hp": 10, "matk": 3 },
+      "elementAffinity": { "element": "NATURE", "damagePct": 0.1, "resistPct": 0 },
+      "statusAffinity": { "status": "poison", "chancePct": 0.05 }
+    },
+    {
+      "id": "item_equip_stone_shield",
+      "slot": "armor",
+      "levelReq": 8,
+      "stats": { "hp": 20, "def": 6, "mdef": 4 },
+      "elementAffinity": { "element": "EARTH", "damagePct": 0.1, "resistPct": 0.15 }
+    },
+    {
+      "id": "item_equip_bronze_gauntlet",
+      "slot": "weapon",
+      "levelReq": 8,
+      "stats": { "atk": 7 },
+      "elementAffinity": { "element": "METAL", "damagePct": 0.12, "resistPct": 0 }
+    },
+    {
+      "id": "item_equip_moon_veil",
+      "slot": "armor",
+      "levelReq": 12,
+      "stats": { "hp": 18, "mdef": 8, "eva": 4 },
+      "elementAffinity": { "element": "DARK", "damagePct": 0.1, "resistPct": 0 },
+      "elementResist": { "LIGHT": 0.1 }
+    },
+    {
+      "id": "item_equip_lantern_charm",
+      "slot": "charm",
+      "levelReq": 12,
+      "stats": { "matk": 4, "mp": 10 },
+      "elementAffinity": { "element": "LIGHT", "damagePct": 0.12, "resistPct": 0 },
+      "statusResist": { "accDown": 0.3 }
+    },
+    {
+      "id": "item_equip_void_pearl",
+      "slot": "charm",
+      "levelReq": 15,
+      "stats": { "hp": 20, "mdef": 4 },
+      "elementAffinity": { "element": "VOID", "damagePct": 0.1, "resistPct": 0 },
+      "statusResist": { "doom": 0.5 }
+    }
   ]
 }

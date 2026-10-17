@@ -2357,6 +2357,227 @@
       "id": "enemy_ancient_guardian",
       "status": "placeholder",
       "asset": "props/enemy_ancient_guardian.png"
+    },
+    {
+      "id": "enemy_wolf_alpha",
+      "status": "placeholder",
+      "asset": "props/enemy_wolf_alpha.png"
+    },
+    {
+      "id": "enemy_thunder_ram",
+      "status": "placeholder",
+      "asset": "props/enemy_thunder_ram.png"
+    },
+    {
+      "id": "enemy_shadow_priest",
+      "status": "placeholder",
+      "asset": "props/enemy_shadow_priest.png"
+    },
+    {
+      "id": "prop_adv_forest_oak",
+      "status": "placeholder",
+      "asset": "props/prop_adv_forest_oak.png"
+    },
+    {
+      "id": "prop_adv_forest_round",
+      "status": "placeholder",
+      "asset": "props/prop_adv_forest_round.png"
+    },
+    {
+      "id": "prop_adv_forest_bush",
+      "status": "placeholder",
+      "asset": "props/prop_adv_forest_bush.png"
+    },
+    {
+      "id": "prop_adv_forest_boulder",
+      "status": "placeholder",
+      "asset": "props/prop_adv_forest_boulder.png"
+    },
+    {
+      "id": "prop_adv_forest_rock",
+      "status": "placeholder",
+      "asset": "props/prop_adv_forest_rock.png"
+    },
+    {
+      "id": "prop_adv_forest_log",
+      "status": "placeholder",
+      "asset": "props/prop_adv_forest_log.png"
+    },
+    {
+      "id": "prop_adv_forest_mushroom",
+      "status": "placeholder",
+      "asset": "props/prop_adv_forest_mushroom.png"
+    },
+    {
+      "id": "prop_adv_forest_stump",
+      "status": "placeholder",
+      "asset": "props/prop_adv_forest_stump.png"
+    },
+    {
+      "id": "prop_adv_forest_hut",
+      "status": "placeholder",
+      "asset": "props/prop_adv_forest_hut.png"
+    },
+    {
+      "id": "prop_adv_mountain_boulder",
+      "status": "placeholder",
+      "asset": "props/prop_adv_mountain_boulder.png"
+    },
+    {
+      "id": "prop_adv_mountain_rock",
+      "status": "placeholder",
+      "asset": "props/prop_adv_mountain_rock.png"
+    },
+    {
+      "id": "prop_adv_mountain_pine",
+      "status": "placeholder",
+      "asset": "props/prop_adv_mountain_pine.png"
+    },
+    {
+      "id": "prop_adv_mountain_crystal",
+      "status": "placeholder",
+      "asset": "props/prop_adv_mountain_crystal.png"
+    },
+    {
+      "id": "prop_adv_mountain_vent",
+      "status": "placeholder",
+      "asset": "props/prop_adv_mountain_vent.png"
+    },
+    {
+      "id": "prop_adv_mountain_cart",
+      "status": "placeholder",
+      "asset": "props/prop_adv_mountain_cart.png"
+    },
+    {
+      "id": "prop_adv_mountain_cabin",
+      "status": "placeholder",
+      "asset": "props/prop_adv_mountain_cabin.png"
+    },
+    {
+      "id": "prop_adv_mountain_fence",
+      "status": "placeholder",
+      "asset": "props/prop_adv_mountain_fence.png"
+    },
+    {
+      "id": "prop_adv_ruins_pillar",
+      "status": "placeholder",
+      "asset": "props/prop_adv_ruins_pillar.png"
+    },
+    {
+      "id": "prop_adv_ruins_broken",
+      "status": "placeholder",
+      "asset": "props/prop_adv_ruins_broken.png"
+    },
+    {
+      "id": "prop_adv_ruins_statue",
+      "status": "placeholder",
+      "asset": "props/prop_adv_ruins_statue.png"
+    },
+    {
+      "id": "prop_adv_ruins_wall",
+      "status": "placeholder",
+      "asset": "props/prop_adv_ruins_wall.png"
+    },
+    {
+      "id": "prop_adv_ruins_brazier",
+      "status": "placeholder",
+      "asset": "props/prop_adv_ruins_brazier.png"
+    },
+    {
+      "id": "prop_adv_ruins_urn",
+      "status": "placeholder",
+      "asset": "props/prop_adv_ruins_urn.png"
+    },
+    {
+      "id": "prop_adv_ruins_deadtree",
+      "status": "placeholder",
+      "asset": "props/prop_adv_ruins_deadtree.png"
+    },
+    {
+      "id": "adv_chest",
+      "status": "placeholder",
+      "states": {
+        "closed": "props/adv_chest_closed.png",
+        "open": "props/adv_chest_open.png"
+      }
+    },
+    {
+      "id": "adv_portal",
+      "status": "placeholder",
+      "states": {
+        "off": "props/adv_portal_off.png",
+        "on": "props/adv_portal_on.png"
+      }
+    },
+    {
+      "id": "adv_spring",
+      "status": "placeholder",
+      "asset": "props/adv_spring.png"
+    },
+    {
+      "id": "adv_npc_traveler",
+      "status": "placeholder",
+      "asset": "props/adv_npc_traveler.png"
+    },
+    {
+      "id": "adv_lore_stone",
+      "status": "placeholder",
+      "asset": "props/adv_lore_stone.png"
+    },
+    {
+      "id": "adv_shrine",
+      "status": "placeholder",
+      "asset": "props/adv_shrine.png"
+    },
+    {
+      "id": "adv_node_herb",
+      "status": "placeholder",
+      "asset": "props/adv_node_herb.png"
+    },
+    {
+      "id": "adv_node_ore",
+      "status": "placeholder",
+      "asset": "props/adv_node_ore.png"
+    },
+    {
+      "id": "adv_gate_metal",
+      "status": "placeholder",
+      "asset": "props/adv_gate_metal.png"
+    },
+    {
+      "id": "adv_gate_nature",
+      "status": "placeholder",
+      "asset": "props/adv_gate_nature.png"
+    },
+    {
+      "id": "adv_gate_water",
+      "status": "placeholder",
+      "asset": "props/adv_gate_water.png"
+    },
+    {
+      "id": "adv_gate_fire",
+      "status": "placeholder",
+      "asset": "props/adv_gate_fire.png"
+    },
+    {
+      "id": "adv_gate_earth",
+      "status": "placeholder",
+      "asset": "props/adv_gate_earth.png"
+    },
+    {
+      "id": "adv_gate_lightning",
+      "status": "placeholder",
+      "asset": "props/adv_gate_lightning.png"
+    },
+    {
+      "id": "adv_gate_dark",
+      "status": "placeholder",
+      "asset": "props/adv_gate_dark.png"
+    },
+    {
+      "id": "adv_gate_light",
+      "status": "placeholder",
+      "asset": "props/adv_gate_light.png"
     }
   ],
   "buildings": [
@@ -3474,6 +3695,56 @@
       "id": "ui_item_equip_rune_charm",
       "status": "placeholder",
       "asset": "ui/ui_item_equip_rune_charm.png"
+    },
+    {
+      "id": "ui_item_equip_fire_staff",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_fire_staff.png"
+    },
+    {
+      "id": "ui_item_equip_tide_rod",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_tide_rod.png"
+    },
+    {
+      "id": "ui_item_equip_thunder_horn",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_thunder_horn.png"
+    },
+    {
+      "id": "ui_item_equip_nature_ring",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_nature_ring.png"
+    },
+    {
+      "id": "ui_item_equip_stone_shield",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_stone_shield.png"
+    },
+    {
+      "id": "ui_item_equip_bronze_gauntlet",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_bronze_gauntlet.png"
+    },
+    {
+      "id": "ui_item_equip_moon_veil",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_moon_veil.png"
+    },
+    {
+      "id": "ui_item_equip_lantern_charm",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_lantern_charm.png"
+    },
+    {
+      "id": "ui_item_equip_void_pearl",
+      "status": "placeholder",
+      "asset": "ui/ui_item_equip_void_pearl.png"
+    },
+    {
+      "id": "ui_item_skill_scroll",
+      "status": "placeholder",
+      "asset": "ui/ui_item_skill_scroll.png"
     }
   ],
   "audio": [

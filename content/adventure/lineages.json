@@ -1,0 +1,165 @@
+{
+  "lineages": [
+    {
+      "id": "nam_hai",
+      "nameVi": "Dòng Nam Hải",
+      "guardianVi": "Cá Ông Nam Hải",
+      "descVi": "Hậu duệ của cá voi hát giữ nhịp thủy triều: hồi máu và che chở.",
+      "element": "WATER",
+      "unique": ["skill_nh_bubble", "skill_nh_soothe", "skill_nh_tide_song", "skill_nh_tsunami"],
+      "ultimate": "skill_ult_nh"
+    },
+    {
+      "id": "quy_son",
+      "nameVi": "Dòng Quy Sơn",
+      "guardianVi": "Quy Sơn – Rùa Mang Núi",
+      "descVi": "Hậu duệ của rùa cõng núi chặn lối The Hollow: lì đòn, che cả đội.",
+      "element": "EARTH",
+      "unique": ["skill_qs_rock_smash", "skill_qs_stone_skin", "skill_qs_mountain_shell", "skill_qs_quake"],
+      "ultimate": "skill_ult_qs"
+    },
+    {
+      "id": "da_mac",
+      "nameVi": "Dòng Dạ Mặc",
+      "guardianVi": "Dạ Mặc – Bạch Tuộc Dệt Đêm",
+      "descVi": "Hậu duệ của bạch tuộc dệt lưới đêm cho muôn loài ngủ yên: làm chậm, phong ấn.",
+      "element": "DARK",
+      "unique": ["skill_dm_ink", "skill_dm_ink_veil", "skill_dm_night_net", "skill_dm_nightmare"],
+      "ultimate": "skill_ult_dm"
+    },
+    {
+      "id": "quang_tru",
+      "nameVi": "Dòng Quang Trư",
+      "guardianVi": "Quang Trư – Heo Mang Đèn",
+      "descVi": "Hậu duệ của heo cõng mảnh Tia Sáng Đầu Tiên: chữa lành và dẫn đường.",
+      "element": "LIGHT",
+      "unique": ["skill_qt_ray", "skill_qt_first_light", "skill_qt_guiding_lamp", "skill_qt_lumina"],
+      "ultimate": "skill_ult_qt"
+    },
+    {
+      "id": "loi_duong",
+      "nameVi": "Dòng Lôi Dương",
+      "guardianVi": "Lôi Dương – Heo Sừng Gọi Sấm",
+      "descVi": "Hậu duệ của Guardian thức tỉnh đầu tiên: nhanh, sấm sét lan khắp trận.",
+      "element": "LIGHTNING",
+      "unique": ["skill_ld_thunder_strike", "skill_ld_swift_bolt", "skill_ld_chain", "skill_ld_call_thunder"],
+      "ultimate": "skill_ult_ld"
+    },
+    {
+      "id": "thiet_giap",
+      "nameVi": "Dòng Thiết Giáp",
+      "guardianVi": "Thiết Giáp – Heo Rừng Giáp Đồng",
+      "descVi": "Hậu duệ của bức tường khiên First War: phá giáp và đứng chắn cho bạn.",
+      "element": "METAL",
+      "unique": [
+        "skill_tg_steel_slash",
+        "skill_tg_bronze_wall",
+        "skill_tg_armor_break",
+        "skill_tg_steel_charge"
+      ],
+      "ultimate": "skill_ult_tg"
+    },
+    {
+      "id": "hoa_giai",
+      "nameVi": "Dòng Hỏa Giải",
+      "guardianVi": "Hỏa Giải – Cua Lò Rèn",
+      "descVi": "Hậu duệ của cua thợ rèn dưới đáy biển: lửa mạnh và gây bỏng.",
+      "element": "FIRE",
+      "unique": ["skill_hg_hot_claw", "skill_hg_forge_fire", "skill_hg_lava", "skill_hg_inferno_hammer"],
+      "ultimate": "skill_ult_hg"
+    },
+    {
+      "id": "moc_mau",
+      "nameVi": "Dòng Mộc Mẫu",
+      "guardianVi": "Mộc Mẫu – Heo Mẹ Rừng Hoa",
+      "descVi": "Hậu duệ của heo mẹ gieo lại rừng: độc gai và hồi phục.",
+      "element": "NATURE",
+      "unique": ["skill_mm_poison_thorn", "skill_mm_sprout", "skill_mm_binding_roots", "skill_mm_blossom"],
+      "ultimate": "skill_ult_mm"
+    },
+    {
+      "id": "hu_khong",
+      "nameVi": "Dòng Hư Không",
+      "guardianVi": "Hư Không – Sứa Vô Định",
+      "descVi": "Hậu duệ của sứa mang bầu trời sao: sát thương thuần, xóa trạng thái.",
+      "element": "VOID",
+      "unique": ["skill_hk_pure_impact", "skill_hk_void_veil", "skill_hk_phase_shift", "skill_hk_void_vortex"],
+      "ultimate": "skill_ult_hk"
+    }
+  ],
+  "families": {
+    "FARM": { "lineage": "moc_mau", "classId": "tanker" },
+    "MEADOW": { "lineage": "moc_mau", "classId": "support" },
+    "WILD": { "lineage": "moc_mau", "classId": "striker" },
+    "WATER": { "lineage": "nam_hai", "classId": "support" },
+    "HERO": { "lineage": "loi_duong", "classId": "striker" },
+    "MYTHIC": { "lineage": "quy_son", "classId": "tanker" },
+    "VIETNAM": { "lineage": "quang_tru", "classId": "mage" },
+    "JOB": { "lineage": "thiet_giap", "classId": "tanker" },
+    "ADVENTURE": { "lineage": "thiet_giap", "classId": "striker" },
+    "SCIFI": { "lineage": "loi_duong", "classId": "mage" },
+    "FANTASY": { "lineage": "hu_khong", "classId": "mage" },
+    "HORROR": { "lineage": "da_mac", "classId": "mage" },
+    "FOOD": { "lineage": "hoa_giai", "classId": "mage" },
+    "FUNNY": { "lineage": "quang_tru", "classId": "support" }
+  },
+  "species": {
+    "PIG_KNIGHT": { "lineage": "thiet_giap", "classId": "striker" },
+    "PIG_SAMURAI": { "lineage": "thiet_giap", "classId": "striker" },
+    "PIG_NINJA": { "lineage": "da_mac", "classId": "striker" },
+    "PIG_WITCH": { "lineage": "da_mac", "classId": "mage" },
+    "PIG_PIRATE": { "lineage": "nam_hai", "classId": "striker" },
+    "PIG_SURFER": { "lineage": "nam_hai", "classId": "support" },
+    "PIG_DIVER": { "lineage": "nam_hai", "classId": "tanker" },
+    "PIG_ZEUS": { "lineage": "loi_duong", "classId": "mage" },
+    "PIG_THOR": { "lineage": "loi_duong", "classId": "striker" },
+    "PIG_VALKYRIE": { "lineage": "quang_tru", "classId": "striker" },
+    "PIG_DRAGON": { "lineage": "hoa_giai", "classId": "mage" },
+    "PIG_ONI": { "lineage": "hoa_giai", "classId": "striker" },
+    "PIG_FAIRY": { "lineage": "quang_tru", "classId": "support" },
+    "PIG_KITSUNE": { "lineage": "hoa_giai", "classId": "mage" },
+    "PIG_VAMPIRE": { "lineage": "da_mac", "classId": "striker" },
+    "PIG_ZOMBIE": { "lineage": "da_mac", "classId": "tanker" },
+    "PIG_GHOST": { "lineage": "da_mac", "classId": "mage" },
+    "PIG_TURTLE": { "lineage": "quy_son", "classId": "tanker" },
+    "PIG_SUNFLOWER": { "lineage": "quang_tru", "classId": "support" },
+    "PIG_FIREFLY": { "lineage": "quang_tru", "classId": "mage" },
+    "PIG_TIGER": { "lineage": "loi_duong", "classId": "striker" },
+    "PIG_HEDGEHOG": { "lineage": "thiet_giap", "classId": "tanker" },
+    "PIG_BATTLEBOT": { "lineage": "thiet_giap", "classId": "tanker" },
+    "PIG_ROBOT": { "lineage": "thiet_giap", "classId": "tanker", "element2": "LIGHTNING" },
+    "PIG_KOI": { "lineage": "nam_hai", "classId": "mage", "element2": "FIRE" },
+    "PIG_MERMAID": { "lineage": "nam_hai", "classId": "support", "element2": "LIGHT" },
+    "PIG_DRAGONLING": { "lineage": "hoa_giai", "classId": "striker", "element2": "EARTH" },
+    "PIG_GALAXY": { "lineage": "hu_khong", "classId": "mage", "element2": "LIGHT" },
+    "PIG_UNICORN": { "lineage": "quang_tru", "classId": "support", "element2": "NATURE" },
+    "PIG_CRYSTAL": { "lineage": "quy_son", "classId": "tanker", "element2": "LIGHT" },
+    "PIG_AURORA": { "lineage": "quang_tru", "classId": "mage", "element2": "LIGHTNING" },
+    "PIG_MYTHICAL": {
+      "lineage": "hu_khong",
+      "classId": "mage",
+      "element2": "LIGHT",
+      "ultimate": "skill_ult_mythical"
+    },
+    "PIG_PHOENIX": {
+      "lineage": "hoa_giai",
+      "classId": "mage",
+      "element2": "LIGHT",
+      "ultimate": "skill_ult_phoenix"
+    },
+    "PIG_POSEIDON": {
+      "lineage": "nam_hai",
+      "classId": "mage",
+      "element2": "LIGHTNING",
+      "ultimate": "skill_ult_trident"
+    }
+  },
+  "fish": {
+    "fish_pufferfish": { "lineage": "moc_mau", "classId": "mage" },
+    "fish_angelfish": { "lineage": "nam_hai", "classId": "support" },
+    "fish_glowfish": { "lineage": "quang_tru", "classId": "mage" },
+    "fish_betta": { "lineage": "hoa_giai", "classId": "striker" },
+    "fish_dragon_koi": { "lineage": "hoa_giai", "classId": "striker", "element2": "WATER" },
+    "fish_moonfish": { "lineage": "quang_tru", "classId": "support", "element2": "WATER" }
+  }
+}

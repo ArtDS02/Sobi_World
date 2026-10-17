@@ -1,18 +1,17 @@
-# src/areas/adventure — Sobi Adventure (GĐ10, GĐ11)
+# src/areas/adventure — Sobi Adventure (GĐ10, GĐ11, V2: decision 037)
 
-Area thứ năm: đưa tối đa 3 heo / cá (đã lớn, chọn mục đích Phiêu lưu) đi qua một vùng gồm chuỗi điểm dừng (trận đánh, rương, sự kiện nhỏ) và trùm cuối; đánh theo lượt. Thua không ai chết: cả đội kiệt sức 4 giờ thật. Decision `docs/decisions/018-adventure.md`. GĐ11 (decision `019-adventure-links.md`) khép vòng với các Area khác: 3 vùng nối chuỗi (Rừng → Núi Đá Vọng → Tàn Tích Cổ, `Zone.requiresCleared`, `cleared` trong state), vật liệu cổ cho công trình Lv3–Lv4, khẩu phần mang theo (`prep`, `actions/start.ts`), công nghệ (`core/tech`) ảnh hưởng năng lượng phiêu lưu và chỗ mang khẩu phần.
+Area thứ năm. V2 (decision 037, spec `docs/update_spec_sobi_adventure_gameplay_v1.md`): đội tối đa 3 heo / cá (đã lớn, mục đích Phiêu lưu) do **So / Bi dẫn đường** đi bộ bằng phím qua **bản đồ khám phá** (mỗi vùng 3 khu, lưới ô 40 px), chạm nhóm quái thì vào **trận theo lượt Combat V2** (9 nguyên tố Ngũ hành, class + cây kỹ năng, Nộ / Tuyệt kỹ, trạng thái, phản ứng). Rương báu mở 1 lần mỗi save, cổng nguyên tố, cổng dịch chuyển (thắp khi hạ trùm khu), suối, lữ khách, bia lore, đền Guardian. Thua không ai chết: kiệt sức 4 giờ thật.
 
-- `index.ts` — module Area đăng ký với `core/area-registry` (manifest `content/adventure/area.json`; mở khi Sobi World cấp 8 và Phát triển thế giới ≥ 20).
-- `logic/` — thuần, có test (`tests/unit/adventure.test.ts`, `adventureUi.test.ts`):
-  - `config/content.ts` — nạp `content/adventure/*.json`: kỹ năng, kiểu đánh (archetype), kẻ địch, vùng, bảng loot, sự kiện, trang bị, cân bằng; `archetypeOf(entry)` cho biết một sinh vật đánh theo kiểu nào.
-  - `state.ts` — slice `areas.sobi_adventure`: chiến binh (cấp, KN, trang bị, năng lượng phiêu lưu, kiệt sức), chuyến đang đi (cả trận đang đánh), loot chờ vào túi.
-  - `fighters.ts` — chỉ số theo cấp / độ hiếm / Bond / trang bị, kỹ năng mở ở cấp 1, 1, 10, 20, ai được đi.
-  - `encounter.ts` — bốc nhóm kẻ địch, bốc loot, lượt của kẻ địch.
-  - `actions/` — `run.ts` (xuất phát, bước vào điểm dừng, ra đòn / Tự động, rút lui, đóng chuyến), `start.ts` (xuất phát: cổng vùng, khẩu phần, năng lượng), `camp.ts` (heo khởi đầu, mặc / tháo trang bị, nhận loot), `kit.ts`.
-  - `battleSim.ts` — mô phỏng cả chuyến N lần (Admin).
-  - `summary.ts`, `suggest.ts`, `worldEvents.ts` (`battle.won`, `adventure.finished`), `rewind.ts`, `art.ts`.
-- `scene/` — Phaser: `AdventureScene` chỉ vẽ nền; mọi thao tác ở lớp DOM.
-- `ui/` — DOM: `adventureUi.ts` (bộ điều khiển, HUD dùng chung `ui/components/areaHud.ts` — decision 031, Tự động), `adventureViews.ts` (sảnh, bản đồ, tổng kết), `battleView.ts` (trận đánh), `adventureDialogs.ts` (trang bị), view-model thuần `adventureVm.ts`, `battleVm.ts`, `vmKit.ts`.
+- `index.ts` — module Area (manifest `content/adventure/area.json`; mở khi Sobi World cấp 8 và Phát triển thế giới ≥ 16). Save slice v2 (`logic/state.ts`, migration v1 → v2).
+- `logic/` — thuần, có test (`tests/unit/adventure*.test.ts`, `combat.test.ts`, `phase11.test.ts`):
+  - `config/content.ts` — nạp `content/adventure/*.json` (skills, elements, statuses, reactions, classes + trees, lineages, enemies, zones, maps, props, equipment, balance), dựng `COMBAT_CONTEXT`; `identityOf(entry)` = dòng Guardian, class mặc định, hệ, skill riêng, Tuyệt kỹ của một sinh vật; `contentProblems()` kiểm tham chiếu chéo.
+  - `state.ts` — slice: chiến binh (cấp, KN, class, SP, cây, loadout, Nộ, trang bị, năng lượng), chuyến đi (khu, vị trí, đội, trận, nhóm đã hạ, chiến lợi phẩm…), thứ mở vĩnh viễn (rương, cổng, cổng dịch chuyển, lore), đội hình, người dẫn.
+  - `maps.ts` — lưới chặn đường (địa hình + footprint mọi vật + cổng đóng), vùng đi được cho `systems/character`, tìm đường, kiểm tra bản đồ (§3.10), vị trí nhóm đi tuần.
+  - `fighters.ts`, `tree.ts`, `progress.ts` — chỉ số / skill / thành viên chuyến; cây kỹ năng (SP, điều kiện, nâng cấp, loadout); % khám phá.
+  - `actions/` — `start.ts` (xuất phát ở lối vào hoặc cổng đã thắp), `explore.ts` (lưu vị trí, chạm quái, Space với vật, dịch chuyển, lối ra, về Trại), `battle.ts` (ra đòn / Tự động, bỏ chạy, kết thúc trận), `sweep.ts` (đi nhanh), `growth.ts` (cây kỹ năng, loadout, đổi class, tẩy điểm, cuộn kỹ năng, đội hình, người dẫn), `camp.ts` (heo khởi đầu, trang bị, nhận loot, đóng tổng kết), `trip.ts` (phần dùng chung), `run.ts` (gom export).
+  - `encounter.ts` (nhóm quái, loot, lượt kẻ địch theo ý định), `battleSim.ts` (mô phỏng cả chuyến, Admin / `npm run sim:adventure`), `events.ts`, `worldEvents.ts`, `summary.ts`, `suggest.ts`, `rewind.ts`, `art.ts`.
+- `scene/` — Phaser: `AdventureScene` (nền ở Trại / trận; ở chuyến đi vẽ khu, đội đi bằng phím, chạm quái, vật trong tầm, lối ra, lưu vị trí), `mapView.ts` (mặt đất, đạo cụ theo footprint, vật, nhóm quái), `walker.ts` (So / Bi + 3 bạn theo vết), `sceneState.ts` (dữ liệu trao đổi với UI). Scene không chạm store.
+- `ui/` — DOM: `adventureUi.ts` (bộ điều khiển, nhận báo cáo từ scene, phím M / số trong trận, Tự động), `campView.ts` (Trại), `exploreView.ts` (HUD bản đồ, tổng kết), `battleView.ts` (trận), `adventureDialogs.ts` (hồ sơ chiến binh có tab, cổng dịch chuyển); view-model thuần `campVm.ts`, `fighterVm.ts`, `exploreVm.ts`, `battleVm.ts`, `sceneVm.ts`, `vmKit.ts`, `viewKit.ts`.
 - `feedback.ts`, `stage.ts` — như các Area khác.
 
-Chiến binh là sinh vật của Area khác: Adventure thấy chúng qua `AreaModule.roster` của registry và nhận heo khởi đầu qua `AreaModule.receiveGift`; nó không import Farm hay Aquarium (guard: `npm run guard`). `systems/combat` và `systems/equipment` là phần luật dùng chung.
+Chiến binh là sinh vật của Area khác: Adventure thấy chúng qua `AreaModule.roster` và nhận heo khởi đầu qua `AreaModule.receiveGift`; nó không import Farm hay Aquarium (guard: `npm run guard`). `systems/combat` (luật trận V2) và `systems/equipment` là phần dùng chung. Admin: "Mô phỏng trận" và "Bản đồ khu" (`tools/admin/adventure*.ts`); mọi file content sửa ở "Nội dung game".

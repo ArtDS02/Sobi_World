@@ -140,6 +140,7 @@ export async function start(root: HTMLElement) {
     openPanel: (panel) => app?.openPanel(panel),
     roster: (save) => AREAS.roster(save),
     give: (save, gift, ctx) => AREAS.give(save, gift, ctx),
+    keys,
   });
   let director: FeedbackDirector | null = null;
   const host: WorldHost = {
@@ -242,7 +243,7 @@ export async function start(root: HTMLElement) {
         reduceMotion: () => host.reduceMotion(),
         paused: () => host.paused(),
       });
-      const adventure = new AdventureScene();
+      const adventure = new AdventureScene({ read: () => overlays.adventureUi.sceneState(), report: overlays.adventureUi.scene, input, reduceMotion: () => host.reduceMotion(), paused: () => host.paused() });
       const cloud = new CloudScene({
         read: () => overlays.cloudUi.sceneState(),
         onPick: (pick) => overlays.cloudUi.pick(pick),

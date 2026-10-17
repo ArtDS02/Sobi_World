@@ -143,6 +143,16 @@ for (const enemy of ['ore_golem']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 
 for (const enemy of ['magma_drake', 'ancient_guardian']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 320, height: 360 };
 CATALOGUE_SIZES.bg_adventure_mountain = { width: 1600, height: 900 };
 CATALOGUE_SIZES.bg_adventure_ruins = { width: 1600, height: 900 };
+// Adventure V2 (decision 037): new guardians, map props (as wide as their footprint × 64 px), the things on a map.
+for (const enemy of ['wolf_alpha', 'thunder_ram', 'shadow_priest']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 240, height: 240 };
+for (const [id, w, h] of [
+  ['forest_oak', 2, 3], ['forest_round', 2, 3], ['forest_bush', 1, 1], ['forest_boulder', 2, 2], ['forest_rock', 1, 1], ['forest_log', 2, 1], ['forest_mushroom', 1, 1.5], ['forest_stump', 1, 1], ['forest_hut', 3, 3],
+  ['mountain_boulder', 2, 2], ['mountain_rock', 1, 1], ['mountain_pine', 2, 3], ['mountain_crystal', 1, 1.5], ['mountain_vent', 2, 1.5], ['mountain_cart', 2, 1.5], ['mountain_cabin', 3, 3], ['mountain_fence', 1, 1],
+  ['ruins_pillar', 1, 2.5], ['ruins_broken', 1, 1.5], ['ruins_statue', 2, 3], ['ruins_wall', 3, 1.5], ['ruins_brazier', 1, 1.5], ['ruins_urn', 1, 1.2], ['ruins_deadtree', 2, 3],
+] as const) CATALOGUE_SIZES[`prop_adv_${id}`] = { width: Math.round(w * 64), height: Math.round(h * 64) };
+for (const id of ['adv_chest_closed', 'adv_chest_open', 'adv_spring', 'adv_npc_traveler', 'adv_lore_stone', 'adv_node_herb', 'adv_node_ore']) CATALOGUE_SIZES[id] = { width: 128, height: 128 };
+for (const id of ['adv_portal_off', 'adv_portal_on', 'adv_shrine']) CATALOGUE_SIZES[id] = { width: 160, height: 200 };
+for (const el of ['metal', 'nature', 'water', 'fire', 'earth', 'lightning', 'dark', 'light']) CATALOGUE_SIZES[`adv_gate_${el}`] = { width: 128, height: 160 };
 
 for (const who of ['so', 'bi']) {
   for (const facing of ['down', 'up', 'left', 'right']) {

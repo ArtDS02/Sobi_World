@@ -273,3 +273,9 @@ img.is-missing { visibility: hidden; }
   .bar { grid-template-columns: 96px 1fr 28px; }
   .drawer { padding: 14px 16px 24px; }
 }
+
+/* Adventure area editor (adventureMaps.ts): one small button per tile. */
+.amap { display: grid; gap: 1px; margin: 12px 0; overflow-x: auto; }
+.amap__cell { width: 18px; height: 18px; padding: 0; border: 0; font: 700 11px/18px system-ui; color: #2b2118; cursor: pointer; }
+.amap__cell:hover { outline: 2px solid #7c5cd6; }
+.amap__problems { color: #c0392b; }

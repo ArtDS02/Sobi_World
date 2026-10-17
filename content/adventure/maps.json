@@ -1,0 +1,1327 @@
+{
+  "maps": [
+    {
+      "id": "map_forest_edge",
+      "zoneId": "zone_forest",
+      "nameVi": "Bìa Rừng",
+      "tile": 40,
+      "cols": 50,
+      "rows": 28,
+      "terrain": [
+        "##################################################",
+        "#.......................~~~~.............#.......#",
+        "#.......................~~~~.............#.......#",
+        "#.......................~~~~.............#.......#",
+        "#.......................~~~~.............#.......#",
+        "#.......................~~~~.............####.####",
+        "#.......................~~~~.....................#",
+        "#..,,,,,,,,.............~~~~.....................#",
+        "#.........,.............~~~~.....................#",
+        "#.........,.............~~~~.....................#",
+        "#.........,.............~~~~.....................#",
+        "#.........,.............~~~~.....................#",
+        "#.........,.............~~~~.............######..,",
+        "#.........,,,,,,,,,,,,,,====,,,,,,,,,,,,,,,,,,,,,,",
+        "#.......................~~~~.............######..,",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "#.......................~~~~.....................#",
+        "##################################################"
+      ],
+      "spawn": { "x": 2, "y": 5 },
+      "portal": { "x": 2, "y": 3 },
+      "exits": [
+        {
+          "id": "exit_f1_east",
+          "x": 49,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_forest_deep",
+          "arriveX": 2,
+          "arriveY": 13
+        }
+      ],
+      "props": [
+        { "prop": "prop_adv_forest_oak", "x": 1, "y": 21 },
+        { "prop": "prop_adv_forest_oak", "x": 3, "y": 21 },
+        { "prop": "prop_adv_forest_oak", "x": 5, "y": 21 },
+        { "prop": "prop_adv_forest_oak", "x": 5, "y": 23 },
+        { "prop": "prop_adv_forest_oak", "x": 8, "y": 1 },
+        { "prop": "prop_adv_forest_oak", "x": 13, "y": 1 },
+        { "prop": "prop_adv_forest_oak", "x": 18, "y": 1 },
+        { "prop": "prop_adv_forest_oak", "x": 1, "y": 12 },
+        { "prop": "prop_adv_forest_oak", "x": 12, "y": 15 },
+        { "prop": "prop_adv_forest_oak", "x": 20, "y": 16 },
+        { "prop": "prop_adv_forest_oak", "x": 9, "y": 24 },
+        { "prop": "prop_adv_forest_bush", "x": 6, "y": 3 },
+        { "prop": "prop_adv_forest_bush", "x": 16, "y": 4 },
+        { "prop": "prop_adv_forest_bush", "x": 21, "y": 9 },
+        { "prop": "prop_adv_forest_bush", "x": 4, "y": 14 },
+        { "prop": "prop_adv_forest_bush", "x": 17, "y": 25 },
+        { "prop": "prop_adv_forest_bush", "x": 22, "y": 20 },
+        { "prop": "prop_adv_forest_mushroom", "x": 11, "y": 4 },
+        { "prop": "prop_adv_forest_mushroom", "x": 3, "y": 18 },
+        { "prop": "prop_adv_forest_log", "x": 14, "y": 23 },
+        { "prop": "prop_adv_forest_round", "x": 30, "y": 2 },
+        { "prop": "prop_adv_forest_round", "x": 35, "y": 3 },
+        { "prop": "prop_adv_forest_round", "x": 29, "y": 15 },
+        { "prop": "prop_adv_forest_round", "x": 38, "y": 23 },
+        { "prop": "prop_adv_forest_round", "x": 44, "y": 8 },
+        { "prop": "prop_adv_forest_round", "x": 44, "y": 16 },
+        { "prop": "prop_adv_forest_boulder", "x": 32, "y": 11 },
+        { "prop": "prop_adv_forest_boulder", "x": 46, "y": 21 },
+        { "prop": "prop_adv_forest_bush", "x": 39, "y": 6 },
+        { "prop": "prop_adv_forest_bush", "x": 30, "y": 20 },
+        { "prop": "prop_adv_forest_bush", "x": 47, "y": 18 },
+        { "prop": "prop_adv_forest_bush", "x": 34, "y": 26 },
+        { "prop": "prop_adv_forest_stump", "x": 37, "y": 13 },
+        { "prop": "prop_adv_forest_stump", "x": 29, "y": 6 }
+      ],
+      "groups": [
+        {
+          "id": "g_f1_elite",
+          "x": 44,
+          "y": 13,
+          "kind": "elite",
+          "pool": [{ "weight": 1, "enemies": ["enemy_bramble_boar"] }]
+        },
+        {
+          "id": "g_f1_a",
+          "x": 14,
+          "y": 9,
+          "kind": "normal",
+          "pool": [
+            { "weight": 3, "enemies": ["enemy_mossling"] },
+            { "weight": 2, "enemies": ["enemy_dew_frog"] },
+            { "weight": 1, "enemies": ["enemy_mossling", "enemy_mossling"] }
+          ],
+          "patrol": [{ "x": 14, "y": 9 }, { "x": 18, "y": 9 }]
+        },
+        {
+          "id": "g_f1_b",
+          "x": 15,
+          "y": 19,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_mossling", "enemy_mossling"] },
+            { "weight": 1, "enemies": ["enemy_thorn_sprout", "enemy_gale_sparrow"] }
+          ]
+        },
+        {
+          "id": "g_f1_c",
+          "x": 33,
+          "y": 8,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_gale_sparrow", "enemy_ember_fox"] },
+            { "weight": 2, "enemies": ["enemy_dew_frog", "enemy_thorn_sprout"] },
+            { "weight": 1, "enemies": ["enemy_forest_wolf"] }
+          ],
+          "patrol": [{ "x": 33, "y": 8 }, { "x": 33, "y": 10 }]
+        },
+        {
+          "id": "g_f1_d",
+          "x": 36,
+          "y": 19,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_ember_fox"] },
+            { "weight": 2, "enemies": ["enemy_thorn_sprout", "enemy_mossling"] }
+          ],
+          "patrol": [{ "x": 36, "y": 19 }, { "x": 40, "y": 19 }]
+        }
+      ],
+      "chests": [
+        { "id": "chest_f1_pocket", "x": 48, "y": 1, "table": "treasure_forest" },
+        { "id": "chest_f1_grove", "x": 1, "y": 26, "table": "treasure_forest" }
+      ],
+      "nodes": [
+        { "id": "herb_f1_a", "x": 6, "y": 17, "kind": "herb", "table": "herbs" },
+        { "id": "herb_f1_b", "x": 31, "y": 24, "kind": "herb", "table": "herbs" }
+      ],
+      "gates": [{ "id": "gate_f1_bramble", "x": 45, "y": 5, "w": 1, "h": 1, "element": "FIRE" }],
+      "springs": [{ "id": "spring_f1", "x": 8, "y": 11 }],
+      "npcs": [{ "id": "npc_f1_herbalist", "x": 19, "y": 22, "event": "event_herbalist" }],
+      "lore": [
+        {
+          "id": "lore_f1_sapling",
+          "x": 43,
+          "y": 2,
+          "textVi": "Rễ cây dưới bìa rừng ấm như có nhịp tim. Người già bảo đó là giấc ngủ của Mộc Mẫu."
+        }
+      ]
+    },
+    {
+      "id": "map_forest_deep",
+      "zoneId": "zone_forest",
+      "nameVi": "Rừng Sâu",
+      "tile": 40,
+      "cols": 50,
+      "rows": 28,
+      "terrain": [
+        "##################################################",
+        "#......................................#.........#",
+        "#......................................#.........#",
+        "#......................................#.........#",
+        "#.......,,,,,,,,,,,,,,,,,,,,,,,,,,,,,..#.........#",
+        "#.......,...........................,..#.........#",
+        "#.......,...........................,..#.........#",
+        "#.......,........~~~~~~~~~~~~~~~....,..#.........#",
+        "#.......,........~~~~~~~~~~~~~~~....,..#.........#",
+        "#.......,........~~~~~~~~~~~~~~~....,..#.........#",
+        "#.......,........~~~~.......~~~~....,..#.........#",
+        "#.......,........~~~~.......~~~~....,..#.........#",
+        ",.......,........~~~~.......~~~~....,..#.........,",
+        ",,,,,,,,,........====.......~~~~....,,,,,,,,,,,,,,",
+        ",.......,........~~~~.......~~~~....,..#.........,",
+        "#.......,........~~~~.......~~~~....,..#.........#",
+        "#.......,........~~~~.......~~~~....,..#.........#",
+        "#.......,........~~~~~~~~~~~~~~~....,..#.........#",
+        "#.......,........~~~~~~~~~~~~~~~....,..#.........#",
+        "#.......,........~~~~~~~~~~~~~~~....,..#.........#",
+        "#######.,...........................,..#.........#",
+        "#.....#.,...........................,..#.........#",
+        "#.....#.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,..#.........#",
+        "#......................................#.........#",
+        "#.....#................................#.........#",
+        "#.....#................................#.........#",
+        "#.....#................................#.........#",
+        "##################################################"
+      ],
+      "spawn": { "x": 43, "y": 6 },
+      "portal": { "x": 43, "y": 4 },
+      "exits": [
+        {
+          "id": "exit_f2_west",
+          "x": 0,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_forest_edge",
+          "arriveX": 47,
+          "arriveY": 13
+        },
+        {
+          "id": "exit_f2_east",
+          "x": 49,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_forest_heart",
+          "arriveX": 2,
+          "arriveY": 13
+        }
+      ],
+      "props": [
+        { "prop": "prop_adv_forest_oak", "x": 2, "y": 2 },
+        { "prop": "prop_adv_forest_oak", "x": 2, "y": 16 },
+        { "prop": "prop_adv_forest_oak", "x": 11, "y": 15 },
+        { "prop": "prop_adv_forest_oak", "x": 14, "y": 9 },
+        { "prop": "prop_adv_forest_oak", "x": 33, "y": 8 },
+        { "prop": "prop_adv_forest_oak", "x": 33, "y": 15 },
+        { "prop": "prop_adv_forest_oak", "x": 24, "y": 24 },
+        { "prop": "prop_adv_forest_oak", "x": 41, "y": 18 },
+        { "prop": "prop_adv_forest_round", "x": 19, "y": 1 },
+        { "prop": "prop_adv_forest_round", "x": 27, "y": 1 },
+        { "prop": "prop_adv_forest_round", "x": 45, "y": 9 },
+        { "prop": "prop_adv_forest_round", "x": 44, "y": 20 },
+        { "prop": "prop_adv_forest_bush", "x": 5, "y": 5 },
+        { "prop": "prop_adv_forest_bush", "x": 12, "y": 18 },
+        { "prop": "prop_adv_forest_bush", "x": 32, "y": 2 },
+        { "prop": "prop_adv_forest_bush", "x": 30, "y": 25 },
+        { "prop": "prop_adv_forest_bush", "x": 42, "y": 15 },
+        { "prop": "prop_adv_forest_bush", "x": 47, "y": 2 },
+        { "prop": "prop_adv_forest_mushroom", "x": 9, "y": 25 },
+        { "prop": "prop_adv_forest_mushroom", "x": 37, "y": 7 },
+        { "prop": "prop_adv_forest_log", "x": 20, "y": 24 },
+        { "prop": "prop_adv_forest_boulder", "x": 46, "y": 15 }
+      ],
+      "groups": [
+        {
+          "id": "g_f2_elite",
+          "x": 39,
+          "y": 13,
+          "kind": "elite",
+          "pool": [{ "weight": 1, "enemies": ["enemy_wolf_alpha", "enemy_forest_wolf"] }]
+        },
+        {
+          "id": "g_f2_a",
+          "x": 13,
+          "y": 4,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_forest_wolf", "enemy_thorn_sprout"] },
+            { "weight": 2, "enemies": ["enemy_bramble_boar"] },
+            { "weight": 1, "enemies": ["enemy_ember_fox", "enemy_gale_sparrow", "enemy_mossling"] }
+          ],
+          "patrol": [{ "x": 13, "y": 4 }, { "x": 13, "y": 2 }]
+        },
+        {
+          "id": "g_f2_b",
+          "x": 30,
+          "y": 4,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_gale_sparrow", "enemy_ember_fox"] },
+            { "weight": 2, "enemies": ["enemy_dew_frog", "enemy_thorn_sprout"] }
+          ],
+          "patrol": [{ "x": 30, "y": 4 }, { "x": 34, "y": 4 }]
+        },
+        {
+          "id": "g_f2_c",
+          "x": 15,
+          "y": 22,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_forest_wolf"] },
+            { "weight": 2, "enemies": ["enemy_mossling", "enemy_mossling", "enemy_thorn_sprout"] }
+          ],
+          "patrol": [{ "x": 15, "y": 22 }, { "x": 20, "y": 22 }]
+        },
+        {
+          "id": "g_f2_d",
+          "x": 33,
+          "y": 22,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_forest_wolf", "enemy_thorn_sprout"] },
+            { "weight": 1, "enemies": ["enemy_bramble_boar", "enemy_mossling"] }
+          ]
+        }
+      ],
+      "chests": [
+        { "id": "chest_f2_island", "x": 26, "y": 13, "table": "treasure_forest" },
+        { "id": "chest_f2_cache", "x": 2, "y": 25, "table": "treasure_forest" }
+      ],
+      "nodes": [
+        { "id": "herb_f2_a", "x": 3, "y": 8, "kind": "herb", "table": "herbs" },
+        { "id": "herb_f2_b", "x": 46, "y": 24, "kind": "herb", "table": "herbs" }
+      ],
+      "gates": [
+        { "id": "gate_f2_vines", "x": 18, "y": 13, "w": 1, "h": 1, "element": "NATURE" },
+        { "id": "gate_f2_rock", "x": 6, "y": 23, "w": 1, "h": 1, "element": "EARTH" }
+      ],
+      "springs": [{ "id": "spring_f2", "x": 10, "y": 2 }],
+      "npcs": [{ "id": "npc_f2_shrine", "x": 34, "y": 25, "event": "event_shrine" }],
+      "lore": [
+        {
+          "id": "lore_f2_pond",
+          "x": 24,
+          "y": 11,
+          "textVi": "Giữa hồ có một vòng đá cổ. Ai đó từng khắc hình một con heo mẹ phủ hoa lên đá."
+        }
+      ]
+    },
+    {
+      "id": "map_forest_heart",
+      "zoneId": "zone_forest",
+      "nameVi": "Lõi Rừng",
+      "tile": 40,
+      "cols": 50,
+      "rows": 28,
+      "terrain": [
+        "##################################################",
+        "#...............................#................#",
+        "#...............................#................#",
+        "#...............................#................#",
+        "#...............................##################",
+        "#.....,,,,,,,,,,,,,,,,,,,,,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        ",.....,...................,.....#................#",
+        ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.................#",
+        ",...........,.............,.....#................#",
+        "#...........,.............,.....#................#",
+        "#...........,.............,.....#................#",
+        "#...........,.............,.....#................#",
+        "##########..,.............,.....#................#",
+        "#........#..,.............,.....#................#",
+        "#........#..,.............,.....#................#",
+        "#........#..,,,,,,,,,,,,,,,.....#................#",
+        "#...............................##################",
+        "#........#......................#................#",
+        "#........#......................#................#",
+        "#........#......................#................#",
+        "#........#......................#................#",
+        "##################################################"
+      ],
+      "spawn": { "x": 45, "y": 8 },
+      "portal": { "x": 45, "y": 6 },
+      "exits": [
+        {
+          "id": "exit_f3_west",
+          "x": 0,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_forest_deep",
+          "arriveX": 47,
+          "arriveY": 13
+        }
+      ],
+      "props": [
+        { "prop": "prop_adv_forest_oak", "x": 1, "y": 4 },
+        { "prop": "prop_adv_forest_oak", "x": 3, "y": 4 },
+        { "prop": "prop_adv_forest_oak", "x": 3, "y": 1 },
+        { "prop": "prop_adv_forest_oak", "x": 10, "y": 8 },
+        { "prop": "prop_adv_forest_oak", "x": 16, "y": 9 },
+        { "prop": "prop_adv_forest_oak", "x": 21, "y": 15 },
+        { "prop": "prop_adv_forest_oak", "x": 12, "y": 15 },
+        { "prop": "prop_adv_forest_oak", "x": 28, "y": 2 },
+        { "prop": "prop_adv_forest_oak", "x": 28, "y": 23 },
+        { "prop": "prop_adv_forest_round", "x": 10, "y": 1 },
+        { "prop": "prop_adv_forest_round", "x": 18, "y": 1 },
+        { "prop": "prop_adv_forest_round", "x": 16, "y": 24 },
+        { "prop": "prop_adv_forest_bush", "x": 4, "y": 9 },
+        { "prop": "prop_adv_forest_bush", "x": 23, "y": 8 },
+        { "prop": "prop_adv_forest_bush", "x": 24, "y": 18 },
+        { "prop": "prop_adv_forest_bush", "x": 13, "y": 12 },
+        { "prop": "prop_adv_forest_bush", "x": 30, "y": 9 },
+        { "prop": "prop_adv_forest_bush", "x": 30, "y": 17 },
+        { "prop": "prop_adv_forest_mushroom", "x": 35, "y": 18 },
+        { "prop": "prop_adv_forest_mushroom", "x": 46, "y": 19 },
+        { "prop": "prop_adv_forest_mushroom", "x": 36, "y": 8 },
+        { "prop": "prop_adv_forest_stump", "x": 39, "y": 9 },
+        { "prop": "prop_adv_forest_stump", "x": 39, "y": 17 }
+      ],
+      "groups": [
+        {
+          "id": "g_f3_boss",
+          "x": 42,
+          "y": 13,
+          "kind": "boss",
+          "pool": [{ "weight": 1, "enemies": ["enemy_old_treant", "enemy_thorn_sprout"] }],
+          "table": "boss_forest"
+        },
+        {
+          "id": "g_f3_a",
+          "x": 14,
+          "y": 5,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_forest_wolf", "enemy_ember_fox"] },
+            { "weight": 2, "enemies": ["enemy_thorn_sprout", "enemy_thorn_sprout", "enemy_dew_frog"] }
+          ],
+          "patrol": [{ "x": 14, "y": 5 }, { "x": 19, "y": 5 }]
+        },
+        {
+          "id": "g_f3_b",
+          "x": 14,
+          "y": 21,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_bramble_boar", "enemy_mossling"] },
+            { "weight": 1, "enemies": ["enemy_forest_wolf", "enemy_forest_wolf"] }
+          ],
+          "patrol": [{ "x": 14, "y": 21 }, { "x": 19, "y": 21 }]
+        },
+        {
+          "id": "g_f3_c",
+          "x": 28,
+          "y": 13,
+          "kind": "normal",
+          "pool": [
+            { "weight": 1, "enemies": ["enemy_forest_wolf", "enemy_thorn_sprout", "enemy_gale_sparrow"] }
+          ]
+        }
+      ],
+      "chests": [{ "id": "chest_f3_hollow", "x": 1, "y": 1, "table": "treasure_forest" }],
+      "nodes": [{ "id": "herb_f3_a", "x": 24, "y": 25, "kind": "herb", "table": "herbs" }],
+      "gates": [{ "id": "gate_f3_mist", "x": 9, "y": 22, "w": 1, "h": 1, "element": "DARK" }],
+      "springs": [{ "id": "spring_f3", "x": 20, "y": 11 }],
+      "npcs": [],
+      "lore": [
+        {
+          "id": "lore_f3_root",
+          "x": 34,
+          "y": 6,
+          "textVi": "Rễ của Cổ Thụ xoắn vào nhau thành hình một con heo đang ngủ. Vết nứt đen như mực bò dọc theo rễ."
+        }
+      ],
+      "shrine": { "id": "shrine_f3", "x": 3, "y": 22, "element": "NATURE", "damagePct": 0.1 }
+    },
+    {
+      "id": "map_mountain_foot",
+      "zoneId": "zone_mountain",
+      "nameVi": "Chân Núi",
+      "tile": 40,
+      "cols": 50,
+      "rows": 28,
+      "terrain": [
+        "##################################################",
+        "#.............##.........................#.......#",
+        "#.............##.........................#.......#",
+        "#.............##.........................#.......#",
+        "#.............##.........................#.......#",
+        "#.............##.........................###.#####",
+        "#.............##..............##.................#",
+        "#..,,,,,,.....##..............##.................#",
+        "#.......,.....##..............##.................#",
+        "#.......,.....##..............##.................#",
+        "#.......,.....................##.................#",
+        "#.......,.....................##.................#",
+        "#.......,................................######..,",
+        "#.......,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+        "#........................................######..,",
+        "#.............................##.................#",
+        "#.............................##.................#",
+        "#.............##..............##.................#",
+        "#.............##..............##.................#",
+        "#.............##..............##.................#",
+        "#.............##..............##.................#",
+        "#.............##.................................#",
+        "#.............##.................................#",
+        "#.............##.................................#",
+        "#.............##.................................#",
+        "#.............##.................................#",
+        "#.............##.................................#",
+        "##################################################"
+      ],
+      "spawn": { "x": 2, "y": 5 },
+      "portal": { "x": 2, "y": 3 },
+      "exits": [
+        {
+          "id": "exit_m1_east",
+          "x": 49,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_mountain_mine",
+          "arriveX": 2,
+          "arriveY": 13
+        }
+      ],
+      "props": [
+        { "prop": "prop_adv_mountain_boulder", "x": 1, "y": 22 },
+        { "prop": "prop_adv_mountain_boulder", "x": 3, "y": 22 },
+        { "prop": "prop_adv_mountain_boulder", "x": 3, "y": 24 },
+        { "prop": "prop_adv_mountain_pine", "x": 5, "y": 1 },
+        { "prop": "prop_adv_mountain_pine", "x": 9, "y": 1 },
+        { "prop": "prop_adv_mountain_pine", "x": 18, "y": 1 },
+        { "prop": "prop_adv_mountain_pine", "x": 24, "y": 1 },
+        { "prop": "prop_adv_mountain_pine", "x": 17, "y": 15 },
+        { "prop": "prop_adv_mountain_pine", "x": 26, "y": 23 },
+        { "prop": "prop_adv_mountain_pine", "x": 34, "y": 2 },
+        { "prop": "prop_adv_mountain_pine", "x": 43, "y": 17 },
+        { "prop": "prop_adv_mountain_rock", "x": 12, "y": 4 },
+        { "prop": "prop_adv_mountain_rock", "x": 20, "y": 11 },
+        { "prop": "prop_adv_mountain_rock", "x": 27, "y": 16 },
+        { "prop": "prop_adv_mountain_rock", "x": 36, "y": 16 },
+        { "prop": "prop_adv_mountain_rock", "x": 46, "y": 9 },
+        { "prop": "prop_adv_mountain_crystal", "x": 4, "y": 15 },
+        { "prop": "prop_adv_mountain_crystal", "x": 25, "y": 4 },
+        { "prop": "prop_adv_mountain_cart", "x": 17, "y": 10 },
+        { "prop": "prop_adv_mountain_cabin", "x": 36, "y": 24 }
+      ],
+      "groups": [
+        {
+          "id": "g_m1_elite",
+          "x": 44,
+          "y": 13,
+          "kind": "elite",
+          "pool": [{ "weight": 1, "enemies": ["enemy_ore_golem", "enemy_rock_beetle"] }]
+        },
+        {
+          "id": "g_m1_a",
+          "x": 10,
+          "y": 18,
+          "kind": "normal",
+          "pool": [
+            { "weight": 3, "enemies": ["enemy_rock_beetle", "enemy_snow_goat"] },
+            { "weight": 1, "enemies": ["enemy_rock_beetle"] }
+          ],
+          "patrol": [{ "x": 10, "y": 18 }, { "x": 10, "y": 21 }]
+        },
+        {
+          "id": "g_m1_b",
+          "x": 22,
+          "y": 7,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_lava_newt"] },
+            { "weight": 2, "enemies": ["enemy_snow_goat", "enemy_rock_beetle"] }
+          ],
+          "patrol": [{ "x": 20, "y": 7 }, { "x": 26, "y": 7 }]
+        },
+        {
+          "id": "g_m1_c",
+          "x": 22,
+          "y": 20,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_snow_goat"] },
+            { "weight": 1, "enemies": ["enemy_cliff_hawk", "enemy_rock_beetle"] }
+          ]
+        },
+        {
+          "id": "g_m1_d",
+          "x": 37,
+          "y": 8,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_rock_beetle"] },
+            { "weight": 1, "enemies": ["enemy_ore_golem"] }
+          ],
+          "patrol": [{ "x": 37, "y": 8 }, { "x": 37, "y": 10 }]
+        }
+      ],
+      "chests": [
+        { "id": "chest_m1_vault", "x": 48, "y": 1, "table": "treasure_mountain" },
+        { "id": "chest_m1_crevice", "x": 1, "y": 26, "table": "treasure_mountain" }
+      ],
+      "nodes": [
+        { "id": "ore_m1_a", "x": 18, "y": 24, "kind": "ore", "table": "ore_vein" },
+        { "id": "ore_m1_b", "x": 47, "y": 22, "kind": "ore", "table": "ore_vein" }
+      ],
+      "gates": [{ "id": "gate_m1_lock", "x": 44, "y": 5, "w": 1, "h": 1, "element": "METAL" }],
+      "springs": [{ "id": "spring_m1", "x": 6, "y": 10 }],
+      "npcs": [{ "id": "npc_m1_miner", "x": 36, "y": 22, "event": "event_miner" }],
+      "lore": [
+        {
+          "id": "lore_m1_carving",
+          "x": 46,
+          "y": 2,
+          "textVi": "Trên vách đá có hình một con cua to đang rèn búa. Bên cạnh khắc: 'Lửa của Hỏa Giải chưa từng tắt'."
+        }
+      ]
+    },
+    {
+      "id": "map_mountain_mine",
+      "zoneId": "zone_mountain",
+      "nameVi": "Mỏ Quặng Bỏ Hoang",
+      "tile": 40,
+      "cols": 50,
+      "rows": 28,
+      "terrain": [
+        "##################################################",
+        "#.....................................#..........#",
+        "#.....................................#..........#",
+        "#.....................................#..........#",
+        "#........,,,,,,,,,,,,,,,,,,,,,,,,,,,..#..........#",
+        "#........,.........................,..#..........#",
+        "#........,.........................,..#..........#",
+        "#........,.........................,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,....####.........####....,..#..........#",
+        ",........,....####.........####....,..#..........,",
+        ",,,,,,,,,,.................####....,,,,,,,,,,,,,,,",
+        ",........,....####.........####....,..#..........,",
+        "#........,....####.........####....,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,.........................,..#..........#",
+        "#######..,.........................,..#..........#",
+        "#.....#..,.........................,..#..........#",
+        "#.....#..,,,,,,,,,,,,,,,,,,,,,,,,,,,..#..........#",
+        "#.....................................#..........#",
+        "#.....#...............................#..........#",
+        "#.....#...............................#..........#",
+        "#.....#...............................#..........#",
+        "##################################################"
+      ],
+      "spawn": { "x": 43, "y": 6 },
+      "portal": { "x": 43, "y": 4 },
+      "exits": [
+        {
+          "id": "exit_m2_west",
+          "x": 0,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_mountain_foot",
+          "arriveX": 47,
+          "arriveY": 13
+        },
+        {
+          "id": "exit_m2_east",
+          "x": 49,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_mountain_peak",
+          "arriveX": 2,
+          "arriveY": 13
+        }
+      ],
+      "props": [
+        { "prop": "prop_adv_mountain_vent", "x": 2, "y": 2 },
+        { "prop": "prop_adv_mountain_vent", "x": 11, "y": 16 },
+        { "prop": "prop_adv_mountain_vent", "x": 32, "y": 8 },
+        { "prop": "prop_adv_mountain_vent", "x": 32, "y": 16 },
+        { "prop": "prop_adv_mountain_vent", "x": 44, "y": 18 },
+        { "prop": "prop_adv_mountain_boulder", "x": 20, "y": 1 },
+        { "prop": "prop_adv_mountain_boulder", "x": 27, "y": 1 },
+        { "prop": "prop_adv_mountain_boulder", "x": 20, "y": 24 },
+        { "prop": "prop_adv_mountain_boulder", "x": 46, "y": 9 },
+        { "prop": "prop_adv_mountain_cart", "x": 11, "y": 10 },
+        { "prop": "prop_adv_mountain_cart", "x": 41, "y": 7 },
+        { "prop": "prop_adv_mountain_crystal", "x": 36, "y": 2 },
+        { "prop": "prop_adv_mountain_crystal", "x": 36, "y": 25 },
+        { "prop": "prop_adv_mountain_crystal", "x": 18, "y": 11 },
+        { "prop": "prop_adv_mountain_crystal", "x": 26, "y": 15 },
+        { "prop": "prop_adv_mountain_fence", "x": 12, "y": 12 },
+        { "prop": "prop_adv_mountain_fence", "x": 12, "y": 14 }
+      ],
+      "groups": [
+        {
+          "id": "g_m2_elite",
+          "x": 38,
+          "y": 13,
+          "kind": "elite",
+          "pool": [{ "weight": 1, "enemies": ["enemy_thunder_ram", "enemy_cliff_hawk"] }]
+        },
+        {
+          "id": "g_m2_a",
+          "x": 16,
+          "y": 4,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_snow_goat"] },
+            { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_rock_beetle"] },
+            { "weight": 1, "enemies": ["enemy_ore_golem"] }
+          ],
+          "patrol": [{ "x": 16, "y": 4 }, { "x": 22, "y": 4 }]
+        },
+        {
+          "id": "g_m2_b",
+          "x": 30,
+          "y": 4,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_ore_golem", "enemy_cliff_hawk"] },
+            { "weight": 1, "enemies": ["enemy_lava_newt", "enemy_lava_newt", "enemy_snow_goat"] }
+          ]
+        },
+        {
+          "id": "g_m2_c",
+          "x": 16,
+          "y": 22,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_lava_newt", "enemy_snow_goat"] },
+            { "weight": 1, "enemies": ["enemy_ore_golem", "enemy_rock_beetle"] }
+          ],
+          "patrol": [{ "x": 16, "y": 22 }, { "x": 22, "y": 22 }]
+        },
+        {
+          "id": "g_m2_d",
+          "x": 32,
+          "y": 22,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_rock_beetle", "enemy_snow_goat"] },
+            { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_lava_newt"] }
+          ]
+        }
+      ],
+      "chests": [
+        { "id": "chest_m2_hall", "x": 25, "y": 13, "table": "treasure_mountain" },
+        { "id": "chest_m2_cache", "x": 2, "y": 25, "table": "treasure_mountain" }
+      ],
+      "nodes": [
+        { "id": "ore_m2_a", "x": 12, "y": 2, "kind": "ore", "table": "ore_vein" },
+        { "id": "ore_m2_b", "x": 45, "y": 23, "kind": "ore", "table": "ore_vein" }
+      ],
+      "gates": [
+        { "id": "gate_m2_fire", "x": 15, "y": 13, "w": 1, "h": 1, "element": "WATER" },
+        { "id": "gate_m2_pylon", "x": 6, "y": 23, "w": 1, "h": 1, "element": "LIGHTNING" }
+      ],
+      "springs": [{ "id": "spring_m2", "x": 4, "y": 8 }],
+      "npcs": [{ "id": "npc_m2_hot_spring", "x": 30, "y": 25, "event": "event_hot_spring" }],
+      "lore": [
+        {
+          "id": "lore_m2_seal",
+          "x": 19,
+          "y": 12,
+          "textVi": "Thợ mỏ đào trúng một chiếc đinh đồng to bằng thân cây, khắc dấu xoáy vàng. Họ bỏ mỏ ngay đêm đó."
+        }
+      ]
+    },
+    {
+      "id": "map_mountain_peak",
+      "zoneId": "zone_mountain",
+      "nameVi": "Đỉnh Dung Nham",
+      "tile": 40,
+      "cols": 50,
+      "rows": 28,
+      "terrain": [
+        "##################################################",
+        "#...............................#................#",
+        "#...............................#................#",
+        "#...............................#................#",
+        "#...............................##################",
+        "#.....,,,,,,,,,,,,,,,,,,,,,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        ",.....,...................,.....#................#",
+        ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.................#",
+        ",...........,.............,.....#................#",
+        "#...........,.............,.....#................#",
+        "#...........,.............,.....#................#",
+        "#...........,.............,.....#................#",
+        "##########..,.............,.....#................#",
+        "#........#..,.............,.....#................#",
+        "#........#..,.............,.....#................#",
+        "#........#..,,,,,,,,,,,,,,,.....#................#",
+        "#...............................##################",
+        "#........#......................#................#",
+        "#........#......................#................#",
+        "#........#......................#................#",
+        "#........#......................#................#",
+        "##################################################"
+      ],
+      "spawn": { "x": 45, "y": 8 },
+      "portal": { "x": 45, "y": 6 },
+      "exits": [
+        {
+          "id": "exit_m3_west",
+          "x": 0,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_mountain_mine",
+          "arriveX": 47,
+          "arriveY": 13
+        }
+      ],
+      "props": [
+        { "prop": "prop_adv_mountain_boulder", "x": 1, "y": 4 },
+        { "prop": "prop_adv_mountain_boulder", "x": 3, "y": 4 },
+        { "prop": "prop_adv_mountain_boulder", "x": 3, "y": 1 },
+        { "prop": "prop_adv_mountain_vent", "x": 10, "y": 8 },
+        { "prop": "prop_adv_mountain_vent", "x": 16, "y": 9 },
+        { "prop": "prop_adv_mountain_vent", "x": 21, "y": 15 },
+        { "prop": "prop_adv_mountain_vent", "x": 12, "y": 15 },
+        { "prop": "prop_adv_mountain_vent", "x": 28, "y": 2 },
+        { "prop": "prop_adv_mountain_vent", "x": 28, "y": 23 },
+        { "prop": "prop_adv_mountain_pine", "x": 10, "y": 1 },
+        { "prop": "prop_adv_mountain_pine", "x": 18, "y": 1 },
+        { "prop": "prop_adv_mountain_pine", "x": 16, "y": 24 },
+        { "prop": "prop_adv_mountain_rock", "x": 4, "y": 9 },
+        { "prop": "prop_adv_mountain_rock", "x": 23, "y": 8 },
+        { "prop": "prop_adv_mountain_rock", "x": 24, "y": 18 },
+        { "prop": "prop_adv_mountain_rock", "x": 13, "y": 12 },
+        { "prop": "prop_adv_mountain_rock", "x": 30, "y": 9 },
+        { "prop": "prop_adv_mountain_rock", "x": 30, "y": 17 },
+        { "prop": "prop_adv_mountain_crystal", "x": 35, "y": 18 },
+        { "prop": "prop_adv_mountain_crystal", "x": 46, "y": 19 },
+        { "prop": "prop_adv_mountain_crystal", "x": 36, "y": 8 },
+        { "prop": "prop_adv_mountain_rock", "x": 39, "y": 9 },
+        { "prop": "prop_adv_mountain_rock", "x": 39, "y": 17 }
+      ],
+      "groups": [
+        {
+          "id": "g_m3_boss",
+          "x": 42,
+          "y": 13,
+          "kind": "boss",
+          "pool": [{ "weight": 1, "enemies": ["enemy_magma_drake", "enemy_lava_newt"] }],
+          "table": "boss_mountain"
+        },
+        {
+          "id": "g_m3_a",
+          "x": 14,
+          "y": 5,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_cliff_hawk"] },
+            { "weight": 2, "enemies": ["enemy_ore_golem", "enemy_lava_newt"] }
+          ],
+          "patrol": [{ "x": 14, "y": 5 }, { "x": 19, "y": 5 }]
+        },
+        {
+          "id": "g_m3_b",
+          "x": 14,
+          "y": 21,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_snow_goat", "enemy_lava_newt", "enemy_rock_beetle"] },
+            { "weight": 1, "enemies": ["enemy_thunder_ram"] }
+          ],
+          "patrol": [{ "x": 14, "y": 21 }, { "x": 19, "y": 21 }]
+        },
+        {
+          "id": "g_m3_c",
+          "x": 28,
+          "y": 13,
+          "kind": "normal",
+          "pool": [{ "weight": 1, "enemies": ["enemy_ore_golem", "enemy_cliff_hawk", "enemy_lava_newt"] }]
+        }
+      ],
+      "chests": [{ "id": "chest_m3_ledge", "x": 1, "y": 1, "table": "treasure_mountain" }],
+      "nodes": [{ "id": "ore_m3_a", "x": 24, "y": 25, "kind": "ore", "table": "ore_vein" }],
+      "gates": [{ "id": "gate_m3_boulder", "x": 9, "y": 22, "w": 1, "h": 1, "element": "EARTH" }],
+      "springs": [{ "id": "spring_m3", "x": 20, "y": 11 }],
+      "npcs": [{ "id": "npc_m3_cliff", "x": 29, "y": 6, "event": "event_cliff_shrine" }],
+      "lore": [
+        {
+          "id": "lore_m3_drake",
+          "x": 34,
+          "y": 20,
+          "textVi": "Vảy của Rồng Dung Nham có những vết nứt tím đen. Khi nó gầm, khói bốc lên có mùi như mực cháy."
+        }
+      ],
+      "shrine": { "id": "shrine_m3", "x": 3, "y": 22, "element": "FIRE", "damagePct": 0.1 }
+    },
+    {
+      "id": "map_ruins_gate",
+      "zoneId": "zone_ruins",
+      "nameVi": "Cổng Tàn Tích",
+      "tile": 40,
+      "cols": 50,
+      "rows": 28,
+      "terrain": [
+        "##################################################",
+        "#...................##...................#.......#",
+        "#...................##...................#.......#",
+        "#...................##...................#.......#",
+        "#...................##...................#.......#",
+        "#...................##...................###.#####",
+        "#...................##...........................#",
+        "#..,,,,,,,,.........##...........................#",
+        "#.........,.........##...........................#",
+        "#.........,.........##...........................#",
+        "#.........,.........##...........................#",
+        "#.........,......................................#",
+        "#.........,..............................######..,",
+        "#.........,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+        "#........................................######..,",
+        "#................................................#",
+        "#...................##...........................#",
+        "#...................##...........................#",
+        "#...................##...........................#",
+        "#...................##...........................#",
+        "#...................##...........................#",
+        "#...................##...........................#",
+        "#...................##...........................#",
+        "#...................##...........................#",
+        "#...................##...........................#",
+        "#...................##...........................#",
+        "#...................##...........................#",
+        "##################################################"
+      ],
+      "spawn": { "x": 2, "y": 5 },
+      "portal": { "x": 2, "y": 3 },
+      "exits": [
+        {
+          "id": "exit_r1_east",
+          "x": 49,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_ruins_hall",
+          "arriveX": 2,
+          "arriveY": 13
+        }
+      ],
+      "props": [
+        { "prop": "prop_adv_ruins_statue", "x": 1, "y": 21 },
+        { "prop": "prop_adv_ruins_statue", "x": 3, "y": 21 },
+        { "prop": "prop_adv_ruins_statue", "x": 3, "y": 23 },
+        { "prop": "prop_adv_ruins_pillar", "x": 5, "y": 1 },
+        { "prop": "prop_adv_ruins_pillar", "x": 8, "y": 1 },
+        { "prop": "prop_adv_ruins_pillar", "x": 11, "y": 1 },
+        { "prop": "prop_adv_ruins_pillar", "x": 14, "y": 1 },
+        { "prop": "prop_adv_ruins_pillar", "x": 5, "y": 25 },
+        { "prop": "prop_adv_ruins_pillar", "x": 8, "y": 25 },
+        { "prop": "prop_adv_ruins_pillar", "x": 11, "y": 25 },
+        { "prop": "prop_adv_ruins_pillar", "x": 14, "y": 25 },
+        { "prop": "prop_adv_ruins_pillar", "x": 24, "y": 4 },
+        { "prop": "prop_adv_ruins_pillar", "x": 24, "y": 22 },
+        { "prop": "prop_adv_ruins_pillar", "x": 34, "y": 4 },
+        { "prop": "prop_adv_ruins_pillar", "x": 34, "y": 22 },
+        { "prop": "prop_adv_ruins_broken", "x": 17, "y": 4 },
+        { "prop": "prop_adv_ruins_broken", "x": 27, "y": 16 },
+        { "prop": "prop_adv_ruins_broken", "x": 38, "y": 17 },
+        { "prop": "prop_adv_ruins_broken", "x": 46, "y": 9 },
+        { "prop": "prop_adv_ruins_wall", "x": 24, "y": 10 },
+        { "prop": "prop_adv_ruins_wall", "x": 33, "y": 16 },
+        { "prop": "prop_adv_ruins_brazier", "x": 9, "y": 10 },
+        { "prop": "prop_adv_ruins_brazier", "x": 9, "y": 16 },
+        { "prop": "prop_adv_ruins_brazier", "x": 40, "y": 10 },
+        { "prop": "prop_adv_ruins_brazier", "x": 40, "y": 16 },
+        { "prop": "prop_adv_ruins_urn", "x": 4, "y": 15 },
+        { "prop": "prop_adv_ruins_urn", "x": 29, "y": 2 }
+      ],
+      "groups": [
+        {
+          "id": "g_r1_elite",
+          "x": 44,
+          "y": 13,
+          "kind": "elite",
+          "pool": [
+            { "weight": 1, "enemies": ["enemy_stone_sentinel", "enemy_stone_sentinel", "enemy_rune_wisp"] }
+          ]
+        },
+        {
+          "id": "g_r1_a",
+          "x": 13,
+          "y": 18,
+          "kind": "normal",
+          "pool": [
+            { "weight": 3, "enemies": ["enemy_stone_sentinel", "enemy_rune_wisp"] },
+            { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_ember_idol"] },
+            { "weight": 1, "enemies": ["enemy_rune_wisp", "enemy_rune_wisp"] }
+          ],
+          "patrol": [{ "x": 13, "y": 18 }, { "x": 13, "y": 21 }]
+        },
+        {
+          "id": "g_r1_b",
+          "x": 27,
+          "y": 7,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_rune_wisp"] },
+            { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_tide_wraith"] }
+          ],
+          "patrol": [{ "x": 25, "y": 7 }, { "x": 31, "y": 7 }]
+        },
+        {
+          "id": "g_r1_c",
+          "x": 30,
+          "y": 20,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_rune_wisp"] },
+            { "weight": 1, "enemies": ["enemy_ember_idol", "enemy_ember_idol"] }
+          ]
+        },
+        {
+          "id": "g_r1_d",
+          "x": 37,
+          "y": 8,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_ember_idol"] },
+            { "weight": 1, "enemies": ["enemy_tide_wraith", "enemy_tide_wraith"] }
+          ],
+          "patrol": [{ "x": 37, "y": 8 }, { "x": 37, "y": 10 }]
+        }
+      ],
+      "chests": [
+        { "id": "chest_r1_sanctum", "x": 48, "y": 1, "table": "treasure_ruins" },
+        { "id": "chest_r1_crypt", "x": 1, "y": 26, "table": "treasure_ruins" }
+      ],
+      "nodes": [{ "id": "ore_r1_a", "x": 17, "y": 24, "kind": "ore", "table": "cache_ancient" }],
+      "gates": [{ "id": "gate_r1_lamp", "x": 44, "y": 5, "w": 1, "h": 1, "element": "LIGHT" }],
+      "springs": [{ "id": "spring_r1", "x": 6, "y": 10 }],
+      "npcs": [{ "id": "npc_r1_altar", "x": 36, "y": 22, "event": "event_rune_altar" }],
+      "lore": [
+        {
+          "id": "lore_r1_lamp",
+          "x": 46,
+          "y": 2,
+          "textVi": "Ngọn đèn cổ này từng được một con heo cõng trên lưng. Khi đèn sáng, lối đi trong tàn tích hiện ra."
+        }
+      ]
+    },
+    {
+      "id": "map_ruins_hall",
+      "zoneId": "zone_ruins",
+      "nameVi": "Hành Lang Rune",
+      "tile": 40,
+      "cols": 50,
+      "rows": 28,
+      "terrain": [
+        "##################################################",
+        "#.....................................#..........#",
+        "#.....................................#..........#",
+        "#.....................................#..........#",
+        "#........,,,,,,,,,,,,,,,,,,,,,,,,,,,..#..........#",
+        "#........,.........................,..#..........#",
+        "#........,.........................,..#..........#",
+        "#........,.........................,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,....####.........####....,..#..........#",
+        ",........,....####.........####....,..#..........,",
+        ",,,,,,,,,,.................####....,,,,,,,,,,,,,,,",
+        ",........,....####.........####....,..#..........,",
+        "#........,....####.........####....,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,....#################....,..#..........#",
+        "#........,.........................,..#..........#",
+        "#######..,.........................,..#..........#",
+        "#.....#..,.........................,..#..........#",
+        "#.....#..,,,,,,,,,,,,,,,,,,,,,,,,,,,..#..........#",
+        "#.....................................#..........#",
+        "#.....#...............................#..........#",
+        "#.....#...............................#..........#",
+        "#.....#...............................#..........#",
+        "##################################################"
+      ],
+      "spawn": { "x": 43, "y": 6 },
+      "portal": { "x": 43, "y": 4 },
+      "exits": [
+        {
+          "id": "exit_r2_west",
+          "x": 0,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_ruins_gate",
+          "arriveX": 47,
+          "arriveY": 13
+        },
+        {
+          "id": "exit_r2_east",
+          "x": 49,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_ruins_sanctum",
+          "arriveX": 2,
+          "arriveY": 13
+        }
+      ],
+      "props": [
+        { "prop": "prop_adv_ruins_pillar", "x": 11, "y": 7 },
+        { "prop": "prop_adv_ruins_pillar", "x": 11, "y": 19 },
+        { "prop": "prop_adv_ruins_pillar", "x": 32, "y": 7 },
+        { "prop": "prop_adv_ruins_pillar", "x": 32, "y": 19 },
+        { "prop": "prop_adv_ruins_pillar", "x": 2, "y": 2 },
+        { "prop": "prop_adv_ruins_pillar", "x": 46, "y": 2 },
+        { "prop": "prop_adv_ruins_pillar", "x": 46, "y": 24 },
+        { "prop": "prop_adv_ruins_statue", "x": 20, "y": 1 },
+        { "prop": "prop_adv_ruins_statue", "x": 27, "y": 1 },
+        { "prop": "prop_adv_ruins_statue", "x": 20, "y": 24 },
+        { "prop": "prop_adv_ruins_broken", "x": 36, "y": 2 },
+        { "prop": "prop_adv_ruins_broken", "x": 36, "y": 25 },
+        { "prop": "prop_adv_ruins_broken", "x": 18, "y": 15 },
+        { "prop": "prop_adv_ruins_broken", "x": 26, "y": 11 },
+        { "prop": "prop_adv_ruins_brazier", "x": 12, "y": 12 },
+        { "prop": "prop_adv_ruins_brazier", "x": 12, "y": 14 },
+        { "prop": "prop_adv_ruins_brazier", "x": 41, "y": 9 },
+        { "prop": "prop_adv_ruins_brazier", "x": 41, "y": 17 },
+        { "prop": "prop_adv_ruins_urn", "x": 3, "y": 17 },
+        { "prop": "prop_adv_ruins_urn", "x": 44, "y": 20 }
+      ],
+      "groups": [
+        {
+          "id": "g_r2_elite",
+          "x": 38,
+          "y": 13,
+          "kind": "elite",
+          "pool": [{ "weight": 1, "enemies": ["enemy_shadow_priest", "enemy_tide_wraith"] }]
+        },
+        {
+          "id": "g_r2_a",
+          "x": 16,
+          "y": 4,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_rune_wisp"] },
+            { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_tide_wraith"] }
+          ],
+          "patrol": [{ "x": 16, "y": 4 }, { "x": 22, "y": 4 }]
+        },
+        {
+          "id": "g_r2_b",
+          "x": 30,
+          "y": 4,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_ember_idol", "enemy_rune_wisp"] },
+            { "weight": 1, "enemies": ["enemy_ember_idol", "enemy_stone_sentinel"] }
+          ]
+        },
+        {
+          "id": "g_r2_c",
+          "x": 16,
+          "y": 22,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_tide_wraith", "enemy_stone_sentinel"] },
+            { "weight": 1, "enemies": ["enemy_rune_wisp", "enemy_rune_wisp", "enemy_ember_idol"] }
+          ],
+          "patrol": [{ "x": 16, "y": 22 }, { "x": 22, "y": 22 }]
+        },
+        {
+          "id": "g_r2_d",
+          "x": 32,
+          "y": 22,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_tide_wraith"] },
+            { "weight": 1, "enemies": ["enemy_stone_sentinel", "enemy_stone_sentinel"] }
+          ]
+        }
+      ],
+      "chests": [
+        { "id": "chest_r2_vault", "x": 25, "y": 13, "table": "treasure_ruins" },
+        { "id": "chest_r2_niche", "x": 2, "y": 25, "table": "treasure_ruins" }
+      ],
+      "nodes": [{ "id": "ore_r2_a", "x": 12, "y": 2, "kind": "ore", "table": "cache_ancient" }],
+      "gates": [
+        { "id": "gate_r2_pylon", "x": 15, "y": 13, "w": 1, "h": 1, "element": "LIGHTNING" },
+        { "id": "gate_r2_mist", "x": 6, "y": 23, "w": 1, "h": 1, "element": "DARK" }
+      ],
+      "springs": [{ "id": "spring_r2", "x": 4, "y": 8 }],
+      "npcs": [{ "id": "npc_r2_cache", "x": 30, "y": 25, "event": "event_ancient_cache" }],
+      "lore": [
+        {
+          "id": "lore_r2_threads",
+          "x": 19,
+          "y": 12,
+          "textVi": "Những sợi chỉ bạc căng ngang hành lang đã sờn và đứt gần hết. Ai đó viết bên dưới: 'Chỉ của Dạ Mặc đang yếu đi'."
+        }
+      ]
+    },
+    {
+      "id": "map_ruins_sanctum",
+      "zoneId": "zone_ruins",
+      "nameVi": "Điện Phong Ấn",
+      "tile": 40,
+      "cols": 50,
+      "rows": 28,
+      "terrain": [
+        "##################################################",
+        "#...............................#................#",
+        "#...............................#................#",
+        "#...............................#................#",
+        "#...............................##################",
+        "#.....,,,,,,,,,,,,,,,,,,,,,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        "#.....,...................,.....#................#",
+        ",.....,...................,.....#................#",
+        ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.................#",
+        ",...........,.............,.....#................#",
+        "#...........,.............,.....#................#",
+        "#...........,.............,.....#................#",
+        "#...........,.............,.....#................#",
+        "##########..,.............,.....#................#",
+        "#........#..,.............,.....#................#",
+        "#........#..,.............,.....#................#",
+        "#........#..,,,,,,,,,,,,,,,.....#................#",
+        "#...............................##################",
+        "#........#......................#................#",
+        "#........#......................#................#",
+        "#........#......................#................#",
+        "#........#......................#................#",
+        "##################################################"
+      ],
+      "spawn": { "x": 45, "y": 8 },
+      "portal": { "x": 45, "y": 6 },
+      "exits": [
+        {
+          "id": "exit_r3_west",
+          "x": 0,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_ruins_hall",
+          "arriveX": 47,
+          "arriveY": 13
+        }
+      ],
+      "props": [
+        { "prop": "prop_adv_ruins_statue", "x": 1, "y": 4 },
+        { "prop": "prop_adv_ruins_statue", "x": 3, "y": 4 },
+        { "prop": "prop_adv_ruins_statue", "x": 3, "y": 1 },
+        { "prop": "prop_adv_ruins_pillar", "x": 10, "y": 8 },
+        { "prop": "prop_adv_ruins_pillar", "x": 16, "y": 9 },
+        { "prop": "prop_adv_ruins_pillar", "x": 21, "y": 15 },
+        { "prop": "prop_adv_ruins_pillar", "x": 12, "y": 15 },
+        { "prop": "prop_adv_ruins_pillar", "x": 28, "y": 2 },
+        { "prop": "prop_adv_ruins_pillar", "x": 28, "y": 23 },
+        { "prop": "prop_adv_ruins_pillar", "x": 35, "y": 7 },
+        { "prop": "prop_adv_ruins_pillar", "x": 35, "y": 18 },
+        { "prop": "prop_adv_ruins_pillar", "x": 47, "y": 8 },
+        { "prop": "prop_adv_ruins_pillar", "x": 47, "y": 18 },
+        { "prop": "prop_adv_ruins_deadtree", "x": 10, "y": 1 },
+        { "prop": "prop_adv_ruins_deadtree", "x": 18, "y": 1 },
+        { "prop": "prop_adv_ruins_deadtree", "x": 16, "y": 24 },
+        { "prop": "prop_adv_ruins_broken", "x": 4, "y": 9 },
+        { "prop": "prop_adv_ruins_broken", "x": 23, "y": 8 },
+        { "prop": "prop_adv_ruins_broken", "x": 24, "y": 18 },
+        { "prop": "prop_adv_ruins_broken", "x": 13, "y": 12 },
+        { "prop": "prop_adv_ruins_broken", "x": 30, "y": 9 },
+        { "prop": "prop_adv_ruins_broken", "x": 30, "y": 17 },
+        { "prop": "prop_adv_ruins_brazier", "x": 39, "y": 9 },
+        { "prop": "prop_adv_ruins_brazier", "x": 39, "y": 17 }
+      ],
+      "groups": [
+        {
+          "id": "g_r3_boss",
+          "x": 42,
+          "y": 13,
+          "kind": "boss",
+          "pool": [{ "weight": 1, "enemies": ["enemy_ancient_guardian", "enemy_rune_wisp"] }],
+          "table": "boss_ruins"
+        },
+        {
+          "id": "g_r3_a",
+          "x": 14,
+          "y": 5,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_rune_wisp", "enemy_ember_idol"] },
+            { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_tide_wraith", "enemy_stone_sentinel"] }
+          ],
+          "patrol": [{ "x": 14, "y": 5 }, { "x": 19, "y": 5 }]
+        },
+        {
+          "id": "g_r3_b",
+          "x": 14,
+          "y": 21,
+          "kind": "normal",
+          "pool": [
+            { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_stone_sentinel"] },
+            { "weight": 1, "enemies": ["enemy_shadow_priest"] }
+          ],
+          "patrol": [{ "x": 14, "y": 21 }, { "x": 19, "y": 21 }]
+        },
+        {
+          "id": "g_r3_c",
+          "x": 28,
+          "y": 13,
+          "kind": "normal",
+          "pool": [
+            { "weight": 1, "enemies": ["enemy_stone_sentinel", "enemy_ember_idol", "enemy_rune_wisp"] }
+          ]
+        }
+      ],
+      "chests": [{ "id": "chest_r3_reliquary", "x": 1, "y": 1, "table": "treasure_ruins" }],
+      "nodes": [{ "id": "ore_r3_a", "x": 24, "y": 25, "kind": "ore", "table": "cache_ancient" }],
+      "gates": [{ "id": "gate_r3_lock", "x": 9, "y": 22, "w": 1, "h": 1, "element": "METAL" }],
+      "springs": [{ "id": "spring_r3", "x": 20, "y": 11 }],
+      "npcs": [],
+      "lore": [
+        {
+          "id": "lore_r3_seal",
+          "x": 34,
+          "y": 20,
+          "textVi": "Pho tượng Thiết Giáp đứng canh phong ấn đã ngàn năm. Những vết nứt đen trên giáp đồng đang lan rộng."
+        }
+      ],
+      "shrine": { "id": "shrine_r3", "x": 3, "y": 22, "element": "LIGHT", "damagePct": 0.1 }
+    }
+  ]
+}

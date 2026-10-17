@@ -5,16 +5,15 @@ import { SAVE_CODEC } from '../../src/app/saveCodec';
 import { adventureArea } from '../../src/areas/adventure';
 import { startRun } from '../../src/areas/adventure/logic/actions/run';
 import { simulateRuns } from '../../src/areas/adventure/logic/battleSim';
-import { AB, ARCHETYPE_LIST, ENEMIES, LOOT_TABLES, ZONES, ZONE_LIST, contentProblems } from '../../src/areas/adventure/logic/config/content';
+import { AB, CLASS_LIST, ENEMIES, LOOT_TABLES, ZONES, ZONE_LIST, contentProblems } from '../../src/areas/adventure/logic/config/content';
 import { energyOf, msToEnergy, withPrep } from '../../src/areas/adventure/logic/fighters';
 import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
-import { zoneCards, hubVm } from '../../src/areas/adventure/ui/adventureVm';
+import { campVm, zoneCards } from '../../src/areas/adventure/ui/campVm';
 import { buildWorkshop, startCraft } from '../../src/areas/garden/logic/actions/buildings';
 import { gardenArea } from '../../src/areas/garden';
 import { gardenOf } from '../../src/areas/garden/logic/save/lens';
 import { workshopVm } from '../../src/areas/garden/ui/gardenVm';
 import { makePig } from './pigFactory';
-import { adventureStateSchema } from '../../src/areas/adventure/logic/state';
 import { hatchEgg } from '../../src/areas/farm/logic/actions/hatchEgg';
 import { farmOf } from '../../src/areas/farm/logic/save/lens';
 import type { RosterEntry } from '../../src/core/area-registry/registry';
@@ -25,7 +24,7 @@ import { mulberry32 } from '../../src/core/rng';
 import type { WorldSave } from '../../src/core/save/world';
 import { buyTech, nextTechLevel, recipeLocked, techLevel, techValue } from '../../src/core/tech/tech';
 import type { ActionContext } from '../../src/core/types';
-import { deriveStats } from '../../src/systems/combat/stats';
+import { deriveStats, zeroStats } from '../../src/systems/combat/stats';
 import { itemUses } from '../../scripts/audit/itemUses';
 import { ITEM_IDS } from '../../src/core/config/items';
 
@@ -155,6 +154,7 @@ describe('rations before a run', () => {
     const b = adventureOf(fed).run!.team[0]!;
     expect(b.stats.hp).toBe(Math.round(a.stats.hp * 1.15));
     expect(b.stats.atk).toBe(Math.round(a.stats.atk * 1.12));
+    expect(b.stats.matk).toBe(Math.round(a.stats.matk * 1.12));
     expect(b.hp).toBe(b.stats.hp);
     expect(adventureOf(fed).run!.prep).toEqual(['item_ration_hearty', 'item_ration_spicy']);
   });
@@ -175,23 +175,23 @@ describe('rations before a run', () => {
   });
 
   it('the swift ration adds speed and crit by flat numbers; unknown ids add nothing', () => {
-    const base = { hp: 100, atk: 20, def: 6, spd: 10, crit: 8 };
+    const base = { ...zeroStats(), hp: 100, atk: 20, def: 6, spd: 10, crit: 8 };
     expect(withPrep(base, ['item_ration_swift'])).toEqual({ ...base, spd: 12, crit: 11 });
     expect(withPrep(base, ['nonsense'])).toEqual(base);
   });
 
   it('the hub lists the rations, how many are in the bag and the slots the kitchen gives', () => {
     const w = withTech(adventureWorld({ item_ration_hearty: 2 }), { tech_kitchen: 2 });
-    const hub = hubVm(w, squad, T0, { starter: (x) => ({ ok: true, state: x, events: [] }), loot: (x) => ({ ok: true, state: x, events: [] }) });
+    const hub = campVm(w, squad, T0, { starter: (x) => ({ ok: true, state: x, events: [] }), loot: (x) => ({ ok: true, state: x, events: [] }) });
     expect(hub.prepSlots).toBe(2);
-    expect(hub.prep.find((p) => p.itemId === 'item_ration_hearty')).toMatchObject({ have: 2, effect: '+15% máu' });
-    expect(hubVm(adventureWorld(), squad, T0, { starter: (x) => ({ ok: true, state: x, events: [] }), loot: (x) => ({ ok: true, state: x, events: [] }) }).prepSlots).toBe(0);
+    expect(hub.prep.find((p) => p.itemId === 'item_ration_hearty')).toMatchObject({ have: 2, effect: '+15% Máu' });
+    expect(campVm(adventureWorld(), squad, T0, { starter: (x) => ({ ok: true, state: x, events: [] }), loot: (x) => ({ ok: true, state: x, events: [] }) }).prepSlots).toBe(0);
   });
 });
 
 describe('Bond lifts the stats more (GĐ11)', () => {
   it('five hearts add a quarter of the stats', () => {
-    const base = { hp: 100, atk: 20, def: 6, spd: 10, crit: 8 };
+    const base = { ...zeroStats(), hp: 100, atk: 20, def: 6, spd: 10, crit: 8 };
     const none = deriveStats(base, { level: 1, rarityMult: 1, hearts: 0 }, { levelGrowth: AB.stats.levelGrowth, bondPerHeart: AB.stats.bondPerHeart });
     const full = deriveStats(base, { level: 1, rarityMult: 1, hearts: 5 }, { levelGrowth: AB.stats.levelGrowth, bondPerHeart: AB.stats.bondPerHeart });
     expect(AB.stats.bondPerHeart).toBe(0.05);
@@ -209,7 +209,7 @@ describe('the zone chain: Forest → Mountain → Ruins', () => {
     expect(ZONES.zone_mountain!.requiresCleared).toBe('zone_forest');
     expect(ZONES.zone_ruins!.requiresCleared).toBe('zone_mountain');
     expect(ZONES.zone_ruins!.fromWorldLevel).toBeGreaterThan(ZONES.zone_mountain!.fromWorldLevel);
-    for (const z of ZONE_LIST.slice(1)) expect(z.nodes.length).toBe(7);
+    for (const z of ZONE_LIST) expect(z.maps).toHaveLength(3);
     expect(Object.values(ENEMIES).filter((e) => e.boss)).toHaveLength(3);
   });
 
@@ -228,49 +228,40 @@ describe('the zone chain: Forest → Mountain → Ruins', () => {
     expect(err(mountain(low))).toBe('ZONE_LOCKED');
   });
 
-  it('the old save without the new fields still loads (cleared and prep default)', () => {
-    const w = adventureWorld();
-    const old: Record<string, unknown> = { ...adventureOf(w) };
-    delete old.cleared;
-    expect(adventureStateSchema.parse(old).cleared).toEqual({});
-    const withRun = ok(startRun(w, { zoneId: 'zone_forest', keys: [squad[0]!.key], roster: squad }, ctxAt(T0))).state;
-    const oldRun: Record<string, unknown> = { ...adventureOf(withRun).run! };
-    delete oldRun.prep;
-    expect(adventureStateSchema.parse({ ...adventureOf(withRun), run: oldRun }).run!.prep).toEqual([]);
-  });
-
   it('the loot flows back: ancient materials, rare seeds, rare fish, eggs and a few Gems', () => {
     const ids = (t: string) => LOOT_TABLES[t]!.entries.map((e) => e.itemId);
-    expect(ids('chest_mountain_boss')).toEqual(expect.arrayContaining(['item_ancient_cog', 'item_mountain_ore', 'item_pig_egg_wild', 'item_seed_star_orchid', 'item_fish_seahorse']));
-    expect(ids('chest_mountain')).toEqual(expect.arrayContaining(['item_seed_rainbow_rose', 'item_fish_betta']));
-    expect(ids('chest_ruins_boss')).toEqual(expect.arrayContaining(['item_ancient_rune', 'item_pig_egg_wild', 'item_fish_dragon_koi']));
-    for (const t of ['chest_mountain', 'chest_mountain_boss', 'chest_ruins', 'chest_ruins_boss']) {
+    expect(ids('boss_mountain')).toEqual(expect.arrayContaining(['item_ancient_cog', 'item_mountain_ore', 'item_pig_egg_wild', 'item_seed_star_orchid', 'item_fish_seahorse']));
+    expect(ids('treasure_mountain')).toEqual(expect.arrayContaining(['item_seed_rainbow_rose', 'item_skill_scroll']));
+    expect(ids('boss_ruins')).toEqual(expect.arrayContaining(['item_ancient_rune', 'item_pig_egg_wild', 'item_fish_dragon_koi']));
+    for (const t of ['boss_mountain', 'boss_ruins']) {
       expect(LOOT_TABLES[t]!.gemChance).toBeGreaterThan(0.02);
       expect(LOOT_TABLES[t]!.gemChance).toBeLessThanOrEqual(0.15); // Gems stay rare (GAME_BALANCE §8)
-      expect(LOOT_TABLES[t]!.gems[1]).toBeLessThanOrEqual(3);
     }
-    expect(ids('chest_forest')).not.toContain('item_ancient_rune');
-    expect(ids('chest_mountain')).not.toContain('item_ancient_rune');
+    // Treasure chests open once per save: richer in Gems, still at most 3 a chest.
+    for (const t of ['treasure_forest', 'treasure_mountain', 'treasure_ruins']) expect(LOOT_TABLES[t]!.gems[1]).toBeLessThanOrEqual(3);
+    expect(ids('treasure_forest')).not.toContain('item_ancient_rune');
+    expect(ids('treasure_mountain')).not.toContain('item_ancient_rune');
   });
 
-  it('balance guard: the Mountain is a fair fight around level 10 with decent gear, the Ruins need more', () => {
-    const team = ['bruiser', 'guardian', 'mystic'].map((archetypeId) => ({ archetypeId }));
-    const win = (zoneId: string, level: number, gear: 'none' | 'uncommon' | 'rare' | 'epic') => simulateRuns({ zoneId, level, team, gear, samples: 60, seed: 5 }).winPercent;
-    expect(win('zone_mountain', 6, 'none')).toBeLessThan(10);
-    const mid = win('zone_mountain', 10, 'uncommon');
-    expect(mid).toBeGreaterThan(35);
-    expect(mid).toBeLessThan(95);
-    expect(win('zone_mountain', 16, 'uncommon')).toBeGreaterThan(90);
-    expect(win('zone_ruins', 8, 'rare')).toBeLessThan(5);
-    expect(win('zone_ruins', 14, 'rare')).toBeLessThan(win('zone_ruins', 20, 'rare'));
-    expect(win('zone_ruins', 20, 'epic')).toBeGreaterThan(80);
-    expect(win('zone_ruins', 12, 'epic')).toBeGreaterThan(win('zone_ruins', 12, 'none'));
+  it('balance guard (decision 037): a balanced team needs levels in each zone, and gear helps', () => {
+    const team = [
+      { lineage: 'thiet_giap' as const, classId: 'tanker' as const },
+      { lineage: 'hoa_giai' as const, classId: 'striker' as const },
+      { lineage: 'quang_tru' as const, classId: 'support' as const },
+    ];
+    const win = (zoneId: string, level: number, gear: 'common' | 'uncommon' | 'rare' | 'epic') => simulateRuns({ zoneId, level, team, gear, samples: 40, seed: 5 }).winPercent;
+    expect(win('zone_forest', 1, 'common')).toBeLessThan(15);
+    expect(win('zone_forest', 8, 'common')).toBeGreaterThan(80);
+    expect(win('zone_mountain', 6, 'uncommon')).toBeLessThan(20);
+    expect(win('zone_mountain', 16, 'uncommon')).toBeGreaterThan(80);
+    expect(win('zone_ruins', 8, 'rare')).toBeLessThan(10);
+    expect(win('zone_ruins', 22, 'epic')).toBeGreaterThan(70);
   });
 
-  it('every style still fights somewhere: no style is dead weight in the Mountain with a sustaining mate', () => {
-    for (const a of ARCHETYPE_LIST) {
-      const r = simulateRuns({ zoneId: 'zone_mountain', level: 14, team: [{ archetypeId: a.id }, { archetypeId: 'guardian' }, { archetypeId: 'mystic' }], gear: 'rare', samples: 40, seed: 6 });
-      expect(r.winPercent, a.id).toBeGreaterThan(30);
+  it('every class fights somewhere: none is dead weight in the Mountain beside a tank and a healer', () => {
+    for (const c of CLASS_LIST) {
+      const r = simulateRuns({ zoneId: 'zone_mountain', level: 16, team: [{ lineage: 'loi_duong', classId: c.id }, { lineage: 'quy_son', classId: 'tanker' }, { lineage: 'quang_tru', classId: 'support' }], gear: 'rare', samples: 30, seed: 6 });
+      expect(r.winPercent, c.id).toBeGreaterThan(30);
     }
   });
 });

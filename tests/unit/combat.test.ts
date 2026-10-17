@@ -1,289 +1,389 @@
-// systems/combat, systems/equipment: turn order, damage and elements, skills (energy, cooldown), statuses, items,
-// determinism of a saved battle, stats and levels, equipment.
+// systems/combat V2 (decision 037, spec §8–§15) and systems/equipment: turn order, the element chart, damage, MP and cooldowns,
+// statuses (DoT, control with immunity, Up/Down cancel, Doom, Auto-Revive), reactions, Rage and the Ultimate, Taunt, Defend,
+// intents, determinism of a saved battle, stats and levels, equipment affinities.
 import { describe, expect, it } from 'vitest';
-import { act, autoPlay, beats, chooseAction, current, effectiveSpeed, elementMultiplier, startBattle, usableSkills, type CombatContext } from '../../src/systems/combat';
-import { addExp, deriveStats, expToNext, skillsAtLevel } from '../../src/systems/combat/stats';
-import type { BattleItemDef, CombatantInit, CombatRules, SkillDef } from '../../src/systems/combat/types';
-import { equipPiece, loadoutBonus, unequipSlot, type EquipmentDef } from '../../src/systems/equipment';
+import {
+  act,
+  actionFor,
+  autoPlay,
+  canAct,
+  chooseAction,
+  current,
+  elementMultiplier,
+  startBattle,
+  stat,
+  type BattleState,
+  type CombatContext,
+} from '../../src/systems/combat';
+import { addExp, addShares, deriveStats, expToNext, zeroStats } from '../../src/systems/combat/stats';
+import type { CombatantInit, CombatRules, ElementChart, ReactionDef, SkillDef, Stats, StatusDef, StatusId } from '../../src/systems/combat/types';
+import { STATUS_IDS } from '../../src/systems/combat/types';
+import { equipPiece, loadoutBonus, loadoutMods, unequipSlot, type EquipmentDef } from '../../src/systems/equipment';
 
 const rules: CombatRules = {
-  counter: 1.5,
-  resisted: 0.75,
   critMultiplier: 1.5,
   variance: 0,
   defenseK: 30,
-  energyStart: 3,
-  energyMax: 10,
-  energyPerTurn: 2,
-  basicEnergyGain: 1,
-  burnPct: 0.1,
-  slowFactor: 0.5,
-  hasteFactor: 2,
-  atkUpFactor: 1.5,
-  defUpFactor: 2,
-  shieldPct: 0.5,
   maxRounds: 40,
+  mpTurnPct: 0.1,
+  mpBasicPct: 0.1,
+  mpGuardPct: 0.2,
+  guardTaken: 0.5,
+  rageK: 1,
+  hitMin: 0.05,
+  statusChanceCap: 0.95,
+  elementDamageCap: 0.4,
+  statusChanceBonusCap: 0.25,
+  resistCap: 0.6,
+  basicPower: 1,
+  basicAccuracy: 100,
 };
-const skill = (over: Partial<SkillDef> & Pick<SkillDef, 'id'>): SkillDef => ({ element: 'FIRE', target: 'enemy', power: 2, healPct: 0, cost: 2, cooldown: 0, statuses: [], ...over });
+
+const elements: ElementChart = {
+  multipliers: { STRONG: 1.5, NEUTRAL: 1, WEAK: 0.75, RESIST: 0.5, IMMUNE: 0 },
+  chart: { WATER: { FIRE: 'STRONG', EARTH: 'WEAK' }, FIRE: { WATER: 'WEAK', METAL: 'STRONG' }, LIGHTNING: { WATER: 'STRONG', EARTH: 'RESIST' }, LIGHT: { DARK: 'STRONG' }, DARK: { LIGHT: 'STRONG' } },
+  dualMin: 0.25,
+  dualMax: 2,
+};
+
+const statusDef = (id: StatusId, over: Partial<StatusDef> = {}): StatusDef => ({
+  id,
+  kind: 'special',
+  positive: false,
+  sourceElement: null,
+  turns: 3,
+  maxStacks: 1,
+  cleansable: true,
+  immunityAfter: 0,
+  tickPct: 0,
+  skipTurn: false,
+  noSkills: false,
+  revivePct: 0,
+  ...over,
+});
+const statuses = Object.fromEntries(STATUS_IDS.map((id) => [id, statusDef(id, { positive: id.endsWith('Up') || ['shield', 'taunt', 'regen', 'autoRevive'].includes(id) })])) as Record<StatusId, StatusDef>;
+Object.assign(statuses, {
+  poison: statusDef('poison', { kind: 'dot', tickPct: 0.1, maxStacks: 3, sourceElement: 'NATURE' }),
+  burn: statusDef('burn', { kind: 'dot', tickPct: 0.1, sourceElement: 'FIRE' }),
+  stun: statusDef('stun', { kind: 'control', turns: 1, skipTurn: true, immunityAfter: 1 }),
+  freeze: statusDef('freeze', { kind: 'control', turns: 2, skipTurn: true, immunityAfter: 2 }),
+  disable: statusDef('disable', { kind: 'control', turns: 2, noSkills: true }),
+  doom: statusDef('doom', { turns: 3, cleansable: false }),
+  atkUp: statusDef('atkUp', { kind: 'stat', positive: true, stat: { key: 'atk', mult: 1.5 } }),
+  atkDown: statusDef('atkDown', { kind: 'stat', stat: { key: 'atk', mult: 0.5 } }),
+  spdUp: statusDef('spdUp', { kind: 'stat', positive: true, stat: { key: 'spd', mult: 2 } }),
+  regen: statusDef('regen', { kind: 'recovery', positive: true, tickPct: 0.1 }),
+  autoRevive: statusDef('autoRevive', { kind: 'recovery', positive: true, revivePct: 0.3 }),
+  taunt: statusDef('taunt', { positive: true, turns: 2 }),
+  shield: statusDef('shield', { positive: true }),
+});
+
+const reactions: ReactionDef[] = [
+  { id: 'shock', priority: 5, elements: ['LIGHTNING'], categories: [], requiresStatus: 'wet', requiresSourceElement: null, requiresTag: null, damageMult: 2, voidBonus: 0, consume: true, applyStatus: null, dispel: 0 },
+  { id: 'shatter', priority: 6, elements: ['FIRE'], categories: ['physical'], requiresStatus: 'freeze', requiresSourceElement: null, requiresTag: null, damageMult: 1.5, voidBonus: 0, consume: true, applyStatus: null, dispel: 0 },
+];
+
+const skill = (over: Partial<SkillDef> & Pick<SkillDef, 'id'>): SkillDef => ({
+  type: 'unique',
+  category: 'magical',
+  element: 'FIRE',
+  target: 'enemy',
+  power: 2,
+  hits: 1,
+  accuracy: 100,
+  mpCost: 10,
+  cooldown: 0,
+  critBonus: 0,
+  effects: [],
+  maxLevel: 5,
+  perLevel: {},
+  ...over,
+});
 const skills: Record<string, SkillDef> = Object.fromEntries(
   [
-    skill({ id: 'big', power: 3, cost: 3, cooldown: 2 }),
-    skill({ id: 'all', target: 'allEnemies', power: 1, cost: 2 }),
-    skill({ id: 'burn', power: 0.5, statuses: [{ status: 'burn', turns: 2 }] }),
-    skill({ id: 'stun', power: 0.5, statuses: [{ status: 'stun', turns: 1 }] }),
-    skill({ id: 'heal', element: 'WATER', target: 'ally', power: 0, healPct: 0.5, cost: 2 }),
-    skill({ id: 'shield', element: 'EARTH', target: 'self', power: 0, statuses: [{ status: 'shield', turns: 3 }] }),
-    skill({ id: 'slow', power: 0.1, statuses: [{ status: 'slow', turns: 2 }] }),
-    skill({ id: 'water', element: 'WATER', power: 1 }),
+    skill({ id: 'big', power: 3, mpCost: 30, cooldown: 2, perLevel: { power: 0.5, mpCost: -5 } }),
+    skill({ id: 'all', target: 'allEnemies', power: 1 }),
+    skill({ id: 'burn', power: 0.5, effects: [{ kind: 'status', status: 'burn' }] }),
+    skill({ id: 'stun', power: 0.5, effects: [{ kind: 'status', status: 'stun' }] }),
+    skill({ id: 'freeze', element: 'WATER', power: 0.1, effects: [{ kind: 'status', status: 'freeze' }] }),
+    skill({ id: 'wet', element: 'WATER', power: 0.1, effects: [{ kind: 'status', status: 'wet', turns: 2 }] }),
+    skill({ id: 'bolt', element: 'LIGHTNING', power: 1 }),
+    skill({ id: 'heal', category: 'support', element: null, target: 'ally', power: 0, effects: [{ kind: 'heal', pct: 0.5 }] }),
+    skill({ id: 'rally', category: 'support', element: null, target: 'allAllies', power: 0, effects: [{ kind: 'status', status: 'atkUp' }] }),
+    skill({ id: 'weaken', category: 'support', element: null, power: 0, effects: [{ kind: 'status', status: 'atkDown' }] }),
+    skill({ id: 'doom', category: 'support', element: null, power: 0, effects: [{ kind: 'status', status: 'doom' }] }),
+    skill({ id: 'purify', category: 'support', element: null, target: 'ally', power: 0, effects: [{ kind: 'cleanse', doom: true }] }),
+    skill({ id: 'taunt', category: 'support', element: null, target: 'self', power: 0, effects: [{ kind: 'status', status: 'taunt' }] }),
+    skill({ id: 'mute', category: 'support', element: null, power: 0, effects: [{ kind: 'status', status: 'disable' }] }),
+    skill({ id: 'self', element: 'SELF', power: 1 }),
+    skill({ id: 'ult', type: 'ultimate', target: 'allEnemies', power: 3, mpCost: 0, effects: [{ kind: 'shield', pct: 0.2, to: 'self' }] }),
   ].map((s) => [s.id, s]),
 );
-const items: Record<string, BattleItemDef> = {
-  tonic: { itemId: 'tonic', target: 'ally', healPct: 0.5, statuses: [] },
-  rally: { itemId: 'rally', target: 'allAllies', healPct: 0, statuses: [{ status: 'atkUp', turns: 3 }] },
-};
-const ctx: CombatContext = { skills, items, rules };
+const items = { tonic: { itemId: 'tonic', target: 'ally' as const, effects: [{ kind: 'heal' as const, pct: 0.5 }] } };
+const ctx: CombatContext = { skills, items, statuses, reactions, elements, rules };
 
-const unit = (id: string, side: 'ally' | 'enemy', over: Omit<Partial<CombatantInit>, 'stats'> & { stats?: Partial<CombatantInit['stats']> } = {}): CombatantInit => ({
+const stats = (over: Partial<Stats> = {}): Stats => ({ hp: 100, mp: 100, atk: 20, def: 0, matk: 20, mdef: 0, spd: 10, acc: 100, eva: 0, crit: 0, ...over });
+const unit = (id: string, side: 'ally' | 'enemy', over: Omit<Partial<CombatantInit>, 'stats'> & { stats?: Partial<Stats> } = {}): CombatantInit => ({
   id,
   side,
   name: id,
   element: 'EARTH',
   skills: [],
   ...over,
-  stats: { hp: 100, atk: 20, def: 0, spd: 10, crit: 0, ...over.stats },
+  stats: stats(over.stats),
 });
+const slots = (...ids: string[]) => ids.map((id) => ({ id, level: 1 }));
 
-describe('elements', () => {
-  it('fire beats wind beats earth beats water beats fire', () => {
-    expect(beats('FIRE', 'WIND')).toBe(true);
-    expect(beats('WIND', 'EARTH')).toBe(true);
-    expect(beats('EARTH', 'WATER')).toBe(true);
-    expect(beats('WATER', 'FIRE')).toBe(true);
-    expect(beats('WIND', 'FIRE')).toBe(false);
-    expect(elementMultiplier('FIRE', 'WIND', rules)).toBe(1.5);
-    expect(elementMultiplier('WIND', 'FIRE', rules)).toBe(0.75);
-    expect(elementMultiplier('FIRE', 'EARTH', rules)).toBe(1);
-    expect(elementMultiplier('FIRE', 'FIRE', rules)).toBe(1);
-  });
-});
-
-describe('turn order and basic damage', () => {
-  it('the fastest acts first; allies before enemies on a tie; a round runs through everyone', () => {
-    const { state } = startBattle(1, [unit('slow', 'ally', { stats: { spd: 5 } }), unit('fast', 'enemy', { stats: { spd: 20 } }), unit('same', 'ally', { stats: { spd: 5 } })], ctx);
-    expect(state.order).toEqual(['fast', 'same', 'slow']);
-    expect(current(state)!.id).toBe('fast');
-  });
-
-  it('a basic attack deals attack × K/(K+def), gives energy, then the next one acts', () => {
-    const { state } = startBattle(1, [unit('a', 'ally', { stats: { spd: 20 } }), unit('e', 'enemy', { stats: { def: 30 } })], ctx);
-    const r = act(state, { kind: 'attack', target: 'e' }, ctx);
-    if (!r.ok) throw new Error(r.error);
-    expect(r.state.combatants.find((c) => c.id === 'e')!.hp).toBe(100 - 10); // 20 × 30/60
-    expect(r.state.combatants.find((c) => c.id === 'a')!.energy).toBe(6); // 3 at the start, +2 when its turn began, +1 for the attack
-    expect(current(r.state)!.id).toBe('e');
-  });
-
-  it('element advantage hits for 1.5, resistance for 0.75; a crit for 1.5 more', () => {
-    const base = unit('a', 'ally', { element: 'FIRE', stats: { spd: 20, crit: 0 } });
-    const hit = (a: CombatantInit, e: CombatantInit) => {
-      const { state } = startBattle(1, [a, e], ctx);
-      const r = act(state, { kind: 'attack', target: 'e' }, ctx);
-      if (!r.ok) throw new Error(r.error);
-      return 100 - r.state.combatants.find((c) => c.id === 'e')!.hp;
-    };
-    expect(hit(base, unit('e', 'enemy', { element: 'WIND' }))).toBe(30);
-    expect(hit(base, unit('e', 'enemy', { element: 'WATER' }))).toBe(15);
-    expect(hit(base, unit('e', 'enemy', { element: 'EARTH' }))).toBe(20);
-    expect(hit({ ...base, stats: { ...base.stats, crit: 100 } }, unit('e', 'enemy', { element: 'EARTH' }))).toBe(30);
-  });
-
-  it('defeating the last enemy wins; losing every ally loses', () => {
-    const { state } = startBattle(1, [unit('a', 'ally', { stats: { spd: 20, atk: 500 } }), unit('e', 'enemy')], ctx);
-    const r = act(state, { kind: 'attack', target: 'e' }, ctx);
-    if (!r.ok) throw new Error(r.error);
-    expect(r.state.outcome).toBe('win');
-    expect(act(r.state, { kind: 'attack', target: 'e' }, ctx)).toEqual({ ok: false, error: 'BATTLE_OVER' });
-    const lost = startBattle(1, [unit('a', 'ally', { hp: 0, stats: { spd: 1 } }), unit('b', 'ally', { stats: { hp: 1, spd: 1 } }), unit('e', 'enemy', { stats: { spd: 50, atk: 500 } })], ctx);
-    expect(lost.state.outcome).toBeNull();
-    const r2 = act(lost.state, { kind: 'attack', target: 'b' }, ctx);
-    if (!r2.ok) throw new Error(r2.error);
-    expect(r2.state.outcome).toBe('lose');
-  });
-
-  it('refuses a target on its own side or a dead one', () => {
-    const { state } = startBattle(1, [unit('a', 'ally', { stats: { spd: 20 } }), unit('b', 'ally'), unit('e', 'enemy')], ctx);
-    expect(act(state, { kind: 'attack', target: 'b' }, ctx)).toEqual({ ok: false, error: 'BAD_TARGET' });
-    expect(act(state, { kind: 'attack', target: 'ghost' }, ctx)).toEqual({ ok: false, error: 'BAD_TARGET' });
-  });
-});
-
-describe('skills', () => {
-  const duo = () => startBattle(1, [unit('a', 'ally', { stats: { spd: 20 }, skills: ['big', 'all', 'burn', 'heal', 'shield', 'stun', 'slow', 'water'] }), unit('e', 'enemy', { stats: { spd: 1 } }), unit('f', 'enemy', { stats: { spd: 1 } })], ctx).state;
-
-  it('costs energy and refuses when short', () => {
-    const s = duo();
-    const r = act(s, { kind: 'skill', skillId: 'big', target: 'e' }, ctx);
-    if (!r.ok) throw new Error(r.error);
-    expect(r.state.combatants[0]!.energy).toBe(2); // 3 at the start, +2 when its turn began, -3
-    s.combatants[0]!.energy = 1;
-    expect(act(s, { kind: 'skill', skillId: 'all' }, ctx)).toEqual({ ok: false, error: 'NOT_ENOUGH_ENERGY' });
-  });
-
-  it('a skill on cooldown is refused until its turns pass', () => {
-    let s = duo();
-    s.combatants[0]!.energy = 10;
-    const r = act(s, { kind: 'skill', skillId: 'big', target: 'e' }, ctx);
+/** The enemies play (their intents) until it is an ally's turn again. */
+function foes(state: BattleState, events: unknown[] = []): BattleState {
+  let s = state;
+  while (!s.outcome && current(s)?.side === 'enemy') {
+    const r = act(s, actionFor(s, ctx)!, ctx);
     if (!r.ok) throw new Error(r.error);
     s = r.state;
-    s.combatants[0]!.energy = 10;
-    s = (act(s, { kind: 'attack', target: 'a' }, ctx) as { ok: true; state: typeof s }).state;
-    s = (act(s, { kind: 'attack', target: 'a' }, ctx) as { ok: true; state: typeof s }).state;
-    expect(current(s)!.id).toBe('a');
-    expect(act(s, { kind: 'skill', skillId: 'big', target: 'e' }, ctx)).toEqual({ ok: false, error: 'ON_COOLDOWN' });
-  });
+    events.push(...r.events);
+  }
+  return s;
+}
 
-  it('an all-enemies skill hits every enemy; a skill the actor does not know is refused', () => {
-    const s = duo();
-    const r = act(s, { kind: 'skill', skillId: 'all' }, ctx);
+/** The player does `actions` in turn; the enemies answer after each. */
+function play(state: BattleState, ...actions: Parameters<typeof act>[1][]) {
+  const events: Parameters<typeof expect>[0][] = [];
+  let s = foes(state, events);
+  for (const a of actions) {
+    const r = act(s, a, ctx);
     if (!r.ok) throw new Error(r.error);
-    expect(r.state.combatants.filter((c) => c.side === 'enemy').every((c) => c.hp < 100)).toBe(true);
-    expect(act(s, { kind: 'skill', skillId: 'nope', target: 'e' }, ctx)).toEqual({ ok: false, error: 'SKILL_UNAVAILABLE' });
-  });
+    events.push(...r.events);
+    s = foes(r.state, events);
+  }
+  return { state: s, events };
+}
 
-  it('burn hurts at the start of the victim turn and wears off; stun skips a turn', () => {
-    let s = duo();
-    const burned = act(s, { kind: 'skill', skillId: 'burn', target: 'e' }, ctx);
-    if (!burned.ok) throw new Error(burned.error);
-    s = burned.state;
-    expect(s.combatants.find((c) => c.id === 'e')!.statuses.map((x) => x.id)).toContain('burn');
-    // the enemy turn begins: burn damage 10% of 100 before it acts
-    expect(burned.events.some((e) => e.type === 'burn' && e.target === 'e')).toBe(true);
-    const stunned = act(duo(), { kind: 'skill', skillId: 'stun', target: 'e' }, ctx);
-    if (!stunned.ok) throw new Error(stunned.error);
-    expect(stunned.events.some((e) => e.type === 'skip' && e.actor === 'e')).toBe(true);
-  });
+const of = (s: BattleState, id: string) => s.combatants.find((c) => c.id === id)!;
 
-  it('heals up to max HP; a shield absorbs damage before HP', () => {
-    const s0 = duo();
-    s0.combatants[0]!.hp = 20;
-    const healed = act(s0, { kind: 'skill', skillId: 'heal', target: 'a' }, ctx);
-    if (!healed.ok) throw new Error(healed.error);
-    expect(healed.state.combatants[0]!.hp).toBe(70);
-    const guarded = act(duo(), { kind: 'skill', skillId: 'shield' }, ctx);
-    if (!guarded.ok) throw new Error(guarded.error);
-    const me = guarded.state.combatants[0]!;
-    expect(me.statuses.find((x) => x.id === 'shield')!.amount).toBe(50);
-    // enemies hit the shielded ally: HP unchanged until 50 are absorbed
-    expect(me.hp).toBe(100);
+describe('element chart (§9)', () => {
+  const target = (element: 'FIRE' | 'WATER' | 'EARTH' | 'VOID', element2: 'WATER' | null = null) => ({ element, element2, mods: { elementOverrides: {} } as never });
+  it('reads strong, weak, resist and neutral from data', () => {
+    expect(elementMultiplier(ctx, 'WATER', target('FIRE'))).toBe(1.5);
+    expect(elementMultiplier(ctx, 'FIRE', target('WATER'))).toBe(0.75);
+    expect(elementMultiplier(ctx, 'LIGHTNING', target('EARTH'))).toBe(0.5);
+    expect(elementMultiplier(ctx, 'VOID', target('FIRE'))).toBe(1);
   });
-
-  it('slow lowers the speed used for the next round order', () => {
-    const c = unit('x', 'enemy', { stats: { spd: 10 } });
-    const s = startBattle(1, [unit('a', 'ally', { stats: { spd: 30 }, skills: ['slow'] }), c], ctx).state;
-    const r = act(s, { kind: 'skill', skillId: 'slow', target: 'x' }, ctx);
-    if (!r.ok) throw new Error(r.error);
-    expect(effectiveSpeed(r.state.combatants[1]!, rules)).toBe(5);
+  it('multiplies both elements of a dual-element target', () => {
+    expect(elementMultiplier(ctx, 'LIGHTNING', target('EARTH', 'WATER'))).toBe(0.75);
+  });
+  it('honours a forced interaction (a boss immune to an element)', () => {
+    expect(elementMultiplier(ctx, 'WATER', { element: 'FIRE', element2: null, mods: { elementOverrides: { WATER: 'IMMUNE' } } as never })).toBe(0);
   });
 });
 
-describe('items', () => {
-  it('a tonic heals one ally, a rally buffs everyone', () => {
-    const s0 = startBattle(1, [unit('a', 'ally', { stats: { spd: 20 } }), unit('b', 'ally'), unit('e', 'enemy')], ctx).state;
-    s0.combatants[1]!.hp = 10;
-    const tonic = act(s0, { kind: 'item', itemId: 'tonic', target: 'b' }, ctx);
-    if (!tonic.ok) throw new Error(tonic.error);
-    expect(tonic.state.combatants[1]!.hp).toBe(60);
-    const rally = act(s0, { kind: 'item', itemId: 'rally' }, ctx);
-    if (!rally.ok) throw new Error(rally.error);
-    expect(rally.state.combatants.filter((c) => c.side === 'ally').every((c) => c.statuses.some((x) => x.id === 'atkUp'))).toBe(true);
-    expect(act(s0, { kind: 'item', itemId: 'bogus' }, ctx)).toEqual({ ok: false, error: 'UNKNOWN_ITEM' });
+describe('turns and damage', () => {
+  it('the fastest acts first; a tie goes to the player side', () => {
+    const fast = startBattle(1, [unit('a', 'ally', { stats: { spd: 5 } }), unit('e', 'enemy', { stats: { spd: 9 } })], ctx).state;
+    expect(current(fast)?.id).toBe('e');
+    const tie = startBattle(1, [unit('e', 'enemy'), unit('a', 'ally')], ctx).state;
+    expect(current(tie)?.id).toBe('a');
+  });
+
+  it('a basic attack hits for atk × K/(K+def) and gives MP back', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { mp: 50 }), unit('e', 'enemy', { stats: { def: 30, spd: 1 } })], ctx);
+    const r = play(state, { kind: 'attack', target: 'e' });
+    expect(of(r.state, 'e').hp).toBe(90);
+    expect(of(r.state, 'a').mp).toBeGreaterThan(50);
+  });
+
+  it('a magical skill uses MATK against MDEF and the element chart', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { skills: slots('self'), element: 'WATER', stats: { matk: 40, atk: 1 } }), unit('e', 'enemy', { element: 'FIRE', stats: { spd: 1, mdef: 30 } })], ctx);
+    const r = play(state, { kind: 'skill', skillId: 'self', target: 'e' });
+    expect(of(r.state, 'e').hp).toBe(100 - 30); // 40 × 1 × 30/60 × 1.5
+  });
+
+  it('skills cost MP, have cooldowns and grow with their level', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { skills: [{ id: 'big', level: 3 }] }), unit('e', 'enemy', { stats: { hp: 1000, spd: 1 } })], ctx);
+    const r = play(state, { kind: 'skill', skillId: 'big', target: 'e' });
+    expect(of(r.state, 'a').mp).toBe(100 - 20 + 10); // 30 − 2×5, then +10% at its next turn
+    expect(of(r.state, 'e').hp).toBe(1000 - 20 * 3 * 2); // power 3 × (1 + 0.5 × 2)
+    expect(canAct(play(r.state, { kind: 'guard' }).state, { kind: 'skill', skillId: 'big', target: 'e' }, ctx)).toBe('ON_COOLDOWN');
+  });
+
+  it('refuses a skill without enough MP', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { skills: slots('big'), mp: 5 }), unit('e', 'enemy', { stats: { spd: 1 } })], ctx);
+    expect(act(state, { kind: 'skill', skillId: 'big', target: 'e' }, ctx)).toEqual({ ok: false, error: 'NOT_ENOUGH_MP' });
+  });
+
+  it('can miss: hit chance = accuracy × ACC × (1 − EVA)', () => {
+    const { state } = startBattle(3, [unit('a', 'ally', { stats: { acc: 5 } }), unit('e', 'enemy', { stats: { spd: 1, eva: 90 } })], ctx);
+    const r = play(state, { kind: 'attack', target: 'e' });
+    expect(r.events.some((e) => e.type === 'miss')).toBe(true);
+    expect(of(r.state, 'e').hp).toBe(100);
+  });
+
+  it('Defend halves the damage until its next turn and gives MP', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { mp: 0 }), unit('e', 'enemy', { stats: { spd: 1 } })], ctx);
+    const r = play(state, { kind: 'guard' });
+    expect(of(r.state, 'a').hp).toBe(90); // the enemy's attack: 20 → 10
+    expect(of(r.state, 'a').mp).toBeGreaterThanOrEqual(20);
   });
 });
 
-describe('determinism', () => {
-  const squad = [
-    unit('a', 'ally', { element: 'FIRE', stats: { spd: 12, crit: 30, atk: 24 }, skills: ['big', 'all', 'burn'] }),
-    unit('b', 'ally', { element: 'WATER', stats: { spd: 9 }, skills: ['heal', 'water'] }),
-    unit('e1', 'enemy', { element: 'WIND', stats: { hp: 200, spd: 11 }, skills: ['slow', 'big'] }),
-    unit('e2', 'enemy', { element: 'EARTH', stats: { hp: 200, spd: 8 }, skills: ['shield'] }),
-  ];
-
-  it('the same seed gives the same battle; a battle saved and loaded halfway ends the same', () => {
-    const whole = autoPlay(startBattle(7, squad, ctx).state, ctx);
-    expect(whole.outcome).not.toBeNull();
-    expect(autoPlay(startBattle(7, squad, ctx).state, ctx)).toEqual(whole);
-    let half = startBattle(7, squad, ctx).state;
-    for (let i = 0; i < 5 && !half.outcome; i += 1) half = (act(half, chooseAction(half, ctx)!, ctx) as { ok: true; state: typeof half }).state;
-    const reloaded = JSON.parse(JSON.stringify(half)) as typeof half;
-    expect(autoPlay(reloaded, ctx)).toEqual(whole);
+describe('statuses (§10)', () => {
+  it('poison stacks and ticks at the start of the bearer turn', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { stats: { atk: 0, matk: 0 } }), unit('e', 'enemy', { stats: { spd: 1, atk: 0, matk: 0 } })], { ...ctx });
+    const s = structuredClone(state);
+    of(s, 'e').statuses.push({ id: 'poison', turns: 3, amount: 0, stacks: 2, source: 'NATURE' });
+    const r = play(s, { kind: 'guard' });
+    expect(r.events).toContainEqual({ type: 'tick', target: 'e', status: 'poison', amount: 20 });
   });
 
-  it('different seeds differ', () => {
-    const a = autoPlay(startBattle(1, squad, ctx).state, ctx);
-    const b = autoPlay(startBattle(2, squad, { ...ctx, rules: { ...rules, variance: 0.3 } }).state, { ...ctx, rules: { ...rules, variance: 0.3 } });
-    expect(JSON.stringify(a)).not.toBe(JSON.stringify(b));
+  it('stun skips one turn, then the target is immune for a turn', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { skills: slots('stun') }), unit('e', 'enemy', { stats: { spd: 1, hp: 1000 } })], ctx);
+    const r = play(state, { kind: 'skill', skillId: 'stun', target: 'e' });
+    expect(r.events).toContainEqual({ type: 'skip', actor: 'e', reason: 'stun' });
+    const again = play(r.state, { kind: 'skill', skillId: 'stun', target: 'e' });
+    expect(again.events).toContainEqual({ type: 'resist', target: 'e', status: 'stun' });
   });
 
-  it('always ends: a battle nobody can win is lost at the round limit', () => {
-    const wall = [unit('a', 'ally', { stats: { atk: 1, def: 1000 } }), unit('e', 'enemy', { stats: { atk: 1, def: 1000, hp: 100000 } })];
-    const end = autoPlay(startBattle(1, wall, { ...ctx, rules: { ...rules, maxRounds: 6 } }).state, { ...ctx, rules: { ...rules, maxRounds: 6 } }, 100);
-    expect(end.outcome).toBe('lose');
+  it('an Up and a Down of the same stat cancel out', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { skills: slots('rally', 'weaken') }), unit('e', 'enemy', { stats: { spd: 1, atk: 0, matk: 0 } })], ctx);
+    const r = play(state, { kind: 'skill', skillId: 'rally' });
+    expect(of(r.state, 'a').statuses.map((s) => s.id)).toContain('atkUp');
+    expect(stat(of(r.state, 'a'), 'atk', ctx)).toBe(30);
   });
 
-  it('the AI uses its skills and heals the hurt', () => {
-    const s = startBattle(3, [unit('b', 'ally', { stats: { spd: 20 }, skills: ['heal'] }), unit('c', 'ally', { stats: { hp: 100 }, hp: 10 }), unit('e', 'enemy', { stats: { spd: 1 } })], ctx).state;
-    const choice = chooseAction(s, ctx);
-    expect(choice).toEqual({ kind: 'skill', skillId: 'heal', target: 'c' });
-    expect(usableSkills(current(s)!, ctx).map((k) => k.id)).toEqual(['heal']);
-  });
-});
-
-describe('stats, levels, skills by level', () => {
-  const sr = { levelGrowth: 0.1, bondPerHeart: 0.03 };
-  const base = { hp: 100, atk: 20, def: 10, spd: 10, crit: 5 };
-
-  it('grows with level, rarity and Bond; equipment adds flat; speed grows at half rate', () => {
-    expect(deriveStats(base, { level: 1, rarityMult: 1, hearts: 0 }, sr)).toEqual(base);
-    expect(deriveStats(base, { level: 11, rarityMult: 1, hearts: 0 }, sr)).toEqual({ hp: 200, atk: 40, def: 20, spd: 15, crit: 5 });
-    expect(deriveStats(base, { level: 1, rarityMult: 1.5, hearts: 0 }, sr).hp).toBe(150);
-    expect(deriveStats(base, { level: 1, rarityMult: 1, hearts: 5 }, sr).hp).toBe(115);
-    expect(deriveStats(base, { level: 1, rarityMult: 1, hearts: 0 }, sr, { atk: 4, crit: 3 })).toMatchObject({ atk: 24, crit: 8 });
+  it('disable blocks skills but not the basic attack', () => {
+    const { state } = startBattle(1, [unit('e', 'enemy', { skills: slots('mute'), stats: { spd: 50 } }), unit('a', 'ally', { skills: slots('bolt') })], ctx);
+    const s = structuredClone(state);
+    of(s, 'a').statuses.push({ id: 'disable', turns: 2, amount: 0, stacks: 1, source: null });
+    s.order = ['a'];
+    expect(canAct(s, { kind: 'skill', skillId: 'bolt', target: 'e' }, ctx)).toBe('SKILL_DISABLED');
+    expect(canAct(s, { kind: 'attack', target: 'e' }, ctx)).toBeNull();
   });
 
-  it('experience levels up, carries the rest, and stops at the cap', () => {
-    const lr = { maxLevel: 3, expBase: 10, expExponent: 1 };
-    expect(expToNext(1, lr)).toBe(10);
-    expect(expToNext(3, lr)).toBe(Number.POSITIVE_INFINITY);
-    expect(addExp(1, 0, 25, lr)).toEqual({ level: 2, exp: 15, levelsGained: 1 }); // 10 for level 2, 20 for level 3
-    expect(addExp(1, 0, 500, lr)).toEqual({ level: 3, exp: 0, levelsGained: 2 });
+  it('Doom counts down and knocks out; a cleanse that lifts Doom saves the target', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { stats: { atk: 0 } }), unit('b', 'ally', { stats: { atk: 0 }, skills: slots('purify') }), unit('e', 'enemy', { stats: { spd: 1, atk: 0, matk: 0 } })], ctx);
+    const s = structuredClone(state);
+    of(s, 'a').statuses.push({ id: 'doom', turns: 1, amount: 0, stacks: 1, source: null });
+    const r = play(s, { kind: 'guard' }, { kind: 'guard' });
+    expect(r.events).toContainEqual({ type: 'defeat', target: 'a' });
+    const saved = structuredClone(state);
+    of(saved, 'a').statuses.push({ id: 'doom', turns: 2, amount: 0, stacks: 1, source: null });
+    const r2 = play(saved, { kind: 'guard' }, { kind: 'skill', skillId: 'purify', target: 'a' });
+    expect(of(r2.state, 'a').statuses.some((x) => x.id === 'doom')).toBe(false);
   });
 
-  it('skills open at levels 1, 1, 10 and 20', () => {
-    const list = ['a', 'b', 'c', 'd'];
-    expect(skillsAtLevel(list, [1, 1, 10, 20], 1)).toEqual(['a', 'b']);
-    expect(skillsAtLevel(list, [1, 1, 10, 20], 10)).toEqual(['a', 'b', 'c']);
-    expect(skillsAtLevel(list, [1, 1, 10, 20], 20)).toEqual(list);
+  it('Auto-Revive brings a knocked-out fighter back once', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { stats: { hp: 10, spd: 1 } }), unit('e', 'enemy', { stats: { atk: 50 } })], ctx);
+    const s = structuredClone(state);
+    of(s, 'a').statuses.push({ id: 'autoRevive', turns: 5, amount: 0, stacks: 1, source: null });
+    const r = act(s, actionFor(s, ctx)!, ctx);
+    expect(r.ok && r.events.some((e) => e.type === 'revive')).toBe(true);
   });
 });
 
-describe('equipment', () => {
-  const defs: Record<string, EquipmentDef> = {
-    sword: { id: 'sword', slot: 'weapon', rarity: 'COMMON', stats: { atk: 4 } },
-    axe: { id: 'axe', slot: 'weapon', rarity: 'RARE', stats: { atk: 10, crit: 2 } },
-    vest: { id: 'vest', slot: 'armor', rarity: 'COMMON', stats: { hp: 20 } },
-  };
+describe('reactions (§11)', () => {
+  it('Wet + Lightning shocks for more damage and uses the Wet up', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { skills: slots('wet', 'bolt'), stats: { spd: 99 } }), unit('e', 'enemy', { stats: { hp: 1000, spd: 1, atk: 0, matk: 0 } })], ctx);
+    const r = play(state, { kind: 'skill', skillId: 'wet', target: 'e' }, { kind: 'skill', skillId: 'bolt', target: 'e' });
+    expect(r.events).toContainEqual({ type: 'reaction', target: 'e', reaction: 'shock' });
+    expect(of(r.state, 'e').statuses.some((s) => s.id === 'wet')).toBe(false);
+  });
 
-  it('adds up the stats of what is worn; putting on replaces the slot and returns the old piece', () => {
-    let l = equipPiece({}, defs.sword!);
-    expect(l.replaced).toBeNull();
-    l = equipPiece(l.loadout, defs.vest!);
-    expect(loadoutBonus(l.loadout, defs)).toEqual({ hp: 20, atk: 4, def: 0, spd: 0, crit: 0 });
-    const swap = equipPiece(l.loadout, defs.axe!);
-    expect(swap.replaced).toBe('sword');
-    expect(loadoutBonus(swap.loadout, defs).atk).toBe(10);
-    const off = unequipSlot(swap.loadout, 'weapon');
-    expect(off.removed).toBe('axe');
-    expect(off.loadout).toEqual({ armor: 'vest' });
-    expect(unequipSlot({}, 'charm').removed).toBeNull();
+  it('a physical hit shatters Freeze for more damage and ends it', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { skills: slots('freeze') }), unit('e', 'enemy', { stats: { hp: 1000, spd: 1, atk: 0, matk: 0 } })], ctx);
+    const frozen = play(state, { kind: 'skill', skillId: 'freeze', target: 'e' });
+    expect(of(frozen.state, 'e').statuses.some((s) => s.id === 'freeze')).toBe(true);
+    const r = play(frozen.state, { kind: 'attack', target: 'e' });
+    expect(r.events).toContainEqual({ type: 'reaction', target: 'e', reaction: 'shatter' });
+    expect(of(r.state, 'e').statuses.some((s) => s.id === 'freeze')).toBe(false);
+  });
+});
+
+describe('Rage and the Ultimate (§8.3, §6.3)', () => {
+  it('Rage grows by the share of max HP lost, never past its max', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { rageMax: 100, stats: { spd: 1 } }), unit('e', 'enemy', { stats: { atk: 30 } })], ctx);
+    const hit = play(state).state;
+    expect(of(hit, 'a').rage).toBe(30);
+    const s = structuredClone(hit);
+    of(s, 'a').rage = 95;
+    const r = play(s, { kind: 'guard' });
+    expect(of(r.state, 'a').rage).toBe(100);
+  });
+
+  it('the Ultimate needs full Rage, resets it and is once per battle', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { rageMax: 100, rage: 100, ultimate: 'ult' }), unit('e', 'enemy', { stats: { hp: 1000, spd: 1, atk: 0, matk: 0 } })], ctx);
+    const r = play(state, { kind: 'ultimate' });
+    expect(of(r.state, 'a').rage).toBe(0);
+    expect(of(r.state, 'a').statuses.some((s) => s.id === 'shield')).toBe(true);
+    const s = structuredClone(r.state);
+    of(s, 'a').rage = 100;
+    expect(canAct(s, { kind: 'ultimate' }, ctx)).toBe('ULTIMATE_NOT_READY');
+  });
+});
+
+describe('Taunt, intents, AI, determinism', () => {
+  it('a taunting foe pulls single-target attacks', () => {
+    const { state } = startBattle(1, [unit('a', 'ally'), unit('t', 'enemy', { stats: { spd: 1, hp: 1000 } }), unit('e', 'enemy', { stats: { spd: 1 } })], ctx);
+    const s = structuredClone(state);
+    of(s, 't').statuses.push({ id: 'taunt', turns: 2, amount: 0, stacks: 1, source: null });
+    const r = play(s, { kind: 'attack', target: 'e' });
+    expect(of(r.state, 'e').hp).toBe(100);
+    expect(of(r.state, 't').hp).toBeLessThan(1000);
+  });
+
+  it('enemies announce an intent at the start of a round', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { stats: { spd: 50 } }), unit('e', 'enemy', { skills: slots('burn') })], ctx);
+    expect(of(state, 'e').intent).not.toBeNull();
+  });
+
+  it('a saved battle plays on to the same result', () => {
+    const team = [unit('a', 'ally', { skills: slots('burn', 'stun', 'heal'), rageMax: 100, ultimate: 'ult' }), unit('b', 'ally', { skills: slots('wet', 'bolt') }), unit('e', 'enemy', { skills: slots('all'), stats: { hp: 400 } }), unit('f', 'enemy', { skills: slots('doom') })];
+    const a = autoPlay(startBattle(42, team, ctx).state, ctx);
+    const b = autoPlay(JSON.parse(JSON.stringify(startBattle(42, team, ctx).state)), ctx);
+    expect(a).toEqual(b);
+    expect(a.outcome).not.toBeNull();
+  });
+
+  it('the AI heals a hurt friend', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { skills: slots('heal'), stats: { atk: 1 } }), unit('b', 'ally', { hp: 10, stats: { spd: 1 } }), unit('e', 'enemy', { stats: { spd: 1 } })], ctx);
+    expect(chooseAction(state, ctx)).toEqual({ kind: 'skill', skillId: 'heal', target: 'b' });
+  });
+});
+
+describe('stats and levels', () => {
+  it('grows with level, rarity and Bond; flat stats stay; speed and MP grow at half rate', () => {
+    const base = { ...zeroStats(), hp: 100, mp: 40, atk: 10, spd: 10, acc: 100, eva: 5, crit: 5 };
+    const s = deriveStats(base, { level: 11, rarityMult: 1, hearts: 0 }, { levelGrowth: 0.1, bondPerHeart: 0.05 });
+    expect(s.hp).toBe(200);
+    expect(s.spd).toBe(15);
+    expect(s.mp).toBe(60);
+    expect(s.acc).toBe(100);
+    expect(addShares(s, { hp: 0.15 }, { spd: 2 }).hp).toBe(230);
+  });
+  it('experience carries over levels and stops at the top', () => {
+    const r = { maxLevel: 3, expBase: 10, expExponent: 1 };
+    expect(expToNext(1, r)).toBe(10);
+    expect(addExp(1, 0, 35, r)).toEqual({ level: 3, exp: 0, levelsGained: 2 });
+  });
+});
+
+describe('equipment (§13)', () => {
+  const sword: EquipmentDef = { id: 'sword', slot: 'weapon', rarity: 'COMMON', levelReq: 1, stats: { atk: 5 }, elementAffinity: { element: 'FIRE', damagePct: 0.15, resistPct: 0 }, statusAffinity: { status: 'burn', chancePct: 0.05 } };
+  const vest: EquipmentDef = { id: 'vest', slot: 'armor', rarity: 'COMMON', levelReq: 1, stats: { def: 7, mdef: 3 }, elementResist: { WATER: 0.2 } };
+  it('adds stats and affinities; putting on swaps the old piece', () => {
+    const defs = { sword, vest };
+    expect(loadoutBonus({ weapon: 'sword', armor: 'vest' }, defs)).toMatchObject({ atk: 5, def: 7, mdef: 3 });
+    expect(loadoutMods({ weapon: 'sword', armor: 'vest' }, defs)).toMatchObject({ elementDamage: { FIRE: 0.15 }, statusChance: { burn: 0.05 }, elementResist: { WATER: 0.2 } });
+    expect(equipPiece({ weapon: 'old' }, sword)).toEqual({ loadout: { weapon: 'sword' }, replaced: 'old' });
+    expect(unequipSlot({ weapon: 'sword' }, 'weapon')).toEqual({ loadout: {}, removed: 'sword' });
+  });
+  it('the element damage bonus is capped', () => {
+    const team = [unit('a', 'ally', { element: 'FIRE', mods: { elementDamage: { FIRE: 5 } } }), unit('e', 'enemy', { stats: { spd: 1 } })];
+    const r = play(startBattle(1, team, ctx).state, { kind: 'attack', target: 'e' });
+    expect(of(r.state, 'e').hp).toBe(100 - 28); // 20 × (1 + 0.4)
+  });
+  it('an item heals from the bag effects', () => {
+    const { state } = startBattle(1, [unit('a', 'ally', { hp: 20 }), unit('e', 'enemy', { stats: { spd: 1, atk: 0, matk: 0 } })], ctx);
+    const r = act(state, { kind: 'item', itemId: 'tonic', target: 'a' }, ctx);
+    expect(r.ok && of(r.state, 'a').hp).toBe(70);
   });
 });

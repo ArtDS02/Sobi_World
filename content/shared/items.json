@@ -1065,6 +1065,96 @@
       "hungerRestore": 0,
       "curesSickness": false,
       "mutationBoost": 10
+    },
+    {
+      "id": "item_equip_fire_staff",
+      "category": "EQUIPMENT",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 100,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_tide_rod",
+      "category": "EQUIPMENT",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 100,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_thunder_horn",
+      "category": "EQUIPMENT",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 100,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_nature_ring",
+      "category": "EQUIPMENT",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 40,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_stone_shield",
+      "category": "EQUIPMENT",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 100,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_bronze_gauntlet",
+      "category": "EQUIPMENT",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 100,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_moon_veil",
+      "category": "EQUIPMENT",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 110,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_lantern_charm",
+      "category": "EQUIPMENT",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 110,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_equip_void_pearl",
+      "category": "EQUIPMENT",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 150,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_skill_scroll",
+      "category": "MATERIAL",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 80,
+      "hungerRestore": 0,
+      "curesSickness": false
     }
   ]
 }

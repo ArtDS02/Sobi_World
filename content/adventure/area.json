@@ -3,7 +3,7 @@
   "name": { "vi": "Sobi Adventure" },
   "movement": "character",
   "portalInPlaza": "portal_gate",
-  "unlock": { "worldLevel": 8, "worldDevelopment": 20 },
+  "unlock": { "worldLevel": 8, "worldDevelopment": 16 },
   "buildings": ["hub"],
   "produces": [
     "item_forest_herb",
@@ -23,7 +23,17 @@
     "item_pig_egg_wild",
     "item_equip_rune_blade",
     "item_equip_golem_plate",
-    "item_equip_rune_charm"
+    "item_equip_rune_charm",
+    "item_equip_fire_staff",
+    "item_equip_tide_rod",
+    "item_equip_thunder_horn",
+    "item_equip_nature_ring",
+    "item_equip_stone_shield",
+    "item_equip_bronze_gauntlet",
+    "item_equip_moon_veil",
+    "item_equip_lantern_charm",
+    "item_equip_void_pearl",
+    "item_skill_scroll"
   ],
   "consumes": [
     "item_potion_healing",

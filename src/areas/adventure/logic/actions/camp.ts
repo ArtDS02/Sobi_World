@@ -1,4 +1,5 @@
-// What happens between runs: the starter pig, the equipment of the fighters, the loot waiting for room in the bag.
+// What happens at the camp, between trips: the starter pig, the equipment of the fighters (its level requirement), the loot waiting for
+// room in the bag, reading a finished trip's summary.
 import type { CreatureGift, GiftResult } from '../../../../core/area-registry/registry';
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
@@ -12,8 +13,8 @@ import { giveSome, put, runAdventure, take, type AdventureResult } from './kit';
 export const starterGift = (): CreatureGift => ({ kind: 'creature', area: 'sobi_farm', species: AB.starter.breed, purpose: 'ADVENTURE' });
 
 /**
- * The knight's quest (spec §8.5, GĐ10 step 7): a starter pig for the Adventure, with a few pieces of equipment. `give` is the
- * world's way to hand a creature to the Area that keeps it (the app passes the registry's); an Area never reaches another.
+ * The knight's quest (spec §8.5, GĐ10 step 7): a starter pig for the Adventure, with a few pieces of equipment. `give` is the world's
+ * way to hand a creature to the Area that keeps it (the app passes the registry's); an Area never reaches another.
  */
 export function claimStarter(world: WorldSave, args: { give: (w: WorldSave, gift: CreatureGift, ctx: ActionContext) => GiftResult }, ctx: ActionContext): AdventureResult {
   return runAdventure(world, ctx, (w, a) => {
@@ -28,15 +29,19 @@ export function claimStarter(world: WorldSave, args: { give: (w: WorldSave, gift
   });
 }
 
-/** Puts a piece of the bag on a fighter (the piece it replaces goes back to the bag). Not during a run. */
+/** The fighter record of `key` (made the first time it is looked at). */
+export const fighterOf = (a: { fighters: Record<string, Fighter> }, key: string, now: number): Fighter => a.fighters[key] ?? newFighter(now);
+
+/** Puts a piece of the bag on a fighter (the piece it replaces goes back to the bag). Not during a trip; its level must be reached. */
 export function equipItem(world: WorldSave, args: { key: string; itemId: string }, ctx: ActionContext): AdventureResult {
   return runAdventure(world, ctx, (w, a) => {
     if (a.run) return { ok: false, error: 'RUN_ACTIVE' };
     const piece = EQUIPMENT_DEFS[args.itemId];
     if (!piece) return { ok: false, error: 'NOT_EQUIPMENT' };
+    const f = fighterOf(a, args.key, ctx.now);
+    if (f.level < piece.levelReq) return { ok: false, error: 'LEVEL_TOO_LOW' };
     const taken = take(w, args.itemId, 1);
     if (!taken.ok) return taken;
-    const f: Fighter = a.fighters[args.key] ?? newFighter(ctx.now);
     const put1 = equipPiece(f.loadout, piece);
     const back = put1.replaced ? giveSome(taken.world, { [put1.replaced]: 1 }) : { world: taken.world };
     return {
@@ -47,7 +52,7 @@ export function equipItem(world: WorldSave, args: { key: string; itemId: string 
   });
 }
 
-/** Takes the piece of `slot` off a fighter and into the bag. Not during a run. */
+/** Takes the piece of `slot` off a fighter and into the bag. Not during a trip. */
 export function unequipSlotOf(world: WorldSave, args: { key: string; slot: EquipmentSlot }, ctx: ActionContext): AdventureResult {
   return runAdventure(world, ctx, (w, a) => {
     if (a.run) return { ok: false, error: 'RUN_ACTIVE' };
@@ -72,6 +77,15 @@ export function collectLoot(world: WorldSave, ctx: ActionContext): AdventureResu
     if (Object.keys(r.given).length === 0) return { ok: false, error: 'INVENTORY_FULL' };
     const left = Object.values(r.left).reduce((n, v) => n + v, 0);
     return { ok: true, world: put(r.world, { ...a, pending: r.left }), events: [{ type: 'ADVENTURE_LOOT_COLLECTED', items: r.given, left }] };
+  });
+}
+
+/** The summary of a finished trip is read; the trip is cleared. */
+export function closeRun(world: WorldSave, ctx: ActionContext): AdventureResult {
+  return runAdventure(world, ctx, (w, a) => {
+    if (!a.run) return { ok: false, error: 'NO_RUN' };
+    if (a.run.phase !== 'done') return { ok: false, error: 'WRONG_PHASE' };
+    return { ok: true, world: put(w, { ...a, run: null }), events: [{ type: 'ADVENTURE_RUN_CLOSED' }] };
   });
 }
 

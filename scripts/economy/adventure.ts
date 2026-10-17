@@ -4,7 +4,8 @@
 // coins and materials on technologies in a fixed order. It never uses potions in a battle, so the numbers it prints are a floor.
 // Imports only src/.
 import { claimStarter, collectLoot, equipItem } from '../../src/areas/adventure/logic/actions/camp';
-import { battleAct, closeRun, enterNode, startRun } from '../../src/areas/adventure/logic/actions/run';
+import { closeRun, startRun } from '../../src/areas/adventure/logic/actions/run';
+import { spendSp, walkTrip } from './adventureTrip';
 import { EQUIPMENT_DEFS, PREP_ITEMS, ZONE_LIST } from '../../src/areas/adventure/logic/config/content';
 import { adventureOf, hasAdventure } from '../../src/areas/adventure/logic/save/lens';
 import { hatchEgg } from '../../src/areas/farm/logic/actions/hatchEgg';
@@ -109,14 +110,6 @@ function prepFor(b: Bot): string[] {
   return Object.keys(PREP_ITEMS).filter((id) => b.bag(id) > 0).slice(0, slots);
 }
 
-function playRun(b: Bot) {
-  for (let guard = 0; guard < 120; guard += 1) {
-    const run = adventureOf(b.world).run;
-    if (!run || run.phase === 'done') return;
-    if (!b.act('adventure', run.phase === 'battle' ? (w, c) => battleAct(w, { action: 'auto' }, c) : (w, c) => enterNode(w, c))) return;
-  }
-}
-
 function goOut(b: Bot) {
   const roster = AREAS.roster(b.world);
   for (let round = 0; round < 6; round += 1) {
@@ -142,7 +135,7 @@ function goOut(b: Bot) {
       if (started) break;
     }
     if (!started) return;
-    playRun(b);
+    walkTrip(b);
     const run = adventureOf(b.world).run;
     if (run?.result === 'win') {
       b.adv.wins += 1;
@@ -164,6 +157,7 @@ export function adventureRoutine(b: Bot) {
   if (!adventureOf(b.world).starterClaimed) b.act('adventure', (w, c) => claimStarter(w, { give: (x, g, cc) => AREAS.give(x, g, cc) }, c));
   b.act('adventure', (w, c) => collectLoot(w, c));
   raiseParty(b);
+  spendSp(b);
   buyTechs(b);
   kitchen(b);
   goOut(b);

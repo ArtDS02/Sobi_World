@@ -117,7 +117,8 @@ describe('asset registry (spec §11.4)', () => {
     const todo = ['prop_plaza_signpost', ...gardenArtIds(), ...aquariumArtIds(), ...cloudArtIds(), ...adventureArtIds(), ...plazaArtIds()];
     for (const row of [...m.buildings, ...m.props]) {
       if (!todo.includes(row.id)) expect(row.status, row.id).not.toBe('placeholder');
-      if (!row.id.startsWith('chr_')) expect(reg.url(row.id, row.asset ? 'asset' : 'full'), row.id).not.toBeNull();
+      // A row of states (the trough, a chest, a portal) answers for its first state.
+      if (!row.id.startsWith('chr_')) expect(reg.url(row.id, row.asset ? 'asset' : Object.keys(('states' in row ? row.states : undefined) ?? { full: '' })[0]!), row.id).not.toBeNull();
     }
     for (const id of ['prop_red_tree', 'prop_sunflower', 'prop_bush', 'prop_mushroom'])
       expect(FARM_LAYOUT.placements.some((p) => p.id === id), id).toBe(true);

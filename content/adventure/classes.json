@@ -1,0 +1,395 @@
+{
+  "classes": [
+    {
+      "id": "tanker",
+      "nameVi": "Hộ Vệ",
+      "descVi": "Chịu đòn, khiêu khích và khống chế. Máu và thủ cao, chậm.",
+      "stats": {
+        "hp": 140,
+        "mp": 40,
+        "atk": 16,
+        "def": 11,
+        "matk": 10,
+        "mdef": 10,
+        "spd": 7,
+        "acc": 100,
+        "eva": 3,
+        "crit": 4
+      }
+    },
+    {
+      "id": "striker",
+      "nameVi": "Chiến Binh",
+      "descVi": "Sát thương vật lý và chí mạng. Nhanh, công cao.",
+      "stats": {
+        "hp": 105,
+        "mp": 45,
+        "atk": 22,
+        "def": 6,
+        "matk": 8,
+        "mdef": 5,
+        "spd": 12,
+        "acc": 100,
+        "eva": 8,
+        "crit": 10
+      }
+    },
+    {
+      "id": "mage",
+      "nameVi": "Pháp Sư",
+      "descVi": "Sát thương phép theo nguyên tố, khống chế. Nhiều MP, máu thấp.",
+      "stats": {
+        "hp": 82,
+        "mp": 80,
+        "atk": 9,
+        "def": 4,
+        "matk": 22,
+        "mdef": 9,
+        "spd": 9,
+        "acc": 100,
+        "eva": 5,
+        "crit": 6
+      }
+    },
+    {
+      "id": "support",
+      "nameVi": "Hỗ Trợ",
+      "descVi": "Hồi máu, tăng sức và xóa trạng thái xấu.",
+      "stats": {
+        "hp": 95,
+        "mp": 70,
+        "atk": 10,
+        "def": 7,
+        "matk": 16,
+        "mdef": 10,
+        "spd": 10,
+        "acc": 100,
+        "eva": 5,
+        "crit": 5
+      }
+    }
+  ],
+  "trees": [
+    {
+      "classId": "tanker",
+      "nodes": [
+        {
+          "id": "node_tk_taunt",
+          "skill": "skill_cl_taunt",
+          "tier": 1,
+          "branch": "core",
+          "unlockCost": 0,
+          "upgradeCost": [1, 2, 3, 4],
+          "requires": [],
+          "starter": true
+        },
+        {
+          "id": "node_tk_hold_fast",
+          "skill": "skill_cl_hold_fast",
+          "tier": 1,
+          "branch": "core",
+          "unlockCost": 2,
+          "upgradeCost": [1, 2, 3, 4],
+          "requires": []
+        },
+        {
+          "id": "node_tk_shield_wall",
+          "skill": "skill_cl_shield_wall",
+          "tier": 2,
+          "branch": "left",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_tk_hold_fast", "level": 1 }]
+        },
+        {
+          "id": "node_tk_second_wind",
+          "skill": "skill_cl_second_wind",
+          "tier": 2,
+          "branch": "left",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_tk_hold_fast", "level": 1 }]
+        },
+        {
+          "id": "node_tk_armor_crush",
+          "skill": "skill_cl_armor_crush",
+          "tier": 2,
+          "branch": "right",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_tk_taunt", "level": 1 }]
+        },
+        {
+          "id": "node_tk_stomp",
+          "skill": "skill_cl_stomp",
+          "tier": 2,
+          "branch": "right",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_tk_taunt", "level": 1 }]
+        },
+        {
+          "id": "node_tk_fortress",
+          "skill": "skill_cl_fortress",
+          "tier": 3,
+          "branch": "left",
+          "unlockCost": 6,
+          "upgradeCost": [2, 3],
+          "requires": [{ "node": "node_tk_shield_wall", "level": 1 }, { "node": "node_tk_taunt", "level": 2 }]
+        },
+        {
+          "id": "node_tk_tremor",
+          "skill": "skill_cl_tremor",
+          "tier": 3,
+          "branch": "right",
+          "unlockCost": 6,
+          "upgradeCost": [2, 3],
+          "requires": [{ "node": "node_tk_stomp", "level": 1 }, { "node": "node_tk_armor_crush", "level": 1 }]
+        }
+      ]
+    },
+    {
+      "classId": "striker",
+      "nodes": [
+        {
+          "id": "node_st_power_strike",
+          "skill": "skill_cl_power_strike",
+          "tier": 1,
+          "branch": "core",
+          "unlockCost": 0,
+          "upgradeCost": [1, 2, 3, 4],
+          "requires": [],
+          "starter": true
+        },
+        {
+          "id": "node_st_aim",
+          "skill": "skill_cl_aim",
+          "tier": 1,
+          "branch": "core",
+          "unlockCost": 2,
+          "upgradeCost": [1, 2, 3, 4],
+          "requires": []
+        },
+        {
+          "id": "node_st_combo",
+          "skill": "skill_cl_combo",
+          "tier": 2,
+          "branch": "left",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_st_power_strike", "level": 1 }]
+        },
+        {
+          "id": "node_st_rend",
+          "skill": "skill_cl_rend",
+          "tier": 2,
+          "branch": "left",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_st_power_strike", "level": 1 }]
+        },
+        {
+          "id": "node_st_dash",
+          "skill": "skill_cl_dash",
+          "tier": 2,
+          "branch": "right",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_st_aim", "level": 1 }]
+        },
+        {
+          "id": "node_st_vital",
+          "skill": "skill_cl_vital",
+          "tier": 2,
+          "branch": "right",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_st_aim", "level": 1 }]
+        },
+        {
+          "id": "node_st_finisher",
+          "skill": "skill_cl_finisher",
+          "tier": 3,
+          "branch": "left",
+          "unlockCost": 6,
+          "upgradeCost": [2, 3],
+          "requires": [
+            { "node": "node_st_combo", "level": 1 },
+            { "node": "node_st_power_strike", "level": 2 }
+          ]
+        },
+        {
+          "id": "node_st_shadow_dance",
+          "skill": "skill_cl_shadow_dance",
+          "tier": 3,
+          "branch": "right",
+          "unlockCost": 6,
+          "upgradeCost": [2, 3],
+          "requires": [{ "node": "node_st_dash", "level": 1 }, { "node": "node_st_vital", "level": 1 }]
+        }
+      ]
+    },
+    {
+      "classId": "mage",
+      "nodes": [
+        {
+          "id": "node_mg_energy_orb",
+          "skill": "skill_cl_energy_orb",
+          "tier": 1,
+          "branch": "core",
+          "unlockCost": 0,
+          "upgradeCost": [1, 2, 3, 4],
+          "requires": [],
+          "starter": true
+        },
+        {
+          "id": "node_mg_focus",
+          "skill": "skill_cl_focus",
+          "tier": 1,
+          "branch": "core",
+          "unlockCost": 2,
+          "upgradeCost": [],
+          "requires": []
+        },
+        {
+          "id": "node_mg_elemental_rain",
+          "skill": "skill_cl_elemental_rain",
+          "tier": 2,
+          "branch": "left",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_mg_energy_orb", "level": 1 }]
+        },
+        {
+          "id": "node_mg_pierce",
+          "skill": "skill_cl_pierce",
+          "tier": 2,
+          "branch": "left",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_mg_energy_orb", "level": 1 }]
+        },
+        {
+          "id": "node_mg_freeze",
+          "skill": "skill_cl_freeze",
+          "tier": 2,
+          "branch": "right",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_mg_focus", "level": 1 }]
+        },
+        {
+          "id": "node_mg_seal",
+          "skill": "skill_cl_seal",
+          "tier": 2,
+          "branch": "right",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_mg_focus", "level": 1 }]
+        },
+        {
+          "id": "node_mg_meteor",
+          "skill": "skill_cl_meteor",
+          "tier": 3,
+          "branch": "left",
+          "unlockCost": 6,
+          "upgradeCost": [2, 3],
+          "requires": [
+            { "node": "node_mg_elemental_rain", "level": 1 },
+            { "node": "node_mg_energy_orb", "level": 2 }
+          ]
+        },
+        {
+          "id": "node_mg_spell_storm",
+          "skill": "skill_cl_spell_storm",
+          "tier": 3,
+          "branch": "right",
+          "unlockCost": 6,
+          "upgradeCost": [2, 3],
+          "requires": [{ "node": "node_mg_seal", "level": 1 }, { "node": "node_mg_pierce", "level": 1 }]
+        }
+      ]
+    },
+    {
+      "classId": "support",
+      "nodes": [
+        {
+          "id": "node_sp_mend",
+          "skill": "skill_cl_mend",
+          "tier": 1,
+          "branch": "core",
+          "unlockCost": 0,
+          "upgradeCost": [1, 2, 3, 4],
+          "requires": [],
+          "starter": true
+        },
+        {
+          "id": "node_sp_cheer",
+          "skill": "skill_cl_cheer",
+          "tier": 1,
+          "branch": "core",
+          "unlockCost": 2,
+          "upgradeCost": [1, 2, 3, 4],
+          "requires": []
+        },
+        {
+          "id": "node_sp_healing_rain",
+          "skill": "skill_cl_healing_rain",
+          "tier": 2,
+          "branch": "left",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_sp_mend", "level": 1 }]
+        },
+        {
+          "id": "node_sp_purify",
+          "skill": "skill_cl_purify",
+          "tier": 2,
+          "branch": "left",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_sp_mend", "level": 1 }]
+        },
+        {
+          "id": "node_sp_rally",
+          "skill": "skill_cl_rally",
+          "tier": 2,
+          "branch": "right",
+          "unlockCost": 4,
+          "upgradeCost": [1, 2, 3],
+          "requires": [{ "node": "node_sp_cheer", "level": 1 }]
+        },
+        {
+          "id": "node_sp_channel",
+          "skill": "skill_cl_channel",
+          "tier": 2,
+          "branch": "right",
+          "unlockCost": 4,
+          "upgradeCost": [],
+          "requires": [{ "node": "node_sp_cheer", "level": 1 }]
+        },
+        {
+          "id": "node_sp_undying",
+          "skill": "skill_cl_undying",
+          "tier": 3,
+          "branch": "left",
+          "unlockCost": 6,
+          "upgradeCost": [2, 3],
+          "requires": [
+            { "node": "node_sp_healing_rain", "level": 1 },
+            { "node": "node_sp_purify", "level": 1 }
+          ]
+        },
+        {
+          "id": "node_sp_aura",
+          "skill": "skill_cl_aura",
+          "tier": 3,
+          "branch": "right",
+          "unlockCost": 6,
+          "upgradeCost": [2, 3],
+          "requires": [{ "node": "node_sp_rally", "level": 1 }, { "node": "node_sp_channel", "level": 1 }]
+        }
+      ]
+    }
+  ]
+}

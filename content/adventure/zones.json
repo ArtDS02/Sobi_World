@@ -3,156 +3,82 @@
     {
       "id": "zone_forest",
       "nameVi": "Rừng Thì Thầm",
-      "descVi": "Khu rừng đầu tiên: năm điểm dừng và một trùm cuối. Phù hợp đội cấp 1–10.",
+      "descVi": "Khu rừng đầu tiên: ba khu, đường chính qua cây cầu, lối phụ sau gai và dây leo. Trùm Cổ Thụ Giận Dữ ở Lõi Rừng. Phù hợp đội cấp 1–10.",
       "fromWorldLevel": 8,
       "backdrop": "bg_adventure_forest",
-      "nodes": [
-        {
-          "type": "battle",
-          "pool": [
-            { "weight": 3, "enemies": ["enemy_mossling"] },
-            { "weight": 2, "enemies": ["enemy_dew_frog"] },
-            { "weight": 2, "enemies": ["enemy_mossling", "enemy_mossling"] },
-            { "weight": 1, "enemies": ["enemy_thorn_sprout", "enemy_gale_sparrow"] }
-          ]
-        },
-        { "type": "chest", "table": "chest_forest" },
-        {
-          "type": "battle",
-          "pool": [
-            { "weight": 2, "enemies": ["enemy_gale_sparrow", "enemy_ember_fox"] },
-            { "weight": 2, "enemies": ["enemy_dew_frog", "enemy_thorn_sprout"] },
-            { "weight": 1, "enemies": ["enemy_forest_wolf"] }
-          ]
-        },
-        { "type": "event", "events": ["event_spring", "event_herbalist", "event_trap", "event_shrine"] },
-        {
-          "type": "battle",
-          "pool": [
-            { "weight": 2, "enemies": ["enemy_forest_wolf", "enemy_thorn_sprout"] },
-            { "weight": 2, "enemies": ["enemy_bramble_boar"] },
-            { "weight": 1, "enemies": ["enemy_ember_fox", "enemy_gale_sparrow", "enemy_mossling"] }
-          ]
-        },
-        {
-          "type": "boss",
-          "enemies": ["enemy_old_treant", "enemy_thorn_sprout"],
-          "table": "chest_forest_boss"
-        }
-      ]
+      "maps": ["map_forest_edge", "map_forest_deep", "map_forest_heart"]
     },
     {
       "id": "zone_mountain",
       "nameVi": "Núi Đá Vọng",
-      "descVi": "Vách đá, dung nham và tượng quặng: nhiều vật liệu cho xưởng. Phù hợp đội cấp 7–14. Cần hạ trùm Rừng Thì Thầm.",
+      "descVi": "Vách đá, mỏ quặng và dung nham: nhiều vật liệu cho xưởng. Trùm Rồng Dung Nham trên đỉnh. Phù hợp đội cấp 7–16. Cần hạ trùm Rừng Thì Thầm.",
       "fromWorldLevel": 10,
       "requiresCleared": "zone_forest",
       "backdrop": "bg_adventure_mountain",
-      "nodes": [
-        {
-          "type": "battle",
-          "pool": [
-            { "weight": 3, "enemies": ["enemy_rock_beetle", "enemy_snow_goat"] },
-            { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_lava_newt"] },
-            { "weight": 1, "enemies": ["enemy_rock_beetle"] }
-          ]
-        },
-        { "type": "chest", "table": "chest_mountain" },
-        {
-          "type": "battle",
-          "pool": [
-            { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_snow_goat"] },
-            { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_rock_beetle"] },
-            { "weight": 1, "enemies": ["enemy_ore_golem"] }
-          ]
-        },
-        {
-          "type": "event",
-          "events": ["event_hot_spring", "event_miner", "event_rockfall", "event_cliff_shrine"]
-        },
-        {
-          "type": "battle",
-          "pool": [
-            { "weight": 2, "enemies": ["enemy_ore_golem", "enemy_cliff_hawk"] },
-            { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_lava_newt", "enemy_snow_goat"] },
-            { "weight": 1, "enemies": ["enemy_ore_golem", "enemy_rock_beetle"] }
-          ]
-        },
-        { "type": "chest", "table": "chest_mountain" },
-        {
-          "type": "boss",
-          "enemies": ["enemy_magma_drake", "enemy_lava_newt"],
-          "table": "chest_mountain_boss"
-        }
-      ]
+      "maps": ["map_mountain_foot", "map_mountain_mine", "map_mountain_peak"]
     },
     {
       "id": "zone_ruins",
       "nameVi": "Tàn Tích Cổ",
-      "descVi": "Đền cổ đầy hồn rune và lính gác đá: nơi duy nhất rơi Rune Cổ. Phù hợp đội cấp 12–20. Cần hạ trùm Núi Đá Vọng.",
+      "descVi": "Đền cổ đầy hồn rune và lính gác đá, nơi phong ấn đang yếu đi: nơi duy nhất rơi Rune Cổ. Phù hợp đội cấp 12–22. Cần hạ trùm Núi Đá Vọng.",
       "fromWorldLevel": 13,
       "requiresCleared": "zone_mountain",
       "backdrop": "bg_adventure_ruins",
-      "nodes": [
-        {
-          "type": "battle",
-          "pool": [
-            { "weight": 3, "enemies": ["enemy_stone_sentinel", "enemy_rune_wisp"] },
-            { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_ember_idol"] },
-            { "weight": 1, "enemies": ["enemy_rune_wisp", "enemy_rune_wisp"] }
-          ]
-        },
-        {
-          "type": "battle",
-          "pool": [
-            { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_rune_wisp"] },
-            { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_tide_wraith"] },
-            { "weight": 1, "enemies": ["enemy_ember_idol", "enemy_ember_idol"] }
-          ]
-        },
-        { "type": "chest", "table": "chest_ruins" },
-        {
-          "type": "event",
-          "events": ["event_rune_altar", "event_ancient_cache", "event_collapse", "event_hot_spring"]
-        },
-        {
-          "type": "battle",
-          "pool": [
-            { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_ember_idol", "enemy_rune_wisp"] },
-            { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_tide_wraith", "enemy_stone_sentinel"] },
-            { "weight": 1, "enemies": ["enemy_ember_idol", "enemy_stone_sentinel"] }
-          ]
-        },
-        { "type": "chest", "table": "chest_ruins" },
-        {
-          "type": "boss",
-          "enemies": ["enemy_ancient_guardian", "enemy_rune_wisp"],
-          "table": "chest_ruins_boss"
-        }
-      ]
+      "maps": ["map_ruins_gate", "map_ruins_hall", "map_ruins_sanctum"]
     }
   ],
   "tables": {
-    "chest_forest": {
+    "treasure_forest": {
       "rolls": 2,
-      "coins": [25, 50],
-      "gemChance": 0.03,
+      "coins": [60, 120],
+      "gemChance": 0.25,
       "gems": [1, 3],
       "entries": [
-        { "itemId": "item_forest_herb", "weight": 3, "min": 2, "max": 4 },
-        { "itemId": "item_seed_carrot", "weight": 2, "min": 2, "max": 4 },
-        { "itemId": "item_fertilizer", "weight": 2, "min": 1, "max": 2 },
-        { "itemId": "item_beast_fang", "weight": 1, "min": 1, "max": 2 },
-        { "itemId": "item_equip_wood_sword", "weight": 2, "min": 1, "max": 1 },
-        { "itemId": "item_equip_leaf_vest", "weight": 2, "min": 1, "max": 1 },
-        { "itemId": "item_equip_lucky_clover", "weight": 2, "min": 1, "max": 1 },
-        { "itemId": "item_equip_iron_sword", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_equip_bark_armor", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_equip_wind_feather", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_potion_mood", "weight": 1, "min": 1, "max": 1 }
+        { "itemId": "item_skill_scroll", "weight": 3, "min": 1, "max": 1 },
+        { "itemId": "item_equip_nature_ring", "weight": 2, "min": 1, "max": 1 },
+        { "itemId": "item_equip_iron_sword", "weight": 2, "min": 1, "max": 1 },
+        { "itemId": "item_equip_bark_armor", "weight": 2, "min": 1, "max": 1 },
+        { "itemId": "item_equip_wind_feather", "weight": 2, "min": 1, "max": 1 },
+        { "itemId": "item_equip_lucky_clover", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_potion_healing", "weight": 2, "min": 1, "max": 1 },
+        { "itemId": "item_potion_battle", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_forest_herb", "weight": 2, "min": 3, "max": 5 }
       ]
     },
-    "chest_forest_boss": {
+    "treasure_mountain": {
+      "rolls": 2,
+      "coins": [90, 160],
+      "gemChance": 0.25,
+      "gems": [1, 3],
+      "entries": [
+        { "itemId": "item_skill_scroll", "weight": 3, "min": 1, "max": 1 },
+        { "itemId": "item_equip_fire_staff", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_equip_tide_rod", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_equip_thunder_horn", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_equip_stone_shield", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_equip_bronze_gauntlet", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_ancient_cog", "weight": 2, "min": 1, "max": 1 },
+        { "itemId": "item_seed_rainbow_rose", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_potion_healing", "weight": 2, "min": 1, "max": 1 }
+      ]
+    },
+    "treasure_ruins": {
+      "rolls": 2,
+      "coins": [120, 220],
+      "gemChance": 0.3,
+      "gems": [1, 3],
+      "entries": [
+        { "itemId": "item_skill_scroll", "weight": 3, "min": 1, "max": 1 },
+        { "itemId": "item_equip_moon_veil", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_equip_lantern_charm", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_equip_void_pearl", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_ancient_rune", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_ancient_cog", "weight": 2, "min": 1, "max": 1 },
+        { "itemId": "item_fish_lanternfish", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_potion_battle", "weight": 2, "min": 1, "max": 1 }
+      ]
+    },
+    "boss_forest": {
       "rolls": 3,
       "coins": [90, 160],
       "gemChance": 0.1,
@@ -170,32 +96,7 @@
         { "itemId": "item_potion_battle", "weight": 1, "min": 1, "max": 1 }
       ]
     },
-    "herbs": {
-      "rolls": 1,
-      "coins": [0, 0],
-      "gemChance": 0,
-      "gems": [1, 1],
-      "entries": [{ "itemId": "item_forest_herb", "weight": 1, "min": 3, "max": 3 }]
-    },
-    "chest_mountain": {
-      "rolls": 2,
-      "coins": [20, 45],
-      "gemChance": 0.03,
-      "gems": [1, 3],
-      "entries": [
-        { "itemId": "item_mountain_ore", "weight": 3, "min": 2, "max": 4 },
-        { "itemId": "item_ancient_cog", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_beast_fang", "weight": 2, "min": 1, "max": 2 },
-        { "itemId": "item_seed_rainbow_rose", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_fish_betta", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_equip_iron_sword", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_equip_bark_armor", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_equip_wind_feather", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_potion_healing", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_fertilizer", "weight": 2, "min": 2, "max": 4 }
-      ]
-    },
-    "chest_mountain_boss": {
+    "boss_mountain": {
       "rolls": 2,
       "coins": [80, 150],
       "gemChance": 0.08,
@@ -213,20 +114,7 @@
         { "itemId": "item_potion_healing", "weight": 1, "min": 1, "max": 2 }
       ]
     },
-    "chest_ruins": {
-      "rolls": 2,
-      "coins": [35, 70],
-      "gemChance": 0.03,
-      "gems": [1, 3],
-      "entries": [
-        { "itemId": "item_ancient_cog", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_mountain_ore", "weight": 1, "min": 2, "max": 4 },
-        { "itemId": "item_fish_lanternfish", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_potion_healing", "weight": 1, "min": 1, "max": 1 },
-        { "itemId": "item_fertilizer", "weight": 1, "min": 2, "max": 4 }
-      ]
-    },
-    "chest_ruins_boss": {
+    "boss_ruins": {
       "rolls": 2,
       "coins": [120, 200],
       "gemChance": 0.1,
@@ -243,6 +131,20 @@
         { "itemId": "item_potion_battle", "weight": 1, "min": 1, "max": 1 }
       ]
     },
+    "herbs": {
+      "rolls": 1,
+      "coins": [0, 0],
+      "gemChance": 0,
+      "gems": [1, 1],
+      "entries": [{ "itemId": "item_forest_herb", "weight": 1, "min": 3, "max": 3 }]
+    },
+    "ore_vein": {
+      "rolls": 1,
+      "coins": [0, 0],
+      "gemChance": 0,
+      "gems": [1, 1],
+      "entries": [{ "itemId": "item_mountain_ore", "weight": 1, "min": 3, "max": 5 }]
+    },
     "cache_ancient": {
       "rolls": 1,
       "coins": [0, 0],
@@ -252,25 +154,9 @@
         { "itemId": "item_ancient_cog", "weight": 2, "min": 1, "max": 2 },
         { "itemId": "item_ancient_rune", "weight": 1, "min": 1, "max": 1 }
       ]
-    },
-    "ore_vein": {
-      "rolls": 1,
-      "coins": [0, 0],
-      "gemChance": 0,
-      "gems": [1, 1],
-      "entries": [{ "itemId": "item_mountain_ore", "weight": 1, "min": 3, "max": 5 }]
     }
   },
   "events": [
-    {
-      "id": "event_spring",
-      "nameVi": "Suối Trong Rừng",
-      "textVi": "Cả đội uống nước suối mát và khỏe hẳn lên.",
-      "healPct": 0.3,
-      "damagePct": 0,
-      "exp": 0,
-      "table": null
-    },
     {
       "id": "event_herbalist",
       "nameVi": "Bà Lão Hái Thuốc",
@@ -279,15 +165,6 @@
       "damagePct": 0,
       "exp": 0,
       "table": "herbs"
-    },
-    {
-      "id": "event_trap",
-      "nameVi": "Bẫy Dây Leo",
-      "textVi": "Dây leo quấn chân cả đội, ai cũng mất chút máu (không ai gục).",
-      "healPct": 0,
-      "damagePct": 0.15,
-      "exp": 0,
-      "table": null
     },
     {
       "id": "event_shrine",
@@ -317,15 +194,6 @@
       "table": "ore_vein"
     },
     {
-      "id": "event_rockfall",
-      "nameVi": "Đá Lở",
-      "textVi": "Đá lăn xuống làm cả đội trầy xước (không ai gục).",
-      "healPct": 0,
-      "damagePct": 0.15,
-      "exp": 0,
-      "table": null
-    },
-    {
       "id": "event_cliff_shrine",
       "nameVi": "Bàn Thờ Vách Đá",
       "textVi": "Cả đội dừng chân ở bàn thờ cũ và học được điều mới.",
@@ -351,15 +219,6 @@
       "damagePct": 0,
       "exp": 0,
       "table": "cache_ancient"
-    },
-    {
-      "id": "event_collapse",
-      "nameVi": "Trần Sập",
-      "textVi": "Trần đền sập một góc, ai cũng mất chút máu (không ai gục).",
-      "healPct": 0,
-      "damagePct": 0.18,
-      "exp": 0,
-      "table": null
     }
   ]
 }

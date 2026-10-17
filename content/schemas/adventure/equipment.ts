@@ -1,13 +1,22 @@
-// content/adventure/equipment.json — what each piece of equipment adds (its rarity and price are those of its item).
+// content/adventure/equipment.json — what each piece of equipment adds (spec §13): stats, an element affinity, a status affinity,
+// resistances, a skill-category bonus. Its rarity and price are those of its item. Affinity never changes a fighter's element (R7).
 import { z } from 'zod';
-import { itemId, nonNeg } from '../fields';
+import { itemId, posInt, unit } from '../fields';
+import { CATEGORY_VALUES, element, partialStatsSchema, statusId } from './combat';
 
 export const EQUIPMENT_SLOT_VALUES = ['weapon', 'armor', 'charm'] as const;
 
 export const equipmentSchema = z.strictObject({
   id: itemId,
   slot: z.enum(EQUIPMENT_SLOT_VALUES),
-  stats: z.strictObject({ hp: nonNeg.optional(), atk: nonNeg.optional(), def: nonNeg.optional(), spd: nonNeg.optional(), crit: nonNeg.optional() }),
+  /** Fighter level needed to wear it. */
+  levelReq: posInt.default(1),
+  stats: partialStatsSchema,
+  elementAffinity: z.strictObject({ element, damagePct: unit, resistPct: unit }).optional(),
+  statusAffinity: z.strictObject({ status: statusId, chancePct: unit }).optional(),
+  elementResist: z.partialRecord(element, unit).optional(),
+  statusResist: z.partialRecord(statusId, unit).optional(),
+  categoryBonus: z.strictObject({ category: z.enum(CATEGORY_VALUES), pct: unit }).optional(),
 });
 
 export const equipmentFileSchema = z.strictObject({ equipment: z.array(equipmentSchema).min(1) }).superRefine((f, ctx) => {

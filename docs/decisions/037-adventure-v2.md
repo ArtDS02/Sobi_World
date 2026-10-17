@@ -1,6 +1,6 @@
 # 037 — Sobi Adventure V2: Combat V2 (9 nguyên tố Ngũ hành, class, Skill Tree, Rage) và bản đồ khám phá
 
-**Ngày:** 2026-10-17 · **Trạng thái:** Chủ dự án đã duyệt hướng; spec chi tiết `docs/update_spec_sobi_adventure_gameplay_v1.md` (A0). Code từ A1.
+**Ngày:** 2026-10-17 · **Trạng thái:** Đã làm (A0–A8, trừ art thật: PROMPT batch `art_inbox/.batch/adventure-02-maps`); chờ chủ dự án chơi thử. Spec: `docs/update_spec_sobi_adventure_gameplay_v1.md`.
 
 ## Bối cảnh
 Adventure GĐ10–11 (decision 018, 019) chạy được nhưng combat mỏng: 4 nguyên tố, năng lượng dùng chung, 8 kiểu đánh cố định, đi qua chuỗi điểm dừng bằng nút. Chủ dự án viết master prompt `docs/UPDATE_SPEC_SOBI_ADVENTURE.md` (Combat V2). File `SOBI_ADVENTURE_GAMEPLAY_SPEC.md` mà master prompt nhắc tới chưa từng tồn tại, nên spec mới được viết thành `update_spec_sobi_adventure_gameplay_v1.md` (cùng kiểu với spec Garden / Aquarium / Cloud). Các Area khác đã làm lại gameplay trong GĐ14 theo cùng cách (decision 023–035).
@@ -28,3 +28,15 @@ World save giữ **v11**. Slice `areas.sobi_adventure` v1 → **v2** có migrati
 - Admin thêm trình sửa bản đồ, xem Skill Tree; mô phỏng trận cập nhật.
 - Art mới (GĐ14): nền 9 khu, đạo cụ có footprint, icon 9 hệ / trạng thái / ý định, VFX, cut-in Ultimate (`docs/ASSET_TODO.md`).
 - `GAME_BALANCE.md` §9 (nguyên tố Lửa > Gió > Đất > Nước, "đòn thường + 2 skill") hết hiệu lực; spec mới thắng.
+
+## Cân bằng (đo bằng `npm run sim:adventure` và bot `npm run sim:week -- 7 45 adventure`, 2026-10-17)
+- Kẻ địch so với GĐ10: máu ×1,7, công ×1,25; vùng Núi thêm máu ×1,35 / công ×1,18; Tàn Tích ×1,45 / ×1,2; trùm vùng máu ×1,3, kẻ canh khu ×1,45. Độc 4% / tầng (tối đa 3).
+- Một chuyến đi khoảng 14 trận (bản GĐ10 chỉ 5 điểm dừng) nên phần thưởng mỗi kẻ địch giảm: KN ×0,27 (trùm ×0,55), tiền ×0,4 (trùm ×0,8), tỉ lệ rơi đồ ×0,4 (trùm giữ nguyên).
+- Đội cân bằng (Hộ Vệ Thiết Giáp + Chiến Binh Hỏa Giải + Hỗ Trợ Quang Trư): Rừng (đồ thường) cấp 3 ≈ 30%, cấp 5 ≈ 85%; Núi (đồ khá) cấp 6 ≈ 10%, cấp 10 ≈ 75%; Tàn Tích (đồ sử thi) cấp 16 ≈ 50%, cấp 20 ≈ 80%. Mỗi trận 4–7 vòng.
+- Đội không có hồi máu / thanh tẩy (3 pháp sư, 3 chiến binh) thua nhiều hơn hẳn, nhất là trước độc diện rộng và Diệt vong: đúng "chiến thuật > chỉ số"; Trại cảnh báo đội hình.
+- Bot (cận trên ~7 chuyến / ngày): Adventure mở ngày 14,5; hạ trùm Rừng ngày 16,3, Núi 21,3, Tàn Tích 31,3; chiến binh cấp 17 sau 14 ngày mở, cấp 30 ngày ~41; đủ 12 cấp công nghệ ngày 29; Adventure đem về ~2.800 Sobi Coin / ngày.
+
+## Ghi chú triển khai
+- Phím tương tác: Space luôn dùng được trên bản đồ (scene nghe phím Space), cộng các phím gán cho "Tương tác" (mặc định E). Không đổi phím mặc định để không đụng cài đặt của người chơi.
+- Ô đất (tile) của bản đồ chưa có art: scene tô màu theo vùng; đạo cụ / vật đang là ảnh tạm (placeholder). Art thật: batch `adventure-02-maps`.
+- Unit test không có DOM giả; luồng DOM (Trại → bản đồ → về Trại) nằm ở e2e `tests/e2e/adventure.spec.ts`.

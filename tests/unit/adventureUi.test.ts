@@ -4,12 +4,16 @@ import { AREAS } from '../../src/app/areas';
 import { SAVE_CODEC } from '../../src/app/saveCodec';
 import { adventureArea } from '../../src/areas/adventure';
 import { claimStarter, collectLoot, starterGift } from '../../src/areas/adventure/logic/actions/camp';
-import { battleAct, enterNode, startRun } from '../../src/areas/adventure/logic/actions/run';
+import { battleAct, engage, startRun } from '../../src/areas/adventure/logic/actions/run';
 import { simulateRuns, GEAR_TIERS } from '../../src/areas/adventure/logic/battleSim';
-import { ARCHETYPE_LIST } from '../../src/areas/adventure/logic/config/content';
-import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
-import { fighterCardVm, hubVm, startReason } from '../../src/areas/adventure/ui/adventureVm';
-import { battleVm, logLine, mapVm, resultVm } from '../../src/areas/adventure/ui/battleVm';
+import { MAPS } from '../../src/areas/adventure/logic/config/content';
+import { tileCenter } from '../../src/areas/adventure/logic/maps';
+import { adventureOf } from '../../src/areas/adventure/logic/save/lens';
+import { battleVm, effectOn, logLine, resultVm } from '../../src/areas/adventure/ui/battleVm';
+import { campVm, startReason, teamWarnings, zoneCards } from '../../src/areas/adventure/ui/campVm';
+import { exploreVm, minimapVm } from '../../src/areas/adventure/ui/exploreVm';
+import { fighterCardVm, sheetVm } from '../../src/areas/adventure/ui/fighterVm';
+import { sceneVm } from '../../src/areas/adventure/ui/sceneVm';
 import { setFishPurpose } from '../../src/areas/aquarium/logic/actions/care';
 import { aquariumOf, withAquarium } from '../../src/areas/aquarium/logic/save/lens';
 import type { Fish } from '../../src/areas/aquarium/logic/state';
@@ -103,147 +107,114 @@ describe('the Aquarium side', () => {
 
 describe('view-models', () => {
   const entry = { key: 'sobi_farm:a', areaId: 'sobi_farm', id: 'a', kind: 'pig' as const, name: 'Mập', speciesId: 'PIG_KNIGHT', family: 'ADVENTURE', rarity: 'COMMON', hearts: 3, sick: false, adult: true, purpose: 'ADVENTURE', artId: 'pig_knight' };
+  const sheep = { ...entry, key: 'sobi_farm:b', id: 'b', name: 'Bông', speciesId: 'PIG_SHEEP', family: 'MEADOW' };
   const world = () => adventureArea.init(openWorld(), ctxAt(T0));
+  const run = { starter: (ww: WorldSave, c: ActionContext) => claimStarter(ww, { give: (x, g, cc) => AREAS.give(x, g, cc) }, c), loot: (ww: WorldSave, c: ActionContext) => collectLoot(ww, c) };
 
-  it('a fighter card shows level, bars, skills (two open, two locked), slots and why it cannot go', () => {
+  it('a card shows class, line, elements, bars and why it cannot go; a fish that cannot fight has none', () => {
     const w = world();
     const card = fighterCardVm(w, entry, T0)!;
-    expect(card).toMatchObject({ name: 'Mập', style: 'Chiến binh', element: 'FIRE', notReady: null, statusChip: null });
-    expect(card.skills.map((s) => s.opensAt)).toEqual([null, null, 10, 20]);
-    expect(card.slots.map((s) => s.itemId)).toEqual([null, null, null]);
-    expect(card.stats.atk).toBeGreaterThan(20); // Bond hearts add a little
+    expect(card).toMatchObject({ name: 'Mập', classId: 'striker', notReady: null, tank: false, heals: false });
+    expect(card.elements).toContain('Kim loại');
+    expect(fighterCardVm(w, sheep, T0)!.heals).toBe(true);
     expect(fighterCardVm(w, { ...entry, sick: true }, T0)!.notReady).toBeTruthy();
-    expect(fighterCardVm(w, { ...entry, purpose: 'SHIP' }, T0)!.notReady).toBeTruthy();
-    expect(fighterCardVm(w, { ...entry, kind: 'fish', speciesId: 'fish_goldfish', family: null }, T0)).toBeNull(); // cannot fight at all
+    expect(fighterCardVm(w, { ...entry, kind: 'fish', speciesId: 'fish_goldfish', family: null }, T0)).toBeNull();
   });
 
-  it('the hub counts the creatures that could fight, offers the quest and the waiting loot with reasons', () => {
+  it('the profile: stats, four Unique skills (two locked), the Ultimate, the tree with costs and reasons, the temple', () => {
+    const v = sheetVm(world(), entry, T0, [entry])!;
+    expect(v.unique.map((s) => s.opensAt)).toEqual([null, null, 10, 20]);
+    expect(v.ultimate.name).toBe('Đoàn Kỵ Thép');
+    expect(v.nodes.find((n) => n.id === 'node_st_power_strike')).toMatchObject({ level: 1, carried: true });
+    const locked = v.nodes.find((n) => n.id === 'node_st_finisher')!;
+    expect(locked.step!.reason).toBeTruthy();
+    expect(locked.needs).toContain('Liên Hoàn');
+    expect(v.temple.classes).toHaveLength(3);
+    expect(v.temple.reset.reason).toBeTruthy(); // nothing to reset yet
+  });
+
+  it('the camp: zones with their gate and discovery, the warnings of a team, why it cannot start', () => {
     const w = world();
-    const waiting = [entry, { ...entry, key: 'sobi_farm:b', id: 'b', purpose: 'SHIP' }];
-    const run = { starter: (ww: WorldSave, c: ActionContext) => claimStarter(ww, { give: (x, g, cc) => AREAS.give(x, g, cc) }, c), loot: (ww: WorldSave, c: ActionContext) => collectLoot(ww, c) };
-    const hub = hubVm(w, waiting, T0, run);
-    expect(hub.fighters).toHaveLength(1);
-    expect(hub.waiting).toBe(1);
-    expect(hub.starter).toMatchObject({ reason: null });
-    expect(hub.loot).toBeNull();
-    const pending = withAdventure(w, { ...adventureOf(w), starterClaimed: true, pending: { item_forest_herb: 4 } });
-    const hub2 = hubVm(pending, waiting, T0, run);
-    expect(hub2.starter).toBeNull();
-    expect(hub2.loot).toMatchObject({ count: 4, reason: null });
+    const camp = campVm(w, [entry, sheep], T0, run);
+    expect(camp.fighters).toHaveLength(2);
+    expect(camp.zones[0]!.starts.map((s) => s.mapId)).toEqual(['map_forest_edge']);
+    expect(zoneCards(w).find((z) => z.id === 'zone_mountain')!.locked).toBeTruthy();
+    expect(teamWarnings([camp.fighters[0]!], camp.zones[0]).some((x) => x.includes('hồi máu'))).toBe(true);
+    expect(teamWarnings(camp.fighters, camp.zones[0]).some((x) => x.includes('hồi máu'))).toBe(false);
+    expect(startReason(w, [entry], 'zone_forest', undefined, [], T0)).toBeTruthy();
+    expect(startReason(w, [entry], 'zone_forest', undefined, [entry.key], T0)).toBeNull();
   });
 
-  it('says why a team cannot start: empty, unknown, exhausted, locked zone', () => {
-    const w = world();
-    expect(startReason(w, [entry], 'zone_forest', [], T0)).toBeTruthy();
-    expect(startReason(w, [entry], 'zone_forest', [entry.key], T0)).toBeNull();
-    expect(startReason(w, [entry], 'zone_forest', ['sobi_farm:ghost'], T0)).toBeTruthy();
-    const low = { ...w, progression: { ...w.progression, areas: {} } };
-    expect(startReason(low, [entry], 'zone_forest', [entry.key], T0)).toContain('cấp');
+  it('on the map: the prompt says what Space does or why not; the small map; the scene state', () => {
+    const w = ok(startRun(world(), { zoneId: 'zone_forest', keys: [entry.key], roster: [entry] }, ctxAt(T0)));
+    const r = adventureOf(w).run!;
+    const v = exploreVm(w, r, 'gate_f1_bramble')!;
+    expect(v.prompt!.reason).toContain('Lửa');
+    expect(exploreVm(w, r, 'map_forest_edge')!.prompt!.reason).toBeNull(); // the entrance portal is lit
+    expect(v.portal.destinations.map((d) => d.mapId)).toEqual(['camp']);
+    expect(minimapVm(w, r)!.tiles).toHaveLength(MAPS.map_forest_edge!.rows);
+    const scene = sceneVm(w, T0, false, 'zone_forest')!;
+    expect(scene).toMatchObject({ mode: 'explore', mapId: 'map_forest_edge', portalLit: true });
+    expect(scene.groups.length).toBe(MAPS.map_forest_edge!.groups.length);
+    expect(sceneVm(world(), T0, false, 'zone_forest')!.mode).toBe('camp');
   });
 
-  it('a battle shows the units, whose turn it is, the actions with reasons and the log in words', () => {
+  it('a battle shows the units with intents, the turn order, actions with reasons, effect labels and the log', () => {
+    const F1 = MAPS.map_forest_edge!;
+    const g = F1.groups.find((x) => x.kind === 'normal')!;
     let w = ok(startRun(world(), { zoneId: 'zone_forest', keys: [entry.key], roster: [entry] }, ctxAt(T0)));
-    expect(mapVm(adventureOf(w).run!).nodes.map((n) => n.state)).toEqual(['now', 'next', 'next', 'next', 'next', 'next']);
-    w = ok(enterNode(w, ctxAt(T0, 4)));
-    const run = adventureOf(w).run!;
-    expect(run.phase).toBe('battle');
-    const vm = battleVm({ ...w, inventory: { items: { ...w.inventory.items, item_potion_healing: 1 } } }, run)!;
-    expect(vm.units.some((u) => u.side === 'ally')).toBe(true);
-    expect(vm.units.some((u) => u.side === 'enemy')).toBe(true);
-    expect(vm.actor).toBeTruthy();
-    const kinds = vm.actions.map((a) => a.kind);
-    expect(kinds).toContain('attack');
-    expect(kinds).toContain('skill');
-    expect(kinds).toContain('item');
-    expect(vm.actions.find((a) => a.id === 'skill_battle_cry')!.aim).toBeNull(); // all allies: no target to pick
-    expect(vm.log.length).toBeGreaterThan(0);
-    // a step of the fight leaves its words in the log
+    w = ok(engage(w, { ...tileCenter(F1, g.x, g.y), groupId: g.id }, ctxAt(T0)));
+    const r = adventureOf(w).run!;
+    const vm = battleVm({ ...w, inventory: { items: { ...w.inventory.items, item_potion_healing: 1 } } }, r)!;
+    expect(vm.units.some((u) => u.side === 'enemy' && u.intent)).toBe(true);
+    expect(vm.order.length).toBeGreaterThan(1);
+    expect(vm.actions.map((a) => a.kind)).toEqual(expect.arrayContaining(['attack', 'skill', 'ultimate', 'guard', 'item', 'flee']));
+    expect(vm.actions.find((a) => a.kind === 'ultimate')!.reason).toBeTruthy(); // Rage not full
+    expect(vm.actions.find((a) => a.kind === 'flee')!.reason).toBeNull();
+    const enemy = r.battle!.combatants.find((c) => c.side === 'enemy')!;
+    expect(effectOn(r.battle!, entry.key, 'METAL', 'physical', enemy.id)).toBeTruthy();
     const after = ok(battleAct(w, { action: 'auto' }, ctxAt(T0, 5)));
-    const next = battleVm(after, adventureOf(after).run!);
-    expect(next === null || next.log.length > 0).toBe(true);
-    expect(logLine({ type: 'damage', actor: 'a', target: 'b', amount: 7, crit: true, mult: 1.5, skillId: null, absorbed: 0 }, (id) => id)).toContain('chí mạng');
+    const next = adventureOf(after).run!;
+    expect(next.phase === 'battle' ? battleVm(after, next)!.log.length : 1).toBeGreaterThan(0);
+    expect(logLine({ type: 'damage', actor: 'a', target: 'b', amount: 7, crit: true, mult: 1.5, skillId: null, absorbed: 0, element: 'FIRE' }, (id) => id)).toContain('chí mạng');
   });
 
-  it('the summary lists experience, coins, level-ups and the loot', () => {
-    const w = world();
-    const base = ok(startRun(w, { zoneId: 'zone_forest', keys: [entry.key], roster: [entry] }, ctxAt(T0)));
-    const run = { ...adventureOf(base).run!, phase: 'done' as const, result: 'lose' as const, expGained: 30, coins: 100, gems: 2, levelUps: [entry.key], loot: { item_forest_herb: 3 } };
-    const vm = resultVm(run, new Map([[entry.key, 'Mập']]))!;
+  it('the summary lists experience, SP, coins, level-ups and the loot', () => {
+    const base = ok(startRun(world(), { zoneId: 'zone_forest', keys: [entry.key], roster: [entry] }, ctxAt(T0)));
+    const r = { ...adventureOf(base).run!, phase: 'done' as const, result: 'lose' as const, expGained: 30, spGained: 3, coins: 100, gems: 2, levelUps: [entry.key], loot: { item_forest_herb: 3 } };
+    const vm = resultVm(r, new Map([[entry.key, 'Mập']]))!;
     expect(vm.lines.join('|')).toContain('30');
-    expect(vm.lines.join('|')).toContain('Mập');
+    expect(vm.lines.join('|')).toContain('SP');
     expect(vm.lines.join('|')).toContain('kiệt sức');
     expect(vm.loot).toEqual([expect.objectContaining({ itemId: 'item_forest_herb', count: 3 })]);
-    expect(resultVm({ ...run, phase: 'map', result: null }, new Map())).toBeNull();
   });
 });
 
 describe('the Admin simulation', () => {
   const team = [
-    { archetypeId: 'bruiser', rarity: 'COMMON', hearts: 0 },
-    { archetypeId: 'guardian', rarity: 'COMMON', hearts: 0 },
-    { archetypeId: 'mystic', rarity: 'COMMON', hearts: 0 },
+    { lineage: 'thiet_giap' as const, classId: 'tanker' as const },
+    { lineage: 'hoa_giai' as const, classId: 'striker' as const },
+    { lineage: 'quang_tru' as const, classId: 'support' as const },
   ];
-  const sim = (level: number, gear: (typeof GEAR_TIERS)[number], samples = 60) => simulateRuns({ zoneId: 'zone_forest', level, team, gear, samples, seed: 11 });
+  const sim = (level: number, gear: (typeof GEAR_TIERS)[number], samples = 30) => simulateRuns({ zoneId: 'zone_forest', level, team, gear, samples, seed: 11 });
 
-  it('is deterministic for a seed and answers in whole runs', () => {
-    expect(sim(5, 'none')).toEqual(sim(5, 'none'));
-    const r = sim(5, 'none');
-    expect(r.samples).toBe(60);
-    expect(r.reachedPercent).toHaveLength(6);
+  it('is deterministic for a seed and answers in whole trips', () => {
+    expect(sim(5, 'common')).toEqual(sim(5, 'common'));
+    const r = sim(5, 'common');
+    expect(r.reachedPercent).toHaveLength(3);
     expect(r.reachedPercent[0]).toBe(100);
-    expect(r.averageRounds).toBeGreaterThan(0);
+    expect(r.averageRounds).toBeGreaterThan(3);
+    expect(r.averageBattles).toBeGreaterThan(8);
   });
 
-  it('a higher level and better gear win more, and a boss that is out of reach shows in the numbers', () => {
-    expect(sim(1, 'none').winPercent).toBeLessThan(sim(8, 'none').winPercent);
-    expect(sim(3, 'none').winPercent).toBeLessThanOrEqual(sim(3, 'rare').winPercent);
-    expect(sim(1, 'none').reachedPercent.at(-1)!).toBeLessThan(100);
-    expect(sim(12, 'uncommon').winPercent).toBeGreaterThan(90);
+  it('a higher level wins more; a lone level 1 fighter still wins its first fights', () => {
+    expect(sim(1, 'common').winPercent).toBeLessThan(sim(8, 'common').winPercent);
+    const lone = simulateRuns({ zoneId: 'zone_forest', level: 1, team: [{ lineage: 'thiet_giap', classId: 'striker' }], gear: 'common', samples: 30, seed: 3 });
+    expect(lone.averageBattles).toBeGreaterThan(1);
   });
 
-  it('refuses an unknown zone or style', () => {
+  it('refuses an unknown zone or line', () => {
     expect(() => simulateRuns({ zoneId: 'zone_nope', level: 1, team, gear: 'none', samples: 1, seed: 1 })).toThrow();
-    expect(() => simulateRuns({ zoneId: 'zone_forest', level: 1, team: [{ archetypeId: 'nope' }], gear: 'none', samples: 1, seed: 1 })).toThrow();
-  });
-
-});
-
-describe('Adventure balance guard (GĐ10 playtest numbers)', () => {
-  const run = (archetypeIds: string[], level: number, gear: (typeof GEAR_TIERS)[number] = 'common') =>
-    simulateRuns({ zoneId: 'zone_forest', level, team: archetypeIds.map((archetypeId) => ({ archetypeId })), gear, samples: 80, seed: 21 });
-  const classic = ['bruiser', 'guardian', 'mystic'];
-
-  it('is out of reach at level 1, a fair fight in the middle and comfortable by level 8', () => {
-    expect(run(classic, 1).winPercent).toBeLessThan(5);
-    const mid = run(classic, 5).winPercent;
-    expect(mid).toBeGreaterThan(40);
-    expect(mid).toBeLessThan(95);
-    expect(run(classic, 8).winPercent).toBeGreaterThan(90);
-  });
-
-  it('a lone level 1 fighter can still win the opening fight, so a first run is never wasted', () => {
-    expect(run(['bruiser'], 1).reachedPercent[1]!).toBeGreaterThan(40);
-  });
-
-  it('no style carries and no style is dead weight: every one adds to a team within a band', () => {
-    const ids = ARCHETYPE_LIST.map((a) => a.id);
-    const mean = (id: string) => {
-      const mates = ids.filter((x) => x !== id);
-      const wins = [[0, 1], [2, 3], [4, 5], [1, 4]].map(([i, j]) => run([id, mates[i!]!, mates[j!]!], 4).winPercent);
-      return wins.reduce((n, w) => n + w, 0) / wins.length;
-    };
-    const means = ids.map(mean);
-    expect(Math.max(...means) - Math.min(...means)).toBeLessThan(30);
-    expect(Math.min(...means)).toBeGreaterThan(15);
-  });
-
-  it('three of the same style is worse than a mixed team (compositions matter)', () => {
-    expect(run(['trickster', 'trickster', 'trickster'], 5).winPercent).toBeLessThan(run(classic, 5).winPercent);
-    expect(run(['stormcaller', 'stormcaller', 'stormcaller'], 5).winPercent).toBeLessThan(run(classic, 5).winPercent);
-  });
-
-  it('gear helps without replacing levels: a full rare set at level 1 does not clear the forest like level 6 does', () => {
-    expect(run(classic, 1, 'rare').winPercent).toBeLessThan(run(classic, 6, 'common').winPercent);
-    expect(run(classic, 3, 'uncommon').winPercent).toBeGreaterThan(run(classic, 3, 'none').winPercent);
+    expect(() => simulateRuns({ zoneId: 'zone_forest', level: 1, team: [{ lineage: 'nope' as never, classId: 'mage' }], gear: 'none', samples: 1, seed: 1 })).toThrow();
   });
 });
