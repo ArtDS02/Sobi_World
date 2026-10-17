@@ -10,6 +10,7 @@ import { vi } from '../../../i18n/vi';
 import type { Element, SkillSlot, StatKey, Stats } from '../../../systems/combat/types';
 import { EQUIPMENT_SLOTS, type EquipmentSlot } from '../../../systems/equipment';
 import { fighterOf } from '../logic/actions/camp';
+import { GUARDIAN_ART } from '../logic/art';
 import { changeClass, classChangeCost, resetCost, resetTree, setLoadout, stepNode, useScroll } from '../logic/actions/growth';
 import { AB, CLASS_LIST, EQUIPMENT_DEFS, NODES, SKILL_SCROLL, SKILLS, TREES, identityOf, type ClassId, type Identity } from '../logic/config/content';
 import { classOf, energyOf, exhaustedLeft, expNeeded, fighterSkills, fighterStats, msToEnergy, whyNotReady } from '../logic/fighters';
@@ -151,6 +152,8 @@ export interface SheetVm {
   title: string;
   art: string;
   guardian: string;
+  /** The portrait of the lineage's First Guardian. */
+  guardianArt: string;
   elements: string;
   classId: ClassId;
   level: number;
@@ -210,6 +213,7 @@ export function sheetVm(world: WorldSave, entry: RosterEntry, now: number, roste
     title: t(vi.adventure.sheet.title, { name: entry.name, line: lineageName(identity.lineage.id), class: className(classId) }),
     art: entry.artId,
     guardian: t(vi.adventure.sheet.guardian, { guardian: identity.lineage.guardianVi }),
+    guardianArt: GUARDIAN_ART[identity.lineage.id],
     elements: t(vi.adventure.sheet.elements, { elements: [identity.element, ...(identity.element2 ? [identity.element2] : [])].map(elementLabel).join(' · ') }),
     classId,
     level: f.level,

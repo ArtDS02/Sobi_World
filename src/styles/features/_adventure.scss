@@ -251,6 +251,7 @@
 
 .adventure-ui {
   &__camp-title { margin: 0 0 $sp-2; }
+  &__legend { display: block; width: 100%; max-height: 11rem; object-fit: cover; object-position: center 40%; border-radius: $radius-md; margin-bottom: $sp-2; }
   &__zone-meta { color: $c-text-muted; }
   &__elements { color: $c-text-muted; font-size: $fs-xs; }
   &__card-actions { display: flex; flex-wrap: wrap; gap: $sp-1; }
@@ -343,7 +344,9 @@
   display: grid;
   gap: $sp-2;
   &__tabs { display: flex; flex-wrap: wrap; gap: $sp-1; }
+  &__arts { display: flex; align-items: flex-end; gap: $sp-3; }
   &__art { width: 6rem; height: 6rem; object-fit: contain; }
+  &__guardian { width: 5rem; height: 5rem; object-fit: contain; opacity: 0.9; }
   &__stats dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px $sp-3; margin: 0; dd { margin: 0; font-weight: $fw-bold; } }
   &__skills { display: grid; gap: $sp-1; padding: 0; margin: 0; list-style: none; }
   &__skill { padding: $sp-1 $sp-2; background: $c-surface-alt; border-radius: $radius-md; p { margin: 2px 0 0; font-size: $fs-xs; } &.is-locked { opacity: 0.6; } &.is-ultimate { background: #fff1d0; } }

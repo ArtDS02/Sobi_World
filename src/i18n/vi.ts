@@ -1136,6 +1136,7 @@ export const vi = {
     back: "Quay lại",
     camp: {
       title: "Trại Phiêu Lưu",
+      legend: "Chín First Guardians",
       zones: "Chọn vùng",
       zoneLocked: "Cần Sobi World cấp {level}",
       zoneNotCleared: "Hạ trùm {zone} trước",

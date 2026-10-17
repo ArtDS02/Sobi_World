@@ -2360,142 +2360,187 @@
     },
     {
       "id": "enemy_wolf_alpha",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_wolf_alpha.png"
     },
     {
       "id": "enemy_thunder_ram",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_thunder_ram.png"
     },
     {
       "id": "enemy_shadow_priest",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_shadow_priest.png"
     },
     {
+      "id": "guardian_light_pig",
+      "status": "production",
+      "asset": "props/guardian_light_pig.png"
+    },
+    {
+      "id": "guardian_thunder_pig",
+      "status": "production",
+      "asset": "props/guardian_thunder_pig.png"
+    },
+    {
+      "id": "guardian_metal_boar",
+      "status": "production",
+      "asset": "props/guardian_metal_boar.png"
+    },
+    {
+      "id": "guardian_bloom_sow",
+      "status": "production",
+      "asset": "props/guardian_bloom_sow.png"
+    },
+    {
+      "id": "guardian_whale",
+      "status": "production",
+      "asset": "props/guardian_whale.png"
+    },
+    {
+      "id": "guardian_turtle",
+      "status": "production",
+      "asset": "props/guardian_turtle.png"
+    },
+    {
+      "id": "guardian_octopus",
+      "status": "production",
+      "asset": "props/guardian_octopus.png"
+    },
+    {
+      "id": "guardian_forge_crab",
+      "status": "production",
+      "asset": "props/guardian_forge_crab.png"
+    },
+    {
+      "id": "guardian_void_jelly",
+      "status": "production",
+      "asset": "props/guardian_void_jelly.png"
+    },
+    {
       "id": "prop_adv_forest_oak",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_forest_oak.png"
     },
     {
       "id": "prop_adv_forest_round",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_forest_round.png"
     },
     {
       "id": "prop_adv_forest_bush",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_forest_bush.png"
     },
     {
       "id": "prop_adv_forest_boulder",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_forest_boulder.png"
     },
     {
       "id": "prop_adv_forest_rock",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_forest_rock.png"
     },
     {
       "id": "prop_adv_forest_log",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_forest_log.png"
     },
     {
       "id": "prop_adv_forest_mushroom",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_forest_mushroom.png"
     },
     {
       "id": "prop_adv_forest_stump",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_forest_stump.png"
     },
     {
       "id": "prop_adv_forest_hut",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_forest_hut.png"
     },
     {
       "id": "prop_adv_mountain_boulder",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_mountain_boulder.png"
     },
     {
       "id": "prop_adv_mountain_rock",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_mountain_rock.png"
     },
     {
       "id": "prop_adv_mountain_pine",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_mountain_pine.png"
     },
     {
       "id": "prop_adv_mountain_crystal",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_mountain_crystal.png"
     },
     {
       "id": "prop_adv_mountain_vent",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_mountain_vent.png"
     },
     {
       "id": "prop_adv_mountain_cart",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_mountain_cart.png"
     },
     {
       "id": "prop_adv_mountain_cabin",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_mountain_cabin.png"
     },
     {
       "id": "prop_adv_mountain_fence",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_mountain_fence.png"
     },
     {
       "id": "prop_adv_ruins_pillar",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_ruins_pillar.png"
     },
     {
       "id": "prop_adv_ruins_broken",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_ruins_broken.png"
     },
     {
       "id": "prop_adv_ruins_statue",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_ruins_statue.png"
     },
     {
       "id": "prop_adv_ruins_wall",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_ruins_wall.png"
     },
     {
       "id": "prop_adv_ruins_brazier",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_ruins_brazier.png"
     },
     {
       "id": "prop_adv_ruins_urn",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_ruins_urn.png"
     },
     {
       "id": "prop_adv_ruins_deadtree",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/prop_adv_ruins_deadtree.png"
     },
     {
       "id": "adv_chest",
-      "status": "placeholder",
+      "status": "production",
       "states": {
         "closed": "props/adv_chest_closed.png",
         "open": "props/adv_chest_open.png"
@@ -2503,7 +2548,7 @@
     },
     {
       "id": "adv_portal",
-      "status": "placeholder",
+      "status": "production",
       "states": {
         "off": "props/adv_portal_off.png",
         "on": "props/adv_portal_on.png"
@@ -2511,72 +2556,72 @@
     },
     {
       "id": "adv_spring",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_spring.png"
     },
     {
       "id": "adv_npc_traveler",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_npc_traveler.png"
     },
     {
       "id": "adv_lore_stone",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_lore_stone.png"
     },
     {
       "id": "adv_shrine",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_shrine.png"
     },
     {
       "id": "adv_node_herb",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_node_herb.png"
     },
     {
       "id": "adv_node_ore",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_node_ore.png"
     },
     {
       "id": "adv_gate_metal",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_gate_metal.png"
     },
     {
       "id": "adv_gate_nature",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_gate_nature.png"
     },
     {
       "id": "adv_gate_water",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_gate_water.png"
     },
     {
       "id": "adv_gate_fire",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_gate_fire.png"
     },
     {
       "id": "adv_gate_earth",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_gate_earth.png"
     },
     {
       "id": "adv_gate_lightning",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_gate_lightning.png"
     },
     {
       "id": "adv_gate_dark",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_gate_dark.png"
     },
     {
       "id": "adv_gate_light",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/adv_gate_light.png"
     }
   ],
@@ -2893,6 +2938,11 @@
       "id": "bg_adventure_ruins",
       "status": "placeholder",
       "asset": "environment/bg_adventure_ruins.png"
+    },
+    {
+      "id": "bg_first_guardians",
+      "status": "production",
+      "asset": "environment/bg_first_guardians.png"
     }
   ],
   "ui": [
@@ -3698,52 +3748,52 @@
     },
     {
       "id": "ui_item_equip_fire_staff",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_equip_fire_staff.png"
     },
     {
       "id": "ui_item_equip_tide_rod",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_equip_tide_rod.png"
     },
     {
       "id": "ui_item_equip_thunder_horn",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_equip_thunder_horn.png"
     },
     {
       "id": "ui_item_equip_nature_ring",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_equip_nature_ring.png"
     },
     {
       "id": "ui_item_equip_stone_shield",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_equip_stone_shield.png"
     },
     {
       "id": "ui_item_equip_bronze_gauntlet",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_equip_bronze_gauntlet.png"
     },
     {
       "id": "ui_item_equip_moon_veil",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_equip_moon_veil.png"
     },
     {
       "id": "ui_item_equip_lantern_charm",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_equip_lantern_charm.png"
     },
     {
       "id": "ui_item_equip_void_pearl",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_equip_void_pearl.png"
     },
     {
       "id": "ui_item_skill_scroll",
-      "status": "placeholder",
+      "status": "production",
       "asset": "ui/ui_item_skill_scroll.png"
     }
   ],

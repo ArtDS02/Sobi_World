@@ -8,12 +8,15 @@
 | Asset | Ghi chú |
 |---|---|
 | Nền 9 khu (3 vùng × 3 khu, cuộn ~1,5–2 màn hình) | Góc nhìn 3/4 từ trên, style Sobi Farm; vẽ khớp lưới 40 px (vách, nước = ô chặn). |
-| Đạo cụ bản đồ (cây, đá, nhà, tượng, cột, hàng rào…) | Mỗi loại có footprint `w × h` ô trong `content/adventure/props.json`; đế vật phải khớp footprint (test). |
-| Rương báu (đóng / mở / lấp lánh), cổng dịch chuyển (tắt / bật), 8 chướng ngại cổng nguyên tố, suối, bia lore, đền Guardian | |
+| ~~Đạo cụ bản đồ 24 loại~~ | Xong 2026-10-17 (batch `adventure-02-maps`, P1–P3). |
+| ~~Cổng dịch chuyển, 8 cổng nguyên tố, suối, bia lore, đền Guardian, lữ khách, điểm thảo dược / quặng, 3 kẻ canh khu, 10 vật phẩm~~ | Xong 2026-10-17 (batch `adventure-02-maps`, T1, G1, E1, I1). |
+| `adv_chest_open` (rương đã mở) | Gemini vẽ ở ô 2 sheet T1 một rương **đóng** y hệt ô 1. Tạm dùng rương đóng nhạt màu, mờ. Cần vẽ lại: nắp mở, vài đồng xu + ngọc bên trong. |
+| Nền 3 vùng `bg_adventure_forest / mountain / ruins` | Vẫn placeholder (nền trận đánh / thẻ vùng). |
 | Icon 9 nguyên tố, ~25 trạng thái, 6 phản ứng, icon ý định kẻ địch | |
 | VFX 9 hệ, phản ứng, cut-in Ultimate 9 dòng | |
 | So / Bi đi bộ (đã có `chr_so` / `chr_bi`, bản tạm) | Vẽ lại theo style chuẩn nếu cần. |
-| Sprite First Guardians / hậu duệ | Theo `asset/FIRST_GUARDIANS_ART_PLAN.md` (loài mới để sau). |
+| ~~Sprite 9 First Guardians + tranh truyền thuyết~~ | Xong 2026-10-17 (batch `adventure-01-guardians` G1–G3, A1): chân dung trong hồ sơ chiến binh, tranh ở đầu Trại. |
+| 32 hậu duệ (sheet D1–D4 đã có ảnh trong `art_inbox/.candidates/`) | Chưa vào game: 30 loài hậu duệ là gameplay để sau (decision 037). `pig_knight` trong sheet D1 trùng id heo đã có, không ghi đè. |
 
 ## GĐ14 — Aquarium: cho ăn / thay nước (decision 032)
 | Việc | Ghi chú |

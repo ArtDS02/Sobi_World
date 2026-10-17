@@ -6,9 +6,18 @@
 **Tiến độ GĐ14:** 50 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Adventure, Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023).
-**Bước tiếp theo:** chủ dự án chơi thử Adventure V2 (decision 037) và tạo ảnh batch `adventure-02-maps`; sau đó art Adventure + ô đất bản đồ.
+**Bước tiếp theo:** chủ dự án chơi thử Adventure V2 bằng save test `npm run dev:max-save` (cấp tối đa, đủ loài); vẽ lại `adv_chest_open`; ô đất bản đồ + nền 3 vùng Adventure.
 
 ## Nhật ký
+
+### 2026-10-17 — GĐ14 Adventure: art batch adventure-01-guardians + adventure-02-maps, save test cấp tối đa
+✅ Đã làm (chủ dự án: "apply các ảnh vào, cho tôi một tài khoản full cấp full sinh vật để test adventure"):
+1. **Cắt 12 sheet**: 24 đạo cụ 3 vùng, rương, cổng dịch chuyển, 8 cổng nguyên tố, suối, bia lore, đền, lữ khách, 2 điểm tài nguyên, 3 kẻ canh khu, 10 vật phẩm → 57 dòng manifest thành `production`. 9 First Guardian + tranh truyền thuyết: 10 dòng mới (`guardian_*`, `bg_first_guardians`). Gỡ dấu ✦ của Gemini (đảo phép trộn alpha, bản gốc giữ ở `.batch/<id>/.orig/`); sheet P1 (hàng so le) và G2 (Gemini vẽ 2 hàng trùng → lấy hàng trên) cắt theo khối liền.
+2. **Hiển thị**: hồ sơ chiến binh có chân dung Guardian của dòng (`GUARDIAN_ART` trong `logic/art.ts`); Trại có tranh Chín First Guardians ở đầu (chuỗi Việt / Anh).
+3. **Save test** `npm run dev:max-save -- [out] [sandbox]` (`scripts/dev/maxSave.ts`): như `dev:full-save` (bot 45 ngày, mọi vật phẩm ×99, ví đầy) + Sobi World cấp 20, một con trưởng thành mỗi giống heo / loài cá (Codex đủ), máng cấp tối đa đầy, sinh vật no / sạch / khỏe, mọi vùng Adventure mở + cổng dịch chuyển thắp, 106 chiến binh cấp 30 có 98 SP, năng lượng đầy. Ghi `saves-export/sobi-world-max.json` (Nhập save trong game). Cấu hình `sandbox-max` trong `.claude/launch.json` dùng thư mục sandbox riêng.
+🧪 Đã kiểm tra: `npm run check` xanh; `assets:check` OK; sandbox 1600×900 với save mới: không có popup bệnh / đói, Trại hiện tranh Guardian, hồ sơ có chân dung Mộc Mẫu, lên đường Rừng Thì Thầm: cây, bụi, nấm, đá, gốc cây, cổng dịch chuyển hiện ảnh mới; không lỗi console. Chưa đi bộ được trong khung trình duyệt tự động (canvas không nhận phím) nên chưa xem rương / cổng nguyên tố / kẻ canh khu tận mắt.
+⚠️ Tự quyết: `adv_chest_open` tạm là rương đóng nhạt màu (Gemini vẽ trùng ô); 32 hậu duệ (D1–D4) chưa vào game vì loài mới là gameplay để sau; `pig_knight` trong D1 trùng id heo đã có, không ghi đè; save test đánh dấu mọi vùng đã hạ trùm để đi thẳng vùng nào cũng được (trùm vẫn đánh lại được).
+👉 Bạn cần: nhập `saves-export/sobi-world-max.json` (Menu → Cài đặt → Nhập save) hoặc chạy sandbox; chơi thử Adventure; vẽ lại rương mở.
 
 ### 2026-10-17 — Adventure V2 hoàn thành phần code (decision 037, chờ chủ dự án chơi thử)
 ✅ Đã làm (chủ dự án: "triển khai toàn bộ Sobi Adventure, cho phép tự quyết"):

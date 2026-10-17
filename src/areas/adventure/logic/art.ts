@@ -5,7 +5,7 @@
 import { AREA_HUD_ART, itemArtId } from '../../../core/config/assetIds';
 import { ITEMS, ITEM_IDS } from '../../../core/config/items';
 import { ELEMENTS } from '../../../systems/combat/types';
-import { ENEMY_LIST, PROP_LIST, SKILL_SCROLL, ZONE_LIST } from './config/content';
+import { ENEMY_LIST, PROP_LIST, SKILL_SCROLL, ZONE_LIST, type LineageId } from './config/content';
 
 /** Materials and rations the Adventure introduced (GĐ10 forest drops, GĐ11 mountain, ruins and field kitchen, the Skill Scroll). */
 const ADVENTURE_MATERIALS = ['item_forest_herb', 'item_beast_fang', 'item_mountain_ore', 'item_ancient_cog', 'item_ancient_rune', 'item_ration_hearty', 'item_ration_spicy', 'item_ration_swift', 'item_pig_egg_wild', SKILL_SCROLL];
@@ -26,6 +26,22 @@ export const THING_ART: Readonly<Record<string, readonly string[]>> = {
   ...Object.fromEntries(ELEMENTS.filter((e) => e !== 'VOID').map((e) => [`adv_gate_${e.toLowerCase()}`, []])),
 };
 
+/** The First Guardian each lineage descends from: the portrait on the fighter sheet. */
+export const GUARDIAN_ART: Readonly<Record<LineageId, string>> = {
+  nam_hai: 'guardian_whale',
+  quy_son: 'guardian_turtle',
+  da_mac: 'guardian_octopus',
+  quang_tru: 'guardian_light_pig',
+  loi_duong: 'guardian_thunder_pig',
+  thiet_giap: 'guardian_metal_boar',
+  hoa_giai: 'guardian_forge_crab',
+  moc_mau: 'guardian_bloom_sow',
+  hu_khong: 'guardian_void_jelly',
+};
+
+/** The legend picture of the nine First Guardians, over the camp. */
+export const GUARDIANS_LEGEND_ART = 'bg_first_guardians';
+
 /** Every id the Adventure needs in the manifest. */
 export const adventureArtIds = (): string[] => [
   ...Object.values(AREA_HUD_ART),
@@ -34,4 +50,6 @@ export const adventureArtIds = (): string[] => [
   ...ADVENTURE_ITEM_IDS.map(itemArtId),
   ...PROP_LIST.map((p) => p.art),
   ...Object.keys(THING_ART),
+  ...Object.values(GUARDIAN_ART),
+  GUARDIANS_LEGEND_ART,
 ];

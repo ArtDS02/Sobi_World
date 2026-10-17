@@ -153,6 +153,9 @@ for (const [id, w, h] of [
 for (const id of ['adv_chest_closed', 'adv_chest_open', 'adv_spring', 'adv_npc_traveler', 'adv_lore_stone', 'adv_node_herb', 'adv_node_ore']) CATALOGUE_SIZES[id] = { width: 128, height: 128 };
 for (const id of ['adv_portal_off', 'adv_portal_on', 'adv_shrine']) CATALOGUE_SIZES[id] = { width: 160, height: 200 };
 for (const el of ['metal', 'nature', 'water', 'fire', 'earth', 'lightning', 'dark', 'light']) CATALOGUE_SIZES[`adv_gate_${el}`] = { width: 128, height: 160 };
+// The nine First Guardians (batch adventure-01-guardians): portraits on the fighter sheet, and their legend picture.
+for (const g of ['light_pig', 'thunder_pig', 'metal_boar', 'bloom_sow', 'whale', 'turtle', 'octopus', 'forge_crab', 'void_jelly']) CATALOGUE_SIZES[`guardian_${g}`] = { width: 256, height: 256 };
+CATALOGUE_SIZES.bg_first_guardians = { width: 1376, height: 768 };
 
 for (const who of ['so', 'bi']) {
   for (const facing of ['down', 'up', 'left', 'right']) {

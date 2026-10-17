@@ -9,6 +9,7 @@ import { claimStarter, collectLoot } from '../logic/actions/camp';
 import { saveFormation, setLeader } from '../logic/actions/growth';
 import { startRun } from '../logic/actions/start';
 import { sweepZone } from '../logic/actions/sweep';
+import { GUARDIANS_LEGEND_ART } from '../logic/art';
 import { AB, ZONES } from '../logic/config/content';
 import { campVm, startReason, sweepReason, teamWarnings, type CampVm } from './campVm';
 import type { FighterCardVm } from './fighterVm';
@@ -124,6 +125,7 @@ export function renderCamp(ctx: ViewCtx): HTMLElement {
   return el(
     'div',
     { class: 'adventure-ui__hub' },
+    art(GUARDIANS_LEGEND_ART, 'adventure-ui__legend', vi.adventure.camp.legend),
     el('h2', { class: 'adventure-ui__camp-title', text: vi.adventure.camp.title }),
     el(
       'section',

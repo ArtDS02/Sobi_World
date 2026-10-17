@@ -109,6 +109,7 @@ export const partC = {
     back: "Back",
     camp: {
       title: "Adventure Camp",
+      legend: "The nine First Guardians",
       zones: "Choose a zone",
       zoneLocked: "Needs Sobi World level {level}",
       zoneNotCleared: "Beat the {zone} boss first",

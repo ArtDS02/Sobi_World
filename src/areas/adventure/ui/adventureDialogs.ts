@@ -112,7 +112,7 @@ export function createAdventureDialogs(d: AdventureDialogsDeps) {
       body = el(
         'div',
         { class: 'adventure-sheet__stats' },
-        art(v.art, 'adventure-sheet__art', v.title),
+        el('div', { class: 'adventure-sheet__arts' }, art(v.art, 'adventure-sheet__art', v.title), art(v.guardianArt, 'adventure-sheet__guardian', v.guardian)),
         el('p', { text: `${v.guardian} · ${v.elements}` }),
         el('dl', {}, ...v.stats.flatMap((s) => [el('dt', { text: s.name }), el('dd', { text: formatInt(s.value) })])),
       );
