@@ -21,7 +21,7 @@
 7. **Cân bằng**: số liệu ở decision 037 (mô phỏng + bot 45 ngày). Bot `sim:week` nay đi chuyến trên bản đồ thật (`scripts/economy/adventureTrip.ts`).
 8. **Art**: 46 id mới vào manifest dạng placeholder; PROMPT 7 sheet / 55 asset ở `art_inbox/.batch/adventure-02-maps/PROMPT.md`; ô đất bản đồ để batch sau (`docs/ASSET_TODO.md`).
 🧪 Đã kiểm tra: `npm run check` xanh (mới: combat V2, 9 bản đồ, chuyến đi, cây kỹ năng, migration, view-model). Chạy thật ở sandbox 1600×900 với save cuối game: Trại → lên đường → đi bằng phím (đội theo sau) → chạm quái vào trận (ý định, thứ tự lượt) → Tự động thắng → khôi phục vị trí sau khi tải lại → Space ở cổng dịch chuyển → sang Đỉnh Dung Nham → Về Trại → tổng kết → hồ sơ / cây kỹ năng.
-⚠️ Tự quyết: scene nghe thêm phím Space (không đổi phím mặc định E); hệ số máu / công / phần thưởng của kẻ địch (decision 037); trong mô phỏng, loadout tự chọn skill mạnh. E2e chưa chạy lại (cần build): đã cập nhật kịch bản.
+⚠️ Tự quyết: scene nghe thêm phím Space (không đổi phím mặc định E); hệ số máu / công / phần thưởng của kẻ địch (decision 037); trong mô phỏng, loadout tự chọn skill mạnh. E2e Adventure (2 kịch bản, bản build desktop) xanh: đi bộ bằng phím, vị trí được lưu, về Trại, khẩu phần.
 👉 Bạn cần: chơi thử một chuyến Rừng (đi bộ, rương ẩn, cổng gai cần hệ Lửa, kẻ canh khu, cổng dịch chuyển), xem hồ sơ / cây kỹ năng; thử Admin "Bản đồ khu"; tạo ảnh batch `adventure-02-maps`.
 
 ### 2026-10-17 — Adventure V2: A0 spec + decision 037 (chủ dự án đã duyệt hướng)
