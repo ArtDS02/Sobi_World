@@ -2,7 +2,7 @@
   "id": "aquarium-06-subs",
   "area": "aquarium",
   "title": "Tàu ngầm chăm bể: cho ăn + thay nước ở cấp 5 (Đại Dương Sâu)",
-  "decisions": "Owner (2026-10-17): at tank level 5 the scene is all under water (decision 026), so the care drones of decision 033 look wrong there; two little submarines bring the food and the fresh water instead. Same job, same path as the drones (in from the left, stop over the fish, out to the right), so they are drawn facing right, seen slightly from the side and above, with no frames: the game bobs and tilts them in code. Until the art arrives level 5 keeps the drone stand-ins. Manifest rows (prop_sub_feed, prop_sub_water, props 256x160 like the drones) are added when the art is delivered.",
+  "decisions": "Owner (2026-10-17): at tank level 5 the scene is all under water (decision 026), so the care drones of decision 033 look wrong there; two little submarines bring the food and the fresh water instead. Same job, same path as the drones (in from the left, stop over the fish, out to the right), so they are drawn facing right, seen slightly from the side and above, with no frames: the game bobs and tilts them in code. Until the art arrives level 5 keeps the drone stand-ins. Manifest rows prop_sub_feed, prop_sub_water (props 256x228: about as tall as wide, so taller than the drones' 256x180). Round 2: the first sheet sat both submarines on grass patches copied from the windmill of the style board, so the notes now forbid any base.",
   "sheets": [
     {
       "name": "S",
@@ -11,10 +11,16 @@
       "grid": [1, 2],
       "fit": "each",
       "views": [],
-      "notes": "Both are the same cute little toy submarine gliding under water, nose pointing RIGHT, seen from the side and slightly from above, much wider than tall: a round chubby hull like a bean, a small conning tower with a periscope on top, two or three round porthole windows with soft light inside, a small propeller at the back (left end) drawn as a soft translucent disc, little fins. Rounded chunky toy-like shapes, riveted brass trim, no face on the submarine, no pilot. It floats in the water: no sea floor, no water drawn around it, no bubbles, no shadow under it.",
+      "notes": "Both are the same cute little toy submarine gliding under water, nose pointing RIGHT, seen from the side and slightly from above, much wider than tall: a round chubby hull like a bean, a small conning tower with a periscope on top, two or three round porthole windows with soft light inside, a small propeller at the back (left end) drawn as a soft translucent disc, little fins. Rounded chunky toy-like shapes, riveted brass trim, no face on the submarine, no pilot. It floats freely in the water and stands on NOTHING: no grass patch, no ground base, no tuft of grass, no rock or sand under it (unlike the windmill in the style reference, which stands on grass — do not copy that base). No sea floor, no water drawn around it, no bubbles, no shadow under it. Nothing spills out: the pellets and the water stay inside their containers.",
       "cells": [
-        { "stem": "prop_sub_feed", "desc": "Feeding submarine: coral-orange hull with cream belly and brass trim, a small glass hopper on its back full of round fish-food pellets (golden-brown), and a little nozzle under the belly where the food comes out" },
-        { "stem": "prop_sub_water", "desc": "Water submarine: sea-teal hull with pearl-white belly and brass trim, a clear round tank on its back full of sparkling fresh blue water with a tiny white swirl, and a short hose with a nozzle under the belly" }
+        {
+          "stem": "prop_sub_feed",
+          "desc": "Feeding submarine: coral-orange hull with cream belly and brass trim, a small glass hopper on its back full of round fish-food pellets (golden-brown), and a little nozzle under the belly where the food comes out"
+        },
+        {
+          "stem": "prop_sub_water",
+          "desc": "Water submarine: sea-teal hull with pearl-white belly and brass trim, a clear round tank on its back full of sparkling fresh blue water with a tiny white swirl, and a short hose with a nozzle under the belly"
+        }
       ]
     }
   ]

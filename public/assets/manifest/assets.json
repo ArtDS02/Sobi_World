@@ -2149,6 +2149,16 @@
       "asset": "props/prop_drone_cloud.png"
     },
     {
+      "id": "prop_sub_feed",
+      "status": "production",
+      "asset": "props/prop_sub_feed.png"
+    },
+    {
+      "id": "prop_sub_water",
+      "status": "production",
+      "asset": "props/prop_sub_water.png"
+    },
+    {
       "id": "prop_fish_egg",
       "status": "production",
       "asset": "props/prop_fish_egg.png"

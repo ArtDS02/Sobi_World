@@ -58,6 +58,9 @@ CATALOGUE_SIZES.bg_garden = { width: 1812, height: 900 };
 // GĐ14 decisions 028–029: the fertiliser drones, the Areas' shop stalls, the sprinkler's look per level.
 CATALOGUE_SIZES.prop_drone_garden = { width: 256, height: 180 };
 CATALOGUE_SIZES.prop_drone_cloud = { width: 256, height: 180 };
+// The deep sea's care submarines (batch aquarium-06-subs): about as tall as wide, so a taller canvas than the drones.
+CATALOGUE_SIZES.prop_sub_feed = { width: 256, height: 228 };
+CATALOGUE_SIZES.prop_sub_water = { width: 256, height: 228 };
 CATALOGUE_SIZES.bld_shop_garden = { width: 260, height: 240 };
 CATALOGUE_SIZES.bld_shop_cloud = { width: 260, height: 240 };
 // Decision 034: the Aquarium's stalls, the dock one (tank level 1) and the undersea one (levels 2-5), batch aquarium-05-shop.
