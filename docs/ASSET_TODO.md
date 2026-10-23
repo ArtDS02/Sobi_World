@@ -10,9 +10,11 @@
 | Nền 9 khu (3 vùng × 3 khu, cuộn ~1,5–2 màn hình) | Góc nhìn 3/4 từ trên, style Sobi Farm; vẽ khớp lưới 40 px (vách, nước = ô chặn). |
 | ~~Đạo cụ bản đồ 24 loại~~ | Xong 2026-10-17 (batch `adventure-02-maps`, P1–P3). |
 | ~~Cổng dịch chuyển, 8 cổng nguyên tố, suối, bia lore, đền Guardian, lữ khách, điểm thảo dược / quặng, 3 kẻ canh khu, 10 vật phẩm~~ | Xong 2026-10-17 (batch `adventure-02-maps`, T1, G1, E1, I1). |
-| `adv_chest_open` (rương đã mở) | Gemini vẽ ở ô 2 sheet T1 một rương **đóng** y hệt ô 1. Tạm dùng rương đóng nhạt màu, mờ. Cần vẽ lại: nắp mở, vài đồng xu + ngọc bên trong. |
-| Nền 3 vùng `bg_adventure_forest / mountain / ruins` | Vẫn placeholder (nền trận đánh / thẻ vùng). |
-| Icon 9 nguyên tố, ~25 trạng thái, 6 phản ứng, icon ý định kẻ địch | |
+| ~~`adv_chest_open` (rương đã mở)~~ | Xong 2026-10-23 (batch `adventure-06-tiles` C1, bản `_b`). |
+| ~~**Làm lại giao diện Adventure theo ảnh mẫu**~~ | Xong 2026-10-23: 212 asset từ 8 batch `adventure-03..10` vào game (manifest + `art:process`), 19 kẻ địch và 3 nền vùng lên production; Trại / Trận / Bản đồ dựng lại theo ảnh mẫu (`art_inbox/.batch/adventure-03-layout/`); emoji hệ / class / trạng thái thay bằng icon; bản đồ rắc decal theo seed; ô đất làm liền mép bằng code. Chờ chủ dự án duyệt. |
+| **Cần tạo lại** (prompt mới đã có trong `PROMPT.md`) | `adventure-08-skills` sheet **K5** (4 kỹ năng Sứa Hư Không: lần 1 vẽ dải cỏ dưới mỗi ô và trùng 2 hàng); `adventure-09-skills-class` sheet **CP2** (Cổ Vũ Toàn Đội, Truyền Năng, Bất Khuất, Hào Quang: sheet CP lần 1 vẽ lặp hàng trên). Trong game các kỹ năng này dùng huy hiệu hệ thay icon. |
+| Nên tạo lại (không bắt buộc) | `adventure-08-skills` **K2** và `adventure-10-skills-enemy` **E1**: Gemini vẽ thẻ đứng (≈ 4:5) thay vì ô vuông, trong game hơi hẹp hơn các icon khác. `adventure-06-tiles` **T3**: ô `ruins_ground` (đá lát + rêu) sau khi làm liền mép bằng code hơi nhoè, `ruins_wall` mép trên / dưới không khớp hoa văn. Nền trận B1–B4 là ảnh 1376 px phóng lên 1600 px (hơi mềm). |
+| Tự sửa khi cắt (không cần tạo lại) | Gỡ dấu ✦ Gemini bằng đảo phép trộn alpha (trong bộ nhớ, sheet gốc giữ nguyên); sheet vẽ trùng 2 hàng (U1, T1–T3, F1, M1, K5, CP) lấy đúng ô; bỏ chữ dưới icon (K4, CT, E3); lật ngang 8 kẻ địch quay phải (Ếch Sương, Sói Rừng, Heo Rừng Gai, Bọ Đá, Diều Hâu Vách Đá, Sa Giông Dung Nham, Dê Tuyết, Hộ Pháp Cổ Đại) để mọi kẻ địch nhìn sang trái; 15 ô đất làm liền mép (trộn với bản dịch nửa ô). |
 | VFX 9 hệ, phản ứng, cut-in Ultimate 9 dòng | |
 | So / Bi đi bộ (đã có `chr_so` / `chr_bi`, bản tạm) | Vẽ lại theo style chuẩn nếu cần. |
 | ~~Sprite 9 First Guardians + tranh truyền thuyết~~ | Xong 2026-10-17 (batch `adventure-01-guardians` G1–G3, A1): chân dung trong hồ sơ chiến binh, tranh ở đầu Trại. |
@@ -40,8 +42,8 @@ Tất cả là placeholder (CSS, ký tự) — làm art ở GĐ14 (decision 017)
 Tất cả là placeholder sinh bằng `npm run assets:placeholders` (decision 017: làm art ở GĐ14):
 | Việc | Ghi chú |
 |---|---|
-| 11 kẻ địch mới `enemy_*` | Núi: Bọ Đá, Diều Hâu Vách Đá, Sa Giông Dung Nham, Dê Tuyết, Tượng Quặng (240×240), Rồng Dung Nham (trùm 320×360). Tàn Tích: Lính Gác Đá, Hồn Rune, Bóng Thủy Triều, Tượng Thần Lửa, Hộ Pháp Cổ Đại (trùm 320×360). |
-| `bg_adventure_mountain`, `bg_adventure_ruins` (1600×900) | Nền hai vùng mới. |
+| ~~11 kẻ địch mới `enemy_*`~~ (xong 2026-10-23, batch `adventure-07-enemies`) | Núi: Bọ Đá, Diều Hâu Vách Đá, Sa Giông Dung Nham, Dê Tuyết, Tượng Quặng (240×240), Rồng Dung Nham (trùm 320×360). Tàn Tích: Lính Gác Đá, Hồn Rune, Bóng Thủy Triều, Tượng Thần Lửa, Hộ Pháp Cổ Đại (trùm 320×360). |
+| ~~`bg_adventure_mountain`, `bg_adventure_ruins` (1600×900)~~ (xong 2026-10-23, `adventure-05-scenes`) | Nền hai vùng mới. |
 | 10 icon `ui_item_*` (128×128) | Quặng Núi, Bánh Răng Cổ, Rune Cổ, 3 khẩu phần, Trứng Heo Hoang, 3 trang bị Sử thi (Kiếm Rune, Giáp Đá Cổ, Bùa Rune Cổ). |
 | Panel Công nghệ | Đang là danh sách thẻ chữ; cần icon cho 4 công nghệ (xưởng, lò, bếp, lều) và hiệu ứng khi nâng cấp. |
 | Quả trứng nở ở Nông trại | Chỉ có toast và tiếng `birth_fanfare`; cần animation trứng nở. |
@@ -50,8 +52,8 @@ Tất cả là placeholder sinh bằng `npm run assets:placeholders` (decision 0
 Tất cả là placeholder sinh bằng `npm run assets:placeholders` (decision 017: làm art ở GĐ14):
 | Việc | Ghi chú |
 |---|---|
-| 8 kẻ địch `enemy_*` (192×192, trùm Cổ Thụ 320×360, nhìn sang trái) | Rêu Con, Mầm Gai, Chim Sẻ Gió, Cáo Lửa, Ếch Sương, Sói Rừng, Heo Rừng Gai, Cổ Thụ Giận Dữ. Chưa có ảnh tham khảo bộ kẻ địch (thêm vào `asset/reference/sobi_adventure/` nếu có). |
-| `bg_adventure_forest` (1600×900) | Nền Rừng Thì Thầm (cảnh chỉ vẽ nền, UI ở DOM). |
+| ~~8 kẻ địch `enemy_*` (192×192, trùm Cổ Thụ 320×360, nhìn sang trái)~~ (xong 2026-10-23, `adventure-07-enemies`) | Rêu Con, Mầm Gai, Chim Sẻ Gió, Cáo Lửa, Ếch Sương, Sói Rừng, Heo Rừng Gai, Cổ Thụ Giận Dữ. Chưa có ảnh tham khảo bộ kẻ địch (thêm vào `asset/reference/sobi_adventure/` nếu có). |
+| ~~`bg_adventure_forest` (1600×900)~~ (xong 2026-10-23, `adventure-05-scenes`) | Nền Rừng Thì Thầm (cảnh chỉ vẽ nền, UI ở DOM). |
 | 11 icon `ui_item_equip_*`, `ui_item_forest_herb`, `ui_item_beast_fang` (128×128) | 9 trang bị (vũ khí, giáp, bùa × 3 bậc) và 2 vật liệu. |
 | Ảnh Hiệp Sĩ Heo (`npc_knight`) | Đang dùng ảnh heo `prop_animal_pig_a`. |
 | Animation trận đánh, VFX đòn / nguyên tố / trạng thái, âm thanh | Hiện chỉ có chữ nhật ký và âm UI có sẵn. |

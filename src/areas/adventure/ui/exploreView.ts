@@ -10,7 +10,8 @@ import { returnToCamp } from '../logic/actions/explore';
 import { adventureOf } from '../logic/save/lens';
 import { resultVm } from './battleVm';
 import { exploreVm, minimapVm } from './exploreVm';
-import { actionButton, bar, toggle, type ViewCtx } from './viewKit';
+import { actionButton, bar, elementIcon, iconOf, roundButton, type ViewCtx } from './viewKit';
+import { ACTION_ART } from './vmKit';
 
 const MINI_COLOUR: Record<string, string> = { '.': '#cfe8b4', '#': '#5d7a4a', '~': '#7fc4e8', P: '#b98cf0', C: '#f2c14e', c: '#c9b37a', G: '#e0703a', '>': '#fff6d8' };
 
@@ -47,22 +48,28 @@ export function renderExplore(ctx: ViewCtx): HTMLElement | null {
           el(
             'div',
             { class: `adventure-explore__member${m.down ? ' is-down' : ''}` },
-            art(m.art, 'adventure-explore__face', m.name) ?? el('span', { text: '🐷' }),
-            el('div', {}, el('b', { text: m.name }), bar(m.hpPercent, 'hp', m.hpText), bar(m.mpPercent, 'mp'), bar(m.ragePercent, 'rage'), el('small', { text: m.down ? vi.adventure.explore.down : m.hpText })),
+            art(m.art, 'adventure-explore__face', m.name) ?? el('span', { class: 'adventure-explore__face' }),
+            el(
+              'div',
+              { class: 'adventure-explore__bars' },
+              el('b', { text: m.name }),
+              el('span', { class: 'adventure-explore__hp' }, bar(m.hpPercent, 'hp', m.hpText), el('small', { text: m.down ? vi.adventure.explore.down : m.hpText })),
+              el('span', { class: 'adventure-explore__sub' }, bar(m.mpPercent, 'mp'), bar(m.ragePercent, 'rage')),
+            ),
           ),
         ),
       ),
       el(
         'div',
         { class: 'adventure-explore__where' },
-        el('b', { text: v.zoneName }),
-        el('small', { text: v.explored }),
-        ...v.blessings.map((b) => el('small', { class: 'adventure-explore__bless', text: b })),
+        el('b', { class: 'adventure-explore__name', text: v.zoneName }),
+        el('span', { class: 'adventure-explore__found' }, bar(v.exploredPct, 'explore', v.explored), el('small', { text: v.explored })),
+        ...v.blessings.map((b) => el('small', { class: 'adventure-explore__bless' }, elementIcon(b.element), el('span', { text: b.text }))),
         el(
           'div',
           { class: 'adventure-explore__buttons' },
-          toggle(vi.adventure.explore.map, ctx.state.showMap, () => ((ctx.state.showMap = !ctx.state.showMap), ctx.rerender())),
-          actionButton({ label: vi.adventure.explore.returnCamp, reason: null }, () => ctx.dispatch((w, c) => returnToCamp(w, c)), 'c-button--ghost'),
+          roundButton(ACTION_ART.map, vi.adventure.explore.map, ctx.state.showMap, () => ((ctx.state.showMap = !ctx.state.showMap), ctx.rerender())),
+          roundButton(ACTION_ART.camp, vi.adventure.explore.returnCamp, false, () => ctx.dispatch((w, c) => returnToCamp(w, c))),
         ),
       ),
     ),
@@ -72,7 +79,7 @@ export function renderExplore(ctx: ViewCtx): HTMLElement | null {
       'div',
       { class: 'adventure-explore__hint' },
       v.prompt
-        ? el('span', { class: `adventure-explore__prompt${v.prompt.reason ? ' is-off' : ''}` }, el('kbd', { text: ctx.interactKey() }), el('b', { text: v.prompt.label }), v.prompt.reason ? el('small', { text: v.prompt.reason }) : null)
+        ? el('span', { class: `adventure-explore__prompt${v.prompt.reason ? ' is-off' : ''}` }, iconOf(ACTION_ART.interact, ''), el('kbd', { text: ctx.interactKey() }), el('b', { text: v.prompt.label }), v.prompt.reason ? el('small', { text: v.prompt.reason }) : null)
         : el('small', { text: t(vi.adventure.explore.keys, { interact: ctx.interactKey() }) }),
     ),
   );

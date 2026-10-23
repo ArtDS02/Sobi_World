@@ -3,6 +3,7 @@
 // traveller, a lore stone, a shrine), the small map, and the portal's destinations. Pure.
 import type { WorldSave } from '../../../core/save/world';
 import { formatInt, t } from '../../../i18n/format';
+import type { Element } from '../../../systems/combat/types';
 import { vi } from '../../../i18n/vi';
 import { portalLit } from '../logic/actions/trip';
 import { AB, EVENTS, MAPS, ZONE_LIST, ZONES, type AreaMap } from '../logic/config/content';
@@ -43,8 +44,10 @@ export interface ExploreVm {
   mapName: string;
   zoneName: string;
   explored: string;
+  exploredPct: number;
   team: MemberBarVm[];
-  blessings: string[];
+  /** The shrine blessings carried: the element and the words. */
+  blessings: { element: Element; text: string }[];
   prompt: PromptVm | null;
   event: { title: string; text: string } | null;
   portal: { lit: boolean; destinations: { mapId: string; label: string }[] };
@@ -116,6 +119,7 @@ export function exploreVm(world: WorldSave, run: Run, focus: string | null): Exp
     mapName: map.nameVi,
     zoneName: zone?.nameVi ?? '',
     explored: t(vi.adventure.explore.mapTitle, { map: map.nameVi, pct: discovery(a, [map.id]).percent }),
+    exploredPct: discovery(a, [map.id]).percent,
     team: run.team.map((m) => ({
       key: m.key,
       name: m.name,
@@ -126,7 +130,7 @@ export function exploreVm(world: WorldSave, run: Run, focus: string | null): Exp
       ragePercent: pctOf(m.rage, AB.rage.max),
       down: m.hp <= 0,
     })),
-    blessings: Object.entries(run.blessings).map(([el, n]) => t(vi.adventure.explore.blessing, { element: elementLabel(el as never), pct: pct(n) })),
+    blessings: Object.entries(run.blessings).map(([el, n]) => ({ element: el as Element, text: t(vi.adventure.explore.blessing, { element: elementLabel(el as Element), pct: pct(n) }) })),
     prompt: thing ? promptFor(world, run, map, thing) : null,
     event,
     portal: { lit, destinations },

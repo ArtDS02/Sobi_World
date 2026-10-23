@@ -50,6 +50,8 @@ export interface ZoneCardVm {
   backdrop: string;
   locked: string | null;
   explored: string;
+  /** Discovery in percent (the bar on the card). */
+  explorePct: number;
   cleared: string | null;
   foes: string;
   /** The elements of its enemies (for the team warning). */
@@ -79,6 +81,7 @@ export function zoneCards(world: WorldSave): ZoneCardVm[] {
             ? t(vi.adventure.camp.zoneNotCleared, { zone: ZONES[z.requiresCleared]?.nameVi ?? '' })
             : null,
       explored: t(vi.adventure.camp.explored, { pct: zoneDiscovery(a, z.id).percent }),
+      explorePct: zoneDiscovery(a, z.id).percent,
       cleared: a.cleared[z.id] ? t(vi.adventure.camp.cleared, { count: a.cleared[z.id]! }) : null,
       foes: t(vi.adventure.camp.foes, { elements: foeElements.map(elementLabel).join(' ') }),
       foeElements,

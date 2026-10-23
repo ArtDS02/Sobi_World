@@ -42,6 +42,23 @@ export const GUARDIAN_ART: Readonly<Record<LineageId, string>> = {
 /** The legend picture of the nine First Guardians, over the camp. */
 export const GUARDIANS_LEGEND_ART = 'bg_first_guardians';
 
+/** The camp's dressing on the owner's mock-up (batches adventure-03 / 05): the sign, the beast peeking over it, the plaque, the corner
+ *  leaves, and the camp's own painting behind the board. */
+export const CAMP_ART = {
+  sign: 'ui_adv_sign_title',
+  peek: 'ui_adv_peek_beast',
+  plaque: 'ui_adv_plaque',
+  leaves: 'ui_adv_corner_leaves',
+  backdrop: 'bg_adventure_camp',
+} as const;
+
+/** The badges of the elements, classes and plain actions (skills have their own icons, `ui_` + id, optional). */
+export const ICON_ART_IDS = [
+  ...ELEMENTS.map((e) => `ui_icon_elem_${e.toLowerCase()}`),
+  ...['tanker', 'striker', 'mage', 'support'].map((c) => `ui_icon_class_${c}`),
+  ...['attack', 'skill', 'guard', 'ultimate', 'flee', 'auto', 'speed', 'map', 'camp', 'formation', 'sweep', 'interact'].map((a) => `ui_icon_adv_${a}`),
+];
+
 /** Every id the Adventure needs in the manifest. */
 export const adventureArtIds = (): string[] => [
   ...Object.values(AREA_HUD_ART),
@@ -52,4 +69,6 @@ export const adventureArtIds = (): string[] => [
   ...Object.keys(THING_ART),
   ...Object.values(GUARDIAN_ART),
   GUARDIANS_LEGEND_ART,
+  ...Object.values(CAMP_ART),
+  ...ICON_ART_IDS,
 ];

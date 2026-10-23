@@ -2,6 +2,7 @@
 // back, the leader and followers, the groups of the area (their look, elements, beaten or not), what is opened or used. Pure.
 import type { WorldSave } from '../../../core/save/world';
 import { groupEnemies, groupKey, portalLit } from '../logic/actions/trip';
+import { CAMP_ART } from '../logic/art';
 import { ENEMIES, MAPS, ZONES, ZONE_LIST } from '../logic/config/content';
 import { adventureOf } from '../logic/save/lens';
 import type { AdventureSceneState } from '../scene/sceneState';
@@ -16,7 +17,7 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
     followers: (run?.team ?? []).map((m) => ({ art: m.art, down: m.hp <= 0 })),
     openedGates: a.openedGates,
     openedChests: a.openedChests,
-    backdrop: zone.backdrop,
+    backdrop: run ? zone.backdrop : CAMP_ART.backdrop,
     now,
     paused,
   };

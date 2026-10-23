@@ -4,7 +4,8 @@
 // Audio:  art_inbox/audio/<id>.ogg|.mp3 plus art_inbox/audio/credits.txt, one line per file:
 //   `<id> | <author / source> | <license>` (lines starting with # are ignored).
 // A row becomes `production` once every image/audio file it references arrives in the same batch.
-// Usage: npm run art:process [-- --dry-run]
+// Usage: npm run art:process [-- --dry-run] [-- --list=<file>]
+//   --list: only the inbox files whose stem is a line of <file> (keeps hand-tuned art from earlier batches untouched).
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { PNG } from 'pngjs';
@@ -45,6 +46,15 @@ interface Img {
 }
 
 const dryRun = process.argv.includes('--dry-run');
+const listArg = process.argv.find((a) => a.startsWith('--list='));
+const only = listArg
+  ? new Set(
+      readFileSync(listArg.slice('--list='.length), 'utf8')
+        .split(/\r?\n/)
+        .map((l) => l.trim().toLowerCase())
+        .filter(Boolean),
+    )
+  : null;
 const stemOf = (p: string) =>
   p
     .split('/')
@@ -307,7 +317,7 @@ async function main() {
     patches.set(id, { ...patches.get(id), ...fields });
 
   const images = existsSync(INBOX)
-    ? readdirSync(INBOX).filter((f) => !f.startsWith('.') && f !== 'audio')
+    ? readdirSync(INBOX).filter((f) => !f.startsWith('.') && f !== 'audio' && (!only || only.has(stemOf(f).toLowerCase())))
     : [];
   for (const file of images) {
     const stem = stemOf(file).toLowerCase();

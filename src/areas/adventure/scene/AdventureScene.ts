@@ -9,7 +9,6 @@ import type { ControlInput } from '../../../ui/world/controlInput';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { AB, MAPS, type AreaMap } from '../logic/config/content';
 import { distanceToThing, groupPosition, thingsOf, walkableOf } from '../logic/maps';
-import { ELEMENT_ICON } from '../ui/vmKit';
 import { buildMap, edgeColour, refreshThings, type MapObjects } from './mapView';
 import type { AdventureSceneState, SceneReport } from './sceneState';
 import { Walker } from './walker';
@@ -35,6 +34,7 @@ const HUD_BOTTOM = 70;
 
 export class AdventureScene extends Phaser.Scene {
   private backdrop!: Phaser.GameObjects.Image;
+  private backdropId = '';
   private walker!: Walker;
   private map: AreaMap | null = null;
   private objs: MapObjects | null = null;
@@ -88,13 +88,17 @@ export class AdventureScene extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.removeBounds();
     cam.setBackgroundColor('rgba(0,0,0,0)');
-    cam.setZoom(this.fitZoom()).centerOn(ADVENTURE_DESIGN.width / 2, ADVENTURE_DESIGN.height / 2);
+    const zoom = this.fitZoom();
+    cam.setZoom(zoom).centerOn(ADVENTURE_DESIGN.width / 2, ADVENTURE_DESIGN.height / 2);
+    this.backdropId = s?.backdrop ?? '';
     const k = s ? textureKey(s.backdrop) : '';
     this.backdrop.setVisible(true).setTexture(this.textures.exists(k) ? k : FALLBACK_PROP_KEY);
-    const view = cam.worldView;
+    // The camera's worldView is only refreshed on its next render (it may still be the map's), so size from the zoom itself.
+    const viewW = this.scale.width / zoom;
+    const viewH = this.scale.height / zoom;
     const ratio = this.backdrop.width / Math.max(1, this.backdrop.height);
-    const w = Math.max(view.width, view.height * ratio, ADVENTURE_DESIGN.width);
-    this.backdrop.setDisplaySize(w, w / ratio).setPosition(view.centerX || ADVENTURE_DESIGN.width / 2, view.centerY || ADVENTURE_DESIGN.height / 2);
+    const w = Math.max(viewW, viewH * ratio, ADVENTURE_DESIGN.width);
+    this.backdrop.setDisplaySize(w, w / ratio).setPosition(ADVENTURE_DESIGN.width / 2, ADVENTURE_DESIGN.height / 2);
   }
 
   private enterMap(s: AdventureSceneState, map: AreaMap) {
@@ -118,7 +122,7 @@ export class AdventureScene extends Phaser.Scene {
     const s = this.deps.read();
     const map = s?.mapId ? MAPS[s.mapId] : undefined;
     if (!s || s.mode !== 'explore' || !map) {
-      if (this.map || !this.backdrop.visible || this.texturesChanged) this.showBackdrop(s);
+      if (this.map || !this.backdrop.visible || this.texturesChanged || (s?.backdrop ?? '') !== this.backdropId) this.showBackdrop(s);
       this.texturesChanged = false;
       return;
     }
@@ -157,7 +161,7 @@ export class AdventureScene extends Phaser.Scene {
       view.img.setPosition(at.x, at.y + 6).setDepth(at.y);
       const d = Math.hypot(at.x - pos.x, at.y - pos.y);
       if (d < AB.explore.foeInfo * map.tile) {
-        view.label.setText(`${g.elements.map((e) => ELEMENT_ICON[e]).join('')} ×${g.count}`).setPosition(at.x, at.y - view.img.displayHeight - 4).setVisible(true);
+        view.label.setPosition(at.x, at.y - view.img.displayHeight - 4).setVisible(true);
       }
       if (!s.paused && now >= s.graceUntil && now >= this.touchLockUntil && d < AB.explore.touch) {
         this.touchLockUntil = now + TOUCH_LOCK_MS;

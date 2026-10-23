@@ -19,8 +19,8 @@ import { EQUIPMENT_DEFS, NODES } from '../logic/config/content';
 import { adventureOf } from '../logic/save/lens';
 import { exploreVm } from './exploreVm';
 import { equipmentText, sheetVm, type NodeVm, type SheetVm, type SkillVm } from './fighterVm';
-import { actionButton } from './viewKit';
-import { CLASS_ICON, className, errorText, nameOfItem, probe, type AdventureRun } from './vmKit';
+import { actionButton, classIcon, skillIcon } from './viewKit';
+import { className, errorText, nameOfItem, probe, type AdventureRun } from './vmKit';
 
 export interface AdventureDialogsDeps {
   /** Where dialogs open (one at a time). */
@@ -47,7 +47,7 @@ function skillRow(s: SkillVm, extra: HTMLElement | null = null, cls = ''): HTMLE
   return el(
     'li',
     { class: `adventure-sheet__skill${s.opensAt !== null ? ' is-locked' : ''} ${cls}`.trim(), attrs: { title: s.desc } },
-    el('b', { text: `${s.icon} ${s.name}${s.maxLevel > 1 ? ` · ${t(vi.adventure.sheet.nodeLevel, { level: s.level, max: s.maxLevel })}` : ''}` }),
+    el('b', { class: 'adventure-sheet__skill-name' }, skillIcon(s.id, s.element, s.name), el('span', { text: `${s.name}${s.maxLevel > 1 ? ` · ${t(vi.adventure.sheet.nodeLevel, { level: s.level, max: s.maxLevel })}` : ''}` })),
     el('small', { text: [s.cost, s.opensAt !== null ? t(vi.adventure.sheet.opensAt, { level: s.opensAt }) : ''].filter(Boolean).join(' · ') }),
     el('p', { text: s.desc }),
     extra,
@@ -78,7 +78,7 @@ export function createAdventureDialogs(d: AdventureDialogsDeps) {
     return el(
       'div',
       { class: `adventure-tree__node is-${n.level > 0 ? 'open' : n.step?.reason ? 'locked' : 'ready'}${n.carried ? ' is-carried' : ''}` },
-      el('b', { text: `${n.skill.icon} ${n.skill.name}` }),
+      el('b', { class: 'adventure-sheet__skill-name' }, skillIcon(n.skill.id, n.skill.element, n.skill.name), el('span', { text: n.skill.name })),
       el('small', { text: n.level > 0 ? t(vi.adventure.sheet.nodeLevel, { level: n.level, max: n.skill.maxLevel }) : (n.needs ? t(vi.adventure.sheet.needs, { nodes: n.needs }) : '') }),
       el('small', { class: 'adventure-tree__desc', text: `${n.skill.cost} · ${n.skill.desc}` }),
       el(
@@ -186,7 +186,7 @@ export function createAdventureDialogs(d: AdventureDialogsDeps) {
       body = el(
         'div',
         { class: 'adventure-sheet__temple' },
-        el('p', { text: t(vi.adventure.sheet.classNow, { class: `${CLASS_ICON[v.classId]} ${className(v.classId)}` }) }),
+        el('p', { class: 'adventure-sheet__class' }, classIcon(v.classId), el('span', { text: t(vi.adventure.sheet.classNow, { class: className(v.classId) }) })),
         v.temple.blocked ? el('p', { class: 'c-dialog__hint', text: v.temple.blocked }) : null,
         el('p', { class: 'c-dialog__hint', text: vi.adventure.sheet.changeHint }),
         ...v.temple.classes.map((c) => actionButton(c, () => d.dispatch((ww, ctx) => changeClass(ww, { key, classId: c.classId, roster }, ctx)), 'c-button--ghost')),

@@ -1,5 +1,5 @@
-// What the Adventure's view-models share: the button that says why it is off, the dry-run of an action, the icons and names of the
-// elements, statuses, classes and lines (placeholders until the art of GĐ14: an art id is tried first, the emoji is the fallback).
+// What the Adventure's view-models share: the button that says why it is off, the dry-run of an action, the names of the elements,
+// statuses, classes and lines, and the art ids of their icons (GĐ14 batches adventure-03/04/08–10; the views fall back to a badge).
 import type { ErrorCode } from '../../../core/config/errors';
 import type { ItemId } from '../../../core/config/ids';
 import { mulberry32 } from '../../../core/rng';
@@ -26,23 +26,41 @@ export function probe(world: WorldSave, run: AdventureRun, now: number): ErrorCo
 
 export const errorText = (e: ErrorCode | null): string | null => (e ? vi.error[e] : null);
 
-export const ELEMENT_ICON: Record<Element, string> = { METAL: '⚙️', NATURE: '🌿', WATER: '💧', FIRE: '🔥', EARTH: '⛰️', LIGHTNING: '⚡', DARK: '🌙', LIGHT: '☀️', VOID: '✨' };
-export const elementArt = (e: Element): string => `ui_element_${e.toLowerCase()}`;
+export const elementArt = (e: Element): string => `ui_icon_elem_${e.toLowerCase()}`;
 export const elementName = (e: Element): string => ELEMENT_NAMES[e]?.nameVi ?? e;
-export const elementLabel = (e: Element): string => `${ELEMENT_ICON[e]} ${elementName(e)}`;
+export const elementLabel = (e: Element): string => elementName(e);
 
-export const STATUS_ICON: Record<StatusId, string> = {
-  poison: '☠️', burn: '🔥', wet: '💦', freeze: '❄️', stun: '💫', disable: '🔇', doom: '💀',
-  atkUp: '⚔▲', atkDown: '⚔▼', defUp: '🛡▲', defDown: '🛡▼', matkUp: '✦▲', matkDown: '✦▼', mdefUp: '❖▲', mdefDown: '❖▼',
-  accUp: '◎▲', accDown: '◎▼', evaUp: '↯▲', evaDown: '↯▼', spdUp: '»▲', spdDown: '»▼',
-  shield: '🔰', taunt: '📣', regen: '💚', autoRevive: '🕯️',
-};
+/** A status's icon: its own badge, or for a raised / lowered stat the stat's badge and which way it went. */
+export function statusArt(id: StatusId): { art: string; arrow: 'up' | 'down' | null } {
+  const def = STATUSES[id];
+  if (def?.kind === 'stat' && def.stat) return { art: `ui_icon_stat_${def.stat.key}`, arrow: id.endsWith('Up') ? 'up' : 'down' };
+  return { art: `ui_icon_status_${id === 'autoRevive' ? 'revive' : id}`, arrow: null };
+}
 export const statusName = (id: StatusId): string => STATUSES[id]?.nameVi ?? id;
 export const statusDesc = (id: StatusId): string => STATUSES[id]?.descVi ?? '';
 
-export const CLASS_ICON: Record<ClassId, string> = { tanker: '🛡️', striker: '⚔️', mage: '🔮', support: '💗' };
+/** A skill's own icon (`ui_` + its id). */
+export const skillArt = (skillId: string): string => `ui_${skillId}`;
+export const reactionArt = (reactionId: string): string => `ui_icon_${reactionId.replace(/^reaction_/, 'react_')}`;
+/** The icons of the battle's plain actions (and of an enemy's intent). */
+export const ACTION_ART = {
+  attack: 'ui_icon_adv_attack',
+  skill: 'ui_icon_adv_skill',
+  guard: 'ui_icon_adv_guard',
+  ultimate: 'ui_icon_adv_ultimate',
+  flee: 'ui_icon_adv_flee',
+  auto: 'ui_icon_adv_auto',
+  speed: 'ui_icon_adv_speed',
+  map: 'ui_icon_adv_map',
+  camp: 'ui_icon_adv_camp',
+  formation: 'ui_icon_adv_formation',
+  sweep: 'ui_icon_adv_sweep',
+  interact: 'ui_icon_adv_interact',
+} as const;
+
+export const classArt = (id: ClassId): string => `ui_icon_class_${id}`;
 export const className = (id: ClassId): string => CLASSES[id]?.nameVi ?? id;
-export const classLabel = (id: ClassId): string => `${CLASS_ICON[id]} ${className(id)}`;
+export const classLabel = (id: ClassId): string => className(id);
 export const lineageName = (id: LineageId): string => LINEAGES[id]?.nameVi ?? id;
 
 export const STAT_ORDER: readonly StatKey[] = ['hp', 'mp', 'atk', 'def', 'matk', 'mdef', 'spd', 'acc', 'eva', 'crit'];

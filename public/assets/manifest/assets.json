@@ -2265,97 +2265,97 @@
     },
     {
       "id": "enemy_mossling",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_mossling.png"
     },
     {
       "id": "enemy_thorn_sprout",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_thorn_sprout.png"
     },
     {
       "id": "enemy_gale_sparrow",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_gale_sparrow.png"
     },
     {
       "id": "enemy_ember_fox",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_ember_fox.png"
     },
     {
       "id": "enemy_dew_frog",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_dew_frog.png"
     },
     {
       "id": "enemy_forest_wolf",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_forest_wolf.png"
     },
     {
       "id": "enemy_bramble_boar",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_bramble_boar.png"
     },
     {
       "id": "enemy_old_treant",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_old_treant.png"
     },
     {
       "id": "enemy_rock_beetle",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_rock_beetle.png"
     },
     {
       "id": "enemy_cliff_hawk",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_cliff_hawk.png"
     },
     {
       "id": "enemy_lava_newt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_lava_newt.png"
     },
     {
       "id": "enemy_snow_goat",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_snow_goat.png"
     },
     {
       "id": "enemy_ore_golem",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_ore_golem.png"
     },
     {
       "id": "enemy_magma_drake",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_magma_drake.png"
     },
     {
       "id": "enemy_stone_sentinel",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_stone_sentinel.png"
     },
     {
       "id": "enemy_rune_wisp",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_rune_wisp.png"
     },
     {
       "id": "enemy_tide_wraith",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_tide_wraith.png"
     },
     {
       "id": "enemy_ember_idol",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_ember_idol.png"
     },
     {
       "id": "enemy_ancient_guardian",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/enemy_ancient_guardian.png"
     },
     {
@@ -2623,6 +2623,86 @@
       "id": "adv_gate_light",
       "status": "production",
       "asset": "props/adv_gate_light.png"
+    },
+    {
+      "id": "prop_adv_decal_grass",
+      "status": "production",
+      "asset": "props/prop_adv_decal_grass.png"
+    },
+    {
+      "id": "prop_adv_decal_daisy",
+      "status": "production",
+      "asset": "props/prop_adv_decal_daisy.png"
+    },
+    {
+      "id": "prop_adv_decal_buttercup",
+      "status": "production",
+      "asset": "props/prop_adv_decal_buttercup.png"
+    },
+    {
+      "id": "prop_adv_decal_pinkflower",
+      "status": "production",
+      "asset": "props/prop_adv_decal_pinkflower.png"
+    },
+    {
+      "id": "prop_adv_decal_lilypad",
+      "status": "production",
+      "asset": "props/prop_adv_decal_lilypad.png"
+    },
+    {
+      "id": "prop_adv_decal_pebbles",
+      "status": "production",
+      "asset": "props/prop_adv_decal_pebbles.png"
+    },
+    {
+      "id": "prop_adv_decal_fern",
+      "status": "production",
+      "asset": "props/prop_adv_decal_fern.png"
+    },
+    {
+      "id": "prop_adv_decal_leaves",
+      "status": "production",
+      "asset": "props/prop_adv_decal_leaves.png"
+    },
+    {
+      "id": "prop_adv_decal_drygrass",
+      "status": "production",
+      "asset": "props/prop_adv_decal_drygrass.png"
+    },
+    {
+      "id": "prop_adv_decal_gravel",
+      "status": "production",
+      "asset": "props/prop_adv_decal_gravel.png"
+    },
+    {
+      "id": "prop_adv_decal_crystal",
+      "status": "production",
+      "asset": "props/prop_adv_decal_crystal.png"
+    },
+    {
+      "id": "prop_adv_decal_rockchips",
+      "status": "production",
+      "asset": "props/prop_adv_decal_rockchips.png"
+    },
+    {
+      "id": "prop_adv_decal_moss",
+      "status": "production",
+      "asset": "props/prop_adv_decal_moss.png"
+    },
+    {
+      "id": "prop_adv_decal_rubble",
+      "status": "production",
+      "asset": "props/prop_adv_decal_rubble.png"
+    },
+    {
+      "id": "prop_adv_decal_violet",
+      "status": "production",
+      "asset": "props/prop_adv_decal_violet.png"
+    },
+    {
+      "id": "prop_adv_decal_ivy",
+      "status": "production",
+      "asset": "props/prop_adv_decal_ivy.png"
     }
   ],
   "buildings": [
@@ -2926,23 +3006,118 @@
     },
     {
       "id": "bg_adventure_forest",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/bg_adventure_forest.png"
     },
     {
       "id": "bg_adventure_mountain",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/bg_adventure_mountain.png"
     },
     {
       "id": "bg_adventure_ruins",
-      "status": "placeholder",
+      "status": "production",
       "asset": "environment/bg_adventure_ruins.png"
     },
     {
       "id": "bg_first_guardians",
       "status": "production",
       "asset": "environment/bg_first_guardians.png"
+    },
+    {
+      "id": "bg_adventure_camp",
+      "status": "production",
+      "asset": "environment/bg_adventure_camp.png"
+    },
+    {
+      "id": "adv_tile_forest_ground",
+      "status": "production",
+      "asset": "environment/adv_tile_forest_ground.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_forest_path",
+      "status": "production",
+      "asset": "environment/adv_tile_forest_path.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_forest_bridge",
+      "status": "production",
+      "asset": "environment/adv_tile_forest_bridge.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_forest_wall",
+      "status": "production",
+      "asset": "environment/adv_tile_forest_wall.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_forest_water",
+      "status": "production",
+      "asset": "environment/adv_tile_forest_water.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_mountain_ground",
+      "status": "production",
+      "asset": "environment/adv_tile_mountain_ground.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_mountain_path",
+      "status": "production",
+      "asset": "environment/adv_tile_mountain_path.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_mountain_bridge",
+      "status": "production",
+      "asset": "environment/adv_tile_mountain_bridge.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_mountain_wall",
+      "status": "production",
+      "asset": "environment/adv_tile_mountain_wall.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_mountain_water",
+      "status": "production",
+      "asset": "environment/adv_tile_mountain_water.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_ruins_ground",
+      "status": "production",
+      "asset": "environment/adv_tile_ruins_ground.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_ruins_path",
+      "status": "production",
+      "asset": "environment/adv_tile_ruins_path.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_ruins_bridge",
+      "status": "production",
+      "asset": "environment/adv_tile_ruins_bridge.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_ruins_wall",
+      "status": "production",
+      "asset": "environment/adv_tile_ruins_wall.png",
+      "tile": true
+    },
+    {
+      "id": "adv_tile_ruins_water",
+      "status": "production",
+      "asset": "environment/adv_tile_ruins_water.png",
+      "tile": true
     }
   ],
   "ui": [
@@ -3795,6 +3970,791 @@
       "id": "ui_item_skill_scroll",
       "status": "production",
       "asset": "ui/ui_item_skill_scroll.png"
+    },
+    {
+      "id": "ui_adv_corner_leaves",
+      "status": "production",
+      "asset": "ui/ui_adv_corner_leaves.png"
+    },
+    {
+      "id": "ui_adv_peek_beast",
+      "status": "production",
+      "asset": "ui/ui_adv_peek_beast.png"
+    },
+    {
+      "id": "ui_adv_plaque",
+      "status": "production",
+      "asset": "ui/ui_adv_plaque.png"
+    },
+    {
+      "id": "ui_adv_sign_title",
+      "status": "production",
+      "asset": "ui/ui_adv_sign_title.png"
+    },
+    {
+      "id": "ui_icon_elem_dark",
+      "status": "production",
+      "asset": "ui/ui_icon_elem_dark.png"
+    },
+    {
+      "id": "ui_icon_elem_earth",
+      "status": "production",
+      "asset": "ui/ui_icon_elem_earth.png"
+    },
+    {
+      "id": "ui_icon_elem_fire",
+      "status": "production",
+      "asset": "ui/ui_icon_elem_fire.png"
+    },
+    {
+      "id": "ui_icon_elem_light",
+      "status": "production",
+      "asset": "ui/ui_icon_elem_light.png"
+    },
+    {
+      "id": "ui_icon_elem_lightning",
+      "status": "production",
+      "asset": "ui/ui_icon_elem_lightning.png"
+    },
+    {
+      "id": "ui_icon_elem_metal",
+      "status": "production",
+      "asset": "ui/ui_icon_elem_metal.png"
+    },
+    {
+      "id": "ui_icon_elem_nature",
+      "status": "production",
+      "asset": "ui/ui_icon_elem_nature.png"
+    },
+    {
+      "id": "ui_icon_elem_void",
+      "status": "production",
+      "asset": "ui/ui_icon_elem_void.png"
+    },
+    {
+      "id": "ui_icon_elem_water",
+      "status": "production",
+      "asset": "ui/ui_icon_elem_water.png"
+    },
+    {
+      "id": "ui_icon_class_mage",
+      "status": "production",
+      "asset": "ui/ui_icon_class_mage.png"
+    },
+    {
+      "id": "ui_icon_class_striker",
+      "status": "production",
+      "asset": "ui/ui_icon_class_striker.png"
+    },
+    {
+      "id": "ui_icon_class_support",
+      "status": "production",
+      "asset": "ui/ui_icon_class_support.png"
+    },
+    {
+      "id": "ui_icon_class_tanker",
+      "status": "production",
+      "asset": "ui/ui_icon_class_tanker.png"
+    },
+    {
+      "id": "ui_icon_adv_attack",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_attack.png"
+    },
+    {
+      "id": "ui_icon_adv_auto",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_auto.png"
+    },
+    {
+      "id": "ui_icon_adv_camp",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_camp.png"
+    },
+    {
+      "id": "ui_icon_adv_flee",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_flee.png"
+    },
+    {
+      "id": "ui_icon_adv_formation",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_formation.png"
+    },
+    {
+      "id": "ui_icon_adv_guard",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_guard.png"
+    },
+    {
+      "id": "ui_icon_adv_interact",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_interact.png"
+    },
+    {
+      "id": "ui_icon_adv_map",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_map.png"
+    },
+    {
+      "id": "ui_icon_adv_skill",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_skill.png"
+    },
+    {
+      "id": "ui_icon_adv_speed",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_speed.png"
+    },
+    {
+      "id": "ui_icon_adv_sweep",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_sweep.png"
+    },
+    {
+      "id": "ui_icon_adv_ultimate",
+      "status": "production",
+      "asset": "ui/ui_icon_adv_ultimate.png"
+    },
+    {
+      "id": "ui_icon_status_burn",
+      "status": "production",
+      "asset": "ui/ui_icon_status_burn.png"
+    },
+    {
+      "id": "ui_icon_status_disable",
+      "status": "production",
+      "asset": "ui/ui_icon_status_disable.png"
+    },
+    {
+      "id": "ui_icon_status_doom",
+      "status": "production",
+      "asset": "ui/ui_icon_status_doom.png"
+    },
+    {
+      "id": "ui_icon_status_freeze",
+      "status": "production",
+      "asset": "ui/ui_icon_status_freeze.png"
+    },
+    {
+      "id": "ui_icon_status_poison",
+      "status": "production",
+      "asset": "ui/ui_icon_status_poison.png"
+    },
+    {
+      "id": "ui_icon_status_regen",
+      "status": "production",
+      "asset": "ui/ui_icon_status_regen.png"
+    },
+    {
+      "id": "ui_icon_status_revive",
+      "status": "production",
+      "asset": "ui/ui_icon_status_revive.png"
+    },
+    {
+      "id": "ui_icon_status_shield",
+      "status": "production",
+      "asset": "ui/ui_icon_status_shield.png"
+    },
+    {
+      "id": "ui_icon_status_stun",
+      "status": "production",
+      "asset": "ui/ui_icon_status_stun.png"
+    },
+    {
+      "id": "ui_icon_status_taunt",
+      "status": "production",
+      "asset": "ui/ui_icon_status_taunt.png"
+    },
+    {
+      "id": "ui_icon_status_wet",
+      "status": "production",
+      "asset": "ui/ui_icon_status_wet.png"
+    },
+    {
+      "id": "ui_icon_stat_acc",
+      "status": "production",
+      "asset": "ui/ui_icon_stat_acc.png"
+    },
+    {
+      "id": "ui_icon_stat_atk",
+      "status": "production",
+      "asset": "ui/ui_icon_stat_atk.png"
+    },
+    {
+      "id": "ui_icon_stat_def",
+      "status": "production",
+      "asset": "ui/ui_icon_stat_def.png"
+    },
+    {
+      "id": "ui_icon_stat_eva",
+      "status": "production",
+      "asset": "ui/ui_icon_stat_eva.png"
+    },
+    {
+      "id": "ui_icon_stat_matk",
+      "status": "production",
+      "asset": "ui/ui_icon_stat_matk.png"
+    },
+    {
+      "id": "ui_icon_stat_mdef",
+      "status": "production",
+      "asset": "ui/ui_icon_stat_mdef.png"
+    },
+    {
+      "id": "ui_icon_stat_spd",
+      "status": "production",
+      "asset": "ui/ui_icon_stat_spd.png"
+    },
+    {
+      "id": "ui_icon_react_eclipse",
+      "status": "production",
+      "asset": "ui/ui_icon_react_eclipse.png"
+    },
+    {
+      "id": "ui_icon_react_purify",
+      "status": "production",
+      "asset": "ui/ui_icon_react_purify.png"
+    },
+    {
+      "id": "ui_icon_react_shatter",
+      "status": "production",
+      "asset": "ui/ui_icon_react_shatter.png"
+    },
+    {
+      "id": "ui_icon_react_shock",
+      "status": "production",
+      "asset": "ui/ui_icon_react_shock.png"
+    },
+    {
+      "id": "ui_icon_react_steam",
+      "status": "production",
+      "asset": "ui/ui_icon_react_steam.png"
+    },
+    {
+      "id": "ui_icon_react_wildfire",
+      "status": "production",
+      "asset": "ui/ui_icon_react_wildfire.png"
+    },
+    {
+      "id": "ui_skill_cl_aim",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_aim.png"
+    },
+    {
+      "id": "ui_skill_cl_armor_crush",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_armor_crush.png"
+    },
+    {
+      "id": "ui_skill_cl_cheer",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_cheer.png"
+    },
+    {
+      "id": "ui_skill_cl_combo",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_combo.png"
+    },
+    {
+      "id": "ui_skill_cl_dash",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_dash.png"
+    },
+    {
+      "id": "ui_skill_cl_elemental_rain",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_elemental_rain.png"
+    },
+    {
+      "id": "ui_skill_cl_energy_orb",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_energy_orb.png"
+    },
+    {
+      "id": "ui_skill_cl_finisher",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_finisher.png"
+    },
+    {
+      "id": "ui_skill_cl_focus",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_focus.png"
+    },
+    {
+      "id": "ui_skill_cl_fortress",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_fortress.png"
+    },
+    {
+      "id": "ui_skill_cl_freeze",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_freeze.png"
+    },
+    {
+      "id": "ui_skill_cl_healing_rain",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_healing_rain.png"
+    },
+    {
+      "id": "ui_skill_cl_hold_fast",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_hold_fast.png"
+    },
+    {
+      "id": "ui_skill_cl_mend",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_mend.png"
+    },
+    {
+      "id": "ui_skill_cl_meteor",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_meteor.png"
+    },
+    {
+      "id": "ui_skill_cl_pierce",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_pierce.png"
+    },
+    {
+      "id": "ui_skill_cl_power_strike",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_power_strike.png"
+    },
+    {
+      "id": "ui_skill_cl_purify",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_purify.png"
+    },
+    {
+      "id": "ui_skill_cl_rend",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_rend.png"
+    },
+    {
+      "id": "ui_skill_cl_seal",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_seal.png"
+    },
+    {
+      "id": "ui_skill_cl_second_wind",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_second_wind.png"
+    },
+    {
+      "id": "ui_skill_cl_shadow_dance",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_shadow_dance.png"
+    },
+    {
+      "id": "ui_skill_cl_shield_wall",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_shield_wall.png"
+    },
+    {
+      "id": "ui_skill_cl_spell_storm",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_spell_storm.png"
+    },
+    {
+      "id": "ui_skill_cl_stomp",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_stomp.png"
+    },
+    {
+      "id": "ui_skill_cl_taunt",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_taunt.png"
+    },
+    {
+      "id": "ui_skill_cl_tremor",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_tremor.png"
+    },
+    {
+      "id": "ui_skill_cl_vital",
+      "status": "production",
+      "asset": "ui/ui_skill_cl_vital.png"
+    },
+    {
+      "id": "ui_skill_dm_ink",
+      "status": "production",
+      "asset": "ui/ui_skill_dm_ink.png"
+    },
+    {
+      "id": "ui_skill_dm_ink_veil",
+      "status": "production",
+      "asset": "ui/ui_skill_dm_ink_veil.png"
+    },
+    {
+      "id": "ui_skill_dm_night_net",
+      "status": "production",
+      "asset": "ui/ui_skill_dm_night_net.png"
+    },
+    {
+      "id": "ui_skill_dm_nightmare",
+      "status": "production",
+      "asset": "ui/ui_skill_dm_nightmare.png"
+    },
+    {
+      "id": "ui_skill_e_bark_skin",
+      "status": "production",
+      "asset": "ui/ui_skill_e_bark_skin.png"
+    },
+    {
+      "id": "ui_skill_e_bronze_crush",
+      "status": "production",
+      "asset": "ui/ui_skill_e_bronze_crush.png"
+    },
+    {
+      "id": "ui_skill_e_bubble",
+      "status": "production",
+      "asset": "ui/ui_skill_e_bubble.png"
+    },
+    {
+      "id": "ui_skill_e_corrupt_bloom",
+      "status": "production",
+      "asset": "ui/ui_skill_e_corrupt_bloom.png"
+    },
+    {
+      "id": "ui_skill_e_curse",
+      "status": "production",
+      "asset": "ui/ui_skill_e_curse.png"
+    },
+    {
+      "id": "ui_skill_e_dive",
+      "status": "production",
+      "asset": "ui/ui_skill_e_dive.png"
+    },
+    {
+      "id": "ui_skill_e_doom_mark",
+      "status": "production",
+      "asset": "ui/ui_skill_e_doom_mark.png"
+    },
+    {
+      "id": "ui_skill_e_dragon_roar",
+      "status": "production",
+      "asset": "ui/ui_skill_e_dragon_roar.png"
+    },
+    {
+      "id": "ui_skill_e_ember_bite",
+      "status": "production",
+      "asset": "ui/ui_skill_e_ember_bite.png"
+    },
+    {
+      "id": "ui_skill_e_frost_breath",
+      "status": "production",
+      "asset": "ui/ui_skill_e_frost_breath.png"
+    },
+    {
+      "id": "ui_skill_e_holy_ward",
+      "status": "production",
+      "asset": "ui/ui_skill_e_holy_ward.png"
+    },
+    {
+      "id": "ui_skill_e_howl",
+      "status": "production",
+      "asset": "ui/ui_skill_e_howl.png"
+    },
+    {
+      "id": "ui_skill_e_idol_flame",
+      "status": "production",
+      "asset": "ui/ui_skill_e_idol_flame.png"
+    },
+    {
+      "id": "ui_skill_e_iron_shell",
+      "status": "production",
+      "asset": "ui/ui_skill_e_iron_shell.png"
+    },
+    {
+      "id": "ui_skill_e_lava_spit",
+      "status": "production",
+      "asset": "ui/ui_skill_e_lava_spit.png"
+    },
+    {
+      "id": "ui_skill_e_magma_breath",
+      "status": "production",
+      "asset": "ui/ui_skill_e_magma_breath.png"
+    },
+    {
+      "id": "ui_skill_e_metal_claw",
+      "status": "production",
+      "asset": "ui/ui_skill_e_metal_claw.png"
+    },
+    {
+      "id": "ui_skill_e_meteor",
+      "status": "production",
+      "asset": "ui/ui_skill_e_meteor.png"
+    },
+    {
+      "id": "ui_skill_e_poison_spore",
+      "status": "production",
+      "asset": "ui/ui_skill_e_poison_spore.png"
+    },
+    {
+      "id": "ui_skill_e_rock_slam",
+      "status": "production",
+      "asset": "ui/ui_skill_e_rock_slam.png"
+    },
+    {
+      "id": "ui_skill_e_root_quake",
+      "status": "production",
+      "asset": "ui/ui_skill_e_root_quake.png"
+    },
+    {
+      "id": "ui_skill_e_rune_beam",
+      "status": "production",
+      "asset": "ui/ui_skill_e_rune_beam.png"
+    },
+    {
+      "id": "ui_skill_e_seal_quake",
+      "status": "production",
+      "asset": "ui/ui_skill_e_seal_quake.png"
+    },
+    {
+      "id": "ui_skill_e_shadow_bite",
+      "status": "production",
+      "asset": "ui/ui_skill_e_shadow_bite.png"
+    },
+    {
+      "id": "ui_skill_e_soothe",
+      "status": "production",
+      "asset": "ui/ui_skill_e_soothe.png"
+    },
+    {
+      "id": "ui_skill_e_spark_peck",
+      "status": "production",
+      "asset": "ui/ui_skill_e_spark_peck.png"
+    },
+    {
+      "id": "ui_skill_e_stone_guard",
+      "status": "production",
+      "asset": "ui/ui_skill_e_stone_guard.png"
+    },
+    {
+      "id": "ui_skill_e_thorn_storm",
+      "status": "production",
+      "asset": "ui/ui_skill_e_thorn_storm.png"
+    },
+    {
+      "id": "ui_skill_e_thunder_charge",
+      "status": "production",
+      "asset": "ui/ui_skill_e_thunder_charge.png"
+    },
+    {
+      "id": "ui_skill_e_tusk_charge",
+      "status": "production",
+      "asset": "ui/ui_skill_e_tusk_charge.png"
+    },
+    {
+      "id": "ui_skill_e_vine_lash",
+      "status": "production",
+      "asset": "ui/ui_skill_e_vine_lash.png"
+    },
+    {
+      "id": "ui_skill_e_wraith_touch",
+      "status": "production",
+      "asset": "ui/ui_skill_e_wraith_touch.png"
+    },
+    {
+      "id": "ui_skill_hg_forge_fire",
+      "status": "production",
+      "asset": "ui/ui_skill_hg_forge_fire.png"
+    },
+    {
+      "id": "ui_skill_hg_hot_claw",
+      "status": "production",
+      "asset": "ui/ui_skill_hg_hot_claw.png"
+    },
+    {
+      "id": "ui_skill_hg_inferno_hammer",
+      "status": "production",
+      "asset": "ui/ui_skill_hg_inferno_hammer.png"
+    },
+    {
+      "id": "ui_skill_hg_lava",
+      "status": "production",
+      "asset": "ui/ui_skill_hg_lava.png"
+    },
+    {
+      "id": "ui_skill_ld_call_thunder",
+      "status": "production",
+      "asset": "ui/ui_skill_ld_call_thunder.png"
+    },
+    {
+      "id": "ui_skill_ld_chain",
+      "status": "production",
+      "asset": "ui/ui_skill_ld_chain.png"
+    },
+    {
+      "id": "ui_skill_ld_swift_bolt",
+      "status": "production",
+      "asset": "ui/ui_skill_ld_swift_bolt.png"
+    },
+    {
+      "id": "ui_skill_ld_thunder_strike",
+      "status": "production",
+      "asset": "ui/ui_skill_ld_thunder_strike.png"
+    },
+    {
+      "id": "ui_skill_mm_binding_roots",
+      "status": "production",
+      "asset": "ui/ui_skill_mm_binding_roots.png"
+    },
+    {
+      "id": "ui_skill_mm_blossom",
+      "status": "production",
+      "asset": "ui/ui_skill_mm_blossom.png"
+    },
+    {
+      "id": "ui_skill_mm_poison_thorn",
+      "status": "production",
+      "asset": "ui/ui_skill_mm_poison_thorn.png"
+    },
+    {
+      "id": "ui_skill_mm_sprout",
+      "status": "production",
+      "asset": "ui/ui_skill_mm_sprout.png"
+    },
+    {
+      "id": "ui_skill_nh_bubble",
+      "status": "production",
+      "asset": "ui/ui_skill_nh_bubble.png"
+    },
+    {
+      "id": "ui_skill_nh_soothe",
+      "status": "production",
+      "asset": "ui/ui_skill_nh_soothe.png"
+    },
+    {
+      "id": "ui_skill_nh_tide_song",
+      "status": "production",
+      "asset": "ui/ui_skill_nh_tide_song.png"
+    },
+    {
+      "id": "ui_skill_nh_tsunami",
+      "status": "production",
+      "asset": "ui/ui_skill_nh_tsunami.png"
+    },
+    {
+      "id": "ui_skill_qs_mountain_shell",
+      "status": "production",
+      "asset": "ui/ui_skill_qs_mountain_shell.png"
+    },
+    {
+      "id": "ui_skill_qs_quake",
+      "status": "production",
+      "asset": "ui/ui_skill_qs_quake.png"
+    },
+    {
+      "id": "ui_skill_qs_rock_smash",
+      "status": "production",
+      "asset": "ui/ui_skill_qs_rock_smash.png"
+    },
+    {
+      "id": "ui_skill_qs_stone_skin",
+      "status": "production",
+      "asset": "ui/ui_skill_qs_stone_skin.png"
+    },
+    {
+      "id": "ui_skill_qt_first_light",
+      "status": "production",
+      "asset": "ui/ui_skill_qt_first_light.png"
+    },
+    {
+      "id": "ui_skill_qt_guiding_lamp",
+      "status": "production",
+      "asset": "ui/ui_skill_qt_guiding_lamp.png"
+    },
+    {
+      "id": "ui_skill_qt_lumina",
+      "status": "production",
+      "asset": "ui/ui_skill_qt_lumina.png"
+    },
+    {
+      "id": "ui_skill_qt_ray",
+      "status": "production",
+      "asset": "ui/ui_skill_qt_ray.png"
+    },
+    {
+      "id": "ui_skill_tg_armor_break",
+      "status": "production",
+      "asset": "ui/ui_skill_tg_armor_break.png"
+    },
+    {
+      "id": "ui_skill_tg_bronze_wall",
+      "status": "production",
+      "asset": "ui/ui_skill_tg_bronze_wall.png"
+    },
+    {
+      "id": "ui_skill_tg_steel_charge",
+      "status": "production",
+      "asset": "ui/ui_skill_tg_steel_charge.png"
+    },
+    {
+      "id": "ui_skill_tg_steel_slash",
+      "status": "production",
+      "asset": "ui/ui_skill_tg_steel_slash.png"
+    },
+    {
+      "id": "ui_skill_ult_dm",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_dm.png"
+    },
+    {
+      "id": "ui_skill_ult_hg",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_hg.png"
+    },
+    {
+      "id": "ui_skill_ult_hk",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_hk.png"
+    },
+    {
+      "id": "ui_skill_ult_ld",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_ld.png"
+    },
+    {
+      "id": "ui_skill_ult_mm",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_mm.png"
+    },
+    {
+      "id": "ui_skill_ult_mythical",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_mythical.png"
+    },
+    {
+      "id": "ui_skill_ult_nh",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_nh.png"
+    },
+    {
+      "id": "ui_skill_ult_phoenix",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_phoenix.png"
+    },
+    {
+      "id": "ui_skill_ult_qs",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_qs.png"
+    },
+    {
+      "id": "ui_skill_ult_qt",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_qt.png"
+    },
+    {
+      "id": "ui_skill_ult_tg",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_tg.png"
+    },
+    {
+      "id": "ui_skill_ult_trident",
+      "status": "production",
+      "asset": "ui/ui_skill_ult_trident.png"
     }
   ],
   "audio": [

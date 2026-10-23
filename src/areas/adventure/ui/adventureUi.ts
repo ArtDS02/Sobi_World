@@ -23,7 +23,7 @@ import { hudVm } from './campVm';
 import { renderCamp } from './campView';
 import { renderDone, renderExplore } from './exploreView';
 import { sceneVm } from './sceneVm';
-import type { UiState, ViewCtx } from './viewKit';
+import { keepScroll, type UiState, type ViewCtx } from './viewKit';
 import type { AdventureRun } from './vmKit';
 
 export interface AdventureUiDeps {
@@ -69,7 +69,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
   let active = false;
   let busy = false;
   let lastPos: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' } | null = null;
-  const state: UiState = { zoneId: ZONE_LIST[0]!.id, startMap: null, selected: [], prep: [], auto: false, fast: false, menu: null, aim: null, focus: null, showMap: false };
+  const state: UiState = { zoneId: ZONE_LIST[0]!.id, startMap: null, selected: [], prep: [], auto: false, fast: false, menu: null, aim: null, focus: null, showMap: false, filter: null, search: '', legend: false, log: false };
 
   const world = (): WorldSave | null => {
     const s = d.world.getSnapshot();
@@ -128,7 +128,10 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     d.host.classList.toggle('is-exploring', exploring);
     patch(hud, renderHud(w));
     const ctx = ctxFor(w);
-    patch(main, run === null ? renderCamp(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx));
+    d.host.classList.toggle('is-battle', run?.phase === 'battle');
+    d.host.classList.toggle('is-camp', run === null);
+    d.host.classList.toggle('is-done', run?.phase === 'done');
+    keepScroll(main, () => patch(main, run === null ? renderCamp(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx)));
     main.scrollTop = top;
     dialogs.follow(w);
   }

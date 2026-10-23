@@ -156,6 +156,25 @@ for (const el of ['metal', 'nature', 'water', 'fire', 'earth', 'lightning', 'dar
 // The nine First Guardians (batch adventure-01-guardians): portraits on the fighter sheet, and their legend picture.
 for (const g of ['light_pig', 'thunder_pig', 'metal_boar', 'bloom_sow', 'whale', 'turtle', 'octopus', 'forge_crab', 'void_jelly']) CATALOGUE_SIZES[`guardian_${g}`] = { width: 256, height: 256 };
 CATALOGUE_SIZES.bg_first_guardians = { width: 1376, height: 768 };
+// The Adventure screens on the owner's mock-ups (batches adventure-03..06): the camp's backdrop, the ground tiles of the exploration
+// maps (square, seamless, drawn at 40 px), and the small dressing scattered over them so the grid does not show.
+CATALOGUE_SIZES.bg_adventure_camp = { width: 1600, height: 900 };
+for (const zone of ['forest', 'mountain', 'ruins']) {
+  for (const kind of ['ground', 'path', 'bridge', 'wall', 'water']) CATALOGUE_SIZES[`adv_tile_${zone}_${kind}`] = sq(128);
+}
+export const ADV_DECALS = [
+  'grass', 'daisy', 'buttercup', 'pinkflower', 'lilypad', 'pebbles', 'fern', 'leaves',
+  'drygrass', 'gravel', 'crystal', 'rockchips', 'moss', 'rubble', 'violet', 'ivy',
+] as const;
+for (const d of ADV_DECALS) CATALOGUE_SIZES[`prop_adv_decal_${d}`] = sq(96);
+
+/** UI pieces that are not square icons (the Adventure's wooden sign, plaque, corner leaves, the beast peeking over the sign). */
+export const UI_FRAME_SIZES: Record<string, Size> = {
+  ui_adv_sign_title: { width: 480, height: 264 },
+  ui_adv_peek_beast: { width: 480, height: 200 },
+  ui_adv_plaque: { width: 480, height: 116 },
+  ui_adv_corner_leaves: { width: 192, height: 200 },
+};
 
 for (const who of ['so', 'bi']) {
   for (const facing of ['down', 'up', 'left', 'right']) {
@@ -174,7 +193,7 @@ export function requiredSize(section: ManifestSection, row: Row, key: string): S
     case 'pigs':
       return sq(512);
     case 'ui':
-      return sq(128);
+      return UI_FRAME_SIZES[row.id] ?? sq(128);
     case 'fx': {
       const fx = row as AssetManifest['fx'][number];
       if (fx.frames) return { width: fx.frames.width * fx.frames.count, height: fx.frames.height };

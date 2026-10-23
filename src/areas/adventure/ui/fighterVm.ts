@@ -17,14 +17,15 @@ import { classOf, energyOf, exhaustedLeft, expNeeded, fighterSkills, fighterStat
 import { adventureOf } from '../logic/save/lens';
 import type { Fighter } from '../logic/state';
 import { classLoadout, nodeLevel, stepCost } from '../logic/tree';
-import { CLASS_ICON, ELEMENT_ICON, STAT_ORDER, bonusText, className, elementLabel, errorText, lineageName, nameOfItem, pct, probe, statName, statusName, type AdventureRun, type ButtonVm } from './vmKit';
+import { STAT_ORDER, bonusText, className, elementLabel, skillArt, errorText, lineageName, nameOfItem, pct, probe, statName, statusName, type AdventureRun, type ButtonVm } from './vmKit';
 
 export interface SkillVm {
   id: string;
   name: string;
   desc: string;
   element: Element | null;
-  icon: string;
+  /** Its own icon (`ui_` + id); the view falls back to the element's badge. */
+  art: string;
   cost: string;
   level: number;
   maxLevel: number;
@@ -41,7 +42,7 @@ export function skillVm(id: string, level = 1, opensAt: number | null = null, ow
     name: s.nameVi,
     desc: s.descVi,
     element,
-    icon: element ? ELEMENT_ICON[element] : '✧',
+    art: skillArt(id),
     cost: s.type === 'ultimate' ? '' : mp > 0 ? t(vi.adventure.sheet.skillLine, { mp, cooldown: s.cooldown }) : t(vi.adventure.sheet.skillFree, { cooldown: s.cooldown }),
     level,
     maxLevel: s.maxLevel,
@@ -59,6 +60,7 @@ export interface FighterCardVm {
   elements: string;
   elementList: Element[];
   level: string;
+  levelNumber: number;
   expPercent: number;
   expText: string;
   energyPercent: number;
@@ -103,11 +105,12 @@ export function fighterCardVm(world: WorldSave, entry: RosterEntry, now: number)
     name: entry.name,
     art: entry.artId,
     classId,
-    classLabel: `${CLASS_ICON[classId]} ${className(classId)}`,
+    classLabel: className(classId),
     lineLabel: lineageName(identity.lineage.id),
     elements: elementList.map(elementLabel).join(' · '),
     elementList,
     level: t(vi.adventure.card.level, { level: f.level }),
+    levelNumber: f.level,
     expPercent: Number.isFinite(need) ? Math.min(100, Math.round((f.exp / need) * 100)) : 100,
     expText: Number.isFinite(need) ? t(vi.adventure.card.exp, { current: Math.floor(f.exp), next: need }) : vi.adventure.card.expMax,
     energyPercent: Math.round((energy / AB.run.energyMax) * 100),

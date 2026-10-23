@@ -1,64 +1,35 @@
-// The camp screen (spec §17): zones with their discovery and where a trip may start, the quick trip, the leader, the formations, the
-// rations, the companions and the chosen team's warnings, the starter quest and the loot. A pure function of the world, the roster and
-// the screen's little state; a click calls back into the controller (adventureUi.ts).
+// The camp screen (spec §17, GĐ14 layout of the owner's mock-up; the cards are in campCards.ts): the wooden sign with the beast
+// peeking over a cream board, the zone cards, the element filter and the search, the companions, and the bottom bar with the chosen
+// team, the formations, where the trip starts and the two ways to set off. The starter quest, the loot, the leader, the rations and the
+// legend picture keep their place on the board. A pure function of the world, the roster and the screen's little state; a click calls
+// back into the controller (adventureUi.ts).
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
+import type { Element } from '../../../systems/combat/types';
+import { ELEMENTS } from '../../../systems/combat/types';
 import { art } from '../../../ui/components/icon';
 import { el } from '../../../ui/dom';
 import { claimStarter, collectLoot } from '../logic/actions/camp';
 import { saveFormation, setLeader } from '../logic/actions/growth';
 import { startRun } from '../logic/actions/start';
 import { sweepZone } from '../logic/actions/sweep';
-import { GUARDIANS_LEGEND_ART } from '../logic/art';
-import { AB, ZONES } from '../logic/config/content';
+import { CAMP_ART, GUARDIANS_LEGEND_ART } from '../logic/art';
+import { AB } from '../logic/config/content';
+import { fighterCard, zoneCard } from './campCards';
 import { campVm, startReason, sweepReason, teamWarnings, type CampVm } from './campVm';
-import type { FighterCardVm } from './fighterVm';
-import { actionButton, bar, toggle, type ViewCtx } from './viewKit';
-import { pct } from './vmKit';
+import { actionButton, elementIcon, iconOf, toggle, type ViewCtx } from './viewKit';
+import { ACTION_ART, elementName, pct } from './vmKit';
 
-function fighterCard(c: FighterCardVm, ctx: ViewCtx): HTMLElement {
-  const chosen = ctx.state.selected.includes(c.key);
-  const off = c.notReady !== null;
-  return el(
-    'div',
-    { class: `adventure-ui__fighter${chosen ? ' is-selected' : ''}${off ? ' is-off' : ''}` },
-    el(
-      'button',
-      {
-        class: 'adventure-ui__fighter-pick',
-        attrs: { type: 'button', 'aria-pressed': String(chosen), ...(off ? { disabled: '', title: c.notReady ?? '' } : {}) },
-        on: {
-          click: () => {
-            const s = ctx.state;
-            s.selected = chosen ? s.selected.filter((k) => k !== c.key) : s.selected.length < AB.team.max ? [...s.selected, c.key] : s.selected;
-            ctx.rerender();
-          },
-        },
-      },
-      art(c.art, 'adventure-ui__fighter-art', c.name) ?? el('span', { class: 'adventure-ui__fighter-art', text: '🐷' }),
-      el('b', { text: c.name }),
-      el('small', { text: `${c.classLabel} · ${c.level}` }),
-      el('small', { class: 'adventure-ui__elements', text: `${c.lineLabel} · ${c.elements}` }),
-    ),
-    el('div', { class: 'adventure-ui__meters' }, bar(c.expPercent, 'exp', c.expText), el('small', { text: c.expText }), bar(c.energyPercent, 'energy', c.energyText), el('small', { text: c.energyText })),
-    el('small', { class: 'adventure-ui__hearts', text: `${c.hearts} · ${c.rageText}` }),
-    c.statusChip ? el('span', { class: 'adventure-ui__chip', text: c.statusChip }) : null,
-    el(
-      'div',
-      { class: 'adventure-ui__card-actions' },
-      el('button', { class: 'c-button c-button--ghost', text: c.sp > 0 ? `${vi.adventure.camp.sheet} · ${t(vi.adventure.card.sp, { sp: c.sp })}` : vi.adventure.camp.sheet, attrs: { type: 'button' }, on: { click: () => ctx.openSheet(c.key) } }),
-    ),
-  );
-}
+/** The cream board's title plaque (wood with leaves), with its words on it. */
+const plaque = (text: string, cls = '') => el('div', { class: `adventure-ui__plaque ${cls}`.trim() }, art(CAMP_ART.plaque, 'adventure-ui__plaque-art'), el('h2', { text }));
 
 function prepSection(camp: CampVm, ctx: ViewCtx): HTMLElement {
   const { state } = ctx;
-  if (camp.prepSlots === 0) return el('p', { class: 'c-dialog__hint', text: vi.adventure.camp.prepNone });
+  if (camp.prepSlots === 0) return el('p', { class: 'adventure-ui__note', text: vi.adventure.camp.prepNone });
   return el(
     'section',
     { class: 'adventure-ui__prep' },
-    el('h3', { text: t(vi.adventure.camp.prepTitle, { count: state.prep.length, max: camp.prepSlots }) }),
-    el('p', { class: 'c-dialog__hint', text: vi.adventure.camp.prepHint }),
+    el('b', { text: t(vi.adventure.camp.prepTitle, { count: state.prep.length, max: camp.prepSlots }) }),
     el(
       'div',
       { class: 'adventure-ui__prep-list' },
@@ -73,6 +44,47 @@ function prepSection(camp: CampVm, ctx: ViewCtx): HTMLElement {
           btn.setAttribute('title', vi.adventure.camp.prepOut);
         }
         return btn;
+      }),
+    ),
+    el('small', { class: 'adventure-ui__note', text: vi.adventure.camp.prepHint }),
+  );
+}
+
+/** The companions' plaque (the rule of a team in its tooltip), the element chips and the name search. */
+function filters(ctx: ViewCtx): HTMLElement {
+  const { state } = ctx;
+  const chip = (e: Element | null) =>
+    el(
+      'button',
+      {
+        class: `adventure-ui__filter${state.filter === e ? ' is-on' : ''}`,
+        attrs: { type: 'button', 'aria-pressed': String(state.filter === e) },
+        on: { click: () => ((state.filter = e), ctx.rerender()) },
+      },
+      e ? elementIcon(e) : null,
+      el('span', { text: e ? elementName(e) : vi.adventure.camp.filterAll }),
+    );
+  return el(
+    'div',
+    { class: 'adventure-ui__team-head' },
+    el('div', { attrs: { title: t(vi.adventure.camp.fightersHint, { cost: AB.run.energyCost }) } }, plaque(vi.adventure.camp.fighters, 'is-small')),
+    el('div', { class: 'adventure-ui__filters', attrs: { 'data-keep-scroll': 'filters' } }, chip(null), ...ELEMENTS.map(chip)),
+    el(
+      'label',
+      { class: 'adventure-ui__search' },
+      el('input', {
+        attrs: { type: 'search', placeholder: vi.adventure.camp.search, value: state.search, 'aria-label': vi.adventure.camp.search },
+        on: {
+          input: (e) => {
+            const input = e.target as HTMLInputElement;
+            const caret = input.selectionStart;
+            state.search = input.value;
+            ctx.rerender();
+            const next = document.querySelector<HTMLInputElement>('.adventure-ui__search input');
+            next?.focus();
+            if (caret !== null) next?.setSelectionRange(caret, caret);
+          },
+        },
       }),
     ),
   );
@@ -97,7 +109,32 @@ function teamBar(camp: CampVm, ctx: ViewCtx): HTMLElement {
   return el(
     'div',
     { class: 'adventure-ui__start' },
-    el('span', { text: t(vi.adventure.camp.selected, { count: state.selected.length, max: AB.team.max }) }),
+    el(
+      'div',
+      { class: 'adventure-ui__team-now' },
+      el('b', { text: t(vi.adventure.camp.teamCount, { count: state.selected.length, max: AB.team.max }) }),
+      ...Array.from({ length: AB.team.max }, (_, i) => {
+        const m = team[i];
+        return el('span', { class: `adventure-ui__slot${m ? ` is-${m.elementList[0]!.toLowerCase()}` : ''}`, attrs: m ? { title: m.name } : {} }, m ? art(m.art, 'adventure-ui__slot-art', m.name) : null);
+      }),
+    ),
+    el(
+      'div',
+      { class: 'adventure-ui__formations' },
+      iconOf(ACTION_ART.formation, vi.adventure.camp.formations),
+      ...camp.formations.map((f) =>
+        el(
+          'span',
+          { class: 'adventure-ui__formation', attrs: { title: f.names } },
+          f.usable
+            ? el('button', { class: 'adventure-ui__formation-use', text: f.label, attrs: { type: 'button', title: `${vi.adventure.camp.formationUse}: ${f.names}` }, on: { click: () => ((state.selected = [...f.keys]), ctx.rerender()) } })
+            : el('span', { class: 'adventure-ui__formation-use is-empty', text: f.label }),
+          state.selected.length > 0
+            ? el('button', { class: 'adventure-ui__formation-save', text: '+', attrs: { type: 'button', title: vi.adventure.camp.formationSave, 'aria-label': `${vi.adventure.camp.formationSave} (${f.label})` }, on: { click: () => ctx.dispatch((ww, c) => saveFormation(ww, { index: f.index, keys: [...state.selected] }, c)) } })
+            : null,
+        ),
+      ),
+    ),
     zone && zone.starts.length > 1
       ? el(
           'label',
@@ -110,10 +147,15 @@ function teamBar(camp: CampVm, ctx: ViewCtx): HTMLElement {
           ),
         )
       : null,
-    actionButton({ label: `${vi.adventure.camp.start} — ${ZONES[state.zoneId]?.nameVi ?? ''}`, reason }, () => launch('start')),
-    actionButton({ label: vi.adventure.camp.sweep, reason: sweep }, () => launch('sweep'), 'c-button--ghost'),
-    el('small', { class: 'c-dialog__hint', text: t(vi.adventure.camp.sweepHint, { pct: pct(AB.sweep.share) }) }),
-    warnings.length > 0 ? el('ul', { class: 'adventure-ui__warnings' }, ...warnings.map((w0) => el('li', { text: `⚠️ ${w0}` }))) : null,
+    reason || warnings.length > 0
+      ? el('ul', { class: 'adventure-ui__warnings' }, reason ? el('li', { class: 'is-reason', text: reason }) : null, ...warnings.map((w0) => el('li', { text: w0 })))
+      : null,
+    el(
+      'div',
+      { class: 'adventure-ui__go' },
+      actionButton({ label: vi.adventure.camp.start, reason }, () => launch('start'), 'adventure-ui__go-start'),
+      el('span', { attrs: { title: t(vi.adventure.camp.sweepHint, { pct: pct(AB.sweep.share) }) } }, actionButton({ label: vi.adventure.camp.sweep, reason: sweep }, () => launch('sweep'), 'adventure-ui__go-sweep')),
+    ),
   );
 }
 
@@ -122,74 +164,63 @@ export function renderCamp(ctx: ViewCtx): HTMLElement {
   const camp = campVm(w, roster, now, { starter: (ww, c) => claimStarter(ww, { give: ctx.give }, c), loot: (ww, c) => collectLoot(ww, c) });
   state.selected = state.selected.filter((k) => camp.fighters.some((c) => c.key === k && c.notReady === null));
   state.prep = state.prep.filter((id) => camp.prep.some((p) => p.itemId === id && p.have > 0)).slice(0, camp.prepSlots);
+  const zone = camp.zones.find((z) => z.id === state.zoneId);
+  const search = state.search.trim().toLocaleLowerCase();
+  const shown = camp.fighters.filter((c) => (!state.filter || c.elementList.includes(state.filter)) && (!search || c.name.toLocaleLowerCase().includes(search)));
   return el(
     'div',
     { class: 'adventure-ui__hub' },
-    art(GUARDIANS_LEGEND_ART, 'adventure-ui__legend', vi.adventure.camp.legend),
-    el('h2', { class: 'adventure-ui__camp-title', text: vi.adventure.camp.title }),
     el(
-      'section',
-      { class: 'adventure-ui__zones', attrs: { 'aria-label': vi.adventure.camp.zones } },
-      ...camp.zones.map((z) =>
-        el(
-          'button',
-          {
-            class: `adventure-ui__zone${z.id === state.zoneId ? ' is-selected' : ''}${z.locked ? ' is-off' : ''}`,
-            attrs: { type: 'button', 'aria-pressed': String(z.id === state.zoneId), ...(z.locked ? { title: z.locked } : {}) },
-            on: {
-              click: () => {
-                state.zoneId = z.id;
-                state.startMap = null;
-                ctx.rerender();
-              },
-            },
-          },
-          el('b', { text: z.name }),
-          el('small', { text: z.desc }),
-          el('small', { class: 'adventure-ui__zone-meta', text: [z.explored, z.cleared].filter(Boolean).join(' · ') }),
-          el('small', { class: 'adventure-ui__zone-meta', text: z.foes }),
-          z.locked ? el('span', { class: 'adventure-ui__chip', text: z.locked }) : null,
-        ),
-      ),
+      'div',
+      { class: 'adventure-ui__sign' },
+      art(CAMP_ART.peek, 'adventure-ui__peek'),
+      el('div', { class: 'adventure-ui__sign-board' }, art(CAMP_ART.sign, 'adventure-ui__sign-art'), el('h1', { text: vi.adventure.title })),
     ),
     el(
       'div',
-      { class: 'adventure-ui__quest' },
-      camp.starter ? el('p', { class: 'c-dialog__hint', text: `${vi.adventure.camp.knight}: ${vi.adventure.camp.starterHint}` }) : null,
-      camp.starter ? actionButton(camp.starter, () => ctx.dispatch((ww, c) => claimStarter(ww, { give: ctx.give }, c))) : null,
-      camp.loot ? actionButton(camp.loot, () => ctx.dispatch((ww, c) => collectLoot(ww, c))) : null,
+      { class: 'adventure-ui__board' },
+      art(CAMP_ART.leaves, 'adventure-ui__leaves is-left'),
+      art(CAMP_ART.leaves, 'adventure-ui__leaves is-right'),
       el(
-        'span',
-        { class: 'adventure-ui__leader' },
-        el('small', { text: vi.adventure.camp.leader }),
-        toggle(vi.adventure.camp.so, camp.leader === 'so', () => ctx.dispatch((ww, c) => setLeader(ww, { leader: 'so' }, c))),
-        toggle(vi.adventure.camp.bi, camp.leader === 'bi', () => ctx.dispatch((ww, c) => setLeader(ww, { leader: 'bi' }, c))),
-      ),
-    ),
-    prepSection(camp, ctx),
-    el('h3', { text: vi.adventure.camp.fighters }),
-    el('p', { class: 'c-dialog__hint', text: t(vi.adventure.camp.fightersHint, { cost: AB.run.energyCost }) }),
-    el(
-      'div',
-      { class: 'adventure-ui__formations' },
-      el('small', { text: vi.adventure.camp.formations }),
-      ...camp.formations.map((f) =>
+        'div',
+        { class: 'adventure-ui__board-head' },
+        plaque(vi.adventure.camp.title),
         el(
-          'span',
-          { class: 'adventure-ui__formation' },
-          el('b', { text: `${f.label}: ` }),
-          el('small', { text: f.names }),
-          f.usable
-            ? el('button', { class: 'c-button c-button--ghost', text: vi.adventure.camp.formationUse, attrs: { type: 'button' }, on: { click: () => ((state.selected = [...f.keys]), ctx.rerender()) } })
-            : null,
-          state.selected.length > 0
-            ? el('button', { class: 'c-button c-button--ghost', text: vi.adventure.camp.formationSave, attrs: { type: 'button' }, on: { click: () => ctx.dispatch((ww, c) => saveFormation(ww, { index: f.index, keys: [...state.selected] }, c)) } })
-            : null,
+          'div',
+          { class: 'adventure-ui__quest' },
+          camp.starter ? el('small', { class: 'adventure-ui__note', text: `${vi.adventure.camp.knight}: ${vi.adventure.camp.starterHint}` }) : null,
+          camp.starter ? actionButton(camp.starter, () => ctx.dispatch((ww, c) => claimStarter(ww, { give: ctx.give }, c))) : null,
+          camp.loot ? actionButton(camp.loot, () => ctx.dispatch((ww, c) => collectLoot(ww, c))) : null,
+          el(
+            'span',
+            { class: 'adventure-ui__leader' },
+            el('small', { text: vi.adventure.camp.leader }),
+            toggle(vi.adventure.camp.so, camp.leader === 'so', () => ctx.dispatch((ww, c) => setLeader(ww, { leader: 'so' }, c))),
+            toggle(vi.adventure.camp.bi, camp.leader === 'bi', () => ctx.dispatch((ww, c) => setLeader(ww, { leader: 'bi' }, c))),
+          ),
+          toggle(vi.adventure.camp.legend, state.legend, () => ((state.legend = !state.legend), ctx.rerender())),
         ),
       ),
+      state.legend ? art(GUARDIANS_LEGEND_ART, 'adventure-ui__legend', vi.adventure.camp.legend) : null,
+      el('section', { class: 'adventure-ui__zones', attrs: { 'aria-label': vi.adventure.camp.zones, 'data-keep-scroll': 'zones' } }, ...camp.zones.map((z) => zoneCard(z, ctx))),
+      filters(ctx),
+      camp.fighters.length === 0
+        ? el('p', { class: 'adventure-ui__note', text: vi.adventure.camp.noFighters })
+        : shown.length === 0
+          ? el('p', { class: 'adventure-ui__note', text: vi.adventure.camp.noMatch })
+          : el('div', { class: 'adventure-ui__fighters', attrs: { 'data-keep-scroll': 'fighters' } }, ...shown.map((c) => fighterCard(c, ctx))),
+      camp.waiting > 0 ? el('p', { class: 'adventure-ui__note', text: t(vi.adventure.camp.waiting, { count: camp.waiting }) }) : null,
+      prepSection(camp, ctx),
+      teamBar(camp, ctx),
     ),
-    camp.fighters.length === 0 ? el('p', { text: vi.adventure.camp.noFighters }) : el('div', { class: 'adventure-ui__fighters' }, ...camp.fighters.map((c) => fighterCard(c, ctx))),
-    camp.waiting > 0 ? el('p', { class: 'c-dialog__hint', text: t(vi.adventure.camp.waiting, { count: camp.waiting }) }) : null,
-    teamBar(camp, ctx),
+    zone
+      ? el(
+          'div',
+          { class: 'adventure-ui__info' },
+          iconOf(ACTION_ART.map, vi.adventure.explore.map),
+          el('span', { text: `${zone.name} · ${zone.explored}` }),
+          el('span', { class: 'adventure-ui__info-foes', attrs: { title: zone.foes } }, ...zone.foeElements.map((e) => elementIcon(e))),
+        )
+      : null,
   );
 }
