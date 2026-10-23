@@ -174,16 +174,13 @@ describe('growing, watering, harvesting', () => {
     expect(wilted).toBe(2);
   });
 
-  it('a full bag leaves the rest on the vine, a harvest that fits nothing is refused', () => {
+  it('the bag has no limit (decision 038): a bag past the old 40 slots still takes the whole harvest', () => {
     const w = ok(upgradeSprinkler(ok(plantCrops(gardenWorld({}, 100_000), { cropId: 'crop_grass', plots: [0, 1, 2] }, ctxAt(T0))), ctxAt(T0)));
     const grown = advance(w, T0 + 2 * H).state;
-    // every slot is taken but the last stack of grass, which has room for 3 more units: one plot fits, not two
-    const full: WorldSave = { ...grown, inventory: { items: { FOOD_BASIC: (INVENTORY.slots - 1) * INVENTORY.stack, item_grass: INVENTORY.stack - 3 } } };
-    const r = ok(harvestPlots(full, {}, ctxAt(T0 + 2 * H)));
-    expect(items(r).item_grass).toBe(INVENTORY.stack);
-    expect(gardenOf(r).plots.filter((p) => p.cropId !== null)).toHaveLength(2);
-    const stuck: WorldSave = { ...grown, inventory: { items: { FOOD_BASIC: INVENTORY.slots * INVENTORY.stack } } };
-    expect(harvestPlots(stuck, {}, ctxAt(T0 + 2 * H))).toEqual({ ok: false, error: 'INVENTORY_FULL' });
+    const big: WorldSave = { ...grown, inventory: { items: { FOOD_BASIC: 40 * INVENTORY.stack, item_grass: INVENTORY.stack - 3 } } };
+    const r = ok(harvestPlots(big, {}, ctxAt(T0 + 2 * H)));
+    expect(items(r).item_grass).toBeGreaterThan(INVENTORY.stack);
+    expect(gardenOf(r).plots.filter((p) => p.cropId !== null)).toHaveLength(0);
   });
 });
 
@@ -279,14 +276,13 @@ describe('workshops', () => {
     expect(startCraft(w, { building: 'mill', recipeId: 'recipe_pig_feed', batches: GB.maxBatches + 1 }, ctxAt(T0))).toEqual({ ok: false, error: 'INVALID_REQUEST' });
   });
 
-  it('collects as many batches as the bag has room for', () => {
+  it('collects every batch however much the bag holds (no limit, decision 038)', () => {
     const w = ok(startCraft(mill({ item_corn: 4, item_wheat: 2 }), { building: 'mill', recipeId: 'recipe_pig_feed', batches: 2 }, ctxAt(T0)));
-    const room = 4; // units of free space left in the bag: one batch (4 units) fits, two do not
-    const tight: WorldSave = { ...w, inventory: { items: { ...items(w), FOOD_BASIC: INVENTORY.slots * INVENTORY.stack - room } } };
-    const r = ok(collectCraft(tight, { building: 'mill' }, ctxAt(T0 + 30 * MIN)));
-    expect(items(r).FOOD_BASIC).toBe(INVENTORY.slots * INVENTORY.stack);
-    expect(gardenOf(r).jobs.mill).toMatchObject({ batches: 2, collected: 1 }); // the other batch waits in the workshop
-    expect(collectCraft(r, { building: 'mill' }, ctxAt(T0 + 30 * MIN))).toEqual({ ok: false, error: 'INVENTORY_FULL' });
+    const before = 40 * INVENTORY.stack;
+    const big: WorldSave = { ...w, inventory: { items: { ...items(w), FOOD_BASIC: before } } };
+    const r = ok(collectCraft(big, { building: 'mill' }, ctxAt(T0 + 30 * MIN)));
+    expect(items(r).FOOD_BASIC).toBeGreaterThan(before);
+    expect(gardenOf(r).jobs.mill ?? null).toBeNull();
   });
 });
 

@@ -1,11 +1,13 @@
 // content/shared/items.json — every item of the shared bag (spec §6 Item): what it does.
 import { z } from 'zod';
 import { itemId, nonNeg } from '../fields';
-import { ITEM_CATEGORY_VALUES, RARITY_VALUES } from '../vocab';
+import { ITEM_AREA_VALUES, ITEM_CATEGORY_VALUES, RARITY_VALUES } from '../vocab';
 
 export const itemSchema = z.strictObject({
   id: itemId,
   category: z.enum(ITEM_CATEGORY_VALUES),
+  /** The Area it belongs to: the bag's Area tab it shows under (decision 038). */
+  area: z.enum(ITEM_AREA_VALUES),
   rarity: z.enum(RARITY_VALUES),
   /** Unit price at the shop (shop.json may sell packs at other prices). */
   priceGold: nonNeg,

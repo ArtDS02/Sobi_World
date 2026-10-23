@@ -62,7 +62,7 @@ function overview(): string {
       <dt>Khu đang đứng</dt><dd>${esc(AREAS.get(w.world.currentArea)?.manifest.name.vi ?? w.world.currentArea)}</dd></dl></section>
     <section class="panel"><h3>Cấp Sobi World ${s.level}</h3><div class="progress"><span style="width:${s.percent}%"></span></div>
       <p class="muted">${gold(s.xp)} KN${s.nextXp !== null ? ` · cấp sau ở ${gold(s.nextXp)} KN` : ' · cấp tối đa'}</p>
-      <dl class="kv"><dt>Túi đồ</dt><dd>${s.bagSlots}/${INVENTORY.slots} ô</dd><dt>Bộ sưu tập</dt><dd>${s.codex} mục</dd>
+      <dl class="kv"><dt>Túi đồ</dt><dd>${INVENTORY.slots === undefined ? `${s.bagSlots} ô (không giới hạn)` : `${s.bagSlots}/${INVENTORY.slots} ô`}</dd><dt>Bộ sưu tập</dt><dd>${s.codex} mục</dd>
       <dt>Heo</dt><dd>${s.pigs}/${s.slots} chuồng${s.sick ? ` · <span class="badge status-error">${s.sick} ốm</span>` : ''}</dd></dl></section>
   </div>
   <section class="panel"><h3>Cài đặt trong game</h3><div class="check-grid">
@@ -103,9 +103,13 @@ function bag(): string {
       <input type="number" min="0" step="1" value="${n}" data-item="${esc(id)}" aria-label="${esc(nameOf(id) ?? id)}" /></div>`;
   };
   const used = W.summary(w).bagSlots;
-  return `<section class="panel"><h3>Túi đồ chung <span class="muted">${used}/${INVENTORY.slots} ô (mỗi ô tối đa ${INVENTORY.stack})</span></h3>
-      <div class="progress"><span style="width:${Math.min(100, (used / INVENTORY.slots) * 100)}%"></span></div>
-      ${used > INVENTORY.slots ? '<p class="issue warn">Túi đang vượt số ô: game vẫn giữ đồ nhưng người chơi không nhận thêm được cho tới khi dùng bớt.</p>' : ''}</section>
+  const limit = INVENTORY.slots;
+  const head = limit === undefined
+    ? `<section class="panel"><h3>Túi đồ chung <span class="muted">${used} ô, không giới hạn (decision 038)</span></h3></section>`
+    : `<section class="panel"><h3>Túi đồ chung <span class="muted">${used}/${limit} ô (mỗi ô tối đa ${INVENTORY.stack})</span></h3>
+      <div class="progress"><span style="width:${Math.min(100, (used / limit) * 100)}%"></span></div>
+      ${used > limit ? '<p class="issue warn">Túi đang vượt số ô: game vẫn giữ đồ nhưng người chơi không nhận thêm được cho tới khi dùng bớt.</p>' : ''}</section>`;
+  return `${head}
     <div class="toolbar"><input type="search" class="search-input" placeholder="Tìm vật phẩm…" data-bag-search />
       <select data-bag-cat><option value="">Mọi loại</option>${cats.map((c) => `<option value="${esc(c)}">${esc(ENUM_LABEL[c] ?? humanize(c))}</option>`).join('')}</select>
       <label class="check"><input type="checkbox" data-bag-owned /> Chỉ món đang có</label>

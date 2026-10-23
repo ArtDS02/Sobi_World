@@ -67,13 +67,15 @@ describe('inventory: the shared bag', () => {
     expect(addAllToBag({ A: 10, B: 10 }, { A: 0, C: 1 }, rules)).toEqual({ ok: false, error: 'INVENTORY_FULL' });
   });
 
-  it('the shipped bag is 40 slots of 99 (GAME_BALANCE §8)', () => {
-    expect(INVENTORY).toEqual({ slots: 40, stack: 99 });
+  it('the shipped bag has no slot limit (decision 038); without `slots` nothing is ever refused for room', () => {
+    expect(INVENTORY).toEqual({ stack: 99 });
+    expect(addToBag({ A: 1_000_000 }, 'B', 99_999, { stack: 10 })).toEqual({ ok: true, items: { A: 1_000_000, B: 99_999 } });
   });
 
-  it('a farm purchase that would overflow the bag is refused without spending', () => {
-    const full = { ...makeState(), inventory: inv({ FOOD_BASIC: INVENTORY.slots * INVENTORY.stack }) };
-    expect(buyItem(full, { itemId: 'FOOD_BASIC', quantity: 1 }, ctx())).toEqual({ ok: false, error: 'INVENTORY_FULL' });
+  it('a farm purchase goes in however much the bag already holds', () => {
+    const big = { ...makeState(), inventory: inv({ FOOD_BASIC: 40 * 99, item_manure: 5_000 }) };
+    const r = buyItem(big, { itemId: 'FOOD_BASIC', quantity: 1 }, ctx());
+    expect(r.ok && r.state.inventory.FOOD_BASIC).toBe(40 * 99 + 1);
   });
 });
 

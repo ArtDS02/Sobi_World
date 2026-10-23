@@ -67,6 +67,9 @@ export type StatId = (typeof STAT_ID_VALUES)[number];
 /** Item categories of the shared bag (spec V2 §6 Item). Seeds and crops joined with the Garden, fish with the Aquarium; essences and more come with their Area. */
 export const ITEM_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'MATERIAL', 'SEED', 'CROP', 'FISH', 'FLOWER', 'POTION', 'EQUIPMENT'] as const;
 export type ItemCategory = (typeof ITEM_CATEGORY_VALUES)[number];
+/** The Area an item belongs to (where it is made or used), for the bag's Area tabs (decision 038). */
+export const ITEM_AREA_VALUES = ['sobi_farm', 'sobi_garden', 'sobi_aquarium', 'sobi_cloud', 'sobi_adventure'] as const;
+export type ItemArea = (typeof ITEM_AREA_VALUES)[number];
 
 export const PRODUCT_CATEGORY_VALUES = ['FOOD', 'MEDICINE', 'SUPPLY', 'SPECIAL'] as const;
 export type ProductCategory = (typeof PRODUCT_CATEGORY_VALUES)[number];

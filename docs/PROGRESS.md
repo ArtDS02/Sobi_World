@@ -10,6 +10,15 @@
 
 ## Nhật ký
 
+### 2026-10-23 — Kho đồ không giới hạn, tab khu vực, chip phân loại (decision 038, chờ duyệt)
+✅ Đã làm (chủ dự án: "kho đồ không giới hạn, có tab phân biệt area, nút phân loại từng loại vật phẩm, giao diện đẹp, đề cao UI/UX"):
+1. **Không giới hạn**: `content/shared/inventory.json` bỏ `slots`; `slots` tuỳ chọn trong schema và `core/inventory/bag.ts` (vắng = không giới hạn). Admin tab Túi đồ hiện "không giới hạn".
+2. **`area` cho 127 vật phẩm** trong `items.json` (vocab `ITEM_AREA_VALUES`), sửa được ở Admin.
+3. **Màn Kho đồ** (`areas/farm/ui/screens/inventoryScreen.ts`, `inventoryVm.ts`, `_inventory.scss`): tab Tất cả + 5 khu (mở đúng tab nơi đang đứng), chip loại có đếm, tìm không dấu, sắp xếp 4 kiểu, thẻ theo độ hiếm, nút nhanh như cũ; đầu bảng dính khi cuộn; vừa 375 px.
+🧪 Đã kiểm tra: `npm run check` xanh (test mới `inventoryView.test.ts`; sửa 5 test "túi đầy" thành "túi không giới hạn"). Sandbox `sandbox-max` 1600×900 và 375×812: mở bằng phím I, đổi tab, chip Hạt giống + sắp Hiếm nhất, gõ "kiem" / "ca vang" (giữ con trỏ, chữ i không đóng kho), mở từ Garden vào tab Vườn; không lỗi console.
+⚠️ Tự quyết: bỏ giới hạn thắng GAME_BALANCE §8 (40 ô, Kho +20 ô / cấp); đếm trên chip là số loại trong tab (không theo ô tìm); Thuốc tiên của Cloud xếp vào Cloud dù dùng ở khu khác. Ảnh 14 trang bị cũ vẫn là placeholder (đã có trong ASSET_TODO).
+👉 Bạn cần: mở Kho đồ (phím I hoặc nút Vật phẩm ở mỗi khu) xem giao diện; duyệt decision 038.
+
 ### 2026-10-23 — GĐ14 Adventure: art batch adventure-03..10 và giao diện theo ảnh mẫu (chờ duyệt)
 ✅ Đã làm (chủ dự án: "kiểm ảnh 8 batch, duyệt, đưa vào game, dựng lại Trại / Trận / Bản đồ theo ảnh mẫu"):
 1. **Ảnh**: 8 batch đủ sheet (không thiếu sheet nào). Cắt + xem từng ô: **212 / 220 asset duyệt** vào `art_inbox/`; cần tạo lại **K5** (dải cỏ dính dưới icon, vẽ trùng hàng) và **CP2** (4 kỹ năng Hỗ trợ, sheet CP vẽ lặp hàng trên) — `batch.json` đã sửa, `prep` chạy lại, PROMPT mới sẵn. Tự sửa khi cắt (không cần Gemini): gỡ dấu ✦ (đảo phép trộn alpha, trong bộ nhớ), lấy đúng hàng khi Gemini vẽ trùng (U1, T1–T3, F1, M1), bỏ chữ dưới icon (K4, CT, E3), lật ngang 8 kẻ địch đang nhìn sang phải, làm liền mép 15 ô đất. Rương mở cắt `--variant b`.

@@ -205,7 +205,7 @@ Giá mua ở chợ: Thức ăn heo 6, Thức ăn cao cấp 15, Phân bón 12.
 | Loot hiếm Adventure | 1–3 Gems, tỉ lệ 3% mỗi rương |
 | Gems dùng cho | Đồ trang trí độc quyền, đổi đơn hàng (5 Gems), mở rộng kho vượt mức tối đa, giống heo đặc biệt |
 | Chợ theo ngày | 2 nhóm hàng ×1.2, 1 nhóm ×0.9, chọn theo seed ngày; ngày Thương nhân ghé, một nhóm hàng được cộng +0.15 (GĐ12, mục 10) |
-| Túi đồ | 40 ô, stack 99; mỗi cấp Kho +20 ô |
+| Túi đồ | Không giới hạn (decision 038; trước: 40 ô, stack 99) |
 
 Gems không được mua lợi thế lớn về sức mạnh (không pay-to-win, kể cả khi chưa có nạp tiền).
 

@@ -1,11 +1,13 @@
 // Items (spec §6 Item): what each one does — content/shared/items.json.
 import { byId, CONTENT } from './content';
-import type { ItemCategory, Rarity } from '../../../content/schemas/vocab';
+import type { ItemArea, ItemCategory, Rarity } from '../../../content/schemas/vocab';
 import { ITEM_ID_VALUES, type ItemId } from './ids';
 
 export interface ItemDef {
   id: ItemId;
   category: ItemCategory;
+  /** The Area it belongs to (the bag's Area tabs, decision 038). */
+  area: ItemArea;
   rarity: Rarity;
   priceGold: number;
   /** What the shop pays for one; absent = cannot be sold. */

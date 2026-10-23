@@ -182,13 +182,12 @@ describe('raking the pen: Dọn phân → item_manure, then sold', () => {
     expect(cleanManure(makeState([makePig()], 0), ctx)).toEqual({ ok: false, error: 'NO_MANURE' });
   });
 
-  it('a full bag keeps what fits and throws the rest away, but the pen is still raked', () => {
-    // 39 full slots of food + a slot of manure with room for 2 more
-    const r = cleanManure(withPiles(4, { FOOD_BASIC: (INVENTORY.slots - 1) * INVENTORY.stack, item_manure: INVENTORY.stack - 2 }), ctx);
+  it('a bag past the old 40 slots keeps every pile (no limit, decision 038)', () => {
+    const r = cleanManure(withPiles(4, { FOOD_BASIC: 40 * INVENTORY.stack, item_manure: INVENTORY.stack - 2 }), ctx);
     if (!r.ok) throw new Error(r.error);
     expect(r.state.manure).toBe(0);
-    expect(r.state.inventory.item_manure).toBe(INVENTORY.stack);
-    expect(r.events).toContainEqual({ type: 'MANURE_CLEANED', piles: 4, kept: 2 });
+    expect(r.state.inventory.item_manure).toBeGreaterThan(INVENTORY.stack);
+    expect(r.events.find((e) => e.type === 'MANURE_CLEANED')).toMatchObject({ piles: 4 });
   });
 
   it('manure sells for 6 each; other items cannot be sold; no more than you have', () => {

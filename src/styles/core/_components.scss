@@ -232,6 +232,13 @@
     max-width: $pig-window-max;
   }
 
+  // The bag (decision 038) lays out many cards: a wider window.
+  // A fixed height so the tabs never jump while a filter shrinks the list.
+  &[data-panel='inventory'] &__panel {
+    max-width: $bag-window-max;
+    height: $window-max-height;
+  }
+
   &[data-panel='well'] &__panel {
     max-width: $dialog-max;
   }

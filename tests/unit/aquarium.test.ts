@@ -303,11 +303,11 @@ describe('the rod', () => {
     expect(fail(releaseFish(w, { itemId: 'item_scale' }, ctxAt(T0)))).toBe('INVALID_REQUEST');
   });
 
-  it('a full bag stops a cast before it spends the rod', () => {
-    const full: Record<string, number> = {};
-    for (let i = 0; i < 40; i += 1) full[`junk_${i}`] = 99;
-    const w = tankWorld([fish()], full);
-    expect(fail(castLine(w, { score: 0.9 }, ctxAt(NOON)))).toBe('INVENTORY_FULL');
+  it('a bag past the old 40 slots still takes the catch (no limit, decision 038)', () => {
+    const big: Record<string, number> = {};
+    for (let i = 0; i < 40; i += 1) big[`junk_${i}`] = 99;
+    const w = tankWorld([fish()], big);
+    expect(fail(castLine(w, { score: 0.9 }, ctxAt(NOON)))).toBeUndefined();
   });
 });
 

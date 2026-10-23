@@ -11,6 +11,7 @@ import type { FarmGame } from '../logic/types';
 import type { AppOptions } from './appTypes';
 import { openOrderDialog, type Act } from './dialogs';
 import type { InventoryHandlers } from './screens/inventoryScreen';
+import type { InventoryView } from './screens/inventoryVm';
 import { renderInventoryScreen } from './screens/inventoryScreen';
 import { renderHistoryScreen } from './screens/historyScreen';
 import { renderBreederPanel } from './heredityViews';
@@ -26,7 +27,7 @@ export interface PanelCtx {
   now: () => number;
   assets: AssetRegistry | null;
   opts: AppOptions;
-  ui: { selectedPigId: string | null; shopTab: ShopTab; ordersTab: OrdersTab };
+  ui: { selectedPigId: string | null; shopTab: ShopTab; ordersTab: OrdersTab; inventory: InventoryView };
   pig: Parameters<typeof renderPigPopup>[3] & { act: (run: Parameters<Act>[0]) => void };
   shop: ShopHandlers;
   inventory: InventoryHandlers;
@@ -59,7 +60,7 @@ export function renderPanel(c: PanelCtx, save: FarmGame, panel: PanelId): HTMLEl
     case 'shop':
       return renderShopScreen(save, now, c.ui.shopTab, c.shop, c.assets);
     case 'inventory':
-      return renderInventoryScreen(save, c.inventory, c.assets ?? undefined, now);
+      return renderInventoryScreen(save, c.inventory, c.ui.inventory, c.assets ?? undefined, now);
     case 'history':
       return renderHistoryScreen(save);
     case 'orders': {

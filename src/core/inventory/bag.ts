@@ -1,10 +1,11 @@
-// The shared bag (spec §6 Inventory): one item map for the whole world, limited by slots; a slot holds
-// up to `stack` units of one item. Pure functions on an item map (the world's inventory.items, or an
+// The shared bag (spec §6 Inventory): one item map for the whole world. Unlimited since decision 038; when
+// content sets `slots`, the bag holds that many slots of up to `stack` units of one item. Pure functions on an item map (the world's inventory.items, or an
 // Area's view of it); item ids are content ids, an unknown id is just another stack.
 import type { ErrorCode } from '../config/errors';
 
 export interface BagRules {
-  slots: number;
+  /** Absent = no limit (decision 038). */
+  slots?: number | undefined;
   stack: number;
 }
 
@@ -21,12 +22,12 @@ export const usedSlots = (items: Items, rules: BagRules): number =>
 
 const validQty = (qty: number) => Number.isInteger(qty) && qty >= 0;
 
-/** `items` with `qty` more of `id`, unless that needs more slots than the bag has. */
+/** `items` with `qty` more of `id`, unless the bag has a slot limit and that needs more slots than it has. */
 export function addToBag<M extends Items>(items: M, id: string, qty: number, rules: BagRules): BagResult<M> {
   if (!validQty(qty)) return { ok: false, error: 'INVALID_REQUEST' };
   if (qty === 0) return { ok: true, items };
   const next = { ...items, [id]: countOf(items, id) + qty } as M;
-  if (usedSlots(next, rules) > rules.slots) return { ok: false, error: 'INVENTORY_FULL' };
+  if (rules.slots !== undefined && usedSlots(next, rules) > rules.slots) return { ok: false, error: 'INVENTORY_FULL' };
   return { ok: true, items: next };
 }
 

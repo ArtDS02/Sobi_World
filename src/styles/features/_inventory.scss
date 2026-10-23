@@ -1,65 +1,497 @@
-// Inventory screen. Owns `.inventory*` inside [data-screen="inventory"].
+// Inventory screen (decision 038): Area tabs, tools, category chips and item cards. Owns `.inventory*` inside
+// [data-screen="inventory"].
 @use '../core' as *;
 
 [data-screen='inventory'] {
   display: grid;
   gap: $sp-3;
 
-  .inventory__list {
+  // The tabs, the tools and the chips stick to the top of the window while the cards scroll.
+  .inventory__head {
+    position: sticky;
+    top: -$sp-4;
+    z-index: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-    gap: $sp-3;
-  }
+    gap: $sp-2;
+    padding: $sp-2 0 $sp-3;
+    margin-top: -$sp-2;
+    background: $c-cream;
+    border-bottom: 2px dashed $c-border;
+    box-shadow: 0 (-$sp-4) 0 $c-cream; // covers the cards scrolling by above it
 
-  .inventory__row {
-    display: grid;
-    grid-template-columns: 4rem 1fr auto;
-    gap: $sp-2 $sp-3;
-    align-items: center;
-    padding: $sp-3;
-    background: #fff;
-    border: 2px solid $c-border;
-    border-radius: $radius-card;
-    box-shadow: 0 3px 0 $c-border;
-
-    > .c-button {
-      grid-column: 1 / -1;
+    @include mq-short {
+      top: -$sp-2;
+      gap: $sp-1;
+      padding-bottom: $sp-2;
     }
   }
 
-  .inventory__pic {
-    display: grid;
+  .inventory__count {
+    display: inline-grid;
     place-items: center;
-    width: 4rem;
-    height: 4rem;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.35rem;
+    font-size: $fs-xs;
+    font-weight: $fw-bold;
+    line-height: 1;
+    color: $c-wood-dark;
+    background: $c-cream;
+    border-radius: 9999px;
+  }
+
+  // Area tabs: one row of big pills, scrolling sideways on narrow windows.
+  .inventory__areas {
+    display: flex;
+    gap: $sp-2;
+    padding: $sp-1;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: 9999px;
+  }
+
+  .inventory__area {
+    display: inline-flex;
+    flex: 1 0 auto;
+    gap: $sp-2;
+    align-items: center;
+    justify-content: center;
+    min-height: $sp-touch-min;
+    padding: $sp-1 $sp-3 $sp-1 $sp-1;
+    font-weight: $fw-bold;
+    color: $c-wood-dark;
+    white-space: nowrap;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    border-radius: 9999px;
+    transition:
+      background-color $dur-fast ease-out,
+      color $dur-fast ease-out;
+
+    &:hover {
+      background: $c-surface-alt;
+    }
+
+    &:focus-visible {
+      outline: $focus-ring solid $c-primary;
+      outline-offset: 1px;
+    }
+
+    &.is-empty:not(.is-active) {
+      opacity: 0.55;
+    }
+
+    &.is-active {
+      color: #fff;
+      background: $c-primary;
+      box-shadow: inset 0 -3px 0 $c-primary-strong;
+
+      .inventory__count {
+        color: $c-primary-strong;
+        background: #fff;
+      }
+    }
+  }
+
+  .inventory__area-pic {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
     background: $c-cream;
     border-radius: 50%;
 
     .c-icon {
-      width: 2.6rem;
-      height: 2.6rem;
+      width: 1.7rem;
+      height: 1.7rem;
+      object-fit: contain;
     }
+  }
+
+  // Search + sort.
+  .inventory__tools {
+    display: flex;
+    gap: $sp-2;
+    align-items: center;
+  }
+
+  .inventory__search {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    align-items: center;
+  }
+
+  // A magnifying glass drawn in CSS (no art needed).
+  .inventory__search-glass {
+    position: absolute;
+    left: 0.95rem;
+    width: 0.85rem;
+    height: 0.85rem;
+    pointer-events: none;
+    border: 2px solid $c-text-muted;
+    border-radius: 50%;
+
+    &::after {
+      position: absolute;
+      right: -0.4rem;
+      bottom: -0.35rem;
+      width: 0.45rem;
+      height: 2px;
+      content: '';
+      background: $c-text-muted;
+      border-radius: 2px;
+      transform: rotate(45deg);
+    }
+  }
+
+  .inventory__search-input {
+    width: 100%;
+    min-height: $sp-touch-min;
+    padding: 0 2.6rem 0 2.5rem;
+    font: inherit;
+    color: $c-text;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: 9999px;
+    outline: none;
+    transition: border-color $dur-fast ease-out;
+
+    &::placeholder {
+      color: $c-text-muted;
+    }
+
+    &:focus-visible,
+    &:focus {
+      border-color: $c-primary;
+      box-shadow: 0 0 0 $focus-ring rgba(232, 112, 138, 0.25);
+    }
+
+    // The browser's own clear cross: we draw ours.
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+  }
+
+  .inventory__search-clear {
+    position: absolute;
+    right: 0.4rem;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: $fs-lg;
+    font-weight: $fw-bold;
+    line-height: 1;
+    color: $c-text-muted;
+    cursor: pointer;
+    background: $c-surface-alt;
+    border: 0;
+    border-radius: 50%;
+
+    &:hover {
+      color: #fff;
+      background: $c-primary;
+    }
+  }
+
+  .inventory__sort {
+    display: inline-flex;
+    flex: none;
+    gap: $sp-2;
+    align-items: center;
+    font-size: $fs-sm;
+    font-weight: $fw-bold;
+    color: $c-wood-dark;
+
+    // The select names itself on phones; the label shows from sm up.
+    > span {
+      display: none;
+
+      @include mq(sm) {
+        display: inline;
+      }
+    }
+  }
+
+  .inventory__sort-select {
+    min-height: $sp-touch-min;
+    padding: 0 $sp-3;
+    font: inherit;
+    font-weight: $fw-bold;
+    color: $c-wood-dark;
+    cursor: pointer;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: 9999px;
+
+    &:focus-visible {
+      outline: $focus-ring solid $c-primary;
+    }
+  }
+
+  // Category chips: one row scrolling sideways on phones, wrapped from md up.
+  .inventory__cats {
+    display: flex;
+    gap: $sp-2;
+    padding-bottom: 0.15rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
+
+    @include mq(md) {
+      flex-wrap: wrap;
+      overflow-x: visible;
+    }
+  }
+
+  .inventory__cat {
+    display: inline-flex;
+    flex: none;
+    gap: 0.35rem;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0.15rem $sp-2 0.15rem $sp-3;
+    font-size: $fs-sm;
+    font-weight: $fw-bold;
+    color: $c-wood-dark;
+    cursor: pointer;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-radius: 9999px;
+    transition:
+      border-color $dur-fast ease-out,
+      background-color $dur-fast ease-out;
+
+    .c-icon {
+      width: 1.35rem;
+      height: 1.35rem;
+      margin-left: -$sp-1;
+      object-fit: contain;
+    }
+
+    &:hover {
+      border-color: $c-honey;
+    }
+
+    &:focus-visible {
+      outline: $focus-ring solid $c-primary;
+      outline-offset: 1px;
+    }
+
+    &.is-active {
+      background: #fff4cc;
+      border-color: $c-honey;
+      box-shadow: 0 2px 0 #e9c46a;
+
+      .inventory__count {
+        color: #fff;
+        background: $c-wood;
+      }
+    }
+  }
+
+  .inventory__summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-2;
+    align-items: center;
+    justify-content: space-between;
+    font-size: $fs-sm;
+    font-weight: $fw-bold;
+    color: $c-text-muted;
+  }
+
+  .inventory__unlimited {
+    padding: 0 $sp-3;
+    font-size: $fs-xs;
+    color: #fff;
+    background: $c-leaf;
+    border-radius: 9999px;
+
+    &::before {
+      margin-right: $sp-1;
+      content: '\221E'; // infinity
+    }
+  }
+
+  // Item cards, tinted by rarity.
+  .inventory__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+    gap: $sp-3;
+  }
+
+  .inventory__card {
+    --rar: #8a8f87;
+
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: $sp-2 $sp-3;
+    align-content: start;
+    padding: $sp-3;
+    background: #fff;
+    border: 2px solid $c-border;
+    border-top: 4px solid var(--rar);
+    border-radius: $radius-card;
+    box-shadow: 0 3px 0 $c-border;
+    transition:
+      transform $dur-fast ease-out,
+      box-shadow $dur-fast ease-out;
+
+    @each $name, $color in $c-rarity {
+      &.is-#{$name} {
+        --rar: var(--c-rarity-#{$name}, #{$color});
+      }
+    }
+
+    &:hover {
+      box-shadow: 0 6px 0 $c-border, 0 10px 18px rgba(59, 42, 38, 0.08);
+      transform: translateY(-2px);
+    }
+
+    &.is-out .inventory__pic > .c-icon {
+      opacity: 0.4;
+      filter: grayscale(1);
+    }
+  }
+
+  .inventory__pic {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    background: radial-gradient(circle at 50% 40%, #fff 0%, color-mix(in srgb, var(--rar) 16%, $c-cream) 70%);
+    border: 2px solid color-mix(in srgb, var(--rar) 45%, #fff);
+    border-radius: $radius-md;
+
+    > .c-icon {
+      width: 3.2rem;
+      height: 3.2rem;
+      object-fit: contain;
+    }
+  }
+
+  .inventory__qty {
+    position: absolute;
+    right: -0.45rem;
+    bottom: -0.45rem;
+    min-width: 1.9rem;
+    padding: 0 0.4rem;
+    font-size: $fs-sm;
+    font-weight: $fw-bold;
+    line-height: 1.5;
+    color: #fff;
+    text-align: center;
+    background: $c-wood-dark;
+    border: 2px solid #fff;
+    border-radius: 9999px;
   }
 
   .inventory__text {
     display: grid;
+    gap: 0.2rem;
+    align-content: start;
+    min-width: 0;
   }
 
   .inventory__name {
+    overflow: hidden;
     font-weight: $fw-bold;
+    line-height: 1.25;
     color: $c-wood-dark;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .inventory__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $sp-1;
+    align-items: center;
+  }
+
+  .inventory__tag {
+    padding: 0 $sp-2;
+    font-size: $fs-xs;
+    font-weight: $fw-bold;
+    line-height: $lh-base;
+    color: $c-wood-dark;
+    background: $c-cream;
+    border-radius: 9999px;
   }
 
   .inventory__desc {
+    display: -webkit-box;
+    overflow: hidden;
     font-size: $fs-xs;
     color: $c-text-muted;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 
-  .inventory__qty {
-    padding: 0 $sp-2;
-    font-size: $fs-lg;
-    font-weight: $fw-bold;
-    color: $c-pig-line;
+  .inventory__actions {
+    display: flex;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+    gap: $sp-2;
+  }
+
+  .inventory__act {
+    display: inline-flex;
+    flex: 1 1 auto;
+    gap: $sp-1;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: $sp-1 $sp-3;
+    font-size: $fs-sm;
+
+    .c-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    &--sell {
+      color: $c-wood-dark;
+      background: #fff4cc;
+      box-shadow: 0 3px 0 #e9c46a;
+    }
+  }
+
+  .inventory__empty {
+    padding: $sp-6 $sp-4;
+    background: #fff;
+    border: 2px dashed $c-border;
+    border-radius: $radius-card;
+
+    p {
+      max-width: 24rem;
+      margin: 0;
+    }
+  }
+
+  .inventory__empty-pic {
+    width: 4rem;
+    height: 4rem;
+    object-fit: contain;
+    opacity: 0.6;
+  }
+
+  @include mq-short {
+    .inventory__area-pic {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+
+    .inventory__area {
+      min-height: 2.25rem;
+    }
   }
 
   // BR-1: newborns waiting in the nursery.
@@ -104,4 +536,8 @@
       border-color: $c-pig-line;
     }
   }
+}
+
+.is-reduced-motion [data-screen='inventory'] .inventory__card:hover {
+  transform: none;
 }

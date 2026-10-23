@@ -29,6 +29,7 @@ import { localDay } from '../../../ui/localDay';
 import { openRenameDialog, openSellDialog, openTroughDialog } from './dialogs';
 import { renderFarmHint } from './screens/farmScreen';
 import type { ShopTab } from './screens/shopScreen';
+import { bagViewHandler, defaultInventoryView, PLACE_BAG_TAB, type InventoryView } from './screens/inventoryVm';
 import { settingsHandlers } from './settingsHandlers';
 import { panelHandlers } from './panelHandlers';
 import { renderPanel, type PanelCtx } from './panels';
@@ -43,6 +44,8 @@ interface UiState {
   shopTab: ShopTab;
   /** The orders panel: the plaza's board or the farm's pig orders. */
   ordersTab: OrdersTab;
+  /** The bag's Area tab, category chip, search and sort (decision 038). */
+  inventory: InventoryView;
 }
 
 export type { AppOptions, FarmCanvas, FarmPick, FarmPickAction, MountedApp } from './appTypes';
@@ -55,7 +58,7 @@ export function mountApp(
 ): MountedApp {
   document.title = vi.app.title;
   setIconSource(opts.assets ? (id) => opts.assets?.url(id) ?? null : null);
-  const ui: UiState = { place: 'area', panel: null, selectedPigId: null, shopTab: 'pigs', ordersTab: 'board' };
+  const ui: UiState = { place: 'area', panel: null, selectedPigId: null, shopTab: 'pigs', ordersTab: 'board', inventory: defaultInventoryView() };
   const topbar = el('header', { class: 'topbar' });
   const banner = el('div', { class: 'app__banner' });
   const saveBanner = el('div', { class: 'app__banner' });
@@ -124,7 +127,7 @@ export function mountApp(
     const save = store.getSnapshot().save;
     if (save) openTroughDialog(dialogs, save, now(), act, units);
   };
-  const { shop, inventory } = panelHandlers({
+  const { shop, inventory: bagHandlers } = panelHandlers({
     store,
     dialogs,
     now,
@@ -136,6 +139,7 @@ export function mountApp(
       rerender();
     },
   });
+  const inventory = { ...bagHandlers, view: bagViewHandler(ui, rerender, popupHost) };
   const settings = settingsHandlers({
     store,
     now,
@@ -169,6 +173,7 @@ export function mountApp(
     hasBackups: !!opts.hasBackups,
   });
   const go = (id: PanelId | null) => {
+    if (id === 'inventory' && ui.panel !== 'inventory') ui.inventory = defaultInventoryView(PLACE_BAG_TAB[ui.place]);
     ui.panel = id;
     if (id !== 'pig') ui.selectedPigId = null;
     if (id === 'settings') session.loadBackups();
