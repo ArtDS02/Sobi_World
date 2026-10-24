@@ -141,6 +141,7 @@ export async function start(root: HTMLElement) {
     roster: (save) => AREAS.roster(save),
     give: (save, gift, ctx) => AREAS.give(save, gift, ctx),
     keys,
+    sound: (key) => audio.play(key),
   });
   let director: FeedbackDirector | null = null;
   const host: WorldHost = {

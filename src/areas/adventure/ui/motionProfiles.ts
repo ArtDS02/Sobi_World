@@ -80,12 +80,15 @@ export const TIMING: Readonly<Record<Delivery | 'ultimate', Timing>> = {
   ultimate: { release: 420, impact: 640, end: 1000 },
 };
 
+/** How long the magic circle shows around a caster before its skill leaves (ms, normal speed). */
+export const CIRCLE_MS = { skill: 560, ultimate: 820 } as const;
+
 /** A beat with no action (a turn lost to a status, or damage over time only). */
 export const QUIET_MS = 360;
 /** Between two beats. */
 export const BEAT_GAP_MS = 80;
 /** A whole step never plays longer than this (ms, normal speed): longer steps are squeezed, so the battle never waits on its art. */
-export const STEP_MAX_MS = 3200;
+export const STEP_MAX_MS = 5600;
 /** Speed x2 plays the motion at this share of its time. */
 export const FAST_SHARE = 0.55;
 

@@ -5,7 +5,7 @@
 // STEP_MAX_MS. Presentation only: it reads the step's events and never touches the battle. Pure.
 import type { BattleEvent, BattleState, Element } from '../../../systems/combat/types';
 import { SKILLS } from '../logic/config/content';
-import { BEAT_GAP_MS, FAST_SHARE, QUIET_MS, SKILL_MOTION, STEP_MAX_MS, TIMING, type Delivery, type Pose, type Timing } from './motionProfiles';
+import { BEAT_GAP_MS, CIRCLE_MS, FAST_SHARE, QUIET_MS, SKILL_MOTION, STEP_MAX_MS, TIMING, type Delivery, type Pose, type Timing } from './motionProfiles';
 
 export interface MotionBeat {
   /** Who acts (null: a beat of damage over time only). */
@@ -16,8 +16,11 @@ export interface MotionBeat {
   skillId: string | null;
   /** The units its effect reaches, in order. */
   targets: string[];
-  /** Times from the start of the step (ms). */
+  /** A skill is cast inside a magic circle first (adventure-big-update-1 §6): the circle shows from `start` to `cast`. */
+  circle: boolean;
+  /** Times from the start of the step (ms): the circle ends at `cast` (= `start` without one), the wind-up at `release`. */
   start: number;
+  cast: number;
   release: number;
   impact: number;
   end: number;
@@ -124,12 +127,20 @@ function draftBeats(events: readonly BattleEvent[]): Draft[] {
 
 const scaleTiming = (t: Timing, k: number): Timing => ({ release: t.release * k, impact: t.impact * k, end: t.end * k });
 
+/** A skill (not the plain attack, not an item) is cast inside a magic circle first; an Ultimate's circle is longer. */
+const circleOf = (d: Pick<Draft, 'pose' | 'skillId'>): number => (d.skillId === null || d.pose === null || d.pose === 'guard' || d.pose === 'stunned' ? 0 : d.pose === 'ultimate' ? CIRCLE_MS.ultimate : CIRCLE_MS.skill);
+
 /** The motion of the step that produced `log` in `battle`; `fast` is the battle's x2. */
 export function stepMotion(battle: BattleState | null, log: readonly { type: string }[], fast = false): StepMotion {
   const events = log as readonly BattleEvent[];
   if (!battle || events.length === 0) return EMPTY;
   const drafts = draftBeats(events).filter((d) => d.events.some((i) => events[i]!.type !== 'turn' && events[i]!.type !== 'round' && events[i]!.type !== 'ready'));
-  const timings = drafts.map((d): Timing => (d.delivery ? TIMING[d.pose === 'ultimate' ? 'ultimate' : d.delivery] : { release: 0, impact: 0, end: QUIET_MS }));
+  const timings = drafts.map((d): Timing => {
+    const base = d.delivery ? TIMING[d.pose === 'ultimate' ? 'ultimate' : d.delivery] : { release: 0, impact: 0, end: QUIET_MS };
+    const c = circleOf(d);
+    return { release: base.release + c, impact: base.impact + c, end: base.end + c };
+  });
+  const circles = drafts.map(circleOf);
   const raw = timings.reduce((sum, t) => sum + t.end, 0) + BEAT_GAP_MS * Math.max(0, drafts.length - 1);
   const k = (fast ? FAST_SHARE : 1) * Math.min(1, STEP_MAX_MS / Math.max(1, raw));
   const eventAt: number[] = events.map(() => 0);
@@ -138,7 +149,8 @@ export function stepMotion(battle: BattleState | null, log: readonly { type: str
   let clock = 0;
   drafts.forEach((d, b) => {
     const t = scaleTiming(timings[b]!, k);
-    const beat: MotionBeat = { actor: d.actor, pose: d.pose, delivery: d.delivery, element: d.element, skillId: d.skillId, targets: d.targets, start: clock, release: clock + t.release, impact: clock + t.impact, end: clock + t.end };
+    const c = circles[b]! * k;
+    const beat: MotionBeat = { actor: d.actor, pose: d.pose, delivery: d.delivery, element: d.element, skillId: d.skillId, targets: d.targets, circle: c > 0, start: clock, cast: clock + c, release: clock + t.release, impact: clock + t.impact, end: clock + t.end };
     beats.push(beat);
     for (const i of d.events) {
       const e = events[i]!;

@@ -1,7 +1,7 @@
 // Asset ids the game rules reference (spec §11, §12; art standard §3.1, §7.4). Paths never live
 // in src/: every id resolves through public/assets/manifest/assets.json.
 
-/** The 12 canonical audio keys (spec §12). */
+/** The 12 canonical audio keys (spec §12), then the Adventure's battle and map sounds (adventure-big-update-1). */
 export const AUDIO_KEYS = [
   'music_farm',
   'ui_click',
@@ -15,6 +15,16 @@ export const AUDIO_KEYS = [
   'birth_fanfare',
   'level_up',
   'notify',
+  'adv_battle_start',
+  'adv_cast',
+  'adv_hit',
+  'adv_crit',
+  'adv_miss',
+  'adv_heal',
+  'adv_ko',
+  'adv_teleport',
+  'adv_victory',
+  'adv_exp_fill',
 ] as const;
 export type AudioKey = (typeof AUDIO_KEYS)[number];
 

@@ -787,8 +787,11 @@ $adv-pink: #ef5a78;
   // ---- tools (Auto, x2, log), on the right under the area HUD's buttons
   &__tools { position: absolute; top: 1rem; right: 0; z-index: 30; display: grid; gap: 2px; justify-items: end; .adv-round { transform: scale(0.85); transform-origin: right center; } }
 
-  // ---- the field: feet on the ground
-  &__field { position: absolute; top: 0.5rem; right: 5rem; bottom: 8.4rem; left: 1rem; pointer-events: none; }
+  // ---- the field: feet on the ground (under the effects canvas, battleStage.ts)
+  &__field { position: absolute; top: 0.5rem; right: 5rem; bottom: 8.4rem; left: 1rem; z-index: 10; pointer-events: none; }
+
+  // The effects canvas of the battle stage: over the field, under the banner, the dock and the turn bar; never takes a click.
+  &__fxcanvas { position: absolute; inset: 0; z-index: 12; display: none; width: 100%; height: 100%; pointer-events: none; &.is-on { display: block; } &.is-ground { z-index: 9; } }
 
   &__unit {
     position: absolute;
@@ -1460,7 +1463,7 @@ $adv-pink: #ef5a78;
     position: absolute;
     top: 30%;
     left: 50%;
-    z-index: 6;
+    z-index: 14;
     display: flex;
     gap: $sp-3;
     align-items: center;

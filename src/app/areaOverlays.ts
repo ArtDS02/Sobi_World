@@ -24,6 +24,7 @@ import { GARDEN_AREA_ID } from '../areas/garden/logic/config/content';
 import { hasGarden } from '../areas/garden/logic/save/lens';
 import { createGardenUi } from '../areas/garden/ui/gardenUi';
 import type { CreatureGift, GiftResult, RosterEntry, SummaryLine } from '../core/area-registry/registry';
+import type { AudioKey } from '../core/config/assetIds';
 import type { ActionContext } from '../core/types';
 import type { EventBase } from '../core/events';
 import { PLAZA_ID } from '../core/player/player';
@@ -42,6 +43,8 @@ export interface AreaOverlaysDeps {
   give: (world: WorldSave, gift: CreatureGift, ctx: ActionContext) => GiftResult;
   /** The player's key bindings (the Adventure's map hint says which keys interact: Space and the bound ones). */
   keys?: () => KeyBindings;
+  /** Plays a sound effect (the Adventure's battle and map cue their sounds on their own clock). */
+  sound?: (key: AudioKey) => void;
 }
 
 /** "Space / E": Space always interacts on the Adventure's map, plus the keys bound to "interact". */
@@ -70,6 +73,7 @@ export function createAreaOverlays(d: AreaOverlaysDeps) {
     roster: d.roster,
     give: d.give,
     ...(d.keys ? { interactKey: () => interactLabel(d.keys!()) } : {}),
+    ...(d.sound ? { sound: d.sound } : {}),
     keys: document,
     frame: (fn, ms) => {
       const id = window.setInterval(fn, ms);

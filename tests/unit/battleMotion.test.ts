@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deliveryOf, stepMotion } from '../../src/areas/adventure/ui/battleMotion';
-import { BODY, ENEMY_BODY, FAST_SHARE, STEP_MAX_MS, TIMING, bodyOf, vfxArt } from '../../src/areas/adventure/ui/motionProfiles';
+import { BODY, CIRCLE_MS, ENEMY_BODY, FAST_SHARE, STEP_MAX_MS, TIMING, bodyOf, vfxArt } from '../../src/areas/adventure/ui/motionProfiles';
 import { ENEMY_LIST } from '../../src/areas/adventure/logic/config/content';
 import type { BattleEvent, BattleState } from '../../src/systems/combat/types';
 
@@ -36,7 +36,12 @@ describe('battle motion (GĐ14 vertical slice)', () => {
       [foe, 'attack', 'melee', 'NATURE'],
     ]);
     const [a, b] = m.beats;
-    expect(a!.impact).toBe(TIMING.projectile.impact);
+    // A skill is cast inside its magic circle first; the plain attack has none (adventure-big-update-1 §6).
+    expect(a!.circle).toBe(true);
+    expect(a!.cast - a!.start).toBe(CIRCLE_MS.skill);
+    expect(b!.circle).toBe(false);
+    expect(b!.cast).toBe(b!.start);
+    expect(a!.impact).toBe(TIMING.projectile.impact + CIRCLE_MS.skill);
     expect(b!.start).toBeGreaterThan(a!.end);
     expect(m.eventAt[2]).toBe(a!.impact);
     expect(m.eventAt[1]).toBe(a!.start);

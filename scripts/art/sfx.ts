@@ -1,4 +1,4 @@
-// The 11 effect keys of game spec §12 (environment catalogue §6), synthesised from scratch so they
+// The 11 effect keys of game spec §12 (environment catalogue §6) and the Adventure's battle and map sounds, synthesised from scratch so they
 // are original work: soft, short and warm — this is a relaxing game. Output: mono 44.1 kHz PCM,
 // peak-normalised so manifest `volume` alone balances them.
 import { Mp3Encoder } from '@breezystack/lamejs';
@@ -307,7 +307,108 @@ const SOUNDS: Record<string, () => Buf> = {
   },
 };
 
+// ---- Sobi Adventure's battle and map (adventure-big-update-1): short, bright, never harsh.
+
+/** A rising or falling noise sweep through a moving band-pass (whooshes, warps). */
+function sweep(b: Buf, at: number, dur: number, from: number, to: number, gain: number, seed: number) {
+  const n = noise(b, at, dur, dur * 0.6, 1, seed);
+  const out = new Float32Array(b.length);
+  const s0 = Math.floor(at * SR);
+  const len = Math.floor(dur * SR);
+  // Cut the sweep into short slices, each band-passed at its own centre.
+  const slice = Math.floor(0.01 * SR);
+  for (let i = 0; i < len; i += slice) {
+    const t = i / len;
+    const f = from * (to / from) ** t;
+    const part = new Float32Array(b.length);
+    for (let j = 0; j < slice && s0 + i + j < b.length; j++) part[s0 + i + j] = n[s0 + i + j]! * Math.sin(Math.PI * Math.min(1, (i + j) / len));
+    const bp = bandpass(part, f, 1.4);
+    for (let j = 0; j < slice + 400 && s0 + i + j < b.length; j++) out[s0 + i + j]! += bp[s0 + i + j]!;
+  }
+  mixInto(b, out, gain);
+}
+
+const ADVENTURE_SOUNDS: Record<string, () => Buf> = {
+  adv_battle_start: () => {
+    const b = buf(1.2);
+    sweep(b, 0, 0.7, 300, 4200, 1.2, 101);
+    tone(b, { at: 0.55, dur: 0.6, freq: (t) => 110 - 40 * t, type: 'sine', gain: 0.7, decay: 0.25, attack: 0.004 });
+    [C5, G5, C6, E6].forEach((f, i) => bell(b, 0.5 + i * 0.05, f, 0.16, 0.22));
+    return lowpass(b, 7000);
+  },
+  adv_cast: () => {
+    // A soft chant: a vowel pad (two formants) under a shimmer of small bells going up.
+    const b = buf(0.95);
+    const pad = buf(0.95);
+    for (const f of [G4, C5, G5]) tone(pad, { at: 0, dur: 0.85, freq: f, type: 'saw', harmonics: 18, gain: 0.3, attack: 0.12, vibrato: { rate: 5.2, depth: 0.008 } });
+    mixInto(b, bandpass(pad, 700, 3), 0.9);
+    mixInto(b, bandpass(pad, 1150, 4), 0.6);
+    const r = rng(102);
+    for (let i = 0; i < 10; i++) bell(b, 0.05 + i * 0.07, 1800 + i * 160 + r() * 200, 0.06, 0.08);
+    return lowpass(b, 6000);
+  },
+  adv_hit: () => {
+    const b = buf(0.32);
+    tone(b, { at: 0, dur: 0.2, freq: (t) => 180 - 110 * t, gain: 0.9, decay: 0.06, attack: 0.001 });
+    mixInto(b, lowpass(noise(b, 0, 0.12, 0.03, 1, 103), 2600), 0.9);
+    mixInto(b, bandpass(noise(b, 0, 0.05, 0.01, 1, 104), 4200, 1.2), 0.4);
+    return b;
+  },
+  adv_crit: () => {
+    const b = buf(0.6);
+    tone(b, { at: 0, dur: 0.3, freq: (t) => 160 - 110 * t, gain: 1, decay: 0.09, attack: 0.001 });
+    mixInto(b, lowpass(noise(b, 0, 0.2, 0.05, 1, 105), 3200), 1);
+    bell(b, 0.02, E6, 0.12, 0.35);
+    bell(b, 0.05, G6, 0.14, 0.25);
+    return b;
+  },
+  adv_miss: () => {
+    const b = buf(0.38);
+    sweep(b, 0, 0.3, 2400, 700, 1.4, 106);
+    return b;
+  },
+  adv_heal: () => {
+    const b = buf(0.9);
+    [C5, E5, G5, C6, E6].forEach((f, i) => bell(b, i * 0.07, f, 0.18, 0.3));
+    tone(b, { at: 0, dur: 0.8, freq: C6 * 2, gain: 0.04, decay: 0.3, vibrato: { rate: 7, depth: 0.01 } });
+    return b;
+  },
+  adv_ko: () => {
+    const b = buf(0.8);
+    tone(b, { at: 0, dur: 0.5, freq: (t) => 520 - 360 * t, type: 'tri', gain: 0.5, attack: 0.01 });
+    mixInto(b, lowpass(noise(b, 0.25, 0.5, 0.15, 1, 107), 1200), 0.6);
+    return b;
+  },
+  adv_teleport: () => {
+    const b = buf(1.3);
+    sweep(b, 0, 0.9, 200, 6000, 1.1, 108);
+    for (let i = 0; i < 6; i++) tone(b, { at: 0.1 + i * 0.12, dur: 0.3, freq: 400 * 2 ** (i / 3), type: 'sine', gain: 0.18, decay: 0.12, vibrato: { rate: 14, depth: 0.03 } });
+    bell(b, 0.85, C6, 0.25, 0.3);
+    return lowpass(b, 8000);
+  },
+  adv_victory: () => {
+    const b = buf(1.6);
+    const brass = (at: number, dur: number, f: number, g = 0.28) => tone(b, { at, dur, freq: f, type: 'saw', harmonics: 12, gain: g, attack: 0.02, vibrato: dur > 0.3 ? { rate: 5, depth: 0.006 } : undefined });
+    brass(0, 0.12, C5);
+    brass(0.13, 0.12, C5);
+    brass(0.26, 0.12, C5);
+    brass(0.42, 0.9, G5, 0.32);
+    brass(0.42, 0.9, E5, 0.2);
+    bell(b, 0.42, C6, 0.3, 0.15);
+    return lowpass(b, (t) => 1500 + 2500 * Math.min(1, t * 3));
+  },
+  adv_exp_fill: () => {
+    const b = buf(0.9);
+    tone(b, { at: 0, dur: 0.85, freq: (t) => 500 + 900 * t, type: 'tri', gain: 0.18, attack: 0.02 });
+    for (let i = 0; i < 12; i++) tone(b, { at: i * 0.07, dur: 0.04, freq: 1200 + i * 90, gain: 0.12, decay: 0.012, attack: 0.001 });
+    return b;
+  },
+};
+Object.assign(SOUNDS, ADVENTURE_SOUNDS);
+
 export const SFX_IDS = Object.keys(SOUNDS);
+/** The Adventure's sounds only (`npx tsx scripts/art/adventureSfx.ts` writes them without regenerating the rest). */
+export const ADVENTURE_SFX_IDS = Object.keys(ADVENTURE_SOUNDS);
 
 /** Peak-normalise (-3 dBFS), fade the tail, encode mono MP3 (128 kbps). */
 export function sfxMp3(id: string): Buffer {

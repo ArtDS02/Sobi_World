@@ -49,12 +49,12 @@ export const SPOTS = {
   ally: [
     { x: 31, y: 79 },
     { x: 19, y: 61 },
-    { x: 13, y: 96 },
+    { x: 16, y: 93 },
   ],
   enemy: [
     { x: 69, y: 79 },
     { x: 81, y: 61 },
-    { x: 87, y: 96 },
+    { x: 85, y: 93 },
     { x: 93, y: 76 },
   ],
 } as const;
@@ -326,8 +326,8 @@ export function renderBattle(ctx: ViewCtx): HTMLElement {
       ...enemies.map((u, i) => unitOnField(u, i, vm, ctx, floatersOf(u.id), step.elapsed, fallsLater(u))),
       sideAim && (aim.aim === 'enemies' || aim.aim === 'all') ? sideMarker('enemy', enemies, aim, ctx) : null,
       sideAim && (aim.aim === 'allies' || aim.aim === 'all') ? sideMarker('ally', allies, aim, ctx) : null,
-      fxBanner ? bannerEl(fxBanner, vm.units.find((u) => u.id === fxBanner.unit)?.art ?? null, step.elapsed) : null,
     ),
+    fxBanner ? bannerEl(fxBanner, vm.units.find((u) => u.id === fxBanner.unit)?.art ?? null, step.elapsed) : null,
     state.log ? el('ol', { class: 'adventure-ui__log', attrs: { 'aria-live': 'polite' } }, ...vm.log.slice(-40).map((line) => el('li', { text: line }))) : null,
     el(
       'div',

@@ -4866,6 +4866,96 @@
       "volume": 0.8,
       "credit": "Sobi Farm — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_battle_start",
+      "status": "production",
+      "asset": "audio/adv_battle_start.mp3",
+      "kind": "sfx",
+      "volume": 0.7,
+      "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_cast",
+      "status": "production",
+      "asset": "audio/adv_cast.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_hit",
+      "status": "production",
+      "asset": "audio/adv_hit.mp3",
+      "kind": "sfx",
+      "volume": 0.7,
+      "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_crit",
+      "status": "production",
+      "asset": "audio/adv_crit.mp3",
+      "kind": "sfx",
+      "volume": 0.75,
+      "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_miss",
+      "status": "production",
+      "asset": "audio/adv_miss.mp3",
+      "kind": "sfx",
+      "volume": 0.5,
+      "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_heal",
+      "status": "production",
+      "asset": "audio/adv_heal.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_ko",
+      "status": "production",
+      "asset": "audio/adv_ko.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_teleport",
+      "status": "production",
+      "asset": "audio/adv_teleport.mp3",
+      "kind": "sfx",
+      "volume": 0.6,
+      "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_victory",
+      "status": "production",
+      "asset": "audio/adv_victory.mp3",
+      "kind": "sfx",
+      "volume": 0.6,
+      "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_exp_fill",
+      "status": "production",
+      "asset": "audio/adv_exp_fill.mp3",
+      "kind": "sfx",
+      "volume": 0.45,
+      "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
+      "license": "Original work, project-owned"
     }
   ]
 }

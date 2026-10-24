@@ -18,6 +18,7 @@ import { adventureOf, hasAdventure } from '../logic/save/lens';
 import type { AdventureSceneState, SceneReport } from '../scene/sceneState';
 import { createAdventureDialogs } from './adventureDialogs';
 import { stepRemaining } from './battleFxView';
+import { createBattleStage, type BattleSound } from './battleStage';
 import { renderBattle, choose } from './battleView';
 import { battleVm } from './battleVm';
 import { hudVm } from './campVm';
@@ -44,7 +45,11 @@ export interface AdventureUiDeps {
   keys?: Pick<EventTarget, 'addEventListener' | 'removeEventListener'>;
   /** A panel or dialog of the shell covers the world. */
   paused?: () => boolean;
+  /** Plays a sound of the battle or the map (manifest audio id; silent when it has no file or sounds are off). */
+  sound?: (key: AdventureSound) => void;
 }
+
+export type AdventureSound = BattleSound | 'adv_teleport' | 'adv_victory' | 'adv_exp_fill' | 'level_up';
 
 export interface AdventureUi {
   setActive(active: boolean): void;
@@ -69,6 +74,11 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
 
   let active = false;
   let busy = false;
+  const reduceNow = () => {
+    const w = world();
+    return !!w?.settings.reduceMotion || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  };
+  const stage = typeof window !== 'undefined' && typeof requestAnimationFrame === 'function' ? createBattleStage({ host: d.host, reduceMotion: reduceNow, ...(d.sound ? { sound: d.sound } : {}) }) : null;
   let lastPos: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' } | null = null;
   const state: UiState = { zoneId: ZONE_LIST[0]!.id, startMap: null, selected: [], prep: [], auto: false, fast: false, menu: null, aim: null, focus: null, showMap: false, filter: null, search: '', legend: false, log: false, quick: true };
 
@@ -132,10 +142,10 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     patch(hud, renderHud(w));
     const ctx = ctxFor(w);
     d.host.classList.toggle('is-battle', run?.phase === 'battle');
+    stage?.setActive(active && run?.phase === 'battle');
     d.host.classList.toggle('is-camp', run === null);
     d.host.classList.toggle('is-done', run?.phase === 'done' || rift);
-    const reduce = w.settings.reduceMotion || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
-    slideTurns(main, () => keepScroll(main, () => patch(main, run === null ? renderCamp(ctx) : rift ? renderRift(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx))), reduce);
+    slideTurns(main, () => keepScroll(main, () => patch(main, run === null ? renderCamp(ctx) : rift ? renderRift(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx))), reduceNow());
     main.scrollTop = top;
     dialogs.follow(w);
   }
@@ -233,6 +243,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     dispose: () => {
       off();
       offDrag();
+      stage?.dispose();
       stop?.();
       d.keys?.removeEventListener('keydown', onKey);
       dialogs.close();

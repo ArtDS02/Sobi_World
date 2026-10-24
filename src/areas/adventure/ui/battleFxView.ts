@@ -10,8 +10,24 @@ import { iconOf } from './viewKit';
 /** How long the numbers and the banner stay after the last beat (ms); the shake is shorter. */
 export const FX_MS = 1600;
 export const SHAKE_MS = 420;
+/** A battle that has just begun first brings its fighters in (the teleport light, battleStage.ts), then plays its first step. */
+export const ENTER_MS = 1100;
+
+export interface PlayingStep {
+  key: string;
+  /** When the step's clock starts (performance.now ms); later than now while the fighters are still coming in. */
+  at: number;
+  fx: StepFx;
+  motion: StepMotion;
+  /** The step opens a battle (its fighters come in first). */
+  enter: boolean;
+}
+
 /** The step whose effects are playing and when it began (a redraw resumes them where they were). */
-const playing: { key: string; at: number; fx: StepFx; motion: StepMotion } = { key: '', at: 0, fx: { floaters: [], banner: null, shake: false, shakeAt: 0 }, motion: stepMotion(null, []) };
+const playing: PlayingStep = { key: '', at: 0, fx: { floaters: [], banner: null, shake: false, shakeAt: 0 }, motion: stepMotion(null, []), enter: false };
+
+/** The step on screen now (the battle stage reads it every frame). */
+export const playingStep = (): Readonly<PlayingStep> => playing;
 
 const clock = () => (typeof performance !== 'undefined' ? performance.now() : 0);
 
@@ -24,8 +40,10 @@ export function stepEffects(
   const key = run.battle ? `${run.battle.seed}:${run.battle.counter}:${run.log.length}` : '';
   const now = clock();
   if (key !== playing.key) {
+    const first = run.log[0] as { type: string; round?: number } | undefined;
     playing.key = key;
-    playing.at = now;
+    playing.enter = !!run.battle && first?.type === 'round' && first.round === 1;
+    playing.at = now + (playing.enter ? ENTER_MS : 0);
     playing.motion = stepMotion(battle, run.log, fast);
     playing.fx = stepFx(battle, run.log, playing.motion.eventAt);
   }

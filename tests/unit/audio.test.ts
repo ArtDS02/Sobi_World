@@ -21,7 +21,7 @@ if (!parsed.ok) throw new Error(parsed.message);
 const reg = createAssetRegistry(parsed.manifest);
 
 describe('audio keys (spec §12)', () => {
-  it('exactly the 12 canonical keys, word for word', () => {
+  it('exactly the 12 canonical keys, then the Adventure sounds, word for word', () => {
     expect([...AUDIO_KEYS]).toEqual([
       'music_farm',
       'ui_click',
@@ -35,6 +35,16 @@ describe('audio keys (spec §12)', () => {
       'birth_fanfare',
       'level_up',
       'notify',
+      'adv_battle_start',
+      'adv_cast',
+      'adv_hit',
+      'adv_crit',
+      'adv_miss',
+      'adv_heal',
+      'adv_ko',
+      'adv_teleport',
+      'adv_victory',
+      'adv_exp_fill',
     ]);
   });
 
