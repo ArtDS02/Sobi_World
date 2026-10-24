@@ -263,6 +263,7 @@ export function mountApp(
       ui.place === 'garden' || ui.place === 'aquarium' || ui.place === 'cloud' || ui.place === 'adventure' ? null : renderHud(save, {
         place: ui.place, now: now(), gems: opts.gems?.() ?? null, go, leave: opts.leave, openTrough: () => openTrough(),
         selectPig: (pigId) => { ui.selectedPigId = pigId; go('pig'); },
+        act: handlers.act,
         goalsDot: opts.world && opts.world.save() ? goalsDot(opts.world.save()!, opts.world.goals, localDay(now())) : 0,
         plaza: ui.place === 'plaza' ? plazaHud(opts, toast) : undefined,
       }),

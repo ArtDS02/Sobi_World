@@ -12,7 +12,7 @@ import { vi } from '../../../i18n/vi';
 import { TRAITS } from '../../../systems/breeding';
 import { breedFish, pairError } from '../logic/actions/breed';
 import { crossChance, recipeFor } from '../../../systems/hybrid';
-import { cleanTank, feedFish } from '../logic/actions/care';
+import { cleanTank, feedFish, sickFish, treatAllFish } from '../logic/actions/care';
 import { upgradeTank } from '../logic/actions/trade';
 import { AB, FEED_ITEM, FISH, FISH_HYBRIDS, FISH_LIST, fishOfItem, tankCapacity } from '../logic/config/content';
 import { castCooldownLeft, nextTankLevel, tankFree } from '../logic/derived';
@@ -69,6 +69,8 @@ export interface BarVm {
   fish: ButtonVm;
   feedAll: ButtonVm;
   water: ButtonVm;
+  /** Treat all: only while a fish is ill. */
+  treatAll: ButtonVm | null;
   scales: ButtonVm;
   bag: ButtonVm;
   tank: ButtonVm;
@@ -83,6 +85,7 @@ export const bagFish = (world: WorldSave): { itemId: string; count: number }[] =
 export function barVm(world: WorldSave, now: number, dayOffsetMs: number): BarVm {
   const a = aquariumOf(world);
   const hungry = a.fish.filter((f) => f.hunger < 100).length;
+  const ill = sickFish(a.fish).length;
   const feed = world.inventory.items[FEED_ITEM] ?? 0;
   const caught = bagFish(world).reduce((n, r) => n + r.count, 0);
   const cool = castCooldownLeft(a, now);
@@ -93,6 +96,7 @@ export function barVm(world: WorldSave, now: number, dayOffsetMs: number): BarVm
       reason: a.fish.length === 0 ? vi.aquarium.noFish : hungry === 0 ? vi.aquarium.allFull : feed === 0 && world.wallet.coins < ITEMS.FOOD_FISH.priceGold ? vi.aquarium.noFeed : null,
     },
     water: button(vi.aquarium.bar.water, probe(world, (w, c) => cleanTank(w, {}, c), now, dayOffsetMs), { WATER_CLEAN: vi.aquarium.waterClear }),
+    treatAll: ill === 0 ? null : button(t(vi.aquarium.bar.treatAll, { count: ill }), probe(world, (w, c) => treatAllFish(w, {}, c), now, dayOffsetMs), { INSUFFICIENT_ITEM: vi.aquarium.noMedicineAll }),
     scales: { label: t(vi.aquarium.bar.scales, { count: a.tank.scales }), reason: a.tank.scales === 0 ? vi.aquarium.noScales : null },
     bag: { label: t(vi.aquarium.bar.bag, { count: caught }), reason: caught === 0 ? vi.aquarium.bagEmpty : null },
     tank: { label: vi.aquarium.bar.tank, reason: null },

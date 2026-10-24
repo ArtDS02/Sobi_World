@@ -62,6 +62,8 @@ export const partC = {
     orderFulfilled: "Order delivered! +{gold} Sobi Coin",
     bought: "Welcome {name} to the farm!",
     treated: "{name} has recovered.",
+    treatedAll: "Shots given: {count} pigs recovered.",
+    treatedAllShort: "{count} pigs recovered, {left} still ill for want of medicine.",
     potionCured: "{name} drank {potion} and recovered, much happier.",
     potionMood: "{name} drank {potion} and is in a great mood.",
     itemBought: "Bought {quantity} {item}.",

@@ -241,6 +241,8 @@ export const AQUARIUM_VIEW = {
   },
   bubbleArt: 'fx_bubble',
   sparkleArt: 'fx_sparkle',
+  /** A cured fish (treat / treat all): the shot's size, the gap between fish, the sparkles after it. */
+  treat: { px: 64, staggerMs: 160, sparkles: 4 },
   sickTint: 0xa8d890,
   hungryIcon: '🍽',
   sickIcon: '🤒',

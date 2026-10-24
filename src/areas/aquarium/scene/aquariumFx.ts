@@ -142,7 +142,8 @@ export class AquariumFx {
     this.scene.tweens.add({ targets: img, x: x + (this.rng.next() * 2 - 1) * 14, duration: 500 + this.rng.next() * 400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
-  private sparkle(x: number, y: number, delay: number) {
+  /** A sparkle twinkling at (x, y) after `delay` ms (the water change; a fish just cured). */
+  sparkle(x: number, y: number, delay: number) {
     const v = AQUARIUM_VIEW;
     const img = this.image(v.sparkleArt, CODE.bubble, x, y, 34, v.depth.sparkle).setScale(0).setAlpha(0.95);
     const to = 34 / Math.max(img.width, 1);

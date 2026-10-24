@@ -20,6 +20,12 @@
 | ~~Sprite 9 First Guardians + tranh truyền thuyết~~ | Xong 2026-10-17 (batch `adventure-01-guardians` G1–G3, A1): chân dung trong hồ sơ chiến binh, tranh ở đầu Trại. |
 | 32 hậu duệ (sheet D1–D4 đã có ảnh trong `art_inbox/.candidates/`) | Chưa vào game: 30 loài hậu duệ là gameplay để sau (decision 037). `pig_knight` trong sheet D1 trùng id heo đã có, không ghi đè. |
 
+## GĐ14 — Chữa bệnh tất cả (Farm, Aquarium)
+| Việc | Ghi chú |
+|---|---|
+| `fx_syringe` | Mũi tiêm chích vào heo / cá khi khỏi bệnh (chữa từng con và chữa tất cả); đang vẽ bằng code trong `src/ui/world/syringe.ts`. Prompt `art_inbox/.batch/fx-01-syringe/PROMPT.md`. Code tự dùng ảnh khi manifest có id. |
+| Âm thanh chích thuốc | Chưa có SFX riêng: Farm dùng `ui_click`, Aquarium `level_up` như chữa từng con. |
+
 ## GĐ14 — Aquarium: cho ăn / thay nước (decision 032)
 | Việc | Ghi chú |
 |---|---|

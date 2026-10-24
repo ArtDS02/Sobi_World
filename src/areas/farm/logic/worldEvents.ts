@@ -51,6 +51,8 @@ export function farmWorldEvents(e: GameEvent): WorldEvent[] {
       return [];
     case 'PIG_TREATED':
       return removed('MEDICINE_COMMON', 1);
+    case 'PIG_TREATED_ALL':
+      return removed('MEDICINE_COMMON', e.pigIds.length);
     case 'BREEDING_STARTED':
       return e.boostItem ? removed(e.boostItem, 1) : [];
     case 'PIG_POTION_USED':

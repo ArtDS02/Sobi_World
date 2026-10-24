@@ -1,9 +1,11 @@
 // The care the player gives, as the Aquarium scene shows it (decision 033), read off the state like the Garden's
 // harvest: a fish whose last meal is new gets food brought by the food drone (pellets it then chases), and water that
-// rose is a water change — the water drone flies over and pours, then the murk clears. Presentation only.
+// rose is a water change — the water drone flies over and pours, then the murk clears; a fish that was ill and is
+// not any more was treated — a medicine shot pokes it (ui/world/syringe.ts), then it sparkles. Presentation only.
 import type * as Phaser from 'phaser';
 import { flyDrone } from '../../../ui/world/fertilizerDrone';
 import { textureKey } from '../../../ui/world/keys';
+import { playSyringe } from '../../../ui/world/syringe';
 import type { WorldRect } from '../../../systems/layout/camera';
 import type { SceneState } from '../logic/derived';
 import type { AquariumFx } from './aquariumFx';
@@ -23,6 +25,8 @@ export interface AquariumCareDeps {
 export class AquariumCare {
   /** Water clarity at the last look (null before the first): a jump up is a water change. */
   private lastWater: number | null = null;
+  /** Who was ill at the last look: a fish that is well now was just cured. */
+  private sickSeen = new Map<string, boolean>();
   /** Flying drones (each entry stops one). */
   private drones = new Set<() => void>();
   /** The water drone is on its way: the murk stays as it was until it pours. */
@@ -47,6 +51,13 @@ export class AquariumCare {
       fed.push(s);
     }
     if (fed.length > 0 && !calm) this.feedByDrone(fed);
+    const cured: Swimmer[] = [];
+    for (const f of state.fish) {
+      const s = this.d.fish(f.id);
+      if (s && this.sickSeen.get(f.id) === true && !f.sick) cured.push(s);
+      this.sickSeen.set(f.id, f.sick);
+    }
+    if (cured.length > 0 && !calm) this.inject(cured);
     const before = this.lastWater;
     this.lastWater = state.water;
     if (before === null || state.water - before < 5 || calm) return;
@@ -123,6 +134,18 @@ export class AquariumCare {
     });
   }
 
+  /** A shot for each cured fish, one after another; it follows the fish as it swims, then the fish sparkles. */
+  private inject(cured: Swimmer[]) {
+    const v = AQUARIUM_VIEW.treat;
+    cured.forEach((s, i) => {
+      const end = playSyringe(this.scene, { at: { x: s.m.x, y: s.m.y }, follow: () => ({ x: s.m.x, y: s.m.y }), delayMs: i * v.staggerMs, depth: AQUARIUM_VIEW.depth.sparkle, px: v.px });
+      for (let k = 0; k < v.sparkles; k += 1) {
+        const [dx, dy] = [((k % 2) * 2 - 1) * 30, (k < v.sparkles / 2 ? -1 : 1) * 22];
+        this.scene.time.delayedCall(end, () => this.d.fx.sparkle(s.m.x + dx, s.m.y + dy, k * 90));
+      }
+    });
+  }
+
   /** Sends the drones home and drops the effects (another place, the scene asleep). */
   calmDown() {
     for (const stop of [...this.drones]) stop();
@@ -130,5 +153,6 @@ export class AquariumCare {
     this.murkHeld = false;
     this.d.fx.clear();
     this.lastWater = null;
+    this.sickSeen.clear();
   }
 }

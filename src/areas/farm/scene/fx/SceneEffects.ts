@@ -11,6 +11,7 @@ import type { AnimationId } from '../feedback/feedbackTable';
 import type { GiftBoxes } from '../prefabs/GiftBoxes';
 import type { PigSprite } from '../prefabs/PigSprite';
 import { FALLBACK_FX_KEY } from '../view/textureKeys';
+import { playSyringe } from '../../../../ui/world/syringe';
 
 export interface EffectTargets {
   pig(pigId: string): PigSprite | undefined;
@@ -103,6 +104,14 @@ export class SceneEffects implements FarmEffects {
       .setDepth(FARM_VIEW.OVERLAY_DEPTH * 2);
     this.scene.time.delayedCall(delayMs, () => emitter.explode(P.count));
     this.scene.time.delayedCall(delayMs + P.lifespanMs + 100, () => emitter.destroy());
+  }
+
+  /** The shot goes into the pig's back (its art anchor), above the pigs. */
+  inject(target: FeedbackTarget, delayMs: number) {
+    if (target.kind !== 'pig') return;
+    const pig = this.targets.pig(target.pigId);
+    if (!pig) return;
+    playSyringe(this.scene, { at: pig.anchorPoint('back'), follow: () => this.targets.pig(target.pigId)?.anchorPoint('back') ?? null, delayMs, depth: FARM_VIEW.OVERLAY_DEPTH * 2 });
   }
 
   /** Reward text: rises and fades from the top of the target, then is destroyed. */

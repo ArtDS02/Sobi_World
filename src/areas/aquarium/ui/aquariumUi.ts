@@ -13,7 +13,7 @@ import { localOffsetMs } from '../../../ui/localDay';
 import type { GameStore } from '../../../core/world/gameStore';
 import type { WorldSave } from '../../../core/save/world';
 import { vi } from '../../../i18n/vi';
-import { cleanTank } from '../logic/actions/care';
+import { cleanTank, treatAllFish } from '../logic/actions/care';
 import { collectScales } from '../logic/actions/trade';
 import { weatherNow } from '../../../systems/weather/live';
 import { sceneState, type SceneState } from '../logic/derived';
@@ -112,6 +112,7 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
             { ...bar.fish, art: BAR_ART.fish, tone: 'main', onClick: () => dialogs.openFishing() },
             { ...bar.feedAll, art: BAR_ART.feedAll, onClick: () => void dispatch(feedAllRun(w)) },
             { ...bar.water, art: BAR_ART.water, onClick: () => void dispatch((s, c) => cleanTank(s, {}, c)) },
+            ...(bar.treatAll ? [{ ...bar.treatAll, art: BAR_ART.treatAll, onClick: () => void dispatch((s, c) => treatAllFish(s, {}, c)) }] : []),
             { ...bar.scales, art: BAR_ART.scales, onClick: () => void dispatch((s, c) => collectScales(s, {}, c)) },
           ],
         },

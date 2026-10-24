@@ -19,6 +19,8 @@ export function aquariumWorldEvents(e: AquariumEvent): WorldEvent[] {
       return [{ type: 'creature.petted', area, creatureId: e.fishId, hearts: e.hearts }];
     case 'AQUARIUM_FISH_TREATED':
       return removed(MEDICINE_ITEM, 1);
+    case 'AQUARIUM_FISH_TREATED_ALL':
+      return removed(MEDICINE_ITEM, e.fishIds.length);
     case 'AQUARIUM_FISH_POTION':
       return removed(e.itemId, 1);
     case 'AQUARIUM_WATER_CHANGED':

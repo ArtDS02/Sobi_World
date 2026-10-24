@@ -2,6 +2,7 @@
 // the director only executes the plan.
 import type { AudioKey, FxId } from '../../../../core/config/assetIds';
 import { FEEDBACK } from '../config/feedback';
+import { SYRINGE_MS } from '../../../../ui/world/syringe';
 import type { GameEvent } from '../../logic/events';
 import type { EventOrigin } from '../../store';
 import { formatInt, t } from '../../../../i18n/format';
@@ -27,6 +28,8 @@ export interface FeedbackPlan {
   vfx: { fx: FxId; target: FeedbackTarget; delayMs: number }[];
   /** Text lines rising from the target (gift rewards, U06). */
   floats: { lines: string[]; target: FeedbackTarget; delayMs: number }[];
+  /** Medicine shots (treat, treat all): the animation and VFX of the same target wait for them. */
+  injections: { target: FeedbackTarget; delayMs: number }[];
   sound: AudioKey | null;
   toast: boolean;
   /** Hand the event to the life simulation (PL-1); never for catch-up or reduceMotion. */
@@ -39,6 +42,7 @@ const pig = (pigId: string): FeedbackTarget => ({ kind: 'pig', pigId });
 export function eventTargets(e: GameEvent): FeedbackTarget[] {
   switch (e.type) {
     case 'PIG_CLEANED':
+    case 'PIG_TREATED_ALL':
       return e.pigIds.map(pig);
     case 'BIRTH':
       return [pig(e.motherId)]; // the child waits in the nursery (BR-1)
@@ -70,7 +74,7 @@ function soundOf(e: GameEvent, sound: AudioKey | null): AudioKey | null {
   return 'gold' in e && e.gold > 0 ? 'coin_collect' : null;
 }
 
-const still = { animations: [], vfx: [], floats: [], life: false };
+const still = { animations: [], vfx: [], floats: [], injections: [], life: false };
 
 /** Reward lines of an event that floats (gift: gold and XP). */
 function floatLines(e: GameEvent): string[] {
@@ -97,7 +101,8 @@ export function feedbackPlan(
   const life = !!row.life;
 
   const targets = eventTargets(e);
-  const delay = (i: number) => (row.stagger ? i * FEEDBACK.STAGGER_MS : 0);
+  const shot = (i: number) => (row.stagger ? i * FEEDBACK.STAGGER_MS : 0);
+  const delay = (i: number) => shot(i) + (row.inject ? SYRINGE_MS : 0);
   const animation = row.animation === 'shake' && !shake ? null : row.animation;
   return {
     animations: animation
@@ -111,6 +116,7 @@ export function feedbackPlan(
     floats: row.float
       ? targets.map((target) => ({ lines: floatLines(e), target, delayMs: 0 }))
       : [],
+    injections: row.inject ? targets.map((target, i) => ({ target, delayMs: shot(i) })) : [],
     sound,
     toast: row.toast,
     life,

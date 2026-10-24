@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { cleanAll, cleanPig } from '../../src/areas/farm/logic/actions/cleanPig';
 import { feedPig } from '../../src/areas/farm/logic/actions/feedPig';
 import { fillTrough } from '../../src/areas/farm/logic/actions/fillTrough';
-import { treatPig } from '../../src/areas/farm/logic/actions/treatPig';
+import { treatAll, treatPig } from '../../src/areas/farm/logic/actions/treatPig';
 import { troughCapacityForLevel } from '../../src/areas/farm/logic/config/levels';
 import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { ctx, expectError, expectOk, farm } from './actionKit';
@@ -125,6 +125,36 @@ describe('treatPig (§8.5)', () => {
       { ...s, inventory: { ...s.inventory, MEDICINE_COMMON: 0 } },
       'INSUFFICIENT_ITEM',
     );
+  });
+});
+
+describe('treatAll', () => {
+  const sick = (n: number, medicine: number) => {
+    const s = farm(Array.from({ length: n }, (_, i) => makePig({ id: `p${i}`, slotIndex: i, isSick: true, lastSickAt: 1000 * (n - i) })));
+    return { ...s, inventory: { ...s.inventory, MEDICINE_COMMON: medicine } };
+  };
+
+  it('cures every ill pig, one medicine each, in one event; healthy pigs untouched', () => {
+    const base = sick(2, 5);
+    const s = { ...base, pigs: [...base.pigs, makePig({ id: 'well', slotIndex: 2 })] };
+    const r = expectOk(treatAll(s, ctx()));
+    expect(r.state.pigs.map((p) => p.isSick)).toEqual([false, false, false]);
+    expect(r.state.pigs[2]).toEqual(s.pigs[2]);
+    expect(r.state.inventory.MEDICINE_COMMON).toBe(3);
+    expect(r.events[0]).toEqual({ type: 'PIG_TREATED_ALL', pigIds: ['p1', 'p0'], left: 0 });
+    expect(r.state.progress.stats.pigsTreated).toBe(2);
+  });
+
+  it('short of medicine: the longest ill first, the rest stay ill and are counted', () => {
+    const r = expectOk(treatAll(sick(3, 2), ctx()));
+    expect(r.events[0]).toEqual({ type: 'PIG_TREATED_ALL', pigIds: ['p2', 'p1'], left: 1 });
+    expect(r.state.pigs.find((p) => p.id === 'p0')!.isSick).toBe(true);
+    expect(r.state.inventory.MEDICINE_COMMON).toBe(0);
+  });
+
+  it('PIG_NOT_SICK when all are well, INSUFFICIENT_ITEM without medicine', () => {
+    expectError((s) => treatAll(s, ctx()), pigWith({}), 'PIG_NOT_SICK');
+    expectError((s) => treatAll(s, ctx()), sick(2, 0), 'INSUFFICIENT_ITEM');
   });
 });
 

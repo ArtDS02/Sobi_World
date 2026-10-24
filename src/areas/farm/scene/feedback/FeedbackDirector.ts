@@ -68,6 +68,7 @@ export function createFeedbackDirector(deps: FeedbackDeps): FeedbackDirector {
         continue;
       }
       const plan = feedbackPlan(event, origin, reduceMotion, deps.shake?.() ?? true);
+      for (const s of plan.injections) fx.inject(s.target, s.delayMs);
       for (const a of plan.animations) fx.animate(a.animation, a.target, a.delayMs, a.from);
       for (const v of plan.vfx) fx.burst(v.fx, v.target, v.delayMs);
       for (const f of plan.floats) fx.float(f.lines, f.target, f.delayMs);

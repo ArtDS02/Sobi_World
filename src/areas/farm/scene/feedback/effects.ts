@@ -17,6 +17,8 @@ export interface FarmEffects {
   float(lines: readonly string[], target: FeedbackTarget, delayMs: number): void;
   /** A world event the pigs' life simulation reacts to (PL-1: a pig walks over to eat). */
   life(event: GameEvent): void;
+  /** A medicine shot into the target (treat, treat all). */
+  inject(target: FeedbackTarget, delayMs: number): void;
 }
 
 export const noEffects: FarmEffects = {
@@ -24,4 +26,5 @@ export const noEffects: FarmEffects = {
   burst: () => {},
   float: () => {},
   life: () => {},
+  inject: () => {},
 };

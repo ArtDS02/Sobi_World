@@ -27,6 +27,8 @@ export interface FeedbackRow {
   float?: boolean;
   /** Handed to the pigs' life simulation (PL-1), which plays the behaviour itself. */
   life?: boolean;
+  /** A medicine shot pokes each pig first (treat, treat all); the animation and VFX follow it. */
+  inject?: boolean;
 }
 
 const row = (
@@ -47,7 +49,8 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   PIG_CLEANED: row('clean', ['fx_bubble'], 'water_splash', false, true),
   MANURE_CLEANED: row(null, ['fx_bubble'], 'water_splash', true),
   ITEM_SOLD: row(null, ['fx_coin'], 'coin_collect', true),
-  PIG_TREATED: row('happy', ['fx_sparkle'], 'ui_click', true),
+  PIG_TREATED: { ...row('happy', ['fx_sparkle'], 'ui_click', true), inject: true },
+  PIG_TREATED_ALL: { ...row('happy', ['fx_sparkle'], 'ui_click', true, true), inject: true },
   PIG_POTION_USED: row('happy', ['fx_sparkle', 'fx_heart'], 'ui_click', true),
   PIG_SOLD: row('exit', ['fx_coin'], 'coin_collect', true),
   BREEDING_STARTED: row('happy', ['fx_heart'], 'breed_chime', true),

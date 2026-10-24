@@ -13,7 +13,7 @@ import { petPig } from '../logic/actions/petPig';
 import { pigFavorite } from '../logic/bond';
 import { fillTrough } from '../logic/actions/fillTrough';
 import { sellPig } from '../logic/actions/sellPig';
-import { treatPig } from '../logic/actions/treatPig';
+import { sickPigs, treatAll, treatPig } from '../logic/actions/treatPig';
 import { usePotion } from '../logic/actions/usePotion';
 import { CREATURE_POTION_IDS } from '../../../core/config/items';
 import { BREEDS } from '../logic/config/breeds';
@@ -107,6 +107,13 @@ export function farmActions(save: FarmGame, now: number) {
     cleanAll: vm(save, now, vi.action.cleanAll, (s, c) => cleanAll(s, c)),
     cleanManure: vm(save, now, vi.action.cleanManure, (s, c) => cleanManure(s, c)),
   };
+}
+
+/** The dock's treat-all card while some pig is ill (null when all are well); `sick` is how many. */
+export function treatAllAction(save: FarmGame, now: number): (ActionVm & { sick: number }) | null {
+  const sick = sickPigs(save).length;
+  if (sick === 0) return null;
+  return { ...vm(save, now, vi.action.treatAll, (s, c) => treatAll(s, c), vi.disabled.noMedicine), sick };
 }
 
 const goldText = (amount: number) => t(vi.hud.gold, { amount: formatInt(amount) });

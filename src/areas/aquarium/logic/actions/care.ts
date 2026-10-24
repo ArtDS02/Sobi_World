@@ -92,6 +92,38 @@ export function petFish(world: WorldSave, args: { fishId: string }, ctx: ActionC
   });
 }
 
+/** The fish cured: immune for a while (NH-1) and a little closer to you. */
+const cure = (fish: Fish, now: number): Fish => ({
+  ...fish,
+  isSick: false,
+  recoveringUntil: now + recoveryMs,
+  bond: raiseBond(fish.bond, bondGainFor(fish, BOND.care.gain), BOND),
+});
+
+/** Ill fish in the order treatAllFish cures them: the longest ill first (they are nearest to critical). */
+export const sickFish = (fish: readonly Fish[]): Fish[] => fish.filter((f) => f.isSick).sort((a, b) => (a.lastSickAt ?? 0) - (b.lastSickAt ?? 0));
+
+/** Cures every ill fish the bag has medicine for, one each; XP per fish cured. */
+export function treatAllFish(world: WorldSave, _args: Record<string, never>, ctx: ActionContext): AquariumResult {
+  return runAquarium(world, ctx, (w, a) => {
+    const sick = sickFish(a.fish);
+    if (sick.length === 0) return { ok: false, error: 'FISH_NOT_SICK' };
+    const n = Math.min(sick.length, w.inventory.items[MEDICINE_ITEM] ?? 0);
+    const taken = take(w, MEDICINE_ITEM, n || 1); // an empty bag answers its own error
+    if (!taken.ok) return taken;
+    const cured = new Map(sick.slice(0, n).map((f) => [f.id, cure(f, ctx.now)]));
+    return {
+      ok: true,
+      world: put(taken.world, { ...a, fish: a.fish.map((f) => cured.get(f.id) ?? f) }),
+      events: [
+        { type: 'AQUARIUM_FISH_TREATED_ALL', fishIds: [...cured.keys()], left: sick.length - n },
+        ...sick.slice(0, n).flatMap((f) => revealEvents(f, cured.get(f.id)!)),
+      ],
+      xp: n * AB.xp.treat,
+    };
+  });
+}
+
 /** Medicine cures an ill fish; it is then immune for a while (NH-1) and a little closer to you. */
 export function treatFish(world: WorldSave, args: { fishId: string }, ctx: ActionContext): AquariumResult {
   return runAquarium(world, ctx, (w, a) => {
@@ -100,12 +132,7 @@ export function treatFish(world: WorldSave, args: { fishId: string }, ctx: Actio
     if (!fish.isSick) return { ok: false, error: 'FISH_NOT_SICK' };
     const taken = take(w, MEDICINE_ITEM, 1);
     if (!taken.ok) return taken;
-    const cured: Fish = {
-      ...fish,
-      isSick: false,
-      recoveringUntil: ctx.now + recoveryMs,
-      bond: raiseBond(fish.bond, bondGainFor(fish, BOND.care.gain), BOND),
-    };
+    const cured = cure(fish, ctx.now);
     return {
       ok: true,
       world: put(taken.world, mapFish(a, fish.id, () => cured)),

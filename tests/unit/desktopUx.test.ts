@@ -242,7 +242,7 @@ describe('FeedbackDirector: long catch-up → away summary instead of toasts', (
         onEvents: (fn) => ((listener = fn as typeof listener), () => {}),
         onReject: () => () => {},
       },
-      effects: () => ({ animate() {}, burst() {}, float() {}, life() {} }),
+      effects: () => ({ animate() {}, burst() {}, float() {}, life() {}, inject() {} }),
       audio: { play: () => {} },
       toast: (m) => log.push(`toast:${m}`),
       away: (events, ms) => log.push(`away:${events.length}:${ms}`),

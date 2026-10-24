@@ -10,6 +10,16 @@
 
 ## Nhật ký
 
+### 2026-10-23 — Nút "Chữa bệnh tất cả" ở Farm và Aquarium, mũi tiêm (chờ duyệt)
+✅ Đã làm (chủ dự án: "nút chữa bệnh tất cả cho farm, aquarium; có thể có asset mũi tiêm tiêm vào heo / cá; cần asset thì tạo prompt trong art_inbox"):
+1. **Logic**: `treatAll` (Farm, `logic/actions/treatPig.ts`) và `treatAllFish` (Aquarium, `logic/actions/care.ts`): mỗi con bệnh 1 Thuốc, con bệnh lâu nhất trước; thiếu thuốc thì chữa được bao nhiêu chữa bấy nhiêu, còn lại báo số con. Một sự kiện gộp `PIG_TREATED_ALL` / `AQUARIUM_FISH_TREATED_ALL { ids, left }` (thành tựu `pigsTreated`, world event trừ thuốc, Bond / Hồi phục như chữa từng con, XP Aquarium theo số cá). Không đổi save.
+2. **Nút**: Farm — thẻ đầu tiên của dock dưới, chỉ hiện khi có heo bệnh, chấm đỏ đếm số con; Aquarium — thẻ "Chữa bệnh tất cả (n)" trong nhóm Chăm sóc, chỉ hiện khi có cá bệnh. Hết thuốc: thẻ tắt kèm lý do. Toast: "Tiêm thuốc xong, n bé heo / cá đã khỏi bệnh" hoặc "… còn n con bệnh vì hết thuốc". Chuỗi Việt / Anh.
+3. **Mũi tiêm** (`src/ui/world/syringe.ts`, dùng chung): hiện phía trên bên phải con vật, chích, giữ, rút ra; heo nhảy vui + lấp lánh sau mũi tiêm (FeedbackDirector: `inject` trong bảng feedback, lần lượt từng con); cá: mũi tiêm bám theo con cá đang bơi rồi lấp lánh (đọc từ state như drone). Chữa từng con cũng có mũi tiêm. Tắt chuyển động (reduceMotion) thì không có.
+4. **Art**: ảnh `fx_syringe` chưa có → hình vẽ bằng code (thuốc xanh lá như `ui_btn_heal`); prompt `art_inbox/.batch/fx-01-syringe/PROMPT.md` (sheet X, đính kèm sẵn), dòng `ASSET_TODO.md`.
+🧪 Đã kiểm tra: `npm run check` xanh (test mới: chữa tất cả / thiếu thuốc / không con nào bệnh cho Farm và Aquarium, kế hoạch feedback có mũi tiêm). Sandbox mới `sandbox-treat` (save cấp tối đa, 4 heo + 3 cá bệnh, 5 thuốc) 1600×900: Farm bấm → 4 heo khỏi, toast đúng, cảnh báo và thẻ biến mất; Aquarium bấm → 1 cá khỏi, toast "còn 2 con", thẻ tắt "Hết thuốc"; không lỗi console. Mũi tiêm chỉ thấy mờ trong ảnh chụp (hiệu ứng ~0,5 giây).
+⚠️ Tự quyết: chỉ dùng Thuốc trong túi (không tự mua như thức ăn cá), Thuốc tiên của Cloud vẫn dùng từng con; thẻ Farm đặt ở dock thay vì giếng nước; chưa có SFX chích riêng.
+👉 Bạn cần: bấm thử ở save thật khi có con bệnh; tạo ảnh sheet X của `fx-01-syringe` bằng Gemini.
+
 ### 2026-10-23 — Kho đồ không giới hạn, tab khu vực, chip phân loại (decision 038, chờ duyệt)
 ✅ Đã làm (chủ dự án: "kho đồ không giới hạn, có tab phân biệt area, nút phân loại từng loại vật phẩm, giao diện đẹp, đề cao UI/UX"):
 1. **Không giới hạn**: `content/shared/inventory.json` bỏ `slots`; `slots` tuỳ chọn trong schema và `core/inventory/bag.ts` (vắng = không giới hạn). Admin tab Túi đồ hiện "không giới hạn".

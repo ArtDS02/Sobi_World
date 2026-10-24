@@ -15,7 +15,7 @@ import { aquariumStateSchema } from '../../src/areas/aquarium/logic/state';
 import { aquariumSuggestions } from '../../src/areas/aquarium/logic/suggest';
 import { aquariumEventsToWorld } from '../../src/areas/aquarium/logic/worldEvents';
 import { breedFish, pairError } from '../../src/areas/aquarium/logic/actions/breed';
-import { cleanTank, feedFish, petFish, setFishPurpose, treatFish } from '../../src/areas/aquarium/logic/actions/care';
+import { cleanTank, feedFish, petFish, setFishPurpose, treatAllFish, treatFish } from '../../src/areas/aquarium/logic/actions/care';
 import { castLine, releaseFish } from '../../src/areas/aquarium/logic/actions/fishing';
 import { collectScales, sellCatch, sellFish, upgradeTank } from '../../src/areas/aquarium/logic/actions/trade';
 import { ITEMS } from '../../src/core/config/items';
@@ -227,6 +227,20 @@ describe('care', () => {
     expect(cured.inventory.items.MEDICINE_COMMON).toBe(0);
     expect(fail(treatFish(cured, { fishId: 'f1' }, ctxAt(T0 + 2 * H)))).toBe('FISH_NOT_SICK');
     expect(fail(treatFish(tankWorld([fish({ isSick: true })], {}), { fishId: 'f1' }, ctxAt(T0)))).toBe('INSUFFICIENT_ITEM');
+  });
+
+  it('treat all: one medicine per ill fish, the longest ill first, the rest wait for more medicine', () => {
+    const ill = [fish({ id: 'f1', isSick: true, lastSickAt: T0 + MIN }), fish({ id: 'f2', isSick: true, lastSickAt: T0 }), fish({ id: 'f3' })];
+    const r = treatAllFish(tankWorld(ill, { MEDICINE_COMMON: 1 }), {}, ctxAt(T0 + H));
+    expect(r.ok && r.events.find((e) => e.type === 'AQUARIUM_FISH_TREATED_ALL')).toEqual({ type: 'AQUARIUM_FISH_TREATED_ALL', fishIds: ['f2'], left: 1 });
+    const one = ok(r);
+    expect(tank(one).fish.map((f) => f.isSick)).toEqual([true, false, false]);
+    expect(one.inventory.items.MEDICINE_COMMON).toBe(0);
+    const all = ok(treatAllFish(tankWorld(ill, { MEDICINE_COMMON: 5 }), {}, ctxAt(T0 + H)));
+    expect(tank(all).fish.every((f) => !f.isSick)).toBe(true);
+    expect(all.inventory.items.MEDICINE_COMMON).toBe(3);
+    expect(fail(treatAllFish(all, {}, ctxAt(T0 + 2 * H)))).toBe('FISH_NOT_SICK');
+    expect(fail(treatAllFish(tankWorld(ill, {}), {}, ctxAt(T0 + H)))).toBe('INSUFFICIENT_ITEM');
   });
 
   it('a pet is not sold and not bred', () => {

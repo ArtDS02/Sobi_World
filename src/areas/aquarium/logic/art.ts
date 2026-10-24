@@ -21,6 +21,7 @@ export const BAR_ART = {
   bag: 'ui_aqua_treasure',
   tank: 'ui_aqua_coral',
   breed: 'ui_aqua_flower',
+  treatAll: UI_ICON.treat,
 } as const;
 
 /** Items the Aquarium introduced: each has its own icon (`ui_item_*`). */

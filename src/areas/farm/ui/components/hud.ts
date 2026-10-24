@@ -1,6 +1,7 @@
 // Which top bar the player sees: the plaza's (money and four buttons) or an Area's (gauges and dock).
 import type { PanelId } from '../../../../ui/components/popup';
 import type { FarmGame } from '../../logic/types';
+import type { BoundAction } from '../../store';
 import { renderPlazaBar, type PlazaBarDeps } from './plazaBar';
 import { renderTopBar } from './topBar';
 
@@ -12,6 +13,8 @@ export interface HudDeps {
   leave: (() => void) | undefined;
   openTrough: () => void;
   selectPig: (pigId: string) => void;
+  /** Runs an action from the dock (treat all); absent = no such card. */
+  act?: ((run: BoundAction) => void) | undefined;
   /** Rewards waiting in the goals panel (the dock dot); absent = none. */
   goalsDot?: number | undefined;
   /** What only the plaza's HUD needs (level, dock, art); absent in an Area. */
@@ -37,5 +40,6 @@ export function renderHud(save: FarmGame, d: HudDeps): HTMLElement {
     nav: d.go,
     pig: d.selectPig,
     goalsDot: d.goalsDot ?? 0,
+    ...(d.act ? { act: d.act } : {}),
   });
 }

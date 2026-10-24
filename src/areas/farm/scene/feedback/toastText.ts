@@ -71,6 +71,8 @@ export function toastText(
       return t(vi.event.adopted, { name: nameOf(event.pigId) });
     case 'PIG_TREATED':
       return t(vi.event.treated, { name: nameOf(event.pigId) });
+    case 'PIG_TREATED_ALL':
+      return t(event.left > 0 ? vi.event.treatedAllShort : vi.event.treatedAll, { count: event.pigIds.length, left: event.left });
     case 'PIG_POTION_USED':
       return t(event.cured ? vi.event.potionCured : vi.event.potionMood, { name: nameOf(event.pigId), potion: vi.shop[event.itemId] });
     case 'ITEM_BOUGHT':

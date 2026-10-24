@@ -6,6 +6,8 @@ import type { FarmGame } from '../../src/areas/farm/logic/types';
 import { createFeedbackDirector } from '../../src/areas/farm/scene/feedback/FeedbackDirector';
 import { feedbackPlan } from '../../src/areas/farm/scene/feedback/feedbackPlan';
 import { FEEDBACK_TABLE, REJECT_ROW } from '../../src/areas/farm/scene/feedback/feedbackTable';
+import { FEEDBACK } from '../../src/areas/farm/scene/config/feedback';
+import { SYRINGE_MS } from '../../src/ui/world/syringe';
 import { toastText } from '../../src/areas/farm/scene/feedback/toastText';
 import { vi } from '../../src/i18n/vi';
 import type { EventListener, EventOrigin, FarmSnapshot as StoreSnapshot } from '../../src/areas/farm/store';
@@ -36,6 +38,7 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   PIG_FED: { type: 'PIG_FED', pigId: 'pig-1' },
   PIG_CLEANED: { type: 'PIG_CLEANED', pigIds: ['pig-1', 'pig-2'] },
   PIG_TREATED: { type: 'PIG_TREATED', pigId: 'pig-1' },
+  PIG_TREATED_ALL: { type: 'PIG_TREATED_ALL', pigIds: ['pig-1', 'pig-2'], left: 0 },
   PIG_POTION_USED: { type: 'PIG_POTION_USED', pigId: 'pig-1', itemId: 'item_potion_mood', cured: false },
   TROUGH_FILLED: { type: 'TROUGH_FILLED', units: 5, fromInventory: 5, gold: 0 },
   ITEM_BOUGHT: { type: 'ITEM_BOUGHT', itemId: 'FOOD_BASIC', quantity: 2, gold: -50 },
@@ -112,6 +115,7 @@ describe('feedbackPlan', () => {
       animations: [],
       vfx: [],
       floats: [],
+      injections: [],
       life: false,
       sound: 'ui_click',
       toast: true,
@@ -132,6 +136,18 @@ describe('feedbackPlan', () => {
     expect(open.toast).toBe(false);
     const still = feedbackPlan(SAMPLES.GIFT_OPENED, 'action', true);
     expect(still).toMatchObject({ floats: [], toast: true, sound: 'coin_collect' });
+  });
+
+  it('treat all: a shot into each pig, staggered; the hop and sparkles wait for it; none under reduceMotion', () => {
+    const p = feedbackPlan(SAMPLES.PIG_TREATED_ALL, 'action', false);
+    expect(p.injections).toEqual([
+      { target: { kind: 'pig', pigId: 'pig-1' }, delayMs: 0 },
+      { target: { kind: 'pig', pigId: 'pig-2' }, delayMs: FEEDBACK.STAGGER_MS },
+    ]);
+    expect(p.animations.map((a) => a.delayMs)).toEqual([SYRINGE_MS, SYRINGE_MS + FEEDBACK.STAGGER_MS]);
+    expect(p.vfx.map((v) => v.fx)).toEqual(['fx_sparkle', 'fx_sparkle']);
+    expect(feedbackPlan(SAMPLES.PIG_TREATED, 'action', false).injections).toHaveLength(1);
+    expect(feedbackPlan(SAMPLES.PIG_TREATED_ALL, 'action', true)).toMatchObject({ injections: [], toast: true });
   });
 
   it('PIG_CLEANED animates each pig, staggered', () => {
@@ -187,6 +203,7 @@ function director(save: FarmGame) {
       burst: (fx, t) => log.push(`vfx:${fx}:${t.kind}`),
       float: (lines, t) => log.push(`float:${lines.join('|')}:${t.kind}`),
       life: (e) => log.push(`life:${e.type}`),
+      inject: (t) => log.push(`inject:${t.kind}`),
     }),
     audio: { play: (k) => log.push(`sound:${k}`) },
     toast: (m) => log.push(`toast:${m}`),

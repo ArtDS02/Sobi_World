@@ -9,7 +9,9 @@ import { hudLevel, hudNav } from '../../../../ui/components/areaHud';
 import { el } from '../../../../ui/dom';
 import { icon } from '../../../../ui/components/icon';
 import type { PanelId } from '../../../../ui/components/popup';
+import { treatAllAction } from '../actionsVm';
 import { clockVm, topBarVm } from '../viewModel';
+import type { BoundAction } from '../../store';
 
 const NAV = ['shop', 'inventory', 'orders', 'collection', 'achievements'] as const;
 const NAV_ICON: Record<(typeof NAV)[number], UiIcon> = {
@@ -45,6 +47,8 @@ export function renderTopBar(
     pig: (pigId: string) => void;
     /** Rewards waiting in the goals panel. */
     goalsDot?: number;
+    /** Runs an action (the dock's treat-all card); absent in DOM tests. */
+    act?: (run: BoundAction) => void;
   },
 ): HTMLElement {
   const vm = topBarVm(save, now);
@@ -68,6 +72,22 @@ export function renderTopBar(
         ? el('span', { class: 'c-dot', text: String(dots[panel]), attrs: { 'aria-hidden': 'true' } })
         : null,
     );
+  // Treat all: shown only while a pig is ill, first in the dock; off (with the reason) when the bag has no medicine.
+  const treat = on.act ? treatAllAction(save, now) : null;
+  const treatButton = treat
+    ? el(
+        'button',
+        {
+          class: `a-dock__act topbar__nav-item topbar__treat${treat.reason ? ' is-off' : ''}`,
+          attrs: { type: 'button', title: treat.reason ? `${treat.label} — ${treat.reason}` : treat.label, ...(treat.reason ? { 'aria-disabled': 'true' } : {}) },
+          on: { click: () => !treat.reason && on.act!(treat.run) },
+        },
+        el('span', { class: 'a-dock__act-icon' }, icon('treat')),
+        el('span', { class: 'a-dock__act-label', text: treat.label }),
+        treat.reason ? el('small', { class: 'a-dock__act-reason', text: treat.reason }) : null,
+        el('span', { class: 'c-dot', text: String(treat.sick), attrs: { 'aria-hidden': 'true' } }),
+      )
+    : null;
   return el(
     'div',
     { class: 'topbar__inner' },
@@ -131,6 +151,6 @@ export function renderTopBar(
       ...(on.home ? [{ icon: AREA_HUD_ART.plaza, label: vi.farm.plaza, onClick: on.home, cls: 'topbar__home' }] : []),
       { icon: AREA_HUD_ART.menu, label: vi.nav.menu, onClick: on.menu, cls: 'topbar__menu' },
     ]),
-    el('nav', { class: 'a-dock topbar__nav', attrs: { 'aria-label': vi.app.title } }, ...NAV.map(navButton)),
+    el('nav', { class: 'a-dock topbar__nav', attrs: { 'aria-label': vi.app.title } }, treatButton, ...NAV.map(navButton)),
   );
 }

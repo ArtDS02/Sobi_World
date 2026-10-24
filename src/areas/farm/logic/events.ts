@@ -36,6 +36,8 @@ export type GameEvent =
   | { type: 'PIG_TRAIT_REVEALED'; pigId: string; traitId: string }
   | { type: 'PIG_CLEANED'; pigIds: string[] }
   | { type: 'PIG_TREATED'; pigId: string }
+  // Treat all: the pigs cured, and how many stay ill for want of medicine.
+  | { type: 'PIG_TREATED_ALL'; pigIds: string[]; left: number }
   // GĐ9: a Cloud potion taken (cured = it also ended an illness).
   | { type: 'PIG_POTION_USED'; pigId: string; itemId: ItemId; cured: boolean }
   | { type: 'TROUGH_UPGRADED'; level: number; capacity: number; gold: number }
@@ -87,6 +89,7 @@ export const GAME_EVENT_TYPES = [
   'PIG_TRAIT_REVEALED',
   'PIG_CLEANED',
   'PIG_TREATED',
+  'PIG_TREATED_ALL',
   'PIG_POTION_USED',
   'TROUGH_UPGRADED',
   'TROUGH_FILLED',

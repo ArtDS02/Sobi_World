@@ -74,6 +74,18 @@
         "SOBIWORLD_SANDBOX": "C:\\Users\\ToraTech\\AppData\\Local\\Temp\\sobiworld-adv",
         "PORT": "5187"
       }
+    },
+    {
+      "name": "sandbox-treat",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/dev/sandbox.mjs"
+      ],
+      "port": 5188,
+      "env": {
+        "SOBIWORLD_SANDBOX": "C:\\Users\\ToraTech\\AppData\\Local\\Temp\\sobiworld-treat",
+        "PORT": "5188"
+      }
     }
   ]
 }
