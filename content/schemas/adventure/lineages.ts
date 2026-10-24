@@ -1,8 +1,8 @@
 // content/adventure/lineages.json — the nine First Guardian lines (spec §6): each line's element, its four Unique skills and its
-// Ultimate; which line and class a pig family / a pig breed / a fish species belongs to, and the overrides a Rare+ species may carry
-// (a second element, its own Unique skills or Ultimate). Only the fish listed here can fight.
+// Ultimate; the combat animals — the pig breeds and fish species that can fight (adventure-big-update-1 §14: only these, a few
+// standout creatures per line, not every creature) with their line and class, and the overrides a species may carry (a second
+// element, its own Unique skills or Ultimate).
 import { z } from 'zod';
-import { FAMILY_VALUES } from '../vocab';
 import { text } from '../fields';
 import { classId } from './classes';
 import { element, skillId } from './combat';
@@ -22,12 +22,10 @@ export const lineageSchema = z.strictObject({
   ultimate: skillId,
 });
 
-const assignment = z.strictObject({ lineage: lineageId, classId });
-
-/** A species' own data: anything left out comes from its family (pig) or must be given (fish). */
+/** A combat animal: its line and class, and what it carries of its own. */
 const speciesSchema = z.strictObject({
-  lineage: lineageId.optional(),
-  classId: classId.optional(),
+  lineage: lineageId,
+  classId,
   element2: element.optional(),
   /** Its own Unique skills by slot (null = the line's). */
   unique: z.array(skillId.nullable()).length(4).optional(),
@@ -37,11 +35,13 @@ const speciesSchema = z.strictObject({
 export const lineagesFileSchema = z
   .strictObject({
     lineages: z.array(lineageSchema),
-    families: z.strictObject(Object.fromEntries(FAMILY_VALUES.map((f) => [f, assignment])) as Record<(typeof FAMILY_VALUES)[number], typeof assignment>),
     species: z.record(z.string().regex(/^PIG_[A-Z0-9_]+$/), speciesSchema),
-    fish: z.record(z.string().regex(/^fish_[a-z0-9_]+$/), speciesSchema.extend({ lineage: lineageId, classId })),
+    fish: z.record(z.string().regex(/^fish_[a-z0-9_]+$/), speciesSchema),
   })
   .superRefine((f, ctx) => {
     const ids = f.lineages.map((l) => l.id).sort();
     if (ids.join() !== [...LINEAGE_ID_VALUES].sort().join()) ctx.addIssue({ code: 'custom', message: 'the file must list the nine lines exactly once' });
+    // Every line keeps at least one combat animal, so every element can be fielded.
+    const fielded = new Set([...Object.values(f.species), ...Object.values(f.fish)].map((s) => s.lineage));
+    for (const id of LINEAGE_ID_VALUES) if (!fielded.has(id)) ctx.addIssue({ code: 'custom', message: `line ${id} has no combat animal` });
   });

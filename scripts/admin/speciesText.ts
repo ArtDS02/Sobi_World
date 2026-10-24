@@ -18,6 +18,8 @@ export interface SpeciesRowData {
   /** Trait every pig of the species is born with, and its favourite food (GĐ7). */
   signatureTrait?: string;
   favorite?: string;
+  /** A combat animal: it may be raised for Sobi Adventure (adventure-big-update-1 §14). */
+  fighter?: boolean;
   artId: string;
   color: number;
 }

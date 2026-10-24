@@ -162,6 +162,7 @@
       "family": "ADVENTURE",
       "buyGold": 500,
       "unlockLevel": 5,
+      "fighter": true,
       "artId": "pig_knight",
       "color": "#b8c0cc",
       "traits": ["warrior", "metal", "hero"]
@@ -254,6 +255,7 @@
       "family": "WILD",
       "buyGold": 1500,
       "unlockLevel": 3,
+      "fighter": true,
       "artId": "pig_boar",
       "color": "#7a6250",
       "traits": ["brown", "wild", "animal"]
@@ -368,6 +370,7 @@
       "nameVi": "Heo Cướp Biển",
       "rarity": "UNCOMMON",
       "family": "ADVENTURE",
+      "fighter": true,
       "artId": "pig_pirate",
       "color": "#5a3a2a",
       "traits": ["warrior", "water"]
@@ -377,6 +380,7 @@
       "nameVi": "Heo Ninja",
       "rarity": "UNCOMMON",
       "family": "ADVENTURE",
+      "fighter": true,
       "artId": "pig_ninja",
       "color": "#3c3c54",
       "traits": ["warrior", "black", "dark"]
@@ -444,6 +448,7 @@
       "family": "FANTASY",
       "buyGold": 1800,
       "unlockLevel": 7,
+      "fighter": true,
       "artId": "pig_dragon",
       "color": "#fcb454",
       "traits": ["myth", "gold", "horns", "fire"]
@@ -462,6 +467,7 @@
       "nameVi": "Heo Ma Cà Rồng",
       "rarity": "UNCOMMON",
       "family": "HORROR",
+      "fighter": true,
       "artId": "pig_vampire",
       "color": "#b49ccc",
       "traits": ["spooky", "purple", "dark"]
@@ -530,6 +536,7 @@
       "family": "WILD",
       "buyGold": 7000,
       "unlockLevel": 6,
+      "fighter": true,
       "artId": "pig_tiger",
       "color": "#f29a4a",
       "traits": ["orange", "wild", "animal"]
@@ -559,6 +566,7 @@
       "nameVi": "Heo Hướng Dương",
       "rarity": "RARE",
       "family": "MEADOW",
+      "fighter": true,
       "artId": "pig_sunflower",
       "color": "#f6c62e",
       "traits": ["gold", "flower", "plant", "light"]
@@ -570,6 +578,7 @@
       "family": "WILD",
       "buyGold": 7000,
       "unlockLevel": 8,
+      "fighter": true,
       "artId": "pig_hedgehog",
       "color": "#8a5a3c",
       "traits": ["brown", "wild", "animal"]
@@ -579,6 +588,7 @@
       "nameVi": "Heo Rùa",
       "rarity": "RARE",
       "family": "WATER",
+      "fighter": true,
       "artId": "pig_turtle",
       "color": "#6a9f56",
       "traits": ["green", "water", "animal"]
@@ -633,6 +643,7 @@
       "nameVi": "Heo Valkyrie",
       "rarity": "RARE",
       "family": "FANTASY",
+      "fighter": true,
       "artId": "pig_valkyrie",
       "color": "#d9b45a",
       "traits": ["myth", "warrior", "wings", "gold"]
@@ -642,6 +653,7 @@
       "nameVi": "Heo Thor",
       "rarity": "RARE",
       "family": "FANTASY",
+      "fighter": true,
       "artId": "pig_thor",
       "color": "#8a94a6",
       "traits": ["myth", "warrior", "metal", "sky"]
@@ -705,6 +717,7 @@
       "nameVi": "Heo Ngân Hà",
       "rarity": "EPIC",
       "family": "MYTHIC",
+      "fighter": true,
       "artId": "pig_galaxy",
       "color": "#3b3a78",
       "traits": ["space", "purple", "dark", "magic"]
@@ -714,6 +727,7 @@
       "nameVi": "Heo Robot",
       "rarity": "EPIC",
       "family": "HERO",
+      "fighter": true,
       "artId": "pig_robot",
       "color": "#9aa4b4",
       "traits": ["tech", "metal", "hero"]
@@ -723,6 +737,7 @@
       "nameVi": "Heo Kỳ Lân",
       "rarity": "EPIC",
       "family": "MYTHIC",
+      "fighter": true,
       "artId": "pig_unicorn",
       "color": "#ffd6e4",
       "traits": ["myth", "magic", "light", "horns"]
@@ -735,6 +750,7 @@
       "sellGold": 30000,
       "signatureTrait": "trait_golden_hoof",
       "favorite": "item_potato",
+      "fighter": true,
       "artId": "pig_crystal",
       "color": "#a9d8ee",
       "traits": ["blue", "magic", "light"]
@@ -756,6 +772,7 @@
       "nameVi": "Heo Thần Thoại",
       "rarity": "LEGENDARY",
       "family": "MYTHIC",
+      "fighter": true,
       "artId": "pig_thienlong",
       "color": "#c9a0f0",
       "traits": ["myth", "gold", "wings", "royal", "light"]
@@ -765,6 +782,7 @@
       "nameVi": "Heo Phượng Hoàng",
       "rarity": "LEGENDARY",
       "family": "MYTHIC",
+      "fighter": true,
       "artId": "pig_phoenix",
       "color": "#f07a3e",
       "traits": ["myth", "fire", "wings", "red", "light"]
@@ -837,6 +855,7 @@
       "nameVi": "Heo Samurai",
       "rarity": "RARE",
       "family": "ADVENTURE",
+      "fighter": true,
       "artId": "pig_samurai",
       "color": "#c8402e",
       "traits": ["warrior", "red", "metal"]
@@ -873,6 +892,7 @@
       "nameVi": "Heo Poseidon",
       "rarity": "LEGENDARY",
       "family": "MYTHIC",
+      "fighter": true,
       "artId": "pig_poseidon",
       "color": "#3f9a8a",
       "traits": ["myth", "water", "royal", "gold"]

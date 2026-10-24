@@ -87,79 +87,45 @@
       "ultimate": "skill_ult_hk"
     }
   ],
-  "families": {
-    "FARM": { "lineage": "moc_mau", "classId": "tanker" },
-    "MEADOW": { "lineage": "moc_mau", "classId": "support" },
-    "WILD": { "lineage": "moc_mau", "classId": "striker" },
-    "WATER": { "lineage": "nam_hai", "classId": "support" },
-    "HERO": { "lineage": "loi_duong", "classId": "striker" },
-    "MYTHIC": { "lineage": "quy_son", "classId": "tanker" },
-    "VIETNAM": { "lineage": "quang_tru", "classId": "mage" },
-    "JOB": { "lineage": "thiet_giap", "classId": "tanker" },
-    "ADVENTURE": { "lineage": "thiet_giap", "classId": "striker" },
-    "SCIFI": { "lineage": "loi_duong", "classId": "mage" },
-    "FANTASY": { "lineage": "hu_khong", "classId": "mage" },
-    "HORROR": { "lineage": "da_mac", "classId": "mage" },
-    "FOOD": { "lineage": "hoa_giai", "classId": "mage" },
-    "FUNNY": { "lineage": "quang_tru", "classId": "support" }
-  },
   "species": {
     "PIG_KNIGHT": { "lineage": "thiet_giap", "classId": "striker" },
     "PIG_SAMURAI": { "lineage": "thiet_giap", "classId": "striker" },
-    "PIG_NINJA": { "lineage": "da_mac", "classId": "striker" },
-    "PIG_WITCH": { "lineage": "da_mac", "classId": "mage" },
-    "PIG_PIRATE": { "lineage": "nam_hai", "classId": "striker" },
-    "PIG_SURFER": { "lineage": "nam_hai", "classId": "support" },
-    "PIG_DIVER": { "lineage": "nam_hai", "classId": "tanker" },
-    "PIG_ZEUS": { "lineage": "loi_duong", "classId": "mage" },
-    "PIG_THOR": { "lineage": "loi_duong", "classId": "striker" },
-    "PIG_VALKYRIE": { "lineage": "quang_tru", "classId": "striker" },
-    "PIG_DRAGON": { "lineage": "hoa_giai", "classId": "mage" },
-    "PIG_ONI": { "lineage": "hoa_giai", "classId": "striker" },
-    "PIG_FAIRY": { "lineage": "quang_tru", "classId": "support" },
-    "PIG_KITSUNE": { "lineage": "hoa_giai", "classId": "mage" },
-    "PIG_VAMPIRE": { "lineage": "da_mac", "classId": "striker" },
-    "PIG_ZOMBIE": { "lineage": "da_mac", "classId": "tanker" },
-    "PIG_GHOST": { "lineage": "da_mac", "classId": "mage" },
-    "PIG_TURTLE": { "lineage": "quy_son", "classId": "tanker" },
-    "PIG_SUNFLOWER": { "lineage": "quang_tru", "classId": "support" },
-    "PIG_FIREFLY": { "lineage": "quang_tru", "classId": "mage" },
-    "PIG_TIGER": { "lineage": "loi_duong", "classId": "striker" },
-    "PIG_HEDGEHOG": { "lineage": "thiet_giap", "classId": "tanker" },
-    "PIG_BATTLEBOT": { "lineage": "thiet_giap", "classId": "tanker" },
     "PIG_ROBOT": { "lineage": "thiet_giap", "classId": "tanker", "element2": "LIGHTNING" },
-    "PIG_KOI": { "lineage": "nam_hai", "classId": "mage", "element2": "FIRE" },
-    "PIG_MERMAID": { "lineage": "nam_hai", "classId": "support", "element2": "LIGHT" },
-    "PIG_DRAGONLING": { "lineage": "hoa_giai", "classId": "striker", "element2": "EARTH" },
-    "PIG_GALAXY": { "lineage": "hu_khong", "classId": "mage", "element2": "LIGHT" },
-    "PIG_UNICORN": { "lineage": "quang_tru", "classId": "support", "element2": "NATURE" },
-    "PIG_CRYSTAL": { "lineage": "quy_son", "classId": "tanker", "element2": "LIGHT" },
-    "PIG_AURORA": { "lineage": "quang_tru", "classId": "mage", "element2": "LIGHTNING" },
-    "PIG_MYTHICAL": {
-      "lineage": "hu_khong",
+    "PIG_NINJA": { "lineage": "da_mac", "classId": "striker" },
+    "PIG_VAMPIRE": { "lineage": "da_mac", "classId": "striker" },
+    "PIG_PIRATE": { "lineage": "nam_hai", "classId": "striker" },
+    "PIG_POSEIDON": {
+      "lineage": "nam_hai",
       "classId": "mage",
-      "element2": "LIGHT",
-      "ultimate": "skill_ult_mythical"
+      "element2": "LIGHTNING",
+      "ultimate": "skill_ult_trident"
     },
+    "PIG_THOR": { "lineage": "loi_duong", "classId": "striker" },
+    "PIG_TIGER": { "lineage": "loi_duong", "classId": "striker" },
+    "PIG_VALKYRIE": { "lineage": "quang_tru", "classId": "striker" },
+    "PIG_UNICORN": { "lineage": "quang_tru", "classId": "support", "element2": "NATURE" },
+    "PIG_DRAGON": { "lineage": "hoa_giai", "classId": "mage" },
     "PIG_PHOENIX": {
       "lineage": "hoa_giai",
       "classId": "mage",
       "element2": "LIGHT",
       "ultimate": "skill_ult_phoenix"
     },
-    "PIG_POSEIDON": {
-      "lineage": "nam_hai",
+    "PIG_TURTLE": { "lineage": "quy_son", "classId": "tanker" },
+    "PIG_CRYSTAL": { "lineage": "quy_son", "classId": "tanker", "element2": "LIGHT" },
+    "PIG_GALAXY": { "lineage": "hu_khong", "classId": "mage", "element2": "LIGHT" },
+    "PIG_MYTHICAL": {
+      "lineage": "hu_khong",
       "classId": "mage",
-      "element2": "LIGHTNING",
-      "ultimate": "skill_ult_trident"
-    }
+      "element2": "LIGHT",
+      "ultimate": "skill_ult_mythical"
+    },
+    "PIG_BOAR": { "lineage": "moc_mau", "classId": "tanker" },
+    "PIG_HEDGEHOG": { "lineage": "thiet_giap", "classId": "tanker" },
+    "PIG_SUNFLOWER": { "lineage": "moc_mau", "classId": "support" }
   },
   "fish": {
     "fish_pufferfish": { "lineage": "moc_mau", "classId": "mage" },
-    "fish_angelfish": { "lineage": "nam_hai", "classId": "support" },
-    "fish_glowfish": { "lineage": "quang_tru", "classId": "mage" },
-    "fish_betta": { "lineage": "hoa_giai", "classId": "striker" },
-    "fish_dragon_koi": { "lineage": "hoa_giai", "classId": "striker", "element2": "WATER" },
-    "fish_moonfish": { "lineage": "quang_tru", "classId": "support", "element2": "WATER" }
+    "fish_betta": { "lineage": "hoa_giai", "classId": "striker" }
   }
 }

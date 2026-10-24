@@ -11,6 +11,8 @@ import { adventureOf, hasAdventure } from '../../src/areas/adventure/logic/save/
 import { hatchEgg } from '../../src/areas/farm/logic/actions/hatchEgg';
 import { sellItem } from '../../src/areas/farm/logic/actions/sellItem';
 import { setPurpose } from '../../src/areas/farm/logic/actions/setPurpose';
+import { buyPig } from '../../src/areas/farm/logic/actions/buyPig';
+import { BREEDS, BREED_IDS } from '../../src/areas/farm/logic/config/breeds';
 import { liftFarmAction } from '../../src/areas/farm/logic/world';
 import { collectCraft, startCraft } from '../../src/areas/garden/logic/actions/buildings';
 import { gardenOf, hasGarden } from '../../src/areas/garden/logic/save/lens';
@@ -62,10 +64,21 @@ const stat = (_b: Bot, item: string, slot: (typeof EQUIPMENT_SLOTS)[number]): nu
 function raiseParty(b: Bot) {
   const have = b.farm().pigs.filter((p) => p.purpose === 'ADVENTURE').length;
   let need = PARTY - have;
+  // Only combat animals fight (adventure-big-update-1 §14): the bot raises the ones it has, and buys the cheapest one it can.
   for (const p of b.farm().pigs) {
     if (need <= 0) break;
-    if (p.purpose === 'ADVENTURE' || p.pregnancy !== null || p.growthProgress < 50) continue;
+    if (p.purpose === 'ADVENTURE' || p.pregnancy !== null || p.growthProgress < 50 || !BREEDS[p.breed]?.fighter) continue;
     if (b.act('adventure', liftFarmAction((s, c) => setPurpose(s, { pigId: p.id, purpose: 'ADVENTURE' }, c)))) need -= 1;
+  }
+  const waiting = b.farm().pigs.filter((p) => p.purpose !== 'ADVENTURE' && BREEDS[p.breed]?.fighter).length;
+  if (need > 0 && waiting === 0) {
+    // A mixed team fares better: the cheapest breed it does not have yet first.
+    const owned = new Set(b.farm().pigs.map((p) => p.breed));
+    const buyable = BREED_IDS.filter((id) => BREEDS[id].fighter && BREEDS[id].buyGold !== null && BREEDS[id].enabled).sort((x, y) => Number(owned.has(x)) - Number(owned.has(y)) || BREEDS[x].buyGold! - BREEDS[y].buyGold!);
+    for (const breed of buyable) {
+      if (b.coins() < RESERVE + BREEDS[breed].buyGold!) continue;
+      if (b.act('pigs bought', liftFarmAction((s, c) => buyPig(s, { breed, gender: 'MALE' }, c)))) break;
+    }
   }
 }
 

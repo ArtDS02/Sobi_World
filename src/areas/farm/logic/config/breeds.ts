@@ -29,6 +29,7 @@ export interface BreedDef {
   /** Food its pigs love; absent = per-pig draw from the Bond pool (GĐ7). */
   favorite?: ItemId | undefined;
   enabled: boolean;            // false = retired: not sold, never bred; pigs already owned stay
+  fighter: boolean;            // a combat animal: may be raised for Sobi Adventure
   artId: string;         // its artwork; the manifest row with this id (§6.6)
   color: number;               // flat fill when the artwork is missing (§11.4)
   hungerFullSec: number;       // derived: full → 0 at the flat decay rate
@@ -42,11 +43,11 @@ export const RARITY_TIER: Record<
 > = FARM_CONTENT.species.tiers;
 
 export type SpeciesRow = Pick<BreedDef, "id" | "nameVi" | "rarity" | "family" | "artId" | "color" | "signatureTrait" | "favorite"> &
-  Partial<Pick<BreedDef, "buyGold" | "unlockLevel" | "enabled" | keyof (typeof RARITY_TIER)[Rarity]>>;
+  Partial<Pick<BreedDef, "buyGold" | "unlockLevel" | "enabled" | "fighter" | keyof (typeof RARITY_TIER)[Rarity]>>;
 
 /** Tier stats + row overrides; how long a full need lasts follows from the flat decay rates. */
 const species = (row: SpeciesRow): BreedDef => {
-  const b = { buyGold: null, unlockLevel: 1, enabled: true, ...RARITY_TIER[row.rarity], ...row };
+  const b = { buyGold: null, unlockLevel: 1, enabled: true, fighter: false, ...RARITY_TIER[row.rarity], ...row };
   return {
     ...b,
     hungerFullSec: (BALANCE.HUNGER_MAX / BALANCE.HUNGER_PER_HOUR) * 3600,

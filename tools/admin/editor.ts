@@ -92,6 +92,7 @@ function form(row: SpeciesRowData, isNew: boolean) {
         ${NUMBERS.map(num).join('')}
         <label class="check"><input type="checkbox" name="breedable" ${s.breedable ? 'checked' : ''} /> Lai được</label>
         <label class="check"><input type="checkbox" name="enabled" ${s.enabled ? 'checked' : ''} /> Đang dùng (bỏ chọn = tắt)</label>
+        <label class="check"><input type="checkbox" name="fighter" ${row.fighter ? 'checked' : ''} /> Combat animal (đi Phiêu lưu được; thêm dòng + class ở lineages.json)</label>
       </div>
       <p class="muted">Suy ra (D16, không sửa): no đầy ${hours(s.growthSec / 3)} · sạch đầy ${hours(s.growthSec * 0.75)} · lớn ${hours(s.growthSec)} · bán ${gold(s.sellGold)} vàng.
         Hạnh phúc / đói / sức khoẻ do hệ chăm sóc chung tính, không có chỉ số riêng theo heo.</p>
@@ -126,6 +127,7 @@ function readForm(f: HTMLFormElement): SpeciesRowData {
   const breedable = d.get('breedable') === 'on';
   if (breedable !== tier.breedable) row.breedable = breedable;
   if (d.get('enabled') !== 'on') row.enabled = false;
+  if (d.get('fighter') === 'on') row.fighter = true;
   return row;
 }
 

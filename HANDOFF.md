@@ -17,7 +17,8 @@ Nhánh: `phase-14-art`. Prompt gốc: 17 mục, thứ tự A → C → B → D �
 - [x] E11 Bản đồ có chiều sâu (`scene/mapDepth.ts`): nền tường lan ra ngoài tối dần, cây/đá/cột lớn viền trên (sau đội) và dưới (trước đội, mờ khi đội tới gần), bóng dưới tường, bóng vật, tia nắng, bóng mây trôi, lá/đom đóm/than hồng/ma thuật bay, nước lấp lánh, vignette CSS.
 - [x] E12 Quái đứng yên + thở (scale theo nhịp riêng, bóng dưới chân); quái thường hồi sinh khi đổi khu (`run.defeated = []`), trùm/kẻ canh khu hạ vĩnh viễn (`slice.beaten`).
 - [x] E13 Cổng dịch chuyển: exit `lock: 'guardian'` (sau lưng trùm, khóa tới khi hạ; chặn đường đi), vùng nối vùng (Rừng→Núi→Tàn Tích, cổng về ở khu đầu vùng), ảnh `adv_portal` on/off + quầng sáng + chữ "Hạ kẻ canh khu để mở cổng"; đi vào: đội tan vào ánh sáng + chớp trắng + `adv_teleport` → khu mới hiện dần từ trắng. Quà trùm (`gift` trong maps.json) vào bảng tổng kết.
-- [ ] F14–F15 combat animal
+- [x] F14 Combat animal chỉ còn 22 loài (danh sách cố định, `lineages.json` bỏ `families`): heo KNIGHT, SAMURAI, ROBOT, HEDGEHOG (Kim) · NINJA, VAMPIRE (Bóng tối) · PIRATE, POSEIDON (Nước) · THOR, TIGER (Sấm) · VALKYRIE, UNICORN (Ánh sáng) · DRAGON, PHOENIX (Lửa) · TURTLE, CRYSTAL (Đất) · GALAXY, MYTHICAL (Hư Không) · BOAR, SUNFLOWER (Thiên nhiên); cá fish_betta, fish_pufferfish. Cờ `fighter` ở `content/farm/species.json` + `content/aquarium/fish.json`; Farm `setPurpose` ADVENTURE chặn giống thường (`NOT_A_FIGHTER`); Admin có ô "Combat animal". Bot mua chiến binh rẻ nhất chưa có, giữ 1 chuồng trống.
+- [x] F15 Thanh cấp: huy hiệu "Lv N" trên ảnh thẻ ở Trại + thanh KN có số; trong trận bảng tên có "Cấp N" + thanh KN mỏng, đội dưới trái có Lv.
 - [ ] G16–G17 cây kỹ năng, vật phẩm lên cấp
 
 ## File chính đã sửa

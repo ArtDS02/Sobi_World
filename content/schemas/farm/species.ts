@@ -30,6 +30,8 @@ const speciesRowSchema = z.strictObject({
   unlockLevel: posInt.optional(),
   /** false = retired: not sold, never bred; pigs already owned stay. */
   enabled: z.boolean().optional(),
+  /** A combat animal (adventure-big-update-1 §14): only these may be raised for Sobi Adventure (content/adventure/lineages.json). */
+  fighter: z.boolean().optional(),
   /** The trait every pig of this species is born with (content/breeding/traits.json); absent = none (GĐ7). */
   signatureTrait: traitId.optional(),
   /** The food its pigs love; absent = drawn per pig from the Bond pool (GĐ7). */

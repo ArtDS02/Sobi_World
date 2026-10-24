@@ -134,11 +134,11 @@ export interface Identity {
 /** The identity of a creature of the roster, or undefined when it cannot fight (a fish species with no line). */
 export function identityOf(entry: Pick<RosterEntry, 'kind' | 'speciesId' | 'family'>): Identity | undefined {
   const file = ADVENTURE_CONTENT.lineages;
+  // Only the combat animals listed in lineages.json can fight (adventure-big-update-1 §14); any other creature has no identity here.
   const own = entry.kind === 'fish' ? file.fish[entry.speciesId] : file.species[entry.speciesId];
-  const family = entry.kind === 'pig' && entry.family ? (file.families as Record<string, { lineage: LineageId; classId: ClassId }>)[entry.family] : undefined;
-  const lineageId = own?.lineage ?? family?.lineage;
-  const classId = own?.classId ?? family?.classId;
-  if (!lineageId || !classId) return undefined;
+  if (!own) return undefined;
+  const lineageId = own.lineage;
+  const classId = own.classId;
   const lineage = LINEAGES[lineageId];
   const unique = lineage.unique.map((id, i) => own?.unique?.[i] ?? id);
   return { lineage, classId, element: lineage.element, element2: own?.element2 ?? null, unique, ultimate: own?.ultimate ?? lineage.ultimate };

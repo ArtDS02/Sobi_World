@@ -65,14 +65,16 @@ export function fighterCard(c: FighterCardVm, ctx: ViewCtx): HTMLElement {
       classIcon(c.classId, 'adventure-ui__fighter-class'),
       chosen ? el('span', { class: 'adventure-ui__fighter-check', attrs: { 'aria-hidden': 'true' } }) : null,
       art(c.art, 'adventure-ui__fighter-art', c.name) ?? el('span', { class: 'adventure-ui__fighter-art' }),
+      el('span', { class: 'adventure-ui__fighter-lv', attrs: { 'aria-label': c.level } }, el('small', { text: 'Lv' }), el('b', { text: String(c.levelNumber) })),
       el('b', { text: c.name }),
-      el('small', { text: `${c.classLabel} · ${c.level}` }),
+      el('small', { text: c.classLabel }),
       c.honor ? el('small', { class: 'adventure-ui__fighter-honor', text: `«${c.honor}»` }) : null,
     ),
     el(
       'div',
       { class: 'adventure-ui__meters' },
-      el('span', { class: 'adventure-ui__meter-row is-exp', attrs: { title: c.expText } }, bar(c.expPercent, 'exp', c.expText)),
+      // The level bar (adventure-big-update-1 §15): the way to the next level, with its numbers on it.
+      el('span', { class: 'adventure-ui__meter-row is-exp is-level', attrs: { title: `${c.level} · ${c.expText}` } }, bar(c.expPercent, 'exp', c.expText), el('small', { class: 'adventure-ui__meter-text', text: c.expText })),
       el('span', { class: 'adventure-ui__meter-row is-energy', attrs: { title: c.energyText } }, bar(c.energyPercent, 'energy', c.energyText)),
     ),
     c.statusChip ? el('span', { class: 'adventure-ui__chip', text: c.statusChip, attrs: { title: c.statusChip } }) : null,

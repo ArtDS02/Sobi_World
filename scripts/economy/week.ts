@@ -214,8 +214,9 @@ function farmRoutine(b: Bot) {
     b.act('care', liftFarmAction((s, c) => petPig(s, { pigId: p.id }, c)));
     b.act('care', liftFarmAction((s, c) => petPig(s, { pigId: p.id }, c)));
   }
-  // Ship what is fully grown.
-  for (const p of f().pigs.filter((x) => x.growthProgress >= 100 && x.pregnancy === null && x.purpose !== 'PET' && x.purpose !== 'ADVENTURE')) {
+  // Ship what is fully grown; combat animals are kept for the Adventure once it is open (adventure-big-update-1 §14).
+  const adventure = hasAdventure(b.world);
+  for (const p of f().pigs.filter((x) => x.growthProgress >= 100 && x.pregnancy === null && x.purpose !== 'PET' && x.purpose !== 'ADVENTURE' && !(adventure && BREEDS[x.breed]?.fighter))) {
     if (b.act('shipping', liftFarmAction((s, c) => sellPig(s, { pigId: p.id }, c)))) b.shipped += 1;
   }
   // Pens first (they raise how many pigs earn), then pigs to fill them.
@@ -223,7 +224,9 @@ function farmRoutine(b: Bot) {
     /* as many as it can afford */
   }
   const cheapest = 'PIG_EARTH_PINK';
-  while (f().pigs.length < f().player.unlockedSlots && b.coins() >= RESERVE + (BREEDS[cheapest].buyGold ?? 0)) {
+  // While the Adventure still lacks fighters, one pen stays free for a combat animal.
+  const keepFree = adventure && f().pigs.filter((x) => BREEDS[x.breed]?.fighter).length < 3 ? 1 : 0;
+  while (f().pigs.length < f().player.unlockedSlots - keepFree && b.coins() >= RESERVE + (BREEDS[cheapest].buyGold ?? 0)) {
     const gender = f().pigs.length % 2 === 0 ? 'FEMALE' : 'MALE';
     if (!b.act('pigs bought', liftFarmAction((s, c) => buyPig(s, { breed: cheapest, gender }, c)))) break;
   }

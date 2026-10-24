@@ -39,8 +39,8 @@ export const entry = (id: string, over: Partial<RosterEntry> = {}): RosterEntry 
   ...over,
 });
 
-/** A Metal striker (knight), a Nature support (meadow sheep), a Metal tanker (job). */
-export const squad = [entry('a'), entry('b', { speciesId: 'PIG_SHEEP', family: 'MEADOW' }), entry('c', { speciesId: 'PIG_CHEF', family: 'JOB' })];
+/** A Metal striker (knight), a Nature support (sunflower), a Metal tanker (hedgehog): three combat animals (adventure-big-update-1 §14). */
+export const squad = [entry('a'), entry('b', { speciesId: 'PIG_SUNFLOWER', family: 'MEADOW' }), entry('c', { speciesId: 'PIG_HEDGEHOG', family: 'WILD' })];
 export const keys = squad.map((e) => e.key);
 
 /** A world with the adventure open at T0, a rich wallet (level 8 reached) and the given bag. */

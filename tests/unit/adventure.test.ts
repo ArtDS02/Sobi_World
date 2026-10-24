@@ -43,9 +43,10 @@ describe('content (decision 037)', () => {
     for (const z of ZONE_LIST) expect(z.maps).toHaveLength(3);
   });
 
-  it('a pig fights as its family line and class, a species overrides, only listed fish fight', () => {
+  it('only the combat animals fight (adventure-big-update-1 §14): each with its line and class, a species overrides, only listed fish', () => {
     expect(identityOf(knight)).toMatchObject({ classId: 'striker', element: 'METAL' });
-    expect(identityOf(entry('x', { speciesId: 'PIG_WHITE', family: 'FARM' }))).toMatchObject({ classId: 'tanker', element: 'NATURE' });
+    expect(identityOf(entry('x', { speciesId: 'PIG_WHITE', family: 'FARM' }))).toBeUndefined();
+    expect(identityOf(entry('x', { speciesId: 'PIG_BOAR', family: 'WILD' }))).toMatchObject({ classId: 'tanker', element: 'NATURE' });
     expect(identityOf(entry('x', { speciesId: 'PIG_PHOENIX', family: 'MYTHIC' }))).toMatchObject({ element: 'FIRE', element2: 'LIGHT', ultimate: 'skill_ult_phoenix' });
     expect(identityOf({ kind: 'fish', speciesId: 'fish_betta', family: null })).toMatchObject({ element: 'FIRE' });
     expect(identityOf({ kind: 'fish', speciesId: 'fish_goldfish', family: null })).toBeUndefined();

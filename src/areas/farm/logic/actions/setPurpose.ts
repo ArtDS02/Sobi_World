@@ -2,6 +2,7 @@
 // Breed = kept for the breeding station; Pet = never sold or bred, it lifts the pen's mood; Adventure
 // opens with Sobi Adventure (GĐ10): the pig then goes on runs as a fighter.
 import { BALANCE } from '../config/balance';
+import { BREEDS } from '../config/breeds';
 import type { Purpose } from '../../../../systems/creature/types';
 import type { ActionContext, ActionResult, FarmGame } from '../types';
 import { ok, runAction } from './runAction';
@@ -11,6 +12,8 @@ export function setPurpose(state: FarmGame, args: { pigId: string; purpose: Purp
     const pig = s.pigs.find((p) => p.id === args.pigId);
     if (!pig) return { ok: false, error: 'PIG_NOT_FOUND' };
     if (args.purpose === 'ADVENTURE' && !s.adventureOpen) return { ok: false, error: 'PURPOSE_LOCKED' };
+    // Only combat animals fight (adventure-big-update-1 §14); a pig already set to Adventure keeps it.
+    if (args.purpose === 'ADVENTURE' && !BREEDS[pig.breed]?.fighter) return { ok: false, error: 'NOT_A_FIGHTER' };
     if (pig.growthProgress < BALANCE.STAGE_ADULT_AT) return { ok: false, error: 'PIG_NOT_MATURE' };
     if (pig.purpose === args.purpose) return { ok: false, error: 'NOTHING_TO_DO' };
     return ok({ ...s, pigs: s.pigs.map((p) => (p.id === pig.id ? { ...p, purpose: args.purpose } : p)) }, [

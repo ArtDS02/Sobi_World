@@ -55,9 +55,11 @@ describe('the farm side', () => {
 
   it('a pig may be raised for the Adventure only once the Adventure is open', () => {
     const w = openWorld();
-    const f = withFarm(w, { ...farmOf(w), pigs: [makePig({ id: 'p1', growthProgress: 100, lastTickedAt: T0, createdAt: T0 })] });
-    const set = (world: WorldSave) => setPurpose(farmOf(world), { pigId: 'p1', purpose: 'ADVENTURE' }, ctxAt(T0));
+    const f = withFarm(w, { ...farmOf(w), pigs: [makePig({ id: 'p1', breed: 'PIG_KNIGHT', growthProgress: 100, lastTickedAt: T0, createdAt: T0 }), makePig({ id: 'p2', growthProgress: 100, lastTickedAt: T0, createdAt: T0 })] });
+    const set = (world: WorldSave, pigId = 'p1') => setPurpose(farmOf(world), { pigId, purpose: 'ADVENTURE' }, ctxAt(T0));
     expect(set(f)).toMatchObject({ ok: true });
+    // A plain farm pig is not a combat animal (adventure-big-update-1 §14).
+    expect(set(f, 'p2')).toEqual({ ok: false, error: 'NOT_A_FIGHTER' });
     const closed = { ...f, world: { ...f.world, unlockedAreas: f.world.unlockedAreas.filter((a) => a !== 'sobi_adventure') } };
     expect(set(closed)).toEqual({ ok: false, error: 'PURPOSE_LOCKED' });
   });
@@ -107,7 +109,7 @@ describe('the Aquarium side', () => {
 
 describe('view-models', () => {
   const entry = { key: 'sobi_farm:a', areaId: 'sobi_farm', id: 'a', kind: 'pig' as const, name: 'Mập', speciesId: 'PIG_KNIGHT', family: 'ADVENTURE', rarity: 'COMMON', hearts: 3, sick: false, adult: true, purpose: 'ADVENTURE', artId: 'pig_knight' };
-  const sheep = { ...entry, key: 'sobi_farm:b', id: 'b', name: 'Bông', speciesId: 'PIG_SHEEP', family: 'MEADOW' };
+  const sheep = { ...entry, key: 'sobi_farm:b', id: 'b', name: 'Bông', speciesId: 'PIG_SUNFLOWER', family: 'MEADOW' };
   const world = () => adventureArea.init(openWorld(), ctxAt(T0));
   const run = { starter: (ww: WorldSave, c: ActionContext) => claimStarter(ww, { give: (x, g, cc) => AREAS.give(x, g, cc) }, c), loot: (ww: WorldSave, c: ActionContext) => collectLoot(ww, c) };
 

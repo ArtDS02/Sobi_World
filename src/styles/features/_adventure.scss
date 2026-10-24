@@ -536,6 +536,34 @@ $adv-pink: #ef5a78;
 
   &__meters { display: grid; gap: 3px; padding: 0 $sp-1; }
 
+  // The level medal on a companion's portrait, and its level bar with the numbers on it (adventure-big-update-1 §15).
+  &__fighter-lv {
+    position: absolute;
+    top: 2.9rem;
+    right: 0.35rem;
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    line-height: 0.85;
+    color: #fff;
+    background: radial-gradient(circle at 35% 30%, #ffd27a, #e5801c 70%);
+    border: 2px solid #fff4dc;
+    border-radius: 50%;
+    box-shadow: 0 2px 0 #b85e08, 0 0 0 1px rgba(91, 58, 28, 0.35);
+    text-shadow: 0 1px 0 #b85e08;
+    small { font-size: 0.5rem; font-weight: $fw-bold; }
+    b { font-size: 0.85rem; }
+  }
+
+  &__meter-row.is-level {
+    position: relative;
+    .adventure-ui__meter { height: 0.9rem; border-radius: 999px; box-shadow: inset 0 1px 2px rgba(91, 58, 28, 0.35); }
+    .c-bar__fill { border-radius: 999px; }
+  }
+
+  &__meter-text { position: absolute; inset: 0 0 0 1rem; display: grid; place-items: center; font-size: 0.55rem; font-weight: $fw-bold; color: #5b3a1c; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); pointer-events: none; }
+
   &__meter-row {
     display: flex;
     gap: 4px;
