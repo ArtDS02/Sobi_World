@@ -9,7 +9,8 @@ import { simulateRuns, GEAR_TIERS } from '../../src/areas/adventure/logic/battle
 import { MAPS } from '../../src/areas/adventure/logic/config/content';
 import { tileCenter } from '../../src/areas/adventure/logic/maps';
 import { adventureOf } from '../../src/areas/adventure/logic/save/lens';
-import { battleVm, effectOn, logLine, resultVm } from '../../src/areas/adventure/ui/battleVm';
+import { battleVm, effectOn, logLine } from '../../src/areas/adventure/ui/battleVm';
+import { resultVm } from '../../src/areas/adventure/ui/tripResultVm';
 import { campVm, startReason, teamWarnings, zoneCards } from '../../src/areas/adventure/ui/campVm';
 import { exploreVm, minimapVm } from '../../src/areas/adventure/ui/exploreVm';
 import { fighterCardVm, sheetVm } from '../../src/areas/adventure/ui/fighterVm';

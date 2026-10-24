@@ -16,6 +16,7 @@ export interface Presentation {
 
 const T = vi.adventure.toast;
 const E = vi.adventure.engage.toast;
+const W = vi.adventure.workshop.toast;
 const itemName = (id: string) => vi.shop[id as ItemId] ?? id;
 const itemsText = (items: Readonly<Record<string, number>>) =>
   Object.entries(items)
@@ -97,6 +98,12 @@ export function adventurePresentation(e: EventBase, origin: 'action' | 'tick' | 
       return { sound: 'coin_collect', toast: t(T.swept, { exp: e.exp, coins: formatInt(e.coins) }) };
     case 'ADVENTURE_LEVEL':
       return { sound: 'level_up', toast: t(T.levelUpWorld, { level: e.level }) };
+    case 'ADVENTURE_SHOP_BOUGHT':
+      return { sound: 'coin_collect', toast: t(W.bought, { count: e.count, item: itemName(e.itemId), coins: formatInt(e.coins) }) };
+    case 'ADVENTURE_FORGED':
+      return { sound: 'level_up', toast: t(W.forged, { items: itemsText(e.items) }) };
+    case 'ADVENTURE_TOME_USED':
+      return { sound: 'notify', toast: t(W.tome, { name: e.name, exp: formatInt(e.exp) }) };
     default:
       return null;
   }

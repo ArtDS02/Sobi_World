@@ -214,6 +214,7 @@ export function renderCamp(ctx: ViewCtx): HTMLElement {
             toggle(vi.adventure.camp.so, camp.leader === 'so', () => ctx.dispatch((ww, c) => setLeader(ww, { leader: 'so' }, c))),
             toggle(vi.adventure.camp.bi, camp.leader === 'bi', () => ctx.dispatch((ww, c) => setLeader(ww, { leader: 'bi' }, c))),
           ),
+          el('button', { class: 'c-button c-button--ghost adventure-ui__workshop-btn', text: vi.adventure.workshop.open, attrs: { type: 'button' }, on: { click: () => ctx.openWorkshop() } }),
           toggle(vi.adventure.camp.legend, state.legend, () => ((state.legend = !state.legend), ctx.rerender())),
         ),
       ),

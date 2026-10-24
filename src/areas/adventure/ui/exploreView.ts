@@ -12,7 +12,7 @@ import { riftNext } from '../logic/actions/rift';
 import { ENGAGEMENT } from '../logic/config/content';
 import { adventureOf } from '../logic/save/lens';
 import { lossAdvice } from './adviceVm';
-import { resultVm } from './battleVm';
+import { resultVm } from './tripResultVm';
 import { exploreVm, minimapVm, type MemberBarVm } from './exploreVm';
 import { riftVm } from './riftVm';
 import { actionButton, bar, elementIcon, iconOf, roundButton, type ViewCtx } from './viewKit';

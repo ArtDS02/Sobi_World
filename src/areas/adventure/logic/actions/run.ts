@@ -6,3 +6,4 @@ export { battleAct, closeReport, flee, settleBattle } from './battle';
 export { riftNext, startRift } from './rift';
 export { sweepZone } from './sweep';
 export { closeRun } from './camp';
+export { buyWorkshopItem, forge, useTome } from './workshop';

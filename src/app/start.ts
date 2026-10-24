@@ -140,8 +140,7 @@ export async function start(root: HTMLElement) {
     openPanel: (panel) => app?.openPanel(panel),
     roster: (save) => AREAS.roster(save),
     give: (save, gift, ctx) => AREAS.give(save, gift, ctx),
-    keys,
-    sound: (key) => audio.play(key),
+    keys, sound: (key) => audio.play(key), // the battle and the map cue their own sounds (audio is made below)
   });
   let director: FeedbackDirector | null = null;
   const host: WorldHost = {

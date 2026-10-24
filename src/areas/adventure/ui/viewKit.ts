@@ -51,6 +51,8 @@ export interface ViewCtx {
   give: (world: WorldSave, gift: CreatureGift, ctx: ActionContext) => GiftResult;
   openSheet(key: string): void;
   openPortal(): void;
+  /** The Adventure Shop and the Forge (adventure-big-update-1 §17). */
+  openWorkshop(): void;
   /** The key bound to "interact" (for the hint). */
   interactKey(): string;
   /** Local time minus UTC (ms): the game day the Rift's rule follows. */

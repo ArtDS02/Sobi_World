@@ -138,6 +138,7 @@ export function closeReport(world: WorldSave, ctx: ActionContext): AdventureResu
     if (!st.run.report) return { ok: false, error: 'WRONG_PHASE' };
     st.run.report = null;
     st.run.log = [];
+    st.events.push({ type: 'ADVENTURE_BOARD_CLOSED' });
     return commit(st);
   });
 }

@@ -19,7 +19,8 @@ import type { AdventureSceneState, SceneReport } from '../scene/sceneState';
 import { createAdventureDialogs } from './adventureDialogs';
 import { stepRemaining } from './battleFxView';
 import { createBattleStage, type BattleSound } from './battleStage';
-import { renderBattle, choose } from './battleView';
+import { choose } from './battleCommand';
+import { renderBattle } from './battleView';
 import { battleVm } from './battleVm';
 import { hudVm } from './campVm';
 import { renderCamp } from './campView';
@@ -120,6 +121,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     give: d.give,
     openSheet: (key) => dialogs.openSheet(key),
     openPortal: () => dialogs.openPortal(),
+    openWorkshop: () => dialogs.openWorkshop(),
     interactKey: () => d.interactKey?.() ?? 'Space',
     dayOffsetMs: -new Date(d.now()).getTimezoneOffset() * 60_000,
   });

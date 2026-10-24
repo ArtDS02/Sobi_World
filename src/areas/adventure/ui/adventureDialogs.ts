@@ -1,6 +1,7 @@
-// The Adventure's dialogs: a companion's profile (tabs: stats, skills, skill tree and loadout, gear, the temple) and the portal's
-// destinations. The body is rebuilt from the world while the dialog is open, so it stays true after each change. A button always says
-// why it is off.
+// The Adventure's dialogs: a companion's profile (tabs: stats with its level bar and the experience books it can be given, skills, the
+// skill tree drawn as a graph of nodes joined by what each one needs — click a node to see, open, upgrade or carry it —, gear, the
+// temple), the portal's destinations, and the Shop & Forge (adventure-big-update-1 §16–§17). The body is rebuilt from the world while
+// the dialog is open, so it stays true after each change. A button always says why it is off.
 import type { RosterEntry } from '../../../core/area-registry/registry';
 import { itemArtId } from '../../../core/config/assetIds';
 import type { ItemId } from '../../../core/config/ids';
@@ -14,6 +15,10 @@ import { art } from '../../../ui/components/icon';
 import { el, patch } from '../../../ui/dom';
 import { equipItem, unequipSlotOf } from '../logic/actions/camp';
 import { changeClass, resetTree, setLoadout, stepNode, useScroll } from '../logic/actions/growth';
+import { buyWorkshopItem } from '../logic/actions/workshop';
+import { guardBuy } from '../../../ui/components/shopGrid';
+import { treeGraph } from './sheetTree';
+import { growSection, workshopBody } from './workshopView';
 import { travel } from '../logic/actions/explore';
 import { EQUIPMENT_DEFS, NODES } from '../logic/config/content';
 import { adventureOf } from '../logic/save/lens';
@@ -58,6 +63,9 @@ export function createAdventureDialogs(d: AdventureDialogsDeps) {
   /** The open dialog's body renderer; re-run on every world change. */
   let live: { body: HTMLElement; render: (w: WorldSave) => HTMLElement | null } | null = null;
   let tab: Tab = 'stats';
+  /** The node picked in the tree tab, and the tab of the Shop & Forge. */
+  let picked: string | null = null;
+  let shopTab: 'shop' | 'forge' = 'shop';
 
   function openLive(title: string, render: (w: WorldSave) => HTMLElement | null) {
     const w = d.world();
@@ -114,6 +122,7 @@ export function createAdventureDialogs(d: AdventureDialogsDeps) {
         { class: 'adventure-sheet__stats' },
         el('div', { class: 'adventure-sheet__arts' }, art(v.art, 'adventure-sheet__art', v.title), art(v.guardianArt, 'adventure-sheet__guardian', v.guardian)),
         el('p', { text: `${v.guardian} · ${v.elements}` }),
+        growSection(w, key, roster, d.now(), d.dispatch),
         el('dl', {}, ...v.stats.flatMap((s) => [el('dt', { text: s.name }), el('dd', { text: formatInt(s.value) })])),
         el('h4', { text: vi.adventure.engage.sheet.honor }),
         v.honors.some((h) => h.earned)
@@ -139,21 +148,7 @@ export function createAdventureDialogs(d: AdventureDialogsDeps) {
         el('ul', { class: 'adventure-sheet__skills' }, ...v.nodes.filter((n) => n.carried).map((n) => skillRow(n.skill))),
       );
     } else if (tab === 'tree') {
-      const tiers = [...new Set(v.nodes.map((n) => n.tier))].sort();
-      body = el(
-        'div',
-        { class: 'adventure-tree' },
-        el('p', { class: 'adventure-tree__sp', text: `${v.spText} · ${v.loadoutTitle}` }),
-        v.scroll ? actionButton(v.scroll, () => d.dispatch((ww, c) => useScroll(ww, { key, roster }, c)), 'c-button--ghost') : null,
-        ...tiers.map((tier) =>
-          el(
-            'section',
-            { class: 'adventure-tree__tier' },
-            el('h4', { text: t(vi.adventure.sheet.tier, { tier }) }),
-            el('div', { class: 'adventure-tree__row' }, ...v.nodes.filter((n) => n.tier === tier).map((n) => treeNode(n, key, roster))),
-          ),
-        ),
-      );
+      body = treeGraph(v, picked, (id) => ((picked = id), rerender()), (n) => treeNode(n, key, roster), v.scroll ? actionButton(v.scroll, () => d.dispatch((ww, c) => useScroll(ww, { key, roster }, c)), 'c-button--ghost') : null);
     } else if (tab === 'gear') {
       body = el(
         'div',
@@ -207,6 +202,13 @@ export function createAdventureDialogs(d: AdventureDialogsDeps) {
     return el('div', { class: 'adventure-sheet' }, tabs, body);
   }
 
+  /** The Adventure Shop (books, battle potions) and the Forge (recipes from every Area's materials). */
+  function openWorkshop() {
+    const buy = guardBuy((itemId, count) => d.dispatch((s, c) => buyWorkshopItem(s, { itemId, count }, c)));
+    openLive(vi.adventure.workshop.title, (w) => workshopBody(w, d.now(), shopTab, (x) => ((shopTab = x), rerender()), buy, d.dispatch));
+    d.host.querySelector('.c-dialog__panel')?.classList.add('adventure-dialog--wide');
+  }
+
   function openSheet(key: string) {
     const w0 = d.world();
     if (!w0) return;
@@ -256,6 +258,7 @@ export function createAdventureDialogs(d: AdventureDialogsDeps) {
   return {
     openSheet,
     openPortal,
+    openWorkshop,
     /** The world changed: the open dialog follows it (and is forgotten once the player closed it). */
     follow(w: WorldSave) {
       if (!live) return;
