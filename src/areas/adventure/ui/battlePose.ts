@@ -26,7 +26,7 @@ const bump = (t: number) => (t <= 0 || t >= 1 ? 0 : t < 0.18 ? easeOut(t / 0.18)
 export const hash = (s: string) => [...s].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) | 0, 7);
 
 /** The body of a unit at `t` ms into the step: where it is pushed, turned, squashed and how bright it is. */
-export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, PoseAnchor>, p: Readonly<PlayingStep>, t: number, now: number): { tf: string; filter: string; opacity: number } {
+export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, PoseAnchor>, p: Readonly<PlayingStep>, t: number, now: number): { tf: string; filter: string; opacity: number; hurt: boolean } {
   const plan = bodyOf(id);
   const profile = BODY[plan];
   const dir = a.side === 'ally' ? 1 : -1;
@@ -42,6 +42,7 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
   let gray = 0;
   let opacity = 1;
   let glow = '';
+  let hurt = false;
   for (const b of p.motion.beats) {
     if (b.actor !== id || !b.pose || t < b.start || t > b.end + 40) continue;
     const target = anchors.get(b.targets[0] ?? '');
@@ -141,6 +142,7 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
       case 'hit':
       case 'hit-heavy': {
         const heavy = r.kind === 'hit-heavy';
+        hurt = true;
         dx += -dir * (heavy ? 42 : 24) * u;
         rot += -dir * (heavy ? 17 : 10) * u;
         sx *= 1 + 0.05 * u;
@@ -179,5 +181,5 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
     bright = Math.max(bright, into < 0.6 ? 1.8 - into : 1);
   }
   const filter = `${bright > 1.01 ? `brightness(${bright.toFixed(2)}) ` : ''}${gray > 0.01 ? `grayscale(${gray.toFixed(2)}) ` : ''}${glow ? `drop-shadow(0 0 10px ${glow})` : ''}`.trim();
-  return { tf: `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) rotate(${rot.toFixed(2)}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)})`, filter, opacity };
+  return { tf: `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) rotate(${rot.toFixed(2)}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)})`, filter, opacity, hurt };
 }

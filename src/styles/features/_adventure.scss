@@ -851,7 +851,11 @@ $adv-pink: #ef5a78;
 
   &__body { position: relative; display: block; transform-origin: 50% 100%; will-change: transform, filter; }
   &__idle { display: block; transform-origin: 50% 100%; }
-  &__face { display: block; }
+  &__face { position: relative; display: block; }
+  // The crying face of a hit, when the creature has one (`<art>_hurt`): it takes the picture's place while the blow lands.
+  &__unit-hurt { position: absolute; inset: 0; opacity: 0; }
+  &__body.is-hurt &__unit-hurt { opacity: 1; }
+  &__body.is-hurt &__face:has(&__unit-hurt) > &__unit-art:not(&__unit-hurt) { opacity: 0; }
   &__unit--ally &__face { transform: scaleX(-1); }
 
   &__unit-art { display: block; width: 10rem; height: 10rem; object-fit: contain; object-position: bottom; }

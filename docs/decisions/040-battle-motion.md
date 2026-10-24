@@ -1,4 +1,4 @@
-# 040 — Animation trận Adventure: bộ máy beat + VFX dự phòng bằng CSS (GĐ14, chờ duyệt)
+# 040 — Animation trận Adventure: bộ máy beat + VFX dự phòng bằng CSS (GĐ14; phần CSS đã thay bằng canvas ở decision 041)
 
 **Bối cảnh.** Chủ dự án giao prompt `art_inbox/.batch/Sobi_Adventure_UI_Animation_Claude_Prompt.md`: audit Adventure, chụp toàn bộ màn hình, thiết kế pipeline animation cho chiến binh / quái / kỹ năng, viết prompt AI, rồi làm **một vertical slice** an toàn. Trước đó trận chỉ có số bay + rung (decision 039) và một cú lắc trên ảnh của đơn vị mất máu; mọi lượt địch trong một bước hiện cùng lúc.
 

@@ -65,6 +65,12 @@ function standOn(scene: Phaser.Scene, k: string, map: AreaMap, x: number, y: num
   return img;
 }
 
+/** A teleport gate's picture: its own art (`adv_warp_gate`, on / off) when the manifest has it, else the area portal's. */
+const gateKey = (scene: Phaser.Scene, open: boolean): string => {
+  const own = textureKey('adv_warp_gate', open ? 'on' : 'off');
+  return scene.textures.exists(own) ? own : key(scene, 'adv_portal', open ? 'on' : 'off');
+};
+
 export interface MapObjects {
   layer: Phaser.GameObjects.Container;
   things: Map<string, Phaser.GameObjects.Image>;
@@ -137,7 +143,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     const cx = (e.x + e.w / 2) * t;
     const feet = (e.y + e.h) * t;
     const glow = scene.add.image(cx, feet - t * 1.4, 'adv-fx-blob').setDisplaySize(t * 3.4, t * 3.4).setTint(view?.forward ? 0x9ae6ff : 0xd8ffd0).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.6);
-    const img = standOn(scene, key(scene, 'adv_portal', view?.open ? 'on' : 'off'), map, e.x - 0.5, e.y, e.w + 1, e.h, 1.05);
+    const img = standOn(scene, gateKey(scene, !!view?.open), map, e.x - 0.5, e.y, e.w + 1, e.h, 1.05);
     const words = scene.add.text(0, -6, vi.adventure.explore.gateLocked, { fontSize: '15px', fontStyle: 'bold', color: '#fff6e0', backgroundColor: '#5b3a1cdd', padding: { x: 8, y: 4 } }).setOrigin(0.5, 1);
     const lockKey = textureKey('ui_icon_lock');
     const lockIcon = scene.textures.exists(lockKey) ? [scene.add.image(0, -words.height - 22, lockKey).setDisplaySize(34, 34)] : [];
@@ -180,7 +186,7 @@ export function refreshThings(scene: Phaser.Scene, map: AreaMap, objs: MapObject
     const g = objs.gates.get(e.id);
     const view = s.exits.find((x) => x.id === e.id);
     if (!g || !view) continue;
-    const k = key(scene, 'adv_portal', view.open ? 'on' : 'off');
+    const k = gateKey(scene, view.open);
     if (g.img.texture.key !== k) g.img.setTexture(k);
     g.img.setTint(view.open ? 0xffffff : 0x9a9aa8);
     // An open gate breathes light; a shut one is dark and says why when the party comes close.

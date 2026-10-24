@@ -151,7 +151,8 @@ export function unitOnField(
       el(
         'span',
         { class: 'adventure-ui__idle' },
-        el('span', { class: 'adventure-ui__face' }, portrait(u, 'adventure-ui__unit-art')),
+        // The crying face of a hit (`<art>_hurt` in the manifest, adventure-big-update-1 §7) shows over the picture while the blow lands.
+        el('span', { class: 'adventure-ui__face' }, portrait(u, 'adventure-ui__unit-art'), art(`${u.art}_hurt`, 'adventure-ui__unit-art adventure-ui__unit-hurt')),
       ),
       can && aim
         ? marker(

@@ -1,0 +1,23 @@
+# 041 — Sobi Adventure: cập nhật lớn 1 (giao diện trận, animation canvas, bảng tổng kết, bản đồ, combat animal, cây kỹ năng, lên cấp bằng vật phẩm)
+
+**Ngày:** 2026-10-25 · **Trạng thái:** đã làm, chờ chủ dự án chơi thử. Chủ dự án giao 17 mục (A–G) và cho tự quyết ("làm luôn, không hỏi lại").
+**Thay thế một phần:** decision 040 (animation bằng CSS: bỏ), decision 037 §8 (quái đi tuần: bỏ; cổng dịch chuyển mỗi khu: thành cổng nối khu khóa sau trùm), decision 039 (trùm hồi sinh mỗi chuyến: bỏ).
+
+## Quyết định
+1. **Trận (A1–A3, C9):** đồng minh trái quay phải, quái phải quay trái; bảng tên nhỏ trên đầu (hệ, tên, cấp, HP, MP + KN); thanh lượt trong hàng HUD, người đang hành động trượt vào ô sáng (FLIP); dock lệnh với 3 tab Kỹ năng chính (skill `unique` + Tuyệt kỹ) / Kỹ năng phụ (skill class) / Vật phẩm, danh sách chỉ mở khi bấm; chọn hành động → dấu ngắm (vòng + X) trên mục tiêu hợp lệ, skill cả phe = 1 dấu lớn, **chỉ click dấu mới ra chiêu**. Phòng thủ / bỏ chạy chạy ngay.
+2. **Animation (B5–B8): canvas + tween JS**, không thêm thư viện. Lý do: trận là DOM, ảnh nhân vật là ảnh tĩnh; Phaser chỉ vẽ bản đồ. Hai canvas bền (dưới đơn vị: vòng phép; trên: hạt, nét vẽ, chớp, tối màn) với engine hạt/hình vector tự viết (`ui/fx/`), công thức riêng 9 hệ theo kiểu Epic Battle Fantasy 3 (nhiều hạt, cộng sáng, tia sét, cột sáng, nổ, khói). Thân đơn vị được tween mỗi khung theo đồng hồ của bước (lao tới mục tiêu khi cận chiến, ngả lui + chớp trắng + nước mắt khi trúng, né + bóng mờ khi hụt, gục), nên DOM vẽ lại không làm chạy lại. Mỗi skill (cả của quái) có **vòng phép + âm niệm phép trước** (`CIRCLE_MS` 560 / Tuyệt kỹ 820 ms). Vào trận: tia dịch chuyển + nhấp nháy (`ENTER_MS` 1,1 s). Bước dài nhất 5,6 s (×0,55 khi x2). Giảm chuyển động: không canvas, không tween.
+3. **Âm thanh:** 10 SFX tổng hợp (`scripts/art/sfx.ts`), thêm vào `AUDIO_KEYS`; UI gọi qua dep `sound` (theo đồng hồ của bước, không qua event).
+4. **Bảng tổng kết (D10):** thắng trận → `run.report` (slice **v4**) giữ thưởng, KN trước/sau từng chiến binh, ảnh chụp trận cuối; UI chiếu lại đòn kết liễu rồi hiện bảng (thanh KN chạy qua từng cấp, LEVEL UP). Bản đồ chờ tới khi bấm "Tiếp tục" (`closeReport`).
+5. **Bản đồ (E11–E13):** dựng chiều sâu bằng code (`scene/mapDepth.ts`); quái đứng yên + thở; **quái thường hồi sinh khi đổi khu**, **trùm / kẻ canh khu hạ một lần là xong** (`slice.beaten`, migrate từ cổng đã thắp + vùng đã hạ trùm); lối sang khu sau là **cổng dịch chuyển sau lưng kẻ canh khu, khóa tới khi hạ** (`exits[].lock: 'guardian'`), vùng nối vùng (Rừng → Núi → Tàn Tích); quà trùm `groups[].gift` hiện trên bảng tổng kết. Chuyến về Trại tính "thắng" nếu đã thắng được gì (không còn phụ thuộc trùm); `runsCleared` chỉ đếm khi hạ trùm. Đi nhanh chỉ còn nhóm thường.
+6. **Combat animal (F14):** 22 loài (20 heo, 2 cá), mỗi dòng Guardian ≥ 2: Kim KNIGHT, SAMURAI, ROBOT, HEDGEHOG · Bóng tối NINJA, VAMPIRE · Nước PIRATE, POSEIDON · Sấm THOR, TIGER · Ánh sáng VALKYRIE, UNICORN · Lửa DRAGON, PHOENIX (+ cá Betta) · Đất TURTLE, CRYSTAL · Hư Không GALAXY, MYTHICAL · Thiên nhiên BOAR, SUNFLOWER (+ cá Nóc). Lý do: hình tượng chiến binh / thần thoại rõ, đủ hệ và class, có loài mua được sớm (KNIGHT 500, BOAR 1.500, DRAGON 1.800). Bỏ `families` (mọi heo trong họ đều đánh được). Heo Hướng Dương chuyển sang dòng Mộc Mẫu (Hỗ trợ Thiên nhiên). Cờ `fighter` trong species/fish; Farm từ chối mục đích Phiêu lưu cho giống thường (`NOT_A_FIGHTER`). Chiến binh cũ của giống bị loại vẫn còn trong save nhưng không hiện ở Trại.
+7. **Cây kỹ năng (G16):** giữ luật SP / điều kiện của decision 037, vẽ lại thành đồ thị node.
+8. **Lên cấp bằng vật phẩm (G17):** `content/adventure/workshop.json`: sách KN (300 / 1.200 / 4.000), Cửa hàng Phiêu lưu (sách, thuốc), Lò Rèn (rèn ngay, nguyên liệu Vườn / Hồ cá / Mây + lõi trùm). Thêm thuốc trận Năng Lượng (+50 MP) và Bình Nộ Hỏa (+50 Nộ).
+
+## Save
+World save giữ v11. Slice `areas.sobi_adventure` **v3 → v4**: `beaten` (từ `activePortals` + `cleared`), `run.report = null`. Test với slice thật (`tests/unit/adventureEngagement.test.ts`).
+
+## Cân bằng (bot `simulateWeek` 40 ngày, forceAdventure)
+Bot mua combat animal rẻ nhất chưa có, giữ 1 chuồng trống. 149 chuyến, 113 thắng / 36 thua; hạ trùm Rừng lần đầu giờ 428 (trước 356), Núi 685 (trước 572): chậm hơn vì bot chỉ có heo mua được và trùm không còn cho KN lặp lại. Chưa cân lại giá sách / cửa hàng (chờ chơi thử).
+
+## Asset
+`art_inbox/.batch/adventure-big-update-1/` (README, assets.csv, prompts.md): mặt đau 44 con, 8 icon vật phẩm (đang là bản tô màu tạm), cổng dịch chuyển, nền ngoài rìa 3 vùng, 10 SFX thật. Mọi asset có móc sẵn trong code.

@@ -139,3 +139,6 @@ Còn thiếu:
 | Trạng thái khóa riêng của từng cổng | Hiện cổng khóa = ảnh cổng bị làm tối + ổ khóa. Spec §3.1: rào, mây che, cổng tắt. |
 | Bảng đơn hàng, Chợ, NPC ở Sảnh | GĐ6. |
 | Art Sobi Garden / Aquarium / Cloud / Adventure | Ảnh tham khảo ở `asset/reference/sobi_{garden,aquarium,cloud}`; làm cùng từng Area. |
+
+## Adventure — cập nhật lớn 1 (decision 041)
+- Batch `art_inbox/.batch/adventure-big-update-1/`: mặt đau `<artId>_hurt` (44), icon sách KN / thuốc Năng Lượng / Bình Nộ / lõi trùm (8, đang tô màu tạm), cổng `adv_warp_gate` on/off, nền `bg_adventure_<vùng>_beyond` (3), 10 SFX `adv_*` thật (đang tổng hợp).

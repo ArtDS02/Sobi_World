@@ -125,6 +125,7 @@ export function createBattleStage(d: BattleStageDeps): BattleStage {
         a.body.style.transform = pose.tf;
         a.body.style.filter = pose.filter;
         a.body.style.opacity = pose.opacity < 0.999 ? pose.opacity.toFixed(2) : '';
+        a.body.classList.toggle('is-hurt', pose.hurt);
       }
       step(world, dt);
       paint(root, reduce);

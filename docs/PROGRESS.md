@@ -5,10 +5,17 @@
 **Chiến lược (decision 017, 022):** gameplay trước, art sau; phong cách chuẩn Sobi Farm, chủ dự án tạo ảnh Gemini theo batch (`asset/batches/`), agent cắt và nối vào game. GĐ15 phát hành.
 **Tiến độ GĐ14:** 28 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). **Adventure** (giao diện theo ảnh mẫu, 212 asset batch adventure-03..10, 2026-10-23, chờ duyệt; còn tạo lại sheet K5, CP2; animation trận bằng code + pipeline / prompt AI: decision 040, 2026-10-24, chờ duyệt). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
-**Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v3 từ decision 039).
+**Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v4 từ decision 041).
 **Bước tiếp theo:** chủ dự án xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
 
 ## Nhật ký
+
+### 2026-10-25 — Adventure: cập nhật lớn 1 (decision 041, chờ chơi thử)
+✅ Đã làm (17 mục của chủ dự án, thứ tự A → C → B → D → E → F → G): bố cục trận mới (ta trái quay phải, quái phải), dock 3 tab, thanh lượt trượt trong hàng HUD, scrollbar mật ong + kéo-cuộn; dấu ngắm click-để-ra-chiêu; animation canvas (vòng phép + niệm phép, 9 hệ, trúng → ngả lui + khóc, hụt → né, vào trận → dịch chuyển); bảng tổng kết (chiếu lại đòn cuối, thanh KN, LEVEL UP, quà trùm); bản đồ có chiều sâu, quái đứng yên thở, trùm hạ vĩnh viễn, cổng dịch chuyển khóa sau trùm; 22 combat animal; thanh cấp ở Trại / trận; cây kỹ năng dạng đồ thị; Cửa hàng & Lò Rèn + sách KN.
+📁 File chính: `docs/decisions/041-adventure-big-update-1.md`, `src/areas/adventure/ui/{battleView,battleField,battleDock,battleCommand,battleStage,battlePose,battleCues,reportView,reportVm,sheetTree,workshopView,workshopVm}.ts`, `ui/fx/*`, `scene/{mapDepth,mapDepthKit}.ts`, `logic/actions/{workshop,battle,explore,trip}.ts`, `logic/{state,migrations}.ts`, `content/adventure/{workshop,maps,lineages}.json`, `scripts/art/sfx.ts`.
+🧪 Đã kiểm tra: `npm run check` xanh (112 file test, 1.497 test); chơi thử trong sandbox (Vết Nứt, bản đồ Rừng, Trại, Cửa hàng, Lò Rèn, cây kỹ năng); chưa chạy e2e / build desktop.
+⚠️ Tự quyết: xem decision 041 (combat animal, trùm không hồi sinh, chuyến "thắng" khi thắng được gì, Hướng Dương sang dòng Mộc Mẫu). Save slice v4.
+👉 Bạn cần: chơi thử, duyệt decision 041; tạo asset theo `art_inbox/.batch/adventure-big-update-1/README.md`.
 
 ### 2026-10-24 — Adventure: audit UI, ảnh tham chiếu, pipeline animation, vertical slice animation trận (decision 040, chờ duyệt)
 ✅ Đã làm (chủ dự án: "đọc `art_inbox/.batch/Sobi_Adventure_UI_Animation_Claude_Prompt.md` rồi triển khai; xong phải có file hướng dẫn"):
