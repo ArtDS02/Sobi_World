@@ -6,10 +6,9 @@ import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
 import { AB, ENEMIES, MAPS, ZONES } from '../config/content';
 import { addCount } from '../encounter';
-import type { Run } from '../state';
 import { credit, runAdventure, type AdventureResult } from './kit';
 import { chargeParty, type PartyArgs } from './start';
-import { commit, giveExp, groupEnemies, type Step } from './trip';
+import { commit, freshRun, giveExp, groupEnemies, type Step } from './trip';
 
 export function sweepZone(world: WorldSave, args: PartyArgs & { zoneId: string }, ctx: ActionContext): AdventureResult {
   return runAdventure(world, ctx, (w, a) => {
@@ -21,11 +20,7 @@ export function sweepZone(world: WorldSave, args: PartyArgs & { zoneId: string }
     if (!party.ok) return party;
     const seed = Math.floor(ctx.rng.next() * 2 ** 31);
     const first = MAPS[zone.maps[0]!]!;
-    const run: Run = {
-      zoneId: zone.id, mapId: first.id, x: 0, y: 0, facing: 'down', seed, team: party.team, prep: party.prep, phase: 'explore', battle: null, fighting: null,
-      encounters: 0, defeated: [], harvested: [], springs: [], blessings: {}, graceUntil: null, loot: {}, coins: 0, gems: 0, expGained: 0, spGained: 0,
-      levelUps: [], lastEvent: null, log: [], bossBeaten: false, result: null, startedAt: ctx.now,
-    };
+    const run = freshRun({ zoneId: zone.id, mapId: first.id, x: 0, y: 0, seed, team: party.team, prep: party.prep, startedAt: ctx.now });
     const st: Step = { w: party.world, a: { ...a, fighters: party.fighters }, run, events: [{ type: 'ADVENTURE_RUN_STARTED', zoneId: zone.id, team: args.keys, prep: party.prep }], xp: 0, ctx };
     const rng = mulberry32(hashSeed('sweep', seed));
     const share = AB.sweep.share;

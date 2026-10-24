@@ -12,7 +12,8 @@ import { EQUIPMENT_SLOTS, type EquipmentSlot } from '../../../systems/equipment'
 import { fighterOf } from '../logic/actions/camp';
 import { GUARDIAN_ART } from '../logic/art';
 import { changeClass, classChangeCost, resetCost, resetTree, setLoadout, stepNode, useScroll } from '../logic/actions/growth';
-import { AB, CLASS_LIST, EQUIPMENT_DEFS, NODES, SKILL_SCROLL, SKILLS, TREES, identityOf, type ClassId, type Identity } from '../logic/config/content';
+import { hasTitle, titleOf } from '../logic/bonds';
+import { AB, CLASS_LIST, ENGAGEMENT, EQUIPMENT_DEFS, NODES, RIFT, SKILL_SCROLL, SKILLS, TREES, identityOf, type ClassId, type Identity, type LineageId } from '../logic/config/content';
 import { classOf, energyOf, exhaustedLeft, expNeeded, fighterSkills, fighterStats, msToEnergy, whyNotReady } from '../logic/fighters';
 import { adventureOf } from '../logic/save/lens';
 import type { Fighter } from '../logic/state';
@@ -57,6 +58,9 @@ export interface FighterCardVm {
   classId: ClassId;
   classLabel: string;
   lineLabel: string;
+  lineage: LineageId;
+  /** Its title (the highest earned), or null. */
+  honor: string | null;
   elements: string;
   elementList: Element[];
   level: string;
@@ -85,8 +89,8 @@ function reasonText(error: ErrorCode, entry: RosterEntry, f: Fighter, now: numbe
   return vi.error[error];
 }
 
-const healsBy = (skills: readonly SkillSlot[]) => skills.some((s) => SKILLS[s.id]?.effects.some((e) => e.kind === 'heal' && !('to' in e && e.to === 'self')));
-const cleansesDoomBy = (skills: readonly SkillSlot[]) => skills.some((s) => SKILLS[s.id]?.effects.some((e) => e.kind === 'cleanse' && e.doom));
+export const healsBy = (skills: readonly SkillSlot[]) => skills.some((s) => SKILLS[s.id]?.effects.some((e) => e.kind === 'heal' && !('to' in e && e.to === 'self')));
+export const cleansesDoomBy = (skills: readonly SkillSlot[]) => skills.some((s) => SKILLS[s.id]?.effects.some((e) => e.kind === 'cleanse' && e.doom));
 
 export function fighterCardVm(world: WorldSave, entry: RosterEntry, now: number): FighterCardVm | null {
   const identity = identityOf(entry);
@@ -107,6 +111,8 @@ export function fighterCardVm(world: WorldSave, entry: RosterEntry, now: number)
     classId,
     classLabel: className(classId),
     lineLabel: lineageName(identity.lineage.id),
+    lineage: identity.lineage.id,
+    honor: titleOf(a.fighters[entry.key])?.nameVi ?? null,
     elements: elementList.map(elementLabel).join(' · '),
     elementList,
     level: t(vi.adventure.card.level, { level: f.level }),
@@ -170,6 +176,27 @@ export interface SheetVm {
   slots: SlotVm[];
   scroll: ButtonVm | null;
   temple: { blocked: string | null; classes: (ButtonVm & { classId: ClassId })[]; reset: ButtonVm };
+  /** Its titles (earned ones first, the shown one marked) and its memories (decision 039 §4). */
+  honors: { id: string; name: string; desc: string; earned: boolean; shown: boolean }[];
+  feats: string[];
+}
+
+/** Every title with whether the fighter holds it; the earned ones first (highest rank first), then the rest by rank. */
+export function honorsOf(f: Pick<Fighter, 'feats' | 'bossClears'>): SheetVm['honors'] {
+  const shown = titleOf(f)?.id ?? null;
+  return [...ENGAGEMENT.titles]
+    .map((t0) => ({ id: t0.id, name: t0.nameVi, desc: t0.descVi, earned: hasTitle(f, t0), shown: t0.id === shown, rank: t0.rank }))
+    .sort((a, b) => Number(b.earned) - Number(a.earned) || (a.earned ? b.rank - a.rank : a.rank - b.rank))
+    .map(({ rank: _rank, ...h }) => h);
+}
+
+/** Its memories in words: battles won, strongest hit, Ultimates, deepest Rift floor, Nightmares purified. */
+export function featLines(f: Pick<Fighter, 'feats'>): string[] {
+  const S = vi.adventure.engage.sheet;
+  const lines = [t(S.battles, { n: formatInt(f.feats.battles) }), t(S.bestHit, { n: formatInt(f.feats.bestHit) }), t(S.ultimates, { n: formatInt(f.feats.ultimates) })];
+  if (f.feats.rift > 0) lines.push(t(S.rift, { n: f.feats.rift }));
+  if (f.feats.nightmares.length > 0) lines.push(t(S.nightmares, { names: f.feats.nightmares.map((id) => RIFT.nightmares.find((n) => n.enemy === id)?.nameVi ?? id).join(', ') }));
+  return lines;
 }
 
 export function slotVms(loadout: Partial<Record<EquipmentSlot, string>>): SlotVm[] {
@@ -238,5 +265,7 @@ export function sheetVm(world: WorldSave, entry: RosterEntry, now: number, roste
       })),
       reset: { label: resetCost(f) === 0 ? vi.adventure.sheet.resetFree : t(vi.adventure.sheet.reset, { cost: formatInt(resetCost(f)) }), reason: run((w, c) => resetTree(w, { key: entry.key, roster }, c)) },
     },
+    honors: honorsOf(f),
+    feats: featLines(f),
   };
 }

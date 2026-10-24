@@ -468,6 +468,11 @@ $adv-pink: #ef5a78;
   }
 
   &__fighter-art { width: 4.8rem; height: 4.8rem; object-fit: contain; }
+  &__fighter-pick &__fighter-honor { max-width: 100%; overflow: hidden; font-style: italic; color: #a06a10; text-overflow: ellipsis; white-space: nowrap; }
+
+  // The bonds of the chosen team (decision 039).
+  &__bonds { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: $fs-xs; small { font-weight: $fw-bold; color: $adv-wood; } }
+  &__bond { padding: 1px $sp-2; font-weight: $fw-bold; color: #5a2a8a; cursor: help; background: #f1e4ff; border: 2px solid #b48ae6; border-radius: 999px; }
   &__fighter-els { position: absolute; top: 2px; left: 2px; display: grid; gap: 2px; }
   &__fighter-class { position: absolute; top: 0; right: 0; padding: 3px; background: $adv-cream-2; border-radius: 0.5rem; }
 
@@ -1077,7 +1082,10 @@ $adv-pink: #ef5a78;
 
     &.is-win h3 { color: $c-success; }
     &.is-lose h3 { color: $c-danger; }
+    &.is-rift h3 { color: #6a2fa0; }
   }
+
+  &__advice { display: grid; gap: 2px; width: 100%; padding: $sp-2 $sp-3; text-align: left; background: #fff7e2; border: 2px dashed $c-honey; border-radius: $radius-md; ul { display: grid; gap: 2px; padding-left: $sp-4; list-style: disc; } li { font-size: $fs-sm; } }
 
   &__loot ul { display: flex; flex-wrap: wrap; gap: $sp-3; padding: 0; margin: $sp-1 0; list-style: none; li { display: flex; gap: $sp-1; align-items: center; } }
   &__loot-icon { width: 3rem; height: 3rem; object-fit: contain; }
@@ -1116,9 +1124,21 @@ $adv-pink: #ef5a78;
   &__me { background: #e0303a !important; border-radius: 50%; transform: scale(2); }
 }
 
+.adventure-rift {
+  &__floor { font-size: 1.2rem; font-weight: $fw-bold; color: $adv-ink; }
+  &__rule { display: grid; gap: 2px; small { color: $c-text-muted; } }
+  &__team { display: flex; flex-wrap: wrap; gap: $sp-2; justify-content: center; }
+  &__nightmare { padding: 2px $sp-3; font-weight: $fw-bold; color: #fff; background: linear-gradient(90deg, #8a1f3c, #4a1a6a); border-radius: 999px; }
+  &__go { display: flex; flex-wrap: wrap; gap: $sp-2; justify-content: center; }
+}
+
+.adventure-explore__event.is-tip { bottom: auto; top: 6.5rem; display: grid; gap: $sp-1; background: #eef8ff; border-color: #6aaee0; }
+
 .adventure-sheet {
   display: grid;
   gap: $sp-2;
+  &__honors { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: $sp-1; padding: 0; margin: 0; list-style: none; li { display: grid; padding: $sp-1 $sp-2; background: $c-surface-alt; border-radius: $radius-md; small { font-size: $fs-xs; color: $c-text-muted; } } li.is-locked { opacity: 0.5; } li.is-earned { background: #fff1d0; } li.is-shown { box-shadow: 0 0 0 2px #f2c14e; } }
+  &__feats { display: grid; gap: 2px; padding-left: $sp-4; margin: 0; font-size: $fs-sm; }
   &__tabs { display: flex; flex-wrap: wrap; gap: $sp-1; }
   &__arts { display: flex; align-items: flex-end; gap: $sp-3; }
   &__art { width: 6rem; height: 6rem; object-fit: contain; }
@@ -1151,9 +1171,65 @@ $adv-pink: #ef5a78;
   }
   &__desc { color: $c-text-muted; font-size: $fs-xs; }
   &__buttons { display: flex; flex-wrap: wrap; gap: $sp-1; }
+
 }
 
 .adventure-portal { justify-items: stretch; }
+
+.adventure-ui {
+  // The last step over the field (decision 039): numbers rising from the units, one banner, a short shake.
+  &__floats { position: absolute; top: 22%; left: 50%; z-index: 5; display: grid; gap: 2px; justify-items: center; pointer-events: none; transform: translateX(-50%); }
+  &__float {
+    font-size: 1.7rem;
+    font-weight: $fw-bold;
+    line-height: 1;
+    color: #fff;
+    white-space: nowrap;
+    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.55), 0 0 6px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    animation: adventure-float 1.3s ease-out var(--fx-delay, 0ms) both;
+
+    &.is-crit { font-size: 2.3rem; color: #ffd84a; }
+    &.is-strong { color: #ffb24a; }
+    &.is-weak { font-size: 1.1rem; color: #d8d8e8; }
+    &.is-heal { color: #8cf07a; }
+    &.is-miss { font-size: 1.1rem; color: #e8eef8; font-style: italic; }
+    &.is-status { font-size: 0.95rem; color: #ff9ad0; }
+    &.is-buff { font-size: 0.95rem; color: #9ad8ff; }
+  }
+
+  &__fxbanner {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    z-index: 6;
+    display: flex;
+    gap: $sp-3;
+    align-items: center;
+    padding: $sp-2 $sp-6 $sp-2 $sp-2;
+    color: #fff;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(36, 40, 70, 0.92), rgba(70, 50, 120, 0.92));
+    border: 3px solid #ffe39a;
+    border-radius: 999px;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    animation: adventure-banner 1.6s ease-out var(--fx-delay, 0ms) both;
+
+    &.is-reaction { background: linear-gradient(90deg, rgba(20, 110, 160, 0.92), rgba(120, 60, 180, 0.92)); border-color: #9ae6ff; }
+    &.is-phase { background: linear-gradient(90deg, rgba(150, 30, 40, 0.92), rgba(90, 20, 60, 0.92)); border-color: #ff9a9a; }
+    &.is-ultimate { padding-left: $sp-1; background: linear-gradient(90deg, rgba(255, 150, 40, 0.95), rgba(230, 60, 110, 0.95)); border-color: #fff; }
+  }
+  &__fxbanner-portrait { width: 5rem; height: 5rem; object-fit: contain; background: rgba(255, 255, 255, 0.85); border: 3px solid #fff; border-radius: 50%; }
+  &__fxbanner-icon { width: 2.6rem; height: 2.6rem; }
+  &__fxbanner-text { display: grid; gap: 2px; b { font-size: 1.5rem; letter-spacing: 0.02em; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35); } small { font-size: $fs-sm; opacity: 0.92; } }
+
+  &__battle.is-shake &__field { animation: adventure-shake 0.42s ease-out; }
+  &__banner-honor { font-size: 0.72rem; font-style: italic; color: #ffe39a; }
+  &__round-pill.is-rift { background: rgba(110, 50, 160, 0.88); }
+  &__round-pill.is-affix { display: inline-flex; gap: 4px; align-items: center; background: rgba(160, 110, 20, 0.88); .adv-icon { width: 1.2rem; height: 1.2rem; } }
+  &__round-pill.is-escape { background: rgba(190, 60, 40, 0.9); animation: adventure-rage 0.6s ease-in-out infinite alternate; }
+}
 
 @keyframes adventure-hit {
   0%, 100% { transform: translateX(0); }
@@ -1184,6 +1260,38 @@ $adv-pink: #ef5a78;
   to { filter: brightness(1.35); }
 }
 
+@keyframes adventure-float {
+  0% { opacity: 0; transform: translateY(8px) scale(0.7); }
+  15% { opacity: 1; transform: translateY(0) scale(1.15); }
+  30% { transform: translateY(-6px) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-46px); }
+}
+
+@keyframes adventure-banner {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  12% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+  22% { transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -60%) scale(1); }
+}
+
+@keyframes adventure-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 3px); }
+  40% { transform: translate(6px, -3px); }
+  60% { transform: translate(-3px, 2px); }
+  80% { transform: translate(3px, -1px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .adventure-ui__unit, .adventure-ui__unit-art, .adventure-ui__meter--rage .c-bar__fill { animation: none !important; }
+  .adventure-ui__field, .adventure-ui__round-pill { animation: none !important; }
+  .adventure-ui__float, .adventure-ui__fxbanner { animation-name: adventure-fade !important; }
+}
+
+@keyframes adventure-fade {
+  0% { opacity: 0; }
+  10%, 80% { opacity: 1; }
+  100% { opacity: 0; }
 }

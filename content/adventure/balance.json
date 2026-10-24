@@ -28,7 +28,7 @@
   "tree": { "loadoutSlots": 3 },
   "temple": { "classChangePerLevel": 100, "respecPerLevel": 50 },
   "team": { "max": 3, "formations": 3 },
-  "run": { "energyCost": 30, "energyMax": 100, "energyPerHour": 10, "exhaustHours": 4 },
+  "run": { "energyCost": 30, "energyMax": 100, "energyPerHour": 10, "exhaustHours": 1 },
   "sweep": { "share": 0.7 },
   "explore": {
     "feetHalfWidth": 14,

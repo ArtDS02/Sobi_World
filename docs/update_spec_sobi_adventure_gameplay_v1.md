@@ -60,7 +60,7 @@ Kết thúc chuyến: về Trại (đi bộ ra lối vào hoặc qua cổng dị
 - **Một chuyến** = từ lúc rời Trại đến lúc về Trại hoặc thua. Trong chuyến: máu, MP giữ giữa các trận; quái đã hạ không xuất hiện lại; tài nguyên nhỏ đã hái không mọc lại.
 - Chuyến mới: quái và tài nguyên nhỏ xuất hiện lại; máu, MP đầy. **Rương báu, cổng nguyên tố, cổng dịch chuyển đã mở thì mở vĩnh viễn** (theo save).
 - Độ dài chuyến tự giới hạn bởi máu/MP (suối chỉ dùng 1 lần mỗi khu mỗi chuyến) và vì quái không hồi lại trong chuyến. Mục tiêu 12–20 phút.
-- **Thua**: cả đội kiệt sức 4 giờ thật, giữ EXP và loot đã nhặt, về Trại (như cũ). Không ai chết.
+- **Thua**: cả đội kiệt sức 1 giờ thật (decision 039; trước là 4 giờ), giữ EXP và loot đã nhặt, về Trại (như cũ). Không ai chết.
 - **Đi nhanh**: vùng đã hạ trùm có nút ở Trại: tốn năng lượng như một chuyến, nhận loot của quái thường × 0,7 và EXP × 0,7, không có rương báu. Không cần đi bộ.
 
 ---
@@ -432,7 +432,7 @@ Chọn skill → trên mỗi mục tiêu hiện nhãn **Hiệu quả! / Bình th
 
 - EXP mỗi trận cho cả đội còn đứng (đã gục vẫn nhận 50%). Nhịp lên cấp giữ tinh thần decision 019 (cấp 30 sau khoảng 25 ngày chơi đều), chỉnh lại bằng `sim:week`.
 - Loot quái thường, rương báu, trùm theo bảng hiện có của từng vùng; Gems theo GAME_BALANCE §8 (rương báu 3–4%, rương trùm 8–12%). Vật liệu cổ, hạt / cá / trứng hiếm về các Area như decision 019.
-- Thua: kiệt sức 4 giờ, giữ EXP, loot đã nhặt; Rage giữ nguyên. Không có hình phạt khác.
+- Thua: kiệt sức 1 giờ (decision 039), giữ EXP, loot đã nhặt; Rage giữ nguyên. Không có hình phạt khác.
 
 ---
 
@@ -529,3 +529,8 @@ Potion (Healing, Chiến Đấu) dùng trong trận; khẩu phần Garden; vật
 - [ ] Save cũ đọc được, migration có test với save thật; không mất gì
 - [ ] Mọi bảng sửa được ở Admin; trình sửa bản đồ chặn bản đồ lỗi
 - [ ] Việt / Anh đầy đủ; `npm run check` xanh; `items:audit` sạch
+
+---
+
+## 25. Bổ sung sau V2 (decision 039)
+Nhịp chơi và endgame: biến thể của nhóm quái thường (Hăng Máu, Bọc Giáp, Nhanh Nhẹn, Ướt Sũng, Nhiễm Umbraflux, Vàng Óng bỏ chạy sau 3 vòng), thắng nhanh khi đội đã vượt cấp vùng, Vết Nứt Umbraflux (tầng nối tầng, luật đổi theo ngày, trùm Ác Mộng ở tầng 10 / 20 / 30), cộng hưởng hai dòng Guardian, thành tích và danh hiệu của chiến binh, câu nói theo dòng, mẹo lần đầu vào khu, gợi ý sau khi thua, số bay / băng phản ứng / cut-in Tuyệt kỹ, kiệt sức 1 giờ. Chi tiết và số: `docs/decisions/039-adventure-engagement.md`; dữ liệu: `content/adventure/engagement.json`. Slice Adventure lên v3.

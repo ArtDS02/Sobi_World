@@ -1,0 +1,477 @@
+{
+  "quickWin": { "levelsAbove": 1, "powerRatio": 1.5, "share": 0.8 },
+  "affixChance": 0.2,
+  "affixes": [
+    {
+      "id": "affix_bloodlust",
+      "nameVi": "Hăng Máu",
+      "descVi": "Công +15% và Tăng công đầu trận. Thưởng ×1,4.",
+      "art": "ui_icon_stat_atk",
+      "weight": 4,
+      "stats": { "atk": 1.15, "matk": 1.15 },
+      "statuses": [{ "status": "atkUp", "turns": 3 }],
+      "tags": [],
+      "reward": 1.4,
+      "gemChance": 0,
+      "gems": [0, 0],
+      "escapeAfterRounds": null
+    },
+    {
+      "id": "affix_armored",
+      "nameVi": "Bọc Giáp",
+      "descVi": "Thủ và Thủ phép +35%. Thưởng ×1,4.",
+      "art": "ui_icon_stat_def",
+      "weight": 4,
+      "stats": { "def": 1.35, "mdef": 1.35 },
+      "statuses": [],
+      "tags": [],
+      "reward": 1.4,
+      "gemChance": 0,
+      "gems": [0, 0],
+      "escapeAfterRounds": null
+    },
+    {
+      "id": "affix_swift",
+      "nameVi": "Nhanh Nhẹn",
+      "descVi": "Tốc độ +30% và Tăng né đầu trận. Thưởng ×1,4.",
+      "art": "ui_icon_stat_spd",
+      "weight": 3,
+      "stats": { "spd": 1.3 },
+      "statuses": [{ "status": "evaUp", "turns": 3 }],
+      "tags": [],
+      "reward": 1.4,
+      "gemChance": 0,
+      "gems": [0, 0],
+      "escapeAfterRounds": null
+    },
+    {
+      "id": "affix_soaked",
+      "nameVi": "Ướt Sũng",
+      "descVi": "Cả nhóm Ướt từ đầu trận: thử hệ Sấm (Điện Giật) hoặc Lửa (Hơi Nước). Thưởng ×1,2.",
+      "art": "ui_icon_status_wet",
+      "weight": 3,
+      "stats": {},
+      "statuses": [{ "status": "wet", "turns": 4 }],
+      "tags": [],
+      "reward": 1.2,
+      "gemChance": 0,
+      "gems": [0, 0],
+      "escapeAfterRounds": null
+    },
+    {
+      "id": "affix_corrupted",
+      "nameVi": "Nhiễm Umbraflux",
+      "descVi": "Máu +25%, mang dấu Umbraflux: đòn Ánh sáng sẽ Thanh Tẩy. Thưởng ×1,6.",
+      "art": "ui_icon_react_purify",
+      "weight": 2,
+      "stats": { "hp": 1.25 },
+      "statuses": [],
+      "tags": ["umbraflux"],
+      "reward": 1.6,
+      "gemChance": 0.1,
+      "gems": [1, 1],
+      "escapeAfterRounds": null
+    },
+    {
+      "id": "affix_golden",
+      "nameVi": "Vàng Óng",
+      "descVi": "Sinh vật đi lạc hiếm: ít máu nhưng giáp dày và né giỏi, bỏ chạy sau 3 vòng! Hạ được: tiền ×5, KN ×2, có thể rơi Gems.",
+      "art": "ui_icon_coin",
+      "weight": 1,
+      "stats": { "hp": 0.6, "def": 2, "mdef": 2 },
+      "statuses": [{ "status": "evaUp", "turns": 3 }],
+      "tags": [],
+      "reward": 1.5,
+      "coins": 5,
+      "exp": 2,
+      "gemChance": 0.5,
+      "gems": [1, 2],
+      "escapeAfterRounds": 3
+    }
+  ],
+  "rift": {
+    "requiresCleared": "zone_ruins",
+    "backdrop": "bg_adventure_ruins",
+    "perFloor": 0.05,
+    "zoneScale": { "zone_forest": 3, "zone_mountain": 1.75, "zone_ruins": 1 },
+    "groupSize": [2, 3],
+    "bigFrom": 8,
+    "restPct": 0.3,
+    "coins": 20,
+    "exp": 40,
+    "growth": 0.1,
+    "chestEvery": 5,
+    "table": "treasure_rift",
+    "nightmare": 0.75,
+    "nightmares": [
+      {
+        "floor": 10,
+        "enemy": "enemy_old_treant",
+        "nameVi": "Cổ Thụ Ác Mộng",
+        "escort": ["enemy_forest_wolf", "enemy_thorn_sprout"],
+        "gems": [3, 5],
+        "rage": [{ "status": "atkUp", "turns": 3 }, { "status": "spdUp", "turns": 3 }]
+      },
+      {
+        "floor": 20,
+        "enemy": "enemy_magma_drake",
+        "nameVi": "Rồng Dung Nham Ác Mộng",
+        "escort": ["enemy_lava_newt", "enemy_cliff_hawk"],
+        "gems": [4, 6],
+        "rage": [{ "status": "atkUp", "turns": 3 }, { "status": "matkUp", "turns": 3 }]
+      },
+      {
+        "floor": 30,
+        "enemy": "enemy_ancient_guardian",
+        "nameVi": "Hộ Pháp Ác Mộng",
+        "escort": ["enemy_rune_wisp", "enemy_tide_wraith"],
+        "gems": [5, 8],
+        "rage": [{ "status": "defUp", "turns": 3 }, { "status": "spdUp", "turns": 3 }]
+      }
+    ],
+    "rules": [
+      {
+        "id": "rift_blaze",
+        "nameVi": "Ngày Lửa Bùng",
+        "descVi": "Mọi đòn hệ Lửa của cả hai phe +40%.",
+        "ally": { "statuses": [], "mods": { "elementDamage": { "FIRE": 0.4 } } },
+        "enemy": { "statuses": [], "mods": { "elementDamage": { "FIRE": 0.4 } }, "stats": {} }
+      },
+      {
+        "id": "rift_storm",
+        "nameVi": "Bão Sấm",
+        "descVi": "Kẻ địch Ướt từ đầu trận; đòn Sấm của đội +25%.",
+        "ally": { "statuses": [], "mods": { "elementDamage": { "LIGHTNING": 0.25 } } },
+        "enemy": { "statuses": [{ "status": "wet", "turns": 3 }], "mods": {}, "stats": {} }
+      },
+      {
+        "id": "rift_regrowth",
+        "nameVi": "Rừng Hồi Sinh",
+        "descVi": "Kẻ địch có Hồi phục 3 lượt đầu trận.",
+        "ally": { "statuses": [], "mods": {} },
+        "enemy": { "statuses": [{ "status": "regen", "turns": 3 }], "mods": {}, "stats": {} }
+      },
+      {
+        "id": "rift_bulwark",
+        "nameVi": "Khiên Ánh Sáng",
+        "descVi": "Đội vào mỗi tầng với Khiên bằng 20% máu.",
+        "ally": { "statuses": [{ "status": "shield", "turns": 3, "amountPct": 0.2 }], "mods": {} },
+        "enemy": { "statuses": [], "mods": {}, "stats": {} }
+      },
+      {
+        "id": "rift_gale",
+        "nameVi": "Gió Lốc",
+        "descVi": "Cả hai phe Tăng tốc 2 lượt đầu trận.",
+        "ally": { "statuses": [{ "status": "spdUp", "turns": 2 }], "mods": {} },
+        "enemy": { "statuses": [{ "status": "spdUp", "turns": 2 }], "mods": {}, "stats": {} }
+      },
+      {
+        "id": "rift_frenzy",
+        "nameVi": "Cuồng Nộ",
+        "descVi": "Kẻ địch Công +20%; đội Tăng công và Tăng công phép 3 lượt đầu trận.",
+        "ally": {
+          "statuses": [{ "status": "atkUp", "turns": 3 }, { "status": "matkUp", "turns": 3 }],
+          "mods": {}
+        },
+        "enemy": { "statuses": [], "mods": {}, "stats": { "atk": 1.2, "matk": 1.2 } }
+      },
+      {
+        "id": "rift_twilight",
+        "nameVi": "Hoàng Hôn Vĩnh Cửu",
+        "descVi": "Đòn Ánh sáng và Bóng tối của cả hai phe +35%.",
+        "ally": { "statuses": [], "mods": { "elementDamage": { "LIGHT": 0.35, "DARK": 0.35 } } },
+        "enemy": { "statuses": [], "mods": { "elementDamage": { "LIGHT": 0.35, "DARK": 0.35 } }, "stats": {} }
+      }
+    ]
+  },
+  "synergies": [
+    {
+      "id": "synergy_sea_storm",
+      "nameVi": "Sấm Trên Biển",
+      "descVi": "Nam Hải + Lôi Dương: đòn Sấm +15%, Ướt dễ dính hơn.",
+      "lineages": ["nam_hai", "loi_duong"],
+      "mods": { "elementDamage": { "LIGHTNING": 0.15 }, "statusChance": { "wet": 0.1 } }
+    },
+    {
+      "id": "synergy_wildfire",
+      "nameVi": "Lửa Rừng Thiêng",
+      "descVi": "Hỏa Giải + Mộc Mẫu: đòn Lửa +10%, Độc dễ dính hơn.",
+      "lineages": ["hoa_giai", "moc_mau"],
+      "mods": { "elementDamage": { "FIRE": 0.1 }, "statusChance": { "poison": 0.1 } }
+    },
+    {
+      "id": "synergy_day_night",
+      "nameVi": "Ngày Và Đêm",
+      "descVi": "Quang Trư + Dạ Mặc: đòn Ánh sáng và Bóng tối +10%.",
+      "lineages": ["quang_tru", "da_mac"],
+      "mods": { "elementDamage": { "LIGHT": 0.1, "DARK": 0.1 } }
+    },
+    {
+      "id": "synergy_stone_wall",
+      "nameVi": "Thành Đá Tường Thép",
+      "descVi": "Quy Sơn + Thiết Giáp: đòn vật lý +8%, kháng Choáng và Đóng băng 20%.",
+      "lineages": ["quy_son", "thiet_giap"],
+      "mods": { "categoryDamage": { "physical": 0.08 }, "statusResist": { "stun": 0.2, "freeze": 0.2 } }
+    },
+    {
+      "id": "synergy_spring_rain",
+      "nameVi": "Mưa Xuân",
+      "descVi": "Nam Hải + Mộc Mẫu: đòn Nước và Thiên nhiên +8%, kháng Độc 25%.",
+      "lineages": ["nam_hai", "moc_mau"],
+      "mods": { "elementDamage": { "WATER": 0.08, "NATURE": 0.08 }, "statusResist": { "poison": 0.25 } }
+    },
+    {
+      "id": "synergy_abyss",
+      "nameVi": "Vực Thẳm",
+      "descVi": "Hư Không + Dạ Mặc: đòn Void +10%, Phong ấn dễ dính hơn.",
+      "lineages": ["hu_khong", "da_mac"],
+      "mods": { "elementDamage": { "VOID": 0.1 }, "statusChance": { "disable": 0.1 } }
+    },
+    {
+      "id": "synergy_old_forge",
+      "nameVi": "Lò Rèn Cổ",
+      "descVi": "Hỏa Giải + Thiết Giáp: đòn Lửa và Kim loại +8%, đòn vật lý +5%.",
+      "lineages": ["hoa_giai", "thiet_giap"],
+      "mods": { "elementDamage": { "FIRE": 0.08, "METAL": 0.08 }, "categoryDamage": { "physical": 0.05 } }
+    },
+    {
+      "id": "synergy_dawn_bloom",
+      "nameVi": "Bình Minh Nở Hoa",
+      "descVi": "Quang Trư + Mộc Mẫu: kháng Diệt vong, Độc và Bỏng 15%.",
+      "lineages": ["quang_tru", "moc_mau"],
+      "mods": { "statusResist": { "doom": 0.15, "poison": 0.15, "burn": 0.15 } }
+    }
+  ],
+  "titles": [
+    {
+      "id": "title_rookie",
+      "nameVi": "Tân Binh",
+      "descVi": "Thắng trận đầu tiên.",
+      "kind": "battles",
+      "value": 1,
+      "target": null,
+      "rank": 1
+    },
+    {
+      "id": "title_seasoned",
+      "nameVi": "Chiến Binh Dày Dạn",
+      "descVi": "Thắng 30 trận.",
+      "kind": "battles",
+      "value": 30,
+      "target": null,
+      "rank": 2
+    },
+    {
+      "id": "title_veteran",
+      "nameVi": "Lão Làng",
+      "descVi": "Thắng 100 trận.",
+      "kind": "battles",
+      "value": 100,
+      "target": null,
+      "rank": 4
+    },
+    {
+      "id": "title_thunder_fist",
+      "nameVi": "Cú Đấm Sấm Sét",
+      "descVi": "Gây 300 sát thương trong một đòn.",
+      "kind": "bestHit",
+      "value": 300,
+      "target": null,
+      "rank": 3
+    },
+    {
+      "id": "title_titan",
+      "nameVi": "Sức Mạnh Cổ Thần",
+      "descVi": "Gây 800 sát thương trong một đòn.",
+      "kind": "bestHit",
+      "value": 800,
+      "target": null,
+      "rank": 6
+    },
+    {
+      "id": "title_ultimate",
+      "nameVi": "Bậc Thầy Tuyệt Kỹ",
+      "descVi": "Tung 10 Tuyệt kỹ.",
+      "kind": "ultimates",
+      "value": 10,
+      "target": null,
+      "rank": 3
+    },
+    {
+      "id": "title_root_calmer",
+      "nameVi": "Người Xoa Dịu Cổ Thụ",
+      "descVi": "Hạ trùm Rừng Thì Thầm.",
+      "kind": "boss",
+      "value": 0,
+      "target": "zone_forest",
+      "rank": 5
+    },
+    {
+      "id": "title_drake_bane",
+      "nameVi": "Kẻ Diệt Rồng Dung Nham",
+      "descVi": "Hạ trùm Núi Đá Vọng.",
+      "kind": "boss",
+      "value": 0,
+      "target": "zone_mountain",
+      "rank": 6
+    },
+    {
+      "id": "title_seal_keeper",
+      "nameVi": "Người Giữ Phong Ấn",
+      "descVi": "Hạ trùm Tàn Tích Cổ.",
+      "kind": "boss",
+      "value": 0,
+      "target": "zone_ruins",
+      "rank": 7
+    },
+    {
+      "id": "title_rift_walker",
+      "nameVi": "Kẻ Lội Vết Nứt",
+      "descVi": "Qua tầng 10 của Vết Nứt.",
+      "kind": "rift",
+      "value": 10,
+      "target": null,
+      "rank": 7
+    },
+    {
+      "id": "title_void_unbroken",
+      "nameVi": "Bất Khuất Trong Hư Vô",
+      "descVi": "Qua tầng 25 của Vết Nứt.",
+      "kind": "rift",
+      "value": 25,
+      "target": null,
+      "rank": 9
+    },
+    {
+      "id": "title_nightmare_forest",
+      "nameVi": "Kẻ Xua Ác Mộng Rừng",
+      "descVi": "Hạ Cổ Thụ Ác Mộng.",
+      "kind": "nightmare",
+      "value": 0,
+      "target": "enemy_old_treant",
+      "rank": 8
+    },
+    {
+      "id": "title_nightmare_drake",
+      "nameVi": "Kẻ Dập Lửa Ác Mộng",
+      "descVi": "Hạ Rồng Dung Nham Ác Mộng.",
+      "kind": "nightmare",
+      "value": 0,
+      "target": "enemy_magma_drake",
+      "rank": 9
+    },
+    {
+      "id": "title_last_light",
+      "nameVi": "Ánh Sáng Cuối Cùng",
+      "descVi": "Hạ Hộ Pháp Ác Mộng.",
+      "kind": "nightmare",
+      "value": 0,
+      "target": "enemy_ancient_guardian",
+      "rank": 10
+    }
+  ],
+  "quips": {
+    "nam_hai": {
+      "winVi": ["Sóng lặng rồi, mình đi tiếp nhé.", "Một khúc ca cho chiến thắng nhỏ này!"],
+      "bossVi": ["Đại dương hát vang cho chúng ta!", "Nghe không? Biển đang reo hò đấy."],
+      "chestVi": ["Kho báu lấp lánh như ánh trăng trên sóng!", "Để mình mang giúp cho, nặng lắm đó."],
+      "lowVi": ["Mình hơi mệt... tìm suối nghỉ chút nhé?", "Sóng yếu quá, cần nghỉ ngơi thôi."],
+      "levelUpVi": ["Giọng hát của mình vang xa hơn rồi!", "Biển trong lòng mình rộng thêm một chút."]
+    },
+    "quy_son": {
+      "winVi": ["Chậm mà chắc.", "Núi không lay, đội mình cũng vậy."],
+      "bossVi": ["Đá cứng đến mấy cũng có ngày vỡ.", "Ta đứng đây, không ai qua được."],
+      "chestVi": ["Từ từ mở, đừng làm vỡ.", "Đồ tốt đấy, cất kỹ nhé."],
+      "lowVi": ["Mai mình nứt rồi... nghỉ chút đã.", "Đá cũng cần thời gian để liền."],
+      "levelUpVi": ["Mai mình dày thêm một lớp.", "Núi cao thêm một chút."]
+    },
+    "da_mac": {
+      "winVi": ["Hì hì, chúng nó còn chưa thấy mình đâu.", "Bóng tối luôn về phe mình."],
+      "bossVi": ["Màn đêm đã nuốt trọn ác mộng.", "Đừng sợ, ác mộng tan rồi."],
+      "chestVi": ["Tám cái tay, mở rương nhanh nhất vùng!", "Có gì lấp lánh trong bóng tối kìa."],
+      "lowVi": ["Mực sắp cạn rồi...", "Mình trốn sau lưng bạn một chút nhé."],
+      "levelUpVi": ["Bóng của mình dài thêm rồi!", "Thêm một chiêu bí mật nữa, suỵt."]
+    },
+    "quang_tru": {
+      "winVi": ["Đèn vẫn sáng, mọi người ổn chứ?", "Ánh sáng thắng rồi!"],
+      "bossVi": ["Bóng tối tan, đường về sáng rỡ!", "Lồng đèn rực rỡ nhất đêm nay!"],
+      "chestVi": ["Sáng quá! Là kho báu thật kìa!", "Để mình soi xem bên trong có gì."],
+      "lowVi": ["Đèn mình leo lét rồi...", "Ai đó châm thêm dầu cho mình với."],
+      "levelUpVi": ["Đèn sáng thêm một vòng!", "Mình soi xa được hơn rồi!"]
+    },
+    "loi_duong": {
+      "winVi": ["Nhanh như chớp!", "Ầm! Xong rồi, tiếp đi!"],
+      "bossVi": ["Sấm rền vang cả vùng!", "Chưa đã! Còn ai nữa không?"],
+      "chestVi": ["Mở lẹ, mở lẹ!", "Rương này có điện không ta?"],
+      "lowVi": ["Pin yếu rồi...", "Sừng mình tê rần, chậm lại chút."],
+      "levelUpVi": ["Tốc độ tăng vọt!", "Tia sét trong mình mạnh hơn rồi!"]
+    },
+    "thiet_giap": {
+      "winVi": ["Giáp vẫn chắc, tiến lên!", "Vì Sobi World!"],
+      "bossVi": ["Hiệp sĩ không bao giờ lùi bước!", "Lời thề đã giữ trọn."],
+      "chestVi": ["Chiến lợi phẩm xứng đáng.", "Để ta canh, mọi người cứ xem."],
+      "lowVi": ["Giáp móp rồi... cần sửa.", "Ta còn đứng được, nhưng không lâu nữa."],
+      "levelUpVi": ["Thanh kiếm sắc thêm.", "Ta mạnh hơn để bảo vệ mọi người."]
+    },
+    "hoa_giai": {
+      "winVi": ["Nóng hổi vừa thổi vừa đánh!", "Lửa rèn chưa bao giờ tắt!"],
+      "bossVi": ["Rèn xong một chiến công!", "Búa nện, đất trời rung chuyển!"],
+      "chestVi": ["Quặng tốt! Mang về lò rèn thôi.", "Càng mình kẹp chặt rồi, không rơi đâu."],
+      "lowVi": ["Lửa sắp tàn...", "Càng mình mỏi nhừ rồi."],
+      "levelUpVi": ["Lò rèn trong mình nóng hơn!", "Một đôi càng mới tinh!"]
+    },
+    "moc_mau": {
+      "winVi": ["Mọi người không sao chứ? Để mình xem nào.", "Hoa lại nở rồi."],
+      "bossVi": ["Rừng thở phào rồi đấy.", "Rễ đã yên, đất đã lành."],
+      "chestVi": ["Có hạt giống trong này không nhỉ?", "Mang về cho vườn nhà mình nhé."],
+      "lowVi": ["Lá héo cả rồi... cần chút nước.", "Đừng lo cho mình, lo cho đội trước."],
+      "levelUpVi": ["Thêm một vòng hoa nở!", "Mình lớn thêm như cây non."]
+    },
+    "hu_khong": {
+      "winVi": ["Có... rồi không... thế thôi.", "Trôi qua như gió."],
+      "bossVi": ["Hư không trả lại sự tĩnh lặng.", "Chuông đã ngân, mọi thứ yên rồi."],
+      "chestVi": ["Bên trong cái rương là... đồ thật kìa.", "Mình thích cái này, nó sáng."],
+      "lowVi": ["Mình đang... mờ dần...", "Trôi chậm lại một chút thôi."],
+      "levelUpVi": ["Mình rộng thêm một chút xíu.", "Hư không vừa mở thêm một cánh cửa."]
+    }
+  },
+  "quipChance": 0.3,
+  "tips": [
+    {
+      "id": "tip_forest_edge",
+      "mapId": "map_forest_edge",
+      "titleVi": "Mẹo: khắc hệ",
+      "textVi": "Đến gần nhóm quái để xem hệ của chúng. Đánh đúng hệ khắc gây ×1,5 sát thương: Kim khắc Thiên nhiên, Thiên nhiên khắc Đất, Đất khắc Nước, Nước khắc Lửa, Lửa khắc Kim. Khi chọn mục tiêu, nhãn \"Hiệu quả!\" cho biết đòn có khắc hay không."
+    },
+    {
+      "id": "tip_forest_deep",
+      "mapId": "map_forest_deep",
+      "titleVi": "Mẹo: đọc ý định",
+      "textVi": "Biểu tượng trên đầu kẻ địch là việc nó sẽ làm ở lượt tới. Thấy nó sắp tung chiêu mạnh vào một bạn yếu? Cho bạn đó Phòng thủ (nhận nửa sát thương, hồi MP) hoặc hạ nó trước."
+    },
+    {
+      "id": "tip_forest_heart",
+      "mapId": "map_forest_heart",
+      "titleVi": "Mẹo: phản ứng nguyên tố",
+      "textVi": "Kẻ địch đang Ướt trúng đòn Sấm sẽ bị Điện Giật (thêm sát thương, có thể choáng); Độc gặp Lửa thành Cháy Rừng lan khắp phe địch. Trùm đổi pha khi còn nửa máu: để dành Tuyệt kỹ cho lúc đó."
+    },
+    {
+      "id": "tip_mountain_foot",
+      "mapId": "map_mountain_foot",
+      "titleVi": "Mẹo: biến thể của quái",
+      "textVi": "Nhóm quái có nhãn như Hăng Máu, Bọc Giáp mạnh hơn nhưng thưởng nhiều hơn. Gặp nhóm Vàng Óng thì đánh thật nhanh: sau 3 vòng nó bỏ chạy! Độc, Bỏng gỡ được bằng kỹ năng Thanh Tẩy."
+    },
+    {
+      "id": "tip_mountain_peak",
+      "mapId": "map_mountain_peak",
+      "titleVi": "Mẹo: Nộ và Tuyệt kỹ",
+      "textVi": "Mỗi lần bị đánh, chiến binh tích Nộ. Nộ đầy thì tung được Tuyệt kỹ, mỗi trận một lần. Nộ được giữ qua các trận, nên để dành cho trùm thường là nước đi hay."
+    },
+    {
+      "id": "tip_ruins_gate",
+      "mapId": "map_ruins_gate",
+      "titleVi": "Mẹo: Diệt vong",
+      "textVi": "Kẻ địch ở Tàn Tích có thể gieo Diệt vong: đếm ngược 3 lượt rồi hạ gục ngay. Chỉ Thanh Tẩy, Ánh Sáng Đầu Tiên hoặc Hồi sinh tự động cứu được: hãy mang theo một bạn Hỗ trợ."
+    }
+  ]
+}

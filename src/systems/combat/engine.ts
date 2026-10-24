@@ -6,7 +6,7 @@ import { cloneData } from '../../core/clone';
 import { hashSeed, mulberry32 } from '../../core/rng';
 import { planIntents } from './ai';
 import { aimableFoes, alliesOf, current, find, foesOf, isAlive, levelOf, noSkills, skillMpCost, skipsTurn, stat, ultimateReady } from './rules';
-import { gainRage, hurt, removeStatus, settleKo, spread, strike } from './resolve';
+import { addStatus, gainRage, hurt, removeStatus, settleKo, spread, strike } from './resolve';
 import { combatantOf } from './combatant';
 export { combatantOf, emptyMods } from './combatant';
 export { hitCategory } from './resolve';
@@ -137,6 +137,10 @@ function begin(s: BattleState, ctx: CombatContext, events: BattleEvent[]) {
 /** A new battle, at the first action of the fastest fighter. */
 export function startBattle(seed: number, fighters: readonly CombatantInit[], ctx: CombatContext): { state: BattleState; events: BattleEvent[] } {
   const state: BattleState = { seed, counter: 0, round: 0, order: [], combatants: fighters.map(combatantOf), outcome: null };
+  fighters.forEach((f, i) => {
+    const c = state.combatants[i]!;
+    for (const st of f.statuses ?? []) addStatus(c, st.status, st.turns, Math.round(c.stats.hp * (st.amountPct ?? 0)), null, ctx);
+  });
   state.outcome = outcomeOf(state);
   const events: BattleEvent[] = [];
   begin(state, ctx, events);

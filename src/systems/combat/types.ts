@@ -178,6 +178,8 @@ export interface CombatantInit {
   rageMax?: number | undefined;
   mods?: Partial<Mods> | undefined;
   phases?: readonly Phase[] | undefined;
+  /** Statuses it already carries when the battle starts (an enemy variant, a Rift rule); a Shield absorbs `amountPct` of its max HP. */
+  statuses?: readonly { status: StatusId; turns: number; amountPct?: number | undefined }[] | undefined;
 }
 
 export type { CombatContext, CombatRules, ElementChart, ReactionDef, StatusDef } from './context';

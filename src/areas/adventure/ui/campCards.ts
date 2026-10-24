@@ -67,6 +67,7 @@ export function fighterCard(c: FighterCardVm, ctx: ViewCtx): HTMLElement {
       art(c.art, 'adventure-ui__fighter-art', c.name) ?? el('span', { class: 'adventure-ui__fighter-art' }),
       el('b', { text: c.name }),
       el('small', { text: `${c.classLabel} · ${c.level}` }),
+      c.honor ? el('small', { class: 'adventure-ui__fighter-honor', text: `«${c.honor}»` }) : null,
     ),
     el(
       'div',

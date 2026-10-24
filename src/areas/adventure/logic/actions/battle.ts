@@ -1,16 +1,20 @@
 // A battle on the trip (spec §14–§16): the current ally acts (or Auto chooses), the enemies answer; fleeing from a normal group; the end
-// of a battle — HP, MP and Rage carry on, the rewards, the area's guardian lights its portal, the zone boss clears the zone (its chest,
-// SP for every fighter's first time), a loss ends the trip.
+// of a battle — HP, MP and Rage carry on, the rewards (more for a group wearing a variant, less for a quick win), the area's guardian
+// lights its portal, the zone boss clears the zone (its chest, SP for every fighter's first time), a loss ends the trip. A golden group
+// runs away when its rounds are over; a Rift floor settles in rift.ts (decision 039).
 import type { ErrorCode } from '../../../../core/config/errors';
 import { hashSeed, mulberry32 } from '../../../../core/rng';
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
 import { act, chooseAction, current } from '../../../../systems/combat';
 import type { BattleAction, BattleState } from '../../../../systems/combat/types';
-import { AB, BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, LOOT_TABLES, MAPS } from '../config/content';
-import { addCount, enemyIdOf, playEnemies, rollTable } from '../encounter';
+import { titlesOf } from '../bonds';
+import { AB, BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, LOOT_TABLES, MAPS, type Affix } from '../config/content';
+import { addCount, enemyIdOf, playEnemies, randInt, rollTable } from '../encounter';
+import { affixOfTags } from '../variants';
 import { countOf, credit, runAdventure, take, type AdventureResult } from './kit';
-import { commit, finish, giveExp, setFighter, stepOf, type Step } from './trip';
+import { settleRiftFloor } from './rift';
+import { announceTitles, carryOver, cheer, commit, finish, giveExp, recordFeats, setFighter, stepOf, updateFeats, type Step } from './trip';
 
 const STEP_ERRORS: Record<string, ErrorCode> = {
   BATTLE_OVER: 'WRONG_PHASE',
@@ -30,20 +34,16 @@ function foughtGroup(st: Step) {
   return { map, group: map?.groups.find((g) => g.id === groupId) };
 }
 
-/** HP, MP and Rage of the team as the battle left them. */
-function carryOver(st: Step, battle: BattleState) {
-  for (const m of st.run.team) {
-    const c = battle.combatants.find((x) => x.id === m.key);
-    if (!c) continue;
-    m.hp = c.hp;
-    m.mp = c.mp;
-    m.rage = c.rage;
-  }
-}
+/** The variant the enemies of a battle wear (the same on all of them), or null. */
+export const battleAffix = (battle: BattleState): Affix | null => affixOfTags(battle.combatants.find((c) => c.side === 'enemy')?.tags ?? []);
 
-/** A battle has ended: its rewards on a win, the end of the trip on a loss. */
-export function settleBattle(st: Step, battle: BattleState) {
+/** A battle has ended: its rewards on a win (`share` of them for a quick win), the end of the trip on a loss. */
+export function settleBattle(st: Step, battle: BattleState, share = 1) {
   const { run } = st;
+  if (run.rift) {
+    settleRiftFloor(st, battle);
+    return;
+  }
   const key = run.fighting;
   const { map, group } = foughtGroup(st);
   carryOver(st, battle);
@@ -54,20 +54,29 @@ export function settleBattle(st: Step, battle: BattleState) {
     finish(st, 'lose');
     return;
   }
+  const affix = battleAffix(battle);
   const rng = mulberry32(hashSeed('drops', run.seed, key, run.encounters));
   const enemies = battle.combatants.filter((c) => c.side === 'enemy').map((c) => ENEMIES[enemyIdOf(c.id)]!);
-  const exp = enemies.reduce((n, e) => n + e.exp, 0);
-  const coins = enemies.reduce((n, e) => n + e.coins, 0);
-  for (const e of enemies) for (const d of e.drops) if (rng.next() < d.chance) addCount(run.loot, d.itemId, d.min + Math.floor(rng.next() * (d.max - d.min + 1)));
+  const expMult = share * (affix?.exp ?? affix?.reward ?? 1);
+  const coinMult = share * (affix?.coins ?? affix?.reward ?? 1);
+  const dropMult = share * (affix?.reward ?? 1);
+  const exp = Math.round(enemies.reduce((n, e) => n + e.exp, 0) * expMult * 10) / 10;
+  const coins = Math.round(enemies.reduce((n, e) => n + e.coins, 0) * coinMult);
+  for (const e of enemies) for (const d of e.drops) if (rng.next() < Math.min(1, d.chance * dropMult)) addCount(run.loot, d.itemId, d.min + Math.floor(rng.next() * (d.max - d.min + 1)));
+  const gems = affix && affix.gemChance > 0 && rng.next() < affix.gemChance ? randInt(rng, affix.gems) : 0;
   st.w = credit(st.w, 'coins', coins, 'ADVENTURE_LOOT', st.ctx, key);
+  st.w = credit(st.w, 'gems', gems, 'ADVENTURE_LOOT', st.ctx, key);
   run.coins += coins;
+  run.gems += gems;
   run.defeated.push(key);
   giveExp(st, exp);
+  updateFeats(st, (feats) => ({ ...feats, battles: feats.battles + 1 }));
   st.a = { ...st.a, battlesWon: st.a.battlesWon + 1 };
   st.xp += AB.xp.battleWin;
   const boss = group.kind === 'boss';
   const elite = group.kind === 'elite';
-  st.events.push({ type: 'ADVENTURE_BATTLE_WON', zoneId: run.zoneId, boss, elite, enemies: enemies.length, exp, coins });
+  st.events.push({ type: 'ADVENTURE_BATTLE_WON', zoneId: run.zoneId, boss, elite, enemies: enemies.length, exp, coins, quick: share < 1, affix: affix?.id ?? null, gems });
+  cheer(st, boss || elite || !!affix?.escapeAfterRounds);
   if ((boss || elite) && !st.a.activePortals.includes(map.id)) {
     st.a = { ...st.a, activePortals: [...st.a.activePortals, map.id] };
     st.events.push({ type: 'ADVENTURE_PORTAL_ACTIVATED', mapId: map.id });
@@ -92,12 +101,25 @@ export function settleBattle(st: Step, battle: BattleState) {
     for (const m of run.team) {
       const f = st.a.fighters[m.key];
       if (!f || f.bossClears.includes(zoneId)) continue;
+      const before = new Set(titlesOf(f).map((t) => t.id));
       setFighter(st, m.key, { sp: f.sp + AB.sp.bossFirstClear, bossClears: [...f.bossClears, zoneId] });
+      announceTitles(st, m.key, m.name, before);
       run.spGained += AB.sp.bossFirstClear;
       st.events.push({ type: 'ADVENTURE_SP_GAINED', key: m.key, amount: AB.sp.bossFirstClear, why: 'boss' });
     }
     st.events.push({ type: 'ADVENTURE_ZONE_CLEARED', zoneId, first });
   }
+}
+
+/** A golden group whose rounds are over runs away: gone for the trip, nothing won, the team keeps what the battle left it. */
+function escape(st: Step, battle: BattleState, affix: Affix) {
+  const { run } = st;
+  carryOver(st, battle);
+  if (run.fighting) run.defeated.push(run.fighting);
+  run.battle = null;
+  run.phase = 'explore';
+  run.fighting = null;
+  st.events.push({ type: 'ADVENTURE_FOE_ESCAPED', affix: affix.id });
 }
 
 /**
@@ -129,20 +151,23 @@ export function battleAct(world: WorldSave, args: { action: BattleAction | 'auto
       st.events.push({ type: 'ADVENTURE_ITEM_USED', itemId: action.itemId });
     }
     run.log = events;
+    recordFeats(st, events);
+    const affix = battleAffix(battle);
     if (battle.outcome) settleBattle(st, battle);
+    else if (affix?.escapeAfterRounds && battle.round > affix.escapeAfterRounds) escape(st, battle, affix);
     else run.battle = battle;
     return commit(st);
   });
 }
 
-/** Running from a normal group (never from a guardian or a boss): the damage taken stays, the group stays, a short grace follows. */
+/** Running from a normal group (never from a guardian, a boss or a Rift floor): the damage taken stays, the group stays, a short grace follows. */
 export function flee(world: WorldSave, ctx: ActionContext): AdventureResult {
   return runAdventure(world, ctx, (w, a) => {
     const st = stepOf(w, a, ctx);
     if (!st) return { ok: false, error: 'NO_RUN' };
     const { run } = st;
     if (run.phase !== 'battle' || !run.battle) return { ok: false, error: 'WRONG_PHASE' };
-    if (foughtGroup(st).group?.kind !== 'normal') return { ok: false, error: 'CANNOT_FLEE' };
+    if (run.rift || foughtGroup(st).group?.kind !== 'normal') return { ok: false, error: 'CANNOT_FLEE' };
     carryOver(st, run.battle);
     run.battle = null;
     run.phase = 'explore';

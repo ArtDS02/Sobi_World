@@ -8,15 +8,17 @@ const area = ADVENTURE_AREA_ID;
 const added = (itemId: string, quantity: number): WorldEvent[] => (quantity > 0 ? [{ type: 'item.added', area, itemId, quantity }] : []);
 const removed = (itemId: string, quantity: number): WorldEvent[] => (quantity > 0 ? [{ type: 'item.removed', area, itemId, quantity }] : []);
 const coins = (amount: number): WorldEvent[] => (amount === 0 ? [] : [{ type: 'currency.changed', area, currency: 'coins', amount }]);
+const gems = (amount: number): WorldEvent[] => (amount === 0 ? [] : [{ type: 'currency.changed', area, currency: 'gems', amount }]);
 
 export function adventureWorldEvents(e: AdventureEvent): WorldEvent[] {
   switch (e.type) {
     case 'ADVENTURE_RUN_STARTED':
+    case 'ADVENTURE_RIFT_STARTED':
       return e.prep.flatMap((id) => removed(id, 1));
     case 'ADVENTURE_BATTLE_WON':
-      return [{ type: 'battle.won', area, zoneId: e.zoneId, enemies: e.enemies }, ...coins(e.coins)];
+      return [{ type: 'battle.won', area, zoneId: e.zoneId, enemies: e.enemies }, ...coins(e.coins), ...gems(e.gems ?? 0)];
     case 'ADVENTURE_CHEST_OPENED':
-      return [...coins(e.coins), ...(e.gems > 0 ? [{ type: 'currency.changed', area, currency: 'gems', amount: e.gems } satisfies WorldEvent] : [])];
+      return [...coins(e.coins), ...gems(e.gems)];
     case 'ADVENTURE_RUN_ENDED':
       return e.result === 'retreat' ? [] : [{ type: 'adventure.finished', area, zoneId: e.zoneId, won: e.result !== 'lose' }];
     case 'ADVENTURE_SWEPT':

@@ -4,6 +4,15 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
+## Adventure: nhịp chơi, Vết Nứt, gắn bó (decision 039)
+| Asset | Ghi chú |
+|---|---|
+| Nền **Vết Nứt Umbraflux** (`bg_adventure_rift`) | Hiện dùng `bg_adventure_ruins` (`content/adventure/engagement.json` → `rift.backdrop`). Tàn tích bị nứt, ánh tím Umbraflux. |
+| Icon 6 biến thể quái | Hiện mượn `ui_icon_stat_atk` / `_def` / `_spd`, `ui_icon_status_wet`, `ui_icon_react_purify`, `ui_icon_coin`. Nên có huy hiệu riêng (khung vàng). |
+| Sinh vật Vàng Óng trên bản đồ | Hiện nhuộm vàng (`setTint`) ảnh quái thường; có thể vẽ hào quang / lấp lánh riêng. |
+| Cut-in Tuyệt kỹ, băng phản ứng, đổi pha | Hiện là băng CSS + chân dung sinh vật (`ui/battleFxView.ts`); có thể thay khung / VFX riêng 9 dòng. |
+| SFX | Số bay, chí mạng, phản ứng, cut-in Tuyệt kỹ, kỷ lục Vết Nứt, nhận danh hiệu (hiện dùng `level_up` / `birth_fanfare` / `coin_collect`). |
+
 ## Adventure V2 (decision 037) — làm ở A7
 | Asset | Ghi chú |
 |---|---|

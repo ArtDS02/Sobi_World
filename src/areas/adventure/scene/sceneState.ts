@@ -17,6 +17,8 @@ export interface SceneGroup {
   elements: Element[];
   count: number;
   defeated: boolean;
+  /** The variant it wears on this trip (decision 039): its name and whether it is the golden one. */
+  affix: { name: string; golden: boolean } | null;
 }
 
 export interface AdventureSceneState {

@@ -2,7 +2,8 @@
 // left and the enemies on the right, each with its element badge, health bar, statuses and (enemies) the intent as an icon; the round
 // and the turn order as round portraits; a banner for the one acting and for the enemy leader; the team list bottom left; the skill
 // cards with their icons, the big round Attack button, Defend / items / flee; the effects on the one acting on the right; Auto and x2;
-// the log behind a button. The effectiveness label shows on each target while aiming.
+// the log behind a button. The effectiveness label shows on each target while aiming. The last step plays over the field (decision 039):
+// numbers over the units it touched, one banner (an Ultimate's cut-in, a reaction, a boss's new phase) and a shake.
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { art } from '../../../ui/components/icon';
@@ -10,6 +11,8 @@ import { el } from '../../../ui/dom';
 import { battleAct, flee } from '../logic/actions/battle';
 import { adventureOf } from '../logic/save/lens';
 import { unitEffects, type HpMemory, type UnitFx } from './battleFx';
+import { FX_MS, SHAKE_MS, bannerEl, floaterEl, stepEffects } from './battleFxView';
+import type { FloaterVm } from './battleFloaters';
 import { battleVm, effectOn, type BattleActionVm, type BattleVm, type UnitVm } from './battleVm';
 import { bar, classIcon, elementIcon, iconOf, roundButton, skillIcon, statusChip, type ViewCtx } from './viewKit';
 import { ACTION_ART } from './vmKit';
@@ -61,7 +64,7 @@ const SPOTS = {
 
 const portrait = (u: { art: string; name: string }, cls: string) => art(u.art, cls, u.name) ?? el('span', { class: cls });
 
-function unitOnField(u: UnitVm, index: number, vm: BattleVm, ctx: ViewCtx, fx?: UnitFx): HTMLElement {
+function unitOnField(u: UnitVm, index: number, vm: BattleVm, ctx: ViewCtx, fx?: UnitFx, floaters: readonly FloaterVm[] = [], elapsed = 0): HTMLElement {
   const aim = ctx.state.aim;
   const aimable = !!aim && aim.side === u.side && !u.down;
   const run = adventureOf(ctx.world).run!;
@@ -84,6 +87,7 @@ function unitOnField(u: UnitVm, index: number, vm: BattleVm, ctx: ViewCtx, fx?: 
       u.statuses.length > 0 ? el('span', { class: 'adventure-ui__statuses' }, ...u.statuses.map(statusChip)) : null,
     ),
     portrait(u, 'adventure-ui__unit-art'),
+    floaters.length > 0 ? el('span', { class: 'adventure-ui__floats' }, ...floaters.map((f) => floaterEl(f, elapsed))) : null,
   );
 }
 
@@ -98,6 +102,7 @@ function banner(u: UnitVm | undefined, side: 'ally' | 'enemy'): HTMLElement | nu
       'div',
       { class: 'adventure-ui__banner-text' },
       el('b', {}, ...u.elements.map((e) => elementIcon(e)), el('span', { text: u.name }), u.level !== null ? el('small', { text: t(vi.adventure.battle.level, { level: u.level }) }) : null),
+      u.honor ? el('small', { class: 'adventure-ui__banner-honor', text: `«${u.honor}»` }) : null,
       el('span', { class: 'adventure-ui__banner-hp' }, bar(u.hpPercent, 'hp', u.hpText), el('small', { text: u.hpText })),
     ),
     u.classId ? classIcon(u.classId, 'adventure-ui__banner-class') : null,
@@ -166,8 +171,13 @@ function effects(vm: BattleVm): HTMLElement | null {
 
 export function renderBattle(ctx: ViewCtx): HTMLElement {
   const { state } = ctx;
-  const vm = battleVm(ctx.world, adventureOf(ctx.world).run!)!;
+  const run = adventureOf(ctx.world).run!;
+  const vm = battleVm(ctx.world, run)!;
   const fx = unitEffects(memory, vm.units);
+  const step = stepEffects(run, run.battle);
+  const live = step.elapsed < FX_MS;
+  const floatersOf = (id: string) => (live ? step.fx.floaters.filter((f) => f.unit === id) : []);
+  const fxBanner = live ? step.fx.banner : null;
   const actor = vm.units.find((u) => u.id === vm.actor);
   const mine = actor?.side === 'ally';
   const cards = vm.actions.filter((a) => a.kind === 'skill' || a.kind === 'ultimate');
@@ -189,7 +199,7 @@ export function renderBattle(ctx: ViewCtx): HTMLElement {
   const nowCount = vm.order.filter((o) => !o.next).length;
   return el(
     'div',
-    { class: `adventure-ui__battle${state.fast ? ' is-fast' : ''}` },
+    { class: `adventure-ui__battle${state.fast ? ' is-fast' : ''}${live && step.fx.shake && step.elapsed < SHAKE_MS ? ' is-shake' : ''}` },
     el(
       'div',
       { class: 'adventure-ui__btop' },
@@ -197,7 +207,10 @@ export function renderBattle(ctx: ViewCtx): HTMLElement {
       el(
         'div',
         { class: 'adventure-ui__order', attrs: { 'aria-label': vi.adventure.battle.order } },
+        vm.riftFloor !== null ? el('span', { class: 'adventure-ui__round-pill is-rift', text: t(vi.adventure.engage.rift.floor, { floor: vm.riftFloor }) }) : null,
         el('span', { class: 'adventure-ui__round-pill', text: t(vi.adventure.battle.round, { round: vm.round }) }),
+        vm.affix ? el('span', { class: 'adventure-ui__round-pill is-affix', attrs: { title: vm.affix.name } }, iconOf(vm.affix.art, vm.affix.name), el('span', { text: vm.affix.name })) : null,
+        vm.escapeIn !== null ? el('span', { class: 'adventure-ui__round-pill is-escape', text: t(vi.adventure.engage.escapeIn, { rounds: vm.escapeIn }) }) : null,
         el(
           'div',
           { class: 'adventure-ui__turns' },
@@ -212,8 +225,9 @@ export function renderBattle(ctx: ViewCtx): HTMLElement {
     el(
       'div',
       { class: 'adventure-ui__field' },
-      ...vm.units.filter((u) => u.side === 'ally').map((u, i) => unitOnField(u, i, vm, ctx, fx.get(u.id))),
-      ...enemies.map((u, i) => unitOnField(u, i, vm, ctx, fx.get(u.id))),
+      ...vm.units.filter((u) => u.side === 'ally').map((u, i) => unitOnField(u, i, vm, ctx, fx.get(u.id), floatersOf(u.id), step.elapsed)),
+      ...enemies.map((u, i) => unitOnField(u, i, vm, ctx, fx.get(u.id), floatersOf(u.id), step.elapsed)),
+      fxBanner ? bannerEl(fxBanner, vm.units.find((u) => u.id === fxBanner.unit)?.art ?? null, step.elapsed) : null,
     ),
     el('div', { class: 'adventure-ui__bleft' }, roundButton(ACTION_ART.skill, vi.adventure.battle.log.title, state.log, () => ((state.log = !state.log), ctx.rerender()))),
     el(

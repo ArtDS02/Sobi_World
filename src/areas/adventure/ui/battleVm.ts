@@ -1,6 +1,7 @@
 // What the battle and the summary screens show, as plain data (no DOM, spec §15.4–15.5, §17): the units with HP / MP / Rage, statuses
 // and the enemies' intents, the turn order, the actions the current ally may take (and why one is off), how well an action would land
-// on each target (element chart, reactions), the battle log in words (battleLog.ts), the summary of a trip. Pure; unit-tested.
+// on each target (element chart, reactions), the battle log in words (battleLog.ts), the summary of a trip; the ally's title, the Rift's
+// floor and a golden group's countdown (decision 039). Pure; unit-tested.
 import { itemArtId } from '../../../core/config/assetIds';
 import type { ItemId } from '../../../core/config/ids';
 import type { WorldSave } from '../../../core/save/world';
@@ -8,8 +9,11 @@ import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { canAct, current, elementMultiplier, find, hasStatus, hitCategory, skillElement, skillMpCost, stat, ultimateReady } from '../../../systems/combat';
 import type { BattleAction, BattleEvent, BattleState, Category, Combatant, Element, StatusId } from '../../../systems/combat/types';
+import { battleAffix } from '../logic/actions/battle';
+import { titleOf } from '../logic/bonds';
 import { AB, BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, MAPS, REACTIONS, SKILLS } from '../logic/config/content';
 import { enemyIdOf } from '../logic/encounter';
+import { escapeIn } from './battleFloaters';
 import { logLine } from './battleLog';
 import type { Run } from '../logic/state';
 import type { ClassId } from '../logic/config/content';
@@ -34,9 +38,10 @@ export interface UnitVm {
   name: string;
   art: string;
   elements: Element[];
-  /** Allies: their level and class (the banner and the team list). */
+  /** Allies: their level, class and title (the banner and the team list). */
   level: number | null;
   classId: ClassId | null;
+  honor: string | null;
   hpText: string;
   hpPercent: number;
   mpText: string;
@@ -85,6 +90,11 @@ export interface BattleVm {
   actor: string | null;
   actions: BattleActionVm[];
   log: string[];
+  /** The Rift floor being fought, or null on a zone trip. */
+  riftFloor: number | null;
+  /** The variant the enemies wear, and the rounds left before a golden group runs away. */
+  affix: { name: string; art: string } | null;
+  escapeIn: number | null;
 }
 
 const pct = (a: number, b: number) => (b <= 0 ? 0 : Math.round((a / b) * 100));
@@ -116,7 +126,7 @@ function intentArt(c: Combatant): string | null {
   return it.kind === 'item' ? itemArtId('item_potion_battle') : ACTION_ART[it.kind];
 }
 
-function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally: { art: string; level: number | null; classId: ClassId | null } | undefined): UnitVm {
+function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally: { art: string; level: number | null; classId: ClassId | null; honor: string | null } | undefined): UnitVm {
   const enemy = c.side === 'enemy' ? ENEMIES[enemyIdOf(c.id)] : undefined;
   return {
     id: c.id,
@@ -126,6 +136,7 @@ function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally
     elements: [c.element, ...(c.element2 ? [c.element2] : [])],
     level: ally?.level ?? null,
     classId: ally?.classId ?? null,
+    honor: ally?.honor ?? null,
     hpText: `${formatInt(c.hp)}/${formatInt(c.stats.hp)}`,
     hpPercent: pct(c.hp, c.stats.hp),
     mpText: `${formatInt(c.mp)}/${formatInt(c.stats.mp)}`,
@@ -212,7 +223,7 @@ function actionsOf(world: WorldSave, run: Run, battle: BattleState, cur: Combata
     const detail = (vi.adventure.battle.itemDetail as Record<string, string>)[item.itemId] ?? '';
     out.push({ kind: 'item', id: item.itemId, label: `${nameOfItem(item.itemId)} (x${have})`, detail, art: itemArtId(item.itemId as ItemId), mp: 0, aim: item.target === 'ally' ? 'ally' : null, reason: null, element: null, category: 'support' });
   }
-  out.push({ kind: 'flee', id: 'flee', label: vi.adventure.battle.flee, detail: '', art: ACTION_ART.flee, mp: 0, aim: null, reason: foughtKind(run) === 'normal' ? null : vi.adventure.battle.fleeOff, element: null, category: 'support' });
+  out.push({ kind: 'flee', id: 'flee', label: vi.adventure.battle.flee, detail: '', art: ACTION_ART.flee, mp: 0, aim: null, reason: !run.rift && foughtKind(run) === 'normal' ? null : vi.adventure.battle.fleeOff, element: null, category: 'support' });
   return out;
 }
 
@@ -221,7 +232,8 @@ export function battleVm(world: WorldSave, run: Run): BattleVm | null {
   if (!battle) return null;
   const cur = current(battle);
   const fighters = adventureOf(world).fighters;
-  const allies = new Map(run.team.map((m) => [m.key, { art: m.art, level: fighters[m.key]?.level ?? null, classId: m.classId }]));
+  const affix = battleAffix(battle);
+  const allies = new Map(run.team.map((m) => [m.key, { art: m.art, level: fighters[m.key]?.level ?? null, classId: m.classId, honor: titleOf(fighters[m.key])?.nameVi ?? null }]));
   const units = battle.combatants.map((c) => unitVm(battle, c, cur?.id ?? null, allies.get(c.id)));
   const artOf = new Map(units.map((u) => [u.id, u.art]));
   const nameOf = (id: string) => battle.combatants.find((c) => c.id === id)?.name ?? id;
@@ -238,6 +250,9 @@ export function battleVm(world: WorldSave, run: Run): BattleVm | null {
     actor: cur?.id ?? null,
     actions: cur && cur.side === 'ally' ? actionsOf(world, run, battle, cur) : [],
     log: run.log.map((e) => logLine(e as BattleEvent, nameOf)).filter((l): l is string => l !== null),
+    riftFloor: run.rift ? run.rift.floor + 1 : null,
+    affix: affix ? { name: affix.nameVi, art: affix.art } : null,
+    escapeIn: escapeIn(battle, affix?.escapeAfterRounds ?? null),
   };
 }
 
@@ -258,10 +273,11 @@ export function resultVm(run: Run, names: ReadonlyMap<string, string>): ResultVm
   if (run.gems > 0) lines.push(t(vi.adventure.resultGems, { gems: run.gems }));
   for (const key of run.levelUps) lines.push(t(vi.adventure.resultLevelUp, { name: names.get(key) ?? key }));
   if (run.result === 'lose') lines.push(t(vi.adventure.resultExhausted, { hours: AB.run.exhaustHours }));
+  const rift = run.rift && run.result !== 'lose';
   return {
     result: run.result,
-    title: vi.adventure.result[run.result].title,
-    body: vi.adventure.result[run.result].body,
+    title: rift ? vi.adventure.engage.rift.resultTitle : vi.adventure.result[run.result].title,
+    body: rift ? t(vi.adventure.engage.rift.resultBody, { floor: run.rift!.floor }) : vi.adventure.result[run.result].body,
     lines,
     loot: Object.entries(run.loot).map(([itemId, count]) => ({ itemId, name: nameOfItem(itemId), count, art: itemArtId(itemId as ItemId) })),
   };

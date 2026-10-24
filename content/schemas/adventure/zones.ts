@@ -13,6 +13,8 @@ export const zoneSchema = z.strictObject({
   requiresCleared: z.string().regex(/^zone_[a-z0-9_]+$/).optional(),
   /** The picture of the zone on the camp's card. */
   backdrop: assetId,
+  /** The fighter levels it suits [from, to] (the advice after a lost trip). */
+  levels: range,
   /** Its areas in walking order; the first one holds the entrance portal, the last one the zone boss. */
   maps: z.array(z.string().regex(/^map_[a-z0-9_]+$/)).min(1),
 });

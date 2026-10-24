@@ -6,7 +6,7 @@ import { formatInt, t } from '../../../i18n/format';
 import type { Element } from '../../../systems/combat/types';
 import { vi } from '../../../i18n/vi';
 import { portalLit } from '../logic/actions/trip';
-import { AB, EVENTS, MAPS, ZONE_LIST, ZONES, type AreaMap } from '../logic/config/content';
+import { AB, EVENTS, MAPS, TIP_OF_MAP, ZONE_LIST, ZONES, type AreaMap } from '../logic/config/content';
 import { blockedTiles, thingsOf, type Thing } from '../logic/maps';
 import { discovery } from '../logic/progress';
 import { adventureOf } from '../logic/save/lens';
@@ -51,6 +51,8 @@ export interface ExploreVm {
   prompt: PromptVm | null;
   event: { title: string; text: string } | null;
   portal: { lit: boolean; destinations: { mapId: string; label: string }[] };
+  /** The area's tip the first time it is walked (decision 039 §5), until read. */
+  tip: { id: string; title: string; text: string } | null;
 }
 
 const pctOf = (a: number, b: number) => (b <= 0 ? 0 : Math.round((a / b) * 100));
@@ -108,6 +110,7 @@ export function exploreVm(world: WorldSave, run: Run, focus: string | null): Exp
     const lore = map.lore.find((l) => l.id === id);
     if (lore) event = { title: vi.adventure.explore.lore, text: lore.textVi };
   }
+  const tip = TIP_OF_MAP[map.id];
   const lit = portalLit(world, a, map.id);
   const destinations = lit
     ? [
@@ -134,6 +137,7 @@ export function exploreVm(world: WorldSave, run: Run, focus: string | null): Exp
     prompt: thing ? promptFor(world, run, map, thing) : null,
     event,
     portal: { lit, destinations },
+    tip: tip && !a.tipsSeen.includes(tip.id) ? { id: tip.id, title: tip.titleVi, text: tip.textVi } : null,
   };
 }
 

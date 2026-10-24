@@ -3,8 +3,9 @@
 import type { WorldSave } from '../../../core/save/world';
 import { groupEnemies, groupKey, portalLit } from '../logic/actions/trip';
 import { CAMP_ART } from '../logic/art';
-import { ENEMIES, MAPS, ZONES, ZONE_LIST } from '../logic/config/content';
+import { ENEMIES, MAPS, RIFT, ZONES, ZONE_LIST } from '../logic/config/content';
 import { adventureOf } from '../logic/save/lens';
+import { groupAffix } from '../logic/variants';
 import type { AdventureSceneState } from '../scene/sceneState';
 
 export function sceneVm(world: WorldSave | null, now: number, paused: boolean, zoneId: string): AdventureSceneState | null {
@@ -17,11 +18,11 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
     followers: (run?.team ?? []).map((m) => ({ art: m.art, down: m.hp <= 0 })),
     openedGates: a.openedGates,
     openedChests: a.openedChests,
-    backdrop: run ? zone.backdrop : CAMP_ART.backdrop,
+    backdrop: run?.rift ? RIFT.backdrop : run ? zone.backdrop : CAMP_ART.backdrop,
     now,
     paused,
   };
-  if (!run || run.phase !== 'explore') {
+  if (!run || run.phase !== 'explore' || run.rift) {
     return { ...base, mode: !run ? 'camp' : run.phase === 'battle' ? 'battle' : 'done', mapId: null, placeKey: '', pos: { x: 0, y: 0, facing: 'down' }, groups: [], usedSpots: [], springUsed: false, portalLit: false, graceUntil: 0 };
   }
   const map = MAPS[run.mapId];
@@ -35,7 +36,9 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
     groups: (map?.groups ?? []).map((g) => {
       const ids = groupEnemies(run.seed, run.mapId, g);
       const enemies = ids.map((id) => ENEMIES[id]!).filter(Boolean);
+      const affix = groupAffix(run.seed, run.mapId, g);
       return {
+        affix: affix ? { name: affix.nameVi, golden: affix.escapeAfterRounds !== null } : null,
         id: g.id,
         kind: g.kind,
         art: enemies[0]?.art ?? '',

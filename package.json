@@ -34,6 +34,7 @@
     "sim:economy": "tsx scripts/simulate-economy.ts",
     "sim:week": "tsx scripts/simulate-week.ts",
     "sim:adventure": "tsx scripts/sim-adventure.ts",
+    "sim:rift": "tsx scripts/sim-rift.ts",
     "items:audit": "tsx scripts/audit/itemUses.ts",
     "test:e2e": "npm run build && playwright test",
     "assets:release": "tsx scripts/assets-check.ts --release",

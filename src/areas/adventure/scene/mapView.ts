@@ -116,14 +116,15 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     const size = g.kind === 'boss' ? 2.4 : g.kind === 'elite' ? 1.8 : 1.4;
     const ratio = img.height > 0 ? img.width / img.height : 1;
     img.setDisplaySize(size * t * ratio, size * t);
-    groups.set(g.id, { img, label: foeLabel(scene, g.elements, g.count) });
+    if (g.affix?.golden) img.setTint(0xffe27a);
+    groups.set(g.id, { img, label: foeLabel(scene, g.elements, g.count, g.affix?.name ?? null) });
     layer.add([img, groups.get(g.id)!.label]);
   }
   return { layer, things, groups, sparkles };
 }
 
 /** The tag over a group seen up close: its elements' badges and how many it is (origin at the bottom centre). */
-function foeLabel(scene: Phaser.Scene, elements: readonly AdventureSceneState['groups'][number]['elements'][number][], count: number): Phaser.GameObjects.Container {
+function foeLabel(scene: Phaser.Scene, elements: readonly AdventureSceneState['groups'][number]['elements'][number][], count: number, affix: string | null): Phaser.GameObjects.Container {
   const icon = 22;
   const parts: Phaser.GameObjects.GameObject[] = [];
   let x = 6;
@@ -138,6 +139,13 @@ function foeLabel(scene: Phaser.Scene, elements: readonly AdventureSceneState['g
   const bg = scene.add.graphics().fillStyle(0xfff6e0, 0.95).lineStyle(2, 0x8a5a2b, 1).fillRoundedRect(0, -icon - 8, w, icon + 8, 10).strokeRoundedRect(0, -icon - 8, w, icon + 8, 10);
   const box = scene.add.container(0, 0, [bg, ...parts, text]).setDepth(99998).setVisible(false);
   for (const p of box.list as unknown as Phaser.GameObjects.Components.Transform[]) p.x -= w / 2;
+  if (affix) {
+    // The variant's name on a gold ribbon above the tag.
+    const name = scene.add.text(0, -icon - 20, affix, { fontSize: '15px', fontStyle: 'bold', color: '#5b3a1c' }).setOrigin(0.5, 0.5);
+    const rw = name.width + 16;
+    const ribbon = scene.add.graphics().fillStyle(0xffe27a, 0.97).lineStyle(2, 0xb8860b, 1).fillRoundedRect(-rw / 2, -icon - 30, rw, 20, 9).strokeRoundedRect(-rw / 2, -icon - 30, rw, 20, 9);
+    box.add([ribbon, name]);
+  }
   return box;
 }
 

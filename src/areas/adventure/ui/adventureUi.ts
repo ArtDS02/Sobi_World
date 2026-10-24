@@ -21,7 +21,7 @@ import { renderBattle, choose } from './battleView';
 import { battleVm } from './battleVm';
 import { hudVm } from './campVm';
 import { renderCamp } from './campView';
-import { renderDone, renderExplore } from './exploreView';
+import { renderDone, renderExplore, renderRift } from './exploreView';
 import { sceneVm } from './sceneVm';
 import { keepScroll, type UiState, type ViewCtx } from './viewKit';
 import type { AdventureRun } from './vmKit';
@@ -69,7 +69,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
   let active = false;
   let busy = false;
   let lastPos: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' } | null = null;
-  const state: UiState = { zoneId: ZONE_LIST[0]!.id, startMap: null, selected: [], prep: [], auto: false, fast: false, menu: null, aim: null, focus: null, showMap: false, filter: null, search: '', legend: false, log: false };
+  const state: UiState = { zoneId: ZONE_LIST[0]!.id, startMap: null, selected: [], prep: [], auto: false, fast: false, menu: null, aim: null, focus: null, showMap: false, filter: null, search: '', legend: false, log: false, quick: true };
 
   const world = (): WorldSave | null => {
     const s = d.world.getSnapshot();
@@ -109,6 +109,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     openSheet: (key) => dialogs.openSheet(key),
     openPortal: () => dialogs.openPortal(),
     interactKey: () => d.interactKey?.() ?? 'Space',
+    dayOffsetMs: -new Date(d.now()).getTimezoneOffset() * 60_000,
   });
 
   function render() {
@@ -124,14 +125,15 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
       state.aim = null;
       state.menu = null;
     }
-    const exploring = run?.phase === 'explore';
+    const rift = run?.phase === 'explore' && !!run.rift;
+    const exploring = run?.phase === 'explore' && !rift;
     d.host.classList.toggle('is-exploring', exploring);
     patch(hud, renderHud(w));
     const ctx = ctxFor(w);
     d.host.classList.toggle('is-battle', run?.phase === 'battle');
     d.host.classList.toggle('is-camp', run === null);
-    d.host.classList.toggle('is-done', run?.phase === 'done');
-    keepScroll(main, () => patch(main, run === null ? renderCamp(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx)));
+    d.host.classList.toggle('is-done', run?.phase === 'done' || rift);
+    keepScroll(main, () => patch(main, run === null ? renderCamp(ctx) : rift ? renderRift(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx)));
     main.scrollTop = top;
     dialogs.follow(w);
   }
@@ -158,7 +160,8 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
 
   const exploring = () => {
     const w = world();
-    return w && adventureOf(w).run?.phase === 'explore' ? w : null;
+    const run = w ? adventureOf(w).run : null;
+    return w && run?.phase === 'explore' && !run.rift ? w : null;
   };
 
   const scene: SceneReport = {
@@ -168,7 +171,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     },
     touch(groupId, pos) {
       lastPos = pos;
-      if (exploring() && !busy && !dialogs.isOpen()) void dispatch((w, c) => engage(w, { ...pos, groupId }, c));
+      if (exploring() && !busy && !dialogs.isOpen()) void dispatch((w, c) => engage(w, { ...pos, groupId, quick: state.quick }, c));
     },
     focus(thingId) {
       state.focus = thingId;

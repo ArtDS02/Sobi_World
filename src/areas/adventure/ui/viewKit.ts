@@ -33,6 +33,8 @@ export interface UiState {
   /** Camp: the legend picture is open. Battle: the log is open. */
   legend: boolean;
   log: boolean;
+  /** Map: a weak normal group is beaten at once when touched (decision 039 §2). */
+  quick: boolean;
 }
 
 export interface ViewCtx {
@@ -50,6 +52,8 @@ export interface ViewCtx {
   openPortal(): void;
   /** The key bound to "interact" (for the hint). */
   interactKey(): string;
+  /** Local time minus UTC (ms): the game day the Rift's rule follows. */
+  dayOffsetMs: number;
 }
 
 export const bar = (percent: number, kind: string, label?: string) =>

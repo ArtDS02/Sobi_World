@@ -5,6 +5,7 @@ import areaRaw from '../../../../../content/adventure/area.json';
 import balanceRaw from '../../../../../content/adventure/balance.json';
 import classesRaw from '../../../../../content/adventure/classes.json';
 import elementsRaw from '../../../../../content/adventure/elements.json';
+import engagementRaw from '../../../../../content/adventure/engagement.json';
 import enemiesRaw from '../../../../../content/adventure/enemies.json';
 import equipmentRaw from '../../../../../content/adventure/equipment.json';
 import lineagesRaw from '../../../../../content/adventure/lineages.json';
@@ -18,6 +19,7 @@ import { areaManifestSchema } from '../../../../../content/schemas/area';
 import { adventureBalanceFileSchema } from '../../../../../content/schemas/adventure/balance';
 import { classesFileSchema } from '../../../../../content/schemas/adventure/classes';
 import { enemiesFileSchema } from '../../../../../content/schemas/adventure/enemies';
+import { engagementFileSchema } from '../../../../../content/schemas/adventure/engagement';
 import { equipmentFileSchema } from '../../../../../content/schemas/adventure/equipment';
 import { lineagesFileSchema } from '../../../../../content/schemas/adventure/lineages';
 import { mapsFileSchema, propsFileSchema } from '../../../../../content/schemas/adventure/maps';
@@ -47,6 +49,7 @@ export const ADVENTURE_CONTENT = {
   maps: loadContent('adventure/maps.json', mapsFileSchema, mapsRaw),
   props: loadContent('adventure/props.json', propsFileSchema, propsRaw),
   equipment: loadContent('adventure/equipment.json', equipmentFileSchema, equipmentRaw),
+  engagement: loadContent('adventure/engagement.json', engagementFileSchema, engagementRaw),
 };
 
 export const ADVENTURE_AREA_ID = ADVENTURE_CONTENT.area.id;
@@ -170,6 +173,27 @@ export const PREP_ITEMS: Readonly<Record<string, (typeof AB.prep)[number]>> = Ob
 
 export const SKILL_SCROLL = 'item_skill_scroll';
 
+// ---- Engagement (decision 039) ------------------------------------------------------------------------------------------
+
+export const ENGAGEMENT = ADVENTURE_CONTENT.engagement;
+export type Affix = (typeof ENGAGEMENT.affixes)[number];
+export const AFFIXES: Readonly<Record<string, Affix>> = Object.fromEntries(ENGAGEMENT.affixes.map((a) => [a.id, a]));
+export const RIFT = ENGAGEMENT.rift;
+export type RiftRule = (typeof RIFT.rules)[number];
+export const RIFT_RULES: Readonly<Record<string, RiftRule>> = Object.fromEntries(RIFT.rules.map((r) => [r.id, r]));
+export type Synergy = (typeof ENGAGEMENT.synergies)[number];
+export type Title = (typeof ENGAGEMENT.titles)[number];
+export const TITLES: Readonly<Record<string, Title>> = Object.fromEntries(ENGAGEMENT.titles.map((t) => [t.id, t]));
+export type Tip = (typeof ENGAGEMENT.tips)[number];
+export const TIP_OF_MAP: Readonly<Record<string, Tip>> = Object.fromEntries(ENGAGEMENT.tips.map((t) => [t.mapId, t]));
+
+/** The zone each enemy is met in (the first area whose groups field it), for the Rift's scaling. */
+export const ENEMY_ZONE: Readonly<Record<string, string>> = (() => {
+  const out: Record<string, string> = {};
+  for (const z of ZONE_LIST) for (const m of z.maps) for (const g of MAPS[m]?.groups ?? []) for (const p of g.pool) for (const e of p.enemies) out[e] ??= z.id;
+  return out;
+})();
+
 // ---- Cross-file checks ------------------------------------------------------------------------------------------------
 
 /** Cross-file references the schemas cannot check: skills of lines, trees and enemies, enemies of the areas, loot tables, events. */
@@ -224,5 +248,15 @@ export function contentProblems(): string[] {
   for (const i of AB.battleItems) need('battle item', i.itemId, ITEMS);
   for (const e of ADVENTURE_CONTENT.equipment.equipment) if (ITEMS[e.id as ItemId].category !== 'EQUIPMENT') problems.push(`${e.id} is not an EQUIPMENT item`);
   need('skill scroll', SKILL_SCROLL, ITEMS);
+  need('rift', RIFT.requiresCleared, ZONES);
+  need('rift', RIFT.table, LOOT_TABLES);
+  for (const z of ZONE_LIST) if (!RIFT.zoneScale[z.id]) problems.push(`rift: no zoneScale for ${z.id}`);
+  for (const n of RIFT.nightmares) for (const e of [n.enemy, ...n.escort]) need(`rift floor ${n.floor}`, e, ENEMIES);
+  for (const n of RIFT.nightmares) if (!ENEMY_ZONE[n.enemy]) problems.push(`rift floor ${n.floor}: ${n.enemy} is met in no zone`);
+  for (const t of ENGAGEMENT.titles) {
+    if (t.kind === 'boss' && t.target) need(`title ${t.id}`, t.target, ZONES);
+    if (t.kind === 'nightmare' && t.target && !RIFT.nightmares.some((n) => n.enemy === t.target)) problems.push(`title ${t.id}: ${t.target} is no Nightmare boss`);
+  }
+  for (const t of ENGAGEMENT.tips) need(`tip ${t.id}`, t.mapId, MAPS);
   return problems;
 }

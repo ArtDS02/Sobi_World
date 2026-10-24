@@ -1,8 +1,9 @@
 // The camp screen (spec §17, GĐ14 layout of the owner's mock-up; the cards are in campCards.ts): the wooden sign with the beast
 // peeking over a cream board, the zone cards, the element filter and the search, the companions, and the bottom bar with the chosen
 // team, the formations, where the trip starts and the two ways to set off. The starter quest, the loot, the leader, the rations and the
-// legend picture keep their place on the board. A pure function of the world, the roster and the screen's little state; a click calls
-// back into the controller (adventureUi.ts).
+// legend picture keep their place on the board. The Umbraflux Rift is one more card after the zones, and the bonds of the chosen team
+// show in the bottom bar (decision 039). A pure function of the world, the roster and the screen's little state; a click calls back
+// into the controller (adventureUi.ts).
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import type { Element } from '../../../systems/combat/types';
@@ -11,12 +12,15 @@ import { art } from '../../../ui/components/icon';
 import { el } from '../../../ui/dom';
 import { claimStarter, collectLoot } from '../logic/actions/camp';
 import { saveFormation, setLeader } from '../logic/actions/growth';
+import { startRift } from '../logic/actions/rift';
 import { startRun } from '../logic/actions/start';
 import { sweepZone } from '../logic/actions/sweep';
 import { CAMP_ART, GUARDIANS_LEGEND_ART } from '../logic/art';
+import { activeSynergies } from '../logic/bonds';
 import { AB } from '../logic/config/content';
 import { fighterCard, zoneCard } from './campCards';
-import { campVm, startReason, sweepReason, teamWarnings, type CampVm } from './campVm';
+import { campVm, startReason, sweepReason, teamWarnings, type CampVm, type ZoneCardVm } from './campVm';
+import { RIFT_CARD, riftCard, riftReason } from './riftVm';
 import { actionButton, elementIcon, iconOf, toggle, type ViewCtx } from './viewKit';
 import { ACTION_ART, elementName, pct } from './vmKit';
 
@@ -90,20 +94,23 @@ function filters(ctx: ViewCtx): HTMLElement {
   );
 }
 
-function teamBar(camp: CampVm, ctx: ViewCtx): HTMLElement {
+function teamBar(camp: CampVm, rift: ZoneCardVm, ctx: ViewCtx): HTMLElement {
   const { state, world: w, now, roster } = ctx;
-  const zone = camp.zones.find((z) => z.id === state.zoneId);
+  const isRift = state.zoneId === RIFT_CARD;
+  const zone = isRift ? rift : camp.zones.find((z) => z.id === state.zoneId);
   const start = zone?.starts.find((s) => s.mapId === state.startMap) ?? zone?.starts[0];
   const team = camp.fighters.filter((f) => state.selected.includes(f.key));
   const warnings = teamWarnings(team, zone);
-  const reason = startReason(w, roster, state.zoneId, start?.mapId, state.selected, now, state.prep);
-  const sweep = sweepReason(w, roster, state.zoneId, state.selected, now, state.prep);
+  const bonds = activeSynergies(team.map((m) => m.lineage));
+  const reason = isRift ? riftReason(w, roster, state.selected, now, state.prep) : startReason(w, roster, state.zoneId, start?.mapId, state.selected, now, state.prep);
+  const sweep = isRift ? null : sweepReason(w, roster, state.zoneId, state.selected, now, state.prep);
   const launch = (fn: 'start' | 'sweep') => {
     const keys = state.selected;
     const zoneId = state.zoneId;
     const mapId = start?.mapId;
     const prep = state.prep;
     state.prep = [];
+    if (isRift) return ctx.dispatch((ww, c) => startRift(ww, { keys, roster: ctx.roster, prep }, c));
     ctx.dispatch(fn === 'start' ? (ww, c) => startRun(ww, { zoneId, mapId, keys, roster: ctx.roster, prep }, c) : (ww, c) => sweepZone(ww, { zoneId, keys, roster: ctx.roster, prep }, c));
   };
   return el(
@@ -135,6 +142,14 @@ function teamBar(camp: CampVm, ctx: ViewCtx): HTMLElement {
         ),
       ),
     ),
+    bonds.length > 0
+      ? el(
+          'div',
+          { class: 'adventure-ui__bonds' },
+          el('small', { text: vi.adventure.engage.bonds }),
+          ...bonds.map((b) => el('span', { class: 'adventure-ui__bond', text: b.nameVi, attrs: { title: b.descVi } })),
+        )
+      : null,
     zone && zone.starts.length > 1
       ? el(
           'label',
@@ -153,8 +168,8 @@ function teamBar(camp: CampVm, ctx: ViewCtx): HTMLElement {
     el(
       'div',
       { class: 'adventure-ui__go' },
-      actionButton({ label: vi.adventure.camp.start, reason }, () => launch('start'), 'adventure-ui__go-start'),
-      el('span', { attrs: { title: t(vi.adventure.camp.sweepHint, { pct: pct(AB.sweep.share) }) } }, actionButton({ label: vi.adventure.camp.sweep, reason: sweep }, () => launch('sweep'), 'adventure-ui__go-sweep')),
+      actionButton({ label: isRift ? vi.adventure.engage.rift.start : vi.adventure.camp.start, reason }, () => launch('start'), 'adventure-ui__go-start'),
+      isRift ? null : el('span', { attrs: { title: t(vi.adventure.camp.sweepHint, { pct: pct(AB.sweep.share) }) } }, actionButton({ label: vi.adventure.camp.sweep, reason: sweep }, () => launch('sweep'), 'adventure-ui__go-sweep')),
     ),
   );
 }
@@ -164,7 +179,8 @@ export function renderCamp(ctx: ViewCtx): HTMLElement {
   const camp = campVm(w, roster, now, { starter: (ww, c) => claimStarter(ww, { give: ctx.give }, c), loot: (ww, c) => collectLoot(ww, c) });
   state.selected = state.selected.filter((k) => camp.fighters.some((c) => c.key === k && c.notReady === null));
   state.prep = state.prep.filter((id) => camp.prep.some((p) => p.itemId === id && p.have > 0)).slice(0, camp.prepSlots);
-  const zone = camp.zones.find((z) => z.id === state.zoneId);
+  const rift = riftCard(w, now, ctx.dayOffsetMs);
+  const zone = state.zoneId === RIFT_CARD ? rift : camp.zones.find((z) => z.id === state.zoneId);
   const search = state.search.trim().toLocaleLowerCase();
   const shown = camp.fighters.filter((c) => (!state.filter || c.elementList.includes(state.filter)) && (!search || c.name.toLocaleLowerCase().includes(search)));
   return el(
@@ -202,7 +218,7 @@ export function renderCamp(ctx: ViewCtx): HTMLElement {
         ),
       ),
       state.legend ? art(GUARDIANS_LEGEND_ART, 'adventure-ui__legend', vi.adventure.camp.legend) : null,
-      el('section', { class: 'adventure-ui__zones', attrs: { 'aria-label': vi.adventure.camp.zones, 'data-keep-scroll': 'zones' } }, ...camp.zones.map((z) => zoneCard(z, ctx))),
+      el('section', { class: 'adventure-ui__zones', attrs: { 'aria-label': vi.adventure.camp.zones, 'data-keep-scroll': 'zones' } }, ...camp.zones.map((z) => zoneCard(z, ctx)), zoneCard(rift, ctx)),
       filters(ctx),
       camp.fighters.length === 0
         ? el('p', { class: 'adventure-ui__note', text: vi.adventure.camp.noFighters })
@@ -211,14 +227,14 @@ export function renderCamp(ctx: ViewCtx): HTMLElement {
           : el('div', { class: 'adventure-ui__fighters', attrs: { 'data-keep-scroll': 'fighters' } }, ...shown.map((c) => fighterCard(c, ctx))),
       camp.waiting > 0 ? el('p', { class: 'adventure-ui__note', text: t(vi.adventure.camp.waiting, { count: camp.waiting }) }) : null,
       prepSection(camp, ctx),
-      teamBar(camp, ctx),
+      teamBar(camp, rift, ctx),
     ),
     zone
       ? el(
           'div',
           { class: 'adventure-ui__info' },
           iconOf(ACTION_ART.map, vi.adventure.explore.map),
-          el('span', { text: `${zone.name} · ${zone.explored}` }),
+          el('span', { text: [zone.name, zone.explored, zone.cleared].filter(Boolean).join(' · ') }),
           el('span', { class: 'adventure-ui__info-foes', attrs: { title: zone.foes } }, ...zone.foeElements.map((e) => elementIcon(e))),
         )
       : null,

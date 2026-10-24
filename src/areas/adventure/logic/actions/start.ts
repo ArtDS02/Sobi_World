@@ -1,5 +1,5 @@
 // Starting a trip (spec §2, §3.7): the party, the zone's gate (level and the zone before it), where it starts (the zone's entrance or
-// any lit portal of it), the rations carried, the energy paid.
+// any lit portal of it), the rations carried, the energy paid, the bonds of its Guardian lines (decision 039).
 import type { RosterEntry } from '../../../../core/area-registry/registry';
 import type { ErrorCode } from '../../../../core/config/errors';
 import { WORLD_LEVELS } from '../../../../core/config/progression';
@@ -9,10 +9,11 @@ import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
 import { AB, MAPS, PREP_ITEMS, ZONES, identityOf } from '../config/content';
 import { energyOf, memberOf, newFighter, whyNotReady } from '../fighters';
+import { withSynergies } from '../bonds';
 import { tileCenter } from '../maps';
-import type { AdventureState, Run, RunMember } from '../state';
+import type { AdventureState, RunMember } from '../state';
 import { countOf, put, runAdventure, take, type AdventureResult } from './kit';
-import { portalLit, zoneOpen } from './trip';
+import { freshRun, portalLit, zoneOpen } from './trip';
 
 export interface PartyArgs {
   keys: string[];
@@ -45,7 +46,7 @@ export function chargeParty(w: WorldSave, a: AdventureState, args: PartyArgs, ct
     if (!taken.ok) return taken;
     bag = taken.world;
   }
-  return { ok: true, world: bag, fighters, team, prep };
+  return { ok: true, world: bag, fighters, team: withSynergies(team), prep };
 }
 
 /**
@@ -65,36 +66,7 @@ export function startRun(world: WorldSave, args: PartyArgs & { zoneId: string; m
     const party = chargeParty(w, a, args, ctx);
     if (!party.ok) return party;
     const at = tileCenter(map, map.spawn.x, map.spawn.y);
-    const run: Run = {
-      zoneId: zone.id,
-      mapId,
-      x: at.x,
-      y: at.y,
-      facing: 'down',
-      seed: Math.floor(ctx.rng.next() * 2 ** 31),
-      team: party.team,
-      prep: party.prep,
-      phase: 'explore',
-      battle: null,
-      fighting: null,
-      encounters: 0,
-      defeated: [],
-      harvested: [],
-      springs: [],
-      blessings: {},
-      graceUntil: null,
-      loot: {},
-      coins: 0,
-      gems: 0,
-      expGained: 0,
-      spGained: 0,
-      levelUps: [],
-      lastEvent: null,
-      log: [],
-      bossBeaten: false,
-      result: null,
-      startedAt: ctx.now,
-    };
+    const run = freshRun({ zoneId: zone.id, mapId, x: at.x, y: at.y, seed: Math.floor(ctx.rng.next() * 2 ** 31), team: party.team, prep: party.prep, startedAt: ctx.now });
     return { ok: true, world: put(party.world, { ...a, fighters: party.fighters, run }), events: [{ type: 'ADVENTURE_RUN_STARTED', zoneId: zone.id, team: args.keys, prep: party.prep }] };
   });
 }

@@ -6,7 +6,8 @@
       "descVi": "Khu rừng đầu tiên: ba khu, đường chính qua cây cầu, lối phụ sau gai và dây leo. Trùm Cổ Thụ Giận Dữ ở Lõi Rừng. Phù hợp đội cấp 1–10.",
       "fromWorldLevel": 8,
       "backdrop": "bg_adventure_forest",
-      "maps": ["map_forest_edge", "map_forest_deep", "map_forest_heart"]
+      "maps": ["map_forest_edge", "map_forest_deep", "map_forest_heart"],
+      "levels": [1, 10]
     },
     {
       "id": "zone_mountain",
@@ -15,7 +16,8 @@
       "fromWorldLevel": 10,
       "requiresCleared": "zone_forest",
       "backdrop": "bg_adventure_mountain",
-      "maps": ["map_mountain_foot", "map_mountain_mine", "map_mountain_peak"]
+      "maps": ["map_mountain_foot", "map_mountain_mine", "map_mountain_peak"],
+      "levels": [7, 16]
     },
     {
       "id": "zone_ruins",
@@ -24,7 +26,8 @@
       "fromWorldLevel": 13,
       "requiresCleared": "zone_mountain",
       "backdrop": "bg_adventure_ruins",
-      "maps": ["map_ruins_gate", "map_ruins_hall", "map_ruins_sanctum"]
+      "maps": ["map_ruins_gate", "map_ruins_hall", "map_ruins_sanctum"],
+      "levels": [12, 22]
     }
   ],
   "tables": {
@@ -153,6 +156,22 @@
       "entries": [
         { "itemId": "item_ancient_cog", "weight": 2, "min": 1, "max": 2 },
         { "itemId": "item_ancient_rune", "weight": 1, "min": 1, "max": 1 }
+      ]
+    },
+    "treasure_rift": {
+      "rolls": 2,
+      "coins": [60, 120],
+      "gemChance": 0.35,
+      "gems": [1, 3],
+      "entries": [
+        { "itemId": "item_skill_scroll", "weight": 4, "min": 1, "max": 1 },
+        { "itemId": "item_equip_moon_veil", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_equip_lantern_charm", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_equip_void_pearl", "weight": 1, "min": 1, "max": 1 },
+        { "itemId": "item_ancient_rune", "weight": 2, "min": 1, "max": 2 },
+        { "itemId": "item_ancient_cog", "weight": 2, "min": 1, "max": 2 },
+        { "itemId": "item_potion_healing", "weight": 2, "min": 1, "max": 2 },
+        { "itemId": "item_potion_battle", "weight": 2, "min": 1, "max": 1 }
       ]
     }
   },

@@ -1,0 +1,111 @@
+// What the last step of a battle shows on the field (decision 039 §1): numbers over the units it touched (damage, critical hits, how
+// well the element landed, misses, heals, new statuses), one banner for the moment that matters most (an Ultimate's cut-in, an element
+// reaction, a boss changing phase), and whether the field shakes. Presentation only: it reads the step's events and never touches the
+// battle. Pure.
+import { formatInt, t } from '../../../i18n/format';
+import { vi } from '../../../i18n/vi';
+import type { BattleEvent, BattleState } from '../../../systems/combat/types';
+import { REACTIONS, SKILLS } from '../logic/config/content';
+import { ACTION_ART, reactionArt, statusName } from './vmKit';
+
+export type FloaterTone = 'damage' | 'crit' | 'strong' | 'weak' | 'heal' | 'miss' | 'status' | 'buff';
+
+export interface FloaterVm {
+  unit: string;
+  text: string;
+  tone: FloaterTone;
+  /** Order on that unit (stacked upwards, a little later each). */
+  index: number;
+}
+
+export interface BannerVm {
+  kind: 'ultimate' | 'reaction' | 'phase';
+  title: string;
+  sub: string | null;
+  art: string;
+  /** The unit it belongs to (its portrait on an Ultimate's cut-in). */
+  unit: string;
+}
+
+export interface StepFx {
+  floaters: FloaterVm[];
+  banner: BannerVm | null;
+  shake: boolean;
+}
+
+const MAX_PER_UNIT = 4;
+
+/** The effect of the events of one step of `battle` (the step that produced `log`). */
+export function stepFx(battle: BattleState | null, log: readonly { type: string }[]): StepFx {
+  const events = log as readonly BattleEvent[];
+  const side = new Map((battle?.combatants ?? []).map((c) => [c.id, c.side]));
+  const name = new Map((battle?.combatants ?? []).map((c) => [c.id, c.name]));
+  const floaters: FloaterVm[] = [];
+  const count = new Map<string, number>();
+  const push = (unit: string, text: string, tone: FloaterTone) => {
+    const n = count.get(unit) ?? 0;
+    if (n >= MAX_PER_UNIT) return;
+    count.set(unit, n + 1);
+    floaters.push({ unit, text, tone, index: n });
+  };
+  let ultimate: BannerVm | null = null;
+  let reaction: BannerVm | null = null;
+  let phase: BannerVm | null = null;
+  let shake = false;
+  for (const e of events) {
+    switch (e.type) {
+      case 'damage': {
+        if (e.amount <= 0 && e.absorbed > 0) {
+          push(e.target, `${statusName('shield')} -${formatInt(e.absorbed)}`, 'buff');
+          break;
+        }
+        const tone: FloaterTone = e.crit ? 'crit' : e.mult > 1 ? 'strong' : e.mult < 1 ? 'weak' : 'damage';
+        const tag = e.crit ? ` ${vi.adventure.engage.floater.crit}` : e.mult > 1 ? ` ${vi.adventure.battle.eff.STRONG}` : e.mult === 0 ? ` ${vi.adventure.battle.eff.IMMUNE}` : e.mult < 1 ? ` ${vi.adventure.battle.eff.WEAK}` : '';
+        push(e.target, `-${formatInt(e.amount)}${tag}`, tone);
+        if (e.crit) shake = true;
+        break;
+      }
+      case 'tick':
+        if (e.status === 'regen') push(e.target, `+${formatInt(e.amount)}`, 'heal');
+        else if (e.status !== 'doom') push(e.target, `-${formatInt(e.amount)} ${statusName(e.status)}`, 'damage');
+        break;
+      case 'miss':
+        push(e.target, vi.adventure.engage.floater.miss, 'miss');
+        break;
+      case 'heal':
+        if (e.amount > 0) push(e.target, `+${formatInt(e.amount)}`, 'heal');
+        break;
+      case 'revive':
+        push(e.target, `+${formatInt(e.amount)}`, 'heal');
+        break;
+      case 'status':
+        push(e.target, statusName(e.status), side.get(e.actor) === side.get(e.target) ? 'buff' : 'status');
+        break;
+      case 'reaction': {
+        const r = REACTIONS[e.reaction];
+        reaction ??= { kind: 'reaction', title: r?.nameVi ?? e.reaction, sub: name.get(e.target) ?? null, art: reactionArt(e.reaction), unit: e.target };
+        shake = true;
+        break;
+      }
+      case 'use':
+        if (e.ultimate && e.skillId) {
+          ultimate = { kind: 'ultimate', title: SKILLS[e.skillId]?.nameVi ?? e.skillId, sub: `${name.get(e.actor) ?? ''} · ${vi.adventure.engage.floater.ultimate}`, art: ACTION_ART.ultimate, unit: e.actor };
+          shake = true;
+        }
+        break;
+      case 'phase':
+        phase = { kind: 'phase', title: t(vi.adventure.engage.floater.phase, { phase: e.phase + 1 }), sub: name.get(e.target) ?? null, art: ACTION_ART.skill, unit: e.target };
+        shake = true;
+        break;
+      default:
+        break;
+    }
+  }
+  return { floaters, banner: ultimate ?? phase ?? reaction, shake };
+}
+
+/** Rounds left before a golden group runs away, or null (decision 039 §2). */
+export function escapeIn(battle: BattleState | null, escapeAfterRounds: number | null): number | null {
+  if (!battle || escapeAfterRounds === null) return null;
+  return Math.max(0, escapeAfterRounds - battle.round + 1);
+}

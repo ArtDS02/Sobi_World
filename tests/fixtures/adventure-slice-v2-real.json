@@ -1,0 +1,159 @@
+{
+ "note": "areas.sobi_adventure of saves-export/sobi-world-max.json (v2, 4 of its fighters), and the run of sobi-world-adventure-test.json when it has one",
+ "slice": {
+  "version": 2,
+  "fighters": {
+   "sobi_farm:af222282-ed36-4655-9ae0-d6f5a7667711": {
+    "level": 30,
+    "exp": 0,
+    "loadout": {
+     "weapon": "item_equip_rune_blade",
+     "armor": "item_equip_golem_plate",
+     "charm": "item_equip_rune_charm"
+    },
+    "energy": 100,
+    "energyAt": 1792254990279,
+    "exhaustedUntil": null,
+    "classId": null,
+    "sp": 98,
+    "tree": {
+     "node_tk_taunt": 5,
+     "node_tk_hold_fast": 5,
+     "node_tk_shield_wall": 4,
+     "node_tk_second_wind": 4,
+     "node_tk_armor_crush": 4,
+     "node_tk_stomp": 3
+    },
+    "skills": null,
+    "rage": 0,
+    "resets": 0,
+    "bossClears": [
+     "zone_forest",
+     "zone_mountain",
+     "zone_ruins"
+    ]
+   },
+   "sobi_farm:f386e7dd-4675-4265-912d-59375e2e98f4": {
+    "level": 30,
+    "exp": 0,
+    "loadout": {
+     "weapon": "item_equip_rune_blade",
+     "armor": "item_equip_golem_plate",
+     "charm": "item_equip_rune_charm"
+    },
+    "energy": 100,
+    "energyAt": 1792254990279,
+    "exhaustedUntil": null,
+    "classId": null,
+    "sp": 98,
+    "tree": {
+     "node_tk_taunt": 5,
+     "node_tk_hold_fast": 5,
+     "node_tk_shield_wall": 4,
+     "node_tk_second_wind": 4,
+     "node_tk_armor_crush": 4,
+     "node_tk_stomp": 3
+    },
+    "skills": null,
+    "rage": 0,
+    "resets": 0,
+    "bossClears": [
+     "zone_forest",
+     "zone_mountain",
+     "zone_ruins"
+    ]
+   },
+   "sobi_farm:19210396-21ad-4128-89ad-d96fb7c3c81b": {
+    "level": 30,
+    "exp": 0,
+    "loadout": {
+     "weapon": "item_equip_rune_blade",
+     "armor": "item_equip_golem_plate",
+     "charm": "item_equip_rune_charm"
+    },
+    "energy": 100,
+    "energyAt": 1792254990279,
+    "exhaustedUntil": null,
+    "classId": null,
+    "sp": 98,
+    "tree": {
+     "node_tk_taunt": 5,
+     "node_tk_hold_fast": 5,
+     "node_tk_shield_wall": 4,
+     "node_tk_second_wind": 4,
+     "node_tk_armor_crush": 4,
+     "node_tk_stomp": 4
+    },
+    "skills": null,
+    "rage": 0,
+    "resets": 0,
+    "bossClears": [
+     "zone_forest",
+     "zone_mountain",
+     "zone_ruins"
+    ]
+   },
+   "sobi_farm:825173ec-94d5-4e67-baac-13e663cbaede": {
+    "level": 30,
+    "exp": 0,
+    "loadout": {},
+    "energy": 100,
+    "energyAt": 1792254990279,
+    "exhaustedUntil": null,
+    "classId": null,
+    "sp": 98,
+    "tree": {},
+    "skills": null,
+    "rage": 0,
+    "resets": 0,
+    "bossClears": []
+   }
+  },
+  "run": null,
+  "pending": {
+   "item_equip_golem_plate": 1
+  },
+  "starterClaimed": true,
+  "cleared": {
+   "zone_forest": 39,
+   "zone_mountain": 30,
+   "zone_ruins": 18
+  },
+  "openedChests": [
+   "chest_f1_grove",
+   "chest_f2_island",
+   "chest_f3_hollow",
+   "chest_m1_crevice",
+   "chest_m3_ledge",
+   "chest_r1_crypt",
+   "chest_r3_reliquary"
+  ],
+  "openedGates": [
+   "gate_f2_vines"
+  ],
+  "activePortals": [
+   "map_forest_edge",
+   "map_forest_deep",
+   "map_forest_heart",
+   "map_mountain_foot",
+   "map_mountain_mine",
+   "map_mountain_peak",
+   "map_ruins_gate",
+   "map_ruins_hall",
+   "map_ruins_sanctum"
+  ],
+  "loreFound": [
+   "lore_f2_pond",
+   "lore_f3_root",
+   "lore_m3_drake",
+   "lore_r3_seal"
+  ],
+  "formations": [],
+  "leader": "so",
+  "battlesWon": 2079,
+  "runsCleared": 87,
+  "runsLost": 67,
+  "lastTickedAt": 1792241010279
+ },
+ "run": null
+}

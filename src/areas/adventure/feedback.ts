@@ -5,7 +5,8 @@ import type { ItemId } from '../../core/config/ids';
 import type { EventBase } from '../../core/events';
 import { formatInt, t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
-import { AB, ELEMENT_NAMES, NODES, SKILLS, ZONES } from './logic/config/content';
+import { quipLine, type QuipTrigger } from './logic/bonds';
+import { AB, AFFIXES, ELEMENT_NAMES, ENEMIES, NODES, RIFT, RIFT_RULES, SKILLS, TITLES, ZONES, type LineageId } from './logic/config/content';
 import { isAdventureEvent } from './logic/events';
 
 export interface Presentation {
@@ -14,6 +15,7 @@ export interface Presentation {
 }
 
 const T = vi.adventure.toast;
+const E = vi.adventure.engage.toast;
 const itemName = (id: string) => vi.shop[id as ItemId] ?? id;
 const itemsText = (items: Readonly<Record<string, number>>) =>
   Object.entries(items)
@@ -29,10 +31,27 @@ export function adventurePresentation(e: EventBase, origin: 'action' | 'tick' | 
       return { sound: 'birth_fanfare', toast: t(T.starter, { breed: vi.adventure.camp.knight }) };
     case 'ADVENTURE_RUN_STARTED':
       return { sound: 'notify', toast: t(T.started, { zone: ZONES[e.zoneId]?.nameVi ?? '' }) };
-    case 'ADVENTURE_BATTLE_STARTED':
-      return { sound: 'notify', toast: e.boss ? T.boss : e.elite ? T.elite : T.battle };
-    case 'ADVENTURE_BATTLE_WON':
-      return { sound: 'level_up', toast: t(T.won, { exp: e.exp, coins: formatInt(e.coins) }) };
+    case 'ADVENTURE_BATTLE_STARTED': {
+      const affix = e.affix ? AFFIXES[e.affix] : undefined;
+      return { sound: 'notify', toast: affix ? t(E.variant, { name: affix.nameVi }) : e.boss ? T.boss : e.elite ? T.elite : T.battle };
+    }
+    case 'ADVENTURE_BATTLE_WON': {
+      // A Rift floor says its own line (ADVENTURE_RIFT_FLOOR).
+      if (e.rift) return null;
+      const text = e.quick ? E.quickWon : (e.gems ?? 0) > 0 ? E.wonGems : T.won;
+      return { sound: 'level_up', toast: t(text, { exp: e.exp, coins: formatInt(e.coins), gems: e.gems ?? 0 }) };
+    }
+    case 'ADVENTURE_FOE_ESCAPED':
+      return { sound: 'ui_click', toast: E.escaped };
+    case 'ADVENTURE_QUIP':
+      return { sound: null, toast: t(E.quip, { name: e.name, line: quipLine(e.lineage as LineageId, e.trigger as QuipTrigger, e.n) }) };
+    case 'ADVENTURE_TITLE_EARNED':
+      return { sound: 'birth_fanfare', toast: t(E.title, { name: e.name, title: TITLES[e.titleId]?.nameVi ?? e.titleId }) };
+    case 'ADVENTURE_RIFT_STARTED':
+      return { sound: 'notify', toast: t(E.riftStarted, { rule: RIFT_RULES[e.ruleId]?.nameVi ?? '' }) };
+    case 'ADVENTURE_RIFT_FLOOR':
+      if (e.nightmare && e.first) return { sound: 'birth_fanfare', toast: t(E.nightmare, { name: RIFT.nightmares.find((n) => n.enemy === e.nightmare)?.nameVi ?? ENEMIES[e.nightmare]?.nameVi ?? '', gems: e.gems }) };
+      return { sound: e.best ? 'birth_fanfare' : 'coin_collect', toast: e.best ? t(E.riftBest, { floor: e.floor }) : t(E.riftFloor, { floor: e.floor, coins: formatInt(e.coins) }) };
     case 'ADVENTURE_FLED':
       return { sound: 'ui_click', toast: T.fled };
     case 'ADVENTURE_CHEST_OPENED':
@@ -66,6 +85,7 @@ export function adventurePresentation(e: EventBase, origin: 'action' | 'tick' | 
     case 'ADVENTURE_LOOT_COLLECTED':
       return { sound: 'coin_collect', toast: t(e.left > 0 ? T.lootLeft : T.loot, { items: itemsText(e.items), left: e.left }) };
     case 'ADVENTURE_RUN_ENDED':
+      if (e.rift && e.result !== 'lose') return { sound: 'level_up', toast: T.returned };
       return e.result === 'win' ? { sound: 'level_up', toast: T.cleared } : e.result === 'retreat' ? { sound: null, toast: T.returned } : null;
     case 'ADVENTURE_NODE_OPENED':
       return { sound: 'level_up', toast: t(T.node, { skill: SKILLS[NODES[e.nodeId]?.skill ?? '']?.nameVi ?? '', level: e.level }) };

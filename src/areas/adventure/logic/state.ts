@@ -3,16 +3,14 @@
 // found, the battle on), what stays opened for good (treasure chests, gates, portals, lore), formations, the leader, loot waiting for
 // room in the bag. The creatures themselves stay in their own Areas; coins, items and XP are world fields.
 import { z } from 'zod';
-import type { Raw } from '../../../core/save/migrate';
 import type { BattleState } from '../../../systems/combat/types';
 import type { Loadout } from '../../../systems/equipment';
 import { EQUIPMENT_SLOTS } from '../../../systems/equipment';
 import { CATEGORY_VALUES, ELEMENT_VALUES, STATUS_VALUES, STAT_VALUES } from '../../../../content/schemas/adventure/combat';
 import { CLASS_ID_VALUES } from '../../../../content/schemas/adventure/classes';
 import { LINEAGE_ID_VALUES } from '../../../../content/schemas/adventure/lineages';
-import { AB, ZONES } from './config/content';
 
-export const ADVENTURE_STATE_VERSION = 2;
+export const ADVENTURE_STATE_VERSION = 3;
 
 const time = z.number().finite();
 const nonNeg = z.number().finite().min(0);
@@ -45,6 +43,15 @@ const fighterSchema = z.strictObject({
   resets: z.number().int().min(0),
   /** Zones whose boss it helped beat (its first time gives SP). */
   bossClears: z.array(z.string()),
+  /** What it has done, for its titles and memories (decision 039). */
+  feats: z.strictObject({
+    battles: z.number().int().min(0),
+    bestHit: nonNeg,
+    ultimates: z.number().int().min(0),
+    /** Highest Rift floor cleared with it, and the Nightmare bosses (enemy ids) it helped beat. */
+    rift: z.number().int().min(0),
+    nightmares: z.array(z.string()),
+  }),
 });
 
 const statsSchema = z.strictObject(Object.fromEntries(STAT_VALUES.map((k) => [k, nonNeg])) as Record<(typeof STAT_VALUES)[number], typeof nonNeg>);
@@ -170,6 +177,8 @@ const runSchema = z.strictObject({
   /** The events of the last step of the battle, for the screen to play. */
   log: z.array(z.looseObject({ type: z.string() })),
   bossBeaten: z.boolean(),
+  /** A trip into the Umbraflux Rift (decision 039): floors cleared so far and the rule of the day it started on; null = a zone trip. */
+  rift: z.strictObject({ floor: z.number().int().min(0), ruleId: z.string() }).nullable(),
   result: z.enum(['win', 'lose', 'retreat', 'sweep']).nullable(),
   startedAt: time,
 });
@@ -194,6 +203,10 @@ export const adventureStateSchema = z.strictObject({
   formations: z.array(formationSchema),
   /** Who leads the party on the map. */
   leader: z.enum(['so', 'bi']),
+  /** Area tips already shown (decision 039). */
+  tipsSeen: z.array(z.string()),
+  /** The Rift: best floor ever, the day (game days since epoch) of `dayBest`, the Nightmare bosses beaten. */
+  rift: z.strictObject({ best: z.number().int().min(0), day: z.number().int(), dayBest: z.number().int().min(0), nightmares: z.array(z.string()) }),
   battlesWon: z.number().int().min(0),
   runsCleared: z.number().int().min(0),
   runsLost: z.number().int().min(0),
@@ -216,48 +229,10 @@ export const newFighterFields = (): Omit<Fighter, 'level' | 'exp' | 'loadout' | 
   rage: 0,
   resets: 0,
   bossClears: [],
+  feats: newFeats(),
 });
 
-/**
- * v1 → v2 (decision 037): fighters keep level, experience, gear and energy, gain the SP of the levels they already have; a trip of the
- * old node chain is closed safely (its loot waits in the pile, the energy is given back); every portal of a cleared zone is lit. The
- * map / zone ids are read from the save itself, so the migration does not depend on today's content.
- */
-export function migrateAdventure1to2(slice: Raw, ctx: { energyCost: number; portalsOf: (zoneId: string) => string[] }): Raw {
-  const fighters = Object.fromEntries(
-    Object.entries((slice.fighters ?? {}) as Record<string, Raw>).map(([key, f]) => [key, { ...f, ...newFighterFields(), sp: 2 * Math.max(0, Number(f.level ?? 1) - 1) }]),
-  ) as Record<string, Raw>;
-  const pending = { ...((slice.pending ?? {}) as Record<string, number>) };
-  const run = slice.run as Raw | null | undefined;
-  if (run) {
-    if (run.phase !== 'done') {
-      for (const [id, n] of Object.entries((run.loot ?? {}) as Record<string, number>)) pending[id] = (pending[id] ?? 0) + n;
-      for (const m of (run.team ?? []) as Raw[]) {
-        const f = fighters[m.key as string];
-        if (f) fighters[m.key as string] = { ...f, energy: Number(f.energy ?? 0) + ctx.energyCost };
-      }
-    }
-  }
-  const cleared = (slice.cleared ?? {}) as Record<string, number>;
-  return {
-    ...slice,
-    version: 2,
-    fighters,
-    run: null,
-    pending,
-    cleared,
-    openedChests: [],
-    openedGates: [],
-    activePortals: Object.keys(cleared).flatMap((z) => ctx.portalsOf(z)),
-    loreFound: [],
-    formations: [],
-    leader: 'so',
-  };
-}
-
-export const ADVENTURE_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
-  1: (slice) => migrateAdventure1to2(slice, { energyCost: AB.run.energyCost, portalsOf: (zoneId) => ZONES[zoneId]?.maps ?? [] }),
-};
+export const newFeats = (): Fighter['feats'] => ({ battles: 0, bestHit: 0, ultimates: 0, rift: 0, nightmares: [] });
 
 export const initialAdventure = (now: number): AdventureState => ({
   version: ADVENTURE_STATE_VERSION,
@@ -272,6 +247,8 @@ export const initialAdventure = (now: number): AdventureState => ({
   loreFound: [],
   formations: [],
   leader: 'so',
+  tipsSeen: [],
+  rift: { best: 0, day: -1, dayBest: 0, nightmares: [] },
   battlesWon: 0,
   runsCleared: 0,
   runsLost: 0,

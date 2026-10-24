@@ -7,14 +7,15 @@ import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
 import type { Vec } from '../../../../systems/character';
 import { startBattle } from '../../../../systems/combat';
-import { AB, COMBAT_CONTEXT, EVENTS, LOOT_TABLES, MAPS, ZONES, type AreaMap } from '../config/content';
+import { AB, COMBAT_CONTEXT, ENGAGEMENT, EVENTS, LOOT_TABLES, MAPS, ZONES, type AreaMap } from '../config/content';
 import { addCount, enemyInits, playEnemies, rollTable } from '../encounter';
 import { allyInit } from '../fighters';
 import { distanceToThing, groupDistance, thingsOf, tileCenter } from '../maps';
 import type { Run } from '../state';
-import { credit, runAdventure, type AdventureResult } from './kit';
+import { autoBattle, groupAffix, quickWinnable, teamLevel, withAffix } from '../variants';
+import { credit, put, runAdventure, type AdventureResult } from './kit';
 import { settleBattle } from './battle';
-import { commit, finish, giveExp, groupEnemies, groupKey, placeAt, portalLit, stepOf, type Step } from './trip';
+import { commit, finish, giveExp, groupEnemies, groupKey, placeAt, portalLit, recordFeats, speak, stepOf, type Step } from './trip';
 
 export type Position = Vec & { facing?: Run['facing'] | undefined };
 
@@ -28,6 +29,8 @@ function onFoot(world: WorldSave, pos: Position | null, ctx: ActionContext, body
     if (!st) return { ok: false, error: 'NO_RUN' };
     if (st.run.phase === 'battle') return { ok: false, error: 'IN_BATTLE' };
     if (st.run.phase !== 'explore') return { ok: false, error: 'WRONG_PHASE' };
+    // A Rift trip has no map to walk; only going back to the camp (no position) is open.
+    if (st.run.rift && pos) return { ok: false, error: 'WRONG_PHASE' };
     const map = MAPS[st.run.mapId];
     if (!map) return { ok: false, error: 'INVALID_REQUEST' };
     if (pos && !placeAt(st, map, pos)) return { ok: false, error: 'BLOCKED' };
@@ -47,8 +50,11 @@ export function moveTo(world: WorldSave, args: Position, ctx: ActionContext): Ad
   });
 }
 
-/** The walker touched a group: the battle starts (the enemies that act before the party already did). */
-export function engage(world: WorldSave, args: Position & { groupId: string }, ctx: ActionContext): AdventureResult {
+/**
+ * The walker touched a group: the battle starts (the enemies that act before the party already did). A normal group far weaker than
+ * the team is beaten at once when the AI of both sides wins it (`quick`, on by default; decision 039); else it is played.
+ */
+export function engage(world: WorldSave, args: Position & { groupId: string; quick?: boolean | undefined }, ctx: ActionContext): AdventureResult {
   return onFoot(world, args, ctx, (st, map) => {
     const { run } = st;
     const g = map.groups.find((x) => x.id === args.groupId);
@@ -58,17 +64,31 @@ export function engage(world: WorldSave, args: Position & { groupId: string }, c
     if (run.graceUntil !== null && ctx.now < run.graceUntil) return fail('TOO_FAR');
     if (groupDistance(map, g, here(st)) > AB.explore.touch + map.tile) return fail('TOO_FAR');
     const ids = groupEnemies(run.seed, map.id, g);
+    const affix = groupAffix(run.seed, map.id, g);
     run.encounters += 1;
-    const started = startBattle(hashSeed('battle', run.seed, key, run.encounters), [...run.team.map((m) => allyInit(m, run.blessings)), ...enemyInits(ids)], COMBAT_CONTEXT);
-    const events = [...started.events];
-    const battle = playEnemies(started.state, events);
-    run.log = events;
+    const seed = hashSeed('battle', run.seed, key, run.encounters);
+    const fighters = [...run.team.map((m) => allyInit(m, run.blessings)), ...withAffix(enemyInits(ids), affix)];
     run.lastEvent = null;
     run.fighting = key;
     run.graceUntil = null;
-    st.events.push({ type: 'ADVENTURE_BATTLE_STARTED', boss: g.kind === 'boss', elite: g.kind === 'elite' });
+    const level = teamLevel(run.team, (key) => st.a.fighters[key]?.level ?? 1);
+    if (args.quick !== false && quickWinnable(run.team, level, ZONES[map.zoneId]?.levels[1] ?? Infinity, ids, g, affix)) {
+      const sim = autoBattle(seed, fighters);
+      if (sim.state.outcome === 'win') {
+        run.log = [];
+        recordFeats(st, sim.events);
+        settleBattle(st, sim.state, ENGAGEMENT.quickWin.share);
+        return { ok: true };
+      }
+    }
+    const started = startBattle(seed, fighters, COMBAT_CONTEXT);
+    const events = [...started.events];
+    const battle = playEnemies(started.state, events);
+    run.log = events;
+    st.events.push({ type: 'ADVENTURE_BATTLE_STARTED', boss: g.kind === 'boss', elite: g.kind === 'elite', affix: affix?.id ?? null });
     run.phase = 'battle';
     run.battle = battle;
+    recordFeats(st, events);
     if (battle.outcome) settleBattle(st, battle);
     return { ok: true };
   });
@@ -101,6 +121,7 @@ export function interact(world: WorldSave, args: Position & { id: string }, ctx:
         const drawn = rollInto(st, chest.table, ['chest', thing.id]);
         st.a = { ...st.a, openedChests: [...st.a.openedChests, thing.id] };
         st.events.push({ type: 'ADVENTURE_CHEST_OPENED', items: drawn.items, coins: drawn.coins, gems: drawn.gems, treasure: true });
+        speak(st, 'chestVi', true);
         break;
       }
       case 'node': {
@@ -211,7 +232,16 @@ export function takeExit(world: WorldSave, args: Position & { exitId: string }, 
 /** Back to the camp from anywhere outside a battle (no penalty, spec §2): a trip that beat its boss counts as a win. */
 export function returnToCamp(world: WorldSave, ctx: ActionContext): AdventureResult {
   return onFoot(world, null, ctx, (st) => {
-    finish(st, st.run.bossBeaten ? 'win' : 'retreat');
+    finish(st, st.run.bossBeaten || (st.run.rift?.floor ?? 0) > 0 ? 'win' : 'retreat');
     return { ok: true };
+  });
+}
+
+/** The tip of an area has been read (it shows once a save, decision 039). */
+export function seeTip(world: WorldSave, args: { tipId: string }, ctx: ActionContext): AdventureResult {
+  return runAdventure(world, ctx, (w, a) => {
+    if (!ENGAGEMENT.tips.some((t) => t.id === args.tipId)) return { ok: false, error: 'INVALID_REQUEST' };
+    if (a.tipsSeen.includes(args.tipId)) return { ok: false, error: 'ALREADY_OPENED' };
+    return { ok: true, world: put(w, { ...a, tipsSeen: [...a.tipsSeen, args.tipId] }), events: [{ type: 'ADVENTURE_TIP_SEEN', tipId: args.tipId }] };
   });
 }

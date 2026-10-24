@@ -115,6 +115,17 @@ export function createAdventureDialogs(d: AdventureDialogsDeps) {
         el('div', { class: 'adventure-sheet__arts' }, art(v.art, 'adventure-sheet__art', v.title), art(v.guardianArt, 'adventure-sheet__guardian', v.guardian)),
         el('p', { text: `${v.guardian} · ${v.elements}` }),
         el('dl', {}, ...v.stats.flatMap((s) => [el('dt', { text: s.name }), el('dd', { text: formatInt(s.value) })])),
+        el('h4', { text: vi.adventure.engage.sheet.honor }),
+        v.honors.some((h) => h.earned)
+          ? null
+          : el('p', { class: 'adventure-ui__note', text: vi.adventure.engage.sheet.honorNone }),
+        el(
+          'ul',
+          { class: 'adventure-sheet__honors' },
+          ...v.honors.map((h) => el('li', { class: `${h.earned ? 'is-earned' : 'is-locked'}${h.shown ? ' is-shown' : ''}`, attrs: { title: h.desc } }, el('b', { text: h.name }), el('small', { text: h.desc }))),
+        ),
+        el('h4', { text: vi.adventure.engage.sheet.feats }),
+        el('ul', { class: 'adventure-sheet__feats' }, ...v.feats.map((line) => el('li', { text: line }))),
       );
     } else if (tab === 'skills') {
       body = el(
