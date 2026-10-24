@@ -13,6 +13,7 @@ import { battleAffix } from '../logic/actions/battle';
 import { titleOf } from '../logic/bonds';
 import { AB, BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, MAPS, REACTIONS, SKILLS } from '../logic/config/content';
 import { enemyIdOf } from '../logic/encounter';
+import { expShare } from '../logic/fighters';
 import { escapeIn } from './battleFloaters';
 import { logLine } from './battleLog';
 import type { Run } from '../logic/state';
@@ -38,8 +39,9 @@ export interface UnitVm {
   name: string;
   art: string;
   elements: Element[];
-  /** Allies: their level, class and title (the banner and the team list). */
+  /** Allies: their level, the share of the way to the next one, class and title (the nameplate and the team list). */
   level: number | null;
+  expPercent: number | null;
   classId: ClassId | null;
   honor: string | null;
   hpText: string;
@@ -60,8 +62,18 @@ export interface UnitVm {
   intentArt: string | null;
 }
 
+/**
+ * Who an action is aimed at: one enemy / one ally (a marker on each), a whole side (one big marker over it), the actor itself, everyone,
+ * or nobody (guard, flee: it runs at once).
+ */
+export type AimVm = 'enemy' | 'ally' | 'enemies' | 'allies' | 'self' | 'all' | null;
+
+/** The tab of the command dock an action sits in: the main skills (its line's own + the Ultimate), the class skills, the items. */
+export type ActionTab = 'main' | 'sub' | 'item' | 'basic';
+
 export interface BattleActionVm {
   kind: 'attack' | 'skill' | 'ultimate' | 'item' | 'guard' | 'flee';
+  tab: ActionTab;
   id: string;
   label: string;
   detail: string;
@@ -69,8 +81,7 @@ export interface BattleActionVm {
   art: string;
   /** MP it costs (0 = free). */
   mp: number;
-  /** Who it must be aimed at: an enemy, an ally, or nobody (all / self). */
-  aim: 'enemy' | 'ally' | null;
+  aim: AimVm;
   reason: string | null;
   /** The element and category it hits with (for the effectiveness labels). */
   element: Element | null;
@@ -126,7 +137,15 @@ function intentArt(c: Combatant): string | null {
   return it.kind === 'item' ? itemArtId('item_potion_battle') : ACTION_ART[it.kind];
 }
 
-function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally: { art: string; level: number | null; classId: ClassId | null; honor: string | null } | undefined): UnitVm {
+interface AllyInfo {
+  art: string;
+  level: number | null;
+  expPercent: number | null;
+  classId: ClassId | null;
+  honor: string | null;
+}
+
+function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally: AllyInfo | undefined): UnitVm {
   const enemy = c.side === 'enemy' ? ENEMIES[enemyIdOf(c.id)] : undefined;
   return {
     id: c.id,
@@ -135,6 +154,7 @@ function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally
     art: enemy?.art ?? ally?.art ?? '',
     elements: [c.element, ...(c.element2 ? [c.element2] : [])],
     level: ally?.level ?? null,
+    expPercent: ally?.expPercent ?? null,
     classId: ally?.classId ?? null,
     honor: ally?.honor ?? null,
     hpText: `${formatInt(c.hp)}/${formatInt(c.stats.hp)}`,
@@ -155,7 +175,7 @@ function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally
   };
 }
 
-const TARGET_AIM: Record<string, 'enemy' | 'ally' | null> = { enemy: 'enemy', ally: 'ally', allEnemies: null, randomEnemies: null, allAllies: null, self: null, all: null };
+const TARGET_AIM: Record<string, AimVm> = { enemy: 'enemy', ally: 'ally', allEnemies: 'enemies', randomEnemies: 'enemies', allAllies: 'allies', self: 'self', all: 'all' };
 
 /** How an attack of `element` would land on `target` (§15.5): the chart label and the reaction it would set off. */
 export function effectOn(battle: BattleState, actorId: string, element: Element | null, category: string, targetId: string): EffectVm | null {
@@ -189,7 +209,7 @@ function actionsOf(world: WorldSave, run: Run, battle: BattleState, cur: Combata
     if (!e || e === 'BAD_TARGET') return null;
     return errorText(e === 'NOT_ENOUGH_MP' || e === 'ON_COOLDOWN' || e === 'SKILL_DISABLED' || e === 'ULTIMATE_NOT_READY' ? e : 'SKILL_UNAVAILABLE');
   };
-  out.push({ kind: 'attack', id: 'attack', label: vi.adventure.battle.attack, detail: t(vi.adventure.battle.attackDetail, { element: elementName(cur.element) }), art: ACTION_ART.attack, mp: 0, aim: 'enemy', reason: null, element: cur.element, category: 'physical' });
+  out.push({ kind: 'attack', tab: 'basic', id: 'attack', label: vi.adventure.battle.attack, detail: t(vi.adventure.battle.attackDetail, { element: elementName(cur.element) }), art: ACTION_ART.attack, mp: 0, aim: 'enemy', reason: null, element: cur.element, category: 'physical' });
   for (const slot of cur.skills) {
     const s = SKILLS[slot.id];
     if (!s) continue;
@@ -199,6 +219,7 @@ function actionsOf(world: WorldSave, run: Run, battle: BattleState, cur: Combata
     const element = skillElement(s, cur);
     out.push({
       kind: 'skill',
+      tab: s.type === 'unique' ? 'main' : 'sub',
       id: s.id,
       label: `${s.nameVi}${slot.level > 1 ? ` Lv.${slot.level}` : ''}`,
       detail: s.descVi,
@@ -214,16 +235,16 @@ function actionsOf(world: WorldSave, run: Run, battle: BattleState, cur: Combata
     const u = SKILLS[cur.ultimate]!;
     const reason = cur.ultimateUsed ? vi.adventure.battle.ultimateUsed : ultimateReady(cur) ? null : t(vi.adventure.battle.ultimateWait, { rage: Math.round(cur.rage), max: cur.rageMax });
     const element = skillElement(u, cur);
-    out.push({ kind: 'ultimate', id: u.id, label: u.nameVi, detail: u.descVi, art: skillArt(u.id), mp: 0, aim: TARGET_AIM[u.target] ?? null, reason, element: u.power > 0 ? element : null, category: hitCategory(cur, u, COMBAT_CONTEXT) });
+    out.push({ kind: 'ultimate', tab: 'main', id: u.id, label: u.nameVi, detail: u.descVi, art: skillArt(u.id), mp: 0, aim: TARGET_AIM[u.target] ?? null, reason, element: u.power > 0 ? element : null, category: hitCategory(cur, u, COMBAT_CONTEXT) });
   }
-  out.push({ kind: 'guard', id: 'guard', label: vi.adventure.battle.guard, detail: vi.adventure.battle.guardDetail, art: ACTION_ART.guard, mp: 0, aim: null, reason: null, element: null, category: 'support' });
+  out.push({ kind: 'guard', tab: 'basic', id: 'guard', label: vi.adventure.battle.guard, detail: vi.adventure.battle.guardDetail, art: ACTION_ART.guard, mp: 0, aim: null, reason: null, element: null, category: 'support' });
   for (const item of Object.values(BATTLE_ITEMS)) {
     const have = world.inventory.items[item.itemId] ?? 0;
     if (have === 0) continue;
     const detail = (vi.adventure.battle.itemDetail as Record<string, string>)[item.itemId] ?? '';
-    out.push({ kind: 'item', id: item.itemId, label: `${nameOfItem(item.itemId)} (x${have})`, detail, art: itemArtId(item.itemId as ItemId), mp: 0, aim: item.target === 'ally' ? 'ally' : null, reason: null, element: null, category: 'support' });
+    out.push({ kind: 'item', tab: 'item', id: item.itemId, label: `${nameOfItem(item.itemId)} (x${have})`, detail, art: itemArtId(item.itemId as ItemId), mp: 0, aim: TARGET_AIM[item.target] ?? 'self', reason: null, element: null, category: 'support' });
   }
-  out.push({ kind: 'flee', id: 'flee', label: vi.adventure.battle.flee, detail: '', art: ACTION_ART.flee, mp: 0, aim: null, reason: !run.rift && foughtKind(run) === 'normal' ? null : vi.adventure.battle.fleeOff, element: null, category: 'support' });
+  out.push({ kind: 'flee', tab: 'basic', id: 'flee', label: vi.adventure.battle.flee, detail: '', art: ACTION_ART.flee, mp: 0, aim: null, reason: !run.rift && foughtKind(run) === 'normal' ? null : vi.adventure.battle.fleeOff, element: null, category: 'support' });
   return out;
 }
 
@@ -233,7 +254,12 @@ export function battleVm(world: WorldSave, run: Run): BattleVm | null {
   const cur = current(battle);
   const fighters = adventureOf(world).fighters;
   const affix = battleAffix(battle);
-  const allies = new Map(run.team.map((m) => [m.key, { art: m.art, level: fighters[m.key]?.level ?? null, classId: m.classId, honor: titleOf(fighters[m.key])?.nameVi ?? null }]));
+  const allies = new Map(
+    run.team.map((m): [string, AllyInfo] => {
+      const f = fighters[m.key];
+      return [m.key, { art: m.art, level: f?.level ?? null, expPercent: f ? expShare(f) : null, classId: m.classId, honor: titleOf(f)?.nameVi ?? null }];
+    }),
+  );
   const units = battle.combatants.map((c) => unitVm(battle, c, cur?.id ?? null, allies.get(c.id)));
   const artOf = new Map(units.map((u) => [u.id, u.art]));
   const nameOf = (id: string) => battle.combatants.find((c) => c.id === id)?.name ?? id;

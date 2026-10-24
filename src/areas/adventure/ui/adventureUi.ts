@@ -24,7 +24,7 @@ import { hudVm } from './campVm';
 import { renderCamp } from './campView';
 import { renderDone, renderExplore, renderRift } from './exploreView';
 import { sceneVm } from './sceneVm';
-import { keepScroll, type UiState, type ViewCtx } from './viewKit';
+import { dragScroll, keepScroll, slideTurns, type UiState, type ViewCtx } from './viewKit';
 import type { AdventureRun } from './vmKit';
 
 export interface AdventureUiDeps {
@@ -134,12 +134,14 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     d.host.classList.toggle('is-battle', run?.phase === 'battle');
     d.host.classList.toggle('is-camp', run === null);
     d.host.classList.toggle('is-done', run?.phase === 'done' || rift);
-    keepScroll(main, () => patch(main, run === null ? renderCamp(ctx) : rift ? renderRift(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx)));
+    const reduce = w.settings.reduceMotion || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    slideTurns(main, () => keepScroll(main, () => patch(main, run === null ? renderCamp(ctx) : rift ? renderRift(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx))), reduce);
     main.scrollTop = top;
     dialogs.follow(w);
   }
 
   const off = d.world.subscribe(render);
+  const offDrag = typeof window !== 'undefined' ? dragScroll(d.host) : () => {};
   render();
 
   /** Auto: when it is an ally's turn the AI chooses for it; the enemies already answered inside the action. */
@@ -230,6 +232,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     scene,
     dispose: () => {
       off();
+      offDrag();
       stop?.();
       d.keys?.removeEventListener('keydown', onKey);
       dialogs.close();

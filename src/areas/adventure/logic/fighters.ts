@@ -43,6 +43,13 @@ export const fighterSkills = (f: Fighter, identity: Identity): SkillSlot[] => [.
 
 export const expNeeded = (f: Pick<Fighter, 'level'>): number => expToNext(f.level, LEVEL_RULES);
 
+/** How far it is on the way to its next level, in whole percent (100 at the level cap). */
+export function expShare(f: Pick<Fighter, 'level' | 'exp'>): number {
+  if (f.level >= LEVEL_RULES.maxLevel) return 100;
+  const need = expNeeded(f);
+  return need <= 0 ? 100 : Math.max(0, Math.min(100, Math.floor((f.exp / need) * 100)));
+}
+
 /** Why a creature cannot go on a trip now, or null when it can. */
 export function whyNotReady(entry: RosterEntry | undefined, f: Fighter | undefined, now: number, boost = 0): ErrorCode | null {
   if (!entry || !identityOf(entry) || entry.purpose !== 'ADVENTURE' || !entry.adult) return 'NOT_A_FIGHTER';
