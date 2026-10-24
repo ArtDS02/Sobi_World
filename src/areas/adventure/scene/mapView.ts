@@ -8,7 +8,9 @@ import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { PROPS, type AreaMap } from '../logic/config/content';
 import { thingsOf, type Thing } from '../logic/maps';
 import { elementArt } from '../ui/vmKit';
+import { vi } from '../../../i18n/vi';
 import { decalsOf } from './decals';
+import { dressArea, type AreaDressing } from './mapDepth';
 import type { AdventureSceneState } from './sceneState';
 
 const GROUND: Record<string, Record<string, number>> = {
@@ -69,14 +71,19 @@ export interface MapObjects {
   /** Each group's picture with its resting scale and its own breathing phase, its shadow and its tag. */
   groups: Map<string, { img: Phaser.GameObjects.Image; sx: number; sy: number; phase: number; shadow: Phaser.GameObjects.Ellipse; label: Phaser.GameObjects.Container }>;
   sparkles: Map<string, Phaser.GameObjects.Text>;
+  /** The teleport gates (exits): the portal picture, its swirl of light while open, the lock and its words while shut. */
+  gates: Map<string, { img: Phaser.GameObjects.Image; glow: Phaser.GameObjects.Image; lock: Phaser.GameObjects.Container }>;
+  dressing: AreaDressing;
 }
 
-/** Builds the whole area; `destroy` the returned layer to drop it. */
-export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneState): MapObjects {
+/** Builds the whole area; `destroy` the returned layer to drop it. `motion` = false (reduced motion): the dressing stays still. */
+export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneState, motion = true): MapObjects {
   const t = map.tile;
   const zone = zoneOfMapId(map);
   const colours = GROUND[zone] ?? GROUND.forest!;
   const layer = scene.add.container(0, 0);
+  const depth = dressArea(scene, layer, map, zone, motion);
+  depth.under();
   const ground = scene.add.graphics().setDepth(-10);
   map.terrain.forEach((row, y) =>
     [...row].forEach((c, x) => {
@@ -86,6 +93,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     }),
   );
   layer.add(ground);
+  const dressing = depth.ground();
   for (const d of decalsOf(map, zone)) {
     const k = textureKey(d.art);
     if (!scene.textures.exists(k)) continue;
@@ -123,7 +131,21 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     groups.set(g.id, { img, sx: img.scaleX, sy: img.scaleY, phase, shadow, label: foeLabel(scene, g.elements, g.count, g.affix?.name ?? null) });
     layer.add([shadow, img, groups.get(g.id)!.label]);
   }
-  return { layer, things, groups, sparkles };
+  const gates: MapObjects['gates'] = new Map();
+  for (const e of map.exits) {
+    const view = s.exits.find((x) => x.id === e.id);
+    const cx = (e.x + e.w / 2) * t;
+    const feet = (e.y + e.h) * t;
+    const glow = scene.add.image(cx, feet - t * 1.4, 'adv-fx-blob').setDisplaySize(t * 3.4, t * 3.4).setTint(view?.forward ? 0x9ae6ff : 0xd8ffd0).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.6);
+    const img = standOn(scene, key(scene, 'adv_portal', view?.open ? 'on' : 'off'), map, e.x - 0.5, e.y, e.w + 1, e.h, 1.05);
+    const words = scene.add.text(0, -6, vi.adventure.explore.gateLocked, { fontSize: '15px', fontStyle: 'bold', color: '#fff6e0', backgroundColor: '#5b3a1cdd', padding: { x: 8, y: 4 } }).setOrigin(0.5, 1);
+    const lockKey = textureKey('ui_icon_lock');
+    const lockIcon = scene.textures.exists(lockKey) ? [scene.add.image(0, -words.height - 22, lockKey).setDisplaySize(34, 34)] : [];
+    const lock = scene.add.container(cx, (e.y - 0.4) * t, [words, ...lockIcon]).setVisible(false);
+    gates.set(e.id, { img, glow, lock });
+    layer.add([glow, img, lock]);
+  }
+  return { layer, things, groups, sparkles, gates, dressing };
 }
 
 /** The tag over a group seen up close: its elements' badges and how many it is (origin at the bottom centre). */
@@ -152,8 +174,20 @@ function foeLabel(scene: Phaser.Scene, elements: readonly AdventureSceneState['g
   return box;
 }
 
-/** Re-points the things whose state changed (a chest opened, a gate gone, a portal lit). */
-export function refreshThings(scene: Phaser.Scene, map: AreaMap, objs: MapObjects, s: AdventureSceneState) {
+/** Re-points the things whose state changed (a chest opened, a gate gone, a portal lit, a teleport gate opened). */
+export function refreshThings(scene: Phaser.Scene, map: AreaMap, objs: MapObjects, s: AdventureSceneState, time = 0, near: { x: number; y: number } | null = null) {
+  for (const e of map.exits) {
+    const g = objs.gates.get(e.id);
+    const view = s.exits.find((x) => x.id === e.id);
+    if (!g || !view) continue;
+    const k = key(scene, 'adv_portal', view.open ? 'on' : 'off');
+    if (g.img.texture.key !== k) g.img.setTexture(k);
+    g.img.setTint(view.open ? 0xffffff : 0x9a9aa8);
+    // An open gate breathes light; a shut one is dark and says why when the party comes close.
+    g.glow.setVisible(view.open).setAlpha(0.45 + 0.25 * Math.sin(time / 380)).setRotation(time / 1600);
+    const close = !!near && Math.hypot(near.x - (e.x + e.w / 2) * map.tile, near.y - (e.y + e.h / 2) * map.tile) < map.tile * 4;
+    g.lock.setVisible(!view.open && close);
+  }
   for (const th of thingsOf(map)) {
     const img = objs.things.get(th.id);
     if (!img) continue;

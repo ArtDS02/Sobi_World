@@ -263,6 +263,7 @@ export const partC = {
       returnCamp: "Back to the camp",
       returnHint: "Keeps everything found, nobody is exhausted.",
       blessing: "Blessing: {element} damage +{pct}%",
+      gateLocked: "Beat the guardian to open the gate",
       down: "Down",
       lastEvent: "Just now",
     },

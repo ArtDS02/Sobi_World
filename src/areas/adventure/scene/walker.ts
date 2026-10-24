@@ -20,6 +20,8 @@ export class Walker {
   private trail: Vec[] = [];
   private readonly leader: Phaser.GameObjects.Image;
   private followers: Phaser.GameObjects.Image[] = [];
+  /** How far the party has dissolved into a gate's light (0 = solid, 1 = gone). */
+  private warp = 0;
 
   constructor(private readonly scene: Phaser.Scene) {
     this.leader = scene.add.image(0, 0, FALLBACK_PROP_KEY).setOrigin(0.5, 1);
@@ -89,6 +91,18 @@ export class Walker {
       left -= d;
     }
     return this.trail.at(-1) ?? this.pos;
+  }
+
+  /** The party dissolving into (or coming out of) a teleport gate's light: thinner, taller, brighter and fading. */
+  setWarp(k: number) {
+    if (k === this.warp && k === 0) return;
+    this.warp = k;
+    for (const img of [this.leader, ...this.followers]) {
+      // Solid again: the leader is whole, the followers' own alpha is set by setFollowers every frame.
+      if (k <= 0) img.clearTint();
+      else img.setScale(img.scaleX * (1 - 0.55 * k), img.scaleY * (1 + 0.5 * k)).setAlpha(1 - k).setTint(0xffffff, 0xffffff, 0xbfefff, 0xbfefff);
+    }
+    if (k <= 0) this.leader.setAlpha(1);
   }
 
   setVisible(on: boolean) {

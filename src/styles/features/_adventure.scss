@@ -1712,3 +1712,12 @@ $adv-pink: #ef5a78;
 @media (prefers-reduced-motion: reduce) {
   .adventure-board, .adventure-board__item { animation-duration: 0.01ms !important; }
 }
+
+// The map's edges darken softly (adventure-big-update-1 §11): the eye stays on the middle, where the party walks.
+.adventure-host.is-exploring::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  background: radial-gradient(ellipse 75% 70% at 50% 55%, transparent 55%, rgba(18, 28, 10, 0.38) 100%);
+}

@@ -1295,6 +1295,7 @@ export const vi = {
       returnCamp: "Về Trại",
       returnHint: "Giữ mọi thứ đã nhặt, không ai kiệt sức.",
       blessing: "Phúc lành: sát thương {element} +{pct}%",
+      gateLocked: "Hạ kẻ canh khu để mở cổng",
       down: "Gục",
       lastEvent: "Vừa rồi",
     },

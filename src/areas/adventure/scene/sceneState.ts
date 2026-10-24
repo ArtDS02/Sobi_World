@@ -54,4 +54,6 @@ export interface SceneReport {
   focus(thingId: string | null): void;
   use(thingId: string, pos: ScenePos): void;
   exit(exitId: string, pos: ScenePos): void;
+  /** The party stepped into an open teleport gate (its light and sound start; `exit` follows when it is over). */
+  warp?(exitId: string): void;
 }

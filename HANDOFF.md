@@ -14,7 +14,9 @@ Nhánh: `phase-14-art`. Prompt gốc: 17 mục, thứ tự A → C → B → D �
 - [x] B8 Vào trận: tia dịch chuyển trên từng đơn vị, nhấp nháy hiện ra + `adv_battle_start` (`ENTER_MS` trong `battleFxView.ts`).
 - Âm thanh: 10 SFX tổng hợp `scripts/art/sfx.ts` (`npx tsx scripts/art/adventureSfx.ts` → `public/assets/audio/adv_*.mp3`), thêm vào `AUDIO_KEYS` + manifest; UI phát qua dep `sound` (areaOverlays → adventureUi).
 - [x] D10 Bảng tổng kết: `run.report` (slice **v4**, migration `migrateAdventure3to4`), tạo ở `settleBattle`/`settleRiftFloor` (`makeReport` trong `trip.ts`), đóng bằng `closeReport`. UI `ui/reportView.ts` + `reportVm.ts`: chiếu lại đòn kết liễu → bảng (KN/xu/gems, vật phẩm, quà trùm, thanh KN chạy qua từng cấp + LEVEL UP, âm `adv_victory`/`adv_exp_fill`/`level_up`). Bot/sim đóng bảng sau mỗi trận.
-- [ ] E11–E13 bản đồ
+- [x] E11 Bản đồ có chiều sâu (`scene/mapDepth.ts`): nền tường lan ra ngoài tối dần, cây/đá/cột lớn viền trên (sau đội) và dưới (trước đội, mờ khi đội tới gần), bóng dưới tường, bóng vật, tia nắng, bóng mây trôi, lá/đom đóm/than hồng/ma thuật bay, nước lấp lánh, vignette CSS.
+- [x] E12 Quái đứng yên + thở (scale theo nhịp riêng, bóng dưới chân); quái thường hồi sinh khi đổi khu (`run.defeated = []`), trùm/kẻ canh khu hạ vĩnh viễn (`slice.beaten`).
+- [x] E13 Cổng dịch chuyển: exit `lock: 'guardian'` (sau lưng trùm, khóa tới khi hạ; chặn đường đi), vùng nối vùng (Rừng→Núi→Tàn Tích, cổng về ở khu đầu vùng), ảnh `adv_portal` on/off + quầng sáng + chữ "Hạ kẻ canh khu để mở cổng"; đi vào: đội tan vào ánh sáng + chớp trắng + `adv_teleport` → khu mới hiện dần từ trắng. Quà trùm (`gift` trong maps.json) vào bảng tổng kết.
 - [ ] F14–F15 combat animal
 - [ ] G16–G17 cây kỹ năng, vật phẩm lên cấp
 

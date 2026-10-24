@@ -1,5 +1,7 @@
 // The Adventure on screen (spec §3): at the camp and in a battle, the zone's picture behind the DOM screens; on a trip, the area itself —
-// its ground, props and things, the enemy groups walking their patrols, and the party (So or Bi in front) walking with the keys. The
+// its ground, props and things dressed with depth (mapDepth.ts), the enemy groups standing and breathing, the teleport gates (open or
+// locked behind the guardian; walking into an open one plays the teleport and lands in the next area), and the party (So or Bi in
+// front) walking with the keys. The
 // scene reads a plain state from the UI and reports what the walker does (stops somewhere, touches a group, has a thing in reach and
 // presses the interact key, walks into an exit); it never reaches the store.
 import * as Phaser from 'phaser';
@@ -28,6 +30,9 @@ export interface AdventureSceneDeps {
 const MOVE_EVERY_MS = 3000;
 const REST_SAVE_MS = 600;
 const TOUCH_LOCK_MS = 1200;
+/** The teleport through a gate: the party dissolves into light, the screen flashes, then the next area fades in (ms). */
+const WARP_MS = 520;
+const ARRIVE_MS = 520;
 /** Room (design px) the camera may scroll past the area's edges, so the HUD on top and the key hint below never hide a tile. */
 const HUD_TOP = 270;
 const HUD_BOTTOM = 70;
@@ -47,6 +52,9 @@ export class AdventureScene extends Phaser.Scene {
   private touchLockUntil = 0;
   private exitLock = false;
   private texturesChanged = false;
+  /** A teleport under way: when it started and the gate it goes through; the moment the party arrived somewhere. */
+  private warp: { at: number; exitId: string; pos: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' } } | null = null;
+  private arrivedAt = -Infinity;
   private offs: (() => void)[] = [];
 
   constructor(private readonly deps: AdventureSceneDeps) {
@@ -104,7 +112,7 @@ export class AdventureScene extends Phaser.Scene {
   private enterMap(s: AdventureSceneState, map: AreaMap) {
     this.objs?.layer.destroy();
     this.map = map;
-    this.objs = buildMap(this, map, s);
+    this.objs = buildMap(this, map, s, !this.deps.reduceMotion());
     this.walk = null;
     this.backdrop.setVisible(false);
     this.walker.setVisible(true);
@@ -113,8 +121,10 @@ export class AdventureScene extends Phaser.Scene {
   }
 
   private ground(s: AdventureSceneState, map: AreaMap): Walkable {
-    const gates = s.openedGates.join(',');
-    if (!this.walk || this.walk.gates !== gates) this.walk = { gates, ground: walkableOf(map, new Set(s.openedGates)) };
+    // A teleport gate still locked behind its guardian blocks the way like a wall.
+    const shut = map.exits.filter((e) => !s.exits.find((x) => x.id === e.id)?.open);
+    const gates = `${s.openedGates.join(',')}|${shut.map((e) => e.id).join(',')}`;
+    if (!this.walk || this.walk.gates !== gates) this.walk = { gates, ground: walkableOf(map, new Set(s.openedGates), shut) };
     return this.walk.ground;
   }
 
@@ -129,18 +139,34 @@ export class AdventureScene extends Phaser.Scene {
     if (this.map?.id !== map.id || this.texturesChanged) this.enterMap(s, map);
     this.texturesChanged = false;
     if (s.placeKey !== this.placeKey) {
+      const arrived = this.placeKey !== '';
       this.placeKey = s.placeKey;
       this.walker.place(s.pos);
       this.saved = { x: s.pos.x, y: s.pos.y };
       this.exitLock = true;
+      this.warp = null;
+      // Arriving in another area (a gate or a portal): the area fades in out of the light.
+      if (arrived && !this.deps.reduceMotion()) {
+        this.arrivedAt = time;
+        this.cameras.main.fadeIn(ARRIVE_MS, 255, 255, 255);
+      }
     }
     this.walker.setFollowers(s.followers);
-    const still = s.paused || this.deps.paused();
+    const still = s.paused || this.deps.paused() || this.warp !== null;
     const dir = still ? { x: 0, y: 0 } : inputVector(this.deps.input.held());
     this.walker.update(dir, delta, this.ground(s, map), s.leader === 'bi' ? 'chr_bi' : 'chr_so', !this.deps.reduceMotion());
+    // The party dissolves into the gate's light, or comes out of it.
+    const warpK = this.warp ? Math.min(1, (time - this.warp.at) / WARP_MS) : Math.max(0, 1 - (time - this.arrivedAt) / ARRIVE_MS);
+    this.walker.setWarp(this.deps.reduceMotion() ? 0 : warpK);
+    if (this.warp && time - this.warp.at >= WARP_MS) {
+      const w = this.warp;
+      this.warp = null;
+      this.deps.report.exit(w.exitId, w.pos);
+    }
     const pos = this.walker.position;
     this.cameras.main.centerOn(pos.x, pos.y);
-    refreshThings(this, map, this.objs!, s);
+    refreshThings(this, map, this.objs!, s, time, pos);
+    this.objs!.dressing.update(time, pos);
     this.updateGroups(s, map, time);
     this.updateFocus(s, map);
     this.updateExit(s, map);
@@ -196,14 +222,21 @@ export class AdventureScene extends Phaser.Scene {
 
   private updateExit(s: AdventureSceneState, map: AreaMap) {
     const pos = this.walker.position;
-    const exit = map.exits.find((e) => distanceToThing(map, pos, e) < map.tile * 0.3);
+    const exit = map.exits.find((e) => distanceToThing(map, pos, e) < map.tile * 0.3 && s.exits.find((x) => x.id === e.id)?.open);
     if (!exit) {
       this.exitLock = false;
       return;
     }
-    if (this.exitLock || s.paused) return;
+    if (this.exitLock || s.paused || this.warp) return;
     this.exitLock = true;
-    this.deps.report.exit(exit.id, pos);
+    if (this.deps.reduceMotion()) {
+      this.deps.report.exit(exit.id, pos);
+      return;
+    }
+    // Into the gate: the light takes the party, the screen flashes white, then the next area (the report goes when it is over).
+    this.warp = { at: this.time.now, exitId: exit.id, pos };
+    this.cameras.main.flash(WARP_MS, 255, 255, 255, true);
+    this.deps.report.warp?.(exit.id);
   }
 
   private saveNow(s: AdventureSceneState, delta: number) {

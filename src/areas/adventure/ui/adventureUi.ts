@@ -206,6 +206,9 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
       }
       void dispatch((ww, c) => interact(ww, { ...pos, id: thingId }, c));
     },
+    warp() {
+      d.sound?.('adv_teleport');
+    },
     exit(exitId, pos) {
       lastPos = pos;
       if (exploring()) void dispatch((w, c) => takeExit(w, { ...pos, exitId }, c));
