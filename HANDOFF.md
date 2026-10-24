@@ -1,27 +1,35 @@
 # HANDOFF — adventure-big-update-1
 
-Nhánh: `phase-14-art`. Prompt gốc: 17 mục, thứ tự A → C → B → D → E → F → G. Batch asset: `art_inbox/.batch/adventure-big-update-1/`.
+Nhánh `phase-14-art`. Đủ 17 mục (A → C → B → D → E → F → G), `npm run check` xanh (1.497 test). Chi tiết quyết định: `docs/decisions/041-adventure-big-update-1.md`. Batch asset: `art_inbox/.batch/adventure-big-update-1/` (README, assets.csv, prompts.md).
 
-## Tiến độ
-- [x] A1 Bố cục trận: đồng minh trái quay phải (`.adventure-ui__face` lật), quái phải; bảng tên nhỏ trên đầu (hệ, tên, cấp, HP, MP + KN cho đồng minh, trạng thái, ý định).
-- [x] A2 Dock lệnh có 3 tab Kỹ năng chính (skill `type: unique` + Tuyệt kỹ) / Kỹ năng phụ (skill class) / Vật phẩm; danh sách chỉ mở khi bấm tab (`UiState.menu`).
-- [x] A3 Thanh lượt nằm trong hàng HUD (top −4.5rem), ô sáng ở đầu; FLIP trượt (`slideTurns` trong `ui/viewKit.ts`).
-- [x] A4 Scrollbar mật ong trong rãnh kem (`.adventure-host ::-webkit-scrollbar`), kéo-cuộn chuột + quán tính + lăn dọc → ngang (`dragScroll`), mọi list `data-keep-scroll` / `data-drag-scroll`.
-- [x] C9 Dấu ngắm (vòng + X) trên mục tiêu hợp lệ; skill toàn đội = 1 dấu lớn bao cả phe; chỉ click dấu mới ra chiêu (`battleView.ts` `marker` / `sideMarker`, `BattleActionVm.aim`).
-- [x] B5 Animation mới: canvas 2 lớp (ground dưới đơn vị, air trên) + engine hạt/hình vector tự viết (`ui/fx/fxEngine.ts`), công thức 9 hệ (`ui/fx/elementFx.ts`), tween JS từng khung cho thân đơn vị (`ui/battleStage.ts`). Bỏ `battleMotionView.ts` + `_adventureMotion.scss` (CSS cũ).
-- [x] B6 Vòng phép quanh người thi triển (cả quái) + âm `adv_cast` trước mỗi skill (`CIRCLE_MS` trong `motionProfiles.ts`, `MotionBeat.circle/cast`).
-- [x] B7 Trúng: ngả lui + chớp trắng + nước mắt + `adv_hit`/`adv_crit`; hụt: chỉ ngả/né + bóng mờ + `adv_miss`.
-- [x] B8 Vào trận: tia dịch chuyển trên từng đơn vị, nhấp nháy hiện ra + `adv_battle_start` (`ENTER_MS` trong `battleFxView.ts`).
-- Âm thanh: 10 SFX tổng hợp `scripts/art/sfx.ts` (`npx tsx scripts/art/adventureSfx.ts` → `public/assets/audio/adv_*.mp3`), thêm vào `AUDIO_KEYS` + manifest; UI phát qua dep `sound` (areaOverlays → adventureUi).
-- [x] D10 Bảng tổng kết: `run.report` (slice **v4**, migration `migrateAdventure3to4`), tạo ở `settleBattle`/`settleRiftFloor` (`makeReport` trong `trip.ts`), đóng bằng `closeReport`. UI `ui/reportView.ts` + `reportVm.ts`: chiếu lại đòn kết liễu → bảng (KN/xu/gems, vật phẩm, quà trùm, thanh KN chạy qua từng cấp + LEVEL UP, âm `adv_victory`/`adv_exp_fill`/`level_up`). Bot/sim đóng bảng sau mỗi trận.
-- [x] E11 Bản đồ có chiều sâu (`scene/mapDepth.ts`): nền tường lan ra ngoài tối dần, cây/đá/cột lớn viền trên (sau đội) và dưới (trước đội, mờ khi đội tới gần), bóng dưới tường, bóng vật, tia nắng, bóng mây trôi, lá/đom đóm/than hồng/ma thuật bay, nước lấp lánh, vignette CSS.
-- [x] E12 Quái đứng yên + thở (scale theo nhịp riêng, bóng dưới chân); quái thường hồi sinh khi đổi khu (`run.defeated = []`), trùm/kẻ canh khu hạ vĩnh viễn (`slice.beaten`).
-- [x] E13 Cổng dịch chuyển: exit `lock: 'guardian'` (sau lưng trùm, khóa tới khi hạ; chặn đường đi), vùng nối vùng (Rừng→Núi→Tàn Tích, cổng về ở khu đầu vùng), ảnh `adv_portal` on/off + quầng sáng + chữ "Hạ kẻ canh khu để mở cổng"; đi vào: đội tan vào ánh sáng + chớp trắng + `adv_teleport` → khu mới hiện dần từ trắng. Quà trùm (`gift` trong maps.json) vào bảng tổng kết.
-- [x] F14 Combat animal chỉ còn 22 loài (danh sách cố định, `lineages.json` bỏ `families`): heo KNIGHT, SAMURAI, ROBOT, HEDGEHOG (Kim) · NINJA, VAMPIRE (Bóng tối) · PIRATE, POSEIDON (Nước) · THOR, TIGER (Sấm) · VALKYRIE, UNICORN (Ánh sáng) · DRAGON, PHOENIX (Lửa) · TURTLE, CRYSTAL (Đất) · GALAXY, MYTHICAL (Hư Không) · BOAR, SUNFLOWER (Thiên nhiên); cá fish_betta, fish_pufferfish. Cờ `fighter` ở `content/farm/species.json` + `content/aquarium/fish.json`; Farm `setPurpose` ADVENTURE chặn giống thường (`NOT_A_FIGHTER`); Admin có ô "Combat animal". Bot mua chiến binh rẻ nhất chưa có, giữ 1 chuồng trống.
-- [x] F15 Thanh cấp: huy hiệu "Lv N" trên ảnh thẻ ở Trại + thanh KN có số; trong trận bảng tên có "Cấp N" + thanh KN mỏng, đội dưới trái có Lv.
-- [x] G16 Cây kỹ năng dạng đồ thị (`ui/sheetTree.ts`): node tròn theo tầng, đường cong tới điều kiện (vàng khi đủ), chấm cấp, trạng thái khóa/mở được/đã mở/tối đa/mang vào trận, bấm node → thẻ chi tiết + Mở/Nâng cấp (SP)/Mang. Logic SP + điều kiện dùng `logic/tree.ts` có sẵn.
-- [x] G17 Lên cấp bằng vật phẩm: `content/adventure/workshop.json` (sách KN 300/1.200/4.000; cửa hàng 6 dòng; Lò Rèn 7 công thức dùng nguyên liệu Vườn/Hồ cá/Mây + lõi trùm). Action `logic/actions/workshop.ts` (`buyWorkshopItem`, `forge`, `useTome`), UI nút "Cửa hàng & Lò Rèn" ở Trại + mục "Lên cấp bằng sách" ở tab Chỉ số (`ui/workshopView.ts`, `workshopVm.ts`). Thuốc mới trong trận: Thuốc Năng Lượng (+50 MP), Bình Nộ Hỏa (+50 Nộ). Admin: "Cửa hàng, Lò Rèn & sách KN".
-- Guard ≤300 dòng: đã tách `battleView` → `battleField/battleDock/battleCommand`, `battleStage` → `battlePose/battleCues`, fx → `castFx/travelFx/impactFx/strokeFx/supportFx/looks/fxDraw`, `mapDepth` → `mapDepthKit`, `battleVm` → `tripResultVm`, dialogs → `sheetTree/workshopView`.
+## Đã xong (theo số mục)
+1. Bố cục trận: ta trái quay phải, quái phải; bảng tên nhỏ — `ui/battleField.ts`, `_adventure.scss` khối "The battle".
+2. Dock 3 tab Kỹ năng chính / phụ / Vật phẩm, chỉ mở khi bấm — `ui/battleDock.ts`, `battleVm.ts` (`tab`, `aim`).
+3. Thanh lượt trong hàng HUD, FLIP trượt vào ô sáng — `battleField.ts` `turnBar`, `viewKit.ts` `slideTurns`.
+4. Scrollbar mật ong + kéo-cuộn chuột (quán tính) + lăn dọc→ngang — `viewKit.ts` `dragScroll`, `data-keep-scroll` / `data-drag-scroll`.
+5. Animation canvas 2 lớp + engine hạt tự viết, 9 hệ — `ui/battleStage.ts`, `battlePose.ts`, `battleCues.ts`, `ui/fx/*`.
+6. Vòng phép + âm niệm phép trước mỗi skill (cả quái) — `motionProfiles.ts` `CIRCLE_MS`, `battleMotion.ts`.
+7. Trúng: ngả lui + chớp + nước mắt (+ ảnh `<art>_hurt` nếu có); hụt: chỉ né — `battlePose.ts`, `fx/supportFx.ts`.
+8. Vào trận: tia dịch chuyển + nhấp nháy + âm — `battleFxView.ts` `ENTER_MS`, `fx/castFx.ts` `teleportIn`.
+9. Dấu ngắm vòng+X, dấu lớn cho cả phe, click dấu mới ra chiêu — `battleField.ts` `marker`/`sideMarker`, `battleCommand.ts`.
+10. Bảng tổng kết: chiếu lại đòn cuối, vật phẩm, quà trùm, thanh KN chạy + LEVEL UP — `ui/reportView.ts`, `reportVm.ts`, `run.report` (slice v4), `closeReport`.
+11. Bản đồ có chiều sâu — `scene/mapDepth.ts`, `mapDepthKit.ts`, vignette CSS.
+12. Quái đứng yên + thở; quái thường hồi sinh khi đổi khu; trùm hạ vĩnh viễn (`slice.beaten`) — `AdventureScene.ts`, `logic/actions/explore.ts`, `battle.ts`.
+13. Cổng dịch chuyển khóa sau trùm, vùng nối vùng, hiệu ứng dịch chuyển; quà trùm trên bảng — `content/adventure/maps.json` (`lock`, `gift`), `trip.ts` `exitOpen`, `mapView.ts`, `walker.ts` `setWarp`.
+14. 22 combat animal (cờ `fighter`, `lineages.json` bỏ `families`) — danh sách ở decision 041.
+15. Thanh cấp: huy hiệu Lv + thanh KN có số ở Trại, Cấp + KN trong trận — `campCards.ts`, `battleField.ts`, `battleDock.ts`.
+16. Cây kỹ năng dạng đồ thị — `ui/sheetTree.ts`.
+17. Lên cấp bằng vật phẩm: Cửa hàng & Lò Rèn + sách KN — `content/adventure/workshop.json`, `logic/actions/workshop.ts`, `ui/workshopView.ts`, `workshopVm.ts`.
 
-## File chính đã sửa
-`src/areas/adventure/ui/{battleView,battleVm,viewKit,adventureUi}.ts`, `src/areas/adventure/logic/fighters.ts` (`expShare`), `src/styles/features/_adventure.scss` (khối "The battle" + scrollbar), `src/i18n/vi.ts`, `src/i18n/en/partC.ts`.
+## Chưa làm / cần biết
+- Chưa chạy e2e (`tests/e2e`) và build desktop. Script chụp ảnh `scripts/capture/adventureShots.ts` còn chọn class cũ (`.adventure-ui__bleft`, `.adventure-vfx`) — cần sửa nếu dùng lại.
+- Giá sách / cửa hàng / Lò Rèn chưa cân bằng bằng bot (bot chưa dùng sách).
+- Asset thật đang chờ chủ dự án (batch ở trên); game chạy đủ khi chưa có.
+
+## Prompt tiếp tục (dán vào phiên mới nếu cần)
+```
+Game Sobi World (Electron + Vite + TypeScript + Phaser), project D:\Local\Sobi_World, nhánh phase-14-art. Phần Sobi Adventure vừa xong "adventure-big-update-1" (17 mục, decision 041). Đọc HANDOFF.md (gốc project) rồi docs/AGENT_RULES.md; chỉ đọc thêm file cần thiết, làm tiếp luôn, không lập kế hoạch lại.
+Đã chốt (không đổi): trận DOM + 2 canvas (battleStage/battlePose/battleCues, ui/fx/*), vòng phép trước mỗi skill, dấu ngắm click-để-ra-chiêu, bảng tổng kết run.report (slice v4), trùm hạ vĩnh viễn slice.beaten, cổng khóa sau trùm exits[].lock, 22 combat animal theo decision 041, workshop.json cho sách KN / Cửa hàng / Lò Rèn.
+Việc còn lại: (1) sửa scripts/capture/adventureShots.ts theo class mới; (2) chạy e2e + build desktop; (3) cân giá sách/cửa hàng bằng bot; (4) khi chủ dự án có asset trong art_inbox/.batch/adventure-big-update-1 thì đặt file + dòng manifest theo README ở đó, chạy npm run assets:check.
+npm run check phải xanh trước khi commit.
+```
