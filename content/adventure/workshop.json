@@ -1,0 +1,52 @@
+{
+  "tomes": [
+    { "itemId": "item_adv_exp_small", "exp": 300 },
+    { "itemId": "item_adv_exp_medium", "exp": 1200 },
+    { "itemId": "item_adv_exp_large", "exp": 4000 }
+  ],
+  "shop": [
+    { "itemId": "item_adv_exp_small", "price": 450 },
+    { "itemId": "item_adv_exp_medium", "price": 1600 },
+    { "itemId": "item_potion_healing", "price": 260 },
+    { "itemId": "item_potion_mana", "price": 320 },
+    { "itemId": "item_potion_battle", "price": 480 },
+    { "itemId": "item_potion_rage", "price": 650 }
+  ],
+  "recipes": [
+    {
+      "id": "forge_exp_small",
+      "inputs": { "item_forest_herb": 3, "item_wheat": 6 },
+      "outputs": { "item_adv_exp_small": 1 }
+    },
+    {
+      "id": "forge_exp_medium",
+      "inputs": { "item_beast_fang": 2, "item_scale": 2, "item_flower_moon_lily": 3 },
+      "outputs": { "item_adv_exp_medium": 1 }
+    },
+    {
+      "id": "forge_exp_large_forest",
+      "inputs": { "item_adv_core_forest": 1, "item_pearl": 1, "item_sunflower": 1 },
+      "outputs": { "item_adv_exp_large": 1 }
+    },
+    {
+      "id": "forge_exp_large_mountain",
+      "inputs": { "item_adv_core_mountain": 1, "item_mountain_ore": 6, "item_watermelon": 2 },
+      "outputs": { "item_adv_exp_large": 2 }
+    },
+    {
+      "id": "forge_exp_large_ruins",
+      "inputs": { "item_adv_core_ruins": 1, "item_ancient_rune": 2, "item_flower_crystal_peony": 1 },
+      "outputs": { "item_adv_exp_large": 3 }
+    },
+    {
+      "id": "forge_potion_mana",
+      "inputs": { "item_pure_water": 3, "item_forest_herb": 2 },
+      "outputs": { "item_potion_mana": 2 }
+    },
+    {
+      "id": "forge_potion_rage",
+      "inputs": { "item_mountain_ore": 3, "item_tomato": 5, "item_beast_fang": 1 },
+      "outputs": { "item_potion_rage": 1 }
+    }
+  ]
+}

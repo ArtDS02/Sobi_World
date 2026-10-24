@@ -14,7 +14,7 @@ import { addCount, enemyIdOf, playEnemies, randInt, rollTable } from '../encount
 import { affixOfTags } from '../variants';
 import { countOf, credit, runAdventure, take, type AdventureResult } from './kit';
 import { settleRiftFloor } from './rift';
-import { announceTitles, carryOver, cheer, commit, finish, giveExp, recordFeats, setFighter, stepOf, updateFeats, type Step } from './trip';
+import { announceTitles, carryOver, cheer, commit, finish, giveExp, levelMarks, lootSince, makeReport, recordFeats, setFighter, stepOf, updateFeats, type Step } from './trip';
 
 const STEP_ERRORS: Record<string, ErrorCode> = {
   BATTLE_OVER: 'WRONG_PHASE',
@@ -55,6 +55,10 @@ export function settleBattle(st: Step, battle: BattleState, share = 1) {
     return;
   }
   const affix = battleAffix(battle);
+  const before = levelMarks(st);
+  const lootBefore = { ...run.loot };
+  const coinsBefore = run.coins;
+  const gemsBefore = run.gems;
   const rng = mulberry32(hashSeed('drops', run.seed, key, run.encounters));
   const enemies = battle.combatants.filter((c) => c.side === 'enemy').map((c) => ENEMIES[enemyIdOf(c.id)]!);
   const expMult = share * (affix?.exp ?? affix?.reward ?? 1);
@@ -75,6 +79,15 @@ export function settleBattle(st: Step, battle: BattleState, share = 1) {
   st.xp += AB.xp.battleWin;
   const boss = group.kind === 'boss';
   const elite = group.kind === 'elite';
+  // A guardian or a boss is beaten for good, and gives its gift now (adventure-big-update-1 §12–§13).
+  const gift: Record<string, number> = {};
+  if ((boss || elite) && !st.a.beaten.includes(key)) {
+    st.a = { ...st.a, beaten: [...st.a.beaten, key] };
+    for (const [id, n] of Object.entries(group.gift ?? {})) {
+      addCount(run.loot, id, n);
+      gift[id] = n;
+    }
+  }
   st.events.push({ type: 'ADVENTURE_BATTLE_WON', zoneId: run.zoneId, boss, elite, enemies: enemies.length, exp, coins, quick: share < 1, affix: affix?.id ?? null, gems });
   cheer(st, boss || elite || !!affix?.escapeAfterRounds);
   if ((boss || elite) && !st.a.activePortals.includes(map.id)) {
@@ -109,6 +122,24 @@ export function settleBattle(st: Step, battle: BattleState, share = 1) {
     }
     st.events.push({ type: 'ADVENTURE_ZONE_CLEARED', zoneId, first });
   }
+  const items = lootSince(st, lootBefore);
+  for (const id of Object.keys(gift)) {
+    items[id] = (items[id] ?? 0) - gift[id]!;
+    if (items[id]! <= 0) delete items[id];
+  }
+  run.report = makeReport(st, { kind: group.kind, quick: share < 1, before, exp, coins: run.coins - coinsBefore, gems: run.gems - gemsBefore, items, gift, battle: share < 1 ? null : battle });
+}
+
+/** The battle board has been read: the party walks on (or the Rift waits for the next floor). */
+export function closeReport(world: WorldSave, ctx: ActionContext): AdventureResult {
+  return runAdventure(world, ctx, (w, a) => {
+    const st = stepOf(w, a, ctx);
+    if (!st) return { ok: false, error: 'NO_RUN' };
+    if (!st.run.report) return { ok: false, error: 'WRONG_PHASE' };
+    st.run.report = null;
+    st.run.log = [];
+    return commit(st);
+  });
 }
 
 /** A golden group whose rounds are over runs away: gone for the trip, nothing won, the team keeps what the battle left it. */

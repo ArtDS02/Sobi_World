@@ -44,7 +44,6 @@ function moveThing(map: AreaMap, id: string, x: number, y: number) {
     for (const list of [map.chests, map.nodes, map.gates, map.springs, map.npcs, map.lore, map.groups] as { id: string; x: number; y: number }[][]) {
       const row = list.find((r) => r.id === id);
       if (row) {
-        if ('patrol' in row && Array.isArray((row as { patrol?: unknown }).patrol)) (row as { patrol?: { x: number; y: number }[] }).patrol = undefined;
         row.x = x;
         row.y = y;
       }

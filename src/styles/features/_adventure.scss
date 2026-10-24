@@ -1535,3 +1535,180 @@ $adv-pink: #ef5a78;
   10%, 80% { opacity: 1; }
   100% { opacity: 0; }
 }
+
+// ======================================================================================================================
+// The battle board (adventure-big-update-1 §10): the last blow plays, then the board rises with the loot, a guardian's gift and
+// every fighter's experience bar filling up (LEVEL UP when it rose)
+
+.adventure-host.is-report .adventure-ui__main {
+  overflow: visible;
+  pointer-events: none;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.adventure-board-host {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+
+  // A quick win has no battle behind: the map is dimmed instead.
+  &:not(.has-replay) { background: rgba(30, 20, 10, 0.35); }
+}
+
+.adventure-board {
+  position: relative;
+  z-index: 45;
+  display: grid;
+  gap: $sp-3;
+  width: min(38rem, 94vw);
+  max-height: calc(100% - 1rem);
+  padding: $sp-6 $sp-4 $sp-4;
+  overflow-y: auto;
+  color: $adv-ink;
+  pointer-events: auto;
+  background: linear-gradient($adv-cream, #fbefd2);
+  border: 5px solid $adv-wood;
+  border-radius: 1.4rem;
+  box-shadow: inset 0 0 0 3px #f3dcae, 0 0 0 3px $adv-wood-dark, 0 14px 34px rgba(40, 24, 8, 0.45);
+  animation: adventure-board-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.15) var(--board-delay, 0ms) both;
+
+  &.is-boss, &.is-elite { border-color: #b8860b; box-shadow: inset 0 0 0 3px #ffe39a, 0 0 0 3px #6b4a08, 0 0 40px 6px rgba(255, 210, 90, 0.55), 0 14px 34px rgba(40, 24, 8, 0.45); }
+
+  &__ribbon {
+    display: flex;
+    gap: $sp-2;
+    align-items: center;
+    justify-content: center;
+    padding: $sp-2 $sp-6;
+    margin: (-$sp-6) auto 0;
+    color: #fff;
+    background: linear-gradient(#ffb44a, #e5801c);
+    border: 3px solid #fff4dc;
+    border-radius: 0 0 1.2rem 1.2rem;
+    box-shadow: 0 4px 0 #b85e08;
+    text-shadow: 0 2px 0 #b85e08;
+
+    h3 { margin: 0; font-size: 1.6rem; letter-spacing: 0.02em; }
+  }
+
+  &__quick { padding: 1px $sp-2; font-size: $fs-xs; font-weight: $fw-bold; color: $adv-ink; text-shadow: none; background: #fff1c4; border-radius: 999px; }
+
+  &__rewards { display: flex; flex-wrap: wrap; gap: $sp-2; justify-content: center; }
+
+  &__reward {
+    padding: 3px $sp-4;
+    font-size: $fs-md;
+    font-weight: $fw-bold;
+    background: #fff;
+    border: 2px solid #e5cf9f;
+    border-radius: 999px;
+
+    &.is-exp { color: #c07a00; border-color: #f2c14e; }
+    &.is-coins { color: #a06a10; }
+    &.is-gems { color: #3f7fd0; border-color: #9ac8f2; }
+  }
+
+  &__gift {
+    display: grid;
+    gap: $sp-1;
+    padding: $sp-2 $sp-3;
+    background: linear-gradient(#fff6d6, #ffe7a8);
+    border: 2px solid #e9b84a;
+    border-radius: 1rem;
+    > small { font-weight: $fw-bold; color: #8a5a10; }
+  }
+
+  &__loot, &__team { display: grid; gap: $sp-1; > b { font-size: $fs-sm; } }
+
+  &__items { display: flex; gap: $sp-2; padding-bottom: 6px; overflow-x: auto; }
+
+  &__item {
+    position: relative;
+    display: grid;
+    flex: none;
+    justify-items: center;
+    width: 4.6rem;
+    padding: $sp-1;
+    background: #fff;
+    border: 2px solid #f0dccd;
+    border-radius: 0.8rem;
+    animation: adventure-pop 0.35s ease-out calc(var(--board-delay, 0ms) + 0.35s) both;
+
+    > b { position: absolute; top: 2px; right: 4px; font-size: 0.7rem; color: $adv-wood-dark; }
+    > small { max-width: 100%; overflow: hidden; font-size: 0.62rem; text-overflow: ellipsis; white-space: nowrap; }
+  }
+
+  &__item-art, &__item .adv-icon { width: 2.6rem; height: 2.6rem; object-fit: contain; }
+
+  &__fighter {
+    position: relative;
+    display: flex;
+    gap: $sp-2;
+    align-items: center;
+    padding: $sp-1 $sp-2;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 0.9rem;
+  }
+
+  &__fighter-art { flex: none; width: 3rem; height: 3rem; object-fit: contain; background: #fff; border: 2px solid #e5cf9f; border-radius: 50%; transform: scaleX(-1); }
+  &__fighter-text { display: grid; flex: 1; gap: 3px; min-width: 0; }
+  &__fighter-head { display: flex; gap: $sp-2; align-items: baseline; b { font-size: $fs-sm; } small { font-size: $fs-xs; color: $c-text-muted; } em { margin-left: auto; font-size: $fs-xs; font-style: normal; font-weight: $fw-bold; color: #c07a00; } }
+
+  &__bar {
+    position: relative;
+    display: block;
+    height: 0.95rem;
+    overflow: hidden;
+    background: rgba(91, 58, 28, 0.18);
+    border-radius: 999px;
+    box-shadow: inset 0 1px 2px rgba(91, 58, 28, 0.4);
+  }
+
+  &__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    display: block;
+    background: linear-gradient(#ffe17a, #f2b33d);
+    border-radius: 999px;
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.55);
+  }
+
+  &__fighter.is-up &__fill { background: linear-gradient(#fff2a0, #ffb020); }
+
+  &__levelup {
+    position: absolute;
+    top: -0.6rem;
+    right: 0.4rem;
+    padding: 1px $sp-3;
+    font-size: $fs-sm;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+    background: linear-gradient(#ff7a4a, #e0401c);
+    border: 2px solid #fff;
+    border-radius: 999px;
+    box-shadow: 0 0 14px 4px rgba(255, 170, 60, 0.85);
+    text-shadow: 0 2px 0 #a02a08;
+  }
+
+  &__next { justify-self: center; min-width: 10rem; }
+}
+
+@keyframes adventure-board-in {
+  from { opacity: 0; transform: translateY(40px) scale(0.85); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes adventure-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adventure-board, .adventure-board__item { animation-duration: 0.01ms !important; }
+}

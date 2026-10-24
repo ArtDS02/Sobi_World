@@ -162,7 +162,7 @@ describe('the save (v2)', () => {
       lastTickedAt: T0,
     };
     const v2 = ADVENTURE_MIGRATIONS[1]!(v1 as never) as Record<string, unknown>;
-    const a = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[2]!(v2 as never));
+    const a = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[3]!(ADVENTURE_MIGRATIONS[2]!(v2 as never)));
     expect(a.fighters.k).toMatchObject({ level: 6, sp: 10, energy: 40 + AB.run.energyCost, classId: null });
     expect(a.run).toBeNull();
     expect(a.pending).toEqual({ item_forest_herb: 3 });

@@ -1,5 +1,5 @@
 // A quick trip through a cleared zone (spec §2 "Đi nhanh"): the party pays its energy as for a trip and brings back a share of what
-// the zone's normal groups and guardians give — experience, coins, drops — without walking. No treasure chest, no boss, no risk. The
+// the zone's normal groups give — experience, coins, drops — without walking. No treasure chest, no boss, no risk. The
 // summary waits like a trip's.
 import { hashSeed, mulberry32 } from '../../../../core/rng';
 import type { WorldSave } from '../../../../core/save/world';
@@ -29,7 +29,8 @@ export function sweepZone(world: WorldSave, args: PartyArgs & { zoneId: string }
     for (const mapId of zone.maps) {
       const map = MAPS[mapId]!;
       for (const g of map.groups) {
-        if (g.kind === 'boss') continue;
+        // Guardians and bosses are beaten once and for all (adventure-big-update-1 §12): a sweep meets the normal groups only.
+        if (g.kind !== 'normal') continue;
         for (const id of groupEnemies(seed, mapId, g)) {
           const e = ENEMIES[id]!;
           exp += e.exp * share;

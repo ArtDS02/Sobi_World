@@ -2,7 +2,7 @@
 // whole trip the way a player would (every group, the springs, the exits, home by the portal).
 import { SAVE_CODEC } from '../../src/app/saveCodec';
 import { adventureArea } from '../../src/areas/adventure';
-import { battleAct, engage, interact, returnToCamp, takeExit } from '../../src/areas/adventure/logic/actions/run';
+import { battleAct, closeReport, engage, interact, returnToCamp, takeExit } from '../../src/areas/adventure/logic/actions/run';
 import { MAPS, ZONES } from '../../src/areas/adventure/logic/config/content';
 import { newFighter } from '../../src/areas/adventure/logic/fighters';
 import { reachableTiles, thingsOf, tileCenter } from '../../src/areas/adventure/logic/maps';
@@ -78,6 +78,8 @@ export function standBy(w: WorldSave, mapId: string, thingId: string): { x: numb
 export function fight(w0: WorldSave, now = T0, seed = 1): WorldSave {
   let w = w0;
   for (let i = 0; i < 400 && adventureOf(w).run?.phase === 'battle'; i += 1) w = ok(battleAct(w, { action: 'auto' }, ctxAt(now, seed + i)));
+  // The battle board (adventure-big-update-1 §10) is read and closed, as the player would.
+  if (adventureOf(w).run?.report) w = ok(closeReport(w, ctxAt(now)));
   return w;
 }
 

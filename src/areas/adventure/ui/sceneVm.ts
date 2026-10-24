@@ -1,7 +1,7 @@
 // The plain state the Adventure's scene draws (scene/sceneState.ts), built from the world: where the party stands and when it must be put
 // back, the leader and followers, the groups of the area (their look, elements, beaten or not), what is opened or used. Pure.
 import type { WorldSave } from '../../../core/save/world';
-import { groupEnemies, groupKey, portalLit } from '../logic/actions/trip';
+import { exitOpen, groupEnemies, groupKey, portalLit } from '../logic/actions/trip';
 import { CAMP_ART } from '../logic/art';
 import { ENEMIES, MAPS, RIFT, ZONES, ZONE_LIST } from '../logic/config/content';
 import { adventureOf } from '../logic/save/lens';
@@ -22,8 +22,9 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
     now,
     paused,
   };
-  if (!run || run.phase !== 'explore' || run.rift) {
-    return { ...base, mode: !run ? 'camp' : run.phase === 'battle' ? 'battle' : 'done', mapId: null, placeKey: '', pos: { x: 0, y: 0, facing: 'down' }, groups: [], usedSpots: [], springUsed: false, portalLit: false, graceUntil: 0 };
+  // The board of a battle just won keeps the battle's picture behind it.
+  if (!run || run.phase !== 'explore' || run.rift || run.report) {
+    return { ...base, mode: !run ? 'camp' : run.phase === 'battle' ? 'battle' : 'done', mapId: null, placeKey: '', pos: { x: 0, y: 0, facing: 'down' }, groups: [], exits: [], usedSpots: [], springUsed: false, portalLit: false, graceUntil: 0 };
   }
   const map = MAPS[run.mapId];
   const prefix = `${run.mapId}/`;
@@ -44,9 +45,11 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
         art: enemies[0]?.art ?? '',
         elements: [...new Set(enemies.map((e) => e.element))],
         count: enemies.length,
-        defeated: run.defeated.includes(groupKey(run.mapId, g.id)),
+        // A normal group is gone until the party changes area; a guardian or a boss is gone for good.
+        defeated: run.defeated.includes(groupKey(run.mapId, g.id)) || (g.kind !== 'normal' && a.beaten.includes(groupKey(run.mapId, g.id))),
       };
     }),
+    exits: (map?.exits ?? []).map((e) => ({ id: e.id, open: !!map && exitOpen(world, a, map, e), forward: e.lock === 'guardian' })),
     usedSpots: run.harvested.filter((k) => k.startsWith(prefix)).map((k) => k.slice(prefix.length)),
     springUsed: run.springs.includes(run.mapId),
     portalLit: portalLit(world, a, run.mapId),

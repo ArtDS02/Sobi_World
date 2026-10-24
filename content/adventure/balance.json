@@ -58,6 +58,8 @@
         { "kind": "status", "status": "defUp", "turns": 4 },
         { "kind": "status", "status": "matkUp", "turns": 4 }
       ]
-    }
+    },
+    { "itemId": "item_potion_mana", "target": "ally", "effects": [{ "kind": "mp", "amount": 50 }] },
+    { "itemId": "item_potion_rage", "target": "ally", "effects": [{ "kind": "rage", "amount": 50 }] }
   ]
 }

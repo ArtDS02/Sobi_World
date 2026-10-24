@@ -33,14 +33,25 @@
     "item_equip_moon_veil",
     "item_equip_lantern_charm",
     "item_equip_void_pearl",
-    "item_skill_scroll"
+    "item_skill_scroll",
+    "item_adv_exp_small",
+    "item_adv_exp_medium",
+    "item_adv_exp_large",
+    "item_adv_core_forest",
+    "item_adv_core_mountain",
+    "item_adv_core_ruins"
   ],
   "consumes": [
     "item_potion_healing",
     "item_potion_battle",
     "item_ration_hearty",
     "item_ration_spicy",
-    "item_ration_swift"
+    "item_ration_swift",
+    "item_potion_mana",
+    "item_potion_rage",
+    "item_adv_exp_small",
+    "item_adv_exp_medium",
+    "item_adv_exp_large"
   ],
   "icon": "prop_portal_gate",
   "npc": "npc_knight"

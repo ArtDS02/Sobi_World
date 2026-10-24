@@ -1,7 +1,7 @@
 // `npm run sim:rift`: how deep the Umbraflux Rift goes (decision 039) for the balanced team of decision 037 at a few levels and gears,
 // floor after floor on Auto, under every rule of the day. Prints the median and best floor reached per level, and the coins and
 // experience a run brings. Numbers only; tune `content/adventure/engagement.json` (rift) from here.
-import { battleAct, riftNext, startRift } from '../src/areas/adventure/logic/actions/run';
+import { battleAct, closeReport, riftNext, startRift } from '../src/areas/adventure/logic/actions/run';
 import { RIFT } from '../src/areas/adventure/logic/config/content';
 import { newFighter } from '../src/areas/adventure/logic/fighters';
 import { adventureOf, withAdventure } from '../src/areas/adventure/logic/save/lens';
@@ -49,6 +49,7 @@ function run(level: number, gear: keyof typeof GEAR, day: number, seed: number):
     if (!r || r.phase !== 'explore' || !r.rift) break;
     w = ok(riftNext(w, ctx(now, seed + floor)));
     for (let i = 0; i < 600 && adventureOf(w).run?.phase === 'battle'; i += 1) w = ok(battleAct(w, { action: 'auto' }, ctx(now, seed + i)));
+    if (adventureOf(w).run?.report) w = ok(closeReport(w, ctx(now, seed)));
   }
   const r = adventureOf(w).run!;
   return { floor: r.rift?.floor ?? 0, coins: w.wallet.coins - coins0, exp: r.expGained };

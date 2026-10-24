@@ -1,7 +1,7 @@
-// The Adventure slice's migrations (`areas.sobi_adventure`): v1 → v2 (decision 037, Combat V2 and the exploration map) and v2 → v3
-// (decision 039, feats, tips and the Rift).
+// The Adventure slice's migrations (`areas.sobi_adventure`): v1 → v2 (decision 037, Combat V2 and the exploration map), v2 → v3
+// (decision 039, feats, tips and the Rift) and v3 → v4 (adventure-big-update-1: guardians beaten for good, the battle board).
 import type { Raw } from '../../../core/save/migrate';
-import { AB, ZONES } from './config/content';
+import { AB, MAPS, ZONES } from './config/content';
 import { newFeats, newFighterFields } from './state';
 
 /**
@@ -55,7 +55,22 @@ export function migrateAdventure2to3(slice: Raw): Raw {
   };
 }
 
+/**
+ * v3 → v4 (adventure-big-update-1): a guardian or a zone boss beaten before stays beaten — the areas whose portal it lit and the zones
+ * cleared say which (`guardiansOf` gives an area's guardian group keys); a trip on its way has no battle board yet.
+ */
+export function migrateAdventure3to4(slice: Raw, ctx: { guardiansOf: (mapId: string) => string[]; bossOf: (zoneId: string) => string[] }): Raw {
+  const lit = (slice.activePortals ?? []) as string[];
+  const cleared = Object.keys((slice.cleared ?? {}) as Record<string, number>);
+  const beaten = [...new Set([...lit.flatMap((m) => ctx.guardiansOf(m)), ...cleared.flatMap((z) => ctx.bossOf(z))])];
+  const run = slice.run as Raw | null | undefined;
+  return { ...slice, version: 4, beaten, run: run ? { ...run, report: null } : null };
+}
+
+const guardiansOf = (mapId: string): string[] => (MAPS[mapId]?.groups ?? []).filter((g) => g.kind !== 'normal').map((g) => `${mapId}/${g.id}`);
+
 export const ADVENTURE_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
   1: (slice) => migrateAdventure1to2(slice, { energyCost: AB.run.energyCost, portalsOf: (zoneId) => ZONES[zoneId]?.maps ?? [] }),
   2: migrateAdventure2to3,
+  3: (slice) => migrateAdventure3to4(slice, { guardiansOf, bossOf: (zoneId) => (ZONES[zoneId]?.maps ?? []).flatMap((m) => guardiansOf(m).filter((k) => MAPS[m]?.groups.find((g) => `${m}/${g.id}` === k)?.kind === 'boss')) }),
 };

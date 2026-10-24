@@ -1,5 +1,5 @@
 // The exploration areas as a grid (spec §3): which tiles block (walls, water, the footprint of every prop and thing, closed gates), the
-// walkable world for the walker, the things one can reach and use, where a patrolling group stands at a moment, and the checks every
+// walkable world for the walker, the things one can reach and use, where a group stands (it never walks), and the checks every
 // area must pass (§3.10): everything reachable, no chest in a dead corner, the main road never behind an element gate, footprints
 // inside the area and never on top of each other. Pure.
 import type { Rect, Vec, Walkable } from '../../../systems/character';
@@ -38,8 +38,8 @@ export function thingsOf(map: AreaMap): Thing[] {
 /** Things that stand on their tiles (an exit is walked into, an opened gate is gone). */
 const solid = (t: Thing, opened: ReadonlySet<string>) => t.kind !== 'exit' && !(t.kind === 'gate' && opened.has(t.id));
 
-/** The blocked tiles of an area with `opened` gates open. */
-export function blockedTiles(map: AreaMap, opened: ReadonlySet<string> = new Set()): boolean[] {
+/** The blocked tiles of an area with `opened` gates open; `closed` = more rectangles that block (teleport gates still locked). */
+export function blockedTiles(map: AreaMap, opened: ReadonlySet<string> = new Set(), closed: readonly Pick<Thing, 'x' | 'y' | 'w' | 'h'>[] = []): boolean[] {
   const blocked = new Array<boolean>(map.cols * map.rows).fill(false);
   const mark = (x: number, y: number, w: number, h: number) => {
     for (let yy = y; yy < y + h; yy += 1) for (let xx = x; xx < x + w; xx += 1) if (xx >= 0 && yy >= 0 && xx < map.cols && yy < map.rows) blocked[yy * map.cols + xx] = true;
@@ -50,6 +50,7 @@ export function blockedTiles(map: AreaMap, opened: ReadonlySet<string> = new Set
     if (def) mark(p.x, p.y, def.w, def.h);
   }
   for (const t of thingsOf(map)) if (solid(t, opened)) mark(t.x, t.y, t.w, t.h);
+  for (const c of closed) mark(c.x, c.y, c.w, c.h);
   return blocked;
 }
 
@@ -62,8 +63,8 @@ export const tileCenter = (map: AreaMap, x: number, y: number): Vec => ({ x: (x 
 export const tileAt = (map: AreaMap, p: Vec): { x: number; y: number } => ({ x: Math.floor(p.x / map.tile), y: Math.floor(p.y / map.tile) });
 
 /** The ground the walker may stand on: the area, minus its blocked tiles (merged into rows of rectangles). */
-export function walkableOf(map: AreaMap, opened: ReadonlySet<string> = new Set()): Walkable {
-  const blocked = blockedTiles(map, opened);
+export function walkableOf(map: AreaMap, opened: ReadonlySet<string> = new Set(), closed: readonly Pick<Thing, 'x' | 'y' | 'w' | 'h'>[] = []): Walkable {
+  const blocked = blockedTiles(map, opened, closed);
   const t = map.tile;
   const obstacles: Rect[] = [];
   for (let y = 0; y < map.rows; y += 1) {
@@ -122,14 +123,6 @@ function usableFrom(map: AreaMap, t: Thing, reach: Set<number>): boolean {
 
 const idx = (map: AreaMap, p: { x: number; y: number }) => p.y * map.cols + p.x;
 
-/** Tiles a straight segment between two tiles passes (a patrol leg). */
-function segmentTiles(a: { x: number; y: number }, b: { x: number; y: number }): { x: number; y: number }[] {
-  const out = [];
-  const n = Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y));
-  for (let i = 0; i <= n; i += 1) out.push({ x: Math.round(a.x + ((b.x - a.x) * i) / Math.max(1, n)), y: Math.round(a.y + ((b.y - a.y) * i) / Math.max(1, n)) });
-  return out;
-}
-
 /** Everything wrong with an area (spec §3.10); [] = fine. */
 export function mapProblems(map: AreaMap): string[] {
   const out: string[] = [];
@@ -165,12 +158,10 @@ export function mapProblems(map: AreaMap): string[] {
   const shut = reachableTiles(map, map.spawn);
   // Every thing usable once every gate is open (no dead corner, §3.5).
   for (const t of thingsOf(map)) if (!usableFrom(map, t, open)) say(`${t.kind} ${t.id} cannot be reached`);
-  for (const g of map.groups) {
-    const points = [{ x: g.x, y: g.y }, ...(g.patrol ?? [])];
-    for (const p of points) if (!walk(p) || !open.has(idx(map, p))) say(`group ${g.id} stands where nobody can walk (${p.x},${p.y})`);
-    const legs = g.patrol ?? [];
-    for (let i = 1; i < legs.length; i += 1) for (const tile of segmentTiles(legs[i - 1]!, legs[i]!)) if (!walk(tile)) say(`group ${g.id} patrols through a blocked tile ${tile.x},${tile.y}`);
-  }
+  for (const g of map.groups) if (!walk(g) || !open.has(idx(map, g))) say(`group ${g.id} stands where nobody can walk (${g.x},${g.y})`);
+  // A gate locked behind the guardian stands behind it: further from the way in than the guardian itself.
+  const guardian = map.groups.find((g) => g.kind !== 'normal');
+  for (const e of map.exits) if (e.lock === 'guardian' && (!guardian || Math.abs(e.x - map.spawn.x) < Math.abs(guardian.x - map.spawn.x))) say(`gate ${e.id} is not behind the guardian`);
   // The main road never needs an element gate: exits, the portal, the guardians and the boss with every gate shut.
   for (const t of thingsOf(map)) if ((t.kind === 'exit' || t.kind === 'portal') && !usableFrom(map, t, shut)) say(`${t.kind} ${t.id} is behind an element gate`);
   for (const g of map.groups) if (g.kind !== 'normal' && !shut.has(idx(map, g))) say(`${g.kind} ${g.id} is behind an element gate`);
@@ -188,44 +179,11 @@ export function distanceToThing(map: AreaMap, p: Vec, t: Pick<Thing, 'x' | 'y' |
   return Math.hypot(dx, dy);
 }
 
-/** Tiles per second a patrolling group walks. */
-export const PATROL_TILES_PER_S = 0.9;
+/** Where a group stands: it waits at its own tile and never walks (adventure-big-update-1 §12). */
+export const groupPosition = (map: AreaMap, g: MapGroup): Vec => tileCenter(map, g.x, g.y);
 
-/** Where a group stands at `ms` (its patrol is walked back and forth); its anchor when it does not patrol. */
-export function groupPosition(map: AreaMap, g: MapGroup, ms: number): Vec {
-  const pts = [{ x: g.x, y: g.y }, ...(g.patrol ?? []).filter((p, i) => i > 0 || p.x !== g.x || p.y !== g.y)];
-  if (pts.length < 2) return tileCenter(map, g.x, g.y);
-  const legs = pts.slice(1).map((p, i) => Math.hypot(p.x - pts[i]!.x, p.y - pts[i]!.y));
-  const length = legs.reduce((n, l) => n + l, 0);
-  if (length <= 0) return tileCenter(map, g.x, g.y);
-  const period = (length * 2) / PATROL_TILES_PER_S;
-  let d = (((ms / 1000) % period) + period) % period;
-  d = d * PATROL_TILES_PER_S;
-  if (d > length) d = length * 2 - d;
-  for (let i = 0; i < legs.length; i += 1) {
-    const leg = legs[i]!;
-    if (d <= leg || i === legs.length - 1) {
-      const a = pts[i]!;
-      const b = pts[i + 1]!;
-      const f = leg > 0 ? Math.min(1, d / leg) : 0;
-      return tileCenter(map, a.x + (b.x - a.x) * f, a.y + (b.y - a.y) * f);
-    }
-    d -= leg;
-  }
-  return tileCenter(map, g.x, g.y);
-}
-
-/** Closest a group comes to `p` anywhere on its patrol (px): the lenient check that a touch really happened. */
+/** How far `p` is from a group (px): the check that a touch really happened. */
 export function groupDistance(map: AreaMap, g: MapGroup, p: Vec): number {
-  const pts = [{ x: g.x, y: g.y }, ...(g.patrol ?? [])].map((q) => tileCenter(map, q.x, q.y));
-  if (pts.length === 1) return Math.hypot(pts[0]!.x - p.x, pts[0]!.y - p.y);
-  let best = Number.POSITIVE_INFINITY;
-  for (let i = 1; i < pts.length; i += 1) {
-    const a = pts[i - 1]!;
-    const b = pts[i]!;
-    const len2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
-    const f = len2 > 0 ? Math.max(0, Math.min(1, ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / len2)) : 0;
-    best = Math.min(best, Math.hypot(a.x + (b.x - a.x) * f - p.x, a.y + (b.y - a.y) * f - p.y));
-  }
-  return best;
+  const at = groupPosition(map, g);
+  return Math.hypot(at.x - p.x, at.y - p.y);
 }

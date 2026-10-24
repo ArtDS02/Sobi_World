@@ -31,6 +31,8 @@ export interface AdventureSceneState {
   /** The team's pictures (knocked-out ones greyed). */
   followers: { art: string; down: boolean }[];
   groups: SceneGroup[];
+  /** The teleport gates of the area: open or still locked behind the guardian, and whether it leads on (forward) or back. */
+  exits: { id: string; open: boolean; forward: boolean }[];
   openedGates: readonly string[];
   openedChests: readonly string[];
   /** Spots used on this trip (resource spots, travellers, shrines). */

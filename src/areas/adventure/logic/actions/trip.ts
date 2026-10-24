@@ -15,7 +15,8 @@ import { pickQuip, titlesOf, type QuipTrigger } from '../bonds';
 import { addCount, pickGroup } from '../encounter';
 import type { AdventureEvent } from '../events';
 import { walkableOf } from '../maps';
-import type { AdventureState, Fighter, Run } from '../state';
+import type { AdventureState, BattleReport, Fighter, Run } from '../state';
+import { expShare } from '../fighters';
 import { put, type Body } from './kit';
 
 /** Working copy of one step: the world, the slice, the trip, what happened and the XP earned. */
@@ -55,6 +56,7 @@ export function freshRun(fields: Pick<Run, 'zoneId' | 'mapId' | 'x' | 'y' | 'see
     bossBeaten: false,
     result: null,
     rift: null,
+    report: null,
     ...fields,
   };
 }
@@ -135,6 +137,38 @@ export function recordFeats(st: Step, events: readonly BattleEvent[]) {
   });
 }
 
+/** Where each member of the team stands on its way to the next level now (before a battle's experience lands). */
+export function levelMarks(st: Step): Map<string, { level: number; exp: number }> {
+  return new Map(st.run.team.map((m) => [m.key, { level: st.a.fighters[m.key]?.level ?? 1, exp: st.a.fighters[m.key]?.exp ?? 0 }]));
+}
+
+/** What the loot of the trip gained since `before`. */
+export function lootSince(st: Step, before: Readonly<Record<string, number>>): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const [id, n] of Object.entries(st.run.loot)) if (n > (before[id] ?? 0)) out[id] = n - (before[id] ?? 0);
+  return out;
+}
+
+/** The board of a battle just won (adventure-big-update-1 §10): rewards, each fighter's bar before and after, the last step to replay. */
+export function makeReport(
+  st: Step,
+  r: { kind: BattleReport['kind']; quick: boolean; before: ReadonlyMap<string, { level: number; exp: number }>; exp: number; coins: number; gems: number; items: Record<string, number>; gift: Record<string, number>; battle: BattleState | null },
+): BattleReport {
+  const fighters = st.run.team.map((m) => {
+    const was = r.before.get(m.key) ?? { level: 1, exp: 0 };
+    const f = st.a.fighters[m.key];
+    return {
+      key: m.key,
+      name: m.name,
+      art: m.art,
+      from: { level: was.level, share: expShare(was) },
+      to: { level: f?.level ?? was.level, share: f ? expShare(f) : expShare(was) },
+      gained: Math.round((m.hp > 0 ? r.exp : r.exp / 2) * 10) / 10,
+    };
+  });
+  return { kind: r.kind, quick: r.quick, exp: r.exp, coins: r.coins, gems: r.gems, items: r.items, gift: r.gift, fighters, battle: r.battle, log: r.battle ? st.run.log : [] };
+}
+
 /** Experience to every member of the team (a knocked-out one gets half), with the level-ups and their SP. */
 export function giveExp(st: Step, exp: number) {
   if (exp <= 0) return;
@@ -154,6 +188,12 @@ export function giveExp(st: Step, exp: number) {
   if (leveled) speak(st, 'levelUpVi', true, leveled);
 }
 
+/**
+ * How a trip that goes home ends: a win when it beat its boss, cleared Rift floors or won anything on the way (guardians and bosses
+ * never come back, adventure-big-update-1 §12, so a trip is worth something without them); a plain retreat otherwise.
+ */
+export const homeResult = (run: Run): 'win' | 'retreat' => (run.bossBeaten || (run.rift?.floor ?? 0) > 0 || run.expGained > 0 ? 'win' : 'retreat');
+
 /** The trip is over: its loot waits in the pile, Rage is kept on each fighter; a lost trip exhausts the party. */
 export function finish(st: Step, result: 'win' | 'lose' | 'retreat') {
   const { run } = st;
@@ -165,7 +205,7 @@ export function finish(st: Step, result: 'win' | 'lose' | 'retreat') {
   for (const [id, n] of Object.entries(run.loot)) addCount(pending, id, n);
   st.a = { ...st.a, pending };
   for (const m of run.team) setFighter(st, m.key, { rage: m.rage });
-  if (result === 'win' && !run.rift) st.a = { ...st.a, runsCleared: st.a.runsCleared + 1 };
+  if (result === 'win' && !run.rift && run.bossBeaten) st.a = { ...st.a, runsCleared: st.a.runsCleared + 1 };
   if (result === 'lose') {
     st.a = { ...st.a, runsLost: st.a.runsLost + 1 };
     const until = st.ctx.now + AB.run.exhaustHours * HOUR_MS;
@@ -181,6 +221,22 @@ export function zoneOpen(w: WorldSave, a: AdventureState, zoneId: string): boole
   if (!zone) return false;
   if (worldLevel(w, WORLD_LEVELS) < zone.fromWorldLevel) return false;
   return !zone.requiresCleared || !!a.cleared[zone.requiresCleared];
+}
+
+/** The guardian or the boss of an area (its one group that is not a normal one), or undefined. */
+export const guardianOf = (map: AreaMap): MapGroup | undefined => map.groups.find((g) => g.kind !== 'normal');
+
+/** Has the guardian (or boss) of this area been beaten for good. */
+export const guardianBeaten = (a: AdventureState, map: AreaMap): boolean => {
+  const g = guardianOf(map);
+  return !g || a.beaten.includes(groupKey(map.id, g.id));
+};
+
+/** Is a teleport gate open: one behind the guardian opens once it is beaten, and a gate into another zone needs that zone open. */
+export function exitOpen(w: WorldSave, a: AdventureState, map: AreaMap, exit: AreaMap['exits'][number]): boolean {
+  if (exit.lock === 'guardian' && !guardianBeaten(a, map)) return false;
+  const dest = MAPS[exit.to];
+  return !!dest && (dest.zoneId === map.zoneId || zoneOpen(w, a, dest.zoneId));
 }
 
 /** Is the portal of an area lit: the entrance of an open zone, or an area whose guardian / boss has fallen. */

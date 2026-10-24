@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { battleAct, engage, interact, returnToCamp, riftNext, seeTip, startRift, startRun } from '../../src/areas/adventure/logic/actions/run';
 import { activeSynergies, hasTitle, pickQuip, quipLine, titleOf, titlesOf, withSynergies } from '../../src/areas/adventure/logic/bonds';
-import { AB, AFFIXES, ENGAGEMENT, MAPS, RIFT, TITLES } from '../../src/areas/adventure/logic/config/content';
+import { AB, AFFIXES, ENGAGEMENT, MAPS, RIFT, TITLES, ZONES } from '../../src/areas/adventure/logic/config/content';
 import { floorReward, floorScale, nightmareAt, riftDay, riftEnemies, ruleOfDay } from '../../src/areas/adventure/logic/rift';
 import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
 import { ADVENTURE_MIGRATIONS } from '../../src/areas/adventure/logic/migrations';
@@ -246,10 +246,26 @@ describe('the Umbraflux Rift (decision 039 §3)', () => {
   });
 });
 
+describe('the save (v4, adventure-big-update-1)', () => {
+  it('a real slice migrates on: guardians whose portal is lit and bosses of cleared zones stay beaten; a trip gets no board', () => {
+    const fixture = JSON.parse(readFileSync(join(import.meta.dirname, '..', 'fixtures', 'adventure-slice-v2-real.json'), 'utf8')) as { slice: Raw };
+    const v3 = ADVENTURE_MIGRATIONS[2]!(fixture.slice);
+    const v4 = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[3]!(v3));
+    expect(v4.version).toBe(4);
+    const lit = (v3.activePortals ?? []) as string[];
+    for (const mapId of lit) {
+      const g = MAPS[mapId]?.groups.find((x) => x.kind !== 'normal');
+      if (g) expect(v4.beaten).toContain(`${mapId}/${g.id}`);
+    }
+    for (const zoneId of Object.keys((v3.cleared ?? {}) as object)) expect(v4.beaten).toContain(`${ZONES[zoneId]!.maps[2]}/${MAPS[ZONES[zoneId]!.maps[2]!]!.groups.find((g) => g.kind === 'boss')!.id}`);
+    expect(v4.fighters).toEqual(adventureStateSchema.shape.fighters.parse(v3.fighters));
+  });
+});
+
 describe('the save (v3)', () => {
   it('a real v2 slice migrates: fighters keep everything and start their feats; tips and the Rift begin empty', () => {
     const fixture = JSON.parse(readFileSync(join(import.meta.dirname, '..', 'fixtures', 'adventure-slice-v2-real.json'), 'utf8')) as { slice: Raw };
-    const a = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[2]!(fixture.slice));
+    const a = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[3]!(ADVENTURE_MIGRATIONS[2]!(fixture.slice)));
     const key = Object.keys(fixture.slice.fighters as object)[0]!;
     const before = (fixture.slice.fighters as Record<string, Raw>)[key]!;
     expect(a.fighters[key]).toMatchObject({ level: before.level, sp: before.sp, feats: newFeats() });
@@ -261,7 +277,7 @@ describe('the save (v3)', () => {
     const a = adventureOf(w);
     const without = (o: object, ...keys: string[]): Raw => Object.fromEntries(Object.entries(o).filter(([k]) => !keys.includes(k)));
     const v2 = { ...without(a, 'tipsSeen', 'rift'), version: 2, run: without(a.run!, 'rift'), fighters: Object.fromEntries(Object.entries(a.fighters).map(([k, f]) => [k, without(f, 'feats')])) };
-    const v3 = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[2]!(v2));
+    const v3 = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[3]!(ADVENTURE_MIGRATIONS[2]!(v2)));
     expect(v3.run).toEqual(a.run);
     expect(v3.fighters).toEqual(a.fighters);
   });

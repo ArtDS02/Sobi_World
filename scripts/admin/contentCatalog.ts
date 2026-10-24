@@ -100,6 +100,7 @@ export const CONTENT_FILES: readonly ContentFileDef[] = [
   def('adventure/props.json', 'adventure', '🌳', 'Vật trên bản đồ', 'Footprint (ô), ảnh, tỉ lệ vẽ', s('adventure', 'maps'), 'propsFileSchema'),
   def('adventure/equipment.json', 'adventure', '🗡️', 'Trang bị', 'Chỉ số, cấp, affinity hệ / trạng thái, kháng', s('adventure', 'equipment'), 'equipmentFileSchema'),
   def('adventure/engagement.json', 'adventure', '🌀', 'Nhịp chơi & Vết Nứt', 'Thắng nhanh, biến thể quái, Vết Nứt Umbraflux, cộng hưởng dòng, danh hiệu, câu nói, mẹo', s('adventure', 'engagement'), 'engagementFileSchema'),
+  def('adventure/workshop.json', 'adventure', '⚒️', 'Cửa hàng, Lò Rèn & sách KN', 'Sách kinh nghiệm, giá cửa hàng Phiêu lưu, công thức Lò Rèn', s('adventure', 'workshop'), 'workshopFileSchema'),
   def('adventure/balance.json', 'adventure', '⚔️', 'Cân bằng Adventure', 'Luật đánh, MP, Nộ, SP, đền, năng lượng, bản đồ', s('adventure', 'balance'), 'adventureBalanceFileSchema'),
   def('adventure/area.json', 'adventure', '🚪', 'Khu Adventure', 'Điều kiện mở, công trình, sản phẩm', '/content/schemas/area.ts', 'areaManifestSchema'),
 

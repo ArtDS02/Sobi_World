@@ -2,7 +2,7 @@
 // camp's quick trip, the Rift (decision 039) and the summary.
 export { startRun, chargeParty } from './start';
 export { engage, interact, moveTo, returnToCamp, seeTip, takeExit, travel, type Position } from './explore';
-export { battleAct, flee, settleBattle } from './battle';
+export { battleAct, closeReport, flee, settleBattle } from './battle';
 export { riftNext, startRift } from './rift';
 export { sweepZone } from './sweep';
 export { closeRun } from './camp';

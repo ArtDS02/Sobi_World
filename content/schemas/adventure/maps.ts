@@ -32,10 +32,10 @@ export const groupSchema = z.strictObject({
   /** normal: a fight; elite: the area's guardian (its first defeat lights the area's portal); boss: the zone boss. */
   kind: z.enum(['normal', 'elite', 'boss']),
   pool: z.array(z.strictObject({ weight: posInt, enemies: z.array(z.string().regex(/^enemy_[a-z0-9_]+$/)).min(1).max(4) })).min(1),
-  /** Points it walks between (tiles), back and forth. */
-  patrol: z.array(point).optional(),
   /** Loot table of the boss chest. */
   table: z.string().optional(),
+  /** What a guardian or a boss gives at its one defeat (items by id), shown on the battle board (adventure-big-update-1 §13). */
+  gift: z.record(z.string().regex(/^item_[a-z0-9_]+$/), posInt).optional(),
 });
 
 export const mapSchema = z.strictObject({
@@ -51,7 +51,11 @@ export const mapSchema = z.strictObject({
   spawn: point,
   /** Top-left tile of the 2×2 portal. */
   portal: point,
-  exits: z.array(z.strictObject({ id: id('exit'), ...cell, w: posInt, h: posInt, to: id('map'), arriveX: z.number().int(), arriveY: z.number().int() })),
+  /**
+   * The teleport gates to the areas around (adventure-big-update-1 §13). `lock: 'guardian'` = it stands behind the area's guardian or
+   * boss and opens only once that one is beaten; a gate into another zone also needs that zone open.
+   */
+  exits: z.array(z.strictObject({ id: id('exit'), ...cell, w: posInt, h: posInt, to: id('map'), arriveX: z.number().int(), arriveY: z.number().int(), lock: z.enum(['guardian']).optional() })),
   props: z.array(z.strictObject({ prop: id('prop_adv'), ...cell })),
   groups: z.array(groupSchema),
   chests: z.array(z.strictObject({ id: id('chest'), ...cell, table: z.string() })),

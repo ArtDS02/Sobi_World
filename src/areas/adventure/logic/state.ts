@@ -1,4 +1,4 @@
-// The Adventure's slice of the world save (`areas.sobi_adventure`, v2 since decision 037): its fighters (level, experience, class, SP and
+// The Adventure's slice of the world save (`areas.sobi_adventure`, v2 since decision 037, v4 since adventure-big-update-1): its fighters (level, experience, class, SP and
 // skill tree, class loadout, Rage, equipment, energy), the trip in progress (where the party stands on which area, what it beat and
 // found, the battle on), what stays opened for good (treasure chests, gates, portals, lore), formations, the leader, loot waiting for
 // room in the bag. The creatures themselves stay in their own Areas; coins, items and XP are world fields.
@@ -10,7 +10,7 @@ import { CATEGORY_VALUES, ELEMENT_VALUES, STATUS_VALUES, STAT_VALUES } from '../
 import { CLASS_ID_VALUES } from '../../../../content/schemas/adventure/classes';
 import { LINEAGE_ID_VALUES } from '../../../../content/schemas/adventure/lineages';
 
-export const ADVENTURE_STATE_VERSION = 3;
+export const ADVENTURE_STATE_VERSION = 4;
 
 const time = z.number().finite();
 const nonNeg = z.number().finite().min(0);
@@ -137,6 +137,27 @@ const battleSchema = z.strictObject({
   outcome: z.enum(['win', 'lose']).nullable(),
 });
 
+/** Where a fighter stood on its way to the next level: its level and the share of the way (whole percent). */
+const levelMark = z.strictObject({ level: z.number().int().min(1), share: z.number().min(0).max(100) });
+
+/**
+ * The board shown when a battle is won (adventure-big-update-1 §10): what it gave, each fighter's experience before and after (the
+ * bars fill on screen, LEVEL UP when one rose), a guardian's gift; the battle's last step so its final blows play first.
+ */
+const reportSchema = z.strictObject({
+  kind: z.enum(['normal', 'elite', 'boss', 'rift']),
+  quick: z.boolean(),
+  exp: nonNeg,
+  coins: nonNeg,
+  gems: nonNeg,
+  items: counts,
+  /** The gift of a guardian or a zone boss (given at its one defeat; it never comes back). */
+  gift: counts,
+  fighters: z.array(z.strictObject({ key: z.string(), name: z.string(), art: z.string(), from: levelMark, to: levelMark, gained: nonNeg })),
+  battle: battleSchema.nullable(),
+  log: z.array(z.looseObject({ type: z.string() })),
+});
+
 const runSchema = z.strictObject({
   zoneId: z.string().min(1),
   /** The area the party walks now, and where it stands (design px, the walker's feet). */
@@ -181,6 +202,8 @@ const runSchema = z.strictObject({
   rift: z.strictObject({ floor: z.number().int().min(0), ruleId: z.string() }).nullable(),
   result: z.enum(['win', 'lose', 'retreat', 'sweep']).nullable(),
   startedAt: time,
+  /** The board of the battle just won, until the player closes it (v4). */
+  report: reportSchema.nullable(),
 });
 
 const formationSchema = z.strictObject({ keys: z.array(z.string()).max(3) });
@@ -198,6 +221,8 @@ export const adventureStateSchema = z.strictObject({
   /** Opened for good (spec §3.5–3.7): treasure chests, element gates, portals (area ids), lore stones read. */
   openedChests: z.array(z.string()),
   openedGates: z.array(z.string()),
+  /** Guardians and zone bosses beaten for good (`<mapId>/<groupId>`, v4): they never stand on the map again. */
+  beaten: z.array(z.string()),
   activePortals: z.array(z.string()),
   loreFound: z.array(z.string()),
   formations: z.array(formationSchema),
@@ -216,7 +241,8 @@ export const adventureStateSchema = z.strictObject({
 
 export type AdventureState = z.infer<typeof adventureStateSchema>;
 export type Fighter = z.infer<typeof fighterSchema> & { loadout: Loadout };
-export type Run = Omit<z.infer<typeof runSchema>, 'battle' | 'log'> & { battle: BattleState | null; log: { type: string }[] };
+export type BattleReport = Omit<z.infer<typeof reportSchema>, 'battle' | 'log'> & { battle: BattleState | null; log: { type: string }[] };
+export type Run = Omit<z.infer<typeof runSchema>, 'battle' | 'log' | 'report'> & { battle: BattleState | null; log: { type: string }[]; report: BattleReport | null };
 export type RunMember = z.infer<typeof memberSchema>;
 export type MemberMods = RunMember['mods'];
 export const CATEGORIES = CATEGORY_VALUES;
@@ -243,6 +269,7 @@ export const initialAdventure = (now: number): AdventureState => ({
   cleared: {},
   openedChests: [],
   openedGates: [],
+  beaten: [],
   activePortals: [],
   loreFound: [],
   formations: [],

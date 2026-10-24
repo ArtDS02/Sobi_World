@@ -3972,6 +3972,46 @@
       "asset": "ui/ui_item_skill_scroll.png"
     },
     {
+      "id": "ui_item_potion_mana",
+      "status": "production",
+      "asset": "ui/ui_item_potion_mana.png"
+    },
+    {
+      "id": "ui_item_potion_rage",
+      "status": "production",
+      "asset": "ui/ui_item_potion_rage.png"
+    },
+    {
+      "id": "ui_item_adv_exp_small",
+      "status": "production",
+      "asset": "ui/ui_item_adv_exp_small.png"
+    },
+    {
+      "id": "ui_item_adv_exp_medium",
+      "status": "production",
+      "asset": "ui/ui_item_adv_exp_medium.png"
+    },
+    {
+      "id": "ui_item_adv_exp_large",
+      "status": "production",
+      "asset": "ui/ui_item_adv_exp_large.png"
+    },
+    {
+      "id": "ui_item_adv_core_forest",
+      "status": "production",
+      "asset": "ui/ui_item_adv_core_forest.png"
+    },
+    {
+      "id": "ui_item_adv_core_mountain",
+      "status": "production",
+      "asset": "ui/ui_item_adv_core_mountain.png"
+    },
+    {
+      "id": "ui_item_adv_core_ruins",
+      "status": "production",
+      "asset": "ui/ui_item_adv_core_ruins.png"
+    },
+    {
       "id": "ui_adv_corner_leaves",
       "status": "production",
       "asset": "ui/ui_adv_corner_leaves.png"

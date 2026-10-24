@@ -1282,6 +1282,86 @@
       "sellGold": 80,
       "hungerRestore": 0,
       "curesSickness": false
+    },
+    {
+      "id": "item_adv_exp_small",
+      "category": "MATERIAL",
+      "area": "sobi_adventure",
+      "rarity": "UNCOMMON",
+      "priceGold": 0,
+      "sellGold": 30,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_adv_exp_medium",
+      "category": "MATERIAL",
+      "area": "sobi_adventure",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 80,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_adv_exp_large",
+      "category": "MATERIAL",
+      "area": "sobi_adventure",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 200,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_potion_mana",
+      "category": "POTION",
+      "area": "sobi_adventure",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 90,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_potion_rage",
+      "category": "POTION",
+      "area": "sobi_adventure",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 150,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_adv_core_forest",
+      "category": "MATERIAL",
+      "area": "sobi_adventure",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 100,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_adv_core_mountain",
+      "category": "MATERIAL",
+      "area": "sobi_adventure",
+      "rarity": "RARE",
+      "priceGold": 0,
+      "sellGold": 140,
+      "hungerRestore": 0,
+      "curesSickness": false
+    },
+    {
+      "id": "item_adv_core_ruins",
+      "category": "MATERIAL",
+      "area": "sobi_adventure",
+      "rarity": "EPIC",
+      "priceGold": 0,
+      "sellGold": 200,
+      "hungerRestore": 0,
+      "curesSickness": false
     }
   ]
 }

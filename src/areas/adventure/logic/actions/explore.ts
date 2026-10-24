@@ -15,7 +15,7 @@ import type { Run } from '../state';
 import { autoBattle, groupAffix, quickWinnable, teamLevel, withAffix } from '../variants';
 import { credit, put, runAdventure, type AdventureResult } from './kit';
 import { settleBattle } from './battle';
-import { commit, finish, giveExp, groupEnemies, groupKey, placeAt, portalLit, recordFeats, speak, stepOf, type Step } from './trip';
+import { commit, exitOpen, finish, homeResult, giveExp, groupEnemies, groupKey, placeAt, portalLit, recordFeats, speak, stepOf, type Step } from './trip';
 
 export type Position = Vec & { facing?: Run['facing'] | undefined };
 
@@ -60,7 +60,8 @@ export function engage(world: WorldSave, args: Position & { groupId: string; qui
     const g = map.groups.find((x) => x.id === args.groupId);
     if (!g) return fail('INVALID_REQUEST');
     const key = groupKey(map.id, g.id);
-    if (run.defeated.includes(key)) return fail('ALREADY_OPENED');
+    if (run.defeated.includes(key) || (g.kind !== 'normal' && st.a.beaten.includes(key))) return fail('ALREADY_OPENED');
+    if (run.report) return fail('WRONG_PHASE');
     if (run.graceUntil !== null && ctx.now < run.graceUntil) return fail('TOO_FAR');
     if (groupDistance(map, g, here(st)) > AB.explore.touch + map.tile) return fail('TOO_FAR');
     const ids = groupEnemies(run.seed, map.id, g);
@@ -193,7 +194,7 @@ export function travel(world: WorldSave, args: Position & { to: string }, ctx: A
     if (distanceToThing(map, here(st), portal) > AB.explore.reach) return fail('TOO_FAR');
     if (!portalLit(st.w, st.a, map.id)) return fail('PORTAL_INACTIVE');
     if (args.to === 'camp') {
-      finish(st, st.run.bossBeaten ? 'win' : 'retreat');
+      finish(st, homeResult(st.run));
       return { ok: true };
     }
     const dest = MAPS[args.to];
@@ -205,6 +206,8 @@ export function travel(world: WorldSave, args: Position & { to: string }, ctx: A
     st.run.y = at.y;
     st.run.facing = 'down';
     st.run.lastEvent = { kind: 'portal', id: dest.id };
+    // Normal groups come back whenever the party moves to another area (adventure-big-update-1 §12).
+    st.run.defeated = [];
     st.events.push({ type: 'ADVENTURE_AREA_ENTERED', mapId: dest.id, via: 'portal' });
     return { ok: true };
   });
@@ -218,12 +221,14 @@ export function takeExit(world: WorldSave, args: Position & { exitId: string }, 
     if (distanceToThing(map, here(st), exit) > map.tile) return fail('TOO_FAR');
     const dest = MAPS[exit.to];
     if (!dest || !ZONES[dest.zoneId]) return fail('INVALID_REQUEST');
+    if (!exitOpen(st.w, st.a, map, exit)) return fail('PORTAL_INACTIVE');
     const at = tileCenter(dest, exit.arriveX, exit.arriveY);
     st.run.mapId = dest.id;
     st.run.zoneId = dest.zoneId;
     st.run.x = at.x;
     st.run.y = at.y;
-    st.run.facing = exit.x === 0 ? 'left' : 'right';
+    st.run.facing = exit.x <= 1 ? 'left' : 'right';
+    st.run.defeated = [];
     st.events.push({ type: 'ADVENTURE_AREA_ENTERED', mapId: dest.id, via: 'exit' });
     return { ok: true };
   });
@@ -232,7 +237,7 @@ export function takeExit(world: WorldSave, args: Position & { exitId: string }, 
 /** Back to the camp from anywhere outside a battle (no penalty, spec §2): a trip that beat its boss counts as a win. */
 export function returnToCamp(world: WorldSave, ctx: ActionContext): AdventureResult {
   return onFoot(world, null, ctx, (st) => {
-    finish(st, st.run.bossBeaten || (st.run.rift?.floor ?? 0) > 0 ? 'win' : 'retreat');
+    finish(st, homeResult(st.run));
     return { ok: true };
   });
 }

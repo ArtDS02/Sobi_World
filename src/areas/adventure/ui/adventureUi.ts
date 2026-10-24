@@ -24,6 +24,7 @@ import { battleVm } from './battleVm';
 import { hudVm } from './campVm';
 import { renderCamp } from './campView';
 import { renderDone, renderExplore, renderRift } from './exploreView';
+import { playBoard, renderReport } from './reportView';
 import { sceneVm } from './sceneVm';
 import { dragScroll, keepScroll, slideTurns, type UiState, type ViewCtx } from './viewKit';
 import type { AdventureRun } from './vmKit';
@@ -136,16 +137,19 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
       state.aim = null;
       state.menu = null;
     }
-    const rift = run?.phase === 'explore' && !!run.rift;
-    const exploring = run?.phase === 'explore' && !rift;
+    const report = run?.report ?? null;
+    const rift = run?.phase === 'explore' && !!run.rift && !report;
+    const exploring = run?.phase === 'explore' && !run.rift && !report;
     d.host.classList.toggle('is-exploring', exploring);
     patch(hud, renderHud(w));
     const ctx = ctxFor(w);
-    d.host.classList.toggle('is-battle', run?.phase === 'battle');
-    stage?.setActive(active && run?.phase === 'battle');
+    d.host.classList.toggle('is-battle', run?.phase === 'battle' || !!report?.battle);
+    d.host.classList.toggle('is-report', !!report);
+    stage?.setActive(active && (run?.phase === 'battle' || !!report?.battle));
     d.host.classList.toggle('is-camp', run === null);
     d.host.classList.toggle('is-done', run?.phase === 'done' || rift);
-    slideTurns(main, () => keepScroll(main, () => patch(main, run === null ? renderCamp(ctx) : rift ? renderRift(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx))), reduceNow());
+    slideTurns(main, () => keepScroll(main, () => patch(main, run === null ? renderCamp(ctx) : report ? renderReport(ctx) : rift ? renderRift(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx))), reduceNow());
+    if (report) playBoard(main, d.sound, reduceNow());
     main.scrollTop = top;
     dialogs.follow(w);
   }

@@ -66,7 +66,8 @@ function standOn(scene: Phaser.Scene, k: string, map: AreaMap, x: number, y: num
 export interface MapObjects {
   layer: Phaser.GameObjects.Container;
   things: Map<string, Phaser.GameObjects.Image>;
-  groups: Map<string, { img: Phaser.GameObjects.Image; label: Phaser.GameObjects.Container }>;
+  /** Each group's picture with its resting scale and its own breathing phase, its shadow and its tag. */
+  groups: Map<string, { img: Phaser.GameObjects.Image; sx: number; sy: number; phase: number; shadow: Phaser.GameObjects.Ellipse; label: Phaser.GameObjects.Container }>;
   sparkles: Map<string, Phaser.GameObjects.Text>;
 }
 
@@ -110,15 +111,17 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
       layer.add(sp);
     }
   }
-  const groups = new Map<string, { img: Phaser.GameObjects.Image; label: Phaser.GameObjects.Container }>();
+  const groups: MapObjects['groups'] = new Map();
   for (const g of s.groups) {
     const img = scene.add.image(0, 0, key(scene, g.art)).setOrigin(0.5, 1);
     const size = g.kind === 'boss' ? 2.4 : g.kind === 'elite' ? 1.8 : 1.4;
     const ratio = img.height > 0 ? img.width / img.height : 1;
     img.setDisplaySize(size * t * ratio, size * t);
     if (g.affix?.golden) img.setTint(0xffe27a);
-    groups.set(g.id, { img, label: foeLabel(scene, g.elements, g.count, g.affix?.name ?? null) });
-    layer.add([img, groups.get(g.id)!.label]);
+    const shadow = scene.add.ellipse(0, 0, size * t * ratio * 0.7, size * t * 0.18, 0x000000, 0.22);
+    const phase = [...g.id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 100;
+    groups.set(g.id, { img, sx: img.scaleX, sy: img.scaleY, phase, shadow, label: foeLabel(scene, g.elements, g.count, g.affix?.name ?? null) });
+    layer.add([shadow, img, groups.get(g.id)!.label]);
   }
   return { layer, things, groups, sparkles };
 }

@@ -13,7 +13,7 @@ Nhánh: `phase-14-art`. Prompt gốc: 17 mục, thứ tự A → C → B → D �
 - [x] B7 Trúng: ngả lui + chớp trắng + nước mắt + `adv_hit`/`adv_crit`; hụt: chỉ ngả/né + bóng mờ + `adv_miss`.
 - [x] B8 Vào trận: tia dịch chuyển trên từng đơn vị, nhấp nháy hiện ra + `adv_battle_start` (`ENTER_MS` trong `battleFxView.ts`).
 - Âm thanh: 10 SFX tổng hợp `scripts/art/sfx.ts` (`npx tsx scripts/art/adventureSfx.ts` → `public/assets/audio/adv_*.mp3`), thêm vào `AUDIO_KEYS` + manifest; UI phát qua dep `sound` (areaOverlays → adventureUi).
-- [ ] D10 bảng tổng kết trận
+- [x] D10 Bảng tổng kết: `run.report` (slice **v4**, migration `migrateAdventure3to4`), tạo ở `settleBattle`/`settleRiftFloor` (`makeReport` trong `trip.ts`), đóng bằng `closeReport`. UI `ui/reportView.ts` + `reportVm.ts`: chiếu lại đòn kết liễu → bảng (KN/xu/gems, vật phẩm, quà trùm, thanh KN chạy qua từng cấp + LEVEL UP, âm `adv_victory`/`adv_exp_fill`/`level_up`). Bot/sim đóng bảng sau mỗi trận.
 - [ ] E11–E13 bản đồ
 - [ ] F14–F15 combat animal
 - [ ] G16–G17 cây kỹ năng, vật phẩm lên cấp

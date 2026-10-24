@@ -48,7 +48,8 @@
           "h": 3,
           "to": "map_forest_deep",
           "arriveX": 2,
-          "arriveY": 13
+          "arriveY": 13,
+          "lock": "guardian"
         }
       ],
       "props": [
@@ -93,7 +94,8 @@
           "x": 44,
           "y": 13,
           "kind": "elite",
-          "pool": [{ "weight": 1, "enemies": ["enemy_bramble_boar"] }]
+          "pool": [{ "weight": 1, "enemies": ["enemy_bramble_boar"] }],
+          "gift": { "item_adv_exp_small": 3, "item_potion_healing": 2 }
         },
         {
           "id": "g_f1_a",
@@ -104,8 +106,7 @@
             { "weight": 3, "enemies": ["enemy_mossling"] },
             { "weight": 2, "enemies": ["enemy_dew_frog"] },
             { "weight": 1, "enemies": ["enemy_mossling", "enemy_mossling"] }
-          ],
-          "patrol": [{ "x": 14, "y": 9 }, { "x": 18, "y": 9 }]
+          ]
         },
         {
           "id": "g_f1_b",
@@ -126,8 +127,7 @@
             { "weight": 2, "enemies": ["enemy_gale_sparrow", "enemy_ember_fox"] },
             { "weight": 2, "enemies": ["enemy_dew_frog", "enemy_thorn_sprout"] },
             { "weight": 1, "enemies": ["enemy_forest_wolf"] }
-          ],
-          "patrol": [{ "x": 33, "y": 8 }, { "x": 33, "y": 10 }]
+          ]
         },
         {
           "id": "g_f1_d",
@@ -137,8 +137,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_ember_fox"] },
             { "weight": 2, "enemies": ["enemy_thorn_sprout", "enemy_mossling"] }
-          ],
-          "patrol": [{ "x": 36, "y": 19 }, { "x": 40, "y": 19 }]
+          ]
         }
       ],
       "chests": [
@@ -219,7 +218,8 @@
           "h": 3,
           "to": "map_forest_heart",
           "arriveX": 2,
-          "arriveY": 13
+          "arriveY": 13,
+          "lock": "guardian"
         }
       ],
       "props": [
@@ -252,7 +252,8 @@
           "x": 39,
           "y": 13,
           "kind": "elite",
-          "pool": [{ "weight": 1, "enemies": ["enemy_wolf_alpha", "enemy_forest_wolf"] }]
+          "pool": [{ "weight": 1, "enemies": ["enemy_wolf_alpha", "enemy_forest_wolf"] }],
+          "gift": { "item_adv_exp_small": 4, "item_potion_mana": 2 }
         },
         {
           "id": "g_f2_a",
@@ -263,8 +264,7 @@
             { "weight": 2, "enemies": ["enemy_forest_wolf", "enemy_thorn_sprout"] },
             { "weight": 2, "enemies": ["enemy_bramble_boar"] },
             { "weight": 1, "enemies": ["enemy_ember_fox", "enemy_gale_sparrow", "enemy_mossling"] }
-          ],
-          "patrol": [{ "x": 13, "y": 4 }, { "x": 13, "y": 2 }]
+          ]
         },
         {
           "id": "g_f2_b",
@@ -274,8 +274,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_gale_sparrow", "enemy_ember_fox"] },
             { "weight": 2, "enemies": ["enemy_dew_frog", "enemy_thorn_sprout"] }
-          ],
-          "patrol": [{ "x": 30, "y": 4 }, { "x": 34, "y": 4 }]
+          ]
         },
         {
           "id": "g_f2_c",
@@ -285,8 +284,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_forest_wolf"] },
             { "weight": 2, "enemies": ["enemy_mossling", "enemy_mossling", "enemy_thorn_sprout"] }
-          ],
-          "patrol": [{ "x": 15, "y": 22 }, { "x": 20, "y": 22 }]
+          ]
         },
         {
           "id": "g_f2_d",
@@ -371,6 +369,17 @@
           "to": "map_forest_deep",
           "arriveX": 47,
           "arriveY": 13
+        },
+        {
+          "id": "exit_f3_next",
+          "x": 48,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_mountain_foot",
+          "arriveX": 3,
+          "arriveY": 13,
+          "lock": "guardian"
         }
       ],
       "props": [
@@ -405,7 +414,8 @@
           "y": 13,
           "kind": "boss",
           "pool": [{ "weight": 1, "enemies": ["enemy_old_treant", "enemy_thorn_sprout"] }],
-          "table": "boss_forest"
+          "table": "boss_forest",
+          "gift": { "item_adv_exp_medium": 3, "item_adv_core_forest": 2, "item_potion_battle": 2 }
         },
         {
           "id": "g_f3_a",
@@ -415,8 +425,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_forest_wolf", "enemy_ember_fox"] },
             { "weight": 2, "enemies": ["enemy_thorn_sprout", "enemy_thorn_sprout", "enemy_dew_frog"] }
-          ],
-          "patrol": [{ "x": 14, "y": 5 }, { "x": 19, "y": 5 }]
+          ]
         },
         {
           "id": "g_f3_b",
@@ -426,8 +435,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_bramble_boar", "enemy_mossling"] },
             { "weight": 1, "enemies": ["enemy_forest_wolf", "enemy_forest_wolf"] }
-          ],
-          "patrol": [{ "x": 14, "y": 21 }, { "x": 19, "y": 21 }]
+          ]
         },
         {
           "id": "g_f3_c",
@@ -495,6 +503,16 @@
       "portal": { "x": 2, "y": 3 },
       "exits": [
         {
+          "id": "exit_m1_back",
+          "x": 1,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_forest_heart",
+          "arriveX": 46,
+          "arriveY": 13
+        },
+        {
           "id": "exit_m1_east",
           "x": 49,
           "y": 12,
@@ -502,7 +520,8 @@
           "h": 3,
           "to": "map_mountain_mine",
           "arriveX": 2,
-          "arriveY": 13
+          "arriveY": 13,
+          "lock": "guardian"
         }
       ],
       "props": [
@@ -533,7 +552,8 @@
           "x": 44,
           "y": 13,
           "kind": "elite",
-          "pool": [{ "weight": 1, "enemies": ["enemy_ore_golem", "enemy_rock_beetle"] }]
+          "pool": [{ "weight": 1, "enemies": ["enemy_ore_golem", "enemy_rock_beetle"] }],
+          "gift": { "item_adv_exp_medium": 2, "item_potion_mana": 2 }
         },
         {
           "id": "g_m1_a",
@@ -543,8 +563,7 @@
           "pool": [
             { "weight": 3, "enemies": ["enemy_rock_beetle", "enemy_snow_goat"] },
             { "weight": 1, "enemies": ["enemy_rock_beetle"] }
-          ],
-          "patrol": [{ "x": 10, "y": 18 }, { "x": 10, "y": 21 }]
+          ]
         },
         {
           "id": "g_m1_b",
@@ -554,8 +573,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_lava_newt"] },
             { "weight": 2, "enemies": ["enemy_snow_goat", "enemy_rock_beetle"] }
-          ],
-          "patrol": [{ "x": 20, "y": 7 }, { "x": 26, "y": 7 }]
+          ]
         },
         {
           "id": "g_m1_c",
@@ -575,8 +593,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_rock_beetle"] },
             { "weight": 1, "enemies": ["enemy_ore_golem"] }
-          ],
-          "patrol": [{ "x": 37, "y": 8 }, { "x": 37, "y": 10 }]
+          ]
         }
       ],
       "chests": [
@@ -657,7 +674,8 @@
           "h": 3,
           "to": "map_mountain_peak",
           "arriveX": 2,
-          "arriveY": 13
+          "arriveY": 13,
+          "lock": "guardian"
         }
       ],
       "props": [
@@ -685,7 +703,8 @@
           "x": 38,
           "y": 13,
           "kind": "elite",
-          "pool": [{ "weight": 1, "enemies": ["enemy_thunder_ram", "enemy_cliff_hawk"] }]
+          "pool": [{ "weight": 1, "enemies": ["enemy_thunder_ram", "enemy_cliff_hawk"] }],
+          "gift": { "item_adv_exp_medium": 3, "item_potion_rage": 1 }
         },
         {
           "id": "g_m2_a",
@@ -696,8 +715,7 @@
             { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_snow_goat"] },
             { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_rock_beetle"] },
             { "weight": 1, "enemies": ["enemy_ore_golem"] }
-          ],
-          "patrol": [{ "x": 16, "y": 4 }, { "x": 22, "y": 4 }]
+          ]
         },
         {
           "id": "g_m2_b",
@@ -717,8 +735,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_lava_newt", "enemy_snow_goat"] },
             { "weight": 1, "enemies": ["enemy_ore_golem", "enemy_rock_beetle"] }
-          ],
-          "patrol": [{ "x": 16, "y": 22 }, { "x": 22, "y": 22 }]
+          ]
         },
         {
           "id": "g_m2_d",
@@ -803,6 +820,17 @@
           "to": "map_mountain_mine",
           "arriveX": 47,
           "arriveY": 13
+        },
+        {
+          "id": "exit_m3_next",
+          "x": 48,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_ruins_gate",
+          "arriveX": 3,
+          "arriveY": 13,
+          "lock": "guardian"
         }
       ],
       "props": [
@@ -837,7 +865,8 @@
           "y": 13,
           "kind": "boss",
           "pool": [{ "weight": 1, "enemies": ["enemy_magma_drake", "enemy_lava_newt"] }],
-          "table": "boss_mountain"
+          "table": "boss_mountain",
+          "gift": { "item_adv_exp_large": 2, "item_adv_core_mountain": 2, "item_potion_battle": 2 }
         },
         {
           "id": "g_m3_a",
@@ -847,8 +876,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_cliff_hawk"] },
             { "weight": 2, "enemies": ["enemy_ore_golem", "enemy_lava_newt"] }
-          ],
-          "patrol": [{ "x": 14, "y": 5 }, { "x": 19, "y": 5 }]
+          ]
         },
         {
           "id": "g_m3_b",
@@ -858,8 +886,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_snow_goat", "enemy_lava_newt", "enemy_rock_beetle"] },
             { "weight": 1, "enemies": ["enemy_thunder_ram"] }
-          ],
-          "patrol": [{ "x": 14, "y": 21 }, { "x": 19, "y": 21 }]
+          ]
         },
         {
           "id": "g_m3_c",
@@ -925,6 +952,16 @@
       "portal": { "x": 2, "y": 3 },
       "exits": [
         {
+          "id": "exit_r1_back",
+          "x": 1,
+          "y": 12,
+          "w": 1,
+          "h": 3,
+          "to": "map_mountain_peak",
+          "arriveX": 46,
+          "arriveY": 13
+        },
+        {
           "id": "exit_r1_east",
           "x": 49,
           "y": 12,
@@ -932,7 +969,8 @@
           "h": 3,
           "to": "map_ruins_hall",
           "arriveX": 2,
-          "arriveY": 13
+          "arriveY": 13,
+          "lock": "guardian"
         }
       ],
       "props": [
@@ -972,7 +1010,8 @@
           "kind": "elite",
           "pool": [
             { "weight": 1, "enemies": ["enemy_stone_sentinel", "enemy_stone_sentinel", "enemy_rune_wisp"] }
-          ]
+          ],
+          "gift": { "item_adv_exp_large": 1, "item_potion_mana": 3 }
         },
         {
           "id": "g_r1_a",
@@ -983,8 +1022,7 @@
             { "weight": 3, "enemies": ["enemy_stone_sentinel", "enemy_rune_wisp"] },
             { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_ember_idol"] },
             { "weight": 1, "enemies": ["enemy_rune_wisp", "enemy_rune_wisp"] }
-          ],
-          "patrol": [{ "x": 13, "y": 18 }, { "x": 13, "y": 21 }]
+          ]
         },
         {
           "id": "g_r1_b",
@@ -994,8 +1032,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_rune_wisp"] },
             { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_tide_wraith"] }
-          ],
-          "patrol": [{ "x": 25, "y": 7 }, { "x": 31, "y": 7 }]
+          ]
         },
         {
           "id": "g_r1_c",
@@ -1015,8 +1052,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_ember_idol"] },
             { "weight": 1, "enemies": ["enemy_tide_wraith", "enemy_tide_wraith"] }
-          ],
-          "patrol": [{ "x": 37, "y": 8 }, { "x": 37, "y": 10 }]
+          ]
         }
       ],
       "chests": [
@@ -1094,7 +1130,8 @@
           "h": 3,
           "to": "map_ruins_sanctum",
           "arriveX": 2,
-          "arriveY": 13
+          "arriveY": 13,
+          "lock": "guardian"
         }
       ],
       "props": [
@@ -1125,7 +1162,8 @@
           "x": 38,
           "y": 13,
           "kind": "elite",
-          "pool": [{ "weight": 1, "enemies": ["enemy_shadow_priest", "enemy_tide_wraith"] }]
+          "pool": [{ "weight": 1, "enemies": ["enemy_shadow_priest", "enemy_tide_wraith"] }],
+          "gift": { "item_adv_exp_large": 2, "item_potion_rage": 2 }
         },
         {
           "id": "g_r2_a",
@@ -1135,8 +1173,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_rune_wisp"] },
             { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_tide_wraith"] }
-          ],
-          "patrol": [{ "x": 16, "y": 4 }, { "x": 22, "y": 4 }]
+          ]
         },
         {
           "id": "g_r2_b",
@@ -1156,8 +1193,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_tide_wraith", "enemy_stone_sentinel"] },
             { "weight": 1, "enemies": ["enemy_rune_wisp", "enemy_rune_wisp", "enemy_ember_idol"] }
-          ],
-          "patrol": [{ "x": 16, "y": 22 }, { "x": 22, "y": 22 }]
+          ]
         },
         {
           "id": "g_r2_d",
@@ -1274,7 +1310,8 @@
           "y": 13,
           "kind": "boss",
           "pool": [{ "weight": 1, "enemies": ["enemy_ancient_guardian", "enemy_rune_wisp"] }],
-          "table": "boss_ruins"
+          "table": "boss_ruins",
+          "gift": { "item_adv_exp_large": 4, "item_adv_core_ruins": 2, "item_potion_rage": 2 }
         },
         {
           "id": "g_r3_a",
@@ -1284,8 +1321,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_rune_wisp", "enemy_ember_idol"] },
             { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_tide_wraith", "enemy_stone_sentinel"] }
-          ],
-          "patrol": [{ "x": 14, "y": 5 }, { "x": 19, "y": 5 }]
+          ]
         },
         {
           "id": "g_r3_b",
@@ -1295,8 +1331,7 @@
           "pool": [
             { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_stone_sentinel"] },
             { "weight": 1, "enemies": ["enemy_shadow_priest"] }
-          ],
-          "patrol": [{ "x": 14, "y": 21 }, { "x": 19, "y": 21 }]
+          ]
         },
         {
           "id": "g_r3_c",

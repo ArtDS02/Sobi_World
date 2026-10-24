@@ -11,7 +11,7 @@ import { addCount, playEnemies, randInt, rollTable } from '../encounter';
 import { floorReward, nightmareAt, riftAlly, riftDay, riftEnemies, riftOpen, ruleOfDay } from '../rift';
 import { credit, put, runAdventure, type AdventureResult } from './kit';
 import { chargeParty, type PartyArgs } from './start';
-import { carryOver, cheer, commit, finish, freshRun, giveExp, recordFeats, stepOf, updateFeats, type Step } from './trip';
+import { carryOver, cheer, commit, finish, freshRun, giveExp, levelMarks, lootSince, makeReport, recordFeats, stepOf, updateFeats, type Step } from './trip';
 
 /** Into the Rift with the fighters `keys`, under the rule of today. */
 export function startRift(world: WorldSave, args: PartyArgs, ctx: ActionContext): AdventureResult {
@@ -77,6 +77,10 @@ export function settleRiftFloor(st: Step, battle: BattleState) {
   }
   const floor = rift.floor + 1;
   run.rift = { ...rift, floor };
+  const before = levelMarks(st);
+  const lootBefore = { ...run.loot };
+  const coinsBefore = run.coins;
+  const gemsBefore = run.gems;
   const rng = mulberry32(hashSeed('rift-drops', run.seed, floor));
   const reward = floorReward(floor);
   let gems = 0;
@@ -121,4 +125,5 @@ export function settleRiftFloor(st: Step, battle: BattleState) {
   st.events.push({ type: 'ADVENTURE_BATTLE_WON', zoneId: run.zoneId, boss: !!nightmare, elite: false, enemies, exp: reward.exp, coins: reward.coins, gems, rift: true });
   st.events.push({ type: 'ADVENTURE_RIFT_FLOOR', floor, coins: reward.coins, exp: reward.exp, gems, nightmare: nightmare?.enemy ?? null, first, best });
   cheer(st, !!nightmare);
+  run.report = makeReport(st, { kind: 'rift', quick: false, before, exp: reward.exp, coins: run.coins - coinsBefore, gems: run.gems - gemsBefore, items: lootSince(st, lootBefore), gift: {}, battle });
 }

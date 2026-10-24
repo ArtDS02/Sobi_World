@@ -51,13 +51,18 @@ describe('exploration areas (§3.10)', () => {
     for (const map of MAP_LIST) expect(canStand(tileCenter(map, map.spawn.x, map.spawn.y), walkableOf(map)), map.id).toBe(true);
   });
 
-  it('patrolling groups walk their legs and the touch check follows them', () => {
-    const map = MAP_LIST.find((m) => m.groups.some((g) => g.patrol))!;
-    const g = map.groups.find((gg) => gg.patrol)!;
-    const a = groupPosition(map, g, 0);
-    const b = groupPosition(map, g, 2500);
-    expect(a).not.toEqual(b);
-    expect(groupDistance(map, g, b)).toBeLessThan(1);
+  it('groups stand still on their own tile and the touch check measures from there (adventure-big-update-1 §12)', () => {
+    const map = MAP_LIST[0]!;
+    const g = map.groups[0]!;
+    const at = groupPosition(map, g);
+    expect(at).toEqual(tileCenter(map, g.x, g.y));
+    expect(groupDistance(map, g, at)).toBe(0);
+  });
+
+  it('every forward gate stands behind its area guardian; zones are chained gate to gate', () => {
+    for (const map of MAP_LIST) for (const e of map.exits.filter((x) => x.lock === 'guardian')) expect(map.groups.some((g) => g.kind !== 'normal'), `${map.id} ${e.id}`).toBe(true);
+    expect(MAPS.map_forest_heart!.exits.find((e) => e.lock === 'guardian')?.to).toBe('map_mountain_foot');
+    expect(MAPS.map_mountain_peak!.exits.find((e) => e.lock === 'guardian')?.to).toBe('map_ruins_gate');
   });
 
   it('lists every usable thing of an area', () => {

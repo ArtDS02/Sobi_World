@@ -14,6 +14,7 @@ import propsRaw from '../../../../../content/adventure/props.json';
 import reactionsRaw from '../../../../../content/adventure/reactions.json';
 import skillsRaw from '../../../../../content/adventure/skills.json';
 import statusesRaw from '../../../../../content/adventure/statuses.json';
+import workshopRaw from '../../../../../content/adventure/workshop.json';
 import zonesRaw from '../../../../../content/adventure/zones.json';
 import { areaManifestSchema } from '../../../../../content/schemas/area';
 import { adventureBalanceFileSchema } from '../../../../../content/schemas/adventure/balance';
@@ -25,6 +26,7 @@ import { lineagesFileSchema } from '../../../../../content/schemas/adventure/lin
 import { mapsFileSchema, propsFileSchema } from '../../../../../content/schemas/adventure/maps';
 import { elementsFileSchema, reactionsFileSchema, statusesFileSchema } from '../../../../../content/schemas/adventure/rules';
 import { skillsFileSchema } from '../../../../../content/schemas/adventure/skills';
+import { workshopFileSchema } from '../../../../../content/schemas/adventure/workshop';
 import { zonesFileSchema } from '../../../../../content/schemas/adventure/zones';
 import { loadContent } from '../../../../core/content/load';
 import type { RosterEntry } from '../../../../core/area-registry/registry';
@@ -50,7 +52,12 @@ export const ADVENTURE_CONTENT = {
   props: loadContent('adventure/props.json', propsFileSchema, propsRaw),
   equipment: loadContent('adventure/equipment.json', equipmentFileSchema, equipmentRaw),
   engagement: loadContent('adventure/engagement.json', engagementFileSchema, engagementRaw),
+  workshop: loadContent('adventure/workshop.json', workshopFileSchema, workshopRaw),
 };
+
+/** Experience books, the Adventure Shop and the Forge (adventure-big-update-1 §17). */
+export const WORKSHOP = ADVENTURE_CONTENT.workshop;
+export const TOMES: Readonly<Record<string, number>> = Object.fromEntries(WORKSHOP.tomes.map((t) => [t.itemId, t.exp]));
 
 export const ADVENTURE_AREA_ID = ADVENTURE_CONTENT.area.id;
 export const AB = ADVENTURE_CONTENT.balance;

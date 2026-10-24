@@ -155,10 +155,14 @@ export class AdventureScene extends Phaser.Scene {
       const row = map.groups.find((x) => x.id === g.id);
       if (!view || !row) continue;
       view.img.setVisible(!g.defeated);
+      view.shadow.setVisible(!g.defeated);
       view.label.setVisible(false);
       if (g.defeated) continue;
-      const at = groupPosition(map, row, this.deps.reduceMotion() ? 0 : time);
-      view.img.setPosition(at.x, at.y + 6).setDepth(at.y);
+      const at = groupPosition(map, row);
+      // Groups stand still and breathe (adventure-big-update-1 §12): a slow squash and stretch, each on its own beat.
+      const beat = this.deps.reduceMotion() ? 0 : Math.sin(time / (760 + view.phase * 9) + view.phase);
+      view.img.setPosition(at.x, at.y + 6).setDepth(at.y).setScale(view.sx * (1 - 0.018 * beat), view.sy * (1 + 0.035 * beat));
+      view.shadow.setPosition(at.x, at.y + 4).setScale(1 - 0.06 * beat, 1).setDepth(at.y - 1);
       const d = Math.hypot(at.x - pos.x, at.y - pos.y);
       if (d < AB.explore.foeInfo * map.tile) {
         view.label.setPosition(at.x, at.y - view.img.displayHeight - 4).setVisible(true);

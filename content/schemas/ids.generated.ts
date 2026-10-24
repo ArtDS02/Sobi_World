@@ -219,6 +219,14 @@ export const ITEM_ID_VALUES = [
   'item_equip_lantern_charm',
   'item_equip_void_pearl',
   'item_skill_scroll',
+  'item_adv_exp_small',
+  'item_adv_exp_medium',
+  'item_adv_exp_large',
+  'item_potion_mana',
+  'item_potion_rage',
+  'item_adv_core_forest',
+  'item_adv_core_mountain',
+  'item_adv_core_ruins',
 ] as const;
 
 export const DECOR_ID_VALUES = [

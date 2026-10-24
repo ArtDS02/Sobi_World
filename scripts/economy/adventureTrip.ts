@@ -2,7 +2,7 @@
 // drinks the spring when the team is hurt, opens the treasure chests it can reach with the gates it has opened (and opens the gates its
 // party's elements allow), plays every battle on Auto, takes the exit to the next area, and goes home by the portal after the boss — or
 // as soon as it is too hurt to go on. It stands where a player would walk to (the actions check the ground, not the path).
-import { battleAct, engage, interact, returnToCamp, takeExit } from '../../src/areas/adventure/logic/actions/run';
+import { battleAct, closeReport, engage, interact, returnToCamp, takeExit } from '../../src/areas/adventure/logic/actions/run';
 import { stepNode } from '../../src/areas/adventure/logic/actions/growth';
 import { MAPS, TREES, ZONES, identityOf } from '../../src/areas/adventure/logic/config/content';
 import { classOf } from '../../src/areas/adventure/logic/fighters';
@@ -31,9 +31,11 @@ function standBy(b: Bot, mapId: string, t: Pick<Thing, 'x' | 'y' | 'w' | 'h' | '
 function fight(b: Bot) {
   for (let guard = 0; guard < 300; guard += 1) {
     const r = run(b);
-    if (!r || r.phase !== 'battle') return;
-    if (!b.act('adventure', (w, c) => battleAct(w, { action: 'auto' }, c))) return;
+    if (!r || r.phase !== 'battle') break;
+    if (!b.act('adventure', (w, c) => battleAct(w, { action: 'auto' }, c))) break;
   }
+  // The battle board is read and closed, as a player would.
+  if (run(b)?.report) b.act('adventure', (w, c) => closeReport(w, c));
 }
 
 const hurt = (b: Bot) => {
