@@ -770,9 +770,6 @@ $adv-pink: #ef5a78;
     &.is-down { filter: grayscale(1); opacity: 0.45; }
     &.is-aimable { cursor: pointer; animation: adventure-aim 0.9s ease-in-out infinite alternate; }
     &.is-aimable &-art { filter: drop-shadow(0 0 6px #fff) drop-shadow(0 0 4px $c-primary); }
-    &.is-hit &-art { animation: adventure-hit 0.35s ease-out; }
-    &.is-heal &-art { animation: adventure-heal 0.5s ease-out; }
-    &.is-ko &-art { animation: adventure-ko 0.5s ease-in; }
     &.is-corrupted &-art { filter: drop-shadow(0 0 6px rgba(150, 40, 140, 0.65)); }
     &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 4px; }
   }
@@ -1224,30 +1221,11 @@ $adv-pink: #ef5a78;
   &__fxbanner-icon { width: 2.6rem; height: 2.6rem; }
   &__fxbanner-text { display: grid; gap: 2px; b { font-size: 1.5rem; letter-spacing: 0.02em; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35); } small { font-size: $fs-sm; opacity: 0.92; } }
 
-  &__battle.is-shake &__field { animation: adventure-shake 0.42s ease-out; }
+  &__battle.is-shake &__field { animation: adventure-shake 0.42s ease-out var(--shake-delay, 0ms) 1 normal none; }
   &__banner-honor { font-size: 0.72rem; font-style: italic; color: #ffe39a; }
   &__round-pill.is-rift { background: rgba(110, 50, 160, 0.88); }
   &__round-pill.is-affix { display: inline-flex; gap: 4px; align-items: center; background: rgba(160, 110, 20, 0.88); .adv-icon { width: 1.2rem; height: 1.2rem; } }
   &__round-pill.is-escape { background: rgba(190, 60, 40, 0.9); animation: adventure-rage 0.6s ease-in-out infinite alternate; }
-}
-
-@keyframes adventure-hit {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-8px); filter: brightness(1.6) saturate(0.6); }
-  40% { transform: translateX(8px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
-}
-
-@keyframes adventure-heal {
-  0% { filter: drop-shadow(0 0 0 rgba(108, 192, 74, 0.9)); }
-  50% { filter: drop-shadow(0 0 12px rgba(108, 192, 74, 0.9)); }
-  100% { filter: drop-shadow(0 0 0 rgba(108, 192, 74, 0)); }
-}
-
-@keyframes adventure-ko {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(0.92) translateY(6px); opacity: 0.4; }
 }
 
 @keyframes adventure-aim {

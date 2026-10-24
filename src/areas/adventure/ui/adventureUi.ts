@@ -17,6 +17,7 @@ import { ZONE_LIST } from '../logic/config/content';
 import { adventureOf, hasAdventure } from '../logic/save/lens';
 import type { AdventureSceneState, SceneReport } from '../scene/sceneState';
 import { createAdventureDialogs } from './adventureDialogs';
+import { stepRemaining } from './battleFxView';
 import { renderBattle, choose } from './battleView';
 import { battleVm } from './battleVm';
 import { hudVm } from './campVm';
@@ -150,9 +151,10 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     void dispatch((ww, c) => battleAct(ww, { action: 'auto' }, c));
   }
   let tick = 0;
+  // Auto waits for the step on screen to finish moving (bounded by STEP_MAX_MS), so every action can be read.
   const stop = d.frame?.(() => {
     tick += 100;
-    if (tick >= (state.fast ? AUTO_MS / 2 : AUTO_MS)) {
+    if (tick >= (state.fast ? AUTO_MS / 2 : AUTO_MS) && stepRemaining() <= 0) {
       tick = 0;
       autoStep();
     }

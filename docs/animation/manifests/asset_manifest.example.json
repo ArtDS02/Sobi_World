@@ -1,0 +1,27 @@
+{
+  "_comment": "Example rows to ADD to the `fx` array of public/assets/manifest/assets.json when the art exists (same shape as the real manifest v3). The game then uses them without a code change: vfxArt() looks for fx_<skillId>_<phase>, then fx_adv_<element>_<phase>. Do not paste this file as is: it is not a manifest.",
+  "fx": [
+    { "id": "fx_skill_mm_poison_thorn_projectile", "status": "production", "asset": "fx/fx_skill_mm_poison_thorn_projectile.png" },
+    { "id": "fx_skill_mm_poison_thorn_impact", "status": "production", "asset": "fx/fx_skill_mm_poison_thorn_impact.png" },
+    { "id": "fx_adv_nature_projectile", "status": "production", "asset": "fx/fx_adv_nature_projectile.png" },
+    { "id": "fx_adv_nature_impact", "status": "production", "asset": "fx/fx_adv_nature_impact.png" },
+    { "id": "fx_umbraflux_aura", "status": "production", "asset": "fx/fx_umbraflux_aura.png", "frames": { "width": 384, "height": 384, "count": 6, "fps": 8 } }
+  ],
+  "animation_entries": [
+    {
+      "entityId": "skill_mm_poison_thorn",
+      "entityType": "skill/unique",
+      "animationId": "skill_mm_poison_thorn_vfx",
+      "category": "skill_vfx",
+      "trigger": "use skillId=skill_mm_poison_thorn",
+      "priority": "P0",
+      "element": "NATURE",
+      "status": "vertical slice (CSS), art pending",
+      "technique": "hybrid",
+      "art": { "manifestId": "fx_skill_mm_poison_thorn_projectile", "path": "fx/fx_skill_mm_poison_thorn_projectile.png", "pivot": "center", "facing": "right" },
+      "timing": { "release": 260, "impact": 520, "end": 760, "loop": false },
+      "fallback": "CSS thorn shape (.is-shape-thorn)",
+      "qa": "verified with CSS fallback (09_motion_slice)"
+    }
+  ]
+}

@@ -3,15 +3,16 @@
 // and the turn order as round portraits; a banner for the one acting and for the enemy leader; the team list bottom left; the skill
 // cards with their icons, the big round Attack button, Defend / items / flee; the effects on the one acting on the right; Auto and x2;
 // the log behind a button. The effectiveness label shows on each target while aiming. The last step plays over the field (decision 039):
-// numbers over the units it touched, one banner (an Ultimate's cut-in, a reaction, a boss's new phase) and a shake.
+// numbers over the units it touched, one banner (an Ultimate's cut-in, a reaction, a boss's new phase) and a shake. Each fighter breathes
+// in a loop, leans into its action and reacts when reached, the effects fly and land on the impact (GĐ14 motion, battleMotionView.ts).
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { art } from '../../../ui/components/icon';
 import { el } from '../../../ui/dom';
 import { battleAct, flee } from '../logic/actions/battle';
 import { adventureOf } from '../logic/save/lens';
-import { unitEffects, type HpMemory, type UnitFx } from './battleFx';
 import { FX_MS, SHAKE_MS, bannerEl, floaterEl, stepEffects } from './battleFxView';
+import { fieldEffects, unitMotion, type Spot, type UnitMotion } from './battleMotionView';
 import type { FloaterVm } from './battleFloaters';
 import { battleVm, effectOn, type BattleActionVm, type BattleVm, type UnitVm } from './battleVm';
 import { bar, classIcon, elementIcon, iconOf, roundButton, skillIcon, statusChip, type ViewCtx } from './viewKit';
@@ -45,8 +46,6 @@ export function choose(action: BattleActionVm, vm: BattleVm, ctx: ViewCtx) {
   ctx.rerender();
 }
 
-const memory: HpMemory = new Map();
-
 /** Where each unit stands on the field (its feet, % of the field): ours on the left, theirs on the right, the first one in front. */
 const SPOTS = {
   ally: [
@@ -64,18 +63,24 @@ const SPOTS = {
 
 const portrait = (u: { art: string; name: string }, cls: string) => art(u.art, cls, u.name) ?? el('span', { class: cls });
 
-function unitOnField(u: UnitVm, index: number, vm: BattleVm, ctx: ViewCtx, fx?: UnitFx, floaters: readonly FloaterVm[] = [], elapsed = 0): HTMLElement {
+const spotOf = (side: UnitVm['side'], index: number): Spot => {
+  const spots = SPOTS[side];
+  return spots[index % spots.length]!;
+};
+
+function unitOnField(u: UnitVm, index: number, vm: BattleVm, ctx: ViewCtx, motion: UnitMotion, floaters: readonly FloaterVm[] = [], elapsed = 0): HTMLElement {
   const aim = ctx.state.aim;
   const aimable = !!aim && aim.side === u.side && !u.down;
   const run = adventureOf(ctx.world).run!;
   const effect = aimable && aim && vm.actor ? effectOn(run.battle!, vm.actor, aim.action.element, aim.action.category, u.id) : null;
-  const spots = SPOTS[u.side];
-  const spot = spots[index % spots.length]!;
+  const spot = spotOf(u.side, index);
+  // A unit knocked out in this step stands until its blow lands, then falls.
+  const down = u.down && !motion.falling;
   return el(
     'button',
     {
-      class: `adventure-ui__unit adventure-ui__unit--${u.side}${u.active ? ' is-active' : ''}${u.down ? ' is-down' : ''}${aimable ? ' is-aimable' : ''}${u.boss ? ' is-boss' : ''}${u.elite ? ' is-elite' : ''}${u.corrupted ? ' is-corrupted' : ''}${fx ? ` is-${fx}` : ''}`,
-      attrs: { type: 'button', style: `left:${spot.x}%;top:${spot.y}%;z-index:${Math.round(spot.y)}`, ...(aimable ? {} : { disabled: '' }), 'aria-label': `${u.name} ${u.hpText}`, title: u.intent ? `${u.name}: ${u.intent}` : u.name },
+      class: `adventure-ui__unit adventure-ui__unit--${u.side}${u.active ? ' is-active' : ''}${down ? ' is-down' : ''}${motion.falling ? ' is-falling' : ''}${aimable ? ' is-aimable' : ''}${u.boss ? ' is-boss' : ''}${u.elite ? ' is-elite' : ''}${u.corrupted ? ' is-corrupted' : ''}`,
+      attrs: { type: 'button', style: `left:${spot.x}%;top:${spot.y}%;z-index:${Math.round(spot.y)}${motion.falling ? `;${motion.falling.style}` : ''}`, ...(aimable ? {} : { disabled: '' }), 'aria-label': `${u.name} ${u.hpText}`, title: u.intent ? `${u.name}: ${u.intent}` : u.name },
       on: { click: () => aimable && aim && act(aim.action, ctx, u.id) },
     },
     el(
@@ -86,7 +91,7 @@ function unitOnField(u: UnitVm, index: number, vm: BattleVm, ctx: ViewCtx, fx?: 
       el('span', { class: 'adventure-ui__unit-bar' }, ...u.elements.map((e) => elementIcon(e)), bar(u.hpPercent, 'hp', u.hpText), u.guarding ? iconOf(ACTION_ART.guard, vi.adventure.battle.guard, 'is-guard') : null),
       u.statuses.length > 0 ? el('span', { class: 'adventure-ui__statuses' }, ...u.statuses.map(statusChip)) : null,
     ),
-    portrait(u, 'adventure-ui__unit-art'),
+    el('span', { class: 'adventure-ui__body', attrs: { style: motion.body } }, el('span', { class: 'adventure-ui__idle', attrs: { style: motion.idle } }, portrait(u, 'adventure-ui__unit-art'))),
     floaters.length > 0 ? el('span', { class: 'adventure-ui__floats' }, ...floaters.map((f) => floaterEl(f, elapsed))) : null,
   );
 }
@@ -173,9 +178,8 @@ export function renderBattle(ctx: ViewCtx): HTMLElement {
   const { state } = ctx;
   const run = adventureOf(ctx.world).run!;
   const vm = battleVm(ctx.world, run)!;
-  const fx = unitEffects(memory, vm.units);
-  const step = stepEffects(run, run.battle);
-  const live = step.elapsed < FX_MS;
+  const step = stepEffects(run, run.battle, state.fast);
+  const live = step.elapsed < step.motion.total + FX_MS;
   const floatersOf = (id: string) => (live ? step.fx.floaters.filter((f) => f.unit === id) : []);
   const fxBanner = live ? step.fx.banner : null;
   const actor = vm.units.find((u) => u.id === vm.actor);
@@ -197,9 +201,16 @@ export function renderBattle(ctx: ViewCtx): HTMLElement {
   const leader = enemies.find((u) => u.boss && !u.down) ?? enemies.find((u) => !u.down) ?? enemies[0];
   const allyBanner = actor?.side === 'ally' ? actor : vm.units.find((u) => u.side === 'ally' && !u.down);
   const nowCount = vm.order.filter((o) => !o.next).length;
+  const allies = vm.units.filter((u) => u.side === 'ally');
+  const spots = new Map<string, Spot>([...allies.map((u, i) => [u.id, spotOf('ally', i)] as const), ...enemies.map((u, i) => [u.id, spotOf('enemy', i)] as const)]);
+  const motionOf = (u: UnitVm) => unitMotion(u.id, u.side, step.motion, step.elapsed, u.down);
+  const shaking = live && step.fx.shake && step.elapsed < step.fx.shakeAt + SHAKE_MS;
   return el(
     'div',
-    { class: `adventure-ui__battle${state.fast ? ' is-fast' : ''}${live && step.fx.shake && step.elapsed < SHAKE_MS ? ' is-shake' : ''}` },
+    {
+      class: `adventure-ui__battle${state.fast ? ' is-fast' : ''}${shaking ? ' is-shake' : ''}`,
+      attrs: shaking ? { style: `--shake-delay:${Math.round(step.fx.shakeAt - step.elapsed)}ms` } : {},
+    },
     el(
       'div',
       { class: 'adventure-ui__btop' },
@@ -225,8 +236,9 @@ export function renderBattle(ctx: ViewCtx): HTMLElement {
     el(
       'div',
       { class: 'adventure-ui__field' },
-      ...vm.units.filter((u) => u.side === 'ally').map((u, i) => unitOnField(u, i, vm, ctx, fx.get(u.id), floatersOf(u.id), step.elapsed)),
-      ...enemies.map((u, i) => unitOnField(u, i, vm, ctx, fx.get(u.id), floatersOf(u.id), step.elapsed)),
+      ...allies.map((u, i) => unitOnField(u, i, vm, ctx, motionOf(u), floatersOf(u.id), step.elapsed)),
+      ...enemies.map((u, i) => unitOnField(u, i, vm, ctx, motionOf(u), floatersOf(u.id), step.elapsed)),
+      ...fieldEffects(step.motion, spots, step.elapsed),
       fxBanner ? bannerEl(fxBanner, vm.units.find((u) => u.id === fxBanner.unit)?.art ?? null, step.elapsed) : null,
     ),
     el('div', { class: 'adventure-ui__bleft' }, roundButton(ACTION_ART.skill, vi.adventure.battle.log.title, state.log, () => ((state.log = !state.log), ctx.rerender()))),

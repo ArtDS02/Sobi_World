@@ -71,7 +71,7 @@ Tất cả là placeholder sinh bằng `npm run assets:placeholders` (decision 0
 | ~~`bg_adventure_forest` (1600×900)~~ (xong 2026-10-23, `adventure-05-scenes`) | Nền Rừng Thì Thầm (cảnh chỉ vẽ nền, UI ở DOM). |
 | 11 icon `ui_item_equip_*`, `ui_item_forest_herb`, `ui_item_beast_fang` (128×128) | 9 trang bị (vũ khí, giáp, bùa × 3 bậc) và 2 vật liệu. |
 | Ảnh Hiệp Sĩ Heo (`npc_knight`) | Đang dùng ảnh heo `prop_animal_pig_a`. |
-| Animation trận đánh, VFX đòn / nguyên tố / trạng thái, âm thanh | Hiện chỉ có chữ nhật ký và âm UI có sẵn. |
+| Animation trận đánh, VFX đòn / nguyên tố / trạng thái, âm thanh | **2026-10-24 (decision 040):** chuyển động bằng code (idle theo body plan, tấn công / thi triển / trúng đòn / gục, VFX theo hệ vẽ bằng CSS) đã có. Còn art: sheet VFX 9 hệ `fx_adv_<hệ>_projectile|impact`, `fx_skill_mm_poison_thorn_*`, overlay `fx_umbraflux_aura`, key pose 3 trùm, biểu cảm thắng / thua; âm thanh theo beat. Prompt: `docs/animation/prompts/`, danh sách: `docs/animation/animation_inventory.csv`. |
 | Bản đồ chuyến có nhân vật đi | Manifest ghi `movement: character`; GĐ10 dùng chuỗi nút. |
 
 ## GĐ9 — Sobi Cloud

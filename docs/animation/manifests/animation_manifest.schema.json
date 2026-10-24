@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sobi-world/docs/animation/animation_manifest.schema.json",
+  "title": "Sobi Adventure animation entry (planning format)",
+  "description": "One planned or delivered animation / VFX. Planning only: the game reads art from public/assets/manifest/assets.json (fx rows) and timing from src/areas/adventure/ui/motionProfiles.ts. Ids must exist in content/adventure/*.json or be marked proposed.",
+  "type": "object",
+  "required": ["entityId", "entityType", "animationId", "category", "trigger", "priority", "status", "technique", "fallback"],
+  "additionalProperties": false,
+  "properties": {
+    "entityId": { "type": "string", "description": "enemy_*, skill_*, reaction_*, an element (FIRE…), ally_pig / ally_fish, or ui_*" },
+    "entityType": { "type": "string" },
+    "proposedId": { "type": "boolean", "description": "true when the id does not exist in content yet (not production data)" },
+    "animationId": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "category": { "enum": ["idle", "pose", "reaction", "corruption", "skill_vfx", "element_vfx", "reaction_vfx", "ui_feedback"] },
+    "trigger": { "type": "string", "description": "the BattleEvent (turn, use, damage, miss, heal, status, tick, reaction, guard, skip, revive, phase, defeat, end) or UI moment" },
+    "priority": { "enum": ["P0", "P1", "P2"] },
+    "element": { "enum": ["METAL", "NATURE", "WATER", "FIRE", "EARTH", "LIGHTNING", "DARK", "LIGHT", "VOID", null] },
+    "status": { "type": "string" },
+    "technique": { "enum": ["code", "sprite_sheet", "key_pose", "image_tween", "particle", "hybrid"] },
+    "art": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "manifestId": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "path": { "type": "string", "description": "relative to public/assets/" },
+        "frames": {
+          "type": "object",
+          "required": ["width", "height", "count", "fps"],
+          "properties": { "width": { "type": "integer" }, "height": { "type": "integer" }, "count": { "type": "integer", "minimum": 2 }, "fps": { "type": "number" } }
+        },
+        "pivot": { "enum": ["center", "bottom-center"] },
+        "facing": { "enum": ["left", "right"] }
+      }
+    },
+    "timing": {
+      "type": "object",
+      "description": "ms from the start of the beat, normal speed (code: TIMING)",
+      "properties": { "release": { "type": "number" }, "impact": { "type": "number" }, "end": { "type": "number" }, "loop": { "type": "boolean" } }
+    },
+    "fallback": { "type": "string" },
+    "qa": { "type": "string" }
+  }
+}

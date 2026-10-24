@@ -98,6 +98,18 @@
         "SOBIWORLD_SANDBOX": "C:\\Users\\ToraTech\\AppData\\Local\\Temp\\sobiworld-rift",
         "PORT": "5189"
       }
+    },
+    {
+      "name": "sandbox-anim",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/dev/sandbox.mjs"
+      ],
+      "port": 5190,
+      "env": {
+        "SOBIWORLD_SANDBOX": "C:\\Users\\ToraTech\\AppData\\Local\\Temp\\sobiworld-anim",
+        "PORT": "5190"
+      }
     }
   ]
 }
