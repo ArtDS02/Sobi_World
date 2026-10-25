@@ -13,6 +13,37 @@ function star(ctx: CanvasRenderingContext2D, r: number, points = 5, inner = 0.45
   ctx.closePath();
 }
 
+/** Soft round sprites (a glow, an ember, a puff of smoke) drawn once per colour and stamped after: a gradient made for every
+ * particle on every frame is what made big skills slow. */
+const SPRITE = 64;
+const sprites = new Map<string, CanvasImageSource | null>();
+function softSprite(kind: 'glow' | 'ember' | 'smoke', color: string): CanvasImageSource | null {
+  const key = `${kind}|${color}`;
+  const have = sprites.get(key);
+  if (have !== undefined) return have;
+  const c = typeof document !== 'undefined' ? document.createElement('canvas') : null;
+  const g = c?.getContext('2d') ?? null;
+  if (!c || !g) {
+    sprites.set(key, null);
+    return null;
+  }
+  c.width = c.height = SPRITE;
+  const h = SPRITE / 2;
+  const grad = g.createRadialGradient(h, h, 0, h, h, h);
+  if (kind === 'ember') {
+    grad.addColorStop(0, '#fff6c0');
+    grad.addColorStop(0.35, color);
+    grad.addColorStop(1, 'rgba(255,60,0,0)');
+  } else {
+    grad.addColorStop(0, color);
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+  }
+  g.fillStyle = grad;
+  g.fillRect(0, 0, SPRITE, SPRITE);
+  sprites.set(key, c);
+  return c;
+}
+
 function drawParticle(ctx: CanvasRenderingContext2D, p: Particle) {
   const t = p.age / p.life;
   const size = lerp(p.size, p.size2, t);
@@ -21,6 +52,13 @@ function drawParticle(ctx: CanvasRenderingContext2D, p: Particle) {
   if (alpha <= 0.01 || size <= 0.2) return;
   ctx.globalAlpha = alpha;
   ctx.globalCompositeOperation = p.add ? 'lighter' : 'source-over';
+  if (p.shape === 'glow' || p.shape === 'ember' || p.shape === 'smoke') {
+    const img = softSprite(p.shape, p.color);
+    if (img) {
+      ctx.drawImage(img, p.x - size, p.y - size, size * 2, size * 2);
+      return;
+    }
+  }
   ctx.save();
   ctx.translate(p.x, p.y);
   switch (p.shape) {

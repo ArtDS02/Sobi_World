@@ -21,10 +21,13 @@ export interface PlayingStep {
   motion: StepMotion;
   /** The step opens a battle (its fighters come in first). */
   enter: boolean;
+  /** How far into the step it was when it first showed (ms): the numbers and the banner are timed from it, so their markup stays the
+   * same through the redraws of the step and they are not rebuilt (and restarted) every second. */
+  shown: number;
 }
 
 /** The step whose effects are playing and when it began (a redraw resumes them where they were). */
-const playing: PlayingStep = { key: '', at: 0, fx: { floaters: [], banner: null, shake: false, shakeAt: 0 }, motion: stepMotion(null, []), enter: false };
+const playing: PlayingStep = { key: '', at: 0, fx: { floaters: [], banner: null, shake: false, shakeAt: 0 }, motion: stepMotion(null, []), enter: false, shown: 0 };
 
 /** The step on screen now (the battle stage reads it every frame). */
 export const playingStep = (): Readonly<PlayingStep> => playing;
@@ -36,7 +39,7 @@ export function stepEffects(
   run: { battle: { seed: number; counter: number } | null; log: readonly { type: string }[] },
   battle: Parameters<typeof stepFx>[0],
   fast = false,
-): { fx: StepFx; motion: StepMotion; elapsed: number } {
+): { fx: StepFx; motion: StepMotion; elapsed: number; shown: number } {
   const key = run.battle ? `${run.battle.seed}:${run.battle.counter}:${run.log.length}` : '';
   const now = clock();
   if (key !== playing.key) {
@@ -46,8 +49,9 @@ export function stepEffects(
     playing.at = now + (playing.enter ? ENTER_MS : 0);
     playing.motion = stepMotion(battle, run.log, fast);
     playing.fx = stepFx(battle, run.log, playing.motion.eventAt);
+    playing.shown = Math.round(now - playing.at);
   }
-  return { fx: playing.fx, motion: playing.motion, elapsed: now - playing.at };
+  return { fx: playing.fx, motion: playing.motion, elapsed: now - playing.at, shown: playing.shown };
 }
 
 /** Ms until the beats of the step on screen are over (0 when nothing plays): Auto waits for it so each action can be read. */

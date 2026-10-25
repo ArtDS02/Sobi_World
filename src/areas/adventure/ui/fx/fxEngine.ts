@@ -113,11 +113,15 @@ export interface BurstOptions {
   flat?: number;
 }
 
+/** The most particles alive at once: a burst past it spawns fewer, so a big skill never drags the frame rate down. */
+export const MAX_PARTICLES = 420;
+
 /** A burst of particles around a point. */
 export function burst(w: FxWorld, o: BurstOptions) {
   const r = w.rand;
   const k = w.scale;
-  for (let i = 0; i < o.count; i += 1) {
+  const count = Math.min(o.count, MAX_PARTICLES - w.particles.length);
+  for (let i = 0; i < count; i += 1) {
     const a = (o.angle ?? 0) + (r() * 2 - 1) * (o.cone ?? Math.PI);
     const sp = lerp(o.speed[0], o.speed[1], r()) * k;
     const spread = (o.spread ?? 0) * Math.sqrt(r()) * k;

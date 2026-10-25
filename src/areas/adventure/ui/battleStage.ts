@@ -44,6 +44,16 @@ export function createBattleStage(d: BattleStageDeps): BattleStage {
   let active = false;
   let frame = 0;
   let last = 0;
+  // The host's size (read once at the top of a frame, never after the styles of the frame are written: that forced a layout every
+  // frame) and the units measured for the field now on screen (measured again only when it is redrawn or resized).
+  let size = { w: 0, h: 0 };
+  let measuredFor: Element | null = null;
+  let measuredUnits = 0;
+  let measuredSize = '';
+  let measuredAt = 0;
+  // What was last written on each body, so a frame writes only what changed.
+  const written = new WeakMap<HTMLElement, { tf: string; filter: string; opacity: string; hurt: boolean }>();
+  let wasClear = true;
 
   function measure(root: HTMLElement): Map<string, Anchor> {
     const base = canvas.getBoundingClientRect();
@@ -68,6 +78,7 @@ export function createBattleStage(d: BattleStageDeps): BattleStage {
         body,
         img: body.querySelector('img'),
         down: unit.classList.contains('is-down'),
+        mirrored: unit.classList.contains('is-mirrored'),
       });
     }
     return out;
@@ -75,7 +86,9 @@ export function createBattleStage(d: BattleStageDeps): BattleStage {
 
   function resize(): boolean {
     const r = d.host.getBoundingClientRect();
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    size = { w: r.width, h: r.height };
+    // The effects are soft glows: 1.25× the CSS pixels is sharp enough and draws far fewer pixels than 2× on a big screen.
+    const dpr = Math.min(1.25, window.devicePixelRatio || 1);
     const w = Math.max(1, Math.round(r.width * dpr));
     const h = Math.max(1, Math.round(r.height * dpr));
     for (const c of [canvas, groundCanvas]) {
@@ -98,7 +111,18 @@ export function createBattleStage(d: BattleStageDeps): BattleStage {
     const root = d.host.querySelector<HTMLElement>('.adventure-ui__battle');
     const reduce = d.reduceMotion();
     if (root && resize()) {
-      anchors = measure(root);
+      const field = root.querySelector('.adventure-ui__field');
+      const units = field ? field.childElementCount : 0;
+      const sized = `${Math.round(size.w)}x${Math.round(size.h)}`;
+      // The bodies' own tweens never move the units, so the anchors hold until the field is redrawn, resized or a second has passed.
+      if (field !== measuredFor || units !== measuredUnits || sized !== measuredSize || now - measuredAt > 1000) {
+        if (field instanceof HTMLElement) field.style.transform = '';
+        anchors = measure(root);
+        measuredFor = field;
+        measuredUnits = units;
+        measuredSize = sized;
+        measuredAt = now;
+      }
       const p = playingStep();
       if (p.key !== key) {
         key = p.key;
@@ -115,17 +139,14 @@ export function createBattleStage(d: BattleStageDeps): BattleStage {
         c.fire();
       }
       for (const [id, a] of anchors) {
-        if (reduce) {
-          a.body.style.transform = '';
-          a.body.style.filter = '';
-          a.body.style.opacity = '';
-          continue;
-        }
-        const pose = poseOf(id, a, anchors, p, t, now);
-        a.body.style.transform = pose.tf;
-        a.body.style.filter = pose.filter;
-        a.body.style.opacity = pose.opacity < 0.999 ? pose.opacity.toFixed(2) : '';
-        a.body.classList.toggle('is-hurt', pose.hurt);
+        const pose = reduce ? { tf: '', filter: '', opacity: 1, hurt: false } : poseOf(id, a, anchors, p, t, now);
+        const next = { tf: pose.tf, filter: pose.filter, opacity: pose.opacity < 0.999 ? pose.opacity.toFixed(2) : '', hurt: pose.hurt };
+        const was = written.get(a.body);
+        if (was?.tf !== next.tf) a.body.style.transform = next.tf;
+        if (was?.filter !== next.filter) a.body.style.filter = next.filter;
+        if (was?.opacity !== next.opacity) a.body.style.opacity = next.opacity;
+        if (was?.hurt !== next.hurt) a.body.classList.toggle('is-hurt', next.hurt);
+        written.set(a.body, next);
       }
       step(world, dt);
       paint(root, reduce);
@@ -138,13 +159,18 @@ export function createBattleStage(d: BattleStageDeps): BattleStage {
 
   function paint(root: HTMLElement | null, reduce: boolean) {
     if (!ctx || !gctx) return;
-    const r = d.host.getBoundingClientRect();
-    ctx.clearRect(0, 0, r.width, r.height);
-    gctx.clearRect(0, 0, r.width, r.height);
+    const r = { width: size.w, height: size.h };
     const field = root?.querySelector<HTMLElement>('.adventure-ui__field');
     const off = reduce ? { x: 0, y: 0 } : shakeOffset(world);
-    if (field) field.style.transform = off.x || off.y ? `translate(${off.x.toFixed(1)}px, ${off.y.toFixed(1)}px)` : '';
-    if (reduce || !root) return;
+    const shift = off.x || off.y ? `translate(${off.x.toFixed(1)}px, ${off.y.toFixed(1)}px)` : '';
+    if (field && field.style.transform !== shift) field.style.transform = shift;
+    // Nothing to draw (most of a battle, waiting for a command): leave the cleared canvases alone instead of clearing them every frame.
+    const clear = reduce || !root || !busy(world);
+    if (clear && wasClear) return;
+    ctx.clearRect(0, 0, r.width, r.height);
+    gctx.clearRect(0, 0, r.width, r.height);
+    wasClear = clear;
+    if (clear) return;
     if (world.dim > 0.01) {
       ctx.fillStyle = `rgba(14, 10, 30, ${(world.dim * 0.85).toFixed(3)})`;
       ctx.fillRect(0, 0, r.width, r.height);
@@ -183,6 +209,7 @@ export function createBattleStage(d: BattleStageDeps): BattleStage {
         world = newWorld();
         key = '';
         cues = [];
+        measuredFor = null;
       }
     },
     dispose() {

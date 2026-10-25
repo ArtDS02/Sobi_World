@@ -49,6 +49,47 @@ export const ENEMY_BODY: Readonly<Record<string, BodyPlan>> = {
   enemy_ancient_guardian: 'heavy',
 };
 
+/** Which way a creature's picture looks. */
+export type Facing = 'right' | 'left' | 'front';
+
+/**
+ * The art convention of the battle (adventure combat art, docs/animation/COMBAT_ART_GUIDE.md): every creature is drawn looking to the
+ * right. Our team stands on the left and looks right as drawn; an enemy stands on the right and is mirrored to look left. A picture
+ * that breaks the convention (the enemies drawn before it) is listed here so it is turned the right way until it is redrawn; remove
+ * its line when the new art lands. A front-facing picture is never mirrored.
+ */
+export const ART_FACING: Readonly<Record<string, Facing>> = {
+  enemy_mossling: 'front',
+  enemy_thorn_sprout: 'front',
+  enemy_gale_sparrow: 'left',
+  enemy_ember_fox: 'left',
+  enemy_dew_frog: 'front',
+  enemy_forest_wolf: 'left',
+  enemy_bramble_boar: 'left',
+  enemy_wolf_alpha: 'left',
+  enemy_old_treant: 'front',
+  enemy_rock_beetle: 'left',
+  enemy_cliff_hawk: 'left',
+  enemy_lava_newt: 'left',
+  enemy_snow_goat: 'left',
+  enemy_ore_golem: 'front',
+  enemy_magma_drake: 'left',
+  enemy_stone_sentinel: 'front',
+  enemy_rune_wisp: 'front',
+  enemy_tide_wraith: 'front',
+  enemy_ember_idol: 'front',
+  enemy_shadow_priest: 'front',
+  enemy_ancient_guardian: 'front',
+};
+
+export const artFacing = (art: string): Facing => ART_FACING[art] ?? 'right';
+
+/** The picture is mirrored on the field so the unit looks at the other side (ours look right, theirs left). */
+export function mirrored(art: string, side: 'ally' | 'enemy'): boolean {
+  const f = artFacing(art);
+  return side === 'ally' ? f === 'left' : f === 'right';
+}
+
 /** A fighter's body plan from its battle id: allies are `<areaId>:<id>` (a fish swims), enemies `<enemyId>#<n>`. */
 export function bodyOf(unitId: string): BodyPlan {
   if (unitId.startsWith('sobi_aquarium:')) return 'aquatic';

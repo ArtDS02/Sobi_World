@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deliveryOf, stepMotion } from '../../src/areas/adventure/ui/battleMotion';
-import { BODY, CIRCLE_MS, ENEMY_BODY, FAST_SHARE, STEP_MAX_MS, TIMING, bodyOf, vfxArt } from '../../src/areas/adventure/ui/motionProfiles';
+import { ART_FACING, BODY, CIRCLE_MS, ENEMY_BODY, FAST_SHARE, STEP_MAX_MS, TIMING, bodyOf, mirrored, vfxArt } from '../../src/areas/adventure/ui/motionProfiles';
 import { ENEMY_LIST } from '../../src/areas/adventure/logic/config/content';
 import type { BattleEvent, BattleState } from '../../src/systems/combat/types';
 
@@ -101,5 +101,23 @@ describe('battle motion (GĐ14 vertical slice)', () => {
     expect(BODY[bodyOf('enemy_unknown#1')]).toBe(BODY.quadruped);
     expect(vfxArt('skill_mm_poison_thorn', 'NATURE', 'projectile')).toEqual(['fx_skill_mm_poison_thorn_projectile', 'fx_adv_nature_projectile']);
     expect(vfxArt(null, null, 'impact')).toEqual([]);
+  });
+});
+
+describe('battle art facing (decision 042)', () => {
+  it('art drawn looking right stays as drawn on our side and is mirrored on theirs', () => {
+    expect(mirrored('pig_knight', 'ally')).toBe(false);
+    expect(mirrored('pig_knight', 'enemy')).toBe(true);
+    expect(mirrored('enemy_thunder_ram', 'enemy')).toBe(true);
+  });
+  it('old art drawn looking left or from the front is never turned away from the other side', () => {
+    expect(mirrored('enemy_forest_wolf', 'enemy')).toBe(false);
+    expect(mirrored('enemy_forest_wolf', 'ally')).toBe(true);
+    expect(mirrored('enemy_mossling', 'enemy')).toBe(false);
+    expect(mirrored('enemy_mossling', 'ally')).toBe(false);
+  });
+  it('every exception names an enemy of the content', () => {
+    const ids = new Set(ENEMY_LIST.map((e) => e.art));
+    for (const art of Object.keys(ART_FACING)) expect(ids.has(art)).toBe(true);
   });
 });

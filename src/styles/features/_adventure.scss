@@ -856,7 +856,8 @@ $adv-pink: #ef5a78;
   &__unit-hurt { position: absolute; inset: 0; opacity: 0; }
   &__body.is-hurt &__unit-hurt { opacity: 1; }
   &__body.is-hurt &__face:has(&__unit-hurt) > &__unit-art:not(&__unit-hurt) { opacity: 0; }
-  &__unit--ally &__face { transform: scaleX(-1); }
+  // Every creature is drawn looking right (motionProfiles.ART_FACING): a unit is mirrored only when its picture looks the wrong way.
+  &__unit.is-mirrored &__face { transform: scaleX(-1); }
 
   &__unit-art { display: block; width: 10rem; height: 10rem; object-fit: contain; object-position: bottom; }
   &__unit.is-elite &__unit-art { width: 12rem; height: 12rem; }
@@ -983,7 +984,7 @@ $adv-pink: #ef5a78;
     &.is-down { filter: grayscale(1); opacity: 0.55; }
   }
 
-  &__teamrow-art { flex: none; width: 2.5rem; height: 2.5rem; object-fit: contain; background: #fff; border: 2px solid #e5cf9f; border-radius: 50%; transform: scaleX(-1); }
+  &__teamrow-art { flex: none; width: 2.5rem; height: 2.5rem; object-fit: contain; background: #fff; border: 2px solid #e5cf9f; border-radius: 50%; }
   &__teamrow-text {
     display: grid;
     flex: 1;
@@ -1686,7 +1687,7 @@ $adv-pink: #ef5a78;
     border-radius: 0.9rem;
   }
 
-  &__fighter-art { flex: none; width: 3rem; height: 3rem; object-fit: contain; background: #fff; border: 2px solid #e5cf9f; border-radius: 50%; transform: scaleX(-1); }
+  &__fighter-art { flex: none; width: 3rem; height: 3rem; object-fit: contain; background: #fff; border: 2px solid #e5cf9f; border-radius: 50%; }
   &__fighter-text { display: grid; flex: 1; gap: 3px; min-width: 0; }
   &__fighter-head { display: flex; gap: $sp-2; align-items: baseline; b { font-size: $fs-sm; } small { font-size: $fs-xs; color: $c-text-muted; } em { margin-left: auto; font-size: $fs-xs; font-style: normal; font-weight: $fw-bold; color: #c07a00; } }
 

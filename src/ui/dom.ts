@@ -24,13 +24,24 @@ export function el<K extends keyof HTMLElementTagNameMap>(
   return node;
 }
 
-/** Replace children only when the markup changed, so a click is never lost to a 1 s re-render. */
+/** The node `patch` last put in each host and the markup it was built with (before anything on screen touched it). */
+const drawn = new WeakMap<HTMLElement, { node: Element; markup: string }>();
+
+/**
+ * Replace children only when the markup changed, so a click is never lost to a 1 s re-render. The new markup is compared with the
+ * markup the shown node was built with, not with the live node: inline styles or classes written later by an animation loop (the
+ * Adventure's battle stage tweens the fighters every frame) must not make every redraw look like a change.
+ */
 export function patch(host: HTMLElement, next: HTMLElement | null) {
   const prev = host.firstElementChild;
   if (next === null) {
+    drawn.delete(host);
     if (prev) host.replaceChildren();
     return;
   }
-  if (prev && prev.outerHTML === next.outerHTML) return;
+  const markup = next.outerHTML;
+  const last = drawn.get(host);
+  if (prev && (last && last.node === prev ? last.markup : prev.outerHTML) === markup) return;
   host.replaceChildren(next);
+  drawn.set(host, { node: next, markup });
 }

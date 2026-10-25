@@ -10,6 +10,14 @@
 
 ## Nhật ký
 
+### 2026-10-25 — Adventure: sửa giựt lag trận, hướng quay; đề xuất animation nhẹ (decision 042, phần 3–4 chờ duyệt)
+✅ Đã làm: tìm ra gốc giựt / mất click: `patch()` so `outerHTML` của DOM đang hiện (đã bị vòng canvas ghi `style` mỗi khung) → cả màn trận dựng lại mỗi tick 1 giây. Sửa `patch()` so với markup lúc dựng; số bay / banner / con bị hạ không còn đổi markup theo đồng hồ. Stage nhẹ hơn (đo vị trí khi cần, không ép layout mỗi khung, chỉ ghi style khi đổi, DPR ≤ 1,25, bỏ vẽ khi trống, sprite hạt cache, ≤ 420 hạt). Hướng quay: mọi ảnh sinh vật quy ước quay phải, quái tự lật, ngoại lệ ở `ART_FACING`; bỏ lật sai của phe ta. Viết đề xuất key pose + Phaser + JSON (`docs/decisions/042-…`, `docs/animation/COMBAT_ART_GUIDE.md`).
+📁 File chính: `src/ui/dom.ts`, `src/areas/adventure/ui/{battleStage,battleView,battleFxView,battleField,battleCues,motionProfiles}.ts`, `ui/fx/{fxDraw,fxEngine}.ts`, `src/styles/features/_adventure.scss`.
+🧪 Đã kiểm tra: `npm run check`; sandbox `sandbox-anim` (trình duyệt 1600×900): 0 lần dựng lại DOM trận trong 5 giây, dấu ngắm còn nguyên, click một lần ra chiêu, không long task khi đòn chạy; Cá Betta quay phải, quái quay trái. Chưa đo FPS trong Electron (pane trình duyệt bị ẩn nên FPS không tin được).
+⚠️ Tự quyết: sửa `patch()` dùng chung cho mọi màn (cùng lỗi tiềm ẩn); con bị hạ được vẽ đứng tới hết bước.
+👉 Bạn cần: chơi thử trận (save thật hoặc sandbox); duyệt decision 042 §3–4 (Phaser + key pose + JSON) trước khi làm.
+
+
 ### 2026-10-25 — Adventure: cập nhật lớn 1 (decision 041, chờ chơi thử)
 ✅ Đã làm (17 mục của chủ dự án, thứ tự A → C → B → D → E → F → G): bố cục trận mới (ta trái quay phải, quái phải), dock 3 tab, thanh lượt trượt trong hàng HUD, scrollbar mật ong + kéo-cuộn; dấu ngắm click-để-ra-chiêu; animation canvas (vòng phép + niệm phép, 9 hệ, trúng → ngả lui + khóc, hụt → né, vào trận → dịch chuyển); bảng tổng kết (chiếu lại đòn cuối, thanh KN, LEVEL UP, quà trùm); bản đồ có chiều sâu, quái đứng yên thở, trùm hạ vĩnh viễn, cổng dịch chuyển khóa sau trùm; 22 combat animal; thanh cấp ở Trại / trận; cây kỹ năng dạng đồ thị; Cửa hàng & Lò Rèn + sách KN.
 📁 File chính: `docs/decisions/041-adventure-big-update-1.md`, `src/areas/adventure/ui/{battleView,battleField,battleDock,battleCommand,battleStage,battlePose,battleCues,reportView,reportVm,sheetTree,workshopView,workshopVm}.ts`, `ui/fx/*`, `scene/{mapDepth,mapDepthKit}.ts`, `logic/actions/{workshop,battle,explore,trip}.ts`, `logic/{state,migrations}.ts`, `content/adventure/{workshop,maps,lineages}.json`, `scripts/art/sfx.ts`.

@@ -26,6 +26,8 @@ export interface Anchor {
   body: HTMLElement;
   img: HTMLImageElement | null;
   down: boolean;
+  /** The picture is drawn mirrored (motionProfiles.mirrored). */
+  mirrored: boolean;
 }
 
 export interface Cue {
@@ -174,7 +176,7 @@ export function stepCues(p: Readonly<PlayingStep>, env: CueEnv): Cue[] {
     const h = a.height;
     const x = a.feet.x - w / 2;
     const y = a.feet.y - h;
-    const flip = a.side === 'ally';
+    const flip = a.mirrored;
     env.world().shapes.push({
       wait: 0,
       dur: 0.38,

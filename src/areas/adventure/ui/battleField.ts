@@ -12,6 +12,7 @@ import { type BattleActionVm, type BattleVm, type UnitVm, effectOn } from './bat
 import { type ViewCtx, bar, elementIcon, iconOf, statusChip } from './viewKit';
 import { ACTION_ART } from './vmKit';
 import { act } from './battleCommand';
+import { mirrored } from './motionProfiles';
 
 
 /** Where each unit stands on the field (its feet, % of the field): ours on the left, theirs on the right, the first one in front. */
@@ -94,7 +95,7 @@ export function unitOnField(
   return el(
     'div',
     {
-      class: `adventure-ui__unit adventure-ui__unit--${u.side}${u.active ? ' is-active' : ''}${down ? ' is-down' : ''}${can ? ' is-aimable' : ''}${u.boss ? ' is-boss' : ''}${u.elite ? ' is-elite' : ''}${u.corrupted ? ' is-corrupted' : ''}`,
+      class: `adventure-ui__unit adventure-ui__unit--${u.side}${u.active ? ' is-active' : ''}${down ? ' is-down' : ''}${can ? ' is-aimable' : ''}${u.boss ? ' is-boss' : ''}${u.elite ? ' is-elite' : ''}${u.corrupted ? ' is-corrupted' : ''}${mirrored(u.art, u.side) ? ' is-mirrored' : ''}`,
       attrs: {
         role: 'group',
         style: `left:${spot.x}%;top:${spot.y}%;z-index:${Math.round(spot.y)}`,

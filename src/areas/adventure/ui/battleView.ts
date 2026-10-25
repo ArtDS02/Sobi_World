@@ -32,12 +32,10 @@ export function renderBattle(ctx: ViewCtx, replay?: Run): HTMLElement {
   const attack = vm.actions.find((a) => a.kind === 'attack');
   const enemies = vm.units.filter((u) => u.side === 'enemy');
   const allies = vm.units.filter((u) => u.side === 'ally');
-  // Knocked out in this step: still standing until its blow lands.
+  // Knocked out in this step: the stage plays its fall when the blow lands, so it is drawn standing while the step plays (not by
+  // the clock: a markup that changed mid-step would rebuild the field and restart the numbers).
   const fallsLater = (u: UnitVm) =>
-    u.down &&
-    step.motion.reactions.some(
-      (r) => r.unit === u.id && r.kind === 'ko' && r.at + 520 > step.elapsed,
-    );
+    live && u.down && step.motion.reactions.some((r) => r.unit === u.id && r.kind === 'ko');
   const aim = state.aim?.action ?? null;
   const sideAim = aim && (aim.aim === 'enemies' || aim.aim === 'allies' || aim.aim === 'all');
   return el(
@@ -74,10 +72,10 @@ export function renderBattle(ctx: ViewCtx, replay?: Run): HTMLElement {
       'div',
       { class: 'adventure-ui__field' },
       ...allies.map((u, i) =>
-        unitOnField(u, i, vm, ctx, run, floatersOf(u.id), step.elapsed, fallsLater(u)),
+        unitOnField(u, i, vm, ctx, run, floatersOf(u.id), step.shown, fallsLater(u)),
       ),
       ...enemies.map((u, i) =>
-        unitOnField(u, i, vm, ctx, run, floatersOf(u.id), step.elapsed, fallsLater(u)),
+        unitOnField(u, i, vm, ctx, run, floatersOf(u.id), step.shown, fallsLater(u)),
       ),
       sideAim && (aim.aim === 'enemies' || aim.aim === 'all')
         ? sideMarker('enemy', enemies, aim, ctx)
@@ -87,7 +85,7 @@ export function renderBattle(ctx: ViewCtx, replay?: Run): HTMLElement {
         : null,
     ),
     fxBanner
-      ? bannerEl(fxBanner, vm.units.find((u) => u.id === fxBanner.unit)?.art ?? null, step.elapsed)
+      ? bannerEl(fxBanner, vm.units.find((u) => u.id === fxBanner.unit)?.art ?? null, step.shown)
       : null,
     state.log && !replay
       ? el(
