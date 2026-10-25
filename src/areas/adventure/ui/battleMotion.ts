@@ -5,7 +5,7 @@
 // STEP_MAX_MS. Presentation only: it reads the step's events and never touches the battle. Pure.
 import type { BattleEvent, BattleState, Element } from '../../../systems/combat/types';
 import { SKILLS } from '../logic/config/content';
-import { BEAT_GAP_MS, CIRCLE_MS, FAST_SHARE, QUIET_MS, SKILL_MOTION, STEP_MAX_MS, TIMING, type Delivery, type Pose, type Timing } from './motionProfiles';
+import { BEAT_GAP_MS, CIRCLE_MS, FAST_SHARE, QUIET_MS, STEP_MAX_MS, skillFx, timingOf, type Delivery, type Pose, type Timing } from './motionProfiles';
 
 export interface MotionBeat {
   /** Who acts (null: a beat of damage over time only). */
@@ -49,7 +49,7 @@ const EMPTY: StepMotion = { beats: [], reactions: [], eventAt: [], total: 0 };
 export function deliveryOf(skillId: string | null, ultimate: boolean): { pose: Pose; delivery: Delivery } {
   if (skillId === null) return { pose: 'attack', delivery: 'melee' };
   const skill = SKILLS[skillId];
-  const own = SKILL_MOTION[skillId]?.delivery;
+  const own = skillFx(skillId)?.delivery;
   const many = !!skill && (skill.target === 'allEnemies' || skill.target === 'randomEnemies' || skill.target === 'all');
   if (ultimate) return { pose: 'ultimate', delivery: own ?? (skill?.category === 'support' ? 'aura' : 'burst') };
   if (!skill) return { pose: 'cast', delivery: own ?? 'burst' };
@@ -136,7 +136,7 @@ export function stepMotion(battle: BattleState | null, log: readonly { type: str
   if (!battle || events.length === 0) return EMPTY;
   const drafts = draftBeats(events).filter((d) => d.events.some((i) => events[i]!.type !== 'turn' && events[i]!.type !== 'round' && events[i]!.type !== 'ready'));
   const timings = drafts.map((d): Timing => {
-    const base = d.delivery ? TIMING[d.pose === 'ultimate' ? 'ultimate' : d.delivery] : { release: 0, impact: 0, end: QUIET_MS };
+    const base = d.delivery ? timingOf(d.pose, d.delivery, d.skillId) : { release: 0, impact: 0, end: QUIET_MS };
     const c = circleOf(d);
     return { release: base.release + c, impact: base.impact + c, end: base.end + c };
   });

@@ -29,7 +29,7 @@ import { createGameStore } from './gameStore';
 import { parseWorldSave } from './saveCodec';
 import { AquariumScene, AQUARIUM_SCENE_KEY } from '../areas/aquarium/scene/AquariumScene';
 import { bindAquariumStage } from '../areas/aquarium/stage';
-import { AdventureScene, ADVENTURE_SCENE_KEY } from '../areas/adventure/scene/AdventureScene';
+import { AdventureScene, ADVENTURE_SCENE_KEY, BattleScene, manifestImages } from '../areas/adventure/scene/AdventureScene';
 import { bindAdventureStage } from '../areas/adventure/stage';
 import { CloudScene, CLOUD_SCENE_KEY } from '../areas/cloud/scene/CloudScene';
 import { bindCloudStage } from '../areas/cloud/stage';
@@ -259,7 +259,7 @@ export async function start(root: HTMLElement) {
           onPick,
           firstScene: () => ({ key: PLAZA_SCENE_KEY, from: null }),
         },
-        [plaza, garden, aquarium, cloud, adventure],
+        [plaza, garden, aquarium, cloud, adventure, new BattleScene({ read: () => overlays.adventureUi.battleStage(), image: manifestImages(assets.registry) })],
       );
       const view = farmView;
       bindGardenStage({ enter: () => view.showScene(GARDEN_SCENE_KEY), exit: () => view.sleepScene(GARDEN_SCENE_KEY) });

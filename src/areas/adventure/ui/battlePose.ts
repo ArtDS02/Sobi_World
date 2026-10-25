@@ -3,18 +3,44 @@
 // ones that fly, float or swim), its own beats (the magic circle's rise, a melee dash to its target and back, a slam, a cast's lean
 // and thrust, a guard's crouch, a stunned wobble), its reactions (knocked back and flashing on a hit, leaning away on a miss, a hop
 // on a buff, a shiver on a curse, the fall of a knock-out) and the flicker of coming in at the start of a battle. Pure arithmetic
-// on the step and the anchors the stage measured; battleStage.ts applies it to the DOM every frame.
+// on the step and the anchors the stage measured; the battle scene (scene/battle/) applies it to the unit's sprite every frame, and
+// picks the key pose (`posture`) whose picture is shown: idle, attack, cast, hurt, ko (decision 042).
+import type { PoseArt } from '../../../../content/schemas/adventure/battleFx';
 import { ENTER_MS, type PlayingStep } from './battleFxView';
 import type { ReactionKind } from './battleMotion';
-import { lookOf } from './fx/looks';
-import { clamp01, easeIn, easeInOut, easeOut, lerp, type Pt } from './fx/fxEngine';
-import { BODY, bodyOf } from './motionProfiles';
+import { BODY, bodyOf, lookOf } from './motionProfiles';
 
-/** Where a unit stands on the stage, as the stage measured it (canvas px). */
+export interface Pt {
+  x: number;
+  y: number;
+}
+
+export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+export const clamp01 = (t: number) => (t < 0 ? 0 : t > 1 ? 1 : t);
+export const easeOut = (t: number) => 1 - (1 - t) * (1 - t);
+export const easeIn = (t: number) => t * t;
+export const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+
+/** Where a unit stands on the stage, as the stage measured it (px), and its picture (which says how its body moves). */
 export interface PoseAnchor {
   side: 'ally' | 'enemy';
+  art: string;
   feet: Pt;
   width: number;
+}
+
+/** A body at one moment: pushed (px), turned (deg), squashed, how bright (1 = as drawn), how grey and faded, its glow (0xRRGGBB). */
+export interface BodyPose {
+  dx: number;
+  dy: number;
+  rot: number;
+  sx: number;
+  sy: number;
+  bright: number;
+  gray: number;
+  opacity: number;
+  glow: number | null;
+  posture: PoseArt;
 }
 
 /** How long each reaction plays (ms). */
@@ -26,31 +52,33 @@ const bump = (t: number) => (t <= 0 || t >= 1 ? 0 : t < 0.18 ? easeOut(t / 0.18)
 export const hash = (s: string) => [...s].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) | 0, 7);
 
 /** The body of a unit at `t` ms into the step: where it is pushed, turned, squashed and how bright it is. */
-export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, PoseAnchor>, p: Readonly<PlayingStep>, t: number, now: number): { tf: string; filter: string; opacity: number; hurt: boolean } {
-  const plan = bodyOf(id);
+export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, PoseAnchor>, p: Readonly<PlayingStep>, t: number, now: number): BodyPose {
+  const plan = bodyOf(a.art);
   const profile = BODY[plan];
   const dir = a.side === 'ally' ? 1 : -1;
   // The idle loop: breathing, or bobbing for the ones that fly or float.
   const phase = ((hash(id) >>> 0) % profile.idleMs) / profile.idleMs;
   const cyc = Math.sin(((now / profile.idleMs + phase) % 1) * Math.PI * 2);
   let dx = 0;
-  let dy = plan === 'flyer' ? cyc * 7 : plan === 'floater' ? cyc * 5 : plan === 'aquatic' ? cyc * 3 : 0;
+  let dy = cyc * profile.bob;
   let rot = plan === 'aquatic' ? cyc * 1.5 : 0;
   let sx = 1 - cyc * 0.012;
-  let sy = 1 + cyc * (plan === 'heavy' ? 0.018 : 0.028);
+  let sy = 1 + cyc * profile.breathe;
   let bright = 1;
   let gray = 0;
   let opacity = 1;
-  let glow = '';
-  let hurt = false;
+  let glow: number | null = null;
+  let posture: PoseArt = 'idle';
   for (const b of p.motion.beats) {
     if (b.actor !== id || !b.pose || t < b.start || t > b.end + 40) continue;
     const target = anchors.get(b.targets[0] ?? '');
+    if (b.pose === 'attack' || b.delivery === 'melee' || b.delivery === 'slam') posture = t >= b.cast && t <= b.impact + 120 ? 'attack' : posture;
+    else if (b.pose === 'cast' || b.pose === 'support' || b.pose === 'ultimate') posture = t <= b.release + 160 ? 'cast' : posture;
     if (b.circle && t < b.cast) {
       const k = clamp01((t - b.start) / Math.max(1, b.cast - b.start));
       dy -= (b.pose === 'ultimate' ? 26 : 8) * easeOut(k);
       bright = Math.max(bright, 1 + 0.25 * Math.sin(k * Math.PI * 3) ** 2);
-      glow = lookOf(b.element).glow;
+      glow = lookOf(b.element, b.skillId).glow;
     }
     const wind = clamp01((t - b.cast) / Math.max(1, b.release - b.cast));
     const go = clamp01((t - b.release) / Math.max(1, b.impact - b.release));
@@ -97,7 +125,7 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
         rot += -dir * 5 * easeOut(wind);
         dx += -dir * 8 * wind;
         bright = Math.max(bright, 1 + 0.35 * wind);
-        glow = lookOf(b.element).glow;
+        glow = lookOf(b.element, b.skillId).glow;
         if (b.pose === 'ultimate') {
           sx *= 1 + 0.08 * wind;
           sy *= 1 + 0.08 * wind;
@@ -133,6 +161,7 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
       dy += 10 * e;
       gray = Math.max(gray, e);
       opacity = Math.min(opacity, 1 - 0.6 * e);
+      if (k > 0.2) posture = 'ko';
       if (k < 0.15) bright = Math.max(bright, 2.2 - k * 8);
       continue;
     }
@@ -142,7 +171,7 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
       case 'hit':
       case 'hit-heavy': {
         const heavy = r.kind === 'hit-heavy';
-        hurt = true;
+        posture = 'hurt';
         dx += -dir * (heavy ? 42 : 24) * u;
         rot += -dir * (heavy ? 17 : 10) * u;
         sx *= 1 + 0.05 * u;
@@ -160,16 +189,16 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
       case 'heal':
         dy -= 10 * u;
         bright = Math.max(bright, 1 + 0.3 * u);
-        glow = '#9ef0c8';
+        glow = 0x9ef0c8;
         break;
       case 'buff':
         dy -= 14 * Math.sin(Math.min(1, k * 2) * Math.PI);
         bright = Math.max(bright, 1 + 0.25 * u);
-        glow = '#bfe8ff';
+        glow = 0xbfe8ff;
         break;
       case 'debuff':
         dx += Math.sin(k * 50) * 4 * (1 - k);
-        glow = '#9a6ad6';
+        glow = 0x9a6ad6;
         break;
     }
   }
@@ -180,6 +209,5 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
     else if (into < 0.45) opacity = Math.min(opacity, Math.sin(into * 70) > 0 ? 0.25 + into : 0.05);
     bright = Math.max(bright, into < 0.6 ? 1.8 - into : 1);
   }
-  const filter = `${bright > 1.01 ? `brightness(${bright.toFixed(2)}) ` : ''}${gray > 0.01 ? `grayscale(${gray.toFixed(2)}) ` : ''}${glow ? `drop-shadow(0 0 10px ${glow})` : ''}`.trim();
-  return { tf: `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) rotate(${rot.toFixed(2)}deg) scale(${sx.toFixed(3)}, ${sy.toFixed(3)})`, filter, opacity, hurt };
+  return { dx, dy, rot, sx, sy, bright, gray, opacity, glow, posture };
 }

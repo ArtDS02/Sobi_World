@@ -17,8 +17,10 @@ import { ZONE_LIST } from '../logic/config/content';
 import { adventureOf, hasAdventure } from '../logic/save/lens';
 import type { AdventureSceneState, SceneReport } from '../scene/sceneState';
 import { createAdventureDialogs } from './adventureDialogs';
-import { stepRemaining } from './battleFxView';
-import { createBattleStage, type BattleSound } from './battleStage';
+import type { BattleStageState } from '../scene/battle/BattleScene';
+import { playingStep, stepRemaining } from './battleFxView';
+import type { BattleSound } from './battlePlan';
+import { measureStage } from './battleStageVm';
 import { choose } from './battleCommand';
 import { renderBattle } from './battleView';
 import { battleVm } from './battleVm';
@@ -49,6 +51,8 @@ export interface AdventureUiDeps {
   paused?: () => boolean;
   /** Plays a sound of the battle or the map (manifest audio id; silent when it has no file or sounds are off). */
   sound?: (key: AdventureSound) => void;
+  /** The battle's fighters and effects are drawn by the Phaser battle stage (decision 042); the DOM keeps only their boxes. */
+  stage?: boolean;
 }
 
 export type AdventureSound = BattleSound | 'adv_teleport' | 'adv_victory' | 'adv_exp_fill' | 'level_up';
@@ -62,6 +66,8 @@ export interface AdventureUi {
   sceneState(): AdventureSceneState | null;
   /** What the scene reports. */
   scene: SceneReport;
+  /** What the battle stage draws now (null: the Adventure is not on screen). */
+  battleStage(): BattleStageState | null;
   dispose(): void;
 }
 
@@ -80,7 +86,10 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     const w = world();
     return !!w?.settings.reduceMotion || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches);
   };
-  const stage = typeof window !== 'undefined' && typeof requestAnimationFrame === 'function' ? createBattleStage({ host: d.host, reduceMotion: reduceNow, ...(d.sound ? { sound: d.sound } : {}) }) : null;
+  d.host.classList.toggle('has-stage', !!d.stage);
+  let drawn = 0;
+  let battleOn = false;
+  const stageCache = { drawn: -1, size: '', at: 0, units: [] as BattleStageState['units'] };
   let lastPos: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' } | null = null;
   const state: UiState = { zoneId: ZONE_LIST[0]!.id, startMap: null, selected: [], prep: [], auto: false, fast: false, menu: null, aim: null, focus: null, showMap: false, filter: null, search: '', legend: false, log: false, quick: true };
 
@@ -147,7 +156,8 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     const ctx = ctxFor(w);
     d.host.classList.toggle('is-battle', run?.phase === 'battle' || !!report?.battle);
     d.host.classList.toggle('is-report', !!report);
-    stage?.setActive(active && (run?.phase === 'battle' || !!report?.battle));
+    battleOn = active && (run?.phase === 'battle' || !!report?.battle);
+    drawn += 1;
     d.host.classList.toggle('is-camp', run === null);
     d.host.classList.toggle('is-done', run?.phase === 'done' || rift);
     slideTurns(main, () => keepScroll(main, () => patch(main, run === null ? renderCamp(ctx) : report ? renderReport(ctx) : rift ? renderRift(ctx) : exploring ? renderExplore(ctx) : run.phase === 'battle' ? renderBattle(ctx) : renderDone(ctx))), reduceNow());
@@ -249,10 +259,14 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     autoStep,
     sceneState: () => (active ? sceneVm(world(), d.now(), dialogs.isOpen() || (d.paused?.() ?? false), state.zoneId) : null),
     scene,
+    battleStage: () => {
+      if (!active) return null;
+      const units = battleOn ? measureStage(main, stageCache, drawn, d.host) : [];
+      return { active: battleOn, units, step: playingStep(), reduce: reduceNow(), sound: d.sound };
+    },
     dispose: () => {
       off();
       offDrag();
-      stage?.dispose();
       stop?.();
       d.keys?.removeEventListener('keydown', onKey);
       dialogs.close();

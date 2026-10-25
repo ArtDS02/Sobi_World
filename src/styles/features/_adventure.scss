@@ -858,6 +858,8 @@ $adv-pink: #ef5a78;
   &__body.is-hurt &__face:has(&__unit-hurt) > &__unit-art:not(&__unit-hurt) { opacity: 0; }
   // Every creature is drawn looking right (motionProfiles.ART_FACING): a unit is mirrored only when its picture looks the wrong way.
   &__unit.is-mirrored &__face { transform: scaleX(-1); }
+  // The Phaser battle stage draws the fighters (decision 042): the DOM keeps their boxes (the layout, the markers) but not their pictures.
+  .adventure-host.has-stage &__face { visibility: hidden; }
 
   &__unit-art { display: block; width: 10rem; height: 10rem; object-fit: contain; object-position: bottom; }
   &__unit.is-elite &__unit-art { width: 12rem; height: 12rem; }

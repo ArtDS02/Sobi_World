@@ -3,6 +3,7 @@
 // Guardian lines, enemies, zones and their areas, props, equipment.
 import areaRaw from '../../../../../content/adventure/area.json';
 import balanceRaw from '../../../../../content/adventure/balance.json';
+import battleFxRaw from '../../../../../content/adventure/battle_fx.json';
 import classesRaw from '../../../../../content/adventure/classes.json';
 import elementsRaw from '../../../../../content/adventure/elements.json';
 import engagementRaw from '../../../../../content/adventure/engagement.json';
@@ -18,6 +19,7 @@ import workshopRaw from '../../../../../content/adventure/workshop.json';
 import zonesRaw from '../../../../../content/adventure/zones.json';
 import { areaManifestSchema } from '../../../../../content/schemas/area';
 import { adventureBalanceFileSchema } from '../../../../../content/schemas/adventure/balance';
+import { battleFxFileSchema } from '../../../../../content/schemas/adventure/battleFx';
 import { classesFileSchema } from '../../../../../content/schemas/adventure/classes';
 import { enemiesFileSchema } from '../../../../../content/schemas/adventure/enemies';
 import { engagementFileSchema } from '../../../../../content/schemas/adventure/engagement';
@@ -53,7 +55,11 @@ export const ADVENTURE_CONTENT = {
   equipment: loadContent('adventure/equipment.json', equipmentFileSchema, equipmentRaw),
   engagement: loadContent('adventure/engagement.json', engagementFileSchema, engagementRaw),
   workshop: loadContent('adventure/workshop.json', workshopFileSchema, workshopRaw),
+  battleFx: loadContent('adventure/battle_fx.json', battleFxFileSchema, battleFxRaw),
 };
+
+/** How a battle looks and moves (decision 042): pacing, bodies, facing, particles, element looks, reactions, skills of their own. */
+export const BATTLE_FX = ADVENTURE_CONTENT.battleFx;
 
 /** Experience books, the Adventure Shop and the Forge (adventure-big-update-1 §17). */
 export const WORKSHOP = ADVENTURE_CONTENT.workshop;

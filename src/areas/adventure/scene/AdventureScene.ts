@@ -11,6 +11,9 @@ import type { ControlInput } from '../../../ui/world/controlInput';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { AB, MAPS, type AreaMap } from '../logic/config/content';
 import { distanceToThing, groupPosition, thingsOf, walkableOf } from '../logic/maps';
+import { BATTLE_SCENE_KEY } from './battle/BattleScene';
+
+export { BattleScene, manifestImages } from './battle/BattleScene';
 import { buildMap, edgeColour, refreshThings, type MapObjects } from './mapView';
 import type { AdventureSceneState, SceneReport } from './sceneState';
 import { Walker } from './walker';
@@ -69,7 +72,23 @@ export class AdventureScene extends Phaser.Scene {
     const use = () => this.useFocus();
     this.offs.push(this.deps.input.onPress('interact', use));
     this.input.keyboard?.on('keydown-SPACE', use);
+    // The battle stage (decision 042) is drawn over this scene and sleeps and wakes with it.
+    const stage = () => this.scene.get(BATTLE_SCENE_KEY);
+    const runStage = () => {
+      if (stage()) {
+        this.scene.run(BATTLE_SCENE_KEY);
+        this.scene.bringToTop(BATTLE_SCENE_KEY);
+      }
+    };
+    const sleepStage = () => {
+      if (stage() && this.scene.isActive(BATTLE_SCENE_KEY)) this.scene.sleep(BATTLE_SCENE_KEY);
+    };
+    runStage();
+    this.events.on(Phaser.Scenes.Events.WAKE, runStage);
+    this.events.on(Phaser.Scenes.Events.SLEEP, sleepStage);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.events.off(Phaser.Scenes.Events.WAKE, runStage);
+      this.events.off(Phaser.Scenes.Events.SLEEP, sleepStage);
       this.textures.off(Phaser.Textures.Events.ADD, onTexture);
       this.input.keyboard?.off('keydown-SPACE', use);
       for (const off of this.offs) off();

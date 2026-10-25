@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { deliveryOf, stepMotion } from '../../src/areas/adventure/ui/battleMotion';
-import { ART_FACING, BODY, CIRCLE_MS, ENEMY_BODY, FAST_SHARE, STEP_MAX_MS, TIMING, bodyOf, mirrored, vfxArt } from '../../src/areas/adventure/ui/motionProfiles';
-import { ENEMY_LIST } from '../../src/areas/adventure/logic/config/content';
+import { BODY, CIRCLE_MS, FAST_SHARE, STEP_MAX_MS, TIMING, bodyOf, mirrored } from '../../src/areas/adventure/ui/motionProfiles';
+import { BATTLE_FX, ENEMY_LIST } from '../../src/areas/adventure/logic/config/content';
 import type { BattleEvent, BattleState } from '../../src/systems/combat/types';
 
 const ally = 'sobi_farm:p1';
@@ -93,14 +93,11 @@ describe('battle motion (GĐ14 vertical slice)', () => {
     expect(stepMotion(battle, []).total).toBe(0);
   });
 
-  it('every enemy has a body plan; fish swim; effect art falls back from the skill to the element', () => {
-    for (const e of ENEMY_LIST) expect(ENEMY_BODY[e.id], e.id).toBeDefined();
-    expect(bodyOf('sobi_aquarium:f1')).toBe('aquatic');
-    expect(bodyOf(ally)).toBe('quadruped');
-    expect(bodyOf('enemy_cliff_hawk#2')).toBe('flyer');
-    expect(BODY[bodyOf('enemy_unknown#1')]).toBe(BODY.quadruped);
-    expect(vfxArt('skill_mm_poison_thorn', 'NATURE', 'projectile')).toEqual(['fx_skill_mm_poison_thorn_projectile', 'fx_adv_nature_projectile']);
-    expect(vfxArt(null, null, 'impact')).toEqual([]);
+  it('a body moves by its picture: as battle_fx.json says, else fish swim and the rest walk', () => {
+    expect(bodyOf('fish_betta')).toBe('aquatic');
+    expect(bodyOf('pig_knight')).toBe('quadruped');
+    expect(bodyOf('enemy_cliff_hawk')).toBe('flyer');
+    expect(BODY[bodyOf('enemy_unknown')]).toBe(BODY.quadruped);
   });
 });
 
@@ -116,8 +113,8 @@ describe('battle art facing (decision 042)', () => {
     expect(mirrored('enemy_mossling', 'enemy')).toBe(false);
     expect(mirrored('enemy_mossling', 'ally')).toBe(false);
   });
-  it('every exception names an enemy of the content', () => {
+  it('every creature of battle_fx.json that breaks the convention is an enemy of the content', () => {
     const ids = new Set(ENEMY_LIST.map((e) => e.art));
-    for (const art of Object.keys(ART_FACING)) expect(ids.has(art)).toBe(true);
+    for (const [art, c] of Object.entries(BATTLE_FX.creatures)) if (c.facing) expect(ids.has(art), art).toBe(true);
   });
 });

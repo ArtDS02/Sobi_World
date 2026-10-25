@@ -103,6 +103,7 @@ export function unitOnField(
         title: u.intent ? `${u.name}: ${u.intent}` : u.name,
         'data-unit': u.id,
         'data-side': u.side,
+        'data-art': u.art,
       },
     },
     el(

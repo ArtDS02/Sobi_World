@@ -1,6 +1,6 @@
 # 042 — Trận Adventure: sửa giựt lag, hướng quay; đề xuất animation nhẹ, dễ tự cập nhật
 
-**Ngày:** 2026-10-25 · **Trạng thái:** phần 1–2 đã làm; phần 3–4 là **đề xuất, chờ chủ dự án duyệt** (thay đổi lớn, AGENT_RULES §6).
+**Ngày:** 2026-10-25 · **Trạng thái:** phần 1–2 đã làm; phần 3–4 **chủ dự án duyệt 2026-10-25**; §3 đã làm (xem §5), §4 chờ chủ dự án tạo art.
 **Bối cảnh:** chủ dự án báo: HUD kỹ năng và dấu tấn công giựt mạnh, phải click nhiều lần; cả màn trận lag; combat animal và quái quay sai phía. Đề xuất của chủ dự án: (1) tạo lại hình mọi sinh vật cho đúng chiều, nhiều trạng thái hơn; (2) sửa HUD / dấu tấn công; (3) animation nhẹ hơn, dễ tự thêm combat animal / skill / sửa animation về sau.
 
 ## 1. Nguyên nhân giựt lag, mất click (đã sửa)
@@ -11,9 +11,9 @@
 
 ## 2. Hướng quay (đã sửa)
 - Ảnh heo và cá chiến đấu **đều quay phải**, nhưng CSS lật cả phe ta (`scaleX(-1)`) → phe ta quay trái. Quái thì ảnh lẫn lộn (trái / phải / chính diện) và không lật.
-- **Quy ước mới: mọi ảnh sinh vật quay phải.** Phe ta giữ nguyên, quái được lật để nhìn sang trái. Ảnh cũ lệch quy ước ghi trong `ui/motionProfiles.ts → ART_FACING` (ảnh quay trái: không lật; chính diện: không bao giờ lật); xóa dòng khi có ảnh mới. Bỏ lật ở ảnh đội trong dock và thẻ Trại.
+- **Quy ước mới: mọi ảnh sinh vật quay phải.** Phe ta giữ nguyên, quái được lật để nhìn sang trái. Ảnh cũ lệch quy ước ghi trong `content/adventure/battle_fx.json → creatures[<art>].facing` (lúc đầu là `ART_FACING` trong code) (ảnh quay trái: không lật; chính diện: không bao giờ lật); xóa dòng khi có ảnh mới. Bỏ lật ở ảnh đội trong dock và thẻ Trại.
 
-## 3. Đề xuất: animation "key pose + tween" vẽ bằng Phaser, khai báo bằng JSON (chờ duyệt)
+## 3. Animation "key pose + tween" vẽ bằng Phaser, khai báo bằng JSON 
 **Vì sao không làm tiếp kiểu hiện tại:** thân con là ảnh DOM, hiệu ứng là 2 canvas 2D phủ toàn màn hình + CSS filter đổi mỗi khung → nặng; công thức hiệu ứng viết bằng code (`ui/fx/*.ts`), chủ dự án không tự sửa được.
 **Vì sao không làm sprite sheet nhiều khung cho mọi con:** 44 sinh vật × 7 trạng thái × 6–8 khung ≈ 2.000 hình; AI tạo ảnh không giữ nhân vật đồng nhất qua nhiều khung.
 
@@ -28,5 +28,12 @@
 
 **Phạm vi khi được duyệt (ước lượng 2–3 phiên):** schema + loader `battle_fx.json`; `BattleScene` Phaser (sân, sinh vật, VFX, hạt) thay `battleStage.ts` + `ui/fx/*`; chuyển công thức 9 hệ hiện tại sang JSON; Admin xem thử; test (nội dung hợp lệ, mọi skill có animation, thiếu ảnh → dự phòng). Giảm chuyển động: không tween, không hạt (như nay). Không đổi save, không đổi logic trận.
 
-## 4. Đề xuất: tạo lại art sinh vật (chờ duyệt)
+## 4. Tạo lại art sinh vật (duyệt, chủ dự án tạo ảnh)
 Batch `adventure-combat-art` (prompt + CSV trong `COMBAT_ART_GUIDE.md`): 22 combat animal + 22 quái, mỗi con 6 key pose, quay phải, khung 512×512, chân ở giữa cạnh dưới. Thứ tự: idle + hurt của mọi con trước (sửa hướng quay + mặt khóc), rồi attack / cast, cuối cùng ko / victory.
+
+## 5. Đã làm (§3)
+- **Dữ liệu:** `content/adventure/battle_fx.json` + schema `content/schemas/adventure/battleFx.ts` (có trong Admin → Nội dung game → "Animation trận"): `pacing`, `deliveries`, `bodies`, `creatures` (hướng ảnh + thân), `particles` (51 burst), `elements` (9 hệ + NEUTRAL: màu, đạn, va chạm, nét `slash / bolt / beam / swirl / vines`, vòng đất, chớp, rung), `reactions` (14 loại), `skills` (phần riêng). Công thức 9 hệ của decision 041 chuyển sang dữ liệu gần như nguyên vẹn. Schema kiểm tra mọi tham chiếu.
+- **Sân Phaser:** `scene/battle/BattleScene.ts` chạy kèm `AdventureScene` (ngủ / thức cùng), vẽ trên tranh nền và dưới DOM. `battleUnits.ts`: mỗi con một ảnh + bản sáng (ADD) + viền phát sáng (ADD), đổi key pose `cb_<art>_<idle|attack|cast|hurt|ko|victory>` (thiếu → `<art>_hurt` cho hurt → ảnh gốc), tự nạp ảnh lần đầu cần. `fxBursts.ts`: mỗi burst một ParticleEmitter dùng lại. `fxPlayer.ts` + `fxStrokes.ts`: vòng phép, tụ lực, đạn + vệt, va chạm, nét, chớp, tối màn, rung camera. `fxTextures.ts`: texture hạt vẽ một lần bằng code.
+- **Thuần, có test:** `ui/battlePlan.ts` (bước → danh sách cue có thời điểm), `ui/battlePose.ts` (tư thế số + key pose), `ui/motionProfiles.ts` (đọc JSON). DOM chỉ giữ hộp của từng con (`has-stage` ẩn ảnh DOM), `ui/battleStageVm.ts` đo hộp khi DOM đổi. Bỏ `ui/battleStage.ts`, `ui/battleCues.ts`, `ui/fx/*` (canvas 2D cũ).
+- **Admin "Xưởng animation trận"** (`#/battle-lab`): chọn kỹ năng (★ = có phần riêng) / bên ra đòn / bên nhận / quái ra đòn / chí mạng / kết liễu / x2 → ▶ Chạy hoặc "Vào trận" trên chính `BattleScene`; sửa JSON phần riêng → "Áp dụng thử" (kiểm schema) → "Lưu vào battle_fx.json" (qua API nội dung, cần `npm run admin`).
+- **Khác trước:** rung chỉ rung sân Phaser (bảng tên DOM đứng yên); mất ảnh sau (afterimage) dùng ảnh hiện tại; hạt không còn lực cản (`drag`).

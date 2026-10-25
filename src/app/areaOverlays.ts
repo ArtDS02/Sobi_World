@@ -75,6 +75,7 @@ export function createAreaOverlays(d: AreaOverlaysDeps) {
     ...(d.keys ? { interactKey: () => interactLabel(d.keys!()) } : {}),
     ...(d.sound ? { sound: d.sound } : {}),
     keys: document,
+    stage: true,
     frame: (fn, ms) => {
       const id = window.setInterval(fn, ms);
       return () => window.clearInterval(id);

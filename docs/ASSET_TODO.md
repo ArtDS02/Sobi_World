@@ -4,10 +4,10 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
-## Adventure: art chiến đấu quay phải, key pose (decision 042 — chờ duyệt)
+## Adventure: art chiến đấu quay phải, key pose (decision 042)
 | Asset | Ghi chú |
 |---|---|
-| 22 combat animal + 22 quái: `cb_<art>_{idle,attack,cast,hurt,ko,victory}` | Quy ước: quay phải, 512×512, chân giữa cạnh dưới (`docs/animation/COMBAT_ART_GUIDE.md`). Ưu tiên idle + hurt. Tạm thời quái cũ quay trái / chính diện được ghi ở `motionProfiles.ts → ART_FACING`; xóa dòng khi có ảnh mới. |
+| 22 combat animal + 22 quái: `cb_<art>_{idle,attack,cast,hurt,ko,victory}` | Quy ước: quay phải, 512×512, chân giữa cạnh dưới (`docs/animation/COMBAT_ART_GUIDE.md`). Ưu tiên idle + hurt. Tạm thời quái cũ quay trái / chính diện được ghi ở `content/adventure/battle_fx.json → creatures[<art>].facing`; xóa `facing` khi có ảnh mới. Ảnh mới cần dòng manifest `cb_<art>_<pose>` (Claude thêm khi cắt). |
 
 ## Adventure: nhịp chơi, Vết Nứt, gắn bó (decision 039)
 | Asset | Ghi chú |

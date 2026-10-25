@@ -1,88 +1,29 @@
-// The one table the battle's motion reads (GĐ14 animation pipeline, docs/animation/): the body plan of each fighter (how it idles and
-// moves), the timing of every pose, the look of each element's effects and the skills that have their own. Art is optional and goes
-// through the manifest by id: `fx_adv_<element>_<phase>` for an element, `fx_<skillId>_<phase>` for a skill of its own; while a file is
-// missing the effect is drawn by CSS (the fallback is the shape named here). Presentation only: nothing here changes a battle. Pure.
+// What the battle's motion reads (decision 042), all of it from content/adventure/battle_fx.json so the look of a battle is edited
+// without code: the pacing of a step, the timing of each way of delivering an action, how each body idles, which way each picture
+// looks, the look of each element and of the skills that differ from theirs. Presentation only: nothing here changes a battle. Pure.
+import type { BattleLook, BodyPlan, Delivery, Facing, PoseArt } from '../../../../content/schemas/adventure/battleFx';
 import type { Element } from '../../../systems/combat/types';
+import { BATTLE_FX } from '../logic/config/content';
 
-/** How a body moves: its idle loop, and how far it leans into an action. */
-export type BodyPlan = 'quadruped' | 'aquatic' | 'flyer' | 'floater' | 'sprout' | 'heavy';
+export type { BodyPlan, Delivery, Facing };
 
 export interface BodyProfile {
   /** One idle loop (ms); the units start at different points of it so a team never breathes as one. */
   idleMs: number;
-  /** How far the body travels on a melee lunge (rem). */
+  /** How far the body travels on a melee lunge (rem), how far it bobs (px), how much it breathes (share of its height). */
   lunge: number;
+  bob: number;
+  breathe: number;
 }
 
-export const BODY: Readonly<Record<BodyPlan, BodyProfile>> = {
-  quadruped: { idleMs: 2200, lunge: 3.2 },
-  aquatic: { idleMs: 2600, lunge: 2.6 },
-  flyer: { idleMs: 1400, lunge: 3.6 },
-  floater: { idleMs: 3000, lunge: 2.2 },
-  sprout: { idleMs: 1800, lunge: 2.4 },
-  heavy: { idleMs: 3200, lunge: 1.8 },
-};
-
-/** The enemies of content/adventure/enemies.json by what they are (an enemy missing here idles as a quadruped). */
-export const ENEMY_BODY: Readonly<Record<string, BodyPlan>> = {
-  enemy_mossling: 'sprout',
-  enemy_thorn_sprout: 'sprout',
-  enemy_gale_sparrow: 'flyer',
-  enemy_ember_fox: 'quadruped',
-  enemy_dew_frog: 'quadruped',
-  enemy_forest_wolf: 'quadruped',
-  enemy_bramble_boar: 'quadruped',
-  enemy_wolf_alpha: 'quadruped',
-  enemy_old_treant: 'heavy',
-  enemy_rock_beetle: 'quadruped',
-  enemy_cliff_hawk: 'flyer',
-  enemy_lava_newt: 'quadruped',
-  enemy_snow_goat: 'quadruped',
-  enemy_ore_golem: 'heavy',
-  enemy_thunder_ram: 'quadruped',
-  enemy_magma_drake: 'heavy',
-  enemy_stone_sentinel: 'heavy',
-  enemy_rune_wisp: 'floater',
-  enemy_tide_wraith: 'floater',
-  enemy_ember_idol: 'heavy',
-  enemy_shadow_priest: 'floater',
-  enemy_ancient_guardian: 'heavy',
-};
-
-/** Which way a creature's picture looks. */
-export type Facing = 'right' | 'left' | 'front';
+export const BODY: Readonly<Record<BodyPlan, BodyProfile>> = BATTLE_FX.bodies as Record<BodyPlan, BodyProfile>;
 
 /**
- * The art convention of the battle (adventure combat art, docs/animation/COMBAT_ART_GUIDE.md): every creature is drawn looking to the
- * right. Our team stands on the left and looks right as drawn; an enemy stands on the right and is mirrored to look left. A picture
- * that breaks the convention (the enemies drawn before it) is listed here so it is turned the right way until it is redrawn; remove
- * its line when the new art lands. A front-facing picture is never mirrored.
+ * The art convention of the battle (docs/animation/COMBAT_ART_GUIDE.md): every creature is drawn looking to the right. Our team stands
+ * on the left and looks right as drawn; an enemy stands on the right and is mirrored to look left. A picture that breaks the convention
+ * says so in `creatures` of battle_fx.json (remove its `facing` when the new art lands); a front-facing picture is never mirrored.
  */
-export const ART_FACING: Readonly<Record<string, Facing>> = {
-  enemy_mossling: 'front',
-  enemy_thorn_sprout: 'front',
-  enemy_gale_sparrow: 'left',
-  enemy_ember_fox: 'left',
-  enemy_dew_frog: 'front',
-  enemy_forest_wolf: 'left',
-  enemy_bramble_boar: 'left',
-  enemy_wolf_alpha: 'left',
-  enemy_old_treant: 'front',
-  enemy_rock_beetle: 'left',
-  enemy_cliff_hawk: 'left',
-  enemy_lava_newt: 'left',
-  enemy_snow_goat: 'left',
-  enemy_ore_golem: 'front',
-  enemy_magma_drake: 'left',
-  enemy_stone_sentinel: 'front',
-  enemy_rune_wisp: 'front',
-  enemy_tide_wraith: 'front',
-  enemy_ember_idol: 'front',
-  enemy_shadow_priest: 'front',
-  enemy_ancient_guardian: 'front',
-};
-
-export const artFacing = (art: string): Facing => ART_FACING[art] ?? 'right';
+export const artFacing = (art: string): Facing => BATTLE_FX.creatures[art]?.facing ?? 'right';
 
 /** The picture is mirrored on the field so the unit looks at the other side (ours look right, theirs left). */
 export function mirrored(art: string, side: 'ally' | 'enemy'): boolean {
@@ -90,17 +31,19 @@ export function mirrored(art: string, side: 'ally' | 'enemy'): boolean {
   return side === 'ally' ? f === 'left' : f === 'right';
 }
 
-/** A fighter's body plan from its battle id: allies are `<areaId>:<id>` (a fish swims), enemies `<enemyId>#<n>`. */
-export function bodyOf(unitId: string): BodyPlan {
-  if (unitId.startsWith('sobi_aquarium:')) return 'aquatic';
-  if (unitId.includes(':')) return 'quadruped';
-  return ENEMY_BODY[unitId.split('#')[0]!] ?? 'quadruped';
+/** The manifest ids a pose of `art` is drawn from, best first (the hurt face of decision 041 is `<art>_hurt`). */
+export function poseArts(art: string, pose: PoseArt): string[] {
+  const idle = [`cb_${art}_idle`, art];
+  if (pose === 'idle') return idle;
+  if (pose === 'hurt') return [`cb_${art}_hurt`, `${art}_hurt`, ...idle];
+  return [`cb_${art}_${pose}`, ...idle];
 }
+
+/** How a creature's body moves, by its picture: as battle_fx.json says, else a fish swims and the rest walk on four legs. */
+export const bodyOf = (art: string): BodyPlan => BATTLE_FX.creatures[art]?.body ?? (art.startsWith('fish_') ? 'aquatic' : 'quadruped');
 
 /** What an actor does with its body. */
 export type Pose = 'attack' | 'cast' | 'support' | 'ultimate' | 'guard' | 'stunned';
-/** How the effect reaches its targets. */
-export type Delivery = 'melee' | 'slam' | 'projectile' | 'burst' | 'aura';
 
 /**
  * When things happen in a beat (ms from its start, normal speed): the actor winds up until `release`, the effect travels or grows until
@@ -112,63 +55,30 @@ export interface Timing {
   end: number;
 }
 
-export const TIMING: Readonly<Record<Delivery | 'ultimate', Timing>> = {
-  melee: { release: 220, impact: 330, end: 620 },
-  slam: { release: 260, impact: 380, end: 680 },
-  projectile: { release: 260, impact: 520, end: 760 },
-  burst: { release: 300, impact: 440, end: 720 },
-  aura: { release: 240, impact: 360, end: 640 },
-  ultimate: { release: 420, impact: 640, end: 1000 },
-};
+export const TIMING: Readonly<Record<Delivery | 'ultimate', Timing>> = BATTLE_FX.deliveries;
 
 /** How long the magic circle shows around a caster before its skill leaves (ms, normal speed). */
-export const CIRCLE_MS = { skill: 560, ultimate: 820 } as const;
-
+export const CIRCLE_MS = BATTLE_FX.pacing.circle;
 /** A beat with no action (a turn lost to a status, or damage over time only). */
-export const QUIET_MS = 360;
+export const QUIET_MS = BATTLE_FX.pacing.quiet;
 /** Between two beats. */
-export const BEAT_GAP_MS = 80;
+export const BEAT_GAP_MS = BATTLE_FX.pacing.gap;
 /** A whole step never plays longer than this (ms, normal speed): longer steps are squeezed, so the battle never waits on its art. */
-export const STEP_MAX_MS = 5600;
+export const STEP_MAX_MS = BATTLE_FX.pacing.stepMax;
 /** Speed x2 plays the motion at this share of its time. */
-export const FAST_SHARE = 0.55;
+export const FAST_SHARE = BATTLE_FX.pacing.fast;
 
-/** The CSS shape an element's effect falls back to while it has no art, and its colours (the shape differs, not just the colour). */
-export interface ElementLook {
-  shape: 'ember' | 'bubble' | 'leaf' | 'rock' | 'blade' | 'bolt' | 'ink' | 'star' | 'ring';
-  color: string;
-  glow: string;
-}
+/** A skill that moves or looks different from its category and element (battle_fx.json `skills`). */
+export const skillFx = (skillId: string | null) => (skillId ? BATTLE_FX.skills[skillId] : undefined);
 
-export const ELEMENT_LOOK: Readonly<Record<Element, ElementLook>> = {
-  FIRE: { shape: 'ember', color: '#ff8a3a', glow: '#ffd36a' },
-  WATER: { shape: 'bubble', color: '#5cc6ff', glow: '#d8f4ff' },
-  NATURE: { shape: 'leaf', color: '#62c25a', glow: '#d6ffa8' },
-  EARTH: { shape: 'rock', color: '#b08350', glow: '#f2d7a6' },
-  METAL: { shape: 'blade', color: '#c9d3e0', glow: '#ffffff' },
-  LIGHTNING: { shape: 'bolt', color: '#ffe14a', glow: '#fffbd0' },
-  DARK: { shape: 'ink', color: '#5a3d8a', glow: '#c9a8ff' },
-  LIGHT: { shape: 'star', color: '#fff2a8', glow: '#ffffff' },
-  VOID: { shape: 'ring', color: '#8c7cff', glow: '#e4dcff' },
-};
+/** The timing of a beat: the skill's own, else its way of delivery's (an Ultimate has its own). */
+export const timingOf = (pose: Pose | null, delivery: Delivery, skillId: string | null): Timing => skillFx(skillId)?.timing ?? TIMING[pose === 'ultimate' ? 'ultimate' : delivery];
 
-/** The look of an effect with no element (support skills, items, guard). */
-export const NEUTRAL_LOOK: ElementLook = { shape: 'star', color: '#9ef0c8', glow: '#ffffff' };
-
-/** A skill with motion of its own (the vertical slice of docs/animation/: Cu Ủn's "Gai Độc"); the rest follow their category. */
-export interface SkillMotion {
-  delivery?: Delivery;
-  shape?: ElementLook['shape'] | 'thorn';
-  /** The effect's art in the manifest (`<id>_projectile`, `<id>_impact`), used when it has a file. */
-  art?: string;
-}
-
-export const SKILL_MOTION: Readonly<Record<string, SkillMotion>> = {
-  skill_mm_poison_thorn: { delivery: 'projectile', shape: 'thorn', art: 'fx_skill_mm_poison_thorn' },
-};
-
-/** The manifest id of an effect's picture for one phase: the skill's own, else its element's. */
-export function vfxArt(skillId: string | null, element: Element | null, phase: 'projectile' | 'impact'): string[] {
-  const own = skillId ? SKILL_MOTION[skillId]?.art : undefined;
-  return [own ? `${own}_${phase}` : null, element ? `fx_adv_${element.toLowerCase()}_${phase}` : null].filter((x): x is string => x !== null);
+/** The look of a beat's effects: its element's (or the neutral one), with what the skill changes. */
+export function lookOf(element: Element | null, skillId: string | null = null): BattleLook {
+  const base = BATTLE_FX.elements[element ?? 'NEUTRAL'] ?? BATTLE_FX.elements.NEUTRAL!;
+  const own = skillFx(skillId);
+  if (!own) return base;
+  const look = Object.entries(own).filter(([k, v]) => v !== undefined && k !== 'delivery' && k !== 'timing');
+  return { ...base, ...Object.fromEntries(look) } as BattleLook;
 }
