@@ -45,6 +45,9 @@ export interface LoadList {
 const FARM_SECTIONS = new Set(['environment', 'props', 'buildings', 'fx', 'ui']);
 /** Files rendered by the farm; shadows, flips and audio are not drawn in R05A. */
 const SKIPPED_FILES = new Set(['shadow', 'flip', 'anchors']);
+/** Art only a battle draws (key poses, battle VFX, status badges): the battle scene loads it when it needs it. */
+const BATTLE_ONLY = ['assets/props/combat/', 'assets/fx/battle/', 'assets/ui/status/'];
+const battleOnly = (url: string) => BATTLE_ONLY.some((dir) => url.startsWith(dir));
 
 /** Files of a species art row the farm draws: idle, optional sleep and wake frames (PS-1). */
 export const PIG_FRAMES = ['asset', 'sleep', 'wake'] as const;
@@ -101,7 +104,7 @@ export function farmLoadList(
       if (SKIPPED_FILES.has(file)) continue;
       if (isSeasonFile(file) && (!season || file !== seasonFile(season))) continue;
       const url = assets.url(entry.id, file);
-      if (!url) continue;
+      if (!url || battleOnly(url)) continue;
       const frames = file === 'asset' ? framesOf.get(entry.id) : undefined;
       const key = textureKey(entry.id, file);
       if (frames) {

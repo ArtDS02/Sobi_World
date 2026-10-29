@@ -170,6 +170,9 @@ describe('preload list (spec §11)', () => {
     expect(keys).toContain('pig_classic_sleep');
     expect(keys.some((k) => k.startsWith('pig_') && !k.startsWith('pig_classic'))).toBe(false);
     expect(keys.some((k) => k.startsWith('music_') || k.startsWith('acc_'))).toBe(false);
+    // Battle-only art (key poses, battle VFX, status badges) is loaded by the battle scene, not up front.
+    expect(keys.some((k) => /^(cb|fxp|fxs|st)_/.test(k))).toBe(false);
+    expect(list.sheets.some((s) => s.key === 'fx_boom')).toBe(false);
   });
 
   it('art list carries the anchors json when the row has one', () => {

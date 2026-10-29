@@ -751,7 +751,7 @@
     },
     {
       "id": "pig_crystal",
-      "status": "placeholder",
+      "status": "production",
       "nameVi": "Heo Pha Lê",
       "collection": "species",
       "asset": "pigs/base/pig_crystal.png",
@@ -1038,6 +1038,522 @@
       "id": "fx_env_haze",
       "status": "production",
       "asset": "fx/env/fx_env_haze.png"
+    },
+    {
+      "id": "fx_pow_star",
+      "status": "production",
+      "asset": "fx/battle/fx_pow_star.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_boom",
+      "status": "production",
+      "asset": "fx/battle/fx_boom.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_slash_arc",
+      "status": "production",
+      "asset": "fx/battle/fx_slash_arc.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_claw",
+      "status": "production",
+      "asset": "fx/battle/fx_claw.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_poof",
+      "status": "production",
+      "asset": "fx/battle/fx_poof.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_ink_splat",
+      "status": "production",
+      "asset": "fx/battle/fx_ink_splat.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_splash",
+      "status": "production",
+      "asset": "fx/battle/fx_splash.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_flame_burst",
+      "status": "production",
+      "asset": "fx/battle/fx_flame_burst.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_ice_encase",
+      "status": "production",
+      "asset": "fx/battle/fx_ice_encase.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_ice_shatter",
+      "status": "production",
+      "asset": "fx/battle/fx_ice_shatter.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_bloom",
+      "status": "production",
+      "asset": "fx/battle/fx_bloom.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_vine_grab",
+      "status": "production",
+      "asset": "fx/battle/fx_vine_grab.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_rock_spike",
+      "status": "production",
+      "asset": "fx/battle/fx_rock_spike.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_lava_pop",
+      "status": "production",
+      "asset": "fx/battle/fx_lava_pop.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_bolt_strike",
+      "status": "production",
+      "asset": "fx/battle/fx_bolt_strike.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_light_pillar",
+      "status": "production",
+      "asset": "fx/battle/fx_light_pillar.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_void_portal",
+      "status": "production",
+      "asset": "fx/battle/fx_void_portal.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_wind_swirl",
+      "status": "production",
+      "asset": "fx/battle/fx_wind_swirl.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_rune_lock",
+      "status": "production",
+      "asset": "fx/battle/fx_rune_lock.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_bite",
+      "status": "production",
+      "asset": "fx/battle/fx_bite.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_shield_dome",
+      "status": "production",
+      "asset": "fx/battle/fx_shield_dome.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fx_ground_crack",
+      "status": "production",
+      "asset": "fx/battle/fx_ground_crack.png",
+      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+    },
+    {
+      "id": "fxs_leaf",
+      "status": "production",
+      "asset": "fx/battle/fxs_leaf.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_petal",
+      "status": "production",
+      "asset": "fx/battle/fxs_petal.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_bubble",
+      "status": "production",
+      "asset": "fx/battle/fxs_bubble.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_drop",
+      "status": "production",
+      "asset": "fx/battle/fxs_drop.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_ember",
+      "status": "production",
+      "asset": "fx/battle/fxs_ember.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_pebble",
+      "status": "production",
+      "asset": "fx/battle/fxs_pebble.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_ice_shard",
+      "status": "production",
+      "asset": "fx/battle/fxs_ice_shard.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_spore",
+      "status": "production",
+      "asset": "fx/battle/fxs_spore.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_star",
+      "status": "production",
+      "asset": "fx/battle/fxs_star.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_spark",
+      "status": "production",
+      "asset": "fx/battle/fxs_spark.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_plus",
+      "status": "production",
+      "asset": "fx/battle/fxs_plus.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_puff",
+      "status": "production",
+      "asset": "fx/battle/fxs_puff.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_feather",
+      "status": "production",
+      "asset": "fx/battle/fxs_feather.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_rune_a",
+      "status": "production",
+      "asset": "fx/battle/fxs_rune_a.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_rune_b",
+      "status": "production",
+      "asset": "fx/battle/fxs_rune_b.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_streak",
+      "status": "production",
+      "asset": "fx/battle/fxs_streak.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_note",
+      "status": "production",
+      "asset": "fx/battle/fxs_note.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_heart",
+      "status": "production",
+      "asset": "fx/battle/fxs_heart.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_ink_blob",
+      "status": "production",
+      "asset": "fx/battle/fxs_ink_blob.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_bolt_mini",
+      "status": "production",
+      "asset": "fx/battle/fxs_bolt_mini.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_thorn",
+      "status": "production",
+      "asset": "fx/battle/fxs_thorn.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_snowflake",
+      "status": "production",
+      "asset": "fx/battle/fxs_snowflake.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_feather_fire",
+      "status": "production",
+      "asset": "fx/battle/fxs_feather_fire.png",
+      "particle": true
+    },
+    {
+      "id": "fxs_metal_bit",
+      "status": "production",
+      "asset": "fx/battle/fxs_metal_bit.png",
+      "particle": true
+    },
+    {
+      "id": "fxp_whale",
+      "status": "production",
+      "asset": "fx/battle/fxp_whale.png"
+    },
+    {
+      "id": "fxp_turtle_mountain",
+      "status": "production",
+      "asset": "fx/battle/fxp_turtle_mountain.png"
+    },
+    {
+      "id": "fxp_mother_tree",
+      "status": "production",
+      "asset": "fx/battle/fxp_mother_tree.png"
+    },
+    {
+      "id": "fxp_phoenix",
+      "status": "production",
+      "asset": "fx/battle/fxp_phoenix.png"
+    },
+    {
+      "id": "fxp_moon_lantern",
+      "status": "production",
+      "asset": "fx/battle/fxp_moon_lantern.png"
+    },
+    {
+      "id": "fxp_sky_bell",
+      "status": "production",
+      "asset": "fx/battle/fxp_sky_bell.png"
+    },
+    {
+      "id": "fxp_wave_crest",
+      "status": "production",
+      "asset": "fx/battle/fxp_wave_crest.png"
+    },
+    {
+      "id": "fxp_night_net",
+      "status": "production",
+      "asset": "fx/battle/fxp_night_net.png"
+    },
+    {
+      "id": "fxp_storm_cloud",
+      "status": "production",
+      "asset": "fx/battle/fxp_storm_cloud.png"
+    },
+    {
+      "id": "fxp_bronze_knight",
+      "status": "production",
+      "asset": "fx/battle/fxp_bronze_knight.png"
+    },
+    {
+      "id": "fxp_spirit_circle",
+      "status": "production",
+      "asset": "fx/battle/fxp_spirit_circle.png"
+    },
+    {
+      "id": "fxp_octo_tentacle",
+      "status": "production",
+      "asset": "fx/battle/fxp_octo_tentacle.png"
+    },
+    {
+      "id": "fxp_bubble_big",
+      "status": "production",
+      "asset": "fx/battle/fxp_bubble_big.png"
+    },
+    {
+      "id": "fxp_heart_drop",
+      "status": "production",
+      "asset": "fx/battle/fxp_heart_drop.png"
+    },
+    {
+      "id": "fxp_trident",
+      "status": "production",
+      "asset": "fx/battle/fxp_trident.png"
+    },
+    {
+      "id": "fxp_boulder",
+      "status": "production",
+      "asset": "fx/battle/fxp_boulder.png"
+    },
+    {
+      "id": "fxp_stone_plate",
+      "status": "production",
+      "asset": "fx/battle/fxp_stone_plate.png"
+    },
+    {
+      "id": "fxp_mountain_trio",
+      "status": "production",
+      "asset": "fx/battle/fxp_mountain_trio.png"
+    },
+    {
+      "id": "fxp_rock_fist",
+      "status": "production",
+      "asset": "fx/battle/fxp_rock_fist.png"
+    },
+    {
+      "id": "fxp_seal_circle",
+      "status": "production",
+      "asset": "fx/battle/fxp_seal_circle.png"
+    },
+    {
+      "id": "fxp_nightmare_mask",
+      "status": "production",
+      "asset": "fx/battle/fxp_nightmare_mask.png"
+    },
+    {
+      "id": "fxp_ghost_hand",
+      "status": "production",
+      "asset": "fx/battle/fxp_ghost_hand.png"
+    },
+    {
+      "id": "fxp_curse_eye",
+      "status": "production",
+      "asset": "fx/battle/fxp_curse_eye.png"
+    },
+    {
+      "id": "fxp_doom_clock",
+      "status": "production",
+      "asset": "fx/battle/fxp_doom_clock.png"
+    },
+    {
+      "id": "fxp_mini_lantern",
+      "status": "production",
+      "asset": "fx/battle/fxp_mini_lantern.png"
+    },
+    {
+      "id": "fxp_sun_disc",
+      "status": "production",
+      "asset": "fx/battle/fxp_sun_disc.png"
+    },
+    {
+      "id": "fxp_lumina_ring",
+      "status": "production",
+      "asset": "fx/battle/fxp_lumina_ring.png"
+    },
+    {
+      "id": "fxp_lumina_spear",
+      "status": "production",
+      "asset": "fx/battle/fxp_lumina_spear.png"
+    },
+    {
+      "id": "fxp_crosshair",
+      "status": "production",
+      "asset": "fx/battle/fxp_crosshair.png"
+    },
+    {
+      "id": "fxp_rainbow",
+      "status": "production",
+      "asset": "fx/battle/fxp_rainbow.png"
+    },
+    {
+      "id": "fxp_horn_sigil",
+      "status": "production",
+      "asset": "fx/battle/fxp_horn_sigil.png"
+    },
+    {
+      "id": "fxp_void_fist",
+      "status": "production",
+      "asset": "fx/battle/fxp_void_fist.png"
+    },
+    {
+      "id": "fxp_rain_cloud",
+      "status": "production",
+      "asset": "fx/battle/fxp_rain_cloud.png"
+    },
+    {
+      "id": "fxp_dragon_roar",
+      "status": "production",
+      "asset": "fx/battle/fxp_dragon_roar.png"
+    },
+    {
+      "id": "fxp_corrupt_flower",
+      "status": "production",
+      "asset": "fx/battle/fxp_corrupt_flower.png"
+    },
+    {
+      "id": "fxp_flower_big",
+      "status": "production",
+      "asset": "fx/battle/fxp_flower_big.png"
+    },
+    {
+      "id": "fxp_steel_blade",
+      "status": "production",
+      "asset": "fx/battle/fxp_steel_blade.png"
+    },
+    {
+      "id": "fxp_bronze_shield",
+      "status": "production",
+      "asset": "fx/battle/fxp_bronze_shield.png"
+    },
+    {
+      "id": "fxp_bronze_fist",
+      "status": "production",
+      "asset": "fx/battle/fxp_bronze_fist.png"
+    },
+    {
+      "id": "fxp_fortress",
+      "status": "production",
+      "asset": "fx/battle/fxp_fortress.png"
+    },
+    {
+      "id": "fxp_taunt_badge",
+      "status": "production",
+      "asset": "fx/battle/fxp_taunt_badge.png"
+    },
+    {
+      "id": "fxp_banner",
+      "status": "production",
+      "asset": "fx/battle/fxp_banner.png"
+    },
+    {
+      "id": "fxp_crab_claw",
+      "status": "production",
+      "asset": "fx/battle/fxp_crab_claw.png"
+    },
+    {
+      "id": "fxp_forge_anvil",
+      "status": "production",
+      "asset": "fx/battle/fxp_forge_anvil.png"
+    },
+    {
+      "id": "fxp_fire_hammer",
+      "status": "production",
+      "asset": "fx/battle/fxp_fire_hammer.png"
+    },
+    {
+      "id": "fxp_meteor",
+      "status": "production",
+      "asset": "fx/battle/fxp_meteor.png"
+    },
+    {
+      "id": "fxp_flame_crown",
+      "status": "production",
+      "asset": "fx/battle/fxp_flame_crown.png"
+    },
+    {
+      "id": "fxp_finisher_emblem",
+      "status": "production",
+      "asset": "fx/battle/fxp_finisher_emblem.png"
     }
   ],
   "props": [
@@ -2703,6 +3219,1296 @@
       "id": "prop_adv_decal_ivy",
       "status": "production",
       "asset": "props/prop_adv_decal_ivy.png"
+    },
+    {
+      "id": "cb_pig_knight_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_knight_idle.png"
+    },
+    {
+      "id": "cb_pig_knight_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_knight_attack.png"
+    },
+    {
+      "id": "cb_pig_knight_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_knight_cast.png"
+    },
+    {
+      "id": "cb_pig_knight_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_knight_hurt.png"
+    },
+    {
+      "id": "cb_pig_knight_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_knight_ko.png"
+    },
+    {
+      "id": "cb_pig_knight_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_knight_victory.png"
+    },
+    {
+      "id": "cb_pig_samurai_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_samurai_idle.png"
+    },
+    {
+      "id": "cb_pig_samurai_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_samurai_attack.png"
+    },
+    {
+      "id": "cb_pig_samurai_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_samurai_cast.png"
+    },
+    {
+      "id": "cb_pig_samurai_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_samurai_hurt.png"
+    },
+    {
+      "id": "cb_pig_samurai_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_samurai_ko.png"
+    },
+    {
+      "id": "cb_pig_samurai_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_samurai_victory.png"
+    },
+    {
+      "id": "cb_pig_robot_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_robot_idle.png"
+    },
+    {
+      "id": "cb_pig_robot_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_robot_attack.png"
+    },
+    {
+      "id": "cb_pig_robot_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_robot_cast.png"
+    },
+    {
+      "id": "cb_pig_robot_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_robot_hurt.png"
+    },
+    {
+      "id": "cb_pig_robot_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_robot_ko.png"
+    },
+    {
+      "id": "cb_pig_robot_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_robot_victory.png"
+    },
+    {
+      "id": "cb_pig_ninja_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_ninja_idle.png"
+    },
+    {
+      "id": "cb_pig_ninja_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_ninja_attack.png"
+    },
+    {
+      "id": "cb_pig_ninja_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_ninja_cast.png"
+    },
+    {
+      "id": "cb_pig_ninja_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_ninja_hurt.png"
+    },
+    {
+      "id": "cb_pig_ninja_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_ninja_ko.png"
+    },
+    {
+      "id": "cb_pig_ninja_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_ninja_victory.png"
+    },
+    {
+      "id": "cb_pig_vampire_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_vampire_idle.png"
+    },
+    {
+      "id": "cb_pig_vampire_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_vampire_attack.png"
+    },
+    {
+      "id": "cb_pig_vampire_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_vampire_cast.png"
+    },
+    {
+      "id": "cb_pig_vampire_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_vampire_hurt.png"
+    },
+    {
+      "id": "cb_pig_vampire_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_vampire_ko.png"
+    },
+    {
+      "id": "cb_pig_vampire_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_vampire_victory.png"
+    },
+    {
+      "id": "cb_pig_pirate_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_pirate_idle.png"
+    },
+    {
+      "id": "cb_pig_pirate_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_pirate_attack.png"
+    },
+    {
+      "id": "cb_pig_pirate_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_pirate_cast.png"
+    },
+    {
+      "id": "cb_pig_pirate_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_pirate_hurt.png"
+    },
+    {
+      "id": "cb_pig_pirate_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_pirate_ko.png"
+    },
+    {
+      "id": "cb_pig_pirate_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_pirate_victory.png"
+    },
+    {
+      "id": "cb_pig_poseidon_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_poseidon_idle.png"
+    },
+    {
+      "id": "cb_pig_poseidon_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_poseidon_attack.png"
+    },
+    {
+      "id": "cb_pig_poseidon_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_poseidon_cast.png"
+    },
+    {
+      "id": "cb_pig_poseidon_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_poseidon_hurt.png"
+    },
+    {
+      "id": "cb_pig_poseidon_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_poseidon_ko.png"
+    },
+    {
+      "id": "cb_pig_poseidon_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_poseidon_victory.png"
+    },
+    {
+      "id": "cb_pig_tiger_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_tiger_idle.png"
+    },
+    {
+      "id": "cb_pig_tiger_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_tiger_attack.png"
+    },
+    {
+      "id": "cb_pig_tiger_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_tiger_cast.png"
+    },
+    {
+      "id": "cb_pig_tiger_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_tiger_hurt.png"
+    },
+    {
+      "id": "cb_pig_tiger_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_tiger_ko.png"
+    },
+    {
+      "id": "cb_pig_tiger_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_tiger_victory.png"
+    },
+    {
+      "id": "cb_pig_valkyrie_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_valkyrie_idle.png"
+    },
+    {
+      "id": "cb_pig_valkyrie_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_valkyrie_attack.png"
+    },
+    {
+      "id": "cb_pig_valkyrie_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_valkyrie_cast.png"
+    },
+    {
+      "id": "cb_pig_valkyrie_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_valkyrie_hurt.png"
+    },
+    {
+      "id": "cb_pig_valkyrie_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_valkyrie_ko.png"
+    },
+    {
+      "id": "cb_pig_valkyrie_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_valkyrie_victory.png"
+    },
+    {
+      "id": "cb_pig_unicorn_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_unicorn_idle.png"
+    },
+    {
+      "id": "cb_pig_unicorn_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_unicorn_attack.png"
+    },
+    {
+      "id": "cb_pig_unicorn_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_unicorn_cast.png"
+    },
+    {
+      "id": "cb_pig_unicorn_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_unicorn_hurt.png"
+    },
+    {
+      "id": "cb_pig_unicorn_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_unicorn_ko.png"
+    },
+    {
+      "id": "cb_pig_unicorn_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_unicorn_victory.png"
+    },
+    {
+      "id": "cb_pig_dragon_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_dragon_idle.png"
+    },
+    {
+      "id": "cb_pig_dragon_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_dragon_attack.png"
+    },
+    {
+      "id": "cb_pig_dragon_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_dragon_cast.png"
+    },
+    {
+      "id": "cb_pig_dragon_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_dragon_hurt.png"
+    },
+    {
+      "id": "cb_pig_dragon_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_dragon_ko.png"
+    },
+    {
+      "id": "cb_pig_dragon_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_dragon_victory.png"
+    },
+    {
+      "id": "cb_pig_phoenix_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_phoenix_idle.png"
+    },
+    {
+      "id": "cb_pig_phoenix_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_phoenix_attack.png"
+    },
+    {
+      "id": "cb_pig_phoenix_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_phoenix_cast.png"
+    },
+    {
+      "id": "cb_pig_phoenix_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_phoenix_hurt.png"
+    },
+    {
+      "id": "cb_pig_phoenix_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_phoenix_ko.png"
+    },
+    {
+      "id": "cb_pig_phoenix_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_phoenix_victory.png"
+    },
+    {
+      "id": "cb_pig_turtle_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_turtle_idle.png"
+    },
+    {
+      "id": "cb_pig_turtle_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_turtle_attack.png"
+    },
+    {
+      "id": "cb_pig_turtle_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_turtle_cast.png"
+    },
+    {
+      "id": "cb_pig_turtle_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_turtle_hurt.png"
+    },
+    {
+      "id": "cb_pig_turtle_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_turtle_ko.png"
+    },
+    {
+      "id": "cb_pig_turtle_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_turtle_victory.png"
+    },
+    {
+      "id": "cb_pig_crystal_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_crystal_idle.png"
+    },
+    {
+      "id": "cb_pig_crystal_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_crystal_attack.png"
+    },
+    {
+      "id": "cb_pig_crystal_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_crystal_cast.png"
+    },
+    {
+      "id": "cb_pig_crystal_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_crystal_hurt.png"
+    },
+    {
+      "id": "cb_pig_crystal_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_crystal_ko.png"
+    },
+    {
+      "id": "cb_pig_crystal_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_crystal_victory.png"
+    },
+    {
+      "id": "cb_pig_galaxy_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_galaxy_idle.png"
+    },
+    {
+      "id": "cb_pig_galaxy_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_galaxy_attack.png"
+    },
+    {
+      "id": "cb_pig_galaxy_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_galaxy_cast.png"
+    },
+    {
+      "id": "cb_pig_galaxy_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_galaxy_hurt.png"
+    },
+    {
+      "id": "cb_pig_galaxy_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_galaxy_ko.png"
+    },
+    {
+      "id": "cb_pig_galaxy_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_galaxy_victory.png"
+    },
+    {
+      "id": "cb_pig_thienlong_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_thienlong_idle.png"
+    },
+    {
+      "id": "cb_pig_thienlong_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_thienlong_attack.png"
+    },
+    {
+      "id": "cb_pig_thienlong_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_thienlong_cast.png"
+    },
+    {
+      "id": "cb_pig_thienlong_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_thienlong_hurt.png"
+    },
+    {
+      "id": "cb_pig_thienlong_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_thienlong_ko.png"
+    },
+    {
+      "id": "cb_pig_thienlong_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_thienlong_victory.png"
+    },
+    {
+      "id": "cb_pig_boar_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_boar_idle.png"
+    },
+    {
+      "id": "cb_pig_boar_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_boar_attack.png"
+    },
+    {
+      "id": "cb_pig_boar_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_boar_cast.png"
+    },
+    {
+      "id": "cb_pig_boar_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_boar_hurt.png"
+    },
+    {
+      "id": "cb_pig_boar_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_boar_ko.png"
+    },
+    {
+      "id": "cb_pig_boar_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_boar_victory.png"
+    },
+    {
+      "id": "cb_pig_hedgehog_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_hedgehog_idle.png"
+    },
+    {
+      "id": "cb_pig_hedgehog_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_hedgehog_attack.png"
+    },
+    {
+      "id": "cb_pig_hedgehog_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_hedgehog_cast.png"
+    },
+    {
+      "id": "cb_pig_hedgehog_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_hedgehog_hurt.png"
+    },
+    {
+      "id": "cb_pig_hedgehog_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_hedgehog_ko.png"
+    },
+    {
+      "id": "cb_pig_hedgehog_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_hedgehog_victory.png"
+    },
+    {
+      "id": "cb_pig_sunflower_idle",
+      "status": "production",
+      "asset": "props/combat/cb_pig_sunflower_idle.png"
+    },
+    {
+      "id": "cb_pig_sunflower_attack",
+      "status": "production",
+      "asset": "props/combat/cb_pig_sunflower_attack.png"
+    },
+    {
+      "id": "cb_pig_sunflower_cast",
+      "status": "production",
+      "asset": "props/combat/cb_pig_sunflower_cast.png"
+    },
+    {
+      "id": "cb_pig_sunflower_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_pig_sunflower_hurt.png"
+    },
+    {
+      "id": "cb_pig_sunflower_ko",
+      "status": "production",
+      "asset": "props/combat/cb_pig_sunflower_ko.png"
+    },
+    {
+      "id": "cb_pig_sunflower_victory",
+      "status": "production",
+      "asset": "props/combat/cb_pig_sunflower_victory.png"
+    },
+    {
+      "id": "cb_fish_pufferfish_idle",
+      "status": "production",
+      "asset": "props/combat/cb_fish_pufferfish_idle.png"
+    },
+    {
+      "id": "cb_fish_pufferfish_attack",
+      "status": "production",
+      "asset": "props/combat/cb_fish_pufferfish_attack.png"
+    },
+    {
+      "id": "cb_fish_pufferfish_cast",
+      "status": "production",
+      "asset": "props/combat/cb_fish_pufferfish_cast.png"
+    },
+    {
+      "id": "cb_fish_pufferfish_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_fish_pufferfish_hurt.png"
+    },
+    {
+      "id": "cb_fish_pufferfish_ko",
+      "status": "production",
+      "asset": "props/combat/cb_fish_pufferfish_ko.png"
+    },
+    {
+      "id": "cb_fish_pufferfish_victory",
+      "status": "production",
+      "asset": "props/combat/cb_fish_pufferfish_victory.png"
+    },
+    {
+      "id": "cb_fish_betta_idle",
+      "status": "production",
+      "asset": "props/combat/cb_fish_betta_idle.png"
+    },
+    {
+      "id": "cb_fish_betta_attack",
+      "status": "production",
+      "asset": "props/combat/cb_fish_betta_attack.png"
+    },
+    {
+      "id": "cb_fish_betta_cast",
+      "status": "production",
+      "asset": "props/combat/cb_fish_betta_cast.png"
+    },
+    {
+      "id": "cb_fish_betta_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_fish_betta_hurt.png"
+    },
+    {
+      "id": "cb_fish_betta_ko",
+      "status": "production",
+      "asset": "props/combat/cb_fish_betta_ko.png"
+    },
+    {
+      "id": "cb_fish_betta_victory",
+      "status": "production",
+      "asset": "props/combat/cb_fish_betta_victory.png"
+    },
+    {
+      "id": "cb_enemy_mossling_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_mossling_idle.png"
+    },
+    {
+      "id": "cb_enemy_mossling_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_mossling_attack.png"
+    },
+    {
+      "id": "cb_enemy_mossling_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_mossling_cast.png"
+    },
+    {
+      "id": "cb_enemy_mossling_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_mossling_hurt.png"
+    },
+    {
+      "id": "cb_enemy_mossling_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_mossling_ko.png"
+    },
+    {
+      "id": "cb_enemy_mossling_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_mossling_victory.png"
+    },
+    {
+      "id": "cb_enemy_thorn_sprout_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thorn_sprout_idle.png"
+    },
+    {
+      "id": "cb_enemy_thorn_sprout_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thorn_sprout_attack.png"
+    },
+    {
+      "id": "cb_enemy_thorn_sprout_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thorn_sprout_cast.png"
+    },
+    {
+      "id": "cb_enemy_thorn_sprout_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thorn_sprout_hurt.png"
+    },
+    {
+      "id": "cb_enemy_thorn_sprout_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thorn_sprout_ko.png"
+    },
+    {
+      "id": "cb_enemy_thorn_sprout_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thorn_sprout_victory.png"
+    },
+    {
+      "id": "cb_enemy_gale_sparrow_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_gale_sparrow_idle.png"
+    },
+    {
+      "id": "cb_enemy_gale_sparrow_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_gale_sparrow_attack.png"
+    },
+    {
+      "id": "cb_enemy_gale_sparrow_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_gale_sparrow_cast.png"
+    },
+    {
+      "id": "cb_enemy_gale_sparrow_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_gale_sparrow_hurt.png"
+    },
+    {
+      "id": "cb_enemy_gale_sparrow_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_gale_sparrow_ko.png"
+    },
+    {
+      "id": "cb_enemy_gale_sparrow_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_gale_sparrow_victory.png"
+    },
+    {
+      "id": "cb_enemy_ember_fox_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_fox_idle.png"
+    },
+    {
+      "id": "cb_enemy_ember_fox_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_fox_attack.png"
+    },
+    {
+      "id": "cb_enemy_ember_fox_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_fox_cast.png"
+    },
+    {
+      "id": "cb_enemy_ember_fox_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_fox_hurt.png"
+    },
+    {
+      "id": "cb_enemy_ember_fox_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_fox_ko.png"
+    },
+    {
+      "id": "cb_enemy_ember_fox_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_fox_victory.png"
+    },
+    {
+      "id": "cb_enemy_dew_frog_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_dew_frog_idle.png"
+    },
+    {
+      "id": "cb_enemy_dew_frog_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_dew_frog_attack.png"
+    },
+    {
+      "id": "cb_enemy_dew_frog_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_dew_frog_cast.png"
+    },
+    {
+      "id": "cb_enemy_dew_frog_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_dew_frog_hurt.png"
+    },
+    {
+      "id": "cb_enemy_dew_frog_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_dew_frog_ko.png"
+    },
+    {
+      "id": "cb_enemy_dew_frog_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_dew_frog_victory.png"
+    },
+    {
+      "id": "cb_enemy_forest_wolf_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_forest_wolf_idle.png"
+    },
+    {
+      "id": "cb_enemy_forest_wolf_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_forest_wolf_attack.png"
+    },
+    {
+      "id": "cb_enemy_forest_wolf_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_forest_wolf_cast.png"
+    },
+    {
+      "id": "cb_enemy_forest_wolf_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_forest_wolf_hurt.png"
+    },
+    {
+      "id": "cb_enemy_forest_wolf_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_forest_wolf_ko.png"
+    },
+    {
+      "id": "cb_enemy_forest_wolf_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_forest_wolf_victory.png"
+    },
+    {
+      "id": "cb_enemy_bramble_boar_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_bramble_boar_idle.png"
+    },
+    {
+      "id": "cb_enemy_bramble_boar_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_bramble_boar_attack.png"
+    },
+    {
+      "id": "cb_enemy_bramble_boar_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_bramble_boar_cast.png"
+    },
+    {
+      "id": "cb_enemy_bramble_boar_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_bramble_boar_hurt.png"
+    },
+    {
+      "id": "cb_enemy_bramble_boar_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_bramble_boar_ko.png"
+    },
+    {
+      "id": "cb_enemy_bramble_boar_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_bramble_boar_victory.png"
+    },
+    {
+      "id": "cb_enemy_wolf_alpha_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_wolf_alpha_idle.png"
+    },
+    {
+      "id": "cb_enemy_wolf_alpha_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_wolf_alpha_attack.png"
+    },
+    {
+      "id": "cb_enemy_wolf_alpha_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_wolf_alpha_cast.png"
+    },
+    {
+      "id": "cb_enemy_wolf_alpha_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_wolf_alpha_hurt.png"
+    },
+    {
+      "id": "cb_enemy_wolf_alpha_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_wolf_alpha_ko.png"
+    },
+    {
+      "id": "cb_enemy_wolf_alpha_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_wolf_alpha_victory.png"
+    },
+    {
+      "id": "cb_enemy_old_treant_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_old_treant_idle.png"
+    },
+    {
+      "id": "cb_enemy_old_treant_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_old_treant_attack.png"
+    },
+    {
+      "id": "cb_enemy_old_treant_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_old_treant_cast.png"
+    },
+    {
+      "id": "cb_enemy_old_treant_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_old_treant_hurt.png"
+    },
+    {
+      "id": "cb_enemy_old_treant_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_old_treant_ko.png"
+    },
+    {
+      "id": "cb_enemy_old_treant_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_old_treant_victory.png"
+    },
+    {
+      "id": "cb_enemy_rock_beetle_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rock_beetle_idle.png"
+    },
+    {
+      "id": "cb_enemy_rock_beetle_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rock_beetle_attack.png"
+    },
+    {
+      "id": "cb_enemy_rock_beetle_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rock_beetle_cast.png"
+    },
+    {
+      "id": "cb_enemy_rock_beetle_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rock_beetle_hurt.png"
+    },
+    {
+      "id": "cb_enemy_rock_beetle_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rock_beetle_ko.png"
+    },
+    {
+      "id": "cb_enemy_rock_beetle_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rock_beetle_victory.png"
+    },
+    {
+      "id": "cb_enemy_cliff_hawk_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_cliff_hawk_idle.png"
+    },
+    {
+      "id": "cb_enemy_cliff_hawk_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_cliff_hawk_attack.png"
+    },
+    {
+      "id": "cb_enemy_cliff_hawk_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_cliff_hawk_cast.png"
+    },
+    {
+      "id": "cb_enemy_cliff_hawk_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_cliff_hawk_hurt.png"
+    },
+    {
+      "id": "cb_enemy_cliff_hawk_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_cliff_hawk_ko.png"
+    },
+    {
+      "id": "cb_enemy_cliff_hawk_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_cliff_hawk_victory.png"
+    },
+    {
+      "id": "cb_enemy_lava_newt_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_lava_newt_idle.png"
+    },
+    {
+      "id": "cb_enemy_lava_newt_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_lava_newt_attack.png"
+    },
+    {
+      "id": "cb_enemy_lava_newt_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_lava_newt_cast.png"
+    },
+    {
+      "id": "cb_enemy_lava_newt_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_lava_newt_hurt.png"
+    },
+    {
+      "id": "cb_enemy_lava_newt_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_lava_newt_ko.png"
+    },
+    {
+      "id": "cb_enemy_lava_newt_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_lava_newt_victory.png"
+    },
+    {
+      "id": "cb_enemy_snow_goat_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_snow_goat_idle.png"
+    },
+    {
+      "id": "cb_enemy_snow_goat_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_snow_goat_attack.png"
+    },
+    {
+      "id": "cb_enemy_snow_goat_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_snow_goat_cast.png"
+    },
+    {
+      "id": "cb_enemy_snow_goat_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_snow_goat_hurt.png"
+    },
+    {
+      "id": "cb_enemy_snow_goat_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_snow_goat_ko.png"
+    },
+    {
+      "id": "cb_enemy_snow_goat_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_snow_goat_victory.png"
+    },
+    {
+      "id": "cb_enemy_ore_golem_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ore_golem_idle.png"
+    },
+    {
+      "id": "cb_enemy_ore_golem_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ore_golem_attack.png"
+    },
+    {
+      "id": "cb_enemy_ore_golem_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ore_golem_cast.png"
+    },
+    {
+      "id": "cb_enemy_ore_golem_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ore_golem_hurt.png"
+    },
+    {
+      "id": "cb_enemy_ore_golem_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ore_golem_ko.png"
+    },
+    {
+      "id": "cb_enemy_ore_golem_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ore_golem_victory.png"
+    },
+    {
+      "id": "cb_enemy_thunder_ram_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thunder_ram_idle.png"
+    },
+    {
+      "id": "cb_enemy_thunder_ram_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thunder_ram_attack.png"
+    },
+    {
+      "id": "cb_enemy_thunder_ram_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thunder_ram_cast.png"
+    },
+    {
+      "id": "cb_enemy_thunder_ram_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thunder_ram_hurt.png"
+    },
+    {
+      "id": "cb_enemy_thunder_ram_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thunder_ram_ko.png"
+    },
+    {
+      "id": "cb_enemy_thunder_ram_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_thunder_ram_victory.png"
+    },
+    {
+      "id": "cb_enemy_magma_drake_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_magma_drake_idle.png"
+    },
+    {
+      "id": "cb_enemy_magma_drake_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_magma_drake_attack.png"
+    },
+    {
+      "id": "cb_enemy_magma_drake_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_magma_drake_cast.png"
+    },
+    {
+      "id": "cb_enemy_magma_drake_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_magma_drake_hurt.png"
+    },
+    {
+      "id": "cb_enemy_magma_drake_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_magma_drake_ko.png"
+    },
+    {
+      "id": "cb_enemy_magma_drake_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_magma_drake_victory.png"
+    },
+    {
+      "id": "cb_enemy_stone_sentinel_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_stone_sentinel_idle.png"
+    },
+    {
+      "id": "cb_enemy_stone_sentinel_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_stone_sentinel_attack.png"
+    },
+    {
+      "id": "cb_enemy_stone_sentinel_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_stone_sentinel_cast.png"
+    },
+    {
+      "id": "cb_enemy_stone_sentinel_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_stone_sentinel_hurt.png"
+    },
+    {
+      "id": "cb_enemy_stone_sentinel_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_stone_sentinel_ko.png"
+    },
+    {
+      "id": "cb_enemy_stone_sentinel_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_stone_sentinel_victory.png"
+    },
+    {
+      "id": "cb_enemy_rune_wisp_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rune_wisp_idle.png"
+    },
+    {
+      "id": "cb_enemy_rune_wisp_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rune_wisp_attack.png"
+    },
+    {
+      "id": "cb_enemy_rune_wisp_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rune_wisp_cast.png"
+    },
+    {
+      "id": "cb_enemy_rune_wisp_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rune_wisp_hurt.png"
+    },
+    {
+      "id": "cb_enemy_rune_wisp_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rune_wisp_ko.png"
+    },
+    {
+      "id": "cb_enemy_rune_wisp_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_rune_wisp_victory.png"
+    },
+    {
+      "id": "cb_enemy_tide_wraith_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_tide_wraith_idle.png"
+    },
+    {
+      "id": "cb_enemy_tide_wraith_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_tide_wraith_attack.png"
+    },
+    {
+      "id": "cb_enemy_tide_wraith_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_tide_wraith_cast.png"
+    },
+    {
+      "id": "cb_enemy_tide_wraith_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_tide_wraith_hurt.png"
+    },
+    {
+      "id": "cb_enemy_tide_wraith_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_tide_wraith_ko.png"
+    },
+    {
+      "id": "cb_enemy_tide_wraith_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_tide_wraith_victory.png"
+    },
+    {
+      "id": "cb_enemy_ember_idol_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_idol_idle.png"
+    },
+    {
+      "id": "cb_enemy_ember_idol_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_idol_attack.png"
+    },
+    {
+      "id": "cb_enemy_ember_idol_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_idol_cast.png"
+    },
+    {
+      "id": "cb_enemy_ember_idol_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_idol_hurt.png"
+    },
+    {
+      "id": "cb_enemy_ember_idol_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_idol_ko.png"
+    },
+    {
+      "id": "cb_enemy_ember_idol_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ember_idol_victory.png"
+    },
+    {
+      "id": "cb_enemy_shadow_priest_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_shadow_priest_idle.png"
+    },
+    {
+      "id": "cb_enemy_shadow_priest_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_shadow_priest_attack.png"
+    },
+    {
+      "id": "cb_enemy_shadow_priest_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_shadow_priest_cast.png"
+    },
+    {
+      "id": "cb_enemy_shadow_priest_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_shadow_priest_hurt.png"
+    },
+    {
+      "id": "cb_enemy_shadow_priest_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_shadow_priest_ko.png"
+    },
+    {
+      "id": "cb_enemy_shadow_priest_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_shadow_priest_victory.png"
+    },
+    {
+      "id": "cb_enemy_ancient_guardian_idle",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ancient_guardian_idle.png"
+    },
+    {
+      "id": "cb_enemy_ancient_guardian_attack",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ancient_guardian_attack.png"
+    },
+    {
+      "id": "cb_enemy_ancient_guardian_cast",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ancient_guardian_cast.png"
+    },
+    {
+      "id": "cb_enemy_ancient_guardian_hurt",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ancient_guardian_hurt.png"
+    },
+    {
+      "id": "cb_enemy_ancient_guardian_ko",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ancient_guardian_ko.png"
+    },
+    {
+      "id": "cb_enemy_ancient_guardian_victory",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ancient_guardian_victory.png"
     }
   ],
   "buildings": [
@@ -4795,6 +6601,126 @@
       "id": "ui_skill_ult_trident",
       "status": "production",
       "asset": "ui/ui_skill_ult_trident.png"
+    },
+    {
+      "id": "st_atk_up",
+      "status": "production",
+      "asset": "ui/status/st_atk_up.png"
+    },
+    {
+      "id": "st_atk_down",
+      "status": "production",
+      "asset": "ui/status/st_atk_down.png"
+    },
+    {
+      "id": "st_def_up",
+      "status": "production",
+      "asset": "ui/status/st_def_up.png"
+    },
+    {
+      "id": "st_def_down",
+      "status": "production",
+      "asset": "ui/status/st_def_down.png"
+    },
+    {
+      "id": "st_matk_up",
+      "status": "production",
+      "asset": "ui/status/st_matk_up.png"
+    },
+    {
+      "id": "st_matk_down",
+      "status": "production",
+      "asset": "ui/status/st_matk_down.png"
+    },
+    {
+      "id": "st_mdef_up",
+      "status": "production",
+      "asset": "ui/status/st_mdef_up.png"
+    },
+    {
+      "id": "st_mdef_down",
+      "status": "production",
+      "asset": "ui/status/st_mdef_down.png"
+    },
+    {
+      "id": "st_acc_up",
+      "status": "production",
+      "asset": "ui/status/st_acc_up.png"
+    },
+    {
+      "id": "st_acc_down",
+      "status": "production",
+      "asset": "ui/status/st_acc_down.png"
+    },
+    {
+      "id": "st_eva_up",
+      "status": "production",
+      "asset": "ui/status/st_eva_up.png"
+    },
+    {
+      "id": "st_eva_down",
+      "status": "production",
+      "asset": "ui/status/st_eva_down.png"
+    },
+    {
+      "id": "st_spd_up",
+      "status": "production",
+      "asset": "ui/status/st_spd_up.png"
+    },
+    {
+      "id": "st_spd_down",
+      "status": "production",
+      "asset": "ui/status/st_spd_down.png"
+    },
+    {
+      "id": "st_taunt",
+      "status": "production",
+      "asset": "ui/status/st_taunt.png"
+    },
+    {
+      "id": "st_shield",
+      "status": "production",
+      "asset": "ui/status/st_shield.png"
+    },
+    {
+      "id": "st_regen",
+      "status": "production",
+      "asset": "ui/status/st_regen.png"
+    },
+    {
+      "id": "st_revive",
+      "status": "production",
+      "asset": "ui/status/st_revive.png"
+    },
+    {
+      "id": "st_doom",
+      "status": "production",
+      "asset": "ui/status/st_doom.png"
+    },
+    {
+      "id": "st_disable",
+      "status": "production",
+      "asset": "ui/status/st_disable.png"
+    },
+    {
+      "id": "st_poison",
+      "status": "production",
+      "asset": "ui/status/st_poison.png"
+    },
+    {
+      "id": "st_burn",
+      "status": "production",
+      "asset": "ui/status/st_burn.png"
+    },
+    {
+      "id": "st_wet",
+      "status": "production",
+      "asset": "ui/status/st_wet.png"
+    },
+    {
+      "id": "st_stun",
+      "status": "production",
+      "asset": "ui/status/st_stun.png"
     }
   ],
   "audio": [

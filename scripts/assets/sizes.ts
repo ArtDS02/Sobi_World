@@ -168,6 +168,10 @@ export const ADV_DECALS = [
 ] as const;
 for (const d of ADV_DECALS) CATALOGUE_SIZES[`prop_adv_decal_${d}`] = sq(96);
 
+// Battle animation (decision 042/044): the key poses of a fighter, all authored on one 512 canvas with the feet at the bottom
+// centre so a pose swap never moves it (docs/animation/COMBAT_ART_GUIDE.md).
+export const isCombatPose = (stem: string) => stem.startsWith('cb_');
+
 /** UI pieces that are not square icons (the Adventure's wooden sign, plaque, corner leaves, the beast peeking over the sign). */
 export const UI_FRAME_SIZES: Record<string, Size> = {
   ui_adv_sign_title: { width: 480, height: 264 },
@@ -197,6 +201,8 @@ export function requiredSize(section: ManifestSection, row: Row, key: string): S
     case 'fx': {
       const fx = row as AssetManifest['fx'][number];
       if (fx.frames) return { width: fx.frames.width * fx.frames.count, height: fx.frames.height };
+      // The battle's big objects (fxp_: a whale, a falling meteor) are drawn up to half the screen.
+      if (fx.id.startsWith('fxp_')) return sq(512);
       return fx.particle ? sq(64) : sq(256);
     }
     default:
@@ -215,5 +221,5 @@ export function placeholderSize(
     .split('/')
     .pop()!
     .replace(/\.\w+$/, '');
-  return requiredSize(section, row, key) ?? CATALOGUE_SIZES[stem] ?? sq(256);
+  return requiredSize(section, row, key) ?? CATALOGUE_SIZES[stem] ?? (isCombatPose(stem) ? sq(512) : sq(256));
 }

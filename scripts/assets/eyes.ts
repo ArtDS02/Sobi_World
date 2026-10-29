@@ -25,6 +25,8 @@ export const EYE_OVERRIDES: Record<string, EyeOverride> = {
   pig_coffee: { drop: [[300, 280, 400, 360]] },
   pig_snowman: { drop: [[300, 280, 400, 360]] },
   pig_crybaby: { closedInIdle: true },
+  // The curl of the tail and the tip of the ear read as eyes.
+  pig_crystal: { drop: [[80, 130, 180, 220], [410, 80, 490, 180]] },
   pig_party: { closedInIdle: true },
   pig_teacher: { eyes: [oval(296, 220, 316, 246), oval(370, 212, 388, 236)] },
   pig_grandpa: { eyes: [oval(303, 221, 317, 237), oval(384, 216, 396, 232)] },

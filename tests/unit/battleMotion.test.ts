@@ -107,11 +107,10 @@ describe('battle art facing (decision 042)', () => {
     expect(mirrored('pig_knight', 'enemy')).toBe(true);
     expect(mirrored('enemy_thunder_ram', 'enemy')).toBe(true);
   });
-  it('old art drawn looking left or from the front is never turned away from the other side', () => {
-    expect(mirrored('enemy_forest_wolf', 'enemy')).toBe(false);
-    expect(mirrored('enemy_forest_wolf', 'ally')).toBe(true);
-    expect(mirrored('enemy_mossling', 'enemy')).toBe(false);
-    expect(mirrored('enemy_mossling', 'ally')).toBe(false);
+  it('a creature redrawn with key poses looks right like the rest (decision 044): mirrored on the enemy side only', () => {
+    expect(mirrored('enemy_forest_wolf', 'enemy')).toBe(true);
+    expect(mirrored('enemy_forest_wolf', 'ally')).toBe(false);
+    expect(mirrored('enemy_mossling', 'enemy')).toBe(true);
   });
   it('every creature of battle_fx.json that breaks the convention is an enemy of the content', () => {
     const ids = new Set(ENEMY_LIST.map((e) => e.art));

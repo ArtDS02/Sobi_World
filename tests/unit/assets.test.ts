@@ -51,7 +51,9 @@ describe('manifest v2 (art standard §7.2)', () => {
     // Outfits were removed in A2 (DECISIONS A2-1): pig rows are species art only — plus library
     // art registered by the admin before a species uses it (AD-1), always tagged "new".
     expect(m.pigs.length).toBeGreaterThanOrEqual(BREED_IDS.length);
-    expect(m.fx.map((f) => f.id).sort()).toEqual([...FX_IDS, ...SEASON_FX_ART_IDS].sort());
+    // Battle VFX (fx/battle/, decision 044) are drawn by the battle scene only.
+    const shared = m.fx.filter((f) => !f.asset.startsWith('fx/battle/'));
+    expect(shared.map((f) => f.id).sort()).toEqual([...FX_IDS, ...SEASON_FX_ART_IDS].sort());
     expect(m.audio.map((a) => a.id)).toEqual([...AUDIO_KEYS]);
     expect(FARM_LAYOUT.designSize).toEqual({ width: 1600, height: 900 });
   });
