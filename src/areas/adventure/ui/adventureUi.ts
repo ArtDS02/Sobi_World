@@ -3,7 +3,7 @@
 // `sceneState()` and reports what the walker does (`scene`). The roster and the way to hand a creature over come from the app (the
 // Areas never reach each other). Mounted by the app into the shell's overlay.
 import type { CreatureGift, GiftResult, RosterEntry } from '../../../core/area-registry/registry';
-import { AREA_HUD_ART } from '../../../core/config/assetIds';
+import { AREA_HUD_ART, AUDIO_KEYS } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import type { ActionContext } from '../../../core/types';
 import type { GameStore } from '../../../core/world/gameStore';
@@ -19,7 +19,7 @@ import type { AdventureSceneState, SceneReport } from '../scene/sceneState';
 import { createAdventureDialogs } from './adventureDialogs';
 import type { BattleStageState } from '../scene/battle/BattleScene';
 import { playingStep, stepRemaining } from './battleFxView';
-import type { BattleSound } from './battlePlan';
+import type { BattleSound, CueSound } from './battlePlan';
 import { measureStage } from './battleStageVm';
 import { choose } from './battleCommand';
 import { renderBattle } from './battleView';
@@ -90,6 +90,9 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
   let drawn = 0;
   let battleOn = false;
   const stageCache = { drawn: -1, size: '', at: 0, units: [] as BattleStageState['units'] };
+  // A script may name any `adv_…` sound (decision 044); only the game's audio keys are played.
+  const audioKeys = new Set<string>(AUDIO_KEYS);
+  const stageSound = d.sound ? (key: CueSound) => audioKeys.has(key) && d.sound!(key as AdventureSound) : undefined;
   let lastPos: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' } | null = null;
   const state: UiState = { zoneId: ZONE_LIST[0]!.id, startMap: null, selected: [], prep: [], auto: false, fast: false, menu: null, aim: null, focus: null, showMap: false, filter: null, search: '', legend: false, log: false, quick: true };
 
@@ -262,7 +265,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     battleStage: () => {
       if (!active) return null;
       const units = battleOn ? measureStage(main, stageCache, drawn, d.host) : [];
-      return { active: battleOn, units, step: playingStep(), reduce: reduceNow(), sound: d.sound };
+      return { active: battleOn, units, step: playingStep(), reduce: reduceNow(), sound: stageSound };
     },
     dispose: () => {
       off();

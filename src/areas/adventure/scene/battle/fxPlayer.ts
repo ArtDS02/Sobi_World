@@ -6,6 +6,7 @@ import * as Phaser from 'phaser';
 import type { BattleLook, ReactionFx } from '../../../../../content/schemas/adventure/battleFx';
 import { BATTLE_FX } from '../../logic/config/content';
 import type { FxCue } from '../../ui/battlePlan';
+import { ActPlayer } from './fxActs';
 import { AIR_DEPTH, Bursts, type BurstSpot } from './fxBursts';
 import { playStroke } from './fxStrokes';
 import { CIRCLE_KEY, PILLAR_KEY, shapeKey } from './fxTextures';
@@ -29,16 +30,27 @@ export interface Timed {
 
 const isShape = (ref: string) => !ref.startsWith('fx_');
 
+/** What the effects ask of the scene: to hold the stage still (hit stop), every fighter's picture. */
+export interface FxHooks {
+  hold(ms: number): void;
+  pictures(): Phaser.GameObjects.Image[];
+}
+
 export class FxPlayer {
   readonly bursts: Bursts;
+  private acts: ActPlayer;
   private timed: Timed[] = [];
   private strokes: Phaser.GameObjects.Graphics;
   private dim: Phaser.GameObjects.Rectangle;
   private flashRect: Phaser.GameObjects.Rectangle;
   private dimTo = 0;
 
-  constructor(private readonly scene: Phaser.Scene) {
+  constructor(
+    private readonly scene: Phaser.Scene,
+    hooks: FxHooks,
+  ) {
     this.bursts = new Bursts(scene);
+    this.acts = new ActPlayer({ scene, bursts: this.bursts, add: (dur, step, done) => this.add(dur, step, done), flash: (c, a, ms) => this.flash(c, a, ms), hold: hooks.hold, pictures: hooks.pictures });
     this.strokes = scene.add.graphics().setDepth(AIR_DEPTH + 1).setBlendMode(Phaser.BlendModes.ADD);
     this.dim = scene.add.rectangle(0, 0, 10, 10, 0x0e0a1e, 1).setOrigin(0).setDepth(AIR_DEPTH - 10).setAlpha(0);
     this.flashRect = scene.add.rectangle(0, 0, 10, 10, 0xffffff, 1).setOrigin(0).setDepth(AIR_DEPTH + 10).setAlpha(0);
@@ -138,6 +150,9 @@ export class FxPlayer {
         for (const ref of cue.refs) this.bursts.play(ref, a, { mirror: a.side === 'enemy', tint: cue.tint });
         return;
       }
+      case 'act':
+        this.acts.play(cue.cue, anchors);
+        return;
       case 'afterimage': {
         const a = unitOf(cue.unit);
         const src = a?.picture;

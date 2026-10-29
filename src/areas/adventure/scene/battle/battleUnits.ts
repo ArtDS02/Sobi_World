@@ -18,6 +18,8 @@ export interface StageUnit {
   height: number;
   down: boolean;
   aimable: boolean;
+  /** The statuses it carries now (decision 044 status_overlay). */
+  statuses: readonly string[];
 }
 
 interface Body {
@@ -43,6 +45,11 @@ export class BattleUnits {
 
   picture(id: string): Phaser.GameObjects.Image | null {
     return this.bodies.get(id)?.main ?? null;
+  }
+
+  /** Every fighter's picture (the colour split of a script copies them). */
+  pictures(): Phaser.GameObjects.Image[] {
+    return [...this.bodies.values()].map((b) => b.main);
   }
 
   private texture(art: string, pose: PoseArt): string | null {
@@ -71,8 +78,11 @@ export class BattleUnits {
     }
   }
 
-  /** Draws a unit at its pose (`pose` null: standing still, reduced motion). `now` drives the pulse of a unit that can be aimed at. */
-  apply(u: StageUnit, pose: BodyPose | null, now: number) {
+  /**
+   * Draws a unit at its pose (`pose` null: standing still, reduced motion). `now` drives the pulse of a unit that can be aimed at;
+   * `statusTint` colours the body while a status says so (a pose's own tint wins).
+   */
+  apply(u: StageUnit, pose: BodyPose | null, now: number, statusTint: number | null = null) {
     const b = this.bodies.get(u.id);
     if (!b) return;
     const posture: PoseArt = u.down ? 'ko' : (pose?.posture ?? 'idle');
@@ -86,7 +96,7 @@ export class BattleUnits {
     const th = b.main.height || 1;
     // Fitted into the box the DOM gave it, standing on its feet (object-fit: contain, bottom).
     const fit = Math.min(u.width / tw, u.height / th);
-    const p = pose ?? { dx: 0, dy: 0, rot: 0, sx: 1, sy: 1, bright: 1, gray: 0, opacity: 1, glow: null, posture };
+    const p = pose ?? { dx: 0, dy: 0, rot: 0, sx: 1, sy: 1, bright: 1, gray: 0, opacity: 1, glow: null, tint: null, posture };
     const gray = u.down ? 1 : p.gray;
     const opacity = u.down ? 0.4 : p.opacity;
     const depth = 1000 + u.feet.y;
@@ -99,7 +109,9 @@ export class BattleUnits {
         .setFlipX(u.mirrored);
     }
     b.main.setDepth(depth).setAlpha(opacity);
+    const tint = p.tint ?? statusTint;
     if (gray > 0.01) b.main.setTint(grey(gray));
+    else if (tint !== null) b.main.setTint(tint);
     else b.main.clearTint();
     const light = Math.min(1, Math.max(0, (p.bright - 1) / 1.2));
     b.light.setDepth(depth + 0.1).setAlpha(light * opacity).setVisible(light > 0.01);

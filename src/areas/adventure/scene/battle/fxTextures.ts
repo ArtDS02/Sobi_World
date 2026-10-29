@@ -8,6 +8,11 @@ export const SHAPE_PX = 64;
 export const shapeKey = (s: ParticleShape) => `advfx_${s}`;
 export const CIRCLE_KEY = 'advfx_circle';
 export const PILLAR_KEY = 'advfx_pillar';
+/** Marks on the ground (decision 044 ground_decal), seen from the side (flattened when drawn), and the dark spot a falling thing casts. */
+export const decalKey = (kind: 'puddle' | 'scorch' | 'crack' | 'rune' | 'ring') => `advfx_decal_${kind}`;
+export const SHADOW_KEY = 'advfx_shadow';
+/** Clear in the middle, coloured towards the edges: the backdrop's vignette around one unit (bg_tint focus). */
+export const VIGNETTE_KEY = 'advfx_vignette';
 
 function star(c: CanvasRenderingContext2D, r: number, points: number, inner: number) {
   c.beginPath();
@@ -173,6 +178,55 @@ export function ensureFxTextures(scene: Phaser.Scene) {
       c.stroke();
       c.restore();
     }
+  });
+  canvasTexture(scene, decalKey('puddle'), 128, 128, (c) => {
+    c.translate(64, 64);
+    soft(c, 62, 0.75);
+  });
+  canvasTexture(scene, decalKey('scorch'), 128, 128, (c) => {
+    c.translate(64, 64);
+    soft(c, 62, 0.45);
+  });
+  canvasTexture(scene, SHADOW_KEY, 128, 128, (c) => {
+    c.translate(64, 64);
+    soft(c, 62, 0.6);
+  });
+  canvasTexture(scene, decalKey('ring'), 128, 128, (c) => {
+    c.translate(64, 64);
+    c.strokeStyle = '#ffffff';
+    c.lineWidth = 8;
+    c.beginPath();
+    c.arc(0, 0, 56, 0, Math.PI * 2);
+    c.stroke();
+  });
+  canvasTexture(scene, decalKey('rune'), 128, 128, (c) => {
+    c.translate(64, 64);
+    c.strokeStyle = '#ffffff';
+    c.lineWidth = 5;
+    c.beginPath();
+    c.arc(0, 0, 58, 0, Math.PI * 2);
+    c.stroke();
+    star(c, 50, 5, 0.38);
+    c.stroke();
+  });
+  canvasTexture(scene, decalKey('crack'), 128, 128, (c) => {
+    c.translate(64, 64);
+    c.strokeStyle = '#ffffff';
+    c.lineWidth = 5;
+    c.lineJoin = 'round';
+    for (const ang of [0.2, 1.4, 2.6, 3.7, 5.0]) {
+      c.beginPath();
+      c.moveTo(0, 0);
+      for (let i = 1; i <= 4; i += 1) c.lineTo(Math.cos(ang + (i % 2 ? 0.3 : -0.3)) * i * 14, Math.sin(ang + (i % 2 ? 0.3 : -0.3)) * i * 14);
+      c.stroke();
+    }
+  });
+  canvasTexture(scene, VIGNETTE_KEY, 256, 256, (c) => {
+    const g = c.createRadialGradient(128, 128, 30, 128, 128, 128);
+    g.addColorStop(0, 'rgba(255,255,255,0)');
+    g.addColorStop(1, 'rgba(255,255,255,1)');
+    c.fillStyle = g;
+    c.fillRect(0, 0, 256, 256);
   });
   // A column of light, bright in the middle and fading at its sides and top.
   canvasTexture(scene, PILLAR_KEY, 64, 256, (c) => {

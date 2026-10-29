@@ -1,7 +1,9 @@
 // Admin "Xưởng animation trận" (decision 042): plays one skill (or the plain attack) between two creatures on the game's own battle
 // stage (scene/battle/BattleScene.ts), from the game's own content (content/adventure/battle_fx.json). The skill's own look can be
 // edited as JSON, tried at once ("Áp dụng thử" changes only this page) and saved into battle_fx.json through the content API, which
-// checks it with the same schema as the game. Nothing else is touched; no save is opened.
+// checks it with the same schema as the game. Nothing else is touched; no save is opened. Decision 044: up to three units a side
+// (an area skill reaches all of them, staggered), the statuses the skill puts on, an elemental reaction, a boss changing phase and
+// the victory can be played too.
 import * as Phaser from 'phaser';
 import battleFxRaw from '../../content/adventure/battle_fx.json';
 import { battleFxFileSchema } from '../../content/schemas/adventure/battleFx';
@@ -15,9 +17,10 @@ import { esc } from './labels';
 import { json, post } from './store';
 
 const FILE = 'adventure/battle_fx.json';
-const ALLY = 'lab:ally';
-const FOE = 'lab_enemy#1';
-const battle = { combatants: [{ id: ALLY, side: 'ally' }, { id: FOE, side: 'enemy' }] } as unknown as BattleState;
+const ALLIES = ['lab:ally', 'lab:ally2', 'lab:ally3'];
+const FOES = ['lab_enemy#1', 'lab_enemy#2', 'lab_enemy#3'];
+const REACTIONS = ['reaction_shock', 'reaction_steam', 'reaction_wildfire', 'reaction_shatter', 'reaction_purify', 'reaction_eclipse'];
+const battleOf = () => ({ combatants: [...ALLIES.slice(0, lab.allies).map((id) => ({ id, side: 'ally' })), ...FOES.slice(0, lab.foes).map((id) => ({ id, side: 'enemy' }))] }) as unknown as BattleState;
 
 type Row = { id: string; asset?: string; frames?: { width: number; height: number; count: number; fps: number } };
 const lab = {
@@ -28,6 +31,13 @@ const lab = {
   crit: false,
   ko: false,
   fast: false,
+  reduce: false,
+  /** Units a side (1–3), the elemental reaction to set off, a boss phase change, the battle won. */
+  allies: 1,
+  foes: 1,
+  reaction: '',
+  phase: false,
+  win: false,
   raw: null as Record<string, unknown> | null,
   images: new Map<string, Row>(),
   step: null as PlayingStep | null,
@@ -39,21 +49,33 @@ const lab = {
   online: false,
 };
 
-/** The events a skill would make between the two creatures (enough for the motion to cut its beat). */
+/** The events a skill would make on the lab's field (enough for the motion to cut its beat): every target of an area skill, the statuses it puts on, the chosen reaction, phase change and victory. */
 function eventsOf(): BattleEvent[] {
   const s = lab.skill ? SKILLS[lab.skill] : undefined;
-  const [actor, foe] = lab.fromEnemy ? [FOE, ALLY] : [ALLY, FOE];
-  const out: BattleEvent[] = [{ type: 'turn', actor }, { type: 'use', actor, skillId: s?.id ?? null, ultimate: !!s && s.id.startsWith('skill_ult') }];
-  if (s?.category === 'support') out.push({ type: 'heal', actor, target: actor, amount: 40, skillId: s.id } as BattleEvent);
-  else {
-    out.push({ type: 'damage', actor, target: foe, amount: 60, crit: lab.crit, mult: 1, skillId: s?.id ?? null, absorbed: 0, element: (s?.element === 'SELF' ? null : s?.element) ?? 'METAL' } as BattleEvent);
-    if (lab.ko) out.push({ type: 'defeat', target: foe } as BattleEvent);
+  const mine = (lab.fromEnemy ? FOES.slice(0, lab.foes) : ALLIES.slice(0, lab.allies));
+  const theirs = (lab.fromEnemy ? ALLIES.slice(0, lab.allies) : FOES.slice(0, lab.foes));
+  const actor = mine[0]!;
+  const out: BattleEvent[] = [{ type: 'turn', actor }, { type: 'use', actor, skillId: s?.id ?? null, ultimate: !!s && s.type === 'ultimate' }];
+  const target = s?.target ?? 'enemy';
+  const friends = target === 'self' ? [actor] : target === 'ally' ? [mine[mine.length > 1 ? 1 : 0]!] : target === 'allAllies' ? mine : target === 'all' ? mine : [];
+  const foes = target === 'allEnemies' || target === 'randomEnemies' || target === 'all' ? theirs : target === 'enemy' || !s ? [theirs[0]!] : [];
+  const element = (s?.element === 'SELF' ? null : s?.element) ?? 'METAL';
+  for (const f of friends) out.push({ type: 'heal', actor, target: f, amount: 40, skillId: s!.id } as BattleEvent);
+  for (const f of foes) out.push({ type: 'damage', actor, target: f, amount: 60, crit: lab.crit, mult: 1, skillId: s?.id ?? null, absorbed: 0, element } as BattleEvent);
+  for (const e of s?.effects ?? []) {
+    if (e.kind !== 'status') continue;
+    const on = e.to === 'self' ? [actor] : e.to === 'allies' ? mine : e.to === 'foes' ? theirs : friends.length > 0 ? friends : foes;
+    for (const t of on) out.push({ type: 'status', actor, target: t, status: e.status, skillId: s!.id } as BattleEvent);
   }
+  if (lab.reaction && foes[0]) out.push({ type: 'reaction', target: foes[0], reaction: lab.reaction } as BattleEvent);
+  if (lab.ko) for (const f of foes) out.push({ type: 'defeat', target: f } as BattleEvent);
+  if (lab.phase) out.push({ type: 'phase', target: FOES[0]!, phase: 2 } as BattleEvent);
+  if (lab.win) out.push({ type: 'end', outcome: 'win' } as BattleEvent);
   return out;
 }
 
 function play(enter = false) {
-  const motion = stepMotion(battle, eventsOf(), lab.fast);
+  const motion = stepMotion(battleOf(), eventsOf(), lab.fast);
   lab.counter += 1;
   lab.step = { key: `lab:${lab.counter}`, at: performance.now() + (enter ? 1100 : 150), fx: { floaters: [], banner: null, shake: false, shakeAt: 0 }, motion, enter, shown: 0 };
 }
@@ -62,10 +84,17 @@ function stageState(): BattleStageState | null {
   const host = lab.host;
   if (!host || !lab.step) return null;
   const r = host.getBoundingClientRect();
-  const unit = (id: string, side: 'ally' | 'enemy', art: string, x: number) => ({ id, side, art, mirrored: mirrored(art, side), feet: { x: r.left + r.width * x, y: r.top + r.height * 0.82 }, width: r.height * 0.34, height: r.height * 0.34, down: false, aimable: false });
+  const size = r.height * (lab.allies + lab.foes > 2 ? 0.26 : 0.34);
+  const unit = (id: string, side: 'ally' | 'enemy', art: string, x: number, y: number) => ({ id, side, art, mirrored: mirrored(art, side), feet: { x: r.left + r.width * x, y: r.top + r.height * y }, width: size, height: size, down: false, aimable: false, statuses: [] as string[] });
   const allyArt = lab.fromEnemy ? lab.target : lab.attacker;
   const foeArt = lab.fromEnemy ? lab.attacker : lab.target;
-  return { active: true, units: [unit(ALLY, 'ally', allyArt, 0.28), unit(FOE, 'enemy', foeArt, 0.72)], step: lab.step, reduce: false };
+  // Three spots a side, staggered in depth like the game's field.
+  const spots = [[0.3, 0.8], [0.18, 0.66], [0.16, 0.92]] as const;
+  const units = [
+    ...ALLIES.slice(0, lab.allies).map((id, i) => unit(id, 'ally', allyArt, spots[i]![0], spots[i]![1])),
+    ...FOES.slice(0, lab.foes).map((id, i) => unit(id, 'enemy', foeArt, 1 - spots[i]![0], spots[i]![1])),
+  ];
+  return { active: true, units, step: lab.step, reduce: lab.reduce };
 }
 
 class Backdrop extends Phaser.Scene {
@@ -134,6 +163,12 @@ export function renderBattleLab(root: HTMLElement) {
       <label class="field"><span>Chí mạng</span><input type="checkbox" data-flag="crit"${lab.crit ? ' checked' : ''} /></label>
       <label class="field"><span>Kết liễu</span><input type="checkbox" data-flag="ko"${lab.ko ? ' checked' : ''} /></label>
       <label class="field"><span>Tốc độ x2</span><input type="checkbox" data-flag="fast"${lab.fast ? ' checked' : ''} /></label>
+      <label class="field"><span>Giảm chuyển động</span><input type="checkbox" data-flag="reduce"${lab.reduce ? ' checked' : ''} /></label>
+      <label class="field"><span>Số đồng đội</span><select data-count="allies">${[1, 2, 3].map((n) => opt(String(n), String(n), String(lab.allies))).join('')}</select></label>
+      <label class="field"><span>Số quái</span><select data-count="foes">${[1, 2, 3].map((n) => opt(String(n), String(n), String(lab.foes))).join('')}</select></label>
+      <label class="field"><span>Phản ứng nguyên tố</span><select data-reaction>${opt('', '—', lab.reaction)}${REACTIONS.map((x) => opt(x, x, lab.reaction)).join('')}</select></label>
+      <label class="field"><span>Trùm đổi pha</span><input type="checkbox" data-flag="phase"${lab.phase ? ' checked' : ''} /></label>
+      <label class="field"><span>Thắng trận</span><input type="checkbox" data-flag="win"${lab.win ? ' checked' : ''} /></label>
     </div>
     <p><button class="btn" data-play>▶ Chạy</button> <button class="btn ghost" data-enter>Vào trận</button></p>
     <div data-stage style="position:relative;width:min(100%,1120px);aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#cfe6c4"></div>
@@ -150,6 +185,8 @@ export function renderBattleLab(root: HTMLElement) {
   q<HTMLSelectElement>('[data-attacker]').onchange = (e) => ((lab.attacker = (e.target as HTMLSelectElement).value), redo());
   q<HTMLSelectElement>('[data-target]').onchange = (e) => ((lab.target = (e.target as HTMLSelectElement).value), redo());
   for (const box of root.querySelectorAll<HTMLInputElement>('[data-flag]')) box.onchange = () => ((lab as unknown as Record<string, boolean>)[box.dataset.flag!] = box.checked);
+  for (const sel of root.querySelectorAll<HTMLSelectElement>('[data-count]')) sel.onchange = () => ((lab as unknown as Record<string, number>)[sel.dataset.count!] = Number(sel.value));
+  q<HTMLSelectElement>('[data-reaction]').onchange = (e) => (lab.reaction = (e.target as HTMLSelectElement).value);
   q('[data-play]').onclick = () => play();
   q('[data-enter]').onclick = () => play(true);
   const own = (): Record<string, unknown> | null => {

@@ -8,6 +8,8 @@
 import type { PoseArt } from '../../../../content/schemas/adventure/battleFx';
 import { ENTER_MS, type PlayingStep } from './battleFxView';
 import type { ReactionKind } from './battleMotion';
+import { addMoves, type MoveAcc } from './battleMoves';
+import { stepScript, type Side } from './battleScript';
 import { BODY, bodyOf, lookOf } from './motionProfiles';
 
 export interface Pt {
@@ -40,6 +42,8 @@ export interface BodyPose {
   gray: number;
   opacity: number;
   glow: number | null;
+  /** The picture coloured (multiplied) in this colour (a status, a script's `glow` with `tint`). */
+  tint: number | null;
   posture: PoseArt;
 }
 
@@ -68,9 +72,14 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
   let gray = 0;
   let opacity = 1;
   let glow: number | null = null;
+  let tint: number | null = null;
   let posture: PoseArt = 'idle';
+  const sides = new Map<string, Side>([...anchors].map(([k2, v]) => [k2, v.side]));
+  const script = stepScript(p, sides);
   for (const b of p.motion.beats) {
     if (b.actor !== id || !b.pose || t < b.start || t > b.end + 40) continue;
+    // A script that moves its actor plays instead of the default motion of the beat.
+    if (script.scripted.has(id) && t >= b.cast) continue;
     const target = anchors.get(b.targets[0] ?? '');
     if (b.pose === 'attack' || b.delivery === 'melee' || b.delivery === 'slam') posture = t >= b.cast && t <= b.impact + 120 ? 'attack' : posture;
     else if (b.pose === 'cast' || b.pose === 'support' || b.pose === 'ultimate') posture = t <= b.release + 160 ? 'cast' : posture;
@@ -202,12 +211,16 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
         break;
     }
   }
-  // Coming in at the start of a battle: the picture flickers in after its light.
-  if (p.enter && t < 0) {
+  const acc: MoveAcc = { dx, dy, rot, sx, sy, bright, opacity, glow, tint, posture: null };
+  addMoves(id, a, anchors, script.moves, t, acc);
+  ({ dx, dy, rot, sx, sy, bright, opacity, glow, tint } = acc);
+  if (acc.posture) posture = acc.posture;
+  // Coming in at the start of a battle: the picture flickers in after its light (unless the entrance has a script of its own).
+  if (p.enter && t < 0 && !script.moves.some((m) => m.unit === id && m.at < 0)) {
     const into = (t + ENTER_MS) / ENTER_MS - (a.side === 'ally' ? 0.1 : 0.32);
     if (into < 0) opacity = 0;
     else if (into < 0.45) opacity = Math.min(opacity, Math.sin(into * 70) > 0 ? 0.25 + into : 0.05);
     bright = Math.max(bright, into < 0.6 ? 1.8 - into : 1);
   }
-  return { dx, dy, rot, sx, sy, bright, gray, opacity, glow, posture };
+  return { dx, dy, rot, sx, sy, bright, gray, opacity, glow, tint, posture };
 }

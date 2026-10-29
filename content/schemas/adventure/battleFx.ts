@@ -5,7 +5,11 @@
 // "Xưởng animation trận".
 import { z } from 'zod';
 import { assetId, color, nonNeg, posInt, range, unit } from '../fields';
-import { ELEMENT_VALUES } from './combat';
+import { scriptSchema, type Act } from './battleScript';
+import { POSE_ART_VALUES } from './battlePoses';
+import { ELEMENT_VALUES, statusId } from './combat';
+
+export { POSE_ART_VALUES };
 
 export const PARTICLE_SHAPES = ['glow', 'spark', 'star', 'leaf', 'petal', 'drop', 'rock', 'bubble', 'shard', 'ring', 'smoke', 'plus', 'arrow', 'rune'] as const;
 export const DELIVERY_VALUES = ['melee', 'slam', 'projectile', 'burst', 'aura'] as const;
@@ -13,8 +17,6 @@ export const STRIKE_VALUES = ['none', 'slash', 'bolt', 'beam', 'swirl', 'vines']
 export const BODY_VALUES = ['quadruped', 'aquatic', 'flyer', 'floater', 'sprout', 'heavy'] as const;
 export const FACING_VALUES = ['right', 'left', 'front'] as const;
 export const REACTION_FX_VALUES = ['hit', 'heavy', 'heal', 'buff', 'debuff', 'miss', 'ko', 'tears', 'guard', 'stun', 'teleport', 'aura', 'charge', 'slam'] as const;
-/** Key poses a creature may have (`cb_<art>_<pose>` in the manifest); `idle` is the picture itself when it has none. */
-export const POSE_ART_VALUES = ['idle', 'attack', 'cast', 'hurt', 'ko', 'victory'] as const;
 
 /**
  * Something drawn: the id of a burst of `particles`, or a manifest image (`fx_…`, played as a strip when its row has frames). An image
@@ -24,6 +26,9 @@ const fxRef = z.string().regex(/^[a-z][a-z0-9_]*$/);
 
 const burst = z.strictObject({
   shape: z.enum(PARTICLE_SHAPES),
+  /** A sprite (`fxs_…`) drawn instead of the shape once it is loaded (sprite_particles); tinted only when `tintArt`. */
+  art: z.string().regex(/^fxs_[a-z0-9_]+$/).optional(),
+  tintArt: z.boolean().optional(),
   colors: z.array(color).min(1),
   /** Opacity at birth (fades out by its end). */
   alpha: unit.optional(),
@@ -71,6 +76,9 @@ const look = z.strictObject({
   ring: color.nullable(),
   flash: color.nullable(),
   shake: nonNeg.max(30),
+  /** The element's particle and impact (`$spark`, `$boom` in a script; a class skill takes its user's). */
+  spark: fxRef.optional(),
+  boom: fxRef.optional(),
 });
 
 const timing = z.strictObject({ release: nonNeg, impact: nonNeg, end: nonNeg }).refine((t) => t.release <= t.impact && t.impact <= t.end, 'timing needs release <= impact <= end');
@@ -78,6 +86,31 @@ const timing = z.strictObject({ release: nonNeg, impact: nonNeg, end: nonNeg }).
 const skill = look.partial().extend({
   delivery: z.enum(DELIVERY_VALUES).optional(),
   timing: timing.optional(),
+  /** What the skill plays, act by act (decision 044); its element's look still fills `$color`, `$spark`… */
+  script: scriptSchema.optional(),
+  /** Between two targets of an area skill (ms): each is hit, numbered and knocked back a little later than the one before. */
+  stagger: nonNeg.max(400).optional(),
+  /** The magic circle first (default: on without a script, off with one; the script opens the skill itself). */
+  circle: z.boolean().optional(),
+});
+
+/** The general actions and reactions that may carry a script (decision 044): played on the unit they are about (`actor`). */
+export const ACTION_FX_VALUES = [
+  'attack', 'guard', 'stunned', 'frozen', 'item', 'hit', 'heavy', 'miss', 'heal', 'regen', 'buff', 'debuff', 'dot_poison', 'dot_burn',
+  'ko', 'revive', 'victory', 'enter_ally', 'enter_enemy', 'boss_phase',
+] as const;
+
+const status = z.strictObject({
+  /** The badge shown by the head while the status lasts (`st_…`). */
+  icon: z.string().regex(/^st_[a-z0-9_]+$/),
+  /** Played when it is put on. */
+  apply: scriptSchema.optional(),
+  /** Played again and again while it lasts (every `every` ms). */
+  loop: z.strictObject({ every: z.number().int().min(300).max(10000), script: scriptSchema }).optional(),
+  /** The body is coloured while it lasts (alpha 0..1). */
+  tint: z.strictObject({ color, alpha: unit }).optional(),
+  /** A frame of an `fx_…` strip laid over the body while it lasts (the ice of Freeze). */
+  cover: z.strictObject({ img: z.string().regex(/^fx_[a-z0-9_]+$/), frame: z.number().int().min(0), alpha: unit }).optional(),
 });
 
 export const battleFxFileSchema = z
@@ -102,6 +135,12 @@ export const battleFxFileSchema = z
     reactions: z.record(z.enum(REACTION_FX_VALUES), z.array(fxRef)),
     /** Skills that look different from their element (the key is the skill id). */
     skills: z.record(z.string().regex(/^skill_[a-z0-9_]+$/), skill),
+    /** Scripts of the general actions (decision 044), played besides `reactions`. */
+    actions: z.partialRecord(z.enum(ACTION_FX_VALUES), scriptSchema).default({}),
+    /** How each status looks (decision 044): its badge, what plays when it lands and while it lasts. */
+    statuses: z.partialRecord(statusId, status).default({}),
+    /** The elemental reactions (`reaction_shock`…): played on the unit when one goes off. */
+    elementReactions: z.record(z.string().regex(/^reaction_[a-z]+$/), scriptSchema).default({}),
   })
   .superRefine((f, ctx) => {
     const known = (ref: string) => ref in f.particles || (PARTICLE_SHAPES as readonly string[]).includes(ref) || ref.startsWith('fx_');
@@ -111,6 +150,18 @@ export const battleFxFileSchema = z
     for (const [id, l] of Object.entries(f.elements)) check([...l.impact, l.projectile.core, l.projectile.trail], `elements.${id}`);
     for (const [id, refs] of Object.entries(f.reactions)) check(refs, `reactions.${id}`);
     for (const [id, s] of Object.entries(f.skills)) check([...(s.impact ?? []), s.projectile?.core, s.projectile?.trail], `skills.${id}`);
+    const isRef = (r: string) => r.startsWith('$') || known(r) || r.startsWith('fxs_') || r.startsWith('fxp_');
+    const checkScript = (acts: readonly Act[] | undefined, where: string) => {
+      for (const [i, a] of (acts ?? []).entries()) if ('ref' in a && a.ref && !isRef(a.ref)) ctx.addIssue({ code: 'custom', message: `${where}[${i}]: "${a.ref}" is neither a burst of particles nor an image` });
+    };
+    for (const [id, s] of Object.entries(f.skills)) checkScript(s.script, `skills.${id}.script`);
+    for (const [id, acts] of Object.entries(f.actions)) checkScript(acts, `actions.${id}`);
+    for (const [id, st] of Object.entries(f.statuses)) {
+      checkScript(st.apply, `statuses.${id}.apply`);
+      checkScript(st.loop?.script, `statuses.${id}.loop`);
+    }
+    for (const [id, acts] of Object.entries(f.elementReactions)) checkScript(acts, `elementReactions.${id}`);
+    for (const [id, l] of Object.entries(f.elements)) check([l.spark, l.boom], `elements.${id}`);
     for (const e of [...ELEMENT_VALUES, 'NEUTRAL'] as const) if (!f.elements[e]) ctx.addIssue({ code: 'custom', message: `elements.${e} is missing` });
     for (const r of REACTION_FX_VALUES) if (!f.reactions[r]) ctx.addIssue({ code: 'custom', message: `reactions.${r} is missing` });
     for (const b of BODY_VALUES) if (!f.bodies[b]) ctx.addIssue({ code: 'custom', message: `bodies.${b} is missing` });
@@ -126,3 +177,6 @@ export type BodyPlan = (typeof BODY_VALUES)[number];
 export type Facing = (typeof FACING_VALUES)[number];
 export type ReactionFx = (typeof REACTION_FX_VALUES)[number];
 export type PoseArt = (typeof POSE_ART_VALUES)[number];
+export type ActionFx = (typeof ACTION_FX_VALUES)[number];
+export type BattleSkillFx = z.output<typeof skill>;
+export type BattleStatusFx = z.output<typeof status>;

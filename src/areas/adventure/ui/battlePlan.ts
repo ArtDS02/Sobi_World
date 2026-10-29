@@ -2,17 +2,21 @@
 // shot that travels, what lands where it lands; for every reaction what plays on the unit (tears and stars of a hit, the swish and
 // afterimage of a miss, the arrows of a buff or a curse, the puff of a knock-out); a new battle's teleport lights; the sounds, one per
 // kind and moment. Each cue is plain data with its time on the step's clock: the battle scene (scene/battle/) plays it, battle_fx.json
-// says what each looks like. Presentation only. Pure.
+// says what each looks like. A skill or an action with a script (decision 044, ui/battleScript.ts) plays its acts instead of the
+// default charge, shot and landing. Presentation only. Pure.
 import type { BattleLook, ReactionFx } from '../../../../content/schemas/adventure/battleFx';
 import { BATTLE_FX } from '../logic/config/content';
 import { ENTER_MS, type PlayingStep } from './battleFxView';
-import { lookOf } from './motionProfiles';
+import { stepScript, type ScriptCue } from './battleScript';
+import { lookOf, skillFx } from './motionProfiles';
 
 /** The sounds of a battle (manifest audio ids; a missing file is silence). */
 export type BattleSound = 'adv_battle_start' | 'adv_cast' | 'adv_hit' | 'adv_crit' | 'adv_miss' | 'adv_heal' | 'adv_ko';
+/** A sound a script names (`adv_…`, decision 044): played only when it is one of the game's audio keys. */
+export type CueSound = BattleSound | (string & {});
 
 export type FxCue = { at: number } & (
-  | { kind: 'sound'; sound: BattleSound }
+  | { kind: 'sound'; sound: CueSound }
   /** A fighter comes in out of a column of light, `delay` ms after the cue. */
   | { kind: 'teleport'; unit: string; delay: number }
   /** The magic circle under a caster for `dur` ms. */
@@ -29,6 +33,8 @@ export type FxCue = { at: number } & (
   | { kind: 'fx'; unit: string; refs: readonly string[]; tint: readonly number[] | null }
   /** A pale copy of the unit left where it stood (it dodged). */
   | { kind: 'afterimage'; unit: string }
+  /** An act of a script (decision 044). */
+  | { kind: 'act'; cue: ScriptCue }
 );
 
 const reactionFx = (r: ReactionFx) => BATTLE_FX.reactions[r] ?? [];
@@ -37,10 +43,12 @@ const reactionFx = (r: ReactionFx) => BATTLE_FX.reactions[r] ?? [];
 export function stepPlan(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 'ally' | 'enemy'>, reduce: boolean): FxCue[] {
   const out: FxCue[] = [];
   const add = (c: FxCue) => out.push(c);
-  const sound = (at: number, s: BattleSound) => add({ at, kind: 'sound', sound: s });
+  const sound = (at: number, s: CueSound) => add({ at, kind: 'sound', sound: s });
+  const script = stepScript(p, sides);
+  const enterScripted = (BATTLE_FX.actions.enter_ally?.length ?? 0) + (BATTLE_FX.actions.enter_enemy?.length ?? 0) > 0;
   if (p.enter) {
     sound(-ENTER_MS, 'adv_battle_start');
-    if (!reduce) {
+    if (!reduce && !enterScripted) {
       let i = 0;
       for (const [unit, side] of sides) add({ at: -ENTER_MS, kind: 'teleport', unit, delay: (side === 'ally' ? 0 : 250) + (i++ % 4) * 80 });
     }
@@ -52,11 +60,20 @@ export function stepPlan(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 'a
     const actor = b.actor;
     const look = lookOf(b.element, b.skillId);
     const big = b.pose === 'ultimate';
+    const own = skillFx(b.skillId)?.script ?? (b.skillId === null && b.pose === 'attack' ? BATTLE_FX.actions.attack : undefined);
     if (b.circle) {
       sound(b.start, 'adv_cast');
       if (!reduce) add({ at: b.start, kind: 'circle', unit: actor, look, dur: b.cast - b.start + 250, big });
     }
     if (reduce) continue;
+    if (own && own.length > 0) {
+      // The script plays the whole beat; only the knock-backs of the friends it helps stay (as default auras).
+      for (const unit of b.targets) {
+        if (sides.get(actor) !== sides.get(unit) || near(unit, 'heal', b.impact)) continue;
+        add({ at: b.impact, kind: 'fx', unit, refs: reactionFx('aura'), tint: [look.glow, look.color] });
+      }
+      continue;
+    }
     if (big) {
       add({ at: b.start, kind: 'dim', to: 0.45 });
       add({ at: b.end, kind: 'dim', to: 0 });
@@ -98,6 +115,11 @@ export function stepPlan(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 'a
           break;
       }
     }
+  }
+  // The scripts' acts; their sounds play with reduced motion too.
+  for (const c of script.cues) {
+    if (c.act.do === 'sound') sound(c.at, c.act.sound);
+    else if (!reduce) add({ at: c.at, kind: 'act', cue: c });
   }
   // One sound per kind and moment: a blow that reaches three units hits once.
   const heard = new Set<string>();

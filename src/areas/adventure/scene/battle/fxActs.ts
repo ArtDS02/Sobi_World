@@ -1,0 +1,270 @@
+// Plays the acts of the battle scripts (decision 044, ui/battleScript.ts) on the battle scene: a 4-frame strip (`fx_…`), a big object
+// (`fxp_…`) travelling on its path, a burst, a beam, a tether, a cone, a mark on the ground, the shadow of something about to land, a
+// trail of afterimages, the backdrop tinted, a camera punch, the hit stop, the colours split, the shake and flash, an Ultimate's cut-in.
+// A picture whose file is missing is drawn with a glow of the look's colour instead, so a script always shows something.
+import * as Phaser from 'phaser';
+import type { Act, Spot } from '../../../../../content/schemas/adventure/battleScript';
+import type { ScriptCue } from '../../ui/battleScript';
+import { AIR_DEPTH, GROUND_DEPTH, type Bursts } from './fxBursts';
+import { beam, cone, tether } from './fxLines';
+import { playProp } from './fxProps';
+import type { FxAnchor, Timed } from './fxPlayer';
+import { SHADOW_KEY, VIGNETTE_KEY, decalKey, shapeKey } from './fxTextures';
+
+type AddTimed = (dur: number, step: Timed['step'], done?: () => void) => void;
+type Pt = { x: number; y: number };
+
+/** What the act player needs from the scene around it. */
+export interface ActHost {
+  scene: Phaser.Scene;
+  bursts: Bursts;
+  add: AddTimed;
+  flash(color: number, alpha: number, ms: number): void;
+  /** Holds the stage still for `ms` (hit stop). */
+  hold(ms: number): void;
+  /** Every unit's picture now (the colour split copies them). */
+  pictures(): Phaser.GameObjects.Image[];
+}
+
+const TINT_DEPTH = 5;
+const CUTIN_DEPTH = AIR_DEPTH + 20;
+
+const easeIn = (t: number) => t * t;
+const easeOut = (t: number) => 1 - (1 - t) * (1 - t);
+const fadeIO = (t: number, inn = 0.12, out = 0.25) => (t < inn ? t / inn : t > 1 - out ? (1 - t) / out : 1);
+
+export class ActPlayer {
+  constructor(private readonly h: ActHost) {}
+
+  private get scene() {
+    return this.h.scene;
+  }
+
+  /** Where on a unit (or on the screen) an act plays. */
+  private spot(a: FxAnchor | null, spot: Spot | undefined, fallback: Spot): Pt {
+    const w = this.scene.scale.width;
+    const hgt = this.scene.scale.height;
+    const s = spot ?? fallback;
+    if (!a) {
+      if (s === 'sky') return { x: w / 2, y: -40 };
+      if (s === 'feet') return { x: w / 2, y: hgt * 0.84 };
+      return { x: w / 2, y: hgt * 0.5 };
+    }
+    const dir = a.side === 'ally' ? 1 : -1;
+    switch (s) {
+      case 'chest':
+        return a.chest;
+      case 'feet':
+        return a.feet;
+      case 'head':
+        return a.head;
+      case 'above':
+        return { x: a.feet.x, y: a.feet.y - a.height * 1.08 };
+      case 'front':
+        return { x: a.chest.x + dir * a.width * 0.55, y: a.chest.y };
+      case 'behind':
+        return { x: a.chest.x - dir * a.width * 0.55, y: a.chest.y };
+      case 'sky':
+        return { x: a.feet.x, y: -40 };
+      case 'middle':
+        return { x: w / 2, y: a.feet.y };
+      case 'center':
+        return { x: w / 2, y: hgt * 0.5 };
+    }
+  }
+
+  play(cue: ScriptCue, anchors: ReadonlyMap<string, FxAnchor>) {
+    const a = cue.unit ? (anchors.get(cue.unit) ?? null) : null;
+    if (cue.unit && !a) return;
+    const from = cue.from ? (anchors.get(cue.from) ?? null) : null;
+    const act = cue.act;
+    const mirror = (from ?? a)?.side === 'enemy';
+    switch (act.do) {
+      case 'burst': {
+        const at = act.spot ? this.spot(a, act.spot, 'chest') : null;
+        const tint = (act.tint as number[] | undefined) ?? null;
+        if (act.ref.startsWith('fx_')) return this.strip({ do: 'strip', at: 0, who: 'actor', img: act.ref }, a, cue.look.glow, mirror);
+        if (act.ref.startsWith('fxs_')) return this.sprite(act.ref, at ?? this.spot(a, undefined, 'chest'), a?.width ?? 120, tint?.[0] ?? null);
+        this.h.bursts.play(act.ref, at ?? a ?? this.spot(null, 'center', 'center'), { mirror, tint, more: act.more ?? 1 });
+        return;
+      }
+      case 'strip':
+        return this.strip(act, a, cue.look.glow, mirror);
+      case 'prop':
+        return playProp(this.h, (x, sp, fb) => this.spot(x, sp, fb), act, a, from, cue.look.glow);
+      case 'beam':
+        if (from && a) beam(this.h, from, a, act.color as number, act.width ?? 26, act.dur, !!act.through);
+        return;
+      case 'tether':
+        if (from && a) tether(this.h, from, a, act.color as number, act.wave ?? 14, act.dur, act.ref ?? null);
+        return;
+      case 'cone':
+        if (from && a) cone(this.h, from, a, act.color as number, act.width ?? 150, act.dur, act.ref ?? null);
+        return;
+      case 'decal':
+        return this.decal(act, a);
+      case 'marker': {
+        const p = this.spot(a, 'feet', 'feet');
+        const size = (a?.width ?? 140) * (act.size ?? 1.1);
+        const img = this.scene.add.image(p.x, p.y, SHADOW_KEY).setDepth(GROUND_DEPTH).setTint(0x1a1020);
+        this.h.add(act.dur, (t) => img.setDisplaySize(size * (0.3 + 0.7 * easeOut(t)), size * 0.32 * (0.3 + 0.7 * easeOut(t))).setAlpha(0.55 * Math.min(1, t * 3)), () => img.destroy());
+        return;
+      }
+      case 'trail': {
+        const pic = a?.picture;
+        if (!pic) return;
+        const every = (act.every ?? 50) / 1000;
+        let since = every;
+        const color = (act.color as number | undefined) ?? null;
+        this.h.add(act.dur, (_t, _g, dt) => {
+          since += dt;
+          if (since < every || !pic.visible) return;
+          since = 0;
+          const ghost = this.scene.add.image(pic.x, pic.y, pic.texture.key).setOrigin(pic.originX, pic.originY).setScale(pic.scaleX, pic.scaleY).setAngle(pic.angle).setFlipX(pic.flipX).setDepth(pic.depth - 1).setAlpha(0.42);
+          if (color !== null) ghost.setTintFill(color).setBlendMode(Phaser.BlendModes.ADD);
+          this.h.add(320, (t) => ghost.setAlpha(0.42 * (1 - t)), () => ghost.destroy());
+        });
+        return;
+      }
+      case 'tint':
+        return this.tint(act, a);
+      case 'punch': {
+        const cam = this.scene.cameras.main;
+        const p = this.spot(a, 'chest', 'center');
+        const w = this.scene.scale.width;
+        const hgt = this.scene.scale.height;
+        this.h.add(act.dur, (t) => {
+          const u = t < 0.3 ? easeOut(t / 0.3) : 1 - easeIn((t - 0.3) / 0.7);
+          cam.setZoom(1 + (act.zoom - 1) * u);
+          cam.centerOn(w / 2 + (p.x - w / 2) * 0.35 * u, hgt / 2 + (p.y - hgt / 2) * 0.35 * u);
+        }, () => {
+          cam.setZoom(1);
+          cam.centerOn(w / 2, hgt / 2);
+        });
+        return;
+      }
+      case 'stop':
+        this.h.hold(act.dur);
+        return;
+      case 'split': {
+        for (const pic of this.h.pictures()) {
+          if (!pic.visible) continue;
+          for (const [dx, color] of [[-5, 0xff3a6a], [5, 0x3ae0ff]] as const) {
+            const g = this.scene.add.image(pic.x + dx, pic.y, pic.texture.key).setOrigin(pic.originX, pic.originY).setScale(pic.scaleX, pic.scaleY).setAngle(pic.angle).setFlipX(pic.flipX).setDepth(pic.depth + 0.2).setBlendMode(Phaser.BlendModes.ADD).setTintFill(color).setAlpha(0.5);
+            this.h.add(act.dur, (t) => g.setAlpha(0.5 * (1 - t)), () => g.destroy());
+          }
+        }
+        return;
+      }
+      case 'shake':
+        this.scene.cameras.main.shake(act.dur, act.amount / Math.max(1, this.scene.scale.width));
+        return;
+      case 'flash':
+        this.h.flash(act.color as number, act.alpha, act.dur);
+        return;
+      case 'cutin':
+        if (from ?? a) this.cutin((from ?? a)!, act.color as number, act.dur);
+        return;
+      case 'sound':
+      case 'move':
+      case 'pose':
+      case 'glow':
+        return;
+    }
+  }
+
+  /** A single sprite of the manifest popping and fading (an `fxs_…` used on its own). */
+  private sprite(key: string, p: Pt, size: number, tint: number | null) {
+    const img = this.scene.add.image(p.x, p.y, this.scene.textures.exists(key) ? key : shapeKey('star')).setDepth(AIR_DEPTH);
+    if (tint !== null) img.setTint(tint);
+    const s = size * 0.4;
+    this.h.add(520, (t) => img.setDisplaySize(s * (0.4 + 0.8 * easeOut(Math.min(1, t * 3))), s * (0.4 + 0.8 * easeOut(Math.min(1, t * 3)))).setAlpha(fadeIO(t, 0.1, 0.4)).setY(p.y - 30 * t), () => img.destroy());
+  }
+
+  /** A strip `fx_…` played on a unit (a frame range, the last frame held); a soft glow while its file is missing. */
+  private strip(act: Extract<Act, { do: 'strip' }>, a: FxAnchor | null, glow: number, mirror: boolean) {
+    const p = this.spot(a, act.spot, 'chest');
+    const width = (a?.width ?? this.scene.scale.height * 0.4) * (act.size ?? 1.3);
+    const y = p.y + (act.y ?? 0);
+    const depth = act.under ? GROUND_DEPTH + 1 : AIR_DEPTH;
+    const alpha = act.alpha ?? 1;
+    if (!this.scene.textures.exists(act.img)) {
+      const g = this.scene.add.image(p.x, y, shapeKey('glow')).setDepth(depth).setBlendMode(Phaser.BlendModes.ADD).setTint((act.tint as number | undefined) ?? glow);
+      this.h.add((act.dur ?? 330) + (act.hold ?? 0), (t) => g.setDisplaySize(width * (0.4 + 0.6 * t), width * (0.4 + 0.6 * t)).setAlpha(alpha * (1 - t)), () => g.destroy());
+      return;
+    }
+    const frames = this.scene.textures.get(act.img).frameTotal - 1;
+    const [f0, f1] = act.frames ? [Math.min(act.frames[0], frames - 1), Math.min(act.frames[1], frames - 1)] : [0, Math.max(0, frames - 1)];
+    const playMs = act.dur ?? (f1 - f0 + 1) * 85;
+    const s = this.scene.add.sprite(p.x, y, act.img, f0).setDepth(depth).setAlpha(alpha);
+    s.setDisplaySize(width, width * (s.height / Math.max(1, s.width)));
+    if (act.tint !== undefined) s.setTint(act.tint as number);
+    s.setFlipX(mirror !== !!act.flip);
+    const hold = act.hold ?? 0;
+    const total = playMs + hold;
+    const count = f1 - f0 + 1;
+    this.h.add(total, (t) => {
+      const ms = t * total;
+      s.setFrame(f0 + Math.min(count - 1, Math.floor((ms / Math.max(1, playMs)) * count)));
+      // Fades over the end of the hold (or of the play, without one).
+      const fadeFrom = hold > 0 ? playMs + hold * 0.6 : playMs * 0.7;
+      s.setAlpha(ms > fadeFrom ? alpha * (1 - (ms - fadeFrom) / Math.max(1, total - fadeFrom)) : alpha);
+    }, () => s.destroy());
+  }
+
+  private decal(act: Extract<Act, { do: 'decal' }>, a: FxAnchor | null) {
+    const p = this.spot(a, 'feet', 'feet');
+    const size = (a?.width ?? this.scene.scale.width * 0.3) * (act.size ?? 1.4);
+    const fromStrip = act.img && this.scene.textures.exists(act.img);
+    const img = fromStrip
+      ? this.scene.add.image(p.x, p.y, act.img!, Math.min(act.frame ?? 2, this.scene.textures.get(act.img!).frameTotal - 2))
+      : this.scene.add.image(p.x, p.y, decalKey(act.kind ?? 'puddle'));
+    img.setDepth(GROUND_DEPTH);
+    if (act.color !== undefined) img.setTint(act.color as number);
+    else if (!fromStrip) img.setTint(act.kind === 'scorch' ? 0x2a1a12 : act.kind === 'crack' ? 0x5a3e28 : 0x8fd8ff);
+    const flat = fromStrip ? 0.55 : 0.36;
+    this.h.add(act.dur, (t) => img.setDisplaySize(size * (0.6 + 0.4 * easeOut(Math.min(1, t * 4))), size * flat * (0.6 + 0.4 * easeOut(Math.min(1, t * 4)))).setAlpha(fadeIO(t, 0.08, 0.45) * 0.85), () => img.destroy());
+  }
+
+  private tint(act: Extract<Act, { do: 'tint' }>, a: FxAnchor | null) {
+    const W = this.scene.scale.width;
+    const H = this.scene.scale.height;
+    const color = act.color as number;
+    const fade = Math.min(0.45, (act.fade ?? 200) / Math.max(1, act.dur));
+    const obj: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle = act.focus && a
+      ? this.scene.add.image(a.chest.x, a.chest.y, VIGNETTE_KEY).setDisplaySize(W * 2.4, W * 2.4).setTint(color)
+      : this.scene.add.rectangle(0, 0, W, H, color, 1).setOrigin(0);
+    obj.setDepth(act.focus ? AIR_DEPTH - 20 : TINT_DEPTH).setAlpha(0);
+    this.h.add(act.dur, (t) => obj.setAlpha(act.alpha * fadeIO(t, fade, fade)), () => obj.destroy());
+  }
+
+  /** An Ultimate's opening: a band in the element's colour sweeps across, the user's picture slides in, the rest darkens. */
+  private cutin(a: FxAnchor, color: number, dur: number) {
+    const W = this.scene.scale.width;
+    const H = this.scene.scale.height;
+    const shade = this.scene.add.rectangle(0, 0, W, H, 0x0e0a1e, 1).setOrigin(0).setDepth(CUTIN_DEPTH - 1).setAlpha(0);
+    const band = this.scene.add.rectangle(W / 2, H * 0.45, W * 1.6, H * 0.26, color, 1).setDepth(CUTIN_DEPTH).setAngle(-8).setAlpha(0.9);
+    const line = this.scene.add.rectangle(W / 2, H * 0.45 - H * 0.13, W * 1.6, 6, 0xffffff, 1).setDepth(CUTIN_DEPTH + 1).setAngle(-8);
+    const key = a.picture?.texture.key;
+    const face = key ? this.scene.add.image(0, H * 0.45, key).setDepth(CUTIN_DEPTH + 2) : null;
+    if (face) {
+      const h = H * 0.42;
+      face.setDisplaySize(h * (face.width / Math.max(1, face.height)), h).setFlipX(a.side === 'enemy');
+    }
+    const dir = a.side === 'ally' ? 1 : -1;
+    this.h.add(dur, (t) => {
+      const inn = easeOut(Math.min(1, t / 0.25));
+      const out = t > 0.8 ? easeIn((t - 0.8) / 0.2) : 0;
+      const x = W / 2 + dir * (-W * (1 - inn) + W * out);
+      band.setX(x);
+      line.setX(x + dir * 30);
+      shade.setAlpha(0.5 * fadeIO(t, 0.15, 0.2));
+      face?.setPosition(W / 2 - dir * W * 0.22 + dir * (-W * 0.6 * (1 - easeOut(Math.min(1, t / 0.35))) + W * out), H * 0.45 + 6);
+    }, () => {
+      shade.destroy();
+      band.destroy();
+      line.destroy();
+      face?.destroy();
+    });
+  }
+}

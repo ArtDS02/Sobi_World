@@ -104,6 +104,7 @@ export function unitOnField(
         'data-unit': u.id,
         'data-side': u.side,
         'data-art': u.art,
+        'data-statuses': u.statuses.map((st) => st.id).join(','),
       },
     },
     el(

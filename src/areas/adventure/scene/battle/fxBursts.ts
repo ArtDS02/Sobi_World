@@ -25,6 +25,8 @@ export interface BurstOptions {
 type Spun = Phaser.GameObjects.Particles.Particle & { s0?: number; r0?: number; turn?: number };
 
 export const AIR_DEPTH = 5000;
+/** Under the fighters (their depth is 1000 + feet y), over the backdrop: marks on the ground. */
+export const GROUND_DEPTH = 900;
 
 export class Bursts {
   private emitters = new Map<string, Phaser.GameObjects.Particles.ParticleEmitter>();
@@ -32,7 +34,9 @@ export class Bursts {
   constructor(private readonly scene: Phaser.Scene) {}
 
   private emitter(id: string, b: BattleBurst, mirror: boolean, tint: readonly number[] | null) {
-    const key = `${id}|${mirror ? 'm' : ''}|${tint?.join(',') ?? ''}`;
+    // A sprite of the manifest (`fxs_…`, decision 044) once it is loaded; the shape drawn by code until then.
+    const art = b.art && this.scene.textures.exists(b.art) ? b.art : null;
+    const key = `${id}|${mirror ? 'm' : ''}|${tint?.join(',') ?? ''}|${art ?? ''}`;
     const have = this.emitters.get(key);
     if (have) return have;
     const k = BATTLE_FX.scale;
@@ -44,18 +48,20 @@ export class Bursts {
     const turnsWithFlight = b.shape === 'spark' || b.shape === 'drop' || b.shape === 'shard';
     const spread = (b.spread ?? 0) * k;
     const size = (p: Spun, t: number) => (p.s0 ?? 1) * (1 + (shrink - 1) * t);
-    const em = this.scene.add.particles(0, 0, shapeKey(b.shape), {
+    const colors = art && !b.tintArt ? [0xffffff] : [...(tint ?? b.colors)];
+    const em = this.scene.add.particles(0, 0, art ?? shapeKey(b.shape), {
       emitting: false,
       lifespan: { min: b.life[0], max: b.life[1] },
       speed: { min: b.speed[0] * k, max: b.speed[1] * k },
       angle: { min: angle - cone, max: angle + cone },
       gravityY: (b.gravity ?? 0) * k,
-      tint: [...(tint ?? b.colors)],
+      tint: colors,
       alpha: { start: b.alpha ?? 1, end: 0, ease: 'Quad.easeIn' },
-      blendMode: b.add === false ? Phaser.BlendModes.NORMAL : Phaser.BlendModes.ADD,
+      // A drawn sprite keeps its outline: painted over, never added as light.
+      blendMode: art || b.add === false ? Phaser.BlendModes.NORMAL : Phaser.BlendModes.ADD,
       scaleX: {
         onEmit: (p?: Spun) => {
-          const s = (Phaser.Math.FloatBetween(b.size[0], b.size[1]) * k * 2) / SHAPE_PX;
+          const s = (Phaser.Math.FloatBetween(b.size[0], b.size[1]) * k * 2) / (art ? this.scene.textures.get(art).getSourceImage().width : SHAPE_PX);
           if (p) p.s0 = s;
           return s;
         },
@@ -65,7 +71,7 @@ export class Bursts {
       rotate: {
         onEmit: (p?: Spun) => {
           if (!p) return 0;
-          p.r0 = turnsWithFlight ? Phaser.Math.RadToDeg(Math.atan2(p.velocityY, p.velocityX)) : ring ? 0 : Phaser.Math.Between(0, 359);
+          p.r0 = turnsWithFlight && !art ? Phaser.Math.RadToDeg(Math.atan2(p.velocityY, p.velocityX)) : ring ? 0 : Phaser.Math.Between(0, 359);
           p.turn = (Phaser.Math.FloatBetween(-1, 1) * (b.spin ?? 0) * 360 * p.life) / 1000;
           return p.r0;
         },
@@ -98,5 +104,10 @@ export class Bursts {
 
   clear() {
     for (const em of this.emitters.values()) em.killAll();
+  }
+
+  /** Holds every particle where it is (hit stop) or lets them fly on. */
+  pause(on: boolean) {
+    for (const em of this.emitters.values()) em.timeScale = on ? 0 : 1;
   }
 }
