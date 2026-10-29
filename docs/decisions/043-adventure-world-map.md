@@ -56,7 +56,7 @@ Decision 037 đã mở băng cho bản đồ và slice save Adventure.
 ## Kế hoạch đợt
 
 - Đợt 0 (decision này): nền tảng, không thêm map, cảm giác chơi không đổi.
-- Đợt 1: đổi bố cục M4–M9. Thêm bước sửa vị trí khi tải: chuyến đang dở mà đứng trên ô không còn đi được thì về `spawn`.
+- Đợt 1 (**xong 2026-10-29**): đổi bố cục M4–M9. Thêm bước sửa vị trí khi tải: chuyến đang dở mà đứng trên ô không còn đi được thì về `spawn`. Chi tiết ở mục "Đợt 1" bên dưới.
 - Đợt 2: N1 + N2.
 - Đợt 3: N4 + N5.
 - Đợt 4: N6 + Sổ Lore.
@@ -66,3 +66,26 @@ Decision 037 đã mở băng cho bản đồ và slice save Adventure.
 
 - Save Adventure v4 → v5: chỉ thêm `openedExits: []`, không đổi dữ liệu cũ.
 - Content cũ hợp lệ nguyên vẹn: mọi lối ra hiện có đã có lối ngược lại, không có `shortcut`.
+
+## Đợt 1 — bố cục mới M4–M9 (2026-10-29)
+
+Mỗi map có một kiểu bố cục riêng, theo bảng "layout signature" ở mục 7 của spec map. Mọi id giữ nguyên; chỉ thay địa hình, đạo cụ, tọa độ vật và lối ra.
+
+| Map | Bố cục | Lối ra |
+|---|---|---|
+| M4 Chân Núi | Leo dốc kiểu chữ chi qua 3 bậc thềm. Ngách sườn sau cổng METAL có rương. | Tây (dưới) → Đông (trên) |
+| M5 Mỏ Quặng | Các phòng mỏ nối bằng đường hầm: sảnh lớn, hầm trên, hang ngập phía tây (rương sau cổng LIGHTNING), hầm suối nóng, ngách sau cổng WATER. | Tây (trên) → Đông (giữa) |
+| M6 Đỉnh Dung Nham | Đường vòng quanh hồ dung nham. Đảo giữa hồ có rương; cầu ván bị tảng đá (EARTH) chặn. Thềm trùm phía đông. | Tây → Đông, ngay sau trùm |
+| M7 Cổng Tàn Tích | Đại lộ thẳng từ chân map lên cổng lớn trong bức tường phía bắc. Hai sân hai bên, hai hồ nước. Hầm mộ sau đèn LIGHT. | Tây (dưới) → cổng bắc, đặt trong map |
+| M8 Hành Lang Rune | Hành lang dài trái → phải, 8 phòng nhỏ mở ra hai bên. Hai phòng khóa: LIGHTNING và DARK. | Tây (cầu thang) → Đông |
+| M9 Điện Phong Ấn | Đối xứng trên / dưới: sân ngoài có hai hồ, điện kín một cửa, hai điện phụ (bên trong là rương sau cổng METAL / đền LIGHT). | Tây |
+
+- Kiểm tra `mapProblems` đổi luật "lối tiến sau kẻ canh": so khoảng cách thẳng từ spawn, không chỉ theo trục x, vì lối ra nay có thể ở bất kỳ cạnh nào.
+- Test mới: hai map bất kỳ khác nhau ít nhất 1/6 số ô. Các bản sao cũ chỉ khác 0–13%.
+- `simulate` gọi `settleWalker`: chuyến đang đi mà người dẫn đứng trên ô không còn đứng được thì về `spawn`. Không áp dụng cho Vết Nứt, trận đánh và chuyến đã xong. Cách này không đổi phiên bản save và dùng được cho mọi lần đổi bố cục sau này.
+- Không đặt lối ra ở mép trên / mép dưới, vì khung cây và cột ở hai mép đó che mất cổng; hình cổng cũng chỉ hợp với lối dọc. Cổng bắc của M7 vì vậy đặt lùi vào trong map.
+- Batch `adventure-11-map`:
+  - Ảnh `before/` M4–M9 đã chụp lại; prompt M4–M9 đã viết lại, có mô tả bố cục riêng từng map.
+  - Ảnh và tranh cũ chuyển sang `before/old-layout/` và `after/old-layout/`.
+  - M1–M3 không đổi.
+

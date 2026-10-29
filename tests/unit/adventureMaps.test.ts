@@ -9,6 +9,7 @@ import { contentProblems, MAP_LIST, MAPS, PROPS, ZONE_LIST, zoneAreas, type Area
 import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
 import { T0, adventureWorld, ctxAt, keys, ok, squad, standBy, strong } from './adventureKit';
 import { mapGraphProblems } from '../../src/areas/adventure/logic/mapGraph';
+import { settleWalker } from '../../src/areas/adventure/logic/simulate';
 import { blockedTiles, groupDistance, groupPosition, mapProblems, reachableTiles, thingsOf, tileCenter, walkableOf } from '../../src/areas/adventure/logic/maps';
 
 describe('exploration areas (§3.10)', () => {
@@ -134,5 +135,29 @@ describe('ways between areas (decision 043)', () => {
     const a = { ...adventureOf(w), beaten: [`map_forest_heart/${heart.groups.find((g) => g.kind === 'boss')!.id}`] };
     expect(exitLock(w, a, heart, next)).toBe('zone');
     expect(exitLock(w, adventureOf(w), heart, next)).toBe('guardian');
+  });
+});
+
+describe('every area its own layout (decision 043, wave 1)', () => {
+  it('no two areas share a layout: each pair differs on at least a sixth of its tiles (the old copies differed on 0–13%)', () => {
+    for (const [i, a] of MAP_LIST.entries()) {
+      for (const b of MAP_LIST.slice(i + 1)) {
+        let diff = 0;
+        a.terrain.forEach((row, y) => [...row].forEach((c, x) => (diff += c === b.terrain[y]![x] ? 0 : 1)));
+        expect(diff, `${a.id} / ${b.id}`).toBeGreaterThan((a.cols * a.rows) / 6);
+      }
+    }
+  });
+
+  it('a walker left on ground that is no longer walkable goes back to the spawn; elsewhere nothing moves', () => {
+    const w = ok(startRun(strong(adventureWorld()), { zoneId: 'zone_forest', keys, roster: squad }, ctxAt(T0)));
+    const a = adventureOf(w);
+    expect(settleWalker(a)).toBe(a);
+    const peak = MAPS.map_mountain_peak!;
+    const lava = tileCenter(peak, 20, 10);
+    const stuck = { ...a, run: { ...a.run!, zoneId: 'zone_mountain', mapId: peak.id, ...lava } };
+    expect(settleWalker(stuck).run).toMatchObject({ mapId: peak.id, ...tileCenter(peak, peak.spawn.x, peak.spawn.y) });
+    const rift = { ...stuck, run: { ...stuck.run, rift: { floor: 0, ruleId: 'x' } } };
+    expect(settleWalker(rift)).toBe(rift);
   });
 });

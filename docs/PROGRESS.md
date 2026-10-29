@@ -10,6 +10,34 @@
 
 ## Nhật ký
 
+### 2026-10-29 — Adventure: Đợt 1 mở rộng map — bố cục mới cho M4–M9 (decision 043)
+✅ Đã làm:
+- 6 map Núi / Tàn Tích trước đây là bản sao bố cục của Rừng; nay mỗi map một kiểu riêng (bảng ở decision 043, mục "Đợt 1"):
+  - M4: leo dốc chữ chi qua 3 bậc thềm.
+  - M5: phòng mỏ nối bằng đường hầm.
+  - M6: đường vòng quanh hồ dung nham, có đảo và cầu.
+  - M7: đại lộ thẳng lên cổng bắc.
+  - M8: hành lang dài, 8 phòng hai bên.
+  - M9: điện đối xứng.
+- Mọi id giữ nguyên. Lối ra không còn cố định ở hàng 12–14. Ô không ai đi tới được tự lấp thành đá. Đạo cụ trang trí rải theo seed và không chặn đường.
+- Chuyến đang dở mà người dẫn đứng trên ô không còn đứng được thì về điểm xuất phát (`settleWalker` trong `logic/simulate.ts`, không đổi save).
+- Luật "lối tiến sau kẻ canh" đo khoảng cách thẳng thay vì theo trục x.
+- Batch `adventure-11-map`: chụp lại ảnh `before/` M4–M9, viết lại 6 prompt; ảnh và tranh cũ chuyển sang `old-layout/`. M1–M3 giữ nguyên.
+📁 File chính: `content/adventure/maps.json`, `src/areas/adventure/logic/{simulate,maps}.ts`, `tests/unit/adventureMaps.test.ts`, `docs/decisions/043-adventure-world-map.md`, `scripts/capture/adventureMaps.ts` (state có `lock`), `art_inbox/.batch/adventure-11-map/{PROMPT.md,before/}` (art_inbox không vào git).
+🧪 Đã kiểm tra:
+- `npm run check` xanh (113 file, 1.514 test). Test mới: mọi cặp map khác nhau ≥ 1/6 số ô; người dẫn đứng trên dung nham → về spawn, đứng đúng chỗ → giữ nguyên, Vết Nứt → giữ nguyên.
+- Mọi map qua `mapProblems` và `mapGraphProblems`.
+- Chụp 9 map trong sandbox `sandbox-anim` bằng Electron: M4–M9 vẽ đúng, lối ra hiện rõ.
+- Chưa đi bộ thử trong game.
+⚠️ Tự quyết:
+- Không dùng lối ra ở mép trên / dưới (khung cây và cột ở mép che mất cổng); cổng bắc M7 đặt lùi vào trong map.
+- Sửa vị trí người dẫn khi tải đặt ở `simulate` thay vì migration, để dùng được cho mọi lần đổi bố cục sau.
+👉 Bạn cần:
+- Chơi thử một chuyến Núi và một chuyến Tàn Tích.
+- Vẽ lại 6 tranh M4–M9 theo `art_inbox/.batch/adventure-11-map/PROMPT.md` (ảnh `before/` mới).
+- Xác nhận Q2 / Q3 / Q6 / Q7 trong `docs/WORLD_MAP_AUDIT.md` trước Đợt 2.
+➡️ Bước tiếp: Đợt 2 — map nhánh N1 + N2 (vùng Rừng).
+
 ### 2026-10-29 — Adventure: audit bản đồ thế giới + Đợt 0 nền tảng mở rộng 18 map (decision 043)
 ✅ Đã làm (chủ dự án giao spec mở rộng map, chọn **hướng 3 (lai)**):
 1. **Audit** `docs/WORLD_MAP_AUDIT.md`:

@@ -159,9 +159,11 @@ export function mapProblems(map: AreaMap): string[] {
   // Every thing usable once every gate is open (no dead corner, §3.5).
   for (const t of thingsOf(map)) if (!usableFrom(map, t, open)) say(`${t.kind} ${t.id} cannot be reached`);
   for (const g of map.groups) if (!walk(g) || !open.has(idx(map, g))) say(`group ${g.id} stands where nobody can walk (${g.x},${g.y})`);
-  // A gate locked behind the guardian stands behind it: further from the way in than the guardian itself.
+  // A gate locked behind the guardian stands behind it: further from the way in than the guardian itself (exits may sit on any edge,
+  // decision 043, so the distance is measured straight, not along x).
   const guardian = map.groups.find((g) => g.kind !== 'normal');
-  for (const e of map.exits) if (e.lock === 'guardian' && (!guardian || Math.abs(e.x - map.spawn.x) < Math.abs(guardian.x - map.spawn.x))) say(`gate ${e.id} is not behind the guardian`);
+  const fromSpawn = (x: number, y: number) => Math.hypot(x - map.spawn.x, y - map.spawn.y);
+  for (const e of map.exits) if (e.lock === 'guardian' && (!guardian || fromSpawn(e.x + (e.w - 1) / 2, e.y + (e.h - 1) / 2) < fromSpawn(guardian.x, guardian.y))) say(`gate ${e.id} is not behind the guardian`);
   // The main road never needs an element gate: exits, the portal, the guardians and the boss with every gate shut.
   for (const t of thingsOf(map)) if ((t.kind === 'exit' || t.kind === 'portal') && !usableFrom(map, t, shut)) say(`${t.kind} ${t.id} is behind an element gate`);
   for (const g of map.groups) if (g.kind !== 'normal' && !shut.has(idx(map, g))) say(`${g.kind} ${g.id} is behind an element gate`);
