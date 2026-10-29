@@ -1,6 +1,6 @@
 // How much of a zone has been found (spec §3.9): treasure chests, element gates, lore stones and portals opened for good, over all there
 // are in its areas. Pure.
-import { MAPS, ZONES } from './config/content';
+import { MAPS, ZONES, zoneAreas } from './config/content';
 import type { AdventureState } from './state';
 
 export interface Discovery {
@@ -29,4 +29,8 @@ export function discovery(a: Pick<AdventureState, 'openedChests' | 'openedGates'
   return { found, total, percent: total === 0 ? 100 : Math.round((found / total) * 100) };
 }
 
-export const zoneDiscovery = (a: Parameters<typeof discovery>[0], zoneId: string): Discovery => discovery(a, ZONES[zoneId]?.maps ?? []);
+/** A zone's discovery counts its side areas too (decision 043). */
+export const zoneDiscovery = (a: Parameters<typeof discovery>[0], zoneId: string): Discovery => {
+  const zone = ZONES[zoneId];
+  return discovery(a, zone ? zoneAreas(zone) : []);
+};

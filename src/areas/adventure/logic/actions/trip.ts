@@ -232,12 +232,22 @@ export const guardianBeaten = (a: AdventureState, map: AreaMap): boolean => {
   return !g || a.beaten.includes(groupKey(map.id, g.id));
 };
 
-/** Is a teleport gate open: one behind the guardian opens once it is beaten, and a gate into another zone needs that zone open. */
-export function exitOpen(w: WorldSave, a: AdventureState, map: AreaMap, exit: AreaMap['exits'][number]): boolean {
-  if (exit.lock === 'guardian' && !guardianBeaten(a, map)) return false;
+/** Why an exit is shut, or null when it is open (decision 043): its guardian, a shortcut not opened from the other side, a closed zone. */
+export type ExitLock = 'guardian' | 'shortcut' | 'zone';
+
+export function exitLock(w: WorldSave, a: AdventureState, map: AreaMap, exit: AreaMap['exits'][number]): ExitLock | null {
+  if (exit.lock === 'guardian' && !guardianBeaten(a, map)) return 'guardian';
+  if (exit.lock === 'shortcut' && !a.openedExits.includes(exit.id)) return 'shortcut';
   const dest = MAPS[exit.to];
-  return !!dest && (dest.zoneId === map.zoneId || zoneOpen(w, a, dest.zoneId));
+  if (!dest) return 'zone';
+  return dest.zoneId === map.zoneId || zoneOpen(w, a, dest.zoneId) ? null : 'zone';
 }
+
+/** Is a teleport gate open: one behind the guardian opens once it is beaten, and a gate into another zone needs that zone open. */
+export const exitOpen = (w: WorldSave, a: AdventureState, map: AreaMap, exit: AreaMap['exits'][number]): boolean => exitLock(w, a, map, exit) === null;
+
+/** The shortcuts of `dest` that lead back to `from`: walking from `from` into `dest` opens them (decision 043). */
+export const shortcutsBack = (from: AreaMap, dest: AreaMap): string[] => dest.exits.filter((e) => e.lock === 'shortcut' && e.to === from.id).map((e) => e.id);
 
 /** Is the portal of an area lit: the entrance of an open zone, or an area whose guardian / boss has fallen. */
 export function portalLit(w: WorldSave, a: AdventureState, mapId: string): boolean {

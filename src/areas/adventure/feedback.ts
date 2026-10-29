@@ -6,7 +6,7 @@ import type { EventBase } from '../../core/events';
 import { formatInt, t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 import { quipLine, type QuipTrigger } from './logic/bonds';
-import { AB, AFFIXES, ELEMENT_NAMES, ENEMIES, NODES, RIFT, RIFT_RULES, SKILLS, TITLES, ZONES, type LineageId } from './logic/config/content';
+import { AB, AFFIXES, ELEMENT_NAMES, ENEMIES, MAPS, NODES, RIFT, RIFT_RULES, SKILLS, TITLES, ZONES, type LineageId } from './logic/config/content';
 import { isAdventureEvent } from './logic/events';
 
 export interface Presentation {
@@ -61,6 +61,8 @@ export function adventurePresentation(e: EventBase, origin: 'action' | 'tick' | 
       return Object.keys(e.items).length > 0 ? { sound: 'coin_collect', toast: t(T.harvest, { items: itemsText(e.items) }) } : null;
     case 'ADVENTURE_GATE_OPENED':
       return { sound: 'level_up', toast: t(T.gate, { element: elementName(e.element) }) };
+    case 'ADVENTURE_SHORTCUT_OPENED':
+      return { sound: 'level_up', toast: t(T.shortcut, { map: MAPS[e.to]?.nameVi ?? '' }) };
     case 'ADVENTURE_SPRING':
       return { sound: 'notify', toast: T.spring };
     case 'ADVENTURE_LORE_FOUND':

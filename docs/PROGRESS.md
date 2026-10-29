@@ -5,10 +5,38 @@
 **Chiến lược (decision 017, 022):** gameplay trước, art sau; phong cách chuẩn Sobi Farm, chủ dự án tạo ảnh Gemini theo batch (`asset/batches/`), agent cắt và nối vào game. GĐ15 phát hành.
 **Tiến độ GĐ14:** 28 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). **Adventure** (giao diện theo ảnh mẫu, 212 asset batch adventure-03..10, 2026-10-23, chờ duyệt; còn tạo lại sheet K5, CP2; animation trận bằng code + pipeline / prompt AI: decision 040, 2026-10-24, chờ duyệt). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
-**Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v4 từ decision 041).
+**Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v5 từ decision 043).
 **Bước tiếp theo:** chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
 
 ## Nhật ký
+
+### 2026-10-29 — Adventure: audit bản đồ thế giới + Đợt 0 nền tảng mở rộng 18 map (decision 043)
+✅ Đã làm (chủ dự án giao spec mở rộng map, chọn **hướng 3 (lai)**):
+1. **Audit** `docs/WORLD_MAP_AUDIT.md`:
+   - 9 map thực chất chỉ có 3 bố cục (M2 = M5 = M8, M3 = M6 = M9), phòng kín, lối ra cố định ở hàng 12–14.
+   - Bảng lối ra và boss gate; so sánh với graph mục tiêu (17 cạnh mới; spec tự mâu thuẫn ở M5 → M7).
+   - Roster quái, lore, ảnh hưởng tới batch vẽ lại `adventure-11-map`; 9 câu hỏi.
+2. **Decision 043**:
+   - Giữ bố cục M1–M3, đổi bố cục M4–M9, vẽ lại 6 tranh.
+   - Tuyến chính giữ như code.
+   - Map nhánh nằm ở `zone.branches`.
+   - Đường tắt mở từ một phía.
+3. **Đợt 0** (không thêm map, cảm giác chơi không đổi):
+   - Schema: `exits[].lock: 'shortcut'`, `facing`, `kind`; id lối ra không trùng; `zones[].branches`.
+   - `exitLock()` cho biết lý do khóa (kẻ canh / lối tắt / vùng chưa mở), bản đồ hiện đúng lý do. Trước đây lối sang vùng chưa mở ghi sai "Hạ kẻ canh khu".
+   - `takeExit` mở lối tắt ở map đích khi đi từ phía bên kia, kèm sự kiện + toast "Mở lối tắt về …".
+   - % khám phá vùng đếm cả map nhánh.
+   - `logic/mapGraph.ts`: lối có đường về, lối tắt mở được, mọi map của vùng đi tới được, map thuộc đúng một vùng, map nhánh không có trùm.
+   - Ô đến không trùng nhóm quái.
+   - Save slice Adventure **v5** (`openedExits: []`).
+📁 File chính: `docs/WORLD_MAP_AUDIT.md`, `docs/decisions/043-adventure-world-map.md`, `content/schemas/adventure/{maps,zones}.ts`, `src/areas/adventure/logic/{state,migrations,progress,maps,mapGraph,events}.ts`, `logic/config/content.ts`, `logic/actions/{trip,explore}.ts`, `ui/sceneVm.ts`, `scene/{sceneState,mapView}.ts`, `feedback.ts`, `src/i18n/{vi.ts,en/partC.ts}`, tests `adventureMaps`, `adventure`, `adventureEngagement`.
+🧪 Đã kiểm tra:
+- `npm run check` xanh (113 file, 1.512 test).
+- Test mới: content hiện tại qua kiểm tra graph; bắt được lối không có đường về / lối tắt không mở được / map nhánh bị cô lập / map không thuộc vùng; đi M1 → M2 mở lối tắt M2 → M1 (lưu vĩnh viễn, có sự kiện, quay đúng hướng); lối sang vùng chưa mở báo `zone`; migration slice thật v2 → v5.
+- Chưa chạy game / sandbox: content không đổi nên bản đồ hiện tại không có lối tắt nào để thấy.
+⚠️ Tự quyết: các câu Q1–Q9 khác theo đề xuất audit, ghi trong decision 043 là "chờ xác nhận trước đợt liên quan"; `kind` lối ra mới chỉ lưu, mọi kiểu vẫn vẽ bằng cổng (ASSET_TODO).
+👉 Bạn cần: đọc `docs/WORLD_MAP_AUDIT.md` mục 8, xác nhận Q2 (vùng của map mới), Q3 (vùng Biển), Q6 (cổng khu ở map nhánh), Q7 (lore Hộ Pháp Cổ Đại).
+➡️ Bước tiếp: Đợt 1, đổi bố cục M4–M9 (6 map trùng) + sửa vị trí chuyến đang dở khi tải; chụp lại ảnh `before/` cho 6 tranh cần vẽ lại.
 
 ### 2026-10-25 — Adventure: hệ animation trận mới — Phaser + key pose + battle_fx.json + Xưởng animation (decision 042 §3, đã duyệt)
 ✅ Đã làm: sân trận vẽ bằng Phaser (`scene/battle/`, chạy kèm AdventureScene) thay 2 canvas 2D + ảnh DOM; mọi bảng nhịp / thân / hướng ảnh / hạt / hiệu ứng 9 hệ / phản ứng / kỹ năng riêng chuyển vào `content/adventure/battle_fx.json` (schema, Admin "Animation trận"); key pose `cb_<art>_<pose>` có sẵn móc (thiếu → ảnh gốc); lịch cue thuần `ui/battlePlan.ts`; Admin "Xưởng animation trận" (`#/battle-lab`) chạy thử / sửa / lưu phần riêng của kỹ năng. Bỏ `ui/battleStage.ts`, `ui/battleCues.ts`, `ui/fx/*`.

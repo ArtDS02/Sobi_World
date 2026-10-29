@@ -17,6 +17,8 @@ export const zoneSchema = z.strictObject({
   levels: range,
   /** Its areas in walking order; the first one holds the entrance portal, the last one the zone boss. */
   maps: z.array(z.string().regex(/^map_[a-z0-9_]+$/)).min(1),
+  /** Side areas off the main road (decision 043): explored and counted, never needed to reach the boss; sweeps and the bot skip them. */
+  branches: z.array(z.string().regex(/^map_[a-z0-9_]+$/)).optional(),
 });
 
 export const lootEntrySchema = z.strictObject({ itemId, weight: posInt, min: posInt, max: posInt });

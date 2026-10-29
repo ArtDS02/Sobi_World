@@ -159,6 +159,8 @@ export type Enemy = (typeof ENEMY_LIST)[number];
 export const ZONE_LIST = ADVENTURE_CONTENT.zones.zones;
 export const ZONES = Object.fromEntries(ZONE_LIST.map((z) => [z.id, z]));
 export type Zone = (typeof ZONE_LIST)[number];
+/** Every area of a zone: the main road, then its side areas (decision 043). */
+export const zoneAreas = (zone: Zone): readonly string[] => [...zone.maps, ...(zone.branches ?? [])];
 export const LOOT_TABLES = ADVENTURE_CONTENT.zones.tables;
 export const EVENTS = Object.fromEntries(ADVENTURE_CONTENT.zones.events.map((e) => [e.id, e]));
 
@@ -238,7 +240,7 @@ export function contentProblems(): string[] {
     for (const s of e.skills) skillOfType(`enemy ${e.id}`, s, 'enemy');
     for (const p of e.phases) for (const s of p.addSkills) skillOfType(`enemy ${e.id}`, s, 'enemy');
   }
-  for (const z of ZONE_LIST) for (const m of z.maps) {
+  for (const z of ZONE_LIST) for (const m of zoneAreas(z)) {
     need(`zone ${z.id}`, m, MAPS);
     if (MAPS[m] && MAPS[m]!.zoneId !== z.id) problems.push(`${m} belongs to ${MAPS[m]!.zoneId}, listed in ${z.id}`);
   }

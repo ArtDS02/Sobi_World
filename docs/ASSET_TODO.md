@@ -4,6 +4,11 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
+## Adventure: kiểu lối ra giữa các map (decision 043)
+| Asset | Ghi chú |
+|---|---|
+| Ngưỡng lối ra theo `exits[].kind`: `trail`, `cave`, `bridge`, `stairs`, `shore`, `tunnel` | Tạm thời mọi kiểu vẽ bằng hình cổng dịch chuyển `adv_exit`. Cần khi làm map nhánh (Đợt 2+); mỗi kiểu một ảnh mở / một trạng thái khóa (rễ gai, đá sụp, cổng phong ấn…). |
+
 ## Adventure: art chiến đấu quay phải, key pose (decision 042)
 | Asset | Ghi chú |
 |---|---|

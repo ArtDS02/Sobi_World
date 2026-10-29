@@ -78,7 +78,7 @@ export interface MapObjects {
   groups: Map<string, { img: Phaser.GameObjects.Image; sx: number; sy: number; phase: number; shadow: Phaser.GameObjects.Ellipse; label: Phaser.GameObjects.Container }>;
   sparkles: Map<string, Phaser.GameObjects.Text>;
   /** The teleport gates (exits): the portal picture, its swirl of light while open, the lock and its words while shut. */
-  gates: Map<string, { img: Phaser.GameObjects.Image; glow: Phaser.GameObjects.Image; lock: Phaser.GameObjects.Container }>;
+  gates: Map<string, { img: Phaser.GameObjects.Image; glow: Phaser.GameObjects.Image; lock: Phaser.GameObjects.Container; words: Phaser.GameObjects.Text }>;
   dressing: AreaDressing;
 }
 
@@ -144,15 +144,19 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     const feet = (e.y + e.h) * t;
     const glow = scene.add.image(cx, feet - t * 1.4, 'adv-fx-blob').setDisplaySize(t * 3.4, t * 3.4).setTint(view?.forward ? 0x9ae6ff : 0xd8ffd0).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.6);
     const img = standOn(scene, gateKey(scene, !!view?.open), map, e.x - 0.5, e.y, e.w + 1, e.h, 1.05);
-    const words = scene.add.text(0, -6, vi.adventure.explore.gateLocked, { fontSize: '15px', fontStyle: 'bold', color: '#fff6e0', backgroundColor: '#5b3a1cdd', padding: { x: 8, y: 4 } }).setOrigin(0.5, 1);
+    const words = scene.add.text(0, -6, lockWords(view?.lock ?? null), { fontSize: '15px', fontStyle: 'bold', color: '#fff6e0', backgroundColor: '#5b3a1cdd', padding: { x: 8, y: 4 } }).setOrigin(0.5, 1);
     const lockKey = textureKey('ui_icon_lock');
     const lockIcon = scene.textures.exists(lockKey) ? [scene.add.image(0, -words.height - 22, lockKey).setDisplaySize(34, 34)] : [];
     const lock = scene.add.container(cx, (e.y - 0.4) * t, [words, ...lockIcon]).setVisible(false);
-    gates.set(e.id, { img, glow, lock });
+    gates.set(e.id, { img, glow, lock, words });
     layer.add([glow, img, lock]);
   }
   return { layer, things, groups, sparkles, gates, dressing };
 }
+
+/** What a shut exit says when the party comes close (decision 043). */
+const lockWords = (lock: AdventureSceneState['exits'][number]['lock']): string =>
+  lock === 'shortcut' ? vi.adventure.explore.shortcutLocked : lock === 'zone' ? vi.adventure.explore.zoneLocked : vi.adventure.explore.gateLocked;
 
 /** The tag over a group seen up close: its elements' badges and how many it is (origin at the bottom centre). */
 function foeLabel(scene: Phaser.Scene, elements: readonly AdventureSceneState['groups'][number]['elements'][number][], count: number, affix: string | null): Phaser.GameObjects.Container {
@@ -192,6 +196,8 @@ export function refreshThings(scene: Phaser.Scene, map: AreaMap, objs: MapObject
     // An open gate breathes light; a shut one is dark and says why when the party comes close.
     g.glow.setVisible(view.open).setAlpha(0.45 + 0.25 * Math.sin(time / 380)).setRotation(time / 1600);
     const close = !!near && Math.hypot(near.x - (e.x + e.w / 2) * map.tile, near.y - (e.y + e.h / 2) * map.tile) < map.tile * 4;
+    const words = lockWords(view.lock);
+    if (g.words.text !== words) g.words.setText(words);
     g.lock.setVisible(!view.open && close);
   }
   for (const th of thingsOf(map)) {

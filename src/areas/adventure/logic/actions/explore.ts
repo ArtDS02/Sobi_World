@@ -15,7 +15,7 @@ import type { Run } from '../state';
 import { autoBattle, groupAffix, quickWinnable, teamLevel, withAffix } from '../variants';
 import { credit, put, runAdventure, type AdventureResult } from './kit';
 import { settleBattle } from './battle';
-import { commit, exitOpen, finish, homeResult, giveExp, groupEnemies, groupKey, placeAt, portalLit, recordFeats, speak, stepOf, type Step } from './trip';
+import { commit, exitOpen, finish, homeResult, giveExp, groupEnemies, groupKey, placeAt, portalLit, recordFeats, shortcutsBack, speak, stepOf, type Step } from './trip';
 
 export type Position = Vec & { facing?: Run['facing'] | undefined };
 
@@ -213,7 +213,7 @@ export function travel(world: WorldSave, args: Position & { to: string }, ctx: A
   });
 }
 
-/** Walking out by an exit: the party arrives in the next (or previous) area of the zone. */
+/** Walking out by an exit: the party arrives in the area it leads to (and opens the shortcuts there that lead back). */
 export function takeExit(world: WorldSave, args: Position & { exitId: string }, ctx: ActionContext): AdventureResult {
   return onFoot(world, args, ctx, (st, map) => {
     const exit = map.exits.find((e) => e.id === args.exitId);
@@ -227,9 +227,15 @@ export function takeExit(world: WorldSave, args: Position & { exitId: string }, 
     st.run.zoneId = dest.zoneId;
     st.run.x = at.x;
     st.run.y = at.y;
-    st.run.facing = exit.x <= 1 ? 'left' : 'right';
+    st.run.facing = exit.facing ?? (exit.x <= 1 ? 'left' : 'right');
     st.run.defeated = [];
     st.events.push({ type: 'ADVENTURE_AREA_ENTERED', mapId: dest.id, via: 'exit' });
+    // Coming through from the far side opens the shortcuts of the new area that lead back (decision 043).
+    for (const id of shortcutsBack(map, dest)) {
+      if (st.a.openedExits.includes(id)) continue;
+      st.a = { ...st.a, openedExits: [...st.a.openedExits, id] };
+      st.events.push({ type: 'ADVENTURE_SHORTCUT_OPENED', mapId: dest.id, exitId: id, to: map.id });
+    }
     return { ok: true };
   });
 }

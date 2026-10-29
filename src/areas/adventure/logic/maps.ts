@@ -166,7 +166,13 @@ export function mapProblems(map: AreaMap): string[] {
   for (const t of thingsOf(map)) if ((t.kind === 'exit' || t.kind === 'portal') && !usableFrom(map, t, shut)) say(`${t.kind} ${t.id} is behind an element gate`);
   for (const g of map.groups) if (g.kind !== 'normal' && !shut.has(idx(map, g))) say(`${g.kind} ${g.id} is behind an element gate`);
   // Arrivals land on walkable ground.
-  for (const other of Object.values(MAPS)) for (const e of other.exits) if (e.to === map.id && !walk({ x: e.arriveX, y: e.arriveY })) say(`arrival from ${other.id} lands on a blocked tile`);
+  for (const other of Object.values(MAPS)) {
+    for (const e of other.exits) {
+      if (e.to !== map.id) continue;
+      if (!walk({ x: e.arriveX, y: e.arriveY })) say(`arrival from ${other.id} lands on a blocked tile`);
+      if (map.groups.some((g) => g.x === e.arriveX && g.y === e.arriveY)) say(`arrival from ${other.id} lands on an enemy group`);
+    }
+  }
   return out;
 }
 

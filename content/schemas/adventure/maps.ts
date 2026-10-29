@@ -9,6 +9,11 @@ import { element } from './combat';
 /** `.` ground, `,` path, `=` bridge (walkable); `#` wall / cliff, `~` water (blocked). */
 export const TERRAIN_CHARS = ['.', ',', '=', '#', '~'] as const;
 
+/** What keeps an exit shut (decision 043). */
+export const EXIT_LOCKS = ['guardian', 'shortcut'] as const;
+/** How an exit looks: a teleport gate (default), a trail through trees, a cave mouth, a bridge, stairs, a shore, a tunnel. */
+export const EXIT_KINDS = ['gate', 'trail', 'cave', 'bridge', 'stairs', 'shore', 'tunnel'] as const;
+
 const cell = { x: z.number().int().min(0), y: z.number().int().min(0) };
 const id = (prefix: string) => z.string().regex(new RegExp(`^${prefix}_[a-z0-9_]+$`));
 const point = z.strictObject(cell);
@@ -52,10 +57,24 @@ export const mapSchema = z.strictObject({
   /** Top-left tile of the 2×2 portal. */
   portal: point,
   /**
-   * The teleport gates to the areas around (adventure-big-update-1 §13). `lock: 'guardian'` = it stands behind the area's guardian or
-   * boss and opens only once that one is beaten; a gate into another zone also needs that zone open.
+   * The ways to the areas around (adventure-big-update-1 §13, decision 043). `lock: 'guardian'` = it stands behind the area's guardian
+   * or boss and opens only once that one is beaten; `lock: 'shortcut'` = shut until the party walks the way back from the other side;
+   * a way into another zone also needs that zone open. `facing` = how the party faces on arrival; `kind` = how the threshold looks.
    */
-  exits: z.array(z.strictObject({ id: id('exit'), ...cell, w: posInt, h: posInt, to: id('map'), arriveX: z.number().int(), arriveY: z.number().int(), lock: z.enum(['guardian']).optional() })),
+  exits: z.array(
+    z.strictObject({
+      id: id('exit'),
+      ...cell,
+      w: posInt,
+      h: posInt,
+      to: id('map'),
+      arriveX: z.number().int(),
+      arriveY: z.number().int(),
+      lock: z.enum(EXIT_LOCKS).optional(),
+      facing: z.enum(['up', 'down', 'left', 'right']).optional(),
+      kind: z.enum(EXIT_KINDS).optional(),
+    }),
+  ),
   props: z.array(z.strictObject({ prop: id('prop_adv'), ...cell })),
   groups: z.array(groupSchema),
   chests: z.array(z.strictObject({ id: id('chest'), ...cell, table: z.string() })),
@@ -80,5 +99,12 @@ export const mapsFileSchema = z.strictObject({ maps: z.array(mapSchema).min(1) }
       if (bad) ctx.addIssue({ code: 'custom', message: `${m.id}: row ${y} has an unknown tile '${bad}'` });
     });
   }
-  for (const m of f.maps) for (const e of m.exits) if (!ids.has(e.to)) ctx.addIssue({ code: 'custom', message: `${m.id}: exit to unknown map ${e.to}` });
+  const exitIds = new Set<string>();
+  for (const m of f.maps) {
+    for (const e of m.exits) {
+      if (!ids.has(e.to)) ctx.addIssue({ code: 'custom', message: `${m.id}: exit to unknown map ${e.to}` });
+      if (exitIds.has(e.id)) ctx.addIssue({ code: 'custom', message: `duplicate exit ${e.id}` });
+      exitIds.add(e.id);
+    }
+  }
 });

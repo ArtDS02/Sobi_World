@@ -1,7 +1,7 @@
 // The plain state the Adventure's scene draws (scene/sceneState.ts), built from the world: where the party stands and when it must be put
 // back, the leader and followers, the groups of the area (their look, elements, beaten or not), what is opened or used. Pure.
 import type { WorldSave } from '../../../core/save/world';
-import { exitOpen, groupEnemies, groupKey, portalLit } from '../logic/actions/trip';
+import { exitLock, groupEnemies, groupKey, portalLit } from '../logic/actions/trip';
 import { CAMP_ART } from '../logic/art';
 import { ENEMIES, MAPS, RIFT, ZONES, ZONE_LIST } from '../logic/config/content';
 import { adventureOf } from '../logic/save/lens';
@@ -49,7 +49,10 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
         defeated: run.defeated.includes(groupKey(run.mapId, g.id)) || (g.kind !== 'normal' && a.beaten.includes(groupKey(run.mapId, g.id))),
       };
     }),
-    exits: (map?.exits ?? []).map((e) => ({ id: e.id, open: !!map && exitOpen(world, a, map, e), forward: e.lock === 'guardian' })),
+    exits: (map?.exits ?? []).map((e) => {
+      const lock = map ? exitLock(world, a, map, e) : 'zone';
+      return { id: e.id, open: lock === null, lock, forward: e.lock === 'guardian' };
+    }),
     usedSpots: run.harvested.filter((k) => k.startsWith(prefix)).map((k) => k.slice(prefix.length)),
     springUsed: run.springs.includes(run.mapId),
     portalLit: portalLit(world, a, run.mapId),

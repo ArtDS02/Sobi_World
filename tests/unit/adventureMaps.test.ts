@@ -3,7 +3,12 @@
 // on walkable ground; the walker's ground is the grid; patrols and touches.
 import { describe, expect, it } from 'vitest';
 import { canStand } from '../../src/systems/character';
-import { MAP_LIST, MAPS, PROPS, ZONE_LIST } from '../../src/areas/adventure/logic/config/content';
+import { startRun, takeExit } from '../../src/areas/adventure/logic/actions/run';
+import { exitLock } from '../../src/areas/adventure/logic/actions/trip';
+import { contentProblems, MAP_LIST, MAPS, PROPS, ZONE_LIST, zoneAreas, type AreaMap, type Zone } from '../../src/areas/adventure/logic/config/content';
+import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
+import { T0, adventureWorld, ctxAt, keys, ok, squad, standBy, strong } from './adventureKit';
+import { mapGraphProblems } from '../../src/areas/adventure/logic/mapGraph';
 import { blockedTiles, groupDistance, groupPosition, mapProblems, reachableTiles, thingsOf, tileCenter, walkableOf } from '../../src/areas/adventure/logic/maps';
 
 describe('exploration areas (§3.10)', () => {
@@ -68,5 +73,66 @@ describe('exploration areas (§3.10)', () => {
   it('lists every usable thing of an area', () => {
     const kinds = new Set(thingsOf(MAPS.map_forest_heart!).map((t) => t.kind));
     for (const k of ['chest', 'gate', 'spring', 'lore', 'shrine', 'portal', 'exit']) expect(kinds.has(k as never), k).toBe(true);
+  });
+});
+
+describe('ways between areas (decision 043)', () => {
+  const clone = <T>(x: T): T => structuredClone(x);
+
+  it('the content passes: every exit has a way back, every area of a zone is walked to from its entrance', () => {
+    expect(mapGraphProblems()).toEqual([]);
+    expect(contentProblems()).toEqual([]);
+  });
+
+  it('finds an exit without a way back, a shortcut nobody can open and an area cut off from its zone', () => {
+    const maps = clone(MAP_LIST) as AreaMap[];
+    const edge = maps.find((m) => m.id === 'map_forest_edge')!;
+    const deep = maps.find((m) => m.id === 'map_forest_deep')!;
+    deep.exits = deep.exits.filter((e) => e.to !== 'map_forest_edge');
+    expect(mapGraphProblems(maps).some((p) => p.includes('exit_f1_east has no way back'))).toBe(true);
+    const both = clone(MAP_LIST) as AreaMap[];
+    for (const m of both.filter((x) => x.id === 'map_forest_edge' || x.id === 'map_forest_deep')) for (const e of m.exits) if (e.to === 'map_forest_edge' || e.to === 'map_forest_deep') e.lock = 'shortcut';
+    expect(mapGraphProblems(both).some((p) => p.includes('can never be opened'))).toBe(true);
+    const zones = clone(ZONE_LIST) as Zone[];
+    zones[0]!.branches = ['map_forest_side'];
+    const side = { ...clone(edge), id: 'map_forest_side', exits: [] };
+    expect(mapGraphProblems([...MAP_LIST, side])).toContain('map_forest_side is in no zone');
+    expect(mapGraphProblems([...MAP_LIST, side], zones)).toContain('zone_forest: map_forest_side cannot be walked to from map_forest_edge');
+  });
+
+  it('a zone counts its side areas in what has been found', () => {
+    expect(zoneAreas({ ...ZONE_LIST[0]!, branches: ['map_x'] })).toEqual([...ZONE_LIST[0]!.maps, 'map_x']);
+  });
+
+  it('a shortcut stays shut until the party walks the way back from its other side, then stays open for good', () => {
+    const deep = MAPS.map_forest_deep!;
+    const back = deep.exits.find((e) => e.to === 'map_forest_edge')!;
+    const saved = back.lock;
+    back.lock = 'shortcut';
+    try {
+      let w = ok(startRun(strong(adventureWorld()), { zoneId: 'zone_forest', keys, roster: squad }, ctxAt(T0)));
+      w = withAdventure(w, { ...adventureOf(w), beaten: ['map_forest_edge/g_f1_elite'] });
+      expect(exitLock(w, adventureOf(w), deep, back)).toBe('shortcut');
+      const edge = MAPS.map_forest_edge!;
+      const exit = edge.exits[0]!;
+      const r = takeExit(w, { ...standBy(w, edge.id, exit.id), exitId: exit.id }, ctxAt(T0));
+      w = ok(r);
+      expect(adventureOf(w).openedExits).toEqual([back.id]);
+      expect(r.ok && r.events).toContainEqual({ type: 'ADVENTURE_SHORTCUT_OPENED', mapId: deep.id, exitId: back.id, to: edge.id });
+      expect(exitLock(w, adventureOf(w), deep, back)).toBeNull();
+      expect(adventureOf(w).run!.facing).toBe('right');
+    } finally {
+      if (saved) back.lock = saved;
+      else delete back.lock;
+    }
+  });
+
+  it('a shut way into a zone not open yet says so', () => {
+    const w = adventureWorld();
+    const heart = MAPS.map_forest_heart!;
+    const next = heart.exits.find((e) => e.to === 'map_mountain_foot')!;
+    const a = { ...adventureOf(w), beaten: [`map_forest_heart/${heart.groups.find((g) => g.kind === 'boss')!.id}`] };
+    expect(exitLock(w, a, heart, next)).toBe('zone');
+    expect(exitLock(w, adventureOf(w), heart, next)).toBe('guardian');
   });
 });
