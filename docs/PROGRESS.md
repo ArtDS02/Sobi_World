@@ -6,9 +6,20 @@
 **Tiến độ GĐ14:** 28 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). **Adventure** (giao diện theo ảnh mẫu, 212 asset batch adventure-03..10, 2026-10-23, chờ duyệt; còn tạo lại sheet K5, CP2; animation trận bằng code + pipeline / prompt AI: decision 040, 2026-10-24, chờ duyệt). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v5 từ decision 043).
-**Bước tiếp theo:** chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
+**Bước tiếp theo:** bản đồ v2 (decision 045): chủ dự án tạo 5 cảnh mẫu V1–V5 của batch `adventure-14-map-v2`; code camera bám + zoom ×2. Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
 
 ## Nhật ký
+
+### 2026-10-30 — Adventure: bản đồ v2 — chốt hướng (decision 045) + batch art `adventure-14-map-v2`
+✅ Đã làm:
+- Chủ dự án chốt Q2, Q3, Q6–Q9 của audit và A1–A5 của `docs/WORLD_MAP_V2_PROPOSAL.md`. Ghi thành decision 045: camera bám, zoom ×2, map 40 × 24 → 80 × 48, sương mù khám phá, khu ẩn 3 kiểu, 2–4 lối ra mỗi map, 10–20 nhóm quái đứng canh / ngủ, 6 loại quái, 5 cấp tha hóa (mạnh hơn), tha hóa theo vùng + thanh tẩy, 5 loại rương, quái đặc biệt có điều kiện, câu đố nhiều bước, suối trước trùm phụ. Bỏ tranh một tấm (hướng 3 / Q5): mọi map dựng bằng bộ ghép, cả M1–M3 bố cục lại.
+- Batch `adventure-14-map-v2` (art_inbox, 43 sheet, 261 asset): 5 cảnh mẫu V1–V5 có bản khối màu 20 × 11 ô làm hint; bộ ghép 4 vùng (ô nền, vách, lớp che, đạo cụ, vật mốc, lối ra / tường giả); rương 5 loại; tha hóa; suối; câu đố 8 hệ; huy hiệu 6 loại quái. Script sinh ở `art_inbox/.batch/adventure-14-map-v2/_src/`.
+- `art.py`: sheet `single` + `bg` dùng câu mở đầu "full-bleed" thay cho "một vật, có khoảng trống xung quanh" (hai câu cũ mâu thuẫn).
+📁 File chính: `docs/decisions/045-adventure-map-v2.md`, `docs/WORLD_MAP_V2_PROPOSAL.md`, `docs/ASSET_TODO.md`, `.claude/skills/image-to-prompt/scripts/art.py`.
+🧪 Đã kiểm tra: `art.py prep` qua (43 sheet, 89 file đính kèm). Chưa sửa code game.
+⚠️ Tự quyết: mép chuyển tiếp giữa các loại ô vẽ bằng code (Gemini không vẽ khớp bộ autotile); ô vẽ cho 80 px (ô thế giới vẫn 40 px). Vùng Biển tạm tên "Bờ Biển".
+👉 Bạn cần: tạo 5 cảnh mẫu V1–V5 trước, gửi lại để duyệt.
+➡️ Bước tiếp: cắt ảnh chuẩn từ cảnh mẫu, `prep` lại bộ ghép; code: camera bám + zoom ×2 + kích thước map.
 
 ### 2026-10-30 — Adventure: đợt animation trận — art 2 batch + kịch bản animation (decision 044)
 ✅ Đã làm:

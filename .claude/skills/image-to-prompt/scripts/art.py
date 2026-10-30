@@ -477,9 +477,14 @@ def render_prompt(ctx: Ctx, data: dict, sheet: dict) -> str:
         framing = p["framing"].get(kind, "")
 
     if mode == "single":
-        lines.append(p["single_opener"])
         obj = sheet["object"].strip()
-        lines.append(f"The object: {obj}")
+        if ctx.is_full_bleed(kind):
+            # A full-bleed scene has no "object with empty space around it"; that opener contradicts the framing.
+            lines.append("Draw ONE full-bleed image: the whole picture is the scene described below, edge to edge.")
+            lines.append(f"The scene: {obj}")
+        else:
+            lines.append(p["single_opener"])
+            lines.append(f"The object: {obj}")
     else:
         rows, cols = sheet["grid"]
         cells = sheet_cells(sheet)
