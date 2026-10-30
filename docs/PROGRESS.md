@@ -30,12 +30,13 @@
 - Biểu tượng Đóng băng dùng `ui_icon_status_freeze` cũ (batch không có `st_freeze`).
 - `fx_shield_dome` khung 4 dựng bằng code.
 - Quái mới N01–N12 chưa render → bỏ qua giai đoạn 5 (làm cùng đợt mở rộng map).
+- **Âm thanh (chủ dự án chọn `audio_v2`):** 37 âm `adv_*` (CC0) vào manifest + `AUDIO_KEYS`; mọi âm kịch bản gọi đều là audio key (test). Âm riêng của kịch bản thay âm trúng / gục mặc định cùng thời điểm (không phát chồng).
 👉 Bạn cần:
-- Chọn bộ âm `audio_v1` hay `audio_v2` và đặt vào `art_inbox/audio/` (kèm `credits.txt`).
+- Nghe thử âm trận; chỉnh `volume` trong manifest nếu cần (chưa chuẩn hoá âm lượng vì máy không có ffmpeg).
 - Tạo lại sheet A08 (Heo Thor).
 - Quyết có đổi ảnh gốc 5 heo theo `*_new*asset.png` không.
 - Duyệt animation trong Xưởng (`npm run admin` → `#/battle-lab`).
-➡️ Bước tiếp: nối âm thanh (khi có bộ âm chọn), A08, quái mới cùng đợt mở rộng map.
+➡️ Bước tiếp: A08, quái mới cùng đợt mở rộng map, kiểm tra trận thật từng vùng / trùm trong Electron.
 
 ### 2026-10-29 — Adventure: Đợt 1 mở rộng map — bố cục mới cho M4–M9 (decision 043)
 ✅ Đã làm:

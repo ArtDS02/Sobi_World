@@ -121,12 +121,13 @@ export function stepPlan(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 'a
     if (c.act.do === 'sound') sound(c.at, c.act.sound);
     else if (!reduce) add({ at: c.at, kind: 'act', cue: c });
   }
-  // One sound per kind and moment: a blow that reaches three units hits once.
+  // One sound per kind and moment: a blow that reaches three units hits once; a script's own sound at that moment replaces it.
+  const scripted = script.cues.filter((c) => c.act.do === 'sound').map((c) => c.at);
   const heard = new Set<string>();
   for (const r of reactions) {
     const s: BattleSound | null = r.kind === 'hit' ? 'adv_hit' : r.kind === 'hit-heavy' ? 'adv_crit' : r.kind === 'miss' ? 'adv_miss' : r.kind === 'heal' ? 'adv_heal' : r.kind === 'ko' ? 'adv_ko' : null;
     const k = `${s}:${Math.round(r.at / 40)}`;
-    if (!s || heard.has(k)) continue;
+    if (!s || heard.has(k) || scripted.some((at) => Math.abs(at - r.at) < 80)) continue;
     heard.add(k);
     sound(r.at, s);
   }

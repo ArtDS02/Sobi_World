@@ -1,7 +1,7 @@
 // Asset ids the game rules reference (spec §11, §12; art standard §3.1, §7.4). Paths never live
 // in src/: every id resolves through public/assets/manifest/assets.json.
 
-/** The 12 canonical audio keys (spec §12), then the Adventure's battle and map sounds (adventure-big-update-1). */
+/** The 12 canonical audio keys (spec §12), then the Adventure's battle and map sounds (adventure-big-update-1, decision 044). */
 export const AUDIO_KEYS = [
   'music_farm',
   'ui_click',
@@ -25,6 +25,44 @@ export const AUDIO_KEYS = [
   'adv_teleport',
   'adv_victory',
   'adv_exp_fill',
+  // The battle animation's sound layers (decision 044, AUDIO_SFX.md of batch adventure-12-animation).
+  'adv_bell',
+  'adv_bonk',
+  'adv_buff',
+  'adv_cheer',
+  'adv_dark_cast',
+  'adv_dark_hit',
+  'adv_debuff',
+  'adv_doom',
+  'adv_earth_cast',
+  'adv_earth_hit',
+  'adv_fire_cast',
+  'adv_fire_hit',
+  'adv_forge',
+  'adv_guard',
+  'adv_light_cast',
+  'adv_light_hit',
+  'adv_metal_cast',
+  'adv_metal_hit',
+  'adv_meteor',
+  'adv_nature_cast',
+  'adv_nature_hit',
+  'adv_phoenix',
+  'adv_pow',
+  'adv_quake',
+  'adv_roar',
+  'adv_shield_break',
+  'adv_stun',
+  'adv_thunder_cast',
+  'adv_thunder_hit',
+  'adv_ult_cutin',
+  'adv_void_cast',
+  'adv_void_hit',
+  'adv_water_cast',
+  'adv_water_hit',
+  'adv_wave',
+  'adv_whale_song',
+  'adv_whoosh',
 ] as const;
 export type AudioKey = (typeof AUDIO_KEYS)[number];
 

@@ -6922,6 +6922,339 @@
       "volume": 0.45,
       "credit": "Sobi Adventure — synthesised in scripts/art/sfx.ts",
       "license": "Original work, project-owned"
+    },
+    {
+      "id": "adv_bell",
+      "status": "production",
+      "asset": "audio/adv_bell.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_bonk",
+      "status": "production",
+      "asset": "audio/adv_bonk.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_buff",
+      "status": "production",
+      "asset": "audio/adv_buff.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_cheer",
+      "status": "production",
+      "asset": "audio/adv_cheer.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_dark_cast",
+      "status": "production",
+      "asset": "audio/adv_dark_cast.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_dark_hit",
+      "status": "production",
+      "asset": "audio/adv_dark_hit.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_debuff",
+      "status": "production",
+      "asset": "audio/adv_debuff.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_doom",
+      "status": "production",
+      "asset": "audio/adv_doom.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_earth_cast",
+      "status": "production",
+      "asset": "audio/adv_earth_cast.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_earth_hit",
+      "status": "production",
+      "asset": "audio/adv_earth_hit.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_fire_cast",
+      "status": "production",
+      "asset": "audio/adv_fire_cast.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_fire_hit",
+      "status": "production",
+      "asset": "audio/adv_fire_hit.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_forge",
+      "status": "production",
+      "asset": "audio/adv_forge.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_guard",
+      "status": "production",
+      "asset": "audio/adv_guard.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_light_cast",
+      "status": "production",
+      "asset": "audio/adv_light_cast.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_light_hit",
+      "status": "production",
+      "asset": "audio/adv_light_hit.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_metal_cast",
+      "status": "production",
+      "asset": "audio/adv_metal_cast.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_metal_hit",
+      "status": "production",
+      "asset": "audio/adv_metal_hit.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_meteor",
+      "status": "production",
+      "asset": "audio/adv_meteor.mp3",
+      "kind": "sfx",
+      "volume": 0.6,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_nature_cast",
+      "status": "production",
+      "asset": "audio/adv_nature_cast.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_nature_hit",
+      "status": "production",
+      "asset": "audio/adv_nature_hit.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_phoenix",
+      "status": "production",
+      "asset": "audio/adv_phoenix.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_pow",
+      "status": "production",
+      "asset": "audio/adv_pow.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_quake",
+      "status": "production",
+      "asset": "audio/adv_quake.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_roar",
+      "status": "production",
+      "asset": "audio/adv_roar.mp3",
+      "kind": "sfx",
+      "volume": 0.6,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_shield_break",
+      "status": "production",
+      "asset": "audio/adv_shield_break.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_stun",
+      "status": "production",
+      "asset": "audio/adv_stun.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_thunder_cast",
+      "status": "production",
+      "asset": "audio/adv_thunder_cast.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_thunder_hit",
+      "status": "production",
+      "asset": "audio/adv_thunder_hit.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_ult_cutin",
+      "status": "production",
+      "asset": "audio/adv_ult_cutin.mp3",
+      "kind": "sfx",
+      "volume": 0.7,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_void_cast",
+      "status": "production",
+      "asset": "audio/adv_void_cast.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_void_hit",
+      "status": "production",
+      "asset": "audio/adv_void_hit.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_water_cast",
+      "status": "production",
+      "asset": "audio/adv_water_cast.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_water_hit",
+      "status": "production",
+      "asset": "audio/adv_water_hit.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_wave",
+      "status": "production",
+      "asset": "audio/adv_wave.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_whale_song",
+      "status": "production",
+      "asset": "audio/adv_whale_song.mp3",
+      "kind": "sfx",
+      "volume": 0.6,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
+    },
+    {
+      "id": "adv_whoosh",
+      "status": "production",
+      "asset": "audio/adv_whoosh.mp3",
+      "kind": "sfx",
+      "volume": 0.55,
+      "credit": "Tự tạo bằng code (Claude, tổng hợp âm bằng Python/NumPy)",
+      "license": "CC0"
     }
   ]
 }

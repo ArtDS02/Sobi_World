@@ -20,7 +20,7 @@
 | Nên tạo lại (không bắt buộc) | **A13** Phượng Hoàng: pose hurt / ko vẽ nhỏ hơn idle. **E04** Cáo Lửa: sheet 3 hàng, pose victory to hơn các pose khác. **E03** Chim Sẻ Sấm: sheet 3×3 (9 con), đã chọn 6 ô. **A16** Heo Ngân Hà: chỉ có bản .jpg 1024 px (mỗi ô ~340 px, hơi mềm). **E05** Ếch Sương: còn vạch đất mảnh dưới pose attack / ko. **E22** đặt tên file khác (`Chibi Golem Guardian Pose Sheet.png`), đã dùng làm E22. |
 | Ảnh gốc mới của 5 heo (A13, A14, A17, A18, A19 `*_new*asset.png`) | Pose trong trận đã theo thiết kế mới, nhưng **ảnh gốc ở Farm / Trại vẫn là bản cũ** (`pig_phoenix`, `pig_turtle`, `pig_thienlong`, `pig_boar`, `pig_hedgehog`). Đổi ảnh gốc cần cắt ảnh mới + `art:sleep` (ngủ / thức): chờ chủ dự án quyết. |
 | **12 quái mới N01–N12 — chưa có** | Chưa render (để làm cùng đợt mở rộng map). Khi có: ảnh idle thành ảnh gốc `enemy_*`, cần decision gameplay (chỉ số, kỹ năng, vùng, rơi đồ) trước khi vào `enemies.json` / `maps.json`. |
-| Âm thanh trận (`AUDIO_SFX.md`, 37 id) | Có 2 bộ trong `art_inbox/.batch/adventure-12-animation/AUDIO_SFX/` (`audio_v1` 37 file + `credits.txt`, `audio_v2` 35 file, không credits), **chưa ở `art_inbox/audio/`** → chưa nối, trận im các âm mới. Kịch bản đã gọi sẵn đúng id. |
+| ~~Âm thanh trận (`AUDIO_SFX.md`, 37 id)~~ | Xong 2026-10-30: bộ `audio_v2` (CC0, tự tạo bằng code) vào `public/assets/audio/`, 37 audio key mới. Âm lượng chưa chuẩn hoá (không có ffmpeg): chỉnh `volume` trong manifest nếu to / nhỏ lệch. |
 
 ## Adventure: nhịp chơi, Vết Nứt, gắn bó (decision 039)
 | Asset | Ghi chú |

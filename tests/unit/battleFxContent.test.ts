@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { actImages, scriptEnd, type Act } from '../../content/schemas/adventure/battleScript';
 import { BATTLE_FX, SKILLS } from '../../src/areas/adventure/logic/config/content';
+import { AUDIO_KEYS } from '../../src/core/config/assetIds';
 import { STATUS_IDS } from '../../src/systems/combat/types';
 
 // Decision 044: the content of the battle animation (the design all_animation_sobi_adventure_final.md moved into battle_fx.json).
@@ -65,6 +66,11 @@ describe('battle animation content (decision 044)', () => {
     }
     for (const [id, acts] of Object.entries(BATTLE_FX.actions)) expect(scriptEnd(acts!), id).toBeLessThanOrEqual(1500);
     for (const [id, acts] of Object.entries(BATTLE_FX.elementReactions)) expect(scriptEnd(acts), id).toBeLessThanOrEqual(1200);
+  });
+
+  it('every sound a script names is one of the game’s audio keys (none would play otherwise)', () => {
+    const keys = new Set<string>(AUDIO_KEYS);
+    for (const [where, acts] of scripts()) for (const a of acts) if (a.do === 'sound') expect(keys.has(a.sound), `${where}: ${a.sound}`).toBe(true);
   });
 
   it('every status has a badge and every elemental reaction a script', () => {

@@ -58,7 +58,8 @@ describe('the cues of a step', () => {
       expect(cues.find((c) => c.kind === 'circle')!.at).toBe(b.start);
       expect(cues.find((c) => c.kind === 'shot')!.at).toBe(b.release);
       expect(cues.find((c) => c.kind === 'land')!.at).toBe(b.impact);
-      expect(cues.filter((c) => c.kind === 'sound').map((c) => (c.kind === 'sound' ? c.sound : ''))).toEqual(expect.arrayContaining(['adv_cast', 'adv_hit', 'adv_ko']));
+      // The circle's chant; the hit and the knock-out sound as the general actions' scripts say (they replace adv_hit / adv_ko).
+      expect(cues.filter((c) => c.kind === 'sound').map((c) => (c.kind === 'sound' ? c.sound : ''))).toEqual(['adv_cast', 'adv_pow', 'adv_bonk']);
       for (let i = 1; i < cues.length; i += 1) expect(cues[i]!.at).toBeGreaterThanOrEqual(cues[i - 1]!.at);
     } finally {
       BATTLE_FX.skills.skill_mm_poison_thorn = own;
