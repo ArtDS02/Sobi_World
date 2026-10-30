@@ -27,6 +27,8 @@ export const EYE_OVERRIDES: Record<string, EyeOverride> = {
   pig_crybaby: { closedInIdle: true },
   // The curl of the tail and the tip of the ear read as eyes.
   pig_crystal: { drop: [[80, 130, 180, 220], [410, 80, 490, 180]] },
+  // The near eye of the new Phoenix art is lighter than the detector expects (owner's redesign, decision 044).
+  pig_phoenix: { extra: [oval(367, 220, 412, 268)] },
   pig_party: { closedInIdle: true },
   pig_teacher: { eyes: [oval(296, 220, 316, 246), oval(370, 212, 388, 236)] },
   pig_grandpa: { eyes: [oval(303, 221, 317, 237), oval(384, 216, 396, 232)] },
