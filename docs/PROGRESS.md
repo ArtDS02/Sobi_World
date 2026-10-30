@@ -10,6 +10,33 @@
 
 ## Nhật ký
 
+### 2026-10-30 — Adventure: đợt animation trận — art 2 batch + kịch bản animation (decision 044)
+✅ Đã làm:
+- **Ảnh:** batch `adventure-12-animation` 29/29 sheet → 183/184 asset duyệt (`fx_*` 22 dải 4 khung, `fxs_*` 24, `fxp_*` 48, `st_*` 24). Batch `adventure-13-combat-poses` 44/56 sheet → 258 key pose `cb_*` (21 combat animal + 22 quái); `pig_crystal` có ảnh gốc (+ ngủ / thức).
+- **Công cụ cắt** `cut_blobs.py` (skill image-to-prompt): cắt theo khối, bỏ đường kẻ ô / vạch đất / chữ nhãn / watermark, 6 pose cùng tỉ lệ khung 512.
+- **Engine (decision 044):** kịch bản theo mốc thời gian trong `battle_fx.json` — đủ 20 khả năng Phụ lục C (hit_stop, stagger, ult_cutin, bg_tint, prop_actor, sprite_particles, strip_frames, status_overlay, actor_moves, beam, tether, cone, ground_decal, shadow_marker, afterimage_trail, camera_punch, boss_phase, color_split, enemy_look, sound_layers).
+- **Nội dung:** 112 skill, 20 hành động chung, 25 trạng thái, 6 phản ứng nguyên tố, 168 burst hạt sprite, bộ hạt / va chạm theo hệ.
+- **Admin "Xưởng animation trận":** 1–3 đơn vị mỗi phe, trạng thái skill gắn (hiện biểu tượng), phản ứng nguyên tố, trùm đổi pha, thắng trận, giảm chuyển động.
+- Ảnh chỉ trận dùng không còn tải trước ở Farm.
+📁 File chính: `content/adventure/battle_fx.json`, `content/schemas/adventure/{battleFx,battleScript,battlePoses}.ts`, `src/areas/adventure/ui/{battleScript,battleMoves,battleMotion,battlePose,battlePlan}.ts`, `src/areas/adventure/scene/battle/{fxActs,fxProps,fxLines,statusBadges,BattleScene,battleUnits,fxBursts,fxTextures}.ts`, `tools/admin/battleLab.ts`, `public/assets/` (+ manifest), `docs/decisions/044-battle-animation-scripts.md`, `docs/animation/COMBAT_ART_GUIDE.md` §5.
+🧪 Đã kiểm tra:
+- `npm run check` xanh (115 file, 1.531 test). Test mới `battleScript.test.ts` (stagger, kịch bản, x2, chuyển động, giảm chuyển động, trạng thái) và `battleFxContent.test.ts` (mọi skill có kịch bản, mọi asset tham chiếu có trong manifest, thời lượng ≤ giới hạn, đủ trạng thái / phản ứng).
+- Xưởng animation: chạy liên tiếp 112 skill với 3 vs 3, 0 lỗi console; xem trực tiếp đánh thường, Gọi Sấm, Hơi Thở Dung Nham (luồng phun lật đúng phe), tuyệt kỹ Cá Voi (cut-in), Lưới Dệt Đêm, Gai Độc (biểu tượng độc).
+- Sandbox `sandbox-anim`: một trận thật Tàn Tích, Tự động + x2 trong 15 s: 0 long task, 0 lỗi.
+- **Chưa làm:** một trận mỗi vùng, trận trùm, tuyệt kỹ từng dòng trong game thật (mới xem trong Xưởng); chưa chạy Electron.
+⚠️ Tự quyết:
+- Decision mới số 044 (043 đã dùng cho bản đồ).
+- Skill có kịch bản bỏ vòng phép mặc định (kịch bản tự mở đầu).
+- Biểu tượng Đóng băng dùng `ui_icon_status_freeze` cũ (batch không có `st_freeze`).
+- `fx_shield_dome` khung 4 dựng bằng code.
+- Quái mới N01–N12 chưa render → bỏ qua giai đoạn 5 (làm cùng đợt mở rộng map).
+👉 Bạn cần:
+- Chọn bộ âm `audio_v1` hay `audio_v2` và đặt vào `art_inbox/audio/` (kèm `credits.txt`).
+- Tạo lại sheet A08 (Heo Thor).
+- Quyết có đổi ảnh gốc 5 heo theo `*_new*asset.png` không.
+- Duyệt animation trong Xưởng (`npm run admin` → `#/battle-lab`).
+➡️ Bước tiếp: nối âm thanh (khi có bộ âm chọn), A08, quái mới cùng đợt mở rộng map.
+
 ### 2026-10-29 — Adventure: Đợt 1 mở rộng map — bố cục mới cho M4–M9 (decision 043)
 ✅ Đã làm:
 - 6 map Núi / Tàn Tích trước đây là bản sao bố cục của Rừng; nay mỗi map một kiểu riêng (bảng ở decision 043, mục "Đợt 1"):

@@ -1,4 +1,4 @@
-# Art & animation chiến đấu Adventure — tự thêm, tự sửa (decision 042)
+# Art & animation chiến đấu Adventure — tự thêm, tự sửa (decision 042, 044)
 
 Trận vẽ bằng sân Phaser (`src/areas/adventure/scene/battle/`). **Mọi thứ nhìn thấy đều đọc từ `content/adventure/battle_fx.json`** và ảnh trong manifest: không cần sửa code để thêm sinh vật, đổi hướng ảnh, đổi màu / hạt / nhịp, hay cho một kỹ năng cách ra đòn riêng.
 
@@ -36,7 +36,7 @@ EVERY pose faces RIGHT (3/4 view looking to the right). Feet touch the bottom ce
 Creature: [tên + mô tả ngắn, vd. "pink pig knight in silver helmet with red plume, small shield"].
 ```
 
-Lưu sheet vào `art_inbox/adventure-combat-art/<art>.png`, nói với Claude: *"cắt sheet combat art trong art_inbox"* — Claude cắt 6 ô, căn chân, đặt tên `cb_<art>_<pose>.png`, thêm dòng manifest, chạy `npm run assets:check`, xóa `facing` cũ nếu có. Thứ tự ưu tiên: idle + hurt của mọi con → attack + cast → ko + victory.
+Lưu sheet vào thư mục batch (vd. `art_inbox/.batch/adventure-13-combat-poses/<sheet>.png`), nói với Claude: *"cắt sheet combat art"* — Claude cắt bằng `python .claude/skills/image-to-prompt/scripts/cut_blobs.py <batch> --sheet <id> --preview` (cắt theo khối: bỏ đường kẻ ô, vạch đất, chữ nhãn, watermark; 6 pose cùng tỉ lệ, khung 512, chân ở đáy giữa; sheet lạ ghi trong `cut_overrides.json` của batch), duyệt `art.py approve`, thêm dòng manifest (`props`, đường dẫn `props/combat/`), `npm run art:process -- --list=<file>`, `npm run assets:check`, xóa `facing` cũ nếu có. Thứ tự ưu tiên: idle + hurt của mọi con → attack + cast → ko + victory.
 
 ## 3. Thêm combat animal mới
 1. Admin → Giống heo: thêm loài, bật **Chiến binh** (`fighter`), chọn dòng Guardian.
@@ -74,3 +74,28 @@ Kỹ năng **không cần khai báo**: nó dùng công thức của hệ (`eleme
 `reactions` là các chùm chung: `hit`, `heavy`, `heal`, `buff`, `debuff`, `miss`, `ko`, `tears`, `guard`, `stun`, `teleport`, `aura`, `charge`, `slam`.
 
 Lưu ý: sai tham chiếu (burst không tồn tại…) bị chặn khi "Áp dụng thử" / "Lưu" với lỗi ghi rõ chỗ sai; game không bao giờ nhận file sai.
+
+## 5. Kịch bản animation (decision 044)
+Mỗi kỹ năng (và mỗi hành động chung, trạng thái, phản ứng nguyên tố) có thể có **kịch bản**: danh sách act có thời điểm, khai báo trong `battle_fx.json`. Cả 112 kỹ năng đã có kịch bản theo bản thiết kế `all_animation_sobi_adventure_final.md`.
+
+```json
+"skill_qt_ray": {
+  "timing": { "release": 260, "impact": 440, "end": 950 },
+  "script": [
+    { "do": "pose", "at": 0, "who": "actor", "dur": 260, "pose": "cast" },
+    { "do": "beam", "at": 260, "who": "target", "dur": 400, "color": "#fff3b0", "width": 14 },
+    { "do": "strip", "at": 440, "who": "target", "img": "fx_pow_star", "tint": "#ffd66a" },
+    { "do": "stop", "at": 440, "who": "actor", "dur": 50 },
+    { "do": "sound", "at": 440, "who": "actor", "sound": "adv_light_hit" }
+  ]
+}
+```
+
+- `at` ms từ đầu nhịp (tốc độ thường; x2 và nén bước tự nhân). `impact` của `timing` là lúc số bay hiện.
+- `who`: `actor`, `target`, `targets` (từng mục tiêu, lệch nhau `stagger`), `allies`, `foes`, `allyside` / `foeside` (giữa một phe), `field` (cả màn).
+- `do`: `pose`, `move` (dash, dash_through, lunge, recoil, hop, jump, lift, knock, spin, spin_roll, vanish, appear, exit_top, dive, wiggle, puff_up, squash, shake, walk_sideways, rear, sink, float, tilt, look, bounce), `glow`, `burst`, `strip` (`fx_…` 4 khung), `prop` (`fxp_…` / `fxs_…` theo `path`: fall, rise, sweep, orbit, pop, grow, throw, fly, stretch, hover), `beam`, `tether`, `cone`, `decal`, `marker`, `trail`, `tint`, `punch`, `stop` (khựng hình), `split`, `shake`, `flash`, `sound`, `cutin`.
+- `$color` / `$glow` / `$spark` / `$boom`: màu, hạt và va chạm của hệ (kỹ năng lớp lấy hệ người dùng).
+- `skills.<id>.stagger`: ms giữa các mục tiêu (số, phản ứng lệch theo). Skill có kịch bản không có vòng phép trừ khi `"circle": true`.
+- `actions` (đánh thường, thủ, choáng, đóng băng, vật phẩm, trúng, chí mạng, né, hồi máu, buff, debuff, độc / bỏng đầu lượt, gục, hồi sinh, thắng, vào trận, trùm đổi pha), `statuses.<id>` (`icon`, `apply`, `loop`, `tint`, `cover`), `elementReactions.<reaction_…>`.
+- Thiếu ảnh → quầng sáng màu hệ (không lỗi). Giảm chuyển động → chỉ còn âm thanh, số và biểu tượng trạng thái.
+- Thử trong "Xưởng animation trận": chọn số đồng đội / quái (1–3), phản ứng nguyên tố, trùm đổi pha, thắng trận, giảm chuyển động; ô JSON nhận cả `script`.

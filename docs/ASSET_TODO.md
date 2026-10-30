@@ -9,10 +9,18 @@
 |---|---|
 | Ngưỡng lối ra theo `exits[].kind`: `trail`, `cave`, `bridge`, `stairs`, `shore`, `tunnel` | Tạm thời mọi kiểu vẽ bằng hình cổng dịch chuyển `adv_exit`. Cần khi làm map nhánh (Đợt 2+); mỗi kiểu một ảnh mở / một trạng thái khóa (rễ gai, đá sụp, cổng phong ấn…). |
 
-## Adventure: art chiến đấu quay phải, key pose (decision 042)
+## Adventure: animation trận — batch adventure-12 / adventure-13 (decision 044)
 | Asset | Ghi chú |
 |---|---|
-| 22 combat animal + 22 quái: `cb_<art>_{idle,attack,cast,hurt,ko,victory}` | Quy ước: quay phải, 512×512, chân giữa cạnh dưới (`docs/animation/COMBAT_ART_GUIDE.md`). Ưu tiên idle + hurt. Tạm thời quái cũ quay trái / chính diện được ghi ở `content/adventure/battle_fx.json → creatures[<art>].facing`; xóa `facing` khi có ảnh mới. Ảnh mới cần dòng manifest `cb_<art>_<pose>` (Claude thêm khi cắt). |
+| ~~Hạt `fxs_*` (24), biểu tượng `st_*` (24), hiệu ứng 4 khung `fx_*` (22), vật thể `fxp_*` (48)~~ | Xong 2026-10-30 (batch `adventure-12-animation`, 29/29 sheet), chờ duyệt trong app. |
+| `fx_shield_dome` khung 4 | Khung 4 ảnh Gemini (vòm kính trắng rất nhạt) bị mất khi xóa nền → **dựng bằng code** từ khung 3 (to 6 %, mờ 45 %). Tạo lại sheet **A11** nếu muốn khung 4 thật (vòm đậm viền hơn). |
+| `fxp_*` sheet B7–B12 | Nguồn ~300 px phóng lên 512 px, hơi mềm khi phóng to giữa màn. Có thể tạo lại ở độ phân giải cao hơn. |
+| ~~Key pose `cb_<art>_<pose>` 21 combat animal + 22 quái (258 ảnh)~~ | Xong 2026-10-30 (batch `adventure-13-combat-poses`), cắt bằng `cut_blobs.py`; quái có pose → xóa `facing`. `pig_crystal`: ảnh idle thành ảnh gốc (+ ngủ / thức). |
+| **A08 Heo Thor — cần tạo lại** | Sheet vẽ con heo hồng cầm búa, **mất mũ cánh + áo choàng** (không giống `pig_thor`), nền trắng từng ô, có vạch đất. Dùng `A08_new_asset.png` làm ảnh mẫu (đính kèm 2) khi tạo lại. Tạm thời Thor dùng ảnh gốc + chuyển động bằng code. |
+| Nên tạo lại (không bắt buộc) | **A13** Phượng Hoàng: pose hurt / ko vẽ nhỏ hơn idle. **E04** Cáo Lửa: sheet 3 hàng, pose victory to hơn các pose khác. **E03** Chim Sẻ Sấm: sheet 3×3 (9 con), đã chọn 6 ô. **A16** Heo Ngân Hà: chỉ có bản .jpg 1024 px (mỗi ô ~340 px, hơi mềm). **E05** Ếch Sương: còn vạch đất mảnh dưới pose attack / ko. **E22** đặt tên file khác (`Chibi Golem Guardian Pose Sheet.png`), đã dùng làm E22. |
+| Ảnh gốc mới của 5 heo (A13, A14, A17, A18, A19 `*_new*asset.png`) | Pose trong trận đã theo thiết kế mới, nhưng **ảnh gốc ở Farm / Trại vẫn là bản cũ** (`pig_phoenix`, `pig_turtle`, `pig_thienlong`, `pig_boar`, `pig_hedgehog`). Đổi ảnh gốc cần cắt ảnh mới + `art:sleep` (ngủ / thức): chờ chủ dự án quyết. |
+| **12 quái mới N01–N12 — chưa có** | Chưa render (để làm cùng đợt mở rộng map). Khi có: ảnh idle thành ảnh gốc `enemy_*`, cần decision gameplay (chỉ số, kỹ năng, vùng, rơi đồ) trước khi vào `enemies.json` / `maps.json`. |
+| Âm thanh trận (`AUDIO_SFX.md`, 37 id) | Có 2 bộ trong `art_inbox/.batch/adventure-12-animation/AUDIO_SFX/` (`audio_v1` 37 file + `credits.txt`, `audio_v2` 35 file, không credits), **chưa ở `art_inbox/audio/`** → chưa nối, trận im các âm mới. Kịch bản đã gọi sẵn đúng id. |
 
 ## Adventure: nhịp chơi, Vết Nứt, gắn bó (decision 039)
 | Asset | Ghi chú |
