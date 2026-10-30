@@ -86,7 +86,7 @@ interface Draft {
 }
 
 /** Cuts the step into beats, one per turn (events before the first turn belong to a beat of their own). */
-function draftBeats(events: readonly BattleEvent[]): Draft[] {
+function draftBeats(events: readonly BattleEvent[], battle: BattleState): Draft[] {
   const out: Draft[] = [];
   let cur: Draft | null = null;
   const open = (actor: string | null): Draft => {
@@ -112,7 +112,9 @@ function draftBeats(events: readonly BattleEvent[]): Draft[] {
         d.pose = how.pose;
         d.delivery = how.delivery;
         d.skillId = e.skillId;
-        d.element = e.skillId ? ((SKILLS[e.skillId]?.element as Element | null | undefined) ?? null) : null;
+        // A class skill takes its user's element (decision 044: its colours and particles are the user's).
+        const own = e.skillId ? SKILLS[e.skillId]?.element : null;
+        d.element = own === 'SELF' ? (battle.combatants.find((c) => c.id === e.actor)?.element ?? null) : ((own as Element | null | undefined) ?? null);
         break;
       }
       case 'guard':
@@ -162,7 +164,7 @@ const staggerOf = (skillId: string | null) => skillFx(skillId)?.stagger ?? 0;
 export function stepMotion(battle: BattleState | null, log: readonly { type: string }[], fast = false): StepMotion {
   const events = log as readonly BattleEvent[];
   if (!battle || events.length === 0) return EMPTY;
-  const drafts = draftBeats(events).filter((d) => d.events.some((i) => events[i]!.type !== 'turn' && events[i]!.type !== 'round' && events[i]!.type !== 'ready'));
+  const drafts = draftBeats(events, battle).filter((d) => d.events.some((i) => events[i]!.type !== 'turn' && events[i]!.type !== 'round' && events[i]!.type !== 'ready'));
   const timings = drafts.map((d): Timing => {
     const base = d.delivery ? timingOf(d.pose, d.delivery, d.skillId) : { release: 0, impact: 0, end: QUIET_MS };
     const c = circleOf(d);

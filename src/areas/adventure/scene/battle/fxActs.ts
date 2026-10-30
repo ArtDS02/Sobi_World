@@ -46,9 +46,8 @@ export class ActPlayer {
     const hgt = this.scene.scale.height;
     const s = spot ?? fallback;
     if (!a) {
-      if (s === 'sky') return { x: w / 2, y: -40 };
-      if (s === 'feet') return { x: w / 2, y: hgt * 0.84 };
-      return { x: w / 2, y: hgt * 0.5 };
+      const y = { sky: -40, above: 0.2, head: 0.28, chest: 0.5, middle: 0.62, feet: 0.84, front: 0.5, behind: 0.5, center: 0.5 }[s];
+      return { x: w / 2, y: s === 'sky' ? y : hgt * y };
     }
     const dir = a.side === 'ally' ? 1 : -1;
     switch (s) {

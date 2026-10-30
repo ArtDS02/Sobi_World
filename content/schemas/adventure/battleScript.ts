@@ -6,8 +6,11 @@ import { z } from 'zod';
 import { color, nonNeg } from '../fields';
 import { POSE_ART_VALUES } from './battlePoses';
 
-/** Who an act plays on: the one acting, its first or every target, every unit of its side or of the other side, or the screen. */
-export const WHO_VALUES = ['actor', 'target', 'targets', 'allies', 'foes', 'field'] as const;
+/**
+ * Who an act plays on: the one acting, its first or every target, every unit of its side or of the other side, the middle of its own
+ * side or of the other side (one spot where a whole row is: a storm cloud over the enemies), or the screen.
+ */
+export const WHO_VALUES = ['actor', 'target', 'targets', 'allies', 'foes', 'allyside', 'foeside', 'field'] as const;
 /** Where on a unit (or on the screen, for `field`) an act starts. */
 export const SPOT_VALUES = ['chest', 'feet', 'head', 'above', 'front', 'behind', 'sky', 'middle', 'center'] as const;
 /** Ways a body moves (actor_moves, decision 044). */
@@ -51,7 +54,7 @@ export const actSchema = z.discriminatedUnion('do', [
   /** Lights the body up in a colour (`tint`: the picture itself is coloured). */
   z.strictObject({ do: z.literal('glow'), ...lasting, color: paint, bright: z.number().finite().min(0).max(3).optional(), tint: z.boolean().optional() }),
   /** A burst of particles (or a sprite `fxs_…` used as one). */
-  z.strictObject({ do: z.literal('burst'), ...base, ref: fxRef, spot: z.enum(SPOT_VALUES).optional(), tint: z.array(paint).min(1).optional(), more: z.number().finite().positive().max(4).optional() }),
+  z.strictObject({ do: z.literal('burst'), ...base, ref: fxRef, spot: z.enum(SPOT_VALUES).optional(), tint: z.array(paint).min(1).optional(), more: z.number().finite().positive().max(10).optional() }),
   /** A 4-frame strip `fx_…` played (or a frame range of it, `hold` keeps the last frame shown that long). */
   z.strictObject({
     do: z.literal('strip'),
@@ -70,11 +73,12 @@ export const actSchema = z.discriminatedUnion('do', [
     under: z.boolean().optional(),
     y: z.number().finite().optional(),
   }),
-  /** A big object `fxp_…` travelling along a path (prop_actor). */
+  /** A big object `fxp_…` (or a sprite `fxs_…`) travelling along a path (prop_actor). */
   z.strictObject({
     do: z.literal('prop'),
     ...lasting,
-    img: imageOf('fxp_'),
+    /** A big object, or a sprite (`fxs_…`) thrown on its own. */
+    img: imageOf('fx[ps]_'),
     path: z.enum(PROP_PATHS),
     spot: z.enum(SPOT_VALUES).optional(),
     /** Size as a share of the unit's height (a `field` prop: of the screen's height). */

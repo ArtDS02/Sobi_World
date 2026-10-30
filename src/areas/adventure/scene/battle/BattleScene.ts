@@ -148,6 +148,18 @@ export class BattleScene extends Phaser.Scene {
         },
       ]),
     );
+    // The middle of each side, for the acts over a whole row (decision 044 `allyside` / `foeside`).
+    for (const side of ['ally', 'enemy'] as const) {
+      const row = units.filter((u) => u.side === side);
+      if (row.length === 0) continue;
+      const x = row.reduce((sum, u) => sum + u.feet.x, 0) / row.length;
+      const y = Math.max(...row.map((u) => u.feet.y));
+      // As wide as one unit, a little more for a longer row (an effect over a whole row is sized like one on a big unit).
+      const span = Math.max(...row.map((u) => u.feet.x + u.width / 2)) - Math.min(...row.map((u) => u.feet.x - u.width / 2));
+      const width = Math.max(row.reduce((sum, u) => sum + u.width, 0) / row.length, span * 0.6);
+      const height = row.reduce((sum, u) => sum + u.height, 0) / row.length;
+      fxAnchors.set(`@${side}`, { side, width, height, feet: { x, y }, chest: { x, y: y - height * 0.45 }, head: { x, y: y - height * 0.58 }, picture: null });
+    }
     for (const c of this.cues) {
       if (c.done || c.at > t) continue;
       if (c.kind !== 'sound' && holding) continue;

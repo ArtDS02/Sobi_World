@@ -30,8 +30,8 @@ describe('battle_fx.json (decision 042)', () => {
       expect(look.projectile.core, s.id).toBeTruthy();
       expect(look.impact.length + (look.strike === 'none' ? 0 : 1), s.id).toBeGreaterThan(0);
     }
-    expect(lookOf('NATURE', 'skill_mm_poison_thorn').projectile.core).toBe('shard');
     expect(lookOf('NATURE').projectile.core).toBe('leaf');
+    expect(lookOf('NATURE').boom).toBe('fx_bloom');
     expect(lookOf(null).color).toBe(BATTLE_FX.elements.NEUTRAL!.color);
     expect(timingOf('cast', 'projectile', null)).toBe(TIMING.projectile);
     expect(timingOf('ultimate', 'burst', null)).toBe(TIMING.ultimate);
@@ -46,24 +46,38 @@ describe('the cues of a step', () => {
     { type: 'defeat', target: foe },
   ];
 
-  it('a skill: circle and chant, charge, shot, what lands, the hit and the knock-out, in time order', () => {
-    const p = playing(log);
-    const b = p.motion.beats[0]!;
-    const cues = stepPlan(p, sides, false);
-    const kinds = cues.map((c) => c.kind);
-    expect(kinds).toEqual(expect.arrayContaining(['circle', 'charge', 'shot', 'land', 'fx']));
-    expect(cues.find((c) => c.kind === 'circle')!.at).toBe(b.start);
-    expect(cues.find((c) => c.kind === 'shot')!.at).toBe(b.release);
-    expect(cues.find((c) => c.kind === 'land')!.at).toBe(b.impact);
-    expect(cues.filter((c) => c.kind === 'sound').map((c) => (c.kind === 'sound' ? c.sound : ''))).toEqual(['adv_cast', 'adv_hit', 'adv_ko']);
-    for (let i = 1; i < cues.length; i += 1) expect(cues[i]!.at).toBeGreaterThanOrEqual(cues[i - 1]!.at);
+  it('a skill without a script: circle and chant, charge, shot, what lands, the hit and the knock-out, in time order', () => {
+    const own = BATTLE_FX.skills.skill_mm_poison_thorn!;
+    delete BATTLE_FX.skills.skill_mm_poison_thorn;
+    try {
+      const p = playing(log);
+      const b = p.motion.beats[0]!;
+      const cues = stepPlan(p, sides, false);
+      const kinds = cues.map((c) => c.kind);
+      expect(kinds).toEqual(expect.arrayContaining(['circle', 'charge', 'shot', 'land', 'fx']));
+      expect(cues.find((c) => c.kind === 'circle')!.at).toBe(b.start);
+      expect(cues.find((c) => c.kind === 'shot')!.at).toBe(b.release);
+      expect(cues.find((c) => c.kind === 'land')!.at).toBe(b.impact);
+      expect(cues.filter((c) => c.kind === 'sound').map((c) => (c.kind === 'sound' ? c.sound : ''))).toEqual(expect.arrayContaining(['adv_cast', 'adv_hit', 'adv_ko']));
+      for (let i = 1; i < cues.length; i += 1) expect(cues[i]!.at).toBeGreaterThanOrEqual(cues[i - 1]!.at);
+    } finally {
+      BATTLE_FX.skills.skill_mm_poison_thorn = own;
+    }
   });
 
-  it('reduced motion keeps only the sounds; a new battle brings every fighter in', () => {
+  it('a skill with a script plays its acts instead (decision 044)', () => {
+    const cues = stepPlan(playing(log), sides, false);
+    expect(cues.some((c) => c.kind === 'act')).toBe(true);
+    expect(cues.some((c) => c.kind === 'shot' || c.kind === 'circle')).toBe(false);
+  });
+
+  it('reduced motion keeps only the sounds; a new battle brings every fighter in by its entrance script', () => {
     expect(stepPlan(playing(log), sides, true).every((c) => c.kind === 'sound')).toBe(true);
     const enter = stepPlan(playing(log, true), sides, false);
-    expect(enter.filter((c) => c.kind === 'teleport')).toHaveLength(2);
     expect(enter[0]).toMatchObject({ kind: 'sound', sound: 'adv_battle_start' });
+    // The entrance plays before the step's clock starts, for every fighter.
+    const early = enter.filter((c) => c.kind === 'act' && c.at < 0);
+    expect(new Set(early.map((c) => (c.kind === 'act' ? c.cue.unit : null)))).toEqual(new Set([ally, foe]));
   });
 });
 

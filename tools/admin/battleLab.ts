@@ -80,12 +80,20 @@ function play(enter = false) {
   lab.step = { key: `lab:${lab.counter}`, at: performance.now() + (enter ? 1100 : 150), fx: { floaters: [], banner: null, shake: false, shakeAt: 0 }, motion, enter, shown: 0 };
 }
 
+/** The statuses the played skill has put on a unit so far (their badges show by its head, decision 044). */
+function statusesOn(id: string): string[] {
+  const step = lab.step;
+  if (!step) return [];
+  const t = performance.now() - step.at;
+  return [...new Set(step.motion.marks.filter((m) => m.kind === 'status' && m.unit === id && m.at <= t).map((m) => m.id))];
+}
+
 function stageState(): BattleStageState | null {
   const host = lab.host;
   if (!host || !lab.step) return null;
   const r = host.getBoundingClientRect();
   const size = r.height * (lab.allies + lab.foes > 2 ? 0.26 : 0.34);
-  const unit = (id: string, side: 'ally' | 'enemy', art: string, x: number, y: number) => ({ id, side, art, mirrored: mirrored(art, side), feet: { x: r.left + r.width * x, y: r.top + r.height * y }, width: size, height: size, down: false, aimable: false, statuses: [] as string[] });
+  const unit = (id: string, side: 'ally' | 'enemy', art: string, x: number, y: number) => ({ id, side, art, mirrored: mirrored(art, side), feet: { x: r.left + r.width * x, y: r.top + r.height * y }, width: size, height: size, down: false, aimable: false, statuses: statusesOn(id) });
   const allyArt = lab.fromEnemy ? lab.target : lab.attacker;
   const foeArt = lab.fromEnemy ? lab.attacker : lab.target;
   // Three spots a side, staggered in depth like the game's field.
@@ -119,6 +127,8 @@ function mountGame(host: HTMLElement) {
     return row?.asset ? { url: `/assets/${row.asset}`, frames: row.frames } : null;
   };
   lab.game = new Phaser.Game({ type: Phaser.AUTO, parent: host, width: host.clientWidth, height: host.clientHeight, transparent: true, banner: false, audio: { noAudio: true }, scene: [new Backdrop(), new BattleScene({ read: stageState, image })] });
+  // For checking the stage from the browser console (Admin only).
+  (window as unknown as { labGame?: Phaser.Game }).labGame = lab.game;
 }
 
 /** The skill's own look in the file (what "Áp dụng thử" and "Lưu" change). */

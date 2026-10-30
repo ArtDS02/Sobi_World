@@ -22,7 +22,8 @@ afterEach(() => rmSync(root, { recursive: true, force: true }));
 
 describe('assets:check (art standard §7.4)', () => {
   // Reads every PNG on disk: slower than a unit test once the whole suite runs in parallel.
-  it('the shipped assets pass', { timeout: 20_000 }, () => {
+  // Reads every shipped PNG (decision 044 added ~380 battle pictures).
+  it('the shipped assets pass', { timeout: 45_000 }, () => {
     expect(checkAssets('public/assets')).toEqual([]);
   });
 

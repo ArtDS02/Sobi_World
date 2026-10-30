@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { deliveryOf, stepMotion } from '../../src/areas/adventure/ui/battleMotion';
-import { BODY, CIRCLE_MS, FAST_SHARE, STEP_MAX_MS, TIMING, bodyOf, mirrored } from '../../src/areas/adventure/ui/motionProfiles';
+import { BODY, FAST_SHARE, STEP_MAX_MS, TIMING, bodyOf, mirrored, timingOf } from '../../src/areas/adventure/ui/motionProfiles';
 import { BATTLE_FX, ENEMY_LIST } from '../../src/areas/adventure/logic/config/content';
 import type { BattleEvent, BattleState } from '../../src/systems/combat/types';
 
@@ -36,12 +36,13 @@ describe('battle motion (GĐ14 vertical slice)', () => {
       [foe, 'attack', 'melee', 'NATURE'],
     ]);
     const [a, b] = m.beats;
-    // A skill is cast inside its magic circle first; the plain attack has none (adventure-big-update-1 §6).
-    expect(a!.circle).toBe(true);
-    expect(a!.cast - a!.start).toBe(CIRCLE_MS.skill);
+    // A skill with its own script opens itself, without the magic circle (decision 044); the plain attack has none either.
+    expect(a!.circle).toBe(false);
+    expect(a!.cast).toBe(a!.start);
     expect(b!.circle).toBe(false);
     expect(b!.cast).toBe(b!.start);
-    expect(a!.impact).toBe(TIMING.projectile.impact + CIRCLE_MS.skill);
+    expect(a!.impact).toBe(timingOf('cast', 'projectile', 'skill_mm_poison_thorn').impact);
+    expect(a!.impact).not.toBe(TIMING.projectile.impact);
     expect(b!.start).toBeGreaterThan(a!.end);
     expect(m.eventAt[2]).toBe(a!.impact);
     expect(m.eventAt[1]).toBe(a!.start);

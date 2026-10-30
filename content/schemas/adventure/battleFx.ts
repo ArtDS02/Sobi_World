@@ -102,7 +102,7 @@ export const ACTION_FX_VALUES = [
 
 const status = z.strictObject({
   /** The badge shown by the head while the status lasts (`st_…`). */
-  icon: z.string().regex(/^st_[a-z0-9_]+$/),
+  icon: z.string().regex(/^(st|ui_icon_status)_[a-z0-9_]+$/),
   /** Played when it is put on. */
   apply: scriptSchema.optional(),
   /** Played again and again while it lasts (every `every` ms). */

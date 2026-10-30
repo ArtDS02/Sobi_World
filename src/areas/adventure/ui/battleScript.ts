@@ -44,6 +44,9 @@ export interface StepScript {
 
 const BODY_ACTS = new Set(['move', 'pose', 'glow']);
 
+/** The spot in the middle of a side (`@ally`, `@enemy`): the battle scene measures it from the units standing there. */
+export const sideSpot = (side: Side) => `@${side}`;
+
 const fill = (v: Paint, look: BattleLook): number => (v === '$color' ? look.color : v === '$glow' ? look.glow : v);
 
 /** The act with its look's colours and refs filled in and its lengths × `k`; null when it names the look's impact and there is none. */
@@ -90,6 +93,10 @@ function run(c: Ctx, acts: readonly Act[], start: number, k: number, actor: stri
         return [...c.sides].filter(([, s]) => s === side).map(([id]) => id);
       case 'foes':
         return [...c.sides].filter(([, s]) => s !== side).map(([id]) => id);
+      case 'allyside':
+        return [sideSpot(side ?? 'ally')];
+      case 'foeside':
+        return [sideSpot(side === 'enemy' ? 'ally' : 'enemy')];
       case 'field':
         return [null];
     }
@@ -101,7 +108,7 @@ function run(c: Ctx, acts: readonly Act[], start: number, k: number, actor: stri
     units(raw.who).forEach((unit, i) => {
       const at = start + raw.at * k + i * gap;
       if (BODY_ACTS.has(a.do)) {
-        if (unit === null) return;
+        if (unit === null || unit.startsWith('@')) return;
         const move = a as BodyMove['act'];
         // A body moving towards someone: its first target, or (for the targets themselves) the actor.
         const toward = unit === actor ? (targets[0] ?? null) : actor;

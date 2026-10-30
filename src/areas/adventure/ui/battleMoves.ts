@@ -187,5 +187,5 @@ export function addMoves(id: string, a: PoseAnchor, anchors: ReadonlyMap<string,
   }
   // Gone (vanished, or flown off the top) until a later move brings it back.
   if (gone !== null && !moves.some((m) => m.unit === id && m.act.do === 'move' && m.act.move === 'appear' && m.at >= gone! && t >= m.at)) acc.opacity = 0;
-  if (up !== null && !moves.some((m) => m.unit === id && m.act.do === 'move' && m.act.move === 'dive' && m.at >= up! && t >= m.at)) acc.dy -= 760;
+  if (up !== null && !moves.some((m) => m.unit === id && m.act.do === 'move' && (m.act.move === 'dive' || m.act.move === 'appear') && m.at >= up! && t >= m.at)) acc.dy -= 760;
 }
