@@ -340,8 +340,8 @@ async function main() {
       continue;
     }
     const src: Img = { w: png.width, h: png.height, d: Buffer.from(png.data) };
-    // The map kit's ground tiles (decision 045) are opaque seamless squares: a flat sand tile must not be keyed out.
-    const groundTile = /^adv_map_.*_tile_/.test(t.row.id);
+    // The map kit's ground tiles and edge panels (decision 045) are opaque on purpose: a flat sand tile must not be keyed out.
+    const groundTile = /^adv_map_.*_(tile|edge)_/.test(t.row.id);
     if ((!isFullBleed(t) || t.section === 'fx') && !groundTile) {
       const bg = removeBackground(src);
       if (bg.error) {

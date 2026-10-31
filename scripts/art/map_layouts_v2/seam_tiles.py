@@ -3,7 +3,8 @@
 Gemini draws a tile as a square picture, not a wrapping texture: laid edge to edge its borders show
 as a grid. Each tile the game lays (the `_tile_` ids of src/areas/adventure/scene/mapKit.ts) is
 blended with itself shifted by half a tile: the borders come from the shifted copy (whose edges
-meet across the wrap), the middle stays the original. Reads the cut candidate
+meet across the wrap), the middle stays the original. The cliff strips (`_edge_cliff`), repeated
+sideways along a plateau, get the same along their width only (their transparent bottom kept). Reads the cut candidate
 (art_inbox/.candidates/<id>_a.png), writes the approved file (art_inbox/<id>.png), so running it
 again gives the same result.
 
@@ -33,8 +34,22 @@ def seamless(img: np.ndarray) -> np.ndarray:
     return (img * k[..., None] + rolled * (1 - k[..., None])).round().astype(np.uint8)
 
 
+def seamless_x(img: np.ndarray) -> np.ndarray:
+    w = img.shape[1]
+    rolled = np.roll(img, w // 2, axis=1)
+    k = np.clip((1 - np.abs(np.linspace(-1, 1, w))) * 2.2, 0, 1)
+    k = (k * k * (3 - 2 * k))[None, :, None]
+    return (img * k + rolled * (1 - k)).round().astype(np.uint8)
+
+
 def main() -> None:
-    ids = sorted(set(re.findall(r"'(adv_map_[a-z0-9_]*_tile_[a-z0-9_]+)'", KIT_TS.read_text(encoding="utf-8"))))
+    text = KIT_TS.read_text(encoding="utf-8")
+    for i in sorted(set(re.findall(r"'(adv_map_[a-z]+_edge_cliff)'", text))):
+        src = ART / ".candidates" / f"{i}_a.png"
+        img = np.asarray(Image.open(src).convert("RGBA")).astype(np.float32)
+        Image.fromarray(seamless_x(img), "RGBA").save(ART / f"{i}.png")
+        print(f"OK  {i} (sideways)")
+    ids = sorted(set(re.findall(r"'(adv_map_[a-z0-9_]*_tile_[a-z0-9_]+)'", text)))
     for i in ids:
         src = ART / ".candidates" / f"{i}_a.png"
         img = np.asarray(Image.open(src).convert("RGB")).astype(np.float32)

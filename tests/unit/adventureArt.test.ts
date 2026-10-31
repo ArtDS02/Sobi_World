@@ -7,6 +7,7 @@ import { CAMP_ART, ICON_ART_IDS } from '../../src/areas/adventure/logic/art';
 import { blockedTiles } from '../../src/areas/adventure/logic/maps';
 import { corruptionDecalsOf, decalsOf } from '../../src/areas/adventure/scene/decals';
 import { chestArt, kitTile, KIT_IDS, puzzleArt } from '../../src/areas/adventure/scene/mapKit';
+import { cliffFaces } from '../../src/areas/adventure/scene/mapCliffs';
 import { PROPS } from '../../src/areas/adventure/logic/config/content';
 import { foeBadgeArt, reactionArt, skillArt, statusArt } from '../../src/areas/adventure/ui/vmKit';
 
@@ -99,5 +100,28 @@ describe('the map kit (decision 045)', () => {
         expect(blocked[Math.floor((d.y - 1) / map.tile) * map.cols + Math.floor(d.x / map.tile)], map.id).toBe(false);
       }
     }
+  });
+});
+
+describe('cliff faces (decision 045)', () => {
+  it('Moss Falls: the plateau front with its two stairs and the waterfall, capped where a side wall goes on', () => {
+    const map = MAP_LIST.find((m) => m.id === 'map_forest_falls')!;
+    const runs = cliffFaces(map);
+    const front = runs.filter((r) => r.bottom === 14);
+    expect(front.filter((r) => r.kind === 'stairs').map((r) => [r.x0, r.x1])).toEqual([[22, 24], [56, 58]]);
+    expect(runs.find((r) => r.kind === 'waterfall')).toMatchObject({ x0: 39, x1: 42, top: 13, bottom: 13 });
+    expect(front[0]).toMatchObject({ kind: 'cliff', x0: 21, top: 13, capL: true });
+    expect(front[front.length - 1]).toMatchObject({ kind: 'cliff', x1: 60, capR: true });
+  });
+
+  it('every face is at most 3 deep, on face tiles only, with the plateau (or the stream of a waterfall) above', () => {
+    for (const map of MAP_LIST)
+      for (const r of cliffFaces(map)) {
+        expect(r.bottom - r.top, map.id).toBeLessThan(3);
+        for (let x = r.x0; x < r.x1; x += 1) {
+          for (let y = r.top; y <= r.bottom; y += 1) expect('Fsw', `${map.id} ${x},${y}`).toContain(map.terrain[y]![x]!);
+          expect(r.kind === 'waterfall' ? '^~=' : '^', `${map.id} ${x}`).toContain(map.terrain[r.top - 1]![x]!);
+        }
+      }
   });
 });

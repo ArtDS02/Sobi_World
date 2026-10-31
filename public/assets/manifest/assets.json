@@ -4974,6 +4974,61 @@
       "id": "adv_map_ruins_landmark_statue_broken",
       "status": "production",
       "asset": "props/adventure_map/adv_map_ruins_landmark_statue_broken.png"
+    },
+    {
+      "id": "adv_map_coast_edge_cliff",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_edge_cliff.png"
+    },
+    {
+      "id": "adv_map_coast_edge_stairs",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_edge_stairs.png"
+    },
+    {
+      "id": "adv_map_forest_edge_cliff",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_edge_cliff.png"
+    },
+    {
+      "id": "adv_map_forest_edge_cliff_end_l",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_edge_cliff_end_l.png"
+    },
+    {
+      "id": "adv_map_forest_edge_cliff_end_r",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_edge_cliff_end_r.png"
+    },
+    {
+      "id": "adv_map_forest_edge_stairs",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_edge_stairs.png"
+    },
+    {
+      "id": "adv_map_forest_edge_waterfall",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_edge_waterfall.png"
+    },
+    {
+      "id": "adv_map_mountain_edge_cliff",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_edge_cliff.png"
+    },
+    {
+      "id": "adv_map_mountain_edge_cliff_end_l",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_edge_cliff_end_l.png"
+    },
+    {
+      "id": "adv_map_mountain_edge_cliff_end_r",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_edge_cliff_end_r.png"
+    },
+    {
+      "id": "adv_map_mountain_edge_stairs",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_edge_stairs.png"
     }
   ],
   "buildings": [

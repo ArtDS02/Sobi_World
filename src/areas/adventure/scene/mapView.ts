@@ -9,6 +9,7 @@ import { PROPS, type AreaMap } from '../logic/config/content';
 import { thingsOf, type Thing } from '../logic/maps';
 import { vi } from '../../../i18n/vi';
 import { decalsOf } from './decals';
+import { drawCliffs } from './mapCliffs';
 import { dressCorruption } from './mapCorruption';
 import { corruptionMarks, foeLabel, NO_MARKS, sleepMark, type CorruptionMarks } from './foeMarks';
 import { drawCover } from './mapCovers';
@@ -139,6 +140,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     }),
   );
   layer.add(ground);
+  drawCliffs(scene, layer, map, zone);
   const dressing = depth.ground();
   dressCorruption(scene, layer, map, s.corruption, motion);
   for (const d of decalsOf(map, zone)) {

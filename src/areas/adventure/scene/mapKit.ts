@@ -12,13 +12,13 @@ const KIT_TILES: Readonly<Record<string, Readonly<Record<string, readonly string
     '^': ['adv_map_coast_tile_dune'],
     s: ['adv_map_coast_tile_boardwalk'],
     c: ['adv_map_coast_tile_sand_b'],
-    F: ['adv_map_coast_tile_tideflat'],
+    F: ['adv_map_coast_tile_dune'],
     w: ['adv_map_coast_tile_sea_deep'],
   },
 };
 
-/** A tint per tile character over a kit tile: the trodden path darker than the sand, the cliffs darker than the rocks. */
-const KIT_TINT: Readonly<Record<string, number>> = { ',': 0xf0dfc4, F: 0xb8aa98, c: 0xd8c0e6 };
+/** A tint per tile character over a kit tile: the trodden path darker than the sand, the cliff rims sandstone brown. */
+const KIT_TINT: Readonly<Record<string, number>> = { ',': 0xf0dfc4, F: 0xc89a6a, c: 0xd8c0e6 };
 
 /** The kit tile of a zone's tile `c` at (x, y) (variants spread by a fixed hash), or null when the zone has none. */
 export function kitTile(zone: string, c: string, x: number, y: number): { id: string; tint: number } | null {
@@ -30,6 +30,22 @@ export function kitTile(zone: string, c: string, x: number, y: number): { id: st
 
 /** The zone's wall picture, seen beyond the edges of its areas. */
 export const kitWall = (zone: string): string | null => KIT_TILES[zone]?.['#']?.[0] ?? null;
+
+/** A zone's cliff face in 3/4 (decision 045 §art): the strip repeated along a plateau's front, its two rounded ends, the stairs and
+ * the waterfall cut into it. A zone without a piece keeps its tinted tiles there. */
+export interface CliffArt {
+  cliff: string;
+  endL?: string;
+  endR?: string;
+  stairs?: string;
+  waterfall?: string;
+}
+export const CLIFF_ART: Readonly<Record<string, CliffArt>> = {
+  forest: { cliff: 'adv_map_forest_edge_cliff', endL: 'adv_map_forest_edge_cliff_end_l', endR: 'adv_map_forest_edge_cliff_end_r', stairs: 'adv_map_forest_edge_stairs', waterfall: 'adv_map_forest_edge_waterfall' },
+  mountain: { cliff: 'adv_map_mountain_edge_cliff', endL: 'adv_map_mountain_edge_cliff_end_l', endR: 'adv_map_mountain_edge_cliff_end_r', stairs: 'adv_map_mountain_edge_stairs', waterfall: 'adv_map_forest_edge_waterfall' },
+  // The coast's ends stand in the sea (drawn with water around): its runs end plain.
+  coast: { cliff: 'adv_map_coast_edge_cliff', stairs: 'adv_map_coast_edge_stairs', waterfall: 'adv_map_forest_edge_waterfall' },
+};
 
 /** The pieces of each zone's cover look (decision 045 covers: tree tops, a rock overhang, a broken roof). */
 export const COVER_ART: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
@@ -88,6 +104,7 @@ export const KIT_IDS: readonly string[] = [
   ...new Set([
     ...Object.values(KIT_TILES).flatMap((z) => Object.values(z).flat()),
     ...Object.values(COVER_ART).flatMap((z) => Object.values(z).flat()),
+    ...Object.values(CLIFF_ART).flatMap((z) => Object.values(z) as string[]),
     ...['wood', 'silver', 'gold', 'hidden'].flatMap((t) => [chestArt(t, false), chestArt(t, true)]),
     MIMIC_ART,
     ...PUZZLE_BY_WORD.flatMap(([, a, b]) => [a, b]),

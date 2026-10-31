@@ -67,6 +67,14 @@
     394,
     259
   ],
+  "adv_map_coast_edge_cliff": [
+    609,
+    209
+  ],
+  "adv_map_coast_edge_stairs": [
+    277,
+    284
+  ],
   "adv_map_coast_exit_clam": [
     246,
     190
@@ -116,10 +124,6 @@
     270
   ],
   "adv_map_coast_tile_sand_b": [
-    271,
-    271
-  ],
-  "adv_map_coast_tile_sand_wet": [
     271,
     271
   ],
@@ -191,6 +195,26 @@
     295,
     259
   ],
+  "adv_map_forest_edge_cliff": [
+    620,
+    156
+  ],
+  "adv_map_forest_edge_cliff_end_l": [
+    260,
+    153
+  ],
+  "adv_map_forest_edge_cliff_end_r": [
+    257,
+    151
+  ],
+  "adv_map_forest_edge_stairs": [
+    283,
+    147
+  ],
+  "adv_map_forest_edge_waterfall": [
+    214,
+    185
+  ],
   "adv_map_forest_landmark_oak_giant": [
     438,
     618
@@ -218,6 +242,22 @@
   "adv_map_mountain_cover_pines_top": [
     264,
     303
+  ],
+  "adv_map_mountain_edge_cliff": [
+    607,
+    169
+  ],
+  "adv_map_mountain_edge_cliff_end_l": [
+    262,
+    169
+  ],
+  "adv_map_mountain_edge_cliff_end_r": [
+    261,
+    169
+  ],
+  "adv_map_mountain_edge_stairs": [
+    304,
+    168
   ],
   "adv_map_mountain_landmark_dragon_skull": [
     398,
