@@ -14,13 +14,13 @@ import { titleOf } from '../logic/bonds';
 import { BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, MAPS, REACTIONS, SKILLS } from '../logic/config/content';
 import { enemyIdOf } from '../logic/encounter';
 import { expShare } from '../logic/fighters';
-import { canFlee, corruptionOfTags, type FoeClass } from '../logic/foes';
+import { canFlee, corruptionOfTags, foeClass, type FoeClass } from '../logic/foes';
 import { escapeIn } from './battleFloaters';
 import { logLine } from './battleLog';
 import type { Run } from '../logic/state';
 import type { ClassId } from '../logic/config/content';
 import { adventureOf } from '../logic/save/lens';
-import { ACTION_ART, elementName, errorText, nameOfItem, skillArt, statusArt, statusDesc, statusName } from './vmKit';
+import { ACTION_ART, elementName, errorText, foeBadgeArt, nameOfItem, skillArt, statusArt, statusDesc, statusName } from './vmKit';
 
 export interface StatusVm {
   id: StatusId;
@@ -56,6 +56,8 @@ export interface UnitVm {
   active: boolean;
   boss: boolean;
   elite: boolean;
+  /** An enemy's class badge and its name (decision 045), none for a normal foe or an ally. */
+  badge: { art: string; name: string } | null;
   corrupted: boolean;
   /** Enemies: their corruption 1–5 (decision 045), 0 when none (a Rift floor). */
   corruption: number;
@@ -148,8 +150,10 @@ interface AllyInfo {
   honor: string | null;
 }
 
-function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally: AllyInfo | undefined): UnitVm {
+function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally: AllyInfo | undefined, groupKind: FoeClass): UnitVm {
   const enemy = c.side === 'enemy' ? ENEMIES[enemyIdOf(c.id)] : undefined;
+  // The boss of a group wears the boss badge, a guardian the elite one, the rest their group's class.
+  const kind: FoeClass | null = !enemy ? null : enemy.boss ? 'boss' : enemy.tags.includes('elite') && groupKind === 'normal' ? 'elite' : groupKind === 'normal' ? null : groupKind;
   return {
     id: c.id,
     side: c.side,
@@ -171,6 +175,7 @@ function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally
     active: c.id === activeId,
     boss: !!enemy?.boss,
     elite: !!enemy?.tags.includes('elite'),
+    badge: kind ? { art: foeBadgeArt(kind), name: foeClass(kind).nameVi } : null,
     corrupted: c.tags.includes('umbraflux'),
     corruption: corruptionOfTags(c.tags),
     guarding: c.guarding,
@@ -264,7 +269,8 @@ export function battleVm(world: WorldSave, run: Run): BattleVm | null {
       return [m.key, { art: m.art, level: f?.level ?? null, expPercent: f ? expShare(f) : null, classId: m.classId, honor: titleOf(f)?.nameVi ?? null }];
     }),
   );
-  const units = battle.combatants.map((c) => unitVm(battle, c, cur?.id ?? null, allies.get(c.id)));
+  const groupKind = run.rift ? 'normal' : foughtKind(run);
+  const units = battle.combatants.map((c) => unitVm(battle, c, cur?.id ?? null, allies.get(c.id), groupKind));
   const artOf = new Map(units.map((u) => [u.id, u.art]));
   const nameOf = (id: string) => battle.combatants.find((c) => c.id === id)?.name ?? id;
   const alive = battle.combatants.filter((c) => c.hp > 0);

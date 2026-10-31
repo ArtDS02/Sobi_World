@@ -8,7 +8,7 @@ import { blockedTiles } from '../../src/areas/adventure/logic/maps';
 import { corruptionDecalsOf, decalsOf } from '../../src/areas/adventure/scene/decals';
 import { chestArt, kitTile, KIT_IDS, puzzleArt } from '../../src/areas/adventure/scene/mapKit';
 import { PROPS } from '../../src/areas/adventure/logic/config/content';
-import { reactionArt, skillArt, statusArt } from '../../src/areas/adventure/ui/vmKit';
+import { foeBadgeArt, reactionArt, skillArt, statusArt } from '../../src/areas/adventure/ui/vmKit';
 
 const zoneOfMapId = (map: (typeof MAP_LIST)[number]) => map.zoneId.replace(/^zone_/, '');
 const manifest = JSON.parse(readFileSync('public/assets/manifest/assets.json', 'utf8')) as Record<string, { id: string }[] | number>;
@@ -49,6 +49,10 @@ describe('adventure icons', () => {
     const statuses = ['poison', 'burn', 'wet', 'freeze', 'stun', 'disable', 'doom', 'atkUp', 'defDown', 'matkUp', 'mdefDown', 'accUp', 'evaDown', 'spdUp', 'shield', 'taunt', 'regen', 'autoRevive'] as const;
     for (const s of statuses) expect(ids.has(statusArt(s).art), s).toBe(true);
     for (const id of [...Object.values(CAMP_ART), ...ICON_ART_IDS]) expect(ids.has(id), id).toBe(true);
+  });
+
+  it('every foe class has its badge (decision 045)', () => {
+    for (const k of ['normal', 'elite', 'mutant', 'subboss', 'boss', 'special']) expect(ids.has(foeBadgeArt(k)), k).toBe(true);
   });
 
   it('skills and reactions name their art after their id', () => {

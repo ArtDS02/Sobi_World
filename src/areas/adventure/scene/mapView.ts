@@ -7,11 +7,10 @@ import * as Phaser from 'phaser';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { PROPS, type AreaMap } from '../logic/config/content';
 import { thingsOf, type Thing } from '../logic/maps';
-import { elementArt } from '../ui/vmKit';
 import { vi } from '../../../i18n/vi';
 import { decalsOf } from './decals';
 import { dressCorruption } from './mapCorruption';
-import { corruptionMarks, NO_MARKS, sleepMark, type CorruptionMarks } from './foeMarks';
+import { corruptionMarks, foeLabel, NO_MARKS, sleepMark, type CorruptionMarks } from './foeMarks';
 import { drawCover } from './mapCovers';
 import { chestArt, kitTile, MIMIC_ART, puzzleArt } from './mapKit';
 import { dressArea, type AreaDressing } from './mapDepth';
@@ -190,7 +189,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     const zzz = g.asleep ? sleepMark(scene, t) : null;
     const marks = g.disguised ? NO_MARKS : corruptionMarks(scene, g.corruption, size * t, ratio);
     const phase = [...g.id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 100;
-    const label = foeLabel(scene, g.elements, g.count, g.affix?.name ?? g.title, g.corruption, g.asleep);
+    const label = foeLabel(scene, g.kind, g.elements, g.count, g.affix?.name ?? g.title, g.corruption, g.asleep);
     groups.set(g.id, { img, sx: img.scaleX, sy: img.scaleY, phase, shadow, label, aura, zzz, marks });
     layer.add([shadow, ...(marks.veins ? [marks.veins] : []), ...(aura ? [aura] : []), ...marks.spikes, img, ...(zzz ? [zzz] : []), label]);
   }
@@ -231,37 +230,6 @@ const lockWords = (lock: AdventureSceneState['exits'][number]['lock']): string =
 
 /** Tint of a group's picture by corruption 1–5 (decision 045): from its own colours toward a sick violet. */
 const CORRUPTION_TINT = [0xffffff, 0xf0e2f6, 0xe0c8ee, 0xcfaae6, 0xb98ad8];
-
-/**
- * The tag over a group seen up close: its elements' badges, how many it is and its corruption pips; above it, a ribbon with its variant
- * or its class (origin at the bottom centre).
- */
-function foeLabel(scene: Phaser.Scene, elements: readonly AdventureSceneState['groups'][number]['elements'][number][], count: number, ribbonText: string | null, corruption: number, asleep: boolean): Phaser.GameObjects.Container {
-  const icon = 22;
-  const parts: Phaser.GameObjects.GameObject[] = [];
-  let x = 6;
-  for (const e of elements) {
-    const k = textureKey(elementArt(e));
-    if (!scene.textures.exists(k)) continue;
-    parts.push(scene.add.image(x + icon / 2, -icon / 2 - 4, k).setDisplaySize(icon, icon));
-    x += icon + 2;
-  }
-  const text = scene.add.text(x + 2, -icon / 2 - 4, `×${count}`, { fontSize: '16px', fontStyle: 'bold', color: '#4a2e17' }).setOrigin(0, 0.5);
-  const pips = scene.add.text(x + 2 + text.width + 6, -icon / 2 - 4, '◆'.repeat(corruption) + '◇'.repeat(Math.max(0, 5 - corruption)), { fontSize: '13px', color: corruption >= 4 ? '#6b1f8f' : '#a24fc8' }).setOrigin(0, 0.5);
-  const w = x + 4 + text.width + 6 + pips.width + 6;
-  const bg = scene.add.graphics().fillStyle(0xfff6e0, 0.95).lineStyle(2, 0x8a5a2b, 1).fillRoundedRect(0, -icon - 8, w, icon + 8, 10).strokeRoundedRect(0, -icon - 8, w, icon + 8, 10);
-  const box = scene.add.container(0, 0, [bg, ...parts, text, pips]).setDepth(99998).setVisible(false);
-  for (const p of box.list as unknown as Phaser.GameObjects.Components.Transform[]) p.x -= w / 2;
-  const words = ribbonText && asleep ? `${ribbonText} · ${vi.adventure.foes.asleep}` : (ribbonText ?? (asleep ? vi.adventure.foes.asleep : null));
-  if (words) {
-    // The variant's or the class's name on a gold ribbon above the tag.
-    const name = scene.add.text(0, -icon - 20, words, { fontSize: '15px', fontStyle: 'bold', color: '#5b3a1c' }).setOrigin(0.5, 0.5);
-    const rw = name.width + 16;
-    const ribbon = scene.add.graphics().fillStyle(0xffe27a, 0.97).lineStyle(2, 0xb8860b, 1).fillRoundedRect(-rw / 2, -icon - 30, rw, 20, 9).strokeRoundedRect(-rw / 2, -icon - 30, rw, 20, 9);
-    box.add([ribbon, name]);
-  }
-  return box;
-}
 
 /** Re-points the things whose state changed (a chest opened, a gate gone, a portal lit, a teleport gate opened). */
 export function refreshThings(scene: Phaser.Scene, map: AreaMap, objs: MapObjects, s: AdventureSceneState, time = 0, near: { x: number; y: number } | null = null) {

@@ -27,6 +27,8 @@ export function probe(world: WorldSave, run: AdventureRun, now: number): ErrorCo
 export const errorText = (e: ErrorCode | null): string | null => (e ? vi.error[e] : null);
 
 export const elementArt = (e: Element): string => `ui_icon_elem_${e.toLowerCase()}`;
+/** The badge of a foe class (decision 045: normal, elite, mutant, subboss, boss, special). */
+export const foeBadgeArt = (kind: string): string => `ui_icon_foe_${kind}`;
 export const elementName = (e: Element): string => ELEMENT_NAMES[e]?.nameVi ?? e;
 export const elementLabel = (e: Element): string => elementName(e);
 

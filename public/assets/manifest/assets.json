@@ -7191,6 +7191,36 @@
       "id": "st_stun",
       "status": "production",
       "asset": "ui/status/st_stun.png"
+    },
+    {
+      "id": "ui_icon_foe_normal",
+      "status": "production",
+      "asset": "ui/adventure/ui_icon_foe_normal.png"
+    },
+    {
+      "id": "ui_icon_foe_elite",
+      "status": "production",
+      "asset": "ui/adventure/ui_icon_foe_elite.png"
+    },
+    {
+      "id": "ui_icon_foe_mutant",
+      "status": "production",
+      "asset": "ui/adventure/ui_icon_foe_mutant.png"
+    },
+    {
+      "id": "ui_icon_foe_subboss",
+      "status": "production",
+      "asset": "ui/adventure/ui_icon_foe_subboss.png"
+    },
+    {
+      "id": "ui_icon_foe_boss",
+      "status": "production",
+      "asset": "ui/adventure/ui_icon_foe_boss.png"
+    },
+    {
+      "id": "ui_icon_foe_special",
+      "status": "production",
+      "asset": "ui/adventure/ui_icon_foe_special.png"
     }
   ],
   "audio": [

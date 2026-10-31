@@ -114,6 +114,7 @@ export function unitOnField(
       el(
         'span',
         { class: 'adventure-ui__plate-name' },
+        u.badge ? iconOf(u.badge.art, u.badge.name, 'adv-icon--foe') : null,
         ...u.elements.map((e) => elementIcon(e)),
         el('b', { text: u.name }),
         u.corruption > 0 ? corruptionPips(u.corruption) : null,
