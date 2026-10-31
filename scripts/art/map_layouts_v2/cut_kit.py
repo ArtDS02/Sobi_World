@@ -50,6 +50,31 @@ MANUAL: dict[str, list[tuple[int, int, int, int]]] = {
            (84, 317, 411, 515), (708, 317, 1292, 515), (708, 550, 1293, 710)],
 }
 
+# The same for the smooth redraw (batch adventure-14b-map-v2-redo), whose sheets have their own layout.
+MANUAL_REDO: dict[str, list[tuple[int, int, int, int]]] = {
+    # an extra third row (a second stairs, a bank corner): the waterfall sits on it
+    "FE": [(30, 55, 660, 215), (730, 55, 995, 215), (1075, 55, 1340, 215),
+           (112, 308, 402, 462), (533, 308, 1300, 462), (1093, 543, 1315, 732)],
+    # three rows; the left end (rounded on its left) is drawn right of the right end; the bank with ground on top is used
+    "ME": [(45, 58, 662, 236), (1058, 58, 1330, 236), (712, 58, 984, 236),
+           (186, 298, 500, 476), (45, 532, 662, 711), (712, 532, 1330, 711)],
+    "RE": [(45, 58, 662, 252), (740, 55, 1000, 285), (1045, 55, 1300, 285),
+           (45, 333, 665, 720), (712, 333, 1330, 482), (710, 525, 1332, 728)],
+    # two extra fallen columns and an extra rubble pile in between are unused
+    "RP": [(64, 27, 281, 472), (392, 37, 562, 440), (747, 53, 949, 207), (1516, 53, 1728, 201),
+           (996, 292, 1145, 440), (1325, 307, 1420, 419), (1606, 254, 1723, 440), (1866, 281, 2078, 461)],
+    # captions above / below each tile: the tile squares only
+    "MT": [(52, 62, 323, 340), (386, 62, 657, 340), (719, 62, 990, 340), (1053, 62, 1324, 340),
+           (52, 428, 323, 706), (386, 428, 657, 706), (719, 428, 990, 706), (1053, 428, 1324, 706)],
+    # drawn twice (two rows): the top row
+    "S1": [(40, 80, 340, 318), (378, 38, 668, 346), (712, 72, 1004, 312), (1072, 98, 1332, 346)],
+}
+# Tiles whose light details read as background (kept whole), sprites whose grey middle is not a hole,
+# and springs standing on a cut-off patch of sand (the sand is removed).
+FORCE_TILE = {"adv_map_ruins_tile_path"}
+KEEP_HOLES = {"adv_map_puzzle_mirror"}
+NO_SAND = {"adv_map_spring_mountain", "adv_map_spring_ruins"}
+
 
 def remove_sparkle(img: np.ndarray) -> np.ndarray:
     """Inpaint the semi-transparent four-point star Gemini stamps on every sheet.
@@ -148,8 +173,9 @@ def cut_sheet(sheet: dict, variant: str) -> list[tuple[str, np.ndarray | None]]:
     names = sheet["assets"]
     cells: list[tuple[tuple[int, int, int, int], np.ndarray]] = []
     # The hand-drawn boxes fit the first drawing of those sheets only (batch adventure-14-map-v2).
-    if sid in MANUAL and BATCH.name == "adventure-14-map-v2":
-        for x0, y0, x1, y1 in MANUAL[sid]:
+    manual = MANUAL if BATCH.name == "adventure-14-map-v2" else MANUAL_REDO
+    if sid in manual:
+        for x0, y0, x1, y1 in manual[sid]:
             member = np.zeros_like(joined)
             member[y0:y1, x0:x1] = joined[y0:y1, x0:x1]
             ys, xs = np.nonzero(member)
@@ -178,7 +204,7 @@ def cut_sheet(sheet: dict, variant: str) -> list[tuple[str, np.ndarray | None]]:
     for name, ((x0, y0, x1, y1), member) in zip(names, cells):
         crop = img[y0:y1, x0:x1]
         fill = content[y0:y1, x0:x1].mean()
-        if "_tile_" in name and fill >= TILE_FILL:
+        if ("_tile_" in name and fill >= TILE_FILL) or name in FORCE_TILE:
             inset = 8
             t = crop[inset:-inset, inset:-inset]
             s = min(t.shape[:2])
@@ -195,7 +221,7 @@ def cut_sheet(sheet: dict, variant: str) -> list[tuple[str, np.ndarray | None]]:
             cv2.floodFill(ff, m, (0, 0), 2)
             transparent = (ff == 2)[1:-1, 1:-1] | (lines[y0:y1, x0:x1] > 0)
             # enclosed holes of sheet grey (inside a fence, under an arch)
-            if transparent.any():
+            if transparent.any() and name not in KEEP_HOLES:
                 ref = np.median(crop[transparent & bg[y0:y1, x0:x1]], axis=0) if (transparent & bg[y0:y1, x0:x1]).any() else None
                 if ref is not None:
                     near = (np.abs(crop.astype(np.int16) - ref.astype(np.int16)).max(2) <= 10) & bg[y0:y1, x0:x1] & ~transparent
@@ -203,6 +229,18 @@ def cut_sheet(sheet: dict, variant: str) -> list[tuple[str, np.ndarray | None]]:
                     for i in range(1, hn):
                         if hs[i][4] >= 250:
                             transparent |= hl == i
+            if name in NO_SAND:
+                c = crop.astype(np.int16)  # BGR
+                sand = (c[..., 2] > 190) & (c[..., 1] > 150) & (c[..., 2] - c[..., 0] > 55) & (c[..., 0] < 170)
+                # only the big patch the cell edge cut off, not the small light faces of the rocks
+                sn, sl, ss, _ = cv2.connectedComponentsWithStats(sand.astype(np.uint8))
+                sand = np.isin(sl, [i for i in range(1, sn) if ss[i][4] >= 1500])
+                transparent |= cv2.dilate(sand.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0
+                # drop what the sand cut loose (crumbs of its rim)
+                n2, l2, s2, _ = cv2.connectedComponentsWithStats((~transparent).astype(np.uint8))
+                if n2 > 1:
+                    keep = 1 + int(np.argmax(s2[1:, 4]))
+                    transparent |= (l2 != keep) & (l2 > 0)
             alpha = np.where(transparent, 0, 255).astype(np.uint8)
             alpha = cv2.medianBlur(alpha, 3)
             rgba = cv2.cvtColor(crop, cv2.COLOR_BGR2BGRA)
