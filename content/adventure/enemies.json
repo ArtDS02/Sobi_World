@@ -565,7 +565,7 @@
       "exp": 16.2,
       "coins": 10,
       "drops": [{ "itemId": "item_mountain_ore", "chance": 0.2, "min": 1, "max": 2 }],
-      "art": "enemy_rock_beetle"
+      "art": "enemy_reef_crab"
     },
     {
       "id": "enemy_salt_gull",
@@ -587,7 +587,7 @@
       "exp": 15.6,
       "coins": 10,
       "drops": [{ "itemId": "item_beast_fang", "chance": 0.2, "min": 1, "max": 1 }],
-      "art": "enemy_cliff_hawk"
+      "art": "enemy_salt_gull"
     },
     {
       "id": "enemy_coral_eel",
@@ -609,7 +609,7 @@
       "exp": 16.2,
       "coins": 10,
       "drops": [{ "itemId": "item_beast_fang", "chance": 0.2, "min": 1, "max": 1 }],
-      "art": "enemy_lava_newt"
+      "art": "enemy_coral_eel"
     },
     {
       "id": "enemy_drift_jelly",
@@ -631,7 +631,7 @@
       "exp": 15.6,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.15, "min": 1, "max": 1 }],
-      "art": "enemy_rune_wisp"
+      "art": "enemy_drift_jelly"
     },
     {
       "id": "enemy_brine_wraith",
@@ -653,7 +653,7 @@
       "exp": 16.8,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.15, "min": 1, "max": 1 }],
-      "art": "enemy_tide_wraith"
+      "art": "enemy_brine_wraith"
     },
     {
       "id": "enemy_shell_knight",
@@ -680,7 +680,7 @@
         { "itemId": "item_mountain_ore", "chance": 0.5, "min": 1, "max": 2 },
         { "itemId": "item_ancient_cog", "chance": 0.3, "min": 1, "max": 1 }
       ],
-      "art": "enemy_ore_golem"
+      "art": "enemy_shell_knight"
     },
     {
       "id": "enemy_abyss_kraken",
@@ -717,7 +717,105 @@
         { "itemId": "item_ancient_cog", "chance": 0.5, "min": 1, "max": 1 }
       ],
       "boss": true,
-      "art": "enemy_magma_drake"
+      "art": "enemy_abyss_kraken"
+    },
+    {
+      "id": "enemy_mimic_forest",
+      "nameVi": "Rương Giả",
+      "element": "EARTH",
+      "tags": ["elite"],
+      "stats": {
+        "hp": 339,
+        "mp": 60,
+        "atk": 31,
+        "def": 12,
+        "matk": 22,
+        "mdef": 11,
+        "spd": 8,
+        "acc": 100,
+        "eva": 5,
+        "crit": 5
+      },
+      "skills": ["skill_e_tusk_charge", "skill_e_bark_skin"],
+      "exp": 3.5,
+      "coins": 5,
+      "drops": [
+        { "itemId": "item_beast_fang", "chance": 0.28, "min": 1, "max": 2 },
+        { "itemId": "item_equip_wood_sword", "chance": 0.048, "min": 1, "max": 1 }
+      ],
+      "art": "enemy_mimic"
+    },
+    {
+      "id": "enemy_mimic_mountain",
+      "nameVi": "Rương Giả",
+      "element": "EARTH",
+      "tags": ["elite"],
+      "stats": {
+        "hp": 509,
+        "mp": 60,
+        "atk": 44,
+        "def": 18,
+        "matk": 31,
+        "mdef": 14,
+        "spd": 6,
+        "acc": 100,
+        "eva": 5,
+        "crit": 4
+      },
+      "skills": ["skill_e_rock_slam", "skill_e_iron_shell"],
+      "exp": 10.5,
+      "coins": 7,
+      "drops": [
+        { "itemId": "item_mountain_ore", "chance": 0.24, "min": 1, "max": 2 },
+        { "itemId": "item_ancient_cog", "chance": 0.016, "min": 1, "max": 1 }
+      ],
+      "art": "enemy_mimic"
+    },
+    {
+      "id": "enemy_mimic_ruins",
+      "nameVi": "Rương Giả",
+      "element": "EARTH",
+      "stats": {
+        "hp": 789,
+        "mp": 60,
+        "atk": 60,
+        "def": 24,
+        "matk": 42,
+        "mdef": 18,
+        "spd": 8,
+        "acc": 100,
+        "eva": 5,
+        "crit": 4
+      },
+      "skills": ["skill_e_rock_slam", "skill_e_stone_guard"],
+      "exp": 15.9,
+      "coins": 10,
+      "drops": [{ "itemId": "item_ancient_cog", "chance": 0.016, "min": 1, "max": 1 }],
+      "art": "enemy_mimic",
+      "tags": ["elite"]
+    },
+    {
+      "id": "enemy_mimic_coast",
+      "nameVi": "Rương Giả",
+      "element": "WATER",
+      "stats": {
+        "hp": 856,
+        "mp": 60,
+        "atk": 62,
+        "def": 24,
+        "matk": 43,
+        "mdef": 18,
+        "spd": 7,
+        "acc": 100,
+        "eva": 5,
+        "crit": 4
+      },
+      "skills": ["skill_e_bubble", "skill_e_iron_shell"],
+      "exp": 16.2,
+      "coins": 10,
+      "drops": [{ "itemId": "item_mountain_ore", "chance": 0.2, "min": 1, "max": 2 }],
+      "art": "enemy_mimic",
+      "tags": ["elite"]
     }
   ]
 }

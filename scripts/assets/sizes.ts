@@ -143,6 +143,11 @@ for (const enemy of ['ore_golem']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 
 for (const enemy of ['magma_drake', 'ancient_guardian']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 320, height: 360 };
 CATALOGUE_SIZES.bg_adventure_mountain = { width: 1600, height: 900 };
 CATALOGUE_SIZES.bg_adventure_ruins = { width: 1600, height: 900 };
+// The coast (decision 045, batch adventure-15-coast-foes): six sea monsters, the elite, the mimic chest and the boss (wide, its arms spread).
+for (const enemy of ['reef_crab', 'salt_gull', 'coral_eel', 'drift_jelly', 'brine_wraith']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 192, height: 192 };
+for (const enemy of ['shell_knight', 'mimic']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 240, height: 240 };
+CATALOGUE_SIZES.enemy_abyss_kraken = { width: 400, height: 360 };
+CATALOGUE_SIZES.bg_adventure_coast = { width: 1600, height: 900 };
 // Adventure V2 (decision 037): new guardians, map props (as wide as their footprint × 64 px), the things on a map.
 for (const enemy of ['wolf_alpha', 'thunder_ram', 'shadow_priest']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 240, height: 240 };
 for (const [id, w, h] of [

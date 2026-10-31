@@ -20,7 +20,8 @@ COVER_LOOK = {"forest": "canopy", "mountain": "rock", "ruins": "roof", "coast": 
 BRANCHES = {"zone_forest": ["map_forest_hollow", "map_forest_falls", "map_forest_marsh"],
             "zone_mountain": ["map_mountain_pass", "map_mountain_tunnels"], "zone_ruins": ["map_ruins_crypt"]}
 # A mimic is an enemy of its zone dressed as a chest (its own art waits for GĐ14).
-MIMIC_ENEMY = {"forest": "enemy_bramble_boar", "mountain": "enemy_ore_golem", "ruins": "enemy_stone_sentinel", "coast": "enemy_reef_crab"}
+# The mimic chest of each zone (art enemy_mimic, stats of the zone).
+MIMIC_ENEMY = {z: f"enemy_mimic_{z}" for z in ("forest", "mountain", "ruins", "coast")}
 NODE_TABLE = {("herb", "forest"): "herbs", ("herb", "mountain"): "herbs", ("herb", "ruins"): "herbs",
               ("ore", "forest"): "ore_vein", ("ore", "mountain"): "ore_vein", ("ore", "ruins"): "cache_ancient", ("herb", "coast"): "herbs", ("ore", "coast"): "ore_vein"}
 GIFT = {"elite": {"item_adv_exp_small": 3, "item_potion_healing": 2}, "subboss": {"item_adv_exp_small": 5, "item_skill_scroll": 1}}
@@ -64,7 +65,7 @@ NEW_LORE = {
 # The coast (decision 043: opens after the mountain boss, team level 14-24; entered from the Misty Marsh).
 COAST_ZONE = {"id": "zone_coast", "nameVi": "Bờ Biển Muối",
               "descVi": "Bãi cát, rạn san hô và vịnh tàu đắm, vào từ Đầm Sương. Trùm Bạch Tuộc Vực Thẳm ở Vịnh Đắm Tàu. Phù hợp đội cấp 14–24.",
-              "fromWorldLevel": 12, "requiresCleared": "zone_mountain", "backdrop": "bg_adventure_forest",
+              "fromWorldLevel": 12, "requiresCleared": "zone_mountain", "backdrop": "bg_adventure_coast",
               "maps": ["map_coast_beach", "map_coast_reef", "map_coast_cove"], "levels": [14, 24]}
 COAST_DESC_EN = "Sand, coral reefs and a wreck cove, entered from the Misty Marsh. The Abyss Kraken waits in Wreck Cove. For teams of level 14–24."
 NEW_NAMES_EN = {"map_coast_beach": "Shell Beach", "map_coast_reef": "Coral Reef", "map_coast_cove": "Wreck Cove", "map_forest_hollow": "Mushroom Hollow", "map_forest_falls": "Moss Falls", "map_forest_marsh": "Misty Marsh",
@@ -209,7 +210,7 @@ def main():
                     g["when"] = ob["when"]
                 if k == "chest":
                     g["disguise"] = "chest"
-                if prev:
+                if prev and k != "chest":
                     g["pool"] = prev["pool"]
                     for f in ("table", "gift"):
                         if f in prev:

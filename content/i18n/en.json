@@ -28,7 +28,11 @@
     "enemies/enemy_drift_jelly/nameVi": "Drift Jelly",
     "enemies/enemy_brine_wraith/nameVi": "Brine Wraith",
     "enemies/enemy_shell_knight/nameVi": "Shell Knight",
-    "enemies/enemy_abyss_kraken/nameVi": "Abyss Kraken"
+    "enemies/enemy_abyss_kraken/nameVi": "Abyss Kraken",
+    "enemies/enemy_mimic_forest/nameVi": "Mimic Chest",
+    "enemies/enemy_mimic_mountain/nameVi": "Mimic Chest",
+    "enemies/enemy_mimic_ruins/nameVi": "Mimic Chest",
+    "enemies/enemy_mimic_coast/nameVi": "Mimic Chest"
   },
   "adventure/skills.json": {
     "skills/skill_nh_bubble/nameVi": "Bubble Shot",

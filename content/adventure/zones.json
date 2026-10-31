@@ -38,7 +38,7 @@
       "descVi": "Bãi cát, rạn san hô và vịnh tàu đắm, vào từ Đầm Sương. Trùm Bạch Tuộc Vực Thẳm ở Vịnh Đắm Tàu. Phù hợp đội cấp 14–24.",
       "fromWorldLevel": 12,
       "requiresCleared": "zone_mountain",
-      "backdrop": "bg_adventure_forest",
+      "backdrop": "bg_adventure_coast",
       "maps": ["map_coast_beach", "map_coast_reef", "map_coast_cove"],
       "levels": [14, 24]
     }

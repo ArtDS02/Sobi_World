@@ -892,6 +892,26 @@
   ],
   "fx": [
     {
+      "id": "fx_corrupt_spikes",
+      "status": "production",
+      "asset": "fx/adventure/fx_corrupt_spikes.png"
+    },
+    {
+      "id": "fx_corrupt_veins",
+      "status": "production",
+      "asset": "fx/adventure/fx_corrupt_veins.png"
+    },
+    {
+      "id": "fx_sleep_zzz",
+      "status": "production",
+      "asset": "fx/adventure/fx_sleep_zzz.png"
+    },
+    {
+      "id": "fx_secret_found",
+      "status": "production",
+      "asset": "fx/adventure/fx_secret_found.png"
+    },
+    {
       "id": "fx_sick",
       "status": "production",
       "asset": "fx/fx_sick.png",
@@ -2890,6 +2910,46 @@
       "asset": "props/enemy_shadow_priest.png"
     },
     {
+      "id": "enemy_reef_crab",
+      "status": "production",
+      "asset": "props/enemy_reef_crab.png"
+    },
+    {
+      "id": "enemy_salt_gull",
+      "status": "production",
+      "asset": "props/enemy_salt_gull.png"
+    },
+    {
+      "id": "enemy_coral_eel",
+      "status": "production",
+      "asset": "props/enemy_coral_eel.png"
+    },
+    {
+      "id": "enemy_drift_jelly",
+      "status": "production",
+      "asset": "props/enemy_drift_jelly.png"
+    },
+    {
+      "id": "enemy_brine_wraith",
+      "status": "production",
+      "asset": "props/enemy_brine_wraith.png"
+    },
+    {
+      "id": "enemy_shell_knight",
+      "status": "production",
+      "asset": "props/enemy_shell_knight.png"
+    },
+    {
+      "id": "enemy_abyss_kraken",
+      "status": "production",
+      "asset": "props/enemy_abyss_kraken.png"
+    },
+    {
+      "id": "enemy_mimic",
+      "status": "production",
+      "asset": "props/enemy_mimic.png"
+    },
+    {
       "id": "guardian_light_pig",
       "status": "production",
       "asset": "props/guardian_light_pig.png"
@@ -4824,6 +4884,11 @@
       "id": "bg_adventure_ruins",
       "status": "production",
       "asset": "environment/bg_adventure_ruins.png"
+    },
+    {
+      "id": "bg_adventure_coast",
+      "status": "production",
+      "asset": "environment/bg_adventure_coast.png"
     },
     {
       "id": "bg_first_guardians",
