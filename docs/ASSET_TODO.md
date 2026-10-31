@@ -5,25 +5,20 @@
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
 ## Adventure: bản đồ v2 — batch adventure-14-map-v2 / 14b / 15 (decision 045)
-**Đã vào game (2026-11-01):** batch `adventure-15-coast-foes` đủ 13 asset (7 quái biển, `enemy_mimic`, lớp phủ `fx_corrupt_spikes` / `fx_corrupt_veins`, `fx_sleep_zzz`, `fx_secret_found`, `bg_adventure_coast`); batch vẽ lại kiểu mịn `adventure-14b-map-v2-redo` duyệt 230 asset đè bản pixel tạm, 81 asset trong số đó đã vào manifest và đang dùng: ô nền / viền khung / đồ rắc của Biển, lớp che 4 vùng, rương gỗ / bạc / vàng / ẩn + rương giả, cơ quan câu đố tắt / sáng, đồ tha hóa theo %, 9 vật mốc (gồm xác tàu N9, cửa đá N5).
+**Đã vào game (2026-11-01):** batch `adventure-15-coast-foes` đủ 13 asset; bộ ghép vẽ lại `adventure-14b-map-v2-redo` đủ 36 sheet + CE vẽ lại + I1 (`I.png`), 248 asset đã duyệt, **151 asset kit đang dùng**: ô nền 4 vùng (mỗi ảnh phủ 2 × 2 ô), mặt vách 3/4 + bậc + thác, lớp che 4 vùng, đạo cụ theo cụm dọc đường đi, khung viền, rương 4 loại + rương giả, cơ quan câu đố, suối 4 vùng, lối ra theo kiểu + vật chắn khi khóa, tường giả, đồ tha hóa theo %, vật mốc, huy hiệu 6 loại quái (map + trận).
 | Còn thiếu / bản tạm | Ghi chú |
 |---|---|
-| **CE** (vách / bậc / bờ biển) — **cần vẽ lại** | Lần vẽ mịn ra khối isometric chéo (không phải mặt vách 3/4 thẳng như FE / ME), dính chữ chú thích dưới mỗi ô. Đang dùng bản pixel tạm (chưa vào game). Sửa prompt: nhắc "straight front-facing 3/4 cliff face strip, horizontal, like image 2 (FE); no isometric block, no diagonal shore; no text". |
-| **I1** (huy hiệu 6 loại quái) | Chủ dự án báo chưa vẽ nên bỏ qua; nhưng folder có `I.png` (1584 × 672) trông đúng là I1 kiểu mịn: 6 huy hiệu (chân thú, sao bạc, xoáy tím, sừng, vương miện, sao đa hệ) vẽ lặp 2 hàng. Nếu đúng: đổi tên `I1.png`, chạy `cut_kit.py --batch adventure-14b-map-v2-redo --sheet I1 --qa` (cần hộp tay lấy hàng trên). `ui_icon_foe_*` dùng bản tạm đã duyệt, chưa vào manifest; nhãn loại trên map vẫn là ruy băng chữ. |
-| Vách / bậc / bờ của Rừng, Núi, Tàn Tích (FE, ME, RE) | Đã duyệt bản mịn nhưng **chưa ghép**: ô `F` (vách cao nguyên) và `s` (bậc) vẫn vẽ bằng ô cơ bản + tint; cần code mặt vách 3/4 (dải lặp ngang + hai góc). Ô `w` (thác) cũng thế. |
-| Ô nền kit của Rừng / Núi / Tàn Tích (FT, MT, RT) | Đã duyệt; game vẫn dùng `adv_tile_*` cũ (đã liền mép, đủ đẹp). Đổi sang kit thì chạy `seam_tiles.py` cho các ô đó và thêm vào `KIT_TILES`. |
-| Đạo cụ / lối ra / tường nứt kit (FP, FQ, FX, MP, MQ, MX, RP, RQ, RX, CP, CQ, CX) | Đã duyệt, chưa dùng (trừ cọ, đá hà, bụi, vỏ sò của Biển). Map vẫn dùng `prop_adv_*` cũ; tường giả vẫn là ô tường + nét nứt code; lối ra theo `exits[].kind` vẫn là cổng dịch chuyển (mục dưới). |
-| Suối 4 vùng (S1) | Đã duyệt, chưa nối (game dùng `adv_spring` chung). |
-| Biển: ô `sand_b`, `sand_wet`, `tideflat` | Gemini không vẽ liền mép; `seam_tiles.py` làm liền nhưng `sand_b` vẫn ra mảng tròn nên chỉ dùng cho đất tha hóa; `#` / `F` của Biển dùng `tideflat` (đá ướt) tạm thay mặt vách. |
+| Kit đã duyệt nhưng chưa dùng | Đường đi của kit (vẽ thành một làn, lặp sẽ ra sọc: giữ ô đường cũ), ô khảm / bệ / cỏ mọc / gạch vụn Tàn Tích, ô đất tha hóa; cầu gỗ `bridge_h/v` (ô `=` vẫn dùng ô cầu cũ); đạo cụ nhỏ không có chỗ đặt trong bố cục (đèn, hàng rào, xe goòng, ray, giàn, thùng, ghế, bục sách, cờ, phao, neo, thuyền, chòi…); lớp che dạng dải (`*_band`, liễu, rễ / dây leo rủ, rèm tảo); đầu vách và bờ của Biển (CE vẽ có nước xung quanh), vách Tàn Tích (RE: Tàn Tích không có ô `F`); `chest_mimic_awake`, `bramble_ash`, bệ ánh sáng, biển chỉ đường; `corrupt_mist`, `purified_bloom`. Cần bố cục đặt đạo cụ (`props[]` theo cụm) hoặc kiểu lối ra mới để dùng. |
+| Mép chuyển tiếp mềm (cỏ ↔ đường, bờ nước) | Theo decision 045 vẽ bằng code (mặt nạ bo + viền): chưa làm, ô vẫn ráp cạnh vuông. |
 | Vết mờ nhỏ chỗ gỡ dấu ✦ | woodpile, mountain lantern, vines_top, ivy_stones, kelp_curtain, anchor, corrupt_tile_grass. Không chặn. |
-| Vật mốc chưa có ảnh kit | Thung Nấm (nấm khổng lồ), Thác Rêu (gốc cây), Đầm Sương (chòi), Chân Núi (lán), Đèo Gió (đại bàng đá), Hành Lang Rune (tường bích họa), Điện Phong Ấn (đại phong ấn), Hầm Mộ Rune (tường hài cốt): dùng ảnh `prop_adv_*` cũ gần nhất. |
-| Dấu tha hóa trên quái | Gân tím (cấp 3+) và cụm gai (cấp 4+, cấp 5 thêm một cụm) phủ lên ảnh gốc, cả map lẫn trận; tint tím + quầng tối vẫn bằng code. Mắt phát sáng, ảnh riêng cho quái biến dị / kỳ dị / trùm phụ: chưa có. |
-| Quái rương giả trong trận | `enemy_mimic` chưa có key pose (`cb_enemy_mimic_*`), quái biển cũng chưa; trận dùng ảnh gốc. |
+| Vật mốc chưa có ảnh kit | Thung Nấm, Thác Rêu, Đầm Sương, Chân Núi, Đèo Gió, Hành Lang Rune, Điện Phong Ấn, Hầm Mộ Rune: dùng `prop_adv_*` cũ gần nhất. |
+| Dấu tha hóa trên quái | Gân tím (cấp 3+), cụm gai (cấp 4+) phủ lên ảnh gốc; mắt phát sáng và ảnh riêng cho quái biến dị / kỳ dị / trùm phụ chưa có. |
+| Key pose trận | Quái biển và `enemy_mimic` chưa có `cb_<art>_*`; trận dùng ảnh gốc. |
 
 ## Adventure: kiểu lối ra giữa các map (decision 043)
 | Asset | Ghi chú |
 |---|---|
-| Ngưỡng lối ra theo `exits[].kind`: `trail`, `cave`, `bridge`, `stairs`, `shore`, `tunnel` | Tạm thời mọi kiểu vẽ bằng hình cổng dịch chuyển `adv_exit`. Cần khi làm map nhánh (Đợt 2+); mỗi kiểu một ảnh mở / một trạng thái khóa (rễ gai, đá sụp, cổng phong ấn…). |
+| ~~Ngưỡng lối ra theo `exits[].kind`~~ | Xong 2026-11-01 (bộ ghép kit FX / MX / RX / CX): vòm, hang, đường hầm, bậc, đá bước; khóa = bụi gai / tảng đá / cổng đá đóng / vách san hô. `bridge` dùng ảnh `trail`. |
 
 ## Adventure: animation trận — batch adventure-12 / adventure-13 (decision 044)
 | Asset | Ghi chú |

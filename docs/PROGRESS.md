@@ -6,9 +6,29 @@
 **Tiến độ GĐ14:** 28 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). **Adventure** (giao diện theo ảnh mẫu, 212 asset batch adventure-03..10, 2026-10-23, chờ duyệt; còn tạo lại sheet K5, CP2; animation trận bằng code + pipeline / prompt AI: decision 040, 2026-10-24, chờ duyệt). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v5 từ decision 043).
-**Bước tiếp theo:** bản đồ v2 (decision 045): code xong; art 2026-11-01 đã vào game batch `adventure-15-coast-foes` (quái biển, rương giả, lớp phủ tha hóa, Zzz, hiệu ứng khu ẩn, nền Biển) và bộ ghép vẽ lại `adventure-14b-map-v2-redo` (ô / khung / lớp che Biển, lớp che 4 vùng, rương 4 loại, cơ quan câu đố, đồ tha hóa theo %, vật mốc kit). Còn: chủ dự án vẽ lại sheet **CE** (vách / bờ Biển) và xác nhận `I.png` = I1; code mặt vách 3/4 cho ô `F` / `s` / `w` dùng FE / ME / RE; nối đạo cụ / lối ra / suối của kit (`docs/ASSET_TODO.md`). Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
+**Bước tiếp theo:** bản đồ v2 (decision 045): code và art đã vào game (2026-11-01: batch 15, bộ ghép vẽ lại đủ 36 sheet + CE + I1, 151 asset kit đang dùng). Còn: kit chưa có chỗ dùng (đạo cụ nhỏ, cầu, lớp che dạng dải: cần bố cục đặt đạo cụ), mép chuyển tiếp mềm bằng code, key pose quái biển / rương giả (`docs/ASSET_TODO.md`). Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
 
 ## Nhật ký
+
+### 2026-11-01 — Adventure: art bản đồ v2 đợt 2 — CE, huy hiệu loại quái, mặt vách 3/4, lối ra, đạo cụ, ô nền kit (decision 045)
+✅ Đã làm:
+- **CE vẽ lại** cắt, duyệt; **I1** (file `I.png`) cắt, duyệt: 6 huy hiệu loại quái hiện ở nhãn nhóm trên map và bảng tên quái trong trận.
+- **Mặt vách 3/4** cho mặt trước mọi cao nguyên (Rừng, Núi, Biển): dải vách lặp, bậc đá, thác nước, đầu vách bo tròn.
+- **Lối ra theo kiểu** (vòm, hang, đường hầm, bậc, đá bước) và **vật chắn khi khóa** (bụi gai, tảng đá, cổng đá đóng, vách san hô). **Tường giả** thành tảng đá / tường nứt kit, mở ra thì vỡ. **Suối** riêng từng vùng.
+- **Ô nền kit** cho Rừng / Núi / Tàn Tích (mỗi ảnh phủ 2 × 2 ô cho đỡ lặp); **đạo cụ kit theo cụm** dọc mép đường đi; khung viền bằng đạo cụ kit.
+
+📁 File thay đổi chính: `scene/{mapCliffs,mapGround}.ts` (mới), `scene/{mapKit,mapView,foeMarks,decals,mapDepthKit}.ts`, `ui/{battleVm,battleField,vmKit}.ts`, `_adventure.scss`, manifest, `scripts/assets/mapKitSizes.json`, `scripts/art/map_layouts_v2/{cut_kit,seam_tiles}.py`, `scripts/process-art.ts`, test, decision 045, ASSET_TODO.
+
+🧪 Đã kiểm tra:
+- `npm run check` xanh (1576 test) trước mỗi commit. `art:process` + `assets:check` OK.
+- Sandbox (trạng thái giả): Thác Rêu (vách + bậc + thác), Chân Núi (vách bậc thang), Bãi Vỏ Sò (vách sa thạch, lối ra đá bước, cọ / đá dọc bãi), Rừng Sâu (tường giả tảng đá, lối ra khóa bụi gai, huy hiệu kẻ canh), Bìa Rừng (cỏ / nước kit, cây dọc bìa), Đỉnh Dung Nham (dung nham kit), Hành Lang Rune (sàn đá, cột đổ).
+
+⚠️ Vấn đề / tự quyết:
+- `I.png` được coi là I1 (đúng 6 huy hiệu theo thứ tự prompt), chép sang `I1.png`, không xóa file gốc.
+- Bố cục không đặt đạo cụ, nên đạo cụ kit chỉ đứng trên ô chặn sát đường (không ảnh hưởng đường đi). Ô đường kit không dùng (vẽ một làn, lặp ra sọc).
+- Đầu vách và bờ của CE có nước xung quanh nên không dùng; dải vách Biển kết thúc trơn.
+
+👉 Chủ dự án cần kiểm tra: đi một vòng Rừng / Núi / Biển xem mặt vách, lối ra, đạo cụ dọc đường; xem nhãn quái có huy hiệu.
 
 ### 2026-11-01 — Adventure: art bản đồ v2 vào game — quái biển, rương giả, dấu tha hóa, bộ ghép vẽ lại (decision 045)
 ✅ Đã làm:

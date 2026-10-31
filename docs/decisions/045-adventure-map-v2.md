@@ -1,6 +1,6 @@
 # 045 — Adventure: bản đồ v2 — camera bám, khu ẩn, tha hóa, phân loại quái, bộ asset dựng map mới
 
-Ngày: 2026-10-30 · Trạng thái: **chủ dự án đã duyệt hướng** (2026-10-30). Code: camera bám + zoom ×2 xong (2026-10-31, `scene/mapCamera.ts`); phân loại quái + tha hóa + quái ngủ xong (2026-10-31, `logic/foes.ts`); lớp che + khu ẩn + tường giả xong (2026-10-31, save v6); bố cục lại M1–M9 + map nhánh N1–N6 (bước 4a), vùng Biển (4b), tha hóa map + thanh tẩy (5), câu đố, sương mù (save v7) xong (2026-10-31, các mục dưới). **Toàn bộ phần code của decision 045 đã xong.** Art: batch `adventure-15-coast-foes` và phần lớn bộ ghép (`adventure-14b-map-v2-redo`) đã vào game (2026-11-01, mục cuối); còn CE, I1, mặt vách 3/4 (`docs/ASSET_TODO.md`).
+Ngày: 2026-10-30 · Trạng thái: **chủ dự án đã duyệt hướng** (2026-10-30). Code: camera bám + zoom ×2 xong (2026-10-31, `scene/mapCamera.ts`); phân loại quái + tha hóa + quái ngủ xong (2026-10-31, `logic/foes.ts`); lớp che + khu ẩn + tường giả xong (2026-10-31, save v6); bố cục lại M1–M9 + map nhánh N1–N6 (bước 4a), vùng Biển (4b), tha hóa map + thanh tẩy (5), câu đố, sương mù (save v7) xong (2026-10-31, các mục dưới). **Toàn bộ phần code của decision 045 đã xong.** Art: batch `adventure-15-coast-foes` và bộ ghép vẽ lại (`adventure-14b-map-v2-redo`, cả CE vẽ lại và I1) đã vào game (2026-11-01, hai mục cuối); phần kit chưa có chỗ dùng ghi ở `docs/ASSET_TODO.md`.
 Đầu vào: `docs/WORLD_MAP_V2_PROPOSAL.md` (đề xuất + câu trả lời Q2–Q9, A1–A5), decision 043.
 
 ## Bối cảnh
@@ -122,3 +122,12 @@ Cân bằng (`npm run sim:adventure`, 80 chuyến, so với trước): Rừng d�
 - **Vật mốc:** dùng ảnh kit khi kit có (sồi cổ thụ, vòng đá, cây khô tha hóa, tháp nâng mỏ, sọ rồng, tượng vỡ, cửa phong ấn, hải đăng, vòm mai rùa, xác tàu). `import_maps.py` dời vật mốc chắn đường tới chỗ trống gần nhất trong 3 ô: xác tàu N9 (−1, +2), cửa đá N5 (−1, 0), bích họa M8 (0, +3) giờ đứng được. Id `prop_adv_lm_*` giữ nguyên.
 - **Kỹ thuật:** hàng manifest của kit sinh bằng `kit_manifest.py`, khung = đúng cỡ ảnh đã duyệt (`mapKitSizes.json`) để `art:process` không co / đệm; `art:process` không tách nền ô nền kit (`adv_map_*_tile_*`); `seam_tiles.py` làm liền mép ô Biển (trộn với bản dịch nửa ô, như ô cũ).
 - **Soát batch 14b:** CE hỏng (khối isometric chéo + chữ) nên không duyệt; FE, ME, RE, RP vẽ thừa hàng / vật, MT dính chữ, S1 vẽ lặp hai hàng: cắt bằng hộp tay (`MANUAL_REDO`). Batch 15: S1 có vạch đất nối 4 con, cắt lại tay; mòng biển, lươn, hiệp sĩ quay phải nên lật.
+
+## Art vào game — đợt 2: CE, I1, mặt vách, lối ra, đạo cụ, ô nền 3 vùng (2026-11-01)
+
+- **CE vẽ lại** đạt (mặt vách thẳng 3/4); dải vách cắt bỏ phần nước. **I1** (lưu là `I.png`, chép sang `I1.png`) cắt hàng trên; huy hiệu bạc giữ phần giữa xám.
+- **Huy hiệu loại quái** `ui_icon_foe_*`: đầu nhãn nhóm trên map; trong trận cạnh tên quái (trùm → huy hiệu trùm, kẻ canh → tinh anh, còn lại theo loại nhóm; quái thường không có).
+- **Mặt vách 3/4** (`scene/mapCliffs.ts`): mặt trước cao nguyên = dải `F` sâu ≤ 3 ô, phía trên là `^`, phía dưới là đất hoặc bậc thấp hơn; dải vách kit lặp ngang (`seam_tiles.py` làm liền mép ngang), bậc `s` và thác `w` ảnh riêng, đầu dải chạm tường bên thì đặt mảnh đầu vách bo tròn. Viền bên / sau của cao nguyên vẫn là ô tint (nhìn từ trên). Tàn Tích không có `F`.
+- **Lối ra** theo `exits[].kind` + vùng; lối ra khóa đổi sang vật chắn của vùng (thay vì làm tối). **Tường giả** = tảng đá kit (id có `boulder`) hoặc tường nứt của vùng; mở ra thì thành bản vỡ, không biến mất. **Suối** theo vùng.
+- **Ô nền kit 3 vùng** (nền, cao nguyên, nước, dung nham); đường / cầu / tường giữ ô cũ vì ô đường kit là một làn. Mỗi ảnh ô kit phủ 2 × 2 ô (khung con `q<x%2><y%2>`) để giảm lặp. Tách `scene/mapGround.ts`.
+- **Đạo cụ theo cụm:** bố cục v2 không đặt đạo cụ, nên `wallPropsOf` rắc đạo cụ kit (cây, đá, cột đổ, cọ…) lên ô `#` sát đường đi, theo seed của khu; chỉ đứng trên ô chặn nên không đổi đường đi. Khung viền 3 vùng đổi sang đạo cụ kit.
