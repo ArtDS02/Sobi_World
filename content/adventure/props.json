@@ -191,6 +191,110 @@
       "w": 2,
       "h": 2,
       "scale": 1.1
+    },
+    {
+      "id": "prop_adv_lm_f1",
+      "nameVi": "Sồi cổ thụ",
+      "art": "prop_adv_forest_oak",
+      "w": 3,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_f2",
+      "nameVi": "Vòng đá rêu",
+      "art": "prop_adv_forest_boulder",
+      "w": 3,
+      "h": 2,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_f3",
+      "nameVi": "Nấm khổng lồ",
+      "art": "prop_adv_forest_mushroom",
+      "w": 4,
+      "h": 4,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_n1",
+      "nameVi": "Nấm khổng lồ",
+      "art": "prop_adv_forest_mushroom",
+      "w": 3,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_n2",
+      "nameVi": "Gốc cây cổ",
+      "art": "prop_adv_forest_stump",
+      "w": 3,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_n3",
+      "nameVi": "Chòi đổ nát",
+      "art": "prop_adv_forest_hut",
+      "w": 3,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_m1",
+      "nameVi": "Lán thợ mỏ",
+      "art": "prop_adv_mountain_cabin",
+      "w": 3,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_m2",
+      "nameVi": "Tháp nâng mỏ",
+      "art": "prop_adv_mountain_cart",
+      "w": 3,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_m3",
+      "nameVi": "Sọ rồng cổ",
+      "art": "prop_adv_mountain_boulder",
+      "w": 3,
+      "h": 2,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_n4",
+      "nameVi": "Tượng cổ",
+      "art": "prop_adv_ruins_statue",
+      "w": 3,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_r1",
+      "nameVi": "Tượng cổ",
+      "art": "prop_adv_ruins_statue",
+      "w": 3,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_r3",
+      "nameVi": "Đại phong ấn",
+      "art": "prop_adv_ruins_broken",
+      "w": 4,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_n6",
+      "nameVi": "Bức tường cổ",
+      "art": "prop_adv_ruins_wall",
+      "w": 4,
+      "h": 3,
+      "scale": 1
     }
   ]
 }

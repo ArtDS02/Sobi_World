@@ -79,8 +79,9 @@ describe('remaking the enemies', () => {
     expect(e!.statuses).toEqual([{ status: 'stun', turns: 1 }]);
   });
   it('rewards: the class, then corruption against the level of the class', () => {
-    expect(foeReward({ kind: 'normal' })).toEqual({ reward: 1, drops: 1 });
-    expect(foeReward({ kind: 'normal', corruption: 2 }).reward).toBeCloseTo(AB.foes.corruption[1]!.reward, 5);
+    const normal = AB.foes.classes.normal;
+    expect(foeReward({ kind: 'normal' })).toEqual({ reward: normal.reward, drops: normal.drops });
+    expect(foeReward({ kind: 'normal', corruption: 2 }).reward).toBeCloseTo(normal.reward * AB.foes.corruption[1]!.reward, 5);
     expect(foeReward({ kind: 'subboss' })).toEqual({ reward: AB.foes.classes.subboss.reward, drops: AB.foes.classes.subboss.drops });
   });
 });

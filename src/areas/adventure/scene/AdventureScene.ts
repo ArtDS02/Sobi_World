@@ -225,7 +225,7 @@ export class AdventureScene extends Phaser.Scene {
       view.img.setPosition(at.x, at.y + 6).setDepth(at.y).setScale(view.sx * (1 - 0.018 * beat), view.sy * (1 + 0.035 * beat));
       view.shadow.setPosition(at.x, at.y + 4).setScale(1 - 0.06 * beat, 1).setDepth(at.y - 1);
       const d = Math.hypot(at.x - pos.x, at.y - pos.y);
-      if (d < AB.explore.foeInfo * map.tile) {
+      if (d < AB.explore.foeInfo * map.tile && !g.disguised) {
         view.label.setPosition(at.x, at.y - view.img.displayHeight - 4).setVisible(true);
       }
       if (!s.paused && now >= s.graceUntil && now >= this.touchLockUntil && d < AB.explore.touch * (g.asleep ? AB.foes.sleepTouch : 1)) {

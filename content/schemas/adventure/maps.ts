@@ -6,13 +6,19 @@ import { z } from 'zod';
 import { assetId, posInt, text, unit } from '../fields';
 import { element } from './combat';
 
-/** `.` ground, `,` path, `=` bridge (walkable); `#` wall / cliff, `~` water (blocked). */
-export const TERRAIN_CHARS = ['.', ',', '=', '#', '~'] as const;
+/**
+ * `.` ground, `,` path, `=` bridge, `^` raised ground, `s` steps up a cliff, `c` corrupted ground (walkable); `#` wall / dense mass,
+ * `~` water, `F` cliff face or rim, `w` waterfall (blocked). The last five came with the map layouts v2 (decision 045).
+ */
+export const TERRAIN_CHARS = ['.', ',', '=', '#', '~', '^', 's', 'c', 'F', 'w'] as const;
 
 /** How an overhead cover looks (decision 045). */
 export const COVER_LOOKS = ['canopy', 'rock', 'roof'] as const;
 /** How an element gate looks: its element's gate (default) or a false wall with a crack. */
 export const GATE_LOOKS = ['gate', 'crack'] as const;
+
+/** The kinds of treasure chest (decision 045); a false chest is an enemy group (`disguise: 'chest'`). */
+export const CHEST_TYPES = ['wood', 'silver', 'gold', 'hidden'] as const;
 
 /** What keeps an exit shut (decision 043). */
 export const EXIT_LOCKS = ['guardian', 'shortcut'] as const;
@@ -55,6 +61,8 @@ export const groupSchema = z.strictObject({
   sleep: z.boolean().optional(),
   /** A special group shows only then. */
   when: z.enum(FOE_WHEN).optional(),
+  /** A special group dressed as a treasure chest (a mimic) until the party touches it. */
+  disguise: z.enum(['chest']).optional(),
   /** The second element a mutant or a special grows (absent = the class table's pick for its first element). */
   element2: element.optional(),
   pool: z.array(z.strictObject({ weight: posInt, enemies: z.array(z.string().regex(/^enemy_[a-z0-9_]+$/)).min(1).max(4) })).min(1),
@@ -98,7 +106,8 @@ export const mapSchema = z.strictObject({
   ),
   props: z.array(z.strictObject({ prop: id('prop_adv'), ...cell })),
   groups: z.array(groupSchema),
-  chests: z.array(z.strictObject({ id: id('chest'), ...cell, table: z.string() })),
+  /** Treasure chests; `type` (decision 045): wood (common), silver (behind a guardian), gold (after a subboss), hidden (under a cover). */
+  chests: z.array(z.strictObject({ id: id('chest'), ...cell, table: z.string(), type: z.enum(CHEST_TYPES).optional() })),
   nodes: z.array(z.strictObject({ id: z.string().regex(/^(herb|ore)_[a-z0-9_]+$/), ...cell, kind: z.enum(['herb', 'ore']), table: z.string() })),
   /** Element gates; `look: 'crack'` = a false wall (decision 045): it looks like the wall around it, with a crack, until opened. */
   gates: z.array(z.strictObject({ id: id('gate'), ...cell, w: posInt, h: posInt, element, look: z.enum(GATE_LOOKS).optional() })),

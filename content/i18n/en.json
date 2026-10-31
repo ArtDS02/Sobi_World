@@ -732,7 +732,19 @@
     "maps/map_mountain_peak/nameVi": "Lava Summit",
     "maps/map_ruins_gate/nameVi": "Ruin Gate",
     "maps/map_ruins_hall/nameVi": "Rune Hall",
-    "maps/map_ruins_sanctum/nameVi": "Seal Sanctum"
+    "maps/map_ruins_sanctum/nameVi": "Seal Sanctum",
+    "maps/map_forest_hollow/lore/lore_n1/textVi": "The mushrooms in this hollow glow in time with a breath. Pickers say a piglet sleeps under the biggest one.",
+    "maps/map_forest_falls/lore/lore_n2/textVi": "Moss Falls has never stopped. Behind the water nine guardian beasts are carved; one is hidden by a violet crack.",
+    "maps/map_forest_marsh/lore/lore_n3/textVi": "The misty marsh was once a fishing village. When the Umbraflux came the villagers left, leaving only huts on stilts.",
+    "maps/map_mountain_pass/lore/lore_n4/textVi": "The stone eagle on the pass looks toward the Ruins. They say it waits for someone to light the summit fire again.",
+    "maps/map_mountain_tunnels/lore/lore_n5/textVi": "The stone door in the old tunnels only half opens. Behind it gears still turn, very softly.",
+    "maps/map_ruins_crypt/lore/lore_n6/textVi": "The crypt walls are lined with small stones, each carved with a pig. The ones near the seal have cracked black.",
+    "maps/map_forest_hollow/nameVi": "Mushroom Hollow",
+    "maps/map_forest_falls/nameVi": "Moss Falls",
+    "maps/map_forest_marsh/nameVi": "Misty Marsh",
+    "maps/map_mountain_pass/nameVi": "Windy Pass",
+    "maps/map_mountain_tunnels/nameVi": "Ancient Tunnels",
+    "maps/map_ruins_crypt/nameVi": "Rune Crypt"
   },
   "adventure/props.json": {
     "props/prop_adv_forest_oak/nameVi": "Oak tree",
@@ -758,7 +770,20 @@
     "props/prop_adv_ruins_wall/nameVi": "Fallen wall",
     "props/prop_adv_ruins_brazier/nameVi": "Bronze brazier",
     "props/prop_adv_ruins_urn/nameVi": "Ancient urn",
-    "props/prop_adv_ruins_deadtree/nameVi": "Dead tree"
+    "props/prop_adv_ruins_deadtree/nameVi": "Dead tree",
+    "props/prop_adv_lm_f1/nameVi": "Ancient oak",
+    "props/prop_adv_lm_f2/nameVi": "Mossy stone ring",
+    "props/prop_adv_lm_f3/nameVi": "Giant mushroom",
+    "props/prop_adv_lm_n1/nameVi": "Giant mushroom",
+    "props/prop_adv_lm_n2/nameVi": "Ancient stump",
+    "props/prop_adv_lm_n3/nameVi": "Ruined hut",
+    "props/prop_adv_lm_m1/nameVi": "Miners' cabin",
+    "props/prop_adv_lm_m2/nameVi": "Mine lift tower",
+    "props/prop_adv_lm_m3/nameVi": "Ancient dragon skull",
+    "props/prop_adv_lm_n4/nameVi": "Ancient statue",
+    "props/prop_adv_lm_r1/nameVi": "Ancient statue",
+    "props/prop_adv_lm_r3/nameVi": "The great seal",
+    "props/prop_adv_lm_n6/nameVi": "Ancient wall"
   },
   "adventure/elements.json": {
     "elements/METAL/nameVi": "Metal",

@@ -46,8 +46,7 @@ describe('walking and using things', () => {
   it('a gate needs a companion of its element; a spring heals once per area per trip', () => {
     let w = start(strong(adventureWorld()));
     const gate = F1.gates[0]!;
-    const near = tileCenter(F1, gate.x, gate.y + 1);
-    expect(err(interact(w, { ...near, id: gate.id }, ctxAt(T0)))).toBe('GATE_NEEDS_ELEMENT');
+    expect(err(interact(w, { ...standBy(w, F1.id, gate.id), id: gate.id }, ctxAt(T0)))).toBe('GATE_NEEDS_ELEMENT');
     const spring = F1.springs[0]!;
     const run = adventureOf(w).run!;
     w = withAdventure(w, { ...adventureOf(w), run: { ...run, team: run.team.map((m) => ({ ...m, hp: 1 })) } });

@@ -17,6 +17,8 @@ export interface SceneGroup {
   size: number;
   corruption: number;
   asleep: boolean;
+  /** A mimic: it looks like a closed treasure chest and shows no tag (decision 045). */
+  disguised: boolean;
   /** Its class's name on the ribbon over its tag (none for a normal group). */
   title: string | null;
   art: string;

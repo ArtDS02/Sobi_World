@@ -45,8 +45,8 @@ describe('exploration areas (§3.10)', () => {
   });
 
   it('a prop blocks its whole footprint, not one tile', () => {
-    const map = MAPS.map_forest_edge!;
-    const p = map.props.find((q) => PROPS[q.prop]!.w === 2)!;
+    const map = MAP_LIST.find((m) => m.props.some((q) => PROPS[q.prop]!.w >= 2))!;
+    const p = map.props.find((q) => PROPS[q.prop]!.w >= 2)!;
     const blocked = blockedTiles(map);
     for (let dy = 0; dy < PROPS[p.prop]!.h; dy += 1) for (let dx = 0; dx < PROPS[p.prop]!.w; dx += 1) expect(blocked[(p.y + dy) * map.cols + p.x + dx]).toBe(true);
     const walk = walkableOf(map);
@@ -142,6 +142,8 @@ describe('every area its own layout (decision 043, wave 1)', () => {
   it('no two areas share a layout: each pair differs on at least a sixth of its tiles (the old copies differed on 0–13%)', () => {
     for (const [i, a] of MAP_LIST.entries()) {
       for (const b of MAP_LIST.slice(i + 1)) {
+        // Areas of another size are another layout by their size (decision 045).
+        if (a.cols !== b.cols || a.rows !== b.rows) continue;
         let diff = 0;
         a.terrain.forEach((row, y) => [...row].forEach((c, x) => (diff += c === b.terrain[y]![x] ? 0 : 1)));
         expect(diff, `${a.id} / ${b.id}`).toBeGreaterThan((a.cols * a.rows) / 6);
@@ -154,7 +156,8 @@ describe('every area its own layout (decision 043, wave 1)', () => {
     const a = adventureOf(w);
     expect(settleWalker(a)).toBe(a);
     const peak = MAPS.map_mountain_peak!;
-    const lava = tileCenter(peak, 20, 10);
+    const y = peak.terrain.findIndex((row, i) => i > 0 && /[#~Fw]/.test(row.slice(1, -1)));
+    const lava = tileCenter(peak, peak.terrain[y]!.slice(1, -1).search(/[#~Fw]/) + 1, y);
     const stuck = { ...a, run: { ...a.run!, zoneId: 'zone_mountain', mapId: peak.id, ...lava } };
     expect(settleWalker(stuck).run).toMatchObject({ mapId: peak.id, ...tileCenter(peak, peak.spawn.x, peak.spawn.y) });
     const rift = { ...stuck, run: { ...stuck.run, rift: { floor: 0, ruleId: 'x' } } };

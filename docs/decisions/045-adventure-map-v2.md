@@ -1,6 +1,6 @@
 # 045 — Adventure: bản đồ v2 — camera bám, khu ẩn, tha hóa, phân loại quái, bộ asset dựng map mới
 
-Ngày: 2026-10-30 · Trạng thái: **chủ dự án đã duyệt hướng** (2026-10-30). Code: camera bám + zoom ×2 xong (2026-10-31, `scene/mapCamera.ts`); phân loại quái + tha hóa + quái ngủ xong (2026-10-31, `logic/foes.ts`); lớp che + khu ẩn + tường giả xong (2026-10-31, save v6; hai mục dưới); art bắt đầu bằng batch `adventure-14-map-v2`.
+Ngày: 2026-10-30 · Trạng thái: **chủ dự án đã duyệt hướng** (2026-10-30). Code: camera bám + zoom ×2 xong (2026-10-31, `scene/mapCamera.ts`); phân loại quái + tha hóa + quái ngủ xong (2026-10-31, `logic/foes.ts`); lớp che + khu ẩn + tường giả xong (2026-10-31, save v6); bố cục lại M1–M9 + map nhánh N1–N6 xong (2026-10-31, bước 4a; các mục dưới); art bắt đầu bằng batch `adventure-14-map-v2`.
 Đầu vào: `docs/WORLD_MAP_V2_PROPOSAL.md` (đề xuất + câu trả lời Q2–Q9, A1–A5), decision 043.
 
 ## Bối cảnh
@@ -81,4 +81,15 @@ Cân bằng (`npm run sim:adventure`, 80 chuyến, so với trước): Rừng d�
 - **Save v6**: thêm `foundSecrets: []` (migration v5 → v6). Đã thử trên save sandbox thật (v5 → v6) và chuỗi migration từ fixture v2.
 - Nội dung tạm cho 9 map hiện có: mỗi map một lớp che phủ lên một rương (tán cây / mái đá / mái đổ theo vùng); `gate_f2_rock`, `gate_m3_boulder` thành tường giả. Bố cục v2 có sẵn vùng che + rương ẩn của từng map, thay khi bố cục lại.
 - Hình lớp che tạm bằng code (các khối tròn chồng nhau theo màu vùng), chờ art bộ ghép.
+
+## Bước code 4a — bố cục lại M1–M9, thêm map nhánh N1–N6 (2026-10-31)
+
+- **Nhập bố cục:** `scripts/art/map_layouts_v2/export.py` xuất `docs/maps/v2/layouts.json`, `import_maps.py` ghi `maps.json`, `zones.json` (`branches`, bảng rương theo loại), `props.json` (vật mốc), `content/i18n/en.json`. Chạy lại: `python scripts/art/map_layouts_v2/export.py`, `python scripts/art/map_layouts_v2/import_maps.py`, `npm run content:fmt`.
+- **15 khu:** 9 khu chính (64 × 36, khu trùm 48 × 27, 9–12 nhóm) và 6 khu nhánh (64 × 36 → 80 × 45, 16–19 nhóm, có trùm phụ, biến dị, kỳ dị, rương giả). Rừng: N1 Thung Nấm, N2 Thác Rêu, N3 Đầm Sương; Núi: N4 Đèo Gió, N5 Đường Hầm Cổ; Tàn Tích: N6 Hầm Mộ Rune.
+- **Địa hình mới** trong game: `^` đất cao, `s` bậc đá, `c` đất tha hóa (đi được); `F` vách cao nguyên, `w` thác (chặn). Tạm vẽ bằng ô cơ bản + tint.
+- **Giữ tiến độ save:** id cũ của nhóm (pool, quà, bảng trùm), rương, cổng, lối ra giữ nguyên khi vật còn. Bia lore cũ gán sang bia của bố cục mới (giữ id + chữ). Đền Guardian của M3 / M6 / M9 đặt ở chỗ đền của bố cục. Sự kiện lữ khách giữ theo khu.
+- **Vật mới:** nhóm thường pool `[E] ×3, [E, E] ×1`; tinh anh / trùm phụ có quà; rương theo loại: gỗ `chest_wood_<vùng>` (nhẹ), bạc / ẩn `treasure_<vùng>`, vàng `chest_gold_<vùng>` (3 lượt, 60 % ngọc); rương giả = nhóm kỳ dị `disguise: 'chest'` (hình rương đóng, không nhãn; quái của vùng thay tạm cho ảnh riêng). Tha hóa nhóm theo % tha hóa của khu: quái thường cấp 2 từ 30 %, cấp 3 từ 90 %; tinh anh +1; trùm phụ cấp 4 từ 50 %; kỳ dị và trùm cấp 5 từ 75 %.
+- **Thưởng:** quái thường ×0,45 (số nhóm thường mỗi vùng ~11 → ~29).
+- **Để sau:** vùng Biển N7–N9 (bước 4b: `zone_coast`, quái và trùm biển); câu đố nguyên tố (`puzzle`, decision 045 mục 13); tinh thể tha hóa trang trí (bước 5). Lối N4 → Cổng Tàn Tích và N5 → Hành Lang Rune bị bỏ vì map đích chưa có lối về (cần sửa bố cục). Vật mốc của N5 và M8 bị bỏ vì chắn đường / đứng trên vách.
+- **Cân bằng** (`phase11`, đội tank + dps + support, 40 chuyến): Rừng cấp 8 95 %, Núi cấp 16 100 %, Tàn Tích cấp 22 (epic) 72,5 %. Cấp thấp vẫn thua (Rừng cấp 1 0 %, Núi cấp 6 0 %, Tàn Tích cấp 8 0 %).
 

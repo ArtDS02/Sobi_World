@@ -49,6 +49,7 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
         size: foeSize(g),
         corruption: corruptionOf(g),
         asleep: !!g.sleep,
+        disguised: g.disguise === 'chest',
         title: g.kind === 'normal' ? null : foeClass(g.kind).nameVi,
         art: enemies[0]?.art ?? '',
         elements: [...new Set(enemies.flatMap((e) => [e.element, ...(grownElement(g, e.element) ? [grownElement(g, e.element)!] : [])]))],

@@ -5,7 +5,7 @@
 import type { Rect, Vec, Walkable } from '../../../systems/character';
 import { AB, MAPS, PROPS, type AreaMap, type MapGroup } from './config/content';
 
-export const WALK_TILES = new Set(['.', ',', '=']);
+export const WALK_TILES = new Set(['.', ',', '=', '^', 's', 'c']);
 
 export type ThingKind = 'chest' | 'node' | 'gate' | 'spring' | 'npc' | 'lore' | 'shrine' | 'portal' | 'exit';
 
@@ -167,7 +167,8 @@ export function mapProblems(map: AreaMap): string[] {
   // The main road never needs an element gate: exits, the portal, the guardians and the boss with every gate shut.
   for (const t of thingsOf(map)) if ((t.kind === 'exit' || t.kind === 'portal') && !usableFrom(map, t, shut)) say(`${t.kind} ${t.id} is behind an element gate`);
   for (const g of map.groups) if ((g.kind === 'elite' || g.kind === 'boss') && !shut.has(idx(map, g))) say(`${g.kind} ${g.id} is behind an element gate`);
-  // A cover hides a place one can walk into, never the way in, the portal, an exit or an enemy group (decision 045).
+  // A cover hides a place one can walk into, never the way in, the portal, an exit or an enemy group but a special one (decision 045:
+  // the rare ones wait in hidden places).
   for (const c of map.covers) {
     const inside = (x: number, y: number, w = 1, h = 1) => x < c.x + c.w && x + w > c.x && y < c.y + c.h && y + h > c.y;
     if (c.x < 0 || c.y < 0 || c.x + c.w > map.cols || c.y + c.h > map.rows) say(`cover ${c.id} is outside the area`);
@@ -177,7 +178,7 @@ export function mapProblems(map: AreaMap): string[] {
     if (inside(map.spawn.x, map.spawn.y)) say(`cover ${c.id} hides the spawn`);
     if (inside(map.portal.x, map.portal.y, 2, 2)) say(`cover ${c.id} hides the portal`);
     for (const e of map.exits) if (inside(e.x, e.y, e.w, e.h)) say(`cover ${c.id} hides exit ${e.id}`);
-    for (const g of map.groups) if (inside(g.x, g.y)) say(`cover ${c.id} hides group ${g.id}`);
+    for (const g of map.groups) if (g.kind !== 'special' && inside(g.x, g.y)) say(`cover ${c.id} hides group ${g.id}`);
   }
   // Arrivals land on walkable ground.
   for (const other of Object.values(MAPS)) {

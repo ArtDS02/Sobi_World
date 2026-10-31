@@ -43,7 +43,7 @@
   },
   "foes": {
     "classes": {
-      "normal": { "nameVi": "Thường", "size": 2, "corruption": 1, "stats": {}, "reward": 1, "drops": 1 },
+      "normal": { "nameVi": "Thường", "size": 2, "corruption": 1, "stats": {}, "reward": 0.45, "drops": 0.45 },
       "elite": { "nameVi": "Tinh Anh", "size": 2.6, "corruption": 2, "stats": {}, "reward": 1, "drops": 1 },
       "mutant": {
         "nameVi": "Biến Dị",

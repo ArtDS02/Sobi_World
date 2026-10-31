@@ -19,7 +19,9 @@ const GROUND: Record<string, Record<string, number>> = {
   mountain: { '.': 0xc9b28c, ',': 0xe0cfa6, '=': 0x9a7650, '#': 0x7a6450, '~': 0xe0703a },
   ruins: { '.': 0xc8c3b0, ',': 0xe6dfc9, '=': 0xa08868, '#': 0x6d6878, '~': 0x6aa6c8 },
 };
-const TILE_NAME: Record<string, string> = { '.': 'ground', ',': 'path', '=': 'bridge', '#': 'wall', '~': 'water' };
+const TILE_NAME: Record<string, string> = { '.': 'ground', ',': 'path', '=': 'bridge', '#': 'wall', '~': 'water', '^': 'ground', s: 'path', c: 'ground', F: 'wall', w: 'water' };
+/** The layout v2 tiles drawn with a base tile until the kit's own (decision 045): its base character and a tint. */
+const TILE_BASE: Record<string, [string, number]> = { '^': ['.', 0xf2f7e6], s: [',', 0xcfc0a8], c: ['.', 0xcbb0dc], F: ['#', 0xb8a894], w: ['~', 0xe8f6ff] };
 
 export const zoneOfMapId = (map: AreaMap): string => map.zoneId.replace(/^zone_/, '');
 
@@ -114,8 +116,9 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
   map.terrain.forEach((row, y) =>
     [...row].forEach((c, x) => {
       const tex = textureKey(`adv_tile_${zone}_${TILE_NAME[c] ?? 'ground'}`);
-      if (scene.textures.exists(tex)) layer.add(scene.add.image(x * t, y * t, tex).setOrigin(0).setDisplaySize(t, t).setDepth(-10));
-      else ground.fillStyle(colours[c] ?? 0x88aa77, 1).fillRect(x * t, y * t, t + 0.5, t + 0.5);
+      const [base, tint] = TILE_BASE[c] ?? [c, 0xffffff];
+      if (scene.textures.exists(tex)) layer.add(scene.add.image(x * t, y * t, tex).setOrigin(0).setDisplaySize(t, t).setDepth(-10).setTint(tint));
+      else ground.fillStyle(colours[base] ?? 0x88aa77, 1).fillRect(x * t, y * t, t + 0.5, t + 0.5);
     }),
   );
   layer.add(ground);
@@ -152,14 +155,15 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
   }
   const groups: MapObjects['groups'] = new Map();
   for (const g of s.groups) {
-    const img = scene.add.image(0, 0, key(scene, g.art)).setOrigin(0.5, 1);
-    const size = g.size;
+    // A mimic wears a closed chest, a tile high (decision 045).
+    const img = scene.add.image(0, 0, g.disguised ? key(scene, 'adv_chest', 'closed') : key(scene, g.art)).setOrigin(0.5, 1);
+    const size = g.disguised ? 1 : g.size;
     const ratio = img.height > 0 ? img.width / img.height : 1;
     img.setDisplaySize(size * t * ratio, size * t);
     // Corruption darkens the picture toward violet; a golden variant shines gold instead.
-    img.setTint(g.affix?.golden ? 0xffe27a : (CORRUPTION_TINT[g.corruption - 1] ?? 0xffffff));
+    img.setTint(g.disguised ? 0xffffff : g.affix?.golden ? 0xffe27a : (CORRUPTION_TINT[g.corruption - 1] ?? 0xffffff));
     const shadow = scene.add.ellipse(0, 0, size * t * ratio * 0.7, size * t * 0.18, g.corruption >= 3 ? 0x3a0a4a : 0x000000, g.corruption >= 3 ? 0.4 : 0.22);
-    const aura = g.corruption >= 3 ? scene.add.image(0, 0, 'adv-fx-blob').setDisplaySize(size * t * ratio * 1.3, size * t * 0.75).setTint(0x4a0f6a).setAlpha(0) : null;
+    const aura = g.corruption >= 3 && !g.disguised ? scene.add.image(0, 0, 'adv-fx-blob').setDisplaySize(size * t * ratio * 1.3, size * t * 0.75).setTint(0x4a0f6a).setAlpha(0) : null;
     const zzz = g.asleep ? scene.add.text(0, 0, 'z Z', { fontSize: '18px', fontStyle: 'bold', color: '#e8f0ff', stroke: '#3a4a7a', strokeThickness: 4 }).setOrigin(0.5, 1) : null;
     const phase = [...g.id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 100;
     const label = foeLabel(scene, g.elements, g.count, g.affix?.name ?? g.title, g.corruption, g.asleep);

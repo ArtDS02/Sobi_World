@@ -1,6 +1,6 @@
 # Bố cục map v2 (decision 045)
 
-Bố cục thiết kế cho đợt mở rộng bản đồ, mỗi file một map: lưới ô + vùng che + danh sách vật. Game **chưa đọc** các file này; bước code sau sẽ nhập vào `content/adventure/maps.json`.
+Bố cục thiết kế cho đợt mở rộng bản đồ, mỗi file một map: lưới ô + vùng che + danh sách vật. M1–M9 và N1–N6 **đã nhập** vào `content/adventure/maps.json` (decision 045 bước 4a: `export.py` → `layouts.json` → `import_maps.py` → `npm run content:fmt`); N7–N9 chờ vùng Biển.
 
 - Nguồn: `scripts/art/map_layouts_v2/` — `layout.py` (bộ công cụ vẽ lưới + kiểm tra đường đi), `forest.py`, `mountain.py`, `ruins.py`, `coast.py` (18 map), `render.py` (sinh file ở đây và ảnh before), `batch.py` (sinh batch ảnh `adventure-14-map-v2`), `refs.py` (cắt ảnh chuẩn từ tranh map đã duyệt làm hint cho bộ ghép), `cut_kit.py` (cắt sheet bộ ghép thành ứng viên: gom mảnh theo hàng / cột, gỡ dấu ✦, giữ ô nền liền khối).
 - Chạy lại: `python scripts/art/map_layouts_v2/render.py` rồi `python scripts/art/map_layouts_v2/batch.py` và `python .claude/skills/image-to-prompt/scripts/art.py prep adventure-14-map-v2`.
