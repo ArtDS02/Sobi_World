@@ -1503,6 +1503,7 @@ export const vi = {
       shrine: "Phúc lành {element}: +{pct}% sát thương",
       portal: "Cổng dịch chuyển đã thắp!",
       cleared: "Đã hạ trùm vùng! Umbraflux tan biến khỏi nó.",
+      purified: "Đã hạ trùm vùng! Cả vùng sáng lại, quái bớt tha hóa.",
       levelUp: "{name} lên cấp {level}!",
       sp: "{name} +{sp} SP",
       exhausted: "Cả đội kiệt sức, nghỉ {hours} giờ",

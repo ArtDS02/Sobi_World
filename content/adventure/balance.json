@@ -90,7 +90,8 @@
       "LIGHT": "DARK",
       "VOID": "DARK"
     },
-    "sleepTouch": 0.5
+    "sleepTouch": 0.5,
+    "purify": { "area": 20, "normal": 1 }
   },
   "xp": { "battleWin": 6, "zoneClear": 40 },
   "starter": { "breed": "PIG_KNIGHT", "items": { "item_equip_wood_sword": 1, "item_equip_leaf_vest": 1 } },

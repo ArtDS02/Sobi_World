@@ -471,6 +471,7 @@ export const partC = {
       shrine: "{element} blessing: +{pct}% damage",
       portal: "A portal is lit!",
       cleared: "Zone boss beaten! The Umbraflux leaves it.",
+      purified: "Zone boss down! The whole zone brightens, its monsters less corrupted.",
       levelUp: "{name} reaches level {level}!",
       sp: "{name} +{sp} SP",
       exhausted: "The team is exhausted, resting {hours} hours",

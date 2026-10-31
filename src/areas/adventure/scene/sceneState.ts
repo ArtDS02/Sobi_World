@@ -43,6 +43,8 @@ export interface AdventureSceneState {
   exits: { id: string; open: boolean; lock: 'guardian' | 'shortcut' | 'zone' | null; forward: boolean }[];
   openedGates: readonly string[];
   openedChests: readonly string[];
+  /** The area's corruption now, 0–100 % (decision 045): its veil and dust. */
+  corruption: number;
   /** Hidden places found for good (the overhead covers stepped under, decision 045). */
   foundSecrets: readonly string[];
   /** Spots used on this trip (resource spots, travellers, shrines). */

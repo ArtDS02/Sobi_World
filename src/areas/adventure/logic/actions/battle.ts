@@ -11,7 +11,7 @@ import type { BattleAction, BattleState } from '../../../../systems/combat/types
 import { titlesOf } from '../bonds';
 import { AB, BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, LOOT_TABLES, MAPS, type Affix } from '../config/content';
 import { addCount, enemyIdOf, playEnemies, randInt, rollTable } from '../encounter';
-import { canFlee, foeReward, staysBeaten } from '../foes';
+import { canFlee, foeReward, groupNow, staysBeaten, zonePurified } from '../foes';
 import { affixOfTags } from '../variants';
 import { countOf, credit, runAdventure, take, type AdventureResult } from './kit';
 import { settleRiftFloor } from './rift';
@@ -63,7 +63,7 @@ export function settleBattle(st: Step, battle: BattleState, share = 1) {
   const rng = mulberry32(hashSeed('drops', run.seed, key, run.encounters));
   const enemies = battle.combatants.filter((c) => c.side === 'enemy').map((c) => ENEMIES[enemyIdOf(c.id)]!);
   // The group's class and corruption (decision 045) and its variant both weigh on what it gives.
-  const cls = foeReward(group);
+  const cls = foeReward(groupNow(group, zonePurified(st.a, map.zoneId)));
   const expMult = share * cls.reward * (affix?.exp ?? affix?.reward ?? 1);
   const coinMult = share * cls.reward * (affix?.coins ?? affix?.reward ?? 1);
   const dropMult = share * cls.drops * (affix?.reward ?? 1);

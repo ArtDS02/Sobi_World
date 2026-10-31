@@ -10,6 +10,7 @@ import { thingsOf, type Thing } from '../logic/maps';
 import { elementArt } from '../ui/vmKit';
 import { vi } from '../../../i18n/vi';
 import { decalsOf } from './decals';
+import { dressCorruption } from './mapCorruption';
 import { drawCover } from './mapCovers';
 import { dressArea, type AreaDressing } from './mapDepth';
 import type { AdventureSceneState } from './sceneState';
@@ -123,6 +124,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
   );
   layer.add(ground);
   const dressing = depth.ground();
+  dressCorruption(scene, layer, map, s.corruption, motion);
   for (const d of decalsOf(map, zone)) {
     const k = textureKey(d.art);
     if (!scene.textures.exists(k)) continue;

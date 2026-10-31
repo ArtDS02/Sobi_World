@@ -10,7 +10,8 @@ import type { WorldSave } from '../../../core/save/world';
 import type { CombatantInit, Element, Mods, Stats } from '../../../systems/combat/types';
 import { weatherNow } from '../../../systems/weather/live';
 import { ELEMENT_VALUES } from '../../../../content/schemas/adventure/combat';
-import { AB, type MapGroup } from './config/content';
+import { AB, type AreaMap, type MapGroup } from './config/content';
+import type { AdventureState } from './state';
 import { scaleStats } from './variants';
 
 export type FoeClass = MapGroup['kind'];
@@ -92,6 +93,19 @@ export function withClass(inits: readonly CombatantInit[], g: Group): CombatantI
       statuses: [...(e.statuses ?? []), ...(g.sleep ? [{ status: 'stun' as const, turns: 1 }] : [])],
     };
   });
+}
+
+/** A zone whose boss has fallen is purified one step (decision 045). */
+export const zonePurified = (a: Pick<AdventureState, 'cleared'>, zoneId: string): boolean => (a.cleared[zoneId] ?? 0) > 0;
+
+/** The corruption of an area now: its own, less a step once its zone is purified. */
+export const areaCorruption = (map: Pick<AreaMap, 'corruption' | 'zoneId'>, a: Pick<AdventureState, 'cleared'>): number =>
+  Math.max(0, map.corruption - (zonePurified(a, map.zoneId) ? FOES.purify.area : 0));
+
+/** A group as it stands now: in a purified zone the normal groups are a step less corrupted (never under 1). */
+export function groupNow<G extends Group>(g: G, purified: boolean): G {
+  if (!purified || g.kind !== 'normal') return g;
+  return { ...g, corruption: Math.max(1, corruptionOf(g) - FOES.purify.normal) };
 }
 
 /** The corruption level a combatant carries (its `corruption:<n>` tag), or 0. */

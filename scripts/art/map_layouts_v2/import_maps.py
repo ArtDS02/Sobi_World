@@ -121,7 +121,7 @@ def main():
             return None
 
         sp = next(ob for ob in objs if ob["kind"] == "spawn")
-        m = {"id": mid, "zoneId": L["zone"], "nameVi": L["name"], "tile": 40, "cols": W, "rows": H, "terrain": grid,
+        m = {"id": mid, "zoneId": L["zone"], "nameVi": L["name"], "corruption": L["corruption"], "tile": 40, "cols": W, "rows": H, "terrain": grid,
              "spawn": {"x": sp["x"], "y": sp["y"]}}
         taken.add((sp["x"], sp["y"]))
         po = next((ob for ob in objs if ob["kind"] == "portal"), None)

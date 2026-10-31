@@ -7,7 +7,7 @@ import type { ActionContext } from '../../../../core/types';
 import { AB, ENEMIES, MAPS, ZONES } from '../config/content';
 import { addCount } from '../encounter';
 import { credit, runAdventure, type AdventureResult } from './kit';
-import { foeReward, staysBeaten } from '../foes';
+import { foeReward, groupNow, staysBeaten, zonePurified } from '../foes';
 import { chargeParty, type PartyArgs } from './start';
 import { commit, freshRun, giveExp, groupEnemies, type Step } from './trip';
 
@@ -32,7 +32,7 @@ export function sweepZone(world: WorldSave, args: PartyArgs & { zoneId: string }
       for (const g of map.groups) {
         // Groups beaten for good (adventure-big-update-1 §12, decision 045) are not met again: a sweep meets the ones that come back.
         if (staysBeaten(g)) continue;
-        const cls = foeReward(g);
+        const cls = foeReward(groupNow(g, zonePurified(st.a, zone.id)));
         for (const id of groupEnemies(seed, mapId, g)) {
           const e = ENEMIES[id]!;
           exp += e.exp * share * cls.reward;

@@ -76,6 +76,8 @@ export const mapSchema = z.strictObject({
   id: id('map'),
   zoneId: id('zone'),
   nameVi: text,
+  /** How far the Umbraflux has spread here, 0–100 % (decision 045): the tint and the dust of the area; beating the zone boss lowers it. */
+  corruption: z.number().int().min(0).max(100).default(0),
   /** Tile size in design px. */
   tile: posInt,
   cols: posInt,

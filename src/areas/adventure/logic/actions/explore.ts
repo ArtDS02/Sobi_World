@@ -10,7 +10,7 @@ import { startBattle } from '../../../../systems/combat';
 import { AB, COMBAT_CONTEXT, ENGAGEMENT, EVENTS, LOOT_TABLES, MAPS, ZONES, type AreaMap } from '../config/content';
 import { addCount, enemyInits, playEnemies, rollTable } from '../encounter';
 import { allyInit } from '../fighters';
-import { foePresent, foeSky, staysBeaten, withClass } from '../foes';
+import { foePresent, foeSky, groupNow, staysBeaten, withClass, zonePurified } from '../foes';
 import { coverAt, distanceToThing, groupDistance, thingsOf, tileCenter } from '../maps';
 import type { Run } from '../state';
 import { autoBattle, groupAffix, quickWinnable, teamLevel, withAffix } from '../variants';
@@ -67,8 +67,9 @@ export function moveTo(world: WorldSave, args: Position, ctx: ActionContext): Ad
 export function engage(world: WorldSave, args: Position & { groupId: string; quick?: boolean | undefined }, ctx: ActionContext): AdventureResult {
   return onFoot(world, args, ctx, (st, map) => {
     const { run } = st;
-    const g = map.groups.find((x) => x.id === args.groupId);
-    if (!g) return fail('INVALID_REQUEST');
+    const row = map.groups.find((x) => x.id === args.groupId);
+    if (!row) return fail('INVALID_REQUEST');
+    const g = groupNow(row, zonePurified(st.a, map.zoneId));
     const key = groupKey(map.id, g.id);
     if (run.defeated.includes(key) || (staysBeaten(g) && st.a.beaten.includes(key))) return fail('ALREADY_OPENED');
     if (!foePresent(g, foeSky(st.w, ctx.now, ctx.dayOffsetMs ?? 0))) return fail('INVALID_REQUEST');

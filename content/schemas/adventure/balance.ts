@@ -118,6 +118,8 @@ export const adventureBalanceFileSchema = z.strictObject({
     secondElement: z.partialRecord(element, element),
     /** A sleeping group is touched only this close (share of the usual touch distance): the party may tiptoe past. */
     sleepTouch: unit,
+    /** Beating a zone's boss purifies the zone one step: its areas lose this much corruption (%), its normal groups this many levels. */
+    purify: z.strictObject({ area: z.number().int().min(0).max(100), normal: z.number().int().min(0).max(4) }),
   }),
   /** Experience of the Area (it counts for the one Sobi World Level). */
   xp: z.strictObject({ battleWin: nonNeg, zoneClear: nonNeg }),

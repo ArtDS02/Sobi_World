@@ -5,7 +5,7 @@ import { exitLock, groupEnemies, groupKey, portalLit } from '../logic/actions/tr
 import { CAMP_ART } from '../logic/art';
 import { ENEMIES, MAPS, RIFT, ZONES, ZONE_LIST } from '../logic/config/content';
 import { adventureOf } from '../logic/save/lens';
-import { corruptionOf, foeClass, grownElement, foePresent, foeSize, foeSky, staysBeaten } from '../logic/foes';
+import { areaCorruption, corruptionOf, foeClass, groupNow, grownElement, zonePurified, foePresent, foeSize, foeSky, staysBeaten } from '../logic/foes';
 import { groupAffix } from '../logic/variants';
 import { localOffsetMs } from '../../../ui/localDay';
 import type { AdventureSceneState } from '../scene/sceneState';
@@ -27,14 +27,16 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
   };
   // The board of a battle just won keeps the battle's picture behind it.
   if (!run || run.phase !== 'explore' || run.rift || run.report) {
-    return { ...base, mode: !run ? 'camp' : run.phase === 'battle' ? 'battle' : 'done', mapId: null, placeKey: '', pos: { x: 0, y: 0, facing: 'down' }, groups: [], exits: [], usedSpots: [], springUsed: false, portalLit: false, graceUntil: 0 };
+    return { ...base, corruption: 0, mode: !run ? 'camp' : run.phase === 'battle' ? 'battle' : 'done', mapId: null, placeKey: '', pos: { x: 0, y: 0, facing: 'down' }, groups: [], exits: [], usedSpots: [], springUsed: false, portalLit: false, graceUntil: 0 };
   }
   const map = MAPS[run.mapId];
   const prefix = `${run.mapId}/`;
   const sky = foeSky(world, now, localOffsetMs(now));
+  const purified = zonePurified(a, run.zoneId);
   return {
     ...base,
     mode: 'explore',
+    corruption: map ? areaCorruption(map, a) : 0,
     mapId: run.mapId,
     placeKey: `${run.startedAt}|${run.mapId}`,
     pos: { x: run.x, y: run.y, facing: run.facing },
@@ -47,7 +49,7 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
         id: g.id,
         kind: g.kind,
         size: foeSize(g),
-        corruption: corruptionOf(g),
+        corruption: corruptionOf(groupNow(g, purified)),
         asleep: !!g.sleep,
         disguised: g.disguise === 'chest',
         title: g.kind === 'normal' ? null : foeClass(g.kind).nameVi,

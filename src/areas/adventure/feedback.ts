@@ -75,7 +75,7 @@ export function adventurePresentation(e: EventBase, origin: 'action' | 'tick' | 
     case 'ADVENTURE_PORTAL_ACTIVATED':
       return { sound: 'level_up', toast: T.portal };
     case 'ADVENTURE_ZONE_CLEARED':
-      return { sound: 'birth_fanfare', toast: T.cleared };
+      return { sound: 'birth_fanfare', toast: e.first ? T.purified : T.cleared };
     case 'ADVENTURE_LEVEL_UP':
       return { sound: 'level_up', toast: t(T.levelUp, { name: e.name, level: e.level }) };
     case 'ADVENTURE_SP_GAINED':

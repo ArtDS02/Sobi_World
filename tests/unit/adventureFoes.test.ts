@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { engage, startRun } from '../../src/areas/adventure/logic/actions/run';
 import { AB, MAPS } from '../../src/areas/adventure/logic/config/content';
 import { enemyInits } from '../../src/areas/adventure/logic/encounter';
-import { canFlee, corruptionOf, corruptionOfTags, foePresent, foeReward, grownElement, isGuardian, staysBeaten, withClass } from '../../src/areas/adventure/logic/foes';
+import { areaCorruption, canFlee, corruptionOf, corruptionOfTags, foePresent, foeReward, groupNow, grownElement, isGuardian, staysBeaten, withClass } from '../../src/areas/adventure/logic/foes';
 import { tileCenter } from '../../src/areas/adventure/logic/maps';
 import { adventureOf } from '../../src/areas/adventure/logic/save/lens';
 import { T0, adventureWorld, ctxAt, err, keys, ok, squad, strong } from './adventureKit';
@@ -114,5 +114,26 @@ describe('on the map', () => {
     const results = tries.map((p) => err(engage(w, { ...p, groupId: g.id, quick: false }, ctxAt(T0))));
     expect(results.some((r) => r === 'TOO_FAR')).toBe(true);
     expect(results.every((r) => r === 'TOO_FAR' || r === 'BLOCKED')).toBe(true);
+  });
+});
+
+describe('purification (decision 045)', () => {
+  const ruins = MAPS.map_ruins_gate!;
+  it('an area keeps its corruption until its zone boss falls, then loses a step', () => {
+    expect(areaCorruption(ruins, { cleared: {} })).toBe(ruins.corruption);
+    expect(areaCorruption(ruins, { cleared: { zone_ruins: 1 } })).toBe(Math.max(0, ruins.corruption - AB.foes.purify.area));
+    expect(areaCorruption(ruins, { cleared: { zone_forest: 1 } })).toBe(ruins.corruption);
+  });
+  it('in a purified zone the normal groups are a step less corrupted, never under 1; the others stay', () => {
+    expect(corruptionOf(groupNow({ kind: 'normal', corruption: 3 }, true))).toBe(3 - AB.foes.purify.normal);
+    expect(corruptionOf(groupNow({ kind: 'normal' }, true))).toBe(1);
+    expect(corruptionOf(groupNow({ kind: 'elite', corruption: 3 }, true))).toBe(3);
+    expect(corruptionOf(groupNow({ kind: 'normal', corruption: 3 }, false))).toBe(3);
+  });
+  it('every area of the content has a corruption that rises along the journey', () => {
+    const pct = (id: string) => MAPS[id]!.corruption;
+    expect(pct('map_forest_edge')).toBeLessThan(pct('map_mountain_foot'));
+    expect(pct('map_mountain_foot')).toBeLessThan(pct('map_ruins_gate'));
+    expect(pct('map_ruins_gate')).toBeLessThan(pct('map_ruins_sanctum'));
   });
 });

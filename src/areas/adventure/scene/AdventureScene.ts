@@ -60,6 +60,7 @@ export class AdventureScene extends Phaser.Scene {
   private camera!: MapCamera;
   /** The cover the party stands under (decision 045). */
   private coverIn: string | null = null;
+  private builtCorruption = -1;
   private offs: (() => void)[] = [];
 
   constructor(private readonly deps: AdventureSceneDeps) {
@@ -136,6 +137,7 @@ export class AdventureScene extends Phaser.Scene {
     this.objs?.layer.destroy();
     this.map = map;
     this.objs = buildMap(this, map, s, !this.deps.reduceMotion());
+    this.builtCorruption = s.corruption;
     this.walk = null;
     this.backdrop.setVisible(false);
     this.walker.setVisible(true);
@@ -159,7 +161,8 @@ export class AdventureScene extends Phaser.Scene {
       this.texturesChanged = false;
       return;
     }
-    if (this.map?.id !== map.id || this.texturesChanged) this.enterMap(s, map);
+    // The area is built again when its corruption changes (its zone just purified).
+    if (this.map?.id !== map.id || this.texturesChanged || s.corruption !== this.builtCorruption) this.enterMap(s, map);
     this.texturesChanged = false;
     this.camera.fit(map, this.fitZoom());
     if (s.placeKey !== this.placeKey) {
