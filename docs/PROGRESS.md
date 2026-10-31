@@ -6,9 +6,32 @@
 **Tiến độ GĐ14:** 28 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). **Adventure** (giao diện theo ảnh mẫu, 212 asset batch adventure-03..10, 2026-10-23, chờ duyệt; còn tạo lại sheet K5, CP2; animation trận bằng code + pipeline / prompt AI: decision 040, 2026-10-24, chờ duyệt). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v5 từ decision 043).
-**Bước tiếp theo:** bản đồ v2 (decision 045): camera bám + zoom ×2, phân loại quái / tha hóa / quái ngủ, lớp che + khu ẩn + tường giả, bố cục lại M1–M9 + map nhánh N1–N6 đã xong; tiếp theo vùng Biển N7–N9 (quái biển) hoặc tha hóa map + thanh tẩy, rồi (mật độ 10–14 nhóm, các loại mới) và ghép map bằng bộ ghép (256 asset bản tạm đã duyệt trong `art_inbox/`, chốt kích thước theo ô khi đưa vào manifest). Chủ dự án vẽ lại 36 sheet bộ ghép kiểu mịn (mọi sheet trừ FT, FO; `PROMPT.md` đã sinh lại) khi tiện. Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
+**Bước tiếp theo:** bản đồ v2 (decision 045): camera bám + zoom ×2, phân loại quái / tha hóa / quái ngủ, **toàn bộ phần code đã xong** (camera, loại quái + tha hóa, khu ẩn, 18 khu theo bố cục v2 gồm vùng Biển, tha hóa map + thanh tẩy, câu đố, sương mù); còn art bộ ghép theo ASSET_TODO, và (mật độ 10–14 nhóm, các loại mới) và ghép map bằng bộ ghép (256 asset bản tạm đã duyệt trong `art_inbox/`, chốt kích thước theo ô khi đưa vào manifest). Chủ dự án vẽ lại 36 sheet bộ ghép kiểu mịn (mọi sheet trừ FT, FO; `PROMPT.md` đã sinh lại) khi tiện. Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
 
 ## Nhật ký
+
+### 2026-10-31 — Adventure: bản đồ v2 — tha hóa map + thanh tẩy, câu đố, sương mù, vùng Biển (decision 045, các bước còn lại)
+✅ Đã làm:
+- **Tha hóa map (bước 5):** mỗi khu có % tha hóa (Rừng 10–35 → Tàn Tích 60–85), hiện bằng lớp màn tím và bụi tím bay lên. **Thanh tẩy:** hạ trùm vùng lần đầu thì vùng giảm 20 % và quái thường giảm 1 cấp tha hóa.
+- **Câu đố nguyên tố:** 9 cơ quan ở 6 map nhánh, thắp bằng bạn đúng hệ; thắp đủ bộ thì cổng tự mở.
+- **Sương mù khám phá:** bản đồ nhỏ (phím M) chỉ hiện phần đã đi qua, lưu vĩnh viễn theo khu.
+- **Save v7:** `litPuzzles`, `explored`, migration v6 → v7. Test migration giờ chạy hết chuỗi qua helper `migrateOn`.
+- **Lối về:** Cổng Tàn Tích ↔ Đèo Gió, Hành Lang Rune ↔ Đường Hầm Cổ.
+- **Vùng Biển (4b):** `zone_coast` "Bờ Biển Muối" (mở sau trùm Núi, vào từ Đầm Sương), 3 khu N7–N9, 7 quái biển mới gồm tinh anh Hiệp Sĩ Vỏ Ốc và trùm Bạch Tuộc Vực Thẳm. Cả 18 khu của bố cục v2 đã vào game.
+
+📁 File thay đổi chính: `logic/{fog,foes,maps,state,migrations,events}.ts`, `logic/actions/{explore,secrets,battle,sweep}.ts`, `scene/{mapCorruption,mapView,AdventureScene,decals,sceneState}.ts`, `ui/{exploreVm,exploreView,sceneVm}.ts`, `content/adventure/{maps,zones,enemies,props,balance,engagement}.json`, `content/schemas/adventure/{maps,balance}.ts`, `scripts/art/map_layouts_v2/{import_maps,ruins,coast}.py`, i18n, test, decision 045.
+
+🧪 Đã kiểm tra:
+- `npm run check` xanh (1566 test) sau mỗi phần; 5 commit.
+- Cân bằng vùng Biển: đội cấp 18 (đồ rare) thắng 65 %, cấp 22 (đồ epic) thắng 100 %. Ban đầu quá dễ (cấp 18 thắng 100 %), đã tăng chỉ số quái biển ×1,2. Bài guard cân bằng 3 vùng cũ vẫn đạt.
+- Trên sandbox: Trại hiện thẻ "Bờ Biển Muối" (hàng thẻ cuộn ngang); Bãi Vỏ Sò vẽ đúng bố cục.
+
+⚠️ Vấn đề / tự quyết:
+- Quái biển, ảnh nền vùng Biển, cơ quan câu đố, viền khung của Biển đang dùng ảnh tạm. Bảng loot Biển tạm bằng bảng Tàn Tích.
+- Vật mốc của N9 (xác tàu) bị bỏ vì chắn đường.
+- Vùng Biển nhẹ hơn Tàn Tích một chút (tự chọn: Biển là vùng nhẹ hơn trong hai vùng sau Núi).
+
+👉 Chủ dự án cần kiểm tra: chơi thử một chuyến đầy đủ (Rừng → map nhánh), thắp một bộ cơ quan ở Thung Nấm (cần hệ Lửa), mở bản đồ nhỏ (M) để xem sương mù; sau khi hạ trùm Núi, vào Biển từ Đầm Sương.
 
 ### 2026-10-31 — Adventure: bản đồ v2 — bố cục lại M1–M9, thêm 6 map nhánh N1–N6 (decision 045, bước code 4a)
 ✅ Đã làm:

@@ -203,14 +203,16 @@ describe('Bond lifts the stats more (GĐ11)', () => {
 describe('the zone chain: Forest → Mountain → Ruins', () => {
   const mountain = (w: WorldSave) => startRun(w, { zoneId: 'zone_mountain', keys: [squad[0]!.key], roster: squad }, ctxAt(T0));
 
-  it('the content has three zones that each end in a boss, with new enemies, art and a link back to the one before', () => {
+  it('the content has four zones that each end in a boss, with new enemies, art and a link back to the one before', () => {
     expect(contentProblems()).toEqual([]);
-    expect(ZONE_LIST.map((z) => z.id)).toEqual(['zone_forest', 'zone_mountain', 'zone_ruins']);
+    expect(ZONE_LIST.map((z) => z.id)).toEqual(['zone_forest', 'zone_mountain', 'zone_ruins', 'zone_coast']);
     expect(ZONES.zone_mountain!.requiresCleared).toBe('zone_forest');
     expect(ZONES.zone_ruins!.requiresCleared).toBe('zone_mountain');
+    // The coast opens beside the Ruins, after the mountain boss (decision 043 / 045).
+    expect(ZONES.zone_coast!.requiresCleared).toBe('zone_mountain');
     expect(ZONES.zone_ruins!.fromWorldLevel).toBeGreaterThan(ZONES.zone_mountain!.fromWorldLevel);
     for (const z of ZONE_LIST) expect(z.maps).toHaveLength(3);
-    expect(Object.values(ENEMIES).filter((e) => e.boss)).toHaveLength(3);
+    expect(Object.values(ENEMIES).filter((e) => e.boss)).toHaveLength(4);
   });
 
   it('a zone opens only after the boss of the zone before it fell', () => {

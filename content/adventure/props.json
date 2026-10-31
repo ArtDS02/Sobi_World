@@ -295,6 +295,22 @@
       "w": 4,
       "h": 3,
       "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_c1",
+      "nameVi": "Hải đăng cũ",
+      "art": "prop_adv_ruins_pillar",
+      "w": 3,
+      "h": 4,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_c2",
+      "nameVi": "Vòm mai rùa",
+      "art": "prop_adv_mountain_boulder",
+      "w": 3,
+      "h": 3,
+      "scale": 1
     }
   ]
 }

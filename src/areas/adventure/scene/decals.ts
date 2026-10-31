@@ -26,6 +26,10 @@ const SETS: Record<string, Partial<Record<string, readonly string[]>>> = {
     '.': ['drygrass', 'drygrass', 'gravel', 'rockchips', 'pebbles', 'crystal'],
     ',': ['pebbles', 'gravel', 'rockchips'],
   },
+  coast: {
+    '.': ['pebbles', 'pebbles', 'drygrass', 'grass', 'rubble'],
+    ',': ['pebbles', 'gravel'],
+  },
   ruins: {
     '.': ['moss', 'moss', 'violet', 'ivy', 'rubble', 'pebbles', 'grass'],
     ',': ['rubble', 'moss', 'pebbles'],
@@ -38,7 +42,7 @@ const DENSITY: Record<string, number> = { '.': 0.16, ',': 0.06, '~': 0.08 };
 
 export const decalArt = (name: string): string => `prop_adv_decal_${name}`;
 
-/** The decals of `map` in its zone (`forest`, `mountain`, `ruins`). */
+/** The decals of `map` in its zone (`forest`, `mountain`, `ruins`, `coast`). */
 export function decalsOf(map: AreaMap, zone: string): Decal[] {
   const set = SETS[zone];
   if (!set) return [];

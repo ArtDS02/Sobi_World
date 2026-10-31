@@ -1,6 +1,6 @@
 # 045 — Adventure: bản đồ v2 — camera bám, khu ẩn, tha hóa, phân loại quái, bộ asset dựng map mới
 
-Ngày: 2026-10-30 · Trạng thái: **chủ dự án đã duyệt hướng** (2026-10-30). Code: camera bám + zoom ×2 xong (2026-10-31, `scene/mapCamera.ts`); phân loại quái + tha hóa + quái ngủ xong (2026-10-31, `logic/foes.ts`); lớp che + khu ẩn + tường giả xong (2026-10-31, save v6); bố cục lại M1–M9 + map nhánh N1–N6 xong (2026-10-31, bước 4a; các mục dưới); art bắt đầu bằng batch `adventure-14-map-v2`.
+Ngày: 2026-10-30 · Trạng thái: **chủ dự án đã duyệt hướng** (2026-10-30). Code: camera bám + zoom ×2 xong (2026-10-31, `scene/mapCamera.ts`); phân loại quái + tha hóa + quái ngủ xong (2026-10-31, `logic/foes.ts`); lớp che + khu ẩn + tường giả xong (2026-10-31, save v6); bố cục lại M1–M9 + map nhánh N1–N6 (bước 4a), vùng Biển (4b), tha hóa map + thanh tẩy (5), câu đố, sương mù (save v7) xong (2026-10-31, các mục dưới). **Toàn bộ phần code của decision 045 đã xong; còn art (GĐ14).** art bắt đầu bằng batch `adventure-14-map-v2`.
 Đầu vào: `docs/WORLD_MAP_V2_PROPOSAL.md` (đề xuất + câu trả lời Q2–Q9, A1–A5), decision 043.
 
 ## Bối cảnh
@@ -93,3 +93,22 @@ Cân bằng (`npm run sim:adventure`, 80 chuyến, so với trước): Rừng d�
 - **Để sau:** vùng Biển N7–N9 (bước 4b: `zone_coast`, quái và trùm biển); câu đố nguyên tố (`puzzle`, decision 045 mục 13); tinh thể tha hóa trang trí (bước 5). Lối N4 → Cổng Tàn Tích và N5 → Hành Lang Rune bị bỏ vì map đích chưa có lối về (cần sửa bố cục). Vật mốc của N5 và M8 bị bỏ vì chắn đường / đứng trên vách.
 - **Cân bằng** (`phase11`, đội tank + dps + support, 40 chuyến): Rừng cấp 8 95 %, Núi cấp 16 100 %, Tàn Tích cấp 22 (epic) 72,5 %. Cấp thấp vẫn thua (Rừng cấp 1 0 %, Núi cấp 6 0 %, Tàn Tích cấp 8 0 %).
 
+## Bước 5 — tha hóa map, thanh tẩy (2026-10-31)
+
+- `maps.json` → `corruption` (0–100 %, lấy từ bố cục): Rừng 10–35, Núi 30–50, Biển 40–60, Tàn Tích 60–85.
+- Hình tạm bằng code (`scene/mapCorruption.ts`): lớp màn tím phủ mặt đất (đậm hơn trên ô `c`), bụi tím bay lên; cả hai mạnh theo % tha hóa.
+- **Thanh tẩy:** hạ trùm vùng lần đầu thì cả vùng giảm 20 % tha hóa và quái thường giảm 1 cấp tha hóa (không dưới 1), thưởng giảm theo. Toast "Cả vùng sáng lại". Khu được dựng lại khi % thay đổi. Số ở `balance.json` → `foes.purify`.
+
+## Câu đố nguyên tố, sương mù khám phá (2026-10-31, save v7)
+
+- **Câu đố** (`maps.json` → `puzzles[]`: `id`, `element`, `gate`): đứng cạnh, bấm Space với một bạn đúng hệ để thắp (lưu vĩnh viễn `slice.litPuzzles`). Cổng có câu đố không mở bằng hệ được (`GATE_NEEDS_PUZZLE`); thắp đủ bộ thì cổng tự mở. 9 cơ quan trên N1, N3, N4, N5, N6, N8 (lò lửa, bánh xe nước, cột thu lôi, bánh răng, phiến rune, vỏ trai). Hình tạm: điện thờ mờ / sáng.
+- **Sương mù** (`logic/fog.ts`): ô 4 × 4, thấy trong bán kính 7 ô quanh đường đi (đoạn thẳng giữa hai lần lưu); lưu vĩnh viễn theo khu ở `slice.explored` (chuỗi hex). Bản đồ nhỏ (phím M) chỉ hiện phần đã thấy, quanh đội hiện ngay.
+- **Save v7:** `litPuzzles: []`, `explored: {}` (migration v6 → v7).
+
+## Bước 4b — vùng Biển (2026-10-31)
+
+- `zone_coast` "Bờ Biển Muối": mở sau trùm Núi, Sobi World cấp 12, đội cấp 14–24, vào từ Đầm Sương (N3). Ba khu N7 Bãi Vỏ Sò, N8 Rạn San Hô, N9 Vịnh Đắm Tàu (trùm). Vết Nứt: `zoneScale` 1,1.
+- **Quái biển (7):** Cua Rạn, Mòng Biển Muối, Lươn San Hô, Sứa Trôi, Hồn Nước Mặn, tinh anh Hiệp Sĩ Vỏ Ốc (Kim + Thủy), trùm Bạch Tuộc Vực Thẳm (đổi sang Bóng tối ở nửa máu). Bố cục `coast.py` đã đổi sang quái biển. Ảnh: tạm mượn ảnh quái cũ (ghi ASSET_TODO).
+- Cân bằng (đội tank + dps + support, 40 chuyến): cấp 18 (rare) 65 %, cấp 22 (epic) 100 %, nhẹ hơn Tàn Tích một chút (Tàn Tích cấp 20 rare 30 %, cấp 22 epic 72,5 %): hai vùng sau Núi, Biển là vùng nhẹ hơn.
+- Bảng loot `treasure_coast`, `boss_coast` (tạm bằng bảng Tàn Tích), `chest_wood_coast`, `chest_gold_coast`. Ảnh nền thẻ vùng tạm dùng `bg_adventure_forest`.
+- Lối Cổng Tàn Tích ↔ Đèo Gió và Hành Lang Rune ↔ Đường Hầm Cổ đã có đường về (sửa `ruins.py`).

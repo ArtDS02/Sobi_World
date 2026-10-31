@@ -544,6 +544,180 @@
       ],
       "boss": true,
       "art": "enemy_ancient_guardian"
+    },
+    {
+      "id": "enemy_reef_crab",
+      "nameVi": "Cua Rạn",
+      "element": "WATER",
+      "stats": {
+        "hp": 856,
+        "mp": 60,
+        "atk": 62,
+        "def": 24,
+        "matk": 43,
+        "mdef": 18,
+        "spd": 7,
+        "acc": 100,
+        "eva": 5,
+        "crit": 4
+      },
+      "skills": ["skill_e_bubble", "skill_e_iron_shell"],
+      "exp": 16.2,
+      "coins": 10,
+      "drops": [{ "itemId": "item_mountain_ore", "chance": 0.2, "min": 1, "max": 2 }],
+      "art": "enemy_rock_beetle"
+    },
+    {
+      "id": "enemy_salt_gull",
+      "nameVi": "Mòng Biển Muối",
+      "element": "LIGHTNING",
+      "stats": {
+        "hp": 552,
+        "mp": 60,
+        "atk": 66,
+        "def": 11,
+        "matk": 48,
+        "mdef": 10,
+        "spd": 18,
+        "acc": 100,
+        "eva": 14,
+        "crit": 10
+      },
+      "skills": ["skill_e_dive", "skill_e_spark_peck"],
+      "exp": 15.6,
+      "coins": 10,
+      "drops": [{ "itemId": "item_beast_fang", "chance": 0.2, "min": 1, "max": 1 }],
+      "art": "enemy_cliff_hawk"
+    },
+    {
+      "id": "enemy_coral_eel",
+      "nameVi": "Lươn San Hô",
+      "element": "WATER",
+      "stats": {
+        "hp": 662,
+        "mp": 60,
+        "atk": 50,
+        "def": 13,
+        "matk": 72,
+        "mdef": 13,
+        "spd": 13,
+        "acc": 100,
+        "eva": 8,
+        "crit": 6
+      },
+      "skills": ["skill_e_bubble", "skill_e_frost_breath"],
+      "exp": 16.2,
+      "coins": 10,
+      "drops": [{ "itemId": "item_beast_fang", "chance": 0.2, "min": 1, "max": 1 }],
+      "art": "enemy_lava_newt"
+    },
+    {
+      "id": "enemy_drift_jelly",
+      "nameVi": "Sứa Trôi",
+      "element": "LIGHT",
+      "stats": {
+        "hp": 593,
+        "mp": 60,
+        "atk": 46,
+        "def": 11,
+        "matk": 70,
+        "mdef": 15,
+        "spd": 11,
+        "acc": 100,
+        "eva": 10,
+        "crit": 5
+      },
+      "skills": ["skill_e_rune_beam", "skill_e_soothe"],
+      "exp": 15.6,
+      "coins": 10,
+      "drops": [{ "itemId": "item_ancient_cog", "chance": 0.15, "min": 1, "max": 1 }],
+      "art": "enemy_rune_wisp"
+    },
+    {
+      "id": "enemy_brine_wraith",
+      "nameVi": "Hồn Nước Mặn",
+      "element": "DARK",
+      "stats": {
+        "hp": 718,
+        "mp": 60,
+        "atk": 50,
+        "def": 14,
+        "matk": 70,
+        "mdef": 14,
+        "spd": 12,
+        "acc": 100,
+        "eva": 5,
+        "crit": 6
+      },
+      "skills": ["skill_e_wraith_touch", "skill_e_shadow_bite"],
+      "exp": 16.8,
+      "coins": 10,
+      "drops": [{ "itemId": "item_ancient_cog", "chance": 0.15, "min": 1, "max": 1 }],
+      "art": "enemy_tide_wraith"
+    },
+    {
+      "id": "enemy_shell_knight",
+      "nameVi": "Hiệp Sĩ Vỏ Ốc",
+      "element": "METAL",
+      "element2": "WATER",
+      "tags": ["elite"],
+      "stats": {
+        "hp": 1132,
+        "mp": 100,
+        "atk": 70,
+        "def": 26,
+        "matk": 48,
+        "mdef": 20,
+        "spd": 8,
+        "acc": 100,
+        "eva": 5,
+        "crit": 4
+      },
+      "skills": ["skill_e_metal_claw", "skill_e_iron_shell", "skill_e_bubble"],
+      "exp": 26.4,
+      "coins": 17,
+      "drops": [
+        { "itemId": "item_mountain_ore", "chance": 0.5, "min": 1, "max": 2 },
+        { "itemId": "item_ancient_cog", "chance": 0.3, "min": 1, "max": 1 }
+      ],
+      "art": "enemy_ore_golem"
+    },
+    {
+      "id": "enemy_abyss_kraken",
+      "nameVi": "Bạch Tuộc Vực Thẳm",
+      "element": "WATER",
+      "tags": ["boss", "umbraflux"],
+      "stats": {
+        "hp": 3588,
+        "mp": 280,
+        "atk": 77,
+        "def": 20,
+        "matk": 84,
+        "mdef": 20,
+        "spd": 11,
+        "acc": 100,
+        "eva": 5,
+        "crit": 6
+      },
+      "skills": ["skill_e_bubble", "skill_e_frost_breath", "skill_e_curse"],
+      "statusResist": { "stun": 0.5, "freeze": 0.5, "disable": 0.5 },
+      "statusImmune": ["doom"],
+      "phases": [
+        {
+          "hpBelow": 0.5,
+          "addSkills": ["skill_e_doom_mark"],
+          "statuses": [{ "status": "atkUp", "turns": 3 }],
+          "element": "DARK"
+        }
+      ],
+      "exp": 180,
+      "coins": 120,
+      "drops": [
+        { "itemId": "item_ancient_rune", "chance": 0.3, "min": 1, "max": 1 },
+        { "itemId": "item_ancient_cog", "chance": 0.5, "min": 1, "max": 1 }
+      ],
+      "boss": true,
+      "art": "enemy_magma_drake"
     }
   ]
 }

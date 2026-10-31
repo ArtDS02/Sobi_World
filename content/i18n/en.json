@@ -21,7 +21,14 @@
     "enemies/enemy_tide_wraith/nameVi": "Tide Wraith",
     "enemies/enemy_ember_idol/nameVi": "Ember Idol",
     "enemies/enemy_shadow_priest/nameVi": "Shadow Priest",
-    "enemies/enemy_ancient_guardian/nameVi": "Ancient Warden"
+    "enemies/enemy_ancient_guardian/nameVi": "Ancient Warden",
+    "enemies/enemy_reef_crab/nameVi": "Reef Crab",
+    "enemies/enemy_salt_gull/nameVi": "Salt Gull",
+    "enemies/enemy_coral_eel/nameVi": "Coral Eel",
+    "enemies/enemy_drift_jelly/nameVi": "Drift Jelly",
+    "enemies/enemy_brine_wraith/nameVi": "Brine Wraith",
+    "enemies/enemy_shell_knight/nameVi": "Shell Knight",
+    "enemies/enemy_abyss_kraken/nameVi": "Abyss Kraken"
   },
   "adventure/skills.json": {
     "skills/skill_nh_bubble/nameVi": "Bubble Shot",
@@ -269,7 +276,9 @@
     "events/event_ancient_cache/textVi": "A small vault hides a few ancient materials.",
     "zones/zone_forest/descVi": "The first forest: three areas, the main road over a bridge, side paths behind brambles and vines. The Furious Old Treant waits in the Heart of the Forest. For teams of level 1–10.",
     "zones/zone_mountain/descVi": "Cliffs, an old mine and lava: plenty of materials for the workshop. The Magma Drake waits on the summit. For teams of level 7–16. Beat the Whispering Forest's boss first.",
-    "zones/zone_ruins/descVi": "An old temple of rune wisps and stone sentinels where the seal grows weak: the only place Ancient Runes drop. For teams of level 12–22. Beat the Echo Mountain's boss first."
+    "zones/zone_ruins/descVi": "An old temple of rune wisps and stone sentinels where the seal grows weak: the only place Ancient Runes drop. For teams of level 12–22. Beat the Echo Mountain's boss first.",
+    "zones/zone_coast/nameVi": "Salt Coast",
+    "zones/zone_coast/descVi": "Sand, coral reefs and a wreck cove, entered from the Misty Marsh. The Abyss Kraken waits in Wreck Cove. For teams of level 14–24."
   },
   "aquarium/fish.json": {
     "fish/fish_goldfish/nameVi": "Goldfish",
@@ -744,7 +753,13 @@
     "maps/map_forest_marsh/nameVi": "Misty Marsh",
     "maps/map_mountain_pass/nameVi": "Windy Pass",
     "maps/map_mountain_tunnels/nameVi": "Ancient Tunnels",
-    "maps/map_ruins_crypt/nameVi": "Rune Crypt"
+    "maps/map_ruins_crypt/nameVi": "Rune Crypt",
+    "maps/map_coast_beach/lore/lore_c1/textVi": "The lighthouse on the dunes went dark when the sea turned violet. Fishers still leave shells at its foot.",
+    "maps/map_coast_reef/lore/lore_c2/textVi": "The coral on this reef once glowed red. Now the branches near the crack have turned to black stone, cold as ink.",
+    "maps/map_coast_cove/lore/lore_c3/textVi": "The wreck carried a bronze bell carved with a piglet. On high-tide nights it still rings under the water.",
+    "maps/map_coast_beach/nameVi": "Shell Beach",
+    "maps/map_coast_reef/nameVi": "Coral Reef",
+    "maps/map_coast_cove/nameVi": "Wreck Cove"
   },
   "adventure/props.json": {
     "props/prop_adv_forest_oak/nameVi": "Oak tree",
@@ -783,7 +798,9 @@
     "props/prop_adv_lm_n4/nameVi": "Ancient statue",
     "props/prop_adv_lm_r1/nameVi": "Ancient statue",
     "props/prop_adv_lm_r3/nameVi": "The great seal",
-    "props/prop_adv_lm_n6/nameVi": "Ancient wall"
+    "props/prop_adv_lm_n6/nameVi": "Ancient wall",
+    "props/prop_adv_lm_c1/nameVi": "Old lighthouse",
+    "props/prop_adv_lm_c2/nameVi": "Turtle-shell arch"
   },
   "adventure/elements.json": {
     "elements/METAL/nameVi": "Metal",

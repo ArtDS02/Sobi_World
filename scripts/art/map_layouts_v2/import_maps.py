@@ -1,9 +1,9 @@
 # Imports the map layouts v2 (decision 045, docs/maps/v2/layouts.json from export.py) into the game's content: the main areas
-# M1-M9 are laid out again and the side areas N1-N6 are added (content/adventure/maps.json), the zones get their side areas and the
-# chest tables by kind (zones.json), each landmark becomes a prop (props.json), and the English texts follow (content/i18n/en.json).
+# M1-M9 are laid out again, the side areas N1-N6 and the coast N7-N9 are added (content/adventure/maps.json), the zones get their
+# side areas, the coast zone and the chest tables by kind (zones.json), each landmark becomes a prop (props.json), and the English texts follow (content/i18n/en.json).
 # What an area already had is kept by id (enemy pools, gifts, boss tables, chest tables, lore texts, traveller events, the Guardian
-# shrine), so a save keeps its opened chests, gates, lore and beaten guardians. Each puzzle holds the gate of its element. The coast
-# (N7-N9) waits for its own zone and enemies; decorative crystals wait for the kit's art. Run `npm run content:fmt` after it, then `npm run check`.
+# shrine), so a save keeps its opened chests, gates, lore and beaten guardians. Each puzzle holds the gate of its element. Decorative
+# crystals wait for the kit's art. Run `npm run content:fmt` after it, then `npm run check`.
 import json
 import re
 import sys
@@ -12,26 +12,28 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 CONTENT = ROOT / "content" / "adventure"
-SKIP = {"N7", "N8", "N9"}
-COAST = {"map_coast_beach", "map_coast_reef", "map_coast_cove"}
+SKIP: set = set()
+COAST: set = set()
 WALK = set(".,=^sc")
-ZONE_OF = {"zone_forest": "forest", "zone_mountain": "mountain", "zone_ruins": "ruins"}
-COVER_LOOK = {"forest": "canopy", "mountain": "rock", "ruins": "roof"}
+ZONE_OF = {"zone_forest": "forest", "zone_mountain": "mountain", "zone_ruins": "ruins", "zone_coast": "coast"}
+COVER_LOOK = {"forest": "canopy", "mountain": "rock", "ruins": "roof", "coast": "rock"}
 BRANCHES = {"zone_forest": ["map_forest_hollow", "map_forest_falls", "map_forest_marsh"],
             "zone_mountain": ["map_mountain_pass", "map_mountain_tunnels"], "zone_ruins": ["map_ruins_crypt"]}
 # A mimic is an enemy of its zone dressed as a chest (its own art waits for GĐ14).
-MIMIC_ENEMY = {"forest": "enemy_bramble_boar", "mountain": "enemy_ore_golem", "ruins": "enemy_stone_sentinel"}
+MIMIC_ENEMY = {"forest": "enemy_bramble_boar", "mountain": "enemy_ore_golem", "ruins": "enemy_stone_sentinel", "coast": "enemy_reef_crab"}
 NODE_TABLE = {("herb", "forest"): "herbs", ("herb", "mountain"): "herbs", ("herb", "ruins"): "herbs",
-              ("ore", "forest"): "ore_vein", ("ore", "mountain"): "ore_vein", ("ore", "ruins"): "cache_ancient"}
+              ("ore", "forest"): "ore_vein", ("ore", "mountain"): "ore_vein", ("ore", "ruins"): "cache_ancient", ("herb", "coast"): "herbs", ("ore", "coast"): "ore_vein"}
 GIFT = {"elite": {"item_adv_exp_small": 3, "item_potion_healing": 2}, "subboss": {"item_adv_exp_small": 5, "item_skill_scroll": 1}}
 NEW_EVENTS = ["event_herbalist", "event_shrine", "event_hot_spring", "event_miner", "event_cliff_shrine", "event_rune_altar", "event_ancient_cache"]
 # Landmark art by a word of its description (else the zone's own), until the kit's art.
-LANDMARK_ART = [("mushroom", "prop_adv_forest_mushroom"), ("stump", "prop_adv_forest_stump"), ("hut", "prop_adv_forest_hut"),
+LANDMARK_ART = [("lighthouse", "prop_adv_ruins_pillar"), ("turtle", "prop_adv_mountain_boulder"), ("shipwreck", "prop_adv_forest_log"), ("mushroom", "prop_adv_forest_mushroom"), ("stump", "prop_adv_forest_stump"), ("hut", "prop_adv_forest_hut"),
                 ("cabin", "prop_adv_mountain_cabin"), ("tower", "prop_adv_mountain_cart"), ("skull", "prop_adv_mountain_boulder"),
                 ("eagle", "prop_adv_ruins_statue"), ("statue", "prop_adv_ruins_statue"), ("door", "prop_adv_ruins_wall"),
                 ("mural", "prop_adv_ruins_wall"), ("ossuary", "prop_adv_ruins_wall"), ("seal", "prop_adv_ruins_broken"),
                 ("withered", "prop_adv_ruins_deadtree"), ("stones", "prop_adv_forest_boulder"), ("oak", "prop_adv_forest_oak")]
-ZONE_ART = {"forest": "prop_adv_forest_oak", "mountain": "prop_adv_mountain_boulder", "ruins": "prop_adv_ruins_statue"}
+ZONE_ART = {"forest": "prop_adv_forest_oak", "mountain": "prop_adv_mountain_boulder", "ruins": "prop_adv_ruins_statue", "coast": "prop_adv_forest_boulder"}
+# A landmark's name by a word of its description first (several share an art), else by its art.
+LANDMARK_WORD_NAME = {"lighthouse": ("Hải đăng cũ", "Old lighthouse"), "turtle": ("Vòm mai rùa", "Turtle-shell arch"), "shipwreck": ("Xác tàu đắm", "Shipwreck")}
 LANDMARK_NAME = {"prop_adv_forest_mushroom": ("Nấm khổng lồ", "Giant mushroom"), "prop_adv_forest_stump": ("Gốc cây cổ", "Ancient stump"),
                  "prop_adv_forest_hut": ("Chòi đổ nát", "Ruined hut"), "prop_adv_mountain_cabin": ("Lán thợ mỏ", "Miners' cabin"),
                  "prop_adv_mountain_cart": ("Tháp nâng mỏ", "Mine lift tower"), "prop_adv_mountain_boulder": ("Sọ rồng cổ", "Ancient dragon skull"),
@@ -50,10 +52,22 @@ NEW_LORE = {
                 "The stone eagle on the pass looks toward the Ruins. They say it waits for someone to light the summit fire again."),
     "lore_n5": ("Cánh cửa đá trong đường hầm cổ chỉ mở được một nửa. Phía sau vẫn còn tiếng bánh răng quay rất khẽ.",
                 "The stone door in the old tunnels only half opens. Behind it gears still turn, very softly."),
+    "lore_c1": ("Ngọn hải đăng trên đồi cát đã tắt từ khi nước biển đổi màu tím. Ngư dân vẫn để lại vỏ sò dưới chân nó.",
+                "The lighthouse on the dunes went dark when the sea turned violet. Fishers still leave shells at its foot."),
+    "lore_c2": ("San hô ở rạn này từng đỏ rực. Giờ những nhánh gần vết nứt đã hóa đá đen, lạnh như mực.",
+                "The coral on this reef once glowed red. Now the branches near the crack have turned to black stone, cold as ink."),
+    "lore_c3": ("Con tàu đắm mang theo một chiếc chuông đồng khắc hình heo con. Đêm triều lên, nó vẫn ngân dưới nước.",
+                "The wreck carried a bronze bell carved with a piglet. On high-tide nights it still rings under the water."),
     "lore_n6": ("Tường hầm mộ xếp đầy bia nhỏ, mỗi bia khắc một con heo. Những bia gần phong ấn đã nứt đen.",
                 "The crypt walls are lined with small stones, each carved with a pig. The ones near the seal have cracked black."),
 }
-NEW_NAMES_EN = {"map_forest_hollow": "Mushroom Hollow", "map_forest_falls": "Moss Falls", "map_forest_marsh": "Misty Marsh",
+# The coast (decision 043: opens after the mountain boss, team level 14-24; entered from the Misty Marsh).
+COAST_ZONE = {"id": "zone_coast", "nameVi": "Bờ Biển Muối",
+              "descVi": "Bãi cát, rạn san hô và vịnh tàu đắm, vào từ Đầm Sương. Trùm Bạch Tuộc Vực Thẳm ở Vịnh Đắm Tàu. Phù hợp đội cấp 14–24.",
+              "fromWorldLevel": 12, "requiresCleared": "zone_mountain", "backdrop": "bg_adventure_forest",
+              "maps": ["map_coast_beach", "map_coast_reef", "map_coast_cove"], "levels": [14, 24]}
+COAST_DESC_EN = "Sand, coral reefs and a wreck cove, entered from the Misty Marsh. The Abyss Kraken waits in Wreck Cove. For teams of level 14–24."
+NEW_NAMES_EN = {"map_coast_beach": "Shell Beach", "map_coast_reef": "Coral Reef", "map_coast_cove": "Wreck Cove", "map_forest_hollow": "Mushroom Hollow", "map_forest_falls": "Moss Falls", "map_forest_marsh": "Misty Marsh",
                 "map_mountain_pass": "Windy Pass", "map_mountain_tunnels": "Ancient Tunnels", "map_ruins_crypt": "Rune Crypt"}
 
 
@@ -162,8 +176,9 @@ def main():
         for i, ob in enumerate(ob for ob in objs if ob["kind"] == "landmark"):
             art = next((a for word, a in LANDMARK_ART if word in ob["what"]), ZONE_ART[zone])
             pid = f"prop_adv_lm_{prefix}"
-            prop_defs[pid] = {"id": pid, "nameVi": LANDMARK_NAME[art][0], "art": art, "w": ob["w"], "h": ob["h"], "scale": 1}
-            en.setdefault("adventure/props.json", {})[f"props/{pid}/nameVi"] = LANDMARK_NAME[art][1]
+            vi_name, en_name = next((n for word, n in LANDMARK_WORD_NAME.items() if word in ob["what"]), LANDMARK_NAME.get(art, ("Vật mốc", "Landmark")))
+            prop_defs[pid] = {"id": pid, "nameVi": vi_name, "art": art, "w": ob["w"], "h": ob["h"], "scale": 1}
+            en.setdefault("adventure/props.json", {})[f"props/{pid}/nameVi"] = en_name
             props.append({"prop": pid, "x": ob["x"], "y": ob["y"], "_w": ob["w"], "_h": ob["h"]})
         m["props"] = props
 
@@ -237,9 +252,10 @@ def main():
                         shrine = {**o["shrine"], **s}
                         continue
                 prev = next((n for n in old_npcs if n["id"] == ob["id"]), None) or (spare_npcs.pop(0) if spare_npcs else None)
-                event = prev["event"] if prev else NEW_EVENTS[len(built) % len(NEW_EVENTS)]
+                event = prev["event"] if prev else "event_shrine" if "shrine" in ob["id"] else NEW_EVENTS[len(built) % len(NEW_EVENTS)]
                 npcs.append({"id": ob["id"], "x": ob["x"], "y": ob["y"], "event": event})
-        covers = [{"id": f"cover_{prefix}_{chr(97 + i)}", "x": c["x0"], "y": c["y0"], "w": c["x1"] - c["x0"] + 1, "h": c["y1"] - c["y0"] + 1, "look": COVER_LOOK[zone]}
+        covers = [{"id": f"cover_{prefix}_{chr(97 + i)}", "x": c["x0"], "y": c["y0"], "w": c["x1"] - c["x0"] + 1, "h": c["y1"] - c["y0"] + 1,
+                   "look": "canopy" if zone == "coast" and "canopy" in c["what"] else COVER_LOOK[zone]}
                   for i, c in enumerate(L["covers"])]
         puzzles = []
         for ob in (ob for ob in objs if ob["kind"] == "puzzle"):
@@ -303,6 +319,9 @@ def main():
 
     maps_file["maps"] = [built.get(m["id"], m) for m in maps_file["maps"]] + [m for k, m in built.items() if k not in old]
     props_file["props"] = list(prop_defs.values())
+    if not any(z["id"] == "zone_coast" for z in zones_file["zones"]):
+        zones_file["zones"].append(COAST_ZONE)
+    en.setdefault("adventure/zones.json", {}).update({"zones/zone_coast/nameVi": "Salt Coast", "zones/zone_coast/descVi": COAST_DESC_EN})
     for z in zones_file["zones"]:
         if z["id"] in BRANCHES:
             z["branches"] = BRANCHES[z["id"]]
@@ -359,9 +378,12 @@ def reach_all(m, blocked) -> bool:
 def add_tables(tables):
     """Lighter wooden chests and richer gold ones per zone (decision 045: more chests on bigger areas)."""
     mats = {"forest": ["item_forest_herb", "item_beast_fang"], "mountain": ["item_mountain_ore", "item_ancient_cog"],
-            "ruins": ["item_ancient_cog", "item_ancient_rune"]}
-    coins = {"forest": [30, 60], "mountain": [45, 80], "ruins": [60, 110]}
-    for zone in ("forest", "mountain", "ruins"):
+            "ruins": ["item_ancient_cog", "item_ancient_rune"], "coast": ["item_beast_fang", "item_ancient_cog"]}
+    coins = {"forest": [30, 60], "mountain": [45, 80], "ruins": [60, 110], "coast": [55, 100]}
+    # The coast's own treasure and boss tables start as the Ruins' (its level), until its own items.
+    for kind in ("treasure", "boss"):
+        tables.setdefault(f"{kind}_coast", json.loads(json.dumps(tables[f"{kind}_ruins"])))
+    for zone in ("forest", "mountain", "ruins", "coast"):
         a, b = mats[zone]
         tables[f"chest_wood_{zone}"] = {"rolls": 1, "coins": coins[zone], "gemChance": 0.05, "gems": [1, 1],
                                         "entries": [{"itemId": a, "weight": 3, "min": 1, "max": 3}, {"itemId": b, "weight": 1, "min": 1, "max": 1},

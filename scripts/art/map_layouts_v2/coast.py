@@ -1,5 +1,6 @@
 # Bờ Biển (zone_coast), map layouts v2 (decision 045): N7 beach, N8 reef, N9 wreck cove (the zone boss).
 # Graph (decision 043): N3-N7, N7-N8, N7-N9, N8-N9. The zone opens after the mountain boss, team level 14-24.
+# Its monsters are the sea batch of decision 045 step 4b (enemies.json, placeholder art until GĐ14).
 from layout import Layout
 
 
@@ -30,10 +31,10 @@ def n7() -> Layout:
     L.add("exit", 0, 14, id="exit_n7_west", to="map_forest_marsh", via="trail")
     L.add("exit", 71, 10, id="exit_n7_east", to="map_coast_reef", via="trail")
     L.add("exit", 71, 30, id="exit_n7_dock", to="map_coast_cove", via="shore")
-    L.add("group", 64, 20, id="g_c1_elite", cls="elite", enemy="enemy_tide_wraith")
-    L.foes("c1", [(8, 18, "enemy_dew_frog"), (22, 20, "enemy_gale_sparrow"), (30, 22, "enemy_dew_frog"), (44, 22, "enemy_tide_wraith"),
-                  (56, 17, "enemy_gale_sparrow"), (60, 24, "enemy_dew_frog"), (28, 8, "enemy_gale_sparrow"), (10, 6, "enemy_dew_frog"),
-                  (40, 14, "enemy_tide_wraith"), (36, 28, "enemy_dew_frog"), (16, 24, "enemy_gale_sparrow", {"sleep": True})])
+    L.add("group", 64, 20, id="g_c1_elite", cls="elite", enemy="enemy_shell_knight")
+    L.foes("c1", [(8, 18, "enemy_reef_crab"), (22, 20, "enemy_salt_gull"), (30, 22, "enemy_coral_eel"), (44, 22, "enemy_brine_wraith"),
+                  (56, 17, "enemy_salt_gull"), (60, 24, "enemy_reef_crab"), (28, 8, "enemy_salt_gull"), (10, 6, "enemy_coral_eel"),
+                  (40, 14, "enemy_drift_jelly"), (36, 28, "enemy_reef_crab"), (16, 24, "enemy_salt_gull", {"sleep": True})])
     L.add("chest", 67, 19, id="chest_c1_nook", type="silver")
     L.add("chest", 52, 5, id="chest_c1_hidden", type="hidden")
     L.add("chest", 6, 5, id="chest_c1_dune", type="wood")
@@ -66,12 +67,12 @@ def n8() -> Layout:
     L.add("portal", 6, 17)
     L.add("exit", 0, 20, id="exit_n8_west", to="map_coast_beach", via="shore")
     L.add("exit", 36, 39, id="exit_n8_south", to="map_coast_cove", via="shore")
-    L.add("group", 62, 30, id="g_c2_boss", cls="subboss", enemy="enemy_tide_wraith")
-    L.add("group", 44, 16, id="g_c2_elite", cls="elite", enemy="enemy_dew_frog")
-    L.add("group", 26, 27, id="g_c2_special", cls="special", when="rain", enemy="enemy_tide_wraith")
-    L.foes("c2", [(6, 17, "enemy_dew_frog"), (11, 23, "enemy_gale_sparrow"), (22, 8, "enemy_dew_frog", {"sleep": True}), (27, 12, "enemy_tide_wraith"),
-                  (23, 32, "enemy_dew_frog"), (30, 31, "enemy_gale_sparrow"), (41, 21, "enemy_tide_wraith"), (48, 20, "enemy_dew_frog", {"cls": "mutant"}),
-                  (59, 9, "enemy_gale_sparrow"), (40, 35, "enemy_dew_frog"), (64, 27, "enemy_tide_wraith"), (14, 18, "enemy_dew_frog")])
+    L.add("group", 62, 30, id="g_c2_boss", cls="subboss", enemy="enemy_reef_crab")
+    L.add("group", 44, 16, id="g_c2_elite", cls="elite", enemy="enemy_shell_knight")
+    L.add("group", 26, 27, id="g_c2_special", cls="special", when="rain", enemy="enemy_drift_jelly")
+    L.foes("c2", [(6, 17, "enemy_coral_eel"), (11, 23, "enemy_salt_gull"), (22, 8, "enemy_reef_crab", {"sleep": True}), (27, 12, "enemy_brine_wraith"),
+                  (23, 32, "enemy_coral_eel"), (30, 31, "enemy_salt_gull"), (41, 21, "enemy_drift_jelly"), (48, 20, "enemy_coral_eel", {"cls": "mutant"}),
+                  (59, 9, "enemy_salt_gull"), (40, 35, "enemy_reef_crab"), (64, 27, "enemy_brine_wraith"), (14, 18, "enemy_coral_eel")])
     L.add("chest", 66, 31, id="chest_c2_island", type="gold")
     L.add("chest", 62, 7, id="chest_c2_cave", type="hidden")
     L.add("chest", 8, 24, id="chest_c2_mimic", type="mimic")
@@ -111,10 +112,10 @@ def n9() -> Layout:
     L.add("portal", 4, 13)
     L.add("exit", 0, 10, id="exit_n9_west", to="map_coast_beach", via="shore")
     L.add("exit", 36, 0, id="exit_n9_north", to="map_coast_reef", via="shore")
-    L.add("group", 43, 24, id="g_c3_boss", cls="boss", enemy="enemy_tide_wraith")
-    L.foes("c3", [(12, 18, "enemy_dew_frog"), (24, 18, "enemy_gale_sparrow"), (30, 12, "enemy_tide_wraith"), (44, 12, "enemy_dew_frog"),
-                  (52, 12, "enemy_gale_sparrow"), (56, 19, "enemy_tide_wraith"), (16, 6, "enemy_dew_frog", {"sleep": True}), (10, 26, "enemy_tide_wraith"),
-                  (14, 30, "enemy_dew_frog")])
+    L.add("group", 43, 24, id="g_c3_boss", cls="boss", enemy="enemy_abyss_kraken")
+    L.foes("c3", [(12, 18, "enemy_reef_crab"), (24, 18, "enemy_salt_gull"), (30, 12, "enemy_drift_jelly"), (44, 12, "enemy_coral_eel"),
+                  (52, 12, "enemy_salt_gull"), (56, 19, "enemy_brine_wraith"), (16, 6, "enemy_reef_crab", {"sleep": True}), (10, 26, "enemy_drift_jelly"),
+                  (14, 30, "enemy_coral_eel")])
     L.add("chest", 5, 17, id="chest_c3_grotto", type="hidden")
     L.add("chest", 20, 6, id="chest_c3_cliff", type="wood")
     L.add("chest", 46, 25, id="chest_c3_boss", type="gold")

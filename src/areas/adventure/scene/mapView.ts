@@ -19,6 +19,7 @@ const GROUND: Record<string, Record<string, number>> = {
   forest: { '.': 0x9fcf7c, ',': 0xd9c08a, '=': 0xb88a55, '#': 0x4f7a3c, '~': 0x6fb6d9 },
   mountain: { '.': 0xc9b28c, ',': 0xe0cfa6, '=': 0x9a7650, '#': 0x7a6450, '~': 0xe0703a },
   ruins: { '.': 0xc8c3b0, ',': 0xe6dfc9, '=': 0xa08868, '#': 0x6d6878, '~': 0x6aa6c8 },
+  coast: { '.': 0xf0e0b0, ',': 0xe8d4a0, '=': 0xb08860, '#': 0x8a8070, '~': 0x4aa8d8 },
 };
 const TILE_NAME: Record<string, string> = { '.': 'ground', ',': 'path', '=': 'bridge', '#': 'wall', '~': 'water', '^': 'ground', s: 'path', c: 'ground', F: 'wall', w: 'water' };
 /** The layout v2 tiles drawn with a base tile until the kit's own (decision 045): its base character and a tint. */

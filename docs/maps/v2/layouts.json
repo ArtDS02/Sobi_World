@@ -4246,14 +4246,14 @@
     "y": 20,
     "id": "g_c1_elite",
     "cls": "elite",
-    "enemy": "enemy_tide_wraith"
+    "enemy": "enemy_shell_knight"
    },
    {
     "kind": "group",
     "x": 8,
     "y": 18,
     "id": "g_c1_a",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_reef_crab",
     "cls": "normal"
    },
    {
@@ -4261,7 +4261,7 @@
     "x": 22,
     "y": 20,
     "id": "g_c1_b",
-    "enemy": "enemy_gale_sparrow",
+    "enemy": "enemy_salt_gull",
     "cls": "normal"
    },
    {
@@ -4269,7 +4269,7 @@
     "x": 30,
     "y": 22,
     "id": "g_c1_c",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_coral_eel",
     "cls": "normal"
    },
    {
@@ -4277,7 +4277,7 @@
     "x": 44,
     "y": 22,
     "id": "g_c1_d",
-    "enemy": "enemy_tide_wraith",
+    "enemy": "enemy_brine_wraith",
     "cls": "normal"
    },
    {
@@ -4285,7 +4285,7 @@
     "x": 56,
     "y": 17,
     "id": "g_c1_e",
-    "enemy": "enemy_gale_sparrow",
+    "enemy": "enemy_salt_gull",
     "cls": "normal"
    },
    {
@@ -4293,7 +4293,7 @@
     "x": 60,
     "y": 24,
     "id": "g_c1_f",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_reef_crab",
     "cls": "normal"
    },
    {
@@ -4301,7 +4301,7 @@
     "x": 28,
     "y": 8,
     "id": "g_c1_g",
-    "enemy": "enemy_gale_sparrow",
+    "enemy": "enemy_salt_gull",
     "cls": "normal"
    },
    {
@@ -4309,7 +4309,7 @@
     "x": 10,
     "y": 6,
     "id": "g_c1_h",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_coral_eel",
     "cls": "normal"
    },
    {
@@ -4317,7 +4317,7 @@
     "x": 40,
     "y": 14,
     "id": "g_c1_i",
-    "enemy": "enemy_tide_wraith",
+    "enemy": "enemy_drift_jelly",
     "cls": "normal"
    },
    {
@@ -4325,7 +4325,7 @@
     "x": 36,
     "y": 28,
     "id": "g_c1_j",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_reef_crab",
     "cls": "normal"
    },
    {
@@ -4333,7 +4333,7 @@
     "x": 16,
     "y": 24,
     "id": "g_c1_k",
-    "enemy": "enemy_gale_sparrow",
+    "enemy": "enemy_salt_gull",
     "cls": "normal",
     "sleep": true
    },
@@ -4505,7 +4505,7 @@
     "y": 30,
     "id": "g_c2_boss",
     "cls": "subboss",
-    "enemy": "enemy_tide_wraith"
+    "enemy": "enemy_reef_crab"
    },
    {
     "kind": "group",
@@ -4513,7 +4513,7 @@
     "y": 16,
     "id": "g_c2_elite",
     "cls": "elite",
-    "enemy": "enemy_dew_frog"
+    "enemy": "enemy_shell_knight"
    },
    {
     "kind": "group",
@@ -4522,14 +4522,14 @@
     "id": "g_c2_special",
     "cls": "special",
     "when": "rain",
-    "enemy": "enemy_tide_wraith"
+    "enemy": "enemy_drift_jelly"
    },
    {
     "kind": "group",
     "x": 6,
     "y": 17,
     "id": "g_c2_a",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_coral_eel",
     "cls": "normal"
    },
    {
@@ -4537,7 +4537,7 @@
     "x": 11,
     "y": 23,
     "id": "g_c2_b",
-    "enemy": "enemy_gale_sparrow",
+    "enemy": "enemy_salt_gull",
     "cls": "normal"
    },
    {
@@ -4545,7 +4545,7 @@
     "x": 22,
     "y": 8,
     "id": "g_c2_c",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_reef_crab",
     "cls": "normal",
     "sleep": true
    },
@@ -4554,7 +4554,7 @@
     "x": 27,
     "y": 12,
     "id": "g_c2_d",
-    "enemy": "enemy_tide_wraith",
+    "enemy": "enemy_brine_wraith",
     "cls": "normal"
    },
    {
@@ -4562,7 +4562,7 @@
     "x": 23,
     "y": 32,
     "id": "g_c2_e",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_coral_eel",
     "cls": "normal"
    },
    {
@@ -4570,7 +4570,7 @@
     "x": 30,
     "y": 31,
     "id": "g_c2_f",
-    "enemy": "enemy_gale_sparrow",
+    "enemy": "enemy_salt_gull",
     "cls": "normal"
    },
    {
@@ -4578,7 +4578,7 @@
     "x": 41,
     "y": 21,
     "id": "g_c2_g",
-    "enemy": "enemy_tide_wraith",
+    "enemy": "enemy_drift_jelly",
     "cls": "normal"
    },
    {
@@ -4586,7 +4586,7 @@
     "x": 48,
     "y": 20,
     "id": "g_c2_h",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_coral_eel",
     "cls": "mutant"
    },
    {
@@ -4594,7 +4594,7 @@
     "x": 59,
     "y": 9,
     "id": "g_c2_i",
-    "enemy": "enemy_gale_sparrow",
+    "enemy": "enemy_salt_gull",
     "cls": "normal"
    },
    {
@@ -4602,7 +4602,7 @@
     "x": 40,
     "y": 35,
     "id": "g_c2_j",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_reef_crab",
     "cls": "normal"
    },
    {
@@ -4610,7 +4610,7 @@
     "x": 64,
     "y": 27,
     "id": "g_c2_k",
-    "enemy": "enemy_tide_wraith",
+    "enemy": "enemy_brine_wraith",
     "cls": "normal"
    },
    {
@@ -4618,7 +4618,7 @@
     "x": 14,
     "y": 18,
     "id": "g_c2_l",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_coral_eel",
     "cls": "normal"
    },
    {
@@ -4787,14 +4787,14 @@
     "y": 24,
     "id": "g_c3_boss",
     "cls": "boss",
-    "enemy": "enemy_tide_wraith"
+    "enemy": "enemy_abyss_kraken"
    },
    {
     "kind": "group",
     "x": 12,
     "y": 18,
     "id": "g_c3_a",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_reef_crab",
     "cls": "normal"
    },
    {
@@ -4802,7 +4802,7 @@
     "x": 24,
     "y": 18,
     "id": "g_c3_b",
-    "enemy": "enemy_gale_sparrow",
+    "enemy": "enemy_salt_gull",
     "cls": "normal"
    },
    {
@@ -4810,7 +4810,7 @@
     "x": 30,
     "y": 12,
     "id": "g_c3_c",
-    "enemy": "enemy_tide_wraith",
+    "enemy": "enemy_drift_jelly",
     "cls": "normal"
    },
    {
@@ -4818,7 +4818,7 @@
     "x": 44,
     "y": 12,
     "id": "g_c3_d",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_coral_eel",
     "cls": "normal"
    },
    {
@@ -4826,7 +4826,7 @@
     "x": 52,
     "y": 12,
     "id": "g_c3_e",
-    "enemy": "enemy_gale_sparrow",
+    "enemy": "enemy_salt_gull",
     "cls": "normal"
    },
    {
@@ -4834,7 +4834,7 @@
     "x": 56,
     "y": 19,
     "id": "g_c3_f",
-    "enemy": "enemy_tide_wraith",
+    "enemy": "enemy_brine_wraith",
     "cls": "normal"
    },
    {
@@ -4842,7 +4842,7 @@
     "x": 16,
     "y": 6,
     "id": "g_c3_g",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_reef_crab",
     "cls": "normal",
     "sleep": true
    },
@@ -4851,7 +4851,7 @@
     "x": 10,
     "y": 26,
     "id": "g_c3_h",
-    "enemy": "enemy_tide_wraith",
+    "enemy": "enemy_drift_jelly",
     "cls": "normal"
    },
    {
@@ -4859,7 +4859,7 @@
     "x": 14,
     "y": 30,
     "id": "g_c3_i",
-    "enemy": "enemy_dew_frog",
+    "enemy": "enemy_coral_eel",
     "cls": "normal"
    },
    {

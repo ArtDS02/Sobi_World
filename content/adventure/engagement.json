@@ -93,7 +93,7 @@
     "requiresCleared": "zone_ruins",
     "backdrop": "bg_adventure_ruins",
     "perFloor": 0.05,
-    "zoneScale": { "zone_forest": 3, "zone_mountain": 1.75, "zone_ruins": 1 },
+    "zoneScale": { "zone_forest": 3, "zone_mountain": 1.75, "zone_ruins": 1, "zone_coast": 1.1 },
     "groupSize": [2, 3],
     "bigFrom": 8,
     "restPct": 0.3,
