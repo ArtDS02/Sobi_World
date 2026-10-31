@@ -1,11 +1,14 @@
 # Bố cục map v2 (decision 045)
 
-Bố cục thiết kế cho đợt mở rộng bản đồ, mỗi file một map: lưới ô + vùng che + danh sách vật. M1–M9 và N1–N6 **đã nhập** vào `content/adventure/maps.json` (decision 045 bước 4a: `export.py` → `layouts.json` → `import_maps.py` → `npm run content:fmt`); N7–N9 chờ vùng Biển.
+Bố cục thiết kế cho đợt mở rộng bản đồ, mỗi file một map: lưới ô + vùng che + danh sách vật. M1–M9 và N1–N6 **đã nhập** vào `content/adventure/maps.json` (decision 045 bước 4a: `export.py` → `layouts.json` → `import_maps.py` → `npm run content:fmt`); N7–N9 đã nhập cùng vùng Biển (bước 4b).
 
 - Nguồn: `scripts/art/map_layouts_v2/` — `layout.py` (bộ công cụ vẽ lưới + kiểm tra đường đi), `forest.py`, `mountain.py`, `ruins.py`, `coast.py` (18 map), `render.py` (sinh file ở đây và ảnh before), `batch.py` (sinh batch ảnh `adventure-14-map-v2`), `refs.py` (cắt ảnh chuẩn từ tranh map đã duyệt làm hint cho bộ ghép), `cut_kit.py` (cắt sheet bộ ghép thành ứng viên: gom mảnh theo hàng / cột, gỡ dấu ✦, giữ ô nền liền khối).
 - Chạy lại: `python scripts/art/map_layouts_v2/render.py` rồi `python scripts/art/map_layouts_v2/batch.py` và `python .claude/skills/image-to-prompt/scripts/art.py prep adventure-14-map-v2`.
 - Bộ ghép (sau khi có tranh): `python scripts/art/map_layouts_v2/refs.py`, `python scripts/art/map_layouts_v2/batch.py --kit [--redo M7,N7]` (`--redo` thêm sheet vẽ lại map chưa đạt), rồi `art.py prep` như trên.
 - Cắt sheet đã tạo: `python scripts/art/map_layouts_v2/cut_kit.py [--batch adventure-14b-map-v2-redo] [--sheet FT ...] --qa` (bản vẽ lại kiểu mịn nằm ở batch `adventure-14b-map-v2-redo`) (ảnh soát ở `art_inbox/.qa/map-v2/`), rồi `art.py approve <asset>... [--force]`.
+- Hộp cắt tay: `MANUAL` (batch đầu) và `MANUAL_REDO` (batch vẽ lại: FE, ME, RE, RP thừa hàng / vật; MT bỏ chữ; S1 lấy hàng trên) trong `cut_kit.py`; `FORCE_TILE`, `KEEP_HOLES`, `NO_SAND` sửa từng asset.
+- Đưa vào game: `python scripts/art/map_layouts_v2/kit_manifest.py` (thêm hàng manifest cho mọi ảnh kit mà `src/areas/adventure/scene/mapKit.ts` và vật mốc trong `props.json` dùng, khung = đúng cỡ ảnh đã duyệt, ghi `scripts/assets/mapKitSizes.json`), `python scripts/art/map_layouts_v2/seam_tiles.py` (làm liền mép ô nền kit), rồi `npm run art:process`.
+- `import_maps.py`: vật mốc dùng ảnh kit theo từ trong mô tả (`LANDMARK_ART`); vật mốc chắn đường được dời tới chỗ trống gần nhất trong 3 ô (N5, M8, N9 nhờ đó đặt được).
 - `render.py` báo lỗi (exit 1) nếu có vật không tới được từ điểm xuất phát, vật đứng trên ô cấm, lối ra không nằm ở mép, hoặc map dưới 40 % ô đi được.
 
 ## Ký hiệu ô

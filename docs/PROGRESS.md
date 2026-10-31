@@ -6,9 +6,31 @@
 **Tiến độ GĐ14:** 28 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). **Adventure** (giao diện theo ảnh mẫu, 212 asset batch adventure-03..10, 2026-10-23, chờ duyệt; còn tạo lại sheet K5, CP2; animation trận bằng code + pipeline / prompt AI: decision 040, 2026-10-24, chờ duyệt). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v5 từ decision 043).
-**Bước tiếp theo:** bản đồ v2 (decision 045): camera bám + zoom ×2, phân loại quái / tha hóa / quái ngủ, **toàn bộ phần code đã xong** (camera, loại quái + tha hóa, khu ẩn, 18 khu theo bố cục v2 gồm vùng Biển, tha hóa map + thanh tẩy, câu đố, sương mù); còn art bộ ghép theo ASSET_TODO, và (mật độ 10–14 nhóm, các loại mới) và ghép map bằng bộ ghép (256 asset bản tạm đã duyệt trong `art_inbox/`, chốt kích thước theo ô khi đưa vào manifest). Chủ dự án vẽ lại 36 sheet bộ ghép kiểu mịn (mọi sheet trừ FT, FO; `PROMPT.md` đã sinh lại) khi tiện. Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
+**Bước tiếp theo:** bản đồ v2 (decision 045): code xong; art 2026-11-01 đã vào game batch `adventure-15-coast-foes` (quái biển, rương giả, lớp phủ tha hóa, Zzz, hiệu ứng khu ẩn, nền Biển) và bộ ghép vẽ lại `adventure-14b-map-v2-redo` (ô / khung / lớp che Biển, lớp che 4 vùng, rương 4 loại, cơ quan câu đố, đồ tha hóa theo %, vật mốc kit). Còn: chủ dự án vẽ lại sheet **CE** (vách / bờ Biển) và xác nhận `I.png` = I1; code mặt vách 3/4 cho ô `F` / `s` / `w` dùng FE / ME / RE; nối đạo cụ / lối ra / suối của kit (`docs/ASSET_TODO.md`). Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
 
 ## Nhật ký
+
+### 2026-11-01 — Adventure: art bản đồ v2 vào game — quái biển, rương giả, dấu tha hóa, bộ ghép vẽ lại (decision 045)
+✅ Đã làm:
+- **Batch `adventure-15-coast-foes`** (13 asset) cắt, soát, duyệt, vào game: 7 quái biển dùng ảnh riêng; quái **Rương Giả** (`enemy_mimic_<vùng>`, chỉ số như quái vùng nó thay) cho 6 nhóm rương giả; **nền vùng Biển**.
+- **Dấu tha hóa trên quái** ở map và trong trận: gân tím từ cấp 3, gai pha lê từ cấp 4. **Zzz** trên nhóm ngủ. **Hiệu ứng tìm thấy khu ẩn** đi qua FeedbackDirector (giảm chuyển động: chỉ hiện rồi mờ).
+- **Batch `adventure-14b-map-v2-redo`**: duyệt 230 asset kiểu mịn đè bản pixel tạm (CE không duyệt). 81 asset vào game: ô nền + khung + đồ rắc của **Biển** (thôi mượn của Rừng), **lớp che** 4 vùng, **rương gỗ / bạc / vàng / ẩn** + rương giả, **cơ quan câu đố** tắt / sáng (thay `adv_shrine`), **đồ tha hóa** theo % của khu, **vật mốc** kit. Xác tàu N9, cửa đá N5 và bích họa M8 giờ đặt được (dời 1–3 ô, không chắn đường).
+- Công cụ: `kit_manifest.py` (hàng manifest + cỡ ảnh kit), `seam_tiles.py` (ô nền liền mép), hộp cắt tay cho batch vẽ lại trong `cut_kit.py`; Battle Lab (Admin) có ô chọn tha hóa của quái.
+
+📁 File thay đổi chính: `content/adventure/{enemies,maps,zones,props}.json`, `content/i18n/en.json`, `public/assets/manifest/assets.json`, `scene/{mapKit,foeMarks,mapVfx}.ts` (mới), `scene/{mapView,mapCovers,mapCorruption,mapDepth,mapDepthKit,decals,AdventureScene}.ts`, `scene/battle/battleUnits.ts`, `ui/{battleField,battleStageVm}.ts`, `feedback.ts`, `core/events.ts`, `areas/farm/scene/feedback/FeedbackDirector.ts`, `app/start.ts`, `scripts/art/map_layouts_v2/{cut_kit,import_maps,kit_manifest,seam_tiles}.py`, `scripts/assets/{sizes.ts,mapKitSizes.json}`, `scripts/process-art.ts`, `tools/admin/battleLab.ts`, test, decision 045, ASSET_TODO, README.
+
+🧪 Đã kiểm tra:
+- `npm run check` xanh (1571 test) trước mỗi commit; 6 commit. `art:process` + `assets:check` OK. Chạy lại `import_maps.py` không đè rương giả.
+- Trên sandbox (trạng thái giả qua javascript_tool, save sandbox không vào được Biển): Bãi Vỏ Sò (cát, đụn, vách đá, hải đăng), Rạn San Hô (vỏ trai tắt / thắp, nhóm Cua ngủ có Zzz, rương giả trên đất tha hóa, hang che), Vịnh Đắm Tàu (Bạch Tuộc tha hóa 4 có gân + gai, xác tàu, rương vàng), Bìa Rừng (tán cây, sồi cổ thụ, ếch ngủ), Mỏ Quặng (tháp nâng mỏ, đồ tha hóa), Cổng Tàn Tích (tượng vỡ, lò tha hóa, pha lê), Thung Nấm (lò lửa tắt / thắp), hiệu ứng khu ẩn. Trận trong Battle Lab: Bạch Tuộc tha hóa 5, Hiệp Sĩ Vỏ Ốc ×3, Lươn San Hô ×3 tha hóa 4.
+
+⚠️ Vấn đề / tự quyết:
+- Rương giả = 4 quái theo vùng (thay vì 1 quái `enemy_mimic`) để giữ "chỉ số theo vùng" mà không cần cơ chế co giãn mới; tên chung "Rương Giả".
+- Dấu tha hóa và Zzz là hình theo trạng thái nên vẽ trong scene (như tint cũ); chỉ hiệu ứng một lần (khu ẩn) đi qua FeedbackDirector.
+- **CE hỏng** (khối isometric chéo + chữ) → cần vẽ lại. `I.png` trong folder 14b trông là I1, chưa xử lý vì được dặn bỏ qua.
+- Ô Biển: đường = cát tông đậm; `sand_b`, `sand_wet` không dùng làm nền (lộ mảng). Vách `F` của Biển tạm bằng đá ướt.
+- Các phần đã duyệt nhưng chưa nối: mặt vách 3/4 (FE / ME / RE), ô nền kit 3 vùng kia, đạo cụ / lối ra / tường nứt / suối của kit.
+
+👉 Chủ dự án cần kiểm tra: vào Biển (sau trùm Núi) xem N7–N9; xem lớp che, rương, cơ quan câu đố ở Thung Nấm; đánh một nhóm rương giả; vẽ lại sheet CE.
 
 ### 2026-10-31 — Adventure: bản đồ v2 — tha hóa map + thanh tẩy, câu đố, sương mù, vùng Biển (decision 045, các bước còn lại)
 ✅ Đã làm:
