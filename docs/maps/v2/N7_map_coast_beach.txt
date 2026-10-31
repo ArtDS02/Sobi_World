@@ -53,18 +53,18 @@ objects (kind x y attrs):
   exit        0  14  id=exit_n7_west to=map_forest_marsh via=trail
   exit       71  10  id=exit_n7_east to=map_coast_reef via=trail
   exit       71  30  id=exit_n7_dock to=map_coast_cove via=shore
-  group      64  20  id=g_c1_elite cls=elite enemy=enemy_tide_wraith
-  group       8  18  id=g_c1_a enemy=enemy_dew_frog cls=normal
-  group      22  20  id=g_c1_b enemy=enemy_gale_sparrow cls=normal
-  group      30  22  id=g_c1_c enemy=enemy_dew_frog cls=normal
-  group      44  22  id=g_c1_d enemy=enemy_tide_wraith cls=normal
-  group      56  17  id=g_c1_e enemy=enemy_gale_sparrow cls=normal
-  group      60  24  id=g_c1_f enemy=enemy_dew_frog cls=normal
-  group      28   8  id=g_c1_g enemy=enemy_gale_sparrow cls=normal
-  group      10   6  id=g_c1_h enemy=enemy_dew_frog cls=normal
-  group      40  14  id=g_c1_i enemy=enemy_tide_wraith cls=normal
-  group      36  28  id=g_c1_j enemy=enemy_dew_frog cls=normal
-  group      16  24  id=g_c1_k enemy=enemy_gale_sparrow cls=normal sleep=True
+  group      64  20  id=g_c1_elite cls=elite enemy=enemy_shell_knight
+  group       8  18  id=g_c1_a enemy=enemy_reef_crab cls=normal
+  group      22  20  id=g_c1_b enemy=enemy_salt_gull cls=normal
+  group      30  22  id=g_c1_c enemy=enemy_coral_eel cls=normal
+  group      44  22  id=g_c1_d enemy=enemy_brine_wraith cls=normal
+  group      56  17  id=g_c1_e enemy=enemy_salt_gull cls=normal
+  group      60  24  id=g_c1_f enemy=enemy_reef_crab cls=normal
+  group      28   8  id=g_c1_g enemy=enemy_salt_gull cls=normal
+  group      10   6  id=g_c1_h enemy=enemy_coral_eel cls=normal
+  group      40  14  id=g_c1_i enemy=enemy_drift_jelly cls=normal
+  group      36  28  id=g_c1_j enemy=enemy_reef_crab cls=normal
+  group      16  24  id=g_c1_k enemy=enemy_salt_gull cls=normal sleep=True
   chest      67  19  id=chest_c1_nook type=silver
   chest      52   5  id=chest_c1_hidden type=hidden
   chest       6   5  id=chest_c1_dune type=wood
