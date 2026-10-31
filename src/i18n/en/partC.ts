@@ -464,6 +464,8 @@ export const partC = {
       harvest: "Found {items}",
       gate: "The {element} way is open",
       shortcut: "Shortcut opened back to {map}",
+      secret: "A hidden place found!",
+      secretWall: "The false wall crumbles: a hidden place!",
       spring: "The team drinks from the spring",
       lore: "Into the Codex: a new old stone",
       shrine: "{element} blessing: +{pct}% damage",

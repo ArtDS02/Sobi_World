@@ -11,7 +11,7 @@ import { AB, COMBAT_CONTEXT, ENGAGEMENT, EVENTS, LOOT_TABLES, MAPS, ZONES, type 
 import { addCount, enemyInits, playEnemies, rollTable } from '../encounter';
 import { allyInit } from '../fighters';
 import { foePresent, foeSky, staysBeaten, withClass } from '../foes';
-import { distanceToThing, groupDistance, thingsOf, tileCenter } from '../maps';
+import { coverAt, distanceToThing, groupDistance, thingsOf, tileCenter } from '../maps';
 import type { Run } from '../state';
 import { autoBattle, groupAffix, quickWinnable, teamLevel, withAffix } from '../variants';
 import { credit, put, runAdventure, type AdventureResult } from './kit';
@@ -35,6 +35,7 @@ function onFoot(world: WorldSave, pos: Position | null, ctx: ActionContext, body
     const map = MAPS[st.run.mapId];
     if (!map) return { ok: false, error: 'INVALID_REQUEST' };
     if (pos && !placeAt(st, map, pos)) return { ok: false, error: 'BLOCKED' };
+    if (pos) findCover(st, map);
     const r = body(st, map);
     if (!r.ok) return r;
     return commit(st);
@@ -42,6 +43,14 @@ function onFoot(world: WorldSave, pos: Position | null, ctx: ActionContext, body
 }
 
 const here = (st: Step): Vec => ({ x: st.run.x, y: st.run.y });
+
+/** Standing under an overhead cover for the first time finds the hidden place (decision 045). */
+function findCover(st: Step, map: AreaMap) {
+  const cover = coverAt(map, here(st));
+  if (!cover || st.a.foundSecrets.includes(cover.id)) return;
+  st.a = { ...st.a, foundSecrets: [...st.a.foundSecrets, cover.id] };
+  st.events.push({ type: 'ADVENTURE_SECRET_FOUND', mapId: map.id, secretId: cover.id, kind: 'cover' });
+}
 
 /** The walker stopped here (saved so a reload puts it back). */
 export function moveTo(world: WorldSave, args: Position, ctx: ActionContext): AdventureResult {
@@ -142,6 +151,8 @@ export function interact(world: WorldSave, args: Position & { id: string }, ctx:
         if (!opener) return fail('GATE_NEEDS_ELEMENT');
         st.a = { ...st.a, openedGates: [...st.a.openedGates, thing.id] };
         st.events.push({ type: 'ADVENTURE_GATE_OPENED', gateId: thing.id, element: gate.element, by: opener.key });
+        // A false wall that gives way is a hidden place found (decision 045).
+        if (gate.look === 'crack') st.events.push({ type: 'ADVENTURE_SECRET_FOUND', mapId: map.id, secretId: thing.id, kind: 'wall' });
         break;
       }
       case 'spring': {

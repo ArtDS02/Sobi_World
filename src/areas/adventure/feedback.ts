@@ -68,6 +68,8 @@ export function adventurePresentation(e: EventBase, origin: 'action' | 'tick' | 
       return { sound: 'notify', toast: T.spring };
     case 'ADVENTURE_LORE_FOUND':
       return { sound: 'notify', toast: T.lore };
+    case 'ADVENTURE_SECRET_FOUND':
+      return { sound: 'birth_fanfare', toast: e.kind === 'wall' ? T.secretWall : T.secret };
     case 'ADVENTURE_SHRINE_BLESSED':
       return { sound: 'level_up', toast: t(T.shrine, { element: elementName(e.element), pct: Math.round(e.pct * 100) }) };
     case 'ADVENTURE_PORTAL_ACTIVATED':

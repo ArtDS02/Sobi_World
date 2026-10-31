@@ -20,6 +20,7 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
     followers: (run?.team ?? []).map((m) => ({ art: m.art, down: m.hp <= 0 })),
     openedGates: a.openedGates,
     openedChests: a.openedChests,
+    foundSecrets: a.foundSecrets,
     backdrop: run?.rift ? RIFT.backdrop : run ? zone.backdrop : CAMP_ART.backdrop,
     now,
     paused,

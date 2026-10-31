@@ -29,6 +29,8 @@ function overlay(map: AreaMap): Map<string, { text: string; colour: string; id: 
   const mark = (x: number, y: number, w: number, h: number, text: string, colour: string, id: string) => {
     for (let yy = y; yy < y + h; yy += 1) for (let xx = x; xx < x + w; xx += 1) out.set(`${xx},${yy}`, { text: xx === x && yy === y ? text : '', colour, id });
   };
+  // Overhead covers first (decision 045): what stands under them draws over their shade.
+  for (const c of map.covers) mark(c.x, c.y, c.w, c.h, '▒', '#2a5e28', c.id);
   for (const p of map.props) {
     const def = PROPS[p.prop];
     if (def) mark(p.x, p.y, def.w, def.h, '▲', '#3f6b35', `prop:${p.x},${p.y}`);

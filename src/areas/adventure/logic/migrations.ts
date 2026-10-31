@@ -1,6 +1,6 @@
 // The Adventure slice's migrations (`areas.sobi_adventure`): v1 → v2 (decision 037, Combat V2 and the exploration map), v2 → v3
-// (decision 039, feats, tips and the Rift), v3 → v4 (adventure-big-update-1: guardians beaten for good, the battle board) and v4 → v5
-// (decision 043: shortcut exits).
+// (decision 039, feats, tips and the Rift), v3 → v4 (adventure-big-update-1: guardians beaten for good, the battle board), v4 → v5
+// (decision 043: shortcut exits) and v5 → v6 (decision 045: hidden places).
 import type { Raw } from '../../../core/save/migrate';
 import { AB, MAPS, ZONES } from './config/content';
 import { newFeats, newFighterFields } from './state';
@@ -73,6 +73,11 @@ export function migrateAdventure4to5(slice: Raw): Raw {
   return { ...slice, version: 5, openedExits: [] };
 }
 
+/** v5 → v6 (decision 045): no hidden place has been found yet. */
+export function migrateAdventure5to6(slice: Raw): Raw {
+  return { ...slice, version: 6, foundSecrets: [] };
+}
+
 // The guardians and bosses of v3 (decision 045's other classes did not exist then and stay out).
 const guardiansOf = (mapId: string): string[] => (MAPS[mapId]?.groups ?? []).filter((g) => g.kind === 'elite' || g.kind === 'boss').map((g) => `${mapId}/${g.id}`);
 
@@ -81,4 +86,5 @@ export const ADVENTURE_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
   2: migrateAdventure2to3,
   3: (slice) => migrateAdventure3to4(slice, { guardiansOf, bossOf: (zoneId) => (ZONES[zoneId]?.maps ?? []).flatMap((m) => guardiansOf(m).filter((k) => MAPS[m]?.groups.find((g) => `${m}/${g.id}` === k)?.kind === 'boss')) }),
   4: migrateAdventure4to5,
+  5: migrateAdventure5to6,
 };

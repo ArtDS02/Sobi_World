@@ -150,6 +150,7 @@
         { "id": "herb_f1_b", "x": 31, "y": 24, "kind": "herb", "table": "herbs" }
       ],
       "gates": [{ "id": "gate_f1_bramble", "x": 45, "y": 5, "w": 1, "h": 1, "element": "FIRE" }],
+      "covers": [{ "id": "cover_f1_canopy", "x": 43, "y": 0, "w": 6, "h": 5, "look": "canopy" }],
       "springs": [{ "id": "spring_f1", "x": 8, "y": 11 }],
       "npcs": [{ "id": "npc_f1_herbalist", "x": 19, "y": 22, "event": "event_herbalist" }],
       "lore": [
@@ -309,8 +310,9 @@
       ],
       "gates": [
         { "id": "gate_f2_vines", "x": 18, "y": 13, "w": 1, "h": 1, "element": "NATURE" },
-        { "id": "gate_f2_rock", "x": 6, "y": 23, "w": 1, "h": 1, "element": "EARTH" }
+        { "id": "gate_f2_rock", "x": 6, "y": 23, "w": 1, "h": 1, "element": "EARTH", "look": "crack" }
       ],
+      "covers": [{ "id": "cover_f2_canopy", "x": 1, "y": 22, "w": 5, "h": 5, "look": "canopy" }],
       "springs": [{ "id": "spring_f2", "x": 10, "y": 2 }],
       "npcs": [{ "id": "npc_f2_shrine", "x": 34, "y": 25, "event": "event_shrine" }],
       "lore": [
@@ -454,6 +456,7 @@
       "chests": [{ "id": "chest_f3_hollow", "x": 1, "y": 1, "table": "treasure_forest" }],
       "nodes": [{ "id": "herb_f3_a", "x": 24, "y": 25, "kind": "herb", "table": "herbs" }],
       "gates": [{ "id": "gate_f3_mist", "x": 9, "y": 22, "w": 1, "h": 1, "element": "DARK" }],
+      "covers": [{ "id": "cover_f3_canopy", "x": 1, "y": 1, "w": 6, "h": 5, "look": "canopy" }],
       "springs": [{ "id": "spring_f3", "x": 20, "y": 11 }],
       "npcs": [],
       "lore": [
@@ -614,6 +617,7 @@
         { "id": "ore_m1_b", "x": 46, "y": 14, "kind": "ore", "table": "ore_vein" }
       ],
       "gates": [{ "id": "gate_m1_lock", "x": 44, "y": 12, "w": 1, "h": 1, "element": "METAL" }],
+      "covers": [{ "id": "cover_m1_overhang", "x": 45, "y": 11, "w": 5, "h": 5, "look": "rock" }],
       "springs": [{ "id": "spring_m1", "x": 12, "y": 11 }],
       "npcs": [{ "id": "npc_m1_miner", "x": 24, "y": 24, "event": "event_miner" }],
       "lore": [
@@ -780,6 +784,7 @@
         { "id": "gate_m2_fire", "x": 34, "y": 17, "w": 1, "h": 1, "element": "WATER" },
         { "id": "gate_m2_pylon", "x": 5, "y": 21, "w": 1, "h": 1, "element": "LIGHTNING" }
       ],
+      "covers": [{ "id": "cover_m2_overhang", "x": 32, "y": 18, "w": 6, "h": 5, "look": "rock" }],
       "springs": [{ "id": "spring_m2", "x": 8, "y": 3 }],
       "npcs": [{ "id": "npc_m2_hot_spring", "x": 29, "y": 24, "event": "event_hot_spring" }],
       "lore": [
@@ -923,7 +928,10 @@
       ],
       "chests": [{ "id": "chest_m3_ledge", "x": 23, "y": 12, "table": "treasure_mountain" }],
       "nodes": [{ "id": "ore_m3_a", "x": 10, "y": 24, "kind": "ore", "table": "ore_vein" }],
-      "gates": [{ "id": "gate_m3_boulder", "x": 23, "y": 20, "w": 1, "h": 1, "element": "EARTH" }],
+      "gates": [
+        { "id": "gate_m3_boulder", "x": 23, "y": 20, "w": 1, "h": 1, "element": "EARTH", "look": "crack" }
+      ],
+      "covers": [{ "id": "cover_m3_overhang", "x": 21, "y": 11, "w": 6, "h": 5, "look": "rock" }],
       "springs": [{ "id": "spring_m3", "x": 6, "y": 6 }],
       "npcs": [{ "id": "npc_m3_cliff", "x": 28, "y": 3, "event": "event_cliff_shrine" }],
       "lore": [
@@ -1091,6 +1099,7 @@
       ],
       "nodes": [{ "id": "ore_r1_a", "x": 3, "y": 17, "kind": "ore", "table": "cache_ancient" }],
       "gates": [{ "id": "gate_r1_lamp", "x": 6, "y": 9, "w": 1, "h": 1, "element": "LIGHT" }],
+      "covers": [{ "id": "cover_r1_roof", "x": 43, "y": 6, "w": 6, "h": 5, "look": "roof" }],
       "springs": [{ "id": "spring_r1", "x": 16, "y": 7 }],
       "npcs": [{ "id": "npc_r1_altar", "x": 36, "y": 7, "event": "event_rune_altar" }],
       "lore": [
@@ -1255,6 +1264,7 @@
         { "id": "gate_r2_pylon", "x": 43, "y": 10, "w": 1, "h": 1, "element": "LIGHTNING" },
         { "id": "gate_r2_mist", "x": 13, "y": 18, "w": 1, "h": 1, "element": "DARK" }
       ],
+      "covers": [{ "id": "cover_r2_roof", "x": 42, "y": 4, "w": 6, "h": 5, "look": "roof" }],
       "springs": [{ "id": "spring_r2", "x": 14, "y": 7 }],
       "npcs": [{ "id": "npc_r2_cache", "x": 46, "y": 21, "event": "event_ancient_cache" }],
       "lore": [
@@ -1388,6 +1398,7 @@
       "chests": [{ "id": "chest_r3_reliquary", "x": 29, "y": 6, "table": "treasure_ruins" }],
       "nodes": [{ "id": "ore_r3_a", "x": 20, "y": 20, "kind": "ore", "table": "cache_ancient" }],
       "gates": [{ "id": "gate_r3_lock", "x": 31, "y": 9, "w": 1, "h": 1, "element": "METAL" }],
+      "covers": [{ "id": "cover_r3_roof", "x": 24, "y": 2, "w": 6, "h": 5, "look": "roof" }],
       "springs": [{ "id": "spring_r3", "x": 20, "y": 7 }],
       "npcs": [],
       "lore": [

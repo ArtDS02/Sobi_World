@@ -167,6 +167,18 @@ export function mapProblems(map: AreaMap): string[] {
   // The main road never needs an element gate: exits, the portal, the guardians and the boss with every gate shut.
   for (const t of thingsOf(map)) if ((t.kind === 'exit' || t.kind === 'portal') && !usableFrom(map, t, shut)) say(`${t.kind} ${t.id} is behind an element gate`);
   for (const g of map.groups) if ((g.kind === 'elite' || g.kind === 'boss') && !shut.has(idx(map, g))) say(`${g.kind} ${g.id} is behind an element gate`);
+  // A cover hides a place one can walk into, never the way in, the portal, an exit or an enemy group (decision 045).
+  for (const c of map.covers) {
+    const inside = (x: number, y: number, w = 1, h = 1) => x < c.x + c.w && x + w > c.x && y < c.y + c.h && y + h > c.y;
+    if (c.x < 0 || c.y < 0 || c.x + c.w > map.cols || c.y + c.h > map.rows) say(`cover ${c.id} is outside the area`);
+    let walkable = 0;
+    for (let y = c.y; y < c.y + c.h; y += 1) for (let x = c.x; x < c.x + c.w; x += 1) if (open.has(idx(map, { x, y }))) walkable += 1;
+    if (walkable === 0) say(`cover ${c.id} hides no ground one can reach`);
+    if (inside(map.spawn.x, map.spawn.y)) say(`cover ${c.id} hides the spawn`);
+    if (inside(map.portal.x, map.portal.y, 2, 2)) say(`cover ${c.id} hides the portal`);
+    for (const e of map.exits) if (inside(e.x, e.y, e.w, e.h)) say(`cover ${c.id} hides exit ${e.id}`);
+    for (const g of map.groups) if (inside(g.x, g.y)) say(`cover ${c.id} hides group ${g.id}`);
+  }
   // Arrivals land on walkable ground.
   for (const other of Object.values(MAPS)) {
     for (const e of other.exits) {
@@ -176,6 +188,12 @@ export function mapProblems(map: AreaMap): string[] {
     }
   }
   return out;
+}
+
+/** The overhead cover over a point, if any (decision 045). */
+export function coverAt(map: AreaMap, p: Vec): AreaMap['covers'][number] | undefined {
+  const t = tileAt(map, p);
+  return map.covers.find((c) => t.x >= c.x && t.x < c.x + c.w && t.y >= c.y && t.y < c.y + c.h);
 }
 
 /** Distance (px) from a point to a rectangle of tiles (0 inside). */

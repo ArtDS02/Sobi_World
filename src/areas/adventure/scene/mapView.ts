@@ -10,6 +10,7 @@ import { thingsOf, type Thing } from '../logic/maps';
 import { elementArt } from '../ui/vmKit';
 import { vi } from '../../../i18n/vi';
 import { decalsOf } from './decals';
+import { drawCover } from './mapCovers';
 import { dressArea, type AreaDressing } from './mapDepth';
 import type { AdventureSceneState } from './sceneState';
 
@@ -32,8 +33,12 @@ export function thingArt(t: Thing, map: AreaMap, s: AdventureSceneState): { id: 
       return { id: 'adv_chest', state: s.openedChests.includes(t.id) ? 'open' : 'closed' };
     case 'node':
       return { id: map.nodes.find((n) => n.id === t.id)?.kind === 'ore' ? 'adv_node_ore' : 'adv_node_herb' };
-    case 'gate':
-      return { id: `adv_gate_${(map.gates.find((g) => g.id === t.id)?.element ?? 'void').toLowerCase()}` };
+    case 'gate': {
+      const gate = map.gates.find((g) => g.id === t.id);
+      // A false wall wears the zone's own wall tile until it gives way (decision 045).
+      if (gate?.look === 'crack') return { id: `adv_tile_${zoneOfMapId(map)}_wall` };
+      return { id: `adv_gate_${(gate?.element ?? 'void').toLowerCase()}` };
+    }
     case 'spring':
       return { id: 'adv_spring' };
     case 'npc':
@@ -93,6 +98,8 @@ export interface MapObjects {
   /** The teleport gates (exits): the portal picture, its swirl of light while open, the lock and its words while shut. */
   gates: Map<string, { img: Phaser.GameObjects.Image; glow: Phaser.GameObjects.Image; lock: Phaser.GameObjects.Container; words: Phaser.GameObjects.Text }>;
   dressing: AreaDressing;
+  /** The overhead covers over hidden places, drawn over the party (decision 045). */
+  covers: Map<string, Phaser.GameObjects.Graphics>;
 }
 
 /** Builds the whole area; `destroy` the returned layer to drop it. `motion` = false (reduced motion): the dressing stays still. */
@@ -132,6 +139,11 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     const img = standOn(scene, key(scene, a.id, a.state), map, th.x, th.y, th.w, th.h, 1);
     things.set(th.id, img);
     layer.add(img);
+    if (th.kind === 'gate' && map.gates.find((g) => g.id === th.id)?.look === 'crack') {
+      // Laid exactly over its tiles like the wall around it, with a crack across.
+      img.setOrigin(0).setPosition(th.x * t, th.y * t).setDisplaySize(th.w * t, th.h * t);
+      layer.add(img.setData('crack', crackOver(scene, map, th)).getData('crack') as Phaser.GameObjects.Graphics);
+    }
     if (th.kind === 'chest') {
       const sp = scene.add.text((th.x + 0.5) * t, (th.y - 0.2) * t, '✦', { fontSize: '22px', color: '#fff6a0' }).setOrigin(0.5).setDepth(99999).setAlpha(0);
       sparkles.set(th.id, sp);
@@ -168,7 +180,21 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     gates.set(e.id, { img, glow, lock, words });
     layer.add([glow, img, lock]);
   }
-  return { layer, things, groups, sparkles, gates, dressing };
+  const covers = new Map<string, Phaser.GameObjects.Graphics>();
+  for (const c of map.covers) covers.set(c.id, drawCover(scene, map, c));
+  layer.once(Phaser.GameObjects.Events.DESTROY, () => covers.forEach((g) => g.destroy()));
+  return { layer, things, groups, sparkles, gates, dressing, covers };
+}
+
+/** The crack across a false wall: a dark zigzag over its rock. */
+function crackOver(scene: Phaser.Scene, map: AreaMap, th: { x: number; y: number; w: number; h: number }): Phaser.GameObjects.Graphics {
+  const cx = (th.x + th.w / 2) * map.tile;
+  const top = (th.y + 0.12) * map.tile;
+  const h = th.h * map.tile * 0.76;
+  const g = scene.add.graphics().lineStyle(3, 0x2a1d14, 0.85);
+  g.beginPath().moveTo(cx - 4, top);
+  for (let i = 1; i <= 5; i += 1) g.lineTo(cx + (i % 2 === 0 ? -7 : 7), top + (h * i) / 5);
+  return g.strokePath();
 }
 
 /** What a shut exit says when the party comes close (decision 043). */
@@ -230,6 +256,7 @@ export function refreshThings(scene: Phaser.Scene, map: AreaMap, objs: MapObject
     if (!img) continue;
     if (th.kind === 'gate') {
       img.setVisible(!s.openedGates.includes(th.id));
+      (img.getData('crack') as Phaser.GameObjects.Graphics | undefined)?.setVisible(img.visible);
       continue;
     }
     const a = thingArt(th, map, s);

@@ -6,9 +6,31 @@
 **Tiến độ GĐ14:** 28 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). **Adventure** (giao diện theo ảnh mẫu, 212 asset batch adventure-03..10, 2026-10-23, chờ duyệt; còn tạo lại sheet K5, CP2; animation trận bằng code + pipeline / prompt AI: decision 040, 2026-10-24, chờ duyệt). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v5 từ decision 043).
-**Bước tiếp theo:** bản đồ v2 (decision 045): camera bám + zoom ×2 và phân loại quái / tha hóa / quái ngủ đã xong; tiếp theo lớp che + khu ẩn, rồi bố cục lại map (mật độ 10–14 nhóm, các loại mới) và ghép map bằng bộ ghép (256 asset bản tạm đã duyệt trong `art_inbox/`, chốt kích thước theo ô khi đưa vào manifest). Chủ dự án vẽ lại 36 sheet bộ ghép kiểu mịn (mọi sheet trừ FT, FO; `PROMPT.md` đã sinh lại) khi tiện. Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
+**Bước tiếp theo:** bản đồ v2 (decision 045): camera bám + zoom ×2, phân loại quái / tha hóa / quái ngủ, lớp che + khu ẩn + tường giả đã xong; tiếp theo bố cục lại map (mật độ 10–14 nhóm, các loại mới) và ghép map bằng bộ ghép (256 asset bản tạm đã duyệt trong `art_inbox/`, chốt kích thước theo ô khi đưa vào manifest). Chủ dự án vẽ lại 36 sheet bộ ghép kiểu mịn (mọi sheet trừ FT, FO; `PROMPT.md` đã sinh lại) khi tiện. Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
 
 ## Nhật ký
+
+### 2026-10-31 — Adventure: bản đồ v2 — lớp che, khu ẩn, tường giả, save v6 (decision 045, bước code 3)
+✅ Đã làm:
+- **Lớp che** (`maps.json` → `covers[]`): tán cây, mái đá hoặc mái đổ vẽ trên đầu đội, che khu ẩn bên dưới. Đội bước vào thì lớp che mờ còn 25 %, bước ra thì hiện lại.
+- **Tìm thấy khu ẩn**: lần đầu đứng dưới một lớp che sẽ lưu vĩnh viễn (`foundSecrets`), hiện toast "Tìm thấy một khu ẩn!" kèm âm thanh, và tính vào % khám phá. Scene báo lưu vị trí ngay khi bước vào nên khu ẩn được ghi nhận tức thì.
+- **Tường giả**: cổng hệ có `look: 'crack'` trông như ô tường của vùng kèm vết nứt. Mở bằng hệ như cổng thường, khi mở có toast riêng.
+- Kiểm tra map mới: lớp che không được che điểm xuất phát, cổng dịch chuyển, lối ra hay nhóm quái, và phải có ô đi tới được bên dưới. Admin bản đồ hiện vùng che (▒).
+- **Save v6**: thêm `foundSecrets`, migration v5 → v6.
+- Nội dung tạm: 9 map hiện có mỗi map một lớp che phủ lên một rương. `gate_f2_rock` và `gate_m3_boulder` thành tường giả.
+
+📁 File thay đổi chính: `scene/mapCovers.ts` (mới), `scene/{mapView,AdventureScene,sceneState}.ts`, `logic/{maps,progress,state,migrations,events}.ts`, `logic/actions/explore.ts`, `ui/sceneVm.ts`, `feedback.ts`, `content/schemas/adventure/maps.ts`, `content/adventure/maps.json`, i18n, `tools/admin/adventureMaps.ts`, `tests/unit/adventureSecrets.test.ts` (mới), 2 test migration cũ, decision 045, README Area, ASSET_TODO.
+
+🧪 Đã kiểm tra:
+- `npm run check` xanh (1551 test, 7 test mới).
+- Save sandbox thật v5 nâng lên v6 khi tải (`foundSecrets: []`), game chạy bình thường.
+- Trên sandbox: tán cây che kín góc ẩn ở Bìa Rừng; đi vào (sau khi mở cổng Lửa) thì tán mờ còn 25 % và scene báo lưu ngay. Tường giả ở Rừng Sâu trông như hàng rào cây có vết nứt.
+
+⚠️ Vấn đề / tự quyết:
+- Vị trí lớp che trên 9 map hiện có là tạm (chọn quanh một rương xa điểm xuất phát), sẽ thay bằng vùng che của bố cục v2 khi bố cục lại. Ở Bìa Rừng, góc ẩn nằm sau cổng Lửa có sẵn.
+- Lớp che vẽ tạm bằng khối tròn.
+
+👉 Chủ dự án cần kiểm tra: vào Bìa Rừng, mở cổng Lửa rồi đi vào dưới tán cây góc trên phải; ở Rừng Sâu, tìm bức tường nứt (cần đội có hệ Đất).
 
 ### 2026-10-31 — Adventure: bản đồ v2 — 6 loại quái, cấp tha hóa 1–5, quái ngủ (decision 045, bước code 2)
 ✅ Đã làm:

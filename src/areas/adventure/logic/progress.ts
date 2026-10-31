@@ -1,5 +1,5 @@
-// How much of a zone has been found (spec §3.9): treasure chests, element gates, lore stones and portals opened for good, over all there
-// are in its areas. Pure.
+// How much of a zone has been found (spec §3.9): treasure chests, element gates, lore stones, portals and hidden places (decision 045)
+// opened or found for good, over all there are in its areas. Pure.
 import { MAPS, ZONES, zoneAreas } from './config/content';
 import type { AdventureState } from './state';
 
@@ -9,7 +9,7 @@ export interface Discovery {
   percent: number;
 }
 
-export function discovery(a: Pick<AdventureState, 'openedChests' | 'openedGates' | 'loreFound' | 'activePortals'>, mapIds: readonly string[]): Discovery {
+export function discovery(a: Pick<AdventureState, 'openedChests' | 'openedGates' | 'loreFound' | 'activePortals' | 'foundSecrets'>, mapIds: readonly string[]): Discovery {
   let found = 0;
   let total = 0;
   for (const id of mapIds) {
@@ -22,6 +22,7 @@ export function discovery(a: Pick<AdventureState, 'openedChests' | 'openedGates'
     count(m.chests.map((c) => c.id), a.openedChests);
     count(m.gates.map((g) => g.id), a.openedGates);
     count(m.lore.map((l) => l.id), a.loreFound);
+    count(m.covers.map((c) => c.id), a.foundSecrets);
     // The entrance portal is lit from the start; the others count once lit.
     const zone = ZONES[m.zoneId];
     if (zone && zone.maps[0] !== m.id) count([m.id], a.activePortals);

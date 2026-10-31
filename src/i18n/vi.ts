@@ -1496,6 +1496,8 @@ export const vi = {
       harvest: "Nhặt được {items}",
       gate: "Lối {element} đã mở",
       shortcut: "Mở lối tắt về {map}",
+      secret: "Tìm thấy một khu ẩn!",
+      secretWall: "Bức tường giả sụp đổ: lộ ra một khu ẩn!",
       spring: "Cả đội uống nước suối mát",
       lore: "Ghi vào Codex: một bia cổ mới",
       shrine: "Phúc lành {element}: +{pct}% sát thương",

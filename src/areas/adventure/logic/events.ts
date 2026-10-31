@@ -8,6 +8,7 @@ export type AdventureEvent =
   | { type: 'ADVENTURE_BATTLE_STARTED'; boss: boolean; elite: boolean; kind?: string; asleep?: boolean; affix?: string | null; rift?: number }
   | { type: 'ADVENTURE_BATTLE_WON'; zoneId: string; boss: boolean; elite: boolean; enemies: number; exp: number; coins: number; quick?: boolean; affix?: string | null; gems?: number; rift?: boolean }
   | { type: 'ADVENTURE_FOE_ESCAPED'; affix: string }
+  | { type: 'ADVENTURE_SECRET_FOUND'; mapId: string; secretId: string; kind: 'cover' | 'wall' }
   | { type: 'ADVENTURE_QUIP'; key: string; name: string; lineage: string; trigger: string; n: number }
   | { type: 'ADVENTURE_TITLE_EARNED'; key: string; name: string; titleId: string }
   | { type: 'ADVENTURE_RIFT_STARTED'; ruleId: string; team: string[]; prep: string[] }
@@ -47,7 +48,7 @@ export type AdventureEvent =
   | { type: 'ADVENTURE_TOME_USED'; key: string; name: string; itemId: string; exp: number };
 
 export const ADVENTURE_EVENT_TYPES = [
-  'ADVENTURE_STARTER_CLAIMED', 'ADVENTURE_RUN_STARTED', 'ADVENTURE_MOVED', 'ADVENTURE_AREA_ENTERED', 'ADVENTURE_BATTLE_STARTED', 'ADVENTURE_BATTLE_WON',
+  'ADVENTURE_STARTER_CLAIMED', 'ADVENTURE_RUN_STARTED', 'ADVENTURE_MOVED', 'ADVENTURE_AREA_ENTERED', 'ADVENTURE_BATTLE_STARTED', 'ADVENTURE_BATTLE_WON', 'ADVENTURE_SECRET_FOUND',
   'ADVENTURE_FLED', 'ADVENTURE_CHEST_OPENED', 'ADVENTURE_HARVESTED', 'ADVENTURE_GATE_OPENED', 'ADVENTURE_SHORTCUT_OPENED', 'ADVENTURE_SPRING', 'ADVENTURE_EVENT', 'ADVENTURE_LORE_FOUND',
   'ADVENTURE_SHRINE_BLESSED', 'ADVENTURE_PORTAL_ACTIVATED', 'ADVENTURE_ZONE_CLEARED', 'ADVENTURE_LEVEL_UP', 'ADVENTURE_SP_GAINED', 'ADVENTURE_RUN_ENDED',
   'ADVENTURE_RUN_CLOSED', 'ADVENTURE_EXHAUSTED', 'ADVENTURE_LOOT_COLLECTED', 'ADVENTURE_ITEM_USED', 'ADVENTURE_EQUIPPED', 'ADVENTURE_UNEQUIPPED', 'ADVENTURE_NODE_OPENED',

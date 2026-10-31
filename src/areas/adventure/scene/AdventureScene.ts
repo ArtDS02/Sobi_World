@@ -15,6 +15,7 @@ import { BATTLE_SCENE_KEY } from './battle/BattleScene';
 
 export { BattleScene, manifestImages } from './battle/BattleScene';
 import { MapCamera } from './mapCamera';
+import { fadeCovers } from './mapCovers';
 import { buildMap, edgeColour, refreshThings, type MapObjects } from './mapView';
 import type { AdventureSceneState, SceneReport } from './sceneState';
 import { Walker } from './walker';
@@ -57,6 +58,8 @@ export class AdventureScene extends Phaser.Scene {
   private warp: { at: number; exitId: string; pos: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' } } | null = null;
   private arrivedAt = -Infinity;
   private camera!: MapCamera;
+  /** The cover the party stands under (decision 045). */
+  private coverIn: string | null = null;
   private offs: (() => void)[] = [];
 
   constructor(private readonly deps: AdventureSceneDeps) {
@@ -187,6 +190,10 @@ export class AdventureScene extends Phaser.Scene {
     }
     const pos = this.walker.position;
     this.camera.follow(pos, delta, this.deps.reduceMotion());
+    // Under a cover not found yet: save the spot now, so the hidden place counts at once.
+    const cover = fadeCovers(map, this.objs!.covers, pos, delta, this.deps.reduceMotion(), this.coverIn);
+    this.coverIn = cover.under;
+    if (cover.entered && !s.foundSecrets.includes(cover.entered) && !s.paused) this.deps.report.move(pos);
     refreshThings(this, map, this.objs!, s, time, pos);
     this.objs!.dressing.update(time, pos);
     this.updateGroups(s, map, time);

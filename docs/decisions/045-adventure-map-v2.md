@@ -1,6 +1,6 @@
 # 045 — Adventure: bản đồ v2 — camera bám, khu ẩn, tha hóa, phân loại quái, bộ asset dựng map mới
 
-Ngày: 2026-10-30 · Trạng thái: **chủ dự án đã duyệt hướng** (2026-10-30). Code: camera bám + zoom ×2 xong (2026-10-31, `scene/mapCamera.ts`); phân loại quái + tha hóa + quái ngủ xong (2026-10-31, `logic/foes.ts`, mục dưới); art bắt đầu bằng batch `adventure-14-map-v2`.
+Ngày: 2026-10-30 · Trạng thái: **chủ dự án đã duyệt hướng** (2026-10-30). Code: camera bám + zoom ×2 xong (2026-10-31, `scene/mapCamera.ts`); phân loại quái + tha hóa + quái ngủ xong (2026-10-31, `logic/foes.ts`); lớp che + khu ẩn + tường giả xong (2026-10-31, save v6; hai mục dưới); art bắt đầu bằng batch `adventure-14-map-v2`.
 Đầu vào: `docs/WORLD_MAP_V2_PROPOSAL.md` (đề xuất + câu trả lời Q2–Q9, A1–A5), decision 043.
 
 ## Bối cảnh
@@ -71,3 +71,14 @@ Cấp tha hóa 1–5: chỉ số (HP, công, thủ) ×1 / 1,05 / 1,1 / 1,16 / 1,
 - Hình tha hóa tạm bằng code: tint tím theo cấp, quầng tối từ cấp 3, chữ Zzz; trong trận: vạch ◆ cạnh tên. Art lớp phủ ghi ở `docs/ASSET_TODO.md`.
 
 Cân bằng (`npm run sim:adventure`, 80 chuyến, so với trước): Rừng dễ hơn chút (nhóm ngủ), Núi gần như cũ, Tàn Tích gần như cũ (starter L24 71 → 65 %, nature L24 49 → 54 %). Bài guard `phase11` (Núi cấp 6 < 20 %) đạt sau khi nâng quái thường ở Mỏ lên cấp 2.
+
+## Bước code 3 — lớp che, khu ẩn, tường giả (2026-10-31)
+
+- **Lớp che** (`maps.json` → `covers[]`: `id`, `x`, `y`, `w`, `h`, `look` = `canopy` / `rock` / `roof`): vẽ trên đầu đội (`scene/mapCovers.ts`), che những gì bên dưới; ô dưới lớp che đi được theo địa hình. Đội đứng dưới lớp che thì lớp che mờ còn 25 %. Lần đầu đứng dưới một lớp che = **tìm thấy khu ẩn**: lưu vĩnh viễn ở `slice.foundSecrets`, sự kiện `ADVENTURE_SECRET_FOUND` (toast + âm), tính vào % khám phá. Scene báo lưu vị trí ngay khi bước vào lớp che chưa tìm, nên không phải chờ lần lưu định kỳ.
+- **Tường giả** = cổng hệ có `look: 'crack'`: trông như ô tường của vùng, có vết nứt; mở bằng hệ như cổng thường (đã tính trong % khám phá qua `openedGates`), khi mở phát thêm `ADVENTURE_SECRET_FOUND` loại `wall`.
+- **Rương thấy nhưng phải đi đường khác**: chỉ là cách đặt vật trên bố cục, không cần code.
+- Kiểm tra map: lớp che nằm trong khu, có ô đi tới được bên dưới, không che điểm xuất phát, cổng dịch chuyển, lối ra, nhóm quái.
+- **Save v6**: thêm `foundSecrets: []` (migration v5 → v6). Đã thử trên save sandbox thật (v5 → v6) và chuỗi migration từ fixture v2.
+- Nội dung tạm cho 9 map hiện có: mỗi map một lớp che phủ lên một rương (tán cây / mái đá / mái đổ theo vùng); `gate_f2_rock`, `gate_m3_boulder` thành tường giả. Bố cục v2 có sẵn vùng che + rương ẩn của từng map, thay khi bố cục lại.
+- Hình lớp che tạm bằng code (các khối tròn chồng nhau theo màu vùng), chờ art bộ ghép.
+

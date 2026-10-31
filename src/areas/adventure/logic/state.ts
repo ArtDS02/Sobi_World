@@ -1,4 +1,4 @@
-// The Adventure's slice of the world save (`areas.sobi_adventure`, v2 since decision 037, v4 since adventure-big-update-1, v5 since decision 043): its fighters (level, experience, class, SP and
+// The Adventure's slice of the world save (`areas.sobi_adventure`, v2 since decision 037, v4 since adventure-big-update-1, v5 since decision 043, v6 since decision 045): its fighters (level, experience, class, SP and
 // skill tree, class loadout, Rage, equipment, energy), the trip in progress (where the party stands on which area, what it beat and
 // found, the battle on), what stays opened for good (treasure chests, gates, portals, shortcuts, lore), formations, the leader, loot waiting for
 // room in the bag. The creatures themselves stay in their own Areas; coins, items and XP are world fields.
@@ -11,7 +11,7 @@ import { CLASS_ID_VALUES } from '../../../../content/schemas/adventure/classes';
 import { LINEAGE_ID_VALUES } from '../../../../content/schemas/adventure/lineages';
 import { FOE_CLASSES } from '../../../../content/schemas/adventure/maps';
 
-export const ADVENTURE_STATE_VERSION = 5;
+export const ADVENTURE_STATE_VERSION = 6;
 
 const time = z.number().finite();
 const nonNeg = z.number().finite().min(0);
@@ -227,6 +227,8 @@ export const adventureStateSchema = z.strictObject({
   activePortals: z.array(z.string()),
   /** Shortcut exits opened for good from their other side (decision 043, v5). */
   openedExits: z.array(z.string()),
+  /** Hidden places found for good: the overhead covers stepped under (decision 045, v6). */
+  foundSecrets: z.array(z.string()),
   loreFound: z.array(z.string()),
   formations: z.array(formationSchema),
   /** Who leads the party on the map. */
@@ -275,6 +277,7 @@ export const initialAdventure = (now: number): AdventureState => ({
   beaten: [],
   activePortals: [],
   openedExits: [],
+  foundSecrets: [],
   loreFound: [],
   formations: [],
   leader: 'so',

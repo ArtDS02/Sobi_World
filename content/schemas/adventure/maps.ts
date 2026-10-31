@@ -9,6 +9,11 @@ import { element } from './combat';
 /** `.` ground, `,` path, `=` bridge (walkable); `#` wall / cliff, `~` water (blocked). */
 export const TERRAIN_CHARS = ['.', ',', '=', '#', '~'] as const;
 
+/** How an overhead cover looks (decision 045). */
+export const COVER_LOOKS = ['canopy', 'rock', 'roof'] as const;
+/** How an element gate looks: its element's gate (default) or a false wall with a crack. */
+export const GATE_LOOKS = ['gate', 'crack'] as const;
+
 /** What keeps an exit shut (decision 043). */
 export const EXIT_LOCKS = ['guardian', 'shortcut'] as const;
 /** How an exit looks: a teleport gate (default), a trail through trees, a cave mouth, a bridge, stairs, a shore, a tunnel. */
@@ -95,7 +100,13 @@ export const mapSchema = z.strictObject({
   groups: z.array(groupSchema),
   chests: z.array(z.strictObject({ id: id('chest'), ...cell, table: z.string() })),
   nodes: z.array(z.strictObject({ id: z.string().regex(/^(herb|ore)_[a-z0-9_]+$/), ...cell, kind: z.enum(['herb', 'ore']), table: z.string() })),
-  gates: z.array(z.strictObject({ id: id('gate'), ...cell, w: posInt, h: posInt, element })),
+  /** Element gates; `look: 'crack'` = a false wall (decision 045): it looks like the wall around it, with a crack, until opened. */
+  gates: z.array(z.strictObject({ id: id('gate'), ...cell, w: posInt, h: posInt, element, look: z.enum(GATE_LOOKS).optional() })),
+  /**
+   * Overhead cover over a hidden place (decision 045): tree tops, a rock overhang, a fallen roof. The tiles under it walk as their
+   * terrain says; the cover hides what is beneath and fades when the party steps in, and the first time counts as a secret found.
+   */
+  covers: z.array(z.strictObject({ id: id('cover'), ...cell, w: posInt, h: posInt, look: z.enum(COVER_LOOKS) })).default([]),
   springs: z.array(z.strictObject({ id: id('spring'), ...cell })),
   npcs: z.array(z.strictObject({ id: id('npc'), ...cell, event: id('event') })),
   lore: z.array(z.strictObject({ id: id('lore'), ...cell, textVi: text })),
