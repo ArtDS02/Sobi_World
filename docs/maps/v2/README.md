@@ -5,7 +5,7 @@ Bố cục thiết kế cho đợt mở rộng bản đồ, mỗi file một map
 - Nguồn: `scripts/art/map_layouts_v2/` — `layout.py` (bộ công cụ vẽ lưới + kiểm tra đường đi), `forest.py`, `mountain.py`, `ruins.py`, `coast.py` (18 map), `render.py` (sinh file ở đây và ảnh before), `batch.py` (sinh batch ảnh `adventure-14-map-v2`), `refs.py` (cắt ảnh chuẩn từ tranh map đã duyệt làm hint cho bộ ghép), `cut_kit.py` (cắt sheet bộ ghép thành ứng viên: gom mảnh theo hàng / cột, gỡ dấu ✦, giữ ô nền liền khối).
 - Chạy lại: `python scripts/art/map_layouts_v2/render.py` rồi `python scripts/art/map_layouts_v2/batch.py` và `python .claude/skills/image-to-prompt/scripts/art.py prep adventure-14-map-v2`.
 - Bộ ghép (sau khi có tranh): `python scripts/art/map_layouts_v2/refs.py`, `python scripts/art/map_layouts_v2/batch.py --kit [--redo M7,N7]` (`--redo` thêm sheet vẽ lại map chưa đạt), rồi `art.py prep` như trên.
-- Cắt sheet đã tạo: `python scripts/art/map_layouts_v2/cut_kit.py [--sheet FT ...] --qa` (ảnh soát ở `art_inbox/.qa/map-v2/`), rồi `art.py approve <asset>... [--force]`.
+- Cắt sheet đã tạo: `python scripts/art/map_layouts_v2/cut_kit.py [--batch adventure-14b-map-v2-redo] [--sheet FT ...] --qa` (bản vẽ lại kiểu mịn nằm ở batch `adventure-14b-map-v2-redo`) (ảnh soát ở `art_inbox/.qa/map-v2/`), rồi `art.py approve <asset>... [--force]`.
 - `render.py` báo lỗi (exit 1) nếu có vật không tới được từ điểm xuất phát, vật đứng trên ô cấm, lối ra không nằm ở mép, hoặc map dưới 40 % ô đi được.
 
 ## Ký hiệu ô

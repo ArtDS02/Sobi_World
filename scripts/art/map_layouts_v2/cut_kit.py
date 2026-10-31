@@ -1,4 +1,4 @@
-"""Cut the map v2 kit sheets (batch adventure-14-map-v2) into candidates.
+"""Cut the map v2 kit sheets (batch adventure-14-map-v2, or its smooth redraw adventure-14b-map-v2-redo with --batch) into candidates.
 
 art.py cut splits on empty bands and falls back to an even grid when a sheet has
 uneven cells, white grid lines or a different grey per cell - most kit sheets do.
@@ -147,7 +147,8 @@ def cut_sheet(sheet: dict, variant: str) -> list[tuple[str, np.ndarray | None]]:
              if st[i][4] / float(st[i][2] * st[i][3]) >= 0.06 and min(st[i][2], st[i][3]) >= 8]
     names = sheet["assets"]
     cells: list[tuple[tuple[int, int, int, int], np.ndarray]] = []
-    if sid in MANUAL:
+    # The hand-drawn boxes fit the first drawing of those sheets only (batch adventure-14-map-v2).
+    if sid in MANUAL and BATCH.name == "adventure-14-map-v2":
         for x0, y0, x1, y1 in MANUAL[sid]:
             member = np.zeros_like(joined)
             member[y0:y1, x0:x1] = joined[y0:y1, x0:x1]
@@ -241,7 +242,10 @@ def main() -> None:
     ap.add_argument("--sheet", action="append")
     ap.add_argument("--variant", default="a")
     ap.add_argument("--qa", action="store_true")
+    ap.add_argument("--batch", default="adventure-14-map-v2", help="the batch folder (adventure-14b-map-v2-redo for the smooth redraw)")
     args = ap.parse_args()
+    global BATCH
+    BATCH = ART / ".batch" / args.batch
     data = json.loads((BATCH / "batch.json").read_text(encoding="utf-8"))
     QA.mkdir(parents=True, exist_ok=True)
     for sheet in data["sheets"]:
