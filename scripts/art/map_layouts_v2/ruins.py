@@ -31,6 +31,9 @@ def m7() -> Layout:
     L.add("exit", 0, 30, id="exit_r1_back", to="map_mountain_peak", via="trail")
     L.add("exit", 32, 0, id="exit_r1_east", to="map_ruins_hall", via="trail", lock="guardian", note="the great gate in the north wall")
     L.add("exit", 63, 18, id="exit_r1_side", to="map_ruins_crypt", via="trail")
+    # The way back down to the Windy Pass (N4).
+    L.line([(26, 29), (26, 35)], 2)
+    L.add("exit", 26, 35, id="exit_r1_pass", to="map_mountain_pass", via="trail")
     L.add("group", 32, 9, id="g_r1_elite", cls="elite", enemy="enemy_stone_sentinel")
     L.foes("r1", [(12, 28, "enemy_rune_wisp"), (24, 26, "enemy_stone_sentinel"), (40, 31, "enemy_ember_idol"), (14, 19, "enemy_tide_wraith"),
                   (22, 12, "enemy_rune_wisp"), (44, 12, "enemy_ember_idol"), (56, 18, "enemy_stone_sentinel"), (40, 18, "enemy_rune_wisp"),
@@ -73,6 +76,9 @@ def m8() -> Layout:
     L.add("exit", 0, 18, id="exit_r2_west", to="map_ruins_gate", via="trail")
     L.add("exit", 63, 18, id="exit_r2_east", to="map_ruins_sanctum", via="trail", lock="guardian")
     L.add("exit", 56, 35, id="exit_r2_south", to="map_ruins_crypt", via="trail")
+    # The way back into the Ancient Tunnels (N5), from the north room.
+    L.line([(26, 4), (26, 0)], 2)
+    L.add("exit", 26, 0, id="exit_r2_tunnels", to="map_mountain_tunnels", via="tunnel")
     L.add("group", 58, 18, id="g_r2_elite", cls="elite", enemy="enemy_shadow_priest")
     L.foes("r2", [(10, 18, "enemy_rune_wisp"), (22, 17, "enemy_stone_sentinel"), (32, 19, "enemy_tide_wraith"), (46, 17, "enemy_ember_idol"),
                   (9, 8, "enemy_rune_wisp"), (25, 6, "enemy_tide_wraith", {"sleep": True}), (41, 8, "enemy_stone_sentinel"), (56, 6, "enemy_ember_idol"),

@@ -34,11 +34,11 @@ grid:
 ####...............,,,,,,,,,,,,,,,,,,................##.....####
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,..................,,,....####
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.........,,,,,,,,,,,,,,#.....####
-,,,,,,,,,,,,,,,,,,,,,,,,,...............,,,,,,,,,,,,..##########
-####...............###ccccc#................###.......####...###
-#############....#####cccccc#####################..#############
-######################ccccc#####################################
-################################################################
+,,,,,,,,,,,,,,,,,,,,,,,,,.,,............,,,,,,,,,,,,..##########
+####...............###cccc,,................###.......####...###
+#############....#####cccc,,#####################..#############
+######################cccc,,####################################
+##########################,,####################################
 
 covers (overhead cover over a hidden area):
   (53,25)-(61,31) a broken stone roof over a hidden chamber
@@ -49,6 +49,7 @@ objects (kind x y attrs):
   exit        0  30  id=exit_r1_back to=map_mountain_peak via=trail
   exit       32   0  id=exit_r1_east to=map_ruins_hall via=trail lock=guardian note=the great gate in the north wall
   exit       63  18  id=exit_r1_side to=map_ruins_crypt via=trail
+  exit       26  35  id=exit_r1_pass to=map_mountain_pass via=trail
   group      32   9  id=g_r1_elite cls=elite enemy=enemy_stone_sentinel
   group      12  28  id=g_r1_a enemy=enemy_rune_wisp cls=normal
   group      24  26  id=g_r1_b enemy=enemy_stone_sentinel cls=normal
