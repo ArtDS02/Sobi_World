@@ -35,6 +35,8 @@ const lab = {
   /** Units a side (1–3), the elemental reaction to set off, a boss phase change, the battle won. */
   allies: 1,
   foes: 1,
+  /** The foes' corruption 0–5 (decision 045): their veins and spikes. */
+  corruption: 0,
   reaction: '',
   phase: false,
   win: false,
@@ -93,7 +95,7 @@ function stageState(): BattleStageState | null {
   if (!host || !lab.step) return null;
   const r = host.getBoundingClientRect();
   const size = r.height * (lab.allies + lab.foes > 2 ? 0.26 : 0.34);
-  const unit = (id: string, side: 'ally' | 'enemy', art: string, x: number, y: number) => ({ id, side, art, mirrored: mirrored(art, side), feet: { x: r.left + r.width * x, y: r.top + r.height * y }, width: size, height: size, down: false, aimable: false, statuses: statusesOn(id), corruption: 0 });
+  const unit = (id: string, side: 'ally' | 'enemy', art: string, x: number, y: number) => ({ id, side, art, mirrored: mirrored(art, side), feet: { x: r.left + r.width * x, y: r.top + r.height * y }, width: size, height: size, down: false, aimable: false, statuses: statusesOn(id), corruption: side === 'enemy' ? lab.corruption : 0 });
   const allyArt = lab.fromEnemy ? lab.target : lab.attacker;
   const foeArt = lab.fromEnemy ? lab.attacker : lab.target;
   // Three spots a side, staggered in depth like the game's field.
@@ -176,6 +178,7 @@ export function renderBattleLab(root: HTMLElement) {
       <label class="field"><span>Giảm chuyển động</span><input type="checkbox" data-flag="reduce"${lab.reduce ? ' checked' : ''} /></label>
       <label class="field"><span>Số đồng đội</span><select data-count="allies">${[1, 2, 3].map((n) => opt(String(n), String(n), String(lab.allies))).join('')}</select></label>
       <label class="field"><span>Số quái</span><select data-count="foes">${[1, 2, 3].map((n) => opt(String(n), String(n), String(lab.foes))).join('')}</select></label>
+      <label class="field"><span>Tha hóa của quái</span><select data-count="corruption">${[0, 1, 2, 3, 4, 5].map((n) => opt(String(n), String(n), String(lab.corruption))).join('')}</select></label>
       <label class="field"><span>Phản ứng nguyên tố</span><select data-reaction>${opt('', '—', lab.reaction)}${REACTIONS.map((x) => opt(x, x, lab.reaction)).join('')}</select></label>
       <label class="field"><span>Trùm đổi pha</span><input type="checkbox" data-flag="phase"${lab.phase ? ' checked' : ''} /></label>
       <label class="field"><span>Thắng trận</span><input type="checkbox" data-flag="win"${lab.win ? ' checked' : ''} /></label>

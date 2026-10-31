@@ -14,6 +14,8 @@ export interface CorruptionMarks {
   veins: Phaser.GameObjects.Image | null;
   spikes: Phaser.GameObjects.Image[];
 }
+/** The pale veins darkened so they read on light grass and sand. */
+export const VEINS_TINT = 0x9a58d6;
 export const NO_MARKS: CorruptionMarks = { veins: null, spikes: [] };
 
 /**
@@ -23,7 +25,7 @@ export const NO_MARKS: CorruptionMarks = { veins: null, spikes: [] };
 export function corruptionMarks(scene: Phaser.Scene, corruption: number, height: number, ratio: number): CorruptionMarks {
   const veinsKey = textureKey('fx_corrupt_veins');
   const spikesKey = textureKey('fx_corrupt_spikes');
-  const veins = corruption >= 3 && scene.textures.exists(veinsKey) ? scene.add.image(0, 0, veinsKey).setDisplaySize(height * ratio * 1.25, height * 0.42).setAlpha(0.85) : null;
+  const veins = corruption >= 3 && scene.textures.exists(veinsKey) ? scene.add.image(0, 0, veinsKey).setDisplaySize(height * ratio * 1.25, height * 0.42).setTint(VEINS_TINT).setAlpha(0.85) : null;
   const spikes: Phaser.GameObjects.Image[] = [];
   if (corruption >= 4 && scene.textures.exists(spikesKey)) {
     spikes.push(scene.add.image(0, 0, spikesKey).setOrigin(0.5, 1).setDisplaySize(height * 0.5, height * 0.5));

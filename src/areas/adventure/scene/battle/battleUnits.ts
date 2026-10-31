@@ -6,6 +6,7 @@ import * as Phaser from 'phaser';
 import type { PoseArt } from '../../../../../content/schemas/adventure/battleFx';
 import type { BodyPose } from '../../ui/battlePose';
 import { poseArts } from '../../ui/motionProfiles';
+import { VEINS_TINT } from '../foeMarks';
 
 /** One fighter as the DOM laid it out (game px). */
 export interface StageUnit {
@@ -148,15 +149,15 @@ export class BattleUnits {
     b.veins.setVisible(veins !== null);
     if (veins) {
       if (b.veins.texture.key !== veins) b.veins.setTexture(veins);
-      b.veins.setPosition(u.feet.x + dx * 0.3, u.feet.y - h * 0.03).setDisplaySize(w * 1.2, h * 0.3).setDepth(depth - 0.2).setAlpha(0.85 * opacity);
+      b.veins.setPosition(u.feet.x + dx * 0.3, u.feet.y - h * 0.03).setDisplaySize(w * 1.2, h * 0.3).setDepth(depth - 0.2).setTint(VEINS_TINT).setAlpha(0.9 * opacity);
     }
     const spikes = u.corruption >= 4 && !u.down ? this.image(SPIKES) : null;
     b.spikes.setVisible(spikes !== null);
     if (spikes) {
       if (b.spikes.texture.key !== spikes) b.spikes.setTexture(spikes);
       const back = u.side === 'enemy' ? 1 : -1;
-      const size = h * (u.corruption >= 5 ? 0.55 : 0.42);
-      b.spikes.setPosition(u.feet.x + dx + back * w * 0.34, u.feet.y).setDisplaySize(size, size).setFlipX(back < 0).setDepth(depth - 0.15).setAlpha(opacity);
+      const size = h * (u.corruption >= 5 ? 0.6 : 0.48);
+      b.spikes.setPosition(u.feet.x + dx + back * w * 0.46, u.feet.y).setDisplaySize(size, size).setFlipX(back < 0).setDepth(depth - 0.15).setAlpha(opacity);
     }
   }
 
