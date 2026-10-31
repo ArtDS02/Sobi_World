@@ -46,6 +46,10 @@ def tile(name: str) -> Image.Image:
     return img(ASSETS / "environment" / f"{name}.png").resize((T, T), Image.LANCZOS)
 
 
+# An enemy's picture by its art id (the sea monsters borrow older pictures until GĐ14).
+ENEMY_ART = {e["id"]: e["art"] for e in json.loads((REPO / "content" / "adventure" / "enemies.json").read_text(encoding="utf-8"))["enemies"]}
+
+
 def sprite(name: str, height_tiles: float, folder="props") -> Image.Image:
     im = img(ASSETS / folder / f"{name}.png")
     box = im.getbbox()
@@ -139,7 +143,7 @@ def render(L) -> Image.Image:
     for o in sorted(L.objects, key=lambda o: o["y"]):
         k, x, y = o["kind"], o["x"], o["y"]
         if k == "group":
-            sp = sprite(o["enemy"], SIZE[o["cls"]])
+            sp = sprite(ENEMY_ART.get(o["enemy"], o["enemy"]), SIZE[o["cls"]])
             if o["cls"] == "mutant":
                 sp = tint(sp, (215, 160, 235))
             if o.get("sleep"):

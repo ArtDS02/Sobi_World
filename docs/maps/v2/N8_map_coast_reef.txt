@@ -52,21 +52,21 @@ objects (kind x y attrs):
   portal      6  17  
   exit        0  20  id=exit_n8_west to=map_coast_beach via=shore
   exit       36  39  id=exit_n8_south to=map_coast_cove via=shore
-  group      62  30  id=g_c2_boss cls=subboss enemy=enemy_tide_wraith
-  group      44  16  id=g_c2_elite cls=elite enemy=enemy_dew_frog
-  group      26  27  id=g_c2_special cls=special when=rain enemy=enemy_tide_wraith
-  group       6  17  id=g_c2_a enemy=enemy_dew_frog cls=normal
-  group      11  23  id=g_c2_b enemy=enemy_gale_sparrow cls=normal
-  group      22   8  id=g_c2_c enemy=enemy_dew_frog cls=normal sleep=True
-  group      27  12  id=g_c2_d enemy=enemy_tide_wraith cls=normal
-  group      23  32  id=g_c2_e enemy=enemy_dew_frog cls=normal
-  group      30  31  id=g_c2_f enemy=enemy_gale_sparrow cls=normal
-  group      41  21  id=g_c2_g enemy=enemy_tide_wraith cls=normal
-  group      48  20  id=g_c2_h enemy=enemy_dew_frog cls=mutant
-  group      59   9  id=g_c2_i enemy=enemy_gale_sparrow cls=normal
-  group      40  35  id=g_c2_j enemy=enemy_dew_frog cls=normal
-  group      64  27  id=g_c2_k enemy=enemy_tide_wraith cls=normal
-  group      14  18  id=g_c2_l enemy=enemy_dew_frog cls=normal
+  group      62  30  id=g_c2_boss cls=subboss enemy=enemy_reef_crab
+  group      44  16  id=g_c2_elite cls=elite enemy=enemy_shell_knight
+  group      26  27  id=g_c2_special cls=special when=rain enemy=enemy_drift_jelly
+  group       6  17  id=g_c2_a enemy=enemy_coral_eel cls=normal
+  group      11  23  id=g_c2_b enemy=enemy_salt_gull cls=normal
+  group      22   8  id=g_c2_c enemy=enemy_reef_crab cls=normal sleep=True
+  group      27  12  id=g_c2_d enemy=enemy_brine_wraith cls=normal
+  group      23  32  id=g_c2_e enemy=enemy_coral_eel cls=normal
+  group      30  31  id=g_c2_f enemy=enemy_salt_gull cls=normal
+  group      41  21  id=g_c2_g enemy=enemy_drift_jelly cls=normal
+  group      48  20  id=g_c2_h enemy=enemy_coral_eel cls=mutant
+  group      59   9  id=g_c2_i enemy=enemy_salt_gull cls=normal
+  group      40  35  id=g_c2_j enemy=enemy_reef_crab cls=normal
+  group      64  27  id=g_c2_k enemy=enemy_brine_wraith cls=normal
+  group      14  18  id=g_c2_l enemy=enemy_coral_eel cls=normal
   chest      66  31  id=chest_c2_island type=gold
   chest      62   7  id=chest_c2_cave type=hidden
   chest       8  24  id=chest_c2_mimic type=mimic
