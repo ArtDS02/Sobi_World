@@ -127,6 +127,10 @@
     278,
     221
   ],
+  "adv_map_coast_prop_driftwood": [
+    274,
+    195
+  ],
   "adv_map_coast_prop_palm": [
     262,
     344
@@ -271,6 +275,46 @@
     397,
     472
   ],
+  "adv_map_forest_prop_bushes": [
+    259,
+    211
+  ],
+  "adv_map_forest_prop_rocks": [
+    233,
+    198
+  ],
+  "adv_map_forest_prop_stumps": [
+    292,
+    219
+  ],
+  "adv_map_forest_prop_tree_blossom": [
+    247,
+    275
+  ],
+  "adv_map_forest_prop_tree_fir": [
+    210,
+    322
+  ],
+  "adv_map_forest_prop_tree_oak": [
+    276,
+    298
+  ],
+  "adv_map_forest_tile_grass_a": [
+    260,
+    260
+  ],
+  "adv_map_forest_tile_top": [
+    261,
+    261
+  ],
+  "adv_map_forest_tile_water": [
+    260,
+    260
+  ],
+  "adv_map_forest_tile_water_deep": [
+    260,
+    260
+  ],
   "adv_map_mountain_corrupt_boulder": [
     270,
     266
@@ -346,6 +390,42 @@
   "adv_map_mountain_landmark_headframe": [
     335,
     444
+  ],
+  "adv_map_mountain_prop_boulders": [
+    280,
+    230
+  ],
+  "adv_map_mountain_prop_dry_grass": [
+    237,
+    215
+  ],
+  "adv_map_mountain_prop_ore_rock": [
+    188,
+    190
+  ],
+  "adv_map_mountain_prop_pine": [
+    216,
+    307
+  ],
+  "adv_map_mountain_prop_stump": [
+    193,
+    213
+  ],
+  "adv_map_mountain_tile_ground_a": [
+    255,
+    255
+  ],
+  "adv_map_mountain_tile_ground_b": [
+    255,
+    255
+  ],
+  "adv_map_mountain_tile_lava": [
+    255,
+    255
+  ],
+  "adv_map_mountain_tile_top": [
+    255,
+    255
   ],
   "adv_map_puzzle_brazier": [
     165,
@@ -466,6 +546,46 @@
   "adv_map_ruins_landmark_statue_broken": [
     408,
     523
+  ],
+  "adv_map_ruins_prop_black_roots": [
+    265,
+    261
+  ],
+  "adv_map_ruins_prop_column_fallen": [
+    186,
+    147
+  ],
+  "adv_map_ruins_prop_ivy_stones": [
+    276,
+    264
+  ],
+  "adv_map_ruins_prop_pillar": [
+    181,
+    418
+  ],
+  "adv_map_ruins_prop_pillar_broken": [
+    166,
+    372
+  ],
+  "adv_map_ruins_prop_rubble": [
+    212,
+    146
+  ],
+  "adv_map_ruins_prop_urns": [
+    244,
+    217
+  ],
+  "adv_map_ruins_tile_floor_a": [
+    263,
+    263
+  ],
+  "adv_map_ruins_tile_floor_b": [
+    262,
+    262
+  ],
+  "adv_map_ruins_tile_water": [
+    261,
+    261
   ],
   "adv_map_spring_coast": [
     287,

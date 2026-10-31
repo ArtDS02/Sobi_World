@@ -15,6 +15,27 @@ const KIT_TILES: Readonly<Record<string, Readonly<Record<string, readonly string
     F: ['adv_map_coast_tile_dune'],
     w: ['adv_map_coast_tile_sea_deep'],
   },
+  // The other zones lay the kit's ground, top, water and lava; their paths, bridges and walls keep the older tiles (a kit path is drawn
+  // as one lane and would stripe when repeated).
+  forest: {
+    '.': ['adv_map_forest_tile_grass_a'],
+    '^': ['adv_map_forest_tile_top'],
+    c: ['adv_map_forest_tile_grass_a'],
+    '~': ['adv_map_forest_tile_water'],
+    w: ['adv_map_forest_tile_water_deep'],
+  },
+  mountain: {
+    '.': ['adv_map_mountain_tile_ground_a'],
+    '^': ['adv_map_mountain_tile_top'],
+    c: ['adv_map_mountain_tile_ground_b'],
+    '~': ['adv_map_mountain_tile_lava'],
+  },
+  ruins: {
+    '.': ['adv_map_ruins_tile_floor_a'],
+    '^': ['adv_map_ruins_tile_floor_b'],
+    c: ['adv_map_ruins_tile_floor_a'],
+    '~': ['adv_map_ruins_tile_water'],
+  },
 };
 
 /** A tint per tile character over a kit tile: the trodden path darker than the sand, the cliff rims sandstone brown. */
@@ -99,6 +120,23 @@ export const CORRUPT_UPRIGHT: Readonly<Record<string, readonly string[]>> = {
 /** The tall pieces framing a coast area and its decals of shells (the other zones keep theirs). */
 export const COAST_FRAME: readonly string[] = ['adv_map_coast_prop_palm', 'adv_map_coast_prop_barnacle_rock', 'adv_map_coast_prop_palm', 'adv_map_coast_prop_bush'];
 
+/**
+ * The kit's props of each zone heaped on the blocked land along the ways (decision 045 "props in clusters"): trees and bushes in the
+ * forest, pines and boulders on the mountain, broken columns in the ruins, palms and barnacled rocks on the coast. Tall ones first.
+ */
+export const WALL_PROPS: Readonly<Record<string, readonly string[]>> = {
+  forest: ['adv_map_forest_prop_tree_oak', 'adv_map_forest_prop_tree_fir', 'adv_map_forest_prop_tree_blossom', 'adv_map_forest_prop_bushes', 'adv_map_forest_prop_rocks', 'adv_map_forest_prop_stumps'],
+  mountain: ['adv_map_mountain_prop_pine', 'adv_map_mountain_prop_boulders', 'adv_map_mountain_prop_ore_rock', 'adv_map_mountain_prop_stump', 'adv_map_mountain_prop_dry_grass'],
+  ruins: ['adv_map_ruins_prop_pillar_broken', 'adv_map_ruins_prop_column_fallen', 'adv_map_ruins_prop_rubble', 'adv_map_ruins_prop_ivy_stones', 'adv_map_ruins_prop_black_roots', 'adv_map_ruins_prop_urns'],
+  coast: ['adv_map_coast_prop_palm', 'adv_map_coast_prop_barnacle_rock', 'adv_map_coast_prop_bush', 'adv_map_coast_prop_driftwood'],
+};
+/** The tall pieces framing the areas of the three older zones, now from the kit. */
+export const KIT_FRAME: Readonly<Record<string, readonly string[]>> = {
+  forest: ['adv_map_forest_prop_tree_oak', 'adv_map_forest_prop_tree_fir', 'adv_map_forest_prop_tree_oak', 'adv_map_forest_prop_bushes'],
+  mountain: ['adv_map_mountain_prop_pine', 'adv_map_mountain_prop_boulders', 'adv_map_mountain_prop_pine', 'adv_map_mountain_prop_ore_rock'],
+  ruins: ['adv_map_ruins_prop_pillar', 'adv_map_ruins_prop_pillar_broken', 'adv_map_ruins_prop_column_fallen', 'adv_map_ruins_prop_ivy_stones'],
+};
+
 /** A zone's own healing spring (sheet S1). */
 export const SPRING_ART: Readonly<Record<string, string>> = {
   forest: 'adv_map_spring_forest',
@@ -147,6 +185,8 @@ export const KIT_IDS: readonly string[] = [
     ...CORRUPT_FLAT,
     ...Object.values(CORRUPT_UPRIGHT).flat(),
     ...COAST_FRAME,
+    ...Object.values(WALL_PROPS).flat(),
+    ...Object.values(KIT_FRAME).flat(),
     ...Object.values(SPRING_ART),
     ...Object.values(EXIT_ART).flatMap((z) => Object.values(z)),
     ...Object.values(EXIT_LOCK),

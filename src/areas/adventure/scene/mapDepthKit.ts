@@ -1,7 +1,7 @@
 // What dresses each zone's areas (adventure-big-update-1 §11): the tall pieces framing them, the tint of the world beyond the
 // edges, the floating life and the light, and the small textures the dressing draws with (made once per scene). Phaser.
 import * as Phaser from 'phaser';
-import { COAST_FRAME } from './mapKit';
+import { COAST_FRAME, KIT_FRAME } from './mapKit';
 
 export interface ZoneDress {
   /** The tall pieces framing the area (prop art ids) and their tint beyond the edge. */
@@ -16,12 +16,7 @@ export interface ZoneDress {
 
 export const DRESS: Readonly<Record<string, ZoneDress>> = {
   forest: {
-    frame: [
-      'prop_adv_forest_oak',
-      'prop_adv_forest_round',
-      'prop_adv_forest_oak',
-      'prop_adv_forest_bush',
-    ],
+    frame: KIT_FRAME.forest!,
     beyond: 0x6f8f5c,
     motes: [
       { colors: [0x9ccf5a, 0xd8b84a, 0xe58a3a], kind: 'leaf' },
@@ -31,12 +26,7 @@ export const DRESS: Readonly<Record<string, ZoneDress>> = {
     shaftColor: 0xfff2c0,
   },
   mountain: {
-    frame: [
-      'prop_adv_mountain_pine',
-      'prop_adv_mountain_boulder',
-      'prop_adv_mountain_pine',
-      'prop_adv_mountain_rock',
-    ],
+    frame: KIT_FRAME.mountain!,
     beyond: 0x8a7458,
     motes: [
       { colors: [0xffb060, 0xff7a3a], kind: 'ember' },
@@ -46,12 +36,7 @@ export const DRESS: Readonly<Record<string, ZoneDress>> = {
     shaftColor: 0xffe0b0,
   },
   ruins: {
-    frame: [
-      'prop_adv_ruins_pillar',
-      'prop_adv_ruins_deadtree',
-      'prop_adv_ruins_broken',
-      'prop_adv_ruins_statue',
-    ],
+    frame: KIT_FRAME.ruins!,
     beyond: 0x7d7a8c,
     motes: [
       { colors: [0xc9a8ff, 0x9ae6ff], kind: 'magic' },

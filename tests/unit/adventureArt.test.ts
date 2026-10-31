@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { MAP_LIST } from '../../src/areas/adventure/logic/config/content';
 import { CAMP_ART, ICON_ART_IDS } from '../../src/areas/adventure/logic/art';
 import { blockedTiles } from '../../src/areas/adventure/logic/maps';
-import { corruptionDecalsOf, decalsOf } from '../../src/areas/adventure/scene/decals';
+import { corruptionDecalsOf, decalsOf, wallPropsOf } from '../../src/areas/adventure/scene/decals';
 import { chestArt, crackArt, exitArt, kitTile, KIT_IDS, puzzleArt } from '../../src/areas/adventure/scene/mapKit';
 import { cliffFaces } from '../../src/areas/adventure/scene/mapCliffs';
 import { PROPS } from '../../src/areas/adventure/logic/config/content';
@@ -70,10 +70,11 @@ describe('the map kit (decision 045)', () => {
     for (const p of Object.values(PROPS)) expect(ids.has(p.art), p.art).toBe(true);
   });
 
-  it('the coast lays its own tiles, the other zones keep theirs', () => {
+  it('the kit lays the ground, the older tiles stay for paths and walls', () => {
     expect(kitTile('coast', '~', 3, 4)).toEqual({ id: 'adv_map_coast_tile_sea', tint: 0xffffff });
     expect(kitTile('coast', ',', 3, 4)).toEqual({ id: 'adv_map_coast_tile_sand_a', tint: 0xf0dfc4 });
-    expect(kitTile('forest', '.', 3, 4)).toBeNull();
+    expect(kitTile('forest', '.', 3, 4)?.id).toBe('adv_map_forest_tile_grass_a');
+    expect(kitTile('forest', ',', 3, 4)).toBeNull();
   });
 
   it('a chest by its kind and an element device by its id, dark and lit', () => {
@@ -133,5 +134,18 @@ describe('cliff faces (decision 045)', () => {
           expect(r.kind === 'waterfall' ? '^~=' : '^', `${map.id} ${x}`).toContain(map.terrain[r.top - 1]![x]!);
         }
       }
+  });
+});
+
+describe('props along the way (decision 045)', () => {
+  it('stand only on wall tiles that touch the way, with art the manifest has', () => {
+    for (const map of MAP_LIST) {
+      const props = wallPropsOf(map, zoneOfMapId(map));
+      expect(props.length, map.id).toBeGreaterThan(0);
+      for (const p of props) {
+        expect(ids.has(p.art), p.art).toBe(true);
+        expect(map.terrain[Math.floor((p.y - 1) / map.tile)]![Math.floor(p.x / map.tile)], map.id).toBe('#');
+      }
+    }
   });
 });

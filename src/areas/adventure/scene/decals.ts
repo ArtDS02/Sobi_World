@@ -4,7 +4,7 @@
 import { hashSeed, mulberry32, pick } from '../../../core/rng';
 import type { AreaMap } from '../logic/config/content';
 import { blockedTiles } from '../logic/maps';
-import { CORRUPT_FLAT, CORRUPT_UPRIGHT } from './mapKit';
+import { CORRUPT_FLAT, CORRUPT_UPRIGHT, WALL_PROPS } from './mapKit';
 
 export interface Decal {
   art: string;
@@ -95,6 +95,35 @@ export function corruptionDecalsOf(map: AreaMap, zone: string, pct: number): (De
       const names = flat ? CORRUPT_FLAT : upright;
       const art = names[Math.floor(pickRoll * names.length)]!;
       out.push({ art, x: (x + 0.5) * t, y: (y + (flat ? 0.75 : 0.9)) * t, size: t * (flat ? 0.9 + sz * 0.4 : 0.55 + sz * 0.3), flip, flat });
+    }),
+  );
+  return out;
+}
+
+/**
+ * The kit's props heaped on the blocked land of `map` (decision 045): on a wall tile (`#`) next to the way, now and then, a tree, a
+ * rock or a broken column of the zone, standing on the tile's foot. They only stand where nothing walks, never on a thing, a cover or
+ * an exit (all of those sit on walkable tiles). Seeded by the area.
+ */
+export function wallPropsOf(map: AreaMap, zone: string): Decal[] {
+  const names = WALL_PROPS[zone] ?? [];
+  if (names.length === 0) return [];
+  const rng = mulberry32(hashSeed('adventure-wall-props', map.id));
+  const t = map.tile;
+  const at = (x: number, y: number) => map.terrain[y]?.[x] ?? '';
+  const open = (c: string) => c !== '' && c !== '#' && c !== 'F' && c !== 'w' && c !== '~';
+  const out: Decal[] = [];
+  map.terrain.forEach((row, y) =>
+    [...row].forEach((c, x) => {
+      const roll = rng.next();
+      const pickRoll = rng.next();
+      const sz = rng.next();
+      const flip = rng.next() < 0.5;
+      if (c !== '#' || roll >= 0.32) return;
+      // Along the way only: a free tile beside or below it (the deep woods stay the wall texture).
+      if (!(open(at(x - 1, y)) || open(at(x + 1, y)) || open(at(x, y + 1)) || open(at(x, y - 1)))) return;
+      const art = names[Math.floor(pickRoll * pickRoll * names.length)]!;
+      out.push({ art, x: (x + 0.5) * t, y: (y + 0.95) * t, size: t * (1.25 + sz * 0.6), flip });
     }),
   );
   return out;

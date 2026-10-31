@@ -8,29 +8,19 @@ import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { PROPS, type AreaMap } from '../logic/config/content';
 import { thingsOf, type Thing } from '../logic/maps';
 import { vi } from '../../../i18n/vi';
-import { decalsOf } from './decals';
+import { decalsOf, wallPropsOf } from './decals';
 import { drawCliffs } from './mapCliffs';
 import { dressCorruption } from './mapCorruption';
 import { corruptionMarks, foeLabel, NO_MARKS, sleepMark, type CorruptionMarks } from './foeMarks';
 import { drawCover } from './mapCovers';
-import { chestArt, crackArt, exitArt, kitTile, MIMIC_ART, puzzleArt, SPRING_ART } from './mapKit';
+import { layGround } from './mapGround';
+import { chestArt, crackArt, exitArt, MIMIC_ART, puzzleArt, SPRING_ART } from './mapKit';
 import { dressArea, type AreaDressing } from './mapDepth';
 import type { AdventureSceneState } from './sceneState';
 
-const GROUND: Record<string, Record<string, number>> = {
-  forest: { '.': 0x9fcf7c, ',': 0xd9c08a, '=': 0xb88a55, '#': 0x4f7a3c, '~': 0x6fb6d9 },
-  mountain: { '.': 0xc9b28c, ',': 0xe0cfa6, '=': 0x9a7650, '#': 0x7a6450, '~': 0xe0703a },
-  ruins: { '.': 0xc8c3b0, ',': 0xe6dfc9, '=': 0xa08868, '#': 0x6d6878, '~': 0x6aa6c8 },
-  coast: { '.': 0xf0e0b0, ',': 0xe8d4a0, '=': 0xb08860, '#': 0x8a8070, '~': 0x4aa8d8 },
-};
-const TILE_NAME: Record<string, string> = { '.': 'ground', ',': 'path', '=': 'bridge', '#': 'wall', '~': 'water', '^': 'ground', s: 'path', c: 'ground', F: 'wall', w: 'water' };
-/** The layout v2 tiles drawn with a base tile until the kit's own (decision 045): its base character and a tint. */
-const TILE_BASE: Record<string, [string, number]> = { '^': ['.', 0xf2f7e6], s: [',', 0xcfc0a8], c: ['.', 0xcbb0dc], F: ['#', 0xb8a894], w: ['~', 0xe8f6ff] };
-
 export const zoneOfMapId = (map: AreaMap): string => map.zoneId.replace(/^zone_/, '');
 
-/** The colour beyond an area's edge (its walls), seen when the camera shows past the edge. */
-export const edgeColour = (map: AreaMap): number => (GROUND[zoneOfMapId(map)] ?? GROUND.forest!)['#']!;
+export { edgeColour } from './mapGround';
 
 /** The art of a thing, by its state; `has` says whether a kit picture is loaded (else the older art). */
 export function thingArt(t: Thing, map: AreaMap, s: AdventureSceneState, has: (id: string) => boolean = () => false): { id: string; state?: string } {
@@ -134,22 +124,10 @@ export interface MapObjects {
 export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneState, motion = true): MapObjects {
   const t = map.tile;
   const zone = zoneOfMapId(map);
-  const colours = GROUND[zone] ?? GROUND.forest!;
   const layer = scene.add.container(0, 0);
   const depth = dressArea(scene, layer, map, zone, motion);
   depth.under();
-  const ground = scene.add.graphics().setDepth(-10);
-  map.terrain.forEach((row, y) =>
-    [...row].forEach((c, x) => {
-      const kit = kitTile(zone, c, x, y);
-      const tex = kit && scene.textures.exists(textureKey(kit.id)) ? textureKey(kit.id) : textureKey(`adv_tile_${zone}_${TILE_NAME[c] ?? 'ground'}`);
-      const [base, plain] = TILE_BASE[c] ?? [c, 0xffffff];
-      const tint = kit && tex === textureKey(kit.id) ? kit.tint : plain;
-      if (scene.textures.exists(tex)) layer.add(scene.add.image(x * t, y * t, tex).setOrigin(0).setDisplaySize(t, t).setDepth(-10).setTint(tint));
-      else ground.fillStyle(colours[base] ?? 0x88aa77, 1).fillRect(x * t, y * t, t + 0.5, t + 0.5);
-    }),
-  );
-  layer.add(ground);
+  layGround(scene, layer, map, zone);
   drawCliffs(scene, layer, map, zone);
   const dressing = depth.ground();
   dressCorruption(scene, layer, map, s.corruption, motion);
@@ -159,6 +137,13 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     const img = scene.add.image(d.x, d.y, k).setOrigin(0.5, 1).setDepth(-9).setFlipX(d.flip);
     img.setDisplaySize(d.size, (d.size * img.height) / Math.max(1, img.width));
     layer.add(img);
+  }
+  // The kit's trees, rocks and ruins along the edges of the way, sorted with the walker by their foot.
+  for (const d of wallPropsOf(map, zone)) {
+    const k = textureKey(d.art);
+    if (!scene.textures.exists(k)) continue;
+    const img = scene.add.image(d.x, d.y, k).setOrigin(0.5, 1).setDepth(d.y).setFlipX(d.flip);
+    layer.add(img.setDisplaySize(d.size, (d.size * img.height) / Math.max(1, img.width)));
   }
   for (const p of map.props) {
     const def = PROPS[p.prop];
