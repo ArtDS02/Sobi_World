@@ -1,7 +1,7 @@
 // The Adventure on screen (spec §3): at the camp and in a battle, the zone's picture behind the DOM screens; on a trip, the area itself —
 // its ground, props and things dressed with depth (mapDepth.ts), the enemy groups standing and breathing, the teleport gates (open or
 // locked behind the guardian; walking into an open one plays the teleport and lands in the next area), and the party (So or Bi in
-// front) walking with the keys. The
+// front) walking with the keys, the camera zoomed in ×2 and easing after them (decision 045). The
 // scene reads a plain state from the UI and reports what the walker does (stops somewhere, touches a group, has a thing in reach and
 // presses the interact key, walks into an exit); it never reaches the store.
 import * as Phaser from 'phaser';
@@ -14,6 +14,7 @@ import { distanceToThing, groupPosition, thingsOf, walkableOf } from '../logic/m
 import { BATTLE_SCENE_KEY } from './battle/BattleScene';
 
 export { BattleScene, manifestImages } from './battle/BattleScene';
+import { MapCamera } from './mapCamera';
 import { buildMap, edgeColour, refreshThings, type MapObjects } from './mapView';
 import type { AdventureSceneState, SceneReport } from './sceneState';
 import { Walker } from './walker';
@@ -36,9 +37,6 @@ const TOUCH_LOCK_MS = 1200;
 /** The teleport through a gate: the party dissolves into light, the screen flashes, then the next area fades in (ms). */
 const WARP_MS = 520;
 const ARRIVE_MS = 520;
-/** Room (design px) the camera may scroll past the area's edges, so the HUD on top and the key hint below never hide a tile. */
-const HUD_TOP = 270;
-const HUD_BOTTOM = 70;
 
 export class AdventureScene extends Phaser.Scene {
   private backdrop!: Phaser.GameObjects.Image;
@@ -58,6 +56,7 @@ export class AdventureScene extends Phaser.Scene {
   /** A teleport under way: when it started and the gate it goes through; the moment the party arrived somewhere. */
   private warp: { at: number; exitId: string; pos: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' } } | null = null;
   private arrivedAt = -Infinity;
+  private camera!: MapCamera;
   private offs: (() => void)[] = [];
 
   constructor(private readonly deps: AdventureSceneDeps) {
@@ -67,6 +66,7 @@ export class AdventureScene extends Phaser.Scene {
   create() {
     this.backdrop = this.add.image(ADVENTURE_DESIGN.width / 2, ADVENTURE_DESIGN.height / 2, FALLBACK_PROP_KEY).setDepth(-1000);
     this.walker = new Walker(this);
+    this.camera = new MapCamera(this.cameras.main);
     const onTexture = () => (this.texturesChanged = true);
     this.textures.on(Phaser.Textures.Events.ADD, onTexture);
     const use = () => this.useFocus();
@@ -111,6 +111,7 @@ export class AdventureScene extends Phaser.Scene {
       this.objs = null;
       this.map = null;
     }
+    this.camera.reset();
     this.walker.setVisible(false);
     const cam = this.cameras.main;
     cam.removeBounds();
@@ -136,7 +137,7 @@ export class AdventureScene extends Phaser.Scene {
     this.backdrop.setVisible(false);
     this.walker.setVisible(true);
     this.cameras.main.setBackgroundColor(edgeColour(map));
-    this.cameras.main.setZoom(this.fitZoom()).setBounds(0, -HUD_TOP, map.cols * map.tile, map.rows * map.tile + HUD_TOP + HUD_BOTTOM);
+    this.camera.reset();
   }
 
   private ground(s: AdventureSceneState, map: AreaMap): Walkable {
@@ -157,9 +158,11 @@ export class AdventureScene extends Phaser.Scene {
     }
     if (this.map?.id !== map.id || this.texturesChanged) this.enterMap(s, map);
     this.texturesChanged = false;
+    this.camera.fit(map, this.fitZoom());
     if (s.placeKey !== this.placeKey) {
       const arrived = this.placeKey !== '';
       this.placeKey = s.placeKey;
+      this.camera.snapNext();
       this.walker.place(s.pos);
       this.saved = { x: s.pos.x, y: s.pos.y };
       this.exitLock = true;
@@ -183,7 +186,7 @@ export class AdventureScene extends Phaser.Scene {
       this.deps.report.exit(w.exitId, w.pos);
     }
     const pos = this.walker.position;
-    this.cameras.main.centerOn(pos.x, pos.y);
+    this.camera.follow(pos, delta, this.deps.reduceMotion());
     refreshThings(this, map, this.objs!, s, time, pos);
     this.objs!.dressing.update(time, pos);
     this.updateGroups(s, map, time);

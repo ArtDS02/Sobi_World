@@ -6,9 +6,26 @@
 **Tiến độ GĐ14:** 28 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). **Adventure** (giao diện theo ảnh mẫu, 212 asset batch adventure-03..10, 2026-10-23, chờ duyệt; còn tạo lại sheet K5, CP2; animation trận bằng code + pipeline / prompt AI: decision 040, 2026-10-24, chờ duyệt). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v5 từ decision 043).
-**Bước tiếp theo:** bản đồ v2 (decision 045): code camera bám + zoom ×2, rồi ghép map bằng bộ ghép (256 asset bản tạm đã duyệt trong `art_inbox/`, chốt kích thước theo ô khi đưa vào manifest). Chủ dự án vẽ lại 36 sheet bộ ghép kiểu mịn (mọi sheet trừ FT, FO; `PROMPT.md` đã sinh lại) khi tiện. Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
+**Bước tiếp theo:** bản đồ v2 (decision 045): camera bám + zoom ×2 đã xong; tiếp theo phân loại quái / cấp tha hóa / mật độ quái, rồi ghép map bằng bộ ghép (256 asset bản tạm đã duyệt trong `art_inbox/`, chốt kích thước theo ô khi đưa vào manifest). Chủ dự án vẽ lại 36 sheet bộ ghép kiểu mịn (mọi sheet trừ FT, FO; `PROMPT.md` đã sinh lại) khi tiện. Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
 
 ## Nhật ký
+
+### 2026-10-31 — Adventure: bản đồ v2 — camera bám + zoom ×2 (decision 045, bước code 1)
+✅ Đã làm:
+- Trong chuyến đi, camera **zoom ×2** so với khung vừa màn hình: thấy khoảng 20 × 11–14 ô, tùy tỉ lệ màn. Camera **trôi mượt theo nhân vật** (bắt kịp khoảng 63 % khoảng cách sau 110 ms), nhảy thẳng tới chỗ mới khi sang khu khác hoặc khi bật giảm chuyển động. Camera dừng ở mép map.
+- Lề cho HUD trên / dưới chia theo zoom, nên trên màn hình vẫn giữ đúng như cũ. Đổi kích thước cửa sổ thì zoom và giới hạn camera tính lại.
+- Tách phần camera ra `src/areas/adventure/scene/mapCamera.ts`. Ảnh chụp toàn map (`scripts/capture/adventureMaps.ts`) tự đặt camera riêng nên không ảnh hưởng.
+
+📁 File thay đổi chính: `src/areas/adventure/scene/{AdventureScene,mapCamera}.ts`, `docs/PROGRESS.md`.
+
+🧪 Đã kiểm tra: `npm run check` xanh (1532 test). Thử trên sandbox `sandbox-anim`, cho scene một trạng thái đi map giả vì save mẫu toàn heo bệnh, không vào chuyến đi thật được:
+- zoom 1.28 (vừa khung 0.64 × 2), khung nhìn 20 × 13.8 ô;
+- khi đi, camera trễ khoảng 16 px rồi bắt kịp lúc dừng;
+- camera dừng đúng ở mép trái, mép phải và góc dưới phải.
+
+⚠️ Vấn đề: chữ thông tin quái và tia lấp lánh rương to gấp đôi trên màn hình vì đang vẽ theo zoom cũ. Map hiện tại (50 × 28 ô) chưa đổi kích thước, việc đó làm ở bước bố cục lại.
+
+👉 Chủ dự án cần kiểm tra: vào một chuyến đi, xem tầm nhìn và độ trôi của camera có dễ chịu không.
 
 ### 2026-10-31 — Adventure: bản đồ v2 — cắt và duyệt tạm 38 sheet bộ ghép, duyệt M7 / N7 vẽ lại
 ✅ Đã làm:
