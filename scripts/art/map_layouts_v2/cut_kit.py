@@ -67,12 +67,16 @@ MANUAL_REDO: dict[str, list[tuple[int, int, int, int]]] = {
     "MT": [(52, 62, 323, 340), (386, 62, 657, 340), (719, 62, 990, 340), (1053, 62, 1324, 340),
            (52, 428, 323, 706), (386, 428, 657, 706), (719, 428, 990, 706), (1053, 428, 1324, 706)],
     # drawn twice (two rows): the top row
-    "S1": [(40, 80, 340, 318), (378, 38, 668, 346), (712, 72, 1004, 312), (1072, 98, 1332, 346)],
+    "S1": [(40, 80, 340, 318), (378, 38, 668, 346), (712, 72, 1004, 312), (1072, 98, 1332, 346)],    # second drawing: opaque panels with the sea in them; the cliff strip stops where the water starts
+    "CE": [(50, 59, 659, 268), (717, 59, 993, 342), (1049, 59, 1326, 343),
+           (50, 425, 327, 709), (383, 426, 659, 709), (717, 426, 1326, 709)],
+    # drawn twice (two rows), sheet saved as I.png and copied to I1.png: the top row
+    "I1": [(70, 117, 279, 327), (318, 119, 525, 324), (564, 118, 774, 325), (813, 119, 1020, 324), (1058, 117, 1269, 326), (1306, 118, 1515, 325)],
 }
 # Tiles whose light details read as background (kept whole), sprites whose grey middle is not a hole,
 # and springs standing on a cut-off patch of sand (the sand is removed).
 FORCE_TILE = {"adv_map_ruins_tile_path"}
-KEEP_HOLES = {"adv_map_puzzle_mirror"}
+KEEP_HOLES = {"adv_map_puzzle_mirror", "ui_icon_foe_elite", "ui_icon_foe_subboss"}
 NO_SAND = {"adv_map_spring_mountain", "adv_map_spring_ruins"}
 
 
