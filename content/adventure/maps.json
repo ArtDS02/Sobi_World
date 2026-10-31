@@ -1682,7 +1682,7 @@
           "facing": "left"
         }
       ],
-      "props": [],
+      "props": [{ "prop": "prop_adv_lm_r2", "x": 28, "y": 16 }],
       "groups": [
         {
           "id": "g_r2_elite",
@@ -3261,7 +3261,7 @@
           "facing": "down"
         }
       ],
-      "props": [],
+      "props": [{ "prop": "prop_adv_lm_n5", "x": 45, "y": 18 }],
       "groups": [
         {
           "id": "g_n5_boss",
@@ -4343,7 +4343,7 @@
           "facing": "up"
         }
       ],
-      "props": [],
+      "props": [{ "prop": "prop_adv_lm_c3", "x": 44, "y": 22 }],
       "groups": [
         {
           "id": "g_c3_boss",

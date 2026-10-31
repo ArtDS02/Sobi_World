@@ -26,16 +26,23 @@ NODE_TABLE = {("herb", "forest"): "herbs", ("herb", "mountain"): "herbs", ("herb
               ("ore", "forest"): "ore_vein", ("ore", "mountain"): "ore_vein", ("ore", "ruins"): "cache_ancient", ("herb", "coast"): "herbs", ("ore", "coast"): "ore_vein"}
 GIFT = {"elite": {"item_adv_exp_small": 3, "item_potion_healing": 2}, "subboss": {"item_adv_exp_small": 5, "item_skill_scroll": 1}}
 NEW_EVENTS = ["event_herbalist", "event_shrine", "event_hot_spring", "event_miner", "event_cliff_shrine", "event_rune_altar", "event_ancient_cache"]
-# Landmark art by a word of its description (else the zone's own), until the kit's art.
-LANDMARK_ART = [("lighthouse", "prop_adv_ruins_pillar"), ("turtle", "prop_adv_mountain_boulder"), ("shipwreck", "prop_adv_forest_log"), ("mushroom", "prop_adv_forest_mushroom"), ("stump", "prop_adv_forest_stump"), ("hut", "prop_adv_forest_hut"),
-                ("cabin", "prop_adv_mountain_cabin"), ("tower", "prop_adv_mountain_cart"), ("skull", "prop_adv_mountain_boulder"),
-                ("eagle", "prop_adv_ruins_statue"), ("statue", "prop_adv_ruins_statue"), ("door", "prop_adv_ruins_wall"),
+# Landmark art by the first word of its description found (else the zone's own): the kit's landmark when it draws that one
+# (batch adventure-14b-map-v2-redo), else the older prop nearest to it.
+LANDMARK_ART = [("lighthouse", "adv_map_coast_landmark_lighthouse"), ("turtle", "adv_map_coast_landmark_turtle_arch"),
+                ("shipwreck", "adv_map_coast_landmark_shipwreck"), ("withered", "adv_map_forest_corrupt_oak"),
+                ("mushroom", "prop_adv_forest_mushroom"), ("stump", "prop_adv_forest_stump"), ("hut", "prop_adv_forest_hut"),
+                ("cabin", "prop_adv_mountain_cabin"), ("tower", "adv_map_mountain_landmark_headframe"), ("skull", "adv_map_mountain_landmark_dragon_skull"),
+                ("eagle", "prop_adv_ruins_statue"), ("statue", "adv_map_ruins_landmark_statue_broken"), ("door", "adv_map_ruins_landmark_sealed_door"),
                 ("mural", "prop_adv_ruins_wall"), ("ossuary", "prop_adv_ruins_wall"), ("seal", "prop_adv_ruins_broken"),
-                ("withered", "prop_adv_ruins_deadtree"), ("stones", "prop_adv_forest_boulder"), ("oak", "prop_adv_forest_oak")]
+                ("stones", "adv_map_forest_landmark_stone_ring"), ("oak", "adv_map_forest_landmark_oak_giant")]
 ZONE_ART = {"forest": "prop_adv_forest_oak", "mountain": "prop_adv_mountain_boulder", "ruins": "prop_adv_ruins_statue", "coast": "prop_adv_forest_boulder"}
 # A landmark's name by a word of its description first (several share an art), else by its art.
 LANDMARK_WORD_NAME = {"lighthouse": ("Hải đăng cũ", "Old lighthouse"), "turtle": ("Vòm mai rùa", "Turtle-shell arch"), "shipwreck": ("Xác tàu đắm", "Shipwreck")}
-LANDMARK_NAME = {"prop_adv_forest_mushroom": ("Nấm khổng lồ", "Giant mushroom"), "prop_adv_forest_stump": ("Gốc cây cổ", "Ancient stump"),
+LANDMARK_NAME = {"adv_map_forest_corrupt_oak": ("Cây khô khổng lồ", "Giant withered tree"), "adv_map_mountain_landmark_headframe": ("Tháp nâng mỏ", "Mine lift tower"),
+                 "adv_map_mountain_landmark_dragon_skull": ("Sọ rồng cổ", "Ancient dragon skull"), "adv_map_ruins_landmark_statue_broken": ("Tượng cổ", "Ancient statue"),
+                 "adv_map_ruins_landmark_sealed_door": ("Cửa đá phong ấn", "Sealed stone door"), "adv_map_forest_landmark_stone_ring": ("Vòng đá rêu", "Mossy stone ring"),
+                 "adv_map_forest_landmark_oak_giant": ("Sồi cổ thụ", "Ancient oak"),
+                 "prop_adv_forest_mushroom": ("Nấm khổng lồ", "Giant mushroom"), "prop_adv_forest_stump": ("Gốc cây cổ", "Ancient stump"),
                  "prop_adv_forest_hut": ("Chòi đổ nát", "Ruined hut"), "prop_adv_mountain_cabin": ("Lán thợ mỏ", "Miners' cabin"),
                  "prop_adv_mountain_cart": ("Tháp nâng mỏ", "Mine lift tower"), "prop_adv_mountain_boulder": ("Sọ rồng cổ", "Ancient dragon skull"),
                  "prop_adv_ruins_statue": ("Tượng cổ", "Ancient statue"), "prop_adv_ruins_wall": ("Bức tường cổ", "Ancient wall"),
@@ -302,12 +309,16 @@ def main():
                 spot = (dest["spawn"]["x"], dest["spawn"]["y"])
             e["arriveX"], e["arriveY"], e["facing"] = spot[0], spot[1], face
 
-    # A landmark that would cut a way or sit on a thing is left out (the kit's art draws it later).
+    # A landmark that would cut a way or sit on a thing moves to the nearest free spot within 3 tiles, else is left out.
     for mid, m in built.items():
         keep = []
         for p in m["props"]:
-            if landmark_ok(m, p, keep):
-                keep.append(p)
+            spots = sorted(((dx, dy) for dx in range(-3, 4) for dy in range(-3, 4)), key=lambda d: (abs(d[0]) + abs(d[1]), d))
+            at = next(({**p, "x": p["x"] + dx, "y": p["y"] + dy} for dx, dy in spots if landmark_ok(m, {**p, "x": p["x"] + dx, "y": p["y"] + dy}, keep)), None)
+            if at:
+                keep.append(at)
+                if (at["x"], at["y"]) != (p["x"], p["y"]):
+                    problems.append(f"{mid}: landmark {p['prop']} moved by ({at['x'] - p['x']}, {at['y'] - p['y']})")
             else:
                 problems.append(f"{mid}: landmark {p['prop']} left out (it would block the way or stand on a thing)")
         m["props"] = [{"prop": p["prop"], "x": p["x"], "y": p["y"]} for p in keep]

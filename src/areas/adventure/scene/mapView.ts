@@ -13,6 +13,7 @@ import { decalsOf } from './decals';
 import { dressCorruption } from './mapCorruption';
 import { corruptionMarks, NO_MARKS, sleepMark, type CorruptionMarks } from './foeMarks';
 import { drawCover } from './mapCovers';
+import { chestArt, kitTile, MIMIC_ART, puzzleArt } from './mapKit';
 import { dressArea, type AreaDressing } from './mapDepth';
 import type { AdventureSceneState } from './sceneState';
 
@@ -31,11 +32,15 @@ export const zoneOfMapId = (map: AreaMap): string => map.zoneId.replace(/^zone_/
 /** The colour beyond an area's edge (its walls), seen when the camera shows past the edge. */
 export const edgeColour = (map: AreaMap): number => (GROUND[zoneOfMapId(map)] ?? GROUND.forest!)['#']!;
 
-/** The art of a thing, by its state. */
-export function thingArt(t: Thing, map: AreaMap, s: AdventureSceneState): { id: string; state?: string } {
+/** The art of a thing, by its state; `has` says whether a kit picture is loaded (else the older art). */
+export function thingArt(t: Thing, map: AreaMap, s: AdventureSceneState, has: (id: string) => boolean = () => false): { id: string; state?: string } {
   switch (t.kind) {
-    case 'chest':
-      return { id: 'adv_chest', state: s.openedChests.includes(t.id) ? 'open' : 'closed' };
+    case 'chest': {
+      // The kit's chest of its kind (decision 045), else the older one.
+      const open = s.openedChests.includes(t.id);
+      const kit = chestArt(map.chests.find((c) => c.id === t.id)?.type, open);
+      return has(kit) ? { id: kit } : { id: 'adv_chest', state: open ? 'open' : 'closed' };
+    }
     case 'node':
       return { id: map.nodes.find((n) => n.id === t.id)?.kind === 'ore' ? 'adv_node_ore' : 'adv_node_herb' };
     case 'gate': {
@@ -44,9 +49,12 @@ export function thingArt(t: Thing, map: AreaMap, s: AdventureSceneState): { id: 
       if (gate?.look === 'crack') return { id: `adv_tile_${zoneOfMapId(map)}_wall` };
       return { id: `adv_gate_${(gate?.element ?? 'void').toLowerCase()}` };
     }
-    case 'puzzle':
-      // An element device: dim until lit (its own art waits for GĐ14).
-      return { id: 'adv_shrine' };
+    case 'puzzle': {
+      // An element device, dark until lit (the kit's own pair), else the shrine dimmed.
+      const p = map.puzzles.find((x) => x.id === t.id);
+      const kit = puzzleArt(t.id, p?.element ?? 'LIGHT', s.litPuzzles.includes(t.id));
+      return has(kit) ? { id: kit } : { id: 'adv_shrine' };
+    }
     case 'spring':
       return { id: 'adv_spring' };
     case 'npc':
@@ -109,7 +117,7 @@ export interface MapObjects {
   gates: Map<string, { img: Phaser.GameObjects.Image; glow: Phaser.GameObjects.Image; lock: Phaser.GameObjects.Container; words: Phaser.GameObjects.Text }>;
   dressing: AreaDressing;
   /** The overhead covers over hidden places, drawn over the party (decision 045). */
-  covers: Map<string, Phaser.GameObjects.Graphics>;
+  covers: Map<string, Phaser.GameObjects.Container>;
 }
 
 /** Builds the whole area; `destroy` the returned layer to drop it. `motion` = false (reduced motion): the dressing stays still. */
@@ -123,8 +131,10 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
   const ground = scene.add.graphics().setDepth(-10);
   map.terrain.forEach((row, y) =>
     [...row].forEach((c, x) => {
-      const tex = textureKey(`adv_tile_${zone}_${TILE_NAME[c] ?? 'ground'}`);
-      const [base, tint] = TILE_BASE[c] ?? [c, 0xffffff];
+      const kit = kitTile(zone, c, x, y);
+      const tex = kit && scene.textures.exists(textureKey(kit.id)) ? textureKey(kit.id) : textureKey(`adv_tile_${zone}_${TILE_NAME[c] ?? 'ground'}`);
+      const [base, plain] = TILE_BASE[c] ?? [c, 0xffffff];
+      const tint = kit && tex === textureKey(kit.id) ? kit.tint : plain;
       if (scene.textures.exists(tex)) layer.add(scene.add.image(x * t, y * t, tex).setOrigin(0).setDisplaySize(t, t).setDepth(-10).setTint(tint));
       else ground.fillStyle(colours[base] ?? 0x88aa77, 1).fillRect(x * t, y * t, t + 0.5, t + 0.5);
     }),
@@ -147,8 +157,11 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
   const sparkles = new Map<string, Phaser.GameObjects.Text>();
   for (const th of thingsOf(map)) {
     if (th.kind === 'exit') continue;
-    const a = thingArt(th, map, s);
+    const a = thingArt(th, map, s, (id) => scene.textures.exists(textureKey(id)));
     const img = standOn(scene, key(scene, a.id, a.state), map, th.x, th.y, th.w, th.h, 1);
+    // A tall thin device (a lightning rod) or a chest no taller than its place; its lit picture keeps the same scale.
+    const tallest = th.kind === 'puzzle' ? 1.8 : th.kind === 'chest' ? 1.2 : Infinity;
+    if (img.displayHeight > tallest * t) img.setScale(img.scaleX * ((tallest * t) / img.displayHeight));
     things.set(th.id, img);
     layer.add(img);
     if (th.kind === 'gate' && map.gates.find((g) => g.id === th.id)?.look === 'crack') {
@@ -165,7 +178,8 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
   const groups: MapObjects['groups'] = new Map();
   for (const g of s.groups) {
     // A mimic wears a closed chest, a tile high (decision 045).
-    const img = scene.add.image(0, 0, g.disguised ? key(scene, 'adv_chest', 'closed') : key(scene, g.art)).setOrigin(0.5, 1);
+    const mimic = scene.textures.exists(textureKey(MIMIC_ART)) ? textureKey(MIMIC_ART) : key(scene, 'adv_chest', 'closed');
+    const img = scene.add.image(0, 0, g.disguised ? mimic : key(scene, g.art)).setOrigin(0.5, 1);
     const size = g.disguised ? 1 : g.size;
     const ratio = img.height > 0 ? img.width / img.height : 1;
     img.setDisplaySize(size * t * ratio, size * t);
@@ -194,7 +208,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     gates.set(e.id, { img, glow, lock, words });
     layer.add([glow, img, lock]);
   }
-  const covers = new Map<string, Phaser.GameObjects.Graphics>();
+  const covers = new Map<string, Phaser.GameObjects.Container>();
   for (const c of map.covers) covers.set(c.id, drawCover(scene, map, c));
   layer.once(Phaser.GameObjects.Events.DESTROY, () => covers.forEach((g) => g.destroy()));
   return { layer, things, groups, sparkles, gates, dressing, covers };
@@ -273,10 +287,10 @@ export function refreshThings(scene: Phaser.Scene, map: AreaMap, objs: MapObject
       (img.getData('crack') as Phaser.GameObjects.Graphics | undefined)?.setVisible(img.visible);
       continue;
     }
-    const a = thingArt(th, map, s);
+    const a = thingArt(th, map, s, (id) => scene.textures.exists(textureKey(id)));
     const k = key(scene, a.id, a.state);
     if (img.texture.key !== k) img.setTexture(k);
-    if (th.kind === 'puzzle') img.setTint(s.litPuzzles.includes(th.id) ? 0xfff2b0 : 0x8a8a9a);
+    if (th.kind === 'puzzle' && a.id === 'adv_shrine') img.setTint(s.litPuzzles.includes(th.id) ? 0xfff2b0 : 0x8a8a9a);
     const used = (th.kind === 'node' || th.kind === 'npc' || th.kind === 'shrine') && s.usedSpots.includes(th.id);
     img.setAlpha(used || (th.kind === 'spring' && s.springUsed) ? 0.55 : 1);
   }

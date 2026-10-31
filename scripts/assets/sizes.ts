@@ -1,6 +1,7 @@
 // Canvas sizes. Standard categories (art standard §4) are enforced by assets:check; catalogue sizes
 // (environment catalogue §1–§3) only shape the generated placeholders.
 import type { AssetManifest, ManifestSection } from '../../src/core/assets/manifestSchema';
+import mapKitSizes from './mapKitSizes.json';
 
 export interface Size {
   width: number;
@@ -148,6 +149,8 @@ for (const enemy of ['reef_crab', 'salt_gull', 'coral_eel', 'drift_jelly', 'brin
 for (const enemy of ['shell_knight', 'mimic']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 240, height: 240 };
 CATALOGUE_SIZES.enemy_abyss_kraken = { width: 400, height: 360 };
 CATALOGUE_SIZES.bg_adventure_coast = { width: 1600, height: 900 };
+// The map kit (decision 045): each picture on its own approved size, so art:process keeps tiles seamless and sprites at their cut scale.
+for (const [id, [width, height]] of Object.entries(mapKitSizes)) CATALOGUE_SIZES[id] = { width: width!, height: height! };
 // Adventure V2 (decision 037): new guardians, map props (as wide as their footprint × 64 px), the things on a map.
 for (const enemy of ['wolf_alpha', 'thunder_ram', 'shadow_priest']) CATALOGUE_SIZES[`enemy_${enemy}`] = { width: 240, height: 240 };
 for (const [id, w, h] of [

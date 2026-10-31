@@ -5,7 +5,9 @@ import { describe, expect, it } from 'vitest';
 import { MAP_LIST } from '../../src/areas/adventure/logic/config/content';
 import { CAMP_ART, ICON_ART_IDS } from '../../src/areas/adventure/logic/art';
 import { blockedTiles } from '../../src/areas/adventure/logic/maps';
-import { decalsOf } from '../../src/areas/adventure/scene/decals';
+import { corruptionDecalsOf, decalsOf } from '../../src/areas/adventure/scene/decals';
+import { chestArt, kitTile, KIT_IDS, puzzleArt } from '../../src/areas/adventure/scene/mapKit';
+import { PROPS } from '../../src/areas/adventure/logic/config/content';
 import { reactionArt, skillArt, statusArt } from '../../src/areas/adventure/ui/vmKit';
 
 const zoneOfMapId = (map: (typeof MAP_LIST)[number]) => map.zoneId.replace(/^zone_/, '');
@@ -54,5 +56,44 @@ describe('adventure icons', () => {
     expect(ids.has(skillArt('skill_nh_bubble'))).toBe(true);
     expect(reactionArt('reaction_shock')).toBe('ui_icon_react_shock');
     expect(ids.has(reactionArt('reaction_shock'))).toBe(true);
+  });
+});
+
+describe('the map kit (decision 045)', () => {
+  it('every kit picture the map draws, and every landmark, has a manifest row', () => {
+    for (const id of KIT_IDS) expect(ids.has(id), id).toBe(true);
+    for (const p of Object.values(PROPS)) expect(ids.has(p.art), p.art).toBe(true);
+  });
+
+  it('the coast lays its own tiles, the other zones keep theirs', () => {
+    expect(kitTile('coast', '~', 3, 4)).toEqual({ id: 'adv_map_coast_tile_sea', tint: 0xffffff });
+    expect(kitTile('coast', ',', 3, 4)).toEqual({ id: 'adv_map_coast_tile_sand_a', tint: 0xf0dfc4 });
+    expect(kitTile('forest', '.', 3, 4)).toBeNull();
+  });
+
+  it('a chest by its kind and an element device by its id, dark and lit', () => {
+    expect(chestArt('gold', false)).toBe('adv_map_chest_gold');
+    expect(chestArt(undefined, true)).toBe('adv_map_chest_wood_open');
+    expect(puzzleArt('puzzle_n1_brazier_a', 'FIRE', false)).toBe('adv_map_puzzle_brazier');
+    expect(puzzleArt('puzzle_n1_brazier_a', 'FIRE', true)).toBe('adv_map_puzzle_brazier_lit');
+    expect(puzzleArt('puzzle_c2_clam', 'LIGHT', true)).toBe('adv_map_coast_exit_clam_open');
+    expect(puzzleArt('puzzle_x', 'DARK', true)).toBe('adv_map_puzzle_veil_gone');
+  });
+
+  it('the corrupted dressing grows with the corruption, never blocks, and only uses art the manifest has', () => {
+    for (const map of MAP_LIST) {
+      const zone = zoneOfMapId(map);
+      const low = corruptionDecalsOf(map, zone, 10);
+      const high = corruptionDecalsOf(map, zone, 90);
+      expect(high.length, map.id).toBeGreaterThan(low.length);
+      // Seeded per tile: the pieces of a lower corruption are among those of a higher one.
+      const at = new Set(high.map((d) => `${d.x},${d.y}`));
+      for (const d of low) expect(at.has(`${d.x},${d.y}`), map.id).toBe(true);
+      const blocked = blockedTiles(map);
+      for (const d of high) {
+        expect(ids.has(d.art), d.art).toBe(true);
+        expect(blocked[Math.floor((d.y - 1) / map.tile) * map.cols + Math.floor(d.x / map.tile)], map.id).toBe(false);
+      }
+    }
   });
 });

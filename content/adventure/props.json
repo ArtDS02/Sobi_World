@@ -195,7 +195,7 @@
     {
       "id": "prop_adv_lm_f1",
       "nameVi": "Sồi cổ thụ",
-      "art": "prop_adv_forest_oak",
+      "art": "adv_map_forest_landmark_oak_giant",
       "w": 3,
       "h": 3,
       "scale": 1
@@ -203,15 +203,15 @@
     {
       "id": "prop_adv_lm_f2",
       "nameVi": "Vòng đá rêu",
-      "art": "prop_adv_forest_boulder",
+      "art": "adv_map_forest_landmark_stone_ring",
       "w": 3,
       "h": 2,
       "scale": 1
     },
     {
       "id": "prop_adv_lm_f3",
-      "nameVi": "Nấm khổng lồ",
-      "art": "prop_adv_forest_mushroom",
+      "nameVi": "Cây khô khổng lồ",
+      "art": "adv_map_forest_corrupt_oak",
       "w": 4,
       "h": 4,
       "scale": 1
@@ -251,7 +251,7 @@
     {
       "id": "prop_adv_lm_m2",
       "nameVi": "Tháp nâng mỏ",
-      "art": "prop_adv_mountain_cart",
+      "art": "adv_map_mountain_landmark_headframe",
       "w": 3,
       "h": 3,
       "scale": 1
@@ -259,7 +259,7 @@
     {
       "id": "prop_adv_lm_m3",
       "nameVi": "Sọ rồng cổ",
-      "art": "prop_adv_mountain_boulder",
+      "art": "adv_map_mountain_landmark_dragon_skull",
       "w": 3,
       "h": 2,
       "scale": 1
@@ -275,7 +275,7 @@
     {
       "id": "prop_adv_lm_r1",
       "nameVi": "Tượng cổ",
-      "art": "prop_adv_ruins_statue",
+      "art": "adv_map_ruins_landmark_statue_broken",
       "w": 3,
       "h": 3,
       "scale": 1
@@ -299,7 +299,7 @@
     {
       "id": "prop_adv_lm_c1",
       "nameVi": "Hải đăng cũ",
-      "art": "prop_adv_ruins_pillar",
+      "art": "adv_map_coast_landmark_lighthouse",
       "w": 3,
       "h": 4,
       "scale": 1
@@ -307,8 +307,32 @@
     {
       "id": "prop_adv_lm_c2",
       "nameVi": "Vòm mai rùa",
-      "art": "prop_adv_mountain_boulder",
+      "art": "adv_map_coast_landmark_turtle_arch",
       "w": 3,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_n5",
+      "nameVi": "Cửa đá phong ấn",
+      "art": "adv_map_ruins_landmark_sealed_door",
+      "w": 3,
+      "h": 3,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_r2",
+      "nameVi": "Bức tường cổ",
+      "art": "prop_adv_ruins_wall",
+      "w": 4,
+      "h": 2,
+      "scale": 1
+    },
+    {
+      "id": "prop_adv_lm_c3",
+      "nameVi": "Xác tàu đắm",
+      "art": "adv_map_coast_landmark_shipwreck",
+      "w": 4,
       "h": 3,
       "scale": 1
     }

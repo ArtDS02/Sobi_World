@@ -1,0 +1,326 @@
+{
+  "adv_map_chest_gold": [
+    242,
+    237
+  ],
+  "adv_map_chest_gold_open": [
+    263,
+    296
+  ],
+  "adv_map_chest_hidden": [
+    241,
+    240
+  ],
+  "adv_map_chest_hidden_open": [
+    263,
+    298
+  ],
+  "adv_map_chest_mimic": [
+    387,
+    390
+  ],
+  "adv_map_chest_silver": [
+    242,
+    236
+  ],
+  "adv_map_chest_silver_open": [
+    264,
+    295
+  ],
+  "adv_map_chest_wood": [
+    241,
+    236
+  ],
+  "adv_map_chest_wood_open": [
+    266,
+    296
+  ],
+  "adv_map_coast_corrupt_coral": [
+    256,
+    248
+  ],
+  "adv_map_coast_corrupt_driftwood": [
+    278,
+    211
+  ],
+  "adv_map_coast_corrupt_kelp": [
+    247,
+    304
+  ],
+  "adv_map_coast_corrupt_pool": [
+    290,
+    178
+  ],
+  "adv_map_coast_cover_awning": [
+    310,
+    283
+  ],
+  "adv_map_coast_cover_palm_one": [
+    307,
+    250
+  ],
+  "adv_map_coast_cover_palms_big": [
+    391,
+    314
+  ],
+  "adv_map_coast_cover_seacave_ceiling": [
+    394,
+    259
+  ],
+  "adv_map_coast_exit_clam": [
+    246,
+    190
+  ],
+  "adv_map_coast_exit_clam_open": [
+    244,
+    266
+  ],
+  "adv_map_coast_landmark_lighthouse": [
+    357,
+    552
+  ],
+  "adv_map_coast_landmark_shipwreck": [
+    417,
+    387
+  ],
+  "adv_map_coast_landmark_turtle_arch": [
+    390,
+    304
+  ],
+  "adv_map_coast_prop_barnacle_rock": [
+    240,
+    204
+  ],
+  "adv_map_coast_prop_bush": [
+    278,
+    221
+  ],
+  "adv_map_coast_prop_palm": [
+    262,
+    344
+  ],
+  "adv_map_coast_prop_shells": [
+    257,
+    258
+  ],
+  "adv_map_coast_tile_boardwalk": [
+    271,
+    271
+  ],
+  "adv_map_coast_tile_dune": [
+    272,
+    272
+  ],
+  "adv_map_coast_tile_sand_a": [
+    270,
+    270
+  ],
+  "adv_map_coast_tile_sand_b": [
+    271,
+    271
+  ],
+  "adv_map_coast_tile_sand_wet": [
+    271,
+    271
+  ],
+  "adv_map_coast_tile_sea": [
+    271,
+    271
+  ],
+  "adv_map_coast_tile_sea_deep": [
+    273,
+    273
+  ],
+  "adv_map_coast_tile_tideflat": [
+    272,
+    272
+  ],
+  "adv_map_corrupt_cracks": [
+    271,
+    204
+  ],
+  "adv_map_corrupt_crystal_l": [
+    236,
+    254
+  ],
+  "adv_map_corrupt_crystal_s": [
+    163,
+    187
+  ],
+  "adv_map_corrupt_roots": [
+    273,
+    236
+  ],
+  "adv_map_corrupt_sludge": [
+    273,
+    140
+  ],
+  "adv_map_corrupt_wilted": [
+    219,
+    189
+  ],
+  "adv_map_forest_corrupt_bush": [
+    274,
+    227
+  ],
+  "adv_map_forest_corrupt_log": [
+    263,
+    201
+  ],
+  "adv_map_forest_corrupt_mushrooms": [
+    248,
+    260
+  ],
+  "adv_map_forest_corrupt_oak": [
+    281,
+    330
+  ],
+  "adv_map_forest_corrupt_rock": [
+    245,
+    245
+  ],
+  "adv_map_forest_cover_canopy_big": [
+    353,
+    325
+  ],
+  "adv_map_forest_cover_canopy_blossom": [
+    318,
+    268
+  ],
+  "adv_map_forest_cover_canopy_mid": [
+    295,
+    259
+  ],
+  "adv_map_forest_landmark_oak_giant": [
+    438,
+    618
+  ],
+  "adv_map_forest_landmark_stone_ring": [
+    397,
+    472
+  ],
+  "adv_map_mountain_corrupt_boulder": [
+    270,
+    266
+  ],
+  "adv_map_mountain_corrupt_ore": [
+    225,
+    246
+  ],
+  "adv_map_mountain_cover_overhang_big": [
+    366,
+    276
+  ],
+  "adv_map_mountain_cover_overhang_mid": [
+    256,
+    177
+  ],
+  "adv_map_mountain_cover_pines_top": [
+    264,
+    303
+  ],
+  "adv_map_mountain_landmark_dragon_skull": [
+    398,
+    393
+  ],
+  "adv_map_mountain_landmark_headframe": [
+    335,
+    444
+  ],
+  "adv_map_puzzle_brazier": [
+    165,
+    183
+  ],
+  "adv_map_puzzle_brazier_lit": [
+    165,
+    246
+  ],
+  "adv_map_puzzle_gear": [
+    248,
+    249
+  ],
+  "adv_map_puzzle_gear_open": [
+    243,
+    254
+  ],
+  "adv_map_puzzle_mirror": [
+    221,
+    289
+  ],
+  "adv_map_puzzle_mirror_lit": [
+    267,
+    316
+  ],
+  "adv_map_puzzle_plate": [
+    225,
+    169
+  ],
+  "adv_map_puzzle_plate_down": [
+    214,
+    142
+  ],
+  "adv_map_puzzle_pod": [
+    209,
+    248
+  ],
+  "adv_map_puzzle_pod_open": [
+    332,
+    212
+  ],
+  "adv_map_puzzle_rod": [
+    65,
+    280
+  ],
+  "adv_map_puzzle_rod_on": [
+    139,
+    304
+  ],
+  "adv_map_puzzle_veil": [
+    263,
+    296
+  ],
+  "adv_map_puzzle_veil_gone": [
+    201,
+    273
+  ],
+  "adv_map_puzzle_wheel": [
+    202,
+    241
+  ],
+  "adv_map_puzzle_wheel_on": [
+    235,
+    252
+  ],
+  "adv_map_ruins_corrupt_brazier": [
+    167,
+    320
+  ],
+  "adv_map_ruins_corrupt_shard": [
+    202,
+    323
+  ],
+  "adv_map_ruins_corrupt_stump": [
+    282,
+    267
+  ],
+  "adv_map_ruins_cover_deadtree_top": [
+    424,
+    330
+  ],
+  "adv_map_ruins_cover_roof_big": [
+    374,
+    256
+  ],
+  "adv_map_ruins_cover_vault": [
+    271,
+    256
+  ],
+  "adv_map_ruins_landmark_sealed_door": [
+    415,
+    532
+  ],
+  "adv_map_ruins_landmark_statue_broken": [
+    408,
+    523
+  ]
+}

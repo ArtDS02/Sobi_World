@@ -10,6 +10,7 @@ import { textureKey } from '../../../ui/world/keys';
 import { PROPS, type AreaMap } from '../logic/config/content';
 import { thingsOf, WALK_TILES } from '../logic/maps';
 import { BEYOND, DRESS, ensureTextures } from './mapDepthKit';
+import { kitWall } from './mapKit';
 
 export interface AreaDressing {
   /** Moves what drifts (cloud shadows); `near` = the walker's position, to clear the bottom frame in front of it. */
@@ -49,7 +50,8 @@ export function dressArea(
     under: () => {
       // The world beyond the grid: the zone's wall texture, darker the further it goes.
       const beyondKey = textureKey(`bg_adventure_${zone}_beyond`);
-      const wallKey = scene.textures.exists(beyondKey) ? beyondKey : textureKey(`adv_tile_${zone}_wall`);
+      const kit = kitWall(zone);
+      const wallKey = scene.textures.exists(beyondKey) ? beyondKey : kit && scene.textures.exists(textureKey(kit)) ? textureKey(kit) : textureKey(`adv_tile_${zone}_wall`);
       if (scene.textures.exists(wallKey)) {
         const beyond = add(
           scene.add

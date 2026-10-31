@@ -1,6 +1,7 @@
 // What dresses each zone's areas (adventure-big-update-1 §11): the tall pieces framing them, the tint of the world beyond the
 // edges, the floating life and the light, and the small textures the dressing draws with (made once per scene). Phaser.
 import * as Phaser from 'phaser';
+import { COAST_FRAME } from './mapKit';
 
 export interface ZoneDress {
   /** The tall pieces framing the area (prop art ids) and their tint beyond the edge. */
@@ -58,6 +59,17 @@ export const DRESS: Readonly<Record<string, ZoneDress>> = {
     ],
     shafts: 3,
     shaftColor: 0xe8e0ff,
+  },
+  // The coast (decision 045): palms and barnacled rocks of the kit, sea spray and pale sparks, bright sun.
+  coast: {
+    frame: COAST_FRAME,
+    beyond: 0x8a9a9c,
+    motes: [
+      { colors: [0xffffff, 0xd8f4ff], kind: 'magic' },
+      { colors: [0xfff6c0], kind: 'firefly' },
+    ],
+    shafts: 4,
+    shaftColor: 0xfff8d8,
   },
 };
 

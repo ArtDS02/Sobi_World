@@ -4569,6 +4569,411 @@
       "id": "cb_enemy_ancient_guardian_victory",
       "status": "production",
       "asset": "props/combat/cb_enemy_ancient_guardian_victory.png"
+    },
+    {
+      "id": "adv_map_chest_gold",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_chest_gold.png"
+    },
+    {
+      "id": "adv_map_chest_gold_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_chest_gold_open.png"
+    },
+    {
+      "id": "adv_map_chest_hidden",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_chest_hidden.png"
+    },
+    {
+      "id": "adv_map_chest_hidden_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_chest_hidden_open.png"
+    },
+    {
+      "id": "adv_map_chest_mimic",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_chest_mimic.png"
+    },
+    {
+      "id": "adv_map_chest_silver",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_chest_silver.png"
+    },
+    {
+      "id": "adv_map_chest_silver_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_chest_silver_open.png"
+    },
+    {
+      "id": "adv_map_chest_wood",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_chest_wood.png"
+    },
+    {
+      "id": "adv_map_chest_wood_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_chest_wood_open.png"
+    },
+    {
+      "id": "adv_map_coast_corrupt_coral",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_corrupt_coral.png"
+    },
+    {
+      "id": "adv_map_coast_corrupt_driftwood",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_corrupt_driftwood.png"
+    },
+    {
+      "id": "adv_map_coast_corrupt_kelp",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_corrupt_kelp.png"
+    },
+    {
+      "id": "adv_map_coast_corrupt_pool",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_corrupt_pool.png"
+    },
+    {
+      "id": "adv_map_coast_cover_awning",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_cover_awning.png"
+    },
+    {
+      "id": "adv_map_coast_cover_palm_one",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_cover_palm_one.png"
+    },
+    {
+      "id": "adv_map_coast_cover_palms_big",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_cover_palms_big.png"
+    },
+    {
+      "id": "adv_map_coast_cover_seacave_ceiling",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_cover_seacave_ceiling.png"
+    },
+    {
+      "id": "adv_map_coast_exit_clam",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_exit_clam.png"
+    },
+    {
+      "id": "adv_map_coast_exit_clam_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_exit_clam_open.png"
+    },
+    {
+      "id": "adv_map_coast_landmark_lighthouse",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_landmark_lighthouse.png"
+    },
+    {
+      "id": "adv_map_coast_landmark_shipwreck",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_landmark_shipwreck.png"
+    },
+    {
+      "id": "adv_map_coast_landmark_turtle_arch",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_landmark_turtle_arch.png"
+    },
+    {
+      "id": "adv_map_coast_prop_barnacle_rock",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_prop_barnacle_rock.png"
+    },
+    {
+      "id": "adv_map_coast_prop_bush",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_prop_bush.png"
+    },
+    {
+      "id": "adv_map_coast_prop_palm",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_prop_palm.png"
+    },
+    {
+      "id": "adv_map_coast_prop_shells",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_prop_shells.png"
+    },
+    {
+      "id": "adv_map_coast_tile_boardwalk",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_tile_boardwalk.png"
+    },
+    {
+      "id": "adv_map_coast_tile_dune",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_tile_dune.png"
+    },
+    {
+      "id": "adv_map_coast_tile_sand_a",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_tile_sand_a.png"
+    },
+    {
+      "id": "adv_map_coast_tile_sand_b",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_tile_sand_b.png"
+    },
+    {
+      "id": "adv_map_coast_tile_sand_wet",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_tile_sand_wet.png"
+    },
+    {
+      "id": "adv_map_coast_tile_sea",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_tile_sea.png"
+    },
+    {
+      "id": "adv_map_coast_tile_sea_deep",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_tile_sea_deep.png"
+    },
+    {
+      "id": "adv_map_coast_tile_tideflat",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_tile_tideflat.png"
+    },
+    {
+      "id": "adv_map_corrupt_cracks",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_corrupt_cracks.png"
+    },
+    {
+      "id": "adv_map_corrupt_crystal_l",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_corrupt_crystal_l.png"
+    },
+    {
+      "id": "adv_map_corrupt_crystal_s",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_corrupt_crystal_s.png"
+    },
+    {
+      "id": "adv_map_corrupt_roots",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_corrupt_roots.png"
+    },
+    {
+      "id": "adv_map_corrupt_sludge",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_corrupt_sludge.png"
+    },
+    {
+      "id": "adv_map_corrupt_wilted",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_corrupt_wilted.png"
+    },
+    {
+      "id": "adv_map_forest_corrupt_bush",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_corrupt_bush.png"
+    },
+    {
+      "id": "adv_map_forest_corrupt_log",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_corrupt_log.png"
+    },
+    {
+      "id": "adv_map_forest_corrupt_mushrooms",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_corrupt_mushrooms.png"
+    },
+    {
+      "id": "adv_map_forest_corrupt_oak",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_corrupt_oak.png"
+    },
+    {
+      "id": "adv_map_forest_corrupt_rock",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_corrupt_rock.png"
+    },
+    {
+      "id": "adv_map_forest_cover_canopy_big",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_cover_canopy_big.png"
+    },
+    {
+      "id": "adv_map_forest_cover_canopy_blossom",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_cover_canopy_blossom.png"
+    },
+    {
+      "id": "adv_map_forest_cover_canopy_mid",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_cover_canopy_mid.png"
+    },
+    {
+      "id": "adv_map_forest_landmark_oak_giant",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_landmark_oak_giant.png"
+    },
+    {
+      "id": "adv_map_forest_landmark_stone_ring",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_landmark_stone_ring.png"
+    },
+    {
+      "id": "adv_map_mountain_corrupt_boulder",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_corrupt_boulder.png"
+    },
+    {
+      "id": "adv_map_mountain_corrupt_ore",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_corrupt_ore.png"
+    },
+    {
+      "id": "adv_map_mountain_cover_overhang_big",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_cover_overhang_big.png"
+    },
+    {
+      "id": "adv_map_mountain_cover_overhang_mid",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_cover_overhang_mid.png"
+    },
+    {
+      "id": "adv_map_mountain_cover_pines_top",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_cover_pines_top.png"
+    },
+    {
+      "id": "adv_map_mountain_landmark_dragon_skull",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_landmark_dragon_skull.png"
+    },
+    {
+      "id": "adv_map_mountain_landmark_headframe",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_landmark_headframe.png"
+    },
+    {
+      "id": "adv_map_puzzle_brazier",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_brazier.png"
+    },
+    {
+      "id": "adv_map_puzzle_brazier_lit",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_brazier_lit.png"
+    },
+    {
+      "id": "adv_map_puzzle_gear",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_gear.png"
+    },
+    {
+      "id": "adv_map_puzzle_gear_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_gear_open.png"
+    },
+    {
+      "id": "adv_map_puzzle_mirror",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_mirror.png"
+    },
+    {
+      "id": "adv_map_puzzle_mirror_lit",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_mirror_lit.png"
+    },
+    {
+      "id": "adv_map_puzzle_plate",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_plate.png"
+    },
+    {
+      "id": "adv_map_puzzle_plate_down",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_plate_down.png"
+    },
+    {
+      "id": "adv_map_puzzle_pod",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_pod.png"
+    },
+    {
+      "id": "adv_map_puzzle_pod_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_pod_open.png"
+    },
+    {
+      "id": "adv_map_puzzle_rod",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_rod.png"
+    },
+    {
+      "id": "adv_map_puzzle_rod_on",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_rod_on.png"
+    },
+    {
+      "id": "adv_map_puzzle_veil",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_veil.png"
+    },
+    {
+      "id": "adv_map_puzzle_veil_gone",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_veil_gone.png"
+    },
+    {
+      "id": "adv_map_puzzle_wheel",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_wheel.png"
+    },
+    {
+      "id": "adv_map_puzzle_wheel_on",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_puzzle_wheel_on.png"
+    },
+    {
+      "id": "adv_map_ruins_corrupt_brazier",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_corrupt_brazier.png"
+    },
+    {
+      "id": "adv_map_ruins_corrupt_shard",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_corrupt_shard.png"
+    },
+    {
+      "id": "adv_map_ruins_corrupt_stump",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_corrupt_stump.png"
+    },
+    {
+      "id": "adv_map_ruins_cover_deadtree_top",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_cover_deadtree_top.png"
+    },
+    {
+      "id": "adv_map_ruins_cover_roof_big",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_cover_roof_big.png"
+    },
+    {
+      "id": "adv_map_ruins_cover_vault",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_cover_vault.png"
+    },
+    {
+      "id": "adv_map_ruins_landmark_sealed_door",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_landmark_sealed_door.png"
+    },
+    {
+      "id": "adv_map_ruins_landmark_statue_broken",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_landmark_statue_broken.png"
     }
   ],
   "buildings": [
