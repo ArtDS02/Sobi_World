@@ -5029,6 +5029,156 @@
       "id": "adv_map_mountain_edge_stairs",
       "status": "production",
       "asset": "props/adventure_map/adv_map_mountain_edge_stairs.png"
+    },
+    {
+      "id": "adv_map_coast_exit_coralwall",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_exit_coralwall.png"
+    },
+    {
+      "id": "adv_map_coast_exit_coralwall_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_exit_coralwall_open.png"
+    },
+    {
+      "id": "adv_map_coast_exit_dock_arch",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_exit_dock_arch.png"
+    },
+    {
+      "id": "adv_map_coast_exit_ladder",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_exit_ladder.png"
+    },
+    {
+      "id": "adv_map_coast_exit_seacave",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_exit_seacave.png"
+    },
+    {
+      "id": "adv_map_coast_exit_stepping_stones",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_coast_exit_stepping_stones.png"
+    },
+    {
+      "id": "adv_map_forest_exit_arch",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_exit_arch.png"
+    },
+    {
+      "id": "adv_map_forest_exit_bramble",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_exit_bramble.png"
+    },
+    {
+      "id": "adv_map_forest_exit_cave",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_exit_cave.png"
+    },
+    {
+      "id": "adv_map_forest_exit_log_tunnel",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_exit_log_tunnel.png"
+    },
+    {
+      "id": "adv_map_forest_exit_vinewall",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_exit_vinewall.png"
+    },
+    {
+      "id": "adv_map_forest_exit_vinewall_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_forest_exit_vinewall_open.png"
+    },
+    {
+      "id": "adv_map_mountain_exit_arch",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_exit_arch.png"
+    },
+    {
+      "id": "adv_map_mountain_exit_boulder",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_exit_boulder.png"
+    },
+    {
+      "id": "adv_map_mountain_exit_boulder_broken",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_exit_boulder_broken.png"
+    },
+    {
+      "id": "adv_map_mountain_exit_cave",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_exit_cave.png"
+    },
+    {
+      "id": "adv_map_mountain_exit_crackwall",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_exit_crackwall.png"
+    },
+    {
+      "id": "adv_map_mountain_exit_crackwall_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_exit_crackwall_open.png"
+    },
+    {
+      "id": "adv_map_mountain_exit_ladder",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_exit_ladder.png"
+    },
+    {
+      "id": "adv_map_mountain_exit_tunnel",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_mountain_exit_tunnel.png"
+    },
+    {
+      "id": "adv_map_ruins_exit_crypt",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_exit_crypt.png"
+    },
+    {
+      "id": "adv_map_ruins_exit_gate",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_exit_gate.png"
+    },
+    {
+      "id": "adv_map_ruins_exit_gate_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_exit_gate_open.png"
+    },
+    {
+      "id": "adv_map_ruins_exit_runewall",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_exit_runewall.png"
+    },
+    {
+      "id": "adv_map_ruins_exit_runewall_open",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_exit_runewall_open.png"
+    },
+    {
+      "id": "adv_map_ruins_exit_stairs_down",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_ruins_exit_stairs_down.png"
+    },
+    {
+      "id": "adv_map_spring_coast",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_spring_coast.png"
+    },
+    {
+      "id": "adv_map_spring_forest",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_spring_forest.png"
+    },
+    {
+      "id": "adv_map_spring_mountain",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_spring_mountain.png"
+    },
+    {
+      "id": "adv_map_spring_ruins",
+      "status": "production",
+      "asset": "props/adventure_map/adv_map_spring_ruins.png"
     }
   ],
   "buildings": [

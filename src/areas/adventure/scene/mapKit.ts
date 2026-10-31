@@ -99,6 +99,41 @@ export const CORRUPT_UPRIGHT: Readonly<Record<string, readonly string[]>> = {
 /** The tall pieces framing a coast area and its decals of shells (the other zones keep theirs). */
 export const COAST_FRAME: readonly string[] = ['adv_map_coast_prop_palm', 'adv_map_coast_prop_barnacle_rock', 'adv_map_coast_prop_palm', 'adv_map_coast_prop_bush'];
 
+/** A zone's own healing spring (sheet S1). */
+export const SPRING_ART: Readonly<Record<string, string>> = {
+  forest: 'adv_map_spring_forest',
+  mountain: 'adv_map_spring_mountain',
+  ruins: 'adv_map_spring_ruins',
+  coast: 'adv_map_spring_coast',
+};
+
+/** An exit by its kind (decision 043 `exits[].kind`) in each zone, open; else the zone's trail. */
+const EXIT_ART: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  forest: { trail: 'adv_map_forest_exit_arch', cave: 'adv_map_forest_exit_cave', tunnel: 'adv_map_forest_exit_log_tunnel', shore: 'adv_map_coast_exit_stepping_stones' },
+  mountain: { trail: 'adv_map_mountain_exit_arch', cave: 'adv_map_mountain_exit_cave', tunnel: 'adv_map_mountain_exit_tunnel', stairs: 'adv_map_mountain_exit_ladder' },
+  ruins: { trail: 'adv_map_ruins_exit_gate_open', cave: 'adv_map_ruins_exit_crypt', tunnel: 'adv_map_ruins_exit_crypt', stairs: 'adv_map_ruins_exit_stairs_down' },
+  coast: { trail: 'adv_map_coast_exit_dock_arch', cave: 'adv_map_coast_exit_seacave', tunnel: 'adv_map_coast_exit_seacave', stairs: 'adv_map_coast_exit_ladder', shore: 'adv_map_coast_exit_stepping_stones' },
+};
+/** What bars a shut exit in each zone: brambles, a boulder, the shut stone gate, a wall of coral. */
+const EXIT_LOCK: Readonly<Record<string, string>> = {
+  forest: 'adv_map_forest_exit_bramble',
+  mountain: 'adv_map_mountain_exit_boulder',
+  ruins: 'adv_map_ruins_exit_gate',
+  coast: 'adv_map_coast_exit_coralwall',
+};
+export const exitArt = (zone: string, kind: string | undefined, open: boolean): string | null =>
+  open ? (EXIT_ART[zone]?.[kind ?? 'trail'] ?? EXIT_ART[zone]?.trail ?? null) : (EXIT_LOCK[zone] ?? null);
+
+/** A false wall (decision 045 `look: 'crack'`): a boulder by its id, else the zone's cracked wall; whole, and broken once opened. */
+const CRACK_ART: Readonly<Record<string, [string, string]>> = {
+  boulder: ['adv_map_mountain_exit_boulder', 'adv_map_mountain_exit_boulder_broken'],
+  forest: ['adv_map_forest_exit_vinewall', 'adv_map_forest_exit_vinewall_open'],
+  mountain: ['adv_map_mountain_exit_crackwall', 'adv_map_mountain_exit_crackwall_open'],
+  ruins: ['adv_map_ruins_exit_runewall', 'adv_map_ruins_exit_runewall_open'],
+  coast: ['adv_map_coast_exit_coralwall', 'adv_map_coast_exit_coralwall_open'],
+};
+export const crackArt = (zone: string, gateId: string, open: boolean): string | null => (CRACK_ART[gateId.includes('boulder') ? 'boulder' : zone]?.[open ? 1 : 0] ?? null);
+
 /** Every kit picture the game draws: the manifest rows of the kit (`scripts/assets/mapKitSizes.json`) are these. */
 export const KIT_IDS: readonly string[] = [
   ...new Set([
@@ -112,6 +147,10 @@ export const KIT_IDS: readonly string[] = [
     ...CORRUPT_FLAT,
     ...Object.values(CORRUPT_UPRIGHT).flat(),
     ...COAST_FRAME,
+    ...Object.values(SPRING_ART),
+    ...Object.values(EXIT_ART).flatMap((z) => Object.values(z)),
+    ...Object.values(EXIT_LOCK),
+    ...Object.values(CRACK_ART).flat(),
     'adv_map_coast_prop_shells',
   ]),
 ];

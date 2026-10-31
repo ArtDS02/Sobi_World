@@ -83,6 +83,30 @@
     244,
     266
   ],
+  "adv_map_coast_exit_coralwall": [
+    297,
+    205
+  ],
+  "adv_map_coast_exit_coralwall_open": [
+    312,
+    222
+  ],
+  "adv_map_coast_exit_dock_arch": [
+    240,
+    224
+  ],
+  "adv_map_coast_exit_ladder": [
+    128,
+    280
+  ],
+  "adv_map_coast_exit_seacave": [
+    328,
+    245
+  ],
+  "adv_map_coast_exit_stepping_stones": [
+    244,
+    259
+  ],
   "adv_map_coast_landmark_lighthouse": [
     357,
     552
@@ -215,6 +239,30 @@
     214,
     185
   ],
+  "adv_map_forest_exit_arch": [
+    236,
+    242
+  ],
+  "adv_map_forest_exit_bramble": [
+    266,
+    255
+  ],
+  "adv_map_forest_exit_cave": [
+    275,
+    274
+  ],
+  "adv_map_forest_exit_log_tunnel": [
+    256,
+    271
+  ],
+  "adv_map_forest_exit_vinewall": [
+    276,
+    282
+  ],
+  "adv_map_forest_exit_vinewall_open": [
+    276,
+    283
+  ],
   "adv_map_forest_landmark_oak_giant": [
     438,
     618
@@ -258,6 +306,38 @@
   "adv_map_mountain_edge_stairs": [
     304,
     168
+  ],
+  "adv_map_mountain_exit_arch": [
+    287,
+    250
+  ],
+  "adv_map_mountain_exit_boulder": [
+    231,
+    234
+  ],
+  "adv_map_mountain_exit_boulder_broken": [
+    244,
+    236
+  ],
+  "adv_map_mountain_exit_cave": [
+    272,
+    278
+  ],
+  "adv_map_mountain_exit_crackwall": [
+    273,
+    233
+  ],
+  "adv_map_mountain_exit_crackwall_open": [
+    296,
+    262
+  ],
+  "adv_map_mountain_exit_ladder": [
+    274,
+    274
+  ],
+  "adv_map_mountain_exit_tunnel": [
+    272,
+    270
   ],
   "adv_map_mountain_landmark_dragon_skull": [
     398,
@@ -355,6 +435,30 @@
     271,
     256
   ],
+  "adv_map_ruins_exit_crypt": [
+    215,
+    255
+  ],
+  "adv_map_ruins_exit_gate": [
+    304,
+    296
+  ],
+  "adv_map_ruins_exit_gate_open": [
+    305,
+    296
+  ],
+  "adv_map_ruins_exit_runewall": [
+    298,
+    186
+  ],
+  "adv_map_ruins_exit_runewall_open": [
+    304,
+    211
+  ],
+  "adv_map_ruins_exit_stairs_down": [
+    272,
+    279
+  ],
   "adv_map_ruins_landmark_sealed_door": [
     415,
     532
@@ -362,5 +466,21 @@
   "adv_map_ruins_landmark_statue_broken": [
     408,
     523
+  ],
+  "adv_map_spring_coast": [
+    287,
+    234
+  ],
+  "adv_map_spring_forest": [
+    287,
+    238
+  ],
+  "adv_map_spring_mountain": [
+    281,
+    222
+  ],
+  "adv_map_spring_ruins": [
+    213,
+    201
   ]
 }

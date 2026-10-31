@@ -13,7 +13,7 @@ import { drawCliffs } from './mapCliffs';
 import { dressCorruption } from './mapCorruption';
 import { corruptionMarks, foeLabel, NO_MARKS, sleepMark, type CorruptionMarks } from './foeMarks';
 import { drawCover } from './mapCovers';
-import { chestArt, kitTile, MIMIC_ART, puzzleArt } from './mapKit';
+import { chestArt, crackArt, exitArt, kitTile, MIMIC_ART, puzzleArt, SPRING_ART } from './mapKit';
 import { dressArea, type AreaDressing } from './mapDepth';
 import type { AdventureSceneState } from './sceneState';
 
@@ -45,8 +45,11 @@ export function thingArt(t: Thing, map: AreaMap, s: AdventureSceneState, has: (i
       return { id: map.nodes.find((n) => n.id === t.id)?.kind === 'ore' ? 'adv_node_ore' : 'adv_node_herb' };
     case 'gate': {
       const gate = map.gates.find((g) => g.id === t.id);
-      // A false wall wears the zone's own wall tile until it gives way (decision 045).
-      if (gate?.look === 'crack') return { id: `adv_tile_${zoneOfMapId(map)}_wall` };
+      // A false wall: the kit's boulder or cracked wall, broken once opened; else the zone's wall tile with a crack (decision 045).
+      if (gate?.look === 'crack') {
+        const kit = crackArt(zoneOfMapId(map), t.id, s.openedGates.includes(t.id));
+        return kit && has(kit) ? { id: kit } : { id: `adv_tile_${zoneOfMapId(map)}_wall` };
+      }
       return { id: `adv_gate_${(gate?.element ?? 'void').toLowerCase()}` };
     }
     case 'puzzle': {
@@ -55,8 +58,10 @@ export function thingArt(t: Thing, map: AreaMap, s: AdventureSceneState, has: (i
       const kit = puzzleArt(t.id, p?.element ?? 'LIGHT', s.litPuzzles.includes(t.id));
       return has(kit) ? { id: kit } : { id: 'adv_shrine' };
     }
-    case 'spring':
-      return { id: 'adv_spring' };
+    case 'spring': {
+      const kit = SPRING_ART[zoneOfMapId(map)];
+      return kit && has(kit) ? { id: kit } : { id: 'adv_spring' };
+    }
     case 'npc':
       return { id: 'adv_npc_traveler' };
     case 'lore':
@@ -86,8 +91,13 @@ function standOn(scene: Phaser.Scene, k: string, map: AreaMap, x: number, y: num
   return img;
 }
 
-/** A teleport gate's picture: its own art (`adv_warp_gate`, on / off) when the manifest has it, else the area portal's. */
-const gateKey = (scene: Phaser.Scene, open: boolean): string => {
+/**
+ * An exit's picture: the kit's passage of its kind (an arch, a cave, a tunnel, stairs, stepping stones) or, while shut, what bars it
+ * (decision 045); else its own teleport gate art (`adv_warp_gate`, on / off), else the area portal's.
+ */
+const gateKey = (scene: Phaser.Scene, open: boolean, map?: AreaMap, kind?: string): string => {
+  const kit = map ? exitArt(zoneOfMapId(map), kind, open) : null;
+  if (kit && scene.textures.exists(textureKey(kit))) return textureKey(kit);
   const own = textureKey('adv_warp_gate', open ? 'on' : 'off');
   return scene.textures.exists(own) ? own : key(scene, 'adv_portal', open ? 'on' : 'off');
 };
@@ -165,7 +175,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     if (img.displayHeight > tallest * t) img.setScale(img.scaleX * ((tallest * t) / img.displayHeight));
     things.set(th.id, img);
     layer.add(img);
-    if (th.kind === 'gate' && map.gates.find((g) => g.id === th.id)?.look === 'crack') {
+    if (th.kind === 'gate' && a.id.startsWith('adv_tile_')) {
       // Laid exactly over its tiles like the wall around it, with a crack across.
       img.setOrigin(0).setPosition(th.x * t, th.y * t).setDisplaySize(th.w * t, th.h * t);
       layer.add(img.setData('crack', crackOver(scene, map, th)).getData('crack') as Phaser.GameObjects.Graphics);
@@ -201,7 +211,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     const cx = (e.x + e.w / 2) * t;
     const feet = (e.y + e.h) * t;
     const glow = scene.add.image(cx, feet - t * 1.4, 'adv-fx-blob').setDisplaySize(t * 3.4, t * 3.4).setTint(view?.forward ? 0x9ae6ff : 0xd8ffd0).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.6);
-    const img = standOn(scene, gateKey(scene, !!view?.open), map, e.x - 0.5, e.y, e.w + 1, e.h, 1.05);
+    const img = standOn(scene, gateKey(scene, !!view?.open, map, e.kind), map, e.x - 0.5, e.y, e.w + 1, e.h, 1.05);
     const words = scene.add.text(0, -6, lockWords(view?.lock ?? null), { fontSize: '15px', fontStyle: 'bold', color: '#fff6e0', backgroundColor: '#5b3a1cdd', padding: { x: 8, y: 4 } }).setOrigin(0.5, 1);
     const lockKey = textureKey('ui_icon_lock');
     const lockIcon = scene.textures.exists(lockKey) ? [scene.add.image(0, -words.height - 22, lockKey).setDisplaySize(34, 34)] : [];
@@ -239,9 +249,16 @@ export function refreshThings(scene: Phaser.Scene, map: AreaMap, objs: MapObject
     const g = objs.gates.get(e.id);
     const view = s.exits.find((x) => x.id === e.id);
     if (!g || !view) continue;
-    const k = gateKey(scene, view.open);
-    if (g.img.texture.key !== k) g.img.setTexture(k);
-    g.img.setTint(view.open ? 0xffffff : 0x9a9aa8);
+    const k = gateKey(scene, view.open, map, e.kind);
+    if (g.img.texture.key !== k) {
+      // A kit passage and what bars it differ in shape: keep the width, take the new picture's height.
+      g.img.setTexture(k);
+      const width = (e.w + 1) * map.tile * 1.05;
+      g.img.setDisplaySize(width, (width * g.img.height) / Math.max(1, g.img.width));
+    }
+    // A kit barrier is drawn shut already; an older gate darkens.
+    if (k.startsWith('adv_map_') || view.open) g.img.clearTint();
+    else g.img.setTint(0x9a9aa8);
     // An open gate breathes light; a shut one is dark and says why when the party comes close.
     g.glow.setVisible(view.open).setAlpha(0.45 + 0.25 * Math.sin(time / 380)).setRotation(time / 1600);
     const close = !!near && Math.hypot(near.x - (e.x + e.w / 2) * map.tile, near.y - (e.y + e.h / 2) * map.tile) < map.tile * 4;
@@ -253,6 +270,13 @@ export function refreshThings(scene: Phaser.Scene, map: AreaMap, objs: MapObject
     const img = objs.things.get(th.id);
     if (!img) continue;
     if (th.kind === 'gate') {
+      // A kit false wall stays, broken; any other gate goes once opened.
+      const wall = thingArt(th, map, s, (id) => scene.textures.exists(textureKey(id)));
+      if (!wall.id.startsWith('adv_tile_') && wall.id.startsWith('adv_map_')) {
+        const k = key(scene, wall.id);
+        if (img.texture.key !== k) img.setTexture(k);
+        continue;
+      }
       img.setVisible(!s.openedGates.includes(th.id));
       (img.getData('crack') as Phaser.GameObjects.Graphics | undefined)?.setVisible(img.visible);
       continue;

@@ -6,7 +6,7 @@ import { MAP_LIST } from '../../src/areas/adventure/logic/config/content';
 import { CAMP_ART, ICON_ART_IDS } from '../../src/areas/adventure/logic/art';
 import { blockedTiles } from '../../src/areas/adventure/logic/maps';
 import { corruptionDecalsOf, decalsOf } from '../../src/areas/adventure/scene/decals';
-import { chestArt, kitTile, KIT_IDS, puzzleArt } from '../../src/areas/adventure/scene/mapKit';
+import { chestArt, crackArt, exitArt, kitTile, KIT_IDS, puzzleArt } from '../../src/areas/adventure/scene/mapKit';
 import { cliffFaces } from '../../src/areas/adventure/scene/mapCliffs';
 import { PROPS } from '../../src/areas/adventure/logic/config/content';
 import { foeBadgeArt, reactionArt, skillArt, statusArt } from '../../src/areas/adventure/ui/vmKit';
@@ -83,6 +83,16 @@ describe('the map kit (decision 045)', () => {
     expect(puzzleArt('puzzle_n1_brazier_a', 'FIRE', true)).toBe('adv_map_puzzle_brazier_lit');
     expect(puzzleArt('puzzle_c2_clam', 'LIGHT', true)).toBe('adv_map_coast_exit_clam_open');
     expect(puzzleArt('puzzle_x', 'DARK', true)).toBe('adv_map_puzzle_veil_gone');
+  });
+
+  it('an exit by its kind, barred while shut; a false wall whole, then broken', () => {
+    expect(exitArt('mountain', 'tunnel', true)).toBe('adv_map_mountain_exit_tunnel');
+    expect(exitArt('coast', undefined, true)).toBe('adv_map_coast_exit_dock_arch');
+    expect(exitArt('forest', 'stairs', true)).toBe('adv_map_forest_exit_arch');
+    expect(exitArt('ruins', 'stairs', false)).toBe('adv_map_ruins_exit_gate');
+    expect(crackArt('forest', 'gate_f2_boulder', false)).toBe('adv_map_mountain_exit_boulder');
+    expect(crackArt('ruins', 'gate_r1_wall', true)).toBe('adv_map_ruins_exit_runewall_open');
+    for (const map of MAP_LIST) for (const e of map.exits) for (const open of [true, false]) expect(ids.has(exitArt(zoneOfMapId(map), e.kind, open)!), `${map.id} ${e.id}`).toBe(true);
   });
 
   it('the corrupted dressing grows with the corruption, never blocks, and only uses art the manifest has', () => {
