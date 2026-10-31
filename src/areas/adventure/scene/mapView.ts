@@ -42,6 +42,9 @@ export function thingArt(t: Thing, map: AreaMap, s: AdventureSceneState): { id: 
       if (gate?.look === 'crack') return { id: `adv_tile_${zoneOfMapId(map)}_wall` };
       return { id: `adv_gate_${(gate?.element ?? 'void').toLowerCase()}` };
     }
+    case 'puzzle':
+      // An element device: dim until lit (its own art waits for GĐ14).
+      return { id: 'adv_shrine' };
     case 'spring':
       return { id: 'adv_spring' };
     case 'npc':
@@ -268,6 +271,7 @@ export function refreshThings(scene: Phaser.Scene, map: AreaMap, objs: MapObject
     const a = thingArt(th, map, s);
     const k = key(scene, a.id, a.state);
     if (img.texture.key !== k) img.setTexture(k);
+    if (th.kind === 'puzzle') img.setTint(s.litPuzzles.includes(th.id) ? 0xfff2b0 : 0x8a8a9a);
     const used = (th.kind === 'node' || th.kind === 'npc' || th.kind === 'shrine') && s.usedSpots.includes(th.id);
     img.setAlpha(used || (th.kind === 'spring' && s.springUsed) ? 0.55 : 1);
   }

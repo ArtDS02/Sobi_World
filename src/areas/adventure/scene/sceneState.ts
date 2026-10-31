@@ -43,6 +43,8 @@ export interface AdventureSceneState {
   exits: { id: string; open: boolean; lock: 'guardian' | 'shortcut' | 'zone' | null; forward: boolean }[];
   openedGates: readonly string[];
   openedChests: readonly string[];
+  /** Element puzzles lit for good (decision 045). */
+  litPuzzles: readonly string[];
   /** The area's corruption now, 0–100 % (decision 045): its veil and dust. */
   corruption: number;
   /** Hidden places found for good (the overhead covers stepped under, decision 045). */

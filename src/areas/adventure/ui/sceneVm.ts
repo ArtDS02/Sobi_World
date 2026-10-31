@@ -21,6 +21,7 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
     openedGates: a.openedGates,
     openedChests: a.openedChests,
     foundSecrets: a.foundSecrets,
+    litPuzzles: a.litPuzzles,
     backdrop: run?.rift ? RIFT.backdrop : run ? zone.backdrop : CAMP_ART.backdrop,
     now,
     paused,

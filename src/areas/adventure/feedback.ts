@@ -60,6 +60,8 @@ export function adventurePresentation(e: EventBase, origin: 'action' | 'tick' | 
       return { sound: 'coin_collect', toast: Object.keys(e.items).length > 0 ? t(T.chest, { items: itemsText(e.items) }) : T.chestEmpty };
     case 'ADVENTURE_HARVESTED':
       return Object.keys(e.items).length > 0 ? { sound: 'coin_collect', toast: t(T.harvest, { items: itemsText(e.items) }) } : null;
+    case 'ADVENTURE_PUZZLE_LIT':
+      return { sound: 'notify', toast: t(T.puzzle, { lit: e.lit, of: e.of }) };
     case 'ADVENTURE_GATE_OPENED':
       return { sound: 'level_up', toast: t(T.gate, { element: elementName(e.element) }) };
     case 'ADVENTURE_SHORTCUT_OPENED':

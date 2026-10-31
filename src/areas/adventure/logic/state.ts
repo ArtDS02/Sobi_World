@@ -1,4 +1,4 @@
-// The Adventure's slice of the world save (`areas.sobi_adventure`, v2 since decision 037, v4 since adventure-big-update-1, v5 since decision 043, v6 since decision 045): its fighters (level, experience, class, SP and
+// The Adventure's slice of the world save (`areas.sobi_adventure`, v2 since decision 037, v4 since adventure-big-update-1, v5 since decision 043, v6 / v7 since decision 045): its fighters (level, experience, class, SP and
 // skill tree, class loadout, Rage, equipment, energy), the trip in progress (where the party stands on which area, what it beat and
 // found, the battle on), what stays opened for good (treasure chests, gates, portals, shortcuts, lore), formations, the leader, loot waiting for
 // room in the bag. The creatures themselves stay in their own Areas; coins, items and XP are world fields.
@@ -11,7 +11,7 @@ import { CLASS_ID_VALUES } from '../../../../content/schemas/adventure/classes';
 import { LINEAGE_ID_VALUES } from '../../../../content/schemas/adventure/lineages';
 import { FOE_CLASSES } from '../../../../content/schemas/adventure/maps';
 
-export const ADVENTURE_STATE_VERSION = 6;
+export const ADVENTURE_STATE_VERSION = 7;
 
 const time = z.number().finite();
 const nonNeg = z.number().finite().min(0);
@@ -195,7 +195,7 @@ const runSchema = z.strictObject({
   /** The rations carried into this trip (item ids, GĐ11). */
   prep: z.array(z.string()),
   /** The last thing that happened on the map (a traveller, a lore stone, a shrine), for the screen. */
-  lastEvent: z.strictObject({ kind: z.enum(['npc', 'lore', 'shrine', 'chest', 'node', 'gate', 'spring', 'portal', 'boss', 'elite']), id: z.string() }).nullable(),
+  lastEvent: z.strictObject({ kind: z.enum(['npc', 'lore', 'shrine', 'chest', 'node', 'gate', 'puzzle', 'spring', 'portal', 'boss', 'elite']), id: z.string() }).nullable(),
   /** The events of the last step of the battle, for the screen to play. */
   log: z.array(z.looseObject({ type: z.string() })),
   bossBeaten: z.boolean(),
@@ -229,6 +229,10 @@ export const adventureStateSchema = z.strictObject({
   openedExits: z.array(z.string()),
   /** Hidden places found for good: the overhead covers stepped under (decision 045, v6). */
   foundSecrets: z.array(z.string()),
+  /** Element puzzles lit for good (decision 045, v7). */
+  litPuzzles: z.array(z.string()),
+  /** The ground seen on each area, by map id: a hex bitmask of 4 × 4-tile chunks, row by row (decision 045, v7; `logic/fog.ts`). */
+  explored: z.record(z.string(), z.string()),
   loreFound: z.array(z.string()),
   formations: z.array(formationSchema),
   /** Who leads the party on the map. */
@@ -278,6 +282,8 @@ export const initialAdventure = (now: number): AdventureState => ({
   activePortals: [],
   openedExits: [],
   foundSecrets: [],
+  litPuzzles: [],
+  explored: {},
   loreFound: [],
   formations: [],
   leader: 'so',

@@ -8,6 +8,7 @@ import { vi } from '../../../i18n/vi';
 import { portalLit } from '../logic/actions/trip';
 import { AB, EVENTS, MAPS, TIP_OF_MAP, ZONE_LIST, ZONES, type AreaMap } from '../logic/config/content';
 import { blockedTiles, thingsOf, type Thing } from '../logic/maps';
+import { revealWalk, tileSeen } from '../logic/fog';
 import { discovery } from '../logic/progress';
 import { adventureOf } from '../logic/save/lens';
 import type { Run } from '../logic/state';
@@ -73,8 +74,15 @@ export function promptFor(world: WorldSave, run: Run, map: AreaMap, thing: Thing
     case 'gate': {
       const gate = map.gates.find((g) => g.id === thing.id)!;
       const label = t(E.gate, { element: elementLabel(gate.element) });
+      if (map.puzzles.some((p) => p.gate === gate.id)) return { ...base, label, reason: E.gatePuzzle };
       const ok = run.team.some((m) => m.hp > 0 && (m.element === gate.element || m.element2 === gate.element));
       return { ...base, label, reason: ok ? null : t(E.gateNeed, { element: elementLabel(gate.element) }) };
+    }
+    case 'puzzle': {
+      const puzzle = map.puzzles.find((p) => p.id === thing.id)!;
+      const ok = run.team.some((m) => m.hp > 0 && (m.element === puzzle.element || m.element2 === puzzle.element));
+      const reason = a.litPuzzles.includes(puzzle.id) ? E.puzzleLit : ok ? null : t(E.gateNeed, { element: elementLabel(puzzle.element) });
+      return { ...base, label: t(E.puzzle, { element: elementLabel(puzzle.element) }), reason };
     }
     case 'spring':
       return { ...base, label: t(E.spring, { pct: pct(AB.explore.springPct) }), reason: run.springs.includes(map.id) ? E.springUsed : null };
@@ -153,5 +161,8 @@ export function minimapVm(world: WorldSave, run: Run): MinimapVm | null {
     if (!mark) continue;
     for (let y = th.y; y < th.y + th.h; y += 1) for (let x = th.x; x < th.x + th.w; x += 1) rows[y]![x] = mark;
   }
+  // Ground not seen yet stays in the fog (decision 045); around the party it shows at once, before the walk is saved.
+  const seen = revealWalk(map, a.explored[map.id] ?? '', { x: run.x, y: run.y }, { x: run.x, y: run.y });
+  for (let y = 0; y < map.rows; y += 1) for (let x = 0; x < map.cols; x += 1) if (!tileSeen(map, seen, x, y)) rows[y]![x] = 'f';
   return { cols: map.cols, rows: map.rows, tiles: rows.map((r) => r.join('')), player: { x: Math.floor(run.x / map.tile), y: Math.floor(run.y / map.tile) } };
 }

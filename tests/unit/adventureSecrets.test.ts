@@ -6,11 +6,12 @@ import { interact, moveTo, startRun } from '../../src/areas/adventure/logic/acti
 import { MAPS } from '../../src/areas/adventure/logic/config/content';
 import { coverAt, mapProblems, reachableTiles, tileCenter } from '../../src/areas/adventure/logic/maps';
 import { ADVENTURE_MIGRATIONS } from '../../src/areas/adventure/logic/migrations';
+import { revealWalk, tileSeen } from '../../src/areas/adventure/logic/fog';
 import { discovery } from '../../src/areas/adventure/logic/progress';
 import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
 import type { AdventureState } from '../../src/areas/adventure/logic/state';
 import type { WorldSave } from '../../src/core/save/world';
-import { T0, adventureWorld, ctxAt, keys, ok, squad, standBy, strong } from './adventureKit';
+import { T0, adventureWorld, ctxAt, err, keys, ok, squad, standBy, strong } from './adventureKit';
 
 const F1 = MAPS.map_forest_edge!;
 const start = () => ok(startRun(strong(adventureWorld()), { zoneId: 'zone_forest', keys, roster: squad }, ctxAt(T0)));
@@ -85,6 +86,54 @@ describe('the save (v6)', () => {
     const a = adventureOf(start());
     const v5: Record<string, unknown> = { ...a, version: 5 };
     delete v5.foundSecrets;
-    expect(ADVENTURE_MIGRATIONS[5]!(v5)).toEqual({ ...a, version: 6, foundSecrets: [] });
+    delete v5.litPuzzles;
+    delete v5.explored;
+    expect(ADVENTURE_MIGRATIONS[5]!(v5)).toEqual({ ...v5, version: 6, foundSecrets: [] });
+    expect(ADVENTURE_MIGRATIONS[6]!({ ...v5, version: 6, foundSecrets: [] })).toEqual({ ...a, version: 7, litPuzzles: [], explored: {} });
+  });
+});
+
+describe('element puzzles (decision 045)', () => {
+  it('a gate held by puzzles opens only once its last puzzle is lit, each by a companion of its element', () => {
+    const map = MAPS.map_forest_hollow!;
+    const set = map.puzzles.filter((p) => p.gate === map.puzzles[0]!.gate);
+    expect(set.length).toBeGreaterThan(1);
+    let w = onMap(start(), map.id);
+    const a = adventureOf(w);
+    expect(err(interact(w, { ...standBy(w, map.id, set[0]!.id), id: set[0]!.id }, ctxAt(T0)))).toBe('GATE_NEEDS_ELEMENT');
+    w = withAdventure(w, { ...a, run: { ...a.run!, team: a.run!.team.map((m, i) => (i === 0 ? { ...m, element: set[0]!.element } : m)) } });
+    expect(err(interact(w, { ...standBy(w, map.id, set[0]!.gate), id: set[0]!.gate }, ctxAt(T0)))).toBe('GATE_NEEDS_PUZZLE');
+    for (const [i, p] of set.entries()) {
+      const r = interact(w, { ...standBy(w, map.id, p.id), id: p.id }, ctxAt(T0));
+      expect(r.ok).toBe(true);
+      if (!r.ok) return;
+      w = r.state;
+      expect(r.events).toContainEqual(expect.objectContaining({ type: 'ADVENTURE_PUZZLE_LIT', lit: i + 1, of: set.length }));
+      expect(adventureOf(w).openedGates.includes(p.gate)).toBe(i === set.length - 1);
+    }
+    expect(err(interact(w, { ...standBy(w, map.id, set[0]!.id), id: set[0]!.id }, ctxAt(T0)))).toBe('ALREADY_OPENED');
+  });
+});
+
+describe('the fog of the area map (decision 045)', () => {
+  it('a walk sees the chunks around its way and nothing far from it', () => {
+    const a = tileCenter(F1, 2, 2);
+    const b = tileCenter(F1, 30, 2);
+    const hex = revealWalk(F1, '', a, b);
+    expect(tileSeen(F1, hex, 2, 2)).toBe(true);
+    expect(tileSeen(F1, hex, 16, 3)).toBe(true);
+    expect(tileSeen(F1, hex, 30, 6)).toBe(true);
+    expect(tileSeen(F1, hex, 30, F1.rows - 1)).toBe(false);
+    expect(revealWalk(F1, hex, a, b)).toBe(hex);
+  });
+  it('walking saves the ground seen for good', () => {
+    const w0 = start();
+    const r = moveTo(w0, underCover(), ctxAt(T0));
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const hex = adventureOf(r.state).explored[F1.id]!;
+    const c = F1.covers[0]!;
+    expect(tileSeen(F1, hex, c.x, c.y)).toBe(true);
+    expect(tileSeen(F1, hex, F1.spawn.x, F1.spawn.y)).toBe(true);
   });
 });

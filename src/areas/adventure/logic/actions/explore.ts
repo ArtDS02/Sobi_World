@@ -11,11 +11,12 @@ import { AB, COMBAT_CONTEXT, ENGAGEMENT, EVENTS, LOOT_TABLES, MAPS, ZONES, type 
 import { addCount, enemyInits, playEnemies, rollTable } from '../encounter';
 import { allyInit } from '../fighters';
 import { foePresent, foeSky, groupNow, staysBeaten, withClass, zonePurified } from '../foes';
-import { coverAt, distanceToThing, groupDistance, thingsOf, tileCenter } from '../maps';
+import { distanceToThing, groupDistance, thingsOf, tileCenter } from '../maps';
 import type { Run } from '../state';
 import { autoBattle, groupAffix, quickWinnable, teamLevel, withAffix } from '../variants';
 import { credit, put, runAdventure, type AdventureResult } from './kit';
 import { settleBattle } from './battle';
+import { findCover, lightPuzzle, seeGround } from './secrets';
 import { commit, exitOpen, finish, homeResult, giveExp, groupEnemies, groupKey, placeAt, portalLit, recordFeats, shortcutsBack, speak, stepOf, type Step } from './trip';
 
 export type Position = Vec & { facing?: Run['facing'] | undefined };
@@ -34,8 +35,12 @@ function onFoot(world: WorldSave, pos: Position | null, ctx: ActionContext, body
     if (st.run.rift && pos) return { ok: false, error: 'WRONG_PHASE' };
     const map = MAPS[st.run.mapId];
     if (!map) return { ok: false, error: 'INVALID_REQUEST' };
+    const from = here(st);
     if (pos && !placeAt(st, map, pos)) return { ok: false, error: 'BLOCKED' };
-    if (pos) findCover(st, map);
+    if (pos) {
+      findCover(st, map);
+      seeGround(st, map, from);
+    }
     const r = body(st, map);
     if (!r.ok) return r;
     return commit(st);
@@ -43,14 +48,6 @@ function onFoot(world: WorldSave, pos: Position | null, ctx: ActionContext, body
 }
 
 const here = (st: Step): Vec => ({ x: st.run.x, y: st.run.y });
-
-/** Standing under an overhead cover for the first time finds the hidden place (decision 045). */
-function findCover(st: Step, map: AreaMap) {
-  const cover = coverAt(map, here(st));
-  if (!cover || st.a.foundSecrets.includes(cover.id)) return;
-  st.a = { ...st.a, foundSecrets: [...st.a.foundSecrets, cover.id] };
-  st.events.push({ type: 'ADVENTURE_SECRET_FOUND', mapId: map.id, secretId: cover.id, kind: 'cover' });
-}
 
 /** The walker stopped here (saved so a reload puts it back). */
 export function moveTo(world: WorldSave, args: Position, ctx: ActionContext): AdventureResult {
@@ -148,12 +145,19 @@ export function interact(world: WorldSave, args: Position & { id: string }, ctx:
       case 'gate': {
         if (st.a.openedGates.includes(thing.id)) return fail('ALREADY_OPENED');
         const gate = map.gates.find((g) => g.id === thing.id)!;
+        // A gate held by puzzles opens only when they are all lit (decision 045).
+        if (map.puzzles.some((p) => p.gate === gate.id)) return fail('GATE_NEEDS_PUZZLE');
         const opener = run.team.find((m) => m.hp > 0 && (m.element === gate.element || m.element2 === gate.element));
         if (!opener) return fail('GATE_NEEDS_ELEMENT');
         st.a = { ...st.a, openedGates: [...st.a.openedGates, thing.id] };
         st.events.push({ type: 'ADVENTURE_GATE_OPENED', gateId: thing.id, element: gate.element, by: opener.key });
         // A false wall that gives way is a hidden place found (decision 045).
         if (gate.look === 'crack') st.events.push({ type: 'ADVENTURE_SECRET_FOUND', mapId: map.id, secretId: thing.id, kind: 'wall' });
+        break;
+      }
+      case 'puzzle': {
+        const r = lightPuzzle(st, map, thing.id);
+        if (!r.ok) return r;
         break;
       }
       case 'spring': {

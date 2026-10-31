@@ -2,8 +2,8 @@
 # M1-M9 are laid out again and the side areas N1-N6 are added (content/adventure/maps.json), the zones get their side areas and the
 # chest tables by kind (zones.json), each landmark becomes a prop (props.json), and the English texts follow (content/i18n/en.json).
 # What an area already had is kept by id (enemy pools, gifts, boss tables, chest tables, lore texts, traveller events, the Guardian
-# shrine), so a save keeps its opened chests, gates, lore and beaten guardians. The coast (N7-N9) waits for its own zone and enemies;
-# puzzles and decorative crystals wait for their own step. Run `npm run content:fmt` after it, then `npm run check`.
+# shrine), so a save keeps its opened chests, gates, lore and beaten guardians. Each puzzle holds the gate of its element. The coast
+# (N7-N9) waits for its own zone and enemies; decorative crystals wait for the kit's art. Run `npm run content:fmt` after it, then `npm run check`.
 import json
 import re
 import sys
@@ -102,7 +102,7 @@ def main():
         objs = L["objects"]
         prefix = next((re.match(r"g_([a-z0-9]+)_", ob["id"]).group(1) for ob in objs if ob["kind"] == "group"), code.lower())
         for ob in objs:
-            if ob["kind"] in ("group", "chest", "gate", "spring", "lore", "npc", "herb", "ore"):
+            if ob["kind"] in ("group", "chest", "gate", "spring", "lore", "npc", "herb", "ore", "puzzle"):
                 taken.add((ob["x"], ob["y"]))
 
         # Exit tiles and their first step inside stay clear.
@@ -241,7 +241,12 @@ def main():
                 npcs.append({"id": ob["id"], "x": ob["x"], "y": ob["y"], "event": event})
         covers = [{"id": f"cover_{prefix}_{chr(97 + i)}", "x": c["x0"], "y": c["y0"], "w": c["x1"] - c["x0"] + 1, "h": c["y1"] - c["y0"] + 1, "look": COVER_LOOK[zone]}
                   for i, c in enumerate(L["covers"])]
-        m.update({"groups": groups, "chests": chests, "nodes": nodes, "gates": gates, "covers": covers, "springs": springs, "npcs": npcs, "lore": lore})
+        puzzles = []
+        for ob in (ob for ob in objs if ob["kind"] == "puzzle"):
+            gate = next((g for g in gates if g["element"] == ob["element"]), gates[0] if gates else None)
+            if gate:
+                puzzles.append({"id": ob["id"], "x": ob["x"], "y": ob["y"], "element": ob["element"], "gate": gate["id"]})
+        m.update({"groups": groups, "chests": chests, "nodes": nodes, "gates": gates, "covers": covers, "puzzles": puzzles, "springs": springs, "npcs": npcs, "lore": lore})
         if shrine:
             m["shrine"] = shrine
         built[mid] = m
@@ -319,7 +324,7 @@ def landmark_ok(m, p, placed) -> bool:
     cells = {(p["x"] + i, p["y"] + j) for i in range(p["_w"]) for j in range(p["_h"])}
     if any(not (0 <= x < W and 0 <= y < H) or m["terrain"][y][x] not in WALK for x, y in cells):
         return False
-    things = [(t["x"], t["y"], 1, 1) for k in ("groups", "chests", "nodes", "springs", "npcs", "lore") for t in m[k]]
+    things = [(t["x"], t["y"], 1, 1) for k in ("groups", "chests", "nodes", "puzzles", "springs", "npcs", "lore") for t in m[k]]
     things += [(g["x"], g["y"], g["w"], g["h"]) for g in m["gates"]] + [(e["x"], e["y"], e["w"], e["h"]) for e in m["exits"]]
     things += [(m["portal"]["x"], m["portal"]["y"], 2, 2), (m["spawn"]["x"], m["spawn"]["y"], 1, 1)]
     if m.get("shrine"):
@@ -346,7 +351,7 @@ def reach_all(m, blocked) -> bool:
                 seen.add(n)
                 q.append(n)
     near = lambda x, y, w=1, h=1: any((x + i + dx, y + j + dy) in seen for i in range(w) for j in range(h) for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)))  # noqa: E731
-    ok = all(near(t["x"], t["y"]) for k in ("groups", "chests", "nodes", "springs", "npcs", "lore") for t in m[k])
+    ok = all(near(t["x"], t["y"]) for k in ("groups", "chests", "nodes", "puzzles", "springs", "npcs", "lore") for t in m[k])
     ok &= all(near(e["x"], e["y"], e["w"], e["h"]) for e in m["exits"])
     return ok and near(m["portal"]["x"], m["portal"]["y"], 2, 2)
 

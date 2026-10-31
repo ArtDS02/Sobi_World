@@ -118,6 +118,11 @@ export const mapSchema = z.strictObject({
    * terrain says; the cover hides what is beneath and fades when the party steps in, and the first time counts as a secret found.
    */
   covers: z.array(z.strictObject({ id: id('cover'), ...cell, w: posInt, h: posInt, look: z.enum(COVER_LOOKS) })).default([]),
+  /**
+   * Element puzzles (decision 045): a brazier, a rod, a wheel… lit with Space by a companion of its element. Once every puzzle of a gate
+   * is lit, that gate opens by itself (it cannot be opened by its element alone).
+   */
+  puzzles: z.array(z.strictObject({ id: id('puzzle'), ...cell, element, gate: id('gate') })).default([]),
   springs: z.array(z.strictObject({ id: id('spring'), ...cell })),
   npcs: z.array(z.strictObject({ id: id('npc'), ...cell, event: id('event') })),
   lore: z.array(z.strictObject({ id: id('lore'), ...cell, textVi: text })),

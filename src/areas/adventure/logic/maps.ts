@@ -7,7 +7,7 @@ import { AB, MAPS, PROPS, type AreaMap, type MapGroup } from './config/content';
 
 export const WALK_TILES = new Set(['.', ',', '=', '^', 's', 'c']);
 
-export type ThingKind = 'chest' | 'node' | 'gate' | 'spring' | 'npc' | 'lore' | 'shrine' | 'portal' | 'exit';
+export type ThingKind = 'chest' | 'node' | 'gate' | 'puzzle' | 'spring' | 'npc' | 'lore' | 'shrine' | 'portal' | 'exit';
 
 /** Something on the map one may walk up to and use (Space), as a rectangle of tiles. */
 export interface Thing {
@@ -26,6 +26,7 @@ export function thingsOf(map: AreaMap): Thing[] {
     ...map.chests.map(one('chest')),
     ...map.nodes.map(one('node')),
     ...map.gates.map((g): Thing => ({ id: g.id, kind: 'gate', x: g.x, y: g.y, w: g.w, h: g.h })),
+    ...map.puzzles.map(one('puzzle')),
     ...map.springs.map(one('spring')),
     ...map.npcs.map(one('npc')),
     ...map.lore.map(one('lore')),

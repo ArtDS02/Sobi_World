@@ -201,6 +201,7 @@
       ],
       "gates": [{ "id": "gate_f1_bramble", "x": 53, "y": 29, "w": 1, "h": 1, "element": "FIRE" }],
       "covers": [{ "id": "cover_f1_a", "x": 4, "y": 4, "w": 10, "h": 7, "look": "canopy" }],
+      "puzzles": [],
       "springs": [{ "id": "spring_f1", "x": 16, "y": 15 }],
       "npcs": [{ "id": "npc_f1_herbalist", "x": 9, "y": 23, "event": "event_herbalist" }],
       "lore": [
@@ -433,6 +434,7 @@
         { "id": "gate_f2_boulder", "x": 56, "y": 26, "w": 1, "h": 1, "element": "EARTH", "look": "crack" }
       ],
       "covers": [{ "id": "cover_f2_a", "x": 14, "y": 25, "w": 10, "h": 7, "look": "canopy" }],
+      "puzzles": [],
       "springs": [{ "id": "spring_f2", "x": 6, "y": 22 }],
       "npcs": [{ "id": "npc_f2_shrine", "x": 44, "y": 15, "event": "event_shrine" }],
       "lore": [
@@ -629,6 +631,7 @@
       "nodes": [],
       "gates": [{ "id": "gate_f3_shadow", "x": 40, "y": 21, "w": 1, "h": 1, "element": "DARK" }],
       "covers": [{ "id": "cover_f3_a", "x": 1, "y": 20, "w": 8, "h": 6, "look": "canopy" }],
+      "puzzles": [],
       "springs": [{ "id": "spring_f3", "x": 28, "y": 21 }],
       "npcs": [],
       "lore": [
@@ -874,6 +877,7 @@
       ],
       "gates": [{ "id": "gate_m1_metal", "x": 11, "y": 8, "w": 1, "h": 1, "element": "METAL" }],
       "covers": [{ "id": "cover_m1_a", "x": 52, "y": 26, "w": 8, "h": 6, "look": "rock" }],
+      "puzzles": [],
       "springs": [{ "id": "spring_m1", "x": 8, "y": 24 }],
       "npcs": [{ "id": "npc_m1_miner", "x": 16, "y": 30, "event": "event_miner" }],
       "lore": [
@@ -1122,6 +1126,7 @@
         { "id": "gate_m2_water", "x": 56, "y": 9, "w": 1, "h": 1, "element": "WATER" }
       ],
       "covers": [{ "id": "cover_m2_a", "x": 37, "y": 14, "w": 8, "h": 6, "look": "rock" }],
+      "puzzles": [],
       "springs": [{ "id": "spring_m2", "x": 50, "y": 10 }],
       "npcs": [],
       "lore": [
@@ -1319,6 +1324,7 @@
         { "id": "gate_m3_boulder", "x": 20, "y": 8, "w": 1, "h": 1, "element": "EARTH", "look": "crack" }
       ],
       "covers": [{ "id": "cover_m3_a", "x": 2, "y": 20, "w": 7, "h": 5, "look": "rock" }],
+      "puzzles": [],
       "springs": [{ "id": "spring_m3", "x": 34, "y": 23 }],
       "npcs": [],
       "lore": [
@@ -1553,6 +1559,7 @@
       "nodes": [],
       "gates": [{ "id": "gate_r1_light", "x": 11, "y": 10, "w": 1, "h": 1, "element": "LIGHT" }],
       "covers": [{ "id": "cover_r1_a", "x": 53, "y": 25, "w": 9, "h": 7, "look": "roof" }],
+      "puzzles": [],
       "springs": [{ "id": "spring_r1", "x": 36, "y": 25 }],
       "npcs": [{ "id": "npc_r1_altar", "x": 24, "y": 32, "event": "event_rune_altar" }],
       "lore": [
@@ -1797,6 +1804,7 @@
         { "id": "gate_r2_dark", "x": 24, "y": 22, "w": 1, "h": 1, "element": "DARK" }
       ],
       "covers": [{ "id": "cover_r2_a", "x": 3, "y": 21, "w": 12, "h": 13, "look": "roof" }],
+      "puzzles": [],
       "springs": [{ "id": "spring_r2", "x": 52, "y": 29 }],
       "npcs": [{ "id": "npc_r2_vault", "x": 44, "y": 5, "event": "event_ancient_cache" }],
       "lore": [
@@ -1982,6 +1990,7 @@
       "nodes": [],
       "gates": [{ "id": "gate_r3_metal", "x": 43, "y": 8, "w": 1, "h": 1, "element": "METAL" }],
       "covers": [{ "id": "cover_r3_a", "x": 18, "y": 15, "w": 6, "h": 5, "look": "roof" }],
+      "puzzles": [],
       "springs": [{ "id": "spring_r3", "x": 14, "y": 13 }],
       "npcs": [],
       "lore": [
@@ -2242,6 +2251,10 @@
       "nodes": [{ "id": "herb_n1", "x": 36, "y": 27, "kind": "herb", "table": "herbs" }],
       "gates": [{ "id": "gate_n1_bramble", "x": 54, "y": 29, "w": 1, "h": 1, "element": "FIRE" }],
       "covers": [{ "id": "cover_n1_a", "x": 4, "y": 5, "w": 15, "h": 9, "look": "canopy" }],
+      "puzzles": [
+        { "id": "puzzle_n1_brazier_a", "x": 48, "y": 27, "element": "FIRE", "gate": "gate_n1_bramble" },
+        { "id": "puzzle_n1_brazier_b", "x": 46, "y": 31, "element": "FIRE", "gate": "gate_n1_bramble" }
+      ],
       "springs": [{ "id": "spring_n1", "x": 18, "y": 33 }],
       "npcs": [],
       "lore": [
@@ -2522,6 +2535,7 @@
         { "id": "gate_n2_boulder", "x": 64, "y": 18, "w": 1, "h": 1, "element": "EARTH", "look": "crack" }
       ],
       "covers": [{ "id": "cover_n2_a", "x": 34, "y": 15, "w": 13, "h": 4, "look": "canopy" }],
+      "puzzles": [],
       "springs": [{ "id": "spring_n2", "x": 46, "y": 6 }],
       "npcs": [],
       "lore": [
@@ -2813,6 +2827,7 @@
       "nodes": [{ "id": "herb_n3", "x": 34, "y": 27, "kind": "herb", "table": "herbs" }],
       "gates": [{ "id": "gate_n3_water", "x": 48, "y": 40, "w": 1, "h": 1, "element": "WATER" }],
       "covers": [{ "id": "cover_n3_a", "x": 24, "y": 19, "w": 8, "h": 7, "look": "canopy" }],
+      "puzzles": [{ "id": "puzzle_n3_wheel", "x": 36, "y": 40, "element": "WATER", "gate": "gate_n3_water" }],
       "springs": [{ "id": "spring_n3", "x": 40, "y": 21 }],
       "npcs": [],
       "lore": [
@@ -3092,6 +3107,10 @@
       ],
       "gates": [{ "id": "gate_n4_lightning", "x": 62, "y": 24, "w": 1, "h": 1, "element": "LIGHTNING" }],
       "covers": [{ "id": "cover_n4_a", "x": 4, "y": 21, "w": 9, "h": 6, "look": "rock" }],
+      "puzzles": [
+        { "id": "puzzle_n4_rod_a", "x": 56, "y": 25, "element": "LIGHTNING", "gate": "gate_n4_lightning" },
+        { "id": "puzzle_n4_rod_b", "x": 52, "y": 31, "element": "LIGHTNING", "gate": "gate_n4_lightning" }
+      ],
       "springs": [{ "id": "spring_n4", "x": 56, "y": 12 }],
       "npcs": [],
       "lore": [
@@ -3362,6 +3381,7 @@
         { "id": "gate_n5_metal", "x": 59, "y": 28, "w": 1, "h": 1, "element": "METAL" }
       ],
       "covers": [{ "id": "cover_n5_a", "x": 54, "y": 3, "w": 14, "h": 11, "look": "rock" }],
+      "puzzles": [{ "id": "puzzle_n5_gear", "x": 46, "y": 28, "element": "METAL", "gate": "gate_n5_metal" }],
       "springs": [{ "id": "spring_n5", "x": 44, "y": 16 }],
       "npcs": [],
       "lore": [
@@ -3664,6 +3684,10 @@
       "nodes": [],
       "gates": [{ "id": "gate_n6_light", "x": 24, "y": 27, "w": 1, "h": 1, "element": "LIGHT" }],
       "covers": [{ "id": "cover_n6_a", "x": 41, "y": 1, "w": 13, "h": 11, "look": "roof" }],
+      "puzzles": [
+        { "id": "puzzle_n6_plate_a", "x": 8, "y": 18, "element": "LIGHT", "gate": "gate_n6_light" },
+        { "id": "puzzle_n6_plate_b", "x": 13, "y": 23, "element": "LIGHT", "gate": "gate_n6_light" }
+      ],
       "springs": [{ "id": "spring_n6", "x": 47, "y": 23 }],
       "npcs": [],
       "lore": [

@@ -5,6 +5,9 @@ import { adventureArea } from '../../src/areas/adventure';
 import { battleAct, closeReport, engage, interact, returnToCamp, takeExit } from '../../src/areas/adventure/logic/actions/run';
 import { MAPS, ZONES } from '../../src/areas/adventure/logic/config/content';
 import { newFighter } from '../../src/areas/adventure/logic/fighters';
+import { ADVENTURE_MIGRATIONS } from '../../src/areas/adventure/logic/migrations';
+import { ADVENTURE_STATE_VERSION } from '../../src/areas/adventure/logic/state';
+import type { Raw } from '../../src/core/save/migrate';
 import { foeOrder } from '../../src/areas/adventure/logic/foes';
 import { reachableTiles, thingsOf, tileCenter } from '../../src/areas/adventure/logic/maps';
 import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
@@ -15,6 +18,13 @@ import type { WorldSave } from '../../src/core/save/world';
 import type { ActionContext } from '../../src/core/types';
 
 export const H = 3_600_000;
+
+/** A slice of version `from` carried through every later migration to today's version. */
+export function migrateOn(from: number, slice: Raw): Raw {
+  let out = slice;
+  for (let v = from; v < ADVENTURE_STATE_VERSION; v += 1) out = ADVENTURE_MIGRATIONS[v]!(out);
+  return out;
+}
 export const T0 = 20_000 * 86_400_000;
 export const ctxAt = (now: number, seed = 7): ActionContext => ({ now, rng: mulberry32(seed) });
 export const ok = (r: { ok: boolean; state?: WorldSave; error?: string }): WorldSave => {

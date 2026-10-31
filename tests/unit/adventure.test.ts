@@ -18,7 +18,7 @@ import { adventureEventsToWorld } from '../../src/areas/adventure/logic/worldEve
 import type { CreatureGift } from '../../src/core/area-registry/registry';
 import { ELEMENTS, STATUS_IDS } from '../../src/systems/combat/types';
 import { ELEMENT_VALUES, STATUS_VALUES } from '../../content/schemas/adventure/combat';
-import { T0, adventureWorld, ctxAt, entry, err, ok, squad, strong } from './adventureKit';
+import { T0, adventureWorld, ctxAt, entry, err, ok, squad, strong, migrateOn } from './adventureKit';
 
 const roster = squad;
 const knight = entry('a');
@@ -163,7 +163,7 @@ describe('the save (v2)', () => {
       lastTickedAt: T0,
     };
     const v2 = ADVENTURE_MIGRATIONS[1]!(v1 as never) as Record<string, unknown>;
-    const a = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[5]!(ADVENTURE_MIGRATIONS[4]!(ADVENTURE_MIGRATIONS[3]!(ADVENTURE_MIGRATIONS[2]!(v2 as never)))));
+    const a = adventureStateSchema.parse(migrateOn(2, v2 as never));
     expect(a.fighters.k).toMatchObject({ level: 6, sp: 10, energy: 40 + AB.run.energyCost, classId: null });
     expect(a.run).toBeNull();
     expect(a.pending).toEqual({ item_forest_herb: 3 });

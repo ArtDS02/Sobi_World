@@ -18,7 +18,7 @@ import { riftVm } from './riftVm';
 import { actionButton, bar, elementIcon, iconOf, roundButton, type ViewCtx } from './viewKit';
 import { ACTION_ART, pct } from './vmKit';
 
-const MINI_COLOUR: Record<string, string> = { '.': '#cfe8b4', '#': '#5d7a4a', '~': '#7fc4e8', P: '#b98cf0', C: '#f2c14e', c: '#c9b37a', G: '#e0703a', '>': '#fff6d8' };
+const MINI_COLOUR: Record<string, string> = { f: '#2a2638', '.': '#cfe8b4', '#': '#5d7a4a', '~': '#7fc4e8', P: '#b98cf0', C: '#f2c14e', c: '#c9b37a', G: '#e0703a', '>': '#fff6d8' };
 
 function minimap(ctx: ViewCtx): HTMLElement | null {
   const run = adventureOf(ctx.world).run;

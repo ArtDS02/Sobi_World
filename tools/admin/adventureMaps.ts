@@ -35,7 +35,7 @@ function overlay(map: AreaMap): Map<string, { text: string; colour: string; id: 
     const def = PROPS[p.prop];
     if (def) mark(p.x, p.y, def.w, def.h, '▲', '#3f6b35', `prop:${p.x},${p.y}`);
   }
-  const KIND: Record<string, [string, string]> = { chest: ['C', '#f2c14e'], node: ['H', '#9fd36b'], gate: ['G', '#e0703a'], spring: ['W', '#5fb8e8'], npc: ['N', '#c79bf2'], lore: ['L', '#d8cbb0'], shrine: ['R', '#f29bc6'], portal: ['P', '#b98cf0'], exit: ['>', '#fff6d8'] };
+  const KIND: Record<string, [string, string]> = { chest: ['C', '#f2c14e'], node: ['H', '#9fd36b'], gate: ['G', '#e0703a'], puzzle: ['Z', '#f0d060'], spring: ['W', '#5fb8e8'], npc: ['N', '#c79bf2'], lore: ['L', '#d8cbb0'], shrine: ['R', '#f29bc6'], portal: ['P', '#b98cf0'], exit: ['>', '#fff6d8'] };
   for (const t of thingsOf(map)) mark(t.x, t.y, t.w, t.h, KIND[t.kind]![0], KIND[t.kind]![1], t.kind === 'portal' ? 'portal' : t.id);
   for (const g of map.groups) out.set(`${g.x},${g.y}`, { text: FOE_LETTER[g.kind], colour: '#e05050', id: g.id });
   out.set(`${map.spawn.x},${map.spawn.y}`, { text: 'S', colour: '#ffffff', id: 'spawn' });

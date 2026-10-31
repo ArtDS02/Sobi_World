@@ -545,6 +545,7 @@ export const partB = {
     TOO_FAR: "Get a little closer.",
     BLOCKED: "Cannot stand there.",
     GATE_NEEDS_ELEMENT: "A companion of the right element is needed to open this way.",
+    GATE_NEEDS_PUZZLE: "This way opens once every device around here is lit.",
     ALREADY_OPENED: "Already opened.",
     SPRING_USED: "This spring was used on this trip.",
     PORTAL_INACTIVE: "This portal is not lit yet.",

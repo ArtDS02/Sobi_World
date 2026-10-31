@@ -21,7 +21,7 @@ import { startBattle } from '../../src/systems/combat';
 import type { BattleEvent } from '../../src/systems/combat/types';
 import type { WorldSave } from '../../src/core/save/world';
 import type { Raw } from '../../src/core/save/migrate';
-import { T0, adventureWorld, ctxAt, err, fight, keys, ok, squad, standBy, strong } from './adventureKit';
+import { T0, adventureWorld, ctxAt, err, fight, keys, ok, squad, standBy, strong, migrateOn } from './adventureKit';
 
 const roster = squad;
 const F1 = MAPS.map_forest_edge!;
@@ -250,8 +250,8 @@ describe('the save (v4, adventure-big-update-1)', () => {
   it('a real slice migrates on: guardians whose portal is lit and bosses of cleared zones stay beaten; a trip gets no board', () => {
     const fixture = JSON.parse(readFileSync(join(import.meta.dirname, '..', 'fixtures', 'adventure-slice-v2-real.json'), 'utf8')) as { slice: Raw };
     const v3 = ADVENTURE_MIGRATIONS[2]!(fixture.slice);
-    const v4 = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[5]!(ADVENTURE_MIGRATIONS[4]!(ADVENTURE_MIGRATIONS[3]!(v3))));
-    expect(v4.version).toBe(6);
+    const v4 = adventureStateSchema.parse(migrateOn(3, v3));
+    expect(v4.version).toBe(7);
     expect(v4.openedExits).toEqual([]);
     expect(v4.foundSecrets).toEqual([]);
     const lit = (v3.activePortals ?? []) as string[];
@@ -267,7 +267,7 @@ describe('the save (v4, adventure-big-update-1)', () => {
 describe('the save (v3)', () => {
   it('a real v2 slice migrates: fighters keep everything and start their feats; tips and the Rift begin empty', () => {
     const fixture = JSON.parse(readFileSync(join(import.meta.dirname, '..', 'fixtures', 'adventure-slice-v2-real.json'), 'utf8')) as { slice: Raw };
-    const a = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[5]!(ADVENTURE_MIGRATIONS[4]!(ADVENTURE_MIGRATIONS[3]!(ADVENTURE_MIGRATIONS[2]!(fixture.slice)))));
+    const a = adventureStateSchema.parse(migrateOn(2, fixture.slice));
     const key = Object.keys(fixture.slice.fighters as object)[0]!;
     const before = (fixture.slice.fighters as Record<string, Raw>)[key]!;
     expect(a.fighters[key]).toMatchObject({ level: before.level, sp: before.sp, feats: newFeats() });
@@ -278,8 +278,8 @@ describe('the save (v3)', () => {
     const w = start(strong(adventureWorld()));
     const a = adventureOf(w);
     const without = (o: object, ...keys: string[]): Raw => Object.fromEntries(Object.entries(o).filter(([k]) => !keys.includes(k)));
-    const v2 = { ...without(a, 'tipsSeen', 'rift', 'openedExits', 'foundSecrets'), version: 2, run: without(a.run!, 'rift'), fighters: Object.fromEntries(Object.entries(a.fighters).map(([k, f]) => [k, without(f, 'feats')])) };
-    const v3 = adventureStateSchema.parse(ADVENTURE_MIGRATIONS[5]!(ADVENTURE_MIGRATIONS[4]!(ADVENTURE_MIGRATIONS[3]!(ADVENTURE_MIGRATIONS[2]!(v2)))));
+    const v2 = { ...without(a, 'tipsSeen', 'rift', 'openedExits', 'foundSecrets', 'litPuzzles', 'explored'), version: 2, run: without(a.run!, 'rift'), fighters: Object.fromEntries(Object.entries(a.fighters).map(([k, f]) => [k, without(f, 'feats')])) };
+    const v3 = adventureStateSchema.parse(migrateOn(2, v2));
     expect(v3.run).toEqual(a.run);
     expect(v3.fighters).toEqual(a.fighters);
   });
