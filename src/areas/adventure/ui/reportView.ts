@@ -50,7 +50,8 @@ export function renderReport(ctx: ViewCtx): HTMLElement | null {
             { class: 'adventure-board__gift' },
             el('b', { text: B.gift }),
             el('div', { class: 'adventure-board__items', attrs: { 'data-drag-scroll': 'gift' } }, ...vm.gift.map(itemChip)),
-            el('small', { text: B.giftNote }),
+            // Only a guardian or a boss opens a gate; a subboss or a special one just gives.
+            vm.kind === 'elite' || vm.kind === 'boss' ? el('small', { text: B.giftNote }) : null,
           )
         : null,
       el(

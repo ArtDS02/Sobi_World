@@ -5,7 +5,7 @@ export type AdventureEvent =
   | { type: 'ADVENTURE_RUN_STARTED'; zoneId: string; team: string[]; prep: string[] }
   | { type: 'ADVENTURE_MOVED'; mapId: string }
   | { type: 'ADVENTURE_AREA_ENTERED'; mapId: string; via: 'exit' | 'portal' }
-  | { type: 'ADVENTURE_BATTLE_STARTED'; boss: boolean; elite: boolean; affix?: string | null; rift?: number }
+  | { type: 'ADVENTURE_BATTLE_STARTED'; boss: boolean; elite: boolean; kind?: string; asleep?: boolean; affix?: string | null; rift?: number }
   | { type: 'ADVENTURE_BATTLE_WON'; zoneId: string; boss: boolean; elite: boolean; enemies: number; exp: number; coins: number; quick?: boolean; affix?: string | null; gems?: number; rift?: boolean }
   | { type: 'ADVENTURE_FOE_ESCAPED'; affix: string }
   | { type: 'ADVENTURE_QUIP'; key: string; name: string; lineage: string; trigger: string; n: number }

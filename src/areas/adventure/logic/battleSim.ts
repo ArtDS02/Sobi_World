@@ -10,6 +10,7 @@ import { loadoutBonus, loadoutMods, type Loadout } from '../../../systems/equipm
 import { AB, CLASSES, COMBAT_CONTEXT, EQUIPMENT_DEFS, LINEAGES, MAPS, SKILLS, STAT_RULES, TREES, ZONES, type ClassId, type Identity, type LineageId } from './config/content';
 import { enemyInits, pickGroup } from './encounter';
 import { allyInit, rarityMultiplier, uniqueSkills, withPrep } from './fighters';
+import { foeOrder, optionalFoe, withClass } from './foes';
 import type { Fighter, RunMember } from './state';
 import { classLoadout, nodeLevel, stepCost, whyNotStep } from './tree';
 
@@ -145,7 +146,8 @@ export function simulateRuns(input: SimInput): SimResult {
       reached[mi]! += 1;
       const map = MAPS[zone.maps[mi]!]!;
       let springUsed = false;
-      const order = [...map.groups].sort((a, b) => ({ normal: 0, elite: 1, boss: 2 })[a.kind] - ({ normal: 0, elite: 1, boss: 2 })[b.kind]);
+      // Optional fights (a subboss, a special one) are left out: the run measures the main road.
+      const order = map.groups.filter((g) => !optionalFoe(g)).sort((a, b) => foeOrder(a.kind) - foeOrder(b.kind));
       for (const g of order) {
         if (g.kind === 'boss') bossReached += 1;
         const hurt = team.reduce((n, m) => n + m.hp, 0) / team.reduce((n, m) => n + m.stats.hp, 0);
@@ -157,7 +159,7 @@ export function simulateRuns(input: SimInput): SimResult {
           }
         }
         const ids = pickGroup(rng, g.pool);
-        const start = startBattle(Math.floor(rng.next() * 2 ** 31), [...team.map((m) => allyInit(m)), ...enemyInits(ids)], COMBAT_CONTEXT);
+        const start = startBattle(Math.floor(rng.next() * 2 ** 31), [...team.map((m) => allyInit(m)), ...withClass(enemyInits(ids), g)], COMBAT_CONTEXT);
         let end: BattleState = start.state;
         for (let i = 0; i < 600 && !end.outcome; i += 1) {
           const action = actionFor(end, COMBAT_CONTEXT);

@@ -6,6 +6,7 @@ import { battleAct, closeReport, engage, interact, returnToCamp, takeExit } from
 import { stepNode } from '../../src/areas/adventure/logic/actions/growth';
 import { MAPS, TREES, ZONES, identityOf } from '../../src/areas/adventure/logic/config/content';
 import { classOf } from '../../src/areas/adventure/logic/fighters';
+import { foeOrder, optionalFoe } from '../../src/areas/adventure/logic/foes';
 import { reachableTiles, thingsOf, tileCenter, type Thing } from '../../src/areas/adventure/logic/maps';
 import { adventureOf } from '../../src/areas/adventure/logic/save/lens';
 import { whyNotStep } from '../../src/areas/adventure/logic/tree';
@@ -60,11 +61,11 @@ export function walkTrip(b: Bot) {
     use(b, mapId, ['gate']);
     use(b, mapId, ['chest', 'node', 'npc', 'lore', 'shrine']);
     const map = MAPS[mapId]!;
-    const order = [...map.groups].sort((a, c) => ({ normal: 0, elite: 1, boss: 2 })[a.kind] - ({ normal: 0, elite: 1, boss: 2 })[c.kind]);
+    const order = [...map.groups].sort((a, c) => foeOrder(a.kind) - foeOrder(c.kind));
     for (const g of order) {
       if (run(b)?.phase !== 'explore') return;
       if (hurt(b) < 0.5) use(b, mapId, ['spring']);
-      if (g.kind === 'normal' && hurt(b) < 0.3) continue;
+      if ((g.kind === 'normal' || optionalFoe(g)) && hurt(b) < 0.3) continue;
       const at = tileCenter(map, g.x, g.y);
       if (b.act('adventure', (w, c) => engage(w, { ...at, groupId: g.id }, c))) fight(b);
     }

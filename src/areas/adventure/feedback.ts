@@ -34,7 +34,8 @@ export function adventurePresentation(e: EventBase, origin: 'action' | 'tick' | 
       return { sound: 'notify', toast: t(T.started, { zone: ZONES[e.zoneId]?.nameVi ?? '' }) };
     case 'ADVENTURE_BATTLE_STARTED': {
       const affix = e.affix ? AFFIXES[e.affix] : undefined;
-      return { sound: 'notify', toast: affix ? t(E.variant, { name: affix.nameVi }) : e.boss ? T.boss : e.elite ? T.elite : T.battle };
+      const kind = e.kind === 'mutant' || e.kind === 'subboss' || e.kind === 'special' ? T[e.kind] : null;
+      return { sound: 'notify', toast: e.boss ? T.boss : e.elite ? T.elite : (kind ?? (e.asleep ? T.ambush : affix ? t(E.variant, { name: affix.nameVi }) : T.battle)) };
     }
     case 'ADVENTURE_BATTLE_WON': {
       // A Rift floor says its own line (ADVENTURE_RIFT_FLOOR).

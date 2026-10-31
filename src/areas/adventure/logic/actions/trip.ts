@@ -17,6 +17,7 @@ import type { AdventureEvent } from '../events';
 import { walkableOf } from '../maps';
 import type { AdventureState, BattleReport, Fighter, Run } from '../state';
 import { expShare } from '../fighters';
+import { isGuardian } from '../foes';
 import { put, type Body } from './kit';
 
 /** Working copy of one step: the world, the slice, the trip, what happened and the XP earned. */
@@ -223,8 +224,8 @@ export function zoneOpen(w: WorldSave, a: AdventureState, zoneId: string): boole
   return !zone.requiresCleared || !!a.cleared[zone.requiresCleared];
 }
 
-/** The guardian or the boss of an area (its one group that is not a normal one), or undefined. */
-export const guardianOf = (map: AreaMap): MapGroup | undefined => map.groups.find((g) => g.kind !== 'normal');
+/** The guardian (elite) or the boss of an area, or undefined (decision 045: the other classes guard nothing). */
+export const guardianOf = (map: AreaMap): MapGroup | undefined => map.groups.find(isGuardian);
 
 /** Has the guardian (or boss) of this area been beaten for good. */
 export const guardianBeaten = (a: AdventureState, map: AreaMap): boolean => {

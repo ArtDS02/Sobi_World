@@ -12,7 +12,13 @@ export interface ScenePos {
 
 export interface SceneGroup {
   id: string;
-  kind: 'normal' | 'elite' | 'boss';
+  kind: 'normal' | 'elite' | 'mutant' | 'subboss' | 'boss' | 'special';
+  /** Height of its picture in tiles, its corruption 1–5, asleep or on guard (decision 045). */
+  size: number;
+  corruption: number;
+  asleep: boolean;
+  /** Its class's name on the ribbon over its tag (none for a normal group). */
+  title: string | null;
   art: string;
   elements: Element[];
   count: number;

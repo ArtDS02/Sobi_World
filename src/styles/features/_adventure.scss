@@ -895,6 +895,8 @@ $adv-pink: #ef5a78;
     .is-guard { width: 1.1rem; height: 1.1rem; }
   }
   &__plate-lv { flex: none; padding: 0 4px; font-size: 0.62rem; font-weight: $fw-bold; color: #fff; background: #d48a1a; border-radius: 999px; }
+  // Corruption 1–5 (decision 045): violet pips, darker as the level rises.
+  &__corruption { flex: none; font-size: 0.58rem; letter-spacing: -1px; color: #a24fc8; &.is-c4, &.is-c5 { color: #6b1f8f; text-shadow: 0 0 4px rgba(150, 40, 200, 0.6); } }
   &__plate-hp { position: relative; .adventure-ui__meter { height: 0.78rem; } small { position: absolute; inset: 0; display: grid; place-items: center; font-size: 0.58rem; font-weight: $fw-bold; color: #fff; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.65); } }
   &__plate-sub { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; .adventure-ui__meter { height: 0.3rem; } }
   &__unit--enemy &__plate-hp .c-bar__fill { background: linear-gradient(#ff8a8a, #e04848); }

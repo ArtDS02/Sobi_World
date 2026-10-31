@@ -7,6 +7,7 @@ import type { ActionContext } from '../../../../core/types';
 import { AB, ENEMIES, MAPS, ZONES } from '../config/content';
 import { addCount } from '../encounter';
 import { credit, runAdventure, type AdventureResult } from './kit';
+import { foeReward, staysBeaten } from '../foes';
 import { chargeParty, type PartyArgs } from './start';
 import { commit, freshRun, giveExp, groupEnemies, type Step } from './trip';
 
@@ -29,13 +30,14 @@ export function sweepZone(world: WorldSave, args: PartyArgs & { zoneId: string }
     for (const mapId of zone.maps) {
       const map = MAPS[mapId]!;
       for (const g of map.groups) {
-        // Guardians and bosses are beaten once and for all (adventure-big-update-1 §12): a sweep meets the normal groups only.
-        if (g.kind !== 'normal') continue;
+        // Groups beaten for good (adventure-big-update-1 §12, decision 045) are not met again: a sweep meets the ones that come back.
+        if (staysBeaten(g)) continue;
+        const cls = foeReward(g);
         for (const id of groupEnemies(seed, mapId, g)) {
           const e = ENEMIES[id]!;
-          exp += e.exp * share;
-          coins += e.coins * share;
-          for (const d of e.drops) if (rng.next() < d.chance * share) addCount(run.loot, d.itemId, d.min + Math.floor(rng.next() * (d.max - d.min + 1)));
+          exp += e.exp * share * cls.reward;
+          coins += e.coins * share * cls.reward;
+          for (const d of e.drops) if (rng.next() < d.chance * share * cls.drops) addCount(run.loot, d.itemId, d.min + Math.floor(rng.next() * (d.max - d.min + 1)));
         }
       }
     }

@@ -75,7 +75,20 @@ export interface MapObjects {
   layer: Phaser.GameObjects.Container;
   things: Map<string, Phaser.GameObjects.Image>;
   /** Each group's picture with its resting scale and its own breathing phase, its shadow and its tag. */
-  groups: Map<string, { img: Phaser.GameObjects.Image; sx: number; sy: number; phase: number; shadow: Phaser.GameObjects.Ellipse; label: Phaser.GameObjects.Container }>;
+  groups: Map<
+    string,
+    {
+      img: Phaser.GameObjects.Image;
+      sx: number;
+      sy: number;
+      phase: number;
+      shadow: Phaser.GameObjects.Ellipse;
+      label: Phaser.GameObjects.Container;
+      /** A dark glow under a group corrupted 3 or more, and the Zzz over a sleeping one (decision 045). */
+      aura: Phaser.GameObjects.Image | null;
+      zzz: Phaser.GameObjects.Text | null;
+    }
+  >;
   sparkles: Map<string, Phaser.GameObjects.Text>;
   /** The teleport gates (exits): the portal picture, its swirl of light while open, the lock and its words while shut. */
   gates: Map<string, { img: Phaser.GameObjects.Image; glow: Phaser.GameObjects.Image; lock: Phaser.GameObjects.Container; words: Phaser.GameObjects.Text }>;
@@ -128,14 +141,18 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
   const groups: MapObjects['groups'] = new Map();
   for (const g of s.groups) {
     const img = scene.add.image(0, 0, key(scene, g.art)).setOrigin(0.5, 1);
-    const size = g.kind === 'boss' ? 2.4 : g.kind === 'elite' ? 1.8 : 1.4;
+    const size = g.size;
     const ratio = img.height > 0 ? img.width / img.height : 1;
     img.setDisplaySize(size * t * ratio, size * t);
-    if (g.affix?.golden) img.setTint(0xffe27a);
-    const shadow = scene.add.ellipse(0, 0, size * t * ratio * 0.7, size * t * 0.18, 0x000000, 0.22);
+    // Corruption darkens the picture toward violet; a golden variant shines gold instead.
+    img.setTint(g.affix?.golden ? 0xffe27a : (CORRUPTION_TINT[g.corruption - 1] ?? 0xffffff));
+    const shadow = scene.add.ellipse(0, 0, size * t * ratio * 0.7, size * t * 0.18, g.corruption >= 3 ? 0x3a0a4a : 0x000000, g.corruption >= 3 ? 0.4 : 0.22);
+    const aura = g.corruption >= 3 ? scene.add.image(0, 0, 'adv-fx-blob').setDisplaySize(size * t * ratio * 1.3, size * t * 0.75).setTint(0x4a0f6a).setAlpha(0) : null;
+    const zzz = g.asleep ? scene.add.text(0, 0, 'z Z', { fontSize: '18px', fontStyle: 'bold', color: '#e8f0ff', stroke: '#3a4a7a', strokeThickness: 4 }).setOrigin(0.5, 1) : null;
     const phase = [...g.id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 100;
-    groups.set(g.id, { img, sx: img.scaleX, sy: img.scaleY, phase, shadow, label: foeLabel(scene, g.elements, g.count, g.affix?.name ?? null) });
-    layer.add([shadow, img, groups.get(g.id)!.label]);
+    const label = foeLabel(scene, g.elements, g.count, g.affix?.name ?? g.title, g.corruption, g.asleep);
+    groups.set(g.id, { img, sx: img.scaleX, sy: img.scaleY, phase, shadow, label, aura, zzz });
+    layer.add([shadow, ...(aura ? [aura] : []), img, ...(zzz ? [zzz] : []), label]);
   }
   const gates: MapObjects['gates'] = new Map();
   for (const e of map.exits) {
@@ -158,8 +175,14 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
 const lockWords = (lock: AdventureSceneState['exits'][number]['lock']): string =>
   lock === 'shortcut' ? vi.adventure.explore.shortcutLocked : lock === 'zone' ? vi.adventure.explore.zoneLocked : vi.adventure.explore.gateLocked;
 
-/** The tag over a group seen up close: its elements' badges and how many it is (origin at the bottom centre). */
-function foeLabel(scene: Phaser.Scene, elements: readonly AdventureSceneState['groups'][number]['elements'][number][], count: number, affix: string | null): Phaser.GameObjects.Container {
+/** Tint of a group's picture by corruption 1–5 (decision 045): from its own colours toward a sick violet. */
+const CORRUPTION_TINT = [0xffffff, 0xf0e2f6, 0xe0c8ee, 0xcfaae6, 0xb98ad8];
+
+/**
+ * The tag over a group seen up close: its elements' badges, how many it is and its corruption pips; above it, a ribbon with its variant
+ * or its class (origin at the bottom centre).
+ */
+function foeLabel(scene: Phaser.Scene, elements: readonly AdventureSceneState['groups'][number]['elements'][number][], count: number, ribbonText: string | null, corruption: number, asleep: boolean): Phaser.GameObjects.Container {
   const icon = 22;
   const parts: Phaser.GameObjects.GameObject[] = [];
   let x = 6;
@@ -170,13 +193,15 @@ function foeLabel(scene: Phaser.Scene, elements: readonly AdventureSceneState['g
     x += icon + 2;
   }
   const text = scene.add.text(x + 2, -icon / 2 - 4, `×${count}`, { fontSize: '16px', fontStyle: 'bold', color: '#4a2e17' }).setOrigin(0, 0.5);
-  const w = x + 4 + text.width + 6;
+  const pips = scene.add.text(x + 2 + text.width + 6, -icon / 2 - 4, '◆'.repeat(corruption) + '◇'.repeat(Math.max(0, 5 - corruption)), { fontSize: '13px', color: corruption >= 4 ? '#6b1f8f' : '#a24fc8' }).setOrigin(0, 0.5);
+  const w = x + 4 + text.width + 6 + pips.width + 6;
   const bg = scene.add.graphics().fillStyle(0xfff6e0, 0.95).lineStyle(2, 0x8a5a2b, 1).fillRoundedRect(0, -icon - 8, w, icon + 8, 10).strokeRoundedRect(0, -icon - 8, w, icon + 8, 10);
-  const box = scene.add.container(0, 0, [bg, ...parts, text]).setDepth(99998).setVisible(false);
+  const box = scene.add.container(0, 0, [bg, ...parts, text, pips]).setDepth(99998).setVisible(false);
   for (const p of box.list as unknown as Phaser.GameObjects.Components.Transform[]) p.x -= w / 2;
-  if (affix) {
-    // The variant's name on a gold ribbon above the tag.
-    const name = scene.add.text(0, -icon - 20, affix, { fontSize: '15px', fontStyle: 'bold', color: '#5b3a1c' }).setOrigin(0.5, 0.5);
+  const words = ribbonText && asleep ? `${ribbonText} · ${vi.adventure.foes.asleep}` : (ribbonText ?? (asleep ? vi.adventure.foes.asleep : null));
+  if (words) {
+    // The variant's or the class's name on a gold ribbon above the tag.
+    const name = scene.add.text(0, -icon - 20, words, { fontSize: '15px', fontStyle: 'bold', color: '#5b3a1c' }).setOrigin(0.5, 0.5);
     const rw = name.width + 16;
     const ribbon = scene.add.graphics().fillStyle(0xffe27a, 0.97).lineStyle(2, 0xb8860b, 1).fillRoundedRect(-rw / 2, -icon - 30, rw, 20, 9).strokeRoundedRect(-rw / 2, -icon - 30, rw, 20, 9);
     box.add([ribbon, name]);

@@ -5,6 +5,8 @@ import type { CreatureGift, GiftResult, RosterEntry } from '../../../core/area-r
 import type { WorldSave } from '../../../core/save/world';
 import type { ActionContext } from '../../../core/types';
 import type { Element } from '../../../systems/combat/types';
+import { t } from '../../../i18n/format';
+import { vi } from '../../../i18n/vi';
 import { art } from '../../../ui/components/icon';
 import { el } from '../../../ui/dom';
 import type { ClassId } from '../logic/config/content';
@@ -94,6 +96,10 @@ export function iconOf(id: string, label: string, cls = ''): HTMLElement {
 }
 
 export const elementIcon = (e: Element, cls = ''): HTMLElement => iconOf(elementArt(e), elementName(e), `adv-icon--elem ${cls}`);
+
+/** An enemy's corruption 1–5 as filled and empty pips (decision 045). */
+export const corruptionPips = (n: number): HTMLElement =>
+  el('small', { class: `adventure-ui__corruption is-c${n}`, text: '◆'.repeat(n) + '◇'.repeat(Math.max(0, 5 - n)), attrs: { title: t(vi.adventure.foes.corruption, { n }), 'aria-label': t(vi.adventure.foes.corruption, { n }) } });
 export const classIcon = (id: ClassId, cls = ''): HTMLElement => iconOf(classArt(id), className(id), `adv-icon--class ${cls}`);
 
 /** A skill's own icon; without art, its element's badge (or the plain skill icon). */

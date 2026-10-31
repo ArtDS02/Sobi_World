@@ -5,6 +5,7 @@ import { adventureArea } from '../../src/areas/adventure';
 import { battleAct, closeReport, engage, interact, returnToCamp, takeExit } from '../../src/areas/adventure/logic/actions/run';
 import { MAPS, ZONES } from '../../src/areas/adventure/logic/config/content';
 import { newFighter } from '../../src/areas/adventure/logic/fighters';
+import { foeOrder } from '../../src/areas/adventure/logic/foes';
 import { reachableTiles, thingsOf, tileCenter } from '../../src/areas/adventure/logic/maps';
 import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
 import type { Fighter } from '../../src/areas/adventure/logic/state';
@@ -91,7 +92,7 @@ export function walkTrip(w0: WorldSave, now = T0): WorldSave {
     const run = adventureOf(w).run;
     if (!run || run.phase !== 'explore' || run.mapId !== mapId) break;
     const map = MAPS[mapId]!;
-    for (const g of [...map.groups].sort((a, b) => ({ normal: 0, elite: 1, boss: 2 })[a.kind] - ({ normal: 0, elite: 1, boss: 2 })[b.kind])) {
+    for (const g of [...map.groups].sort((a, b) => foeOrder(a.kind) - foeOrder(b.kind))) {
       if (adventureOf(w).run?.phase !== 'explore') return w;
       const team = adventureOf(w).run!.team;
       if (team.reduce((n, m) => n + m.hp, 0) < team.reduce((n, m) => n + m.stats.hp, 0) * 0.5 && map.springs[0]) {

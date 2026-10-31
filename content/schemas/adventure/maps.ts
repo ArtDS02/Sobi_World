@@ -31,11 +31,27 @@ export const propSchema = z.strictObject({
 
 export const propsFileSchema = z.strictObject({ props: z.array(propSchema) });
 
+/**
+ * The six classes of enemy group (decision 045): normal fills the area; elite is the area's guardian (its first defeat lights the
+ * area's portal and opens the gates behind it); mutant grows a second element; subboss is an optional hard fight; boss is the zone
+ * boss; special is a chimera met only on some days. Elite, subboss, boss and special are beaten for good.
+ */
+export const FOE_CLASSES = ['normal', 'elite', 'mutant', 'subboss', 'boss', 'special'] as const;
+/** When a special group shows: on a rainy day, or at night. */
+export const FOE_WHEN = ['rain', 'night'] as const;
+
 export const groupSchema = z.strictObject({
   id: id('g'),
   ...cell,
-  /** normal: a fight; elite: the area's guardian (its first defeat lights the area's portal); boss: the zone boss. */
-  kind: z.enum(['normal', 'elite', 'boss']),
+  kind: z.enum(FOE_CLASSES),
+  /** Corruption 1–5 (decision 045): stronger and darker the higher it is; absent = the class's own level. */
+  corruption: z.number().int().min(1).max(5).optional(),
+  /** Asleep instead of standing guard: the party may tiptoe past, and touching it gives the party the first move. */
+  sleep: z.boolean().optional(),
+  /** A special group shows only then. */
+  when: z.enum(FOE_WHEN).optional(),
+  /** The second element a mutant or a special grows (absent = the class table's pick for its first element). */
+  element2: element.optional(),
   pool: z.array(z.strictObject({ weight: posInt, enemies: z.array(z.string().regex(/^enemy_[a-z0-9_]+$/)).min(1).max(4) })).min(1),
   /** Loot table of the boss chest. */
   table: z.string().optional(),

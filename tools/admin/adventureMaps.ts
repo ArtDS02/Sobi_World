@@ -6,6 +6,9 @@ import { mapProblems, thingsOf } from '../../src/areas/adventure/logic/maps';
 import { esc } from './labels';
 import { post, rememberMessage } from './store';
 
+/** The letter of each class of enemy group on the grid (decision 045). */
+const FOE_LETTER: Record<AreaMap['groups'][number]['kind'], string> = { normal: '1', elite: 'E', mutant: 'M', subboss: 'S', boss: 'B', special: '*' };
+
 type Tool = { kind: 'ground'; char: string } | { kind: 'prop'; id: string } | { kind: 'erase' } | { kind: 'move'; what: string | null };
 
 const GROUND = [['.', 'Đất'], [',', 'Đường'], ['=', 'Cầu'], ['#', 'Vách / tường'], ['~', 'Nước']] as const;
@@ -32,7 +35,7 @@ function overlay(map: AreaMap): Map<string, { text: string; colour: string; id: 
   }
   const KIND: Record<string, [string, string]> = { chest: ['C', '#f2c14e'], node: ['H', '#9fd36b'], gate: ['G', '#e0703a'], spring: ['W', '#5fb8e8'], npc: ['N', '#c79bf2'], lore: ['L', '#d8cbb0'], shrine: ['R', '#f29bc6'], portal: ['P', '#b98cf0'], exit: ['>', '#fff6d8'] };
   for (const t of thingsOf(map)) mark(t.x, t.y, t.w, t.h, KIND[t.kind]![0], KIND[t.kind]![1], t.kind === 'portal' ? 'portal' : t.id);
-  for (const g of map.groups) out.set(`${g.x},${g.y}`, { text: g.kind === 'boss' ? 'B' : g.kind === 'elite' ? 'E' : '1', colour: '#e05050', id: g.id });
+  for (const g of map.groups) out.set(`${g.x},${g.y}`, { text: FOE_LETTER[g.kind], colour: '#e05050', id: g.id });
   out.set(`${map.spawn.x},${map.spawn.y}`, { text: 'S', colour: '#ffffff', id: 'spawn' });
   return out;
 }

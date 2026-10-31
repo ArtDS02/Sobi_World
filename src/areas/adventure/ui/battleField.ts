@@ -9,7 +9,7 @@ import type { Run } from '../logic/state';
 import { floaterEl } from './battleFxView';
 import type { FloaterVm } from './battleFloaters';
 import { type BattleActionVm, type BattleVm, type UnitVm, effectOn } from './battleVm';
-import { type ViewCtx, bar, elementIcon, iconOf, statusChip } from './viewKit';
+import { type ViewCtx, bar, corruptionPips, elementIcon, iconOf, statusChip } from './viewKit';
 import { ACTION_ART } from './vmKit';
 import { act } from './battleCommand';
 import { mirrored } from './motionProfiles';
@@ -115,6 +115,7 @@ export function unitOnField(
         { class: 'adventure-ui__plate-name' },
         ...u.elements.map((e) => elementIcon(e)),
         el('b', { text: u.name }),
+        u.corruption > 0 ? corruptionPips(u.corruption) : null,
         u.level !== null
           ? el('small', {
               class: 'adventure-ui__plate-lv',

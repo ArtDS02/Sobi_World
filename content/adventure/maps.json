@@ -134,6 +134,7 @@
           "x": 36,
           "y": 19,
           "kind": "normal",
+          "sleep": true,
           "pool": [
             { "weight": 2, "enemies": ["enemy_ember_fox"] },
             { "weight": 2, "enemies": ["enemy_thorn_sprout", "enemy_mossling"] }
@@ -291,6 +292,7 @@
           "x": 33,
           "y": 22,
           "kind": "normal",
+          "sleep": true,
           "pool": [
             { "weight": 2, "enemies": ["enemy_forest_wolf", "enemy_thorn_sprout"] },
             { "weight": 1, "enemies": ["enemy_bramble_boar", "enemy_mossling"] }
@@ -443,6 +445,7 @@
           "x": 28,
           "y": 13,
           "kind": "normal",
+          "sleep": true,
           "pool": [
             { "weight": 1, "enemies": ["enemy_forest_wolf", "enemy_thorn_sprout", "enemy_gale_sparrow"] }
           ]
@@ -595,6 +598,7 @@
           "x": 28,
           "y": 4,
           "kind": "normal",
+          "sleep": true,
           "pool": [
             { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_rock_beetle"] },
             { "weight": 1, "enemies": ["enemy_ore_golem"] }
@@ -713,6 +717,7 @@
           "x": 45,
           "y": 13,
           "kind": "elite",
+          "corruption": 3,
           "pool": [{ "weight": 1, "enemies": ["enemy_thunder_ram", "enemy_cliff_hawk"] }],
           "gift": { "item_adv_exp_medium": 3, "item_potion_rage": 1 }
         },
@@ -721,6 +726,7 @@
           "x": 25,
           "y": 10,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_snow_goat"] },
             { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_rock_beetle"] },
@@ -732,6 +738,7 @@
           "x": 27,
           "y": 2,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_ore_golem", "enemy_cliff_hawk"] },
             { "weight": 1, "enemies": ["enemy_lava_newt", "enemy_lava_newt", "enemy_snow_goat"] }
@@ -742,6 +749,8 @@
           "x": 5,
           "y": 16,
           "kind": "normal",
+          "corruption": 2,
+          "sleep": true,
           "pool": [
             { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_lava_newt", "enemy_snow_goat"] },
             { "weight": 1, "enemies": ["enemy_ore_golem", "enemy_rock_beetle"] }
@@ -752,6 +761,7 @@
           "x": 18,
           "y": 23,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_rock_beetle", "enemy_snow_goat"] },
             { "weight": 2, "enemies": ["enemy_cliff_hawk", "enemy_lava_newt"] }
@@ -884,6 +894,7 @@
           "x": 20,
           "y": 4,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_lava_newt", "enemy_cliff_hawk"] },
             { "weight": 2, "enemies": ["enemy_ore_golem", "enemy_lava_newt"] }
@@ -894,6 +905,7 @@
           "x": 18,
           "y": 21,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_snow_goat", "enemy_lava_newt", "enemy_rock_beetle"] },
             { "weight": 1, "enemies": ["enemy_thunder_ram"] }
@@ -904,6 +916,8 @@
           "x": 30,
           "y": 23,
           "kind": "normal",
+          "corruption": 2,
+          "sleep": true,
           "pool": [{ "weight": 1, "enemies": ["enemy_ore_golem", "enemy_cliff_hawk", "enemy_lava_newt"] }]
         }
       ],
@@ -1018,6 +1032,7 @@
           "x": 24,
           "y": 6,
           "kind": "elite",
+          "corruption": 3,
           "pool": [
             { "weight": 1, "enemies": ["enemy_stone_sentinel", "enemy_stone_sentinel", "enemy_rune_wisp"] }
           ],
@@ -1028,6 +1043,7 @@
           "x": 12,
           "y": 14,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 3, "enemies": ["enemy_stone_sentinel", "enemy_rune_wisp"] },
             { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_ember_idol"] },
@@ -1039,6 +1055,7 @@
           "x": 38,
           "y": 10,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_rune_wisp"] },
             { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_tide_wraith"] }
@@ -1049,6 +1066,7 @@
           "x": 24,
           "y": 15,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_rune_wisp"] },
             { "weight": 1, "enemies": ["enemy_ember_idol", "enemy_ember_idol"] }
@@ -1059,6 +1077,8 @@
           "x": 43,
           "y": 18,
           "kind": "normal",
+          "corruption": 2,
+          "sleep": true,
           "pool": [
             { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_ember_idol"] },
             { "weight": 1, "enemies": ["enemy_tide_wraith", "enemy_tide_wraith"] }
@@ -1176,6 +1196,7 @@
           "x": 44,
           "y": 14,
           "kind": "elite",
+          "corruption": 3,
           "pool": [{ "weight": 1, "enemies": ["enemy_shadow_priest", "enemy_tide_wraith"] }],
           "gift": { "item_adv_exp_large": 2, "item_potion_rage": 2 }
         },
@@ -1184,6 +1205,7 @@
           "x": 23,
           "y": 5,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_rune_wisp"] },
             { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_tide_wraith"] }
@@ -1194,6 +1216,7 @@
           "x": 25,
           "y": 21,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_ember_idol", "enemy_rune_wisp"] },
             { "weight": 1, "enemies": ["enemy_ember_idol", "enemy_stone_sentinel"] }
@@ -1204,6 +1227,7 @@
           "x": 36,
           "y": 22,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_tide_wraith", "enemy_stone_sentinel"] },
             { "weight": 1, "enemies": ["enemy_rune_wisp", "enemy_rune_wisp", "enemy_ember_idol"] }
@@ -1214,6 +1238,8 @@
           "x": 34,
           "y": 6,
           "kind": "normal",
+          "corruption": 2,
+          "sleep": true,
           "pool": [
             { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_tide_wraith"] },
             { "weight": 1, "enemies": ["enemy_stone_sentinel", "enemy_stone_sentinel"] }
@@ -1320,6 +1346,7 @@
           "x": 41,
           "y": 13,
           "kind": "boss",
+          "corruption": 5,
           "pool": [{ "weight": 1, "enemies": ["enemy_ancient_guardian", "enemy_rune_wisp"] }],
           "table": "boss_ruins",
           "gift": { "item_adv_exp_large": 4, "item_adv_core_ruins": 2, "item_potion_rage": 2 }
@@ -1329,6 +1356,7 @@
           "x": 13,
           "y": 4,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_stone_sentinel", "enemy_rune_wisp", "enemy_ember_idol"] },
             { "weight": 2, "enemies": ["enemy_tide_wraith", "enemy_tide_wraith", "enemy_stone_sentinel"] }
@@ -1339,6 +1367,7 @@
           "x": 13,
           "y": 23,
           "kind": "normal",
+          "corruption": 2,
           "pool": [
             { "weight": 2, "enemies": ["enemy_ember_idol", "enemy_stone_sentinel"] },
             { "weight": 1, "enemies": ["enemy_shadow_priest"] }
@@ -1349,6 +1378,8 @@
           "x": 22,
           "y": 13,
           "kind": "normal",
+          "corruption": 2,
+          "sleep": true,
           "pool": [
             { "weight": 1, "enemies": ["enemy_stone_sentinel", "enemy_ember_idol", "enemy_rune_wisp"] }
           ]

@@ -73,7 +73,8 @@ export function migrateAdventure4to5(slice: Raw): Raw {
   return { ...slice, version: 5, openedExits: [] };
 }
 
-const guardiansOf = (mapId: string): string[] => (MAPS[mapId]?.groups ?? []).filter((g) => g.kind !== 'normal').map((g) => `${mapId}/${g.id}`);
+// The guardians and bosses of v3 (decision 045's other classes did not exist then and stay out).
+const guardiansOf = (mapId: string): string[] => (MAPS[mapId]?.groups ?? []).filter((g) => g.kind === 'elite' || g.kind === 'boss').map((g) => `${mapId}/${g.id}`);
 
 export const ADVENTURE_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
   1: (slice) => migrateAdventure1to2(slice, { energyCost: AB.run.energyCost, portalsOf: (zoneId) => ZONES[zoneId]?.maps ?? [] }),

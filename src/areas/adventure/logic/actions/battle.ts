@@ -11,6 +11,7 @@ import type { BattleAction, BattleState } from '../../../../systems/combat/types
 import { titlesOf } from '../bonds';
 import { AB, BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, LOOT_TABLES, MAPS, type Affix } from '../config/content';
 import { addCount, enemyIdOf, playEnemies, randInt, rollTable } from '../encounter';
+import { canFlee, foeReward, staysBeaten } from '../foes';
 import { affixOfTags } from '../variants';
 import { countOf, credit, runAdventure, take, type AdventureResult } from './kit';
 import { settleRiftFloor } from './rift';
@@ -61,9 +62,11 @@ export function settleBattle(st: Step, battle: BattleState, share = 1) {
   const gemsBefore = run.gems;
   const rng = mulberry32(hashSeed('drops', run.seed, key, run.encounters));
   const enemies = battle.combatants.filter((c) => c.side === 'enemy').map((c) => ENEMIES[enemyIdOf(c.id)]!);
-  const expMult = share * (affix?.exp ?? affix?.reward ?? 1);
-  const coinMult = share * (affix?.coins ?? affix?.reward ?? 1);
-  const dropMult = share * (affix?.reward ?? 1);
+  // The group's class and corruption (decision 045) and its variant both weigh on what it gives.
+  const cls = foeReward(group);
+  const expMult = share * cls.reward * (affix?.exp ?? affix?.reward ?? 1);
+  const coinMult = share * cls.reward * (affix?.coins ?? affix?.reward ?? 1);
+  const dropMult = share * cls.drops * (affix?.reward ?? 1);
   const exp = Math.round(enemies.reduce((n, e) => n + e.exp, 0) * expMult * 10) / 10;
   const coins = Math.round(enemies.reduce((n, e) => n + e.coins, 0) * coinMult);
   for (const e of enemies) for (const d of e.drops) if (rng.next() < Math.min(1, d.chance * dropMult)) addCount(run.loot, d.itemId, d.min + Math.floor(rng.next() * (d.max - d.min + 1)));
@@ -79,9 +82,10 @@ export function settleBattle(st: Step, battle: BattleState, share = 1) {
   st.xp += AB.xp.battleWin;
   const boss = group.kind === 'boss';
   const elite = group.kind === 'elite';
-  // A guardian or a boss is beaten for good, and gives its gift now (adventure-big-update-1 §12–§13).
+  // A guardian, a boss, a subboss or a special group is beaten for good, and gives its gift now (adventure-big-update-1 §12–§13,
+  // decision 045).
   const gift: Record<string, number> = {};
-  if ((boss || elite) && !st.a.beaten.includes(key)) {
+  if (staysBeaten(group) && !st.a.beaten.includes(key)) {
     st.a = { ...st.a, beaten: [...st.a.beaten, key] };
     for (const [id, n] of Object.entries(group.gift ?? {})) {
       addCount(run.loot, id, n);
@@ -89,7 +93,7 @@ export function settleBattle(st: Step, battle: BattleState, share = 1) {
     }
   }
   st.events.push({ type: 'ADVENTURE_BATTLE_WON', zoneId: run.zoneId, boss, elite, enemies: enemies.length, exp, coins, quick: share < 1, affix: affix?.id ?? null, gems });
-  cheer(st, boss || elite || !!affix?.escapeAfterRounds);
+  cheer(st, staysBeaten(group) || !!affix?.escapeAfterRounds);
   if ((boss || elite) && !st.a.activePortals.includes(map.id)) {
     st.a = { ...st.a, activePortals: [...st.a.activePortals, map.id] };
     st.events.push({ type: 'ADVENTURE_PORTAL_ACTIVATED', mapId: map.id });
@@ -192,14 +196,15 @@ export function battleAct(world: WorldSave, args: { action: BattleAction | 'auto
   });
 }
 
-/** Running from a normal group (never from a guardian, a boss or a Rift floor): the damage taken stays, the group stays, a short grace follows. */
+/** Running from a group that comes back (a normal or a mutant one; never from a group beaten for good or a Rift floor): the damage taken stays, the group stays, a short grace follows. */
 export function flee(world: WorldSave, ctx: ActionContext): AdventureResult {
   return runAdventure(world, ctx, (w, a) => {
     const st = stepOf(w, a, ctx);
     if (!st) return { ok: false, error: 'NO_RUN' };
     const { run } = st;
     if (run.phase !== 'battle' || !run.battle) return { ok: false, error: 'WRONG_PHASE' };
-    if (run.rift || foughtGroup(st).group?.kind !== 'normal') return { ok: false, error: 'CANNOT_FLEE' };
+    const fought = foughtGroup(st).group;
+    if (run.rift || !fought || !canFlee(fought)) return { ok: false, error: 'CANNOT_FLEE' };
     carryOver(st, run.battle);
     run.battle = null;
     run.phase = 'explore';

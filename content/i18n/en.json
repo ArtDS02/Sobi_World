@@ -846,6 +846,14 @@
     "reactions/reaction_purify/descVi": "A Light blow on an Umbraflux-corrupted creature: +25% damage and strips one of its good statuses.",
     "reactions/reaction_eclipse/descVi": "A Light blow on a target with a Dark-born status: extra Void damage of 25% of the blow, that status is used up."
   },
+  "adventure/balance.json": {
+    "foes/classes/normal/nameVi": "Normal",
+    "foes/classes/elite/nameVi": "Elite",
+    "foes/classes/mutant/nameVi": "Mutant",
+    "foes/classes/subboss/nameVi": "Subboss",
+    "foes/classes/boss/nameVi": "Boss",
+    "foes/classes/special/nameVi": "Strange"
+  },
   "adventure/engagement.json": {
     "affixes/affix_bloodlust/nameVi": "Bloodthirsty",
     "affixes/affix_bloodlust/descVi": "Attack +15% and Attack Up at the start of battle. Rewards ×1.4.",

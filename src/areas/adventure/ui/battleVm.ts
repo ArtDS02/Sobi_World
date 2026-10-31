@@ -14,6 +14,7 @@ import { titleOf } from '../logic/bonds';
 import { BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, MAPS, REACTIONS, SKILLS } from '../logic/config/content';
 import { enemyIdOf } from '../logic/encounter';
 import { expShare } from '../logic/fighters';
+import { canFlee, corruptionOfTags, type FoeClass } from '../logic/foes';
 import { escapeIn } from './battleFloaters';
 import { logLine } from './battleLog';
 import type { Run } from '../logic/state';
@@ -56,6 +57,8 @@ export interface UnitVm {
   boss: boolean;
   elite: boolean;
   corrupted: boolean;
+  /** Enemies: their corruption 1–5 (decision 045), 0 when none (a Rift floor). */
+  corruption: number;
   guarding: boolean;
   /** What the enemy will do this round (§15.4), in words and as an icon (the skill's own icon for a skill). */
   intent: string | null;
@@ -169,6 +172,7 @@ function unitVm(battle: BattleState, c: Combatant, activeId: string | null, ally
     boss: !!enemy?.boss,
     elite: !!enemy?.tags.includes('elite'),
     corrupted: c.tags.includes('umbraflux'),
+    corruption: corruptionOfTags(c.tags),
     guarding: c.guarding,
     intent: intentText(battle, c),
     intentArt: intentArt(c),
@@ -197,7 +201,7 @@ export function effectOn(battle: BattleState, actorId: string, element: Element 
 }
 
 /** The group being fought, from the trip. */
-export function foughtKind(run: Run): 'normal' | 'elite' | 'boss' {
+export function foughtKind(run: Run): FoeClass {
   const [mapId, groupId] = (run.fighting ?? '/').split('/');
   return MAPS[mapId ?? '']?.groups.find((g) => g.id === groupId)?.kind ?? 'normal';
 }
@@ -244,7 +248,7 @@ function actionsOf(world: WorldSave, run: Run, battle: BattleState, cur: Combata
     const detail = (vi.adventure.battle.itemDetail as Record<string, string>)[item.itemId] ?? '';
     out.push({ kind: 'item', tab: 'item', id: item.itemId, label: `${nameOfItem(item.itemId)} (x${have})`, detail, art: itemArtId(item.itemId as ItemId), mp: 0, aim: TARGET_AIM[item.target] ?? 'self', reason: null, element: null, category: 'support' });
   }
-  out.push({ kind: 'flee', tab: 'basic', id: 'flee', label: vi.adventure.battle.flee, detail: '', art: ACTION_ART.flee, mp: 0, aim: null, reason: !run.rift && foughtKind(run) === 'normal' ? null : vi.adventure.battle.fleeOff, element: null, category: 'support' });
+  out.push({ kind: 'flee', tab: 'basic', id: 'flee', label: vi.adventure.battle.flee, detail: '', art: ACTION_ART.flee, mp: 0, aim: null, reason: !run.rift && canFlee({ kind: foughtKind(run) }) ? null : vi.adventure.battle.fleeOff, element: null, category: 'support' });
   return out;
 }
 

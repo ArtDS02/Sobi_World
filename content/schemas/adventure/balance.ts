@@ -2,11 +2,27 @@
 // the skill trees, the team, the energy of a trip, exhaustion, the exploration map, what the world gets, the starter kit, the rations
 // and the items usable in a battle.
 import { z } from 'zod';
-import { itemId, nonNeg, posInt, unit } from '../fields';
+import { itemId, nonNeg, posInt, text, unit } from '../fields';
 import { RARITY_VALUES } from '../vocab';
-import { effectSchema, partialStatsSchema } from './combat';
+import { effectSchema, element, partialStatsSchema, skillId } from './combat';
+import { FOE_CLASSES } from './maps';
 
 const factor = z.number().finite().positive();
+
+/** One class of enemy group (decision 045). */
+const foeClassSchema = z.strictObject({
+  /** Its name, added after the enemy's own for the classes that change it (mutant, subboss, special). */
+  nameVi: text,
+  /** Height of the picture on the map, in tiles of the area (before the camera's zoom). */
+  size: factor,
+  /** Its corruption when the group does not say. */
+  corruption: z.number().int().min(1).max(5),
+  /** Stats multiplied for every enemy of the group (absent = ×1). */
+  stats: partialStatsSchema,
+  /** Experience and coins multiplied, and drop chances multiplied. */
+  reward: factor,
+  drops: factor,
+});
 
 export const adventureBalanceFileSchema = z.strictObject({
   combat: z.strictObject({
@@ -85,6 +101,23 @@ export const adventureBalanceFileSchema = z.strictObject({
     graceMs: z.number().int().min(0),
     /** A spring heals this share of max HP and MP, once per area per trip. */
     springPct: unit,
+  }),
+  /** The six classes of enemy group and the five levels of corruption (decision 045). */
+  foes: z.strictObject({
+    classes: z.strictObject(Object.fromEntries(FOE_CLASSES.map((k) => [k, foeClassSchema])) as Record<(typeof FOE_CLASSES)[number], typeof foeClassSchema>),
+    /**
+     * Levels 1–5, in order. Stats, rewards, `resist` (extra share of every element but Light resisted) and the dark `skill`s are
+     * measured against the class's own level, so a class at its usual corruption stays as its enemies were made; `lightWeak` (extra
+     * damage share taken from Light) counts in full. From `umbrafluxFrom` on the enemies carry the `umbraflux` tag (Light's Purify).
+     */
+    corruption: z
+      .array(z.strictObject({ stats: factor, reward: factor, lightWeak: unit, resist: unit, skill: skillId.nullable() }))
+      .length(5),
+    umbrafluxFrom: z.number().int().min(1).max(5),
+    /** The second element a mutant or a special grows, by its first element. */
+    secondElement: z.partialRecord(element, element),
+    /** A sleeping group is touched only this close (share of the usual touch distance): the party may tiptoe past. */
+    sleepTouch: unit,
   }),
   /** Experience of the Area (it counts for the one Sobi World Level). */
   xp: z.strictObject({ battleWin: nonNeg, zoneClear: nonNeg }),

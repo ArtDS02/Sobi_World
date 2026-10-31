@@ -9,6 +9,7 @@ import { EQUIPMENT_SLOTS } from '../../../systems/equipment';
 import { CATEGORY_VALUES, ELEMENT_VALUES, STATUS_VALUES, STAT_VALUES } from '../../../../content/schemas/adventure/combat';
 import { CLASS_ID_VALUES } from '../../../../content/schemas/adventure/classes';
 import { LINEAGE_ID_VALUES } from '../../../../content/schemas/adventure/lineages';
+import { FOE_CLASSES } from '../../../../content/schemas/adventure/maps';
 
 export const ADVENTURE_STATE_VERSION = 5;
 
@@ -145,7 +146,7 @@ const levelMark = z.strictObject({ level: z.number().int().min(1), share: z.numb
  * bars fill on screen, LEVEL UP when one rose), a guardian's gift; the battle's last step so its final blows play first.
  */
 const reportSchema = z.strictObject({
-  kind: z.enum(['normal', 'elite', 'boss', 'rift']),
+  kind: z.enum([...FOE_CLASSES, 'rift']),
   quick: z.boolean(),
   exp: nonNeg,
   coins: nonNeg,

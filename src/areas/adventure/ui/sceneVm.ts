@@ -5,7 +5,9 @@ import { exitLock, groupEnemies, groupKey, portalLit } from '../logic/actions/tr
 import { CAMP_ART } from '../logic/art';
 import { ENEMIES, MAPS, RIFT, ZONES, ZONE_LIST } from '../logic/config/content';
 import { adventureOf } from '../logic/save/lens';
+import { corruptionOf, foeClass, grownElement, foePresent, foeSize, foeSky, staysBeaten } from '../logic/foes';
 import { groupAffix } from '../logic/variants';
+import { localOffsetMs } from '../../../ui/localDay';
 import type { AdventureSceneState } from '../scene/sceneState';
 
 export function sceneVm(world: WorldSave | null, now: number, paused: boolean, zoneId: string): AdventureSceneState | null {
@@ -28,6 +30,7 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
   }
   const map = MAPS[run.mapId];
   const prefix = `${run.mapId}/`;
+  const sky = foeSky(world, now, localOffsetMs(now));
   return {
     ...base,
     mode: 'explore',
@@ -42,11 +45,16 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
         affix: affix ? { name: affix.nameVi, golden: affix.escapeAfterRounds !== null } : null,
         id: g.id,
         kind: g.kind,
+        size: foeSize(g),
+        corruption: corruptionOf(g),
+        asleep: !!g.sleep,
+        title: g.kind === 'normal' ? null : foeClass(g.kind).nameVi,
         art: enemies[0]?.art ?? '',
-        elements: [...new Set(enemies.map((e) => e.element))],
+        elements: [...new Set(enemies.flatMap((e) => [e.element, ...(grownElement(g, e.element) ? [grownElement(g, e.element)!] : [])]))],
         count: enemies.length,
-        // A normal group is gone until the party changes area; a guardian or a boss is gone for good.
-        defeated: run.defeated.includes(groupKey(run.mapId, g.id)) || (g.kind !== 'normal' && a.beaten.includes(groupKey(run.mapId, g.id))),
+        // A normal or mutant group is gone until the party changes area; the other classes are gone for good. A special group away
+        // from its sky (rain, night) is not there.
+        defeated: run.defeated.includes(groupKey(run.mapId, g.id)) || (staysBeaten(g) && a.beaten.includes(groupKey(run.mapId, g.id))) || !foePresent(g, sky),
       };
     }),
     exits: (map?.exits ?? []).map((e) => {

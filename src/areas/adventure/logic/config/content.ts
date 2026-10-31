@@ -255,12 +255,19 @@ export function contentProblems(): string[] {
     for (const n of m.npcs) need(`map ${m.id}`, n.event, EVENTS);
     for (const p of m.props) need(`map ${m.id}`, p.prop, PROPS);
     if (m.groups.filter((g) => g.kind === 'boss').length > 1) problems.push(`${m.id}: more than one boss`);
+    // One guardian per area (decision 045): an elite or the boss, never both.
+    if (m.groups.filter((g) => g.kind === 'elite' || g.kind === 'boss').length > 1) problems.push(`${m.id}: more than one guardian (elite / boss)`);
+    for (const g of m.groups) {
+      if (g.when && g.kind !== 'special') problems.push(`${m.id} group ${g.id}: only a special group waits for rain or night`);
+      if (g.element2 && g.kind !== 'mutant' && g.kind !== 'special') problems.push(`${m.id} group ${g.id}: only a mutant or a special group grows an element`);
+    }
   }
   for (const z of ZONE_LIST) {
     const last = MAPS[z.maps.at(-1)!];
     if (last && !last.groups.some((g) => g.kind === 'boss')) problems.push(`${z.id}: its last area has no boss`);
   }
   for (const i of AB.battleItems) need('battle item', i.itemId, ITEMS);
+  for (const l of AB.foes.corruption) if (l.skill) skillOfType('corruption', l.skill, 'enemy');
   for (const e of ADVENTURE_CONTENT.equipment.equipment) if (ITEMS[e.id as ItemId].category !== 'EQUIPMENT') problems.push(`${e.id} is not an EQUIPMENT item`);
   need('skill scroll', SKILL_SCROLL, ITEMS);
   need('rift', RIFT.requiresCleared, ZONES);
