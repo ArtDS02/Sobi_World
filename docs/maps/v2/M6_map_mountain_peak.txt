@@ -1,0 +1,59 @@
+# M6 map_mountain_peak — Đỉnh Dung Nham (48 x 27), zone zone_mountain, corruption 50 %
+# the lava peak: a ring path around a lava lake with an island, the Magma Drake waits on a raised terrace to the east
+# 9 monster groups
+
+grid:
+##############,,################################
+##############,,################################
+###....#######,,##.....################.......##
+##............,,............ccccc.............##
+##............,,..............c...............##
+##............,,....................FFFFFFFFFF##
+##........,,,,,,,,,,,,,,,,,,,,,,,...F^^^^^^^^F##
+##........,,,,,,,,,,,,,,,,,,,,,,,,..F^^^^^^^^F##
+###......,,,........,,.........,,,,.F^^^^^^^^F##
+###......,,,.....~~~,,..........,,,,F^^^^^^^^F##
+###......,,....~~~~~==~~~~.......,,,,^^^^^^^^F##
+###.....,,,....~~~~~==~~~~~.......,,,^^^^^^^^F##
+###.....,,,...~~~~~~==~~~~~~.......,,^^^^^^^^F##
+,,,,,,,,,,...~~~~~~.,,~~~~~~~.......,^^^^^^^^,,,
+,,,,,,,,,,..~~~~~~.....~~~~~~.......F^^^^^^^^,,,
+##......,,,.~~~~~~~...~~~~~~~.......F^^^^^^^^F##
+##......,,,..~~~~~~~~~~~~~~~~.......F^^^^^^^^F##
+##.......,,..~~~~~~~~~~~~~~~........F^^^^^^^^F##
+##.......,,.....~~~~~~~~~...........F^^^^^^^^F##
+##.......,,,........................F^^^^^^^^F##
+##.......,,,........................FFFFssFFFF##
+##......,,,,,,,,,,,,,,..............FFFFssFFFF##
+##....,,,.,,,,,,,,,,,,,,,,,,,,,,,,,,,........###
+##..................,,,,,,,,,,,,,,,,,,,,,,...###
+##############....###########......,,,,,,,...###
+################################################
+################################################
+
+covers (overhead cover over a hidden area):
+  (2,20)-(8,24) a black rock overhang over a hidden lava cave
+
+objects (kind x y attrs):
+  spawn       2  13  
+  exit        0  13  id=exit_m3_west to=map_mountain_mine via=trail
+  exit       14   0  id=exit_m3_north to=map_mountain_pass via=trail note=walking this way opens the shortcut back from N4
+  exit       47  13  id=exit_m3_next to=map_ruins_gate via=trail lock=guardian
+  group      41  12  id=g_m3_boss cls=boss enemy=enemy_magma_drake
+  group       6   8  id=g_m3_a enemy=enemy_lava_newt cls=normal
+  group      17   4  id=g_m3_b enemy=enemy_cliff_hawk cls=normal
+  group      28   4  id=g_m3_c enemy=enemy_rock_beetle cls=normal
+  group      14  22  id=g_m3_d enemy=enemy_lava_newt cls=normal
+  group      24  23  id=g_m3_e enemy=enemy_ore_golem cls=normal
+  group       4  17  id=g_m3_f enemy=enemy_rock_beetle cls=normal
+  group      32  20  id=g_m3_g enemy=enemy_lava_newt cls=normal
+  group      12  18  id=g_m3_h enemy=enemy_snow_goat cls=normal sleep=True
+  chest      21  14  id=chest_m3_island type=wood
+  chest       4  22  id=chest_m3_hidden type=hidden
+  chest      44  18  id=chest_m3_boss type=gold
+  gate       20   8  id=gate_m3_boulder element=EARTH
+  spring     34  23  id=spring_m3 note=before the steps to the boss
+  npc        43   7  id=npc_m3_shrine note=FIRE Guardian shrine
+  lore       26  22  id=lore_m3
+  landmark    4   3  w=3 h=2 what=a huge ancient dragon skull half sunk into the rock sprite=prop_adv_mountain_boulder
+  crystal    30   3  

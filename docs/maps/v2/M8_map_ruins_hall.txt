@@ -1,0 +1,75 @@
+# M8 map_ruins_hall — Hành Lang Rune (64 x 36), zone zone_ruins, corruption 70 %
+# the rune hall: a long pillared corridor with small chambers on both sides; the upper chambers form a second way through
+# 12 monster groups
+
+grid:
+################################################################
+################################################################
+################################################################
+################################################################
+####..........######..........######..........######..........##
+####..........######........cc######..........######..........##
+####..........######......ccccc#####..........######..........##
+####..........######.......ccc######..........######..........##
+####..........,,,,,,..........,,,,,,..........,,,,,,..........##
+####..........######..........######..........######..........##
+####..........######..........######..........######..........##
+####..........######..........######..........######..........##
+####..........######..........######..........######..........##
+########,,##############,,##############,,##############,,######
+########,,##############,,##############,,##############,,######
+########,,##############,,##############,,##############,,######
+................................................................
+................................................................
+................................................................
+................................................................
+................................................................
+############,###########,,##############,,##############,,######
+############,###########,,##############,,##############,,######
+############,###########,,##############,,##############,,######
+####........,.######..........######..........######..........##
+####........,.######..........######..........######..........##
+####........,.######..........######..........######..........##
+####..........######..........######..........######..........##
+####...ccc....######..........######....~~~...######..........##
+####..cccc....######..........######...~~~~~..######..........##
+####...ccc....######..........######....~~~...######..........##
+####..........######..........######..........######..........##
+####..........######..........######..........######..........##
+########################################################,,######
+########################################################,,######
+########################################################,,######
+
+covers (overhead cover over a hidden area):
+  (3,21)-(14,33) a collapsed stone ceiling over a hidden chamber
+
+objects (kind x y attrs):
+  spawn       2  18  
+  portal      3  16  
+  exit        0  18  id=exit_r2_west to=map_ruins_gate via=trail
+  exit       63  18  id=exit_r2_east to=map_ruins_sanctum via=trail lock=guardian
+  exit       56  35  id=exit_r2_south to=map_ruins_crypt via=trail
+  group      58  18  id=g_r2_elite cls=elite enemy=enemy_shadow_priest
+  group      10  18  id=g_r2_a enemy=enemy_rune_wisp cls=normal
+  group      22  17  id=g_r2_b enemy=enemy_stone_sentinel cls=normal
+  group      32  19  id=g_r2_c enemy=enemy_tide_wraith cls=normal
+  group      46  17  id=g_r2_d enemy=enemy_ember_idol cls=normal
+  group       9   8  id=g_r2_e enemy=enemy_rune_wisp cls=normal
+  group      25   6  id=g_r2_f enemy=enemy_tide_wraith cls=normal sleep=True
+  group      41   8  id=g_r2_g enemy=enemy_stone_sentinel cls=normal
+  group      56   6  id=g_r2_h enemy=enemy_ember_idol cls=normal
+  group      27  29  id=g_r2_i enemy=enemy_shadow_priest cls=normal
+  group      39  26  id=g_r2_j enemy=enemy_rune_wisp cls=normal
+  group      56  28  id=g_r2_k enemy=enemy_tide_wraith cls=normal
+  chest      43  30  id=chest_r2_lightning type=silver
+  chest      25  31  id=chest_r2_dark type=wood
+  chest       6  30  id=chest_r2_hidden type=hidden
+  chest      59   5  id=chest_r2_vault type=wood
+  gate       40  22  id=gate_r2_lightning element=LIGHTNING
+  gate       24  22  id=gate_r2_dark element=DARK
+  spring     52  29  id=spring_r2
+  npc        44   5  id=npc_r2_vault note=ancient vault
+  lore       12   6  id=lore_r2
+  landmark   28  13  w=4 h=2 what=a long cracked wall mural of nine guardian beasts sprite=prop_adv_ruins_wall
+  crystal     8  29  
+  crystal    28   6  

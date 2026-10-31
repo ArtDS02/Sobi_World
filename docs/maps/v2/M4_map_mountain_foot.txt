@@ -1,0 +1,75 @@
+# M4 map_mountain_foot — Chân Núi (64 x 36), zone zone_mountain, corruption 30 %
+# the foot of the mountain: a switchback climb over two rocky terraces, an old miners' camp below
+# 12 monster groups
+
+grid:
+####################################,,##########################
+####################################,,##########################
+###################..###############,,###################.....##
+###...######............######FFFFFF,,FFFFFFFFFFFFFFFFFFFFFFF.##
+###.########..................F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F.##
+###......####.................F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F.##
+###......#####................F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F.##
+###......#####................F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F###
+###......,,,,,................F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^,,,,
+###......####.................F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^,,,,
+#############.................F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F###
+#############.................F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F###
+###..#######..FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFssFFFFFFFFFFFFFFF.##
+###..#####....F^^^^^^^^^^^^^^^FFFFFFFFFFFFFFssFFFFFFFFFFFFFFF.##
+##............F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F...##
+##............F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F...##
+##............F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F...##
+##............F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F...##
+##............F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F..###
+##............F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F..###
+##............F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F..###
+##............F^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^F..###
+##............FFFFFFFFFFFFssFFFFFFFFFFFFFFFFFFFFFFFFFFssFFF..###
+##............FFFFFFFFFFFFssFFFFFFFFFFFFFFFFFFFFFFFFFFssFFF..###
+###..........................................................###
+###......................,,,..........................,,.....###
+###....................,,,,,.........................,,,##...###
+###..................,,,,,,.........................,......#.###
+,,,,,,,,,,,,,,,,,,,,,,,,,...........................,......#####
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.....................,,,.....#####
+####...................,,,,,,,,,,,,,..............,,,......#####
+########....................,,,,,,,,,,,,,,,,,,,,,,,,,###########
+############......####............,,,,,,,,,,,ccc,,,,..#####.####
+############################################cccc##########..####
+#############################################ccc################
+################################################################
+
+covers (overhead cover over a hidden area):
+  (52,26)-(59,31) a rock overhang over a hidden hollow
+
+objects (kind x y attrs):
+  spawn       2  28  
+  portal      5  25  
+  exit        0  28  id=exit_m1_back to=map_forest_heart via=trail
+  exit       63   8  id=exit_m1_east to=map_mountain_mine via=trail lock=guardian
+  exit       36   0  id=exit_m1_north to=map_mountain_pass via=trail
+  group      58   8  id=g_m1_elite cls=elite enemy=enemy_ore_golem
+  group      12  26  id=g_m1_a enemy=enemy_rock_beetle cls=normal
+  group      22  32  id=g_m1_b enemy=enemy_lava_newt cls=normal
+  group      34  28  id=g_m1_c enemy=enemy_snow_goat cls=normal
+  group      46  33  id=g_m1_d enemy=enemy_rock_beetle cls=normal
+  group      30  18  id=g_m1_e enemy=enemy_cliff_hawk cls=normal
+  group      40  20  id=g_m1_f enemy=enemy_lava_newt cls=normal
+  group      50  15  id=g_m1_g enemy=enemy_snow_goat cls=normal
+  group      20  15  id=g_m1_h enemy=enemy_rock_beetle cls=normal
+  group      38   6  id=g_m1_i enemy=enemy_cliff_hawk cls=normal
+  group      50   5  id=g_m1_j enemy=enemy_rock_beetle cls=normal
+  group      24  15  id=g_m1_k enemy=enemy_snow_goat cls=normal sleep=True
+  chest       5   6  id=chest_m1_ledge type=silver
+  chest      56  28  id=chest_m1_hidden type=hidden
+  chest      56  15  id=chest_m1_terrace type=wood
+  chest      34  32  id=chest_m1_camp type=wood
+  gate       11   8  id=gate_m1_metal element=METAL
+  spring      8  24  id=spring_m1
+  npc        16  30  id=npc_m1_miner
+  lore       40   5  id=lore_m1
+  ore        28  26  id=ore_m1_a
+  ore        48  18  id=ore_m1_b
+  landmark    4  15  w=3 h=3 what=an abandoned miners' cabin with an old mine cart sprite=prop_adv_mountain_cabin
+  crystal    46  33  

@@ -1,0 +1,69 @@
+# N9 map_coast_cove — Vịnh Đắm Tàu (64 x 36), zone zone_coast, corruption 60 %
+# the wreck cove: a sandy crescent around a dark bay, a shipwreck on a sand spit where the sea's corrupted lord waits, cliffs to the north-west
+# 10 monster groups
+
+grid:
+####################################,,##########################
+####################################,,##########################
+####FFFFFFFFFFFFFFFFFFFFF#########..,,######....################
+####F^^^^^^^^^^^^^^^^^^^F.....#.....,,.###............##########
+##..F^^^^^^^^^^^^^^^^^^^F...........,,...............###########
+##..F^^^^^^^^^^^^^^^^^^^F...........,,...............###########
+###.F^^^^^^^^^^^^^^^^^^^F...........,,..............############
+###.F^^^^^^^^^^^^^^^^^^^F...........,,..............############
+###.F^^^^^^^^^^^^^^^^^^^F...........,,...............###########
+###.F^^^^^^^^^^^^^^^^^^^F...........,,.................#########
+,,,.F^^^^^^^^^^^^^^^^^^^F...........,,.................#########
+,,,,,,FFFFFFF,ssFFFFFFFFF...........,,..................###.####
+#,,,,,,,FFFFFFssFFFFFFFFF...........,,......................####
+###.,,,,,,,.........................,,.......................###
+####..,,,,,,,,,.................,,,,,,,,,,,,,,,..............###
+####.....,,,,,,,,,,,....,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.....###
+###....,,,...,,,,,,,,,,,,,,,,,,,,,...,,,.....,,,,,,,,,,,.....###
+###...,,.........,,,,,,,,,~~~........,,,,.............,,,....###
+###....##.......,,,,,....~~~~~~~~~~~~~====~~~~~.......,,,....###
+###....#......,,,,,...~~~~~~~~~~~~~~~~~===~~~~~~.....ccc,....###
+###.###.....,,,,,=~~~~ccccc~~~~~~~~~~~~~===~~~~~~~~~~ccc,,....##
+###........,,===~~~~~ccccccc~~~~~~~~~~~~====.~~~~~~~~~cc,,...###
+###.......,,==~~~~~~~~ccccc~~~~~~~~~~~~..,,,....~~~~~~=,,,...###
+###.......,,=~~~~~~~~~~~~~~~~~~~~~~~~~....,,.....~~====,,,...###
+###.......,,=~~~~~~~~~~~~~~~~~~~~~~~~............======,....####
+###........,=~~~~~~~~~~~~~~~~~~~~~~~~~...........====~~~....####
+###.######.,==~~~~~~~~~~~~~~~~~~~~~~~~~.........~~~~~~~~....####
+###########,==~~~~~~~~~~~~~~~~~~~~~~~~~~~~...~~~~~~~~~~~....####
+############,==~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~....####
+############,,,~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~...####
+#############,,.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~....####
+############.,,,.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~.......###
+############.,,,###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~..#..........###
+##############,,####~~~~~~~~~~~~~~~~~~~~~~~~...#################
+#######################~~~~~~~~~~~~~~~~#~~~#####################
+###########################~#####~~~~~##########################
+
+covers (overhead cover over a hidden area):
+  (2,15)-(8,20) a sea-cliff overhang over a hidden grotto
+
+objects (kind x y attrs):
+  spawn       2  10  
+  portal      4  13  
+  exit        0  10  id=exit_n9_west to=map_coast_beach via=shore
+  exit       36   0  id=exit_n9_north to=map_coast_reef via=shore
+  group      43  24  id=g_c3_boss cls=boss enemy=enemy_tide_wraith
+  group      12  18  id=g_c3_a enemy=enemy_dew_frog cls=normal
+  group      24  18  id=g_c3_b enemy=enemy_gale_sparrow cls=normal
+  group      30  12  id=g_c3_c enemy=enemy_tide_wraith cls=normal
+  group      44  12  id=g_c3_d enemy=enemy_dew_frog cls=normal
+  group      52  12  id=g_c3_e enemy=enemy_gale_sparrow cls=normal
+  group      56  19  id=g_c3_f enemy=enemy_tide_wraith cls=normal
+  group      16   6  id=g_c3_g enemy=enemy_dew_frog cls=normal sleep=True
+  group      10  26  id=g_c3_h enemy=enemy_tide_wraith cls=normal
+  group      14  30  id=g_c3_i enemy=enemy_dew_frog cls=normal
+  chest       5  17  id=chest_c3_grotto type=hidden
+  chest      20   6  id=chest_c3_cliff type=wood
+  chest      46  25  id=chest_c3_boss type=gold
+  chest      57  22  id=chest_c3_shore type=silver
+  spring     36  16  id=spring_c3 note=before the boardwalks to the wreck
+  npc        22   4  id=npc_c3_shrine note=WATER Guardian shrine
+  lore        9   7  id=lore_c3
+  landmark   45  20  w=4 h=3 what=a big wooden shipwreck lying on its side on the sand spit sprite=prop_adv_forest_hut
+  crystal    24  21  

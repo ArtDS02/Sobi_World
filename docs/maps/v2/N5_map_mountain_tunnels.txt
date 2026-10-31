@@ -1,0 +1,86 @@
+# N5 map_mountain_tunnels — Đường Hầm Cổ (72 x 40), zone zone_mountain, corruption 45 %
+# ancient tunnels under the mountain that link the forest, the mine and the ruins: crystal caverns, a lava pool, a buried rune door
+# 15 monster groups
+
+grid:
+####################################,,##################################
+####################################,,##################################
+####################################,,##################################
+####################################,,##################################
+############################...####,,,#####################....#########
+#########################.........,,,,###################........#######
+#######################..........,,,,##################...........######
+######################..........,,,,##################............######
+#####################.........,,,,,.##################.............#####
+#####################..ccc...,,,,,..###################.....,,.....#####
+#####################.cccc,,,,,,....###################...,,,,....######
+#####################.,cc,,,,,,,,,,..###########....#####,,,,,..########
+####################,,,,,,,,..,,,,,,,,,#######........##,,,,############
+##################,,,,,,.........,,,,,,,,,##...........,,,,#############
+#########..######,,,,,#............##,,,,,,,,,........,,,,##############
+######........##,,,,#####.........######,,,,,,,,,,...,,,,.##############
+#####..........,,,,#########...###########..,,,,,,,,,,,,...#############
+#####........,,,,,########################......,,,,,,,....#############
+#####.......,,,,,########################..................#############
+####.......,,,,...#######################........~~~.......#############
+,,,,,,,,,,,,,,....########################......~~~~~......#############
+,,,,,,,,,,,,,,....########################.....~~~~~~~.....#############
+####.......,,,,..#########################......~~~~~ccc..,,,,,#########
+####........,,,,,##########################......~~~ccccc#,,,,,,,,,,,,##
+#####........,,,,,###########################....,,,.ccc,####,,,,,,,,,,,
+######.......##,,,,############################.,,,,##,,,,##########,,,,
+########...#####,,,,######..........##########,,,,,####,,,,#############
+#################,,,,,###.............#######,,,,,######,,,,,###########
+##################,,,,,,,.............###,,,,,,,#########,,,,,##########
+####################,,,,,,,,,,....,,,,,,,,,,,,,############,,,,.....####
+######################.,,,,,,,,,,,,,,,,,,,,###############..,,,,,...####
+######################......,,,,,,,,....#################....,,,,....###
+#####################...................#################......,,....###
+#####################...................#################............###
+######################.................###################...........###
+########################.............######################.........####
+##########################..........##########################.#########
+###########################......#######################################
+########################################################################
+########################################################################
+
+covers (overhead cover over a hidden area):
+  (54,3)-(67,13) a crystal-studded rock ceiling over a hidden grotto
+
+objects (kind x y attrs):
+  spawn       2  20  
+  portal      6  23  
+  exit        0  20  id=exit_n5_west to=map_forest_deep via=tunnel
+  exit       36   0  id=exit_n5_north to=map_mountain_mine via=tunnel lock=shortcut note=opens after coming down from M5
+  exit       71  24  id=exit_n5_east to=map_ruins_hall via=tunnel note=closed until the ruins zone opens
+  group      52  15  id=g_n5_boss cls=subboss enemy=enemy_ore_golem
+  group      35  31  id=g_n5_elite cls=elite enemy=enemy_thunder_ram
+  group       8  17  id=g_n5_special cls=special when=night enemy=enemy_rune_wisp
+  group      13  23  id=g_n5_a enemy=enemy_rock_beetle cls=normal
+  group      22  13  id=g_n5_b enemy=enemy_lava_newt cls=normal
+  group      30   7  id=g_n5_c enemy=enemy_cliff_hawk cls=normal sleep=True
+  group      44  14  id=g_n5_d enemy=enemy_rock_beetle cls=normal
+  group      46  21  id=g_n5_e enemy=enemy_lava_newt cls=mutant
+  group      56  24  id=g_n5_f enemy=enemy_ore_golem cls=normal
+  group      27  31  id=g_n5_g enemy=enemy_rock_beetle cls=normal
+  group      64  34  id=g_n5_h enemy=enemy_lava_newt cls=normal
+  group      37   5  id=g_n5_i enemy=enemy_snow_goat cls=normal
+  group      32  13  id=g_n5_j enemy=enemy_rock_beetle cls=normal
+  group      24  29  id=g_n5_k enemy=enemy_lava_newt cls=normal
+  group      66  24  id=g_n5_l enemy=enemy_cliff_hawk cls=normal
+  chest      56  14  id=chest_n5_cavern type=gold
+  chest      62   7  id=chest_n5_grotto type=hidden
+  chest      31  34  id=chest_n5_hall type=silver
+  chest      66  33  id=chest_n5_mimic type=mimic
+  chest       7  23  id=chest_n5_entry type=wood
+  gate       20  28  id=gate_n5_earth element=EARTH
+  gate       59  28  id=gate_n5_metal element=METAL note=opens when the gear lock turns
+  puzzle     46  28  id=puzzle_n5_gear element=METAL
+  spring     44  16  id=spring_n5 note=before the sub-boss cavern
+  lore       14  18  id=lore_n5
+  ore        32  12  id=ore_n5_a
+  ore        48  26  id=ore_n5_b
+  landmark   46  18  w=3 h=3 what=a giant ancient stone door half buried in the cavern wall, carved with runes sprite=prop_adv_ruins_wall
+  crystal    24  10  
+  crystal    54  23  
+  crystal    64   9  

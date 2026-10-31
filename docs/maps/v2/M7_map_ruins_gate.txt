@@ -1,0 +1,72 @@
+# M7 map_ruins_gate — Cổng Tàn Tích (64 x 36), zone zone_ruins, corruption 60 %
+# the gate of the ruins: a broad avenue climbs north to a great gate in the wall, with walled courtyards and pools on both sides
+# 11 monster groups
+
+grid:
+###############################,,,##############################
+###############################,,,##############################
+###############........#####...,,,.#####################.....###
+########.......................,,,..............####........####
+###############################,,,##############################
+###############################,,,##############################
+##.............................,,,..........................####
+##..#####......................,,,..........................####
+###......##..........,,,,,,,,,,,,,,,,,,,,,,.................####
+###......###....,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,........####
+###......,,,,...,,,,,,,........,,,.......,,,,,,,,,,,........####
+###......##..~~~==.............,,,.......ccc..~~~===........####
+###......##.~~~~===~...........,,,......ccccc~~~~===~........###
+##########.~~~~~===~~~.........,,,.......ccc~~~~~==~~~.......###
+####.......~~~~~~==~~~~........,,,.........~~~~~===~~~........##
+####.......~~~~~~==~~~~........,,,..........~~~~===~~~........##
+####........~~~~~==~~~.........,,,..........~~~~==~~~.........##
+####......c...~~~==............,,,...........~~===~...........##
+####.....ccc.....,,,...........,,,.............,,,,,,,,,,,,,,,,,
+####......cc.....,,,...........,,,.............,,,,,,,,,,,,,,,,,
+####..............,,...........,,,............,,,............###
+####..............,,...........,,,...........,,,,............###
+####....##########,,#######....,,,....#####,,,,,#########....###
+####....##########,,,######....,,,....###,,,,,,##########....###
+####..............,,,..........,,,.....,,,,,,............#...###
+####...............,,..........,,,...,,,,,,............#########
+####...............,,..........,,,.,,,,,,............###########
+####...............,,.......,,,,,,,,,,,..............##.....####
+####...............,,,,,,,,,,,,,,,,,,................##.....####
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,..................,,,....####
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.........,,,,,,,,,,,,,,#.....####
+,,,,,,,,,,,,,,,,,,,,,,,,,...............,,,,,,,,,,,,..##########
+####...............###ccccc#................###.......####...###
+#############....#####cccccc#####################..#############
+######################ccccc#####################################
+################################################################
+
+covers (overhead cover over a hidden area):
+  (53,25)-(61,31) a broken stone roof over a hidden chamber
+
+objects (kind x y attrs):
+  spawn       2  30  
+  portal      6  27  
+  exit        0  30  id=exit_r1_back to=map_mountain_peak via=trail
+  exit       32   0  id=exit_r1_east to=map_ruins_hall via=trail lock=guardian note=the great gate in the north wall
+  exit       63  18  id=exit_r1_side to=map_ruins_crypt via=trail
+  group      32   9  id=g_r1_elite cls=elite enemy=enemy_stone_sentinel
+  group      12  28  id=g_r1_a enemy=enemy_rune_wisp cls=normal
+  group      24  26  id=g_r1_b enemy=enemy_stone_sentinel cls=normal
+  group      40  31  id=g_r1_c enemy=enemy_ember_idol cls=normal
+  group      14  19  id=g_r1_d enemy=enemy_tide_wraith cls=normal
+  group      22  12  id=g_r1_e enemy=enemy_rune_wisp cls=normal
+  group      44  12  id=g_r1_f enemy=enemy_ember_idol cls=normal
+  group      56  18  id=g_r1_g enemy=enemy_stone_sentinel cls=normal
+  group      40  18  id=g_r1_h enemy=enemy_rune_wisp cls=normal
+  group      26  18  id=g_r1_i enemy=enemy_tide_wraith cls=normal
+  group       8  32  id=g_r1_j enemy=enemy_ember_idol cls=normal sleep=True
+  chest       5  10  id=chest_r1_crypt type=silver
+  chest      58  28  id=chest_r1_hidden type=hidden
+  chest      20  19  id=chest_r1_court type=wood
+  chest      58   9  id=chest_r1_corner type=wood
+  gate       11  10  id=gate_r1_light element=LIGHT
+  spring     36  25  id=spring_r1 note=an old fountain
+  npc        24  32  id=npc_r1_altar note=rune altar
+  lore       28  14  id=lore_r1
+  landmark   35  14  w=3 h=3 what=a huge broken statue of a guardian beast beside the avenue sprite=prop_adv_ruins_statue
+  crystal    42  12  

@@ -1,0 +1,79 @@
+# N1 map_forest_hollow — Thung Nấm (64 x 36), zone zone_forest, corruption 15 %
+# a hollow of giant mushrooms north of the forest edge: loops of trails, a terrace with a guarded treasure, a bramble nook
+# 16 monster groups
+
+grid:
+################################################################
+################################################################
+###....########.################################################
+###.................############......#####......###........####
+####.......####.....#############...........................####
+####.....########....############...........................####
+####....##########......########.......................,,,,,####
+###...,,###########.............................,,,,,,,,,,,,,###
+###.###,,,##########........................,,,,,,,,,,,,,.,,,###
+###.#####,,,########.......................,,,,,,,.........,,###
+###.#######,,,######.......................,,,.............,,,##
+###.#########,,,####......................,,,..............,,,##
+###.###########,,,##.....................,,,,...............,,,,
+###..############,,,.....................,,,...........,,,,,,,,,
+####..#############,,...................,,,.......,,,,,,,,,,,,##
+####....##########......................,,,....,,,,,,,,,,.....##
+####...................,,,,,,..........,,,.,,,,,,,,,.........###
+####.................,,,,,,,,,,,,,,,..,,,,,,,,,,,............###
+####................,,,,,..,,,,,,,,,,,,,,,,,,................###
+####................,,,...........,,,,,,,,...................###
+####..................................,,,...................####
+###FFFFFFFFFFFFFFFFFFFF....######.....,,,....................###
+###F^^^^^^^^^^^^^^^^^^F...########.....,,....................###
+###F^^^^^^^^^^^^^^^^^^F...#########....,,....................###
+###F^^^^^^^^^^^^^^^^^^F..##########....,,....................###
+###F^^^^^^^^^^^^^^^^^^F..##########....,,,...................###
+###F^^^^^^^^^^^^^^^^^^F...#########....,,,...........####....###
+###F^^^^^^^^^^^^^^^^^^F...#######.......,,.......######......###
+###F^^^^^^^^^^^^^^^^^^F......###........,,......#######......###
+###FFFFFFFFFssFFFFFFFFF.................,,......##,,,,,......###
+###FFFFFFFFFssFFFFFFFFF.................,,......#######......###
+###.........,,.....................,,,,,,,......#######......###
+###.##......,,............,,,,,,,,,,,,,,,,##....#######......###
+##########..,,,,,,,,,,,,,,,,,,,,,,,,,###,,#################..###
+############,,,,,,,,,,,,,,,,############,,######################
+########################################,,######################
+
+covers (overhead cover over a hidden area):
+  (4,5)-(18,13) giant mushroom caps over a hidden trail
+
+objects (kind x y attrs):
+  spawn      40  33  
+  portal     44  32  
+  exit       40  35  id=exit_n1_south to=map_forest_edge via=trail
+  exit       63  12  id=exit_n1_east to=map_forest_falls via=trail
+  group       8  25  id=g_n1_boss cls=subboss enemy=enemy_wolf_alpha
+  group      56  30  id=g_n1_elite cls=elite enemy=enemy_bramble_boar
+  group      26  31  id=g_n1_special cls=special when=rain enemy=enemy_ember_fox
+  group      40  29  id=g_n1_a enemy=enemy_mossling cls=normal
+  group      35  21  id=g_n1_b enemy=enemy_thorn_sprout cls=normal
+  group      46  12  id=g_n1_c enemy=enemy_gale_sparrow cls=normal
+  group      30  15  id=g_n1_d enemy=enemy_forest_wolf cls=normal
+  group      22  18  id=g_n1_e enemy=enemy_mossling cls=normal
+  group      52  16  id=g_n1_f enemy=enemy_dew_frog cls=normal sleep=True
+  group      56   7  id=g_n1_g enemy=enemy_ember_fox cls=normal
+  group      48   7  id=g_n1_h enemy=enemy_thorn_sprout cls=normal
+  group      16  25  id=g_n1_i enemy=enemy_mossling cls=normal sleep=True
+  group      19  23  id=g_n1_j enemy=enemy_forest_wolf cls=normal
+  group      57  20  id=g_n1_k enemy=enemy_bramble_boar cls=mutant
+  group      44  22  id=g_n1_l enemy=enemy_dew_frog cls=normal
+  group      30  33  id=g_n1_m enemy=enemy_thorn_sprout cls=normal
+  chest       5  23  id=chest_n1_terrace type=gold
+  chest       6   7  id=chest_n1_hidden type=hidden
+  chest      58  28  id=chest_n1_nook type=silver
+  chest      59  31  id=chest_n1_mimic type=mimic
+  chest      50   4  id=chest_n1_ridge type=wood
+  chest      33   9  id=chest_n1_glade type=wood
+  gate       54  29  id=gate_n1_bramble element=FIRE note=opens when both braziers are lit
+  puzzle     48  27  id=puzzle_n1_brazier_a element=FIRE
+  puzzle     46  31  id=puzzle_n1_brazier_b element=FIRE
+  spring     18  33  id=spring_n1 note=before the terrace steps and the sub-boss
+  lore       30  10  id=lore_n1
+  herb       36  27  id=herb_n1
+  landmark   46  21  w=3 h=3 what=a gigantic red-capped mushroom tree

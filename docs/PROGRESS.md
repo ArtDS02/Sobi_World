@@ -6,20 +6,48 @@
 **Tiến độ GĐ14:** 28 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). **Adventure** (giao diện theo ảnh mẫu, 212 asset batch adventure-03..10, 2026-10-23, chờ duyệt; còn tạo lại sheet K5, CP2; animation trận bằng code + pipeline / prompt AI: decision 040, 2026-10-24, chờ duyệt). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v5 từ decision 043).
-**Bước tiếp theo:** bản đồ v2 (decision 045): chủ dự án tạo 5 cảnh mẫu V1–V5 của batch `adventure-14-map-v2`; code camera bám + zoom ×2. Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
+**Bước tiếp theo:** bản đồ v2 (decision 045): code camera bám + zoom ×2, rồi ghép map bằng bộ ghép (256 asset bản tạm đã duyệt trong `art_inbox/`, chốt kích thước theo ô khi đưa vào manifest). Chủ dự án vẽ lại 36 sheet bộ ghép kiểu mịn (mọi sheet trừ FT, FO; `PROMPT.md` đã sinh lại) khi tiện. Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; xem giao diện Adventure mới (Trại / Trận / Bản đồ) và animation trận (`docs/animation/HUONG_DAN_CHU_DU_AN.md`), tạo sheet VFX 9 hệ, tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
 
 ## Nhật ký
+
+### 2026-10-31 — Adventure: bản đồ v2 — cắt và duyệt tạm 38 sheet bộ ghép, duyệt M7 / N7 vẽ lại
+✅ Đã làm:
+- **M7, N7 vẽ lại: đạt.** M7 đúng bố cục, tha hóa rõ (pha lê tím, rễ đen, cỏ xỉn). N7 lệch bố cục (biển lấn cao, vịnh có đảo cát) nhưng phong cách tốt, dùng làm ảnh chuẩn như N9.
+- **Phong cách bộ ghép lệch:** 36/38 sheet ra pixel art khối (chỉ FT, FO vẽ mịn như M1-hint), do câu style có "like polished high-resolution pixel art". Chủ dự án chốt **dùng tạm, vẽ lại sau**. Đã sửa câu style + câu cấm (`batch.py`: "smoothly painted … NOT pixel art"), sinh lại `PROMPT.md` (38 sheet, không còn sheet M7 / N7).
+- **Bộ cắt mới `scripts/art/map_layouts_v2/cut_kit.py`:** `art.py cut` chia lưới đều sai ở 14 sheet (ô to nhỏ khác nhau, kẻ trắng, nền mỗi ô một sắc xám). Bộ mới gom mảnh theo hàng rồi theo cột (khe rộng nhất), bỏ kẻ trắng và mép ô, xóa nền ngoài + lỗ nền kín (giữa hàng rào, dưới cổng), giữ ô nền liền khối vuông, gỡ dấu ✦ (luôn ở tâm w−120, h−120: inpaint trên nền, chép vân bên cạnh trong ô nền). 4 sheet khai báo hộp tay (RT, RE, RL, CE). Ảnh soát `art_inbox/.qa/map-v2/`.
+- **256 asset duyệt vào `art_inbox/`** (`adv_map_*` 250, `ui_icon_foe_*` 6). Chưa vào manifest / `public/assets`: cần chốt kích thước theo ô (80 px / ô) cùng code ghép map.
+
+📁 File thay đổi chính: `scripts/art/map_layouts_v2/{cut_kit,batch}.py`, `docs/maps/v2/README.md`, `docs/ASSET_TODO.md`, `docs/PROGRESS.md`; `art_inbox/` (256 PNG, batch, `.qa/map-v2/`).
+
+🧪 Đã kiểm tra: cắt cả 38 sheet, soát từng ảnh ghép; `art.py prep` qua (38 sheet, 79 đính kèm, 256 asset). Không đổi code game.
+
+⚠️ Vấn đề: vài sprite còn vết mờ chỗ gỡ ✦ (woodpile, waterfall, rail_curve, bench, vines_top, kelp_curtain); RL cây đền bị cắt mép trên (Gemini vẽ chạm mép); CX seacave / ladder vẽ kèm nền riêng; khói / sương nhạt (steam_vent, veil_gone) bị xóa bớt cùng nền. Sheet RE, CE thừa 1 hình (tường vỡ thứ 2, dải sóng trơn): bỏ.
+
+### 2026-10-30 — Adventure: bản đồ v2 — duyệt 18 tranh map, cắt ảnh chuẩn, sinh batch bộ ghép
+✅ Đã làm:
+- **Duyệt 12 tranh mới** (so với ảnh before): đạt cả bố cục và phong cách: M5, M6, N4, M8, M9. Lệch bố cục nhưng phong cách tốt, dùng để tách asset: M4 (thêm sông dung nham, cửa hầm), N5 (thêm hồ dung nham), N6 (thêm hồ giữa, phòng mộ), N9 (vịnh mở ra biển, tàu đắm thay chòi), N8 (nét mềm hơn, nước loang nhưng dùng được). **Cần vẽ lại:** M7 (cỏ xanh chói phẳng, ít chi tiết, trông như ngày nắng dù tha hóa 60 %), N7 (đường cát bậc thang vuông, cát phẳng, mép rừng có ô đen). Nhiều tranh còn khung nét đứt và dấu ✦ ở góc: không ảnh hưởng vì chỉ dùng để cắt.
+- **Ảnh chuẩn:** `scripts/art/map_layouts_v2/refs.py` cắt 189 mẩu từ 16 tranh đạt (bỏ M7, N7), gom thành 31 ảnh hint theo vùng × nhóm (ô nền, vách / bậc / bờ, lớp che, đạo cụ, vật mốc, lối ra) + dùng chung (rương, suối, câu đố, tha hóa chung và theo vùng) ở `art_inbox/.hints/adventure-14-map-v2/ref/` (mẩu lẻ ở `ref/<vùng>/`). Tránh mẩu có quái.
+- **`batch.py --kit`:** mỗi sheet bộ ghép dùng ảnh chuẩn của vùng mình (Núi / Tàn Tích / Biển không còn mượn hint Rừng); ảnh 1 vẫn là bản cận cảnh `M1-hint.png`. Câu "accepted" riêng cho bộ ghép: ảnh chuẩn mờ (tranh nhỏ) nên dặn vẽ lại sắc nét, bỏ quái / rương / chữ trong hint. Batch chỉ còn sheet bộ ghép theo thứ tự tạo; `--redo M7,N7` thêm sheet vẽ lại map ở cuối, kèm tranh đã duyệt cùng vùng (M8, N9) làm ảnh 3.
+- `art.py`: sheet được ghi đè câu prompt của batch (`prompt` trong sheet), để sheet vẽ lại map giữ câu phong cách "cả map" trong batch bộ ghép.
+📁 File chính: `scripts/art/map_layouts_v2/{refs,batch}.py`, `.claude/skills/image-to-prompt/scripts/art.py`, `.claude/skills/image-to-prompt/references/batch-manifest.md`, `docs/maps/v2/README.md`, `docs/ASSET_TODO.md`.
+🧪 Đã kiểm tra: `refs.py` chạy (31 hint); xem lại từng ảnh hint, sửa mẩu cắt nhầm quái (lửa ở M9, nhím ở M1) và mẩu dính khung nét đứt; `art.py prep` qua (40 sheet, 85 file đính kèm, 258 asset). Không đổi code game nên chưa chạy `npm run check`.
+👉 Bạn cần: tạo sheet theo thứ tự trong `PROMPT.md` (FT → FX, H1, H2, S1, U1, U2, MT → MX, RT → RX, U4, CT → CX, U3, Z1, Z2, I1), vẽ lại M7, N7.
+➡️ Bước tiếp: cắt các sheet bộ ghép (`art.py cut`), QA; code camera bám + zoom ×2 + nhập bố cục `docs/maps/v2/`.
 
 ### 2026-10-30 — Adventure: bản đồ v2 — chốt hướng (decision 045) + batch art `adventure-14-map-v2`
 ✅ Đã làm:
 - Chủ dự án chốt Q2, Q3, Q6–Q9 của audit và A1–A5 của `docs/WORLD_MAP_V2_PROPOSAL.md`. Ghi thành decision 045: camera bám, zoom ×2, map 40 × 24 → 80 × 48, sương mù khám phá, khu ẩn 3 kiểu, 2–4 lối ra mỗi map, 10–20 nhóm quái đứng canh / ngủ, 6 loại quái, 5 cấp tha hóa (mạnh hơn), tha hóa theo vùng + thanh tẩy, 5 loại rương, quái đặc biệt có điều kiện, câu đố nhiều bước, suối trước trùm phụ. Bỏ tranh một tấm (hướng 3 / Q5): mọi map dựng bằng bộ ghép, cả M1–M3 bố cục lại.
-- Batch `adventure-14-map-v2` (art_inbox, 43 sheet, 261 asset): 5 cảnh mẫu V1–V5 có bản khối màu 20 × 11 ô làm hint; bộ ghép 4 vùng (ô nền, vách, lớp che, đạo cụ, vật mốc, lối ra / tường giả); rương 5 loại; tha hóa; suối; câu đố 8 hệ; huy hiệu 6 loại quái. Script sinh ở `art_inbox/.batch/adventure-14-map-v2/_src/`.
+- Batch `adventure-14-map-v2` (art_inbox, 43 sheet, 261 asset): 5 cảnh mẫu V1–V5 có bản khối màu 20 × 11 ô làm hint; bộ ghép 4 vùng (ô nền, vách, lớp che, đạo cụ, vật mốc, lối ra / tường giả); rương 5 loại; tha hóa; suối; câu đố 8 hệ; huy hiệu 6 loại quái. (Phần cảnh mẫu đã bỏ, xem dưới.)
+- Lần thử V1 đầu tiên xấu (Gemini vẽ y nguyên khối màu / hình tròn của hint, nét hoạt hình dày). Đã đổi: hint V1–V5 thành **ảnh cắt ghép thô** từ `M1-hint.png` + sprite game (`_src/make_collage.py`), vị trí vật ghi theo %; câu phong cách / câu cấm riêng cho batch mô tả đúng `M1-hint.png` (chi tiết nhỏ, nét mảnh, kiểu pixel art độ phân giải cao). `art.py` cho batch ghi đè các câu prompt của profile (`prompt` trong batch.json). Ảnh hỏng chuyển vào `_rejected/`.
 - `art.py`: sheet `single` + `bg` dùng câu mở đầu "full-bleed" thay cho "một vật, có khoảng trống xung quanh" (hai câu cũ mâu thuẫn).
-📁 File chính: `docs/decisions/045-adventure-map-v2.md`, `docs/WORLD_MAP_V2_PROPOSAL.md`, `docs/ASSET_TODO.md`, `.claude/skills/image-to-prompt/scripts/art.py`.
+- **Đổi quy trình art (chủ dự án chốt):** bỏ 5 cảnh mẫu. Thiết kế bố cục mới 6 map Rừng bằng lưới ô (`scripts/art/map_layouts_v2/`, `docs/maps/v2/`): M1 64×36, M2 64×36, M3 48×27, N1 64×36, N2 72×40, N3 80×45; 2–3 lối ra mỗi map, 2 đường tới lối tiến, khu ẩn dưới lớp che, cổng hệ, rương 5 loại, 9–18 nhóm quái, trùm phụ + suối ở map nhánh. Dựng ảnh before kiểu `adventure-11-map/before`; batch `adventure-14-map-v2` giờ là 6 sheet vẽ lại map (ảnh 1 = `M1-hint.png`). Bộ ghép (`batch.py --kit`) làm sau khi duyệt tranh.
+📁 File chính: `docs/decisions/045-adventure-map-v2.md`, `docs/WORLD_MAP_V2_PROPOSAL.md`, `docs/maps/v2/`, `scripts/art/map_layouts_v2/`, `docs/ASSET_TODO.md`, `.claude/skills/image-to-prompt/scripts/art.py`.
 🧪 Đã kiểm tra: `art.py prep` qua (43 sheet, 89 file đính kèm). Chưa sửa code game.
 ⚠️ Tự quyết: mép chuyển tiếp giữa các loại ô vẽ bằng code (Gemini không vẽ khớp bộ autotile); ô vẽ cho 80 px (ô thế giới vẫn 40 px). Vùng Biển tạm tên "Bờ Biển".
-👉 Bạn cần: tạo 5 cảnh mẫu V1–V5 trước, gửi lại để duyệt.
-➡️ Bước tiếp: cắt ảnh chuẩn từ cảnh mẫu, `prep` lại bộ ghép; code: camera bám + zoom ×2 + kích thước map.
+- **Đủ 18 map:** thêm bố cục Núi (M4–M6, N4 Đèo Gió, N5 Đường Hầm Cổ), Tàn Tích (M7–M9, N6 Hầm Mộ Rune), Biển (N7 Bãi Vỏ Sò, N8 Rạn San Hô, N9 Vịnh Đắm Tàu, trùm vùng). Cả 18 qua kiểm tra đường đi; prompt theo từng vùng (khối đá / tường đổ / rừng dừa, dung nham / hồ tối / biển) và mức tha hóa.
+- **Duyệt 6 tranh Rừng chủ dự án vẽ:** M1, M2, N1, N2 khớp bố cục và đúng phong cách. M3, N3 lệch bố cục (thêm vách, suối, hồ) nhưng phong cách và dấu tha hóa tốt; vì tranh chỉ dùng để tách asset nên vẫn dùng được. Tranh 1376 × 768 nên asset sẽ được vẽ lại ở độ phân giải cao theo các tranh này (bước bộ ghép).
+👉 Bạn cần: vẽ 12 map còn lại (M4–M9, N4–N9) theo `art_inbox/.batch/adventure-14-map-v2/PROMPT.md`.
+➡️ Bước tiếp: cắt ảnh chuẩn từ tranh map, sinh sheet bộ ghép (`batch.py --kit`); code: camera bám + zoom ×2 + kích thước map, nhập bố cục `docs/maps/v2/`.
 
 ### 2026-10-30 — Adventure: đợt animation trận — art 2 batch + kịch bản animation (decision 044)
 ✅ Đã làm:

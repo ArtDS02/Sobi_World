@@ -32,7 +32,13 @@ Sau Đợt 1 của decision 043, chủ dự án chơi thử và thấy: góc nh�
 - **Ô nền** (Gemini) là ô vuông liền mép, mỗi loại 2–3 biến thể. **Mép chuyển tiếp** (cỏ ↔ đường, bờ nước) vẽ bằng code: mặt nạ bo tròn + viền nâu ấm + bóng trong, rồi rắc đồ trang trí dọc mép. Lý do: Gemini không vẽ khớp được bộ autotile 47 ô.
 - **Vách / bậc cao** vẽ kiểu 3/4: mặt trên dùng ô nền, **mặt vách** là dải ảnh lặp ngang (Gemini) + hai góc.
 - **Tha hóa map** bằng code trước (tint theo `corruption`, hạt bụi tím), cộng bộ đồ trang trí tha hóa (Gemini).
-- Thứ tự art: 5 **cảnh mẫu** (một màn 20 × 11 ô mỗi vùng / mức tha hóa) được duyệt trước; bộ ghép từng vùng lấy cảnh mẫu đã duyệt làm ảnh chuẩn.
+- **Quy trình art (chủ dự án chốt 2026-10-30, thay cho 5 cảnh mẫu):**
+  1. Thiết kế bố cục mới từng map bằng lưới ô (`scripts/art/map_layouts_v2/`, kết quả ở `docs/maps/v2/`), có kiểm tra đường đi.
+  2. Dựng ảnh before giống `adventure-11-map/before` (ô tạm + sprite game, 1 ô = 40 px).
+  3. Chủ dự án vẽ lại cả map theo `M1-hint.png` (batch `adventure-14-map-v2`).
+  4. Agent cắt ô nền, cây, đá, vách, lớp che… từ tranh đã duyệt làm ảnh chuẩn, sinh các sheet bộ ghép; ghép map trong game bằng các asset đó.
+  - Thử 5 cảnh mẫu (khối màu, rồi ảnh cắt ghép) cho kết quả xấu hoặc chật, bỏ.
+- Bố cục đủ 18 map (Rừng, Núi, Tàn Tích, Biển).
 
 ## Hệ quả
 

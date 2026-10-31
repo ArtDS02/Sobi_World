@@ -5,10 +5,10 @@
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
 ## Adventure: bản đồ v2 — batch adventure-14-map-v2 (decision 045)
-Prompt + hint đã sẵn: `art_inbox/.batch/adventure-14-map-v2/PROMPT.md` (43 sheet, 261 asset; ảnh 1 = `M1-hint.png`). Chưa tạo ảnh.
+Bước 1 xong: 18 tranh map (`art_inbox/.batch/adventure-14-map-v2/M*.png`, `N*.png`; M7, N7 đã vẽ lại 2026-10-31, đạt). Bước 2 xong **bản tạm** (2026-10-31): 38 sheet bộ ghép đã tạo, cắt bằng `scripts/art/map_layouts_v2/cut_kit.py`, 256 asset (`adv_map_*` 250, `ui_icon_foe_*` 6) đã duyệt vào `art_inbox/` (chưa vào manifest / `public/assets`: làm cùng code ghép map). **Cần vẽ lại kiểu mịn (chủ dự án chốt: dùng tạm, vẽ lại sau):** 36 sheet ra pixel art khối vì câu style cũ có "pixel art": mọi sheet trừ **FT, FO**. Câu style đã sửa, `PROMPT.md` đã sinh lại; vẽ lại sheet nào thì lưu đè `<sheet>.png`, chạy `cut_kit.py --sheet <ID>` rồi `art.py approve <asset> --force`. Vết mờ nhỏ chỗ gỡ dấu ✦ trên vài sprite (woodpile, waterfall, rail_curve, bench, vines_top, kelp_curtain); `RL` cây đền bị cắt mép trên; `CX` seacave / ladder có nền riêng.
 | Nhóm | Sheet | Ghi chú |
 |---|---|---|
-| Cảnh mẫu 5 vùng / mức tha hóa | V1–V5 | **Làm trước.** Một màn 20 × 11 ô theo bản khối màu; duyệt xong agent cắt làm ảnh chuẩn cho bộ ghép và `prep` lại. |
+| Tranh map theo bố cục mới | M1–M9, N1–N9 | Chỉ làm ảnh chuẩn để tách asset, không dùng nguyên tấm trong game. |
 | Bộ ghép từng vùng (Rừng / Núi / Biển / Tàn Tích) | `<F|M|C|R>` + T (8 ô nền), E (vách / bậc / bờ), O (lớp che), P, Q (đạo cụ), L (3 vật mốc), X (lối ra, tường giả, câu đố) | Ô vẽ cho 80 px. Thay `adv_tile_*` cũ và `adv_exit` (mục bên dưới). Mép chuyển tiếp mềm vẽ bằng code. |
 | Rương 5 loại, rương giả | H1, H2 | Thay `adv_chest_closed/open`. |
 | Tha hóa + thanh tẩy | U1 (dùng chung), U2 Rừng, U3 Núi + Biển, U4 Tàn Tích | Tint / hạt tha hóa theo `corruption` làm bằng code. |

@@ -1,0 +1,59 @@
+# M3 map_forest_heart — Lõi Rừng (48 x 27), zone zone_forest, corruption 30 %
+# the heart of the forest, already sick: withered trees and violet cracks around a huge dying tree; the Angry Old Tree waits in a clearing to the east
+# 9 monster groups
+
+grid:
+################,,##############################
+################,,##############################
+####...#########,,#####...........###......#####
+###.............,,............................##
+###.............,,................ccccc.......##
+###.............,,................cccccc......##
+###.............,,................ccccc.......##
+###...,.........,,................########...###
+###...,,..,,,,,,,,,,,,,,,,,,,,,,,.##############
+###....,.,,,,,,,,,,,,,,,,,,,,,,,,,,##.....######
+###....,,,,,...................,,,,,........####
+###....,,,,.......cccccc......###,,,,........###
+###....,,,.......cccccccc.....####,,,.........##
+##....,,,,.......cccccccc.....###...........,,,,
+,,,,,,,,,.........ccccccc....####...........,,,,
+,,,,,,,,,..........ccccc.....#####............##
+##....,,,,..........ccc.......####............##
+##.....,,,.....................###,,,........###
+##......,,,.....................#,,,,.......####
+##......,,,,...................,,,,,#...,..#####
+##.......,,,,,,,,,,,,,,,,,,,,,,,,,,#####,#######
+##.....,,,,,,,,,,,,,,,,,,,,,,,,,,.######,#..#.##
+###..,,,..ccccc.....................####,.....##
+###.,,........................................##
+###.....####............#############........###
+################################################
+################################################
+
+covers (overhead cover over a hidden area):
+  (1,20)-(8,25) withered canopy over a hidden hollow
+
+objects (kind x y attrs):
+  spawn       2  14  
+  exit        0  14  id=exit_f3_west to=map_forest_deep via=trail
+  exit       16   0  id=exit_f3_north to=map_forest_falls via=trail note=N2 shortcut: walking this way opens the way back from N2
+  exit       47  13  id=exit_f3_next to=map_mountain_foot via=trail lock=guardian
+  group      40  14  id=g_f3_boss cls=boss enemy=enemy_old_treant
+  group      12  10  id=g_f3_a cls=normal enemy=enemy_forest_wolf
+  group      14  18  id=g_f3_b cls=normal enemy=enemy_bramble_boar
+  group      26  22  id=g_f3_c cls=normal enemy=enemy_thorn_sprout
+  group       8  17  id=g_f3_d cls=normal enemy=enemy_mossling
+  group      30   5  id=g_f3_e cls=normal enemy=enemy_ember_fox
+  group      27  10  id=g_f3_f cls=normal enemy=enemy_forest_wolf
+  group      29  17  id=g_f3_g cls=normal enemy=enemy_bramble_boar
+  group      22   6  id=g_f3_sleep cls=normal sleep=True enemy=enemy_mossling
+  chest       4  23  id=chest_f3_hidden type=hidden
+  chest      42  23  id=chest_f3_root type=wood
+  gate       40  21  id=gate_f3_shadow element=DARK
+  spring     28  21  id=spring_f3
+  npc         6   4  id=npc_f3_shrine note=NATURE Guardian shrine
+  lore       18   4  id=lore_f3
+  landmark   21  12  w=4 h=4 what=a huge withered grey tree with dark-violet veins, violet mushrooms around its roots
+  crystal    36   5  
+  crystal    12  21  

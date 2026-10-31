@@ -1,0 +1,60 @@
+# M9 map_ruins_sanctum — Điện Phong Ấn (48 x 27), zone zone_ruins, corruption 85 %
+# the sealed sanctum: a symmetric outer yard with two dark pools, a great hall with one door where the Ancient Guardian keeps the seal
+# 9 monster groups
+
+grid:
+################################################
+################################################
+###..........################............#######
+###.......,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,...###
+###......,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,...###
+###...~~~==,....########################,,,..###
+###...~~~==.....########################,,,..###
+###...~~===.....##.....................##,,..###
+###.....=,,ccc..##.....................##,,,####
+###....,,,cccc..##........ccccc........##,,,####
+##.....,,,.ccc..##........ccccc........##,,,..##
+###....,,.......##........ccccc........##.,,..##
+###...,,,.......,,.....................##.,,..##
+,,,,,,,,,,,,,,,,,,,....................##.,,..##
+,,,,,,,,,,,,,,,,,,,....................##.,,.###
+###...,,,.......##.....................##.,,.###
+###....,,.......##................cc...##.,,.###
+###....,,,......##..............ccccc..##,,,####
+##.....,,,......##...............ccc...##,,,####
+##....~~===.....##.....................##,,..###
+##...~~~===.....#########################,,..###
+##....~~~==.....########################,,,..###
+##.....~~=,,............................,,,..###
+##.......,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,...###
+##########,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,######
+########################,,######################
+########################,,######################
+
+covers (overhead cover over a hidden area):
+  (18,15)-(23,19) a fallen roof corner over a hidden niche
+
+objects (kind x y attrs):
+  spawn       2  13  
+  exit        0  13  id=exit_r3_west to=map_ruins_hall via=trail
+  exit       24  26  id=exit_r3_south to=map_ruins_crypt via=stairs
+  group      32  13  id=g_r3_boss cls=boss enemy=enemy_ancient_guardian
+  group       8  10  id=g_r3_a enemy=enemy_rune_wisp cls=normal
+  group      12  18  id=g_r3_b enemy=enemy_stone_sentinel cls=normal
+  group      22   3  id=g_r3_c enemy=enemy_tide_wraith cls=normal
+  group      30  23  id=g_r3_d enemy=enemy_ember_idol cls=normal
+  group      36   3  id=g_r3_e enemy=enemy_shadow_priest cls=normal
+  group      44  13  id=g_r3_f enemy=enemy_stone_sentinel cls=normal sleep=True
+  group      21   9  id=g_r3_g enemy=enemy_rune_wisp cls=normal
+  group      26  17  id=g_r3_h enemy=enemy_tide_wraith cls=normal
+  chest      43   5  id=chest_r3_metal type=wood
+  chest      19  18  id=chest_r3_hidden type=hidden
+  chest      36   9  id=chest_r3_boss type=gold
+  gate       43   8  id=gate_r3_metal element=METAL
+  npc        43  21  id=npc_r3_shrine note=LIGHT Guardian shrine
+  spring     14  13  id=spring_r3 note=before the hall door
+  lore        4   9  id=lore_r3_seal
+  landmark   25  11  w=4 h=3 what=the great seal: a cracked rune altar with dark-violet crystals bursting through it sprite=prop_adv_ruins_broken
+  crystal    28  10  
+  crystal    12   9  
+  crystal    34  17  

@@ -13,6 +13,7 @@ Every path is relative to the art root (`art_inbox/`), so the tree can be moved.
   "title": "Hoa Sobi Cloud: 6 loài × 4 giai đoạn",   // shown in the PROMPT.md heading
   "layout": ".ref/cloud-layout.png",    // the target layout; "" when there is none
   "note": "",                           // optional paragraph under the how-to
+  "prompt": {},                         // optional: overrides profile lines (style_line, negative_line, shape_line, accepted_line) for this batch
   "style_refs": {                       // key -> file; a sheet picks one by key
     "flora":    ".batch/cloud-01-flowers/1_style_flora.png",
     "building": "...", "item": "...", "creature": "...", "sky": "..."
@@ -45,6 +46,7 @@ keys without failing validation.
   "extra": ["set-wide note placed before the framing clause"],
   "tail":  ["per-row rule placed after the framing clause"],
   "framing": "",               // optional: replaces the clause "kind" would supply
+  "prompt": {},                // optional: overrides the batch / profile prompt lines for this sheet only
   "trim": "tight",             // tight (default) | uniform | none
   "anchor": "bottom-center",   // uniform only: bottom-center | bottom-left | center
   "assets": ["flower_cloud_daisy_sprout", "..."]   // reading order, one per cell

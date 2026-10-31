@@ -1,0 +1,76 @@
+# M5 map_mountain_mine — Mỏ Quặng Bỏ Hoang (64 x 36), zone zone_mountain, corruption 40 %
+# an abandoned ore mine inside the mountain: rock chambers joined by timbered tunnels, a lava channel, a hot spring
+# 12 monster groups
+
+grid:
+################################################################
+################################################################
+################################################################
+################################################################
+##########################..........#####################.....##
+#########..#############.............####################.....##
+#######.......#########...............###################.....##
+#####...........######................##########....#####.....##
+####............###,,,,,,,,,,,,,,,,,..########.........##,....##
+####.........,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,##...........,,######
+,,,,,,,,,,,,,,,,,,,,,##.......,,..,,,,,,,,,,,,,,.......,,#######
+,,,,,,,,,,,,,,,..######.......,,.....####,,,,,,,,,,......#######
+####......,,,....########.....,,..#######,#...,,,,,,.....#######
+####.......,,,..#############.,,#########,#......,,,.....#######
+######.....,,,################,,#########,##......,,,....#######
+############,,,###############,,#######..,..#.....,,,....#######
+############,,,###############,,#######.....##.....,,..#########
+#############,,,##############,,#######.....#######,,###########
+#############,,,,#############,,#######.....#######,,,##########
+##############,,,,,######.....,,.##################,,,##########
+###############,,,,,,#.............#################,,########,,
+#################,,,,,,.............################,,######,,,,
+###################,,,,,.............##########.....,,...,,,,,,,
+####################.,,,.............#########......,,..,,,,,,##
+#######.......######........,,,,,,...#######........,,..,,,.####
+######..........####........,,,,,,,,,,,,,,##........,,......####
+#####............###.,,,........,,,,,,,,,,,,,,,,,,,,,,......####
+#####....~~~.....#,,,,,,............####,,,,,,,,,,,,,,......####
+#####...~~~~~....,,,,,,.........,,.##########...............####
+#####....~~~....#,,,####........,,###########..ccc.........#####
+######.........###########....~~===~~~~~~~####cccc........######
+########...########~~~~~~~~~~~~~===~~~~~~~#####ccc......########
+###################~~~~~~~~~~~~~#,,#############################
+#################################,,,############################
+#################################,,,############################
+##################################,,############################
+
+covers (overhead cover over a hidden area):
+  (37,14)-(44,19) a collapsed rock ceiling over a hidden side tunnel
+
+objects (kind x y attrs):
+  spawn       2  10  
+  portal      8  13  
+  exit        0  10  id=exit_m2_west to=map_mountain_foot via=tunnel
+  exit       63  20  id=exit_m2_east to=map_mountain_peak via=tunnel lock=guardian
+  exit       34  35  id=exit_m2_south to=map_mountain_tunnels via=tunnel note=walking this way opens the shortcut back from N5
+  group      60  21  id=g_m2_elite cls=elite enemy=enemy_thunder_ram
+  group      12   7  id=g_m2_a enemy=enemy_rock_beetle cls=normal
+  group      26   6  id=g_m2_b enemy=enemy_cliff_hawk cls=normal
+  group      34  10  id=g_m2_c enemy=enemy_lava_newt cls=normal sleep=True
+  group      24  22  id=g_m2_d enemy=enemy_ore_golem cls=normal
+  group      32  27  id=g_m2_e enemy=enemy_rock_beetle cls=normal
+  group      46  26  id=g_m2_f enemy=enemy_lava_newt cls=normal
+  group      50  15  id=g_m2_g enemy=enemy_snow_goat cls=normal
+  group      54  29  id=g_m2_h enemy=enemy_rock_beetle cls=normal
+  group      14  25  id=g_m2_i enemy=enemy_lava_newt cls=normal
+  group      46  10  id=g_m2_j enemy=enemy_cliff_hawk cls=normal
+  group      58  26  id=g_m2_k enemy=enemy_ore_golem cls=normal
+  chest      11  30  id=chest_m2_flooded type=silver
+  chest      59   6  id=chest_m2_niche type=wood
+  chest      42  16  id=chest_m2_hidden type=hidden
+  chest      22  27  id=chest_m2_hall type=wood
+  gate       17  28  id=gate_m2_lightning element=LIGHTNING
+  gate       56   9  id=gate_m2_water element=WATER
+  spring     50  10  id=spring_m2 note=hot spring
+  lore        8   7  id=lore_m2
+  ore        30  12  id=ore_m2_a
+  ore        56  24  id=ore_m2_b
+  landmark   25  19  w=3 h=3 what=an old mine lift tower with a big pulley wheel sprite=prop_adv_mountain_cart
+  crystal    36  27  
+  crystal    48  30  

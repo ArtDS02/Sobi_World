@@ -1,0 +1,86 @@
+# N6 map_ruins_crypt — Hầm Mộ Rune (72 x 40), zone zone_ruins, corruption 80 %
+# the rune crypt under the ruins: stone halls and corridors around a dark water channel, an ossuary hall with a sub-boss, a sealed hidden room
+# 17 monster groups
+
+grid:
+##############################,,########~~##############################
+##############################,,########~~##############################
+##############################,,########~~...........###################
+##############################,,########~~...........###################
+########################......,,.....###~~...........###################
+########################......,,.....###~~...........###################
+########################......,,.....###~~....,,,....###################
+########################......,,.....###~~.,,,,,,....###################
+########################......,,.....###==,,,,,,.....###################
+########################.....,,,.....#,,==,,,........###################
+########################...,,,,,....,,,,==...........###################
+########################..,,,,,.....,,,,=~##############################
+########################,,,,,........,,,==,#############################
+######################,,,,,,.........##,==,,,###########################
+####################,,,,,,...........###~=,,,,,..............###########
+##################,,,,,,################~~#,,,,,,............###########
+####.............,,,,,##################~~###,,,,,,..........###########
+####...........,,,,,####################~~####.,,,,,,........###########
+####.........,,,,,,#####################~~####...,,,,,.......###########
+####.......,,,,,,#######################~~####.....,,,.......###########
+,,,,,,,,,,,,,,,..#######################~~####...............###########
+,,,,,,,ccc,,,,,..#######################~~####...............###########
+####..ccccc,,,,,,#######################~~###,,,........,,,..###########
+####...ccc...,,,,,,#####################~~##,,,,........,ccc.###########
+####...........,,,,,,###################~~,,,,,.........ccccc###########
+#################,,,,,,#################==,,,,...........ccc,,##########
+###################,,,,,,..............,==,,##.......,,....,,,,.......##
+#####################,,,,,...........,,,==###########,,#####,,,,......##
+#######################,,,,,.......,,,,,=~##########,,,######,,,,.....##
+########################,,,,,,....,,,,,#~~##########,,,#######,,,,,...##
+########################..,,,,,,,,,,,..#~~######....,,...#####.,,,,,,,,,
+########################....,,,,,,,,...#~~######....,,...#####...,,,,,,,
+########################......,,,,.....#~~######....,,...#####........##
+########################.....ccc.......#~~######.........#####........##
+########################....ccccc......#~~######.........#####........##
+########################.....ccc.......#~~######.........###############
+########################...............#~~######.........###############
+########################################~~##############################
+########################################~~##############################
+########################################~~##############################
+
+covers (overhead cover over a hidden area):
+  (41,1)-(53,11) a sealed vault ceiling over a hidden room
+
+objects (kind x y attrs):
+  spawn       2  20  
+  portal      6  17  
+  exit        0  20  id=exit_n6_west to=map_ruins_gate via=trail
+  exit       30   0  id=exit_n6_north to=map_ruins_hall via=stairs
+  exit       71  30  id=exit_n6_east to=map_ruins_sanctum via=stairs
+  group      54  18  id=g_n6_boss cls=subboss enemy=enemy_shadow_priest
+  group      28  32  id=g_n6_elite cls=elite enemy=enemy_stone_sentinel
+  group      28   6  id=g_n6_special cls=special when=night enemy=enemy_tide_wraith
+  group       8  22  id=g_n6_a enemy=enemy_rune_wisp cls=normal
+  group      14  18  id=g_n6_b enemy=enemy_ember_idol cls=normal
+  group      33  12  id=g_n6_c enemy=enemy_tide_wraith cls=normal
+  group      26  11  id=g_n6_d enemy=enemy_stone_sentinel cls=normal sleep=True
+  group      36  30  id=g_n6_e enemy=enemy_rune_wisp cls=normal
+  group      45  22  id=g_n6_f enemy=enemy_ember_idol cls=normal
+  group      50  24  id=g_n6_g enemy=enemy_rune_wisp cls=mutant
+  group      58  24  id=g_n6_h enemy=enemy_stone_sentinel cls=normal
+  group      52  34  id=g_n6_i enemy=enemy_tide_wraith cls=normal
+  group      64  28  id=g_n6_j enemy=enemy_ember_idol cls=normal
+  group      68  32  id=g_n6_k enemy=enemy_rune_wisp cls=normal
+  group      34   5  id=g_n6_l enemy=enemy_shadow_priest cls=normal
+  group      20  15  id=g_n6_m enemy=enemy_stone_sentinel cls=normal sleep=True
+  group      48  16  id=g_n6_n enemy=enemy_tide_wraith cls=normal
+  chest      58  16  id=chest_n6_ossuary type=gold
+  chest      50   4  id=chest_n6_vault type=hidden
+  chest      34  34  id=chest_n6_hall type=silver
+  chest      66  32  id=chest_n6_mimic type=mimic
+  chest       5  17  id=chest_n6_entry type=wood
+  gate       24  27  id=gate_n6_light element=LIGHT note=opens when both rune plates shine
+  puzzle      8  18  id=puzzle_n6_plate_a element=LIGHT
+  puzzle     13  23  id=puzzle_n6_plate_b element=LIGHT
+  spring     47  23  id=spring_n6 note=at the door of the ossuary hall
+  lore       34   7  id=lore_n6
+  landmark   50  14  w=4 h=3 what=a vast ossuary wall of stone coffins around a cracked guardian sarcophagus sprite=prop_adv_ruins_wall
+  crystal    30  34  
+  crystal    58  24  
+  crystal     8  22  

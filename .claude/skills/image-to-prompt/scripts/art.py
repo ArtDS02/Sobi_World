@@ -454,7 +454,8 @@ def attachment_plan(data: dict, sheet: dict) -> list[tuple[str, str]]:
 
 def render_prompt(ctx: Ctx, data: dict, sheet: dict) -> str:
     """Build the copy-paste prompt body for one sheet."""
-    p = ctx.profile
+    # A batch may override the profile's prompt lines (style_line, negative_line ...) for its own look, and a sheet those of its batch.
+    p = {**ctx.profile, **(data.get("prompt") or {}), **(sheet.get("prompt") or {})}
     mode = sheet.get("mode", "sheet")
     lines: list[str] = []
 

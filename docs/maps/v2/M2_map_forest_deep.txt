@@ -1,0 +1,73 @@
+# M2 map_forest_deep — Rừng Sâu (64 x 36), zone zone_forest, corruption 18 %
+# the deep forest: clearings joined by two routes, a pond and a stream, a mossy ridge with an old shrine
+# 12 monster groups
+
+grid:
+################################################################
+################################################################
+####....###############################..#######################
+####..#######..............................########........#####
+##############..........................############.........###
+#####......####.........................#############........###
+#####......####........~~~..............#############.......####
+#####......####......~~~~~~.............#############........###
+#####......###......~~~~~~~~~...........############.........###
+##########,##.......~~~~~~~~~~............#########..........###
+####...##.,.........~~~~~~~~~.............................,,,,,,
+###.......,..........~~~~~~~~.......,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+###.....................~~~........,,,,,,,,,,,,,,,,,,,,,,,,,,,##
+###.....................~~........,,,,FFFFFFFFFFFFF........,,,##
+###.....................~~~......,,,,^^^^^^^^^^^^^F........,,###
+###..............,,,,,,,===,,,,,,,,,F^^^^^^^^^^^^^F.......,,,###
+###............,,,,,,,,,,==,,,,,,,,.F^^^^^^^^^^^^^F.......,,,###
+###..........,,,,,,......~~.........F^^^^^^^^^^^^^F......,,,.###
+,,,,,,,,,,,,,,,,,........~~~........F^^^^^^^^^^^^^F.....,,,,.###
+,,,,,,,,,,,,,,,,.........~~~........FFFFFFssFFFFFFF....,,,,.####
+###..........,,,,.........~~........FFFFFFssFFFFFFF...,,,,..####
+###...........,,,,........~~..............,,.........,,,,....###
+###............,,,,,,,,,..~~..............,,....,,,,,,,,.....###
+###.............,,,,,,,,,,==,,,,,,......,,,,,,,,,,,,,,,.,....###
+####...........#,#####,,,===,,,,,,,,,,,,,,,,,,,,,,.#####,.....##
+####..........##,########~~~,,,.ccc,,,,,,,........######,#....##
+###..........###,########~~..,,.ccc..............#######,##...##
+###..........###,########~~..,,,ccc#####........#######.......##
+###..........###,,,,#####~~..,,,.########.......#######.......##
+###...........#####,,,###~~...,,#########.......#######.......##
+###.............########.~~...,,#########.......#######.......##
+###...............##....~~~...,,#########.........#####.......##
+#######...........#####.~~~...,,########...........#####....####
+##########..############~~##..,,.###############################
+########################~~####,,################################
+########################~~####,,################################
+
+covers (overhead cover over a hidden area):
+  (14,25)-(23,31) dark forest canopy over a hidden grove
+
+objects (kind x y attrs):
+  spawn       2  18  
+  portal      5  21  
+  exit        0  18  id=exit_f2_west to=map_forest_edge via=trail
+  exit       63  10  id=exit_f2_east to=map_forest_heart via=trail lock=guardian
+  exit       30  35  id=exit_f2_south to=map_mountain_tunnels via=tunnel note=N5, closed until the mountain zone opens
+  group      58  10  id=g_f2_elite cls=elite enemy=enemy_wolf_alpha
+  group       6  14  id=g_f2_a cls=normal enemy=enemy_mossling
+  group      20  19  id=g_f2_b cls=normal enemy=enemy_ember_fox
+  group      30  11  id=g_f2_c cls=normal enemy=enemy_dew_frog
+  group      33  23  id=g_f2_d cls=normal enemy=enemy_forest_wolf
+  group      48  16  id=g_f2_e cls=normal enemy=enemy_thorn_sprout
+  group      53   8  id=g_f2_f cls=normal enemy=enemy_gale_sparrow
+  group      38   8  id=g_f2_g cls=normal enemy=enemy_forest_wolf
+  group      56  20  id=g_f2_h cls=normal enemy=enemy_bramble_boar
+  group      28  31  id=g_f2_i cls=normal enemy=enemy_mossling
+  group      10  26  id=g_f2_j cls=normal enemy=enemy_thorn_sprout
+  group      46  24  id=g_f2_sleep cls=normal sleep=True enemy=enemy_forest_wolf
+  chest      21  29  id=chest_f2_hidden type=hidden
+  chest       7   6  id=chest_f2_vines type=silver
+  chest      57  29  id=chest_f2_boulder type=wood
+  gate       10  10  id=gate_f2_vines element=NATURE
+  gate       56  26  id=gate_f2_boulder element=EARTH
+  spring      6  22  id=spring_f2
+  npc        44  15  id=npc_f2_shrine
+  lore       40   9  id=lore_f2
+  landmark   57   4  w=3 h=2 what=a ring of mossy standing stones
+  crystal    33  26  
