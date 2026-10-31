@@ -2,7 +2,7 @@
 // FeedbackDirector, the one place that turns events into presentation. Pure.
 import type { AudioKey } from '../../core/config/assetIds';
 import type { ItemId } from '../../core/config/ids';
-import type { EventBase } from '../../core/events';
+import type { AreaVfx, EventBase } from '../../core/events';
 import { formatInt, t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 import { quipLine, type QuipTrigger } from './logic/bonds';
@@ -12,6 +12,8 @@ import { isAdventureEvent } from './logic/events';
 export interface Presentation {
   sound: AudioKey | null;
   toast: string | null;
+  /** A one-shot picture played by the Area's scene: the fx art id and the thing it plays on (null: on the party). */
+  vfx?: AreaVfx;
 }
 
 const T = vi.adventure.toast;
@@ -71,7 +73,7 @@ export function adventurePresentation(e: EventBase, origin: 'action' | 'tick' | 
     case 'ADVENTURE_LORE_FOUND':
       return { sound: 'notify', toast: T.lore };
     case 'ADVENTURE_SECRET_FOUND':
-      return { sound: 'birth_fanfare', toast: e.kind === 'wall' ? T.secretWall : T.secret };
+      return { sound: 'birth_fanfare', toast: e.kind === 'wall' ? T.secretWall : T.secret, vfx: { fx: 'fx_secret_found', at: e.secretId } };
     case 'ADVENTURE_SHRINE_BLESSED':
       return { sound: 'level_up', toast: t(T.shrine, { element: elementName(e.element), pct: Math.round(e.pct * 100) }) };
     case 'ADVENTURE_PORTAL_ACTIVATED':

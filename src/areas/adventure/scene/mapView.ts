@@ -11,6 +11,7 @@ import { elementArt } from '../ui/vmKit';
 import { vi } from '../../../i18n/vi';
 import { decalsOf } from './decals';
 import { dressCorruption } from './mapCorruption';
+import { corruptionMarks, NO_MARKS, sleepMark, type CorruptionMarks } from './foeMarks';
 import { drawCover } from './mapCovers';
 import { dressArea, type AreaDressing } from './mapDepth';
 import type { AdventureSceneState } from './sceneState';
@@ -98,7 +99,9 @@ export interface MapObjects {
       label: Phaser.GameObjects.Container;
       /** A dark glow under a group corrupted 3 or more, and the Zzz over a sleeping one (decision 045). */
       aura: Phaser.GameObjects.Image | null;
-      zzz: Phaser.GameObjects.Text | null;
+      zzz: Phaser.GameObjects.Image | Phaser.GameObjects.Text | null;
+      /** Its corruption marks (decision 045): violet veins on the ground under it from 3, crystal spikes behind it from 4. */
+      marks: CorruptionMarks;
     }
   >;
   sparkles: Map<string, Phaser.GameObjects.Text>;
@@ -170,11 +173,12 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     img.setTint(g.disguised ? 0xffffff : g.affix?.golden ? 0xffe27a : (CORRUPTION_TINT[g.corruption - 1] ?? 0xffffff));
     const shadow = scene.add.ellipse(0, 0, size * t * ratio * 0.7, size * t * 0.18, g.corruption >= 3 ? 0x3a0a4a : 0x000000, g.corruption >= 3 ? 0.4 : 0.22);
     const aura = g.corruption >= 3 && !g.disguised ? scene.add.image(0, 0, 'adv-fx-blob').setDisplaySize(size * t * ratio * 1.3, size * t * 0.75).setTint(0x4a0f6a).setAlpha(0) : null;
-    const zzz = g.asleep ? scene.add.text(0, 0, 'z Z', { fontSize: '18px', fontStyle: 'bold', color: '#e8f0ff', stroke: '#3a4a7a', strokeThickness: 4 }).setOrigin(0.5, 1) : null;
+    const zzz = g.asleep ? sleepMark(scene, t) : null;
+    const marks = g.disguised ? NO_MARKS : corruptionMarks(scene, g.corruption, size * t, ratio);
     const phase = [...g.id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 100;
     const label = foeLabel(scene, g.elements, g.count, g.affix?.name ?? g.title, g.corruption, g.asleep);
-    groups.set(g.id, { img, sx: img.scaleX, sy: img.scaleY, phase, shadow, label, aura, zzz });
-    layer.add([shadow, ...(aura ? [aura] : []), img, ...(zzz ? [zzz] : []), label]);
+    groups.set(g.id, { img, sx: img.scaleX, sy: img.scaleY, phase, shadow, label, aura, zzz, marks });
+    layer.add([shadow, ...(marks.veins ? [marks.veins] : []), ...(aura ? [aura] : []), ...marks.spikes, img, ...(zzz ? [zzz] : []), label]);
   }
   const gates: MapObjects['gates'] = new Map();
   for (const e of map.exits) {

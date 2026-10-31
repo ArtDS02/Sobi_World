@@ -32,6 +32,7 @@ export function measureStage(root: HTMLElement, cache: StageCache, drawn: number
       down: unit.classList.contains('is-down'),
       aimable: unit.classList.contains('is-aimable'),
       statuses: unit.dataset.statuses ? unit.dataset.statuses.split(',') : [],
+      corruption: Number(unit.dataset.corruption ?? 0) || 0,
     });
   }
   cache.drawn = drawn;

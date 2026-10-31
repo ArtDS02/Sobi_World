@@ -20,6 +20,8 @@ export interface StageUnit {
   aimable: boolean;
   /** The statuses it carries now (decision 044 status_overlay). */
   statuses: readonly string[];
+  /** An enemy's corruption 1–5 (decision 045), 0 when none. */
+  corruption: number;
 }
 
 interface Body {
@@ -27,7 +29,13 @@ interface Body {
   main: Phaser.GameObjects.Image;
   light: Phaser.GameObjects.Image;
   glow: Phaser.GameObjects.Image;
+  /** Corruption marks (decision 045): violet veins on the ground from 3, a crystal cluster behind it from 4. */
+  veins: Phaser.GameObjects.Image;
+  spikes: Phaser.GameObjects.Image;
 }
+
+const VEINS = 'fx_corrupt_veins';
+const SPIKES = 'fx_corrupt_spikes';
 
 const grey = (k: number) => {
   const c = Math.round(255 - k * 120);
@@ -60,20 +68,25 @@ export class BattleUnits {
     return null;
   }
 
+  /** A manifest image by its id, asked for the first time it is missing. */
+  private image(id: string): string | null {
+    if (this.scene.textures.exists(id)) return id;
+    this.want(id);
+    return null;
+  }
+
   /** Keeps one body per unit on the field (new ones made, gone ones removed). */
   sync(units: readonly StageUnit[]) {
     const ids = new Set(units.map((u) => u.id));
     for (const [id, b] of this.bodies) {
       if (ids.has(id)) continue;
-      b.main.destroy();
-      b.light.destroy();
-      b.glow.destroy();
+      for (const img of [b.main, b.light, b.glow, b.veins, b.spikes]) img.destroy();
       this.bodies.delete(id);
     }
     for (const u of units) {
       if (this.bodies.has(u.id)) continue;
       const make = () => this.scene.add.image(0, 0, '__MISSING').setOrigin(0.5, 1).setVisible(false);
-      const b: Body = { art: u.art, main: make(), light: make().setBlendMode(Phaser.BlendModes.ADD), glow: make().setBlendMode(Phaser.BlendModes.ADD) };
+      const b: Body = { art: u.art, main: make(), light: make().setBlendMode(Phaser.BlendModes.ADD), glow: make().setBlendMode(Phaser.BlendModes.ADD), veins: make().setOrigin(0.5), spikes: make() };
       this.bodies.set(u.id, b);
     }
   }
@@ -88,7 +101,7 @@ export class BattleUnits {
     const posture: PoseArt = u.down ? 'ko' : (pose?.posture ?? 'idle');
     const key = this.texture(u.art, posture);
     if (!key) {
-      for (const img of [b.main, b.light, b.glow]) img.setVisible(false);
+      for (const img of [b.main, b.light, b.glow, b.veins, b.spikes]) img.setVisible(false);
       return;
     }
     for (const img of [b.main, b.light, b.glow]) if (img.texture.key !== key) img.setTexture(key);
@@ -124,9 +137,30 @@ export class BattleUnits {
       .setScale(fit * p.sx * 1.08, fit * p.sy * 1.05)
       .setTintFill(glow ?? 0xffffff)
       .setAlpha(glowAlpha * opacity);
+    this.marks(u, b, fit, p.dx, opacity, depth);
+  }
+
+  /** The veins under a corrupted enemy's feet and the spikes at its back (it looks at the other side); they stay when it moves. */
+  private marks(u: StageUnit, b: Body, fit: number, dx: number, opacity: number, depth: number) {
+    const w = b.main.width * fit;
+    const h = b.main.height * fit;
+    const veins = u.corruption >= 3 && !u.down ? this.image(VEINS) : null;
+    b.veins.setVisible(veins !== null);
+    if (veins) {
+      if (b.veins.texture.key !== veins) b.veins.setTexture(veins);
+      b.veins.setPosition(u.feet.x + dx * 0.3, u.feet.y - h * 0.03).setDisplaySize(w * 1.2, h * 0.3).setDepth(depth - 0.2).setAlpha(0.85 * opacity);
+    }
+    const spikes = u.corruption >= 4 && !u.down ? this.image(SPIKES) : null;
+    b.spikes.setVisible(spikes !== null);
+    if (spikes) {
+      if (b.spikes.texture.key !== spikes) b.spikes.setTexture(spikes);
+      const back = u.side === 'enemy' ? 1 : -1;
+      const size = h * (u.corruption >= 5 ? 0.55 : 0.42);
+      b.spikes.setPosition(u.feet.x + dx + back * w * 0.34, u.feet.y).setDisplaySize(size, size).setFlipX(back < 0).setDepth(depth - 0.15).setAlpha(opacity);
+    }
   }
 
   hideAll() {
-    for (const b of this.bodies.values()) for (const img of [b.main, b.light, b.glow]) img.setVisible(false);
+    for (const b of this.bodies.values()) for (const img of [b.main, b.light, b.glow, b.veins, b.spikes]) img.setVisible(false);
   }
 }

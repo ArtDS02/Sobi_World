@@ -93,7 +93,7 @@ function stageState(): BattleStageState | null {
   if (!host || !lab.step) return null;
   const r = host.getBoundingClientRect();
   const size = r.height * (lab.allies + lab.foes > 2 ? 0.26 : 0.34);
-  const unit = (id: string, side: 'ally' | 'enemy', art: string, x: number, y: number) => ({ id, side, art, mirrored: mirrored(art, side), feet: { x: r.left + r.width * x, y: r.top + r.height * y }, width: size, height: size, down: false, aimable: false, statuses: statusesOn(id) });
+  const unit = (id: string, side: 'ally' | 'enemy', art: string, x: number, y: number) => ({ id, side, art, mirrored: mirrored(art, side), feet: { x: r.left + r.width * x, y: r.top + r.height * y }, width: size, height: size, down: false, aimable: false, statuses: statusesOn(id), corruption: 0 });
   const allyArt = lab.fromEnemy ? lab.target : lab.attacker;
   const foeArt = lab.fromEnemy ? lab.attacker : lab.target;
   // Three spots a side, staggered in depth like the game's field.

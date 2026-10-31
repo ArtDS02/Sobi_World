@@ -9,6 +9,12 @@ export interface EventBase {
   readonly type: string;
 }
 
+/** An Area's one-shot picture for an event, chosen by its feedback table and played by its scene: the fx art id and the thing it plays on (null: on the player). */
+export interface AreaVfx {
+  readonly fx: string;
+  readonly at: string | null;
+}
+
 export type WorldEvent =
   | { type: 'item.added'; area: string; itemId: string; quantity: number }
   | { type: 'item.removed'; area: string; itemId: string; quantity: number }

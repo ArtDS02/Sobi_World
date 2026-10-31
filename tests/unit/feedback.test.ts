@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { ErrorCode } from '../../src/core/config/errors';
 import { GAME_EVENT_TYPES, type GameEvent } from '../../src/areas/farm/logic/events';
 import type { FarmGame } from '../../src/areas/farm/logic/types';
+import { adventurePresentation } from '../../src/areas/adventure/feedback';
 import { createFeedbackDirector } from '../../src/areas/farm/scene/feedback/FeedbackDirector';
 import { feedbackPlan } from '../../src/areas/farm/scene/feedback/feedbackPlan';
 import { FEEDBACK_TABLE, REJECT_ROW } from '../../src/areas/farm/scene/feedback/feedbackTable';
@@ -261,5 +262,23 @@ describe('FeedbackDirector', () => {
     });
     store.emit([SAMPLES.PIG_TREATED], 'action');
     expect(log).toEqual(['sound:ui_click', 'toast:Ủn Hồng đã khỏi bệnh.']);
+  });
+
+  it("an Area's one-shot picture plays before its sound and toast, told whether motion is reduced (decision 045)", () => {
+    const base = farm();
+    for (const reduceMotion of [false, true]) {
+      const store = fakeStore({ ...base, settings: { ...base.settings, reduceMotion } });
+      const log: string[] = [];
+      createFeedbackDirector({
+        store,
+        effects: () => ({ animate: () => {}, burst: () => {}, float: () => {}, life: () => {}, inject: () => {} }),
+        audio: { play: (k) => log.push(`sound:${k}`) },
+        toast: (m) => log.push(`toast:${m}`),
+        other: (e, origin) => adventurePresentation(e, origin),
+        areaVfx: (vfx, still) => log.push(`vfx:${vfx.fx}:${vfx.at}:${still}`),
+      });
+      store.emit([{ type: 'ADVENTURE_SECRET_FOUND', mapId: 'm', secretId: 'cover_a', kind: 'cover' } as unknown as GameEvent], 'action');
+      expect(log).toEqual([`vfx:fx_secret_found:cover_a:${reduceMotion}`, 'sound:birth_fanfare', `toast:${vi.adventure.toast.secret}`]);
+    }
   });
 });

@@ -105,6 +105,7 @@ export function unitOnField(
         'data-side': u.side,
         'data-art': u.art,
         'data-statuses': u.statuses.map((st) => st.id).join(','),
+        'data-corruption': String(u.corruption),
       },
     },
     el(

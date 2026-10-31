@@ -5,6 +5,7 @@
 // scene reads a plain state from the UI and reports what the walker does (stops somewhere, touches a group, has a thing in reach and
 // presses the interact key, walks into an exit); it never reaches the store.
 import * as Phaser from 'phaser';
+import type { AreaVfx } from '../../../core/events';
 import { inputVector, type Walkable } from '../../../systems/character';
 import { farmCamera } from '../../../systems/layout/camera';
 import type { ControlInput } from '../../../ui/world/controlInput';
@@ -14,8 +15,10 @@ import { distanceToThing, groupPosition, thingsOf, walkableOf } from '../logic/m
 import { BATTLE_SCENE_KEY } from './battle/BattleScene';
 
 export { BattleScene, manifestImages } from './battle/BattleScene';
+import { placeMarks } from './foeMarks';
 import { MapCamera } from './mapCamera';
 import { fadeCovers } from './mapCovers';
+import { playMapVfx } from './mapVfx';
 import { buildMap, edgeColour, refreshThings, type MapObjects } from './mapView';
 import type { AdventureSceneState, SceneReport } from './sceneState';
 import { Walker } from './walker';
@@ -97,6 +100,11 @@ export class AdventureScene extends Phaser.Scene {
       this.input.keyboard?.off('keydown-SPACE', use);
       for (const off of this.offs) off();
     });
+  }
+
+  /** A one-shot picture of the FeedbackDirector (decision 045), see mapVfx.ts. */
+  playVfx(vfx: AreaVfx, still: boolean) {
+    if (this.map && this.objs && this.sys.isActive()) playMapVfx(this, this.map, this.walker.position, vfx, still);
   }
 
   private useFocus() {
@@ -212,10 +220,7 @@ export class AdventureScene extends Phaser.Scene {
       const view = this.objs!.groups.get(g.id);
       const row = map.groups.find((x) => x.id === g.id);
       if (!view || !row) continue;
-      view.img.setVisible(!g.defeated);
-      view.shadow.setVisible(!g.defeated);
-      view.aura?.setVisible(!g.defeated);
-      view.zzz?.setVisible(!g.defeated);
+      for (const o of [view.img, view.shadow, view.aura, view.zzz, view.marks.veins, ...view.marks.spikes]) o?.setVisible(!g.defeated);
       view.label.setVisible(false);
       if (g.defeated) continue;
       const at = groupPosition(map, row);
@@ -226,6 +231,7 @@ export class AdventureScene extends Phaser.Scene {
       view.aura?.setPosition(at.x, at.y - view.img.displayHeight * 0.2).setDepth(at.y - 2).setAlpha(0.2 + 0.06 * g.corruption + (still ? 0 : 0.08 * Math.sin(time / 420 + view.phase)));
       view.zzz?.setPosition(at.x + view.img.displayWidth * 0.45, at.y - view.img.displayHeight * 0.7 - (still ? 0 : 6 + 6 * Math.sin(time / 600 + view.phase))).setDepth(at.y + 1);
       view.img.setPosition(at.x, at.y + 6).setDepth(at.y).setScale(view.sx * (1 - 0.018 * beat), view.sy * (1 + 0.035 * beat));
+      placeMarks(view.marks, at, view.img.displayWidth, still ? 0 : Math.sin(time / 420 + view.phase));
       view.shadow.setPosition(at.x, at.y + 4).setScale(1 - 0.06 * beat, 1).setDepth(at.y - 1);
       const d = Math.hypot(at.x - pos.x, at.y - pos.y);
       if (d < AB.explore.foeInfo * map.tile && !g.disguised) {

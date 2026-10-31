@@ -5,7 +5,7 @@ import { SAVE } from '../../../../core/config/save';
 import type { GameEvent } from '../../logic/events';
 import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
-import type { EventBase } from '../../../../core/events';
+import type { AreaVfx, EventBase } from '../../../../core/events';
 import type { AudioKey } from '../../../../core/config/assetIds';
 import type { FarmStore } from '../../store';
 import type { AudioPort } from '../audio/audioPort';
@@ -28,7 +28,9 @@ export interface FeedbackDeps {
    * Feedback of events that are not the farm's (an Area's own events, the world's): the Area gives their sound and
    * toast text; null = nothing to show. Still the one place that turns events into presentation.
    */
-  other?: (event: EventBase, origin: 'action' | 'tick' | 'catchup') => { sound: AudioKey | null; toast: string | null } | null;
+  other?: (event: EventBase, origin: 'action' | 'tick' | 'catchup') => { sound: AudioKey | null; toast: string | null; vfx?: AreaVfx } | null;
+  /** Plays an Area's one-shot picture on its scene (a still fade when motion is reduced). */
+  areaVfx?: (vfx: AreaVfx, reduceMotion: boolean) => void;
 }
 
 export interface FeedbackDirector {
@@ -63,6 +65,7 @@ export function createFeedbackDirector(deps: FeedbackDeps): FeedbackDirector {
     for (const event of events) {
       if (!(event.type in FEEDBACK_TABLE)) {
         const extra = deps.other?.(event, origin);
+        if (extra?.vfx) deps.areaVfx?.(extra.vfx, reduceMotion);
         if (extra?.sound) deps.audio.play(extra.sound);
         if (extra?.toast) deps.toast(extra.toast);
         continue;
