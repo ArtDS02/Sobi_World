@@ -103,16 +103,16 @@ export function deleteMapDraft(body: { id: string }, dir = MAP_DATA_DIR): Result
   const meta = readMeta(dir);
   // A published area keeps its notes; an empty one (only the times of the dropped draft) goes with the draft.
   const note = meta[id];
-  if (note && (!published || (!note.descriptionVi && !note.node))) {
+  if (note && (!published || (!note.descriptionVi && !note.node && Object.keys(note.exits ?? {}).length === 0))) {
     delete meta[id];
     writeMeta(dir, meta);
   }
   return { status: 200, body: { ok: true, discarded: published } };
 }
 
-export type MetaPatch = Partial<Pick<MapMeta, 'descriptionVi' | 'disabled' | 'node'>>;
+export type MetaPatch = Partial<Pick<MapMeta, 'descriptionVi' | 'disabled' | 'node' | 'exits'>>;
 
-/** POST /adventure/maps/meta { id, patch }: the builder's notes on an area (description, switched off, network node). */
+/** POST /adventure/maps/meta { id, patch }: the builder's notes on an area (description, switched off, network node, exit notes — `exits` replaces them all). */
 export function saveMapMeta(body: { id: string; patch: MetaPatch }, dir = MAP_DATA_DIR): Result {
   const { id, patch } = body;
   if (typeof id !== 'string' || !ID.test(id)) return refuse('Id map không hợp lệ');
@@ -121,11 +121,20 @@ export function saveMapMeta(body: { id: string; patch: MetaPatch }, dir = MAP_DA
   if (patch.descriptionVi !== undefined && (typeof patch.descriptionVi !== 'string' || patch.descriptionVi.length > 500)) return refuse('Mô tả tối đa 500 ký tự');
   if (patch.disabled !== undefined && (typeof patch.disabled !== 'boolean' || (published && patch.disabled))) return refuse('Map đã publish không tắt được');
   if (patch.node !== undefined && !(Number.isFinite(patch.node?.x) && Number.isFinite(patch.node?.y))) return refuse('Vị trí node không hợp lệ');
+  if (patch.exits !== undefined) {
+    const live = new Set(((readContent('adventure/maps.json') as { maps: { id: string; exits: { id: string }[] }[] }).maps.find((m) => m.id === id)?.exits ?? []).map((e) => e.id));
+    for (const [exitId, note] of Object.entries(patch.exits ?? {})) {
+      if (!/^exit_[a-z0-9_]+$/.test(exitId)) return refuse(`Id lối ra ${exitId} không hợp lệ`);
+      if (note.nameVi !== undefined && (typeof note.nameVi !== 'string' || note.nameVi.length > 80)) return refuse('Tên lối ra tối đa 80 ký tự');
+      if (note.inactive !== undefined && typeof note.inactive !== 'boolean') return refuse('inactive phải là true / false');
+      if (note.inactive && live.has(exitId)) return refuse(`${exitId} đã publish: không tắt được (save giữ id)`);
+    }
+  }
   const meta = readMeta(dir);
   const at = nowIso();
   const keep = Object.fromEntries(Object.entries(patch).filter(([, v]) => v !== undefined)) as MetaPatch;
   // A node moved on the network is layout only: it does not count as a change of the area.
-  const touched = patch.descriptionVi !== undefined || patch.disabled !== undefined;
+  const touched = patch.descriptionVi !== undefined || patch.disabled !== undefined || patch.exits !== undefined;
   const before = meta[id];
   meta[id] = { descriptionVi: '', createdAt: before?.createdAt ?? at, ...before, ...keep, updatedAt: touched || !before ? at : before.updatedAt };
   if (meta[id].disabled === false) delete meta[id].disabled;

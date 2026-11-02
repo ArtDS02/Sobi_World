@@ -1,5 +1,5 @@
 // How the areas hang together (decision 043): every area sits in exactly one zone, on its main road or as a side area (no boss there);
-// every exit has a way back from where it leads; a shortcut can be opened from its other side (the way back is no shortcut too); every
+// every exit has a way back from where it leads (unless it is one-way on purpose, decision 047); a shortcut can be opened from its other side (the way back is no shortcut too); every
 // area of a zone is walked to from its entrance. Pure; the content is passed in so the checks can be tried on broken copies.
 import { MAP_LIST, ZONE_LIST, zoneAreas, type AreaMap, type Zone } from './config/content';
 
@@ -18,7 +18,9 @@ export function mapGraphProblems(maps: readonly AreaMap[] = MAP_LIST, zones: rea
     if (!listed.has(m.id)) out.push(`${m.id} is in no zone`);
     for (const e of m.exits) {
       const back = byId.get(e.to)?.exits.filter((x) => x.to === m.id) ?? [];
-      if (back.length === 0) out.push(`${m.id}: exit ${e.id} has no way back from ${e.to}`);
+      if (back.length === 0) {
+        if (!e.oneWay) out.push(`${m.id}: exit ${e.id} has no way back from ${e.to}`);
+      }
       else if (e.lock === 'shortcut' && back.every((x) => x.lock === 'shortcut')) out.push(`${m.id}: shortcut ${e.id} can never be opened (no plain way back)`);
     }
   }

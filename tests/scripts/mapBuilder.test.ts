@@ -1,5 +1,5 @@
 // Map Builder (decision 047): the pure model of "Quản lý map" (new areas, copies, references, status; GĐ2), the spawn points exits land
-// on (GĐ3), the save-held ids a content save may never drop, and the draft store of the dev API (in a throw-away folder).
+// on (GĐ3), the connections between areas (GĐ4), the save-held ids a content save may never drop, and the draft store of the dev API (in a throw-away folder).
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -11,6 +11,7 @@ import { mapGraphProblems } from '../../src/areas/adventure/logic/mapGraph';
 import { mapProblems } from '../../src/areas/adventure/logic/maps';
 import { deleteMapDraft, readDrafts, readMeta, saveMapDraft, saveMapMeta } from '../../scripts/admin/mapDrafts';
 import { savedIdProblems, savedMapIds } from '../../scripts/admin/mapIds';
+import * as L from '../../tools/admin/mapLinks';
 import * as M from '../../tools/admin/mapModel';
 
 const load = async () => mapsSchemaModule as unknown as Record<string, unknown>;
@@ -205,5 +206,63 @@ describe('spawn points', () => {
     const dup = MAP_LIST.map((m) => structuredClone(m));
     dup[1]!.spawns = [...dup[1]!.spawns!, { ...dup[1]!.spawns![0]! }];
     expect(mapsFileSchema.safeParse({ maps: dup }).success).toBe(false);
+  });
+});
+
+describe('connections', () => {
+  const fresh = () => M.blankMap({ id: 'map_link_test', nameVi: 'Nối Thử', zoneId: MAPS.map_forest_deep!.zoneId, cols: 30, rows: 20 });
+
+  it('makes an exit, lands it on a spawn picked or made in the destination, and its way back at a chosen place', () => {
+    const a = fresh();
+    const b = structuredClone(MAPS.map_forest_deep!);
+    const d = data({ [a.id]: { map: a, road: 'branch' }, [b.id]: { map: b, road: 'main' } });
+    const exit = L.newExit(a, b, { x: 28, y: 9 }, L.takenIds(d));
+    expect(exit.id).toBe('exit_link_test_to_forest_deep');
+    expect([exit.arriveX, exit.arriveY, exit.arrive]).toEqual([b.spawn.x, b.spawn.y, 'spawn_default']);
+    const spawnId = L.spawnAt(b, a, 30, 20);
+    expect(spawnId).toBe('spawn_from_link_test');
+    expect(L.spawnAt(b, a, 30, 20)).toBe(spawnId); // the same tile picks the same spawn
+    L.landOn(exit, b, spawnId);
+    expect(exit).toMatchObject({ arrive: spawnId, arriveX: 30, arriveY: 20, facing: 'down' });
+    // No way back yet: the graph says so, unless the exit is one-way.
+    expect(L.graphProblems(d)(a.id).some((p) => p.includes('no way back'))).toBe(true);
+    exit.oneWay = true;
+    expect(L.graphProblems(d)(a.id).some((p) => p.includes('no way back'))).toBe(false);
+    delete exit.oneWay;
+    const back = L.newExit(b, a, { x: 1, y: 20 }, L.takenIds(d));
+    L.landOn(back, a, L.spawnAt(a, b, 27, 9));
+    expect(L.waysBack(b, a)).toEqual([back]);
+    expect(L.graphProblems(d)(a.id)).toEqual([]);
+    expect(mapProblems(a, [a, b]).filter((p) => /exit|arrival|spawn/.test(p))).toEqual([]);
+  });
+
+  it('keeps published exits, drops new ones, and leaves inactive exits and switched-off areas out of the graph', () => {
+    const b = structuredClone(MAPS.map_forest_deep!);
+    const d = data({ [b.id]: { map: b, road: 'main' } });
+    expect(L.removeExit(d, b, b.exits[0]!.id)).toMatch(/không xoá/);
+    const a = fresh();
+    const d2 = data({ [a.id]: { map: a, road: 'branch' }, [b.id]: { map: b, road: 'main' } });
+    const exit = L.newExit(a, b, { x: 28, y: 9 }, L.takenIds(d2));
+    const withNote = { ...d2, meta: { [a.id]: { descriptionVi: '', createdAt: '', updatedAt: '', exits: { [exit.id]: { inactive: true } } } } };
+    expect(L.liveMaps(withNote).find((m) => m.id === a.id)!.exits).toEqual([]);
+    expect(L.removeExit(d2, a, exit.id)).toBeNull();
+    expect(a.exits).toEqual([]);
+    const off = { ...d2, meta: { [a.id]: { descriptionVi: '', createdAt: '', updatedAt: '', disabled: true } } };
+    expect(L.liveMaps(off).some((m) => m.id === a.id)).toBe(false);
+  });
+
+  it('puts new areas in their zone for the checks, and faces arrivals into the area', () => {
+    const a = fresh();
+    const zones = L.workingZones(data({ [a.id]: { map: a, road: 'branch' } }));
+    expect(zones.find((z) => z.id === a.zoneId)!.branches).toContain(a.id);
+    expect(L.facingInto(a, 0, 5)).toBe('right');
+    expect(L.facingInto(a, a.cols - 1, 5)).toBe('left');
+    expect(L.facingInto(a, 5, a.rows - 1)).toBe('up');
+  });
+
+  it('never lets a shortcut be one-way', () => {
+    const maps = MAP_LIST.map((m) => structuredClone(m));
+    Object.assign(maps[0]!.exits[0]!, { lock: 'shortcut', oneWay: true });
+    expect(mapsFileSchema.safeParse({ maps }).success).toBe(false);
   });
 });

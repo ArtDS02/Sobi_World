@@ -33,3 +33,12 @@ Chủ dự án muốn tự xây thế giới Sobi Adventure trong Admin: tạo m
 - `mapProblems`: spawn phải đứng ô đi được, tới được, không trên nhóm quái; nhận `others` (map của builder) để kiểm điểm tới từ bản nháp.
 - Không làm "điều kiện xuất hiện" (spawn conditions): sẽ là luật gameplay mới, cần decision riêng.
 - Còn mở: spawn / map do Admin tạo cần tên tiếng Anh trước khi publish (test i18n) — làm ở bước Publish (GĐ7).
+
+## Giai đoạn 4 (2026-11-02) — Lối ra và kết nối
+
+- `exits[].oneWay` (tùy chọn): lối một chiều có chủ ý; `mapGraph` không đòi lối về cho nó. Lối tắt (`shortcut`) không được một chiều (schema chặn), vì nó mở khi đi lối về.
+- Hộp thoại **Lối ra** (Quản lý map): hai lưới — map này và map đích của lối đang chọn. Đặt lối ra bằng cú bấm; chọn map đích và điểm tới (danh sách, hoặc bấm lưới map đích: lấy điểm có sẵn ở ô đó, không có thì tạo `spawn_from_<map>` quay vào trong map); rộng / cao, hình, khoá (luôn mở / sau kẻ canh / lối tắt), một chiều, tên, tạm tắt.
+- **Hai chiều luôn đặt tay ở cả hai đầu:** "Tạo lối về" → bấm chỗ lối về đứng ở map đích → bấm chỗ nó tới ở map này. Không có lối về tự sinh. Chưa có lối về (và không đánh dấu một chiều) thì báo lỗi.
+- Lưu ghi bản nháp của cả hai map; "Lưu & mở lối ra của map đích" mở tiếp map bên kia.
+- Lối ra đã publish không xoá, không tắt được (save giữ id `openedExits`); vẫn dời, đổi đích, đổi khoá, đổi điểm tới được. Tên / tạm tắt của lối ra nằm ở `meta.json` (`exits`), không vào game; lối ra tạm tắt bị bỏ khi publish.
+- Kiểm tra kết nối chạy trên thế giới "như sau khi publish": map nháp vào vùng của nó (nhánh / đường chính), map tạm tắt và lối ra tạm tắt bị bỏ (`tools/admin/mapLinks.ts`). Bảng Quản lý map cộng lỗi kết nối vào cột Kiểm tra.

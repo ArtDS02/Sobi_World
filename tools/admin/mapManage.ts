@@ -8,6 +8,8 @@ import { zoneSchema } from '../../content/schemas/adventure/zones';
 import { esc } from './labels';
 import * as M from './mapModel';
 import { confirmDanger, openModal } from './modal';
+import { openExits } from './mapExits';
+import { graphProblems } from './mapLinks';
 import { openSpawns } from './mapSpawns';
 import { json, post } from './store';
 
@@ -36,10 +38,7 @@ async function fetchData(): Promise<M.BuilderData> {
 const zoneName = (data: M.BuilderData, id: string) => data.zones.find((z) => z.id === id)?.nameVi ?? id;
 const mapOf = (data: M.BuilderData, id: string) => M.workingMaps(data).find((m) => m.id === id)!;
 
-/** The draft of an area, made from its published row when it has none yet. */
-function draftOf(data: M.BuilderData, id: string): M.MapDraft {
-  return structuredClone(data.drafts[id] ?? { map: mapOf(data, id), road: M.roadOf(data, id) ?? 'branch' });
-}
+const draftOf = M.draftOf;
 
 async function act(run: () => Promise<unknown>, done: string, rerender: () => void) {
   await run();
@@ -146,6 +145,17 @@ function askDelete(data: M.BuilderData, id: string, rerender: () => void) {
   confirmDanger('Xoá map nháp', `Xoá hẳn bản nháp ${map.nameVi} (${id})?${list}`, 'Xoá map', () => act(() => post(`${API}/delete`, { id }), `Đã xoá ${map.nameVi}.`, rerender), id);
 }
 
+/** "Lối ra" of an area: saves the drafts it touched and its exit notes, then opens the next area's when asked. */
+function editExits(data: M.BuilderData, id: string, rerender: () => void) {
+  openExits(data, id, async ({ drafts, notes, next }) => {
+    await act(async () => {
+      for (const draft of drafts) await post(`${API}/draft`, { draft });
+      await post(`${API}/meta`, { id, patch: { exits: notes } });
+    }, `Đã lưu lối ra của ${drafts[0]!.map.nameVi}${drafts.length > 1 ? ` và ${drafts.length - 1} map đích` : ''} (bản nháp).`, rerender);
+    if (next) editExits(page.data!, next, rerender);
+  });
+}
+
 function rowHtml(data: M.BuilderData, s: M.MapSummary): string {
   const published = s.status === 'published' || s.status === 'changed';
   const tone = s.status === 'disabled' ? 'warn' : published ? 'ok' : 'new';
@@ -161,7 +171,7 @@ function rowHtml(data: M.BuilderData, s: M.MapSummary): string {
     <td><small>${s.updatedAt ? esc(new Date(s.updatedAt).toLocaleString('vi-VN')) : '—'}</small></td>
     <td class="mapm__acts">
       ${published ? `<a class="btn btn-small" href="#/adventure-maps/${s.id}">Sửa</a>` : btn('edit', 'Sửa', 'disabled title="Editor cho bản nháp: Map Builder GĐ6"')}
-      ${btn('spawns', 'Điểm xuất hiện')}${btn('copy', 'Nhân bản')}${btn('rename', 'Đổi tên')}
+      ${btn('exits', 'Lối ra')}${btn('spawns', 'Điểm xuất hiện')}${btn('copy', 'Nhân bản')}${btn('rename', 'Đổi tên')}
       ${published ? '' : btn('toggle', s.status === 'disabled' ? 'Bật' : 'Tắt')}
       ${s.status === 'published' ? '' : btn('delete', s.status === 'changed' ? 'Bỏ nháp' : 'Xoá')}
     </td></tr>`;
@@ -169,7 +179,8 @@ function rowHtml(data: M.BuilderData, s: M.MapSummary): string {
 
 function draw(root: HTMLElement) {
   const data = page.data!;
-  const all = M.summaries(data);
+  const graph = graphProblems(data);
+  const all = M.summaries(data).map((s) => ({ ...s, problems: [...s.problems, ...graph(s.id)] }));
   const q = page.query.trim().toLowerCase();
   const shown = all.filter((s) => (!page.zone || s.zoneId === page.zone) && (!page.status || s.status === page.status) && (!q || `${s.nameVi} ${s.id}`.toLowerCase().includes(q)));
   const count = (st: M.MapStatus) => all.filter((s) => s.status === st).length;
@@ -201,6 +212,7 @@ function draw(root: HTMLElement) {
       const id = b.dataset.id!;
       const run = {
         spawns: () => openSpawns(data, draftOf(data, id), (draft) => act(() => post(`${API}/draft`, { draft }), `Đã lưu điểm xuất hiện của ${draft.map.nameVi} (bản nháp).`, rerender)),
+        exits: () => editExits(data, id, rerender),
         copy: () => openCreate(data, rerender, id),
         rename: () => openRename(data, id, rerender),
         toggle: () => void act(() => post(`${API}/meta`, { id, patch: { disabled: M.statusOf(data, id) !== 'disabled' } }), 'Đã đổi trạng thái.', rerender).catch((e: unknown) => alert((e as Error).message)),

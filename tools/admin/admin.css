@@ -290,3 +290,8 @@ img.is-missing { visibility: hidden; }
 .mspawn__side { display: grid; gap: 8px; max-height: 70vh; overflow-y: auto; }
 .mspawn__row { padding: 8px; border: 1px solid var(--line, #4443); border-radius: 8px; cursor: pointer; display: grid; gap: 4px; }
 .mspawn__row.is-selected { border-color: #ff2fd0; box-shadow: 0 0 0 1px #ff2fd0; }
+.mexit__grids canvas { max-width: 100%; cursor: crosshair; image-rendering: pixelated; border-radius: 6px; display: block; }
+.mexit__grids canvas[hidden] { display: none; }
+.mexit__hint { position: sticky; top: 0; z-index: 1; margin: 0; padding: 6px 8px; border-radius: 6px; background: #3b2a6b; color: #fff; }
+.mexit__fields { display: grid; gap: 6px; padding: 8px; border: 1px dashed #ff2fd0; border-radius: 8px; }
+.mexit__fields .toolbar input[type='number'] { width: 64px; }

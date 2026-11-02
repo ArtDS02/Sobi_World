@@ -15,6 +15,13 @@ export interface MapMeta {
   publishedAt?: string;
   /** Where its node sits on the map network (GĐ5): layout only, no gameplay. */
   node?: { x: number; y: number };
+  /** Per exit: a name for the admin, and `inactive` = kept in the draft but left out when published (never a published exit). */
+  exits?: Record<string, ExitNote>;
+}
+
+export interface ExitNote {
+  nameVi?: string;
+  inactive?: boolean;
 }
 
 /** An area being designed: the whole row of maps.json (problems allowed) and where it goes in its zone once published. */
@@ -54,6 +61,12 @@ export function workingMaps(data: BuilderData): AreaMap[] {
   const out = data.published.map((m) => data.drafts[m.id]?.map ?? m);
   for (const [id, d] of Object.entries(data.drafts)) if (!isPublished(data, id)) out.push(d.map);
   return out;
+}
+
+/** A copy of the draft of an area to edit, made from its published row when it has none yet. */
+export function draftOf(data: BuilderData, id: string): MapDraft {
+  const map = workingMaps(data).find((m) => m.id === id)!;
+  return structuredClone(data.drafts[id] ?? { map, road: roadOf(data, id) ?? 'branch' });
 }
 
 /** The zone an area belongs to and whether it walks its main road. */

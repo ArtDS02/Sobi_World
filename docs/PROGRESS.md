@@ -10,6 +10,19 @@
 
 ## Nhật ký
 
+### 2026-11-02 — Adventure: Map Builder GĐ4 — Lối ra và kết nối (decision 047)
+✅ Đã làm:
+- `exits[].oneWay`: lối một chiều có chủ ý (graph không đòi lối về; lối tắt không được một chiều).
+- Admin → Quản lý map → nút **Lối ra**: hai lưới (map này + map đích). Thêm lối ra tới map bất kỳ; bấm lưới để đặt; chọn điểm tới (hoặc bấm lưới map đích để lấy / tạo điểm); rộng × cao, hình, khoá, một chiều, tên, tạm tắt; xoá (trừ lối đã publish). **Lối về** đặt tay ở cả hai đầu ("Tạo lối về" → bấm map đích → bấm map này). "Lưu & mở lối ra của map đích". Lỗi lối ra / điểm tới / kết nối hiện ngay.
+- Kiểm tra kết nối chạy trên thế giới như sau khi publish (map nháp vào vùng, bỏ map / lối ra tạm tắt); cột Kiểm tra của bảng có cả lỗi kết nối.
+- `tools/admin/mapLinks.ts` (thuần, có test), `tools/admin/mapExits.ts`; tên / tạm tắt lối ra ở `meta.json`.
+
+🧪 `npm run check` xanh (1600 test; +4 test kết nối). Chạy Admin thật: tạo map Hang Thử → lối ra tới Rừng Sâu → bấm lưới Rừng Sâu tạo điểm tới → tạo lối về hai đầu → hết lỗi → lưu (2 bản nháp) → mở lối ra của Rừng Sâu thấy lối về; bảng: Hang Thử "1 ra · 1 vào ✓". Dữ liệu thử đã dọn.
+
+⚠️ Tự quyết: lối ra mới mặc định rộng 1 × cao 2, hình "lối mòn", tới điểm mặc định của map đích cho tới khi chọn; điểm tới tạo bằng cú bấm quay vào trong map. Lưu nhiều map không nguyên tử (map đầu đã lưu nếu map sau bị từ chối) — bản nháp nên chấp nhận được, Publish (GĐ7) sẽ nguyên tử.
+
+➡️ GĐ5: Mạng map (sơ đồ node / kết nối, kéo thả, tìm, lọc, cảnh báo).
+
 ### 2026-11-02 — Adventure: Map Builder GĐ3 — Điểm xuất hiện (decision 047)
 ✅ Đã làm:
 - `maps.json` thêm `spawns[]` (điểm tới có tên, hướng) và `exits[].arrive` (lối ra chọn điểm tới của map đích). Game vẫn đọc `arriveX/Y` của lối ra; schema chặn lệch giữa lối ra và điểm nó chọn.

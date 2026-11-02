@@ -115,6 +115,8 @@ export const mapSchema = z.strictObject({
       kind: z.enum(EXIT_KINDS).optional(),
       /** The spawn of `to` it lands on (decision 047): `arriveX/Y` and `facing` must then be that spawn's (the builder writes them). */
       arrive: id('spawn').optional(),
+      /** A way with no way back on purpose (decision 047): a drop, a slide, a current. Never a shortcut (that opens from the way back). */
+      oneWay: z.literal(true).optional(),
     }),
   ),
   props: z.array(z.strictObject({ prop: id('prop_adv'), ...cell })),
@@ -205,6 +207,7 @@ export const mapsFileSchema = z.strictObject({ maps: z.array(mapSchema).min(1) }
       if (!ids.has(e.to)) ctx.addIssue({ code: 'custom', message: `${m.id}: exit to unknown map ${e.to}` });
       if (exitIds.has(e.id)) ctx.addIssue({ code: 'custom', message: `duplicate exit ${e.id}` });
       exitIds.add(e.id);
+      if (e.oneWay && e.lock === 'shortcut') ctx.addIssue({ code: 'custom', message: `${m.id}: shortcut ${e.id} cannot be one-way (it opens from the way back)` });
       const dest = byId.get(e.to);
       if (e.arrive && dest) for (const message of arrivalProblems(e, dest)) ctx.addIssue({ code: 'custom', message: `${m.id}: ${message}` });
     }
