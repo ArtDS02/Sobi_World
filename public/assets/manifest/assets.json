@@ -5495,6 +5495,406 @@
   ],
   "environment": [
     {
+      "id": "bg_adv_v3_coast_cove_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_cove_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_cove_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_cove_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_cove_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_cove_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_cove_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_cove_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_reef_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_reef_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_reef_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_reef_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_reef_c20",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_reef_c20.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_reef_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_reef_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_reef_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_reef_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_reef_c21",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_reef_c21.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_beach_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_beach_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_beach_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_beach_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_beach_c20",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_beach_c20.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_beach_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_beach_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_beach_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_beach_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_coast_beach_c21",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_coast_beach_c21.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_crypt_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_crypt_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_crypt_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_crypt_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_crypt_c20",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_crypt_c20.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_crypt_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_crypt_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_crypt_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_crypt_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_crypt_c21",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_crypt_c21.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_sanctum_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_sanctum_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_sanctum_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_sanctum_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_hall_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_hall_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_hall_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_hall_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_hall_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_hall_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_hall_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_hall_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_gate_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_gate_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_gate_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_gate_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_gate_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_gate_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_ruins_gate_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_ruins_gate_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_tunnels_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_tunnels_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_tunnels_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_tunnels_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_tunnels_c20",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_tunnels_c20.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_tunnels_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_tunnels_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_tunnels_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_tunnels_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_tunnels_c21",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_tunnels_c21.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_pass_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_pass_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_pass_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_pass_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_pass_c20",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_pass_c20.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_pass_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_pass_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_pass_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_pass_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_pass_c21",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_pass_c21.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_peak_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_peak_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_peak_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_peak_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_mine_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_mine_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_mine_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_mine_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_mine_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_mine_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_mine_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_mine_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_foot_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_foot_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_foot_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_foot_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_foot_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_foot_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_mountain_foot_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_mountain_foot_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_marsh_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_marsh_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_marsh_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_marsh_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_marsh_c20",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_marsh_c20.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_marsh_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_marsh_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_marsh_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_marsh_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_marsh_c21",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_marsh_c21.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_falls_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_falls_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_falls_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_falls_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_falls_c20",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_falls_c20.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_falls_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_falls_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_falls_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_falls_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_falls_c21",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_falls_c21.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_hollow_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_hollow_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_hollow_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_hollow_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_hollow_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_hollow_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_hollow_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_hollow_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_heart_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_heart_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_heart_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_heart_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_edge_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_edge_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_edge_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_edge_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_edge_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_edge_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_edge_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_edge_c11.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_deep_c00",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_deep_c00.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_deep_c10",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_deep_c10.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_deep_c01",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_deep_c01.png"
+    },
+    {
+      "id": "bg_adv_v3_forest_deep_c11",
+      "status": "production",
+      "asset": "environment/adventure_v3/bg_adv_v3_forest_deep_c11.png"
+    },
+    {
       "id": "env_sky",
       "status": "production",
       "asset": "environment/env_sky.png"

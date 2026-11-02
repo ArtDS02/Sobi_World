@@ -128,6 +128,19 @@ export const mapSchema = z.strictObject({
   lore: z.array(z.strictObject({ id: id('lore'), ...cell, textVi: text })),
   /** A Guardian shrine: the party's damage of its element rises for the rest of the trip. */
   shrine: z.strictObject({ id: id('shrine'), ...cell, element, damagePct: unit }).optional(),
+  /**
+   * The area painted as one continuous 3/4 picture (docs/maps/v3/M2_PLAN.md): the manifest stem of its background, cut into
+   * `chunks` [columns, rows] named `<art>_c<col><row>`, `px` source px per tile; `elevation` = height 0–9 per tile (presentation only).
+   * Absent = the area is drawn from its tiles as before. `terrain` stays what the party walks on either way.
+   */
+  scene: z
+    .strictObject({
+      art: z.string().regex(/^bg_adv_v3_[a-z0-9_]+$/),
+      px: posInt,
+      chunks: z.tuple([posInt, posInt]),
+      elevation: z.array(z.string().regex(/^[0-9]+$/)).optional(),
+    })
+    .optional(),
 });
 
 export const mapsFileSchema = z.strictObject({ maps: z.array(mapSchema).min(1) }).superRefine((f, ctx) => {
@@ -141,6 +154,9 @@ export const mapsFileSchema = z.strictObject({ maps: z.array(mapSchema).min(1) }
       const bad = [...row].find((c) => !(TERRAIN_CHARS as readonly string[]).includes(c));
       if (bad) ctx.addIssue({ code: 'custom', message: `${m.id}: row ${y} has an unknown tile '${bad}'` });
     });
+    const elevation = m.scene?.elevation;
+    if (elevation && (elevation.length !== m.rows || elevation.some((row) => row.length !== m.cols)))
+      ctx.addIssue({ code: 'custom', message: `${m.id}: scene.elevation must be ${m.rows} rows of ${m.cols}` });
   }
   const exitIds = new Set<string>();
   for (const m of f.maps) {

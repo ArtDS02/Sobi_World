@@ -1,13 +1,12 @@
 // The Adventure on screen (spec §3): at the camp and in a battle, the zone's picture behind the DOM screens; on a trip, the area itself —
 // its ground, props and things dressed with depth (mapDepth.ts), the enemy groups standing and breathing, the teleport gates (open or
 // locked behind the guardian; walking into an open one plays the teleport and lands in the next area), and the party (So or Bi in
-// front) walking with the keys, the camera zoomed in ×2 and easing after them (decision 045). The
+// front) walking with the keys, the camera at the fitted zoom and easing after them (decision 045, 046). The
 // scene reads a plain state from the UI and reports what the walker does (stops somewhere, touches a group, has a thing in reach and
 // presses the interact key, walks into an exit); it never reaches the store.
 import * as Phaser from 'phaser';
 import type { AreaVfx } from '../../../core/events';
 import { inputVector, type Walkable } from '../../../systems/character';
-import { farmCamera } from '../../../systems/layout/camera';
 import type { ControlInput } from '../../../ui/world/controlInput';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { AB, MAPS, type AreaMap } from '../logic/config/content';
@@ -16,15 +15,16 @@ import { BATTLE_SCENE_KEY } from './battle/BattleScene';
 
 export { BattleScene, manifestImages } from './battle/BattleScene';
 import { placeMarks } from './foeMarks';
-import { MapCamera } from './mapCamera';
+import { ADVENTURE_DESIGN, fitZoom, MapCamera } from './mapCamera';
 import { fadeCovers } from './mapCovers';
 import { playMapVfx } from './mapVfx';
+import { PaintedArt } from './mapScene';
 import { buildMap, edgeColour, refreshThings, type MapObjects } from './mapView';
 import type { AdventureSceneState, SceneReport } from './sceneState';
 import { Walker } from './walker';
 
 export const ADVENTURE_SCENE_KEY = 'adventure';
-export const ADVENTURE_DESIGN = { width: 1600, height: 900 } as const;
+export { ADVENTURE_DESIGN };
 
 export interface AdventureSceneDeps {
   read(): AdventureSceneState | null;
@@ -33,6 +33,8 @@ export interface AdventureSceneDeps {
   reduceMotion(): boolean;
   /** A panel of the shell covers the world (the walker stands still). */
   paused(): boolean;
+  /** The url of a manifest image, for the art loaded only when needed (a painted area's background). */
+  image?(id: string): { url: string } | null;
 }
 
 const MOVE_EVERY_MS = 3000;
@@ -64,6 +66,7 @@ export class AdventureScene extends Phaser.Scene {
   /** The cover the party stands under (decision 045). */
   private coverIn: string | null = null;
   private builtCorruption = -1;
+  private readonly painted = new PaintedArt(this, (id) => this.deps.image?.(id) ?? null);
   private offs: (() => void)[] = [];
 
   constructor(private readonly deps: AdventureSceneDeps) {
@@ -113,10 +116,6 @@ export class AdventureScene extends Phaser.Scene {
     this.deps.report.use(this.focus, this.walker.position);
   }
 
-  private fitZoom(): number {
-    return farmCamera(this.scale.width, this.scale.height, ADVENTURE_DESIGN.width, ADVENTURE_DESIGN.height).zoom;
-  }
-
   private showBackdrop(s: AdventureSceneState | null) {
     if (this.objs) {
       this.objs.layer.destroy();
@@ -128,7 +127,7 @@ export class AdventureScene extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.removeBounds();
     cam.setBackgroundColor('rgba(0,0,0,0)');
-    const zoom = this.fitZoom();
+    const zoom = fitZoom(this.scale);
     cam.setZoom(zoom).centerOn(ADVENTURE_DESIGN.width / 2, ADVENTURE_DESIGN.height / 2);
     this.backdropId = s?.backdrop ?? '';
     const k = s ? textureKey(s.backdrop) : '';
@@ -143,6 +142,7 @@ export class AdventureScene extends Phaser.Scene {
 
   private enterMap(s: AdventureSceneState, map: AreaMap) {
     this.objs?.layer.destroy();
+    this.painted.enter(map);
     this.map = map;
     this.objs = buildMap(this, map, s, !this.deps.reduceMotion());
     this.builtCorruption = s.corruption;
@@ -172,7 +172,7 @@ export class AdventureScene extends Phaser.Scene {
     // The area is built again when its corruption changes (its zone just purified).
     if (this.map?.id !== map.id || this.texturesChanged || s.corruption !== this.builtCorruption) this.enterMap(s, map);
     this.texturesChanged = false;
-    this.camera.fit(map, this.fitZoom());
+    this.camera.fit(map, fitZoom(this.scale));
     if (s.placeKey !== this.placeKey) {
       const arrived = this.placeKey !== '';
       this.placeKey = s.placeKey;

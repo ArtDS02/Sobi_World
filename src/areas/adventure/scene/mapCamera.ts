@@ -1,12 +1,19 @@
-// The Adventure's camera on a trip (decision 045): zoomed in ×2 on the fitted frame (about 20 × 11 tiles show), kept inside the
-// area with room above and below for the HUD, and easing after the party.
+// The Adventure's camera on a trip (decision 045; ×1 since decision 046, so the painted maps show at their own scale): the fitted frame
+// (about 40 × 22 tiles show), kept inside the area with room above and below for the HUD, and easing after the party.
 import type * as Phaser from 'phaser';
+import { farmCamera } from '../../../systems/layout/camera';
 import type { AreaMap } from '../logic/config/content';
+
+/** The Adventure's design frame: the fitted zoom shows it whole on any stage. */
+export const ADVENTURE_DESIGN = { width: 1600, height: 900 } as const;
+
+/** The zoom that fits the design frame into a stage of `size`. */
+export const fitZoom = (size: { width: number; height: number }): number => farmCamera(size.width, size.height, ADVENTURE_DESIGN.width, ADVENTURE_DESIGN.height).zoom;
 
 /** Room (design px, at the fitted zoom) the camera may scroll past the area's edges, so the HUD on top and the key hint below never hide a tile. */
 const HUD_TOP = 270;
 const HUD_BOTTOM = 70;
-const EXPLORE_ZOOM = 2;
+const EXPLORE_ZOOM = 1;
 /** How fast the camera catches up with the party (ms to close ~63 % of the gap). */
 const FOLLOW_MS = 110;
 

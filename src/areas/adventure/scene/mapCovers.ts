@@ -9,8 +9,9 @@ import { COVER_ART } from './mapKit';
 import type { AreaMap } from '../logic/config/content';
 import { coverAt } from '../logic/maps';
 
-/** How see-through a cover is with the party under it, and how fast it fades (ms to close ~63 % of the way). */
-const UNDER_ALPHA = 0.25;
+/** How see-through a cover is with the party under it (gone: the ground beneath shows clearly), and how fast it fades (ms to close
+ * ~63 % of the way). */
+const UNDER_ALPHA = 0;
 const FADE_MS = 140;
 
 /** Colours of a cover by its look (shade, body, light): the masses under the kit's pieces, or the whole cover without them. */

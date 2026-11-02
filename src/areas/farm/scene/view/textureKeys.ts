@@ -45,8 +45,11 @@ export interface LoadList {
 const FARM_SECTIONS = new Set(['environment', 'props', 'buildings', 'fx', 'ui']);
 /** Files rendered by the farm; shadows, flips and audio are not drawn in R05A. */
 const SKIPPED_FILES = new Set(['shadow', 'flip', 'anchors']);
-/** Art only a battle draws (key poses, battle VFX, status badges): the battle scene loads it when it needs it. */
-const BATTLE_ONLY = ['assets/props/combat/', 'assets/fx/battle/', 'assets/ui/status/'];
+/**
+ * Art only a battle draws (key poses, battle VFX, status badges): the battle scene loads it when it needs it. The painted Adventure
+ * areas (map v3 backgrounds) are as big: the Adventure scene loads an area's own when it enters that area.
+ */
+const BATTLE_ONLY = ['assets/props/combat/', 'assets/fx/battle/', 'assets/ui/status/', 'assets/environment/adventure_v3/'];
 const battleOnly = (url: string) => BATTLE_ONLY.some((dir) => url.startsWith(dir));
 
 /** Files of a species art row the farm draws: idle, optional sleep and wake frames (PS-1). */

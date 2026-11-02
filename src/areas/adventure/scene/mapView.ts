@@ -13,14 +13,15 @@ import { drawCliffs } from './mapCliffs';
 import { dressCorruption } from './mapCorruption';
 import { corruptionMarks, foeLabel, NO_MARKS, sleepMark, type CorruptionMarks } from './foeMarks';
 import { drawCover } from './mapCovers';
-import { layGround } from './mapGround';
+import { edgeColour, layGround } from './mapGround';
+import { layScene } from './mapScene';
 import { chestArt, crackArt, exitArt, MIMIC_ART, puzzleArt, SPRING_ART } from './mapKit';
 import { dressArea, type AreaDressing } from './mapDepth';
 import type { AdventureSceneState } from './sceneState';
 
 export const zoneOfMapId = (map: AreaMap): string => map.zoneId.replace(/^zone_/, '');
 
-export { edgeColour } from './mapGround';
+export { edgeColour };
 
 /** The art of a thing, by its state; `has` says whether a kit picture is loaded (else the older art). */
 export function thingArt(t: Thing, map: AreaMap, s: AdventureSceneState, has: (id: string) => boolean = () => false): { id: string; state?: string } {
@@ -125,13 +126,18 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
   const t = map.tile;
   const zone = zoneOfMapId(map);
   const layer = scene.add.container(0, 0);
-  const depth = dressArea(scene, layer, map, zone, motion);
+  // A painted area (map.scene) lays its one picture; the others are drawn from their tiles, cliffs and scattered dressing.
+  const painted = !!map.scene;
+  const depth = dressArea(scene, layer, map, zone, motion, painted);
   depth.under();
-  layGround(scene, layer, map, zone);
-  drawCliffs(scene, layer, map, zone);
+  if (painted) layScene(scene, layer, map, edgeColour(map));
+  else {
+    layGround(scene, layer, map, zone);
+    drawCliffs(scene, layer, map, zone);
+  }
   const dressing = depth.ground();
   dressCorruption(scene, layer, map, s.corruption, motion);
-  for (const d of decalsOf(map, zone)) {
+  for (const d of painted ? [] : decalsOf(map, zone)) {
     const k = textureKey(d.art);
     if (!scene.textures.exists(k)) continue;
     const img = scene.add.image(d.x, d.y, k).setOrigin(0.5, 1).setDepth(-9).setFlipX(d.flip);
@@ -139,7 +145,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     layer.add(img);
   }
   // The kit's trees, rocks and ruins along the edges of the way, sorted with the walker by their foot.
-  for (const d of wallPropsOf(map, zone)) {
+  for (const d of painted ? [] : wallPropsOf(map, zone)) {
     const k = textureKey(d.art);
     if (!scene.textures.exists(k)) continue;
     const img = scene.add.image(d.x, d.y, k).setOrigin(0.5, 1).setDepth(d.y).setFlipX(d.flip);

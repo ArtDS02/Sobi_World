@@ -115,14 +115,19 @@ describe('the map kit (decision 045)', () => {
 });
 
 describe('cliff faces (decision 045)', () => {
-  it('Moss Falls: the plateau front with its two stairs and the waterfall, capped where a side wall goes on', () => {
-    const map = MAP_LIST.find((m) => m.id === 'map_forest_falls')!;
+  it('a plateau front with its stairs and its waterfall, capped where a side wall goes on', () => {
+    // The tile maps still draw their faces from the grid (the painted ones carry them in their picture, decision 046).
+    const terrain = ['############', '#F^^^~~^^^F#', '#F^^^~~^^^F#', '#FFsswwFFFF#', '#FFsswwFFFF#', '#..........#', '#..........#', '############'];
+    const map = { ...MAP_LIST.find((m) => !m.scene)!, cols: 12, rows: 8, terrain };
     const runs = cliffFaces(map);
-    const front = runs.filter((r) => r.bottom === 14);
-    expect(front.filter((r) => r.kind === 'stairs').map((r) => [r.x0, r.x1])).toEqual([[22, 24], [56, 58]]);
-    expect(runs.find((r) => r.kind === 'waterfall')).toMatchObject({ x0: 39, x1: 42, top: 13, bottom: 13 });
-    expect(front[0]).toMatchObject({ kind: 'cliff', x0: 21, top: 13, capL: true });
-    expect(front[front.length - 1]).toMatchObject({ kind: 'cliff', x1: 60, capR: true });
+    expect(runs.map((r) => [r.kind, r.x0, r.x1, r.top, r.bottom])).toEqual([
+      ['cliff', 2, 3, 3, 4],
+      ['stairs', 3, 5, 3, 4],
+      ['waterfall', 5, 7, 3, 4],
+      ['cliff', 7, 10, 3, 4],
+    ]);
+    expect(runs[0]).toMatchObject({ capL: true, capR: false });
+    expect(runs[3]).toMatchObject({ capL: false, capR: true });
   });
 
   it('every face is at most 3 deep, on face tiles only, with the plateau (or the stream of a waterfall) above', () => {

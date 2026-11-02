@@ -21,7 +21,8 @@ export interface AreaDressing {
  * Dresses `map`. The area's `layer` draws in the order things are added, under the party: `under` adds what lies beneath the ground
  * tiles (the world beyond), then the caller lays the ground, then `ground` adds what lies on it (wall shadows, prop shadows, cloud
  * shadows, glitter). What stands over the party (the bottom frame, light, floating life) goes straight into the scene and is
- * destroyed with the layer. `motion` = false (reduced motion): nothing drifts or floats.
+ * destroyed with the layer. `motion` = false (reduced motion): nothing drifts or floats. `painted` = the area is one painted picture
+ * (map.scene): its walls already stand and cast their shade, and its edges are painted, so the tile shadows and the frame are left out.
  */
 export function dressArea(
   scene: Phaser.Scene,
@@ -29,6 +30,7 @@ export function dressArea(
   map: AreaMap,
   zone: string,
   motion: boolean,
+  painted = false,
 ): { under: () => void; ground: () => AreaDressing } {
   ensureTextures(scene);
   const dress = DRESS[zone] ?? DRESS.forest!;
@@ -52,7 +54,8 @@ export function dressArea(
       const beyondKey = textureKey(`bg_adventure_${zone}_beyond`);
       const kit = kitWall(zone);
       const wallKey = scene.textures.exists(beyondKey) ? beyondKey : kit && scene.textures.exists(textureKey(kit)) ? textureKey(kit) : textureKey(`adv_tile_${zone}_wall`);
-      if (scene.textures.exists(wallKey)) {
+      // A painted area's edge is painted forest: beyond it lies a plain dark tone, never the older tile texture.
+      if (!painted && scene.textures.exists(wallKey)) {
         const beyond = add(
           scene.add
             .tileSprite(-BEYOND, -BEYOND, W + BEYOND * 2, H + BEYOND * 2, wallKey)
@@ -64,7 +67,7 @@ export function dressArea(
       } else {
         add(
           scene.add
-            .rectangle(-BEYOND, -BEYOND, W + BEYOND * 2, H + BEYOND * 2, dress.beyond)
+            .rectangle(-BEYOND, -BEYOND, W + BEYOND * 2, H + BEYOND * 2, painted ? Phaser.Display.Color.ValueToColor(dress.beyond).darken(35).color : dress.beyond)
             .setOrigin(0)
             .setDepth(-30),
         );
@@ -88,7 +91,7 @@ export function dressArea(
       const shade = add(scene.add.graphics().setDepth(-8));
       map.terrain.forEach((row, y) =>
         [...row].forEach((c, x) => {
-          if (WALK_TILES.has(c)) return;
+          if (painted || WALK_TILES.has(c)) return;
           const below = map.terrain[y + 1]?.[x];
           if (below && WALK_TILES.has(below))
             for (let k = 0; k < 6; k += 1)
@@ -103,7 +106,7 @@ export function dressArea(
         .map((id) => textureKey(id))
         .filter((k) => scene.textures.exists(k));
       const front: Phaser.GameObjects.Image[] = [];
-      if (frameKeys.length > 0) {
+      if (frameKeys.length > 0 && !painted) {
         for (const edge of ['top', 'bottom'] as const) {
           for (let x = -t * 2; x < W + t * 2; x += t * (1.6 + rng.next() * 1.2)) {
             const k = frameKeys[Math.floor(rng.next() * frameKeys.length)]!;

@@ -243,7 +243,7 @@ export async function start(root: HTMLElement) {
         reduceMotion: () => host.reduceMotion(),
         paused: () => host.paused(),
       });
-      const adventure = (adventureScene = new AdventureScene({ read: () => overlays.adventureUi.sceneState(), report: overlays.adventureUi.scene, input, reduceMotion: () => host.reduceMotion(), paused: () => host.paused() }));
+      const adventure = (adventureScene = new AdventureScene({ read: () => overlays.adventureUi.sceneState(), report: overlays.adventureUi.scene, input, reduceMotion: () => host.reduceMotion(), paused: () => host.paused(), image: manifestImages(assets.registry) }));
       const cloud = new CloudScene({
         read: () => overlays.cloudUi.sceneState(),
         onPick: (pick) => overlays.cloudUi.pick(pick),
