@@ -1,6 +1,6 @@
 // Map Builder (decision 047): the pure model of "Quản lý map" (new areas, copies, references, status; GĐ2), the spawn points exits land
-// on (GĐ3), the connections between areas (GĐ4), the map network (GĐ5), the editor's operations (GĐ6), the save-held ids a content save may never drop, and the draft store of the dev API (in a throw-away folder).
-import { mkdtempSync, readFileSync } from 'node:fs';
+// on (GĐ3), the connections between areas (GĐ4), the map network (GĐ5), the editor's operations (GĐ6), publish plans and history (GĐ7), the save-held ids a content save may never drop, and the draft store of the dev API (in a throw-away folder).
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -12,10 +12,12 @@ import { mapProblems } from '../../src/areas/adventure/logic/maps';
 import { appendPropRow, assetUse } from '../../scripts/admin/mapAssets';
 import { deleteMapDraft, readDrafts, readMeta, saveMapDraft, saveMapMeta } from '../../scripts/admin/mapDrafts';
 import { savedIdProblems, savedMapIds } from '../../scripts/admin/mapIds';
+import { mapHistory, restoreVersion } from '../../scripts/admin/mapPublishApi';
 import * as E from '../../tools/admin/mapEditModel';
 import * as L from '../../tools/admin/mapLinks';
 import * as M from '../../tools/admin/mapModel';
 import * as N from '../../tools/admin/mapNetwork';
+import * as P from '../../tools/admin/mapPublish';
 
 const load = async () => mapsSchemaModule as unknown as Record<string, unknown>;
 const data = (drafts: M.BuilderData['drafts'] = {}, meta: M.BuilderData['meta'] = {}): M.BuilderData => ({ published: MAP_LIST, zones: ZONE_LIST, drafts, meta });
@@ -416,5 +418,80 @@ describe('decorations in the editor', () => {
     expect(JSON.parse(out).props.map((r: { id: string }) => r.id)).toEqual(['a', 'adv_decor_x']);
     expect(out).toContain('    {\n      "id": "adv_decor_x",\n      "status": "production",');
     expect(assetUse(mkdtempSync(join(tmpdir(), 'sobi-assetuse-')))).toEqual({});
+  });
+});
+
+describe('publish plan', () => {
+  const en = JSON.parse(readFileSync('content/i18n/en.json', 'utf8'))['adventure/maps.json'] as Record<string, string>;
+
+  it('publishes nothing new over the shipped world cleanly', () => {
+    const plan = P.planPublish(data(), [], en);
+    expect(plan.checks).toEqual([]);
+    expect(plan.english).toEqual([]);
+    expect(plan.maps).toHaveLength(MAP_LIST.length);
+  });
+
+  it('adds a connected new area to its zone, asks for its English, and moves exits onto a moved spawn', () => {
+    const a = M.blankMap({ id: 'map_pub_new', nameVi: 'Hang Mới', zoneId: MAPS.map_forest_deep!.zoneId, cols: 30, rows: 20 });
+    const b = structuredClone(MAPS.map_forest_deep!);
+    const d = data({ [a.id]: { map: a, road: 'branch' }, [b.id]: { map: b, road: 'main' } });
+    const go = L.newExit(b, a, { x: 60, y: 8 }, L.takenIds(d));
+    L.landOn(go, a, L.spawnAt(a, b, 2, 9));
+    const back = L.newExit(a, b, { x: 1, y: 9 }, L.takenIds(d));
+    L.landOn(back, b, b.spawns![0]!.id);
+    // Move the spawn the old exit of Bìa Rừng lands on: that published area's exit follows.
+    const sp = b.spawns![0]!;
+    M.moveSpawn(b, sp.id, sp.x, sp.y + 1);
+    L.landOn(back, b, sp.id);
+    const plan = P.planPublish(d, [a.id, b.id], en);
+    expect(plan.checks.filter((c) => c.level === 'error')).toEqual([]);
+    expect(plan.zones.find((z) => z.id === a.zoneId)!.branches).toContain(a.id);
+    expect(plan.moved.length).toBeGreaterThan(0);
+    expect(plan.changed).toEqual(expect.arrayContaining([a.id, b.id]));
+    const paths = plan.english.map((t) => t.path);
+    expect(paths).toEqual(expect.arrayContaining([`maps/${a.id}/nameVi`, `maps/${a.id}/spawns/spawn_from_forest_deep/nameVi`]));
+    expect(P.blockingChecks(plan, {}).length).toBe(plan.english.length);
+    const answers = Object.fromEntries(plan.english.map((t) => [t.path, 'x']));
+    expect(P.blockingChecks(plan, answers)).toEqual([]);
+  });
+
+  it('refuses a draft whose exit leads to an unpublished area, a dropped saved id, and a zone change', () => {
+    const a = M.blankMap({ id: 'map_pub_alone', nameVi: 'Một Mình', zoneId: MAPS.map_forest_deep!.zoneId, cols: 30, rows: 20 });
+    const b = structuredClone(MAPS.map_forest_deep!);
+    const d = data({ [a.id]: { map: a, road: 'branch' }, [b.id]: { map: b, road: 'main' } });
+    L.newExit(b, a, { x: 60, y: 8 }, L.takenIds(d));
+    b.chests = b.chests.slice(1);
+    b.zoneId = 'zone_mountain';
+    const errors = P.planPublish(d, [b.id], en).checks.filter((c) => c.level === 'error').map((c) => c.text).join('\n');
+    expect(errors).toMatch(/chưa publish/);
+    expect(errors).toMatch(/Không được xoá id/);
+    expect(errors).toMatch(/không đổi vùng/);
+  });
+
+  it('leaves inactive exits and switched-off drafts out', () => {
+    const b = structuredClone(MAPS.map_forest_deep!);
+    const a = M.blankMap({ id: 'map_pub_off', nameVi: 'Tắt', zoneId: b.zoneId, cols: 30, rows: 20 });
+    const d0 = data({ [a.id]: { map: a, road: 'branch' }, [b.id]: { map: b, road: 'main' } });
+    const go = L.newExit(b, a, { x: 60, y: 8 }, L.takenIds(d0));
+    const d = { ...d0, meta: { [b.id]: { descriptionVi: '', createdAt: '', updatedAt: '', exits: { [go.id]: { inactive: true } } }, [a.id]: { descriptionVi: '', createdAt: '', updatedAt: '', disabled: true } } };
+    const plan = P.planPublish(d, [a.id, b.id], en);
+    expect(plan.ids).toEqual([b.id]);
+    expect(plan.maps.find((m) => m.id === b.id)!.exits.some((e) => e.id === go.id)).toBe(false);
+    expect(plan.checks.filter((c) => c.level === 'error')).toEqual([]);
+  });
+});
+
+describe('history', () => {
+  it('lists the earlier versions of an area and brings one back as its draft', async () => {
+    const d = mkdtempSync(join(tmpdir(), 'sobi-history-'));
+    const at = '2026-11-02T10:00:00.000Z';
+    const folder = join(d, 'history', 'map_forest_deep');
+    mkdirSync(folder, { recursive: true });
+    writeFileSync(join(folder, '2026-11-02T10-00-00-000Z.json'), JSON.stringify({ at, map: { ...MAPS.map_forest_deep!, nameVi: 'Rừng Sâu cũ' } }));
+    expect(mapHistory('map_forest_deep', d).body).toEqual({ versions: [at] });
+    expect(mapHistory('../etc', d).status).toBe(400);
+    expect((await restoreVersion({ id: 'map_forest_deep', at }, load, d)).status).toBe(200);
+    expect(readDrafts(d).map_forest_deep).toMatchObject({ road: 'main', map: { nameVi: 'Rừng Sâu cũ' } });
+    expect((await restoreVersion({ id: 'map_forest_deep', at: 'nope' }, load, d)).status).toBe(400);
   });
 });

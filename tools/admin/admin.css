@@ -355,3 +355,13 @@ img.is-missing { visibility: hidden; }
 .massets__thumb { height: 120px; display: grid; place-items: center; background: #ffffff10; border-radius: 8px; }
 .massets__thumb img { max-width: 100%; max-height: 116px; object-fit: contain; }
 .massets__big { max-width: 220px; max-height: 180px; object-fit: contain; display: block; margin: 0 auto 8px; }
+.mpub__drafts { display: grid; gap: 4px; max-height: 180px; overflow-y: auto; }
+.mpub__warns { color: #f2c14e; }
+.mpub__en { display: grid; gap: 6px; max-height: 300px; overflow-y: auto; }
+.mpub__history { display: grid; gap: 6px; padding-left: 16px; }
+.msim { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 10px; }
+.msim canvas { width: 100%; height: auto; border-radius: 8px; background: #17121f; }
+.msim__side { display: grid; gap: 6px; align-content: start; max-height: 70vh; overflow-y: auto; }
+.msim__log { margin: 0; padding-left: 18px; font-size: 12px; display: grid; gap: 2px; }
+.mpub__shot { max-width: 100%; display: block; margin: 6px 0; border-radius: 8px; }
+.msim__side select { max-width: 100%; }

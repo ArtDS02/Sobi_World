@@ -21,6 +21,9 @@
 //   GET  /build-info · POST /open-folder { which } → desktop build status + guide data (AM-1)
 //   GET  /adventure/maps · POST /adventure/maps/draft { draft, create?, previousId? } · /adventure/maps/delete { id } ·
 //        /adventure/maps/meta { id, patch } → Map Builder drafts and notes in tools/admin/data/adventure (decision 047)
+//   POST /adventure/maps/publish { ids, english } · GET /adventure/maps/history?id= · POST /adventure/maps/restore { id, at }
+//        → publish all or nothing, earlier versions back as drafts (scripts/admin/mapPublishApi.ts)
+//   POST /adventure/maps/preview { ids, mapId } → pictures of the area in the game's renderer (scripts/admin/mapPreviewApi.ts)
 //   GET  /adventure/assets · POST /adventure/assets/{save,upload,delete} → the decoration library (scripts/admin/mapAssets.ts)
 import { readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
@@ -44,6 +47,8 @@ import { buildInfo, openFolder } from './buildInfo';
 import type { RowTexts } from './contentCatalog';
 import { readContentFiles, saveContentFile } from './contentSave';
 import { deleteAsset, assetUse, saveAsset, uploadAsset } from './mapAssets';
+import { mapHistory, publishMaps, restoreVersion } from './mapPublishApi';
+import { previewMaps, stopPreview } from './mapPreviewApi';
 import { deleteMapDraft, readMapBuilder, saveMapDraft, saveMapMeta, type MetaPatch } from './mapDrafts';
 import type { MapDraft } from '../../tools/admin/mapModel';
 import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
@@ -334,6 +339,14 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
       return deleteMapDraft(await body<{ id: string }>());
     case 'POST /adventure/maps/meta':
       return saveMapMeta(await body<{ id: string; patch: MetaPatch }>());
+    case 'POST /adventure/maps/publish':
+      return publishMaps(await body(), { load, invalidate: () => server.moduleGraph.invalidateAll() });
+    case 'POST /adventure/maps/preview':
+      return previewMaps(await body(), { load, invalidate: () => server.moduleGraph.invalidateAll() });
+    case 'GET /adventure/maps/history':
+      return mapHistory(url.searchParams.get('id') ?? '');
+    case 'POST /adventure/maps/restore':
+      return restoreVersion(await body(), load);
     case 'GET /adventure/assets':
       return { status: 200, body: { use: assetUse() } };
     case 'POST /adventure/assets/save':
@@ -356,6 +369,7 @@ export function adminApi(): Plugin {
     name: 'un-in-admin-api',
     apply: 'serve',
     configureServer(server) {
+      server.httpServer?.on('close', stopPreview);
       server.middlewares.use('/__admin', (req, res) => {
         // Write failures surface to the dashboard as a 500 with the message — never swallowed.
         route(server, req).then(

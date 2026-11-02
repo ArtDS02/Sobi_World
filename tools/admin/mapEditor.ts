@@ -15,6 +15,8 @@ import { applyField, inspectorHtml } from './mapEditInspector';
 import * as E from './mapEditModel';
 import { graphProblems } from './mapLinks';
 import * as M from './mapModel';
+import { openPreview, openPublish } from './mapPublishDialog';
+import { openSimulation } from './mapSimulate';
 
 type Tool = 'select' | 'brush' | 'rect' | 'fill' | 'height' | 'cover' | 'erase' | 'place' | 'decor';
 
@@ -116,7 +118,7 @@ function mount(root: HTMLElement, st: EditorState) {
       <button class="btn btn-small" data-cmd="fit">Vừa khung</button>
       <span class="medit__sep"></span>
       <button class="btn btn-small" data-cmd="exits">Lối ra</button><button class="btn btn-small" data-cmd="spawns">Điểm xuất hiện</button>
-      <button class="btn btn-primary btn-small" data-cmd="save" title="Ctrl+S">Lưu nháp</button>
+      <button class="btn btn-primary btn-small" data-cmd="save" title="Ctrl+S">Lưu nháp</button><button class="btn btn-small" data-cmd="simulate">▶ Chạy thử</button><button class="btn btn-small" data-cmd="preview">🎥 Xem bằng game</button><button class="btn btn-small" data-cmd="publish">Kiểm tra & Publish</button>
     </header>
     <aside class="medit__left" data-left></aside>
     <div class="medit__stage" data-stage><canvas data-canvas></canvas><div class="medit__status" data-status></div></div>
@@ -275,6 +277,17 @@ function mount(root: HTMLElement, st: EditorState) {
       } catch (e) {
         st.message = (e as Error).message;
       }
+    } else if (cmd === 'preview') {
+      if (st.dirty) await command('save');
+      if (!st.dirty) openPreview(st.data.drafts[m.id] ? [m.id] : [], m.id);
+      return;
+    } else if (cmd === 'simulate') {
+      openSimulation(st.data, m.id, structuredClone(m));
+      return;
+    } else if (cmd === 'publish') {
+      if (st.dirty) await command('save');
+      if (!st.dirty) openPublish(st.data, [m.id]);
+      return;
     } else if (cmd === 'exits' || cmd === 'spawns') {
       // The dialogs work on saved drafts: save first, then take back what they saved.
       if (st.dirty) await command('save');

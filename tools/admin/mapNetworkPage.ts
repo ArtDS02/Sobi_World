@@ -6,6 +6,7 @@
 import { esc } from './labels';
 import { editExits, editSpawns, fetchBuilder, postMeta } from './mapApi';
 import { EXIT_KIND_LABEL, LOCK_LABEL } from './mapLinks';
+import { openSimulation } from './mapSimulate';
 import * as M from './mapModel';
 import { NODE, autoLayout, networkEdges, networkWarnings, nodePositions, type NetEdge, type Point } from './mapNetwork';
 
@@ -88,7 +89,7 @@ function sideHtml(data: M.BuilderData, edges: NetEdge[], warnings: ReturnType<ty
     const ins = edges.filter((e) => e.exits.some((x) => x.exit.to === m.id)).length;
     detail = `<h4>${esc(m.nameVi)}</h4><p class="mono muted">${m.id}</p>
       <p>${esc(data.zones.find((z) => z.id === m.zoneId)?.nameVi ?? m.zoneId)} · ${m.cols}×${m.rows} · ${M.STATUS_LABEL[status]}<br>${m.exits.length} lối ra · ${ins} map dẫn tới</p>
-      <div class="toolbar"><button class="btn btn-small" data-do="exits">Lối ra</button><button class="btn btn-small" data-do="spawns">Điểm xuất hiện</button>
+      <div class="toolbar"><button class="btn btn-small" data-do="simulate">▶ Chạy thử</button><button class="btn btn-small" data-do="exits">Lối ra</button><button class="btn btn-small" data-do="spawns">Điểm xuất hiện</button>
 <a class="btn btn-small" href="#/adventure-editor/${m.id}">Map Editor</a><a class="btn btn-small" href="#/adventure-world">Quản lý map</a></div>`;
   } else if (sel?.kind === 'edge') {
     const e = edges.find((x) => x.key === sel.key)!;
@@ -182,6 +183,7 @@ function wire(root: HTMLElement, svg: SVGSVGElement, paint: () => void) {
     page.fitted = false;
     await saved('Đã xếp lại sơ đồ theo vùng.');
   });
+  root.querySelector('[data-do="simulate"]')?.addEventListener('click', () => page.selected?.kind === 'node' && openSimulation(data, page.selected.id));
   root.querySelector('[data-do="exits"]')?.addEventListener('click', () => page.selected?.kind === 'node' && editExits(data, page.selected.id, saved));
   root.querySelector('[data-do="spawns"]')?.addEventListener('click', () => page.selected?.kind === 'node' && editSpawns(data, M.draftOf(data, page.selected.id), saved));
   root.querySelectorAll<HTMLButtonElement>('[data-edit-exit]').forEach((b) => b.addEventListener('click', () => {

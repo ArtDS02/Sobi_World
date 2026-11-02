@@ -7,7 +7,8 @@
 // trip camera's zoom over the spawn, 1600 × 900). Main maps and branch maps are taken, named by their code in docs/maps/v2 (M1…, N1…).
 // --zoom <k> adds a third picture of that arrival with the camera at fitZoom × k instead (a preview of another trip zoom; the game's
 // own camera is not changed), and --only <code or id,...> takes only those areas.
-// Options: --save <save.json> --url <dev url> --out <folder> --view --zoom <k> --only <M2,map_forest_edge,...>.
+// --content <folder> reads maps.json / zones.json from there instead of content/adventure (the Map Builder's preview, decision 047).
+// Options: --save <save.json> --url <dev url> --out <folder> --view --zoom <k> --only <M2,map_forest_edge,...> --content <folder>.
 import { _electron as electron, type Page } from '@playwright/test';
 import {
   existsSync,
@@ -32,6 +33,7 @@ const OUT = arg('out', join(root, 'art_inbox', '.batch', 'adventure-11-map', 'be
 const VIEW = process.argv.includes('--view');
 const ZOOM = Number(arg('zoom', '0')) || 0;
 const ONLY = new Set(arg('only', '').split(',').filter(Boolean));
+const CONTENT = arg('content', join(root, 'content', 'adventure'));
 /** The design px of room kept above and below the area for the HUD, as in scene/mapCamera.ts. */
 const HUD_TOP = 270;
 const HUD_BOTTOM = 70;
@@ -123,12 +125,12 @@ const SHOOT = (m: MapRow, view: boolean, zoom: number) => `(async () => {
 async function main() {
   if (!existsSync(SAVE)) throw new Error(`No save at ${SAVE} (pass --save)`);
   const maps = (
-    JSON.parse(readFileSync(join(root, 'content/adventure/maps.json'), 'utf8')) as {
+    JSON.parse(readFileSync(join(CONTENT, 'maps.json'), 'utf8')) as {
       maps: MapRow[];
     }
   ).maps;
   const zones = (
-    JSON.parse(readFileSync(join(root, 'content/adventure/zones.json'), 'utf8')) as {
+    JSON.parse(readFileSync(join(CONTENT, 'zones.json'), 'utf8')) as {
       zones: ZoneRow[];
     }
   ).zones;

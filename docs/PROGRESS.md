@@ -10,6 +10,19 @@
 
 ## Nhật ký
 
+### 2026-11-02 — Adventure: Map Builder GĐ7 — Kiểm tra, Publish, Lịch sử, Chạy thử, Xem bằng game (decision 047)
+✅ Đã làm:
+- **Kiểm tra & Publish:** chọn bản nháp, xem mọi lỗi / cảnh báo trên thế giới sau publish, nhập tiếng Anh cho chữ mới / đã đổi; publish ghi `maps.json` + `zones.json` + `en.json` cùng lúc, game nạp lại, hỏng thì khôi phục hết; map mới vào vùng; lối ra map khác đi theo điểm tới đã dời.
+- **Lịch sử:** mỗi lần publish giữ bản cũ; "Đưa về nháp" để quay lại (vẫn qua mọi kiểm tra).
+- **Chạy thử** trong Admin: đi bằng phím theo đúng luật đi của game, cổng / khoá, chuyển map qua lối ra và cổng dịch chuyển, chọn điểm xuất hiện; bản đã publish hoặc bản nháp; không lưu gì.
+- **Xem bằng game thật:** server game riêng đọc thế giới sau publish + Electron chụp map trên save tạm (không đụng `content/` lẫn save thật).
+
+🧪 `npm run check` xanh (1621 test). Trọn luồng trên Admin thật: tạo map Hang Thử → nối hai chiều với Rừng Sâu → Kiểm tra (bỏ chọn Hang Thử → lỗi "map đó chưa publish"; 3 chữ tiếng Anh bắt buộc) → Publish (3 file ghi cùng lúc, `check_live` sạch, Hang Thử vào nhánh Rừng, bản Rừng Sâu cũ vào Lịch sử) → Chạy thử (vào lối ra sang Hang Thử tại (2,9), đi lối về tới Rừng Sâu (61,7)) → Xem bằng game (ảnh Electron đúng map mới, ~50 giây) → Lịch sử đưa bản cũ về nháp. Đã hoàn lại nội dung game và dọn dữ liệu thử. Sửa khi thử: vòng lặp chạy thử dùng hẹn giờ (khung hình dừng khi cửa sổ ẩn).
+
+⚠️ Tự quyết: Xem bằng game là ảnh chụp từ renderer thật; đi thử / va chạm ở Chạy thử (cùng luật game). Publish ghi lại dòng map đã sửa theo thứ tự trường của schema (chỉ đổi vị trí trường, không đổi dữ liệu).
+
+➡️ GĐ8: kiểm thử tích hợp runtime + save (map mới tạo từ Admin chơi được bằng `takeExit` thật; save cũ nạp được; 18 map cũ; build desktop).
+
 ### 2026-11-02 — Adventure: Map Builder GĐ6 — Map Editor + asset trang trí + Thư viện asset (decision 047)
 ✅ Đã làm:
 - **6a Map Editor** (`#/adventure-editor/<id>`): canvas lớn với nền vẽ, đất, lưới, độ cao, mọi vật; zoom / kéo trong lưới ô của game. Công cụ chọn / dời / đổi cỡ / chọn khung, cọ, chữ nhật, đổ loang, độ cao, lối ẩn, tẩy vật, thêm vật (sao chép vật có sẵn, id mới). Inspector số chính xác + trường chọn sẵn. Undo / redo, nhân bản, chép / dán, mũi tên, Ctrl+S lưu nháp; kiểm tra sống.
