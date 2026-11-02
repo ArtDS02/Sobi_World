@@ -143,20 +143,26 @@ export const mapSchema = z.strictObject({
     .optional(),
 });
 
+/** The grid of one area against its size: rows × cols of known tiles, the elevation the same size (also run on a builder draft). */
+export function mapShapeProblems(m: Pick<z.infer<typeof mapSchema>, 'id' | 'cols' | 'rows' | 'terrain' | 'scene'>): string[] {
+  const out: string[] = [];
+  if (m.terrain.length !== m.rows) out.push(`${m.id}: ${m.terrain.length} terrain rows, expected ${m.rows}`);
+  m.terrain.forEach((row, y) => {
+    if (row.length !== m.cols) out.push(`${m.id}: row ${y} has ${row.length} tiles, expected ${m.cols}`);
+    const bad = [...row].find((c) => !(TERRAIN_CHARS as readonly string[]).includes(c));
+    if (bad) out.push(`${m.id}: row ${y} has an unknown tile '${bad}'`);
+  });
+  const elevation = m.scene?.elevation;
+  if (elevation && (elevation.length !== m.rows || elevation.some((row) => row.length !== m.cols))) out.push(`${m.id}: scene.elevation must be ${m.rows} rows of ${m.cols}`);
+  return out;
+}
+
 export const mapsFileSchema = z.strictObject({ maps: z.array(mapSchema).min(1) }).superRefine((f, ctx) => {
   const ids = new Set<string>();
   for (const m of f.maps) {
     if (ids.has(m.id)) ctx.addIssue({ code: 'custom', message: `duplicate map ${m.id}` });
     ids.add(m.id);
-    if (m.terrain.length !== m.rows) ctx.addIssue({ code: 'custom', message: `${m.id}: ${m.terrain.length} terrain rows, expected ${m.rows}` });
-    m.terrain.forEach((row, y) => {
-      if (row.length !== m.cols) ctx.addIssue({ code: 'custom', message: `${m.id}: row ${y} has ${row.length} tiles, expected ${m.cols}` });
-      const bad = [...row].find((c) => !(TERRAIN_CHARS as readonly string[]).includes(c));
-      if (bad) ctx.addIssue({ code: 'custom', message: `${m.id}: row ${y} has an unknown tile '${bad}'` });
-    });
-    const elevation = m.scene?.elevation;
-    if (elevation && (elevation.length !== m.rows || elevation.some((row) => row.length !== m.cols)))
-      ctx.addIssue({ code: 'custom', message: `${m.id}: scene.elevation must be ${m.rows} rows of ${m.cols}` });
+    for (const message of mapShapeProblems(m)) ctx.addIssue({ code: 'custom', message });
   }
   const exitIds = new Set<string>();
   for (const m of f.maps) {

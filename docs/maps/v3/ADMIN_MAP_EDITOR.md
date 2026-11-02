@@ -1,5 +1,7 @@
 # Admin "Cập nhật bản đồ" — yêu cầu (chưa làm)
 
+> **2026-11-02:** mở rộng thành Custom Map Builder — audit + đề xuất ở `MAP_BUILDER_AUDIT.md` (thay phần "Ghi chú kỹ thuật" dưới đây khi được duyệt).
+
 Ngày ghi: 2026-11-02 · Trạng thái: **chủ dự án nêu hướng, làm sau** khi đã có layout + nền v3 của các map (decision 046). Mục tiêu: chỉnh từng map bằng tay cho hợp lý nhất, thay cho việc agent đặt vật bằng script.
 
 ## Chủ dự án muốn

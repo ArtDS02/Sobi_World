@@ -279,3 +279,9 @@ img.is-missing { visibility: hidden; }
 .amap__cell { width: 18px; height: 18px; padding: 0; border: 0; font: 700 11px/18px system-ui; color: #2b2118; cursor: pointer; }
 .amap__cell:hover { outline: 2px solid #7c5cd6; }
 .amap__problems { color: #c0392b; }
+/* Quản lý map (decision 047). */
+.mapm td { vertical-align: top; }
+.mapm__acts { display: flex; flex-wrap: wrap; gap: 4px; }
+.mapm__status--ok { background: #dff3df; color: #256b2a; }
+.mapm__status--new { background: #e8e1fb; color: #4b2fa0; }
+.mapm__status--warn { background: #fbefd6; color: #8a5a00; }

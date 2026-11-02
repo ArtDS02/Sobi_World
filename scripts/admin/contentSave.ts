@@ -1,7 +1,7 @@
 // "Nội dung game" on the dev API (decision 036): any file of the catalog (scripts/admin/contentCatalog.ts) can be
 // rewritten — numbers, words, switches, lists, new rows — and is only kept when the game accepts it:
 //   1. the file's own schema (content/schemas), with ids.generated.ts regenerated first when the file owns an id list;
-//   2. a shipped id is never removed (saves hold them: ARCHITECTURE §8);
+//   2. a shipped id is never removed (saves hold them: ARCHITECTURE §8), the Adventure's map / chest / exit… ids included (decision 047);
 //   3. a row whose name lives in the string tables has a name in both languages (scripts/admin/i18nText.ts);
 //   4. every content module of the game loads again with the new file (cross-file references, area manifests).
 // Any failure restores every file touched, so a refused save leaves no trace.
@@ -12,6 +12,7 @@ import { writeText } from './artFiles';
 import { CONTENT_FILES, EDITABLE_FILES, TEXT_TABLES, type RowTexts } from './contentCatalog';
 import { readContent, schemaProblems } from './contentFiles';
 import { readRowTexts, restoreTables, snapshotTables, writeRowTexts } from './i18nText';
+import { savedIdProblems } from './mapIds';
 
 type Mod = Record<string, unknown>;
 type Result = { status: number; body: unknown };
@@ -90,6 +91,7 @@ export async function saveContentFile(body: { file: string; value: unknown; text
 
   const early = [
     ...idProblems(def.file, body.value, list ? listIn(idsBefore, list.name) : []),
+    ...savedIdProblems(def.file, JSON.parse(before) as unknown, body.value),
     ...(table ? missingNames(def.file, body.value, texts, readRowTexts(table, rowIds(body.value, table.rowsKey))) : []),
   ];
   if (early.length) return refuse(early);

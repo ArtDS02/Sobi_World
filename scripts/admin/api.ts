@@ -19,6 +19,8 @@
 //        checked by its schema and by the game loading every content module again; GET /content/result?id= → the outcome
 //        of a save whose response the page lost to Vite's reload (the written file reloads the dashboard)
 //   GET  /build-info · POST /open-folder { which } → desktop build status + guide data (AM-1)
+//   GET  /adventure/maps · POST /adventure/maps/draft { draft, create?, previousId? } · /adventure/maps/delete { id } ·
+//        /adventure/maps/meta { id, patch } → Map Builder drafts and notes in tools/admin/data/adventure (decision 047)
 import { readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin, ViteDevServer } from 'vite';
@@ -40,6 +42,8 @@ import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, reg
 import { buildInfo, openFolder } from './buildInfo';
 import type { RowTexts } from './contentCatalog';
 import { readContentFiles, saveContentFile } from './contentSave';
+import { deleteMapDraft, readMapBuilder, saveMapDraft, saveMapMeta, type MetaPatch } from './mapDrafts';
+import type { MapDraft } from '../../tools/admin/mapModel';
 import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
 import type { GeneticsRules, Mutation } from '../../src/areas/farm/logic/config/breedingRules';
 import type { GeneBonuses } from '../../src/areas/farm/logic/config/genePool';
@@ -320,6 +324,14 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
       const r = results.get(url.searchParams.get('id') ?? '');
       return r ?? { status: 404, body: { error: 'unknown request' } };
     }
+    case 'GET /adventure/maps':
+      return readMapBuilder();
+    case 'POST /adventure/maps/draft':
+      return saveMapDraft(await body<{ draft: MapDraft; create?: boolean; previousId?: string }>(), load);
+    case 'POST /adventure/maps/delete':
+      return deleteMapDraft(await body<{ id: string }>());
+    case 'POST /adventure/maps/meta':
+      return saveMapMeta(await body<{ id: string; patch: MetaPatch }>());
     case 'GET /build-info':
       return buildInfo();
     case 'POST /open-folder':

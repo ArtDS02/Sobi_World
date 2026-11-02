@@ -10,6 +10,27 @@
 
 ## Nhật ký
 
+### 2026-11-02 — Adventure: Map Builder GĐ2 — Quản lý map + kho nháp (decision 047)
+✅ Đã làm:
+- Chủ dự án duyệt 6 điểm của audit + thêm chế độ chạy thử sau publish → decision 047.
+- Admin trang mới **🧭 Quản lý map** (`#/adventure-world`): bảng mọi map (published / có nháp / nháp / tạm tắt), tìm, lọc vùng / trạng thái, số lối ra / vào, lỗi `mapProblems`. Tạo map trống hoặc từ mẫu, nhân bản (id mới cho mọi vật, câu đố theo cổng mới, không chép lối ra), đổi tên + mô tả (id đổi được chỉ khi chưa publish và không ai trỏ tới), tắt / bật nháp, xoá nháp (liệt kê lối ra đang trỏ tới, gõ id để xác nhận), bỏ nháp của map đã publish.
+- Kho nháp `tools/admin/data/adventure/` (`drafts/<id>.json`, `meta.json`) qua dev API `scripts/admin/mapDrafts.ts`; game không đọc.
+- Lưu `maps.json` / `zones.json` từ Admin nay **không cho xoá id save đang giữ** (map, vùng, rương, cổng, lối ra, lớp che, câu đố, lore, kẻ canh / trùm): `scripts/admin/mapIds.ts`.
+- `mapShapeProblems` tách khỏi `mapsFileSchema` (dùng chung cho nháp). "Bản đồ khu" mở thẳng map theo `#/adventure-maps/<id>`.
+
+🧪 `npm run check` xanh (1591 test, +10 `tests/scripts/mapBuilder.test.ts`). Chạy Admin thật: tạo từ mẫu Rừng Sâu, đổi tên + id, tắt, xoá; đổi tên map đã publish → có nháp → bỏ nháp; không lỗi console. Dữ liệu thử đã dọn.
+
+⚠️ Tự quyết: map mới mặc định là nhánh; nút "Sửa" của bản nháp tắt tới GĐ6 (editor mới), map đã publish vẫn sửa bằng "Bản đồ khu" cũ (ghi thẳng `maps.json`, giờ được chặn xoá id).
+
+➡️ GĐ3: nhiều điểm xuất hiện (`spawns[]`, `exits[].arrive`).
+
+### 2026-11-02 — Adventure: Custom Map Builder — GĐ1 audit + đề xuất (chưa code)
+✅ Đã làm: chủ dự án giao task nâng màn "Cập nhật bản đồ" thành Custom Map Builder (quản lý map, spawn nhiều, lối ra / kết nối, mạng map, editor đầy đủ, draft / validate / publish). Audit map schema, loader, chuyển map, save, Admin; viết `docs/maps/v3/MAP_BUILDER_AUDIT.md` (bảng khái niệm ↔ code, data flow, schema chỉ thêm, 8 giai đoạn).
+
+⚠️ Phát hiện: "portal" của task = `exits` trong code (cổng 2×2 `portal` là cơ chế khác); `contentSave` hiện không chặn xóa map / chest / exit đã ship (save giữ các id này) — sửa ở GĐ2.
+
+👉 Chủ dự án: chốt 6 điểm ở §7 của tài liệu (lối ra một chiều, không xóa map đã ship, inactive chỉ ở nháp, va chạm asset, nơi lưu nháp, tách maps.json về sau).
+
 ### 2026-11-02 — Adventure: bản đồ v3 — 12 map Núi, Tàn Tích, Biển vào game; cả 18 map dùng nền vẽ (decision 046)
 ✅ Đã làm:
 - 12 nền (M4–M6, N4, N5, M7–M9, N6, N7–N9) xóa dấu sao, phóng 64 px / ô, chia khối (56 khối, manifest). Nhập bằng `import_v3.py`, giữ mọi id.

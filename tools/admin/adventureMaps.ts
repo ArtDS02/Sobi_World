@@ -80,7 +80,9 @@ function click(x: number, y: number, rerender: () => void) {
   rerender();
 }
 
-export function renderAdventureMaps(root: HTMLElement) {
+/** `mapId` (from `#/adventure-maps/<id>`, the "Quản lý map" page) opens that area. */
+export function renderAdventureMaps(root: HTMLElement, mapId?: string | null) {
+  if (mapId && page.maps.some((m) => m.id === mapId)) page.mapId = mapId;
   const draw = () => {
     const map = current();
     const marks = overlay(map);
@@ -108,6 +110,7 @@ export function renderAdventureMaps(root: HTMLElement) {
       ${problems.length > 0 ? `<ul class="amap__problems">${problems.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>` : '<p class="ok">Khu này qua mọi kiểm tra: không góc chết, đường chính không cần cổng nguyên tố.</p>'}`;
     root.querySelector<HTMLSelectElement>('[data-map]')!.addEventListener('change', (e) => {
       page.mapId = (e.target as HTMLSelectElement).value;
+      history.replaceState(null, '', `#/adventure-maps/${page.mapId}`);
       draw();
     });
     root.querySelector<HTMLSelectElement>('[data-tool]')!.addEventListener('change', (e) => {

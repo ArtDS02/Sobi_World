@@ -10,13 +10,15 @@ API ghi file ở `scripts/admin/` (plugin Vite, chỉ chạy khi `serve`). Quy�
 | Nội dung game | `contentPage.ts` + form `schemaForm.ts` / `schemaModel.ts` / `fieldLabels.ts` / `idNames.ts` | mọi file trong `scripts/admin/contentCatalog.ts`; tên vật phẩm / trang trí / thành tựu vào `src/i18n` |
 | Giống heo, Kiểm tra dữ liệu | `pigList.ts`, `editor.ts`, `validation.ts`, `store.ts` | `content/farm/species.json`, manifest |
 | Phối giống, Cửa hàng Farm, Bố cục, Mùa, Ngày / Đêm | `breeding*.ts`, `products.ts`, `layout*.ts`, `seasons.ts`, `dayNight*.ts` | file content tương ứng |
+| Quản lý map (Map Builder, decision 047) | `mapManage.ts`, `mapModel.ts` (thuần, có test) | bản nháp + ghi chú ở `tools/admin/data/adventure/` (`scripts/admin/mapDrafts.ts`); game không đọc tới khi publish |
+| Bản đồ khu | `adventureMaps.ts` (`#/adventure-maps/<mapId>`) | `content/adventure/maps.json` (editor cũ, thay ở Map Builder GĐ6) |
 | Asset nguồn / Thư viện, Bản desktop, Hướng dẫn | `assets.ts`, `library.ts`, `desktop.ts`, `guide.ts` | ảnh heo + manifest |
 
 Quy tắc:
 - Save người chơi chỉ sửa qua `worldEdits.ts` (WorldSave → WorldSave): tiền qua `changeCurrency` (giao dịch ADMIN_ADJUST), kết quả kiểm bằng
   schema thế giới + schema save từng khu + bộ đọc save của game. Sửa riêng Nông trại: `farmEdits.ts` chạy trên `farmOf` / `withFarm`.
 - Nội dung: form dựng từ zod schema của game (`z.toJSONSchema`); server (`scripts/admin/contentSave.ts`) kiểm schema, không cho xoá id đã
-  phát hành, sinh lại `content/schemas/ids.generated.ts`, nạp lại mọi module content của game; lỗi thì khôi phục mọi file.
+  phát hành (cả id map / rương / lối ra… của Adventure: `scripts/admin/mapIds.ts`), sinh lại `content/schemas/ids.generated.ts`, nạp lại mọi module content của game; lỗi thì khôi phục mọi file.
 - Server admin **không hot-reload** (`vite.admin.config.ts`): trang tự tải lại sau lần lưu của chính nó (`store.ts` `rememberMessage`).
   Sửa code admin thì bấm F5.
 - Chữ của admin là tiếng Việt viết thẳng ở đây (công cụ dev, không qua `src/i18n`).
