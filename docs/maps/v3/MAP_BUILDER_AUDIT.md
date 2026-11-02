@@ -125,7 +125,7 @@ scene.scenery?: {                // hand-placed decoration (replaces script plac
 | 2 ✅ | Kho draft + `meta.json` + dev API; trang Quản lý map: tạo (trống / mẫu), nhân bản, đổi tên, tắt, xóa có liệt kê tham chiếu; khóa xóa id đã ship trong `contentSave` (sửa lỗ hổng §1.3) | không |
 | 3 ✅ | `spawns[]` + `exits[].arrive` (schema, test); quản lý spawn trong editor | schema chỉ thêm |
 | 4 ✅ | Lối ra: nhiều lối / map, đích + spawn đích, khóa, `oneWay`, hai chiều có xác nhận, mở nhanh map đích; `mapGraph` hiểu `oneWay` (test) | `mapGraph` |
-| 5 | Mạng map (SVG, kéo thả, tìm, lọc, cảnh báo) | không |
+| 5 ✅ | Mạng map (SVG, kéo thả, tìm, lọc, cảnh báo) | không |
 | 6 | Map Editor canvas (nền, lưới, công cụ tô, undo), `scene.scenery[]` + render + va chạm, Thư viện asset + upload | renderer + `blockedTiles` |
 | 7 | Validate tổng hợp + Publish + lịch sử / quay lại + Preview sandbox + **chạy thử trong Admin** (đi bằng bàn phím trên map đã publish, luật đi / lối ra của game, không chạm save) | không |
 | 8 | Test tích hợp: map mới tạo từ Admin → publish → chơi qua lối ra thật; save thật cũ nạp được; 18 map cũ sạch `check_live`; build desktop | không |

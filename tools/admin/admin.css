@@ -295,3 +295,29 @@ img.is-missing { visibility: hidden; }
 .mexit__hint { position: sticky; top: 0; z-index: 1; margin: 0; padding: 6px 8px; border-radius: 6px; background: #3b2a6b; color: #fff; }
 .mexit__fields { display: grid; gap: 6px; padding: 8px; border: 1px dashed #ff2fd0; border-radius: 8px; }
 .mexit__fields .toolbar input[type='number'] { width: 64px; }
+/* Mạng map (decision 047). */
+.mnet { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; margin-top: 10px; }
+.mnet__svg { width: 100%; height: 72vh; background: var(--surface-2, #2a2238); border-radius: 10px; touch-action: none; user-select: none; cursor: grab; }
+.mnet__side { max-height: 72vh; overflow-y: auto; display: grid; gap: 8px; align-content: start; }
+.mnet__edge line { stroke: #9fd36b; stroke-width: 3; }
+.mnet__edge.is-locked line { stroke-dasharray: 8 6; stroke: #f2c14e; }
+.mnet__edge.is-inactive line { stroke: #888; stroke-dasharray: 2 6; }
+.mnet__edge.has-problem line { stroke: #e05050; }
+.mnet__edge.is-selected line { stroke-width: 6; }
+.mnet__svg .mnet__edge line.mnet__hit { stroke: transparent; stroke-width: 16; stroke-dasharray: none; cursor: pointer; }
+.mnet__node { cursor: pointer; }
+.mnet__node rect { stroke: #6b5a8a; stroke-width: 2; }
+.mnet__node.is-off rect { stroke-dasharray: 6 4; }
+.mnet__node.has-problem rect { stroke: #e05050; }
+.mnet__node.is-hit rect { stroke: #3fa3ff; stroke-width: 4; }
+.mnet__node.is-selected rect { stroke: #ff2fd0; stroke-width: 4; }
+.mnet__name { font: 700 14px system-ui; fill: #2b2118; }
+.mnet__id { font: 12px system-ui; fill: #5a4d40; }
+.mnet__badge { fill: #e05050; }
+.mnet__badge-text { font: 700 11px system-ui; fill: #fff; }
+.mnet__warns { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 4px; }
+.mnet__warn { cursor: pointer; font-size: 13px; padding: 4px 6px; border-radius: 6px; }
+.mnet__warn:hover { background: var(--surface-2, #3332); }
+.mnet__warn--error { color: #ff8a80; }
+.mnet__warn--warn { color: #f2c14e; }
+@media (max-width: 1200px) { .mnet { grid-template-columns: 1fr; } .mnet__svg { height: 60vh; } .mnet__side { max-height: none; } }

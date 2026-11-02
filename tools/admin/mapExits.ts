@@ -39,7 +39,8 @@ function marks(map: AreaMap, strongExit: string | null, strongSpawn: string | nu
 
 const option = (value: string, label: string, selected: boolean, disabled = false) => `<option value="${esc(value)}"${selected ? ' selected' : ''}${disabled ? ' disabled' : ''}>${esc(label)}</option>`;
 
-export function openExits(data: M.BuilderData, mapId: string, save: (s: ExitsSave) => Promise<void>) {
+/** `selectExit` = the exit selected when it opens (from the map network); else the first. */
+export function openExits(data: M.BuilderData, mapId: string, save: (s: ExitsSave) => Promise<void>, selectExit?: string) {
   const draft = M.draftOf(data, mapId);
   const map = draft.map;
   const touched = new Map<string, M.MapDraft>();
@@ -51,7 +52,7 @@ export function openExits(data: M.BuilderData, mapId: string, save: (s: ExitsSav
     return touched.get(id)!.map;
   };
   const world = () => M.workingMaps(data).map((m) => (m.id === mapId ? map : (touched.get(m.id)?.map ?? m)));
-  let selected: string | null = map.exits[0]?.id ?? null;
+  let selected: string | null = (selectExit && map.exits.some((e) => e.id === selectExit) ? selectExit : map.exits[0]?.id) ?? null;
   let mode: Mode = { kind: 'exit' };
   let note = '';
   let next: string | undefined;

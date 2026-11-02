@@ -1,5 +1,5 @@
 // Map Builder (decision 047): the pure model of "Quản lý map" (new areas, copies, references, status; GĐ2), the spawn points exits land
-// on (GĐ3), the connections between areas (GĐ4), the save-held ids a content save may never drop, and the draft store of the dev API (in a throw-away folder).
+// on (GĐ3), the connections between areas (GĐ4), the map network (GĐ5), the save-held ids a content save may never drop, and the draft store of the dev API (in a throw-away folder).
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -13,6 +13,7 @@ import { deleteMapDraft, readDrafts, readMeta, saveMapDraft, saveMapMeta } from 
 import { savedIdProblems, savedMapIds } from '../../scripts/admin/mapIds';
 import * as L from '../../tools/admin/mapLinks';
 import * as M from '../../tools/admin/mapModel';
+import * as N from '../../tools/admin/mapNetwork';
 
 const load = async () => mapsSchemaModule as unknown as Record<string, unknown>;
 const data = (drafts: M.BuilderData['drafts'] = {}, meta: M.BuilderData['meta'] = {}): M.BuilderData => ({ published: MAP_LIST, zones: ZONE_LIST, drafts, meta });
@@ -264,5 +265,49 @@ describe('connections', () => {
     const maps = MAP_LIST.map((m) => structuredClone(m));
     Object.assign(maps[0]!.exits[0]!, { lock: 'shortcut', oneWay: true });
     expect(mapsFileSchema.safeParse({ maps }).success).toBe(false);
+  });
+});
+
+describe('map network', () => {
+  const note = (exits: Record<string, M.ExitNote>) => ({ descriptionVi: '', createdAt: '', updatedAt: '', exits });
+
+  it('draws the published world as two-way edges, laid out by zone, with no warning', () => {
+    const d = data();
+    const edges = N.networkEdges(d);
+    const pairs = new Set(MAP_LIST.flatMap((m) => m.exits.map((e) => [m.id, e.to].sort().join('|'))));
+    expect(edges.map((e) => e.key).sort()).toEqual([...pairs].sort());
+    expect(edges.every((e) => e.twoWay && !e.inactive && e.problems.length === 0)).toBe(true);
+    const pos = N.nodePositions(d);
+    expect(Object.keys(pos).sort()).toEqual(MAP_LIST.map((m) => m.id).sort());
+    expect(new Set(Object.values(pos).map((p) => `${p.x},${p.y}`)).size).toBe(MAP_LIST.length);
+    expect(N.networkWarnings(d)).toEqual([]);
+  });
+
+  it('keeps the admin placement and warns about an area with no connection', () => {
+    const lone = M.blankMap({ id: 'map_net_lone', nameVi: 'Một Mình', zoneId, cols: 30, rows: 20 });
+    const d = data({ [lone.id]: { map: lone, road: 'branch' } }, { [lone.id]: { descriptionVi: '', createdAt: '', updatedAt: '', node: { x: 5, y: 6 } } });
+    expect(N.nodePositions(d)[lone.id]).toEqual({ x: 5, y: 6 });
+    const w = N.networkWarnings(d).filter((x) => x.mapId === lone.id);
+    expect(w.some((x) => x.text.includes('chưa có kết nối'))).toBe(true);
+    expect(w.some((x) => x.text === 'Một Mình: không đi tới được từ cửa vùng Bìa Rừng')).toBe(true);
+  });
+
+  it('flags one-way edges, a missing spawn, and an inactive exit that is the only way in', () => {
+    const a = M.blankMap({ id: 'map_net_a', nameVi: 'Nối A', zoneId: MAPS.map_forest_deep!.zoneId, cols: 30, rows: 20 });
+    const b = structuredClone(MAPS.map_forest_deep!);
+    const d = data({ [a.id]: { map: a, road: 'branch' }, [b.id]: { map: b, road: 'main' } });
+    const go = L.newExit(b, a, { x: 60, y: 8 }, L.takenIds(d));
+    L.landOn(go, a, L.spawnAt(a, b, 2, 9));
+    const back = L.newExit(a, b, { x: 1, y: 9 }, L.takenIds(d));
+    L.landOn(back, b, 'spawn_default');
+    expect(N.networkEdges(d).find((e) => e.key === `${b.id}|${a.id}`.split('|').sort().join('|'))!.twoWay).toBe(true);
+    expect(N.networkWarnings(d).filter((w) => w.mapId === a.id || w.mapId === b.id)).toEqual([]);
+    // The way in switched off: it is the only way to A.
+    const off = { ...d, meta: { [b.id]: note({ [go.id]: { inactive: true } }) } };
+    expect(N.networkWarnings(off).some((w) => w.exitId === go.id && w.text.includes('lối đi duy nhất'))).toBe(true);
+    expect(N.networkEdges(off).find((e) => e.exits.some((x) => x.exit.id === go.id))!.twoWay).toBe(false);
+    // Landing on a spawn A does not have.
+    go.arrive = 'spawn_gone';
+    expect(N.networkWarnings(d).some((w) => w.exitId === go.id && w.level === 'error')).toBe(true);
   });
 });

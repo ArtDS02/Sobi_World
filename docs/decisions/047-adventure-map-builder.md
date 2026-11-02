@@ -42,3 +42,11 @@ Chủ dự án muốn tự xây thế giới Sobi Adventure trong Admin: tạo m
 - Lưu ghi bản nháp của cả hai map; "Lưu & mở lối ra của map đích" mở tiếp map bên kia.
 - Lối ra đã publish không xoá, không tắt được (save giữ id `openedExits`); vẫn dời, đổi đích, đổi khoá, đổi điểm tới được. Tên / tạm tắt của lối ra nằm ở `meta.json` (`exits`), không vào game; lối ra tạm tắt bị bỏ khi publish.
 - Kiểm tra kết nối chạy trên thế giới "như sau khi publish": map nháp vào vùng của nó (nhánh / đường chính), map tạm tắt và lối ra tạm tắt bị bỏ (`tools/admin/mapLinks.ts`). Bảng Quản lý map cộng lỗi kết nối vào cột Kiểm tra.
+
+## Giai đoạn 5 (2026-11-02) — Mạng map
+
+- Trang **🕸️ Mạng map** (`#/adventure-network`): mỗi map một node (màu theo trạng thái, huy hiệu đỏ = số cảnh báo), mỗi cặp map có lối ra là một đường nối (các lối ra hai phía gộp làm một): mũi tên = một chiều, nét đứt = có khoá, mờ = tạm tắt, đỏ = lỗi.
+- Kéo node để sắp xếp → chỉ ghi `meta.json` `node` (không tạo bản nháp, không đổi "cập nhật lúc"); chưa kéo thì xếp tự động theo vùng (cột mỗi vùng, đường chính dọc, nhánh bên cạnh map nó nối). Kéo nền = di chuyển, cuộn = phóng to, "Vừa khung", "Xếp tự động" (ghi đè vị trí đã kéo, có hỏi).
+- Bấm node: thông tin + Lối ra / Điểm xuất hiện / Bản đồ khu; bấm đúp: mở Lối ra. Bấm đường nối: các lối ra hai phía (đích, điểm tới, khoá, hình) + "Sửa lối ra này" (mở hộp Lối ra chọn sẵn lối đó). Tìm (tô xanh), lọc vùng / trạng thái (làm mờ phần khác).
+- Cảnh báo cả thế giới: map chưa có kết nối; không có lối vào hợp lệ; lối ra tới map không tồn tại / đang tạm tắt; điểm tới không tồn tại hoặc lệch; lỗi kết nối của game (nói lại bằng tiếng Việt, tên map); lối ra tạm tắt đang là lối duy nhất tới một map. Bấm cảnh báo → chọn map đó.
+- Mã: `tools/admin/mapNetwork.ts` (thuần, có test), `tools/admin/mapNetworkPage.ts`; API trang dùng chung `tools/admin/mapApi.ts`.

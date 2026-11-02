@@ -10,6 +10,19 @@
 
 ## Nhật ký
 
+### 2026-11-02 — Adventure: Map Builder GĐ5 — Mạng map (decision 047)
+✅ Đã làm:
+- Admin trang mới **🕸️ Mạng map**: sơ đồ mọi map (node theo trạng thái, huy hiệu số cảnh báo) và đường nối (một chiều = mũi tên, có khoá = nét đứt, tạm tắt = mờ, lỗi = đỏ). Kéo node (chỉ lưu vị trí sơ đồ vào `meta.json`, không đụng map), kéo nền, cuộn phóng to, Vừa khung, Xếp tự động theo vùng; tìm, lọc vùng / trạng thái.
+- Bấm map → chi tiết + Lối ra / Điểm xuất hiện / Bản đồ khu (bấm đúp mở Lối ra); bấm đường nối → các lối ra hai phía + "Sửa lối ra này".
+- Cảnh báo cả thế giới (tiếng Việt): chưa kết nối, không lối vào, lối ra tới map không có / tạm tắt, điểm tới sai, lỗi kết nối, lối tạm tắt là đường duy nhất.
+- `mapApi.ts` gom API + hộp thoại cho cả hai trang; Quản lý map đọc lại dữ liệu mỗi lần vào trang.
+
+🧪 `npm run check` xanh (1603 test; +3 test mạng map). Chạy Admin thật: 18 map / 25 đường nối, 0 cảnh báo; kéo Bìa Rừng → chỉ `meta.json` đổi, không bản nháp; bấm đường nối Rừng Sâu ↔ Lõi Rừng → 2 lối ra, "Sửa lối ra này" mở đúng lối; tìm "hầm" tô 2 map; thêm map nháp chưa nối → hiện node + 2 cảnh báo. Sửa: vùng bấm đường nối bị nét đứt che (CSS). Dữ liệu thử đã dọn.
+
+⚠️ Tự quyết: đường nối "có khoá" khi một lối bất kỳ trên đó có khoá; màn hẹp (< 1200 px) đưa bảng chi tiết xuống dưới sơ đồ; cuộn chuột trên sơ đồ là phóng to (không cuộn trang).
+
+➡️ GĐ6: Map Editor canvas (nền vẽ, lưới, công cụ tô, vật gameplay, asset trang trí `scenery`, Thư viện asset, undo / redo).
+
 ### 2026-11-02 — Adventure: Map Builder GĐ4 — Lối ra và kết nối (decision 047)
 ✅ Đã làm:
 - `exits[].oneWay`: lối một chiều có chủ ý (graph không đòi lối về; lối tắt không được một chiều).
