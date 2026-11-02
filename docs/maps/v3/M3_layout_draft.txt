@@ -1,0 +1,55 @@
+# M3 map_forest_heart — Lõi Rừng, layout v3 DRAFT (48 x 27), scripts/art/map_v3/layout_v3.py
+# the heart of the forest, already sick: a ring of trails around a huge withered tree standing in a wide central clearing (leave the clearing's middle as bare, slightly greyish ground for the tree, which is added later); a dark root hollow in the south-west; a hidden grove in the north-east; at the east end a round clearing where the zone's boss waits, before the trail leaves east toward the mountains; one trail leaves north.
+
+grid:
+################,,##############################
+###############,,,##############################
+###############,,,..##############..############
+##############..,,...##########......###########
+############....,,,...#########..,,...##########
+############....,,,....########.,,,....#########
+#############...,,,....#######.,,,.....#########
+################,,,,,,,,,,,,,,,,,.....##########
+################,,,,,,,,,,,,,,,,.###############
+###############,,,,,,,,,,,,,,,,,,###############
+#####.########,,,,,cccccccc,,,,,,,###.......####
+###.....#####,,,,,.ccccccccc.,,,,,,,.........###
+##.......####,,,,,.ccccccccc..,,,,,,,........###
+#,,,,,,,,,,,,,,,,..ccccccccc....,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,..ccccccccc...,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,.ccccccccc.,,,,,,,,,,,,,,,,,,#
+#..........,,,,,,,,ccccccccc,,,,,,,#........####
+##........,,,#,,,,,cccccccc,,,,,,#####.....#####
+########.,,,###,,,,,,,,,,,,,,,,,########..######
+########,,,#####,,,,,,,,,,,,,,,#################
+#########,,######,,,,,,,,,,,,,##################
+#####..,,,..####################################
+#####..,,....###################################
+####.........###################################
+######.....#####################################
+################################################
+################################################
+
+objects (kind id x y):
+  spawn 2 14
+  portal 4 16
+  exit exit_f3_west 0 14 1x2 -> map_forest_deep (arrive there 62,7)
+  exit exit_f3_north 16 0 2x1 -> map_forest_falls (arrive there 24,38)
+  exit exit_f3_next 47 13 1x2 -> map_mountain_foot (arrive there 1,28)
+  groups g_f3_boss 41 14
+  groups g_f3_a 26 7
+  groups g_f3_b 29 10
+  groups g_f3_c 27 20
+  groups g_f3_d 30 17
+  groups g_f3_e 15 5
+  groups g_f3_f 7 12
+  groups g_f3_g 36 12
+  groups g_f3_sleep 21 20
+  chests chest_f3_hidden 35 5
+  chests chest_f3_root 8 23
+  gates gate_f3_shadow 9 20 2x1
+  covers cover_f3_a 30 2 9x6
+  springs spring_f3 36 16
+  lore lore_f3_root 24 17
+  shrine shrine_f3 19 5
+  prop prop_adv_lm_f3 21 12

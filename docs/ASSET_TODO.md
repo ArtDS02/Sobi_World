@@ -4,6 +4,12 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
+## Adventure: bản đồ v3 — batch adventure-15-m2-3q (decision 046)
+- **P1 (cây)** ra pixel art, lệch nền vẽ mịn: tạo lại (thêm câu "Smooth painted illustration, absolutely no pixel art." và đính kèm `BG.png` đã chốt).
+- **P3** cây rỗng bị cụt tán (chỉ có thân); vòng đá, đền, bia đá dùng được. **P4** thiếu hai mảnh đầu dải (trái / phải). Cả P2–P4 có dấu sao Gemini ở góc phải dưới (agent xóa khi cắt).
+- **BG** M2 chỉ 1376 × 768 (phóng ×3, hơi mềm khi xem gần): nếu Gemini có 2K / 4K thì tạo lại cùng prompt, hoặc làm lượt vẽ chi tiết theo mảnh (M2_PLAN §7).
+- Lượt 3 dùng P1–P4 cho cây / bụi / landmark / tán che M2; lớp che `cover_f2_a` và vạt tha hóa ô vuông còn là hình cũ.
+
 ## Adventure: bản đồ v2 — batch adventure-14-map-v2 / 14b / 15 (decision 045)
 **Đã vào game (2026-11-01):** batch `adventure-15-coast-foes` đủ 13 asset; bộ ghép vẽ lại `adventure-14b-map-v2-redo` đủ 36 sheet + CE vẽ lại + I1 (`I.png`), 248 asset đã duyệt, **151 asset kit đang dùng**: ô nền 4 vùng (mỗi ảnh phủ 2 × 2 ô), mặt vách 3/4 + bậc + thác, lớp che 4 vùng, đạo cụ theo cụm dọc đường đi, khung viền, rương 4 loại + rương giả, cơ quan câu đố, suối 4 vùng, lối ra theo kiểu + vật chắn khi khóa, tường giả, đồ tha hóa theo %, vật mốc, huy hiệu 6 loại quái (map + trận).
 | Còn thiếu / bản tạm | Ghi chú |

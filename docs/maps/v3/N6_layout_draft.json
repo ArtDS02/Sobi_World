@@ -1,0 +1,565 @@
+{
+ "map": {
+  "id": "map_ruins_crypt",
+  "zoneId": "zone_ruins",
+  "nameVi": "Hầm Mộ Rune",
+  "corruption": 80,
+  "tile": 40,
+  "cols": 72,
+  "rows": 40,
+  "terrain": [
+   "##############################,,##############~~########################",
+   "#############################,,,##############~~########################",
+   "#############################,,,##############~~########################",
+   "############################,,,###############~~########################",
+   "############################,,,###############~~########################",
+   "##########################..,,,###############~~#############...########",
+   "########################....,,,....##########~~~##########........######",
+   "#######################.....,,,.....#########~~~#########.........######",
+   "########################....,,......#########~~#########...........#####",
+   "########################....,,.....##########~~########...,,,.......####",
+   "#########################...,,....###########~~########,,,,,,.......####",
+   "#########################...,,.##############~~######,,,,,,,.......#####",
+   "############################,,###############~~###,,,,,,,........#######",
+   "############################,,###############~~##,,,,,,#################",
+   "######################......,,....###########~~,,,,,####################",
+   "####################........,,.....##########~=,,,######################",
+   "#####....###########........,,.......#######~==,,#######################",
+   "####......##########........,,........######===,########################",
+   "###........,,,,,,,,,,,,,,,,,,,,,,.....####,,==##########################",
+   "#,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,..###,,,=~##########################",
+   ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,~~##########################",
+   ",,,,,,,,,,,,,,#######.........,,,,,,,,,,,,,,~~##########################",
+   "###........,,########.............,,,,,,,,,===,#########################",
+   "###........,,,########............###,,,,,,===,,,,######################",
+   "############,,#########..........####,,,.,,==,,,,,,,########...#########",
+   "############,,############......#####,,,###~~,,,,,,,,,,..........#######",
+   "############,,########################,,###~~##,,,,,,,,,,........#######",
+   "############,,########################,,###~~~###,,,,,,,,,,......#######",
+   "############,,,.######################,,###~~~####..,,,,,,,,,,,,,,,,####",
+   "###########..,,...####################,,,###~~####....,,,,,,,,,,,,,,,,,#",
+   "#########....,,....##################..,,...~~###........,,,,,,,,,,,,,,,",
+   "#########....,,......###############...,,...~~~###................,,,,,,",
+   "#########............##############....,,....~~#####.............#######",
+   "#########............#############...........~~#########.......#########",
+   "#########..........###############...........~~~##########...###########",
+   "#########.........#################...........~~########################",
+   "######################################.....###~~########################",
+   "##############################################~~~#######################",
+   "##############################################~~~#######################",
+   "###############################################~~#######################"
+  ],
+  "spawn": {
+   "x": 2,
+   "y": 20
+  },
+  "portal": {
+   "x": 4,
+   "y": 22
+  },
+  "exits": [
+   {
+    "id": "exit_n6_west",
+    "x": 0,
+    "y": 20,
+    "w": 1,
+    "h": 2,
+    "to": "map_ruins_gate",
+    "arriveX": 62,
+    "arriveY": 18,
+    "kind": "trail",
+    "facing": "left"
+   },
+   {
+    "id": "exit_n6_north",
+    "x": 30,
+    "y": 0,
+    "w": 2,
+    "h": 1,
+    "to": "map_ruins_hall",
+    "arriveX": 56,
+    "arriveY": 34,
+    "kind": "stairs",
+    "facing": "up"
+   },
+   {
+    "id": "exit_n6_east",
+    "x": 71,
+    "y": 30,
+    "w": 1,
+    "h": 2,
+    "to": "map_ruins_sanctum",
+    "arriveX": 24,
+    "arriveY": 25,
+    "kind": "stairs",
+    "facing": "up"
+   }
+  ],
+  "props": [
+   {
+    "prop": "prop_adv_lm_n6",
+    "x": 28,
+    "y": 22
+   }
+  ],
+  "groups": [
+   {
+    "id": "g_n6_boss",
+    "x": 62,
+    "y": 9,
+    "kind": "subboss",
+    "corruption": 4,
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_shadow_priest"
+      ]
+     }
+    ],
+    "gift": {
+     "item_adv_exp_small": 5,
+     "item_skill_scroll": 1
+    }
+   },
+   {
+    "id": "g_n6_elite",
+    "x": 66,
+    "y": 30,
+    "kind": "elite",
+    "corruption": 3,
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_stone_sentinel"
+      ]
+     }
+    ],
+    "gift": {
+     "item_adv_exp_small": 3,
+     "item_potion_healing": 2
+    }
+   },
+   {
+    "id": "g_n6_special",
+    "x": 26,
+    "y": 17,
+    "kind": "special",
+    "corruption": 5,
+    "when": "night",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_tide_wraith"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_a",
+    "x": 33,
+    "y": 20,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rune_wisp"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rune_wisp",
+       "enemy_rune_wisp"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_b",
+    "x": 23,
+    "y": 20,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_ember_idol"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ember_idol",
+       "enemy_ember_idol"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_c",
+    "x": 27,
+    "y": 11,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_tide_wraith"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_tide_wraith",
+       "enemy_tide_wraith"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_d",
+    "x": 26,
+    "y": 7,
+    "kind": "normal",
+    "corruption": 2,
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_stone_sentinel"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_stone_sentinel",
+       "enemy_stone_sentinel"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_e",
+    "x": 55,
+    "y": 30,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rune_wisp"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rune_wisp",
+       "enemy_rune_wisp"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_f",
+    "x": 60,
+    "y": 27,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_ember_idol"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ember_idol",
+       "enemy_ember_idol"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_g",
+    "x": 56,
+    "y": 26,
+    "kind": "mutant",
+    "corruption": 4,
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rune_wisp"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_h",
+    "x": 37,
+    "y": 32,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_stone_sentinel"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_stone_sentinel",
+       "enemy_stone_sentinel"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_i",
+    "x": 45,
+    "y": 35,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_tide_wraith"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_tide_wraith",
+       "enemy_tide_wraith"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_j",
+    "x": 12,
+    "y": 30,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_ember_idol"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ember_idol",
+       "enemy_ember_idol"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_k",
+    "x": 8,
+    "y": 18,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rune_wisp"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rune_wisp",
+       "enemy_rune_wisp"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_l",
+    "x": 24,
+    "y": 24,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_shadow_priest"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_shadow_priest",
+       "enemy_shadow_priest"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_m",
+    "x": 64,
+    "y": 26,
+    "kind": "normal",
+    "corruption": 2,
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_stone_sentinel"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_stone_sentinel",
+       "enemy_stone_sentinel"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_n",
+    "x": 29,
+    "y": 4,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_tide_wraith"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_tide_wraith",
+       "enemy_tide_wraith"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n6_mimic",
+    "x": 38,
+    "y": 36,
+    "kind": "special",
+    "corruption": 5,
+    "disguise": "chest",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mimic_ruins"
+      ]
+     }
+    ]
+   }
+  ],
+  "chests": [
+   {
+    "id": "chest_n6_ossuary",
+    "x": 59,
+    "y": 7,
+    "table": "chest_gold_ruins",
+    "type": "gold"
+   },
+   {
+    "id": "chest_n6_vault",
+    "x": 15,
+    "y": 33,
+    "table": "treasure_ruins",
+    "type": "hidden"
+   },
+   {
+    "id": "chest_n6_hall",
+    "x": 41,
+    "y": 33,
+    "table": "treasure_ruins",
+    "type": "silver"
+   },
+   {
+    "id": "chest_n6_entry",
+    "x": 8,
+    "y": 22,
+    "table": "chest_wood_ruins",
+    "type": "wood"
+   }
+  ],
+  "nodes": [],
+  "gates": [
+   {
+    "id": "gate_n6_light",
+    "x": 52,
+    "y": 12,
+    "w": 1,
+    "h": 2,
+    "element": "LIGHT"
+   }
+  ],
+  "covers": [
+   {
+    "id": "cover_n6_a",
+    "x": 7,
+    "y": 27,
+    "w": 13,
+    "h": 11,
+    "look": "roof"
+   }
+  ],
+  "puzzles": [
+   {
+    "id": "puzzle_n6_plate_a",
+    "x": 30,
+    "y": 17,
+    "element": "LIGHT",
+    "gate": "gate_n6_light"
+   },
+   {
+    "id": "puzzle_n6_plate_b",
+    "x": 59,
+    "y": 31,
+    "element": "LIGHT",
+    "gate": "gate_n6_light"
+   }
+  ],
+  "springs": [
+   {
+    "id": "spring_n6",
+    "x": 30,
+    "y": 8
+   }
+  ],
+  "npcs": [],
+  "lore": [
+   {
+    "id": "lore_n6",
+    "x": 27,
+    "y": 21,
+    "textVi": "Tường hầm mộ xếp đầy bia nhỏ, mỗi bia khắc một con heo. Những bia gần phong ấn đã nứt đen."
+   }
+  ]
+ },
+ "arrivals": {}
+}

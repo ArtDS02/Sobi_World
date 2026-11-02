@@ -1,0 +1,458 @@
+{
+ "map": {
+  "id": "map_forest_deep",
+  "zoneId": "zone_forest",
+  "nameVi": "Rừng Sâu",
+  "corruption": 18,
+  "tile": 40,
+  "cols": 64,
+  "rows": 36,
+  "terrain": [
+   "#######################################~~#######################",
+   "#######################################~~#######################",
+   "##########FFFFFFFFFFF#######..,,...####~~#########.....#########",
+   "#########FF^^^^^^^^^FF#####...,,...####~~#####............######",
+   "########FF^^^^^^^^^^^FF#####..,,...####~~####................###",
+   "########F^^^^^^^^^^^^^F.#####.,,..#####~~####.................##",
+   "######..F^^^^^^^^^^^^^F########,#######~~####.,,,,,,,,,,...,,,,,",
+   "#####....F^^^^^^^^^^^F..#######,#######==,,,,,,,,,,,,,,,,,,,,,,,",
+   "#####....FF^^^^^^^^^FF..######,,##,,,,,==,,,,,,,,,,,,,,,,,,,,,,,",
+   "######....FFFFFssFFFF...##..,,,,,,,,,,,==,,,,,,,.....,,,,,,,,,##",
+   "########...FFFFssFFF...,,,,,,,,,,,,,,,===,#####.....,,,,,,,#####",
+   "##########.....,,,..,,,,,,,,,,~~~~~~~~~~~#########.,,,,,,#######",
+   "###############,,,,,,,,,,,,,,~~~~~~~~~~~.#########,,,,,,.#######",
+   "################,,,,,,,,,,...~~~~~~~~~....######,,,,,,,...######",
+   "#################,,,,,,#.....~~~~~~~~....######,,,,,,,.......###",
+   "#################,,,,####...~~~~~~~.....######,,,,,,..........##",
+   "################,,,,######.~~~~.......#######,,,,,,...........##",
+   "######..########,,,,######~~~~........####,,,,,,,,............##",
+   "####......######,,,.#####~~~~#.........,,,,,,,,,##...........###",
+   "####......,,,,,,,,,,,,,,,~~~###......,,,,,,,,,,,##..........####",
+   ",,,,,,,,,,,,,,,,,,,,,,,,===,,,,,,,,,,,,,,,,,,..###..........####",
+   ",,,,,,,,,,,,,,,,,,,,,,,,===,,,,,,,,,,,,,,,.....####........#####",
+   ",,,,,,,,,,,,,.#####,,##===,,,,,,,,,,,,,,.......####.......######",
+   "##......,,...######,,##~~~####,,,.....,,,..cc.########...#######",
+   "##......,,...#####,,,##~~########......,,,.ccc#########..#######",
+   "##......,,..######,,,#~~~#########......,,,.cc#########..#######",
+   "###.....,,########,,..~~~.#########.....,,,..##########...######",
+   "########,,########,,.~~~...##########....,,.##########........##",
+   "########,,#######.,,.~~~....#############,,,##########........##",
+   "######..,,..####..,,.~~......############,,,#########..........#",
+   "#####...,,...###..,,.~~.......############,,#########..........#",
+   "#####...,,...###....~~~......#############,,,#########........##",
+   "#####...,,..####....~~......##############,,,##########.....####",
+   "######.....#########~~#..##################,,############..#####",
+   "###################~~~#####################,,###################",
+   "###################~~######################,,,##################"
+  ],
+  "spawn": {
+   "x": 2,
+   "y": 21
+  },
+  "portal": {
+   "x": 5,
+   "y": 24
+  },
+  "exits": [
+   {
+    "id": "exit_f2_west",
+    "x": 0,
+    "y": 21,
+    "w": 1,
+    "h": 2,
+    "to": "map_forest_edge",
+    "arriveX": 62,
+    "arriveY": 17,
+    "kind": "trail",
+    "facing": "left"
+   },
+   {
+    "id": "exit_f2_east",
+    "x": 63,
+    "y": 7,
+    "w": 1,
+    "h": 2,
+    "to": "map_forest_heart",
+    "arriveX": 1,
+    "arriveY": 14,
+    "lock": "guardian",
+    "kind": "trail",
+    "facing": "right"
+   },
+   {
+    "id": "exit_f2_south",
+    "x": 44,
+    "y": 35,
+    "w": 2,
+    "h": 1,
+    "to": "map_mountain_tunnels",
+    "arriveX": 1,
+    "arriveY": 20,
+    "kind": "tunnel",
+    "facing": "right"
+   }
+  ],
+  "props": [
+   {
+    "prop": "prop_adv_lm_f2",
+    "x": 13,
+    "y": 4
+   }
+  ],
+  "groups": [
+   {
+    "id": "g_f2_elite",
+    "x": 58,
+    "y": 9,
+    "kind": "elite",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_wolf_alpha",
+       "enemy_forest_wolf"
+      ]
+     }
+    ],
+    "gift": {
+     "item_adv_exp_small": 4,
+     "item_potion_mana": 2
+    }
+   },
+   {
+    "id": "g_f2_a",
+    "x": 14,
+    "y": 19,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_thorn_sprout"
+      ]
+     },
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_bramble_boar"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ember_fox",
+       "enemy_gale_sparrow",
+       "enemy_mossling"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f2_b",
+    "x": 20,
+    "y": 12,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_gale_sparrow",
+       "enemy_ember_fox"
+      ]
+     },
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_dew_frog",
+       "enemy_thorn_sprout"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f2_c",
+    "x": 28,
+    "y": 11,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     },
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_mossling",
+       "enemy_mossling",
+       "enemy_thorn_sprout"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f2_d",
+    "x": 34,
+    "y": 23,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_thorn_sprout"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_bramble_boar",
+       "enemy_mossling"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f2_e",
+    "x": 51,
+    "y": 16,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_thorn_sprout"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_thorn_sprout",
+       "enemy_thorn_sprout"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f2_f",
+    "x": 49,
+    "y": 4,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_gale_sparrow"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_gale_sparrow",
+       "enemy_gale_sparrow"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f2_g",
+    "x": 12,
+    "y": 5,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_forest_wolf"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f2_h",
+    "x": 56,
+    "y": 20,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_bramble_boar"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_bramble_boar",
+       "enemy_bramble_boar"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f2_i",
+    "x": 19,
+    "y": 30,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_mossling"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mossling",
+       "enemy_mossling"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f2_j",
+    "x": 35,
+    "y": 16,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_thorn_sprout"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_thorn_sprout",
+       "enemy_thorn_sprout"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f2_sleep",
+    "x": 41,
+    "y": 25,
+    "kind": "normal",
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_forest_wolf"
+      ]
+     }
+    ]
+   }
+  ],
+  "chests": [
+   {
+    "id": "chest_f2_hidden",
+    "x": 59,
+    "y": 30,
+    "table": "treasure_forest",
+    "type": "hidden"
+   },
+   {
+    "id": "chest_f2_vines",
+    "x": 31,
+    "y": 2,
+    "table": "treasure_forest",
+    "type": "silver"
+   },
+   {
+    "id": "chest_f2_boulder",
+    "x": 8,
+    "y": 32,
+    "table": "chest_wood_forest",
+    "type": "wood"
+   }
+  ],
+  "nodes": [],
+  "gates": [
+   {
+    "id": "gate_f2_vines",
+    "x": 31,
+    "y": 7,
+    "w": 1,
+    "h": 1,
+    "element": "NATURE"
+   },
+   {
+    "id": "gate_f2_boulder",
+    "x": 9,
+    "y": 28,
+    "w": 1,
+    "h": 1,
+    "element": "EARTH",
+    "look": "crack"
+   }
+  ],
+  "covers": [
+   {
+    "id": "cover_f2_a",
+    "x": 51,
+    "y": 25,
+    "w": 11,
+    "h": 8,
+    "look": "canopy"
+   }
+  ],
+  "puzzles": [],
+  "springs": [
+   {
+    "id": "spring_f2",
+    "x": 9,
+    "y": 24
+   }
+  ],
+  "npcs": [
+   {
+    "id": "npc_f2_shrine",
+    "x": 19,
+    "y": 5,
+    "event": "event_shrine"
+   }
+  ],
+  "lore": [
+   {
+    "id": "lore_f2_pond",
+    "x": 33,
+    "y": 17,
+    "textVi": "Giữa hồ có một vòng đá cổ. Ai đó từng khắc hình một con heo mẹ phủ hoa lên đá."
+   }
+  ]
+ },
+ "arrivals": {
+  "map_forest_edge/exit_f1_east": [
+   1,
+   21
+  ],
+  "map_forest_heart/exit_f3_west": [
+   62,
+   7
+  ],
+  "map_mountain_tunnels/exit_n5_west": [
+   44,
+   34
+  ]
+ }
+}

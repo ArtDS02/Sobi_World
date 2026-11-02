@@ -1,0 +1,361 @@
+{
+ "map": {
+  "id": "map_mountain_peak",
+  "zoneId": "zone_mountain",
+  "nameVi": "Đỉnh Dung Nham",
+  "corruption": 50,
+  "tile": 40,
+  "cols": 48,
+  "rows": 27,
+  "terrain": [
+   "##############,,################################",
+   "#############,,,################################",
+   "#############,,,################################",
+   "########...##,,,################################",
+   "#######.,,,..,,,################################",
+   "######..,,,,,,,.################################",
+   "######...,,,,,,,,,,,,,,,,,,,,,,,################",
+   "########...,,,,,,,,,,,,,,,,,,,,,,###############",
+   "#########,,,,,,,,,,,,,,,,,,,,,,,,,#####FFFFF####",
+   "########,,,,,,................,,,,,##FFF^^^FFF##",
+   "###....,,,,,,........~~~~~.....,,,,,FF^^^^^^^FF#",
+   "###....,,,,,......~~~~~~~~~~....,,,,F^^^^^^^^^F#",
+   "#,,,,,,,,,,......~~~~...~~~~.....,,,F^^^^^^^^^F#",
+   ",,,,,,,,,,......~~~~.....~~~~.....,,F^^^^^^^^^,,",
+   ",,,,,,,,,,,....~~~~~.,,..~~~~.....,,F^^^^^^^^^,,",
+   "##.....,,,,,...~~~~~~,,.~~~~~.....,,,F^^^^^^^F##",
+   "###...#,,,,,,...~~~~~==~~~~~~.....,,,FFF^^^FFF##",
+   "########,,,,,....~~~~==~~~~.......,,,,FFssFFF###",
+   "#########,,,,,.......,=~~.........,,,,,,ssF#####",
+   "##########,,,,,......,,......,,,,,,,,,,,,,######",
+   "###########,,,,,,,,,#,,,#,,,,,,,,,,,,,,,,,######",
+   "############,,,,,,,,#,,,#,,,,,,,,,,,,,,,,,######",
+   "#############,,,,,,,,,,,,,,,,,,,........########",
+   "################################........########",
+   "####################################..##########",
+   "################################################",
+   "################################################"
+  ],
+  "spawn": {
+   "x": 2,
+   "y": 13
+  },
+  "portal": {
+   "x": 3,
+   "y": 15
+  },
+  "exits": [
+   {
+    "id": "exit_m3_west",
+    "x": 0,
+    "y": 13,
+    "w": 1,
+    "h": 2,
+    "to": "map_mountain_mine",
+    "arriveX": 62,
+    "arriveY": 20,
+    "kind": "trail",
+    "facing": "left"
+   },
+   {
+    "id": "exit_m3_north",
+    "x": 14,
+    "y": 0,
+    "w": 2,
+    "h": 1,
+    "to": "map_mountain_pass",
+    "arriveX": 70,
+    "arriveY": 30,
+    "kind": "trail",
+    "facing": "left"
+   },
+   {
+    "id": "exit_m3_next",
+    "x": 47,
+    "y": 13,
+    "w": 1,
+    "h": 2,
+    "to": "map_ruins_gate",
+    "arriveX": 1,
+    "arriveY": 30,
+    "lock": "guardian",
+    "kind": "trail",
+    "facing": "right"
+   }
+  ],
+  "props": [
+   {
+    "prop": "prop_adv_lm_m3",
+    "x": 26,
+    "y": 9
+   }
+  ],
+  "groups": [
+   {
+    "id": "g_m3_boss",
+    "x": 41,
+    "y": 12,
+    "kind": "boss",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_magma_drake",
+       "enemy_lava_newt"
+      ]
+     }
+    ],
+    "table": "boss_mountain",
+    "gift": {
+     "item_adv_exp_large": 2,
+     "item_adv_core_mountain": 2,
+     "item_potion_battle": 2
+    }
+   },
+   {
+    "id": "g_m3_a",
+    "x": 22,
+    "y": 7,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_lava_newt",
+       "enemy_cliff_hawk"
+      ]
+     },
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_ore_golem",
+       "enemy_lava_newt"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m3_b",
+    "x": 18,
+    "y": 6,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_snow_goat",
+       "enemy_lava_newt",
+       "enemy_rock_beetle"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_thunder_ram"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m3_c",
+    "x": 22,
+    "y": 22,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ore_golem",
+       "enemy_cliff_hawk",
+       "enemy_lava_newt"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m3_d",
+    "x": 28,
+    "y": 22,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_lava_newt"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_lava_newt",
+       "enemy_lava_newt"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m3_e",
+    "x": 36,
+    "y": 18,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_ore_golem"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ore_golem",
+       "enemy_ore_golem"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m3_f",
+    "x": 29,
+    "y": 6,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rock_beetle"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rock_beetle",
+       "enemy_rock_beetle"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m3_g",
+    "x": 6,
+    "y": 12,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_lava_newt"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_lava_newt",
+       "enemy_lava_newt"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m3_h",
+    "x": 18,
+    "y": 21,
+    "kind": "normal",
+    "corruption": 2,
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_snow_goat"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_snow_goat",
+       "enemy_snow_goat"
+      ]
+     }
+    ]
+   }
+  ],
+  "chests": [
+   {
+    "id": "chest_m3_island",
+    "x": 22,
+    "y": 13,
+    "table": "chest_wood_mountain",
+    "type": "wood"
+   },
+   {
+    "id": "chest_m3_hidden",
+    "x": 7,
+    "y": 4,
+    "table": "treasure_mountain",
+    "type": "hidden"
+   },
+   {
+    "id": "chest_m3_boss",
+    "x": 41,
+    "y": 15,
+    "table": "chest_gold_mountain",
+    "type": "gold"
+   }
+  ],
+  "nodes": [],
+  "gates": [
+   {
+    "id": "gate_m3_boulder",
+    "x": 21,
+    "y": 18,
+    "w": 2,
+    "h": 1,
+    "element": "EARTH",
+    "look": "crack"
+   }
+  ],
+  "covers": [
+   {
+    "id": "cover_m3_a",
+    "x": 6,
+    "y": 2,
+    "w": 7,
+    "h": 5,
+    "look": "rock"
+   }
+  ],
+  "puzzles": [],
+  "springs": [
+   {
+    "id": "spring_m3",
+    "x": 33,
+    "y": 22
+   }
+  ],
+  "npcs": [],
+  "lore": [
+   {
+    "id": "lore_m3_drake",
+    "x": 25,
+    "y": 19,
+    "textVi": "Vảy của Rồng Dung Nham có những vết nứt tím đen. Khi nó gầm, khói bốc lên có mùi như mực cháy."
+   }
+  ],
+  "shrine": {
+   "id": "shrine_m3",
+   "x": 36,
+   "y": 22,
+   "element": "FIRE",
+   "damagePct": 0.1
+  }
+ },
+ "arrivals": {}
+}

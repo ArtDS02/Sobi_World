@@ -1,0 +1,530 @@
+{
+ "map": {
+  "id": "map_forest_hollow",
+  "zoneId": "zone_forest",
+  "nameVi": "Thung Nấm",
+  "corruption": 15,
+  "tile": 40,
+  "cols": 64,
+  "rows": 36,
+  "terrain": [
+   "########################~~######################################",
+   "########################~~######################################",
+   "#############FFF########~~######################################",
+   "########FFFFFF^FFFFFF###~~~##########.......####################",
+   "#######FF^^^^^^^^^^^FF##~~~########..............###############",
+   "######FF^^^^^^^^^^^^^FF##~~#######................##############",
+   "######F^^^^^^^^^^^^^^^F##~~#######.....,,,........##############",
+   "#######F^^^^^^^^^^^^^F###~~#######.....,,,.......###############",
+   "#######FF^^^^^^^^^^^FF###~~########....,,,......################",
+   "########FFFFFF^sFFFFF###~~~#########...,,,.#####################",
+   "#########FFFFFssFFFF####~~~############,,,.###########.#########",
+   "#######.......s......###~~#############,,,,,,,,,,,,,,,,,,,,,,,,#",
+   "#######......,,.......##~~###########,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+   "#######......,,......##~~~######....,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+   "########.....,,......##~~~#.......,,,,,,,,#####..,,,,,........##",
+   "#############,,....####~~.......,,,,,,,,..#####...,,,,........##",
+   "#############,,########~~......,,,,,,,....#####....,,,,......###",
+   "#########....,,#######~~~...,,,,,,,,,......####.....,,,.....####",
+   "#######......,,,,,####~~~,,,,,,,,,,.......######....,,,...######",
+   "#######......,,,,,,,,,==,,,,,,,,,,,,.....#######....,,,..#######",
+   "#######.......,,,,,,,,==,,,,,...,,,,,...##########..,,,.########",
+   "#######...........,,,===,,......,,,,,..############,,,##########",
+   "######...............~~~###......,,,,,.############,,,##########",
+   "######..............#~~######.....,,,,,##########,,,,,##########",
+   "######..............~~~############,,,,#######,,,,,,,,##########",
+   "######............##~~~############,,,,,....,,,,,,,,,,,#########",
+   "######..........####~~#############.,,,,,.,,,,,,,,####,,########",
+   "#########.....######~~############...,,,,,,,,,,######,,,....####",
+   "###################~~~############...,,,,,,,,..#####..,,....####",
+   "###################~~~###########.....,,,,.....#####........####",
+   "###################~~############......,,,.....#######......####",
+   "###################~~#############.....,,,.....#########.#######",
+   "###################~~##############....,,,....##################",
+   "##################~~~##################,,,...###################",
+   "##################~~###################,,,######################",
+   "##################~~####################,,######################"
+  ],
+  "spawn": {
+   "x": 40,
+   "y": 33
+  },
+  "portal": {
+   "x": 44,
+   "y": 31
+  },
+  "exits": [
+   {
+    "id": "exit_n1_south",
+    "x": 40,
+    "y": 35,
+    "w": 2,
+    "h": 1,
+    "to": "map_forest_edge",
+    "arriveX": 36,
+    "arriveY": 1,
+    "kind": "trail",
+    "facing": "down"
+   },
+   {
+    "id": "exit_n1_east",
+    "x": 63,
+    "y": 12,
+    "w": 1,
+    "h": 2,
+    "to": "map_forest_falls",
+    "arriveX": 1,
+    "arriveY": 20,
+    "kind": "trail",
+    "facing": "right"
+   }
+  ],
+  "props": [
+   {
+    "prop": "prop_adv_lm_n1",
+    "x": 37,
+    "y": 17
+   }
+  ],
+  "groups": [
+   {
+    "id": "g_n1_boss",
+    "x": 17,
+    "y": 5,
+    "kind": "subboss",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_wolf_alpha"
+      ]
+     }
+    ],
+    "gift": {
+     "item_adv_exp_small": 5,
+     "item_skill_scroll": 1
+    }
+   },
+   {
+    "id": "g_n1_elite",
+    "x": 58,
+    "y": 12,
+    "kind": "elite",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_bramble_boar"
+      ]
+     }
+    ],
+    "gift": {
+     "item_adv_exp_small": 3,
+     "item_potion_healing": 2
+    }
+   },
+   {
+    "id": "g_n1_special",
+    "x": 31,
+    "y": 18,
+    "kind": "special",
+    "when": "rain",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ember_fox"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_a",
+    "x": 34,
+    "y": 14,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_mossling"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mossling",
+       "enemy_mossling"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_b",
+    "x": 32,
+    "y": 22,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_thorn_sprout"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_thorn_sprout",
+       "enemy_thorn_sprout"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_c",
+    "x": 16,
+    "y": 22,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_gale_sparrow"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_gale_sparrow",
+       "enemy_gale_sparrow"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_d",
+    "x": 12,
+    "y": 18,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_forest_wolf"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_e",
+    "x": 42,
+    "y": 8,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_mossling"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mossling",
+       "enemy_mossling"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_f",
+    "x": 37,
+    "y": 7,
+    "kind": "normal",
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_dew_frog"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_dew_frog",
+       "enemy_dew_frog"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_g",
+    "x": 51,
+    "y": 15,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_ember_fox"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ember_fox",
+       "enemy_ember_fox"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_h",
+    "x": 48,
+    "y": 24,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_thorn_sprout"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_thorn_sprout",
+       "enemy_thorn_sprout"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_i",
+    "x": 42,
+    "y": 25,
+    "kind": "normal",
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_mossling"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mossling",
+       "enemy_mossling"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_j",
+    "x": 11,
+    "y": 12,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_forest_wolf"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_k",
+    "x": 55,
+    "y": 19,
+    "kind": "mutant",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_bramble_boar"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_l",
+    "x": 10,
+    "y": 5,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_dew_frog"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_dew_frog",
+       "enemy_dew_frog"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_m",
+    "x": 37,
+    "y": 30,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_thorn_sprout"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_thorn_sprout",
+       "enemy_thorn_sprout"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n1_mimic",
+    "x": 46,
+    "y": 4,
+    "kind": "special",
+    "disguise": "chest",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mimic_forest"
+      ]
+     }
+    ]
+   }
+  ],
+  "chests": [
+   {
+    "id": "chest_n1_terrace",
+    "x": 14,
+    "y": 6,
+    "table": "chest_gold_forest",
+    "type": "gold"
+   },
+   {
+    "id": "chest_n1_hidden",
+    "x": 12,
+    "y": 22,
+    "table": "treasure_forest",
+    "type": "hidden"
+   },
+   {
+    "id": "chest_n1_nook",
+    "x": 57,
+    "y": 29,
+    "table": "treasure_forest",
+    "type": "silver"
+   },
+   {
+    "id": "chest_n1_ridge",
+    "x": 15,
+    "y": 12,
+    "table": "chest_wood_forest",
+    "type": "wood"
+   },
+   {
+    "id": "chest_n1_glade",
+    "x": 41,
+    "y": 4,
+    "table": "chest_wood_forest",
+    "type": "wood"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "herb_n1",
+    "x": 42,
+    "y": 29,
+    "kind": "herb",
+    "table": "herbs"
+   }
+  ],
+  "gates": [
+   {
+    "id": "gate_n1_bramble",
+    "x": 54,
+    "y": 26,
+    "w": 2,
+    "h": 1,
+    "element": "FIRE"
+   }
+  ],
+  "covers": [
+   {
+    "id": "cover_n1_a",
+    "x": 6,
+    "y": 17,
+    "w": 14,
+    "h": 9,
+    "look": "canopy"
+   }
+  ],
+  "puzzles": [
+   {
+    "id": "puzzle_n1_brazier_a",
+    "x": 46,
+    "y": 28,
+    "element": "FIRE",
+    "gate": "gate_n1_bramble"
+   },
+   {
+    "id": "puzzle_n1_brazier_b",
+    "x": 55,
+    "y": 15,
+    "element": "FIRE",
+    "gate": "gate_n1_bramble"
+   }
+  ],
+  "springs": [
+   {
+    "id": "spring_n1",
+    "x": 16,
+    "y": 15
+   }
+  ],
+  "npcs": [],
+  "lore": [
+   {
+    "id": "lore_n1",
+    "x": 35,
+    "y": 18,
+    "textVi": "Nấm ở thung lũng này phát sáng theo nhịp thở. Người hái nấm kể có một con heo con ngủ dưới cây nấm lớn nhất."
+   }
+  ]
+ },
+ "arrivals": {
+  "map_forest_deep/exit_f2_west": [
+   62,
+   20
+  ]
+ }
+}

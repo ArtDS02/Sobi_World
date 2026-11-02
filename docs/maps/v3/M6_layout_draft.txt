@@ -1,0 +1,56 @@
+# M6 map_mountain_peak — Đỉnh Dung Nham, layout v3 DRAFT (48 x 27), scripts/art/map_v3/layout_v3.py
+# the lava peak, the summit of the mountain: a lake of glowing lava in the middle with a small rock island, joined to the south shore by a plank bridge; a ring trail around the lake; a raised dark basalt terrace in the east where the zone's boss waits, reached by stone steps from the south; a hidden nook under an overhang in the north-west; the trail comes in from the left edge and leaves through the top edge and, past the boss, the right edge.
+
+grid:
+##############,,################################
+#############,,,################################
+#############,,,################################
+########...##,,,################################
+#######.,,,..,,,################################
+######..,,,,,,,.################################
+######...,,,,,,,,,,,,,,,,,,,,,,,################
+########...,,,,,,,,,,,,,,,,,,,,,,###############
+#########,,,,,,,,,,,,,,,,,,,,,,,,,#####FFFFF####
+########,,,,,,................,,,,,##FFF^^^FFF##
+###....,,,,,,........~~~~~.....,,,,,FF^^^^^^^FF#
+###....,,,,,......~~~~~~~~~~....,,,,F^^^^^^^^^F#
+#,,,,,,,,,,......~~~~...~~~~.....,,,F^^^^^^^^^F#
+,,,,,,,,,,......~~~~.....~~~~.....,,F^^^^^^^^^,,
+,,,,,,,,,,,....~~~~~.,,..~~~~.....,,F^^^^^^^^^,,
+##.....,,,,,...~~~~~~,,.~~~~~.....,,,F^^^^^^^F##
+###...#,,,,,,...~~~~~==~~~~~~.....,,,FFF^^^FFF##
+########,,,,,....~~~~==~~~~.......,,,,FFssFFF###
+#########,,,,,.......,=~~.........,,,,,,ssF#####
+##########,,,,,......,,......,,,,,,,,,,,,,######
+###########,,,,,,,,,#,,,#,,,,,,,,,,,,,,,,,######
+############,,,,,,,,#,,,#,,,,,,,,,,,,,,,,,######
+#############,,,,,,,,,,,,,,,,,,,........########
+################################........########
+####################################..##########
+################################################
+################################################
+
+objects (kind id x y):
+  spawn 2 13
+  portal 3 15
+  exit exit_m3_west 0 13 1x2 -> map_mountain_mine (arrive there 62,20)
+  exit exit_m3_north 14 0 2x1 -> map_mountain_pass (arrive there 70,30)
+  exit exit_m3_next 47 13 1x2 -> map_ruins_gate (arrive there 1,30)
+  groups g_m3_boss 41 12
+  groups g_m3_a 22 7
+  groups g_m3_b 18 6
+  groups g_m3_c 22 22
+  groups g_m3_d 28 22
+  groups g_m3_e 36 18
+  groups g_m3_f 29 6
+  groups g_m3_g 6 12
+  groups g_m3_h 18 21
+  chests chest_m3_island 22 13
+  chests chest_m3_hidden 7 4
+  chests chest_m3_boss 41 15
+  gates gate_m3_boulder 21 18 2x1
+  covers cover_m3_a 6 2 7x5
+  springs spring_m3 33 22
+  lore lore_m3_drake 25 19
+  shrine shrine_m3 36 22
+  prop prop_adv_lm_m3 26 9

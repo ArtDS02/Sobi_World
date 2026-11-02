@@ -1,0 +1,461 @@
+{
+ "map": {
+  "id": "map_mountain_foot",
+  "zoneId": "zone_mountain",
+  "nameVi": "Chân Núi",
+  "corruption": 30,
+  "tile": 40,
+  "cols": 64,
+  "rows": 36,
+  "terrain": [
+   "####################################,,##########################",
+   "###################################,,,##########################",
+   "###################################,,,##########################",
+   "###################################,,,##########################",
+   "#########FFFFFFFFFFF###############,,,...#######################",
+   "########FF^^^^^^^^^FF############..,,,.....#############....####",
+   "########F^^^^^^^^^^^F#########......,,......#########.........##",
+   "########F^^^^^^^^^^^F#########......,,......########...,,,,,,,,#",
+   "#########F^^^^^^^^^F##########,,,,,,,,......########.,,,,,,,,,,,",
+   "#########FFFFFsFFFFF#,,,,,,,,,,,,,,,,,,.....########,,,,,,,,,,,,",
+   "##########FFFFsFFFF,,,,,,,,,,,,,###.,,,....########,,,,,,,...###",
+   "###########.##,##,,,,,##############,,,###.......,,,,,,,....####",
+   "##########...,,,,...################,,,##.......,,,,,,,...######",
+   "#########..........FFFFFFFFF#########,,,.......,,,,,,.....######",
+   "#########........FFF^^^^^^^FFF#######,,,.....,,,,,,,......######",
+   "##########......FF^^^^^^^^^^^FF######,,,....,,,,,,,......#######",
+   "################F^^^^^^^^^^^^^F######,,,...,,,,,,,.......#######",
+   "#################F^^^^^^^^^^^F########,,,,,,,,,,........########",
+   "#################FFF^^^^^^^FFF########,,,,,,,,,........#########",
+   "##################FFFFFsFFFFF#########,,,,,,,........###########",
+   "#################...FFFsFFF....#####,,,,,,,,......##############",
+   "#################....,,,..........,,,,,,,,,#####################",
+   "#########.....###....,,,.......,,,,,,,,,,,######################",
+   "######.........###..,,,......,,,,,,,,,,.########################",
+   "#####...........###.,,,.,,,,,,,,,,,,....########################",
+   "####...............,,,,,,,,,,,,,,,......########################",
+   "####.....,,,,,,,,,,,,,,,,,,,,,,,.......#########################",
+   "#,,,,,,,,,,,,,,,,,,,,,,,,,...,,........#########################",
+   ",,,,,,,,,,,,,,,,,,,,,,##....,,,......###########################",
+   ",,,,,,,,,,,,.......#####....,,,...##############################",
+   "####..............#######...,,...###############################",
+   "######...........#######....,,...###############################",
+   "########################..........##############################",
+   "########################..........##############################",
+   "#########################.....##################################",
+   "################################################################"
+  ],
+  "spawn": {
+   "x": 2,
+   "y": 28
+  },
+  "portal": {
+   "x": 4,
+   "y": 25
+  },
+  "exits": [
+   {
+    "id": "exit_m1_back",
+    "x": 0,
+    "y": 28,
+    "w": 1,
+    "h": 2,
+    "to": "map_forest_heart",
+    "arriveX": 46,
+    "arriveY": 13,
+    "kind": "trail",
+    "facing": "left"
+   },
+   {
+    "id": "exit_m1_east",
+    "x": 63,
+    "y": 8,
+    "w": 1,
+    "h": 2,
+    "to": "map_mountain_mine",
+    "arriveX": 1,
+    "arriveY": 10,
+    "lock": "guardian",
+    "kind": "trail",
+    "facing": "right"
+   },
+   {
+    "id": "exit_m1_north",
+    "x": 36,
+    "y": 0,
+    "w": 2,
+    "h": 1,
+    "to": "map_mountain_pass",
+    "arriveX": 20,
+    "arriveY": 38,
+    "kind": "trail",
+    "facing": "up"
+   }
+  ],
+  "props": [
+   {
+    "prop": "prop_adv_lm_m1",
+    "x": 9,
+    "y": 25
+   }
+  ],
+  "groups": [
+   {
+    "id": "g_m1_elite",
+    "x": 58,
+    "y": 9,
+    "kind": "elite",
+    "corruption": 3,
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ore_golem",
+       "enemy_rock_beetle"
+      ]
+     }
+    ],
+    "gift": {
+     "item_adv_exp_medium": 2,
+     "item_potion_mana": 2
+    }
+   },
+   {
+    "id": "g_m1_a",
+    "x": 30,
+    "y": 26,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rock_beetle",
+       "enemy_snow_goat"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rock_beetle"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m1_b",
+    "x": 33,
+    "y": 22,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_cliff_hawk",
+       "enemy_lava_newt"
+      ]
+     },
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_snow_goat",
+       "enemy_rock_beetle"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m1_c",
+    "x": 33,
+    "y": 8,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_lava_newt",
+       "enemy_snow_goat"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_cliff_hawk",
+       "enemy_rock_beetle"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m1_d",
+    "x": 38,
+    "y": 11,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_cliff_hawk",
+       "enemy_rock_beetle"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ore_golem"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m1_e",
+    "x": 48,
+    "y": 13,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_cliff_hawk"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_cliff_hawk",
+       "enemy_cliff_hawk"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m1_f",
+    "x": 52,
+    "y": 15,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_lava_newt"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_lava_newt",
+       "enemy_lava_newt"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m1_g",
+    "x": 15,
+    "y": 15,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_snow_goat"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_snow_goat",
+       "enemy_snow_goat"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m1_h",
+    "x": 26,
+    "y": 14,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rock_beetle"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rock_beetle",
+       "enemy_rock_beetle"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m1_i",
+    "x": 17,
+    "y": 26,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_cliff_hawk"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_cliff_hawk",
+       "enemy_cliff_hawk"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m1_j",
+    "x": 34,
+    "y": 27,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rock_beetle"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rock_beetle",
+       "enemy_rock_beetle"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_m1_k",
+    "x": 44,
+    "y": 15,
+    "kind": "normal",
+    "corruption": 2,
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_snow_goat"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_snow_goat",
+       "enemy_snow_goat"
+      ]
+     }
+    ]
+   }
+  ],
+  "chests": [
+   {
+    "id": "chest_m1_ledge",
+    "x": 14,
+    "y": 6,
+    "table": "treasure_mountain",
+    "type": "silver"
+   },
+   {
+    "id": "chest_m1_hidden",
+    "x": 28,
+    "y": 32,
+    "table": "treasure_mountain",
+    "type": "hidden"
+   },
+   {
+    "id": "chest_m1_terrace",
+    "x": 22,
+    "y": 16,
+    "table": "chest_wood_mountain",
+    "type": "wood"
+   },
+   {
+    "id": "chest_m1_camp",
+    "x": 13,
+    "y": 29,
+    "table": "chest_wood_mountain",
+    "type": "wood"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "ore_m1_a",
+    "x": 29,
+    "y": 22,
+    "kind": "ore",
+    "table": "ore_vein"
+   },
+   {
+    "id": "ore_m1_b",
+    "x": 38,
+    "y": 7,
+    "kind": "ore",
+    "table": "ore_vein"
+   }
+  ],
+  "gates": [
+   {
+    "id": "gate_m1_metal",
+    "x": 14,
+    "y": 11,
+    "w": 1,
+    "h": 1,
+    "element": "METAL"
+   }
+  ],
+  "covers": [
+   {
+    "id": "cover_m1_a",
+    "x": 25,
+    "y": 29,
+    "w": 8,
+    "h": 6,
+    "look": "rock"
+   }
+  ],
+  "puzzles": [],
+  "springs": [
+   {
+    "id": "spring_m1",
+    "x": 9,
+    "y": 30
+   }
+  ],
+  "npcs": [
+   {
+    "id": "npc_m1_miner",
+    "x": 13,
+    "y": 24,
+    "event": "event_miner"
+   }
+  ],
+  "lore": [
+   {
+    "id": "lore_m1_carving",
+    "x": 48,
+    "y": 17,
+    "textVi": "Trên vách đá có hình một con cua to đang rèn búa. Bên cạnh khắc: 'Lửa của Hỏa Giải chưa từng tắt'."
+   }
+  ]
+ },
+ "arrivals": {}
+}

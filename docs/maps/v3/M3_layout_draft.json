@@ -1,0 +1,359 @@
+{
+ "map": {
+  "id": "map_forest_heart",
+  "zoneId": "zone_forest",
+  "nameVi": "Lõi Rừng",
+  "corruption": 30,
+  "tile": 40,
+  "cols": 48,
+  "rows": 27,
+  "terrain": [
+   "################,,##############################",
+   "###############,,,##############################",
+   "###############,,,..##############..############",
+   "##############..,,...##########......###########",
+   "############....,,,...#########..,,...##########",
+   "############....,,,....########.,,,....#########",
+   "#############...,,,....#######.,,,.....#########",
+   "################,,,,,,,,,,,,,,,,,.....##########",
+   "################,,,,,,,,,,,,,,,,.###############",
+   "###############,,,,,,,,,,,,,,,,,,###############",
+   "#####.########,,,,,cccccccc,,,,,,,###.......####",
+   "###.....#####,,,,,.ccccccccc.,,,,,,,.........###",
+   "##.......####,,,,,.ccccccccc..,,,,,,,........###",
+   "#,,,,,,,,,,,,,,,,..ccccccccc....,,,,,,,,,,,,,,,,",
+   ",,,,,,,,,,,,,,,,,..ccccccccc...,,,,,,,,,,,,,,,,,",
+   ",,,,,,,,,,,,,,,,,,.ccccccccc.,,,,,,,,,,,,,,,,,,#",
+   "#..........,,,,,,,,ccccccccc,,,,,,,#........####",
+   "##........,,,#,,,,,cccccccc,,,,,,#####.....#####",
+   "########.,,,###,,,,,,,,,,,,,,,,,########..######",
+   "########,,,#####,,,,,,,,,,,,,,,#################",
+   "#########,,######,,,,,,,,,,,,,##################",
+   "#####..,,,..####################################",
+   "#####..,,....###################################",
+   "####.........###################################",
+   "######.....#####################################",
+   "################################################",
+   "################################################"
+  ],
+  "spawn": {
+   "x": 2,
+   "y": 14
+  },
+  "portal": {
+   "x": 4,
+   "y": 16
+  },
+  "exits": [
+   {
+    "id": "exit_f3_west",
+    "x": 0,
+    "y": 14,
+    "w": 1,
+    "h": 2,
+    "to": "map_forest_deep",
+    "arriveX": 62,
+    "arriveY": 7,
+    "kind": "trail",
+    "facing": "left"
+   },
+   {
+    "id": "exit_f3_north",
+    "x": 16,
+    "y": 0,
+    "w": 2,
+    "h": 1,
+    "to": "map_forest_falls",
+    "arriveX": 24,
+    "arriveY": 38,
+    "kind": "trail",
+    "facing": "up"
+   },
+   {
+    "id": "exit_f3_next",
+    "x": 47,
+    "y": 13,
+    "w": 1,
+    "h": 2,
+    "to": "map_mountain_foot",
+    "arriveX": 1,
+    "arriveY": 28,
+    "lock": "guardian",
+    "kind": "trail",
+    "facing": "right"
+   }
+  ],
+  "props": [
+   {
+    "prop": "prop_adv_lm_f3",
+    "x": 21,
+    "y": 12
+   }
+  ],
+  "groups": [
+   {
+    "id": "g_f3_boss",
+    "x": 41,
+    "y": 14,
+    "kind": "boss",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_old_treant",
+       "enemy_thorn_sprout"
+      ]
+     }
+    ],
+    "table": "boss_forest",
+    "gift": {
+     "item_adv_exp_medium": 3,
+     "item_adv_core_forest": 2,
+     "item_potion_battle": 2
+    }
+   },
+   {
+    "id": "g_f3_a",
+    "x": 26,
+    "y": 7,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_ember_fox"
+      ]
+     },
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_thorn_sprout",
+       "enemy_thorn_sprout",
+       "enemy_dew_frog"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f3_b",
+    "x": 29,
+    "y": 10,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_bramble_boar",
+       "enemy_mossling"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_forest_wolf"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f3_c",
+    "x": 27,
+    "y": 20,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_thorn_sprout",
+       "enemy_gale_sparrow"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f3_d",
+    "x": 30,
+    "y": 17,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_mossling"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mossling",
+       "enemy_mossling"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f3_e",
+    "x": 15,
+    "y": 5,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_ember_fox"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ember_fox",
+       "enemy_ember_fox"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f3_f",
+    "x": 7,
+    "y": 12,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_forest_wolf"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f3_g",
+    "x": 36,
+    "y": 12,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_bramble_boar"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_bramble_boar",
+       "enemy_bramble_boar"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_f3_sleep",
+    "x": 21,
+    "y": 20,
+    "kind": "normal",
+    "corruption": 2,
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_mossling"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mossling",
+       "enemy_mossling"
+      ]
+     }
+    ]
+   }
+  ],
+  "chests": [
+   {
+    "id": "chest_f3_hidden",
+    "x": 35,
+    "y": 5,
+    "table": "treasure_forest",
+    "type": "hidden"
+   },
+   {
+    "id": "chest_f3_root",
+    "x": 8,
+    "y": 23,
+    "table": "chest_wood_forest",
+    "type": "wood"
+   }
+  ],
+  "nodes": [],
+  "gates": [
+   {
+    "id": "gate_f3_shadow",
+    "x": 9,
+    "y": 20,
+    "w": 2,
+    "h": 1,
+    "element": "DARK"
+   }
+  ],
+  "covers": [
+   {
+    "id": "cover_f3_a",
+    "x": 30,
+    "y": 2,
+    "w": 9,
+    "h": 6,
+    "look": "canopy"
+   }
+  ],
+  "puzzles": [],
+  "springs": [
+   {
+    "id": "spring_f3",
+    "x": 36,
+    "y": 16
+   }
+  ],
+  "npcs": [],
+  "lore": [
+   {
+    "id": "lore_f3_root",
+    "x": 24,
+    "y": 17,
+    "textVi": "Rễ của Cổ Thụ xoắn vào nhau thành hình một con heo đang ngủ. Vết nứt đen như mực bò dọc theo rễ."
+   }
+  ],
+  "shrine": {
+   "id": "shrine_f3",
+   "x": 19,
+   "y": 5,
+   "element": "NATURE",
+   "damagePct": 0.1
+  }
+ },
+ "arrivals": {
+  "map_forest_deep/exit_f2_west": [
+   62,
+   20
+  ]
+ }
+}

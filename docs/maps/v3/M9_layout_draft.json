@@ -1,0 +1,349 @@
+{
+ "map": {
+  "id": "map_ruins_sanctum",
+  "zoneId": "zone_ruins",
+  "nameVi": "Điện Phong Ấn",
+  "corruption": 85,
+  "tile": 40,
+  "cols": 48,
+  "rows": 27,
+  "terrain": [
+   "################################################",
+   "################################################",
+   "#####.##########################################",
+   "###.....########################################",
+   "##..,,...#######################################",
+   "##..,,,......#####################FFF###########",
+   "####,,,...~~~~~..#############FFFFF^FFFFF#######",
+   "#####,,,.~~~~~~...##########FFF^^^^^^^^^FFF#####",
+   "######,,,.~~~~~....########FF^^^^^^^^^^^^^FF####",
+   "######,,,..........#######FF^^^^^^^^^^^^^^^FF###",
+   "#####..,,...........######F^^^^^^^^^^^^^^^^^F###",
+   "#####...............#####FF^^^^^^^^^^^^^^^^^FF##",
+   "#,,,,,,,,,,,,........####F^^^^^^^^^^^^^^^^^^^F##",
+   ",,,,,,,,,,,,,,,,,.....####F^^^^^^^^^^^^^^^^^F###",
+   ",,,,,,,,,,,,,,,,,,,,,.####F^^^^^^^^^^^^^^^^^F###",
+   "###........,,,,,,,,,,,.####F^^^^^^^^^^^^^^^F####",
+   "###....,,......,,,,,,,,####FF^^^^^^^^^^^^^FF####",
+   "###...,,,..........,,,,,####FFF^^^^^^^^^FFF#####",
+   "####.,,,,.~~~~~.....,,,,,####FFFFFs^FFFFFF######",
+   "####,,,,..~~~~~~..###,,,,,#####FFFssFFFF########",
+   "####,,,...~~~~~#######,,,,,#######.s############",
+   "##..,,...##############,,,,,,,,,,,,,.###########",
+   "###......##############,,,,,,,,,,,,,..##########",
+   "###.....#############..,,,,,,,,,,,,,..##########",
+   "#####..###############.,,,............##########",
+   "#######################,,,..........############",
+   "########################,,######################"
+  ],
+  "spawn": {
+   "x": 2,
+   "y": 13
+  },
+  "portal": {
+   "x": 3,
+   "y": 15
+  },
+  "exits": [
+   {
+    "id": "exit_r3_west",
+    "x": 0,
+    "y": 13,
+    "w": 1,
+    "h": 2,
+    "to": "map_ruins_hall",
+    "arriveX": 62,
+    "arriveY": 18,
+    "kind": "trail",
+    "facing": "left"
+   },
+   {
+    "id": "exit_r3_south",
+    "x": 24,
+    "y": 26,
+    "w": 2,
+    "h": 1,
+    "to": "map_ruins_crypt",
+    "arriveX": 70,
+    "arriveY": 30,
+    "kind": "stairs",
+    "facing": "left"
+   }
+  ],
+  "props": [
+   {
+    "prop": "prop_adv_lm_r3",
+    "x": 35,
+    "y": 12
+   }
+  ],
+  "groups": [
+   {
+    "id": "g_r3_boss",
+    "x": 35,
+    "y": 10,
+    "kind": "boss",
+    "corruption": 5,
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ancient_guardian",
+       "enemy_rune_wisp"
+      ]
+     }
+    ],
+    "table": "boss_ruins",
+    "gift": {
+     "item_adv_exp_large": 4,
+     "item_adv_core_ruins": 2,
+     "item_potion_rage": 2
+    }
+   },
+   {
+    "id": "g_r3_a",
+    "x": 13,
+    "y": 16,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_stone_sentinel",
+       "enemy_rune_wisp",
+       "enemy_ember_idol"
+      ]
+     },
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_tide_wraith",
+       "enemy_tide_wraith",
+       "enemy_stone_sentinel"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_r3_b",
+    "x": 17,
+    "y": 14,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 2,
+      "enemies": [
+       "enemy_ember_idol",
+       "enemy_stone_sentinel"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_shadow_priest"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_r3_c",
+    "x": 9,
+    "y": 13,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_stone_sentinel",
+       "enemy_ember_idol",
+       "enemy_rune_wisp"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_r3_d",
+    "x": 34,
+    "y": 20,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_ember_idol"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ember_idol",
+       "enemy_ember_idol"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_r3_e",
+    "x": 28,
+    "y": 21,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_shadow_priest"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_shadow_priest",
+       "enemy_shadow_priest"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_r3_f",
+    "x": 17,
+    "y": 10,
+    "kind": "normal",
+    "corruption": 2,
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_stone_sentinel"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_stone_sentinel",
+       "enemy_stone_sentinel"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_r3_g",
+    "x": 8,
+    "y": 17,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rune_wisp"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rune_wisp",
+       "enemy_rune_wisp"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_r3_h",
+    "x": 24,
+    "y": 21,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_tide_wraith"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_tide_wraith",
+       "enemy_tide_wraith"
+      ]
+     }
+    ]
+   }
+  ],
+  "chests": [
+   {
+    "id": "chest_r3_metal",
+    "x": 4,
+    "y": 3,
+    "table": "chest_wood_ruins",
+    "type": "wood"
+   },
+   {
+    "id": "chest_r3_hidden",
+    "x": 6,
+    "y": 23,
+    "table": "treasure_ruins",
+    "type": "hidden"
+   },
+   {
+    "id": "chest_r3_boss",
+    "x": 33,
+    "y": 13,
+    "table": "chest_gold_ruins",
+    "type": "gold"
+   }
+  ],
+  "nodes": [],
+  "gates": [
+   {
+    "id": "gate_r3_metal",
+    "x": 5,
+    "y": 7,
+    "w": 4,
+    "h": 1,
+    "element": "METAL"
+   }
+  ],
+  "covers": [
+   {
+    "id": "cover_r3_a",
+    "x": 2,
+    "y": 20,
+    "w": 6,
+    "h": 5,
+    "look": "roof"
+   }
+  ],
+  "puzzles": [],
+  "springs": [
+   {
+    "id": "spring_r3",
+    "x": 31,
+    "y": 24
+   }
+  ],
+  "npcs": [],
+  "lore": [
+   {
+    "id": "lore_r3_seal",
+    "x": 13,
+    "y": 12,
+    "textVi": "Pho tượng Thiết Giáp đứng canh phong ấn đã ngàn năm. Những vết nứt đen trên giáp đồng đang lan rộng."
+   }
+  ],
+  "shrine": {
+   "id": "shrine_r3",
+   "x": 36,
+   "y": 23,
+   "element": "LIGHT",
+   "damagePct": 0.1
+  }
+ },
+ "arrivals": {}
+}

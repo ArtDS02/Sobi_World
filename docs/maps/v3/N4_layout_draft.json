@@ -1,0 +1,555 @@
+{
+ "map": {
+  "id": "map_mountain_pass",
+  "zoneId": "zone_mountain",
+  "nameVi": "Đèo Gió",
+  "corruption": 35,
+  "tile": 40,
+  "cols": 72,
+  "rows": 40,
+  "terrain": [
+   "##################################~~~#############,,####################",
+   "##################################~~~############,,,####################",
+   "##################################~~~############,,,####################",
+   "##################################~~~###########,,,#####################",
+   "##################################~~~###########,,,#####################",
+   "###############FFF################~~~###########,,,#####################",
+   "#########FFFFFFF^FFFFFFF##########~~~###########,,,#####################",
+   "#######FFF^^^^^^^^^^^^^FFF########~~~##########,,,..########...#########",
+   "######FF^^^^^^^^^^^^^^^^^FF#######~~~######....,,,....#####.....########",
+   "######F^^^^^^^^^^^^^^^^^^^F#######~~~#####.....,,,....####.,,,...#######",
+   "#####FF^^^^^^^^^^^^^^^^^^^FF######~~=,,,,,,,...,,,..,,,,,,,,,,....######",
+   "#####F^^^^^^^^^^^^^^^^^^^^^F######~===,,,,,,,,,,,,,,,,,,,,,,,.....######",
+   "######F^^^^^^^^^^^^^^^^^^^F######,====###.,,,,,,,,,,,,.###......########",
+   "######F^^^^^^^^^^^^^^^^^^^F#####,,==~~#####...,,,.....#######.##########",
+   "######FF^^^^^^^^^^^^^^^^^FF###,,,,=~~#########,,,....###################",
+   "#######FFF^^^^^^^^^^^^^FFF###,,,,#~~~#########,,,...####################",
+   "#######FFFFFFFFF^sFFFFFFFF##,,,,##~~~########,,,########################",
+   "########FFFFFFFFssFFFFFFF###,,,###~~~########,,,########################",
+   "##########FFFFFFssFFFFF####,,,###~~~~######..,,,#############.....######",
+   "################s.#########,,,###~~~~####....,,,.###########.......#####",
+   "############....,,..###...,,,..##~~~###.....,,,....########.........####",
+   "###########.....,,........,,,....~~~##......,,,......#####..........####",
+   "###########.....,,........,,.....~~~#.......,,,........###...,,......###",
+   "###########.....,,,..............~~~#.......,,,........####,,,,.....####",
+   "############.....,,.##..........,===,,,,,,,,,,,,,,.....###,,,,....######",
+   "#################,,,######.,,,,,,===,,,,,,,,,,,,,,,,,,.##,,,,###########",
+   "#################,,,#####,,,,,,,,===,,,,,,,,,,,,,,,,,,,,,,,,.###########",
+   "##############....,,...,,,,,,,,,,=~~#..........,,,,,,,,,,,,,,,,#########",
+   "#############.....,,,,,,,,,,,,###~~~#..............,,,,,,,,,,,,,,,,,,,##",
+   "#############......,,,,,,,,..####~~~##...........######,,,,,,,,,,,,,,,,#",
+   "#############......,,,,,,....####~~~#########################,,,,,,,,,,,",
+   "#############......,,,,......####~~~###############################,,,,,",
+   "#############......,,,.......####~~~####################################",
+   "#############......,,,.....######~~~####################################",
+   "##############.....,,,...########~~~####################################",
+   "################...,,,..#########~~~####################################",
+   "#################..,,,.##########~~~####################################",
+   "###################,,,###########~~~####################################",
+   "###################,,,###########~~~####################################",
+   "####################,,###########~~~~###################################"
+  ],
+  "spawn": {
+   "x": 20,
+   "y": 37
+  },
+  "portal": {
+   "x": 17,
+   "y": 34
+  },
+  "exits": [
+   {
+    "id": "exit_n4_south",
+    "x": 20,
+    "y": 39,
+    "w": 2,
+    "h": 1,
+    "to": "map_mountain_foot",
+    "arriveX": 36,
+    "arriveY": 1,
+    "kind": "trail",
+    "facing": "down"
+   },
+   {
+    "id": "exit_n4_east",
+    "x": 71,
+    "y": 30,
+    "w": 1,
+    "h": 2,
+    "to": "map_mountain_peak",
+    "arriveX": 14,
+    "arriveY": 1,
+    "lock": "shortcut",
+    "kind": "trail",
+    "facing": "down"
+   },
+   {
+    "id": "exit_n4_north",
+    "x": 50,
+    "y": 0,
+    "w": 2,
+    "h": 1,
+    "to": "map_ruins_gate",
+    "arriveX": 26,
+    "arriveY": 34,
+    "kind": "trail",
+    "facing": "up"
+   }
+  ],
+  "props": [
+   {
+    "prop": "prop_adv_lm_n4",
+    "x": 17,
+    "y": 11
+   }
+  ],
+  "groups": [
+   {
+    "id": "g_n4_boss",
+    "x": 16,
+    "y": 9,
+    "kind": "subboss",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_thunder_ram"
+      ]
+     }
+    ],
+    "gift": {
+     "item_adv_exp_small": 5,
+     "item_skill_scroll": 1
+    }
+   },
+   {
+    "id": "g_n4_elite",
+    "x": 66,
+    "y": 30,
+    "kind": "elite",
+    "corruption": 3,
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ore_golem"
+      ]
+     }
+    ],
+    "gift": {
+     "item_adv_exp_small": 3,
+     "item_potion_healing": 2
+    }
+   },
+   {
+    "id": "g_n4_special",
+    "x": 43,
+    "y": 24,
+    "kind": "special",
+    "when": "night",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_cliff_hawk"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_a",
+    "x": 18,
+    "y": 25,
+    "kind": "normal",
+    "corruption": 2,
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rock_beetle"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rock_beetle",
+       "enemy_rock_beetle"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_b",
+    "x": 25,
+    "y": 22,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_lava_newt"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_lava_newt",
+       "enemy_lava_newt"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_c",
+    "x": 52,
+    "y": 24,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_snow_goat"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_snow_goat",
+       "enemy_snow_goat"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_d",
+    "x": 46,
+    "y": 19,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_cliff_hawk"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_cliff_hawk",
+       "enemy_cliff_hawk"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_e",
+    "x": 46,
+    "y": 11,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rock_beetle"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rock_beetle",
+       "enemy_rock_beetle"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_f",
+    "x": 47,
+    "y": 7,
+    "kind": "mutant",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_lava_newt"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_g",
+    "x": 30,
+    "y": 14,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_snow_goat"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_snow_goat",
+       "enemy_snow_goat"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_h",
+    "x": 22,
+    "y": 32,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_cliff_hawk"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_cliff_hawk",
+       "enemy_cliff_hawk"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_i",
+    "x": 12,
+    "y": 10,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rock_beetle"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rock_beetle",
+       "enemy_rock_beetle"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_j",
+    "x": 50,
+    "y": 20,
+    "kind": "normal",
+    "corruption": 2,
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_lava_newt"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_lava_newt",
+       "enemy_lava_newt"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_k",
+    "x": 49,
+    "y": 14,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_ore_golem"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ore_golem",
+       "enemy_ore_golem"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_l",
+    "x": 14,
+    "y": 22,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_snow_goat"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_snow_goat",
+       "enemy_snow_goat"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_m",
+    "x": 53,
+    "y": 28,
+    "kind": "normal",
+    "corruption": 2,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_rock_beetle"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_rock_beetle",
+       "enemy_rock_beetle"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n4_mimic",
+    "x": 29,
+    "y": 18,
+    "kind": "special",
+    "disguise": "chest",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mimic_mountain"
+      ]
+     }
+    ]
+   }
+  ],
+  "chests": [
+   {
+    "id": "chest_n4_shelf",
+    "x": 15,
+    "y": 13,
+    "table": "chest_gold_mountain",
+    "type": "gold"
+   },
+   {
+    "id": "chest_n4_nook",
+    "x": 61,
+    "y": 11,
+    "table": "treasure_mountain",
+    "type": "silver"
+   },
+   {
+    "id": "chest_n4_hidden",
+    "x": 63,
+    "y": 21,
+    "table": "treasure_mountain",
+    "type": "hidden"
+   },
+   {
+    "id": "chest_n4_ledge",
+    "x": 26,
+    "y": 11,
+    "table": "chest_wood_mountain",
+    "type": "wood"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "ore_n4_a",
+    "x": 47,
+    "y": 23,
+    "kind": "ore",
+    "table": "ore_vein"
+   },
+   {
+    "id": "ore_n4_b",
+    "x": 21,
+    "y": 22,
+    "kind": "ore",
+    "table": "ore_vein"
+   }
+  ],
+  "gates": [
+   {
+    "id": "gate_n4_lightning",
+    "x": 57,
+    "y": 10,
+    "w": 1,
+    "h": 2,
+    "element": "LIGHTNING"
+   }
+  ],
+  "covers": [
+   {
+    "id": "cover_n4_a",
+    "x": 59,
+    "y": 18,
+    "w": 9,
+    "h": 6,
+    "look": "rock"
+   }
+  ],
+  "puzzles": [
+   {
+    "id": "puzzle_n4_rod_a",
+    "x": 50,
+    "y": 10,
+    "element": "LIGHTNING",
+    "gate": "gate_n4_lightning"
+   },
+   {
+    "id": "puzzle_n4_rod_b",
+    "x": 46,
+    "y": 27,
+    "element": "LIGHTNING",
+    "gate": "gate_n4_lightning"
+   }
+  ],
+  "springs": [
+   {
+    "id": "spring_n4",
+    "x": 18,
+    "y": 21
+   }
+  ],
+  "npcs": [],
+  "lore": [
+   {
+    "id": "lore_n4",
+    "x": 49,
+    "y": 28,
+    "textVi": "Con đại bàng đá trên vách đèo nhìn về Tàn Tích. Người ta bảo nó đang chờ người thắp lại ngọn lửa trên đỉnh núi."
+   }
+  ]
+ },
+ "arrivals": {}
+}

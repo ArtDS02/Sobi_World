@@ -10,6 +10,99 @@
 
 ## Nhật ký
 
+### 2026-11-02 — Adventure: bản đồ v3 — 12 map Núi, Tàn Tích, Biển vào game; cả 18 map dùng nền vẽ (decision 046)
+✅ Đã làm:
+- 12 nền (M4–M6, N4, N5, M7–M9, N6, N7–N9) xóa dấu sao, phóng 64 px / ô, chia khối (56 khối, manifest). Nhập bằng `import_v3.py`, giữ mọi id.
+- `import_v3.py` thêm:
+  - dung nham nhận theo màu, kể cả chỗ bản nháp không có;
+  - cầu tranh vẽ thêm nhận theo hình (dải hẹp cạnh dung nham / nước, có đất hai đầu);
+  - khu đất bị tách được nối qua khe ngắn nhất (≤ 3 ô, thường là bậc thang chưa nhận);
+  - đá xanh xám không tính là nền (N5);
+  - vật đứng và cổng dịch chuyển không được cắt rời phần đất nào;
+  - cổng hệ không có chỗ hẹp trước khu cũ thì tìm ngách cụt có cổ hẹp và dời đồ nó canh vào đó (M7 cổng ánh sáng, N6 cổng ánh sáng).
+- `scripts/art/map_v3/check_live.ts`: kiểm `mapProblems` + `mapGraph` trên `maps.json` thật. Test map vẽ nay bao cả 18 map.
+- Overlay duyệt mask: `art_inbox/.batch/adventure-1{7,8,9}-*/guide/*_mask_overlay.png`.
+
+🧪 `npm run check` xanh (1581 test); 18 map sạch `mapProblems`, graph sạch.
+
+⚠️ Tự quyết:
+- Tranh M4 / M5 / N4 vẽ thêm suối dung nham, cầu so với hint: theo tranh (dung nham chặn, cầu đi được).
+- N6: rương hài cốt + trùm vào ngách có cổ hẹp mới. Cổng N5 kim loại rộng 6 ô, N7 san hô 7 ô.
+- Tổng nền vẽ `adventure_v3/` 177 MB.
+
+✅ Chủ dự án duyệt mask 12 map (2026-11-02). Vị trí / kích thước vật chỉnh sau trong màn Admin "Cập nhật bản đồ".
+
+### 2026-11-02 — Adventure: bản đồ v3 — hint + PROMPT cho mọi map còn lại (Tàn Tích, Biển) (decision 046)
+✅ Đã làm:
+- `ruins_v3.py` (M7, M8, M9, N6), `coast_v3.py` (N7, N8, N9): layout mới, giữ mọi id; 12 bản nháp chưa nhập (gồm Núi) kiểm chung sạch `mapProblems` + `mapGraph`, cổng chặn đúng.
+- Bộ công cụ: cổng tự đặt ở chỗ hẹp (`gate_in`), vật đứng không cắt rời map, bãi cát nổi, bảng màu + lời tả Tàn Tích / Biển.
+- Gói `adventure-18-ruins-3q`, `adventure-19-coast-3q` + hướng dẫn chung `art_inbox/.batch/MAP_V3_RENDER_ALL.md`.
+
+⚠️ Tự quyết: lối ra giữ cạnh và ô ở chỗ nối giữa các vùng; Rạn San Hô gần như toàn biển, đảo cát nối cầu ván.
+
+👉 Chủ dự án: tạo 12 ảnh nền theo `MAP_V3_RENDER_ALL.md`.
+
+### 2026-11-02 — Adventure: bản đồ v3 — vùng Núi (M4, M5, M6, N4, N5): layout + gói Gemini nền (decision 046)
+✅ Đã làm:
+- Chủ dự án duyệt mask vùng Rừng. `scripts/art/map_v3/mountain_v3.py` thiết kế mới 5 map Núi (giữ id / số lượng / loại / hành vi); cả 5 sạch `mapProblems` + `mapGraph`; cổng chặn đúng (N5: cổng kim loại chặn hang sâu có trùm phụ + rương vàng).
+- Bộ công cụ theo vùng: bảng màu hint (dung nham cam, đá), lời tả PROMPT, công cụ nhập nhận màu dung nham; điểm tới bỏ qua lối ra nằm trong map.
+- Gói `art_inbox/.batch/adventure-17-mountain-3q/`: hint, guide, `PROMPT.md`.
+
+⚠️ Tự quyết: lối sang Tàn Tích (M6 → M7, N4 → M7, N5 → M8) giữ ô; M5 vẽ "nhìn từ trên vào trong núi" (hầm, hang) như mọi map khác.
+
+👉 Chủ dự án: xem `guide/*_guide_annotated.png`, tạo `M4_BG.png` … `N5_BG.png` theo `PROMPT.md`.
+
+### 2026-11-02 — Adventure: bản đồ v3 — vùng Rừng vào game (M1, M3, N1, N2, N3) (decision 046)
+✅ Đã làm:
+- 5 nền Rừng xóa dấu sao, phóng 64 px / ô, chia khối (M3 2 × 1, N2 / N3 3 × 2), manifest. `import_v3.py` (công cụ chung): mask theo tranh (Otsu từng tranh), gò / bậc / thác / cầu, lối ra theo lối mòn vẽ, vật dời về ô hợp lệ gần nhất, cổng hệ ở chỗ hẹp nhất, lớp che theo rương ẩn, cổng dịch chuyển cạnh điểm xuất phát. Ghi `maps.json` (giữ mọi id) + điểm tới hai chiều (M2 → M1 nay tới (62,20)).
+- Ngoài mép map vẽ: màu tối trơn. Test vách dùng map dựng trong test; test map vẽ bao cả vùng Rừng.
+- Overlay duyệt mask: `art_inbox/.batch/adventure-16-forest-3q/guide/*_mask_overlay.png`; ảnh trong game: `after/`.
+
+🧪 `npm run check` xanh (1581 test); `mapProblems` + `mapGraph` sạch; cổng / câu đố / lớp che giữ đúng ngữ nghĩa.
+
+⚠️ Tự quyết: cổng rộng bằng chỗ hẹp (M1 bụi gai 6 ô); M3 khoét lối mòn tới lối sang Núi (tranh không vẽ); sương mù 5 map giữ nguyên (chưa duyệt xóa); chưa chạy lại mô phỏng cân bằng (chỉ đổi chỗ đứng, không đổi số).
+
+👉 Chủ dự án: duyệt 5 overlay mask; chơi thử vùng Rừng ở sandbox.
+
+### 2026-11-02 — Adventure: bản đồ v3 — vùng Rừng (M1, M3, N1, N2, N3): layout + gói Gemini nền (decision 046)
+✅ Đã làm:
+- Chủ dự án duyệt mask M2; chọn làm tiếp các map để có layout mẫu, props chỉnh sau bằng màn Admin "Cập nhật bản đồ" (yêu cầu ghi ở `docs/maps/v3/ADMIN_MAP_EDITOR.md`).
+- Bộ công cụ chung `scripts/art/map_v3/layout_v3.py`; `forest_v3.py` thiết kế mới 5 map Rừng (giữ id / số lượng / loại / hành vi mọi vật). `check_draft.ts` kiểm nhiều bản nháp cùng lúc: cả 5 sạch `mapProblems`, `mapGraph` sạch.
+- Gói `art_inbox/.batch/adventure-16-forest-3q/`: hint không chữ, guide có lưới + id, `PROMPT.md` (đính kèm nền M2 đã duyệt làm mẫu).
+
+⚠️ Tự quyết: lối ra ra khỏi vùng (M3 → M4, N3 → N7) giữ ô cũ; M2 → M1 sẽ tới (62,20) khi nhập M1. Bản nháp chưa nhập vào `maps.json` (chờ ảnh nền).
+
+👉 Chủ dự án: xem `guide/*_guide_annotated.png`, tạo `M1_BG.png` … `N3_BG.png` theo `PROMPT.md`.
+
+### 2026-11-02 — Adventure: bản đồ v3 — Lượt 2 pilot M2: nền liền một tấm, camera ×1.5, layout v3 (decision 046)
+✅ Đã làm:
+- Chủ dự án mang về BG + P1–P4 (`art_inbox/.batch/adventure-15-m2-3q/`). BG xóa dấu sao, phóng 64 px / ô (4096 × 2304), cắt 2 × 2 khối từ một ảnh, vào manifest (nạp khi vào khu, không nạp lúc khởi động).
+- `maps.json` → `scene` (tùy chọn): M2 vẽ nền một tấm; map khác giữ ô ghép. Camera `EXPLORE_ZOOM` 2 → 1.5 → **1** toàn game.
+- Mask M2 đề xuất từ màu tranh + chỉnh tay, đặt lại mọi đối tượng (giữ id), hai cổng rộng 2 ô, ba lối ra dời ô + sửa `arriveX/Y` ở M1 / M3 / N5.
+- Chụp 18 map ×1.5 (`after/`), overlay mask (`guide/M2_mask_overlay.png`).
+- **Sửa theo chủ dự án (cùng ngày):** camera về **×1** (zoom vừa khung, ≈ 40 × 22 ô) vì ×1.5 làm nền vẽ mờ; lớp che **ẩn hẳn** khi đội đứng dưới (trước mờ còn 25 %). Ảnh ×1: `after_x1/` (M2, M3, M6).
+
+📁 File: `content/schemas/adventure/maps.ts`, `content/adventure/maps.json`, `scene/{mapScene (mới),mapView,mapDepth,mapCamera,AdventureScene}.ts`, `app/start.ts`, `farm/scene/view/textureKeys.ts`, manifest + `public/assets/environment/adventure_v3/`, `scripts/art/map_v3/{bg_prepare,propose_mask,overlay,m2_apply}.py`, test `adventureMapScene.test.ts`, decision 046.
+
+🧪 `npm run check` xanh (1581 test). `mapProblems` mọi map + `mapGraph` sạch. Save cũ: test id M2 + chuyến dở trên ô cũ về spawn; app mở được với bản sao save sandbox (có `gate_f2_vines` đã mở).
+
+⚠️ Tự quyết: PNG (9,8 MB < 12 MB); cổng 2 ô; sương mù M2 giữ nguyên (chưa duyệt xóa); thung dây leo trong tranh có lối mòn chạy ra mép trên, mask chặn hàng mép.
+
+👉 Chủ dự án: duyệt `guide/M2_mask_overlay.png`; chơi thử M2 ở sandbox; tạo lại P1 (pixel art).
+
+### 2026-11-02 — Adventure: bản đồ 3/4 nền liên tục — Lượt 1 pilot M2 (audit, kế hoạch, gói Gemini)
+✅ Đã làm:
+- Audit M2 Rừng Sâu theo `docs/maps/SOBI_ADVENTURE_NEW_MAP_DIRECTION.md` v1.1: id / tọa độ / lối ra hai chiều / save liên quan; điểm khác Context.md. Chụp before (M1, M2, M3, N5: toàn khu, góc nhìn ×2, xem trước ×1.5) bằng sandbox.
+- Kế hoạch `docs/maps/v3/M2_PLAN.md`: kiến trúc (trường `scene` tùy chọn, map cũ giữ renderer cũ), 64 px/ô, 4096 × 2304 chia 2 × 2, Style Guide số, authoring, tha hóa động, props M2, rủi ro, kiểm thử save, hiệu năng. Camera: hằng `EXPLORE_ZOOM` ở `scene/mapCamera.ts:9` (chưa đổi).
+- Gói `art_inbox/.batch/adventure-15-m2-3q/` (`PROMPT.md`: BG + P1–P4, hint, guide có lưới + id).
+- Chủ dự án chốt: **làm lại layout mọi map**, M2 thử trước rồi nhân rộng theo vùng. Layout v3 của M2 thiết kế mới (`docs/maps/v3/M2_layout_draft.txt`, `scripts/art/map_v3/m2_layout.py`), `mapProblems` + `mapGraph` sạch (`scripts/art/map_v3/check_draft.ts`); ba lối ra dời ô, `arriveX/Y` phía M1 / M3 / N5 sửa ở Lượt 2. Hint / guide / prompt BG vẽ theo layout mới.
+
+📁 File: `scripts/capture/adventureMaps.ts` (`--view`, `--zoom`, `--only`; chỉ công cụ), `scripts/art/map_v3/{m2_layout.py,m2_hints.py,check_draft.ts}` (mới), `docs/maps/v3/{M2_PLAN.md,M2_layout_draft.*}`.
+
+⚠️ Tự quyết: xem M2_PLAN §16. Chưa tích hợp nền, chưa đổi camera (Lượt 2).
+
+👉 Chủ dự án: duyệt M2_PLAN §17 (mặt bằng mới, xóa sương mù map làm lại), tạo ảnh BG (rồi P1–P4) theo `PROMPT.md`.
+
 ### 2026-11-01 — Adventure: art bản đồ v2 đợt 2 — CE, huy hiệu loại quái, mặt vách 3/4, lối ra, đạo cụ, ô nền kit (decision 045)
 ✅ Đã làm:
 - **CE vẽ lại** cắt, duyệt; **I1** (file `I.png`) cắt, duyệt: 6 huy hiệu loại quái hiện ở nhãn nhóm trên map và bảng tên quái trong trận.

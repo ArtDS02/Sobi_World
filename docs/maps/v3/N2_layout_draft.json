@@ -1,0 +1,539 @@
+{
+ "map": {
+  "id": "map_forest_falls",
+  "zoneId": "zone_forest",
+  "nameVi": "Thác Rêu",
+  "corruption": 20,
+  "tile": 40,
+  "cols": 72,
+  "rows": 40,
+  "terrain": [
+   "########################################################################",
+   "#####################################~~#################################",
+   "#####################################~~#################################",
+   "####################FFFFFFFFFFFFFFFFF~~FFFF#############################",
+   "###############FFFFFF^^^^^^^^^^^^^^^^~~^^^FFFFFF########################",
+   "############FFFF^^^^^^^^^^^^^^^^^^^^^~~^^^^^^^^FFFF########........#####",
+   "##########FFF^^^^^^^^^^^^^^^^^^^^^^^^~~^^^^^^^^^^^FFF#,,,,,,,,,,....####",
+   "#########FF^^^^^^^^^^^^^^^^^^^^^^^^^^==^^^^^^^^^^^^^^^,,,,,,,,,,....####",
+   "#########F^^^^^^^^^^^^^^^^^^^^^^^^^^^==^^^^^^^^^^^^^^^,,####.......#####",
+   "##########F^^^^^^^^^^^^^^^^^^^^^^^^^^~~^^^^^^^^^^^^^F#######......######",
+   "##########FFF^^^^^^^^^^^^^^^^^^^^^^^^~~^^^^^^^^^^^FFF##########..#######",
+   "##########FFFFss^^^^^^^^^^^^^^^^^^^^^~~^^^^^^^^ssFFFF###################",
+   "###########FFFssFFFFF^^^^^^^^^^^^^^^^~~^^^FFFFFssFFF####################",
+   "#############FssFFFFFFFFFFFFFFFFFFFFFwwFFFFFFFFssF######################",
+   "##############,,FFFFFFFFFFFFFFFFFFFFFwwFFFFFFFF,,#######################",
+   "##############,,#####FFFFFFFFFFFFFFFFwwFFF#####,,#######################",
+   "##############,,####################~~~~#######,,#######################",
+   "#####.....####,,####################~~~~#######,,#######################",
+   "###...........,,####################~~~~#######,,#######################",
+   "#,,,,,,,,,,...,,###################~~~~~~....##,,#######################",
+   ",,,,,,,,,,,,,,,,################...~~~~~~~....#,,#######################",
+   ",,,,,,,,,,,,,,,,,,#############....~~~~~~....##,,#######################",
+   "##......,,,,,,,,,,,,,#########.......~~~~~...##,,####...........########",
+   "###.....,,..,,,,,,,,,,,,,,,,,,,,,,,,,,,.~~~...#,,####.............######",
+   "####....,,...##,,,,,,,,,,,,,,,,,,,,,,,,,====,,.,,###...............#####",
+   "####....,,.########,,,,,,,,,,,,,,,,,,,,,,===,,,,,,,,,..............#####",
+   "#######.,,###########..,,...#########,,,,,====,,,,,,,,,,,,,,,......#####",
+   "########,,##########...,,...###############====,,,,,,,,,,,,,,,,,,,,,,,,#",
+   "#########,########.....,,.....##############~~~~###,,,,,,,,,,,,,,,,,,,,,",
+   "########,,,...####.....,,......##############~~~~###.......,,,,,,,,,,,,,",
+   "#######..,,...####.....,,........##############~~~~##.............######",
+   "######...,,...###......,,.........##############~~~~##..........########",
+   "#######.......###......,,........################~~~~##........#########",
+   "#########....####......,,.......##################~~~~##......##########",
+   "#################......,,,...#######################~~~#################",
+   "###################....,,,.##########################~~~################",
+   "#######################,,,###########################~~~~###############",
+   "#######################,,,############################~~~~##############",
+   "#######################,,,#############################~~~~#############",
+   "########################,,##############################~~~#############"
+  ],
+  "spawn": {
+   "x": 2,
+   "y": 20
+  },
+  "portal": {
+   "x": 5,
+   "y": 23
+  },
+  "exits": [
+   {
+    "id": "exit_n2_west",
+    "x": 0,
+    "y": 20,
+    "w": 1,
+    "h": 2,
+    "to": "map_forest_hollow",
+    "arriveX": 62,
+    "arriveY": 12,
+    "kind": "trail",
+    "facing": "left"
+   },
+   {
+    "id": "exit_n2_south",
+    "x": 24,
+    "y": 39,
+    "w": 2,
+    "h": 1,
+    "to": "map_forest_heart",
+    "arriveX": 16,
+    "arriveY": 1,
+    "lock": "shortcut",
+    "kind": "trail",
+    "facing": "down"
+   },
+   {
+    "id": "exit_n2_east",
+    "x": 71,
+    "y": 28,
+    "w": 1,
+    "h": 2,
+    "to": "map_forest_marsh",
+    "arriveX": 1,
+    "arriveY": 28,
+    "kind": "trail",
+    "facing": "right"
+   }
+  ],
+  "props": [
+   {
+    "prop": "prop_adv_lm_n2",
+    "x": 26,
+    "y": 31
+   }
+  ],
+  "groups": [
+   {
+    "id": "g_n2_boss",
+    "x": 45,
+    "y": 7,
+    "kind": "subboss",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_old_treant"
+      ]
+     }
+    ],
+    "gift": {
+     "item_adv_exp_small": 5,
+     "item_skill_scroll": 1
+    }
+   },
+   {
+    "id": "g_n2_elite",
+    "x": 66,
+    "y": 28,
+    "kind": "elite",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     }
+    ],
+    "gift": {
+     "item_adv_exp_small": 3,
+     "item_potion_healing": 2
+    }
+   },
+   {
+    "id": "g_n2_special",
+    "x": 43,
+    "y": 23,
+    "kind": "special",
+    "when": "night",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_a",
+    "x": 20,
+    "y": 22,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_mossling"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mossling",
+       "enemy_mossling"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_b",
+    "x": 25,
+    "y": 23,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_dew_frog"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_dew_frog",
+       "enemy_dew_frog"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_c",
+    "x": 25,
+    "y": 8,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_thorn_sprout"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_thorn_sprout",
+       "enemy_thorn_sprout"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_d",
+    "x": 21,
+    "y": 9,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_gale_sparrow"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_gale_sparrow",
+       "enemy_gale_sparrow"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_e",
+    "x": 24,
+    "y": 4,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_forest_wolf"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_f",
+    "x": 42,
+    "y": 19,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_ember_fox"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ember_fox",
+       "enemy_ember_fox"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_g",
+    "x": 23,
+    "y": 33,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_bramble_boar"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_bramble_boar",
+       "enemy_bramble_boar"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_h",
+    "x": 19,
+    "y": 33,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_dew_frog"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_dew_frog",
+       "enemy_dew_frog"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_i",
+    "x": 60,
+    "y": 27,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_mossling"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_mossling",
+       "enemy_mossling"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_j",
+    "x": 61,
+    "y": 31,
+    "kind": "normal",
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_ember_fox"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_ember_fox",
+       "enemy_ember_fox"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_k",
+    "x": 45,
+    "y": 11,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_thorn_sprout"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_thorn_sprout",
+       "enemy_thorn_sprout"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_l",
+    "x": 16,
+    "y": 22,
+    "kind": "normal",
+    "sleep": true,
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_forest_wolf"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_m",
+    "x": 55,
+    "y": 28,
+    "kind": "mutant",
+    "pool": [
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_gale_sparrow"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "g_n2_n",
+    "x": 8,
+    "y": 20,
+    "kind": "normal",
+    "pool": [
+     {
+      "weight": 3,
+      "enemies": [
+       "enemy_forest_wolf"
+      ]
+     },
+     {
+      "weight": 1,
+      "enemies": [
+       "enemy_forest_wolf",
+       "enemy_forest_wolf"
+      ]
+     }
+    ]
+   }
+  ],
+  "chests": [
+   {
+    "id": "chest_n2_shelf",
+    "x": 48,
+    "y": 6,
+    "table": "chest_gold_forest",
+    "type": "gold"
+   },
+   {
+    "id": "chest_n2_cave",
+    "x": 61,
+    "y": 8,
+    "table": "treasure_forest",
+    "type": "hidden"
+   },
+   {
+    "id": "chest_n2_nook",
+    "x": 10,
+    "y": 32,
+    "table": "treasure_forest",
+    "type": "silver"
+   },
+   {
+    "id": "chest_n2_glade",
+    "x": 25,
+    "y": 29,
+    "table": "chest_wood_forest",
+    "type": "wood"
+   },
+   {
+    "id": "chest_n2_bank",
+    "x": 39,
+    "y": 23,
+    "table": "chest_wood_forest",
+    "type": "wood"
+   }
+  ],
+  "nodes": [
+   {
+    "id": "herb_n2",
+    "x": 22,
+    "y": 26,
+    "kind": "herb",
+    "table": "herbs"
+   }
+  ],
+  "gates": [
+   {
+    "id": "gate_n2_boulder",
+    "x": 9,
+    "y": 28,
+    "w": 1,
+    "h": 1,
+    "element": "EARTH",
+    "look": "crack"
+   }
+  ],
+  "covers": [
+   {
+    "id": "cover_n2_a",
+    "x": 53,
+    "y": 5,
+    "w": 13,
+    "h": 4,
+    "look": "canopy"
+   }
+  ],
+  "puzzles": [],
+  "springs": [
+   {
+    "id": "spring_n2",
+    "x": 42,
+    "y": 7
+   }
+  ],
+  "npcs": [],
+  "lore": [
+   {
+    "id": "lore_n2",
+    "x": 36,
+    "y": 22,
+    "textVi": "Thác Rêu chưa bao giờ ngừng chảy. Sau làn nước có khắc chín con thú canh giữ, một con đã bị vết nứt tím che mất."
+   }
+  ]
+ },
+ "arrivals": {
+  "map_forest_deep/exit_f2_west": [
+   62,
+   20
+  ]
+ }
+}

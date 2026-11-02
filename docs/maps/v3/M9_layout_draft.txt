@@ -1,0 +1,55 @@
+# M9 map_ruins_sanctum — Điện Phong Ấn, layout v3 DRAFT (48 x 27), scripts/art/map_v3/layout_v3.py
+# the sealed sanctum, the end of the ruins: a wide paved outer yard in the west with two dark square pools; to the east a great raised stone platform (a dais) holding the seal, reached by a wide flight of steps from the south, where the zone's boss waits; a small shrine room in the north-west behind a narrow passage; a little walled room in the south-west; the trail comes in from the left edge and stairs leave through the bottom edge.
+
+grid:
+################################################
+################################################
+#####.##########################################
+###.....########################################
+##..,,...#######################################
+##..,,,......#####################FFF###########
+####,,,...~~~~~..#############FFFFF^FFFFF#######
+#####,,,.~~~~~~...##########FFF^^^^^^^^^FFF#####
+######,,,.~~~~~....########FF^^^^^^^^^^^^^FF####
+######,,,..........#######FF^^^^^^^^^^^^^^^FF###
+#####..,,...........######F^^^^^^^^^^^^^^^^^F###
+#####...............#####FF^^^^^^^^^^^^^^^^^FF##
+#,,,,,,,,,,,,........####F^^^^^^^^^^^^^^^^^^^F##
+,,,,,,,,,,,,,,,,,.....####F^^^^^^^^^^^^^^^^^F###
+,,,,,,,,,,,,,,,,,,,,,.####F^^^^^^^^^^^^^^^^^F###
+###........,,,,,,,,,,,.####F^^^^^^^^^^^^^^^F####
+###....,,......,,,,,,,,####FF^^^^^^^^^^^^^FF####
+###...,,,..........,,,,,####FFF^^^^^^^^^FFF#####
+####.,,,,.~~~~~.....,,,,,####FFFFFs^FFFFFF######
+####,,,,..~~~~~~..###,,,,,#####FFFssFFFF########
+####,,,...~~~~~#######,,,,,#######.s############
+##..,,...##############,,,,,,,,,,,,,.###########
+###......##############,,,,,,,,,,,,,..##########
+###.....#############..,,,,,,,,,,,,,..##########
+#####..###############.,,,............##########
+#######################,,,..........############
+########################,,######################
+
+objects (kind id x y):
+  spawn 2 13
+  portal 3 15
+  exit exit_r3_west 0 13 1x2 -> map_ruins_hall (arrive there 62,18)
+  exit exit_r3_south 24 26 2x1 -> map_ruins_crypt (arrive there 70,30)
+  groups g_r3_boss 35 10
+  groups g_r3_a 13 16
+  groups g_r3_b 17 14
+  groups g_r3_c 9 13
+  groups g_r3_d 34 20
+  groups g_r3_e 28 21
+  groups g_r3_f 17 10
+  groups g_r3_g 8 17
+  groups g_r3_h 24 21
+  chests chest_r3_metal 4 3
+  chests chest_r3_hidden 6 23
+  chests chest_r3_boss 33 13
+  gates gate_r3_metal 5 7 4x1
+  covers cover_r3_a 2 20 6x5
+  springs spring_r3 31 24
+  lore lore_r3_seal 13 12
+  shrine shrine_r3 36 23
+  prop prop_adv_lm_r3 35 12
