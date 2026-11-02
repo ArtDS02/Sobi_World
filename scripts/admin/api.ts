@@ -21,6 +21,7 @@
 //   GET  /build-info · POST /open-folder { which } → desktop build status + guide data (AM-1)
 //   GET  /adventure/maps · POST /adventure/maps/draft { draft, create?, previousId? } · /adventure/maps/delete { id } ·
 //        /adventure/maps/meta { id, patch } → Map Builder drafts and notes in tools/admin/data/adventure (decision 047)
+//   GET  /adventure/assets · POST /adventure/assets/{save,upload,delete} → the decoration library (scripts/admin/mapAssets.ts)
 import { readFileSync } from 'node:fs';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin, ViteDevServer } from 'vite';
@@ -42,6 +43,7 @@ import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, reg
 import { buildInfo, openFolder } from './buildInfo';
 import type { RowTexts } from './contentCatalog';
 import { readContentFiles, saveContentFile } from './contentSave';
+import { deleteAsset, assetUse, saveAsset, uploadAsset } from './mapAssets';
 import { deleteMapDraft, readMapBuilder, saveMapDraft, saveMapMeta, type MetaPatch } from './mapDrafts';
 import type { MapDraft } from '../../tools/admin/mapModel';
 import { archiveProfile, listProfiles, readProfile, savesRoot, setSavesRoot, writeProfile } from './saves';
@@ -332,6 +334,14 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
       return deleteMapDraft(await body<{ id: string }>());
     case 'POST /adventure/maps/meta':
       return saveMapMeta(await body<{ id: string; patch: MetaPatch }>());
+    case 'GET /adventure/assets':
+      return { status: 200, body: { use: assetUse() } };
+    case 'POST /adventure/assets/save':
+      return saveAsset(await body(), load);
+    case 'POST /adventure/assets/upload':
+      return uploadAsset(await body(), load);
+    case 'POST /adventure/assets/delete':
+      return deleteAsset(await body());
     case 'GET /build-info':
       return buildInfo();
     case 'POST /open-folder':

@@ -8,13 +8,15 @@ import { mapProblems } from '../../src/areas/adventure/logic/maps';
 import { esc } from './labels';
 import { editExits, editSpawns, fetchBuilder, postDraft } from './mapApi';
 import { COLOUR, GROUND } from './mapCanvas';
-import { ImageCache, OBJ_STYLE, drawEditor, fitView, tileAtScreen, type Ghost, type Layers, type View } from './mapEditCanvas';
+import { DECOR, DECOR_LIST } from '../../src/areas/adventure/logic/config/content';
+import { ImageCache, LAYER_LABEL, OBJ_STYLE, drawEditor, fitView, tileAtScreen, type Ghost, type Layers, type View } from './mapEditCanvas';
+import { artUrl } from './store';
 import { applyField, inspectorHtml } from './mapEditInspector';
 import * as E from './mapEditModel';
 import { graphProblems } from './mapLinks';
 import * as M from './mapModel';
 
-type Tool = 'select' | 'brush' | 'rect' | 'fill' | 'height' | 'cover' | 'erase' | 'place';
+type Tool = 'select' | 'brush' | 'rect' | 'fill' | 'height' | 'cover' | 'erase' | 'place' | 'decor';
 
 const TOOLS: [Tool, string, string][] = [
   ['select', '🖱️ Chọn', 'V'],
@@ -39,6 +41,9 @@ interface EditorState {
   height: number;
   size: number;
   place: E.Addable | null;
+  /** The library asset the decoration tool places, and the library search. */
+  decor: string | null;
+  decorQuery: string;
   layers: Layers;
   selected: E.ObjRef[];
   clipboard: { kind: E.ObjKind; ref: E.ObjRef; dx: number; dy: number }[];
@@ -82,7 +87,9 @@ export function renderMapEditor(root: HTMLElement, mapId: string | null) {
         height: 1,
         size: 1,
         place: null,
-        layers: { background: true, collision: true, grid: true, elevation: false, objects: true },
+        decor: null,
+        decorQuery: '',
+        layers: { background: true, ground: true, environment: true, objects: true, creatures: true, foreground: true, collision: true, grid: true, elevation: false },
         selected: [],
         clipboard: [],
         message: '',
@@ -151,7 +158,7 @@ function mount(root: HTMLElement, st: EditorState) {
       ${st.message ? `<p class="status-warn">${esc(st.message)}</p>` : ''}
       <h4>Kiểm tra (${problems.length})</h4>${problems.length ? `<ul class="amap__problems">${problems.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>` : '<p class="ok">Map qua mọi kiểm tra.</p>'}`;
     right.querySelectorAll<HTMLInputElement & HTMLSelectElement>('[data-insp]').forEach((el) =>
-      el.addEventListener('change', () => change(() => applyField(map(), st.selected[0]!, el.dataset.insp!, el.value))),
+      el.addEventListener('change', () => change(() => applyField(map(), st.selected[0]!, el.dataset.insp!, el.value, (el as HTMLInputElement).checked))),
     );
     right.querySelectorAll<HTMLButtonElement>('[data-cmd]').forEach((b) => b.addEventListener('click', () => command(b.dataset.cmd!)));
     right.querySelector('[data-open="exits"]')?.addEventListener('click', () => command('exits'));
@@ -162,7 +169,27 @@ function mount(root: HTMLElement, st: EditorState) {
       <label class="field"><span>Cỡ cọ</span><select data-size>${[1, 2, 3, 5].map((n) => `<option${n === st.size ? ' selected' : ''}>${n}</option>`).join('')}</select></label>
       <h4>Độ cao (chỉ để vẽ)</h4><div class="medit__swatches">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((h) => `<button class="medit__swatch medit__swatch--n${st.height === h ? ' is-active' : ''}" data-height="${h}">${h}</button>`).join('')}</div>
       <h4>Thêm vật</h4><div class="medit__adds">${E.ADDABLE.map((k) => `<button class="btn btn-small${st.tool === 'place' && st.place === k ? ' is-active' : ''}" data-place="${k}"><b style="color:${OBJ_STYLE[k][1]}">${OBJ_STYLE[k][0]}</b> ${esc(E.OBJ_LABEL[k])}</button>`).join('')}</div>
-      <h4>Hiện</h4>${(Object.keys(st.layers) as (keyof Layers)[]).map((k) => `<label class="check"><input type="checkbox" data-layer="${k}"${st.layers[k] ? ' checked' : ''}/> ${{ background: 'Nền vẽ', collision: 'Va chạm', grid: 'Lưới (G)', elevation: 'Độ cao', objects: 'Vật' }[k]}</label>`).join('')}`;
+      <h4>Asset trang trí <a class="muted" href="#/adventure-assets">(thư viện)</a></h4><input type="search" data-decor-q placeholder="Tìm asset…" value="${esc(st.decorQuery)}" />
+      <div class="medit__decor">${DECOR_LIST.filter((d) => !st.decorQuery || `${d.nameVi} ${d.id} ${d.category}`.toLowerCase().includes(st.decorQuery.toLowerCase()))
+        .map((d) => `<button class="medit__decor-item${st.tool === 'decor' && st.decor === d.id ? ' is-active' : ''}" data-decor="${d.id}" title="${esc(d.id)}">${artUrl(d.art) ? `<img src="${artUrl(d.art)}" alt="" />` : ''}<span>${esc(d.nameVi)}</span></button>`)
+        .join('')}</div>
+      <h4>Lớp hiển thị</h4>${(Object.keys(st.layers) as (keyof Layers)[]).map((k) => `<label class="check"><input type="checkbox" data-layer="${k}"${st.layers[k] ? ' checked' : ''}/> ${LAYER_LABEL[k]}</label>`).join('')}`;
+    left.querySelectorAll<HTMLButtonElement>('[data-decor]').forEach((b) => b.addEventListener('click', () => {
+      st.decor = b.dataset.decor!;
+      st.tool = 'decor';
+      st.message = `Bấm lên map để đặt ${DECOR[st.decor]?.nameVi ?? st.decor} (chân asset ở chỗ bấm).`;
+      palette();
+      side();
+      paint();
+    }));
+    const dq = left.querySelector<HTMLInputElement>('[data-decor-q]')!;
+    dq.addEventListener('input', () => {
+      st.decorQuery = dq.value;
+      palette();
+      const again = left.querySelector<HTMLInputElement>('[data-decor-q]')!;
+      again.focus();
+      again.setSelectionRange(again.value.length, again.value.length);
+    });
     left.querySelectorAll<HTMLButtonElement>('[data-ground]').forEach((b) => b.addEventListener('click', () => {
       st.ground = b.dataset.ground!;
       if (!['brush', 'rect', 'fill'].includes(st.tool)) st.tool = 'brush';
@@ -280,6 +307,11 @@ function mount(root: HTMLElement, st: EditorState) {
     const r = canvas.getBoundingClientRect();
     return tileAtScreen(st.view!, ((e.clientX - r.left) * canvas.width) / r.width, ((e.clientY - r.top) * canvas.height) / r.height);
   };
+  /** The point under the pointer in tiles, with fractions (a decoration's foot). */
+  const pointOf = (e: PointerEvent) => {
+    const r = canvas.getBoundingClientRect();
+    return { x: (((e.clientX - r.left) * canvas.width) / r.width) / st.view!.scale + st.view!.ox, y: (((e.clientY - r.top) * canvas.height) / r.height) / st.view!.scale + st.view!.oy };
+  };
   const inArea = (t: E.Tile) => t.x >= 0 && t.y >= 0 && t.x < map().cols && t.y < map().rows;
 
   canvas.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -321,6 +353,13 @@ function mount(root: HTMLElement, st: EditorState) {
         st.selected = [hit];
         void command('delete');
       }
+    } else if (st.tool === 'decor' && st.decor && inArea(t)) {
+      const at = pointOf(e);
+      let made: E.ObjRef | null = null;
+      change(() => (made = E.addDecor(map(), st.decor!, at, taken())));
+      st.selected = made ? [made] : [];
+      side();
+      paint();
     } else if (st.tool === 'place' && st.place && inArea(t)) {
       const row = templateOf(st, st.place);
       if (row) {

@@ -50,3 +50,20 @@ Chủ dự án muốn tự xây thế giới Sobi Adventure trong Admin: tạo m
 - Bấm node: thông tin + Lối ra / Điểm xuất hiện / Bản đồ khu; bấm đúp: mở Lối ra. Bấm đường nối: các lối ra hai phía (đích, điểm tới, khoá, hình) + "Sửa lối ra này" (mở hộp Lối ra chọn sẵn lối đó). Tìm (tô xanh), lọc vùng / trạng thái (làm mờ phần khác).
 - Cảnh báo cả thế giới: map chưa có kết nối; không có lối vào hợp lệ; lối ra tới map không tồn tại / đang tạm tắt; điểm tới không tồn tại hoặc lệch; lỗi kết nối của game (nói lại bằng tiếng Việt, tên map); lối ra tạm tắt đang là lối duy nhất tới một map. Bấm cảnh báo → chọn map đó.
 - Mã: `tools/admin/mapNetwork.ts` (thuần, có test), `tools/admin/mapNetworkPage.ts`; API trang dùng chung `tools/admin/mapApi.ts`.
+
+## Giai đoạn 6 (2026-11-02) — Map Editor + Thư viện asset
+
+**6a — Map Editor** (`#/adventure-editor/<mapId>`, nút "Sửa" ở Quản lý map, "Map Editor" ở Mạng map):
+- Canvas lớn: nền vẽ (cùng khối ảnh game dùng), đất (tô màu đầy với map vẽ bằng ô; trên nền vẽ chỉ tô ô chặn, mờ), lưới, độ cao, mọi vật. Toạ độ luôn là ô của game; zoom (cuộn) / kéo (chuột phải, giữa, hoặc Space) chỉ đổi cách vẽ.
+- Công cụ: Chọn (kéo dời, kéo góc để đổi cỡ cổng / lớp che / lối ra, Shift chọn thêm, kéo khoảng trống chọn khung), Cọ (cỡ 1–5), Chữ nhật, Đổ loang, Độ cao 0–9 (chỉ trình bày), Lối ẩn (kéo khung = lớp che mới), Tẩy vật, Thêm vật (sao chép một vật cùng loại có sẵn, id mới, không tạo luật mới).
+- Inspector: ô / cỡ chính xác và các trường chỉ chọn trong cái game đã có (bảng thưởng, loại rương, hệ, hình, sự kiện, lời bia, tên / hướng điểm tới). Nhóm quái chỉ dời / nhân bản, không sửa chỉ số.
+- Undo / Redo (200 bước), Ctrl+D / C / V, Del, mũi tên (Shift = 5 ô), Ctrl+S lưu nháp. Kiểm tra sống: `mapProblems` + điểm tới + kết nối. Công việc từng map giữ trong bộ nhớ khi chuyển trang; đóng / tải lại khi chưa lưu thì hỏi.
+- Không xoá id save giữ, điểm tới đang có lối ra chọn, cổng có câu đố trỏ tới; điểm mặc định / cổng dịch chuyển chỉ dời.
+- "Placement Zone": game chưa có dữ liệu này nên không làm (cần decision nếu muốn).
+
+**6b — Asset trang trí + Thư viện asset:**
+- `content/adventure/scenery.json` (schema `content/schemas/adventure/scenery.ts`): thư viện dùng chung — `id` `decor_*`, `nameVi` (+ tiếng Anh ở `en.json`), `art`, `category`, `w` (ô), `anchorY`, `foot` (ô chặn quanh chân), `mode` (`normal` dưới đất / `occluder` sắp theo chân / `foreground` luôn ở trên / `cover` ở trên và mờ khi đội tới gần). Mở đầu 9 asset từ bộ ghép Rừng.
+- `maps.json` → `scenery[]` (tùy chọn, cấp map, dùng được cho cả map vẽ bằng ô): `id` `scn_*`, `asset`, chân `x, y` (ô, có số lẻ) và chỉ phần đổi so với thư viện: `w`, `h`, `rotate`, `flip`, `mode`, `foot`, `fade` (`alpha` 0 = ẩn hẳn, 0,3 = mờ một phần; theo `radius` hoặc vùng `area`). Sửa thư viện là mọi chỗ đặt đổi theo.
+- Runtime: `logic/scenery.ts` (thuần); chân asset là ô chặn trong `blockedTiles`; `mapProblems` báo asset lạ / vật dưới chân; `scene/mapScenery.ts` vẽ + mờ. Save không đổi; 18 map chưa có asset nào nên chơi không đổi.
+- Editor: cột trái có thư viện (tìm, bấm rồi bấm map để đặt), inspector asset. Lớp hiển thị theo renderer: Nền vẽ, Chi tiết mặt đất, Môi trường, Vật tương tác, Nhóm quái, Tiền cảnh / lớp che, Va chạm (kèm ô chặn của asset), Lưới, Độ cao. Renderer không có lớp VFX riêng trên map nên không có ô VFX.
+- Trang **Thư viện asset** (`#/adventure-assets`): thẻ asset, sửa, thêm từ ảnh có sẵn, tải PNG mới (`public/assets/props/adventure_decor/adv_decor_*.png` + dòng manifest đúng định dạng; hỏng thì gỡ lại), xoá khi không map nào dùng. Bắt buộc tên tiếng Anh. Ảnh tải lên không qua `art:process`: cần PNG nền trong suốt, cắt sát.

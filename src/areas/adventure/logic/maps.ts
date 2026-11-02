@@ -3,7 +3,8 @@
 // area must pass (§3.10): everything reachable, no chest in a dead corner, the main road never behind an element gate, footprints
 // inside the area and never on top of each other. Pure.
 import type { Rect, Vec, Walkable } from '../../../systems/character';
-import { AB, MAPS, PROPS, type AreaMap, type MapGroup } from './config/content';
+import { AB, DECOR, MAPS, PROPS, type AreaMap, type MapGroup } from './config/content';
+import { sceneryBlocks } from './scenery';
 
 export const WALK_TILES = new Set(['.', ',', '=', '^', 's', 'c']);
 
@@ -51,6 +52,8 @@ export function blockedTiles(map: AreaMap, opened: ReadonlySet<string> = new Set
     if (def) mark(p.x, p.y, def.w, def.h);
   }
   for (const t of thingsOf(map)) if (solid(t, opened)) mark(t.x, t.y, t.w, t.h);
+  // Hand-placed decorations block the tiles of their foot (decision 047).
+  for (const r of sceneryBlocks(map)) mark(r.x, r.y, r.w, r.h);
   for (const c of closed) mark(c.x, c.y, c.w, c.h);
   return blocked;
 }
@@ -151,6 +154,13 @@ export function mapProblems(map: AreaMap, others: readonly AreaMap[] = Object.va
     else claim(`${p.prop}@${p.x},${p.y}`, p.x, p.y, def.w, def.h);
   }
   for (const t of thingsOf(map)) if (t.kind !== 'exit') claim(t.id, t.x, t.y, t.w, t.h);
+  for (const d of map.scenery ?? []) if (!DECOR[d.asset]) say(`unknown decoration ${d.asset} (${d.id})`);
+  for (const r of sceneryBlocks(map))
+    for (let yy = r.y; yy < r.y + r.h; yy += 1)
+      for (let xx = r.x; xx < r.x + r.w; xx += 1) {
+        const under = owner.get(yy * map.cols + xx);
+        if (under) say(`a decoration's foot covers ${under} at ${xx},${yy}`);
+      }
   for (const e of map.exits) for (let y = e.y; y < e.y + e.h; y += 1) if (!WALK_TILES.has(map.terrain[y]?.[e.x] ?? '#')) say(`exit ${e.id} is not walkable`);
   const allGates = new Set(map.gates.map((g) => g.id));
   const free = blockedTiles(map, allGates);

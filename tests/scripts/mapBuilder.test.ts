@@ -9,6 +9,7 @@ import { mapSchema, mapsFileSchema } from '../../content/schemas/adventure/maps'
 import { MAP_LIST, MAPS, ZONE_LIST } from '../../src/areas/adventure/logic/config/content';
 import { mapGraphProblems } from '../../src/areas/adventure/logic/mapGraph';
 import { mapProblems } from '../../src/areas/adventure/logic/maps';
+import { appendPropRow, assetUse } from '../../scripts/admin/mapAssets';
 import { deleteMapDraft, readDrafts, readMeta, saveMapDraft, saveMapMeta } from '../../scripts/admin/mapDrafts';
 import { savedIdProblems, savedMapIds } from '../../scripts/admin/mapIds';
 import * as E from '../../tools/admin/mapEditModel';
@@ -389,5 +390,31 @@ describe('map editor model', () => {
     expect(h.undo(s)).toBeNull(); // only 2 kept
     s = h.redo(s)!;
     expect(s.n).toBe(2);
+  });
+});
+
+describe('decorations in the editor', () => {
+  it('places, moves by whole tiles keeping the fraction, duplicates and removes a decoration', () => {
+    const m = structuredClone(MAPS.map_forest_deep!);
+    const taken = M.thingIds(MAP_LIST);
+    const ref = E.addDecor(m, 'decor_forest_oak', { x: 10.3, y: 12.8 }, taken);
+    expect(m.scenery).toEqual([{ id: ref.id, asset: 'decor_forest_oak', x: 10.5, y: 13 }]);
+    const box = E.decorBox(m.scenery![0]!);
+    expect(E.objectAt(m, box.x + 1, box.y + 1)).toMatchObject({ kind: 'scenery', id: ref.id });
+    E.moveObjects(m, [ref], 2, -1);
+    expect(m.scenery![0]).toMatchObject({ x: 12.5, y: 12 });
+    const copy = E.duplicateObject(m, ref, { x: box.x + 5, y: box.y + 3 }, taken)!;
+    // The box moved by (2, -1): the copy lands (3, 4) tiles from it, the same fraction kept.
+    expect(m.scenery!.find((d) => d.id === copy.id)).toMatchObject({ asset: 'decor_forest_oak', x: 15.5, y: 16 });
+    expect(E.removeObjects(m, [ref, copy], MAPS.map_forest_deep)).toEqual([]);
+    expect(m.scenery).toBeUndefined();
+  });
+
+  it('appends a picture to the manifest in its own layout and counts where assets stand', () => {
+    const text = '{\n  "props": [\n    {\n      "id": "a",\n      "status": "production",\n      "asset": "props/a.png"\n    }\n  ],\n  "ui": []\n}\n';
+    const out = appendPropRow(text, { id: 'adv_decor_x', asset: 'props/adventure_decor/adv_decor_x.png' });
+    expect(JSON.parse(out).props.map((r: { id: string }) => r.id)).toEqual(['a', 'adv_decor_x']);
+    expect(out).toContain('    {\n      "id": "adv_decor_x",\n      "status": "production",');
+    expect(assetUse(mkdtempSync(join(tmpdir(), 'sobi-assetuse-')))).toEqual({});
   });
 });

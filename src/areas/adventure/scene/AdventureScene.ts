@@ -1,9 +1,8 @@
 // The Adventure on screen (spec §3): at the camp and in a battle, the zone's picture behind the DOM screens; on a trip, the area itself —
-// its ground, props and things dressed with depth (mapDepth.ts), the enemy groups standing and breathing, the teleport gates (open or
-// locked behind the guardian; walking into an open one plays the teleport and lands in the next area), and the party (So or Bi in
-// front) walking with the keys, the camera at the fitted zoom and easing after them (decision 045, 046). The
-// scene reads a plain state from the UI and reports what the walker does (stops somewhere, touches a group, has a thing in reach and
-// presses the interact key, walks into an exit); it never reaches the store.
+// its ground, props, decorations and things dressed with depth (mapDepth.ts), the enemy groups standing and breathing, the teleport gates
+// (open, or locked behind the guardian; walking into an open one lands in the next area), and the party walking with the keys, the camera
+// easing after them (decision 045, 046, 047). The scene reads a plain state from the UI and reports what the walker does (stops, touches
+// a group, has a thing in reach and presses the interact key, walks into an exit); it never reaches the store.
 import * as Phaser from 'phaser';
 import type { AreaVfx } from '../../../core/events';
 import { inputVector, type Walkable } from '../../../systems/character';
@@ -17,6 +16,7 @@ export { BattleScene, manifestImages } from './battle/BattleScene';
 import { placeMarks } from './foeMarks';
 import { ADVENTURE_DESIGN, fitZoom, MapCamera } from './mapCamera';
 import { fadeCovers } from './mapCovers';
+import { fadeScenery } from './mapScenery';
 import { playMapVfx } from './mapVfx';
 import { PaintedArt } from './mapScene';
 import { buildMap, edgeColour, refreshThings, type MapObjects } from './mapView';
@@ -204,6 +204,7 @@ export class AdventureScene extends Phaser.Scene {
     // Under a cover not found yet: save the spot now, so the hidden place counts at once.
     const cover = fadeCovers(map, this.objs!.covers, pos, delta, this.deps.reduceMotion(), this.coverIn);
     this.coverIn = cover.under;
+    fadeScenery(map, this.objs!.scenery, pos, delta, this.deps.reduceMotion());
     if (cover.entered && !s.foundSecrets.includes(cover.entered) && !s.paused) this.deps.report.move(pos);
     refreshThings(this, map, this.objs!, s, time, pos);
     this.objs!.dressing.update(time, pos);

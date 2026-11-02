@@ -10,6 +10,18 @@
 
 ## Nhật ký
 
+### 2026-11-02 — Adventure: Map Builder GĐ6 — Map Editor + asset trang trí + Thư viện asset (decision 047)
+✅ Đã làm:
+- **6a Map Editor** (`#/adventure-editor/<id>`): canvas lớn với nền vẽ, đất, lưới, độ cao, mọi vật; zoom / kéo trong lưới ô của game. Công cụ chọn / dời / đổi cỡ / chọn khung, cọ, chữ nhật, đổ loang, độ cao, lối ẩn, tẩy vật, thêm vật (sao chép vật có sẵn, id mới). Inspector số chính xác + trường chọn sẵn. Undo / redo, nhân bản, chép / dán, mũi tên, Ctrl+S lưu nháp; kiểm tra sống.
+- **6b Asset trang trí:** thư viện dùng chung `content/adventure/scenery.json` (9 asset Rừng mở đầu) + `maps.json` `scenery[]` (chỉ chỗ đặt và phần đổi). Game: chân asset chặn đường, 4 cách đứng, lớp che mờ khi tới gần, `mapProblems` báo lỗi. Editor: đặt từ thư viện, xoay, lật, cỡ, cách đứng, ô chặn, mờ; lớp hiển thị theo renderer.
+- **Thư viện asset** (`#/adventure-assets`): xem, tìm, lọc, sửa, thêm từ ảnh có sẵn, tải PNG mới (ảnh + manifest + tên Anh), xoá khi không dùng.
+
+🧪 `npm run check` xanh (1616 test). Admin thật: dời / undo / redo / nhân bản / xoá (chặn id đã publish) / đặt suối / lối ẩn (báo đúng lỗi) / lưu nháp; tải ảnh thử (thiếu tên Anh bị từ chối; manifest đúng định dạng; `assets:check`, test i18n qua) → đặt lên Rừng Sâu, xoay, lớp che → xoá asset bị chặn vì đang dùng. **Renderer thật** (Electron sandbox, save tạm): 3 asset tạm trên Rừng Sâu hiện đúng. Mọi dữ liệu thử đã dọn / hoàn lại.
+
+⚠️ Tự quyết: `scenery` ở cấp map (không trong `scene`) để map vẽ bằng ô cũng dùng được; "Placement Zone" và lớp VFX không làm (game chưa có); ảnh tải lên không qua `art:process`; "Bản đồ khu" cũ vẫn còn trong menu.
+
+➡️ GĐ7: Validate tổng hợp + Publish (nguyên tử, tên tiếng Anh cho map / điểm tới / bia mới, lịch sử + quay lại) + Preview sandbox + chạy thử trong Admin.
+
 ### 2026-11-02 — Adventure: Map Builder GĐ5 — Mạng map (decision 047)
 ✅ Đã làm:
 - Admin trang mới **🕸️ Mạng map**: sơ đồ mọi map (node theo trạng thái, huy hiệu số cảnh báo) và đường nối (một chiều = mũi tên, có khoá = nét đứt, tạm tắt = mờ, lỗi = đỏ). Kéo node (chỉ lưu vị trí sơ đồ vào `meta.json`, không đụng map), kéo nền, cuộn phóng to, Vừa khung, Xếp tự động theo vùng; tìm, lọc vùng / trạng thái.

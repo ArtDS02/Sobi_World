@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import { assetId, posInt, text, unit } from '../fields';
 import { element } from './combat';
+import { sceneryPlacementSchema } from './scenery';
 
 /**
  * `.` ground, `,` path, `=` bridge, `^` raised ground, `s` steps up a cliff, `c` corrupted ground (walkable); `#` wall / dense mass,
@@ -141,6 +142,8 @@ export const mapSchema = z.strictObject({
   lore: z.array(z.strictObject({ id: id('lore'), ...cell, textVi: text })),
   /** A Guardian shrine: the party's damage of its element rises for the rest of the trip. */
   shrine: z.strictObject({ id: id('shrine'), ...cell, element, damagePct: unit }).optional(),
+  /** Decorations placed by hand from the shared library (decision 047, `scenery.json`): drawn, sorted, faded; their foot blocks. */
+  scenery: z.array(sceneryPlacementSchema).optional(),
   /**
    * The area painted as one continuous 3/4 picture (docs/maps/v3/M2_PLAN.md): the manifest stem of its background, cut into
    * `chunks` [columns, rows] named `<art>_c<col><row>`, `px` source px per tile; `elevation` = height 0–9 per tile (presentation only).
@@ -175,7 +178,7 @@ export function arrivalProblems(e: MapRow['exits'][number], dest: Pick<MapRow, '
 }
 
 /** The grid of one area against its size: rows × cols of known tiles, the elevation the same size (also run on a builder draft). */
-export function mapShapeProblems(m: Pick<MapRow, 'id' | 'cols' | 'rows' | 'terrain' | 'scene' | 'spawns'>): string[] {
+export function mapShapeProblems(m: Pick<MapRow, 'id' | 'cols' | 'rows' | 'terrain' | 'scene' | 'spawns' | 'scenery'>): string[] {
   const out: string[] = [];
   if (m.terrain.length !== m.rows) out.push(`${m.id}: ${m.terrain.length} terrain rows, expected ${m.rows}`);
   m.terrain.forEach((row, y) => {
@@ -185,6 +188,11 @@ export function mapShapeProblems(m: Pick<MapRow, 'id' | 'cols' | 'rows' | 'terra
   });
   const elevation = m.scene?.elevation;
   if (elevation && (elevation.length !== m.rows || elevation.some((row) => row.length !== m.cols))) out.push(`${m.id}: scene.elevation must be ${m.rows} rows of ${m.cols}`);
+  const decor = new Set<string>();
+  for (const d of m.scenery ?? []) {
+    if (decor.has(d.id)) out.push(`${m.id}: decoration ${d.id} is taken`);
+    decor.add(d.id);
+  }
   const spawnIds = new Set<string>();
   for (const sp of m.spawns ?? []) {
     if (sp.id === DEFAULT_SPAWN || spawnIds.has(sp.id)) out.push(`${m.id}: spawn ${sp.id} is taken`);

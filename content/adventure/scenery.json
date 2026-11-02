@@ -1,0 +1,85 @@
+{
+  "assets": [
+    {
+      "id": "decor_forest_oak",
+      "nameVi": "Cây sồi",
+      "art": "adv_map_forest_prop_tree_oak",
+      "category": "tree",
+      "w": 3,
+      "foot": [{ "x": 0, "y": 0, "w": 1, "h": 1 }],
+      "mode": "occluder"
+    },
+    {
+      "id": "decor_forest_fir",
+      "nameVi": "Cây thông",
+      "art": "adv_map_forest_prop_tree_fir",
+      "category": "tree",
+      "w": 2.5,
+      "foot": [{ "x": 0, "y": 0, "w": 1, "h": 1 }],
+      "mode": "occluder"
+    },
+    {
+      "id": "decor_forest_blossom",
+      "nameVi": "Cây hoa",
+      "art": "adv_map_forest_prop_tree_blossom",
+      "category": "tree",
+      "w": 3,
+      "foot": [{ "x": 0, "y": 0, "w": 1, "h": 1 }],
+      "mode": "occluder"
+    },
+    {
+      "id": "decor_forest_bushes",
+      "nameVi": "Bụi cây",
+      "art": "adv_map_forest_prop_bushes",
+      "category": "bush",
+      "w": 2,
+      "foot": [],
+      "mode": "occluder"
+    },
+    {
+      "id": "decor_forest_rocks",
+      "nameVi": "Đá rừng",
+      "art": "adv_map_forest_prop_rocks",
+      "category": "rock",
+      "w": 2,
+      "foot": [{ "x": -1, "y": 0, "w": 2, "h": 1 }],
+      "mode": "occluder"
+    },
+    {
+      "id": "decor_forest_stumps",
+      "nameVi": "Gốc cây",
+      "art": "adv_map_forest_prop_stumps",
+      "category": "tree",
+      "w": 1.5,
+      "foot": [{ "x": 0, "y": 0, "w": 1, "h": 1 }],
+      "mode": "occluder"
+    },
+    {
+      "id": "decor_forest_oak_giant",
+      "nameVi": "Sồi cổ thụ",
+      "art": "adv_map_forest_landmark_oak_giant",
+      "category": "tree",
+      "w": 6,
+      "foot": [{ "x": -1, "y": 0, "w": 2, "h": 1 }],
+      "mode": "occluder"
+    },
+    {
+      "id": "decor_forest_stone_ring",
+      "nameVi": "Vòng đá",
+      "art": "adv_map_forest_landmark_stone_ring",
+      "category": "ruin",
+      "w": 4,
+      "foot": [],
+      "mode": "normal"
+    },
+    {
+      "id": "decor_forest_canopy",
+      "nameVi": "Tán cây che",
+      "art": "adv_map_forest_cover_canopy_big",
+      "category": "cover",
+      "w": 6,
+      "foot": [],
+      "mode": "cover"
+    }
+  ]
+}

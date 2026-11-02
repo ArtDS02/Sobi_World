@@ -14,6 +14,7 @@ import { dressCorruption } from './mapCorruption';
 import { corruptionMarks, foeLabel, NO_MARKS, sleepMark, type CorruptionMarks } from './foeMarks';
 import { drawCover } from './mapCovers';
 import { edgeColour, layGround } from './mapGround';
+import { layScenery, type SceneryFades } from './mapScenery';
 import { layScene } from './mapScene';
 import { chestArt, crackArt, exitArt, MIMIC_ART, puzzleArt, SPRING_ART } from './mapKit';
 import { dressArea, type AreaDressing } from './mapDepth';
@@ -119,6 +120,8 @@ export interface MapObjects {
   dressing: AreaDressing;
   /** The overhead covers over hidden places, drawn over the party (decision 045). */
   covers: Map<string, Phaser.GameObjects.Container>;
+  /** The hand-placed decorations that fade near the party (decision 047). */
+  scenery: SceneryFades;
 }
 
 /** Builds the whole area; `destroy` the returned layer to drop it. `motion` = false (reduced motion): the dressing stays still. */
@@ -155,6 +158,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
     const def = PROPS[p.prop];
     if (def) layer.add(standOn(scene, key(scene, def.art), map, p.x, p.y, def.w, def.h, def.scale));
   }
+  const scenery = layScenery(scene, layer, map);
   const things = new Map<string, Phaser.GameObjects.Image>();
   const sparkles = new Map<string, Phaser.GameObjects.Text>();
   for (const th of thingsOf(map)) {
@@ -213,7 +217,7 @@ export function buildMap(scene: Phaser.Scene, map: AreaMap, s: AdventureSceneSta
   const covers = new Map<string, Phaser.GameObjects.Container>();
   for (const c of map.covers) covers.set(c.id, drawCover(scene, map, c));
   layer.once(Phaser.GameObjects.Events.DESTROY, () => covers.forEach((g) => g.destroy()));
-  return { layer, things, groups, sparkles, gates, dressing, covers };
+  return { layer, things, groups, sparkles, gates, dressing, covers, scenery };
 }
 
 /** The crack across a false wall: a dark zigzag over its rock. */

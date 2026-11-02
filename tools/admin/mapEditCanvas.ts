@@ -3,7 +3,8 @@
 // every object with its letter (props with their picture), the selection and the shape being drawn. One screen px = `scale` / tile;
 // `ox`, `oy` = the tile at the canvas' top-left — tiles stay the game's own, the zoom only changes the drawing.
 import type { AreaMap } from '../../src/areas/adventure/logic/config/content';
-import { PROPS } from '../../src/areas/adventure/logic/config/content';
+import { DECOR, PROPS } from '../../src/areas/adventure/logic/config/content';
+import { decorOf } from '../../src/areas/adventure/logic/scenery';
 import { sceneChunks } from '../../src/areas/adventure/scene/mapScene';
 import { COLOUR } from './mapCanvas';
 import { objectsOf, refKey, type EditObj, type ObjKind, type Tile } from './mapEditModel';
@@ -15,12 +16,49 @@ export interface View {
   oy: number;
 }
 
+/** What is shown, as the game's own layers (the renderer has no VFX layer of its own on the map). */
 export interface Layers {
+  /** Terrain background: the painting. */
   background: boolean;
+  /** Ground details: decorations lying flat. */
+  ground: boolean;
+  /** Environment: props and decorations sorted with the walkers. */
+  environment: boolean;
+  /** Interactive objects: spawns, portal, exits, chests, gates… */
+  objects: boolean;
+  /** Characters and creatures: the enemy groups. */
+  creatures: boolean;
+  /** Foreground / cover: decorations over the party and the hidden-way covers. */
+  foreground: boolean;
+  /** Navigation overlay: blocked ground (and decoration feet), grid, heights. */
   collision: boolean;
   grid: boolean;
   elevation: boolean;
-  objects: boolean;
+}
+
+export const LAYER_LABEL: Record<keyof Layers, string> = {
+  background: 'Nền vẽ',
+  ground: 'Chi tiết mặt đất',
+  environment: 'Môi trường (cây, đá…)',
+  objects: 'Vật tương tác',
+  creatures: 'Nhóm quái',
+  foreground: 'Tiền cảnh / lớp che',
+  collision: 'Va chạm',
+  grid: 'Lưới (G)',
+  elevation: 'Độ cao',
+};
+
+/** The layer an object is drawn in. */
+function layerOf(map: AreaMap, o: EditObj): keyof Layers {
+  if (o.kind === 'scenery') {
+    const d = map.scenery?.find((x) => x.id === o.id);
+    const mode = d?.mode ?? DECOR[d?.asset ?? '']?.mode ?? 'occluder';
+    return mode === 'normal' ? 'ground' : mode === 'occluder' ? 'environment' : 'foreground';
+  }
+  if (o.kind === 'props') return 'environment';
+  if (o.kind === 'covers') return 'foreground';
+  if (o.kind === 'groups') return 'creatures';
+  return 'objects';
 }
 
 /** What is being dragged out: a rectangle of tiles (ground, cover, selection) or tiles under the brush. */
@@ -42,6 +80,7 @@ export const OBJ_STYLE: Record<ObjKind, [letter: string, colour: string]> = {
   npcs: ['N', '#c79bf2'],
   lore: ['L', '#d8cbb0'],
   props: ['▲', '#3f6b35'],
+  scenery: ['✿', '#7fd0a0'],
 };
 
 /** Pictures by URL, loaded once; `onLoad` redraws when one arrives. */
@@ -138,7 +177,14 @@ export function drawEditor(
   }
   g.strokeStyle = '#ffffff88';
   g.strokeRect(px(0), py(0), map.cols * s, map.rows * s);
-  if (layers.objects) for (const o of objectsOf(map)) drawObject(g, map, o, px, py, s, images, selected.has(refKey(o)));
+  for (const o of objectsOf(map)) if (layers[layerOf(map, o)]) drawObject(g, map, o, px, py, s, images, selected.has(refKey(o)));
+  // Decoration feet: the tiles they block, over everything when the navigation overlay is on.
+  if (layers.collision) {
+    g.strokeStyle = '#ff5050';
+    g.lineWidth = 2;
+    for (const d of decorOf(map)) for (const r of d.foot) g.strokeRect(px(r.x) + 1, py(r.y) + 1, r.w * s - 2, r.h * s - 2);
+    g.lineWidth = 1;
+  }
   if (ghost) {
     g.fillStyle = ghost.colour;
     g.globalAlpha = 0.45;
@@ -166,6 +212,23 @@ function drawObject(g: CanvasRenderingContext2D, map: AreaMap, o: EditObj, px: (
     g.strokeStyle = '#7fe07a';
     g.strokeRect(x, y, w, h);
     g.setLineDash([]);
+  } else if (o.kind === 'scenery') {
+    const d = decorOf(map).find((x) => x.id === o.id);
+    const img = d ? images.get(artUrl(d.art)) : null;
+    if (d && img) {
+      const dw = d.w * s;
+      const dh = d.h !== null ? d.h * s : (img.naturalHeight / img.naturalWidth) * dw;
+      g.save();
+      g.translate(px(d.x), py(d.y));
+      g.rotate((d.rotate * Math.PI) / 180);
+      g.scale(d.flip ? -1 : 1, 1);
+      g.globalAlpha = d.mode === 'cover' ? 0.8 : 1;
+      g.drawImage(img, -dw / 2, -dh * (1 - d.anchorY), dw, dh);
+      g.restore();
+    } else {
+      g.fillStyle = `${colour}aa`;
+      g.fillRect(x, y, w, h);
+    }
   } else if (o.kind === 'props') {
     const prop = PROPS[map.props[Number(o.id)]!.prop];
     const img = prop ? images.get(artUrl(prop.art)) : null;

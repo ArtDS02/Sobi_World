@@ -1129,5 +1129,16 @@
     "tips/tip_mountain_peak/textVi": "Every hit taken fills a fighter's Rage. With full Rage it can unleash its Ultimate, once a battle. Rage carries over between battles, so saving it for the boss is often wise.",
     "tips/tip_ruins_gate/titleVi": "Tip: Doom",
     "tips/tip_ruins_gate/textVi": "Enemies of the Ruins can cast Doom: three turns, then an instant knock-out. Only Cleanse, First Light or Auto-Revive can save you: bring a Support friend."
+  },
+  "adventure/scenery.json": {
+    "assets/decor_forest_oak/nameVi": "Oak",
+    "assets/decor_forest_fir/nameVi": "Fir",
+    "assets/decor_forest_blossom/nameVi": "Blossom tree",
+    "assets/decor_forest_bushes/nameVi": "Bushes",
+    "assets/decor_forest_rocks/nameVi": "Forest rocks",
+    "assets/decor_forest_stumps/nameVi": "Stumps",
+    "assets/decor_forest_oak_giant/nameVi": "Ancient oak",
+    "assets/decor_forest_stone_ring/nameVi": "Stone ring",
+    "assets/decor_forest_canopy/nameVi": "Canopy cover"
   }
 }

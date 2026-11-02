@@ -98,6 +98,7 @@ export const CONTENT_FILES: readonly ContentFileDef[] = [
   def('adventure/zones.json', 'adventure', '🌲', 'Vùng phiêu lưu', 'Khu của vùng, bảng loot, sự kiện nhỏ', s('adventure', 'zones'), 'zonesFileSchema'),
   def('adventure/maps.json', 'adventure', '🗺️', 'Bản đồ khu', 'Lưới ô, vật, quái, rương, cổng (vẽ trực quan ở trang Bản đồ khu)', s('adventure', 'maps'), 'mapsFileSchema'),
   def('adventure/props.json', 'adventure', '🌳', 'Vật trên bản đồ', 'Footprint (ô), ảnh, tỉ lệ vẽ', s('adventure', 'maps'), 'propsFileSchema'),
+  page('adventure/scenery.json', 'adventure', '🌲', 'Thư viện asset trang trí', 'Trang riêng: ảnh, tên hai thứ tiếng, cỡ, ô chặn, cách đứng', '#/adventure-assets'),
   def('adventure/equipment.json', 'adventure', '🗡️', 'Trang bị', 'Chỉ số, cấp, affinity hệ / trạng thái, kháng', s('adventure', 'equipment'), 'equipmentFileSchema'),
   def('adventure/engagement.json', 'adventure', '🌀', 'Nhịp chơi & Vết Nứt', 'Thắng nhanh, biến thể quái, Vết Nứt Umbraflux, cộng hưởng dòng, danh hiệu, câu nói, mẹo', s('adventure', 'engagement'), 'engagementFileSchema'),
   def('adventure/workshop.json', 'adventure', '⚒️', 'Cửa hàng, Lò Rèn & sách KN', 'Sách kinh nghiệm, giá cửa hàng Phiêu lưu, công thức Lò Rèn', s('adventure', 'workshop'), 'workshopFileSchema'),

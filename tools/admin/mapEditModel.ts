@@ -4,14 +4,14 @@
 // the editor's zoom only changes the drawing. Undo / redo keep whole copies of the area (an area is a few kB).
 import { DEFAULT_SPAWN } from '../../content/schemas/adventure/maps';
 import type { AreaMap } from '../../src/areas/adventure/logic/config/content';
-import { PROPS } from '../../src/areas/adventure/logic/config/content';
+import { DECOR, PROPS } from '../../src/areas/adventure/logic/config/content';
 import { savedMapIds } from '../../scripts/admin/mapIds';
 import { freeId } from './mapModel';
 
 /** The lists of rows with an id and a tile on an area. */
 export const ROW_LISTS = ['exits', 'groups', 'chests', 'nodes', 'gates', 'covers', 'puzzles', 'springs', 'npcs', 'lore', 'spawns'] as const;
 export type RowList = (typeof ROW_LISTS)[number];
-export type ObjKind = RowList | 'spawn' | 'portal' | 'shrine' | 'props';
+export type ObjKind = RowList | 'spawn' | 'portal' | 'shrine' | 'props' | 'scenery';
 
 /** One object on the grid: `id` = its row id (`spawn_default` / the area id for the spawn / portal, the index for a prop). */
 export interface ObjRef {
@@ -44,6 +44,7 @@ export const OBJ_LABEL: Record<ObjKind, string> = {
   npcs: 'Người lữ hành',
   lore: 'Bia lore',
   props: 'Vật trang trí (ô)',
+  scenery: 'Asset trang trí',
 };
 
 const SIZABLE = new Set<ObjKind>(['exits', 'gates', 'covers']);
@@ -53,10 +54,32 @@ export const refKey = (r: ObjRef) => `${r.kind}:${r.id}`;
 type Row = { id: string; x: number; y: number; w?: number; h?: number };
 const rowsOf = (map: AreaMap, kind: RowList): Row[] => (map[kind] ?? []) as Row[];
 
-/** Every object of an area, bottom first (covers, props, exits… the spawn last): drawn in this order, hit from the top. */
+/**
+ * The box of a decoration in whole tiles, for picking and moving: as wide as drawn, as tall as drawn (or as wide, when its height
+ * follows the picture), standing on its foot.
+ */
+export function decorBox(d: NonNullable<AreaMap['scenery']>[number]): { x: number; y: number; w: number; h: number } {
+  const w = d.w ?? DECOR[d.asset]?.w ?? 1;
+  const h = d.h ?? w;
+  const x = Math.floor(d.x - w / 2);
+  const y = Math.floor(d.y - h);
+  return { x, y, w: Math.max(1, Math.ceil(d.x + w / 2) - x), h: Math.max(1, Math.ceil(d.y) - y) };
+}
+
+const DECOR_ORDER = { normal: 0, occluder: 1, foreground: 2, cover: 3 } as const;
+
+/** Every object of an area, bottom first (decorations on the ground, covers, props, exits… the spawn, the decorations over all): drawn in
+ * this order, hit from the top. */
 export function objectsOf(map: AreaMap): EditObj[] {
   const out: EditObj[] = [];
   const add = (kind: ObjKind, id: string, x: number, y: number, w = 1, h = 1) => out.push({ kind, id, x, y, w, h, sizable: SIZABLE.has(kind) });
+  const decor = [...(map.scenery ?? [])].map((d) => ({ d, mode: d.mode ?? DECOR[d.asset]?.mode ?? 'occluder' }));
+  const addDecor = (keep: (mode: keyof typeof DECOR_ORDER) => boolean) =>
+    decor.filter((x) => keep(x.mode)).sort((a, b) => a.d.y - b.d.y).forEach(({ d }) => {
+      const b = decorBox(d);
+      add('scenery', d.id, b.x, b.y, b.w, b.h);
+    });
+  addDecor((m) => m === 'normal');
   for (const c of map.covers) add('covers', c.id, c.x, c.y, c.w, c.h);
   map.props.forEach((p, i) => add('props', String(i), p.x, p.y, PROPS[p.prop]?.w ?? 1, PROPS[p.prop]?.h ?? 1));
   for (const e of map.exits) add('exits', e.id, e.x, e.y, e.w, e.h);
@@ -64,8 +87,10 @@ export function objectsOf(map: AreaMap): EditObj[] {
   add('portal', map.id, map.portal.x, map.portal.y, 2, 2);
   if (map.shrine) add('shrine', map.shrine.id, map.shrine.x, map.shrine.y, 2, 2);
   for (const kind of ['chests', 'nodes', 'puzzles', 'springs', 'npcs', 'lore', 'groups'] as const) for (const r of rowsOf(map, kind)) add(kind, r.id, r.x, r.y);
+  addDecor((m) => m === 'occluder');
   for (const s of map.spawns ?? []) add('spawns', s.id, s.x, s.y);
   add('spawn', DEFAULT_SPAWN, map.spawn.x, map.spawn.y);
+  addDecor((m) => DECOR_ORDER[m] >= 2);
   return out;
 }
 
@@ -99,6 +124,8 @@ export function setBox(map: AreaMap, ref: ObjRef, box: { x: number; y: number; w
     if (map.shrine) map.shrine = { ...map.shrine, x, y };
   }
   else if (ref.kind === 'props') map.props = map.props.map((p, i) => (String(i) === ref.id ? { ...p, x, y } : p));
+  // A decoration moves by the same whole tiles as its box and keeps its fraction.
+  else if (ref.kind === 'scenery') map.scenery = map.scenery?.map((d) => (d.id === ref.id ? { ...d, x: d.x + (x - o.x), y: d.y + (y - o.y) } : d));
   else {
     const row = rowsOf(map, ref.kind).find((r) => r.id === ref.id)!;
     Object.assign(row, { x, y }, o.sizable ? { w, h } : {});
@@ -142,6 +169,10 @@ export function removeObjects(map: AreaMap, refs: readonly ObjRef[], published: 
     const no = cannotRemove(ref, map, published, landedOn);
     if (no) why.push(no);
     else if (ref.kind === 'shrine') delete map.shrine;
+    else if (ref.kind === 'scenery') {
+      map.scenery = map.scenery?.filter((d) => d.id !== ref.id);
+      if (map.scenery?.length === 0) delete map.scenery;
+    }
     else if (ref.kind !== 'spawn' && ref.kind !== 'portal') {
       const list = map[ref.kind] as Row[] | undefined;
       if (list) (map as unknown as Record<string, Row[]>)[ref.kind] = list.filter((r) => r.id !== ref.id);
@@ -184,9 +215,26 @@ export function duplicateObject(map: AreaMap, ref: ObjRef, at: Tile, taken: Set<
     map.props.push({ ...p, x: at.x, y: at.y });
     return { kind: 'props', id: String(map.props.length - 1) };
   }
+  if (ref.kind === 'scenery') {
+    const d = map.scenery?.find((x) => x.id === ref.id);
+    const box = d && decorBox(d);
+    return d && box ? addDecor(map, d.asset, { x: d.x + (at.x - box.x), y: d.y + (at.y - box.y) }, taken, d) : null;
+  }
   if (!(ADDABLE as readonly string[]).includes(ref.kind)) return null;
   const row = (map[ref.kind as Addable] as (Row & Record<string, unknown>)[] | undefined)?.find((r) => r.id === ref.id);
   return row ? addRow(map, ref.kind as Addable, row, at, taken) : null;
+}
+
+/**
+ * A decoration of the library on the area, its foot at `foot` (tiles; snapped to half tiles), copying `like` (another placement's
+ * size, turn, stance…) when given. Returns its ref.
+ */
+export function addDecor(map: AreaMap, asset: string, foot: { x: number; y: number }, taken: Set<string>, like?: NonNullable<AreaMap['scenery']>[number]): ObjRef {
+  const id = freeId('scn', `${map.id.replace(/^map_/, '')}_${(map.scenery?.length ?? 0) + 1}`, new Set([...taken, ...(map.scenery ?? []).map((d) => d.id)]));
+  taken.add(id);
+  const half = (v: number) => Math.round(v * 2) / 2;
+  map.scenery = [...(map.scenery ?? []), { ...(like ? structuredClone(like) : {}), id, asset, x: half(foot.x), y: half(foot.y) }];
+  return { kind: 'scenery', id };
 }
 
 /** A new overhead cover (a hidden way) over a rectangle of tiles. */

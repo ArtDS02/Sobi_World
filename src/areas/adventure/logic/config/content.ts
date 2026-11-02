@@ -12,6 +12,7 @@ import equipmentRaw from '../../../../../content/adventure/equipment.json';
 import lineagesRaw from '../../../../../content/adventure/lineages.json';
 import mapsRaw from '../../../../../content/adventure/maps.json';
 import propsRaw from '../../../../../content/adventure/props.json';
+import sceneryRaw from '../../../../../content/adventure/scenery.json';
 import reactionsRaw from '../../../../../content/adventure/reactions.json';
 import skillsRaw from '../../../../../content/adventure/skills.json';
 import statusesRaw from '../../../../../content/adventure/statuses.json';
@@ -26,6 +27,7 @@ import { engagementFileSchema } from '../../../../../content/schemas/adventure/e
 import { equipmentFileSchema } from '../../../../../content/schemas/adventure/equipment';
 import { lineagesFileSchema } from '../../../../../content/schemas/adventure/lineages';
 import { mapsFileSchema, propsFileSchema } from '../../../../../content/schemas/adventure/maps';
+import { sceneryFileSchema } from '../../../../../content/schemas/adventure/scenery';
 import { elementsFileSchema, reactionsFileSchema, statusesFileSchema } from '../../../../../content/schemas/adventure/rules';
 import { skillsFileSchema } from '../../../../../content/schemas/adventure/skills';
 import { workshopFileSchema } from '../../../../../content/schemas/adventure/workshop';
@@ -52,6 +54,7 @@ export const ADVENTURE_CONTENT = {
   zones: loadContent('adventure/zones.json', zonesFileSchema, zonesRaw),
   maps: loadContent('adventure/maps.json', mapsFileSchema, mapsRaw),
   props: loadContent('adventure/props.json', propsFileSchema, propsRaw),
+  scenery: loadContent('adventure/scenery.json', sceneryFileSchema, sceneryRaw),
   equipment: loadContent('adventure/equipment.json', equipmentFileSchema, equipmentRaw),
   engagement: loadContent('adventure/engagement.json', engagementFileSchema, engagementRaw),
   workshop: loadContent('adventure/workshop.json', workshopFileSchema, workshopRaw),
@@ -172,6 +175,10 @@ export const MAPS = Object.fromEntries(MAP_LIST.map((m) => [m.id, m])) as Record
 export const PROP_LIST = ADVENTURE_CONTENT.props.props;
 export type PropRow = (typeof PROP_LIST)[number];
 export const PROPS = Object.fromEntries(PROP_LIST.map((p) => [p.id, p])) as Record<string, PropRow>;
+/** The shared decoration library (decision 047): what a placed decoration's picture, size, foot and stance are by default. */
+export const DECOR_LIST = ADVENTURE_CONTENT.scenery.assets;
+export type DecorAsset = (typeof DECOR_LIST)[number];
+export const DECOR = Object.fromEntries(DECOR_LIST.map((d) => [d.id, d])) as Record<string, DecorAsset>;
 
 /** The zone an area belongs to. */
 export const zoneOfMap = (mapId: string): Zone | undefined => ZONES[MAPS[mapId]?.zoneId ?? ''];
@@ -280,5 +287,6 @@ export function contentProblems(): string[] {
     if (t.kind === 'nightmare' && t.target && !RIFT.nightmares.some((n) => n.enemy === t.target)) problems.push(`title ${t.id}: ${t.target} is no Nightmare boss`);
   }
   for (const t of ENGAGEMENT.tips) need(`tip ${t.id}`, t.mapId, MAPS);
+  for (const m of MAP_LIST) for (const d of m.scenery ?? []) need(`${m.id} decoration ${d.id}`, d.asset, DECOR);
   return problems;
 }
