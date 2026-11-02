@@ -89,7 +89,7 @@ function sideHtml(data: M.BuilderData, edges: NetEdge[], warnings: ReturnType<ty
     detail = `<h4>${esc(m.nameVi)}</h4><p class="mono muted">${m.id}</p>
       <p>${esc(data.zones.find((z) => z.id === m.zoneId)?.nameVi ?? m.zoneId)} · ${m.cols}×${m.rows} · ${M.STATUS_LABEL[status]}<br>${m.exits.length} lối ra · ${ins} map dẫn tới</p>
       <div class="toolbar"><button class="btn btn-small" data-do="exits">Lối ra</button><button class="btn btn-small" data-do="spawns">Điểm xuất hiện</button>
-      ${status === 'published' || status === 'changed' ? `<a class="btn btn-small" href="#/adventure-maps/${m.id}">Bản đồ khu</a>` : ''}<a class="btn btn-small" href="#/adventure-world">Quản lý map</a></div>`;
+<a class="btn btn-small" href="#/adventure-editor/${m.id}">Map Editor</a><a class="btn btn-small" href="#/adventure-world">Quản lý map</a></div>`;
   } else if (sel?.kind === 'edge') {
     const e = edges.find((x) => x.key === sel.key)!;
     detail = `<h4>${esc(name(e.a))} ↔ ${esc(name(e.b))}</h4>

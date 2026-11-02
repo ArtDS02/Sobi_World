@@ -1,5 +1,5 @@
 // Map Builder (decision 047): the pure model of "Quản lý map" (new areas, copies, references, status; GĐ2), the spawn points exits land
-// on (GĐ3), the connections between areas (GĐ4), the map network (GĐ5), the save-held ids a content save may never drop, and the draft store of the dev API (in a throw-away folder).
+// on (GĐ3), the connections between areas (GĐ4), the map network (GĐ5), the editor's operations (GĐ6), the save-held ids a content save may never drop, and the draft store of the dev API (in a throw-away folder).
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -11,6 +11,7 @@ import { mapGraphProblems } from '../../src/areas/adventure/logic/mapGraph';
 import { mapProblems } from '../../src/areas/adventure/logic/maps';
 import { deleteMapDraft, readDrafts, readMeta, saveMapDraft, saveMapMeta } from '../../scripts/admin/mapDrafts';
 import { savedIdProblems, savedMapIds } from '../../scripts/admin/mapIds';
+import * as E from '../../tools/admin/mapEditModel';
 import * as L from '../../tools/admin/mapLinks';
 import * as M from '../../tools/admin/mapModel';
 import * as N from '../../tools/admin/mapNetwork';
@@ -309,5 +310,84 @@ describe('map network', () => {
     // Landing on a spawn A does not have.
     go.arrive = 'spawn_gone';
     expect(N.networkWarnings(d).some((w) => w.exitId === go.id && w.level === 'error')).toBe(true);
+  });
+});
+
+describe('map editor model', () => {
+  const area = () => structuredClone(MAPS.map_forest_deep!);
+
+  it('lists every object once, hits the top one, and selects by rectangle', () => {
+    const m = area();
+    const objs = E.objectsOf(m);
+    const count = m.covers.length + m.props.length + m.exits.length + m.gates.length + 1 + (m.shrine ? 1 : 0) + m.chests.length + m.nodes.length + m.puzzles.length + m.springs.length + m.npcs.length + m.lore.length + m.groups.length + (m.spawns?.length ?? 0) + 1;
+    expect(objs).toHaveLength(count);
+    expect(E.objectAt(m, m.spawn.x, m.spawn.y)!.kind).toBe('spawn');
+    const chest = m.chests[0]!;
+    expect(E.objectAt(m, chest.x, chest.y)).toMatchObject({ kind: 'chests', id: chest.id });
+    expect(E.objectsIn(m, chest.x - 1, chest.y - 1, chest.x + 1, chest.y + 1).some((o) => o.id === chest.id)).toBe(true);
+  });
+
+  it('moves, resizes and duplicates objects in the game grid, keeping a group inside the area', () => {
+    const m = area();
+    const gate = m.gates[0]!;
+    E.setBox(m, { kind: 'gates', id: gate.id }, { x: 5, y: 6, w: 3, h: 2 });
+    expect(m.gates[0]).toMatchObject({ x: 5, y: 6, w: 3, h: 2 });
+    E.setBox(m, { kind: 'chests', id: m.chests[0]!.id }, { x: 9999, y: -5 });
+    expect(m.chests[0]).toMatchObject({ x: m.cols - 1, y: 0 });
+    const refs = [{ kind: 'chests' as const, id: m.chests[0]!.id }, { kind: 'spawn' as const, id: 'spawn_default' }];
+    const before = m.spawn.x;
+    E.moveObjects(m, refs, 50, 0); // the chest is at the right edge: nothing moves
+    expect(m.spawn.x).toBe(before);
+    const taken = M.thingIds(MAP_LIST);
+    const copy = E.duplicateObject(m, { kind: 'chests', id: m.chests[1]!.id }, { x: 3, y: 3 }, taken)!;
+    expect(copy.id).toMatch(/^chest_forest_deep_/);
+    expect(m.chests.find((c) => c.id === copy.id)).toMatchObject({ x: 3, y: 3, table: m.chests[1]!.table });
+    expect(E.duplicateObject(m, { kind: 'portal', id: m.id }, { x: 1, y: 1 }, taken)).toBeNull();
+  });
+
+  it('removes only what no save holds and nothing points at', () => {
+    const m = area();
+    const pub = MAPS.map_forest_deep!;
+    const why = E.removeObjects(m, [{ kind: 'chests', id: m.chests[0]!.id }, { kind: 'portal', id: m.id }], pub);
+    expect(why).toHaveLength(2);
+    expect(m.chests).toHaveLength(pub.chests.length);
+    const copy = E.duplicateObject(m, { kind: 'springs', id: m.springs[0]!.id }, { x: 3, y: 3 }, M.thingIds(MAP_LIST))!;
+    expect(E.removeObjects(m, [copy], pub)).toEqual([]);
+    expect(m.springs.some((s) => s.id === copy.id)).toBe(false);
+    const used = m.spawns![0]!.id;
+    expect(E.removeObjects(m, [{ kind: 'spawns', id: used }], pub, new Set([used]))[0]).toMatch(/lối ra/);
+    const props = m.props.length;
+    E.removeObjects(m, [{ kind: 'props', id: '0' }], pub);
+    expect(m.props).toHaveLength(props - 1);
+  });
+
+  it('paints ground by stroke, rectangle and flood, and heights on painted areas', () => {
+    const m = M.blankMap({ id: 'map_paint', nameVi: 'Tô', zoneId, cols: 20, rows: 12 });
+    E.paintTerrain(m, E.strokeTiles({ x: 2, y: 2 }, { x: 6, y: 2 }, 1), '~');
+    expect(m.terrain[2]!.slice(2, 7)).toBe('~~~~~');
+    E.paintTerrain(m, E.rectTiles({ x: 10, y: 8 }, { x: 8, y: 6 }), ',');
+    expect(m.terrain[7]!.slice(8, 11)).toBe(',,,');
+    expect(E.floodTiles(m, { x: 4, y: 2 })).toHaveLength(5);
+    expect(E.strokeTiles({ x: 0, y: 0 }, { x: 0, y: 0 }, 3)).toHaveLength(9);
+    expect(mapSchema.safeParse(m).success).toBe(true);
+    expect(E.paintElevation(m, [{ x: 1, y: 1 }], 4)).toBe(false);
+    const painted = area();
+    expect(E.paintElevation(painted, [{ x: 1, y: 1 }], 12)).toBe(true);
+    expect(painted.scene!.elevation![1]![1]).toBe('9');
+  });
+
+  it('undoes and redoes whole copies', () => {
+    const h = new E.EditHistory<{ n: number }>(2);
+    let s = { n: 0 };
+    for (const n of [1, 2, 3]) {
+      h.record(s);
+      s = { n };
+    }
+    s = h.undo(s)!;
+    s = h.undo(s)!;
+    expect(s.n).toBe(1);
+    expect(h.undo(s)).toBeNull(); // only 2 kept
+    s = h.redo(s)!;
+    expect(s.n).toBe(2);
   });
 });

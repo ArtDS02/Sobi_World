@@ -142,7 +142,7 @@ function rowHtml(data: M.BuilderData, s: M.MapSummary): string {
     <td>${check}</td>
     <td><small>${s.updatedAt ? esc(new Date(s.updatedAt).toLocaleString('vi-VN')) : '—'}</small></td>
     <td class="mapm__acts">
-      ${published ? `<a class="btn btn-small" href="#/adventure-maps/${s.id}">Sửa</a>` : btn('edit', 'Sửa', 'disabled title="Editor cho bản nháp: Map Builder GĐ6"')}
+      <a class="btn btn-small btn-primary" href="#/adventure-editor/${s.id}">Sửa</a>
       ${btn('exits', 'Lối ra')}${btn('spawns', 'Điểm xuất hiện')}${btn('copy', 'Nhân bản')}${btn('rename', 'Đổi tên')}
       ${published ? '' : btn('toggle', s.status === 'disabled' ? 'Bật' : 'Tắt')}
       ${s.status === 'published' ? '' : btn('delete', s.status === 'changed' ? 'Bỏ nháp' : 'Xoá')}
