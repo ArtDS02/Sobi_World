@@ -24,6 +24,10 @@ export const CHEST_TYPES = ['wood', 'silver', 'gold', 'hidden'] as const;
 export const EXIT_LOCKS = ['guardian', 'shortcut'] as const;
 /** How an exit looks: a teleport gate (default), a trail through trees, a cave mouth, a bridge, stairs, a shore, a tunnel. */
 export const EXIT_KINDS = ['gate', 'trail', 'cave', 'bridge', 'stairs', 'shore', 'tunnel'] as const;
+/** How the party faces. */
+export const FACINGS = ['up', 'down', 'left', 'right'] as const;
+/** The id of an area's own spawn (`map.spawn`) when an exit lands on it (decision 047). */
+export const DEFAULT_SPAWN = 'spawn_default';
 
 const cell = { x: z.number().int().min(0), y: z.number().int().min(0) };
 const id = (prefix: string) => z.string().regex(new RegExp(`^${prefix}_[a-z0-9_]+$`));
@@ -83,8 +87,13 @@ export const mapSchema = z.strictObject({
   cols: posInt,
   rows: posInt,
   terrain: z.array(z.string()),
-  /** Where the party stands when it arrives by the portal (or from the camp). */
+  /** Where the party stands when it arrives by the portal (or from the camp); exits name it `spawn_default`. */
   spawn: point,
+  /**
+   * Named arrival points (decision 047): where the party lands coming in by an exit (`exits[].arrive` of the area it comes from), how it
+   * faces then. The game reads the exit's own `arriveX/Y`; these keep the arrivals named and the same for every exit using them.
+   */
+  spawns: z.array(z.strictObject({ id: id('spawn'), nameVi: text, ...cell, facing: z.enum(FACINGS).optional() })).optional(),
   /** Top-left tile of the 2×2 portal. */
   portal: point,
   /**
@@ -102,8 +111,10 @@ export const mapSchema = z.strictObject({
       arriveX: z.number().int(),
       arriveY: z.number().int(),
       lock: z.enum(EXIT_LOCKS).optional(),
-      facing: z.enum(['up', 'down', 'left', 'right']).optional(),
+      facing: z.enum(FACINGS).optional(),
       kind: z.enum(EXIT_KINDS).optional(),
+      /** The spawn of `to` it lands on (decision 047): `arriveX/Y` and `facing` must then be that spawn's (the builder writes them). */
+      arrive: id('spawn').optional(),
     }),
   ),
   props: z.array(z.strictObject({ prop: id('prop_adv'), ...cell })),
@@ -143,8 +154,26 @@ export const mapSchema = z.strictObject({
     .optional(),
 });
 
+type MapRow = z.infer<typeof mapSchema>;
+
+/** A named spawn of an area: `spawn_default` is the area's own spawn. */
+export function spawnIn(map: Pick<MapRow, 'spawn' | 'spawns'>, spawnId: string): { x: number; y: number; facing?: (typeof FACINGS)[number] } | undefined {
+  return spawnId === DEFAULT_SPAWN ? map.spawn : map.spawns?.find((s) => s.id === spawnId);
+}
+
+/** An exit naming its spawn lands exactly there (decision 047): the spawn exists, `arriveX/Y` and `facing` are its own. */
+export function arrivalProblems(e: MapRow['exits'][number], dest: Pick<MapRow, 'id' | 'spawn' | 'spawns'>): string[] {
+  if (!e.arrive) return [];
+  const s = spawnIn(dest, e.arrive);
+  if (!s) return [`exit ${e.id} lands on spawn ${e.arrive}, which ${dest.id} does not have`];
+  const out: string[] = [];
+  if (s.x !== e.arriveX || s.y !== e.arriveY) out.push(`exit ${e.id} lands at ${e.arriveX},${e.arriveY} but its spawn ${e.arrive} is at ${s.x},${s.y}`);
+  if (s.facing && s.facing !== e.facing) out.push(`exit ${e.id} faces ${e.facing ?? '(default)'} but its spawn ${e.arrive} faces ${s.facing}`);
+  return out;
+}
+
 /** The grid of one area against its size: rows × cols of known tiles, the elevation the same size (also run on a builder draft). */
-export function mapShapeProblems(m: Pick<z.infer<typeof mapSchema>, 'id' | 'cols' | 'rows' | 'terrain' | 'scene'>): string[] {
+export function mapShapeProblems(m: Pick<MapRow, 'id' | 'cols' | 'rows' | 'terrain' | 'scene' | 'spawns'>): string[] {
   const out: string[] = [];
   if (m.terrain.length !== m.rows) out.push(`${m.id}: ${m.terrain.length} terrain rows, expected ${m.rows}`);
   m.terrain.forEach((row, y) => {
@@ -154,6 +183,11 @@ export function mapShapeProblems(m: Pick<z.infer<typeof mapSchema>, 'id' | 'cols
   });
   const elevation = m.scene?.elevation;
   if (elevation && (elevation.length !== m.rows || elevation.some((row) => row.length !== m.cols))) out.push(`${m.id}: scene.elevation must be ${m.rows} rows of ${m.cols}`);
+  const spawnIds = new Set<string>();
+  for (const sp of m.spawns ?? []) {
+    if (sp.id === DEFAULT_SPAWN || spawnIds.has(sp.id)) out.push(`${m.id}: spawn ${sp.id} is taken`);
+    spawnIds.add(sp.id);
+  }
   return out;
 }
 
@@ -165,11 +199,14 @@ export const mapsFileSchema = z.strictObject({ maps: z.array(mapSchema).min(1) }
     for (const message of mapShapeProblems(m)) ctx.addIssue({ code: 'custom', message });
   }
   const exitIds = new Set<string>();
+  const byId = new Map(f.maps.map((m) => [m.id, m]));
   for (const m of f.maps) {
     for (const e of m.exits) {
       if (!ids.has(e.to)) ctx.addIssue({ code: 'custom', message: `${m.id}: exit to unknown map ${e.to}` });
       if (exitIds.has(e.id)) ctx.addIssue({ code: 'custom', message: `duplicate exit ${e.id}` });
       exitIds.add(e.id);
+      const dest = byId.get(e.to);
+      if (e.arrive && dest) for (const message of arrivalProblems(e, dest)) ctx.addIssue({ code: 'custom', message: `${m.id}: ${message}` });
     }
   }
 });

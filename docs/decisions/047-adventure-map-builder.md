@@ -24,3 +24,12 @@ Chủ dự án muốn tự xây thế giới Sobi Adventure trong Admin: tạo m
 - Map mới: trống (viền chặn, đất giữa, spawn + cổng dịch chuyển ở giữa) hoặc **từ mẫu** (nhân bản một map). Nhân bản đặt id mới cho mọi vật (`chest_<slug>_1`…), sửa câu đố trỏ theo cổng mới, **bỏ lối ra** (kết nối không sao chép — tránh lối một chiều ngoài ý muốn).
 - Map mới vào zone ở dạng **nhánh** (`zone.branches`) theo mặc định, vì đường chính có luật trùm / đi nhanh / bot.
 - Id map sinh từ tên (bỏ dấu), sửa được chỉ khi map chưa publish và chưa có lối ra nào trỏ tới.
+
+## Giai đoạn 3 (2026-11-02) — Điểm xuất hiện
+
+- `maps.json`: `spawns[]` (tùy chọn: `id` `spawn_*`, `nameVi`, ô, `facing`) và `exits[].arrive` (spawn của map đích). `spawn_default` = `map.spawn` (cổng dịch chuyển, từ Trại).
+- **Runtime không đổi:** game vẫn đọc `arriveX/Y` + `facing` của lối ra. Schema bắt khớp: lối ra có `arrive` thì spawn phải tồn tại, ô và hướng phải đúng của spawn. Builder ghi lại ô / hướng khi publish (`resolveArrivals`).
+- 50 điểm tới cũ của 18 map được đặt tên `spawn_from_<map nguồn>` bằng `scripts/content/nameArrivals.ts`: **cùng ô, cùng hướng** game đang quay (lối ra chưa có `facing` nay ghi rõ hướng mặc định cũ), nên không đổi gì khi chơi. Tên tiếng Anh "From <map>" vào `content/i18n/en.json`.
+- `mapProblems`: spawn phải đứng ô đi được, tới được, không trên nhóm quái; nhận `others` (map của builder) để kiểm điểm tới từ bản nháp.
+- Không làm "điều kiện xuất hiện" (spawn conditions): sẽ là luật gameplay mới, cần decision riêng.
+- Còn mở: spawn / map do Admin tạo cần tên tiếng Anh trước khi publish (test i18n) — làm ở bước Publish (GĐ7).

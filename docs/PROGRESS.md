@@ -10,6 +10,19 @@
 
 ## Nhật ký
 
+### 2026-11-02 — Adventure: Map Builder GĐ3 — Điểm xuất hiện (decision 047)
+✅ Đã làm:
+- `maps.json` thêm `spawns[]` (điểm tới có tên, hướng) và `exits[].arrive` (lối ra chọn điểm tới của map đích). Game vẫn đọc `arriveX/Y` của lối ra; schema chặn lệch giữa lối ra và điểm nó chọn.
+- 50 điểm tới cũ của 18 map được đặt tên `spawn_from_<map nguồn>` (cùng ô, cùng hướng — chơi không đổi) + tên tiếng Anh; script `scripts/content/nameArrivals.ts` chạy lại an toàn.
+- Admin → Quản lý map → nút **Điểm xuất hiện**: lưới map, chọn điểm rồi bấm lưới để dời, đổi tên / hướng, thêm, xoá (không xoá điểm có lối ra đang chọn), xem lối ra nào tới điểm nào, lỗi hiện ngay; lưu thành bản nháp.
+- `mapProblems` kiểm spawn (ô đi được, tới được, không trên quái); kiểm điểm tới từ cả bản nháp. Lưới map dùng chung `tools/admin/mapCanvas.ts`.
+
+🧪 `npm run check` xanh (1596 test; +5 test điểm xuất hiện). `check_live`: 18 map sạch, graph sạch. Chạy Admin thật: dời điểm lên vách → báo 2 lỗi (điểm + lối ra Bìa Rừng lệch) → dời lại hết lỗi; thêm điểm, lưu nháp, bỏ nháp. Dữ liệu thử đã dọn.
+
+⚠️ Tự quyết: lối ra cũ không có `facing` nay ghi rõ hướng mặc định (trái nếu ở mép trái, còn lại phải) — đúng như game đang quay. Không làm điều kiện xuất hiện (luật gameplay mới). Spawn / map tạo trong Admin cần tên tiếng Anh khi publish (GĐ7).
+
+➡️ GĐ4: lối ra / kết nối (nhiều lối, chọn map + điểm tới, khóa, một chiều / hai chiều, mở nhanh map đích).
+
 ### 2026-11-02 — Adventure: Map Builder GĐ2 — Quản lý map + kho nháp (decision 047)
 ✅ Đã làm:
 - Chủ dự án duyệt 6 điểm của audit + thêm chế độ chạy thử sau publish → decision 047.

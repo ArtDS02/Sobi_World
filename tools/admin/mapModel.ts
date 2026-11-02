@@ -1,6 +1,7 @@
 // Map Builder model (decision 047): the pure operations behind "Quản lý map" — the status of each area (published / draft / off), new
 // areas (blank or from a template), copies with fresh ids for everything a save may remember, the ways that lead into an area, and
 // whether its id may still change. The page and the dev API (scripts/admin/mapDrafts.ts) both go through these, so they are tested.
+import { DEFAULT_SPAWN, arrivalProblems, spawnIn } from '../../content/schemas/adventure/maps';
 import type { AreaMap, Zone } from '../../src/areas/adventure/logic/config/content';
 import { mapProblems } from '../../src/areas/adventure/logic/maps';
 
@@ -233,7 +234,8 @@ export interface MapSummary {
 }
 
 export function summaries(data: BuilderData): MapSummary[] {
-  return workingMaps(data).map((m) => ({
+  const working = workingMaps(data);
+  return working.map((m) => ({
     id: m.id,
     nameVi: m.nameVi,
     zoneId: m.zoneId,
@@ -243,8 +245,116 @@ export function summaries(data: BuilderData): MapSummary[] {
     status: statusOf(data, m.id),
     exitsOut: m.exits.length,
     exitsIn: referencesTo(data, m.id).length,
-    problems: mapProblems(m),
+    problems: [...mapProblems(m, working), ...arrivalMismatches(working, m)],
     updatedAt: data.meta[m.id]?.updatedAt ?? null,
     descriptionVi: data.meta[m.id]?.descriptionVi ?? '',
   }));
+}
+
+// ---- Spawn points (GĐ3) ---------------------------------------------------------------------------------------------------
+
+export type Facing = NonNullable<AreaMap['exits'][number]['facing']>;
+export type Exit = AreaMap['exits'][number];
+export type Spawn = NonNullable<AreaMap['spawns']>[number];
+
+/** How the game turns the party arriving by an exit with no `facing` (explore.ts `takeExit`). */
+export const arrivalFacing = (e: Exit): Facing => e.facing ?? (e.x <= 1 ? 'left' : 'right');
+
+/** Every arrival point of an area, its own spawn first (`spawn_default`: the portal and the camp land there, facing down). */
+export function spawnsOf(map: AreaMap): Spawn[] {
+  return [{ id: DEFAULT_SPAWN, nameVi: 'Mặc định (cổng dịch chuyển, từ Trại)', x: map.spawn.x, y: map.spawn.y, facing: 'down' }, ...(map.spawns ?? [])];
+}
+
+/** An exit of another area that lands in `mapId`. */
+export interface Arrival {
+  from: string;
+  fromName: string;
+  exit: Exit;
+}
+
+/** The exits of `maps` that land in `mapId`. */
+export function arrivalsInto(maps: readonly AreaMap[], mapId: string): Arrival[] {
+  return maps.flatMap((m) => m.exits.filter((e) => e.to === mapId).map((exit) => ({ from: m.id, fromName: m.nameVi, exit })));
+}
+
+/** The arrivals that land on a spawn: named for it, or (unnamed) on its tile. */
+export const arrivalsOn = (arrivals: readonly Arrival[], sp: Spawn): Arrival[] =>
+  arrivals.filter((a) => (a.exit.arrive ? a.exit.arrive === sp.id : a.exit.arriveX === sp.x && a.exit.arriveY === sp.y && sp.id !== DEFAULT_SPAWN));
+
+/** The problems of the exits landing in `map` against its spawns (missing spawn, moved spawn). */
+export function arrivalMismatches(maps: readonly AreaMap[], map: AreaMap): string[] {
+  return arrivalsInto(maps, map.id).flatMap((a) => arrivalProblems(a.exit, map).map((p) => `${a.from}: ${p}`));
+}
+
+/**
+ * Exits that name a spawn take its tile and facing (the publish step, and after a spawn moves). Returns new rows for the areas that
+ * changed and the ids of the exits that moved; an exit whose spawn is gone stays as it was (validation reports it).
+ */
+export function resolveArrivals(maps: readonly AreaMap[]): { maps: AreaMap[]; moved: string[] } {
+  const byId = new Map(maps.map((m) => [m.id, m]));
+  const moved: string[] = [];
+  const out = maps.map((m) => {
+    let changed = false;
+    const exits = m.exits.map((e) => {
+      const dest = byId.get(e.to);
+      const sp = e.arrive && dest ? spawnIn(dest, e.arrive) : undefined;
+      if (!sp) return e;
+      const facing = sp.facing ?? e.facing;
+      if (sp.x === e.arriveX && sp.y === e.arriveY && facing === e.facing) return e;
+      changed = true;
+      moved.push(e.id);
+      return { ...e, arriveX: sp.x, arriveY: sp.y, ...(facing ? { facing } : {}) };
+    });
+    return changed ? { ...m, exits } : m;
+  });
+  return { maps: out, moved };
+}
+
+/**
+ * Names every unnamed arrival (the content before decision 047): each exit landing in an area gets a spawn there,
+ * `spawn_from_<source>` at its tile, facing as the game turns it now — exits from one area to the same tile share it. Nothing moves
+ * and nobody turns differently: the exit keeps its tile and gets the facing it already had.
+ */
+export function nameArrivals(maps: readonly AreaMap[]): AreaMap[] {
+  const out = maps.map((m) => structuredClone(m));
+  const byId = new Map(out.map((m) => [m.id, m]));
+  for (const src of out) {
+    for (const e of src.exits) {
+      const dest = byId.get(e.to);
+      if (e.arrive || !dest) continue;
+      const facing = arrivalFacing(e);
+      const spawns = (dest.spawns ??= []);
+      let sp = spawns.find((s) => s.x === e.arriveX && s.y === e.arriveY && s.facing === facing);
+      if (!sp) {
+        sp = { id: freeId('spawn', `from_${src.id.replace(/^map_/, '')}`, new Set(spawns.map((s) => s.id))), nameVi: `Từ ${src.nameVi}`, x: e.arriveX, y: e.arriveY, facing };
+        spawns.push(sp);
+      }
+      e.arrive = sp.id;
+      e.facing = facing;
+    }
+  }
+  return out;
+}
+
+/** A new named spawn on the area's own spawn tile (moved after): `spawn_<name>`, free within the area. */
+export function addSpawn(map: AreaMap, nameVi: string): Spawn {
+  const sp: Spawn = { id: freeId('spawn', slugOf(nameVi), new Set([DEFAULT_SPAWN, ...(map.spawns ?? []).map((s) => s.id)])), nameVi, x: map.spawn.x, y: map.spawn.y, facing: 'down' };
+  map.spawns = [...(map.spawns ?? []), sp];
+  return sp;
+}
+
+/** Moves a spawn (`spawn_default` = the area's own spawn) to a tile. */
+export function moveSpawn(map: AreaMap, id: string, x: number, y: number) {
+  if (id === DEFAULT_SPAWN) map.spawn = { x, y };
+  else map.spawns = (map.spawns ?? []).map((s) => (s.id === id ? { ...s, x, y } : s));
+}
+
+/** Drops a named spawn unless an exit lands on it by name (that exit would point at nothing): returns why not, or null. */
+export function removeSpawn(map: AreaMap, id: string, arrivals: readonly Arrival[]): string | null {
+  if (id === DEFAULT_SPAWN) return 'Điểm mặc định không xoá được';
+  const users = arrivals.filter((a) => a.exit.arrive === id);
+  if (users.length) return `Đang có lối ra dẫn tới điểm này: ${users.map((a) => `${a.fromName} · ${a.exit.id}`).join(', ')}`;
+  map.spawns = (map.spawns ?? []).filter((s) => s.id !== id);
+  if (map.spawns.length === 0) delete map.spawns;
+  return null;
 }

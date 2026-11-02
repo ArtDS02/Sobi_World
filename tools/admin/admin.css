@@ -285,3 +285,8 @@ img.is-missing { visibility: hidden; }
 .mapm__status--ok { background: #dff3df; color: #256b2a; }
 .mapm__status--new { background: #e8e1fb; color: #4b2fa0; }
 .mapm__status--warn { background: #fbefd6; color: #8a5a00; }
+.mspawn { display: grid; grid-template-columns: minmax(0, 3fr) minmax(260px, 2fr); gap: 14px; align-items: start; }
+.mspawn__grid canvas { max-width: 100%; cursor: crosshair; image-rendering: pixelated; border-radius: 6px; }
+.mspawn__side { display: grid; gap: 8px; max-height: 70vh; overflow-y: auto; }
+.mspawn__row { padding: 8px; border: 1px solid var(--line, #4443); border-radius: 8px; cursor: pointer; display: grid; gap: 4px; }
+.mspawn__row.is-selected { border-color: #ff2fd0; box-shadow: 0 0 0 1px #ff2fd0; }

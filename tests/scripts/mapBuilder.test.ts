@@ -1,11 +1,11 @@
-// Map Builder GĐ2 (decision 047): the pure model of "Quản lý map" (new areas, copies, references, status), the save-held ids a content
-// save may never drop, and the draft store of the dev API (in a throw-away folder).
+// Map Builder (decision 047): the pure model of "Quản lý map" (new areas, copies, references, status; GĐ2), the spawn points exits land
+// on (GĐ3), the save-held ids a content save may never drop, and the draft store of the dev API (in a throw-away folder).
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import * as mapsSchemaModule from '../../content/schemas/adventure/maps';
-import { mapSchema } from '../../content/schemas/adventure/maps';
+import { mapSchema, mapsFileSchema } from '../../content/schemas/adventure/maps';
 import { MAP_LIST, MAPS, ZONE_LIST } from '../../src/areas/adventure/logic/config/content';
 import { mapGraphProblems } from '../../src/areas/adventure/logic/mapGraph';
 import { mapProblems } from '../../src/areas/adventure/logic/maps';
@@ -134,5 +134,76 @@ describe('draft store', () => {
     expect(deleteMapDraft({ id: pub.id }, d).body).toEqual({ ok: true, discarded: true });
     expect(readDrafts(d)).toEqual({});
     expect(readMeta(d)[pub.id]?.descriptionVi).toBe('ghi chú');
+    // A dropped draft with no notes leaves nothing behind.
+    const other = structuredClone(MAP_LIST[1]!);
+    expect((await saveMapDraft({ draft: { map: other, road: 'main' } }, load, d)).status).toBe(200);
+    deleteMapDraft({ id: other.id }, d);
+    expect(readMeta(d)[other.id]).toBeUndefined();
+  });
+});
+
+describe('spawn points', () => {
+  const raw = () => JSON.parse(readFileSync('content/adventure/maps.json', 'utf8')) as { maps: typeof MAP_LIST };
+
+  it('names every arrival of the game, at the tile and facing it had', () => {
+    for (const m of MAP_LIST) for (const e of m.exits) {
+      expect(e.arrive, e.id).toBeTruthy();
+      const sp = M.spawnsOf(MAPS[e.to]!).find((s) => s.id === e.arrive)!;
+      expect([sp.x, sp.y, sp.facing]).toEqual([e.arriveX, e.arriveY, e.facing]);
+    }
+    expect(M.nameArrivals(MAP_LIST)).toEqual(MAP_LIST.map((m) => structuredClone(m)));
+  });
+
+  it('names unnamed arrivals without moving or turning anybody', () => {
+    const bare = raw().maps.map((m) => ({ ...m, spawns: undefined, exits: m.exits.map(({ arrive: _a, facing: _f, ...e }) => e) }));
+    const named = M.nameArrivals(bare as typeof MAP_LIST);
+    named.forEach((m, i) =>
+      m.exits.forEach((e, j) => {
+        const before = bare[i]!.exits[j]!;
+        expect([e.arriveX, e.arriveY]).toEqual([before.arriveX, before.arriveY]);
+        expect(e.facing).toBe(M.arrivalFacing(before as M.Exit));
+      }),
+    );
+    expect(mapsFileSchema.safeParse({ maps: named }).success).toBe(true);
+  });
+
+  it('adds, moves and removes spawns; a spawn an exit names stays', () => {
+    const map = structuredClone(MAPS.map_forest_deep!);
+    const sp = M.addSpawn(map, 'Từ Hang Bí Mật');
+    expect(sp.id).toBe('spawn_tu_hang_bi_mat');
+    M.moveSpawn(map, sp.id, map.spawn.x + 1, map.spawn.y);
+    expect(map.spawns!.find((s) => s.id === sp.id)).toMatchObject({ x: map.spawn.x + 1 });
+    M.moveSpawn(map, 'spawn_default', 3, 4);
+    expect(map.spawn).toEqual({ x: 3, y: 4 });
+    const arrivals = M.arrivalsInto(MAP_LIST, map.id);
+    const used = arrivals[0]!.exit.arrive!;
+    expect(M.removeSpawn(map, used, arrivals)).toMatch(/Đang có lối ra/);
+    expect(M.removeSpawn(map, sp.id, arrivals)).toBeNull();
+    expect(M.removeSpawn(map, 'spawn_default', arrivals)).toMatch(/không xoá/);
+  });
+
+  it('flags a spawn on a wall and exits left behind by a moved spawn, then moves those exits along', () => {
+    const maps = MAP_LIST.map((m) => structuredClone(m));
+    const deep = maps.find((m) => m.id === 'map_forest_deep')!;
+    const target = deep.spawns![0]!;
+    const wall = { x: 0, y: 0 };
+    M.moveSpawn(deep, target.id, wall.x, wall.y);
+    expect(mapProblems(deep, maps).some((p) => p.includes(`spawn ${target.id} stands where nobody can walk`))).toBe(true);
+    M.moveSpawn(deep, target.id, deep.spawn.x, deep.spawn.y + 1);
+    expect(M.arrivalMismatches(maps, deep).length).toBeGreaterThan(0);
+    expect(mapsFileSchema.safeParse({ maps }).success).toBe(false);
+    const { maps: fixed, moved } = M.resolveArrivals(maps);
+    expect(moved.length).toBeGreaterThan(0);
+    expect(M.arrivalMismatches(fixed, fixed.find((m) => m.id === deep.id)!)).toEqual([]);
+    expect(mapsFileSchema.safeParse({ maps: fixed }).success).toBe(true);
+  });
+
+  it('refuses an exit naming a spawn its area does not have, or a taken spawn id', () => {
+    const maps = MAP_LIST.map((m) => structuredClone(m));
+    maps[0]!.exits[0]!.arrive = 'spawn_nowhere';
+    expect(mapsFileSchema.safeParse({ maps }).success).toBe(false);
+    const dup = MAP_LIST.map((m) => structuredClone(m));
+    dup[1]!.spawns = [...dup[1]!.spawns!, { ...dup[1]!.spawns![0]! }];
+    expect(mapsFileSchema.safeParse({ maps: dup }).success).toBe(false);
   });
 });

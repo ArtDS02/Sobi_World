@@ -8,6 +8,7 @@ import { zoneSchema } from '../../content/schemas/adventure/zones';
 import { esc } from './labels';
 import * as M from './mapModel';
 import { confirmDanger, openModal } from './modal';
+import { openSpawns } from './mapSpawns';
 import { json, post } from './store';
 
 const API = '/__admin/adventure/maps';
@@ -160,7 +161,7 @@ function rowHtml(data: M.BuilderData, s: M.MapSummary): string {
     <td><small>${s.updatedAt ? esc(new Date(s.updatedAt).toLocaleString('vi-VN')) : '—'}</small></td>
     <td class="mapm__acts">
       ${published ? `<a class="btn btn-small" href="#/adventure-maps/${s.id}">Sửa</a>` : btn('edit', 'Sửa', 'disabled title="Editor cho bản nháp: Map Builder GĐ6"')}
-      ${btn('copy', 'Nhân bản')}${btn('rename', 'Đổi tên')}
+      ${btn('spawns', 'Điểm xuất hiện')}${btn('copy', 'Nhân bản')}${btn('rename', 'Đổi tên')}
       ${published ? '' : btn('toggle', s.status === 'disabled' ? 'Bật' : 'Tắt')}
       ${s.status === 'published' ? '' : btn('delete', s.status === 'changed' ? 'Bỏ nháp' : 'Xoá')}
     </td></tr>`;
@@ -199,6 +200,7 @@ function draw(root: HTMLElement) {
     b.addEventListener('click', () => {
       const id = b.dataset.id!;
       const run = {
+        spawns: () => openSpawns(data, draftOf(data, id), (draft) => act(() => post(`${API}/draft`, { draft }), `Đã lưu điểm xuất hiện của ${draft.map.nameVi} (bản nháp).`, rerender)),
         copy: () => openCreate(data, rerender, id),
         rename: () => openRename(data, id, rerender),
         toggle: () => void act(() => post(`${API}/meta`, { id, patch: { disabled: M.statusOf(data, id) !== 'disabled' } }), 'Đã đổi trạng thái.', rerender).catch((e: unknown) => alert((e as Error).message)),

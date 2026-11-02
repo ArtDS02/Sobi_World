@@ -60,7 +60,8 @@
           "arriveY": 21,
           "lock": "guardian",
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_forest_edge"
         },
         {
           "id": "exit_f1_north",
@@ -72,7 +73,8 @@
           "arriveX": 40,
           "arriveY": 34,
           "kind": "trail",
-          "facing": "up"
+          "facing": "up",
+          "arrive": "spawn_from_forest_edge"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_f1", "x": 46, "y": 6 }],
@@ -254,7 +256,11 @@
           "0000000000000000000000000000000000000000000000000000000000000000",
           "0000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_forest_deep", "nameVi": "Từ Rừng Sâu", "x": 62, "y": 20, "facing": "left" },
+        { "id": "spawn_from_forest_hollow", "nameVi": "Từ Thung Nấm", "x": 36, "y": 1, "facing": "down" }
+      ]
     },
     {
       "id": "map_forest_deep",
@@ -315,7 +321,8 @@
           "arriveX": 62,
           "arriveY": 20,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_forest_deep"
         },
         {
           "id": "exit_f2_east",
@@ -328,7 +335,8 @@
           "arriveY": 14,
           "lock": "guardian",
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_forest_deep"
         },
         {
           "id": "exit_f2_south",
@@ -340,7 +348,8 @@
           "arriveX": 1,
           "arriveY": 20,
           "kind": "tunnel",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_forest_deep"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_f2", "x": 13, "y": 3 }],
@@ -530,7 +539,12 @@
           "0000000000000000000000000000000000000000000000000000000000000000",
           "0000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_forest_edge", "nameVi": "Từ Bìa Rừng", "x": 1, "y": 21, "facing": "right" },
+        { "id": "spawn_from_forest_heart", "nameVi": "Từ Lõi Rừng", "x": 62, "y": 7, "facing": "left" },
+        { "id": "spawn_from_mountain_tunnels", "nameVi": "Từ Đường Hầm Cổ", "x": 43, "y": 34, "facing": "up" }
+      ]
     },
     {
       "id": "map_forest_heart",
@@ -582,7 +596,8 @@
           "arriveX": 62,
           "arriveY": 7,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_forest_heart"
         },
         {
           "id": "exit_f3_north",
@@ -594,7 +609,8 @@
           "arriveX": 24,
           "arriveY": 38,
           "kind": "trail",
-          "facing": "up"
+          "facing": "up",
+          "arrive": "spawn_from_forest_heart"
         },
         {
           "id": "exit_f3_next",
@@ -607,7 +623,8 @@
           "arriveY": 28,
           "lock": "guardian",
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_forest_heart"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_f3", "x": 21, "y": 12 }],
@@ -762,7 +779,12 @@
           "000000000000000000000000000000000000000000000000",
           "000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_forest_deep", "nameVi": "Từ Rừng Sâu", "x": 1, "y": 14, "facing": "right" },
+        { "id": "spawn_from_mountain_foot", "nameVi": "Từ Chân Núi", "x": 46, "y": 13, "facing": "left" },
+        { "id": "spawn_from_forest_falls", "nameVi": "Từ Thác Rêu", "x": 16, "y": 1, "facing": "down" }
+      ]
     },
     {
       "id": "map_mountain_foot",
@@ -823,7 +845,8 @@
           "arriveX": 46,
           "arriveY": 13,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_mountain_foot"
         },
         {
           "id": "exit_m1_east",
@@ -836,7 +859,8 @@
           "arriveY": 10,
           "lock": "guardian",
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_mountain_foot"
         },
         {
           "id": "exit_m1_north",
@@ -848,7 +872,8 @@
           "arriveX": 20,
           "arriveY": 38,
           "kind": "trail",
-          "facing": "up"
+          "facing": "up",
+          "arrive": "spawn_from_mountain_foot"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_m1", "x": 18, "y": 15 }],
@@ -1050,7 +1075,18 @@
           "0000000000000000000000000000000000000000000000000000000000000000",
           "0000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_forest_heart", "nameVi": "Từ Lõi Rừng", "x": 1, "y": 28, "facing": "right" },
+        {
+          "id": "spawn_from_mountain_mine",
+          "nameVi": "Từ Mỏ Quặng Bỏ Hoang",
+          "x": 62,
+          "y": 8,
+          "facing": "left"
+        },
+        { "id": "spawn_from_mountain_pass", "nameVi": "Từ Đèo Gió", "x": 36, "y": 1, "facing": "down" }
+      ]
     },
     {
       "id": "map_mountain_mine",
@@ -1111,7 +1147,8 @@
           "arriveX": 62,
           "arriveY": 8,
           "kind": "tunnel",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_mountain_mine"
         },
         {
           "id": "exit_m2_east",
@@ -1124,7 +1161,8 @@
           "arriveY": 13,
           "lock": "guardian",
           "kind": "tunnel",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_mountain_mine"
         },
         {
           "id": "exit_m2_south",
@@ -1136,7 +1174,8 @@
           "arriveX": 36,
           "arriveY": 1,
           "kind": "tunnel",
-          "facing": "down"
+          "facing": "down",
+          "arrive": "spawn_from_mountain_mine"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_m2", "x": 24, "y": 20 }],
@@ -1342,7 +1381,18 @@
           "0000000000000000000000000000000000000000000000000000000000000000",
           "0000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_mountain_foot", "nameVi": "Từ Chân Núi", "x": 1, "y": 10, "facing": "right" },
+        {
+          "id": "spawn_from_mountain_peak",
+          "nameVi": "Từ Đỉnh Dung Nham",
+          "x": 62,
+          "y": 20,
+          "facing": "left"
+        },
+        { "id": "spawn_from_mountain_tunnels", "nameVi": "Từ Đường Hầm Cổ", "x": 34, "y": 34, "facing": "up" }
+      ]
     },
     {
       "id": "map_mountain_peak",
@@ -1394,7 +1444,8 @@
           "arriveX": 62,
           "arriveY": 20,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_mountain_peak"
         },
         {
           "id": "exit_m3_north",
@@ -1406,7 +1457,8 @@
           "arriveX": 70,
           "arriveY": 30,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_mountain_peak"
         },
         {
           "id": "exit_m3_next",
@@ -1419,7 +1471,8 @@
           "arriveY": 32,
           "lock": "guardian",
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_mountain_peak"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_m3", "x": 27, "y": 8 }],
@@ -1575,7 +1628,18 @@
           "000000000000000000000000000000000000000000000000",
           "000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        {
+          "id": "spawn_from_mountain_mine",
+          "nameVi": "Từ Mỏ Quặng Bỏ Hoang",
+          "x": 1,
+          "y": 13,
+          "facing": "right"
+        },
+        { "id": "spawn_from_ruins_gate", "nameVi": "Từ Cổng Tàn Tích", "x": 46, "y": 13, "facing": "left" },
+        { "id": "spawn_from_mountain_pass", "nameVi": "Từ Đèo Gió", "x": 14, "y": 1, "facing": "down" }
+      ]
     },
     {
       "id": "map_ruins_gate",
@@ -1636,7 +1700,8 @@
           "arriveX": 46,
           "arriveY": 13,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_ruins_gate"
         },
         {
           "id": "exit_r1_east",
@@ -1649,7 +1714,8 @@
           "arriveY": 18,
           "lock": "guardian",
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_ruins_gate"
         },
         {
           "id": "exit_r1_side",
@@ -1661,7 +1727,8 @@
           "arriveX": 1,
           "arriveY": 20,
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_ruins_gate"
         },
         {
           "id": "exit_r1_pass",
@@ -1673,7 +1740,8 @@
           "arriveX": 50,
           "arriveY": 1,
           "kind": "trail",
-          "facing": "down"
+          "facing": "down",
+          "arrive": "spawn_from_ruins_gate"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_r1", "x": 34, "y": 6 }],
@@ -1864,7 +1932,19 @@
           "0000000000000000000000000000000000000000000000000000000000000000",
           "0000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        {
+          "id": "spawn_from_mountain_peak",
+          "nameVi": "Từ Đỉnh Dung Nham",
+          "x": 1,
+          "y": 32,
+          "facing": "right"
+        },
+        { "id": "spawn_from_ruins_hall", "nameVi": "Từ Hành Lang Rune", "x": 32, "y": 1, "facing": "down" },
+        { "id": "spawn_from_mountain_pass", "nameVi": "Từ Đèo Gió", "x": 26, "y": 34, "facing": "up" },
+        { "id": "spawn_from_ruins_crypt", "nameVi": "Từ Hầm Mộ Rune", "x": 62, "y": 18, "facing": "left" }
+      ]
     },
     {
       "id": "map_ruins_hall",
@@ -1925,7 +2005,8 @@
           "arriveX": 32,
           "arriveY": 1,
           "kind": "trail",
-          "facing": "down"
+          "facing": "down",
+          "arrive": "spawn_from_ruins_hall"
         },
         {
           "id": "exit_r2_east",
@@ -1938,7 +2019,8 @@
           "arriveY": 13,
           "lock": "guardian",
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_ruins_hall"
         },
         {
           "id": "exit_r2_south",
@@ -1950,7 +2032,8 @@
           "arriveX": 30,
           "arriveY": 1,
           "kind": "trail",
-          "facing": "down"
+          "facing": "down",
+          "arrive": "spawn_from_ruins_hall"
         },
         {
           "id": "exit_r2_tunnels",
@@ -1962,7 +2045,8 @@
           "arriveX": 70,
           "arriveY": 24,
           "kind": "tunnel",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_ruins_hall"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_r2", "x": 50, "y": 8 }],
@@ -2164,7 +2248,19 @@
           "0000000000000000000000000000000000000000000000000000000000000000",
           "0000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_ruins_gate", "nameVi": "Từ Cổng Tàn Tích", "x": 1, "y": 18, "facing": "right" },
+        { "id": "spawn_from_ruins_sanctum", "nameVi": "Từ Điện Phong Ấn", "x": 62, "y": 18, "facing": "left" },
+        {
+          "id": "spawn_from_mountain_tunnels",
+          "nameVi": "Từ Đường Hầm Cổ",
+          "x": 26,
+          "y": 1,
+          "facing": "down"
+        },
+        { "id": "spawn_from_ruins_crypt", "nameVi": "Từ Hầm Mộ Rune", "x": 56, "y": 34, "facing": "up" }
+      ]
     },
     {
       "id": "map_ruins_sanctum",
@@ -2216,7 +2312,8 @@
           "arriveX": 62,
           "arriveY": 18,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_ruins_sanctum"
         },
         {
           "id": "exit_r3_south",
@@ -2228,7 +2325,8 @@
           "arriveX": 70,
           "arriveY": 30,
           "kind": "stairs",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_ruins_sanctum"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_r3", "x": 35, "y": 11 }],
@@ -2385,7 +2483,11 @@
           "000000000000000000000000000000000000000000000000",
           "000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_ruins_hall", "nameVi": "Từ Hành Lang Rune", "x": 1, "y": 13, "facing": "right" },
+        { "id": "spawn_from_ruins_crypt", "nameVi": "Từ Hầm Mộ Rune", "x": 24, "y": 25, "facing": "up" }
+      ]
     },
     {
       "id": "map_forest_hollow",
@@ -2446,7 +2548,8 @@
           "arriveX": 36,
           "arriveY": 1,
           "kind": "trail",
-          "facing": "down"
+          "facing": "down",
+          "arrive": "spawn_from_forest_hollow"
         },
         {
           "id": "exit_n1_east",
@@ -2458,7 +2561,8 @@
           "arriveX": 1,
           "arriveY": 19,
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_forest_hollow"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_n1", "x": 38, "y": 18 }],
@@ -2691,7 +2795,11 @@
           "0000000000000000000000000000000000000000000000000000000000000000",
           "0000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_forest_edge", "nameVi": "Từ Bìa Rừng", "x": 40, "y": 34, "facing": "up" },
+        { "id": "spawn_from_forest_falls", "nameVi": "Từ Thác Rêu", "x": 62, "y": 12, "facing": "left" }
+      ]
     },
     {
       "id": "map_forest_falls",
@@ -2756,7 +2864,8 @@
           "arriveX": 62,
           "arriveY": 12,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_forest_falls"
         },
         {
           "id": "exit_n2_south",
@@ -2769,7 +2878,8 @@
           "arriveY": 1,
           "lock": "shortcut",
           "kind": "trail",
-          "facing": "down"
+          "facing": "down",
+          "arrive": "spawn_from_forest_falls"
         },
         {
           "id": "exit_n2_east",
@@ -2781,7 +2891,8 @@
           "arriveX": 1,
           "arriveY": 28,
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_forest_falls"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_n2", "x": 26, "y": 31 }],
@@ -3019,7 +3130,12 @@
           "000000000000000000000000000000000000000000000000000000000000000000000000",
           "000000000000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_forest_heart", "nameVi": "Từ Lõi Rừng", "x": 24, "y": 38, "facing": "up" },
+        { "id": "spawn_from_forest_hollow", "nameVi": "Từ Thung Nấm", "x": 1, "y": 19, "facing": "right" },
+        { "id": "spawn_from_forest_marsh", "nameVi": "Từ Đầm Sương", "x": 70, "y": 27, "facing": "left" }
+      ]
     },
     {
       "id": "map_forest_marsh",
@@ -3089,7 +3205,8 @@
           "arriveX": 70,
           "arriveY": 27,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_forest_marsh"
         },
         {
           "id": "exit_n3_east",
@@ -3101,7 +3218,8 @@
           "arriveX": 1,
           "arriveY": 14,
           "kind": "shore",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_forest_marsh"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_n3", "x": 51, "y": 39 }],
@@ -3375,7 +3493,11 @@
           "00000000000000000000000000000000000000000000000000000000000000000000000000000000",
           "00000000000000000000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_forest_falls", "nameVi": "Từ Thác Rêu", "x": 1, "y": 28, "facing": "right" },
+        { "id": "spawn_from_coast_beach", "nameVi": "Từ Bãi Vỏ Sò", "x": 78, "y": 18, "facing": "left" }
+      ]
     },
     {
       "id": "map_mountain_pass",
@@ -3440,7 +3562,8 @@
           "arriveX": 36,
           "arriveY": 1,
           "kind": "trail",
-          "facing": "down"
+          "facing": "down",
+          "arrive": "spawn_from_mountain_pass"
         },
         {
           "id": "exit_n4_east",
@@ -3453,7 +3576,8 @@
           "arriveY": 1,
           "lock": "shortcut",
           "kind": "trail",
-          "facing": "down"
+          "facing": "down",
+          "arrive": "spawn_from_mountain_pass"
         },
         {
           "id": "exit_n4_north",
@@ -3465,7 +3589,8 @@
           "arriveX": 26,
           "arriveY": 34,
           "kind": "trail",
-          "facing": "up"
+          "facing": "up",
+          "arrive": "spawn_from_mountain_pass"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_n4", "x": 17, "y": 11 }],
@@ -3717,7 +3842,18 @@
           "000000000000000000000000000000000000000000000000000000000000000000000000",
           "000000000000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_mountain_foot", "nameVi": "Từ Chân Núi", "x": 20, "y": 38, "facing": "up" },
+        {
+          "id": "spawn_from_mountain_peak",
+          "nameVi": "Từ Đỉnh Dung Nham",
+          "x": 70,
+          "y": 30,
+          "facing": "left"
+        },
+        { "id": "spawn_from_ruins_gate", "nameVi": "Từ Cổng Tàn Tích", "x": 50, "y": 1, "facing": "down" }
+      ]
     },
     {
       "id": "map_mountain_tunnels",
@@ -3782,7 +3918,8 @@
           "arriveX": 43,
           "arriveY": 34,
           "kind": "tunnel",
-          "facing": "up"
+          "facing": "up",
+          "arrive": "spawn_from_mountain_tunnels"
         },
         {
           "id": "exit_n5_north",
@@ -3795,7 +3932,8 @@
           "arriveY": 34,
           "lock": "shortcut",
           "kind": "tunnel",
-          "facing": "up"
+          "facing": "up",
+          "arrive": "spawn_from_mountain_tunnels"
         },
         {
           "id": "exit_n5_east",
@@ -3807,7 +3945,8 @@
           "arriveX": 26,
           "arriveY": 1,
           "kind": "tunnel",
-          "facing": "down"
+          "facing": "down",
+          "arrive": "spawn_from_mountain_tunnels"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_n5", "x": 51, "y": 21 }],
@@ -4047,7 +4186,18 @@
           "000000000000000000000000000000000000000000000000000000000000000000000000",
           "000000000000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_forest_deep", "nameVi": "Từ Rừng Sâu", "x": 1, "y": 20, "facing": "right" },
+        {
+          "id": "spawn_from_mountain_mine",
+          "nameVi": "Từ Mỏ Quặng Bỏ Hoang",
+          "x": 36,
+          "y": 1,
+          "facing": "down"
+        },
+        { "id": "spawn_from_ruins_hall", "nameVi": "Từ Hành Lang Rune", "x": 70, "y": 24, "facing": "left" }
+      ]
     },
     {
       "id": "map_ruins_crypt",
@@ -4112,7 +4262,8 @@
           "arriveX": 62,
           "arriveY": 18,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_ruins_crypt"
         },
         {
           "id": "exit_n6_north",
@@ -4124,7 +4275,8 @@
           "arriveX": 56,
           "arriveY": 34,
           "kind": "stairs",
-          "facing": "up"
+          "facing": "up",
+          "arrive": "spawn_from_ruins_crypt"
         },
         {
           "id": "exit_n6_east",
@@ -4136,7 +4288,8 @@
           "arriveX": 24,
           "arriveY": 25,
           "kind": "stairs",
-          "facing": "up"
+          "facing": "up",
+          "arrive": "spawn_from_ruins_crypt"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_n6", "x": 29, "y": 19 }],
@@ -4400,7 +4553,12 @@
           "000000000000000000000000000000000000000000000000000000000000000000000000",
           "000000000000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_ruins_gate", "nameVi": "Từ Cổng Tàn Tích", "x": 1, "y": 20, "facing": "right" },
+        { "id": "spawn_from_ruins_hall", "nameVi": "Từ Hành Lang Rune", "x": 30, "y": 1, "facing": "down" },
+        { "id": "spawn_from_ruins_sanctum", "nameVi": "Từ Điện Phong Ấn", "x": 70, "y": 30, "facing": "left" }
+      ]
     },
     {
       "id": "map_coast_beach",
@@ -4465,7 +4623,8 @@
           "arriveX": 78,
           "arriveY": 18,
           "kind": "trail",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_coast_beach"
         },
         {
           "id": "exit_n7_east",
@@ -4477,7 +4636,8 @@
           "arriveX": 1,
           "arriveY": 20,
           "kind": "trail",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_coast_beach"
         },
         {
           "id": "exit_n7_dock",
@@ -4489,7 +4649,8 @@
           "arriveX": 1,
           "arriveY": 10,
           "kind": "shore",
-          "facing": "right"
+          "facing": "right",
+          "arrive": "spawn_from_coast_beach"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_c1", "x": 13, "y": 3 }],
@@ -4692,7 +4853,12 @@
           "000000000000000000000000000000000000000000000000000000000000000000000000",
           "000000000000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_forest_marsh", "nameVi": "Từ Đầm Sương", "x": 1, "y": 14, "facing": "right" },
+        { "id": "spawn_from_coast_reef", "nameVi": "Từ Rạn San Hô", "x": 70, "y": 9, "facing": "left" },
+        { "id": "spawn_from_coast_cove", "nameVi": "Từ Vịnh Đắm Tàu", "x": 70, "y": 30, "facing": "left" }
+      ]
     },
     {
       "id": "map_coast_reef",
@@ -4757,7 +4923,8 @@
           "arriveX": 70,
           "arriveY": 9,
           "kind": "shore",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_coast_reef"
         },
         {
           "id": "exit_n8_south",
@@ -4769,7 +4936,8 @@
           "arriveX": 36,
           "arriveY": 1,
           "kind": "shore",
-          "facing": "down"
+          "facing": "down",
+          "arrive": "spawn_from_coast_reef"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_c2", "x": 39, "y": 20 }],
@@ -5004,7 +5172,11 @@
           "000000000000000000000000000000000000000000000000000000000000000000000000",
           "000000000000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_coast_beach", "nameVi": "Từ Bãi Vỏ Sò", "x": 1, "y": 20, "facing": "right" },
+        { "id": "spawn_from_coast_cove", "nameVi": "Từ Vịnh Đắm Tàu", "x": 36, "y": 38, "facing": "up" }
+      ]
     },
     {
       "id": "map_coast_cove",
@@ -5065,7 +5237,8 @@
           "arriveX": 70,
           "arriveY": 30,
           "kind": "shore",
-          "facing": "left"
+          "facing": "left",
+          "arrive": "spawn_from_coast_cove"
         },
         {
           "id": "exit_n9_north",
@@ -5077,7 +5250,8 @@
           "arriveX": 36,
           "arriveY": 38,
           "kind": "shore",
-          "facing": "up"
+          "facing": "up",
+          "arrive": "spawn_from_coast_cove"
         }
       ],
       "props": [{ "prop": "prop_adv_lm_c3", "x": 42, "y": 21 }],
@@ -5253,7 +5427,11 @@
           "0000000000000000000000000000000000000000000000000000000000000000",
           "0000000000000000000000000000000000000000000000000000000000000000"
         ]
-      }
+      },
+      "spawns": [
+        { "id": "spawn_from_coast_beach", "nameVi": "Từ Bãi Vỏ Sò", "x": 1, "y": 10, "facing": "right" },
+        { "id": "spawn_from_coast_reef", "nameVi": "Từ Rạn San Hô", "x": 36, "y": 1, "facing": "down" }
+      ]
     }
   ]
 }

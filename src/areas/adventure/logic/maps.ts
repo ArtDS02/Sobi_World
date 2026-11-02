@@ -125,7 +125,8 @@ function usableFrom(map: AreaMap, t: Thing, reach: Set<number>): boolean {
 const idx = (map: AreaMap, p: { x: number; y: number }) => p.y * map.cols + p.x;
 
 /** Everything wrong with an area (spec §3.10); [] = fine. */
-export function mapProblems(map: AreaMap): string[] {
+/** `others` = the areas whose exits lead here (the game's by default; the map builder passes its drafts too). */
+export function mapProblems(map: AreaMap, others: readonly AreaMap[] = Object.values(MAPS)): string[] {
   const out: string[] = [];
   const say = (msg: string) => out.push(`${map.id}: ${msg}`);
   // Footprints inside the area and never on top of each other.
@@ -181,8 +182,13 @@ export function mapProblems(map: AreaMap): string[] {
     for (const e of map.exits) if (inside(e.x, e.y, e.w, e.h)) say(`cover ${c.id} hides exit ${e.id}`);
     for (const g of map.groups) if ((g.kind === 'elite' || g.kind === 'boss') && inside(g.x, g.y)) say(`cover ${c.id} hides guardian ${g.id}`);
   }
+  // Named arrival points (decision 047) stand where one can walk, off the enemy groups.
+  for (const sp of map.spawns ?? []) {
+    if (!walk(sp) || !open.has(idx(map, sp))) say(`spawn ${sp.id} stands where nobody can walk (${sp.x},${sp.y})`);
+    if (map.groups.some((g) => g.x === sp.x && g.y === sp.y)) say(`spawn ${sp.id} stands on an enemy group`);
+  }
   // Arrivals land on walkable ground.
-  for (const other of Object.values(MAPS)) {
+  for (const other of others) {
     for (const e of other.exits) {
       if (e.to !== map.id) continue;
       if (!walk({ x: e.arriveX, y: e.arriveY })) say(`arrival from ${other.id} lands on a blocked tile`);
