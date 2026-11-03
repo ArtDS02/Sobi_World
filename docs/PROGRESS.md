@@ -10,6 +10,18 @@
 
 ## Nhật ký
 
+### 2026-11-03 — Adventure: Map Builder GĐ8 — kiểm thử tích hợp runtime + save; Map Builder xong (decision 047)
+✅ Đã làm:
+- Test runtime: map do Builder publish được game nạp như map chính thức, chuyến đi thật vào / ra bằng `takeExit` tới đúng điểm tới, đi trong map, save giữ chuyến ở map mới nạp lại nguyên vẹn. Test đối chiếu: Builder publish đúng y thế giới mà test runtime chơi.
+- Test save: slice Adventure thật qua mọi migration, mọi id còn; chuyến lưu ở mọi điểm xuất hiện của mọi map nạp được, đứng yên; ảnh chụp 242 id + 4 vùng save có thể giữ (`tests/fixtures/adventure-saved-ids.json`), nội dung luôn phải chứa đủ.
+- Bảng nghiệm thu task §11 ở decision 047.
+
+🧪 `npm run check` xanh (1628 test). `npm run build` + `verify:build` sạch (không Admin). Bản cài Windows: build xong, verify:installer sạch (app.asar không Admin / công cụ dev / URL ngoài; exe đúng thư mục save, không gọi mạng).
+
+⚠️ Phát hiện (trước Builder, decision 045): 5 rương đã bị bỏ khi làm bố cục v2 (`chest_f2_island`, `chest_f3_hollow`, `chest_m1_crevice`, `chest_m3_ledge`, `chest_r3_reliquary`). Save cũ vẫn nạp được, id chỉ thừa. Test ghim đúng 5 id này.
+
+👉 Chủ dự án: thử Map Builder trên Admin (Quản lý map → Tạo / Sửa / Lối ra / Chạy thử / Kiểm tra & Publish); quyết có trả lại 5 rương trên không.
+
 ### 2026-11-02 — Adventure: Map Builder GĐ7 — Kiểm tra, Publish, Lịch sử, Chạy thử, Xem bằng game (decision 047)
 ✅ Đã làm:
 - **Kiểm tra & Publish:** chọn bản nháp, xem mọi lỗi / cảnh báo trên thế giới sau publish, nhập tiếng Anh cho chữ mới / đã đổi; publish ghi `maps.json` + `zones.json` + `en.json` cùng lúc, game nạp lại, hỏng thì khôi phục hết; map mới vào vùng; lối ra map khác đi theo điểm tới đã dời.

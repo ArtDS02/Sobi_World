@@ -77,3 +77,29 @@ Chủ dự án muốn tự xây thế giới Sobi Adventure trong Admin: tạo m
 - **Chạy thử** (Map Editor, Quản lý map, Mạng map; `tools/admin/mapSimulate.ts`): đi bằng phím mũi tên / WASD theo đúng luật đi của game (`walkableOf`, `stepCharacter`, tốc độ khám phá, hộp chân); cổng nguyên tố đóng / mở; lối ra có khoá chặn như tường trừ khi chọn "coi như đã mở khoá"; bước vào lối ra (cùng khoảng cách game dùng) sang map đích tại điểm tới của nó; đứng cạnh cổng dịch chuyển để tới điểm mặc định map khác; chọn đứng ở điểm xuất hiện bất kỳ; nhật ký chuyển map. Chạy trên bản đã publish hoặc bản nháp (từ Map Editor: cả thay đổi chưa lưu). Không lưu gì, không đụng save.
 - **Xem bằng game thật** (Map Editor; `scripts/admin/mapPreviewApi.ts`): ghi thế giới sau publish vào `tools/admin/data/adventure/preview/content` (không đụng `content/`), chạy server game riêng `scripts/dev/mapPreview.mjs` (cổng 5191) đọc file đó, chụp map bằng Electron với `scripts/capture/adventureMaps.ts --content` trên bản sao save tạo bằng `scripts/dev/richSave.ts` trong `%TEMP%\sobiworld-mappreview`. Hai ảnh: cả map và góc nhìn lúc tới. Khoảng 30–60 giây.
 - Giới hạn: xem bằng game là ảnh (sắp chiều sâu, lớp che, asset, ánh sáng của renderer thật); đi thử / va chạm / chuyển map dùng Chạy thử (cùng luật, vẽ bằng canvas của Admin).
+
+## Giai đoạn 8 (2026-11-03) — Kiểm thử tích hợp runtime + save
+
+- `tests/unit/builderWorld.ts`: thế giới sau một lần publish của Builder (map mới "Hang Kiểm Thử" nối hai chiều với Rừng Sâu bằng điểm tới có tên, vào nhánh vùng Rừng), dạng JSON thô. `tests/scripts/mapBuilder.test.ts` chứng minh Builder publish ra **đúng y** các dòng đó.
+- `tests/unit/adventureBuilderRuntime.test.ts` (game nạp thế giới đó thay `maps.json` / `zones.json`): map mới qua schema + kiểm tra chéo của game, `mapProblems` / `mapGraph` sạch cả 19 map; chuyến đi thật vào map mới bằng `takeExit`, tới đúng điểm tới, đi trong map (`moveTo`), ra lối về tới đúng điểm bên Rừng Sâu; save chứa chuyến đang ở map mới nạp lại nguyên vẹn.
+- `tests/unit/adventureBuilderSaves.test.ts`: slice Adventure thật (trước Builder) qua mọi migration, mọi id nó giữ còn trong game; chuyến lưu ở **mọi** điểm xuất hiện của mọi map nạp được và đứng yên chỗ cũ; `tests/fixtures/adventure-saved-ids.json` (242 id + 4 vùng, sinh bằng `scripts/content/savedIds.ts`, chỉ thêm) — nội dung luôn phải chứa đủ, kể cả khi sửa bằng script ngoài Admin.
+- **Phát hiện (trước Builder):** 5 rương bị bỏ ở bố cục v2 (decision 045, 2026-10-31): `chest_f2_island`, `chest_f3_hollow`, `chest_m1_crevice`, `chest_m3_ledge`, `chest_r3_reliquary`. Save cũ vẫn nạp được, id chỉ thừa (không mất tiến trình khác). Test ghim đúng 5 id này; chủ dự án quyết có trả lại không.
+- Build: `npm run build` + `verify:build` sạch (không Admin, không công cụ dev, không URL ngoài). Bản cài Windows (`dist:win`): build xong, verify:installer sạch (app.asar không Admin / công cụ dev / URL ngoài; exe đúng thư mục save, không gọi mạng).
+
+## Nghiệm thu (task §11)
+
+| Tiêu chí | Có ở |
+|---|---|
+| Tạo map mới từ Admin | Quản lý map → Tạo map mới (trống / mẫu) — GĐ2 |
+| Chỉnh sửa và nhân bản map | Map Editor (GĐ6), Nhân bản (GĐ2) |
+| Nhiều portal (lối ra) trong một map, mỗi lối tới một map khác | Hộp Lối ra (GĐ4) |
+| Kết nối một chiều và hai chiều | `oneWay`; lối về đặt tay hai đầu (GĐ4) |
+| Chọn Spawn Point riêng cho từng lối ra | `spawns[]` + `exits[].arrive` (GĐ3–4) |
+| Thấy toàn bộ kết nối trên Map Network | Mạng map (GĐ5) |
+| Tự thiết kế terrain, navigation, asset | Map Editor + Thư viện asset (GĐ6) |
+| Map mới được runtime tải và chuyển cảnh chính xác | Test runtime `takeExit` (GĐ8), Chạy thử + Xem bằng game (GĐ7) |
+| Save Draft, Validate, Publish độc lập | Kho nháp (GĐ2), Kiểm tra & Publish nguyên tử (GĐ7) |
+| Không làm mất / reset dữ liệu map và save | Id save giữ bị chặn ở Admin + test ảnh chụp id; save thật / mọi điểm xuất hiện nạp được (GĐ8) |
+| Map cũ vẫn hoạt động | 18 map sạch mọi kiểm tra; trip tests cũ vẫn xanh |
+
+Ngoài phạm vi (cần decision riêng nếu muốn): điều kiện xuất hiện theo spawn, Placement Zone, nhạc nền theo map, lớp VFX riêng trên map, tách `maps.json` theo từng map (khi > ~40 map).

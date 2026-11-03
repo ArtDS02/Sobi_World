@@ -128,7 +128,7 @@ scene.scenery?: {                // hand-placed decoration (replaces script plac
 | 5 ✅ | Mạng map (SVG, kéo thả, tìm, lọc, cảnh báo) | không |
 | 6 ✅ | Map Editor canvas (nền, lưới, công cụ tô, undo), `scene.scenery[]` + render + va chạm, Thư viện asset + upload | renderer + `blockedTiles` |
 | 7 ✅ | Validate tổng hợp + Publish + lịch sử / quay lại + Preview sandbox + **chạy thử trong Admin** (đi bằng bàn phím trên map đã publish, luật đi / lối ra của game, không chạm save) | không |
-| 8 | Test tích hợp: map mới tạo từ Admin → publish → chơi qua lối ra thật; save thật cũ nạp được; 18 map cũ sạch `check_live`; build desktop | không |
+| 8 ✅ | Test tích hợp: map mới tạo từ Admin → publish → chơi qua lối ra thật; save thật cũ nạp được; 18 map cũ sạch `check_live`; build desktop | không |
 
 Ước lượng: GĐ6 lớn nhất (canvas editor + renderer scenery), có thể tách 6a (canvas + terrain + gameplay object) / 6b (scenery + asset library).
 

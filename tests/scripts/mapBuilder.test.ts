@@ -18,6 +18,7 @@ import * as L from '../../tools/admin/mapLinks';
 import * as M from '../../tools/admin/mapModel';
 import * as N from '../../tools/admin/mapNetwork';
 import * as P from '../../tools/admin/mapPublish';
+import * as W from '../unit/builderWorld';
 
 const load = async () => mapsSchemaModule as unknown as Record<string, unknown>;
 const data = (drafts: M.BuilderData['drafts'] = {}, meta: M.BuilderData['meta'] = {}): M.BuilderData => ({ published: MAP_LIST, zones: ZONE_LIST, drafts, meta });
@@ -493,5 +494,22 @@ describe('history', () => {
     expect((await restoreVersion({ id: 'map_forest_deep', at }, load, d)).status).toBe(200);
     expect(readDrafts(d).map_forest_deep).toMatchObject({ road: 'main', map: { nameVi: 'Rừng Sâu cũ' } });
     expect((await restoreVersion({ id: 'map_forest_deep', at: 'nope' }, load, d)).status).toBe(400);
+  });
+});
+
+describe('the world the runtime test plays (tests/unit/builderWorld.ts)', () => {
+  it('is exactly what the builder publishes for a new cave joined to Rừng Sâu both ways', () => {
+    const cave = M.blankMap({ id: W.CAVE, nameVi: 'Hang Kiểm Thử', zoneId: 'zone_forest', cols: 30, rows: 20 });
+    const deep = structuredClone(MAPS.map_forest_deep!);
+    const d = data({ [cave.id]: { map: cave, road: 'branch' }, [deep.id]: { map: deep, road: 'main' } });
+    L.landOn(L.newExit(deep, cave, { x: 60, y: 8 }, L.takenIds(d)), cave, L.spawnAt(cave, deep, 2, 9));
+    L.landOn(L.newExit(cave, deep, { x: 1, y: 9 }, L.takenIds(d)), deep, L.spawnAt(deep, cave, 61, 7));
+    const en = JSON.parse(readFileSync('content/i18n/en.json', 'utf8'))['adventure/maps.json'] as Record<string, string>;
+    const plan = P.planPublish(d, [cave.id, deep.id], en);
+    expect(plan.checks.filter((c) => c.level === 'error')).toEqual([]);
+    const raw = W.builderMaps(JSON.parse(readFileSync('content/adventure/maps.json', 'utf8')));
+    for (const id of [W.CAVE, W.DEEP]) expect(plan.maps.find((m) => m.id === id), id).toEqual(mapSchema.parse(raw.maps.find((m) => m.id === id)));
+    const zones = W.builderZones(JSON.parse(readFileSync('content/adventure/zones.json', 'utf8')) as { zones: { id: string }[] });
+    expect(plan.zones.find((z) => z.id === 'zone_forest')!.branches).toEqual((zones.zones.find((z) => z.id === 'zone_forest') as { branches?: string[] }).branches);
   });
 });
