@@ -20,7 +20,9 @@
 
 ⚠️ Phát hiện (trước Builder, decision 045): 5 rương đã bị bỏ khi làm bố cục v2 (`chest_f2_island`, `chest_f3_hollow`, `chest_m1_crevice`, `chest_m3_ledge`, `chest_r3_reliquary`). Save cũ vẫn nạp được, id chỉ thừa. Test ghim đúng 5 id này.
 
-👉 Chủ dự án: thử Map Builder trên Admin (Quản lý map → Tạo / Sửa / Lối ra / Chạy thử / Kiểm tra & Publish); quyết có trả lại 5 rương trên không.
+✅ Chủ dự án chốt: để nguyên 5 rương đã bỏ (không trả lại).
+
+👉 Chủ dự án: thử Map Builder trên Admin (Quản lý map → Tạo / Sửa / Lối ra / Chạy thử / Kiểm tra & Publish).
 
 ### 2026-11-02 — Adventure: Map Builder GĐ7 — Kiểm tra, Publish, Lịch sử, Chạy thử, Xem bằng game (decision 047)
 ✅ Đã làm:
