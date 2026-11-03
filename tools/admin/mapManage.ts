@@ -9,6 +9,8 @@ import * as M from './mapModel';
 import { confirmDanger, openModal } from './modal';
 import { openHistory, openPublish } from './mapPublishDialog';
 import { openSimulation } from './mapSimulate';
+import { imageOf, mapThumb } from './mapThumb';
+import { optionHtml, type Visual } from './richSelect';
 import { post } from './store';
 
 const page = {
@@ -32,8 +34,14 @@ async function act(run: () => Promise<unknown>, done: string, rerender: () => vo
   rerender();
 }
 
+/** A zone's card picture, a status's mark: the visuals of the dropdowns of the Map Builder pages. */
+export const zoneVisual = (data: M.BuilderData, id: string): Visual => {
+  const z = data.zones.find((x) => x.id === id);
+  return z ? { img: imageOf(z.backdrop), sub: `${z.maps.length + (z.branches?.length ?? 0)} map` } : {};
+};
+export const STATUS_ICON: Record<M.MapStatus, string> = { published: '✅', changed: '✏️', draft: '📝', disabled: '⏸️' };
 const zoneOptions = (data: M.BuilderData, selected: string) =>
-  data.zones.map((z) => `<option value="${z.id}"${z.id === selected ? ' selected' : ''}>${esc(z.nameVi)}</option>`).join('');
+  data.zones.map((z) => optionHtml(z.id, z.nameVi, z.id === selected, zoneVisual(data, z.id))).join('');
 
 /** New area: blank or from a template (`from` preselects one: "Nhân bản"). */
 function openCreate(data: M.BuilderData, rerender: () => void, from?: string) {
@@ -46,9 +54,9 @@ function openCreate(data: M.BuilderData, rerender: () => void, from?: string) {
     body: `<div class="form-grid">
       <label class="field"><span>Tên map</span><input name="nameVi" value="${esc(name)}" required /></label>
       <label class="field"><span>Map ID (không đổi được sau khi publish)</span><input name="id" class="mono" value="${src ? M.freeId('map', M.slugOf(name), M.mapIds(data)) : ''}" /></label>
-      <label class="field"><span>Vùng</span><select name="zoneId">${zoneOptions(data, src?.zoneId ?? data.zones[0]?.id ?? '')}</select></label>
-      <label class="field"><span>Vị trí trong vùng</span><select name="road"><option value="branch">Nhánh phụ</option><option value="main">Đường chính</option></select></label>
-      <label class="field"><span>Bắt đầu từ</span><select name="from"><option value="">Map trống</option>${working.map((m) => `<option value="${m.id}"${m.id === from ? ' selected' : ''}>Mẫu: ${esc(m.nameVi)} (${m.cols}×${m.rows})</option>`).join('')}</select></label>
+      <label class="field"><span>Vùng</span><select name="zoneId" data-rich>${zoneOptions(data, src?.zoneId ?? data.zones[0]?.id ?? '')}</select></label>
+      <label class="field"><span>Vị trí trong vùng</span><select name="road" data-rich>${optionHtml('branch', 'Nhánh phụ', true, { icon: '🌿', sub: 'Khám phá thêm, không chặn đường tới trùm' })}${optionHtml('main', 'Đường chính', false, { icon: '🛤️', sub: 'Nằm trên đường tới trùm vùng' })}</select></label>
+      <label class="field"><span>Bắt đầu từ</span><select name="from" data-rich>${optionHtml('', 'Map trống', !from, { icon: '⬜', sub: 'Viền chặn, đất ở giữa' })}${working.map((m) => optionHtml(m.id, `Mẫu: ${m.nameVi}`, m.id === from, { img: mapThumb(m), mapId: m.id, sub: `${m.cols}×${m.rows} ô` })).join('')}</select></label>
       <label class="field" data-size><span>Kích thước (ô) rộng × cao</span><span class="toolbar"><input name="cols" type="number" value="64" min="${M.MAP_SIZE.minCols}" max="${M.MAP_SIZE.maxCols}" /> × <input name="rows" type="number" value="36" min="${M.MAP_SIZE.minRows}" max="${M.MAP_SIZE.maxRows}" /></span></label>
       <label class="field"><span>Mô tả (cho admin)</span><textarea name="descriptionVi" rows="2"></textarea></label>
     </div>
@@ -130,26 +138,42 @@ function askDelete(data: M.BuilderData, id: string, rerender: () => void) {
   confirmDanger('Xoá map nháp', `Xoá hẳn bản nháp ${map.nameVi} (${id})?${list}`, 'Xoá map', () => act(() => post(`${API}/delete`, { id }), `Đã xoá ${map.nameVi}.`, rerender), id);
 }
 
+/** The actions of a row past "Sửa" and "Chạy thử", as a menu (one line per row, aligned). */
+function moreMenu(s: M.MapSummary): string {
+  const published = s.status === 'published' || s.status === 'changed';
+  type Item = [action: string, icon: string, label: string, sub: string];
+  const items: Item[] = [
+    ['exits', '🚪', 'Lối ra', 'Nối với map khác'],
+    ['spawns', '📍', 'Điểm xuất hiện', 'Nơi người chơi tới'],
+    ['copy', '⧉', 'Nhân bản', 'Map mới từ map này'],
+    ['rename', '✎', 'Đổi tên / mô tả', ''],
+  ];
+  if (s.status === 'changed' || s.status === 'draft') items.push(['publish', '✔', 'Kiểm tra & Publish', 'Đưa vào game']);
+  if (published) items.push(['history', '🕘', 'Lịch sử', 'Quay lại bản cũ']);
+  else items.push(['toggle', s.status === 'disabled' ? '▶' : '⏸', s.status === 'disabled' ? 'Bật lại' : 'Tạm tắt', 'Chỉ bản nháp']);
+  if (s.status !== 'published') items.push(['delete', '🗑', s.status === 'changed' ? 'Bỏ bản nháp' : 'Xoá map nháp', '']);
+  return `<select class="mapm__more" data-act-menu data-id="${s.id}" data-rich="compact" aria-label="Thêm thao tác">${optionHtml('', 'Thêm', true, { icon: '⋯', label: true })}${items.map(([v, icon, label, sub]) => optionHtml(v, label, false, { icon, sub })).join('')}</select>`;
+}
+
 function rowHtml(data: M.BuilderData, s: M.MapSummary): string {
   const published = s.status === 'published' || s.status === 'changed';
   const tone = s.status === 'disabled' ? 'warn' : published ? 'ok' : 'new';
-  const check = s.problems.length ? `<span class="status-error" title="${esc(s.problems.join('\n'))}">⚠ ${s.problems.length} lỗi</span>` : '<span class="status-ok">✓</span>';
-  const btn = (a: string, label: string, extra = '') => `<button class="btn btn-small" data-act="${a}" data-id="${s.id}" ${extra}>${label}</button>`;
+  const check = s.problems.length ? `<span class="status-error" title="${esc(s.problems.join('\n'))}">⚠ ${s.problems.length} lỗi</span>` : '<span class="status-ok">✓ Ổn</span>';
+  const map = M.workingMaps(data).find((m) => m.id === s.id)!;
   return `<tr>
-    <td><b>${esc(s.nameVi)}</b><br><span class="mono muted">${s.id}</span>${s.descriptionVi ? `<br><small class="muted">${esc(s.descriptionVi)}</small>` : ''}</td>
-    <td>${esc(zoneName(data, s.zoneId))}<br><small class="muted">${s.road === 'main' ? 'Đường chính' : 'Nhánh'}</small></td>
-    <td>${s.cols}×${s.rows}</td>
-    <td><span class="badge mapm__status mapm__status--${tone}">${M.STATUS_LABEL[s.status]}</span></td>
-    <td>${s.exitsOut} ra · ${s.exitsIn} vào</td>
+    <td class="mapm__thumb"><a href="#/adventure-editor/${s.id}" title="Mở Map Editor"><img data-map-thumb="${s.id}" src="${mapThumb(map)}" alt="" /></a></td>
+    <td><b>${esc(s.nameVi)}</b><div class="mono muted">${s.id}</div>${s.descriptionVi ? `<small class="muted">${esc(s.descriptionVi)}</small>` : ''}</td>
+    <td>${esc(zoneName(data, s.zoneId))}<div class="muted"><small>${s.road === 'main' ? 'Đường chính' : 'Nhánh'}</small></div></td>
+    <td class="mapm__num">${s.cols}×${s.rows}</td>
+    <td><span class="badge mapm__status mapm__status--${tone}">${STATUS_ICON[s.status]} ${M.STATUS_LABEL[s.status]}</span></td>
+    <td class="mapm__num">${s.exitsOut} ra · ${s.exitsIn} vào</td>
     <td>${check}</td>
     <td><small>${s.updatedAt ? esc(new Date(s.updatedAt).toLocaleString('vi-VN')) : '—'}</small></td>
-    <td class="mapm__acts">
+    <td><div class="mapm__acts">
       <a class="btn btn-small btn-primary" href="#/adventure-editor/${s.id}">Sửa</a>
-      ${btn('simulate', '▶ Chạy thử')}${btn('exits', 'Lối ra')}${btn('spawns', 'Điểm xuất hiện')}${btn('copy', 'Nhân bản')}${btn('rename', 'Đổi tên')}
-      ${published ? '' : btn('toggle', s.status === 'disabled' ? 'Bật' : 'Tắt')}
-      ${s.status === 'draft' || s.status === 'disabled' ? '' : btn('history', 'Lịch sử')}${s.status === 'changed' || s.status === 'draft' ? btn('publish', 'Publish') : ''}
-      ${s.status === 'published' ? '' : btn('delete', s.status === 'changed' ? 'Bỏ nháp' : 'Xoá')}
-    </td></tr>`;
+      <button class="btn btn-small" data-act="simulate" data-id="${s.id}">▶ Chạy thử</button>
+      ${moreMenu(s)}
+    </div></td></tr>`;
 }
 
 function draw(root: HTMLElement) {
@@ -164,13 +188,13 @@ function draw(root: HTMLElement) {
     ${page.message ? `<p class="ok">${esc(page.message)}</p>` : ''}
     <div class="toolbar">
       <input class="search" type="search" placeholder="Tìm tên hoặc id…" value="${esc(page.query)}" data-q />
-      <select data-zone><option value="">Mọi vùng</option>${zoneOptions(data, page.zone)}</select>
-      <select data-status><option value="">Mọi trạng thái</option>${(Object.keys(M.STATUS_LABEL) as M.MapStatus[]).map((st) => `<option value="${st}"${st === page.status ? ' selected' : ''}>${M.STATUS_LABEL[st]}</option>`).join('')}</select>
+      <span class="mapm__filter"><select data-zone data-rich="compact">${optionHtml('', 'Mọi vùng', !page.zone, { icon: '🗺️' })}${zoneOptions(data, page.zone)}</select></span>
+      <span class="mapm__filter"><select data-status data-rich="compact">${optionHtml('', 'Mọi trạng thái', !page.status, { icon: '📋' })}${(Object.keys(M.STATUS_LABEL) as M.MapStatus[]).map((st) => optionHtml(st, M.STATUS_LABEL[st], st === page.status, { icon: STATUS_ICON[st] })).join('')}</select></span>
       <button class="btn" data-publish>✔ Kiểm tra & Publish</button>
       <button class="btn btn-primary" data-new>＋ Tạo map mới</button>
     </div>
-    <table class="table mapm"><thead><tr><th>Map</th><th>Vùng</th><th>Cỡ</th><th>Trạng thái</th><th>Kết nối</th><th>Kiểm tra</th><th>Cập nhật</th><th></th></tr></thead>
-      <tbody>${shown.map((s) => rowHtml(data, s)).join('') || '<tr><td colspan="8" class="muted">Không có map khớp bộ lọc.</td></tr>'}</tbody></table>`;
+    <div class="mapm-wrap"><table class="table mapm"><thead><tr><th></th><th>Map</th><th>Vùng</th><th>Cỡ</th><th>Trạng thái</th><th>Kết nối</th><th>Kiểm tra</th><th>Cập nhật</th><th></th></tr></thead>
+      <tbody>${shown.map((s) => rowHtml(data, s)).join('') || '<tr><td colspan="9" class="muted">Không có map khớp bộ lọc.</td></tr>'}</tbody></table></div>`;
   const rerender = () => draw(root);
   const q$ = root.querySelector<HTMLInputElement>('[data-q]')!;
   q$.addEventListener('input', () => {
@@ -184,21 +208,26 @@ function draw(root: HTMLElement) {
   root.querySelector<HTMLSelectElement>('[data-status]')!.addEventListener('change', (e) => ((page.status = (e.target as HTMLSelectElement).value as M.MapStatus | ''), rerender()));
   root.querySelector('[data-new]')!.addEventListener('click', () => openCreate(data, rerender));
   root.querySelector('[data-publish]')!.addEventListener('click', () => openPublish(data));
-  root.querySelectorAll<HTMLButtonElement>('[data-act]').forEach((b) =>
-    b.addEventListener('click', () => {
-      const id = b.dataset.id!;
-      const run = {
-        spawns: () => editSpawns(data, draftOf(data, id), (msg) => act(async () => {}, msg, rerender)),
-        exits: () => editExits(data, id, (msg) => act(async () => {}, msg, rerender)),
-        copy: () => openCreate(data, rerender, id),
-        simulate: () => openSimulation(data, id),
-        history: () => void openHistory(data, id, (msg) => act(async () => {}, msg, rerender)).catch((e: unknown) => alert((e as Error).message)),
-        publish: () => openPublish(data, [id]),
-        rename: () => openRename(data, id, rerender),
-        toggle: () => void act(() => post(`${API}/meta`, { id, patch: { disabled: M.statusOf(data, id) !== 'disabled' } }), 'Đã đổi trạng thái.', rerender).catch((e: unknown) => alert((e as Error).message)),
-        delete: () => askDelete(data, id, rerender),
-      }[b.dataset.act as 'copy'];
-      run?.();
+  const runAct = (action: string, id: string) => {
+    const run = {
+      spawns: () => editSpawns(data, draftOf(data, id), (msg) => act(async () => {}, msg, rerender)),
+      exits: () => editExits(data, id, (msg) => act(async () => {}, msg, rerender)),
+      copy: () => openCreate(data, rerender, id),
+      simulate: () => openSimulation(data, id),
+      history: () => void openHistory(data, id, (msg) => act(async () => {}, msg, rerender)).catch((e: unknown) => alert((e as Error).message)),
+      publish: () => openPublish(data, [id]),
+      rename: () => openRename(data, id, rerender),
+      toggle: () => void act(() => post(`${API}/meta`, { id, patch: { disabled: M.statusOf(data, id) !== 'disabled' } }), 'Đã đổi trạng thái.', rerender).catch((e: unknown) => alert((e as Error).message)),
+      delete: () => askDelete(data, id, rerender),
+    }[action as 'copy'];
+    run?.();
+  };
+  root.querySelectorAll<HTMLButtonElement>('button[data-act]').forEach((b) => b.addEventListener('click', () => runAct(b.dataset.act!, b.dataset.id!)));
+  root.querySelectorAll<HTMLSelectElement>('select[data-act-menu]').forEach((sel) =>
+    sel.addEventListener('change', () => {
+      const act = sel.value;
+      sel.value = '';
+      if (act) runAct(act, sel.dataset.id!);
     }),
   );
 }

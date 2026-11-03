@@ -7,6 +7,8 @@ import { esc } from './labels';
 import { editExits, editSpawns, fetchBuilder, postMeta } from './mapApi';
 import { EXIT_KIND_LABEL, LOCK_LABEL } from './mapLinks';
 import { openSimulation } from './mapSimulate';
+import { STATUS_ICON, zoneVisual } from './mapManage';
+import { optionHtml } from './richSelect';
 import * as M from './mapModel';
 import { NODE, autoLayout, networkEdges, networkWarnings, nodePositions, type NetEdge, type Point } from './mapNetwork';
 
@@ -140,8 +142,8 @@ function draw(root: HTMLElement) {
     ${page.message ? `<p class="ok">${esc(page.message)}</p>` : ''}
     <div class="toolbar">
       <input class="search" type="search" placeholder="Tìm map…" value="${esc(page.query)}" data-q />
-      <select data-zone><option value="">Mọi vùng</option>${data.zones.map((z) => `<option value="${z.id}"${z.id === page.zone ? ' selected' : ''}>${esc(z.nameVi)}</option>`).join('')}</select>
-      <select data-status><option value="">Mọi trạng thái</option>${(Object.keys(M.STATUS_LABEL) as M.MapStatus[]).map((s) => `<option value="${s}"${s === page.status ? ' selected' : ''}>${M.STATUS_LABEL[s]}</option>`).join('')}</select>
+      <span class="mapm__filter"><select data-zone data-rich="compact">${optionHtml('', 'Mọi vùng', !page.zone, { icon: '🗺️' })}${data.zones.map((z) => optionHtml(z.id, z.nameVi, z.id === page.zone, zoneVisual(data, z.id))).join('')}</select></span>
+      <span class="mapm__filter"><select data-status data-rich="compact">${optionHtml('', 'Mọi trạng thái', !page.status, { icon: '📋' })}${(Object.keys(M.STATUS_LABEL) as M.MapStatus[]).map((s) => optionHtml(s, M.STATUS_LABEL[s], s === page.status, { icon: STATUS_ICON[s] })).join('')}</select></span>
       <button class="btn" data-fit>Vừa khung</button><button class="btn" data-auto>Xếp tự động</button>
     </div>
     <div class="mnet"><svg class="mnet__svg"></svg><aside class="mnet__side">${sideHtml(data, edges, warnings)}</aside></div>`;

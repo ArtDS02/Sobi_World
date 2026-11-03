@@ -5,6 +5,7 @@ import { renderAssets } from './assets';
 import { renderAdventure } from './adventure';
 import { renderAdventureMaps } from './adventureMaps';
 import { renderMapManage } from './mapManage';
+import { watchRichSelects } from './richSelect';
 import { renderMapNetwork } from './mapNetworkPage';
 import { editorDirty, renderMapEditor } from './mapEditor';
 import { renderMapAssets } from './mapAssetsPage';
@@ -15,7 +16,7 @@ import { renderDayNight } from './dayNight';
 import { renderSeasons } from './seasons';
 import { renderEditor } from './editor';
 import { renderDesktop } from './desktop';
-import { renderGuide } from './guide';
+import { openGuide, renderGuide } from './guide';
 import { esc } from './labels';
 import { layoutDirty, renderLayout } from './layout';
 import { renderLibrary } from './library';
@@ -39,7 +40,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
     ['layout', '🗺️', 'Bố cục cảnh', 'layout'],
     ['seasons', '🍂', 'Mùa & hiệu ứng', 'seasons'],
   ]],
-  ['Thế giới', [['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['adventure', '⚔️', 'Mô phỏng trận', 'content'], ['adventure-world', '🧭', 'Quản lý map', 'content'], ['adventure-network', '🕸️', 'Mạng map', 'content'], ['adventure-editor', '✏️', 'Map Editor', 'content'], ['adventure-assets', '🌲', 'Thư viện asset', 'content'], ['adventure-maps', '🗺️', 'Bản đồ khu', 'content'], ['battle-lab', '✨', 'Xưởng animation trận', 'content']]],
+  ['Thế giới', [['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['adventure', '⚔️', 'Mô phỏng trận', 'battle-sim'], ['adventure-world', '🧭', 'Quản lý map', 'map-manage'], ['adventure-network', '🕸️', 'Mạng map', 'map-network'], ['adventure-editor', '✏️', 'Map Editor', 'map-editor'], ['adventure-assets', '🌲', 'Thư viện asset', 'map-assets'], ['adventure-maps', '🗺️', 'Bản đồ khu', 'adventure-maps'], ['battle-lab', '✨', 'Xưởng animation trận', 'battle-lab']]],
   ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
   ['Hệ thống', [['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
 ];
@@ -94,7 +95,7 @@ function shell() {
         <header class="header">
           <h1>${current[1]} ${esc(current[2])}</h1>
           <div class="header__actions">
-            ${page !== 'guide' ? `<a class="help-link" href="#/guide/${current[3]}">❔ Hướng dẫn</a>` : ''}
+            ${page !== 'guide' ? `<button type="button" class="help-link" data-guide="${current[3]}">❔ Hướng dẫn</button>` : ''}
             ${species && state.dirty ? '<span class="badge status-warn">● Chưa lưu</span><button class="btn" data-discard>↺ Huỷ thay đổi</button>' : ''}
             ${species ? `<button class="btn btn-primary" data-save ${!state.dirty || state.saving || !state.apiOnline || errors > 0 ? 'disabled' : ''}
               title="${errors ? 'Sửa hết lỗi trước khi lưu' : 'Ghi vào content/farm/species.json + manifest'}">
@@ -107,6 +108,8 @@ function shell() {
     </div>
     <div class="drawer-host"></div>`;
   app.querySelector('[data-save]')?.addEventListener('click', () => void save());
+  // The guide opens over the page (no navigation: the work on the page stays).
+  app.querySelector<HTMLButtonElement>('[data-guide]')?.addEventListener('click', (e) => openGuide((e.currentTarget as HTMLButtonElement).dataset.guide!));
   app.querySelector('[data-discard]')?.addEventListener('click', discard);
   app.querySelector('[data-dismiss]')?.addEventListener('click', () => {
     state.message = null;
@@ -161,6 +164,7 @@ window.addEventListener('beforeunload', (e) => {
   if (anyDirty()) e.preventDefault();
 });
 onChange(render);
+watchRichSelects();
 app.innerHTML = '<p class="loading">Đang tải dữ liệu Sobi World… 🌍</p>';
 load().catch((e: unknown) => {
   app.innerHTML = `<p class="empty">Không tải được manifest: ${esc((e as Error).message)}</p>`;

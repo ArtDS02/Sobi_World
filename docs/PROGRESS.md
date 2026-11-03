@@ -10,6 +10,17 @@
 
 ## Nhật ký
 
+### 2026-11-03 — Admin: hướng dẫn dạng popup, dropdown có hình, bảng Quản lý map (decision 047)
+✅ Đã làm:
+- Nút "❔ Hướng dẫn" mở popup ngay trên trang (không chuyển trang, không mất việc đang làm); trong popup chọn được mục khác, có link sang trang hướng dẫn đầy đủ.
+- Hướng dẫn mới, viết ngắn và dễ hiểu: Quản lý map, Mạng map, Map Editor, Lối ra & Điểm xuất hiện, Kiểm tra / Publish / Chạy thử / Lịch sử, Thư viện asset, Bản đồ khu (trang cũ), Mô phỏng trận, Xưởng animation trận (`tools/admin/guideWorld.ts`).
+- Dropdown có hình cho mọi trang nhóm Thế giới (`tools/admin/richSelect.ts`): map (ảnh map), vùng (ảnh thẻ vùng), sinh vật, kỹ năng, phản ứng, dòng Guardian, class, trang bị, độ hiếm, loại đất, vật, asset, rương, hệ, hình lối ra, khoá, hướng…; danh sách dài có ô tìm, dùng được bàn phím.
+- Quản lý map: ảnh từng map, các thao tác phụ gom vào menu "⋯ Thêm", hàng thẳng (lỗi cũ do ô hành động dùng `display: flex` trực tiếp trên `td`). Xưởng animation: các ô tích xếp thành một hàng gọn.
+
+🧪 `npm run check` xanh (1628 test). Admin thật: bảng Quản lý map ở khung 1900 thẳng hàng, menu Thêm mở Lịch sử đúng, popup Hướng dẫn không đổi trang, dropdown sinh vật / kỹ năng / map / inspector có hình và chọn vẫn chạy đúng.
+
+👉 Chủ dự án: bấm F5 ở Admin đang mở để nạp giao diện mới.
+
 ### 2026-11-03 — Adventure: Map Builder GĐ8 — kiểm thử tích hợp runtime + save; Map Builder xong (decision 047)
 ✅ Đã làm:
 - Test runtime: map do Builder publish được game nạp như map chính thức, chuyến đi thật vào / ra bằng `takeExit` tới đúng điểm tới, đi trong map, save giữ chuyến ở map mới nạp lại nguyên vẹn. Test đối chiếu: Builder publish đúng y thế giới mà test runtime chơi.

@@ -8,6 +8,7 @@ import { esc } from './labels';
 import { cellFor, drawMapGrid, tileOfEvent, type GridMark } from './mapCanvas';
 import * as M from './mapModel';
 import { openModal } from './modal';
+import { optionHtml } from './richSelect';
 
 const FACING_LABEL: Record<M.Facing, string> = { up: '↑ Lên', down: '↓ Xuống', left: '← Trái', right: '→ Phải' };
 
@@ -47,7 +48,7 @@ export function openSpawns(data: M.BuilderData, draft: M.MapDraft, save: (draft:
             const named = sp.id !== 'spawn_default';
             return `<div class="mspawn__row${sp.id === selected ? ' is-selected' : ''}" data-pick="${sp.id}">
               <div><b>${esc(sp.nameVi)}</b> <span class="mono muted">${sp.id}</span> · ${sp.x},${sp.y}</div>
-              ${named ? `<div class="toolbar"><input data-name="${sp.id}" value="${esc(sp.nameVi)}" /><select data-facing="${sp.id}">${(Object.keys(FACING_LABEL) as M.Facing[]).map((f) => `<option value="${f}"${f === sp.facing ? ' selected' : ''}>${FACING_LABEL[f]}</option>`).join('')}</select><button type="button" class="btn btn-small" data-remove="${sp.id}">Xoá</button></div>` : ''}
+              ${named ? `<div class="toolbar"><input data-name="${sp.id}" value="${esc(sp.nameVi)}" /><select data-facing="${sp.id}" data-rich="compact">${(Object.keys(FACING_LABEL) as M.Facing[]).map((fc) => optionHtml(fc, FACING_LABEL[fc].slice(2), fc === sp.facing, { icon: FACING_LABEL[fc].slice(0, 1) })).join('')}</select><button type="button" class="btn btn-small" data-remove="${sp.id}">Xoá</button></div>` : ''}
               <small class="muted">${on.length ? `Lối ra tới đây: ${on.map((a) => `${esc(a.fromName)} · ${a.exit.id}${a.exit.arrive ? '' : ' (chưa gắn tên)'}`).join('; ')}` : 'Chưa có lối ra nào tới điểm này.'}</small>
             </div>`;
           })

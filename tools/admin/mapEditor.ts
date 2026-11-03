@@ -15,6 +15,7 @@ import { applyField, inspectorHtml } from './mapEditInspector';
 import * as E from './mapEditModel';
 import { graphProblems } from './mapLinks';
 import * as M from './mapModel';
+import { optionHtml } from './richSelect';
 import { openPreview, openPublish } from './mapPublishDialog';
 import { openSimulation } from './mapSimulate';
 
@@ -168,7 +169,7 @@ function mount(root: HTMLElement, st: EditorState) {
 
   const palette = () => {
     left.innerHTML = `<h4>Đất</h4><div class="medit__swatches">${GROUND.map(([c, n]) => `<button class="medit__swatch${st.ground === c ? ' is-active' : ''}" data-ground="${esc(c)}" title="${esc(n)}"><i style="background:${COLOUR[c]}"></i>${esc(n)}</button>`).join('')}</div>
-      <label class="field"><span>Cỡ cọ</span><select data-size>${[1, 2, 3, 5].map((n) => `<option${n === st.size ? ' selected' : ''}>${n}</option>`).join('')}</select></label>
+      <label class="field"><span>Cỡ cọ</span><select data-size data-rich="compact">${[1, 2, 3, 5].map((n) => optionHtml(String(n), `${n} × ${n} ô`, n === st.size, { icon: ['▪', '◾', '◼', '⬛'][[1, 2, 3, 5].indexOf(n)]! })).join('')}</select></label>
       <h4>Độ cao (chỉ để vẽ)</h4><div class="medit__swatches">${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((h) => `<button class="medit__swatch medit__swatch--n${st.height === h ? ' is-active' : ''}" data-height="${h}">${h}</button>`).join('')}</div>
       <h4>Thêm vật</h4><div class="medit__adds">${E.ADDABLE.map((k) => `<button class="btn btn-small${st.tool === 'place' && st.place === k ? ' is-active' : ''}" data-place="${k}"><b style="color:${OBJ_STYLE[k][1]}">${OBJ_STYLE[k][0]}</b> ${esc(E.OBJ_LABEL[k])}</button>`).join('')}</div>
       <h4>Asset trang trí <a class="muted" href="#/adventure-assets">(thư viện)</a></h4><input type="search" data-decor-q placeholder="Tìm asset…" value="${esc(st.decorQuery)}" />
@@ -454,7 +455,7 @@ function mount(root: HTMLElement, st: EditorState) {
   // ---- Keys (only while this editor is on screen and no field has the focus) ---------------------------------------------
   const onKey = (e: KeyboardEvent) => {
     if (!root.isConnected) return document.removeEventListener('keydown', onKey), document.removeEventListener('keyup', onKeyUp);
-    if (document.querySelector('.modal-host') || (e.target instanceof Element && e.target.closest('input, textarea, select'))) return;
+    if (document.querySelector('.modal-host') || (e.target instanceof Element && e.target.closest('input, textarea, select, .rsel'))) return;
     const k = e.key.toLowerCase();
     const ctrl = e.ctrlKey || e.metaKey;
     const keyCmd = ctrl ? ({ z: e.shiftKey ? 'redo' : 'undo', y: 'redo', d: 'duplicate', c: 'copy', v: 'paste', s: 'save' } as Record<string, string>)[k] : undefined;

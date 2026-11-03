@@ -8,6 +8,7 @@ import { DECOR_LIST, type DecorAsset } from '../../src/areas/adventure/logic/con
 import { esc } from './labels';
 import { slugOf } from './mapModel';
 import { confirmDanger, openModal } from './modal';
+import { optionHtml } from './richSelect';
 import { artUrl, json, post, reloadSoon, rememberMessage, state } from './store';
 
 const API = '/__admin/adventure/assets';
@@ -34,7 +35,9 @@ const parseFeet = (t: string) =>
     .map((p) => p.split(',').map((n) => Math.round(Number(n.trim()))))
     .filter((n) => n.length === 4 && n.every(Number.isFinite))
     .map(([x, y, w, h]) => ({ x: x!, y: y!, w: Math.max(1, w!), h: Math.max(1, h!) }));
-const options = <T extends string>(list: readonly T[], label: Record<T, string>, sel: string) => list.map((v) => `<option value="${v}"${v === sel ? ' selected' : ''}>${esc(label[v])}</option>`).join('');
+const CATEGORY_ICON: Record<(typeof SCENERY_CATEGORIES)[number], string> = { tree: '🌳', bush: '🌿', rock: '🪨', building: '🏠', ruin: '🏛️', water: '💧', flower: '🌸', light: '🏮', cover: '🍃', other: '✨' };
+const MODE_ICON: Record<(typeof SCENERY_MODES)[number], string> = { normal: '⬇️', occluder: '↕️', foreground: '⬆️', cover: '🫥' };
+const options = <T extends string>(list: readonly T[], label: Record<T, string>, sel: string, icons?: Record<T, string>) => list.map((v) => optionHtml(v, label[v], v === sel, icons ? { icon: icons[v] } : {})).join('');
 
 /** The fields shared by "edit", "from a picture" and "upload". */
 function fieldsHtml(a: Partial<DecorAsset>, opts: { idEditable: boolean; artPick: boolean }) {
@@ -43,8 +46,8 @@ function fieldsHtml(a: Partial<DecorAsset>, opts: { idEditable: boolean; artPick
     <label class="field"><span>Tên (tiếng Anh)</span><input name="nameEn" value="${esc(a.id ? enName(a.id) : '')}" required /></label>
     <label class="field"><span>Asset ID</span><input name="id" class="mono" value="${esc(a.id ?? '')}" ${opts.idEditable ? '' : 'disabled'} placeholder="decor_ten" /></label>
     ${opts.artPick ? `<label class="field"><span>Ảnh (id trong manifest)</span><input name="art" class="mono" list="mass-art" value="${esc(a.art ?? '')}" /><datalist id="mass-art">${state.art.filter((r) => r.section === 'props' || r.section === 'environment').map((r) => `<option value="${esc(r.id)}"></option>`).join('')}</datalist></label>` : ''}
-    <label class="field"><span>Loại</span><select name="category">${options(SCENERY_CATEGORIES, CATEGORY_LABEL, a.category ?? 'other')}</select></label>
-    <label class="field"><span>Cách đứng</span><select name="mode">${options(SCENERY_MODES, MODE_LABEL, a.mode ?? 'occluder')}</select></label>
+    <label class="field"><span>Loại</span><select name="category" data-rich>${options(SCENERY_CATEGORIES, CATEGORY_LABEL, a.category ?? 'other', CATEGORY_ICON)}</select></label>
+    <label class="field"><span>Cách đứng</span><select name="mode" data-rich>${options(SCENERY_MODES, MODE_LABEL, a.mode ?? 'occluder', MODE_ICON)}</select></label>
     <label class="field"><span>Rộng khi vẽ (ô)</span><input name="w" type="number" step="0.25" min="0.25" value="${a.w ?? 2}" /></label>
     <label class="field"><span>Chân cách đáy ảnh (0–0,9 chiều cao)</span><input name="anchorY" type="number" step="0.05" min="0" max="0.9" value="${a.anchorY ?? 0}" /></label>
     <label class="field"><span>Ô chặn quanh chân "x,y,w,h; …" (trống = đi xuyên)</span><input name="foot" value="${esc(a.foot ? feet(a as DecorAsset) : '0,0,1,1')}" /></label>
@@ -128,7 +131,7 @@ function draw(root: HTMLElement) {
     <p class="muted">${DECOR_LIST.length} asset dùng chung cho mọi map: mỗi asset khai báo ảnh, cỡ, ô chặn, cách đứng một lần; map chỉ ghi chỗ đặt. Đặt asset trong Map Editor (cột trái).</p>
     <div class="toolbar">
       <input class="search" type="search" placeholder="Tìm asset…" value="${esc(page.query)}" data-q />
-      <select data-cat><option value="">Mọi loại</option>${options(SCENERY_CATEGORIES, CATEGORY_LABEL, page.category)}</select>
+      <span class="mapm__filter"><select data-cat data-rich="compact">${optionHtml('', 'Mọi loại', !page.category, { icon: '🗂️' })}${options(SCENERY_CATEGORIES, CATEGORY_LABEL, page.category, CATEGORY_ICON)}</select></span>
       <button class="btn" data-from>＋ Từ ảnh có sẵn</button><button class="btn btn-primary" data-upload>⬆ Tải ảnh mới</button>
     </div>
     <div class="massets">${list

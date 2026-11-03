@@ -8,6 +8,9 @@ import type { ItemId } from '../../src/core/config/ids';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import { vi } from '../../src/i18n/vi';
 import { RARITY_LABEL, esc } from './labels';
+import { imageOf } from './mapThumb';
+import { optionHtml, type Visual } from './richSelect';
+import { GUARDIAN_ART } from '../../src/areas/adventure/logic/art';
 
 interface Form {
   zoneId: string;
@@ -33,6 +36,9 @@ const form: Form = {
   seed: 2024,
 };
 
+/** A picture for each gear tier (a sword of that tier) and each rarity's colour, for the dropdowns. */
+const GEAR_ART: Record<GearTier, string | null> = { none: null, common: 'ui_item_equip_wood_sword', uncommon: 'ui_item_equip_iron_sword', rare: 'ui_item_equip_flame_blade', epic: 'ui_item_equip_rune_blade' };
+const RARITY_COLOUR: Record<string, string> = { COMMON: '#8f9a96', UNCOMMON: '#4fa96c', RARE: '#4686db', EPIC: '#9b5cdb', LEGENDARY: '#df9b16' };
 const GEAR_LABEL: Record<GearTier, string> = { none: 'Không trang bị', common: 'Trang bị thường', uncommon: 'Trang bị khá', rare: 'Trang bị hiếm', epic: 'Trang bị sử thi (Tàn Tích)' };
 const pct = (n: number) => `${n.toLocaleString('vi-VN')}%`;
 
@@ -58,22 +64,23 @@ function resultHtml(r: SimResult): string {
 const run = () => resultHtml(simulateRuns({ zoneId: form.zoneId, level: form.level, team: form.team, gear: form.gear, prep: form.prep, samples: form.samples, seed: form.seed }));
 
 export function renderAdventure(root: HTMLElement) {
-  const options = <T extends string>(list: readonly { id: T; nameVi: string }[], cur: string) => list.map((x) => `<option value="${x.id}"${x.id === cur ? ' selected' : ''}>${esc(x.nameVi)}</option>`).join('');
-  const rarityOptions = (cur: string) => RARITY_VALUES.map((r) => `<option value="${r}"${r === cur ? ' selected' : ''}>${esc(RARITY_LABEL[r] ?? r)}</option>`).join('');
+  const options = <T extends string>(list: readonly { id: T; nameVi: string }[], cur: string, visual: (id: T) => Visual = () => ({})) => list.map((x) => optionHtml(x.id, x.nameVi, x.id === cur, visual(x.id))).join('');
+  const rarityOptions = (cur: string) => RARITY_VALUES.map((r) => optionHtml(r, RARITY_LABEL[r] ?? r, r === cur, { swatch: RARITY_COLOUR[r] ?? '#999' })).join('');
+  const zoneVisual = (id: string): Visual => ({ img: imageOf(ZONES[id]!.backdrop), sub: `Cấp đội gợi ý ${ZONES[id]!.levels.join('–')}` });
   root.innerHTML = `<h3>Mô phỏng trận (Sobi Adventure)</h3>
     <p class="muted">Một đội đi trọn ba khu của một vùng nhiều lần bằng đúng luật đánh của game (đánh mọi nhóm, uống suối khi yếu, hạ kẻ canh khu rồi trùm); cùng seed cho cùng kết quả. Cây kỹ năng tự mở theo SP của cấp. Không lưu gì.</p>
     <div class="form-grid">
-      <label class="field"><span>Vùng</span><select data-zone>${options(ZONE_LIST, form.zoneId)}</select></label>
+      <label class="field"><span>Vùng</span><select data-zone data-rich>${options(ZONE_LIST, form.zoneId, zoneVisual)}</select></label>
       <label class="field"><span>Cấp của cả đội</span><input type="number" min="1" max="30" data-level value="${form.level}" /></label>
-      <label class="field"><span>Trang bị</span><select data-gear>${GEAR_TIERS.map((g) => `<option value="${g}"${g === form.gear ? ' selected' : ''}>${esc(GEAR_LABEL[g])}</option>`).join('')}</select></label>
+      <label class="field"><span>Trang bị</span><select data-gear data-rich>${GEAR_TIERS.map((g) => optionHtml(g, GEAR_LABEL[g], g === form.gear, GEAR_ART[g] ? { img: imageOf(GEAR_ART[g]) } : { icon: '🚫' })).join('')}</select></label>
       ${Object.values(PREP_ITEMS).map((p) => `<label class="field"><span>Mang ${esc(vi.shop[p.itemId as ItemId] ?? p.itemId)}</span><input type="checkbox" data-prep="${p.itemId}"${form.prep.includes(p.itemId) ? ' checked' : ''} /></label>`).join('')}
       <label class="field"><span>Số chuyến</span><input type="number" min="1" max="2000" data-samples value="${form.samples}" /></label>
       <label class="field"><span>Random seed</span><input type="number" data-seed value="${form.seed}" /></label>
     </div>
     <div class="form-grid">${form.team
-      .map((m, i) => `<label class="field"><span>Bạn ${i + 1}: dòng</span><select data-line="${i}">${options(LINEAGE_LIST, m.lineage)}</select></label>
-        <label class="field"><span>Bạn ${i + 1}: class</span><select data-class="${i}">${options(CLASS_LIST, m.classId)}</select></label>
-        <label class="field"><span>Bạn ${i + 1}: độ hiếm</span><select data-rarity="${i}">${rarityOptions(m.rarity)}</select></label>
+      .map((m, i) => `<label class="field"><span>Bạn ${i + 1}: dòng</span><select data-line="${i}" data-rich>${options(LINEAGE_LIST, m.lineage, (id) => ({ img: imageOf(GUARDIAN_ART[id]) }))}</select></label>
+        <label class="field"><span>Bạn ${i + 1}: class</span><select data-class="${i}" data-rich>${options(CLASS_LIST, m.classId, (id) => ({ img: imageOf(`ui_icon_class_${id}`) }))}</select></label>
+        <label class="field"><span>Bạn ${i + 1}: độ hiếm</span><select data-rarity="${i}" data-rich>${rarityOptions(m.rarity)}</select></label>
         <label class="field"><span>Bạn ${i + 1}: tim (0–5)</span><input type="number" min="0" max="5" data-hearts="${i}" value="${m.hearts}" /></label>`)
       .join('')}</div>
     <div data-result>${run()}</div>`;

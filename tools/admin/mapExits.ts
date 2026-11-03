@@ -9,6 +9,10 @@ import { cellFor, drawMapGrid, tileOfEvent, type GridMark } from './mapCanvas';
 import * as L from './mapLinks';
 import * as M from './mapModel';
 import { openModal } from './modal';
+import { imageOf, mapThumb } from './mapThumb';
+import { optionHtml, type Visual } from './richSelect';
+
+const FACING_ARROW: Record<string, string> = { up: '↑', down: '↓', left: '←', right: '→' };
 
 /** What the next click on a grid does. */
 type Mode = { kind: 'exit' } | { kind: 'new'; to: string } | { kind: 'arrive' } | { kind: 'back' } | { kind: 'backArrive'; exitId: string };
@@ -37,7 +41,19 @@ function marks(map: AreaMap, strongExit: string | null, strongSpawn: string | nu
   ];
 }
 
-const option = (value: string, label: string, selected: boolean, disabled = false) => `<option value="${esc(value)}"${selected ? ' selected' : ''}${disabled ? ' disabled' : ''}>${esc(label)}</option>`;
+const option = (value: string, label: string, selected: boolean, disabled = false, v: Visual = {}) => optionHtml(value, label, selected, v, disabled);
+const mapOption = (m: AreaMap, selected: boolean) => option(m.id, m.nameVi, selected, false, { img: mapThumb(m), mapId: m.id, sub: `${m.cols}×${m.rows} ô` });
+/** The kit picture of each exit look (forest / mountain / ruins), an emoji when there is none. */
+const KIND_VISUAL: Record<string, Visual> = {
+  gate: { img: imageOf('adv_warp_gate') ?? imageOf('adv_portal'), icon: '🌀' },
+  trail: { icon: '🥾' },
+  cave: { img: imageOf('adv_map_forest_exit_cave') },
+  bridge: { icon: '🌉' },
+  stairs: { img: imageOf('adv_map_ruins_exit_stairs_down') },
+  shore: { icon: '🏖️' },
+  tunnel: { img: imageOf('adv_map_mountain_exit_tunnel') },
+};
+const LOCK_ICON: Record<string, string> = { none: '🔓', guardian: '🛡️', shortcut: '↩️' };
 
 /** `selectExit` = the exit selected when it opens (from the map network); else the first. */
 export function openExits(data: M.BuilderData, mapId: string, save: (s: ExitsSave) => Promise<void>, selectExit?: string) {
@@ -105,7 +121,7 @@ export function openExits(data: M.BuilderData, mapId: string, save: (s: ExitsSav
               </div>`;
             })
             .join('')}
-          <div class="toolbar"><select data-new-to>${others.map((m) => option(m.id, m.nameVi, mode.kind === 'new' && mode.to === m.id)).join('')}</select><button type="button" class="btn btn-small" data-new>＋ Lối ra tới map này</button></div>
+          <div class="toolbar"><span class="mexit__pick"><select data-new-to data-rich>${others.map((m) => mapOption(m, mode.kind === 'new' && mode.to === m.id)).join('')}</select></span><button type="button" class="btn btn-small" data-new>＋ Lối ra tới map này</button></div>
           ${exit ? fields(exit, dest!, back) : ''}
           ${note ? `<p class="status-warn">${esc(note)}</p>` : ''}
           ${problems.length ? `<ul class="amap__problems">${[...new Set(problems)].map((p) => `<li>${esc(p)}</li>`).join('')}</ul>` : '<p class="ok">Lối ra và kết nối của map này hợp lệ.</p>'}`;
@@ -116,12 +132,12 @@ export function openExits(data: M.BuilderData, mapId: string, save: (s: ExitsSav
         const live = publishedExits.has(exit.id);
         return `<div class="mexit__fields">
           <label class="field"><span>Tên (cho admin)</span><input data-f="name" value="${esc(notes[exit.id]?.nameVi ?? '')}" placeholder="Tới ${esc(dest.nameVi)}" /></label>
-          <label class="field"><span>Map đích</span><select data-f="to">${world().filter((m) => m.id !== mapId).map((m) => option(m.id, m.nameVi, m.id === exit.to)).join('')}</select></label>
-          <label class="field"><span>Điểm tới ở map đích</span><select data-f="arrive">${M.spawnsOf(dest).map((s) => option(s.id, `${s.nameVi} (${s.x},${s.y})`, s.id === exit.arrive)).join('')}</select></label>
+          <label class="field"><span>Map đích</span><select data-f="to" data-rich>${world().filter((m) => m.id !== mapId).map((m) => mapOption(m, m.id === exit.to)).join('')}</select></label>
+          <label class="field"><span>Điểm tới ở map đích</span><select data-f="arrive" data-rich>${M.spawnsOf(dest).map((s) => option(s.id, s.nameVi, s.id === exit.arrive, false, { icon: s.id === 'spawn_default' ? '⚪' : '📍', sub: `ô ${s.x},${s.y} · quay ${FACING_ARROW[s.facing ?? 'down']}` })).join('')}</select></label>
           <button type="button" class="btn btn-small" data-mode="arrive">Chọn điểm tới trên lưới map đích</button>
           <label class="field"><span>Ô (x, y) · rộng × cao</span><span class="toolbar"><input type="number" data-f="x" value="${exit.x}" /><input type="number" data-f="y" value="${exit.y}" /><input type="number" min="1" data-f="w" value="${exit.w}" /><input type="number" min="1" data-f="h" value="${exit.h}" /></span></label>
-          <label class="field"><span>Hình</span><select data-f="kind">${Object.entries(L.EXIT_KIND_LABEL).map(([k, n]) => option(k, n, (exit.kind ?? 'gate') === k)).join('')}</select></label>
-          <label class="field"><span>Khoá</span><select data-f="lock">${Object.entries(L.LOCK_LABEL).map(([k, n]) => option(k, n, (exit.lock ?? 'none') === k, k === 'shortcut' && !!exit.oneWay)).join('')}</select></label>
+          <label class="field"><span>Hình</span><select data-f="kind" data-rich>${Object.entries(L.EXIT_KIND_LABEL).map(([k, n]) => option(k, n, (exit.kind ?? 'gate') === k, false, KIND_VISUAL[k]!.img ? { img: KIND_VISUAL[k]!.img } : { icon: KIND_VISUAL[k]!.icon ?? '🚪' })).join('')}</select></label>
+          <label class="field"><span>Khoá</span><select data-f="lock" data-rich>${Object.entries(L.LOCK_LABEL).map(([k, n]) => option(k, n.split(' (')[0]!, (exit.lock ?? 'none') === k, k === 'shortcut' && !!exit.oneWay, { icon: LOCK_ICON[k], sub: n.includes('(') ? n.slice(n.indexOf('(') + 1, -1) : '' })).join('')}</select></label>
           <label class="check"><input type="checkbox" data-f="oneWay" ${exit.oneWay ? 'checked' : ''} ${exit.lock === 'shortcut' ? 'disabled' : ''} /> Một chiều (không cần lối về)</label>
           <label class="check"><input type="checkbox" data-f="inactive" ${notes[exit.id]?.inactive ? 'checked' : ''} ${live ? 'disabled title="Lối ra đã publish không tắt được"' : ''} /> Tạm tắt (không publish)</label>
           <div><b>Lối về từ ${esc(dest.nameVi)}</b>: ${back.length ? back.map((b) => `<span class="mono">${b.id}</span> → ${esc(M.spawnsOf(map).find((s) => s.id === b.arrive)?.nameVi ?? `ô ${b.arriveX},${b.arriveY}`)}`).join('; ') : exit.oneWay ? 'không cần (một chiều)' : '<span class="status-error">chưa có</span>'}</div>

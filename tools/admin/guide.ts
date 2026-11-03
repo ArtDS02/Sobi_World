@@ -1,8 +1,12 @@
 // Admin guide inside the dashboard (DECISIONS AD-1): one section per module with purpose, steps, a
-// real workflow and pitfalls. Pages link here with "❔ Hướng dẫn" (#/guide/<section>).
+// real workflow and pitfalls. Each page's "❔ Hướng dẫn" opens its section in a popup (openGuide), so the work on the page stays
+// where it is; the whole guide is also a page (#/guide/<section>).
 import { esc } from './labels';
+import { openModal } from './modal';
+import { optionHtml } from './richSelect';
+import { WORLD_SECTIONS } from './guideWorld';
 
-interface Section {
+export interface GuideSection {
   id: string;
   icon: string;
   title: string;
@@ -12,7 +16,7 @@ interface Section {
   notes: string[];
 }
 
-const SECTIONS: Section[] = [
+const BASE_SECTIONS: GuideSection[] = [
   {
     id: 'overview', icon: '🏠', title: 'Tổng quan Dashboard',
     purpose: 'Công cụ dev (npm run admin, cổng 5175) sửa đúng các file game đọc: nội dung của cả 5 khu (Nội dung game), giống heo, manifest asset, cửa hàng, luật phối giống, bố cục, ngày/đêm — và save của người chơi. Không có trong bản cài đặt gửi người chơi.',
@@ -111,17 +115,53 @@ const SECTIONS: Section[] = [
   },
 ];
 
+/** Every section: the World pages (Map Builder, battle tools) right after the overview of the dashboard. */
+const SECTIONS: GuideSection[] = [...BASE_SECTIONS.slice(0, 1), ...WORLD_SECTIONS, ...BASE_SECTIONS.slice(1)];
+
+const list = (items: string[], ordered = false) =>
+  `<${ordered ? 'ol' : 'ul'}>${items.map((i) => `<li>${esc(i)}</li>`).join('')}</${ordered ? 'ol' : 'ul'}>`;
+
+const sectionBody = (s: GuideSection) => `<h4>🎯 Dùng để làm gì</h4><p>${esc(s.purpose)}</p>
+  <h4>🧭 Các bước</h4>${list(s.steps, true)}
+  <h4>💡 Ví dụ</h4>${list(s.example)}
+  <h4>⚠️ Lưu ý</h4>${list(s.notes)}`;
+
+/** The guide of a page in a popup (the page and its unsaved work stay as they are); another section can be picked inside. */
+export function openGuide(sectionId: string) {
+  let current = SECTIONS.find((s) => s.id === sectionId) ?? SECTIONS[0]!;
+  openModal({
+    title: '❔ Hướng dẫn',
+    submit: 'Đã hiểu',
+    wide: true,
+    body: `<div class="guide-pop">
+      <label class="field"><span>Mục</span><select data-guide-pick data-rich>${SECTIONS.map((s) => optionHtml(s.id, s.title, s.id === current.id, { icon: s.icon })).join('')}</select></label>
+      <div class="guide-pop__body" data-guide-body></div>
+      <p class="muted"><a href="#/guide/${esc(current.id)}" data-guide-full>Mở toàn bộ hướng dẫn (trang riêng)</a></p>
+    </div>`,
+    onOpen: (form) => {
+      const body = form.querySelector<HTMLElement>('[data-guide-body]')!;
+      const paint = () => {
+        body.innerHTML = `<h3>${current.icon} ${esc(current.title)}</h3>${sectionBody(current)}`;
+        form.querySelector<HTMLAnchorElement>('[data-guide-full]')!.href = `#/guide/${current.id}`;
+      };
+      form.querySelector<HTMLSelectElement>('[data-guide-pick]')!.addEventListener('change', (e) => {
+        current = SECTIONS.find((s) => s.id === (e.target as HTMLSelectElement).value) ?? current;
+        paint();
+        body.scrollTop = 0;
+      });
+      form.querySelector('[data-guide-full]')!.addEventListener('click', () => form.querySelector<HTMLButtonElement>('[data-mclose]')?.click());
+      paint();
+    },
+    onSubmit: () => undefined,
+  });
+}
+
 export function renderGuide(root: HTMLElement, section: string | null) {
-  const list = (items: string[], ordered = false) =>
-    `<${ordered ? 'ol' : 'ul'}>${items.map((i) => `<li>${esc(i)}</li>`).join('')}</${ordered ? 'ol' : 'ul'}>`;
   root.innerHTML = `<div class="guide">
     <nav class="guide__toc panel">${SECTIONS.map((s) => `<a href="#/guide/${s.id}" class="${s.id === section ? 'is-active' : ''}">${s.icon} ${esc(s.title)}</a>`).join('')}</nav>
     <div class="guide__body">${SECTIONS.map((s) => `<section class="panel guide__section${s.id === section ? ' is-active' : ''}" id="guide-${s.id}">
       <h2>${s.icon} ${esc(s.title)}</h2>
-      <h4>🎯 Mục đích</h4><p>${esc(s.purpose)}</p>
-      <h4>🧭 Cách sử dụng</h4>${list(s.steps, true)}
-      <h4>💡 Ví dụ</h4>${list(s.example)}
-      <h4>⚠️ Lưu ý</h4>${list(s.notes)}
+      ${sectionBody(s)}
     </section>`).join('')}</div></div>`;
   if (section) root.querySelector(`#guide-${CSS.escape(section)}`)?.scrollIntoView({ block: 'start' });
 }

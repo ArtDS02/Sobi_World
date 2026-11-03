@@ -8,13 +8,15 @@ import * as Phaser from 'phaser';
 import battleFxRaw from '../../content/adventure/battle_fx.json';
 import { battleFxFileSchema } from '../../content/schemas/adventure/battleFx';
 import { BattleScene, type BattleStageState } from '../../src/areas/adventure/scene/battle/BattleScene';
-import { BATTLE_FX, ENEMY_LIST, SKILL_LIST, SKILLS } from '../../src/areas/adventure/logic/config/content';
+import { BATTLE_FX, ELEMENT_NAMES, ENEMY_LIST, REACTIONS as REACTION_ROWS, SKILL_LIST, SKILLS } from '../../src/areas/adventure/logic/config/content';
+import { reactionArt } from '../../src/areas/adventure/ui/vmKit';
 import { stepMotion } from '../../src/areas/adventure/ui/battleMotion';
 import type { PlayingStep } from '../../src/areas/adventure/ui/battleFxView';
 import { lookOf, mirrored } from '../../src/areas/adventure/ui/motionProfiles';
 import type { BattleEvent, BattleState } from '../../src/systems/combat/types';
 import { esc } from './labels';
-import { json, post } from './store';
+import { optionHtml, type Visual } from './richSelect';
+import { json, post, state } from './store';
 
 const FILE = 'adventure/battle_fx.json';
 const ALLIES = ['lab:ally', 'lab:ally2', 'lab:ally3'];
@@ -161,27 +163,31 @@ export function renderBattleLab(root: HTMLElement) {
       .catch((e: Error) => (root.innerHTML = `<p class="error">Không tải được: ${esc(e.message)} (cần chạy <code>npm run admin</code>).</p>`));
     return;
   }
-  const opt = (id: string, label: string, cur: string) => `<option value="${esc(id)}"${id === cur ? ' selected' : ''}>${esc(label)}</option>`;
+  const opt = (id: string, label: string, cur: string, v: Visual = {}) => optionHtml(id, label, id === cur, v);
+  const pic = (id: string) => {
+    const row = lab.images.get(id);
+    return row?.asset ? `/assets/${row.asset}` : null;
+  };
+  const creatureName = (id: string) => ENEMY_LIST.find((e) => e.art === id)?.nameVi ?? state.pigs.find((p) => p.id === id)?.nameVi ?? (id.startsWith('fish_') ? 'Cá' : '');
+  const skillPic = (id: string, element: string | null) => pic(`ui_${id}`) ?? (element && element !== 'SELF' ? pic(`ui_icon_elem_${element.toLowerCase()}`) : null) ?? pic('ui_icon_adv_skill');
   const creatures = [...[...lab.images.values()].filter((r) => /^(pig_|fish_)/.test(r.id) && !/_(hurt|sleep|wake)$/.test(r.id)).map((r) => r.id), ...ENEMY_LIST.map((e) => e.art)];
   const element = SKILLS[lab.skill]?.element ?? null;
   const look = lookOf(element === 'SELF' ? null : element, lab.skill || null);
   root.innerHTML = `<h3>Xưởng animation trận</h3>
     <p class="muted">Chạy một kỹ năng giữa hai sinh vật bằng đúng sân trận Phaser của game, đọc từ <code>content/adventure/battle_fx.json</code>. Ô JSON là phần <b>riêng</b> của kỹ năng (để trống = dùng công thức của hệ). Cách viết: <code>docs/animation/COMBAT_ART_GUIDE.md</code> §4.</p>
     <div class="form-grid">
-      <label class="field"><span>Kỹ năng</span><select data-skill>${opt('', 'Đánh thường', lab.skill)}${SKILL_LIST.map((s) => opt(s.id, `${s.nameVi} · ${s.element ?? '—'} · ${s.category}${BATTLE_FX.skills[s.id] ? ' ★' : ''}`, lab.skill)).join('')}</select></label>
-      <label class="field"><span>Bên ra đòn</span><select data-attacker>${creatures.map((c) => opt(c, c, lab.attacker)).join('')}</select></label>
-      <label class="field"><span>Bên nhận đòn</span><select data-target>${creatures.map((c) => opt(c, c, lab.target)).join('')}</select></label>
-      <label class="field"><span>Quái ra đòn (từ bên phải)</span><input type="checkbox" data-flag="fromEnemy"${lab.fromEnemy ? ' checked' : ''} /></label>
-      <label class="field"><span>Chí mạng</span><input type="checkbox" data-flag="crit"${lab.crit ? ' checked' : ''} /></label>
-      <label class="field"><span>Kết liễu</span><input type="checkbox" data-flag="ko"${lab.ko ? ' checked' : ''} /></label>
-      <label class="field"><span>Tốc độ x2</span><input type="checkbox" data-flag="fast"${lab.fast ? ' checked' : ''} /></label>
-      <label class="field"><span>Giảm chuyển động</span><input type="checkbox" data-flag="reduce"${lab.reduce ? ' checked' : ''} /></label>
-      <label class="field"><span>Số đồng đội</span><select data-count="allies">${[1, 2, 3].map((n) => opt(String(n), String(n), String(lab.allies))).join('')}</select></label>
-      <label class="field"><span>Số quái</span><select data-count="foes">${[1, 2, 3].map((n) => opt(String(n), String(n), String(lab.foes))).join('')}</select></label>
-      <label class="field"><span>Tha hóa của quái</span><select data-count="corruption">${[0, 1, 2, 3, 4, 5].map((n) => opt(String(n), String(n), String(lab.corruption))).join('')}</select></label>
-      <label class="field"><span>Phản ứng nguyên tố</span><select data-reaction>${opt('', '—', lab.reaction)}${REACTIONS.map((x) => opt(x, x, lab.reaction)).join('')}</select></label>
-      <label class="field"><span>Trùm đổi pha</span><input type="checkbox" data-flag="phase"${lab.phase ? ' checked' : ''} /></label>
-      <label class="field"><span>Thắng trận</span><input type="checkbox" data-flag="win"${lab.win ? ' checked' : ''} /></label>
+      <label class="field"><span>Kỹ năng</span><select data-skill data-rich>${opt('', 'Đánh thường', lab.skill, { img: pic('ui_icon_adv_attack'), sub: 'Đòn thường, không kỹ năng' })}${SKILL_LIST.map((s) => opt(s.id, s.nameVi, lab.skill, { img: skillPic(s.id, s.element ?? null), sub: `${s.element ? (ELEMENT_NAMES[s.element as keyof typeof ELEMENT_NAMES]?.nameVi ?? s.element) : 'Không hệ'} · ${s.category}${BATTLE_FX.skills[s.id] ? ' · ★ có animation riêng' : ''}` })).join('')}</select></label>
+      <label class="field"><span>Bên ra đòn</span><select data-attacker data-rich>${creatures.map((c) => opt(c, creatureName(c) || c, lab.attacker, { img: pic(c), sub: c })).join('')}</select></label>
+      <label class="field"><span>Bên nhận đòn</span><select data-target data-rich>${creatures.map((c) => opt(c, creatureName(c) || c, lab.target, { img: pic(c), sub: c })).join('')}</select></label>
+      <label class="field"><span>Số đồng đội</span><select data-count="allies" data-rich>${[1, 2, 3].map((n) => opt(String(n), `${n} đồng đội`, String(lab.allies), { icon: '🐷'.repeat(n) })).join('')}</select></label>
+      <label class="field"><span>Số quái</span><select data-count="foes" data-rich>${[1, 2, 3].map((n) => opt(String(n), `${n} quái`, String(lab.foes), { icon: '👾'.repeat(n) })).join('')}</select></label>
+      <label class="field"><span>Tha hóa của quái</span><select data-count="corruption" data-rich>${[0, 1, 2, 3, 4, 5].map((n) => opt(String(n), n ? `Cấp ${n}` : 'Không tha hóa', String(lab.corruption), { swatch: ['#9fd36b', '#c9b7e8', '#a98bd8', '#8460c4', '#6a3fae', '#4a1f86'][n]!, sub: n >= 3 ? 'Có hào quang tối' : '' })).join('')}</select></label>
+      <label class="field"><span>Phản ứng nguyên tố</span><select data-reaction data-rich>${opt('', 'Không có', lab.reaction, { icon: '—' })}${REACTIONS.map((x) => opt(x, REACTION_ROWS[x]?.nameVi ?? x, lab.reaction, { img: pic(reactionArt(x)), sub: x })).join('')}</select></label>
+    </div>
+    <div class="blab__flags">
+      ${([['fromEnemy', 'Quái ra đòn (từ bên phải)'], ['crit', 'Chí mạng'], ['ko', 'Kết liễu'], ['fast', 'Tốc độ x2'], ['reduce', 'Giảm chuyển động'], ['phase', 'Trùm đổi pha'], ['win', 'Thắng trận']] as const)
+        .map(([k, label]) => `<label class="check"><input type="checkbox" data-flag="${k}"${(lab as unknown as Record<string, boolean>)[k] ? ' checked' : ''} /> ${label}</label>`)
+        .join('')}
     </div>
     <p><button class="btn" data-play>▶ Chạy</button> <button class="btn ghost" data-enter>Vào trận</button></p>
     <div data-stage style="position:relative;width:min(100%,1120px);aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#cfe6c4"></div>

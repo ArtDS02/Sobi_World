@@ -12,6 +12,8 @@ import { esc } from './labels';
 import { ImageCache, drawEditor, type Layers } from './mapEditCanvas';
 import * as M from './mapModel';
 import { openModal } from './modal';
+import { mapThumb } from './mapThumb';
+import { optionHtml } from './richSelect';
 
 type Source = 'draft' | 'published';
 
@@ -59,12 +61,12 @@ export function openSimulation(data: M.BuilderData, startId: string, override?: 
       const panel = () => {
         const tile = { x: Math.floor(state.x / map.tile), y: Math.floor(state.y / map.tile) };
         const nearPortal = distanceToThing(map, state, thingsOf(map).find((t) => t.kind === 'portal')!) <= AB.explore.reach;
-        side.innerHTML = `<label class="field"><span>Bản đi thử</span><select data-source><option value="draft"${source === 'draft' ? ' selected' : ''}>Bản nháp (gồm thay đổi chưa publish)</option><option value="published"${source === 'published' ? ' selected' : ''}>Bản đã publish (đang chơi)</option></select></label>
+        side.innerHTML = `<label class="field"><span>Bản đi thử</span><select data-source data-rich>${optionHtml('draft', 'Bản nháp', source === 'draft', { icon: '📝', sub: 'Gồm thay đổi chưa publish' })}${optionHtml('published', 'Bản đã publish', source === 'published', { icon: '✅', sub: 'Đang chơi trong game' })}</select></label>
           <p><b>${esc(map.nameVi)}</b> <span class="mono muted">${map.id}</span><br>Ô ${tile.x},${tile.y}${coverAt(map, state) ? ' · dưới lớp che' : ''}</p>
-          <label class="field"><span>Đứng ở</span><select data-at>${M.spawnsOf(map).map((s) => `<option value="${s.id}">${esc(s.nameVi)} (${s.x},${s.y})</option>`).join('')}</select></label>
+          <label class="field"><span>Đứng ở</span><select data-at data-rich>${optionHtml('', 'Chọn điểm…', true, { icon: '📍' })}${M.spawnsOf(map).map((s) => optionHtml(s.id, s.nameVi, false, { icon: s.id === 'spawn_default' ? '⚪' : '📍', sub: `ô ${s.x},${s.y}` })).join('')}</select></label>
           <label class="check"><input type="checkbox" data-gates${gatesOpen ? ' checked' : ''}/> Mở mọi cổng nguyên tố</label>
           <label class="check"><input type="checkbox" data-locks${unlockAll ? ' checked' : ''}/> Coi như mọi lối ra đã mở khoá</label>
-          ${nearPortal ? `<label class="field"><span>Cổng dịch chuyển: tới</span><select data-warp>${world.filter((m) => m.id !== map.id).map((m) => `<option value="${m.id}">${esc(m.nameVi)}</option>`).join('')}</select></label><button type="button" class="btn btn-small" data-go>Dịch chuyển</button>` : '<p class="muted">Đứng cạnh cổng dịch chuyển (P) để dịch chuyển.</p>'}
+          ${nearPortal ? `<label class="field"><span>Cổng dịch chuyển: tới</span><select data-warp data-rich>${world.filter((m) => m.id !== map.id).map((m, k) => optionHtml(m.id, m.nameVi, k === 0, { img: mapThumb(m), mapId: m.id })).join('')}</select></label><button type="button" class="btn btn-small" data-go>Dịch chuyển</button>` : '<p class="muted">Đứng cạnh cổng dịch chuyển (P) để dịch chuyển.</p>'}
           <p class="muted">Phím mũi tên / WASD để đi. Đi vào lối ra (&gt;) để sang map khác. Không lưu gì.</p>
           <ol class="msim__log">${log.slice(0, 12).map((l) => `<li>${esc(l)}</li>`).join('')}</ol>`;
         side.querySelector<HTMLSelectElement>('[data-source]')!.addEventListener('change', (e) => {

@@ -1,10 +1,12 @@
 // Admin "Bản đồ khu" (decision 037, spec §20): an area of Sobi Adventure drawn as its grid. Paint the ground (walk, path, bridge, wall,
 // water), put or remove props (their whole footprint shows), move a thing (chest, group, gate, spring, traveller, stone, shrine, portal,
 // spawn). The game's own map checks (§3.10) run on every change: a problem is listed in red and the save stays off until it is fixed.
-import { MAP_LIST, PROP_LIST, PROPS, type AreaMap } from '../../src/areas/adventure/logic/config/content';
-import { mapProblems, thingsOf } from '../../src/areas/adventure/logic/maps';
+import { MAP_LIST, PROP_LIST, PROPS, ZONES, type AreaMap } from '../../src/areas/adventure/logic/config/content';
+import { WALK_TILES, mapProblems, thingsOf } from '../../src/areas/adventure/logic/maps';
 import { esc } from './labels';
 import { COLOUR, GROUND } from './mapCanvas';
+import { imageOf, mapThumb } from './mapThumb';
+import { optionHtml } from './richSelect';
 import { post, rememberMessage } from './store';
 
 /** The letter of each class of enemy group on the grid (decision 045). */
@@ -96,12 +98,12 @@ export function renderAdventureMaps(root: HTMLElement, mapId?: string | null) {
     root.innerHTML = `<h3>Bản đồ khu (Sobi Adventure)</h3>
       <p class="muted">Bấm ô để tô / đặt. Mỗi vật chặn đủ cả đế (footprint). Lỗi lối đi hiện đỏ bên dưới; còn lỗi thì không lưu được.</p>
       <div class="form-grid">
-        <label class="field"><span>Khu</span><select data-map>${page.maps.map((m) => `<option value="${m.id}"${m.id === page.mapId ? ' selected' : ''}>${esc(m.nameVi)} (${m.zoneId})</option>`).join('')}</select></label>
-        <label class="field"><span>Công cụ</span><select data-tool>
-          ${GROUND.map(([c, n]) => `<option value="g:${c}"${tool.kind === 'ground' && tool.char === c ? ' selected' : ''}>Tô: ${n}</option>`).join('')}
-          ${PROP_LIST.map((p) => `<option value="p:${p.id}"${tool.kind === 'prop' && tool.id === p.id ? ' selected' : ''}>Đặt vật: ${esc(p.nameVi)} (${p.w}×${p.h})</option>`).join('')}
-          <option value="e"${tool.kind === 'erase' ? ' selected' : ''}>Xoá vật</option>
-          <option value="m"${tool.kind === 'move' ? ' selected' : ''}>Dời rương / quái / cổng / suối…${tool.kind === 'move' && tool.what ? ` (đang dời ${esc(tool.what)})` : ''}</option>
+        <label class="field"><span>Khu</span><select data-map data-rich>${page.maps.map((m) => optionHtml(m.id, m.nameVi, m.id === page.mapId, { img: mapThumb(m), mapId: m.id, sub: `${ZONES[m.zoneId]?.nameVi ?? m.zoneId} · ${m.cols}×${m.rows}` })).join('')}</select></label>
+        <label class="field"><span>Công cụ</span><select data-tool data-rich>
+          ${GROUND.map(([c, n]) => optionHtml(`g:${c}`, `Tô: ${n}`, tool.kind === 'ground' && tool.char === c, { swatch: COLOUR[c], sub: WALK_TILES.has(c) ? 'Đi được' : 'Chặn' })).join('')}
+          ${PROP_LIST.map((p) => optionHtml(`p:${p.id}`, `Đặt vật: ${p.nameVi}`, tool.kind === 'prop' && tool.id === p.id, { img: imageOf(p.art), sub: `Chiếm ${p.w}×${p.h} ô` })).join('')}
+          ${optionHtml('e', 'Xoá vật', tool.kind === 'erase', { icon: '🧽', sub: 'Bấm lên vật trang trí để xoá' })}
+          ${optionHtml('m', `Dời rương / quái / cổng / suối…${tool.kind === 'move' && tool.what ? ` (đang dời ${tool.what})` : ''}`, tool.kind === 'move', { icon: '✋', sub: 'Bấm vật rồi bấm ô mới' })}
         </select></label>
         <button class="btn" data-save ${page.dirty && problems.length === 0 ? '' : 'disabled'}>Lưu vào game</button>
       </div>

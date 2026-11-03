@@ -6,10 +6,11 @@ import { SCENERY_MODES } from '../../content/schemas/adventure/scenery';
 import { DECOR, DECOR_LIST, ELEMENT_NAMES, ENEMIES, EVENTS, LOOT_TABLES, PROP_LIST, type AreaMap } from '../../src/areas/adventure/logic/config/content';
 import { esc } from './labels';
 import { OBJ_LABEL, findObject, setBox, type ObjRef } from './mapEditModel';
+import { elementImg, imageOf } from './mapThumb';
+import { optionHtml, type Visual } from './richSelect';
 
-const opt = (v: string, label: string, sel: boolean) => `<option value="${esc(v)}"${sel ? ' selected' : ''}>${esc(label)}</option>`;
-const select = (field: string, value: string, options: [string, string][]) =>
-  `<select data-insp="${field}">${options.map(([v, l]) => opt(v, l, v === value)).join('')}</select>`;
+const select = (field: string, value: string, options: ([string, string] | [string, string, Visual])[]) =>
+  `<select data-insp="${field}" data-rich>${options.map(([v, l, vis]) => optionHtml(v, l, v === value, vis ?? {})).join('')}</select>`;
 const field = (label: string, control: string) => `<label class="field"><span>${esc(label)}</span>${control}</label>`;
 const num = (f: string, v: number) => `<input type="number" data-insp="${f}" value="${v}" />`;
 
@@ -17,8 +18,9 @@ type AnyRow = Record<string, unknown> & { id: string };
 const rowOf = (map: AreaMap, ref: ObjRef): AnyRow | undefined =>
   ref.kind === 'shrine' ? (map.shrine as AnyRow | undefined) : ((map as unknown as Record<string, AnyRow[] | undefined>)[ref.kind]?.find((r) => r.id === ref.id));
 
-const elements = (): [string, string][] => Object.entries(ELEMENT_NAMES).map(([id, e]) => [id, (e as { nameVi?: string }).nameVi ?? id]);
-const tables = (): [string, string][] => Object.keys(LOOT_TABLES).map((t) => [t, t]);
+const elements = (): [string, string, Visual][] => Object.entries(ELEMENT_NAMES).map(([id, e]) => [id, (e as { nameVi?: string }).nameVi ?? id, { img: elementImg(id) }]);
+const tables = (): [string, string, Visual][] => Object.entries(LOOT_TABLES).map(([t, row]) => [t, t, { icon: t.startsWith('boss') ? '👑' : t.includes('gold') ? '🟨' : t === 'herbs' ? '🌿' : t === 'ore_vein' ? '⛏️' : '💰', sub: `${row.rolls} lượt · ${row.coins[0]}–${row.coins[1]} xu` }]);
+const ARROW: Record<string, string> = { up: '↑ Lên', down: '↓ Xuống', left: '← Trái', right: '→ Phải' };
 
 /** The inspector for one object of `map`. */
 export function inspectorHtml(map: AreaMap, ref: ObjRef): string {
@@ -33,28 +35,28 @@ export function inspectorHtml(map: AreaMap, ref: ObjRef): string {
   if (o.sizable) parts.push(field('Rộng × cao (ô)', `<span class="toolbar">${num('w', o.w)}${num('h', o.h)}</span>`));
   switch (ref.kind) {
     case 'chests':
-      parts.push(field('Loại rương', select('type', String(row!.type ?? 'wood'), CHEST_TYPES.map((t) => [t, t]))), field('Bảng phần thưởng', select('table', String(row!.table), tables())));
+      parts.push(field('Loại rương', select('type', String(row!.type ?? 'wood'), CHEST_TYPES.map((t): [string, string, Visual] => [t, { wood: 'Rương gỗ', silver: 'Rương bạc', gold: 'Rương vàng', hidden: 'Rương ẩn' }[t], { img: imageOf(`adv_map_chest_${t}`) }]))), field('Bảng phần thưởng', select('table', String(row!.table), tables())));
       break;
     case 'nodes':
       parts.push(field('Bảng phần thưởng', select('table', String(row!.table), tables())));
       break;
     case 'gates':
-      parts.push(field('Hệ', select('element', String(row!.element), elements())), field('Hình', select('look', String(row!.look ?? 'gate'), GATE_LOOKS.map((l) => [l, l === 'crack' ? 'Tường giả có vết nứt' : 'Cổng nguyên tố']))));
+      parts.push(field('Hệ', select('element', String(row!.element), elements())), field('Hình', select('look', String(row!.look ?? 'gate'), GATE_LOOKS.map((l): [string, string, Visual] => [l, l === 'crack' ? 'Tường giả có vết nứt' : 'Cổng nguyên tố', l === 'crack' ? { icon: '🧱' } : { img: imageOf(`adv_gate_${String(row!.element).toLowerCase()}`) }]))));
       break;
     case 'covers':
-      parts.push(field('Hình lớp che', select('look', String(row!.look), COVER_LOOKS.map((l) => [l, { canopy: 'Tán cây', rock: 'Mái đá', roof: 'Mái sập' }[l]]))));
+      parts.push(field('Hình lớp che', select('look', String(row!.look), COVER_LOOKS.map((l): [string, string, Visual] => [l, { canopy: 'Tán cây', rock: 'Mái đá', roof: 'Mái sập' }[l], { icon: { canopy: '🌳', rock: '🪨', roof: '🏚️' }[l] }]))));
       break;
     case 'puzzles':
-      parts.push(field('Hệ', select('element', String(row!.element), elements())), field('Mở cổng', select('gate', String(row!.gate), map.gates.map((g) => [g.id, g.id]))));
+      parts.push(field('Hệ', select('element', String(row!.element), elements())), field('Mở cổng', select('gate', String(row!.gate), map.gates.map((g): [string, string, Visual] => [g.id, g.id, { img: elementImg(g.element) }]))));
       break;
     case 'npcs':
-      parts.push(field('Sự kiện', select('event', String(row!.event), Object.values(EVENTS).map((e) => [e.id, e.nameVi]))));
+      parts.push(field('Sự kiện', select('event', String(row!.event), Object.values(EVENTS).map((e): [string, string, Visual] => [e.id, e.nameVi, { img: imageOf('adv_npc_traveler'), sub: e.id }]))));
       break;
     case 'lore':
       parts.push(field('Lời trên bia', `<textarea data-insp="textVi" rows="4">${esc(row!.textVi)}</textarea>`), '<p class="muted">Bia mới / lời mới cần bản tiếng Anh khi publish.</p>');
       break;
     case 'spawns':
-      parts.push(field('Tên', `<input data-insp="nameVi" value="${esc(row!.nameVi)}" />`), field('Hướng', select('facing', String(row!.facing ?? 'down'), FACINGS.map((f) => [f, f]))));
+      parts.push(field('Tên', `<input data-insp="nameVi" value="${esc(row!.nameVi)}" />`), field('Hướng', select('facing', String(row!.facing ?? 'down'), FACINGS.map((fc): [string, string] => [fc, ARROW[fc] ?? fc]))));
       break;
     case 'groups': {
       const enemies = ((row!.pool as { enemies: string[] }[]) ?? []).flatMap((p) => p.enemies).map((e) => ENEMIES[e]?.nameVi ?? e);
@@ -62,7 +64,7 @@ export function inspectorHtml(map: AreaMap, ref: ObjRef): string {
       break;
     }
     case 'props':
-      parts.push(field('Vật', select('prop', map.props[Number(ref.id)]!.prop, PROP_LIST.map((p) => [p.id, `${p.nameVi} (${p.w}×${p.h})`]))));
+      parts.push(field('Vật', select('prop', map.props[Number(ref.id)]!.prop, PROP_LIST.map((p): [string, string, Visual] => [p.id, p.nameVi, { img: imageOf(p.art), sub: `${p.w}×${p.h} ô` }]))));
       break;
     case 'exits':
       parts.push('<button type="button" class="btn btn-small" data-open="exits">Sửa ở hộp Lối ra</button>');
@@ -95,12 +97,12 @@ function decorHtml(map: AreaMap, id: string): string {
   const dec = (f: string, v: number | undefined, step = 0.25) => `<input type="number" step="${step}" data-insp="${f}" value="${v ?? ''}" placeholder="tự động" />`;
   return [
     `<h4>${esc(OBJ_LABEL.scenery)}</h4><p class="mono muted">${esc(id)}</p>`,
-    field('Asset', select('asset', d.asset, DECOR_LIST.map((x) => [x.id, x.nameVi]))),
+    field('Asset', select('asset', d.asset, DECOR_LIST.map((x): [string, string, Visual] => [x.id, x.nameVi, { img: imageOf(x.art), sub: x.category }]))),
     field('Chân (x, y) — ô, có số lẻ', `<span class="toolbar">${dec('fx', d.x)}${dec('fy', d.y)}</span>`),
     field(`Rộng × cao (ô; trống = ${a?.w ?? '?'} × theo ảnh)`, `<span class="toolbar">${dec('dw', d.w)}${dec('dh', d.h)}</span>`),
     field('Xoay (độ)', dec('rotate', d.rotate, 5)),
     `<label class="check"><input type="checkbox" data-insp="flip"${d.flip ? ' checked' : ''} /> Lật ngang</label>`,
-    field('Cách đứng', select('mode', d.mode ?? a?.mode ?? 'occluder', SCENERY_MODES.map((m) => [m, MODE_LABEL[m]]))),
+    field('Cách đứng', select('mode', d.mode ?? a?.mode ?? 'occluder', SCENERY_MODES.map((m): [string, string, Visual] => [m, MODE_LABEL[m], { icon: { normal: '⬇️', occluder: '↕️', foreground: '⬆️', cover: '🫥' }[m] }]))),
     field('Ô chặn quanh chân "x,y,w,h; …" (trống = của asset)', `<input data-insp="foot" value="${esc(d.foot ? rects(d.foot) : '')}" placeholder="${esc(rects(a?.foot))}" />`),
     field('Mờ còn (0 = ẩn hẳn) · bán kính (ô)', `<span class="toolbar">${dec('fadeAlpha', d.fade?.alpha, 0.1)}${dec('fadeRadius', d.fade?.radius, 0.5)}</span>`),
     field('Vùng kích hoạt "x,y,w,h" (ô; trống = theo bán kính)', `<input data-insp="fadeArea" value="${esc(d.fade?.area ? rects([d.fade.area]) : '')}" />`),

@@ -14,6 +14,8 @@ API ghi file ở `scripts/admin/` (plugin Vite, chỉ chạy khi `serve`). Quy�
 | Bản đồ khu | `adventureMaps.ts` (`#/adventure-maps/<mapId>`) | `content/adventure/maps.json` (editor cũ, thay ở Map Builder GĐ6) |
 | Asset nguồn / Thư viện, Bản desktop, Hướng dẫn | `assets.ts`, `library.ts`, `desktop.ts`, `guide.ts` | ảnh heo + manifest |
 
+Dùng chung: `richSelect.ts` (dropdown có hình: `<select data-rich>` + `optionHtml(…, { img | swatch | icon, sub })`, select gốc vẫn giữ giá trị và sự kiện `change`), `mapThumb.ts` (ảnh thu nhỏ map, ảnh asset theo id), `guide.ts` + `guideWorld.ts` (hướng dẫn; nút ❔ mở popup `openGuide`, không đổi trang).
+
 Quy tắc:
 - Save người chơi chỉ sửa qua `worldEdits.ts` (WorldSave → WorldSave): tiền qua `changeCurrency` (giao dịch ADMIN_ADJUST), kết quả kiểm bằng
   schema thế giới + schema save từng khu + bộ đọc save của game. Sửa riêng Nông trại: `farmEdits.ts` chạy trên `farmOf` / `withFarm`.
