@@ -8,6 +8,7 @@ import { loopCues } from '../../ui/battleScript';
 import { statusDelta } from '../../ui/statusDelta';
 import type { ScriptCue } from '../../ui/battleScript';
 import { AIR_DEPTH } from './fxBursts';
+import { shapeKey } from './fxTextures';
 import type { FxAnchor } from './fxPlayer';
 
 const SHOWN = 3;
@@ -20,6 +21,8 @@ interface Held {
   looped: Map<string, number>;
   /** The statuses seen last frame (for the expire diff, ANIM-003). */
   seen: Set<string>;
+  /** The things circling the unit, by status (ANIM-003 layers). */
+  layers: Map<string, Phaser.GameObjects.Image[]>;
 }
 
 export class StatusBadges {
@@ -47,6 +50,53 @@ export class StatusBadges {
     return tint;
   }
 
+  /** Whether a status makes the body sway like a dizzy one (Stun). */
+  swaying(statuses: readonly string[]): boolean {
+    return statuses.some((s) => BATTLE_FX.statuses[s as StatusId]?.sway === true);
+  }
+
+  /** Draws the circling layers of the statuses on a unit; a status that is gone takes its layers away. */
+  private drawLayers(h: Held, u: { statuses: readonly string[]; down: boolean }, a: FxAnchor | undefined, now: number, reduce: boolean) {
+    const live = new Set<string>();
+    if (a && !u.down) {
+      for (const s of u.statuses) {
+        const layers = BATTLE_FX.statuses[s as StatusId]?.layers;
+        if (!layers) continue;
+        live.add(s);
+        const pool = h.layers.get(s) ?? [];
+        h.layers.set(s, pool);
+        let at = 0;
+        for (const l of layers) {
+          const manifest = /^fx[sp]_/.test(l.img);
+          if (manifest) this.want(l.img);
+          const key = manifest && this.scene.textures.exists(l.img) ? l.img : shapeKey(manifest ? 'star' : (l.img as never));
+          const anchor = l.spot === 'head' ? a.head : l.spot === 'chest' ? a.chest : a.feet;
+          for (let i = 0; i < l.n; i += 1) {
+            const img = (pool[at] ??= this.scene.add.image(0, 0, key));
+            at += 1;
+            if (img.texture.key !== key) img.setTexture(key);
+            const ang = (l.phase ?? 0) + (reduce ? 0 : (now / 1000) * l.speed) + (i * Math.PI * 2) / l.n;
+            const back = Math.sin(ang) < 0 && l.ry > 0;
+            const beat = l.pulse ? 1 + Math.sin((now / 1000) * 1.2 * Math.PI * 2) * l.pulse : 1;
+            const size = a.width * l.size * (back ? 0.8 : 1) * (reduce ? 1 : beat);
+            img.setVisible(true).setPosition(anchor.x + Math.cos(ang) * l.rx * a.width, anchor.y + Math.sin(ang) * l.ry * a.width)
+              .setDisplaySize(size, size)
+              .setAlpha((l.alpha ?? 1) * (back ? 0.6 : 1))
+              .setDepth(back ? 1000 + a.feet.y - 0.5 : AIR_DEPTH - 6);
+            if (!manifest) img.setBlendMode(1);
+            if (l.tint !== undefined) img.setTint(l.tint);
+          }
+        }
+        for (let j = at; j < pool.length; j += 1) pool[j]!.setVisible(false);
+      }
+    }
+    for (const [s, pool] of h.layers) {
+      if (live.has(s)) continue;
+      for (const img of pool) img.destroy();
+      h.layers.delete(s);
+    }
+  }
+
   /** Whether a status holds the body perfectly still (Freeze): no breathing, no bobbing. */
   frozenBody(statuses: readonly string[]): boolean {
     return statuses.some((s) => BATTLE_FX.statuses[s as StatusId]?.freezeBody === true);
@@ -59,7 +109,7 @@ export class StatusBadges {
     for (const u of units) {
       seen.add(u.id);
       const a = anchors.get(u.id);
-      const h: Held = this.held.get(u.id) ?? { badges: [], cover: null, looped: new Map(), seen: new Set() };
+      const h: Held = this.held.get(u.id) ?? { badges: [], cover: null, looped: new Map(), seen: new Set(), layers: new Map() };
       this.held.set(u.id, h);
       const icons = u.down || !a ? [] : u.statuses.map((s) => BATTLE_FX.statuses[s as StatusId]?.icon).filter((x): x is string => !!x);
       for (const icon of icons) this.want(icon);
@@ -77,6 +127,7 @@ export class StatusBadges {
         const bob = reduce ? 0 : Math.sin(now / 420 + i * 1.3) * 3;
         b.setVisible(true).setDisplaySize(size, size).setPosition(a.head.x + dir * (a.width * 0.3 + i * size * 0.9), a.feet.y - a.height * 0.98 + bob - i * 4);
       });
+      this.drawLayers(h, u, a, now, reduce);
       // A strip frame laid over the body (Freeze).
       const cover = u.down ? null : u.statuses.map((s) => BATTLE_FX.statuses[s as StatusId]?.cover).find((c) => !!c) ?? null;
       if (cover && a) {
@@ -118,6 +169,7 @@ export class StatusBadges {
     for (const [id, h] of this.held) {
       if (seen.has(id)) continue;
       for (const b of h.badges) b.destroy();
+      for (const pool of h.layers.values()) for (const img of pool) img.destroy();
       h.cover?.destroy();
       this.held.delete(id);
       this.known.delete(id);
@@ -131,6 +183,7 @@ export class StatusBadges {
     for (const h of this.held.values()) {
       for (const b of h.badges) b.setVisible(false);
       h.cover?.setVisible(false);
+      for (const pool of h.layers.values()) for (const img of pool) img.setVisible(false);
     }
   }
 }

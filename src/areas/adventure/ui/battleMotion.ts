@@ -40,7 +40,7 @@ export interface ReactionCue {
  */
 export interface StepMark {
   unit: string;
-  kind: 'status' | 'reaction' | 'phase' | 'revive' | 'tick' | 'skip' | 'cleanse' | 'victory';
+  kind: 'status' | 'reaction' | 'phase' | 'revive' | 'tick' | 'skip' | 'cleanse' | 'resist' | 'victory';
   /** The status, the reaction, the reason of a lost turn, the new phase… */
   id: string;
   at: number;
@@ -227,6 +227,9 @@ export function stepMotion(battle: BattleState | null, log: readonly { type: str
           break;
         case 'skip':
           mark(e.actor, 'skip', e.reason);
+          break;
+        case 'resist':
+          mark(e.target, 'resist', e.status);
           break;
         case 'cleanse':
           mark(e.target, 'cleanse', e.statuses.join(','));

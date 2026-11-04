@@ -97,8 +97,30 @@ const skill = look.partial().extend({
 /** The general actions and reactions that may carry a script (decision 044): played on the unit they are about (`actor`). */
 export const ACTION_FX_VALUES = [
   'attack', 'guard', 'stunned', 'frozen', 'item', 'hit', 'heavy', 'miss', 'heal', 'regen', 'buff', 'debuff', 'dot_poison', 'dot_burn',
-  'ko', 'revive', 'victory', 'enter_ally', 'enter_enemy', 'boss_phase', 'cleanse',
+  'ko', 'revive', 'victory', 'enter_ally', 'enter_enemy', 'boss_phase', 'cleanse', 'resist',
 ] as const;
+
+/** A thing that circles a unit for as long as a status lasts (ANIM-003 layers): stars round a dizzy head, a clock over a doomed one. */
+const statusLayer = z.strictObject({
+  kind: z.literal('orbit'),
+  /** A particle shape (`star`, `rune`…) or a manifest picture (`fxs_…` / `fxp_…`); a missing picture is drawn as a star. */
+  img: z.string().regex(/^([a-z]+|fx[sp]_[a-z0-9_]+)$/),
+  n: z.number().int().min(1).max(6),
+  /** The ellipse as shares of the unit's width (0 and 0: the thing stays put). */
+  rx: z.number().finite().min(0).max(1.5),
+  ry: z.number().finite().min(0).max(1.5),
+  /** Radians a second (negative: the other way). */
+  speed: z.number().finite().min(-8).max(8),
+  spot: z.enum(['head', 'chest', 'feet']),
+  /** Size as a share of the unit's width. */
+  size: z.number().finite().positive().max(1.5),
+  tint: color.optional(),
+  alpha: unit.optional(),
+  /** Where the first one starts (radians). */
+  phase: z.number().finite().optional(),
+  /** Beats in size by this share at 1.2 Hz (a clock ticking). */
+  pulse: z.number().finite().min(0).max(0.5).optional(),
+});
 
 const status = z.strictObject({
   /** The badge shown by the head while the status lasts (`st_…`). */
@@ -111,6 +133,10 @@ const status = z.strictObject({
   tint: z.strictObject({ color, alpha: unit }).optional(),
   /** A frame of an `fx_…` strip laid over the body while it lasts (the ice of Freeze). */
   cover: z.strictObject({ img: z.string().regex(/^fx_[a-z0-9_]+$/), frame: z.number().int().min(0), alpha: unit }).optional(),
+  /** Things that circle the unit while it lasts (at most 3). */
+  layers: z.array(statusLayer).max(3).optional(),
+  /** The body sways like a dizzy one: no breathing, a slow lurch side to side (Stun). */
+  sway: z.boolean().optional(),
   /** Played once when it is gone (ran out, cleansed or broken); the stage finds out by comparing frames (ui/statusDelta.ts). */
   expire: scriptSchema.optional(),
   /** Played each time it does its damage (poison, burn…) instead of the generic damage-over-time action. */

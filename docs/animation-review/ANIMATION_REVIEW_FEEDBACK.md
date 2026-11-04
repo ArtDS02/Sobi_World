@@ -451,7 +451,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/propMotion.ts` (thuần, có test): `propFram
 > Các trạng thái người dùng nhắc nhưng **game hiện không có**: *ngủ, câm lặng, trói/root, mù, choáng váng, chậm*. Tương đương hiện có: `disable` ≈ phong ấn/câm lặng/trói; `accDown` ≈ mù; `spdDown` ≈ chậm; `stun` ≈ choáng; **không có "ngủ"** — nếu thêm sẽ là thay đổi gameplay (hỏi chủ dự án trước; thiết kế sẵn ở ANIM-050 phụ chú).
 
 ### [ANIM-050] Choáng (stun)
-- [ ] Chưa làm
+- [x] Đã làm (B3)
+Ghi chú dev: ĐIỀU CHỈNH. Engine B3: schema `statuses[id].layers` (kind `orbit`: img = hình dạng hạt hoặc `fxs_/fxp_`, n, rx/ry, speed, spot, size, tint, pulse; nửa sau vẽ sau thân, nhỏ 0.8 alpha 0.6) và `sway` (thân lảo đảo, `PoseAnchor.swaying`), vẽ trong `statusBadges.ts`. Stun: 3 sao vàng + 1 tia xanh ngược chiều quay quanh đầu, thân lảo đảo suốt thời gian choáng, expire sao tung ra. CHƯA làm: mặt choáng (mắt xoáy `fxs_dizzy_eyes`), chim `fxs_birdie` (asset A02 — dùng hạt `spark` thay), sao rơi theo trọng lực, bật thẳng bằng settle.
 - Ưu tiên: P1
 - Nhóm: Status
 - Đối tượng: status `stun`; skill gây choáng; action `stunned` (mất lượt vì stun)
@@ -463,8 +464,9 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/propMotion.ts` (thuần, có test): `propFram
 - Asset cần thêm: `A02_status_overlays.md` (`fxs_birdie`, `fxs_dizzy_eyes`).
 
 ### [ANIM-051] Đóng băng (freeze) — và sửa lỗi "đóng băng mà rung"
-- [x] Đã làm (B0)
-Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json actions.frozen`: xoá `move shake`; `ui/battlePose.ts`: beat `stunned` do skip lý do `freeze` giữ nguyên thân (không wobble/thở), stun thường vẫn wobble. CHƯA làm: vỡ băng khi hết (cần ANIM-003 expire), đứng yên khi idle bị freeze (cần `freezeBody`), chớp/nứt khi bị đánh.
+- [x] Đã làm (B0+B3)
+Ghi chú dev B3: thêm loop 1.6s (glint + tuyết), expire mạnh hơn (hit-stop 60 + vỡ băng + 2.2x mảnh + shake 3). CHƯA: chớp/nứt thêm khi bị đánh lúc băng, bật thân scale 1.08, `fx_ice_crack`.
+Ghi chú dev B0: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json actions.frozen`: xoá `move shake`; `ui/battlePose.ts`: beat `stunned` do skip lý do `freeze` giữ nguyên thân (không wobble/thở), stun thường vẫn wobble. CHƯA làm: vỡ băng khi hết (cần ANIM-003 expire), đứng yên khi idle bị freeze (cần `freezeBody`), chớp/nứt khi bị đánh.
 - Ưu tiên: **P0** (mâu thuẫn nghĩa — đứng hình bị rung)
 - Nhóm: Status
 - Đối tượng: status `freeze`; skill `skill_cl_freeze`, `skill_e_frost_breath`; action `frozen`
@@ -476,7 +478,8 @@ Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json act
 - Asset cần thêm: `A02` (`fx_ice_loop` glint, `fx_ice_crack`).
 
 ### [ANIM-052] Nhiễm độc (poison)
-- [ ] Chưa làm
+- [x] Đã làm (B3)
+Ghi chú dev: ĐIỀU CHỈNH. Poison: tint #b8e0a0 α0.22 (priority 3), loop 0.7s bọt + bào tử, `tick` riêng (rùng mình + giọt độc xanh), expire khói tan. CHƯA làm: thân khom/rùng mình định kỳ, tint pulse, số sát thương tím.
 - Ưu tiên: P1
 - Nhóm: Status
 - Đối tượng: status `poison`; tick `dot_poison`; skill `skill_mm_poison_thorn`, `skill_e_poison_spore`, `skill_e_corrupt_bloom`
@@ -488,7 +491,8 @@ Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json act
 - Asset cần thêm: `A02`.
 
 ### [ANIM-053] Bỏng (burn)
-- [ ] Chưa làm
+- [x] Đã làm (B3)
+Ghi chú dev: ĐIỀU CHỈNH. Burn: tint #ff9a6a α0.2 (priority 4), loop 0.6s tàn lửa + lửa nhỏ ở chân (dùng `fx_flame_burst` thay `fx_flame_cling` chưa có), `tick` phụt lửa to, expire khói xám. CHƯA làm: lửa bám loop liên tục (cần asset A02), tint nhấp nháy ngẫu nhiên.
 - Ưu tiên: P1
 - Nhóm: Status
 - Đối tượng: status `burn`; tick `dot_burn`; skill lửa
@@ -500,7 +504,8 @@ Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json act
 - Asset cần thêm: `A02` (`fx_flame_cling`).
 
 ### [ANIM-054] Ướt (wet)
-- [ ] Chưa làm
+- [x] Đã làm (B3)
+Ghi chú dev: ĐIỀU CHỈNH. Wet: tint α0.16 (priority 1), giọt chảy + vũng nhỏ dưới chân mỗi 1.2s (decal puddle), expire bọt bay hơi. CHƯA làm: highlight ADD trên thân.
 - Ưu tiên: P2
 - Nhóm: Status
 - Đối tượng: status `wet`
@@ -512,7 +517,8 @@ Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json act
 - Asset cần thêm: không.
 
 ### [ANIM-055] Phong ấn (disable)
-- [ ] Chưa làm
+- [x] Đã làm (B3)
+Ghi chú dev: ĐIỀU CHỈNH. Disable: 2 rune tím quay quanh ngực (layer orbit, nhịp 1.2Hz) thay xích `fxs_chain` (chưa có asset), expire: khóa vỡ + shake nhẹ. CHƯA làm: xích giật căng khi mất lượt.
 - Ưu tiên: P2
 - Nhóm: Status
 - Đối tượng: status `disable`; skill `skill_cl_seal`, `skill_e_seal_quake`
@@ -524,7 +530,8 @@ Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json act
 - Asset cần thêm: `A02` (`fxs_chain`).
 
 ### [ANIM-056] Tử chú (doom)
-- [ ] Chưa làm
+- [x] Đã làm (B3)
+Ghi chú dev: ĐIỀU CHỈNH. Doom: đồng hồ `fxp_doom_clock` luôn hiện trên đầu (layer orbit rx=ry=0, nhịp 1.2Hz), expire: hit-stop 120 + khói tối + shake 6. CHƯA làm: số lượt còn lại, cảnh báo lượt cuối, kim quay, đồng hồ vỡ khi cleanse (VM chưa cung cấp số lượt).
 - Ưu tiên: P2
 - Nhóm: Status
 - Đối tượng: status `doom`; skill `skill_e_doom_mark`, trùm `enemy_ancient_guardian`, `enemy_shadow_priest`
@@ -537,6 +544,7 @@ Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json act
 
 ### [ANIM-057] Icon trạng thái trên HUD (nhất quán 25 status)
 - [ ] Chưa làm
+Ghi chú dev (B3): CHƯA LÀM. Cần quyết định sản phẩm: bỏ badge Phaser hay chip DOM (hiện cả hai), đổi icon `freeze` -> `st_freeze` phụ thuộc asset, số lượt còn lại cần VM mới. Để lại cho B9/HUD.
 - Ưu tiên: P2
 - Nhóm: Status
 - Đối tượng: 25 status; chip DOM (`statusChip` trong `viewKit.ts`) và badge Phaser (`statusBadges.ts`, tối đa 3, luân phiên 1.6s)
@@ -548,7 +556,8 @@ Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json act
 - Asset cần thêm: icon `st_freeze` (đồng bộ) trong `A02`.
 
 ### [ANIM-058] Phản hồi Kháng cự / Miễn nhiễm / Thanh tẩy
-- [ ] Chưa làm
+- [x] Đã làm (B3)
+Ghi chú dev: ĐIỀU CHỈNH. Event `resist` -> mark `resist` -> action mới `resist` (JSON: khiên chớp + sao xanh, `battleMotion`/`battleScript`). `cleanse` đã có từ B1. CHƯA làm: chữ "KHÁNG" (i18n + số bay), hit-stop/shake cho 6 phản ứng nguyên tố.
 - Ưu tiên: P1
 - Nhóm: Status
 - Đối tượng: events `resist`, `cleanse`; phản ứng nguyên tố (6)

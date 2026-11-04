@@ -36,6 +36,8 @@ export interface PoseAnchor {
   width: number;
   /** A status holds the body still (Freeze `freezeBody`): no breathing or bobbing. */
   frozen?: boolean;
+  /** A status makes the body sway like a dizzy one (Stun `sway`). */
+  swaying?: boolean;
 }
 
 /** A body at one moment: pushed (px), turned (deg), squashed, how bright (1 = as drawn), how grey and faded, its glow (0xRRGGBB). */
@@ -85,6 +87,14 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
   let posture: PoseArt = 'idle';
   // Bodies that fly or float hover over their shadow; the rest stand on it.
   let air = profile.bob * (1 - cyc);
+  if (a.swaying && !a.frozen) {
+    // Dizzy: no breathing, a slow lurch side to side (ANIM-050).
+    dy = 0;
+    sx = 1;
+    sy = 1;
+    rot = Math.sin(now / 380) * 4;
+    dx = Math.sin(now / 760) * 3;
+  }
   if (a.frozen) {
     dy = 0;
     rot = 0;

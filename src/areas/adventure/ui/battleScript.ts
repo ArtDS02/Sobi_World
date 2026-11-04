@@ -190,6 +190,7 @@ export function stepScript(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 
     else if (mk.kind === 'phase') run(c, actionScript('boss_phase'), mk.at, k, mk.unit, [], neutral);
     else if (mk.kind === 'revive') run(c, actionScript('revive'), mk.at, k, mk.unit, [], neutral);
     else if (mk.kind === 'cleanse') run(c, actionScript('cleanse'), mk.at, k, mk.unit, [], neutral);
+    else if (mk.kind === 'resist') run(c, actionScript('resist'), mk.at, k, mk.unit, [], neutral);
     else if (mk.kind === 'victory') {
       const side = sides.get(mk.unit);
       [...sides].filter(([, s]) => s === side).forEach(([id], i) => run(c, actionScript('victory'), mk.at + i * 120 * k, k, id, [], neutral));
