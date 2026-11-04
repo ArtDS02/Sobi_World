@@ -59,3 +59,21 @@ describe('body plans and casts (ANIM-020, 021)', () => {
     }
   });
 });
+
+describe('the Ultimate frame (ANIM-009)', () => {
+  const ults = Object.entries(BATTLE_FX.skills).filter(([id]) => id.startsWith('skill_ult_'));
+  it('has twelve ultimates', () => {
+    expect(ults).toHaveLength(12);
+  });
+  it.each(ults)('%s closes the bars at the start and opens them before the end, and a blow ends on the biggest hit stop', (id, fx) => {
+    const script = fx!.script!;
+    const bars = script.filter((a) => a.do === 'letterbox');
+    expect(bars.map((a) => (a.do === 'letterbox' ? a.on : null)), id).toEqual([true, false]);
+    expect(bars[1]!.at + (bars[1]!.do === 'letterbox' ? bars[1]!.dur : 0)).toBeLessThanOrEqual(fx!.timing!.end);
+    const stops = script.filter((a) => a.do === 'stop');
+    // A support ultimate has no blow, so no hit stop.
+    if (stops.length === 0) return;
+    const last = stops.reduce((m, a) => (a.at > m.at ? a : m), stops[0]!);
+    expect(last.do === 'stop' ? last.tier : null).toBe('ultimate');
+  });
+});

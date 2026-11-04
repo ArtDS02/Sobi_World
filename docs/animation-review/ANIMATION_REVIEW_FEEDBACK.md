@@ -587,7 +587,8 @@ Ghi chú dev: ĐIỀU CHỈNH. Event `resist` -> mark `resist` -> action mới `
 > **Khung chung (ANIM-009)** áp dụng cho cả 12 ultimate; các task 060–071 chỉ ghi phần riêng. Hiện tại ult = `cutin` 500ms (dải màu −8° + ảnh unit trượt) + `tint` nền 0.35 + 1–3 `prop` + `shake` ≤12 + `stop` 80–120ms; **không có**: letterbox, zoom camera có điều khiển, slow-mo, môi trường, outro.
 
 ### [ANIM-009] Ultimate Director: intro / layer / impact / outro / môi trường
-- [ ] Chưa làm
+- [x] Đã làm (B6)
+Ghi chú dev: ĐIỀU CHỈNH. Không viết module `ultDirector.ts` riêng: khung chuẩn được SINH vào script của cả 12 ult trong `battle_fx.json` (vì engine đã có acts): letterbox vào 240ms ở 0 và ra ở `end-320`, vignette tối #0a0612 α0.5, `punch` zoom 1.08 về phía người cast 620ms, hit-stop tier `ultimate` 220ms ở đòn cuối (ult support không có đòn nên không có stop). Test `buffLanguage.test.ts` ép 12 ult có khung. Dọn dẹp: `screen.reset()` khi đổi step/hết trận, `reduce` không phát acts. CHƯA làm: slow-mo (DOM số bay lệch đồng hồ, chưa xử lý), zoom out 0.96 lúc bung, chromatic 200ms, knockback chung, số sát thương to hơn, module môi trường `ultEnv`, tên skill chữ lớn trong cut-in, `castProfiles.ultimate` riêng. Timing các ult giữ nguyên (<3.5s).
 - Ưu tiên: P1
 - Nhóm: Ultimate
 - Đối tượng: 12 ultimate (`skill_ult_*`) + "ult của trùm" (boss_phase nâng cấp)
@@ -626,7 +627,8 @@ Ghi chú dev: ĐIỀU CHỈNH. Event `resist` -> mark `resist` -> action mới `
 - Kịch bản: đêm xuống (tint xanh đậm), **trăng lồng đèn lớn** hạ từ trời, đèn nhỏ bay vòng quanh từng đồng đội (orbit), chùm tia sáng xiên (`light_rays`) rọi xuống; hồi máu = hạt sáng dâng; outro: bình minh nhẹ.
 
 ### [ANIM-064] Ult Lôi Đường — `skill_ult_ld` (sấm, hệ sét)
-- [ ] Chưa làm · P1 · Ultimate · allEnemies · Hiện có: `fxp_horn_sigil`, decal crack, shake 5/7/10, stop 120
+- [x] Đã làm (B6) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. 3 nhát sét: chớp toàn màn nhát 1-2, 3 chớp nền xa, nhát cuối: mục tiêu co giật (shake x3 n16, 400ms) rồi văng (knock), vết cháy + tia điện `bolt_pop`, shake dọc. CHƯA làm: nứt đất tỏa tia, bóng đổ đảo, `lightning_storm` module. · allEnemies · Hiện có: `fxp_horn_sigil`, decal crack, shake 5/7/10, stop 120
 - Kịch bản: mây đen kéo vào (tint xám xanh), **3 nhát sét to** đánh lần lượt (flash toàn màn 90ms, bóng đổ đảo), nhát cuối trúng thẳng mục tiêu với cột sét + nứt đất toả tia; mục tiêu co giật (shake ±3@40Hz 400ms) rồi văng; điện chạy trên mặt đất.
 - Môi trường: `lightning_storm` + vết cháy `decal scorch`.
 
@@ -636,7 +638,8 @@ Ghi chú dev: ĐIỀU CHỈNH. Event `resist` -> mark `resist` -> action mới `
 - Môi trường: vết cắt trên đất, tia lửa kim loại bắn.
 
 ### [ANIM-066] Ult Hoả Giải — `skill_ult_hg` (lò rèn/búa lửa, hệ lửa)
-- [ ] Chưa làm · P1 · Ultimate · allEnemies · Hiện có: `fxp_forge_anvil`, `fxp_fire_hammer`, 3 decal ring cam, shake 6/8/12, stop 120
+- [x] Đã làm (B6) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Búa 3 nhát: hit-stop light/medium/ultimate, flash cam mỗi nhát, shake dọc; nhát cuối thêm nứt đất rực cam (`fx_ground_crack` tint), vết cháy, 4 đợt `ember_fall` (mưa lửa ~0.9s). CHƯA làm: sóng xung kích riêng, burn visual cho mục tiêu, `fire_rain` module. · allEnemies · Hiện có: `fxp_forge_anvil`, `fxp_fire_hammer`, 3 decal ring cam, shake 6/8/12, stop 120
 - Kịch bản: nền đỏ cam; đe lơ lửng trên địch, búa lửa to nện 3 nhát (nhát 1 nhẹ, 2 vừa, 3 cực mạnh), mỗi nhát: ring cam + sóng xung kích + flash; nhát cuối **mưa lửa** (`fire_rain`) rơi 1.2s + nứt đất rực dung nham; mục tiêu cháy (applies burn visual).
 - Môi trường: `fire_rain` + `ground_crack` phát sáng cam.
 
@@ -651,12 +654,14 @@ Ghi chú dev: ĐIỀU CHỈNH. Event `resist` -> mark `resist` -> action mới `
 - Môi trường: vết nứt không gian (đường trắng zigzag), tinh vân tím.
 
 ### [ANIM-069] Ult Phượng Hoàng — `skill_ult_phoenix` (lửa, địch toàn bộ)
-- [ ] Chưa làm · P1 · Ultimate · allEnemies · Hiện có: `fxp_phoenix`×3, shake 10, stop 110
+- [x] Đã làm (B6) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Thêm 2 phượng bay chéo ngược chiều, phượng lớn dang cánh (grow 1.4) bao màn, flash vàng + shake dọc, mưa lông lửa 4 đợt, tro/khói xám cuối. CHƯA làm: phượng `dive` đường cong thật, sóng nhiệt méo viền màn, bão lốc lửa. · allEnemies · Hiện có: `fxp_phoenix`×3, shake 10, stop 110
 - Kịch bản: trời đỏ cam, 3 phượng hoàng lao xuống nối nhau (`dive` đường cong), lông lửa rơi (`firefeather_fall`), cuối cùng phượng hoàng lớn **dang cánh bao trùm màn** (grow) rồi nổ cầu lửa; mưa lửa + bão lốc lửa nhỏ; outro: tro bay.
 - Môi trường: `fire_rain` + sóng nhiệt (méo viền màn nhẹ).
 
 ### [ANIM-070] Ult Đinh Ba — `skill_ult_trident` (nước, địch toàn bộ)
-- [ ] Chưa làm · P1 · Ultimate · allEnemies · Hiện có: `fxp_trident`, shake 8×2, stop 90
+- [x] Đã làm (B6) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Mưa lớn 5 đợt, ribbon nước dâng (dày 28% màn, dài 1.2, bọt) 1.2s, 3 vòng sóng xung kích tròn, flash xanh, mục tiêu knock + lift sẵn có, hit-stop heavy. CHƯA làm: cột nước xoáy xoắn quanh đinh ba (ribbon xoắn), nước dâng 12% rồi rút thật, mây giông. · allEnemies · Hiện có: `fxp_trident`, shake 8×2, stop 90
 - Kịch bản: mây giông + mưa lớn, đinh ba lơ lửng sáng, **cột nước xoáy (waterspout) dựng quanh đinh ba** (ribbon xoắn), phóng đinh ba cắm xuống giữa sân → sóng xung kích tròn dâng cao + ngập (nước dâng 12% màn rồi rút); mục tiêu bị nhấc lên rồi quật xuống.
 - Môi trường: mưa, ngập nước, gợn tròn.
 
