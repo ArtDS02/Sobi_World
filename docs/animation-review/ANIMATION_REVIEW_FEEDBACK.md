@@ -608,22 +608,26 @@ Ghi chú dev: ĐIỀU CHỈNH. Không viết module `ultDirector.ts` riêng: khu
 > Mỗi task ult dưới đây: **Đối tượng** = tên ult; **File** = `fx.json skills.<id>.script` (+ `ultDirector`); **Phụ thuộc** = ANIM-009 (+ ANIM-006 khi dùng ribbon); **Asset** = file `A06`; **Nghiệm thu chung** = §ANIM-009 + điểm riêng bên dưới. Hiện trạng chung: prop riêng đã có (xem ngoặc), nhưng chưa có môi trường/impact/outro.
 
 ### [ANIM-060] Ult Nam Hải — `skill_ult_nh` (cá voi, nhóm nước, buff đồng đội)
-- [ ] Chưa làm · Ưu tiên P1 · Nhóm Ultimate · Target allAllies (support) · Hiện có: `fxp_whale`, `fxp_rainbow`, cut-in teal `#3ad0c8`
+- [x] Đã làm (B7) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Ribbon sóng cuộn + ribbon cột nước dựng, slow-mo 0.5 300ms khi cá voi nhảy, 3 vòng gợn nước dưới chân đồng đội, mưa nước 3 đợt, bọt bay lên, ánh nắng nhạt cuối. CHƯA làm: cột nước thẳng đứng 0.9 màn thật, bóng đổ cá voi. · Target allAllies (support) · Hiện có: `fxp_whale`, `fxp_rainbow`, cut-in teal `#3ad0c8`
 - Kịch bản: tối xanh sâu `#0a3a6a` + bong bóng dâng; **sóng cuộn ribbon** từ trái tràn qua sân (ANIM-006), cá voi bơi qua phía sau với bóng đổ; cá voi **phun cột nước** lên trời (cột nước 0.9 màn, ribbon thẳng đứng); mưa nước nhẹ + cầu vồng hiện ở đỉnh sau mưa; đồng đội lần lượt được vầng hồi xanh và nhảy `hop` 12px; outro: bọt lung linh bay lên, ánh nắng.
 - Chi tiết: hit-stop không (support) nhưng `slow-mo 0.5` 300ms khi cá voi nhảy lên; môi trường: gợn nước dưới chân đồng đội.
 
 ### [ANIM-061] Ult Quy Sơn — `skill_ult_qs` (núi rùa, buff đồng đội)
-- [ ] Chưa làm · P1 · Ultimate · allAllies (support) · Hiện có: `fxp_turtle_mountain`, `fxp_stone_plate`, `fxp_taunt_badge`
+- [x] Đã làm (B7) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Shake dọc 700ms, nứt đất quanh núi, bụi 3 đợt + đá rơi, rune đá dưới chân đồng đội, vòng vàng + flash khi vòm khép, bụi lắng cuối. CHƯA làm: núi chìm xuống chậm, hex 6 mảnh ép vào. · allAllies (support) · Hiện có: `fxp_turtle_mountain`, `fxp_stone_plate`, `fxp_taunt_badge`
 - Kịch bản: mặt đất rung (shake thấp tần 3Hz 700ms), **ngọn núi-rùa trồi lên** từ phía sau (`rise`, 700ms, bụi + đá văng), ván đá bay xuống bao từng đồng đội (hex đá 6 mảnh ép vào), vòm đá phủ nhóm; vòng taunt/khiên sáng vàng; outro: đá lắng bụi, núi chìm xuống chậm.
 - Môi trường: nứt đất nhẹ quanh núi, bụi rơi.
 
 ### [ANIM-062] Ult Dạ Minh — `skill_ult_dm` (bạch tuộc/lưới đêm, tối)
-- [ ] Chưa làm · P1 · Ultimate · allEnemies · Hiện có: `fxp_octo_tentacle`×2, `fxp_night_net`, shake 8, punch
+- [x] Đã làm (B7) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Vignette đen 0.6, vết mực (decal puddle) dưới địch, mực dâng, mục tiêu squash 0.85 rồi knock, flash tím + split, khói tối cuối. CHƯA làm: tentacle ribbon quấn mục tiêu, chromatic thật (dùng split). · allEnemies · Hiện có: `fxp_octo_tentacle`×2, `fxp_night_net`, shake 8, punch
 - Kịch bản: màn tối dần (vignette đen 0.6), mực loang từ góc; **xúc tu ribbon** vươn từ đáy màn quấn mục tiêu (ANIM-006), lưới đêm phủ xuống (grow); mục tiêu bị kéo xuống (sy 0.85) rồi tung lên; impact: hit-stop 160 + chromatic tím; outro: mực tan thành bóng.
 - Môi trường: mực đen loang trên đất (decal ink).
 
 ### [ANIM-063] Ult Quang Trụ — `skill_ult_qt` (đèn trăng, ánh sáng, buff đồng đội)
-- [ ] Chưa làm · P1 · Ultimate · allAllies (support) · Hiện có: `fxp_moon_lantern`, `fxp_mini_lantern`, decal ring
+- [x] Đã làm (B7) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Vignette xanh đêm, đèn nhỏ orbit quanh từng đồng đội, 4 đợt sao sáng, rune vàng dưới chân, hạt hồi dâng, flash bình minh. CHƯA làm: chùm tia xiên `light_rays` (cần asset A06). · allAllies (support) · Hiện có: `fxp_moon_lantern`, `fxp_mini_lantern`, decal ring
 - Kịch bản: đêm xuống (tint xanh đậm), **trăng lồng đèn lớn** hạ từ trời, đèn nhỏ bay vòng quanh từng đồng đội (orbit), chùm tia sáng xiên (`light_rays`) rọi xuống; hồi máu = hạt sáng dâng; outro: bình minh nhẹ.
 
 ### [ANIM-064] Ult Lôi Đường — `skill_ult_ld` (sấm, hệ sét)
@@ -633,7 +637,8 @@ Ghi chú dev: ĐIỀU CHỈNH. 3 nhát sét: chớp toàn màn nhát 1-2, 3 ch�
 - Môi trường: `lightning_storm` + vết cháy `decal scorch`.
 
 ### [ANIM-065] Ult Thiết Giáp — `skill_ult_tg` (hiệp sĩ đồng, kim)
-- [ ] Chưa làm · P1 · Ultimate · allEnemies · Hiện có: `fxp_bronze_knight`×4, `fxp_bronze_shield`, shake 8
+- [x] Đã làm (B7) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Mỗi nhát chém: shake dọc, vết cắt kim loại (decal crack), mảnh kim loại văng, flash trắng 2 nhát đầu; cuối mưa mảnh kim + bụi, vòng đồng khi khiên đóng. CHƯA làm: hiệp sĩ rơi có shadow growth. · allEnemies · Hiện có: `fxp_bronze_knight`×4, `fxp_bronze_shield`, shake 8
 - Kịch bản: 4 hiệp sĩ đồng từ trên rơi xuống (`fall` + shadow growth) lần lượt chém tạo đường cắt kim loại chéo (slash arc lớn + tia lửa), tiếng chuông kim; tấm khiên đồng cuối đóng lại; shake nặng, bụi + mảnh kim loại văng.
 - Môi trường: vết cắt trên đất, tia lửa kim loại bắn.
 
@@ -644,12 +649,14 @@ Ghi chú dev: ĐIỀU CHỈNH. Búa 3 nhát: hit-stop light/medium/ultimate, fla
 - Môi trường: `fire_rain` + `ground_crack` phát sáng cam.
 
 ### [ANIM-067] Ult Mộc Mẫu — `skill_ult_mm` (cây mẹ, buff đồng đội)
-- [ ] Chưa làm · P1 · Ultimate · allAllies (support) · Hiện có: `fxp_mother_tree` (shake 0, stop 0)
+- [x] Đã làm (B7) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Lá nảy, ribbon dây leo xanh toả ra, vòng xanh + hạt sáng dưới chân đồng đội, cánh hoa, lá rơi cuối, flash xanh nhạt. CHƯA làm: cỏ mọc quanh chân, đom đóm (cần asset A06). · allAllies (support) · Hiện có: `fxp_mother_tree` (shake 0, stop 0)
 - Kịch bản: hạt giống rơi, **cây mẹ lớn mọc lên** (grow `easeOutBack` 900ms, dây leo ribbon toả ra), hoa nở trên đồng đội, phấn hoa/cánh hoa bay trong gió, vầng xanh hồi; outro: lá rơi.
 - Môi trường: cỏ mọc quanh chân, đom đóm.
 
 ### [ANIM-068] Ult Hư Không — `skill_ult_hk` (chuông trời, hệ hư vô)
-- [ ] Chưa làm · P1 · Ultimate · allEnemies · Hiện có: `fxp_sky_bell`, 3 decal ring, shake 5/7/10, stop 120
+- [x] Đã làm (B7) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Flash trắng 1 nhịp đầu (thay đảo màu), rune tím dưới địch, 3 hồi chuông: split + sóng tròn toàn sân, tia hư vô, mục tiêu co lại, vignette tím. CHƯA làm: vòng hút xoáy thật, vết nứt không gian, tinh vân. · allEnemies · Hiện có: `fxp_sky_bell`, 3 decal ring, shake 5/7/10, stop 120
 - Kịch bản: màn đảo màu 1 frame, **vòng hút hư không** (spiral) kéo mục tiêu về tâm, chuông trời gõ 3 hồi (mỗi hồi sóng tròn lan toàn màn + chromatic), hư vô nuốt rồi nổ ra; mục tiêu mờ rìa.
 - Môi trường: vết nứt không gian (đường trắng zigzag), tinh vân tím.
 
@@ -666,7 +673,8 @@ Ghi chú dev: ĐIỀU CHỈNH. Mưa lớn 5 đợt, ribbon nước dâng (dày 2
 - Môi trường: mưa, ngập nước, gợn tròn.
 
 ### [ANIM-071] Ult Thần Thoại — `skill_ult_mythical` (vòng linh, hư vô)
-- [ ] Chưa làm · P1 · Ultimate · allEnemies · Hiện có: `fxp_spirit_circle`, shake 10, stop 120, punch
+- [x] Đã làm (B7) · P1 · Ultimate
+Ghi chú dev: ĐIỀU CHỈNH. Rune vàng trên đất, 2 vòng linh bay qua (xanh/lục), flash trắng + split, slow-mo 0.3 300ms sau hit-stop, nổ sao đa sắc, mưa sao băng 4 đợt, mục tiêu văng. Giữ 3.5s (test chặn ult <3.5s, không phải 3.8s). CHƯA làm: 4 linh thú ảo ảnh. · allEnemies · Hiện có: `fxp_spirit_circle`, shake 10, stop 120, punch
 - Kịch bản: vòng linh khổng lồ trải xuống sân (rune tự quay + phát sáng), 4 linh thú ảo ảnh bay quanh rồi lao vào các mục tiêu; đỉnh điểm: **vụ nổ ánh sáng đa sắc** (flash trắng 160 + chromatic) + sao băng; đây là ult "đỉnh" nên dài nhất (3.8s) với slow-mo 0.3 ở cú chạm.
 - Môi trường: rune sáng trên đất, sao rơi.
 

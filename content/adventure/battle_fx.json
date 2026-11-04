@@ -3535,7 +3535,77 @@
           "size": 0.4,
           "alpha": 0.6
         },
-        { "do": "letterbox", "at": 2980, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 2980, "who": "field", "dur": 240, "on": false },
+        {
+          "do": "ribbon",
+          "at": 350,
+          "who": "field",
+          "dur": 1300,
+          "color": "#2a8ad6",
+          "amp": 0.08,
+          "freq": 1.8,
+          "speed": 4,
+          "thickness": 0.2,
+          "length": 0.9,
+          "foam": true
+        },
+        {
+          "do": "ribbon",
+          "at": 1250,
+          "who": "field",
+          "dur": 900,
+          "color": "#bfe8ff",
+          "amp": 0.02,
+          "freq": 0.8,
+          "speed": 6,
+          "thickness": 0.09,
+          "length": 0.9,
+          "foam": true
+        },
+        { "do": "slowmo", "at": 1200, "who": "field", "dur": 300, "scale": 0.5 },
+        {
+          "do": "decal",
+          "at": 1350,
+          "who": "allies",
+          "dur": 800,
+          "kind": "ring",
+          "color": "#7fd0ff",
+          "size": 1,
+          "stagger": 150
+        },
+        {
+          "do": "decal",
+          "at": 1470,
+          "who": "allies",
+          "dur": 800,
+          "kind": "ring",
+          "color": "#7fd0ff",
+          "size": 1.3,
+          "stagger": 150
+        },
+        {
+          "do": "decal",
+          "at": 1590,
+          "who": "allies",
+          "dur": 800,
+          "kind": "ring",
+          "color": "#7fd0ff",
+          "size": 1.6,
+          "stagger": 150
+        },
+        { "do": "burst", "at": 1700, "who": "field", "ref": "drop_fall", "spot": "head", "more": 1.5 },
+        { "do": "burst", "at": 1950, "who": "field", "ref": "drop_fall", "spot": "head", "more": 1.5 },
+        { "do": "burst", "at": 2200, "who": "field", "ref": "drop_fall", "spot": "head", "more": 1.5 },
+        {
+          "do": "burst",
+          "at": 2700,
+          "who": "allyside",
+          "ref": "bubble_rise",
+          "spot": "feet",
+          "tint": ["#ffffff"],
+          "more": 2.5
+        },
+        { "do": "flash", "at": 2750, "who": "field", "dur": 300, "color": "#fff6c8", "alpha": 0.2 }
       ]
     },
     "skill_qs_rock_smash": {
@@ -3756,7 +3826,50 @@
         },
         { "do": "move", "at": 2300, "who": "foes", "dur": 500, "move": "look", "deg": 6 },
         { "do": "sound", "at": 2300, "who": "actor", "sound": "adv_roar" },
-        { "do": "letterbox", "at": 2980, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 2980, "who": "field", "dur": 240, "on": false },
+        { "do": "shake", "at": 500, "who": "field", "dur": 700, "amount": 5, "dir": [0, 1] },
+        {
+          "do": "decal",
+          "at": 700,
+          "who": "allyside",
+          "dur": 1800,
+          "kind": "crack",
+          "color": "#6a4a2a",
+          "size": 2.6
+        },
+        { "do": "burst", "at": 800, "who": "allyside", "ref": "earth_dust", "spot": "feet", "more": 1.5 },
+        { "do": "burst", "at": 1150, "who": "allyside", "ref": "earth_dust", "spot": "feet", "more": 1.5 },
+        { "do": "burst", "at": 1500, "who": "allyside", "ref": "earth_dust", "spot": "feet", "more": 1.5 },
+        { "do": "burst", "at": 1300, "who": "allyside", "ref": "pebble_fall", "spot": "head", "more": 3 },
+        {
+          "do": "decal",
+          "at": 1850,
+          "who": "allies",
+          "dur": 900,
+          "kind": "rune",
+          "color": "#ffd66a",
+          "size": 1.5,
+          "stagger": 150
+        },
+        {
+          "do": "decal",
+          "at": 2300,
+          "who": "allyside",
+          "dur": 600,
+          "kind": "ring",
+          "color": "#ffd66a",
+          "size": 2.6
+        },
+        { "do": "flash", "at": 2300, "who": "field", "dur": 160, "color": "#ffd66a", "alpha": 0.2 },
+        {
+          "do": "burst",
+          "at": 2800,
+          "who": "allyside",
+          "ref": "puff_rise",
+          "spot": "feet",
+          "tint": ["#a08060"],
+          "more": 2
+        }
       ]
     },
     "skill_dm_ink": {
@@ -3981,7 +4094,58 @@
         { "do": "punch", "at": 2050, "who": "target", "dur": 220, "zoom": 1.04 },
         { "do": "sound", "at": 2050, "who": "actor", "sound": "adv_dark_hit" },
         { "do": "burst", "at": 2450, "who": "foeside", "ref": "star_rise", "tint": ["#ffffff"], "more": 2 },
-        { "do": "letterbox", "at": 2780, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 2780, "who": "field", "dur": 240, "on": false },
+        { "do": "vignette", "at": 300, "who": "field", "dur": 1800, "color": "#000000", "alpha": 0.6 },
+        {
+          "do": "decal",
+          "at": 500,
+          "who": "foes",
+          "dur": 2200,
+          "kind": "puddle",
+          "color": "#120a22",
+          "size": 2,
+          "stagger": 100
+        },
+        {
+          "do": "burst",
+          "at": 600,
+          "who": "foeside",
+          "ref": "ink_rise",
+          "spot": "feet",
+          "tint": ["#201038"],
+          "more": 3
+        },
+        {
+          "do": "move",
+          "at": 1500,
+          "who": "targets",
+          "dur": 500,
+          "move": "squash",
+          "scale": 0.85,
+          "stagger": 100
+        },
+        {
+          "do": "move",
+          "at": 2100,
+          "who": "targets",
+          "dur": 450,
+          "move": "knock",
+          "x": 10,
+          "deg": 14,
+          "stagger": 100
+        },
+        { "do": "flash", "at": 2050, "who": "field", "dur": 120, "color": "#9a6aff", "alpha": 0.3 },
+        { "do": "split", "at": 2050, "who": "field", "dur": 160 },
+        {
+          "do": "burst",
+          "at": 2150,
+          "who": "targets",
+          "ref": "ink_spray",
+          "tint": ["#201038"],
+          "more": 1.5,
+          "stagger": 100
+        },
+        { "do": "burst", "at": 2500, "who": "foeside", "ref": "dark_smoke", "spot": "feet", "more": 2.5 }
       ]
     },
     "skill_qt_ray": {
@@ -4179,7 +4343,76 @@
           "size": 2.5
         },
         { "do": "burst", "at": 2700, "who": "allyside", "ref": "star_fall", "tint": ["#ffd66a"], "more": 2 },
-        { "do": "letterbox", "at": 2880, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 2880, "who": "field", "dur": 240, "on": false },
+        { "do": "vignette", "at": 300, "who": "field", "dur": 1800, "color": "#0a1030", "alpha": 0.5 },
+        {
+          "do": "prop",
+          "at": 900,
+          "who": "allies",
+          "dur": 1400,
+          "img": "fxp_mini_lantern",
+          "path": "orbit",
+          "spot": "head",
+          "size": 0.22,
+          "stagger": 150,
+          "spin": 1.4
+        },
+        {
+          "do": "burst",
+          "at": 1100,
+          "who": "allyside",
+          "ref": "light_stars",
+          "spot": "head",
+          "tint": ["#fff0b0"],
+          "more": 2
+        },
+        {
+          "do": "burst",
+          "at": 1350,
+          "who": "allyside",
+          "ref": "light_stars",
+          "spot": "head",
+          "tint": ["#fff0b0"],
+          "more": 2
+        },
+        {
+          "do": "burst",
+          "at": 1600,
+          "who": "allyside",
+          "ref": "light_stars",
+          "spot": "head",
+          "tint": ["#fff0b0"],
+          "more": 2
+        },
+        {
+          "do": "burst",
+          "at": 1850,
+          "who": "allyside",
+          "ref": "light_stars",
+          "spot": "head",
+          "tint": ["#fff0b0"],
+          "more": 2
+        },
+        {
+          "do": "decal",
+          "at": 1300,
+          "who": "allies",
+          "dur": 1200,
+          "kind": "rune",
+          "color": "#ffe39a",
+          "size": 1.4,
+          "stagger": 150
+        },
+        {
+          "do": "burst",
+          "at": 1900,
+          "who": "allyside",
+          "ref": "plus_rise",
+          "spot": "feet",
+          "tint": ["#8ff0b0"],
+          "more": 3
+        },
+        { "do": "flash", "at": 2650, "who": "field", "dur": 260, "color": "#ffe9b0", "alpha": 0.25 }
       ]
     },
     "skill_ld_thunder_strike": {
@@ -4651,7 +4884,64 @@
           "frames": [0, 2],
           "hold": 300
         },
-        { "do": "letterbox", "at": 2980, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 2980, "who": "field", "dur": 240, "on": false },
+        { "do": "shake", "at": 1350, "who": "field", "dur": 220, "amount": 7, "dir": [0, 1] },
+        {
+          "do": "decal",
+          "at": 1350,
+          "who": "foes",
+          "dur": 1000,
+          "kind": "crack",
+          "color": "#c8ccd8",
+          "size": 1.3,
+          "stagger": 100
+        },
+        { "do": "burst", "at": 1350, "who": "targets", "ref": "metal_spray", "more": 1.2, "stagger": 100 },
+        { "do": "shake", "at": 1600, "who": "field", "dur": 220, "amount": 7, "dir": [0, 1] },
+        {
+          "do": "decal",
+          "at": 1600,
+          "who": "foes",
+          "dur": 1000,
+          "kind": "crack",
+          "color": "#c8ccd8",
+          "size": 1.3,
+          "stagger": 100
+        },
+        { "do": "burst", "at": 1600, "who": "targets", "ref": "metal_spray", "more": 1.2, "stagger": 100 },
+        { "do": "shake", "at": 1850, "who": "field", "dur": 220, "amount": 7, "dir": [0, 1] },
+        {
+          "do": "decal",
+          "at": 1850,
+          "who": "foes",
+          "dur": 1000,
+          "kind": "crack",
+          "color": "#c8ccd8",
+          "size": 1.3,
+          "stagger": 100
+        },
+        { "do": "burst", "at": 1850, "who": "targets", "ref": "metal_spray", "more": 1.2, "stagger": 100 },
+        { "do": "flash", "at": 1400, "who": "field", "dur": 80, "color": "#ffffff", "alpha": 0.25 },
+        { "do": "flash", "at": 1650, "who": "field", "dur": 80, "color": "#ffffff", "alpha": 0.25 },
+        { "do": "burst", "at": 2200, "who": "foeside", "ref": "metal_fall", "spot": "head", "more": 3 },
+        {
+          "do": "burst",
+          "at": 2200,
+          "who": "foeside",
+          "ref": "puff_pop",
+          "spot": "feet",
+          "tint": ["#8a7a6a"],
+          "more": 2
+        },
+        {
+          "do": "decal",
+          "at": 2600,
+          "who": "actor",
+          "dur": 600,
+          "kind": "ring",
+          "color": "#d89a50",
+          "size": 2
+        }
       ]
     },
     "skill_hg_hot_claw": {
@@ -5075,7 +5365,42 @@
         },
         { "do": "sound", "at": 2200, "who": "actor", "sound": "adv_nature_hit" },
         { "do": "burst", "at": 2250, "who": "targets", "ref": "spore_pop", "more": 1.2, "stagger": 120 },
-        { "do": "letterbox", "at": 3080, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 3080, "who": "field", "dur": 240, "on": false },
+        { "do": "burst", "at": 500, "who": "allyside", "ref": "leaf_pop", "spot": "head", "more": 1 },
+        {
+          "do": "ribbon",
+          "at": 1100,
+          "who": "field",
+          "dur": 900,
+          "color": "#4a9a3a",
+          "amp": 0.06,
+          "freq": 2.4,
+          "speed": 3,
+          "thickness": 0.05,
+          "length": 0.6
+        },
+        { "do": "burst", "at": 1900, "who": "allyside", "ref": "petal_fall", "spot": "above", "more": 3 },
+        {
+          "do": "decal",
+          "at": 1500,
+          "who": "allies",
+          "dur": 1400,
+          "kind": "ring",
+          "color": "#8ff0b0",
+          "size": 1.3,
+          "stagger": 120
+        },
+        {
+          "do": "burst",
+          "at": 1700,
+          "who": "allies",
+          "ref": "spark_rise",
+          "tint": ["#d8ff8a"],
+          "more": 1.2,
+          "stagger": 120
+        },
+        { "do": "burst", "at": 2500, "who": "allyside", "ref": "leaf_fall", "spot": "above", "more": 3 },
+        { "do": "flash", "at": 1300, "who": "field", "dur": 240, "color": "#c0ff8a", "alpha": 0.18 }
       ]
     },
     "skill_hk_pure_impact": {
@@ -5277,7 +5602,68 @@
         { "do": "sound", "at": 2000, "who": "actor", "sound": "adv_shield_break" },
         { "do": "sound", "at": 2000, "who": "actor", "sound": "adv_void_hit" },
         { "do": "burst", "at": 2400, "who": "foeside", "ref": "star_fall", "tint": ["#d8b8ff"], "more": 1.5 },
-        { "do": "letterbox", "at": 2880, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 2880, "who": "field", "dur": 240, "on": false },
+        { "do": "flash", "at": 330, "who": "field", "dur": 90, "color": "#ffffff", "alpha": 0.55 },
+        {
+          "do": "decal",
+          "at": 700,
+          "who": "foes",
+          "dur": 1400,
+          "kind": "rune",
+          "color": "#8a6ad6",
+          "size": 2.2,
+          "stagger": 100
+        },
+        { "do": "split", "at": 1200, "who": "field", "dur": 120 },
+        {
+          "do": "decal",
+          "at": 1280,
+          "who": "foeside",
+          "dur": 500,
+          "kind": "ring",
+          "color": "#d8b8ff",
+          "size": 4.2
+        },
+        { "do": "split", "at": 1600, "who": "field", "dur": 120 },
+        {
+          "do": "decal",
+          "at": 1680,
+          "who": "foeside",
+          "dur": 500,
+          "kind": "ring",
+          "color": "#d8b8ff",
+          "size": 4.2
+        },
+        { "do": "split", "at": 2000, "who": "field", "dur": 120 },
+        {
+          "do": "decal",
+          "at": 2080,
+          "who": "foeside",
+          "dur": 500,
+          "kind": "ring",
+          "color": "#d8b8ff",
+          "size": 4.2
+        },
+        { "do": "burst", "at": 900, "who": "foeside", "ref": "void_sparks", "tint": ["#b48aff"], "more": 3 },
+        {
+          "do": "move",
+          "at": 1400,
+          "who": "targets",
+          "dur": 600,
+          "move": "puff_up",
+          "scale": 0.8,
+          "stagger": 100
+        },
+        {
+          "do": "burst",
+          "at": 1000,
+          "who": "foeside",
+          "ref": "star_fall",
+          "spot": "head",
+          "tint": ["#a07af0"],
+          "more": 2
+        },
+        { "do": "vignette", "at": 1500, "who": "field", "dur": 900, "color": "#2a0a50", "alpha": 0.55 }
       ]
     },
     "skill_ult_phoenix": {
@@ -5574,7 +5960,98 @@
         { "do": "burst", "at": 2500, "who": "allies", "ref": "star_fall", "tint": ["#ffd66a"], "more": 1.2 },
         { "do": "burst", "at": 2600, "who": "allies", "ref": "plus_rise", "tint": ["#8ff0b0"] },
         { "do": "sound", "at": 2600, "who": "actor", "sound": "adv_heal" },
-        { "do": "letterbox", "at": 3180, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 3180, "who": "field", "dur": 240, "on": false },
+        {
+          "do": "decal",
+          "at": 600,
+          "who": "foes",
+          "dur": 2200,
+          "kind": "rune",
+          "color": "#ffd66a",
+          "size": 2.4,
+          "stagger": 100
+        },
+        {
+          "do": "prop",
+          "at": 900,
+          "who": "field",
+          "dur": 900,
+          "img": "fxp_spirit_circle",
+          "path": "sweep",
+          "spot": "middle",
+          "size": 0.3,
+          "tint": "#6fc4ff"
+        },
+        {
+          "do": "prop",
+          "at": 1000,
+          "who": "field",
+          "dur": 800,
+          "img": "fxp_spirit_circle",
+          "path": "sweep",
+          "spot": "head",
+          "size": 0.3,
+          "flip": true,
+          "tint": "#7ccf5a"
+        },
+        { "do": "flash", "at": 1700, "who": "field", "dur": 160, "color": "#ffffff", "alpha": 0.6 },
+        { "do": "split", "at": 1700, "who": "field", "dur": 200 },
+        { "do": "slowmo", "at": 1950, "who": "field", "dur": 300, "scale": 0.3 },
+        {
+          "do": "burst",
+          "at": 1750,
+          "who": "targets",
+          "ref": "star_big",
+          "tint": ["#ffd66a", "#ff7a2a", "#6fc4ff", "#7ccf5a"],
+          "more": 2.5,
+          "stagger": 100
+        },
+        {
+          "do": "burst",
+          "at": 2000,
+          "who": "foeside",
+          "ref": "star_fall",
+          "spot": "head",
+          "tint": ["#ffe9a0"],
+          "more": 1.5
+        },
+        {
+          "do": "burst",
+          "at": 2200,
+          "who": "foeside",
+          "ref": "star_fall",
+          "spot": "head",
+          "tint": ["#ffe9a0"],
+          "more": 1.5
+        },
+        {
+          "do": "burst",
+          "at": 2400,
+          "who": "foeside",
+          "ref": "star_fall",
+          "spot": "head",
+          "tint": ["#ffe9a0"],
+          "more": 1.5
+        },
+        {
+          "do": "burst",
+          "at": 2600,
+          "who": "foeside",
+          "ref": "star_fall",
+          "spot": "head",
+          "tint": ["#ffe9a0"],
+          "more": 1.5
+        },
+        {
+          "do": "move",
+          "at": 1750,
+          "who": "targets",
+          "dur": 420,
+          "move": "knock",
+          "x": 40,
+          "deg": 22,
+          "stagger": 100
+        }
       ]
     },
     "skill_cl_taunt": {
