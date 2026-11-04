@@ -99,7 +99,7 @@ const skill = look.partial().extend({
 /** The general actions and reactions that may carry a script (decision 044): played on the unit they are about (`actor`). */
 export const ACTION_FX_VALUES = [
   'attack', 'guard', 'stunned', 'frozen', 'item', 'hit', 'heavy', 'miss', 'heal', 'regen', 'buff', 'debuff', 'dot_poison', 'dot_burn',
-  'ko', 'revive', 'victory', 'enter_ally', 'enter_enemy', 'boss_phase', 'cleanse', 'resist', 'crit', 'turn_start_ally', 'turn_start_enemy',
+  'ko', 'revive', 'victory', 'enter_ally', 'enter_enemy', 'boss_phase', 'cleanse', 'resist', 'crit', 'victory_cam', 'turn_start_ally', 'turn_start_enemy',
 ] as const;
 
 /** A thing that circles a unit for as long as a status lasts (ANIM-003 layers): stars round a dizzy head, a clock over a doomed one. */

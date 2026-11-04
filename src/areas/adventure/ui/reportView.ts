@@ -91,6 +91,17 @@ export function renderReport(ctx: ViewCtx): HTMLElement | null {
 /** Which board keys already played their sounds. */
 const heard = new Set<string>();
 
+/** Counts the first number of `text` up from 0 to its value as `k` goes 0..1, easing out hard (easeOutExpo). */
+export function countText(text: string, k: number): string {
+  const e = k >= 1 ? 1 : 1 - 2 ** (-10 * Math.max(0, k));
+  return text.replace(/\d{1,3}(?:[.,]\d{3})+|\d+/, (m) => {
+    // A whole number, maybe with thousands separators ("1.234"): counted as an integer and written back the same way.
+    const sep = /[.,]/.exec(m)?.[0] ?? '';
+    const whole = Math.round(Number(m.replace(/[.,]/g, '')) * e);
+    return sep ? String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, sep) : String(whole);
+  });
+}
+
 /**
  * After a redraw: fills the bars of the board on screen leg by leg, pops LEVEL UP when a bar first tops out, and cues the sounds,
  * all from the moment the board first showed. Reduced motion: the bars stand at their end and nothing pops.
@@ -111,6 +122,17 @@ export function playBoard(host: HTMLElement, sound: ((key: AdventureSound) => vo
     for (const up of board.querySelectorAll<HTMLElement>('.adventure-board__levelup')) at(300 + Number(up.dataset.at ?? 0), () => sound?.('level_up'));
   }
   if (reduce || typeof board.animate !== 'function') return;
+  // The rewards count up as the board settles (ANIM-105).
+  for (const r of board.querySelectorAll<HTMLElement>('.adventure-board__reward')) {
+    const final = r.textContent ?? '';
+    const begin = performance.now() - since + 400;
+    const tick = () => {
+      const k = (performance.now() - begin) / 800;
+      r.textContent = countText(final, k);
+      if (k < 1 && r.isConnected) requestAnimationFrame(tick);
+    };
+    tick();
+  }
   for (const fill of fills) {
     const legs = (fill.dataset.legs ?? '').split(',').map((s) => s.split('-').map(Number) as [number, number]);
     const total = LEG_MS * legs.length;

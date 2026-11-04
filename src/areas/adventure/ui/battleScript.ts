@@ -196,6 +196,8 @@ export function stepScript(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 
     else if (mk.kind === 'victory') {
       const side = sides.get(mk.unit);
       [...sides].filter(([, s]) => s === side).forEach(([id], i) => run(c, actionScript('victory'), mk.at + i * 120 * k, k, id, [], neutral));
+      // The last blow of the battle is held for a breath and the camera leans in on the winner (ANIM-105).
+      run(c, actionScript('victory_cam'), mk.at, k, mk.unit, [], neutral);
     }
   }
   if (p.enter) {

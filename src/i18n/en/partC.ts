@@ -330,6 +330,7 @@ export const partC = {
       pickTarget: "Choose a target",
       aimHint: "{skill}: click a ⊗ marker to cast",
       aimAll: "Whole side",
+      start: "Battle!",
       cancel: "Cancel",
       tabs: {
         main: "Main skills",

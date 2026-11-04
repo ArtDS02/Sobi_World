@@ -9,7 +9,7 @@ import { vi } from '../../../i18n/vi';
 import { el } from '../../../ui/dom';
 import { adventureOf } from '../logic/save/lens';
 import type { Run } from '../logic/state';
-import { FX_MS, bannerEl, stepEffects } from './battleFxView';
+import { ENTER_MS, FX_MS, bannerEl, stepEffects } from './battleFxView';
 import { type UnitVm, battleVm } from './battleVm';
 import { type ViewCtx, iconOf, roundButton } from './viewKit';
 import { ACTION_ART } from './vmKit';
@@ -94,6 +94,8 @@ export function renderBattle(ctx: ViewCtx, replay?: Run): HTMLElement {
         ? sideMarker('ally', allies, aim, ctx)
         : null,
     ),
+    // Going into a battle (ANIM-105): two panels close over the field, the call sweeps across, the panels open on the fight.
+    step.elapsed < -250 && !reduce && !replay ? el('div', { class: 'adventure-ui__intro', attrs: { style: `--intro-skip:${-Math.round(step.elapsed + ENTER_MS)}ms`, 'aria-hidden': 'true' } }, el('b', { text: vi.adventure.battle.start })) : null,
     fxBanner
       ? bannerEl(fxBanner, vm.units.find((u) => u.id === fxBanner.unit)?.art ?? null, step.shown)
       : null,

@@ -898,7 +898,8 @@ Ghi chú dev: ĐIỀU CHỈNH. Số nảy outBack ~220ms (0.6→1.25→1) rồi 
 - Asset cần thêm: không.
 
 ### [ANIM-105] Chuyển cảnh vào/ra trận, thắng/thua, bảng tổng kết
-- [ ] Chưa làm (B9: chưa làm; cần quyết định phạm vi — chuyển cảnh vào/ra trận, màn thua, slow-mo đòn cuối thắng, bảng tổng kết đếm easeOutExpo; chỉ phần level up ở ANIM-106 đã làm)
+- [x] Đã làm (B9+)
+Ghi chú dev: ĐIỀU CHỈNH. (1) Vào trận: 2 tấm tối khép từ hai bên rồi chữ "Vào trận!" quét ngang và tấm mở ra, 1s khớp `ENTER_MS` (CSS, bỏ khi reduce; chuỗi i18n `battle.start`). (2) Thua: màn kết quả hiện chậm — nền đỏ-xám phủ dần 1.4s, thẻ rơi xuống từ xám, tiêu đề giãn chữ rồi hiện. (3) Thắng: action `victory_cam` (slow-mo 0.35 300ms, zoom 1.06 về người thắng, confetti sao nhiều màu). (4) Bảng tổng kết: số thưởng đếm lên easeOutExpo 800ms (`countText`, có test), vật phẩm rơi nảy. CHƯA làm: tên khu & cờ phe chạy ngang, thua trong sân (units gục + chữ trước khi về map; hiện thua đi thẳng sang màn kết quả), camera zoom đúng đòn cuối.
 - Ưu tiên: P2
 - Nhóm: Khác
 - Đối tượng: vào trận (`ENTER_MS=1100`, `actions.enter_ally/enemy`), thắng (`victory`), thua, bảng `reportView.ts`

@@ -8379,6 +8379,19 @@
         "more": 1.6
       },
       { "do": "move", "at": 160, "who": "actor", "dur": 460, "move": "bounce", "y": 16, "n": 2 }
+    ],
+    "victory_cam": [
+      { "do": "slowmo", "at": 0, "who": "field", "dur": 300, "scale": 0.35 },
+      { "do": "punch", "at": 0, "who": "actor", "dur": 700, "zoom": 1.06 },
+      {
+        "do": "burst",
+        "at": 100,
+        "who": "field",
+        "ref": "star_fall",
+        "spot": "head",
+        "tint": ["#ffe36a", "#ff9ac2", "#9ae6ff", "#8ff0b0"],
+        "more": 3
+      }
     ]
   },
   "statuses": {

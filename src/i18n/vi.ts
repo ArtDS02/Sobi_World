@@ -1346,6 +1346,7 @@ export const vi = {
       effectsNone: "Chưa có hiệu ứng nào.",
       turnsLeft: "còn {turns} lượt",
       round: "Vòng {round}",
+      start: "Vào trận!",
       order: "Thứ tự lượt",
       yourTurn: "Lượt của {name}",
       attack: "Đánh thường",
