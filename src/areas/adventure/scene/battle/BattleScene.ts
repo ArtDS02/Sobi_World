@@ -149,7 +149,7 @@ export class BattleScene extends Phaser.Scene {
     poseAnchors.clear();
     poseSides.clear();
     for (const u of units) {
-      poseAnchors.set(u.id, { side: u.side, art: u.art, feet: u.feet, width: u.width, frozen: !u.down && this.badges.frozenBody(u.statuses), swaying: !u.down && this.badges.swaying(u.statuses) });
+      poseAnchors.set(u.id, { side: u.side, art: u.art, feet: u.feet, width: u.width, frozen: !u.down && this.badges.frozenBody(u.statuses), swaying: !u.down && this.badges.swaying(u.statuses), low: u.low === true && !u.down, boss: u.boss === true });
       poseSides.set(u.id, u.side);
     }
     for (const u of units) {

@@ -26,7 +26,7 @@ export interface MotionBeat {
   end: number;
 }
 
-export type ReactionKind = 'hit' | 'hit-heavy' | 'heal' | 'buff' | 'debuff' | 'miss' | 'ko';
+export type ReactionKind = 'hit' | 'hit-heavy' | 'hit-crit' | 'heal' | 'buff' | 'debuff' | 'miss' | 'ko';
 
 export interface ReactionCue {
   unit: string;
@@ -199,7 +199,7 @@ export function stepMotion(battle: BattleState | null, log: readonly { type: str
       const mark = (unit: string, kind: StepMark['kind'], id: string, from: string | null = null) => marks.push({ unit, kind, id, at, from });
       switch (e.type) {
         case 'damage':
-          if (e.amount > 0) cue(e.target, e.crit || e.mult > 1 ? 'hit-heavy' : 'hit');
+          if (e.amount > 0) cue(e.target, e.crit ? 'hit-crit' : e.mult > 1 ? 'hit-heavy' : 'hit');
           break;
         case 'tick':
           cue(e.target, e.status === 'regen' ? 'heal' : 'hit');

@@ -134,4 +134,22 @@ export function playBoard(host: HTMLElement, sound: ((key: AdventureSound) => vo
     );
     anim.currentTime = since;
   }
+  // A level up is a small party (ANIM-106): the animal hops twice and a column of light rises from its feet.
+  for (const fighter of board.querySelectorAll<HTMLElement>('.adventure-board__fighter.is-up')) {
+    const up = fighter.querySelector<HTMLElement>('.adventure-board__levelup');
+    const portrait = fighter.querySelector<HTMLElement>('.adventure-board__fighter-art');
+    const delay = 300 + Number(up?.dataset.at ?? 0);
+    if (portrait) {
+      const hop = portrait.animate(
+        [{ transform: 'none' }, { transform: 'translateY(-14px) scale(1.06)', offset: 0.2 }, { transform: 'none', offset: 0.4 }, { transform: 'translateY(-14px) scale(1.06)', offset: 0.6 }, { transform: 'none' }],
+        { duration: 800, delay, easing: 'ease-out', fill: 'both' },
+      );
+      hop.currentTime = since;
+    }
+    const glow = fighter.animate(
+      [{ boxShadow: '0 0 0 0 rgba(255,214,90,0)' }, { boxShadow: '0 0 28px 8px rgba(255,214,90,0.75)', offset: 0.3 }, { boxShadow: '0 0 0 0 rgba(255,214,90,0)' }],
+      { duration: 900, delay, easing: 'ease-out', fill: 'none' },
+    );
+    glow.currentTime = since;
+  }
 }

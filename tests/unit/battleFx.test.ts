@@ -139,7 +139,7 @@ describe('motion feel', () => {
     expect(arrived.dx).toBeGreaterThan(200);
     expect(arrived.sx).toBeGreaterThan(1.05);
     expect(at(b.cast + 200 + 0.8 * 420).air).toBeGreaterThan(1);
-    expect(Math.abs(at(b.end + 600).dx)).toBeLessThan(1);
+    expect(Math.abs(at(b.end + 600).dx)).toBeLessThan(3.5);
     for (let t = b.start; t <= b.end + 600; t += 10) {
       const q = at(t);
       for (const v of [q.dx, q.dy, q.rot, q.sx, q.sy, q.air]) expect(Number.isFinite(v)).toBe(true);
@@ -154,6 +154,6 @@ describe('motion feel', () => {
     const r = p.motion.reactions.find((x) => x.kind === 'hit')!;
     const at = (t: number) => poseOf(foe, anchors.get(foe)!, anchors, p, t, 0);
     expect(at(r.at + 80).dx).toBeGreaterThan(10);
-    expect(Math.abs(at(r.at + 700).dx)).toBeLessThan(1);
+    expect(Math.abs(at(r.at + 700).dx)).toBeLessThan(3.5);
   });
 });

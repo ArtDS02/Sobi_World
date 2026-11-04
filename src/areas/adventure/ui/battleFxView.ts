@@ -60,7 +60,7 @@ export function stepRemaining(): number {
 }
 
 export const floaterEl = (f: FloaterVm, elapsed: number) =>
-  el('span', { class: `adventure-ui__float is-${f.tone}`, text: f.text, attrs: { style: `--fx-delay:${Math.round(f.at + f.index * 140 - elapsed)}ms`, 'aria-hidden': 'true' } });
+  el('span', { class: `adventure-ui__float is-${f.tone}`, text: f.text, attrs: { style: `--fx-delay:${Math.round(f.at + f.index * 140 - elapsed)}ms;--fx-drift:${f.tone === 'heal' ? 0 : (f.index % 2 === 0 ? 1 : -1) * (10 + f.index * 6)}px`, 'aria-hidden': 'true' } });
 
 export function bannerEl(b: BannerVm, portraitArt: string | null, elapsed: number): HTMLElement {
   return el(

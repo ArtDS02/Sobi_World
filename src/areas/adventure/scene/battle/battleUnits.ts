@@ -26,6 +26,9 @@ export interface StageUnit {
   statuses: readonly string[];
   /** An enemy's corruption 1–5 (decision 045), 0 when none. */
   corruption: number;
+  /** Down to a quarter of its health (ANIM-100: it breathes hard and sways). */
+  low?: boolean;
+  boss?: boolean;
 }
 
 interface Body {
@@ -126,8 +129,10 @@ export class BattleUnits {
     // Fitted into the box the DOM gave it, standing on its feet (object-fit: contain, bottom).
     const fit = Math.min(u.width / tw, u.height / th);
     const p = pose ?? { dx: 0, dy: 0, rot: 0, sx: 1, sy: 1, bright: 1, gray: 0, opacity: 1, glow: null, tint: null, posture, air: 0 };
-    const gray = u.down ? 1 : p.gray;
-    const opacity = u.down ? 0.4 : p.opacity;
+    // A monster that fell is gone once the fall has played (ANIM-103); a friend stays down, faded, so it is clear it can be saved.
+    const gone = u.down && u.side === 'enemy';
+    const gray = u.down && !gone ? 1 : p.gray;
+    const opacity = gone ? (pose ? p.opacity : 0) : u.down ? 0.5 : p.opacity;
     const depth = 1000 + u.feet.y;
     for (const img of [b.main, b.light, b.glow]) {
       img

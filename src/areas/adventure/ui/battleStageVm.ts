@@ -34,6 +34,8 @@ export function measureStage(root: HTMLElement, cache: StageCache, drawn: number
       active: unit.classList.contains('is-active'),
       statuses: unit.dataset.statuses ? unit.dataset.statuses.split(',') : [],
       corruption: Number(unit.dataset.corruption ?? 0) || 0,
+      low: unit.dataset.low === '1',
+      boss: unit.dataset.boss === '1',
     });
   }
   cache.drawn = drawn;

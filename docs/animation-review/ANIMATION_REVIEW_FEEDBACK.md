@@ -708,7 +708,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/turnMarker.ts`: vòng nhịp dướ
 - Asset cần thêm: `A07_turn_marker_hud.md`.
 
 ### [ANIM-080] Hoạt cảnh bắt đầu lượt cho quái & animal (áp dụng ANIM-011)
-- [ ] Chưa làm
+- [x] Đã làm (B9)
+Ghi chú dev: ĐIỀU CHỈNH. 2 action 240ms: `turn_start_ally` (hop 8 + sao nhỏ), `turn_start_enemy` (rear 8° + mắt đỏ lóe 120ms + tiếng gầm `adv_roar`), phát ở đầu mỗi beat có actor (không phát khi bị mất lượt). CHƯA làm: rung 2px riêng cho trùm; SFX growl riêng (A09).
 - Ưu tiên: P2
 - Nhóm: Turn-HUD
 - Đối tượng: 13 quái thường/elite có entry `creatures` + 4 trùm; 22 animal
@@ -720,7 +721,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/turnMarker.ts`: vòng nhịp dướ
 - Asset cần thêm: SFX trong `A09`.
 
 ### [ANIM-081] Thanh lượt: trượt đầu hàng & phản hồi
-- [ ] Chưa làm
+- [x] Đã làm (B9)
+Ghi chú dev: ĐIỀU CHỈNH. `ui/turnBarMotion.ts` (thuần, có test) so thứ tự 2 lần vẽ gần nhất: ô dịch lên đầu hàng trượt 200ms từ vị trí cũ (`--turn-shift`), ô mới scale 0.6→1.1→1 (260ms); vẫn dựng lại DOM mỗi step như cũ. CHƯA làm: ô đầu trượt ra mờ dần (nó biến mất ngay), viền nhịp 1.2s cho `.is-now`.
 - Ưu tiên: P2
 - Nhóm: Turn-HUD
 - Đối tượng: `turnBar` (`battleField.ts`), slot sáng `__turn-slot`
@@ -732,7 +734,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/turnMarker.ts`: vòng nhịp dướ
 - Asset cần thêm: không.
 
 ### [ANIM-082] Telegraph ý định của quái (intent)
-- [ ] Chưa làm
+- [x] Đã làm (B9)
+Ghi chú dev: ĐIỀU CHỈNH. Icon ý định nhấp nhẹ 1Hz; quái đang tới lượt (`is-active`) phóng 1.25 + viền đỏ pulse 2Hz (tắt khi reduce). CHƯA làm: đường mờ tới mục tiêu dự kiến (VM chưa có dữ liệu).
 - Ưu tiên: P2
 - Nhóm: Turn-HUD
 - Đối tượng: quái có `intent` (`u.intent`, `u.intentArt`), trùm
@@ -830,7 +833,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/screenFx.ts`: `hitStop(tier|ms)` (H
 - Asset cần thêm: không.
 
 ### [ANIM-100] Idle sống động (key pose tĩnh)
-- [ ] Chưa làm
+- [x] Đã làm (B9)
+Ghi chú dev: ĐIỀU CHỈNH. `poseKit.idleLife`: chuyển trọng tâm dx ±3 chu kỳ 2.6s, mỗi 4–7s (theo hash id) một cú giật tai/đuôi (rot ±3°, 500ms), pha riêng từng unit; HP<25% thở nhanh ×0.6 và lảo đảo ±1.6°; chỉ chạy khi unit không có beat/phản ứng. CHƯA làm: quái hung dữ thở nặng/rung.
 - Ưu tiên: P2
 - Nhóm: Khác
 - Đối tượng: mọi unit trong trận
@@ -842,7 +846,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/screenFx.ts`: `hitStop(tier|ms)` (H
 - Asset cần thêm: không.
 
 ### [ANIM-101] Phản ứng bị đánh theo tầng (nhẹ / nặng / chí mạng)
-- [ ] Chưa làm
+- [x] Đã làm (B9)
+Ghi chú dev: ĐIỀU CHỈNH. Thêm tầng `hit-crit` (VM: chí mạng riêng, khắc hệ vẫn `hit-heavy`): lùi 54px/xoay 22°/ép dẹt mạnh, action `crit` (hit-stop heavy 120, zoom, flash cam-đỏ 140ms, split 120, shake dọc, boom vàng, bounce); chữ CRIT có viền đỏ. CHƯA làm: biểu tượng ↑ khắc hệ / khiên mờ khi kháng, chromatic thật.
 - Ưu tiên: P2
 - Nhóm: Khác
 - Đối tượng: mọi unit (reaction `hit`, `hit-heavy`)
@@ -854,7 +859,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/screenFx.ts`: `hitStop(tier|ms)` (H
 - Asset cần thêm: không.
 
 ### [ANIM-102] Né / trượt đòn
-- [ ] Chưa làm
+- [x] Đã làm (B9)
+Ghi chú dev: ĐIỀU CHỈNH (một phần). Chữ MISS trượt vào từ bên né (keyframe riêng). CHƯA làm: tiếng whiff riêng, kẻ tấn công lố đà 14px.
 - Ưu tiên: P2
 - Nhóm: Khác
 - Đối tượng: reaction `miss`
@@ -866,7 +872,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/screenFx.ts`: `hitStop(tier|ms)` (H
 - Asset cần thêm: không.
 
 ### [ANIM-103] Hạ gục / xác / hồi sinh
-- [ ] Chưa làm
+- [x] Đã làm (B9)
+Ghi chú dev: ĐIỀU CHỈNH. Quái bị hạ mờ dần về 0 trong 640ms rồi biến mất hẳn (trùm phồng to hơn), không còn đứng xám 0.4 vĩnh viễn; animal ally ngã giữ mờ 0.5. CHƯA làm: slow-mo/nổ lớn riêng cho trùm, hạt tan `ko_puff`, chỗ cho drop bay.
 - Ưu tiên: P2
 - Nhóm: Khác
 - Đối tượng: KO của animal và quái (trùm khác)
@@ -878,7 +885,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/screenFx.ts`: `hitStop(tier|ms)` (H
 - Asset cần thêm: không.
 
 ### [ANIM-104] Số sát thương & floater theo nhịp stage
-- [ ] Chưa làm
+- [x] Đã làm (B9)
+Ghi chú dev: ĐIỀU CHỈNH. Số nảy outBack ~220ms (0.6→1.25→1) rồi bay theo đường cong nhẹ (`--fx-drift` đổi bên theo index), chữ crit có viền; heal bay thẳng. CHƯA làm: đồng bộ theo stage clock (hit-stop/slow-mo).
 - Ưu tiên: P2
 - Nhóm: Khác
 - Đối tượng: số bay (`FloaterVm`: damage, crit, strong, weak, heal, miss, status, buff)
@@ -890,7 +898,7 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/screenFx.ts`: `hitStop(tier|ms)` (H
 - Asset cần thêm: không.
 
 ### [ANIM-105] Chuyển cảnh vào/ra trận, thắng/thua, bảng tổng kết
-- [ ] Chưa làm
+- [ ] Chưa làm (B9: chưa làm; cần quyết định phạm vi — chuyển cảnh vào/ra trận, màn thua, slow-mo đòn cuối thắng, bảng tổng kết đếm easeOutExpo; chỉ phần level up ở ANIM-106 đã làm)
 - Ưu tiên: P2
 - Nhóm: Khác
 - Đối tượng: vào trận (`ENTER_MS=1100`, `actions.enter_ally/enemy`), thắng (`victory`), thua, bảng `reportView.ts`
@@ -902,7 +910,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/screenFx.ts`: `hitStop(tier|ms)` (H
 - Asset cần thêm: không.
 
 ### [ANIM-106] Lên cấp (level up)
-- [ ] Chưa làm
+- [x] Đã làm (B9)
+Ghi chú dev: ĐIỀU CHỈNH. Khi lên cấp: animal hop ×2, vầng sáng vàng bùng quanh ô, nhãn LEVEL UP đã nảy sẵn. CHƯA làm: cột sáng từ chân, vòng sao, chữ "LV n→n+1", bảng chỉ số +x.
 - Ưu tiên: P2
 - Nhóm: Khác
 - Đối tượng: animal lên cấp (sau trận, trên bảng và ở trại)

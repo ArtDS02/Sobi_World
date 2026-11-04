@@ -90,7 +90,7 @@ export function stepPlan(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 'a
         continue;
       }
       if (near(unit, 'miss', b.impact)) continue;
-      add({ at: b.impact, kind: 'land', unit, look, heavy: near(unit, 'hit-heavy', b.impact), big, slam: b.delivery === 'slam' });
+      add({ at: b.impact, kind: 'land', unit, look, heavy: near(unit, 'hit-heavy', b.impact) || near(unit, 'hit-crit', b.impact), big, slam: b.delivery === 'slam' });
     }
   }
   if (!reduce) {
@@ -98,6 +98,7 @@ export function stepPlan(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 'a
       switch (r.kind) {
         case 'hit':
         case 'hit-heavy':
+        case 'hit-crit':
           add({ at: r.at, kind: 'fx', unit: r.unit, refs: [...reactionFx(r.kind === 'hit' ? 'hit' : 'heavy'), ...reactionFx('tears')], tint: null });
           break;
         case 'miss':
@@ -125,7 +126,7 @@ export function stepPlan(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 'a
   const scripted = script.cues.filter((c) => c.act.do === 'sound').map((c) => c.at);
   const heard = new Set<string>();
   for (const r of reactions) {
-    const s: BattleSound | null = r.kind === 'hit' ? 'adv_hit' : r.kind === 'hit-heavy' ? 'adv_crit' : r.kind === 'miss' ? 'adv_miss' : r.kind === 'heal' ? 'adv_heal' : r.kind === 'ko' ? 'adv_ko' : null;
+    const s: BattleSound | null = r.kind === 'hit' ? 'adv_hit' : r.kind === 'hit-heavy' || r.kind === 'hit-crit' ? 'adv_crit' : r.kind === 'miss' ? 'adv_miss' : r.kind === 'heal' ? 'adv_heal' : r.kind === 'ko' ? 'adv_ko' : null;
     const k = `${s}:${Math.round(r.at / 40)}`;
     if (!s || heard.has(k) || scripted.some((at) => Math.abs(at - r.at) < 80)) continue;
     heard.add(k);

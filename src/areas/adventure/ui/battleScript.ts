@@ -147,6 +147,8 @@ export function stepScript(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 
     if (!b.actor) continue;
     const look = lookOf(b.element, b.skillId);
     const skip = m.marks.find((x) => x.kind === 'skip' && x.unit === b.actor && x.at >= b.start - 1 && x.at <= b.end)?.id;
+    // A short signal that the turn has come (ANIM-080), at most 240 ms: a friend hops, a monster rears with red eyes.
+    if (!skip) run(c, actionScript(sides.get(b.actor) === 'ally' ? 'turn_start_ally' : 'turn_start_enemy'), b.start, k, b.actor, [], look, 0);
     const { acts, own } = beatScript(b, skip);
     if (acts.length === 0) continue;
     // The content's beat starts after the circle; its impact lands where the motion put it (the step may be squeezed).
@@ -165,7 +167,7 @@ export function stepScript(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 
   for (const r of m.reactions) {
     const look = lookOfUnit(r.unit, r.at);
     const tick = tickAt(r.unit, r.at);
-    let id: ActionFx = r.kind === 'hit-heavy' ? 'heavy' : r.kind;
+    let id: ActionFx = r.kind === 'hit-heavy' ? 'heavy' : r.kind === 'hit-crit' ? 'crit' : r.kind;
     if (tick === 'poison') id = 'dot_poison';
     else if (tick === 'burn') id = 'dot_burn';
     else if (tick === 'regen') id = 'regen';

@@ -9,6 +9,7 @@ import type { Run } from '../logic/state';
 import { floaterEl } from './battleFxView';
 import type { FloaterVm } from './battleFloaters';
 import { type BattleActionVm, type BattleVm, type UnitVm, effectOn } from './battleVm';
+import { OrderTracker, slotMotions } from './turnBarMotion';
 import { type ViewCtx, bar, corruptionPips, elementIcon, iconOf, statusChip } from './viewKit';
 import { ACTION_ART } from './vmKit';
 import { act } from './battleCommand';
@@ -112,6 +113,8 @@ export function unitOnField(
         'data-art': u.art,
         'data-statuses': u.statuses.map((st) => st.id).join(','),
         'data-corruption': String(u.corruption),
+        'data-low': !down && u.hpPercent < 25 ? '1' : '0',
+        'data-boss': u.boss ? '1' : '0',
       },
     },
     el(
@@ -213,10 +216,16 @@ export function sideMarker(
   );
 }
 
+const orders = new OrderTracker();
+/** Width of one slot of the turn bar with its gap (rem). */
+const SLOT_REM = 2.9;
+
 /** The turn bar: the round, the one acting in the lit slot at the head, then the ones after it (the next round past the arrow). */
 export function turnBar(vm: BattleVm): HTMLElement {
   const nowCount = vm.order.filter((o) => !o.next).length;
   const [head, ...rest] = vm.order;
+  const keys = vm.order.map((o) => `${o.id}:${o.next ? 'n' : 'c'}`);
+  const motions = slotMotions(orders.before(keys), keys);
   return el(
     'div',
     { class: 'adventure-ui__turnbar', attrs: { 'aria-label': vi.adventure.battle.order } },
@@ -261,8 +270,8 @@ export function turnBar(vm: BattleVm): HTMLElement {
               el(
                 'span',
                 {
-                  class: `adventure-ui__turn is-${o.side}${o.next ? ' is-next' : ''}${i === 0 ? ' is-now' : ''}`,
-                  attrs: { title: o.name, 'data-turn': `${o.id}:${o.next ? 'n' : 'c'}` },
+                  class: `adventure-ui__turn is-${o.side}${o.next ? ' is-next' : ''}${i === 0 ? ' is-now' : ''}${motions[i]?.shift ? ' is-shift' : ''}${motions[i]?.fresh ? ' is-new' : ''}`,
+                  attrs: { title: o.name, 'data-turn': keys[i]!, ...(motions[i]?.shift ? { style: `--turn-shift:${motions[i]!.shift * SLOT_REM}rem` } : {}) },
                 },
                 portrait(o, 'adventure-ui__turn-art'),
               ),

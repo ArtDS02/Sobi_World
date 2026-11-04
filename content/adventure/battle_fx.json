@@ -8336,6 +8336,49 @@
         "more": 0.6
       },
       { "do": "strip", "at": 0, "who": "actor", "img": "fx_shield_dome", "size": 1.1, "alpha": 0.6 }
+    ],
+    "turn_start_ally": [
+      { "do": "move", "at": 0, "who": "actor", "dur": 240, "move": "hop", "y": 8 },
+      {
+        "do": "burst",
+        "at": 0,
+        "who": "actor",
+        "ref": "star_pop",
+        "spot": "above",
+        "tint": ["#ffe36a"],
+        "more": 0.3
+      }
+    ],
+    "turn_start_enemy": [
+      { "do": "move", "at": 0, "who": "actor", "dur": 240, "move": "rear", "y": 4, "deg": 8 },
+      { "do": "glow", "at": 0, "who": "actor", "dur": 120, "color": "#ff4a4a", "bright": 1.15, "tint": true },
+      { "do": "sound", "at": 0, "who": "actor", "sound": "adv_roar" }
+    ],
+    "crit": [
+      { "do": "stop", "at": 0, "who": "actor", "tier": "heavy", "dur": 120 },
+      { "do": "punch", "at": 0, "who": "actor", "dur": 220, "zoom": 1.05 },
+      { "do": "flash", "at": 0, "who": "field", "dur": 140, "color": "#ff5a3a", "alpha": 0.28 },
+      { "do": "split", "at": 0, "who": "field", "dur": 120 },
+      { "do": "shake", "at": 0, "who": "field", "dur": 260, "amount": 6, "dir": [1, 0.4] },
+      {
+        "do": "strip",
+        "at": 30,
+        "who": "actor",
+        "spot": "behind",
+        "img": "fx_boom",
+        "size": 1,
+        "tint": "#ffe36a",
+        "alpha": 0.9
+      },
+      {
+        "do": "burst",
+        "at": 100,
+        "who": "actor",
+        "ref": "star_pop",
+        "tint": ["#ffe36a", "#ff7a3a"],
+        "more": 1.6
+      },
+      { "do": "move", "at": 160, "who": "actor", "dur": 460, "move": "bounce", "y": 16, "n": 2 }
     ]
   },
   "statuses": {

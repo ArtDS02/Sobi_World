@@ -50,7 +50,7 @@ describe('battle motion (GĐ14 vertical slice)', () => {
     expect(m.reactions).toEqual([
       { unit: foe, kind: 'hit', at: a!.impact },
       { unit: foe, kind: 'debuff', at: a!.impact },
-      { unit: ally, kind: 'hit-heavy', at: b!.impact },
+      { unit: ally, kind: 'hit-crit', at: b!.impact },
     ]);
     expect(m.total).toBe(b!.end);
   });

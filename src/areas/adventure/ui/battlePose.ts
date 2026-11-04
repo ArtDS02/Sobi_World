@@ -7,26 +7,17 @@
 // picks the key pose (`posture`) whose picture is shown: idle, attack, cast, hurt, ko (decision 042).
 import type { PoseArt } from '../../../../content/schemas/adventure/battleFx';
 import { ENTER_MS, type PlayingStep } from './battleFxView';
-import type { ReactionKind } from './battleMotion';
 import { addMoves, easeOutBack, settle, type MoveAcc } from './battleMoves';
 import { stepScript, type Side } from './battleScript';
 import { CAST_BY_BODY, CAST_TRACKS, trackFor } from './castTracks';
 import { BODY, bodyOf, lookOf } from './motionProfiles';
+import { bump, clamp01, easeIn, easeInOut, easeOut, hash, idleLife, lerp, REACT_MS, type Pt } from './poseKit';
 
 /** How long after its release a cast keeps settling (ms). */
 const CAST_SETTLE_MS = 360;
 
-export interface Pt {
-  x: number;
-  y: number;
-}
-
-export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-export const clamp01 = (t: number) => (t < 0 ? 0 : t > 1 ? 1 : t);
-export const easeOut = (t: number) => 1 - (1 - t) * (1 - t);
-export const easeIn = (t: number) => t * t;
-export const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 export { easeOutBack, settle };
+export { clamp01, easeIn, easeInOut, easeOut, hash, lerp, REACT_MS, type Pt };
 
 /** Where a unit stands on the stage, as the stage measured it (px), and its picture (which says how its body moves). */
 export interface PoseAnchor {
@@ -38,6 +29,9 @@ export interface PoseAnchor {
   frozen?: boolean;
   /** A status makes the body sway like a dizzy one (Stun `sway`). */
   swaying?: boolean;
+  /** Down to a quarter of its health (ANIM-100): it breathes fast and sways. */
+  low?: boolean;
+  boss?: boolean;
 }
 
 /** A body at one moment: pushed (px), turned (deg), squashed, how bright (1 = as drawn), how grey and faded, its glow (0xRRGGBB). */
@@ -58,22 +52,18 @@ export interface BodyPose {
   air: number;
 }
 
-/** How long each reaction plays (ms). */
-export const REACT_MS: Readonly<Record<ReactionKind, number>> = { hit: 520, 'hit-heavy': 700, heal: 620, buff: 560, debuff: 620, miss: 480, ko: 640 };
-
-/** A bump that rises fast and settles (0 → 1 → 0 over t ∈ [0, 1]). */
-const bump = (t: number) => (t <= 0 || t >= 1 ? 0 : t < 0.18 ? easeOut(t / 0.18) : 1 - easeInOut((t - 0.18) / 0.82));
-
-export const hash = (s: string) => [...s].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) | 0, 7);
-
 /** The body of a unit at `t` ms into the step: where it is pushed, turned, squashed and how bright it is. */
 export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, PoseAnchor>, p: Readonly<PlayingStep>, t: number, now: number, sidesIn?: ReadonlyMap<string, Side>): BodyPose {
   const plan = bodyOf(a.art);
   const profile = BODY[plan];
   const dir = a.side === 'ally' ? 1 : -1;
   // The idle loop: breathing, or bobbing for the ones that fly or float.
-  const phase = ((hash(id) >>> 0) % profile.idleMs) / profile.idleMs;
-  const cyc = Math.sin(((now / profile.idleMs + phase) % 1) * Math.PI * 2);
+  // A unit near death breathes fast (ANIM-100); every unit has its own phase.
+  const idleMs = a.low ? profile.idleMs * 0.6 : profile.idleMs;
+  const phase = ((hash(id) >>> 0) % idleMs) / idleMs;
+  const cyc = Math.sin(((now / idleMs + phase) % 1) * Math.PI * 2);
+  // Set when a beat or a reaction has the body: the small idle movements leave it alone then.
+  let busy = false;
   let dx = 0;
   let dy = cyc * profile.bob;
   let rot = plan === 'aquatic' ? cyc * 1.5 : 0;
@@ -107,6 +97,7 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
   const script = stepScript(p, sides);
   for (const b of p.motion.beats) {
     if (b.actor !== id || !b.pose || t < b.start || t > b.end + 40) continue;
+    busy = true;
     // A script that moves its actor plays instead of the default motion of the beat.
     if (script.scripted.has(id) && t >= b.cast) continue;
     const target = anchors.get(b.targets[0] ?? '');
@@ -220,6 +211,7 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
     if (r.unit !== id) continue;
     const len = REACT_MS[r.kind];
     const k = (t - r.at) / len;
+    if (k >= 0 && (k <= 1 || r.kind === 'ko')) busy = true;
     if (r.kind === 'ko') {
       if (k < 0) continue;
       const e = easeOut(clamp01(k));
@@ -227,7 +219,12 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
       sy *= 1 - 0.14 * e;
       dy += 10 * e;
       gray = Math.max(gray, e);
-      opacity = Math.min(opacity, 1 - 0.6 * e);
+      // A monster dissolves (it is gone once the fall has played); a friend stays down, half faded (ANIM-103).
+      opacity = Math.min(opacity, a.side === 'enemy' ? 1 - e : 1 - 0.5 * e);
+      if (a.side === 'enemy') {
+        sx *= 1 + (a.boss ? 0.12 : 0.05) * e;
+        sy *= 1 + (a.boss ? 0.06 : 0) * e;
+      }
       if (k > 0.2) posture = 'ko';
       if (k < 0.15) bright = Math.max(bright, 2.2 - k * 8);
       continue;
@@ -238,16 +235,19 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
     const recoil = k < 0.16 ? easeOut(k / 0.16) : 1 - settle((k - 0.16) / 0.84);
     switch (r.kind) {
       case 'hit':
-      case 'hit-heavy': {
-        const heavy = r.kind === 'hit-heavy';
+      case 'hit-heavy':
+      case 'hit-crit': {
+        // Three tiers (ANIM-101): a light hit, a strong one (the element lands well), a critical one.
+        const crit = r.kind === 'hit-crit';
+        const heavy = r.kind !== 'hit';
         posture = 'hurt';
-        dx += -dir * (heavy ? 42 : 24) * recoil;
-        rot += -dir * (heavy ? 17 : 10) * recoil;
+        dx += -dir * (crit ? 54 : heavy ? 42 : 24) * recoil;
+        rot += -dir * (crit ? 22 : heavy ? 17 : 10) * recoil;
         air += heavy ? 10 * Math.max(0, recoil) * (1 - k) : 0;
         dy -= heavy ? 10 * Math.max(0, recoil) * (1 - k) : 0;
         sx *= 1 + 0.05 * u;
-        sy *= 1 - 0.07 * u;
-        dx += Math.sin(k * 60) * 3 * (1 - k);
+        sy *= 1 - (crit ? 0.12 : 0.07) * u;
+        dx += Math.sin(k * 60) * (crit ? 5 : 3) * (1 - k);
         if (k < 0.16) bright = Math.max(bright, 2.4 - k * 8);
         break;
       }
@@ -275,6 +275,11 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
         glow = 0x9a6ad6;
         break;
     }
+  }
+  if (!busy && !a.frozen && !a.swaying) {
+    const life = idleLife(id, now, a.low === true);
+    dx += life.dx;
+    rot += life.rot;
   }
   const acc: MoveAcc = { dx, dy, rot, sx, sy, bright, opacity, glow, tint, posture: null, air };
   addMoves(id, a, anchors, script.moves, t, acc);
