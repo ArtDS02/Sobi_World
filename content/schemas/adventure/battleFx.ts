@@ -79,6 +79,8 @@ const look = z.strictObject({
   /** The element's particle and impact (`$spark`, `$boom` in a script; a class skill takes its user's). */
   spark: fxRef.optional(),
   boom: fxRef.optional(),
+  /** The shape at the heart of the element's magic circle (ANIM-022): a flame spark, a drop, a leaf… */
+  glyph: z.enum(PARTICLE_SHAPES).optional(),
 });
 
 const timing = z.strictObject({ release: nonNeg, impact: nonNeg, end: nonNeg }).refine((t) => t.release <= t.impact && t.impact <= t.end, 'timing needs release <= impact <= end');

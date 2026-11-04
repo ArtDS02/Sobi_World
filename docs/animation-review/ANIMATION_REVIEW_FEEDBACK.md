@@ -207,7 +207,8 @@ Ghi chú dev: ĐIỀU CHỈNH. Gốc lỗi sửa ở `ui/battleMotion.ts::circle
 - Asset cần thêm: SFX `adv_cast_release`, `adv_ult_charge`, `adv_cast_soft` (file `A09`); vòng phép đẹp hơn: `A04`.
 
 ### [ANIM-022] Nâng cấp hình ảnh vòng phép (rune circle theo hệ)
-- [ ] Chưa làm
+- [x] Đã làm (B4)
+Ghi chú dev: ĐIỀU CHỈNH. Vòng phép 3 lớp (`fxPlayer` case circle): vòng ngoài +1.2 rad/s, vòng giữa -1.8 rad/s, glyph theo hệ ở tâm nhịp 3Hz (`elements.*.glyph`: lửa spark, nước drop, mộc leaf, đất rock, kim shard, sấm spark, tối smoke, sáng star, hư ring, trung tính rune), cột sáng khi sắp thả, depth GROUND+3; ult/boss ×1.5 tốc độ quay. CHƯA làm: hạt `<elem>_rise` dưới đáy, art rune theo hệ (A04) — 9 hệ chỉ khác glyph+màu, khó phân biệt 'không đọc tên' bằng code; boss ×2.6.
 - Ưu tiên: P1
 - Nhóm: Cast
 - Đối tượng: 9 hệ (`FIRE, WATER, NATURE, EARTH, METAL, LIGHTNING, DARK, LIGHT, VOID`) + trung tính; vòng nhỏ (skill) và lớn (ult/boss)
@@ -232,7 +233,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/castTracks.ts` (thuần): `sampleTrack`, 6 ea
 - Asset cần thêm: không.
 
 ### [ANIM-020] Cử động tung phép của Animal (22 combat animal)
-- [ ] Chưa làm
+- [x] Đã làm (B4)
+Ghi chú dev: ĐIỀU CHỈNH. Body plan thêm cho 9 loài (ĐỀ XUẤT DEV, chủ dự án xác nhận theo ảnh): flyer = pig_phoenix/valkyrie/dragon; floater = pig_galaxy/mythical/crystal; heavy = pig_turtle/boar; sprout = pig_sunflower. Preset cast gán tự động cho 82 skill phép có script (theo hệ/loại: lửa roar, nước coil, mộc sprout, đất stomp, kim/sấm charge, tối/hư hover, sáng raise, support bow) bằng cách thay move nhẹ đầu tiên của actor (rear/wiggle/…) hoặc chèn mới; skill đã có dash/jump/… giữ nguyên. CHƯA làm: giữ pose `cb_<art>_cast` suốt P1–P3, tinh chỉnh từng skill bằng mắt.
 - Ưu tiên: P1
 - Nhóm: Cast
 - Đối tượng: 9 dòng (lineage) × 4 skill riêng + 32 skill class + 12 ultimate (Phụ lục A); loài `PIG_*` (20 species) và 2 cá (`fish_pufferfish`, `fish_betta`)
@@ -244,7 +246,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/castTracks.ts` (thuần): `sampleTrack`, 6 ea
 - Asset cần thêm: nếu thiếu `cb_<art>_cast` cho animal nào → xem `docs/ASSET_TODO.md`.
 
 ### [ANIM-021] Chuỗi tung phép của Quái (29/32 skill quái không có pose cast)
-- [ ] Chưa làm
+- [x] Đã làm (B4)
+Ghi chú dev: ĐIỀU CHỈNH. Quái: thêm body plan cho 9 quái; skill_e_* phép có preset (magma_breath/dragon_roar/frost_breath/howl = roar, curse = hover, meteor/doom_mark/holy_ward/rune_beam = raise, thorn_storm = sprout); 11 skill quái tấn công thêm telegraph (`marker` 300ms dưới chân mục tiêu trước impact). Vòng phép đã hiện cho quái nhờ B0. CHƯA làm: telegraph đỏ riêng cho boss, intent icon phát sáng (ANIM-082), mimic chưa có body plan (không rõ art id).
 - Ưu tiên: P1
 - Nhóm: Cast
 - Đối tượng: quái thường và trùm: `enemy_old_treant, enemy_magma_drake, enemy_ancient_guardian, enemy_abyss_kraken` (boss) + 29 quái; 32 skill `skill_e_*`
@@ -259,7 +262,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/castTracks.ts` (thuần): `sampleTrack`, 6 ea
 ### Nhóm Buff
 
 ### [ANIM-008] Ngôn ngữ hình ảnh buff (registry)
-- [ ] Chưa làm
+- [x] Đã làm (B4)
+Ghi chú dev: ĐIỀU CHỈNH. `ui/buffLanguage.ts` (bảng family/màu/hướng/loại layer cho 18 status buff+debuff, `DEBUFF_MAX_MS` 400) + `buffLanguage.test.ts` ép nội dung JSON theo bảng (đủ entry, đúng màu họ, buff có layer duy trì, debuff đi xuống ≤400ms). Nội dung ở `battle_fx.json statuses`. Khác đề xuất: lưới hex/vòm dùng hình `ring` code thay `fx_hex_guard` (chưa có asset A03); spdUp đổi màu #ffe36a -> #ffd23c theo bảng. Chưa kiểm 'đoán đúng 5/6' bằng mắt.
 - Ưu tiên: P1
 - Nhóm: Buff
 - Đối tượng: tất cả skill `support` (animal: 14 unique + 16 class + 4 ult; quái: 8) và 14 status buff/debuff
@@ -283,7 +287,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/castTracks.ts` (thuần): `sampleTrack`, 6 ea
 - Asset cần thêm: `A03_buff_auras.md`.
 
 ### [ANIM-030] Buff "Tăng công/phép/chính xác" (power)
-- [ ] Chưa làm
+- [x] Đã làm (B4)
+Ghi chú dev: ĐIỀU CHỈNH. atkUp/matkUp/accUp: apply ring màu + hạt bay lên + sao `fx_pow_star` (atk) + puff 1.12; layer duy trì: aura glow (atk), aura + 3 rune quay (matk), crosshair quay quanh đầu (acc); loop mũi tên lên mỗi 1.4s; expire khói màu. CHƯA làm: anticipation ngồi xuống + hạt hút vào (cần act hạt hướng vào), skill cụ thể (`skill_cl_aim`… giữ script cũ, chỉ nhận preset cast).
 - Ưu tiên: P1
 - Nhóm: Buff
 - Đối tượng: status `atkUp`, `matkUp`, `accUp`; skill `skill_cl_aim`, `skill_cl_focus`, `skill_cl_dash`(tempo), `skill_hg_forge_fire` (self buff), `skill_e_howl`, `skill_e_dragon_roar`
@@ -295,7 +300,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/castTracks.ts` (thuần): `sampleTrack`, 6 ea
 - Asset cần thêm: `A03`.
 
 ### [ANIM-031] Buff phòng thủ & khiên
-- [ ] Chưa làm
+- [x] Đã làm (B4)
+Ghi chú dev: ĐIỀU CHỈNH. defUp/mdefUp/shield: apply vòm `fx_shield_dome` + hạt kim loại, layer `ring` duy trì (thay lưới hex), shield có expire (vòm vỡ). CHƯA làm: mảnh bay VÀO ép sát thân (cần act hạt hút), vòm chớp khi bị đánh lúc có shield, vật liệu riêng từng skill (đá/đồng/mực/hư không).
 - Ưu tiên: P1
 - Nhóm: Buff
 - Đối tượng: `defUp`, `mdefUp`, `shield`; skill `skill_qs_stone_skin`, `skill_qs_mountain_shell`, `skill_tg_bronze_wall`, `skill_cl_hold_fast`, `skill_cl_shield_wall`, `skill_cl_fortress`, `skill_hk_void_veil`, `skill_dm_ink_veil`, `skill_e_bark_skin`, `skill_e_iron_shell`, `skill_e_stone_guard`, `skill_e_holy_ward`
@@ -308,6 +314,7 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/castTracks.ts` (thuần): `sampleTrack`, 6 ea
 
 ### [ANIM-032] Hồi máu / hồi sinh / thanh tẩy
 - [ ] Chưa làm
+Ghi chú dev (B4): CHƯA LÀM đủ. Đã có từ B1/B4: action `cleanse`, `regen` loop+expire, `autoRevive` layer+expire. Còn: heal dâng từ chân lên, stagger 100ms nhiều mục tiêu, mini-ult revive.
 - Ưu tiên: P1
 - Nhóm: Buff
 - Đối tượng: events `heal`/`revive`/`cleanse`; status `regen`, `autoRevive`; skill `skill_nh_soothe`, `skill_nh_tide_song`, `skill_qt_first_light`, `skill_qt_guiding_lamp`, `skill_mm_sprout`, `skill_mm_blossom`, `skill_cl_mend`, `skill_cl_cheer`, `skill_cl_healing_rain`, `skill_cl_purify`, `skill_cl_second_wind`, `skill_cl_channel`, `skill_cl_undying`, `skill_cl_rally`, `skill_cl_aura`, `skill_e_soothe`, `skill_ult_nh/qs/qt/mm`
@@ -319,7 +326,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/castTracks.ts` (thuần): `sampleTrack`, 6 ea
 - Asset cần thêm: `A03` (`fx_heal_rise`).
 
 ### [ANIM-033] Buff nhịp độ: tăng tốc, né tránh
-- [ ] Chưa làm
+- [x] Đã làm (B4)
+Ghi chú dev: ĐIỀU CHỈNH. spdUp có expire; evaUp có layer 2 bóng ảo lệch quanh thân (alpha 0.12) + expire. CHƯA làm: thân nghiêng 6° + afterimage trail loop, thân nhấp nháy mờ 4Hz, spdDown/evaDown nặng nề, `phase_shift`.
 - Ưu tiên: P2
 - Nhóm: Buff
 - Đối tượng: `spdUp`, `evaUp`, `accDown?`(không), `spdDown`, `evaDown`; skill `skill_ld_swift_bolt`, `skill_cl_dash`, `skill_hk_phase_shift`
@@ -331,7 +339,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/castTracks.ts` (thuần): `sampleTrack`, 6 ea
 - Asset cần thêm: `A03`.
 
 ### [ANIM-034] Taunt và họ debuff (…Down, doom-mark)
-- [ ] Chưa làm
+- [x] Đã làm (B4)
+Ghi chú dev: ĐIỀU CHỈNH. 7 debuff: apply ≤300ms (squash + mũi tên xuống + hạt riêng từng loại: kim loại rơi / mảnh khiên / rune tắt / mực / đá / bùn) màu #6b4a8a, loop khói tím mỗi 1.8s. taunt: sóng đỏ 360ms + mắt đỏ trên đầu (layer) + puff 1.15. CHƯA làm: kiếm gãy/khiên nứt dạng hình (asset), neo/xích.
 - Ưu tiên: P2
 - Nhóm: Buff
 - Đối tượng: `taunt`, `atkDown, defDown, matkDown, mdefDown, accDown, evaDown, spdDown`; skill `skill_cl_taunt`, `skill_e_doom_mark`, `skill_tg_armor_break`, `skill_cl_armor_crush`

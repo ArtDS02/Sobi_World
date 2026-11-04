@@ -7,7 +7,7 @@ import type { BattleLook, ReactionFx } from '../../../../../content/schemas/adve
 import { BATTLE_FX } from '../../logic/config/content';
 import type { FxCue } from '../../ui/battlePlan';
 import { ActPlayer } from './fxActs';
-import { AIR_DEPTH, Bursts, type BurstSpot } from './fxBursts';
+import { AIR_DEPTH, GROUND_DEPTH, Bursts, type BurstSpot } from './fxBursts';
 import { playStroke } from './fxStrokes';
 import { ScreenFx } from './screenFx';
 import { CIRCLE_KEY, PILLAR_KEY, shapeKey } from './fxTextures';
@@ -118,13 +118,32 @@ export class FxPlayer {
       case 'circle': {
         const a = unitOf(cue.unit);
         if (!a) return;
-        const c = this.scene.add.image(a.feet.x, a.feet.y, CIRCLE_KEY).setDepth(10).setBlendMode(Phaser.BlendModes.ADD).setTint(cue.look.color);
+        // Three layers (ANIM-022): the outer ring turning one way, a smaller ring the other, the element's glyph at the heart beating, and
+        // a column of light when the spell is let go. Over the ground marks, under the bodies.
+        const add = (key: string, tint: number) => this.scene.add.image(a.feet.x, a.feet.y, key).setDepth(GROUND_DEPTH + 3).setBlendMode(Phaser.BlendModes.ADD).setTint(tint);
+        const outer = add(CIRCLE_KEY, cue.look.color);
+        const mid = add(CIRCLE_KEY, cue.look.glow);
+        const glyph = add(shapeKey(cue.look.glyph ?? 'rune'), cue.look.glow);
+        const pillar = this.scene.add.image(a.feet.x, a.feet.y, PILLAR_KEY).setOrigin(0.5, 1).setDepth(GROUND_DEPTH + 3).setBlendMode(Phaser.BlendModes.ADD).setTint(cue.look.glow).setAlpha(0);
         const size = a.width * (cue.big ? 2.1 : 1.6);
+        let age = 0;
         this.add(cue.dur, (t, _g, dt) => {
-          c.setDisplaySize(size * (0.6 + 0.4 * Math.min(1, t * 3)), size * 0.38 * (0.6 + 0.4 * Math.min(1, t * 3)));
-          c.rotation += dt * (cue.big ? 2.4 : 1.6);
-          c.setAlpha(t < 0.15 ? t / 0.15 : t > 0.8 ? (1 - t) / 0.2 : 1);
-        }, () => c.destroy());
+          age += dt;
+          const grow = 0.4 + 0.6 * Math.min(1, t * 3);
+          const fade = t < 0.15 ? t / 0.15 : t > 0.8 ? (1 - t) / 0.2 : 1;
+          outer.setDisplaySize(size * grow, size * 0.38 * grow).setAlpha(fade);
+          outer.rotation += dt * 1.2 * (cue.big ? 1.5 : 1);
+          mid.setDisplaySize(size * 0.68 * grow, size * 0.26 * grow).setAlpha(0.8 * fade);
+          mid.rotation -= dt * 1.8 * (cue.big ? 1.5 : 1);
+          const beat = 0.975 + 0.075 * Math.sin(age * Math.PI * 2 * 3);
+          glyph.setDisplaySize(size * 0.3 * beat * grow, size * 0.3 * 0.38 * beat * grow).setAlpha(0.9 * fade);
+          pillar.setDisplaySize(a.width * (cue.big ? 1.1 : 0.8), a.height * 2).setAlpha(t > 0.7 ? 0.35 * fade : 0);
+        }, () => {
+          outer.destroy();
+          mid.destroy();
+          glyph.destroy();
+          pillar.destroy();
+        });
         return;
       }
       case 'charge': {
