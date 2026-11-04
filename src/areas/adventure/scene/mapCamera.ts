@@ -3,6 +3,7 @@
 import type * as Phaser from 'phaser';
 import { farmCamera } from '../../../systems/layout/camera';
 import type { AreaMap } from '../logic/config/content';
+import { snapToPixel } from '../logic/walkMotion';
 
 /** The Adventure's design frame: the fitted zoom shows it whole on any stage. */
 export const ADVENTURE_DESIGN = { width: 1600, height: 900 } as const;
@@ -53,5 +54,7 @@ export class MapCamera {
       this.at.y += (pos.y - this.at.y) * k;
     }
     this.cam.centerOn(this.at.x, this.at.y);
+    // Whole screen pixels only, so the sprites do not shimmer against the ground while the camera eases after them.
+    this.cam.setScroll(snapToPixel(this.cam.scrollX, this.zoom), snapToPixel(this.cam.scrollY, this.zoom));
   }
 }

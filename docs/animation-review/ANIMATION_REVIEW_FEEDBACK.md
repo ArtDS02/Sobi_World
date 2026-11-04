@@ -749,7 +749,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/turnMarker.ts`: vòng nhịp dướ
 > Hiện trạng chung (đã đối chiếu): `scene/walker.ts`: leader là **ảnh tĩnh** `chr_so|chr_bi_<up|down|left|right>_<idle|walk1|walk2>` (96×144, 3 khung/hướng), chu kỳ `['walk1','idle','walk2','idle']` ở **8 fps cố định**; tốc độ `AB.explore.speed = 260 px/s` (`content/adventure/balance.json`), cao hiển thị 120px; `stepCharacter` (`src/systems/character/move.ts`) cho vận tốc **tức thời** (không tăng/giảm tốc), chéo được chuẩn hoá nhưng hướng hiển thị chỉ 4 hướng (`facingFor` giữ trục hiện tại). Camera `MapCamera.follow` ease 110ms. Follower: ảnh tĩnh 1 khung (`textureKey(a.art)`), nhún `|sin(walkedMs/1000*9+i)|*6px`, chỉ `flipX`.
 
 ### [ANIM-090] Chuyển động mượt: tăng/giảm tốc, làm tròn pixel
-- [ ] Chưa làm
+- [x] Đã làm (B8)
+Ghi chú dev: ĐIỀU CHỈNH. `logic/walkMotion.ts` (thuần, có test): vận tốc có quán tính ở Walker (tăng tốc tau 70ms, giảm 55ms), truyền hướng+tỉ lệ tốc độ vào `stepCharacter` (không đổi `systems/character`); giữ `moving` trong lúc giảm tốc; đụng tường thì mất vận tốc. Làm tròn vị trí vẽ theo 1/zoom và `scroll` camera sau `centerOn`. Cần xác nhận bằng mắt không còn rung viền.
 - Ưu tiên: P1
 - Nhóm: Map
 - Đối tượng: nhân vật dẫn đầu (So/Bi) và cả đội
@@ -761,7 +762,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/turnMarker.ts`: vòng nhịp dướ
 - Asset cần thêm: không.
 
 ### [ANIM-091] Chu kỳ bước: khớp tốc độ, nhún, squash
-- [ ] Chưa làm
+- [x] Đã làm (B8)
+Ghi chú dev: ĐIỀU CHỈNH. Tốc độ khung = clamp(speed/30, 5, 14) (260px/s ≈ 8.7fps), 2 khung = 1 bước; leader nhún 5px, squash 4% khi chạm đất, nghiêng ±1.5°; dừng thì squash nhỏ settle 90ms; bóng elip dưới chân co theo độ nâng. CHƯA làm: chu kỳ 6–8 khung (cần asset A01). Cần chỉnh `FRAME_STRIDE_PX` bằng mắt nếu chân còn trượt.
 - Ưu tiên: P1
 - Nhóm: Map
 - Đối tượng: So/Bi dẫn đầu
@@ -773,7 +775,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/turnMarker.ts`: vòng nhịp dướ
 - Asset cần thêm: `A01_walk_cycle_so_bi.md`.
 
 ### [ANIM-092] Đi lên/xuống, đi chéo, 8 hướng
-- [ ] Chưa làm
+- [x] Đã làm (B8)
+Ghi chú dev: ĐIỀU CHỈNH. Mặt hiển thị tách khỏi `Facing` chung (`pickFace`, hysteresis 120ms, chéo chọn trục lớn hơn, chéo đều giữ mặt hiện tại); đi lên/xuống lắc thân ±3°. Không đổi API `systems/character`. CHƯA làm: 4 hướng chéo/6 khung (cần asset A01).
 - Ưu tiên: P1
 - Nhóm: Map
 - Đối tượng: So/Bi và follower
@@ -785,7 +788,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/turnMarker.ts`: vòng nhịp dướ
 - Asset cần thêm: `A01`.
 
 ### [ANIM-093] Follower (3 đồng đội) di chuyển sống động
-- [ ] Chưa làm
+- [x] Đã làm (B8)
+Ghi chú dev: ĐIỀU CHỈNH. Follower nhún cùng pha bước của leader (lệch 0.3 bước mỗi con), nhún mờ dần 120ms khi dừng, "thở" ±2% (2.2s) khi đứng, squash 4%, lật theo hướng đi thật (điểm trail phía trước). CHƯA làm: trễ phản ứng 40ms/follower.
 - Ưu tiên: P2
 - Nhóm: Map
 - Đối tượng: 3 follower (animal/pet trong đội)
@@ -797,7 +801,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/turnMarker.ts`: vòng nhịp dướ
 - Asset cần thêm: không (nếu có `cb_<art>_idle` có thể dùng).
 
 ### [ANIM-094] Sắp xếp độ sâu theo Y, bóng, che khuất
-- [ ] Chưa làm
+- [x] Đã làm (B8)
+Ghi chú dev: ĐIỀU CHỈNH. Bóng elip (texture canvas `advmap_shadow`) dưới leader và từng follower, co/mờ theo độ nâng; depth follower = chân − 0.001×(i+1) để cùng hệ sort với leader. CHƯA kiểm bằng mắt: che khuất sau cây/nhà (`mapCovers`) và dốc (`mapCliffs`).
 - Ưu tiên: P2
 - Nhóm: Map
 - Đối tượng: So/Bi + follower + scenery (`scene/mapDepth.ts`, `mapDepthKit.ts`)
