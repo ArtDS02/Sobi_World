@@ -147,13 +147,14 @@ function draftBeats(events: readonly BattleEvent[], battle: BattleState): Draft[
 const scaleTiming = (t: Timing, k: number): Timing => ({ release: t.release * k, impact: t.impact * k, end: t.end * k });
 
 /**
- * A skill (not the plain attack, not an item) is cast inside a magic circle first; an Ultimate's circle is longer. A skill with its own
- * script opens itself (decision 044) unless it asks for the circle.
+ * A skill (not the plain attack, not an item) is cast inside a magic circle first; an Ultimate's circle is longer. Every non-physical
+ * skill (cast / support / ultimate pose) opens with the circle whether or not it has a script (ANIM-001: scripts used to switch the
+ * circle off, so every skill started at once); a skill's `circle` flag overrides either way, and a physical blow has none by default.
  */
 function circleOf(d: Pick<Draft, 'pose' | 'skillId'>): number {
   if (d.skillId === null || d.pose === null || d.pose === 'guard' || d.pose === 'stunned') return 0;
   const own = skillFx(d.skillId);
-  if (!(own?.circle ?? !own?.script)) return 0;
+  if (!(own?.circle ?? d.pose !== 'attack')) return 0;
   return d.pose === 'ultimate' ? CIRCLE_MS.ultimate : CIRCLE_MS.skill;
 }
 

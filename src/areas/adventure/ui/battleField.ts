@@ -52,6 +52,12 @@ function aimable(u: UnitVm, action: BattleActionVm, actor: string | null): boole
   return false;
 }
 
+/**
+ * ANIM-002: while aiming, a unit that can be picked stands above the ones that cannot (its z-index is the spot's y + this), so its marker
+ * and click area are never under another unit's body or name plate. The whole-side marker is above all of them (_adventure.scss).
+ */
+const AIM_Z_LIFT = 100;
+
 /** The ring with an X that fires the action on what it marks. */
 function marker(
   label: string,
@@ -98,7 +104,7 @@ export function unitOnField(
       class: `adventure-ui__unit adventure-ui__unit--${u.side}${u.active ? ' is-active' : ''}${down ? ' is-down' : ''}${can ? ' is-aimable' : ''}${u.boss ? ' is-boss' : ''}${u.elite ? ' is-elite' : ''}${u.corrupted ? ' is-corrupted' : ''}${mirrored(u.art, u.side) ? ' is-mirrored' : ''}`,
       attrs: {
         role: 'group',
-        style: `left:${spot.x}%;top:${spot.y}%;z-index:${Math.round(spot.y)}`,
+        style: `left:${spot.x}%;top:${spot.y}%;z-index:${Math.round(spot.y) + (can ? AIM_Z_LIFT : 0)}`,
         'aria-label': `${u.name} ${u.hpText}`,
         title: u.intent ? `${u.name}: ${u.intent}` : u.name,
         'data-unit': u.id,

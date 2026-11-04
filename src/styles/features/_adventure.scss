@@ -23,6 +23,7 @@ $adv-cream-2: #f7e8c6;
 $adv-wood: #8a5a2b;
 $adv-wood-dark: #5b3a1c;
 $adv-ink: #4a2e17;
+$adv-reticle-size: 6rem; // the target ring (ANIM-002: was 5.2rem)
 $adv-navy: rgba(36, 40, 70, 0.78);
 $adv-green: #6fc24c;
 $adv-pink: #ef5a78;
@@ -1160,19 +1161,26 @@ $adv-pink: #ef5a78;
   &__attack-gap { width: 8rem; }
 }
 
+// While aiming, name plates never take a click meant for a marker (ANIM-002).
+.adventure-ui__battle.is-aiming .adventure-ui__plate { pointer-events: none; }
+
 // ---- the target marker: a ring with an X; one big marker over a whole side
 .adv-reticle {
   position: absolute;
   top: 50%;
   left: 50%;
-  z-index: 50;
+  z-index: 60;
   display: grid;
   place-items: center;
-  width: 5.2rem;
-  height: 5.2rem;
+  width: $adv-reticle-size;
+  height: $adv-reticle-size;
   padding: 0;
   cursor: pointer;
   pointer-events: auto;
+  transition: scale 0.12s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+
+  // A forgiving click area: the ring plus a margin, 7rem or more across (ANIM-002), still a circle.
+  &::after { position: absolute; inset: -0.9rem; content: ''; border-radius: 50%; }
   background: radial-gradient(circle, rgba(255, 255, 255, 0.28) 0 45%, transparent 62%);
   border: 0;
   border-radius: 50%;
@@ -1218,13 +1226,16 @@ $adv-pink: #ef5a78;
   }
 
   &:hover &__ring, &:focus-visible &__ring { box-shadow: 0 0 0 3px #ffb020, 0 0 22px 6px rgba(255, 200, 60, 0.95), inset 0 0 0 3px #ffb020; }
-  &:hover { scale: 1.08; }
+  &:hover, &:focus-visible { scale: 1.12; }
   &:focus-visible { outline: none; }
 
-  // A whole side: an ellipse over the formation, the X in its middle.
+  // A whole side: an ellipse over the formation, the X in its middle. Above every unit (their z-index is their y, 61-93, +100 while
+  // aimable) so a click anywhere in it, over a body or a name plate too, fires the skill (ANIM-002).
   &--side {
+    z-index: 300;
     width: auto;
     height: auto;
+    &::after { inset: 0; }
     border-radius: 50%;
     transform: translate(-50%, -50%);
     &:hover { scale: 1.03; }

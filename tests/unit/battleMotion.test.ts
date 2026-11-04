@@ -36,12 +36,12 @@ describe('battle motion (GĐ14 vertical slice)', () => {
       [foe, 'attack', 'melee', 'NATURE'],
     ]);
     const [a, b] = m.beats;
-    // A skill with its own script opens itself, without the magic circle (decision 044); the plain attack has none either.
-    expect(a!.circle).toBe(false);
-    expect(a!.cast).toBe(a!.start);
+    // A spell opens with its magic circle even with a script (ANIM-001); the plain attack has none.
+    expect(a!.circle).toBe(true);
+    expect(a!.cast).toBeGreaterThan(a!.start);
     expect(b!.circle).toBe(false);
     expect(b!.cast).toBe(b!.start);
-    expect(a!.impact).toBe(timingOf('cast', 'projectile', 'skill_mm_poison_thorn').impact);
+    expect(a!.impact - (a!.cast - a!.start)).toBe(timingOf('cast', 'projectile', 'skill_mm_poison_thorn').impact);
     expect(a!.impact).not.toBe(TIMING.projectile.impact);
     expect(b!.start).toBeGreaterThan(a!.end);
     expect(m.eventAt[2]).toBe(a!.impact);
@@ -116,5 +116,22 @@ describe('battle art facing (decision 042)', () => {
   it('every creature of battle_fx.json that breaks the convention is an enemy of the content', () => {
     const ids = new Set(ENEMY_LIST.map((e) => e.art));
     for (const [art, c] of Object.entries(BATTLE_FX.creatures)) if (c.facing) expect(ids.has(art), art).toBe(true);
+  });
+});
+
+describe('every spell opens with its magic circle (ANIM-001)', () => {
+  it('each non-physical skill gets a circle that ends after it starts; a physical blow gets none', async () => {
+    const { SKILLS } = await import('../../src/areas/adventure/logic/config/content');
+    for (const [id, skill] of Object.entries(SKILLS)) {
+      if (!skill) continue;
+      const log: BattleEvent[] = [{ type: 'turn', actor: ally }, { type: 'use', actor: ally, skillId: id, ultimate: false }, hit(ally, foe, { skillId: id })];
+      const beat = stepMotion(battle, log).beats[0]!;
+      if (skill.category === 'physical') expect(beat.circle, id).toBe(false);
+      else {
+        expect(beat.circle, id).toBe(true);
+        expect(beat.cast, id).toBeGreaterThan(beat.start);
+      }
+      expect(stepMotion(battle, log).total, id).toBeLessThanOrEqual(STEP_MAX_MS + 1);
+    }
   });
 });

@@ -59,6 +59,8 @@ export class BattleScene extends Phaser.Scene {
   /** The stage holds still until then (hit stop, performance.now ms). */
   private holdUntil = 0;
   private held = new Map<string, BodyPose | null>();
+  private poseAnchors = new Map<string, PoseAnchor>();
+  private poseSides = new Map<string, 'ally' | 'enemy'>();
   private loops: { at: number; cue: Extract<FxCue, { kind: 'act' }>['cue'] }[] = [];
 
   constructor(private readonly deps: BattleSceneDeps) {
@@ -127,10 +129,19 @@ export class BattleScene extends Phaser.Scene {
     this.tweens.timeScale = holding ? 0 : 1;
     this.time.timeScale = holding ? 0 : 1;
     this.fx.bursts.pause(holding);
-    const poseAnchors = new Map<string, PoseAnchor>(units.map((u) => [u.id, { side: u.side, art: u.art, feet: u.feet, width: u.width }]));
+    // Maps reused between frames (ANIM-107): cleared and refilled instead of allocated per frame.
+    const poseAnchors = this.poseAnchors;
+    const poseSides = this.poseSides;
+    poseAnchors.clear();
+    poseSides.clear();
     for (const u of units) {
-      for (const id of [`cb_${u.art}_idle`, u.art]) this.want(id);
-      const pose = s.reduce ? null : holding && this.held.has(u.id) ? this.held.get(u.id)! : poseOf(u.id, poseAnchors.get(u.id)!, poseAnchors, p, t, now);
+      poseAnchors.set(u.id, { side: u.side, art: u.art, feet: u.feet, width: u.width });
+      poseSides.set(u.id, u.side);
+    }
+    for (const u of units) {
+      this.want(`cb_${u.art}_idle`);
+      this.want(u.art);
+      const pose = s.reduce ? null : holding && this.held.has(u.id) ? this.held.get(u.id)! : poseOf(u.id, poseAnchors.get(u.id)!, poseAnchors, p, t, now, poseSides);
       if (!holding) this.held.set(u.id, pose);
       this.units.apply(u, pose, now, this.badges.tintOf(u.statuses));
     }

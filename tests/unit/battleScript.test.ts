@@ -72,11 +72,11 @@ describe('stagger (decision 044)', () => {
     expect(m.beats[0]!.end).toBeGreaterThan(hits[2]!);
   });
 
-  it('a skill with a script opens itself: no magic circle unless it asks for one', () => {
+  it('a spell with a script still opens with its magic circle (ANIM-001), unless it opts out', () => {
     withScript([]);
-    expect(stepMotion(battle, use()).beats[0]!.circle).toBe(false);
-    withScript([], { circle: true });
     expect(stepMotion(battle, use()).beats[0]!.circle).toBe(true);
+    withScript([], { circle: false });
+    expect(stepMotion(battle, use()).beats[0]!.circle).toBe(false);
   });
 });
 

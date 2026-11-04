@@ -7208,7 +7208,6 @@
       { "do": "sound", "at": 0, "who": "actor", "sound": "adv_stun" }
     ],
     "frozen": [
-      { "do": "move", "at": 0, "who": "actor", "dur": 600, "move": "shake", "x": 1.5, "n": 4 },
       { "do": "glow", "at": 0, "who": "actor", "dur": 600, "color": "#bfe8ff", "bright": 1.15, "tint": true },
       {
         "do": "strip",

@@ -3,7 +3,7 @@ import { BATTLE_FX, ENEMY_LIST, SKILLS } from '../../src/areas/adventure/logic/c
 import type { PlayingStep } from '../../src/areas/adventure/ui/battleFxView';
 import { stepMotion } from '../../src/areas/adventure/ui/battleMotion';
 import { stepPlan } from '../../src/areas/adventure/ui/battlePlan';
-import { poseOf } from '../../src/areas/adventure/ui/battlePose';
+import { easeOutBack, poseOf, settle } from '../../src/areas/adventure/ui/battlePose';
 import { lookOf, poseArts, timingOf, TIMING } from '../../src/areas/adventure/ui/motionProfiles';
 import type { BattleEvent, BattleState } from '../../src/systems/combat/types';
 
@@ -69,7 +69,11 @@ describe('the cues of a step', () => {
   it('a skill with a script plays its acts instead (decision 044)', () => {
     const cues = stepPlan(playing(log), sides, false);
     expect(cues.some((c) => c.kind === 'act')).toBe(true);
-    expect(cues.some((c) => c.kind === 'shot' || c.kind === 'circle')).toBe(false);
+    expect(cues.some((c) => c.kind === 'shot')).toBe(false);
+    // ...after the magic circle every spell opens with (ANIM-001).
+    const circle = cues.find((c) => c.kind === 'circle');
+    expect(circle).toBeDefined();
+    expect(Math.min(...cues.filter((c) => c.kind === 'act').map((c) => c.at))).toBeGreaterThanOrEqual(circle!.at);
   });
 
   it('reduced motion keeps only the sounds; a new battle brings every fighter in by its entrance script', () => {
@@ -106,3 +110,50 @@ describe('key poses', () => {
 function log2(): BattleEvent[] {
   return [{ type: 'turn', actor: ally }, { type: 'use', actor: ally, skillId: 'skill_mm_poison_thorn', ultimate: false }, hit(ally, foe, { skillId: 'skill_mm_poison_thorn' })];
 }
+
+describe('motion feel', () => {
+  const anchors = new Map([
+    [ally, { side: 'ally' as const, art: 'pig_knight', feet: { x: 100, y: 300 }, width: 100 }],
+    [foe, { side: 'enemy' as const, art: 'enemy_mossling', feet: { x: 500, y: 300 }, width: 100 }],
+  ]);
+  const melee = () => {
+    const p = playing([{ type: 'turn', actor: ally }, { type: 'use', actor: ally, skillId: null, ultimate: false }, hit(ally, foe)]);
+    return { p, b: p.motion.beats[0]! };
+  };
+
+  it('the easings start and end where they should, and the spring runs past rest', () => {
+    expect(easeOutBack(0)).toBeCloseTo(0);
+    expect(easeOutBack(1)).toBeCloseTo(1);
+    expect(Math.max(...[0.5, 0.6, 0.7, 0.8].map(easeOutBack))).toBeGreaterThan(1);
+    expect(settle(0)).toBe(0);
+    expect(settle(1)).toBe(1);
+    expect(Math.max(...Array.from({ length: 40 }, (_, i) => settle(i / 40)))).toBeGreaterThan(1);
+  });
+
+  it('a plain attack coils back first, dashes in, hits and comes home, standing over its shadow', () => {
+    const { p, b } = melee();
+    expect(b.delivery).toBe('melee');
+    const at = (t: number) => poseOf(ally, anchors.get(ally)!, anchors, p, t, 0);
+    expect(at(b.cast + 100).dx).toBeLessThan(-5);
+    const arrived = at(b.cast + 200 + 0.5 * 420);
+    expect(arrived.dx).toBeGreaterThan(200);
+    expect(arrived.sx).toBeGreaterThan(1.05);
+    expect(at(b.cast + 200 + 0.8 * 420).air).toBeGreaterThan(1);
+    expect(Math.abs(at(b.end + 600).dx)).toBeLessThan(1);
+    for (let t = b.start; t <= b.end + 600; t += 10) {
+      const q = at(t);
+      for (const v of [q.dx, q.dy, q.rot, q.sx, q.sy, q.air]) expect(Number.isFinite(v)).toBe(true);
+      expect(q.air).toBeGreaterThanOrEqual(0);
+      expect(q.sx).toBeGreaterThan(0.5);
+      expect(q.sy).toBeGreaterThan(0.5);
+    }
+  });
+
+  it('a body that is hit is knocked back, then springs past rest and settles', () => {
+    const { p } = melee();
+    const r = p.motion.reactions.find((x) => x.kind === 'hit')!;
+    const at = (t: number) => poseOf(foe, anchors.get(foe)!, anchors, p, t, 0);
+    expect(at(r.at + 80).dx).toBeGreaterThan(10);
+    expect(Math.abs(at(r.at + 700).dx)).toBeLessThan(1);
+  });
+});
