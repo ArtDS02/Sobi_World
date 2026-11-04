@@ -30,6 +30,8 @@ export interface Timed {
 }
 
 const isShape = (ref: string) => !ref.startsWith('fx_');
+/** A shot lays one burst of its trail every this many pixels it flies. */
+const TRAIL_STEP_PX = 9;
 
 /** What the effects ask of the scene: to hold the stage still (hit stop), every fighter's picture. */
 export interface FxHooks {
@@ -200,16 +202,22 @@ export class FxPlayer {
     if (isShape(p.core)) core.setDisplaySize(size, size);
     halo.setDisplaySize(size * 2.4, size * 2.4).setAlpha(0.7);
     let last = { x: from.chest.x, y: from.chest.y };
-    let since = 0;
+    let travelled = 0;
     this.add(dur, (t, _g, dt) => {
-      const x = Phaser.Math.Linear(from.chest.x, to.chest.x, t);
-      const y = Phaser.Math.Linear(from.chest.y, to.chest.y, t) - Math.sin(t * Math.PI) * p.arc;
+      // It sets off slowly and speeds up (smoothstep, ANIM-042), the core and its halo beat, and the trail is laid by distance
+      // flown rather than by time, so it stays even at x2 and over a hit stop.
+      const e = t * t * (3 - 2 * t);
+      const x = Phaser.Math.Linear(from.chest.x, to.chest.x, e);
+      const y = Phaser.Math.Linear(from.chest.y, to.chest.y, e) - Math.sin(e * Math.PI) * p.arc;
       core.setPosition(x, y).setRotation(Math.atan2(y - last.y, x - last.x) + (to.chest.x < from.chest.x && !isShape(p.core) ? Math.PI : 0));
-      halo.setPosition(x, y);
-      since += dt;
-      // The trail: one burst of the look's trail every 16 ms of flight.
-      while (p.trail && since >= 0.016) {
-        since -= 0.016;
+      if (isShape(p.core)) {
+        const beat = 1 + 0.08 * Math.sin(t * dur * 0.001 * Math.PI * 2 * 8);
+        core.setDisplaySize(size * beat, size * beat);
+      }
+      halo.setPosition(x, y).setDisplaySize(size * 2.4 * (1 + 0.2 * Math.sin(t * dur * 0.001 * Math.PI * 2 * 5)), size * 2.4 * (1 + 0.2 * Math.sin(t * dur * 0.001 * Math.PI * 2 * 5)));
+      if (dt > 0) travelled += Math.hypot(x - last.x, y - last.y);
+      while (p.trail && travelled >= TRAIL_STEP_PX) {
+        travelled -= TRAIL_STEP_PX;
         this.bursts.play(p.trail, { x, y }, { mirror: from.side === 'enemy' });
       }
       last = { x, y };

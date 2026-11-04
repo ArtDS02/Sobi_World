@@ -381,7 +381,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/propMotion.ts` (thuần, có test): `propFram
 - Asset cần thêm: không.
 
 ### [ANIM-040] Skill nước: sóng, vòi, mưa, bọt (làm lại cho "chảy")
-- [ ] Chưa làm
+- [x] Đã làm (B5)
+Ghi chú dev: ĐIỀU CHỈNH (làm 5/10 skill; ribbon vẽ bằng code). Tsunami: ribbon quét 900ms có bọt đầu sóng + prop `fxp_wave_crest` (đã ease/wobble từ B2) rải hạt `drop_spray` theo đường (`trail`), flash xanh 80ms, hit-stop tier medium, mmục tiêu bị đẩy 18px nghiêng 10° (`knock`) + bọt, ribbon dội ngược nhỏ 1330ms (timing.end 1650→1800). Tide song: ribbon nhẹ + 3 vòng gợn tròn dưới chân đồng đội stagger. Healing rain: 3 vòng gợn xanh lá + bọt trôi lên. Bubble (animal + quái): bong bóng nở outBack, pulse 6%@3Hz, bobY. Frost breath: sương trắng dưới đất + tuyết ngang. Hạt giọt dùng gravity có sẵn của particle. CHƯA làm: `skill_cl_freeze`, `skill_ult_nh`, `skill_ult_trident`, `enemy_abyss_kraken` (ult/boss, B6-B7), `fxs_foam_curl` (asset A05), displacement/shader, ribbon dạng Rope+texture.
 - Ưu tiên: P1
 - Nhóm: Skill
 - Đối tượng: `skill_nh_bubble`, `skill_nh_tide_song`, `skill_nh_tsunami`, `skill_cl_freeze` (hệ nước), `skill_cl_healing_rain`, `skill_e_bubble`, `skill_e_frost_breath`, ultimate `skill_ult_nh` (cá voi), `skill_ult_trident`, trùm `enemy_abyss_kraken`
@@ -401,7 +402,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/propMotion.ts` (thuần, có test): `propFram
 - Asset cần thêm: `A05_water_kit.md`.
 
 ### [ANIM-041] Chuẩn hoá anticipation → impact → recovery cho đòn vật lý
-- [ ] Chưa làm
+- [x] Đã làm (B5)
+Ghi chú dev: ĐIỀU CHỈNH. Mọi skill vật lý có script + action `attack`: `stop` có `tier` theo độ dài cũ (≤55 light, ≤95 medium, ≤130 heavy), `shake` thành shake có hướng ngang (dir [1,0.12], suy giảm mũ, ≥220ms), thêm follow-through `tilt` 8° sau cú dash. Combo giữ nhịp tăng dần sẵn có (40/40/100ms, 3/3/7px). CHƯA làm: knockback theo vector (`dirFrom`; `knock` hiện đẩy ra xa phe mình nên đã hợp lý), hit-stop heavy theo crit trong action `hit-heavy`.
 - Ưu tiên: P2
 - Nhóm: Skill
 - Đối tượng: skill class vật lý (9: `power_strike, combo, rend, vital, finisher, shadow_dance, armor_crush, stomp, tremor`), skill quái vật lý (12), đòn thường (`actions.attack`)
@@ -413,7 +415,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/propMotion.ts` (thuần, có test): `propFram
 - Asset cần thêm: không.
 
 ### [ANIM-042] Đạn/tia/vệt: đường bay có gia tốc và quán tính
-- [ ] Chưa làm
+- [x] Đã làm (B5)
+Ghi chú dev: ĐIỀU CHỈNH. `fxPlayer.shot`: smoothstep (chậm rồi nhanh), core pulse ±8% @8Hz, halo nhấp ±20% @5Hz, trail theo quãng đường bay (mỗi 9px, dừng khi hit-stop vì dt=0). CHƯA làm: spiral nhẹ cho hệ gió/nước (look không biết hệ).
 - Ưu tiên: P2
 - Nhóm: Skill
 - Đối tượng: mọi skill `projectile` (mặc định `delivery` của `magical` đơn), cue `shot`
@@ -425,7 +428,8 @@ Ghi chú dev: ĐIỀU CHỈNH. `ui/propMotion.ts` (thuần, có test): `propFram
 - Asset cần thêm: không.
 
 ### [ANIM-043] Dấu ấn riêng của từng hệ (signature pass)
-- [ ] Chưa làm
+- [x] Đã làm (B5)
+Ghi chú dev: ĐIỀU CHỈNH. Dấu ấn hệ gán tự động vào 25 skill phép (không phải ult) tại thời điểm impact: Sét flash trắng 60ms + shake dọc; Đất shake dọc dài hơn +3; Lửa flash cam 110ms; Tối vignette tối 700ms trước impact; Sáng flash vàng nhạt 130ms; Hư vô `split` 220ms; Kim flash 50ms. Mộc giữ nguyên. CHƯA làm: rung điện thân 40Hz, tia zigzag, đảo màu 1 frame, kiểm 'grayscale vẫn đoán được hệ' bằng mắt.
 - Ưu tiên: P2
 - Nhóm: Skill
 - Đối tượng: 9 hệ — lửa (`hg_*`), sét (`ld_*`), đất (`qs_*`), mộc (`mm_*`), kim (`tg_*`), tối (`dm_*`), sáng (`qt_*`), hư vô (`hk_*`)
