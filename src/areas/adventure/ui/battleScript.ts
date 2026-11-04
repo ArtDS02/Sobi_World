@@ -169,6 +169,12 @@ export function stepScript(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 
     if (tick === 'poison') id = 'dot_poison';
     else if (tick === 'burn') id = 'dot_burn';
     else if (tick === 'regen') id = 'regen';
+    // A status with its own tick look plays that instead of the generic damage-over-time action (ANIM-003).
+    const ownTick = tick ? BATTLE_FX.statuses[tick as StatusId]?.tick : undefined;
+    if (ownTick && ownTick.length > 0) {
+      run(c, ownTick, r.at, k, r.unit, [], look);
+      continue;
+    }
     if (r.kind === 'buff' || r.kind === 'debuff') {
       // A status with its own look plays that instead of the generic arrows.
       const own = statusAt(r.unit, r.at).filter((s) => BATTLE_FX.statuses[s.id as StatusId]?.apply);
@@ -183,6 +189,7 @@ export function stepScript(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 
     if (mk.kind === 'reaction') run(c, BATTLE_FX.elementReactions[mk.id] ?? [], mk.at, k, mk.unit, [], neutral);
     else if (mk.kind === 'phase') run(c, actionScript('boss_phase'), mk.at, k, mk.unit, [], neutral);
     else if (mk.kind === 'revive') run(c, actionScript('revive'), mk.at, k, mk.unit, [], neutral);
+    else if (mk.kind === 'cleanse') run(c, actionScript('cleanse'), mk.at, k, mk.unit, [], neutral);
     else if (mk.kind === 'victory') {
       const side = sides.get(mk.unit);
       [...sides].filter(([, s]) => s === side).forEach(([id], i) => run(c, actionScript('victory'), mk.at + i * 120 * k, k, id, [], neutral));

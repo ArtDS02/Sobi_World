@@ -30,6 +30,8 @@ export interface PoseAnchor {
   art: string;
   feet: Pt;
   width: number;
+  /** A status holds the body still (Freeze `freezeBody`): no breathing or bobbing. */
+  frozen?: boolean;
 }
 
 /** A body at one moment: pushed (px), turned (deg), squashed, how bright (1 = as drawn), how grey and faded, its glow (0xRRGGBB). */
@@ -79,6 +81,13 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
   let posture: PoseArt = 'idle';
   // Bodies that fly or float hover over their shadow; the rest stand on it.
   let air = profile.bob * (1 - cyc);
+  if (a.frozen) {
+    dy = 0;
+    rot = 0;
+    sx = 1;
+    sy = 1;
+    air = profile.bob;
+  }
   // `sidesIn` is built once per frame by the caller (ANIM-107: no Map per unit per frame); tests may omit it.
   const sides = sidesIn ?? new Map<string, Side>([...anchors].map(([k2, v]) => [k2, v.side]));
   const script = stepScript(p, sides);

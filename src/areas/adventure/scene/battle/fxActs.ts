@@ -9,6 +9,7 @@ import { AIR_DEPTH, GROUND_DEPTH, type Bursts } from './fxBursts';
 import { beam, cone, tether } from './fxLines';
 import { playProp } from './fxProps';
 import type { FxAnchor, Timed } from './fxPlayer';
+import type { ScreenFx } from './screenFx';
 import { SHADOW_KEY, VIGNETTE_KEY, decalKey, shapeKey } from './fxTextures';
 
 type AddTimed = (dur: number, step: Timed['step'], done?: () => void) => void;
@@ -22,6 +23,8 @@ export interface ActHost {
   flash(color: number, alpha: number, ms: number): void;
   /** Holds the stage still for `ms` (hit stop). */
   hold(ms: number): void;
+  /** Hit stop tiers, slow motion, directional shake, letterbox, vignette (ANIM-004). */
+  screen: ScreenFx;
   /** Every unit's picture now (the colour split copies them). */
   pictures(): Phaser.GameObjects.Image[];
 }
@@ -143,7 +146,16 @@ export class ActPlayer {
         return;
       }
       case 'stop':
-        this.h.hold(act.dur);
+        this.h.screen.hitStop(act.tier ?? act.dur);
+        return;
+      case 'slowmo':
+        this.h.screen.slowMo(act.scale, act.dur);
+        return;
+      case 'letterbox':
+        this.h.screen.letterbox(act.on, act.dur);
+        return;
+      case 'vignette':
+        this.h.screen.vignette(act.color as number, act.alpha, act.dur);
         return;
       case 'split': {
         for (const pic of this.h.pictures()) {
@@ -156,6 +168,10 @@ export class ActPlayer {
         return;
       }
       case 'shake':
+        if (act.dir) {
+          this.h.screen.shake(act.amount, act.dur, act.dir);
+          return;
+        }
         this.scene.cameras.main.shake(act.dur, act.amount / Math.max(1, this.scene.scale.width));
         return;
       case 'flash':

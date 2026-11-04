@@ -5,6 +5,7 @@ import type * as Phaser from 'phaser';
 import type { StatusId } from '../../../../systems/combat/types';
 import { BATTLE_FX } from '../../logic/config/content';
 import { loopCues } from '../../ui/battleScript';
+import { statusDelta } from '../../ui/statusDelta';
 import type { ScriptCue } from '../../ui/battleScript';
 import { AIR_DEPTH } from './fxBursts';
 import type { FxAnchor } from './fxPlayer';
@@ -17,10 +18,14 @@ interface Held {
   cover: Phaser.GameObjects.Image | null;
   /** When each status of the unit last played its loop. */
   looped: Map<string, number>;
+  /** The statuses seen last frame (for the expire diff, ANIM-003). */
+  seen: Set<string>;
 }
 
 export class StatusBadges {
   private held = new Map<string, Held>();
+  /** Units seen at least once (a first sight has no previous statuses to diff against). */
+  private known = new Set<string>();
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -30,11 +35,21 @@ export class StatusBadges {
   /** The colour a status gives the body of the unit now (the last one that has one), or null. */
   tintOf(statuses: readonly string[]): number | null {
     let tint: number | null = null;
+    let best = -1;
     for (const s of statuses) {
-      const t = BATTLE_FX.statuses[s as StatusId]?.tint;
-      if (t) tint = t.color;
+      const def = BATTLE_FX.statuses[s as StatusId];
+      // The highest priority wins; of equal ones the later (ANIM-003).
+      if (def?.tint && (def.priority ?? 0) >= best) {
+        tint = def.tint.color;
+        best = def.priority ?? 0;
+      }
     }
     return tint;
+  }
+
+  /** Whether a status holds the body perfectly still (Freeze): no breathing, no bobbing. */
+  frozenBody(statuses: readonly string[]): boolean {
+    return statuses.some((s) => BATTLE_FX.statuses[s as StatusId]?.freezeBody === true);
   }
 
   /** Draws the badges of every unit at `now`; returns the loops due now (played by the caller unless motion is reduced). */
@@ -44,7 +59,7 @@ export class StatusBadges {
     for (const u of units) {
       seen.add(u.id);
       const a = anchors.get(u.id);
-      const h: Held = this.held.get(u.id) ?? { badges: [], cover: null, looped: new Map() };
+      const h: Held = this.held.get(u.id) ?? { badges: [], cover: null, looped: new Map(), seen: new Set() };
       this.held.set(u.id, h);
       const icons = u.down || !a ? [] : u.statuses.map((s) => BATTLE_FX.statuses[s as StatusId]?.icon).filter((x): x is string => !!x);
       for (const icon of icons) this.want(icon);
@@ -72,6 +87,18 @@ export class StatusBadges {
           h.cover.setTexture(cover.img, frame).setVisible(true).setDepth(1000 + a.feet.y + 0.5).setAlpha(cover.alpha).setPosition(a.chest.x, a.feet.y - a.height * 0.48).setDisplaySize(a.width * 1.15, a.height * 1.1);
         }
       } else h.cover?.setVisible(false);
+      // A status that was on the unit last frame and is gone plays its expire script once (a unit seen for the first time, or one
+      // knocked out, plays none: no false expiry on a reload).
+      const known = this.known.has(u.id);
+      const delta = statusDelta(known ? h.seen : null, u.statuses, u.down);
+      this.known.add(u.id);
+      h.seen = new Set(u.statuses);
+      if (!reduce) {
+        for (const s of delta.removed) {
+          const expire = BATTLE_FX.statuses[s as StatusId]?.expire;
+          if (expire && expire.length > 0) due.push(...loopCues(expire, u.id));
+        }
+      }
       if (reduce || u.down) continue;
       for (const s of u.statuses) {
         const loop = BATTLE_FX.statuses[s as StatusId]?.loop;
@@ -93,11 +120,14 @@ export class StatusBadges {
       for (const b of h.badges) b.destroy();
       h.cover?.destroy();
       this.held.delete(id);
+      this.known.delete(id);
     }
     return due;
   }
 
   hideAll() {
+    // A battle is over (or not shown): the next one starts with no memory of statuses, so none expires falsely.
+    this.known.clear();
     for (const h of this.held.values()) {
       for (const b of h.badges) b.setVisible(false);
       h.cover?.setVisible(false);

@@ -35,6 +35,7 @@ const base = {
   /** Between two units of `targets` / `allies` / `foes` (ms), in their order; the skill's own stagger when left out. */
   stagger: nonNeg.optional(),
 };
+export const HIT_STOP_TIERS = ['light', 'medium', 'heavy', 'ultimate'] as const;
 const lasting = { ...base, dur: nonNeg.max(4000) };
 
 export const actSchema = z.discriminatedUnion('do', [
@@ -118,10 +119,18 @@ export const actSchema = z.discriminatedUnion('do', [
   /** A quick zoom towards the unit and back. */
   z.strictObject({ do: z.literal('punch'), ...lasting, zoom: z.number().finite().min(1).max(1.2) }),
   /** The stage holds still (hit stop); numbers and sounds go on. */
-  z.strictObject({ do: z.literal('stop'), ...lasting }),
+  /** `tier` (light 50 / medium 80 / heavy 120 / ultimate 220 ms, scene/battle/screenFx.ts) replaces `dur` when given. */
+  z.strictObject({ do: z.literal('stop'), ...lasting, tier: z.enum(HIT_STOP_TIERS).optional() }),
   /** The colours split for a beat (Void). */
   z.strictObject({ do: z.literal('split'), ...lasting }),
-  z.strictObject({ do: z.literal('shake'), ...lasting, amount: nonNeg.max(30) }),
+  /** The camera shakes; with `dir` it shakes along that direction and dies away exponentially (otherwise the plain random shake). */
+  z.strictObject({ do: z.literal('shake'), ...lasting, amount: nonNeg.max(30), dir: z.tuple([z.number().finite(), z.number().finite()]).optional() }),
+  /** Slow motion of the whole stage: speed `scale` (0.1..1) that eases back to normal over `dur` (off for reduced motion). */
+  z.strictObject({ do: z.literal('slowmo'), ...lasting, scale: z.number().finite().min(0.1).max(1) }),
+  /** Two black bars close in top and bottom (`on`) or open again over `dur`: the cinematic frame of an Ultimate. */
+  z.strictObject({ do: z.literal('letterbox'), ...lasting, on: z.boolean() }),
+  /** The edges of the screen darken in a colour for `dur`. */
+  z.strictObject({ do: z.literal('vignette'), ...lasting, color: paint, alpha: z.number().finite().min(0).max(1) }),
   z.strictObject({ do: z.literal('flash'), ...lasting, color: paint, alpha: z.number().finite().min(0).max(1) }),
   /** A sound of the manifest (`adv_…`; a missing file is silence). Plays with reduced motion too. */
   z.strictObject({ do: z.literal('sound'), ...base, sound: z.string().regex(/^adv_[a-z0-9_]+$/) }),

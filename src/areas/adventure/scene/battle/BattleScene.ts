@@ -58,6 +58,10 @@ export class BattleScene extends Phaser.Scene {
   private badges!: StatusBadges;
   /** The stage holds still until then (hit stop, performance.now ms). */
   private holdUntil = 0;
+  /** Real ms the stage has lost to slow motion so far; the step's clock is `now - lost` (ANIM-004, one clock for cues and poses). */
+  private lost = 0;
+  private lostAtStep = 0;
+  private stageLast = 0;
   private held = new Map<string, BodyPose | null>();
   private poseAnchors = new Map<string, PoseAnchor>();
   private poseSides = new Map<string, 'ally' | 'enemy'>();
@@ -114,6 +118,8 @@ export class BattleScene extends Phaser.Scene {
     const p = s.step;
     if (p.key !== this.key) {
       this.key = p.key;
+      this.lostAtStep = this.lost;
+      this.fx.screen.reset();
       const sides = new Map(units.map((u) => [u.id, u.side] as const));
       this.cues = stepPlan(p, sides, s.reduce).map((c) => ({ ...c, done: false }));
       // A step already under way when it first shows (a reload) skips what is long past.
@@ -123,11 +129,15 @@ export class BattleScene extends Phaser.Scene {
       for (const c of this.cues) if (c.kind === 'act') for (const id of actImages(c.cue.act)) this.want(id);
       this.holdUntil = 0;
     }
-    const t = now - p.at;
+    // Slow motion (screenFx.slowMo) stretches the stage's clock: cues, poses, tweens, particles all read it; reduced motion has none.
+    const scale = s.reduce ? 1 : this.fx.screen.timeScale(now);
+    this.lost += Math.min(50, now - (this.stageLast || now)) * (1 - scale);
+    this.stageLast = now;
+    const t = now - this.lost - (p.at - this.lostAtStep);
     // Hit stop: the bodies keep the pose they had, the effects and particles wait.
     const holding = !s.reduce && now < this.holdUntil;
-    this.tweens.timeScale = holding ? 0 : 1;
-    this.time.timeScale = holding ? 0 : 1;
+    this.tweens.timeScale = holding ? 0 : scale;
+    this.time.timeScale = holding ? 0 : scale;
     this.fx.bursts.pause(holding);
     // Maps reused between frames (ANIM-107): cleared and refilled instead of allocated per frame.
     const poseAnchors = this.poseAnchors;
@@ -135,7 +145,7 @@ export class BattleScene extends Phaser.Scene {
     poseAnchors.clear();
     poseSides.clear();
     for (const u of units) {
-      poseAnchors.set(u.id, { side: u.side, art: u.art, feet: u.feet, width: u.width });
+      poseAnchors.set(u.id, { side: u.side, art: u.art, feet: u.feet, width: u.width, frozen: !u.down && this.badges.frozenBody(u.statuses) });
       poseSides.set(u.id, u.side);
     }
     for (const u of units) {
@@ -185,6 +195,7 @@ export class BattleScene extends Phaser.Scene {
       this.loops = this.loops.filter((l) => l.at > now);
       for (const l of due) this.fx.play({ at: 0, kind: 'act', cue: l.cue }, fxAnchors);
     }
-    this.fx.update(holding ? 0 : dt, this.scale.width, this.scale.height);
+    this.fx.update(holding ? 0 : dt * scale, this.scale.width, this.scale.height);
+    this.fx.screen.update(now);
   }
 }

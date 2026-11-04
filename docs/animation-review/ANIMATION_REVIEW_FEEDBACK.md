@@ -772,7 +772,8 @@ Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json act
 ### Nhóm Khác
 
 ### [ANIM-004] Screen FX Director (hit-stop theo tầng, slow-mo, letterbox, vignette)
-- [ ] Chưa làm
+- [x] Đã làm (B1)
+Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/screenFx.ts`: `hitStop(tier|ms)` (HIT_STOP_MS light50/medium80/heavy120/ultimate220), `slowMo`, `shake` có hướng + suy giảm mũ, `letterbox`, `vignette`, `reset()` (gọi ở fx.clear + đổi step). Acts mới `slowmo`, `letterbox`, `vignette`; `stop` nhận `tier`; `shake` nhận `dir`. Stage clock: `BattleScene` có `lost` -> cue/pose đọc `now - lost` nên slow-mo kéo giãn đồng bộ cue, pose, tween, hạt. LƯU Ý: số bay/banner DOM chạy bằng đồng hồ thật nên sẽ LỆCH khi slow-mo (chưa skill nào dùng; xử lý trước khi dùng ở B6). CHƯA làm: `zoomTo` (act `punch` hiện có đủ dùng), `chromatic` (act `split` có sẵn), gom hằng depth vào `layers.ts`. Chưa có skill nào gọi các act mới -> cần thử bằng Admin lab khi dùng ở ult.
 - Ưu tiên: P1
 - Nhóm: Khác
 - Đối tượng: toàn trận (đòn thường, chí mạng, ult, boss phase, KO)
@@ -881,7 +882,8 @@ Ghi chú dev: ĐIỀU CHỈNH (một phần). `BattleScene.update`: `poseAnchors
 - Asset cần thêm: không.
 
 ### [ANIM-003] Status Visual System (apply · layers · tick · expire + diff)
-- [ ] Chưa làm
+- [x] Đã làm (B1)
+Ghi chú dev: ĐIỀU CHỈNH (lõi đã làm, `layers` hoãn). Schema `statuses[id]` thêm `expire`, `tick`, `freezeBody`, `priority` (+ validator). `ui/statusDelta.ts` (thuần, có test): diff trạng thái giữa 2 frame; `statusBadges.ts` phát `expire` đúng 1 lần khi status mất, không phát cho unit mới thấy (reload) / unit gục / sau `hideAll`. `tick` riêng thay action dot_* chung (battleScript). `cleanse` mark nay chạy action mới `cleanse` (JSON). `freezeBody` -> `PoseAnchor.frozen` làm thân đứng yên khi idle. Tint chọn theo `priority`. JSON: freeze có expire (vỡ băng `fx_ice_shatter`) + freezeBody + priority 10; poison có expire (khói tan). CHƯA làm: `layers` (orbit/aura/emitter liên tục), `resist` visual, expire cho 23 status còn lại (nội dung, làm ở B3/B4), Admin lab xem apply→loop→expire, tint pulse. => ANIM-051 phần vỡ băng + đứng yên idle nay đã có.
 - Ưu tiên: **P0**
 - Nhóm: Status
 - Đối tượng: toàn bộ 25 status + events `cleanse`/`resist`

@@ -97,7 +97,7 @@ const skill = look.partial().extend({
 /** The general actions and reactions that may carry a script (decision 044): played on the unit they are about (`actor`). */
 export const ACTION_FX_VALUES = [
   'attack', 'guard', 'stunned', 'frozen', 'item', 'hit', 'heavy', 'miss', 'heal', 'regen', 'buff', 'debuff', 'dot_poison', 'dot_burn',
-  'ko', 'revive', 'victory', 'enter_ally', 'enter_enemy', 'boss_phase',
+  'ko', 'revive', 'victory', 'enter_ally', 'enter_enemy', 'boss_phase', 'cleanse',
 ] as const;
 
 const status = z.strictObject({
@@ -111,6 +111,14 @@ const status = z.strictObject({
   tint: z.strictObject({ color, alpha: unit }).optional(),
   /** A frame of an `fx_…` strip laid over the body while it lasts (the ice of Freeze). */
   cover: z.strictObject({ img: z.string().regex(/^fx_[a-z0-9_]+$/), frame: z.number().int().min(0), alpha: unit }).optional(),
+  /** Played once when it is gone (ran out, cleansed or broken); the stage finds out by comparing frames (ui/statusDelta.ts). */
+  expire: scriptSchema.optional(),
+  /** Played each time it does its damage (poison, burn…) instead of the generic damage-over-time action. */
+  tick: scriptSchema.optional(),
+  /** The body is held perfectly still while it lasts: no breathing, no bobbing (Freeze). */
+  freezeBody: z.boolean().optional(),
+  /** When several statuses colour the body, the highest wins (default 0; the later one wins a tie). */
+  priority: z.number().int().min(0).max(100).optional(),
 });
 
 export const battleFxFileSchema = z
@@ -159,6 +167,8 @@ export const battleFxFileSchema = z
     for (const [id, st] of Object.entries(f.statuses)) {
       checkScript(st.apply, `statuses.${id}.apply`);
       checkScript(st.loop?.script, `statuses.${id}.loop`);
+      checkScript(st.expire, `statuses.${id}.expire`);
+      checkScript(st.tick, `statuses.${id}.tick`);
     }
     for (const [id, acts] of Object.entries(f.elementReactions)) checkScript(acts, `elementReactions.${id}`);
     for (const [id, l] of Object.entries(f.elements)) check([l.spark, l.boom], `elements.${id}`);

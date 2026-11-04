@@ -7319,6 +7319,20 @@
       { "do": "shake", "at": 0, "who": "field", "dur": 200, "amount": 4 },
       { "do": "sound", "at": 0, "who": "actor", "sound": "adv_bonk" }
     ],
+    "cleanse": [
+      { "do": "glow", "at": 0, "who": "actor", "dur": 500, "color": "#ffffff", "bright": 1.25, "tint": true },
+      {
+        "do": "strip",
+        "at": 0,
+        "who": "actor",
+        "img": "fx_light_pillar",
+        "spot": "feet",
+        "size": 1.1,
+        "y": -40,
+        "alpha": 0.5
+      },
+      { "do": "burst", "at": 100, "who": "actor", "ref": "plus_rise", "more": 1 }
+    ],
     "revive": [
       { "do": "move", "at": 0, "who": "actor", "dur": 300, "move": "appear", "scale": 0.9 },
       { "do": "move", "at": 300, "who": "actor", "dur": 600, "move": "bounce", "y": 16, "n": 2 },
@@ -7377,7 +7391,8 @@
       "loop": {
         "every": 1800,
         "script": [{ "do": "burst", "at": 0, "who": "actor", "ref": "spore_rise", "more": 0.17 }]
-      }
+      },
+      "expire": [{ "do": "burst", "at": 0, "who": "actor", "ref": "spore_rise", "more": 0.7 }]
     },
     "burn": {
       "icon": "st_burn",
@@ -7424,7 +7439,13 @@
         }
       ],
       "tint": { "color": "#bfe8ff", "alpha": 0.3 },
-      "cover": { "img": "fx_ice_encase", "frame": 3, "alpha": 0.75 }
+      "cover": { "img": "fx_ice_encase", "frame": 3, "alpha": 0.75 },
+      "freezeBody": true,
+      "priority": 10,
+      "expire": [
+        { "do": "strip", "at": 0, "who": "actor", "img": "fx_ice_shatter", "size": 1.3 },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "ice_pop", "more": 1.5 }
+      ]
     },
     "stun": {
       "icon": "st_stun",
