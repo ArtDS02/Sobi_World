@@ -7,6 +7,7 @@ import type { ActHost } from './fxActs';
 import { AIR_DEPTH, GROUND_DEPTH } from './fxBursts';
 import type { FxAnchor } from './fxPlayer';
 import { SHADOW_KEY, shapeKey } from './fxTextures';
+import { modsOf, propFrame, type PropFrame } from '../../ui/propMotion';
 
 type SpotOf = (a: FxAnchor | null, spot: Spot | undefined, fallback: Spot) => { x: number; y: number };
 const easeIn = (t: number) => t * t;
@@ -25,7 +26,9 @@ export function playProp(h: ActHost, spotOf: SpotOf, act: Extract<Act, { do: 'pr
   else if (act.tint !== undefined) img.setTint(act.tint as number);
   const ratio = have ? img.height / Math.max(1, img.width) : 1;
   const baseW = ratio > 1 ? size / ratio : size;
-  const set = (x: number, y: number, scale: number, alpha: number) => img.setPosition(x, y).setDisplaySize(baseW * scale, baseW * ratio * scale).setAlpha(alpha * (act.alpha ?? 1));
+  const mods = modsOf(act.path, act);
+  let m: PropFrame = { prog: 0, dy: 0, rot: 0, sx: 1, sy: 1 };
+  const set = (x: number, y: number, scale: number, alpha: number) => img.setPosition(x, y + m.dy).setDisplaySize(baseW * scale * m.sx, baseW * ratio * scale * m.sy).setAlpha(alpha * (act.alpha ?? 1));
   const flipped = ((from ?? a)?.side === 'enemy') !== !!act.flip;
   img.setFlipX(flipped);
   const dir = flipped ? -1 : 1;
@@ -36,10 +39,10 @@ export function playProp(h: ActHost, spotOf: SpotOf, act: Extract<Act, { do: 'pr
     const sh = h.scene.add.image(target.x, a ? a.feet.y : H * 0.84, SHADOW_KEY).setDepth(GROUND_DEPTH).setTint(0x1a1020);
     h.add(act.dur, (t) => sh.setDisplaySize(size * (0.3 + 0.7 * Math.min(1, t * 1.6)), size * 0.3 * (0.3 + 0.7 * Math.min(1, t * 1.6))).setAlpha(0.5 * fadeIO(t, 0.1, 0.3)), () => sh.destroy());
   }
-  const step = (t: number) => {
+  const body = (t: number) => {
     switch (act.path) {
       case 'fall': {
-        const e = easeIn(Math.min(1, t / 0.7));
+        const e = m.prog;
         set(target.x, -size + (target.y + size) * e, 1, t > 0.85 ? (1 - t) / 0.15 : 1);
         img.setRotation(spin * t);
         return;
@@ -54,7 +57,7 @@ export function playProp(h: ActHost, spotOf: SpotOf, act: Extract<Act, { do: 'pr
         img.setOrigin(0.5, act.spot === 'feet' || !act.spot ? 1 : 0.5);
         const x0 = dir > 0 ? -size : W + size;
         const x1 = dir > 0 ? W + size : -size;
-        set(x0 + (x1 - x0) * t, target.y, 1, fadeIO(t, 0.05, 0.1));
+        set(x0 + (x1 - x0) * m.prog, target.y, 1, fadeIO(t, 0.05, 0.1));
         return;
       }
       case 'orbit': {
@@ -75,7 +78,7 @@ export function playProp(h: ActHost, spotOf: SpotOf, act: Extract<Act, { do: 'pr
         return;
       case 'throw':
       case 'fly': {
-        const e = act.path === 'throw' ? t : easeIn(t);
+        const e = m.prog;
         const arc = act.path === 'throw' ? (act.arc ?? 90) : (act.arc ?? 0);
         set(start.x + (target.x - start.x) * e, start.y + (target.y - start.y) * e - Math.sin(Math.PI * t) * arc, 1, t > 0.92 ? (1 - t) / 0.08 : 1);
         img.setRotation(spin * t);
@@ -93,6 +96,20 @@ export function playProp(h: ActHost, spotOf: SpotOf, act: Extract<Act, { do: 'pr
       case 'hover':
         set(target.x, target.y + Math.sin(t * Math.PI * 4) * 6, 1, fadeIO(t));
         return;
+    }
+  };
+  // The secondary motion (ui/propMotion.ts) is computed once a frame; the path draws with it.
+  const raw = (t: number) => (act.path === 'fall' ? t / 0.7 : t);
+  const hitAt = act.path === 'fall' ? 0.7 : 0.92;
+  let lastTrail = 0;
+  const step = (t: number) => {
+    m = propFrame(mods, t, raw(t), hitAt);
+    img.setRotation(0);
+    body(t);
+    if (act.path !== 'stretch') img.setRotation(img.rotation + m.rot);
+    if (mods.trail && t * act.dur - lastTrail >= mods.trail.every) {
+      lastTrail = t * act.dur;
+      h.bursts.play(mods.trail.ref, { x: img.x, y: img.y }, { mirror: flipped, tint: null, more: 1 });
     }
   };
   step(0);

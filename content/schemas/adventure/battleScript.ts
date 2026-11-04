@@ -13,13 +13,20 @@ import { POSE_ART_VALUES } from './battlePoses';
 export const WHO_VALUES = ['actor', 'target', 'targets', 'allies', 'foes', 'allyside', 'foeside', 'field'] as const;
 /** Where on a unit (or on the screen, for `field`) an act starts. */
 export const SPOT_VALUES = ['chest', 'feet', 'head', 'above', 'front', 'behind', 'sky', 'middle', 'center'] as const;
+/** Named cast keyframe tracks (ANIM-005, ui/castTracks.ts): one per way of gathering power, by body. */
+export const CAST_PRESET_VALUES = [
+  'cast_charge', 'cast_raise', 'cast_roar', 'cast_stomp', 'cast_spin', 'cast_hover', 'cast_sprout', 'cast_coil', 'cast_bow', 'cast_wing',
+] as const;
+export const EASE_VALUES = ['linear', 'outQuad', 'inQuad', 'inOutQuad', 'outBack', 'spring'] as const;
 /** Ways a body moves (actor_moves, decision 044). */
 export const MOVE_VALUES = [
+  ...CAST_PRESET_VALUES,
   'dash', 'dash_through', 'lunge', 'recoil', 'hop', 'jump', 'lift', 'knock', 'spin', 'spin_roll', 'vanish', 'appear', 'exit_top', 'dive',
   'wiggle', 'puff_up', 'squash', 'shake', 'walk_sideways', 'rear', 'sink', 'float', 'tilt', 'look', 'bounce',
 ] as const;
 /** Paths a big object (`fxp_…`) travels (prop_actor). */
 export const PROP_PATHS = ['fall', 'rise', 'sweep', 'orbit', 'pop', 'grow', 'throw', 'fly', 'stretch', 'hover'] as const;
+export const PROP_EASE_VALUES = ['linear', 'inQuad', 'outQuad', 'inOutSine', 'inBack', 'outBack', 'spring'] as const;
 export const DECAL_KINDS = ['puddle', 'scorch', 'crack', 'rune', 'ring'] as const;
 
 /** A colour, or the colour of the beat's look (`$color`) or its glow (`$glow`). */
@@ -38,6 +45,25 @@ const base = {
 export const HIT_STOP_TIERS = ['light', 'medium', 'heavy', 'ultimate'] as const;
 const lasting = { ...base, dur: nonNeg.max(4000) };
 
+/** The secondary motion of a prop (ANIM-007, ui/propMotion.ts); each path has its defaults, these override them. */
+const propMods = z.strictObject({
+  ease: z.enum(PROP_EASE_VALUES).optional(),
+  /** Rocks by `rot` degrees at `freq` Hz. */
+  wobble: z.strictObject({ rot: z.number().finite().min(0).max(45), freq: z.number().finite().positive().max(10) }).optional(),
+  /** Breathes in size by `amp` (share) at `freq` Hz. */
+  pulse: z.strictObject({ amp: z.number().finite().min(0).max(0.5), freq: z.number().finite().positive().max(10) }).optional(),
+  /** Stretched along the way it goes, the faster the more. */
+  stretch: z.boolean().optional(),
+  /** Bobs up and down by `amp` px at `freq` Hz. */
+  bobY: z.strictObject({ amp: z.number().finite().min(0).max(60), freq: z.number().finite().positive().max(10) }).optional(),
+  /** Squashes when it lands. */
+  squashOnHit: z.boolean().optional(),
+  /** Leaves a burst `ref` behind every `every` ms. */
+  trail: z.strictObject({ ref: fxRef, every: nonNeg.min(20).max(1000) }).optional(),
+});
+export type PropMods = z.output<typeof propMods>;
+export type PropEase = (typeof PROP_EASE_VALUES)[number];
+
 export const actSchema = z.discriminatedUnion('do', [
   /** Shows a key pose for a while. */
   z.strictObject({ do: z.literal('pose'), ...lasting, pose: z.enum(POSE_ART_VALUES) }),
@@ -51,6 +77,25 @@ export const actSchema = z.discriminatedUnion('do', [
     deg: z.number().finite().optional(),
     scale: z.number().finite().positive().optional(),
     n: z.number().finite().positive().optional(),
+  }),
+  /** Keyframes of the body over `dur` (ANIM-005): t 0..1 ascending, each key an offset (px, deg, scale) eased in from the one before; the last key is rest. */
+  z.strictObject({
+    do: z.literal('track'),
+    ...lasting,
+    keys: z
+      .array(
+        z.strictObject({
+          t: z.number().finite().min(0).max(1),
+          dx: z.number().finite().optional(),
+          dy: z.number().finite().optional(),
+          rot: z.number().finite().optional(),
+          sx: z.number().finite().positive().optional(),
+          sy: z.number().finite().positive().optional(),
+          ease: z.enum(EASE_VALUES).optional(),
+        }),
+      )
+      .min(2)
+      .max(16),
   }),
   /** Lights the body up in a colour (`tint`: the picture itself is coloured). */
   z.strictObject({ do: z.literal('glow'), ...lasting, color: paint, bright: z.number().finite().min(0).max(3).optional(), tint: z.boolean().optional() }),
@@ -93,9 +138,23 @@ export const actSchema = z.discriminatedUnion('do', [
     flip: z.boolean().optional(),
     /** Drawn under the fighters. */
     under: z.boolean().optional(),
+    ...propMods.shape,
   }),
   /** A straight beam from the actor to the unit (`through`: on to the edge of the screen). */
   z.strictObject({ do: z.literal('beam'), ...lasting, color: paint, width: nonNeg.max(200).optional(), through: z.boolean().optional() }),
+  /** A wave of water or wind sweeping across the stage (ANIM-006): `amp` / `thickness` / `length` as shares of the screen. */
+  z.strictObject({
+    do: z.literal('ribbon'),
+    ...lasting,
+    color: paint,
+    amp: z.number().finite().min(0).max(0.4).optional(),
+    freq: z.number().finite().positive().max(8).optional(),
+    speed: z.number().finite().min(0).max(20).optional(),
+    thickness: z.number().finite().positive().max(0.5).optional(),
+    length: z.number().finite().positive().max(1.2).optional(),
+    foam: z.boolean().optional(),
+    flip: z.boolean().optional(),
+  }),
   /** A wavy line from the actor to the unit, particles running along it. */
   z.strictObject({ do: z.literal('tether'), ...lasting, color: paint, wave: nonNeg.max(60).optional(), ref: fxRef.optional() }),
   /** A cone blown from the actor's mouth over the unit. */

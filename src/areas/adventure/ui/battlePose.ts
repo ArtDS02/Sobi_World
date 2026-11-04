@@ -10,7 +10,11 @@ import { ENTER_MS, type PlayingStep } from './battleFxView';
 import type { ReactionKind } from './battleMotion';
 import { addMoves, easeOutBack, settle, type MoveAcc } from './battleMoves';
 import { stepScript, type Side } from './battleScript';
+import { CAST_BY_BODY, CAST_TRACKS, trackFor } from './castTracks';
 import { BODY, bodyOf, lookOf } from './motionProfiles';
+
+/** How long after its release a cast keeps settling (ms). */
+const CAST_SETTLE_MS = 360;
 
 export interface Pt {
   x: number;
@@ -162,27 +166,24 @@ export function poseOf(id: string, a: PoseAnchor, anchors: ReadonlyMap<string, P
         sx *= 1 + 0.12 * k;
       }
     } else if (b.pose === 'cast' || b.pose === 'support' || b.pose === 'ultimate') {
-      // Lean back while the power gathers, thrust forward as it leaves, settle.
+      // The cast of the body (ANIM-005): draw back, hold, let go, settle - a keyframe track by body plan (a bow for a support skill).
+      const end = b.release + Math.min(CAST_SETTLE_MS, Math.max(1, b.end - b.release));
+      if (t >= b.cast && t <= end) {
+        const tr = trackFor(CAST_TRACKS[b.pose === 'support' ? 'cast_bow' : CAST_BY_BODY[plan]], (t - b.cast) / Math.max(1, end - b.cast), a.width, dir);
+        dx += tr.dx;
+        dy += tr.dy;
+        rot += tr.rot;
+        sx *= tr.sx;
+        sy *= tr.sy;
+        air += Math.max(0, -tr.dy);
+      }
       if (t >= b.cast && t < b.release) {
-        rot += -dir * 5 * easeOut(wind);
-        dx += -dir * 8 * wind;
-        sy *= 1 - 0.06 * easeOut(wind);
-        sx *= 1 + 0.04 * easeOut(wind);
         bright = Math.max(bright, 1 + 0.35 * wind);
         glow = lookOf(b.element, b.skillId).glow;
         if (b.pose === 'ultimate') {
           sx *= 1 + 0.08 * wind;
           sy *= 1 + 0.08 * wind;
         }
-      } else if (t >= b.release) {
-        // Thrown out with a spring: it leans past rest and rings out instead of just easing back.
-        const k = 1 - settle(clamp01((t - b.release) / Math.max(1, b.end - b.release)));
-        rot += dir * 7 * k;
-        dx += dir * 14 * k;
-        dy -= 6 * k;
-        air += 6 * Math.max(0, k);
-        sy *= 1 + 0.07 * k;
-        sx *= 1 - 0.05 * k;
       }
       if (b.pose === 'ultimate' && t < b.cast) {
         sx *= 1.1;

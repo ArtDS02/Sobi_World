@@ -1281,6 +1281,21 @@ $adv-pink: #ef5a78;
   to { box-shadow: inset 0 0 0 2px #fff, 0 0 16px 3px rgba(255, 170, 60, 0.65); }
 }
 
+// ---- the HUD phases (ANIM-010, ui/battleHud.ts): while a skill plays the dock slides away, the name plates keep only their health and the
+// turn bar shrinks; only transform / opacity move, so the layout never jumps and the dock still takes clicks while it slides.
+.adventure-ui__battle {
+  &.is-dock-hidden .adventure-ui__dock { opacity: 0; transform: translateY(110%); pointer-events: none; > * { pointer-events: none; } }
+  &.is-dock-compact .adventure-ui__dock { transform: translateY(14%); }
+  &.is-plates-hp-only .adventure-ui__plate-name, &.is-plates-hp-only .adventure-ui__plate-sub { opacity: 0; }
+  &.is-hud-resolving .adventure-ui__turnbar, &.is-hud-result .adventure-ui__turnbar { transform: scale(0.82); transform-origin: top center; }
+  &.is-hud-moving.is-dock-hidden .adventure-ui__dock { animation: adventure-dock-out 0.22s ease-in both; }
+  &.is-hud-moving:not(.is-dock-hidden) .adventure-ui__dock { animation: adventure-dock-in 0.22s ease-out both; }
+  &.is-hud-moving.is-plates-hp-only .adventure-ui__plate-name, &.is-hud-moving.is-plates-hp-only .adventure-ui__plate-sub { animation: adventure-plate-out 0.18s ease-in both; }
+}
+@keyframes adventure-dock-out { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(110%); } }
+@keyframes adventure-dock-in { from { opacity: 0; transform: translateY(110%); } to { opacity: 1; transform: translateY(0); } }
+@keyframes adventure-plate-out { from { opacity: 1; } to { opacity: 0; } }
+
 @keyframes adventure-reticle-in {
   from { opacity: 0; scale: 1.6; }
   to { opacity: 1; scale: 1; }

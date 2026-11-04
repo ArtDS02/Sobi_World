@@ -8,6 +8,7 @@ import type { ScriptCue } from '../../ui/battleScript';
 import { AIR_DEPTH, GROUND_DEPTH, type Bursts } from './fxBursts';
 import { beam, cone, tether } from './fxLines';
 import { playProp } from './fxProps';
+import { playRibbon } from './fxRibbon';
 import type { FxAnchor, Timed } from './fxPlayer';
 import type { ScreenFx } from './screenFx';
 import { SHADOW_KEY, VIGNETTE_KEY, decalKey, shapeKey } from './fxTextures';
@@ -97,6 +98,8 @@ export class ActPlayer {
       case 'beam':
         if (from && a) beam(this.h, from, a, act.color as number, act.width ?? 26, act.dur, !!act.through);
         return;
+      case 'ribbon':
+        return playRibbon(this.h, act, a, from);
       case 'tether':
         if (from && a) tether(this.h, from, a, act.color as number, act.wave ?? 14, act.dur, act.ref ?? null);
         return;

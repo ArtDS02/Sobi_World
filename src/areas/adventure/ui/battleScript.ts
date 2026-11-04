@@ -30,7 +30,7 @@ export interface BodyMove {
   unit: string;
   at: number;
   dur: number;
-  act: Extract<Act, { do: 'move' | 'pose' | 'glow' }>;
+  act: Extract<Act, { do: 'move' | 'pose' | 'glow' | 'track' }>;
   /** The unit it moves towards (a dash, a look), when it has one. */
   toward: string | null;
 }
@@ -42,7 +42,7 @@ export interface StepScript {
   scripted: Set<string>;
 }
 
-const BODY_ACTS = new Set(['move', 'pose', 'glow']);
+const BODY_ACTS = new Set(['move', 'pose', 'glow', 'track']);
 
 /** The spot in the middle of a side (`@ally`, `@enemy`): the battle scene measures it from the units standing there. */
 export const sideSpot = (side: Side) => `@${side}`;
@@ -153,7 +153,7 @@ export function stepScript(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 
     const raw = b.delivery ? timingOf(b.pose, b.delivery, b.skillId).impact : 0;
     const kb = raw > 0 ? (b.impact - b.cast) / raw : k;
     run(c, acts, b.cast, kb, b.actor, b.targets, look, skillFx(b.skillId)?.stagger ?? 0);
-    if (own && acts.some((a) => a.who === 'actor' && (a.do === 'move' || a.do === 'pose'))) out.scripted.add(b.actor);
+    if (own && acts.some((a) => a.who === 'actor' && (a.do === 'move' || a.do === 'pose' || a.do === 'track'))) out.scripted.add(b.actor);
   }
   const neutral = lookOf(null);
   const lookOfUnit = (unit: string, at: number) => {

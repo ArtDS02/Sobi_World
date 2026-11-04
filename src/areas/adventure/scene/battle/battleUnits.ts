@@ -7,6 +7,7 @@ import type { PoseArt } from '../../../../../content/schemas/adventure/battleFx'
 import type { BodyPose } from '../../ui/battlePose';
 import { poseArts } from '../../ui/motionProfiles';
 import { VEINS_TINT } from '../foeMarks';
+import { SHADOW_KEY } from './fxTextures';
 
 /** One fighter as the DOM laid it out (game px). */
 export interface StageUnit {
@@ -19,6 +20,8 @@ export interface StageUnit {
   height: number;
   down: boolean;
   aimable: boolean;
+  /** It is this unit's turn to act (the DOM's `is-active`). */
+  active?: boolean;
   /** The statuses it carries now (decision 044 status_overlay). */
   statuses: readonly string[];
   /** An enemy's corruption 1–5 (decision 045), 0 when none. */
@@ -33,10 +36,14 @@ interface Body {
   /** Corruption marks (decision 045): violet veins on the ground from 3, a crystal cluster behind it from 4. */
   veins: Phaser.GameObjects.Image;
   spikes: Phaser.GameObjects.Image;
+  /** The dark spot on the ground under the feet: it stays on the ground while the body jumps (shrinking and fading with the height). */
+  shadow: Phaser.GameObjects.Image;
 }
 
 const VEINS = 'fx_corrupt_veins';
 const SPIKES = 'fx_corrupt_spikes';
+
+const everyImage = (b: Body) => [b.main, b.light, b.glow, b.veins, b.spikes, b.shadow];
 
 const grey = (k: number) => {
   const c = Math.round(255 - k * 120);
@@ -81,13 +88,21 @@ export class BattleUnits {
     const ids = new Set(units.map((u) => u.id));
     for (const [id, b] of this.bodies) {
       if (ids.has(id)) continue;
-      for (const img of [b.main, b.light, b.glow, b.veins, b.spikes]) img.destroy();
+      for (const img of everyImage(b)) img.destroy();
       this.bodies.delete(id);
     }
     for (const u of units) {
       if (this.bodies.has(u.id)) continue;
       const make = () => this.scene.add.image(0, 0, '__MISSING').setOrigin(0.5, 1).setVisible(false);
-      const b: Body = { art: u.art, main: make(), light: make().setBlendMode(Phaser.BlendModes.ADD), glow: make().setBlendMode(Phaser.BlendModes.ADD), veins: make().setOrigin(0.5), spikes: make() };
+      const b: Body = {
+        art: u.art,
+        main: make(),
+        light: make().setBlendMode(Phaser.BlendModes.ADD),
+        glow: make().setBlendMode(Phaser.BlendModes.ADD),
+        veins: make().setOrigin(0.5),
+        spikes: make(),
+        shadow: make().setOrigin(0.5),
+      };
       this.bodies.set(u.id, b);
     }
   }
@@ -102,7 +117,7 @@ export class BattleUnits {
     const posture: PoseArt = u.down ? 'ko' : (pose?.posture ?? 'idle');
     const key = this.texture(u.art, posture);
     if (!key) {
-      for (const img of [b.main, b.light, b.glow, b.veins, b.spikes]) img.setVisible(false);
+      for (const img of everyImage(b)) img.setVisible(false);
       return;
     }
     for (const img of [b.main, b.light, b.glow]) if (img.texture.key !== key) img.setTexture(key);
@@ -110,7 +125,7 @@ export class BattleUnits {
     const th = b.main.height || 1;
     // Fitted into the box the DOM gave it, standing on its feet (object-fit: contain, bottom).
     const fit = Math.min(u.width / tw, u.height / th);
-    const p = pose ?? { dx: 0, dy: 0, rot: 0, sx: 1, sy: 1, bright: 1, gray: 0, opacity: 1, glow: null, tint: null, posture };
+    const p = pose ?? { dx: 0, dy: 0, rot: 0, sx: 1, sy: 1, bright: 1, gray: 0, opacity: 1, glow: null, tint: null, posture, air: 0 };
     const gray = u.down ? 1 : p.gray;
     const opacity = u.down ? 0.4 : p.opacity;
     const depth = 1000 + u.feet.y;
@@ -139,6 +154,26 @@ export class BattleUnits {
       .setTintFill(glow ?? 0xffffff)
       .setAlpha(glowAlpha * opacity);
     this.marks(u, b, fit, p.dx, opacity, depth);
+    this.shadow(u, b, p, opacity, depth);
+  }
+
+  /** The shadow stays where the feet would land; the higher the body, the smaller and fainter it is. */
+  private shadow(u: StageUnit, b: Body, p: BodyPose, opacity: number, depth: number) {
+    if (!this.scene.textures.exists(SHADOW_KEY)) {
+      b.shadow.setVisible(false);
+      return;
+    }
+    const lift = Math.min(1, p.air / 140);
+    // The body's squash widens it a little: a squashed body sits wider on the ground.
+    const w = u.width * 0.78 * (1 - 0.35 * lift) * Math.min(1.25, Math.max(0.85, p.sx));
+    if (b.shadow.texture.key !== SHADOW_KEY) b.shadow.setTexture(SHADOW_KEY);
+    b.shadow
+      .setVisible(true)
+      .setPosition(u.feet.x + p.dx, u.feet.y + p.dy + p.air - 2)
+      .setDisplaySize(w, w * 0.2)
+      .setTintFill(0x000000)
+      .setDepth(depth - 0.5)
+      .setAlpha(0.55 * (1 - 0.6 * lift) * opacity);
   }
 
   /** The veins under a corrupted enemy's feet and the spikes at its back (it looks at the other side); they stay when it moves. */
@@ -162,6 +197,6 @@ export class BattleUnits {
   }
 
   hideAll() {
-    for (const b of this.bodies.values()) for (const img of [b.main, b.light, b.glow, b.veins, b.spikes]) img.setVisible(false);
+    for (const b of this.bodies.values()) for (const img of everyImage(b)) img.setVisible(false);
   }
 }

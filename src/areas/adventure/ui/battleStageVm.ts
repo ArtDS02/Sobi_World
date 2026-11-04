@@ -31,6 +31,7 @@ export function measureStage(root: HTMLElement, cache: StageCache, drawn: number
       height: r.height,
       down: unit.classList.contains('is-down'),
       aimable: unit.classList.contains('is-aimable'),
+      active: unit.classList.contains('is-active'),
       statuses: unit.dataset.statuses ? unit.dataset.statuses.split(',') : [],
       corruption: Number(unit.dataset.corruption ?? 0) || 0,
     });

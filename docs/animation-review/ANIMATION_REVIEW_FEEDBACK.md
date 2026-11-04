@@ -219,7 +219,8 @@ Ghi chú dev: ĐIỀU CHỈNH. Gốc lỗi sửa ở `ui/battleMotion.ts::circle
 - Asset cần thêm: `A04_cast_circles.md`.
 
 ### [ANIM-005] Keyframe pose track + preset cast theo dạng thân
-- [ ] Chưa làm
+- [x] Đã làm (B2)
+Ghi chú dev: ĐIỀU CHỈNH. `ui/castTracks.ts` (thuần): `sampleTrack`, 6 ease, 10 preset `cast_*` (hằng `CAST_TRACKS`), `CAST_BY_BODY` (6 dạng thân -> 6 preset khác nhau), biên độ nhân `width/160`, lật theo hướng nhìn. Act `track` {keys} + move `cast_*` trong schema; `battleMoves.addMoves` xử lý cả hai; `battlePose` cast mặc định nay dùng preset theo thân (support = `cast_bow`) thay chuỗi nghiêng cố định; skill có `track`/`cast_*` thì tính là `scripted`. Test `castTracks.test.ts` (mọi track về pose 0, kể cả track trong JSON). CHƯA làm: dropdown xem preset trong Admin lab; gán preset riêng cho từng skill (ANIM-020/021); `cast_spin` kết thúc ở 360° (≡ 0, test so modulo 360).
 - Ưu tiên: P1
 - Nhóm: Cast
 - Đối tượng: tất cả
@@ -345,7 +346,8 @@ Ghi chú dev: ĐIỀU CHỈNH. Gốc lỗi sửa ở `ui/battleMotion.ts::circle
 ### Nhóm Skill (chung)
 
 ### [ANIM-006] Ribbon/Mesh VFX (nền móng cho nước, gió, xúc tu, roi, cờ)
-- [ ] Chưa làm
+- [x] Đã làm (B2)
+Ghi chú dev: ĐIỀU CHỈNH. `ui/ribbonMotion.ts` (thuần, có test): n≤20 điểm, envelope đầu cao/đuôi thấp (đuôi 27%), quán tính từng điểm. Act `ribbon` {color, amp, freq, speed, thickness, length, foam, flip} + `scene/battle/fxRibbon.ts`: VẼ BẰNG GRAPHICS (dải tô + viền trắng + bọt ở đầu) chạy cả WebGL/Canvas, tối đa 3 ribbon cùng lúc; `reduce` không phát acts nên bỏ ribbon. CHƯA dùng Phaser Rope + texture (chờ asset A05_water_kit) và chưa gắn vào skill nước nào (ANIM-040).
 - Ưu tiên: P1
 - Nhóm: Skill
 - Đối tượng: skill nước (xem ANIM-040), `fxp_octo_tentacle`, roi dây (vine_lash, binding_roots), `tether` act
@@ -357,7 +359,8 @@ Ghi chú dev: ĐIỀU CHỈNH. Gốc lỗi sửa ở `ui/battleMotion.ts::circle
 - Asset cần thêm: `A05_water_kit.md`.
 
 ### [ANIM-007] Prop motion modifier (chuyển động phụ cho vật thể bay)
-- [ ] Chưa làm
+- [x] Đã làm (B2)
+Ghi chú dev: ĐIỀU CHỈNH. `ui/propMotion.ts` (thuần, có test): `propFrame` trả prog đã ease, dy (bobY), rot (wobble), sx/sy (pulse, stretch theo độ dốc ease, squashOnHit). Mặc định theo path đúng spec (sweep inOutSine+wobble 3°@2.5Hz+bob 6px@3Hz; fall inBack+squash; throw/fly stretch). Schema prop thêm `ease,wobble,pulse,stretch,bobY,squashOnHit,trail`; `fxProps.ts` dùng khung này cho mọi prop (đổi cảm giác toàn bộ 95 act — cần xem lại bằng mắt). Khác đề xuất: throw mặc định ease `linear` (giữ parabol), fly `inQuad` (như cũ). `trail` chạy qua burst mỗi `every` ms. Chưa chỉnh JSON từng skill.
 - Ưu tiên: P1
 - Nhóm: Skill
 - Đối tượng: mọi act `prop` (95 act trong 112 skill)
@@ -644,7 +647,8 @@ Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json act
 ### Nhóm Turn-HUD
 
 ### [ANIM-010] HUD state machine + dock/plate co giãn
-- [ ] Chưa làm
+- [x] Đã làm (B2)
+Ghi chú dev: ĐIỀU CHỈNH. `ui/battleHud.ts` (thuần, có test): `hudPhase` (idle/turnStart/choosing/aiming/resolving/result theo độ ưu tiên), bảng `HUD_LAYOUT` (dock open/compact/hidden, turnbar full/mini, plates full/hp-only), `hudTracker` ghi mốc đổi phase, `hudMoving` (220ms, tắt khi reduceMotion). `battleView` gắn class `is-hud-*`/`is-dock-*`/`is-plates-*`/`is-hud-moving` lên `.adventure-ui__battle`; `_adventure.scss`: dock trượt ra khi skill chạy (animation transform/opacity, pointer-events tắt khi ẩn), plate chỉ giữ HP, thanh lượt thu 0.82. Dùng CSS animation (không transition) vì `patch()` thay cả node khi markup đổi. Cần xác nhận bằng mắt không bị giật khi DOM dựng lại.
 - Ưu tiên: P1
 - Nhóm: Turn-HUD
 - Đối tượng: dock lệnh (`__dock`), nameplate (`__plate`), thanh lượt (`__turnbar`), nút công cụ
@@ -656,7 +660,8 @@ Ghi chú dev: ĐIỀU CHỈNH (chỉ phần P0 'bỏ rung'). `battle_fx.json act
 - Asset cần thêm: không.
 
 ### [ANIM-011] Dấu hiệu "đến lượt" trên sân (animal & quái)
-- [ ] Chưa làm
+- [x] Đã làm (B2)
+Ghi chú dev: ĐIỀU CHỈNH. `scene/battle/turnMarker.ts`: vòng nhịp dưới chân + mũi tên nảy trên đầu (vẽ bằng code, vàng cho ta / tím cho quái; hằng `TURN_MARKER`), biến mất khi step bắt đầu chiếu hoặc unit gục, đứng yên khi reduce. `StageUnit.active` đọc từ class DOM `is-active` (`battleStageVm.ts`). CHƯA làm: thay bằng art `A07`, hoạt cảnh bắt đầu lượt (ANIM-080).
 - Ưu tiên: P1
 - Nhóm: Turn-HUD
 - Đối tượng: mọi unit khi đến lượt (kể cả quái)

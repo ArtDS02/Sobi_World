@@ -15,6 +15,7 @@ import { BattleUnits, type StageUnit } from './battleUnits';
 import { FxPlayer, type FxAnchor } from './fxPlayer';
 import { ensureFxTextures } from './fxTextures';
 import { StatusBadges } from './statusBadges';
+import { TurnMarker } from './turnMarker';
 
 export const BATTLE_SCENE_KEY = 'adventure-battle';
 
@@ -56,6 +57,7 @@ export class BattleScene extends Phaser.Scene {
   private asked = new Set<string>();
   private last = 0;
   private badges!: StatusBadges;
+  private turn!: TurnMarker;
   /** The stage holds still until then (hit stop, performance.now ms). */
   private holdUntil = 0;
   /** Real ms the stage has lost to slow motion so far; the step's clock is `now - lost` (ANIM-004, one clock for cues and poses). */
@@ -76,6 +78,7 @@ export class BattleScene extends Phaser.Scene {
     this.units = new BattleUnits(this, (id) => this.want(id));
     this.fx = new FxPlayer(this, { hold: (ms) => (this.holdUntil = Math.max(this.holdUntil, performance.now() + ms)), pictures: () => this.units.pictures() });
     this.badges = new StatusBadges(this, (id) => this.want(id));
+    this.turn = new TurnMarker(this);
     // The sprites of the particles and the status badges are small: loaded up front so a burst never starts with the drawn shape.
     for (const b of Object.values(BATTLE_FX.particles)) if (b.art) this.want(b.art);
     for (const st of Object.values(BATTLE_FX.statuses)) if (st) this.want(st.icon);
@@ -110,6 +113,7 @@ export class BattleScene extends Phaser.Scene {
       }
       this.units.hideAll();
       this.badges.hideAll();
+      this.turn.hide();
       return;
     }
     const base = this.game.canvas.getBoundingClientRect();
@@ -197,5 +201,8 @@ export class BattleScene extends Phaser.Scene {
     }
     this.fx.update(holding ? 0 : dt * scale, this.scale.width, this.scale.height);
     this.fx.screen.update(now);
+    // Whose turn it is, until a step starts playing (ANIM-011).
+    const playing = t >= 0 && t <= p.motion.total + 200;
+    this.turn.update(playing ? null : (units.find((u) => u.active) ?? null), fxAnchors, now, s.reduce);
   }
 }

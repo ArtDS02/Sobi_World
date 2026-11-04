@@ -16,6 +16,9 @@ import { ACTION_ART } from './vmKit';
 import { choose } from './battleCommand';
 import { commands, party } from './battleDock';
 import { sideMarker, turnBar, unitOnField } from './battleField';
+import { HUD_LAYOUT, hudMoving, hudPhase, hudTracker } from './battleHud';
+
+const trackHud = hudTracker();
 
 
 /** The battle on screen; `replay` = a battle just won, played to its last blow under the battle board (no commands). */
@@ -38,10 +41,17 @@ export function renderBattle(ctx: ViewCtx, replay?: Run): HTMLElement {
     live && u.down && step.motion.reactions.some((r) => r.unit === u.id && r.kind === 'ko');
   const aim = state.aim?.action ?? null;
   const sideAim = aim && (aim.aim === 'enemies' || aim.aim === 'allies' || aim.aim === 'all');
+  // The HUD phase (ANIM-010): classes only, so the CSS moves the dock and the plates with transform / opacity.
+  const reduce = !!ctx.world.settings.reduceMotion;
+  const now = performance.now();
+  const phase = hudPhase({ resolving: live, ended: !!replay, aiming: !!aim, turn: actor ? (mine ? 'ally' : 'enemy') : null });
+  const hud = trackHud(phase, now);
+  const layout = HUD_LAYOUT[hud.phase];
+  const hudClass = replay ? '' : ` is-hud-${hud.phase} is-dock-${layout.dock} is-plates-${layout.plates}${hudMoving(hud.changedAt, now, reduce) ? ' is-hud-moving' : ''}`;
   return el(
     'div',
     {
-      class: `adventure-ui__battle${state.fast ? ' is-fast' : ''}${aim ? ' is-aiming' : ''}${replay ? ' is-replay' : ''}`,
+      class: `adventure-ui__battle${state.fast ? ' is-fast' : ''}${aim ? ' is-aiming' : ''}${replay ? ' is-replay' : ''}${hudClass}`,
     },
     replay ? null : turnBar(vm),
     replay
