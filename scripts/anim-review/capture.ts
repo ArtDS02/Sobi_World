@@ -2,12 +2,14 @@
 // Plays each case of the Battle Lab on a controlled clock, takes frames at the step's own beats plus an even grid, joins them into a
 // contact sheet and writes docs/animation-review/capture/runs/<runId>/ with manifest.json + CAPTURE_MANIFEST.md (templates/MANIFEST_SPEC.md).
 // Read-only: no content is saved, no save file is opened. Rules against stale evidence: docs/animation-review/ANTI_CACHE.md.
+import type { PNG } from 'pngjs';
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { buildCases, SUITES, type Suite } from './lib/cases';
 import { canary, determinism } from './lib/gates';
 import { flagsOf, measure, type CaseMetrics } from './lib/metrics';
 import { decode, diff } from './lib/png';
+import { shapeChange } from './lib/shape';
 import { startServer } from './lib/server';
 import { frameAt, openBrowser, openLab, prepare, type LabCase, type LabInfo } from './lib/session';
 import { contactSheet, type Cell } from './lib/sheet';
@@ -214,8 +216,10 @@ async function runCase(browser: Awaited<ReturnType<typeof openBrowser>>['browser
     let maxAt = 0;
     let prevImg = first;
     const afterRelease = info.beats[0]?.release ?? 0;
+    const shown: PNG[] = [];
     for (const f of frames.slice(1)) {
       const img = decode(f.png);
+      if (f.t >= afterRelease && f.t <= info.total) shown.push(img);
       const step = diff(prevImg, img);
       if (f.t >= afterRelease && step.fraction > 0.002) changedFrames += 1;
       const fromFirst = diff(first, img).fraction;
@@ -225,7 +229,9 @@ async function runCase(browser: Awaited<ReturnType<typeof openBrowser>>['browser
       }
       prevImg = img;
     }
-    const metrics = measure(info, c.group, { changedFrames, frameCount: frames.length, maxChangeVsStart: Number(maxChange.toFixed(4)) }, lab.errors.filter((e) => !/status of 404/.test(e) || lab.missing.length > 0), lab.missing);
+    // Whether the effect changes shape while it shows, or is a still picture moved (lib/shape.ts).
+    const shape = shapeChange(first, shown);
+    const metrics = measure(info, c.group, { changedFrames, frameCount: frames.length, maxChangeVsStart: Number(maxChange.toFixed(4)), shapeIoU: shape.medianIoU, shapeSamples: shape.samples }, lab.errors.filter((e) => !/status of 404/.test(e) || lab.missing.length > 0), lab.missing);
     const picked = pick(frames);
     const dims = decode(picked[0]!.png);
     const cells: Cell[] = picked.map((f) => ({ png: f.png, width: dims.width, height: dims.height, label: `t=${f.t} ms - ${f.label}` }));
@@ -278,10 +284,10 @@ function manifestMd(m: Manifest): string {
   const bad = cases.filter((c) => c.status !== 'ok' || (c.flags?.length ?? 0) > 0);
   L.push(`## Case có cờ (${bad.length}/${cases.length})`, '', '| case | cờ [Auto] | ghi chú |', '|---|---|---|');
   for (const c of bad) L.push(`| \`${c.caseId}\` | ${(c.flags ?? []).join(', ')} | ${c.status === 'error' ? 'ERROR' : c.duplicates ? `trùng cấu trúc với ${c.duplicates.join(', ')}` : ''} |`);
-  L.push('', `## Mọi case`, '', '| case | status | sheet | thời lượng | hit-stop | lấy đà | lớp VFX | khung đổi |', '|---|---|---|---|---|---|---|---|');
+  L.push('', `## Mọi case`, '', '| case | status | sheet | thời lượng | hit-stop | lấy đà | lớp VFX | khung đổi | hình (IoU) |', '|---|---|---|---|---|---|---|---|---|');
   for (const c of cases) {
     const x = c.metrics;
-    L.push(`| \`${c.caseId}\` | ${c.status} | ${c.sheet ? `\`${c.sheet}\`` : '-'} | ${x?.durationMs ?? '-'} | ${x?.hitStopMs ?? '-'} | ${x?.anticipationMs ?? '-'} | ${x?.layerClasses.length ?? '-'} | ${x ? `${x.changedFrames}/${x.frameCount}` : '-'} |`);
+    L.push(`| \`${c.caseId}\` | ${c.status} | ${c.sheet ? `\`${c.sheet}\`` : '-'} | ${x?.durationMs ?? '-'} | ${x?.hitStopMs ?? '-'} | ${x?.anticipationMs ?? '-'} | ${x?.layerClasses.length ?? '-'} | ${x ? `${x.changedFrames}/${x.frameCount}` : '-'} | ${x?.shapeIoU ?? '-'} (${x?.shapeSamples ?? 0}) |`);
   }
   L.push('', `## Không chụp được (absent)`, '', m.absent.length > 0 ? m.absent.map((a) => `- \`${a.caseId}\`: ${a.reason}`).join('\n') : '(không)', '');
   L.push(`## Sheet tổng`, '', Object.keys(m.overview).length > 0 ? Object.entries(m.overview).map(([k, v]) => `- ${k}: \`${v}\``).join('\n') : '(không)', '');

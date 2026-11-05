@@ -45,12 +45,15 @@ export interface CaseMetrics {
   changedFrames: number;
   frameCount: number;
   maxChangeVsStart: number;
+  /** Median IoU of the main blob's normalised shape between following frames after the release (lib/shape.ts); null: no big blob. */
+  shapeIoU: number | null;
+  shapeSamples: number;
   consoleErrors: string[];
   missingAssets: string[];
   overflowFrames: null;
 }
 
-export function measure(info: LabInfo, group: string, px: { changedFrames: number; frameCount: number; maxChangeVsStart: number }, errors: string[], missing: string[]): CaseMetrics {
+export function measure(info: LabInfo, group: string, px: { changedFrames: number; frameCount: number; maxChangeVsStart: number; shapeIoU: number | null; shapeSamples: number }, errors: string[], missing: string[]): CaseMetrics {
   const stops = hitStopTable();
   const b = info.beats[0] ?? null;
   const acts = info.cues.map(actOf).filter((a): a is Act => !!a);
@@ -92,6 +95,9 @@ export function measure(info: LabInfo, group: string, px: { changedFrames: numbe
   };
 }
 
+/** STATIC_SHAPE: the main blob keeps the same shape (IoU ≥ iou) over at least minSamples following frames. Calibrated in docs/animation-review/audit/README.md. */
+export const STATIC_SHAPE = { iou: 0.85, minSamples: 3 } as const;
+
 const range = (v: number | null, lo: number, hi: number) => v !== null && (v < lo || v > hi);
 
 /** Rubric §10.3 flags for one case (hints only). `others` maps scriptSig → caseIds of the same group, for DUPLICATE_SCRIPT. */
@@ -109,6 +115,7 @@ export function flagsOf(m: CaseMetrics, group: string, dup: string[]): string[] 
   if (ult && (!m.ultIntro || !m.ultOutro)) f.push('ULT_INTRO_OUTRO');
   if (m.maxChangeVsStart < 0.005) f.push('NO_VISIBLE_CHANGE');
   if (m.flashesPerSec > 3) f.push('FLASH_RATE');
+  if (['skill', 'ultimate'].includes(group) && m.shapeSamples >= STATIC_SHAPE.minSamples && (m.shapeIoU ?? 0) >= STATIC_SHAPE.iou) f.push('STATIC_SHAPE');
   if (m.consoleErrors.length > 0) f.push('CONSOLE_ERRORS');
   if (m.missingAssets.length > 0) f.push('MISSING_ASSETS');
   if (dup.length > 0) f.push('DUPLICATE_SCRIPT');

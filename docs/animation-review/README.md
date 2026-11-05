@@ -43,6 +43,7 @@ Mỗi session mở bằng đúng một prompt ngắn trong [`PROMPTS.md`](PROMPT
 | `rounds/round-NN/COMPARE.md` (TRƯỚC/SAU của vòng NN-1 → NN) | TD | Dev, chủ dự án |
 | `rounds/round-NN/FIX_REPORT.md` | Dev | Tester, TD |
 | `scripts/anim-review/**`, `package.json` script `anim:*` | Tester (BUILD) | Tester |
+| `audit/AUDIT.md`, `audit/inventory.json` (sinh bằng `npm run anim:audit`, không sửa tay; cách đọc: [`audit/README.md`](audit/README.md)) | script | TD, Dev, Designer |
 | `src/**`, `content/**`, `tools/**`, `tests/**` | Dev (và Tester chỉ khi thêm hook chụp, ghi rõ) | — |
 
 `ANIMATION_REVIEW_FEEDBACK.md` (cũ, review qua code, 2026-11-03) = **baseline vòng 0**. Không sửa; các `ANIM-###` trong đó là danh sách ứng viên. Vòng 1 của TD phải **phân loại lại từng ID** (đã sửa / còn / không tái hiện) dựa trên ảnh — vì các batch 4–8 đã sửa nhiều mục.

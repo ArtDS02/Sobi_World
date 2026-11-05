@@ -10,6 +10,13 @@
 
 ## Nhật ký
 
+### 2026-11-05 — Animation P0: thước đo "sprite tĩnh di chuyển" (audit dữ liệu + đo hình từ frame)
+✅ Đã làm: bước P0 của nghiên cứu Animation & VFX Reference. `npm run anim:audit` (`scripts/anim-review/audit.ts`, `lib/scriptAudit.ts`) đọc kịch bản 112 skill → `docs/animation-review/audit/AUDIT.md` + `inventory.json`: hình chủ đạo tĩnh hay biến dạng, bậc tác động so với power (T0–T4), lấy đà / dư âm, số lớp, ngân sách thời gian, flipbook dùng chung, điểm ưu tiên. Harness thêm `shapeIoU` + cờ gợi ý `STATIC_SHAPE` (`lib/shape.ts`: khối thay đổi lớn nhất, chuẩn hóa vị trí / tỉ lệ, IoU giữa các frame). Cách đọc + hiệu chuẩn: `docs/animation-review/audit/README.md`.
+📊 Kết quả: 64/112 skill có hình chủ đạo là ảnh tĩnh tween; Nước 5/6, Bóng tối 6/7, Lửa 6/10, Đất 3/5. `fx_pow_star` dùng ở 17 skill. Chỉ 3 skill tác động thấp hơn bậc ≥ 2 (skill class gây sát thương: 13/16 có hit-stop — nhận định "38/42 skill class không hit-stop" trong báo cáo nghiên cứu là sai, vì gộp skill hỗ trợ và skill quái).
+🧪 `npm run check` xanh (1757 test, thêm `tests/scripts/animAudit.test.ts`, `animShape.test.ts`); run hiệu chuẩn 11 case `20261105-095545-fb12afa-5264cbf5` (canary + determinism pass): ngưỡng 0,85 bắt sóng thần (0,891) và đinh ba (0,993), không bắt nhầm skill có strip (≤ 0,803). `capture/LATEST.json` giữ run vòng 4.
+⚠️ Tự quyết: ngưỡng, bậc và ngân sách là đề xuất của nghiên cứu (chưa duyệt thành chuẩn), nên chỉ là cờ gợi ý; **rubric không đổi**. Ảnh tĩnh nhỏ (bong bóng) không đo được bằng hình → dựa audit dữ liệu. Audit chưa tính `actions.heavy/crit` phát thêm khi chí mạng.
+👉 Chủ dự án: đọc `docs/animation-review/audit/AUDIT.md`; quyết có đưa `STATIC_HERO` / `STATIC_SHAPE` vào MUST-HAVE của rubric không.
+
 ### 2026-11-05 — Dọn dẹp source/tài liệu + xử lý IP (decision 048, Pha 2)
 ✅ Đã làm: xóa code chết (`collectionVm.ts`, `collectionScreen.ts`, `core/config/character.ts`, `systems/layout/footprint.ts`, `scripts/art/sheet.ts`, hàm `drape()`, zip trùng của skill); chuyển `HANDOFF.md`, `ADMIN_PLAN`, `AUDIT_AND_PLAN`, `UPDATE_SPEC_SOBI_ADVENTURE`, `WORLD_MAP_AUDIT`, `WORLD_MAP_V2_PROPOSAL` vào `docs/archive/plans/` (đã sửa link). IP: Thor → `PIG_STORM` Heo Sấm, Superman → `PIG_HERO` Heo Anh Hùng, Battlebot → `PIG_WARBOT` Heo Chiến Giáp (art gốc mới dựng bằng `scripts/art/pigs.ts`, ảnh cũ + ảnh nguồn đã xóa); 2 loài cá đổi màu (Cá Đuôi Gai Tím); Treant / Mimic đổi tên en; catalogue bỏ Loki / Frankenstein. Alias id cũ trong save: `src/core/save/retiredIds.ts` (+ test). Chi tiết: `docs/IP_AUDIT_REPORT.md` mục G.
 🧪 `npm run check` xanh (1743 test); save thật `sobi-world-max.json` (có id cũ) nạp được và đổi sang id mới.
