@@ -726,7 +726,7 @@ export const partC = {
     item_fish_butterflyfish_desc: "A caught fish. Release it into the tank to raise it, or sell it, or keep it for orders.",
     item_fish_boxfish: "Boxfish",
     item_fish_boxfish_desc: "A caught fish. Release it into the tank to raise it, or sell it, or keep it for orders.",
-    item_fish_blue_tang: "Blue Tang",
+    item_fish_blue_tang: "Violet Tang",
     item_fish_blue_tang_desc: "A caught fish. Release it into the tank to raise it, or sell it, or keep it for orders.",
     item_fish_discus: "Discus",
     item_fish_discus_desc: "A caught fish. Release it into the tank to raise it, or sell it, or keep it for orders.",

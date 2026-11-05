@@ -3,7 +3,7 @@
 **Ngày:** 2026-10-17 · **Trạng thái:** Đã làm (A0–A8, trừ art thật: PROMPT batch `art_inbox/.batch/adventure-02-maps`); chờ chủ dự án chơi thử. Spec: `docs/update_spec_sobi_adventure_gameplay_v1.md`.
 
 ## Bối cảnh
-Adventure GĐ10–11 (decision 018, 019) chạy được nhưng combat mỏng: 4 nguyên tố, năng lượng dùng chung, 8 kiểu đánh cố định, đi qua chuỗi điểm dừng bằng nút. Chủ dự án viết master prompt `docs/UPDATE_SPEC_SOBI_ADVENTURE.md` (Combat V2). File `SOBI_ADVENTURE_GAMEPLAY_SPEC.md` mà master prompt nhắc tới chưa từng tồn tại, nên spec mới được viết thành `update_spec_sobi_adventure_gameplay_v1.md` (cùng kiểu với spec Garden / Aquarium / Cloud). Các Area khác đã làm lại gameplay trong GĐ14 theo cùng cách (decision 023–035).
+Adventure GĐ10–11 (decision 018, 019) chạy được nhưng combat mỏng: 4 nguyên tố, năng lượng dùng chung, 8 kiểu đánh cố định, đi qua chuỗi điểm dừng bằng nút. Chủ dự án viết master prompt `docs/archive/plans/UPDATE_SPEC_SOBI_ADVENTURE.md` (Combat V2). File `SOBI_ADVENTURE_GAMEPLAY_SPEC.md` mà master prompt nhắc tới chưa từng tồn tại, nên spec mới được viết thành `update_spec_sobi_adventure_gameplay_v1.md` (cùng kiểu với spec Garden / Aquarium / Cloud). Các Area khác đã làm lại gameplay trong GĐ14 theo cùng cách (decision 023–035).
 
 ## Quyết định
 1. **Mở băng có giới hạn** cho Adventure (decision 021): được đổi combat, progression, bản đồ, slice save Adventure. Các Area khác giữ băng như cũ.

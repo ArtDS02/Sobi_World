@@ -10,6 +10,11 @@
 
 ## Nhật ký
 
+### 2026-11-05 — Dọn dẹp source/tài liệu + xử lý IP (decision 048, Pha 2)
+✅ Đã làm: xóa code chết (`collectionVm.ts`, `collectionScreen.ts`, `core/config/character.ts`, `systems/layout/footprint.ts`, `scripts/art/sheet.ts`, hàm `drape()`, zip trùng của skill); chuyển `HANDOFF.md`, `ADMIN_PLAN`, `AUDIT_AND_PLAN`, `UPDATE_SPEC_SOBI_ADVENTURE`, `WORLD_MAP_AUDIT`, `WORLD_MAP_V2_PROPOSAL` vào `docs/archive/plans/` (đã sửa link). IP: Thor → `PIG_STORM` Heo Sấm, Superman → `PIG_HERO` Heo Anh Hùng, Battlebot → `PIG_WARBOT` Heo Chiến Giáp (art gốc mới dựng bằng `scripts/art/pigs.ts`, ảnh cũ + ảnh nguồn đã xóa); 2 loài cá đổi màu (Cá Đuôi Gai Tím); Treant / Mimic đổi tên en; catalogue bỏ Loki / Frankenstein. Alias id cũ trong save: `src/core/save/retiredIds.ts` (+ test). Chi tiết: `docs/IP_AUDIT_REPORT.md` mục G.
+🧪 `npm run check` xanh (1743 test); save thật `sobi-world-max.json` (có id cũ) nạp được và đổi sang id mới.
+⚠️ Art 3 heo mới là ảnh tạm dựng bằng code (ghi ở `ASSET_TODO.md` A08); ảnh trận / cut-in Thor cũ không dùng nữa. Còn mở: nhạc Mureka, tra cứu nhãn hiệu "Sobi World".
+
 ### 2026-11-04 — Luật bản quyền (decision 048); chưa xóa/đổi nội dung
 ✅ Đã làm: AGENT_RULES §9 + decision 048 + CLAUDE.md + `docs/IP_AUDIT_PROMPT.md` + báo cáo Pha 1 `docs/IP_AUDIT_REPORT.md` + `docs/THIRD_PARTY.md`. Pha 2 (đổi tên/id/art) đã thử rồi hoàn tác theo yêu cầu chủ dự án; chủ dự án sẽ tự triển khai sau.
 
@@ -430,12 +435,12 @@
 
 ### 2026-10-30 — Adventure: bản đồ v2 — chốt hướng (decision 045) + batch art `adventure-14-map-v2`
 ✅ Đã làm:
-- Chủ dự án chốt Q2, Q3, Q6–Q9 của audit và A1–A5 của `docs/WORLD_MAP_V2_PROPOSAL.md`. Ghi thành decision 045: camera bám, zoom ×2, map 40 × 24 → 80 × 48, sương mù khám phá, khu ẩn 3 kiểu, 2–4 lối ra mỗi map, 10–20 nhóm quái đứng canh / ngủ, 6 loại quái, 5 cấp tha hóa (mạnh hơn), tha hóa theo vùng + thanh tẩy, 5 loại rương, quái đặc biệt có điều kiện, câu đố nhiều bước, suối trước trùm phụ. Bỏ tranh một tấm (hướng 3 / Q5): mọi map dựng bằng bộ ghép, cả M1–M3 bố cục lại.
+- Chủ dự án chốt Q2, Q3, Q6–Q9 của audit và A1–A5 của `docs/archive/plans/WORLD_MAP_V2_PROPOSAL.md`. Ghi thành decision 045: camera bám, zoom ×2, map 40 × 24 → 80 × 48, sương mù khám phá, khu ẩn 3 kiểu, 2–4 lối ra mỗi map, 10–20 nhóm quái đứng canh / ngủ, 6 loại quái, 5 cấp tha hóa (mạnh hơn), tha hóa theo vùng + thanh tẩy, 5 loại rương, quái đặc biệt có điều kiện, câu đố nhiều bước, suối trước trùm phụ. Bỏ tranh một tấm (hướng 3 / Q5): mọi map dựng bằng bộ ghép, cả M1–M3 bố cục lại.
 - Batch `adventure-14-map-v2` (art_inbox, 43 sheet, 261 asset): 5 cảnh mẫu V1–V5 có bản khối màu 20 × 11 ô làm hint; bộ ghép 4 vùng (ô nền, vách, lớp che, đạo cụ, vật mốc, lối ra / tường giả); rương 5 loại; tha hóa; suối; câu đố 8 hệ; huy hiệu 6 loại quái. (Phần cảnh mẫu đã bỏ, xem dưới.)
 - Lần thử V1 đầu tiên xấu (Gemini vẽ y nguyên khối màu / hình tròn của hint, nét hoạt hình dày). Đã đổi: hint V1–V5 thành **ảnh cắt ghép thô** từ `M1-hint.png` + sprite game (`_src/make_collage.py`), vị trí vật ghi theo %; câu phong cách / câu cấm riêng cho batch mô tả đúng `M1-hint.png` (chi tiết nhỏ, nét mảnh, kiểu pixel art độ phân giải cao). `art.py` cho batch ghi đè các câu prompt của profile (`prompt` trong batch.json). Ảnh hỏng chuyển vào `_rejected/`.
 - `art.py`: sheet `single` + `bg` dùng câu mở đầu "full-bleed" thay cho "một vật, có khoảng trống xung quanh" (hai câu cũ mâu thuẫn).
 - **Đổi quy trình art (chủ dự án chốt):** bỏ 5 cảnh mẫu. Thiết kế bố cục mới 6 map Rừng bằng lưới ô (`scripts/art/map_layouts_v2/`, `docs/maps/v2/`): M1 64×36, M2 64×36, M3 48×27, N1 64×36, N2 72×40, N3 80×45; 2–3 lối ra mỗi map, 2 đường tới lối tiến, khu ẩn dưới lớp che, cổng hệ, rương 5 loại, 9–18 nhóm quái, trùm phụ + suối ở map nhánh. Dựng ảnh before kiểu `adventure-11-map/before`; batch `adventure-14-map-v2` giờ là 6 sheet vẽ lại map (ảnh 1 = `M1-hint.png`). Bộ ghép (`batch.py --kit`) làm sau khi duyệt tranh.
-📁 File chính: `docs/decisions/045-adventure-map-v2.md`, `docs/WORLD_MAP_V2_PROPOSAL.md`, `docs/maps/v2/`, `scripts/art/map_layouts_v2/`, `docs/ASSET_TODO.md`, `.claude/skills/image-to-prompt/scripts/art.py`.
+📁 File chính: `docs/decisions/045-adventure-map-v2.md`, `docs/archive/plans/WORLD_MAP_V2_PROPOSAL.md`, `docs/maps/v2/`, `scripts/art/map_layouts_v2/`, `docs/ASSET_TODO.md`, `.claude/skills/image-to-prompt/scripts/art.py`.
 🧪 Đã kiểm tra: `art.py prep` qua (43 sheet, 89 file đính kèm). Chưa sửa code game.
 ⚠️ Tự quyết: mép chuyển tiếp giữa các loại ô vẽ bằng code (Gemini không vẽ khớp bộ autotile); ô vẽ cho 80 px (ô thế giới vẫn 40 px). Vùng Biển tạm tên "Bờ Biển".
 - **Đủ 18 map:** thêm bố cục Núi (M4–M6, N4 Đèo Gió, N5 Đường Hầm Cổ), Tàn Tích (M7–M9, N6 Hầm Mộ Rune), Biển (N7 Bãi Vỏ Sò, N8 Rạn San Hô, N9 Vịnh Đắm Tàu, trùm vùng). Cả 18 qua kiểm tra đường đi; prompt theo từng vùng (khối đá / tường đổ / rừng dừa, dung nham / hồ tối / biển) và mức tha hóa.
@@ -496,12 +501,12 @@
 👉 Bạn cần:
 - Chơi thử một chuyến Núi và một chuyến Tàn Tích.
 - Vẽ lại 6 tranh M4–M9 theo `art_inbox/.batch/adventure-11-map/PROMPT.md` (ảnh `before/` mới).
-- Xác nhận Q2 / Q3 / Q6 / Q7 trong `docs/WORLD_MAP_AUDIT.md` trước Đợt 2.
+- Xác nhận Q2 / Q3 / Q6 / Q7 trong `docs/archive/plans/WORLD_MAP_AUDIT.md` trước Đợt 2.
 ➡️ Bước tiếp: Đợt 2 — map nhánh N1 + N2 (vùng Rừng).
 
 ### 2026-10-29 — Adventure: audit bản đồ thế giới + Đợt 0 nền tảng mở rộng 18 map (decision 043)
 ✅ Đã làm (chủ dự án giao spec mở rộng map, chọn **hướng 3 (lai)**):
-1. **Audit** `docs/WORLD_MAP_AUDIT.md`:
+1. **Audit** `docs/archive/plans/WORLD_MAP_AUDIT.md`:
    - 9 map thực chất chỉ có 3 bố cục (M2 = M5 = M8, M3 = M6 = M9), phòng kín, lối ra cố định ở hàng 12–14.
    - Bảng lối ra và boss gate; so sánh với graph mục tiêu (17 cạnh mới; spec tự mâu thuẫn ở M5 → M7).
    - Roster quái, lore, ảnh hưởng tới batch vẽ lại `adventure-11-map`; 9 câu hỏi.
@@ -518,13 +523,13 @@
    - `logic/mapGraph.ts`: lối có đường về, lối tắt mở được, mọi map của vùng đi tới được, map thuộc đúng một vùng, map nhánh không có trùm.
    - Ô đến không trùng nhóm quái.
    - Save slice Adventure **v5** (`openedExits: []`).
-📁 File chính: `docs/WORLD_MAP_AUDIT.md`, `docs/decisions/043-adventure-world-map.md`, `content/schemas/adventure/{maps,zones}.ts`, `src/areas/adventure/logic/{state,migrations,progress,maps,mapGraph,events}.ts`, `logic/config/content.ts`, `logic/actions/{trip,explore}.ts`, `ui/sceneVm.ts`, `scene/{sceneState,mapView}.ts`, `feedback.ts`, `src/i18n/{vi.ts,en/partC.ts}`, tests `adventureMaps`, `adventure`, `adventureEngagement`.
+📁 File chính: `docs/archive/plans/WORLD_MAP_AUDIT.md`, `docs/decisions/043-adventure-world-map.md`, `content/schemas/adventure/{maps,zones}.ts`, `src/areas/adventure/logic/{state,migrations,progress,maps,mapGraph,events}.ts`, `logic/config/content.ts`, `logic/actions/{trip,explore}.ts`, `ui/sceneVm.ts`, `scene/{sceneState,mapView}.ts`, `feedback.ts`, `src/i18n/{vi.ts,en/partC.ts}`, tests `adventureMaps`, `adventure`, `adventureEngagement`.
 🧪 Đã kiểm tra:
 - `npm run check` xanh (113 file, 1.512 test).
 - Test mới: content hiện tại qua kiểm tra graph; bắt được lối không có đường về / lối tắt không mở được / map nhánh bị cô lập / map không thuộc vùng; đi M1 → M2 mở lối tắt M2 → M1 (lưu vĩnh viễn, có sự kiện, quay đúng hướng); lối sang vùng chưa mở báo `zone`; migration slice thật v2 → v5.
 - Chưa chạy game / sandbox: content không đổi nên bản đồ hiện tại không có lối tắt nào để thấy.
 ⚠️ Tự quyết: các câu Q1–Q9 khác theo đề xuất audit, ghi trong decision 043 là "chờ xác nhận trước đợt liên quan"; `kind` lối ra mới chỉ lưu, mọi kiểu vẫn vẽ bằng cổng (ASSET_TODO).
-👉 Bạn cần: đọc `docs/WORLD_MAP_AUDIT.md` mục 8, xác nhận Q2 (vùng của map mới), Q3 (vùng Biển), Q6 (cổng khu ở map nhánh), Q7 (lore Hộ Pháp Cổ Đại).
+👉 Bạn cần: đọc `docs/archive/plans/WORLD_MAP_AUDIT.md` mục 8, xác nhận Q2 (vùng của map mới), Q3 (vùng Biển), Q6 (cổng khu ở map nhánh), Q7 (lore Hộ Pháp Cổ Đại).
 ➡️ Bước tiếp: Đợt 1, đổi bố cục M4–M9 (6 map trùng) + sửa vị trí chuyến đang dở khi tải; chụp lại ảnh `before/` cho 6 tranh cần vẽ lại.
 
 ### 2026-10-25 — Adventure: hệ animation trận mới — Phaser + key pose + battle_fx.json + Xưởng animation (decision 042 §3, đã duyệt)
@@ -1195,7 +1200,7 @@ Chưa kiểm: `npm run dist:win` (installer), chạy Electron thủ công, thử
 - Tên trong content vẫn là `nameVi`/`descVi`, chưa là `name: { vi }`: đổi khi thêm ngôn ngữ thứ hai.
 
 ### 2026-10-05 — GĐ1 Bước 1: kiểm tra code Sobi Farm
-✅ Đã làm: đọc toàn bộ code (core, store, game, ui, platform, electron, admin, guard), viết `docs/AUDIT_AND_PLAN.md`
+✅ Đã làm: đọc toàn bộ code (core, store, game, ui, platform, electron, admin, guard), viết `docs/archive/plans/AUDIT_AND_PLAN.md`
 (bản đồ code → core/systems/areas/content/admin, chỗ hard-code, so số với GAME_BALANCE, save v8 + migration,
 đóng gói, kế hoạch 9 bước, rủi ro, 10 câu hỏi). Chưa sửa code.
 ⚠️ Phát hiện: GAME_BALANCE §6 (thức ăn 6 Coins) mâu thuẫn thang tiền Sobi Farm (thức ăn 25) — câu hỏi 5.

@@ -100,7 +100,7 @@
       "element2": "LIGHTNING",
       "ultimate": "skill_ult_trident"
     },
-    "PIG_THOR": { "lineage": "loi_duong", "classId": "striker" },
+    "PIG_STORM": { "lineage": "loi_duong", "classId": "striker" },
     "PIG_TIGER": { "lineage": "loi_duong", "classId": "striker" },
     "PIG_VALKYRIE": { "lineage": "quang_tru", "classId": "striker" },
     "PIG_UNICORN": { "lineage": "quang_tru", "classId": "support", "element2": "NATURE" },

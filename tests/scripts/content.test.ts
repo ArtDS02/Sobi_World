@@ -39,8 +39,8 @@ describe('content files', () => {
     const current = readFileSync(IDS_FILE, 'utf8');
     const extra = current.replace("export const ITEM_ID_VALUES = [\n", "export const ITEM_ID_VALUES = [\n  'ITEM_GONE',\n");
     expect(() => idsText(extra)).toThrow(/ITEM_GONE removed/);
-    const shorter = current.replace("  'PIG_THOR',\n", '');
-    expect(listIn(idsText(shorter), 'BREED_ID_VALUES').at(-1)).toBe('PIG_THOR');
+    const shorter = current.replace("  'PIG_STORM',\n", '');
+    expect(listIn(idsText(shorter), 'BREED_ID_VALUES').at(-1)).toBe('PIG_STORM');
   });
 
   it('a bad file names the file and the field', () => {

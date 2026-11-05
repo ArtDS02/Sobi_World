@@ -1,12 +1,12 @@
 # 043 — Adventure: mở rộng bản đồ thế giới (18 map, bán mở) — Đợt 0 nền tảng
 
-Ngày: 2026-10-29 · Trạng thái: **hướng 3 đã duyệt**; các điểm còn lại theo đề xuất trong `docs/WORLD_MAP_AUDIT.md`, chờ chủ dự án xác nhận trước từng đợt.
+Ngày: 2026-10-29 · Trạng thái: **hướng 3 đã duyệt**; các điểm còn lại theo đề xuất trong `docs/archive/plans/WORLD_MAP_AUDIT.md`, chờ chủ dự án xác nhận trước từng đợt.
 
 > **2026-10-30:** các điểm chờ xác nhận đã chốt; hướng 3 (tranh một tấm) và luật "không đặt lối ra ở mép trên / dưới" được thay bằng **decision 045** (bản đồ v2).
 
 ## Bối cảnh
 
-Chủ dự án giao spec "Sobi Adventure — World Map Expansion": từ 9 lên 18 map, có nhánh phụ, đường tắt, bí mật, lore First Guardians, và map không bị tường bao kín. Audit (`docs/WORLD_MAP_AUDIT.md`) tìm ra mấy điểm:
+Chủ dự án giao spec "Sobi Adventure — World Map Expansion": từ 9 lên 18 map, có nhánh phụ, đường tắt, bí mật, lore First Guardians, và map không bị tường bao kín. Audit (`docs/archive/plans/WORLD_MAP_AUDIT.md`) tìm ra mấy điểm:
 - Ba vùng dùng chung 3 bố cục: M2 = M5 = M8 và M3 = M6 = M9, giống hệt nhau từng ô.
 - Mọi map bị tường bao kín, lối ra cố định ở hàng 12–14.
 - Boss gate đã có sẵn: kẻ canh mỗi map, cộng `exitOpen` chặn lối sang vùng chưa mở.

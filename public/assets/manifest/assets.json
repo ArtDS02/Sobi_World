@@ -22,14 +22,14 @@
       "wakeAsset": "pigs/base/pig_watermelon_wake.png"
     },
     {
-      "id": "pig_superhero",
+      "id": "pig_hero",
       "status": "production",
-      "nameVi": "Heo Siêu Nhân",
+      "nameVi": "Heo Anh Hùng",
       "collection": "species",
-      "asset": "pigs/base/pig_superhero.png",
-      "sleepAsset": "pigs/base/pig_superhero_sleep.png",
+      "asset": "pigs/base/pig_hero.png",
+      "sleepAsset": "pigs/base/pig_hero_sleep.png",
       "tags": ["job", "hero"],
-      "wakeAsset": "pigs/base/pig_superhero_wake.png"
+      "wakeAsset": "pigs/base/pig_hero_wake.png"
     },
     {
       "id": "pig_thienlong",
@@ -622,14 +622,14 @@
       "wakeAsset": "pigs/base/pig_rich_wake.png"
     },
     {
-      "id": "pig_battlebot",
+      "id": "pig_warbot",
       "status": "production",
-      "nameVi": "Heo Battlebot",
+      "nameVi": "Heo Chiến Giáp",
       "collection": "species",
-      "asset": "pigs/base/pig_battlebot.png",
-      "sleepAsset": "pigs/base/pig_battlebot_sleep.png",
+      "asset": "pigs/base/pig_warbot.png",
+      "sleepAsset": "pigs/base/pig_warbot_sleep.png",
       "tags": ["species", "scifi", "new"],
-      "wakeAsset": "pigs/base/pig_battlebot_wake.png"
+      "wakeAsset": "pigs/base/pig_warbot_wake.png"
     },
     {
       "id": "pig_ufo",
@@ -682,14 +682,14 @@
       "wakeAsset": "pigs/base/pig_valkyrie_wake.png"
     },
     {
-      "id": "pig_thor",
+      "id": "pig_storm",
       "status": "production",
-      "nameVi": "Heo Thor",
+      "nameVi": "Heo Sấm",
       "collection": "species",
-      "asset": "pigs/base/pig_thor.png",
-      "sleepAsset": "pigs/base/pig_thor_sleep.png",
+      "asset": "pigs/base/pig_storm.png",
+      "sleepAsset": "pigs/base/pig_storm_sleep.png",
       "tags": ["species", "fantasy", "new"],
-      "wakeAsset": "pigs/base/pig_thor_wake.png"
+      "wakeAsset": "pigs/base/pig_storm_wake.png"
     },
     {
       "id": "pig_alien_v3",

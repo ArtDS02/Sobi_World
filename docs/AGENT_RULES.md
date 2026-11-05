@@ -64,5 +64,5 @@ Cuối mỗi bước lớn và cuối giai đoạn, báo theo mẫu:
 - Sinh vật/nhân vật/vật phẩm phải là **thiết kế gốc**: dựa trên động vật có thật, thần thoại dân gian phổ thông (rồng, phượng hoàng, kỳ lân… ở dạng chung chung) hoặc sáng tạo riêng. Không copy dáng, bảng màu và đặc điểm nhận diện của một IP cụ thể.
 - Nghi ngờ một tên/hình có thể trùng IP → **không dùng**, chọn phương án gốc và ghi vào `PROGRESS.md`; thay đổi lớn thì hỏi chủ dự án.
 - Phần mềm, font, âm thanh, thư viện bên thứ ba phải có giấy phép cho phép dùng thương mại; ghi nguồn + license vào `docs/THIRD_PARTY.md`.
-- Nội dung đã có từ trước rule (xem `docs/IP_AUDIT_REPORT.md`: Thor, Superman, Battlebot, 2 loài cá, Loki…) **chưa xử lý**; chủ dự án sẽ quyết và triển khai sau. Không thêm nội dung mới cùng kiểu.
+- Nội dung vi phạm có từ trước rule đã được xử lý ngày 2026-11-05 (`docs/IP_AUDIT_REPORT.md` mục G): Thor → Heo Sấm, Superman → Heo Anh Hùng, Battlebot → Heo Chiến Giáp, 2 loài cá đổi màu, Loki bỏ khỏi danh mục, Treant / Mimic đổi tên hiển thị. Id cũ được alias trong save (`src/core/save/retiredIds.ts`). Không thêm nội dung mới cùng kiểu.
 - Rà soát toàn game theo `docs/IP_AUDIT_PROMPT.md` trước mỗi lần phát hành/tag giai đoạn và khi nghi ngờ.

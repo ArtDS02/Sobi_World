@@ -1,7 +1,7 @@
 # 045 — Adventure: bản đồ v2 — camera bám, khu ẩn, tha hóa, phân loại quái, bộ asset dựng map mới
 
 Ngày: 2026-10-30 · Trạng thái: **chủ dự án đã duyệt hướng** (2026-10-30). Code: camera bám + zoom ×2 xong (2026-10-31, `scene/mapCamera.ts`); phân loại quái + tha hóa + quái ngủ xong (2026-10-31, `logic/foes.ts`); lớp che + khu ẩn + tường giả xong (2026-10-31, save v6); bố cục lại M1–M9 + map nhánh N1–N6 (bước 4a), vùng Biển (4b), tha hóa map + thanh tẩy (5), câu đố, sương mù (save v7) xong (2026-10-31, các mục dưới). **Toàn bộ phần code của decision 045 đã xong.** Art: batch `adventure-15-coast-foes` và bộ ghép vẽ lại (`adventure-14b-map-v2-redo`, cả CE vẽ lại và I1) đã vào game (2026-11-01, hai mục cuối); phần kit chưa có chỗ dùng ghi ở `docs/ASSET_TODO.md`.
-Đầu vào: `docs/WORLD_MAP_V2_PROPOSAL.md` (đề xuất + câu trả lời Q2–Q9, A1–A5), decision 043.
+Đầu vào: `docs/archive/plans/WORLD_MAP_V2_PROPOSAL.md` (đề xuất + câu trả lời Q2–Q9, A1–A5), decision 043.
 
 ## Bối cảnh
 

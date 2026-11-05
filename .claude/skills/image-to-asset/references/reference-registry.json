@@ -20,11 +20,11 @@
   "cells": [
     { "sheet": "env", "cell": "box[20, 50, 360, 300]", "ids": ["pig_classic"], "match": "EXACT", "cuttable": true, "note": "Style anchor pig. Also the base of the white/brown recolours." },
     { "sheet": "env", "cell": "box[395, 30, 370, 320]", "ids": ["pig_watermelon"], "match": "EXACT", "cuttable": true, "note": "Green striped body, leaf sprout, seed dots." },
-    { "sheet": "env", "cell": "box[770, 50, 370, 300]", "ids": ["pig_superhero"], "match": "EXACT", "cuttable": true, "note": "Periwinkle body, red cape + knot; mask accent from pack concept missing." },
+    { "sheet": "env", "cell": "box[770, 50, 370, 300]", "ids": [], "match": "EXACT", "cuttable": false, "note": "RETIRED (decision 048): red-cape hero is too close to third-party IP. Do not cut; pig_hero is an original design." },
     { "sheet": "env", "cell": "box[1140, 30, 390, 320]", "ids": ["pig_thienlong"], "match": "EXACT", "cuttable": true, "note": "Golden body, white wings, crown, collar + bell." },
     { "sheet": "pigs", "cell": "c0r0", "ids": [], "match": "STYLE", "cuttable": true, "note": "Plain pink pig — scale reference for the pig sheet." },
     { "sheet": "pigs", "cell": "c1r0", "ids": ["pig_watermelon"], "match": "STYLE", "cuttable": true, "note": "Duplicate of the env watermelon." },
-    { "sheet": "pigs", "cell": "c2r0", "ids": ["pig_superhero"], "match": "STYLE", "cuttable": true, "note": "Duplicate of the env superhero." },
+    { "sheet": "pigs", "cell": "c2r0", "ids": [], "match": "STYLE", "cuttable": false, "note": "RETIRED (decision 048): duplicate of the retired env superhero." },
     { "sheet": "pigs", "cell": "c3r0", "ids": ["pig_thienlong"], "match": "STYLE", "cuttable": true, "note": "Duplicate of the env thienlong." },
     { "sheet": "pigs", "cell": "c4r0", "ids": ["pig_black"], "match": "EXACT", "cuttable": true, "note": "Charcoal pig with light flank patch." },
     { "sheet": "pigs", "cell": "c5r0", "ids": ["pig_spotted"], "match": "EXACT", "cuttable": true, "note": "Pink body, brown spots (catalogue: dark spots)." },

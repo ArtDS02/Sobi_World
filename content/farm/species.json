@@ -521,12 +521,12 @@
       "traits": ["brown", "plant", "cozy"]
     },
     {
-      "id": "PIG_SUPERMAN",
-      "nameVi": "Heo Siêu Nhân",
+      "id": "PIG_HERO",
+      "nameVi": "Heo Anh Hùng",
       "rarity": "RARE",
       "family": "HERO",
-      "artId": "pig_superhero",
-      "color": "#7fa8f0",
+      "artId": "pig_hero",
+      "color": "#7fd1c4",
       "traits": ["hero", "purple", "sky"]
     },
     {
@@ -594,11 +594,11 @@
       "traits": ["green", "water", "animal"]
     },
     {
-      "id": "PIG_BATTLEBOT",
-      "nameVi": "Heo Battlebot",
+      "id": "PIG_WARBOT",
+      "nameVi": "Heo Chiến Giáp",
       "rarity": "RARE",
       "family": "SCIFI",
-      "artId": "pig_battlebot",
+      "artId": "pig_warbot",
       "color": "#9cb4b4",
       "traits": ["tech", "metal", "warrior"]
     },
@@ -649,12 +649,12 @@
       "traits": ["myth", "warrior", "wings", "gold"]
     },
     {
-      "id": "PIG_THOR",
-      "nameVi": "Heo Thor",
+      "id": "PIG_STORM",
+      "nameVi": "Heo Sấm",
       "rarity": "RARE",
       "family": "FANTASY",
       "fighter": true,
-      "artId": "pig_thor",
+      "artId": "pig_storm",
       "color": "#8a94a6",
       "traits": ["myth", "warrior", "metal", "sky"]
     },

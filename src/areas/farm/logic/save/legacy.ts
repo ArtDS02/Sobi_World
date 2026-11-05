@@ -23,7 +23,7 @@ const isObject = (v: unknown): v is Raw => typeof v === 'object' && v !== null &
 const asArray = (v: unknown): Raw[] => (Array.isArray(v) ? v.filter(isObject) : []);
 const asObject = (v: unknown): Raw => (isObject(v) ? v : {});
 
-/** What every v2 save owned from the start: the four v1 breed artworks (frozen history). */
+/** What every v2 save owned from the start: the four v1 breed artworks (frozen history; `pig_superhero` is old save data, not a current asset id: decision 048). */
 const V2_STARTER_SKINS = ['pig_classic', 'pig_watermelon', 'pig_superhero', 'pig_thienlong'];
 
 /** v1 (v3 spec save) -> v2: trough, orders, collection, ownedSkins, reduceMotion, skins on pigs. */

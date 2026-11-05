@@ -23,7 +23,7 @@ const SECTION_COLLECTION = {
   9: 'mythology', 10: 'horror', 11: 'seasonal', 12: 'food', 13: 'funny',
 };
 const PRICE = { P1: 2000, P2: 6000, P3: 15000, P4: 40000, P5: null }; // pack §9 price ladder
-const P0 = ['pig_classic', 'pig_watermelon', 'pig_superhero', 'pig_thienlong'];
+const P0 = ['pig_classic', 'pig_watermelon', 'pig_hero', 'pig_thienlong'];
 
 function cataloguePigs() {
   const pigs = [];

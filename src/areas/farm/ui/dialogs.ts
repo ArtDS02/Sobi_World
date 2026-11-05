@@ -18,7 +18,7 @@ import { el } from '../../../ui/dom';
 export type Act = (run: BoundAction) => Promise<boolean>;
 
 /** Rare breeds always warn (§10.2: mandatory confirmation for SUPERMAN and MYTHICAL). */
-const RARE = new Set<Pig['breed']>(['PIG_SUPERMAN', 'PIG_MYTHICAL']);
+const RARE = new Set<Pig['breed']>(['PIG_HERO', 'PIG_MYTHICAL']);
 
 /** `bonus`: the farm's decoration bonus, so the shown price is the one paid (PG-3). */
 export function openSellDialog(

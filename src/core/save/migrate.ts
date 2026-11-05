@@ -6,6 +6,7 @@ import type { ActionContext } from '../types';
 import { initialGoals } from '../goals/state';
 import { initialLive } from '../live/state';
 import { newPlayer } from '../player/player';
+import { renameRetiredIds } from './retiredIds';
 import { WORLD_SAVE_VERSION, worldSaveSchema, type WorldSave } from './world';
 
 export type Raw = Record<string, unknown>;
@@ -90,13 +91,13 @@ export function migrate(input: unknown, codec: SaveCodec): MigrateResult {
   }
   if (fromVersion > WORLD_SAVE_VERSION) return { ok: false, error: 'SAVE_TOO_NEW' };
 
-  let raw: Raw = input;
+  let raw: Raw = renameRetiredIds(input);
   let version = fromVersion;
   if (version < WORLD_SAVE_VERSION) {
-    const up = fromVersion < 8 ? codec.legacy(input) : null;
+    const up = fromVersion < 8 ? codec.legacy(raw) : null;
     if (up && !up.ok) return up;
     if (up) {
-      raw = up.raw;
+      raw = renameRetiredIds(up.raw);
       version = 8;
     }
     while (version < WORLD_SAVE_VERSION) {

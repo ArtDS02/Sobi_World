@@ -44,7 +44,8 @@ DỪNG tại đây và chờ chủ dự án duyệt từng mục (giữ / đổi
 === PHA 2 — XỬ LÝ (chỉ sau khi được duyệt) ===
 - Nhánh git riêng: fix/ip-audit-<ngày>. Commit nhỏ theo từng nhóm.
 - Chỉ xử lý các mục đã được duyệt. Không tự mở rộng.
-- Đổi id → thêm migration/alias cho save + test với save thật. KHÔNG làm mất save người chơi.
+- Đổi id → thêm vào `RETIRED_IDS` trong `src/core/save/retiredIds.ts` (alias id cũ → mới khi nạp save, đã có test) + thử với save thật. KHÔNG làm mất save người chơi.
+- Công cụ sinh art cũng phải sạch: gỡ mục IP khỏi script cắt/sinh ảnh (`scripts/cut-reference.ts`, `scripts/art/pigs.ts`), registry của skill `image-to-asset`, catalogue/pack prompt.
 - Xóa asset: gỡ khỏi manifest, content, i18n, test, admin; không để tham chiếu mồ côi.
 - Art thay thế: placeholder + ghi docs/ASSET_TODO.md (art thật làm theo skill image-to-asset, tuân §9).
 - Cập nhật docs/THIRD_PARTY.md cho nguồn hợp lệ còn giữ.

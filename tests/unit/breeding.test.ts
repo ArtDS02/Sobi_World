@@ -147,10 +147,10 @@ describe('breedPigs effect (§8.8)', () => {
   it.each([
     ['PIG_EARTH_PINK', 3600],
     ['PIG_STRIPED_MELON', 5400],
-    ['PIG_SUPERMAN', 10800],
+    ['PIG_HERO', 10800],
   ] as const)('pregnancy length follows the mother breed (D22): %s', (b, sec) => {
     expect(BREEDS[b].pregnancySec).toBe(sec);
-    expect(mother(bred({ breed: b }, { breed: 'PIG_SUPERMAN' })).pregnancy!.endsAt).toBe(sec * SEC);
+    expect(mother(bred({ breed: b }, { breed: 'PIG_HERO' })).pregnancy!.endsAt).toBe(sec * SEC);
   });
 });
 

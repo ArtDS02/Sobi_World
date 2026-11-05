@@ -1,4 +1,4 @@
-# IP AUDIT REPORT — Pha 1 (chỉ báo cáo, chưa sửa gì)
+# IP AUDIT REPORT — Pha 1 (báo cáo) + Pha 2 (đã xử lý 2026-11-05, mục G)
 
 Ngày: 2026-11-04 · Nhánh: `phase-14-art` · Quy trình: `docs/IP_AUDIT_PROMPT.md`
 
@@ -74,3 +74,16 @@ Khối lượng: nhỏ–vừa (≈ 12 file content/code, ~20 ảnh, 1 migration
 3. Nhạc `music_farm`: có bằng chứng gói Mureka cho phép thương mại không? Nếu không chắc → thay nhạc.
 4. Có tra cứu nhãn hiệu "Sobi World" chưa?
 5. Duyệt các tên thay thế ở mục D hay chọn tên khác?
+
+## G. Pha 2 — đã xử lý (2026-11-05, chủ dự án uỷ quyền tự quyết)
+
+| # | Xử lý |
+|---|---|
+| 1 Thor | `PIG_THOR` → `PIG_STORM` "Heo Sấm", art `pig_storm` (heo xám-xanh, mây dông + tia chớp, không búa / mũ cánh / áo choàng); ảnh cũ và ảnh nguồn Gemini bị xóa |
+| 2 Superman | `PIG_SUPERMAN` → `PIG_HERO` "Heo Anh Hùng", art `pig_hero` (khăn lime + kính bay, không cape); `pig_superhero` bị loại khỏi `cut-reference.ts` và registry của skill |
+| 3 Battlebot | `PIG_BATTLEBOT` → `PIG_WARBOT` "Heo Chiến Giáp", art `pig_warbot` (robot thép, ăng-ten) |
+| 4–5 Cá | Cá Hề: cam → vàng-trắng; Cá Đuôi Gai Xanh → "Cá Đuôi Gai Tím" (tím, đuôi trắng); cả `props/` và `ui_item_*` |
+| 7–8 | En: "Treant" → "Rootkeeper", "Mimic Chest" → "Fake Chest" (id nội bộ không đổi, không vào save) |
+| 9–10 | `PIG_CATALOGUE.md`: Loki → "Heo Ảo Thuật", Frankenstein → "Heo Khâu Vá", mô tả Hades / Thor / Battlebot viết lại |
+| Save | `src/core/save/retiredIds.ts` đổi id cũ → mới ở mọi chuỗi và khóa của save khi nạp (không đổi version, idempotent, test `tests/unit/retiredIds.test.ts`) |
+| Còn mở | #11 nhạc Mureka (cần bằng chứng gói thương mại), #15 tra cứu nhãn hiệu "Sobi World", `THIRD_PARTY.md` cần xác nhận pháp lý. #6 (Zeus / Poseidon / Valkyrie) giữ vì là thần thoại chung. Art 3 heo mới là ảnh dựng bằng code, art cuối làm ở GĐ14 theo §9. |

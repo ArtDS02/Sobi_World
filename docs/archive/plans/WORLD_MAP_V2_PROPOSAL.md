@@ -1,7 +1,7 @@
 # Đề xuất bản đồ Adventure v2 — góc nhìn, khu ẩn, tha hóa, phân loại quái
 
 Ngày: 2026-10-30 · Nhánh: `phase-14-art` · **Trạng thái: đã duyệt 2026-10-30 → decision 045** (câu trả lời ở mục 7). Chưa sửa code.
-Đầu vào: phản hồi của chủ dự án ngày 2026-10-30, `docs/WORLD_MAP_AUDIT.md`, decision 043.
+Đầu vào: phản hồi của chủ dự án ngày 2026-10-30, `docs/archive/plans/WORLD_MAP_AUDIT.md`, decision 043.
 Tham khảo phong cách: Epic Battle Fantasy 3 (EBF3), chỉ học cách dàn dựng (camera bám nhân vật, nhiều lối, khu ẩn, rương rải rác, quái nhìn thấy trên map). Không sao chép map, quái hay nội dung của game đó.
 
 ---

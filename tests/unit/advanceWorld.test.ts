@@ -79,7 +79,7 @@ describe('advanceWorld (§7.4)', () => {
     // SUPERMAN (Rare: 259,200 s to Mature): 1 meal at 27,000 s → hunger 150 credited → zero at
     // 67,500 s; it grew while hunger was above 30 (until 54,000 s) and was stalled after.
     const out = advanceWorld(
-      makeState([makePig({ breed: 'PIG_SUPERMAN' })], 1),
+      makeState([makePig({ breed: 'PIG_HERO' })], 1),
       90_000 * SEC,
       neverSick(),
     );

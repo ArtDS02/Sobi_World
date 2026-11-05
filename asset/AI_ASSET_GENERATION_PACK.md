@@ -140,7 +140,7 @@ Without these the game has no art at all. All four exist as concept art in `refe
 |---|---|
 | `pig_classic` | `A classic soft pink farm pig. Rounded body, small floppy ears, curly tail, dark hooves, rosy cheek blush, large friendly dark eyes. No costume, no accessories. This is the anchor design for the entire game.` |
 | `pig_watermelon` | `A watermelon-themed pig. Bright green body with dark green vertical rind stripes, pale green belly, a small green leaf sprout growing from the top of the head, a few tiny black seed dots on the flank. Pink snout and ears kept. Cheerful open-mouth smile.` |
-| `pig_superhero` | `A superhero pig. Periwinkle blue-purple body, a short red cape flowing from the shoulders tied with a red knot at the chest, confident determined eyebrows, small red mask accent. The cape is worn, not held.` |
+| `pig_hero` | `A hero pig (original design, decision 048). Teal body, a long lime-green scarf tied in a knot at the chest, flying goggles pushed up on the forehead, confident eyebrows. No cape, no emblem, no mask.` |
 | `pig_thienlong` | `A legendary divine pig. Warm golden-cream body with a soft glow, small white feathered wings on the back, a small ornate gold crown, a gold collar with a round amber bell pendant. Regal and serene expression. Subtle, readable, not overloaded with detail.` |
 
 ## 3.2 P1 — core skin set, generate after the P0 four
@@ -471,4 +471,4 @@ Everything needed for a game that looks finished. **71 images**, plus 18 cosmeti
 
 At 3–5 generations per accepted asset, wave 1 is roughly 150 generations and wave 2 roughly 130. Do wave 1 completely before starting wave 2, and play the game in between — the point of wave 1's cut line is that it is the smallest set that lets you judge whether the game is worth more art.
 
-Before any of this, **wave 0**: four coloured rounded rectangles named `pig_classic.png`, `pig_watermelon.png`, `pig_superhero.png`, `pig_thienlong.png`. The game must run on those. That is not a joke requirement — it is what proves the manifest swap works before 73 real files depend on it.
+Before any of this, **wave 0**: four coloured rounded rectangles named `pig_classic.png`, `pig_watermelon.png`, `pig_hero.png`, `pig_thienlong.png`. The game must run on those. That is not a joke requirement — it is what proves the manifest swap works before 73 real files depend on it.

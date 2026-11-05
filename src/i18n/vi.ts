@@ -1759,7 +1759,7 @@ export const vi = {
     item_fish_butterflyfish_desc: "Cá câu được. Thả vào bể để nuôi lớn, hoặc bán, hoặc giữ cho đơn hàng.",
     item_fish_boxfish: "Cá Hộp",
     item_fish_boxfish_desc: "Cá câu được. Thả vào bể để nuôi lớn, hoặc bán, hoặc giữ cho đơn hàng.",
-    item_fish_blue_tang: "Cá Đuôi Gai Xanh",
+    item_fish_blue_tang: "Cá Đuôi Gai Tím",
     item_fish_blue_tang_desc: "Cá câu được. Thả vào bể để nuôi lớn, hoặc bán, hoặc giữ cho đơn hàng.",
     item_fish_discus: "Cá Đĩa",
     item_fish_discus_desc: "Cá câu được. Thả vào bể để nuôi lớn, hoặc bán, hoặc giữ cho đơn hàng.",

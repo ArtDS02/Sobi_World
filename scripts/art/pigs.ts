@@ -257,23 +257,6 @@ const knot = (fill: string, x = -20, y = 116) =>
   ) +
   part(ellipseD(x, y, 15, 12), fill, { shade: 5 });
 
-/** Cape / cloak draped from the neck over the back (rig space). */
-function drape(r: Rig, fill: string, len: number) {
-  const { x0, y0 } = r.box;
-  if (r.pose === 'sleep') {
-    return part(
-      `M300,318 C250,300 150,300 ${x0 + 6},${y0 + 14} C${x0 - 14},${y0 + 40} ${x0 - 4},${y0 + 62} ${x0 + 14},${y0 + 74} C80,${y0 + 60} 110,${y0 + 76} 140,${y0 + 64} C170,${y0 + 80} 200,${y0 + 66} 228,${y0 + 72} C260,${y0 + 58} 290,${y0 + 52} 306,${y0 + 40} Z`,
-      fill,
-      { shade: 14 },
-    );
-  }
-  return part(
-    `M290,236 C240,214 160,214 ${x0 + 10},${y0 + 22} C${x0 - 16},${y0 + 50} ${x0 - 14},${y0 + 60 + len * 0.4} ${x0 + 4},${y0 + 60 + len} C${x0 + 34},${y0 + 48 + len} ${x0 + 58},${y0 + 66 + len} ${x0 + 86},${y0 + 52 + len} C${x0 + 112},${y0 + 68 + len} ${x0 + 140},${y0 + 50 + len} ${x0 + 168},${y0 + 56 + len} C${x0 + 196},${y0 + 40 + len} 270,${y0 + 30 + len * 0.6} 300,280 Z`,
-    fill,
-    { shade: 16 },
-  );
-}
-
 function wing(x: number, y: number, k: number, fill: string) {
   const t = `translate(${x},${y}) scale(${k})`;
   const feathers =
@@ -351,11 +334,53 @@ export const LOOKS: Record<string, Look> = {
       line('M-8,-146 C-34,-156 -56,-156 -72,-152 M4,-146 C28,-160 52,-164 70,-160', '#4f8a32', 3),
   },
 
-  pig_superhero: {
-    body: '#9a9ce8',
+  // Original design (decision 048): teal body, long lime scarf and flying goggles — no cape, no emblem.
+  pig_hero: {
+    body: '#7fd1c4',
+    belly: '#e4f7ef',
     brows: true,
-    overBody: (r) => drape(r, '#e5463f', 30),
-    neck: (pose) => collar('#e5463f') + (pose === 'idle' ? knot('#e5463f') : ''),
+    neck: (pose) => collar('#c8e34a', '#8fa82a') + (pose === 'idle' ? knot('#c8e34a') : ''),
+    hat: () =>
+      line('M-96,-92 C-40,-112 40,-112 100,-90', '#6b4a2f', 8) +
+      part(ellipseD(-30, -108, 22, 17), '#bfe7f3', { stroke: 5.5, shade: 6 }) +
+      part(ellipseD(30, -108, 22, 17), '#bfe7f3', { stroke: 5.5, shade: 6 }) +
+      glint(-38, -114, 5),
+  },
+
+  // Original design (decision 048): a storm-cloud pig — slate-blue body, cloud puff and a yellow zigzag on the head,
+  // a zigzag collar. No hammer, winged helmet or red cape.
+  pig_storm: {
+    body: '#8aa4c8',
+    belly: '#dfe8f5',
+    snout: '#c9d6ea',
+    earInner: '#b9c9e2',
+    neck: () =>
+      collar('#f2c94c', '#c99a1c'),
+    hat: () =>
+      part(ellipseD(-30, -118, 34, 22), '#f4f8ff', { stroke: 5.5, shade: 6 }) +
+      part(ellipseD(14, -126, 40, 26), '#ffffff', { stroke: 5.5, shade: 6 }) +
+      part(ellipseD(56, -114, 30, 20), '#f4f8ff', { stroke: 5.5, shade: 6 }) +
+      part('M6,-104 L26,-104 L16,-84 L32,-84 L2,-52 L10,-76 L-4,-76 Z', '#ffd84a', { stroke: 4.5, shade: 6 }),
+  },
+
+  // Original design (decision 048): a plain steel-plated robot pig with an antenna ball; no weapons, no show branding.
+  pig_warbot: {
+    body: '#9aa5b1',
+    belly: '#cfd6dd',
+    snout: '#6f7c89',
+    hoof: '#3d4650',
+    earInner: '#7b8794',
+    eyeShine: '#6fe3ff',
+    bodyPattern: (r) =>
+      [0.25, 0.5, 0.75]
+        .map((k) =>
+          part(ellipseD(r.box.x0 + (r.box.x1 - r.box.x0) * k, r.box.y0 + 26, 6, 6), '#5f6b77', { stroke: 3, shade: 0 }),
+        )
+        .join(''),
+    neck: () => collar('#4b5560', '#2f3740'),
+    hat: () =>
+      line('M0,-112 C0,-128 4,-140 6,-150', '#4b5560', 7) +
+      part(ellipseD(6, -156, 12, 12), '#ff6a5a', { stroke: 4.5, shade: 6 }),
   },
 
   pig_thienlong: {

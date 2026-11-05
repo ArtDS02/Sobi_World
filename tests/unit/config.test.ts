@@ -69,8 +69,8 @@ describe('breeding rules (§6.5 as rules, U00-1 D4)', () => {
       ['PIG_BEE', 'PIG_PUMPKIN', 'PIG_SUNFLOWER'],
       ['PIG_BOAR', 'PIG_SHEEP', 'PIG_HEDGEHOG'],
       ['PIG_PENGUIN', 'PIG_STRIPED_MELON', 'PIG_TURTLE'],
-      ['PIG_SUPERMAN', 'PIG_PENGUIN', 'PIG_ROBOT'],
-      ['PIG_SHEEP', 'PIG_SUPERMAN', 'PIG_UNICORN'],
+      ['PIG_HERO', 'PIG_PENGUIN', 'PIG_ROBOT'],
+      ['PIG_SHEEP', 'PIG_HERO', 'PIG_UNICORN'],
     ];
     for (const [a, b, child] of cases) expect(odds(a, b)[child], child).toBeGreaterThan(0);
   });

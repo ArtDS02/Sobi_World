@@ -40,7 +40,7 @@ export const EYE_OVERRIDES: Record<string, EyeOverride> = {
   pig_mecha: { eyes: [oval(336, 202, 368, 234), oval(420, 204, 434, 232)] },
   pig_cyborg: { eyes: [oval(304, 192, 346, 238), oval(400, 186, 422, 220)] },
   pig_rich: { eyes: [oval(300, 204, 332, 236), oval(364, 188, 384, 210)] },
-  pig_battlebot: { eyes: [oval(272, 228, 308, 264), oval(340, 212, 360, 234)] },
+  pig_warbot: { eyes: [oval(272, 228, 308, 264), oval(340, 212, 360, 234)] },
   pig_ufo: { eyes: [mask(258, 214, 276, 238), mask(298, 196, 314, 218)] },
   pig_sleepy: { closedInIdle: true },
   pig_tiger: { eyes: [mask(300, 184, 350, 242), oval(395, 179, 413, 215)] },

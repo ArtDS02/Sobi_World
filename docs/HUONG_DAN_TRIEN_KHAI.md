@@ -34,7 +34,7 @@ BỐI CẢNH: Repo này chứa code game nuôi heo Sobi Farm đã hoàn thiện 
 BƯỚC 1 — KIỂM TRA (chưa sửa code):
 - Làm trên nhánh git phase-01-world-foundation.
 - Đọc toàn bộ code Sobi Farm: tech stack, cách chạy, cấu trúc, model heo, AI, lai giống, túi đồ, tiền, shop, save, asset, layout, admin, cách đóng gói.
-- Tạo docs/AUDIT_AND_PLAN.md gồm:
+- Tạo docs/archive/plans/AUDIT_AND_PLAN.md gồm:
   a) Bảng: mỗi phần code hiện có → đi vào core / systems / areas/farm / content / admin.
   b) Chỗ đang hard-code nội dung, số liệu, chữ hiển thị, hoặc gắn chặt với "heo".
   c) Con số hiện có so với GAME_BALANCE.md (giữ số hiện có nếu đang chơi ổn).

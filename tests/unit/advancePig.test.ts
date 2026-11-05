@@ -147,7 +147,7 @@ describe('split invariance (many (a, b) pairs)', () => {
   const starts: Record<string, Pig> = {
     'pink baby': makePig(),
     'pink half-fed young': makePig({ hunger: 37, cleanliness: 61, growthProgress: 42 }),
-    'superman near adult': makePig({ breed: 'PIG_SUPERMAN', growthProgress: 99.5, hunger: 80 }),
+    'hero near adult': makePig({ breed: 'PIG_HERO', growthProgress: 99.5, hunger: 80 }),
     'mythical dirty': makePig({ breed: 'PIG_MYTHICAL', cleanliness: 31, hunger: 5 }),
     'adult starving': makePig({ growthProgress: 100, hunger: 0, cleanliness: 20 }),
   };

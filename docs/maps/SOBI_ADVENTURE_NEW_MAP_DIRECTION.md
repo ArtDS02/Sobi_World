@@ -444,7 +444,7 @@ Sobi Adventure dùng bản đồ 2D góc nhìn 3/4, camera ×1.5, nền terrain 
 
 ### Việc cần đọc trước khi làm (Lượt 1)
 1. `SOBI_ADVENTURE_NEW_MAP_DIRECTION.md` (toàn bộ) và `Context.md`.
-2. `AGENT_RULES`, `docs/decisions/043-adventure-world-map.md`, `045-adventure-map-v2.md`, `docs/WORLD_MAP_V2_PROPOSAL.md`, `src/areas/adventure/README.md`, `docs/maps/v2/README.md` và bố cục M2.
+2. `AGENT_RULES`, `docs/decisions/043-adventure-world-map.md`, `045-adventure-map-v2.md`, `docs/archive/plans/WORLD_MAP_V2_PROPOSAL.md`, `src/areas/adventure/README.md`, `docs/maps/v2/README.md` và bố cục M2.
 3. Code thực tế ở branch hiện tại: `content/adventure/maps.json`, `props.json`, `zones.json`; `logic/maps.ts`, `mapGraph.ts`, `fog.ts`, `foes.ts`; `scene/mapView.ts`, `mapGround.ts`, `mapCliffs.ts`, `mapDepth.ts`, `mapDepthKit.ts`, `mapCovers.ts`, `mapCorruption.ts`, `decals.ts`, `mapKit.ts`, `mapCamera.ts`; hệ save; `scripts/capture/adventureMaps.ts`; `tools/admin/adventure*.ts`; quy trình `npm run art:process` và manifest.
 
 ### Báo cáo cuối mỗi lượt gồm

@@ -125,7 +125,7 @@ describe('buyPig (§8.1)', () => {
 
   it('INVALID_REQUEST for a non-buyable breed or a bad gender', () => {
     expectError(
-      (s) => buyPig(s, { breed: 'PIG_SUPERMAN', gender: 'MALE' }, ctx()),
+      (s) => buyPig(s, { breed: 'PIG_HERO', gender: 'MALE' }, ctx()),
       start(),
       'INVALID_REQUEST',
     );

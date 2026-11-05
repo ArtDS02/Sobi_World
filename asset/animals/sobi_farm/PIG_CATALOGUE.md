@@ -84,13 +84,13 @@
 | Heo Giả Kim | `pig_alchemist` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
 | Heo Cung Thủ | `pig_archer` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
 | Heo Thám Hiểm | `pig_explorer` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
-| Heo Siêu Anh Hùng | `pig_superhero` | `PIG_SUPERMAN` | Adventure Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_superhero.png` |
+| Heo Anh Hùng | `pig_hero` | `PIG_HERO` | Adventure Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_hero.png` |
 | Heo Phản Diện | `pig_villain` | — | Adventure Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
 | Heo Cơ Giáp | `pig_robot` | `PIG_ROBOT` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_robot.png` |
 | Heo Mecha | `pig_mecha` | `PIG_MECHA` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_mecha.png` |
 | Heo Cyborg | `pig_cyborg` | `PIG_CYBORG` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_cyborg.png` |
 | Heo Android | `pig_android` | — | Robot / Sci-Fi Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
-| Heo Battlebot | `pig_battlebot` | `PIG_BATTLEBOT` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_battlebot.png` |
+| Heo Chiến Giáp | `pig_warbot` | `PIG_WARBOT` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_warbot.png` |
 | Heo AI | `pig_ai` | — | Robot / Sci-Fi Collection | — | ✗ | ✗ | ✗ | — | — | 🟡 PARTIAL | `asset/animals/asset/pig_ai.png` (review) |
 | Heo Không Gian | `pig_space` | — | Robot / Sci-Fi Collection | — | ✗ | ✗ | ✗ | — | — | 🟡 PARTIAL | `asset/animals/asset/pig_space.png` (review) |
 | Heo Ngoài Hành Tinh | `pig_alien` | `PIG_ALIEN` | Robot / Sci-Fi Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_alien.png` |
@@ -116,14 +116,14 @@
 | Heo Valkyrie | `pig_valkyrie` | `PIG_VALKYRIE` | Mythology Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_valkyrie.png` |
 | Heo Minotaur | `pig_minotaur` | — | Mythology Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
 | Heo Medusa | `pig_medusa` | — | Mythology Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
-| Heo Thor | `pig_thor` | `PIG_THOR` | Mythology Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_thor.png` |
-| Heo Loki | `pig_loki` | — | Mythology Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Sấm | `pig_storm` | `PIG_STORM` | Mythology Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_storm.png` |
+| Heo Ảo Thuật | `pig_trickster` | — | Mythology Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
 | Heo Bí Ngô | `pig_pumpkin` | `PIG_PUMPKIN` | Horror / Halloween Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | ✅ COMPLETED | `pigs/base/pig_pumpkin.png` |
 | Heo Ma | `pig_ghost` | `PIG_GHOST` | Horror / Halloween Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_ghost.png` |
 | Heo Ma Cà Rồng | `pig_vampire` | `PIG_VAMPIRE` | Horror / Halloween Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_vampire.png` |
 | Heo Zombie | `pig_zombie` | `PIG_ZOMBIE` | Horror / Halloween Collection | ✓ ×0.6 | ✓ | ✓ flip | ✓ | — | — | 🆕 NEW | `pigs/base/pig_zombie.png` |
 | Heo Xác Ướp | `pig_mummy` | — | Horror / Halloween Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
-| Heo Frankenstein | `pig_franken` | — | Horror / Halloween Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
+| Heo Khâu Vá | `pig_patchwork` | — | Horror / Halloween Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
 | Heo Xương | `pig_skeleton` | — | Horror / Halloween Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
 | Heo Người Sói | `pig_werewolf` | — | Horror / Halloween Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
 | Heo Đi Biển | `pig_beach` | — | Seasonal Collection | ✗ | ✗ | ✗ | ✗ | — | — | ⬜ NOT DESIGNED | — |
@@ -187,7 +187,7 @@ versions were **not** copied over live art; the live file keeps its name, source
 | `pig_ao_dai_v2.png` | `pig_ao_dai` | — | Bản thay thế (áo dài xanh) — game dùng pig_ao_dai (đỏ/vàng) |
 | `pig_astronaut.png` | `pig_astronaut` | ✓ dùng → `pig_astronaut` |  |
 | `pig_banh_chung.png` | `pig_banh_chung` | ✓ dùng → `pig_banh_chung` |  |
-| `pig_battlebot.png` | `pig_battlebot` | ✓ dùng → `pig_battlebot` |  |
+| `pig_warbot.png` | `pig_warbot` | ✓ dùng → `pig_warbot` |  |
 | `pig_boba.png` | `pig_boba` | ✓ dùng → `pig_boba` |  |
 | `pig_burger.png` | `pig_burger` | ✓ dùng → `pig_burger` |  |
 | `pig_business.png` | `pig_business` | ✓ dùng → `pig_business` |  |
@@ -229,7 +229,7 @@ versions were **not** copied over live art; the live file keeps its name, source
 | `pig_tet.png` | `pig_tet` | — | Heo dưa hấu đeo bảng chữ Tết — trùng thân pig_watermelon, không khớp concept áo đỏ/vàng; giữ pig_tet_v3 |
 | `pig_tet_v3.png` | `pig_tet` | ✓ dùng → `pig_tet` |  |
 | `pig_thienlong.png` | `pig_thienlong` | — | Bản khác pig_thienlong (đồ rồng cam) — không ghi đè; game giữ bản P0 cánh + vương miện |
-| `pig_thor.png` | `pig_thor` | ✓ dùng → `pig_thor` |  |
+| `pig_storm.png` | `pig_storm` | ✓ dùng → `pig_storm` |  |
 | `pig_ufo.png` | `pig_ufo` | ✓ dùng → `pig_ufo` |  |
 | `pig_unicorn.png` | `pig_unicorn` | — | Bản khác pig_unicorn (thân cầu vồng) — không ghi đè; user duyệt |
 | `pig_valkyrie_v2.png` | `pig_valkyrie` | ✓ dùng → `pig_valkyrie` |  |
@@ -469,7 +469,7 @@ The Vietnamese collection should reinforce the identity of the game.
 | `pig_alchemist` | Heo Giả Kim | Potion bottles and coat | P2 |
 | `pig_archer` | Heo Cung Thủ | Hood, bow and quiver | P2 |
 | `pig_explorer` | Heo Thám Hiểm | Explorer hat, backpack | P1 |
-| `pig_superhero` | Heo Siêu Anh Hùng | Mask and cape | P1 |
+| `pig_hero` | Heo Anh Hùng | Mask and cape | P1 |
 | `pig_villain` | Heo Phản Diện | Dark cape and mischievous look | P2 |
 
 ---
@@ -484,7 +484,7 @@ This collection expands the original `pig_robot` into a complete technological u
 | `pig_mecha` | Heo Mecha | Chunky combat armor | P2 |
 | `pig_cyborg` | Heo Cyborg | Organic + mechanical body | P2 |
 | `pig_android` | Heo Android | Clean white synthetic body | P3 |
-| `pig_battlebot` | Heo Battlebot | Arena combat robot | P3 |
+| `pig_warbot` | Heo Chiến Giáp | Plain steel-plated robot | P3 |
 | `pig_ai` | Heo AI | Futuristic AI core and hologram | P3 |
 | `pig_space` | Heo Không Gian | Futuristic space explorer | P2 |
 | `pig_alien` | Heo Ngoài Hành Tinh | Purple skin, antennae, large eyes | P2 |
@@ -536,13 +536,13 @@ Use a cute parody-inspired interpretation rather than realistic historical depic
 | `pig_oni` | Heo Oni | Small horns, red/blue theme | P2 |
 | `pig_zeus` | Heo Zeus | Crown, toga, lightning | P3 |
 | `pig_poseidon` | Heo Poseidon | Trident and ocean theme | P3 |
-| `pig_hades` | Heo Hades | Dark cape, flame motif | P3 |
+| `pig_hades` | Heo Hades | Underworld lantern and ash-grey coat | P3 |
 | `pig_athena` | Heo Athena | Helmet and shield | P3 |
 | `pig_valkyrie` | Heo Valkyrie | Winged helmet, armor | P3 |
 | `pig_minotaur` | Heo Minotaur | Cute horned costume | P3 |
 | `pig_medusa` | Heo Medusa | Snake-hair inspired hood | P3 |
-| `pig_thor` | Heo Thor | Hammer and lightning | P3 |
-| `pig_loki` | Heo Loki | Horned helmet and green costume | P3 |
+| `pig_storm` | Heo Sấm | Storm cloud puff and zigzag bolt (no hammer) | P3 |
+| `pig_trickster` | Heo Ảo Thuật | Mint cloak and oversized wizard hat | P3 |
 
 ---
 
@@ -557,7 +557,7 @@ Keep horror cute and family-friendly.
 | `pig_vampire` | Heo Ma Cà Rồng | Cape and tiny fangs | P2 |
 | `pig_zombie` | Heo Zombie | Torn clothes, funny expression | P2 |
 | `pig_mummy` | Heo Xác Ướp | Wrapped bandages | P2 |
-| `pig_franken` | Heo Frankenstein | Bolts and stitched costume | P3 |
+| `pig_patchwork` | Heo Khâu Vá | Patchwork quilt coat with button stitches | P3 |
 | `pig_skeleton` | Heo Xương | Cartoon skeleton costume | P2 |
 | `pig_werewolf` | Heo Người Sói | Fluffy ears and claws | P2 |
 
@@ -1251,14 +1251,14 @@ These four are the **only** artwork the game cannot run without, because every p
 
 - `pig_classic` — PIG_EARTH_PINK (Heo Hồng Đất)
 - `pig_watermelon` — PIG_STRIPED_MELON (Heo Sọc Dưa)
-- `pig_superhero` — PIG_SUPERMAN (Heo Siêu Nhân)
+- `pig_hero` — PIG_HERO (Heo Anh Hùng)
 - `pig_thienlong` — PIG_MYTHICAL (Heo Thần Thoại)
 
 All four already exist as concept art in `../reference/style_reference_environment.png`, top row, left to right in exactly this order.
 
 ## P1 — Core
 
-Create next (`pig_classic` and `pig_superhero` already done in P0):
+Create next (`pig_classic` and `pig_hero` already done in P0):
 
 - pig_classic
 - pig_white
@@ -1271,7 +1271,7 @@ Create next (`pig_classic` and `pig_superhero` already done in P0):
 - pig_wizard
 - pig_cowboy
 - pig_detective
-- pig_superhero
+- pig_hero
 - pig_ghost
 - pig_christmas
 - pig_tet
