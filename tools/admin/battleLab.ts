@@ -21,6 +21,7 @@ import { optionHtml, type Visual } from './richSelect';
 import { json, post, state } from './store';
 
 const FILE = 'adventure/battle_fx.json';
+type Side = 'ally' | 'enemy';
 const ALLIES = ['lab:ally', 'lab:ally2', 'lab:ally3'];
 const FOES = ['lab_enemy#1', 'lab_enemy#2', 'lab_enemy#3'];
 const REACTIONS = ['reaction_shock', 'reaction_steam', 'reaction_wildfire', 'reaction_shatter', 'reaction_purify', 'reaction_eclipse'];
@@ -34,6 +35,8 @@ const lab = {
   attacker: 'pig_knight',
   target: 'enemy_forest_wolf',
   fromEnemy: false,
+  /** What the side that is not striking remembers of its skill choice (the two config blocks each keep their own). */
+  mem: { ally: { skillType: '', skill: '' }, enemy: { skillType: '', skill: '' } } as Record<'ally' | 'enemy', { skillType: string; skill: string }>,
   crit: false,
   ko: false,
   fast: false,
@@ -276,34 +279,52 @@ export function renderBattleLab(root: HTMLElement) {
   // Combat animals (pigs, fish) and monsters are listed apart: the side that strikes and the side that is struck each get their own kind.
   const animals = [...lab.images.values()].filter((r) => /^(pig_|fish_)/.test(r.id) && !/_(hurt|sleep|wake)$/.test(r.id)).map((r) => r.id);
   const monsters = ENEMY_LIST.map((e) => e.art);
-  const attackers = lab.fromEnemy ? monsters : animals;
-  const targets = lab.fromEnemy ? animals : monsters;
-  const skills = SKILL_LIST.filter((x) => !lab.skillType || x.type === lab.skillType);
-  const skillTypes = [['', 'Mọi loại'], ['class', 'Chức nghiệp'], ['unique', 'Độc nhất'], ['ultimate', 'Tuyệt kỹ'], ['enemy', 'Quái vật']] as const;
+  const cur: Side = lab.fromEnemy ? 'enemy' : 'ally';
+  const SKILL_TYPES: Record<Side, readonly (readonly [string, string, string])[]> = {
+    ally: [['', 'Mọi loại', '🗂️'], ['class', 'Chức nghiệp', '🎓'], ['unique', 'Độc nhất', '⭐'], ['ultimate', 'Tuyệt kỹ', '💥']],
+    enemy: [['', 'Mọi loại', '🗂️'], ['enemy', 'Kỹ năng quái', '👹']],
+  };
+  /** The skill choice shown in a block: the striking side's is live, the other side's is remembered. */
+  const choice = (side: Side) => (side === cur ? { type: lab.skillType, skill: lab.skill } : { type: lab.mem[side].skillType, skill: lab.mem[side].skill });
   const element = SKILLS[lab.skill]?.element ?? null;
   const look = lookOf(element === 'SELF' ? null : element, lab.skill || null);
   const allyArt = lab.fromEnemy ? lab.target : lab.attacker;
   const def = lab.skill ? SKILLS[lab.skill] : undefined;
-  const flags = [['fromEnemy', 'Quái ra đòn (từ bên phải)'], ['crit', 'Chí mạng'], ['ko', 'Kết liễu'], ['reduce', 'Giảm chuyển động'], ['phase', 'Trùm đổi pha'], ['win', 'Thắng trận']] as const;
+  const flags = [['crit', 'Chí mạng'], ['ko', 'Kết liễu'], ['reduce', 'Giảm chuyển động'], ['phase', 'Trùm đổi pha'], ['win', 'Thắng trận']] as const;
+  const foeArt = lab.fromEnemy ? lab.attacker : lab.target;
   const lines = (text: string) => Array.from({ length: text.split('\n').length }, (_, n) => n + 1).join('\n');
   const ownText = lab.skill ? JSON.stringify(ownRaw(), null, 2) : '';
   const bad = !!lab.message && !lab.message.startsWith('✓');
+  const picks = (list: readonly string[], chosen: string) => list.map((c) => opt(c, creatureName(c) || c, chosen, { img: pic(c), sub: c })).join('');
+  const sideBlock = (side: Side) => {
+    const ally = side === 'ally';
+    const c = choice(side);
+    const list = SKILL_LIST.filter((x) => ((x.type === 'enemy') === !ally && (!c.type || x.type === c.type)) || x.id === c.skill);
+    const mine = ally ? allyArt : foeArt;
+    const other = ally ? foeArt : allyArt;
+    const chips = ally ? lab.allies : lab.foes;
+    return `<div class="bside bside--${side}${side === cur ? ' is-acting' : ''}" data-side="${side}">
+      <div class="bside__head"><span class="bside__badge">${ally ? '🛡️' : '👹'}</span><b>${ally ? 'Đồng minh (Phe ta)' : 'Quái vật (Phe địch)'}</b>
+        <button type="button" class="bside__act" data-act="${side}" aria-pressed="${side === cur}">${side === cur ? '● Đang ra đòn' : '○ Cho bên này ra đòn'}</button></div>
+      <div class="blab__grid">
+        <label class="field"><span>Loại kỹ năng</span><select data-skilltype="${side}" data-rich>${SKILL_TYPES[side].map(([v, l, i]) => opt(v, l, c.type, { icon: i })).join('')}</select></label>
+        <div class="field blab__wide"><span>Kỹ năng</span><div class="blab__row"><select data-skill="${side}" data-rich>${opt('', 'Đánh thường', c.skill, { img: pic('ui_icon_adv_attack'), sub: 'Đòn thường, không kỹ năng' })}${list.map((x) => opt(x.id, x.nameVi, c.skill, { img: skillPic(x.id, x.element ?? null), sub: `${x.element ? (ELEMENT_NAMES[x.element as keyof typeof ELEMENT_NAMES]?.nameVi ?? x.element) : 'Không hệ'} · ${x.category}${BATTLE_FX.skills[x.id] ? ' · ★ có animation riêng' : ''}` })).join('')}</select>${ally ? '<button type="button" class="btn blab__tree" data-tree>🌳 Cây kỹ năng</button>' : ''}</div></div>
+        <label class="field"><span>${ally ? 'Bên ra đòn' : 'Quái ra đòn'}</span><select data-art="${side}" data-rich>${picks(ally ? animals : monsters, mine)}</select></label>
+        <div class="field"><span>${ally ? 'Đội hình (phe ta)' : 'Đội hình (phe địch)'}</span><div class="blab__team">${[0, 1, 2].map((n) => `<button type="button" class="blab__chip${n < chips ? ' is-on' : ''}" data-team="${side}:${n}" title="${n + 1} ${ally ? 'đồng đội' : 'quái'}">${pic(mine) ? `<img src="${pic(mine)}" alt="" />` : '🐷'}</button>`).join('')}</div></div>
+        <label class="field"><span>${ally ? 'Quái nhận đòn' : 'Bên nhận đòn'}</span><select data-art="${ally ? 'enemy' : 'ally'}" data-rich>${picks(ally ? monsters : animals, other)}</select></label>
+        <label class="field"><span>Số quái</span><select data-count="foes" data-rich>${[1, 2, 3].map((n) => opt(String(n), `${n} quái`, String(lab.foes), { icon: '👾' })).join('')}</select></label>
+        <label class="field"><span>Tha hóa của quái</span><select data-count="corruption" data-rich>${[0, 1, 2, 3, 4, 5].map((n) => opt(String(n), n ? `Cấp ${n}` : 'Không tha hóa', String(lab.corruption), { swatch: ['#9fd36b', '#c9b7e8', '#a98bd8', '#8460c4', '#6a3fae', '#4a1f86'][n]!, sub: n >= 3 ? 'Có hào quang tối' : '' })).join('')}</select></label>
+      </div>
+      ${ally ? '' : `<details class="blab__react"><summary>Phản ứng nguyên tố</summary><div class="blab__reactbody"><label class="field"><span>Phản ứng</span><select data-reaction data-rich>${opt('', 'Không có', lab.reaction, { icon: '—' })}${REACTIONS.map((x) => opt(x, REACTION_ROWS[x]?.nameVi ?? x, lab.reaction, { img: pic(reactionArt(x)), sub: x })).join('')}</select></label></div></details>`}
+      ${ally ? '' : `<div class="blab__flags">${flags.map(([k, label]) => `<label class="check"><input type="checkbox" data-flag="${k}"${(lab as unknown as Record<string, boolean>)[k] ? ' checked' : ''} /> ${label}</label>`).join('')}</div>`}
+    </div>`;
+  };
   root.innerHTML = `<div class="blab">
     <p class="muted">Thiết kế và kiểm thử animation các kỹ năng trong trận đấu, trên đúng sân trận Phaser của game. Cách viết: <code>docs/animation/COMBAT_ART_GUIDE.md</code> §4.</p>
-    <section class="blab__card${lab.collapsed ? ' is-folded' : ''}" data-config>
-      <div class="blab__cardhead"><h3>⚙️ Cấu hình trận đấu</h3><button class="help-link" data-fold>${lab.collapsed ? 'Mở rộng ⌄' : 'Thu gọn ⌃'}</button></div>
+    <section class="blab__card blab__config${lab.collapsed ? ' is-folded' : ''}" data-config>
+      <div class="blab__cardhead"><h3><span class="blab__ico">⚙️</span> Cấu hình trận đấu</h3><button class="help-link" data-fold>${lab.collapsed ? 'Mở rộng ⌄' : 'Thu gọn ⌃'}</button></div>
       <div class="blab__cardbody">
-        <div class="blab__grid">
-          <label class="field"><span>Loại kỹ năng</span><select data-skilltype>${skillTypes.map(([v, l]) => `<option value="${v}"${v === lab.skillType ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
-          <div class="field"><span>Kỹ năng</span><div class="blab__row"><select data-skill data-rich>${opt('', 'Đánh thường', lab.skill, { img: pic('ui_icon_adv_attack'), sub: 'Đòn thường, không kỹ năng' })}${skills.map((x) => opt(x.id, x.nameVi, lab.skill, { img: skillPic(x.id, x.element ?? null), sub: `${x.element ? (ELEMENT_NAMES[x.element as keyof typeof ELEMENT_NAMES]?.nameVi ?? x.element) : 'Không hệ'} · ${x.category}${BATTLE_FX.skills[x.id] ? ' · ★ có animation riêng' : ''}` })).join('')}</select><button type="button" class="btn btn-small" data-tree>🌳 Cây kỹ năng</button></div></div>
-          <label class="field"><span>${lab.fromEnemy ? 'Quái ra đòn' : 'Bên ra đòn'}</span><select data-attacker data-rich>${attackers.map((c) => opt(c, creatureName(c) || c, lab.attacker, { img: pic(c), sub: c })).join('')}</select></label>
-          <div class="field"><span>Đội hình (phe ta)</span><div class="blab__team">${[0, 1, 2].map((n) => `<button type="button" class="blab__chip${n < lab.allies ? ' is-on' : ''}" data-ally="${n}" title="${n + 1} đồng đội">${pic(allyArt) ? `<img src="${pic(allyArt)}" alt="" />` : '🐷'}</button>`).join('')}</div></div>
-          <label class="field"><span>${lab.fromEnemy ? 'Bên nhận đòn' : 'Quái nhận đòn'}</span><select data-target data-rich>${targets.map((c) => opt(c, creatureName(c) || c, lab.target, { img: pic(c), sub: c })).join('')}</select></label>
-          <label class="field"><span>Số quái</span><select data-count="foes" data-rich>${[1, 2, 3].map((n) => opt(String(n), `${n} quái`, String(lab.foes), { icon: '👾'.repeat(n) })).join('')}</select></label>
-          <label class="field"><span>Tha hóa của quái</span><select data-count="corruption" data-rich>${[0, 1, 2, 3, 4, 5].map((n) => opt(String(n), n ? `Cấp ${n}` : 'Không tha hóa', String(lab.corruption), { swatch: ['#9fd36b', '#c9b7e8', '#a98bd8', '#8460c4', '#6a3fae', '#4a1f86'][n]!, sub: n >= 3 ? 'Có hào quang tối' : '' })).join('')}</select></label>
-          <label class="field"><span>Phản ứng nguyên tố</span><select data-reaction data-rich>${opt('', 'Không có', lab.reaction, { icon: '—' })}${REACTIONS.map((x) => opt(x, REACTION_ROWS[x]?.nameVi ?? x, lab.reaction, { img: pic(reactionArt(x)), sub: x })).join('')}</select></label>
-        </div>
-        <div class="blab__flags">${flags.map(([k, label]) => `<label class="check"><input type="checkbox" data-flag="${k}"${(lab as unknown as Record<string, boolean>)[k] ? ' checked' : ''} /> ${label}</label>`).join('')}</div>
+        ${(['ally', 'enemy'] as const).map((side) => sideBlock(side)).join('')}
       </div>
     </section>
     <div class="blab__cols">
@@ -347,37 +368,63 @@ export function renderBattleLab(root: HTMLElement) {
   const q = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
   mountGame(q('[data-stage]'));
   const redo = () => renderBattleLab(root);
-  q<HTMLSelectElement>('[data-skill]').onchange = (e) => ((lab.skill = (e.target as HTMLSelectElement).value), (lab.message = ''), redo());
-  q<HTMLSelectElement>('[data-skilltype]').onchange = (e) => {
-    lab.skillType = (e.target as HTMLSelectElement).value;
-    if (lab.skill && lab.skillType && SKILLS[lab.skill]?.type !== lab.skillType) lab.skill = '';
-    redo();
+  // Choosing a skill (or its type) in a block makes that side the one that strikes: the sides swap their remembered choices and arts.
+  const strike = (side: Side) => {
+    if (side === cur) return;
+    lab.mem[cur] = { skillType: lab.skillType, skill: lab.skill };
+    lab.skillType = lab.mem[side].skillType;
+    lab.skill = lab.mem[side].skill;
+    lab.fromEnemy = side === 'enemy';
+    [lab.attacker, lab.target] = [lab.target, lab.attacker];
   };
-  q('[data-tree]').onclick = () => openTreeDialog(pic, skillPic, (id) => ((lab.skill = id), (lab.skillType = ''), (lab.message = ''), redo()));
-  q<HTMLSelectElement>('[data-attacker]').onchange = (e) => ((lab.attacker = (e.target as HTMLSelectElement).value), redo());
-  q<HTMLSelectElement>('[data-target]').onchange = (e) => ((lab.target = (e.target as HTMLSelectElement).value), redo());
+  for (const b of root.querySelectorAll<HTMLButtonElement>('[data-act]')) b.onclick = () => (strike(b.dataset.act as Side), (lab.message = ''), redo());
+  for (const sel of root.querySelectorAll<HTMLSelectElement>('select[data-skill]')) {
+    sel.onchange = () => {
+      strike(sel.dataset.skill as Side);
+      lab.skill = sel.value;
+      lab.message = '';
+      redo();
+    };
+  }
+  for (const sel of root.querySelectorAll<HTMLSelectElement>('select[data-skilltype]')) {
+    sel.onchange = () => {
+      strike(sel.dataset.skilltype as Side);
+      lab.skillType = sel.value;
+      if (lab.skill && lab.skillType && SKILLS[lab.skill]?.type !== lab.skillType) lab.skill = '';
+      redo();
+    };
+  }
+  // A creature picker sets the art of the ally or of the foe, whichever side strikes.
+  for (const sel of root.querySelectorAll<HTMLSelectElement>('select[data-art]')) {
+    sel.onchange = () => {
+      const isAlly = sel.dataset.art === 'ally';
+      if (isAlly === !lab.fromEnemy) lab.attacker = sel.value;
+      else lab.target = sel.value;
+      redo();
+    };
+  }
+  q('[data-tree]').onclick = () => openTreeDialog(pic, skillPic, (id) => (strike('ally'), (lab.skill = id), (lab.skillType = ''), (lab.message = ''), redo()));
   q('[data-fold]').onclick = () => {
     lab.collapsed = !lab.collapsed;
     q('[data-config]').classList.toggle('is-folded', lab.collapsed);
     q('[data-fold]').textContent = lab.collapsed ? 'Mở rộng ⌄' : 'Thu gọn ⌃';
   };
-  for (const chip of root.querySelectorAll<HTMLButtonElement>('[data-ally]')) {
+  for (const chip of root.querySelectorAll<HTMLButtonElement>('[data-team]')) {
     chip.onclick = () => {
-      const n = Number(chip.dataset.ally) + 1;
-      lab.allies = n === lab.allies ? Math.max(1, n - 1) : n;
+      const [side, i] = chip.dataset.team!.split(':');
+      const n = Number(i) + 1;
+      if (side === 'ally') lab.allies = n === lab.allies ? Math.max(1, n - 1) : n;
+      else lab.foes = n === lab.foes ? Math.max(1, n - 1) : n;
       redo();
     };
   }
-  for (const flag of root.querySelectorAll<HTMLInputElement>('[data-flag]')) {
-    flag.onchange = () => {
-      (lab as unknown as Record<string, boolean>)[flag.dataset.flag!] = flag.checked;
-      if (flag.dataset.flag !== 'fromEnemy') return;
-      // The two sides swap kinds: the striker and the struck trade places so each list keeps its own kind.
-      [lab.attacker, lab.target] = [lab.target, lab.attacker];
+  for (const flag of root.querySelectorAll<HTMLInputElement>('[data-flag]')) flag.onchange = () => ((lab as unknown as Record<string, boolean>)[flag.dataset.flag!] = flag.checked);
+  for (const sel of root.querySelectorAll<HTMLSelectElement>('[data-count]')) {
+    sel.onchange = () => {
+      (lab as unknown as Record<string, number>)[sel.dataset.count!] = Number(sel.value);
       redo();
     };
   }
-  for (const sel of root.querySelectorAll<HTMLSelectElement>('[data-count]')) sel.onchange = () => ((lab as unknown as Record<string, number>)[sel.dataset.count!] = Number(sel.value));
   q<HTMLSelectElement>('[data-reaction]').onchange = (e) => (lab.reaction = (e.target as HTMLSelectElement).value);
   q('[data-play]').onclick = () => play();
   q('[data-enter]').onclick = () => play(true);
