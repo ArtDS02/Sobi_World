@@ -51,7 +51,7 @@ export class ActPlayer {
     const hgt = this.scene.scale.height;
     const s = spot ?? fallback;
     if (!a) {
-      const y = { sky: -40, above: 0.2, head: 0.28, chest: 0.5, middle: 0.62, feet: 0.84, front: 0.5, behind: 0.5, center: 0.5 }[s];
+      const y = { sky: -40, above: 0.2, head: 0.28, chest: 0.5, middle: 0.62, feet: 0.84, front: 0.5, behind: 0.5, center: 0.5, mouth: 0.3, tail: 0.5 }[s];
       return { x: w / 2, y: s === 'sky' ? y : hgt * y };
     }
     const dir = a.side === 'ally' ? 1 : -1;
@@ -62,6 +62,11 @@ export class ActPlayer {
         return a.feet;
       case 'head':
         return a.head;
+      // A puppet's own mouth / tail (decision 050); a picture's head / back.
+      case 'mouth':
+        return a.part?.('mouth') ?? a.head;
+      case 'tail':
+        return a.part?.('tail') ?? { x: a.chest.x - dir * a.width * 0.45, y: a.chest.y };
       case 'above':
         return { x: a.feet.x, y: a.feet.y - a.height * 1.08 };
       case 'front':

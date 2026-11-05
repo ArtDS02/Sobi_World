@@ -32,6 +32,8 @@ export interface PoseAnchor {
   /** Down to a quarter of its health (ANIM-100): it breathes fast and sways. */
   low?: boolean;
   boss?: boolean;
+  /** Drawn as a puppet (decision 050): its cast gestures are clips of its rig, not whole-body tracks. */
+  rigged?: boolean;
 }
 
 /** A body at one moment: pushed (px), turned (deg), squashed, how bright (1 = as drawn), how grey and faded, its glow (0xRRGGBB). */

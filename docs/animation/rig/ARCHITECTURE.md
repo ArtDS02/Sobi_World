@@ -68,6 +68,9 @@ tools/admin/rigLab.ts — "Xưởng rig sinh vật" (#/rig-lab): từng clip, ×
 | Impact Feedback | phản ứng mục tiêu = **clip `hurt` của mục tiêu** + hit-stop + số | đầu giật ngược, tai văng (lò xo), mắt nhắm, đổi mặt khóc |
 Hit-stop dừng cả đồng hồ puppet (`BattlePuppets.tick`), slow-mo làm chậm nó. VFX neo đầu tại mắt / đầu thật của puppet (`puppets.head`). Bóng mờ / vệt / tách màu chép từng bộ phận (`fxGhosts.ts`).
 
+### 5b. Skill (✅ bước 1)
+Cử chỉ của skill = `gesture` khai báo → suy từ `cast_*` của kịch bản → từ delivery. Puppet thử `skill_<id>` → `ultimate` (tuyệt kỹ) → `g_<gesture>` → cử chỉ gần nhất → `cast`. Tween `cast_*` của kịch bản bị bỏ qua với con có rig. Spot `mouth` / `tail` lấy từ `anchors` của rig.
+
 ## 6. Hiệu năng (✅ đo cấu trúc, 📝 đo FPS trên máy thật)
 - Mỗi puppet: 1 Container, 15–24 Image, 1–6 Rope (10 đoạn), 0–1 post-FX (chỉ bật khi sáng / xám / glow). 6 đơn vị ≈ 150 object — cùng bậc với 420 hạt hiện có; WebGL gom lô theo texture.
 - Lấy mẫu clip O(số key), solve O(số bone + đoạn chuỗi) / khung. Hiện `solve()` còn tạo một Map tra bone, danh sách vẽ và mảng điểm chuỗi mỗi khung, `mixPose` tạo Map tạm khi crossfade — rác nhỏ, chưa đo thấy giật; gom về bộ đệm dùng lại ở R5.

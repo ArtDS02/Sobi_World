@@ -6,7 +6,7 @@
 import { z } from 'zod';
 import { assetId, color, nonNeg, posInt, range, unit } from '../fields';
 import { scriptSchema, type Act } from './battleScript';
-import { POSE_ART_VALUES } from './battlePoses';
+import { GESTURE_VALUES, POSE_ART_VALUES } from './battlePoses';
 import { ELEMENT_VALUES, statusId } from './combat';
 
 export { POSE_ART_VALUES };
@@ -96,6 +96,8 @@ const skill = look.partial().extend({
   circle: z.boolean().optional(),
   /** How long its magic circle shows before the skill leaves (ms; default: the pacing's `circle.skill` / `circle.ultimate`). Each Ultimate winds up its own way (ANIM-112). */
   circleMs: nonNeg.max(1500).optional(),
+  /** The user's body gesture (decision 050): which `g_<gesture>` clip a puppet plays (default from the delivery: battlePerf.ts). */
+  gesture: z.enum(GESTURE_VALUES).optional(),
 });
 
 /** The general actions and reactions that may carry a script (decision 044): played on the unit they are about (`actor`). */

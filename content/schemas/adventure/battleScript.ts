@@ -12,7 +12,8 @@ import { POSE_ART_VALUES } from './battlePoses';
  */
 export const WHO_VALUES = ['actor', 'target', 'targets', 'allies', 'foes', 'allyside', 'foeside', 'field'] as const;
 /** Where on a unit (or on the screen, for `field`) an act starts. */
-export const SPOT_VALUES = ['chest', 'feet', 'head', 'above', 'front', 'behind', 'sky', 'middle', 'center'] as const;
+// `mouth` and `tail` are parts of a puppet's body (decision 050: the rig's `anchors`); a unit drawn as a picture uses its head / behind.
+export const SPOT_VALUES = ['chest', 'feet', 'head', 'above', 'front', 'behind', 'sky', 'middle', 'center', 'mouth', 'tail'] as const;
 /** Named cast keyframe tracks (ANIM-005, ui/castTracks.ts): one per way of gathering power, by body. */
 export const CAST_PRESET_VALUES = [
   'cast_charge', 'cast_raise', 'cast_roar', 'cast_stomp', 'cast_spin', 'cast_hover', 'cast_sprout', 'cast_coil', 'cast_bow', 'cast_wing',

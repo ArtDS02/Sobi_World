@@ -53,7 +53,8 @@
     "anim:audit": "tsx scripts/anim-review/audit.ts",
     "rig:parts": "tsx scripts/rig/build-parts.ts",
     "rig:fmt": "tsx scripts/rig/fmt.ts",
-    "rig:guide": "tsx scripts/rig/guide.ts"
+    "rig:guide": "tsx scripts/rig/guide.ts",
+    "rig:batch": "python scripts/rig/batch.py"
   },
   "dependencies": {
     "@fontsource/baloo-2": "^5.3.0",

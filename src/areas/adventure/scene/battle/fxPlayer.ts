@@ -22,6 +22,8 @@ export interface FxAnchor extends BurstSpot {
   picture: Phaser.GameObjects.Image | null;
   /** What a ghost of it copies now (its picture, or its puppet's parts: decision 050). */
   ghosts?: () => Ghost[];
+  /** Where a named part of its puppet is now (`mouth`, `tail`: the rig's anchors), null when it has none. */
+  part?: (name: string) => { x: number; y: number } | null;
 }
 
 export interface Timed {

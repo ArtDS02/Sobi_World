@@ -32,6 +32,14 @@
 - `fade`: 30–60 ms vào hurt (đòn phải đọc ngay), 80–140 ms vào attack / cast, 200–300 ms vào idle / victory của loài nặng.
 - Dùng lò xo cho phần mềm thay vì keyframe tay (tai, bờm, lá, vây ngực, mai) — keyframe chỉ cho ý đồ diễn (tai cụp khi buồn).
 
+## 4b. Clip cử chỉ skill
+- Tên: `g_<gesture>` (10 cử chỉ: `shoot`, `breath`, `summon_ground`, `summon_sky`, `channel`, `brace`, `slam`, `charge`, `lash`, `roar`), `ultimate`, và tuỳ chọn `skill_<skillId>`.
+- Bắt buộc `marks.windup < marks.release`; cử chỉ có va chạm (`slam`, `lash`) có `contact`. Mỗi clip đổi mặt và chuyển ≥ 3 bộ phận (test).
+- Diễn theo thân loài: tự hỏi "con này làm việc đó bằng bộ phận nào?" (bắn: heo hất mõm, cá phụt miệng, bạch tuộc bóp túi đầu).
+- Một rig tối thiểu nên có các cử chỉ mà skill dòng máu của nó cần (test `battlePerf.test.ts` kiểm cho prototype); thiếu thì rơi về cử chỉ gần nhất → `cast`.
+- Gán cử chỉ cho skill: `"gesture"` trong `battle_fx.json` khi cử chỉ suy từ kịch bản (`cast_*`) chưa đúng ý.
+- VFX muốn phát từ miệng / đuôi: spot `mouth` / `tail` (rig khai `anchors`).
+
 ## 5. Tích hợp với code / VFX
 - `Want { action, key, timing }` là hợp đồng duy nhất giữa một Area và puppet. Adventure: `ui/battlePerf.ts`. Area khác viết hàm tương tự (đi dạo → `move`, ăn → `idle_eat`…).
 - Root motion (dash, knock-back, nhảy cao) vẫn do Area tính; `feel.root` giảm phần xoay / squash cả thân vì rig tự làm.

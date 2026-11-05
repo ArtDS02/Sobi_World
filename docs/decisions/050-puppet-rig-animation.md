@@ -19,3 +19,15 @@
 
 ## File
 `content/schemas/anim/rig.ts`, `content/anim/rigs/*.json`, `src/systems/animation/*`, `src/ui/puppet/puppet.ts`, `src/areas/adventure/ui/battlePerf.ts`, `src/areas/adventure/scene/battle/{battlePuppets,fxGhosts}.ts` (+ sửa `battleUnits`, `BattleScene`, `fxActs`, `fxPlayer`), `tools/admin/rigLab.ts` (`#/rig-lab`), `scripts/rig/{build-parts,fmt,guide,rigText}.ts`, `asset/rigs/*/`, `art_inbox/rig_*`, `tests/unit/{animationRig,battlePerf}.test.ts`, `docs/animation/rig/*`.
+
+## Bổ sung 2026-11-05 — Animation skill: cử chỉ thân + điểm neo VFX (R2 bước 1)
+Chủ dự án giao agent tự chọn giải pháp skill. Quyết định:
+1. **Ba lớp của một skill**: thân (clip cử chỉ của loài) – VFX (kịch bản `battle_fx.json`, giữ nguyên) – phản ứng mục tiêu (clip `hurt*` của mục tiêu theo bậc đòn). Không lớp nào thay lớp khác.
+2. **Bộ cử chỉ** `GESTURE_VALUES` (`content/schemas/adventure/battlePoses.ts`): `shoot`, `breath`, `summon_ground`, `summon_sky`, `channel`, `brace`, `slam`, `charge`, `lash`, `roar`. Mỗi rig diễn cử chỉ theo thân mình (clip `g_<gesture>`): cùng `shoot` nhưng heo rừng ngửa đầu – xù bờm – hất đầu, cá hút lùi rồi phụt, bạch tuộc phồng túi đầu rồi bóp. Clip `ultimate` riêng cho tuyệt kỹ; clip `skill_<id>` (tuỳ chọn) cho skill cần động tác độc nhất.
+3. **Cử chỉ của mỗi skill**: `gesture` trong `battle_fx.json` nếu có; nếu không, **suy từ kịch bản đã viết** (act `move` `cast_*` của người dùng: `cast_bow`/`cast_hover` → channel, `cast_stomp`/`cast_sprout` → summon_ground, `cast_roar` → roar, `cast_raise`/`cast_wing` → summon_sky, `cast_coil` → shoot, `cast_charge` → charge, `cast_spin` → lash); nếu không có, từ cách ra đòn (projectile → shoot, burst → summon_ground, aura hỗ trợ → channel, slam → slam). 83/112 skill có `cast_*` → cử chỉ đúng ý đồ thiết kế ngay. Rig thiếu clip → cử chỉ gần nhất (`brace → channel`, `slam → summon_ground`, `breath → roar`, `summon_sky → channel`, `lash → shoot`, `roar → summon_sky`) → `cast` của loài.
+4. **Con có rig bỏ qua tween `cast_*` / `track`** của kịch bản (thân tự diễn); các move dời chỗ (dash, lunge, hop, knock…) vẫn chạy.
+5. **Khớp nhịp**: clip cử chỉ có `windup / release (/ contact)`; release ↔ release của beat (đạn rời đi đúng lúc), contact ↔ impact (cú dập, cú quất).
+6. **Điểm neo thân cho VFX**: spot mới `mouth`, `tail` trong kịch bản; rig khai `anchors` (`mouth` → bone, `tail` → chuỗi = ngọn); con không rig dùng đầu / sau lưng. Đã chuyển `skill_dm_ink` (vệt mực) sang `mouth`.
+7. **Thí điểm**: 8 skill có `gesture` rõ (`skill_mm_poison_thorn`, `skill_qs_rock_smash`, `skill_qs_stone_skin`, `skill_qs_mountain_shell`, `skill_qs_quake`, `skill_hg_inferno_hammer`, `skill_dm_ink`, `skill_dm_night_net`); 22 clip cử chỉ + tuyệt kỹ cho 4 rig; test bắt buộc **mọi skill của dòng máu mỗi prototype ra clip thân riêng**, không rơi về `cast` chung.
+
+Chưa làm (R2 tiếp): clip `skill_<id>` cho skill đặc biệt, `ultimate` có flipbook khoảnh khắc, chuyển thêm spot `mouth` cho các skill phun / thở khác sau khi chủ dự án xem bản thí điểm.

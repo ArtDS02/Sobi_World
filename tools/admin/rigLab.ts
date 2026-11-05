@@ -165,7 +165,7 @@ class RigLabScene extends Phaser.Scene {
   /** The old picture of this action (key pose), standing at the left: the "before". */
   private drawOld(rigId: string, x: number, y: number, height: number) {
     if (!lab.old) return;
-    const key = `cb_${rigId}_${OLD_POSE[lab.action] ?? 'idle'}`;
+    const key = `cb_${rigId}_${OLD_POSE[lab.action] ?? (lab.action.startsWith('g_') || lab.action === 'ultimate' ? 'cast' : 'idle')}`;
     const fallback = lab.images.has(key) ? key : lab.images.has(rigId) ? rigId : null;
     if (!fallback) return;
     this.want(fallback);
@@ -190,11 +190,16 @@ function mount(host: HTMLElement) {
 function controls(): string {
   const btn = (on: boolean, attr: string, label: string) => `<button class="btn${on ? ' primary' : ''}" ${attr}>${esc(label)}</button>`;
   const rigs = [...RIGS.values()].map((r) => btn(!lab.all && r.id === lab.rig, `data-rig="${r.id}"`, `${r.id} · ${r.plan}`)).join('');
+  // The skill gestures (g_*) and the ultimate of the rig shown (every rig's, side by side).
+  const shownRigs = lab.all ? [...RIGS.values()] : [RIGS.get(lab.rig)!];
+  const skillClips = [...new Set(shownRigs.flatMap((r) => Object.keys(r.clips).filter((k) => k.startsWith('g_') || k === 'ultimate')))].sort();
   const acts = ACTIONS.map((a) => btn(a === lab.action, `data-act="${a}"`, a)).join('');
+  const skills = skillClips.map((a) => btn(a === lab.action, `data-act="${a}"`, a)).join('');
   const speeds = [1, 0.5, 0.25].map((s) => btn(s === lab.speed, `data-speed="${s}"`, `×${s}`)).join('');
   return `
     <div class="rlab-bar"><b>Sinh vật</b> ${rigs} ${btn(lab.all, 'data-all', 'Cả đội')}</div>
     <div class="rlab-bar"><b>Hành động</b> ${acts} <button class="btn" data-replay>↻ Lại</button></div>
+    <div class="rlab-bar"><b>Cử chỉ skill</b> ${skills}</div>
     <div class="rlab-bar"><b>Tốc độ</b> ${speeds}
       <label><input type="checkbox" data-bones ${lab.bones ? 'checked' : ''}> Hiện xương</label>
       <label><input type="checkbox" data-old ${lab.old ? 'checked' : ''}> So với ảnh cũ (trái)</label>

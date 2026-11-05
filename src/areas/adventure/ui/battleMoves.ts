@@ -69,6 +69,8 @@ export function addMoves(id: string, a: PoseAnchor, anchors: ReadonlyMap<string,
       acc.posture = act.pose;
       continue;
     }
+    // A puppet's body plays the skill's gesture clip itself (decision 050): the whole-body cast tracks would only push it around.
+    if (a.rigged && (act.do === 'track' || (act.do === 'move' && act.move.startsWith('cast_')))) continue;
     if (act.do === 'track' || (act.do === 'move' && act.move.startsWith('cast_'))) {
       // Keyframes, written or named (ANIM-005); a track that ends in a full turn is back at rest, so the rest of its turns is dropped.
       const keys = act.do === 'track' ? act.keys : CAST_TRACKS[act.move as CastPreset];

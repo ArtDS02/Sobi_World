@@ -26,8 +26,11 @@ Trạng thái 2026-11-05 cho 4 prototype (`pig_boar`, `pig_turtle`, `fish_betta`
 | B1 | Thân người dùng có chuẩn bị riêng cho cast (khác đánh thường) | [L] cast vs attack | ✅ |
 | B2 | Ba lớp tách: thân (clip) – VFX (`battle_fx.json`) – phản ứng mục tiêu (clip `hurt` của mục tiêu) | [B] | ✅ |
 | B3 | VFX neo vào bộ phận thật (đầu / mắt của puppet) | [B] anchor `head` | ✅ |
-| B4 | Skill khác nhau có tư thế thân khác nhau (clip theo skill: `cast_<skill>`) | — | ⬜ R2 (hiện mọi skill dùng `cast` của loài) |
-| B5 | Ultimate có khoảnh khắc thân riêng (flipbook hoặc clip `ultimate`) | — | ⬜ R2 |
+| B4 | Skill khác nhau có tư thế thân khác nhau: mỗi skill của dòng máu prototype ra clip cử chỉ riêng (`g_*` / `ultimate`), không rơi về `cast` | [T] `battlePerf.test.ts` + [L] "Cử chỉ skill" | ✅ 4 rig × dòng máu của nó (16 skill + 4 tuyệt kỹ) |
+| B5 | Ultimate có khoảnh khắc thân riêng (clip `ultimate`, có gom lực dài – bung – hồi) | [T] + [L] | ✅ clip; ⬜ flipbook khoảnh khắc |
+| B6 | Cử chỉ khớp nhịp: release của clip trùng release của beat | [B] | ✅ `skill_mm_poison_thorn` / Heo Rừng: beat 860 ms ↔ clip 462 ms (mốc 460) |
+| B7 | VFX phát từ bộ phận thật (spot `mouth`, `tail`) | [B] | ✅ neo miệng theo đầu; ⬜ mới chuyển 1 skill (`skill_dm_ink`) |
+| B8 | Chủ dự án chấm cảm giác skill thí điểm | [O] | ⬜ |
 
 ## C. System architecture
 | # | Tiêu chí | Cách kiểm | Trạng thái |

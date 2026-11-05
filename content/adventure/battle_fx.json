@@ -3624,6 +3624,7 @@
       ]
     },
     "skill_qs_rock_smash": {
+      "gesture": "summon_ground",
       "timing": { "release": 350, "impact": 760, "end": 1200 },
       "script": [
         { "do": "move", "at": 0, "who": "actor", "dur": 300, "move": "hop", "y": 8, "n": 2 },
@@ -3672,6 +3673,7 @@
       ]
     },
     "skill_qs_stone_skin": {
+      "gesture": "brace",
       "timing": { "release": 300, "impact": 780, "end": 1150 },
       "script": [
         { "do": "pose", "at": 0, "who": "actor", "dur": 300, "pose": "cast" },
@@ -3714,6 +3716,7 @@
       ]
     },
     "skill_qs_mountain_shell": {
+      "gesture": "brace",
       "timing": { "release": 350, "impact": 900, "end": 1500 },
       "stagger": 110,
       "script": [
@@ -3756,6 +3759,7 @@
       ]
     },
     "skill_qs_quake": {
+      "gesture": "slam",
       "timing": { "release": 420, "impact": 600, "end": 1550 },
       "stagger": 130,
       "script": [
@@ -3898,6 +3902,7 @@
       ]
     },
     "skill_dm_ink": {
+      "gesture": "shoot",
       "timing": { "release": 260, "impact": 620, "end": 1100 },
       "script": [
         { "do": "pose", "at": 0, "who": "actor", "dur": 260, "pose": "cast" },
@@ -3914,7 +3919,7 @@
           "spin": 1,
           "arc": -40
         },
-        { "do": "burst", "at": 300, "who": "actor", "ref": "ink_trail", "spot": "front", "more": 8 },
+        { "do": "burst", "at": 300, "who": "actor", "ref": "ink_trail", "spot": "mouth", "more": 8 },
         { "do": "strip", "at": 620, "who": "target", "img": "fx_ink_splat", "spot": "head", "size": 0.9 },
         { "do": "move", "at": 620, "who": "target", "dur": 400, "move": "wiggle", "deg": 8, "n": 3 },
         { "do": "stop", "at": 620, "who": "actor", "dur": 50 },
@@ -3959,6 +3964,7 @@
       ]
     },
     "skill_dm_night_net": {
+      "gesture": "lash",
       "timing": { "release": 360, "impact": 860, "end": 1550 },
       "stagger": 80,
       "script": [
@@ -5127,6 +5133,7 @@
       ]
     },
     "skill_hg_inferno_hammer": {
+      "gesture": "summon_sky",
       "timing": { "release": 500, "impact": 800, "end": 1450 },
       "script": [
         { "do": "pose", "at": 0, "who": "actor", "dur": 500, "pose": "cast" },
@@ -5275,6 +5282,7 @@
       ]
     },
     "skill_mm_poison_thorn": {
+      "gesture": "shoot",
       "timing": { "release": 300, "impact": 600, "end": 1100 },
       "script": [
         { "do": "pose", "at": 0, "who": "actor", "dur": 300, "pose": "cast" },

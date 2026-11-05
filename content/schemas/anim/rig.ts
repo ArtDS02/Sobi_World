@@ -107,6 +107,8 @@ export const rigSchema = z.strictObject({
   chains: z.array(chain).default([]),
   springs: z.array(spring).default([]),
   clips: z.record(id, clipSchema),
+  /** Named points of the body effects come out of (decision 050): `mouth`, `tail`… → a bone, or a chain (its tip). */
+  anchors: z.record(id, id).default({}),
 });
 
 export type RigData = z.infer<typeof rigSchema>;
@@ -161,6 +163,7 @@ export function rigProblems(r: RigData): string[] {
     const order = MARK_VALUES.map((m) => c.marks[m]).filter((v): v is number => v !== undefined);
     if (order.some((v, i) => i > 0 && v < order[i - 1]!)) out.push(`${r.id}: clip ${name} marks out of order`);
   }
+  for (const [name, at] of Object.entries(r.anchors)) if (!targets.has(at)) out.push(`${r.id}: anchor ${name} on missing ${at}`);
   if (r.feel.blink && !slots.get(r.feel.blink.slot)) out.push(`${r.id}: blink slot ${r.feel.blink.slot} missing`);
   if (!seen.has(r.feel.breath.bone)) out.push(`${r.id}: breath bone ${r.feel.breath.bone} missing`);
   return out;

@@ -90,6 +90,19 @@ describe('every rig (content/anim/rigs)', () => {
     }
   });
 
+  it('skill gestures and ultimates prepare, then let go (windup < release, and contact when they land)', () => {
+    for (const r of rigs)
+      for (const [name, c] of Object.entries(r.clips)) {
+        if (!name.startsWith('g_') && name !== 'ultimate') continue;
+        expect(c.marks.windup! < c.marks.release! && c.marks.release! < c.len, `${r.id}.${name}`).toBe(true);
+        if (c.marks.contact !== undefined) expect(c.marks.contact > c.marks.release!, `${r.id}.${name} contact`).toBe(true);
+        expect(Object.keys(c.tracks).length + Object.keys(c.waves).length, `${r.id}.${name} parts`).toBeGreaterThanOrEqual(3);
+        expect(Object.keys(c.faces).length, `${r.id}.${name} face`).toBeGreaterThan(0);
+      }
+    // Each species has its own set: the same gesture is never the same keys on two rigs.
+    expect(JSON.stringify(RIGS.get('pig_boar')!.clips.g_roar!.tracks)).not.toBe(JSON.stringify(RIGS.get('pig_turtle')!.clips.g_roar!.tracks));
+  });
+
   it('species differ in tempo and weight: the turtle is the slowest and heaviest, the fish the lightest', () => {
     const by = (id: string) => RIGS.get(id)!.feel;
     expect(by('pig_turtle').tempo).toBeLessThan(by('pig_boar').tempo);
@@ -142,7 +155,8 @@ describe('the performer', () => {
   it('an action whose clip the rig lacks falls back (a heal → buff → victory chain ends in a clip that exists)', () => {
     const p = new Performer(boar, 'u5');
     expect(p.clipName('hurt_crit')).toBe('hurt_heavy');
-    expect(p.clipName('ultimate')).toBe('cast');
+    expect(p.clipName('ultimate')).toBe('ultimate');
+    expect(p.clipName('support')).toBe('cast');
     expect(p.clipName('nothing_like_it')).toBe('idle');
   });
 

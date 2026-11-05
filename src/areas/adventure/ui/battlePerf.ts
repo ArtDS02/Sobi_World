@@ -6,6 +6,9 @@ import type { ActionTiming, Want } from '../../../systems/animation';
 import type { PlayingStep } from './battleFxView';
 import { REACT_MS } from './poseKit';
 import type { PoseArt } from '../../../../content/schemas/adventure/battleFx';
+import type { Gesture } from '../../../../content/schemas/adventure/battlePoses';
+import { BATTLE_FX } from '../logic/config/content';
+import type { MotionBeat } from './battleMotion';
 
 /** How long a cast keeps settling after its release (the same as battlePose.ts). */
 const CAST_SETTLE_MS = 360;
@@ -23,6 +26,60 @@ const REACTION_ACTION: Readonly<Record<string, string>> = {
 
 /** A posture a script forced (decision 044 `pose` acts, victory) played on the puppet's own clock. */
 const POSTURE_ACTION: Readonly<Record<PoseArt, string>> = { idle: 'idle', attack: 'attack', cast: 'cast', hurt: 'hurt', ko: 'ko', victory: 'victory' };
+
+/** What each whole-body cast preset of the scripts (castTracks.ts) means as a gesture of the body. */
+const CAST_GESTURE: Readonly<Record<string, Gesture>> = {
+  cast_charge: 'charge',
+  cast_raise: 'summon_sky',
+  cast_roar: 'roar',
+  cast_stomp: 'summon_ground',
+  cast_spin: 'lash',
+  cast_hover: 'channel',
+  cast_sprout: 'summon_ground',
+  cast_coil: 'shoot',
+  cast_bow: 'channel',
+  cast_wing: 'summon_sky',
+};
+
+/**
+ * The body gesture of a beat's skill (decision 050): the skill's own `gesture` in battle_fx.json, else one read from how it is
+ * delivered — a shot is shot, a burst rises from the ground, an aura on friends is channelled, a slam is a slam, a strike a charge.
+ */
+export function gestureOf(b: Pick<MotionBeat, 'skillId' | 'pose' | 'delivery'>): Gesture | null {
+  const skill = b.skillId ? BATTLE_FX.skills[b.skillId] : undefined;
+  if (skill?.gesture) return skill.gesture;
+  if (!b.skillId) return null;
+  // The whole-body cast its script was written with says what the body was meant to do.
+  const cast = skill?.script?.find((a) => a.do === 'move' && (a.who ?? 'actor') === 'actor' && a.move.startsWith('cast_'));
+  if (cast && cast.do === 'move') {
+    const g = CAST_GESTURE[cast.move];
+    if (g) return g;
+  }
+  switch (b.delivery) {
+    case 'projectile':
+      return 'shoot';
+    case 'burst':
+      return 'summon_ground';
+    case 'slam':
+      return 'slam';
+    case 'melee':
+      return 'charge';
+    case 'aura':
+      return b.pose === 'support' ? 'channel' : 'roar';
+    default:
+      return null;
+  }
+}
+
+/** A gesture a rig has no clip for is played as the nearest one it may have (a brace as a channel, a slam as a stomp). */
+const GESTURE_FALLBACK: Readonly<Partial<Record<Gesture, Gesture>>> = { brace: 'channel', slam: 'summon_ground', breath: 'roar', summon_sky: 'channel', lash: 'shoot', roar: 'summon_sky' };
+
+/** The clips a puppet tries for a beat, most particular first: the skill's own clip, an ultimate's, its gesture's (then its fallbacks). */
+export function altOf(b: Pick<MotionBeat, 'skillId' | 'pose' | 'delivery'>): string[] {
+  const out: string[] = [...(b.skillId ? [b.skillId] : []), ...(b.pose === 'ultimate' ? ['ultimate'] : [])];
+  for (let g = gestureOf(b), i = 0; g && i < 4; g = GESTURE_FALLBACK[g] ?? null, i++) if (!out.includes(`g_${g}`)) out.push(`g_${g}`);
+  return out;
+}
 
 /**
  * The puppet's want for unit `id` at `t` ms into the step. `posture` is the key pose the pose picked (a script may force one),
@@ -45,11 +102,12 @@ export function perfOf(id: string, p: Readonly<PlayingStep>, t: number, posture:
     const key = `${p.key}:b${b.start}`;
     const into = t - b.cast;
     if (b.pose === 'attack' || b.delivery === 'melee' || b.delivery === 'slam') {
-      return { action: 'attack', key, timing: { t: into, marks: { release: b.release - b.cast, contact: b.impact - b.cast, end: b.end - b.cast } } };
+      return { action: 'attack', alt: altOf(b), key, timing: { t: into, marks: { release: b.release - b.cast, contact: b.impact - b.cast, end: b.end - b.cast } } };
     }
     if (b.pose === 'cast' || b.pose === 'support' || b.pose === 'ultimate') {
       const end = b.release + Math.min(CAST_SETTLE_MS, Math.max(1, b.end - b.release));
-      return { action: b.pose === 'ultimate' ? 'ultimate' : b.pose === 'support' ? 'support' : 'cast', key, timing: { t: into, marks: { release: b.release - b.cast, end: end - b.cast } } };
+      // A skill that lands on its targets lines its contact up too (a slam's crash, a lash's crack).
+      return { action: b.pose === 'ultimate' ? 'ultimate' : b.pose === 'support' ? 'support' : 'cast', alt: altOf(b), key, timing: { t: into, marks: { release: b.release - b.cast, contact: b.impact - b.cast, end: Math.max(end, b.impact + 1) - b.cast } } };
     }
     if (b.pose === 'guard') return { action: 'guard', key, timing: { t: t - b.start } };
     if (b.pose === 'stunned') return { action: 'stunned', key };

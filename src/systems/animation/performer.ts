@@ -12,6 +12,8 @@ import { warpTime, type ActionTiming } from './warp';
 /** What the caller wants the body to do now. `key` changes when the same action starts again (a second attack). */
 export interface Want {
   action: string;
+  /** Clips tried first, in order, before `action` and its fallbacks (a skill's own clip `skill_<id>`, its gesture `g_<gesture>`). */
+  alt?: readonly string[] | undefined;
   key?: string | undefined;
   timing?: ActionTiming | undefined;
 }
@@ -73,7 +75,8 @@ export class Performer {
   }
 
   /** The clip an action plays on this rig (fallbacks followed, `idle` last). */
-  clipName(action: string): string {
+  clipName(action: string, alt: readonly string[] = []): string {
+    for (const c of alt) if (this.rig.clips[c]) return c;
     let a: string | undefined = action;
     for (let i = 0; i < 6 && a; i++) {
       if (this.rig.clips[a]) return a;
@@ -96,7 +99,8 @@ export class Performer {
   update(now: number, want: Want): Frame {
     const dt = this.last < 0 ? 16 : now - this.last;
     this.last = now;
-    let name = this.clipName(want.action);
+    const wanted = this.clipName(want.action, want.alt);
+    let name = wanted;
     let key = `${name}:${want.key ?? ''}`;
     // A long idle now and then plays one of the rig's fidgets (idle_*), then goes back to idling.
     if (name === 'idle' && !want.timing && this.fidgets.length > 0) {
@@ -116,7 +120,7 @@ export class Performer {
     const cur = this.cur!;
     const clip = cur.clip;
     const tempo = this.rig.feel.tempo;
-    const raw = want.timing && name === this.clipName(want.action) ? warpTime(clip, want.timing, tempo) : (now - cur.since) * tempo;
+    const raw = want.timing && name === wanted ? warpTime(clip, want.timing, tempo) : (now - cur.since) * tempo;
     const t = clipTime(clip, raw);
     if (cur.name !== 'idle' && !clip.loop && !want.timing && raw > clip.len + 60 && want.action !== cur.name) this.switchTo('idle', 'idle:', now);
     sampleClip(clip, t, this.scratch);

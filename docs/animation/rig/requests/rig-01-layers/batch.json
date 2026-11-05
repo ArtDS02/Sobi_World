@@ -1,0 +1,599 @@
+{
+  "batch": "rig-01-layers",
+  "title": "Layer bộ phận cho puppet rig (decision 050): Heo Rừng, Heo Rùa, Cá Betta, Bạch Tuộc",
+  "layout": "",
+  "note": "Mỗi con 3 sheet: bộ phận rời (như bộ rối giấy cắt sẵn, mỗi bộ phận vẽ trọn vẹn), mắt + miệng nghỉ, các miệng còn lại. Ảnh 2 = ảnh hiện tại của con đó (giữ nhận diện); ảnh 3 = bản vẽ tạm đang chạy trong game, chỉ để biết ô nào là bộ phận nào. KHÔNG cần căn chỉnh gì: sau khi lưu sheet, Claude chạy art.py cut + scripts/rig/batch.py place tự đặt từng bộ phận về đúng khớp. Thứ tự ưu tiên: B1–B3 (Heo Rừng) → T1–T3 → F1–F3 → O1–O3.",
+  "style_refs": {
+    "creature": ".batch/adventure-02-maps/1_style_creature.png"
+  },
+  "sheets": [
+    {
+      "id": "B1",
+      "title": "Wild Boar Pig (pig_boar): bộ phận rời",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        2,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/pig_boar_look.png",
+          "subject": "this exact creature (Wild Boar Pig) as it already is in my game"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/B1_layout.png",
+          "subject": "which body part goes in which cell and its rough shape (a flat placeholder drawing of the same parts)"
+        }
+      ],
+      "rows": [
+        [
+          "the BODY alone: an egg-shaped furry trunk with the light belly and back spots, no head, no legs, no tail; its front end is painted complete (normally hidden under the head)",
+          "the HEAD alone: a big round furry head seen three-quarter to the right, with the cheek blush, but NO eyes, NO mouth, NO snout, NO ears (blank face)",
+          "the SNOUT alone: the pink snout disc with two nostrils and the two small cream tusks curving up from its lower edge",
+          "the MANE alone: the tuft of dark-brown spiky bristles that runs along the nape, as one piece"
+        ],
+        [
+          "one EAR alone: pointed brown ear standing up, pink inside, with a short rounded base",
+          "one FRONT LEG alone: a short straight leg with a dark hoof, standing straight down, a rounded top",
+          "one BACK LEG alone: a short straight hind leg with a dark hoof, standing straight down, a rounded top",
+          "the TAIL alone: a thin tail with a small tuft of dark bristles at the tip, drawn perfectly STRAIGHT and HORIZONTAL like a ribbon laid flat, its base (where it joins the body) at the LEFT end and its tip at the RIGHT end"
+        ]
+      ],
+      "extra": [
+        "All cells are separate BODY PARTS of ONE creature, like a cut-out puppet kit laid out flat: Wild Boar Pig: a brown boar piglet with a spiky dark-brown mane along its nape, light spots on its back, a pink snout with two small cream tusks curving up, pointed ears, short legs with dark hooves. Keep every part IDENTICAL to image 2 in colours, markings, line and proportions, as if cut out of that very picture.",
+        "Draw each part COMPLETE and whole, as if the other parts had been taken away: the area normally hidden behind other parts is painted too. Every part in a calm neutral rest position, seen three-quarter from the side, the creature facing RIGHT."
+      ],
+      "framing": "A cut-out puppet kit sheet: each cell holds exactly ONE separate body part, centred, filling about 70 % of the cell. No other body around it, no joints, no pins, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_pig_boar_body",
+        "rigsrc_pig_boar_head",
+        "rigsrc_pig_boar_snout",
+        "rigsrc_pig_boar_mane",
+        "rigsrc_pig_boar_ear",
+        "rigsrc_pig_boar_leg_front",
+        "rigsrc_pig_boar_leg_back",
+        "rigsrc_pig_boar_tail"
+      ]
+    },
+    {
+      "id": "B2",
+      "title": "Wild Boar Pig (pig_boar): mắt + miệng nghỉ",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        2,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/pig_boar_look.png",
+          "subject": "this exact creature (Wild Boar Pig): its eyes and mouth are what to draw"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/B2_layout.png",
+          "subject": "which expression goes in which cell (a flat placeholder drawing)"
+        }
+      ],
+      "rows": [
+        [
+          "the EYES open: big round shiny eyes with two white highlights",
+          "the EYES half-closed, sleepy",
+          "the EYES closed: two gentle curved lines",
+          "the EYES angry: determined round eyes under frowning brows"
+        ],
+        [
+          "the EYES hurt: squeezed shut like > < with one small cartoon tear",
+          "the EYES dizzy: cartoon spirals",
+          "the EYES happy: closed upward curves ^ ^",
+          "the MOUTH at rest: a small soft line"
+        ]
+      ],
+      "extra": [
+        "Every cell shows ONLY a piece of the face of the creature in image 2 (Wild Boar Pig), floating alone exactly as it sits on its face in three-quarter view facing right: no head, no snout, no skin around it.",
+        "The eye cells show two eyes side by side (the far eye a little smaller and closer to the middle); every eye cell has the SAME size and the SAME spacing so they can be swapped one for another. The mouth cells are small, all the SAME size.",
+        "Same line and colours as image 2's eyes and mouth."
+      ],
+      "framing": "A face-parts sheet for a cartoon puppet: each cell holds only that piece of the face, centred, filling about 55 % of the cell. No head, no skin patch behind it, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_pig_boar_eyes_open",
+        "rigsrc_pig_boar_eyes_half",
+        "rigsrc_pig_boar_eyes_closed",
+        "rigsrc_pig_boar_eyes_angry",
+        "rigsrc_pig_boar_eyes_hurt",
+        "rigsrc_pig_boar_eyes_dizzy",
+        "rigsrc_pig_boar_eyes_happy",
+        "rigsrc_pig_boar_mouth_neutral"
+      ]
+    },
+    {
+      "id": "B3",
+      "title": "Wild Boar Pig (pig_boar): miệng",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        1,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/pig_boar_look.png",
+          "subject": "this exact creature (Wild Boar Pig): its eyes and mouth are what to draw"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/B3_layout.png",
+          "subject": "which expression goes in which cell (a flat placeholder drawing)"
+        }
+      ],
+      "rows": [
+        [
+          "the MOUTH wide open in a shout, little pink tongue",
+          "the MOUTH gritting its teeth",
+          "the MOUTH in a big open smile",
+          "the MOUTH wobbly, about to cry"
+        ]
+      ],
+      "extra": [
+        "Every cell shows ONLY a piece of the face of the creature in image 2 (Wild Boar Pig), floating alone exactly as it sits on its face in three-quarter view facing right: no head, no snout, no skin around it.",
+        "The eye cells show two eyes side by side (the far eye a little smaller and closer to the middle); every eye cell has the SAME size and the SAME spacing so they can be swapped one for another. The mouth cells are small, all the SAME size.",
+        "Same line and colours as image 2's eyes and mouth."
+      ],
+      "framing": "A face-parts sheet for a cartoon puppet: each cell holds only that piece of the face, centred, filling about 55 % of the cell. No head, no skin patch behind it, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_pig_boar_mouth_open",
+        "rigsrc_pig_boar_mouth_grit",
+        "rigsrc_pig_boar_mouth_smile",
+        "rigsrc_pig_boar_mouth_cry"
+      ]
+    },
+    {
+      "id": "T1",
+      "title": "Turtle Pig (pig_turtle): bộ phận rời",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        2,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/pig_turtle_look.png",
+          "subject": "this exact creature (Turtle Pig) as it already is in my game"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/T1_layout.png",
+          "subject": "which body part goes in which cell and its rough shape (a flat placeholder drawing of the same parts)"
+        }
+      ],
+      "rows": [
+        [
+          "the pink BODY alone: the round pink trunk and belly, no shell, no head, no legs; painted complete (normally hidden under the shell)",
+          "the SHELL alone: a big green dome shell with hexagon plates and the cream rim along its lower edge, seen from the side, no sprout on it",
+          "the SPROUT alone: a short green stem with two round leaves opening to each side",
+          "the HEAD alone: a round pink pig head seen three-quarter to the right, with the cheek blush and a short neck behind it, but NO eyes, NO mouth, NO snout, NO ears"
+        ],
+        [
+          "one EAR alone: a soft floppy pink ear, pink inside",
+          "the SNOUT alone: a big pink snout disc with two nostrils",
+          "one LEG alone: a short chubby pink leg with a mossy-green hoof, standing straight down, a rounded top",
+          "the TAIL alone: a curly pink piggy tail making one loop, lying flat"
+        ]
+      ],
+      "extra": [
+        "All cells are separate BODY PARTS of ONE creature, like a cut-out puppet kit laid out flat: Turtle Pig: a soft pink pig wearing a big green turtle shell with hexagon plates and a cream rim, a two-leaf sprout on top of the shell, floppy pink ears, short legs with mossy-green hooves. Keep every part IDENTICAL to image 2 in colours, markings, line and proportions, as if cut out of that very picture.",
+        "Draw each part COMPLETE and whole, as if the other parts had been taken away: the area normally hidden behind other parts is painted too. Every part in a calm neutral rest position, seen three-quarter from the side, the creature facing RIGHT."
+      ],
+      "framing": "A cut-out puppet kit sheet: each cell holds exactly ONE separate body part, centred, filling about 70 % of the cell. No other body around it, no joints, no pins, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_pig_turtle_body",
+        "rigsrc_pig_turtle_shell",
+        "rigsrc_pig_turtle_leaf",
+        "rigsrc_pig_turtle_head",
+        "rigsrc_pig_turtle_ear",
+        "rigsrc_pig_turtle_snout",
+        "rigsrc_pig_turtle_leg",
+        "rigsrc_pig_turtle_tail"
+      ]
+    },
+    {
+      "id": "T2",
+      "title": "Turtle Pig (pig_turtle): mắt + miệng nghỉ",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        2,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/pig_turtle_look.png",
+          "subject": "this exact creature (Turtle Pig): its eyes and mouth are what to draw"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/T2_layout.png",
+          "subject": "which expression goes in which cell (a flat placeholder drawing)"
+        }
+      ],
+      "rows": [
+        [
+          "the EYES open: big round shiny eyes with two white highlights",
+          "the EYES half-closed, sleepy",
+          "the EYES closed: two gentle curved lines",
+          "the EYES angry: determined round eyes under frowning brows"
+        ],
+        [
+          "the EYES hurt: squeezed shut like > < with one small cartoon tear",
+          "the EYES dizzy: cartoon spirals",
+          "the EYES happy: closed upward curves ^ ^",
+          "the MOUTH at rest: a small soft line"
+        ]
+      ],
+      "extra": [
+        "Every cell shows ONLY a piece of the face of the creature in image 2 (Turtle Pig), floating alone exactly as it sits on its face in three-quarter view facing right: no head, no snout, no skin around it.",
+        "The eye cells show two eyes side by side (the far eye a little smaller and closer to the middle); every eye cell has the SAME size and the SAME spacing so they can be swapped one for another. The mouth cells are small, all the SAME size.",
+        "Same line and colours as image 2's eyes and mouth."
+      ],
+      "framing": "A face-parts sheet for a cartoon puppet: each cell holds only that piece of the face, centred, filling about 55 % of the cell. No head, no skin patch behind it, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_pig_turtle_eyes_open",
+        "rigsrc_pig_turtle_eyes_half",
+        "rigsrc_pig_turtle_eyes_closed",
+        "rigsrc_pig_turtle_eyes_angry",
+        "rigsrc_pig_turtle_eyes_hurt",
+        "rigsrc_pig_turtle_eyes_dizzy",
+        "rigsrc_pig_turtle_eyes_happy",
+        "rigsrc_pig_turtle_mouth_neutral"
+      ]
+    },
+    {
+      "id": "T3",
+      "title": "Turtle Pig (pig_turtle): miệng",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        1,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/pig_turtle_look.png",
+          "subject": "this exact creature (Turtle Pig): its eyes and mouth are what to draw"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/T3_layout.png",
+          "subject": "which expression goes in which cell (a flat placeholder drawing)"
+        }
+      ],
+      "rows": [
+        [
+          "the MOUTH wide open in a shout, little pink tongue",
+          "the MOUTH gritting its teeth",
+          "the MOUTH in a big open smile",
+          "the MOUTH wobbly, about to cry"
+        ]
+      ],
+      "extra": [
+        "Every cell shows ONLY a piece of the face of the creature in image 2 (Turtle Pig), floating alone exactly as it sits on its face in three-quarter view facing right: no head, no snout, no skin around it.",
+        "The eye cells show two eyes side by side (the far eye a little smaller and closer to the middle); every eye cell has the SAME size and the SAME spacing so they can be swapped one for another. The mouth cells are small, all the SAME size.",
+        "Same line and colours as image 2's eyes and mouth."
+      ],
+      "framing": "A face-parts sheet for a cartoon puppet: each cell holds only that piece of the face, centred, filling about 55 % of the cell. No head, no skin patch behind it, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_pig_turtle_mouth_open",
+        "rigsrc_pig_turtle_mouth_grit",
+        "rigsrc_pig_turtle_mouth_smile",
+        "rigsrc_pig_turtle_mouth_cry"
+      ]
+    },
+    {
+      "id": "F1",
+      "title": "Betta Fish (fish_betta): bộ phận rời",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        2,
+        3
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/fish_betta_look.png",
+          "subject": "this exact creature (Betta Fish) as it already is in my game"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/F1_layout.png",
+          "subject": "which body part goes in which cell and its rough shape (a flat placeholder drawing of the same parts)"
+        }
+      ],
+      "rows": [
+        [
+          "the HEAD alone: the front of the fish (head and gill cover) seen from the side facing right, cut off cleanly just behind the gill, with NO eye and NO mouth",
+          "one small PECTORAL FIN alone: a little fan-shaped violet fin",
+          "the BODY behind the head alone: the scaly red body from the gills to the tail base, thick at the base and thinner at the tip, the lighter belly along its UPPER edge, drawn perfectly STRAIGHT and HORIZONTAL like a ribbon laid flat, its base (where it joins the body) at the LEFT end and its tip at the RIGHT end"
+        ],
+        [
+          "the TAIL FIN alone: a big flowing violet-and-red silk fan with fin rays, narrow at the base and very wide at the tip, drawn perfectly STRAIGHT and HORIZONTAL like a ribbon laid flat, its base (where it joins the body) at the LEFT end and its tip at the RIGHT end",
+          "the long DORSAL FIN alone: a silky violet veil, narrow at the base and wider at the tip, drawn perfectly STRAIGHT and HORIZONTAL like a ribbon laid flat, its base (where it joins the body) at the LEFT end and its tip at the RIGHT end",
+          "the long BELLY FIN alone: a smaller silky violet veil, narrow at the base and wider at the tip, drawn perfectly STRAIGHT and HORIZONTAL like a ribbon laid flat, its base (where it joins the body) at the LEFT end and its tip at the RIGHT end"
+        ]
+      ],
+      "extra": [
+        "All cells are separate BODY PARTS of ONE creature, like a cut-out puppet kit laid out flat: Betta Fish: a rose-red betta fish with long flowing violet-and-red silk fins and a big round cute eye. Keep every part IDENTICAL to image 2 in colours, markings, line and proportions, as if cut out of that very picture.",
+        "Draw each part COMPLETE and whole, as if the other parts had been taken away: the area normally hidden behind other parts is painted too. Every part in a calm neutral rest position, seen three-quarter from the side, the creature facing RIGHT."
+      ],
+      "framing": "A cut-out puppet kit sheet: each cell holds exactly ONE separate body part, centred, filling about 70 % of the cell. No other body around it, no joints, no pins, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_fish_betta_head",
+        "rigsrc_fish_betta_fin_pec",
+        "rigsrc_fish_betta_spine",
+        "rigsrc_fish_betta_tail_fin",
+        "rigsrc_fish_betta_veil_top",
+        "rigsrc_fish_betta_veil_low"
+      ]
+    },
+    {
+      "id": "F2",
+      "title": "Betta Fish (fish_betta): mắt + miệng nghỉ",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        2,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/fish_betta_look.png",
+          "subject": "this exact creature (Betta Fish): its eyes and mouth are what to draw"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/F2_layout.png",
+          "subject": "which expression goes in which cell (a flat placeholder drawing)"
+        }
+      ],
+      "rows": [
+        [
+          "the EYES open: big round shiny eyes with two white highlights",
+          "the EYES half-closed, sleepy",
+          "the EYES closed: two gentle curved lines",
+          "the EYES angry: determined round eyes under frowning brows"
+        ],
+        [
+          "the EYES hurt: squeezed shut like > < with one small cartoon tear",
+          "the EYES dizzy: cartoon spirals",
+          "the EYES happy: closed upward curves ^ ^",
+          "the MOUTH at rest: a small soft line"
+        ]
+      ],
+      "extra": [
+        "Every cell shows ONLY a piece of the face of the creature in image 2 (Betta Fish), floating alone exactly as it sits on its face in three-quarter view facing right: no head, no snout, no skin around it.",
+        "The eye cells show ONE eye (the fish is seen from the side); every eye cell has the SAME size and the SAME spacing so they can be swapped one for another. The mouth cells are small, all the SAME size.",
+        "Same line and colours as image 2's eyes and mouth."
+      ],
+      "framing": "A face-parts sheet for a cartoon puppet: each cell holds only that piece of the face, centred, filling about 55 % of the cell. No head, no skin patch behind it, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_fish_betta_eyes_open",
+        "rigsrc_fish_betta_eyes_half",
+        "rigsrc_fish_betta_eyes_closed",
+        "rigsrc_fish_betta_eyes_angry",
+        "rigsrc_fish_betta_eyes_hurt",
+        "rigsrc_fish_betta_eyes_dizzy",
+        "rigsrc_fish_betta_eyes_happy",
+        "rigsrc_fish_betta_mouth_neutral"
+      ]
+    },
+    {
+      "id": "F3",
+      "title": "Betta Fish (fish_betta): miệng",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        1,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/fish_betta_look.png",
+          "subject": "this exact creature (Betta Fish): its eyes and mouth are what to draw"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/F3_layout.png",
+          "subject": "which expression goes in which cell (a flat placeholder drawing)"
+        }
+      ],
+      "rows": [
+        [
+          "the MOUTH wide open in a shout, little pink tongue",
+          "the MOUTH gritting its teeth",
+          "the MOUTH in a big open smile",
+          "the MOUTH wobbly, about to cry"
+        ]
+      ],
+      "extra": [
+        "Every cell shows ONLY a piece of the face of the creature in image 2 (Betta Fish), floating alone exactly as it sits on its face in three-quarter view facing right: no head, no snout, no skin around it.",
+        "The eye cells show ONE eye (the fish is seen from the side); every eye cell has the SAME size and the SAME spacing so they can be swapped one for another. The mouth cells are small, all the SAME size.",
+        "Same line and colours as image 2's eyes and mouth."
+      ],
+      "framing": "A face-parts sheet for a cartoon puppet: each cell holds only that piece of the face, centred, filling about 55 % of the cell. No head, no skin patch behind it, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_fish_betta_mouth_open",
+        "rigsrc_fish_betta_mouth_grit",
+        "rigsrc_fish_betta_mouth_smile",
+        "rigsrc_fish_betta_mouth_cry"
+      ]
+    },
+    {
+      "id": "O1",
+      "title": "Little Octopus (octopus): bộ phận rời",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        1,
+        3
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/octopus_look.png",
+          "subject": "this exact creature (Little Octopus) as it already is in my game"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/O1_layout.png",
+          "subject": "which body part goes in which cell and its rough shape (a flat placeholder drawing of the same parts)"
+        }
+      ],
+      "rows": [
+        [
+          "the HEAD alone: the round soft orange head (mantle) with a few darker spots and the cheek blush, but NO eyes, NO mouth and NO arms",
+          "one ARM alone: a soft orange tentacle, thick at the base and thin at the tip, a row of cream suction cups along its LOWER edge, drawn perfectly STRAIGHT and HORIZONTAL like a ribbon laid flat, its base (where it joins the body) at the LEFT end and its tip at the RIGHT end",
+          "one BACK ARM alone: the same tentacle a little darker orange, suction cups paler, drawn perfectly STRAIGHT and HORIZONTAL like a ribbon laid flat, its base (where it joins the body) at the LEFT end and its tip at the RIGHT end"
+        ]
+      ],
+      "extra": [
+        "All cells are separate BODY PARTS of ONE creature, like a cut-out puppet kit laid out flat: Little Octopus: a soft orange octopus with a round head, a few darker spots, cream suction cups and big shiny eyes. Keep every part IDENTICAL to image 2 in colours, markings, line and proportions, as if cut out of that very picture.",
+        "Draw each part COMPLETE and whole, as if the other parts had been taken away: the area normally hidden behind other parts is painted too. Every part in a calm neutral rest position, seen three-quarter from the side, the creature facing RIGHT."
+      ],
+      "framing": "A cut-out puppet kit sheet: each cell holds exactly ONE separate body part, centred, filling about 70 % of the cell. No other body around it, no joints, no pins, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_octopus_mantle",
+        "rigsrc_octopus_arm",
+        "rigsrc_octopus_arm_back"
+      ]
+    },
+    {
+      "id": "O2",
+      "title": "Little Octopus (octopus): mắt + miệng nghỉ",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        2,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/octopus_look.png",
+          "subject": "this exact creature (Little Octopus): its eyes and mouth are what to draw"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/O2_layout.png",
+          "subject": "which expression goes in which cell (a flat placeholder drawing)"
+        }
+      ],
+      "rows": [
+        [
+          "the EYES open: big round shiny eyes with two white highlights",
+          "the EYES half-closed, sleepy",
+          "the EYES closed: two gentle curved lines",
+          "the EYES angry: determined round eyes under frowning brows"
+        ],
+        [
+          "the EYES hurt: squeezed shut like > < with one small cartoon tear",
+          "the EYES dizzy: cartoon spirals",
+          "the EYES happy: closed upward curves ^ ^",
+          "the MOUTH at rest: a small soft line"
+        ]
+      ],
+      "extra": [
+        "Every cell shows ONLY a piece of the face of the creature in image 2 (Little Octopus), floating alone exactly as it sits on its face in three-quarter view facing right: no head, no snout, no skin around it.",
+        "The eye cells show two eyes side by side (the far eye a little smaller and closer to the middle); every eye cell has the SAME size and the SAME spacing so they can be swapped one for another. The mouth cells are small, all the SAME size.",
+        "Same line and colours as image 2's eyes and mouth."
+      ],
+      "framing": "A face-parts sheet for a cartoon puppet: each cell holds only that piece of the face, centred, filling about 55 % of the cell. No head, no skin patch behind it, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_octopus_eyes_open",
+        "rigsrc_octopus_eyes_half",
+        "rigsrc_octopus_eyes_closed",
+        "rigsrc_octopus_eyes_angry",
+        "rigsrc_octopus_eyes_hurt",
+        "rigsrc_octopus_eyes_dizzy",
+        "rigsrc_octopus_eyes_happy",
+        "rigsrc_octopus_mouth_neutral"
+      ]
+    },
+    {
+      "id": "O3",
+      "title": "Little Octopus (octopus): miệng",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        1,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-01-layers/octopus_look.png",
+          "subject": "this exact creature (Little Octopus): its eyes and mouth are what to draw"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-01-layers/O3_layout.png",
+          "subject": "which expression goes in which cell (a flat placeholder drawing)"
+        }
+      ],
+      "rows": [
+        [
+          "the MOUTH wide open in a shout, little pink tongue",
+          "the MOUTH gritting its teeth",
+          "the MOUTH in a big open smile",
+          "the MOUTH wobbly, about to cry"
+        ]
+      ],
+      "extra": [
+        "Every cell shows ONLY a piece of the face of the creature in image 2 (Little Octopus), floating alone exactly as it sits on its face in three-quarter view facing right: no head, no snout, no skin around it.",
+        "The eye cells show two eyes side by side (the far eye a little smaller and closer to the middle); every eye cell has the SAME size and the SAME spacing so they can be swapped one for another. The mouth cells are small, all the SAME size.",
+        "Same line and colours as image 2's eyes and mouth."
+      ],
+      "framing": "A face-parts sheet for a cartoon puppet: each cell holds only that piece of the face, centred, filling about 55 % of the cell. No head, no skin patch behind it, no shadow, no effects, no text.",
+      "trim": "tight",
+      "assets": [
+        "rigsrc_octopus_mouth_open",
+        "rigsrc_octopus_mouth_grit",
+        "rigsrc_octopus_mouth_smile",
+        "rigsrc_octopus_mouth_cry"
+      ]
+    }
+  ]
+}

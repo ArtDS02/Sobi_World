@@ -1,5 +1,7 @@
 # Yêu cầu art — layer bộ phận cho puppet rig (decision 050)
 
+> **Cách làm nhanh (khuyên dùng):** chỉ cần render 12 sheet của batch Gemini **`art_inbox/.batch/rig-01-layers/PROMPT.md`** (mỗi con 3 sheet: bộ phận rời, mắt + miệng nghỉ, các miệng; file đính kèm có sẵn trong thư mục đó; thứ tự B1–B3 → T1–T3 → F1–F3 → O1–O3), lưu `B1.png`, `B2.png`… vào cùng thư mục. Không phải căn chỉnh gì: Claude chạy `art.py cut` + `npm run rig:batch place <rig>` + `npm run rig:parts <rig>` để đặt từng bộ phận về đúng khớp. Phần dưới là quy chuẩn chi tiết (khi muốn tự vẽ layer, hoặc chỉnh tay sau đó).
+
 Đọc file này trước, rồi file của từng con: `rig_pig_boar.md`, `rig_pig_turtle.md`, `rig_fish_betta.md`, `rig_octopus.md`. Mỗi con có ảnh bố cục `rig_<rig>_guide.png` (vẽ từ bản rig-proof đang chạy trong game: vị trí từng bộ phận + điểm khớp đỏ, gốc dải xanh, vạch đất).
 
 ## Vì sao cần vẽ lại

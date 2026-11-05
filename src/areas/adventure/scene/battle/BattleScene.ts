@@ -10,6 +10,7 @@ import type { PlayingStep } from '../../ui/battleFxView';
 import { actImages } from '../../../../../content/schemas/adventure/battleScript';
 import { BATTLE_FX } from '../../logic/config/content';
 import { stepPlan, type CueSound, type FxCue } from '../../ui/battlePlan';
+import { rigOf } from '../../../../systems/animation';
 import { perfOf } from '../../ui/battlePerf';
 import { poseOf, type BodyPose, type PoseAnchor } from '../../ui/battlePose';
 import { BattleUnits, type StageUnit } from './battleUnits';
@@ -152,7 +153,7 @@ export class BattleScene extends Phaser.Scene {
     poseAnchors.clear();
     poseSides.clear();
     for (const u of units) {
-      poseAnchors.set(u.id, { side: u.side, art: u.art, feet: u.feet, width: u.width, frozen: !u.down && this.badges.frozenBody(u.statuses), swaying: !u.down && this.badges.swaying(u.statuses), low: u.low === true && !u.down, boss: u.boss === true });
+      poseAnchors.set(u.id, { side: u.side, art: u.art, feet: u.feet, width: u.width, frozen: !u.down && this.badges.frozenBody(u.statuses), swaying: !u.down && this.badges.swaying(u.statuses), low: u.low === true && !u.down, boss: u.boss === true, rigged: rigOf(u.art) !== null });
       poseSides.set(u.id, u.side);
     }
     for (const u of units) {
@@ -175,6 +176,7 @@ export class BattleScene extends Phaser.Scene {
           head: this.units.puppets.head(u.id) ?? { x: u.feet.x + (u.side === 'ally' ? 1 : -1) * u.width * 0.16, y: u.feet.y - u.height * 0.58 },
           picture: this.units.picture(u.id),
           ghosts: () => this.units.ghosts(u.id),
+          part: (name: string) => this.units.puppets.anchor(u.id, name),
         },
       ]),
     );

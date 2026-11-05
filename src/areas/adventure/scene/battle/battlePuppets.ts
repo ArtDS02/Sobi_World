@@ -76,6 +76,14 @@ export class BattlePuppets {
     return p && p.container.visible ? p.copies() : null;
   }
 
+  /** Where a named anchor of a unit's puppet is now (`mouth`, `tail`…: the rig's `anchors`; a chain anchors at its tip). */
+  anchor(id: string, name: string): { x: number; y: number } | null {
+    const p = this.puppets.get(id);
+    const at = p?.rig.anchors[name];
+    if (!p || !at) return null;
+    return p.rig.chains.some((c) => c.id === at) ? p.point(`${at}:tip`) : p.point(at);
+  }
+
   /** Where a unit's head is now (its eyes, else its head bone), for the effects that land on it. */
   head(id: string): { x: number; y: number } | null {
     const p = this.puppets.get(id);

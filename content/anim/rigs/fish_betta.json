@@ -322,6 +322,87 @@
       "waves": {
         "tail_fin": { "amp": 34, "speed": 4 }
       }
+    },
+    "g_roar": {
+      "len": 1200,
+      "fade": 110,
+      "life": 0.3,
+      "marks": { "windup": 460, "release": 580, "recover": 1000 },
+      "tracks": {
+        "head": { "x": [[0, 0, "out"], [460, -14, "in"], [580, 10, "out"], [1000, 0]] },
+        "swim": { "rot": [[0, 0, "out"], [460, -12, "in"], [580, 8, "out"], [1000, 0]] },
+        "spine": { "rot": [[0, 0], [460, 20, "in"], [580, -14, "out"], [900, 0]] },
+        "veil_top": { "rot": [[0, 0], [460, 18, "in"], [580, -10, "out"], [1000, 0]] },
+        "veil_low": { "rot": [[0, 0], [460, -18, "in"], [580, 10, "out"], [1000, 0]] }
+      },
+      "faces": { "eyes": [[0, "angry"], [560, "closed"], [880, "angry"], [1150, "open"]], "mouth": [[0, "grit"], [560, "open"], [1000, "neutral"]] },
+      "waves": {
+        "spine": { "amp": 16, "speed": 3.2 },
+        "tail_fin": { "amp": 30, "speed": 3.2 }
+      }
+    },
+    "g_channel": {
+      "len": 1300,
+      "fade": 160,
+      "life": 0.6,
+      "marks": { "windup": 640, "release": 760, "recover": 1100 },
+      "tracks": {
+        "head": { "y": [[0, 0, "inOut"], [640, -16, "inOut"], [760, -10, "out"], [1100, 0]] },
+        "veil_top": { "rot": [[0, 0, "inOut"], [640, 30, "inOut"], [760, 10, "out"], [1100, 0]], "sx": [[0, 1], [640, 1.15], [760, 1], [1100, 1]] },
+        "veil_low": { "rot": [[0, 0, "inOut"], [640, -28, "inOut"], [760, -8], [1100, 0]], "sx": [[0, 1], [640, 1.15], [760, 1], [1100, 1]] },
+        "tail_fin": { "sx": [[0, 1], [640, 1.12, "inOut"], [1100, 1]] },
+        "fin_pec": { "rot": [[0, 0], [640, -40], [760, 0], [1100, 0]] }
+      },
+      "faces": { "eyes": [[0, "half"], [300, "closed"], [760, "happy"], [1200, "open"]], "mouth": [[760, "smile"], [1200, "neutral"]] },
+      "waves": {
+        "veil_top": { "amp": 6, "speed": 0.7 },
+        "veil_low": { "amp": 6, "speed": 0.7 },
+        "tail_fin": { "amp": 10, "speed": 0.7 }
+      }
+    },
+    "g_summon_sky": {
+      "len": 1300,
+      "fade": 110,
+      "life": 0.3,
+      "marks": { "windup": 600, "release": 720, "recover": 1050 },
+      "tracks": {
+        "head": { "y": [[0, 0, "inOut"], [600, -30, "in"], [720, -36, "out"], [1050, 0, "inOut"]] },
+        "swim": { "rot": [[0, 0], [600, -28, "in"], [720, -34, "out"], [1050, 0]] },
+        "tail_fin": { "rot": [[0, 0], [600, 0], [660, 30], [720, -30, "out"], [900, 0]] },
+        "spine": { "rot": [[0, 0], [600, 0], [660, 16], [720, -16, "out"], [900, 0]] }
+      },
+      "faces": { "eyes": [[0, "open"], [400, "closed"], [720, "angry"], [1150, "open"]], "mouth": [[720, "open"], [1000, "neutral"]] }
+    },
+    "g_shoot": {
+      "len": 1000,
+      "fade": 110,
+      "life": 0.3,
+      "marks": { "windup": 360, "release": 460, "recover": 760 },
+      "tracks": {
+        "head": { "x": [[0, 0, "out"], [360, -16, "in"], [460, 12, "out"], [760, 0]] },
+        "swim": { "rot": [[0, 0], [360, -6], [460, 6], [760, 0]] },
+        "spine": { "rot": [[0, 0], [360, 18, "in"], [460, -12, "out"], [700, 0]] }
+      },
+      "faces": { "eyes": [[0, "angry"], [460, "closed"], [600, "angry"], [900, "open"]], "mouth": [[0, "neutral"], [300, "grit"], [440, "open"], [700, "neutral"]] }
+    },
+    "ultimate": {
+      "len": 1900,
+      "fade": 140,
+      "life": 0.1,
+      "marks": { "windup": 900, "release": 1060, "recover": 1500 },
+      "tracks": {
+        "swim": { "rot": [[0, 0, "inOut"], [200, -14, "inOut"], [880, 360, "hold"], [881, 0], [1060, -10, "out"], [1500, 0]] },
+        "head": { "y": [[0, 0], [880, -20], [1060, -6, "out"], [1500, 0]], "x": [[0, 0], [880, 0], [1000, -12, "in"], [1060, 16, "out"], [1500, 0]] },
+        "veil_top": { "rot": [[0, 0], [1000, 24, "in"], [1060, -14, "out"], [1500, 0]] },
+        "veil_low": { "rot": [[0, 0], [1000, -24, "in"], [1060, 14, "out"], [1500, 0]] },
+        "tail_fin": { "sx": [[0, 1], [1020, 1], [1060, 1.2, "outElastic"], [1600, 1]] }
+      },
+      "faces": { "eyes": [[0, "closed"], [1060, "angry"], [1700, "open"]], "mouth": [[0, "grit"], [1040, "open"], [1500, "neutral"]] },
+      "waves": {
+        "tail_fin": { "amp": 36, "speed": 4 },
+        "spine": { "amp": 16, "speed": 4 }
+      }
     }
-  }
+  },
+  "anchors": { "mouth": "mouth", "tail": "tail_fin" }
 }
