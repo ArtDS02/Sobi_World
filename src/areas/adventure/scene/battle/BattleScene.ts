@@ -190,7 +190,7 @@ export class BattleScene extends Phaser.Scene {
       if (c.kind !== 'sound' && holding) continue;
       c.done = true;
       if (c.kind === 'sound') s.sound?.(c.sound);
-      else if (!s.reduce) this.fx.play(c, fxAnchors);
+      else if (!s.reduce || c.kind === 'still') this.fx.play(c, fxAnchors);
     }
     // The statuses: badges by the head, and the little loops they play while they last.
     for (const cue of this.badges.update(units, fxAnchors, now, s.reduce)) this.loops.push({ at: now + cue.at, cue });

@@ -70,10 +70,69 @@ describe('the Ultimate frame (ANIM-009)', () => {
     const bars = script.filter((a) => a.do === 'letterbox');
     expect(bars.map((a) => (a.do === 'letterbox' ? a.on : null)), id).toEqual([true, false]);
     expect(bars[1]!.at + (bars[1]!.do === 'letterbox' ? bars[1]!.dur : 0)).toBeLessThanOrEqual(fx!.timing!.end);
+    // Every Ultimate ends on a real hit stop, a support one too (the owner kept the rubric's MUST-HAVE, ANIM-110).
     const stops = script.filter((a) => a.do === 'stop');
-    // A support ultimate has no blow, so no hit stop.
-    if (stops.length === 0) return;
+    expect(stops.length, id).toBeGreaterThan(0);
     const last = stops.reduce((m, a) => (a.at > m.at ? a : m), stops[0]!);
     expect(last.do === 'stop' ? last.tier : null).toBe('ultimate');
+  });
+});
+
+describe('the twelve Ultimates open their own way (ANIM-112)', () => {
+  const ults = Object.entries(BATTLE_FX.skills).filter(([id]) => id.startsWith('skill_ult_'));
+  it('winds up for different lengths and sweeps in with more than one cut-in style', () => {
+    const circles = new Set(ults.map(([, fx]) => fx!.circleMs));
+    const releases = new Set(ults.map(([, fx]) => fx!.timing!.release));
+    const styles = new Set(ults.flatMap(([, fx]) => fx!.script!.filter((a) => a.do === 'cutin').map((a) => (a.do === 'cutin' ? a.style : null))));
+    expect(circles.size).toBeGreaterThanOrEqual(8);
+    expect(releases.size).toBeGreaterThanOrEqual(8);
+    expect(styles).toEqual(new Set(['slash', 'bars', 'rise', 'ring']));
+    for (const [id, fx] of ults) expect(fx!.circleMs, id).toBeDefined();
+  });
+});
+
+describe('statuses have a start, a lasting look and an end (ANIM-119, ANIM-114)', () => {
+  it('every status has an expire script', () => {
+    for (const [id, st] of Object.entries(BATTLE_FX.statuses)) expect(st!.expire?.length, id).toBeGreaterThan(0);
+  });
+  it('no two statuses share the acts and pictures of their apply; only the colour may differ (ANIM-114)', () => {
+    const sig = (id: string) => JSON.stringify((BATTLE_FX.statuses[id as StatusId]!.apply ?? []).filter((a) => a.do !== 'sound').map((a) => [a.do, 'ref' in a ? a.ref : 'img' in a ? a.img : '']));
+    const seen = new Map<string, string>();
+    for (const id of Object.keys(BATTLE_FX.statuses)) {
+      const k = sig(id);
+      expect(seen.get(k), `${id} duplicates ${seen.get(k)}`).toBeUndefined();
+      seen.set(k, id);
+    }
+  });
+  it('the debuffs show their own picture, big enough to read next to a blow', () => {
+    const downs = ['atkDown', 'defDown', 'matkDown', 'mdefDown', 'accDown', 'evaDown', 'spdDown'] as const;
+    for (const id of downs) {
+      const shape = BATTLE_FX.statuses[id]!.apply!.find((a) => a.do === 'prop' || a.do === 'strip');
+      expect(shape, id).toBeDefined();
+      expect(shape!.do === 'prop' || shape!.do === 'strip' ? (shape as { size?: number }).size ?? 1.3 : 0, id).toBeGreaterThanOrEqual(0.45);
+    }
+  });
+  it('an expire is a picture and not only a few particles, so the end of a status can be seen (ANIM-120)', () => {
+    for (const [id, st] of Object.entries(BATTLE_FX.statuses)) {
+      if (['freeze', 'burn', 'doom'].includes(id)) continue;
+      const seen = st!.expire!.some((a) => a.do === 'strip' || a.do === 'decal' || a.do === 'prop');
+      expect(seen, id).toBe(true);
+    }
+  });
+});
+
+describe('an Ultimate lands with weight (ANIM-129)', () => {
+  const ults = Object.entries(BATTLE_FX.skills).filter(([id]) => id.startsWith('skill_ult_'));
+  it.each(ults)('%s has a camera punch, a flash and a firm shake around its hit stop, without a strobe', (id, fx) => {
+    const script = fx!.script!;
+    const stops = script.filter((a) => a.do === 'stop');
+    const T = Math.max(...stops.map((a) => a.at));
+    const around = (do_: string, lo: number, hi: number) => script.filter((a) => a.do === do_ && a.at >= T + lo && a.at <= T + hi);
+    expect(around('punch', -250, 150).length, `${id} punch`).toBeGreaterThan(0);
+    expect(around('flash', -80, 150).length, `${id} flash`).toBeGreaterThan(0);
+    expect(around('shake', -300, 300).some((a) => a.do === 'shake' && a.amount >= 6), `${id} shake`).toBe(true);
+    // Rubric 10.4: no more than three strong full-screen flashes in any second.
+    const strong = script.filter((a) => a.do === 'flash' && a.alpha >= 0.4).map((a) => a.at);
+    for (const t of strong) expect(strong.filter((u) => u >= t && u < t + 1000).length, `${id} strobe`).toBeLessThanOrEqual(3);
   });
 });

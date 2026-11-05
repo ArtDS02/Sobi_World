@@ -42,7 +42,9 @@ const base = {
   /** Between two units of `targets` / `allies` / `foes` (ms), in their order; the skill's own stagger when left out. */
   stagger: nonNeg.optional(),
 };
-export const HIT_STOP_TIERS = ['light', 'medium', 'heavy', 'ultimate'] as const;
+/** How an Ultimate's cut-in sweeps in (ANIM-112): a slanted band, two bands from the sides, a column rising, a ring opening from the user. */
+export const CUTIN_STYLES = ['slash', 'bars', 'rise', 'ring'] as const;
+export const HIT_STOP_TIERS =['light', 'medium', 'heavy', 'ultimate'] as const;
 const lasting = { ...base, dur: nonNeg.max(4000) };
 
 /** The secondary motion of a prop (ANIM-007, ui/propMotion.ts); each path has its defaults, these override them. */
@@ -194,7 +196,7 @@ export const actSchema = z.discriminatedUnion('do', [
   /** A sound of the manifest (`adv_…`; a missing file is silence). Plays with reduced motion too. */
   z.strictObject({ do: z.literal('sound'), ...base, sound: z.string().regex(/^adv_[a-z0-9_]+$/) }),
   /** The opening of an Ultimate: a band in the colour sweeps across, the actor's picture slides in, the rest darkens. */
-  z.strictObject({ do: z.literal('cutin'), ...lasting, color: paint }),
+  z.strictObject({ do: z.literal('cutin'), ...lasting, color: paint, style: z.enum(CUTIN_STYLES).optional() }),
 ]);
 
 export const scriptSchema = z.array(actSchema).max(60);

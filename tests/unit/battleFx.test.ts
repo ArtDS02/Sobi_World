@@ -76,8 +76,12 @@ describe('the cues of a step', () => {
     expect(Math.min(...cues.filter((c) => c.kind === 'act').map((c) => c.at))).toBeGreaterThanOrEqual(circle!.at);
   });
 
-  it('reduced motion keeps only the sounds; a new battle brings every fighter in by its entrance script', () => {
-    expect(stepPlan(playing(log), sides, true).every((c) => c.kind === 'sound')).toBe(true);
+  it('reduced motion keeps the sounds and a still ring on who acts and who is aimed at (ANIM-111); a new battle brings every fighter in by its entrance script', () => {
+    const calm = stepPlan(playing(log), sides, true);
+    expect(calm.every((c) => c.kind === 'sound' || c.kind === 'still')).toBe(true);
+    // Who acts is marked before the blow lands, and each unit it is for is marked when it lands.
+    expect(calm.some((c) => c.kind === 'still' && c.role === 'actor' && c.unit === ally)).toBe(true);
+    expect(calm.some((c) => c.kind === 'still' && c.role === 'target' && c.unit === foe)).toBe(true);
     const enter = stepPlan(playing(log, true), sides, false);
     expect(enter[0]).toMatchObject({ kind: 'sound', sound: 'adv_battle_start' });
     // The entrance plays before the step's clock starts, for every fighter.

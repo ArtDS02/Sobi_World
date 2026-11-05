@@ -7,6 +7,7 @@ import type { Act, Spot } from '../../../../../content/schemas/adventure/battleS
 import type { ScriptCue } from '../../ui/battleScript';
 import { AIR_DEPTH, GROUND_DEPTH, type Bursts } from './fxBursts';
 import { beam, cone, tether } from './fxLines';
+import { playCutin } from './fxCutin';
 import { playProp } from './fxProps';
 import { playRibbon } from './fxRibbon';
 import type { FxAnchor, Timed } from './fxPlayer';
@@ -31,7 +32,6 @@ export interface ActHost {
 }
 
 const TINT_DEPTH = 5;
-const CUTIN_DEPTH = AIR_DEPTH + 20;
 
 const easeIn = (t: number) => t * t;
 const easeOut = (t: number) => 1 - (1 - t) * (1 - t);
@@ -181,7 +181,7 @@ export class ActPlayer {
         this.h.flash(act.color as number, act.alpha, act.dur);
         return;
       case 'cutin':
-        if (from ?? a) this.cutin((from ?? a)!, act.color as number, act.dur);
+        if (from ?? a) playCutin(this.scene, this.h.add, (from ?? a)!, act.color as number, act.dur, act.style, cue.title ?? null);
         return;
       case 'sound':
       case 'move':
@@ -254,35 +254,5 @@ export class ActPlayer {
       : this.scene.add.rectangle(0, 0, W, H, color, 1).setOrigin(0);
     obj.setDepth(act.focus ? AIR_DEPTH - 20 : TINT_DEPTH).setAlpha(0);
     this.h.add(act.dur, (t) => obj.setAlpha(act.alpha * fadeIO(t, fade, fade)), () => obj.destroy());
-  }
-
-  /** An Ultimate's opening: a band in the element's colour sweeps across, the user's picture slides in, the rest darkens. */
-  private cutin(a: FxAnchor, color: number, dur: number) {
-    const W = this.scene.scale.width;
-    const H = this.scene.scale.height;
-    const shade = this.scene.add.rectangle(0, 0, W, H, 0x0e0a1e, 1).setOrigin(0).setDepth(CUTIN_DEPTH - 1).setAlpha(0);
-    const band = this.scene.add.rectangle(W / 2, H * 0.45, W * 1.6, H * 0.26, color, 1).setDepth(CUTIN_DEPTH).setAngle(-8).setAlpha(0.9);
-    const line = this.scene.add.rectangle(W / 2, H * 0.45 - H * 0.13, W * 1.6, 6, 0xffffff, 1).setDepth(CUTIN_DEPTH + 1).setAngle(-8);
-    const key = a.picture?.texture.key;
-    const face = key ? this.scene.add.image(0, H * 0.45, key).setDepth(CUTIN_DEPTH + 2) : null;
-    if (face) {
-      const h = H * 0.42;
-      face.setDisplaySize(h * (face.width / Math.max(1, face.height)), h).setFlipX(a.side === 'enemy');
-    }
-    const dir = a.side === 'ally' ? 1 : -1;
-    this.h.add(dur, (t) => {
-      const inn = easeOut(Math.min(1, t / 0.25));
-      const out = t > 0.8 ? easeIn((t - 0.8) / 0.2) : 0;
-      const x = W / 2 + dir * (-W * (1 - inn) + W * out);
-      band.setX(x);
-      line.setX(x + dir * 30);
-      shade.setAlpha(0.5 * fadeIO(t, 0.15, 0.2));
-      face?.setPosition(W / 2 - dir * W * 0.22 + dir * (-W * 0.6 * (1 - easeOut(Math.min(1, t / 0.35))) + W * out), H * 0.45 + 6);
-    }, () => {
-      shade.destroy();
-      band.destroy();
-      line.destroy();
-      face?.destroy();
-    });
   }
 }

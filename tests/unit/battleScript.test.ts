@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { battleFxFileSchema } from '../../content/schemas/adventure/battleFx';
 import { scriptEnd, scriptSchema, type Act } from '../../content/schemas/adventure/battleScript';
-import { BATTLE_FX } from '../../src/areas/adventure/logic/config/content';
+import { BATTLE_FX, SKILLS } from '../../src/areas/adventure/logic/config/content';
 import type { PlayingStep } from '../../src/areas/adventure/ui/battleFxView';
 import { stepMotion } from '../../src/areas/adventure/ui/battleMotion';
 import { stepPlan } from '../../src/areas/adventure/ui/battlePlan';
@@ -111,7 +111,8 @@ describe('a skill script on the step clock', () => {
     expect(cues.some((c) => c.kind === 'shot' || c.kind === 'land' || c.kind === 'charge')).toBe(false);
     expect(cues.some((c) => c.kind === 'act')).toBe(true);
     const reduced = stepPlan(p, sides, true);
-    expect(reduced.every((c) => c.kind === 'sound')).toBe(true);
+    // Its acts are gone with reduced motion; only the sounds and the still rings of ANIM-111 stay.
+    expect(reduced.every((c) => c.kind === 'sound' || c.kind === 'still')).toBe(true);
     expect(reduced.some((c) => c.kind === 'sound' && c.sound === 'adv_fire_cast')).toBe(true);
   });
 
@@ -175,5 +176,15 @@ describe('statuses, reactions and the general actions', () => {
       { do: 'shake', at: 50, dur: 100, amount: 4 },
     ]);
     expect(scriptEnd(acts)).toBe(600);
+  });
+});
+
+describe('the cut-in of an Ultimate names the skill (ANIM-112)', () => {
+  it('its cue carries the skill name from the content text, so the band can show it', () => {
+    withScript([{ do: 'cutin', at: 0, who: 'actor', dur: 500, color: '#ffffff', style: 'ring' }]);
+    const cue = stepScript(playing(use(['e1'])), sides).cues.find((c) => c.act.do === 'cutin');
+    expect(cue).toBeDefined();
+    expect(cue!.title).toBe(SKILLS[SKILL]!.nameVi);
+    expect(cue!.title?.length).toBeGreaterThan(0);
   });
 });

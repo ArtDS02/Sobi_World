@@ -94,6 +94,8 @@ const skill = look.partial().extend({
   stagger: nonNeg.max(400).optional(),
   /** The magic circle first (default: on without a script, off with one; the script opens the skill itself). */
   circle: z.boolean().optional(),
+  /** How long its magic circle shows before the skill leaves (ms; default: the pacing's `circle.skill` / `circle.ultimate`). Each Ultimate winds up its own way (ANIM-112). */
+  circleMs: nonNeg.max(1500).optional(),
 });
 
 /** The general actions and reactions that may carry a script (decision 044): played on the unit they are about (`actor`). */

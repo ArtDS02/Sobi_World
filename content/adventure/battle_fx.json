@@ -3453,13 +3453,14 @@
     },
     "skill_ult_nh": {
       "timing": { "release": 500, "impact": 1300, "end": 3300 },
+      "circleMs": 820,
       "stagger": 150,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_bow" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#3ad0c8" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#3ad0c8", "style": "ring" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3300, "color": "#0a3a6a", "alpha": 0.35, "fade": 300 },
         { "do": "burst", "at": 0, "who": "field", "ref": "bubble_rise", "spot": "feet", "more": 3 },
@@ -3524,6 +3525,17 @@
           "stagger": 150
         },
         { "do": "stop", "at": 2650, "who": "actor", "dur": 220, "tier": "ultimate" },
+        { "do": "punch", "at": 2630, "who": "field", "dur": 240, "zoom": 1.06 },
+        { "do": "shake", "at": 2650, "who": "field", "dur": 260, "amount": 7, "dir": [0, 1] },
+        {
+          "do": "decal",
+          "at": 2950,
+          "who": "targets",
+          "dur": 350,
+          "kind": "ring",
+          "color": "$glow",
+          "size": 2.4
+        },
         {
           "do": "prop",
           "at": 2750,
@@ -3767,13 +3779,14 @@
       ]
     },
     "skill_ult_qs": {
-      "timing": { "release": 500, "impact": 1450, "end": 3300 },
+      "timing": { "release": 600, "impact": 1450, "end": 3300 },
+      "circleMs": 900,
       "stagger": 150,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#c89a50" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#c89a50", "style": "rise" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3300, "color": "#ff9a5a", "alpha": 0.2, "fade": 300 },
         {
@@ -3812,6 +3825,11 @@
           "stagger": 150
         },
         { "do": "sound", "at": 1850, "who": "actor", "sound": "adv_guard" },
+        { "do": "stop", "at": 1850, "who": "actor", "dur": 220, "tier": "ultimate" },
+        { "do": "punch", "at": 1830, "who": "field", "dur": 240, "zoom": 1.06 },
+        { "do": "flash", "at": 1850, "who": "field", "dur": 120, "color": "$glow", "alpha": 0.35 },
+        { "do": "shake", "at": 1850, "who": "field", "dur": 260, "amount": 7, "dir": [0, 1] },
+        { "do": "shake", "at": 1850, "who": "field", "dur": 300, "amount": 3 },
         { "do": "move", "at": 2250, "who": "actor", "dur": 500, "move": "lunge", "x": 30 },
         { "do": "move", "at": 2300, "who": "actor", "dur": 450, "move": "puff_up", "scale": 1.15 },
         {
@@ -4028,14 +4046,15 @@
       ]
     },
     "skill_ult_dm": {
-      "timing": { "release": 500, "impact": 1250, "end": 3100 },
+      "timing": { "release": 450, "impact": 1250, "end": 3100 },
+      "circleMs": 760,
       "stagger": 150,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_hover" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#7a4ad6" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#7a4ad6", "style": "bars" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3100, "color": "#0a0820", "alpha": 0.4, "fade": 300 },
         {
@@ -4090,6 +4109,15 @@
         { "do": "move", "at": 2050, "who": "targets", "dur": 400, "move": "squash", "scale": 0.82 },
         { "do": "strip", "at": 2050, "who": "targets", "img": "fx_ink_splat", "stagger": 60 },
         { "do": "stop", "at": 2050, "who": "actor", "dur": 220, "tier": "ultimate" },
+        {
+          "do": "decal",
+          "at": 2350,
+          "who": "targets",
+          "dur": 450,
+          "kind": "ring",
+          "color": "$glow",
+          "size": 2.4
+        },
         { "do": "shake", "at": 2050, "who": "field", "dur": 260, "amount": 8 },
         { "do": "punch", "at": 2050, "who": "target", "dur": 220, "zoom": 1.04 },
         { "do": "sound", "at": 2050, "who": "actor", "sound": "adv_dark_hit" },
@@ -4282,14 +4310,15 @@
       ]
     },
     "skill_ult_qt": {
-      "timing": { "release": 500, "impact": 1300, "end": 3200 },
+      "timing": { "release": 520, "impact": 1300, "end": 3200 },
+      "circleMs": 700,
       "stagger": 150,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_bow" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#ffe0a0" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#ffe0a0", "style": "ring" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3200, "color": "#0a1030", "alpha": 0.35, "fade": 300 },
         {
@@ -4332,6 +4361,11 @@
           "stagger": 150
         },
         { "do": "sound", "at": 1750, "who": "actor", "sound": "adv_heal" },
+        { "do": "stop", "at": 1750, "who": "actor", "dur": 220, "tier": "ultimate" },
+        { "do": "punch", "at": 1730, "who": "field", "dur": 240, "zoom": 1.06 },
+        { "do": "flash", "at": 1750, "who": "field", "dur": 120, "color": "$glow", "alpha": 0.35 },
+        { "do": "shake", "at": 1750, "who": "field", "dur": 260, "amount": 7, "dir": [0, 1] },
+        { "do": "shake", "at": 1750, "who": "field", "dur": 300, "amount": 3 },
         { "do": "burst", "at": 2200, "who": "allies", "ref": "heart_pop", "more": 0.5 },
         {
           "do": "decal",
@@ -4561,14 +4595,15 @@
       ]
     },
     "skill_ult_ld": {
-      "timing": { "release": 500, "impact": 1200, "end": 3100 },
+      "timing": { "release": 300, "impact": 1200, "end": 3100 },
+      "circleMs": 420,
       "stagger": 120,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_charge" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#ffe25a" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#ffe25a", "style": "slash" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3100, "color": "#1a1028", "alpha": 0.4, "fade": 300 },
         {
@@ -4800,14 +4835,15 @@
       ]
     },
     "skill_ult_tg": {
-      "timing": { "release": 500, "impact": 1200, "end": 3300 },
+      "timing": { "release": 400, "impact": 1200, "end": 3300 },
+      "circleMs": 640,
       "stagger": 100,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_charge" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#d8dce6" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#d8dce6", "style": "bars" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3300, "color": "#ffc8a0", "alpha": 0.18, "fade": 300 },
         {
@@ -4864,6 +4900,8 @@
           "size": 0.6
         },
         { "do": "stop", "at": 2200, "who": "actor", "dur": 220, "tier": "ultimate" },
+        { "do": "punch", "at": 2180, "who": "field", "dur": 240, "zoom": 1.06 },
+        { "do": "flash", "at": 2200, "who": "field", "dur": 120, "color": "$glow", "alpha": 0.35 },
         { "do": "shake", "at": 2200, "who": "field", "dur": 260, "amount": 8 },
         {
           "do": "prop",
@@ -5102,14 +5140,15 @@
       ]
     },
     "skill_ult_hg": {
-      "timing": { "release": 500, "impact": 1200, "end": 3300 },
+      "timing": { "release": 320, "impact": 1200, "end": 3300 },
+      "circleMs": 480,
       "stagger": 60,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_roar" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#ff5a2a" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#ff5a2a", "style": "slash" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3300, "color": "#5a0a0a", "alpha": 0.35, "fade": 300 },
         {
@@ -5176,6 +5215,16 @@
         { "do": "stop", "at": 1200, "who": "actor", "dur": 50, "tier": "light" },
         { "do": "flash", "at": 1200, "who": "field", "dur": 90, "color": "#ff7a2a", "alpha": 0.18 },
         { "do": "stop", "at": 1650, "who": "actor", "dur": 80, "tier": "medium" },
+        { "do": "punch", "at": 2080, "who": "field", "dur": 240, "zoom": 1.06 },
+        {
+          "do": "decal",
+          "at": 2400,
+          "who": "targets",
+          "dur": 450,
+          "kind": "ring",
+          "color": "$glow",
+          "size": 2.4
+        },
         { "do": "flash", "at": 1650, "who": "field", "dur": 90, "color": "#ff7a2a", "alpha": 0.18 },
         {
           "do": "strip",
@@ -5322,14 +5371,15 @@
       ]
     },
     "skill_ult_mm": {
-      "timing": { "release": 500, "impact": 1300, "end": 3400 },
+      "timing": { "release": 560, "impact": 1300, "end": 3400 },
+      "circleMs": 880,
       "stagger": 120,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_bow" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#6ac04a" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#6ac04a", "style": "rise" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3400, "color": "#c0ff8a", "alpha": 0.15, "fade": 300 },
         {
@@ -5346,6 +5396,20 @@
         { "do": "sound", "at": 500, "who": "actor", "sound": "adv_nature_cast" },
         { "do": "burst", "at": 1300, "who": "allyside", "ref": "petal_fall", "spot": "above", "more": 4 },
         { "do": "sound", "at": 1400, "who": "actor", "sound": "adv_heal" },
+        { "do": "stop", "at": 1500, "who": "actor", "dur": 220, "tier": "ultimate" },
+        { "do": "punch", "at": 1480, "who": "field", "dur": 240, "zoom": 1.06 },
+        { "do": "flash", "at": 1500, "who": "field", "dur": 120, "color": "$glow", "alpha": 0.35 },
+        { "do": "shake", "at": 1500, "who": "field", "dur": 260, "amount": 7, "dir": [0, 1] },
+        {
+          "do": "decal",
+          "at": 1800,
+          "who": "targets",
+          "dur": 450,
+          "kind": "ring",
+          "color": "$glow",
+          "size": 2.4
+        },
+        { "do": "shake", "at": 1500, "who": "field", "dur": 300, "amount": 3 },
         {
           "do": "burst",
           "at": 1500,
@@ -5540,13 +5604,14 @@
       ]
     },
     "skill_ult_hk": {
-      "timing": { "release": 500, "impact": 1200, "end": 3200 },
+      "timing": { "release": 700, "impact": 1200, "end": 3200 },
+      "circleMs": 1000,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_hover" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#8a6ad6" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#8a6ad6", "style": "ring" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3200, "color": "#1a1040", "alpha": 0.35, "fade": 300 },
         { "do": "split", "at": 300, "who": "field", "dur": 90 },
@@ -5596,6 +5661,16 @@
         },
         { "do": "shake", "at": 2000, "who": "field", "dur": 260, "amount": 10 },
         { "do": "stop", "at": 2000, "who": "actor", "dur": 220, "tier": "ultimate" },
+        { "do": "punch", "at": 1980, "who": "field", "dur": 240, "zoom": 1.06 },
+        {
+          "do": "decal",
+          "at": 2300,
+          "who": "targets",
+          "dur": 450,
+          "kind": "ring",
+          "color": "$glow",
+          "size": 2.4
+        },
         { "do": "flash", "at": 2000, "who": "field", "dur": 220, "color": "#b48aff", "alpha": 0.3 },
         { "do": "split", "at": 2000, "who": "field", "dur": 90 },
         { "do": "burst", "at": 2000, "who": "foeside", "ref": "ice_pop", "tint": ["#b48aff"], "more": 4 },
@@ -5667,14 +5742,15 @@
       ]
     },
     "skill_ult_phoenix": {
-      "timing": { "release": 500, "impact": 1300, "end": 3400 },
+      "timing": { "release": 350, "impact": 1300, "end": 3400 },
+      "circleMs": 560,
       "stagger": 90,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_roar" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#ff7a2a" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#ff7a2a", "style": "slash" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3400, "color": "#ff6a2a", "alpha": 0.25, "fade": 300 },
         { "do": "glow", "at": 500, "who": "actor", "dur": 500, "color": "#ff7a2a", "bright": 1.6 },
@@ -5705,6 +5781,17 @@
         { "do": "shake", "at": 1500, "who": "field", "dur": 260, "amount": 10 },
         { "do": "sound", "at": 1500, "who": "actor", "sound": "adv_fire_hit" },
         { "do": "stop", "at": 1700, "who": "actor", "dur": 220, "tier": "ultimate" },
+        { "do": "punch", "at": 1680, "who": "field", "dur": 240, "zoom": 1.06 },
+        { "do": "flash", "at": 1700, "who": "field", "dur": 120, "color": "$glow", "alpha": 0.35 },
+        {
+          "do": "decal",
+          "at": 2000,
+          "who": "targets",
+          "dur": 450,
+          "kind": "ring",
+          "color": "$glow",
+          "size": 2.4
+        },
         {
           "do": "prop",
           "at": 2300,
@@ -5764,14 +5851,15 @@
       ]
     },
     "skill_ult_trident": {
-      "timing": { "release": 500, "impact": 1100, "end": 3200 },
+      "timing": { "release": 450, "impact": 1100, "end": 3200 },
+      "circleMs": 600,
       "stagger": 400,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_coil" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#2a8ad6" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#2a8ad6", "style": "bars" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3200, "color": "#0a2a4a", "alpha": 0.35, "fade": 300 },
         {
@@ -5817,6 +5905,17 @@
         },
         { "do": "sound", "at": 1100, "who": "actor", "sound": "adv_water_hit" },
         { "do": "stop", "at": 1300, "who": "actor", "dur": 220, "tier": "ultimate" },
+        { "do": "punch", "at": 1280, "who": "field", "dur": 240, "zoom": 1.06 },
+        { "do": "flash", "at": 1300, "who": "field", "dur": 120, "color": "$glow", "alpha": 0.35 },
+        {
+          "do": "decal",
+          "at": 1600,
+          "who": "targets",
+          "dur": 450,
+          "kind": "ring",
+          "color": "$glow",
+          "size": 2.4
+        },
         { "do": "shake", "at": 1300, "who": "field", "dur": 260, "amount": 8, "dir": [0, 1] },
         { "do": "burst", "at": 2400, "who": "field", "ref": "drop_fall", "spot": "head", "more": 3 },
         { "do": "burst", "at": 400, "who": "field", "ref": "drop_fall", "spot": "head", "more": 2.5 },
@@ -5882,14 +5981,15 @@
       ]
     },
     "skill_ult_mythical": {
-      "timing": { "release": 500, "impact": 1400, "end": 3500 },
+      "timing": { "release": 650, "impact": 1400, "end": 3500 },
+      "circleMs": 960,
       "stagger": 100,
       "script": [
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_hover" },
-        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#b48aff" },
+        { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#b48aff", "style": "rise" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 3500, "color": "#100a30", "alpha": 0.4, "fade": 300 },
         {
@@ -5954,6 +6054,15 @@
         },
         { "do": "strip", "at": 1700, "who": "targets", "img": "fx_boom", "tint": "#b48aff" },
         { "do": "stop", "at": 1700, "who": "actor", "dur": 220, "tier": "ultimate" },
+        {
+          "do": "decal",
+          "at": 2000,
+          "who": "targets",
+          "dur": 450,
+          "kind": "ring",
+          "color": "$glow",
+          "size": 2.4
+        },
         { "do": "shake", "at": 1700, "who": "field", "dur": 260, "amount": 10 },
         { "do": "punch", "at": 1700, "who": "target", "dur": 220, "zoom": 1.05 },
         { "do": "sound", "at": 1700, "who": "actor", "sound": "adv_void_hit" },
@@ -8409,6 +8518,15 @@
         ]
       },
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.6,
+          "tint": "#7ad05a",
+          "alpha": 0.9
+        },
         { "do": "burst", "at": 0, "who": "actor", "ref": "spore_rise", "more": 0.9 },
         { "do": "burst", "at": 80, "who": "actor", "ref": "debuff_smoke", "more": 0.5 }
       ],
@@ -8479,7 +8597,7 @@
       "loop": {
         "every": 1200,
         "script": [
-          { "do": "burst", "at": 0, "who": "actor", "ref": "drop_fall", "more": 0.15 },
+          { "do": "burst", "at": 0, "who": "actor", "ref": "drop_fall", "more": 0.5 },
           {
             "do": "decal",
             "at": 0,
@@ -8487,13 +8605,35 @@
             "dur": 1500,
             "kind": "puddle",
             "color": "#bfe4ff",
-            "size": 0.7
+            "size": 1.1
           }
         ]
       },
-      "tint": { "color": "#bfe4ff", "alpha": 0.16 },
+      "tint": { "color": "#bfe4ff", "alpha": 0.3 },
       "priority": 1,
-      "expire": [{ "do": "burst", "at": 0, "who": "actor", "ref": "bubble_rise", "more": 1 }]
+      "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.6,
+          "tint": "#7ac8ff",
+          "alpha": 0.7
+        },
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_splash",
+          "size": 3.2,
+          "spot": "feet",
+          "tint": "#7ac8ff",
+          "alpha": 0.9
+        },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "drop_fall", "spot": "above", "more": 3 },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "bubble_rise", "more": 1 }
+      ]
     },
     "freeze": {
       "icon": "ui_icon_status_freeze",
@@ -8577,6 +8717,24 @@
       ],
       "expire": [
         {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.6,
+          "tint": "#ffe36a",
+          "alpha": 0.7
+        },
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_pow_star",
+          "size": 3.2,
+          "tint": "#ffe36a",
+          "alpha": 0.95
+        },
+        {
           "do": "burst",
           "at": 0,
           "who": "actor",
@@ -8620,6 +8778,16 @@
         }
       ],
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#9a6ad8",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#9a6ad8", "size": 3 },
         { "do": "strip", "at": 0, "who": "actor", "img": "fx_rune_lock", "size": 0.9, "alpha": 0.7 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "rune_a_pop", "tint": ["#b48aff"], "more": 1.2 },
         { "do": "shake", "at": 0, "who": "field", "dur": 160, "amount": 3 }
@@ -8709,6 +8877,16 @@
         ]
       },
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#ff5a3c",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#ff5a3c", "size": 3 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#ff5a3c"], "more": 0.5 }
       ]
     },
@@ -8718,6 +8896,17 @@
         { "do": "move", "at": 0, "who": "actor", "dur": 300, "move": "squash", "scale": 0.92 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_arrows", "tint": ["#6b4a8a"], "more": 0.6 },
         { "do": "burst", "at": 60, "who": "actor", "ref": "metal_fall", "tint": ["#6b4a8a"], "more": 0.6 },
+        {
+          "do": "prop",
+          "at": 0,
+          "who": "actor",
+          "dur": 380,
+          "img": "fxp_steel_blade",
+          "path": "fall",
+          "spot": "above",
+          "size": 0.55,
+          "tint": "#b79adf"
+        },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_debuff" }
       ],
       "loop": {
@@ -8725,7 +8914,21 @@
         "script": [
           { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_smoke", "tint": ["#6b4a8a"], "more": 0.15 }
         ]
-      }
+      },
+      "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.7,
+          "tint": "#b79adf",
+          "alpha": 0.9
+        },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 300, "color": "#ffffff", "bright": 1.9 },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#6b4a8a"], "more": 0.5 },
+        { "do": "move", "at": 0, "who": "actor", "dur": 260, "move": "puff_up", "scale": 1.06 }
+      ]
     },
     "defUp": {
       "icon": "st_def_up",
@@ -8743,6 +8946,17 @@
         },
         { "do": "burst", "at": 0, "who": "actor", "ref": "metal_pop", "tint": ["#4aa8ff"], "more": 1 },
         { "do": "move", "at": 0, "who": "actor", "dur": 220, "move": "puff_up", "scale": 1.05 },
+        {
+          "do": "prop",
+          "at": 0,
+          "who": "actor",
+          "dur": 420,
+          "img": "fxp_bronze_shield",
+          "path": "pop",
+          "spot": "chest",
+          "size": 0.55,
+          "alpha": 0.95
+        },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_guard" }
       ],
       "layers": [
@@ -8761,6 +8975,16 @@
         }
       ],
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#4aa8ff",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#4aa8ff", "size": 3 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "metal_spray", "tint": ["#4aa8ff"], "more": 0.6 }
       ]
     },
@@ -8770,6 +8994,17 @@
         { "do": "move", "at": 0, "who": "actor", "dur": 300, "move": "squash", "scale": 0.92 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_arrows", "tint": ["#6b4a8a"], "more": 0.6 },
         { "do": "burst", "at": 60, "who": "actor", "ref": "metal_spray", "tint": ["#6b4a8a"], "more": 0.6 },
+        {
+          "do": "prop",
+          "at": 0,
+          "who": "actor",
+          "dur": 380,
+          "img": "fxp_bronze_shield",
+          "path": "fall",
+          "spot": "above",
+          "size": 0.55,
+          "tint": "#b79adf"
+        },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_debuff" }
       ],
       "loop": {
@@ -8777,7 +9012,21 @@
         "script": [
           { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_smoke", "tint": ["#6b4a8a"], "more": 0.15 }
         ]
-      }
+      },
+      "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.7,
+          "tint": "#b79adf",
+          "alpha": 0.9
+        },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 300, "color": "#ffffff", "bright": 1.9 },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#6b4a8a"], "more": 0.5 },
+        { "do": "move", "at": 0, "who": "actor", "dur": 260, "move": "puff_up", "scale": 1.06 }
+      ]
     },
     "matkUp": {
       "icon": "st_matk_up",
@@ -8793,6 +9042,18 @@
         },
         { "do": "burst", "at": 0, "who": "actor", "ref": "spark_rise", "tint": ["#b06aff"], "more": 1 },
         { "do": "move", "at": 0, "who": "actor", "dur": 220, "move": "puff_up", "scale": 1.12 },
+        {
+          "do": "prop",
+          "at": 0,
+          "who": "actor",
+          "dur": 420,
+          "img": "fxp_seal_circle",
+          "path": "pop",
+          "spot": "above",
+          "size": 0.6,
+          "tint": "#b06aff",
+          "alpha": 0.95
+        },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_buff" }
       ],
       "layers": [
@@ -8828,6 +9089,16 @@
         ]
       },
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#b06aff",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#b06aff", "size": 3 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#b06aff"], "more": 0.5 }
       ]
     },
@@ -8837,6 +9108,17 @@
         { "do": "move", "at": 0, "who": "actor", "dur": 300, "move": "squash", "scale": 0.92 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_arrows", "tint": ["#6b4a8a"], "more": 0.6 },
         { "do": "burst", "at": 60, "who": "actor", "ref": "rune_a_rise", "tint": ["#6b4a8a"], "more": 0.6 },
+        {
+          "do": "prop",
+          "at": 0,
+          "who": "actor",
+          "dur": 360,
+          "img": "fxp_seal_circle",
+          "path": "pop",
+          "spot": "above",
+          "size": 0.55,
+          "tint": "#b79adf"
+        },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_debuff" }
       ],
       "loop": {
@@ -8844,7 +9126,21 @@
         "script": [
           { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_smoke", "tint": ["#6b4a8a"], "more": 0.15 }
         ]
-      }
+      },
+      "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.7,
+          "tint": "#b79adf",
+          "alpha": 0.9
+        },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 300, "color": "#ffffff", "bright": 1.9 },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#6b4a8a"], "more": 0.5 },
+        { "do": "move", "at": 0, "who": "actor", "dur": 260, "move": "puff_up", "scale": 1.06 }
+      ]
     },
     "mdefUp": {
       "icon": "st_mdef_up",
@@ -8853,12 +9149,10 @@
           "do": "strip",
           "at": 0,
           "who": "actor",
-          "img": "fx_shield_dome",
-          "size": 1.25,
+          "img": "fx_wind_swirl",
+          "size": 1.5,
           "tint": "#8fe0ff",
-          "frames": [0, 2],
-          "hold": 160,
-          "alpha": 0.5
+          "alpha": 0.85
         },
         { "do": "burst", "at": 0, "who": "actor", "ref": "metal_pop", "tint": ["#8fe0ff"], "more": 1 },
         { "do": "move", "at": 0, "who": "actor", "dur": 220, "move": "puff_up", "scale": 1.05 },
@@ -8880,6 +9174,16 @@
         }
       ],
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#8fe0ff",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#8fe0ff", "size": 3 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "metal_spray", "tint": ["#8fe0ff"], "more": 0.6 }
       ]
     },
@@ -8889,6 +9193,16 @@
         { "do": "move", "at": 0, "who": "actor", "dur": 300, "move": "squash", "scale": 0.92 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_arrows", "tint": ["#6b4a8a"], "more": 0.6 },
         { "do": "burst", "at": 60, "who": "actor", "ref": "rune_b_rise", "tint": ["#6b4a8a"], "more": 0.6 },
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_rune_lock",
+          "spot": "head",
+          "size": 1.2,
+          "tint": "#b79adf",
+          "dur": 360
+        },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_debuff" }
       ],
       "loop": {
@@ -8896,7 +9210,21 @@
         "script": [
           { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_smoke", "tint": ["#6b4a8a"], "more": 0.15 }
         ]
-      }
+      },
+      "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.7,
+          "tint": "#b79adf",
+          "alpha": 0.9
+        },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 300, "color": "#ffffff", "bright": 1.9 },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#6b4a8a"], "more": 0.5 },
+        { "do": "move", "at": 0, "who": "actor", "dur": 260, "move": "puff_up", "scale": 1.06 }
+      ]
     },
     "accUp": {
       "icon": "st_acc_up",
@@ -8912,6 +9240,18 @@
         },
         { "do": "burst", "at": 0, "who": "actor", "ref": "spark_rise", "tint": ["#ffe08a"], "more": 1 },
         { "do": "move", "at": 0, "who": "actor", "dur": 220, "move": "puff_up", "scale": 1.12 },
+        {
+          "do": "prop",
+          "at": 0,
+          "who": "actor",
+          "dur": 420,
+          "img": "fxp_crosshair",
+          "path": "pop",
+          "spot": "above",
+          "size": 0.55,
+          "tint": "#ffe08a",
+          "alpha": 0.95
+        },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_buff" }
       ],
       "layers": [
@@ -8928,6 +9268,16 @@
         }
       ],
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#ffe08a",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#ffe08a", "size": 3 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#ffe08a"], "more": 0.5 }
       ]
     },
@@ -8937,6 +9287,17 @@
         { "do": "move", "at": 0, "who": "actor", "dur": 300, "move": "squash", "scale": 0.92 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_arrows", "tint": ["#6b4a8a"], "more": 0.6 },
         { "do": "burst", "at": 60, "who": "actor", "ref": "ink_rise", "tint": ["#6b4a8a"], "more": 0.6 },
+        {
+          "do": "prop",
+          "at": 0,
+          "who": "actor",
+          "dur": 380,
+          "img": "fxp_crosshair",
+          "path": "fall",
+          "spot": "above",
+          "size": 0.55,
+          "tint": "#b79adf"
+        },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_debuff" }
       ],
       "loop": {
@@ -8944,7 +9305,21 @@
         "script": [
           { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_smoke", "tint": ["#6b4a8a"], "more": 0.15 }
         ]
-      }
+      },
+      "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.7,
+          "tint": "#b79adf",
+          "alpha": 0.9
+        },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 300, "color": "#ffffff", "bright": 1.9 },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#6b4a8a"], "more": 0.5 },
+        { "do": "move", "at": 0, "who": "actor", "dur": 260, "move": "puff_up", "scale": 1.06 }
+      ]
     },
     "evaUp": {
       "icon": "st_eva_up",
@@ -8970,6 +9345,16 @@
         }
       ],
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#b0f0ff",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#b0f0ff", "size": 3 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#b0f0ff"], "more": 0.4 }
       ]
     },
@@ -8979,6 +9364,17 @@
         { "do": "move", "at": 0, "who": "actor", "dur": 300, "move": "squash", "scale": 0.92 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_arrows", "tint": ["#6b4a8a"], "more": 0.6 },
         { "do": "burst", "at": 60, "who": "actor", "ref": "pebble_ring", "tint": ["#6b4a8a"], "more": 0.6 },
+        {
+          "do": "prop",
+          "at": 0,
+          "who": "actor",
+          "dur": 380,
+          "img": "fxp_boulder",
+          "path": "fall",
+          "spot": "feet",
+          "size": 0.45,
+          "tint": "#b79adf"
+        },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_debuff" }
       ],
       "loop": {
@@ -8986,7 +9382,21 @@
         "script": [
           { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_smoke", "tint": ["#6b4a8a"], "more": 0.15 }
         ]
-      }
+      },
+      "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.7,
+          "tint": "#b79adf",
+          "alpha": 0.9
+        },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 300, "color": "#ffffff", "bright": 1.9 },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#6b4a8a"], "more": 0.5 },
+        { "do": "move", "at": 0, "who": "actor", "dur": 260, "move": "puff_up", "scale": 1.06 }
+      ]
     },
     "spdUp": {
       "icon": "st_spd_up",
@@ -9011,6 +9421,16 @@
         ]
       },
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#ffd23c",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#ffd23c", "size": 3 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "streak_spray", "tint": ["#ffd23c"], "more": 0.4 }
       ]
     },
@@ -9020,6 +9440,17 @@
         { "do": "move", "at": 0, "who": "actor", "dur": 300, "move": "squash", "scale": 0.92 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_arrows", "tint": ["#6b4a8a"], "more": 0.6 },
         { "do": "burst", "at": 60, "who": "actor", "ref": "puff_fall", "tint": ["#6b4a8a"], "more": 0.6 },
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_ink_splat",
+          "spot": "feet",
+          "size": 1.3,
+          "tint": "#b79adf",
+          "dur": 380,
+          "under": true
+        },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_debuff" }
       ],
       "loop": {
@@ -9027,7 +9458,21 @@
         "script": [
           { "do": "burst", "at": 0, "who": "actor", "ref": "debuff_smoke", "tint": ["#6b4a8a"], "more": 0.15 }
         ]
-      }
+      },
+      "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.7,
+          "tint": "#b79adf",
+          "alpha": 0.9
+        },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 300, "color": "#ffffff", "bright": 1.9 },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#6b4a8a"], "more": 0.5 },
+        { "do": "move", "at": 0, "who": "actor", "dur": 260, "move": "puff_up", "scale": 1.06 }
+      ]
     },
     "shield": {
       "icon": "st_shield",
@@ -9061,6 +9506,16 @@
         }
       ],
       "expire": [
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#9ad0ff", "size": 3 },
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#9ad0ff",
+          "alpha": 0.9
+        },
         {
           "do": "strip",
           "at": 0,
@@ -9105,6 +9560,16 @@
         }
       ],
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#ff4a4a",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#ff4a4a", "size": 3 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#ff4a4a"], "more": 0.4 }
       ]
     },
@@ -9119,6 +9584,16 @@
         ]
       },
       "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#6ff0a0",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#6ff0a0", "size": 3 },
         { "do": "burst", "at": 0, "who": "actor", "ref": "puff_rise", "tint": ["#6ff0a0"], "more": 0.4 }
       ]
     },
@@ -9141,7 +9616,19 @@
           "tint": "#ffd23c"
         }
       ],
-      "expire": [{ "do": "burst", "at": 0, "who": "actor", "ref": "heart_pop", "more": 0.8 }]
+      "expire": [
+        {
+          "do": "strip",
+          "at": 0,
+          "who": "actor",
+          "img": "fx_poof",
+          "size": 2.5,
+          "tint": "#ffd23c",
+          "alpha": 0.9
+        },
+        { "do": "decal", "at": 0, "who": "actor", "dur": 340, "kind": "ring", "color": "#ffd23c", "size": 3 },
+        { "do": "burst", "at": 0, "who": "actor", "ref": "heart_pop", "more": 0.8 }
+      ]
     }
   },
   "elementReactions": {

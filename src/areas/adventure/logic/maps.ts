@@ -127,82 +127,139 @@ function usableFrom(map: AreaMap, t: Thing, reach: Set<number>): boolean {
 
 const idx = (map: AreaMap, p: { x: number; y: number }) => p.y * map.cols + p.x;
 
-/** Everything wrong with an area (spec §3.10); [] = fine. */
+/** What a check is about: an object of the area (`prop` id = `<prop>@x,y`, `portal` id = the area id, `spawn` = the default spawn). */
+export interface IssueSubject {
+  kind: ThingKind | 'prop' | 'group' | 'spawn' | 'spawnPoint' | 'cover' | 'decor' | 'map';
+  id: string;
+}
+
+/** The checks of `mapIssues`, by what went wrong. */
+export type MapIssueCode =
+  | 'outside'
+  | 'onWall'
+  | 'overlap'
+  | 'unknownProp'
+  | 'unknownDecor'
+  | 'decorFoot'
+  | 'exitBlocked'
+  | 'spawnBlocked'
+  | 'unreachable'
+  | 'groupStuck'
+  | 'notBehindGuardian'
+  | 'behindGate'
+  | 'coverOutside'
+  | 'coverEmpty'
+  | 'coverHides'
+  | 'spawnPointStuck'
+  | 'spawnPointOnGroup'
+  | 'arrivalBlocked'
+  | 'arrivalOnGroup';
+
+/** One problem of an area, on the tile it concerns (when it has one), naming its objects; `text` = the English line. */
+export interface MapIssue {
+  code: MapIssueCode;
+  subject: IssueSubject;
+  /** The second object it names: the one overlapped / hidden, the guardian, the area an arrival comes from. */
+  other?: IssueSubject;
+  x?: number;
+  y?: number;
+  text: string;
+}
+
+/** Everything wrong with an area (spec §3.10), one line each `<area id>: …`; [] = fine. */
 /** `others` = the areas whose exits lead here (the game's by default; the map builder passes its drafts too). */
 export function mapProblems(map: AreaMap, others: readonly AreaMap[] = Object.values(MAPS)): string[] {
-  const out: string[] = [];
-  const say = (msg: string) => out.push(`${map.id}: ${msg}`);
+  return mapIssues(map, others).map((i) => `${map.id}: ${i.text}`);
+}
+
+/** Everything wrong with an area (spec §3.10) with the tile and objects of each problem; [] = fine. */
+export function mapIssues(map: AreaMap, others: readonly AreaMap[] = Object.values(MAPS)): MapIssue[] {
+  const out: MapIssue[] = [];
+  const say = (code: MapIssueCode, subject: IssueSubject, text: string, at?: { x: number; y: number }, other?: IssueSubject) =>
+    out.push({ code, subject, ...(other ? { other } : {}), ...(at ? { x: at.x, y: at.y } : {}), text });
+  const tile = (t: { x: number; y: number }) => ({ x: t.x, y: t.y });
   // Footprints inside the area and never on top of each other.
-  const owner = new Map<number, string>();
-  const claim = (what: string, x: number, y: number, w: number, h: number) => {
+  const owner = new Map<number, IssueSubject>();
+  const claim = (what: IssueSubject, x: number, y: number, w: number, h: number) => {
     for (let yy = y; yy < y + h; yy += 1) {
       for (let xx = x; xx < x + w; xx += 1) {
         if (xx < 1 || yy < 1 || xx >= map.cols - 1 || yy >= map.rows - 1) {
-          say(`${what} stands outside the area at ${xx},${yy}`);
+          say('outside', what, `${what.id} stands outside the area at ${xx},${yy}`, { x: xx, y: yy });
           continue;
         }
-        if (!WALK_TILES.has(map.terrain[yy]![xx]!)) say(`${what} stands on a wall or water at ${xx},${yy}`);
+        if (!WALK_TILES.has(map.terrain[yy]![xx]!)) say('onWall', what, `${what.id} stands on a wall or water at ${xx},${yy}`, { x: xx, y: yy });
         const prev = owner.get(yy * map.cols + xx);
-        if (prev) say(`${what} overlaps ${prev} at ${xx},${yy}`);
+        if (prev) say('overlap', what, `${what.id} overlaps ${prev.id} at ${xx},${yy}`, { x: xx, y: yy }, prev);
         owner.set(yy * map.cols + xx, what);
       }
     }
   };
   for (const p of map.props) {
     const def = PROPS[p.prop];
-    if (!def) say(`unknown prop ${p.prop}`);
-    else claim(`${p.prop}@${p.x},${p.y}`, p.x, p.y, def.w, def.h);
+    const what: IssueSubject = { kind: 'prop', id: `${p.prop}@${p.x},${p.y}` };
+    if (!def) say('unknownProp', what, `unknown prop ${p.prop}`, tile(p));
+    else claim(what, p.x, p.y, def.w, def.h);
   }
-  for (const t of thingsOf(map)) if (t.kind !== 'exit') claim(t.id, t.x, t.y, t.w, t.h);
-  for (const d of map.scenery ?? []) if (!DECOR[d.asset]) say(`unknown decoration ${d.asset} (${d.id})`);
+  for (const t of thingsOf(map)) if (t.kind !== 'exit') claim({ kind: t.kind, id: t.id }, t.x, t.y, t.w, t.h);
+  for (const d of map.scenery ?? []) if (!DECOR[d.asset]) say('unknownDecor', { kind: 'decor', id: d.id }, `unknown decoration ${d.asset} (${d.id})`, { x: Math.floor(d.x), y: Math.floor(d.y) });
   for (const r of sceneryBlocks(map))
     for (let yy = r.y; yy < r.y + r.h; yy += 1)
       for (let xx = r.x; xx < r.x + r.w; xx += 1) {
         const under = owner.get(yy * map.cols + xx);
-        if (under) say(`a decoration's foot covers ${under} at ${xx},${yy}`);
+        if (under) say('decorFoot', under, `a decoration's foot covers ${under.id} at ${xx},${yy}`, { x: xx, y: yy });
       }
-  for (const e of map.exits) for (let y = e.y; y < e.y + e.h; y += 1) if (!WALK_TILES.has(map.terrain[y]?.[e.x] ?? '#')) say(`exit ${e.id} is not walkable`);
+  for (const e of map.exits)
+    for (let y = e.y; y < e.y + e.h; y += 1) if (!WALK_TILES.has(map.terrain[y]?.[e.x] ?? '#')) say('exitBlocked', { kind: 'exit', id: e.id }, `exit ${e.id} is not walkable`, { x: e.x, y });
   const allGates = new Set(map.gates.map((g) => g.id));
   const free = blockedTiles(map, allGates);
   const walk = (p: { x: number; y: number }) => p.x >= 0 && p.y >= 0 && p.x < map.cols && p.y < map.rows && !free[idx(map, p)];
-  if (!walk(map.spawn)) say('the spawn tile is blocked');
+  const spawn: IssueSubject = { kind: 'spawn', id: 'spawn_default' };
+  if (!walk(map.spawn)) say('spawnBlocked', spawn, 'the spawn tile is blocked', tile(map.spawn));
   const open = reachableTiles(map, map.spawn, allGates);
   const shut = reachableTiles(map, map.spawn);
   // Every thing usable once every gate is open (no dead corner, §3.5).
-  for (const t of thingsOf(map)) if (!usableFrom(map, t, open)) say(`${t.kind} ${t.id} cannot be reached`);
-  for (const g of map.groups) if (!walk(g) || !open.has(idx(map, g))) say(`group ${g.id} stands where nobody can walk (${g.x},${g.y})`);
+  for (const t of thingsOf(map)) if (!usableFrom(map, t, open)) say('unreachable', { kind: t.kind, id: t.id }, `${t.kind} ${t.id} cannot be reached`, tile(t));
+  for (const g of map.groups) if (!walk(g) || !open.has(idx(map, g))) say('groupStuck', { kind: 'group', id: g.id }, `group ${g.id} stands where nobody can walk (${g.x},${g.y})`, tile(g));
   // A gate locked behind the guardian stands behind it: further from the way in than the guardian itself (exits may sit on any edge,
   // decision 043, so the distance is measured straight, not along x).
   const guardian = map.groups.find((g) => g.kind === 'elite' || g.kind === 'boss');
   const fromSpawn = (x: number, y: number) => Math.hypot(x - map.spawn.x, y - map.spawn.y);
-  for (const e of map.exits) if (e.lock === 'guardian' && (!guardian || fromSpawn(e.x + (e.w - 1) / 2, e.y + (e.h - 1) / 2) < fromSpawn(guardian.x, guardian.y))) say(`gate ${e.id} is not behind the guardian`);
+  for (const e of map.exits)
+    if (e.lock === 'guardian' && (!guardian || fromSpawn(e.x + (e.w - 1) / 2, e.y + (e.h - 1) / 2) < fromSpawn(guardian.x, guardian.y)))
+      say('notBehindGuardian', { kind: 'exit', id: e.id }, `gate ${e.id} is not behind the guardian`, tile(e), guardian ? { kind: 'group', id: guardian.id } : undefined);
   // The main road never needs an element gate: exits, the portal, the guardians and the boss with every gate shut.
-  for (const t of thingsOf(map)) if ((t.kind === 'exit' || t.kind === 'portal') && !usableFrom(map, t, shut)) say(`${t.kind} ${t.id} is behind an element gate`);
-  for (const g of map.groups) if ((g.kind === 'elite' || g.kind === 'boss') && !shut.has(idx(map, g))) say(`${g.kind} ${g.id} is behind an element gate`);
+  for (const t of thingsOf(map)) if ((t.kind === 'exit' || t.kind === 'portal') && !usableFrom(map, t, shut)) say('behindGate', { kind: t.kind, id: t.id }, `${t.kind} ${t.id} is behind an element gate`, tile(t));
+  for (const g of map.groups) if ((g.kind === 'elite' || g.kind === 'boss') && !shut.has(idx(map, g))) say('behindGate', { kind: 'group', id: g.id }, `${g.kind} ${g.id} is behind an element gate`, tile(g));
   // A cover hides a place one can walk into, never the way in, the portal, an exit or a guardian (decision 045: a hidden place may
   // have its own watchers and rare ones).
   for (const c of map.covers) {
     const inside = (x: number, y: number, w = 1, h = 1) => x < c.x + c.w && x + w > c.x && y < c.y + c.h && y + h > c.y;
-    if (c.x < 0 || c.y < 0 || c.x + c.w > map.cols || c.y + c.h > map.rows) say(`cover ${c.id} is outside the area`);
+    const cover: IssueSubject = { kind: 'cover', id: c.id };
+    if (c.x < 0 || c.y < 0 || c.x + c.w > map.cols || c.y + c.h > map.rows) say('coverOutside', cover, `cover ${c.id} is outside the area`, tile(c));
     let walkable = 0;
     for (let y = c.y; y < c.y + c.h; y += 1) for (let x = c.x; x < c.x + c.w; x += 1) if (open.has(idx(map, { x, y }))) walkable += 1;
-    if (walkable === 0) say(`cover ${c.id} hides no ground one can reach`);
-    if (inside(map.spawn.x, map.spawn.y)) say(`cover ${c.id} hides the spawn`);
-    if (inside(map.portal.x, map.portal.y, 2, 2)) say(`cover ${c.id} hides the portal`);
-    for (const e of map.exits) if (inside(e.x, e.y, e.w, e.h)) say(`cover ${c.id} hides exit ${e.id}`);
-    for (const g of map.groups) if ((g.kind === 'elite' || g.kind === 'boss') && inside(g.x, g.y)) say(`cover ${c.id} hides guardian ${g.id}`);
+    if (walkable === 0) say('coverEmpty', cover, `cover ${c.id} hides no ground one can reach`, tile(c));
+    if (inside(map.spawn.x, map.spawn.y)) say('coverHides', cover, `cover ${c.id} hides the spawn`, tile(map.spawn), spawn);
+    if (inside(map.portal.x, map.portal.y, 2, 2)) say('coverHides', cover, `cover ${c.id} hides the portal`, tile(map.portal), { kind: 'portal', id: map.id });
+    for (const e of map.exits) if (inside(e.x, e.y, e.w, e.h)) say('coverHides', cover, `cover ${c.id} hides exit ${e.id}`, tile(e), { kind: 'exit', id: e.id });
+    for (const g of map.groups) if ((g.kind === 'elite' || g.kind === 'boss') && inside(g.x, g.y)) say('coverHides', cover, `cover ${c.id} hides guardian ${g.id}`, tile(g), { kind: 'group', id: g.id });
   }
   // Named arrival points (decision 047) stand where one can walk, off the enemy groups.
   for (const sp of map.spawns ?? []) {
-    if (!walk(sp) || !open.has(idx(map, sp))) say(`spawn ${sp.id} stands where nobody can walk (${sp.x},${sp.y})`);
-    if (map.groups.some((g) => g.x === sp.x && g.y === sp.y)) say(`spawn ${sp.id} stands on an enemy group`);
+    const what: IssueSubject = { kind: 'spawnPoint', id: sp.id };
+    if (!walk(sp) || !open.has(idx(map, sp))) say('spawnPointStuck', what, `spawn ${sp.id} stands where nobody can walk (${sp.x},${sp.y})`, tile(sp));
+    const on = map.groups.find((g) => g.x === sp.x && g.y === sp.y);
+    if (on) say('spawnPointOnGroup', what, `spawn ${sp.id} stands on an enemy group`, tile(sp), { kind: 'group', id: on.id });
   }
   // Arrivals land on walkable ground.
   for (const other of others) {
     for (const e of other.exits) {
       if (e.to !== map.id) continue;
-      if (!walk({ x: e.arriveX, y: e.arriveY })) say(`arrival from ${other.id} lands on a blocked tile`);
-      if (map.groups.some((g) => g.x === e.arriveX && g.y === e.arriveY)) say(`arrival from ${other.id} lands on an enemy group`);
+      const at = { x: e.arriveX, y: e.arriveY };
+      const from: IssueSubject = { kind: 'map', id: other.id };
+      if (!walk(at)) say('arrivalBlocked', { kind: 'exit', id: e.id }, `arrival from ${other.id} lands on a blocked tile`, at, from);
+      const on = map.groups.find((g) => g.x === e.arriveX && g.y === e.arriveY);
+      if (on) say('arrivalOnGroup', { kind: 'exit', id: e.id }, `arrival from ${other.id} lands on an enemy group`, at, from);
     }
   }
   return out;

@@ -148,6 +148,16 @@ export class FxPlayer {
         });
         return;
       }
+      case 'still': {
+        // Reduced motion (ANIM-111): a steady ring on the ground, fading in and out, no turning, flashing or shaking.
+        const a = unitOf(cue.unit);
+        if (!a) return;
+        const ring = this.scene.add.image(a.feet.x, a.feet.y, CIRCLE_KEY).setDepth(GROUND_DEPTH + 3).setBlendMode(Phaser.BlendModes.ADD).setTint(cue.role === 'actor' ? cue.look.glow : cue.look.color);
+        const size = a.width * (cue.role === 'actor' ? 1.3 : 1.5);
+        ring.setDisplaySize(size, size * 0.38);
+        this.add(cue.dur, (t) => ring.setAlpha(0.85 * (t < 0.2 ? t / 0.2 : t > 0.7 ? (1 - t) / 0.3 : 1)), () => ring.destroy());
+        return;
+      }
       case 'charge': {
         const a = unitOf(cue.unit);
         if (!a) return;

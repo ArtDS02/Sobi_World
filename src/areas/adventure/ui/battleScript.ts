@@ -6,7 +6,7 @@
 // over several are staggered in order. Colours and refs of the look (`$color`, `$spark`…) are filled in here. Presentation only. Pure.
 import type { Act, Paint } from '../../../../content/schemas/adventure/battleScript';
 import type { ActionFx, BattleLook } from '../../../../content/schemas/adventure/battleFx';
-import { BATTLE_FX } from '../logic/config/content';
+import { BATTLE_FX, SKILLS } from '../logic/config/content';
 import { ENTER_MS, type PlayingStep } from './battleFxView';
 import type { MotionBeat } from './battleMotion';
 import type { StatusId } from '../../../systems/combat/types';
@@ -23,6 +23,8 @@ export interface ScriptCue {
   /** Who acts (a beam starts there, a prop is thrown from there); the unit itself for a reaction. */
   from: string | null;
   look: BattleLook;
+  /** The skill's name, on the cut-in of an Ultimate (ANIM-112): shown in its band. */
+  title?: string | null;
 }
 
 /** A move of a body (`move`, `pose`, `glow` acts) on the step's clock. */
@@ -79,7 +81,7 @@ interface Ctx {
  * Plays `acts` from `start` (step ms) with times × `k`: `actor` is who the script is about, `targets` its targets in order, `stagger`
  * the default gap between units of an act over several.
  */
-function run(c: Ctx, acts: readonly Act[], start: number, k: number, actor: string, targets: readonly string[], look: BattleLook, stagger = 0) {
+function run(c: Ctx, acts: readonly Act[], start: number, k: number, actor: string, targets: readonly string[], look: BattleLook, stagger = 0, title: string | null = null) {
   const side = c.sides.get(actor);
   const units = (who: Act['who']): (string | null)[] => {
     switch (who) {
@@ -115,7 +117,7 @@ function run(c: Ctx, acts: readonly Act[], start: number, k: number, actor: stri
         c.out.moves.push({ unit, at, dur: move.dur, act: move, toward });
         return;
       }
-      c.out.cues.push({ at, act: a, unit, from: actor, look });
+      c.out.cues.push({ at, act: a, unit, from: actor, look, ...(a.do === 'cutin' ? { title } : {}) });
     });
   }
 }
@@ -154,7 +156,7 @@ export function stepScript(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 
     // The content's beat starts after the circle; its impact lands where the motion put it (the step may be squeezed).
     const raw = b.delivery ? timingOf(b.pose, b.delivery, b.skillId).impact : 0;
     const kb = raw > 0 ? (b.impact - b.cast) / raw : k;
-    run(c, acts, b.cast, kb, b.actor, b.targets, look, skillFx(b.skillId)?.stagger ?? 0);
+    run(c, acts, b.cast, kb, b.actor, b.targets, look, skillFx(b.skillId)?.stagger ?? 0, b.skillId ? (SKILLS[b.skillId]?.nameVi ?? null) : null);
     if (own && acts.some((a) => a.who === 'actor' && (a.do === 'move' || a.do === 'pose' || a.do === 'track'))) out.scripted.add(b.actor);
   }
   const neutral = lookOf(null);

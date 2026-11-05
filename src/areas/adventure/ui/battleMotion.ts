@@ -155,7 +155,7 @@ function circleOf(d: Pick<Draft, 'pose' | 'skillId'>): number {
   if (d.skillId === null || d.pose === null || d.pose === 'guard' || d.pose === 'stunned') return 0;
   const own = skillFx(d.skillId);
   if (!(own?.circle ?? d.pose !== 'attack')) return 0;
-  return d.pose === 'ultimate' ? CIRCLE_MS.ultimate : CIRCLE_MS.skill;
+  return own?.circleMs ?? (d.pose === 'ultimate' ? CIRCLE_MS.ultimate : CIRCLE_MS.skill);
 }
 
 /** Between two targets of the skill (ms, normal speed): each lands a little after the one before (decision 044 stagger). */

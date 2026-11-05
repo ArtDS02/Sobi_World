@@ -35,11 +35,13 @@ export type FxCue = { at: number } & (
   | { kind: 'afterimage'; unit: string }
   /** An act of a script (decision 044). */
   | { kind: 'act'; cue: ScriptCue }
+  /** Reduced motion (ANIM-111): a steady ring on the ground for `dur` ms marks who acts (`actor`) and who the blow is for (`target`). */
+  | { kind: 'still'; unit: string; look: BattleLook; dur: number; role: 'actor' | 'target' }
 );
 
 const reactionFx = (r: ReactionFx) => BATTLE_FX.reactions[r] ?? [];
 
-/** The cues of the step `p` in time order; `sides` says on which side each unit stands, `reduce` keeps only the sounds. */
+/** The cues of the step `p` in time order; `sides` says on which side each unit stands, `reduce` keeps the sounds and a still ring on the actor and the targets. */
 export function stepPlan(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 'ally' | 'enemy'>, reduce: boolean): FxCue[] {
   const out: FxCue[] = [];
   const add = (c: FxCue) => out.push(c);
@@ -65,7 +67,12 @@ export function stepPlan(p: Readonly<PlayingStep>, sides: ReadonlyMap<string, 'a
       sound(b.start, 'adv_cast');
       if (!reduce) add({ at: b.start, kind: 'circle', unit: actor, look, dur: b.cast - b.start + 250, big });
     }
-    if (reduce) continue;
+    if (reduce) {
+      // Nothing moves, flashes or shakes, but who acts (until the blow lands) and who it is for stay readable.
+      add({ at: b.start, kind: 'still', unit: actor, look, dur: b.impact - b.start + 250, role: 'actor' });
+      for (const unit of b.targets) if (unit !== actor) add({ at: b.impact, kind: 'still', unit, look, dur: 700, role: 'target' });
+      continue;
+    }
     if (own && own.length > 0) {
       // The script plays the whole beat; only the knock-backs of the friends it helps stay (as default auras).
       for (const unit of b.targets) {
