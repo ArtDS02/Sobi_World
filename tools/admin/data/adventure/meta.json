@@ -1,0 +1,33 @@
+{
+  "maps": {
+    "map_forest_deep": {
+      "descriptionVi": "",
+      "createdAt": "2026-11-03T02:59:32.434Z",
+      "updatedAt": "2026-11-03T03:50:05.093Z",
+      "publishedAt": "2026-11-03T03:50:05.093Z"
+    },
+    "map_forest_edge": {
+      "descriptionVi": "",
+      "createdAt": "2026-11-03T02:40:18.111Z",
+      "updatedAt": "2026-11-03T02:48:34.694Z",
+      "publishedAt": "2026-11-03T02:48:34.694Z"
+    },
+    "map_forest_heart": {
+      "descriptionVi": "",
+      "createdAt": "2026-11-03T03:53:37.218Z",
+      "updatedAt": "2026-11-03T03:58:20.735Z",
+      "publishedAt": "2026-11-03T03:58:20.735Z"
+    },
+    "map_mountain_foot": {
+      "descriptionVi": "",
+      "createdAt": "2026-11-03T04:00:42.959Z",
+      "updatedAt": "2026-11-03T04:35:34.718Z",
+      "publishedAt": "2026-11-03T04:35:34.718Z"
+    },
+    "map_mountain_mine": {
+      "descriptionVi": "",
+      "createdAt": "2026-11-03T04:09:19.366Z",
+      "updatedAt": "2026-11-03T04:32:54.532Z"
+    }
+  }
+}
