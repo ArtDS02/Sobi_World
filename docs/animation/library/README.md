@@ -18,6 +18,7 @@ Thứ chạy trong game vẫn chỉ là `content/adventure/battle_fx.json` (deci
 - **Motif:** [ice](bibles/motifs/ice.md) · [poison](bibles/motifs/poison.md)
 - **Hành động:** [projectile](bibles/actions/projectile.md) · [melee-and-hit](bibles/actions/melee-and-hit.md) · [cast](bibles/actions/cast.md) · [buff-and-heal](bibles/actions/buff-and-heal.md) · [status](bibles/actions/status.md) · [ultimate](bibles/actions/ultimate.md) · [idle-and-states](bibles/actions/idle-and-states.md)
 - **REF:** `refs/` (Nước: sóng, bong bóng, băng bọc). Thêm REF khi làm brief cho hệ / loại tương ứng.
+- **Kịch bản (169):** [`scenarios/`](scenarios/README.md) — mọi skill, hành động chung, trạng thái, phản ứng; asset mới: [`scenarios/ASSETS.md`](scenarios/ASSETS.md).
 
 ## Thứ tự nâng cấp (từ `anim:audit` + bible)
 Bảng "Hiện trạng" trong bible là ảnh chụp audit lúc viết; nguồn sự thật luôn là [`AUDIT.md`](../../animation-review/audit/AUDIT.md) (`npm run anim:audit`).

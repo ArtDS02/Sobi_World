@@ -46,6 +46,24 @@ describe('animation scenarios', () => {
     expect(scenarioProblems('# no header', 'skill_nh_bubble', 'skills', world)[0]).toMatch(/no/);
   });
 
+  it('every skill, status, action and reaction of the game has a scenario (write one with new content)', () => {
+    const missing: string[] = [];
+    for (const [kind, ids] of Object.entries(world.units) as [keyof typeof KIND_DIR, ReadonlySet<string>][])
+      for (const id of ids) if (!existsSync(join(LIB, 'scenarios', KIND_DIR[kind], `${id}.md`))) missing.push(`${kind}:${id}`);
+    expect(missing).toEqual([]);
+  });
+
+  it('every engine ability a scenario needs is listed in the scenarios README', () => {
+    const readme = readFileSync(join(LIB, 'scenarios/README.md'), 'utf8');
+    const used = new Set<string>();
+    for (const dir of Object.values(KIND_DIR))
+      for (const f of filesIn(join(LIB, 'scenarios', dir), '.md')) {
+        const m = /"engine": \[([^\]]*)\]/.exec(readFileSync(join(LIB, 'scenarios', dir, f), 'utf8'));
+        for (const e of m?.[1]?.match(/[a-z_]+/g) ?? []) used.add(e);
+      }
+    expect([...used].filter((e) => !readme.includes(`\`${e}\``))).toEqual([]);
+  });
+
   it('every scenario file in the library is valid', () => {
     const problems: string[] = [];
     let n = 0;

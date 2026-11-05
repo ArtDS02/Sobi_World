@@ -28,3 +28,4 @@ Chủ dự án: "tất cả animation vẫn quá kém… nên có một bộ tà
 - Kịch bản kế thừa ý tưởng của bản thiết kế gốc của chủ dự án (`art_inbox/.batch/adventure-12-animation/all_animation_sobi_adventure_final.md`) và bổ sung phần bản đó thiếu: bóc lớp, đặc tả asset từng khung, bước dựng.
 - Khả năng engine còn thiếu đặt tên cố định (`prop_displace`, `prop_flipbook`, `strip_scale_xy`, `bg_scene`, `action_by_body`) để gom thành việc engine riêng.
 - Đợt thử: 9 skill hệ Nước + đánh thường; asset mới cần: `fx_wave_rise`, `fx_bubble_pop`, `fx_water_column`, `fx_ice_grow`, `fx_hit_burst` (`docs/ASSET_TODO.md`).
+- 2026-11-05: đủ 169 kịch bản (112 skill, 26 hành động, 25 trạng thái, 6 phản ứng); danh mục asset mới `scenarios/ASSETS.md`; test bắt buộc nội dung mới phải có kịch bản.

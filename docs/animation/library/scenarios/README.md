@@ -40,6 +40,11 @@ Vì sao: bản thiết kế cũ (`art_inbox/.batch/adventure-12-animation/all_an
 | `strip_scale_xy` | `strip` co giãn khác nhau theo chiều ngang / dọc (cột nước cao) | thay được bằng asset dọc riêng |
 | `bg_scene` | đổi nền trận tạm thời (biển sâu, biển bão) rồi trả lại | hiện chỉ có `tint` màu |
 | `action_by_body` | hành động chung (đánh thường…) có script riêng theo kiểu thân (`bodies`: bốn chân, bay, bơi, nặng…) | hiện `actions.attack` là một script cho mọi con |
+| `item_icon_prop` | act `prop` dùng ảnh `ui_item_*` của vật phẩm đang dùng | cho `actions.item` |
 
-## Đã viết
-Xem cột "kịch bản" trong [`AUDIT.md`](../../../animation-review/audit/AUDIT.md). Đợt thử: hệ Nước (dòng Nam Hải + đinh ba + quái nước / băng + Đóng Băng) và đánh thường.
+Số kịch bản cần từng khả năng (2026-11-05): `prop_displace` 25 · `bg_scene` 12 · `action_by_body` 3 · `prop_flipbook` 3 · `item_icon_prop` 1. Ngoài bảng, một số kịch bản ghi "cần kiểm / ghi engine nếu thiếu" trong mục Bóc lớp (khiên phản ứng khi đỡ đòn, giữ khiên khi Phòng thủ, phản ứng lan sang nhiều mục tiêu, hào quang trùm pha 2, đếm lượt Diệt vong, bóng mờ tách hướng) — kiểm khi dựng, thiếu thì thêm vào bảng.
+
+## Độ phủ
+**Đủ 169 kịch bản** (2026-11-05): 112 skill · 26 hành động chung · 25 trạng thái · 6 phản ứng. Test `animScenario.test.ts` bắt buộc mọi skill / trạng thái / hành động / phản ứng trong `content/` có kịch bản — thêm nội dung mới thì viết kịch bản cùng lúc. Asset mới cần: [`ASSETS.md`](ASSETS.md). Cột "kịch bản" trong [`AUDIT.md`](../../../animation-review/audit/AUDIT.md).
+
+Thứ tự dựng đề xuất (khi asset / engine sẵn sàng): pilot `skill_nh_tsunami` (decision 049 §6) → đánh thường + trúng đòn (thấy nhiều nhất) → skill class (heo nào cũng có) → ultimate → skill dòng → quái → trạng thái / phản ứng.
