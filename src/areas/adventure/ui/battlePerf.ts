@@ -1,0 +1,61 @@
+// What a puppet (decision 050) performs on the battle stage at a moment of the step: the action (attack, cast, hurt…) and, when the step
+// times it, how far into it it is and when its marks fall — so the rig's clip is warped onto the beat (the tusk lands when the number
+// pops) instead of playing at its own pace. Read from the same beats and reactions the pose (battlePose.ts) reads; the pose still moves
+// the whole body (the dash to the target, the knock-back), the puppet moves its parts. Pure.
+import type { ActionTiming, Want } from '../../../systems/animation';
+import type { PlayingStep } from './battleFxView';
+import { REACT_MS } from './poseKit';
+import type { PoseArt } from '../../../../content/schemas/adventure/battleFx';
+
+/** How long a cast keeps settling after its release (the same as battlePose.ts). */
+const CAST_SETTLE_MS = 360;
+
+const REACTION_ACTION: Readonly<Record<string, string>> = {
+  hit: 'hurt',
+  'hit-heavy': 'hurt_heavy',
+  'hit-crit': 'hurt_crit',
+  miss: 'dodge',
+  heal: 'heal',
+  buff: 'buff',
+  debuff: 'debuff',
+  ko: 'ko',
+};
+
+/** A posture a script forced (decision 044 `pose` acts, victory) played on the puppet's own clock. */
+const POSTURE_ACTION: Readonly<Record<PoseArt, string>> = { idle: 'idle', attack: 'attack', cast: 'cast', hurt: 'hurt', ko: 'ko', victory: 'victory' };
+
+/**
+ * The puppet's want for unit `id` at `t` ms into the step. `posture` is the key pose the pose picked (a script may force one),
+ * `down` that the unit is already out. Reactions win over the unit's own beat (a counter-hit mid-swing), the latest one first.
+ */
+export function perfOf(id: string, p: Readonly<PlayingStep>, t: number, posture: PoseArt, down: boolean): Want {
+  if (down) return { action: 'ko', key: 'down', timing: { t: 10_000 } };
+  let best: { at: number; want: Want } | null = null;
+  for (const r of p.motion.reactions) {
+    if (r.unit !== id || t < r.at) continue;
+    const len = REACT_MS[r.kind];
+    if (r.kind !== 'ko' && t > r.at + len) continue;
+    if (best && best.at > r.at) continue;
+    const timing: ActionTiming = { t: t - r.at, marks: { end: r.kind === 'ko' ? undefined : len } };
+    best = { at: r.at, want: { action: REACTION_ACTION[r.kind] ?? 'hurt', key: `${p.key}:r${r.at}`, timing } };
+  }
+  if (best) return best.want;
+  for (const b of p.motion.beats) {
+    if (b.actor !== id || !b.pose || t < b.cast || t > b.end + 40) continue;
+    const key = `${p.key}:b${b.start}`;
+    const into = t - b.cast;
+    if (b.pose === 'attack' || b.delivery === 'melee' || b.delivery === 'slam') {
+      return { action: 'attack', key, timing: { t: into, marks: { release: b.release - b.cast, contact: b.impact - b.cast, end: b.end - b.cast } } };
+    }
+    if (b.pose === 'cast' || b.pose === 'support' || b.pose === 'ultimate') {
+      const end = b.release + Math.min(CAST_SETTLE_MS, Math.max(1, b.end - b.release));
+      return { action: b.pose === 'ultimate' ? 'ultimate' : b.pose === 'support' ? 'support' : 'cast', key, timing: { t: into, marks: { release: b.release - b.cast, end: end - b.cast } } };
+    }
+    if (b.pose === 'guard') return { action: 'guard', key, timing: { t: t - b.start } };
+    if (b.pose === 'stunned') return { action: 'stunned', key };
+  }
+  // A posture a script holds (a victory, a forced pose) plays on the puppet's own clock.
+  if (posture !== 'idle') return { action: POSTURE_ACTION[posture], key: `${p.key}:${posture}` };
+  if (p.motion.marks.some((m) => m.kind === 'victory' && m.unit === id && t >= m.at)) return { action: 'victory', key: `${p.key}:win` };
+  return { action: 'idle' };
+}

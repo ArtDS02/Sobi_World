@@ -16,4 +16,5 @@ Chỉ import `core/`. Area dùng systems, không ngược lại.
 | `equipment/` | ba ô trang bị (vũ khí, giáp, bùa), cộng chỉ số, mặc / tháo (GĐ10) |
 | `breeding/` | lai giống nâng cao: tính trạng, di truyền, đột biến, vận may, phả hệ, tin đồn của Nhà lai giống (GĐ7) |
 | `hybrid/` | lai giống theo công thức (decision 035): hai loài cha mẹ → loài hiếm với tỉ lệ, mỗi lần hụt tăng tỉ lệ, hụt đủ số lần thì chắc chắn ra; `reachable` kiểm loài nào cũng lai ra được |
+| `animation/` | puppet rig (decision 050): lấy mẫu clip keyframe, warp clip vào nhịp (mốc windup / release / contact), lớp sống (thở, chớp mắt nhịp riêng, lò xo overlap, sóng dải), state machine `Performer` (fallback, crossfade, fidget), solve xương + dải; registry `RIGS` đọc `content/anim/rigs/`. Thuần, tất định; vẽ Phaser ở `src/ui/puppet/` |
 | `weather/` | thời tiết theo số ngày (GĐ12): hàm thuần, dự báo, cắt thời gian ở nửa đêm (`daySegments`), tác dụng lên cây / cá / phối giống; `live.ts` đọc bầu trời của một save (kể cả công tắc Admin) |

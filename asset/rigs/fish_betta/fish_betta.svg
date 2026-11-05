@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Rig-proof parts of the Cá Betta puppet (decision 050). The head is a rigid part; the body behind it, the tail fin and the two veils
+       are chains (drawn on a bending strip): each is drawn here as it looks on screen pointing left from its root, then turned 180° so
+       its root is the left edge of its picture (the strip runs from root to tip). One group "part-NAME" per part; ground y=470. -->
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d23a64"/><stop offset="0.55" stop-color="#e65a7a"/><stop offset="1" stop-color="#f3a2b4"/></linearGradient>
+    <linearGradient id="fin" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#c84a8a"/><stop offset="0.5" stop-color="#9a6ad8"/><stop offset="1" stop-color="#d14a6a"/></linearGradient>
+    <linearGradient id="veil" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#cf4a7c"/><stop offset="1" stop-color="#8f6ae0"/></linearGradient>
+    <radialGradient id="head" cx="0.55" cy="0.35" r="0.75"><stop offset="0" stop-color="#f27a92"/><stop offset="0.6" stop-color="#dc4a6c"/><stop offset="1" stop-color="#b8325a"/></radialGradient>
+    <radialGradient id="eye" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#4a2a3a"/><stop offset="1" stop-color="#160a12"/></radialGradient>
+  </defs>
+  <g stroke="#6a2440" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+
+    <g id="part-veil_top">
+      <g transform="rotate(180 225 300)">
+        <path d="M300 288 C260 270 200 250 150 258 C160 290 156 318 150 342 C200 344 262 322 300 312 Z" fill="url(#veil)" opacity="0.95"/>
+        <path d="M296 296 C250 286 200 276 160 280 M296 304 C250 306 200 316 160 326" fill="none" stroke="#f0b2d8" stroke-width="2.5" opacity="0.7"/>
+      </g>
+    </g>
+    <g id="part-veil_low">
+      <g transform="rotate(180 235 300)">
+        <path d="M300 290 C270 280 220 268 170 278 C178 296 176 312 170 326 C220 334 270 320 300 310 Z" fill="url(#veil)" opacity="0.95"/>
+        <path d="M296 300 C250 298 210 300 176 302" fill="none" stroke="#f0b2d8" stroke-width="2.5" opacity="0.7"/>
+      </g>
+    </g>
+
+    <g id="part-tail_fin">
+      <g transform="rotate(180 105 300)">
+        <path d="M180 282 C150 240 90 196 30 200 C40 250 44 350 30 400 C90 404 150 360 180 318 Z" fill="url(#fin)" opacity="0.96"/>
+        <path d="M176 292 C140 260 90 230 44 222 M178 300 C130 296 80 296 40 300 M176 308 C140 340 90 370 44 378" fill="none" stroke="#f6b6d6" stroke-width="3" opacity="0.75"/>
+        <path d="M30 200 C40 250 44 350 30 400" fill="none" stroke="#e8486e" stroke-width="5" opacity="0.6"/>
+      </g>
+    </g>
+
+    <g id="part-spine">
+      <g transform="rotate(180 235 300)">
+        <path d="M300 264 C250 268 200 280 170 284 L170 316 C200 320 250 332 300 336 Z" fill="url(#body)"/>
+        <path d="M270 284 q8 6 0 12 M250 288 q8 6 0 12 M230 292 q7 5 0 10 M262 304 q8 6 0 12 M242 306 q7 5 0 10" fill="none" stroke="#b02c54" stroke-width="2.5" opacity="0.55"/>
+      </g>
+    </g>
+
+    <g id="part-head">
+      <path d="M292 266 C322 252 360 258 382 284 C392 296 392 306 382 316 C360 340 322 346 292 334 C282 320 282 280 292 266 Z" fill="url(#head)"/>
+      <path d="M326 270 C318 290 318 312 326 332" fill="none" stroke="#a82a52" stroke-width="3.5" opacity="0.7"/>
+      <path d="M310 272 q24 -12 52 -2" fill="none" stroke="#ffb6c8" stroke-width="5" opacity="0.6"/>
+      <ellipse cx="358" cy="318" rx="9" ry="5" fill="#ff9ab0" stroke="none" opacity="0.6"/>
+    </g>
+
+    <g id="part-fin_pec">
+      <path d="M326 312 C312 322 300 340 302 352 C314 352 330 342 336 326 Z" fill="url(#veil)" opacity="0.9" stroke-width="3.5"/>
+    </g>
+
+    <g id="part-eyes_open">
+      <circle cx="356" cy="290" r="11" fill="#fff"/>
+      <circle cx="358" cy="291" r="8" fill="url(#eye)" stroke="none"/>
+      <circle cx="355" cy="287" r="3" fill="#fff" stroke="none"/>
+    </g>
+    <g id="part-eyes_half"><path d="M345 290 q11 -5 22 0 q-2 11 -11 12 q-9 -1 -11 -12 z" fill="url(#eye)"/></g>
+    <g id="part-eyes_closed"><path d="M346 292 q10 6 20 0" fill="none" stroke-width="4"/></g>
+    <g id="part-eyes_angry">
+      <circle cx="357" cy="292" r="9" fill="#fff"/><circle cx="358" cy="293" r="6.5" fill="url(#eye)" stroke="none"/>
+      <path d="M344 278 L370 284" fill="none" stroke-width="4.5"/>
+    </g>
+    <g id="part-eyes_hurt"><path d="M346 282 L366 291 L346 300" fill="none" stroke-width="4.5"/><path d="M368 302 q3 8 0 12 q-5 -3 0 -12 z" fill="#8fd3ff" stroke="#4a8fc0" stroke-width="2"/></g>
+    <g id="part-eyes_dizzy"><path d="M356 290 m-9 0 a9 9 0 1 1 9 9 a5.5 5.5 0 1 1 -5.5 -5.5" fill="none" stroke-width="3"/></g>
+    <g id="part-eyes_happy"><path d="M346 294 q10 -13 20 0" fill="none" stroke-width="4.5"/></g>
+
+    <g id="part-mouth_neutral"><path d="M378 310 q5 3 9 0" fill="none" stroke-width="3.5"/></g>
+    <g id="part-mouth_open"><ellipse cx="383" cy="310" rx="6" ry="7" fill="#7a1f3a"/></g>
+    <g id="part-mouth_smile"><path d="M376 307 q6 9 12 0 z" fill="#7a1f3a" stroke-width="3"/></g>
+    <g id="part-mouth_grit"><path d="M376 307 h12 v6 h-12 z" fill="#fff8ec" stroke-width="3"/></g>
+    <g id="part-mouth_cry"><path d="M376 312 q3 -5 6 0 q3 5 6 0" fill="none" stroke-width="3"/></g>
+  </g>
+</svg>

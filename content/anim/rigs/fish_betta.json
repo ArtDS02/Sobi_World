@@ -1,0 +1,327 @@
+{
+  "id": "fish_betta",
+  "plan": "aquatic",
+  "height": 300,
+  "res": 2,
+  "feel": {
+    "tempo": 1.15,
+    "weight": 0.2,
+    "breath": { "ms": 1500, "bone": "head", "sy": 0.014, "y": 0 },
+    "blink": { "slot": "eyes", "closed": "closed", "half": "half", "every": [3000, 7000] },
+    "root": { "rot": 0.6, "squash": 0.12 }
+  },
+  "parts": {
+    "veil_top": { "img": "rig_fish_betta_veil_top", "box": [-110, -216, 158, 94] },
+    "veil_low": { "img": "rig_fish_betta_veil_low", "box": [-90, -202.5, 138, 62] },
+    "tail_fin": { "img": "rig_fish_betta_tail_fin", "box": [-230, -274, 158, 208] },
+    "spine": { "img": "rig_fish_betta_spine", "box": [-90, -210, 138, 80] },
+    "head": { "img": "rig_fish_betta_head", "box": [24.5, -215.5, 113, 89.5] },
+    "fin_pec": { "img": "rig_fish_betta_fin_pec", "box": [42.5, -161.5, 41, 47] },
+    "eyes_open": { "img": "rig_fish_betta_eyes_open", "box": [85, -195, 30, 30] },
+    "eyes_half": { "img": "rig_fish_betta_eyes_half", "box": [85, -186.5, 30, 22.5] },
+    "eyes_closed": { "img": "rig_fish_betta_eyes_closed", "box": [86.5, -181.5, 27, 10] },
+    "eyes_angry": { "img": "rig_fish_betta_eyes_angry", "box": [84, -196, 34, 31] },
+    "eyes_hurt": { "img": "rig_fish_betta_eyes_hurt", "box": [86, -192, 30, 38.5] },
+    "eyes_dizzy": { "img": "rig_fish_betta_eyes_dizzy", "box": [86, -192, 26, 29.5] },
+    "eyes_happy": { "img": "rig_fish_betta_eyes_happy", "box": [86, -186.5, 28, 14.5] },
+    "mouth_neutral": { "img": "rig_fish_betta_mouth_neutral", "box": [118.5, -163.5, 16, 8.5] },
+    "mouth_open": { "img": "rig_fish_betta_mouth_open", "box": [117, -171, 20, 22] },
+    "mouth_smile": { "img": "rig_fish_betta_mouth_smile", "box": [117, -166, 18, 10.5] },
+    "mouth_grit": { "img": "rig_fish_betta_mouth_grit", "box": [117, -166, 18, 12] },
+    "mouth_cry": { "img": "rig_fish_betta_mouth_cry", "box": [117, -163.5, 18, 11] }
+  },
+  "bones": [
+    { "id": "root", "parent": null, "at": [0, 0] },
+    { "id": "swim", "parent": "root", "at": [-24, -172] },
+    { "id": "head", "parent": "swim", "at": [44, -170], "part": "head", "z": 10 },
+    { "id": "fin_pec", "parent": "head", "at": [72, -156], "part": "fin_pec", "z": 12 },
+    {
+      "id": "mouth",
+      "parent": "head",
+      "at": [126, -160],
+      "z": 13,
+      "slot": {
+        "name": "mouth",
+        "rest": "neutral",
+        "pictures": { "neutral": "mouth_neutral", "open": "mouth_open", "smile": "mouth_smile", "grit": "mouth_grit", "cry": "mouth_cry" }
+      }
+    },
+    {
+      "id": "eyes",
+      "parent": "head",
+      "at": [100, -180],
+      "z": 14,
+      "slot": {
+        "name": "eyes",
+        "rest": "open",
+        "pictures": { "open": "eyes_open", "half": "eyes_half", "closed": "eyes_closed", "angry": "eyes_angry", "hurt": "eyes_hurt", "dizzy": "eyes_dizzy", "happy": "eyes_happy" }
+      }
+    }
+  ],
+  "chains": [
+    {
+      "id": "spine",
+      "parent": "head",
+      "at": [46, -170],
+      "part": "spine",
+      "dir": 180,
+      "len": 128,
+      "segments": 8,
+      "wave": { "amp": 9, "speed": 1.4, "phase": 0.5 },
+      "taper": 2.2,
+      "z": 7
+    },
+    {
+      "id": "tail_fin",
+      "parent": "spine",
+      "at": [0, 0],
+      "part": "tail_fin",
+      "dir": 0,
+      "len": 148,
+      "segments": 8,
+      "wave": { "amp": 20, "speed": 1.4, "phase": 0.45 },
+      "taper": 1.6,
+      "z": 4
+    },
+    {
+      "id": "veil_top",
+      "parent": "head",
+      "at": [44, -200],
+      "part": "veil_top",
+      "dir": 196,
+      "len": 150,
+      "segments": 8,
+      "wave": { "amp": 14, "speed": 1.15, "phase": 0.55 },
+      "curl": 14,
+      "taper": 1.8,
+      "z": 5
+    },
+    {
+      "id": "veil_low",
+      "parent": "head",
+      "at": [44, -140],
+      "part": "veil_low",
+      "dir": 164,
+      "len": 130,
+      "segments": 8,
+      "wave": { "amp": 12, "speed": 1.25, "phase": 0.55 },
+      "curl": -12,
+      "taper": 1.8,
+      "z": 5
+    }
+  ],
+  "springs": [
+    { "bone": "fin_pec", "stiff": 160, "damp": 6, "gain": 1.2, "gainY": 1.4, "max": 30 }
+  ],
+  "clips": {
+    "idle": {
+      "len": 2000,
+      "loop": true,
+      "fade": 220,
+      "tracks": {
+        "head": { "y": [[0, 0, "inOut"], [1000, -7, "inOut"], [2000, 0]], "rot": [[0, 1, "inOut"], [1000, -2, "inOut"], [2000, 1]] },
+        "fin_pec": { "rot": [[0, 0, "inOut"], [250, -26, "inOut"], [500, 0, "inOut"], [750, -26, "inOut"], [1000, 0, "inOut"], [1250, -26, "inOut"], [1500, 0, "inOut"], [1750, -26, "inOut"], [2000, 0]] }
+      }
+    },
+    "idle_dart": {
+      "len": 1500,
+      "fade": 180,
+      "life": 0.7,
+      "tracks": {
+        "head": { "x": [[0, 0, "in"], [200, -6, "out"], [420, 18, "inOut"], [1100, 0]], "rot": [[0, 0], [200, 4], [420, -4, "inOut"], [1000, 0]] },
+        "spine": { "rot": [[0, 0], [200, 16, "inOut"], [420, -14, "inOut"], [700, 4, "inOut"], [1000, 0]] }
+      },
+      "waves": {
+        "spine": { "amp": 16, "speed": 2.4 },
+        "tail_fin": { "amp": 30, "speed": 2.4 }
+      }
+    },
+    "idle_bubble": {
+      "len": 1400,
+      "fade": 160,
+      "life": 0.8,
+      "tracks": {
+        "head": { "rot": [[0, 0, "inOut"], [300, -6, "inOut"], [1100, -5, "inOut"], [1400, 0]] }
+      },
+      "faces": { "eyes": [[200, "half"], [1100, "open"]], "mouth": [[300, "open"], [480, "neutral"], [660, "open"], [840, "neutral"]] }
+    },
+    "move": {
+      "len": 700,
+      "loop": true,
+      "fade": 160,
+      "life": 0.6,
+      "tracks": {
+        "head": { "x": [[0, 0, "out"], [350, 5, "in"], [700, 0]], "y": [[0, 0, "inOut"], [350, -3, "inOut"], [700, 0]], "rot": [[0, 2, "inOut"], [350, -2, "inOut"], [700, 2]] },
+        "fin_pec": { "rot": [[0, 0, "inOut"], [175, -34, "inOut"], [350, 0, "inOut"], [525, -34, "inOut"], [700, 0]] }
+      },
+      "waves": {
+        "spine": { "amp": 18, "speed": 2.8 },
+        "tail_fin": { "amp": 34, "speed": 2.8 },
+        "veil_top": { "amp": 20, "speed": 2.2 },
+        "veil_low": { "amp": 18, "speed": 2.4 }
+      }
+    },
+    "attack": {
+      "len": 920,
+      "fade": 80,
+      "life": 0.3,
+      "marks": { "windup": 260, "release": 340, "contact": 520, "recover": 720 },
+      "tracks": {
+        "head": {
+          "x": [[0, 0, "out"], [260, -14, "in"], [340, -8, "in"], [520, 14, "out"], [720, 0, "inOut"], [920, 0]],
+          "rot": [[0, 0, "out"], [260, -10, "in"], [340, 4, "in"], [520, 10, "out"], [720, 0, "inOut"]]
+        },
+        "spine": { "rot": [[0, 0, "out"], [260, 34, "in"], [340, -32, "out"], [460, 16, "inOut"], [600, -6, "inOut"], [800, 0]] },
+        "tail_fin": { "rot": [[0, 0, "out"], [260, 28, "in"], [360, -40, "out"], [500, 18, "inOut"], [680, -6, "inOut"], [860, 0]] },
+        "veil_top": { "rot": [[0, 0], [260, 14, "in"], [360, -12, "out"], [700, 0, "inOut"]] },
+        "veil_low": { "rot": [[0, 0], [260, -14, "in"], [360, 12, "out"], [700, 0, "inOut"]] }
+      },
+      "faces": { "eyes": [[0, "angry"], [520, "closed"], [640, "angry"], [860, "open"]], "mouth": [[0, "grit"], [480, "open"], [640, "grit"], [860, "neutral"]] },
+      "waves": {
+        "spine": { "amp": 10, "speed": 3 },
+        "tail_fin": { "amp": 22, "speed": 3 }
+      }
+    },
+    "cast": {
+      "len": 1240,
+      "fade": 140,
+      "life": 0.4,
+      "marks": { "windup": 620, "release": 740, "recover": 1020 },
+      "tracks": {
+        "head": {
+          "y": [[0, 0, "inOut"], [620, -16, "in"], [740, -8, "out"], [1020, 0, "inOut"]],
+          "rot": [[0, 0, "inOut"], [620, -10, "in"], [740, 6, "out"], [1020, 0, "inOut"]],
+          "x": [[0, 0], [620, -6, "in"], [740, 10, "out"], [1020, 0, "inOut"]]
+        },
+        "veil_top": { "rot": [[0, 0, "inOut"], [620, 26, "in"], [740, -8, "out"], [1100, 0, "inOut"]], "sx": [[0, 1], [620, 1.12, "in"], [740, 0.95, "out"], [1100, 1]] },
+        "veil_low": { "rot": [[0, 0, "inOut"], [620, -26, "in"], [740, 8, "out"], [1100, 0, "inOut"]], "sx": [[0, 1], [620, 1.12, "in"], [740, 0.95, "out"], [1100, 1]] },
+        "tail_fin": { "rot": [[0, 0, "inOut"], [620, 12, "in"], [740, -20, "out"], [1000, 0, "inOut"]] },
+        "fin_pec": { "rot": [[0, 0], [620, -40, "in"], [740, 10, "out"], [1000, 0]] }
+      },
+      "faces": { "eyes": [[0, "half"], [300, "closed"], [740, "angry"], [1160, "open"]], "mouth": [[0, "neutral"], [740, "open"], [1040, "neutral"]] },
+      "waves": {
+        "veil_top": { "amp": 8, "speed": 0.8 },
+        "veil_low": { "amp": 8, "speed": 0.8 },
+        "spine": { "amp": 5, "speed": 1 },
+        "tail_fin": { "amp": 14, "speed": 1 }
+      }
+    },
+    "hurt": {
+      "len": 620,
+      "fade": 40,
+      "life": 0.3,
+      "tracks": {
+        "head": { "rot": [[0, 0, "out"], [90, -16, "inOut"], [320, 4, "inOut"], [620, 0]], "x": [[0, 0, "out"], [90, -8, "inOut"], [620, 0]] },
+        "spine": { "rot": [[0, 0, "out"], [90, -26, "inOut"], [260, 12, "inOut"], [440, -4, "inOut"], [620, 0]] },
+        "tail_fin": { "rot": [[0, 0, "out"], [120, -30, "inOut"], [300, 16, "inOut"], [500, 0]] },
+        "veil_top": { "sx": [[0, 1], [90, 0.82, "outElastic"], [520, 1]] },
+        "veil_low": { "sx": [[0, 1], [90, 0.82, "outElastic"], [520, 1]] }
+      },
+      "faces": { "eyes": [[0, "hurt"], [480, "open"]], "mouth": [[0, "cry"], [500, "neutral"]] },
+      "waves": {
+        "veil_top": { "amp": 26, "speed": 5 },
+        "veil_low": { "amp": 24, "speed": 5 }
+      }
+    },
+    "hurt_heavy": {
+      "len": 900,
+      "fade": 30,
+      "life": 0.2,
+      "tracks": {
+        "head": { "rot": [[0, 0, "out"], [100, -12, "inOut"], [400, 0]], "x": [[0, 0, "out"], [100, -14, "inOut"], [900, 0]], "y": [[0, 0], [100, -10, "out"], [500, 0, "outBack"]] },
+        "spine": { "rot": [[0, 0, "out"], [100, -30, "inOut"], [340, 18, "inOut"], [600, 0]] },
+        "tail_fin": { "rot": [[0, 0, "out"], [120, -34, "inOut"], [360, 18, "inOut"], [640, 0]] },
+        "swim": { "rot": [[0, 0, "out"], [100, -20, "inOut"], [420, 360, "hold"], [421, 0], [900, 0]] }
+      },
+      "faces": { "eyes": [[0, "hurt"], [400, "dizzy"], [800, "open"]], "mouth": [[0, "cry"], [780, "neutral"]] },
+      "waves": {
+        "veil_top": { "amp": 28, "speed": 5 },
+        "veil_low": { "amp": 26, "speed": 5 }
+      }
+    },
+    "ko": {
+      "len": 1300,
+      "fade": 60,
+      "life": 0,
+      "tracks": {
+        "head": { "y": [[0, 0, "in"], [200, -8, "in"], [900, 26, "out"], [1300, 30]] },
+        "spine": { "rot": [[0, 0], [900, -8], [1300, -8]] },
+        "veil_top": { "sx": [[0, 1], [900, 0.8], [1300, 0.8]] },
+        "veil_low": { "sx": [[0, 1], [900, 0.8], [1300, 0.8]] },
+        "swim": { "rot": [[0, 0, "inOut"], [200, -14, "in"], [900, 176, "outBack"], [1300, 176]] }
+      },
+      "faces": { "eyes": [[0, "hurt"], [500, "dizzy"]], "mouth": [[0, "cry"]] },
+      "waves": {
+        "spine": { "amp": 2, "speed": 0.4 },
+        "tail_fin": { "amp": 4, "speed": 0.4 },
+        "veil_top": { "amp": 4, "speed": 0.3 },
+        "veil_low": { "amp": 4, "speed": 0.3 }
+      }
+    },
+    "victory": {
+      "len": 1100,
+      "loop": true,
+      "fade": 200,
+      "life": 0.6,
+      "tracks": {
+        "head": { "y": [[0, 0, "out"], [140, 6, "out"], [440, -46, "in"], [760, 0, "outBack"], [1100, 0]], "rot": [[0, 0], [140, 6, "inOut"], [440, -22, "inOut"], [760, 10, "inOut"], [1000, 0]] },
+        "spine": { "rot": [[0, 0], [140, -14, "inOut"], [440, 20, "inOut"], [760, -10, "inOut"], [1000, 0]] }
+      },
+      "faces": { "eyes": [[0, "happy"]], "mouth": [[0, "smile"]] },
+      "waves": {
+        "tail_fin": { "amp": 36, "speed": 3.2 },
+        "spine": { "amp": 14, "speed": 3.2 }
+      }
+    },
+    "guard": {
+      "len": 600,
+      "fade": 90,
+      "life": 0.3,
+      "tracks": {
+        "head": { "x": [[0, 0, "out"], [200, -8], [600, -8]], "rot": [[0, 0, "out"], [200, 6], [600, 6]] },
+        "spine": { "rot": [[0, 0, "out"], [200, 24], [600, 24]] },
+        "tail_fin": { "rot": [[0, 0, "out"], [200, 30], [600, 30]] },
+        "veil_top": { "rot": [[0, 0, "out"], [200, -22], [600, -22]] },
+        "veil_low": { "rot": [[0, 0, "out"], [200, 22], [600, 22]] }
+      },
+      "faces": { "eyes": [[0, "angry"]], "mouth": [[0, "grit"]] }
+    },
+    "stunned": {
+      "len": 1600,
+      "loop": true,
+      "fade": 240,
+      "life": 0.3,
+      "tracks": {
+        "head": { "rot": [[0, 6, "inOut"], [800, -10, "inOut"], [1600, 6]], "y": [[0, 0, "inOut"], [800, 6, "inOut"], [1600, 0]] }
+      },
+      "faces": { "eyes": [[0, "dizzy"]], "mouth": [[0, "cry"]] },
+      "waves": {
+        "tail_fin": { "amp": 8, "speed": 0.6 }
+      }
+    },
+    "buff": {
+      "len": 820,
+      "fade": 140,
+      "life": 0.6,
+      "tracks": {
+        "head": { "y": [[0, 0, "out"], [260, -12, "inOut"], [820, 0]], "rot": [[0, 0, "out"], [260, -8, "inOut"], [820, 0]] },
+        "veil_top": { "sx": [[0, 1], [260, 1.15, "outElastic"], [820, 1]] },
+        "veil_low": { "sx": [[0, 1], [260, 1.15, "outElastic"], [820, 1]] }
+      },
+      "faces": { "eyes": [[0, "happy"], [760, "open"]], "mouth": [[0, "smile"], [760, "neutral"]] }
+    },
+    "dodge": {
+      "len": 560,
+      "fade": 60,
+      "life": 0.4,
+      "tracks": {
+        "head": { "y": [[0, 0, "out"], [160, -22, "inOut"], [560, 0]], "x": [[0, 0, "out"], [160, -10, "inOut"], [560, 0]], "rot": [[0, 0], [160, -12, "inOut"], [460, 0]] },
+        "spine": { "rot": [[0, 0], [160, 22, "inOut"], [400, 0]] }
+      },
+      "faces": { "eyes": [[0, "closed"], [300, "open"]] },
+      "waves": {
+        "tail_fin": { "amp": 34, "speed": 4 }
+      }
+    }
+  }
+}

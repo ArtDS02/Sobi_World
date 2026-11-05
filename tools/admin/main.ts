@@ -1,6 +1,6 @@
 // Sobi World admin dashboard entry (admin.html, `npm run admin`; decisions A7-1, AD-1, 036). Hash routes:
 // #/ overview · #/users[/<id>] · #/content[/<file>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
-// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/battle-lab · #/assets · #/library · #/desktop · #/guide[/<section>]
+// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/battle-lab · #/rig-lab · #/assets · #/library · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
 import { renderAdventure } from './adventure';
 import { renderAdventureMaps } from './adventureMaps';
@@ -10,6 +10,7 @@ import { renderMapNetwork } from './mapNetworkPage';
 import { editorDirty, renderMapEditor } from './mapEditor';
 import { renderMapAssets } from './mapAssetsPage';
 import { renderBattleLab } from './battleLab';
+import { renderRigLab } from './rigLab';
 import { breedingDirty, renderBreeding } from './breeding';
 import { contentDirty, renderContent } from './contentPage';
 import { renderDayNight } from './dayNight';
@@ -40,7 +41,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
     ['layout', '🗺️', 'Bố cục cảnh', 'layout'],
     ['seasons', '🍂', 'Mùa & hiệu ứng', 'seasons'],
   ]],
-  ['Thế giới', [['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['adventure', '⚔️', 'Mô phỏng trận', 'battle-sim'], ['adventure-world', '🧭', 'Quản lý map', 'map-manage'], ['adventure-network', '🕸️', 'Mạng map', 'map-network'], ['adventure-editor', '✏️', 'Map Editor', 'map-editor'], ['adventure-assets', '🌲', 'Thư viện asset', 'map-assets'], ['adventure-maps', '🗺️', 'Bản đồ khu', 'adventure-maps'], ['battle-lab', '✨', 'Xưởng animation trận', 'battle-lab']]],
+  ['Thế giới', [['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['adventure', '⚔️', 'Mô phỏng trận', 'battle-sim'], ['adventure-world', '🧭', 'Quản lý map', 'map-manage'], ['adventure-network', '🕸️', 'Mạng map', 'map-network'], ['adventure-editor', '✏️', 'Map Editor', 'map-editor'], ['adventure-assets', '🌲', 'Thư viện asset', 'map-assets'], ['adventure-maps', '🗺️', 'Bản đồ khu', 'adventure-maps'], ['battle-lab', '✨', 'Xưởng animation trận', 'battle-lab'], ['rig-lab', '🦴', 'Xưởng rig sinh vật', 'battle-lab']]],
   ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
   ['Hệ thống', [['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
 ];
@@ -144,6 +145,7 @@ function render() {
     'adventure-assets': () => renderMapAssets(content),
     'adventure-maps': () => renderAdventureMaps(content, id),
     'battle-lab': () => renderBattleLab(content),
+    'rig-lab': () => renderRigLab(content),
     layout: () => renderLayout(content, render),
     desktop: () => renderDesktop(content),
     guide: () => renderGuide(content, id),

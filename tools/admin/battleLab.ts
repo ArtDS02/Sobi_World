@@ -187,7 +187,8 @@ function mountGame(host: HTMLElement) {
   };
   lab.game = new Phaser.Game({ type: Phaser.AUTO, parent: host, width: host.clientWidth, height: host.clientHeight, transparent: true, banner: false, audio: { noAudio: true }, scene: [new Backdrop(), new BattleScene({ read: stageState, image })] });
   // For checking the stage from the browser console (Admin only).
-  (window as unknown as { labGame?: Phaser.Game }).labGame = lab.game;
+  (window as unknown as { labGame?: Phaser.Game; battleLabState?: typeof lab }).labGame = lab.game;
+  (window as unknown as { battleLabState?: typeof lab }).battleLabState = lab;
 }
 
 /** Holds the stage still, or lets it go on from the same moment (the step's clock waits too). */

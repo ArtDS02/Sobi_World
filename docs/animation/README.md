@@ -4,6 +4,8 @@ Bộ tài liệu theo prompt `art_inbox/.batch/Sobi_Adventure_UI_Animation_Claud
 
 **Bắt đầu đọc:** [`HUONG_DAN_CHU_DU_AN.md`](HUONG_DAN_CHU_DU_AN.md) — hướng dẫn từng bước cho chủ dự án.
 
+**Mới (decision 050):** animation **thân sinh vật** chuyển sang puppet rig cắt mảnh — [`rig/README.md`](rig/README.md) (audit, kiến trúc, pipeline, asset, nghiệm thu, roadmap). Tài liệu dưới đây vẫn đúng cho lớp VFX / kịch bản; phần "key pose + tween" của thân được thay dần bằng rig.
+
 | File | Nội dung |
 | --- | --- |
 | `sobi_adventure_audit.md` | Audit: công nghệ, màn hình / trạng thái, bản đồ, combat, asset, lỗi UI/UX, phần chưa xác minh, ưu tiên |

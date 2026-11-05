@@ -4,6 +4,9 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
+## Sinh vật: layer bộ phận cho puppet rig (decision 050)
+4 rig chạy trên bộ phận **rig-proof** vector (manifest `rig_<rig>_*`, `placeholder`): `pig_boar`, `pig_turtle`, `fish_betta`, `octopus`. Cần layer vẽ tay theo `art_inbox/rig_README.md` + `art_inbox/rig_<rig>.md` (ảnh bố cục `rig_<rig>_guide.png`), đặt vào `asset/rigs/<rig>/layers/`, chạy `npm run rig:parts <rig>`. Sau đó: 22 combat animal + 22 quái theo `docs/animation/rig/ROADMAP.md` R2b / R3.
+
 ## Adventure: VFX theo kịch bản animation (decision 049)
 Danh mục đầy đủ + đặc tả từng khung: [`docs/animation/library/scenarios/ASSETS.md`](animation/library/scenarios/ASSETS.md) (25 asset: flipbook nước, đất, lửa, thiên nhiên, kim, sấm, sáng, hư không, khiên, buff / debuff / hồi máu, va chạm chung `fx_hit_burst`). Đã có: `fx_wave_rise` (2026-11-05); còn lại chưa tạo; mọi kịch bản có phương án dự phòng bằng asset sẵn có. Thứ tự tạo đề xuất ghi cuối file đó.
 

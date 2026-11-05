@@ -7,6 +7,7 @@ import type { BattleLook, ReactionFx } from '../../../../../content/schemas/adve
 import { BATTLE_FX } from '../../logic/config/content';
 import type { FxCue } from '../../ui/battlePlan';
 import { ActPlayer } from './fxActs';
+import { ghostImages, type Ghost } from './fxGhosts';
 import { AIR_DEPTH, GROUND_DEPTH, Bursts, type BurstSpot } from './fxBursts';
 import { playStroke } from './fxStrokes';
 import { ScreenFx } from './screenFx';
@@ -17,8 +18,10 @@ export interface FxAnchor extends BurstSpot {
   side: 'ally' | 'enemy';
   width: number;
   height: number;
-  /** The unit's picture now (for its afterimage). */
+  /** The unit's picture now (the cut-in portrait). */
   picture: Phaser.GameObjects.Image | null;
+  /** What a ghost of it copies now (its picture, or its puppet's parts: decision 050). */
+  ghosts?: () => Ghost[];
 }
 
 export interface Timed {
@@ -33,10 +36,10 @@ const isShape = (ref: string) => !ref.startsWith('fx_');
 /** A shot lays one burst of its trail every this many pixels it flies. */
 const TRAIL_STEP_PX = 9;
 
-/** What the effects ask of the scene: to hold the stage still (hit stop), every fighter's picture. */
+/** What the effects ask of the scene: to hold the stage still (hit stop), every fighter's ghost pictures (a colour split). */
 export interface FxHooks {
   hold(ms: number): void;
-  pictures(): Phaser.GameObjects.Image[];
+  ghosts(): Ghost[];
 }
 
 export class FxPlayer {
@@ -55,7 +58,7 @@ export class FxPlayer {
   ) {
     this.bursts = new Bursts(scene);
     this.screen = new ScreenFx(scene, hooks.hold);
-    this.acts = new ActPlayer({ scene, bursts: this.bursts, screen: this.screen, add: (dur, step, done) => this.add(dur, step, done), flash: (c, a, ms) => this.flash(c, a, ms), hold: hooks.hold, pictures: hooks.pictures });
+    this.acts = new ActPlayer({ scene, bursts: this.bursts, screen: this.screen, add: (dur, step, done) => this.add(dur, step, done), flash: (c, a, ms) => this.flash(c, a, ms), hold: hooks.hold, ghosts: hooks.ghosts });
     this.strokes = scene.add.graphics().setDepth(AIR_DEPTH + 1).setBlendMode(Phaser.BlendModes.ADD);
     this.dim = scene.add.rectangle(0, 0, 10, 10, 0x0e0a1e, 1).setOrigin(0).setDepth(AIR_DEPTH - 10).setAlpha(0);
     this.flashRect = scene.add.rectangle(0, 0, 10, 10, 0xffffff, 1).setOrigin(0).setDepth(AIR_DEPTH + 10).setAlpha(0);
@@ -190,10 +193,9 @@ export class FxPlayer {
         return;
       case 'afterimage': {
         const a = unitOf(cue.unit);
-        const src = a?.picture;
-        if (!src) return;
-        const ghost = this.scene.add.image(src.x, src.y, src.texture.key).setOrigin(src.originX, src.originY).setScale(src.scaleX, src.scaleY).setFlipX(src.flipX).setDepth(src.depth - 1).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.45);
-        this.add(380, (t) => ghost.setAlpha(0.45 * (1 - t)), () => ghost.destroy());
+        const made = ghostImages(this.scene, a?.ghosts?.() ?? []).map((g) => g.setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.45));
+        if (made.length === 0) return;
+        this.add(380, (t) => made.forEach((g) => g.setAlpha(0.45 * (1 - t))), () => made.forEach((g) => g.destroy()));
         return;
       }
     }

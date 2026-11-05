@@ -8,6 +8,7 @@ import type { ScriptCue } from '../../ui/battleScript';
 import { AIR_DEPTH, GROUND_DEPTH, type Bursts } from './fxBursts';
 import { beam, cone, tether } from './fxLines';
 import { playCutin } from './fxCutin';
+import { ghostImages, type Ghost } from './fxGhosts';
 import { playProp } from './fxProps';
 import { playRibbon } from './fxRibbon';
 import type { FxAnchor, Timed } from './fxPlayer';
@@ -27,8 +28,8 @@ export interface ActHost {
   hold(ms: number): void;
   /** Hit stop tiers, slow motion, directional shake, letterbox, vignette (ANIM-004). */
   screen: ScreenFx;
-  /** Every unit's picture now (the colour split copies them). */
-  pictures(): Phaser.GameObjects.Image[];
+  /** Every unit's ghost pictures now (the colour split copies them: pictures, or puppets' parts). */
+  ghosts(): Ghost[];
 }
 
 const TINT_DEPTH = 5;
@@ -116,18 +117,18 @@ export class ActPlayer {
         return;
       }
       case 'trail': {
-        const pic = a?.picture;
-        if (!pic) return;
+        const ghostsOf = a?.ghosts;
+        if (!ghostsOf) return;
         const every = (act.every ?? 50) / 1000;
         let since = every;
         const color = (act.color as number | undefined) ?? null;
         this.h.add(act.dur, (_t, _g, dt) => {
           since += dt;
-          if (since < every || !pic.visible) return;
+          if (since < every) return;
           since = 0;
-          const ghost = this.scene.add.image(pic.x, pic.y, pic.texture.key).setOrigin(pic.originX, pic.originY).setScale(pic.scaleX, pic.scaleY).setAngle(pic.angle).setFlipX(pic.flipX).setDepth(pic.depth - 1).setAlpha(0.42);
-          if (color !== null) ghost.setTintFill(color).setBlendMode(Phaser.BlendModes.ADD);
-          this.h.add(320, (t) => ghost.setAlpha(0.42 * (1 - t)), () => ghost.destroy());
+          const made = ghostImages(this.scene, ghostsOf()).map((g) => g.setAlpha(0.42));
+          if (color !== null) for (const g of made) g.setTintFill(color).setBlendMode(Phaser.BlendModes.ADD);
+          if (made.length > 0) this.h.add(320, (t) => made.forEach((g) => g.setAlpha(0.42 * (1 - t))), () => made.forEach((g) => g.destroy()));
         });
         return;
       }
@@ -161,12 +162,10 @@ export class ActPlayer {
         this.h.screen.vignette(act.color as number, act.alpha, act.dur);
         return;
       case 'split': {
-        for (const pic of this.h.pictures()) {
-          if (!pic.visible) continue;
-          for (const [dx, color] of [[-5, 0xff3a6a], [5, 0x3ae0ff]] as const) {
-            const g = this.scene.add.image(pic.x + dx, pic.y, pic.texture.key).setOrigin(pic.originX, pic.originY).setScale(pic.scaleX, pic.scaleY).setAngle(pic.angle).setFlipX(pic.flipX).setDepth(pic.depth + 0.2).setBlendMode(Phaser.BlendModes.ADD).setTintFill(color).setAlpha(0.5);
-            this.h.add(act.dur, (t) => g.setAlpha(0.5 * (1 - t)), () => g.destroy());
-          }
+        const field = this.h.ghosts();
+        for (const [dx, color] of [[-5, 0xff3a6a], [5, 0x3ae0ff]] as const) {
+          const made = ghostImages(this.scene, field, dx, 0.2).map((g) => g.setBlendMode(Phaser.BlendModes.ADD).setTintFill(color).setAlpha(0.5));
+          if (made.length > 0) this.h.add(act.dur, (t) => made.forEach((g) => g.setAlpha(0.5 * (1 - t))), () => made.forEach((g) => g.destroy()));
         }
         return;
       }

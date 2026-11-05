@@ -10,6 +10,7 @@ import type { PlayingStep } from '../../ui/battleFxView';
 import { actImages } from '../../../../../content/schemas/adventure/battleScript';
 import { BATTLE_FX } from '../../logic/config/content';
 import { stepPlan, type CueSound, type FxCue } from '../../ui/battlePlan';
+import { perfOf } from '../../ui/battlePerf';
 import { poseOf, type BodyPose, type PoseAnchor } from '../../ui/battlePose';
 import { BattleUnits, type StageUnit } from './battleUnits';
 import { FxPlayer, type FxAnchor } from './fxPlayer';
@@ -76,7 +77,7 @@ export class BattleScene extends Phaser.Scene {
   create() {
     ensureFxTextures(this);
     this.units = new BattleUnits(this, (id) => this.want(id));
-    this.fx = new FxPlayer(this, { hold: (ms) => (this.holdUntil = Math.max(this.holdUntil, performance.now() + ms)), pictures: () => this.units.pictures() });
+    this.fx = new FxPlayer(this, { hold: (ms) => (this.holdUntil = Math.max(this.holdUntil, performance.now() + ms)), ghosts: () => this.units.allGhosts() });
     this.badges = new StatusBadges(this, (id) => this.want(id));
     this.turn = new TurnMarker(this);
     // The sprites of the particles and the status badges are small: loaded up front so a burst never starts with the drawn shape.
@@ -143,6 +144,8 @@ export class BattleScene extends Phaser.Scene {
     this.tweens.timeScale = holding ? 0 : scale;
     this.time.timeScale = holding ? 0 : scale;
     this.fx.bursts.pause(holding);
+    // The puppets' clock (decision 050) holds with the hit stop and slows with slow motion.
+    this.units.puppets.tick(dt * 1000, holding ? 0 : scale);
     // Maps reused between frames (ANIM-107): cleared and refilled instead of allocated per frame.
     const poseAnchors = this.poseAnchors;
     const poseSides = this.poseSides;
@@ -157,7 +160,7 @@ export class BattleScene extends Phaser.Scene {
       this.want(u.art);
       const pose = s.reduce ? null : holding && this.held.has(u.id) ? this.held.get(u.id)! : poseOf(u.id, poseAnchors.get(u.id)!, poseAnchors, p, t, now, poseSides);
       if (!holding) this.held.set(u.id, pose);
-      this.units.apply(u, pose, now, this.badges.tintOf(u.statuses));
+      this.units.apply(u, pose, now, this.badges.tintOf(u.statuses), perfOf(u.id, p, t, pose?.posture ?? 'idle', u.down));
     }
     const fxAnchors = new Map<string, FxAnchor>(
       units.map((u) => [
@@ -168,8 +171,10 @@ export class BattleScene extends Phaser.Scene {
           height: u.height,
           feet: u.feet,
           chest: { x: u.feet.x, y: u.feet.y - u.height * 0.45 },
-          head: { x: u.feet.x + (u.side === 'ally' ? 1 : -1) * u.width * 0.16, y: u.feet.y - u.height * 0.58 },
+          // A puppet's head is where its eyes are now (it ducks, rears, is knocked back); a picture's is guessed from its box.
+          head: this.units.puppets.head(u.id) ?? { x: u.feet.x + (u.side === 'ally' ? 1 : -1) * u.width * 0.16, y: u.feet.y - u.height * 0.58 },
           picture: this.units.picture(u.id),
+          ghosts: () => this.units.ghosts(u.id),
         },
       ]),
     );

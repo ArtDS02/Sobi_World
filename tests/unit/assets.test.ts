@@ -116,7 +116,9 @@ describe('asset registry (spec §11.4)', () => {
     const m = manifest();
     // GĐ3 art that is still a placeholder (docs/ASSET_TODO.md).
     // Placeholders that wait for real art (docs/ASSET_TODO.md): the plaza's signpost and the Garden's (GĐ5).
-    const todo = ['prop_plaza_signpost', ...gardenArtIds(), ...aquariumArtIds(), ...cloudArtIds(), ...adventureArtIds(), ...plazaArtIds()];
+    // Decision 050: the rig-proof parts of the puppets (vector, `npm run rig:parts`) wait for their painted layers (art_inbox/rig_*.md).
+    const rigProof = m.props.filter((r) => r.id.startsWith('rig_')).map((r) => r.id);
+    const todo = ['prop_plaza_signpost', ...gardenArtIds(), ...aquariumArtIds(), ...cloudArtIds(), ...adventureArtIds(), ...plazaArtIds(), ...rigProof];
     for (const row of [...m.buildings, ...m.props]) {
       if (!todo.includes(row.id)) expect(row.status, row.id).not.toBe('placeholder');
       // A row of states (the trough, a chest, a portal) answers for its first state.

@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Rig-proof parts of the Heo Rùa puppet (decision 050): a pink pig under a heavy green shell with a sprout. One group "part-NAME"
+       per part; ground at y=470, centre x=256. Painted replacements keep this canvas and these names (art_inbox/rig_pig_turtle.md). -->
+  <defs>
+    <radialGradient id="skin" cx="0.4" cy="0.3" r="0.8"><stop offset="0" stop-color="#fde0d6"/><stop offset="0.65" stop-color="#f6bfb0"/><stop offset="1" stop-color="#e9a493"/></radialGradient>
+    <radialGradient id="skinFar" cx="0.4" cy="0.3" r="0.8"><stop offset="0" stop-color="#eab4a5"/><stop offset="1" stop-color="#d29484"/></radialGradient>
+    <radialGradient id="shell" cx="0.42" cy="0.25" r="0.85"><stop offset="0" stop-color="#9cc76a"/><stop offset="0.55" stop-color="#6f9e46"/><stop offset="1" stop-color="#4c7a31"/></radialGradient>
+    <radialGradient id="snout" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#ffd6cc"/><stop offset="1" stop-color="#f0a698"/></radialGradient>
+    <linearGradient id="hoof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6c7a3a"/><stop offset="1" stop-color="#4b5726"/></linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b6e27c"/><stop offset="1" stop-color="#5f9a34"/></linearGradient>
+    <radialGradient id="eye" cx="0.4" cy="0.35" r="0.7"><stop offset="0" stop-color="#5a3726"/><stop offset="1" stop-color="#1e120c"/></radialGradient>
+  </defs>
+  <g stroke="#7a4434" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+
+    <g id="part-leg_bl">
+      <path d="M128 418 q-6 26 -2 46 q14 7 32 0 q4 -22 0 -46 z" fill="url(#skinFar)"/>
+      <path d="M125 456 q16 9 34 0 l0 10 q-17 7 -34 0 z" fill="url(#hoof)" stroke-width="4"/>
+    </g>
+    <g id="part-leg_fl">
+      <path d="M302 418 q-4 26 0 46 q14 7 32 0 q4 -22 0 -46 z" fill="url(#skinFar)"/>
+      <path d="M301 456 q16 9 34 0 l0 10 q-17 7 -34 0 z" fill="url(#hoof)" stroke-width="4"/>
+    </g>
+
+    <g id="part-body">
+      <path d="M120 392 C116 344 168 318 230 318 C296 318 336 344 336 392 C336 436 290 448 228 448 C166 448 124 436 120 392 Z" fill="url(#skin)"/>
+      <path d="M150 428 C190 446 270 446 310 426" fill="none" stroke="#e6a08f" stroke-width="5" opacity="0.7"/>
+    </g>
+
+    <g id="part-leg_br">
+      <path d="M150 420 q-6 26 -2 44 q15 8 36 0 q4 -22 0 -44 z" fill="url(#skin)"/>
+      <path d="M147 456 q18 10 38 0 l0 11 q-19 7 -38 0 z" fill="url(#hoof)" stroke-width="4"/>
+    </g>
+    <g id="part-leg_fr">
+      <path d="M272 420 q-4 26 0 44 q15 8 36 0 q4 -22 0 -44 z" fill="url(#skin)"/>
+      <path d="M271 456 q18 10 38 0 l0 11 q-19 7 -38 0 z" fill="url(#hoof)" stroke-width="4"/>
+    </g>
+
+    <g id="part-tail">
+      <path d="M20 40 C34 30 50 30 58 40 C64 50 54 60 46 54 C40 48 46 42 50 44" fill="none" stroke="#7a4434" stroke-width="12"/>
+      <path d="M20 40 C34 30 50 30 58 40 C64 50 54 60 46 54 C40 48 46 42 50 44" fill="none" stroke="#f6bfb0" stroke-width="6"/>
+    </g>
+
+    <g id="part-shell">
+      <path d="M112 384 C104 300 160 246 234 246 C306 246 350 300 344 380 C300 400 160 402 112 384 Z" fill="url(#shell)"/>
+      <path d="M196 270 L234 258 L272 270 L276 310 L234 326 L192 310 Z" fill="#87b65a" stroke="#3f6a28" stroke-width="4"/>
+      <path d="M192 310 L150 322 L140 360 M276 310 L318 322 L328 360 M234 326 L234 386 M150 322 L128 300 M318 322 L338 300" fill="none" stroke="#3f6a28" stroke-width="4"/>
+      <path d="M160 286 q30 -26 70 -30" fill="none" stroke="#c4e698" stroke-width="7" opacity="0.6"/>
+      <path d="M104 384 C150 408 304 408 350 380 C352 396 344 406 330 410 C290 422 168 424 124 410 C110 406 102 396 104 384 Z" fill="#efe6b8"/>
+    </g>
+
+    <g id="part-leaf">
+      <path d="M232 250 C230 236 232 226 236 218" fill="none" stroke="#4f7d2c" stroke-width="5"/>
+      <path d="M236 222 C214 204 188 206 180 220 C196 236 222 236 236 222 Z" fill="url(#leaf)" stroke="#4f7d2c" stroke-width="4"/>
+      <path d="M238 220 C250 196 278 190 292 202 C282 222 256 228 238 220 Z" fill="url(#leaf)" stroke="#4f7d2c" stroke-width="4"/>
+    </g>
+
+    <g id="part-ear_far">
+      <path d="M296 268 C284 248 290 226 306 220 C318 234 320 254 314 270 Z" fill="url(#skinFar)"/>
+    </g>
+    <g id="part-head">
+      <path d="M270 334 C266 282 300 254 346 254 C398 254 428 288 426 334 C424 378 392 404 346 404 C300 404 272 380 270 334 Z" fill="url(#skin)"/>
+      <ellipse cx="358" cy="360" rx="16" ry="10" fill="#f58f8a" stroke="none" opacity="0.55"/>
+      <ellipse cx="294" cy="352" rx="10" ry="7" fill="#f58f8a" stroke="none" opacity="0.45"/>
+      <path d="M290 292 q20 -28 56 -32" fill="none" stroke="#fff" stroke-width="7" opacity="0.4"/>
+    </g>
+    <g id="part-ear_near">
+      <path d="M352 268 C344 240 358 216 380 214 C392 232 388 256 372 272 Z" fill="url(#skin)"/>
+      <path d="M360 262 C356 244 364 230 376 226 C382 238 380 252 370 262 Z" fill="#f4a39a" stroke="none"/>
+    </g>
+    <g id="part-snout">
+      <ellipse cx="408" cy="338" rx="30" ry="25" fill="url(#snout)"/>
+      <ellipse cx="400" cy="337" rx="5.5" ry="8" fill="#b4565a" stroke="none"/>
+      <ellipse cx="418" cy="337" rx="5" ry="7.5" fill="#b4565a" stroke="none"/>
+      <ellipse cx="404" cy="325" rx="9" ry="3.5" fill="#fff" stroke="none" opacity="0.5"/>
+    </g>
+
+    <g id="part-eyes_open">
+      <ellipse cx="368" cy="306" rx="14" ry="17" fill="url(#eye)"/>
+      <circle cx="363" cy="299" r="5" fill="#fff" stroke="none"/><circle cx="372" cy="312" r="2.3" fill="#fff" stroke="none"/>
+      <ellipse cx="318" cy="303" rx="11" ry="14" fill="url(#eye)"/>
+      <circle cx="314" cy="297" r="4" fill="#fff" stroke="none"/>
+    </g>
+    <g id="part-eyes_half">
+      <path d="M354 306 q14 -6 28 0 q-2 15 -14 16 q-12 -1 -14 -16 z" fill="url(#eye)"/>
+      <path d="M307 303 q11 -5 22 0 q-1 12 -11 13 q-10 -1 -11 -13 z" fill="url(#eye)"/>
+    </g>
+    <g id="part-eyes_closed">
+      <path d="M354 310 q14 7 28 0" fill="none" stroke-width="5"/>
+      <path d="M307 307 q11 6 22 0" fill="none" stroke-width="5"/>
+    </g>
+    <g id="part-eyes_angry">
+      <ellipse cx="368" cy="310" rx="13" ry="13" fill="url(#eye)"/>
+      <circle cx="364" cy="305" r="4" fill="#fff" stroke="none"/>
+      <ellipse cx="318" cy="307" rx="10" ry="11" fill="url(#eye)"/>
+      <path d="M350 286 L384 298" fill="none" stroke-width="5.5"/>
+      <path d="M306 290 L330 296" fill="none" stroke-width="5"/>
+    </g>
+    <g id="part-eyes_hurt">
+      <path d="M356 296 L380 307 L356 318" fill="none" stroke-width="5"/>
+      <path d="M308 294 L328 304 L308 314" fill="none" stroke-width="5"/>
+      <path d="M384 322 q4 10 0 16 q-6 -4 0 -16 z" fill="#8fd3ff" stroke="#4a8fc0" stroke-width="2"/>
+    </g>
+    <g id="part-eyes_dizzy">
+      <path d="M368 306 m-11 0 a11 11 0 1 1 11 11 a7 7 0 1 1 -7 -7 a3.5 3.5 0 1 1 3.5 3.5" fill="none" stroke-width="3.5"/>
+      <path d="M318 303 m-9 0 a9 9 0 1 1 9 9 a5.5 5.5 0 1 1 -5.5 -5.5" fill="none" stroke-width="3.5"/>
+    </g>
+    <g id="part-eyes_happy">
+      <path d="M354 312 q14 -17 28 0" fill="none" stroke-width="5"/>
+      <path d="M307 309 q11 -14 22 0" fill="none" stroke-width="5"/>
+    </g>
+
+    <g id="part-mouth_neutral"><path d="M376 376 q9 6 18 0" fill="none" stroke-width="4"/></g>
+    <g id="part-mouth_open">
+      <path d="M372 370 q13 -4 26 0 q-2 20 -13 22 q-11 -2 -13 -22 z" fill="#a2433f"/>
+      <path d="M377 385 q8 -6 16 0 q-8 5 -16 0 z" fill="#f08c86" stroke="none"/>
+    </g>
+    <g id="part-mouth_grit">
+      <path d="M372 372 h26 q0 11 -13 13 q-13 -2 -13 -13 z" fill="#fff8ec"/>
+      <path d="M380 372 v11 M388 372 v11" stroke-width="2.5"/>
+    </g>
+    <g id="part-mouth_smile">
+      <path d="M372 372 q13 17 26 0 z" fill="#a2433f"/>
+    </g>
+    <g id="part-mouth_cry"><path d="M374 382 q4 -7 7 0 q4 7 7 0 q4 -7 7 0" fill="none" stroke-width="4"/></g>
+  </g>
+</svg>

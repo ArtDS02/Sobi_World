@@ -50,7 +50,10 @@
     "anim:compare": "tsx scripts/anim-review/compare.ts",
     "anim:verify": "tsx scripts/anim-review/verify.ts",
     "anim:game": "tsx scripts/anim-review/game.ts",
-    "anim:audit": "tsx scripts/anim-review/audit.ts"
+    "anim:audit": "tsx scripts/anim-review/audit.ts",
+    "rig:parts": "tsx scripts/rig/build-parts.ts",
+    "rig:fmt": "tsx scripts/rig/fmt.ts",
+    "rig:guide": "tsx scripts/rig/guide.ts"
   },
   "dependencies": {
     "@fontsource/baloo-2": "^5.3.0",

@@ -5,8 +5,11 @@
 import * as Phaser from 'phaser';
 import type { PoseArt } from '../../../../../content/schemas/adventure/battleFx';
 import type { BodyPose } from '../../ui/battlePose';
+import type { Want } from '../../../../systems/animation';
 import { poseArts } from '../../ui/motionProfiles';
 import { VEINS_TINT } from '../foeMarks';
+import { BattlePuppets } from './battlePuppets';
+import type { Ghost } from './fxGhosts';
 import { SHADOW_KEY } from './fxTextures';
 
 /** One fighter as the DOM laid it out (game px). */
@@ -55,21 +58,34 @@ const grey = (k: number) => {
 
 export class BattleUnits {
   private bodies = new Map<string, Body>();
+  /** The fighters whose art has a rig, drawn as puppets (decision 050). */
+  readonly puppets: BattlePuppets;
 
   constructor(
     private readonly scene: Phaser.Scene,
     /** Asks for a manifest image the scene does not have yet (it arrives later). */
     private readonly want: (id: string) => void,
-  ) {}
+  ) {
+    this.puppets = new BattlePuppets(scene, want);
+  }
+
+  /** What a ghost of a unit copies (an afterimage, a trail): its puppet's parts as they stand, or its picture. */
+  ghosts(id: string): Ghost[] {
+    const parts = this.puppets.copies(id);
+    if (parts) return parts.map((c) => ({ ...c, flipX: false }));
+    const m = this.bodies.get(id)?.main;
+    return m && m.visible ? [{ key: m.texture.key, x: m.x, y: m.y, originX: m.originX, originY: m.originY, scaleX: m.scaleX, scaleY: m.scaleY, rotation: m.rotation, depth: m.depth, flipX: m.flipX }] : [];
+  }
+
+  /** The ghosts of every unit (a colour split copies the whole field). */
+  allGhosts(): Ghost[] {
+    return [...this.bodies.keys()].flatMap((id) => this.ghosts(id));
+  }
 
   picture(id: string): Phaser.GameObjects.Image | null {
     return this.bodies.get(id)?.main ?? null;
   }
 
-  /** Every fighter's picture (the colour split of a script copies them). */
-  pictures(): Phaser.GameObjects.Image[] {
-    return [...this.bodies.values()].map((b) => b.main);
-  }
 
   private texture(art: string, pose: PoseArt): string | null {
     for (const id of poseArts(art, pose)) {
@@ -89,6 +105,7 @@ export class BattleUnits {
   /** Keeps one body per unit on the field (new ones made, gone ones removed). */
   sync(units: readonly StageUnit[]) {
     const ids = new Set(units.map((u) => u.id));
+    this.puppets.sync(ids);
     for (const [id, b] of this.bodies) {
       if (ids.has(id)) continue;
       for (const img of everyImage(b)) img.destroy();
@@ -112,9 +129,9 @@ export class BattleUnits {
 
   /**
    * Draws a unit at its pose (`pose` null: standing still, reduced motion). `now` drives the pulse of a unit that can be aimed at;
-   * `statusTint` colours the body while a status says so (a pose's own tint wins).
+   * `statusTint` colours the body while a status says so (a pose's own tint wins). `want` is what a puppet performs (a fighter with a rig).
    */
-  apply(u: StageUnit, pose: BodyPose | null, now: number, statusTint: number | null = null) {
+  apply(u: StageUnit, pose: BodyPose | null, now: number, statusTint: number | null = null, want: Want = { action: 'idle' }) {
     const b = this.bodies.get(u.id);
     if (!b) return;
     const posture: PoseArt = u.down ? 'ko' : (pose?.posture ?? 'idle');
@@ -147,18 +164,28 @@ export class BattleUnits {
     if (gray > 0.01) b.main.setTint(grey(gray));
     else if (tint !== null) b.main.setTint(tint);
     else b.main.clearTint();
+    // A fighter with a rig is its puppet: the picture stays hidden (its key pose is still set, for the cut-in portrait).
+    const glowAim = p.glow ?? (u.aimable ? 0xffffff : null);
+    const glowAimAlpha = p.glow !== null ? 0.6 : u.aimable ? 0.35 + 0.2 * Math.sin(now / 160) : 0;
+    if (this.puppets.draw(u, pose, want, { bright: p.bright, gray, tint, glow: glowAim, glowAlpha: glowAimAlpha, opacity }, depth)) {
+      for (const img of [b.main, b.light, b.glow]) img.setVisible(false);
+      this.marks(u, b, u.width * 0.9, u.height * 0.8, p.dx, opacity, depth);
+      this.shadow(u, b, p, opacity, depth);
+      return;
+    }
+    this.puppets.hide(u.id);
     const light = Math.min(1, Math.max(0, (p.bright - 1) / 1.2));
     b.light.setDepth(depth + 0.1).setAlpha(light * opacity).setVisible(light > 0.01);
     // A glow under the body: the pose's (a cast, a heal), or a soft white pulse on a unit that can be aimed at.
-    const glow = p.glow ?? (u.aimable ? 0xffffff : null);
-    const glowAlpha = p.glow !== null ? 0.6 : u.aimable ? 0.35 + 0.2 * Math.sin(now / 160) : 0;
+    const glow = glowAim;
+    const glowAlpha = glowAimAlpha;
     b.glow
       .setDepth(depth - 0.1)
       .setVisible(glow !== null && glowAlpha > 0.01)
       .setScale(fit * p.sx * 1.08, fit * p.sy * 1.05)
       .setTintFill(glow ?? 0xffffff)
       .setAlpha(glowAlpha * opacity);
-    this.marks(u, b, fit, p.dx, opacity, depth);
+    this.marks(u, b, b.main.width * fit, b.main.height * fit, p.dx, opacity, depth);
     this.shadow(u, b, p, opacity, depth);
   }
 
@@ -182,9 +209,7 @@ export class BattleUnits {
   }
 
   /** The veins under a corrupted enemy's feet and the spikes at its back (it looks at the other side); they stay when it moves. */
-  private marks(u: StageUnit, b: Body, fit: number, dx: number, opacity: number, depth: number) {
-    const w = b.main.width * fit;
-    const h = b.main.height * fit;
+  private marks(u: StageUnit, b: Body, w: number, h: number, dx: number, opacity: number, depth: number) {
     const veins = u.corruption >= 3 && !u.down ? this.image(VEINS) : null;
     b.veins.setVisible(veins !== null);
     if (veins) {
@@ -202,6 +227,7 @@ export class BattleUnits {
   }
 
   hideAll() {
+    this.puppets.hideAll();
     for (const b of this.bodies.values()) for (const img of everyImage(b)) img.setVisible(false);
   }
 }
