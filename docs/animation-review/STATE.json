@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "round": 4,
+  "maxRounds": 8,
+  "phase": "awaiting_playtest",
+  "blocked": false,
+  "rubric": "docs/animation-review/ANIMATION_QUALITY_RUBRIC.md",
+  "harness": {
+    "built": true,
+    "determinism": "pass",
+    "builtAtStamp": "755dce5-11ae3155",
+    "suitesBuilt": [
+      "pilot",
+      "skills",
+      "ultimates",
+      "statuses",
+      "reactions",
+      "variants",
+      "game-battle-ui",
+      "game-map-tour"
+    ],
+    "suitesPending": [
+      "multi-target-aim",
+      "ultimate-in-real-battle",
+      "map-walk-frame-sequence"
+    ]
+  },
+  "lastCapture": {
+    "runId": "20261104-184504-755dce5-ff9beea5",
+    "stamp": "755dce5-ff9beea5",
+    "complete": true,
+    "scope": "full (suite all, grid 200) + game 20261104-192358-755dce5-59fb28d9"
+  },
+  "review": {
+    "feedbackFile": "docs/animation-review/rounds/round-04/FEEDBACK.md",
+    "basedOnRunId": "20261104-184504-755dce5-ff9beea5",
+    "open": {
+      "blocker": 0,
+      "major": 0,
+      "minor": 3
+    },
+    "baseline": "docs/animation-review/ANIMATION_REVIEW_FEEDBACK.md",
+    "coverage": "partial: Lab overviews + 5 sheets; game battle UI (12 pics + metrics) and one map picture",
+    "ownerDecisions": [
+      "D-1 (2026-11-04): buff ultimates keep hit-stop; rubric unchanged",
+      "D-2 (2026-11-04): ultimate cut-in identity = skill name text (i18n), no new art"
+    ],
+    "testerBacklog": [
+      "ko/win/crit variants on a damaging skill",
+      "measure OVERFLOW and flashes from pixels",
+      "map, targeting, turn indicator, HUD"
+    ],
+    "playtestRequest": "docs/animation-review/PLAYTEST_REQUEST.md"
+  },
+  "fix": {
+    "reportFile": "docs/animation-review/rounds/round-02/FIX_REPORT.md",
+    "changedFiles": [
+      "content/adventure/battle_fx.json",
+      "src/areas/adventure/ui/battleScript.ts",
+      "src/areas/adventure/scene/battle/fxActs.ts",
+      "src/areas/adventure/scene/battle/fxCutin.ts",
+      "tests/unit/buffLanguage.test.ts",
+      "tests/unit/battleScript.test.ts"
+    ],
+    "targetsRunId": "20261104-161729-755dce5-36236937"
+  },
+  "history": [
+    {
+      "event": "harness built",
+      "stamp": "755dce5-1cd1d264",
+      "note": "pilot suite verified: canary pass, determinism pass, two consecutive runs DIFF 0.0%; pilot runs deleted"
+    },
+    {
+      "event": "round-1 capture",
+      "runId": "20261104-152903-755dce5-f5ba39e3",
+      "note": "149 cases ok, 0 errors, 9 absent; canary+determinism pass; run is ~1.5 GB (local only, gitignored)"
+    },
+    {
+      "event": "round-1 review",
+      "note": "1 blocker, 4 major, 2 minor; many baseline items fixed (ANIM-001/003/051); targeting/HUD/map need evidence"
+    },
+    {
+      "event": "round-1 fix",
+      "note": "ANIM-110/111/119 fixed, 112 partial, 114 partial (harness false positive on Up pairs); npm run check green"
+    },
+    {
+      "event": "round-2 capture",
+      "runId": "20261104-161729-755dce5-36236937",
+      "note": "200 cases ok; harness fixed (status alone, loop/expire, clean t=0, overview max-change); DUPLICATE_SCRIPT on status cases invalid in this run (see rounds/round-02/TESTER_NOTES.md)"
+    },
+    {
+      "event": "round-2 review",
+      "note": "ANIM-110/111 fixed; open: ANIM-112/114/120 major; scores Ultimate 72, Status ~67"
+    },
+    {
+      "event": "round-2 fix",
+      "note": "ANIM-120/114/112 fixed (112 by skill-name text per D-2); check green except a CPU-contention timeout in phase11 balance guard (passes alone / --maxWorkers=4)"
+    },
+    {
+      "event": "maxRounds raised 3 -> 8",
+      "note": "owner authorised continuous autonomous iteration until the rubric targets are met (2026-11-04)"
+    },
+    {
+      "event": "round-3 capture",
+      "runId": "20261104-173002-755dce5-11ae3155",
+      "note": "202 cases ok; all 25 expire >= 8% (stun 20.6, wet 19.9); no status duplicates; ko/crit/win on a damaging skill"
+    },
+    {
+      "event": "round-3 review",
+      "note": "ANIM-112/114/120 fixed; open ANIM-129 major (ultimate impact signature), minors; first game-UI evidence for Targeting/HUD"
+    },
+    {
+      "event": "round-4",
+      "note": "no blocker/major; verdict awaiting_playtest; owner playtest requested (C2/C5 per rubric 7); old runs pruned"
+    }
+  ]
+}

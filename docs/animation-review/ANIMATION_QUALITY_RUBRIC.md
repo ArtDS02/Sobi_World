@@ -1,5 +1,5 @@
 # SOBI ADVENTURE – BỘ TIÊU CHUẨN ĐÁNH GIÁ ANIMATION
-Phiên bản 1.0 · Áp dụng cho: combat (animal, quái vật, skill, buff, status, ultimate, targeting, chuyển lượt, HUD) và di chuyển trên map.
+Phiên bản 1.1 (v1.0 của chủ dự án + bổ sung quy trình ở §10, đánh dấu **[v1.1]**) · Áp dụng cho: combat (animal, quái vật, skill, buff, status, ultimate, targeting, chuyển lượt, HUD) và di chuyển trên map.
 Tham chiếu chất lượng: Epic Battle Fantasy 3.
 
 ---
@@ -167,7 +167,7 @@ Thiếu bất kỳ mục nào → animation **KHÔNG ĐẠT**, bất kể điể
 
 **Quy tắc chặn:**
 1. Thiếu bất kỳ mục MUST-HAVE nào → Không đạt.
-2. Có tiêu chí nào ≤ 2 điểm → Không được chốt, dù tổng cao.
+2. Có tiêu chí nào ≤ 2 điểm → Không được chốt, dù tổng cao. *(Tiêu chí có trọng số 0 trong nhóm — vd C5 của Targeting và Map — ghi `N/A`, không chấm, không tính vào quy tắc này. [v1.1])*
 3. Ultimate phải đạt ≥ 90 mới được chốt.
 4. Targeting và Chuyển lượt + HUD phải có C1 và C7 ≥ 4.
 
@@ -211,3 +211,72 @@ AI không tự chấm được phần "cảm giác khi chơi". Các tiêu chí C
 ## 9. BẢNG TỔNG HỢP CUỐI ĐỢT
 | Nhóm | Số animation | Điểm TB | Xuất sắc | Tốt | Đạt | Không đạt |
 |---|---|---|---|---|---|---|
+---
+
+## 10. BỔ SUNG v1.1 CHO QUY TRÌNH TỰ ĐỘNG (không đổi thang điểm hay trọng số của v1.0)
+
+Phần này làm cho rubric dùng được bởi AI trong vòng Test → Review → Fix. Khi mâu thuẫn với §1–§9, **§1–§9 thắng**, trừ khi mục nói rõ là làm rõ.
+
+### 10.1 Đơn vị chấm (tránh chấm 100+ animation từng cái mỗi vòng)
+| Nhóm | Đơn vị chấm |
+|---|---|
+| Ultimate (12) | **từng cái** |
+| Status (25) | **từng status**, mỗi status 3 pha (dính · loop · hết) → điểm của status = điểm pha thấp nhất ghép với trung bình ba pha, ghi cả hai |
+| Skill thường / Buff / Cast | **theo họ (hệ × loại)**: chấm 1 đại diện + **mọi case bị cờ tự động** (§10.3); các case còn lại ghi "theo họ" |
+| Targeting, Chuyển lượt + HUD, Map | từng tình huống đã liệt kê trong manifest (1/2/3 mục tiêu, 4 hướng…) |
+| Khác | từng loại (bị đánh, KO, né, chí mạng, số sát thương, thắng/thua) |
+Điểm lẻ **không dùng**: chỉ số nguyên 0–5. Nghi giữa hai mức thì chọn mức thấp và nói rõ điều gì còn thiếu để lên mức trên.
+
+### 10.2 Ánh xạ sang mức độ lỗi (severity) của FEEDBACK
+| Tình huống | Severity |
+|---|---|
+| Thiếu MUST-HAVE của Ultimate / Targeting / Chuyển lượt+HUD; hoặc C7 ≤ 1; hoặc lỗi input/z-order | **blocker** |
+| Thiếu MUST-HAVE ở nhóm khác; hoặc tiêu chí ≤ 2; hoặc dưới *mục tiêu tối thiểu* của nhóm (§6) | **major** |
+| Còn lại (điểm đủ nhưng chưa tới mức Tốt/Xuất sắc), hoặc `taste` | **minor** |
+Điều kiện `done` của quy trình = không còn blocker/major, **và** mọi đơn vị chấm đạt mục tiêu tối thiểu §6, **và** các mục [Playtest] của §7 đã được chủ dự án xác nhận. Nếu chưa có xác nhận: trạng thái `awaiting_playtest`, không phải `done`.
+
+### 10.3 Kiểm tra tự động từ harness (nguồn bằng chứng mới: **[Auto]**)
+Harness (`manifest.json → cases[].metrics`) cho số đo; TD dùng chúng để ghi cờ. Bảng khoảng tham khảo lấy từ §5, **cờ chỉ là gợi ý để TD kiểm tra, không tự động hạ điểm** (§5 là "không phải luật cứng"); TD phải ghi lý do nếu chấp nhận ngoài khoảng.
+| Số đo | Khoảng (từ §5) | Cờ |
+|---|---|---|
+| `hitStopMs` skill thường | 50–100 | `HITSTOP_RANGE` |
+| `hitStopMs` ultimate | 150–300 | `HITSTOP_RANGE` |
+| `anticipationMs` (start→release) | 150–300 | `ANTICIPATION_RANGE` |
+| `circleMs` (start→cast) | 300–600 (chỉ khi `circle`) | `CIRCLE_RANGE` |
+| `durationMs` skill thường | 800–1800 | `DURATION_RANGE` |
+| `durationMs` ultimate | 2500–5000 | `DURATION_RANGE` |
+| `statusApplyMs` / `statusExpireMs` | 300–600 | `STATUS_RANGE` |
+| Ultimate: số lớp VFX (cue khác loại chồng nhau) | ≥ 3 | `ULT_LAYERS` |
+| Ultimate: có cue `dim`/letterbox đầu **và** cue trả về cuối | cả hai | `ULT_INTRO_OUTRO` |
+| Ultimate: có thể bỏ qua (skip) | có | `ULT_SKIPPABLE` |
+| Số frame có thay đổi pixel | > 0 sau `release` | `NO_VISIBLE_CHANGE` |
+| VFX tràn ra ngoài khung sân | 0 | `OVERFLOW` |
+| Status có đủ 3 pha trong data | dính/loop/hết | `STATUS_PHASE_ABSENT` (pha vắng = thiếu MUST-HAVE) |
+| Hai case "khác ID" có chuỗi cue giống nhau y hệt | không | `DUPLICATE_SCRIPT` (MUST-HAVE Ultimate #6, Status "không dùng chung") |
+Lưu ý: số trong khoảng **không** chứng minh animation tốt; nó chỉ loại bớt lỗi hiển nhiên. C1, C3, C4 vẫn phải dựa vào **[Hình]**.
+
+### 10.4 Tiêu chí bổ sung (ghi vào C7, không thêm cột)
+- **Chống nhấp nháy (an toàn quang học)**: không quá 3 lần chớp toàn màn hình/giây, không chớp trắng toàn màn hình > 100 ms liên tục. Vi phạm → C7 ≤ 2.
+- **"Giảm chuyển động" (`reduce`)**: mỗi nhóm có ít nhất một case chụp với `reduce:true`; hiệu ứng vẫn phải đọc được (C1 ≥ 3), không mất thông tin quan trọng. Thiếu bản `reduce` → C7 ≤ 3.
+- **Bỏ qua / tua nhanh (x2)**: ultimate bỏ qua được; chế độ x2 (`fast`) không làm mất pha lấy đà/impact. Vi phạm → C6 ≤ 3.
+- **Ngân sách hiệu năng**: mục tiêu 60 FPS; trần hạt theo `fxBursts` (~420). Số hạt cực đại và thời gian khung hình xấu nhất lấy từ harness; vượt trần → C7 ≤ 2.
+- **Nhất quán giữa họ**: các skill cùng hệ cùng cấp có mức "hoành tráng" tương xứng (sheet tổng); lệch rõ → ghi vào C4 của case lệch.
+
+### 10.5 Hiệu chuẩn (làm một lần ở vòng 1, lưu vào `rounds/round-01/CALIBRATION.md`)
+AI dễ lệch mức khi chấm. Trước khi chấm hàng loạt, TD chọn **3 neo**: một animation mà TD cho là 1–2 điểm, một 3, một 4–5, nêu lý do bằng ảnh. Chủ dự án chỉ cần đọc và sửa nếu thấy sai. Các vòng sau đối chiếu neo này; không đổi neo giữa chừng nếu không ghi lý do.
+
+### 10.6 Bằng chứng cho từng điểm (bổ sung §7)
+Thêm nguồn **[Auto]** (số đo/cờ của harness, ghi `caseId` + tên chỉ số). Quy tắc:
+- C2 và C5 có thể sơ bộ bằng **[Auto]+[Hình]** (hit-stop, thời lượng, phản ứng mục tiêu trong ô impact), nhưng **chốt** cần [Playtest] (đúng §7).
+- C1, C3, C4, C6: [Hình] bắt buộc; điểm chỉ [Code] thì ghi rõ "chưa xác nhận bằng hình" và không được vượt 3.
+- Mọi điểm ≥ 4 phải trỏ tới ô cụ thể (`t=… ms`) chứng minh điều đó.
+
+### 10.7 Mẫu báo cáo rút gọn cho nhóm chấm "theo họ"
+`| họ (hệ × loại) | đại diện | cờ [Auto] | C1…C7 | tổng | loại | ID lỗi |` — mỗi dòng một họ; chỉ mở bảng §8 đầy đủ cho đơn vị bị blocker/major hoặc dưới mục tiêu.
+
+### 10.8 Nhật ký thay đổi
+- v1.0: bản của chủ dự án.
+- v1.1: N/A cho trọng số 0; đơn vị chấm; ánh xạ severity; cờ [Auto]; an toàn quang học/`reduce`/skip/hiệu năng; hiệu chuẩn neo; quy tắc bằng chứng; trạng thái `awaiting_playtest`.
+
+### 10.9 Đề xuất v1.2 — KHÔNG ÁP DỤNG (chủ dự án quyết giữ nguyên rubric, 2026-11-04)
+Phát sinh từ vòng 1 (FEEDBACK `D-1`): ba ultimate hỗ trợ (`skill_ult_qs`, `_qt`, `_mm`) không gây đòn lên kẻ địch. Đề xuất: với ultimate **hỗ trợ**, MUST-HAVE "rung màn hình và hit-stop mạnh hơn skill thường" được thay bằng "một khoảnh khắc nhấn ≥ 100 ms tại điểm bùng buff (đứng hình nhẹ, hoặc flash + zoom punch), có rung nhẹ". Chủ dự án chọn: giữ nguyên v1.1 hay duyệt đề xuất này.

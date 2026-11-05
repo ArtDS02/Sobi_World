@@ -8,13 +8,15 @@ import * as Phaser from 'phaser';
 import battleFxRaw from '../../content/adventure/battle_fx.json';
 import { battleFxFileSchema } from '../../content/schemas/adventure/battleFx';
 import { BattleScene, type BattleStageState } from '../../src/areas/adventure/scene/battle/BattleScene';
-import { BATTLE_FX, ELEMENT_NAMES, ENEMY_LIST, REACTIONS as REACTION_ROWS, SKILL_LIST, SKILLS } from '../../src/areas/adventure/logic/config/content';
+import { BATTLE_FX, CLASS_LIST, ELEMENT_NAMES, ENEMY_LIST, REACTIONS as REACTION_ROWS, SKILL_LIST, SKILLS, TREES } from '../../src/areas/adventure/logic/config/content';
 import { reactionArt } from '../../src/areas/adventure/ui/vmKit';
 import { stepMotion } from '../../src/areas/adventure/ui/battleMotion';
 import type { PlayingStep } from '../../src/areas/adventure/ui/battleFxView';
+import { stepPlan } from '../../src/areas/adventure/ui/battlePlan';
 import { lookOf, mirrored } from '../../src/areas/adventure/ui/motionProfiles';
 import type { BattleEvent, BattleState } from '../../src/systems/combat/types';
 import { esc } from './labels';
+import { openModal } from './modal';
 import { optionHtml, type Visual } from './richSelect';
 import { json, post, state } from './store';
 
@@ -27,6 +29,8 @@ const battleOf = () => ({ combatants: [...ALLIES.slice(0, lab.allies).map((id) =
 type Row = { id: string; asset?: string; frames?: { width: number; height: number; count: number; fps: number } };
 const lab = {
   skill: '' as string,
+  /** Filter of the skill dropdown by skill type ('' = every type). */
+  skillType: '' as string,
   attacker: 'pig_knight',
   target: 'enemy_forest_wolf',
   fromEnemy: false,
@@ -51,7 +55,49 @@ const lab = {
   message: '',
   /** The content API answered (without it the page can try looks but not save them). */
   online: false,
+  /** The settings card is folded away; the stage is paused since this performance.now (0: running); the last play entered a battle. */
+  collapsed: false,
+  pausedAt: 0,
+  lastEnter: false,
+  /** Test hook only: a status put on a unit by the played step (alone, with the plain attack), on a foe or on the striker. */
+  status: '',
+  statusTo: 'foe' as 'foe' | 'self',
+  timer: 0,
+  /** The page the lab is drawn in (the test hook below re-renders it). */
+  root: null as HTMLElement | null,
 };
+
+// Test hook for scripts/anim-review (Admin only, never in the shipped game): sets the lab's fields and plays without the UI, and reports
+// the step's timing so the capture can name its beats. Read-only with respect to the content: it never saves.
+const hook = {
+  /** The stage is up: content loaded, the battle scene running and its pictures in. */
+  ready: () => !!lab.raw && !!lab.game && lab.game.scene.isActive('adventure-battle') && lab.game.textures.exists('bg'),
+  configure: (o: Partial<Pick<typeof lab, 'skill' | 'attacker' | 'target' | 'fromEnemy' | 'crit' | 'ko' | 'fast' | 'reduce' | 'allies' | 'foes' | 'corruption' | 'reaction' | 'phase' | 'win' | 'status' | 'statusTo'>>) => {
+    Object.assign(lab, o);
+    if (lab.root) renderBattleLab(lab.root);
+  },
+  play: (enter = false) => play(enter),
+  /** A step with nothing in it: the statuses of the last step end (their expire plays) and the stage is quiet. */
+  idle: () => {
+    lab.counter += 1;
+    lab.step = { key: `lab:idle:${lab.counter}`, at: performance.now(), fx: { floaters: [], banner: null, shake: false, shakeAt: 0 }, motion: stepMotion(battleOf(), [], false), enter: false, shown: 0 };
+  },
+  info: () => {
+    const step = lab.step;
+    if (!step) return null;
+    const sides = new Map<string, 'ally' | 'enemy'>([...ALLIES.map((id) => [id, 'ally'] as const), ...FOES.map((id) => [id, 'enemy'] as const)]);
+    return { now: performance.now(), at: step.at, total: step.motion.total, speed: step.motion.speed, beats: step.motion.beats, marks: step.motion.marks, reactions: step.motion.reactions, cues: stepPlan(step, sides, lab.reduce) };
+  },
+  /** Nothing is being loaded (pictures are asked for lazily, at the cue that needs them). */
+  settled: () => {
+    const scene = lab.game?.scene.getScene('adventure-battle');
+    return !!scene && !scene.load.isLoading() && scene.load.list.size === 0;
+  },
+  skills: () => SKILL_LIST.map((s) => ({ id: s.id, type: s.type, element: s.element ?? null, target: s.target ?? null, statuses: (s.effects ?? []).filter((e) => e.kind === 'status').map((e) => (e as { status: string }).status), hasLook: !!BATTLE_FX.skills[s.id] })),
+  reactions: () => REACTIONS,
+  statuses: () => Object.entries((BATTLE_FX as unknown as { statuses?: Record<string, { apply?: unknown; loop?: unknown; layers?: unknown; expire?: unknown }> }).statuses ?? {}).map(([id, v]) => ({ id, hasApply: !!v.apply, hasLoop: !!v.loop, hasLayers: !!v.layers, hasExpire: !!v.expire, applySig: JSON.stringify(((v.apply ?? []) as { do: string; ref?: string; img?: string }[]).filter((a) => a.do !== 'sound').map((a) => [a.do, a.ref ?? a.img ?? ''])) })),
+};
+(window as unknown as { __animLab?: typeof hook }).__animLab = hook;
 
 /** The events a skill would make on the lab's field (enough for the motion to cut its beat): every target of an area skill, the statuses it puts on, the chosen reaction, phase change and victory. */
 function eventsOf(): BattleEvent[] {
@@ -71,6 +117,7 @@ function eventsOf(): BattleEvent[] {
     const on = e.to === 'self' ? [actor] : e.to === 'allies' ? mine : e.to === 'foes' ? theirs : friends.length > 0 ? friends : foes;
     for (const t of on) out.push({ type: 'status', actor, target: t, status: e.status, skillId: s!.id } as BattleEvent);
   }
+  if (lab.status) out.push({ type: 'status', actor, target: lab.statusTo === 'self' ? actor : theirs[0]!, status: lab.status, skillId: null } as unknown as BattleEvent);
   if (lab.reaction && foes[0]) out.push({ type: 'reaction', target: foes[0], reaction: lab.reaction } as BattleEvent);
   if (lab.ko) for (const f of foes) out.push({ type: 'defeat', target: f } as BattleEvent);
   if (lab.phase) out.push({ type: 'phase', target: FOES[0]!, phase: 2 } as BattleEvent);
@@ -79,6 +126,9 @@ function eventsOf(): BattleEvent[] {
 }
 
 function play(enter = false) {
+  if (lab.pausedAt) lab.game?.resume();
+  lab.pausedAt = 0;
+  lab.lastEnter = enter;
   const motion = stepMotion(battleOf(), eventsOf(), lab.fast);
   lab.counter += 1;
   lab.step = { key: `lab:${lab.counter}`, at: performance.now() + (enter ? 1100 : 150), fx: { floaters: [], banner: null, shake: false, shakeAt: 0 }, motion, enter, shown: 0 };
@@ -120,6 +170,8 @@ class Backdrop extends Phaser.Scene {
   create() {
     if (this.textures.exists('bg')) this.add.image(this.scale.width / 2, this.scale.height / 2, 'bg').setDisplaySize(this.scale.width, this.scale.height);
     this.scene.launch('adventure-battle');
+    // The stage can change size (full screen): the backdrop follows.
+    this.scale.on('resize', (size: Phaser.Structs.Size) => this.children.list.filter((c): c is Phaser.GameObjects.Image => c instanceof Phaser.GameObjects.Image).forEach((i) => i.setPosition(size.width / 2, size.height / 2).setDisplaySize(size.width, size.height)));
   }
 }
 
@@ -135,20 +187,71 @@ function mountGame(host: HTMLElement) {
   (window as unknown as { labGame?: Phaser.Game }).labGame = lab.game;
 }
 
+/** Holds the stage still, or lets it go on from the same moment (the step's clock waits too). */
+function togglePause(): boolean {
+  if (!lab.game || !lab.step) return false;
+  if (lab.pausedAt) {
+    lab.game.resume();
+    lab.step.at += performance.now() - lab.pausedAt;
+    lab.pausedAt = 0;
+  } else {
+    lab.game.pause();
+    lab.pausedAt = performance.now();
+  }
+  return lab.pausedAt > 0;
+}
+
+/** mm:ss.t */
+const clock = (ms: number) => `${String(Math.floor(ms / 60000)).padStart(2, '0')}:${((ms % 60000) / 1000).toFixed(1).padStart(4, '0')}`;
+
 /** The skill's own look in the file (what "Áp dụng thử" and "Lưu" change). */
 const ownRaw = () => ((lab.raw?.skills as Record<string, unknown> | undefined)?.[lab.skill] ?? {}) as Record<string, unknown>;
 
 /** The file with the skill's own look replaced by `own` (an empty object removes it), checked by the game's schema. */
-function withOwn(own: Record<string, unknown>): { raw: Record<string, unknown>; error: string | null } {
+function withOwn(own: Record<string, unknown>, apply = true): { raw: Record<string, unknown>; error: string | null } {
   const skills = { ...((lab.raw?.skills as Record<string, unknown>) ?? {}) };
   if (Object.keys(own).length === 0) delete skills[lab.skill];
   else skills[lab.skill] = own;
   const raw = { ...lab.raw, skills };
   const r = battleFxFileSchema.safeParse(raw);
-  return r.success ? (Object.assign(BATTLE_FX, r.data), { raw, error: null }) : { raw, error: r.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('\n') };
+  return r.success ? (apply && Object.assign(BATTLE_FX, r.data), { raw, error: null }) : { raw, error: r.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('\n') };
+}
+
+/** The skill trees of the four classes in a dialog; a click on a skill picks it in the lab. */
+function openTreeDialog(pic: (id: string) => string | null, skillPic: (id: string, element: string | null) => string | null, pick: (skillId: string) => void) {
+  const tree = (classId: (typeof CLASS_LIST)[number]['id']) => {
+    const nodes = TREES[classId];
+    const tiers = [...new Set(nodes.map((n) => n.tier))].sort((a, b) => a - b);
+    return `<section class="btree__class"><h3>${esc(CLASS_LIST.find((c) => c.id === classId)!.nameVi)}</h3>${tiers
+      .map((t) => `<div class="btree__tier"><span class="btree__label">Bậc ${t}</span>${nodes
+        .filter((n) => n.tier === t)
+        .map((n) => {
+          const sk = SKILLS[n.skill];
+          const img = skillPic(n.skill, sk?.element ?? null) ?? pic('ui_icon_adv_skill');
+          return `<button type="button" class="btree__node" data-pick="${n.skill}" title="${esc(sk?.descVi ?? '')}">${img ? `<img src="${img}" alt="" />` : ''}<b>${esc(sk?.nameVi ?? n.skill)}</b><small>${esc(n.branch)}${BATTLE_FX.skills[n.skill] ? ' · ★' : ''}</small></button>`;
+        })
+        .join('')}</div>`)
+      .join('')}</section>`;
+  };
+  const close = openModal({
+    title: 'Cây kỹ năng',
+    body: `<div class="btree">${CLASS_LIST.map((c) => tree(c.id)).join('')}</div>`,
+    submit: 'Đóng',
+    wide: true,
+    onSubmit: () => undefined,
+    onOpen: (form) => {
+      for (const b of form.querySelectorAll<HTMLButtonElement>('[data-pick]')) {
+        b.onclick = () => {
+          close();
+          pick(b.dataset.pick!);
+        };
+      }
+    },
+  });
 }
 
 export function renderBattleLab(root: HTMLElement) {
+  lab.root = root;
   if (!lab.raw) {
     root.innerHTML = '<p class="muted">Đang tải battle_fx.json…</p>';
     const content = json<{ files: Record<string, unknown> }>('/__admin/content').catch(() => null);
@@ -170,44 +273,165 @@ export function renderBattleLab(root: HTMLElement) {
   };
   const creatureName = (id: string) => ENEMY_LIST.find((e) => e.art === id)?.nameVi ?? state.pigs.find((p) => p.id === id)?.nameVi ?? (id.startsWith('fish_') ? 'Cá' : '');
   const skillPic = (id: string, element: string | null) => pic(`ui_${id}`) ?? (element && element !== 'SELF' ? pic(`ui_icon_elem_${element.toLowerCase()}`) : null) ?? pic('ui_icon_adv_skill');
-  const creatures = [...[...lab.images.values()].filter((r) => /^(pig_|fish_)/.test(r.id) && !/_(hurt|sleep|wake)$/.test(r.id)).map((r) => r.id), ...ENEMY_LIST.map((e) => e.art)];
+  // Combat animals (pigs, fish) and monsters are listed apart: the side that strikes and the side that is struck each get their own kind.
+  const animals = [...lab.images.values()].filter((r) => /^(pig_|fish_)/.test(r.id) && !/_(hurt|sleep|wake)$/.test(r.id)).map((r) => r.id);
+  const monsters = ENEMY_LIST.map((e) => e.art);
+  const attackers = lab.fromEnemy ? monsters : animals;
+  const targets = lab.fromEnemy ? animals : monsters;
+  const skills = SKILL_LIST.filter((x) => !lab.skillType || x.type === lab.skillType);
+  const skillTypes = [['', 'Mọi loại'], ['class', 'Chức nghiệp'], ['unique', 'Độc nhất'], ['ultimate', 'Tuyệt kỹ'], ['enemy', 'Quái vật']] as const;
   const element = SKILLS[lab.skill]?.element ?? null;
   const look = lookOf(element === 'SELF' ? null : element, lab.skill || null);
-  root.innerHTML = `<h3>Xưởng animation trận</h3>
-    <p class="muted">Chạy một kỹ năng giữa hai sinh vật bằng đúng sân trận Phaser của game, đọc từ <code>content/adventure/battle_fx.json</code>. Ô JSON là phần <b>riêng</b> của kỹ năng (để trống = dùng công thức của hệ). Cách viết: <code>docs/animation/COMBAT_ART_GUIDE.md</code> §4.</p>
-    <div class="form-grid">
-      <label class="field"><span>Kỹ năng</span><select data-skill data-rich>${opt('', 'Đánh thường', lab.skill, { img: pic('ui_icon_adv_attack'), sub: 'Đòn thường, không kỹ năng' })}${SKILL_LIST.map((s) => opt(s.id, s.nameVi, lab.skill, { img: skillPic(s.id, s.element ?? null), sub: `${s.element ? (ELEMENT_NAMES[s.element as keyof typeof ELEMENT_NAMES]?.nameVi ?? s.element) : 'Không hệ'} · ${s.category}${BATTLE_FX.skills[s.id] ? ' · ★ có animation riêng' : ''}` })).join('')}</select></label>
-      <label class="field"><span>Bên ra đòn</span><select data-attacker data-rich>${creatures.map((c) => opt(c, creatureName(c) || c, lab.attacker, { img: pic(c), sub: c })).join('')}</select></label>
-      <label class="field"><span>Bên nhận đòn</span><select data-target data-rich>${creatures.map((c) => opt(c, creatureName(c) || c, lab.target, { img: pic(c), sub: c })).join('')}</select></label>
-      <label class="field"><span>Số đồng đội</span><select data-count="allies" data-rich>${[1, 2, 3].map((n) => opt(String(n), `${n} đồng đội`, String(lab.allies), { icon: '🐷'.repeat(n) })).join('')}</select></label>
-      <label class="field"><span>Số quái</span><select data-count="foes" data-rich>${[1, 2, 3].map((n) => opt(String(n), `${n} quái`, String(lab.foes), { icon: '👾'.repeat(n) })).join('')}</select></label>
-      <label class="field"><span>Tha hóa của quái</span><select data-count="corruption" data-rich>${[0, 1, 2, 3, 4, 5].map((n) => opt(String(n), n ? `Cấp ${n}` : 'Không tha hóa', String(lab.corruption), { swatch: ['#9fd36b', '#c9b7e8', '#a98bd8', '#8460c4', '#6a3fae', '#4a1f86'][n]!, sub: n >= 3 ? 'Có hào quang tối' : '' })).join('')}</select></label>
-      <label class="field"><span>Phản ứng nguyên tố</span><select data-reaction data-rich>${opt('', 'Không có', lab.reaction, { icon: '—' })}${REACTIONS.map((x) => opt(x, REACTION_ROWS[x]?.nameVi ?? x, lab.reaction, { img: pic(reactionArt(x)), sub: x })).join('')}</select></label>
+  const allyArt = lab.fromEnemy ? lab.target : lab.attacker;
+  const def = lab.skill ? SKILLS[lab.skill] : undefined;
+  const flags = [['fromEnemy', 'Quái ra đòn (từ bên phải)'], ['crit', 'Chí mạng'], ['ko', 'Kết liễu'], ['reduce', 'Giảm chuyển động'], ['phase', 'Trùm đổi pha'], ['win', 'Thắng trận']] as const;
+  const lines = (text: string) => Array.from({ length: text.split('\n').length }, (_, n) => n + 1).join('\n');
+  const ownText = lab.skill ? JSON.stringify(ownRaw(), null, 2) : '';
+  const bad = !!lab.message && !lab.message.startsWith('✓');
+  root.innerHTML = `<div class="blab">
+    <p class="muted">Thiết kế và kiểm thử animation các kỹ năng trong trận đấu, trên đúng sân trận Phaser của game. Cách viết: <code>docs/animation/COMBAT_ART_GUIDE.md</code> §4.</p>
+    <section class="blab__card${lab.collapsed ? ' is-folded' : ''}" data-config>
+      <div class="blab__cardhead"><h3>⚙️ Cấu hình trận đấu</h3><button class="help-link" data-fold>${lab.collapsed ? 'Mở rộng ⌄' : 'Thu gọn ⌃'}</button></div>
+      <div class="blab__cardbody">
+        <div class="blab__grid">
+          <label class="field"><span>Loại kỹ năng</span><select data-skilltype>${skillTypes.map(([v, l]) => `<option value="${v}"${v === lab.skillType ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
+          <div class="field"><span>Kỹ năng</span><div class="blab__row"><select data-skill data-rich>${opt('', 'Đánh thường', lab.skill, { img: pic('ui_icon_adv_attack'), sub: 'Đòn thường, không kỹ năng' })}${skills.map((x) => opt(x.id, x.nameVi, lab.skill, { img: skillPic(x.id, x.element ?? null), sub: `${x.element ? (ELEMENT_NAMES[x.element as keyof typeof ELEMENT_NAMES]?.nameVi ?? x.element) : 'Không hệ'} · ${x.category}${BATTLE_FX.skills[x.id] ? ' · ★ có animation riêng' : ''}` })).join('')}</select><button type="button" class="btn btn-small" data-tree>🌳 Cây kỹ năng</button></div></div>
+          <label class="field"><span>${lab.fromEnemy ? 'Quái ra đòn' : 'Bên ra đòn'}</span><select data-attacker data-rich>${attackers.map((c) => opt(c, creatureName(c) || c, lab.attacker, { img: pic(c), sub: c })).join('')}</select></label>
+          <div class="field"><span>Đội hình (phe ta)</span><div class="blab__team">${[0, 1, 2].map((n) => `<button type="button" class="blab__chip${n < lab.allies ? ' is-on' : ''}" data-ally="${n}" title="${n + 1} đồng đội">${pic(allyArt) ? `<img src="${pic(allyArt)}" alt="" />` : '🐷'}</button>`).join('')}</div></div>
+          <label class="field"><span>${lab.fromEnemy ? 'Bên nhận đòn' : 'Quái nhận đòn'}</span><select data-target data-rich>${targets.map((c) => opt(c, creatureName(c) || c, lab.target, { img: pic(c), sub: c })).join('')}</select></label>
+          <label class="field"><span>Số quái</span><select data-count="foes" data-rich>${[1, 2, 3].map((n) => opt(String(n), `${n} quái`, String(lab.foes), { icon: '👾'.repeat(n) })).join('')}</select></label>
+          <label class="field"><span>Tha hóa của quái</span><select data-count="corruption" data-rich>${[0, 1, 2, 3, 4, 5].map((n) => opt(String(n), n ? `Cấp ${n}` : 'Không tha hóa', String(lab.corruption), { swatch: ['#9fd36b', '#c9b7e8', '#a98bd8', '#8460c4', '#6a3fae', '#4a1f86'][n]!, sub: n >= 3 ? 'Có hào quang tối' : '' })).join('')}</select></label>
+          <label class="field"><span>Phản ứng nguyên tố</span><select data-reaction data-rich>${opt('', 'Không có', lab.reaction, { icon: '—' })}${REACTIONS.map((x) => opt(x, REACTION_ROWS[x]?.nameVi ?? x, lab.reaction, { img: pic(reactionArt(x)), sub: x })).join('')}</select></label>
+        </div>
+        <div class="blab__flags">${flags.map(([k, label]) => `<label class="check"><input type="checkbox" data-flag="${k}"${(lab as unknown as Record<string, boolean>)[k] ? ' checked' : ''} /> ${label}</label>`).join('')}</div>
+      </div>
+    </section>
+    <div class="blab__cols">
+      <section class="blab__card">
+        <div class="blab__cardhead"><h3>▶ Xem trước animation</h3></div>
+        <div class="blab__bar">
+          <button class="btn btn-primary btn-small" data-play>▶ Chạy</button>
+          <button class="btn btn-small" data-enter>Vào trận</button>
+          <button class="btn btn-small" data-pause>⏸ Tạm dừng</button>
+          <button class="btn btn-small" data-replay>⟲ Phát lại</button>
+          <label class="blab__speed">Tốc độ <select data-speed><option value="1"${lab.fast ? '' : ' selected'}>100%</option><option value="2"${lab.fast ? ' selected' : ''}>×2 (nhanh)</option></select></label>
+          <span class="blab__spacer"></span>
+          <button class="btn btn-small" data-full title="Toàn màn hình">⛶</button>
+          <button class="btn btn-small" data-shot title="Chụp ảnh sân khấu">📷</button>
+        </div>
+        <div class="blab__stage" data-stage></div>
+        <div class="blab__time"><div class="blab__track"><i data-fill></i></div><span data-time>00:00.0 / 00:00.0</span></div>
+      </section>
+      <section class="blab__card">
+        <div class="blab__cardhead"><h3>✨ Kỹ năng đang chọn</h3></div>
+        <div class="blab__skill">
+          <img src="${skillPic(lab.skill, def?.element ?? null) ?? pic('ui_icon_adv_attack') ?? ''}" alt="" />
+          <div><b>${esc(def?.nameVi ?? 'Đánh thường')}</b>${lab.skill && BATTLE_FX.skills[lab.skill] ? ' <span class="blab__tag">★ có animation riêng</span>' : ''}<p class="muted">${esc(def?.descVi ?? 'Tấn công cơ bản, gây sát thương cho mục tiêu.')}</p></div>
+          <span class="blab__valid" data-valid></span>
+        </div>
+        <div class="blab__editor">
+          <pre class="blab__lines" data-lines>${lab.skill ? lines(ownText) : ''}</pre>
+          <textarea data-own rows="14" wrap="off" spellcheck="false"${lab.skill ? '' : ' disabled'}>${esc(lab.skill ? ownText : 'Chọn một kỹ năng để sửa phần riêng.')}</textarea>
+        </div>
+        <pre data-msg class="${bad ? 'error' : 'ok'}">${bad ? esc(lab.message) : ''}</pre>
+        <div class="blab__actions">
+          <button class="btn btn-small" data-format${lab.skill ? '' : ' disabled'}>⟳ Định dạng lại</button>
+          <button class="btn btn-small" data-try${lab.skill ? '' : ' disabled'}>▶ Áp dụng thử</button>
+          <button class="btn btn-primary btn-small" data-save${lab.skill && lab.online ? '' : ' disabled'}>💾 Lưu vào battle_fx.json</button>
+        </div>
+        <details class="blab__merged"><summary>Công thức đã gộp (hệ + phần riêng)</summary><pre class="muted">${esc(JSON.stringify({ ...look, color: `#${look.color.toString(16).padStart(6, '0')}`, glow: `#${look.glow.toString(16).padStart(6, '0')}` }, null, 1))}</pre></details>
+      </section>
     </div>
-    <div class="blab__flags">
-      ${([['fromEnemy', 'Quái ra đòn (từ bên phải)'], ['crit', 'Chí mạng'], ['ko', 'Kết liễu'], ['fast', 'Tốc độ x2'], ['reduce', 'Giảm chuyển động'], ['phase', 'Trùm đổi pha'], ['win', 'Thắng trận']] as const)
-        .map(([k, label]) => `<label class="check"><input type="checkbox" data-flag="${k}"${(lab as unknown as Record<string, boolean>)[k] ? ' checked' : ''} /> ${label}</label>`)
-        .join('')}
-    </div>
-    <p><button class="btn" data-play>▶ Chạy</button> <button class="btn ghost" data-enter>Vào trận</button></p>
-    <div data-stage style="position:relative;width:min(100%,1120px);aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#cfe6c4"></div>
-    <h4>Kỹ năng này trông thế nào (đã gộp hệ + phần riêng)</h4>
-    <pre class="muted" style="max-height:12rem;overflow:auto">${esc(JSON.stringify({ ...look, color: `#${look.color.toString(16).padStart(6, '0')}`, glow: `#${look.glow.toString(16).padStart(6, '0')}` }, null, 1))}</pre>
-    <h4>Phần riêng của kỹ năng (JSON)</h4>
-    <textarea data-own rows="8" style="width:100%;font-family:monospace"${lab.skill ? '' : ' disabled'}>${esc(lab.skill ? JSON.stringify(ownRaw(), null, 2) : 'Chọn một kỹ năng để sửa phần riêng.')}</textarea>
-    <p><button class="btn" data-try${lab.skill ? '' : ' disabled'}>Áp dụng thử</button> <button class="btn" data-save${lab.skill && lab.online ? '' : ' disabled'}>Lưu vào battle_fx.json</button></p>
-    <pre data-msg class="${lab.message.startsWith('✓') ? 'ok' : 'error'}">${esc(lab.message)}</pre>`;
+    <footer class="blab__status${bad ? ' is-bad' : ''}"><span>${bad ? '⚠️' : '✅'} ${esc((lab.message || 'Sẵn sàng. Chọn kỹ năng rồi nhấn Chạy để xem thử animation!').split('\n')[0]!)}</span><span class="muted">Mẹo: ⛶ xem toàn màn hình, 📷 lưu ảnh sân khấu.</span></footer>
+  </div>`;
   const q = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
   mountGame(q('[data-stage]'));
   const redo = () => renderBattleLab(root);
   q<HTMLSelectElement>('[data-skill]').onchange = (e) => ((lab.skill = (e.target as HTMLSelectElement).value), (lab.message = ''), redo());
+  q<HTMLSelectElement>('[data-skilltype]').onchange = (e) => {
+    lab.skillType = (e.target as HTMLSelectElement).value;
+    if (lab.skill && lab.skillType && SKILLS[lab.skill]?.type !== lab.skillType) lab.skill = '';
+    redo();
+  };
+  q('[data-tree]').onclick = () => openTreeDialog(pic, skillPic, (id) => ((lab.skill = id), (lab.skillType = ''), (lab.message = ''), redo()));
   q<HTMLSelectElement>('[data-attacker]').onchange = (e) => ((lab.attacker = (e.target as HTMLSelectElement).value), redo());
   q<HTMLSelectElement>('[data-target]').onchange = (e) => ((lab.target = (e.target as HTMLSelectElement).value), redo());
-  for (const box of root.querySelectorAll<HTMLInputElement>('[data-flag]')) box.onchange = () => ((lab as unknown as Record<string, boolean>)[box.dataset.flag!] = box.checked);
+  q('[data-fold]').onclick = () => {
+    lab.collapsed = !lab.collapsed;
+    q('[data-config]').classList.toggle('is-folded', lab.collapsed);
+    q('[data-fold]').textContent = lab.collapsed ? 'Mở rộng ⌄' : 'Thu gọn ⌃';
+  };
+  for (const chip of root.querySelectorAll<HTMLButtonElement>('[data-ally]')) {
+    chip.onclick = () => {
+      const n = Number(chip.dataset.ally) + 1;
+      lab.allies = n === lab.allies ? Math.max(1, n - 1) : n;
+      redo();
+    };
+  }
+  for (const flag of root.querySelectorAll<HTMLInputElement>('[data-flag]')) {
+    flag.onchange = () => {
+      (lab as unknown as Record<string, boolean>)[flag.dataset.flag!] = flag.checked;
+      if (flag.dataset.flag !== 'fromEnemy') return;
+      // The two sides swap kinds: the striker and the struck trade places so each list keeps its own kind.
+      [lab.attacker, lab.target] = [lab.target, lab.attacker];
+      redo();
+    };
+  }
   for (const sel of root.querySelectorAll<HTMLSelectElement>('[data-count]')) sel.onchange = () => ((lab as unknown as Record<string, number>)[sel.dataset.count!] = Number(sel.value));
   q<HTMLSelectElement>('[data-reaction]').onchange = (e) => (lab.reaction = (e.target as HTMLSelectElement).value);
   q('[data-play]').onclick = () => play();
   q('[data-enter]').onclick = () => play(true);
+  q('[data-replay]').onclick = () => play(lab.lastEnter);
+  q('[data-pause]').onclick = () => (q('[data-pause]').textContent = togglePause() ? '▶ Tiếp tục' : '⏸ Tạm dừng');
+  q<HTMLSelectElement>('[data-speed]').onchange = (e) => (lab.fast = (e.target as HTMLSelectElement).value === '2');
+  const stage = q('[data-stage]');
+  q('[data-full]').onclick = () => void (document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen());
+  stage.onfullscreenchange = () => lab.game?.scale.resize(stage.clientWidth, stage.clientHeight);
+  q('[data-shot]').onclick = () =>
+    lab.game?.renderer.snapshot((img) => {
+      const a = document.createElement('a');
+      a.href = (img as HTMLImageElement).src;
+      a.download = `animation-${lab.skill || 'attack'}.png`;
+      a.click();
+    });
+  // The clock under the stage: how far the step has played.
+  window.clearInterval(lab.timer);
+  const fill = q('[data-fill]');
+  const time = q('[data-time]');
+  lab.timer = window.setInterval(() => {
+    if (!fill.isConnected) return window.clearInterval(lab.timer);
+    const total = lab.step ? Math.max(0, lab.step.motion.total) : 0;
+    const t = lab.step ? Math.min(total, Math.max(0, (lab.pausedAt || performance.now()) - lab.step.at)) : 0;
+    fill.style.width = total ? `${(t / total) * 100}%` : '0%';
+    time.textContent = `${clock(t)} / ${clock(total)}`;
+  }, 80);
+  // The editor: line numbers, and whether what is written would be accepted.
+  const box = q<HTMLTextAreaElement>('[data-own]');
+  const gutter = q('[data-lines]');
+  const valid = q('[data-valid]');
+  const judge = () => {
+    gutter.textContent = lab.skill ? lines(box.value) : '';
+    if (!lab.skill) return void (valid.textContent = '');
+    try {
+      const r = withOwn(JSON.parse(box.value || '{}') as Record<string, unknown>, false);
+      valid.textContent = r.error ? '✗ Chưa hợp lệ' : '✓ Hợp lệ';
+      valid.className = `blab__valid ${r.error ? 'is-bad' : 'is-ok'}`;
+    } catch {
+      valid.textContent = '✗ JSON sai';
+      valid.className = 'blab__valid is-bad';
+    }
+  };
+  box.oninput = judge;
+  box.onscroll = () => (gutter.scrollTop = box.scrollTop);
+  judge();
+  q('[data-format]').onclick = () => {
+    try {
+      box.value = JSON.stringify(JSON.parse(box.value || '{}'), null, 2);
+      judge();
+    } catch (e) {
+      q('[data-msg]').textContent = `JSON sai: ${(e as Error).message}`;
+    }
+  };
   const own = (): Record<string, unknown> | null => {
     try {
       return JSON.parse(q<HTMLTextAreaElement>('[data-own]').value || '{}') as Record<string, unknown>;

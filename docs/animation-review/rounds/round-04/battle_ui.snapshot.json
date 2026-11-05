@@ -1,0 +1,980 @@
+{
+  "schema": 1,
+  "ok": true,
+  "error": null,
+  "pictures": [
+    "00_rift_entry.png",
+    "01_intro_curtain.png",
+    "02_hud_player_turn.png",
+    "03_hover_enemy.png",
+    "04_skill_cards.png",
+    "04b_hover_card.png",
+    "05_aiming.png",
+    "06_aim_hover.png",
+    "07_step_early.png",
+    "08_step_mid.png",
+    "09_step_late.png",
+    "10_next_turn.png",
+    "auto_00.png",
+    "auto_01.png",
+    "auto_02.png",
+    "auto_03.png",
+    "auto_04.png",
+    "auto_05.png",
+    "auto_06.png",
+    "auto_07.png",
+    "auto_08.png",
+    "auto_09.png",
+    "auto_10.png",
+    "auto_11.png",
+    "auto_12.png",
+    "auto_13.png"
+  ],
+  "metrics": {
+    "view": {
+      "width": 1600,
+      "height": 900
+    },
+    "url": "http://localhost:5196",
+    "dockSlideInMs": 2713,
+    "hudPlayerTurn": {
+      "dock": {
+        "x": 12,
+        "y": 760,
+        "w": 1576,
+        "h": 128,
+        "opacity": 1,
+        "transform": "none",
+        "visible": true
+      },
+      "turnbar": {
+        "x": 552,
+        "y": 16,
+        "w": 497,
+        "h": 70,
+        "opacity": 1,
+        "transform": "matrix(1, 0, 0, 1, -248.305, 0)",
+        "visible": true
+      },
+      "plates": 4,
+      "cards": 0,
+      "aiming": false,
+      "t": 18915
+    },
+    "hudAiming": {
+      "dock": {
+        "x": 12,
+        "y": 791,
+        "w": 1576,
+        "h": 113,
+        "opacity": 1,
+        "transform": "matrix(1, 0, 0, 1, 0, 15.8681)",
+        "visible": true
+      },
+      "turnbar": {
+        "x": 552,
+        "y": 16,
+        "w": 497,
+        "h": 70,
+        "opacity": 1,
+        "transform": "matrix(1, 0, 0, 1, -248.305, 0)",
+        "visible": true
+      },
+      "plates": 4,
+      "cards": 0,
+      "aiming": true,
+      "t": 30643
+    },
+    "aim": {
+      "rem": 16,
+      "aimable": 2,
+      "reticles": 2,
+      "sideReticle": false,
+      "units": [
+        {
+          "unit": "adventure-ui__unit.adventure-ui__unit--enemy",
+          "reticle": true,
+          "widthPx": 96,
+          "heightPx": 96,
+          "widthRem": 6,
+          "unitWidthPx": 160,
+          "reach": "5/5",
+          "blockedBy": [],
+          "pointerEvents": "auto"
+        },
+        {
+          "unit": "adventure-ui__unit.adventure-ui__unit--enemy",
+          "reticle": true,
+          "widthPx": 96,
+          "heightPx": 96,
+          "widthRem": 6,
+          "unitWidthPx": 160,
+          "reach": "5/5",
+          "blockedBy": [],
+          "pointerEvents": "auto"
+        }
+      ],
+      "aimLabel": false
+    },
+    "hover": {
+      "idle": {
+        "scale": "none",
+        "ringShadow": "rgb(226, 69, 31) 0px 0px 0px 3px, rgba(255, 120, 60, 0.85) 0px 0px 14px 3px, rgb"
+      },
+      "early": {
+        "hovered": true,
+        "scale": "1.12",
+        "ringShadow": "rgb(255, 176, 32) 0px 0px 0px 3px, rgba(255, 200, 60, 0.95) 0px 0px 22px 6px, rg"
+      },
+      "after": {
+        "hovered": true,
+        "scale": "1.12",
+        "ringShadow": "rgb(255, 176, 32) 0px 0px 0px 3px, rgba(255, 200, 60, 0.95) 0px 0px 22px 6px, rg"
+      }
+    },
+    "hudDuringStep": [
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 31568
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 835,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0.467825,
+          "transform": "matrix(1, 0, 0, 1, 0, 74.9302)",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 31735
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 32309
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 32467
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 32640
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 32807
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 33342
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 33508
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 33667
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 33837
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 34002
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 34167
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 369,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 34336
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 766,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0.955521,
+          "transform": "matrix(1, 0, 0, 1, 0, 6.26261)",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 34916
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 35086
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 35256
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 35418
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 35574
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "none",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 35736
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "none",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 35907
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "none",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 36069
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "none",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 36240
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "none",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 36407
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 760,
+          "w": 1576,
+          "h": 128,
+          "opacity": 1,
+          "transform": "none",
+          "visible": true
+        },
+        "turnbar": {
+          "x": 575,
+          "y": 16,
+          "w": 451,
+          "h": 70,
+          "opacity": 1,
+          "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 36574
+      }
+    ],
+    "hudNextTurn": {
+      "dock": {
+        "x": 12,
+        "y": 760,
+        "w": 1576,
+        "h": 128,
+        "opacity": 1,
+        "transform": "none",
+        "visible": true
+      },
+      "turnbar": {
+        "x": 575,
+        "y": 16,
+        "w": 451,
+        "h": 70,
+        "opacity": 1,
+        "transform": "matrix(1, 0, 0, 1, -225.305, 0)",
+        "visible": true
+      },
+      "plates": 4,
+      "cards": 0,
+      "aiming": false,
+      "t": 37930
+    },
+    "hudAuto": [
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 845,
+          "y": 16,
+          "w": 409,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 43395
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 845,
+          "y": 16,
+          "w": 409,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 48816
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 371,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 54235
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 845,
+          "y": 16,
+          "w": 409,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 59658
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 841,
+          "y": 16,
+          "w": 371,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 65046
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 832,
+          "y": 16,
+          "w": 296,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 70487
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 837,
+          "y": 16,
+          "w": 334,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 75916
+      },
+      {
+        "dock": {
+          "x": 12,
+          "y": 901,
+          "w": 1576,
+          "h": 128,
+          "opacity": 0,
+          "transform": "matrix(1, 0, 0, 1, 0, 140.8)",
+          "visible": false
+        },
+        "turnbar": {
+          "x": 837,
+          "y": 16,
+          "w": 333,
+          "h": 58,
+          "opacity": 1,
+          "transform": "matrix(0.82, 0, 0, 0.82, 0, 0)",
+          "visible": true
+        },
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 81366
+      },
+      {
+        "dock": null,
+        "turnbar": null,
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 86794
+      },
+      {
+        "dock": null,
+        "turnbar": null,
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 92155
+      },
+      {
+        "dock": null,
+        "turnbar": null,
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 97549
+      },
+      {
+        "dock": null,
+        "turnbar": null,
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 102926
+      },
+      {
+        "dock": null,
+        "turnbar": null,
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 108299
+      },
+      {
+        "dock": null,
+        "turnbar": null,
+        "plates": 4,
+        "cards": 0,
+        "aiming": false,
+        "t": 113666
+      }
+    ]
+  }
+}
