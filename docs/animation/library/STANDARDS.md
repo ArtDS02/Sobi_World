@@ -39,7 +39,7 @@ Bậc cần suy từ `power` của skill: 0 → T0 · < 0,9 → T1 · < 1,4 → 
 | T0 hỗ trợ | — | 0 | ≤ 0,15 (màu ấm, không trắng) | — | ≤ 0,1 |
 | T1 nhẹ | light (50) | 0–2 | — | — | — |
 | T2 thường | medium (80) | 3–4 | ≤ 0,25 | — | — |
-| T3 mạnh | heavy (120) | 5–6 | ≤ 0,35 | 1,02–1,04 | ≤ 0,2 |
+| T3 mạnh | medium (80) + `punch` / `flash` (heavy 120 chỉ cho `heavy` / `crit` / ultimate: rubric §10.3 giới hạn skill thường 50–100 ms) | 5–6 | ≤ 0,35 | 1,04 | ≤ 0,2 |
 | T4 ultimate | ultimate (220), có thể nhiều nhịp | 7–12 | ≤ 0,5, ≤ 2 chớp mạnh/giây | 1,04–1,08 | ≤ 0,5 |
 Lệch ≥ 2 bậc → cờ `IMPACT_UNDER_TIER` / `IMPACT_OVER_TIER`. Đòn nhiều nhịp: nhịp cuối mạnh nhất (1-2-…-**BỤP**).
 
@@ -48,7 +48,7 @@ Lệch ≥ 2 bậc → cờ `IMPACT_UNDER_TIER` / `IMPACT_OVER_TIER`. Đòn nhi�
 |---|---|---|---|
 | Đánh thường | 600–900 | 120–200 | 50–80 |
 | Skill T1–T2 | 900–1500 | 200–350 | 50–80 |
-| Skill T3 | 1300–2000 | 300–450 | 80–120 |
+| Skill T3 | 1300–2000 | 300–450 | 80–100 |
 | Ultimate | 2500–4500 (bỏ qua được) | ≥ 600 kèm cut-in | 120–220 |
 | Buff / hồi | 700–1400 | 150–250 | 0 |
 | Status: dính / mỗi nhịp loop / hết | 400–700 / ≤ 400 / 300–500 | | 0 (đóng băng vỡ: ≤ 60) |
@@ -68,3 +68,4 @@ Phản ứng **theo hướng đòn** và **theo bậc**: T1 giật nhẹ (`move 
 
 ## 8. Nhật ký
 - 2026-11-05: bản đầu (decision 049), từ nghiên cứu + audit P0.
+- 2026-11-05: T3 dùng hit-stop medium + punch 1,04 (không heavy 120) cho khớp rubric §10.3 (skill thường 50–100 ms).

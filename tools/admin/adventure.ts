@@ -10,6 +10,7 @@ import { vi } from '../../src/i18n/vi';
 import { RARITY_LABEL, esc } from './labels';
 import { imageOf } from './mapThumb';
 import { optionHtml, type Visual } from './richSelect';
+import { pageIntro, panel } from './worldUi';
 import { GUARDIAN_ART } from '../../src/areas/adventure/logic/art';
 
 interface Form {
@@ -67,23 +68,27 @@ export function renderAdventure(root: HTMLElement) {
   const options = <T extends string>(list: readonly { id: T; nameVi: string }[], cur: string, visual: (id: T) => Visual = () => ({})) => list.map((x) => optionHtml(x.id, x.nameVi, x.id === cur, visual(x.id))).join('');
   const rarityOptions = (cur: string) => RARITY_VALUES.map((r) => optionHtml(r, RARITY_LABEL[r] ?? r, r === cur, { swatch: RARITY_COLOUR[r] ?? '#999' })).join('');
   const zoneVisual = (id: string): Visual => ({ img: imageOf(ZONES[id]!.backdrop), sub: `Cấp đội gợi ý ${ZONES[id]!.levels.join('–')}` });
-  root.innerHTML = `<h3>Mô phỏng trận (Sobi Adventure)</h3>
-    <p class="muted">Một đội đi trọn ba khu của một vùng nhiều lần bằng đúng luật đánh của game (đánh mọi nhóm, uống suối khi yếu, hạ kẻ canh khu rồi trùm); cùng seed cho cùng kết quả. Cây kỹ năng tự mở theo SP của cấp. Không lưu gì.</p>
-    <div class="form-grid">
+  const zone = ZONES[form.zoneId]!;
+  const config = `<div class="form-grid">
       <label class="field"><span>Vùng</span><select data-zone data-rich>${options(ZONE_LIST, form.zoneId, zoneVisual)}</select></label>
-      <label class="field"><span>Cấp của cả đội</span><input type="number" min="1" max="30" data-level value="${form.level}" /></label>
+      <label class="field"><span>Cấp của cả đội (gợi ý ${zone.levels.join('–')})</span><input type="number" min="1" max="30" data-level value="${form.level}" /></label>
       <label class="field"><span>Trang bị</span><select data-gear data-rich>${GEAR_TIERS.map((g) => optionHtml(g, GEAR_LABEL[g], g === form.gear, GEAR_ART[g] ? { img: imageOf(GEAR_ART[g]) } : { icon: '🚫' })).join('')}</select></label>
-      ${Object.values(PREP_ITEMS).map((p) => `<label class="field"><span>Mang ${esc(vi.shop[p.itemId as ItemId] ?? p.itemId)}</span><input type="checkbox" data-prep="${p.itemId}"${form.prep.includes(p.itemId) ? ' checked' : ''} /></label>`).join('')}
       <label class="field"><span>Số chuyến</span><input type="number" min="1" max="2000" data-samples value="${form.samples}" /></label>
       <label class="field"><span>Random seed</span><input type="number" data-seed value="${form.seed}" /></label>
     </div>
-    <div class="form-grid">${form.team
-      .map((m, i) => `<label class="field"><span>Bạn ${i + 1}: dòng</span><select data-line="${i}" data-rich>${options(LINEAGE_LIST, m.lineage, (id) => ({ img: imageOf(GUARDIAN_ART[id]) }))}</select></label>
-        <label class="field"><span>Bạn ${i + 1}: class</span><select data-class="${i}" data-rich>${options(CLASS_LIST, m.classId, (id) => ({ img: imageOf(`ui_icon_class_${id}`) }))}</select></label>
-        <label class="field"><span>Bạn ${i + 1}: độ hiếm</span><select data-rarity="${i}" data-rich>${rarityOptions(m.rarity)}</select></label>
-        <label class="field"><span>Bạn ${i + 1}: tim (0–5)</span><input type="number" min="0" max="5" data-hearts="${i}" value="${m.hearts}" /></label>`)
-      .join('')}</div>
-    <div data-result>${run()}</div>`;
+    <div class="wflags">${Object.values(PREP_ITEMS).map((p) => `<label class="check"><input type="checkbox" data-prep="${p.itemId}"${form.prep.includes(p.itemId) ? ' checked' : ''} /> Mang ${esc(vi.shop[p.itemId as ItemId] ?? p.itemId)}</label>`).join('')}</div>`;
+  const team = `<div class="wteam">${form.team
+    .map((m, i) => `<div class="wteam__card"><h4>Bạn ${i + 1}</h4>
+        <label class="field"><span>Dòng</span><select data-line="${i}" data-rich>${options(LINEAGE_LIST, m.lineage, (id) => ({ img: imageOf(GUARDIAN_ART[id]) }))}</select></label>
+        <label class="field"><span>Class</span><select data-class="${i}" data-rich>${options(CLASS_LIST, m.classId, (id) => ({ img: imageOf(`ui_icon_class_${id}`) }))}</select></label>
+        <label class="field"><span>Độ hiếm</span><select data-rarity="${i}" data-rich>${rarityOptions(m.rarity)}</select></label>
+        <label class="field"><span>Tim (0–5)</span><input type="number" min="0" max="5" data-hearts="${i}" value="${m.hearts}" /></label></div>`)
+    .join('')}</div>`;
+  root.innerHTML = `${pageIntro('Một đội đi trọn ba khu của một vùng nhiều lần bằng đúng luật đánh của game (đánh mọi nhóm, uống suối khi yếu, hạ kẻ canh khu rồi trùm); cùng seed cho cùng kết quả. Cây kỹ năng tự mở theo SP của cấp. Không lưu gì.')}
+    ${panel('Cấu hình chuyến đi', config, { icon: '⚙️', fold: true })}
+    ${panel('Đội hình', team, { icon: '🛡️', fold: true })}
+    ${panel('Kết quả mô phỏng', '<div data-result></div>', { icon: '📊', note: `${form.samples} chuyến · seed ${form.seed}` })}`;
+  root.querySelector('[data-result]')!.innerHTML = run();
   const redo = () => {
     root.querySelector('[data-result]')!.innerHTML = run();
   };
@@ -97,7 +102,11 @@ export function renderAdventure(root: HTMLElement) {
       set((e.target as HTMLSelectElement).value);
       redo();
     });
-  pick('[data-zone]', (v) => (form.zoneId = v));
+  // The suggested level in the label follows the zone, so the panel is drawn again.
+  root.querySelector<HTMLSelectElement>('[data-zone]')!.addEventListener('change', (e) => {
+    form.zoneId = (e.target as HTMLSelectElement).value;
+    renderAdventure(root);
+  });
   pick('[data-gear]', (v) => (form.gear = v as GearTier));
   root.querySelectorAll<HTMLInputElement>('[data-prep]').forEach((box) =>
     box.addEventListener('change', () => {

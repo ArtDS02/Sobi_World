@@ -5,8 +5,8 @@
       "type": "class",
       "element": "SELF",
       "power": 1.5,
-      "acts": 12,
-      "durationMs": 1020,
+      "acts": 13,
+      "durationMs": 1220,
       "tier": {
         "expected": 3,
         "actual": 3
@@ -25,24 +25,23 @@
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
         "STATIC_HERO",
         "STATIC_SHARE",
-        "NO_AFTERMATH",
         "FEW_LAYERS",
         "DURATION_UNDER"
       ],
-      "priority": 27
+      "priority": 24
     },
     {
       "id": "skill_cl_armor_crush",
       "type": "class",
       "element": "SELF",
       "power": 0.9,
-      "acts": 13,
-      "durationMs": 880,
+      "acts": 14,
+      "durationMs": 980,
       "tier": {
         "expected": 2,
         "actual": 4
@@ -61,16 +60,14 @@
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
         "STATIC_HERO",
         "STATIC_SHARE",
-        "IMPACT_OVER_TIER",
-        "NO_AFTERMATH",
-        "DURATION_UNDER"
+        "IMPACT_OVER_TIER"
       ],
-      "priority": 24
+      "priority": 18
     },
     {
       "id": "skill_cl_fortress",
@@ -81,7 +78,7 @@
       "durationMs": 1450,
       "tier": {
         "expected": 0,
-        "actual": 2
+        "actual": 1
       },
       "staticShare": 0.8,
       "hero": {
@@ -101,44 +98,7 @@
       "flags": [
         "STATIC_HERO",
         "STATIC_SHARE",
-        "IMPACT_OVER_TIER",
         "DURATION_OVER"
-      ],
-      "priority": 21
-    },
-    {
-      "id": "skill_cl_finisher",
-      "type": "class",
-      "element": "SELF",
-      "power": 3,
-      "acts": 20,
-      "durationMs": 1550,
-      "tier": {
-        "expected": 3,
-        "actual": 4
-      },
-      "staticShare": 0.63,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_finisher_emblem",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L2-core",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "NO_AFTERMATH"
       ],
       "priority": 18
     },
@@ -176,117 +136,12 @@
       "priority": 18
     },
     {
-      "id": "skill_cl_seal",
-      "type": "class",
-      "element": "SELF",
-      "power": 0.6,
-      "acts": 11,
-      "durationMs": 1100,
-      "tier": {
-        "expected": 1,
-        "actual": 1
-      },
-      "staticShare": 0.38,
-      "hero": {
-        "do": "prop",
-        "img": "fxs_rune_a",
-        "liveness": 0
-      },
-      "layers": [
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "NO_AFTERMATH"
-      ],
-      "priority": 18
-    },
-    {
-      "id": "skill_cl_vital",
-      "type": "class",
-      "element": "SELF",
-      "power": 1.3,
-      "acts": 10,
-      "durationMs": 900,
-      "tier": {
-        "expected": 2,
-        "actual": 2
-      },
-      "staticShare": 0.35,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_crosshair",
-        "liveness": 0
-      },
-      "layers": [
-        "L1-body",
-        "L2-core",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "NO_AFTERMATH"
-      ],
-      "priority": 18
-    },
-    {
-      "id": "skill_e_wraith_touch",
-      "type": "enemy",
-      "element": "DARK",
-      "power": 1.3,
-      "acts": 10,
-      "durationMs": 1050,
-      "tier": {
-        "expected": 2,
-        "actual": 0
-      },
-      "staticShare": 1,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_ghost_hand",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L2-core",
-        "L3-particles"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": false,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "IMPACT_UNDER_TIER",
-        "NO_AFTERMATH"
-      ],
-      "priority": 18
-    },
-    {
       "id": "skill_qs_rock_smash",
       "type": "unique",
       "element": "EARTH",
       "power": 1.4,
-      "acts": 14,
-      "durationMs": 1200,
+      "acts": 16,
+      "durationMs": 1260,
       "tier": {
         "expected": 3,
         "actual": 4
@@ -305,24 +160,23 @@
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
         "STATIC_HERO",
         "STATIC_SHARE",
-        "NO_AFTERMATH",
         "FEW_LAYERS",
         "DURATION_UNDER"
       ],
-      "priority": 18
+      "priority": 16
     },
     {
       "id": "skill_qt_lumina",
       "type": "unique",
       "element": "LIGHT",
       "power": 2.2,
-      "acts": 16,
-      "durationMs": 1060,
+      "acts": 17,
+      "durationMs": 1160,
       "tier": {
         "expected": 3,
         "actual": 3
@@ -341,51 +195,13 @@
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
         "STATIC_HERO",
         "STATIC_SHARE",
-        "NO_AFTERMATH",
         "FEW_LAYERS",
         "DURATION_UNDER"
-      ],
-      "priority": 18
-    },
-    {
-      "id": "skill_e_seal_quake",
-      "type": "enemy",
-      "element": "EARTH",
-      "power": 1.3,
-      "acts": 16,
-      "durationMs": 2400,
-      "tier": {
-        "expected": 2,
-        "actual": 4
-      },
-      "staticShare": 0.65,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_seal_circle",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L2-core",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "IMPACT_OVER_TIER",
-        "NO_AFTERMATH",
-        "DURATION_OVER"
       ],
       "priority": 16
     },
@@ -488,6 +304,41 @@
       "priority": 15
     },
     {
+      "id": "skill_cl_finisher",
+      "type": "class",
+      "element": "SELF",
+      "power": 3,
+      "acts": 21,
+      "durationMs": 1550,
+      "tier": {
+        "expected": 3,
+        "actual": 4
+      },
+      "staticShare": 0.63,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_finisher_emblem",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 15
+    },
+    {
       "id": "skill_cl_meteor",
       "type": "class",
       "element": "SELF",
@@ -547,6 +398,39 @@
         "preparation": true,
         "impact": false,
         "aftermath": false
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 15
+    },
+    {
+      "id": "skill_cl_seal",
+      "type": "class",
+      "element": "SELF",
+      "power": 0.6,
+      "acts": 12,
+      "durationMs": 1300,
+      "tier": {
+        "expected": 1,
+        "actual": 1
+      },
+      "staticShare": 0.38,
+      "hero": {
+        "do": "prop",
+        "img": "fxs_rune_a",
+        "liveness": 0
+      },
+      "layers": [
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
       },
       "flags": [
         "STATIC_HERO",
@@ -619,20 +503,20 @@
       "priority": 15
     },
     {
-      "id": "skill_e_rock_slam",
-      "type": "enemy",
-      "element": "EARTH",
-      "power": 1.5,
+      "id": "skill_cl_vital",
+      "type": "class",
+      "element": "SELF",
+      "power": 1.3,
       "acts": 11,
-      "durationMs": 1050,
+      "durationMs": 920,
       "tier": {
-        "expected": 3,
-        "actual": 4
+        "expected": 2,
+        "actual": 2
       },
-      "staticShare": 0.6,
+      "staticShare": 0.35,
       "hero": {
         "do": "prop",
-        "img": "fxp_rock_fist",
+        "img": "fxp_crosshair",
         "liveness": 0
       },
       "layers": [
@@ -644,84 +528,13 @@
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
         "STATIC_HERO",
-        "STATIC_SHARE",
-        "NO_AFTERMATH",
-        "DURATION_UNDER"
+        "STATIC_SHARE"
       ],
-      "priority": 14
-    },
-    {
-      "id": "skill_cl_freeze",
-      "type": "class",
-      "element": "WATER",
-      "power": 0.8,
-      "acts": 11,
-      "durationMs": 1300,
-      "tier": {
-        "expected": 1,
-        "actual": 2
-      },
-      "staticShare": 0.21,
-      "hero": {
-        "do": "prop",
-        "img": "fxs_snowflake",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "NO_AFTERMATH"
-      ],
-      "priority": 12
-    },
-    {
-      "id": "skill_dm_nightmare",
-      "type": "unique",
-      "element": "DARK",
-      "power": 1.2,
-      "acts": 12,
-      "durationMs": 1300,
-      "tier": {
-        "expected": 2,
-        "actual": 1
-      },
-      "staticShare": 0.58,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_nightmare_mask",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "NO_AFTERMATH"
-      ],
-      "priority": 12
+      "priority": 15
     },
     {
       "id": "skill_e_bronze_crush",
@@ -759,46 +572,11 @@
       "priority": 12
     },
     {
-      "id": "skill_e_bubble",
-      "type": "enemy",
-      "element": "WATER",
-      "power": 1,
-      "acts": 10,
-      "durationMs": 1100,
-      "tier": {
-        "expected": 2,
-        "actual": 1
-      },
-      "staticShare": 0.58,
-      "hero": {
-        "do": "prop",
-        "img": "fxs_bubble",
-        "liveness": 0
-      },
-      "layers": [
-        "L1-body",
-        "L2-core",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "NO_AFTERMATH"
-      ],
-      "priority": 12
-    },
-    {
       "id": "skill_e_corrupt_bloom",
       "type": "enemy",
       "element": "NATURE",
       "power": 0.5,
-      "acts": 10,
+      "acts": 11,
       "durationMs": 1500,
       "tier": {
         "expected": 1,
@@ -833,7 +611,7 @@
       "type": "enemy",
       "element": "DARK",
       "power": 0.4,
-      "acts": 12,
+      "acts": 13,
       "durationMs": 1400,
       "tier": {
         "expected": 1,
@@ -897,46 +675,12 @@
       "priority": 12
     },
     {
-      "id": "skill_e_dragon_roar",
-      "type": "enemy",
-      "element": "SUPPORT",
-      "power": 0,
-      "acts": 6,
-      "durationMs": 1250,
-      "tier": {
-        "expected": 0,
-        "actual": 3
-      },
-      "staticShare": 1,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_dragon_roar",
-        "liveness": 0
-      },
-      "layers": [
-        "L1-body",
-        "L2-core",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "IMPACT_OVER_TIER"
-      ],
-      "priority": 12
-    },
-    {
       "id": "skill_e_idol_flame",
       "type": "enemy",
       "element": "FIRE",
       "power": 1,
-      "acts": 11,
-      "durationMs": 1500,
+      "acts": 13,
+      "durationMs": 1550,
       "tier": {
         "expected": 2,
         "actual": 3
@@ -957,47 +701,12 @@
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
         "STATIC_HERO",
         "STATIC_SHARE",
-        "NO_AFTERMATH"
-      ],
-      "priority": 12
-    },
-    {
-      "id": "skill_e_lava_spit",
-      "type": "enemy",
-      "element": "FIRE",
-      "power": 1.2,
-      "acts": 12,
-      "durationMs": 1120,
-      "tier": {
-        "expected": 2,
-        "actual": 3
-      },
-      "staticShare": 0.36,
-      "hero": {
-        "do": "prop",
-        "img": "fxs_ember",
-        "liveness": 0
-      },
-      "layers": [
-        "L1-body",
-        "L2-core",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "NO_AFTERMATH"
+        "DURATION_OVER"
       ],
       "priority": 12
     },
@@ -1038,23 +747,24 @@
       "priority": 12
     },
     {
-      "id": "skill_hg_forge_fire",
-      "type": "unique",
-      "element": "SUPPORT",
-      "power": 0,
-      "acts": 15,
-      "durationMs": 1250,
+      "id": "skill_e_seal_quake",
+      "type": "enemy",
+      "element": "EARTH",
+      "power": 1.3,
+      "acts": 18,
+      "durationMs": 2400,
       "tier": {
-        "expected": 0,
+        "expected": 2,
         "actual": 2
       },
-      "staticShare": 0.78,
+      "staticShare": 0.65,
       "hero": {
         "do": "prop",
-        "img": "fxp_forge_anvil",
+        "img": "fxp_seal_circle",
         "liveness": 0
       },
       "layers": [
+        "L0-screen",
         "L1-body",
         "L2-core",
         "L3-particles",
@@ -1068,7 +778,7 @@
       "flags": [
         "STATIC_HERO",
         "STATIC_SHARE",
-        "IMPACT_OVER_TIER"
+        "DURATION_OVER"
       ],
       "priority": 12
     },
@@ -1104,40 +814,6 @@
         "STATIC_HERO",
         "STATIC_SHARE",
         "DURATION_OVER"
-      ],
-      "priority": 12
-    },
-    {
-      "id": "skill_nh_bubble",
-      "type": "unique",
-      "element": "WATER",
-      "power": 1.3,
-      "acts": 15,
-      "durationMs": 1160,
-      "tier": {
-        "expected": 2,
-        "actual": 2
-      },
-      "staticShare": 0.65,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_bubble_big",
-        "liveness": 0
-      },
-      "layers": [
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "NO_AFTERMATH"
       ],
       "priority": 12
     },
@@ -1211,40 +887,6 @@
       "priority": 12
     },
     {
-      "id": "skill_tg_bronze_wall",
-      "type": "unique",
-      "element": "SUPPORT",
-      "power": 0,
-      "acts": 11,
-      "durationMs": 1200,
-      "tier": {
-        "expected": 0,
-        "actual": 3
-      },
-      "staticShare": 0.7,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_bronze_shield",
-        "liveness": 0
-      },
-      "layers": [
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "IMPACT_OVER_TIER"
-      ],
-      "priority": 12
-    },
-    {
       "id": "skill_tg_steel_slash",
       "type": "unique",
       "element": "METAL",
@@ -1314,6 +956,107 @@
       "priority": 10
     },
     {
+      "id": "skill_dm_nightmare",
+      "type": "unique",
+      "element": "DARK",
+      "power": 1.2,
+      "acts": 13,
+      "durationMs": 1320,
+      "tier": {
+        "expected": 2,
+        "actual": 1
+      },
+      "staticShare": 0.58,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_nightmare_mask",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 10
+    },
+    {
+      "id": "skill_e_bubble",
+      "type": "enemy",
+      "element": "WATER",
+      "power": 1,
+      "acts": 12,
+      "durationMs": 1300,
+      "tier": {
+        "expected": 2,
+        "actual": 1
+      },
+      "staticShare": 0.58,
+      "hero": {
+        "do": "prop",
+        "img": "fxs_bubble",
+        "liveness": 0
+      },
+      "layers": [
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 10
+    },
+    {
+      "id": "skill_e_dragon_roar",
+      "type": "enemy",
+      "element": "SUPPORT",
+      "power": 0,
+      "acts": 6,
+      "durationMs": 1250,
+      "tier": {
+        "expected": 0,
+        "actual": 1
+      },
+      "staticShare": 1,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_dragon_roar",
+        "liveness": 0
+      },
+      "layers": [
+        "L1-body",
+        "L2-core",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": false
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 10
+    },
+    {
       "id": "skill_e_iron_shell",
       "type": "enemy",
       "element": "SUPPORT",
@@ -1346,21 +1089,21 @@
       "priority": 10
     },
     {
-      "id": "skill_e_rune_beam",
+      "id": "skill_e_lava_spit",
       "type": "enemy",
-      "element": "LIGHT",
-      "power": 1.4,
-      "acts": 11,
-      "durationMs": 860,
+      "element": "FIRE",
+      "power": 1.2,
+      "acts": 14,
+      "durationMs": 1220,
       "tier": {
-        "expected": 3,
-        "actual": 1
+        "expected": 2,
+        "actual": 3
       },
-      "staticShare": 0,
+      "staticShare": 0.36,
       "hero": {
-        "do": "beam",
-        "img": null,
-        "liveness": 1
+        "do": "prop",
+        "img": "fxs_ember",
+        "liveness": 0
       },
       "layers": [
         "L1-body",
@@ -1371,12 +1114,45 @@
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
-        "IMPACT_UNDER_TIER",
-        "NO_AFTERMATH",
-        "DURATION_UNDER"
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 10
+    },
+    {
+      "id": "skill_e_rock_slam",
+      "type": "enemy",
+      "element": "EARTH",
+      "power": 1.5,
+      "acts": 13,
+      "durationMs": 1350,
+      "tier": {
+        "expected": 3,
+        "actual": 4
+      },
+      "staticShare": 0.6,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_rock_fist",
+        "liveness": 0
+      },
+      "layers": [
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
       ],
       "priority": 10
     },
@@ -1445,20 +1221,20 @@
       "priority": 10
     },
     {
-      "id": "skill_e_thorn_storm",
+      "id": "skill_e_wraith_touch",
       "type": "enemy",
-      "element": "NATURE",
+      "element": "DARK",
       "power": 1.3,
-      "acts": 17,
-      "durationMs": 2000,
+      "acts": 13,
+      "durationMs": 1150,
       "tier": {
         "expected": 2,
-        "actual": 4
+        "actual": 2
       },
-      "staticShare": 0.26,
+      "staticShare": 1,
       "hero": {
         "do": "prop",
-        "img": "fxs_thorn",
+        "img": "fxp_ghost_hand",
         "liveness": 0
       },
       "layers": [
@@ -1475,43 +1251,41 @@
       },
       "flags": [
         "STATIC_HERO",
-        "IMPACT_OVER_TIER",
-        "DURATION_OVER"
+        "STATIC_SHARE"
       ],
       "priority": 10
     },
     {
-      "id": "skill_e_tusk_charge",
-      "type": "enemy",
-      "element": "EARTH",
-      "power": 1.6,
-      "acts": 14,
-      "durationMs": 1150,
+      "id": "skill_hg_forge_fire",
+      "type": "unique",
+      "element": "SUPPORT",
+      "power": 0,
+      "acts": 15,
+      "durationMs": 1250,
       "tier": {
-        "expected": 3,
-        "actual": 4
+        "expected": 0,
+        "actual": 1
       },
-      "staticShare": 0,
+      "staticShare": 0.78,
       "hero": {
-        "do": "strip",
-        "img": "fx_boom",
-        "liveness": 0.5
+        "do": "prop",
+        "img": "fxp_forge_anvil",
+        "liveness": 0
       },
       "layers": [
         "L1-body",
+        "L2-core",
         "L3-particles",
         "L4-feedback"
       ],
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
-        "NO_AFTERMATH",
-        "FEW_LAYERS",
-        "DURATION_UNDER",
-        "SHARED_FLIPBOOK_HERO"
+        "STATIC_HERO",
+        "STATIC_SHARE"
       ],
       "priority": 10
     },
@@ -1583,42 +1357,6 @@
       "priority": 10
     },
     {
-      "id": "skill_ld_thunder_strike",
-      "type": "unique",
-      "element": "LIGHTNING",
-      "power": 1.4,
-      "acts": 15,
-      "durationMs": 1000,
-      "tier": {
-        "expected": 3,
-        "actual": 4
-      },
-      "staticShare": 0.14,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_horn_sigil",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L2-core",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "NO_AFTERMATH",
-        "DURATION_UNDER"
-      ],
-      "priority": 10
-    },
-    {
       "id": "skill_mm_blossom",
       "type": "unique",
       "element": "SUPPORT",
@@ -1643,6 +1381,39 @@
         "preparation": true,
         "impact": false,
         "aftermath": false
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 10
+    },
+    {
+      "id": "skill_nh_bubble",
+      "type": "unique",
+      "element": "WATER",
+      "power": 1.3,
+      "acts": 17,
+      "durationMs": 1360,
+      "tier": {
+        "expected": 2,
+        "actual": 2
+      },
+      "staticShare": 0.65,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_bubble_big",
+        "liveness": 0
+      },
+      "layers": [
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
       },
       "flags": [
         "STATIC_HERO",
@@ -1814,37 +1585,68 @@
       "priority": 10
     },
     {
-      "id": "skill_cl_power_strike",
-      "type": "class",
-      "element": "SELF",
-      "power": 1.8,
-      "acts": 15,
-      "durationMs": 930,
+      "id": "skill_tg_bronze_wall",
+      "type": "unique",
+      "element": "SUPPORT",
+      "power": 0,
+      "acts": 11,
+      "durationMs": 1200,
       "tier": {
-        "expected": 3,
-        "actual": 4
+        "expected": 0,
+        "actual": 1
       },
-      "staticShare": 0,
+      "staticShare": 0.7,
       "hero": {
-        "do": "strip",
-        "img": "fx_slash_arc",
-        "liveness": 0.5
+        "do": "prop",
+        "img": "fxp_bronze_shield",
+        "liveness": 0
       },
       "layers": [
         "L1-body",
-        "L2-core",
         "L3-particles",
         "L4-feedback"
       ],
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
-        "NO_AFTERMATH",
-        "DURATION_UNDER",
-        "SHARED_FLIPBOOK_HERO"
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 10
+    },
+    {
+      "id": "skill_cl_freeze",
+      "type": "class",
+      "element": "WATER",
+      "power": 0.8,
+      "acts": 13,
+      "durationMs": 1350,
+      "tier": {
+        "expected": 1,
+        "actual": 2
+      },
+      "staticShare": 0.21,
+      "hero": {
+        "do": "prop",
+        "img": "fxs_snowflake",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO"
       ],
       "priority": 9
     },
@@ -1880,11 +1682,115 @@
       "priority": 9
     },
     {
+      "id": "skill_e_thorn_storm",
+      "type": "enemy",
+      "element": "NATURE",
+      "power": 1.3,
+      "acts": 17,
+      "durationMs": 2000,
+      "tier": {
+        "expected": 2,
+        "actual": 2
+      },
+      "staticShare": 0.26,
+      "hero": {
+        "do": "prop",
+        "img": "fxs_thorn",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "DURATION_OVER"
+      ],
+      "priority": 8
+    },
+    {
+      "id": "skill_e_tusk_charge",
+      "type": "enemy",
+      "element": "EARTH",
+      "power": 1.6,
+      "acts": 16,
+      "durationMs": 1250,
+      "tier": {
+        "expected": 3,
+        "actual": 4
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_boom",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "FEW_LAYERS",
+        "DURATION_UNDER",
+        "SHARED_FLIPBOOK_HERO"
+      ],
+      "priority": 8
+    },
+    {
+      "id": "skill_ld_thunder_strike",
+      "type": "unique",
+      "element": "LIGHTNING",
+      "power": 1.4,
+      "acts": 16,
+      "durationMs": 1000,
+      "tier": {
+        "expected": 3,
+        "actual": 4
+      },
+      "staticShare": 0.14,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_horn_sigil",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "DURATION_UNDER"
+      ],
+      "priority": 8
+    },
+    {
       "id": "skill_ult_qs",
       "type": "ultimate",
       "element": "SUPPORT",
       "power": 0,
-      "acts": 34,
+      "acts": 36,
       "durationMs": 3300,
       "tier": {
         "expected": 4,
@@ -1899,6 +1805,7 @@
       "layers": [
         "L0-screen",
         "L1-body",
+        "L2-core",
         "L3-particles",
         "L4-feedback"
       ],
@@ -1910,461 +1817,7 @@
       "flags": [
         "STATIC_HERO",
         "STATIC_SHARE",
-        "NO_PREPARATION",
-        "FEW_LAYERS"
-      ],
-      "priority": 9
-    },
-    {
-      "id": "skill_dm_ink",
-      "type": "unique",
-      "element": "DARK",
-      "power": 1.3,
-      "acts": 12,
-      "durationMs": 1020,
-      "tier": {
-        "expected": 2,
-        "actual": 2
-      },
-      "staticShare": 0.21,
-      "hero": {
-        "do": "prop",
-        "img": "fxs_ink_blob",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_HERO",
-        "NO_AFTERMATH"
-      ],
-      "priority": 8
-    },
-    {
-      "id": "skill_e_frost_breath",
-      "type": "enemy",
-      "element": "WATER",
-      "power": 1,
-      "acts": 13,
-      "durationMs": 1250,
-      "tier": {
-        "expected": 2,
-        "actual": 0
-      },
-      "staticShare": 0,
-      "hero": {
-        "do": "strip",
-        "img": "fx_ice_encase",
-        "liveness": 0.5
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L2-core",
-        "L3-particles"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": false,
-        "aftermath": false
-      },
-      "flags": [
-        "IMPACT_UNDER_TIER",
-        "NO_AFTERMATH"
-      ],
-      "priority": 8
-    },
-    {
-      "id": "skill_hg_hot_claw",
-      "type": "unique",
-      "element": "FIRE",
-      "power": 1.3,
-      "acts": 14,
-      "durationMs": 1040,
-      "tier": {
-        "expected": 2,
-        "actual": 3
-      },
-      "staticShare": 0.35,
-      "hero": {
-        "do": "strip",
-        "img": "fx_flame_burst",
-        "liveness": 0.5
-      },
-      "layers": [
-        "L1-body",
-        "L2-core",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "STATIC_SHARE",
-        "NO_AFTERMATH",
-        "SHARED_FLIPBOOK_HERO"
-      ],
-      "priority": 8
-    },
-    {
-      "id": "skill_ult_dm",
-      "type": "ultimate",
-      "element": "DARK",
-      "power": 1.5,
-      "acts": 30,
-      "durationMs": 3100,
-      "tier": {
-        "expected": 4,
-        "actual": 4
-      },
-      "staticShare": 0.94,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_octo_tentacle",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "FEW_LAYERS"
-      ],
-      "priority": 7
-    },
-    {
-      "id": "skill_ult_hg",
-      "type": "ultimate",
-      "element": "FIRE",
-      "power": 2,
-      "acts": 39,
-      "durationMs": 3300,
-      "tier": {
-        "expected": 4,
-        "actual": 4
-      },
-      "staticShare": 0.63,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_forge_anvil",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "FEW_LAYERS"
-      ],
-      "priority": 7
-    },
-    {
-      "id": "skill_ult_hk",
-      "type": "ultimate",
-      "element": "VOID",
-      "power": 2.2,
-      "acts": 41,
-      "durationMs": 3200,
-      "tier": {
-        "expected": 4,
-        "actual": 4
-      },
-      "staticShare": 1,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_sky_bell",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "FEW_LAYERS"
-      ],
-      "priority": 7
-    },
-    {
-      "id": "skill_ult_ld",
-      "type": "ultimate",
-      "element": "LIGHTNING",
-      "power": 2.5,
-      "acts": 33,
-      "durationMs": 3100,
-      "tier": {
-        "expected": 4,
-        "actual": 4
-      },
-      "staticShare": 0.58,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_horn_sigil",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "FEW_LAYERS"
-      ],
-      "priority": 7
-    },
-    {
-      "id": "skill_ult_mm",
-      "type": "ultimate",
-      "element": "SUPPORT",
-      "power": 0,
-      "acts": 29,
-      "durationMs": 3400,
-      "tier": {
-        "expected": 4,
-        "actual": 4
-      },
-      "staticShare": 0.81,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_mother_tree",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "FEW_LAYERS"
-      ],
-      "priority": 7
-    },
-    {
-      "id": "skill_ult_mythical",
-      "type": "ultimate",
-      "element": "VOID",
-      "power": 2,
-      "acts": 38,
-      "durationMs": 3500,
-      "tier": {
-        "expected": 4,
-        "actual": 4
-      },
-      "staticShare": 0.59,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_spirit_circle",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "FEW_LAYERS"
-      ],
-      "priority": 7
-    },
-    {
-      "id": "skill_ult_nh",
-      "type": "ultimate",
-      "element": "SUPPORT",
-      "power": 0,
-      "acts": 36,
-      "durationMs": 3300,
-      "tier": {
-        "expected": 4,
-        "actual": 4
-      },
-      "staticShare": 0.61,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_whale",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "FEW_LAYERS"
-      ],
-      "priority": 7
-    },
-    {
-      "id": "skill_ult_qt",
-      "type": "ultimate",
-      "element": "SUPPORT",
-      "power": 0,
-      "acts": 32,
-      "durationMs": 3200,
-      "tier": {
-        "expected": 4,
-        "actual": 4
-      },
-      "staticShare": 1,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_moon_lantern",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "FEW_LAYERS"
-      ],
-      "priority": 7
-    },
-    {
-      "id": "skill_ult_tg",
-      "type": "ultimate",
-      "element": "METAL",
-      "power": 2,
-      "acts": 38,
-      "durationMs": 3300,
-      "tier": {
-        "expected": 4,
-        "actual": 4
-      },
-      "staticShare": 0.87,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_bronze_knight",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "FEW_LAYERS"
-      ],
-      "priority": 7
-    },
-    {
-      "id": "skill_ult_trident",
-      "type": "ultimate",
-      "element": "WATER",
-      "power": 2.2,
-      "acts": 32,
-      "durationMs": 3200,
-      "tier": {
-        "expected": 4,
-        "actual": 4
-      },
-      "staticShare": 0.68,
-      "hero": {
-        "do": "prop",
-        "img": "fxp_trident",
-        "liveness": 0
-      },
-      "layers": [
-        "L0-screen",
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "STATIC_HERO",
-        "STATIC_SHARE",
-        "FEW_LAYERS"
+        "NO_PREPARATION"
       ],
       "priority": 7
     },
@@ -2397,6 +1850,40 @@
       },
       "flags": [
         "IMPACT_OVER_TIER",
+        "SHARED_FLIPBOOK_HERO"
+      ],
+      "priority": 6
+    },
+    {
+      "id": "skill_cl_power_strike",
+      "type": "class",
+      "element": "SELF",
+      "power": 1.8,
+      "acts": 16,
+      "durationMs": 930,
+      "tier": {
+        "expected": 3,
+        "actual": 4
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_slash_arc",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "DURATION_UNDER",
         "SHARED_FLIPBOOK_HERO"
       ],
       "priority": 6
@@ -2469,6 +1956,39 @@
       "priority": 6
     },
     {
+      "id": "skill_dm_ink",
+      "type": "unique",
+      "element": "DARK",
+      "power": 1.3,
+      "acts": 13,
+      "durationMs": 1120,
+      "tier": {
+        "expected": 2,
+        "actual": 2
+      },
+      "staticShare": 0.21,
+      "hero": {
+        "do": "prop",
+        "img": "fxs_ink_blob",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO"
+      ],
+      "priority": 6
+    },
+    {
       "id": "skill_e_bark_skin",
       "type": "enemy",
       "element": "SUPPORT",
@@ -2496,41 +2016,6 @@
       },
       "flags": [
         "STATIC_SHARE",
-        "SHARED_FLIPBOOK_HERO"
-      ],
-      "priority": 6
-    },
-    {
-      "id": "skill_e_dive",
-      "type": "enemy",
-      "element": "LIGHTNING",
-      "power": 1.6,
-      "acts": 11,
-      "durationMs": 1250,
-      "tier": {
-        "expected": 3,
-        "actual": 4
-      },
-      "staticShare": 0,
-      "hero": {
-        "do": "strip",
-        "img": "fx_boom",
-        "liveness": 0.5
-      },
-      "layers": [
-        "L1-body",
-        "L2-core",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "NO_AFTERMATH",
-        "DURATION_UNDER",
         "SHARED_FLIPBOOK_HERO"
       ],
       "priority": 6
@@ -2602,20 +2087,20 @@
       "priority": 6
     },
     {
-      "id": "skill_e_spark_peck",
-      "type": "enemy",
-      "element": "LIGHTNING",
+      "id": "skill_hg_hot_claw",
+      "type": "unique",
+      "element": "FIRE",
       "power": 1.3,
-      "acts": 15,
-      "durationMs": 850,
+      "acts": 16,
+      "durationMs": 1050,
       "tier": {
         "expected": 2,
-        "actual": 1
+        "actual": 3
       },
-      "staticShare": 0,
+      "staticShare": 0.35,
       "hero": {
         "do": "strip",
-        "img": "fx_pow_star",
+        "img": "fx_flame_burst",
         "liveness": 0.5
       },
       "layers": [
@@ -2627,33 +2112,33 @@
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
-        "NO_AFTERMATH",
-        "DURATION_UNDER",
+        "STATIC_SHARE",
         "SHARED_FLIPBOOK_HERO"
       ],
       "priority": 6
     },
     {
-      "id": "skill_tg_steel_charge",
-      "type": "unique",
-      "element": "METAL",
-      "power": 2.2,
-      "acts": 14,
-      "durationMs": 1160,
+      "id": "skill_ult_dm",
+      "type": "ultimate",
+      "element": "DARK",
+      "power": 1.5,
+      "acts": 31,
+      "durationMs": 3100,
       "tier": {
-        "expected": 3,
+        "expected": 4,
         "actual": 4
       },
-      "staticShare": 0,
+      "staticShare": 0.94,
       "hero": {
-        "do": "strip",
-        "img": "fx_boom",
-        "liveness": 0.5
+        "do": "prop",
+        "img": "fxp_octo_tentacle",
+        "liveness": 0
       },
       "layers": [
+        "L0-screen",
         "L1-body",
         "L2-core",
         "L3-particles",
@@ -2662,14 +2147,223 @@
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
-        "NO_AFTERMATH",
-        "DURATION_UNDER",
-        "SHARED_FLIPBOOK_HERO"
+        "STATIC_HERO",
+        "STATIC_SHARE"
       ],
-      "priority": 6
+      "priority": 5
+    },
+    {
+      "id": "skill_ult_hg",
+      "type": "ultimate",
+      "element": "FIRE",
+      "power": 2,
+      "acts": 40,
+      "durationMs": 3300,
+      "tier": {
+        "expected": 4,
+        "actual": 4
+      },
+      "staticShare": 0.63,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_forge_anvil",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "skill_ult_hk",
+      "type": "ultimate",
+      "element": "VOID",
+      "power": 2.2,
+      "acts": 42,
+      "durationMs": 3200,
+      "tier": {
+        "expected": 4,
+        "actual": 4
+      },
+      "staticShare": 1,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_sky_bell",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "skill_ult_ld",
+      "type": "ultimate",
+      "element": "LIGHTNING",
+      "power": 2.5,
+      "acts": 34,
+      "durationMs": 3100,
+      "tier": {
+        "expected": 4,
+        "actual": 4
+      },
+      "staticShare": 0.58,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_horn_sigil",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "skill_ult_mm",
+      "type": "ultimate",
+      "element": "SUPPORT",
+      "power": 0,
+      "acts": 30,
+      "durationMs": 3400,
+      "tier": {
+        "expected": 4,
+        "actual": 4
+      },
+      "staticShare": 0.81,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_mother_tree",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "skill_ult_mythical",
+      "type": "ultimate",
+      "element": "VOID",
+      "power": 2,
+      "acts": 39,
+      "durationMs": 3500,
+      "tier": {
+        "expected": 4,
+        "actual": 4
+      },
+      "staticShare": 0.59,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_spirit_circle",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "skill_ult_nh",
+      "type": "ultimate",
+      "element": "SUPPORT",
+      "power": 0,
+      "acts": 37,
+      "durationMs": 3300,
+      "tier": {
+        "expected": 4,
+        "actual": 4
+      },
+      "staticShare": 0.61,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_whale",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 5
     },
     {
       "id": "skill_ult_phoenix",
@@ -2707,54 +2401,21 @@
       "priority": 5
     },
     {
-      "id": "skill_e_ember_bite",
-      "type": "enemy",
-      "element": "FIRE",
-      "power": 1.3,
-      "acts": 12,
-      "durationMs": 980,
+      "id": "skill_ult_qt",
+      "type": "ultimate",
+      "element": "SUPPORT",
+      "power": 0,
+      "acts": 33,
+      "durationMs": 3200,
       "tier": {
-        "expected": 2,
-        "actual": 3
-      },
-      "staticShare": 0,
-      "hero": {
-        "do": "strip",
-        "img": "fx_flame_burst",
-        "liveness": 0.5
-      },
-      "layers": [
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "NO_AFTERMATH",
-        "SHARED_FLIPBOOK_HERO"
-      ],
-      "priority": 4
-    },
-    {
-      "id": "skill_e_magma_breath",
-      "type": "enemy",
-      "element": "FIRE",
-      "power": 1.1,
-      "acts": 12,
-      "durationMs": 1500,
-      "tier": {
-        "expected": 2,
+        "expected": 4,
         "actual": 4
       },
-      "staticShare": 0,
+      "staticShare": 1,
       "hero": {
-        "do": "strip",
-        "img": "fx_flame_burst",
-        "liveness": 0.5
+        "do": "prop",
+        "img": "fxp_moon_lantern",
+        "liveness": 0
       },
       "layers": [
         "L0-screen",
@@ -2769,26 +2430,96 @@
         "aftermath": true
       },
       "flags": [
-        "IMPACT_OVER_TIER",
-        "SHARED_FLIPBOOK_HERO"
+        "STATIC_HERO",
+        "STATIC_SHARE"
       ],
-      "priority": 4
+      "priority": 5
     },
     {
-      "id": "skill_e_thunder_charge",
+      "id": "skill_ult_tg",
+      "type": "ultimate",
+      "element": "METAL",
+      "power": 2,
+      "acts": 39,
+      "durationMs": 3300,
+      "tier": {
+        "expected": 4,
+        "actual": 4
+      },
+      "staticShare": 0.87,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_bronze_knight",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "skill_ult_trident",
+      "type": "ultimate",
+      "element": "WATER",
+      "power": 2.2,
+      "acts": 33,
+      "durationMs": 3200,
+      "tier": {
+        "expected": 4,
+        "actual": 4
+      },
+      "staticShare": 0.68,
+      "hero": {
+        "do": "prop",
+        "img": "fxp_trident",
+        "liveness": 0
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "STATIC_HERO",
+        "STATIC_SHARE"
+      ],
+      "priority": 5
+    },
+    {
+      "id": "skill_e_dive",
       "type": "enemy",
       "element": "LIGHTNING",
-      "power": 0.9,
-      "acts": 13,
-      "durationMs": 1400,
+      "power": 1.6,
+      "acts": 12,
+      "durationMs": 1250,
       "tier": {
-        "expected": 2,
-        "actual": 3
+        "expected": 3,
+        "actual": 4
       },
       "staticShare": 0,
       "hero": {
         "do": "strip",
-        "img": "fx_slash_arc",
+        "img": "fx_boom",
         "liveness": 0.5
       },
       "layers": [
@@ -2800,77 +2531,45 @@
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
-        "NO_AFTERMATH",
+        "DURATION_UNDER",
         "SHARED_FLIPBOOK_HERO"
       ],
       "priority": 4
     },
     {
-      "id": "skill_e_vine_lash",
+      "id": "skill_e_spark_peck",
       "type": "enemy",
-      "element": "NATURE",
-      "power": 1.2,
-      "acts": 11,
-      "durationMs": 860,
+      "element": "LIGHTNING",
+      "power": 1.3,
+      "acts": 16,
+      "durationMs": 880,
       "tier": {
         "expected": 2,
-        "actual": 2
+        "actual": 1
       },
       "staticShare": 0,
       "hero": {
         "do": "strip",
-        "img": "fx_vine_grab",
+        "img": "fx_pow_star",
         "liveness": 0.5
       },
       "layers": [
         "L1-body",
+        "L2-core",
         "L3-particles",
         "L4-feedback"
       ],
       "phases": {
         "preparation": true,
         "impact": true,
-        "aftermath": false
+        "aftermath": true
       },
       "flags": [
-        "NO_AFTERMATH",
-        "DURATION_UNDER"
-      ],
-      "priority": 4
-    },
-    {
-      "id": "skill_hk_void_vortex",
-      "type": "unique",
-      "element": "VOID",
-      "power": 0.85,
-      "acts": 13,
-      "durationMs": 1250,
-      "tier": {
-        "expected": 1,
-        "actual": 4
-      },
-      "staticShare": 0,
-      "hero": {
-        "do": "strip",
-        "img": "fx_void_portal",
-        "liveness": 0.5
-      },
-      "layers": [
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "IMPACT_OVER_TIER",
-        "NO_AFTERMATH"
+        "DURATION_UNDER",
+        "SHARED_FLIPBOOK_HERO"
       ],
       "priority": 4
     },
@@ -2897,6 +2596,40 @@
       },
       "flags": [
         "FEW_LAYERS"
+      ],
+      "priority": 4
+    },
+    {
+      "id": "skill_tg_steel_charge",
+      "type": "unique",
+      "element": "METAL",
+      "power": 2.2,
+      "acts": 15,
+      "durationMs": 1160,
+      "tier": {
+        "expected": 3,
+        "actual": 4
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_boom",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "DURATION_UNDER",
+        "SHARED_FLIPBOOK_HERO"
       ],
       "priority": 4
     },
@@ -3028,71 +2761,6 @@
       "priority": 3
     },
     {
-      "id": "skill_cl_rend",
-      "type": "class",
-      "element": "SELF",
-      "power": 1.1,
-      "acts": 11,
-      "durationMs": 960,
-      "tier": {
-        "expected": 2,
-        "actual": 3
-      },
-      "staticShare": 0,
-      "hero": {
-        "do": "strip",
-        "img": "fx_claw",
-        "liveness": 0.5
-      },
-      "layers": [
-        "L1-body",
-        "L2-core",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "NO_AFTERMATH"
-      ],
-      "priority": 3
-    },
-    {
-      "id": "skill_cl_spell_storm",
-      "type": "class",
-      "element": "SELF",
-      "power": 0.7,
-      "acts": 10,
-      "durationMs": 1400,
-      "tier": {
-        "expected": 1,
-        "actual": 2
-      },
-      "staticShare": 0,
-      "hero": {
-        "do": "strip",
-        "img": "fx_wind_swirl",
-        "liveness": 0.5
-      },
-      "layers": [
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "NO_AFTERMATH"
-      ],
-      "priority": 3
-    },
-    {
       "id": "skill_cl_tremor",
       "type": "class",
       "element": "SELF",
@@ -3158,12 +2826,78 @@
       "priority": 2
     },
     {
+      "id": "skill_e_ember_bite",
+      "type": "enemy",
+      "element": "FIRE",
+      "power": 1.3,
+      "acts": 14,
+      "durationMs": 1050,
+      "tier": {
+        "expected": 2,
+        "actual": 3
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_flame_burst",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "SHARED_FLIPBOOK_HERO"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "skill_e_magma_breath",
+      "type": "enemy",
+      "element": "FIRE",
+      "power": 1.1,
+      "acts": 12,
+      "durationMs": 1500,
+      "tier": {
+        "expected": 2,
+        "actual": 2
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_flame_burst",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "SHARED_FLIPBOOK_HERO"
+      ],
+      "priority": 2
+    },
+    {
       "id": "skill_e_poison_spore",
       "type": "enemy",
       "element": "NATURE",
       "power": 0.8,
-      "acts": 10,
-      "durationMs": 1100,
+      "acts": 11,
+      "durationMs": 1200,
       "tier": {
         "expected": 1,
         "actual": 0
@@ -3186,6 +2920,72 @@
       },
       "flags": [
         "NO_AFTERMATH"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "skill_e_rune_beam",
+      "type": "enemy",
+      "element": "LIGHT",
+      "power": 1.4,
+      "acts": 14,
+      "durationMs": 1060,
+      "tier": {
+        "expected": 3,
+        "actual": 3
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "beam",
+        "img": null,
+        "liveness": 1
+      },
+      "layers": [
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "DURATION_UNDER"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "skill_e_thunder_charge",
+      "type": "enemy",
+      "element": "LIGHTNING",
+      "power": 0.9,
+      "acts": 14,
+      "durationMs": 1400,
+      "tier": {
+        "expected": 2,
+        "actual": 3
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_slash_arc",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [
+        "SHARED_FLIPBOOK_HERO"
       ],
       "priority": 2
     },
@@ -3255,38 +3055,6 @@
       "priority": 2
     },
     {
-      "id": "skill_mm_binding_roots",
-      "type": "unique",
-      "element": "NATURE",
-      "power": 0.6,
-      "acts": 10,
-      "durationMs": 1300,
-      "tier": {
-        "expected": 1,
-        "actual": 2
-      },
-      "staticShare": 0,
-      "hero": {
-        "do": "strip",
-        "img": "fx_vine_grab",
-        "liveness": 0.5
-      },
-      "layers": [
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "NO_AFTERMATH"
-      ],
-      "priority": 2
-    },
-    {
       "id": "skill_mm_poison_thorn",
       "type": "unique",
       "element": "NATURE",
@@ -3315,71 +3083,6 @@
       },
       "flags": [
         "SHARED_FLIPBOOK_HERO"
-      ],
-      "priority": 2
-    },
-    {
-      "id": "skill_qs_quake",
-      "type": "unique",
-      "element": "EARTH",
-      "power": 1,
-      "acts": 13,
-      "durationMs": 1220,
-      "tier": {
-        "expected": 2,
-        "actual": 4
-      },
-      "staticShare": 0,
-      "hero": {
-        "do": "strip",
-        "img": "fx_rock_spike",
-        "liveness": 0.5
-      },
-      "layers": [
-        "L1-body",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": true
-      },
-      "flags": [
-        "IMPACT_OVER_TIER"
-      ],
-      "priority": 2
-    },
-    {
-      "id": "skill_tg_armor_break",
-      "type": "unique",
-      "element": "METAL",
-      "power": 0.9,
-      "acts": 13,
-      "durationMs": 960,
-      "tier": {
-        "expected": 2,
-        "actual": 3
-      },
-      "staticShare": 0,
-      "hero": {
-        "do": "tether",
-        "img": null,
-        "liveness": 1
-      },
-      "layers": [
-        "L1-body",
-        "L2-core",
-        "L3-particles",
-        "L4-feedback"
-      ],
-      "phases": {
-        "preparation": true,
-        "impact": true,
-        "aftermath": false
-      },
-      "flags": [
-        "NO_AFTERMATH"
       ],
       "priority": 2
     },
@@ -3498,6 +3201,37 @@
       "priority": 0
     },
     {
+      "id": "skill_cl_rend",
+      "type": "class",
+      "element": "SELF",
+      "power": 1.1,
+      "acts": 12,
+      "durationMs": 960,
+      "tier": {
+        "expected": 2,
+        "actual": 3
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_claw",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [],
+      "priority": 0
+    },
+    {
       "id": "skill_cl_second_wind",
       "type": "class",
       "element": "SUPPORT",
@@ -3522,6 +3256,68 @@
         "preparation": true,
         "impact": false,
         "aftermath": false
+      },
+      "flags": [],
+      "priority": 0
+    },
+    {
+      "id": "skill_cl_spell_storm",
+      "type": "class",
+      "element": "SELF",
+      "power": 0.7,
+      "acts": 11,
+      "durationMs": 1400,
+      "tier": {
+        "expected": 1,
+        "actual": 2
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_wind_swirl",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [],
+      "priority": 0
+    },
+    {
+      "id": "skill_e_frost_breath",
+      "type": "enemy",
+      "element": "WATER",
+      "power": 1,
+      "acts": 16,
+      "durationMs": 1350,
+      "tier": {
+        "expected": 2,
+        "actual": 2
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "cone",
+        "img": null,
+        "liveness": 1
+      },
+      "layers": [
+        "L0-screen",
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
       },
       "flags": [],
       "priority": 0
@@ -3613,6 +3409,36 @@
       "priority": 0
     },
     {
+      "id": "skill_e_vine_lash",
+      "type": "enemy",
+      "element": "NATURE",
+      "power": 1.2,
+      "acts": 12,
+      "durationMs": 1060,
+      "tier": {
+        "expected": 2,
+        "actual": 2
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_vine_grab",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [],
+      "priority": 0
+    },
+    {
       "id": "skill_hk_phase_shift",
       "type": "unique",
       "element": "SUPPORT",
@@ -3668,6 +3494,66 @@
       "priority": 0
     },
     {
+      "id": "skill_hk_void_vortex",
+      "type": "unique",
+      "element": "VOID",
+      "power": 0.85,
+      "acts": 14,
+      "durationMs": 1350,
+      "tier": {
+        "expected": 1,
+        "actual": 2
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_void_portal",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [],
+      "priority": 0
+    },
+    {
+      "id": "skill_mm_binding_roots",
+      "type": "unique",
+      "element": "NATURE",
+      "power": 0.6,
+      "acts": 11,
+      "durationMs": 1400,
+      "tier": {
+        "expected": 1,
+        "actual": 2
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_vine_grab",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [],
+      "priority": 0
+    },
+    {
       "id": "skill_mm_sprout",
       "type": "unique",
       "element": "SUPPORT",
@@ -3697,6 +3583,36 @@
       "priority": 0
     },
     {
+      "id": "skill_qs_quake",
+      "type": "unique",
+      "element": "EARTH",
+      "power": 1,
+      "acts": 13,
+      "durationMs": 1220,
+      "tier": {
+        "expected": 2,
+        "actual": 3
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "strip",
+        "img": "fx_rock_spike",
+        "liveness": 0.5
+      },
+      "layers": [
+        "L1-body",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [],
+      "priority": 0
+    },
+    {
       "id": "skill_qt_ray",
       "type": "unique",
       "element": "LIGHT",
@@ -3710,6 +3626,37 @@
       "staticShare": 0,
       "hero": {
         "do": "beam",
+        "img": null,
+        "liveness": 1
+      },
+      "layers": [
+        "L1-body",
+        "L2-core",
+        "L3-particles",
+        "L4-feedback"
+      ],
+      "phases": {
+        "preparation": true,
+        "impact": true,
+        "aftermath": true
+      },
+      "flags": [],
+      "priority": 0
+    },
+    {
+      "id": "skill_tg_armor_break",
+      "type": "unique",
+      "element": "METAL",
+      "power": 0.9,
+      "acts": 14,
+      "durationMs": 1060,
+      "tier": {
+        "expected": 2,
+        "actual": 3
+      },
+      "staticShare": 0,
+      "hero": {
+        "do": "tether",
         "img": null,
         "liveness": 1
       },
@@ -3885,15 +3832,14 @@
   "byElement": {
     "SELF": {
       "skills": 15,
-      "meanPriority": 11.6,
+      "meanPriority": 9.8,
       "staticHero": 7,
       "impactUnder": 0,
       "flags": {
         "STATIC_HERO": 7,
         "STATIC_SHARE": 7,
-        "NO_AFTERMATH": 8,
         "FEW_LAYERS": 1,
-        "DURATION_UNDER": 4,
+        "DURATION_UNDER": 3,
         "IMPACT_OVER_TIER": 5,
         "SHARED_FLIPBOOK_HERO": 3,
         "DURATION_OVER": 1
@@ -3901,147 +3847,127 @@
     },
     "SUPPORT": {
       "skills": 42,
-      "meanPriority": 7.7,
+      "meanPriority": 7.3,
       "staticHero": 25,
       "impactUnder": 0,
       "flags": {
         "STATIC_HERO": 25,
         "STATIC_SHARE": 26,
-        "IMPACT_OVER_TIER": 4,
         "DURATION_OVER": 6,
-        "FEW_LAYERS": 6,
+        "FEW_LAYERS": 2,
         "SHARED_FLIPBOOK_HERO": 4,
         "NO_PREPARATION": 1
       }
     },
-    "DARK": {
-      "skills": 7,
-      "meanPriority": 10.4,
-      "staticHero": 6,
-      "impactUnder": 1,
-      "flags": {
-        "STATIC_HERO": 6,
-        "STATIC_SHARE": 5,
-        "IMPACT_UNDER_TIER": 1,
-        "NO_AFTERMATH": 4,
-        "FEW_LAYERS": 2,
-        "DURATION_UNDER": 1
-      }
-    },
     "EARTH": {
       "skills": 5,
-      "meanPriority": 12,
+      "meanPriority": 9.2,
       "staticHero": 3,
       "impactUnder": 0,
       "flags": {
         "STATIC_HERO": 3,
         "STATIC_SHARE": 3,
-        "NO_AFTERMATH": 4,
         "FEW_LAYERS": 2,
-        "DURATION_UNDER": 3,
-        "IMPACT_OVER_TIER": 2,
+        "DURATION_UNDER": 2,
         "DURATION_OVER": 1,
         "SHARED_FLIPBOOK_HERO": 1
       }
     },
     "LIGHT": {
       "skills": 3,
-      "meanPriority": 9.3,
+      "meanPriority": 6,
       "staticHero": 1,
-      "impactUnder": 1,
+      "impactUnder": 0,
       "flags": {
         "STATIC_HERO": 1,
         "STATIC_SHARE": 1,
-        "NO_AFTERMATH": 2,
         "FEW_LAYERS": 1,
-        "DURATION_UNDER": 2,
-        "IMPACT_UNDER_TIER": 1
-      }
-    },
-    "WATER": {
-      "skills": 6,
-      "meanPriority": 10.5,
-      "staticHero": 5,
-      "impactUnder": 1,
-      "flags": {
-        "STATIC_HERO": 5,
-        "NO_AFTERMATH": 4,
-        "STATIC_SHARE": 4,
-        "DURATION_OVER": 1,
-        "IMPACT_UNDER_TIER": 1,
-        "FEW_LAYERS": 1
+        "DURATION_UNDER": 2
       }
     },
     "METAL": {
       "skills": 6,
-      "meanPriority": 7.5,
+      "meanPriority": 6.5,
       "staticHero": 3,
       "impactUnder": 0,
       "flags": {
         "STATIC_HERO": 3,
         "STATIC_SHARE": 3,
         "DURATION_UNDER": 4,
-        "FEW_LAYERS": 2,
-        "NO_AFTERMATH": 2,
+        "FEW_LAYERS": 1,
         "SHARED_FLIPBOOK_HERO": 1
       }
     },
     "NATURE": {
       "skills": 7,
-      "meanPriority": 4.6,
+      "meanPriority": 3.4,
       "staticHero": 2,
       "impactUnder": 0,
       "flags": {
         "STATIC_HERO": 2,
         "STATIC_SHARE": 1,
-        "NO_AFTERMATH": 4,
-        "IMPACT_OVER_TIER": 1,
+        "NO_AFTERMATH": 2,
         "DURATION_OVER": 1,
-        "DURATION_UNDER": 1,
         "SHARED_FLIPBOOK_HERO": 1
+      }
+    },
+    "DARK": {
+      "skills": 7,
+      "meanPriority": 8.4,
+      "staticHero": 6,
+      "impactUnder": 0,
+      "flags": {
+        "STATIC_HERO": 6,
+        "STATIC_SHARE": 5,
+        "NO_AFTERMATH": 1,
+        "FEW_LAYERS": 1,
+        "DURATION_UNDER": 1
       }
     },
     "FIRE": {
       "skills": 10,
-      "meanPriority": 7.6,
+      "meanPriority": 6.6,
       "staticHero": 6,
       "impactUnder": 0,
       "flags": {
         "STATIC_HERO": 6,
         "STATIC_SHARE": 7,
-        "NO_AFTERMATH": 4,
-        "DURATION_OVER": 2,
-        "SHARED_FLIPBOOK_HERO": 3,
-        "FEW_LAYERS": 1,
-        "IMPACT_OVER_TIER": 1
+        "DURATION_OVER": 3,
+        "SHARED_FLIPBOOK_HERO": 3
       }
     },
     "LIGHTNING": {
       "skills": 7,
-      "meanPriority": 6.7,
+      "meanPriority": 5.3,
       "staticHero": 3,
       "impactUnder": 0,
       "flags": {
         "STATIC_HERO": 3,
         "STATIC_SHARE": 2,
         "DURATION_OVER": 1,
-        "NO_AFTERMATH": 4,
         "DURATION_UNDER": 3,
-        "FEW_LAYERS": 1,
         "SHARED_FLIPBOOK_HERO": 4
+      }
+    },
+    "WATER": {
+      "skills": 6,
+      "meanPriority": 7.7,
+      "staticHero": 5,
+      "impactUnder": 0,
+      "flags": {
+        "STATIC_HERO": 5,
+        "STATIC_SHARE": 4,
+        "DURATION_OVER": 1
       }
     },
     "VOID": {
       "skills": 4,
-      "meanPriority": 7,
+      "meanPriority": 5,
       "staticHero": 3,
       "impactUnder": 0,
       "flags": {
         "STATIC_HERO": 3,
-        "STATIC_SHARE": 3,
-        "FEW_LAYERS": 2,
-        "IMPACT_OVER_TIER": 1,
-        "NO_AFTERMATH": 1
+        "STATIC_SHARE": 3
       }
     }
   }

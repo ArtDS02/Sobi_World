@@ -15,7 +15,7 @@ Khuôn như [WATER](WATER.md). Màu: `elements.LIGHT` (`color #ffe98a`, `glow #f
 | Mục tiêu (địch) | bị đẩy lùi nhẹ, tint trắng 1 nhịp | `move knock`, `glow #ffffff` |
 
 ## 3. Nhịp mẫu
-Tia sáng T2–T3: tụ điểm sáng 350 → **phóng tia 60** → giữ tia 250 (beam có độ dày dao động) → nở sao + hit-stop medium/heavy → lấp lánh 700. Tác động T3 của Ánh sáng: `stop heavy` + `punch` + `flash` vàng, **rung ≤ 3**.
+Tia sáng T2–T3: tụ điểm sáng 350 → **phóng tia 60** → giữ tia 250 (beam có độ dày dao động) → nở sao + hit-stop medium → lấp lánh 700. Tác động T3 của Ánh sáng: `stop medium` + `punch 1.04` + `flash` vàng, **rung ≤ 3**.
 
 ## 4. Hình chủ đạo sống
 Vòng Lumina (`fxp_lumina_ring`), đĩa mặt trời (`fxp_sun_disc`): xoay + tia tỏa nhấp nhô (pulse lệch pha) + hạt sao sinh ra từ vành. Beam đã sống sẵn (vẽ bằng code); cần thêm lõi trắng (L2) và độ dày dao động.
@@ -28,7 +28,7 @@ Flipbook `fx_light_pillar` [4]. Vật: `fxp_lumina_ring`, `fxp_lumina_spear`, `f
 | Skill | Bậc | Cờ | Hướng |
 |---|---|---|---|
 | `skill_qt_lumina` | T3/T3 | STATIC_HERO, NO_AFTERMATH, FEW_LAYERS, DURATION_UNDER | vòng xoay + tia, tụ 350, lấp lánh dư âm |
-| `skill_e_rune_beam` | T3/**T1** | IMPACT_UNDER_TIER, NO_AFTERMATH, DURATION_UNDER | thêm stop heavy + punch + flash vàng; giữ tia lâu hơn |
+| `skill_e_rune_beam` | T3/**T1** | IMPACT_UNDER_TIER, NO_AFTERMATH, DURATION_UNDER | đã thêm stop medium + punch 1,04 + rung 4 (2026-11-05); còn: giữ tia lâu hơn |
 | `skill_qt_ray` | T2/T1 | — | thêm stop medium |
 Ánh sáng là hệ **ngắn và nhẹ tay** nhất (TB 800 ms) — cần pha tụ và dư âm, không cần rung.
 Phản ứng `reaction_purify`: hạt sáng bay lên + tan đốm tối.

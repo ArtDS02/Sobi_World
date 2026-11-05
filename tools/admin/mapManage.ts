@@ -13,6 +13,8 @@ import { openSimulation } from './mapSimulate';
 import { imageOf, mapThumb } from './mapThumb';
 import { optionHtml, type Visual } from './richSelect';
 import { post } from './store';
+import { cascade, matchesQuery } from './worldFilters';
+import { emptyState, errorState, facetSelect, filterBar, filterCell, loadingState, pageIntro, searchBox } from './worldUi';
 
 const page = {
   data: null as M.BuilderData | null,
@@ -190,22 +192,25 @@ function draw(root: HTMLElement) {
       .map((i) => `${i.level === 'warn' ? '⚠ ' : ''}${i.name}: ${i.message}${i.x !== undefined ? ` (ô ${i.x}, ${i.y})` : ''}`);
   };
   const all = M.summaries(data).map((s) => ({ ...s, problems: problemsOf(s.id) }));
-  const q = page.query.trim().toLowerCase();
-  const shown = all.filter((s) => (!page.zone || s.zoneId === page.zone) && (!page.status || s.status === page.status) && (!q || `${s.nameVi} ${s.id}`.toLowerCase().includes(q)));
+  // Zone and status narrow each other: each list holds only what the other choice leaves; a choice that stopped being valid is reset.
+  const cas = cascade(all, { of: (s) => s.zoneId, label: (z) => data.zones.find((x) => x.id === z)?.nameVi ?? z, order: data.zones.map((z) => z.id) }, { of: (s) => s.status, label: (v) => M.STATUS_LABEL[v as M.MapStatus], order: Object.keys(M.STATUS_LABEL) }, { a: page.zone, b: page.status });
+  page.zone = cas.a;
+  page.status = cas.b as M.MapStatus | '';
+  const shown = cas.shown.filter((s) => matchesQuery(page.query, s.nameVi, s.id));
   const count = (st: M.MapStatus) => all.filter((s) => s.status === st).length;
-  root.innerHTML = `<h3>Quản lý map (Sobi Adventure)</h3>
-    <p class="muted">${all.length} map · ${count('published') + count('changed')} đã publish (${count('changed')} có nháp) · ${count('draft')} nháp · ${count('disabled')} tạm tắt. Map đã publish không xoá, không tắt được (save người chơi còn giữ id).</p>
+  root.innerHTML = `${pageIntro(`${all.length} map · ${count('published') + count('changed')} đã publish (${count('changed')} có nháp) · ${count('draft')} nháp · ${count('disabled')} tạm tắt. Map đã publish không xoá, không tắt được (save người chơi còn giữ id).`,
+      '<button class="btn" data-publish>✔ Kiểm tra &amp; Publish</button><button class="btn btn-primary" data-new>＋ Tạo map mới</button>')}
     ${page.message ? `<p class="ok">${esc(page.message)}</p>` : ''}
-    <div class="toolbar">
-      <input class="search" type="search" placeholder="Tìm tên hoặc id…" value="${esc(page.query)}" data-q />
-      <span class="mapm__filter"><select data-zone data-rich="compact">${optionHtml('', 'Mọi vùng', !page.zone, { icon: '🗺️' })}${zoneOptions(data, page.zone)}</select></span>
-      <span class="mapm__filter"><select data-status data-rich="compact">${optionHtml('', 'Mọi trạng thái', !page.status, { icon: '📋' })}${(Object.keys(M.STATUS_LABEL) as M.MapStatus[]).map((st) => optionHtml(st, M.STATUS_LABEL[st], st === page.status, { icon: STATUS_ICON[st] })).join('')}</select></span>
-      <button class="btn" data-publish>✔ Kiểm tra & Publish</button>
-      <button class="btn btn-primary" data-new>＋ Tạo map mới</button>
-    </div>
+    ${filterBar(
+      `<div class="wf wf--search">${searchBox(page.query, 'Tìm theo tên hoặc id…')}</div>
+       ${filterCell('Vùng', facetSelect('data-zone', 'Mọi vùng', cas.aFacets, page.zone, (z) => zoneVisual(data, z).img ? { img: zoneVisual(data, z).img! } : { icon: '🗺️' }, ' map'), !!page.zone)}
+       ${filterCell('Trạng thái', facetSelect('data-status', 'Mọi trạng thái', cas.bFacets, page.status, (v) => ({ icon: STATUS_ICON[v as M.MapStatus] }), ' map'), !!page.status)}`,
+      `Hiển thị ${shown.length} / ${all.length} map${page.zone || page.status || page.query.trim() ? ' · <button type="button" class="chip" data-reset-filters>Xoá bộ lọc</button>' : ''}`,
+    )}
     <div class="mapm-wrap"><table class="table mapm"><thead><tr><th></th><th>Map</th><th>Vùng</th><th>Cỡ</th><th>Trạng thái</th><th>Kết nối</th><th>Kiểm tra</th><th>Cập nhật</th><th></th></tr></thead>
-      <tbody>${shown.map((s) => rowHtml(data, s)).join('') || '<tr><td colspan="9" class="muted">Không có map khớp bộ lọc.</td></tr>'}</tbody></table></div>`;
+      <tbody>${shown.map((s) => rowHtml(data, s)).join('') || `<tr><td colspan="9">${emptyState('🔎', 'Không có map khớp bộ lọc.')}</td></tr>`}</tbody></table></div>`;
   const rerender = () => draw(root);
+  root.querySelector('[data-reset-filters]')?.addEventListener('click', () => ((page.zone = ''), (page.status = ''), (page.query = ''), rerender()));
   const q$ = root.querySelector<HTMLInputElement>('[data-q]')!;
   q$.addEventListener('input', () => {
     page.query = q$.value;
@@ -244,13 +249,13 @@ function draw(root: HTMLElement) {
 
 export function renderMapManage(root: HTMLElement) {
   // Read again on every visit: another page ("Mạng map") may have changed drafts.
-  if (!page.data) root.innerHTML = '<p class="loading">Đang tải danh sách map…</p>';
+  if (!page.data) root.innerHTML = loadingState('Đang tải danh sách map…');
   else draw(root);
   fetchData().then(
     (d) => {
       page.data = d;
       draw(root);
     },
-    (e: unknown) => (root.innerHTML = `<p class="empty">Không tải được map (cần <code>npm run admin</code>): ${esc((e as Error).message)}</p>`),
+    (e: unknown) => (root.innerHTML = errorState(`Không tải được map (cần <code>npm run admin</code>): ${esc((e as Error).message)}`)),
   );
 }

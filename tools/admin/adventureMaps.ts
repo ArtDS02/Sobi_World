@@ -6,6 +6,7 @@ import { WALK_TILES, mapProblems, thingsOf } from '../../src/areas/adventure/log
 import { esc } from './labels';
 import { COLOUR, GROUND } from './mapCanvas';
 import { imageOf, mapThumb } from './mapThumb';
+import { pageIntro } from './worldUi';
 import { optionHtml } from './richSelect';
 import { post, rememberMessage } from './store';
 
@@ -95,9 +96,8 @@ export function renderAdventureMaps(root: HTMLElement, mapId?: string | null) {
         return `<button class="amap__cell" data-x="${x}" data-y="${y}" style="background:${m?.colour ?? COLOUR[c] ?? '#000'}" title="${x},${y}${m ? ` · ${esc(m.id)}` : ''}">${m?.text ?? ''}</button>`;
       }))
       .join('');
-    root.innerHTML = `<h3>Bản đồ khu (Sobi Adventure)</h3>
-      <p class="muted">Bấm ô để tô / đặt. Mỗi vật chặn đủ cả đế (footprint). Lỗi lối đi hiện đỏ bên dưới; còn lỗi thì không lưu được.</p>
-      <div class="form-grid">
+    root.innerHTML = `${pageIntro('Bấm ô để tô / đặt. Mỗi vật chặn đủ cả đế (footprint). Lỗi lối đi hiện đỏ bên dưới; còn lỗi thì không lưu được.')}
+      <div class="form-grid wpanel wpanel__body">
         <label class="field"><span>Khu</span><select data-map data-rich>${page.maps.map((m) => optionHtml(m.id, m.nameVi, m.id === page.mapId, { img: mapThumb(m), mapId: m.id, sub: `${ZONES[m.zoneId]?.nameVi ?? m.zoneId} · ${m.cols}×${m.rows}` })).join('')}</select></label>
         <label class="field"><span>Công cụ</span><select data-tool data-rich>
           ${GROUND.map(([c, n]) => optionHtml(`g:${c}`, `Tô: ${n}`, tool.kind === 'ground' && tool.char === c, { swatch: COLOUR[c], sub: WALK_TILES.has(c) ? 'Đi được' : 'Chặn' })).join('')}

@@ -1,0 +1,118 @@
+/* World pages design system (reference: "Xưởng animation trận"). Extends admin.css tokens, adds no second palette.
+   Page rules live under `.wpage` (set by main.ts on the content of World pages), so Farm / Asset / System pages are untouched. */
+:root {
+  /* surfaces: a violet-tinted panel on the page, a stronger header strip */
+  --w-panel: color-mix(in srgb, var(--brand) 7%, var(--surface));
+  --w-panel-head: color-mix(in srgb, var(--brand) 16%, var(--surface));
+  --w-border: color-mix(in srgb, var(--brand) 28%, var(--line));
+  --w-focus: 0 0 0 3px color-mix(in srgb, var(--brand) 32%, transparent);
+  /* shape, rhythm, type */
+  --w-radius: 14px;
+  --w-radius-sm: 10px;
+  --w-gap: 16px;
+  --w-gap-sm: 10px;
+  --w-ctl-h: 44px;
+  --w-fs-body: 14px;
+  --w-fs-label: 13px;
+  --w-fs-title: 16px;
+  /* layers: dropdown < modal < tooltip */
+  --z-dropdown: 2000;
+  --z-modal: 3000;
+  --z-tooltip: 4000;
+}
+
+.rsel__pop { z-index: var(--z-dropdown); }
+
+.wpage { display: grid; gap: var(--w-gap); align-content: start; font-size: var(--w-fs-body); max-width: 1480px; }
+
+/* ---- header strip ---- */
+.wintro { display: flex; align-items: center; justify-content: space-between; gap: var(--w-gap); flex-wrap: wrap; }
+.wintro p { margin: 0; color: var(--muted); max-width: 90ch; line-height: 1.5; }
+.wintro__acts { display: flex; gap: var(--w-gap-sm); flex-wrap: wrap; }
+
+/* ---- panels ---- */
+.wpanel { background: var(--w-panel); border: 1px solid var(--w-border); border-radius: var(--w-radius); box-shadow: var(--shadow); min-width: 0; overflow: hidden; }
+.wpanel__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: var(--w-panel-head); font-weight: 800; font-size: var(--w-fs-title); list-style: none; }
+details.wpanel > .wpanel__head { cursor: pointer; }
+details.wpanel > .wpanel__head::-webkit-details-marker { display: none; }
+details.wpanel > .wpanel__head::after { content: '▾'; color: var(--muted); transition: transform 0.15s; }
+details.wpanel:not([open]) > .wpanel__head::after { transform: rotate(-90deg); }
+.wpanel__note { font-size: var(--w-fs-label); font-weight: 600; color: var(--muted); margin-left: auto; }
+.wpanel__body { padding: var(--w-gap); display: grid; gap: var(--w-gap); }
+
+/* ---- controls: one size for every World page (40–48px, 14px text) ---- */
+.wpage input:not([type='checkbox']):not([type='radio']):not([type='color']):not([type='range']), .wpage select, .wpage .btn { min-height: var(--w-ctl-h); font-size: var(--w-fs-body); }
+.wpage input:not([type='checkbox']):not([type='radio']):not([type='color']):not([type='range']), .wpage select { padding: 8px 14px; border-color: var(--w-border); background: var(--surface); border-radius: var(--w-radius-sm); }
+.wpage input:hover, .wpage select:hover { border-color: var(--brand); }
+.wpage input:focus-visible, .wpage select:focus-visible, .wpage .rsel:focus-visible, .wpage .btn:focus-visible { outline: none; box-shadow: var(--w-focus); border-color: var(--brand); }
+.wpage input:disabled, .wpage select:disabled { opacity: 0.55; cursor: not-allowed; }
+.wpage .btn { border-radius: var(--w-radius-sm); padding: 8px 18px; border-color: var(--w-border); }
+.wpage .btn-small { min-height: 36px; font-size: var(--w-fs-label); padding: 4px 14px; }
+.wpage .btn:active:not(:disabled) { transform: translateY(1px); }
+.wpage .btn-primary { background: var(--brand-strong); border-color: var(--brand-strong); color: #fff; }
+.wpage .btn-danger, .wpage .btn-ghost-danger { color: var(--error); }
+.wpage .btn-danger:hover:not(:disabled), .wpage .btn-ghost-danger:hover:not(:disabled) { border-color: var(--error); background: var(--error-soft); }
+.wpage .rsel, .wpage .rsel--compact { min-height: var(--w-ctl-h); padding: 4px 12px; border-color: var(--w-border); border-radius: var(--w-radius-sm); font-size: var(--w-fs-body); }
+.wpage .rsel--compact .rsel__img { width: 36px; height: 28px; }
+.rsel__pop { font-size: var(--w-fs-body); }
+.rsel__list { max-height: min(400px, 60vh); }
+.rsel__opt { min-height: 40px; }
+.rsel__opt.is-selected::after { content: '✓'; margin-left: auto; color: var(--brand-strong); font-weight: 800; }
+
+/* ---- filter bar: wraps on a grid, never one cramped row ---- */
+.wfilters { display: grid; gap: 8px; }
+.wfilters__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: var(--w-gap-sm) var(--w-gap); align-items: end; }
+.wfilters__row > .wf--search { grid-column: span 2; }
+@media (max-width: 760px) { .wfilters__row > .wf--search { grid-column: auto; } }
+.wfilters__acts { display: flex; gap: var(--w-gap-sm); flex-wrap: wrap; justify-content: flex-end; }
+.wfilters__result { margin: 0; font-size: var(--w-fs-label); color: var(--muted); }
+.wf { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.wf__label { font-size: var(--w-fs-label); font-weight: 700; color: var(--muted); }
+.wf.is-set .wf__label { color: var(--brand-strong); }
+.wf.is-set .rsel { border-color: var(--brand); background: var(--brand-soft); }
+.wpage .wf .mapm__filter, .wpage .mapm__filter { min-width: 0; display: block; }
+.wpage .toolbar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--w-gap-sm) var(--w-gap); align-items: end; margin: 0; }
+.wpage .toolbar .btn-primary { margin-left: 0; }
+.wpage .toolbar .search { grid-column: span 2; }
+
+/* ---- form grids ---- */
+.wpage .form-grid { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--w-gap-sm) var(--w-gap); align-items: start; }
+.wpage .field { font-size: var(--w-fs-label); }
+.wpage .field > span { color: var(--muted); }
+.wpage .field input[type='checkbox'] { width: 24px; height: 24px; min-height: 0; accent-color: var(--brand-strong); }
+
+/* ---- states ---- */
+.wempty { display: grid; justify-items: center; gap: 8px; padding: 36px 16px; text-align: center; color: var(--muted); border: 1px dashed var(--w-border); border-radius: var(--w-radius); background: var(--w-panel); }
+.wempty__icon { font-size: 30px; }
+.wempty p { margin: 0; max-width: 60ch; }
+.wempty--error { color: var(--error); background: var(--error-soft); border-color: var(--error); }
+.wbadge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 9999px; font-size: var(--w-fs-label); font-weight: 700; white-space: nowrap; }
+.wbadge--ok { background: var(--ok-soft); color: var(--ok); }
+.wbadge--warn { background: var(--warn-soft); color: var(--warn); }
+.wbadge--error { background: var(--error-soft); color: var(--error); }
+.wbadge--info { background: var(--brand-soft); color: var(--brand-strong); }
+.wbadge--off { background: var(--surface-2); color: var(--muted); }
+.wpage p.ok { margin: 0; padding: 10px 14px; border-radius: var(--w-radius-sm); background: var(--ok-soft); color: var(--ok); font-weight: 700; }
+
+/* ---- tables and cards ---- */
+.wpage .mapm-wrap { overflow-x: auto; background: var(--w-panel); border: 1px solid var(--w-border); border-radius: var(--w-radius); }
+.wpage .mapm th { text-align: left; padding: 12px 10px; font-size: var(--w-fs-label); color: var(--muted); background: var(--w-panel-head); position: sticky; top: 0; }
+.wpage .massets { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--w-gap); }
+.wpage .massets__card { background: var(--w-panel); border: 1px solid var(--w-border); border-radius: var(--w-radius); }
+.wpage .massets__card:hover { border-color: var(--brand); }
+.wpage .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--w-gap-sm); }
+.wpage .stat-row > div { background: var(--surface); border: 1px solid var(--w-border); border-radius: var(--w-radius-sm); padding: 12px 14px; }
+.wpage .stat-row b { display: block; font-size: 22px; }
+
+/* ---- Mô phỏng trận: team cards, flags ---- */
+.wteam { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--w-gap); }
+.wteam__card { display: grid; gap: var(--w-gap-sm); align-content: start; padding: 14px; background: var(--surface); border: 1px solid var(--w-border); border-radius: var(--w-radius); }
+.wteam__card h4 { margin: 0; font-size: var(--w-fs-title); color: var(--brand-strong); }
+.wflags { display: flex; flex-wrap: wrap; gap: 8px 24px; padding-top: 10px; border-top: 1px solid var(--w-border); }
+.wflags .check { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; font-weight: 600; }
+
+/* ---- Quản lý map: the row actions never shrink into "…" ---- */
+.wpage .mapm__acts { flex-wrap: nowrap; justify-content: flex-end; }
+.wpage .mapm__acts .btn, .wpage .mapm__acts .rsel { flex: none; }
+.wpage .mapm__acts .rsel { width: auto; min-width: 116px; }
+.wpage .mapm td { padding: 10px; }

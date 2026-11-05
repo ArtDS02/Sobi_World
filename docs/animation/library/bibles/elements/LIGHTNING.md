@@ -10,7 +10,7 @@ Sấm **không khối lượng, tức thời, giật cục**. Đọc khi bỏ m�
 |---|---|---|
 | Chuẩn bị | tĩnh điện nhỏ nhảy trên thân, lông dựng, mây tụ | `burst spark_pop` lác đác, `glow` nhấp nháy, `prop fxp_storm_cloud` tụ |
 | Đường đi | **không bay**: tia đánh tức thì (≤ 2 khung) từ trên / từ tay | `strip fx_bolt_strike`, `beam` ngắn, `tether` có `wave` |
-| Va chạm | trắng 1 khung, nhánh tỏa, mục tiêu **giật** 3–4 lần | `flash #fffbd0` ≤ 0,35, `stop medium/heavy`, `move shake` nhanh |
+| Va chạm | trắng 1 khung, nhánh tỏa, mục tiêu **giật** 3–4 lần | `flash #fffbd0` ≤ 0,35, `stop medium` (+ `punch` cho T3), `move shake` nhanh |
 | Dư âm | hồ quang nhỏ nhảy trên thân 300–500, khói mỏng | `burst bolt_pop` vài nhịp, `burst lightning_glow` |
 | Âm thanh | rắc → ầm (lệch 1 nhịp) | 2 `sound` |
 

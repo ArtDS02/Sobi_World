@@ -29,9 +29,14 @@ const FLAG_VI: Readonly<Record<string, string>> = {
   NO_SCRIPT: 'không có kịch bản',
 };
 
+/** Whether a skill already has its animation scenario (docs/animation/library/scenarios/skills/<id>.md, decision 049). */
+const hasScenario = (id: string) => existsSync(join(ROOT, 'docs/animation/library/scenarios/skills', `${id}.md`));
+
 function markdown(r: AuditReport): string {
   const L: string[] = ['# AUDIT kịch bản animation (dữ liệu)', ''];
+  const written = r.skills.filter((s) => hasScenario(s.id)).length;
   L.push('Sinh bằng `npm run anim:audit` từ `content/adventure/battle_fx.json`, `skills.json`, manifest asset. **Không sửa tay.** Cách đọc và ngưỡng: [README.md](README.md). Cờ là gợi ý cho reviewer, không phải điểm.', '');
+  L.push(`**Kịch bản animation** (\`docs/animation/library/scenarios/\`): ${written}/${r.skills.length} skill đã có.`, '');
   L.push('## Theo hệ', '', '| hệ | skill | ưu tiên TB | hình chủ đạo tĩnh | tác động dưới bậc | cờ hay gặp |', '|---|---|---|---|---|---|');
   for (const [e, x] of Object.entries(r.byElement).sort((a, b) => b[1].meanPriority - a[1].meanPriority)) {
     const top = Object.entries(x.flags).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([f, n]) => `${f} ×${n}`).join(', ');
@@ -39,10 +44,10 @@ function markdown(r: AuditReport): string {
   }
   L.push('', '## Flipbook dùng nhiều', '', '| ảnh | số skill |', '|---|---|');
   for (const [img, ids] of Object.entries(r.flipbookUse).sort((a, b) => b[1].length - a[1].length)) L.push(`| \`${img}\` | ${ids.length} |`);
-  L.push('', '## Mọi skill (ưu tiên cao trước)', '', '| skill | loại | hệ | power | bậc cần / có | ms | ảnh tĩnh | hình chủ đạo | lớp | cờ | ưu tiên |', '|---|---|---|---|---|---|---|---|---|---|---|');
+  L.push('', '## Mọi skill (ưu tiên cao trước)', '', '| skill | loại | hệ | power | bậc cần / có | ms | ảnh tĩnh | hình chủ đạo | lớp | cờ | ưu tiên | kịch bản |', '|---|---|---|---|---|---|---|---|---|---|---|---|');
   for (const s of r.skills) {
     const hero = s.hero ? `${s.hero.do}${s.hero.img ? ` \`${s.hero.img}\`` : ''} (${s.hero.liveness})` : '-';
-    L.push(`| \`${s.id}\` | ${s.type} | ${s.element} | ${s.power} | T${s.tier.expected} / T${s.tier.actual} | ${s.durationMs} | ${Math.round(s.staticShare * 100)}% | ${hero} | ${s.layers.length} | ${s.flags.join(', ')} | ${s.priority} |`);
+    L.push(`| \`${s.id}\` | ${s.type} | ${s.element} | ${s.power} | T${s.tier.expected} / T${s.tier.actual} | ${s.durationMs} | ${Math.round(s.staticShare * 100)}% | ${hero} | ${s.layers.length} | ${s.flags.join(', ')} | ${s.priority} | ${hasScenario(s.id) ? `[có](../../animation/library/scenarios/skills/${s.id}.md)` : '–'} |`);
   }
   L.push('', '## Nghĩa của cờ', '', ...Object.entries(FLAG_VI).map(([f, t]) => `- \`${f}\`: ${t}`), '');
   return L.join('\n');

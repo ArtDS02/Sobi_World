@@ -3162,7 +3162,7 @@
       "ring": null,
       "flash": "#2e2470",
       "shake": 5,
-      "spark": "ice_pop",
+      "spark": "void_sparks",
       "boom": "fx_void_portal",
       "glyph": "ring"
     },
@@ -3249,7 +3249,9 @@
         { "do": "stop", "at": 860, "who": "actor", "dur": 60 },
         { "do": "shake", "at": 860, "who": "field", "dur": 260, "amount": 3 },
         { "do": "sound", "at": 860, "who": "actor", "sound": "adv_water_hit" },
-        { "do": "move", "at": 900, "who": "target", "dur": 250, "move": "squash", "scale": 0.9 }
+        { "do": "move", "at": 900, "who": "target", "dur": 250, "move": "squash", "scale": 0.9 },
+        { "do": "burst", "at": 1060, "who": "targets", "ref": "drop_fall", "more": 0.6 },
+        { "do": "decal", "at": 860, "who": "targets", "dur": 290, "kind": "puddle", "color": "#6fc4ff" }
       ]
     },
     "skill_nh_soothe": {
@@ -3617,7 +3619,8 @@
           "tint": ["#ffffff"],
           "more": 2.5
         },
-        { "do": "flash", "at": 2750, "who": "field", "dur": 300, "color": "#fff6c8", "alpha": 0.2 }
+        { "do": "flash", "at": 2750, "who": "field", "dur": 300, "color": "#fff6c8", "alpha": 0.2 },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_qs_rock_smash": {
@@ -3663,7 +3666,9 @@
         { "do": "move", "at": 760, "who": "target", "dur": 420, "move": "knock", "x": 40 },
         { "do": "stop", "at": 760, "who": "actor", "dur": 90 },
         { "do": "shake", "at": 760, "who": "field", "dur": 440, "amount": 11, "dir": [0, 1] },
-        { "do": "sound", "at": 760, "who": "actor", "sound": "adv_earth_hit" }
+        { "do": "sound", "at": 760, "who": "actor", "sound": "adv_earth_hit" },
+        { "do": "burst", "at": 960, "who": "targets", "ref": "earth_dust", "more": 0.6 },
+        { "do": "decal", "at": 760, "who": "targets", "dur": 440, "kind": "crack", "color": "#7a5230" }
       ]
     },
     "skill_qs_stone_skin": {
@@ -3756,7 +3761,7 @@
       "script": [
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_stomp" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_earth_cast" },
-        { "do": "shake", "at": 420, "who": "field", "dur": 500, "amount": 13, "dir": [0, 1] },
+        { "do": "shake", "at": 420, "who": "field", "dur": 500, "amount": 6, "dir": [0, 1] },
         { "do": "decal", "at": 420, "who": "foeside", "dur": 800, "kind": "crack", "size": 2.6 },
         { "do": "decal", "at": 420, "who": "actor", "dur": 700, "kind": "crack", "size": 0.9 },
         { "do": "sound", "at": 420, "who": "actor", "sound": "adv_quake" },
@@ -3774,8 +3779,8 @@
         { "do": "burst", "at": 600, "who": "targets", "ref": "pebble_pop", "more": 1.5, "stagger": 130 },
         { "do": "stop", "at": 600, "who": "actor", "dur": 70 },
         { "do": "sound", "at": 600, "who": "actor", "sound": "adv_earth_hit" },
-        { "do": "shake", "at": 760, "who": "field", "dur": 200, "amount": 7 },
-        { "do": "shake", "at": 900, "who": "field", "dur": 200, "amount": 4 }
+        { "do": "shake", "at": 760, "who": "field", "dur": 200, "amount": 4 },
+        { "do": "shake", "at": 900, "who": "field", "dur": 200, "amount": 2 }
       ]
     },
     "skill_ult_qs": {
@@ -3887,7 +3892,9 @@
           "spot": "feet",
           "tint": ["#a08060"],
           "more": 2
-        }
+        },
+        { "do": "move", "at": 500, "who": "actor", "dur": 500, "move": "cast_coil" },
+        { "do": "glow", "at": 500, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_dm_ink": {
@@ -3914,7 +3921,8 @@
         { "do": "shake", "at": 620, "who": "field", "dur": 260, "amount": 3 },
         { "do": "sound", "at": 620, "who": "actor", "sound": "adv_dark_hit" },
         { "do": "burst", "at": 700, "who": "target", "ref": "ink_fall", "spot": "head", "more": 0.3 },
-        { "do": "vignette", "at": 320, "who": "field", "dur": 700, "color": "#1a0a2a", "alpha": 0.45 }
+        { "do": "vignette", "at": 320, "who": "field", "dur": 700, "color": "#1a0a2a", "alpha": 0.45 },
+        { "do": "burst", "at": 820, "who": "targets", "ref": "dark_smoke", "more": 0.6 }
       ]
     },
     "skill_dm_ink_veil": {
@@ -4042,7 +4050,8 @@
         { "do": "stop", "at": 820, "who": "actor", "dur": 60 },
         { "do": "sound", "at": 820, "who": "actor", "sound": "adv_dark_hit" },
         { "do": "strip", "at": 950, "who": "target", "img": "fx_rune_lock", "size": 0.7 },
-        { "do": "vignette", "at": 520, "who": "field", "dur": 700, "color": "#1a0a2a", "alpha": 0.45 }
+        { "do": "vignette", "at": 520, "who": "field", "dur": 700, "color": "#1a0a2a", "alpha": 0.45 },
+        { "do": "burst", "at": 1020, "who": "targets", "ref": "dark_smoke", "more": 0.6 }
       ]
     },
     "skill_ult_dm": {
@@ -4173,7 +4182,8 @@
           "more": 1.5,
           "stagger": 100
         },
-        { "do": "burst", "at": 2500, "who": "foeside", "ref": "dark_smoke", "spot": "feet", "more": 2.5 }
+        { "do": "burst", "at": 2500, "who": "foeside", "ref": "dark_smoke", "spot": "feet", "more": 2.5 },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_qt_ray": {
@@ -4306,7 +4316,8 @@
         { "do": "flash", "at": 660, "who": "field", "dur": 220, "color": "#ffffff", "alpha": 0.3 },
         { "do": "sound", "at": 660, "who": "actor", "sound": "adv_light_hit" },
         { "do": "burst", "at": 760, "who": "target", "ref": "star_pop", "tint": ["#ffd66a"], "more": 2.5 },
-        { "do": "flash", "at": 660, "who": "field", "dur": 130, "color": "#fff6c8", "alpha": 0.3 }
+        { "do": "flash", "at": 660, "who": "field", "dur": 130, "color": "#fff6c8", "alpha": 0.3 },
+        { "do": "burst", "at": 860, "who": "targets", "ref": "star_fall", "more": 0.6 }
       ]
     },
     "skill_ult_qt": {
@@ -4446,7 +4457,8 @@
           "tint": ["#8ff0b0"],
           "more": 3
         },
-        { "do": "flash", "at": 2650, "who": "field", "dur": 260, "color": "#ffe9b0", "alpha": 0.25 }
+        { "do": "flash", "at": 2650, "who": "field", "dur": 260, "color": "#ffe9b0", "alpha": 0.25 },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_ld_thunder_strike": {
@@ -4483,7 +4495,8 @@
         { "do": "sound", "at": 470, "who": "actor", "sound": "adv_thunder_hit" },
         { "do": "burst", "at": 520, "who": "target", "ref": "bolt_pop", "more": 0.4 },
         { "do": "burst", "at": 560, "who": "target", "ref": "puff_rise", "more": 0.35 },
-        { "do": "flash", "at": 470, "who": "field", "dur": 60, "color": "#ffffff", "alpha": 0.35 }
+        { "do": "flash", "at": 470, "who": "field", "dur": 60, "color": "#ffffff", "alpha": 0.35 },
+        { "do": "burst", "at": 670, "who": "targets", "ref": "bolt_pop", "more": 0.6 }
       ]
     },
     "skill_ld_swift_bolt": {
@@ -4701,7 +4714,8 @@
           "stagger": 120
         },
         { "do": "burst", "at": 2250, "who": "foes", "ref": "bolt_pop", "more": 1.6, "stagger": 120 },
-        { "do": "letterbox", "at": 2780, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 2780, "who": "field", "dur": 240, "on": false },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_tg_steel_slash": {
@@ -4748,7 +4762,7 @@
           "spot": "front",
           "size": 0.6
         },
-        { "do": "shake", "at": 450, "who": "field", "dur": 260, "amount": 5 },
+        { "do": "shake", "at": 450, "who": "field", "dur": 260, "amount": 2 },
         { "do": "strip", "at": 470, "who": "actor", "img": "fx_poof", "spot": "front", "size": 0.7 },
         {
           "do": "decal",
@@ -4804,7 +4818,8 @@
         { "do": "burst", "at": 660, "who": "target", "ref": "metal_pop", "more": 1.3 },
         { "do": "strip", "at": 660, "who": "target", "img": "fx_pow_star", "tint": "#c8ccd6" },
         { "do": "shake", "at": 660, "who": "field", "dur": 260, "amount": 5 },
-        { "do": "flash", "at": 660, "who": "field", "dur": 50, "color": "#ffffff", "alpha": 0.2 }
+        { "do": "flash", "at": 660, "who": "field", "dur": 50, "color": "#ffffff", "alpha": 0.2 },
+        { "do": "burst", "at": 760, "who": "targets", "ref": "metal_fall", "more": 0.6 }
       ]
     },
     "skill_tg_steel_charge": {
@@ -4831,7 +4846,8 @@
         { "do": "shake", "at": 660, "who": "field", "dur": 260, "amount": 9 },
         { "do": "punch", "at": 660, "who": "target", "dur": 220, "zoom": 1.03 },
         { "do": "sound", "at": 660, "who": "actor", "sound": "adv_metal_hit" },
-        { "do": "flash", "at": 660, "who": "field", "dur": 50, "color": "#ffffff", "alpha": 0.2 }
+        { "do": "flash", "at": 660, "who": "field", "dur": 50, "color": "#ffffff", "alpha": 0.2 },
+        { "do": "burst", "at": 860, "who": "targets", "ref": "metal_fall", "more": 0.6 }
       ]
     },
     "skill_ult_tg": {
@@ -4979,7 +4995,8 @@
           "kind": "ring",
           "color": "#d89a50",
           "size": 2
-        }
+        },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_hg_hot_claw": {
@@ -5006,7 +5023,9 @@
         { "do": "shake", "at": 480, "who": "field", "dur": 260, "amount": 5 },
         { "do": "sound", "at": 480, "who": "actor", "sound": "adv_fire_hit" },
         { "do": "burst", "at": 600, "who": "target", "ref": "puff_rise", "spot": "head", "more": 0.4 },
-        { "do": "flash", "at": 480, "who": "field", "dur": 110, "color": "#ff9a3c", "alpha": 0.15 }
+        { "do": "flash", "at": 480, "who": "field", "dur": 110, "color": "#ff9a3c", "alpha": 0.15 },
+        { "do": "burst", "at": 680, "who": "targets", "ref": "fire_smoke", "more": 0.6 },
+        { "do": "decal", "at": 480, "who": "targets", "dur": 570, "kind": "scorch", "color": "#5a3020" }
       ]
     },
     "skill_hg_forge_fire": {
@@ -5023,7 +5042,7 @@
           "spot": "front",
           "size": 0.4
         },
-        { "do": "shake", "at": 280, "who": "field", "dur": 260, "amount": 4 },
+        { "do": "shake", "at": 280, "who": "field", "dur": 260, "amount": 2 },
         { "do": "sound", "at": 280, "who": "actor", "sound": "adv_forge" },
         {
           "do": "prop",
@@ -5251,7 +5270,8 @@
         { "do": "burst", "at": 2420, "who": "foeside", "ref": "ember_fall", "more": 2.5 },
         { "do": "burst", "at": 2640, "who": "foeside", "ref": "ember_fall", "more": 2.5 },
         { "do": "burst", "at": 2860, "who": "foeside", "ref": "ember_fall", "more": 2.5 },
-        { "do": "letterbox", "at": 2980, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 2980, "who": "field", "dur": 240, "on": false },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_mm_poison_thorn": {
@@ -5343,7 +5363,8 @@
         { "do": "move", "at": 900, "who": "targets", "dur": 400, "move": "shake", "x": 3 },
         { "do": "burst", "at": 900, "who": "targets", "ref": "leaf_pop", "more": 0.75 },
         { "do": "stop", "at": 900, "who": "actor", "dur": 50 },
-        { "do": "shake", "at": 900, "who": "field", "dur": 260, "amount": 4 }
+        { "do": "shake", "at": 900, "who": "field", "dur": 260, "amount": 4 },
+        { "do": "burst", "at": 1100, "who": "targets", "ref": "leaf_fall", "more": 0.6 }
       ]
     },
     "skill_mm_blossom": {
@@ -5464,7 +5485,8 @@
           "stagger": 120
         },
         { "do": "burst", "at": 2500, "who": "allyside", "ref": "leaf_fall", "spot": "above", "more": 3 },
-        { "do": "flash", "at": 1300, "who": "field", "dur": 240, "color": "#c0ff8a", "alpha": 0.18 }
+        { "do": "flash", "at": 1300, "who": "field", "dur": 240, "color": "#c0ff8a", "alpha": 0.18 },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_hk_pure_impact": {
@@ -5597,10 +5619,11 @@
         { "do": "strip", "at": 850, "who": "foeside", "img": "fx_boom", "size": 1.6, "tint": "#b48aff" },
         { "do": "move", "at": 850, "who": "targets", "dur": 400, "move": "knock", "x": 36, "stagger": 60 },
         { "do": "stop", "at": 850, "who": "actor", "dur": 80 },
-        { "do": "shake", "at": 850, "who": "field", "dur": 260, "amount": 7 },
+        { "do": "shake", "at": 850, "who": "field", "dur": 260, "amount": 3 },
         { "do": "sound", "at": 850, "who": "actor", "sound": "adv_void_hit" },
         { "do": "burst", "at": 900, "who": "foeside", "ref": "ice_fall", "tint": ["#b48aff"], "more": 1.2 },
-        { "do": "split", "at": 850, "who": "field", "dur": 220 }
+        { "do": "split", "at": 850, "who": "field", "dur": 220 },
+        { "do": "burst", "at": 1050, "who": "targets", "ref": "void_ring", "more": 0.6 }
       ]
     },
     "skill_ult_hk": {
@@ -5738,7 +5761,8 @@
           "tint": ["#a07af0"],
           "more": 2
         },
-        { "do": "vignette", "at": 1500, "who": "field", "dur": 900, "color": "#2a0a50", "alpha": 0.55 }
+        { "do": "vignette", "at": 1500, "who": "field", "dur": 900, "color": "#2a0a50", "alpha": 0.55 },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_ult_phoenix": {
@@ -5977,7 +6001,8 @@
           "stagger": 400
         },
         { "do": "flash", "at": 1100, "who": "field", "dur": 120, "color": "#bfe8ff", "alpha": 0.3 },
-        { "do": "letterbox", "at": 2880, "who": "field", "dur": 240, "on": false }
+        { "do": "letterbox", "at": 2880, "who": "field", "dur": 240, "on": false },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_ult_mythical": {
@@ -6160,7 +6185,8 @@
           "x": 40,
           "deg": 22,
           "stagger": 100
-        }
+        },
+        { "do": "glow", "at": 0, "who": "actor", "dur": 700, "color": "$color", "bright": 1.25 }
       ]
     },
     "skill_cl_taunt": {
@@ -6300,7 +6326,8 @@
         { "do": "stop", "at": 480, "who": "actor", "dur": 90, "tier": "medium" },
         { "do": "shake", "at": 480, "who": "field", "dur": 260, "amount": 7, "dir": [1, 0.12] },
         { "do": "sound", "at": 480, "who": "actor", "sound": "adv_pow" },
-        { "do": "move", "at": 480, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 }
+        { "do": "move", "at": 480, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 },
+        { "do": "burst", "at": 680, "who": "targets", "ref": "$spark", "more": 0.6 }
       ]
     },
     "skill_cl_stomp": {
@@ -6349,10 +6376,10 @@
           "size": 0.7,
           "under": true
         },
-        { "do": "shake", "at": 500, "who": "field", "dur": 150, "amount": 3 },
+        { "do": "shake", "at": 500, "who": "field", "dur": 150, "amount": 2 },
         { "do": "sound", "at": 500, "who": "actor", "sound": "adv_bonk" },
-        { "do": "shake", "at": 600, "who": "field", "dur": 150, "amount": 3 },
-        { "do": "shake", "at": 700, "who": "field", "dur": 150, "amount": 3 },
+        { "do": "shake", "at": 600, "who": "field", "dur": 150, "amount": 2 },
+        { "do": "shake", "at": 700, "who": "field", "dur": 150, "amount": 2 },
         {
           "do": "strip",
           "at": 800,
@@ -6429,7 +6456,8 @@
         { "do": "stop", "at": 380, "who": "actor", "dur": 110, "tier": "heavy" },
         { "do": "shake", "at": 380, "who": "field", "dur": 260, "amount": 8, "dir": [1, 0.12] },
         { "do": "sound", "at": 380, "who": "actor", "sound": "adv_pow" },
-        { "do": "move", "at": 380, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 }
+        { "do": "move", "at": 380, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 },
+        { "do": "burst", "at": 580, "who": "targets", "ref": "$spark", "more": 0.6 }
       ]
     },
     "skill_cl_aim": {
@@ -6500,7 +6528,8 @@
           "tint": "$color",
           "flip": true
         },
-        { "do": "move", "at": 420, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 }
+        { "do": "move", "at": 420, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 },
+        { "do": "burst", "at": 620, "who": "targets", "ref": "$spark", "more": 0.6 }
       ]
     },
     "skill_cl_dash": {
@@ -6537,7 +6566,8 @@
         { "do": "strip", "at": 420, "who": "target", "img": "fx_pow_star" },
         { "do": "stop", "at": 420, "who": "actor", "dur": 70, "tier": "medium" },
         { "do": "sound", "at": 420, "who": "actor", "sound": "adv_pow" },
-        { "do": "move", "at": 420, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 }
+        { "do": "move", "at": 420, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 },
+        { "do": "burst", "at": 620, "who": "targets", "ref": "$spark", "more": 0.6 }
       ]
     },
     "skill_cl_finisher": {
@@ -6572,7 +6602,8 @@
         { "do": "sound", "at": 800, "who": "actor", "sound": "adv_crit" },
         { "do": "strip", "at": 820, "who": "target", "img": "fx_pow_star" },
         { "do": "pose", "at": 1300, "who": "actor", "dur": 250, "pose": "victory" },
-        { "do": "move", "at": 800, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 }
+        { "do": "move", "at": 800, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 },
+        { "do": "burst", "at": 1000, "who": "targets", "ref": "$spark", "more": 0.6 }
       ]
     },
     "skill_cl_shadow_dance": {
@@ -6659,7 +6690,8 @@
         { "do": "burst", "at": 720, "who": "target", "ref": "$spark", "more": 1.2 },
         { "do": "stop", "at": 720, "who": "actor", "dur": 60 },
         { "do": "shake", "at": 720, "who": "field", "dur": 260, "amount": 5 },
-        { "do": "sound", "at": 720, "who": "actor", "sound": "adv_pow" }
+        { "do": "sound", "at": 720, "who": "actor", "sound": "adv_pow" },
+        { "do": "burst", "at": 920, "who": "targets", "ref": "$spark", "more": 0.6 }
       ]
     },
     "skill_cl_focus": {
@@ -6763,7 +6795,9 @@
         { "do": "stop", "at": 700, "who": "actor", "dur": 80 },
         { "do": "shake", "at": 700, "who": "field", "dur": 260, "amount": 3 },
         { "do": "sound", "at": 700, "who": "actor", "sound": "adv_water_hit" },
-        { "do": "burst", "at": 800, "who": "target", "ref": "puff_rise", "tint": ["#ffffff"], "more": 0.5 }
+        { "do": "burst", "at": 800, "who": "target", "ref": "puff_rise", "tint": ["#ffffff"], "more": 0.5 },
+        { "do": "burst", "at": 900, "who": "targets", "ref": "snow_fall", "more": 0.6 },
+        { "do": "decal", "at": 700, "who": "targets", "dur": 650, "kind": "ring", "color": "#bfe8ff" }
       ]
     },
     "skill_cl_seal": {
@@ -6799,7 +6833,8 @@
         },
         { "do": "strip", "at": 800, "who": "target", "img": "fx_rune_lock", "size": 0.8 },
         { "do": "stop", "at": 800, "who": "actor", "dur": 50 },
-        { "do": "sound", "at": 800, "who": "actor", "sound": "adv_debuff" }
+        { "do": "sound", "at": 800, "who": "actor", "sound": "adv_debuff" },
+        { "do": "burst", "at": 1000, "who": "targets", "ref": "$spark", "more": 0.6 }
       ]
     },
     "skill_cl_meteor": {
@@ -6881,7 +6916,8 @@
           "color": "$glow",
           "width": 5,
           "stagger": 100
-        }
+        },
+        { "do": "burst", "at": 1000, "who": "targets", "ref": "$spark", "more": 0.6 }
       ]
     },
     "skill_cl_mend": {
@@ -7206,7 +7242,8 @@
         { "do": "burst", "at": 560, "who": "target", "ref": "leaf_pop" },
         { "do": "stop", "at": 560, "who": "actor", "dur": 60, "tier": "medium" },
         { "do": "shake", "at": 560, "who": "field", "dur": 260, "amount": 4, "dir": [1, 0.12] },
-        { "do": "sound", "at": 560, "who": "actor", "sound": "adv_nature_hit" }
+        { "do": "sound", "at": 560, "who": "actor", "sound": "adv_nature_hit" },
+        { "do": "burst", "at": 760, "who": "targets", "ref": "leaf_fall", "more": 0.6 }
       ]
     },
     "skill_e_poison_spore": {
@@ -7229,7 +7266,8 @@
         { "do": "burst", "at": 700, "who": "target", "ref": "spore_pop", "more": 1 },
         { "do": "move", "at": 700, "who": "target", "dur": 400, "move": "shake", "x": 4, "n": 3 },
         { "do": "sound", "at": 700, "who": "actor", "sound": "adv_nature_hit" },
-        { "do": "marker", "at": 50, "who": "targets", "dur": 300, "size": 1 }
+        { "do": "marker", "at": 50, "who": "targets", "dur": 300, "size": 1 },
+        { "do": "burst", "at": 900, "who": "targets", "ref": "spore_fall", "more": 0.6 }
       ]
     },
     "skill_e_spark_peck": {
@@ -7257,7 +7295,8 @@
         },
         { "do": "stop", "at": 470, "who": "actor", "dur": 40, "tier": "light" },
         { "do": "burst", "at": 500, "who": "actor", "ref": "feather_fall", "more": 0.3 },
-        { "do": "move", "at": 380, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 }
+        { "do": "move", "at": 380, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 },
+        { "do": "burst", "at": 580, "who": "targets", "ref": "bolt_pop", "more": 0.6 }
       ]
     },
     "skill_e_ember_bite": {
@@ -7274,7 +7313,9 @@
         { "do": "shake", "at": 480, "who": "field", "dur": 260, "amount": 5, "dir": [1, 0.12] },
         { "do": "sound", "at": 480, "who": "actor", "sound": "adv_fire_hit" },
         { "do": "burst", "at": 600, "who": "target", "ref": "ember_big" },
-        { "do": "move", "at": 480, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 }
+        { "do": "move", "at": 480, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 },
+        { "do": "burst", "at": 680, "who": "targets", "ref": "fire_smoke", "more": 0.6 },
+        { "do": "decal", "at": 480, "who": "targets", "dur": 570, "kind": "scorch", "color": "#5a3020" }
       ]
     },
     "skill_e_bubble": {
@@ -7322,7 +7363,9 @@
         { "do": "sound", "at": 720, "who": "actor", "sound": "adv_water_hit" },
         { "do": "strip", "at": 800, "who": "target", "img": "fx_splash" },
         { "do": "stop", "at": 800, "who": "actor", "dur": 40 },
-        { "do": "marker", "at": 20, "who": "targets", "dur": 300, "size": 1 }
+        { "do": "marker", "at": 20, "who": "targets", "dur": 300, "size": 1 },
+        { "do": "burst", "at": 1000, "who": "targets", "ref": "drop_fall", "more": 0.6 },
+        { "do": "decal", "at": 800, "who": "targets", "dur": 350, "kind": "puddle", "color": "#6fc4ff" }
       ]
     },
     "skill_e_soothe": {
@@ -7442,7 +7485,9 @@
         { "do": "stop", "at": 700, "who": "actor", "dur": 100, "tier": "heavy" },
         { "do": "shake", "at": 700, "who": "field", "dur": 260, "amount": 9, "dir": [1, 0.12] },
         { "do": "sound", "at": 700, "who": "actor", "sound": "adv_earth_hit" },
-        { "do": "move", "at": 700, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 }
+        { "do": "move", "at": 700, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 },
+        { "do": "burst", "at": 900, "who": "targets", "ref": "earth_dust", "more": 0.6 },
+        { "do": "decal", "at": 700, "who": "targets", "dur": 550, "kind": "crack", "color": "#7a5230" }
       ]
     },
     "skill_e_bark_skin": {
@@ -7547,7 +7592,8 @@
           "stagger": 90
         },
         { "do": "sound", "at": 900, "who": "actor", "sound": "adv_dark_hit" },
-        { "do": "marker", "at": 100, "who": "targets", "dur": 300, "size": 1 }
+        { "do": "marker", "at": 100, "who": "targets", "dur": 300, "size": 1 },
+        { "do": "burst", "at": 1100, "who": "targets", "ref": "spore_fall", "more": 0.6 }
       ]
     },
     "skill_e_thorn_storm": {
@@ -7613,7 +7659,7 @@
           "tint": "#6a9a4a",
           "stagger": 120
         },
-        { "do": "shake", "at": 1400, "who": "field", "dur": 260, "amount": 7, "dir": [1, 0.12] }
+        { "do": "shake", "at": 1400, "who": "field", "dur": 260, "amount": 4, "dir": [1, 0.12] }
       ]
     },
     "skill_e_iron_shell": {
@@ -7704,7 +7750,8 @@
         { "do": "strip", "at": 700, "who": "target", "img": "fx_boom", "size": 0.9, "tint": "#b08a60" },
         { "do": "stop", "at": 700, "who": "actor", "dur": 90, "tier": "medium" },
         { "do": "shake", "at": 700, "who": "field", "dur": 260, "amount": 8, "dir": [1, 0.12] },
-        { "do": "sound", "at": 700, "who": "actor", "sound": "adv_thunder_hit" }
+        { "do": "sound", "at": 700, "who": "actor", "sound": "adv_thunder_hit" },
+        { "do": "burst", "at": 900, "who": "targets", "ref": "bolt_pop", "more": 0.6 }
       ]
     },
     "skill_e_lava_spit": {
@@ -7731,7 +7778,9 @@
         { "do": "shake", "at": 720, "who": "field", "dur": 260, "amount": 5 },
         { "do": "sound", "at": 720, "who": "actor", "sound": "adv_fire_hit" },
         { "do": "marker", "at": 20, "who": "targets", "dur": 300, "size": 1 },
-        { "do": "flash", "at": 720, "who": "field", "dur": 110, "color": "#ff9a3c", "alpha": 0.15 }
+        { "do": "flash", "at": 720, "who": "field", "dur": 110, "color": "#ff9a3c", "alpha": 0.15 },
+        { "do": "burst", "at": 920, "who": "targets", "ref": "fire_smoke", "more": 0.6 },
+        { "do": "decal", "at": 720, "who": "targets", "dur": 430, "kind": "scorch", "color": "#5a3020" }
       ]
     },
     "skill_e_frost_breath": {
@@ -7781,7 +7830,10 @@
           "tint": ["#d8f4ff"],
           "more": 0.8
         },
-        { "do": "burst", "at": 400, "who": "actor", "ref": "snow_trail", "spot": "front", "more": 1.5 }
+        { "do": "burst", "at": 400, "who": "actor", "ref": "snow_trail", "spot": "front", "more": 1.5 },
+        { "do": "stop", "at": 850, "who": "actor", "dur": 80, "tier": "medium" },
+        { "do": "shake", "at": 850, "who": "field", "dur": 200, "amount": 3 },
+        { "do": "burst", "at": 1050, "who": "targets", "ref": "snow_fall", "more": 0.6 }
       ]
     },
     "skill_e_rock_slam": {
@@ -7805,7 +7857,9 @@
         { "do": "move", "at": 750, "who": "target", "dur": 300, "move": "squash", "scale": 0.6 },
         { "do": "stop", "at": 750, "who": "actor", "dur": 110, "tier": "heavy" },
         { "do": "shake", "at": 750, "who": "field", "dur": 260, "amount": 10, "dir": [1, 0.12] },
-        { "do": "sound", "at": 750, "who": "actor", "sound": "adv_earth_hit" }
+        { "do": "sound", "at": 750, "who": "actor", "sound": "adv_earth_hit" },
+        { "do": "burst", "at": 950, "who": "targets", "ref": "earth_dust", "more": 0.6 },
+        { "do": "decal", "at": 750, "who": "targets", "dur": 600, "kind": "crack", "color": "#7a5230" }
       ]
     },
     "skill_e_thunder_charge": {
@@ -7839,7 +7893,8 @@
           "flip": true,
           "stagger": 150
         },
-        { "do": "move", "at": 520, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 }
+        { "do": "move", "at": 520, "who": "actor", "dur": 300, "move": "tilt", "deg": 8 },
+        { "do": "burst", "at": 720, "who": "targets", "ref": "bolt_pop", "more": 0.6 }
       ]
     },
     "skill_e_magma_breath": {
@@ -7860,7 +7915,7 @@
           "width": 220
         },
         { "do": "strip", "at": 450, "who": "targets", "img": "fx_flame_burst", "stagger": 100 },
-        { "do": "shake", "at": 450, "who": "field", "dur": 600, "amount": 7 },
+        { "do": "shake", "at": 450, "who": "field", "dur": 600, "amount": 4 },
         { "do": "sound", "at": 450, "who": "actor", "sound": "adv_fire_hit" },
         { "do": "burst", "at": 460, "who": "actor", "ref": "ember_spray", "spot": "front", "more": 4 },
         { "do": "burst", "at": 1050, "who": "foeside", "ref": "puff_rise", "more": 1 },
@@ -7884,7 +7939,7 @@
           "size": 0.6,
           "flip": true
         },
-        { "do": "shake", "at": 350, "who": "field", "dur": 400, "amount": 6 },
+        { "do": "shake", "at": 350, "who": "field", "dur": 400, "amount": 2 },
         { "do": "glow", "at": 850, "who": "allies", "dur": 400, "color": "#ff5a3a", "bright": 1.3 },
         { "do": "sound", "at": 850, "who": "actor", "sound": "adv_buff" }
       ]
@@ -7965,10 +8020,13 @@
         { "do": "beam", "at": 380, "who": "target", "dur": 400, "color": "#8a8aff", "width": 16 },
         { "do": "strip", "at": 560, "who": "target", "img": "fx_pow_star", "tint": "#8a8aff" },
         { "do": "burst", "at": 560, "who": "target", "ref": "rune_b_pop", "tint": ["#8a8aff"], "more": 0.4 },
-        { "do": "stop", "at": 560, "who": "actor", "dur": 60 },
+        { "do": "stop", "at": 560, "who": "actor", "dur": 80, "tier": "medium" },
         { "do": "sound", "at": 560, "who": "actor", "sound": "adv_light_hit" },
         { "do": "marker", "at": 80, "who": "targets", "dur": 300, "size": 1 },
-        { "do": "flash", "at": 560, "who": "field", "dur": 130, "color": "#fff6c8", "alpha": 0.3 }
+        { "do": "flash", "at": 560, "who": "field", "dur": 130, "color": "#fff6c8", "alpha": 0.3 },
+        { "do": "shake", "at": 560, "who": "field", "dur": 220, "amount": 4 },
+        { "do": "punch", "at": 560, "who": "target", "dur": 200, "zoom": 1.04 },
+        { "do": "burst", "at": 760, "who": "targets", "ref": "star_fall", "more": 0.6 }
       ]
     },
     "skill_e_holy_ward": {
@@ -8019,7 +8077,10 @@
         { "do": "glow", "at": 650, "who": "target", "dur": 300, "color": "#9a8ad6", "tint": true },
         { "do": "sound", "at": 650, "who": "actor", "sound": "adv_dark_hit" },
         { "do": "marker", "at": 0, "who": "targets", "dur": 300, "size": 1 },
-        { "do": "vignette", "at": 350, "who": "field", "dur": 700, "color": "#1a0a2a", "alpha": 0.45 }
+        { "do": "vignette", "at": 350, "who": "field", "dur": 700, "color": "#1a0a2a", "alpha": 0.45 },
+        { "do": "stop", "at": 650, "who": "actor", "dur": 80, "tier": "medium" },
+        { "do": "shake", "at": 650, "who": "field", "dur": 200, "amount": 3 },
+        { "do": "burst", "at": 850, "who": "targets", "ref": "dark_smoke", "more": 0.6 }
       ]
     },
     "skill_e_curse": {
@@ -8055,7 +8116,8 @@
         { "do": "glow", "at": 900, "who": "targets", "dur": 400, "color": "#3a2a4a", "tint": true },
         { "do": "sound", "at": 900, "who": "actor", "sound": "adv_debuff" },
         { "do": "marker", "at": 100, "who": "targets", "dur": 300, "size": 1 },
-        { "do": "vignette", "at": 600, "who": "field", "dur": 700, "color": "#1a0a2a", "alpha": 0.45 }
+        { "do": "vignette", "at": 600, "who": "field", "dur": 700, "color": "#1a0a2a", "alpha": 0.45 },
+        { "do": "burst", "at": 1100, "who": "targets", "ref": "dark_smoke", "more": 0.6 }
       ]
     },
     "skill_e_idol_flame": {
@@ -8090,7 +8152,9 @@
         { "do": "shake", "at": 900, "who": "field", "dur": 260, "amount": 6 },
         { "do": "sound", "at": 900, "who": "actor", "sound": "adv_fire_hit" },
         { "do": "marker", "at": 100, "who": "targets", "dur": 300, "size": 1 },
-        { "do": "flash", "at": 900, "who": "field", "dur": 110, "color": "#ff9a3c", "alpha": 0.15 }
+        { "do": "flash", "at": 900, "who": "field", "dur": 110, "color": "#ff9a3c", "alpha": 0.15 },
+        { "do": "burst", "at": 1100, "who": "targets", "ref": "fire_smoke", "more": 0.6 },
+        { "do": "decal", "at": 900, "who": "targets", "dur": 650, "kind": "scorch", "color": "#5a3020" }
       ]
     },
     "skill_e_doom_mark": {
@@ -8206,10 +8270,12 @@
           "stagger": 100
         },
         { "do": "move", "at": 1700, "who": "targets", "dur": 400, "move": "lift", "y": 30, "stagger": 100 },
-        { "do": "stop", "at": 1700, "who": "actor", "dur": 120, "tier": "heavy" },
-        { "do": "shake", "at": 1700, "who": "field", "dur": 260, "amount": 12, "dir": [1, 0.12] },
-        { "do": "punch", "at": 1700, "who": "target", "dur": 220, "zoom": 1.04 },
-        { "do": "sound", "at": 1700, "who": "actor", "sound": "adv_earth_hit" }
+        { "do": "stop", "at": 1700, "who": "actor", "dur": 80, "tier": "medium" },
+        { "do": "shake", "at": 1700, "who": "field", "dur": 260, "amount": 4, "dir": [1, 0.12] },
+        { "do": "punch", "at": 1700, "who": "target", "dur": 220, "zoom": 1.02 },
+        { "do": "sound", "at": 1700, "who": "actor", "sound": "adv_earth_hit" },
+        { "do": "burst", "at": 1900, "who": "targets", "ref": "earth_dust", "more": 0.6 },
+        { "do": "decal", "at": 1700, "who": "targets", "dur": 700, "kind": "crack", "color": "#7a5230" }
       ]
     }
   },
@@ -8283,7 +8349,7 @@
       { "do": "sound", "at": 520, "who": "actor", "sound": "adv_buff" }
     ],
     "hit": [
-      { "do": "burst", "at": 0, "who": "actor", "ref": "drop_spray", "more": 0.4 },
+      { "do": "burst", "at": 0, "who": "actor", "ref": "$spark", "more": 0.4 },
       { "do": "sound", "at": 0, "who": "actor", "sound": "adv_pow" }
     ],
     "heavy": [

@@ -45,6 +45,8 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
   ['Hệ thống', [['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
 ];
 const ALL = NAV.flatMap(([, items]) => items);
+/** The "Thế giới" pages share one design (worldUi.css, `.wpage`). The Map Editor is a full-screen tool with its own dark theme. */
+const WORLD_PAGES = new Set(NAV.find(([group]) => group === 'Thế giới')![1].map(([p]) => p).filter((p) => p !== 'adventure-editor'));
 /** Pages that edit the species draft: the header save belongs to them. */
 const SPECIES_PAGES = new Set(['pigs', 'validation']);
 /** `#/<page>?key=value` links (overview cards) preset that page's list filters. */
@@ -103,7 +105,7 @@ function shell() {
           </div>
         </header>
         ${msg}
-        <div class="content"></div>
+        <div class="content${WORLD_PAGES.has(page) ? ' wpage' : ''}"></div>
       </main>
     </div>
     <div class="drawer-host"></div>`;

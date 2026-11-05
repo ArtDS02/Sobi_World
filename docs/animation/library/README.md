@@ -11,7 +11,7 @@ Thứ chạy trong game vẫn chỉ là `content/adventure/battle_fx.json` (deci
 | `bibles/motifs/<motif>.md` | Thẻ phụ dùng xuyên hệ: ice, steam, wind, poison, heal, shield… | Motion Designer |
 | `bibles/actions/<loại>.md` | Mỗi loại hành động: phóng đạn, cận chiến & bị đánh, cast, buff, status, ultimate, idle… | Motion Designer |
 | `refs/<REF-ID>.json` | Một hiệu ứng tham chiếu: giai đoạn (ms), lớp, hạt, act gợi ý, nguồn + loại bản quyền, cách chuyển sang phong cách Sobi | Reference Curator |
-| `briefs/<skillId>.md` | Motion Brief của một skill (khi làm thật): REF, bậc, bảng giai đoạn → act, danh sách asset cho Artist, tiêu chí nghiệm thu đo được | Motion Designer |
+| [`scenarios/`](scenarios/README.md)`<loại>/<id>.md` | **Kịch bản animation** của từng skill / trạng thái / hành động / phản ứng: ý tưởng → nhịp → bóc lớp L0–L4 → đặc tả asset → bước dựng → nghiệm thu. Viết và duyệt **trước** khi tạo asset và dựng act | Motion Designer |
 
 ## Mục lục
 - **Hệ (9):** [WATER](bibles/elements/WATER.md) · [FIRE](bibles/elements/FIRE.md) · [NATURE](bibles/elements/NATURE.md) · [EARTH](bibles/elements/EARTH.md) · [METAL](bibles/elements/METAL.md) · [LIGHTNING](bibles/elements/LIGHTNING.md) · [DARK](bibles/elements/DARK.md) · [LIGHT](bibles/elements/LIGHT.md) · [VOID](bibles/elements/VOID.md)
@@ -20,8 +20,9 @@ Thứ chạy trong game vẫn chỉ là `content/adventure/battle_fx.json` (deci
 - **REF:** `refs/` (Nước: sóng, bong bóng, băng bọc). Thêm REF khi làm brief cho hệ / loại tương ứng.
 
 ## Thứ tự nâng cấp (từ `anim:audit` + bible)
+Bảng "Hiện trạng" trong bible là ảnh chụp audit lúc viết; nguồn sự thật luôn là [`AUDIT.md`](../../animation-review/audit/AUDIT.md) (`npm run anim:audit`).
 1. **Pilot Nước** (P2): `skill_nh_tsunami` — so flipbook vs displacement (decision 049 §6).
-2. **Sửa dữ liệu rẻ, lợi lớn** (chi phí S, không cần art): L2 cho 11 ultimate; hạ tác động các skill quá tay (Đất `seal_quake`, `qs_quake`; Thiên nhiên `thorn_storm`; Hư Không `void_vortex`; Lửa `magma_breath`); thêm tác động cho `e_wraith_touch`, `e_rune_beam`, `e_frost_breath`; `actions.hit` dùng `$spark`; `VOID.spark` bỏ `ice_pop`; thêm pha tụ cho skill Kim / Ánh sáng quá ngắn; dư âm (`NO_AFTERMATH`, 37 skill).
+2. ✅ (2026-11-05, xem PROGRESS) **Sửa dữ liệu rẻ, lợi lớn** (chi phí S, không cần art): L2 cho 11 ultimate; hạ tác động các skill quá tay (Đất `seal_quake`, `qs_quake`; Thiên nhiên `thorn_storm`; Hư Không `void_vortex`; Lửa `magma_breath`); thêm tác động cho `e_wraith_touch`, `e_rune_beam`, `e_frost_breath`; `actions.hit` dùng `$spark`; `VOID.spark` bỏ `ice_pop`; thêm pha tụ cho skill Kim / Ánh sáng quá ngắn; dư âm (`NO_AFTERMATH`, 37 skill).
 3. **Hình chủ đạo sống** theo hướng chọn ở P2: ultimate → skill dòng (unique) → quái → hỗ trợ.
 
 ## Bản ghi REF
@@ -34,9 +35,9 @@ Schema: `scripts/anim-review/lib/library.ts` (zod), kiểm bằng `tests/scripts
 
 ## Quy trình (tóm tắt — chi tiết ở nghiên cứu 2026-11-05, decision 049)
 1. `npm run anim:audit` → chọn đơn vị ưu tiên.
-2. Motion Designer đọc bible hệ + bible hành động + REF → viết `briefs/<skillId>.md`.
-3. Artist (chủ dự án render Gemini qua skill `image-to-asset` / `image-to-prompt`) làm phần asset của brief → `art_inbox/` → `art:process` → `assets:check` → IP audit (`docs/IP_AUDIT_PROMPT.md`).
-4. Developer chuyển bảng giai đoạn → act trong `battle_fx.json`; `npm run check`.
+2. Motion Designer đọc bible hệ + bible hành động + REF + thiết kế gốc → viết **kịch bản** `scenarios/<loại>/<id>.md` (khuôn ở [scenarios/README](scenarios/README.md)) → chủ dự án duyệt (`status: approved`).
+3. Artist (chủ dự án render Gemini qua skill `image-to-asset` / `image-to-prompt`) làm asset theo `assets[].spec` của kịch bản → `art_inbox/` → `art:process` → `assets:check` → IP audit (`docs/IP_AUDIT_PROMPT.md`).
+4. Developer dựng theo "Các bước dựng" của kịch bản (B1 nhịp → … → B7 capture) trong `battle_fx.json`; `npm run check`.
 5. Harness `anim:capture` + `anim:audit` → TD chấm theo rubric (`docs/animation-review/`) → chủ dự án playtest C2/C5.
 
 ## Bản quyền (decision 048, 049)

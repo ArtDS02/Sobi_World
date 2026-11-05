@@ -4,6 +4,16 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
+## Adventure: VFX theo kịch bản animation (decision 049, đợt thử hệ Nước)
+Đặc tả từng khung nằm trong đầu file kịch bản (`docs/animation/library/scenarios/**`, trường `assets[].spec`). Chưa tạo; mỗi kịch bản có phương án dự phòng bằng asset sẵn có.
+| Asset | Dạng | Dùng ở |
+|---|---|---|
+| `fx_wave_rise` | flipbook 8 khung 512² (sóng dâng → cuộn → đổ → vỡ) | `skill_nh_tsunami`, `skill_nh_tide_song`, `skill_ult_trident` |
+| `fx_bubble_pop` | flipbook 6 khung 256² (bong bóng căng → bẹp → vỡ vòng giọt) | `skill_nh_bubble`, `skill_e_bubble`, `skill_nh_soothe` |
+| `fx_water_column` | flipbook 6 khung 256×512 dọc (cột nước vọt → nở → sụp) | `skill_ult_nh`, `skill_ult_trident` |
+| `fx_ice_grow` | flipbook 6 khung 256² (băng mọc từ chân theo nấc) | `skill_cl_freeze`, `skill_e_frost_breath` |
+| `fx_hit_burst` | flipbook 6 khung 256², vẽ trắng để tô theo hệ (sao va chạm) | đánh thường (`actions.attack`), thay `fx_pow_star` dùng chung 17 skill |
+
 ## Adventure: bản đồ v3 — batch adventure-15-m2-3q (decision 046)
 - **P1 (cây)** ra pixel art, lệch nền vẽ mịn: tạo lại (thêm câu "Smooth painted illustration, absolutely no pixel art." và đính kèm `BG.png` đã chốt).
 - **P3** cây rỗng bị cụt tán (chỉ có thân); vòng đá, đền, bia đá dùng được. **P4** thiếu hai mảnh đầu dải (trái / phải). Cả P2–P4 có dấu sao Gemini ở góc phải dưới (agent xóa khi cắt).

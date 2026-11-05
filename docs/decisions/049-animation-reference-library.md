@@ -20,3 +20,11 @@
 
 ## Lộ trình
 P1 (đợt này): khung thư viện, STANDARDS, schema + test, bible Nước + motif Băng + 2 bible hành động (phóng đạn, cận chiến & bị đánh), REF Nước đầu tiên. Tiếp: các bible còn lại → P2 pilot Nước → P3 nhân rộng theo `anim:audit` → P4 nhân vật & môi trường.
+
+## Bổ sung 2026-11-05 — Kịch bản animation cho từng đơn vị
+Chủ dự án: "tất cả animation vẫn quá kém… nên có một bộ tài liệu mô tả kịch bản cho từng skill, từng animation, dựa vào đó dựng các bước, lớp layer rồi mới tạo asset". Quyết định:
+- Mỗi skill / trạng thái / hành động chung / phản ứng có một file `docs/animation/library/scenarios/<loại>/<id>.md` (thay cho `briefs/` dự kiến trước). Thứ tự bắt buộc: **kịch bản → duyệt → asset theo đặc tả → dựng theo bước → capture**.
+- Khuôn 7 mục cố định (ý tưởng, hiện tại, kịch bản theo nhịp, bóc lớp, asset, các bước dựng, nghiệm thu) + đầu JSON (`status`, asset `have/new/edit` có đặc tả, khả năng engine còn thiếu). Kiểm bằng `scripts/anim-review/lib/scenario.ts` + `tests/scripts/animScenario.test.ts`; `anim:audit` có cột "kịch bản".
+- Kịch bản kế thừa ý tưởng của bản thiết kế gốc của chủ dự án (`art_inbox/.batch/adventure-12-animation/all_animation_sobi_adventure_final.md`) và bổ sung phần bản đó thiếu: bóc lớp, đặc tả asset từng khung, bước dựng.
+- Khả năng engine còn thiếu đặt tên cố định (`prop_displace`, `prop_flipbook`, `strip_scale_xy`, `bg_scene`, `action_by_body`) để gom thành việc engine riêng.
+- Đợt thử: 9 skill hệ Nước + đánh thường; asset mới cần: `fx_wave_rise`, `fx_bubble_pop`, `fx_water_column`, `fx_ice_grow`, `fx_hit_burst` (`docs/ASSET_TODO.md`).

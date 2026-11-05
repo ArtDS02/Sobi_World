@@ -60,7 +60,7 @@ function openList(select: HTMLSelectElement, button: HTMLButtonElement) {
     const rows = shown();
     if (!rows.some((r) => r.i === active)) active = rows[0]?.i ?? -1;
     list.innerHTML = rows.length
-      ? rows.map(({ o, i }) => `<div class="rsel__opt${i === select.selectedIndex ? ' is-selected' : ''}${i === active ? ' is-active' : ''}${o.disabled ? ' is-disabled' : ''}" role="option" data-i="${i}">${entryHtml(o)}</div>`).join('')
+      ? rows.map(({ o, i }) => `<div class="rsel__opt${i === select.selectedIndex ? ' is-selected' : ''}${i === active ? ' is-active' : ''}${o.disabled ? ' is-disabled' : ''}" role="option" data-i="${i}" title="${esc(o.textContent ?? '')}">${entryHtml(o)}</div>`).join('')
       : '<p class="rsel__empty">Không có lựa chọn khớp.</p>';
     list.querySelector('.is-active')?.scrollIntoView({ block: 'nearest' });
   };
@@ -136,6 +136,8 @@ function openList(select: HTMLSelectElement, button: HTMLButtonElement) {
 
 function paintButton(select: HTMLSelectElement, button: HTMLButtonElement) {
   const o = select.options[select.selectedIndex];
+  // Long names are cut with an ellipsis: the full text stays available as a tooltip.
+  button.title = o?.textContent ?? '';
   button.innerHTML = `${o ? entryHtml(o) : '<span class="rsel__text">—</span>'}<span class="rsel__caret" aria-hidden="true">▾</span>`;
   button.disabled = select.disabled;
 }

@@ -8,8 +8,9 @@ import { editExits, editSpawns, fetchBuilder, postMeta } from './mapApi';
 import { EXIT_KIND_LABEL, LOCK_LABEL } from './mapLinks';
 import { openSimulation } from './mapSimulate';
 import { STATUS_ICON, zoneVisual } from './mapManage';
-import { optionHtml } from './richSelect';
 import * as M from './mapModel';
+import { cascade } from './worldFilters';
+import { facetSelect, filterBar, filterCell, pageIntro, searchBox } from './worldUi';
 import { NODE, autoLayout, networkEdges, networkWarnings, nodePositions, type NetEdge, type Point } from './mapNetwork';
 
 const lastClick = { id: null as string | null, at: 0 };
@@ -137,15 +138,18 @@ function draw(root: HTMLElement) {
   const warned = new Map<string, number>();
   for (const w of warnings) warned.set(w.mapId, (warned.get(w.mapId) ?? 0) + 1);
   const maps = M.workingMaps(data);
-  root.innerHTML = `<h3>Mạng map (Sobi Adventure)</h3>
-    <p class="muted">${maps.length} map · ${edges.length} đường nối. Kéo map để sắp xếp (chỉ đổi sơ đồ, không đổi map); kéo nền để di chuyển, cuộn để phóng to. Mũi tên = một chiều, nét đứt = có khoá, mờ = tạm tắt, đỏ = lỗi.</p>
+  const cas = cascade(maps.map((m) => ({ id: m.id, zoneId: m.zoneId, status: M.statusOf(data, m.id) })), { of: (m) => m.zoneId, label: (z) => data.zones.find((x) => x.id === z)?.nameVi ?? z, order: data.zones.map((z) => z.id) }, { of: (m) => m.status, label: (v) => M.STATUS_LABEL[v as M.MapStatus], order: Object.keys(M.STATUS_LABEL) }, { a: page.zone, b: page.status });
+  page.zone = cas.a;
+  page.status = cas.b as M.MapStatus | '';
+  root.innerHTML = `${pageIntro(`${maps.length} map · ${edges.length} đường nối. Kéo map để sắp xếp (chỉ đổi sơ đồ, không đổi map); kéo nền để di chuyển, cuộn để phóng to. Mũi tên = một chiều, nét đứt = có khoá, mờ = tạm tắt, đỏ = lỗi.`,
+      '<button class="btn" data-fit>Vừa khung</button><button class="btn" data-auto>Xếp tự động</button>')}
     ${page.message ? `<p class="ok">${esc(page.message)}</p>` : ''}
-    <div class="toolbar">
-      <input class="search" type="search" placeholder="Tìm map…" value="${esc(page.query)}" data-q />
-      <span class="mapm__filter"><select data-zone data-rich="compact">${optionHtml('', 'Mọi vùng', !page.zone, { icon: '🗺️' })}${data.zones.map((z) => optionHtml(z.id, z.nameVi, z.id === page.zone, zoneVisual(data, z.id))).join('')}</select></span>
-      <span class="mapm__filter"><select data-status data-rich="compact">${optionHtml('', 'Mọi trạng thái', !page.status, { icon: '📋' })}${(Object.keys(M.STATUS_LABEL) as M.MapStatus[]).map((s) => optionHtml(s, M.STATUS_LABEL[s], s === page.status, { icon: STATUS_ICON[s] })).join('')}</select></span>
-      <button class="btn" data-fit>Vừa khung</button><button class="btn" data-auto>Xếp tự động</button>
-    </div>
+    ${filterBar(
+      `<div class="wf wf--search">${searchBox(page.query, 'Tìm map theo tên hoặc id…')}</div>
+       ${filterCell('Vùng', facetSelect('data-zone', 'Mọi vùng', cas.aFacets, page.zone, (z) => zoneVisual(data, z), ' map'), !!page.zone)}
+       ${filterCell('Trạng thái', facetSelect('data-status', 'Mọi trạng thái', cas.bFacets, page.status, (v) => ({ icon: STATUS_ICON[v as M.MapStatus] }), ' map'), !!page.status)}`,
+      `Làm nổi ${cas.shown.length} / ${maps.length} map${page.zone || page.status || page.query.trim() ? ' · <button type="button" class="chip" data-reset-filters>Xoá bộ lọc</button>' : ''}`,
+    )}
     <div class="mnet"><svg class="mnet__svg"></svg><aside class="mnet__side">${sideHtml(data, edges, warnings)}</aside></div>`;
   const svg = root.querySelector<SVGSVGElement>('svg')!;
   const paint = () => {
@@ -176,7 +180,8 @@ function wire(root: HTMLElement, svg: SVGSVGElement, paint: () => void) {
     paint();
   });
   root.querySelector<HTMLSelectElement>('[data-zone]')!.addEventListener('change', (e) => ((page.zone = (e.target as HTMLSelectElement).value), rerender()));
-  root.querySelector<HTMLSelectElement>('[data-status]')!.addEventListener('change', (e) => ((page.status = (e.target as HTMLSelectElement).value as M.MapStatus | ''), paint()));
+  root.querySelector<HTMLSelectElement>('[data-status]')!.addEventListener('change', (e) => ((page.status = (e.target as HTMLSelectElement).value as M.MapStatus | ''), rerender()));
+  root.querySelector('[data-reset-filters]')?.addEventListener('click', () => ((page.zone = ''), (page.status = ''), (page.query = ''), rerender()));
   root.querySelector('[data-fit]')!.addEventListener('click', () => (fit(root), paint()));
   root.querySelector('[data-auto]')!.addEventListener('click', async () => {
     if (!confirm('Xếp lại mọi map theo vùng? Vị trí đã kéo tay sẽ bị thay (map không đổi).')) return;

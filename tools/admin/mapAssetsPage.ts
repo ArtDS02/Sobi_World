@@ -10,6 +10,8 @@ import { slugOf } from './mapModel';
 import { confirmDanger, openModal } from './modal';
 import { optionHtml } from './richSelect';
 import { artUrl, json, post, reloadSoon, rememberMessage, state } from './store';
+import { facetOptions, matchesQuery, reconcile } from './worldFilters';
+import { emptyState, facetSelect, filterBar, filterCell, pageIntro, searchBox } from './worldUi';
 
 const API = '/__admin/adventure/assets';
 const CATEGORY_LABEL: Record<(typeof SCENERY_CATEGORIES)[number], string> = {
@@ -125,15 +127,17 @@ function openUpload() {
 }
 
 function draw(root: HTMLElement) {
-  const q = page.query.trim().toLowerCase();
-  const list = DECOR_LIST.filter((a) => (!page.category || a.category === page.category) && (!q || `${a.nameVi} ${enName(a.id)} ${a.id} ${a.art}`.toLowerCase().includes(q)));
-  root.innerHTML = `<h3>Thư viện asset (Sobi Adventure)</h3>
-    <p class="muted">${DECOR_LIST.length} asset dùng chung cho mọi map: mỗi asset khai báo ảnh, cỡ, ô chặn, cách đứng một lần; map chỉ ghi chỗ đặt. Đặt asset trong Map Editor (cột trái).</p>
-    <div class="toolbar">
-      <input class="search" type="search" placeholder="Tìm asset…" value="${esc(page.query)}" data-q />
-      <span class="mapm__filter"><select data-cat data-rich="compact">${optionHtml('', 'Mọi loại', !page.category, { icon: '🗂️' })}${options(SCENERY_CATEGORIES, CATEGORY_LABEL, page.category, CATEGORY_ICON)}</select></span>
-      <button class="btn" data-from>＋ Từ ảnh có sẵn</button><button class="btn btn-primary" data-upload>⬆ Tải ảnh mới</button>
-    </div>
+  // Only categories that hold an asset are offered (with their counts); a category that emptied (after a delete) is reset.
+  const catFacets = facetOptions(DECOR_LIST, { of: (a) => a.category, label: (c) => CATEGORY_LABEL[c as keyof typeof CATEGORY_LABEL] ?? c, order: SCENERY_CATEGORIES });
+  page.category = reconcile(page.category, catFacets);
+  const list = DECOR_LIST.filter((a) => (!page.category || a.category === page.category) && matchesQuery(page.query, a.nameVi, enName(a.id), a.id, a.art));
+  root.innerHTML = `${pageIntro(`${DECOR_LIST.length} asset dùng chung cho mọi map: mỗi asset khai báo ảnh, cỡ, ô chặn, cách đứng một lần; map chỉ ghi chỗ đặt. Đặt asset trong Map Editor (cột trái).`,
+      '<button class="btn" data-from>＋ Từ ảnh có sẵn</button><button class="btn btn-primary" data-upload>⬆ Tải ảnh mới</button>')}
+    ${filterBar(
+      `<div class="wf wf--search">${searchBox(page.query, 'Tìm theo tên, id hoặc ảnh…')}</div>
+       ${filterCell('Loại', facetSelect('data-cat', 'Mọi loại', catFacets, page.category, (c) => ({ icon: CATEGORY_ICON[c as keyof typeof CATEGORY_ICON] }), ' asset'), !!page.category)}`,
+      `Hiển thị ${list.length} / ${DECOR_LIST.length} asset${page.category || page.query.trim() ? ' · <button type="button" class="chip" data-reset-filters>Xoá bộ lọc</button>' : ''}`,
+    )}
     <div class="massets">${list
       .map((a) => {
         const used = page.use?.[a.id] ?? [];
@@ -146,7 +150,7 @@ function draw(root: HTMLElement) {
           <div class="toolbar"><button class="btn btn-small" data-edit="${a.id}">Sửa</button><button class="btn btn-small" data-del="${a.id}" ${used.length ? 'disabled title="Đang đặt trên map"' : ''}>Xoá</button></div>
         </div>`;
       })
-      .join('') || '<p class="muted">Không có asset khớp.</p>'}</div>`;
+      .join('') || emptyState('🔎', 'Không có asset khớp bộ lọc.')}</div>`;
   const qi = root.querySelector<HTMLInputElement>('[data-q]')!;
   qi.addEventListener('input', () => {
     page.query = qi.value;
@@ -156,6 +160,7 @@ function draw(root: HTMLElement) {
     again.setSelectionRange(again.value.length, again.value.length);
   });
   root.querySelector<HTMLSelectElement>('[data-cat]')!.addEventListener('change', (e) => ((page.category = (e.target as HTMLSelectElement).value), draw(root)));
+  root.querySelector('[data-reset-filters]')?.addEventListener('click', () => ((page.category = ''), (page.query = ''), draw(root)));
   root.querySelector('[data-from]')!.addEventListener('click', () => openEdit(null));
   root.querySelector('[data-upload]')!.addEventListener('click', openUpload);
   root.querySelectorAll<HTMLButtonElement>('[data-edit]').forEach((b) => b.addEventListener('click', () => openEdit(DECOR_LIST.find((a) => a.id === b.dataset.edit)!)));

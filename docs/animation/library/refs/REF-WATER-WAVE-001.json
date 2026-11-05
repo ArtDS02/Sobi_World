@@ -9,7 +9,7 @@
     { "phase": "preparation", "ms": [0, 350], "desc": "người dùng nén người, nước gom quanh chân, sân tối nhẹ", "acts": ["pose cast", "move cast_coil", "strip fx_splash under", "tint field 0.12"] },
     { "phase": "startup", "ms": [350, 650], "desc": "mặt nước dâng thành vách phía sau đội mình; viền bọt hình thành dần từ đáy lên đỉnh", "acts": ["prop rise", "burst drop_rise"] },
     { "phase": "travel", "ms": [650, 1050], "desc": "vách sóng tiến về phía địch, đỉnh nghiêng dần ra trước rồi cuộn; giọt rơi khỏi đỉnh suốt quãng", "acts": ["prop sweep + trail drop_spray", "ribbon foam"] },
-    { "phase": "impact", "ms": [1050, 1200], "desc": "đỉnh sóng đổ sập lên hàng địch, lệch nhịp 90 ms mỗi mục tiêu; mục tiêu bị nhấc và đẩy theo hướng sóng", "acts": ["stop heavy", "shake 6", "flash 0.25", "move lift", "move knock", "strip fx_splash"] },
+    { "phase": "impact", "ms": [1050, 1200], "desc": "đỉnh sóng đổ sập lên hàng địch, lệch nhịp 90 ms mỗi mục tiêu; mục tiêu bị nhấc và đẩy theo hướng sóng", "acts": ["stop medium", "punch 1.04", "shake 6", "flash 0.25", "move lift", "move knock", "strip fx_splash"] },
     { "phase": "aftermath", "ms": [1200, 1800], "desc": "giọt rơi theo parabol, bọt tan, vũng nước dưới chân mục tiêu, gợn nhỏ chạy ngược về", "acts": ["burst drop_fall", "burst bubble_spray", "decal puddle", "ribbon thin"] }
   ],
   "layers": ["L0-screen", "L1-body", "L2-core", "L3-particles", "L4-feedback"],

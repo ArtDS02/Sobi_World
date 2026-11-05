@@ -62,8 +62,8 @@ export function renderDayNight(root: HTMLElement, apiOnline: boolean) {
   ].join('');
   root.innerHTML = `
     <div class="dn">
-      <section class="card dn__form">
-        <h2>Cài đặt Ngày / Đêm</h2>
+      <section class="wpanel dn__form">
+        <header class="wpanel__head"><span class="wpanel__title">⚙️ Cài đặt Ngày / Đêm</span></header><div class="wpanel__body">
         <label class="check"><input type="checkbox" data-enabled ${d.enabled ? 'checked' : ''} /> Bật ngày/đêm theo giờ máy người chơi</label>
         <div class="form-grid">${times}</div>
         <div class="form-grid">
@@ -77,16 +77,16 @@ export function renderDayNight(root: HTMLElement, apiOnline: boolean) {
         <div class="form-actions">
           <button class="btn" data-reset>Hoàn tác</button>
           <button class="btn btn-primary" data-dn-save ${apiOnline ? '' : 'disabled title="Chạy npm run admin để lưu"'}>💾 Lưu vào game</button>
-        </div>
+        </div></div>
       </section>
-      <section class="card dn__preview">
-        <h2>Xem trước</h2>
+      <section class="wpanel dn__preview">
+        <header class="wpanel__head"><span class="wpanel__title">🌗 Xem trước</span></header><div class="wpanel__body">
         <div class="dn__buttons">${buttons}</div>
         <label class="field"><span>Xem thử theo giờ: <b data-time-label></b></span>
           <input type="range" min="0" max="1439" step="5" data-time /></label>
         <canvas width="800" height="450" class="dn__canvas"></canvas>
         <p class="dn__caption"><span data-caption></span> · <a data-open target="_blank" rel="noopener">Mở trong game (dev) ↗</a></p>
-        <small>Chỉ là ảnh xem trước: không đổi giờ thật, không ghi save. Trong game dev (<code>?dev=1</code>) có ô chọn pha ở thanh công cụ.</small>
+        <small>Chỉ là ảnh xem trước: không đổi giờ thật, không ghi save. Trong game dev (<code>?dev=1</code>) có ô chọn pha ở thanh công cụ.</small></div>
       </section>
     </div>`;
   wire(root);

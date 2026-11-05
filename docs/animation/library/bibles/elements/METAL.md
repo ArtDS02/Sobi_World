@@ -15,7 +15,7 @@ Kim **sắc, chính xác, cực nhanh**. Đọc khi bỏ màu: đường **thẳ
 | Mục tiêu | giật gọn, không văng xa | `move knock x 8–12` |
 
 ## 3. Nhịp mẫu
-Chém T3: tụ 300 (đứng yên, sáng dọc lưỡi) → **lướt 80** → vệt chém + hit-stop heavy 120 → tắt dần 250. Tỉ lệ chờ / ra đòn cao nhất trong các hệ (≥ 3:1) — đó là cá tính của Kim.
+Chém T3: tụ 300 (đứng yên, sáng dọc lưỡi) → **lướt 80** → vệt chém + hit-stop medium + punch 1,04 → tắt dần 250. Tỉ lệ chờ / ra đòn cao nhất trong các hệ (≥ 3:1) — đó là cá tính của Kim.
 
 ## 4. Hình chủ đạo sống
 Lưỡi (`fxp_steel_blade`) và nắm đấm đồng (`fxp_bronze_fist`) là vật rắn: dùng dấu hiệu 2+3 — vệt sáng chạy dọc vật (glow), `stretch` khi lao, tia lửa kim khi chạm. Hiệp sĩ đồng (`fxp_bronze_knight`): xuất hiện bằng **ghép mảnh** (nhiều `prop` nhỏ lắp lại) hoặc wipe, không hiện nguyên.

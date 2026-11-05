@@ -17,7 +17,7 @@ Nước **nặng, có quán tính, chảy, không bao giờ đứng yên**. Đ�
 
 ## 3. Nhịp mẫu (x1)
 - **Đạn nước (T1–T2)**: chuẩn bị 250–350 · tụ 150 (bong bóng phồng) · bay 350–450 · va chạm 80 + hit-stop light/medium · dư âm 400–600 (giọt + vũng).
-- **Sóng diện rộng (T3)**: chuẩn bị 300–420 · **dâng 300** · cuộn / tiến 400 · **đổ sập 120** + hit-stop heavy, lệch nhịp 90 ms mỗi mục tiêu · dư âm 500–700.
+- **Sóng diện rộng (T3)**: chuẩn bị 300–420 · **dâng 300** · cuộn / tiến 400 · **đổ sập 120** + hit-stop medium + punch 1,04, lệch nhịp 90 ms mỗi mục tiêu · dư âm 500–700.
 - **Ultimate (T4)**: cut-in + tối màn → triệu hồi vật lớn từ biển (dâng có bọt) → nhiều nhịp va chạm, nhịp cuối mạnh nhất → mưa giọt + vũng toàn sân → outro trả màn.
 
 ## 4. Hình chủ đạo phải "sống" (STANDARDS §2) — cách làm cho Nước

@@ -16,7 +16,7 @@ Lửa **nhẹ, bốc lên, đói, không giữ hình**. Đọc khi bỏ màu: l�
 | Mục tiêu | giật + thân tint cam 1 nhịp, khói nhỏ trên đầu | `glow #ff7a2a`, `move knock` |
 
 ## 3. Nhịp mẫu
-Đạn lửa T2: chuẩn bị 250 · bén 150 · bay 300 (tăng tốc) · nổ 80 + hit-stop medium · khói 500. Đập lửa T3 (búa): giơ cao chậm 400 → **nện 80** + heavy + `punch` → sóng lửa lan trên đất 300 → khói 500.
+Đạn lửa T2: chuẩn bị 250 · bén 150 · bay 300 (tăng tốc) · nổ 80 + hit-stop medium · khói 500. Đập lửa T3 (búa): giơ cao chậm 400 → **nện 80** + medium + `punch 1.04` → sóng lửa lan trên đất 300 → khói 500.
 
 ## 4. Hình chủ đạo sống
 Lửa là hệ **cần biến hình nhất**: ngọn lửa đứng yên trong 1 ảnh là lỗi rõ nhất. Vật lửa tĩnh (`fxp_flame_crown`, `fxp_fire_hammer`, `fxp_phoenix`, `fxp_meteor`) phải kèm: `trail ember_trail` dày (every 40–60) + lớp lửa phủ là flipbook / displacement nhiễu chạy **lên trên** (thử cùng P2) + flicker sáng (`glow` nhấp nháy nhẹ, ≤ 3 lần/giây).

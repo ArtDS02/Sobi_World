@@ -10,12 +10,12 @@ Khuôn như [WATER](WATER.md). Màu: `elements.EARTH` (`color #c08a50`, `glow #f
 |---|---|---|
 | Hình thành | báo trước bằng **rung + nứt** dưới chân rồi mới trồi | `move shake` (nhỏ) + `decal crack` trước, rồi `prop rise` / `strip fx_rock_spike` |
 | Đường đi | rơi: gia tốc mạnh (`fall` inBack); ném: arc cao 90 | `prop fall` + `marker` bóng báo trước |
-| Va chạm | dừng phịch, `squashOnHit`, bụi vòng, mảnh đá văng **thấp** | `stop heavy`, `shake` có `dir [0,1]` (dọc), `burst slam_dust`, `burst pebble_spray` |
+| Va chạm | dừng phịch, `squashOnHit`, bụi vòng, mảnh đá văng **thấp** | `stop medium` + `punch 1.04`, `shake` có `dir [0,1]` (dọc), `burst slam_dust`, `burst pebble_spray` |
 | Dư âm | bụi lắng chậm 800 ms, nứt đất 1–1,5 s, sỏi lăn | `decal crack`, `burst earth_dust` |
 | Mục tiêu | **nảy lên** (lift) rồi rơi, không bật xa | `move lift y 20–40`, `move bounce` |
 
 ## 3. Nhịp mẫu
-Đập đá T3: nhấc đá chậm 450 (anticipation dài nhất trong các hệ) → rơi 150 → **chạm 120 hit-stop heavy + rung dọc 6–8** → bụi 800. Đất là hệ được phép rung mạnh nhất, nhưng vẫn theo bậc (STANDARDS §4).
+Đập đá T3: nhấc đá chậm 450 (anticipation dài nhất trong các hệ) → rơi 150 → **chạm: hit-stop medium + punch 1,04 + rung dọc 5–6** → bụi 800. Đất là hệ được phép rung mạnh nhất, nhưng vẫn theo bậc (STANDARDS §4).
 
 ## 4. Hình chủ đạo sống
 Đá là vật rắn: không cần biến hình nội tại, nhưng **bắt buộc** dấu hiệu 2 và 3: `squashOnHit` + mảnh vụn tách khỏi đá khi bay (`trail pebble_trail`) + vỡ đôi khi chạm (`strip fx_ground_crack` / mảnh). Dấu ấn phong ấn (`fxp_seal_circle`): vẽ dần (wipe / xoay mở) thay vì hiện nguyên.
