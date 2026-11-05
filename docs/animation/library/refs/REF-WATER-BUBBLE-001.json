@@ -1,0 +1,28 @@
+{
+  "id": "REF-WATER-BUBBLE-001",
+  "name": "Đạn bong bóng: phồng – bay vồng – bẹp – vỡ",
+  "group": "elemental/projectile",
+  "element": "WATER",
+  "motifs": ["bubble"],
+  "tier": 2,
+  "phases": [
+    { "phase": "preparation", "ms": [0, 300], "desc": "nén người, phồng má / ngực, bọt nhỏ bay lên quanh miệng", "acts": ["pose cast", "move cast_coil", "burst bubble_rise"] },
+    { "phase": "startup", "ms": [300, 450], "desc": "bong bóng phồng từ nhỏ ở điểm front, vượt cỡ rồi co về (overshoot), bề mặt rung nhẹ", "acts": ["prop pop outBack", "burst bubble_pop"] },
+    { "phase": "execution", "ms": [450, 520], "desc": "người bắn giật lùi ngược hướng bắn", "acts": ["move recoil"] },
+    { "phase": "travel", "ms": [520, 900], "desc": "bay cung tròn arc 50–60, kéo giãn theo vận tốc, giọt nhỏ rơi khỏi đáy bong bóng", "acts": ["prop throw + stretch + trail drop_trail"] },
+    { "phase": "impact", "ms": [900, 1000], "desc": "chạm thân mục tiêu: bẹp ngang 1 nhịp rồi vỡ thành vòng + giọt bắn parabol; mục tiêu bị đẩy theo hướng bay", "acts": ["stop medium", "shake 3", "strip fx_splash", "burst drop_ring", "move knock"] },
+    { "phase": "aftermath", "ms": [1000, 1450], "desc": "giọt rơi lác đác, bọt nhỏ bay lên tan, vũng nhỏ", "acts": ["burst drop_fall", "burst bubble_rise", "decal puddle"] }
+  ],
+  "layers": ["L1-body", "L2-core", "L3-particles", "L4-feedback"],
+  "particles": "giọt rơi khỏi bong bóng mỗi 60–80 ms khi bay; khi vỡ: vòng giọt văng đều + 3–5 bọt nhỏ bay lên chậm",
+  "secondary": ["mục tiêu knock 10–14 px theo hướng bay", "status wet nếu skill gắn"],
+  "purpose": "Chuẩn cho đạn nước đơn mục tiêu T1–T2 (skill_nh_bubble; skill_e_bubble là biến thể nhiều bong bóng nhỏ lệch nhịp).",
+  "complexity": "M",
+  "sources": [
+    { "kind": "GAME", "title": "Script skill_nh_bubble hiện tại (fxp_bubble_big tĩnh, cờ STATIC_HERO)" },
+    { "kind": "R", "title": "F. Thomas & O. Johnston, The Illusion of Life (1981) — squash & stretch, arcs", "note": "nguyên lý" }
+  ],
+  "sobiTranslation": "Bong bóng tròn trong, viền nâu ấm mảnh, một điểm sáng phản chiếu trên-trái (đúng hướng sáng của style guide); vỡ thành vòng giọt tròn, không tia sắc.",
+  "implementedBy": ["skill_nh_bubble", "skill_e_bubble"],
+  "status": "approved"
+}

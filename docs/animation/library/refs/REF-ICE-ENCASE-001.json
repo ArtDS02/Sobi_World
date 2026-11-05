@@ -1,0 +1,27 @@
+{
+  "id": "REF-ICE-ENCASE-001",
+  "name": "Băng bọc mục tiêu: kết tinh từng nấc – khóa – nứt – vỡ",
+  "group": "status/control",
+  "element": "WATER",
+  "motifs": ["ice"],
+  "tier": 2,
+  "phases": [
+    { "phase": "startup", "ms": [0, 120], "desc": "tinh thể nhọn bám ở chân mục tiêu, sương lạnh lan trên đất", "acts": ["strip fx_ice_encase frames 0-1", "burst snow_pop"] },
+    { "phase": "execution", "ms": [120, 360], "desc": "băng bò lên thân theo 3–4 nấc dừng đột ngột (step), mỗi nấc một tiếng lách cách", "acts": ["strip fx_ice_encase frames 1-3 hold", "glow #bfe8ff"] },
+    { "phase": "impact", "ms": [360, 420], "desc": "khóa: thân đứng yên, lấp lánh một điểm, hit-stop rất ngắn", "acts": ["stop light", "burst star_pop"] },
+    { "phase": "aftermath", "ms": [420, 2000], "desc": "loop khi còn hiệu lực: lấp lánh + tuyết rơi chậm mỗi 1,6 s; thân giữ tint lạnh", "acts": ["burst snow_fall", "tint focus"] },
+    { "phase": "recovery", "ms": [2000, 2500], "desc": "hết: 1 khung đường nứt sáng → vỡ mảnh sắc văng thẳng → mảnh rơi tan; thân rùng mình trở lại", "acts": ["stop light", "strip fx_ice_shatter", "burst ice_pop", "shake 3", "move shake"] }
+  ],
+  "layers": ["L1-body", "L2-core", "L3-particles", "L4-feedback"],
+  "particles": "mảnh băng góc cạnh văng theo đường thẳng, rơi nhanh, sống 300–500 ms; tuyết rơi chậm khi loop",
+  "secondary": ["sinh vật vẫn nhận ra dưới lớp băng (alpha ≤ 0,75)", "vỡ báo trước bằng nứt"],
+  "purpose": "Chuẩn cho status freeze (apply / loop / expire) và đoạn kết của skill băng (skill_cl_freeze, skill_e_frost_breath).",
+  "complexity": "M",
+  "sources": [
+    { "kind": "GAME", "title": "statuses.freeze + reaction_shatter trong battle_fx.json (đã có 3 pha; thiếu nấc kết tinh và khung nứt)" },
+    { "kind": "R", "title": "J. Gilland, Elemental Magic — kết tinh / vỡ vật giòn", "note": "nguyên lý" }
+  ],
+  "sobiTranslation": "Khối băng xanh rất nhạt #bfe8ff, cạnh bo nhẹ kiểu Sobi nhưng vẫn góc cạnh hơn nước; viền nâu ấm mảnh; không che mặt sinh vật quá 1 khung.",
+  "implementedBy": ["status:freeze", "reaction:reaction_shatter", "skill_cl_freeze", "skill_e_frost_breath"],
+  "status": "approved"
+}

@@ -1,0 +1,22 @@
+# 049 — Thư viện tham chiếu Animation & VFX (Sobi Adventure)
+
+**Ngày:** 2026-11-05 · **Trạng thái:** đã quyết (chủ dự án giao agent tự quyết "miễn là tốt cho game", 2026-11-05).
+**Bối cảnh:** nghiên cứu Animation & VFX Reference (chủ dự án yêu cầu, tham chiếu nguyên lý của Epic Battle Fantasy 3). Bước P0 (`npm run anim:audit`, cờ `STATIC_SHAPE`, `docs/animation-review/audit/`) cho thấy vấn đề chung là **hình chủ đạo là ảnh tĩnh chỉ được tween**: 64/112 skill, Nước 5/6. Engine kịch bản (decision 044) và vòng review (rubric v1.1) đã có; còn thiếu chuẩn mô tả "tốt trông thế nào" cho từng hệ / loại hành động, và một hợp đồng chung giữa Designer → Artist → Developer.
+
+## Quyết định
+1. **Vị trí:** `docs/animation/library/` (README, STANDARDS, `bibles/`, `refs/`, `briefs/`). Thư viện là **tài liệu + dữ liệu mô tả**; thứ chạy trong game vẫn chỉ là `content/adventure/battle_fx.json` (decision 044). Không có hệ thống song song.
+2. **Phân loại:** theo **9 hệ của game** (METAL, NATURE, WATER, FIRE, EARTH, LIGHTNING, DARK, LIGHT, VOID) + **motif** làm thẻ phụ (ice, steam, wind, poison, heal, shield…). Không đổi bộ hệ (đổi hệ là gameplay, ngoài phạm vi).
+3. **Bản ghi tham chiếu (REF)** là JSON có schema (`scripts/anim-review/lib/library.ts`), kiểm bằng test `tests/scripts/animLibrary.test.ts`: tên act đúng engine, skill / status / action được trỏ tới có thật, nguồn có loại bản quyền.
+4. **Bản quyền (cùng decision 048):** nguồn chia 3 loại — `R` chỉ nghiên cứu (EBF3, video, sách: chỉ mô tả bằng lời + số + sơ đồ tự vẽ, **không** lưu ảnh của bên thứ ba vào repo, không dùng làm hint ảnh cho Gemini), `F` dùng được (license thương mại rõ, ghi `docs/THIRD_PARTY.md`), `L` cần phép. Không rõ license = `R`.
+5. **Không quay EBF3 ở giai đoạn này.** Thư viện dựa trên nguyên lý animation, tài liệu chuyên môn và frame của chính game (harness). Con số timing là đề xuất, chỉnh qua playtest. Có thể bổ sung đo từ footage sau nếu cần.
+6. **Shader displacement (Phaser FX)** được thử ở pilot hệ Nước (P2) **song song** với flipbook nhiều khung, cho cùng một skill (`skill_nh_tsunami`); chọn bằng so sánh trước / sau + playtest. Điều kiện: tắt khi "Giảm chuyển động", giữ FPS, có dự phòng khi không có WebGL. Kết quả ghi bổ sung vào decision này.
+7. **Rubric:** `STATIC_HERO` / `STATIC_SHAPE` giữ là **cờ gợi ý** tới khi pilot P2 chứng minh sửa được; sau đó thành MUST-HAVE cho skill **mới hoặc làm lại** (không đánh trượt hàng loạt skill cũ cùng lúc).
+8. **Thứ tự ưu tiên tài liệu** khi mâu thuẫn: spec > decisions > ARCHITECTURE > `animation_style_guide.md` / `asset/GAME_ART_DIRECTION.md` > thư viện. Bible chỉ **mở rộng** style guide, không đè.
+
+## Lý do
+- Một chỗ duy nhất cho palette / hình / nhịp / vật lý của từng hệ, đọc được bởi người và agent, kiểm được bằng test.
+- Brief viết bằng đúng từ vựng `do:` của engine → Developer chuyển gần 1:1, không diễn giải lại.
+- Không chặn bởi việc chủ dự án quay video; vẫn mở đường đo footage sau.
+
+## Lộ trình
+P1 (đợt này): khung thư viện, STANDARDS, schema + test, bible Nước + motif Băng + 2 bible hành động (phóng đạn, cận chiến & bị đánh), REF Nước đầu tiên. Tiếp: các bible còn lại → P2 pilot Nước → P3 nhân rộng theo `anim:audit` → P4 nhân vật & môi trường.

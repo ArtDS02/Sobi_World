@@ -1,0 +1,28 @@
+{
+  "id": "REF-WATER-WAVE-001",
+  "name": "Sóng diện rộng: dâng – cuộn – đổ – vỡ",
+  "group": "elemental/area",
+  "element": "WATER",
+  "motifs": ["wave", "foam"],
+  "tier": 3,
+  "phases": [
+    { "phase": "preparation", "ms": [0, 350], "desc": "người dùng nén người, nước gom quanh chân, sân tối nhẹ", "acts": ["pose cast", "move cast_coil", "strip fx_splash under", "tint field 0.12"] },
+    { "phase": "startup", "ms": [350, 650], "desc": "mặt nước dâng thành vách phía sau đội mình; viền bọt hình thành dần từ đáy lên đỉnh", "acts": ["prop rise", "burst drop_rise"] },
+    { "phase": "travel", "ms": [650, 1050], "desc": "vách sóng tiến về phía địch, đỉnh nghiêng dần ra trước rồi cuộn; giọt rơi khỏi đỉnh suốt quãng", "acts": ["prop sweep + trail drop_spray", "ribbon foam"] },
+    { "phase": "impact", "ms": [1050, 1200], "desc": "đỉnh sóng đổ sập lên hàng địch, lệch nhịp 90 ms mỗi mục tiêu; mục tiêu bị nhấc và đẩy theo hướng sóng", "acts": ["stop heavy", "shake 6", "flash 0.25", "move lift", "move knock", "strip fx_splash"] },
+    { "phase": "aftermath", "ms": [1200, 1800], "desc": "giọt rơi theo parabol, bọt tan, vũng nước dưới chân mục tiêu, gợn nhỏ chạy ngược về", "acts": ["burst drop_fall", "burst bubble_spray", "decal puddle", "ribbon thin"] }
+  ],
+  "layers": ["L0-screen", "L1-body", "L2-core", "L3-particles", "L4-feedback"],
+  "particles": "giọt tròn có điểm sáng, sinh ra từ đỉnh sóng trong lúc tiến (mỗi 50–80 ms), rơi theo trọng lực cao, sống 400–900 ms; bọt trắng sinh ở viền khi vỡ",
+  "secondary": ["mục tiêu bị nhấc 20–30 px rồi đẩy lùi theo hướng sóng", "vũng nước 500–1500 ms", "status wet nếu skill gắn"],
+  "purpose": "Chuẩn cho skill nước diện rộng bậc T3 (hiện: skill_nh_tsunami). Khác bản hiện tại: thân sóng phải đổi hình (dâng → cuộn → đổ), không là một ảnh trượt ngang.",
+  "complexity": "L",
+  "sources": [
+    { "kind": "GAME", "title": "Capture skill_nh_tsunami hiện tại (ảnh sóng tĩnh trượt ngang, shapeIoU 0,891)", "note": "run 20261105-095545-fb12afa-5264cbf5, chỉ trên máy" },
+    { "kind": "R", "title": "F. Thomas & O. Johnston, The Illusion of Life (1981) — anticipation, overlapping action, arcs", "note": "nguyên lý, không trích hình" },
+    { "kind": "R", "title": "J. Gilland, Elemental Magic vol. 1 — vật lý nước / sóng vẽ tay", "note": "nguyên lý, không trích hình" }
+  ],
+  "sobiTranslation": "Sóng bo tròn kiểu sticker Sobi: viền nâu ấm mảnh, thân xanh #3fb2ff → bọt trắng #d8f4ff, bóng mềm; không sóng tả thực, không tối màn quá 20%. Hai hướng làm thân sóng (decision 049 §6): (a) flipbook 8 khung dâng → đổ → vỡ, (b) ảnh fxp_wave_crest hiện có + displacement gợn + nghiêng / kéo giãn theo pha.",
+  "implementedBy": ["skill_nh_tsunami"],
+  "status": "approved"
+}

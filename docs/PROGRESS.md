@@ -10,6 +10,11 @@
 
 ## Nhật ký
 
+### 2026-11-05 — Animation P1: thư viện tham chiếu Animation & VFX (decision 049)
+✅ Đã làm: decision 049 (chủ dự án giao agent tự quyết): thư viện ở `docs/animation/library/`, phân loại theo 9 hệ của game + motif, không quay EBF3 ở giai đoạn này, thử shader displacement song song flipbook ở pilot Nước, `STATIC_HERO` / `STATIC_SHAPE` thành MUST-HAVE chỉ sau pilot và chỉ cho skill mới / làm lại. Viết: `README.md`, `STANDARDS.md` (7 giai đoạn, 3 dấu hiệu sống, 5 lớp, bậc lực T0–T4 khớp `HIT_STOP_MS`, ngân sách thời gian, phản ứng mục tiêu, checklist); bible `elements/WATER.md`, `motifs/ice.md`, `actions/projectile.md`, `actions/melee-and-hit.md`; REF `REF-WATER-WAVE-001`, `REF-WATER-BUBBLE-001`, `REF-ICE-ENCASE-001`. Schema REF: `scripts/anim-review/lib/library.ts` + test `tests/scripts/animLibrary.test.ts` (act đúng engine, skill / status / action / reaction có thật, nguồn có loại bản quyền R/F/L/GAME, R không trỏ file trong repo).
+⚠️ Phát hiện khi viết bible (chưa sửa, để P2/P3): `actions.hit` bắn `drop_spray` (giọt nước) cho mọi hệ → nên dùng `$spark`; `skill_e_frost_breath` không có tác động (T0 so với T2 cần); `reaction_steam` dùng âm lửa và khói chung.
+➡️ Tiếp: bible 8 hệ còn lại + motif / hành động (cast, buff, status, ultimate, idle), rồi P2 pilot Nước (brief `skill_nh_tsunami`, so flipbook vs displacement).
+
 ### 2026-11-05 — Animation P0: thước đo "sprite tĩnh di chuyển" (audit dữ liệu + đo hình từ frame)
 ✅ Đã làm: bước P0 của nghiên cứu Animation & VFX Reference. `npm run anim:audit` (`scripts/anim-review/audit.ts`, `lib/scriptAudit.ts`) đọc kịch bản 112 skill → `docs/animation-review/audit/AUDIT.md` + `inventory.json`: hình chủ đạo tĩnh hay biến dạng, bậc tác động so với power (T0–T4), lấy đà / dư âm, số lớp, ngân sách thời gian, flipbook dùng chung, điểm ưu tiên. Harness thêm `shapeIoU` + cờ gợi ý `STATIC_SHAPE` (`lib/shape.ts`: khối thay đổi lớn nhất, chuẩn hóa vị trí / tỉ lệ, IoU giữa các frame). Cách đọc + hiệu chuẩn: `docs/animation-review/audit/README.md`.
 📊 Kết quả: 64/112 skill có hình chủ đạo là ảnh tĩnh tween; Nước 5/6, Bóng tối 6/7, Lửa 6/10, Đất 3/5. `fx_pow_star` dùng ở 17 skill. Chỉ 3 skill tác động thấp hơn bậc ≥ 2 (skill class gây sát thương: 13/16 có hit-stop — nhận định "38/42 skill class không hit-stop" trong báo cáo nghiên cứu là sai, vì gộp skill hỗ trợ và skill quái).

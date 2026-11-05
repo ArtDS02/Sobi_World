@@ -16,5 +16,6 @@ Bộ tài liệu theo prompt `art_inbox/.batch/Sobi_Adventure_UI_Animation_Claud
 | `prompts/01..08` | Prompt AI tái sử dụng (model sheet, idle, attack, cast, hit / thắng / thua, VFX hệ, Umbraflux, dọn sheet) |
 | `manifests/` | JSON schema cho dòng animation (lập kế hoạch) + ví dụ dòng manifest `fx` |
 | `examples/sample_animation_spec.md` | Brief mẫu: Cu Ủn — Gai Độc (vertical slice) |
+| [`library/`](library/README.md) | **Thư viện tham chiếu Animation & VFX** (decision 049): STANDARDS (giai đoạn, 5 lớp, bậc lực, ngân sách), bible theo hệ / motif / hành động, bản ghi REF (JSON có schema + test) |
 
 Code: `src/areas/adventure/ui/{battleMotion,battleMotionView,motionProfiles}.ts`, `src/styles/features/_adventureMotion.scss`. Chụp ảnh: `scripts/capture/adventureShots.ts`.
