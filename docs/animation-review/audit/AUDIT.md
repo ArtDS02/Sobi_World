@@ -45,6 +45,7 @@ Sinh bằng `npm run anim:audit` từ `content/adventure/battle_fx.json`, `skill
 | `fx_lava_pop` | 2 |
 | `fx_ice_encase` | 2 |
 | `fx_bite` | 2 |
+| `fx_wave_rise` | 1 |
 
 ## Mọi skill (ưu tiên cao trước)
 
@@ -75,7 +76,7 @@ Sinh bằng `npm run anim:audit` từ `content/adventure/battle_fx.json`, `skill
 | `skill_e_seal_quake` | enemy | EARTH | 1.3 | T2 / T2 | 2400 | 65% | prop `fxp_seal_circle` (0) | 5 | STATIC_HERO, STATIC_SHARE, DURATION_OVER | 12 | [có](../../animation/library/scenarios/skills/skill_e_seal_quake.md) |
 | `skill_ld_call_thunder` | unique | LIGHTNING | 1 | T2 / T3 | 1600 | 67% | prop `fxp_storm_cloud` (0) | 4 | STATIC_HERO, STATIC_SHARE, DURATION_OVER | 12 | [có](../../animation/library/scenarios/skills/skill_ld_call_thunder.md) |
 | `skill_nh_tide_song` | unique | SUPPORT | 0 | T0 / T0 | 1450 | 79% | prop `fxp_wave_crest` (0) | 3 | STATIC_HERO, STATIC_SHARE, DURATION_OVER | 12 | [có](../../animation/library/scenarios/skills/skill_nh_tide_song.md) |
-| `skill_nh_tsunami` | unique | WATER | 1.1 | T2 / T3 | 1780 | 55% | prop `fxp_wave_crest` (0) | 4 | STATIC_HERO, STATIC_SHARE, DURATION_OVER | 12 | [có](../../animation/library/scenarios/skills/skill_nh_tsunami.md) |
+| `skill_nh_tsunami` | unique | WATER | 1.1 | T2 / T3 | 1650 | 43% | prop `fxp_wave_crest` (0) | 5 | STATIC_HERO, STATIC_SHARE, DURATION_OVER | 12 | [có](../../animation/library/scenarios/skills/skill_nh_tsunami.md) |
 | `skill_tg_steel_slash` | unique | METAL | 1.4 | T3 / T3 | 960 | 31% | prop `fxp_steel_blade` (0) | 4 | STATIC_HERO, STATIC_SHARE, DURATION_UNDER | 12 | [có](../../animation/library/scenarios/skills/skill_tg_steel_slash.md) |
 | `skill_dm_night_net` | unique | DARK | 0.8 | T1 / T2 | 1500 | 100% | prop `fxp_night_net` (0) | 4 | STATIC_HERO, STATIC_SHARE | 10 | [có](../../animation/library/scenarios/skills/skill_dm_night_net.md) |
 | `skill_dm_nightmare` | unique | DARK | 1.2 | T2 / T1 | 1320 | 58% | prop `fxp_nightmare_mask` (0) | 4 | STATIC_HERO, STATIC_SHARE | 10 | [có](../../animation/library/scenarios/skills/skill_dm_nightmare.md) |

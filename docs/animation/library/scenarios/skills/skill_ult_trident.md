@@ -7,7 +7,7 @@
   "assets": [
     { "id": "fxp_trident", "state": "have", "layer": "L1" },
     { "id": "fx_water_column", "state": "new", "layer": "L1", "spec": "Xem skill_ult_nh (dùng chung). Ở skill này phát đủ K1–K6 dưới chân từng quái, size 1,4." },
-    { "id": "fx_wave_rise", "state": "new", "layer": "L3", "spec": "Xem skill_nh_tsunami (dùng chung). Ở skill này phát K1–K3 nhỏ quanh chân đinh ba (nước dâng khi cắm)." },
+    { "id": "fx_wave_rise", "state": "have", "layer": "L3", "spec": "Xem skill_nh_tsunami (dùng chung). Ở skill này phát K1–K3 nhỏ quanh chân đinh ba (nước dâng khi cắm)." },
     { "id": "fx_splash", "state": "have", "layer": "L3" },
     { "id": "fxs_drop", "state": "have", "layer": "L3" }
   ],
@@ -48,7 +48,7 @@ L1 đạt 3/3: biến hình (cột nước 6 khung) · phụ sinh (nước dâng
 | Asset | Lớp | Trạng thái |
 |---|---|---|
 | `fx_water_column` | L1 | **mới** (chung với `skill_ult_nh`) |
-| `fx_wave_rise` | L3 | **mới** (chung với `skill_nh_tsunami`) |
+| `fx_wave_rise` | L3 | có (2026-11-05, chung với `skill_nh_tsunami`) |
 | `fxp_trident`, `fx_splash`, `fxs_drop` | | có |
 Dự phòng: chưa có `fx_water_column` → `fx_splash` size 2 + `burst drop_rise` dày + `move lift` cao (hiện tại). Chưa có `bg_scene` → tint.
 

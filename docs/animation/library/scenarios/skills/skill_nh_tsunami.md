@@ -5,7 +5,7 @@
   "id": "skill_nh_tsunami", "kind": "skill", "name": "Sóng Thần Cổ", "element": "WATER", "tier": 2, "durationMs": 1650,
   "status": "built", "refs": ["REF-WATER-WAVE-001"], "bibles": ["elements/WATER", "actions/cast"],
   "assets": [
-    { "id": "fx_wave_rise", "state": "new", "layer": "L1", "spec": "Flipbook 8 khung, mỗi khung 512×512, ghép ngang 4096×512, nền trong suốt, pivot giữa cạnh đáy, sóng hướng sang PHẢI. K1 mặt nước gợn thấp (cao 15% khung) · K2 nước dâng 35%, mép trên gợn · K3 vách dâng 60%, viền bọt trắng mỏng ở đỉnh · K4 vách cao 85%, đỉnh bắt đầu nghiêng sang phải · K5 đỉnh cuộn thành móc, bọt dày · K6 móc cuộn sâu, bọt tung lên, giọt rời khỏi đỉnh · K7 đổ sập xuống phía phải, tán bọt rộng · K8 vỡ thành mảng bọt thấp + giọt tan. Thân xanh #3fb2ff → bọt trắng #d8f4ff, viền nâu ấm mảnh, bóng mềm kiểu Sobi Farm, bo tròn như sticker; không tả thực." },
+    { "id": "fx_wave_rise", "state": "have", "layer": "L1", "spec": "Flipbook 8 khung, mỗi khung 512×512, ghép ngang 4096×512, nền trong suốt, pivot giữa cạnh đáy, sóng hướng sang PHẢI. K1 mặt nước gợn thấp (cao 15% khung) · K2 nước dâng 35%, mép trên gợn · K3 vách dâng 60%, viền bọt trắng mỏng ở đỉnh · K4 vách cao 85%, đỉnh bắt đầu nghiêng sang phải · K5 đỉnh cuộn thành móc, bọt dày · K6 móc cuộn sâu, bọt tung lên, giọt rời khỏi đỉnh · K7 đổ sập xuống phía phải, tán bọt rộng · K8 vỡ thành mảng bọt thấp + giọt tan. Thân xanh #3fb2ff → bọt trắng #d8f4ff, viền nâu ấm mảnh, bóng mềm kiểu Sobi Farm, bo tròn như sticker; không tả thực." },
     { "id": "fxp_wave_crest", "state": "have", "layer": "L1" },
     { "id": "fx_splash", "state": "have", "layer": "L3" },
     { "id": "fxs_drop", "state": "have", "layer": "L3" },
@@ -44,7 +44,7 @@ Hình chủ đạo L1 đạt **3/3** dấu hiệu sống: biến hình (flipbook
 ## 5. Asset
 | Asset | Lớp | Trạng thái | Ghi chú |
 |---|---|---|---|
-| `fx_wave_rise` | L1 | **mới** | đặc tả ở đầu file; cũng dùng cho `skill_nh_tide_song` (thu nhỏ, chỉ K1–K4) và `skill_ult_trident` (K6–K8) |
+| `fx_wave_rise` | L1 | có (2026-11-05, sheet W1) | đặc tả ở đầu file; cũng dùng cho `skill_nh_tide_song` (thu nhỏ, chỉ K1–K4) và `skill_ult_trident` (K6–K8) |
 | `fxp_wave_crest` | L1 | có | dùng cho nhịp tiến; cần khớp silhouette với K4–K5 của `fx_wave_rise` (artist dùng ảnh này làm tham chiếu dáng) |
 | `fx_splash`, `fxs_drop`, `fxs_bubble` | L3 | có | |
 Dự phòng khi chưa có `fx_wave_rise`: (a) dâng = `fxp_wave_crest` `path: rise` từ dưới đất lên + `burst drop_rise`; (c) đổ = `fx_splash` size 1,6 + `burst bubble_spray`. Khi chưa có `prop_displace`: nghiêng + `wobble` + trail giọt dày (vẫn đạt 2/3 dấu hiệu).
@@ -62,7 +62,14 @@ Dự phòng khi chưa có `fx_wave_rise`: (a) dâng = `fxp_wave_crest` `path: ri
 - `prop_displace` làm bằng **Phaser Rope** (`scene/battle/fxRipple.ts`, toán ở `ui/propMotion.ts → rippleOffsets`, act `prop` có `ripple: { amp, waves, speed }`): ảnh `fxp_wave_crest` uốn theo sóng chạy dọc thân, mạnh hơn ở mép trước. WebGL; không có thì vẽ ảnh thường.
 - Script: chuẩn bị 0–380 → sóng tiến `sweep` ease `inQuad` 380–1280 có ripple `{ 0.035, 1, 1.2 }` + wobble + bob + trail giọt → đổ 1050 lệch 90 / quái (splash 0,7, bọt, nhấc + đẩy, hit-stop medium 80, rung 5, punch 1,03) → mưa giọt + vũng. Bỏ dải ribbon lớn (cắt ngang thân sóng, rối mắt); giữ ribbon mảnh cuối.
 - Hiệu chỉnh sau capture đầu: ripple `{0.06, 1.5, 1.6}` + 16 điểm làm đỉnh sóng gãy khúc → `{0.035, 1, 1.2}` + 24 điểm; splash ở chân quái 1,6 → 0,7 (trông như cái xô).
-- Còn chờ: `fx_wave_rise` (batch `art_inbox/.batch/adventure-20-wave/`, prompt `PROMPT.md`, chủ dự án render) để thay nhịp dâng / đổ bằng flipbook 8 khung → khi có, so hai hướng (flipbook vs ripple) bằng capture.
+- `fx_wave_rise` đã có (sheet W1 của chủ dự án, batch `art_inbox/.batch/adventure-20-wave/`; cắt bằng hộp ngang chung + chân từng ô thẳng một đường đất, bỏ vạch đất → dải 8 × 512²).
+
+## 6c. Chọn hướng (2026-11-05): **lai** — flipbook ở chỗ đứng yên, ripple khi di chuyển
+So capture: chỉ ripple (run `20261105-140604-438f80c-890186f5`, IoU 0,83) chỉ có một hình sóng trượt qua, không dâng không đổ. Bản lai (run `20261105-142538-fb87f0a-60ab3622`, IoU **0,837**) đủ 3 hình: sóng **dâng từ đất** sau đội → đỉnh sóng **uốn** tiến tới đàn quái → sóng **cuộn đổ** tại từng con. Chọn bản lai:
+- Dâng: `strip fx_wave_rise frames [0,3]` tại `allyside`, `spot behind`, `size 1.5`, `under`, **`stand`** (mới: đáy dải đặt trên đường đất của đơn vị, không căn giữa), `y 6`, 380 ms, `dur 320 hold 160`.
+- Tiến: `prop fxp_wave_crest sweep` **820 ms** (trước 900) để đỉnh tới quái đúng lúc đổ và tắt ~150 ms sau; `stretch` theo vận tốc + ripple như cũ.
+- Đổ: `strip fx_wave_rise frames [4,7]` tại `targets`, `size 1.6`, 360 ms, lệch 90 / quái.
+- Bài học: khi đỉnh sóng (ảnh tĩnh) còn chiếm khung sau va chạm thì IoU 0,875 → cờ `STATIC_SHAPE`; khi tắt quá sớm (700 ms) khung va chạm trống. Hình chủ đạo tĩnh phải **nhường chỗ** cho flipbook đúng nhịp đổi.
 
 ## 7. Nghiệm thu
 - `anim:audit`: không `STATIC_HERO`, `DURATION_OVER`; bậc có T2–T3.

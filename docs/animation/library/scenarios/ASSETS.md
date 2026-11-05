@@ -6,7 +6,7 @@ Một nơi duy nhất mô tả các asset **chưa có** mà kịch bản cần (
 
 | Asset | Khung × cỡ | Pivot | Nội dung từng khung | Dùng ở (kịch bản) |
 |---|---|---|---|---|
-| `fx_wave_rise` | 8 × 512² | đáy | xem `skills/skill_nh_tsunami.md` | Nước: tsunami, tide_song, trident |
+| ~~`fx_wave_rise`~~ ✅ có (2026-11-05) | 8 × 512² | đáy | xem `skills/skill_nh_tsunami.md` | Nước: tsunami, tide_song, trident |
 | `fx_bubble_pop` | 6 × 256² | tâm | xem `skills/skill_nh_bubble.md` | Nước: bubble, e_bubble, soothe |
 | `fx_water_column` | 6 × 256×512 | đáy | xem `skills/skill_ult_nh.md` | Nước: ult_nh, trident |
 | `fx_ice_grow` | 6 × 256² | đáy | xem `skills/skill_cl_freeze.md` | Băng: cl_freeze, e_frost_breath, status freeze |

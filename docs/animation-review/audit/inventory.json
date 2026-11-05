@@ -856,13 +856,13 @@
       "type": "unique",
       "element": "WATER",
       "power": 1.1,
-      "acts": 22,
-      "durationMs": 1780,
+      "acts": 24,
+      "durationMs": 1650,
       "tier": {
         "expected": 2,
         "actual": 3
       },
-      "staticShare": 0.55,
+      "staticShare": 0.43,
       "hero": {
         "do": "prop",
         "img": "fxp_wave_crest",
@@ -871,6 +871,7 @@
       "layers": [
         "L0-screen",
         "L1-body",
+        "L2-core",
         "L3-particles",
         "L4-feedback"
       ],
@@ -3682,6 +3683,9 @@
       "skill_ult_nh",
       "skill_ult_trident",
       "skill_e_bubble"
+    ],
+    "fx_wave_rise": [
+      "skill_nh_tsunami"
     ],
     "fx_pow_star": [
       "skill_qs_rock_smash",

@@ -126,6 +126,8 @@ export const actSchema = z.discriminatedUnion('do', [
     flip: z.boolean().optional(),
     /** Drawn under the fighters (a splash on the ground). */
     under: z.boolean().optional(),
+    /** Stands on the unit's ground line (bottom edge at its feet) instead of centred on the spot: a wave rising from the ground. */
+    stand: z.boolean().optional(),
     y: z.number().finite().optional(),
   }),
   /** A big object `fxp_…` (or a sprite `fxs_…`) travelling along a path (prop_actor). */

@@ -1102,6 +1102,12 @@
       "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
     },
     {
+      "id": "fx_wave_rise",
+      "status": "production",
+      "asset": "fx/battle/fx_wave_rise.png",
+      "frames": { "width": 512, "height": 512, "count": 8, "fps": 12 }
+    },
+    {
       "id": "fx_flame_burst",
       "status": "production",
       "asset": "fx/battle/fx_flame_burst.png",

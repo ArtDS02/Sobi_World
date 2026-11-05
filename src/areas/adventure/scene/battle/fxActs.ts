@@ -203,7 +203,8 @@ export class ActPlayer {
   private strip(act: Extract<Act, { do: 'strip' }>, a: FxAnchor | null, glow: number, mirror: boolean) {
     const p = this.spot(a, act.spot, 'chest');
     const width = (a?.width ?? this.scene.scale.height * 0.4) * (act.size ?? 1.3);
-    const y = p.y + (act.y ?? 0);
+    // `stand`: the strip's bottom edge on the unit's ground line (a wave rising from the ground), not its centre on the spot.
+    const y = (act.stand && a ? a.feet.y : p.y) + (act.y ?? 0);
     const depth = act.under ? GROUND_DEPTH + 1 : AIR_DEPTH;
     const alpha = act.alpha ?? 1;
     if (!this.scene.textures.exists(act.img)) {
@@ -214,7 +215,7 @@ export class ActPlayer {
     const frames = this.scene.textures.get(act.img).frameTotal - 1;
     const [f0, f1] = act.frames ? [Math.min(act.frames[0], frames - 1), Math.min(act.frames[1], frames - 1)] : [0, Math.max(0, frames - 1)];
     const playMs = act.dur ?? (f1 - f0 + 1) * 85;
-    const s = this.scene.add.sprite(p.x, y, act.img, f0).setDepth(depth).setAlpha(alpha);
+    const s = this.scene.add.sprite(p.x, y, act.img, f0).setDepth(depth).setAlpha(alpha).setOrigin(0.5, act.stand ? 1 : 0.5);
     s.setDisplaySize(width, width * (s.height / Math.max(1, s.width)));
     if (act.tint !== undefined) s.setTint(act.tint as number);
     s.setFlipX(mirror !== !!act.flip);

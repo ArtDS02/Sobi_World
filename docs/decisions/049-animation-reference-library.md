@@ -29,3 +29,9 @@ Chủ dự án: "tất cả animation vẫn quá kém… nên có một bộ tà
 - Khả năng engine còn thiếu đặt tên cố định (`prop_displace`, `prop_flipbook`, `strip_scale_xy`, `bg_scene`, `action_by_body`) để gom thành việc engine riêng.
 - Đợt thử: 9 skill hệ Nước + đánh thường; asset mới cần: `fx_wave_rise`, `fx_bubble_pop`, `fx_water_column`, `fx_ice_grow`, `fx_hit_burst` (`docs/ASSET_TODO.md`).
 - 2026-11-05: đủ 169 kịch bản (112 skill, 26 hành động, 25 trạng thái, 6 phản ứng); danh mục asset mới `scenarios/ASSETS.md`; test bắt buộc nội dung mới phải có kịch bản.
+
+## Kết quả pilot P2 (§6) — 2026-11-05
+- Displacement làm bằng **Phaser Rope** (act `prop` + `ripple`), không dùng Phaser FX shader: rẻ, tất định, cùng API với ảnh thường; không WebGL thì vẽ ảnh thường; "Giảm chuyển động" không phát act.
+- **Chọn hướng lai** cho `skill_nh_tsunami`: flipbook nhiều khung (`fx_wave_rise`) cho những nhịp **đổi hình tại chỗ** (dâng, đổ), ripple cho nhịp **di chuyển** của ảnh tĩnh. Chỉ ripple: IoU 0,83, chỉ một hình trượt; lai: IoU 0,837, đủ dâng → tiến → đổ (so sánh ở kịch bản `skill_nh_tsunami` §6c).
+- Quy tắc rút ra cho P3: ảnh tĩnh của `prop` chỉ được làm hình chủ đạo **trong lúc di chuyển** và phải tắt khi flipbook va chạm bắt đầu; act `strip` có thêm `stand` (đáy dải trên đường đất) cho hiệu ứng mọc từ đất.
+- §7 giữ nguyên: `STATIC_SHAPE` vẫn là cờ gợi ý; thành MUST-HAVE cho skill mới / làm lại sau khi chủ dự án playtest bản lai.

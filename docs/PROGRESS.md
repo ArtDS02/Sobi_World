@@ -10,6 +10,11 @@
 
 ## Nhật ký
 
+### 2026-11-05 — Animation P2: nhập `fx_wave_rise`, sóng thần bản lai (chốt hướng pilot)
+✅ Đã làm: cắt sheet W1 (chủ dự án render) thành dải `fx_wave_rise` 8 × 512² (hộp ngang chung, chân từng ô cùng một đường đất, bỏ vạch đất), thêm dòng manifest, `art:process` + `assets:check` đạt. Act `strip` có thêm `stand` (đáy dải đặt trên đường đất của đơn vị). `skill_nh_tsunami` dựng bản **lai**: sóng dâng K1–K4 mọc từ đất sau đội → đỉnh sóng `fxp_wave_crest` uốn (ripple) + giãn theo vận tốc tiến tới quái trong 820 ms → sóng cuộn đổ K5–K8 tại từng quái (size 1,6, lệch 90 ms) → mưa giọt + vũng. Kịch bản tsunami / tide_song / ult_trident đổi `fx_wave_rise` sang `have`; decision 049 ghi kết quả pilot §6: **chọn hướng lai** (flipbook cho đổi hình tại chỗ, ripple cho di chuyển).
+📊 Capture `20261105-142538-fb87f0a-60ab3622`: `shapeIoU` **0,837** (không `STATIC_SHAPE`); chỉ ripple 0,83 nhưng thiếu dâng / đổ. Hai lần chỉnh: đỉnh sóng còn chiếm khung sau va chạm → IoU 0,875 (cờ); tắt sớm (700 ms) → khung va chạm trống; 820 ms vừa.
+👉 Chủ dự án: F5 Admin → Xưởng animation trận → `skill_nh_tsunami` xem bản lai; nếu đạt cảm giác thì P3 nhân rộng cùng cách (tide_song, trident dùng lại `fx_wave_rise`).
+
 ### 2026-11-05 — Animation P2: pilot sóng thần + khả năng `prop_displace`
 ✅ Đã làm: act `prop` có tham số mới `ripple: { amp, waves, speed }` (schema `battleScript.ts`) — ảnh tĩnh được trải lên **Phaser Rope** 24 điểm và uốn theo sóng chạy dọc thân, mạnh hơn ở mép trước (`scene/battle/fxRipple.ts`; toán thuần `ui/propMotion.ts → rippleOffsets` + test). Chỉ WebGL; không có thì vẽ ảnh thường; giảm chuyển động không phát act. `skill_nh_tsunami` dựng lại theo kịch bản (bản dự phòng chưa có `fx_wave_rise`): chuẩn bị → sóng tiến chậm dần nhanh (`inQuad`) có ripple + wobble + trail giọt → đổ lệch nhịp 90 / quái → mưa giọt + vũng; bỏ dải ribbon lớn cắt ngang sóng. Batch Gemini `art_inbox/.batch/adventure-20-wave/` (`PROMPT.md`, sheet W1 2×4 = 8 khung sóng dâng → cuộn → đổ → vỡ, đính kèm ảnh sóng của game làm mẫu dáng).
 📊 Capture: `shapeIoU` 0,891 → **0,83** (hết `STATIC_SHAPE`), 0 lỗi console, 0 thiếu asset (run `20261105-140604-438f80c-890186f5`). Hiệu chỉnh qua 3 lần chụp: ripple `{0.06, 1.5, 1.6}` + 16 điểm làm đỉnh sóng gãy khúc → `{0.035, 1, 1.2}` + 24 điểm; splash chân quái 1,6 → 0,7.

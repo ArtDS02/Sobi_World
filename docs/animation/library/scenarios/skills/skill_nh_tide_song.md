@@ -5,7 +5,7 @@
   "id": "skill_nh_tide_song", "kind": "skill", "name": "Khúc Ca Triều", "element": "SUPPORT", "tier": 0, "durationMs": 1450,
   "status": "draft", "refs": ["REF-WATER-WAVE-001"], "bibles": ["actions/buff-and-heal", "elements/WATER"],
   "assets": [
-    { "id": "fx_wave_rise", "state": "new", "layer": "L1", "spec": "Xem skill_nh_tsunami (dùng chung). Ở skill này chỉ phát K1–K3 (sóng thấp, hiền), size 0,45, không bao giờ tới khung đổ sập." },
+    { "id": "fx_wave_rise", "state": "have", "layer": "L1", "spec": "Xem skill_nh_tsunami (dùng chung). Ở skill này chỉ phát K1–K3 (sóng thấp, hiền), size 0,45, không bao giờ tới khung đổ sập." },
     { "id": "fxp_wave_crest", "state": "have", "layer": "L1" },
     { "id": "fxs_note", "state": "have", "layer": "L3" },
     { "id": "fxs_bubble", "state": "have", "layer": "L3" }
@@ -42,7 +42,7 @@ L1 đạt 2/3 (biến hình: dâng khung + displacement · phụ sinh: nốt / b
 ## 5. Asset
 | Asset | Lớp | Trạng thái |
 |---|---|---|
-| `fx_wave_rise` | L1 | **mới** (chung với `skill_nh_tsunami`) |
+| `fx_wave_rise` | L1 | có (2026-11-05, chung với `skill_nh_tsunami`) |
 | `fxp_wave_crest`, `fxs_note`, `fxs_bubble` | L1/L3 | có |
 Dự phòng: chưa có `fx_wave_rise` → bỏ nhịp dâng, `prop rise` thấp. Chưa có displacement → `wobble` nhỏ + `bobY`.
 
