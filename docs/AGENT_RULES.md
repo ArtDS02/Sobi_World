@@ -57,3 +57,12 @@ Cuối mỗi bước lớn và cuối giai đoạn, báo theo mẫu:
 - Nhu cầu art mới ghi vào `docs/ASSET_TODO.md`; **không làm art/animation/VFX/polish UI ngoài GĐ14** và không quay lại phase đã nghiệm thu chỉ vì việc đó.
 - Vẫn được sửa phase cũ khi có **lỗi gameplay, lỗi kiến trúc hoặc vấn đề tích hợp thật**: đánh giá ảnh hưởng, sửa phần cần thiết, ghi vào `PROGRESS.md`. Không dùng nguyên tắc này để bỏ qua lỗi.
 - Khi gắn tag hoặc merge: kiểm tra tag đã tồn tại chưa, không force-push, không tạo tag trùng.
+
+## 9. Bản quyền / IP (decision 048) — LUẬT QUAN TRỌNG
+- **Cấm** tạo, đặt tên, thêm hoặc mô tả bất kỳ asset/nội dung nào có hình ảnh, tên, thiết kế, câu thoại, âm thanh hoặc đặc trưng nhận diện của nhân vật, sinh vật, địa danh, sản phẩm, thương hiệu có bản quyền/nhãn hiệu của bên thứ ba (game, phim, anime, truyện, hãng đồ chơi, thương hiệu thật…). Gồm cả "lấy cảm hứng sát", "phiên bản nhái", viết lệch tên, đổi màu để né.
+- Áp dụng cho: id, tên hiển thị, i18n, prompt tạo ảnh (Gemini, `image-to-asset`, `image-to-prompt`), tên file asset, content JSON, comment, ảnh reference mới đưa vào `asset/`.
+- Sinh vật/nhân vật/vật phẩm phải là **thiết kế gốc**: dựa trên động vật có thật, thần thoại dân gian phổ thông (rồng, phượng hoàng, kỳ lân… ở dạng chung chung) hoặc sáng tạo riêng. Không copy dáng, bảng màu và đặc điểm nhận diện của một IP cụ thể.
+- Nghi ngờ một tên/hình có thể trùng IP → **không dùng**, chọn phương án gốc và ghi vào `PROGRESS.md`; thay đổi lớn thì hỏi chủ dự án.
+- Phần mềm, font, âm thanh, thư viện bên thứ ba phải có giấy phép cho phép dùng thương mại; ghi nguồn + license vào `docs/THIRD_PARTY.md`.
+- Nội dung đã có từ trước rule (xem `docs/IP_AUDIT_REPORT.md`: Thor, Superman, Battlebot, 2 loài cá, Loki…) **chưa xử lý**; chủ dự án sẽ quyết và triển khai sau. Không thêm nội dung mới cùng kiểu.
+- Rà soát toàn game theo `docs/IP_AUDIT_PROMPT.md` trước mỗi lần phát hành/tag giai đoạn và khi nghi ngờ.

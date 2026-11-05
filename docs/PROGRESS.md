@@ -10,6 +10,42 @@
 
 ## Nhật ký
 
+### 2026-11-04 — Luật bản quyền (decision 048); chưa xóa/đổi nội dung
+✅ Đã làm: AGENT_RULES §9 + decision 048 + CLAUDE.md + `docs/IP_AUDIT_PROMPT.md` + báo cáo Pha 1 `docs/IP_AUDIT_REPORT.md` + `docs/THIRD_PARTY.md`. Pha 2 (đổi tên/id/art) đã thử rồi hoàn tác theo yêu cầu chủ dự án; chủ dự án sẽ tự triển khai sau.
+
+### 2026-11-03 — Admin: Xưởng animation trận làm lại giao diện (theo ảnh mẫu của chủ dự án)
+✅ Đã làm: thẻ "Cấu hình trận đấu" thu gọn được (kỹ năng, bên ra đòn, đội hình 1–3 bằng ô chân dung, bên nhận đòn, số quái, tha hóa, phản ứng nguyên tố, các cờ thử); thẻ "Xem trước" có Chạy / Vào trận / Tạm dừng / Phát lại / Tốc độ (100% hoặc ×2) / toàn màn hình / chụp ảnh, thanh thời gian `mm:ss.t`; thẻ "Kỹ năng đang chọn" có icon, mô tả, JSON có số dòng, nhãn Hợp lệ / Chưa hợp lệ / JSON sai theo từng phím gõ, Định dạng lại, Áp dụng thử, Lưu; thanh trạng thái dưới cùng. Files: `tools/admin/battleLab.ts`, `battleLab.css` (mới), `admin.html`.
+🧪 `tsc` sạch. Trên Admin thật: Chạy, Tạm dừng giữ nguyên đồng hồ rồi Tiếp tục đi tiếp, thu gọn thẻ, chọn 1–3 đồng đội, chọn kỹ năng ra JSON hợp lệ 126 dòng, sửa hỏng JSON báo "JSON sai"; không lỗi console.
+⚠️ Khác ảnh mẫu: ô "Nguyên tố / Hiệu ứng" của ảnh thay bằng "Tha hóa" và "Phản ứng nguyên tố" (là thứ lab thật có); không có nút âm thanh (lab tắt âm); không kéo thanh thời gian (hiệu ứng phát một chiều); chưa có chạy chậm (< 100%) vì sân trận đọc đồng hồ trang. Nút toàn màn hình và chụp ảnh chưa thử.
+
+### 2026-11-03 — Adventure: chuyển động trận mượt hơn (thử nghiệm, chờ chủ dự án xem)
+✅ Đã làm:
+- `battleMoves.ts` (chuyển động của script nội dung): thêm `easeOutBack` (lấy đà quá tay) và `settle` (lò xo tắt dần). `recoil` thành pha lấy đà rồi nhả; `dash` tăng tốc có kéo giãn, nảy bẹp khi chạm, về nhà trượt quá rồi lắng; `jump` có ép người trước khi nhảy và nảy bẹp khi tiếp đất kéo dài sau khi move hết (170 ms); `knock` bật lùi rồi nảy về quá điểm nghỉ.
+- `battlePose.ts`: nhánh mặc định (cận chiến, slam, cast) và phản ứng trúng đòn dùng cùng lò xo; thêm `BodyPose.air` (độ cao so với mặt đất, cộng dồn từ mọi lần nhấc / vòng cung / nhảy).
+- `battleUnits.ts`: bóng dưới chân ở mặt đất, nhỏ lại và mờ đi khi thân bay lên, rộng ra khi thân bẹp.
+- Không thêm hit-stop hay ảnh mờ kéo theo: script đã có `stop` và `trail` sẵn.
+
+🧪 Typecheck sạch; `battleFx` + `battleScript` xanh (thêm 3 test: easing, đòn đánh thường, bị đánh). `npm run check`: 1638/1639, 1 test cân bằng `phase11` hết 20 s khi cả bộ chạy cùng lúc, chạy riêng qua (11 s). Xưởng animation mở được, bấm Chạy không có lỗi console.
+
+⚠️ Chưa xem được chuyển động bằng mắt (pane trình duyệt nhỏ, canvas bị cắt). Các hằng số (độ kéo giãn, độ nảy, 170 ms) là số mình chọn, chưa chỉnh theo cảm giác.
+
+👉 Chủ dự án: F5 Admin → Xưởng animation trận → chạy Đánh thường, vài skill vật lý, và đòn bị đánh; cho biết chỗ nào quá tay / chưa đủ.
+
+### 2026-11-03 — Admin: Map Editor làm lại giao diện / thao tác, lỗi map tiếng Việt có vị trí (decision 047)
+✅ Đã làm:
+- **Bố cục 4 vùng** theo ảnh mẫu của chủ dự án: giao diện tối toàn màn hình; header (đường dẫn, trạng thái lưu "Đang lưu… / Đã lưu lúc …", Lưu nháp, Chạy thử, Xem bằng game, Xuất bản); thanh công cụ chia nhóm có nhãn (Quản lý bản đồ · Công cụ chỉnh sửa · Hiển thị · Kiểm tra & xuất bản), icon nét đồng nhất, tooltip giải thích + phím tắt; cột trái 3 tab (Địa hình / Đối tượng có tìm kiếm + kéo thả vào map / Layer có ẩn, khoá, sáng layer đang thao tác), thu gọn được; canvas tự Fit khi mở, thước toạ độ, thanh zoom nổi, chú thích màu, ô toạ độ; cột phải: thẻ đối tượng (hình, tên hiển thị, loại, X/Y, kích thước, layer, Nhân bản / Xoá / Sửa thuộc tính), tab Kiểm tra lỗi / Thuộc tính, mẹo dùng.
+- **Overlay vùng di chuyển** tính theo đúng luật chặn của game (`blockedTiles`: đất, vật, cổng đóng, chân asset): xanh lá đi được, đỏ chặn, cam vùng đặc biệt (cầu, đất cao, bậc đá, đất tha hoá), xanh dương nước; đậm hơn, viền vùng chặn / nước khi zoom gần; bật / tắt từng loại ở chú thích. Lưới mờ dần khi zoom xa (chỉ còn đường mỗi 5 ô), rõ khi zoom gần. Ô hover viền trắng, vật chọn viền cyan + tay nắm.
+- **Lỗi có cấu trúc**: `mapIssues` (logic game) trả mã lỗi + vật + ô; `mapProblems` giữ nguyên chuỗi tiếng Anh cũ (test, script). Admin `mapIssues.ts`: câu tiếng Việt, tên hiển thị thay id (rương theo loại + số thứ tự, lối ra "phía Đông (tới …)", quái theo hạng + tên quái…), mức độ theo đúng luật publish (lỗi chặn / cảnh báo publish tự sửa hoặc chỉ ghi chú / gợi ý), thêm kiểm tra lối ra tới map không tồn tại / chưa publish. Hộp Xuất bản và bảng Quản lý map cũng dùng câu tiếng Việt.
+- **Marker lỗi trên map**: đỏ / vàng / xanh, gom theo ô kèm số lượng, ô lỗi tô viền; bấm marker → tooltip + mục lỗi sáng + chọn vật; "Đi tới" → camera bay tới đúng ô, zoom hợp lý, ô nhấp nháy, chọn vật, mở inspector, tooltip. Lỗi tính lại sau mỗi thay đổi; marker ẩn khi đang kéo, lỗi đã sửa thì marker và tooltip mất.
+- **Chuột**: Shift + kéo = pan (con trỏ bàn tay; chuột phải / giữa / Space vẫn pan); Ctrl + cuộn = zoom tại con trỏ; cuộn thường = cuộn map; Ctrl + bấm = chọn thêm (trước là Shift). Nút Zoom −/+, 100% (1 ô = 1 ô game), Fit Map (F). Công cụ mới: Di chuyển (kéo vật, kéo trống = pan), Vùng di chuyển (W: đổi đi được ↔ chặn).
+- Sửa lỗi cũ: vẽ lại editor (sau Lưu / hộp Lối ra) gắn thêm một bộ nghe phím → Ctrl+Z chạy hai lần; nay gỡ bộ cũ trước. Canvas vẽ theo devicePixelRatio (nét hơn).
+
+🧪 `npm run check` xanh (1636 test, thêm `tests/scripts/mapIssues.test.ts`). Admin thật (Rừng Sâu, 1600×920): bố cục một hàng; Đi tới lỗi rương (32,3) → đúng ô, inspector "Rương bạc #2"; bấm marker → tooltip + chọn rương; dời rương xuống 1 ô → lỗi và marker mất, Ctrl+Z → lỗi về; Shift+kéo pan 3 ô, không chọn / không tô (cả khi cầm Cọ); Ctrl+cuộn giữ đúng ô dưới con trỏ ở mọi mức zoom; cuộn thường không zoom; Cọ, Vùng di chuyển, kéo thả rương, khoá layer (không chọn được), chọn khung + Ctrl+bấm; Lưu nháp ghi file nháp giống hệt (đã sao lưu / hoàn lại dữ liệu nháp).
+
+⚠️ Tự quyết: phím F nay là Fit (theo ảnh mẫu), Đổ loang chọn ở tab Địa hình; Shift+bấm không còn chọn thêm (Shift dành cho pan). "Chọn nhiều ô" = chọn khung nhiều vật (đã có). Chưa thử: Xuất bản thật (không muốn đổi `content/`), Xem bằng game.
+
+👉 Chủ dự án: F5 Admin rồi mở Map Editor; thử trên màn hình thật.
+
 ### 2026-11-03 — Admin: hướng dẫn dạng popup, dropdown có hình, bảng Quản lý map (decision 047)
 ✅ Đã làm:
 - Nút "❔ Hướng dẫn" mở popup ngay trên trang (không chuyển trang, không mất việc đang làm); trong popup chọn được mục khác, có link sang trang hướng dẫn đầy đủ.

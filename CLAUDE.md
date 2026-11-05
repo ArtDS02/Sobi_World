@@ -9,5 +9,6 @@ Bắt đầu mỗi phiên: đọc `docs/AGENT_RULES.md` rồi `docs/PROGRESS.md`
 - Không HTTP server/port/mạng trong bản ship. Save = file qua SaveStorage port; lỗi ghi không được nuốt. Không làm mất save người chơi.
 - Cổng chất lượng: `npm run check` xanh trước khi commit. File LF (`.gitattributes`).
 - Gameplay trước, art sau (decision 017, AGENT_RULES §8): art/animation/VFX/âm thanh chỉ làm ở GĐ14; trước đó dùng placeholder và ghi `docs/ASSET_TODO.md`.
+- **Bản quyền (decision 048, AGENT_RULES §9)**: không tạo asset/tên/mô tả có hình ảnh hoặc tên liên quan nhân vật, sinh vật, sản phẩm, thương hiệu có bản quyền của bên thứ ba; mọi thiết kế phải gốc. Rà soát bằng `docs/IP_AUDIT_PROMPT.md`.
 - Skill `image-to-asset` dùng cho art (từ GĐ14). Guard kiến trúc: `scripts/guard/` (`npm run guard`).
 - Comment code tiếng Anh. Trả lời tiếng Việt, báo cáo theo mẫu trong AGENT_RULES §7.
