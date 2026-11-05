@@ -35,7 +35,7 @@ Vì sao: bản thiết kế cũ (`art_inbox/.batch/adventure-12-animation/all_an
 ## Khả năng engine còn thiếu (đặt tên cố định để gom việc)
 | Tên | Nghĩa | Ghi chú |
 |---|---|---|
-| `prop_displace` | shader displacement (Phaser FX) trên một `prop`: ảnh tĩnh gợn / chảy theo thời gian | decision 049 §6, thử ở P2 |
+| `prop_displace` | ảnh tĩnh của `prop` uốn / gợn theo thời gian | ✅ **đã có** (2026-11-05): act `prop` thêm `ripple: { amp, waves, speed }` — Phaser Rope (`scene/battle/fxRipple.ts`), WebGL; không có thì vẽ ảnh thường. Dựng thử ở `skill_nh_tsunami` |
 | `prop_flipbook` | `prop` phát khung của một flipbook `fx_` trong lúc di chuyển (hiện `prop` chỉ 1 ảnh, `strip` đứng yên) | cần cho sóng cuộn khi đang tiến |
 | `strip_scale_xy` | `strip` co giãn khác nhau theo chiều ngang / dọc (cột nước cao) | thay được bằng asset dọc riêng |
 | `bg_scene` | đổi nền trận tạm thời (biển sâu, biển bão) rồi trả lại | hiện chỉ có `tint` màu |

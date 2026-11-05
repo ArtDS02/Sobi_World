@@ -62,6 +62,13 @@ const propMods = z.strictObject({
   squashOnHit: z.boolean().optional(),
   /** Leaves a burst `ref` behind every `every` ms. */
   trail: z.strictObject({ ref: fxRef, every: nonNeg.min(20).max(1000) }).optional(),
+  /**
+   * prop_displace (decision 049): the picture bends along a travelling wave — `amp` share of its height, `waves` across its width,
+   * `speed` waves a second. WebGL only (a Phaser Rope); without it the plain picture is drawn.
+   */
+  ripple: z
+    .strictObject({ amp: z.number().finite().min(0).max(0.3), waves: z.number().finite().min(0.25).max(4), speed: z.number().finite().min(0).max(5) })
+    .optional(),
 });
 export type PropMods = z.output<typeof propMods>;
 export type PropEase = (typeof PROP_EASE_VALUES)[number];

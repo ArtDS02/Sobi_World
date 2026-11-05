@@ -39,6 +39,22 @@ export interface PropFrame {
   sy: number;
 }
 
+/**
+ * The ripple of a prop (prop_displace, decision 049): the picture is laid on a strip of `n` points across its width and each point is
+ * moved up or down by a travelling wave, so the picture itself bends and flows instead of only moving. Returns the offset of each point
+ * as a share of the picture's height, `time` in seconds. The wave is stronger at the leading edge (the right end, where a wave crest
+ * curls) and weaker at the trailing edge, so the back of the picture stays readable.
+ */
+export function rippleOffsets(ripple: NonNullable<PropMods['ripple']>, n: number, time: number): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < n; i += 1) {
+    const s = n > 1 ? i / (n - 1) : 0;
+    const env = 0.35 + 0.65 * s;
+    out.push(Math.sin((ripple.waves * s - ripple.speed * time) * Math.PI * 2) * ripple.amp * env);
+  }
+  return out;
+}
+
 /** The mods of an act: its path's defaults, then what the act sets. */
 export const modsOf = (path: PropPath, own: PropMods): PropMods => ({ ...PATH_DEFAULTS[path], ...own });
 

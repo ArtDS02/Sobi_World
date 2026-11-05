@@ -8,6 +8,7 @@ import { AIR_DEPTH, GROUND_DEPTH } from './fxBursts';
 import type { FxAnchor } from './fxPlayer';
 import { SHADOW_KEY, shapeKey } from './fxTextures';
 import { modsOf, propFrame, type PropFrame } from '../../ui/propMotion';
+import { canRipple, RippleProp, type PropPicture } from './fxRipple';
 
 type SpotOf = (a: FxAnchor | null, spot: Spot | undefined, fallback: Spot) => { x: number; y: number };
 const easeIn = (t: number) => t * t;
@@ -21,12 +22,15 @@ export function playProp(h: ActHost, spotOf: SpotOf, act: Extract<Act, { do: 'pr
   const unitH = a ? a.height : H;
   const size = unitH * act.size;
   const have = h.scene.textures.exists(act.img);
-  const img = h.scene.add.image(0, 0, have ? act.img : shapeKey('glow')).setDepth(act.under ? GROUND_DEPTH + 2 : AIR_DEPTH - 2);
+  const mods = modsOf(act.path, act);
+  // prop_displace: a picture that bends along a wave (a Rope) when asked for and drawable; a plain Image otherwise.
+  const ripple = have && mods.ripple && act.path !== 'stretch' && canRipple(h.scene) ? new RippleProp(h.scene, act.img, mods.ripple) : null;
+  const img: PropPicture = ripple ?? h.scene.add.image(0, 0, have ? act.img : shapeKey('glow'));
+  img.setDepth(act.under ? GROUND_DEPTH + 2 : AIR_DEPTH - 2);
   if (!have) img.setBlendMode(Phaser.BlendModes.ADD).setTint(glow);
   else if (act.tint !== undefined) img.setTint(act.tint as number);
   const ratio = have ? img.height / Math.max(1, img.width) : 1;
   const baseW = ratio > 1 ? size / ratio : size;
-  const mods = modsOf(act.path, act);
   let m: PropFrame = { prog: 0, dy: 0, rot: 0, sx: 1, sy: 1 };
   const set = (x: number, y: number, scale: number, alpha: number) => img.setPosition(x, y + m.dy).setDisplaySize(baseW * scale * m.sx, baseW * ratio * scale * m.sy).setAlpha(alpha * (act.alpha ?? 1));
   const flipped = ((from ?? a)?.side === 'enemy') !== !!act.flip;
@@ -107,6 +111,7 @@ export function playProp(h: ActHost, spotOf: SpotOf, act: Extract<Act, { do: 'pr
     img.setRotation(0);
     body(t);
     if (act.path !== 'stretch') img.setRotation(img.rotation + m.rot);
+    ripple?.bend((t * act.dur) / 1000);
     if (mods.trail && t * act.dur - lastTrail >= mods.trail.every) {
       lastTrail = t * act.dur;
       h.bursts.play(mods.trail.ref, { x: img.x, y: img.y }, { mirror: flipped, tint: null, more: 1 });

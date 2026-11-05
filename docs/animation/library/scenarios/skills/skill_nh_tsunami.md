@@ -3,7 +3,7 @@
 ```json scenario
 {
   "id": "skill_nh_tsunami", "kind": "skill", "name": "Sóng Thần Cổ", "element": "WATER", "tier": 2, "durationMs": 1650,
-  "status": "draft", "refs": ["REF-WATER-WAVE-001"], "bibles": ["elements/WATER", "actions/cast"],
+  "status": "built", "refs": ["REF-WATER-WAVE-001"], "bibles": ["elements/WATER", "actions/cast"],
   "assets": [
     { "id": "fx_wave_rise", "state": "new", "layer": "L1", "spec": "Flipbook 8 khung, mỗi khung 512×512, ghép ngang 4096×512, nền trong suốt, pivot giữa cạnh đáy, sóng hướng sang PHẢI. K1 mặt nước gợn thấp (cao 15% khung) · K2 nước dâng 35%, mép trên gợn · K3 vách dâng 60%, viền bọt trắng mỏng ở đỉnh · K4 vách cao 85%, đỉnh bắt đầu nghiêng sang phải · K5 đỉnh cuộn thành móc, bọt dày · K6 móc cuộn sâu, bọt tung lên, giọt rời khỏi đỉnh · K7 đổ sập xuống phía phải, tán bọt rộng · K8 vỡ thành mảng bọt thấp + giọt tan. Thân xanh #3fb2ff → bọt trắng #d8f4ff, viền nâu ấm mảnh, bóng mềm kiểu Sobi Farm, bo tròn như sticker; không tả thực." },
     { "id": "fxp_wave_crest", "state": "have", "layer": "L1" },
@@ -57,6 +57,12 @@ Dự phòng khi chưa có `fx_wave_rise`: (a) dâng = `fxp_wave_crest` `path: ri
 5. **B5 L4**: `stop medium`, `shake`, `punch` ở con đầu; kiểm `anim:audit` T2.
 6. **B6 âm**: `adv_water_cast` → `adv_wave` → `adv_water_hit` theo stagger.
 7. **B7**: `npm run anim:capture -- --only battle.skill.skill_nh_tsunami`, so với run cũ; cập nhật `status`.
+
+## 6b. Đã dựng (pilot P2, 2026-11-05) — bản dự phòng + prop_displace
+- `prop_displace` làm bằng **Phaser Rope** (`scene/battle/fxRipple.ts`, toán ở `ui/propMotion.ts → rippleOffsets`, act `prop` có `ripple: { amp, waves, speed }`): ảnh `fxp_wave_crest` uốn theo sóng chạy dọc thân, mạnh hơn ở mép trước. WebGL; không có thì vẽ ảnh thường.
+- Script: chuẩn bị 0–380 → sóng tiến `sweep` ease `inQuad` 380–1280 có ripple `{ 0.035, 1, 1.2 }` + wobble + bob + trail giọt → đổ 1050 lệch 90 / quái (splash 0,7, bọt, nhấc + đẩy, hit-stop medium 80, rung 5, punch 1,03) → mưa giọt + vũng. Bỏ dải ribbon lớn (cắt ngang thân sóng, rối mắt); giữ ribbon mảnh cuối.
+- Hiệu chỉnh sau capture đầu: ripple `{0.06, 1.5, 1.6}` + 16 điểm làm đỉnh sóng gãy khúc → `{0.035, 1, 1.2}` + 24 điểm; splash ở chân quái 1,6 → 0,7 (trông như cái xô).
+- Còn chờ: `fx_wave_rise` (batch `art_inbox/.batch/adventure-20-wave/`, prompt `PROMPT.md`, chủ dự án render) để thay nhịp dâng / đổ bằng flipbook 8 khung → khi có, so hai hướng (flipbook vs ripple) bằng capture.
 
 ## 7. Nghiệm thu
 - `anim:audit`: không `STATIC_HERO`, `DURATION_OVER`; bậc có T2–T3.
