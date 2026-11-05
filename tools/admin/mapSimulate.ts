@@ -124,7 +124,21 @@ export function openSimulation(data: M.BuilderData, startId: string, override?: 
       const draw = () => {
         const scale = 22;
         const view = { scale, ox: state.x / map.tile - canvas.width / scale / 2, oy: state.y / map.tile - canvas.height / scale / 2 };
-        drawEditor(canvas, map, view, LAYERS, images, new Set(), null);
+        drawEditor(canvas, map, view, {
+          width: canvas.width,
+          height: canvas.height,
+          dpr: 1,
+          layers: LAYERS,
+          overlays: { walk: false, block: true, special: false, water: true },
+          images,
+          selected: new Set(),
+          ghost: null,
+          hover: [],
+          rulers: false,
+          markers: [],
+          activeMarker: null,
+          focus: null,
+        });
         const g = canvas.getContext('2d')!;
         const px = (state.x / map.tile - view.ox) * scale;
         const py = (state.y / map.tile - view.oy) * scale;

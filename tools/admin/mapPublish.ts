@@ -5,9 +5,9 @@
 import { mapsFileSchema } from '../../content/schemas/adventure/maps';
 import type { AreaMap, Zone } from '../../src/areas/adventure/logic/config/content';
 import { mapGraphProblems } from '../../src/areas/adventure/logic/mapGraph';
-import { mapProblems } from '../../src/areas/adventure/logic/maps';
 import { translatableTexts } from '../../src/i18n/contentText';
 import { savedIdProblems } from '../../scripts/admin/mapIds';
+import { problemLines } from './mapIssues';
 import { graphText } from './mapNetwork';
 import { isPublished, resolveArrivals, type BuilderData } from './mapModel';
 
@@ -87,7 +87,7 @@ export function planPublish(data: BuilderData, ids: readonly string[], en: Reado
   // The game's own checks, on the world as it would be.
   const parsed = mapsFileSchema.safeParse({ maps });
   if (!parsed.success) for (const i of parsed.error.issues) err(null, `Cấu trúc maps.json: ${i.message}${i.path.length ? ` (${i.path.join('.')})` : ''}`);
-  for (const m of maps) for (const p of mapProblems(m, maps)) err(m.id, p);
+  for (const m of maps) for (const p of problemLines(m, maps)) err(m.id, p);
   for (const p of mapGraphProblems(maps, zones)) err(maps.find((m) => p.includes(m.id))?.id ?? null, graphText(p, name));
   for (const p of savedIdProblems(MAPS_FILE, { maps: data.published }, { maps })) err(null, p);
   if (resolved.moved.length) warn(null, `${resolved.moved.length} lối ra đi theo điểm tới đã dời: ${resolved.moved.join(', ')}`);

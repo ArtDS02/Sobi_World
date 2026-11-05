@@ -328,34 +328,7 @@ img.is-missing { visibility: hidden; }
 .mnet__warn--error { color: #ff8a80; }
 .mnet__warn--warn { color: #f2c14e; }
 @media (max-width: 1200px) { .mnet { grid-template-columns: 1fr; } .mnet__svg { height: 60vh; } .mnet__side { max-height: none; } }
-/* Map Editor (decision 047). */
-.medit { display: grid; grid-template-columns: 210px minmax(0, 1fr) 300px; grid-template-rows: auto minmax(0, 1fr); gap: 8px; height: calc(100vh - 120px); min-height: 520px; }
-.medit__bar { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.medit__bar .is-active, .medit__adds .is-active { outline: 2px solid #ff2fd0; }
-.medit__sep { width: 1px; height: 24px; background: #fff3; margin: 0 4px; }
-.medit__dirty { color: #f2c14e; font-size: 13px; }
-.medit__left, .medit__right { overflow-y: auto; display: grid; gap: 6px; align-content: start; }
-.medit__left h4, .medit__right h4 { margin: 8px 0 2px; }
-.medit__stage { position: relative; min-height: 0; border-radius: 8px; overflow: hidden; }
-.medit__stage canvas { width: 100%; height: 100%; display: block; cursor: crosshair; }
-.medit__status { position: absolute; left: 8px; bottom: 6px; font: 12px system-ui; color: #fff; background: #0008; padding: 2px 8px; border-radius: 6px; pointer-events: none; }
-.medit__swatches { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
-.medit__swatch { display: flex; gap: 6px; align-items: center; font-size: 12px; padding: 4px; border-radius: 6px; border: 1px solid #fff2; background: transparent; color: inherit; cursor: pointer; text-align: left; }
-.medit__swatch i { width: 14px; height: 14px; border-radius: 3px; flex: none; }
-.medit__swatch.is-active { outline: 2px solid #ff2fd0; }
-.medit__swatch--n { justify-content: center; }
-.medit__adds { display: grid; gap: 4px; }
-.medit__right .toolbar input[type='number'] { width: 70px; }
-@media (max-width: 1400px) {
-  .medit { grid-template-columns: minmax(0, 1fr) 250px; grid-template-rows: auto minmax(360px, 1fr) auto; height: auto; }
-  .medit__left { grid-column: 1 / -1; grid-row: 3; display: block; columns: 3 220px; max-height: none; }
-  .medit__left > * { break-inside: avoid; }
-  .medit__stage { height: calc(100vh - 220px); }
-}
-.medit__decor { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; max-height: 260px; overflow-y: auto; }
-.medit__decor-item { display: grid; justify-items: center; gap: 2px; padding: 4px; border: 1px solid #fff2; border-radius: 6px; background: transparent; color: inherit; font-size: 11px; cursor: pointer; }
-.medit__decor-item img { width: 100%; height: 48px; object-fit: contain; }
-.medit__decor-item.is-active { outline: 2px solid #ff2fd0; }
+/* Map Editor (decision 047): mapEditor.css. */
 /* Thư viện asset (decision 047). */
 .massets { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
 .massets__card { display: grid; gap: 3px; padding: 8px; border: 1px solid #fff2; border-radius: 10px; }

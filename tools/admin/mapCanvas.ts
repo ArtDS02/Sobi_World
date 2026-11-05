@@ -2,10 +2,9 @@
 // exits, portal, groups…), one square per tile in the game's own grid — the scale only changes the drawing, a click always gives the
 // logical tile.
 import type { AreaMap } from '../../src/areas/adventure/logic/config/content';
+import { COLOUR } from './mapGround';
 
-/** The tiles of `maps.json` terrain, with their names in the admin. */
-export const GROUND = [['.', 'Đất'], [',', 'Đường'], ['=', 'Cầu'], ['#', 'Vách / tường'], ['~', 'Nước'], ['^', 'Đất cao'], ['s', 'Bậc đá'], ['c', 'Đất tha hóa'], ['F', 'Vách cao nguyên'], ['w', 'Thác nước']] as const;
-export const COLOUR: Record<string, string> = { '.': '#bfe09f', ',': '#e6d3a3', '=': '#c49a68', '#': '#5c7a4a', '~': '#7fc4e8', '^': '#d6efb8', s: '#cdb68a', c: '#c9a8dc', F: '#8a7a62', w: '#b8e4f8' };
+export { COLOUR, GROUND } from './mapGround';
 
 export interface GridMark {
   x: number;

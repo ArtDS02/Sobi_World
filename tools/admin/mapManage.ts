@@ -4,6 +4,7 @@
 // API) and never in the game until it is published. The operations themselves live in mapModel.ts.
 import { esc } from './labels';
 import { MAP_API as API, editExits, editSpawns, fetchBuilder as fetchData } from './mapApi';
+import { editorIssues } from './mapIssues';
 import { graphProblems } from './mapLinks';
 import * as M from './mapModel';
 import { confirmDanger, openModal } from './modal';
@@ -179,7 +180,16 @@ function rowHtml(data: M.BuilderData, s: M.MapSummary): string {
 function draw(root: HTMLElement) {
   const data = page.data!;
   const graph = graphProblems(data);
-  const all = M.summaries(data).map((s) => ({ ...s, problems: [...s.problems, ...graph(s.id)] }));
+  const working = M.workingMaps(data);
+  const publishedIds = new Set(data.published.map((m) => m.id));
+  // The editor's own checks in Vietnamese: what a publish refuses or warns about (hints left out here).
+  const problemsOf = (id: string) => {
+    const map = working.find((m) => m.id === id)!;
+    return editorIssues({ map, maps: working, graph: graph(id), published: data.published.find((m) => m.id === id) ?? null, publishedIds })
+      .filter((i) => i.level !== 'info')
+      .map((i) => `${i.level === 'warn' ? '⚠ ' : ''}${i.name}: ${i.message}${i.x !== undefined ? ` (ô ${i.x}, ${i.y})` : ''}`);
+  };
+  const all = M.summaries(data).map((s) => ({ ...s, problems: problemsOf(s.id) }));
   const q = page.query.trim().toLowerCase();
   const shown = all.filter((s) => (!page.zone || s.zoneId === page.zone) && (!page.status || s.status === page.status) && (!q || `${s.nameVi} ${s.id}`.toLowerCase().includes(q)));
   const count = (st: M.MapStatus) => all.filter((s) => s.status === st).length;
