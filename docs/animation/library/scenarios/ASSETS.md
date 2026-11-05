@@ -30,6 +30,7 @@ Một nơi duy nhất mô tả các asset **chưa có** mà kịch bản cần (
 | `fx_shield_form` | 6 × 256² | tâm | khiên lục giác: các mảnh lục giác bay vào ghép dần (K1 3 mảnh, K2 7, K3 kín nửa, K4 kín vòm), K5 sóng sáng chạy qua mặt khiên, K6 khiên trong mờ đứng yên. Vẽ trắng tô theo hệ. Thay `fx_shield_dome` (4 khung, khung 4 nhạt) | Khiên / thủ: stone_skin, cl_shield_wall, tg_bronze_wall, status shield, guard |
 | `fx_buff_rise` | 6 × 256×512 | đáy | cột sáng mảnh từ chân **vút lên**, các mũi nhọn / vệt bay lên trong cột, đỉnh lóe, tan từ dưới lên. Vẽ trắng (đỏ cho công, lam cho thủ…) | buff tăng chỉ số, status *Up apply |
 | `fx_debuff_sink` | 6 × 256×512 | đáy | khói nặng **chảy xuống** từ đầu bao thân, đọng thành vũng mờ ở chân rồi tan. Vẽ xám-tím | debuff giảm chỉ số, status *Down apply |
+| `fx_energy_orb` | 6 × 256², vòng lặp, vẽ trắng | tâm | quả cầu năng lượng: lõi tròn sáng + 2–3 dải năng lượng **cuộn quanh** lõi, mỗi khung dải xoay tiếp; viền ngoài gợn. Khung 6 nối khung 1. Thay `fxp_bubble_big` (bong bóng nước) đang bị mượn làm quả cầu cho mọi hệ | Pháp sư: cl_energy_orb; quả cầu tụ lực chung |
 | `fx_heal_bloom` | 6 × 256² | đáy | vòng sáng mềm nở từ chân, các giọt sáng tròn + dấu cộng bo tròn bay lên chậm, tan mềm. Xanh lá #7ee08a → trắng | hồi máu: cl_mend, cl_healing_rain, cl_second_wind, regen, e_soothe |
 
 Thứ tự tạo đề xuất (nhiều kịch bản dùng nhất trước): `fx_hit_burst`, `fx_shield_form`, `fx_buff_rise`, `fx_debuff_sink`, `fx_dust_ring`, `fx_rock_burst`, `fx_fire_blast`, `fx_flame_loop`, `fx_slash_long`, `fx_ink_bloom`, rồi các asset riêng hệ.

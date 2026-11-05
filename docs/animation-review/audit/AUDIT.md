@@ -2,7 +2,7 @@
 
 Sinh bằng `npm run anim:audit` từ `content/adventure/battle_fx.json`, `skills.json`, manifest asset. **Không sửa tay.** Cách đọc và ngưỡng: [README.md](README.md). Cờ là gợi ý cho reviewer, không phải điểm.
 
-**Kịch bản animation** (`docs/animation/library/scenarios/`): 51/112 skill đã có.
+**Kịch bản animation** (`docs/animation/library/scenarios/`): 82/112 skill đã có.
 
 ## Theo hệ
 
@@ -50,22 +50,22 @@ Sinh bằng `npm run anim:audit` từ `content/adventure/battle_fx.json`, `skill
 
 | skill | loại | hệ | power | bậc cần / có | ms | ảnh tĩnh | hình chủ đạo | lớp | cờ | ưu tiên | kịch bản |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| `skill_cl_energy_orb` | class | SELF | 1.5 | T3 / T3 | 1220 | 100% | prop `fxp_bubble_big` (0) | 3 | STATIC_HERO, STATIC_SHARE, FEW_LAYERS, DURATION_UNDER | 24 | – |
-| `skill_cl_armor_crush` | class | SELF | 0.9 | T2 / T4 | 980 | 43% | strip `$boom` (0) | 3 | STATIC_HERO, STATIC_SHARE, IMPACT_OVER_TIER | 18 | – |
-| `skill_cl_fortress` | class | SUPPORT | 0 | T0 / T1 | 1450 | 80% | prop `fxp_fortress` (0) | 2 | STATIC_HERO, STATIC_SHARE, DURATION_OVER | 18 | – |
-| `skill_cl_healing_rain` | class | SUPPORT | 0 | T0 / T0 | 1550 | 100% | prop `fxp_rain_cloud` (0) | 2 | STATIC_HERO, STATIC_SHARE, DURATION_OVER | 18 | – |
+| `skill_cl_energy_orb` | class | SELF | 1.5 | T3 / T3 | 1220 | 100% | prop `fxp_bubble_big` (0) | 3 | STATIC_HERO, STATIC_SHARE, FEW_LAYERS, DURATION_UNDER | 24 | [có](../../animation/library/scenarios/skills/skill_cl_energy_orb.md) |
+| `skill_cl_armor_crush` | class | SELF | 0.9 | T2 / T4 | 980 | 43% | strip `$boom` (0) | 3 | STATIC_HERO, STATIC_SHARE, IMPACT_OVER_TIER | 18 | [có](../../animation/library/scenarios/skills/skill_cl_armor_crush.md) |
+| `skill_cl_fortress` | class | SUPPORT | 0 | T0 / T1 | 1450 | 80% | prop `fxp_fortress` (0) | 2 | STATIC_HERO, STATIC_SHARE, DURATION_OVER | 18 | [có](../../animation/library/scenarios/skills/skill_cl_fortress.md) |
+| `skill_cl_healing_rain` | class | SUPPORT | 0 | T0 / T0 | 1550 | 100% | prop `fxp_rain_cloud` (0) | 2 | STATIC_HERO, STATIC_SHARE, DURATION_OVER | 18 | [có](../../animation/library/scenarios/skills/skill_cl_healing_rain.md) |
 | `skill_qs_rock_smash` | unique | EARTH | 1.4 | T3 / T4 | 1260 | 62% | prop `fxp_boulder` (0) | 3 | STATIC_HERO, STATIC_SHARE, FEW_LAYERS, DURATION_UNDER | 16 | [có](../../animation/library/scenarios/skills/skill_qs_rock_smash.md) |
 | `skill_qt_lumina` | unique | LIGHT | 2.2 | T3 / T3 | 1160 | 52% | prop `fxp_lumina_ring` (0) | 3 | STATIC_HERO, STATIC_SHARE, FEW_LAYERS, DURATION_UNDER | 16 | [có](../../animation/library/scenarios/skills/skill_qt_lumina.md) |
-| `skill_cl_aim` | class | SUPPORT | 0 | T0 / T0 | 950 | 100% | prop `fxp_crosshair` (0) | 3 | STATIC_HERO, STATIC_SHARE | 15 | – |
-| `skill_cl_cheer` | class | SUPPORT | 0 | T0 / T0 | 1000 | 100% | prop `fxs_star` (0) | 2 | STATIC_HERO, STATIC_SHARE | 15 | – |
-| `skill_cl_elemental_rain` | class | SELF | 0.95 | T2 / T1 | 1300 | 100% | strip `$boom` (0) | 3 | STATIC_HERO, STATIC_SHARE | 15 | – |
-| `skill_cl_finisher` | class | SELF | 3 | T3 / T4 | 1550 | 63% | prop `fxp_finisher_emblem` (0) | 5 | STATIC_HERO, STATIC_SHARE | 15 | – |
-| `skill_cl_meteor` | class | SELF | 1.6 | T3 / T4 | 1550 | 30% | prop `fxp_meteor` (0) | 5 | STATIC_HERO, STATIC_SHARE | 15 | – |
-| `skill_cl_rally` | class | SUPPORT | 0 | T0 / T0 | 1300 | 100% | prop `fxp_banner` (0) | 2 | STATIC_HERO, STATIC_SHARE | 15 | – |
-| `skill_cl_seal` | class | SELF | 0.6 | T1 / T1 | 1300 | 38% | prop `fxs_rune_a` (0) | 3 | STATIC_HERO, STATIC_SHARE | 15 | – |
-| `skill_cl_taunt` | class | SUPPORT | 0 | T0 / T0 | 900 | 51% | prop `fxp_taunt_badge` (0) | 2 | STATIC_HERO, STATIC_SHARE | 15 | – |
-| `skill_cl_undying` | class | SUPPORT | 0 | T0 / T0 | 1050 | 100% | prop `fxs_heart` (0) | 2 | STATIC_HERO, STATIC_SHARE | 15 | – |
-| `skill_cl_vital` | class | SELF | 1.3 | T2 / T2 | 920 | 35% | prop `fxp_crosshair` (0) | 4 | STATIC_HERO, STATIC_SHARE | 15 | – |
+| `skill_cl_aim` | class | SUPPORT | 0 | T0 / T0 | 950 | 100% | prop `fxp_crosshair` (0) | 3 | STATIC_HERO, STATIC_SHARE | 15 | [có](../../animation/library/scenarios/skills/skill_cl_aim.md) |
+| `skill_cl_cheer` | class | SUPPORT | 0 | T0 / T0 | 1000 | 100% | prop `fxs_star` (0) | 2 | STATIC_HERO, STATIC_SHARE | 15 | [có](../../animation/library/scenarios/skills/skill_cl_cheer.md) |
+| `skill_cl_elemental_rain` | class | SELF | 0.95 | T2 / T1 | 1300 | 100% | strip `$boom` (0) | 3 | STATIC_HERO, STATIC_SHARE | 15 | [có](../../animation/library/scenarios/skills/skill_cl_elemental_rain.md) |
+| `skill_cl_finisher` | class | SELF | 3 | T3 / T4 | 1550 | 63% | prop `fxp_finisher_emblem` (0) | 5 | STATIC_HERO, STATIC_SHARE | 15 | [có](../../animation/library/scenarios/skills/skill_cl_finisher.md) |
+| `skill_cl_meteor` | class | SELF | 1.6 | T3 / T4 | 1550 | 30% | prop `fxp_meteor` (0) | 5 | STATIC_HERO, STATIC_SHARE | 15 | [có](../../animation/library/scenarios/skills/skill_cl_meteor.md) |
+| `skill_cl_rally` | class | SUPPORT | 0 | T0 / T0 | 1300 | 100% | prop `fxp_banner` (0) | 2 | STATIC_HERO, STATIC_SHARE | 15 | [có](../../animation/library/scenarios/skills/skill_cl_rally.md) |
+| `skill_cl_seal` | class | SELF | 0.6 | T1 / T1 | 1300 | 38% | prop `fxs_rune_a` (0) | 3 | STATIC_HERO, STATIC_SHARE | 15 | [có](../../animation/library/scenarios/skills/skill_cl_seal.md) |
+| `skill_cl_taunt` | class | SUPPORT | 0 | T0 / T0 | 900 | 51% | prop `fxp_taunt_badge` (0) | 2 | STATIC_HERO, STATIC_SHARE | 15 | [có](../../animation/library/scenarios/skills/skill_cl_taunt.md) |
+| `skill_cl_undying` | class | SUPPORT | 0 | T0 / T0 | 1050 | 100% | prop `fxs_heart` (0) | 2 | STATIC_HERO, STATIC_SHARE | 15 | [có](../../animation/library/scenarios/skills/skill_cl_undying.md) |
+| `skill_cl_vital` | class | SELF | 1.3 | T2 / T2 | 920 | 35% | prop `fxp_crosshair` (0) | 4 | STATIC_HERO, STATIC_SHARE | 15 | [có](../../animation/library/scenarios/skills/skill_cl_vital.md) |
 | `skill_e_bronze_crush` | enemy | METAL | 2 | T3 / T4 | 1200 | 60% | prop `fxp_bronze_fist` (0) | 4 | STATIC_HERO, STATIC_SHARE, DURATION_UNDER | 12 | – |
 | `skill_e_corrupt_bloom` | enemy | NATURE | 0.5 | T1 / T0 | 1500 | 100% | prop `fxp_corrupt_flower` (0) | 4 | STATIC_HERO, STATIC_SHARE, NO_AFTERMATH | 12 | – |
 | `skill_e_curse` | enemy | DARK | 0.4 | T1 / T0 | 1400 | 100% | prop `fxp_curse_eye` (0) | 4 | STATIC_HERO, STATIC_SHARE, NO_AFTERMATH | 12 | – |
@@ -99,15 +99,15 @@ Sinh bằng `npm run anim:audit` từ `content/adventure/battle_fx.json`, `skill
 | `skill_qt_guiding_lamp` | unique | SUPPORT | 0 | T0 / T0 | 1280 | 73% | prop `fxp_mini_lantern` (0) | 2 | STATIC_HERO, STATIC_SHARE | 10 | [có](../../animation/library/scenarios/skills/skill_qt_guiding_lamp.md) |
 | `skill_tg_bronze_wall` | unique | SUPPORT | 0 | T0 / T1 | 1200 | 70% | prop `fxp_bronze_shield` (0) | 3 | STATIC_HERO, STATIC_SHARE | 10 | [có](../../animation/library/scenarios/skills/skill_tg_bronze_wall.md) |
 | `skill_cl_freeze` | class | WATER | 0.8 | T1 / T2 | 1350 | 21% | prop `fxs_snowflake` (0) | 4 | STATIC_HERO | 9 | [có](../../animation/library/scenarios/skills/skill_cl_freeze.md) |
-| `skill_cl_shield_wall` | class | SUPPORT | 0 | T0 / T0 | 1150 | 0% | strip `fx_shield_dome` (0.5) | 1 | FEW_LAYERS, SHARED_FLIPBOOK_HERO | 9 | – |
+| `skill_cl_shield_wall` | class | SUPPORT | 0 | T0 / T0 | 1150 | 0% | strip `fx_shield_dome` (0.5) | 1 | FEW_LAYERS, SHARED_FLIPBOOK_HERO | 9 | [có](../../animation/library/scenarios/skills/skill_cl_shield_wall.md) |
 | `skill_e_thorn_storm` | enemy | NATURE | 1.3 | T2 / T2 | 2000 | 26% | prop `fxs_thorn` (0) | 5 | STATIC_HERO, DURATION_OVER | 8 | – |
 | `skill_e_tusk_charge` | enemy | EARTH | 1.6 | T3 / T4 | 1250 | 0% | strip `fx_boom` (0.5) | 3 | FEW_LAYERS, DURATION_UNDER, SHARED_FLIPBOOK_HERO | 8 | – |
 | `skill_ld_thunder_strike` | unique | LIGHTNING | 1.4 | T3 / T4 | 1000 | 14% | prop `fxp_horn_sigil` (0) | 5 | STATIC_HERO, DURATION_UNDER | 8 | [có](../../animation/library/scenarios/skills/skill_ld_thunder_strike.md) |
 | `skill_ult_qs` | ultimate | SUPPORT | 0 | T4 / T4 | 3300 | 90% | prop `fxp_turtle_mountain` (0) | 5 | STATIC_HERO, STATIC_SHARE, NO_PREPARATION | 7 | [có](../../animation/library/scenarios/skills/skill_ult_qs.md) |
-| `skill_cl_combo` | class | SELF | 0.6 | T1 / T4 | 1400 | 0% | strip `fx_boom` (0.5) | 3 | IMPACT_OVER_TIER, SHARED_FLIPBOOK_HERO | 6 | – |
-| `skill_cl_power_strike` | class | SELF | 1.8 | T3 / T4 | 930 | 0% | strip `fx_slash_arc` (0.5) | 4 | DURATION_UNDER, SHARED_FLIPBOOK_HERO | 6 | – |
-| `skill_cl_shadow_dance` | class | SELF | 0.6 | T1 / T3 | 1700 | 0% | strip `fx_poof` (0.5) | 4 | IMPACT_OVER_TIER, DURATION_OVER | 6 | – |
-| `skill_cl_stomp` | class | SELF | 0.6 | T1 / T4 | 900 | 0% | strip `fx_ground_crack` (0.5) | 3 | IMPACT_OVER_TIER, SHARED_FLIPBOOK_HERO | 6 | – |
+| `skill_cl_combo` | class | SELF | 0.6 | T1 / T4 | 1400 | 0% | strip `fx_boom` (0.5) | 3 | IMPACT_OVER_TIER, SHARED_FLIPBOOK_HERO | 6 | [có](../../animation/library/scenarios/skills/skill_cl_combo.md) |
+| `skill_cl_power_strike` | class | SELF | 1.8 | T3 / T4 | 930 | 0% | strip `fx_slash_arc` (0.5) | 4 | DURATION_UNDER, SHARED_FLIPBOOK_HERO | 6 | [có](../../animation/library/scenarios/skills/skill_cl_power_strike.md) |
+| `skill_cl_shadow_dance` | class | SELF | 0.6 | T1 / T3 | 1700 | 0% | strip `fx_poof` (0.5) | 4 | IMPACT_OVER_TIER, DURATION_OVER | 6 | [có](../../animation/library/scenarios/skills/skill_cl_shadow_dance.md) |
+| `skill_cl_stomp` | class | SELF | 0.6 | T1 / T4 | 900 | 0% | strip `fx_ground_crack` (0.5) | 3 | IMPACT_OVER_TIER, SHARED_FLIPBOOK_HERO | 6 | [có](../../animation/library/scenarios/skills/skill_cl_stomp.md) |
 | `skill_dm_ink` | unique | DARK | 1.3 | T2 / T2 | 1120 | 21% | prop `fxs_ink_blob` (0) | 4 | STATIC_HERO | 6 | [có](../../animation/library/scenarios/skills/skill_dm_ink.md) |
 | `skill_e_bark_skin` | enemy | SUPPORT | 0 | T0 / T0 | 1050 | 43% | strip `fx_shield_dome` (0.5) | 2 | STATIC_SHARE, SHARED_FLIPBOOK_HERO | 6 | – |
 | `skill_e_metal_claw` | enemy | METAL | 1.4 | T3 / T3 | 960 | 0% | strip `fx_claw` (0.5) | 3 | FEW_LAYERS, DURATION_UNDER | 6 | – |
@@ -128,11 +128,11 @@ Sinh bằng `npm run anim:audit` từ `content/adventure/battle_fx.json`, `skill
 | `skill_e_spark_peck` | enemy | LIGHTNING | 1.3 | T2 / T1 | 880 | 0% | strip `fx_pow_star` (0.5) | 4 | DURATION_UNDER, SHARED_FLIPBOOK_HERO | 4 | – |
 | `skill_ld_swift_bolt` | unique | SUPPORT | 0 | T0 / T0 | 1000 | 0% | - | 1 | FEW_LAYERS | 4 | [có](../../animation/library/scenarios/skills/skill_ld_swift_bolt.md) |
 | `skill_tg_steel_charge` | unique | METAL | 2.2 | T3 / T4 | 1160 | 0% | strip `fx_boom` (0.5) | 4 | DURATION_UNDER, SHARED_FLIPBOOK_HERO | 4 | [có](../../animation/library/scenarios/skills/skill_tg_steel_charge.md) |
-| `skill_cl_aura` | class | SUPPORT | 0 | T0 / T0 | 1250 | 0% | strip `fx_shield_dome` (0.5) | 2 | SHARED_FLIPBOOK_HERO | 3 | – |
-| `skill_cl_hold_fast` | class | SUPPORT | 0 | T0 / T0 | 950 | 0% | strip `fx_shield_dome` (0.5) | 2 | SHARED_FLIPBOOK_HERO | 3 | – |
-| `skill_cl_pierce` | class | SELF | 0.9 | T2 / T2 | 750 | 0% | beam (1) | 4 | DURATION_UNDER | 3 | – |
-| `skill_cl_purify` | class | SUPPORT | 0 | T0 / T0 | 1500 | 0% | strip `fx_light_pillar` (0.5) | 3 | DURATION_OVER | 3 | – |
-| `skill_cl_tremor` | class | SELF | 1 | T2 / T4 | 1200 | 0% | strip `fx_rock_spike` (0.5) | 3 | IMPACT_OVER_TIER | 3 | – |
+| `skill_cl_aura` | class | SUPPORT | 0 | T0 / T0 | 1250 | 0% | strip `fx_shield_dome` (0.5) | 2 | SHARED_FLIPBOOK_HERO | 3 | [có](../../animation/library/scenarios/skills/skill_cl_aura.md) |
+| `skill_cl_hold_fast` | class | SUPPORT | 0 | T0 / T0 | 950 | 0% | strip `fx_shield_dome` (0.5) | 2 | SHARED_FLIPBOOK_HERO | 3 | [có](../../animation/library/scenarios/skills/skill_cl_hold_fast.md) |
+| `skill_cl_pierce` | class | SELF | 0.9 | T2 / T2 | 750 | 0% | beam (1) | 4 | DURATION_UNDER | 3 | [có](../../animation/library/scenarios/skills/skill_cl_pierce.md) |
+| `skill_cl_purify` | class | SUPPORT | 0 | T0 / T0 | 1500 | 0% | strip `fx_light_pillar` (0.5) | 3 | DURATION_OVER | 3 | [có](../../animation/library/scenarios/skills/skill_cl_purify.md) |
+| `skill_cl_tremor` | class | SELF | 1 | T2 / T4 | 1200 | 0% | strip `fx_rock_spike` (0.5) | 3 | IMPACT_OVER_TIER | 3 | [có](../../animation/library/scenarios/skills/skill_cl_tremor.md) |
 | `skill_dm_ink_veil` | unique | SUPPORT | 0 | T0 / T0 | 1420 | 0% | strip `fx_poof` (0.5) | 4 | DURATION_OVER | 2 | [có](../../animation/library/scenarios/skills/skill_dm_ink_veil.md) |
 | `skill_e_ember_bite` | enemy | FIRE | 1.3 | T2 / T3 | 1050 | 0% | strip `fx_flame_burst` (0.5) | 3 | SHARED_FLIPBOOK_HERO | 2 | – |
 | `skill_e_magma_breath` | enemy | FIRE | 1.1 | T2 / T2 | 1500 | 0% | strip `fx_flame_burst` (0.5) | 5 | SHARED_FLIPBOOK_HERO | 2 | – |
@@ -142,13 +142,13 @@ Sinh bằng `npm run anim:audit` từ `content/adventure/battle_fx.json`, `skill
 | `skill_hg_lava` | unique | FIRE | 0.9 | T2 / T3 | 1550 | 0% | strip `fx_lava_pop` (0.5) | 4 | DURATION_OVER | 2 | [có](../../animation/library/scenarios/skills/skill_hg_lava.md) |
 | `skill_ld_chain` | unique | LIGHTNING | 0.7 | T1 / T2 | 1300 | 0% | strip `fx_pow_star` (0.5) | 3 | SHARED_FLIPBOOK_HERO | 2 | [có](../../animation/library/scenarios/skills/skill_ld_chain.md) |
 | `skill_mm_poison_thorn` | unique | NATURE | 1.2 | T2 / T2 | 1060 | 0% | strip `fx_pow_star` (0.5) | 3 | SHARED_FLIPBOOK_HERO | 2 | [có](../../animation/library/scenarios/skills/skill_mm_poison_thorn.md) |
-| `skill_cl_channel` | class | SUPPORT | 0 | T0 / T0 | 1300 | 0% | tether (1) | 3 |  | 0 | – |
-| `skill_cl_dash` | class | SUPPORT | 0 | T0 / T0 | 1000 | 0% | strip `fx_wind_swirl` (0.5) | 3 |  | 0 | – |
-| `skill_cl_focus` | class | SUPPORT | 0 | T0 / T0 | 1050 | 0% | - | 2 |  | 0 | – |
-| `skill_cl_mend` | class | SUPPORT | 0 | T0 / T0 | 1000 | 20% | strip `fx_bloom` (0.5) | 2 |  | 0 | – |
-| `skill_cl_rend` | class | SELF | 1.1 | T2 / T3 | 960 | 0% | strip `fx_claw` (0.5) | 4 |  | 0 | – |
-| `skill_cl_second_wind` | class | SUPPORT | 0 | T0 / T0 | 1000 | 0% | strip `fx_wind_swirl` (0.5) | 2 |  | 0 | – |
-| `skill_cl_spell_storm` | class | SELF | 0.7 | T1 / T2 | 1400 | 0% | strip `fx_wind_swirl` (0.5) | 3 |  | 0 | – |
+| `skill_cl_channel` | class | SUPPORT | 0 | T0 / T0 | 1300 | 0% | tether (1) | 3 |  | 0 | [có](../../animation/library/scenarios/skills/skill_cl_channel.md) |
+| `skill_cl_dash` | class | SUPPORT | 0 | T0 / T0 | 1000 | 0% | strip `fx_wind_swirl` (0.5) | 3 |  | 0 | [có](../../animation/library/scenarios/skills/skill_cl_dash.md) |
+| `skill_cl_focus` | class | SUPPORT | 0 | T0 / T0 | 1050 | 0% | - | 2 |  | 0 | [có](../../animation/library/scenarios/skills/skill_cl_focus.md) |
+| `skill_cl_mend` | class | SUPPORT | 0 | T0 / T0 | 1000 | 20% | strip `fx_bloom` (0.5) | 2 |  | 0 | [có](../../animation/library/scenarios/skills/skill_cl_mend.md) |
+| `skill_cl_rend` | class | SELF | 1.1 | T2 / T3 | 960 | 0% | strip `fx_claw` (0.5) | 4 |  | 0 | [có](../../animation/library/scenarios/skills/skill_cl_rend.md) |
+| `skill_cl_second_wind` | class | SUPPORT | 0 | T0 / T0 | 1000 | 0% | strip `fx_wind_swirl` (0.5) | 2 |  | 0 | [có](../../animation/library/scenarios/skills/skill_cl_second_wind.md) |
+| `skill_cl_spell_storm` | class | SELF | 0.7 | T1 / T2 | 1400 | 0% | strip `fx_wind_swirl` (0.5) | 3 |  | 0 | [có](../../animation/library/scenarios/skills/skill_cl_spell_storm.md) |
 | `skill_e_frost_breath` | enemy | WATER | 1 | T2 / T2 | 1350 | 0% | cone (1) | 5 |  | 0 | [có](../../animation/library/scenarios/skills/skill_e_frost_breath.md) |
 | `skill_e_holy_ward` | enemy | SUPPORT | 0 | T0 / T0 | 950 | 0% | strip `fx_bloom` (0.5) | 2 |  | 0 | – |
 | `skill_e_howl` | enemy | SUPPORT | 0 | T0 / T1 | 1300 | 0% | - | 4 |  | 0 | – |
