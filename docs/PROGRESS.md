@@ -10,6 +10,11 @@
 
 ## Nhật ký
 
+### 2026-11-05 — Animation P1 (tiếp): đủ bible 9 hệ + motif + hành động
+✅ Đã làm: bible 8 hệ còn lại (`FIRE`, `NATURE`, `EARTH`, `METAL`, `LIGHTNING`, `DARK`, `LIGHT`, `VOID`): tính cách đọc được khi bỏ màu, vật lý → act, nhịp mẫu, cách làm hình chủ đạo sống, asset có / thiếu, bảng hiện trạng từng skill theo `anim:audit`, cấm. Motif `poison`. Bible hành động `cast`, `buff-and-heal`, `status`, `ultimate`, `idle-and-states`. README thư viện có mục lục + thứ tự nâng cấp.
+⚠️ Phát hiện (chưa sửa, đưa vào thứ tự nâng cấp): **12/12 ultimate** hình chủ đạo tĩnh, 11/12 thiếu lớp L2 (chỉ `skill_ult_phoenix` có); hệ Đất và một số skill quái **quá tay** (T4 cho skill T2: `e_seal_quake`, `qs_quake`, `e_thorn_storm`, `hk_void_vortex`, `e_magma_breath`); `elements.VOID.spark = ice_pop` (hạt băng cho Hư Không); Kim / Ánh sáng ngắn quá (thiếu pha tụ). Tự quyết (giao bởi chủ dự án): ANIM-123 — skill hồi máu có hình riêng thì bỏ lớp hồi chung (làm ở P3).
+➡️ Tiếp: P2 pilot `skill_nh_tsunami` (brief, hai hướng flipbook / displacement, so trước-sau); song song có thể làm nhóm "sửa dữ liệu rẻ" (README thư viện §Thứ tự nâng cấp mục 2).
+
 ### 2026-11-05 — Animation P1: thư viện tham chiếu Animation & VFX (decision 049)
 ✅ Đã làm: decision 049 (chủ dự án giao agent tự quyết): thư viện ở `docs/animation/library/`, phân loại theo 9 hệ của game + motif, không quay EBF3 ở giai đoạn này, thử shader displacement song song flipbook ở pilot Nước, `STATIC_HERO` / `STATIC_SHAPE` thành MUST-HAVE chỉ sau pilot và chỉ cho skill mới / làm lại. Viết: `README.md`, `STANDARDS.md` (7 giai đoạn, 3 dấu hiệu sống, 5 lớp, bậc lực T0–T4 khớp `HIT_STOP_MS`, ngân sách thời gian, phản ứng mục tiêu, checklist); bible `elements/WATER.md`, `motifs/ice.md`, `actions/projectile.md`, `actions/melee-and-hit.md`; REF `REF-WATER-WAVE-001`, `REF-WATER-BUBBLE-001`, `REF-ICE-ENCASE-001`. Schema REF: `scripts/anim-review/lib/library.ts` + test `tests/scripts/animLibrary.test.ts` (act đúng engine, skill / status / action / reaction có thật, nguồn có loại bản quyền R/F/L/GAME, R không trỏ file trong repo).
 ⚠️ Phát hiện khi viết bible (chưa sửa, để P2/P3): `actions.hit` bắn `drop_spray` (giọt nước) cho mọi hệ → nên dùng `$spark`; `skill_e_frost_breath` không có tác động (T0 so với T2 cần); `reaction_steam` dùng âm lửa và khói chung.

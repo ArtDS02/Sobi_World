@@ -13,7 +13,16 @@ Thứ chạy trong game vẫn chỉ là `content/adventure/battle_fx.json` (deci
 | `refs/<REF-ID>.json` | Một hiệu ứng tham chiếu: giai đoạn (ms), lớp, hạt, act gợi ý, nguồn + loại bản quyền, cách chuyển sang phong cách Sobi | Reference Curator |
 | `briefs/<skillId>.md` | Motion Brief của một skill (khi làm thật): REF, bậc, bảng giai đoạn → act, danh sách asset cho Artist, tiêu chí nghiệm thu đo được | Motion Designer |
 
-Đã có: STANDARDS; bible [WATER](bibles/elements/WATER.md), motif [ice](bibles/motifs/ice.md), hành động [projectile](bibles/actions/projectile.md), [melee-and-hit](bibles/actions/melee-and-hit.md); REF trong `refs/`. Còn lại: xem decision 049 §Lộ trình.
+## Mục lục
+- **Hệ (9):** [WATER](bibles/elements/WATER.md) · [FIRE](bibles/elements/FIRE.md) · [NATURE](bibles/elements/NATURE.md) · [EARTH](bibles/elements/EARTH.md) · [METAL](bibles/elements/METAL.md) · [LIGHTNING](bibles/elements/LIGHTNING.md) · [DARK](bibles/elements/DARK.md) · [LIGHT](bibles/elements/LIGHT.md) · [VOID](bibles/elements/VOID.md)
+- **Motif:** [ice](bibles/motifs/ice.md) · [poison](bibles/motifs/poison.md)
+- **Hành động:** [projectile](bibles/actions/projectile.md) · [melee-and-hit](bibles/actions/melee-and-hit.md) · [cast](bibles/actions/cast.md) · [buff-and-heal](bibles/actions/buff-and-heal.md) · [status](bibles/actions/status.md) · [ultimate](bibles/actions/ultimate.md) · [idle-and-states](bibles/actions/idle-and-states.md)
+- **REF:** `refs/` (Nước: sóng, bong bóng, băng bọc). Thêm REF khi làm brief cho hệ / loại tương ứng.
+
+## Thứ tự nâng cấp (từ `anim:audit` + bible)
+1. **Pilot Nước** (P2): `skill_nh_tsunami` — so flipbook vs displacement (decision 049 §6).
+2. **Sửa dữ liệu rẻ, lợi lớn** (chi phí S, không cần art): L2 cho 11 ultimate; hạ tác động các skill quá tay (Đất `seal_quake`, `qs_quake`; Thiên nhiên `thorn_storm`; Hư Không `void_vortex`; Lửa `magma_breath`); thêm tác động cho `e_wraith_touch`, `e_rune_beam`, `e_frost_breath`; `actions.hit` dùng `$spark`; `VOID.spark` bỏ `ice_pop`; thêm pha tụ cho skill Kim / Ánh sáng quá ngắn; dư âm (`NO_AFTERMATH`, 37 skill).
+3. **Hình chủ đạo sống** theo hướng chọn ở P2: ultimate → skill dòng (unique) → quái → hỗ trợ.
 
 ## Bản ghi REF
 Schema: `scripts/anim-review/lib/library.ts` (zod), kiểm bằng `tests/scripts/animLibrary.test.ts` (chạy trong `npm run check`):
