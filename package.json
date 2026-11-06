@@ -60,7 +60,8 @@
     "rig:skin-rig": "python scripts/rig/skinRigs.py",
     "rig:snap": "tsx scripts/rig/snap.ts",
     "rig:auto": "python scripts/rig/autoskin.py",
-    "rig:auto-any": "python scripts/rig/autoskin_generic.py"
+    "rig:auto-any": "python scripts/rig/autoskin_generic.py",
+    "rig:pose": "python scripts/rig/poseRig.py"
   },
   "dependencies": {
     "@fontsource/baloo-2": "^5.3.0",

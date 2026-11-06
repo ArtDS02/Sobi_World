@@ -60,3 +60,15 @@ Chủ dự án duyệt skin ("hợp lý, đủ tốt") và giao agent tự quy�
 2. Sửa tay qua `fix` sau khi soi ảnh lưới: mắt của 14 quái (sọc, nốt, vảy, khuy áo bị nhận nhầm; mắt phát sáng không tối), vài hộp miệng, chân lính đá (khiên / giáo), bỏ "đuôi" giả của ếch / bọ / cừu.
 3. **Lỗi đã sửa:** Container của puppet có post-FX (ma trận màu, viền sáng) dù đang tắt vẫn vẽ qua render target, và khi bị lật (mọi quái) thì **bạc màu**. Giờ FX chỉ được gắn khi một look cần (sáng lên, xám, viền sáng) và gỡ ngay sau đó (`ui/puppet/puppet.ts`).
 Kết quả: 44 rig (4 prototype, 18 chiến binh, 22 quái), tất cả là skin; không cần asset mới.
+
+## Bổ sung 2026-11-06 (5) — Pose to pose trên key pose đã duyệt (thay skin một ảnh) — chủ dự án bác bản (3)/(4)
+**Chủ dự án:** "thực sự không ổn": chuyển động skin tệ hơn hẳn bản ghép bộ phận, không đối chiếu với hình minh hoạ có sẵn (đòn đánh của Vệ Binh Cổ / Heo Thiên Long không giống tranh attack), biểu cảm vẽ thêm đè lên tai / vương miện / mặt robot — "cẩu thả, không chấp nhận được".
+**Nhận lỗi:** agent đã (a) bẻ chỉ một ảnh idle nên phải giảm biên độ clip tới mức gần như đứng yên; (b) bỏ qua bộ key pose đã duyệt `cb_<art>_{idle,attack,cast,hurt,victory,ko}` — chính là hình mẫu của từng động tác; (c) vẽ biểu cảm bằng nét không giới hạn trong mặt; (d) chỉ soi ở cỡ nhỏ, không đặt cạnh tranh mẫu.
+**Quyết định:**
+1. **Mỗi động tác hiện đúng tranh của nó vào đúng mốc**: attack hiện tranh attack từ release tới recover (trùng số sát thương ở contact), cast hiện tranh cast từ windup, hurt / ko / victory hiện tranh của chúng. Clip chọn tranh bằng khe `pose` (`faces.pose`), runtime hoà 70 ms (`skin.poses`, `skin.poseFade`, `ui/puppet/skinView.ts`). 43 sinh vật đều có đủ 6 tranh cùng khung, cùng đường chân → không nhảy cỡ.
+2. **Lưới chỉ thêm cái tranh tĩnh không có**: lấy đà (nén + ngả ra sau trước release), giãn khi bung, chân bám đất khi thân lao / ngả (vùng `root` ở dải chân), đầu trễ nhịp (lò xo trên `head`, vùng đĩa quanh mắt), thở, hạ cánh nén. Không xoay tới mức tranh rách.
+3. **Không vẽ gì đè lên mặt**: biểu cảm là biểu cảm đã vẽ trong từng tranh; idle không chớp mắt (chưa có tranh mắt nhắm được duyệt).
+4. 25 clip chung (`scripts/rig/poseClips.py`): idle (+ 2 fidget), move, attack, cast, hurt, hurt_heavy, ko, victory, guard, stunned, buff, dodge, 10 cử chỉ skill, ultimate (gom trên tranh cast, bung trên tranh attack). Mỗi loài giữ `tempo` / `weight` riêng.
+5. Công cụ: `npm run rig:pose <art…>` (layer `skin*.png` từ 6 tranh + rig), `rig:snap` vẽ đúng tranh của từng khung; test: mỗi động tác hiện đúng tranh ở mốc của nó, đòn đánh có nén + ngả trước release và giãn sau.
+**Phạm vi:** 43 sinh vật có key pose (21 chiến binh, 22 quái). Bạch Tuộc (không có key pose) giữ skin một ảnh. Các script skin trước (`skin.py`, `faces.py`, `autoskin*.py`) giữ để tham khảo / cho loài không có key pose; layer cũ ở `asset/rigs/<art>/layers_skin1/`.
+**Giới hạn còn lại:** chuyển giữa hai tranh là hoà nhanh, không có khung trung gian vẽ tay; muốn mượt hơn nữa cần tranh trung gian (ví dụ `cb_<art>_windup`) — đề xuất, chưa làm.

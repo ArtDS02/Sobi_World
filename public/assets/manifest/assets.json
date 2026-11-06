@@ -8290,6 +8290,1081 @@
       "id": "rig_enemy_shadow_priest_skin",
       "status": "production",
       "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_skin.png"
+    },
+    {
+      "id": "rig_pig_thienlong_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_thienlong_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_thienlong_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_thienlong_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_thienlong_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_mossling_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_mossling_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_mossling_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_mossling_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_mossling_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_skin_victory.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_skin_attack",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_skin_attack.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_skin_cast",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_skin_cast.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_skin_hurt.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_skin_ko",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_skin_ko.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_skin_victory",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_skin_victory.png"
+    },
+    {
+      "id": "rig_fish_betta_skin_attack",
+      "status": "production",
+      "asset": "props/rig/fish_betta/rig_fish_betta_skin_attack.png"
+    },
+    {
+      "id": "rig_fish_betta_skin_cast",
+      "status": "production",
+      "asset": "props/rig/fish_betta/rig_fish_betta_skin_cast.png"
+    },
+    {
+      "id": "rig_fish_betta_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/fish_betta/rig_fish_betta_skin_hurt.png"
+    },
+    {
+      "id": "rig_fish_betta_skin_ko",
+      "status": "production",
+      "asset": "props/rig/fish_betta/rig_fish_betta_skin_ko.png"
+    },
+    {
+      "id": "rig_fish_betta_skin_victory",
+      "status": "production",
+      "asset": "props/rig/fish_betta/rig_fish_betta_skin_victory.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_skin_attack",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_skin_attack.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_skin_cast",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_skin_cast.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_skin_hurt.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_skin_ko",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_skin_ko.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_skin_victory",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_crystal_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_crystal_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_crystal_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_crystal_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_crystal_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_boar_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_boar/rig_pig_boar_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_boar_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_boar/rig_pig_boar_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_boar_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_boar/rig_pig_boar_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_boar_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_boar/rig_pig_boar_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_boar_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_boar/rig_pig_boar_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_dragon_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_dragon_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_dragon_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_dragon_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_dragon_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_galaxy_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_galaxy_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_galaxy_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_galaxy_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_galaxy_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_knight_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_knight_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_knight_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_knight_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_knight_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_ninja_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_ninja_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_ninja_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_ninja_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_ninja_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_phoenix_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_phoenix_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_phoenix_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_phoenix_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_phoenix_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_pirate_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_pirate_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_pirate_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_pirate_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_pirate_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_poseidon_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_poseidon_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_poseidon_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_poseidon_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_poseidon_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_robot_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_robot_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_robot_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_robot_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_robot_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_samurai_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_samurai_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_samurai_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_samurai_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_samurai_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_sunflower_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_sunflower_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_sunflower_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_sunflower_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_sunflower_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_tiger_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_tiger_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_tiger_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_tiger_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_tiger_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_turtle_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_turtle/rig_pig_turtle_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_turtle_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_turtle/rig_pig_turtle_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_turtle_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_turtle/rig_pig_turtle_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_turtle_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_turtle/rig_pig_turtle_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_turtle_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_turtle/rig_pig_turtle_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_unicorn_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_unicorn_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_unicorn_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_unicorn_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_unicorn_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_vampire_skin_attack",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_skin_attack.png"
+    },
+    {
+      "id": "rig_pig_vampire_skin_cast",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_skin_cast.png"
+    },
+    {
+      "id": "rig_pig_vampire_skin_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_skin_hurt.png"
+    },
+    {
+      "id": "rig_pig_vampire_skin_ko",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_skin_ko.png"
+    },
+    {
+      "id": "rig_pig_vampire_skin_victory",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_skin_victory.png"
     }
   ],
   "buildings": [

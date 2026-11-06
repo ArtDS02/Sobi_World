@@ -93,10 +93,12 @@ function restOf(rig: RigData) {
 }
 
 /** Builds the grid of a rig's skin and binds every point to its regions. Null when the rig has no skin. */
-export function buildSkin(rig: RigData, maxStrip = 1400): SkinMesh | null {
+export function buildSkin(rig: RigData, maxStrip = 1400, pose?: string): SkinMesh | null {
   const sk = rig.skin;
   if (!sk) return null;
-  const [bx, by, bw, bh] = rig.parts[sk.part]!.box;
+  // Each key pose has its own picture (and box) on the same regions.
+  const part = pose && pose !== 'rest' ? (sk.poses[pose] ?? sk.part) : sk.part;
+  const [bx, by, bw, bh] = rig.parts[part]!.box;
   const [cols, rows] = sk.grid;
   const n = (cols + 1) * (rows + 1);
   const rest = new Float32Array(n * 2);

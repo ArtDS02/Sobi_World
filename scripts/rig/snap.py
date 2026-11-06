@@ -58,7 +58,7 @@ def draw_frame(data: dict, fr: dict, k: float, textures: dict) -> np.ndarray:
     layers = list(fr["drawn"])
     skin_z = skin["z"] if skin else 0
     def draw_skin():
-        part = data["parts"][skin["part"]]
+        part = data["parts"][fr.get("part") or skin["part"]]
         tex = textures.setdefault(part["img"], picture(part["img"]))
         cols, rows = data["grid"]
         pos = np.array(fr["skin"], np.float32).reshape(-1, 2)

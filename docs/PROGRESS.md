@@ -11,6 +11,13 @@
 
 ## Nhật ký
 
+### 2026-11-06 — Animation: pose to pose trên key pose đã duyệt (decision 050 bổ sung (5)) — sửa bản skin bị bác
+❌ Chủ dự án bác bản skin một ảnh (bổ sung (3)/(4)): chuyển động yếu hơn bản ghép bộ phận, không giống tranh attack / cast có sẵn, biểu cảm vẽ thêm đè lên tai / vương miện / mặt robot. Lỗi của agent: chỉ bẻ ảnh idle (phải giảm biên độ), bỏ qua bộ key pose đã duyệt, vẽ mặt không giới hạn, không đặt cạnh tranh mẫu khi soi.
+✅ Đã làm: mỗi động tác hiện đúng tranh đã duyệt vào đúng mốc nhịp (attack từ release tới recover, cast từ windup, hurt / ko / victory), hoà 70 ms; lưới chỉ thêm lấy đà, nén giãn, chân bám đất, đầu trễ nhịp; không vẽ gì lên mặt. `scripts/rig/poseRig.py` + `poseClips.py` (25 clip chung), runtime `skin.poses` / khe `pose`. 43 sinh vật.
+🧪 Test mới: mỗi động tác hiện đúng tranh ở mốc của nó; đòn đánh nén + ngả trước release, giãn sau. Dải khung đặt cạnh tranh mẫu: Heo Thiên Long, Vệ Binh Cổ (attack / cast / hurt / victory), Heo Rừng, Heo Rùa, Cá Betta, Sói, Đom đóm rune, Phượng hoàng, Diều hâu, Golem (attack). Xưởng rig chạy.
+⚠️ Còn: chuyển giữa hai tranh là hoà nhanh (không có khung trung gian vẽ tay); idle không chớp mắt; Bạch Tuộc giữ skin một ảnh.
+👉 Chủ dự án: Xưởng rig sinh vật (bật "So với ảnh cũ", ×0,25) và Xưởng trận; chấm lại.
+
 ### 2026-11-06 — Animation: 22 quái dùng skin (decision 050 bổ sung (4), R3) + sửa màu puppet bên địch
 ✅ Đã làm: `scripts/rig/autoskin_generic.py` (`npm run rig:auto-any`) cho quái không phải heo — dáng beast / front / float, clip của `pig_boar` / `pig_turtle` / `octopus`, mắt đôi hoặc một, miệng chỉ thay khi dò chắc, `--flip` cho ảnh nhìn trái. Ảnh soi `art_inbox/.qa/autoskin_<art>.png` có lưới toạ độ để đọc sửa tay; sửa mắt 14 quái, vài miệng / chân / đuôi. Sửa lỗi: puppet bị lật (mọi quái) bạc màu vì post-FX luôn gắn → FX chỉ gắn khi cần. Tổng 44 rig, đều là skin; không cần asset mới.
 🧪 `npm run check` xanh; dải khung attack cả 22 quái; Xưởng trận: Heo Rồng vs Heo Rừng Gai / Sói Rừng (đúng hướng, đúng màu).

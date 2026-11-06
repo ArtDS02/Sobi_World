@@ -5,7 +5,7 @@
 // WebGL (no CSS filter); tint goes on each part. Shared by every Area: it knows nothing of battles.
 import * as Phaser from 'phaser';
 import { SkinView } from './skinView';
-import { buildSkin, Performer, rigImages, type DrawnChain, type DrawnPart, type Frame, type RigData, type Want } from '../../systems/animation';
+import { Performer, rigImages, type DrawnChain, type DrawnPart, type Frame, type RigData, type Want } from '../../systems/animation';
 
 /** Where and how the whole puppet stands this frame (screen px). */
 export interface PuppetPlace {
@@ -170,10 +170,10 @@ export class Puppet {
       }
     }
     if (this.rig.skin && !this.skin) {
-      this.skin = new SkinView(this.scene, this.rig, buildSkin(this.rig)!);
+      this.skin = new SkinView(this.scene, this.rig);
       this.container.add(this.skin.object);
     }
-    this.skin?.draw(f, tint);
+    this.skin?.draw(f, tint, now);
     const skinObj = this.skin?.object;
     // Depth order inside the container follows the draw list (the skin at its own depth).
     const order: Phaser.GameObjects.GameObject[] = [];
@@ -256,7 +256,7 @@ export class Puppet {
       out.push({ key: b.img, x: d.translateX, y: d.translateY, originX: 0.5, originY: 0.5, scaleX: d.scaleX, scaleY: d.scaleY, rotation: d.rotation, depth: this.container.depth });
     }
     for (const obj of this.container.list) {
-      if (!(obj instanceof Phaser.GameObjects.Image) || !obj.visible || obj === this.skin?.object) continue;
+      if (!(obj instanceof Phaser.GameObjects.Image) || !obj.visible) continue;
       local.applyITRS(obj.x, obj.y, obj.rotation, obj.scaleX, obj.scaleY);
       parent.multiply(local, world);
       const d = world.decomposeMatrix();

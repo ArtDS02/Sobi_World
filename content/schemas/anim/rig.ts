@@ -101,6 +101,11 @@ const skin = z.strictObject({
   regions: z.array(z.strictObject({ bind: id, poly: z.array(pt).min(3), soft: z.number().positive().optional() })).min(1),
   /** Depth among the rig's parts (faces sit above it). */
   z: z.number().default(0),
+  /** Pose to pose (2026-11-06 (5)): the creature's approved key poses by name (`attack` → a key of `parts`), each bent by the same
+   *  regions. A clip picks one with the face slot `pose` (`faces.pose`); `part` is the rest pose. Expressions are the drawn ones. */
+  poses: z.record(id, id).default({}),
+  /** Crossfade between two poses (ms). */
+  poseFade: z.number().min(0).default(70),
 });
 
 export const rigSchema = z.strictObject({
@@ -171,12 +176,17 @@ export function rigProblems(r: RigData): string[] {
   if (r.skin) {
     if (!r.parts[r.skin.part]) out.push(`${r.id}: skin part ${r.skin.part} missing`);
     for (const g of r.skin.regions) if (!targets.has(g.bind)) out.push(`${r.id}: skin region on missing ${g.bind}`);
+    for (const [name, pic] of Object.entries(r.skin.poses)) if (!r.parts[pic]) out.push(`${r.id}: pose ${name} picture ${pic} missing`);
   }
   for (const s of r.springs) if (!seen.has(s.bone)) out.push(`${r.id}: spring on missing bone ${s.bone}`);
   for (const name of REQUIRED_CLIPS) if (!r.clips[name]) out.push(`${r.id}: clip ${name} missing`);
   for (const [name, c] of Object.entries(r.clips)) {
     for (const t of Object.keys(c.tracks)) if (!targets.has(t)) out.push(`${r.id}: clip ${name} animates missing ${t}`);
     for (const [slot, keys] of Object.entries(c.faces)) {
+      if (slot === 'pose' && r.skin) {
+        for (const [, pic] of keys) if (pic !== 'rest' && !r.skin.poses[pic]) out.push(`${r.id}: clip ${name} pose ${pic} missing`);
+        continue;
+      }
       const s = slots.get(slot);
       if (!s) out.push(`${r.id}: clip ${name} face slot ${slot} missing`);
       else for (const [, pic] of keys) if (!s.pictures[pic]) out.push(`${r.id}: clip ${name} face ${slot}.${pic} missing`);

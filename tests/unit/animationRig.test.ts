@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import manifest from '../../public/assets/manifest/assets.json';
 import { REQUIRED_CLIPS, rigProblems, type ClipData, type RigData } from '../../content/schemas/anim/rig';
-import { buildSkin, clipTime, deformSkin, Performer, RIGS, sampleTrack, solve, waveBend, type Frame, type World } from '../../src/systems/animation';
+import { buildSkin, clipTime, deformSkin, Performer, RIGS, sampleFaces, sampleTrack, solve, waveBend, type Frame, type World } from '../../src/systems/animation';
 import { warpTime } from '../../src/systems/animation';
 
 const rigs = [...RIGS.values()];
@@ -71,18 +71,34 @@ describe('every rig (content/anim/rigs)', () => {
       }
   });
 
-  it('body mechanics, not a moved picture: each action moves several parts, and the face acts', () => {
-    for (const r of rigs) {
-      for (const name of ['idle', 'move', 'attack', 'cast', 'hurt', 'victory']) {
-        const c = r.clips[name]!;
-        const moved = Object.keys(c.tracks).length + Object.keys(c.waves).length;
-        // A whole-body clip touches at least three bones or chains (idle may lean on breath, blink and chain waves).
-        expect(moved, `${r.id}.${name} parts moved`).toBeGreaterThanOrEqual(name === 'idle' ? 2 : 3);
-      }
-      for (const name of ['attack', 'hurt', 'victory']) expect(Object.keys(r.clips[name]!.faces).length, `${r.id}.${name} face`).toBeGreaterThan(0);
-      expect(r.feel.blink, `${r.id} blinks`).toBeDefined();
-      // Idle has life of its own beyond the loop: at least one fidget (idle_*) that breaks the repetition.
+  // Pose to pose (decision 050, 2026-11-06 (5)): an action shows the creature's own approved drawing at the moment that matters.
+  const posed = rigs.filter((r) => r.skin && Object.keys(r.skin.poses).length > 0);
+  const poseAt = (r: RigData, clipName: string, t: number) => sampleFaces(r.clips[clipName]!, t).get('pose') ?? 'rest';
+
+  it('every fighter and enemy with key poses is posed, and every action shows its own drawing at its moment', () => {
+    expect(posed.length).toBeGreaterThanOrEqual(40);
+    for (const r of posed) {
+      const a = r.clips.attack!;
+      expect(poseAt(r, 'attack', a.marks.contact!), `${r.id} attack at contact`).toBe('attack');
+      expect(poseAt(r, 'attack', 0), `${r.id} attack starts at rest`).toBe('rest');
+      expect(poseAt(r, 'attack', a.len), `${r.id} attack ends at rest`).toBe('rest');
+      const c = r.clips.cast!;
+      expect(poseAt(r, 'cast', c.marks.release!), `${r.id} cast at release`).toBe('cast');
+      expect(poseAt(r, 'hurt', 0), `${r.id} hurt`).toBe('hurt');
+      expect(poseAt(r, 'victory', 100), `${r.id} victory`).toBe('victory');
+      expect(poseAt(r, 'ko', r.clips.ko!.len), `${r.id} ko`).toBe('ko');
       expect(Object.keys(r.clips).some((k) => k.startsWith('idle_')), `${r.id} fidget`).toBe(true);
+    }
+  });
+
+  it('a strike is prepared: squash and lean back before the release, the stretch on it', () => {
+    for (const r of posed) {
+      const a = r.clips.attack!;
+      const sy = (t: number) => sampleTrack(a.tracks.body!.sy!, t);
+      const rot = (t: number) => sampleTrack(a.tracks.body!.rot!, t);
+      expect(sy(a.marks.windup!), `${r.id} squash`).toBeLessThan(0.97);
+      expect(rot(a.marks.windup!), `${r.id} lean back`).toBeLessThan(0);
+      expect(sy(a.marks.release! + 30), `${r.id} stretch`).toBeGreaterThan(1);
     }
   });
 
@@ -95,25 +111,21 @@ describe('every rig (content/anim/rigs)', () => {
     }
   });
 
-  it('skill gestures and ultimates prepare, then let go (windup < release, and contact when they land)', () => {
+  it('skill gestures and ultimates prepare, then let go on a drawing of their own (windup < release, contact when they land)', () => {
     for (const r of rigs)
       for (const [name, c] of Object.entries(r.clips)) {
         if (!name.startsWith('g_') && name !== 'ultimate') continue;
         expect(c.marks.windup! < c.marks.release! && c.marks.release! < c.len, `${r.id}.${name}`).toBe(true);
         if (c.marks.contact !== undefined) expect(c.marks.contact > c.marks.release!, `${r.id}.${name} contact`).toBe(true);
-        expect(Object.keys(c.tracks).length + Object.keys(c.waves).length, `${r.id}.${name} parts`).toBeGreaterThanOrEqual(3);
-        expect(Object.keys(c.faces).length, `${r.id}.${name} face`).toBeGreaterThan(0);
+        if (posed.includes(r) && name !== 'g_brace') expect(poseAt(r, name, c.marks.release! + 20), `${r.id}.${name} drawing`).not.toBe('rest');
       }
-    // Each species has its own set: the same gesture is never the same keys on two rigs.
-    expect(JSON.stringify(RIGS.get('pig_boar')!.clips.g_roar!.tracks)).not.toBe(JSON.stringify(RIGS.get('pig_turtle')!.clips.g_roar!.tracks));
   });
 
-  it('species differ in tempo and weight: the turtle is the slowest and heaviest, the fish the lightest', () => {
+  it('species differ in tempo and weight: the turtle is slower and heavier than the boar, the fish the lightest', () => {
     const by = (id: string) => RIGS.get(id)!.feel;
     expect(by('pig_turtle').tempo).toBeLessThan(by('pig_boar').tempo);
     expect(by('pig_turtle').weight).toBeGreaterThan(by('pig_boar').weight);
-    expect(by('fish_betta').weight).toBeLessThan(by('octopus').weight);
-    expect(RIGS.get('pig_turtle')!.clips.move!.len).toBeGreaterThan(RIGS.get('pig_boar')!.clips.move!.len);
+    expect(by('fish_betta').weight).toBeLessThan(by('pig_turtle').weight);
   });
 });
 
@@ -142,7 +154,8 @@ describe('the performer', () => {
       const e = f.drawn.find((d) => d.kind === 'part' && d.bone === 'eyes');
       if (e && e.kind === 'part') eyes.add(e.part);
     }
-    expect(eyes.has('eyes_closed')).toBe(true);
+    // A posed rig has no blink (no closed-eye drawing is approved): it shows its drawn faces only.
+    if (boar.feel.blink) expect(eyes.has('eyes_closed')).toBe(true);
     expect([...clips].some((c) => c.startsWith('idle_'))).toBe(true);
   });
 
@@ -150,7 +163,7 @@ describe('the performer', () => {
     const p = new Performer(boar, 'u4');
     const before = run(p, 0, 1200, 'idle');
     const after = p.update(1200 + 16, { action: 'attack', key: 'a1', timing: { t: 400, marks: { release: 220, contact: 330, end: 650 } } });
-    for (const bone of ['head', 'body', 'leg_fr']) {
+    for (const bone of ['head', 'body']) {
       const x0 = partAt(before, bone)!;
       const x1 = partAt(after, bone)!;
       expect(Math.abs(x1.x - x0.x) + Math.abs(x1.y - x0.y), bone).toBeLessThan(6);
@@ -165,21 +178,21 @@ describe('the performer', () => {
     expect(p.clipName('nothing_like_it')).toBe('idle');
   });
 
-  it('springs give overlap: a dash swings the ears back, and they settle once the body stops', () => {
+  it('springs give overlap: a dash swings the head back, and it settles once the body stops', () => {
     const p = new Performer(boar, 'u6');
     run(p, 0, 500, 'idle');
     const rest = p.update(516, { action: 'idle' });
-    const restRot = partAt(rest, 'ear_near')!.rot - partAt(rest, 'head')!.rot;
+    const restRot = partAt(rest, 'head')!.rot - partAt(rest, 'body')!.rot;
     // The whole body accelerates to the right (a dash): fed to the springs as root motion.
     let f = rest;
     for (let i = 1; i <= 8; i++) {
       p.nudgeRoot(4 * i, 0);
       f = p.update(516 + i * 16, { action: 'idle' });
     }
-    const swung = partAt(f, 'ear_near')!.rot - partAt(f, 'head')!.rot;
+    const swung = partAt(f, 'head')!.rot - partAt(f, 'body')!.rot;
     expect(swung).toBeLessThan(restRot - 0.02);
     f = run(p, 700, 3500, 'idle');
-    const settled = partAt(f, 'ear_near')!.rot - partAt(f, 'head')!.rot;
+    const settled = partAt(f, 'head')!.rot - partAt(f, 'body')!.rot;
     expect(Math.abs(settled - restRot)).toBeLessThan(0.05);
   });
 

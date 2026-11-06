@@ -40,6 +40,8 @@ export interface Frame {
   worlds: ReadonlyMap<string, World>;
   /** The points of every chain (root first). */
   chains: ReadonlyMap<string, readonly { x: number; y: number }[]>;
+  /** The key pose a pose-to-pose skin shows (`faces.pose` of the clip; `rest` = the skin's own picture). */
+  pose: string;
   /** The clip playing and its time (ms) — for the lab and the tests. */
   clip: string;
   t: number;
@@ -153,7 +155,7 @@ export class Performer {
       return waveBend(c, i, timeS, { amp: wave.amp * k, speed: wave.speed, phase: wave.phase, curl: (own?.curl ?? c.curl) * coil });
     };
     const drawn = solve(this.rig, this.pose, faces, bend, this.worlds, this.chains);
-    return { drawn, worlds: this.worlds, chains: this.chains, clip: cur.name, t };
+    return { drawn, worlds: this.worlds, chains: this.chains, pose: faces.get('pose') ?? 'rest', clip: cur.name, t };
   }
 
   /** Feeds the root's motion (canvas px) to the springs: a dash or a knock-back of the whole body swings the ears too. */

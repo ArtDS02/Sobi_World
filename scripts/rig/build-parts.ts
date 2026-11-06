@@ -112,8 +112,11 @@ function referenced(data: Record<string, unknown>): Set<string> | null {
     for (const p of Object.values(b.slot?.pictures ?? {})) out.add(p);
   }
   for (const c of (data.chains as { part?: string }[] | undefined) ?? []) if (c.part) out.add(c.part);
-  const skin = data.skin as { part: string } | undefined;
-  if (skin) out.add(skin.part);
+  const skin = data.skin as { part: string; poses?: Record<string, string> } | undefined;
+  if (skin) {
+    out.add(skin.part);
+    for (const p of Object.values(skin.poses ?? {})) out.add(p);
+  }
   return out;
 }
 

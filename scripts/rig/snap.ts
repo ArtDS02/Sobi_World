@@ -14,7 +14,12 @@ if (!rig || !rig.clips[clipName]) {
 const frames = Number(framesArg);
 const clip = rig.clips[clipName]!;
 const len = clip.len / rig.feel.tempo;
-const mesh = buildSkin(rig);
+const meshes = new Map<string, ReturnType<typeof buildSkin>>();
+const meshOf = (pose: string) => {
+  if (!meshes.has(pose)) meshes.set(pose, buildSkin(rig, 1400, pose));
+  return meshes.get(pose)!;
+};
+const mesh = meshOf('rest');
 const out: unknown[] = [];
 for (let k = 0; k < frames; k++) {
   // A fresh performer per frame, played from its start: idle first (so the crossfade starts from rest), then the clip.
@@ -23,8 +28,10 @@ for (let k = 0; k < frames; k++) {
   for (let t = 0; t <= 600; t += 1000 / 60) p.update(t, { action: 'idle' });
   let f = p.update(600, { action: clipName, key: 'snap' });
   for (let t = 600; t <= 600 + at; t += 1000 / 60) f = p.update(t, { action: clipName, key: 'snap' });
-  const skin = mesh ? Array.from(deformSkin(mesh, f.worlds, f.chains, new Float32Array(mesh.rest.length)), (v) => Math.round(v * 100) / 100) : null;
-  out.push({ t: Math.round(at), clip: f.clip, skin, drawn: f.drawn });
+  const m = mesh ? meshOf(rig.skin!.poses[f.pose] ? f.pose : 'rest')! : null;
+  const skin = m ? Array.from(deformSkin(m, f.worlds, f.chains, new Float32Array(m.rest.length)), (v) => Math.round(v * 100) / 100) : null;
+  const part = rig.skin ? (rig.skin.poses[f.pose] ?? rig.skin.part) : null;
+  out.push({ t: Math.round(at), clip: f.clip, pose: f.pose, part, skin, drawn: f.drawn });
 }
 const dir = join(process.cwd(), 'art_inbox/.qa');
 mkdirSync(dir, { recursive: true });
