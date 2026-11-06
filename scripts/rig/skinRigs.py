@@ -137,8 +137,22 @@ RIGS: dict[str, dict] = {
 }
 
 
+def spec_of(rig: str) -> dict | None:
+    """A hand-measured rig above, or the draft autoskin.py wrote for it (asset/rigs/<rig>/skin_spec.json)."""
+    if rig in RIGS:
+        return RIGS[rig]
+    f = ROOT / "asset/rigs" / rig / "skin_spec.json"
+    if not f.exists():
+        return None
+    s = json.loads(f.read_text(encoding="utf-8"))["rig"]
+    s.setdefault("damp", {})
+    s.setdefault("springs", {})
+    s["regions"] = [tuple(g) for g in s["regions"]]
+    return s
+
+
 def apply(rig: str) -> None:
-    spec = RIGS[rig]
+    spec = spec_of(rig)
     feet = spec["feet"]
     c = lambda p: [round(p[0] - 256, 1), round(p[1] - feet, 1)]  # noqa: E731
     path = ROOT / "content/anim/rigs" / f"{rig}.json"
@@ -184,7 +198,7 @@ def apply(rig: str) -> None:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2 or sys.argv[1] not in RIGS:
+    if len(sys.argv) < 2 or spec_of(sys.argv[1]) is None:
         print(__doc__)
         sys.exit(1)
     apply(sys.argv[1])

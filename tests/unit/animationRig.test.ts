@@ -52,7 +52,9 @@ describe('clips and warping', () => {
 
 describe('every rig (content/anim/rigs)', () => {
   it('loads, passes its own checks and has every clip of the prototype bar', () => {
-    expect(rigs.map((r) => r.id).sort()).toEqual(['fish_betta', 'octopus', 'pig_boar', 'pig_turtle']);
+    // The four body-plan prototypes, plus every fighter skinned from them (R2b).
+    expect(rigs.map((r) => r.id)).toEqual(expect.arrayContaining(['fish_betta', 'octopus', 'pig_boar', 'pig_turtle']));
+    expect(rigs.length).toBeGreaterThanOrEqual(22);
     for (const r of rigs) {
       expect(rigProblems(r)).toEqual([]);
       for (const c of REQUIRED_CLIPS) expect(r.clips[c], `${r.id}.${c}`).toBeDefined();
@@ -193,8 +195,8 @@ describe('the performer', () => {
 describe('skins (the accepted picture bent by the rig)', () => {
   const skinned = rigs.filter((r) => r.skin);
 
-  it('every prototype is skinned, and each band of the grid fits one draw call', () => {
-    expect(skinned.map((r) => r.id).sort()).toEqual(['fish_betta', 'octopus', 'pig_boar', 'pig_turtle']);
+  it('every rig is skinned, and each band of the grid fits one draw call', () => {
+    expect(skinned.length).toBe(rigs.length);
     for (const r of skinned) for (const s of buildSkin(r)!.strips) expect(s.length, r.id).toBeLessThanOrEqual(1536);
   });
 

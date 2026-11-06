@@ -22,6 +22,9 @@
 3. `npm run rig:skin <rig>` → `npm run rig:skin-rig <rig>` → `npm run rig:parts <rig>` → `npm run rig:snap <rig> <clip>` + `python scripts/rig/snap.py <rig> <clip> 0.7` (xem `art_inbox/.qa/rig_<rig>_<clip>.png`).
 4. Đọc dải khung: vết **xén thẳng** = vùng hẹp hơn phần chuyển động (mở rộng vùng / tăng `soft`); **gập lưới** = biên độ quá lớn (giảm `damp`).
 
+## 2c. Heo mới (template tự dò)
+`npm run rig:auto <art>` → mở `art_inbox/.qa/autoskin_<art>.png` (vùng, khớp, mắt, hộp miệng) → sai chỗ nào ghi vào `fix` của `asset/rigs/<art>/skin_spec.json` (`face.eyes`, `face.mouth`, `face.overlays`, `face.nomouth`, `legs` [[x0, x1] theo thứ tự chân sau gần, sau xa, trước gần, trước xa]) và chạy lại → `npm run rig:skin <art>` → `npm run rig:skin-rig <art>` → `npm run rig:parts <art>` → thêm import vào `src/systems/animation/rigs.ts` → `npm run rig:snap <art> attack` + `snap.py`.
+
 ## 3. Quy chuẩn asset (tóm tắt — đầy đủ ở `art_inbox/rig_README.md`)
 - Canvas 512 (layer PNG 1024 = ×2), quay phải, ba phần tư, đất y = 470 (940 ở 1024), tư thế nghỉ.
 - Vẽ đủ phần bị che; mép khớp kéo vào 15–20 px.

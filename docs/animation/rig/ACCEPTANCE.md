@@ -2,7 +2,7 @@
 
 Mỗi mục kiểm được: **[T]** = test tự động (`tests/unit/animationRig.test.ts`, `battlePerf.test.ts`), **[L]** = xem ở Admin "Xưởng rig sinh vật" (`#/rig-lab`, ×0,25, Hiện xương, Dải 8 khung), **[B]** = xem ở "Xưởng animation trận" / trận thật, **[O]** = chủ dự án chấm.
 
-Trạng thái 2026-11-05 cho 4 prototype (`pig_boar`, `pig_turtle`, `fish_betta`, `octopus`): ✅ đạt · 🟡 đạt trên bản rig-proof, chờ art · ⬜ chưa kiểm.
+Trạng thái 2026-11-06: 4 prototype + 18 chiến binh skin (R2b); ban đầu 2026-11-05 cho 4 prototype (`pig_boar`, `pig_turtle`, `fish_betta`, `octopus`): ✅ đạt · 🟡 đạt trên bản rig-proof, chờ art · ⬜ chưa kiểm.
 
 ## A. Character animation
 | # | Tiêu chí | Cách kiểm | Trạng thái |

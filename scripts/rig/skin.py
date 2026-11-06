@@ -22,6 +22,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
 sys.path.insert(0, str(Path(__file__).parent))
+import faces as faces_mod  # noqa: E402
 from sheetcut import MANUAL, keyed, label  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -180,12 +181,55 @@ def place_mouths(spec: dict, can_size: tuple[int, int]) -> dict[str, Image.Image
     return out
 
 
+def tight_eyes(can: Image.Image, area: Image.Image) -> Image.Image:
+    """The rough eye / brow areas, minus the ink that only passes through them: an outline or a helmet rim that runs on outside the
+    area is not the eye, so it is kept (painting it over would smear it)."""
+    a = np.array(can).astype(np.int16)
+    lum = a[..., :3].mean(axis=2)
+    inside = np.array(area) > 0
+    ink = ((a[..., 3] > 150) & (lum < 120)).astype(np.uint8)
+    n, lab, stats, _ = cv2.connectedComponentsWithStats(ink)
+    inn = np.bincount(lab[inside], minlength=n)
+    foreign = np.zeros_like(inside)
+    for i in range(1, n):
+        if inn[i] > 0 and stats[i, cv2.CC_STAT_AREA] > 1.5 * inn[i]:
+            foreign |= lab == i
+    foreign = cv2.dilate(foreign.astype(np.uint8), np.ones((3, 3), np.uint8)) > 0
+    return Image.fromarray(((inside & ~foreign) * 255).astype(np.uint8))
+
+
+def drawn_faces(can: Image.Image, open_layer: Image.Image, spec: dict, k: int, dy: int) -> dict[str, Image.Image]:
+    """No face sheet: faces drawn from the picture's own eyes and ink (faces.py)."""
+    sides = []
+    snout_x = np.mean([p[0] for p in next(iter(spec["overlays"].values()))]) if spec["overlays"] else spec["eyes"][-1]["c"][0] + 40
+    for e in spec["eyes"]:
+        cx, cy = e["c"][0] * k, e["c"][1] * k + dy
+        sides.append((cx, cy, e["r"][0] * k * 0.8, e["r"][1] * k * 0.8, 1 if e["c"][0] < snout_x else -1))
+    ink = faces_mod.ink_of(can, *sides[0][:4])
+    x0, y0, x1, y1 = spec["mouth"]["box"]
+    box = (x0 * k, y0 * k + dy, x1 * k, y1 * k + dy)
+    room = (spec["mouth"]["max"][0] * k / 2, spec["mouth"]["max"][1] * k)
+    return {**faces_mod.eyes(can.size, sides, open_layer, ink), **faces_mod.mouths(can.size, box, room, ink)}
+
+
 def fill(arr: np.ndarray, hole: np.ndarray) -> np.ndarray:
     """Paints a hole with the skin around it: a normalised blur of the neighbours that are skin (not outline ink, not outside),
     the finest scale that reaches each pixel. Smooth, and no dark smear from a tusk or an outline next to the hole."""
     rgb = arr[..., :3].astype(np.float32)
     lum = rgb.mean(axis=2)
-    valid = (~hole & (arr[..., 3] > 200) & (lum > 120)).astype(np.float32)
+    valid = ~hole & (arr[..., 3] > 200) & (lum > 120)
+    # Per hole, only neighbours close to the skin right around it: a helmet rim or a hat next to an eye is not skin.
+    n, lab = cv2.connectedComponents(hole.astype(np.uint8))
+    near = np.zeros_like(valid)
+    for i in range(1, n):
+        h = lab == i
+        ring = (cv2.dilate(h.astype(np.uint8), np.ones((17, 17), np.uint8)) > 0) & valid
+        if not ring.any():
+            continue
+        skin = np.median(rgb[ring], axis=0)
+        zone = cv2.dilate(h.astype(np.uint8), np.ones((161, 161), np.uint8)) > 0
+        near |= zone & valid & (np.abs(rgb - skin).max(axis=2) < 60)
+    valid = (near if near.any() else valid).astype(np.float32)
     out = rgb.copy()
     todo = hole.copy()
     for sigma in (4, 8, 16, 32, 64):
@@ -197,8 +241,25 @@ def fill(arr: np.ndarray, hole: np.ndarray) -> np.ndarray:
     return np.clip(out, 0, 255).astype(np.uint8)
 
 
+def spec_of(rig: str) -> dict | None:
+    """A hand-measured face above, or the draft autoskin.py wrote (asset/rigs/<rig>/skin_spec.json; no face sheet: drawn faces)."""
+    if rig in SPEC:
+        return SPEC[rig]
+    f = ROOT / "asset/rigs" / rig / "skin_spec.json"
+    if not f.exists():
+        return None
+    s = json.loads(f.read_text(encoding="utf-8"))["face"]
+    for e in s["eyes"]:
+        e["c"], e["r"] = tuple(e["c"]), tuple(e["r"])
+        if "brow" in e:
+            e["brow"] = tuple(e["brow"])
+    s["mouth"]["box"] = tuple(s["mouth"]["box"])
+    s["overlays"] = {k: [tuple(p) for p in v] for k, v in s["overlays"].items()}
+    return s
+
+
 def build(rig: str) -> None:
-    spec = SPEC[rig]
+    spec = spec_of(rig)
     look = Image.open(ROOT / spec["look"]).convert("RGBA")
     can = to_canvas(look, spec["feet"])
     size = can.size
@@ -206,11 +267,15 @@ def build(rig: str) -> None:
     k, dy = RES, spec["dy"]
     snout = [p for p in spec["overlays"].values()]
     eye_mask = poly_mask(size, [], [(e["c"], e["r"]) for e in spec["eyes"]], [e["brow"] for e in spec["eyes"] if "brow" in e], k, dy)
+    if spec.get("tight"):
+        eye_mask = tight_eyes(can, eye_mask)
     # An eye the snout covers in part: the snout stays the snout.
     if snout:
         eye_mask = Image.fromarray(np.where(np.array(poly_mask(size, snout, k=k, dy=dy)) > 0, 0, np.array(eye_mask)).astype(np.uint8))
     mouth_mask = poly_mask(size, [], [], [spec["mouth"]["box"]], k, dy)
-    face = Image.fromarray(np.maximum(np.array(eye_mask), np.array(mouth_mask)))
+    # A mouth under a mask or a beard stays painted: its faces are the picture itself (nothing to open).
+    nomouth = spec.get("nomouth", False)
+    face = eye_mask if nomouth else Image.fromarray(np.maximum(np.array(eye_mask), np.array(mouth_mask)))
     out_dir = ROOT / "asset/rigs" / rig / "layers"
     keep = ROOT / "asset/rigs" / rig / "layers_cutout"
     if out_dir.exists() and not keep.exists():
@@ -228,13 +293,19 @@ def build(rig: str) -> None:
     cut(can, mouth_mask).save(out_dir / "mouth_neutral.png")
     for name, poly in spec["overlays"].items():
         cut(can, poly_mask(size, [poly], k=k, dy=dy), 1.0).save(out_dir / f"{name}.png")
-    for name, img in {**place_eyes(rig, spec, size), **place_mouths(spec, size)}.items():
+    if spec.get("sheet"):
+        faces = {**place_eyes(rig, spec, size), **place_mouths(spec, size)}
+    else:
+        faces = drawn_faces(can, Image.open(out_dir / "eyes_open.png"), spec, k, dy)
+    if nomouth:
+        faces.update({m: Image.open(out_dir / "mouth_neutral.png") for m in MOUTHS})
+    for name, img in faces.items():
         img.save(out_dir / f"{name}.png")
     print(f"{rig}: skin + {len(list(out_dir.glob('*.png'))) - 1} overlays -> {out_dir.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2 or sys.argv[1] not in SPEC:
+    if len(sys.argv) < 2 or spec_of(sys.argv[1]) is None:
         print(__doc__)
         sys.exit(1)
     build(sys.argv[1])

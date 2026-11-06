@@ -11,6 +11,12 @@
 
 ## Nhật ký
 
+### 2026-11-06 — Animation: 18 chiến binh dùng skin (decision 050 bổ sung (3), R2b)
+✅ Đã làm: chủ dự án duyệt skin và giao tự quyết. `scripts/rig/autoskin.py` (`npm run rig:auto`) dò mắt, mõm, nụ cười, chân, đuôi trên ảnh duyệt và dời vùng đầu / tai của heo mẫu theo cặp mắt; `scripts/rig/faces.py` vẽ biểu cảm từ chính mắt / mực của con đó (không cần sheet Gemini); xoá mắt cũ chỉ trong vùng mắt, giữ vành mũ / mép đầu, lấp bằng màu da gần. 17 heo + cá nóc có rig (22 rig tất cả), clip chép từ `pig_boar` / `fish_betta`, nhịp riêng cho nhóm nặng / nhẹ. Commit trước đó: `d3413da` (skin 4 prototype).
+🧪 Test: mọi rig là skin, nghỉ = ảnh duyệt, mỗi dải ≤ 1536 đỉnh; dải khung attack cả 18 con (`art_inbox/.qa/rig_<art>_attack.png`); Xưởng trận: Heo Rừng, Heo Samurai.
+⚠️ Tự quyết: sửa tay mắt hổ, chân hiệp sĩ / ma cà rồng; ninja / Poseidon không đổi miệng (mặt nạ / râu). Chưa làm: 22 quái (R3).
+👉 Chủ dự án: Xưởng rig sinh vật / Xưởng trận với các heo mới; nếu biểu cảm vẽ nét chưa đạt, có thể làm sheet mặt Gemini cho từng con (quy trình B2/B3).
+
 ### 2026-11-06 — Animation: skin — rig bẻ chính ảnh đã duyệt (decision 050 bổ sung (2))
 ✅ Đã làm: chủ dự án chấm hình ghép từ bộ phận vẽ rời xấu hơn ảnh tĩnh. So tư thế nghỉ: bản ghép nhỏ hơn ~30 %, đầu tách thân, tai dựng, chân mảnh, mắt nhỏ — ảnh duyệt là một khối liền, bộ phận rời không cộng lại được. Chuyển sang **skin** (linear blend skinning như Live2D / Spine): ảnh đã duyệt trên lưới 32 × 28, vùng gắn điểm lưới vào xương / dải, biên hoà mềm. Runtime thuần `src/systems/animation/skin.ts` (`buildSkin`, `deformSkin`; solve xuất điểm dải; dải có thể không có ảnh), vẽ `src/ui/puppet/skinView.ts` (Rope theo dải hàng — lô rope Phaser giữ 1536 đỉnh), schema `skin` trong rig. Mặt: mắt mở + miệng nghỉ cắt từ ảnh, chỗ cũ lấp bằng da xung quanh; biểu cảm khác từ sheet mặt Gemini, mỗi mắt khớp riêng vào mắt của ảnh. Script `rig:skin`, `rig:skin-rig`, `rig:snap` (+ `snap.py` dựng dải khung độ phân giải đầy đủ); `rig:parts` chỉ dựng ảnh rig dùng (manifest `rig_*`: 80 → 54 dòng). Bộ phận cắt giữ ở `asset/rigs/<rig>/layers_cutout/`.
 🧪 Test mới: skin ở tư thế nghỉ trùng ảnh duyệt (sai < 0,01 px), đầu xoay bẻ mặt không bẻ chân, mỗi dải ≤ 1536 đỉnh. Dải khung: attack / g_roar / move / ko Heo Rừng, attack / g_slam / ultimate Heo Rùa, attack / ko / ultimate Cá Betta, idle / ultimate Bạch Tuộc. Xưởng rig "Cả đội": cả 4 con đúng nét ảnh cũ.

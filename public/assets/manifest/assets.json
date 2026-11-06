@@ -5605,6 +5605,1261 @@
       "id": "rig_octopus_skin",
       "status": "production",
       "asset": "props/rig/octopus/rig_octopus_skin.png"
+    },
+    {
+      "id": "rig_pig_crystal_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_crystal_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_crystal_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_crystal_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_crystal_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_crystal_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_crystal_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_crystal_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_crystal_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_crystal_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_crystal_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_crystal_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_crystal_skin",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_skin.png"
+    },
+    {
+      "id": "rig_pig_crystal_snout",
+      "status": "production",
+      "asset": "props/rig/pig_crystal/rig_pig_crystal_snout.png"
+    },
+    {
+      "id": "rig_pig_dragon_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_dragon_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_dragon_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_dragon_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_dragon_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_dragon_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_dragon_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_dragon_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_dragon_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_dragon_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_dragon_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_dragon_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_dragon_skin",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_skin.png"
+    },
+    {
+      "id": "rig_pig_dragon_snout",
+      "status": "production",
+      "asset": "props/rig/pig_dragon/rig_pig_dragon_snout.png"
+    },
+    {
+      "id": "rig_pig_galaxy_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_galaxy_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_galaxy_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_galaxy_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_galaxy_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_galaxy_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_galaxy_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_galaxy_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_galaxy_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_galaxy_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_galaxy_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_galaxy_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_galaxy_skin",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_skin.png"
+    },
+    {
+      "id": "rig_pig_galaxy_snout",
+      "status": "production",
+      "asset": "props/rig/pig_galaxy/rig_pig_galaxy_snout.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_skin",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_skin.png"
+    },
+    {
+      "id": "rig_pig_hedgehog_snout",
+      "status": "production",
+      "asset": "props/rig/pig_hedgehog/rig_pig_hedgehog_snout.png"
+    },
+    {
+      "id": "rig_pig_knight_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_knight_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_knight_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_knight_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_knight_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_knight_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_knight_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_knight_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_knight_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_knight_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_knight_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_knight_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_knight_skin",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_skin.png"
+    },
+    {
+      "id": "rig_pig_knight_snout",
+      "status": "production",
+      "asset": "props/rig/pig_knight/rig_pig_knight_snout.png"
+    },
+    {
+      "id": "rig_pig_ninja_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_ninja_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_ninja_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_ninja_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_ninja_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_ninja_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_ninja_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_ninja_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_ninja_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_ninja_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_ninja_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_ninja_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_ninja_skin",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_skin.png"
+    },
+    {
+      "id": "rig_pig_ninja_snout",
+      "status": "production",
+      "asset": "props/rig/pig_ninja/rig_pig_ninja_snout.png"
+    },
+    {
+      "id": "rig_pig_phoenix_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_phoenix_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_phoenix_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_phoenix_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_phoenix_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_phoenix_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_phoenix_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_phoenix_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_phoenix_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_phoenix_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_phoenix_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_phoenix_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_phoenix_skin",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_skin.png"
+    },
+    {
+      "id": "rig_pig_phoenix_snout",
+      "status": "production",
+      "asset": "props/rig/pig_phoenix/rig_pig_phoenix_snout.png"
+    },
+    {
+      "id": "rig_pig_pirate_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_pirate_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_pirate_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_pirate_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_pirate_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_pirate_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_pirate_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_pirate_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_pirate_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_pirate_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_pirate_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_pirate_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_pirate_skin",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_skin.png"
+    },
+    {
+      "id": "rig_pig_pirate_snout",
+      "status": "production",
+      "asset": "props/rig/pig_pirate/rig_pig_pirate_snout.png"
+    },
+    {
+      "id": "rig_pig_poseidon_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_poseidon_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_poseidon_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_poseidon_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_poseidon_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_poseidon_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_poseidon_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_poseidon_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_poseidon_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_poseidon_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_poseidon_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_poseidon_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_poseidon_skin",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_skin.png"
+    },
+    {
+      "id": "rig_pig_poseidon_snout",
+      "status": "production",
+      "asset": "props/rig/pig_poseidon/rig_pig_poseidon_snout.png"
+    },
+    {
+      "id": "rig_pig_robot_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_robot_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_robot_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_robot_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_robot_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_robot_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_robot_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_robot_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_robot_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_robot_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_robot_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_robot_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_robot_skin",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_skin.png"
+    },
+    {
+      "id": "rig_pig_robot_snout",
+      "status": "production",
+      "asset": "props/rig/pig_robot/rig_pig_robot_snout.png"
+    },
+    {
+      "id": "rig_pig_samurai_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_samurai_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_samurai_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_samurai_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_samurai_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_samurai_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_samurai_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_samurai_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_samurai_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_samurai_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_samurai_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_samurai_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_samurai_skin",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_skin.png"
+    },
+    {
+      "id": "rig_pig_samurai_snout",
+      "status": "production",
+      "asset": "props/rig/pig_samurai/rig_pig_samurai_snout.png"
+    },
+    {
+      "id": "rig_pig_sunflower_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_sunflower_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_sunflower_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_sunflower_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_sunflower_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_sunflower_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_sunflower_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_sunflower_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_sunflower_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_sunflower_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_sunflower_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_sunflower_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_sunflower_skin",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_skin.png"
+    },
+    {
+      "id": "rig_pig_sunflower_snout",
+      "status": "production",
+      "asset": "props/rig/pig_sunflower/rig_pig_sunflower_snout.png"
+    },
+    {
+      "id": "rig_pig_thienlong_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_thienlong_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_thienlong_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_thienlong_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_thienlong_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_thienlong_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_thienlong_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_thienlong_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_thienlong_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_thienlong_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_thienlong_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_thienlong_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_thienlong_skin",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_skin.png"
+    },
+    {
+      "id": "rig_pig_thienlong_snout",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_snout.png"
+    },
+    {
+      "id": "rig_pig_tiger_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_tiger_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_tiger_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_tiger_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_tiger_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_tiger_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_tiger_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_tiger_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_tiger_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_tiger_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_tiger_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_tiger_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_tiger_skin",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_skin.png"
+    },
+    {
+      "id": "rig_pig_tiger_snout",
+      "status": "production",
+      "asset": "props/rig/pig_tiger/rig_pig_tiger_snout.png"
+    },
+    {
+      "id": "rig_pig_unicorn_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_unicorn_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_unicorn_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_unicorn_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_unicorn_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_unicorn_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_unicorn_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_unicorn_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_unicorn_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_unicorn_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_unicorn_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_unicorn_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_unicorn_skin",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_skin.png"
+    },
+    {
+      "id": "rig_pig_unicorn_snout",
+      "status": "production",
+      "asset": "props/rig/pig_unicorn/rig_pig_unicorn_snout.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_skin",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_skin.png"
+    },
+    {
+      "id": "rig_pig_valkyrie_snout",
+      "status": "production",
+      "asset": "props/rig/pig_valkyrie/rig_pig_valkyrie_snout.png"
+    },
+    {
+      "id": "rig_pig_vampire_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_eyes_angry.png"
+    },
+    {
+      "id": "rig_pig_vampire_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_eyes_closed.png"
+    },
+    {
+      "id": "rig_pig_vampire_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_pig_vampire_eyes_half",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_eyes_half.png"
+    },
+    {
+      "id": "rig_pig_vampire_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_eyes_happy.png"
+    },
+    {
+      "id": "rig_pig_vampire_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_eyes_hurt.png"
+    },
+    {
+      "id": "rig_pig_vampire_eyes_open",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_eyes_open.png"
+    },
+    {
+      "id": "rig_pig_vampire_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_vampire_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_mouth_grit.png"
+    },
+    {
+      "id": "rig_pig_vampire_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_mouth_neutral.png"
+    },
+    {
+      "id": "rig_pig_vampire_mouth_open",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_mouth_open.png"
+    },
+    {
+      "id": "rig_pig_vampire_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_mouth_smile.png"
+    },
+    {
+      "id": "rig_pig_vampire_skin",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_skin.png"
+    },
+    {
+      "id": "rig_pig_vampire_snout",
+      "status": "production",
+      "asset": "props/rig/pig_vampire/rig_pig_vampire_snout.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_eyes_angry.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_eyes_closed.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_eyes_half",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_eyes_half.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_eyes_happy.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_eyes_hurt.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_eyes_open",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_eyes_open.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_mouth_cry.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_mouth_grit.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_mouth_neutral.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_mouth_open",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_mouth_open.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_mouth_smile.png"
+    },
+    {
+      "id": "rig_fish_pufferfish_skin",
+      "status": "production",
+      "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_skin.png"
     }
   ],
   "buildings": [
