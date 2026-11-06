@@ -80,13 +80,13 @@ export class Puppet {
         this.origin.set(`${b.id}/${n}`, { ox: (b.at[0] - box[0]) / box[2], oy: (b.at[1] - box[1]) / box[3] });
       }
     }
-    const fx = (this.container as unknown as { postFX?: Phaser.GameObjects.Components.FX }).postFX;
-    if (scene.game.renderer.type === Phaser.WEBGL && fx) {
-      this.matrix = fx.addColorMatrix();
-      this.glowFx = fx.addGlow(0xffffff, 0, 0, false, 0.1, 10);
-      this.matrix.active = false;
-      this.glowFx.active = false;
-    }
+  }
+
+  /** The Container's post-FX, on WebGL. They are added only while a look needs them: a Container drawn through post-FX (even
+   *  inactive ones) washes out when it is mirrored, which every enemy is. */
+  private get fx(): Phaser.GameObjects.Components.FX | null {
+    if (this.scene.game.renderer.type !== Phaser.WEBGL) return null;
+    return (this.container as unknown as { postFX?: Phaser.GameObjects.Components.FX }).postFX ?? null;
   }
 
   /** All its pictures are loaded (until then the caller draws something else). */
@@ -204,24 +204,30 @@ export class Puppet {
   }
 
   private applyLook(look: PuppetLook) {
+    const fx = this.fx;
+    if (!fx) return;
     const bright = look.bright ?? 1;
     const gray = look.gray ?? 0;
+    const wantMatrix = bright > 1.01 || gray > 0.01;
+    if (wantMatrix && !this.matrix) this.matrix = fx.addColorMatrix();
+    if (!wantMatrix && this.matrix) {
+      fx.remove(this.matrix as unknown as Phaser.FX.Controller);
+      this.matrix = null;
+    }
     if (this.matrix) {
-      const on = bright > 1.01 || gray > 0.01;
-      this.matrix.active = on;
-      if (on) {
-        this.matrix.reset();
-        if (gray > 0.01) this.matrix.grayscale(gray, true);
-        if (bright > 1.01) this.matrix.brightness(bright, true);
-      }
+      this.matrix.reset();
+      if (gray > 0.01) this.matrix.grayscale(gray, true);
+      if (bright > 1.01) this.matrix.brightness(bright, true);
+    }
+    const wantGlow = look.glow !== null && look.glow !== undefined && (look.glowAlpha ?? 0.6) > 0.01;
+    if (wantGlow && !this.glowFx) this.glowFx = fx.addGlow(0xffffff, 0, 0, false, 0.1, 10);
+    if (!wantGlow && this.glowFx) {
+      fx.remove(this.glowFx as unknown as Phaser.FX.Controller);
+      this.glowFx = null;
     }
     if (this.glowFx) {
-      const on = look.glow !== null && look.glow !== undefined && (look.glowAlpha ?? 0.6) > 0.01;
-      this.glowFx.active = on;
-      if (on) {
-        this.glowFx.color = look.glow!;
-        this.glowFx.outerStrength = 4 * (look.glowAlpha ?? 0.6);
-      }
+      this.glowFx.color = look.glow!;
+      this.glowFx.outerStrength = 4 * (look.glowAlpha ?? 0.6);
     }
   }
 

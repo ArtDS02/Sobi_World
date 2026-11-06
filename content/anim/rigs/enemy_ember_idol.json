@@ -1,0 +1,421 @@
+{
+  "id": "enemy_ember_idol",
+  "plan": "heavy",
+  "height": 300,
+  "res": 2,
+  "feel": {
+    "tempo": 0.85,
+    "weight": 0.9,
+    "breath": { "ms": 3200, "bone": "body", "sy": 0.022, "y": -1 },
+    "blink": { "slot": "eyes", "closed": "closed", "half": "half", "every": [3200, 6800] },
+    "root": { "rot": 0.2, "squash": 0.35 }
+  },
+  "parts": {
+    "eyes_angry": { "img": "rig_enemy_ember_idol_eyes_angry", "box": [-33.5, -166.5, 127.5, 55.5] },
+    "eyes_closed": { "img": "rig_enemy_ember_idol_eyes_closed", "box": [-28, -144.5, 117, 19] },
+    "eyes_dizzy": { "img": "rig_enemy_ember_idol_eyes_dizzy", "box": [-24, -155, 111.5, 35.5] },
+    "eyes_half": { "img": "rig_enemy_ember_idol_eyes_half", "box": [-33.5, -146.5, 127.5, 35.5] },
+    "eyes_happy": { "img": "rig_enemy_ember_idol_eyes_happy", "box": [-27.5, -150.5, 116, 23.5] },
+    "eyes_hurt": { "img": "rig_enemy_ember_idol_eyes_hurt", "box": [-24, -154, 109.5, 32.5] },
+    "eyes_open": { "img": "rig_enemy_ember_idol_eyes_open", "box": [-33.5, -165.5, 127.5, 54.5] },
+    "mouth_cry": { "img": "rig_enemy_ember_idol_mouth_cry", "box": [24, -123.5, 24, 9] },
+    "mouth_grit": { "img": "rig_enemy_ember_idol_mouth_grit", "box": [23, -123.5, 26, 14] },
+    "mouth_neutral": { "img": "rig_enemy_ember_idol_mouth_neutral", "box": [13.5, -131.5, 45.5, 25.5] },
+    "mouth_open": { "img": "rig_enemy_ember_idol_mouth_open", "box": [24, -122.5, 24, 18.5] },
+    "mouth_smile": { "img": "rig_enemy_ember_idol_mouth_smile", "box": [22.5, -123.5, 27, 17] },
+    "skin": { "img": "rig_enemy_ember_idol_skin", "box": [-120, -377, 240, 380] }
+  },
+  "bones": [
+    { "id": "root", "parent": null, "at": [0, 0] },
+    { "id": "hips", "parent": "root", "at": [-12.2, -82.5] },
+    { "id": "leg_bl", "parent": "hips", "at": [-16, -60], "z": 1 },
+    { "id": "leg_fl", "parent": "hips", "at": [60, -60], "z": 2 },
+    { "id": "body", "parent": "hips", "at": [-12.2, -82.5], "z": 5 },
+    { "id": "leg_br", "parent": "hips", "at": [-56.5, -60], "z": 6 },
+    { "id": "leg_fr", "parent": "hips", "at": [19, -60], "z": 7 },
+    { "id": "shell", "parent": "body", "at": [-96, -192], "z": 8 },
+    { "id": "leaf", "parent": "shell", "at": [-46, -327], "z": 9 },
+    { "id": "head", "parent": "body", "at": [31.5, -21.2], "z": 10 },
+    { "id": "ear_far", "parent": "head", "at": [129, -327], "z": 9.6 },
+    { "id": "ear_near", "parent": "head", "at": [32, -300], "z": 12 },
+    {
+      "id": "mouth",
+      "parent": "head",
+      "at": [36, -119],
+      "z": 12.5,
+      "slot": {
+        "name": "mouth",
+        "rest": "neutral",
+        "pictures": { "neutral": "mouth_neutral", "open": "mouth_open", "grit": "mouth_grit", "smile": "mouth_smile", "cry": "mouth_cry" }
+      }
+    },
+    { "id": "snout", "parent": "head", "at": [158, -200], "z": 13 },
+    {
+      "id": "eyes",
+      "parent": "head",
+      "at": [31.5, -138.5],
+      "z": 14,
+      "slot": {
+        "name": "eyes",
+        "rest": "open",
+        "pictures": { "open": "eyes_open", "half": "eyes_half", "closed": "eyes_closed", "angry": "eyes_angry", "hurt": "eyes_hurt", "dizzy": "eyes_dizzy", "happy": "eyes_happy" }
+      }
+    }
+  ],
+  "chains": [
+    {
+      "id": "tail",
+      "parent": "body",
+      "at": [-190, -200],
+      "dir": 248,
+      "len": 52,
+      "segments": 6,
+      "wave": { "amp": 10, "speed": 0.9, "phase": 0.5 },
+      "taper": 1.6,
+      "z": 4
+    }
+  ],
+  "skin": {
+    "part": "skin",
+    "grid": [32, 28],
+    "soft": 12,
+    "z": 0,
+    "regions": [
+      { "bind": "body", "poly": [[-256, -491], [256, -491], [256, 21], [-256, 21]] },
+      { "bind": "leg_br", "poly": [[-78, -60], [-35, -60], [-35, 21], [-78, 21]] },
+      { "bind": "leg_bl", "poly": [[-38, -60], [6, -60], [6, 21], [-38, 21]] },
+      { "bind": "leg_fr", "poly": [[3, -60], [35, -60], [35, 21], [3, 21]] },
+      { "bind": "leg_fl", "poly": [[32, -60], [88, -60], [88, 21], [32, 21]] },
+      {
+        "bind": "head",
+        "poly": [
+          [159.4, -117.2],
+          [149.7, -76.4],
+          [122, -41.8],
+          [80.5, -18.7],
+          [31.5, -10.6],
+          [-17.5, -18.7],
+          [-59, -41.8],
+          [-86.7, -76.4],
+          [-96.4, -117.2],
+          [-86.7, -158],
+          [-59, -192.6],
+          [-17.5, -215.7],
+          [31.5, -223.8],
+          [80.5, -215.7],
+          [122, -192.6],
+          [149.7, -158]
+        ],
+        "soft": 16
+      }
+    ]
+  },
+  "springs": [
+    { "bone": "shell", "stiff": 90, "damp": 7, "gain": 0.3, "gainY": 0.48, "max": 6 },
+    { "bone": "leaf", "stiff": 110, "damp": 4.5, "gain": 1.44, "gainY": 1.08, "max": 12 },
+    { "bone": "ear_near", "stiff": 120, "damp": 6, "gain": 0.84, "gainY": 0.96, "max": 12 },
+    { "bone": "ear_far", "stiff": 115, "damp": 6, "gain": 0.72, "gainY": 0.84, "max": 14 },
+    { "bone": "head", "stiff": 200, "damp": 16, "gain": 0.24, "gainY": 0.18, "max": 9 }
+  ],
+  "clips": {
+    "idle": {
+      "len": 3200,
+      "loop": true,
+      "fade": 260,
+      "tracks": {
+        "head": { "rot": [[0, 0, "inOut"], [1600, -1.95, "inOut"], [3200, 0]], "x": [[0, 0, "inOut"], [1600, 0.98, "inOut"], [3200, 0]] },
+        "hips": { "x": [[0, 0, "inOut"], [1600, -1.5, "inOut"], [3200, 0]] },
+        "snout": { "y": [[0, 0], [2200, 0, "inOut"], [2380, -2, "inOut"], [2560, 0]] }
+      }
+    },
+    "idle_look": {
+      "len": 2600,
+      "fade": 300,
+      "life": 0.7,
+      "tracks": {
+        "head": { "rot": [[0, 0, "inOut"], [700, -7.8, "inOut"], [1900, -7.15, "inOut"], [2500, 0]], "y": [[0, 0, "inOut"], [700, -2.6], [1900, -2.6, "inOut"], [2500, 0]] },
+        "body": { "rot": [[0, 0, "inOut"], [700, -2, "inOut"], [1900, -2, "inOut"], [2500, 0]] }
+      },
+      "faces": { "eyes": [[600, "happy"], [1900, "open"]], "mouth": [[700, "smile"], [1900, "neutral"]] }
+    },
+    "idle_tuck": {
+      "len": 2800,
+      "fade": 300,
+      "life": 0.4,
+      "tracks": {
+        "head": {
+          "x": [[0, 0, "inOut"], [500, -9.1, "inOut"], [2100, -9.1, "outBack"], [2600, 0]],
+          "y": [[0, 0, "inOut"], [500, 3.25], [2100, 3.25, "outBack"], [2600, 0]],
+          "rot": [[0, 0], [500, 3.9], [2100, 3.9, "inOut"], [2600, 0]]
+        },
+        "hips": { "y": [[0, 0, "inOut"], [500, 3], [2100, 3, "inOut"], [2600, 0]] }
+      },
+      "faces": { "eyes": [[300, "half"], [520, "closed"], [2100, "half"], [2400, "open"]] }
+    },
+    "move": {
+      "len": 920,
+      "loop": true,
+      "fade": 200,
+      "life": 0.6,
+      "tracks": {
+        "leg_fr": { "rot": [[0, -15, "inOut"], [460, 13, "inOut"], [920, -15]] },
+        "leg_bl": { "rot": [[0, -13, "inOut"], [460, 12, "inOut"], [920, -13]] },
+        "leg_fl": { "rot": [[0, 13, "inOut"], [460, -15, "inOut"], [920, 13]] },
+        "leg_br": { "rot": [[0, 12, "inOut"], [460, -13, "inOut"], [920, 12]] },
+        "hips": { "y": [[0, 0, "out"], [200, -3.5, "in"], [460, 1, "out"], [660, -3.5, "in"], [920, 0]] },
+        "body": { "rot": [[0, 1.4, "inOut"], [460, -1.4, "inOut"], [920, 1.4]] },
+        "head": { "rot": [[0, -0.98, "inOut"], [230, 0.98, "inOut"], [460, -0.98, "inOut"], [690, 0.98, "inOut"], [920, -0.98]] }
+      },
+      "waves": {
+        "tail": { "amp": 14, "speed": 2 }
+      }
+    },
+    "attack": {
+      "len": 1240,
+      "fade": 140,
+      "life": 0.2,
+      "marks": { "windup": 440, "release": 540, "contact": 780, "recover": 1000 },
+      "tracks": {
+        "hips": { "x": [[0, 0, "inOut"], [440, -20, "in"], [540, -16, "in"], [780, 12, "out"], [1000, 0, "inOut"], [1240, 0]], "y": [[0, 0, "inOut"], [440, 6, "in"], [540, 4], [780, 2, "outBack"], [1240, 0]] },
+        "body": {
+          "rot": [[0, 0, "inOut"], [440, -7, "in"], [540, -4, "in"], [780, 9, "out"], [1000, -1, "inOut"], [1240, 0]],
+          "sy": [[0, 1], [440, 0.93, "in"], [540, 1.02], [780, 0.86, "outElastic"], [1140, 1]],
+          "sx": [[0, 1], [780, 1.1, "outElastic"], [1140, 1]]
+        },
+        "head": { "x": [[0, 0, "inOut"], [440, -7.8, "in"], [700, -9.1, "out"], [800, 5.2, "outBack"], [1100, 0]], "rot": [[0, 0, "inOut"], [440, 5.2], [780, 9.1, "out"], [1100, 0]] },
+        "leg_fr": { "rot": [[0, 0, "inOut"], [440, -14], [540, 18, "inOut"], [660, -18, "inOut"], [780, 10, "inOut"], [1000, 0]] },
+        "leg_fl": { "rot": [[0, 0, "inOut"], [440, -10], [540, -18, "inOut"], [660, 16, "inOut"], [780, 6, "inOut"], [1000, 0]] },
+        "leg_br": { "rot": [[0, 0, "inOut"], [440, 14], [540, -16, "inOut"], [660, 18, "inOut"], [780, 12, "inOut"], [1000, 0]] },
+        "leg_bl": { "rot": [[0, 0, "inOut"], [440, 10], [540, 18, "inOut"], [660, -16, "inOut"], [780, 8, "inOut"], [1000, 0]] }
+      },
+      "faces": { "eyes": [[0, "angry"], [700, "closed"], [820, "angry"], [1140, "open"]], "mouth": [[0, "grit"], [780, "open"], [1000, "grit"], [1140, "neutral"]] }
+    },
+    "cast": {
+      "len": 1420,
+      "fade": 160,
+      "life": 0.3,
+      "marks": { "windup": 700, "release": 840, "recover": 1160 },
+      "tracks": {
+        "hips": { "y": [[0, 0, "inOut"], [300, 7], [700, 8, "in"], [840, -3, "out"], [1160, 0, "inOut"], [1420, 0]] },
+        "body": { "sy": [[0, 1], [700, 0.95, "in"], [840, 1.05, "outElastic"], [1240, 1]] },
+        "shell": { "y": [[0, 0], [600, -1.4, "in"], [840, -5.6, "outBack"], [1160, 0, "inOut"]], "rot": [[0, 0], [300, -1.4, "inOut"], [500, 1.4, "inOut"], [700, -1.4, "inOut"], [840, 0]] },
+        "leaf": { "rot": [[0, 0], [300, -14, "inOut"], [500, 14, "inOut"], [700, -14, "inOut"], [840, 0, "outElastic"], [1300, 0]], "sy": [[0, 1], [840, 1.175, "outElastic"], [1300, 1]] },
+        "head": { "rot": [[0, 0, "inOut"], [700, 3.9, "in"], [840, -11.7, "out"], [1160, -7.8, "inOut"], [1420, 0]] },
+        "leg_fr": { "rot": [[0, 0], [300, -8, "inOut"], [1160, -8, "inOut"], [1420, 0]] },
+        "leg_br": { "rot": [[0, 0], [300, 8, "inOut"], [1160, 8, "inOut"], [1420, 0]] }
+      },
+      "faces": { "eyes": [[0, "half"], [300, "closed"], [840, "angry"], [1300, "open"]], "mouth": [[0, "neutral"], [840, "open"], [1200, "neutral"]] }
+    },
+    "hurt": {
+      "len": 720,
+      "fade": 50,
+      "life": 0.2,
+      "tracks": {
+        "head": { "x": [[0, 0, "out"], [100, -10.4, "inOut"], [460, -6.5, "outBack"], [720, 0]], "y": [[0, 0, "out"], [100, 3.9], [460, 2.6, "inOut"], [720, 0]], "rot": [[0, 0], [100, -5.2, "inOut"], [460, 0]] },
+        "shell": { "rot": [[0, 0], [60, -2.8, "inOut"], [140, 2.1, "inOut"], [220, -1.4, "inOut"], [320, 0]] },
+        "body": { "sy": [[0, 1], [70, 0.9, "outElastic"], [560, 1]], "rot": [[0, 0], [90, -3, "inOut"], [400, 0]] },
+        "hips": { "x": [[0, 0], [100, -3, "inOut"], [720, 0]] }
+      },
+      "faces": { "eyes": [[0, "hurt"], [560, "open"]], "mouth": [[0, "cry"], [580, "neutral"]] }
+    },
+    "hurt_heavy": {
+      "len": 1000,
+      "fade": 40,
+      "life": 0.1,
+      "tracks": {
+        "head": { "x": [[0, 0, "out"], [100, -16.9, "inOut"], [640, -15.6, "outBack"], [1000, 0]], "y": [[0, 0, "out"], [100, 6.5], [640, 5.85, "inOut"], [1000, 0]] },
+        "shell": { "rot": [[0, 0], [60, -4.2, "inOut"], [150, 3.5, "inOut"], [240, -2.8, "inOut"], [340, 1.4, "inOut"], [440, 0]] },
+        "body": { "sy": [[0, 1], [70, 0.84, "outElastic"], [700, 1]], "sx": [[0, 1], [70, 1.08, "outElastic"], [700, 1]] },
+        "hips": { "y": [[0, 0, "out"], [100, 6], [640, 6, "outBack"], [1000, 0]] },
+        "leg_fr": { "y": [[0, 0, "out"], [100, -12], [640, -12, "outBack"], [1000, 0]] },
+        "leg_fl": { "y": [[0, 0, "out"], [100, -12], [640, -12, "outBack"], [1000, 0]] },
+        "leg_br": { "y": [[0, 0, "out"], [100, -12], [640, -12, "outBack"], [1000, 0]] },
+        "leg_bl": { "y": [[0, 0, "out"], [100, -12], [640, -12, "outBack"], [1000, 0]] }
+      },
+      "faces": { "eyes": [[0, "hurt"], [500, "dizzy"], [900, "open"]], "mouth": [[0, "cry"], [880, "neutral"]] }
+    },
+    "ko": {
+      "len": 1300,
+      "fade": 80,
+      "life": 0,
+      "tracks": {
+        "hips": { "y": [[0, 0, "in"], [500, 10, "outBack"], [1300, 10]], "x": [[0, 0], [500, -6], [1300, -6]] },
+        "body": { "rot": [[0, 0, "in"], [500, -10, "outBack"], [1300, -10]] },
+        "head": { "rot": [[0, 0, "inOut"], [300, -3.9, "in"], [700, 16.9, "outBack"], [1300, 16.9]], "x": [[0, 0], [700, -3.9], [1300, -3.9]] },
+        "leg_fr": { "rot": [[0, 0], [500, -50, "outBack"], [1300, -50]] },
+        "leg_fl": { "rot": [[0, 0], [500, -40, "outBack"], [1300, -40]] },
+        "leg_br": { "rot": [[0, 0], [500, 45, "outBack"], [1300, 45]] },
+        "leg_bl": { "rot": [[0, 0], [500, 38, "outBack"], [1300, 38]] },
+        "leaf": { "rot": [[0, 0], [700, 24.5, "outBack"], [1300, 24.5]] }
+      },
+      "faces": { "eyes": [[0, "hurt"], [500, "dizzy"]], "mouth": [[0, "cry"]] }
+    },
+    "victory": {
+      "len": 1400,
+      "loop": true,
+      "fade": 220,
+      "life": 0.5,
+      "tracks": {
+        "hips": { "y": [[0, 0, "out"], [180, 5, "out"], [420, -16, "in"], [640, 0, "out"], [700, 4, "out"], [900, 0], [1400, 0]] },
+        "body": { "rot": [[0, 0, "inOut"], [420, -4, "inOut"], [900, 4, "inOut"], [1400, 0]], "sy": [[0, 1], [180, 0.93, "out"], [420, 1.04, "inOut"], [640, 0.9, "outElastic"], [1000, 1]] },
+        "head": { "rot": [[0, 0, "inOut"], [420, -6.5, "inOut"], [900, 3.25, "inOut"], [1400, 0]] },
+        "leg_fr": { "rot": [[180, 0, "out"], [420, -18, "inOut"], [640, 0]] },
+        "leg_fl": { "rot": [[180, 0, "out"], [420, -14, "inOut"], [640, 0]] },
+        "leg_br": { "rot": [[180, 0, "out"], [420, 16, "inOut"], [640, 0]] },
+        "leg_bl": { "rot": [[180, 0, "out"], [420, 12, "inOut"], [640, 0]] }
+      },
+      "faces": { "eyes": [[0, "happy"]], "mouth": [[0, "smile"]] },
+      "waves": {
+        "tail": { "amp": 26, "speed": 3 }
+      }
+    },
+    "guard": {
+      "len": 640,
+      "fade": 90,
+      "life": 0.2,
+      "tracks": {
+        "head": { "x": [[0, 0, "in"], [220, -18.2, "outBack"], [640, -18.2]], "y": [[0, 0, "in"], [220, 6.5], [640, 6.5]] },
+        "hips": { "y": [[0, 0, "in"], [220, 14, "outBack"], [640, 14]] },
+        "leg_fr": { "y": [[0, 0, "in"], [220, -16], [640, -16]] },
+        "leg_fl": { "y": [[0, 0, "in"], [220, -16], [640, -16]] },
+        "leg_br": { "y": [[0, 0, "in"], [220, -16], [640, -16]] },
+        "leg_bl": { "y": [[0, 0, "in"], [220, -16], [640, -16]] },
+        "shell": { "rot": [[0, 0], [240, 2.1, "inOut"], [340, -1.4, "inOut"], [440, 0]] }
+      },
+      "faces": { "eyes": [[0, "closed"]], "mouth": [[0, "grit"]] }
+    },
+    "stunned": {
+      "len": 1800,
+      "loop": true,
+      "fade": 240,
+      "life": 0.3,
+      "tracks": {
+        "head": { "rot": [[0, 0, "inOut"], [450, 3.9, "inOut"], [900, 0, "inOut"], [1350, -3.9, "inOut"], [1800, 0]], "x": [[0, -1.3, "inOut"], [900, 1.3, "inOut"], [1800, -1.3]] },
+        "body": { "rot": [[0, 1.5, "inOut"], [900, -1.5, "inOut"], [1800, 1.5]] }
+      },
+      "faces": { "eyes": [[0, "dizzy"]], "mouth": [[0, "cry"]] }
+    },
+    "buff": {
+      "len": 960,
+      "fade": 160,
+      "life": 0.5,
+      "tracks": {
+        "head": { "rot": [[0, 0, "out"], [260, -7.8, "inOut"], [720, -5.85, "inOut"], [960, 0]] },
+        "shell": { "y": [[0, 0], [260, -3.5, "outBack"], [720, -2.8, "inOut"], [960, 0]] },
+        "leaf": { "sy": [[0, 1], [260, 1.21, "outElastic"], [720, 1.07], [960, 1]] },
+        "hips": { "y": [[0, 0], [260, -4, "inOut"], [800, 0]] }
+      },
+      "faces": { "eyes": [[0, "happy"], [880, "open"]], "mouth": [[0, "smile"], [880, "neutral"]] }
+    },
+    "dodge": {
+      "len": 720,
+      "fade": 80,
+      "life": 0.3,
+      "tracks": {
+        "hips": { "x": [[0, 0, "out"], [240, -10, "inOut"], [720, 0]], "y": [[0, 0], [240, 4], [720, 0]] },
+        "head": { "x": [[0, 0, "out"], [200, -10.4, "inOut"], [600, 0]] },
+        "body": { "rot": [[0, 0], [240, -4, "inOut"], [600, 0]] }
+      },
+      "faces": { "eyes": [[0, "closed"], [420, "open"]], "mouth": [[0, "grit"], [420, "neutral"]] }
+    },
+    "g_slam": {
+      "len": 1400,
+      "fade": 160,
+      "life": 0.3,
+      "marks": { "windup": 600, "release": 760, "contact": 1000, "recover": 1200 },
+      "tracks": {
+        "hips": { "y": [[0, 0, "inOut"], [600, 10, "in"], [760, -6, "out"], [880, -30, "in"], [1000, 6, "outElastic"], [1300, 0]] },
+        "body": { "sy": [[0, 1], [600, 0.88, "in"], [760, 1.08, "out"], [1000, 0.8, "outElastic"], [1300, 1]], "sx": [[0, 1], [980, 1], [1000, 1.14, "outElastic"], [1300, 1]] },
+        "head": { "x": [[0, 0], [600, -3.9], [880, -11.7, "in"], [1000, -13], [1150, 0, "outBack"]] },
+        "shell": { "y": [[0, 0], [1000, 0], [1040, -4.2, "out"], [1200, 0, "outElastic"]] },
+        "leg_fr": { "y": [[0, 0], [760, 0], [880, -10, "in"], [1000, 0, "out"]] },
+        "leg_fl": { "y": [[0, 0], [760, 0], [880, -10, "in"], [1000, 0, "out"]] },
+        "leg_br": { "y": [[0, 0], [760, 0], [880, -10, "in"], [1000, 0, "out"]] },
+        "leg_bl": { "y": [[0, 0], [760, 0], [880, -10, "in"], [1000, 0, "out"]] }
+      },
+      "faces": { "eyes": [[0, "angry"], [880, "closed"], [1100, "angry"], [1300, "open"]], "mouth": [[0, "grit"], [1000, "open"], [1200, "neutral"]] }
+    },
+    "g_brace": {
+      "len": 1300,
+      "fade": 160,
+      "life": 0.3,
+      "marks": { "windup": 640, "release": 780, "recover": 1100 },
+      "tracks": {
+        "hips": { "y": [[0, 0, "inOut"], [640, 8, "inOut"], [780, 10], [1100, 4], [1300, 0]] },
+        "leg_fr": { "rot": [[0, 0], [640, -10], [1300, 0]] },
+        "leg_br": { "rot": [[0, 0], [640, 10], [1300, 0]] },
+        "leg_fl": { "rot": [[0, 0], [640, -8], [1300, 0]] },
+        "leg_bl": { "rot": [[0, 0], [640, 8], [1300, 0]] },
+        "head": { "x": [[0, 0], [640, -7.8, "inOut"], [1100, -7.8], [1300, 0]] },
+        "shell": { "y": [[0, 0], [600, -2.8, "inOut"], [700, -7, "out"], [780, 1.4, "in"], [900, 0, "outElastic"]], "sy": [[0, 1], [700, 1.042], [780, 0.965], [900, 1]] },
+        "leaf": { "sy": [[0, 1], [740, 1], [780, 1.21, "outElastic"], [1200, 1]] }
+      },
+      "faces": { "eyes": [[0, "angry"], [400, "closed"], [780, "angry"], [1200, "open"]], "mouth": [[0, "grit"], [1200, "neutral"]] }
+    },
+    "g_summon_ground": {
+      "len": 1300,
+      "fade": 160,
+      "life": 0.3,
+      "marks": { "windup": 620, "release": 760, "recover": 1100 },
+      "tracks": {
+        "hips": { "y": [[0, 0], [300, -6, "in"], [400, 4, "out"], [620, -10, "in"], [760, 8, "outElastic"], [1100, 0]] },
+        "body": { "rot": [[0, 0], [300, -5], [400, 2], [620, -8, "in"], [760, 4, "out"], [1100, 0]] },
+        "leg_fr": { "rot": [[0, 0], [300, -22, "in"], [400, 0, "out"], [620, -30, "in"], [760, 4, "out"], [1000, 0]] },
+        "leg_fl": { "rot": [[0, 0], [620, -24, "in"], [760, 2, "out"], [1000, 0]] },
+        "head": { "rot": [[0, 0], [620, -6.5], [760, 6.5, "out"], [1100, 0]] },
+        "shell": { "rot": [[0, 0], [760, 0], [820, -2.1], [900, 1.4], [1000, 0]] }
+      },
+      "faces": { "eyes": [[0, "angry"], [760, "closed"], [880, "angry"], [1200, "open"]], "mouth": [[0, "grit"], [760, "open"], [1100, "neutral"]] }
+    },
+    "g_channel": {
+      "len": 1400,
+      "fade": 200,
+      "life": 0.6,
+      "marks": { "windup": 700, "release": 840, "recover": 1200 },
+      "tracks": {
+        "hips": { "y": [[0, 0, "inOut"], [700, 4, "inOut"], [840, -2, "out"], [1200, 0]] },
+        "head": { "rot": [[0, 0, "inOut"], [500, 6.5, "inOut"], [700, 6.5], [840, -7.8, "out"], [1200, 0, "inOut"]] },
+        "body": { "sy": [[0, 1], [700, 1.05, "inOut"], [840, 0.97, "out"], [1200, 1]] },
+        "leaf": { "rot": [[0, 0], [300, -8.4, "inOut"], [600, 8.4, "inOut"], [840, 0, "outElastic"]], "sy": [[0, 1], [800, 1], [840, 1.175, "outElastic"], [1300, 1]] }
+      },
+      "faces": { "eyes": [[0, "half"], [300, "closed"], [840, "happy"], [1300, "open"]], "mouth": [[840, "smile"], [1300, "neutral"]] }
+    },
+    "g_roar": {
+      "len": 1300,
+      "fade": 160,
+      "life": 0.3,
+      "marks": { "windup": 560, "release": 700, "recover": 1050 },
+      "tracks": {
+        "head": { "x": [[0, 0, "inOut"], [560, -6.5, "in"], [700, 9.1, "out"], [1000, 6.5, "inOut"], [1250, 0]], "rot": [[0, 0], [560, 5.2, "in"], [680, -13, "out"], [1000, -9.1], [1250, 0]] },
+        "body": { "rot": [[0, 0], [560, 3], [700, -4], [1050, 0]] },
+        "shell": { "rot": [[0, 0], [700, 0], [760, -1.4], [820, 1.4], [880, -0.7], [940, 0]] }
+      },
+      "faces": { "eyes": [[0, "angry"], [680, "closed"], [1000, "angry"], [1250, "open"]], "mouth": [[0, "grit"], [680, "open"], [1100, "neutral"]] }
+    },
+    "ultimate": {
+      "len": 2100,
+      "fade": 200,
+      "life": 0.1,
+      "marks": { "windup": 1000, "release": 1180, "recover": 1650 },
+      "tracks": {
+        "head": {
+          "x": [[0, 0, "in"], [300, -19.5, "outBack"], [1000, -19.5], [1180, 10.4, "outBack"], [1650, 0, "inOut"]],
+          "y": [[0, 0], [300, 6.5], [1000, 6.5], [1180, -5.2, "out"], [1650, 0]],
+          "rot": [[0, 0], [1000, 0], [1180, -13, "out"], [1650, 0]]
+        },
+        "hips": { "y": [[0, 0, "in"], [300, 14, "outBack"], [900, 10, "in"], [1000, -10, "in"], [1180, 8, "outElastic"], [1650, 0]] },
+        "shell": {
+          "rot": [[0, 0], [400, 0], [460, -1.4], [520, 1.4], [580, -1.4], [640, 1.4], [700, -1.4], [760, 1.4], [820, -1.4], [880, 1.4], [940, 0]],
+          "y": [[0, 0], [900, -2.8], [1000, -9.8, "in"], [1180, 1.4, "outElastic"], [1500, 0]]
+        },
+        "leaf": { "sy": [[0, 1], [1140, 1], [1180, 1.28, "outElastic"], [1800, 1]] },
+        "leg_fr": { "y": [[0, 0, "in"], [300, -16, "outBack"], [1000, -16], [1180, 4, "out"], [1400, 0]] },
+        "leg_fl": { "y": [[0, 0, "in"], [300, -16, "outBack"], [1000, -16], [1180, 4, "out"], [1400, 0]] },
+        "leg_br": { "y": [[0, 0, "in"], [300, -16, "outBack"], [1000, -16], [1180, 4, "out"], [1400, 0]] },
+        "leg_bl": { "y": [[0, 0, "in"], [300, -16, "outBack"], [1000, -16], [1180, 4, "out"], [1400, 0]] }
+      },
+      "faces": { "eyes": [[0, "closed"], [1180, "angry"], [1900, "open"]], "mouth": [[0, "grit"], [1160, "open"], [1700, "neutral"]] }
+    }
+  },
+  "anchors": { "mouth": "mouth", "tail": "tail" }
+}

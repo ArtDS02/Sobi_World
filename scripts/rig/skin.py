@@ -201,10 +201,11 @@ def tight_eyes(can: Image.Image, area: Image.Image) -> Image.Image:
 def drawn_faces(can: Image.Image, open_layer: Image.Image, spec: dict, k: int, dy: int) -> dict[str, Image.Image]:
     """No face sheet: faces drawn from the picture's own eyes and ink (faces.py)."""
     sides = []
-    snout_x = np.mean([p[0] for p in next(iter(spec["overlays"].values()))]) if spec["overlays"] else spec["eyes"][-1]["c"][0] + 40
+    # An eye's inner side looks at the other eye (one eye alone: the creature looks right).
+    mid = np.mean([e["c"][0] for e in spec["eyes"]])
     for e in spec["eyes"]:
         cx, cy = e["c"][0] * k, e["c"][1] * k + dy
-        sides.append((cx, cy, e["r"][0] * k * 0.8, e["r"][1] * k * 0.8, 1 if e["c"][0] < snout_x else -1))
+        sides.append((cx, cy, e["r"][0] * k * 0.8, e["r"][1] * k * 0.8, 1 if len(spec["eyes"]) == 1 or e["c"][0] < mid else -1))
     ink = faces_mod.ink_of(can, *sides[0][:4])
     x0, y0, x1, y1 = spec["mouth"]["box"]
     box = (x0 * k, y0 * k + dy, x1 * k, y1 * k + dy)

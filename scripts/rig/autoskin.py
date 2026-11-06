@@ -215,6 +215,13 @@ def overlay(art: str, spec: dict) -> None:
     bg.alpha_composite(img)
     bg = bg.resize((512 * k, 512 * k))
     d = ImageDraw.Draw(bg)
+    for v in range(0, 512, 25):  # a coordinate grid (px of the picture) to read fixes from
+        c = (255, 255, 255) if v % 100 == 0 else (225, 235, 225)
+        d.line([(v * k, 0), (v * k, 512 * k)], fill=c, width=1)
+        d.line([(0, v * k), (512 * k, v * k)], fill=c, width=1)
+        if v % 100 == 0:
+            d.text((v * k + 3, 3), str(v), fill=(0, 0, 160))
+            d.text((3, v * k + 3), str(v), fill=(0, 0, 160))
     colors = {"head": (255, 0, 0), "ear_near": (255, 140, 0), "ear_far": (255, 200, 0), "snout": (255, 0, 200), "tail": (0, 0, 255)}
     for g in spec["rig"]["regions"][1:]:
         c = colors.get(g[0], (0, 120, 255) if g[0].startswith("leg") else (80, 80, 80))
@@ -227,10 +234,12 @@ def overlay(art: str, spec: dict) -> None:
         d.ellipse([(cx - rx) * k, (cy - ry) * k, (cx + rx) * k, (cy + ry) * k], outline=(0, 255, 255), width=3)
     mx0, my0, mx1, my1 = spec["face"]["mouth"]["box"]
     d.rectangle([mx0 * k, my0 * k, mx1 * k, my1 * k], outline=(255, 255, 255), width=3)
-    t = spec["rig"]["chains"]["tail"]
-    tx, ty = t["at"]
-    ex, ey = tx + t["len"] * np.cos(np.radians(t["dir"])), ty + t["len"] * np.sin(np.radians(t["dir"]))
-    d.line([(tx * k, ty * k), (ex * k, ey * k)], fill=(0, 0, 255), width=4)
+    for t in spec["rig"]["chains"].values():
+        if "at" not in t or t["at"] == [0, 0]:
+            continue
+        tx, ty = t["at"]
+        ex, ey = tx + t["len"] * np.cos(np.radians(t["dir"])), ty + t["len"] * np.sin(np.radians(t["dir"]))
+        d.line([(tx * k, ty * k), (ex * k, ey * k)], fill=(0, 0, 255), width=4)
     out = ROOT / "art_inbox/.qa" / f"autoskin_{art}.png"
     out.parent.mkdir(parents=True, exist_ok=True)
     bg.convert("RGB").resize((512, 512)).save(out)

@@ -6860,6 +6860,1436 @@
       "id": "rig_fish_pufferfish_skin",
       "status": "production",
       "asset": "props/rig/fish_pufferfish/rig_fish_pufferfish_skin.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_bramble_boar_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_bramble_boar/rig_enemy_bramble_boar_skin.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_skin.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_dew_frog_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_dew_frog/rig_enemy_dew_frog_skin.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_ember_fox_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_fox/rig_enemy_ember_fox_skin.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_forest_wolf_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_forest_wolf/rig_enemy_forest_wolf_skin.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_gale_sparrow_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_gale_sparrow/rig_enemy_gale_sparrow_skin.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_lava_newt_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_lava_newt/rig_enemy_lava_newt_skin.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_magma_drake_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_magma_drake/rig_enemy_magma_drake_skin.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_rock_beetle_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_rock_beetle/rig_enemy_rock_beetle_skin.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_snow_goat_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_snow_goat/rig_enemy_snow_goat_skin.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_thunder_ram_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_thunder_ram/rig_enemy_thunder_ram_skin.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_wolf_alpha_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_wolf_alpha/rig_enemy_wolf_alpha_skin.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_skin.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_ore_golem_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_ore_golem/rig_enemy_ore_golem_skin.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_stone_sentinel_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_stone_sentinel/rig_enemy_stone_sentinel_skin.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_old_treant_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_old_treant/rig_enemy_old_treant_skin.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_ember_idol_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_ember_idol/rig_enemy_ember_idol_skin.png"
+    },
+    {
+      "id": "rig_enemy_mossling_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_mossling_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_mossling_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_mossling_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_mossling_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_mossling_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_mossling_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_mossling_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_mossling_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_mossling_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_mossling_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_mossling_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_mossling_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_mossling/rig_enemy_mossling_skin.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_thorn_sprout_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_thorn_sprout/rig_enemy_thorn_sprout_skin.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_rune_wisp_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_rune_wisp/rig_enemy_rune_wisp_skin.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_tide_wraith_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_tide_wraith/rig_enemy_tide_wraith_skin.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_eyes_angry",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_eyes_angry.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_eyes_closed",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_eyes_closed.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_eyes_dizzy",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_eyes_dizzy.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_eyes_half",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_eyes_half.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_eyes_happy",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_eyes_happy.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_eyes_hurt",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_eyes_hurt.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_eyes_open",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_eyes_open.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_mouth_cry",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_mouth_cry.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_mouth_grit",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_mouth_grit.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_mouth_neutral",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_mouth_neutral.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_mouth_open",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_mouth_open.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_mouth_smile",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_mouth_smile.png"
+    },
+    {
+      "id": "rig_enemy_shadow_priest_skin",
+      "status": "production",
+      "asset": "props/rig/enemy_shadow_priest/rig_enemy_shadow_priest_skin.png"
     }
   ],
   "buildings": [

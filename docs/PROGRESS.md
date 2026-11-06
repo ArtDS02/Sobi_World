@@ -11,6 +11,12 @@
 
 ## Nhật ký
 
+### 2026-11-06 — Animation: 22 quái dùng skin (decision 050 bổ sung (4), R3) + sửa màu puppet bên địch
+✅ Đã làm: `scripts/rig/autoskin_generic.py` (`npm run rig:auto-any`) cho quái không phải heo — dáng beast / front / float, clip của `pig_boar` / `pig_turtle` / `octopus`, mắt đôi hoặc một, miệng chỉ thay khi dò chắc, `--flip` cho ảnh nhìn trái. Ảnh soi `art_inbox/.qa/autoskin_<art>.png` có lưới toạ độ để đọc sửa tay; sửa mắt 14 quái, vài miệng / chân / đuôi. Sửa lỗi: puppet bị lật (mọi quái) bạc màu vì post-FX luôn gắn → FX chỉ gắn khi cần. Tổng 44 rig, đều là skin; không cần asset mới.
+🧪 `npm run check` xanh; dải khung attack cả 22 quái; Xưởng trận: Heo Rồng vs Heo Rừng Gai / Sói Rừng (đúng hướng, đúng màu).
+⚠️ Tự quyết: quái dùng lại clip của 3 prototype (chưa có clip riêng cho chim vỗ cánh, golem nện tay); ếch / chim / kỳ nhông / golem / thầy tu… chỉ đổi mắt. Chưa làm: quái biển (chưa có key pose), boss `phase`.
+👉 Chủ dự án: Xưởng trận với vài quái (Sói, Cáo, Golem, Rêu, Đom đóm rune) và chấm; nếu muốn biểu cảm đẹp hơn cho con nào, làm sheet mặt Gemini (B2/B3) cho con đó.
+
 ### 2026-11-06 — Animation: 18 chiến binh dùng skin (decision 050 bổ sung (3), R2b)
 ✅ Đã làm: chủ dự án duyệt skin và giao tự quyết. `scripts/rig/autoskin.py` (`npm run rig:auto`) dò mắt, mõm, nụ cười, chân, đuôi trên ảnh duyệt và dời vùng đầu / tai của heo mẫu theo cặp mắt; `scripts/rig/faces.py` vẽ biểu cảm từ chính mắt / mực của con đó (không cần sheet Gemini); xoá mắt cũ chỉ trong vùng mắt, giữ vành mũ / mép đầu, lấp bằng màu da gần. 17 heo + cá nóc có rig (22 rig tất cả), clip chép từ `pig_boar` / `fish_betta`, nhịp riêng cho nhóm nặng / nhẹ. Commit trước đó: `d3413da` (skin 4 prototype).
 🧪 Test: mọi rig là skin, nghỉ = ảnh duyệt, mỗi dải ≤ 1536 đỉnh; dải khung attack cả 18 con (`art_inbox/.qa/rig_<art>_attack.png`); Xưởng trận: Heo Rừng, Heo Samurai.
