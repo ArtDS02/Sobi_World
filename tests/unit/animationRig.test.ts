@@ -91,6 +91,21 @@ describe('every rig (content/anim/rigs)', () => {
     }
   });
 
+  it('a creature with an approved windup drawing winds up on it, then strikes on the attack drawing', () => {
+    const wound = posed.filter((r) => r.skin!.poses.windup);
+    expect(wound.map((r) => r.id).sort()).toEqual(['enemy_ancient_guardian', 'pig_thienlong']); // pilot batch rig-02-windup
+    for (const r of wound) {
+      const a = r.clips.attack!;
+      expect(poseAt(r, 'attack', a.marks.windup!), `${r.id} windup drawing at windup`).toBe('windup');
+      expect(poseAt(r, 'attack', a.marks.release!), `${r.id} attack drawing at release`).toBe('attack');
+      expect(poseAt(r, 'attack', a.marks.contact!), `${r.id} attack drawing at contact`).toBe('attack');
+    }
+    for (const r of posed.filter((x) => !x.skin!.poses.windup)) {
+      const a = r.clips.attack!;
+      expect(poseAt(r, 'attack', a.marks.windup!), `${r.id} no windup drawing: rest until the strike`).toBe('rest');
+    }
+  });
+
   it('a strike is prepared: squash and lean back before the release, the stretch on it', () => {
     for (const r of posed) {
       const a = r.clips.attack!;

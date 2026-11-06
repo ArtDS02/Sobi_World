@@ -11,6 +11,12 @@
 
 ## Nhật ký
 
+### 2026-11-06 — Animation: thử tranh lấy đà (windup) cho 2 con (decision 050 (5), batch `rig-02-windup`)
+✅ Đã làm: chủ dự án chọn thử tranh trung gian. Batch `art_inbox/.batch/rig-02-windup/` (bản có git: `docs/animation/rig/requests/rig-02-windup/`): mỗi con 1 sheet 1×3 [idle vẽ lại · WINDUP · attack vẽ lại]; ô hai bên (`cal_*`) chỉ để Gemini hiểu khung trung gian và để đo cỡ, không dùng. Cỡ đo bằng khớp mẫu chi tiết không đổi của tranh attack đã duyệt (đầu, mõm, vương miện, mề đay) vào ô windup: Hộ Pháp Cổ Đại ×0,755 (đầu khớp ổn định 0,755–0,79); Heo Thần Thoại đo được ×1,22 nhưng tranh vượt mép trên layer 1024² (chân ở y=940) → cắt đầu cánh, nên dùng ×1,18 (lớn nhất còn vừa; đầu nhỏ hơn số đo ~3 %). Đặt như mọi `cb_*`: tâm đáy (256, 492) trên canvas 512 → `cb_<art>_windup.png` + manifest. `poseRig.py`: pose tuỳ chọn `windup` khi có tranh; `poseClips.py` `strike(drawn_windup=True)`: tranh windup hiện ở 30 % đoạn lấy đà, lưới chỉ thêm 40 % độ ngả / lùi / nén (tranh đã tự cúi). Con khác không đổi.
+🧪 Test mới: con có tranh windup hiện windup ở mốc windup, attack ở release / contact; con khác vẫn nghỉ tới cú đánh. Dải 12 khung attack 2 con; khung windup đặt cạnh tranh windup ở độ phân giải đầy đủ (Heo lần đầu bị cắt đầu cánh → sửa cỡ); contact vẫn là tranh attack (độ lệch lưới như trước khi sửa).
+⚠️ Hộ Pháp: W2.png vẽ khiên sang tay kia ở ô windup (khiên nhảy trái → phải → trái khi chuyển tranh) — không đạt liền mạch; đã sửa mô tả ô W2 trong batch, chờ render lại `W2-2.png`. Chưa xem trong trận thật / Xưởng trận.
+👉 Chủ dự án: render lại W2 (lưu `W2-2.png`); chấm Heo Thần Thoại trong Xưởng rig (attack).
+
 ### 2026-11-06 — Animation: pose to pose trên key pose đã duyệt (decision 050 bổ sung (5)) — sửa bản skin bị bác
 ❌ Chủ dự án bác bản skin một ảnh (bổ sung (3)/(4)): chuyển động yếu hơn bản ghép bộ phận, không giống tranh attack / cast có sẵn, biểu cảm vẽ thêm đè lên tai / vương miện / mặt robot. Lỗi của agent: chỉ bẻ ảnh idle (phải giảm biên độ), bỏ qua bộ key pose đã duyệt, vẽ mặt không giới hạn, không đặt cạnh tranh mẫu khi soi.
 ✅ Đã làm: mỗi động tác hiện đúng tranh đã duyệt vào đúng mốc nhịp (attack từ release tới recover, cast từ windup, hurt / ko / victory), hoà 70 ms; lưới chỉ thêm lấy đà, nén giãn, chân bám đất, đầu trễ nhịp; không vẽ gì lên mặt. `scripts/rig/poseRig.py` + `poseClips.py` (25 clip chung), runtime `skin.poses` / khe `pose`. 43 sinh vật.

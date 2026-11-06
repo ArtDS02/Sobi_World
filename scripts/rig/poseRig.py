@@ -22,10 +22,11 @@ import numpy as np
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).parent))
-from poseClips import CLIPS  # noqa: E402
+from poseClips import CLIPS, WINDUP_CLIPS  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 POSES = ["attack", "cast", "hurt", "victory", "ko"]
+OPTIONAL_POSES = ["windup"]  # extra approved drawings some creatures have (pilot batch rig-02-windup)
 RES = 2
 GROUNDED = {"quadruped", "heavy", "biped", "small", "flyer"}
 
@@ -60,8 +61,10 @@ def build(art: str) -> None:
     for f in layers.glob("*.png"):
         f.unlink()
     canvas(idle, feet).save(layers / "skin.png")
-    for p in POSES:
+    poses = POSES + [p for p in OPTIONAL_POSES if src(p).exists()]
+    for p in poses:
         canvas(Image.open(src(p)).convert("RGBA"), feet).save(layers / f"skin_{p}.png")
+    clips = {**CLIPS, **(WINDUP_CLIPS if "windup" in poses else {})}
 
     c = lambda x, y: [round(x - 256, 1), round(y - feet, 1)]  # noqa: E731
     eyes = eyes_of(art)
@@ -100,13 +103,13 @@ def build(art: str) -> None:
         ],
         "chains": [],
         "skin": {"part": "skin", "grid": [32, 28], "soft": 12, "z": 0, "regions": regions,
-                 "poses": {p: f"skin_{p}" for p in POSES}, "poseFade": 70},
+                 "poses": {p: f"skin_{p}" for p in poses}, "poseFade": 70},
         "springs": [{"bone": "head", "stiff": 170, "damp": 11, "gain": 0.45, "gainY": 0.3, "max": 7}],
-        "clips": CLIPS,
+        "clips": clips,
         "anchors": {"mouth": "mouth", "tail": "tail"},
     }
     path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8", newline="\n")
-    print(f"{art}: {plan}, 6 poses, {len(CLIPS)} clips")
+    print(f"{art}: {plan}, {len(poses) + 1} poses, {len(clips)} clips")
 
 
 if __name__ == "__main__":

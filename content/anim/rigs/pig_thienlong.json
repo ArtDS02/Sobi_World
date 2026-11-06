@@ -15,7 +15,8 @@
     "skin_cast": { "img": "rig_pig_thienlong_skin_cast", "box": [-236, -419, 474.5, 422] },
     "skin_hurt": { "img": "rig_pig_thienlong_skin_hurt", "box": [-248, -385, 496, 388] },
     "skin_ko": { "img": "rig_pig_thienlong_skin_ko", "box": [-216, -363, 431, 366] },
-    "skin_victory": { "img": "rig_pig_thienlong_skin_victory", "box": [-210, -394, 419, 396.5] }
+    "skin_victory": { "img": "rig_pig_thienlong_skin_victory", "box": [-210, -394, 419, 396.5] },
+    "skin_windup": { "img": "rig_pig_thienlong_skin_windup", "box": [-230, -468, 461, 471] }
   },
   "bones": [
     { "id": "root", "parent": null, "at": [0, 0] },
@@ -61,7 +62,7 @@
         "soft": 24.5
       }
     ],
-    "poses": { "attack": "skin_attack", "cast": "skin_cast", "hurt": "skin_hurt", "victory": "skin_victory", "ko": "skin_ko" },
+    "poses": { "attack": "skin_attack", "cast": "skin_cast", "hurt": "skin_hurt", "victory": "skin_victory", "ko": "skin_ko", "windup": "skin_windup" },
     "poseFade": 70
   },
   "springs": [
@@ -133,14 +134,14 @@
       "marks": { "windup": 260, "release": 340, "contact": 560, "recover": 780 },
       "tracks": {
         "body": {
-          "rot": [[0, 0], [260, -5, "in"], [340, 4, "out"], [560, 5], [780, 0, "inOut"]],
-          "x": [[0, 0], [260, -12, "in"], [340, 9.600000000000001, "out"], [560, 12], [780, 0, "inOut"]],
-          "sx": [[0, 1], [260, 1.1, "in"], [340, 0.94, "outBack"], [440, 1], [560, 1.04], [620, 1]],
-          "sy": [[0, 1], [260, 0.9, "in"], [340, 1.07, "outBack"], [440, 1], [560, 0.96], [620, 1]]
+          "rot": [[0, 0], [260, -2, "in"], [340, 4, "out"], [560, 5], [780, 0, "inOut"]],
+          "x": [[0, 0], [260, -4.8, "in"], [340, 9.600000000000001, "out"], [560, 12], [780, 0, "inOut"]],
+          "sx": [[0, 1], [260, 1.04, "in"], [340, 0.94, "outBack"], [440, 1], [560, 1.04], [620, 1]],
+          "sy": [[0, 1], [260, 0.96, "in"], [340, 1.07, "outBack"], [440, 1], [560, 0.96], [620, 1]]
         },
-        "head": { "rot": [[0, 0], [260, -4], [380, 5, "outBack"], [560, 3], [780, 0]] }
+        "head": { "rot": [[0, 0], [260, -1.6], [380, 5, "outBack"], [560, 3], [780, 0]] }
       },
-      "faces": { "pose": [[0, "rest"], [300, "attack"], [800, "rest"]] },
+      "faces": { "pose": [[0, "rest"], [78, "windup"], [300, "attack"], [800, "rest"]] },
       "life": 0.3,
       "waves": {}
     },

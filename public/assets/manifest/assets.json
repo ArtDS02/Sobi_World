@@ -3767,6 +3767,11 @@
       "asset": "props/combat/cb_pig_thienlong_victory.png"
     },
     {
+      "id": "cb_pig_thienlong_windup",
+      "status": "production",
+      "asset": "props/combat/cb_pig_thienlong_windup.png"
+    },
+    {
       "id": "cb_pig_boar_idle",
       "status": "production",
       "asset": "props/combat/cb_pig_boar_idle.png"
@@ -4575,6 +4580,11 @@
       "id": "cb_enemy_ancient_guardian_victory",
       "status": "production",
       "asset": "props/combat/cb_enemy_ancient_guardian_victory.png"
+    },
+    {
+      "id": "cb_enemy_ancient_guardian_windup",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_ancient_guardian_windup.png"
     },
     {
       "id": "adv_map_chest_gold",
@@ -9365,6 +9375,16 @@
       "id": "rig_pig_vampire_skin_victory",
       "status": "production",
       "asset": "props/rig/pig_vampire/rig_pig_vampire_skin_victory.png"
+    },
+    {
+      "id": "rig_pig_thienlong_skin_windup",
+      "status": "production",
+      "asset": "props/rig/pig_thienlong/rig_pig_thienlong_skin_windup.png"
+    },
+    {
+      "id": "rig_enemy_ancient_guardian_skin_windup",
+      "status": "production",
+      "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_skin_windup.png"
     }
   ],
   "buildings": [

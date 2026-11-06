@@ -21,17 +21,26 @@ def squash(t_down, k_down, t_up, k_up, t_end):
     }
 
 
-def strike(pose, windup, release, contact, recover, length, lean=5, reach=12, crouch=0.9, extra=None):
-    """Lean back and squash (anticipation), lunge on the release with the strike drawing (stretch), a small squash on contact."""
-    body = {"rot": [[0, 0], [windup, -lean, "in"], [release, lean * 0.8, "out"], [contact, lean], [recover, 0, "inOut"]],
-            "x": [[0, 0], [windup, -reach, "in"], [release, reach * 0.8, "out"], [contact, reach], [recover, 0, "inOut"]],
+def strike(pose, windup, release, contact, recover, length, lean=5, reach=12, crouch=0.9, extra=None, drawn_windup=False):
+    """Lean back and squash (anticipation), lunge on the release with the strike drawing (stretch), a small squash on contact.
+
+    drawn_windup: the creature has an approved windup drawing (`cb_<art>_windup`). It shows early in the anticipation and already
+    crouches and pulls back, so the grid only eases into it (40 % of the lean, the step back and the squash) instead of doubling it.
+    """
+    back = 0.4 if drawn_windup else 1.0
+    crouch = round(1 - (1 - crouch) * back, 3)
+    body = {"rot": [[0, 0], [windup, round(-lean * back, 2), "in"], [release, lean * 0.8, "out"], [contact, lean], [recover, 0, "inOut"]],
+            "x": [[0, 0], [windup, round(-reach * back, 2), "in"], [release, reach * 0.8, "out"], [contact, reach], [recover, 0, "inOut"]],
             "sx": [[0, 1], [windup, round(2 - crouch, 3), "in"], [release, 0.94, "outBack"], [release + 100, 1], [contact, 1.04], [contact + 60, 1]],
             "sy": [[0, 1], [windup, crouch, "in"], [release, 1.07, "outBack"], [release + 100, 1], [contact, 0.96], [contact + 60, 1]]}
-    tracks = {"body": body, "head": {"rot": [[0, 0], [windup, -4], [release + 40, 5, "outBack"], [contact, 3], [recover, 0]]}}
+    tracks = {"body": body, "head": {"rot": [[0, 0], [windup, round(-4 * back, 2)], [release + 40, 5, "outBack"], [contact, 3], [recover, 0]]}}
     for bone, ch in (extra or {}).items():
         tracks.setdefault(bone, {}).update(ch)
     marks = {"windup": windup, "release": release, "contact": contact, "recover": recover}
-    return clip(length, tracks, [[0, "rest"], [release - 40, pose], [recover + 20, "rest"]], marks)
+    poses = [[0, "rest"], [release - 40, pose], [recover + 20, "rest"]]
+    if drawn_windup:
+        poses.insert(1, [round(windup * 0.3), "windup"])
+    return clip(length, tracks, poses, marks)
 
 
 def raise_up(pose, windup, release, recover, length, rise=14, crouch=0.88, contact=None, end_pose="rest"):
@@ -97,3 +106,7 @@ CLIPS = {
 # The ultimate lets go with the strike drawing: gather on the cast pose, strike on the attack pose, back to rest.
 CLIPS["ultimate"]["faces"]["pose"] = [[0, "rest"], [300, "cast"], [820, "attack"], [1500, "rest"]]
 CLIPS["g_slam"]["faces"]["pose"] = [[0, "rest"], [300, "cast"], [600, "attack"], [1000, "rest"]]
+
+# Creatures with an approved windup drawing (cb_<art>_windup; pilot batch rig-02-windup): the plain attack winds up on it.
+# Skill gestures keep their own anticipation for now (one drawing per moment is checked against its picture first).
+WINDUP_CLIPS = {"attack": strike("attack", 260, 340, 560, 780, 980, drawn_windup=True)}
