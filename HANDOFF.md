@@ -24,7 +24,7 @@ chuyển tranh, windup Hộ Pháp W2). Nguồn sự thật vẫn theo CLAUDE.md;
 - Server admin (`npm run admin`, cổng 5175) chạy cùng lúc có thể làm 2 test chậm quá thời gian (`assetsCheck`, `phase11`):
   chạy riêng 2 file đó để phân biệt, hoặc xin tắt server.
 
-## 3. Phần CHƯA commit (trên đĩa, `npm run check` đã xanh: 140 file, 1801 test)
+## 3. Phần làm trong phiên 2026-11-06 (đã commit `d8c50f0`, `npm run check` xanh: 140 file, 1801 test)
 
 | Đường dẫn | Nội dung |
 |---|---|
