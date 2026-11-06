@@ -33,6 +33,9 @@ export const clipSchema = z.strictObject({
   life: z.number().min(0).max(1).default(1),
   /** The wave of each chain during this clip (overrides the chain's own). */
   waves: z.record(id, z.strictObject({ amp: z.number(), speed: z.number(), phase: z.number().optional(), curl: z.number().optional() })).default({}),
+  /** Crossfade between two key poses while this clip plays (ms; default the skin's `poseFade`). A drawn cycle (the move frames)
+   *  holds each drawing ~130 ms, so it cuts nearly hard: a long fade would show two legs / wings at once. */
+  poseFade: z.number().min(0).optional(),
 });
 
 const part = z.strictObject({
@@ -106,6 +109,9 @@ const skin = z.strictObject({
   poses: z.record(id, id).default({}),
   /** Crossfade between two poses (ms). */
   poseFade: z.number().min(0).default(70),
+  /** Canvas px a pose's drawing is moved back by: a drawing stored shifted to fit the 512 canvas (a wingbeat taller than it)
+   *  is put where it belongs, so the head stays where it is in the other drawings and the regions bind the right parts. */
+  offsets: z.record(id, z.tuple([z.number(), z.number()])).default({}),
 });
 
 export const rigSchema = z.strictObject({
@@ -177,6 +183,7 @@ export function rigProblems(r: RigData): string[] {
     if (!r.parts[r.skin.part]) out.push(`${r.id}: skin part ${r.skin.part} missing`);
     for (const g of r.skin.regions) if (!targets.has(g.bind)) out.push(`${r.id}: skin region on missing ${g.bind}`);
     for (const [name, pic] of Object.entries(r.skin.poses)) if (!r.parts[pic]) out.push(`${r.id}: pose ${name} picture ${pic} missing`);
+    for (const name of Object.keys(r.skin.offsets)) if (!r.skin.poses[name]) out.push(`${r.id}: offset for unknown pose ${name}`);
   }
   for (const s of r.springs) if (!seen.has(s.bone)) out.push(`${r.id}: spring on missing bone ${s.bone}`);
   for (const name of REQUIRED_CLIPS) if (!r.clips[name]) out.push(`${r.id}: clip ${name} missing`);

@@ -98,7 +98,10 @@ export function buildSkin(rig: RigData, maxStrip = 1400, pose?: string): SkinMes
   if (!sk) return null;
   // Each key pose has its own picture (and box) on the same regions.
   const part = pose && pose !== 'rest' ? (sk.poses[pose] ?? sk.part) : sk.part;
-  const [bx, by, bw, bh] = rig.parts[part]!.box;
+  // A drawing stored moved to fit the canvas (a wingbeat taller than the canvas) is put back where it belongs (`offsets`).
+  const [ox, oy] = (pose && sk.offsets[pose]) || [0, 0];
+  const box = rig.parts[part]!.box;
+  const [bx, by, bw, bh] = [box[0] + ox, box[1] + oy, box[2], box[3]];
   const [cols, rows] = sk.grid;
   const n = (cols + 1) * (rows + 1);
   const rest = new Float32Array(n * 2);

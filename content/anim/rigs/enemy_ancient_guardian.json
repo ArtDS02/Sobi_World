@@ -16,7 +16,7 @@
     "skin_hurt": { "img": "rig_enemy_ancient_guardian_skin_hurt", "box": [-195, -380, 390, 383] },
     "skin_ko": { "img": "rig_enemy_ancient_guardian_skin_ko", "box": [-207, -319, 414, 322] },
     "skin_victory": { "img": "rig_enemy_ancient_guardian_skin_victory", "box": [-193, -402, 386, 405] },
-    "skin_windup": { "img": "rig_enemy_ancient_guardian_skin_windup", "box": [-191, -311, 382, 314] }
+    "skin_windup": { "img": "rig_enemy_ancient_guardian_skin_windup", "box": [-208, -412, 417, 415] }
   },
   "bones": [
     { "id": "root", "parent": null, "at": [0, 0] },

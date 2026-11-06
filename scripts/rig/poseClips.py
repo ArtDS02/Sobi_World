@@ -110,3 +110,36 @@ CLIPS["g_slam"]["faces"]["pose"] = [[0, "rest"], [300, "cast"], [600, "attack"],
 # Creatures with an approved windup drawing (cb_<art>_windup; pilot batch rig-02-windup): the plain attack winds up on it.
 # Skill gestures keep their own anticipation for now (one drawing per moment is checked against its picture first).
 WINDUP_CLIPS = {"attack": strike("attack", 260, 340, 560, 780, 980, drawn_windup=True)}
+
+
+def wave(base, amp, peak, cycles=1, length=560, step=35):
+    """Keys of a smooth cosine over one loop: `base + amp` at time `peak`, `cycles` periods per loop, ends where it starts."""
+    import math
+    keys = []
+    for k in range(length // step + 1):
+        tt = k * step
+        keys.append([tt, round(base + amp * math.cos(2 * math.pi * cycles * (tt - peak) / length), 3), "inOut"])
+    return keys
+
+
+# The four holds of a drawn cycle (drawing 1, 2, 3, 2) are centred at 70, 210, 350 and 490 ms.
+def drawn_move(way):
+    """A move cycle on three approved move drawings (batch rig-03-move): 1 → 2 → 3 → 2. The drawings carry the stride / wingbeat /
+    tail sweep; the grid keeps the body moving smoothly between them so a hold never stands still: a flier rises when it takes off
+    and bobs with its wingbeat (lowest with the wings up, highest with them down), a swimmer sways against its tail, a walker dips on
+    each step and rises on the passing frame with its feet planted. The whole creature (`root`) moves for fliers and swimmers, so
+    the band that keeps feet on the ground moves with it."""
+    if way == "fly":
+        tracks = {"root": {"y": wave(-30, 7, 70), "rot": wave(0, 1, 350)}}
+    elif way == "swim":
+        tracks = {"root": {"y": wave(0, 4, 70), "rot": wave(0, 2.5, 70)}}
+    else:
+        tracks = {"body": {"y": wave(0, 3, 70, cycles=2), "sy": wave(1, -0.012, 70, cycles=2), "sx": wave(1, 0.01, 70, cycles=2),
+                           "rot": [[k[0], round(2 + 1 * (k[1] / 3), 3), "inOut"] for k in wave(0, 3, 210)]}}
+    c = clip(560, tracks, [[0, "move1"], [140, "move2"], [280, "move3"], [420, "move2"]], loop=True, life=0.8)
+    c["poseFade"] = 50
+    return c
+
+
+# Way of moving -> the move clip on its drawings.
+MOVE_CLIPS = {way: drawn_move(way) for way in ("walk", "fly", "swim")}

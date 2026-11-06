@@ -6,5 +6,6 @@ export { FALLBACK, Performer, type Frame, type Want } from './performer';
 export { RIGS, rigImages, rigOf } from './rigs';
 export type { BodyPlan, ClipData, RigData } from '../../../content/schemas/anim/rig';
 export { buildSkin, deformSkin, type SkinMesh } from './skin';
+export { fadeWeight, poseFadeMs } from './poseFade';
 export { solve, waveBend, type Drawn, type DrawnChain, type DrawnPart, type World } from './skeleton';
 export { warpPairs, warpTime, type ActionTiming } from './warp';

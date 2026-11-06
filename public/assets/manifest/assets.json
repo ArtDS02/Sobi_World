@@ -3922,6 +3922,21 @@
       "asset": "props/combat/cb_fish_betta_victory.png"
     },
     {
+      "id": "cb_fish_betta_move1",
+      "status": "production",
+      "asset": "props/combat/cb_fish_betta_move1.png"
+    },
+    {
+      "id": "cb_fish_betta_move2",
+      "status": "production",
+      "asset": "props/combat/cb_fish_betta_move2.png"
+    },
+    {
+      "id": "cb_fish_betta_move3",
+      "status": "production",
+      "asset": "props/combat/cb_fish_betta_move3.png"
+    },
+    {
       "id": "cb_enemy_mossling_idle",
       "status": "production",
       "asset": "props/combat/cb_enemy_mossling_idle.png"
@@ -4250,6 +4265,21 @@
       "id": "cb_enemy_cliff_hawk_victory",
       "status": "production",
       "asset": "props/combat/cb_enemy_cliff_hawk_victory.png"
+    },
+    {
+      "id": "cb_enemy_cliff_hawk_move1",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_cliff_hawk_move1.png"
+    },
+    {
+      "id": "cb_enemy_cliff_hawk_move2",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_cliff_hawk_move2.png"
+    },
+    {
+      "id": "cb_enemy_cliff_hawk_move3",
+      "status": "production",
+      "asset": "props/combat/cb_enemy_cliff_hawk_move3.png"
     },
     {
       "id": "cb_enemy_lava_newt_idle",
@@ -9385,6 +9415,36 @@
       "id": "rig_enemy_ancient_guardian_skin_windup",
       "status": "production",
       "asset": "props/rig/enemy_ancient_guardian/rig_enemy_ancient_guardian_skin_windup.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_skin_move1",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_skin_move1.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_skin_move2",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_skin_move2.png"
+    },
+    {
+      "id": "rig_enemy_cliff_hawk_skin_move3",
+      "status": "production",
+      "asset": "props/rig/enemy_cliff_hawk/rig_enemy_cliff_hawk_skin_move3.png"
+    },
+    {
+      "id": "rig_fish_betta_skin_move1",
+      "status": "production",
+      "asset": "props/rig/fish_betta/rig_fish_betta_skin_move1.png"
+    },
+    {
+      "id": "rig_fish_betta_skin_move2",
+      "status": "production",
+      "asset": "props/rig/fish_betta/rig_fish_betta_skin_move2.png"
+    },
+    {
+      "id": "rig_fish_betta_skin_move3",
+      "status": "production",
+      "asset": "props/rig/fish_betta/rig_fish_betta_skin_move3.png"
     }
   ],
   "buildings": [

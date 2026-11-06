@@ -1,9 +1,10 @@
 // The skin of a puppet on screen (decision 050): the creature's approved picture on the grid systems/animation/skin.ts bends — one
-// grid per key pose (pose to pose, 2026-11-06 (5)): the clip says which pose shows, the new one fades in over the old (`poseFade`).
+// grid per key pose (pose to pose, 2026-11-06 (5)): the clip says which pose shows, the new one fades in over the old, eased, longer
+// on the first change after a clip starts (systems/animation/poseFade.ts).
 // A grid is drawn as Ropes, one per band of rows (Phaser's rope batch holds 1536 vertices); their vertices are written here every
 // frame in strip order and Phaser never recomputes them (no setDirty). Without WebGL the pose's picture stands still.
 import * as Phaser from 'phaser';
-import { buildSkin, deformSkin, type Frame, type RigData, type SkinMesh } from '../../systems/animation';
+import { buildSkin, deformSkin, fadeWeight, poseFadeMs, type Frame, type RigData, type SkinMesh } from '../../systems/animation';
 
 interface PoseView {
   group: Phaser.GameObjects.Container;
@@ -18,6 +19,9 @@ export class SkinView {
   private shown = '';
   private previous = '';
   private since = 0;
+  private fade = 0;
+  private clip = '';
+  private clipSince = 0;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -87,13 +91,17 @@ export class SkinView {
   /** Bends the pose the frame shows (and the one it fades from) and tints it (null = as drawn). `now` in ms of the puppet's clock. */
   draw(f: Frame, tint: number | null, now: number) {
     const pose = this.rig.skin!.poses[f.pose] ? f.pose : 'rest';
+    if (f.clip !== this.clip) {
+      this.clip = f.clip;
+      this.clipSince = now;
+    }
     if (pose !== this.shown) {
       this.previous = this.shown;
       this.shown = pose;
       this.since = now;
+      this.fade = poseFadeMs(this.rig, f.clip, now - this.clipSince);
     }
-    const fade = this.rig.skin!.poseFade;
-    const k = fade > 0 && this.previous ? Math.min(1, (now - this.since) / fade) : 1;
+    const k = this.previous ? fadeWeight(now - this.since, this.fade) : 1;
     const cur = this.view(pose);
     for (const [name, v] of this.views) v.group.setVisible(name === pose || (k < 1 && name === this.previous));
     if (k < 1) this.bend(this.view(this.previous), f, tint);

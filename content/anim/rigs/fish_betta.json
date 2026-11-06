@@ -15,6 +15,9 @@
     "skin_cast": { "img": "rig_fish_betta_skin_cast", "box": [-203, -422, 406, 425] },
     "skin_hurt": { "img": "rig_fish_betta_skin_hurt", "box": [-226, -367, 450.5, 370] },
     "skin_ko": { "img": "rig_fish_betta_skin_ko", "box": [-229, -333, 458, 336] },
+    "skin_move1": { "img": "rig_fish_betta_skin_move1", "box": [-231, -370, 440, 359] },
+    "skin_move2": { "img": "rig_fish_betta_skin_move2", "box": [-256, -351, 466, 360] },
+    "skin_move3": { "img": "rig_fish_betta_skin_move3", "box": [-241, -351, 450, 368] },
     "skin_victory": { "img": "rig_fish_betta_skin_victory", "box": [-218, -424, 436, 426.5] }
   },
   "bones": [
@@ -60,8 +63,9 @@
         "soft": 18.7
       }
     ],
-    "poses": { "attack": "skin_attack", "cast": "skin_cast", "hurt": "skin_hurt", "victory": "skin_victory", "ko": "skin_ko" },
-    "poseFade": 70
+    "poses": { "attack": "skin_attack", "cast": "skin_cast", "hurt": "skin_hurt", "victory": "skin_victory", "ko": "skin_ko", "move1": "skin_move1", "move2": "skin_move2", "move3": "skin_move3" },
+    "poseFade": 70,
+    "offsets": {}
   },
   "springs": [
     { "bone": "head", "stiff": 170, "damp": 11, "gain": 0.45, "gainY": 0.3, "max": 7 }
@@ -114,16 +118,51 @@
       "fade": 100,
       "marks": {},
       "tracks": {
-        "body": {
-          "y": [[0, 0], [140, -12, "out"], [280, 0, "in"], [420, -12, "out"], [560, 0, "in"]],
-          "sy": [[0, 0.95], [140, 1.04], [280, 0.95], [420, 1.04], [560, 0.95]],
-          "sx": [[0, 1.04], [140, 0.97], [280, 1.04], [420, 0.97], [560, 1.04]],
-          "rot": [[0, 3]]
+        "root": {
+          "y": [
+            [0, 2.828, "inOut"],
+            [35, 3.696, "inOut"],
+            [70, 4, "inOut"],
+            [105, 3.696, "inOut"],
+            [140, 2.828, "inOut"],
+            [175, 1.531, "inOut"],
+            [210, 0, "inOut"],
+            [245, -1.531, "inOut"],
+            [280, -2.828, "inOut"],
+            [315, -3.696, "inOut"],
+            [350, -4, "inOut"],
+            [385, -3.696, "inOut"],
+            [420, -2.828, "inOut"],
+            [455, -1.531, "inOut"],
+            [490, 0, "inOut"],
+            [525, 1.531, "inOut"],
+            [560, 2.828, "inOut"]
+          ],
+          "rot": [
+            [0, 1.768, "inOut"],
+            [35, 2.31, "inOut"],
+            [70, 2.5, "inOut"],
+            [105, 2.31, "inOut"],
+            [140, 1.768, "inOut"],
+            [175, 0.957, "inOut"],
+            [210, 0, "inOut"],
+            [245, -0.957, "inOut"],
+            [280, -1.768, "inOut"],
+            [315, -2.31, "inOut"],
+            [350, -2.5, "inOut"],
+            [385, -2.31, "inOut"],
+            [420, -1.768, "inOut"],
+            [455, -0.957, "inOut"],
+            [490, 0, "inOut"],
+            [525, 0.957, "inOut"],
+            [560, 1.768, "inOut"]
+          ]
         }
       },
-      "faces": { "pose": [[0, "rest"]] },
+      "faces": { "pose": [[0, "move1"], [140, "move2"], [280, "move3"], [420, "move2"]] },
       "life": 0.8,
-      "waves": {}
+      "waves": {},
+      "poseFade": 50
     },
     "attack": {
       "len": 980,

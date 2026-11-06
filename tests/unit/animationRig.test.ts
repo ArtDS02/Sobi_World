@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import manifest from '../../public/assets/manifest/assets.json';
 import { REQUIRED_CLIPS, rigProblems, type ClipData, type RigData } from '../../content/schemas/anim/rig';
 import { buildSkin, clipTime, deformSkin, Performer, RIGS, sampleFaces, sampleTrack, solve, waveBend, type Frame, type World } from '../../src/systems/animation';
-import { warpTime } from '../../src/systems/animation';
+import { fadeWeight, poseFadeMs, warpTime } from '../../src/systems/animation';
 
 const rigs = [...RIGS.values()];
 const clip = (len: number, extra: Partial<ClipData> = {}): ClipData => ({ len, loop: false, fade: 120, marks: {}, tracks: {}, faces: {}, life: 1, waves: {}, ...extra });
@@ -23,6 +23,18 @@ const partAt = (f: Frame, bone: string) => f.worlds.get(bone);
 const whole = (f: Frame) => JSON.stringify({ drawn: f.drawn, worlds: [...f.worlds], chains: [...f.chains] });
 
 describe('clips and warping', () => {
+  it('a change of drawing eases in, and takes the own fade of the clip right after it starts', () => {
+    expect(fadeWeight(0, 60)).toBe(0);
+    expect(fadeWeight(30, 60)).toBeCloseTo(0.5);
+    expect(fadeWeight(10, 60)).toBeLessThan(10 / 60); // slow start
+    expect(fadeWeight(50, 60)).toBeGreaterThan(50 / 60); // soft landing
+    expect(fadeWeight(5, 0)).toBe(1);
+    const hawk = RIGS.get('enemy_cliff_hawk')!;
+    expect(poseFadeMs(hawk, 'move', 0)).toBe(hawk.clips.move!.fade); // stand → fly: the clip's crossfade
+    expect(poseFadeMs(hawk, 'move', 300)).toBe(hawk.clips.move!.poseFade); // inside the wingbeat: short
+    expect(poseFadeMs(hawk, 'attack', 600)).toBe(hawk.skin!.poseFade);
+  });
+
   it('a track eases between keys and holds outside them; loops wrap, one-shots hold their end', () => {
     expect(sampleTrack([[0, 0], [100, 10, 'linear'], [200, 0]], 50)).toBeCloseTo(5);
     expect(sampleTrack([[100, 4], [200, 8]], 0)).toBe(4);
@@ -104,6 +116,30 @@ describe('every rig (content/anim/rigs)', () => {
       const a = r.clips.attack!;
       expect(poseAt(r, 'attack', a.marks.windup!), `${r.id} no windup drawing: rest until the strike`).toBe('rest');
     }
+  });
+
+  it('a creature with approved move drawings cycles them 1 → 2 → 3 → 2 with a short eased fade and a body that keeps moving; the others move on their rest drawing', () => {
+    const moving = posed.filter((r) => r.skin!.poses.move1 && r.skin!.poses.move2 && r.skin!.poses.move3);
+    expect(moving.map((r) => r.id).sort()).toEqual(['enemy_cliff_hawk', 'fish_betta']); // pilot batch rig-03-move
+    for (const r of moving) {
+      const m = r.clips.move!;
+      expect(m.loop, `${r.id} move loops`).toBe(true);
+      const q = m.len / 4;
+      expect([0, q, 2 * q, 3 * q].map((t) => poseAt(r, 'move', t + 10)), `${r.id} move cycle`).toEqual(['move1', 'move2', 'move3', 'move2']);
+      // A drawing holds a quarter of the loop: the fade between two of them stays under half of it, and the body never stands still.
+      expect(m.poseFade!, `${r.id} move fade`).toBeLessThanOrEqual(q / 2);
+      const moving = (bone: string, ch: 'y' | 'rot') => { const k = m.tracks[bone]?.[ch]; return k ? Math.abs(sampleTrack(k, 10) - sampleTrack(k, q / 2)) : 0; };
+      expect(Math.max(moving('root', 'y'), moving('body', 'y'), moving('root', 'rot'), moving('body', 'rot')), `${r.id} moves during a hold`).toBeGreaterThan(0.3);
+    }
+    for (const r of posed.filter((x) => !moving.includes(x))) expect(poseAt(r, 'move', 10), `${r.id} move`).toBe('rest');
+  });
+
+  it('a drawing stored shifted to fit the canvas is put back by its offset', () => {
+    const hawk = RIGS.get('enemy_cliff_hawk')!;
+    const [ox, oy] = hawk.skin!.offsets.move3!;
+    const a = buildSkin(hawk, 1400, 'move3')!;
+    const box = hawk.parts[hawk.skin!.poses.move3!]!.box;
+    expect([a.rest[0], a.rest[1]]).toEqual([box[0] + ox, box[1] + oy]);
   });
 
   it('a strike is prepared: squash and lean back before the release, the stretch on it', () => {

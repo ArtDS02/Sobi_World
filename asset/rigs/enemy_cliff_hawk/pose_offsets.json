@@ -1,0 +1,6 @@
+{
+  "_note": "canvas px that put each move drawing back where it belongs: they were stored shifted (-15, +16 / -33 / -82) so a wingbeat fits the 512 canvas with the head on the idle head (batch rig-03-move)",
+  "move1": [15, -16],
+  "move2": [15, 33],
+  "move3": [15, 82]
+}

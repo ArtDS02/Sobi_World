@@ -22,11 +22,13 @@ import numpy as np
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).parent))
-from poseClips import CLIPS, WINDUP_CLIPS  # noqa: E402
+from poseClips import CLIPS, MOVE_CLIPS, WINDUP_CLIPS  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 POSES = ["attack", "cast", "hurt", "victory", "ko"]
-OPTIONAL_POSES = ["windup"]  # extra approved drawings some creatures have (pilot batch rig-02-windup)
+OPTIONAL_POSES = ["windup", "move1", "move2", "move3"]  # extra approved drawings some have (batches rig-02-windup, rig-03-move)
+# How a creature with move drawings moves (picks its move clip); the rest walk (decision 050 (5), batch rig-03-move).
+LOCOMOTION = {"enemy_cliff_hawk": "fly", "enemy_gale_sparrow": "fly", "fish_betta": "swim", "fish_pufferfish": "swim"}
 RES = 2
 GROUNDED = {"quadruped", "heavy", "biped", "small", "flyer"}
 
@@ -64,7 +66,12 @@ def build(art: str) -> None:
     poses = POSES + [p for p in OPTIONAL_POSES if src(p).exists()]
     for p in poses:
         canvas(Image.open(src(p)).convert("RGBA"), feet).save(layers / f"skin_{p}.png")
+    # Drawings stored shifted to fit the canvas, with the canvas px that put them back (written when they were placed).
+    off_file = ROOT / "asset/rigs" / art / "pose_offsets.json"
+    offsets = {k: v for k, v in json.loads(off_file.read_text(encoding="utf-8")).items() if k in poses} if off_file.exists() else {}
     clips = {**CLIPS, **(WINDUP_CLIPS if "windup" in poses else {})}
+    if all(f"move{k}" in poses for k in (1, 2, 3)):
+        clips["move"] = MOVE_CLIPS[LOCOMOTION.get(art, "walk")]
 
     c = lambda x, y: [round(x - 256, 1), round(y - feet, 1)]  # noqa: E731
     eyes = eyes_of(art)
@@ -103,7 +110,7 @@ def build(art: str) -> None:
         ],
         "chains": [],
         "skin": {"part": "skin", "grid": [32, 28], "soft": 12, "z": 0, "regions": regions,
-                 "poses": {p: f"skin_{p}" for p in poses}, "poseFade": 70},
+                 "poses": {p: f"skin_{p}" for p in poses}, "poseFade": 70, "offsets": offsets},
         "springs": [{"bone": "head", "stiff": 170, "damp": 11, "gain": 0.45, "gainY": 0.3, "max": 7}],
         "clips": clips,
         "anchors": {"mouth": "mouth", "tail": "tail"},

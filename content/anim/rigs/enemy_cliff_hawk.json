@@ -15,6 +15,9 @@
     "skin_cast": { "img": "rig_enemy_cliff_hawk_skin_cast", "box": [-207, -447, 413.5, 450] },
     "skin_hurt": { "img": "rig_enemy_cliff_hawk_skin_hurt", "box": [-225, -355, 449.5, 358] },
     "skin_ko": { "img": "rig_enemy_cliff_hawk_skin_ko", "box": [-192, -315, 384, 318] },
+    "skin_move1": { "img": "rig_enemy_cliff_hawk_skin_move1", "box": [-224, -468, 402.5, 479.5] },
+    "skin_move2": { "img": "rig_enemy_cliff_hawk_skin_move2", "box": [-241.5, -338.5, 494, 269.5] },
+    "skin_move3": { "img": "rig_enemy_cliff_hawk_skin_move3", "box": [-252.5, -391, 442.5, 404.5] },
     "skin_victory": { "img": "rig_enemy_cliff_hawk_skin_victory", "box": [-229, -443, 458, 446] }
   },
   "bones": [
@@ -61,8 +64,9 @@
         "soft": 17.3
       }
     ],
-    "poses": { "attack": "skin_attack", "cast": "skin_cast", "hurt": "skin_hurt", "victory": "skin_victory", "ko": "skin_ko" },
-    "poseFade": 70
+    "poses": { "attack": "skin_attack", "cast": "skin_cast", "hurt": "skin_hurt", "victory": "skin_victory", "ko": "skin_ko", "move1": "skin_move1", "move2": "skin_move2", "move3": "skin_move3" },
+    "poseFade": 70,
+    "offsets": { "move1": [15, -16], "move2": [15, 33], "move3": [15, 82] }
   },
   "springs": [
     { "bone": "head", "stiff": 170, "damp": 11, "gain": 0.45, "gainY": 0.3, "max": 7 }
@@ -115,16 +119,51 @@
       "fade": 100,
       "marks": {},
       "tracks": {
-        "body": {
-          "y": [[0, 0], [140, -12, "out"], [280, 0, "in"], [420, -12, "out"], [560, 0, "in"]],
-          "sy": [[0, 0.95], [140, 1.04], [280, 0.95], [420, 1.04], [560, 0.95]],
-          "sx": [[0, 1.04], [140, 0.97], [280, 1.04], [420, 0.97], [560, 1.04]],
-          "rot": [[0, 3]]
+        "root": {
+          "y": [
+            [0, -25.05, "inOut"],
+            [35, -23.533, "inOut"],
+            [70, -23, "inOut"],
+            [105, -23.533, "inOut"],
+            [140, -25.05, "inOut"],
+            [175, -27.321, "inOut"],
+            [210, -30, "inOut"],
+            [245, -32.679, "inOut"],
+            [280, -34.95, "inOut"],
+            [315, -36.467, "inOut"],
+            [350, -37, "inOut"],
+            [385, -36.467, "inOut"],
+            [420, -34.95, "inOut"],
+            [455, -32.679, "inOut"],
+            [490, -30, "inOut"],
+            [525, -27.321, "inOut"],
+            [560, -25.05, "inOut"]
+          ],
+          "rot": [
+            [0, -0.707, "inOut"],
+            [35, -0.924, "inOut"],
+            [70, -1, "inOut"],
+            [105, -0.924, "inOut"],
+            [140, -0.707, "inOut"],
+            [175, -0.383, "inOut"],
+            [210, 0, "inOut"],
+            [245, 0.383, "inOut"],
+            [280, 0.707, "inOut"],
+            [315, 0.924, "inOut"],
+            [350, 1, "inOut"],
+            [385, 0.924, "inOut"],
+            [420, 0.707, "inOut"],
+            [455, 0.383, "inOut"],
+            [490, 0, "inOut"],
+            [525, -0.383, "inOut"],
+            [560, -0.707, "inOut"]
+          ]
         }
       },
-      "faces": { "pose": [[0, "rest"]] },
+      "faces": { "pose": [[0, "move1"], [140, "move2"], [280, "move3"], [420, "move2"]] },
       "life": 0.8,
-      "waves": {}
+      "waves": {},
+      "poseFade": 50
     },
     "attack": {
       "len": 980,
