@@ -2,9 +2,11 @@
 // The bird rests (hovering in place) for a while, now and then flies a smooth curve to a random spot over the island or back
 // to its perch, and when a caterpillar shows up on a flower it goes and catches them one by one. A caterpillar appears now
 // and then on a growing flower of the tier on screen. With reduced motion the bird stays still at its perch and no
-// caterpillar appears.
+// caterpillar appears. With its drawn wing frames (decision 050 (5)) the wings beat in pictures, a second image dissolving
+// the next frame in; without them the picture squashes a little for a beat.
 import * as Phaser from 'phaser';
-import { CLOUD_DRESSING_ART } from '../logic/art';
+import { loopFrameAt } from '../../../systems/animation/poseFade';
+import { CLOUD_BIRD_WINGS, CLOUD_DRESSING_ART } from '../logic/art';
 import { FX_KEYS } from './cloudFx';
 import { CLOUD_VIEW } from './cloudView';
 
@@ -47,6 +49,8 @@ export class CloudBird {
   private restSince = 0;
   private nextPestAt = 0;
   private pests: Pest[] = [];
+  /** The next wing frame dissolving in over the bird (made once the drawn frames are loaded). */
+  private over: Img | null = null;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -60,7 +64,12 @@ export class CloudBird {
   }
 
   update(time: number, delta: number) {
-    if (this.d.reduceMotion()) return;
+    if (this.d.reduceMotion()) {
+      // Holding still it shows its plain picture.
+      if (this.img.texture.key !== CLOUD_DRESSING_ART.bird && this.scene.textures.exists(CLOUD_DRESSING_ART.bird)) this.img.setTexture(CLOUD_DRESSING_ART.bird);
+      this.over?.setVisible(false);
+      return;
+    }
     if (this.restUntil === 0) {
       this.restSince = time;
       this.restUntil = time + between(CLOUD_VIEW.bird.restMs);
@@ -93,7 +102,9 @@ export class CloudBird {
     const bob = Math.sin(time / 700) * 6;
     const flap = Math.sin(time / 110) > 0.92 ? 0.9 : 1;
     this.img.setPosition(this.rest.x + Math.sin(time / 1300) * 4, this.rest.y + bob).setAngle(Math.sin(time / 1500) * 3);
-    this.img.setScale(this.baseScale.x * Math.sign(this.img.scaleX || 1), this.baseScale.y * flap);
+    const drawn = this.wings(time, CLOUD_VIEW.bird.wingHz.rest);
+    this.img.setScale(this.baseScale.x * Math.sign(this.img.scaleX || 1), this.baseScale.y * (drawn ? 1 : flap));
+    this.syncOver();
     this.pos = { x: this.img.x, y: this.img.y };
     const pest = this.pests[0];
     // It waits a moment before going, so the caterpillar is seen first.
@@ -103,6 +114,25 @@ export class CloudBird {
     const a = CLOUD_VIEW.bird.area;
     const home = Math.random() < 0.35;
     this.flyTo(home ? { x: CLOUD_VIEW.bird.x, y: CLOUD_VIEW.bird.y } : { x: Phaser.Math.Between(a.x0, a.x1), y: Phaser.Math.Between(a.y0, a.y1) }, null);
+  }
+
+  /** Shows the wing frame of this moment (`hz` beats a second); false when the drawn frames are not (yet) loaded. */
+  private wings(time: number, hz: number): boolean {
+    const tex = this.scene.textures;
+    if (!CLOUD_BIRD_WINGS.every((k) => tex.exists(k))) return false;
+    const at = loopFrameAt((time / 1000) * hz * Math.PI * 2, 0.3);
+    if (this.img.texture.key !== CLOUD_BIRD_WINGS[at.from]) this.img.setTexture(CLOUD_BIRD_WINGS[at.from]);
+    this.over ??= this.scene.add.image(this.img.x, this.img.y, CLOUD_BIRD_WINGS[at.to]);
+    if (this.over.texture.key !== CLOUD_BIRD_WINGS[at.to]) this.over.setTexture(CLOUD_BIRD_WINGS[at.to]);
+    this.over.setAlpha(at.w).setVisible(at.w > 0 && at.from !== at.to);
+    return true;
+  }
+
+  /** The dissolving frame follows the bird exactly (place, turn, flip, size, depth). */
+  private syncOver() {
+    const o = this.over;
+    if (!o?.visible) return;
+    o.setPosition(this.img.x, this.img.y).setAngle(this.img.angle).setScale(this.img.scaleX, this.img.scaleY).setDepth(this.img.depth);
   }
 
   private flyTo(to: Point, pest: Pest | null) {
@@ -123,7 +153,9 @@ export class CloudBird {
     // The art faces left: flip when flying right; tilt into the flight; beat the wings fast.
     const facing = x > this.pos.x ? -1 : x < this.pos.x ? 1 : Math.sign(this.img.scaleX || 1);
     this.img.setPosition(x, y).setAngle(Phaser.Math.Clamp((y - this.pos.y) * 1.5, -12, 12));
-    this.img.setScale(this.baseScale.x * facing, this.baseScale.y * (Math.sin(time / 60) > 0 ? 0.88 : 1));
+    const drawn = this.wings(time, CLOUD_VIEW.bird.wingHz.fly);
+    this.img.setScale(this.baseScale.x * facing, this.baseScale.y * (drawn || Math.sin(time / 60) <= 0 ? 1 : 0.88));
+    this.syncOver();
     this.pos = { x, y };
     if (f.t < 1) return;
     this.flight = null;

@@ -1,0 +1,101 @@
+{
+  "batch": "rig-04-move",
+  "title": "Khung di chuyển — loài cùng kiểu với Ưng (bay) và Betta (bơi)",
+  "layout": "",
+  "note": "Decision 050 (5), mở rộng thử nghiệm rig-03-move cho loài cùng kiểu (chủ dự án chọn): Chim Sẻ Sấm bay như Ưng, Cá Nóc bơi như Betta. Mỗi sheet = MỘT sinh vật, 4 ô: (1) idle vẽ lại để đo cỡ (không dùng), (2)(3)(4) ba khung di chuyển, chạy 1 → 2 → 3 → 2. Ảnh 2 = tranh idle đã duyệt, ảnh 3 = sơ đồ ô và tư thế. Mọi pose QUAY PHẢI. Lưu kết quả S1.png, F1.png trong thư mục này.",
+  "style_refs": {
+    "creature": ".batch/adventure-02-maps/1_style_creature.png"
+  },
+  "sheets": [
+    {
+      "id": "S1",
+      "title": "Chim Sẻ Sấm (enemy_gale_sparrow): bay, đập cánh",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        1,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-04-move/enemy_gale_sparrow_idle.png",
+          "subject": "this exact creature (Chim Sẻ Sấm) in its IDLE pose"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-04-move/layout_fly.png",
+          "subject": "the layout of the four cells and the wing positions of one wingbeat: one creature per cell, same size, cell 1 as in image 2, cells 2 to 4 the three moving frames in this order"
+        }
+      ],
+      "rows": [
+        [
+          "IDLE pose — the same pose as image 2, standing on its feet",
+          "FLY frame 1 — flying to the right, feet tucked under the body, BOTH wings raised high above the back (the top of the wingbeat)",
+          "FLY frame 2 — flying, both wings stretched straight out to the sides, level with the body, feathers spread (the middle of the wingbeat)",
+          "FLY frame 3 — flying, both wings swept down below the body (the bottom of the wingbeat), tail feathers fanned"
+        ]
+      ],
+      "extra": [
+        "All four cells show the SAME single creature: Chim Sẻ Sấm, a round little grey-and-yellow songbird with a cream chest, a grey crest with yellow lightning-zigzag stripes and a small dark beak, the creature shown in image 2. Keep it IDENTICAL to image 2: the same colours, markings, crest, zigzag stripes, feather colours, beak, feet and body proportions, drawn at the SAME scale as in image 2.",
+        "Cells 2, 3 and 4 are the three in-between frames of ONE flying wingbeat cycle, played 2 → 3 → 4 → 3 in a loop: the creature stays in the SAME place, at the SAME size, with the SAME calm face as image 2 in all of them; ONLY the wings (and the tail feathers a little) change from cell to cell (a tiny bob of the body is fine). EVERY cell faces RIGHT (three-quarter view looking to the right, like image 2).",
+        "In image 2 one wing is already lifted as a greeting; in cells 2 to 4 BOTH wings move together as one wingbeat."
+      ],
+      "framing": "A character animation sheet: each cell holds the whole creature once, at the SAME size in every cell; in cell 1 it stands on an invisible ground line at the bottom of the cell, in cells 2, 3 and 4 it flies at exactly the same height, a little above that line, about 70 % of the cell height tall with its wings fully inside the cell. Clear silhouette. No props, effects, motion lines, dust, water, bubbles, stars or text around it.",
+      "trim": "uniform",
+      "anchor": "bottom-center",
+      "assets": [
+        "cal_enemy_gale_sparrow_idle_mv",
+        "cb_enemy_gale_sparrow_move1",
+        "cb_enemy_gale_sparrow_move2",
+        "cb_enemy_gale_sparrow_move3"
+      ]
+    },
+    {
+      "id": "F1",
+      "title": "Cá Nóc (fish_pufferfish): bơi, vẫy đuôi và vây",
+      "mode": "sheet",
+      "kind": "creature",
+      "style": "creature",
+      "grid": [
+        1,
+        4
+      ],
+      "refs": [
+        {
+          "type": "accepted",
+          "src": ".hints/rig-04-move/fish_pufferfish_idle.png",
+          "subject": "this exact creature (Cá Nóc) in its IDLE pose"
+        },
+        {
+          "type": "shape",
+          "src": ".hints/rig-04-move/layout_swim.png",
+          "subject": "the layout of the four cells and the tail positions of one swimming stroke: one creature per cell, same size, cell 1 as in image 2, cells 2 to 4 the three moving frames in this order"
+        }
+      ],
+      "rows": [
+        [
+          "IDLE pose — the same pose as image 2, floating",
+          "SWIM frame 1 — swimming to the right: the tail fin swept UP, the small side fin folded back against the body, the round body tilted very slightly",
+          "SWIM frame 2 — swimming, the body level, the tail fin straight and spread wide, the side fin open (the middle of the stroke)",
+          "SWIM frame 3 — swimming: the tail fin swept DOWN, the side fin pushed forward, the round body tilted very slightly the other way"
+        ]
+      ],
+      "extra": [
+        "All four cells show the SAME single creature: Cá Nóc, a round yellow-and-cream pufferfish with brown spots, small soft spines on its back and a small smile, the creature shown in image 2. Keep it IDENTICAL to image 2: the same colours, markings, spots, spines, fin shapes, eye, mouth and body proportions, drawn at the SAME scale as in image 2.",
+        "Cells 2, 3 and 4 are the three in-between frames of ONE swimming cycle, played 2 → 3 → 4 → 3 in a loop: the creature stays in the SAME place, at the SAME size, with the SAME calm face as image 2 in all of them; ONLY the tail fin and the small fins change from cell to cell (a tiny bob of the body is fine). EVERY cell faces RIGHT (three-quarter view looking to the right, like image 2).",
+        "The body stays round and the same size in every cell: it does NOT puff up or shrink."
+      ],
+      "framing": "A character animation sheet: each cell holds the whole creature once, at the SAME size in every cell; in cell 1 it floats as in image 2, in cells 2, 3 and 4 it floats at exactly the same height, a little above that line, about 70 % of the cell height tall with its fins fully inside the cell. Clear silhouette. No props, effects, motion lines, dust, water, bubbles, stars or text around it.",
+      "trim": "uniform",
+      "anchor": "bottom-center",
+      "assets": [
+        "cal_fish_pufferfish_idle_mv",
+        "cb_fish_pufferfish_move1",
+        "cb_fish_pufferfish_move2",
+        "cb_fish_pufferfish_move3"
+      ]
+    }
+  ]
+}

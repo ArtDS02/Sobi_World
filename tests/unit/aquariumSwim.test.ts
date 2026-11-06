@@ -2,7 +2,8 @@
 // next leg stays in the water, mostly level, near the top for a hungry fish and near the bottom for a sick one.
 import { describe, expect, it } from 'vitest';
 import { bodyWave, fleeFrom, nextLeg, scatterFrom, steer, type Swimmer } from '../../src/areas/aquarium/scene/fishSwim';
-import { bendAt, kindFrame, pulseAt, SPECIES_SWIM, SWIM_STYLES, swimStyleOf } from '../../src/areas/aquarium/scene/swimStyles';
+import { bendAt, kindFrame, pulseAt, SPECIES_SWIM, SWIM_FRAME_FADE, SWIM_STYLES, swimFrameAt, swimStyleOf } from '../../src/areas/aquarium/scene/swimStyles';
+import { existsSync, readFileSync } from 'node:fs';
 import { FISH_LIST } from '../../src/areas/aquarium/logic/config/content';
 import { AQUARIUM_VIEW } from '../../src/areas/aquarium/scene/aquariumView';
 import { mulberry32 } from '../../src/core/rng';
@@ -115,5 +116,49 @@ describe('a click on empty water teases the fish', () => {
     expect(near.boostUntil).toBe(1000 + t.ms);
     expect(far.tx).toBe(far.m.x);
     expect(far.restUntil).toBe(5000);
+  });
+});
+
+describe('drawn swim frames (decision 050 (5))', () => {
+  const TAU = Math.PI * 2;
+  it('one tail beat walks the loop 1 → 2 → 3 → 2, each frame holding before the next dissolves in', () => {
+    const shown = (t: number) => swimFrameAt(t * TAU);
+    expect([0.05, 0.3, 0.55, 0.8].map((t) => shown(t).from)).toEqual([0, 1, 2, 1]);
+    for (const t of [0.05, 0.3, 0.55, 0.8]) expect(shown(t).w).toBe(0);
+    // Late in a quarter the next frame comes in, eased and growing, and lands fully at the boundary.
+    expect(shown(0.24).to).toBe(1);
+    expect(shown(0.24).w).toBeGreaterThan(shown(0.22).w);
+    expect(shown(0.2499).w).toBeGreaterThan(0.99);
+    expect(shown(0.99).from).toBe(1);
+    expect(shown(0.99).to).toBe(0);
+    // The dissolve starts at the planned share of the quarter.
+    expect(shown(0.25 * (1 - SWIM_FRAME_FADE) - 0.001).w).toBe(0);
+  });
+
+  it('wraps cleanly over any number of beats and backwards phases', () => {
+    for (const t of [0.1, 0.4, 0.7]) {
+      const a = swimFrameAt(t * TAU + 7 * TAU);
+      const b = swimFrameAt(t * TAU);
+      expect([a.from, a.to]).toEqual([b.from, b.to]);
+      expect(a.w).toBeCloseTo(b.w, 6);
+      expect(swimFrameAt(t * TAU - 3 * TAU).from).toBe(swimFrameAt(t * TAU).from);
+    }
+  });
+
+  it('a species with drawn frames has all three, the same size, in the manifest', () => {
+    const rows = (JSON.parse(readFileSync('public/assets/manifest/assets.json', 'utf8')) as { props: { id: string; asset: string }[] }).props;
+    const ids = new Set(rows.map((r) => r.id));
+    const drawn = FISH_LIST.filter((f) => ids.has(`${f.art}_swim1`) || ids.has(`${f.art}_swim2`) || ids.has(`${f.art}_swim3`));
+    expect(drawn.map((f) => f.art)).toContain('fish_betta');
+    for (const f of drawn) {
+      for (const k of [1, 2, 3]) {
+        const row = rows.find((r) => r.id === `${f.art}_swim${k}`);
+        expect(row, `${f.art}_swim${k}`).toBeDefined();
+        expect(existsSync(`public/assets/${row!.asset}`)).toBe(true);
+      }
+      const size = (k: number) => readFileSync(`public/assets/props/${f.art}_swim${k}.png`).subarray(16, 24).toString('hex');
+      expect(size(2)).toBe(size(1));
+      expect(size(3)).toBe(size(1));
+    }
   });
 });

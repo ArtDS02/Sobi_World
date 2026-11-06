@@ -18,3 +18,21 @@ export function fadeWeight(elapsed: number, ms: number): number {
   const k = Math.min(1, Math.max(0, elapsed / ms));
   return k * k * (3 - 2 * k);
 }
+
+/** The order three drawn in-between frames loop in (the battle move clip, the Aquarium swim, the Cloud bird's wings): 1 → 2 → 3 → 2. */
+export const LOOP_FRAME_ORDER = [0, 1, 2, 1] as const;
+
+/** One of the three drawn loop frames (0 = move 1). */
+export type LoopFrame = (typeof LOOP_FRAME_ORDER)[number];
+
+/**
+ * Which of three looping drawn frames shows at `phase` (one cycle = 2π walks 1 → 2 → 3 → 2): `from` holds, then over the last
+ * `fade` share of its quarter `to` dissolves in over it with eased weight `w` (0 = only `from`).
+ */
+export function loopFrameAt(phase: number, fade: number): { from: LoopFrame; to: LoopFrame; w: number } {
+  const turn = phase / (Math.PI * 2);
+  const q = (turn - Math.floor(turn)) * 4;
+  const i = Math.min(3, Math.floor(q));
+  const k = fade <= 0 ? 0 : Math.min(1, Math.max(0, (q - i - (1 - fade)) / fade));
+  return { from: LOOP_FRAME_ORDER[i]!, to: LOOP_FRAME_ORDER[(i + 1) % 4]!, w: k * k * (3 - 2 * k) };
+}

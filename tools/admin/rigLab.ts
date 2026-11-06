@@ -111,7 +111,9 @@ class RigLabScene extends Phaser.Scene {
       const len = clip ? clip.len / rig.feel.tempo : 1000;
       const t = clip?.loop ? this.clock - this.startedAt : (this.clock - this.startedAt) % (len + 700);
       const action = clip?.loop || t <= len + 80 ? lab.action : 'idle';
-      const f = p.update(this.clock, { action, key: `${lab.take}:${Math.floor((this.clock - this.startedAt) / (len + 700))}` }, { x, y, scale, mirrored: lab.mirrored, depth: 100 + i });
+      // A looping clip keeps one key for the whole take: a new key would restart it mid-cycle.
+      const round = clip?.loop ? 0 : Math.floor((this.clock - this.startedAt) / (len + 700));
+      const f = p.update(this.clock, { action, key: `${lab.take}:${round}` }, { x, y, scale, mirrored: lab.mirrored, depth: 100 + i });
       if (f) lines.push(`${id}: ${f.clip} ${Math.round(f.t)}ms`);
       if (f && lab.bones) this.drawBones(p, f.worlds);
       if (!lab.all) this.drawOld(id, W * 0.24, y, height);

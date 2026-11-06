@@ -16,6 +16,8 @@ export const CLOUD_NPC_ART = 'prop_npc_alchemist';
 export const CLOUD_BACKDROP_ART = 'bg_cloud';
 /** Scene dressing (decision 023): label planks, the tier banner and its arrows, the ambient bird. */
 export const CLOUD_DRESSING_ART = { plank: 'prop_sign_plank', banner: 'prop_title_banner', up: 'ui_btn_tier_up', down: 'ui_btn_tier_down', bird: 'prop_cloud_bird' } as const;
+/** The bird's drawn wing frames (decision 050 (5)): wings up, level, down; played 1 → 2 → 3 → 2. */
+export const CLOUD_BIRD_WINGS = ['prop_cloud_bird_fly1', 'prop_cloud_bird_fly2', 'prop_cloud_bird_fly3'] as const;
 
 /** Items the Cloud introduced: each has its own icon (`ui_item_*`). */
 export const CLOUD_ITEM_IDS = ITEM_IDS.filter((id) => ITEMS[id].category === 'FLOWER' || ITEMS[id].category === 'POTION' || id === 'item_pure_water' || FLOWER_LIST.some((f) => f.seedItem === id));

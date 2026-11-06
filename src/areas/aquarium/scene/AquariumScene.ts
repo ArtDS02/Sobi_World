@@ -121,6 +121,7 @@ export class AquariumScene extends Phaser.Scene {
       }
       this.props.retexture(key);
       for (const s of this.swimmers.values()) if (key === textureKey(FISH[s.species]?.art ?? '')) s.img.setTexture(key);
+      for (const s of this.swimmers.values()) s.img.useFramesOf(FISH[s.species]?.art ?? '');
     };
     this.textures.on(Phaser.Textures.Events.ADD, onTexture);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.textures.off(Phaser.Textures.Events.ADD, onTexture));
@@ -247,7 +248,7 @@ export class AquariumScene extends Phaser.Scene {
         const { x, y } = egg ? { x: egg.x, y: egg.y - 20 } : this.randomSpot(rng);
         if (egg && !this.deps.reduceMotion()) this.moments.hatch(egg.x, egg.y);
         // Plain bounds, not pixel-perfect: a flipped, scaled fish is hard to hit pixel by pixel.
-        const img = new FishBody(this, x, y, KEY(art, this.textures), v.depth.fish);
+        const img = new FishBody(this, x, y, KEY(art, this.textures), v.depth.fish, art);
         img.hit.on(Phaser.Input.Events.POINTER_DOWN, () => this.touch(f.id));
         const icon = this.add.text(x, y, '', { fontSize: '30px' }).setOrigin(0.5).setDepth(v.depth.badge - 2);
         s = new Swimmer(img, icon, rng, f.species);
@@ -257,6 +258,7 @@ export class AquariumScene extends Phaser.Scene {
       if (s.species !== f.species) {
         s.species = f.species;
         s.img.setTexture(KEY(art, this.textures));
+        s.img.useFramesOf(art);
       }
       s.mood = moodOf(f);
       s.hearts = f.hearts;

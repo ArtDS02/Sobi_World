@@ -3,6 +3,8 @@
 // porpoises in waves, a boxfish hovers on fluttering fins, a pufferfish now and then puffs up. Presentation only: the
 // numbers shape fishSwim.ts / fishBody.ts and are never state. Pure; unit-tested.
 
+import { LOOP_FRAME_ORDER, loopFrameAt } from '../../../systems/animation/poseFade';
+
 /** Where the body bends: the tail, the whole body (eel), only the tentacles, the wing tips, or not at all. */
 export type BendMode = 'tail' | 'body' | 'tentacles' | 'wing' | 'none';
 
@@ -125,6 +127,18 @@ export function bendAt(mode: BendMode, u: number, phase: number, amount: number)
     }
   }
 }
+
+/** The order the three drawn swim frames play in (decision 050 (5), as the battle move loop): 1 → 2 → 3 → 2. */
+export const SWIM_FRAME_ORDER = LOOP_FRAME_ORDER;
+
+/** Share of each frame's quarter of the beat spent dissolving into the next frame. */
+export const SWIM_FRAME_FADE = 0.3;
+
+/** Which drawn swim frame shows at a tail beat `phase` (one beat = 2π walks the whole loop); see loopFrameAt. */
+export const swimFrameAt = (phase: number, fade = SWIM_FRAME_FADE) => loopFrameAt(phase, fade);
+
+/** How much of the coded bend a fish with drawn swim frames keeps: the drawings already move its tail and fins. */
+export const DRAWN_BEND = 0.3;
 
 /** 0..1 through one pulse of `periodMs`, offset by `seed` so creatures of a kind do not pulse together. */
 export const pulseAt = (time: number, periodMs: number, seed: number): number => (((time + seed * periodMs) % periodMs) + periodMs) % periodMs / periodMs;

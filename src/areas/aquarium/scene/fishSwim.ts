@@ -209,7 +209,7 @@ export class Swimmer {
 
   /** Holds still where it is (reduced motion). */
   still() {
-    this.img.pose(this.m.x, this.m.y, this.facing === -1, 0, this.base, this.base, 0, 0, 'none');
+    this.img.pose(this.m.x, this.m.y, this.facing === -1, 0, this.base, this.base, 0, 0, 'none', false);
     this.icon.setPosition(this.m.x, this.m.y - this.img.displayHeight * 0.6);
   }
 }

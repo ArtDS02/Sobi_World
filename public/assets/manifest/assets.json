@@ -2281,6 +2281,21 @@
       "asset": "props/fish_betta.png"
     },
     {
+      "id": "fish_betta_swim1",
+      "status": "production",
+      "asset": "props/fish_betta_swim1.png"
+    },
+    {
+      "id": "fish_betta_swim2",
+      "status": "production",
+      "asset": "props/fish_betta_swim2.png"
+    },
+    {
+      "id": "fish_betta_swim3",
+      "status": "production",
+      "asset": "props/fish_betta_swim3.png"
+    },
+    {
       "id": "fish_lanternfish",
       "status": "production",
       "asset": "props/fish_lanternfish.png"
