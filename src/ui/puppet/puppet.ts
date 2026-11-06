@@ -1,9 +1,11 @@
 // A creature drawn as a puppet (decision 050): one Phaser image per part (one per face slot, its picture swapped), one Rope per chain
-// (tails, fins, tentacles bend along their points), all in a Container standing on the creature's feet. Every frame the performer
+// (tails, fins, tentacles bend along their points), or the creature's finished picture bent on a grid (skinView.ts) with only the face
+// slots on top; all in a Container standing on the creature's feet. Every frame the performer
 // (systems/animation) solves the body and this lays the parts where it says. Brightness, grey, glow use the Container's post-FX on
 // WebGL (no CSS filter); tint goes on each part. Shared by every Area: it knows nothing of battles.
 import * as Phaser from 'phaser';
-import { Performer, rigImages, type DrawnChain, type DrawnPart, type Frame, type RigData, type Want } from '../../systems/animation';
+import { SkinView } from './skinView';
+import { buildSkin, Performer, rigImages, type DrawnChain, type DrawnPart, type Frame, type RigData, type Want } from '../../systems/animation';
 
 /** Where and how the whole puppet stands this frame (screen px). */
 export interface PuppetPlace {
@@ -59,6 +61,7 @@ export class Puppet {
   private frame: Frame | null = null;
   private lastRoot: { x: number; y: number } | null = null;
   private ready = false;
+  private skin: SkinView | null = null;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -166,8 +169,25 @@ export class Puppet {
         }
       }
     }
-    // Depth order inside the container follows the draw list.
-    const order = f.drawn.map((d) => (d.kind === 'part' ? this.images.get(d.bone) : this.ropes.get(d.id))).filter((o): o is Phaser.GameObjects.Image => !!o);
+    if (this.rig.skin && !this.skin) {
+      this.skin = new SkinView(this.scene, this.rig, buildSkin(this.rig)!);
+      this.container.add(this.skin.object);
+    }
+    this.skin?.draw(f, tint);
+    const skinObj = this.skin?.object;
+    // Depth order inside the container follows the draw list (the skin at its own depth).
+    const order: Phaser.GameObjects.GameObject[] = [];
+    const skinZ = this.rig.skin?.z ?? 0;
+    let skinPlaced = !skinObj;
+    for (const d of f.drawn) {
+      if (!skinPlaced && d.z > skinZ) {
+        order.push(skinObj!);
+        skinPlaced = true;
+      }
+      const o = d.kind === 'part' ? this.images.get(d.bone) : this.ropes.get(d.id);
+      if (o) order.push(o);
+    }
+    if (!skinPlaced) order.push(skinObj!);
     order.forEach((o, i) => {
       if (this.container.getIndex(o) !== i) this.container.moveTo(o, i);
     });
@@ -221,8 +241,16 @@ export class Puppet {
     const parent = this.container.getWorldTransformMatrix();
     const local = new Phaser.GameObjects.Components.TransformMatrix();
     const world = new Phaser.GameObjects.Components.TransformMatrix();
+    if (this.skin) {
+      // A ghost of a skinned body is its picture at rest (the bend of one frame is not worth a copy of the grid).
+      const b = this.skin.restBox();
+      local.applyITRS(b.x, b.y, 0, b.scale, b.scale);
+      parent.multiply(local, world);
+      const d = world.decomposeMatrix();
+      out.push({ key: b.img, x: d.translateX, y: d.translateY, originX: 0.5, originY: 0.5, scaleX: d.scaleX, scaleY: d.scaleY, rotation: d.rotation, depth: this.container.depth });
+    }
     for (const obj of this.container.list) {
-      if (!(obj instanceof Phaser.GameObjects.Image) || !obj.visible) continue;
+      if (!(obj instanceof Phaser.GameObjects.Image) || !obj.visible || obj === this.skin?.object) continue;
       local.applyITRS(obj.x, obj.y, obj.rotation, obj.scaleX, obj.scaleY);
       parent.multiply(local, world);
       const d = world.decomposeMatrix();

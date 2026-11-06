@@ -16,6 +16,12 @@
 8. Trận: art id của chiến binh / quái **trùng** id rig → tự vẽ bằng puppet (`rigOf(art)`); không có rig → ảnh cũ như trước. Thử ở **Xưởng animation trận** (`#/battle-lab`).
 9. `npm run check` (test `animationRig.test.ts` kiểm mọi rig: đủ clip, đủ ảnh, mark đúng thứ tự, đủ bộ phận chuyển động, có fidget, có mặt).
 
+## 2b. Skin — mặc định cho sinh vật đã có ảnh duyệt (2026-11-06)
+1. `scripts/rig/skin.py` → thêm SPEC: ảnh duyệt, đường chân, mắt (tâm, bán kính, hộp lông mày; mắt gần trước), hộp miệng nghỉ + chỗ cho miệng há, lớp phủ cắt từ ảnh (mõm). Cần 2 sheet mặt Gemini (mắt + miệng nghỉ, các miệng) như B2/B3 của `rig-01-layers`.
+2. `scripts/rig/skinRigs.py` → khớp (px ảnh), dải (gốc ở mép gắn vào thân, hướng tới ngọn), vùng dưới → trên; vùng đầu / tai mở rộng ra phần trong suốt quanh nó (ô lưới trống cũng phải theo đầu, không thì xoay bị xén); tai / vây `soft` lớn (18–30).
+3. `npm run rig:skin <rig>` → `npm run rig:skin-rig <rig>` → `npm run rig:parts <rig>` → `npm run rig:snap <rig> <clip>` + `python scripts/rig/snap.py <rig> <clip> 0.7` (xem `art_inbox/.qa/rig_<rig>_<clip>.png`).
+4. Đọc dải khung: vết **xén thẳng** = vùng hẹp hơn phần chuyển động (mở rộng vùng / tăng `soft`); **gập lưới** = biên độ quá lớn (giảm `damp`).
+
 ## 3. Quy chuẩn asset (tóm tắt — đầy đủ ở `art_inbox/rig_README.md`)
 - Canvas 512 (layer PNG 1024 = ×2), quay phải, ba phần tư, đất y = 470 (940 ở 1024), tư thế nghỉ.
 - Vẽ đủ phần bị che; mép khớp kéo vào 15–20 px.

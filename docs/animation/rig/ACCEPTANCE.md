@@ -16,9 +16,10 @@ Trạng thái 2026-11-05 cho 4 prototype (`pig_boar`, `pig_turtle`, `fish_betta`
 | A7 | Idle không lặp máy móc: có fidget chen vào trong 20 s; chớp mắt có nhịp không đều, thỉnh thoảng chớp đôi | [T] | ✅ |
 | A8 | Mỗi loài khác tempo / trọng lượng (rùa chậm & nặng nhất, cá nhẹ nhất; chu kỳ đi của rùa dài hơn heo rừng) | [T] | ✅ |
 | A9 | Mặt diễn: đánh (mắt giận / nhắm khi chạm), bị đánh (><, miệng run), thắng (^^, cười), KO (xoắn) | [T] có faces + [L] | ✅ |
-| A10 | Không còn cảm giác "ảnh tĩnh di chuyển": xem dải 8 khung attack — chân / đầu / thân ở tư thế khác nhau từng khung | [L] | 🟡 |
+| A10 | Không còn cảm giác "ảnh tĩnh di chuyển": xem dải 8 khung attack — chân / đầu / thân ở tư thế khác nhau từng khung | [L] | ✅ trên layer vẽ tay (2026-11-06: dải attack Heo Rừng / Cá Betta, `g_slam` Heo Rùa, `ultimate` Bạch Tuộc); ⬜ chủ dự án chấm |
 | A11 | Chuyển trạng thái mượt: idle → attack → hurt → idle trong trận, không giật | [B] | 🟡 (đã chạy trong Xưởng trận; chưa playtest trận thật) |
-| A12 | Tỉ lệ & nét vẽ đạt chuẩn Sobi Farm | [O] | ⬜ chờ layer vẽ tay (`art_inbox/rig_*.md`) |
+| A12 | Tỉ lệ & nét vẽ đạt chuẩn Sobi Farm | [O] + [T] | 🟡 skin (2026-11-06): ở tư thế nghỉ trùng ảnh đã duyệt (test `skins`); chờ chủ dự án chấm lúc chuyển động |
+| A13 | Skin không rách: khớp giãn mềm, không xén thẳng ở tai / vây / đầu | [L] + `rig:snap` | ✅ attack, g_roar, move, ko, g_slam, ultimate của 3 chiến binh; 🟡 tuyệt kỹ bạch tuộc (xúc tu giơ cao) còn giãn nhẹ |
 
 ## B. Skill animation
 | # | Tiêu chí | Cách kiểm | Trạng thái |
@@ -49,6 +50,6 @@ Trạng thái 2026-11-05 cho 4 prototype (`pig_boar`, `pig_turtle`, `fish_betta`
 | D1 | Quy chuẩn asset rõ (`art_inbox/rig_README.md`) | ✅ |
 | D2 | Quy chuẩn clip rõ (`PIPELINE.md` §4) | ✅ |
 | D3 | Yêu cầu art cụ thể cho 4 prototype + ảnh guide | ✅ |
-| D4 | Script: `rig:parts`, `rig:fmt`, `rig:guide` | ✅ |
+| D4 | Script: `rig:parts`, `rig:fmt`, `rig:guide`, `rig:batch`, `rig:cut` | ✅ |
 | D5 | Màn kiểm tra trực quan (Xưởng rig) | ✅ |
-| D6 | Layer vẽ tay thay vào không đổi code / clip | ⬜ kiểm khi có layer đầu tiên |
+| D6 | Đổi nguồn art không đổi code / clip | ✅ cắt rời → skin: cùng id xương / clip; chỉ đo lại khớp và nhân hệ số biên độ (`skinRigs.py`) |

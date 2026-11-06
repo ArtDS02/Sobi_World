@@ -1,7 +1,7 @@
 """Gemini batch for the painted layers of the puppets (decision 050) and the step that puts them back on the rig.
 
   python scripts/rig/batch.py make            -> art_inbox/.batch/rig-01-layers/batch.json + hints (then: art.py prep rig-01-layers)
-  python scripts/rig/batch.py place <rig> [v] -> candidates (art.py cut) -> asset/rigs/<rig>/layers/<layer>.png (then: npm run rig:parts <rig>)
+  python scripts/rig/batch.py place <rig> [v] -> candidates (npm run rig:cut) -> asset/rigs/<rig>/layers/<layer>.png (then: npm run rig:parts <rig>)
 
 A sheet asks for the parts of ONE creature drawn apart ("exploded view", each part whole, nothing hidden), or for its eyes / mouths.
 Nobody has to line anything up by hand: `place` scales each cut part into the box its rig-proof part has in the 512 canvas (the
@@ -196,7 +196,12 @@ def make() -> None:
 def place(rig: str, variant: str) -> None:
     """Puts every cut part of `rig` into the box its rig-proof part has, as a full-canvas layer."""
     data = json.loads((ROOT / "content/anim/rigs" / f"{rig}.json").read_text(encoding="utf-8"))
-    boxes = {k: v["box"] for k, v in data["parts"].items()}
+    # Target = the rig-proof box, frozen once (rig:parts rewrites the rig's boxes from the painted layers).
+    frozen = ROOT / "asset/rigs" / rig / "proof_boxes.json"
+    if not frozen.exists():
+        frozen.write_text(json.dumps({k: v["box"] for k, v in data["parts"].items()}), encoding="utf-8", newline="\n")
+    boxes = json.loads(frozen.read_text(encoding="utf-8"))
+    ribbons = {c["part"] for c in data.get("chains", [])}
     cand = ART / ".candidates"
     out_dir = ROOT / "asset/rigs" / rig / "layers"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -218,8 +223,10 @@ def place(rig: str, variant: str) -> None:
             part = rgb
         x, y, w, h = boxes[layer]
         # Contain-fit into the proof's box: the joint (set in the rig) stays inside the part. Legs hang from their top, the rest centred.
+        # A chain picture is a ribbon the rope re-bends along its length anyway: it fills the box, so it keeps the proof's thickness.
         k = min(w * RES / part.width, h * RES / part.height)
-        part = part.resize((max(1, round(part.width * k)), max(1, round(part.height * k))), Image.LANCZOS)
+        size = (round(w * RES), round(h * RES)) if layer in ribbons else (round(part.width * k), round(part.height * k))
+        part = part.resize((max(1, size[0]), max(1, size[1])), Image.LANCZOS)
         bx, by = (x + ORIGIN[0]) * RES, (y + ORIGIN[1]) * RES
         px = round(bx + (w * RES - part.width) / 2)
         py = round(by if layer.startswith("leg") else by + (h * RES - part.height) / 2)

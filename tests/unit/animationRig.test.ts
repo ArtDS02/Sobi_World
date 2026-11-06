@@ -5,7 +5,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import manifest from '../../public/assets/manifest/assets.json';
 import { REQUIRED_CLIPS, rigProblems, type ClipData, type RigData } from '../../content/schemas/anim/rig';
-import { clipTime, Performer, RIGS, sampleTrack, warpTime, type Frame } from '../../src/systems/animation';
+import { buildSkin, clipTime, deformSkin, Performer, RIGS, sampleTrack, solve, waveBend, type Frame, type World } from '../../src/systems/animation';
+import { warpTime } from '../../src/systems/animation';
 
 const rigs = [...RIGS.values()];
 const clip = (len: number, extra: Partial<ClipData> = {}): ClipData => ({ len, loop: false, fade: 120, marks: {}, tracks: {}, faces: {}, life: 1, waves: {}, ...extra });
@@ -17,7 +18,9 @@ function run(p: Performer, from: number, to: number, action: string, timing?: (t
   return f!;
 }
 
-const partAt = (f: Frame, bone: string) => f.drawn.find((d) => d.kind === 'part' && d.bone === bone) as Extract<Frame['drawn'][number], { kind: 'part' }> | undefined;
+/** Where a bone is this frame (a skinned rig draws no picture on its body bones: the bone still moves the skin). */
+const partAt = (f: Frame, bone: string) => f.worlds.get(bone);
+const whole = (f: Frame) => JSON.stringify({ drawn: f.drawn, worlds: [...f.worlds], chains: [...f.chains] });
 
 describe('clips and warping', () => {
   it('a track eases between keys and holds outside them; loops wrap, one-shots hold their end', () => {
@@ -118,13 +121,13 @@ describe('the performer', () => {
   it('is deterministic: the same unit, the same calls, the same frames', () => {
     const a = run(new Performer(boar, 'u1'), 0, 4000, 'idle');
     const b = run(new Performer(boar, 'u1'), 0, 4000, 'idle');
-    expect(JSON.stringify(a.drawn)).toBe(JSON.stringify(b.drawn));
+    expect(whole(a)).toBe(whole(b));
   });
 
   it('two units of one species are never in step (own breath phase and blinks)', () => {
     const a = run(new Performer(boar, 'u1'), 0, 1500, 'idle');
     const b = run(new Performer(boar, 'u2'), 0, 1500, 'idle');
-    expect(JSON.stringify(a.drawn)).not.toBe(JSON.stringify(b.drawn));
+    expect(whole(a)).not.toBe(whole(b));
   });
 
   it('blinks on its own rhythm, and a long idle slips in a fidget', () => {
@@ -180,10 +183,52 @@ describe('the performer', () => {
 
   it('chains bend: an octopus arm is curled, not a straight stick', () => {
     const f = run(new Performer(RIGS.get('octopus')!, 'u7'), 0, 400, 'idle');
-    const arm = f.drawn.find((d) => d.kind === 'chain' && d.id === 'arm_f1');
-    expect(arm && arm.kind === 'chain').toBe(true);
-    if (arm?.kind !== 'chain') return;
-    const dir = (i: number) => Math.atan2(arm.points[i + 1]!.y - arm.points[i]!.y, arm.points[i + 1]!.x - arm.points[i]!.x);
-    expect(Math.abs(dir(arm.points.length - 2) - dir(0))).toBeGreaterThan(0.5);
+    const arm = f.chains.get('arm_f1')!;
+    expect(arm.length).toBeGreaterThan(3);
+    const dir = (i: number) => Math.atan2(arm[i + 1]!.y - arm[i]!.y, arm[i + 1]!.x - arm[i]!.x);
+    expect(Math.abs(dir(arm.length - 2) - dir(0))).toBeGreaterThan(0.5);
+  });
+});
+
+describe('skins (the accepted picture bent by the rig)', () => {
+  const skinned = rigs.filter((r) => r.skin);
+
+  it('every prototype is skinned, and each band of the grid fits one draw call', () => {
+    expect(skinned.map((r) => r.id).sort()).toEqual(['fish_betta', 'octopus', 'pig_boar', 'pig_turtle']);
+    for (const r of skinned) for (const s of buildSkin(r)!.strips) expect(s.length, r.id).toBeLessThanOrEqual(1536);
+  });
+
+  it('at rest the picture lies exactly as drawn (no point moved)', () => {
+    for (const r of skinned) {
+      const mesh = buildSkin(r)!;
+      const worlds = new Map<string, World>();
+      const chains = new Map<string, { x: number; y: number }[]>();
+      solve(r, new Map(), new Map(), (c, i) => waveBend(c, i, 0, { amp: 0, speed: 0, curl: c.curl }), worlds, chains);
+      const pos = deformSkin(mesh, worlds, chains, new Float32Array(mesh.rest.length));
+      let worst = 0;
+      for (let i = 0; i < pos.length; i++) worst = Math.max(worst, Math.abs(pos[i]! - mesh.rest[i]!));
+      expect(worst, r.id).toBeLessThan(0.01);
+    }
+  });
+
+  it('a turning head bends the face, not the feet', () => {
+    const boar = RIGS.get('pig_boar')!;
+    const mesh = buildSkin(boar)!;
+    const worlds = new Map<string, World>();
+    const chains = new Map<string, { x: number; y: number }[]>();
+    solve(boar, new Map([['head', { rot: 12, x: 0, y: 0, sx: 1, sy: 1 }]]), new Map(), () => 0, worlds, chains);
+    const pos = deformSkin(mesh, worlds, chains, new Float32Array(mesh.rest.length));
+    const moved = (x: number, y: number) => {
+      let best = 0;
+      let d = Infinity;
+      for (let i = 0; i < mesh.rest.length; i += 2) {
+        const e = Math.hypot(mesh.rest[i]! - x, mesh.rest[i + 1]! - y);
+        if (e < d) [d, best] = [e, i];
+      }
+      return Math.hypot(pos[best]! - mesh.rest[best]!, pos[best + 1]! - mesh.rest[best + 1]!);
+    };
+    const eyes = boar.bones.find((b) => b.id === 'eyes')!.at;
+    expect(moved(eyes[0], eyes[1])).toBeGreaterThan(5);
+    expect(moved(-80, -10)).toBeLessThan(0.5);
   });
 });

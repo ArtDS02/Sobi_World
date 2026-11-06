@@ -44,7 +44,8 @@ export type ChainBend = (c: ChainData, segment: number) => number;
 
 /**
  * Solves the rig at a local pose. `faces` picks the picture of each face slot (its rest picture otherwise). `root` places the whole
- * body (canvas px, deg). The world of every bone is written to `worlds` (by id) for the springs and the effects anchors.
+ * body (canvas px, deg). The world of every bone is written to `worlds` (by id) for the springs and the effects anchors, the points of
+ * every chain to `chains` (a skin bends along them, a chain without a picture draws nothing itself).
  */
 export function solve(
   rig: RigData,
@@ -52,8 +53,10 @@ export function solve(
   faces: ReadonlyMap<string, string>,
   bend: ChainBend,
   worlds: Map<string, World> = new Map(),
+  chains: Map<string, { x: number; y: number }[]> = new Map(),
 ): Drawn[] {
   worlds.clear();
+  chains.clear();
   const drawn: Drawn[] = [];
   const byId = new Map<string, BoneData>(rig.bones.map((b) => [b.id, b]));
   for (const b of rig.bones) {
@@ -104,7 +107,8 @@ export function solve(
     }
     worlds.set(c.id, { x: points[0]!.x, y: points[0]!.y, rot: dir, sx: l.sx, sy: l.sy });
     worlds.set(`${c.id}:tip`, { x, y, rot: dir, sx: 1, sy: 1 });
-    drawn.push({ kind: 'chain', id: c.id, part: c.part, points, z: c.z });
+    chains.set(c.id, points);
+    if (c.part) drawn.push({ kind: 'chain', id: c.id, part: c.part, points, z: c.z });
   }
   // Stable: equal depths keep the rig's order.
   return drawn.map((d, i) => ({ d, i })).sort((a, b) => a.d.z - b.d.z || a.i - b.i).map((e) => e.d);

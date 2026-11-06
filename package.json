@@ -54,7 +54,11 @@
     "rig:parts": "tsx scripts/rig/build-parts.ts",
     "rig:fmt": "tsx scripts/rig/fmt.ts",
     "rig:guide": "tsx scripts/rig/guide.ts",
-    "rig:batch": "python scripts/rig/batch.py"
+    "rig:batch": "python scripts/rig/batch.py",
+    "rig:cut": "python scripts/rig/sheetcut.py",
+    "rig:skin": "python scripts/rig/skin.py",
+    "rig:skin-rig": "python scripts/rig/skinRigs.py",
+    "rig:snap": "tsx scripts/rig/snap.ts"
   },
   "dependencies": {
     "@fontsource/baloo-2": "^5.3.0",

@@ -38,6 +38,8 @@ export const FALLBACK: Readonly<Record<string, string>> = {
 export interface Frame {
   drawn: Drawn[];
   worlds: ReadonlyMap<string, World>;
+  /** The points of every chain (root first). */
+  chains: ReadonlyMap<string, readonly { x: number; y: number }[]>;
   /** The clip playing and its time (ms) — for the lab and the tests. */
   clip: string;
   t: number;
@@ -60,6 +62,7 @@ export class Performer {
   private pose: LocalPose = new Map();
   private scratch: LocalPose = new Map();
   private worlds = new Map<string, World>();
+  private chains = new Map<string, { x: number; y: number }[]>();
   private springs = new Map<string, SpringState>();
   private idleSince = 0;
   private fidget: { name: string; at: number } | null = null;
@@ -149,8 +152,8 @@ export class Performer {
       const coil = this.pose.get(c.id)?.sy ?? 1;
       return waveBend(c, i, timeS, { amp: wave.amp * k, speed: wave.speed, phase: wave.phase, curl: (own?.curl ?? c.curl) * coil });
     };
-    const drawn = solve(this.rig, this.pose, faces, bend, this.worlds);
-    return { drawn, worlds: this.worlds, clip: cur.name, t };
+    const drawn = solve(this.rig, this.pose, faces, bend, this.worlds, this.chains);
+    return { drawn, worlds: this.worlds, chains: this.chains, clip: cur.name, t };
   }
 
   /** Feeds the root's motion (canvas px) to the springs: a dash or a knock-back of the whole body swings the ears too. */

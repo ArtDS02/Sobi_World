@@ -71,8 +71,8 @@ const chain = z.strictObject({
   id,
   parent: id,
   at: pt,
-  /** Picture drawn along the chain, its root at the left edge, its width along the chain. */
-  part: id,
+  /** Picture drawn along the chain, its root at the left edge, its width along the chain. None when the chain only bends a skin. */
+  part: id.optional(),
   /** Rest direction (deg, 0 = right, 90 = down) and length (px). */
   dir: z.number(),
   len: z.number().positive(),
@@ -83,6 +83,23 @@ const chain = z.strictObject({
   curl: z.number().default(0),
   /** How much more the tip bends than the root (1 = the same). */
   taper: z.number().default(1.6),
+  z: z.number().default(0),
+});
+
+/**
+ * A skin (decision 050, 2026-11-06): one finished picture of the whole creature laid on a grid that the bones and chains bend
+ * (linear blend skinning), instead of cut parts. Each region binds the grid points inside it to a bone or a chain; later regions lie
+ * on top of earlier ones and the borders blend over `soft` px, so the picture stretches at a joint instead of opening a seam.
+ */
+const skin = z.strictObject({
+  /** The picture (a key of `parts`; its box places it in the canvas). */
+  part: id,
+  /** Grid cells across and down. */
+  grid: z.tuple([z.number().int().min(2).max(64), z.number().int().min(2).max(64)]).default([32, 32]),
+  soft: z.number().positive().default(12),
+  /** A region may blend wider than the rest (`soft`): an ear that turns over the body behind it. */
+  regions: z.array(z.strictObject({ bind: id, poly: z.array(pt).min(3), soft: z.number().positive().optional() })).min(1),
+  /** Depth among the rig's parts (faces sit above it). */
   z: z.number().default(0),
 });
 
@@ -105,6 +122,7 @@ export const rigSchema = z.strictObject({
   parts: z.record(id, part),
   bones: z.array(bone).min(1),
   chains: z.array(chain).default([]),
+  skin: skin.optional(),
   springs: z.array(spring).default([]),
   clips: z.record(id, clipSchema),
   /** Named points of the body effects come out of (decision 050): `mouth`, `tail`… → a bone, or a chain (its tip). */
@@ -115,6 +133,7 @@ export type RigData = z.infer<typeof rigSchema>;
 export type ClipData = z.infer<typeof clipSchema>;
 export type BoneData = z.infer<typeof bone>;
 export type ChainData = z.infer<typeof chain>;
+export type SkinData = z.infer<typeof skin>;
 export type Ease = (typeof EASE_VALUES)[number];
 export type Channel = (typeof CHANNEL_VALUES)[number];
 export type Mark = (typeof MARK_VALUES)[number];
@@ -145,10 +164,14 @@ export function rigProblems(r: RigData): string[] {
     // A chain hangs from a bone, or from the tip of a chain before it (a betta's tail fin at the end of its spine).
     if (!seen.has(c.parent) && !chainsBefore.has(c.parent)) out.push(`${r.id}: chain ${c.id} parent ${c.parent} missing`);
     chainsBefore.add(c.id);
-    if (!r.parts[c.part]) out.push(`${r.id}: chain ${c.id} part ${c.part} missing`);
+    if (c.part && !r.parts[c.part]) out.push(`${r.id}: chain ${c.id} part ${c.part} missing`);
     if (seen.has(c.id)) out.push(`${r.id}: chain ${c.id} shares a bone id`);
   }
   const targets = new Set([...seen, ...r.chains.map((c) => c.id)]);
+  if (r.skin) {
+    if (!r.parts[r.skin.part]) out.push(`${r.id}: skin part ${r.skin.part} missing`);
+    for (const g of r.skin.regions) if (!targets.has(g.bind)) out.push(`${r.id}: skin region on missing ${g.bind}`);
+  }
   for (const s of r.springs) if (!seen.has(s.bone)) out.push(`${r.id}: spring on missing bone ${s.bone}`);
   for (const name of REQUIRED_CLIPS) if (!r.clips[name]) out.push(`${r.id}: clip ${name} missing`);
   for (const [name, c] of Object.entries(r.clips)) {

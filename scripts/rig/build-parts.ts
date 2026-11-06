@@ -4,7 +4,7 @@
 // the SVG part of the same name. Each part is rendered at ×2, trimmed to its pixels, written to public/assets/props/rig/<rig>/, given a
 // manifest row (`rig_<rig>_<name>`, status `placeholder` while it comes from the SVG proof, `production` from a painted layer) and its box
 // in the canvas written into content/anim/rigs/<rig>.json → parts (bones, clips and the rest of that file are left as they are).
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Resvg } from '@resvg/resvg-js';
 import { PNG } from 'pngjs';
@@ -86,6 +86,36 @@ function addPropRow(text: string, row: Record<string, string>): string {
   throw new Error('manifest: props section not closed');
 }
 
+/** Removes the row with `id` (and the comma before it) from the manifest text. */
+function removeRow(text: string, id: string): string {
+  const at = text.indexOf(`"id": ${JSON.stringify(id)}`);
+  if (at < 0) return text;
+  const start = text.lastIndexOf('{', at);
+  let depth = 0;
+  for (let i = start; i < text.length; i++) {
+    if (text[i] === '{') depth++;
+    else if (text[i] === '}' && --depth === 0) {
+      const comma = text.lastIndexOf(',', start);
+      return text.slice(0, comma) + text.slice(i + 1);
+    }
+  }
+  throw new Error(`manifest: row ${id} not closed`);
+}
+
+/** The pictures a rig draws: bone parts, slot pictures, chain parts, its skin. Null for a rig file that has no bones yet. */
+function referenced(data: Record<string, unknown>): Set<string> | null {
+  const bones = data.bones as { part?: string; slot?: { pictures: Record<string, string> } }[] | undefined;
+  if (!bones) return null;
+  const out = new Set<string>();
+  for (const b of bones) {
+    if (b.part) out.add(b.part);
+    for (const p of Object.values(b.slot?.pictures ?? {})) out.add(p);
+  }
+  for (const c of (data.chains as { part?: string }[] | undefined) ?? []) if (c.part) out.add(c.part);
+  const skin = data.skin as { part: string } | undefined;
+  if (skin) out.add(skin.part);
+  return out;
+}
 
 function buildRig(rig: string) {
   const dir = join(root, 'asset/rigs', rig);
@@ -112,6 +142,17 @@ function buildRig(rig: string) {
   const data = existsSync(rigPath) ? (JSON.parse(readFileSync(rigPath, 'utf8')) as Record<string, unknown>) : { id: rig };
   const boxes: Record<string, { img: string; box: [number, number, number, number] }> = {};
   let manifest = readFileSync(manifestPath, 'utf8');
+  // Only what the rig draws: a skinned rig leaves its old cut parts out (their pictures and manifest rows go).
+  const used = referenced(data);
+  if (used) {
+    for (const name of [...parts.keys()]) if (!used.has(name)) parts.delete(name);
+    for (const name of Object.keys((data.parts as Record<string, unknown> | undefined) ?? {})) {
+      if (used.has(name)) continue;
+      const id = `rig_${rig}_${name}`;
+      manifest = removeRow(manifest, id);
+      rmSync(join(outDir, `${id}.png`), { force: true });
+    }
+  }
   for (const [name, { img, painted }] of parts) {
     const cut = trim(img);
     if (!cut) throw new Error(`${rig}: part ${name} is empty`);

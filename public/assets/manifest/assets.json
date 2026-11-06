@@ -5337,404 +5337,274 @@
       "asset": "props/adventure_map/adv_map_ruins_tile_water.png"
     },
     {
-      "id": "rig_pig_boar_leg_bl",
-      "status": "placeholder",
-      "asset": "props/rig/pig_boar/rig_pig_boar_leg_bl.png"
-    },
-    {
-      "id": "rig_pig_boar_leg_fl",
-      "status": "placeholder",
-      "asset": "props/rig/pig_boar/rig_pig_boar_leg_fl.png"
-    },
-    {
-      "id": "rig_pig_boar_body",
-      "status": "placeholder",
-      "asset": "props/rig/pig_boar/rig_pig_boar_body.png"
-    },
-    {
-      "id": "rig_pig_boar_leg_br",
-      "status": "placeholder",
-      "asset": "props/rig/pig_boar/rig_pig_boar_leg_br.png"
-    },
-    {
-      "id": "rig_pig_boar_leg_fr",
-      "status": "placeholder",
-      "asset": "props/rig/pig_boar/rig_pig_boar_leg_fr.png"
-    },
-    {
-      "id": "rig_pig_boar_ear_far",
-      "status": "placeholder",
-      "asset": "props/rig/pig_boar/rig_pig_boar_ear_far.png"
-    },
-    {
-      "id": "rig_pig_boar_mane",
-      "status": "placeholder",
-      "asset": "props/rig/pig_boar/rig_pig_boar_mane.png"
-    },
-    {
-      "id": "rig_pig_boar_head",
-      "status": "placeholder",
-      "asset": "props/rig/pig_boar/rig_pig_boar_head.png"
-    },
-    {
-      "id": "rig_pig_boar_ear_near",
-      "status": "placeholder",
-      "asset": "props/rig/pig_boar/rig_pig_boar_ear_near.png"
-    },
-    {
       "id": "rig_pig_boar_snout",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_snout.png"
     },
     {
       "id": "rig_pig_boar_eyes_open",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_eyes_open.png"
     },
     {
       "id": "rig_pig_boar_eyes_half",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_eyes_half.png"
     },
     {
       "id": "rig_pig_boar_eyes_closed",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_eyes_closed.png"
     },
     {
       "id": "rig_pig_boar_eyes_angry",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_eyes_angry.png"
     },
     {
       "id": "rig_pig_boar_eyes_hurt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_eyes_hurt.png"
     },
     {
       "id": "rig_pig_boar_eyes_dizzy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_eyes_dizzy.png"
     },
     {
       "id": "rig_pig_boar_eyes_happy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_eyes_happy.png"
     },
     {
       "id": "rig_pig_boar_mouth_neutral",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_mouth_neutral.png"
     },
     {
       "id": "rig_pig_boar_mouth_open",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_mouth_open.png"
     },
     {
       "id": "rig_pig_boar_mouth_grit",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_mouth_grit.png"
     },
     {
       "id": "rig_pig_boar_mouth_smile",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_mouth_smile.png"
     },
     {
       "id": "rig_pig_boar_mouth_cry",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_boar/rig_pig_boar_mouth_cry.png"
     },
     {
-      "id": "rig_pig_boar_tail",
-      "status": "placeholder",
-      "asset": "props/rig/pig_boar/rig_pig_boar_tail.png"
-    },
-    {
-      "id": "rig_pig_turtle_leg_bl",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_leg_bl.png"
-    },
-    {
-      "id": "rig_pig_turtle_leg_fl",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_leg_fl.png"
-    },
-    {
-      "id": "rig_pig_turtle_body",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_body.png"
-    },
-    {
-      "id": "rig_pig_turtle_leg_br",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_leg_br.png"
-    },
-    {
-      "id": "rig_pig_turtle_leg_fr",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_leg_fr.png"
-    },
-    {
-      "id": "rig_pig_turtle_tail",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_tail.png"
-    },
-    {
-      "id": "rig_pig_turtle_shell",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_shell.png"
-    },
-    {
-      "id": "rig_pig_turtle_leaf",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_leaf.png"
-    },
-    {
-      "id": "rig_pig_turtle_ear_far",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_ear_far.png"
-    },
-    {
-      "id": "rig_pig_turtle_head",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_head.png"
-    },
-    {
-      "id": "rig_pig_turtle_ear_near",
-      "status": "placeholder",
-      "asset": "props/rig/pig_turtle/rig_pig_turtle_ear_near.png"
-    },
-    {
       "id": "rig_pig_turtle_snout",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_snout.png"
     },
     {
       "id": "rig_pig_turtle_eyes_open",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_eyes_open.png"
     },
     {
       "id": "rig_pig_turtle_eyes_half",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_eyes_half.png"
     },
     {
       "id": "rig_pig_turtle_eyes_closed",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_eyes_closed.png"
     },
     {
       "id": "rig_pig_turtle_eyes_angry",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_eyes_angry.png"
     },
     {
       "id": "rig_pig_turtle_eyes_hurt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_eyes_hurt.png"
     },
     {
       "id": "rig_pig_turtle_eyes_dizzy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_eyes_dizzy.png"
     },
     {
       "id": "rig_pig_turtle_eyes_happy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_eyes_happy.png"
     },
     {
       "id": "rig_pig_turtle_mouth_neutral",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_mouth_neutral.png"
     },
     {
       "id": "rig_pig_turtle_mouth_open",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_mouth_open.png"
     },
     {
       "id": "rig_pig_turtle_mouth_grit",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_mouth_grit.png"
     },
     {
       "id": "rig_pig_turtle_mouth_smile",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_mouth_smile.png"
     },
     {
       "id": "rig_pig_turtle_mouth_cry",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/pig_turtle/rig_pig_turtle_mouth_cry.png"
     },
     {
-      "id": "rig_fish_betta_veil_top",
-      "status": "placeholder",
-      "asset": "props/rig/fish_betta/rig_fish_betta_veil_top.png"
-    },
-    {
-      "id": "rig_fish_betta_veil_low",
-      "status": "placeholder",
-      "asset": "props/rig/fish_betta/rig_fish_betta_veil_low.png"
-    },
-    {
-      "id": "rig_fish_betta_tail_fin",
-      "status": "placeholder",
-      "asset": "props/rig/fish_betta/rig_fish_betta_tail_fin.png"
-    },
-    {
-      "id": "rig_fish_betta_spine",
-      "status": "placeholder",
-      "asset": "props/rig/fish_betta/rig_fish_betta_spine.png"
-    },
-    {
-      "id": "rig_fish_betta_head",
-      "status": "placeholder",
-      "asset": "props/rig/fish_betta/rig_fish_betta_head.png"
-    },
-    {
-      "id": "rig_fish_betta_fin_pec",
-      "status": "placeholder",
-      "asset": "props/rig/fish_betta/rig_fish_betta_fin_pec.png"
-    },
-    {
       "id": "rig_fish_betta_eyes_open",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_eyes_open.png"
     },
     {
       "id": "rig_fish_betta_eyes_half",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_eyes_half.png"
     },
     {
       "id": "rig_fish_betta_eyes_closed",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_eyes_closed.png"
     },
     {
       "id": "rig_fish_betta_eyes_angry",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_eyes_angry.png"
     },
     {
       "id": "rig_fish_betta_eyes_hurt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_eyes_hurt.png"
     },
     {
       "id": "rig_fish_betta_eyes_dizzy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_eyes_dizzy.png"
     },
     {
       "id": "rig_fish_betta_eyes_happy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_eyes_happy.png"
     },
     {
       "id": "rig_fish_betta_mouth_neutral",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_mouth_neutral.png"
     },
     {
       "id": "rig_fish_betta_mouth_open",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_mouth_open.png"
     },
     {
       "id": "rig_fish_betta_mouth_smile",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_mouth_smile.png"
     },
     {
       "id": "rig_fish_betta_mouth_grit",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_mouth_grit.png"
     },
     {
       "id": "rig_fish_betta_mouth_cry",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/fish_betta/rig_fish_betta_mouth_cry.png"
     },
     {
-      "id": "rig_octopus_arm_back",
-      "status": "placeholder",
-      "asset": "props/rig/octopus/rig_octopus_arm_back.png"
-    },
-    {
-      "id": "rig_octopus_arm",
-      "status": "placeholder",
-      "asset": "props/rig/octopus/rig_octopus_arm.png"
-    },
-    {
-      "id": "rig_octopus_mantle",
-      "status": "placeholder",
-      "asset": "props/rig/octopus/rig_octopus_mantle.png"
-    },
-    {
       "id": "rig_octopus_eyes_open",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_eyes_open.png"
     },
     {
       "id": "rig_octopus_eyes_half",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_eyes_half.png"
     },
     {
       "id": "rig_octopus_eyes_closed",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_eyes_closed.png"
     },
     {
       "id": "rig_octopus_eyes_angry",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_eyes_angry.png"
     },
     {
       "id": "rig_octopus_eyes_hurt",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_eyes_hurt.png"
     },
     {
       "id": "rig_octopus_eyes_dizzy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_eyes_dizzy.png"
     },
     {
       "id": "rig_octopus_eyes_happy",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_eyes_happy.png"
     },
     {
       "id": "rig_octopus_mouth_neutral",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_mouth_neutral.png"
     },
     {
       "id": "rig_octopus_mouth_open",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_mouth_open.png"
     },
     {
       "id": "rig_octopus_mouth_smile",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_mouth_smile.png"
     },
     {
       "id": "rig_octopus_mouth_grit",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_mouth_grit.png"
     },
     {
       "id": "rig_octopus_mouth_cry",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/rig/octopus/rig_octopus_mouth_cry.png"
+    },
+    {
+      "id": "rig_pig_boar_skin",
+      "status": "production",
+      "asset": "props/rig/pig_boar/rig_pig_boar_skin.png"
+    },
+    {
+      "id": "rig_pig_turtle_skin",
+      "status": "production",
+      "asset": "props/rig/pig_turtle/rig_pig_turtle_skin.png"
+    },
+    {
+      "id": "rig_fish_betta_skin",
+      "status": "production",
+      "asset": "props/rig/fish_betta/rig_fish_betta_skin.png"
+    },
+    {
+      "id": "rig_octopus_skin",
+      "status": "production",
+      "asset": "props/rig/octopus/rig_octopus_skin.png"
     }
   ],
   "buildings": [
