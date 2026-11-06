@@ -6,8 +6,12 @@ import { RIGS } from '../../src/systems/animation';
 import { Puppet } from '../../src/ui/puppet/puppet';
 import { esc } from './labels';
 import { json } from './store';
+import { vi } from '../../src/i18n/vi';
+import enemiesJson from '../../content/adventure/enemies.json';
+import './rigLab.css';
 
-type Row = { id: string; asset?: string };
+type Row = { id: string; asset?: string; nameVi?: string };
+type Cat = 'all' | 'pig' | 'enemy' | 'aquatic';
 const ACTIONS = ['idle', 'move', 'attack', 'cast', 'hurt', 'hurt_heavy', 'ko', 'victory', 'guard', 'stunned', 'buff', 'dodge'] as const;
 /** The old key pose (cb_<art>_<pose>) closest to an action, for the before / after view. */
 const OLD_POSE: Record<string, string> = { idle: 'idle', move: 'idle', attack: 'attack', cast: 'cast', hurt: 'hurt', hurt_heavy: 'hurt', ko: 'ko', victory: 'victory', guard: 'idle', stunned: 'hurt', buff: 'victory', dodge: 'idle' };
@@ -22,6 +26,9 @@ const lab = {
   /** Eight frames of the clip side by side (each its own puppet at a fixed time): the clip read like a storyboard. */
   strip: false,
   mirrored: false,
+  /** Sidebar filters: category tab + free-text search. */
+  cat: 'all' as Cat,
+  q: '',
   /** Bumped to replay a one-shot clip. */
   take: 0,
   images: new Map<string, Row>(),
@@ -187,24 +194,80 @@ function mount(host: HTMLElement) {
   (window as unknown as { rigLab?: { game: Phaser.Game; lab: typeof lab } }).rigLab = { game: lab.game, lab };
 }
 
-function controls(): string {
-  const btn = (on: boolean, attr: string, label: string) => `<button class="btn${on ? ' primary' : ''}" ${attr}>${esc(label)}</button>`;
-  const rigs = [...RIGS.values()].map((r) => btn(!lab.all && r.id === lab.rig, `data-rig="${r.id}"`, `${r.id} · ${r.plan}`)).join('');
-  // The skill gestures (g_*) and the ultimate of the rig shown (every rig's, side by side).
+const ACTION_LABEL: Record<string, string> = {
+  idle: 'Đứng yên', move: 'Di chuyển', attack: 'Tấn công', cast: 'Niệm chiêu', hurt: 'Bị đau', hurt_heavy: 'Đau nặng', ko: 'Gục ngã', victory: 'Chiến thắng',
+  guard: 'Thủ thế', stunned: 'Choáng', buff: 'Tăng cường', dodge: 'Né tránh',
+  g_brace: 'Gồng mình', g_breath: 'Phun hơi', g_charge: 'Húc tới', g_lash: 'Quất', g_slam: 'Đập xuống', g_channel: 'Tụ lực', g_roar: 'Gầm thét', g_shoot: 'Bắn', g_summon_ground: 'Triệu hồi (đất)', g_summon_sky: 'Triệu hồi (trời)', ultimate: 'Tuyệt chiêu',
+};
+const ACTION_ICON: Record<string, string> = { idle: '🧍', move: '🏃', attack: '⚔️', cast: '✨', hurt: '💢', hurt_heavy: '💥', ko: '💫', victory: '🏆', guard: '🛡️', stunned: '😵', buff: '⬆️', dodge: '💨' };
+const PLAN_LABEL: Record<string, string> = { quadruped: 'Bốn chân', heavy: 'Nặng nề', cephalopod: 'Xúc tu', aquatic: 'Thủy sinh' };
+const CAT_LABEL: Record<Cat, string> = { all: 'Tất cả', pig: '🐷 Heo', enemy: '👾 Kẻ địch', aquatic: '🐟 Thủy sinh' };
+const SPEEDS = [1, 0.5, 0.25];
+
+const enemyNames = new Map<string, string>((enemiesJson as { enemies: { id: string; nameVi: string }[] }).enemies.map((e) => [e.id, e.nameVi]));
+const viMap = vi as unknown as Record<string, string>;
+
+const catOf = (id: string): Cat => (id.startsWith('pig_') ? 'pig' : id.startsWith('enemy_') ? 'enemy' : 'aquatic');
+/** Vietnamese display name of a rig: manifest (pigs), enemies.json, or the fish item strings. */
+function nameOf(id: string): string {
+  const fromManifest = lab.images.get(id)?.nameVi;
+  if (fromManifest) return fromManifest;
+  return enemyNames.get(id) ?? viMap[`item_${id.startsWith('fish_') ? id : `fish_${id}`}`] ?? id;
+}
+/** Thumbnail url: the idle key pose, else the plain portrait. */
+function thumbOf(id: string): string {
+  const row = lab.images.get(`cb_${id}_idle`) ?? lab.images.get(id) ?? lab.images.get(`fish_${id}`);
+  return row?.asset ? `/assets/${row.asset}` : '';
+}
+const matches = (id: string) => (lab.cat === 'all' || catOf(id) === lab.cat) && (!lab.q || `${nameOf(id)} ${id}`.toLowerCase().includes(lab.q.toLowerCase()));
+
+function grid(): string {
+  const cards = [...RIGS.values()]
+    .filter((r) => matches(r.id))
+    .map((r) => {
+      const img = thumbOf(r.id);
+      return `<button class="rl-card${!lab.all && r.id === lab.rig ? ' on' : ''}" data-rig="${r.id}" title="${esc(r.id)}">
+      <span class="rl-thumb">${img ? `<img src="${esc(img)}" loading="lazy" alt="">` : '❔'}</span>
+      <b>${esc(nameOf(r.id))}</b><small>${esc(PLAN_LABEL[r.plan] ?? r.plan)}</small></button>`;
+    })
+    .join('');
+  return cards || '<p class="rl-empty">Không có sinh vật phù hợp.</p>';
+}
+
+function sidebar(): string {
+  const all = [...RIGS.values()];
+  const count = (c: Cat) => all.filter((r) => c === 'all' || catOf(r.id) === c).length;
+  const tabs = (Object.keys(CAT_LABEL) as Cat[]).map((c) => `<button class="rl-tab${lab.cat === c ? ' on' : ''}" data-cat="${c}">${CAT_LABEL[c]} <i>${count(c)}</i></button>`).join('');
+  return `<div class="rl-tabs">${tabs}</div>
+    <input class="rl-search" type="search" placeholder="Tìm theo tên hoặc id…" value="${esc(lab.q)}" data-search>
+    <button class="rl-all${lab.all ? ' on' : ''}" data-all>👥 Cả đội — so sánh tất cả</button>
+    <div class="rl-grid">${grid()}</div>`;
+}
+
+function toolbar(): string {
+  const chip = (on: boolean, attr: string, label: string) => `<button class="rl-chip${on ? ' on' : ''}" ${attr}>${esc(label)}</button>`;
   const shownRigs = lab.all ? [...RIGS.values()] : [RIGS.get(lab.rig)!];
   const skillClips = [...new Set(shownRigs.flatMap((r) => Object.keys(r.clips).filter((k) => k.startsWith('g_') || k === 'ultimate')))].sort();
-  const acts = ACTIONS.map((a) => btn(a === lab.action, `data-act="${a}"`, a)).join('');
-  const skills = skillClips.map((a) => btn(a === lab.action, `data-act="${a}"`, a)).join('');
-  const speeds = [1, 0.5, 0.25].map((s) => btn(s === lab.speed, `data-speed="${s}"`, `×${s}`)).join('');
+  const acts = ACTIONS.map((a) => chip(a === lab.action, `data-act="${a}"`, `${ACTION_ICON[a] ?? ''} ${ACTION_LABEL[a] ?? a}`)).join('');
+  const skills = skillClips.map((a) => chip(a === lab.action, `data-act="${a}"`, ACTION_LABEL[a] ?? a)).join('');
+  const toggle = (on: boolean, attr: string, label: string) => `<label class="rl-sw"><input type="checkbox" ${attr} ${on ? 'checked' : ''}><span></span>${esc(label)}</label>`;
   return `
-    <div class="rlab-bar"><b>Sinh vật</b> ${rigs} ${btn(lab.all, 'data-all', 'Cả đội')}</div>
-    <div class="rlab-bar"><b>Hành động</b> ${acts} <button class="btn" data-replay>↻ Lại</button></div>
-    <div class="rlab-bar"><b>Cử chỉ skill</b> ${skills}</div>
-    <div class="rlab-bar"><b>Tốc độ</b> ${speeds}
-      <label><input type="checkbox" data-bones ${lab.bones ? 'checked' : ''}> Hiện xương</label>
-      <label><input type="checkbox" data-old ${lab.old ? 'checked' : ''}> So với ảnh cũ (trái)</label>
-      <label><input type="checkbox" data-mirror ${lab.mirrored ? 'checked' : ''}> Quay trái</label>
-      <label><input type="checkbox" data-strip ${lab.strip ? 'checked' : ''}> Dải 8 khung</label></div>`;
+    <div class="rl-row"><span class="rl-lbl">Hành động</span><div class="rl-chips">${acts}</div></div>
+    <div class="rl-row"><span class="rl-lbl">Cử chỉ skill</span><div class="rl-chips">${skills || '<small class="rl-empty">Không có</small>'}</div></div>
+    <div class="rl-row rl-opts">
+      <div class="rl-seg"><span>Tốc độ</span>${SPEEDS.map((x) => `<button class="${x === lab.speed ? 'on' : ''}" data-speed="${x}">×${x}</button>`).join('')}</div>
+      <button class="rl-chip rl-replay" data-replay>↻ Phát lại</button>
+      ${toggle(lab.old, 'data-old', 'So với ảnh cũ')}${toggle(lab.bones, 'data-bones', 'Hiện xương')}${toggle(lab.mirrored, 'data-mirror', 'Quay trái')}${toggle(lab.strip, 'data-strip', 'Dải 8 khung')}
+    </div>`;
+}
+
+function header(): string {
+  if (lab.all) return `<h3>Cả đội <small>${RIGS.size} sinh vật cùng làm một hành động để so sánh</small></h3><span class="rl-now">${esc(ACTION_LABEL[lab.action] ?? lab.action)}</span>`;
+  const r = RIGS.get(lab.rig);
+  if (!r) return '';
+  const img = thumbOf(r.id);
+  return `${img ? `<img class="rl-head-img" src="${esc(img)}" alt="">` : ''}<h3>${esc(nameOf(r.id))} <small>${esc(r.id)} · ${esc(PLAN_LABEL[r.plan] ?? r.plan)} · ${Object.keys(r.clips).length} clip</small></h3>
+    <span class="rl-now">${esc(ACTION_LABEL[lab.action] ?? lab.action)}</span>`;
 }
 
 export function renderRigLab(root: HTMLElement) {
@@ -218,28 +281,48 @@ export function renderRigLab(root: HTMLElement) {
     return;
   }
   root.innerHTML = `
-    <section class="rlab">
-      <p class="muted">Rig cắt mảnh (decision 050): mỗi bộ phận một ảnh trên xương, clip theo khung khoá, lò xo cho tai / bờm / vỏ, chuỗi uốn cho đuôi / vây / xúc tu.
-      Ảnh bộ phận hiện là bản <b>rig-proof</b> vẽ vector (chờ art vẽ tay theo <code>art_inbox/rig_*.md</code>).</p>
-      <div class="rlab-controls">${controls()}</div>
-      <div class="rlab-stage" style="height:560px;border-radius:12px;overflow:hidden;background:#2a3a2a"></div>
+    <section class="rl">
+      <aside class="rl-side"></aside>
+      <div class="rl-main">
+        <div class="rl-head"></div>
+        <div class="rl-stage"></div>
+        <div class="rl-toolbar"></div>
+        <p class="rl-note">Rig cắt mảnh (decision 050): mỗi bộ phận một ảnh trên xương, clip theo khung khoá, lò xo cho tai / bờm / vỏ, chuỗi uốn cho đuôi / vây / xúc tu. Ảnh bộ phận hiện là bản <b>rig-proof</b> (chờ art vẽ tay theo <code>art_inbox/rig_*.md</code>).</p>
+      </div>
     </section>`;
-  root.querySelector('.rlab-controls')!.addEventListener('click', (e) => {
+  const q = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+  const refresh = (searchOnly = false) => {
+    if (searchOnly) q('.rl-grid').innerHTML = grid();
+    else q('.rl-side').innerHTML = sidebar();
+    q('.rl-head').innerHTML = header();
+    q('.rl-toolbar').innerHTML = toolbar();
+  };
+  refresh();
+  const section = q('.rl');
+  section.addEventListener('click', (e) => {
     const t = (e.target as HTMLElement).closest('button');
     if (!t) return;
+    if (t.dataset.cat) lab.cat = t.dataset.cat as Cat;
     if (t.dataset.rig) [lab.rig, lab.all] = [t.dataset.rig, false];
     if (t.dataset.act) lab.action = t.dataset.act;
     if (t.dataset.speed) lab.speed = Number(t.dataset.speed);
     if (t.hasAttribute('data-all')) lab.all = !lab.all;
-    lab.take++;
-    root.querySelector('.rlab-controls')!.innerHTML = controls();
+    if (!t.dataset.cat) lab.take++;
+    refresh();
   });
-  root.querySelector('.rlab-controls')!.addEventListener('change', (e) => {
+  section.addEventListener('input', (e) => {
+    const t = e.target as HTMLInputElement;
+    if (t.hasAttribute('data-search')) {
+      lab.q = t.value;
+      refresh(true);
+    }
+  });
+  section.addEventListener('change', (e) => {
     const t = e.target as HTMLInputElement;
     if (t.hasAttribute('data-bones')) lab.bones = t.checked;
     if (t.hasAttribute('data-old')) lab.old = t.checked;
     if (t.hasAttribute('data-mirror')) lab.mirrored = t.checked;
     if (t.hasAttribute('data-strip')) lab.strip = t.checked;
   });
-  mount(root.querySelector<HTMLElement>('.rlab-stage')!);
+  mount(q('.rl-stage'));
 }
