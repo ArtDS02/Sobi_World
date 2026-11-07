@@ -1,5 +1,10 @@
 # HANDOFF — animation sinh vật: tranh vẽ tay cho chuyển động (2026-11-06)
 
+> **2026-11-07 — ĐỔI HƯỚNG:** chủ dự án duyệt Sobi Studio (Unity tạo lại toàn bộ asset + animation): decision 051,
+> `docs/UNITY_STUDIO_PLAN.md`. Làm trên nhánh `phase-14-unity-studio`; session mới làm theo §11 của plan. Các batch
+> Gemini ở mục 4 dưới đây **dừng hẳn**. Nội dung bên dưới là lịch sử của hướng cũ (tag `pre-unity-studio`), chỉ tham
+> khảo: runtime rig, clip và cách soi khung vẫn dùng được.
+
 Bàn giao giữa hai phiên agent. Nhánh `phase-14-art`. Commit cuối đã có: `1910e53` (khung di chuyển Ưng / Betta, làm mượt
 chuyển tranh, windup Hộ Pháp W2). Nguồn sự thật vẫn theo CLAUDE.md; file này chỉ nói đang ở đâu và làm tiếp thế nào.
 
@@ -48,6 +53,12 @@ chuyển tranh, windup Hộ Pháp W2). Nguồn sự thật vẫn theo CLAUDE.md;
   từ F1), **C1** chim mây. Asset: `cal_<art>_idle_mv`, `<art>_mv1..3` (chim: `prop_cloud_bird_mv1..3`). Đã đề nghị render
   thử trước A01 Cá Vàng, A11 Cá Trăng, A23 Sứa, A26 Đuối, C1 Chim mây; kiểm xong mới làm hết.
 - `art.py status` để xem sheet nào đã có ảnh. Ảnh chưa có thì ghi "chưa có", không báo xong.
+- **Trạng thái 2026-11-07**: có ảnh S1, F1 (`F1_only up.png` = sheet 1×4, `F1_only_down.png` = 1 con lẻ), A01–A09. Chưa có
+  A10–A28, C1. Chủ dự án **dừng render** vì chất lượng tệ; kết quả kiểm + đánh giá ở `docs/PROGRESS.md` mục 2026-11-07.
+  Chưa cắt / ghép gì. **Không tạo batch mới, không làm tiếp 5b cho cá** cho tới khi chủ dự án chọn hướng (sheet vẽ lại
+  nguyên con lệch nhận diện giữa các khung; chim thì dùng được).
+- Python trên máy là 3.14 chưa có numpy / Pillow → `art.py` và `art_inbox/.tools/anim/*.py` không chạy. Xin phép rồi
+  `py -m pip install numpy pillow` (lệnh là `py`, không phải `python`).
 
 ## 5. Cách ghép khi ảnh về
 
