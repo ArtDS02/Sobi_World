@@ -1,0 +1,12 @@
+# Unity caches (several GB) and machine-local settings
+/Library/
+/Temp/
+/Logs/
+/UserSettings/
+/obj/
+/.cache/
+/studio.local.json
+*.csproj
+*.sln
+*.slnx
+.vs/

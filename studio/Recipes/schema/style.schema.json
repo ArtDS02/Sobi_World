@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "palette": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^#[0-9a-fA-F]{6}$"
+      }
+    },
+    "light": {
+      "type": "object",
+      "properties": {
+        "dir": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "shadowTint": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "aoTint": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "bands": {
+          "type": "object",
+          "properties": {
+            "shadow": {
+              "type": "number"
+            },
+            "soft": {
+              "type": "number"
+            },
+            "highlight": {
+              "type": "number"
+            },
+            "highlightAmount": {
+              "type": "number"
+            }
+          },
+          "required": ["shadow", "soft", "highlight", "highlightAmount"],
+          "additionalProperties": false
+        },
+        "rim": {
+          "type": "object",
+          "properties": {
+            "strength": {
+              "type": "number"
+            },
+            "power": {
+              "type": "number"
+            }
+          },
+          "required": ["strength", "power"],
+          "additionalProperties": false
+        },
+        "specular": {
+          "type": "object",
+          "properties": {
+            "strength": {
+              "type": "number"
+            },
+            "power": {
+              "type": "number"
+            }
+          },
+          "required": ["strength", "power"],
+          "additionalProperties": false
+        },
+        "ao": {
+          "type": "object",
+          "properties": {
+            "strength": {
+              "type": "number"
+            },
+            "step": {
+              "type": "number"
+            },
+            "falloff": {
+              "type": "number"
+            }
+          },
+          "required": ["strength", "step", "falloff"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["dir", "color", "shadowTint", "aoTint", "bands", "rim", "specular", "ao"],
+      "additionalProperties": false
+    },
+    "outline": {
+      "type": "object",
+      "properties": {
+        "px": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "innerPx": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "depthJump": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "groupJump": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "lightness": {
+          "type": "number"
+        },
+        "chroma": {
+          "type": "number"
+        },
+        "ink": {
+          "type": "string"
+        },
+        "inkMix": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "px",
+        "innerPx",
+        "depthJump",
+        "groupJump",
+        "lightness",
+        "chroma",
+        "ink",
+        "inkMix"
+      ],
+      "additionalProperties": false
+    },
+    "eyes": {
+      "type": "object",
+      "properties": {
+        "highlight": {
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "number"
+            },
+            "up": {
+              "type": "number"
+            },
+            "side": {
+              "type": "number"
+            }
+          },
+          "required": ["size", "up", "side"],
+          "additionalProperties": false
+        },
+        "highlight2": {
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "number"
+            },
+            "up": {
+              "type": "number"
+            },
+            "side": {
+              "type": "number"
+            }
+          },
+          "required": ["size", "up", "side"],
+          "additionalProperties": false
+        },
+        "highlightColor": {
+          "type": "string"
+        },
+        "irisScale": {
+          "type": "number"
+        },
+        "irisDown": {
+          "type": "number"
+        },
+        "irisSoft": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "highlight",
+        "highlight2",
+        "highlightColor",
+        "irisScale",
+        "irisDown",
+        "irisSoft"
+      ],
+      "additionalProperties": false
+    },
+    "paint": {
+      "type": "object",
+      "properties": {
+        "grain": {
+          "type": "number"
+        },
+        "grainFreq": {
+          "type": "number"
+        },
+        "gradient": {
+          "type": "number"
+        }
+      },
+      "required": ["grain", "grainFreq", "gradient"],
+      "additionalProperties": false
+    },
+    "supersample": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "kinds": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "canvas": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "ppu": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "origin": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "camera": {
+            "type": "object",
+            "properties": {
+              "yaw": {
+                "type": "number"
+              },
+              "pitch": {
+                "type": "number"
+              }
+            },
+            "required": ["yaw", "pitch"],
+            "additionalProperties": false
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["sdf", "flat"]
+          },
+          "lineScale": {
+            "default": 1,
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": ["canvas", "ppu", "origin", "camera", "mode"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["version", "palette", "light", "outline", "eyes", "paint", "supersample", "kinds"],
+  "additionalProperties": false
+}

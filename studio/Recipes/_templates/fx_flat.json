@@ -1,0 +1,12 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "kind": "fx_battle",
+  "area": "fx",
+  "notes": "Battle effect sheets (flat 2D, nested colour bands + outline). Keep the old frame count: battle_fx.json addresses frames by index.",
+  "colors": {
+    "outer": "flame_outer",
+    "mid": "flame_mid",
+    "core": "flame_core",
+    "line": "flame_line"
+  }
+}

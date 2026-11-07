@@ -1,0 +1,250 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "kind": "pig_farm",
+  "area": "farm",
+  "notes": "Farm pig: chubby chibi body, big floppy ears, snout disc. Units: ground y = 0, faces +x, visible side +z.",
+  "colors": {
+    "skin": "pig_pink",
+    "belly": "pig_belly",
+    "snout": "pig_snout",
+    "nostril": "pig_nostril",
+    "ear_inner": "pig_ear_inner",
+    "blush": "blush",
+    "hoof": "hoof",
+    "eye": "eye_dark",
+    "mouth": "mouth",
+    "iris": "eye_brown",
+    "hoof_dark": "shadow_dark"
+  },
+  "parts": {
+    "body": {
+      "shape": "ellipsoid",
+      "size": [0.9, 0.66, 0.7],
+      "at": [-0.16, 0.78, 0],
+      "color": "skin",
+      "group": "skin",
+      "flags": ["gloss"]
+    },
+    "head": {
+      "shape": "ellipsoid",
+      "size": [0.62, 0.59, 0.62],
+      "parent": "body",
+      "at": [0.7, 0.36, 0.06],
+      "color": "skin",
+      "group": "head",
+      "blend": 0.03,
+      "rot": [0, -50, 4],
+      "flags": ["gloss"]
+    },
+    "snout": {
+      "shape": "cylinder",
+      "size": [0.2, 0.14, 0.08],
+      "parent": "head",
+      "at": [0.6, -0.1, 0],
+      "rot": [0, 0, -90],
+      "color": "snout",
+      "group": "snout",
+      "blend": 0.03
+    },
+    "ear_root_l": {
+      "parent": "head",
+      "at": [0.02, 0.44, 0.28],
+      "rot": [110, 29, 0],
+      "mirror": true
+    },
+    "ear_l": {
+      "shape": "ellipsoid",
+      "size": [0.25, 0.33, 0.08],
+      "parent": "ear_root_l",
+      "offset": [0, 0.22, 0],
+      "rot": [0, 0, 0],
+      "color": "skin",
+      "group": "ear",
+      "blend": 0.03,
+      "mirror": true
+    },
+    "leg_fl": {
+      "shape": "cone",
+      "size": [0.16, 0.145, 0.36],
+      "parent": "body",
+      "at": [0.5, -0.36, 0.32],
+      "rot": [0, 0, 180],
+      "color": "skin",
+      "group": "legs",
+      "blend": 0.06,
+      "mirror": true
+    },
+    "leg_bl": {
+      "shape": "cone",
+      "size": [0.16, 0.145, 0.36],
+      "parent": "body",
+      "at": [-0.62, -0.36, 0.32],
+      "rot": [0, 0, 180],
+      "color": "skin",
+      "group": "legs",
+      "blend": 0.06,
+      "mirror": true
+    },
+    "tail": {
+      "shape": "arc",
+      "size": [0.12, 0.04, 300],
+      "parent": "body",
+      "at": [-0.98, 0.18, 0.18],
+      "rot": [0, 55, 30],
+      "color": "skin",
+      "group": "skin",
+      "blend": 0.03
+    }
+  },
+  "paints": {
+    "hooves": {
+      "shape": "box",
+      "size": [3, 0.075, 3, 0],
+      "at": [0, 0, 0],
+      "color": "hoof",
+      "on": ["legs"],
+      "soft": 0.012
+    },
+    "belly": {
+      "shape": "ellipsoid",
+      "size": [0.62, 0.32, 0.6],
+      "parent": "body",
+      "at": [0.22, -0.48, 0.22],
+      "color": "belly",
+      "on": ["skin", "head"],
+      "soft": 0.18,
+      "opacity": 0.55
+    },
+    "nostril_l": {
+      "shape": "ellipsoid",
+      "size": [0.042, 0.065, 0.04],
+      "parent": "snout",
+      "at": [0.06, 0.145, 0.075],
+      "color": "nostril",
+      "on": ["snout"],
+      "soft": 0.008,
+      "mirror": true
+    },
+    "ear_inner_l": {
+      "shape": "ellipsoid",
+      "size": [0.17, 0.25, 0.2],
+      "parent": "ear_l",
+      "at": [0.01, 0.22, 0],
+      "color": "ear_inner",
+      "on": ["ear"],
+      "soft": 0.05,
+      "opacity": 0.9,
+      "mirror": true
+    },
+    "blush_l": {
+      "shape": "ellipsoid",
+      "size": [0.13, 0.085, 0.13],
+      "parent": "head",
+      "at": [0.3, -0.16, 0.46],
+      "color": "blush",
+      "on": ["skin", "head"],
+      "soft": 0.04,
+      "opacity": 0.9,
+      "mirror": true
+    },
+    "mouth": {
+      "shape": "arc",
+      "size": [0.085, 0.018, 55],
+      "parent": "head",
+      "at": [0.46, -0.27, 0.22],
+      "rot": [0, 0, 180],
+      "billboard": true,
+      "color": "mouth",
+      "on": ["head"],
+      "soft": 0.004
+    },
+    "lid_l": {
+      "shape": "arc",
+      "size": [0.1, 0.022, 70],
+      "parent": "head",
+      "at": [0.44, 0.06, 0.36],
+      "rot": [0, 0, 180],
+      "billboard": true,
+      "color": "mouth",
+      "on": ["head"],
+      "soft": 0.004,
+      "hide": true,
+      "mirror": true
+    },
+    "eye_l": {
+      "shape": "eye",
+      "size": [0.13, 0.165],
+      "parent": "head",
+      "at": [0.44, 0.08, 0.36],
+      "billboard": true,
+      "color": "eye",
+      "on": ["head"],
+      "soft": 0.006,
+      "mirror": true
+    },
+    "brow_l": {
+      "shape": "arc",
+      "size": [0.075, 0.016, 40],
+      "parent": "head",
+      "at": [0.44, 0.33, 0.36],
+      "rot": [0, 0, 8],
+      "billboard": true,
+      "color": "mouth",
+      "on": ["head"],
+      "soft": 0.004,
+      "mirror": true,
+      "opacity": 0.85
+    },
+    "snout_shine": {
+      "shape": "ellipsoid",
+      "size": [0.05, 0.03, 1],
+      "parent": "snout",
+      "at": [-0.06, 0.15, 0.06],
+      "billboard": true,
+      "color": "white",
+      "on": ["snout"],
+      "soft": 0.01,
+      "opacity": 0.7,
+      "flags": ["unlit"]
+    },
+    "hoof_split": {
+      "shape": "box",
+      "size": [0.008, 0.06, 3, 0],
+      "at": [0.5, 0.03, 0],
+      "color": "hoof_dark",
+      "on": ["legs"],
+      "soft": 0.004,
+      "repeat": {
+        "n": 2,
+        "step": [-1.12, 0, 0]
+      }
+    }
+  },
+  "poses": {
+    "idle": {},
+    "sleep": {
+      "paint:eye_l": {
+        "hide": true
+      },
+      "paint:eye_r": {
+        "hide": true
+      },
+      "paint:lid_l": {
+        "show": true
+      },
+      "paint:lid_r": {
+        "show": true
+      }
+    },
+    "wake": {
+      "paint:eye_l": {
+        "size": [0.13, 0.085],
+        "offset": [0, -0.03, 0]
+      },
+      "paint:eye_r": {
+        "size": [0.13, 0.085],
+        "offset": [0, -0.03, 0]
+      }
+    }
+  }
+}

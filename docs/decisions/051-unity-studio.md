@@ -30,3 +30,10 @@ hành.
 
 ## Quay lại
 Hướng cũ ở tag `pre-unity-studio` (commit `c1c058b`, nhánh `phase-14-art`). Công việc mới ở nhánh `phase-14-unity-studio`.
+
+## Cập nhật 2026-11-07 — cổng U1 không đạt, hướng "tạo lại tất cả" dừng
+U0 xong (Unity 6000.6.8f1 batchmode, renderer SDF + toon tự viết, recipe → PNG → manifest, chụp trong game). Bốn mẫu U1
+(heo farm, Cá Vàng, chuồng heo, lửa) đặt trong game cạnh bản cũ, chỉnh 2 vòng. Agent tự chấm: (a) đẹp hơn bản cũ — không,
+(b) đồng bộ hơn — có, (c) đáng đổi cả game — không. Theo §10.1 hướng tạo lại toàn bộ **dừng**; game giữ art cũ. Ảnh và
+chấm chi tiết: `docs/studio/STATUS.md`, `docs/studio/u1/`. Chờ chủ dự án chọn phương án hẹp (VFX / animation trên
+asset hiện có) hoặc bỏ. Công cụ `studio/` + `scripts/studio/` giữ trong git.

@@ -30,7 +30,22 @@ const mathRandom = {
 };
 
 export default tseslint.config(
-  { ignores: ['dist', 'dist-electron', 'release', 'coverage', 'node_modules', '.claude'] },
+  {
+    ignores: [
+      'dist',
+      'dist-electron',
+      'release',
+      'coverage',
+      'node_modules',
+      '.claude',
+      // Unity caches of the offline art studio (decision 051)
+      'studio/Library',
+      'studio/Temp',
+      'studio/Logs',
+      'studio/UserSettings',
+      'studio/.cache',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

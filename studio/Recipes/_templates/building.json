@@ -1,0 +1,21 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "kind": "building",
+  "area": "farm",
+  "notes": "Buildings: ground y = 0, door gable faces +x, long side faces +z (towards the camera). No text in images.",
+  "colors": {
+    "grass": "grass",
+    "grass_dark": "grass_dark",
+    "stone": "stone",
+    "mortar": "stone_dark",
+    "wood": "wood_light",
+    "wood_mid": "wood",
+    "wood_dark": "wood_dark",
+    "roof": "roof_red",
+    "tile": "roof_red_light",
+    "hollow": "shadow_dark",
+    "hay": "hay",
+    "petal": "petal",
+    "core": "flower_core"
+  }
+}

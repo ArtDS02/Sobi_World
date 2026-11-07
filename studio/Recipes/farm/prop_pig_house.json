@@ -1,0 +1,565 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "extends": "_templates/building",
+  "id": "prop_pig_house",
+  "notes": "Pig house: wooden walls on a stone base, red tiled roof, arched door with hay, fence and flowers. The old sign with painted text is gone (no text in images).",
+  "parts": {
+    "ground": {
+      "shape": "ellipsoid",
+      "size": [1.6, 0.11, 1.15],
+      "at": [0.12, -0.02, 0.05],
+      "color": "grass",
+      "group": "ground",
+      "noise": {
+        "amp": 0.035,
+        "freq": 3.2,
+        "speed": 0
+      }
+    },
+    "stone": {
+      "shape": "box",
+      "size": [1.05, 0.24, 0.8, 0.05],
+      "at": [0, 0.34, 0],
+      "color": "stone",
+      "group": "stone",
+      "blend": 0.02
+    },
+    "wall": {
+      "shape": "box",
+      "size": [1, 0.43, 0.75, 0.03],
+      "at": [0, 0.99, 0],
+      "color": "wood",
+      "group": "wood"
+    },
+    "gable": {
+      "shape": "wedge",
+      "size": [0.75, 0.57, 1, 0.02],
+      "at": [0, 1.4, 0],
+      "rot": [0, 90, 0],
+      "color": "wood",
+      "group": "wood"
+    },
+    "post_l": {
+      "shape": "box",
+      "size": [0.075, 0.66, 0.075, 0.02],
+      "at": [0.99, 0.74, 0.74],
+      "color": "wood_mid",
+      "group": "post",
+      "mirror": true,
+      "repeat": {
+        "n": 2,
+        "step": [-1.98, 0, 0]
+      }
+    },
+    "door_hole": {
+      "shape": "box",
+      "size": [0.16, 0.4, 0.3, 0.26],
+      "at": [1, 0.92, 0],
+      "color": "hollow",
+      "op": "cut",
+      "blend": 0.01,
+      "flags": ["tintcut"]
+    },
+    "window_hole": {
+      "shape": "box",
+      "size": [0.24, 0.16, 0.1, 0.03],
+      "at": [-0.38, 1.02, 0.75],
+      "color": "hollow",
+      "op": "cut",
+      "blend": 0.01,
+      "flags": ["tintcut"]
+    },
+    "hay": {
+      "shape": "box",
+      "size": [0.11, 0.13, 0.26, 0.07],
+      "at": [0.9, 0.62, 0],
+      "color": "hay",
+      "group": "hay",
+      "noise": {
+        "amp": 0.02,
+        "freq": 14,
+        "speed": 0
+      }
+    },
+    "door_arc": {
+      "shape": "arc",
+      "size": [0.3, 0.045, 92],
+      "at": [1.01, 1.02, 0],
+      "rot": [0, 90, 0],
+      "color": "wood_mid",
+      "group": "frame"
+    },
+    "door_side_l": {
+      "shape": "box",
+      "size": [0.045, 0.24, 0.045, 0.015],
+      "at": [1.01, 0.78, 0.3],
+      "color": "wood_mid",
+      "group": "frame",
+      "mirror": true
+    },
+    "window_frame": {
+      "shape": "box",
+      "size": [0.27, 0.025, 0.05, 0.01],
+      "at": [-0.38, 0.85, 0.76],
+      "color": "wood_mid",
+      "group": "frame",
+      "repeat": {
+        "n": 2,
+        "step": [0, 0.34, 0]
+      }
+    },
+    "window_side": {
+      "shape": "box",
+      "size": [0.025, 0.19, 0.05, 0.01],
+      "at": [-0.64, 1.02, 0.76],
+      "color": "wood_mid",
+      "group": "frame",
+      "repeat": {
+        "n": 3,
+        "step": [0.26, 0, 0]
+      }
+    },
+    "window_bar": {
+      "shape": "box",
+      "size": [0.25, 0.015, 0.03, 0.005],
+      "at": [-0.38, 1.02, 0.76],
+      "color": "wood_mid",
+      "group": "frame"
+    },
+    "ramp": {
+      "shape": "box",
+      "size": [0.32, 0.03, 0.27, 0.01],
+      "at": [1.3, 0.37, 0],
+      "rot": [0, 0, -22],
+      "color": "wood",
+      "group": "ramp"
+    },
+    "roof_l": {
+      "shape": "box",
+      "size": [1.24, 0.08, 0.64, 0.04],
+      "at": [0, 1.67, 0.5],
+      "rot": [36, 0, 0],
+      "color": "roof",
+      "group": "roof",
+      "mirror": true
+    },
+    "tile_l": {
+      "shape": "box",
+      "size": [0.125, 0.04, 0.125, 0.035],
+      "parent": "roof_l",
+      "at": [-1.08, 0.08, -0.5],
+      "color": "tile",
+      "group": "roof",
+      "mirror": true,
+      "repeat": {
+        "n": 9,
+        "step": [0.27, 0, 0],
+        "n2": 5,
+        "step2": [0, 0, 0.245],
+        "stagger": [0.135, 0, 0]
+      },
+      "rot": [-9, 0, 0]
+    },
+    "ridge": {
+      "shape": "cylinder",
+      "size": [0.085, 1.24, 0.03],
+      "at": [0, 1.99, 0],
+      "rot": [0, 0, 90],
+      "color": "roof",
+      "group": "roof"
+    },
+    "chimney": {
+      "shape": "box",
+      "size": [0.16, 0.3, 0.16, 0.02],
+      "at": [-0.6, 2.06, -0.32],
+      "color": "stone",
+      "group": "chimney"
+    },
+    "chimney_cap": {
+      "shape": "box",
+      "size": [0.2, 0.045, 0.2, 0.02],
+      "at": [-0.6, 2.38, -0.32],
+      "color": "mortar",
+      "group": "chimney"
+    },
+    "fence_post": {
+      "shape": "cylinder",
+      "size": [0.05, 0.22, 0.02],
+      "at": [-1.5, 0.28, 1.05],
+      "color": "wood_mid",
+      "group": "fence",
+      "repeat": {
+        "n": 3,
+        "step": [0.4, 0, 0]
+      }
+    },
+    "fence_rail": {
+      "shape": "box",
+      "size": [0.45, 0.03, 0.02, 0.01],
+      "at": [-1.1, 0.22, 1.05],
+      "color": "wood",
+      "group": "fence",
+      "repeat": {
+        "n": 2,
+        "step": [0, 0.16, 0]
+      }
+    },
+    "fence2_post": {
+      "shape": "cylinder",
+      "size": [0.05, 0.22, 0.02],
+      "at": [1.55, 0.28, 0.4],
+      "color": "wood_mid",
+      "group": "fence",
+      "repeat": {
+        "n": 3,
+        "step": [0, 0, 0.42]
+      }
+    },
+    "fence2_rail": {
+      "shape": "box",
+      "size": [0.02, 0.03, 0.44, 0.01],
+      "at": [1.55, 0.22, 0.82],
+      "color": "wood",
+      "group": "fence",
+      "repeat": {
+        "n": 2,
+        "step": [0, 0.16, 0]
+      }
+    },
+    "snow_roof_l": {
+      "shape": "box",
+      "size": [1.22, 0.07, 0.6, 0.06],
+      "parent": "roof_l",
+      "at": [0, 0.13, -0.02],
+      "color": "snow",
+      "group": "snow",
+      "hide": true,
+      "mirror": true,
+      "noise": {
+        "amp": 0.025,
+        "freq": 5,
+        "speed": 0
+      },
+      "order": 1
+    },
+    "snow_chimney": {
+      "shape": "box",
+      "size": [0.21, 0.05, 0.21, 0.05],
+      "at": [-0.6, 2.44, -0.32],
+      "color": "snow",
+      "group": "snow",
+      "hide": true,
+      "order": 1
+    },
+    "snow_ground": {
+      "shape": "ellipsoid",
+      "size": [1.48, 0.05, 1.04],
+      "at": [0.12, 0.09, 0.05],
+      "color": "snow",
+      "group": "snow",
+      "hide": true,
+      "noise": {
+        "amp": 0.04,
+        "freq": 2.5,
+        "speed": 0
+      },
+      "blend": 0.04
+    },
+    "snow_fence": {
+      "shape": "box",
+      "size": [0.45, 0.025, 0.035, 0.02],
+      "at": [-1.1, 0.41, 1.05],
+      "color": "snow",
+      "group": "snow",
+      "hide": true
+    }
+  },
+  "paints": {
+    "plank_front": {
+      "shape": "box",
+      "size": [0.006, 0.44, 0.06, 0],
+      "at": [-0.78, 0.99, 0.75],
+      "color": "wood_dark",
+      "on": ["wood"],
+      "soft": 0.004,
+      "opacity": 0.55,
+      "repeat": {
+        "n": 8,
+        "step": [0.22, 0, 0]
+      }
+    },
+    "plank_gable": {
+      "shape": "box",
+      "size": [0.06, 1, 0.006, 0],
+      "at": [1, 1.3, -0.6],
+      "color": "wood_dark",
+      "on": ["wood"],
+      "soft": 0.004,
+      "opacity": 0.55,
+      "repeat": {
+        "n": 7,
+        "step": [0, 0, 0.2]
+      }
+    },
+    "mortar_h": {
+      "shape": "box",
+      "size": [1.2, 0.007, 0.95, 0],
+      "at": [0, 0.34, 0],
+      "color": "mortar",
+      "on": ["stone"],
+      "soft": 0.004,
+      "opacity": 0.8
+    },
+    "mortar_v": {
+      "shape": "box",
+      "size": [0.007, 0.12, 0.95, 0],
+      "at": [-0.92, 0.22, 0],
+      "color": "mortar",
+      "on": ["stone"],
+      "soft": 0.004,
+      "opacity": 0.8,
+      "repeat": {
+        "n": 8,
+        "step": [0.26, 0, 0],
+        "n2": 2,
+        "step2": [0, 0.24, 0],
+        "stagger": [0.13, 0, 0]
+      }
+    },
+    "mortar_vx": {
+      "shape": "box",
+      "size": [0.95, 0.12, 0.007, 0],
+      "at": [0, 0.22, -0.65],
+      "color": "mortar",
+      "on": ["stone"],
+      "soft": 0.004,
+      "opacity": 0.8,
+      "repeat": {
+        "n": 6,
+        "step": [0, 0, 0.26],
+        "n2": 2,
+        "step2": [0, 0.24, 0],
+        "stagger": [0, 0, 0.13]
+      }
+    },
+    "heart_l": {
+      "shape": "sphere",
+      "size": [0.085],
+      "at": [1, 1.6, 0.055],
+      "color": "hollow",
+      "on": ["wood"],
+      "soft": 0.004,
+      "mirror": true
+    },
+    "heart_tip": {
+      "shape": "box",
+      "size": [0.2, 0.087, 0.087, 0],
+      "at": [1, 1.545, 0],
+      "rot": [45, 0, 0],
+      "color": "hollow",
+      "on": ["wood"],
+      "soft": 0.004
+    },
+    "ramp_lines": {
+      "shape": "box",
+      "size": [0.4, 0.004, 0.2, 0],
+      "parent": "ramp",
+      "at": [0, 0, -0.18],
+      "color": "wood_dark",
+      "on": ["ramp"],
+      "soft": 0.004,
+      "opacity": 0.5,
+      "repeat": {
+        "n": 3,
+        "step": [0, 0, 0.18]
+      }
+    },
+    "grass_shade": {
+      "shape": "ellipsoid",
+      "size": [1.5, 0.5, 1],
+      "at": [-0.4, 0.1, -0.6],
+      "color": "grass_dark",
+      "on": ["ground"],
+      "soft": 0.4,
+      "opacity": 0.6
+    },
+    "flower0_petal": {
+      "shape": "sphere",
+      "size": [0.055],
+      "at": [-1.3, 0.11, 1.25],
+      "offset": [0.065, 0, 0],
+      "billboard": true,
+      "color": "petal",
+      "on": ["ground"],
+      "soft": 0.004,
+      "repeat": {
+        "n": 5,
+        "turn": [0, 0, 72]
+      }
+    },
+    "flower0_core": {
+      "shape": "sphere",
+      "size": [0.04],
+      "at": [-1.3, 0.11, 1.25],
+      "billboard": true,
+      "color": "core",
+      "on": ["ground"],
+      "soft": 0.004
+    },
+    "flower1_petal": {
+      "shape": "sphere",
+      "size": [0.055],
+      "at": [-0.5, 0.11, 1.32],
+      "offset": [0.065, 0, 0],
+      "billboard": true,
+      "color": "petal",
+      "on": ["ground"],
+      "soft": 0.004,
+      "repeat": {
+        "n": 5,
+        "turn": [0, 0, 72]
+      }
+    },
+    "flower1_core": {
+      "shape": "sphere",
+      "size": [0.04],
+      "at": [-0.5, 0.11, 1.32],
+      "billboard": true,
+      "color": "core",
+      "on": ["ground"],
+      "soft": 0.004
+    },
+    "flower2_petal": {
+      "shape": "sphere",
+      "size": [0.055],
+      "at": [0.55, 0.11, 1.3],
+      "offset": [0.065, 0, 0],
+      "billboard": true,
+      "color": "petal",
+      "on": ["ground"],
+      "soft": 0.004,
+      "repeat": {
+        "n": 5,
+        "turn": [0, 0, 72]
+      }
+    },
+    "flower2_core": {
+      "shape": "sphere",
+      "size": [0.04],
+      "at": [0.55, 0.11, 1.3],
+      "billboard": true,
+      "color": "core",
+      "on": ["ground"],
+      "soft": 0.004
+    },
+    "flower3_petal": {
+      "shape": "sphere",
+      "size": [0.055],
+      "at": [1.6, 0.11, 0.9],
+      "offset": [0.065, 0, 0],
+      "billboard": true,
+      "color": "petal",
+      "on": ["ground"],
+      "soft": 0.004,
+      "repeat": {
+        "n": 5,
+        "turn": [0, 0, 72]
+      }
+    },
+    "flower3_core": {
+      "shape": "sphere",
+      "size": [0.04],
+      "at": [1.6, 0.11, 0.9],
+      "billboard": true,
+      "color": "core",
+      "on": ["ground"],
+      "soft": 0.004
+    },
+    "flower4_petal": {
+      "shape": "sphere",
+      "size": [0.055],
+      "at": [-1.55, 0.11, 0.5],
+      "offset": [0.065, 0, 0],
+      "billboard": true,
+      "color": "petal",
+      "on": ["ground"],
+      "soft": 0.004,
+      "repeat": {
+        "n": 5,
+        "turn": [0, 0, 72]
+      }
+    },
+    "flower4_core": {
+      "shape": "sphere",
+      "size": [0.04],
+      "at": [-1.55, 0.11, 0.5],
+      "billboard": true,
+      "color": "core",
+      "on": ["ground"],
+      "soft": 0.004
+    }
+  },
+  "outputs": [
+    {
+      "asset": "prop_pig_house",
+      "file": "buildings/prop_pig_house.png"
+    },
+    {
+      "asset": "prop_pig_house",
+      "file": "buildings/prop_pig_house_winter.png",
+      "pose": "winter"
+    }
+  ],
+  "colors": {
+    "snow": "snow"
+  },
+  "poses": {
+    "winter": {
+      "snow_roof_l": {
+        "show": true
+      },
+      "snow_roof_r": {
+        "show": true
+      },
+      "snow_chimney": {
+        "show": true
+      },
+      "snow_ground": {
+        "show": true
+      },
+      "snow_fence": {
+        "show": true
+      },
+      "paint:flower0_petal": {
+        "hide": true
+      },
+      "paint:flower0_core": {
+        "hide": true
+      },
+      "paint:flower1_petal": {
+        "hide": true
+      },
+      "paint:flower1_core": {
+        "hide": true
+      },
+      "paint:flower2_petal": {
+        "hide": true
+      },
+      "paint:flower2_core": {
+        "hide": true
+      },
+      "paint:flower3_petal": {
+        "hide": true
+      },
+      "paint:flower3_core": {
+        "hide": true
+      },
+      "paint:flower4_petal": {
+        "hide": true
+      },
+      "paint:flower4_core": {
+        "hide": true
+      }
+    }
+  }
+}

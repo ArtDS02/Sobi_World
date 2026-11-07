@@ -1,0 +1,367 @@
+// Sobi Studio renderer: ray-marched signed distance fields, toon shading, drawn outlines.
+// Every number that shapes the look arrives as a uniform compiled from studio/Style/style.json
+// by scripts/studio (no style constants live here).
+#pragma kernel GBuffer
+#pragma kernel Shade
+#pragma kernel Flat
+#pragma kernel Down
+
+struct Prim {
+    float4 r0, r1, r2;   // world -> local affine rows (includes 1/scale)
+    float4 p;            // shape parameters
+    float4 col;          // rgb (linear), smooth radius k
+    float4 lineCol;         // outline rgb, noise amplitude
+    float4 ext;          // noise frequency, noise phase, local->world scale, bend (x shift per y^2)
+    float4 col2;         // flat mode: mid band rgb, band 1 depth
+    float4 col3;         // flat mode: core band rgb, band 2 depth
+    int4 info;           // type, op, group, flags
+};
+
+struct Paint {
+    float4 r0, r1, r2;
+    float4 p;
+    float4 col;          // rgb, edge softness (world units)
+    float4 ext;          // opacity, local->world scale, unused, unused
+    int4 info;           // type, group mask, flags (1 projected from the camera, 2 unlit), unused
+};
+
+StructuredBuffer<Prim> _Prims;
+StructuredBuffer<Paint> _Paints;
+int _PrimCount;
+int _PaintCount;
+
+float3 _CamCenter, _CamRight, _CamUp, _CamFwd;
+float2 _Half;          // world half extents of the view
+int2 _Size;            // supersampled pixel size
+float _Far;
+float _Eps;            // hit epsilon (world)
+
+// Style (from style.json via the job file)
+float3 _LightDir;
+float3 _LightColor;
+float3 _ShadowTint;
+float3 _AoTint;
+float4 _Bands;         // x: shadow threshold, y: softness, z: highlight threshold, w: highlight amount
+float4 _Rim;           // x: strength, y: power, z: specular strength, w: specular power
+float4 _Ao;            // x: strength, y: step, z: falloff, w: unused
+float4 _Paint;         // x: grain amount, y: grain frequency (world), z: top-to-bottom light gradient, w: unused
+float4 _Lines;         // x: outer radius px, y: inner radius px, z: depth jump (world), w: depth gap for lines between groups
+int _SS;               // supersample factor
+
+RWTexture2D<float4> _G0;   // albedo rgb, coverage
+RWTexture2D<float4> _G1;   // normal xyz, depth
+RWTexture2D<float4> _G2;   // line rgb, group
+RWTexture2D<float4> _G3;   // ao, flags, unused, unused
+RWTexture2D<float4> _Color; // shaded, premultiplied (supersampled)
+RWTexture2D<float4> _Out;   // final, premultiplied linear
+
+// ---------- noise ----------
+float hash31(float3 p) {
+    p = frac(p * 0.1031);
+    p += dot(p, p.zyx + 31.32);
+    return frac((p.x + p.y) * p.z);
+}
+float vnoise(float3 x) {
+    float3 i = floor(x);
+    float3 f = frac(x);
+    f = f * f * (3.0 - 2.0 * f);
+    float n000 = hash31(i), n100 = hash31(i + float3(1, 0, 0));
+    float n010 = hash31(i + float3(0, 1, 0)), n110 = hash31(i + float3(1, 1, 0));
+    float n001 = hash31(i + float3(0, 0, 1)), n101 = hash31(i + float3(1, 0, 1));
+    float n011 = hash31(i + float3(0, 1, 1)), n111 = hash31(i + float3(1, 1, 1));
+    return lerp(lerp(lerp(n000, n100, f.x), lerp(n010, n110, f.x), f.y),
+                lerp(lerp(n001, n101, f.x), lerp(n011, n111, f.x), f.y), f.z) * 2.0 - 1.0;
+}
+float fbm(float3 x) {
+    return vnoise(x) * 0.65 + vnoise(x * 2.03 + 7.1) * 0.35;
+}
+
+// ---------- shapes (local space) ----------
+float sdEllipsoid(float3 q, float3 r) {
+    float k0 = length(q / r);
+    float k1 = length(q / (r * r));
+    return k0 * (k0 - 1.0) / max(k1, 1e-6);
+}
+float sdRoundBox(float3 q, float3 b, float r) {
+    float3 d = abs(q) - b + r;
+    return length(max(d, 0.0)) + min(max(d.x, max(d.y, d.z)), 0.0) - r;
+}
+float sdRoundCone(float3 q, float r1, float r2, float h) {
+    float b = (r1 - r2) / h;
+    float a = sqrt(saturate(1.0 - b * b));
+    float2 v = float2(length(q.xz), q.y);
+    float k = dot(v, float2(-b, a));
+    if (k < 0.0) return length(v) - r1;
+    if (k > a * h) return length(v - float2(0.0, h)) - r2;
+    return dot(v, float2(a, b)) - r1;
+}
+// Ring in the local XY plane around +Y, opening half angle `ang` (radians, PI = full ring).
+float sdArc(float3 q, float ra, float rb, float ang) {
+    float2 sc = float2(sin(ang), cos(ang));
+    q.x = abs(q.x);
+    float k = (sc.y * q.x > sc.x * q.y) ? dot(q.xy, sc) : length(q.xy);
+    return sqrt(max(dot(q, q) + ra * ra - 2.0 * ra * k, 0.0)) - rb;
+}
+float sdCylinder(float3 q, float r, float h, float rb) {
+    float2 d = float2(length(q.xz) - (r - rb), abs(q.y) - (h - rb));
+    return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - rb;
+}
+// Isosceles triangular prism: apex up (+Y), half width p.x, height p.y, half depth p.z, rounding p.w
+float sdWedge(float3 q, float4 p) {
+    float hw = p.x, h = p.y;
+    float2 n = normalize(float2(h, hw));
+    float side = dot(float2(abs(q.x), q.y - h), n);
+    float d2 = max(side, -q.y);
+    float dz = abs(q.z) - p.z;
+    float2 w = float2(d2 + p.w, dz + p.w);
+    return min(max(w.x, w.y), 0.0) + length(max(w, 0.0)) - p.w;
+}
+
+float shapeDist(int type, float3 q, float4 p) {
+    switch (type) {
+        case 0: return length(q) - p.x;
+        case 1: return sdEllipsoid(q, p.xyz);
+        case 2: return sdRoundBox(q, p.xyz, p.w);
+        case 3: return sdRoundCone(q, p.x, p.y, p.z);
+        case 4: return sdArc(q, p.x, p.y, p.z);
+        case 5: return sdCylinder(q, p.x, p.y, p.z);
+        case 6: return sdWedge(q, p);
+        default: return 1e9;
+    }
+}
+
+float3 toLocal(float4 r0, float4 r1, float4 r2, float3 w) {
+    return float3(dot(r0.xyz, w) + r0.w, dot(r1.xyz, w) + r1.w, dot(r2.xyz, w) + r2.w);
+}
+
+float primDist(Prim P, float3 w) {
+    float3 q = toLocal(P.r0, P.r1, P.r2, w);
+    if (P.ext.w != 0.0) q.x -= P.ext.w * q.y * q.y;   // curve along local y (flame tongues, tails)
+    float d = shapeDist(P.info.x, q, P.p) * P.ext.z;
+    if (P.lineCol.w != 0.0) d += P.lineCol.w * fbm(q * P.ext.x + float3(0.0, -P.ext.y, P.ext.y * 0.37));
+    return d;
+}
+
+struct Hit {
+    float d;
+    float3 col;
+    float3 col2;
+    float3 col3;
+    float b1;
+    float b2;
+    int idx;
+};
+
+Hit scene(float3 w) {
+    Hit h;
+    h.d = 1e9; h.col = 0; h.col2 = 0; h.col3 = 0; h.b1 = 0; h.b2 = 0; h.idx = -1;
+    for (int i = 0; i < _PrimCount; i++) {
+        Prim P = _Prims[i];
+        float di = primDist(P, w);
+        float k = P.col.w;
+        int op = P.info.y;
+        if (op == 0) {
+            if (k <= 0.0) {
+                if (di < h.d) { h.d = di; h.col = P.col.rgb; h.col2 = P.col2.rgb; h.col3 = P.col3.rgb; h.b1 = P.col2.w; h.b2 = P.col3.w; h.idx = i; }
+            } else {
+                float t = saturate(0.5 + 0.5 * (di - h.d) / k);
+                float nd = lerp(di, h.d, t) - k * t * (1.0 - t);
+                h.col = lerp(P.col.rgb, h.col, t);
+                h.col2 = lerp(P.col2.rgb, h.col2, t);
+                h.col3 = lerp(P.col3.rgb, h.col3, t);
+                h.b1 = lerp(P.col2.w, h.b1, t);
+                h.b2 = lerp(P.col3.w, h.b2, t);
+                if (t < 0.5 || h.idx < 0) h.idx = i;
+                h.d = nd;
+            }
+        } else if (op == 1) {
+            float kk = max(k, 1e-5);
+            float t = saturate(0.5 - 0.5 * (h.d + di) / kk);
+            h.d = lerp(h.d, -di, t) + kk * t * (1.0 - t);
+            if ((P.info.w & 8) != 0) h.col = lerp(h.col, P.col.rgb, t);
+        } else {
+            float kk = max(k, 1e-5);
+            float t = saturate(0.5 - 0.5 * (di - h.d) / kk);
+            h.d = lerp(di, h.d, t) + kk * t * (1.0 - t);
+        }
+    }
+    return h;
+}
+
+float sceneD(float3 w) { return scene(w).d; }
+
+float3 normalAt(float3 w, float e) {
+    const float2 k = float2(1, -1);
+    return normalize(k.xyy * sceneD(w + k.xyy * e) + k.yyx * sceneD(w + k.yyx * e) +
+                     k.yxy * sceneD(w + k.yxy * e) + k.xxx * sceneD(w + k.xxx * e));
+}
+
+float aoAt(float3 w, float3 n) {
+    float occ = 0.0, sca = 1.0;
+    for (int i = 1; i <= 5; i++) {
+        float hgt = _Ao.y * i;
+        float d = sceneD(w + n * hgt);
+        occ += (hgt - d) * sca;
+        sca *= _Ao.z;
+    }
+    return saturate(1.0 - _Ao.x * occ / _Ao.y);
+}
+
+float3 applyPaints(float3 w, float3 col, int group, inout int flags) {
+    for (int j = 0; j < _PaintCount; j++) {
+        Paint Q = _Paints[j];
+        if ((Q.info.y & (1 << group)) == 0) continue;
+        float3 q = toLocal(Q.r0, Q.r1, Q.r2, w);
+        if ((Q.info.z & 1) != 0) q.z = 0.0;   // decal: depth ignored, painted where it shows
+        float d = shapeDist(Q.info.x, q, Q.p) * Q.ext.y;
+        float s = max(Q.col.w, 1e-5);
+        float a = (1.0 - smoothstep(-s, s, d)) * Q.ext.x;
+        col = lerp(col, Q.col.rgb, a);
+        if ((Q.info.z & 2) != 0 && a > 0.5) flags |= 1;
+        else if (a > 0.5) flags &= ~1;
+    }
+    return col;
+}
+
+float3 rayOrigin(uint2 id) {
+    float2 uv = (float2(id) + 0.5) / float2(_Size);
+    float x = (uv.x * 2.0 - 1.0) * _Half.x;
+    float y = (1.0 - uv.y * 2.0) * _Half.y;   // row 0 is the top of the image
+    return _CamCenter + _CamRight * x + _CamUp * y - _CamFwd * _Far;
+}
+
+int2 _Offset;          // tile offset (GBuffer is dispatched in tiles to stay under the GPU watchdog)
+
+[numthreads(8, 8, 1)]
+void GBuffer(uint3 gid : SV_DispatchThreadID) {
+    uint3 id = uint3(gid.xy + (uint2)_Offset, 0);
+    if (id.x >= (uint)_Size.x || id.y >= (uint)_Size.y) return;
+    float3 ro = rayOrigin(id.xy);
+    float t = 0.0;
+    float tmax = _Far * 2.0;
+    bool hit = false;
+    Hit h;
+    [loop] for (int i = 0; i < 220; i++) {
+        h = scene(ro + _CamFwd * t);
+        if (h.d < _Eps) { hit = true; break; }
+        t += max(h.d * 0.8, _Eps * 0.5);
+        if (t > tmax) break;
+    }
+    if (!hit) {
+        _G0[id.xy] = 0; _G1[id.xy] = float4(0, 0, 0, 1e9); _G2[id.xy] = float4(0, 0, 0, -1); _G3[id.xy] = 0;
+        return;
+    }
+    float3 w = ro + _CamFwd * t;
+    Prim P = _Prims[h.idx];
+    float3 n = normalAt(w, _Eps * 0.75);
+    float ao = aoAt(w, n);
+    int flags = P.info.w;
+    float3 albedo = applyPaints(w, h.col, P.info.z, flags);
+    _G0[id.xy] = float4(albedo, 1.0);
+    _G1[id.xy] = float4(n, t);
+    _G2[id.xy] = float4(P.lineCol.rgb, (float)P.info.z);
+    _G3[id.xy] = float4(ao, (float)flags, 0, 0);
+}
+
+[numthreads(8, 8, 1)]
+void Shade(uint3 id : SV_DispatchThreadID) {
+    if (id.x >= (uint)_Size.x || id.y >= (uint)_Size.y) return;
+    float4 g0 = _G0[id.xy];
+    float4 g1 = _G1[id.xy];
+    int ro = (int)ceil(_Lines.x);
+    int ri = (int)ceil(_Lines.y);
+
+    if (g0.a < 0.5) {
+        // Outer outline: background pixel close to a covered pixel takes that pixel's line colour.
+        float best = 1e9; float3 lc = 0;
+        for (int dy = -ro; dy <= ro; dy++) for (int dx = -ro; dx <= ro; dx++) {
+            float r2 = dx * dx + dy * dy;
+            if (r2 > _Lines.x * _Lines.x || r2 >= best) continue;
+            int2 c = int2(id.xy) + int2(dx, dy);
+            if (c.x < 0 || c.y < 0 || c.x >= _Size.x || c.y >= _Size.y) continue;
+            if (_G0[c].a < 0.5) continue;
+            int fl = (int)_G3[c].y;
+            if ((fl & 2) != 0) continue;
+            best = r2; lc = _G2[c].rgb;
+        }
+        _Color[id.xy] = best < 1e8 ? float4(lc, 1.0) : 0;
+        return;
+    }
+
+    int flags = (int)_G3[id.xy].y;
+    // Inner outline: a nearer surface nearby (or a nearer part of another group) draws its line over this one.
+    float myGroup = _G2[id.xy].a;
+    if ((flags & 2) == 0) {
+        float best = 1e9; float3 lc = 0;
+        for (int dy = -ri; dy <= ri; dy++) for (int dx = -ri; dx <= ri; dx++) {
+            float r2 = dx * dx + dy * dy;
+            if (r2 > _Lines.y * _Lines.y || r2 >= best) continue;
+            int2 c = int2(id.xy) + int2(dx, dy);
+            if (c.x < 0 || c.y < 0 || c.x >= _Size.x || c.y >= _Size.y) continue;
+            float4 n1 = _G1[c];
+            if (_G0[c].a < 0.5) continue;
+            bool nearer = n1.w < g1.w - _Lines.z;
+            bool otherGroup = _G2[c].a != myGroup && n1.w < g1.w - _Lines.w;
+            if (!nearer && !otherGroup) continue;
+            int fl = (int)_G3[c].y;
+            if ((fl & 2) != 0) continue;
+            best = r2; lc = _G2[c].rgb;
+        }
+        if (best < 1e8) { _Color[id.xy] = float4(lc, 1.0); return; }
+    }
+
+    float3 albedo = g0.rgb;
+    if ((flags & 1) != 0) { _Color[id.xy] = float4(albedo, 1.0); return; }
+    // Painted feel: soft brush grain in world space and a light gradient from the top of the picture.
+    float3 wp = rayOrigin(id.xy) + _CamFwd * g1.w;
+    float v = (float)id.y / _Size.y;
+    albedo *= (1.0 + _Paint.x * fbm(wp * _Paint.y)) * (1.0 + _Paint.z * (0.5 - v));
+
+    float3 n = g1.xyz;
+    float3 L = normalize(_LightDir);
+    float3 V = -_CamFwd;
+    float hl = dot(n, L) * 0.5 + 0.5;
+    float lit = smoothstep(_Bands.x - _Bands.y, _Bands.x + _Bands.y, hl);
+    float hi = smoothstep(_Bands.z - _Bands.y, _Bands.z + _Bands.y, hl) * _Bands.w;
+    float ao = _G3[id.xy].x;
+    float3 shadow = albedo * _ShadowTint;
+    float3 c = lerp(shadow, albedo, lit);
+    c = lerp(c, c * _AoTint, 1.0 - ao);
+    c += albedo * hi * _LightColor;
+    float fres = pow(saturate(1.0 - dot(n, V)), _Rim.y);
+    c += _LightColor * fres * _Rim.x * (0.35 + 0.65 * lit);
+    if ((flags & 4) != 0) {
+        float3 R = reflect(-L, n);
+        float sp = pow(saturate(dot(R, V)), _Rim.w);
+        c += _LightColor * smoothstep(0.45 - _Bands.y, 0.45 + _Bands.y, sp) * _Rim.z;   // toon glint
+    }
+    _Color[id.xy] = float4(c, 1.0);
+}
+
+// Flat mode (2D effects): the z = 0 slice of the field, coloured in nested bands with an outline.
+[numthreads(8, 8, 1)]
+void Flat(uint3 id : SV_DispatchThreadID) {
+    if (id.x >= (uint)_Size.x || id.y >= (uint)_Size.y) return;
+    float3 w = rayOrigin(id.xy) + _CamFwd * _Far;
+    Hit h = scene(w);
+    float lineW = _Lines.x * (2.0 * _Half.x / _Size.x);
+    if (h.d > lineW || h.idx < 0) { _Color[id.xy] = 0; return; }
+    Prim P = _Prims[h.idx];
+    if (h.d > 0.0) { _Color[id.xy] = (P.info.w & 2) != 0 ? 0 : float4(P.lineCol.rgb, 1.0); return; }
+    float3 c = h.col;
+    if (h.b1 > 0.0 && -h.d > h.b1) c = h.col2;
+    if (h.b2 > 0.0 && -h.d > h.b2) c = h.col3;
+    _Color[id.xy] = float4(c, 1.0);
+}
+
+[numthreads(8, 8, 1)]
+void Down(uint3 id : SV_DispatchThreadID) {
+    int2 base = int2(id.xy) * _SS;
+    if (base.x >= _Size.x || base.y >= _Size.y) return;
+    float4 acc = 0;
+    for (int y = 0; y < _SS; y++) for (int x = 0; x < _SS; x++) {
+        float4 c = _Color[base + int2(x, y)];
+        acc += float4(c.rgb * c.a, c.a);
+    }
+    _Out[id.xy] = acc / (_SS * _SS);
+}

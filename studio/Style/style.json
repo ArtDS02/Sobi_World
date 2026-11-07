@@ -1,0 +1,147 @@
+{
+  "$schema": "../Recipes/schema/style.schema.json",
+  "version": 1,
+  "palette": {
+    "white": "#ffffff",
+    "cream": "#fff3e2",
+    "ink": "#4a2620",
+    "eye_dark": "#2b1a16",
+    "eye_brown": "#86522f",
+    "pig_pink": "#f6a49c",
+    "pig_pink_light": "#fcc7bc",
+    "pig_belly": "#fde0cf",
+    "pig_snout": "#f2878a",
+    "pig_nostril": "#b9505a",
+    "pig_ear_inner": "#ee8c90",
+    "blush": "#f0707e",
+    "hoof": "#7c3a33",
+    "mouth": "#7a2f2c",
+    "orange": "#ff8a2b",
+    "orange_light": "#ffb256",
+    "orange_deep": "#e9601d",
+    "yellow": "#ffd65a",
+    "yellow_pale": "#fff0a6",
+    "wood_light": "#e0aa6c",
+    "wood": "#bf7f45",
+    "wood_dark": "#8d552f",
+    "roof_red": "#d94a3c",
+    "roof_red_light": "#ec6a55",
+    "stone": "#c2bcb1",
+    "stone_dark": "#968e83",
+    "grass": "#93c94f",
+    "grass_dark": "#62a03a",
+    "hay": "#f1c64a",
+    "petal": "#fffaf0",
+    "flower_core": "#ffc93a",
+    "flame_outer": "#ff7a2c",
+    "flame_mid": "#ffad3a",
+    "flame_core": "#ffe58a",
+    "flame_line": "#8c3a1b",
+    "shadow_dark": "#3b2a24",
+    "peach": "#ffd9a8",
+    "snow": "#f4f8ff"
+  },
+  "light": {
+    "dir": [-0.55, 0.78, 0.55],
+    "color": "#fff7ec",
+    "shadowTint": [0.9, 0.79, 0.86],
+    "aoTint": [0.9, 0.8, 0.86],
+    "bands": {
+      "shadow": 0.36,
+      "soft": 0.06,
+      "highlight": 0.86,
+      "highlightAmount": 0.12
+    },
+    "rim": {
+      "strength": 0.16,
+      "power": 3
+    },
+    "specular": {
+      "strength": 0.14,
+      "power": 40
+    },
+    "ao": {
+      "strength": 0.45,
+      "step": 0.05,
+      "falloff": 0.7
+    }
+  },
+  "outline": {
+    "px": 2,
+    "innerPx": 1.4,
+    "depthJump": 0.12,
+    "groupJump": 0.03,
+    "lightness": 0.5,
+    "chroma": 1.15,
+    "ink": "ink",
+    "inkMix": 0.25
+  },
+  "eyes": {
+    "highlight": {
+      "size": 0.36,
+      "up": 0.34,
+      "side": -0.22
+    },
+    "highlight2": {
+      "size": 0.16,
+      "up": -0.38,
+      "side": 0.3
+    },
+    "highlightColor": "white",
+    "irisScale": 0.68,
+    "irisDown": 0.3,
+    "irisSoft": 0.35
+  },
+  "paint": {
+    "grain": 0.06,
+    "grainFreq": 7,
+    "gradient": 0.14
+  },
+  "supersample": 3,
+  "kinds": {
+    "pig_farm": {
+      "canvas": [512, 512],
+      "ppu": 172,
+      "origin": [252, 386],
+      "camera": {
+        "yaw": 24,
+        "pitch": 12
+      },
+      "mode": "sdf",
+      "lineScale": 3.6
+    },
+    "fish_aquarium": {
+      "canvas": [192, 120],
+      "ppu": 82,
+      "origin": [100, 60],
+      "camera": {
+        "yaw": 18,
+        "pitch": 6
+      },
+      "mode": "sdf",
+      "lineScale": 1.7
+    },
+    "building": {
+      "canvas": [384, 355],
+      "ppu": 86,
+      "origin": [190, 258],
+      "camera": {
+        "yaw": 46,
+        "pitch": 28
+      },
+      "mode": "sdf",
+      "lineScale": 1.7
+    },
+    "fx_battle": {
+      "canvas": [256, 256],
+      "ppu": 158,
+      "origin": [128, 252],
+      "camera": {
+        "yaw": 0,
+        "pitch": 0
+      },
+      "mode": "flat",
+      "lineScale": 1.5
+    }
+  }
+}

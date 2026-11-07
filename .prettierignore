@@ -3,3 +3,8 @@ coverage
 node_modules
 *.md
 .claude
+studio/Library
+studio/Temp
+studio/Logs
+studio/UserSettings
+studio/.cache

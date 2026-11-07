@@ -1,0 +1,325 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "kind": "fish_aquarium",
+  "area": "aquarium",
+  "notes": "Side-view fish with a tail fin; faces +x, visible side +z. Swim clip: the tail yaws around its root (seen edge-on it narrows and widens), fins flutter.",
+  "colors": {
+    "skin": "orange",
+    "back": "orange_deep",
+    "belly": "yellow_pale",
+    "fin": "orange",
+    "fin_tip": "orange_light",
+    "eye": "eye_dark",
+    "iris": "eye_brown",
+    "mouth": "mouth",
+    "ray": "orange_deep"
+  },
+  "parts": {
+    "body": {
+      "shape": "ellipsoid",
+      "size": [0.5, 0.42, 0.3],
+      "at": [0.14, 0.02, 0],
+      "color": "skin",
+      "group": "body",
+      "flags": []
+    },
+    "head": {
+      "shape": "ellipsoid",
+      "size": [0.3, 0.31, 0.26],
+      "parent": "body",
+      "at": [0.3, 0.02, 0],
+      "color": "skin",
+      "group": "body",
+      "blend": 0.12
+    },
+    "tail_root": {
+      "parent": "body",
+      "at": [-0.47, -0.02, 0]
+    },
+    "tail_top": {
+      "shape": "ellipsoid",
+      "size": [0.42, 0.22, 0.022],
+      "parent": "tail_root",
+      "offset": [-0.36, 0.04, 0],
+      "rot": [0, 0, -28],
+      "color": "fin_tip",
+      "group": "fin",
+      "blend": 0.06,
+      "noise": {
+        "amp": 0.012,
+        "freq": 4.5,
+        "speed": 0
+      }
+    },
+    "tail_bot": {
+      "shape": "ellipsoid",
+      "size": [0.44, 0.21, 0.022],
+      "parent": "tail_root",
+      "offset": [-0.34, -0.08, 0],
+      "rot": [0, 0, 38],
+      "color": "fin_tip",
+      "group": "fin",
+      "blend": 0.06,
+      "noise": {
+        "amp": 0.012,
+        "freq": 4.5,
+        "speed": 0
+      }
+    },
+    "dorsal": {
+      "shape": "ellipsoid",
+      "size": [0.34, 0.24, 0.022],
+      "parent": "body",
+      "at": [-0.08, 0.34, 0],
+      "rot": [0, 0, 28],
+      "color": "fin_tip",
+      "group": "fin",
+      "blend": 0.05,
+      "noise": {
+        "amp": 0.012,
+        "freq": 4.5,
+        "speed": 0
+      }
+    },
+    "pelvic": {
+      "shape": "ellipsoid",
+      "size": [0.2, 0.11, 0.02],
+      "parent": "body",
+      "at": [-0.04, -0.36, 0.08],
+      "rot": [0, 0, -40],
+      "color": "fin",
+      "group": "fin",
+      "blend": 0.04,
+      "noise": {
+        "amp": 0.012,
+        "freq": 4.5,
+        "speed": 0
+      }
+    },
+    "pectoral_root": {
+      "parent": "body",
+      "at": [0.22, -0.14, 0.27]
+    },
+    "pectoral": {
+      "shape": "ellipsoid",
+      "size": [0.19, 0.09, 0.02],
+      "parent": "pectoral_root",
+      "offset": [-0.12, -0.03, 0],
+      "rot": [20, -20, -28],
+      "color": "fin",
+      "group": "fin2"
+    }
+  },
+  "paints": {
+    "back": {
+      "shape": "ellipsoid",
+      "size": [0.7, 0.3, 0.6],
+      "parent": "body",
+      "at": [0, 0.38, 0],
+      "color": "back",
+      "on": ["body"],
+      "soft": 0.14,
+      "opacity": 0.55
+    },
+    "belly": {
+      "shape": "ellipsoid",
+      "size": [0.55, 0.22, 0.5],
+      "parent": "body",
+      "at": [0.1, -0.36, 0.1],
+      "color": "belly",
+      "on": ["body"],
+      "soft": 0.14,
+      "opacity": 0.6
+    },
+    "fin_tips": {
+      "shape": "sphere",
+      "size": [0.32],
+      "parent": "tail_root",
+      "at": [0.05, 0, 0],
+      "color": "fin",
+      "on": ["fin"],
+      "soft": 0.22,
+      "opacity": 1
+    },
+    "eye": {
+      "shape": "eye",
+      "size": [0.08, 0.09],
+      "parent": "head",
+      "at": [0.16, 0.06, 0.2],
+      "billboard": true,
+      "color": "eye",
+      "on": ["body"],
+      "soft": 0.005
+    },
+    "mouth": {
+      "shape": "arc",
+      "size": [0.04, 0.008, 55],
+      "parent": "head",
+      "at": [0.28, -0.05, 0.12],
+      "rot": [0, 0, 165],
+      "billboard": true,
+      "color": "mouth",
+      "on": ["body"],
+      "soft": 0.003
+    },
+    "ray_0": {
+      "shape": "box",
+      "size": [0.0072, 0.25, 0.12, 0],
+      "parent": "tail_root",
+      "at": [0, 0, 0],
+      "rot": [0, 0, 68],
+      "color": "ray",
+      "on": ["fin"],
+      "soft": 0.006,
+      "opacity": 0.7,
+      "offset": [0, 0.25, 0]
+    },
+    "ray_1": {
+      "shape": "box",
+      "size": [0.0072, 0.275, 0.12, 0],
+      "parent": "tail_root",
+      "at": [0, 0, 0],
+      "rot": [0, 0, 82],
+      "color": "ray",
+      "on": ["fin"],
+      "soft": 0.006,
+      "opacity": 0.7,
+      "offset": [0, 0.275, 0]
+    },
+    "ray_2": {
+      "shape": "box",
+      "size": [0.0072, 0.275, 0.12, 0],
+      "parent": "tail_root",
+      "at": [0, 0, 0],
+      "rot": [0, 0, 98],
+      "color": "ray",
+      "on": ["fin"],
+      "soft": 0.006,
+      "opacity": 0.7,
+      "offset": [0, 0.275, 0]
+    },
+    "ray_3": {
+      "shape": "box",
+      "size": [0.0072, 0.25, 0.12, 0],
+      "parent": "tail_root",
+      "at": [0, 0, 0],
+      "rot": [0, 0, 114],
+      "color": "ray",
+      "on": ["fin"],
+      "soft": 0.006,
+      "opacity": 0.7,
+      "offset": [0, 0.25, 0]
+    },
+    "ray_4": {
+      "shape": "box",
+      "size": [0.0072, 0.225, 0.12, 0],
+      "parent": "tail_root",
+      "at": [0, 0, 0],
+      "rot": [0, 0, 130],
+      "color": "ray",
+      "on": ["fin"],
+      "soft": 0.006,
+      "opacity": 0.7,
+      "offset": [0, 0.225, 0]
+    },
+    "dray_0": {
+      "shape": "box",
+      "size": [0.006, 0.11, 0.12, 0],
+      "parent": "dorsal",
+      "at": [0.12, -0.12, 0],
+      "rot": [0, 0, 20],
+      "color": "ray",
+      "on": ["fin"],
+      "soft": 0.005,
+      "opacity": 0.7,
+      "offset": [0, 0.11, 0]
+    },
+    "dray_1": {
+      "shape": "box",
+      "size": [0.006, 0.12, 0.12, 0],
+      "parent": "dorsal",
+      "at": [0.12, -0.12, 0],
+      "rot": [0, 0, 45],
+      "color": "ray",
+      "on": ["fin"],
+      "soft": 0.005,
+      "opacity": 0.7,
+      "offset": [0, 0.12, 0]
+    },
+    "dray_2": {
+      "shape": "box",
+      "size": [0.006, 0.11, 0.12, 0],
+      "parent": "dorsal",
+      "at": [0.12, -0.12, 0],
+      "rot": [0, 0, 70],
+      "color": "ray",
+      "on": ["fin"],
+      "soft": 0.005,
+      "opacity": 0.7,
+      "offset": [0, 0.11, 0]
+    },
+    "scales": {
+      "shape": "arc",
+      "size": [0.07, 0.009, 75],
+      "parent": "body",
+      "at": [-0.26, 0.12, 0.3],
+      "rot": [0, 0, 90],
+      "billboard": true,
+      "color": "back",
+      "on": ["body"],
+      "soft": 0.006,
+      "opacity": 0.45,
+      "repeat": {
+        "n": 4,
+        "step": [0.13, 0, 0],
+        "n2": 3,
+        "step2": [0, -0.12, 0],
+        "stagger": [0.065, 0, 0]
+      }
+    }
+  },
+  "poses": {
+    "rest": {},
+    "tail_a": {
+      "tail_root": {
+        "rot": [0, 42, 0]
+      },
+      "dorsal": {
+        "rot": [0, 0, 7]
+      },
+      "pectoral_root": {
+        "rot": [0, -18, 0]
+      }
+    },
+    "tail_b": {
+      "tail_root": {
+        "rot": [0, -42, 0]
+      },
+      "dorsal": {
+        "rot": [0, 0, -7]
+      },
+      "pectoral_root": {
+        "rot": [0, 14, 0]
+      }
+    }
+  },
+  "clips": {
+    "swim": {
+      "frames": 3,
+      "keys": [
+        {
+          "t": 0,
+          "pose": "tail_a"
+        },
+        {
+          "t": 0.5,
+          "pose": "rest"
+        },
+        {
+          "t": 1,
+          "pose": "tail_b"
+        }
+      ]
+    }
+  }
+}

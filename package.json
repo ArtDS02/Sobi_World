@@ -51,6 +51,7 @@
     "anim:verify": "tsx scripts/anim-review/verify.ts",
     "anim:game": "tsx scripts/anim-review/game.ts",
     "anim:audit": "tsx scripts/anim-review/audit.ts",
+    "studio": "tsx scripts/studio/cli.ts",
     "rig:parts": "tsx scripts/rig/build-parts.ts",
     "rig:fmt": "tsx scripts/rig/fmt.ts",
     "rig:guide": "tsx scripts/rig/guide.ts",

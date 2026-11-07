@@ -1,0 +1,277 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "extends": "_templates/fx_flat",
+  "id": "fx_flame_burst",
+  "notes": "Fire burst, 4 frames: ignite, peak, breaking into tongues, last ember.",
+  "parts": {
+    "main": {
+      "shape": "cone",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.06,
+        "b2": 0.15
+      },
+      "blend": 0.08,
+      "noise": {
+        "amp": 0.035,
+        "freq": 2.6,
+        "speed": 1
+      },
+      "size": [0.42, 0.012, 1.1],
+      "at": [0, 0.46, 0],
+      "bend": 0.3
+    },
+    "tongue_l": {
+      "shape": "cone",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.06,
+        "b2": 0.15
+      },
+      "blend": 0.08,
+      "noise": {
+        "amp": 0.04,
+        "freq": 3.2,
+        "speed": 1
+      },
+      "size": [0.22, 0.015, 0.6],
+      "at": [-0.34, 0.26, 0],
+      "rot": [0, 0, 30],
+      "bend": 0.75
+    },
+    "tongue_r": {
+      "shape": "cone",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.06,
+        "b2": 0.15
+      },
+      "blend": 0.08,
+      "noise": {
+        "amp": 0.04,
+        "freq": 3.2,
+        "speed": 1
+      },
+      "size": [0.24, 0.015, 0.64],
+      "at": [0.36, 0.26, 0],
+      "rot": [0, 0, -28],
+      "bend": -0.7
+    },
+    "lick_l": {
+      "shape": "cone",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.06,
+        "b2": 0.15
+      },
+      "blend": 0.08,
+      "noise": {
+        "amp": 0.04,
+        "freq": 3.2,
+        "speed": 1
+      },
+      "size": [0.12, 0.01, 0.34],
+      "at": [-0.22, 1.05, 0],
+      "rot": [0, 0, 18],
+      "hide": true,
+      "bend": 1.2
+    },
+    "lick_r": {
+      "shape": "cone",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.06,
+        "b2": 0.15
+      },
+      "blend": 0.08,
+      "noise": {
+        "amp": 0.04,
+        "freq": 3.2,
+        "speed": 1
+      },
+      "size": [0.11, 0.01, 0.3],
+      "at": [0.3, 1.2, 0],
+      "rot": [0, 0, -12],
+      "hide": true,
+      "bend": -1.4
+    },
+    "spark_a": {
+      "shape": "cone",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.06,
+        "b2": 0.15
+      },
+      "blend": 0,
+      "noise": {
+        "amp": 0.04,
+        "freq": 3.2,
+        "speed": 1
+      },
+      "size": [0.06, 0.01, 0.13],
+      "at": [-0.5, 1.1, 0],
+      "rot": [0, 0, 10],
+      "hide": true,
+      "bend": 2
+    },
+    "spark_b": {
+      "shape": "cone",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.06,
+        "b2": 0.15
+      },
+      "blend": 0,
+      "noise": {
+        "amp": 0.04,
+        "freq": 3.2,
+        "speed": 1
+      },
+      "size": [0.05, 0.01, 0.11],
+      "at": [0.55, 0.95, 0],
+      "rot": [0, 0, -15],
+      "hide": true,
+      "bend": 2
+    },
+    "spark_c": {
+      "shape": "cone",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.06,
+        "b2": 0.15
+      },
+      "blend": 0,
+      "noise": {
+        "amp": 0.04,
+        "freq": 3.2,
+        "speed": 1
+      },
+      "size": [0.045, 0.01, 0.1],
+      "at": [0.1, 1.55, 0],
+      "hide": true,
+      "bend": 2
+    }
+  },
+  "poses": {
+    "ignite": {
+      "main": {
+        "size": [0.2, 0.015, 0.36],
+        "at": [-0.12, 0, 0]
+      },
+      "tongue_l": {
+        "hide": true
+      },
+      "tongue_r": {
+        "hide": true
+      }
+    },
+    "peak": {},
+    "break": {
+      "main": {
+        "size": [0.34, 0.02, 0.95],
+        "at": [0.02, 0.06, 0]
+      },
+      "tongue_l": {
+        "size": [0.18, 0.015, 0.62],
+        "at": [-0.4, -0.04, 0],
+        "rot": [0, 0, 14]
+      },
+      "tongue_r": {
+        "size": [0.17, 0.015, 0.58],
+        "at": [0.42, -0.06, 0],
+        "rot": [0, 0, -12]
+      },
+      "lick_l": {
+        "show": true
+      },
+      "lick_r": {
+        "show": true
+      },
+      "spark_a": {
+        "show": true
+      },
+      "spark_b": {
+        "show": true
+      },
+      "spark_c": {
+        "show": true
+      }
+    },
+    "ember": {
+      "main": {
+        "size": [0.15, 0.012, 0.26],
+        "at": [0.22, 0, 0]
+      },
+      "tongue_l": {
+        "hide": true
+      },
+      "tongue_r": {
+        "hide": true
+      },
+      "spark_c": {
+        "show": true,
+        "at": [-0.05, -0.75, 0]
+      }
+    }
+  },
+  "clips": {
+    "burst": {
+      "frames": 4,
+      "phase": [0, 2.4],
+      "keys": [
+        {
+          "t": 0,
+          "pose": "ignite",
+          "ease": "linear"
+        },
+        {
+          "t": 0.3333,
+          "pose": "peak",
+          "ease": "linear"
+        },
+        {
+          "t": 0.6667,
+          "pose": "break",
+          "ease": "linear"
+        },
+        {
+          "t": 1,
+          "pose": "ember",
+          "ease": "linear"
+        }
+      ]
+    }
+  },
+  "outputs": [
+    {
+      "asset": "fx_flame_burst",
+      "file": "fx/battle/fx_flame_burst.png",
+      "clip": "burst",
+      "fps": 12
+    }
+  ]
+}

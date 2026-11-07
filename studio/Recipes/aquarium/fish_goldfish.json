@@ -1,0 +1,13 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "extends": "_templates/fish_tail",
+  "id": "fish_goldfish",
+  "notes": "Fancy goldfish: round body, big double tail. U1 sample (gate failed 2026-11-07, not imported). The swim clip renders 3 frames; adding them needs fish_goldfish_swim1..3 manifest rows.",
+  "outputs": [
+    {
+      "asset": "fish_goldfish",
+      "file": "props/fish_goldfish.png",
+      "pose": "rest"
+    }
+  ]
+}

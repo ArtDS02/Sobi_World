@@ -1,0 +1,10 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "extends": "_templates/pig_farm",
+  "id": "pig_classic",
+  "outputs": [
+    { "asset": "pig_classic", "file": "pigs/base/pig_classic.png", "pose": "idle" },
+    { "asset": "pig_classic", "file": "pigs/base/pig_classic_sleep.png", "pose": "sleep" },
+    { "asset": "pig_classic", "file": "pigs/base/pig_classic_wake.png", "pose": "wake" }
+  ]
+}
