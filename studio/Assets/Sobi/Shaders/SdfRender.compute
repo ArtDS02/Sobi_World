@@ -117,6 +117,30 @@ float sdWedge(float3 q, float4 p) {
     return min(max(w.x, w.y), 0.0) + length(max(w, 0.0)) - p.w;
 }
 
+float2 bez2(float2 b, float h, float t) {
+    float u = 1.0 - t;
+    return 2.0 * u * t * b + t * t * float2(0.0, h);
+}
+// Brush stroke in local XY: quadratic Bezier from (0,0) through control p.xy to (0,p.z), radius p.w shaped by
+// taper (> 0: round base, pointed tip, radius * (1-t)^taper; < 0: pointed both ends, radius * sin(pi t)^-taper).
+float sdStroke(float3 q, float4 p, float taper) {
+    float bt = 0.0, bd = 1e9;
+    [loop] for (int i = 0; i <= 24; i++) {
+        float t = i / 24.0;
+        float d = distance(q.xy, bez2(p.xy, p.z, t));
+        if (d < bd) { bd = d; bt = t; }
+    }
+    float lo = max(bt - 1.0 / 24.0, 0.0), hi = min(bt + 1.0 / 24.0, 1.0);
+    [loop] for (int k = 0; k < 8; k++) {
+        float m1 = lerp(lo, hi, 1.0 / 3.0), m2 = lerp(lo, hi, 2.0 / 3.0);
+        if (distance(q.xy, bez2(p.xy, p.z, m1)) < distance(q.xy, bez2(p.xy, p.z, m2))) hi = m2; else lo = m1;
+    }
+    float t = 0.5 * (lo + hi);
+    float d = distance(q.xy, bez2(p.xy, p.z, t));
+    float r = taper >= 0.0 ? p.w * pow(saturate(1.0 - t), max(taper, 0.01)) : p.w * pow(saturate(sin(3.14159265 * t)), -taper);
+    return max(d - r, abs(q.z) - p.w);
+}
+
 float shapeDist(int type, float3 q, float4 p) {
     switch (type) {
         case 0: return length(q) - p.x;
@@ -136,8 +160,12 @@ float3 toLocal(float4 r0, float4 r1, float4 r2, float3 w) {
 
 float primDist(Prim P, float3 w) {
     float3 q = toLocal(P.r0, P.r1, P.r2, w);
-    if (P.ext.w != 0.0) q.x -= P.ext.w * q.y * q.y;   // curve along local y (flame tongues, tails)
-    float d = shapeDist(P.info.x, q, P.p) * P.ext.z;
+    float d;
+    if (P.info.x == 7) d = sdStroke(q, P.p, P.ext.w) * P.ext.z;   // ext.w is the taper for strokes
+    else {
+        if (P.ext.w != 0.0) q.x -= P.ext.w * q.y * q.y;   // curve along local y (flame tongues, tails)
+        d = shapeDist(P.info.x, q, P.p) * P.ext.z;
+    }
     if (P.lineCol.w != 0.0) d += P.lineCol.w * fbm(q * P.ext.x + float3(0.0, -P.ext.y, P.ext.y * 0.37));
     return d;
 }
@@ -152,39 +180,44 @@ struct Hit {
     int idx;
 };
 
-Hit scene(float3 w) {
+void accumulate(inout Hit h, Prim P, float di, int i) {
+    float k = P.col.w;
+    int op = P.info.y;
+    if (op == 0) {
+        if (k <= 0.0) {
+            if (di < h.d) { h.d = di; h.col = P.col.rgb; h.col2 = P.col2.rgb; h.col3 = P.col3.rgb; h.b1 = P.col2.w; h.b2 = P.col3.w; h.idx = i; }
+        } else {
+            float t = saturate(0.5 + 0.5 * (di - h.d) / k);
+            float nd = lerp(di, h.d, t) - k * t * (1.0 - t);
+            h.col = lerp(P.col.rgb, h.col, t);
+            h.col2 = lerp(P.col2.rgb, h.col2, t);
+            h.col3 = lerp(P.col3.rgb, h.col3, t);
+            h.b1 = lerp(P.col2.w, h.b1, t);
+            h.b2 = lerp(P.col3.w, h.b2, t);
+            if (t < 0.5 || h.idx < 0) h.idx = i;
+            h.d = nd;
+        }
+    } else if (op == 1) {
+        float kk = max(k, 1e-5);
+        float t = saturate(0.5 - 0.5 * (h.d + di) / kk);
+        h.d = lerp(h.d, -di, t) + kk * t * (1.0 - t);
+        if ((P.info.w & 8) != 0) h.col = lerp(h.col, P.col.rgb, t);
+    } else {
+        float kk = max(k, 1e-5);
+        float t = saturate(0.5 - 0.5 * (di - h.d) / kk);
+        h.d = lerp(di, h.d, t) + kk * t * (1.0 - t);
+    }
+}
+
+Hit emptyHit() {
     Hit h;
     h.d = 1e9; h.col = 0; h.col2 = 0; h.col3 = 0; h.b1 = 0; h.b2 = 0; h.idx = -1;
-    for (int i = 0; i < _PrimCount; i++) {
-        Prim P = _Prims[i];
-        float di = primDist(P, w);
-        float k = P.col.w;
-        int op = P.info.y;
-        if (op == 0) {
-            if (k <= 0.0) {
-                if (di < h.d) { h.d = di; h.col = P.col.rgb; h.col2 = P.col2.rgb; h.col3 = P.col3.rgb; h.b1 = P.col2.w; h.b2 = P.col3.w; h.idx = i; }
-            } else {
-                float t = saturate(0.5 + 0.5 * (di - h.d) / k);
-                float nd = lerp(di, h.d, t) - k * t * (1.0 - t);
-                h.col = lerp(P.col.rgb, h.col, t);
-                h.col2 = lerp(P.col2.rgb, h.col2, t);
-                h.col3 = lerp(P.col3.rgb, h.col3, t);
-                h.b1 = lerp(P.col2.w, h.b1, t);
-                h.b2 = lerp(P.col3.w, h.b2, t);
-                if (t < 0.5 || h.idx < 0) h.idx = i;
-                h.d = nd;
-            }
-        } else if (op == 1) {
-            float kk = max(k, 1e-5);
-            float t = saturate(0.5 - 0.5 * (h.d + di) / kk);
-            h.d = lerp(h.d, -di, t) + kk * t * (1.0 - t);
-            if ((P.info.w & 8) != 0) h.col = lerp(h.col, P.col.rgb, t);
-        } else {
-            float kk = max(k, 1e-5);
-            float t = saturate(0.5 - 0.5 * (di - h.d) / kk);
-            h.d = lerp(di, h.d, t) + kk * t * (1.0 - t);
-        }
-    }
+    return h;
+}
+
+Hit scene(float3 w) {
+    Hit h = emptyHit();
+    for (int i = 0; i < _PrimCount; i++) accumulate(h, _Prims[i], primDist(_Prims[i], w), i);
     return h;
 }
 
@@ -213,7 +246,7 @@ float3 applyPaints(float3 w, float3 col, int group, inout int flags) {
         if ((Q.info.y & (1 << group)) == 0) continue;
         float3 q = toLocal(Q.r0, Q.r1, Q.r2, w);
         if ((Q.info.z & 1) != 0) q.z = 0.0;   // decal: depth ignored, painted where it shows
-        float d = shapeDist(Q.info.x, q, Q.p) * Q.ext.y;
+        float d = (Q.info.x == 7 ? sdStroke(q, Q.p, 1.0) : shapeDist(Q.info.x, q, Q.p)) * Q.ext.y;
         float s = max(Q.col.w, 1e-5);
         float a = (1.0 - smoothstep(-s, s, d)) * Q.ext.x;
         col = lerp(col, Q.col.rgb, a);
@@ -343,15 +376,28 @@ void Shade(uint3 id : SV_DispatchThreadID) {
 void Flat(uint3 id : SV_DispatchThreadID) {
     if (id.x >= (uint)_Size.x || id.y >= (uint)_Size.y) return;
     float3 w = rayOrigin(id.xy) + _CamFwd * _Far;
-    Hit h = scene(w);
     float lineW = _Lines.x * (2.0 * _Half.x / _Size.x);
-    if (h.d > lineW || h.idx < 0) { _Color[id.xy] = 0; return; }
-    Prim P = _Prims[h.idx];
-    if (h.d > 0.0) { _Color[id.xy] = (P.info.w & 2) != 0 ? 0 : float4(P.lineCol.rgb, 1.0); return; }
-    float3 c = h.col;
-    if (h.b1 > 0.0 && -h.d > h.b1) c = h.col2;
-    if (h.b2 > 0.0 && -h.d > h.b2) c = h.col3;
-    _Color[id.xy] = float4(c, 1.0);
+    // Each run of prims with the same group is one layer; layers are painted over each other in order.
+    float4 outc = 0;
+    int i = 0;
+    [loop] while (i < _PrimCount) {
+        int g = _Prims[i].info.z;
+        Hit h = emptyHit();
+        int j = i;
+        [loop] for (; j < _PrimCount && _Prims[j].info.z == g; j++) accumulate(h, _Prims[j], primDist(_Prims[j], w), j);
+        i = j;
+        if (h.idx < 0 || h.d > lineW) continue;
+        Prim P = _Prims[h.idx];
+        if (h.d > 0.0) {
+            if ((P.info.w & 2) == 0) outc = float4(P.lineCol.rgb, 1.0);
+            continue;
+        }
+        float3 c = h.col;
+        if (h.b1 > 0.0 && -h.d > h.b1) c = h.col2;
+        if (h.b2 > 0.0 && -h.d > h.b2) c = h.col3;
+        outc = float4(c, 1.0);
+    }
+    _Color[id.xy] = outc;
 }
 
 [numthreads(8, 8, 1)]

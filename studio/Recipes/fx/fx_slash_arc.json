@@ -1,0 +1,197 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "extends": "_templates/fx_flat",
+  "id": "fx_slash_arc",
+  "notes": "Slash, 4 frames: the blade starts, full crescent with speed lines, thinning, breaking up.",
+  "colors": {
+    "outer": "slash_gold",
+    "mid": "slash_light",
+    "core": "white",
+    "line": "slash_line"
+  },
+  "parts": {
+    "trail2": {
+      "shape": "stroke",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.035,
+        "b2": 0.075
+      },
+      "blend": 0.04,
+      "size": [0.62, 0.45, 0.85, 0.025],
+      "at": [-0.56, 0.36, 0],
+      "rot": [0, 0, -22],
+      "taper": -0.9,
+      "group": "trail"
+    },
+    "trail1": {
+      "shape": "stroke",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.035,
+        "b2": 0.075
+      },
+      "blend": 0.04,
+      "size": [0.78, 0.5, 1.05, 0.04],
+      "at": [-0.5, 0.25, 0],
+      "rot": [0, 0, -22],
+      "taper": -0.8,
+      "group": "trail"
+    },
+    "blade": {
+      "shape": "stroke",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.035,
+        "b2": 0.075
+      },
+      "blend": 0.04,
+      "size": [0.95, 0.55, 1.25, 0.15],
+      "at": [-0.42, 0.18, 0],
+      "rot": [0, 0, -22],
+      "taper": -0.7,
+      "group": "blade"
+    },
+    "chip_a": {
+      "shape": "stroke",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.035,
+        "b2": 0.075
+      },
+      "blend": 0,
+      "size": [0.03, 0.05, 0.12, 0.03],
+      "at": [0.48, 0.95, 0],
+      "rot": [0, 0, -60],
+      "taper": -0.6,
+      "hide": true,
+      "group": "blade"
+    },
+    "chip_b": {
+      "shape": "stroke",
+      "color": "outer",
+      "line": "line",
+      "bands": {
+        "mid": "mid",
+        "core": "core",
+        "b1": 0.035,
+        "b2": 0.075
+      },
+      "blend": 0,
+      "size": [0.03, 0.05, 0.1, 0.025],
+      "at": [0.58, 0.6, 0],
+      "rot": [0, 0, -95],
+      "taper": -0.6,
+      "hide": true,
+      "group": "blade"
+    }
+  },
+  "poses": {
+    "start": {
+      "blade": {
+        "size": [0.45, 0.2, 0.55, 0.05],
+        "at": [0.05, 0.2, 0],
+        "rot": [0, 0, -40]
+      },
+      "trail1": {
+        "hide": true
+      },
+      "trail2": {
+        "hide": true
+      }
+    },
+    "full": {},
+    "thin": {
+      "blade": {
+        "size": [0.95, 0.55, 1.25, 0.08],
+        "at": [-0.36, 0.2, 0]
+      },
+      "trail1": {
+        "size": [0.78, 0.5, 1.05, 0.02]
+      },
+      "trail2": {
+        "hide": true
+      },
+      "chip_a": {
+        "show": true
+      },
+      "chip_b": {
+        "show": true
+      }
+    },
+    "fade": {
+      "blade": {
+        "size": [0.5, 0.3, 0.6, 0.03],
+        "at": [0.02, 0.62, 0],
+        "rot": [0, 0, -50]
+      },
+      "trail1": {
+        "size": [0.3, 0.2, 0.4, 0.02],
+        "at": [-0.45, 0.3, 0],
+        "rot": [0, 0, 5]
+      },
+      "trail2": {
+        "hide": true
+      },
+      "chip_a": {
+        "show": true,
+        "at": [0.06, 0.12, 0]
+      },
+      "chip_b": {
+        "show": true,
+        "at": [0.08, -0.1, 0]
+      }
+    }
+  },
+  "clips": {
+    "burst": {
+      "frames": 4,
+      "keys": [
+        {
+          "t": 0,
+          "pose": "start",
+          "ease": "linear"
+        },
+        {
+          "t": 0.3333,
+          "pose": "full",
+          "ease": "linear"
+        },
+        {
+          "t": 0.6667,
+          "pose": "thin",
+          "ease": "linear"
+        },
+        {
+          "t": 1,
+          "pose": "fade",
+          "ease": "linear"
+        }
+      ]
+    }
+  },
+  "outputs": [
+    {
+      "asset": "fx_slash_arc",
+      "file": "fx/battle/fx_slash_arc.png",
+      "clip": "burst",
+      "fps": 12
+    }
+  ],
+  "root": {
+    "at": [-0.18, -0.12, 0],
+    "scale": 1.25
+  }
+}

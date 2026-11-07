@@ -1,4 +1,4 @@
-# HANDOFF — Sobi Studio (decision 051): U0 xong, cổng U1 KHÔNG ĐẠT, đang chờ chủ dự án (2026-11-07)
+# HANDOFF — Sobi Studio (decision 051): U0 xong, cổng U1 và cổng VFX hẹp đều KHÔNG ĐẠT, chờ chủ dự án (2026-11-07)
 
 Nhánh `phase-14-unity-studio`. Trạng thái chi tiết: `docs/studio/STATUS.md` (đọc trước). Cách dùng công cụ:
 `docs/studio/RECIPE_GUIDE.md`. Nhật ký: `docs/PROGRESS.md` mục 2026-11-07 đầu tiên.
@@ -9,14 +9,12 @@ Nhánh `phase-14-unity-studio`. Trạng thái chi tiết: `docs/studio/STATUS.md
   (`scripts/studio/shots.ts`, Electron offscreen — chạy được khi pane trình duyệt ẩn; cần dev server `sandbox` cổng 5181).
 - **U1 không đạt sau 2 vòng chỉnh** (agent tự chấm trung thực: không đẹp hơn bản cũ, không đáng đổi cả game). Theo
   luật §7 / §10.1 **dừng hướng "tạo lại tất cả"**. Game giữ nguyên art cũ (không ảnh Studio nào trong `public/assets`).
-- Ảnh cho chủ dự án: `docs/studio/u1/` (cũ trái, mới phải).
+- Chủ dự án chọn thử **phương án hẹp VFX**: 3 hiệu ứng (lửa, tia nước, vệt chém) với nét cọ + xếp lớp 2D, 2 vòng chỉnh → **cũng không đạt**, không nhập vào game. Agent đề nghị bỏ Studio cho việc tạo hình.
+- Ảnh cho chủ dự án: `docs/studio/u1/` (cũ trái, mới phải; `vfx_r2_*` là cổng VFX).
 
 ## 2. Session sau làm gì
-- **Không làm U2–U10** khi chủ dự án chưa chọn hướng. Hỏi / đọc câu trả lời của chủ dự án về 3 lựa chọn ở cuối
-  `docs/studio/STATUS.md` (phương án hẹp VFX / animation, bỏ hẳn, hoặc vẫn làm tiếp U2).
-- Nếu chọn phương án hẹp cho VFX: mẫu lửa SDF 2D (`studio/Recipes/fx/fx_flame_burst.json`) cũng chưa đẹp hơn bản cũ →
-  thử hạt + texture vẽ bằng code, giữ số khung sheet cũ (`battle_fx.json` gọi khung theo chỉ số, mặc định 85 ms/khung),
-  làm cổng riêng (3 hiệu ứng cạnh bản cũ trong trận thật / Xưởng trận).
+- **Không làm U2–U10 và không làm thêm VFX Studio** khi chủ dự án chưa trả lời đề nghị ở cuối `docs/studio/STATUS.md`.
+- Phương án hẹp VFX đã thử (nét cọ `stroke`, xếp lớp 2D; recipe `studio/Recipes/fx/`). Nếu sau này vẫn thử lại: giữ số khung sheet cũ (`battle_fx.json` gọi khung theo chỉ số, mặc định 85 ms/khung).
 
 ## 3. Lưu ý kỹ thuật
 - `sandbox-anim` trong `.claude/launch.json` trỏ thư mục của máy khác (`C:\Users\ToraTech`) → lỗi EPERM; dùng `sandbox`.

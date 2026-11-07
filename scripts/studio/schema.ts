@@ -81,6 +81,7 @@ export const SHAPES = [
   'arc',
   'cylinder',
   'wedge',
+  'stroke',
   'eye',
 ] as const;
 export const FLAGS = ['unlit', 'noline', 'gloss', 'tintcut'] as const;
@@ -105,6 +106,8 @@ const PartFields = {
   blend: num.min(0).optional(),
   /** curve the shape: local x shifts by bend * y^2 */
   bend: num.optional(),
+  /** stroke only: > 0 round base + pointed tip, < 0 pointed both ends (crescent) */
+  taper: num.optional(),
   op: z.enum(['add', 'cut', 'intersect']).optional(),
   group: z.string().optional(),
   flags: z.array(z.enum(FLAGS)).optional(),
@@ -158,6 +161,7 @@ export const PartDelta = z
     scale: num.positive().optional(),
     size: z.array(num).min(1).max(4).optional(),
     bend: num.optional(),
+    taper: num.optional(),
     hide: z.boolean().optional(),
     show: z.boolean().optional(),
     noisePhase: num.optional(),

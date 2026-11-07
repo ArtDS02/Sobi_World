@@ -125,6 +125,16 @@ describe('studio compiler', () => {
     void style;
   });
 
+  it('a stroke packs as shape 7 with its taper where other shapes keep their bend', () => {
+    const style = loadStyle();
+    const slash = loadAll().find((l) => l.recipe.id === 'fx_slash_arc')!.recipe;
+    const frame = compileRecipe(style, slash)[0]!.frames[1]!;
+    const types = frame.primInfo.filter((_, i) => i % 4 === 0);
+    expect(types.every((t) => t === 7)).toBe(true);
+    const taper = frame.prims[PRIM_FLOATS * 2 + 27]; // ext.w of the third prim (the blade)
+    expect(taper).toBe(slash.parts.blade!.taper);
+  });
+
   it('world -> local rows undo the part transform (rotation, scale, hierarchy)', () => {
     const parent = xfFrom([1, 2, 3], [10, 40, -20], 1.5);
     const child = compose(parent, xfFrom([0.3, -0.2, 0.5], [70, 0, 15], 0.8));

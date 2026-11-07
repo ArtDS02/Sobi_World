@@ -42,7 +42,17 @@
         "properties": {
           "shape": {
             "type": "string",
-            "enum": ["sphere", "ellipsoid", "box", "cone", "arc", "cylinder", "wedge", "eye"]
+            "enum": [
+              "sphere",
+              "ellipsoid",
+              "box",
+              "cone",
+              "arc",
+              "cylinder",
+              "wedge",
+              "stroke",
+              "eye"
+            ]
           },
           "size": {
             "minItems": 1,
@@ -121,6 +131,9 @@
             "minimum": 0
           },
           "bend": {
+            "type": "number"
+          },
+          "taper": {
             "type": "number"
           },
           "op": {
@@ -293,7 +306,17 @@
         "properties": {
           "shape": {
             "type": "string",
-            "enum": ["sphere", "ellipsoid", "box", "cone", "arc", "cylinder", "wedge", "eye"]
+            "enum": [
+              "sphere",
+              "ellipsoid",
+              "box",
+              "cone",
+              "arc",
+              "cylinder",
+              "wedge",
+              "stroke",
+              "eye"
+            ]
           },
           "size": {
             "minItems": 1,
@@ -372,6 +395,9 @@
             "minimum": 0
           },
           "bend": {
+            "type": "number"
+          },
+          "taper": {
             "type": "number"
           },
           "op": {
@@ -628,6 +654,9 @@
             "bend": {
               "type": "number"
             },
+            "taper": {
+              "type": "number"
+            },
             "hide": {
               "type": "boolean"
             },
@@ -744,6 +773,9 @@
                             }
                           },
                           "bend": {
+                            "type": "number"
+                          },
+                          "taper": {
                             "type": "number"
                           },
                           "hide": {

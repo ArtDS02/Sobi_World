@@ -33,6 +33,7 @@ const SHAPE_ID: Record<string, number> = {
   arc: 4,
   cylinder: 5,
   wedge: 6,
+  stroke: 7,
 };
 const SHAPE_ARITY: Record<string, number> = {
   sphere: 1,
@@ -42,6 +43,7 @@ const SHAPE_ARITY: Record<string, number> = {
   arc: 3,
   cylinder: 3,
   wedge: 4,
+  stroke: 4,
   eye: 1,
 };
 const FLAG_BIT = { unlit: 1, noline: 2, gloss: 4, tintcut: 8 } as const;
@@ -217,6 +219,8 @@ function blendDelta(a: PartDelta | undefined, b: PartDelta | undefined, t: numbe
   if (A.size && B.size && A.size.length === B.size.length)
     out.size = A.size.map((v, i) => lerp(v, B.size![i]!, t));
   else if (A.size || B.size) out.size = (t < 0.5 ? A.size : B.size) ?? A.size ?? B.size;
+  if (A.taper !== undefined || B.taper !== undefined)
+    out.taper = lerp(A.taper ?? B.taper!, B.taper ?? A.taper!, t);
   if (A.bend !== undefined || B.bend !== undefined) out.bend = lerp(A.bend ?? 0, B.bend ?? 0, t);
   if (A.noisePhase !== undefined || B.noisePhase !== undefined)
     out.noisePhase = lerp(A.noisePhase ?? 0, B.noisePhase ?? 0, t);
@@ -437,7 +441,7 @@ export function buildFrame(ctx: Ctx, pose: Pose): JobFrame {
       part.blend ?? 0,
       line,
       noise,
-      (part.bend ?? 0) + (d.bend ?? 0),
+      part.shape === 'stroke' ? (d.taper ?? part.taper ?? 1) : (part.bend ?? 0) + (d.bend ?? 0),
       bands,
       [SHAPE_ID[part.shape]!, op, group, flags],
     );

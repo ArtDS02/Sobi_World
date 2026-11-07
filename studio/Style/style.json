@@ -39,7 +39,15 @@
     "flame_line": "#8c3a1b",
     "shadow_dark": "#3b2a24",
     "peach": "#ffd9a8",
-    "snow": "#f4f8ff"
+    "snow": "#f4f8ff",
+    "water_deep": "#3d8fd6",
+    "water": "#6dbaf0",
+    "water_light": "#b9e4ff",
+    "foam": "#f2fbff",
+    "water_line": "#1f4f86",
+    "slash_gold": "#ffd98a",
+    "slash_light": "#fff3cf",
+    "slash_line": "#7a5626"
   },
   "light": {
     "dir": [-0.55, 0.78, 0.55],

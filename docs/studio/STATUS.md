@@ -10,6 +10,24 @@ không có ảnh Studio nào trong `public/assets`.
 
 Session sau: **không làm tiếp U2 → U10**. Đọc mục "Chờ chủ dự án" ở cuối file này.
 
+## ⛔ Phương án hẹp (VFX) cũng không đạt cổng riêng (2026-11-07)
+
+Chủ dự án chọn thử phương án hẹp. Cổng: 3 hiệu ứng của 3 hệ cạnh bản cũ — `fx_flame_burst` (Lửa), `fx_splash`
+(Nước), `fx_slash_arc` (Kim), giữ 4 khung 256 px như cũ. Thêm vào renderer: hình **nét cọ** `stroke` (đường cong
+Bézier thuôn, `taper` > 0 đầu nhọn / < 0 lưỡi liềm) và **xếp lớp** ở chế độ 2D (mỗi nhóm một lớp, vẽ đè theo thứ tự).
+Bản đầu + 2 vòng chỉnh, tự chấm ở độ phân giải đầy đủ:
+
+| Hiệu ứng | Đẹp hơn bản cũ? |
+|---|---|
+| Lửa | **Không**: lưỡi lửa thô hơn, khung "tan" còn chạm mép |
+| Tia nước | **Không**: như vương miện gai, kém dễ đọc hơn bản cũ |
+| Vệt chém | **Không** (tối đa ngang bằng): có vệt tốc độ nhưng dáng như chùm cong, chạm mép trên |
+
+Không nhập vào game (chỉ render `--no-import`), nên **chưa xem trong trận thật**: ảnh sheet đã cho thấy không hơn bản
+cũ, thay bằng bản ngang hoặc kém thì không có lợi. Ảnh: `docs/studio/u1/vfx_r2_*.png` (cũ trái, mới phải).
+Nguyên nhân chung với U1: agent đặt hình bằng toạ độ số rồi mới nhìn thấy kết quả; mỗi hiệu ứng cần rất nhiều vòng mà
+vẫn kém tranh vẽ sẵn.
+
 ## Bảng giai đoạn
 
 | GĐ | Trạng thái | Ghi chú |
@@ -17,6 +35,7 @@ Session sau: **không làm tiếp U2 → U10**. Đọc mục "Chờ chủ dự �
 | U0 | ✅ Xong | Unity 6000.6.8f1 (Personal, đã kích hoạt), `studio/`, CLI batchmode, `npm run studio`, render PNG alpha thẳng, QA, nhập manifest, chụp trong game |
 | U1 | ❌ Không đạt (2 vòng chỉnh) | 4 mẫu dựng xong và đặt trong game cạnh bản cũ; chấm ở dưới |
 | U2–U10 | ⏸ Dừng | Chờ chủ dự án chọn hướng |
+| VFX hẹp | ❌ Không đạt (2 vòng chỉnh) | 3 hiệu ứng, không nhập vào game |
 
 ## Cổng U1 — tự chấm (trung thực)
 
@@ -42,9 +61,7 @@ Session sau: **không làm tiếp U2 → U10**. Đọc mục "Chờ chủ dự �
 
 ## Chờ chủ dự án
 
-Chọn một:
-1. **Phương án hẹp**: giữ Unity Studio cho VFX trận (Particle System + shader, không dựng nhân vật) và / hoặc chuyển động
-   trên asset hiện có. Lưu ý: mẫu lửa SDF 2D cũng chưa đẹp hơn bản cũ, nên VFX phải thử cách khác (hạt + texture vẽ bằng
-   code), có cổng riêng.
-2. **Bỏ hẳn** Studio: quay về hướng cũ (tag `pre-unity-studio`); công cụ vẫn nằm trong git để tham khảo.
-3. Chủ dự án thấy ảnh mới vẫn đáng làm tiếp (khác với agent chấm): agent làm tiếp U2 với các lỗi đã ghi.
+Cả hướng "tạo lại tất cả" (U1) và phương án hẹp VFX đều không đạt. Agent đề nghị **bỏ Studio cho việc tạo hình**, quay
+về hướng cũ (tag `pre-unity-studio`, art Gemini hiện có); công cụ `studio/` + `scripts/studio/` để lại trong git
+(không ảnh hưởng game, có thể xoá sau). Nếu chủ dự án vẫn muốn dùng Unity, việc hợp nhất còn lại là chuyển động / hiệu
+ứng phụ trên chính tranh hiện có (rung, loé sáng, hạt bụi), không vẽ hình mới — cần quyết định riêng.

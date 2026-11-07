@@ -37,3 +37,8 @@ U0 xong (Unity 6000.6.8f1 batchmode, renderer SDF + toon tự viết, recipe →
 (b) đồng bộ hơn — có, (c) đáng đổi cả game — không. Theo §10.1 hướng tạo lại toàn bộ **dừng**; game giữ art cũ. Ảnh và
 chấm chi tiết: `docs/studio/STATUS.md`, `docs/studio/u1/`. Chờ chủ dự án chọn phương án hẹp (VFX / animation trên
 asset hiện có) hoặc bỏ. Công cụ `studio/` + `scripts/studio/` giữ trong git.
+
+## Cập nhật 2026-11-07 (2) — phương án hẹp VFX không đạt
+Chủ dự án chọn thử phương án hẹp. Cổng riêng: `fx_flame_burst`, `fx_splash`, `fx_slash_arc` cạnh bản cũ; renderer
+thêm nét cọ `stroke` và xếp lớp 2D. Sau 2 vòng chỉnh không hiệu ứng nào đẹp hơn bản cũ → dừng, không nhập vào game.
+Đề nghị: bỏ Studio cho việc tạo hình, giữ art hiện có. Chi tiết `docs/studio/STATUS.md`.
