@@ -392,6 +392,7 @@ export const partA = {
       bought: "Bought {count} {name}",
       planted: "Sowed {count} plots of {name}",
       watered: "Watered {count} plots",
+      wateredTip: "Watered {count} plots on the beat, +{tip} Sobi Coin tip",
       fertilized: "Fertilized {count} plots",
       harvested: "Picked {quantity} {name}",
       harvestedNight: "Picked {quantity} {name} at night: double!",

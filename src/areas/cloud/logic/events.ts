@@ -2,7 +2,7 @@
 // through worldEvents.ts).
 export type CloudEvent =
   | { type: 'CLOUD_PLANTED'; flowerId: string; plots: number[]; bought: number; gold: number }
-  | { type: 'CLOUD_WATERED'; plots: number }
+  | { type: 'CLOUD_WATERED'; plots: number; /** Coins of tip from the timing mini-game (D8). */ tip?: number }
   | { type: 'CLOUD_FERTILIZED'; plots: number[] }
   | { type: 'CLOUD_HARVESTED'; flowerId: string; quantity: number; plots: number; wilted: number; left: number; night: boolean }
   | { type: 'CLOUD_FLOWER_RIPE'; flowerId: string; count: number }

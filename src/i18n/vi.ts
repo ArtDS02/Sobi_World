@@ -408,6 +408,7 @@ export const vi = {
       planted: "Đã gieo {count} ô {name}",
       bought: "Đã mua {count} {name}",
       watered: "Đã tưới {count} ô",
+      wateredTip: "Đã tưới {count} ô đúng nhịp, +{tip} Sobi Coin tiền thưởng",
       fertilized: "Đã bón phân {count} ô",
       harvested: "Hái {quantity} {name}",
       harvestedNight: "Hái {quantity} {name} lúc tối: được gấp đôi!",
@@ -733,6 +734,7 @@ export const vi = {
     toast: {
       planted: "Đã gieo {count} ô {name}",
       watered: "Đã tưới {count} ô",
+      wateredTip: "Đã tưới {count} ô đúng nhịp, +{tip} Sobi Coin tiền thưởng",
       fertilized: "Đã bón phân {count} ô",
       harvested: "Thu hoạch {quantity} {name}",
       harvestedLeft: "Thu hoạch {quantity} {name}. Túi đồ đầy, còn {left} ô chưa hái.",
@@ -1052,6 +1054,16 @@ export const vi = {
     noPartner: "Không có bạn phối phù hợp",
     happinessTooLow: "Chưa đủ vui vẻ ({current}/{required})",
     cannotBreed: "Giống này không phối được",
+  },
+
+  rhythm: {
+    open: "🎯 Đúng nhịp",
+    quick: "Làm nhanh",
+    hint: "Bấm (hoặc Space) khi vạch chạy qua vùng xanh ở giữa. Càng chuẩn, tiền thưởng càng cao. Không muốn chơi: bấm \"Làm nhanh\".",
+    press: "Bấm!",
+    round: "Lượt {n}/{of}",
+    finished: "Xong! Độ chuẩn {pct}%",
+    title: "Tưới đúng nhịp",
   },
 
   show: {

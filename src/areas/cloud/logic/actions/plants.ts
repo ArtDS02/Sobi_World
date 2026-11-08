@@ -1,6 +1,8 @@
 // Flower plot actions (spec §8.4): sow, water with pure water, fertilise, pick. Each works on a list of plots so "plant
 // everywhere" and "pick everything" are one action, not twenty clicks.
+import { CONTENT } from '../../../../core/config/content';
 import { ITEMS } from '../../../../core/config/items';
+import { rhythmTip } from '../../../../systems/minigame/rhythm';
 import type { ItemId } from '../../../../core/config/ids';
 import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
@@ -42,7 +44,7 @@ export function plantFlowers(world: WorldSave, args: { flowerId: string; plots: 
  * Waters every growing plot of `plots` (all of them when absent) that is dry, one pure water each: the plot grows at full
  * speed for `waterHours`. With less water than plots the first plots are watered and the rest wait.
  */
-export function waterPlots(world: WorldSave, args: { plots?: number[] }, ctx: ActionContext): CloudResult {
+export function waterPlots(world: WorldSave, args: { plots?: number[]; score?: number }, ctx: ActionContext): CloudResult {
   return runCloud(world, ctx, (w, g) => {
     const wanted = args.plots ? distinct(args.plots) : g.plots.map((_, i) => i);
     if (args.plots && !valid(wanted, g.plots.length)) return { ok: false, error: 'INVALID_REQUEST' };
@@ -54,7 +56,11 @@ export function waterPlots(world: WorldSave, args: { plots?: number[] }, ctx: Ac
     const taken = take(w, WATER_ITEM, todo.length);
     if (!taken.ok) return taken;
     const plots = g.plots.map((p, i) => (todo.includes(i) ? { ...p, wetUntil: ctx.now + WATER_MS } : p));
-    return { ok: true, world: put(taken.world, { ...g, plots }), events: [{ type: 'CLOUD_WATERED', plots: todo.length }], xp: todo.length * CB.xp.water };
+    // D8: the timing mini-game's tip, scaled by its score; the plain watering pays none.
+    const tip = args.score === undefined ? 0 : rhythmTip(args.score, todo.length, CONTENT.minigame.rhythm);
+    const paid = tip > 0 ? pay(put(taken.world, { ...g, plots }), tip, 'MINIGAME_TIP', ctx) : { ok: true as const, state: put(taken.world, { ...g, plots }) };
+    if (!paid.ok) return paid;
+    return { ok: true, world: paid.state, events: [{ type: 'CLOUD_WATERED', plots: todo.length, ...(tip > 0 ? { tip } : {}) }], xp: todo.length * CB.xp.water };
   });
 }
 

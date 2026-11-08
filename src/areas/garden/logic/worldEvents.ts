@@ -19,6 +19,8 @@ export function gardenWorldEvents(e: GardenEvent): WorldEvent[] {
       const sown: WorldEvent[] = e.plots.map((i) => ({ type: 'crop.planted', area, plotId: `plot_${i}`, cropId: e.cropId }));
       return [...sown, ...(crop ? removed(crop.seedItem, e.plots.length - e.bought) : []), ...coins(-e.gold)];
     }
+    case 'GARDEN_WATERED':
+      return coins(e.tip ?? 0);
     case 'GARDEN_FERTILIZED':
       return removed('item_fertilizer', e.plots.length);
     case 'GARDEN_HARVESTED': {

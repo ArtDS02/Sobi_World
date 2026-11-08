@@ -1450,3 +1450,6 @@ Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật
 
 ### 2026-11-09 — D4 Vết Nứt theo ngày (feat/rift-daily)
 ✅ Mọi chuyến Vết Nứt trong một ngày game dùng cùng seed (cùng các tầng); mỗi chuyến kết thúc ghi một dòng vào bảng điểm local (slice Adventure v8 + migration), hiện top 5 giữa các tầng. Decision 055.
+
+### 2026-11-09 — D8 mini-game nhịp cho Garden/Cloud (feat/rhythm-minigame)
+✅ Ở hộp thoại ô đất có thêm nút "🎯 Đúng nhịp" (3 lượt bấm khi vạch qua vùng xanh): điểm đổi thành tiền thưởng nhỏ qua ledger (`MINIGAME_TIP`); nút "Làm nhanh" vẫn tưới như cũ, không thưởng. Toán thuần `systems/minigame/rhythm.ts`, số liệu `content/shared/minigame.json` (chỉnh trong Admin). Không đổi save.

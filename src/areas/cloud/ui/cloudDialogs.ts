@@ -1,6 +1,8 @@
 // The Cloud's dialogs (plot, spring, cauldron, more plots): each body is rebuilt from the world while the dialog is open,
 // so its numbers (time left, what the bag holds) stay true without being closed and reopened.
 import { openDialog } from '../../../ui/components/dialog';
+import { openRhythmDialog } from '../../../ui/components/rhythmDialog';
+import { CONTENT } from '../../../core/config/content';
 import { dressShopDialog, guardBuy, shopGrid } from '../../../ui/components/shopGrid';
 import { el, patch } from '../../../ui/dom';
 import type { UiIcon } from '../../../core/config/assetIds';
@@ -131,7 +133,9 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
         el(
           'div',
           { class: 'cloud-dialog__actions' },
-          card.water ? actionButton(card.water, () => run((s, c) => waterPlots(s, only, c))) : null,
+          card.water ? actionButton({ ...card.water, label: vi.rhythm.quick }, () => run((s, c) => waterPlots(s, only, c))) : null,
+          // D8: the optional timing mini-game; its score becomes a tip, the quick button pays none.
+          card.water ? actionButton({ ...card.water, label: vi.rhythm.open }, () => openRhythmDialog(d.host, vi.rhythm.title, { rules: CONTENT.minigame.rhythm, onDone: (score) => run((s, c) => waterPlots(s, { ...only, score }, c)) })) : null,
           card.fertilize ? actionButton(card.fertilize, () => run((s, c) => fertilizePlots(s, only, c))) : null,
           card.harvest
             ? actionButton(card.harvest, () => {

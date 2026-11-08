@@ -18,6 +18,16 @@ export const partC = {
     cannotBreed: "This breed cannot breed",
   },
 
+  rhythm: {
+    open: "🎯 On the beat",
+    quick: "Quick",
+    hint: "Press (or Space) when the marker crosses the green zone in the middle. The closer, the bigger the tip. Not in the mood: press \"Quick\".",
+    press: "Press!",
+    round: "Round {n}/{of}",
+    finished: "Done! Accuracy {pct}%",
+    title: "Watering on the beat",
+  },
+
   show: {
     title: "Pig show",
     hint: "Each season ({days} days) every pig may enter once. The score comes from quality, rarity, traits, bond, generation and family tree, care, plus a little luck.",
