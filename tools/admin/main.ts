@@ -2,6 +2,7 @@
 // #/ overview · #/users[/<id>] · #/content[/<file>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
 // #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/battle-lab · #/rig-lab · #/assets · #/library · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
+import { preloadChecks, problemCount, renderChecks } from './checks';
 import { renderAdventure } from './adventure';
 import { renderAdventureMaps } from './adventureMaps';
 import { renderMapManage } from './mapManage';
@@ -57,7 +58,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
   ]],
   ['Xưởng hoạt họa', [['battle-lab', '✨', 'Animation trận', 'battle-lab'], ['rig-lab', '🦴', 'Rig sinh vật', 'battle-lab']]],
   ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
-  ['Hệ thống', [['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
+  ['Hệ thống', [['checks', '🔎', 'Kiểm tra dữ liệu', 'checks'], ['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
 ];
 const ALL = NAV.flatMap(([, items]) => items);
 /** The world / adventure / animation pages share one design (worldUi.css, `.wpage`). The Map Editor is a full-screen tool with its own dark theme. */
@@ -116,7 +117,7 @@ function shell() {
   const prefs = readPrefs();
   const item = ([p, icon, label]: NavItem) => `<a href="#/${p}" class="nav__item${page === p ? ' is-active' : ''}" title="${esc(label)}">
       <span class="nav__icon">${icon}</span><span class="nav__label">${label}</span>
-      ${p === 'validation' && errors ? `<span class="nav__count">${errors}</span>` : ''}${dirtyOf[p]?.() ? '<span class="dot-warn" title="Có thay đổi chưa lưu"></span>' : ''}</a>`;
+      ${p === 'validation' && errors ? `<span class="nav__count">${errors}</span>` : ''}${p === 'checks' && problemCount() ? `<span class="nav__count">${problemCount()}</span>` : ''}${dirtyOf[p]?.() ? '<span class="dot-warn" title="Có thay đổi chưa lưu"></span>' : ''}</a>`;
   const nav = NAV.map(([group, items]) => {
     const rows = items.map(item).join('');
     if (!group) return `<div class="nav__sec">${rows}</div>`;
@@ -231,6 +232,7 @@ function render() {
     'adventure-maps': () => renderAdventureMaps(content, id),
     'battle-lab': () => renderBattleLab(content),
     'rig-lab': () => renderRigLab(content),
+    checks: () => renderChecks(content, render),
     layout: () => renderLayout(content, render),
     desktop: () => renderDesktop(content),
     guide: () => renderGuide(content, id),
@@ -264,6 +266,6 @@ window.addEventListener('beforeunload', (e) => {
 onChange(render);
 watchRichSelects();
 app.innerHTML = '<p class="loading">Đang tải dữ liệu Sobi World… 🌍</p>';
-load().catch((e: unknown) => {
+load().then(() => preloadChecks(render)).catch((e: unknown) => {
   app.innerHTML = `<p class="empty">Không tải được manifest: ${esc((e as Error).message)}</p>`;
 });

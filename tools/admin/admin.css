@@ -425,3 +425,5 @@ kbd { background: var(--surface-2); border: 1px solid var(--line); border-radius
 
 .diff-list { margin: 8px 0 0; padding-left: 18px; max-height: 50vh; overflow: auto; font-size: 13px; }
 .diff-list li { margin: 2px 0; word-break: break-word; }
+.check-list { margin: 8px 0 0; padding-left: 18px; font-size: 13px; max-height: 40vh; overflow: auto; }
+.check-list li { margin: 2px 0; word-break: break-word; }

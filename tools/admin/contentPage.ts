@@ -6,8 +6,10 @@
 import type { z } from 'zod';
 import { CONTENT_FILES, CONTENT_GROUPS, EDITABLE_FILES, TEXT_TABLES, contentDef, type RowTexts } from '../../scripts/admin/contentCatalog';
 import { openBackups } from './contentBackups';
+import { checkImport, downloadJson, pickJsonFile } from './contentIo';
 import { describeChanges, diffValues } from './diff';
 import { openModal } from './modal';
+import { usages } from './refs';
 import { esc } from './labels';
 import { imageOf, loadNames, nameOf, resetNames } from './idNames';
 import { bindForm, newUi, renderForm, type FormOptions, type FormUi } from './schemaForm';
@@ -277,6 +279,8 @@ function editor(root: HTMLElement, file: string, rerender: () => void) {
         <div><h2>${def.icon} ${esc(def.title)}</h2><p class="muted">${esc(def.hint)} · <code>content/${esc(file)}</code></p></div>
         <div class="fileedit__actions">
           ${d.dirty ? '<span class="badge status-warn">● Chưa lưu</span><button class="btn" data-revert>↺ Hoàn tác</button>' : '<span class="badge status-ok">✓ Đã lưu</span>'}
+          <button class="btn" data-export title="Tải bản nháp về dạng JSON">⬇ Xuất</button>
+          <button class="btn" data-import title="Thay bản nháp bằng một file JSON (game kiểm tra trước)">⬆ Nhập</button>
           <button class="btn" data-backups title="Các bản cũ được giữ trước mỗi lần lưu">🕘 Sao lưu</button>
           <button class="btn btn-primary" data-save ${!d.dirty || page.saving || bad ? 'disabled' : ''} title="${bad ? 'Sửa các ô đỏ trước' : 'Kiểm tra bằng schema của game rồi ghi'}">${page.saving ? 'Đang lưu…' : '💾 Lưu file'}</button>
         </div>
@@ -320,16 +324,39 @@ function editor(root: HTMLElement, file: string, rerender: () => void) {
   });
   // Plan step 7.3: the save shows what changes (names instead of ids) and waits for a yes.
   root.querySelector('[data-save]')?.addEventListener('click', () => {
-    const lines = describeChanges(diffValues(page.files![file], d.value, (id) => nameOf(id) ?? id));
+    const changes = diffValues(page.files![file], d.value, (id) => nameOf(id) ?? id);
+    const lines = describeChanges(changes);
+    // 8.5: a removed row that other rows still mention would leave them pointing at nothing.
+    const warns = changes.flatMap((c) => {
+      const id = c.kind === 'removed' && c.before && typeof c.before === 'object' ? (c.before as { id?: unknown }).id : null;
+      const n = typeof id === 'string' ? usages(page.files!, id).length : 0;
+      return n ? [`⚠ ${nameOf(id as string) ?? id} (${id}) bị xoá nhưng còn ${n} chỗ dùng: xem trang Kiểm tra dữ liệu › Dùng ở đâu.`] : [];
+    });
     openModal({
       title: `Xem thay đổi trước khi lưu: ${file}`,
-      body: lines.length ? `<p class="muted">${lines.length} thay đổi. Bản cũ được tự sao lưu (nút 🕘 Sao lưu).</p><ul class="diff-list">${lines.slice(0, 200).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>${lines.length > 200 ? `<p class="muted">… và ${lines.length - 200} thay đổi nữa.</p>` : ''}` : '<p class="muted">Không có thay đổi nào so với bản đang lưu (chỉ lời văn tên hiển thị có thể đổi).</p>',
+      body: lines.length ? `${warns.length ? `<div class="issues-box">${warns.map((w) => `<p>${esc(w)}</p>`).join('')}</div>` : ''}<p class="muted">${lines.length} thay đổi. Bản cũ được tự sao lưu (nút 🕘 Sao lưu).</p><ul class="diff-list">${lines.slice(0, 200).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>${lines.length > 200 ? `<p class="muted">… và ${lines.length - 200} thay đổi nữa.</p>` : ''}` : '<p class="muted">Không có thay đổi nào so với bản đang lưu (chỉ lời văn tên hiển thị có thể đổi).</p>',
       submit: '💾 Lưu',
       wide: true,
       onSubmit: () => void save(file, rerender),
     });
   });
   root.querySelector('[data-revert]')?.addEventListener('click', revert);
+  root.querySelector('[data-export]')?.addEventListener('click', () => downloadJson(file, d.value));
+  root.querySelector('[data-import]')?.addEventListener('click', () => {
+    void pickJsonFile().then((text) => {
+      if (text === null) return;
+      const r = checkImport(text, schemaOf(file));
+      if (!r.ok) {
+        page.message = { kind: 'error', text: r.error };
+      } else {
+        d.value = r.value;
+        d.dirty = true;
+        page.message = { kind: 'ok', text: 'Đã nạp file vào bản nháp. Xem lại rồi bấm Lưu.' };
+        persistLater();
+      }
+      rerender();
+    });
+  });
   root.querySelector('[data-backups]')?.addEventListener('click', () => void openBackups(file));
   root.querySelector('[data-dismiss]')?.addEventListener('click', () => {
     page.message = null;

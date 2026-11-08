@@ -9,7 +9,7 @@ const BASE = process.argv[2] ?? 'http://localhost:5175/admin.html';
 const WIDTHS = [1440, 1100, 760];
 const PAGES = [
   '', 'users', 'content', 'pigs', 'validation', 'breeding', 'products', 'layout', 'seasons', 'daynight', 'adventure',
-  'adventure-world', 'adventure-network', 'adventure-assets', 'adventure-maps', 'battle-lab', 'rig-lab', 'assets', 'library', 'desktop', 'guide',
+  'adventure-world', 'adventure-network', 'adventure-assets', 'adventure-maps', 'battle-lab', 'rig-lab', 'assets', 'library', 'checks', 'desktop', 'guide',
 ];
 const CANDIDATES = [process.env.ADMIN_CHROME, 'C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'];
 const exe = CANDIDATES.find((p): p is string => !!p && existsSync(p));
