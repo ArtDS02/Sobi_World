@@ -41,13 +41,22 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
     ['layout', '🗺️', 'Bố cục cảnh', 'layout'],
     ['seasons', '🍂', 'Mùa & hiệu ứng', 'seasons'],
   ]],
-  ['Thế giới', [['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['adventure', '⚔️', 'Mô phỏng trận', 'battle-sim'], ['adventure-world', '🧭', 'Quản lý map', 'map-manage'], ['adventure-network', '🕸️', 'Mạng map', 'map-network'], ['adventure-editor', '✏️', 'Map Editor', 'map-editor'], ['adventure-assets', '🌲', 'Thư viện asset', 'map-assets'], ['adventure-maps', '🗺️', 'Bản đồ khu', 'adventure-maps'], ['battle-lab', '✨', 'Xưởng animation trận', 'battle-lab'], ['rig-lab', '🦴', 'Xưởng rig sinh vật', 'battle-lab']]],
+  ['Thế giới (dùng chung)', [['daynight', '🌗', 'Ngày / Đêm', 'daynight']]],
+  ['Phiêu lưu', [
+    ['adventure', '⚔️', 'Mô phỏng trận', 'battle-sim'],
+    ['adventure-world', '🧭', 'Quản lý map', 'map-manage'],
+    ['adventure-network', '🕸️', 'Mạng map', 'map-network'],
+    ['adventure-editor', '✏️', 'Map Editor', 'map-editor'],
+    ['adventure-assets', '🌲', 'Asset bản đồ', 'map-assets'],
+    ['adventure-maps', '🗺️', 'Bản đồ khu', 'adventure-maps'],
+  ]],
+  ['Xưởng hoạt họa', [['battle-lab', '✨', 'Animation trận', 'battle-lab'], ['rig-lab', '🦴', 'Rig sinh vật', 'battle-lab']]],
   ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
   ['Hệ thống', [['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
 ];
 const ALL = NAV.flatMap(([, items]) => items);
-/** The "Thế giới" pages share one design (worldUi.css, `.wpage`). The Map Editor is a full-screen tool with its own dark theme. */
-const WORLD_PAGES = new Set(NAV.find(([group]) => group === 'Thế giới')![1].map(([p]) => p).filter((p) => p !== 'adventure-editor'));
+/** The world / adventure / animation pages share one design (worldUi.css, `.wpage`). The Map Editor is a full-screen tool with its own dark theme. */
+const WORLD_PAGES = new Set(['daynight', 'adventure', 'adventure-world', 'adventure-network', 'adventure-assets', 'adventure-maps', 'battle-lab', 'rig-lab']);
 /** Pages that edit the species draft: the header save belongs to them. */
 const SPECIES_PAGES = new Set(['pigs', 'validation']);
 /** `#/<page>?key=value` links (overview cards) preset that page's list filters. */
@@ -124,6 +133,8 @@ function render() {
   const { page, id, query } = route();
   if (MOVED[page]) return void location.replace(MOVED[page]);
   const scroll = document.scrollingElement?.scrollTop ?? 0;
+  // The page is rebuilt: hold its height meanwhile so the browser does not clamp the scroll to the top.
+  app.style.minHeight = `${app.offsetHeight}px`;
   shell();
   const content = app.querySelector<HTMLElement>('.content')!;
   const open = (pigId: string | null) => go(`#/pigs/${pigId ? encodeURIComponent(pigId) : 'new'}`);
@@ -157,6 +168,10 @@ function render() {
   if (location.hash === lastHash && page !== 'guide') document.scrollingElement?.scrollTo({ top: scroll });
   else window.scrollTo({ top: 0 });
   lastHash = location.hash;
+  requestAnimationFrame(() => {
+    if (location.hash === lastHash && page !== 'guide') document.scrollingElement?.scrollTo({ top: scroll });
+    app.style.minHeight = '';
+  });
   if (page === 'pigs' && id) {
     const art = new URLSearchParams(query).get('art') ?? undefined;
     renderEditor(app.querySelector<HTMLElement>('.drawer-host')!, id === 'new' ? null : id, () => go('#/pigs'), art);

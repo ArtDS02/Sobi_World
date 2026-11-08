@@ -58,8 +58,7 @@ const lab = {
   message: '',
   /** The content API answered (without it the page can try looks but not save them). */
   online: false,
-  /** The settings card is folded away; the stage is paused since this performance.now (0: running); the last play entered a battle. */
-  collapsed: false,
+  /** The stage is paused since this performance.now (0: running); the last play entered a battle. */
   pausedAt: 0,
   lastEnter: false,
   /** Test hook only: a status put on a unit by the played step (alone, with the plain attack), on a foe or on the striker. */
@@ -322,14 +321,11 @@ export function renderBattleLab(root: HTMLElement) {
   };
   root.innerHTML = `<div class="blab">
     <p class="muted">Thiết kế và kiểm thử animation các kỹ năng trong trận đấu, trên đúng sân trận Phaser của game. Cách viết: <code>docs/animation/COMBAT_ART_GUIDE.md</code> §4.</p>
-    <section class="blab__card blab__config${lab.collapsed ? ' is-folded' : ''}" data-config>
-      <div class="blab__cardhead"><h3><span class="blab__ico">⚙️</span> Cấu hình trận đấu</h3><button class="help-link" data-fold>${lab.collapsed ? 'Mở rộng ⌄' : 'Thu gọn ⌃'}</button></div>
-      <div class="blab__cardbody">
-        ${(['ally', 'enemy'] as const).map((side) => sideBlock(side)).join('')}
-      </div>
-    </section>
-    <div class="blab__cols">
-      <section class="blab__card">
+    <div class="blab__stagegrid">
+      <section class="blab__card blab__col blab__col--ally">
+        <div class="blab__cardbody">${sideBlock('ally')}</div>
+      </section>
+      <section class="blab__card blab__col blab__col--stage">
         <div class="blab__cardhead"><h3>▶ Xem trước animation</h3></div>
         <div class="blab__bar">
           <button class="btn btn-primary btn-small" data-play>▶ Chạy</button>
@@ -344,6 +340,11 @@ export function renderBattleLab(root: HTMLElement) {
         <div class="blab__stage" data-stage></div>
         <div class="blab__time"><div class="blab__track"><i data-fill></i></div><span data-time>00:00.0 / 00:00.0</span></div>
       </section>
+      <section class="blab__card blab__col blab__col--enemy">
+        <div class="blab__cardbody">${sideBlock('enemy')}</div>
+      </section>
+    </div>
+    <div class="blab__cols">
       <section class="blab__card">
         <div class="blab__cardhead"><h3>✨ Kỹ năng đang chọn</h3></div>
         <div class="blab__skill">
@@ -368,7 +369,18 @@ export function renderBattleLab(root: HTMLElement) {
   </div>`;
   const q = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
   mountGame(q('[data-stage]'));
-  const redo = () => renderBattleLab(root);
+  // Redrawing replaces the whole page: keep its height and scroll so a click far down never throws the view back to the top.
+  const redo = () => {
+    const sc = document.scrollingElement;
+    const top = sc?.scrollTop ?? 0;
+    root.style.minHeight = `${root.offsetHeight}px`;
+    renderBattleLab(root);
+    sc?.scrollTo({ top });
+    requestAnimationFrame(() => {
+      sc?.scrollTo({ top });
+      root.style.minHeight = '';
+    });
+  };
   // Choosing a skill (or its type) in a block makes that side the one that strikes: the sides swap their remembered choices and arts.
   const strike = (side: Side) => {
     if (side === cur) return;
@@ -405,11 +417,6 @@ export function renderBattleLab(root: HTMLElement) {
     };
   }
   q('[data-tree]').onclick = () => openTreeDialog(pic, skillPic, (id) => (strike('ally'), (lab.skill = id), (lab.skillType = ''), (lab.message = ''), redo()));
-  q('[data-fold]').onclick = () => {
-    lab.collapsed = !lab.collapsed;
-    q('[data-config]').classList.toggle('is-folded', lab.collapsed);
-    q('[data-fold]').textContent = lab.collapsed ? 'Mở rộng ⌄' : 'Thu gọn ⌃';
-  };
   for (const chip of root.querySelectorAll<HTMLButtonElement>('[data-team]')) {
     chip.onclick = () => {
       const [side, i] = chip.dataset.team!.split(':');

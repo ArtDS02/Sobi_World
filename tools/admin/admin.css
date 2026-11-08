@@ -380,3 +380,14 @@ button.help-link:hover { background: var(--surface-2); }
 .guide-pop__body li { margin: 4px 0; }
 .mapm-wrap { overflow-x: auto; margin-top: 10px; }
 .mapm td:nth-child(3), .mapm td:nth-child(7), .mapm th { white-space: nowrap; }
+
+/* Quiet scrollbars: thin, dim, a little brighter on hover (sidebar and page). */
+.sidebar { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+.sidebar:hover { scrollbar-color: color-mix(in srgb, var(--muted) 28%, transparent) transparent; }
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-thumb { background: transparent; border-radius: 6px; }
+.sidebar:hover::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 28%, transparent); }
+html { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--muted) 30%, transparent) transparent; }
+html::-webkit-scrollbar { width: 8px; }
+html::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 30%, transparent); border-radius: 8px; }
+html::-webkit-scrollbar-track { background: transparent; }

@@ -124,3 +124,22 @@
 .blab__bar [data-full], .blab__bar [data-shot] { width: 40px; padding: 4px 0; }
 .blab__speed { margin-left: 4px; }
 @media (max-width: 1100px) { .blab__cols { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- Three columns: allies (left) · stage (middle) · monsters (right); the skill code sits below ---- */
+.blab { max-width: none; }
+.blab__stagegrid { display: grid; grid-template-columns: minmax(250px, 0.95fr) minmax(0, 1.7fr) minmax(250px, 0.95fr); gap: 14px; align-items: start; }
+.blab__col--stage { position: sticky; top: 12px; }
+.blab__col > .blab__cardbody { padding: 10px; }
+.blab__col .bside > .blab__grid { padding: 12px; }
+.blab__col .bside .blab__grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.blab__col .blab__wide { grid-column: auto; }
+.blab__col .bside__head { flex-wrap: wrap; gap: 8px 10px; padding: 10px 12px; font-size: 15px; }
+.blab__col .bside__act { margin-left: 0; width: 100%; }
+.blab__col .bside .blab__flags { gap: 8px 16px; padding: 10px 12px; }
+.blab__col--stage .blab__bar .btn-small { padding: 4px 10px; }
+.blab__cols { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 1250px) {
+  .blab__stagegrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .blab__col--stage { position: static; grid-column: 1 / -1; grid-row: 1; }
+}
+@media (max-width: 760px) { .blab__stagegrid { grid-template-columns: minmax(0, 1fr); } }
