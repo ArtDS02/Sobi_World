@@ -427,3 +427,5 @@ kbd { background: var(--surface-2); border: 1px solid var(--line); border-radius
 .diff-list li { margin: 2px 0; word-break: break-word; }
 .check-list { margin: 8px 0 0; padding-left: 18px; font-size: 13px; max-height: 40vh; overflow: auto; }
 .check-list li { margin: 2px 0; word-break: break-word; }
+.balance td.is-outlier { background: color-mix(in srgb, #f2c14e 38%, transparent); font-weight: 700; }
+.balance th { white-space: nowrap; }

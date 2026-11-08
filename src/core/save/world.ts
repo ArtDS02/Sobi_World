@@ -1,6 +1,7 @@
 // World save document v11 (ARCHITECTURE §9, AUDIT_AND_PLAN §d): world-level state shared by every Area,
 // plus one opaque slice per Area under `areas` that the Area's own schema validates.
 import { z } from 'zod';
+import { CONTENT } from '../config/content';
 import { goalsSchema, initialGoals, type GoalsState } from '../goals/state';
 import { initialLive, liveSchema, type LiveState } from '../live/state';
 import { newPlayer, playerSchema, type PlayerSave } from '../player/player';
@@ -122,8 +123,8 @@ export function emptyWorld(now: number, settings: WorldSettings, firstArea: stri
 
 /** Settings of a new world (sound off until the player turns it on; existing saves keep their own values);  `reduceMotion` = the OS preference at first launch (spec §11.3). */
 export const defaultSettings = (opts: { reduceMotion?: boolean } = {}): WorldSettings => ({
-  musicOn: false,
-  sfxOn: false,
+  musicOn: CONTENT.defaults.newSave.musicOn,
+  sfxOn: CONTENT.defaults.newSave.sfxOn,
   reduceMotion: opts.reduceMotion ?? false,
   tutorialDone: false,
   lastExportAt: null,

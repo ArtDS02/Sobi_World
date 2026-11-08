@@ -2,6 +2,7 @@
 // #/ overview · #/users[/<id>] · #/content[/<file>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
 // #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/battle-lab · #/rig-lab · #/assets · #/library · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
+import { renderBalance } from './balance';
 import { preloadChecks, problemCount, renderChecks } from './checks';
 import { renderAdventure } from './adventure';
 import { renderAdventureMaps } from './adventureMaps';
@@ -38,7 +39,7 @@ import { renderValidation } from './validation';
 
 type NavItem = readonly [page: string, icon: string, label: string, help: string];
 const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])[] = [
-  [null, [['', '🏠', 'Tổng quan', 'overview'], ['users', '👤', 'Người chơi', 'users'], ['content', '📚', 'Nội dung game', 'content']]],
+  [null, [['', '🏠', 'Tổng quan', 'overview'], ['users', '👤', 'Người chơi', 'users'], ['content', '📚', 'Nội dung game', 'content'], ['balance', '⚖️', 'So sánh cân bằng', 'content']]],
   ['Sobi Farm', [
     ['pigs', '🐷', 'Giống heo', 'pigs'],
     ['validation', '🩺', 'Kiểm tra dữ liệu heo', 'pigs'],
@@ -56,6 +57,10 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
     ['adventure-assets', '🌲', 'Asset bản đồ', 'map-assets'],
     ['adventure-maps', '🗺️', 'Bản đồ khu', 'adventure-maps'],
   ]],
+  // Plan 8.3: each Area has its own group; its pages are the content files that belong to it (shortcuts into "Nội dung game").
+  ['Sobi Garden', [['content/garden%2Fcrops.json', '🌱', 'Cây trồng', 'content'], ['content/garden%2Fhybrids.json', '🧪', 'Công thức lai', 'content'], ['content/garden%2Fbalance.json', '⚙️', 'Cân bằng Garden', 'content'], ['content/garden%2Farea.json', '🚪', 'Mở khu Garden', 'content']]],
+  ['Sobi Aquarium', [['content/aquarium%2Ffish.json', '🐟', 'Loài cá', 'content'], ['content/aquarium%2Fhybrids.json', '🧪', 'Cặp lai cá', 'content'], ['content/aquarium%2Fbalance.json', '⚙️', 'Cân bằng Aquarium', 'content'], ['content/aquarium%2Farea.json', '🚪', 'Mở khu Aquarium', 'content']]],
+  ['Sobi Cloud', [['content/cloud%2Fflowers.json', '🌸', 'Loài hoa', 'content'], ['content/cloud%2Fhybrids.json', '🧪', 'Công thức lai hoa', 'content'], ['content/cloud%2Fbalance.json', '⚙️', 'Cân bằng Cloud', 'content'], ['content/cloud%2Farea.json', '🚪', 'Mở khu Cloud', 'content']]],
   ['Xưởng hoạt họa', [['battle-lab', '✨', 'Animation trận', 'battle-lab'], ['rig-lab', '🦴', 'Rig sinh vật', 'battle-lab']]],
   ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
   ['Hệ thống', [['checks', '🔎', 'Kiểm tra dữ liệu', 'checks'], ['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
@@ -115,13 +120,16 @@ function shell() {
     pigs: () => state.dirty, products: productsDirty, breeding: breedingDirty, layout: layoutDirty, users: userDirty, content: contentDirty,
   };
   const prefs = readPrefs();
-  const item = ([p, icon, label]: NavItem) => `<a href="#/${p}" class="nav__item${page === p ? ' is-active' : ''}" title="${esc(label)}">
+  const hash = location.hash.slice(2).split('?')[0];
+  const onShortcut = ALL.some((n) => n[0].includes('/') && n[0] === hash);
+  const active = (p: string) => (p.includes('/') ? hash === p : page === p && !(p === 'content' && onShortcut));
+  const item = ([p, icon, label]: NavItem) => `<a href="#/${p}" class="nav__item${active(p) ? ' is-active' : ''}" title="${esc(label)}">
       <span class="nav__icon">${icon}</span><span class="nav__label">${label}</span>
       ${p === 'validation' && errors ? `<span class="nav__count">${errors}</span>` : ''}${p === 'checks' && problemCount() ? `<span class="nav__count">${problemCount()}</span>` : ''}${dirtyOf[p]?.() ? '<span class="dot-warn" title="Có thay đổi chưa lưu"></span>' : ''}</a>`;
   const nav = NAV.map(([group, items]) => {
     const rows = items.map(item).join('');
     if (!group) return `<div class="nav__sec">${rows}</div>`;
-    const folded = isFolded(group, prefs, items.some((n) => n[0] === page));
+    const folded = isFolded(group, prefs, items.some((n) => active(n[0])));
     return `<div class="nav__sec${folded ? ' is-folded' : ''}" data-group="${esc(group)}"><button type="button" class="nav__group" data-nav-group aria-expanded="${!folded}"><span class="nav__chev">▾</span><span class="nav__gtext">${esc(group)}</span></button><div class="nav__items">${rows}</div></div>`;
   }).join('');
   const tools = `<div class="nav__tools"><button type="button" class="nav__tool" data-quick-search title="Tìm nhanh (Ctrl+K)">🔍<span class="nav__label"> Tìm nhanh</span></button><button type="button" class="nav__tool" data-nav-all="fold" title="Thu tất cả nhóm">⮝</button><button type="button" class="nav__tool" data-nav-all="open" title="Mở tất cả nhóm">⮟</button><button type="button" class="nav__tool" data-nav-icons title="Thanh bên chỉ có biểu tượng">▤</button></div>`;
@@ -232,6 +240,7 @@ function render() {
     'adventure-maps': () => renderAdventureMaps(content, id),
     'battle-lab': () => renderBattleLab(content),
     'rig-lab': () => renderRigLab(content),
+    balance: () => renderBalance(content, render),
     checks: () => renderChecks(content, render),
     layout: () => renderLayout(content, render),
     desktop: () => renderDesktop(content),

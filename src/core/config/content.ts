@@ -19,6 +19,7 @@ import itemsRaw from '../../../content/shared/items.json';
 import progressionRaw from '../../../content/shared/progression.json';
 import recipesRaw from '../../../content/shared/recipes.json';
 import qualityRaw from '../../../content/shared/quality.json';
+import defaultsRaw from '../../../content/shared/defaults.json';
 import shopRaw from '../../../content/shared/shop.json';
 import valuationRaw from '../../../content/shared/valuation.json';
 import techRaw from '../../../content/shared/tech.json';
@@ -44,6 +45,7 @@ import { itemsFileSchema } from '../../../content/schemas/shared/items';
 import { progressionFileSchema } from '../../../content/schemas/shared/progression';
 import { recipesFileSchema } from '../../../content/schemas/shared/recipes';
 import { qualityFileSchema } from '../../../content/schemas/shared/quality';
+import { defaultsFileSchema } from '../../../content/schemas/shared/defaults';
 import { shopFileSchema } from '../../../content/schemas/shared/shop';
 import { valuationFileSchema } from '../../../content/schemas/shared/valuation';
 import { techFileSchema } from '../../../content/schemas/shared/tech';
@@ -59,6 +61,7 @@ export const CONTENT = {
   progression: loadContent('shared/progression.json', progressionFileSchema, progressionRaw),
   recipes: loadContent('shared/recipes.json', recipesFileSchema, recipesRaw),
   quality: loadContent('shared/quality.json', qualityFileSchema, qualityRaw),
+  defaults: loadContent('shared/defaults.json', defaultsFileSchema, defaultsRaw),
   shop: loadContent('shared/shop.json', shopFileSchema, shopRaw),
   bond: loadContent('shared/bond.json', bondFileSchema, bondRaw),
   codex: loadContent('shared/codex.json', codexFileSchema, codexRaw),

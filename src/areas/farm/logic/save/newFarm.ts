@@ -1,3 +1,4 @@
+import { CONTENT } from '../../../../core/config/content';
 // Starter state (D7) with an INITIAL_GOLD transaction (spec §9.1).
 import { ITEM_ID_VALUES } from '../../../../core/config/ids';
 import { BALANCE } from '../config/balance';
@@ -28,8 +29,8 @@ export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {
     progress: { stats: {}, claimed: {}, daily: { lastDay: null, streak: 0 } },
     decor: [],
     settings: {
-      musicOn: false,
-      sfxOn: false,
+      musicOn: CONTENT.defaults.newSave.musicOn,
+      sfxOn: CONTENT.defaults.newSave.sfxOn,
       reduceMotion: opts.reduceMotion ?? false,
       tutorialDone: false,
       lastExportAt: null,
