@@ -289,3 +289,16 @@ describe('A3: slice repair and code errors', () => {
     store.dispose();
   });
 });
+
+describe('B2: farm lens keeps references on a plain time step', () => {
+  it('withFarm of an untouched bag and ledger reuses the world objects; a changed bag still merges', () => {
+    const w = world(richFarm());
+    const view = farmOf(w);
+    const stepped = withFarm(w, { ...view, updatedAt: view.updatedAt + 1 });
+    expect(stepped.inventory).toBe(w.inventory);
+    expect(stepped.transactions).toBe(w.transactions);
+    const bought = withFarm(w, { ...view, inventory: { ...view.inventory, FOOD_BASIC: view.inventory.FOOD_BASIC + 1 } });
+    expect(bought.inventory.items.FOOD_BASIC).toBe((w.inventory.items.FOOD_BASIC ?? 0) + 1);
+    expect(farmOf(w)).toBe(view); // the cached view is stable
+  });
+});

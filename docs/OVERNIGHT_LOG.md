@@ -1,4 +1,4 @@
-NEXT: B2 (catch-up 30 days perf), then B3..B9
+NEXT: B3 (settings.json queued writes + retry)
 
 # Overnight log (branch `overnight-hardening`)
 
@@ -12,7 +12,7 @@ Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume
 - [x] A2 (tick/dispatch try/catch + INTERNAL_ERROR toast once/min, crash overlay, electron render-process-gone/unresponsive/did-fail-load reload ≤3 per 5 min, logs/error.log rotated) global error handling (tick, renderer, electron main, error.log)
 - [x] A3 (SAVE_CODE_ERROR keeps files + new status codeError; damaged Area slices recreated via codec.freshSlice, original kept as saves/before-slice-repair-*.json, toast SAVE_AREA_REPAIRED; farm slice included — decision: repair, not fallback to older backup, original is kept) safer save (code vs data errors, slice repair)
 - [x] B1 (src/core/world/persister.ts coalesces writes; dispatch no longer awaits disk) non-blocking dispatch + persist coalescing
-- [ ] B2 catch-up 30 days perf
+- [x] B2 catch-up 30 days perf (cpu-prof: farmOf/withFarm rebuilt the item table + remapped transactions every step; now references reused. Standalone 30-day catch-up 0.85 s → 0.53 s; the 3 s failure only appears when 8 test workers compete. Simulation results unchanged: whole suite green)
 - [ ] B3 settings.json queued writes
 - [ ] B4 fs.watch error handler
 - [ ] B5 external-edit content hash

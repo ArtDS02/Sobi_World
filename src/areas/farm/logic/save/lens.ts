@@ -13,6 +13,17 @@ export const FARM_AREA_ID = 'sobi_farm';
 
 /** Farm view of a world, cached per world object so readers get stable references. */
 const views = new WeakMap<WorldSave, FarmGame>();
+/** The farm's full item table of one world bag (B2: a long catch-up reads the same bag thousands of times). */
+const bagViews = new WeakMap<object, FarmGame['inventory']>();
+
+function inventoryView(items: Readonly<Record<string, number>>): FarmGame['inventory'] {
+  let view = bagViews.get(items);
+  if (!view) {
+    view = Object.fromEntries(ITEM_ID_VALUES.map((id) => [id, items[id] ?? 0])) as FarmGame['inventory'];
+    bagViews.set(items, view);
+  }
+  return view;
+}
 
 export function farmArea(world: WorldSave): FarmArea {
   const area = world.areas[FARM_AREA_ID];
@@ -37,7 +48,7 @@ export function farmOf(world: WorldSave): FarmGame {
     pigs: area.pigs,
     nursery: area.nursery,
     trough: area.trough,
-    inventory: Object.fromEntries(ITEM_ID_VALUES.map((id) => [id, items[id] ?? 0])) as FarmGame['inventory'],
+    inventory: inventoryView(items),
     orders: area.orders,
     collection: { discoveredBreeds: (world.collection.discovered.breed ?? []) as FarmGame['collection']['discoveredBreeds'] },
     transactions: world.transactions as FarmGame['transactions'],
@@ -63,7 +74,8 @@ export function farmOf(world: WorldSave): FarmGame {
 
 /** `world` with the farm view `farm` written back; `world` itself when nothing changed. */
 export function withFarm(world: WorldSave, farm: FarmGame): WorldSave {
-  if (views.get(world) === farm) return world;
+  const view = views.get(world);
+  if (view === farm) return world;
   const area: FarmArea = {
     unlockedSlots: farm.player.unlockedSlots,
     pigs: farm.pigs,
@@ -83,9 +95,10 @@ export function withFarm(world: WorldSave, farm: FarmGame): WorldSave {
     ...world,
     meta: { ...world.meta, createdAt: farm.createdAt, updatedAt: farm.updatedAt },
     wallet: { ...world.wallet, coins: farm.player.gold },
-    inventory: { items: { ...world.inventory.items, ...farm.inventory } },
+    // B2: a farm that did not touch its bag or its ledger (a plain time step) keeps the world's own objects.
+    inventory: view && farm.inventory === view.inventory ? world.inventory : { items: { ...world.inventory.items, ...farm.inventory } },
     // A farm transaction without a currency moved coins (the farm's only money).
-    transactions: farm.transactions.map((t) => ({ ...t, currency: t.currency ?? 'coins' })),
+    transactions: view && farm.transactions === view.transactions ? world.transactions : farm.transactions.map((t) => ({ ...t, currency: t.currency ?? 'coins' })),
     progression: {
       ...world.progression,
       // The farm sees the world's XP: what it gained goes to its own entry, the other Areas keep theirs.
