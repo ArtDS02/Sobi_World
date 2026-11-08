@@ -43,9 +43,9 @@ function variantsHtml() {
       ? `<td><img class="thumb" src="/assets/${esc(path)}" alt="" loading="lazy" /></td>`
       : `<td><span class="badge">mặc định</span></td>`;
   };
-  return `<table class="table"><thead><tr><th>Công trình / vật</th><th>Mặc định</th>${SEASON_IDS.map((s) => `<th>${SEASON_LABEL[s]}</th>`).join('')}</tr></thead><tbody>
+  return `<div class="table-wrap"><table class="table"><thead><tr><th>Công trình / vật</th><th>Mặc định</th>${SEASON_IDS.map((s) => `<th>${SEASON_LABEL[s]}</th>`).join('')}</tr></thead><tbody>
     ${page.art.map((r) => `<tr><td>${esc(r.id)}</td><td>${r.asset ? `<img class="thumb" src="/assets/${esc(r.asset)}" alt="" loading="lazy" />` : '—'}</td>${SEASON_IDS.map((s) => cell(r, s)).join('')}</tr>`).join('')}
-  </tbody></table>
+  </tbody></table></div>
   <p class="muted">Mùa thiếu art → game vẽ art mặc định (không bao giờ biến mất). Vị trí, kích thước, va chạm giữ nguyên ở mọi mùa (canvas mùa = canvas mặc định). Art mùa cắt bằng <code>npm run art:seasons</code>.</p>`;
 }
 
@@ -70,7 +70,7 @@ function fxHtml() {
       <label class="check"><input type="checkbox" data-global="enabled" ${d.enabled ? 'checked' : ''} /> Bật hiệu ứng mùa</label>
       <label class="field"><span>Mật độ chung (0…${L.densityMax})</span><input type="number" min="0" max="${L.densityMax}" step="0.1" data-global="density" value="${d.density}" /></label>
     </div>
-    <table class="table"><thead><tr><th>Mùa</th><th>Hiệu ứng</th><th>Khi nào</th><th>Bật</th><th>Mật độ ×</th><th>Tốc độ sinh ×</th><th>Tối đa cùng lúc</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="table-wrap"><table class="table"><thead><tr><th>Mùa</th><th>Hiệu ứng</th><th>Khi nào</th><th>Bật</th><th>Mật độ ×</th><th>Tốc độ sinh ×</th><th>Tối đa cùng lúc</th></tr></thead><tbody>${rows}</tbody></table></div>
     <p class="muted">Ngày / đêm lấy từ đồng hồ ngày-đêm của game (đom đóm chỉ có đêm hè, tia nắng / bụi nắng chỉ ban ngày). Hiệu ứng là sprite PNG trong suốt (<code>npm run art:season-fx</code>), không bấm được, không ảnh hưởng heo / va chạm / camera; tắt hẳn khi người chơi bật "Giảm chuyển động".</p>`;
 }
 

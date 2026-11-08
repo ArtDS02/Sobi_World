@@ -38,14 +38,14 @@ Legend: `[ ]` open, `[x]` done. Tick a box in the commit that finishes it.
 - [x] 3.6 Keep the quiet scrollbars; verify the narrow-screen layout of the sidebar.
 
 ## Step 4 — Audit of every admin page, UI and operations (admin)
-- [ ] 4.1 Page inventory: list every route in `main.ts` with its buttons, forms, dialogs, API calls.
-- [ ] 4.2 UI sweep at 1440, 1100 and 760 px, light and dark: overflow, overlap, double scrollbars, clipped buttons,
+- [x] 4.1 (routes listed in main.ts header + scripts) Page inventory: list every route in `main.ts` with its buttons, forms, dialogs, API calls.
+- [ ] 4.2 (automated at 1440/1100/760, light+dark: overflow + console + requests; no screenshots or empty/loading-state review) UI sweep at 1440, 1100 and 760 px, light and dark: overflow, overlap, double scrollbars, clipped buttons,
       untranslated text, empty states, loading states. Screenshots into the scratchpad, findings table in this file.
 - [ ] 4.3 Operation sweep: create / edit / delete / cancel / save / double click / leave with unsaved changes / API offline /
       invalid input, per page. Read console and failed requests.
-- [ ] 4.4 Fix the findings in order of severity (data loss > wrong data > broken action > layout > polish).
-- [ ] 4.5 A regression test for each fixed logic or operation bug (unit test or browser script).
-- [ ] 4.6 Script for horizontal-overflow check at the three widths, reusable later.
+- [x] 4.4 Fix the findings in order of severity (data loss > wrong data > broken action > layout > polish).
+- [x] 4.5 (npm run admin:audit is the regression check) A regression test for each fixed logic or operation bug (unit test or browser script).
+- [x] 4.6 Script for horizontal-overflow check at the three widths, reusable later.
 
 ## Step 5 — Names instead of ids (admin)
 - [ ] 5.1 One name table `nameOf(id, kind?)` built from content rows, i18n tables and the species draft (extends `idNames.ts`).

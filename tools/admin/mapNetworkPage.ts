@@ -118,17 +118,19 @@ function sideHtml(data: M.BuilderData, edges: NetEdge[], warnings: ReturnType<ty
     <h4>Cảnh báo (${warnings.length})</h4>${list ? `<ul class="mnet__warns">${list}</ul>` : '<p class="ok">Mạng map không có cảnh báo.</p>'}`;
 }
 
-function fit(root: HTMLElement) {
+/** Fits the view to the maps; false while there is nothing to fit or the frame has no size yet (hidden, not laid out). */
+function fit(root: HTMLElement): boolean {
   const svg = root.querySelector<SVGSVGElement>('svg')!;
   const pts = Object.values(page.pos);
-  if (!pts.length) return;
+  if (!pts.length) return false;
   const minX = Math.min(...pts.map((p) => p.x)) - 30;
   const minY = Math.min(...pts.map((p) => p.y)) - 30;
   const w = Math.max(...pts.map((p) => p.x)) + NODE.w + 30 - minX;
   const h = Math.max(...pts.map((p) => p.y)) + NODE.h + 30 - minY;
   const r = svg.getBoundingClientRect();
-  const scale = Math.min(r.width / w, r.height / h, 1.5);
-  page.view = { x: minX, y: minY, scale };
+  if (!(r.width > 0 && r.height > 0 && w > 0 && h > 0)) return false;
+  page.view = { x: minX, y: minY, scale: Math.min(r.width / w, r.height / h, 1.5) };
+  return true;
 }
 
 function draw(root: HTMLElement) {
@@ -154,13 +156,14 @@ function draw(root: HTMLElement) {
   const svg = root.querySelector<SVGSVGElement>('svg')!;
   const paint = () => {
     const r = svg.getBoundingClientRect();
-    svg.setAttribute('viewBox', `${page.view.x} ${page.view.y} ${r.width / page.view.scale} ${r.height / page.view.scale}`);
+    // A zero-size frame or a degenerate scale would write NaN / Infinity into the viewBox (console error, blank map).
+    const scale = page.view.scale > 0 && Number.isFinite(page.view.scale) ? page.view.scale : 1;
+    const vw = r.width / scale;
+    const vh = r.height / scale;
+    if (vw > 0 && vh > 0 && Number.isFinite(vw + vh + page.view.x + page.view.y)) svg.setAttribute('viewBox', `${page.view.x} ${page.view.y} ${vw} ${vh}`);
     svg.innerHTML = svgContent(data, edges, warned);
   };
-  if (!page.fitted) {
-    fit(root);
-    page.fitted = true;
-  }
+  if (!page.fitted) page.fitted = fit(root);
   paint();
   wire(root, svg, paint);
 }
