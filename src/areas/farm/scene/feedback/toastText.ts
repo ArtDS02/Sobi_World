@@ -97,6 +97,8 @@ export function toastText(
       return t(vi.event.giftOpened, { gold: formatInt(event.gold), xp: formatInt(event.xp) });
     case 'RELIEF_CLAIMED':
       return t(vi.event.reliefClaimed, { what: rewardText(event) });
+    case 'SHOW_ENTERED':
+      return t(event.place > 0 ? vi.show.placed : vi.show.participated, { name: event.name, place: event.place, coins: formatInt(event.coins), tokens: event.tokens });
     case 'DECOR_ARRANGED':
       return t(vi.decor.arranged[event.op], { name: vi.decor[event.decorId as DecorId] });
     case 'DECOR_BOUGHT':

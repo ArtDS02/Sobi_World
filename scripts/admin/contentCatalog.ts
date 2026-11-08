@@ -65,6 +65,7 @@ export const CONTENT_FILES: readonly ContentFileDef[] = [
   def('farm/balance.json', 'farm', '🐷', 'Cân bằng Nông trại', 'Đói, sạch, năng lượng, lớn, phân, máng, chuồng', s('farm', 'balance'), 'farmBalanceFileSchema'),
   def('farm/decor.json', 'farm', '🌻', 'Trang trí', 'Giá, cấp mở, vui vẻ, chỗ đặt; tên hiển thị', s('farm', 'decor'), 'decorFileSchema'),
   def('farm/gifts.json', 'farm', '🎀', 'Hộp quà', 'Nhịp xuất hiện, giá trị quà', s('farm', 'gifts'), 'giftsFileSchema'),
+  def('farm/show.json', 'farm', '🏆', 'Hội thi heo', 'Cách chấm điểm, giải thưởng, độ dài mùa', s('farm', 'show'), 'showFileSchema'),
   def('farm/behavior.json', 'farm', '💤', 'Hành vi heo', 'Nhu cầu, tự ăn, ngủ, đi lại', s('farm', 'behavior'), 'behaviorFileSchema'),
   def('farm/names.json', 'farm', '🏷️', 'Tên heo ngẫu nhiên', 'Danh sách tên đặt cho heo con', s('farm', 'names'), 'namesFileSchema'),
   def('farm/area.json', 'farm', '🚪', 'Khu Farm', 'Điều kiện mở, công trình, sản phẩm', '/content/schemas/area.ts', 'areaManifestSchema'),

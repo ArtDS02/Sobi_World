@@ -9,6 +9,7 @@ import { upgradeTrough } from '../logic/actions/upgradeTrough';
 import { nextTroughLevel, troughLevel } from '../logic/troughLevel';
 import { cleanAll, cleanPig } from '../logic/actions/cleanPig';
 import { feedAll } from '../logic/actions/feedAll';
+import { enterShow } from '../logic/show';
 import { feedPig } from '../logic/actions/feedPig';
 import { petPig } from '../logic/actions/petPig';
 import { pigFavorite } from '../logic/bond';
@@ -56,6 +57,7 @@ const SHORT_REASON: Partial<Record<ErrorCode, string>> = {
   NO_PIG_SLOT: vi.disabled.noSlot,
   NURSERY_FULL: vi.disabled.nurseryFull,
   PET_LIMIT_REACHED: vi.disabled.petLimit,
+  ALREADY_CLAIMED: vi.show.entered, // the pig show: this pig already entered this season
 };
 
 /** Error code → short disabled reason; INSUFFICIENT_ITEM names the missing item. */
@@ -84,6 +86,8 @@ export function pigActions(save: FarmGame, pigId: string, now: number) {
     feedPremium: save.inventory.FOOD_PREMIUM > 0 ? vm(save, now, t(vi.action.feedPremium, { count: save.inventory.FOOD_PREMIUM }), (s, c) => feedPig(s, { ...args, itemId: 'FOOD_PREMIUM' }, c)) : null,
     feedGrass: save.inventory.item_grass > 0 ? vm(save, now, t(vi.action.feedGrass, { count: save.inventory.item_grass }), (s, c) => feedPig(s, { ...args, itemId: 'item_grass' }, c)) : null,
     pet: vm(save, now, vi.action.pet, (s, c) => petPig(s, args, c)),
+    /** D3: the seasonal pig show. */
+    show: vm(save, now, vi.show.enter, (s, c) => enterShow(s, args, c)),
     /** Its favourite crop, offered only while the bag holds one. */
     feedFavorite: (() => {
       const pig = save.pigs.find((p) => p.id === pigId);

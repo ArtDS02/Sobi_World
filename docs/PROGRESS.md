@@ -1444,3 +1444,6 @@ Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật
 ### 2026-11-09 — D2 nhiệm vụ tuần liên khu (feat/weekly-goals)
 ✅ 4 nhiệm vụ mỗi tuần trải khắp các khu (thứ Hai đổi mới), thưởng Sobi Coin + Ngọc, thưởng cả tuần thêm Vé Lễ Hội; save lên v12 kèm migration; decision 053. Số liệu là bản đầu, chỉnh trong Admin.
 👉 Chủ dự án cần kiểm tra: mở bảng Mục tiêu, xem mục "Nhiệm vụ tuần"; số thưởng có hợp lý không.
+
+### 2026-11-09 — D3 hội thi heo theo mùa (feat/pig-show)
+✅ Nút "Dự thi" ở bảng heo: mỗi heo thi 1 lần mỗi mùa (28 ngày), điểm từ phẩm chất, độ hiếm, tính trạng, thân thiết, đời, phả hệ, chăm sóc + may mắn (rng inject); hạng 1–3 và quà tham gia trả Sobi Coin + Vé Lễ Hội qua ledger. Số liệu `content/farm/show.json`; không cần migration (trường tuỳ chọn). Decision 054.

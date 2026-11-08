@@ -37,6 +37,8 @@ export function farmWorldEvents(e: GameEvent): WorldEvent[] {
       return [...removed('FOOD_BASIC', e.fromInventory), ...coins(e.gold)];
     case 'MANURE_CLEANED':
       return added('item_manure', e.kept);
+    case 'SHOW_ENTERED':
+      return [...coins(e.coins), ...(e.tokens > 0 ? [{ type: 'currency.changed' as const, area, currency: 'eventTokens' as const, amount: e.tokens }] : [])];
     case 'ITEM_SOLD':
       return [...removed(e.itemId, e.quantity), ...coins(e.gold)];
     case 'PIG_HATCHED':
