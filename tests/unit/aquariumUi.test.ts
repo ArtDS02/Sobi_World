@@ -381,3 +381,32 @@ describe('admin time travel and art', () => {
     expect(aquariumArtIds().filter((id) => id.startsWith('fish_'))).toHaveLength(FISH_LIST.length);
   });
 });
+
+describe('B8: the rod keys, the dialog kit hooks and the injectable rng', () => {
+  it('rodTakesKey: only during aim/wait/fight, never from a stray control', async () => {
+    const { rodTakesKey } = await import('../../src/areas/aquarium/ui/fishingGame');
+    const body = { tag: 'DIV', isRodButton: false };
+    for (const beat of ['idle', 'result']) expect(rodTakesKey(beat, body)).toBe(false);
+    for (const beat of ['aim', 'wait', 'fight']) expect(rodTakesKey(beat, body)).toBe(true);
+    expect(rodTakesKey('wait', { tag: 'BUTTON', isRodButton: false })).toBe(false); // the close button keeps its Space
+    expect(rodTakesKey('wait', { tag: 'SUMMARY', isRodButton: false })).toBe(false);
+    expect(rodTakesKey('wait', { tag: 'BUTTON', isRodButton: true })).toBe(true); // the pull button is the beat's own
+  });
+
+  it('the kit seeds its rng from the clock (replayable), accepts an injected one, and runs close hooks once', async () => {
+    const { createDialogKit } = await import('../../src/areas/aquarium/ui/dialogKit');
+    const host = { childElementCount: 0, replaceChildren() {} } as unknown as HTMLElement;
+    const base = { host, world: () => null, dispatch: async () => ({ ok: true }) };
+    const a = createDialogKit({ ...base, now: () => 1234 }).kit;
+    const b = createDialogKit({ ...base, now: () => 1234 }).kit;
+    expect([a.rng().next(), a.rng().next()]).toEqual([b.rng().next(), b.rng().next()]);
+    const fixed = mulberry32(9);
+    expect(createDialogKit({ ...base, now: () => 1, rng: () => fixed }).kit.rng()).toBe(fixed);
+    const d = createDialogKit({ ...base, now: () => 1 });
+    let closed = 0;
+    d.kit.onClose(() => (closed += 1));
+    d.close();
+    d.close();
+    expect(closed).toBe(1);
+  });
+});

@@ -2,6 +2,7 @@
 // open at a time, its body rebuilt from the world on every change so its numbers stay true.
 import { openDialog } from '../../../ui/components/dialog';
 import type { UiIcon } from '../../../core/config/assetIds';
+import { mulberry32, type Rng } from '../../../core/rng';
 import { el, patch } from '../../../ui/dom';
 import { localOffsetMs } from '../../../ui/localDay';
 import type { EventBase } from '../../../core/events';
@@ -43,6 +44,8 @@ export interface AquariumDialogsDeps {
   dispatch: (run: AquariumRun) => Promise<{ ok: boolean; events?: readonly EventBase[] }>;
   /** Plays a frame callback; returns the cancel. Absent in tests (the rod's marker then stays put). */
   frame?: (fn: () => void) => () => void;
+  /** The random source of the dialogs' mini-games (tests inject a fixed one); default: seeded from `now`. */
+  rng?: () => Rng;
 }
 
 /** What each dialog file gets to open itself and act. */
@@ -59,15 +62,23 @@ export interface DialogKit {
   redraw(): void;
   /** Runs fn every frame while this dialog is open. */
   onFrame(fn: () => void): void;
+  /** Runs `fn` once when this dialog is closed or replaced (remove listeners here). */
+  onClose(fn: () => void): void;
+  /** A fresh random source for one mini-game session: injectable, otherwise seeded from the store's clock. */
+  rng(): Rng;
 }
 
 export function createDialogKit(d: AquariumDialogsDeps) {
   /** The open dialog's body renderer; re-run on every world change. */
   let live: { body: HTMLElement; render: (w: WorldSave) => HTMLElement | null } | null = null;
   let stopFrames: (() => void) | null = null;
+  let closers: (() => void)[] = [];
   const stop = () => {
     stopFrames?.();
     stopFrames = null;
+    const run = closers;
+    closers = [];
+    for (const fn of run) fn();
   };
 
   const kit: DialogKit = {
@@ -93,6 +104,8 @@ export function createDialogKit(d: AquariumDialogsDeps) {
     onFrame(fn) {
       if (d.frame) stopFrames = d.frame(fn);
     },
+    onClose: (fn) => void closers.push(fn),
+    rng: () => d.rng?.() ?? mulberry32(d.now() >>> 0),
   };
 
   return {

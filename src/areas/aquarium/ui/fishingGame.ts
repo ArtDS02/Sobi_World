@@ -178,3 +178,15 @@ export function rodScore(outcome: 'landed' | 'escaped', reaction: number, f: Fig
   const base = 0.3 + 0.35 * accuracy + 0.2 * reaction;
   return Math.max(0, Math.min(1, base + SHADOW[size].bonus + Math.min(5, streak) * 0.03));
 }
+
+/** Elements that act on Space / Enter themselves; the rod only takes the key from them when the beat has its own button there. */
+const NATIVE_KEY_TAGS = new Set(['BUTTON', 'A', 'SUMMARY', 'INPUT', 'SELECT', 'TEXTAREA']);
+
+/**
+ * Should the rod take this Space / Enter? Only while a beat needs it (aim, wait, fight), and never from another
+ * control that has focus (the odds toggle, the close button): that control keeps its own keyboard behaviour.
+ */
+export function rodTakesKey(beat: string, target: { tag: string; isRodButton: boolean }): boolean {
+  if (beat !== 'aim' && beat !== 'wait' && beat !== 'fight') return false;
+  return !NATIVE_KEY_TAGS.has(target.tag) || target.isRodButton;
+}

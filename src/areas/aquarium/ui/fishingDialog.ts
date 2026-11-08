@@ -22,6 +22,7 @@ import {
   fightOver,
   powerAt,
   reactionOf,
+  rodTakesKey,
   ROD,
   rodScore,
   shadowGap,
@@ -58,6 +59,7 @@ export function openFishing(k: DialogKit) {
   let refs: Partial<SceneParts> & Partial<Record<'status' | 'pull' | 'arena' | 'zone' | 'fish' | 'reel' | 'reelText' | 'hold', HTMLElement>> = {};
   /** True from a cast's end until castLine answers: the frame loop and the keys must not cast it again meanwhile. */
   let landing = false;
+  const rnd = k.rng(); // injectable through the dialog kit: a test can replay a cast exactly
 
   const set = (next: Phase) => {
     phase = next;
@@ -107,13 +109,13 @@ export function openFishing(k: DialogKit) {
     if (phase.kind === 'aim') {
       const power = powerAt(now - phase.startedAt);
       const depth = depthOf(power);
-      const b = biteTimes(Math.random(), Math.random());
-      set({ kind: 'wait', depth, power, size: shadowOf(Math.random(), depth), landedAt: now, bite: b.bite, nibbles: b.nibbles, early: 0, startledAt: null });
+      const b = biteTimes(rnd.next(), rnd.next());
+      set({ kind: 'wait', depth, power, size: shadowOf(rnd.next(), depth), landedAt: now, bite: b.bite, nibbles: b.nibbles, early: 0, startledAt: null });
     } else if (phase.kind === 'wait') {
       const since = now - phase.landedAt;
       if (since < phase.bite) {
         const early = phase.early + 1;
-        const next = earlyPull(since, early, Math.random());
+        const next = earlyPull(since, early, rnd.next());
         if (next === 'gone') return void land(0, phase.depth, F.early, null);
         // Only startled: the fish comes back later, with no more nibbles before that.
         phase = { ...phase, bite: next.bite, nibbles: [], early, startledAt: now };
@@ -160,7 +162,7 @@ export function openFishing(k: DialogKit) {
     }
     if (phase.kind === 'fight') {
       const dt = Math.min(0.05, (now - phase.last) / 1000);
-      const fight = stepFight(phase.fight, dt, holding, phase.depth, phase.size, Math.random());
+      const fight = stepFight(phase.fight, dt, holding, phase.depth, phase.size, rnd.next());
       phase = { ...phase, fight, last: now };
       const zoneH = ROD.fight.zone[phase.depth];
       const isIn = fight.fish >= fight.zone && fight.fish <= fight.zone + zoneH;
@@ -183,9 +185,16 @@ export function openFishing(k: DialogKit) {
     }
   }
 
+  const detach = () => {
+    document.removeEventListener('keydown', onKey);
+    document.removeEventListener('keyup', onKey);
+  };
   const onKey = (e: KeyboardEvent) => {
-    if (!root?.isConnected) return document.removeEventListener('keydown', onKey), document.removeEventListener('keyup', onKey);
+    if (root && !root.isConnected) return detach(); // safety net: the dialog is gone
     if (e.code !== 'Space' && e.code !== 'Enter') return;
+    const el = e.target instanceof Element ? e.target : null;
+    const taken = rodTakesKey(phase.kind, { tag: el?.tagName ?? '', isRodButton: !!el?.closest('.aquarium-rod__go, .aquarium-rod__hold') });
+    if (!taken) return; // idle / result, or focus on another control: the key keeps its normal job
     e.preventDefault();
     if (phase.kind === 'fight') holding = e.type === 'keydown';
     else if (e.type === 'keydown' && !e.repeat) act();
@@ -285,6 +294,6 @@ export function openFishing(k: DialogKit) {
     );
     return (root = el('div', { class: 'aquarium-dialog' }, stage, odds));
   }, (body) => body.closest('.c-dialog__panel')?.classList.add('c-dialog__panel--rod'), 'orders');
-  // The power marker, the bobber and the fight move on the frame loop, not on world changes.
-  k.onFrame(frame);
+  k.onFrame(frame); // the power marker, the bobber and the fight move on the frame loop
+  k.onClose(detach); // after open(): the keys go the moment the dialog closes
 }
