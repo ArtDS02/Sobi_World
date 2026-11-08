@@ -56,6 +56,16 @@ for (const [what, run] of [
   ['units', async () => { for (const i of [1, 2]) { await click(`[data-team="ally:${i}"]`); await click(`[data-team="enemy:${i}"]`); } }],
   ['corruption', async () => { for (let c = 0; c <= 5; c++) { await setSelect('[data-count="corruption"]', String(c)); await click('[data-play]'); await page.waitForTimeout(250); } }],
   ['enter battle', async () => { await click('[data-enter]'); await page.waitForTimeout(600); }],
+  ['scrub and frame step', async () => {
+    await click('[data-play]');
+    await page.waitForTimeout(300);
+    const box = await page.locator('.blab__track').boundingBox();
+    if (box) await page.mouse.click(box.x + box.width * 0.6, box.y + box.height / 2);
+    for (const sel of ['[data-next]', '[data-prev]', '[data-next]']) await click(sel);
+    await page.keyboard.press('ArrowRight');
+    await click('[data-pause]'); // resume
+    await page.waitForTimeout(300);
+  }],
   ['replay', async () => { await click('[data-replay]'); await page.waitForTimeout(400); }],
   ['fast + reduce', async () => { await setSelect('[data-speed]', '2'); await setFlag('reduce', true); await click('[data-play]'); await page.waitForTimeout(400); }],
 ] as const) {
