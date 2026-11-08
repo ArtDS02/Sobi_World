@@ -48,12 +48,12 @@ Legend: `[ ]` open, `[x]` done. Tick a box in the commit that finishes it.
 - [x] 4.6 Script for horizontal-overflow check at the three widths, reusable later.
 
 ## Step 5 — Names instead of ids (admin)
-- [ ] 5.1 One name table `nameOf(id, kind?)` built from content rows, i18n tables and the species draft (extends `idNames.ts`).
+- [x] 5.1 (idNames.ts already was the table) One name table `nameOf(id, kind?)` built from content rows, i18n tables and the species draft (extends `idNames.ts`).
 - [ ] 5.2 One shared picker (picture + name + search, id as small sub-line / tooltip) replacing every raw id field and select
       (skill type, element, status, creature, map, item, trait, zone, class…).
-- [ ] 5.3 Tables, labels, validation messages, breadcrumbs and toasts show names; ids only as secondary text.
-- [ ] 5.4 Types and categories (e.g. `class`, `unique`, `ultimate`, `enemy`) get Vietnamese display names from one table.
-- [ ] 5.5 Test that scans the rendered admin pages for `snake_case`/id-like strings outside allowed spots and reports leftovers.
+- [x] 5.3 (scan finds 0 raw ids on 11 pages) Tables, labels, validation messages, breadcrumbs and toasts show names; ids only as secondary text.
+- [x] 5.4 (elements added; other enums already labelled in ENUM_LABEL) Types and categories (e.g. `class`, `unique`, `ultimate`, `enemy`) get Vietnamese display names from one table.
+- [x] 5.5 (npm run admin:idscan --strict) Test that scans the rendered admin pages for `snake_case`/id-like strings outside allowed spots and reports leftovers.
 
 ## Step 6 — Animation workshop (battle lab and rig lab)
 - [ ] 6.1 Reproduce play and action bugs: every skill, every status, every reaction, enter battle, win, phase change,

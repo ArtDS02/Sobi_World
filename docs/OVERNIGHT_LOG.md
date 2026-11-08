@@ -34,3 +34,4 @@ Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume
 ## Final run (E)
 typecheck, lint, guard green; `npm run assets:check` OK (30 s); full vitest: 1885 pass, 1 fail = assetsCheck "the shipped assets pass" (61 s, over its own timeout; same test as baseline, the script itself passes). The simulation 30-day test passed this run (baseline 4.0 s failure was load).
 Branches (local only, nothing pushed): overnight-hardening (all work merged), admin-upgrade and feat/save-health (merged, kept).
+- Second pass: admin step 5 done (branch admin-step5 merged).
