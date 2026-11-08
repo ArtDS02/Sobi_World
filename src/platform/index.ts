@@ -47,6 +47,7 @@ export function createPlatform(parseSave: SaveParser): Platform {
         restore: (n) => bridge.save.restoreBackup(n),
         backupBeforeReset: () => bridge.save.backupBeforeReset(),
         backupBeforeMigration: (v) => bridge.save.backupBeforeMigration(v),
+        backupBeforeSliceRepair: () => bridge.save.backupBeforeSliceRepair(),
       },
     };
   }

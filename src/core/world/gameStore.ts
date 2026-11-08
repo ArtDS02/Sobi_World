@@ -19,7 +19,7 @@ export type { PageLike, StoreDeps, WorldAdvance } from './storeDeps';
 
 /** Every dependency is injected (app/gameStore.ts fills the browser defaults). */
 export function createWorldStore(deps: StoreDeps) {
-  let snapshot: StoreSnapshot = { status: 'loading', save: null, readOnly: false, loadSource: null, saveError: false, clockRewound: false };
+  let snapshot: StoreSnapshot = { status: 'loading', save: null, readOnly: false, loadSource: null, saveError: false, clockRewound: false, repairedAreas: [] };
   const subscribers = new Set<(s: StoreSnapshot) => void>();
   const listen = <F>(set: Set<F>, fn: F) => (set.add(fn), () => void set.delete(fn));
   const eventListeners = new Set<EventListener>();
@@ -31,6 +31,7 @@ export function createWorldStore(deps: StoreDeps) {
   let disposed = false;
   let reloading = false; // AM-1: adopting a save another program wrote; nothing is persisted
   let migratedFrom: number | null = null; // the loaded save was migrated: back it up before the first write
+  let repaired = false; // damaged Area slices were recreated: back the original up before the first write
   const unlisten: (() => void)[] = [];
 
   const set = (patch: Partial<StoreSnapshot>) => {
@@ -54,6 +55,8 @@ export function createWorldStore(deps: StoreDeps) {
     for (const fn of rejectListeners) fn('INTERNAL_ERROR');
   });
   const safely = errors.safely;
+  /** A save newer than this build, or one our own code failed to read, is never overwritten. */
+  const lockedStatus = () => snapshot.status === 'tooNew' || snapshot.status === 'codeError';
   const canWrite = () => snapshot.status === 'ready' && !guard.isReadOnly() && !reloading;
 
   /** One write of the current state; false on failure, which is surfaced as `saveError` and retried, never swallowed (§9.2). */
@@ -65,6 +68,8 @@ export function createWorldStore(deps: StoreDeps) {
       // failed copy fails the write (retried): the migrated farm is never written without it.
       if (migratedFrom !== null && deps.backups) await deps.backups.backupBeforeMigration(migratedFrom);
       migratedFrom = null;
+      if (repaired && deps.backups) await deps.backups.backupBeforeSliceRepair();
+      repaired = false;
       await deps.storage.save({ ...save, meta: { ...save.meta, lastSavedAt: deps.clock.now() } });
       if (snapshot.saveError) set({ saveError: false });
       return true;
@@ -125,14 +130,18 @@ export function createWorldStore(deps: StoreDeps) {
   /** Read chain → ready / recovery / tooNew, or a new game on first launch. */
   async function load() {
     migratedFrom = null;
+    repaired = false;
     const loaded = await deps.storage.load();
     if (loaded.kind === 'tooNew') set({ status: 'tooNew', loadSource: loaded.source });
+    else if (loaded.kind === 'codeError') set({ status: 'codeError', save: null, loadSource: loaded.source });
     else if (loaded.kind === 'recovery') set({ status: 'recovery', save: null });
     else if (loaded.kind === 'ok') {
       migratedFrom = loaded.fromVersion < WORLD_SAVE_VERSION ? loaded.fromVersion : null;
+      repaired = (loaded.repairedAreas?.length ?? 0) > 0;
+      set({ repairedAreas: loaded.repairedAreas ?? [] });
       becomeReady(loaded.save, loaded.source);
-    }
-    else {
+      if (repaired) for (const fn of rejectListeners) fn('SAVE_AREA_REPAIRED');
+    } else {
       becomeReady(fresh(), null);
       await persist();
     }
@@ -140,7 +149,7 @@ export function createWorldStore(deps: StoreDeps) {
 
   /** AM-1: another program (admin dashboard) replaced the save: adopt it, never overwrite it. */
   async function reloadExternal() {
-    if (reloading || disposed || snapshot.status === 'tooNew' || guard.isReadOnly()) return;
+    if (reloading || disposed || lockedStatus() || guard.isReadOnly()) return;
     reloading = true;
     stopLoop();
     await persister.idle(); // queued writes see `reloading` and skip
@@ -158,17 +167,12 @@ export function createWorldStore(deps: StoreDeps) {
 
   return {
     getSnapshot: () => snapshot,
-
     subscribe: (fn: (s: StoreSnapshot) => void): (() => void) => listen(subscribers, fn),
-
     onEvents: (fn: EventListener): (() => void) => listen(eventListeners, fn),
-
     /** Standard world events (`item.added`, `creature.sold`…) of every Area, or '*'. */
     onWorldEvent: bus.on,
-
     /** Rejected actions and imports (`ok: false`): feedback is `ui_error` + a toast (§11.3). */
     onReject: (fn: (error: ErrorCode) => void): (() => void) => listen(rejectListeners, fn),
-
     /** Load (or create) the save, claim the instance, start the global loop. */
     async init(): Promise<StoreStatus> {
       await guard.start(() => set({ readOnly: true }));
@@ -196,7 +200,7 @@ export function createWorldStore(deps: StoreDeps) {
      * first; the platform keeps the current save as a backup. False (with a rejection) on failure.
      */
     async restoreBackup(name: string): Promise<boolean> {
-      if (!deps.backups || snapshot.status === 'tooNew' || guard.isReadOnly()) {
+      if (!deps.backups || lockedStatus() || guard.isReadOnly()) {
         reject({ ok: false, error: 'INVALID_REQUEST' });
         return false;
       }
@@ -215,9 +219,7 @@ export function createWorldStore(deps: StoreDeps) {
 
     /** Backups the player can pick, newest first; empty where the platform keeps none. */
     listBackups: () => deps.backups?.list() ?? Promise.resolve([]),
-
     tick: () => tick('tick'),
-
     /** Runs an action; persists and notifies only on success. */
     async dispatch(action: BoundAction): Promise<ActionResult> {
       if (!snapshot.save || !canWrite()) return reject({ ok: false, error: 'INVALID_REQUEST' });
@@ -238,7 +240,7 @@ export function createWorldStore(deps: StoreDeps) {
 
     /** Recovery screen "start new", after the player's explicit confirmation (§9.2). */
     async startNewGame(): Promise<void> {
-      if (snapshot.status === 'tooNew' || guard.isReadOnly()) return;
+      if (lockedStatus() || guard.isReadOnly()) return;
       becomeReady(fresh(), null);
       await persist();
     },
@@ -258,7 +260,7 @@ export function createWorldStore(deps: StoreDeps) {
 
     /** Import after confirmation; the previous save goes to the backup key. Invalid → untouched. */
     async importSave(json: string): Promise<ActionResult> {
-      if (snapshot.status === 'tooNew' || guard.isReadOnly()) {
+      if (lockedStatus() || guard.isReadOnly()) {
         return reject({ ok: false, error: 'INVALID_REQUEST' });
       }
       const parsed = parseImport(json, deps.codec);
@@ -271,7 +273,6 @@ export function createWorldStore(deps: StoreDeps) {
 
     /** Flushes pending writes. */
     flush: () => persister.idle(),
-
     /** Writes the current state now and waits for the queue (main's flush before quit, §9.1). */
     persistNow: () => persist(),
 

@@ -16,6 +16,7 @@ const unin: UninBridge = {
     restoreBackup: (name) => invoke('unin:save:restoreBackup', name),
     backupBeforeReset: () => invoke('unin:save:backupBeforeReset'),
     backupBeforeMigration: (fromVersion) => invoke('unin:save:backupBeforeMigration', fromVersion),
+    backupBeforeSliceRepair: () => invoke('unin:save:backupBeforeSliceRepair'),
     exportTo: (json, suggestedName) => invoke('unin:save:exportTo', json, suggestedName),
     importFrom: () => invoke('unin:save:importFrom'),
     openFolder: () => invoke('unin:save:openFolder'),

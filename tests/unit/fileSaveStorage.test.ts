@@ -20,6 +20,7 @@ function fakeBridge(candidates: SaveCandidate[], failWrites = false) {
     listBackups: async () => [],
     restoreBackup: async () => {},
     backupBeforeReset: async () => {},
+    backupBeforeSliceRepair: async () => {},
     backupBeforeMigration: async () => {},
     exportTo: async () => true,
     importFrom: async () => null,
@@ -93,5 +94,15 @@ describe('FileSaveStorage', () => {
     const s = world(makeState([makePig()]));
     await createFileSaveStorage(f.bridge, parseWorldSave).save(s);
     expect(f.writes).toEqual([JSON.stringify(s)]);
+  });
+});
+
+describe('A3: a code error keeps every file', () => {
+  it('does not rename the file to corrupt, stops the chain and refuses writes', async () => {
+    const { bridge, corrupt } = fakeBridge([{ source: 'save', json: '{}' }, { source: 'backup:b.json', json: '{}' }]);
+    const storage = createFileSaveStorage(bridge, () => ({ ok: false, error: 'SAVE_CODE_ERROR' }));
+    expect(await storage.load()).toEqual({ kind: 'codeError', source: 'primary' });
+    expect(corrupt).toEqual([]);
+    await expect(storage.save({} as never)).rejects.toThrow();
   });
 });

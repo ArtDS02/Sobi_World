@@ -18,7 +18,8 @@ export function renderStatusScreen(
   if (status === 'loading') {
     return el('p', { class: 'c-status', text: vi.app.loading, attrs: { role: 'status' } });
   }
-  return el('p', { class: 'c-status', text: vi.error.SAVE_TOO_NEW, attrs: { role: 'alert' } });
+  const text = status === 'codeError' ? vi.error.SAVE_CODE_ERROR : vi.error.SAVE_TOO_NEW;
+  return el('p', { class: 'c-status', text, attrs: { role: 'alert' } });
 }
 
 /** §9.2: every copy failed — pick a backup, import a file, or start new (confirmed). */

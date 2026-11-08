@@ -82,7 +82,10 @@ describe('opening', () => {
     const back = parseWorldSave(JSON.stringify(w));
     expect(back.ok && back.save).toEqual(w);
     const bad = { ...w, areas: { ...w.areas, sobi_aquarium: { ...aquariumOf(w), fish: [{ ...fish(), breed: 'fish_unknown' }] } } };
-    expect(parseWorldSave(JSON.stringify(bad)).ok).toBe(false); // a corrupt slice is refused, not played
+    // A corrupt slice is not played as it is: it is recreated and reported (A3).
+    const fixed = parseWorldSave(JSON.stringify(bad));
+    expect(fixed.ok && fixed.repairedAreas).toEqual(['sobi_aquarium']);
+    expect(fixed.ok && aquariumStateSchema.safeParse(aquariumOf(fixed.save)).success).toBe(true);
   });
 });
 

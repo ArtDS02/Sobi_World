@@ -944,6 +944,8 @@ export const vi = {
     LEVEL_TOO_LOW: "Chưa đủ cấp độ.",
     MAX_SLOTS_REACHED: "Đã mở hết chuồng.",
     SAVE_CORRUPT: "File lưu bị lỗi.",
+    SAVE_CODE_ERROR: "Game gặp lỗi khi đọc file lưu (lỗi của game, không phải của bạn). File lưu được giữ nguyên, chưa bị ghi đè. Hãy báo nhà phát triển.",
+    SAVE_AREA_REPAIRED: "Một khu trong file lưu bị hỏng nên đã được tạo lại. Bản gốc được giữ trong thư mục lưu (before-slice-repair).",
     INTERNAL_ERROR: "Game gặp lỗi bất ngờ. Tiến trình đã lưu vẫn an toàn; nếu lỗi lặp lại, hãy khởi động lại game.",
     SAVE_TOO_NEW: "File lưu thuộc phiên bản mới hơn. Hãy cập nhật game.",
     TROUGH_FULL: "Máng ăn đã đầy.",

@@ -5,10 +5,19 @@ import type { WorldSave } from './world';
 export type LoadSource = 'primary' | 'mirror' | 'backup';
 
 export type LoadResult =
-  | { kind: 'ok'; save: WorldSave; source: LoadSource; /** Version on disk (< current = migrated). */ fromVersion: number }
+  | {
+      kind: 'ok';
+      save: WorldSave;
+      source: LoadSource;
+      /** Version on disk (< current = migrated). */
+      fromVersion: number;
+      /** Area slices that failed validation and were recreated (A3): back the file up before the first write. */
+      repairedAreas?: string[];
+    }
   | { kind: 'empty' } // first launch: caller creates newGame
   | { kind: 'tooNew'; source: LoadSource } // SAVE_TOO_NEW: never overwrite
-  | { kind: 'recovery' }; // all copies invalid: recovery screen, nothing deleted
+  | { kind: 'recovery' } // all copies invalid: recovery screen, nothing deleted
+  | { kind: 'codeError'; source: LoadSource }; // our own code threw while reading: file untouched, never overwritten (A3)
 
 /**
  * A file storage refuses to write when another program (the admin dashboard) replaced the save
@@ -56,6 +65,8 @@ export interface BackupStore {
   backupBeforeReset(): Promise<void>;
   /** Before the first write of a save that was migrated from `fromVersion` (ARCHITECTURE §9). */
   backupBeforeMigration(fromVersion: number): Promise<void>;
+  /** Before the first write of a save whose damaged Area slices were recreated (A3): saves/before-slice-repair-*.json. */
+  backupBeforeSliceRepair(): Promise<void>;
 }
 
 /** One writer per save (§9.4): tab guard in the browser, single-instance lock on desktop. */

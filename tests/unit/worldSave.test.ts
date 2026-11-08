@@ -107,9 +107,10 @@ describe('world save v8: migration', () => {
     expect(parseSave('{nope', SAVE_CODEC)).toEqual({ ok: false, error: 'SAVE_CORRUPT' });
     expect(migrate({ ...w, wallet: { ...w.wallet, coins: -1 } }, SAVE_CODEC).ok).toBe(false);
     expect(migrate({ ...w, meta: undefined }, SAVE_CODEC).ok).toBe(false);
-    // A broken Area slice fails the whole save (the store then tries the backups).
+    // A broken Area slice no longer fails the whole save: it is recreated (A3, see the repair tests below).
     const farm = w.areas[FARM_AREA_ID] as { unlockedSlots: number };
-    expect(migrate({ ...w, areas: { [FARM_AREA_ID]: { ...farm, unlockedSlots: 0 } } }, SAVE_CODEC).ok).toBe(false);
+    const repaired = migrate({ ...w, areas: { [FARM_AREA_ID]: { ...farm, unlockedSlots: 0 } } }, SAVE_CODEC);
+    expect(repaired.ok && repaired.repairedAreas).toEqual([FARM_AREA_ID]);
   });
 
   it('keeps data it does not know: other Areas, other items, gems', () => {
@@ -162,6 +163,7 @@ describe('store: backup before the first write of a migrated save (ARCHITECTURE 
       list: async () => [],
       restore: async () => {},
       backupBeforeReset: async () => {},
+      backupBeforeSliceRepair: async () => {},
       backupBeforeMigration: async (v) => {
         if (failBackup) throw new Error('disk full');
         log.push(`backup:v${v}`);
@@ -213,4 +215,77 @@ describe('store: backup before the first write of a migrated save (ARCHITECTURE 
 it('the pig factory pig is a valid farm member of a world', () => {
   const farm = { ...newGame(ctx()), pigs: [makePig()] };
   expect(migrate(world(farm), SAVE_CODEC).ok).toBe(true);
+});
+
+describe('A3: slice repair and code errors', () => {
+  const base = () => world(richFarm());
+
+  it('a damaged Area slice is recreated; wallet, bag and the other Areas are kept', () => {
+    const w = base();
+    const withGarden = { ...w, areas: { ...w.areas, sobi_garden: { broken: true } } } as unknown as WorldSave;
+    const farmBefore = JSON.stringify(withGarden.areas[FARM_AREA_ID]);
+    const r = migrate(JSON.parse(JSON.stringify(withGarden)), SAVE_CODEC);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.repairedAreas).toEqual(['sobi_garden']);
+    expect(JSON.stringify(r.save.areas[FARM_AREA_ID])).toBe(farmBefore);
+    expect(r.save.wallet).toEqual(withGarden.wallet);
+    expect(r.save.inventory).toEqual(withGarden.inventory);
+    expect(r.save.areas.sobi_garden).toBeDefined();
+    expect(JSON.stringify(r.save.areas.sobi_garden)).not.toContain('broken');
+  });
+
+  it('a damaged world part (not an Area slice) is still SAVE_CORRUPT', () => {
+    const w = JSON.parse(JSON.stringify(base()));
+    w.wallet = { coins: 'many' };
+    expect(migrate(w, SAVE_CODEC)).toEqual({ ok: false, error: 'SAVE_CORRUPT' });
+  });
+
+  it('an intact save reports no repairs', () => {
+    const r = migrate(JSON.parse(JSON.stringify(base())), SAVE_CODEC);
+    expect(r.ok && r.repairedAreas).toBeFalsy();
+  });
+
+  it('an exception thrown while migrating is a CODE error, not corruption; invalid JSON is corruption', () => {
+    const boom = { ...SAVE_CODEC, legacy: () => { throw new Error('bug in legacy()'); } };
+    expect(parseSave(JSON.stringify(richFarm()), boom)).toEqual({ ok: false, error: 'SAVE_CODE_ERROR' });
+    expect(parseSave('{not json', SAVE_CODEC)).toEqual({ ok: false, error: 'SAVE_CORRUPT' });
+  });
+
+  it('the store backs the original up before the first write after a repair and warns once', async () => {
+    const calls: string[] = [];
+    const rejects: string[] = [];
+    const repaired = base();
+    const storage: SaveStorage = {
+      load: async () => ({ kind: 'ok', save: repaired, source: 'primary', fromVersion: WORLD_SAVE_VERSION, repairedAreas: ['sobi_garden'] }),
+      save: async () => void calls.push('write'),
+    };
+    const backups: BackupStore = {
+      list: async () => [], restore: async () => {}, backupBeforeReset: async () => {},
+      backupBeforeMigration: async () => void calls.push('migration'),
+      backupBeforeSliceRepair: async () => void calls.push('repair'),
+    };
+    const store = createFarmGameStore({ storage, backups, clock: fakeClock(T0 + 1000), instanceGuard: { start: async () => true, isReadOnly: () => false, close: () => {} } });
+    store.onReject((e) => rejects.push(e));
+    await store.init();
+    await store.flush();
+    expect(calls.slice(0, 2)).toEqual(['repair', 'write']);
+    expect(store.getSnapshot().repairedAreas).toEqual(['sobi_garden']);
+    store.dispose();
+  });
+
+  it('a code error at load locks the store: nothing is written and "start new" does not overwrite', async () => {
+    const calls: string[] = [];
+    const storage: SaveStorage = {
+      load: async () => ({ kind: 'codeError', source: 'primary' }),
+      save: async () => void calls.push('write'),
+    };
+    const store = createFarmGameStore({ storage, clock: fakeClock(T0), instanceGuard: { start: async () => true, isReadOnly: () => false, close: () => {} } });
+    expect(await store.init()).toBe('codeError');
+    await store.startNewGame();
+    await store.flush();
+    expect(calls).toEqual([]);
+    expect(store.getSnapshot().status).toBe('codeError');
+    store.dispose();
+  });
 });

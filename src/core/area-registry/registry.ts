@@ -8,7 +8,7 @@ import type { CodexKind } from '../collection/codex';
 import type { EventBase, WorldEvent } from '../events';
 import { simulateWorld, type SimMode, type SimulationResult } from '../simulation/simulate';
 import { unlockGaps, worldDevelopment, worldLevel, type LevelTable, type UnlockGap, type WorldDevelopmentRules } from '../progression/levels';
-import type { Rng } from '../rng';
+import { mulberry32, type Rng } from '../rng';
 import type { AreaSaveSpec, LegacyResult, Raw, SaveCodec } from '../save/migrate';
 import { emptyWorld, type WorldSave, type WorldSettings } from '../save/world';
 import type { ActionContext } from '../types';
@@ -257,6 +257,11 @@ export function createAreaRegistry(
       return {
         legacy,
         areas: Object.fromEntries(modules.map((m) => [m.manifest.id, m.save])),
+        // Only the slice is kept from a fresh init: the starter items and coins it also gives must not be given twice.
+        freshSlice: (id, now) => {
+          const m = byId.get(id);
+          return m?.init(emptyWorld(now, settings({}), id), { now, rng: mulberry32(0x5eed) }).areas[id];
+        },
         newWorld: (ctx, opts = {}) => newWorld(ctx, settings(opts)),
       };
     },

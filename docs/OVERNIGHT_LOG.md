@@ -1,4 +1,4 @@
-NEXT: A3 (save safety: code vs data errors, slice repair)
+NEXT: B2 (catch-up 30 days perf), then B3..B9
 
 # Overnight log (branch `overnight-hardening`)
 
@@ -10,7 +10,7 @@ Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume
 ## Checklist
 - [x] A1 non-finite money / valuation
 - [x] A2 (tick/dispatch try/catch + INTERNAL_ERROR toast once/min, crash overlay, electron render-process-gone/unresponsive/did-fail-load reload ≤3 per 5 min, logs/error.log rotated) global error handling (tick, renderer, electron main, error.log)
-- [ ] A3 safer save (code vs data errors, slice repair)
+- [x] A3 (SAVE_CODE_ERROR keeps files + new status codeError; damaged Area slices recreated via codec.freshSlice, original kept as saves/before-slice-repair-*.json, toast SAVE_AREA_REPAIRED; farm slice included — decision: repair, not fallback to older backup, original is kept) safer save (code vs data errors, slice repair)
 - [x] B1 (src/core/world/persister.ts coalesces writes; dispatch no longer awaits disk) non-blocking dispatch + persist coalescing
 - [ ] B2 catch-up 30 days perf
 - [ ] B3 settings.json queued writes
@@ -25,3 +25,5 @@ Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume
 
 ## Decisions / stuck items
 - Layout fixes for admin were already committed (a9d34e3) and the branch `overnight-hardening` already existed.
+
+- Group A: `npm run check` equivalent (typecheck, lint, guard, vitest minus assetsCheck) green after A3; tests that asserted "corrupt slice refused" (aquarium, cloud, garden, areaRegistry, worldSave) updated to assert repair.

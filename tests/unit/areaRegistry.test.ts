@@ -89,7 +89,9 @@ describe('area registry', () => {
     const r = parseSave(JSON.stringify(v1), codec);
     expect(r.ok && r.save.areas.test_garden).toEqual({ version: 2, growth: 10, harvests: 3, lastTickedAt: T0 });
     const broken = { ...w, areas: { ...w.areas, test_garden: { version: 2, growth: 999, harvests: 0, lastTickedAt: T0 } } };
-    expect(parseSave(JSON.stringify(broken), codec)).toEqual({ ok: false, error: 'SAVE_CORRUPT' });
+    const fixed = parseSave(JSON.stringify(broken), codec); // recreated from the Area's own init() (A3)
+    expect(fixed.ok && fixed.repairedAreas).toEqual(['test_garden']);
+    expect(fixed.ok && fixed.save.areas.test_garden).toMatchObject({ version: 2, growth: 0 });
   });
 
   it('an Area this build does not know keeps its data in the save', () => {

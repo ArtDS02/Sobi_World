@@ -4,7 +4,7 @@ import type { LoadSource } from '../save/port';
 import type { WorldSave } from '../save/world';
 import type { ActionContext, ActionResultOf } from '../types';
 
-export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew';
+export type StoreStatus = 'loading' | 'ready' | 'recovery' | 'tooNew' | 'codeError';
 
 /**
  * Where events came from (spec §11.3): a player action, a visible tick, or the catch-up tick
@@ -29,6 +29,8 @@ export interface StoreSnapshot {
   saveError: boolean;
   /** The device clock is set back past the last simulated time: time does not run backwards, nothing advances. */
   clockRewound: boolean;
+  /** Area slices recreated at load because they were damaged (A3); empty when the save was intact. */
+  repairedAreas: readonly string[];
 }
 
 /** An action bound to its arguments, e.g. `(s, c) => buyPig(s, args, c)`. */

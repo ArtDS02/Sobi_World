@@ -247,4 +247,20 @@ describe('saveFiles: save.json replaced by another program (AM-1)', () => {
     expect((await f.listBackups()).map((b) => b.name)).not.toContain(kept[0]);
     await expect(f.backupBeforeMigration(0)).rejects.toThrow('invalid version');
   });
+
+  it('backupBeforeSliceRepair keeps the damaged original permanently, outside rotation', async () => {
+    const f = files();
+    await f.backupBeforeSliceRepair(); // no save yet: nothing to copy
+    expect((await readdir(dir)).filter((n) => n.startsWith('before-slice-repair-'))).toEqual([]);
+    await writeFile(join(dir, 'save.json'), '{"damaged":true}');
+    await f.backupBeforeSliceRepair();
+    const kept = (await readdir(dir)).filter((n) => n.startsWith('before-slice-repair-'));
+    expect(kept).toHaveLength(1);
+    expect(await read(kept[0]!)).toBe('{"damaged":true}');
+    for (let i = 0; i < BACKUP_KEEP + 2; i++) {
+      t += BACKUP_SPACING_MS;
+      await f.write(`{"v":${i}}`);
+    }
+    expect((await readdir(dir)).filter((n) => n.startsWith('before-slice-repair-'))).toHaveLength(1);
+  });
 });

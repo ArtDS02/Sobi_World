@@ -71,12 +71,13 @@ describe('opening the cloud', () => {
     expect(opened.state.inventory.items.item_pure_water).toBe(CB.start.water);
   });
 
-  it('a save with the cloud survives the codec, and a corrupt slice is refused', () => {
+  it('a save with the cloud survives the codec, and a corrupt slice is recreated', () => {
     const w = ok(plantFlowers(cloudWorld({ item_pure_water: 3 }), { flowerId: 'flower_cloud_daisy', plots: [0] }, ctxAt(T0)));
     const parsed = parseWorldSave(JSON.stringify(w));
     expect(parsed.ok && parsed.save).toEqual(w);
     const bad = { ...w, areas: { ...w.areas, sobi_cloud: { ...cloudOf(w), plots: [] } } };
-    expect(parseWorldSave(JSON.stringify(bad)).ok).toBe(false);
+    const fixed = parseWorldSave(JSON.stringify(bad)); // recreated and reported, not played as it is (A3)
+    expect(fixed.ok && fixed.repairedAreas).toEqual(['sobi_cloud']);
     expect(cloudStateSchema.safeParse({ ...cloudOf(w), spring: { level: 9, since: 0 } }).success).toBe(false);
   });
 });

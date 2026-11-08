@@ -34,6 +34,7 @@ export const devBackups: BackupStore = {
   restore: (name) => call<void>('restore', { name }),
   backupBeforeReset: () => call<void>('backupBeforeReset', {}),
   backupBeforeMigration: (fromVersion) => call<void>('backupBeforeMigration', { fromVersion }),
+  backupBeforeSliceRepair: () => call<void>('backupBeforeSliceRepair', {}),
 };
 
 /** Last action or last write (every world tick that changed something is written). */

@@ -551,6 +551,8 @@ export const partB = {
     PORTAL_INACTIVE: "This portal is not lit yet.",
     CANNOT_FLEE: "There is no running from this battle.",
     IN_BATTLE: "A battle is on.",
+    SAVE_CODE_ERROR: "The game failed while reading the save (a game bug, not yours). The save file was left untouched. Please tell the developer.",
+    SAVE_AREA_REPAIRED: "One area of the save was damaged and has been recreated. The original is kept in the save folder (before-slice-repair).",
     INTERNAL_ERROR: "The game hit an unexpected error. Your saved progress is safe; restart the game if it keeps happening.",
     INVENTORY_FULL: "The bag is full. Use some items first.",
     FISH_NOT_FOUND: "This fish could not be found.",

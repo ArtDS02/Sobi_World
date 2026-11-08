@@ -148,6 +148,7 @@ function platform(start: LoadResult, backup: FarmGame | null) {
       current = { kind: 'ok', save: backupWorld, source: 'primary', fromVersion: 8 };
     },
     backupBeforeReset: async () => {},
+    backupBeforeSliceRepair: async () => {},
     backupBeforeMigration: async () => {},
   };
   const instanceGuard: InstanceGuard = {
@@ -237,6 +238,7 @@ describe('FeedbackDirector: long catch-up → away summary instead of toasts', (
           loadSource: null,
           saveError: false,
           clockRewound: false,
+          repairedAreas: [],
         }),
         subscribe: () => () => {},
         onEvents: (fn) => ((listener = fn as typeof listener), () => {}),

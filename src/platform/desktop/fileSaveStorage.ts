@@ -27,11 +27,15 @@ export function createFileSaveStorage(bridge: SaveFileBridge, parseSave: SavePar
       for (const { source, json } of candidates) {
         const parsed = parseSave(json);
         if (parsed.ok) {
-          return { kind: 'ok', save: parsed.save, source: loadSource(source), fromVersion: parsed.fromVersion };
+          return { kind: 'ok', save: parsed.save, source: loadSource(source), fromVersion: parsed.fromVersion, ...(parsed.repairedAreas ? { repairedAreas: parsed.repairedAreas } : {}) };
         }
         if (parsed.error === 'SAVE_TOO_NEW') {
           locked = true; // an older copy would silently lose the newer progress
           return { kind: 'tooNew', source: loadSource(source) };
+        }
+        if (parsed.error === 'SAVE_CODE_ERROR') {
+          locked = true; // our bug, not their data: keep every file exactly as it is
+          return { kind: 'codeError', source: loadSource(source) };
         }
         await bridge.markCorrupt(source);
       }

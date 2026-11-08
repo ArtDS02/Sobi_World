@@ -82,10 +82,12 @@ describe('opening the garden', () => {
     expect(WORLD_SAVE_VERSION).toBe(11); // the garden is a slice: it needed no world migration of its own (v11 is the living world)
   });
 
-  it('a corrupt garden slice is refused, not played', () => {
+  it('a corrupt garden slice is recreated and reported, not played as it is', () => {
     const w = gardenWorld();
     const bad = { ...w, areas: { ...w.areas, sobi_garden: { ...gardenOf(w), plots: [] } } };
-    expect(parseWorldSave(JSON.stringify(bad)).ok).toBe(false);
+    const fixed = parseWorldSave(JSON.stringify(bad));
+    expect(fixed.ok && fixed.repairedAreas).toEqual(['sobi_garden']);
+    expect(fixed.ok && gardenOf(fixed.save).plots.length).toBeGreaterThan(0);
   });
 });
 

@@ -10,10 +10,18 @@ import { renameRetiredIds } from './retiredIds';
 import { WORLD_SAVE_VERSION, worldSaveSchema, type WorldSave } from './world';
 
 export type Raw = Record<string, unknown>;
-export type SaveError = Extract<ErrorCode, 'SAVE_CORRUPT' | 'SAVE_TOO_NEW'>;
+/** `SAVE_CODE_ERROR`: an unexpected exception in OUR code (not a data problem): the file must be left alone. */
+export type SaveError = Extract<ErrorCode, 'SAVE_CORRUPT' | 'SAVE_TOO_NEW' | 'SAVE_CODE_ERROR'>;
 
 export type MigrateResult =
-  | { ok: true; save: WorldSave; /** Version read from the input (< current = it was migrated). */ fromVersion: number }
+  | {
+      ok: true;
+      save: WorldSave;
+      /** Version read from the input (< current = it was migrated). */
+      fromVersion: number;
+      /** Areas whose slice failed validation and was recreated empty (A3); the original file must be kept. */
+      repairedAreas?: string[];
+    }
   | { ok: false; error: SaveError };
 
 export type LegacyResult = { ok: true; raw: Raw } | { ok: false; error: SaveError };
@@ -31,6 +39,8 @@ export interface SaveCodec {
   /** Upgrades a save written before the world format (Sobi Farm v1–v7) to a world document (v8 or later; later steps follow). */
   legacy(input: Raw): LegacyResult;
   areas: Record<string, AreaSaveSpec>;
+  /** A brand-new slice of one Area (its `init()` on an empty world), used to repair a damaged slice; null when unknown. */
+  freshSlice?(areaId: string, now: number): unknown;
   /** A fresh world (first launch, "play again"). */
   newWorld(ctx: ActionContext, opts?: { reduceMotion?: boolean }): WorldSave;
 }
@@ -83,7 +93,16 @@ function migrateArea(slice: unknown, spec: AreaSaveSpec): unknown {
   return raw;
 }
 
+/** Data problems are `SAVE_CORRUPT`; anything thrown from inside the steps below is a bug in the game. */
 export function migrate(input: unknown, codec: SaveCodec): MigrateResult {
+  try {
+    return migrateUnsafe(input, codec);
+  } catch {
+    return { ok: false, error: 'SAVE_CODE_ERROR' };
+  }
+}
+
+function migrateUnsafe(input: unknown, codec: SaveCodec): MigrateResult {
   if (!isObject(input)) return { ok: false, error: 'SAVE_CORRUPT' };
   const fromVersion = input.schemaVersion;
   if (typeof fromVersion !== 'number' || !Number.isInteger(fromVersion) || fromVersion < 1) {
@@ -111,20 +130,32 @@ export function migrate(input: unknown, codec: SaveCodec): MigrateResult {
   const world = worldSaveSchema.safeParse(raw);
   if (!world.success) return { ok: false, error: 'SAVE_CORRUPT' };
   const areas: Raw = { ...world.data.areas };
+  const repairedAreas: string[] = [];
   for (const [id, spec] of Object.entries(codec.areas)) {
     if (!(id in areas)) continue; // an Area not started yet: its init() creates it
     const parsed = spec.schema.safeParse(migrateArea(areas[id], spec));
-    if (!parsed.success) return { ok: false, error: 'SAVE_CORRUPT' };
-    areas[id] = parsed.data;
+    if (parsed.success) {
+      areas[id] = parsed.data;
+      continue;
+    }
+    // A3: one damaged Area slice does not cost the whole save (wallet, bag, other Areas stay). Only Area slices.
+    const fresh = codec.freshSlice?.(id, world.data.meta.lastSavedAt ?? world.data.meta.updatedAt);
+    const again = fresh === undefined || fresh === null ? null : spec.schema.safeParse(fresh);
+    if (!again?.success) return { ok: false, error: 'SAVE_CORRUPT' };
+    areas[id] = again.data;
+    repairedAreas.push(id);
   }
-  return { ok: true, save: { ...(world.data as WorldSave), areas }, fromVersion };
+  const save = { ...(world.data as WorldSave), areas };
+  return repairedAreas.length > 0 ? { ok: true, save, fromVersion, repairedAreas } : { ok: true, save, fromVersion };
 }
 
 /** Parse a JSON string and migrate it. */
 export function parseSave(json: string, codec: SaveCodec): MigrateResult {
+  let parsed: unknown;
   try {
-    return migrate(JSON.parse(json), codec);
+    parsed = JSON.parse(json);
   } catch {
-    return { ok: false, error: 'SAVE_CORRUPT' };
+    return { ok: false, error: 'SAVE_CORRUPT' }; // not even JSON: damaged data
   }
+  return migrate(parsed, codec);
 }

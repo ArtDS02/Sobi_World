@@ -47,6 +47,7 @@ export function devSaveApi(dir = devSavesDir()): Plugin {
     'GET backups': () => saves.listBackups(),
     'POST restore': (b) => saves.restoreBackup(String(b.name)),
     'POST backupBeforeReset': () => saves.backupBeforeReset(),
+    'POST backupBeforeSliceRepair': () => saves.backupBeforeSliceRepair(),
     'POST backupBeforeMigration': (body) => saves.backupBeforeMigration(Number(body.fromVersion)),
   };
   return {

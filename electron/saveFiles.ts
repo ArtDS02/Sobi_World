@@ -252,6 +252,13 @@ export function createSaveFiles(opts: SaveFilesOptions) {
         await fsp.copyFile(savePath, join(dir, await freeName(dir, `before-migration-v${fromVersion}-`)));
       }),
 
+    /** Before the first write after damaged Area slices were recreated (A3): a permanent copy outside the rotation. */
+    backupBeforeSliceRepair: () =>
+      serial(async () => {
+        if (!(await exists(savePath))) return;
+        await fsp.copyFile(savePath, join(dir, await freeName(dir, 'before-slice-repair-')));
+      }),
+
     /**
      * Calls `onChange` (debounced) whenever save.json is replaced by another program while the game
      * runs. Own writes never fire it. Returns a stop function.

@@ -182,6 +182,7 @@ function registerSaveIpc(saves: SaveFiles, getWin: () => BrowserWindow | null) {
   handle('unin:save:backupBeforeMigration', (fromVersion: number) =>
     saves.backupBeforeMigration(fromVersion),
   );
+  handle('unin:save:backupBeforeSliceRepair', () => saves.backupBeforeSliceRepair());
   handle('unin:save:exportTo', async (json: string, suggestedName: string) => {
     const win = getWin();
     const options = {

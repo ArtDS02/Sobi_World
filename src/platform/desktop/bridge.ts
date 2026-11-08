@@ -34,6 +34,8 @@ export interface UninBridge {
     backupBeforeReset(): Promise<void>;
     /** Before the first write of a migrated save: a permanent saves/before-migration-v<N>-*.json copy. */
     backupBeforeMigration(fromVersion: number): Promise<void>;
+    /** Before the first write after damaged Area slices were recreated: a permanent saves/before-slice-repair-*.json copy. */
+    backupBeforeSliceRepair(): Promise<void>;
     /** Native save dialog; false when cancelled. */
     exportTo(json: string, suggestedName: string): Promise<boolean>;
     /** Native open dialog; backs up the current save, returns the file text or null when cancelled. */
@@ -69,6 +71,7 @@ export type IpcChannel =
   | 'unin:save:restoreBackup'
   | 'unin:save:backupBeforeReset'
   | 'unin:save:backupBeforeMigration'
+  | 'unin:save:backupBeforeSliceRepair'
   | 'unin:save:exportTo'
   | 'unin:save:importFrom'
   | 'unin:save:openFolder'

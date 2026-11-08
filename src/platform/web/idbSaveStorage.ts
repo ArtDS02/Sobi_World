@@ -65,11 +65,15 @@ export function createSaveStorage(opts: StorageOptions): SaveStorage {
         const parsed = parseSave(json);
         if (parsed.ok) {
           lastGoodJson = JSON.stringify(parsed.save);
-          return { kind: 'ok', save: parsed.save, source, fromVersion: parsed.fromVersion };
+          return { kind: 'ok', save: parsed.save, source, fromVersion: parsed.fromVersion, ...(parsed.repairedAreas ? { repairedAreas: parsed.repairedAreas } : {}) };
         }
         if (parsed.error === 'SAVE_TOO_NEW') {
           locked = true; // an older copy would silently lose the newer progress
           return { kind: 'tooNew', source };
+        }
+        if (parsed.error === 'SAVE_CODE_ERROR') {
+          locked = true; // our bug, not their data: never overwrite
+          return { kind: 'codeError', source };
         }
       }
       return { kind: 'recovery' };
