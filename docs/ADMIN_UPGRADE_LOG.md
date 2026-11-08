@@ -11,3 +11,4 @@ Branch `admin-upgrade` (from `overnight-hardening`). Baseline before this branch
 
 ## Not done (stopped for budget, not blocked)
 Step 5 (names instead of ids), step 6 (animation workshop; the audit script only proved #/battle-lab and #/rig-lab load without console errors), 7.1 / 7.3, step 8 (editing every area; no inventory table yet), step 9. Next session: start with step 5 then 8.0 inventory.
+- Step 5 (done in a second pass): scripts/admin/idScan.ts found 101 raw ids; assets/library lists are exempt (the id is the subject), map ids are the intended secondary .mono line; the real leftovers were battle_fx file names in two labels → fixed; element enums (METAL, FIRE, SELF…) now show Vietnamese names. 5.2 (one shared picker everywhere) was not changed: richSelect/picker already cover the main fields.

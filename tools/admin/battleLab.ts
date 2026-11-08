@@ -256,7 +256,7 @@ function openTreeDialog(pic: (id: string) => string | null, skillPic: (id: strin
 export function renderBattleLab(root: HTMLElement) {
   lab.root = root;
   if (!lab.raw) {
-    root.innerHTML = '<p class="muted">Đang tải battle_fx.json…</p>';
+    root.innerHTML = '<p class="muted">Đang tải <code>battle_fx.json</code>…</p>';
     const content = json<{ files: Record<string, unknown> }>('/__admin/content').catch(() => null);
     void Promise.all([content, json<Record<string, unknown>>('/assets/manifest/assets.json')])
       .then(([c, m]) => {
@@ -360,7 +360,7 @@ export function renderBattleLab(root: HTMLElement) {
         <div class="blab__actions">
           <button class="btn btn-small" data-format${lab.skill ? '' : ' disabled'}>⟳ Định dạng lại</button>
           <button class="btn btn-small" data-try${lab.skill ? '' : ' disabled'}>▶ Áp dụng thử</button>
-          <button class="btn btn-primary btn-small" data-save${lab.skill && lab.online ? '' : ' disabled'}>💾 Lưu vào battle_fx.json</button>
+          <button class="btn btn-primary btn-small" data-save${lab.skill && lab.online ? '' : ' disabled'}>💾 Lưu hiệu ứng trận</button>
         </div>
         <details class="blab__merged"><summary>Công thức đã gộp (hệ + phần riêng)</summary><pre class="muted">${esc(JSON.stringify({ ...look, color: `#${look.color.toString(16).padStart(6, '0')}`, glow: `#${look.glow.toString(16).padStart(6, '0')}` }, null, 1))}</pre></details>
       </section>

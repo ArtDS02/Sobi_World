@@ -1,6 +1,7 @@
 // Vietnamese labels of content and save fields for the schema-driven forms (decision 036). A path is labelled by
 // its last one or two keys (`stats.hp`, then `hp`); unknown keys are spelled out from their camelCase / SNAKE_CASE.
 // Dashboard text (a dev tool): it lives here, not in src/i18n.
+import elements from '../../content/adventure/elements.json';
 import { FAMILY_LABEL, RARITY_LABEL } from './labels';
 
 export const LABEL: Record<string, string> = {
@@ -368,4 +369,6 @@ export const ENUM_LABEL: Record<string, string> = {
   // Item categories (shared/items.json) after the pig families: FOOD reads as food here.
   FOOD: 'Thức ăn', MEDICINE: 'Thuốc', MATERIAL: 'Nguyên liệu', SEED: 'Hạt giống', CROP: 'Nông sản', FISH: 'Cá', FLOWER: 'Hoa', POTION: 'Potion', EQUIPMENT: 'Trang bị',
   SUPPLY: 'Vật dụng', SPECIAL: 'Đặc biệt', SHIP: 'Xuất chuồng', BREED: 'Giống', PET: 'Thú cưng',
+  // Elements of the Adventure (content/adventure/elements.json) and the skill's own-element marker.
+  ...Object.fromEntries(elements.elements.map((e) => [e.id, e.nameVi])), SELF: 'Của người dùng',
 };
