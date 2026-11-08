@@ -143,3 +143,5 @@
   .blab__col--stage { position: static; grid-column: 1 / -1; grid-row: 1; }
 }
 @media (max-width: 760px) { .blab__stagegrid { grid-template-columns: minmax(0, 1fr); } }
+
+.blab__track { cursor: pointer; touch-action: none; }

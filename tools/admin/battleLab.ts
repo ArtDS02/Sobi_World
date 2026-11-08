@@ -217,6 +217,35 @@ function togglePause(): boolean {
   return lab.pausedAt > 0;
 }
 
+/** One frame of the step, in ms (the stage draws at 60 fps). */
+const FRAME_MS = 1000 / 60;
+
+/** Where the played step is now, in ms from its start (frozen while paused). */
+function stepTime(): number {
+  if (!lab.step) return 0;
+  return Math.min(Math.max(0, lab.step.motion.total), Math.max(0, (lab.pausedAt || performance.now()) - lab.step.at));
+}
+
+/**
+ * Jumps the paused stage to `ms` of the step and draws that moment once (timeline scrub, frame step). The step's clock is the page's
+ * (`step.at`), so moving `at` moves the picture; Phaser skips frames while paused, so one is run by hand.
+ */
+function seek(ms: number): void {
+  if (!lab.game || !lab.step) return;
+  const t = Math.min(Math.max(0, lab.step.motion.total), Math.max(0, ms));
+  const now = performance.now();
+  if (!lab.pausedAt) lab.game.pause();
+  lab.pausedAt = now;
+  lab.step.at = now - t;
+  const g = lab.game as unknown as { isPaused: boolean; step(time: number, delta: number): void };
+  g.isPaused = false;
+  try {
+    g.step(now, FRAME_MS);
+  } finally {
+    g.isPaused = true;
+  }
+}
+
 /** mm:ss.t */
 const clock = (ms: number) => `${String(Math.floor(ms / 60000)).padStart(2, '0')}:${((ms % 60000) / 1000).toFixed(1).padStart(4, '0')}`;
 
@@ -344,6 +373,8 @@ export function renderBattleLab(root: HTMLElement) {
           <button class="btn btn-primary btn-small" data-play>▶ Chạy</button>
           <button class="btn btn-small" data-enter>Vào trận</button>
           <button class="btn btn-small" data-pause>⏸ Tạm dừng</button>
+          <button class="btn btn-small" data-prev title="Lùi một khung (←)">⏮</button>
+          <button class="btn btn-small" data-next title="Tới một khung (→)">⏭</button>
           <button class="btn btn-small" data-replay>⟲ Phát lại</button>
           <label class="blab__speed">Tốc độ <select data-speed><option value="1"${lab.fast ? '' : ' selected'}>100%</option><option value="2"${lab.fast ? ' selected' : ''}>×2 (nhanh)</option></select></label>
           <span class="blab__spacer"></span>
@@ -451,8 +482,29 @@ export function renderBattleLab(root: HTMLElement) {
         lab.root.querySelector<HTMLElement>('[data-pause]')?.click();
       }
       else if (e.code === 'KeyR') lab.root.querySelector<HTMLElement>('[data-replay]')?.click();
+      else if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
+        e.preventDefault();
+        seek(stepTime() + (e.code === 'ArrowRight' ? FRAME_MS : -FRAME_MS));
+        lab.root.querySelector('[data-pause]')!.textContent = '▶ Tiếp tục';
+      }
     });
   }
+  // The timeline scrubs (click or drag) and the buttons step one frame; both hold the stage still on the chosen moment.
+  const scrub = (clientX: number) => {
+    const r = q('.blab__track').getBoundingClientRect();
+    const total = lab.step?.motion.total ?? 0;
+    seek(total * Math.min(1, Math.max(0, (clientX - r.left) / Math.max(1, r.width))));
+    q('[data-pause]').textContent = '▶ Tiếp tục';
+  };
+  q('.blab__track').onpointerdown = (e) => {
+    if (!lab.step) return;
+    q('.blab__track').setPointerCapture(e.pointerId);
+    scrub(e.clientX);
+    q('.blab__track').onpointermove = (m) => scrub(m.clientX);
+  };
+  q('.blab__track').onpointerup = () => (q('.blab__track').onpointermove = null);
+  q('[data-prev]').onclick = () => (seek(stepTime() - FRAME_MS), (q('[data-pause]').textContent = '▶ Tiếp tục'));
+  q('[data-next]').onclick = () => (seek(stepTime() + FRAME_MS), (q('[data-pause]').textContent = '▶ Tiếp tục'));
   q('[data-play]').onclick = () => play();
   q('[data-enter]').onclick = () => play(true);
   q('[data-replay]').onclick = () => play(lab.lastEnter);
