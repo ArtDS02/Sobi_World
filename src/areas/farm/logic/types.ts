@@ -62,6 +62,10 @@ export interface FarmGame {
   graceUntil?: number | undefined;
   /** Pity of the breeding station (systems/breeding/pity): percentage points added to the Rare+ chance; absent = 0. */
   breedingPity?: number | undefined;
+  /** D3: the pigs that entered the pig show of `season` (a pig enters once per season). Absent = none yet. */
+  showEntries?: { season: number; pigIds: string[] } | undefined;
+  /** D3: festival tokens of the wallet, mirrored only while the farm holds some or has just earned some (the farm's own money is `player.gold`). */
+  tokens?: number | undefined;
   /** Pigs that died, newest first (the Codex keeps a line of memory for each). */
   memorials?: Memorial[] | undefined;
   settings: {

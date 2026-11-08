@@ -62,6 +62,7 @@ const SAMPLES: Record<(typeof GAME_EVENT_TYPES)[number], GameEvent> = {
   RELIEF_CLAIMED: { type: 'RELIEF_CLAIMED', gold: 0, food: 12, medicine: 1 },
   DECOR_BOUGHT: { type: 'DECOR_BOUGHT', decorId: 'DECOR_HAY_BALE', gold: -1500 },
   DECOR_ARRANGED: { type: 'DECOR_ARRANGED', decorId: 'DECOR_HAY_BALE', op: 'move' },
+  SHOW_ENTERED: { type: 'SHOW_ENTERED', pigId: 'p1', name: 'Bi', place: 2, score: 61, coins: 350, tokens: 3 },
 };
 
 describe('feedback table (§11.3)', () => {

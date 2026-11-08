@@ -57,6 +57,8 @@ export type GameEvent =
   | { type: 'RELIEF_CLAIMED'; gold: number; food: number; medicine: number }
   | { type: 'DECOR_BOUGHT'; decorId: DecorId; gold: number }
   | { type: 'DECOR_ARRANGED'; decorId: DecorId; op: 'place' | 'store' | 'move' }
+  // D3: a pig entered the seasonal show: its place (0 = none), score and the prize paid.
+  | { type: 'SHOW_ENTERED'; pigId: string; name: string; place: number; score: number; coins: number; tokens: number }
   | {
       type: 'SETTING_CHANGED';
       key: 'musicOn' | 'sfxOn' | 'reduceMotion' | 'tutorialDone';
@@ -106,6 +108,7 @@ export const GAME_EVENT_TYPES = [
   'RELIEF_CLAIMED',
   'DECOR_BOUGHT',
   'DECOR_ARRANGED',
+  'SHOW_ENTERED',
   'SETTING_CHANGED',
 ] as const satisfies readonly GameEventType[];
 

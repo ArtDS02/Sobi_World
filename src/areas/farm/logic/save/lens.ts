@@ -66,6 +66,8 @@ export function farmOf(world: WorldSave): FarmGame {
     ...(area.graceUntil === undefined ? {} : { graceUntil: area.graceUntil }),
     ...(area.memorials === undefined ? {} : { memorials: area.memorials }),
     ...(area.breedingPity === undefined ? {} : { breedingPity: area.breedingPity }),
+    ...(area.showEntries === undefined ? {} : { showEntries: area.showEntries }),
+    ...(world.wallet.eventTokens > 0 ? { tokens: world.wallet.eventTokens } : {}),
     settings: world.settings,
   };
   views.set(world, farm);
@@ -90,11 +92,13 @@ export function withFarm(world: WorldSave, farm: FarmGame): WorldSave {
     ...(farm.graceUntil === undefined ? {} : { graceUntil: farm.graceUntil }),
     ...(farm.memorials === undefined ? {} : { memorials: farm.memorials }),
     ...(farm.breedingPity === undefined ? {} : { breedingPity: farm.breedingPity }),
+    ...(farm.showEntries === undefined ? {} : { showEntries: farm.showEntries }),
   };
   const next: WorldSave = {
     ...world,
     meta: { ...world.meta, createdAt: farm.createdAt, updatedAt: farm.updatedAt },
-    wallet: { ...world.wallet, coins: farm.player.gold },
+    // `tokens` is set only by the farm actions that pay festival tokens; absent = the wallet's own value stays.
+    wallet: { ...world.wallet, coins: farm.player.gold, ...(farm.tokens === undefined ? {} : { eventTokens: farm.tokens }) },
     // B2: a farm that did not touch its bag or its ledger (a plain time step) keeps the world's own objects.
     inventory: view && farm.inventory === view.inventory ? world.inventory : { items: { ...world.inventory.items, ...farm.inventory } },
     // A farm transaction without a currency moved coins (the farm's only money).

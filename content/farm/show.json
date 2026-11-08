@@ -1,0 +1,23 @@
+{
+  "seasonDays": 28,
+  "judges": {
+    "jitter": 8,
+    "bondPerHeart": 2,
+    "traitPoints": 4,
+    "traitCap": 12,
+    "rarityPoints": 5,
+    "qualityPoints": 10,
+    "generationPoints": 2,
+    "generationCap": 6,
+    "lineagePoints": 1,
+    "lineageCap": 6,
+    "carePoints": 10,
+    "sickPenalty": 15
+  },
+  "places": [
+    { "place": 1, "minScore": 75, "coins": 600, "tokens": 5 },
+    { "place": 2, "minScore": 60, "coins": 350, "tokens": 3 },
+    { "place": 3, "minScore": 45, "coins": 180, "tokens": 2 }
+  ],
+  "participation": { "coins": 60, "tokens": 1 }
+}

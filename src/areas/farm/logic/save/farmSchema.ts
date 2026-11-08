@@ -229,6 +229,7 @@ const farmAreaShape = z.object({
   memorials: z.array(z.object({ id: z.string(), name: z.string(), breed: breedId, diedAt: time })).optional(),
   /** Pity of the breeding station (GĐ7); absent = 0. */
   breedingPity: z.number().finite().min(0).optional(),
+  showEntries: z.object({ season: z.number().int(), pigIds: z.array(z.string()) }).optional(),
 });
 
 export const farmAreaSchema = farmAreaShape.superRefine(farmInvariants);

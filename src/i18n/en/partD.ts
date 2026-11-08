@@ -65,6 +65,7 @@ export const partD = {
     DAILY_REWARD: "Daily gift",
     ACHIEVEMENT_REWARD: "Achievement reward",
     DECOR_PURCHASE: "Bought decor",
+    SHOW_REWARD: "Pig show prize",
   },
 
   settings: {

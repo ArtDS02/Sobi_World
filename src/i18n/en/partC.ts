@@ -18,6 +18,17 @@ export const partC = {
     cannotBreed: "This breed cannot breed",
   },
 
+  show: {
+    title: "Pig show",
+    hint: "Each season ({days} days) every pig may enter once. The score comes from quality, rarity, traits, bond, generation and family tree, care, plus a little luck.",
+    enter: "Enter the show",
+    entered: "Entered this season",
+    placed: "{name} took place {place} in the show! +{coins} Sobi Coin, +{tokens} festival tokens",
+    participated: "{name} entered and got the participation gift: +{coins} Sobi Coin, +{tokens} festival tokens",
+    score: "Strength: {score}",
+    prizes: "Prizes: 1st {p1} · 2nd {p2} · 3rd {p3}",
+  },
+
   event: {
     becameAdult: "{name} has grown up!",
     becameSick: "{name} fell sick!",

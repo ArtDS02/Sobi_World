@@ -83,6 +83,7 @@ export const FEEDBACK_TABLE: Record<GameEventType, FeedbackRow> = {
   // GĐ7: a hidden trait opens: a little celebration.
   PIG_TRAIT_REVEALED: row('happy', ['fx_heart', 'fx_sparkle'], 'birth_fanfare', true),
   // The toggle itself is the feedback (the button's ui_click; music starts / stops).
+  SHOW_ENTERED: row('happy', ['fx_sparkle', 'fx_coin'], 'level_up', true), // D3
   SETTING_CHANGED: row(null, [], null, false),
   // Not in the §11.3 table: toast only, as before (DECISIONS R05B-1).
   PIG_HUNGRY_ZERO: row(null, [], null, true),

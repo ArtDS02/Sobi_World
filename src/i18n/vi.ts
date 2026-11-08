@@ -1054,6 +1054,17 @@ export const vi = {
     cannotBreed: "Giống này không phối được",
   },
 
+  show: {
+    title: "Hội thi heo",
+    hint: "Mỗi mùa ({days} ngày) mỗi bạn heo thi một lần. Điểm tính từ phẩm chất, độ hiếm, tính trạng, thân thiết, đời và cây phả hệ, chăm sóc, cộng chút may mắn.",
+    enter: "Dự thi",
+    entered: "Đã thi mùa này",
+    placed: "{name} đạt hạng {place} hội thi! +{coins} Sobi Coin, +{tokens} Vé Lễ Hội",
+    participated: "{name} dự thi và nhận quà tham gia: +{coins} Sobi Coin, +{tokens} Vé Lễ Hội",
+    score: "Điểm mạnh: {score}",
+    prizes: "Giải: hạng 1 {p1} · hạng 2 {p2} · hạng 3 {p3}",
+  },
+
   event: {
     becameAdult: "{name} đã trưởng thành!",
     becameSick: "{name} bị bệnh rồi!",
@@ -1984,6 +1995,7 @@ export const vi = {
     DAILY_REWARD: "Quà hằng ngày",
     ACHIEVEMENT_REWARD: "Thưởng thành tích",
     DECOR_PURCHASE: "Mua đồ trang trí",
+    SHOW_REWARD: "Thưởng hội thi heo",
   },
 
   settings: {

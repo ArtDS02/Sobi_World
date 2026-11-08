@@ -25,6 +25,7 @@ export const TRANSACTION_TYPE_VALUES = [
   'DECOR_PURCHASE', // farm decoration bought (PG-3)
   'ITEM_SELL', // items sold from the bag (GĐ2: manure)
   'TROUGH_UPGRADE', // the trough raised a level (GĐ2)
+  'SHOW_REWARD', // the seasonal pig show paid coins or festival tokens (D3)
 ] as const;
 
 export type BreedId = (typeof BREED_ID_VALUES)[number];
