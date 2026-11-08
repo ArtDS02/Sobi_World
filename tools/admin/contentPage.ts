@@ -6,7 +6,8 @@
 import type { z } from 'zod';
 import { CONTENT_FILES, CONTENT_GROUPS, EDITABLE_FILES, TEXT_TABLES, contentDef, type RowTexts } from '../../scripts/admin/contentCatalog';
 import { openBackups } from './contentBackups';
-import { checkImport, downloadJson, pickJsonFile } from './contentIo';
+import { applyCsv, toCsv } from './contentCsv';
+import { checkImport, downloadJson, downloadText, listKeyOf, pickJsonFile } from './contentIo';
 import { describeChanges, diffValues } from './diff';
 import { openModal } from './modal';
 import { usages } from './refs';
@@ -280,6 +281,7 @@ function editor(root: HTMLElement, file: string, rerender: () => void) {
         <div class="fileedit__actions">
           ${d.dirty ? '<span class="badge status-warn">● Chưa lưu</span><button class="btn" data-revert>↺ Hoàn tác</button>' : '<span class="badge status-ok">✓ Đã lưu</span>'}
           <button class="btn" data-export title="Tải bản nháp về dạng JSON">⬇ Xuất</button>
+          ${listKeyOf(d.value) ? '<button class="btn" data-csv-out title="Bảng CSV của danh sách (mở bằng Excel)">⬇ CSV</button><button class="btn" data-csv-in title="Sửa ô / thêm hàng từ file CSV (game kiểm trước)">⬆ CSV</button>' : ''}
           <button class="btn" data-import title="Thay bản nháp bằng một file JSON (game kiểm tra trước)">⬆ Nhập</button>
           <button class="btn" data-backups title="Các bản cũ được giữ trước mỗi lần lưu">🕘 Sao lưu</button>
           <button class="btn btn-primary" data-save ${!d.dirty || page.saving || bad || issues.length ? 'disabled' : ''} title="${bad || issues.length ? 'Sửa các lỗi trong khung vàng trước' : 'Kiểm tra bằng schema của game rồi ghi'}">${page.saving ? 'Đang lưu…' : '💾 Lưu file'}</button>
@@ -347,6 +349,25 @@ function editor(root: HTMLElement, file: string, rerender: () => void) {
   });
   root.querySelector('[data-revert]')?.addEventListener('click', revert);
   root.querySelector('[data-export]')?.addEventListener('click', () => downloadJson(file, d.value));
+  const listKey = listKeyOf(d.value);
+  const csvName = `${file.endsWith('.json') ? file.slice(0, -5) : file}.csv`;
+  const bom = String.fromCharCode(0xfeff); // Excel reads Vietnamese UTF-8 only with it
+  root.querySelector('[data-csv-out]')?.addEventListener('click', () => listKey && downloadText(csvName, bom + toCsv((d.value as Record<string, Record<string, unknown>[]>)[listKey]!), 'text/csv'));
+  root.querySelector('[data-csv-in]')?.addEventListener('click', () => {
+    if (!listKey) return;
+    void pickJsonFile('text/csv,.csv').then((text) => {
+      if (text === null) return;
+      const r = applyCsv((d.value as Record<string, Record<string, unknown>[]>)[listKey]!, text);
+      if (r.errors.length > 0) page.message = { kind: 'error', text: `Không nhập được CSV:\n${r.errors.slice(0, 6).join('\n')}` };
+      else {
+        (d.value as Record<string, unknown>)[listKey] = r.rows;
+        d.dirty = true;
+        page.message = { kind: 'ok', text: `Đã nạp CSV vào bản nháp: ${r.changed} hàng sửa, ${r.added} hàng mới. Xem lại rồi bấm Lưu (game kiểm tra lúc lưu).` };
+        persistLater();
+      }
+      rerender();
+    });
+  });
   root.querySelector('[data-import]')?.addEventListener('click', () => {
     void pickJsonFile().then((text) => {
       if (text === null) return;
