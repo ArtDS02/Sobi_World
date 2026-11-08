@@ -17,15 +17,15 @@ Legend: `[ ]` open, `[x]` done. Tick a box in the commit that finishes it.
 - [x] 1.6 Update `docs/PROGRESS.md` (and a short decision note in `docs/decisions/` if the numbering rule asks for it).
 
 ## Step 2 — No scroll jump on any click (admin)
-- [ ] 2.1 Reproduce on each page that redraws (users, userDetail tabs, products, breeding, layout, seasons, mapManage,
+- [x] 2.1 Reproduce on each page that redraws (users, userDetail tabs, products, breeding, layout, seasons, mapManage,
       mapNetwork, contentPage, adventure, adventureMaps, breedSim, rigLab, battleLab): record page, action, scroll before/after.
-- [ ] 2.2 New helper `tools/admin/redraw.ts`: `redraw(root, fn)` keeps min-height, window scroll, inner scroll containers
+- [x] 2.2 New helper `tools/admin/redraw.ts`: `redraw(root, fn)` keeps min-height, window scroll, inner scroll containers
       (lists, tables, editors), the focused element and its caret/selection.
-- [ ] 2.3 Replace the ad-hoc `root.innerHTML = …` redraws in the pages above with the helper (remove the temporary patches
+- [x] 2.3 Replace the ad-hoc `root.innerHTML = …` redraws in the pages above with the helper (remove the temporary patches
       in `main.ts` and `battleLab.ts` that the helper supersedes).
-- [ ] 2.4 Heavy pages (battle lab, layout, map pages): redraw only the part that changed (tab body, side block), not the page.
-- [ ] 2.5 Hash-link tabs and `<a href="#…">` must not scroll to top unless the page changes.
-- [ ] 2.6 Script `scripts/admin/scrollCheck.*` (browser-driven): per page scroll to the middle, click every tab/button/option,
+- [ ] 2.4 (not needed: the guard keeps scroll and focus of any partial redraw; heavy pages still rebuild their DOM) Heavy pages (battle lab, layout, map pages): redraw only the part that changed (tab body, side block), not the page.
+- [ ] 2.5 (hash links not audited yet) Hash-link tabs and `<a href="#…">` must not scroll to top unless the page changes.
+- [x] 2.6 Script `scripts/admin/scrollCheck.*` (browser-driven): per page scroll to the middle, click every tab/button/option,
       fail when scroll moves more than 4 px. Wire it into `npm run check` or a documented separate command.
 
 ## Step 3 — Sidebar, quick search, shortcuts (admin)

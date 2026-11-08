@@ -22,6 +22,7 @@ import { esc } from './labels';
 import { layoutDirty, renderLayout } from './layout';
 import { renderLibrary } from './library';
 import { renderOverview } from './overview';
+import { installRedrawGuard } from './redraw';
 import { applyQueryString } from './listKit';
 import { renderPigList } from './pigList';
 import { productsDirty, renderProducts } from './products';
@@ -178,6 +179,7 @@ function render() {
   }
 }
 
+installRedrawGuard(app); // every page's own `innerHTML = …` redraw keeps scroll and focus (step 2)
 window.addEventListener('hashchange', render);
 window.addEventListener('beforeunload', (e) => {
   if (anyDirty()) e.preventDefault();
