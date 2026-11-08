@@ -282,7 +282,7 @@ function editor(root: HTMLElement, file: string, rerender: () => void) {
           <button class="btn" data-export title="Tải bản nháp về dạng JSON">⬇ Xuất</button>
           <button class="btn" data-import title="Thay bản nháp bằng một file JSON (game kiểm tra trước)">⬆ Nhập</button>
           <button class="btn" data-backups title="Các bản cũ được giữ trước mỗi lần lưu">🕘 Sao lưu</button>
-          <button class="btn btn-primary" data-save ${!d.dirty || page.saving || bad ? 'disabled' : ''} title="${bad ? 'Sửa các ô đỏ trước' : 'Kiểm tra bằng schema của game rồi ghi'}">${page.saving ? 'Đang lưu…' : '💾 Lưu file'}</button>
+          <button class="btn btn-primary" data-save ${!d.dirty || page.saving || bad || issues.length ? 'disabled' : ''} title="${bad || issues.length ? 'Sửa các lỗi trong khung vàng trước' : 'Kiểm tra bằng schema của game rồi ghi'}">${page.saving ? 'Đang lưu…' : '💾 Lưu file'}</button>
         </div>
       </header>
       ${msg}
@@ -302,10 +302,15 @@ function editor(root: HTMLElement, file: string, rerender: () => void) {
       persistLater();
     }
     if (kind === 'value') {
-      // No redraw (the caret stays): just the save state.
-      const btn = root.querySelector<HTMLButtonElement>('[data-save]');
-      if (btn) btn.disabled = page.saving || d.ui.invalid.size > 0;
+      // No redraw (the caret stays): just the header and the save state. The header first (it enables the button), then the checks.
       if (!root.querySelector('[data-revert]')) refreshHeader(root, revert);
+      const btn = root.querySelector<HTMLButtonElement>('[data-save]');
+      // The game's schema says no (a value out of range, a broken rule): the button waits for a valid draft, as for a red cell.
+      const live = liveIssues(file, d);
+      if (btn) {
+        btn.disabled = page.saving || d.ui.invalid.size > 0 || live.length > 0;
+        btn.title = live.length ? `Game từ chối: ${live[0]}` : 'Kiểm tra bằng schema của game rồi ghi';
+      }
       return;
     }
     rerender();
