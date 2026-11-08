@@ -22,6 +22,7 @@ import {
 } from './math.ts';
 import type { Clip, Output, Paint, Part, PartDelta, Pose, Recipe, Style } from './schema.ts';
 import { StudioError } from './recipes.ts';
+import { oldAsset } from './qa.ts';
 
 export const TOOL_VERSION = 1;
 
@@ -34,6 +35,7 @@ const SHAPE_ID: Record<string, number> = {
   cylinder: 5,
   wedge: 6,
   stroke: 7,
+  image: 8,
 };
 const SHAPE_ARITY: Record<string, number> = {
   sphere: 1,
@@ -44,6 +46,7 @@ const SHAPE_ARITY: Record<string, number> = {
   cylinder: 3,
   wedge: 4,
   stroke: 4,
+  image: 2,
   eye: 1,
 };
 const FLAG_BIT = { unlit: 1, noline: 2, gloss: 4, tintcut: 8 } as const;
@@ -66,6 +69,8 @@ export interface Job {
   height: number;
   supersample: number;
   mode: 'sdf' | 'flat';
+  /** absolute path of the source art (filled by the CLI when the recipe has one) */
+  source: string;
   camCenter: V3;
   camRight: V3;
   camUp: V3;
@@ -224,6 +229,16 @@ function blendDelta(a: PartDelta | undefined, b: PartDelta | undefined, t: numbe
   if (A.bend !== undefined || B.bend !== undefined) out.bend = lerp(A.bend ?? 0, B.bend ?? 0, t);
   if (A.noisePhase !== undefined || B.noisePhase !== undefined)
     out.noisePhase = lerp(A.noisePhase ?? 0, B.noisePhase ?? 0, t);
+  // A key without the value means the neutral one: fully shown, not dissolved, wipe complete, no sway shift.
+  const NEUTRAL = { opacity: 1, dissolve: 0, wipe: 1, swayPhase: 0 } as const;
+  for (const k of ['opacity', 'dissolve', 'wipe', 'swayPhase'] as const)
+    if (A[k] !== undefined || B[k] !== undefined)
+      out[k] = lerp(A[k] ?? NEUTRAL[k], B[k] ?? NEUTRAL[k], t);
+  if (A.stretch || B.stretch) {
+    const a = A.stretch ?? [1, 1];
+    const b = B.stretch ?? [1, 1];
+    out.stretch = [lerp(a[0], b[0], t), lerp(a[1], b[1], t)];
+  }
   const hide = t < 0.5 ? (A.hide ?? false) : (B.hide ?? false);
   const show = t < 0.5 ? (A.show ?? false) : (B.show ?? false);
   if (hide) out.hide = true;
@@ -260,6 +275,132 @@ interface Ctx {
   cam: Camera;
   groups: Map<string, number>;
   phase: number;
+  /** clip time 0..1 (0 for a still pose) and clip length in ms, for sways and particles */
+  t: number;
+  ms: number;
+  /** size of the source art, for image parts */
+  src: { width: number; height: number } | null;
+}
+
+/** Source art size for a recipe with image parts (read from the git ref, cached). */
+const SOURCE_SIZE = new Map<string, { width: number; height: number }>();
+export function sourceSize(recipe: Recipe): { width: number; height: number } | null {
+  const src = recipe.source;
+  if (!src) return null;
+  const key = `${src.ref}:${src.file}`;
+  let size = SOURCE_SIZE.get(key);
+  if (!size) {
+    const img = oldAsset(src.file, src.ref);
+    if (!img) throw new StudioError(`${recipe.id}: source ${src.file} not found at ${src.ref}`);
+    size = { width: img.width, height: img.height };
+    SOURCE_SIZE.set(key, size);
+  }
+  return size;
+}
+
+/** uv rect (u0, v top, u1, v bottom) of a frame index or pixel rect of the source art; texture v = 0 is the bottom row. */
+export function uvRect(
+  src: { frame?: number | undefined; rect?: [number, number, number, number] | undefined },
+  size: { width: number; height: number },
+  frame: [number, number],
+  where: string,
+): number[] {
+  let rect = src.rect;
+  if (!rect) {
+    if (src.frame === undefined) throw new StudioError(`${where}: src needs frame or rect`);
+    const cols = Math.max(1, Math.floor(size.width / frame[0]));
+    rect = [
+      (src.frame % cols) * frame[0],
+      Math.floor(src.frame / cols) * frame[1],
+      frame[0],
+      frame[1],
+    ];
+  }
+  const [x, y, w, h] = rect;
+  if (x < 0 || y < 0 || x + w > size.width || y + h > size.height)
+    throw new StudioError(`${where}: src outside the source art`);
+  return [
+    (x + 0.5) / size.width,
+    1 - (y + 0.5) / size.height,
+    (x + w - 0.5) / size.width,
+    1 - (y + h - 0.5) / size.height,
+  ];
+}
+
+function pushImage(
+  frame: JobFrame,
+  xf: Xf,
+  half: [number, number],
+  uv: number[],
+  sway: { amp: number; waves: number; phase: number },
+  dissolve: { amount: number; soft: number; freq: number },
+  wipe: { cx: number; cy: number; from: number; to: number; soft: number },
+  opacity: number,
+  group: number,
+  flags: number,
+) {
+  frame.prims.push(
+    ...inverseRows(xf),
+    ...uv,
+    0,
+    0,
+    0,
+    0,
+    wipe.cx,
+    wipe.cy,
+    wipe.to,
+    wipe.soft,
+    0,
+    sway.phase,
+    scaleOf(xf),
+    wipe.from,
+    half[0],
+    half[1],
+    sway.amp,
+    sway.waves,
+    dissolve.amount,
+    dissolve.soft,
+    dissolve.freq,
+    opacity,
+  );
+  frame.primInfo.push(8, 0, group, flags);
+}
+
+/** Deterministic 0..1 sequence (mulberry32). */
+export function rng(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Particles alive at clip time t: position, turn, size factor, opacity (plan: pieces of the approved art). */
+export function particlesAt(e: Recipe['emitters'][string], t: number, ms: number) {
+  const out: { x: number; y: number; rot: number; scale: number; opacity: number }[] = [];
+  for (let i = 0; i < e.count; i++) {
+    const r = rng(e.seed * 1009 + i * 7919);
+    const [r0, r1, r2, r3, r4, r5] = [r(), r(), r(), r(), r(), r()];
+    const birth = e.life[0] + (e.life[1] - e.life[0]) * r0;
+    const death = e.life[2];
+    if (t < birth || t > death || death <= birth) continue;
+    const age = ((t - birth) * ms) / 1000;
+    const k = (t - birth) / (death - birth);
+    const vx = e.vel[0] + e.jitter[0] * (r3 - 0.5);
+    const vy = e.vel[1] + e.jitter[1] * (r4 - 0.5);
+    const fade = k < 0.6 ? 1 : 1 - (k - 0.6) / 0.4;
+    out.push({
+      x: e.at[0] + e.box[0] * (r1 - 0.5) + vx * age,
+      y: e.at[1] + e.box[1] * (r2 - 0.5) + vy * age - 0.5 * e.gravity * age * age,
+      rot: e.spin * age * (r5 - 0.5) * 2,
+      scale: 1 - e.shrink * k,
+      opacity: Math.max(0, fade),
+    });
+  }
+  return out;
 }
 
 function groupIndex(ctx: Ctx, name: string): number {
@@ -412,6 +553,48 @@ export function buildFrame(ctx: Ctx, pose: Pose): JobFrame {
     const xf = shapeXf(node, d);
     const size = d.size ?? part.size;
     if (!size) throw new StudioError(`${where}: missing size`);
+    if (part.shape === 'image') {
+      if (!ctx.src || !recipe.source)
+        throw new StudioError(`${where}: image parts need the recipe's source`);
+      if (!part.src) throw new StudioError(`${where}: image parts need src`);
+      const st = d.stretch ?? part.stretch ?? [1, 1];
+      const off = add(part.offset ?? [0, 0, 0], d.offset ?? [0, 0, 0]);
+      const node = nodes.get(name)!;
+      const ixf = { r: node.xf.r, t: point(node.xf, [off[0] * st[0], off[1] * st[1], off[2]]) };
+      const w = part.wipe;
+      const prog = d.wipe ?? w?.progress ?? 1;
+      pushImage(
+        frame,
+        ixf,
+        [((size[0] ?? 1) / 2) * st[0], ((size[1] ?? size[0] ?? 1) / 2) * st[1]],
+        uvRect(part.src, ctx.src, recipe.source.frame, where),
+        part.sway
+          ? {
+              amp: part.sway.amp,
+              waves: part.sway.waves,
+              phase: part.sway.speed * ctx.t * 2 * Math.PI + (d.swayPhase ?? 0),
+            }
+          : { amp: 0, waves: 0, phase: 0 },
+        {
+          amount: d.dissolve ?? part.dissolve?.amount ?? 0,
+          soft: part.dissolve?.soft ?? 0.08,
+          freq: part.dissolve?.freq ?? 6,
+        },
+        w
+          ? {
+              cx: w.center[0],
+              cy: w.center[1],
+              from: (w.from * Math.PI) / 180,
+              to: ((w.from + (w.to - w.from) * prog) * Math.PI) / 180,
+              soft: w.soft,
+            }
+          : { cx: 0, cy: 0, from: 0, to: 0, soft: 0 },
+        (part.opacity ?? 1) * (d.opacity ?? 1),
+        groupIndex(ctx, part.group ?? 'body'),
+        flagsOf(part.flags),
+      );
+      continue;
+    }
     const col = colorOf(style, recipe, part.color ?? 'white', `part ${name}`);
     const line = lineOf(style, recipe, col, part.line, `part ${name}`);
     const group = groupIndex(ctx, part.group ?? 'body');
@@ -445,6 +628,27 @@ export function buildFrame(ctx: Ctx, pose: Pose): JobFrame {
       bands,
       [SHAPE_ID[part.shape]!, op, group, flags],
     );
+  }
+
+  for (const [name, e] of Object.entries(recipe.emitters)) {
+    if (!ctx.src || !recipe.source)
+      throw new StudioError(`${recipe.id}: emitter ${name} needs the recipe's source`);
+    const uv = uvRect(e.src, ctx.src, recipe.source.frame, `${recipe.id}: emitter ${name}`);
+    for (const p of particlesAt(e, ctx.t, ctx.ms)) {
+      const xf = compose(root, xfFrom([p.x, p.y, 0], [0, 0, p.rot], 1));
+      pushImage(
+        frame,
+        xf,
+        [(e.size[0] / 2) * p.scale, (e.size[1] / 2) * p.scale],
+        uv,
+        { amp: 0, waves: 0, phase: 0 },
+        { amount: 0, soft: 0.08, freq: 6 },
+        { cx: 0, cy: 0, from: 0, to: 0, soft: 0 },
+        p.opacity,
+        groupIndex(ctx, `emitter:${name}`),
+        0,
+      );
+    }
   }
 
   for (const [name, paint] of paints) {
@@ -567,7 +771,16 @@ export function compileOutput(style: Style, recipe: Recipe, out: Output): Job {
     mul(cam.right, (w / 2 - v.origin[0]) / v.ppu),
     mul(cam.up, (v.origin[1] - h / 2) / v.ppu),
   );
-  const ctx: Ctx = { style, recipe, cam, groups: new Map(), phase: 0 };
+  const ctx: Ctx = {
+    style,
+    recipe,
+    cam,
+    groups: new Map(),
+    phase: 0,
+    t: 0,
+    ms: 340,
+    src: sourceSize(recipe),
+  };
   const frames: JobFrame[] = [];
   if (out.clip) {
     const clip = recipe.clips[out.clip];
@@ -579,6 +792,8 @@ export function compileOutput(style: Style, recipe: Recipe, out: Output): Job {
       throw new StudioError(`${recipe.id}: output ${out.file}: frame out of range`);
     for (const t of picked as number[]) {
       ctx.phase = clip.phase ? lerp(clip.phase[0], clip.phase[1], t) : 0;
+      ctx.t = t;
+      ctx.ms = clip.ms;
       frames.push(buildFrame(ctx, sampleClip(recipe, out.clip, clip, t)));
     }
   } else {
@@ -596,6 +811,7 @@ export function compileOutput(style: Style, recipe: Recipe, out: Output): Job {
     height: h,
     supersample: ss,
     mode: v.kind.mode,
+    source: '',
     camCenter: center,
     camRight: cam.right,
     camUp: cam.up,

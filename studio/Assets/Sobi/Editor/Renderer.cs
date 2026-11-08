@@ -100,6 +100,8 @@ namespace Sobi.Studio
             cs.SetVector("_Paint", V4(st.paint));
 
             bool flat = job.mode == "flat";
+            var src = LoadSource(job.source);
+            cs.SetTexture(kF, "_Src", src);
             for (int f = 0; f < frames; f++)
             {
                 var fr = job.frames[f];
@@ -165,7 +167,44 @@ namespace Sobi.Studio
             var bytes = sheet.EncodeToPNG();
             UnityEngine.Object.DestroyImmediate(sheet);
             foreach (var rt in new[] { g0, g1, g2, g3, color, output }) rt.Release();
+            UnityEngine.Object.DestroyImmediate(src);
             return bytes;
+        }
+
+        // Source art for image layers as linear, premultiplied floats (correct filtering at the edges).
+        static Texture2D LoadSource(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                var empty = new Texture2D(1, 1, TextureFormat.RGBAFloat, false, true);
+                empty.SetPixel(0, 0, new Color(0, 0, 0, 0));
+                empty.Apply();
+                return empty;
+            }
+            var png = new Texture2D(2, 2, TextureFormat.RGBA32, false, true);
+            if (!png.LoadImage(File.ReadAllBytes(path))) throw new Exception("cannot read source art " + path);
+            var px = png.GetPixels32();
+            var lin = new Color[px.Length];
+            for (int i = 0; i < px.Length; i++)
+            {
+                float a = px[i].a / 255f;
+                lin[i] = new Color(Lin(px[i].r) * a, Lin(px[i].g) * a, Lin(px[i].b) * a, a);
+            }
+            var tex = new Texture2D(png.width, png.height, TextureFormat.RGBAFloat, false, true)
+            {
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp
+            };
+            tex.SetPixels(lin);
+            tex.Apply(false);
+            UnityEngine.Object.DestroyImmediate(png);
+            return tex;
+        }
+
+        static float Lin(byte v)
+        {
+            float s = v / 255f;
+            return s <= 0.04045f ? s / 12.92f : Mathf.Pow((s + 0.055f) / 1.055f, 2.4f);
         }
 
         static byte Srgb(float v)

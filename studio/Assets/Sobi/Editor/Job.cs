@@ -21,6 +21,7 @@ namespace Sobi.Studio
         public int height;
         public int supersample;
         public string mode;        // "sdf" (3D toon) or "flat" (2D bands)
+        public string source;      // flat mode: source art PNG for image layers (absolute path), or empty
         public float[] camCenter;
         public float[] camRight;
         public float[] camUp;

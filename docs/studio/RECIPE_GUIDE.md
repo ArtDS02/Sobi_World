@@ -51,6 +51,16 @@ Project phải đóng trong Editor khi chạy batchmode.
 - `poses`: delta theo tên node (`"paint:<tên>"` cho paint): `rot` / `at` / `offset` cộng thêm, `scale` nhân, `size`
   thay, `bend` cộng, `hide` / `show`. Bản lặp `tên#i` theo delta của `tên`.
 - `clips`: `frames`, `keys` (`t` 0..1, `pose` tên hoặc nội tuyến, `ease`), `loop`, `phase` (pha nhiễu cho lửa).
+- **Diễn hoạt tranh có sẵn** (VFX, kind `fx_battle_anim`: 1 đơn vị = một khung 256 px, gốc ở đáy giữa):
+  `source: { file, ref, frame: [w, h] }` (tranh đã duyệt đọc từ git, không phải file đang ghi đè); part `shape: "image"`,
+  `size [w, h]`, `src: { frame }` hoặc `{ rect: [x, y, w, h] }`, `stretch [sx, sy]` (co giãn quanh khớp), `sway { amp, waves,
+  speed }`, `dissolve { amount, soft, freq }`, `wipe { center, from, to, soft, progress }`, `opacity`. Pose:
+  `stretch`, `dissolve`, `wipe`, `opacity`, `swayPhase` (khoá thiếu giá trị = trung tính: rõ hẳn, không tan, quét xong).
+  `emitters`: hạt là mảnh `src` của tranh, `count`, `seed`, `at`, `box`, `vel`, `jitter`, `gravity` (đơn vị / giây theo
+  `clips.<tên>.ms`), `life [xuất hiện đầu, xuất hiện cuối, hết]` theo thời gian clip 0..1. Tìm mảnh: `npx tsx
+  scripts/studio/blobs.ts <file> <khung> <rộng khung>`. Sheet trận: 8 khung + `fps: 24` giữ 340 ms.
+- So trong trận: `npm run anim:capture -- --suite skills --only battle.skill.<id> --grid 40` (một lần với asset cũ, một lần
+  mới), rồi `npx tsx scripts/studio/battlePair.ts <run cũ> <run mới> battle.skill.<id> <từ ms> <tới ms> x,y,w,h <out.png>`.
 - `outputs`: `file` phải là file của manifest id `asset` (id không bao giờ đổi), `pose` hoặc `clip` (+ `frame`, `cols`,
   `fps` cho sheet), `view` đè canvas / ppu / origin.
 

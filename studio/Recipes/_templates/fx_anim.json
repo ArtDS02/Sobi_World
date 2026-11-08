@@ -1,0 +1,6 @@
+{
+  "$schema": "../schema/recipe.schema.json",
+  "kind": "fx_battle_anim",
+  "area": "fx",
+  "notes": "Battle effect MOTION made from the approved drawings (source = the sheet at tag pre-unity-studio): squash / stretch, sway, dissolve, wipe, particles cut from the same art. Units: 1 = one 256 px frame, origin at the bottom centre. 8 frames at 24 fps = the same 340 ms as the old 4 frames at 12 fps."
+}

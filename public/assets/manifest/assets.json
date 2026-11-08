@@ -1075,7 +1075,7 @@
       "id": "fx_slash_arc",
       "status": "production",
       "asset": "fx/battle/fx_slash_arc.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_claw",
@@ -1099,7 +1099,7 @@
       "id": "fx_splash",
       "status": "production",
       "asset": "fx/battle/fx_splash.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_wave_rise",
@@ -1111,7 +1111,7 @@
       "id": "fx_flame_burst",
       "status": "production",
       "asset": "fx/battle/fx_flame_burst.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_ice_encase",

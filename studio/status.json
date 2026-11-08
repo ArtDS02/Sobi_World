@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "recipes": {
+    "fx_flame_burst": {
+      "hash": "c7788ff848b50130",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_flame_burst.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_slash_arc": {
+      "hash": "180130bab0c5ffce",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_slash_arc.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_splash": {
+      "hash": "08f0024ecca08b73",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_splash.png"
+      ],
+      "imported": "2026-11-08"
+    }
+  }
+}

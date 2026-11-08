@@ -9,8 +9,10 @@ import {
   expandMirror,
   expandRepeat,
   PAINT_FLOATS,
+  particlesAt,
   PRIM_FLOATS,
   sampleClip,
+  uvRect,
 } from '../../scripts/studio/compile.ts';
 import { insertAfterText, manifestCheck, setFramesText } from '../../scripts/studio/manifest.ts';
 import { compose, inverseRows, point, xfFrom, type V3 } from '../../scripts/studio/math.ts';
@@ -109,10 +111,12 @@ describe('studio compiler', () => {
   });
 
   it('clips sample their keys: loops stop short of the end, one-shots land on it', () => {
-    expect(clipTimes({ frames: 4, keys: [{ t: 0, pose: {} }], loop: true })).toEqual([
+    expect(clipTimes({ frames: 4, keys: [{ t: 0, pose: {} }], loop: true, ms: 340 })).toEqual([
       0, 0.25, 0.5, 0.75,
     ]);
-    expect(clipTimes({ frames: 3, keys: [{ t: 0, pose: {} }], loop: false })).toEqual([0, 0.5, 1]);
+    expect(clipTimes({ frames: 3, keys: [{ t: 0, pose: {} }], loop: false, ms: 340 })).toEqual([
+      0, 0.5, 1,
+    ]);
     const style = loadStyle();
     const recipe = loadAll().find((l) => l.recipe.clips.swim)!.recipe;
     const clip = recipe.clips.swim!;
@@ -125,14 +129,65 @@ describe('studio compiler', () => {
     void style;
   });
 
-  it('a stroke packs as shape 7 with its taper where other shapes keep their bend', () => {
+  it('a stroke packs as shape 7 with its taper in ext.w', () => {
     const style = loadStyle();
-    const slash = loadAll().find((l) => l.recipe.id === 'fx_slash_arc')!.recipe;
-    const frame = compileRecipe(style, slash)[0]!.frames[1]!;
-    const types = frame.primInfo.filter((_, i) => i % 4 === 0);
-    expect(types.every((t) => t === 7)).toBe(true);
-    const taper = frame.prims[PRIM_FLOATS * 2 + 27]; // ext.w of the third prim (the blade)
-    expect(taper).toBe(slash.parts.blade!.taper);
+    const recipe = RecipeSchema.parse({
+      id: 'probe',
+      kind: 'fx_battle',
+      parts: { blade: { shape: 'stroke', size: [0.5, 0.3, 1, 0.1], taper: -0.7, color: 'white' } },
+      outputs: [{ asset: 'fx_slash_arc', file: 'fx/battle/fx_slash_arc.png' }],
+    });
+    const frame = compileRecipe(style, recipe)[0]!.frames[0]!;
+    expect(frame.primInfo[0]).toBe(7);
+    expect(frame.prims[27]).toBe(-0.7);
+  });
+
+  it('motion recipes read their approved source art and pack image layers (shape 8) with uv inside the sheet', () => {
+    const style = loadStyle();
+    for (const id of ['fx_flame_burst', 'fx_splash', 'fx_slash_arc']) {
+      const recipe = loadAll().find((l) => l.recipe.id === id)!.recipe;
+      expect(recipe.source?.ref).toBe('pre-unity-studio');
+      const job = compileRecipe(style, recipe)[0]!;
+      expect(job.frames).toHaveLength(8);
+      for (const f of job.frames) {
+        const n = f.primInfo.length / 4;
+        for (let i = 0; i < n; i++) {
+          expect(f.primInfo[i * 4]).toBe(8);
+          const uv = f.prims.slice(i * PRIM_FLOATS + 12, i * PRIM_FLOATS + 16);
+          for (const v of uv) expect(v >= 0 && v <= 1).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('uv rects: frame index walks the sheet, v = 0 is the bottom row, outside pieces are refused', () => {
+    const size = { width: 1024, height: 256 };
+    const uv = uvRect({ frame: 2 }, size, [256, 256], 'probe');
+    expect(uv[0]).toBeCloseTo(512.5 / 1024);
+    expect(uv[1]).toBeCloseTo(1 - 0.5 / 256);
+    expect(uv[3]).toBeCloseTo(0.5 / 256);
+    expect(() => uvRect({ rect: [1000, 0, 40, 10] }, size, [256, 256], 'probe')).toThrow(/outside/);
+  });
+
+  it('particles are the same every build and follow their life window', () => {
+    const e = {
+      src: { frame: 0 },
+      count: 5,
+      seed: 7,
+      at: [0, 0.5] as [number, number],
+      box: [0.2, 0.2] as [number, number],
+      vel: [0, 1] as [number, number],
+      jitter: [0.5, 0.5] as [number, number],
+      gravity: 2,
+      size: [0.1, 0.1] as [number, number],
+      life: [0.2, 0.5, 1] as [number, number, number],
+      spin: 0,
+      shrink: 0.4,
+    };
+    expect(particlesAt(e, 0.1, 340)).toHaveLength(0);
+    expect(particlesAt(e, 0.8, 340)).toEqual(particlesAt(e, 0.8, 340));
+    expect(particlesAt(e, 0.8, 340).length).toBeGreaterThan(0);
+    for (const p of particlesAt(e, 0.99, 340)) expect(p.opacity).toBeLessThan(0.2);
   });
 
   it('world -> local rows undo the part transform (rotation, scale, hierarchy)', () => {

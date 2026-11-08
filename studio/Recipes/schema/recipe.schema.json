@@ -51,6 +51,7 @@
               "cylinder",
               "wedge",
               "stroke",
+              "image",
               "eye"
             ]
           },
@@ -135,6 +136,129 @@
           },
           "taper": {
             "type": "number"
+          },
+          "src": {
+            "type": "object",
+            "properties": {
+              "frame": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "rect": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "items": false,
+                "minItems": 4,
+                "maxItems": 4
+              }
+            },
+            "additionalProperties": false
+          },
+          "sway": {
+            "type": "object",
+            "properties": {
+              "amp": {
+                "type": "number"
+              },
+              "waves": {
+                "type": "number"
+              },
+              "speed": {
+                "type": "number"
+              }
+            },
+            "required": ["amp", "waves", "speed"],
+            "additionalProperties": false
+          },
+          "dissolve": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1.2
+              },
+              "soft": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "freq": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": ["amount", "soft", "freq"],
+            "additionalProperties": false
+          },
+          "wipe": {
+            "type": "object",
+            "properties": {
+              "center": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "items": false,
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "from": {
+                "type": "number"
+              },
+              "to": {
+                "type": "number"
+              },
+              "soft": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "progress": {
+                "default": 1,
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": ["center", "from", "to", "soft"],
+            "additionalProperties": false
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "stretch": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
           },
           "op": {
             "type": "string",
@@ -315,6 +439,7 @@
               "cylinder",
               "wedge",
               "stroke",
+              "image",
               "eye"
             ]
           },
@@ -399,6 +524,129 @@
           },
           "taper": {
             "type": "number"
+          },
+          "src": {
+            "type": "object",
+            "properties": {
+              "frame": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "rect": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "items": false,
+                "minItems": 4,
+                "maxItems": 4
+              }
+            },
+            "additionalProperties": false
+          },
+          "sway": {
+            "type": "object",
+            "properties": {
+              "amp": {
+                "type": "number"
+              },
+              "waves": {
+                "type": "number"
+              },
+              "speed": {
+                "type": "number"
+              }
+            },
+            "required": ["amp", "waves", "speed"],
+            "additionalProperties": false
+          },
+          "dissolve": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1.2
+              },
+              "soft": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "freq": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": ["amount", "soft", "freq"],
+            "additionalProperties": false
+          },
+          "wipe": {
+            "type": "object",
+            "properties": {
+              "center": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "items": false,
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "from": {
+                "type": "number"
+              },
+              "to": {
+                "type": "number"
+              },
+              "soft": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "progress": {
+                "default": 1,
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": ["center", "from", "to", "soft"],
+            "additionalProperties": false
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "stretch": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
           },
           "op": {
             "type": "string",
@@ -564,11 +812,6 @@
           "soft": {
             "type": "number",
             "minimum": 0
-          },
-          "opacity": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
           }
         },
         "additionalProperties": false
@@ -655,6 +898,38 @@
               "type": "number"
             },
             "taper": {
+              "type": "number"
+            },
+            "opacity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "dissolve": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1.2
+            },
+            "wipe": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "stretch": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "items": false,
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "swayPhase": {
               "type": "number"
             },
             "hide": {
@@ -778,6 +1053,38 @@
                           "taper": {
                             "type": "number"
                           },
+                          "opacity": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "dissolve": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1.2
+                          },
+                          "wipe": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "stretch": {
+                            "type": "array",
+                            "prefixItems": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ],
+                            "items": false,
+                            "minItems": 2,
+                            "maxItems": 2
+                          },
+                          "swayPhase": {
+                            "type": "number"
+                          },
                           "hide": {
                             "type": "boolean"
                           },
@@ -819,6 +1126,11 @@
             "items": false,
             "minItems": 2,
             "maxItems": 2
+          },
+          "ms": {
+            "default": 340,
+            "type": "number",
+            "exclusiveMinimum": 0
           }
         },
         "required": ["frames", "keys"],
@@ -902,6 +1214,197 @@
           }
         },
         "required": ["file", "asset"],
+        "additionalProperties": false
+      }
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "pattern": "^[a-z0-9_/]+\\.png$"
+        },
+        "ref": {
+          "default": "pre-unity-studio",
+          "type": "string"
+        },
+        "frame": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": ["file", "frame"],
+      "additionalProperties": false
+    },
+    "emitters": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "object",
+            "properties": {
+              "frame": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "rect": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "items": false,
+                "minItems": 4,
+                "maxItems": 4
+              }
+            },
+            "additionalProperties": false
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 64
+          },
+          "seed": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "at": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "box": {
+            "default": [0, 0],
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "vel": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "jitter": {
+            "default": [0, 0],
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "gravity": {
+            "default": 0,
+            "type": "number"
+          },
+          "size": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "life": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "items": false,
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "spin": {
+            "default": 0,
+            "type": "number"
+          },
+          "shrink": {
+            "default": 0.4,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": ["src", "count", "seed", "at", "vel", "size", "life"],
         "additionalProperties": false
       }
     },

@@ -54,6 +54,10 @@ RWTexture2D<float4> _G2;   // line rgb, group
 RWTexture2D<float4> _G3;   // ao, flags, unused, unused
 RWTexture2D<float4> _Color; // shaded, premultiplied (supersampled)
 RWTexture2D<float4> _Out;   // final, premultiplied linear
+Texture2D<float4> _Src;     // source art for image layers: linear, premultiplied (Renderer.cs converts it)
+SamplerState sampler_linear_clamp;
+
+
 
 // ---------- noise ----------
 float hash31(float3 p) {
@@ -371,6 +375,32 @@ void Shade(uint3 id : SV_DispatchThreadID) {
     _Color[id.xy] = float4(c, 1.0);
 }
 
+// Image layer (prim type 8): a rectangle of the source art, moved by the prim transform.
+//   p = uv rect (u0, v0 top, u1, v1 bottom); col2 = half size (local), sway amount, sway waves;
+//   col3 = dissolve level, dissolve softness, dissolve noise frequency, opacity;
+//   lineCol = wipe centre (local xy), wipe end angle, wipe softness (0: no wipe); ext.y = sway phase, ext.w = wipe start angle.
+float4 imageLayer(Prim P, float3 w) {
+    float3 q = toLocal(P.r0, P.r1, P.r2, w);
+    float2 n = q.xy / P.col2.xy;                       // -1..1 inside the rectangle
+    float rise = saturate(n.y * 0.5 + 0.5);
+    n.x += P.col2.z * rise * rise * sin(n.y * P.col2.w * 3.14159265 - P.ext.y);   // sway grows towards the top
+    if (abs(n.x) > 1.0 || abs(n.y) > 1.0) return 0;
+    float2 uv = float2(lerp(P.p.x, P.p.z, n.x * 0.5 + 0.5), lerp(P.p.y, P.p.w, 0.5 - n.y * 0.5));
+    float4 c = _Src.SampleLevel(sampler_linear_clamp, uv, 0);
+    if (P.col3.x > 0.0) {
+        float nn = fbm(float3(q.xy * P.col3.z, 3.7)) * 0.5 + 0.5;
+        c *= smoothstep(P.col3.x - P.col3.y, P.col3.x + P.col3.y, nn);
+    }
+    if (P.lineCol.w > 0.0) {
+        float sweep = P.lineCol.z - P.ext.w;
+        float2 d = q.xy - P.lineCol.xy;
+        float da = (atan2(d.y, d.x) - P.ext.w) * (sweep < 0.0 ? -1.0 : 1.0);
+        da = fmod(da + 12.566370614, 6.283185307);
+        c *= 1.0 - smoothstep(abs(sweep) - P.lineCol.w, abs(sweep) + P.lineCol.w, da);
+    }
+    return c * P.col3.w;
+}
+
 // Flat mode (2D effects): the z = 0 slice of the field, coloured in nested bands with an outline.
 [numthreads(8, 8, 1)]
 void Flat(uint3 id : SV_DispatchThreadID) {
@@ -381,10 +411,16 @@ void Flat(uint3 id : SV_DispatchThreadID) {
     float4 outc = 0;
     int i = 0;
     [loop] while (i < _PrimCount) {
+        if (_Prims[i].info.x == 8) {               // image layer: composited over what is below
+            float4 c = imageLayer(_Prims[i], w);
+            outc = c + outc * (1.0 - c.a);
+            i++;
+            continue;
+        }
         int g = _Prims[i].info.z;
         Hit h = emptyHit();
         int j = i;
-        [loop] for (; j < _PrimCount && _Prims[j].info.z == g; j++) accumulate(h, _Prims[j], primDist(_Prims[j], w), j);
+        [loop] for (; j < _PrimCount && _Prims[j].info.z == g && _Prims[j].info.x != 8; j++) accumulate(h, _Prims[j], primDist(_Prims[j], w), j);
         i = j;
         if (h.idx < 0 || h.d > lineW) continue;
         Prim P = _Prims[h.idx];
@@ -397,7 +433,7 @@ void Flat(uint3 id : SV_DispatchThreadID) {
         if (h.b2 > 0.0 && -h.d > h.b2) c = h.col3;
         outc = float4(c, 1.0);
     }
-    _Color[id.xy] = outc;
+    _Color[id.xy] = outc.a > 1e-5 ? float4(outc.rgb / outc.a, outc.a) : 0;   // straight colour (Down premultiplies)
 }
 
 [numthreads(8, 8, 1)]

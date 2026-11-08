@@ -1,4 +1,4 @@
-# HANDOFF — Sobi Studio (decision 051): U0 xong, cổng U1 và cổng VFX hẹp đều KHÔNG ĐẠT, chờ chủ dự án (2026-11-07)
+# HANDOFF — Sobi Studio (decision 051): vẽ hình KHÔNG ĐẠT; VFX bằng chuyển động ĐẠT cổng thử (2026-11-08)
 
 Nhánh `phase-14-unity-studio`. Trạng thái chi tiết: `docs/studio/STATUS.md` (đọc trước). Cách dùng công cụ:
 `docs/studio/RECIPE_GUIDE.md`. Nhật ký: `docs/PROGRESS.md` mục 2026-11-07 đầu tiên.
@@ -12,7 +12,13 @@ Nhánh `phase-14-unity-studio`. Trạng thái chi tiết: `docs/studio/STATUS.md
 - Chủ dự án chọn thử **phương án hẹp VFX**: 3 hiệu ứng (lửa, tia nước, vệt chém) với nét cọ + xếp lớp 2D, 2 vòng chỉnh → **cũng không đạt**, không nhập vào game. Agent đề nghị bỏ Studio cho việc tạo hình.
 - Ảnh cho chủ dự án: `docs/studio/u1/` (cũ trái, mới phải; `vfx_r2_*` là cổng VFX).
 
+- **2026-11-08**: chủ dự án làm rõ phương án hẹp = **chuyển động trên tranh có sẵn**. Đã làm (part `image`, `emitters`,
+  nhịp `stripTiming.ts`), 3 hiệu ứng `fx_flame_burst`, `fx_splash`, `fx_slash_arc` đạt cổng và **đã nhập vào game**.
+  Cách làm: `docs/studio/RECIPE_GUIDE.md` mục "Diễn hoạt tranh có sẵn".
+
 ## 2. Session sau làm gì
+- Nếu chủ dự án đồng ý: làm 20 sheet trận còn lại theo danh sách cuối `docs/studio/STATUS.md` (kiểm `cover.frame`,
+  `frames: [a, b]`, `decal.frame` trước khi lên 8 khung). Unity cần Unity Hub đang chạy (tự mở được, xem PROGRESS).
 - **Không làm U2–U10 và không làm thêm VFX Studio** khi chủ dự án chưa trả lời đề nghị ở cuối `docs/studio/STATUS.md`.
 - Phương án hẹp VFX đã thử (nét cọ `stroke`, xếp lớp 2D; recipe `studio/Recipes/fx/`). Nếu sau này vẫn thử lại: giữ số khung sheet cũ (`battle_fx.json` gọi khung theo chỉ số, mặc định 85 ms/khung).
 

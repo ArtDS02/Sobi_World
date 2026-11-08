@@ -82,6 +82,7 @@ export const SHAPES = [
   'cylinder',
   'wedge',
   'stroke',
+  'image',
   'eye',
 ] as const;
 export const FLAGS = ['unlit', 'noline', 'gloss', 'tintcut'] as const;
@@ -108,6 +109,35 @@ const PartFields = {
   bend: num.optional(),
   /** stroke only: > 0 round base + pointed tip, < 0 pointed both ends (crescent) */
   taper: num.optional(),
+  /** image only: which part of the recipe's source art (frame index of the sheet, or a pixel rect x, y, w, h) */
+  src: z
+    .object({
+      frame: z.number().int().min(0).optional(),
+      rect: z.tuple([num, num, num, num]).optional(),
+    })
+    .strict()
+    .optional(),
+  /** image only: sideways wave that grows towards the top (flames, water) */
+  sway: z.object({ amp: num, waves: num, speed: num }).strict().optional(),
+  /** image only: noise erosion (0 = whole, 1 = gone) */
+  dissolve: z
+    .object({ amount: num.min(0).max(1.2), soft: num.positive(), freq: num.positive() })
+    .strict()
+    .optional(),
+  /** image only: angular reveal around a centre (local units), from -> to degrees, progress 0..1 */
+  wipe: z
+    .object({
+      center: z.tuple([num, num]),
+      from: num,
+      to: num,
+      soft: num.positive(),
+      progress: num.min(0).max(1).default(1),
+    })
+    .strict()
+    .optional(),
+  opacity: num.min(0).max(1).optional(),
+  /** image only: non-uniform scale of the picture and its offset (squash and stretch around the joint) */
+  stretch: z.tuple([num, num]).optional(),
   op: z.enum(['add', 'cut', 'intersect']).optional(),
   group: z.string().optional(),
   flags: z.array(z.enum(FLAGS)).optional(),
@@ -162,6 +192,11 @@ export const PartDelta = z
     size: z.array(num).min(1).max(4).optional(),
     bend: num.optional(),
     taper: num.optional(),
+    opacity: num.min(0).max(1).optional(),
+    dissolve: num.min(0).max(1.2).optional(),
+    wipe: num.min(0).max(1).optional(),
+    stretch: z.tuple([num, num]).optional(),
+    swayPhase: num.optional(),
     hide: z.boolean().optional(),
     show: z.boolean().optional(),
     noisePhase: num.optional(),
@@ -192,6 +227,8 @@ export const ClipSchema = z
     loop: z.boolean().default(false),
     /** global noise phase from .. to across the clip (fire flicker) */
     phase: z.tuple([num, num]).optional(),
+    /** clip length in ms (particle speeds are per second) */
+    ms: num.positive().default(340),
   })
   .strict();
 export type Clip = z.infer<typeof ClipSchema>;
@@ -240,6 +277,43 @@ export const RecipeSchema = z
     poses: z.record(z.string(), PoseSchema).default({}),
     clips: z.record(z.string(), ClipSchema).default({}),
     outputs: z.array(OutputSchema).default([]),
+    /** source art for image parts: a manifest file read from a git ref (the approved art, never the file being written) */
+    source: z
+      .object({
+        file: z.string().regex(/^[a-z0-9_/]+\.png$/),
+        ref: z.string().default('pre-unity-studio'),
+        frame: z.tuple([z.number().int().positive(), z.number().int().positive()]),
+      })
+      .strict()
+      .optional(),
+    /** particles made of image pieces, placed per clip frame from a seed (deterministic) */
+    emitters: z
+      .record(
+        z.string(),
+        z
+          .object({
+            src: z
+              .object({
+                frame: z.number().int().min(0).optional(),
+                rect: z.tuple([num, num, num, num]).optional(),
+              })
+              .strict(),
+            count: z.number().int().min(1).max(64),
+            seed: z.number().int(),
+            at: z.tuple([num, num]),
+            box: z.tuple([num, num]).default([0, 0]),
+            vel: z.tuple([num, num]),
+            jitter: z.tuple([num, num]).default([0, 0]),
+            gravity: num.default(0),
+            size: z.tuple([num, num]),
+            /** clip time (0..1) when the first piece appears, when the last appears, when all are gone */
+            life: z.tuple([num, num, num]),
+            spin: num.default(0),
+            shrink: num.min(0).max(1).default(0.4),
+          })
+          .strict(),
+      )
+      .default({}),
     /** whole-model transform */
     root: z
       .object({ at: Vec3.optional(), rot: Vec3.optional(), scale: num.positive().optional() })

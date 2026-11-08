@@ -6,7 +6,8 @@
 //   schema                   write JSON Schema copies to studio/Recipes/schema/
 //   status                   recipes with their build state
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { compileRecipe, TOOL_VERSION, type Job } from './compile.ts';
 import {
   RECIPES,
@@ -104,7 +105,22 @@ function build(args: string[]) {
   const outDir = join(INBOX, runId);
   mkdirSync(outDir, { recursive: true });
   const jobs: { l: Loaded; job: Job }[] = [];
-  for (const l of chosen) for (const job of compileRecipe(style, l.recipe)) jobs.push({ l, job });
+  for (const l of chosen) {
+    // Image parts read the approved art from git, never the file this build overwrites.
+    let source = '';
+    const src = l.recipe.source;
+    if (src) {
+      source = join(outDir, '_source', src.ref, src.file);
+      mkdirSync(dirname(source), { recursive: true });
+      writeFileSync(
+        source,
+        execFileSync('git', ['show', `${src.ref}:public/assets/${src.file}`], {
+          maxBuffer: 64 * 1024 * 1024,
+        }),
+      );
+    }
+    for (const job of compileRecipe(style, l.recipe)) jobs.push({ l, job: { ...job, source } });
+  }
   const jobFile = join(outDir, 'jobs.json');
   writeFileSync(jobFile, JSON.stringify({ version: 1, outDir, jobs: jobs.map((j) => j.job) }));
   console.log(`[studio] ${chosen.length} recipe(s), ${jobs.length} output(s) -> ${rel(outDir)}`);

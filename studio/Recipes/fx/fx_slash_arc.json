@@ -1,182 +1,208 @@
 {
   "$schema": "../schema/recipe.schema.json",
-  "extends": "_templates/fx_flat",
+  "extends": "_templates/fx_anim",
   "id": "fx_slash_arc",
-  "notes": "Slash, 4 frames: the blade starts, full crescent with speed lines, thinning, breaking up.",
-  "colors": {
-    "outer": "slash_gold",
-    "mid": "slash_light",
-    "core": "white",
-    "line": "slash_line"
+  "notes": "Slash: the crescent is drawn along its arc (wipe), holds with an afterimage, thins out and breaks into chips that fly off.",
+  "source": {
+    "file": "fx/battle/fx_slash_arc.png",
+    "ref": "pre-unity-studio",
+    "frame": [256, 256]
   },
   "parts": {
-    "trail2": {
-      "shape": "stroke",
-      "color": "outer",
-      "line": "line",
-      "bands": {
-        "mid": "mid",
-        "core": "core",
-        "b1": 0.035,
-        "b2": 0.075
+    "ghost": {
+      "shape": "image",
+      "size": [1, 1],
+      "src": {
+        "frame": 1
       },
-      "blend": 0.04,
-      "size": [0.62, 0.45, 0.85, 0.025],
-      "at": [-0.56, 0.36, 0],
-      "rot": [0, 0, -22],
-      "taper": -0.9,
-      "group": "trail"
-    },
-    "trail1": {
-      "shape": "stroke",
-      "color": "outer",
-      "line": "line",
-      "bands": {
-        "mid": "mid",
-        "core": "core",
-        "b1": 0.035,
-        "b2": 0.075
-      },
-      "blend": 0.04,
-      "size": [0.78, 0.5, 1.05, 0.04],
-      "at": [-0.5, 0.25, 0],
-      "rot": [0, 0, -22],
-      "taper": -0.8,
-      "group": "trail"
+      "at": [0, 0.5, 0],
+      "hide": true,
+      "opacity": 0.35,
+      "rot": [0, 0, 10]
     },
     "blade": {
-      "shape": "stroke",
-      "color": "outer",
-      "line": "line",
-      "bands": {
-        "mid": "mid",
-        "core": "core",
-        "b1": 0.035,
-        "b2": 0.075
+      "shape": "image",
+      "size": [1, 1],
+      "src": {
+        "frame": 1
       },
-      "blend": 0.04,
-      "size": [0.95, 0.55, 1.25, 0.15],
-      "at": [-0.42, 0.18, 0],
-      "rot": [0, 0, -22],
-      "taper": -0.7,
-      "group": "blade"
+      "at": [0, 0.5, 0],
+      "wipe": {
+        "center": [0.08, 0],
+        "from": 48,
+        "to": 315,
+        "soft": 0.25,
+        "progress": 1
+      },
+      "dissolve": {
+        "amount": 0,
+        "soft": 0.035,
+        "freq": 8
+      }
     },
-    "chip_a": {
-      "shape": "stroke",
-      "color": "outer",
-      "line": "line",
-      "bands": {
-        "mid": "mid",
-        "core": "core",
-        "b1": 0.035,
-        "b2": 0.075
+    "thin": {
+      "shape": "image",
+      "size": [1, 1],
+      "src": {
+        "frame": 2
       },
-      "blend": 0,
-      "size": [0.03, 0.05, 0.12, 0.03],
-      "at": [0.48, 0.95, 0],
-      "rot": [0, 0, -60],
-      "taper": -0.6,
+      "at": [0, 0.5, 0],
       "hide": true,
-      "group": "blade"
+      "dissolve": {
+        "amount": 0,
+        "soft": 0.035,
+        "freq": 8
+      }
     },
-    "chip_b": {
-      "shape": "stroke",
-      "color": "outer",
-      "line": "line",
-      "bands": {
-        "mid": "mid",
-        "core": "core",
-        "b1": 0.035,
-        "b2": 0.075
+    "broken": {
+      "shape": "image",
+      "size": [1, 1],
+      "src": {
+        "frame": 3
       },
-      "blend": 0,
-      "size": [0.03, 0.05, 0.1, 0.025],
-      "at": [0.58, 0.6, 0],
-      "rot": [0, 0, -95],
-      "taper": -0.6,
+      "at": [0, 0.5, 0],
       "hide": true,
-      "group": "blade"
+      "dissolve": {
+        "amount": 0,
+        "soft": 0.035,
+        "freq": 9
+      }
+    }
+  },
+  "emitters": {
+    "chips": {
+      "src": {
+        "rect": [973, 219, 18, 16]
+      },
+      "count": 6,
+      "seed": 3,
+      "at": [0.12, 0.5],
+      "box": [0.25, 0.7],
+      "vel": [1, 0],
+      "jitter": [1.2, 1.4],
+      "gravity": 2,
+      "size": [0.07, 0.06],
+      "life": [0.55, 0.75, 1],
+      "spin": 400,
+      "shrink": 0.3
     }
   },
   "poses": {
-    "start": {
+    "f0": {
       "blade": {
-        "size": [0.45, 0.2, 0.55, 0.05],
-        "at": [0.05, 0.2, 0],
-        "rot": [0, 0, -40]
-      },
-      "trail1": {
-        "hide": true
-      },
-      "trail2": {
-        "hide": true
+        "wipe": 0.3
       }
     },
-    "full": {},
-    "thin": {
+    "f1": {
       "blade": {
-        "size": [0.95, 0.55, 1.25, 0.08],
-        "at": [-0.36, 0.2, 0]
+        "wipe": 0.68
+      }
+    },
+    "f2": {
+      "blade": {
+        "wipe": 1,
+        "scale": 1.04
+      }
+    },
+    "f3": {
+      "blade": {
+        "wipe": 1
       },
-      "trail1": {
-        "size": [0.78, 0.5, 1.05, 0.02]
-      },
-      "trail2": {
-        "hide": true
-      },
-      "chip_a": {
-        "show": true
-      },
-      "chip_b": {
+      "ghost": {
         "show": true
       }
     },
-    "fade": {
+    "f4": {
       "blade": {
-        "size": [0.5, 0.3, 0.6, 0.03],
-        "at": [0.02, 0.62, 0],
-        "rot": [0, 0, -50]
+        "wipe": 1,
+        "dissolve": 0.6
       },
-      "trail1": {
-        "size": [0.3, 0.2, 0.4, 0.02],
-        "at": [-0.45, 0.3, 0],
-        "rot": [0, 0, 5]
+      "ghost": {
+        "show": true,
+        "opacity": 0.3
       },
-      "trail2": {
+      "thin": {
+        "show": true,
+        "dissolve": 0.2
+      }
+    },
+    "f5": {
+      "blade": {
         "hide": true
       },
-      "chip_a": {
+      "thin": {
         "show": true,
-        "at": [0.06, 0.12, 0]
+        "rot": [0, 0, 5],
+        "dissolve": 0.2
+      }
+    },
+    "f6": {
+      "blade": {
+        "hide": true
       },
-      "chip_b": {
+      "thin": {
         "show": true,
-        "at": [0.08, -0.1, 0]
+        "rot": [0, 0, 8],
+        "dissolve": 0.7
+      },
+      "broken": {
+        "show": true
+      }
+    },
+    "f7": {
+      "blade": {
+        "hide": true
+      },
+      "broken": {
+        "show": true,
+        "dissolve": 0.6,
+        "scale": 1.04
       }
     }
   },
   "clips": {
     "burst": {
-      "frames": 4,
+      "frames": 8,
+      "ms": 340,
       "keys": [
         {
           "t": 0,
-          "pose": "start",
+          "pose": "f0",
           "ease": "linear"
         },
         {
-          "t": 0.3333,
-          "pose": "full",
+          "t": 0.14285714285714285,
+          "pose": "f1",
           "ease": "linear"
         },
         {
-          "t": 0.6667,
-          "pose": "thin",
+          "t": 0.2857142857142857,
+          "pose": "f2",
+          "ease": "linear"
+        },
+        {
+          "t": 0.42857142857142855,
+          "pose": "f3",
+          "ease": "linear"
+        },
+        {
+          "t": 0.5714285714285714,
+          "pose": "f4",
+          "ease": "linear"
+        },
+        {
+          "t": 0.7142857142857143,
+          "pose": "f5",
+          "ease": "linear"
+        },
+        {
+          "t": 0.8571428571428571,
+          "pose": "f6",
           "ease": "linear"
         },
         {
           "t": 1,
-          "pose": "fade",
+          "pose": "f7",
           "ease": "linear"
         }
       ]
@@ -187,11 +213,7 @@
       "asset": "fx_slash_arc",
       "file": "fx/battle/fx_slash_arc.png",
       "clip": "burst",
-      "fps": 12
+      "fps": 24
     }
-  ],
-  "root": {
-    "at": [-0.18, -0.12, 0],
-    "scale": 1.25
-  }
+  ]
 }

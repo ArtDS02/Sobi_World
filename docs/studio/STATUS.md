@@ -2,6 +2,26 @@
 
 Cập nhật: 2026-11-07. Nhánh `phase-14-unity-studio`.
 
+## ✅ VFX bằng CHUYỂN ĐỘNG trên tranh đã duyệt — ĐẠT cổng thử (2026-11-08)
+
+Chủ dự án làm rõ: Unity chỉ **tạo chuyển động cho hiệu ứng có sẵn**, không vẽ hình. Studio thêm chế độ diễn hoạt tranh
+(`shape: "image"`): nguồn là sheet đã duyệt ở tag `pre-unity-studio`; co giãn có nảy (`stretch`), lay sóng
+(`sway`), tan theo vân (`dissolve`), quét theo cung (`wipe`), hạt cắt từ chính tranh có trọng lực (`emitters`).
+3 hiệu ứng thử, 8 khung @24 fps = 340 ms như 4 khung cũ @12 fps (`src/areas/adventure/scene/battle/stripTiming.ts`:
+mọi sheet 12 fps chạy y như trước):
+
+| Hiệu ứng | Hình giữ nguyên? | Chuyển động mượt / sinh động hơn? |
+|---|---|---|
+| `fx_splash` | Có | **Có, rõ** — vương miện mọc lên từ vòng nước, sụp xuống, giọt rơi, vũng loang |
+| `fx_slash_arc` | Có | **Có** — lưỡi liềm quét theo cung, bóng mờ, mỏng dần, vỡ mảnh |
+| `fx_flame_burst` | Có | **Có, vừa** — vươn lên có nảy, giữ ngọn lớn lâu hơn, lay, vỡ thành lưỡi, tàn |
+
+Kiểm trong trận thật (Battle Lab, `npm run anim:capture`, mỗi 40 ms, cùng mốc thời gian cũ / mới):
+`docs/studio/vfx/battle_*.png` (hàng trên cũ, hàng dưới mới); sheet `docs/studio/vfx/sheet_*.png` (cũ 4 khung | mới 8
+khung). Cổng "tất định" của công cụ chụp trượt cả trên asset cũ ở máy này nên chạy bản sao tạm bỏ qua cổng đó (đã xoá).
+Còn: khung chuyển tiếp tan theo vân hơi lốm đốm; bộ nhớ sheet gấp đôi (256² × 8 ≈ 2 MB GPU / hiệu ứng).
+**Đã nhập vào game 3 hiệu ứng này.** 20 sheet trận còn lại: chờ chủ dự án đồng ý làm tiếp.
+
 ## ⛔ Hướng "tạo lại tất cả" đã DỪNG ở cổng U1
 
 Cổng U1 (plan §7, §10.1) **không đạt** sau 2 vòng chỉnh. Theo luật, agent dừng hướng tạo lại toàn bộ asset và chờ chủ
@@ -35,7 +55,8 @@ vẫn kém tranh vẽ sẵn.
 | U0 | ✅ Xong | Unity 6000.6.8f1 (Personal, đã kích hoạt), `studio/`, CLI batchmode, `npm run studio`, render PNG alpha thẳng, QA, nhập manifest, chụp trong game |
 | U1 | ❌ Không đạt (2 vòng chỉnh) | 4 mẫu dựng xong và đặt trong game cạnh bản cũ; chấm ở dưới |
 | U2–U10 | ⏸ Dừng | Chờ chủ dự án chọn hướng |
-| VFX hẹp | ❌ Không đạt (2 vòng chỉnh) | 3 hiệu ứng, không nhập vào game |
+| VFX hẹp (vẽ hình) | ❌ Không đạt (2 vòng chỉnh) | 3 hiệu ứng, không nhập vào game |
+| VFX chuyển động | ✅ Đạt cổng thử (2 vòng chỉnh) | 3 hiệu ứng đã nhập; 20 sheet trận còn lại chờ |
 
 ## Cổng U1 — tự chấm (trung thực)
 
@@ -61,7 +82,9 @@ vẫn kém tranh vẽ sẵn.
 
 ## Chờ chủ dự án
 
-Cả hướng "tạo lại tất cả" (U1) và phương án hẹp VFX đều không đạt. Agent đề nghị **bỏ Studio cho việc tạo hình**, quay
-về hướng cũ (tag `pre-unity-studio`, art Gemini hiện có); công cụ `studio/` + `scripts/studio/` để lại trong git
-(không ảnh hưởng game, có thể xoá sau). Nếu chủ dự án vẫn muốn dùng Unity, việc hợp nhất còn lại là chuyển động / hiệu
-ứng phụ trên chính tranh hiện có (rung, loé sáng, hạt bụi), không vẽ hình mới — cần quyết định riêng.
+Đồng ý làm chuyển động cho **20 sheet trận còn lại** (`fx_pow_star`, `fx_boom`, `fx_claw`, `fx_poof`,
+`fx_ink_splat`, `fx_wave_rise`, `fx_ice_encase`, `fx_ice_shatter`, `fx_bloom`, `fx_vine_grab`, `fx_rock_spike`,
+`fx_lava_pop`, `fx_bolt_strike`, `fx_light_pillar`, `fx_void_portal`, `fx_wind_swirl`, `fx_rune_lock`, `fx_bite`,
+`fx_shield_dome`, `fx_ground_crack`) theo cùng cách? Lưu ý khi làm: `fx_ice_encase` có `cover.frame` (huy hiệu trạng thái)
+và một số đòn gọi `frames: [a, b]` / `decal.frame` theo chỉ số khung 4 — phải đổi chỉ số tương ứng khi lên 8 khung.
+Hướng vẽ hình bằng Unity (U1, VFX vẽ hình) giữ trạng thái dừng.

@@ -42,3 +42,9 @@ asset hiện có) hoặc bỏ. Công cụ `studio/` + `scripts/studio/` giữ tr
 Chủ dự án chọn thử phương án hẹp. Cổng riêng: `fx_flame_burst`, `fx_splash`, `fx_slash_arc` cạnh bản cũ; renderer
 thêm nét cọ `stroke` và xếp lớp 2D. Sau 2 vòng chỉnh không hiệu ứng nào đẹp hơn bản cũ → dừng, không nhập vào game.
 Đề nghị: bỏ Studio cho việc tạo hình, giữ art hiện có. Chi tiết `docs/studio/STATUS.md`.
+
+## Cập nhật 2026-11-08 (3) — VFX bằng chuyển động trên tranh đã duyệt: đạt cổng thử
+Chủ dự án làm rõ phương án hẹp: Unity chỉ tạo **chuyển động** cho hiệu ứng có sẵn. Studio thêm part `image` (nguồn là
+sheet ở tag `pre-unity-studio`), co giãn / lay / tan / quét / hạt cắt từ tranh. `fx_flame_burst`, `fx_splash`,
+`fx_slash_arc` lên 8 khung @24 fps; trận tính thời lượng khung theo fps (`stripTiming.ts`, sheet 12 fps không đổi). Kiểm
+trong Battle Lab cạnh bản cũ: hình giữ nguyên, chuyển động mượt hơn → đạt, đã nhập 3 hiệu ứng. 20 sheet còn lại chờ chủ dự án.

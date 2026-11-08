@@ -150,6 +150,17 @@
       },
       "mode": "flat",
       "lineScale": 1.5
+    },
+    "fx_battle_anim": {
+      "canvas": [256, 256],
+      "ppu": 256,
+      "origin": [128, 256],
+      "camera": {
+        "yaw": 0,
+        "pitch": 0
+      },
+      "mode": "flat",
+      "lineScale": 1
     }
   }
 }
