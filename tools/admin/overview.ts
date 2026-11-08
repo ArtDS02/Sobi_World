@@ -3,6 +3,7 @@
 import { ITEM_IDS } from '../../src/core/config/items';
 import { RARITY_VALUES } from '../../src/core/config/rarity';
 import { RARITY_LABEL, art, esc, isNew } from './labels';
+import { healthCounts, preloadChecks } from './checks';
 import { json, state } from './store';
 
 interface Data {
@@ -65,7 +66,16 @@ function areaCard(a: AreaCard): string {
     <a class="link" href="${fileLink(a.file)}">Điều kiện mở khu →</a></section>`;
 }
 
-export function renderOverview(root: HTMLElement, rerender: () => void) {
+/** `unsaved`: the header chip text (pages with unsaved work), null when everything is saved. */
+export function renderOverview(root: HTMLElement, rerender: () => void, unsaved: string | null = null) {
+  preloadChecks(rerender);
+  const h = healthCounts();
+  const health = `<section class="panel"><h3>❤️ Sức khỏe dashboard <a class="link" href="#/checks">Kiểm tra dữ liệu →</a></h3><ul class="check-list">
+    <li>${state.apiOnline ? '🟢 Đang nối dữ liệu game' : '🔴 Chỉ đọc: chạy <code>npm run admin</code>'}</li>
+    <li>${h ? (h.broken ? `🔴 ${h.broken} tham chiếu hỏng` : '🟢 Không có tham chiếu hỏng') : '… đang kiểm tra tham chiếu'}</li>
+    <li>${h ? (h.noEnglish ? `🟡 ${h.noEnglish} hàng thiếu tên tiếng Anh` : '🟢 Đủ tên tiếng Anh') : '…'}</li>
+    <li>${h ? `${h.noArt ? '🟡' : '🟢'} ${h.noArt} ảnh chờ phase art` : '…'}</li>
+    <li>${unsaved ? `🟡 ${esc(unsaved)}` : '🟢 Không có thay đổi chưa lưu'}</li></ul></section>`;
   if (!data && state.apiOnline) void loadData(rerender);
   const pigs = state.rows;
   const complete = pigs.filter((r) => art(r).complete).length;
@@ -80,7 +90,7 @@ export function renderOverview(root: HTMLElement, rerender: () => void) {
   root.innerHTML = `
     <section class="hero"><div><h2>Chào mừng đến bảng quản trị Sobi World 👋</h2>
       <p>Sửa mọi nội dung của 5 khu (Farm, Garden, Aquarium, Cloud, Adventure), quản lý save của người chơi và asset. Mọi thay đổi đều được kiểm bằng chính luật của game trước khi ghi.</p></div>
-      <div class="hero__actions"><a class="btn btn-primary" href="#/users">👤 Người chơi</a><a class="btn" href="#/content">📚 Nội dung game</a></div></section>
+      <div class="hero__actions"><a class="btn btn-primary" href="#/users">👤 Người chơi</a><a class="btn" href="#/content">📚 Nội dung game</a><a class="btn" href="http://localhost:5173/" target="_blank" rel="noopener" title="Mở game đang chạy bằng npm run dev (chỉ trên máy này); dữ liệu đã lưu áp ngay khi tải lại">▶ Chạy thử game</a></div></section>
     <div class="stats">
       ${card('👤', 'Save người chơi', data ? data.saves : '…', '#/users')}
       ${card('📦', 'Vật phẩm', ITEM_IDS.length, fileLink('shared/items.json'))}
@@ -90,6 +100,7 @@ export function renderOverview(root: HTMLElement, rerender: () => void) {
       ${card('⚠️', 'Vấn đề dữ liệu heo', errors + warns, '#/validation', errors ? 'tone-error' : warns ? 'tone-warn' : 'tone-ok')}
     </div>
     <p class="muted">🔇 Âm thanh mặc định của save <b>mới</b>: tắt (nhạc và hiệu ứng). Save đang chơi giữ lựa chọn riêng; người chơi bật lại trong Cài đặt.</p>
+    ${health}
     <h3 class="section-title">Các khu</h3>
     <div class="area-grid">${AREAS.map(areaCard).join('')}</div>
     <div class="grid-2">

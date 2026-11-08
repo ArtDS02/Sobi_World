@@ -217,7 +217,9 @@ function render() {
   if (MOVED[page]) return void location.replace(MOVED[page]);
   const scroll = document.scrollingElement?.scrollTop ?? 0;
   // The page is rebuilt: hold its height meanwhile so the browser does not clamp the scroll to the top.
-  app.style.minHeight = `${app.offsetHeight}px`;
+  // The same page redrawn only grows its box (a shorter table must not pull the scroll up); another page starts fresh.
+  const samePage = location.hash === lastHash;
+  app.style.minHeight = `${Math.max(samePage ? parseFloat(app.style.minHeight) || 0 : 0, app.offsetHeight)}px`;
   shell();
   const content = app.querySelector<HTMLElement>('.content')!;
   const open = (pigId: string | null) => go(`#/pigs/${pigId ? encodeURIComponent(pigId) : 'new'}`);
@@ -248,14 +250,14 @@ function render() {
   };
   if (query && !id && LIST_OF[page] && location.hash !== appliedHash) applyQueryString(LIST_OF[page], query);
   appliedHash = location.hash;
-  (pages[page] ?? (() => renderOverview(content, render)))();
+  (pages[page] ?? (() => renderOverview(content, render, dirtyChip(DIRTY))))();
   // Same page redrawn (an edit): keep the scroll; another page starts at the top.
   if (location.hash === lastHash && page !== 'guide') document.scrollingElement?.scrollTo({ top: scroll });
   else window.scrollTo({ top: 0 });
   lastHash = location.hash;
   requestAnimationFrame(() => {
     if (location.hash === lastHash && page !== 'guide') document.scrollingElement?.scrollTo({ top: scroll });
-    app.style.minHeight = '';
+    if (!samePage) app.style.minHeight = '';
   });
   if (page === 'pigs' && id) {
     const art = new URLSearchParams(query).get('art') ?? undefined;

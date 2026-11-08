@@ -44,18 +44,27 @@ export function check(data: Loaded, hasArt: (id: string) => boolean): Report {
 /** Count for the sidebar badge: broken references only. Missing art is the art phase's list (docs/ASSET_TODO.md), not an error. */
 export const problemCount = (): number => report?.broken.length ?? 0;
 
+/** Lines of the health panel on the overview (9.1): what the last data check found; null while it is still loading. */
+export function healthCounts(): { broken: number; noEnglish: number; noArt: number } | null {
+  return report ? { broken: report.broken.length, noEnglish: report.noEnglish.length, noArt: report.noArt.length } : null;
+}
+
 /** Loads the report in the background so the sidebar badge is right before the page is opened. */
 export function preloadChecks(rerender: () => void): void {
   if (!loaded && !error) void load(rerender);
 }
 
+let busy = false;
 async function load(rerender: () => void) {
+  if (busy) return;
+  busy = true;
   try {
     loaded = await json<Loaded>('/__admin/content');
     report = check(loaded, (id) => artUrl(id) !== null);
   } catch (e) {
     error = (e as Error).message;
   }
+  busy = false;
   rerender();
 }
 
