@@ -9,12 +9,12 @@ shared redraw helper for every page plus partial redraw on heavy pages; all extr
 Legend: `[ ]` open, `[x]` done. Tick a box in the commit that finishes it.
 
 ## Step 1 — Sound off by default (game)
-- [ ] 1.1 `src/areas/farm/logic/save/newFarm.ts`: new farm `musicOn: false`, `sfxOn: false`.
-- [ ] 1.2 `src/core/save/world.ts`: default world settings `musicOn: false`, `sfxOn: false`.
-- [ ] 1.3 Existing saves keep their own values (no migration that flips them); add a test that proves it.
-- [ ] 1.4 Fix tests and fixtures that assume sound is on; check Settings screen still turns it on and off.
-- [ ] 1.5 Admin: show the default in the "Nội dung game"/overview as a read-only line (edit later via step 8).
-- [ ] 1.6 Update `docs/PROGRESS.md` (and a short decision note in `docs/decisions/` if the numbering rule asks for it).
+- [x] 1.1 `src/areas/farm/logic/save/newFarm.ts`: new farm `musicOn: false`, `sfxOn: false`.
+- [x] 1.2 `src/core/save/world.ts`: default world settings `musicOn: false`, `sfxOn: false`.
+- [x] 1.3 Existing saves keep their own values (no migration that flips them); add a test that proves it.
+- [x] 1.4 Fix tests and fixtures that assume sound is on; check Settings screen still turns it on and off.
+- [x] 1.5 Admin: show the default in the "Nội dung game"/overview as a read-only line (edit later via step 8).
+- [x] 1.6 Update `docs/PROGRESS.md` (and a short decision note in `docs/decisions/` if the numbering rule asks for it).
 
 ## Step 2 — No scroll jump on any click (admin)
 - [ ] 2.1 Reproduce on each page that redraws (users, userDetail tabs, products, breeding, layout, seasons, mapManage,

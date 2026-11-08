@@ -28,8 +28,8 @@ export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {
     progress: { stats: {}, claimed: {}, daily: { lastDay: null, streak: 0 } },
     decor: [],
     settings: {
-      musicOn: true,
-      sfxOn: true,
+      musicOn: false,
+      sfxOn: false,
       reduceMotion: opts.reduceMotion ?? false,
       tutorialDone: false,
       lastExportAt: null,

@@ -89,6 +89,7 @@ export function renderOverview(root: HTMLElement, rerender: () => void) {
       ${card('🏆', 'Thành tựu', data ? rows('shared/achievements.json', 'achievements') : '…', fileLink('shared/achievements.json'))}
       ${card('⚠️', 'Vấn đề dữ liệu heo', errors + warns, '#/validation', errors ? 'tone-error' : warns ? 'tone-warn' : 'tone-ok')}
     </div>
+    <p class="muted">🔇 Âm thanh mặc định của save <b>mới</b>: tắt (nhạc và hiệu ứng). Save đang chơi giữ lựa chọn riêng; người chơi bật lại trong Cài đặt.</p>
     <h3 class="section-title">Các khu</h3>
     <div class="area-grid">${AREAS.map(areaCard).join('')}</div>
     <div class="grid-2">
