@@ -6,6 +6,8 @@
 import type { z } from 'zod';
 import { CONTENT_FILES, CONTENT_GROUPS, EDITABLE_FILES, TEXT_TABLES, contentDef, type RowTexts } from '../../scripts/admin/contentCatalog';
 import { openBackups } from './contentBackups';
+import { describeChanges, diffValues } from './diff';
+import { openModal } from './modal';
 import { esc } from './labels';
 import { imageOf, loadNames, nameOf, resetNames } from './idNames';
 import { bindForm, newUi, renderForm, type FormOptions, type FormUi } from './schemaForm';
@@ -316,7 +318,17 @@ function editor(root: HTMLElement, file: string, rerender: () => void) {
     persistLater();
     if (!root.querySelector('[data-revert]')) refreshHeader(root, revert);
   });
-  root.querySelector('[data-save]')?.addEventListener('click', () => void save(file, rerender));
+  // Plan step 7.3: the save shows what changes (names instead of ids) and waits for a yes.
+  root.querySelector('[data-save]')?.addEventListener('click', () => {
+    const lines = describeChanges(diffValues(page.files![file], d.value, (id) => nameOf(id) ?? id));
+    openModal({
+      title: `Xem thay đổi trước khi lưu: ${file}`,
+      body: lines.length ? `<p class="muted">${lines.length} thay đổi. Bản cũ được tự sao lưu (nút 🕘 Sao lưu).</p><ul class="diff-list">${lines.slice(0, 200).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>${lines.length > 200 ? `<p class="muted">… và ${lines.length - 200} thay đổi nữa.</p>` : ''}` : '<p class="muted">Không có thay đổi nào so với bản đang lưu (chỉ lời văn tên hiển thị có thể đổi).</p>',
+      submit: '💾 Lưu',
+      wide: true,
+      onSubmit: () => void save(file, rerender),
+    });
+  });
   root.querySelector('[data-revert]')?.addEventListener('click', revert);
   root.querySelector('[data-backups]')?.addEventListener('click', () => void openBackups(file));
   root.querySelector('[data-dismiss]')?.addEventListener('click', () => {

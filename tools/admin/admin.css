@@ -422,3 +422,6 @@ html::-webkit-scrollbar-track { background: transparent; }
 kbd { background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; font-size: 12px; }
 @media (max-width: 600px) { .nav__tools { display: none; } }
 .mapm-wrap, .table-wrap { position: relative; } /* hidden native selects inside are absolutely positioned: they must be clipped by the scroll box, not widen the page */
+
+.diff-list { margin: 8px 0 0; padding-left: 18px; max-height: 50vh; overflow: auto; font-size: 13px; }
+.diff-list li { margin: 2px 0; word-break: break-word; }

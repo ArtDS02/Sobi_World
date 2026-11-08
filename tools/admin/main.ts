@@ -25,7 +25,8 @@ import { renderOverview } from './overview';
 import { installRedrawGuard } from './redraw';
 import { isFolded, readPrefs, setAll, toggleGroup, writePrefs } from './navState';
 import { openQuickSearch, type SearchEntry } from './quickSearch';
-import { installShortcuts } from './shortcuts';
+import { dirtyChip, nextSaveStep, type DirtySource } from './dirty';
+import { installShortcuts, saveButton } from './shortcuts';
 import { applyQueryString } from './listKit';
 import { renderPigList } from './pigList';
 import { productsDirty, renderProducts } from './products';
@@ -82,7 +83,29 @@ const go = (hash: string) => {
   location.hash = hash;
 };
 
-const anyDirty = () => state.dirty || productsDirty() || breedingDirty() || layoutDirty() || userDirty() || contentDirty() || editorDirty();
+/** Every page that can hold unsaved work (plan step 7.1): one list for the header chip, "Lưu tất cả" and the leave warning. */
+const DIRTY: DirtySource[] = [
+  { page: 'pigs', label: 'Giống heo', dirty: () => state.dirty },
+  { page: 'products', label: 'Cửa hàng', dirty: productsDirty },
+  { page: 'breeding', label: 'Phối giống', dirty: breedingDirty },
+  { page: 'layout', label: 'Bố cục', dirty: layoutDirty },
+  { page: 'users', label: 'Người chơi', dirty: userDirty },
+  { page: 'content', label: 'Nội dung', dirty: contentDirty },
+  { page: 'adventure-editor', label: 'Map Editor', dirty: editorDirty },
+];
+const anyDirty = () => DIRTY.some((d) => d.dirty());
+
+const dirtySlot = () => (dirtyChip(DIRTY) ? `<span class="badge status-warn" title="Bản nháp chưa lưu nằm ở các trang này">${esc(dirtyChip(DIRTY)!)}</span><button type="button" class="btn" data-save-all>💾 Lưu tất cả</button>` : '');
+/** Editing does not redraw the shell: the chip follows the page's own dirty flags a moment after each edit. */
+let chipTimer = 0;
+const refreshChip = () => {
+  window.clearTimeout(chipTimer);
+  chipTimer = window.setTimeout(() => {
+    const slot = app.querySelector('[data-dirty-slot]');
+    const html = dirtySlot();
+    if (slot && slot.innerHTML !== html) slot.innerHTML = html;
+  }, 500);
+};
 
 function shell() {
   const { page } = route();
@@ -117,6 +140,7 @@ function shell() {
         <header class="header">
           <h1>${current[1]} ${esc(current[2])}</h1>
           <div class="header__actions">
+            <span data-dirty-slot>${dirtySlot()}</span>
             ${page !== 'guide' ? `<button type="button" class="help-link" data-guide="${current[3]}">❔ Hướng dẫn</button>` : ''}
             ${species && state.dirty ? '<span class="badge status-warn">● Chưa lưu</span><button class="btn" data-discard>↺ Huỷ thay đổi</button>' : ''}
             ${species ? `<button class="btn btn-primary" data-save ${!state.dirty || state.saving || !state.apiOnline || errors > 0 ? 'disabled' : ''}
@@ -139,6 +163,15 @@ function shell() {
   });
 }
 
+/** "Lưu tất cả": the species draft saves in place; any other page is opened (or its save button pressed) one at a time. */
+function saveAll() {
+  const step = nextSaveStep(DIRTY, route().page, state.dirty);
+  if (!step) return;
+  if (step.kind === 'species') void save();
+  else if (step.kind === 'click') saveButton(app)?.click();
+  else go(`#/${step.page}`);
+}
+
 /** Sidebar clicks change the nav in place (no page redraw): fold a group, fold / open all, icon-only mode, quick search. */
 function wireNav() {
   const pages: SearchEntry[] = ALL.map(([p, icon, label]) => ({ label: `${icon} ${label}`, sub: 'Trang', href: `#/${p}`, kind: 'page' }));
@@ -148,6 +181,7 @@ function wireNav() {
     const t = e.target instanceof Element ? e.target : null;
     const groups = NAV.flatMap(([g]) => (g ? [g] : []));
     const fold = (g: string, on: boolean) => app.querySelectorAll<HTMLElement>('.nav__sec[data-group]').forEach((el) => el.dataset.group === g && el.classList.toggle('is-folded', on));
+    if (t?.closest('[data-save-all]')) return saveAll();
     if (t?.closest('[data-quick-search]')) return openSearch();
     const one = t?.closest<HTMLElement>('[data-nav-group]')?.parentElement?.dataset.group;
     if (one) {
@@ -220,6 +254,9 @@ function render() {
 
 installRedrawGuard(app); // every page's own `innerHTML = …` redraw keeps scroll and focus (step 2)
 wireNav();
+app.addEventListener('input', refreshChip);
+app.addEventListener('change', refreshChip);
+app.addEventListener('click', refreshChip);
 window.addEventListener('hashchange', render);
 window.addEventListener('beforeunload', (e) => {
   if (anyDirty()) e.preventDefault();
