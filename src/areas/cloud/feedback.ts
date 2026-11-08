@@ -24,7 +24,7 @@ export function cloudPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
     case 'CLOUD_PLANTED':
       return { sound: null, toast: t(T.planted, { count: e.plots.length, name: FLOWERS[e.flowerId]?.nameVi ?? '' }) };
     case 'CLOUD_WATERED':
-      return { sound: 'water_splash', toast: t(T.watered, { count: e.plots }) };
+      return { sound: 'water_splash', toast: e.tip ? t(T.wateredTip, { count: e.plots, tip: e.tip }) : t(T.watered, { count: e.plots }) };
     case 'CLOUD_FERTILIZED':
       return { sound: 'water_splash', toast: t(T.fertilized, { count: e.plots.length }) };
     case 'CLOUD_HARVESTED': {

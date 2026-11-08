@@ -1,0 +1,39 @@
+// The timing mini-game dialog (ui/components/rhythmDialog.ts, D8): a bar, the good zone in the middle, a sweeping marker.
+@use '../core' as *;
+
+.c-rhythm__bar {
+  position: relative;
+  height: 28px;
+  margin: $sp-3 0;
+  border-radius: 14px;
+  background: $c-surface-alt;
+  overflow: hidden;
+}
+
+.c-rhythm__zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: color-mix(in srgb, $c-primary 35%, transparent);
+}
+
+.c-rhythm__marker {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 6px;
+  margin-left: -3px;
+  border-radius: 3px;
+  background: $c-text;
+}
+
+.c-rhythm__status {
+  text-align: center;
+  font-weight: 700;
+}
+
+.c-rhythm__press {
+  display: block;
+  margin: $sp-2 auto 0;
+  min-width: 8rem;
+}

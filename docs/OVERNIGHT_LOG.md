@@ -41,3 +41,4 @@ Branches (local only, nothing pushed): overnight-hardening (all work merged), ad
 - D2 done (feat/weekly-goals merged): core/goals/weekly.ts, content goals.json weekly, save v12 + migration test, settle step, 3 events, goals panel section, decision 053. 
 - D3 done (feat/pig-show): logic/show.ts, content/farm/show.json, lens carries showEntries + tokens, SHOW_ENTERED event, pig panel button, decision 054.
 - D4 done (feat/rift-daily): riftDaySeed, rift.board in Adventure slice v8, scoreboard in the Rift panel, decision 055.
+- D8 done (feat/rhythm-minigame): systems/minigame/rhythm.ts, content/shared/minigame.json, ui/components/rhythmDialog.ts, tip on Garden + Cloud watering (optional score arg), ASSET_TODO note.

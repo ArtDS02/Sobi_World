@@ -4,7 +4,7 @@ import type { BuildingId } from './config/content';
 
 export type GardenEvent =
   | { type: 'GARDEN_PLANTED'; cropId: string; plots: number[]; bought: number; gold: number }
-  | { type: 'GARDEN_WATERED'; plots: number }
+  | { type: 'GARDEN_WATERED'; plots: number; /** Coins of tip from the timing mini-game (D8). */ tip?: number }
   | { type: 'GARDEN_FERTILIZED'; plots: number[] }
   | { type: 'GARDEN_HARVESTED'; cropId: string; quantity: number; plots: number; wilted: number; left: number }
   | { type: 'GARDEN_CROP_RIPE'; cropId: string; count: number }

@@ -183,3 +183,6 @@ Còn thiếu:
 
 ## Adventure — cập nhật lớn 1 (decision 041)
 - Batch `art_inbox/.batch/adventure-big-update-1/`: mặt đau `<artId>_hurt` (44), icon sách KN / thuốc Năng Lượng / Bình Nộ / lõi trùm (8, đang tô màu tạm), cổng `adv_warp_gate` on/off, nền `bg_adventure_<vùng>_beyond` (3), 10 SFX `adv_*` thật (đang tổng hợp).
+
+## D8 — timing mini-game (Garden / Cloud watering)
+- The bar, the good zone and the marker are plain CSS (`src/styles/features/_rhythm.scss`). Art phase: a watering-can marker, a themed bar per Area, a short sparkle on a perfect round, a soft "tick" sound per press.

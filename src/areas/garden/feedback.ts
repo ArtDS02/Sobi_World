@@ -25,7 +25,7 @@ export function gardenPresentation(e: EventBase, origin: 'action' | 'tick' | 'ca
     case 'GARDEN_PLANTED':
       return { sound: null, toast: t(T.planted, { count: e.plots.length, name: CROPS[e.cropId]?.nameVi ?? '' }) };
     case 'GARDEN_WATERED':
-      return { sound: 'water_splash', toast: t(T.watered, { count: e.plots }) };
+      return { sound: 'water_splash', toast: e.tip ? t(T.wateredTip, { count: e.plots, tip: e.tip }) : t(T.watered, { count: e.plots }) };
     case 'GARDEN_FERTILIZED':
       return { sound: 'water_splash', toast: t(T.fertilized, { count: e.plots.length }) };
     case 'GARDEN_HARVESTED': {

@@ -277,6 +277,7 @@ export const partB = {
     toast: {
       planted: "Sowed {count} plots of {name}",
       watered: "Watered {count} plots",
+      wateredTip: "Watered {count} plots on the beat, +{tip} Sobi Coin tip",
       fertilized: "Fertilized {count} plots",
       harvested: "Harvested {quantity} {name}",
       harvestedLeft: "Harvested {quantity} {name}. Bag full, {left} plots left unpicked.",
