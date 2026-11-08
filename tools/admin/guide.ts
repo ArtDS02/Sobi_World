@@ -25,6 +25,13 @@ const BASE_SECTIONS: GuideSection[] = [
     notes: ['Mọi file được ghi là file nguồn trong git: xem lại bằng git diff trước khi commit.', 'Chấm vàng cạnh mục menu = trang đó còn thay đổi chưa lưu.'],
   },
   {
+    id: 'checks', icon: '🔎', title: 'Kiểm tra dữ liệu, so sánh cân bằng, phím tắt',
+    purpose: 'Trang Kiểm tra dữ liệu quét mọi file Nội dung game: tham chiếu hỏng (id trỏ tới hàng không tồn tại), ảnh chưa có trong manifest, hàng thiếu tên tiếng Anh, và ô “Dùng ở đâu” cho một id. Trang So sánh cân bằng đặt số liệu của một danh sách cạnh nhau, tô vàng ô lệch từ 2 độ lệch chuẩn.',
+    steps: ['Mở 🔎 Kiểm tra dữ liệu: huy hiệu đỏ ở thanh bên là số tham chiếu hỏng.', 'Trước khi xoá hoặc đổi id: gõ id vào “Dùng ở đâu”; hộp thoại Lưu cũng cảnh báo khi hàng bị xoá vẫn còn chỗ dùng.', 'Lưu một file: hộp thoại liệt kê thay đổi (tên thay vì id), bản cũ tự được sao lưu (🕘 Sao lưu, giữ 20 bản mới nhất).', '⬇ Xuất / ⬆ Nhập: tải bản nháp của file về hoặc nạp file JSON (game kiểm trước khi thành bản nháp).', 'Phím tắt: Ctrl+K tìm nhanh, Ctrl+S lưu trang, Esc đóng, ? xem bảng phím tắt. Thanh bên: bấm tên nhóm để thu gọn, ▤ chỉ biểu tượng.', 'Header hiện “N trang chưa lưu” và 💾 Lưu tất cả khi nhiều trang còn bản nháp.'],
+    example: ['Xoá vật phẩm item_manure: Dùng ở đâu cho thấy 2 chỗ dùng (đơn hàng, Garden) → sửa hai chỗ đó trước.'],
+    notes: ['Ảnh chờ phase art không phải lỗi: xem docs/ASSET_TODO.md.', 'Sao lưu nằm trong .admin-backups/ (không vào git, không vào bản game).'],
+  },
+  {
     id: 'users', icon: '👤', title: 'Người chơi (save)',
     purpose: 'Game chơi đơn, offline: mỗi “người chơi” là một save thế giới (5 khu). Xem và sửa tiền (Sobi Coin, Ngọc, Vé Lễ Hội), túi đồ, KN và khu đã mở, bộ sưu tập, thành tựu, dữ liệu từng khu, thế giới sống và thời gian.',
     steps: ['Mục Người chơi liệt kê save trong %APPDATA%\\SobiWorld*\\saves*: “Bản dev” = save của npm run dev và npm run dev:desktop; “Bản cài đặt” = bản cài. File .json từ máy khác: “📂 Mở file save”.', 'Mở một save → chọn tab. Mỗi thay đổi áp ngay vào bản nháp (ô số: gõ rồi Enter hoặc bấm ra ngoài; công tắc: ngay lập tức) — không còn bước “Áp dụng”.', 'Hộp vàng phía trên liệt kê điều game sẽ từ chối (kiểm bằng đúng schema save của game và của từng khu) và khoá nút Lưu cho tới khi sửa hết.', 'Bấm 💾 Lưu vào save — game đang mở tự tải lại save mới trong vài giây; bản cũ vào backups/.', 'Tab từng khu (Garden, Aquarium, Cloud, Adventure, và “Dữ liệu Nông trại”) hiện mọi trường game lưu cho khu đó: danh sách dài chọn dòng bên trái, sửa bên phải.', 'Tab Thế giới & thời gian: lịch 14 ngày + công tắc thử (thời tiết / lễ hội / Thương nhân), ⏩ Tua thời gian cho mọi khu, Bảng đơn & mục tiêu ngày.'],

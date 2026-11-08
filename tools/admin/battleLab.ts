@@ -65,6 +65,10 @@ const lab = {
   status: '',
   statusTo: 'foe' as 'foe' | 'self',
   timer: 0,
+  /** Which two creatures the live Phaser game was built for: the same pair keeps the one game across redraws (step 6.3). */
+  mountKey: '',
+  /** Keyboard shortcuts are listening (one listener for the life of the page). */
+  keys: false,
   /** The page the lab is drawn in (the test hook below re-renders it). */
   root: null as HTMLElement | null,
 };
@@ -178,7 +182,16 @@ class Backdrop extends Phaser.Scene {
 }
 
 function mountGame(host: HTMLElement) {
+  const key = `${lab.attacker}|${lab.target}`;
+  if (lab.game && lab.mountKey === key && lab.game.canvas) {
+    // Same creatures: the stage reads its state every frame, so the running game just moves into the new frame.
+    host.appendChild(lab.game.canvas);
+    lab.host = host;
+    lab.game.scale.resize(host.clientWidth, host.clientHeight);
+    return;
+  }
   lab.game?.destroy(true);
+  lab.mountKey = key;
   lab.host = host;
   const image = (id: string) => {
     const row = lab.images.get(id);
@@ -358,6 +371,9 @@ export function renderBattleLab(root: HTMLElement) {
         </div>
         <pre data-msg class="${bad ? 'error' : 'ok'}">${bad ? esc(lab.message) : ''}</pre>
         <div class="blab__actions">
+          <button class="btn btn-small" data-undo${lab.skill ? '' : ' disabled'} title="Hoàn tác">↶</button>
+          <button class="btn btn-small" data-redo${lab.skill ? '' : ' disabled'} title="Làm lại">↷</button>
+          <button class="btn btn-small" data-revert${lab.skill ? '' : ' disabled'} title="Về bản đang lưu trong game (so sánh trước / sau)">⟲ Về bản lưu</button>
           <button class="btn btn-small" data-format${lab.skill ? '' : ' disabled'}>⟳ Định dạng lại</button>
           <button class="btn btn-small" data-try${lab.skill ? '' : ' disabled'}>▶ Áp dụng thử</button>
           <button class="btn btn-primary btn-small" data-save${lab.skill && lab.online ? '' : ' disabled'}>💾 Lưu hiệu ứng trận</button>
@@ -369,18 +385,8 @@ export function renderBattleLab(root: HTMLElement) {
   </div>`;
   const q = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
   mountGame(q('[data-stage]'));
-  // Redrawing replaces the whole page: keep its height and scroll so a click far down never throws the view back to the top.
-  const redo = () => {
-    const sc = document.scrollingElement;
-    const top = sc?.scrollTop ?? 0;
-    root.style.minHeight = `${root.offsetHeight}px`;
-    renderBattleLab(root);
-    sc?.scrollTo({ top });
-    requestAnimationFrame(() => {
-      sc?.scrollTo({ top });
-      root.style.minHeight = '';
-    });
-  };
+  // The redraw guard (tools/admin/redraw.ts) keeps the scroll, the focus and the page height of this rebuild.
+  const redo = () => renderBattleLab(root);
   // Choosing a skill (or its type) in a block makes that side the one that strikes: the sides swap their remembered choices and arts.
   const strike = (side: Side) => {
     if (side === cur) return;
@@ -434,6 +440,19 @@ export function renderBattleLab(root: HTMLElement) {
     };
   }
   q<HTMLSelectElement>('[data-reaction]').onchange = (e) => (lab.reaction = (e.target as HTMLSelectElement).value);
+  // Space pauses, R plays again, outside text fields only; one listener for the life of the page.
+  if (!lab.keys) {
+    lab.keys = true;
+    document.addEventListener('keydown', (e) => {
+      const t = e.target as HTMLElement | null;
+      if (!lab.root?.isConnected || e.ctrlKey || e.metaKey || e.altKey || (t && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(t.tagName)))) return;
+      if (e.code === 'Space') {
+        e.preventDefault();
+        lab.root.querySelector<HTMLElement>('[data-pause]')?.click();
+      }
+      else if (e.code === 'KeyR') lab.root.querySelector<HTMLElement>('[data-replay]')?.click();
+    });
+  }
   q('[data-play]').onclick = () => play();
   q('[data-enter]').onclick = () => play(true);
   q('[data-replay]').onclick = () => play(lab.lastEnter);
@@ -454,7 +473,14 @@ export function renderBattleLab(root: HTMLElement) {
   const fill = q('[data-fill]');
   const time = q('[data-time]');
   lab.timer = window.setInterval(() => {
-    if (!fill.isConnected) return window.clearInterval(lab.timer);
+    if (!fill.isConnected) {
+      window.clearInterval(lab.timer);
+      // The page was left (not just redrawn: a redraw clears this timer first): nothing keeps running behind it.
+      lab.game?.destroy(true);
+      lab.game = null;
+      lab.mountKey = '';
+      return;
+    }
     const total = lab.step ? Math.max(0, lab.step.motion.total) : 0;
     const t = lab.step ? Math.min(total, Math.max(0, (lab.pausedAt || performance.now()) - lab.step.at)) : 0;
     fill.style.width = total ? `${(t / total) * 100}%` : '0%';
@@ -470,18 +496,39 @@ export function renderBattleLab(root: HTMLElement) {
     try {
       const r = withOwn(JSON.parse(box.value || '{}') as Record<string, unknown>, false);
       valid.textContent = r.error ? '✗ Chưa hợp lệ' : '✓ Hợp lệ';
+      valid.title = r.error ?? ''; // the reason, field by field, on hover
       valid.className = `blab__valid ${r.error ? 'is-bad' : 'is-ok'}`;
     } catch {
       valid.textContent = '✗ JSON sai';
       valid.className = 'blab__valid is-bad';
     }
   };
-  box.oninput = judge;
+  // Undo / redo of the editor's own history (programmatic changes such as "format" keep native undo out of play).
+  const hist = { stack: [box.value], at: 0 };
+  const record = () => {
+    if (hist.stack[hist.at] === box.value) return;
+    hist.stack = [...hist.stack.slice(0, hist.at + 1), box.value].slice(-100);
+    hist.at = hist.stack.length - 1;
+  };
+  const jump = (to: number) => {
+    hist.at = Math.max(0, Math.min(hist.stack.length - 1, to));
+    box.value = hist.stack[hist.at]!;
+    judge();
+  };
+  q('[data-undo]').onclick = () => jump(hist.at - 1);
+  q('[data-redo]').onclick = () => jump(hist.at + 1);
+  q('[data-revert]').onclick = () => {
+    box.value = ownText;
+    record();
+    judge();
+  };
+  box.oninput = () => (record(), judge());
   box.onscroll = () => (gutter.scrollTop = box.scrollTop);
   judge();
   q('[data-format]').onclick = () => {
     try {
       box.value = JSON.stringify(JSON.parse(box.value || '{}'), null, 2);
+      record();
       judge();
     } catch (e) {
       q('[data-msg]').textContent = `JSON sai: ${(e as Error).message}`;

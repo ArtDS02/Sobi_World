@@ -2,6 +2,8 @@
 // #/ overview · #/users[/<id>] · #/content[/<file>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
 // #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/battle-lab · #/rig-lab · #/assets · #/library · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
+import { renderBalance } from './balance';
+import { preloadChecks, problemCount, renderChecks } from './checks';
 import { renderAdventure } from './adventure';
 import { renderAdventureMaps } from './adventureMaps';
 import { renderMapManage } from './mapManage';
@@ -25,7 +27,8 @@ import { renderOverview } from './overview';
 import { installRedrawGuard } from './redraw';
 import { isFolded, readPrefs, setAll, toggleGroup, writePrefs } from './navState';
 import { openQuickSearch, type SearchEntry } from './quickSearch';
-import { installShortcuts } from './shortcuts';
+import { dirtyChip, nextSaveStep, type DirtySource } from './dirty';
+import { installShortcuts, saveButton } from './shortcuts';
 import { applyQueryString } from './listKit';
 import { renderPigList } from './pigList';
 import { productsDirty, renderProducts } from './products';
@@ -36,7 +39,7 @@ import { renderValidation } from './validation';
 
 type NavItem = readonly [page: string, icon: string, label: string, help: string];
 const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])[] = [
-  [null, [['', '🏠', 'Tổng quan', 'overview'], ['users', '👤', 'Người chơi', 'users'], ['content', '📚', 'Nội dung game', 'content']]],
+  [null, [['', '🏠', 'Tổng quan', 'overview'], ['users', '👤', 'Người chơi', 'users'], ['content', '📚', 'Nội dung game', 'content'], ['balance', '⚖️', 'So sánh cân bằng', 'content']]],
   ['Sobi Farm', [
     ['pigs', '🐷', 'Giống heo', 'pigs'],
     ['validation', '🩺', 'Kiểm tra dữ liệu heo', 'pigs'],
@@ -54,9 +57,13 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
     ['adventure-assets', '🌲', 'Asset bản đồ', 'map-assets'],
     ['adventure-maps', '🗺️', 'Bản đồ khu', 'adventure-maps'],
   ]],
+  // Plan 8.3: each Area has its own group; its pages are the content files that belong to it (shortcuts into "Nội dung game").
+  ['Sobi Garden', [['content/garden%2Fcrops.json', '🌱', 'Cây trồng', 'content'], ['content/garden%2Fhybrids.json', '🧪', 'Công thức lai', 'content'], ['content/garden%2Fbalance.json', '⚙️', 'Cân bằng Garden', 'content'], ['content/garden%2Farea.json', '🚪', 'Mở khu Garden', 'content']]],
+  ['Sobi Aquarium', [['content/aquarium%2Ffish.json', '🐟', 'Loài cá', 'content'], ['content/aquarium%2Fhybrids.json', '🧪', 'Cặp lai cá', 'content'], ['content/aquarium%2Fbalance.json', '⚙️', 'Cân bằng Aquarium', 'content'], ['content/aquarium%2Farea.json', '🚪', 'Mở khu Aquarium', 'content']]],
+  ['Sobi Cloud', [['content/cloud%2Fflowers.json', '🌸', 'Loài hoa', 'content'], ['content/cloud%2Fhybrids.json', '🧪', 'Công thức lai hoa', 'content'], ['content/cloud%2Fbalance.json', '⚙️', 'Cân bằng Cloud', 'content'], ['content/cloud%2Farea.json', '🚪', 'Mở khu Cloud', 'content']]],
   ['Xưởng hoạt họa', [['battle-lab', '✨', 'Animation trận', 'battle-lab'], ['rig-lab', '🦴', 'Rig sinh vật', 'battle-lab']]],
   ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
-  ['Hệ thống', [['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
+  ['Hệ thống', [['checks', '🔎', 'Kiểm tra dữ liệu', 'checks'], ['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
 ];
 const ALL = NAV.flatMap(([, items]) => items);
 /** The world / adventure / animation pages share one design (worldUi.css, `.wpage`). The Map Editor is a full-screen tool with its own dark theme. */
@@ -82,7 +89,29 @@ const go = (hash: string) => {
   location.hash = hash;
 };
 
-const anyDirty = () => state.dirty || productsDirty() || breedingDirty() || layoutDirty() || userDirty() || contentDirty() || editorDirty();
+/** Every page that can hold unsaved work (plan step 7.1): one list for the header chip, "Lưu tất cả" and the leave warning. */
+const DIRTY: DirtySource[] = [
+  { page: 'pigs', label: 'Giống heo', dirty: () => state.dirty },
+  { page: 'products', label: 'Cửa hàng', dirty: productsDirty },
+  { page: 'breeding', label: 'Phối giống', dirty: breedingDirty },
+  { page: 'layout', label: 'Bố cục', dirty: layoutDirty },
+  { page: 'users', label: 'Người chơi', dirty: userDirty },
+  { page: 'content', label: 'Nội dung', dirty: contentDirty },
+  { page: 'adventure-editor', label: 'Map Editor', dirty: editorDirty },
+];
+const anyDirty = () => DIRTY.some((d) => d.dirty());
+
+const dirtySlot = () => (dirtyChip(DIRTY) ? `<span class="badge status-warn" title="Bản nháp chưa lưu nằm ở các trang này">${esc(dirtyChip(DIRTY)!)}</span><button type="button" class="btn" data-save-all>💾 Lưu tất cả</button>` : '');
+/** Editing does not redraw the shell: the chip follows the page's own dirty flags a moment after each edit. */
+let chipTimer = 0;
+const refreshChip = () => {
+  window.clearTimeout(chipTimer);
+  chipTimer = window.setTimeout(() => {
+    const slot = app.querySelector('[data-dirty-slot]');
+    const html = dirtySlot();
+    if (slot && slot.innerHTML !== html) slot.innerHTML = html;
+  }, 500);
+};
 
 function shell() {
   const { page } = route();
@@ -91,13 +120,16 @@ function shell() {
     pigs: () => state.dirty, products: productsDirty, breeding: breedingDirty, layout: layoutDirty, users: userDirty, content: contentDirty,
   };
   const prefs = readPrefs();
-  const item = ([p, icon, label]: NavItem) => `<a href="#/${p}" class="nav__item${page === p ? ' is-active' : ''}" title="${esc(label)}">
+  const hash = location.hash.slice(2).split('?')[0];
+  const onShortcut = ALL.some((n) => n[0].includes('/') && n[0] === hash);
+  const active = (p: string) => (p.includes('/') ? hash === p : page === p && !(p === 'content' && onShortcut));
+  const item = ([p, icon, label]: NavItem) => `<a href="#/${p}" class="nav__item${active(p) ? ' is-active' : ''}" title="${esc(label)}">
       <span class="nav__icon">${icon}</span><span class="nav__label">${label}</span>
-      ${p === 'validation' && errors ? `<span class="nav__count">${errors}</span>` : ''}${dirtyOf[p]?.() ? '<span class="dot-warn" title="Có thay đổi chưa lưu"></span>' : ''}</a>`;
+      ${p === 'validation' && errors ? `<span class="nav__count">${errors}</span>` : ''}${p === 'checks' && problemCount() ? `<span class="nav__count">${problemCount()}</span>` : ''}${dirtyOf[p]?.() ? '<span class="dot-warn" title="Có thay đổi chưa lưu"></span>' : ''}</a>`;
   const nav = NAV.map(([group, items]) => {
     const rows = items.map(item).join('');
     if (!group) return `<div class="nav__sec">${rows}</div>`;
-    const folded = isFolded(group, prefs, items.some((n) => n[0] === page));
+    const folded = isFolded(group, prefs, items.some((n) => active(n[0])));
     return `<div class="nav__sec${folded ? ' is-folded' : ''}" data-group="${esc(group)}"><button type="button" class="nav__group" data-nav-group aria-expanded="${!folded}"><span class="nav__chev">▾</span><span class="nav__gtext">${esc(group)}</span></button><div class="nav__items">${rows}</div></div>`;
   }).join('');
   const tools = `<div class="nav__tools"><button type="button" class="nav__tool" data-quick-search title="Tìm nhanh (Ctrl+K)">🔍<span class="nav__label"> Tìm nhanh</span></button><button type="button" class="nav__tool" data-nav-all="fold" title="Thu tất cả nhóm">⮝</button><button type="button" class="nav__tool" data-nav-all="open" title="Mở tất cả nhóm">⮟</button><button type="button" class="nav__tool" data-nav-icons title="Thanh bên chỉ có biểu tượng">▤</button></div>`;
@@ -117,6 +149,7 @@ function shell() {
         <header class="header">
           <h1>${current[1]} ${esc(current[2])}</h1>
           <div class="header__actions">
+            <span data-dirty-slot>${dirtySlot()}</span>
             ${page !== 'guide' ? `<button type="button" class="help-link" data-guide="${current[3]}">❔ Hướng dẫn</button>` : ''}
             ${species && state.dirty ? '<span class="badge status-warn">● Chưa lưu</span><button class="btn" data-discard>↺ Huỷ thay đổi</button>' : ''}
             ${species ? `<button class="btn btn-primary" data-save ${!state.dirty || state.saving || !state.apiOnline || errors > 0 ? 'disabled' : ''}
@@ -139,6 +172,15 @@ function shell() {
   });
 }
 
+/** "Lưu tất cả": the species draft saves in place; any other page is opened (or its save button pressed) one at a time. */
+function saveAll() {
+  const step = nextSaveStep(DIRTY, route().page, state.dirty);
+  if (!step) return;
+  if (step.kind === 'species') void save();
+  else if (step.kind === 'click') saveButton(app)?.click();
+  else go(`#/${step.page}`);
+}
+
 /** Sidebar clicks change the nav in place (no page redraw): fold a group, fold / open all, icon-only mode, quick search. */
 function wireNav() {
   const pages: SearchEntry[] = ALL.map(([p, icon, label]) => ({ label: `${icon} ${label}`, sub: 'Trang', href: `#/${p}`, kind: 'page' }));
@@ -148,6 +190,7 @@ function wireNav() {
     const t = e.target instanceof Element ? e.target : null;
     const groups = NAV.flatMap(([g]) => (g ? [g] : []));
     const fold = (g: string, on: boolean) => app.querySelectorAll<HTMLElement>('.nav__sec[data-group]').forEach((el) => el.dataset.group === g && el.classList.toggle('is-folded', on));
+    if (t?.closest('[data-save-all]')) return saveAll();
     if (t?.closest('[data-quick-search]')) return openSearch();
     const one = t?.closest<HTMLElement>('[data-nav-group]')?.parentElement?.dataset.group;
     if (one) {
@@ -174,7 +217,9 @@ function render() {
   if (MOVED[page]) return void location.replace(MOVED[page]);
   const scroll = document.scrollingElement?.scrollTop ?? 0;
   // The page is rebuilt: hold its height meanwhile so the browser does not clamp the scroll to the top.
-  app.style.minHeight = `${app.offsetHeight}px`;
+  // The same page redrawn only grows its box (a shorter table must not pull the scroll up); another page starts fresh.
+  const samePage = location.hash === lastHash;
+  app.style.minHeight = `${Math.max(samePage ? parseFloat(app.style.minHeight) || 0 : 0, app.offsetHeight)}px`;
   shell();
   const content = app.querySelector<HTMLElement>('.content')!;
   const open = (pigId: string | null) => go(`#/pigs/${pigId ? encodeURIComponent(pigId) : 'new'}`);
@@ -197,20 +242,22 @@ function render() {
     'adventure-maps': () => renderAdventureMaps(content, id),
     'battle-lab': () => renderBattleLab(content),
     'rig-lab': () => renderRigLab(content),
+    balance: () => renderBalance(content, render),
+    checks: () => renderChecks(content, render),
     layout: () => renderLayout(content, render),
     desktop: () => renderDesktop(content),
     guide: () => renderGuide(content, id),
   };
   if (query && !id && LIST_OF[page] && location.hash !== appliedHash) applyQueryString(LIST_OF[page], query);
   appliedHash = location.hash;
-  (pages[page] ?? (() => renderOverview(content, render)))();
+  (pages[page] ?? (() => renderOverview(content, render, dirtyChip(DIRTY))))();
   // Same page redrawn (an edit): keep the scroll; another page starts at the top.
   if (location.hash === lastHash && page !== 'guide') document.scrollingElement?.scrollTo({ top: scroll });
   else window.scrollTo({ top: 0 });
   lastHash = location.hash;
   requestAnimationFrame(() => {
     if (location.hash === lastHash && page !== 'guide') document.scrollingElement?.scrollTo({ top: scroll });
-    app.style.minHeight = '';
+    if (!samePage) app.style.minHeight = '';
   });
   if (page === 'pigs' && id) {
     const art = new URLSearchParams(query).get('art') ?? undefined;
@@ -220,6 +267,9 @@ function render() {
 
 installRedrawGuard(app); // every page's own `innerHTML = …` redraw keeps scroll and focus (step 2)
 wireNav();
+app.addEventListener('input', refreshChip);
+app.addEventListener('change', refreshChip);
+app.addEventListener('click', refreshChip);
 window.addEventListener('hashchange', render);
 window.addEventListener('beforeunload', (e) => {
   if (anyDirty()) e.preventDefault();
@@ -227,6 +277,6 @@ window.addEventListener('beforeunload', (e) => {
 onChange(render);
 watchRichSelects();
 app.innerHTML = '<p class="loading">Đang tải dữ liệu Sobi World… 🌍</p>';
-load().catch((e: unknown) => {
+load().then(() => preloadChecks(render)).catch((e: unknown) => {
   app.innerHTML = `<p class="empty">Không tải được manifest: ${esc((e as Error).message)}</p>`;
 });

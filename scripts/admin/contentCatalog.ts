@@ -43,6 +43,7 @@ export const CONTENT_FILES: readonly ContentFileDef[] = [
   def('shared/health.json', 'world', '🩺', 'Sức khỏe', 'Bệnh, nguy kịch, chết, ân hạn, bảo vệ người mới', s('shared', 'health'), 'healthFileSchema'),
   def('shared/progression.json', 'world', '📈', 'Cấp Sobi World', 'KN từng cấp, Phát triển thế giới', s('shared', 'progression'), 'progressionFileSchema'),
   def('shared/bond.json', 'world', '💕', 'Thân thiết', 'Vuốt ve, món yêu thích, món ăn vặt', s('shared', 'bond'), 'bondFileSchema'),
+  def('shared/defaults.json', 'world', '🔇', 'Mặc định save mới', 'Âm thanh khi bắt đầu save mới (save cũ giữ lựa chọn riêng)', s('shared', 'defaults'), 'defaultsFileSchema'),
   def('shared/quality.json', 'world', '⭐', 'Chất lượng', 'Ngưỡng tâm trạng, hệ số giá', s('shared', 'quality'), 'qualityFileSchema'),
   def('shared/orders.json', 'world', '📋', 'Bảng đơn hàng', 'Ô, thời gian, thưởng, vật phẩm được đặt', s('shared', 'orders'), 'ordersFileSchema'),
   def('shared/goals.json', 'world', '🎯', 'Mục tiêu hằng ngày', 'Mẫu mục tiêu, thưởng, bonus', s('shared', 'goals'), 'goalsFileSchema'),
