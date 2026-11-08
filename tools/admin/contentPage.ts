@@ -5,6 +5,7 @@
 // beside their row. A save reloads the page (Vite): the draft and the outcome survive it in sessionStorage.
 import type { z } from 'zod';
 import { CONTENT_FILES, CONTENT_GROUPS, EDITABLE_FILES, TEXT_TABLES, contentDef, type RowTexts } from '../../scripts/admin/contentCatalog';
+import { openBackups } from './contentBackups';
 import { esc } from './labels';
 import { imageOf, loadNames, nameOf, resetNames } from './idNames';
 import { bindForm, newUi, renderForm, type FormOptions, type FormUi } from './schemaForm';
@@ -274,6 +275,7 @@ function editor(root: HTMLElement, file: string, rerender: () => void) {
         <div><h2>${def.icon} ${esc(def.title)}</h2><p class="muted">${esc(def.hint)} · <code>content/${esc(file)}</code></p></div>
         <div class="fileedit__actions">
           ${d.dirty ? '<span class="badge status-warn">● Chưa lưu</span><button class="btn" data-revert>↺ Hoàn tác</button>' : '<span class="badge status-ok">✓ Đã lưu</span>'}
+          <button class="btn" data-backups title="Các bản cũ được giữ trước mỗi lần lưu">🕘 Sao lưu</button>
           <button class="btn btn-primary" data-save ${!d.dirty || page.saving || bad ? 'disabled' : ''} title="${bad ? 'Sửa các ô đỏ trước' : 'Kiểm tra bằng schema của game rồi ghi'}">${page.saving ? 'Đang lưu…' : '💾 Lưu file'}</button>
         </div>
       </header>
@@ -316,6 +318,7 @@ function editor(root: HTMLElement, file: string, rerender: () => void) {
   });
   root.querySelector('[data-save]')?.addEventListener('click', () => void save(file, rerender));
   root.querySelector('[data-revert]')?.addEventListener('click', revert);
+  root.querySelector('[data-backups]')?.addEventListener('click', () => void openBackups(file));
   root.querySelector('[data-dismiss]')?.addEventListener('click', () => {
     page.message = null;
     rerender();

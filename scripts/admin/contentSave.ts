@@ -9,6 +9,7 @@ import { readFileSync } from 'node:fs';
 import { contentJson } from '../content/format';
 import { ID_LISTS, IDS_FILE, idsText, listIn } from '../content/ids';
 import { writeText } from './artFiles';
+import { backupBeforeWrite } from './contentBackup';
 import { CONTENT_FILES, EDITABLE_FILES, TEXT_TABLES, type RowTexts } from './contentCatalog';
 import { readContent, schemaProblems } from './contentFiles';
 import { readRowTexts, restoreTables, snapshotTables, writeRowTexts } from './i18nText';
@@ -95,6 +96,12 @@ export async function saveContentFile(body: { file: string; value: unknown; text
     ...(table ? missingNames(def.file, body.value, texts, readRowTexts(table, rowIds(body.value, table.rowsKey))) : []),
   ];
   if (early.length) return refuse(early);
+  // Plan step 7.2: the file as it is now is kept before it is overwritten; no copy, no save.
+  try {
+    backupBeforeWrite(def.file, before, Date.now());
+  } catch (e) {
+    return refuse([`Không tạo được bản sao lưu trước khi ghi (chưa ghi gì): ${e instanceof Error ? e.message : String(e)}`]);
+  }
 
   try {
     writeText(`content/${def.file}`, contentJson(body.value));

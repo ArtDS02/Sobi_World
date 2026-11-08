@@ -302,3 +302,20 @@ describe('B2: farm lens keeps references on a plain time step', () => {
     expect(farmOf(w)).toBe(view); // the cached view is stable
   });
 });
+
+describe('step 1 of the admin plan: sound is off in NEW saves only', () => {
+  it('a new world and a new farm start silent', () => {
+    expect(SAVE_CODEC.newWorld(ctx()).settings).toMatchObject({ musicOn: false, sfxOn: false });
+    expect(newGame(ctx()).settings).toMatchObject({ musicOn: false, sfxOn: false });
+  });
+
+  it('an existing save keeps its own sound choice, on or off', () => {
+    const base = world(richFarm());
+    const on = { ...base, settings: { ...base.settings, musicOn: true, sfxOn: true } };
+    const r = migrate(JSON.parse(JSON.stringify(on)), SAVE_CODEC);
+    expect(r.ok && r.save.settings).toMatchObject({ musicOn: true, sfxOn: true });
+    const off = { ...on, settings: { ...on.settings, musicOn: false, sfxOn: true } };
+    const r2 = migrate(JSON.parse(JSON.stringify(off)), SAVE_CODEC);
+    expect(r2.ok && r2.save.settings).toMatchObject({ musicOn: false, sfxOn: true });
+  });
+});

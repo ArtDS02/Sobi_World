@@ -1422,3 +1422,9 @@ Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật
 ⚠️ Quyết định: slice Farm hỏng cũng được tạo lại (bản gốc giữ ở `before-slice-repair-*`); test cũ "slice hỏng bị từ chối" đổi thành "được tạo lại".
 👉 Chủ dự án cần kiểm tra: chơi thử thoát/mở lại game, màn "Game gặp lỗi", thông báo slice được sửa.
 ➡️ Bước tiếp theo: nhóm C (nâng cấp Admin).
+
+### 2026-11-09 — Overnight, nhóm C (Admin, nhánh admin-upgrade → merge vào overnight-hardening)
+✅ Đã làm: âm thanh tắt mặc định chỉ cho save mới; hết giật màn hình (redraw guard + `npm run admin:scrollcheck`); sidebar thu gọn, chế độ biểu tượng, Ctrl+K tìm nhanh, phím tắt; kiểm tra trang tự động (`npm run admin:audit`, sửa lỗi NaN viewBox, tràn ngang, favicon 404); sao lưu tự động file content trước mỗi lần ghi + khôi phục.
+⚠️ Chưa làm: bước 5 (tên thay id), 6 (xưởng hoạt họa), 7.1/7.3, 8 (sửa mọi area), 9. Chi tiết: docs/ADMIN_UPGRADE_LOG.md.
+👉 Chủ dự án cần kiểm tra: mở `npm run admin`, thử Ctrl+K, thu gọn sidebar, nút 🕘 Sao lưu ở trang Nội dung.
+➡️ Bước tiếp theo: bước 5 và 8.0 của kế hoạch admin.

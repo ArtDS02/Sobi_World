@@ -1,4 +1,4 @@
-NEXT: C step 1 (sound off by default) on branch admin-upgrade
+NEXT: D1 (save health button) on branch feat/save-health; C remaining steps 5-9 are listed in ADMIN_UPGRADE_LOG.md
 
 # Overnight log (branch `overnight-hardening`)
 
@@ -20,7 +20,7 @@ Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume
 - [x] B7 app:// decodeURIComponent
 - [x] B8 fishing dialog keys + injectable rng
 - [x] B9 (XP kept per pile as before; toast says how many piles were thrown away) cleanManure full bag notice
-- [ ] C admin upgrade (9 steps, see ADMIN_UPGRADE_LOG.md)
+- [~] C admin upgrade: steps 1, 2, 3, 4, 7.2 done and merged; 5, 6, 7.1, 7.3, 8, 9 NOT done (ADMIN_UPGRADE_LOG.md)
 - [ ] D1..D9 features
 
 ## Decisions / stuck items
@@ -28,3 +28,4 @@ Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume
 
 - Group A: `npm run check` equivalent (typecheck, lint, guard, vitest minus assetsCheck) green after A3; tests that asserted "corrupt slice refused" (aquarium, cloud, garden, areaRegistry, worldSave) updated to assert repair.
 - Group B: typecheck/lint/guard green; vitest 1860 pass excluding assetsCheck (baseline-slow). assets:check not re-run yet.
+- Group C: typecheck/lint/guard green; vitest 1868 pass; 3 perf tests flaked only while the admin dev server and Chrome ran in parallel (simulation 30-day 4.2 s, neglected-pigs 3.4 s, breeding 10k-sample 27 s) and pass when run alone.

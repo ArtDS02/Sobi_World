@@ -67,7 +67,7 @@ code { background: var(--surface-2); padding: 1px 6px; border-radius: 6px; font-
 .loading, .empty { padding: 40px; text-align: center; color: var(--muted); }
 
 /* layout */
-.layout { display: grid; grid-template-columns: 236px 1fr; min-height: 100vh; }
+.layout { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100vh; }
 .sidebar {
   position: sticky; top: 0; height: 100vh; padding: 18px 12px; overflow-y: auto;
   background: var(--surface); border-right: 1px solid var(--line);
@@ -256,13 +256,13 @@ img.is-missing { visibility: hidden; }
 /* responsive: tablet stacks the charts, phone turns the sidebar into a top bar */
 @media (max-width: 900px) {
   .grid-2 { grid-template-columns: 1fr; }
-  .layout { grid-template-columns: 76px 1fr; }
+  .layout { grid-template-columns: 76px minmax(0, 1fr); }
   .nav__label, .brand span:last-child, .sidebar__foot { display: none; }
   .nav__item { justify-content: center; position: relative; }
   .nav__count { position: absolute; top: 2px; right: 2px; }
 }
 @media (max-width: 600px) {
-  .layout { grid-template-columns: 1fr; }
+  .layout { grid-template-columns: minmax(0, 1fr); }
   .sidebar { position: sticky; z-index: 5; height: auto; flex-direction: row; align-items: center; padding: 8px 12px; border-right: 0; border-bottom: 1px solid var(--line); }
   .nav { flex-direction: row; flex: 1; justify-content: space-around; }
   .main { padding: 14px 16px 40px; }
@@ -391,3 +391,34 @@ html { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--muted) 3
 html::-webkit-scrollbar { width: 8px; }
 html::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--muted) 30%, transparent); border-radius: 8px; }
 html::-webkit-scrollbar-track { background: transparent; }
+
+/* Sidebar groups, tools and icon-only mode (plan step 3) */
+.nav__sec { display: flex; flex-direction: column; gap: 2px; }
+.nav__group { display: flex; align-items: center; gap: 6px; width: calc(100% - 24px); background: none; border: 0; cursor: pointer; text-align: left; font-family: inherit; }
+.nav__group:hover { color: var(--text); }
+.nav__chev { display: inline-block; transition: transform 0.15s; }
+.nav__sec.is-folded .nav__chev { transform: rotate(-90deg); }
+.nav__sec.is-folded .nav__items { display: none; }
+.nav__items { display: flex; flex-direction: column; gap: 2px; }
+.nav__tools { display: flex; gap: 4px; margin: 0 8px 6px; flex-wrap: wrap; }
+.nav__tool { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; cursor: pointer; font-size: 12px; color: var(--text); }
+.nav__tool:hover { background: var(--brand-soft); }
+.layout.nav-icons { grid-template-columns: 64px minmax(0, 1fr); }
+.nav-icons .nav__label, .nav-icons .nav__gtext, .nav-icons .brand span:last-child, .nav-icons .sidebar__foot { display: none; }
+.nav-icons .nav__item { justify-content: center; position: relative; }
+.nav-icons .nav__count { position: absolute; top: 2px; right: 2px; }
+.nav-icons .nav__group { justify-content: center; width: auto; margin: 6px auto 2px; }
+.nav-icons .nav__tools { flex-direction: column; align-items: center; }
+/* Quick search and shortcut list */
+.qs-host { position: fixed; inset: 0; z-index: 1000; display: flex; justify-content: center; align-items: flex-start; padding-top: 12vh; }
+.qs-backdrop { position: absolute; inset: 0; background: rgba(40, 25, 20, 0.45); }
+.qs { position: relative; width: min(640px, calc(100vw - 32px)); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); overflow: hidden; }
+.qs__input { width: 100%; box-sizing: border-box; padding: 14px 16px; font-size: 16px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--text); outline: none; }
+.qs__list { list-style: none; margin: 0; padding: 6px; max-height: 50vh; overflow: auto; }
+.qs__row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+.qs__row small { color: var(--muted); }
+.qs__row.is-on, .qs__row:hover { background: var(--brand-soft); }
+.qs__empty { padding: 12px; color: var(--muted); }
+kbd { background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; font-size: 12px; }
+@media (max-width: 600px) { .nav__tools { display: none; } }
+.mapm-wrap, .table-wrap { position: relative; } /* hidden native selects inside are absolutely positioned: they must be clipped by the scroll box, not widen the page */

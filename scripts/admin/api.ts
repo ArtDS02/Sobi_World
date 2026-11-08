@@ -45,6 +45,7 @@ import { validateSpecies, type ValidateInput } from './validate';
 import { MANIFEST, assetFiles, writeText, filesPayload, importArt, readPigs, registerExisting, uploadArt } from './artFiles';
 import { buildInfo, openFolder } from './buildInfo';
 import type { RowTexts } from './contentCatalog';
+import { listContentBackups, readContentBackup } from './contentBackup';
 import { readContentFiles, saveContentFile } from './contentSave';
 import { deleteAsset, assetUse, saveAsset, uploadAsset } from './mapAssets';
 import { mapHistory, publishMaps, restoreVersion } from './mapPublishApi';
@@ -326,6 +327,19 @@ async function route(server: ViteDevServer, req: IncomingMessage): Promise<Resul
       const r = await saveContentFile(b, { load, invalidate: () => server.moduleGraph.invalidateAll() });
       if (b.requestId) remember(b.requestId, r);
       return r;
+    }
+    case 'GET /content/backups':
+      return { status: 200, body: { backups: listContentBackups(url.searchParams.get('file') ?? '') } };
+    case 'POST /content/restore': {
+      // A restore is an ordinary save of the old text: the schema, the shipped-id rule and the module reload all still apply.
+      const b = await body<{ file: string; name: string }>();
+      let value: unknown;
+      try {
+        value = JSON.parse(readContentBackup(b.file, b.name));
+      } catch (e) {
+        return { status: 400, body: { error: `Không đọc được bản sao lưu: ${e instanceof Error ? e.message : String(e)}` } };
+      }
+      return saveContentFile({ file: b.file, value }, { load, invalidate: () => server.moduleGraph.invalidateAll() });
     }
     case 'GET /content/result': {
       const r = results.get(url.searchParams.get('id') ?? '');
