@@ -33,6 +33,59 @@ describe('createSettingsFile', () => {
   });
 });
 
+describe('createSettingsFile: queue and retry (B3)', () => {
+  it('concurrent writes run in order: the last one wins and no temp file is left', async () => {
+    const file = createSettingsFile(join(dir, 'settings.json'));
+    await Promise.all(Array.from({ length: 12 }, (_, i) => file.write(`{"n":${i}}`)));
+    expect(await file.read()).toBe('{"n":11}');
+    expect(await readdir(dir)).toEqual(['settings.json']);
+  });
+
+  it('a rename held by another program (EPERM) is retried', async () => {
+    let fails = 2;
+    const { rename } = await import('node:fs/promises');
+    const file = createSettingsFile(join(dir, 'settings.json'), {
+      sleep: async () => {},
+      rename: async (a, b) => {
+        if (fails-- > 0) throw Object.assign(new Error('locked'), { code: 'EPERM' });
+        await rename(a, b);
+      },
+    });
+    await file.write('{"ok":1}');
+    expect(await file.read()).toBe('{"ok":1}');
+  });
+
+  it('a lasting failure rejects, cleans its temp file, and the next write still works', async () => {
+    let broken = true;
+    const { rename } = await import('node:fs/promises');
+    const file = createSettingsFile(join(dir, 'settings.json'), {
+      sleep: async () => {},
+      rename: async (a, b) => {
+        if (broken) throw Object.assign(new Error('locked'), { code: 'EBUSY' });
+        await rename(a, b);
+      },
+    });
+    await expect(file.write('{"bad":1}')).rejects.toThrow('locked');
+    expect(await readdir(dir)).toEqual([]);
+    broken = false;
+    await file.write('{"good":1}');
+    expect(await file.read()).toBe('{"good":1}');
+  });
+
+  it('a non-retryable error is not retried', async () => {
+    let calls = 0;
+    const file = createSettingsFile(join(dir, 'settings.json'), {
+      sleep: async () => {},
+      rename: async () => {
+        calls += 1;
+        throw Object.assign(new Error('nope'), { code: 'ENOSPC' });
+      },
+    });
+    await expect(file.write('x')).rejects.toThrow('nope');
+    expect(calls).toBe(1);
+  });
+});
+
 describe('createLocalSettings', () => {
   it('stores under one key and rejects when the browser refuses', async () => {
     const items = new Map<string, string>();
