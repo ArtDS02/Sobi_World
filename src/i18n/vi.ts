@@ -846,6 +846,7 @@ export const vi = {
     feedGrass: "Ăn cỏ (x{count})",
     clean: "Tắm",
     cleanAll: "Tắm tất cả",
+    feedAll: "Cho ăn tất cả",
     cleanManure: "Dọn phân",
     sellItem: "Bán hết",
     treat: "Chữa bệnh",

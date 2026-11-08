@@ -387,6 +387,7 @@ export const partB = {
     feedGrass: "Feed grass (x{count})",
     clean: "Wash",
     cleanAll: "Wash all",
+    feedAll: "Feed all",
     cleanManure: "Clear manure",
     sellItem: "Sell all",
     treat: "Treat",
