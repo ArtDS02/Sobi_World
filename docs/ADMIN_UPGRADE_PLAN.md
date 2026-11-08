@@ -70,10 +70,10 @@ Legend: `[ ]` open, `[x]` done. Tick a box in the commit that finishes it.
 ## Step 7 — Data safety (admin)
 - [ ] 7.1 B2 — One unsaved-changes system: every page registers its dirty state; header shows count; "Lưu tất cả";
       leaving a page or the app warns once, consistently.
-- [ ] 7.2 B4 — Automatic backup of any content file before the API overwrites it (`content-api` side, outside shipped game),
+- [x] 7.2 B4 — Automatic backup of any content file before the API overwrites it (`content-api` side, outside shipped game),
       keep the last N, with a "Khôi phục" list per file. Write errors are never swallowed.
 - [ ] 7.3 B3 — Diff before save (old vs new, readable names) and a change history with undo for the session.
-- [ ] 7.4 Tests for backup/restore and for a failed write (nothing lost, error shown).
+- [x] 7.4 (backup module tests; a failed backup refuses the save; restore verified live through the API) Tests for backup/restore and for a failed write (nothing lost, error shown).
 
 ## Step 8 — Edit every area (admin)
 Order: Adventure → Aquarium → Garden → Cloud → Plaza → Breeding → Farm leftovers. One commit per area.
