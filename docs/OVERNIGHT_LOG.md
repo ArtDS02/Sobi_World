@@ -1,4 +1,4 @@
-NEXT: remaining D2..D9 not started; C steps 5-9 not done (see ADMIN_UPGRADE_LOG.md). Final report is the next thing if no more budget.
+NEXT: (stopped) D2..D9 and admin steps 5-9 remain; start with ADMIN_UPGRADE_LOG.md "Not done", then D2.
 
 # Overnight log (branch `overnight-hardening`)
 
@@ -30,3 +30,7 @@ Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume
 - Group A: `npm run check` equivalent (typecheck, lint, guard, vitest minus assetsCheck) green after A3; tests that asserted "corrupt slice refused" (aquarium, cloud, garden, areaRegistry, worldSave) updated to assert repair.
 - Group B: typecheck/lint/guard green; vitest 1860 pass excluding assetsCheck (baseline-slow). assets:check not re-run yet.
 - Group C: typecheck/lint/guard green; vitest 1868 pass; 3 perf tests flaked only while the admin dev server and Chrome ran in parallel (simulation 30-day 4.2 s, neglected-pigs 3.4 s, breeding 10k-sample 27 s) and pass when run alone.
+
+## Final run (E)
+typecheck, lint, guard green; `npm run assets:check` OK (30 s); full vitest: 1885 pass, 1 fail = assetsCheck "the shipped assets pass" (61 s, over its own timeout; same test as baseline, the script itself passes). The simulation 30-day test passed this run (baseline 4.0 s failure was load).
+Branches (local only, nothing pushed): overnight-hardening (all work merged), admin-upgrade and feat/save-health (merged, kept).
