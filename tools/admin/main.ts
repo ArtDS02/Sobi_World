@@ -23,6 +23,9 @@ import { layoutDirty, renderLayout } from './layout';
 import { renderLibrary } from './library';
 import { renderOverview } from './overview';
 import { installRedrawGuard } from './redraw';
+import { isFolded, readPrefs, setAll, toggleGroup, writePrefs } from './navState';
+import { openQuickSearch, type SearchEntry } from './quickSearch';
+import { installShortcuts } from './shortcuts';
 import { applyQueryString } from './listKit';
 import { renderPigList } from './pigList';
 import { productsDirty, renderProducts } from './products';
@@ -87,21 +90,27 @@ function shell() {
   const dirtyOf: Record<string, () => boolean> = {
     pigs: () => state.dirty, products: productsDirty, breeding: breedingDirty, layout: layoutDirty, users: userDirty, content: contentDirty,
   };
-  const nav = NAV.map(([group, items]) => `${group ? `<p class="nav__group">${esc(group)}</p>` : ''}${items
-    .map(([p, icon, label]) => `<a href="#/${p}" class="nav__item${page === p ? ' is-active' : ''}">
+  const prefs = readPrefs();
+  const item = ([p, icon, label]: NavItem) => `<a href="#/${p}" class="nav__item${page === p ? ' is-active' : ''}" title="${esc(label)}">
       <span class="nav__icon">${icon}</span><span class="nav__label">${label}</span>
-      ${p === 'validation' && errors ? `<span class="nav__count">${errors}</span>` : ''}${dirtyOf[p]?.() ? '<span class="dot-warn" title="Có thay đổi chưa lưu"></span>' : ''}</a>`)
-    .join('')}`).join('');
+      ${p === 'validation' && errors ? `<span class="nav__count">${errors}</span>` : ''}${dirtyOf[p]?.() ? '<span class="dot-warn" title="Có thay đổi chưa lưu"></span>' : ''}</a>`;
+  const nav = NAV.map(([group, items]) => {
+    const rows = items.map(item).join('');
+    if (!group) return `<div class="nav__sec">${rows}</div>`;
+    const folded = isFolded(group, prefs, items.some((n) => n[0] === page));
+    return `<div class="nav__sec${folded ? ' is-folded' : ''}" data-group="${esc(group)}"><button type="button" class="nav__group" data-nav-group aria-expanded="${!folded}"><span class="nav__chev">▾</span><span class="nav__gtext">${esc(group)}</span></button><div class="nav__items">${rows}</div></div>`;
+  }).join('');
+  const tools = `<div class="nav__tools"><button type="button" class="nav__tool" data-quick-search title="Tìm nhanh (Ctrl+K)">🔍<span class="nav__label"> Tìm nhanh</span></button><button type="button" class="nav__tool" data-nav-all="fold" title="Thu tất cả nhóm">⮝</button><button type="button" class="nav__tool" data-nav-all="open" title="Mở tất cả nhóm">⮟</button><button type="button" class="nav__tool" data-nav-icons title="Thanh bên chỉ có biểu tượng">▤</button></div>`;
   const current = ALL.find((n) => n[0] === page) ?? ALL[0]!;
   const species = SPECIES_PAGES.has(page);
   const msg = state.message
     ? `<div class="toast ${state.message.kind}"><pre>${esc(state.message.text)}</pre><button class="icon-btn" data-dismiss aria-label="Đóng">✕</button></div>`
     : '';
   app.innerHTML = `
-    <div class="layout">
+    <div class="layout${prefs.icons ? ' nav-icons' : ''}">
       <aside class="sidebar">
         <a class="brand" href="#/"><span class="brand__logo">🌍</span><span><b>Sobi World</b><small>Admin</small></span></a>
-        <nav class="nav">${nav}</nav>
+        ${tools}<nav class="nav">${nav}</nav>
         <p class="sidebar__foot"><span class="api-dot ${state.apiOnline ? 'is-on' : ''}"></span>${state.apiOnline ? 'Đang nối dữ liệu game' : 'Chỉ đọc — chạy npm run admin'}</p>
       </aside>
       <main class="main">
@@ -127,6 +136,36 @@ function shell() {
   app.querySelector('[data-dismiss]')?.addEventListener('click', () => {
     state.message = null;
     render();
+  });
+}
+
+/** Sidebar clicks change the nav in place (no page redraw): fold a group, fold / open all, icon-only mode, quick search. */
+function wireNav() {
+  const pages: SearchEntry[] = ALL.map(([p, icon, label]) => ({ label: `${icon} ${label}`, sub: 'Trang', href: `#/${p}`, kind: 'page' }));
+  const openSearch = () => void openQuickSearch(pages);
+  installShortcuts({ openSearch, root: app });
+  app.addEventListener('click', (e) => {
+    const t = e.target instanceof Element ? e.target : null;
+    const groups = NAV.flatMap(([g]) => (g ? [g] : []));
+    const fold = (g: string, on: boolean) => app.querySelectorAll<HTMLElement>('.nav__sec[data-group]').forEach((el) => el.dataset.group === g && el.classList.toggle('is-folded', on));
+    if (t?.closest('[data-quick-search]')) return openSearch();
+    const one = t?.closest<HTMLElement>('[data-nav-group]')?.parentElement?.dataset.group;
+    if (one) {
+      const next = toggleGroup(readPrefs(), one);
+      writePrefs(next);
+      return fold(one, next.collapsed.includes(one));
+    }
+    const all = t?.closest<HTMLElement>('[data-nav-all]')?.dataset.navAll;
+    if (all) {
+      writePrefs(setAll(readPrefs(), groups, all === 'fold'));
+      for (const g of groups) fold(g, all === 'fold');
+      return;
+    }
+    if (t?.closest('[data-nav-icons]')) {
+      const next = { ...readPrefs(), icons: !readPrefs().icons };
+      writePrefs(next);
+      app.querySelector('.layout')?.classList.toggle('nav-icons', next.icons);
+    }
   });
 }
 
@@ -180,6 +219,7 @@ function render() {
 }
 
 installRedrawGuard(app); // every page's own `innerHTML = …` redraw keeps scroll and focus (step 2)
+wireNav();
 window.addEventListener('hashchange', render);
 window.addEventListener('beforeunload', (e) => {
   if (anyDirty()) e.preventDefault();

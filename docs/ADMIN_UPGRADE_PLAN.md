@@ -29,13 +29,13 @@ Legend: `[ ]` open, `[x]` done. Tick a box in the commit that finishes it.
       fail when scroll moves more than 4 px. Wire it into `npm run check` or a documented separate command.
 
 ## Step 3 — Sidebar, quick search, shortcuts (admin)
-- [ ] 3.1 Collapsible nav groups (click the title), state saved in `localStorage` (guarded by try/catch), the group of the
+- [x] 3.1 Collapsible nav groups (click the title), state saved in `localStorage` (guarded by try/catch), the group of the
       open page opens itself.
-- [ ] 3.2 Buttons "thu tất cả / mở tất cả".
-- [ ] 3.3 Icon-only sidebar mode (toggle), remembered.
-- [ ] 3.4 B1 — Quick search (Ctrl+K): pages plus content names (skills, pigs, enemies, items, maps…) → jump to the page/row.
-- [ ] 3.5 B11 — Shortcuts: Ctrl+S save, Esc close dialog, `?` shows the list; context help per page.
-- [ ] 3.6 Keep the quiet scrollbars; verify the narrow-screen layout of the sidebar.
+- [x] 3.2 Buttons "thu tất cả / mở tất cả".
+- [x] 3.3 Icon-only sidebar mode (toggle), remembered.
+- [x] 3.4 B1 — Quick search (Ctrl+K): pages plus content names (skills, pigs, enemies, items, maps…) → jump to the page/row.
+- [x] 3.5 B11 — Shortcuts: Ctrl+S save, Esc close dialog, `?` shows the list; context help per page.
+- [x] 3.6 Keep the quiet scrollbars; verify the narrow-screen layout of the sidebar.
 
 ## Step 4 — Audit of every admin page, UI and operations (admin)
 - [ ] 4.1 Page inventory: list every route in `main.ts` with its buttons, forms, dialogs, API calls.
