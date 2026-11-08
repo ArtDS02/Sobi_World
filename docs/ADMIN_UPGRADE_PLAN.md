@@ -41,7 +41,7 @@ Legend: `[ ]` open, `[x]` done. Tick a box in the commit that finishes it.
 - [x] 4.1 (routes listed in main.ts header + scripts) Page inventory: list every route in `main.ts` with its buttons, forms, dialogs, API calls.
 - [ ] 4.2 (automated at 1440/1100/760, light+dark: overflow + console + requests; no screenshots or empty/loading-state review) UI sweep at 1440, 1100 and 760 px, light and dark: overflow, overlap, double scrollbars, clipped buttons,
       untranslated text, empty states, loading states. Screenshots into the scratchpad, findings table in this file.
-- [ ] 4.3 Operation sweep: create / edit / delete / cancel / save / double click / leave with unsaved changes / API offline /
+- [x] 4.3 Operation sweep: create / edit / delete / cancel / save / double click / leave with unsaved changes / API offline /
       invalid input, per page. Read console and failed requests.
 - [x] 4.4 Fix the findings in order of severity (data loss > wrong data > broken action > layout > polish).
 - [x] 4.5 (npm run admin:audit is the regression check) A regression test for each fixed logic or operation bug (unit test or browser script).

@@ -190,9 +190,19 @@ class RigLabScene extends Phaser.Scene {
   }
 }
 
+/** Watches the stage: once its frame has left the page (another page opened) the game is destroyed, so no WebGL loop runs behind it. */
+let guard = 0;
+
 function mount(host: HTMLElement) {
+  window.clearInterval(guard);
+  guard = window.setInterval(() => {
+    if (host.isConnected) return;
+    window.clearInterval(guard);
+    lab.game?.destroy(true);
+    lab.game = null;
+  }, 400);
   lab.game?.destroy(true);
-  lab.game = new Phaser.Game({ type: Phaser.WEBGL, parent: host, width: host.clientWidth, height: host.clientHeight, transparent: true, banner: false, audio: { noAudio: true }, scene: [new RigLabScene()] });
+  lab.game = new Phaser.Game({ type: Phaser.WEBGL, parent: host, width: Math.max(1, host.clientWidth), height: Math.max(1, host.clientHeight), transparent: true, banner: false, audio: { noAudio: true }, scene: [new RigLabScene()] });
   (window as unknown as { rigLab?: { game: Phaser.Game; lab: typeof lab } }).rigLab = { game: lab.game, lab };
 }
 

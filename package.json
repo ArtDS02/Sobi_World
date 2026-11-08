@@ -14,6 +14,7 @@
     "admin:audit": "tsx scripts/admin/pageAudit.ts",
     "admin:idscan": "tsx scripts/admin/idScan.ts",
     "admin:labsweep": "tsx scripts/admin/labSweep.ts",
+    "admin:ops": "tsx scripts/admin/opsSweep.ts",
     "build": "npm run typecheck && vite build && vite build --config vite.electron.config.ts",
     "dist:win": "npm run build && electron-builder --win nsis && npm run verify:build && npm run verify:installer",
     "preview": "vite preview",
