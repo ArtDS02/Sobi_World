@@ -13,8 +13,8 @@ const PAGES = [
   '', 'users', 'content', 'pigs', 'validation', 'breeding', 'products', 'layout', 'seasons', 'daynight', 'adventure',
   'adventure-world', 'adventure-network', 'adventure-assets', 'adventure-maps', 'battle-lab', 'rig-lab', 'assets', 'library', 'desktop', 'guide',
 ];
-/** Controls that only change the view. */
-const SAFE = '[role="tab"], .subtabs button, .tabs button, .chip:not(a), button.chip, summary, label.chip, [data-tab], [data-view]';
+/** Controls that only change the view. Native <summary> toggles are left out: folding a block shortens the page and the browser clamps the scroll by itself (no redraw involved). */
+const SAFE = '[role="tab"], .subtabs button, .tabs button, .chip:not(a), button.chip, label.chip, [data-tab], [data-view]';
 
 const CANDIDATES = [process.env.ADMIN_CHROME, 'C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'];
 const exe = CANDIDATES.find((p): p is string => !!p && existsSync(p));
