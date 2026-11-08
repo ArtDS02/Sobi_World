@@ -1453,3 +1453,7 @@ Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật
 
 ### 2026-11-09 — D8 mini-game nhịp cho Garden/Cloud (feat/rhythm-minigame)
 ✅ Ở hộp thoại ô đất có thêm nút "🎯 Đúng nhịp" (3 lượt bấm khi vạch qua vùng xanh): điểm đổi thành tiền thưởng nhỏ qua ledger (`MINIGAME_TIP`); nút "Làm nhanh" vẫn tưới như cũ, không thưởng. Toán thuần `systems/minigame/rhythm.ts`, số liệu `content/shared/minigame.json` (chỉnh trong Admin). Không đổi save.
+
+### 2026-11-09 — D9 album ảnh (feat/album)
+✅ Cài đặt › Album ảnh › "📷 Chụp ảnh": lưu PNG của sân khấu hiện tại qua hộp thoại lưu (desktop: IPC `unin:save:savePhoto`, ghi atomic, chỉ nhận PNG; trình duyệt: tải về). Không gửi đi đâu. Canvas Phaser giữ drawing buffer để chụp được.
+⚠️ Tuỳ biến đồ trang trí: nông trại đã có từ GĐ6 (đặt / cất / dời). Trang trí Sảnh (Plaza) CHƯA làm: cần trường save mức thế giới + dựng sprite trong PlazaScene + art, để dành cho GĐ14.

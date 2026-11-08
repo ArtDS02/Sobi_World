@@ -42,3 +42,4 @@ Branches (local only, nothing pushed): overnight-hardening (all work merged), ad
 - D3 done (feat/pig-show): logic/show.ts, content/farm/show.json, lens carries showEntries + tokens, SHOW_ENTERED event, pig panel button, decision 054.
 - D4 done (feat/rift-daily): riftDaySeed, rift.board in Adventure slice v8, scoreboard in the Rift panel, decision 055.
 - D8 done (feat/rhythm-minigame): systems/minigame/rhythm.ts, content/shared/minigame.json, ui/components/rhythmDialog.ts, tip on Garden + Cloud watering (optional score arg), ASSET_TODO note.
+- D9 partial (feat/album merged): photo album done (settings button, PNG via native save dialog, atomic write, PNG signature check in main). Plaza decoration customisation NOT done: Plaza has no save slice (decision 010); placing decor there needs a world-level field + migration + PlazaScene sprites + art, left for the art phase. Farm decor placement (GĐ6) already exists.

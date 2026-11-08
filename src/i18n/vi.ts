@@ -2013,6 +2013,9 @@ export const vi = {
   },
 
   settings: {
+    album: "Album ảnh",
+    albumHint: "Lưu một tấm ảnh PNG của sân khấu đang hiện (không có giao diện). Ảnh nằm trong máy bạn, không gửi đi đâu.",
+    takePhoto: "📷 Chụp ảnh",
     title: "Cài đặt",
     music: "Nhạc nền",
     sfx: "Âm thanh",

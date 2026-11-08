@@ -41,6 +41,8 @@ export interface UninBridge {
     /** Native open dialog; backs up the current save, returns the file text or null when cancelled. */
     importFrom(): Promise<string | null>;
     openFolder(): Promise<void>;
+    /** Native save dialog for a PNG of the stage (D9); false when cancelled. */
+    savePhoto(png: Uint8Array, suggestedName: string): Promise<boolean>;
     /** save.json was replaced by another program while the game runs (AM-1). */
     onExternalChange(fn: () => void): void;
   };
@@ -75,6 +77,7 @@ export type IpcChannel =
   | 'unin:save:exportTo'
   | 'unin:save:importFrom'
   | 'unin:save:openFolder'
+  | 'unin:save:savePhoto'
   | 'unin:save:changed'
   | 'unin:settings:load'
   | 'unin:settings:write'

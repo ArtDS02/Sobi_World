@@ -27,5 +27,14 @@ export function createWebFileDialogs(): FileDialogs {
       });
     },
     openSaveFolder: () => null,
+    async savePhoto(png, suggestedName) {
+      const url = URL.createObjectURL(new Blob([png as BlobPart], { type: 'image/png' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = suggestedName;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+      return true;
+    },
   };
 }

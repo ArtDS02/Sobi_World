@@ -46,6 +46,8 @@ export interface FileDialogs {
   importSave(): Promise<string | null>;
   /** Opens the save folder; null where the platform has no folder (browser). */
   openSaveFolder(): Promise<void> | null;
+  /** Saves a PNG of the stage to a file the player picks (photo album); false when cancelled. Absent where unsupported. */
+  savePhoto?(png: Uint8Array, suggestedName: string): Promise<boolean>;
 }
 
 /** A rotated backup of the save (desktop: saves/backups/<name>). */

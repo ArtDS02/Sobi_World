@@ -26,6 +26,18 @@ export async function readImportFile(path: string): Promise<string> {
   return text;
 }
 
+/** Atomic write of binary data (a photo): temp file in the target folder, then rename. */
+export async function writeBinaryFile(path: string, bytes: Uint8Array): Promise<void> {
+  const tmp = join(dirname(path), `.${Date.now()}-${process.pid}.photo.tmp`);
+  try {
+    await fsp.writeFile(tmp, bytes);
+    await fsp.rename(tmp, path);
+  } catch (e) {
+    await fsp.rm(tmp, { force: true }).catch(() => undefined);
+    throw e;
+  }
+}
+
 /** Atomic export: temp file in the target folder, then rename, so a failed export never leaves half a file. */
 export async function writeExportFile(path: string, json: string): Promise<void> {
   const tmp = join(dirname(path), `.${Date.now()}-${process.pid}.export.tmp`);

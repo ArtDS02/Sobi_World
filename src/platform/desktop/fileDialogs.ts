@@ -7,6 +7,7 @@ export function createDesktopFileDialogs(bridge: UninBridge['save']): FileDialog
     exportSave: (json, suggestedName) => bridge.exportTo(json, suggestedName),
     importSave: () => bridge.importFrom(),
     openSaveFolder: () => bridge.openFolder(),
+    savePhoto: (png, suggestedName) => bridge.savePhoto(png, suggestedName),
   };
 }
 
