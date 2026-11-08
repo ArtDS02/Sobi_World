@@ -18,6 +18,9 @@ export const dailyTemplateSchema = z.strictObject({
   coins: range,
 });
 
+/** A weekly goal: like a daily one, but a cross-Area target worth coins and gems. */
+export const weeklyTemplateSchema = dailyTemplateSchema.extend({ gems: range });
+
 export const goalsFileSchema = z
   .strictObject({
     daily: z.strictObject({
@@ -26,10 +29,20 @@ export const goalsFileSchema = z
       bonus: z.strictObject({ xp: nonNeg, coins: nonNeg }),
       templates: z.array(dailyTemplateSchema).min(1),
     }),
+    /** D2: a few goals a week that reach across the Areas; new at local Monday, paid in coins, gems and festival tokens. */
+    weekly: z.strictObject({
+      count: posInt,
+      bonus: z.strictObject({ xp: nonNeg, coins: nonNeg, gems: nonNeg, eventTokens: nonNeg }),
+      templates: z.array(weeklyTemplateSchema).min(1),
+    }),
   })
   .superRefine((f, ctx) => {
     const ids = f.daily.templates.map((t) => t.id);
     const dup = ids.find((id, i) => ids.indexOf(id) !== i);
     if (dup) ctx.addIssue({ code: 'custom', message: `duplicate daily template ${dup}` });
     for (const t of f.daily.templates) if (t.min > t.max) ctx.addIssue({ code: 'custom', message: `template ${t.id}: min > max` });
+    const wids = f.weekly.templates.map((t) => t.id);
+    const wdup = wids.find((id, i) => wids.indexOf(id) !== i);
+    if (wdup) ctx.addIssue({ code: 'custom', message: `duplicate weekly template ${wdup}` });
+    for (const t of f.weekly.templates) if (t.min > t.max) ctx.addIssue({ code: 'custom', message: `weekly template ${t.id}: min > max` });
   });

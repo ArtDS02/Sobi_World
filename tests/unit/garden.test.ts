@@ -79,7 +79,7 @@ describe('opening the garden', () => {
     const w = ok(plantCrops(gardenWorld(), { cropId: 'crop_corn', plots: [0, 1] }, ctxAt(T0)));
     const parsed = parseWorldSave(JSON.stringify(w));
     expect(parsed.ok && parsed.save).toEqual(w);
-    expect(WORLD_SAVE_VERSION).toBe(11); // the garden is a slice: it needed no world migration of its own (v11 is the living world)
+    expect(WORLD_SAVE_VERSION).toBe(12); // the garden is a slice: it needed no world migration of its own (v11 = living world, v12 = weekly goals)
   });
 
   it('a corrupt garden slice is recreated and reported, not played as it is', () => {

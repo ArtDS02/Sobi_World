@@ -9,10 +9,11 @@ import type { MerchantEvent } from '../live/merchant';
 import type { TechEvent } from '../tech/tech';
 import type { AchievementEvent } from './achievements';
 import type { DailyEvent } from './daily';
+import type { WeeklyEvent } from './weekly';
 import type { LoginEvent } from './loginReward';
 import type { BoardEvent } from './orders';
 
-export type GoalsEvent = BoardEvent | DailyEvent | AchievementEvent | CodexEvent | LoginEvent | WorldLevelUp | TechEvent | FestivalEvent | MerchantEvent;
+export type GoalsEvent = BoardEvent | DailyEvent | WeeklyEvent | AchievementEvent | CodexEvent | LoginEvent | WorldLevelUp | TechEvent | FestivalEvent | MerchantEvent;
 
 export const GOALS_EVENT_TYPES = [
   'BOARD_ORDER_NEW',
@@ -21,6 +22,9 @@ export const GOALS_EVENT_TYPES = [
   'DAILY_GOAL_REACHED',
   'DAILY_GOAL_CLAIMED',
   'DAILY_BONUS_CLAIMED',
+  'WEEKLY_GOAL_REACHED',
+  'WEEKLY_GOAL_CLAIMED',
+  'WEEKLY_BONUS_CLAIMED',
   'ACHIEVEMENT_REACHED',
   'ACHIEVEMENT_CLAIMED',
   'CODEX_DISCOVERED',
@@ -60,6 +64,14 @@ export function goalsWorldEvents(e: GoalsEvent): WorldEvent[] {
       return coins(e.coins);
     case 'DAILY_CLAIMED':
       return coins(e.gold);
+    case 'WEEKLY_GOAL_CLAIMED':
+      return [...coins(e.coins), { type: 'currency.changed', area: WORLD, currency: 'gems', amount: e.gems }];
+    case 'WEEKLY_BONUS_CLAIMED':
+      return [
+        ...coins(e.coins),
+        { type: 'currency.changed', area: WORLD, currency: 'gems', amount: e.gems },
+        { type: 'currency.changed', area: WORLD, currency: 'eventTokens', amount: e.eventTokens },
+      ];
     case 'TECH_UPGRADED':
       return [
         { type: 'tech.upgraded', area: WORLD, techId: e.techId, level: e.level },

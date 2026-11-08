@@ -1440,3 +1440,7 @@ Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật
 
 ### 2026-11-09 — D5 gợi ý cặp lai (feat/pedigree)
 ✅ Hộp thoại phối giống đánh dấu ★ bạn phối tốt nhất (cơ hội ra giống chưa có trong Codex, độ hiếm) và cảnh báo cùng huyết thống. Cây phả hệ (các đời tổ tiên) đã có sẵn từ GĐ7.
+
+### 2026-11-09 — D2 nhiệm vụ tuần liên khu (feat/weekly-goals)
+✅ 4 nhiệm vụ mỗi tuần trải khắp các khu (thứ Hai đổi mới), thưởng Sobi Coin + Ngọc, thưởng cả tuần thêm Vé Lễ Hội; save lên v12 kèm migration; decision 053. Số liệu là bản đầu, chỉnh trong Admin.
+👉 Chủ dự án cần kiểm tra: mở bảng Mục tiêu, xem mục "Nhiệm vụ tuần"; số thưởng có hợp lý không.
