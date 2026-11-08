@@ -100,3 +100,7 @@ Order: Adventure → Aquarium → Garden → Cloud → Plaza → Breeding → Fa
 - Whether the existing 8 failing tests (assetsCheck, phase11, simulation timing) are pre-existing; compare against a clean
   checkout before step 1 so they are not blamed on this work.
 - Exact failing actions in the animation workshop, if the owner remembers any (otherwise found by step 6.1).
+
+## Status at the end of the first overnight run
+Done: step 1 (all), step 2 (2.1–2.3, 2.6), step 3 (all), step 4 (4.1, 4.4–4.6), step 7.2 + 7.4.
+Not done: 2.4/2.5, 4.2 screenshots, 4.3 operation sweep, steps 5, 6, 7.1, 7.3, 8, 9. Recorded in ADMIN_UPGRADE_LOG.md.
