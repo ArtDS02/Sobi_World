@@ -9,6 +9,8 @@ import contentTexts from '../../content/i18n/en.json';
 import { localizeRaw, type ContentTexts } from '../i18n/contentText';
 import { applyLanguage } from '../i18n/language';
 import { readSettingsText } from '../platform/earlySettings';
+import { installCrashHandlers } from '../ui/crashScreen';
+import type { UninBridge } from '../platform/desktop/bridge';
 import { renderStartupError } from '../ui/startupError';
 
 async function applyChosenLanguage(): Promise<void> {
@@ -17,6 +19,16 @@ async function applyChosenLanguage(): Promise<void> {
   document.documentElement.lang = language;
   if (language === 'en') setContentLocalizer((file, raw) => localizeRaw(file, raw, contentTexts as ContentTexts));
 }
+
+// A2: uncaught errors and rejected promises show a recoverable screen and go to the local error log.
+installCrashHandlers(window, {
+  report: (where, message) => {
+    const bridge = (globalThis as { unin?: UninBridge }).unin;
+    if (bridge) bridge.app.logError(where, message);
+    else console.error(`[${where}] ${message}`);
+  },
+  reload: () => window.location.reload(),
+});
 
 const root = document.querySelector<HTMLDivElement>('#app');
 if (root) {

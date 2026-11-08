@@ -5,6 +5,10 @@ export const partA = {
     title: "Sobi World",
     loading: "Loading...",
     startupError: "The game data is damaged and could not be opened. Please tell the developer.",
+    crashTitle: "The game hit an error",
+    crashBody: "Something unexpected happened. Your saved progress is safe. You can reload the game or keep playing.",
+    crashReload: "Reload",
+    crashKeep: "Keep playing",
   },
 
   nav: {

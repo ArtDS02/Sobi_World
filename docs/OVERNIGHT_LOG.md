@@ -1,17 +1,17 @@
-NEXT: A1 commit, then A2 (global error handling)
+NEXT: A3 (save safety: code vs data errors, slice repair)
 
 # Overnight log (branch `overnight-hardening`)
 
 Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume from NEXT.
 
 ## Baseline (before any overnight change)
-See "Baseline results" below once recorded.
+`npx vitest run --testTimeout=120000`: 2 fail of 1820 — simulation "a 30-day catch-up finishes quickly" (4.0 s > 3 s) and assetsCheck "the shipped assets pass" (80 s). Under parallel load phase11 "balance guard" can also time out at the default 5 s; it passes alone with a long timeout.
 
 ## Checklist
-- [ ] A1 non-finite money / valuation
-- [ ] A2 global error handling (tick, renderer, electron main, error.log)
+- [x] A1 non-finite money / valuation
+- [x] A2 (tick/dispatch try/catch + INTERNAL_ERROR toast once/min, crash overlay, electron render-process-gone/unresponsive/did-fail-load reload ≤3 per 5 min, logs/error.log rotated) global error handling (tick, renderer, electron main, error.log)
 - [ ] A3 safer save (code vs data errors, slice repair)
-- [ ] B1 non-blocking dispatch + persist coalescing
+- [x] B1 (src/core/world/persister.ts coalesces writes; dispatch no longer awaits disk) non-blocking dispatch + persist coalescing
 - [ ] B2 catch-up 30 days perf
 - [ ] B3 settings.json queued writes
 - [ ] B4 fs.watch error handler

@@ -46,7 +46,6 @@ import { realClock } from './runtime';
 import { mountApp, type AppOptions, type MountedApp } from '../areas/farm/ui/app';
 import type { Place } from '../areas/farm/ui/appTypes';
 import { renderManifestError } from '../areas/farm/ui/screens/statusScreen';
-
 export async function start(root: HTMLElement) {
   // §11.4: an invalid manifest is a startup error screen (a development bug, not a player state).
   const assets = await loadAssetRegistry();
@@ -90,6 +89,7 @@ export async function start(root: HTMLElement) {
     storage: platform.storage,
     instanceGuard: platform.instanceGuard,
     backups: platform.backups,
+    reportError: platform.logError,
   });
   // The farm's screens and scene see the world through the farm facade (areas/farm/store.ts).
   const store = farmStore(world);

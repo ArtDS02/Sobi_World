@@ -3,6 +3,10 @@ export const vi = {
     title: "Sobi World",
     loading: "Đang tải...",
     startupError: "Dữ liệu game bị lỗi nên không mở được. Hãy báo nhà phát triển.",
+    crashTitle: "Game gặp lỗi",
+    crashBody: "Có lỗi bất ngờ xảy ra. Tiến trình đã lưu vẫn an toàn. Bạn có thể tải lại game hoặc chơi tiếp.",
+    crashReload: "Tải lại",
+    crashKeep: "Chơi tiếp",
   },
 
   nav: {
@@ -940,6 +944,7 @@ export const vi = {
     LEVEL_TOO_LOW: "Chưa đủ cấp độ.",
     MAX_SLOTS_REACHED: "Đã mở hết chuồng.",
     SAVE_CORRUPT: "File lưu bị lỗi.",
+    INTERNAL_ERROR: "Game gặp lỗi bất ngờ. Tiến trình đã lưu vẫn an toàn; nếu lỗi lặp lại, hãy khởi động lại game.",
     SAVE_TOO_NEW: "File lưu thuộc phiên bản mới hơn. Hãy cập nhật game.",
     TROUGH_FULL: "Máng ăn đã đầy.",
     ORDER_NOT_FOUND: "Không tìm thấy đơn hàng.",

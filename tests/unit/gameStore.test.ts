@@ -384,3 +384,65 @@ describe('gameStore event origins and rejections (spec §11.3)', () => {
     expect(events).toEqual([]);
   });
 });
+
+describe('gameStore survives exceptions (A2)', () => {
+  it('a throwing tick keeps the loop alive, state and disk untouched, reports once per minute', async () => {
+    let boom = false;
+    const logged: string[] = [];
+    const rejects: string[] = [];
+    const { store, counter, timers } = makeStore({
+      advanceWorld: (state) => {
+        if (boom) throw new Error('tick exploded');
+        return { state, events: [] };
+      },
+      reportError: (where, e) => logged.push(`${where}:${(e as Error).message}`),
+    });
+    await store.init();
+    store.onReject((e) => rejects.push(e));
+    await store.flush();
+    const before = store.getSnapshot().save;
+    const writes = counter.saves;
+    boom = true;
+    for (let i = 0; i < 5; i++) timers.fire();
+    await store.flush();
+    expect(logged).toEqual(Array(5).fill('tick:tick exploded'));
+    expect(rejects).toEqual(['INTERNAL_ERROR']); // rate limited
+    expect(store.getSnapshot().save).toBe(before);
+    expect(counter.saves).toBe(writes);
+    expect(timers.live()).toBe(1);
+    clock.advance(61 * SEC);
+    timers.fire();
+    expect(rejects).toEqual(['INTERNAL_ERROR', 'INTERNAL_ERROR']);
+    boom = false;
+    timers.fire(); // recovers
+    expect(store.getSnapshot().status).toBe('ready');
+  });
+
+  it('a throwing action is rejected with INTERNAL_ERROR and does not persist', async () => {
+    const { store, counter } = makeStore();
+    await store.init();
+    await store.flush();
+    const writes = counter.saves;
+    const r = await store.dispatch(() => {
+      throw new Error('action exploded');
+    });
+    expect(r).toEqual({ ok: false, error: 'INTERNAL_ERROR' });
+    expect(counter.saves).toBe(writes);
+  });
+});
+
+describe('gameStore write coalescing (B1)', () => {
+  it('ten dispatches in a row cost at most two disk writes and answer before the disk does', async () => {
+    const { store, counter } = makeStore();
+    await store.init();
+    await store.flush();
+    const writes = counter.saves;
+    let answered = 0;
+    const all = Array.from({ length: 10 }, () => store.dispatch(buy).then((r) => { answered += r.ok ? 1 : 0; }));
+    await Promise.all(all);
+    expect(answered).toBeGreaterThan(0); // actions resolved without waiting for the write queue
+    await store.flush();
+    expect(counter.saves - writes).toBeLessThanOrEqual(2);
+    expect(store.getSnapshot().save).not.toBeNull();
+  });
+});

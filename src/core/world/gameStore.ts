@@ -7,6 +7,8 @@ import { WORLD_SAVE_VERSION, type WorldSave } from '../save/world';
 import { isSaveChangedExternally, type LoadSource } from '../save/port';
 import type { ErrorCode } from '../config/errors';
 import type { ActionContext, ActionResultOf } from '../types';
+import { createErrorGate } from './errorGate';
+import { createPersister } from './persister';
 import { actionContext, type StoreDeps } from './storeDeps';
 import type { BoundAction, CatchupInfo, EventListener, EventOrigin, StoreSnapshot, StoreStatus } from './storeTypes';
 
@@ -26,9 +28,6 @@ export function createWorldStore(deps: StoreDeps) {
   const rejectListeners = new Set<(error: ErrorCode) => void>();
   let interval: unknown = null;
   let lastPersistAt = 0;
-  let persistQueue: Promise<void> = Promise.resolve();
-  let retryStep = 0;
-  let retryScheduled = false;
   let disposed = false;
   let reloading = false; // AM-1: adopting a save another program wrote; nothing is persisted
   let migratedFrom: number | null = null; // the loaded save was migrated: back it up before the first write
@@ -51,46 +50,42 @@ export function createWorldStore(deps: StoreDeps) {
   };
   const ctx = (now?: number): ActionContext => actionContext(deps.clock, deps.rng, now);
   const guard = deps.instanceGuard;
+  const errors = createErrorGate(() => deps.clock.now(), deps.reportError, () => {
+    for (const fn of rejectListeners) fn('INTERNAL_ERROR');
+  });
+  const safely = errors.safely;
   const canWrite = () => snapshot.status === 'ready' && !guard.isReadOnly() && !reloading;
 
-  /** One write; a failure is surfaced as `saveError` and retried, never swallowed (§9.2). */
-  async function write(save: WorldSave): Promise<void> {
-    if (reloading) return; // queued before the reload: stale, the file now holds the newer save
+  /** One write of the current state; false on failure, which is surfaced as `saveError` and retried, never swallowed (§9.2). */
+  async function write(): Promise<boolean> {
+    const save = snapshot.save;
+    if (reloading || !save || !canWrite()) return true; // stale or not allowed: the file holds the newer save / stays untouched
     try {
       // ARCHITECTURE §9: the old file is copied away before a migrated save first replaces it. A
       // failed copy fails the write (retried): the migrated farm is never written without it.
       if (migratedFrom !== null && deps.backups) await deps.backups.backupBeforeMigration(migratedFrom);
       migratedFrom = null;
       await deps.storage.save({ ...save, meta: { ...save.meta, lastSavedAt: deps.clock.now() } });
-      retryStep = 0;
       if (snapshot.saveError) set({ saveError: false });
+      return true;
     } catch (e) {
-      if (isSaveChangedExternally(e)) return void reloadExternal();
+      if (isSaveChangedExternally(e)) return void reloadExternal(), true;
       if (!snapshot.saveError) set({ saveError: true });
-      scheduleRetry();
+      return false;
     }
   }
-
-  /** Backoff 1 s → 5 s → 30 s → every 30 s; a retry writes the latest state through the queue. */
-  function scheduleRetry() {
-    if (retryScheduled || disposed) return;
-    retryScheduled = true;
-    const delays = SAVE.SAVE_RETRY_MS;
-    const delay = delays[Math.min(retryStep, delays.length - 1)]!;
-    retryStep += 1;
-    void deps.sleep(delay).then(() => {
-      retryScheduled = false;
-      if (snapshot.saveError && !disposed) void persist();
-    });
-  }
-
-  /** Serialized writes; never runs for a read-only instance or a too-new save. */
+  const persister = createPersister({
+    attempt: write,
+    sleep: deps.sleep,
+    retryMs: SAVE.SAVE_RETRY_MS,
+    isDead: () => disposed,
+    wantsRetry: () => snapshot.saveError,
+  });
+  /** Coalesced writes; never runs for a read-only instance or a too-new save. */
   function persist(): Promise<void> {
-    const save = snapshot.save;
-    if (!save || !canWrite()) return persistQueue;
+    if (!snapshot.save || !canWrite()) return persister.idle();
     lastPersistAt = deps.clock.now();
-    persistQueue = persistQueue.then(() => write(save));
-    return persistQueue;
+    return persister.persist();
   }
 
   /** The world systems' turn (goals, Codex); a no-op without `deps.settle`. */
@@ -102,11 +97,16 @@ export function createWorldStore(deps: StoreDeps) {
     const now = deps.clock.now();
     const awayMs = Math.max(0, now - deps.lastSimulatedAt(snapshot.save));
     const mode = origin === 'catchup' ? 'offline' : 'online';
-    const world = deps.advanceWorld(snapshot.save, now, deps.rng, ctx(now).dayOffsetMs ?? 0, mode);
+    // A throwing tick is logged, the loop lives on, and nothing half-computed is kept or persisted.
+    const step = safely('tick', () => {
+      const w = deps.advanceWorld(snapshot.save!, now, deps.rng, ctx(now).dayOffsetMs ?? 0, mode);
+      return { world: w, settled: w.rewound === true ? null : settle(snapshot.save!, w.state, w.events, ctx(now)) };
+    });
+    if (!step) return [];
+    const { world, settled } = step;
     const rewound = world.rewound === true;
     if (rewound !== snapshot.clockRewound) set({ clockRewound: rewound });
-    if (rewound) return []; // GAME_BALANCE §1: never simulate backwards, the stamps stay
-    const settled = settle(snapshot.save, world.state, world.events, ctx(now));
+    if (!settled) return []; // GAME_BALANCE §1: never simulate backwards, the stamps stay
     const events = [...world.events, ...settled.events];
     set({ save: settled.state });
     if (events.length > 0 || now - lastPersistAt >= SAVE.AUTOSAVE_MS) void persist();
@@ -143,7 +143,7 @@ export function createWorldStore(deps: StoreDeps) {
     if (reloading || disposed || snapshot.status === 'tooNew' || guard.isReadOnly()) return;
     reloading = true;
     stopLoop();
-    await persistQueue; // queued writes see `reloading` and skip
+    await persister.idle(); // queued writes see `reloading` and skip
     await load().finally(() => (reloading = false));
   }
 
@@ -201,7 +201,7 @@ export function createWorldStore(deps: StoreDeps) {
         return false;
       }
       stopLoop();
-      await persistQueue;
+      await persister.idle();
       try {
         await deps.backups.restore(name);
       } catch {
@@ -222,12 +222,16 @@ export function createWorldStore(deps: StoreDeps) {
     async dispatch(action: BoundAction): Promise<ActionResult> {
       if (!snapshot.save || !canWrite()) return reject({ ok: false, error: 'INVALID_REQUEST' });
       const c = ctx();
-      const result = action(snapshot.save, c);
-      if (!result.ok) return reject(result);
-      const settled = settle(snapshot.save, result.state, result.events, c);
+      const step = safely('dispatch', () => {
+        const result = action(snapshot.save!, c);
+        return { result, settled: result.ok ? settle(snapshot.save!, result.state, result.events, c) : null };
+      });
+      if (!step) return { ok: false, error: 'INTERNAL_ERROR' };
+      const { result, settled } = step;
+      if (!result.ok || !settled) return reject(result as Extract<ActionResult, { ok: false }>);
       const done = { ...result, state: settled.state, events: [...result.events, ...settled.events] };
       set({ save: done.state });
-      await persist();
+      void persist(); // B1: the screen answers at once; the write runs behind, coalesced, failures retried
       emit(done.events, 'action');
       return done;
     },
@@ -266,7 +270,7 @@ export function createWorldStore(deps: StoreDeps) {
     },
 
     /** Flushes pending writes. */
-    flush: () => persistQueue,
+    flush: () => persister.idle(),
 
     /** Writes the current state now and waits for the queue (main's flush before quit, §9.1). */
     persistNow: () => persist(),

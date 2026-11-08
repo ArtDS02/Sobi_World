@@ -50,6 +50,8 @@ export interface UninBridge {
   };
   app: {
     version: string;
+    /** Fire-and-forget line for the local error log (logs/error.log); never throws. */
+    logError(where: string, message: string): void;
     /** Main asks for a flush before the window closes; it waits at most 3 s for the promise. */
     onFlushRequest(flush: () => Promise<void>): void;
   };
@@ -74,5 +76,6 @@ export type IpcChannel =
   | 'unin:settings:load'
   | 'unin:settings:write'
   | 'unin:app:version'
+  | 'unin:log:error'
   | 'unin:app:flushRequest'
   | 'unin:app:flushDone';

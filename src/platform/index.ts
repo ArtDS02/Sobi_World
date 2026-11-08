@@ -1,6 +1,7 @@
 // Platform selection (spec §4.1, §13.1): desktop adapters when window.unin exists, web otherwise
 // (`npm run dev`: the dev save file through the dev server, AM-1; a plain web build: IndexedDB).
 import type { BackupStore, FileDialogs, InstanceGuard, SaveStorage } from '../core/save/port';
+import { errorText } from '../core/world/errorGate';
 import type { SettingsStorage } from '../core/settings/port';
 import type { UninBridge } from './desktop/bridge';
 import { createFileSettings } from './desktop/fileSettings';
@@ -22,6 +23,8 @@ export interface Platform {
   /** Desktop: main asks for a flush before the window closes (§13.1). */
   onFlushRequest(flush: () => Promise<void>): void;
   version: string | null;
+  /** Local error log: desktop writes logs/error.log; the browser build only prints to the console. */
+  logError(where: string, error: unknown): void;
   /** Desktop backups (§9.2); the browser build has none to pick from. */
   backups: BackupStore | null;
 }
@@ -38,6 +41,7 @@ export function createPlatform(parseSave: SaveParser): Platform {
       instanceGuard: desktopInstanceGuard,
       onFlushRequest: (flush) => bridge.app.onFlushRequest(flush),
       version: bridge.app.version,
+      logError: (where, error) => bridge.app.logError(where, errorText(error)),
       backups: {
         list: () => bridge.save.listBackups(),
         restore: (n) => bridge.save.restoreBackup(n),
@@ -59,6 +63,7 @@ export function createPlatform(parseSave: SaveParser): Platform {
     instanceGuard: createWebInstanceGuard(browserChannel(), crypto.randomUUID(), sleep),
     onFlushRequest: () => {},
     version: null,
+    logError: (where, error) => console.error(`[${where}]`, error),
     backups: devFiles ? devBackups : null,
   };
 }

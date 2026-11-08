@@ -58,6 +58,8 @@ export interface StoreDeps {
   backups: BackupStore | null;
   /** OS "reduce motion" preference; seeds settings.reduceMotion of a new game (spec §11.3). */
   prefersReducedMotion: () => boolean;
+  /** Optional error sink (local log file); a throwing sink is ignored. */
+  reportError?: (where: string, error: unknown) => void;
 }
 
 /** Action context at `now` (default: the clock's time), with the local day offset (NH-1). */

@@ -551,6 +551,7 @@ export const partB = {
     PORTAL_INACTIVE: "This portal is not lit yet.",
     CANNOT_FLEE: "There is no running from this battle.",
     IN_BATTLE: "A battle is on.",
+    INTERNAL_ERROR: "The game hit an unexpected error. Your saved progress is safe; restart the game if it keeps happening.",
     INVENTORY_FULL: "The bag is full. Use some items first.",
     FISH_NOT_FOUND: "This fish could not be found.",
     TANK_FULL: "The tank is full. Upgrade the tank or sell some fish.",

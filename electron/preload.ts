@@ -29,6 +29,9 @@ const unin: UninBridge = {
   },
   app: {
     version: ipcRenderer.sendSync(channel('unin:app:version')) as string,
+    logError(where, message) {
+      ipcRenderer.send(channel('unin:log:error'), where, message);
+    },
     onFlushRequest(flush) {
       ipcRenderer.on(channel('unin:app:flushRequest'), () => {
         void flush()

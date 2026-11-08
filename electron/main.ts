@@ -15,11 +15,17 @@ import * as fsp from 'node:fs/promises';
 import { extname, join, normalize, sep } from 'node:path';
 import type { IpcChannel, SaveCandidateSource } from '../src/platform/desktop/bridge';
 import { adoptLegacySaves, DATA_DIR_NAME, devUserDataDir, LEGACY_DATA_DIR_NAME } from './dataDir';
+import { createErrorLog, type ErrorLog } from './errorLog';
+import { createReloadLimiter } from './reloadLimiter';
 import { createSaveFiles, type SaveFiles } from './saveFiles';
 import { createSettingsFile, type SettingsFile } from './settingsFile';
 import { readWindowState, WINDOW_MIN, writeWindowState } from './windowState';
 
 const FLUSH_TIMEOUT_MS = 3000;
+/** A hung renderer is given this long to recover before the window is reloaded. */
+const UNRESPONSIVE_RELOAD_MS = 15_000;
+const RELOAD_MAX = 3;
+const RELOAD_WINDOW_MS = 5 * 60_000;
 const SCHEME = 'app';
 const ORIGIN = `${SCHEME}://game`;
 const DEV_URL = app.isPackaged ? null : process.env.UNIN_DEV_URL || null; // empty = unset
@@ -90,6 +96,7 @@ if (!app.requestSingleInstanceLock()) {
   });
 
   let saves: SaveFiles | null = null;
+  let errorLog: ErrorLog | null = null;
   // A write started by pagehide may still be running: let it finish (≤ 3 s) before exiting.
   app.on('window-all-closed', () => {
     const pending = saves?.idle() ?? Promise.resolve();
@@ -106,13 +113,19 @@ if (!app.requestSingleInstanceLock()) {
         (e: unknown) => console.error('could not copy the Sobi Farm save', e),
       );
     }
+    errorLog = createErrorLog({ dir: join(app.getPath('userData'), 'logs'), now: Date.now });
+    ipcMain.on('unin:log:error' satisfies IpcChannel, (_event, where: unknown, message: unknown) => {
+      void errorLog?.log(String(where).slice(0, 40), String(message));
+    });
+    process.on('uncaughtException', (e) => void errorLog?.log('main.uncaughtException', String(e?.stack ?? e)));
+    process.on('unhandledRejection', (e) => void errorLog?.log('main.unhandledRejection', String((e as Error)?.stack ?? e)));
     saves = createSaveFiles({ dir: join(app.getPath('userData'), 'saves'), now: Date.now });
     registerProtocol();
     lockDownSession();
     registerSaveIpc(saves, () => win);
     registerSettingsIpc(createSettingsFile(join(app.getPath('userData'), 'settings.json')));
     if (app.isPackaged) Menu.setApplicationMenu(null);
-    win = await createWindow();
+    win = await createWindow(errorLog);
     // AM-1: save.json replaced by another program (admin dashboard) → the renderer reloads it.
     const changed: IpcChannel = 'unin:save:changed';
     await saves.watch(() => {
@@ -209,7 +222,7 @@ function registerSettingsIpc(settings: SettingsFile) {
   handle('unin:settings:write', (json: string) => settings.write(json));
 }
 
-async function createWindow(): Promise<BrowserWindow> {
+async function createWindow(errorLog: ErrorLog): Promise<BrowserWindow> {
   const statePath = join(app.getPath('userData'), 'window-state.json');
   const state = await readWindowState(
     statePath,
@@ -266,8 +279,46 @@ async function createWindow(): Promise<BrowserWindow> {
     });
   });
 
+  guardRenderer(win, errorLog);
   await win.loadURL(DEV_URL ?? `${ORIGIN}/index.html`);
   return win;
+}
+
+/**
+ * A2: a crashed, failed or hung renderer is logged and the window reloaded, at most RELOAD_MAX times per
+ * RELOAD_WINDOW_MS. A hung (but alive) renderer is first asked to flush the save.
+ */
+function guardRenderer(win: BrowserWindow, errorLog: ErrorLog) {
+  const limiter = createReloadLimiter(RELOAD_MAX, RELOAD_WINDOW_MS, Date.now);
+  const wc = win.webContents;
+  const reload = (why: string) => {
+    if (wc.isDestroyed()) return;
+    if (!limiter.allow()) {
+      void errorLog.log('window', `${why}: reload limit reached, leaving the window as it is`);
+      return;
+    }
+    void errorLog.log('window', `${why}: reloading`);
+    wc.reload();
+  };
+  wc.on('render-process-gone', (_e, details) => reload(`render-process-gone (${details.reason})`));
+  wc.on('did-fail-load', (_e, code, description, _url, isMainFrame) => {
+    // -3 = aborted (a navigation replaced the load): not a failure.
+    if (isMainFrame && code !== -3) reload(`did-fail-load ${code} ${description}`);
+  });
+  let hang: ReturnType<typeof setTimeout> | null = null;
+  win.on('unresponsive', () => {
+    void errorLog.log('window', 'unresponsive');
+    void requestFlush(win); // the save is written first if the renderer still answers
+    hang = setTimeout(() => reload('still unresponsive'), UNRESPONSIVE_RELOAD_MS);
+  });
+  win.on('responsive', () => {
+    if (hang) clearTimeout(hang);
+    hang = null;
+    void errorLog.log('window', 'responsive again');
+  });
+  win.on('closed', () => {
+    if (hang) clearTimeout(hang);
+  });
 }
 
 function requestFlush(win: BrowserWindow): Promise<void> {
