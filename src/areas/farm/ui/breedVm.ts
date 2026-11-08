@@ -2,6 +2,7 @@
 // pregnancy length of each pairing. Availability comes from dry-running the real breedPigs.
 // Hidden discovery (PS-2): a species not yet in the collection shows as "???" + its rarity, and
 // the pair's compatibility shows as hearts; the engine (breedingOdds) decides, the UI only shows.
+import { bestPartner, scorePair } from '../logic/pairSuggest';
 import { breedPigs } from '../logic/actions/breedPigs';
 import { BALANCE } from '../logic/config/balance';
 import { BREEDING_RULES } from '../logic/config/breedingRules';
@@ -51,6 +52,8 @@ export interface PartnerVm {
   compat: string;
   /** Shown when this exact species pair was bred before (a known recipe). */
   known: string | null;
+  /** D5: the recommended partner (star line), or a warning about shared ancestors; null otherwise. */
+  suggest: string | null;
   duration: string;
   confirm: ActionVm;
 }
@@ -154,12 +157,22 @@ export function breedingVm(save: FarmGame, pig: Pig, now: number): BreedingVm {
       chances: chanceLines(outcomes, seen),
       compat: hearts(compat),
       known: bredPairs.has([pig.breed, other.breed].sort().join('+')) ? vi.breed.known : null,
+      suggest: null,
       duration: t(vi.breed.duration, {
         time: formatDuration((BREEDS[mother.breed].pregnancySec ?? 0) * 1000),
       }),
       confirm: { label: vi.breed.confirm, reason: null, run },
     });
   }
+  // D5: star the partner with the best expected litter (new species first, then rarity), warn about shared ancestors.
+  const discovered = new Set<string>(save.collection.discoveredBreeds);
+  const mates = partners.map((p) => save.pigs.find((x) => x.id === p.pigId)!);
+  const best = bestPartner(pig, mates, discovered);
+  partners.forEach((p, i) => {
+    const s = scorePair(pig, mates[i]!, discovered);
+    if (i === best) p.suggest = s.newChance > 0 ? t(vi.breed.suggestNew, { n: Math.round(s.newChance * 100) }) : vi.breed.suggestRare;
+    else if (s.sharedAncestors > 0) p.suggest = t(vi.breed.suggestInbred, { n: s.sharedAncestors });
+  });
   const reason = selfReason(pig) ?? (partners.length > 0 ? null : sharedReason(errors));
   return {
     self: card(pig),

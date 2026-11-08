@@ -165,6 +165,7 @@ export function openBreedDialog(
         el('span', { class: 'c-breed__pick-name', text: p.card.name }),
         el('span', { class: 'c-breed__pick-breed', text: p.card.breedName }),
         el('span', { class: 'c-breed__pick-hearts', text: '♥'.repeat(p.hearts) }),
+        p.suggest ? el('span', { class: 'c-breed__pick-suggest', text: p.suggest }) : null,
       ),
     ),
   );
