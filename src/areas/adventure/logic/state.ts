@@ -11,7 +11,7 @@ import { CLASS_ID_VALUES } from '../../../../content/schemas/adventure/classes';
 import { LINEAGE_ID_VALUES } from '../../../../content/schemas/adventure/lineages';
 import { FOE_CLASSES } from '../../../../content/schemas/adventure/maps';
 
-export const ADVENTURE_STATE_VERSION = 7;
+export const ADVENTURE_STATE_VERSION = 8;
 
 const time = z.number().finite();
 const nonNeg = z.number().finite().min(0);
@@ -237,10 +237,13 @@ export const adventureStateSchema = z.strictObject({
   formations: z.array(formationSchema),
   /** Who leads the party on the map. */
   leader: z.enum(['so', 'bi']),
-  /** Area tips already shown (decision 039). */
-  tipsSeen: z.array(z.string()),
+  tipsSeen: z.array(z.string()), // area tips already shown (decision 039)
   /** The Rift: best floor ever, the day (game days since epoch) of `dayBest`, the Nightmare bosses beaten. */
-  rift: z.strictObject({ best: z.number().int().min(0), day: z.number().int(), dayBest: z.number().int().min(0), nightmares: z.array(z.string()) }),
+  rift: z.strictObject({
+    best: z.number().int().min(0), day: z.number().int(), dayBest: z.number().int().min(0), nightmares: z.array(z.string()),
+    /** D4: local scoreboard, one row per finished trip, newest first (RIFT_BOARD_MAX). */
+    board: z.array(z.strictObject({ day: z.number().int(), floor: z.number().int().min(0), at: z.number().finite(), result: z.enum(['win', 'lose', 'retreat']) })),
+  }),
   battlesWon: z.number().int().min(0),
   runsCleared: z.number().int().min(0),
   runsLost: z.number().int().min(0),
@@ -288,7 +291,7 @@ export const initialAdventure = (now: number): AdventureState => ({
   formations: [],
   leader: 'so',
   tipsSeen: [],
-  rift: { best: 0, day: -1, dayBest: 0, nightmares: [] },
+  rift: { best: 0, day: -1, dayBest: 0, nightmares: [], board: [] },
   battlesWon: 0,
   runsCleared: 0,
   runsLost: 0,

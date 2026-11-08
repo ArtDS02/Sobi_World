@@ -83,6 +83,12 @@ export function migrateAdventure6to7(slice: Raw): Raw {
   return { ...slice, version: 7, litPuzzles: [], explored: {} };
 }
 
+/** v7 → v8 (D4): the Rift's local scoreboard starts empty. */
+export function migrateAdventure7to8(slice: Raw): Raw {
+  const rift = (slice.rift ?? {}) as Raw;
+  return { ...slice, version: 8, rift: { ...rift, board: [] } };
+}
+
 // The guardians and bosses of v3 (decision 045's other classes did not exist then and stay out).
 const guardiansOf = (mapId: string): string[] => (MAPS[mapId]?.groups ?? []).filter((g) => g.kind === 'elite' || g.kind === 'boss').map((g) => `${mapId}/${g.id}`);
 
@@ -93,4 +99,5 @@ export const ADVENTURE_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
   4: migrateAdventure4to5,
   5: migrateAdventure5to6,
   6: migrateAdventure6to7,
+  7: migrateAdventure7to8,
 };

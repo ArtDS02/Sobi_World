@@ -15,6 +15,7 @@ import { pickQuip, titlesOf, type QuipTrigger } from '../bonds';
 import { addCount, pickGroup } from '../encounter';
 import type { AdventureEvent } from '../events';
 import { walkableOf } from '../maps';
+import { RIFT_BOARD_MAX, riftDay } from '../rift';
 import type { AdventureState, BattleReport, Fighter, Run } from '../state';
 import { expShare } from '../fighters';
 import { isGuardian } from '../foes';
@@ -212,6 +213,11 @@ export function finish(st: Step, result: 'win' | 'lose' | 'retreat') {
     const until = st.ctx.now + AB.run.exhaustHours * HOUR_MS;
     for (const m of run.team) setFighter(st, m.key, { exhaustedUntil: until });
     st.events.push({ type: 'ADVENTURE_EXHAUSTED', keys: run.team.map((m) => m.key) });
+  }
+  if (run.rift) {
+    // D4: the trip goes on the local scoreboard (its floors cleared, the day it was played).
+    const row = { day: riftDay(st.ctx.now, st.ctx.dayOffsetMs), floor: run.rift.floor, at: st.ctx.now, result };
+    st.a = { ...st.a, rift: { ...st.a.rift, board: [row, ...st.a.rift.board].slice(0, RIFT_BOARD_MAX) } };
   }
   st.events.push({ type: 'ADVENTURE_RUN_ENDED', zoneId: run.zoneId, result, ...(run.rift ? { rift: true } : {}) });
 }

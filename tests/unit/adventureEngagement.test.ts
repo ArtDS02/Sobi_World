@@ -7,7 +7,8 @@ import { describe, expect, it } from 'vitest';
 import { battleAct, engage, interact, returnToCamp, riftNext, seeTip, startRift, startRun } from '../../src/areas/adventure/logic/actions/run';
 import { activeSynergies, hasTitle, pickQuip, quipLine, titleOf, titlesOf, withSynergies } from '../../src/areas/adventure/logic/bonds';
 import { AB, AFFIXES, ENGAGEMENT, MAPS, RIFT, TITLES, ZONES } from '../../src/areas/adventure/logic/config/content';
-import { floorReward, floorScale, nightmareAt, riftDay, riftEnemies, ruleOfDay } from '../../src/areas/adventure/logic/rift';
+import { floorReward, floorScale, nightmareAt, riftDay, riftDaySeed, riftEnemies, RIFT_BOARD_MAX, ruleOfDay } from '../../src/areas/adventure/logic/rift';
+import { boardLines } from '../../src/areas/adventure/ui/riftVm';
 import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
 import { ADVENTURE_MIGRATIONS } from '../../src/areas/adventure/logic/migrations';
 import { adventureStateSchema, newFeats, type RunMember } from '../../src/areas/adventure/logic/state';
@@ -237,6 +238,33 @@ describe('the Umbraflux Rift (decision 039 §3)', () => {
     const home = adventureOf(ok(returnToCamp(w, ctxAt(T0)))).run!;
     expect(home.result).toBe('win');
   });
+  it('D4: every trip of a game day shares one seed (same floors); another day has another', () => {
+    const seedOn = (now: number) => adventureOf(ok(startRift(opened(), { keys, roster }, ctxAt(now)))).run!.seed;
+    expect(seedOn(T0)).toBe(riftDaySeed(riftDay(T0)));
+    expect(seedOn(T0 + 3_600_000)).toBe(seedOn(T0)); // same day, an hour later
+    expect(seedOn(T0 + 86_400_000)).not.toBe(seedOn(T0));
+    expect(riftEnemies(riftDaySeed(5), 3, ruleOfDay(5))).toEqual(riftEnemies(riftDaySeed(5), 3, ruleOfDay(5)));
+  });
+  it('D4: a finished trip goes on the local scoreboard, newest first, capped', () => {
+    let w = ok(startRift(opened(), { keys, roster }, ctxAt(T0)));
+    w = fight(ok(riftNext(w, ctxAt(T0))));
+    w = ok(returnToCamp(w, ctxAt(T0 + 5)));
+    expect(adventureOf(w).rift.board).toEqual([{ day: riftDay(T0), floor: 1, at: T0 + 5, result: 'win' }]);
+    const a = adventureOf(opened());
+    const full = withAdventure(opened(), { ...a, rift: { ...a.rift, board: Array.from({ length: RIFT_BOARD_MAX }, (_, i) => ({ day: 1, floor: i, at: i, result: 'win' as const })) } });
+    let again = ok(startRift(full, { keys, roster }, ctxAt(T0 + 10)));
+    again = ok(returnToCamp(again, ctxAt(T0 + 11)));
+    const board = adventureOf(again).rift.board;
+    expect(board).toHaveLength(RIFT_BOARD_MAX);
+    expect(board[0]).toMatchObject({ floor: 0, at: T0 + 11 });
+  });
+  it('D4: the scoreboard lines rank the best floor first, the newest on a tie', () => {
+    const lines = boardLines([{ day: 1, floor: 3, at: 10, result: 'win' }, { day: 1, floor: 9, at: 5, result: 'lose' }, { day: 2, floor: 3, at: 20, result: 'win' }]);
+    expect(lines).toHaveLength(3);
+    expect(lines[0]).toContain('9');
+    expect(lines[1]).toContain('3');
+    expect(boardLines([], 5)).toEqual([]);
+  });
   it('a lost floor ends the trip like a lost trip', () => {
     let w = ok(startRift(opened(1), { keys, roster }, ctxAt(T0)));
     const a0 = adventureOf(w);
@@ -251,7 +279,7 @@ describe('the save (v4, adventure-big-update-1)', () => {
     const fixture = JSON.parse(readFileSync(join(import.meta.dirname, '..', 'fixtures', 'adventure-slice-v2-real.json'), 'utf8')) as { slice: Raw };
     const v3 = ADVENTURE_MIGRATIONS[2]!(fixture.slice);
     const v4 = adventureStateSchema.parse(migrateOn(3, v3));
-    expect(v4.version).toBe(7);
+    expect(v4.version).toBe(8); // v4 → … → v8 (v8: the Rift's local scoreboard, D4)
     expect(v4.openedExits).toEqual([]);
     expect(v4.foundSecrets).toEqual([]);
     const lit = (v3.activePortals ?? []) as string[];
@@ -272,7 +300,7 @@ describe('the save (v3)', () => {
     const before = (fixture.slice.fighters as Record<string, Raw>)[key]!;
     expect(a.fighters[key]).toMatchObject({ level: before.level, sp: before.sp, feats: newFeats() });
     expect(a.tipsSeen).toEqual([]);
-    expect(a.rift).toEqual({ best: 0, day: -1, dayBest: 0, nightmares: [] });
+    expect(a.rift).toEqual({ best: 0, day: -1, dayBest: 0, nightmares: [], board: [] });
   });
   it('a v2 trip on its way plays on as a zone trip', () => {
     const w = start(strong(adventureWorld()));

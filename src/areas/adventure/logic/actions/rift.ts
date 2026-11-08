@@ -8,7 +8,7 @@ import { startBattle } from '../../../../systems/combat';
 import type { BattleState } from '../../../../systems/combat/types';
 import { AB, COMBAT_CONTEXT, LOOT_TABLES, RIFT, RIFT_RULES, ZONES } from '../config/content';
 import { addCount, playEnemies, randInt, rollTable } from '../encounter';
-import { floorReward, nightmareAt, riftAlly, riftDay, riftEnemies, riftOpen, ruleOfDay } from '../rift';
+import { floorReward, nightmareAt, riftAlly, riftDay, riftDaySeed, riftEnemies, riftOpen, ruleOfDay } from '../rift';
 import { credit, put, runAdventure, type AdventureResult } from './kit';
 import { chargeParty, type PartyArgs } from './start';
 import { carryOver, cheer, commit, finish, freshRun, giveExp, levelMarks, lootSince, makeReport, recordFeats, stepOf, updateFeats, type Step } from './trip';
@@ -27,7 +27,8 @@ export function startRift(world: WorldSave, args: PartyArgs, ctx: ActionContext)
       mapId: zone.maps.at(-1)!,
       x: 0,
       y: 0,
-      seed: Math.floor(ctx.rng.next() * 2 ** 31),
+      // D4: every trip of a game day faces the same floors (the seed is the day's), so scores of one day compare like with like.
+      seed: riftDaySeed(riftDay(ctx.now, ctx.dayOffsetMs)),
       team: party.team,
       prep: party.prep,
       startedAt: ctx.now,

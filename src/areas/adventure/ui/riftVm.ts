@@ -2,7 +2,7 @@
 // between two floors, the floors cleared, the next one (a Nightmare waiting on it), the team's bars and the way out. Pure.
 import type { RosterEntry } from '../../../core/area-registry/registry';
 import type { WorldSave } from '../../../core/save/world';
-import { formatInt, t } from '../../../i18n/format';
+import { formatDateTime, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { AB, ENEMIES, ENEMY_LIST, ENEMY_ZONE, RIFT, RIFT_RULES, SKILLS, ZONES } from '../logic/config/content';
 import { startRift } from '../logic/actions/rift';
@@ -49,6 +49,14 @@ export function riftReason(world: WorldSave, roster: readonly RosterEntry[], key
   return errorText(probe(world, (w, c) => startRift(w, { keys, roster, prep }, c), now));
 }
 
+/** The scoreboard as lines: "1. Tầng 12 · hôm nay", best floor first; the newest trip wins a tie. */
+export function boardLines(board: readonly { day: number; floor: number; at: number; result: string }[], limit = 5): string[] {
+  return [...board]
+    .sort((x, y) => y.floor - x.floor || y.at - x.at)
+    .slice(0, limit)
+    .map((row, i) => t(vi.adventure.engage.rift.boardRow, { n: i + 1, floor: row.floor, date: formatDateTime(row.at) }));
+}
+
 export interface RiftVm {
   title: string;
   cleared: string;
@@ -56,6 +64,8 @@ export interface RiftVm {
   next: { label: string; nightmare: string | null; reason: string | null };
   hint: string;
   record: string;
+  /** D4: the local scoreboard of finished trips, best floor first (newest first among equals). */
+  board: string[];
   team: { key: string; name: string; art: string; hpText: string; hpPercent: number; mpPercent: number; ragePercent: number; down: boolean }[];
 }
 
@@ -77,6 +87,7 @@ export function riftVm(world: WorldSave, run: Run): RiftVm | null {
     },
     hint: t(vi.adventure.engage.rift.hint, { pct: pct(RIFT.restPct), every: RIFT.chestEvery }),
     record: t(vi.adventure.engage.rift.best, { floor: a.rift.best }),
+    board: boardLines(a.rift.board),
     team: run.team.map((m) => ({
       key: m.key,
       name: m.name,

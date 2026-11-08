@@ -130,6 +130,7 @@ export function renderRift(ctx: ViewCtx): HTMLElement | null {
       actionButton({ label: vi.adventure.engage.rift.leave, reason: null }, () => ctx.dispatch((w, c) => returnToCamp(w, c)), 'c-button--ghost'),
     ),
     el('small', { class: 'adventure-ui__note', text: `${v.record} · ${v.hint}` }),
+    v.board.length > 0 ? el('div', { class: 'adventure-rift__board' }, el('b', { text: vi.adventure.engage.rift.boardTitle }), el('ol', {}, ...v.board.map((line) => el('li', { text: line })))) : null,
   );
 }
 
