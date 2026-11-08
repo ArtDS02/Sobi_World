@@ -1,6 +1,7 @@
 // Keyboard controls of the world (spec §4): which controls are held, and a callback when one is pressed.
 // Keys come from the player's bindings (core/settings), read at the moment of each key event, so a
 // rebinding applies at once. Typing in a field and OS shortcuts (Ctrl/Alt/Meta) never count.
+import { browserPads, createGamepadInput } from './gamepadInput';
 import { controlOf, pressedControls, type Control, type KeyBindings } from '../../core/settings/keys';
 
 export interface ControlInput {
@@ -54,6 +55,8 @@ export function createControlInput(target: KeyTarget, keys: () => KeyBindings): 
   target.addEventListener('keydown', onKeyDown);
   target.addEventListener('keyup', onKeyUp);
   target.defaultView?.addEventListener('blur', releaseAll);
+  const padSource = browserPads();
+  const pad = padSource && 'dispatchEvent' in target ? createGamepadInput(target as EventTarget, keys, padSource) : null; // D6
 
   return {
     held: () => pressedControls(keys(), down),
@@ -78,6 +81,7 @@ export function createControlInput(target: KeyTarget, keys: () => KeyBindings): 
       target.removeEventListener('keydown', onKeyDown);
       target.removeEventListener('keyup', onKeyUp);
       target.defaultView?.removeEventListener('blur', releaseAll);
+      pad?.dispose();
       presses.clear();
     },
   };

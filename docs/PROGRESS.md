@@ -1433,3 +1433,7 @@ Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật
 ✅ Cài đặt có nút "Kiểm tra file lưu" (đọc lại như lúc mở game, báo từng khu, không sửa/ghi) và cảnh báo khi bản sao lưu mới nhất quá 7 ngày; màn recovery đã có chọn backup từ trước.
 🧪 Đã kiểm tra: typecheck, lint, guard; 1877 test xanh (trừ assetsCheck chậm sẵn).
 👉 Chủ dự án cần kiểm tra: Cài đặt → Kiểm tra file lưu trên bản desktop.
+
+### 2026-11-09 — D6 tay cầm cơ bản (feat/gamepad)
+✅ Tay cầm: d-pad/cần trái để đi, A tương tác, X Codex, Y túi, Start menu; đi qua đúng phím người chơi đã gán. Cỡ chữ và chế độ màu đã có từ GĐ13.
+⚠️ Chưa thử với tay cầm thật, chỉ test bằng nguồn giả.
