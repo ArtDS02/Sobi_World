@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 // Admin scroll check (plan step 2.6): on every page, scroll to the middle, click every tab / chip / summary / select option,
 // and fail when the page scroll moves by more than TOLERANCE px. Only safe controls are clicked (never save, delete,
 // publish or apply), so a run changes nothing on disk.
