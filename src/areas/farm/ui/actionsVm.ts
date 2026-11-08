@@ -8,6 +8,7 @@ import { cleanManure } from '../logic/actions/cleanManure';
 import { upgradeTrough } from '../logic/actions/upgradeTrough';
 import { nextTroughLevel, troughLevel } from '../logic/troughLevel';
 import { cleanAll, cleanPig } from '../logic/actions/cleanPig';
+import { feedAll } from '../logic/actions/feedAll';
 import { feedPig } from '../logic/actions/feedPig';
 import { petPig } from '../logic/actions/petPig';
 import { pigFavorite } from '../logic/bond';
@@ -104,6 +105,7 @@ export function pigActions(save: FarmGame, pigId: string, now: number) {
 /** Farm toolbar: bathe all, rake the pen. Buying moved to the shop (R03). */
 export function farmActions(save: FarmGame, now: number) {
   return {
+    feedAll: vm(save, now, vi.action.feedAll, (s, c) => feedAll(s, c), vi.disabled.noFood),
     cleanAll: vm(save, now, vi.action.cleanAll, (s, c) => cleanAll(s, c)),
     cleanManure: vm(save, now, vi.action.cleanManure, (s, c) => cleanManure(s, c)),
   };
