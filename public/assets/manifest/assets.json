@@ -1063,13 +1063,13 @@
       "id": "fx_pow_star",
       "status": "production",
       "asset": "fx/battle/fx_pow_star.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_boom",
       "status": "production",
       "asset": "fx/battle/fx_boom.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_slash_arc",
@@ -1081,19 +1081,19 @@
       "id": "fx_claw",
       "status": "production",
       "asset": "fx/battle/fx_claw.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_poof",
       "status": "production",
       "asset": "fx/battle/fx_poof.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_ink_splat",
       "status": "production",
       "asset": "fx/battle/fx_ink_splat.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_splash",
@@ -1117,85 +1117,85 @@
       "id": "fx_ice_encase",
       "status": "production",
       "asset": "fx/battle/fx_ice_encase.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_ice_shatter",
       "status": "production",
       "asset": "fx/battle/fx_ice_shatter.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_bloom",
       "status": "production",
       "asset": "fx/battle/fx_bloom.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_vine_grab",
       "status": "production",
       "asset": "fx/battle/fx_vine_grab.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_rock_spike",
       "status": "production",
       "asset": "fx/battle/fx_rock_spike.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_lava_pop",
       "status": "production",
       "asset": "fx/battle/fx_lava_pop.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_bolt_strike",
       "status": "production",
       "asset": "fx/battle/fx_bolt_strike.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_light_pillar",
       "status": "production",
       "asset": "fx/battle/fx_light_pillar.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_void_portal",
       "status": "production",
       "asset": "fx/battle/fx_void_portal.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_wind_swirl",
       "status": "production",
       "asset": "fx/battle/fx_wind_swirl.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_rune_lock",
       "status": "production",
       "asset": "fx/battle/fx_rune_lock.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_bite",
       "status": "production",
       "asset": "fx/battle/fx_bite.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_shield_dome",
       "status": "production",
       "asset": "fx/battle/fx_shield_dome.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fx_ground_crack",
       "status": "production",
       "asset": "fx/battle/fx_ground_crack.png",
-      "frames": { "width": 256, "height": 256, "count": 4, "fps": 12 }
+      "frames": { "width": 256, "height": 256, "count": 8, "fps": 24 }
     },
     {
       "id": "fxs_leaf",

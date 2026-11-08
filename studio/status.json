@@ -1,12 +1,156 @@
 {
   "version": 1,
   "recipes": {
+    "fx_bite": {
+      "hash": "04023fbfa2cdea84",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_bite.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_bloom": {
+      "hash": "a03f936d3bb70f78",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_bloom.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_bolt_strike": {
+      "hash": "37d89f2cadb836c1",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_bolt_strike.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_boom": {
+      "hash": "fdcd441c3c189901",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_boom.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_claw": {
+      "hash": "e8244c45892fc01b",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_claw.png"
+      ],
+      "imported": "2026-11-08"
+    },
     "fx_flame_burst": {
       "hash": "c7788ff848b50130",
       "area": "fx",
       "kind": "fx_battle_anim",
       "outputs": [
         "fx/battle/fx_flame_burst.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_ground_crack": {
+      "hash": "106cf7ebbe75a994",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_ground_crack.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_ice_encase": {
+      "hash": "976da288a5a2c7de",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_ice_encase.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_ice_shatter": {
+      "hash": "c41ae484a9c85434",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_ice_shatter.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_ink_splat": {
+      "hash": "1d2090ecc2dba904",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_ink_splat.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_lava_pop": {
+      "hash": "6af65b30419f31f5",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_lava_pop.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_light_pillar": {
+      "hash": "31a292f63b2d0742",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_light_pillar.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_poof": {
+      "hash": "9333e13af67afe3c",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_poof.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_pow_star": {
+      "hash": "b7864e1016cec91f",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_pow_star.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_rock_spike": {
+      "hash": "b984f4f7b9fa2842",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_rock_spike.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_rune_lock": {
+      "hash": "4bb005f0d05fadf7",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_rune_lock.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_shield_dome": {
+      "hash": "db596ac97fdeef0a",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_shield_dome.png"
       ],
       "imported": "2026-11-08"
     },
@@ -25,6 +169,33 @@
       "kind": "fx_battle_anim",
       "outputs": [
         "fx/battle/fx_splash.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_vine_grab": {
+      "hash": "4b6c6e7715db2b5c",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_vine_grab.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_void_portal": {
+      "hash": "0946dbbc2f9f2a9e",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_void_portal.png"
+      ],
+      "imported": "2026-11-08"
+    },
+    "fx_wind_swirl": {
+      "hash": "afce7a9697a8505f",
+      "area": "fx",
+      "kind": "fx_battle_anim",
+      "outputs": [
+        "fx/battle/fx_wind_swirl.png"
       ],
       "imported": "2026-11-08"
     }

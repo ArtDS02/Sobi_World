@@ -11,7 +11,7 @@ import { playCutin } from './fxCutin';
 import { ghostImages, type Ghost } from './fxGhosts';
 import { playProp } from './fxProps';
 import { playRibbon } from './fxRibbon';
-import { stripFrameMs } from './stripTiming';
+import { stripFrameMs, stripRange, stripStill } from './stripTiming';
 import type { FxAnchor, Timed } from './fxPlayer';
 import type { ScreenFx } from './screenFx';
 import { SHADOW_KEY, VIGNETTE_KEY, decalKey, shapeKey } from './fxTextures';
@@ -218,8 +218,10 @@ export class ActPlayer {
       return;
     }
     const frames = this.scene.textures.get(act.img).frameTotal - 1;
-    const [f0, f1] = act.frames ? [Math.min(act.frames[0], frames - 1), Math.min(act.frames[1], frames - 1)] : [0, Math.max(0, frames - 1)];
-    const playMs = act.dur ?? (f1 - f0 + 1) * stripFrameMs(this.scene.anims.get(act.img)?.frameRate);
+    const fps = this.scene.anims.get(act.img)?.frameRate;
+    const range = act.frames ? stripRange(act.frames[0], act.frames[1], fps) : null;
+    const [f0, f1] = range ? [Math.min(range[0], frames - 1), Math.min(range[1], frames - 1)] : [0, Math.max(0, frames - 1)];
+    const playMs = act.dur ?? (f1 - f0 + 1) * stripFrameMs(fps);
     const s = this.scene.add.sprite(p.x, y, act.img, f0).setDepth(depth).setAlpha(alpha).setOrigin(0.5, act.stand ? 1 : 0.5);
     s.setDisplaySize(width, width * (s.height / Math.max(1, s.width)));
     if (act.tint !== undefined) s.setTint(act.tint as number);
@@ -241,7 +243,7 @@ export class ActPlayer {
     const size = (a?.width ?? this.scene.scale.width * 0.3) * (act.size ?? 1.4);
     const fromStrip = act.img && this.scene.textures.exists(act.img);
     const img = fromStrip
-      ? this.scene.add.image(p.x, p.y, act.img!, Math.min(act.frame ?? 2, this.scene.textures.get(act.img!).frameTotal - 2))
+      ? this.scene.add.image(p.x, p.y, act.img!, Math.min(stripStill(act.frame ?? 2, this.scene.anims.get(act.img!)?.frameRate), this.scene.textures.get(act.img!).frameTotal - 2))
       : this.scene.add.image(p.x, p.y, decalKey(act.kind ?? 'puddle'));
     img.setDepth(GROUND_DEPTH);
     if (act.color !== undefined) img.setTint(act.color as number);

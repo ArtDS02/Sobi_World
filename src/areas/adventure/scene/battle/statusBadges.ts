@@ -10,6 +10,7 @@ import type { ScriptCue } from '../../ui/battleScript';
 import { AIR_DEPTH } from './fxBursts';
 import { shapeKey } from './fxTextures';
 import type { FxAnchor } from './fxPlayer';
+import { stripStill } from './stripTiming';
 
 const SHOWN = 3;
 const TURN_MS = 1600;
@@ -133,7 +134,7 @@ export class StatusBadges {
       if (cover && a) {
         this.want(cover.img);
         if (this.scene.textures.exists(cover.img)) {
-          const frame = Math.min(cover.frame, this.scene.textures.get(cover.img).frameTotal - 2);
+          const frame = Math.min(stripStill(cover.frame, this.scene.anims.get(cover.img)?.frameRate), this.scene.textures.get(cover.img).frameTotal - 2);
           h.cover ??= this.scene.add.image(0, 0, cover.img, frame);
           h.cover.setTexture(cover.img, frame).setVisible(true).setDepth(1000 + a.feet.y + 0.5).setAlpha(cover.alpha).setPosition(a.chest.x, a.feet.y - a.height * 0.48).setDisplaySize(a.width * 1.15, a.height * 1.1);
         }

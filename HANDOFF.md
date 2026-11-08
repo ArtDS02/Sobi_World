@@ -1,4 +1,4 @@
-# HANDOFF — Sobi Studio (decision 051): vẽ hình KHÔNG ĐẠT; VFX bằng chuyển động ĐẠT cổng thử (2026-11-08)
+# HANDOFF — Sobi Studio (decision 051): vẽ hình KHÔNG ĐẠT; VFX trận bằng chuyển động: 22 / 23 sheet xong (2026-11-08)
 
 Nhánh `phase-14-unity-studio`. Trạng thái chi tiết: `docs/studio/STATUS.md` (đọc trước). Cách dùng công cụ:
 `docs/studio/RECIPE_GUIDE.md`. Nhật ký: `docs/PROGRESS.md` mục 2026-11-07 đầu tiên.
@@ -16,9 +16,11 @@ Nhánh `phase-14-unity-studio`. Trạng thái chi tiết: `docs/studio/STATUS.md
   nhịp `stripTiming.ts`), 3 hiệu ứng `fx_flame_burst`, `fx_splash`, `fx_slash_arc` đạt cổng và **đã nhập vào game**.
   Cách làm: `docs/studio/RECIPE_GUIDE.md` mục "Diễn hoạt tranh có sẵn".
 
+- 19 sheet còn lại sinh bằng `scripts/studio/fxMotion.ts`; trận quy đổi chỉ số khung (`stripTiming.ts`). `fx_wave_rise` giữ nguyên.
+
 ## 2. Session sau làm gì
-- Nếu chủ dự án đồng ý: làm 20 sheet trận còn lại theo danh sách cuối `docs/studio/STATUS.md` (kiểm `cover.frame`,
-  `frames: [a, b]`, `decal.frame` trước khi lên 8 khung). Unity cần Unity Hub đang chạy (tự mở được, xem PROGRESS).
+- Chờ chủ dự án xem 22 hiệu ứng; việc tiếp theo có thể là chỉnh tay hiệu ứng còn đơn điệu hoặc VFX ngoài trận (mục cuối
+  `docs/studio/STATUS.md`). Unity cần Unity Hub đang chạy (tự mở được, xem PROGRESS 2026-11-08).
 - **Không làm U2–U10 và không làm thêm VFX Studio** khi chủ dự án chưa trả lời đề nghị ở cuối `docs/studio/STATUS.md`.
 - Phương án hẹp VFX đã thử (nét cọ `stroke`, xếp lớp 2D; recipe `studio/Recipes/fx/`). Nếu sau này vẫn thử lại: giữ số khung sheet cũ (`battle_fx.json` gọi khung theo chỉ số, mặc định 85 ms/khung).
 

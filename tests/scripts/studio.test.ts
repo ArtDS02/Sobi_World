@@ -246,3 +246,22 @@ describe('studio manifest edits', () => {
     expect(out).toContain('    {\n      "id": "fx_a2",');
   });
 });
+
+describe('fx motion recipes (scripts/studio/fxMotion.ts)', () => {
+  it('odd frames hold drawing k plainly, even frames bring it in over the previous one', async () => {
+    const { MOTIONS, motionRecipe } = await import('../../scripts/studio/fxMotion.ts');
+    for (const [id, m] of Object.entries(MOTIONS)) {
+      const r = motionRecipe(id, m) as {
+        poses: Record<string, Record<string, Record<string, unknown>>>;
+      };
+      for (let k = 0; k < 4; k++) {
+        const hold = r.poses[`f${2 * k + 1}`]!;
+        expect(Object.keys(hold)).toEqual([`d${k}`]);
+        expect(hold[`d${k}`]!.scale ?? 1).toBe(1);
+        expect(hold[`d${k}`]!.stretch).toBeUndefined();
+        const enter = r.poses[`f${2 * k}`]!;
+        expect(Object.keys(enter)).toEqual(k === 0 ? ['d0'] : [`d${k - 1}`, `d${k}`]);
+      }
+    }
+  });
+});

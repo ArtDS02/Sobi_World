@@ -48,3 +48,8 @@ Chủ dự án làm rõ phương án hẹp: Unity chỉ tạo **chuyển động
 sheet ở tag `pre-unity-studio`), co giãn / lay / tan / quét / hạt cắt từ tranh. `fx_flame_burst`, `fx_splash`,
 `fx_slash_arc` lên 8 khung @24 fps; trận tính thời lượng khung theo fps (`stripTiming.ts`, sheet 12 fps không đổi). Kiểm
 trong Battle Lab cạnh bản cũ: hình giữ nguyên, chuyển động mượt hơn → đạt, đã nhập 3 hiệu ứng. 20 sheet còn lại chờ chủ dự án.
+
+## Cập nhật 2026-11-08 (4) — 22 / 23 sheet VFX trận có chuyển động
+Chủ dự án đồng ý làm tiếp. 19 sheet sinh bằng `scripts/studio/fxMotion.ts` (khung 2k đưa tranh k vào, 2k+1 giữ tranh k).
+Trận quy đổi chỉ số khung theo fps (`stripRange`, `stripStill` trong `stripTiming.ts`), nội dung `battle_fx.json` không đổi.
+`fx_wave_rise` giữ nguyên (đã 8 khung 512 px; gấp đôi quá tốn bộ nhớ).

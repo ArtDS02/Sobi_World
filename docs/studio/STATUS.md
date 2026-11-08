@@ -2,6 +2,19 @@
 
 Cập nhật: 2026-11-07. Nhánh `phase-14-unity-studio`.
 
+## ✅ VFX trận bằng chuyển động: 22 / 23 sheet xong (2026-11-08)
+
+Sau cổng thử (3 hiệu ứng làm tay, mục dưới), chủ dự án đồng ý làm tiếp. 19 sheet còn lại sinh bằng
+`scripts/studio/fxMotion.ts` (mỗi hiệu ứng một dòng: neo đáy / giữa / đỉnh, cách vào, lay, xoay): khung 2k đưa tranh k vào
+(co giãn / xoay / dịch, tranh trước tan dưới nó), khung 2k+1 là tranh k nguyên vẹn. Trận quy đổi chỉ số khung cũ
+(`stripTiming.ts`: dải `[a, b]` → `[2a, 2b+1]`, khung đơn `f` → `2f+1`) nên `battle_fx.json` (30 chỗ gọi theo chỉ số) không
+phải sửa; lớp phủ đóng băng (`cover.frame`) và decal dùng cùng quy đổi. Ảnh: `docs/studio/vfx/sheets_19_a.png`,
+`sheets_19_b.png` (trái cũ 4 khung, phải mới 8 khung); trong trận: `battle_shield_dome.png`, `battle_bolt_strike.png`,
+`battle_boom.png`, `battle_vine_grab.png`, `battle_ice_encase.png`, `battle_void_portal.png` (trên cũ, dưới mới).
+Đánh giá trung thực: 19 sheet sinh tự động mượt hơn mức **vừa** (thêm khung chuyển tiếp, mọc dần, xoay), không sinh động
+bằng 3 hiệu ứng làm tay; muốn hơn thì chỉnh tay từng recipe (vd. thêm hạt) như lửa / nước / chém.
+**Không làm `fx_wave_rise`**: sheet này đã 8 khung 512 px; lên 16 khung tốn ~16 MB bộ nhớ đồ hoạ cho một hiệu ứng.
+
 ## ✅ VFX bằng CHUYỂN ĐỘNG trên tranh đã duyệt — ĐẠT cổng thử (2026-11-08)
 
 Chủ dự án làm rõ: Unity chỉ **tạo chuyển động cho hiệu ứng có sẵn**, không vẽ hình. Studio thêm chế độ diễn hoạt tranh
@@ -82,9 +95,6 @@ vẫn kém tranh vẽ sẵn.
 
 ## Chờ chủ dự án
 
-Đồng ý làm chuyển động cho **20 sheet trận còn lại** (`fx_pow_star`, `fx_boom`, `fx_claw`, `fx_poof`,
-`fx_ink_splat`, `fx_wave_rise`, `fx_ice_encase`, `fx_ice_shatter`, `fx_bloom`, `fx_vine_grab`, `fx_rock_spike`,
-`fx_lava_pop`, `fx_bolt_strike`, `fx_light_pillar`, `fx_void_portal`, `fx_wind_swirl`, `fx_rune_lock`, `fx_bite`,
-`fx_shield_dome`, `fx_ground_crack`) theo cùng cách? Lưu ý khi làm: `fx_ice_encase` có `cover.frame` (huy hiệu trạng thái)
-và một số đòn gọi `frames: [a, b]` / `decal.frame` theo chỉ số khung 4 — phải đổi chỉ số tương ứng khi lên 8 khung.
+Xem 22 hiệu ứng trận trong game. Việc có thể làm tiếp (chờ chủ dự án chọn): chỉnh tay thêm hạt / nhịp cho các hiệu ứng
+sinh tự động mà chủ dự án thấy còn đơn điệu; hiệu ứng ngoài trận (`fx/adventure`, môi trường, farm) theo cùng cách.
 Hướng vẽ hình bằng Unity (U1, VFX vẽ hình) giữ trạng thái dừng.

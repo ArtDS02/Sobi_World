@@ -59,6 +59,7 @@ Project phải đóng trong Editor khi chạy batchmode.
   `emitters`: hạt là mảnh `src` của tranh, `count`, `seed`, `at`, `box`, `vel`, `jitter`, `gravity` (đơn vị / giây theo
   `clips.<tên>.ms`), `life [xuất hiện đầu, xuất hiện cuối, hết]` theo thời gian clip 0..1. Tìm mảnh: `npx tsx
   scripts/studio/blobs.ts <file> <khung> <rộng khung>`. Sheet trận: 8 khung + `fps: 24` giữ 340 ms.
+- **Sheet 4 khung → 8 khung hàng loạt**: thêm một dòng vào `MOTIONS` trong `scripts/studio/fxMotion.ts` (neo `bottom` / `center` / `top`, `first` = cách tranh 0 xuất hiện, `enter` = cách tranh kế vào, `sway`, `spin`), chạy `npx tsx scripts/studio/fxMotion.ts <id>` rồi `npm run studio -- build <id>`. Quy ước: khung 2k đưa tranh k vào (tranh trước tan dưới nó), khung 2k+1 là tranh k nguyên vẹn. Trận tự quy đổi chỉ số khung cũ (`src/areas/adventure/scene/battle/stripTiming.ts`: dải `[a, b]` → `[2a, 2b+1]`, khung đơn `f` → `2f+1` khi sheet 24 fps), nên `battle_fx.json` không phải sửa.
 - So trong trận: `npm run anim:capture -- --suite skills --only battle.skill.<id> --grid 40` (một lần với asset cũ, một lần
   mới), rồi `npx tsx scripts/studio/battlePair.ts <run cũ> <run mới> battle.skill.<id> <từ ms> <tới ms> x,y,w,h <out.png>`.
 - `outputs`: `file` phải là file của manifest id `asset` (id không bao giờ đổi), `pose` hoặc `clip` (+ `frame`, `cols`,
