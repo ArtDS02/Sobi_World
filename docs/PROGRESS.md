@@ -1437,3 +1437,6 @@ Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật
 ### 2026-11-09 — D6 tay cầm cơ bản (feat/gamepad)
 ✅ Tay cầm: d-pad/cần trái để đi, A tương tác, X Codex, Y túi, Start menu; đi qua đúng phím người chơi đã gán. Cỡ chữ và chế độ màu đã có từ GĐ13.
 ⚠️ Chưa thử với tay cầm thật, chỉ test bằng nguồn giả.
+
+### 2026-11-09 — D5 gợi ý cặp lai (feat/pedigree)
+✅ Hộp thoại phối giống đánh dấu ★ bạn phối tốt nhất (cơ hội ra giống chưa có trong Codex, độ hiếm) và cảnh báo cùng huyết thống. Cây phả hệ (các đời tổ tiên) đã có sẵn từ GĐ7.

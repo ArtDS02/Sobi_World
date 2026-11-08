@@ -1896,6 +1896,9 @@ export const vi = {
   },
 
   breed: {
+    suggestNew: "★ Gợi ý: {n}% có giống mới",
+    suggestRare: "★ Gợi ý: hợp để ra giống hiếm",
+    suggestInbred: "Cùng huyết thống ({n} tổ tiên chung)",
     title: "Chọn bạn phối",
     boostTitle: "Thêm một bông hoa để tăng đột biến (tùy chọn)",
     boostNone: "Không thêm",

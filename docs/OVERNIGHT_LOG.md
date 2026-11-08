@@ -36,3 +36,4 @@ typecheck, lint, guard green; `npm run assets:check` OK (30 s); full vitest: 188
 Branches (local only, nothing pushed): overnight-hardening (all work merged), admin-upgrade and feat/save-health (merged, kept).
 - Second pass: admin step 5 done (branch admin-step5 merged).
 - D6 (accessibility): text size and colour mode already existed (GĐ13, settings.json). Added basic gamepad support: core/settings/gamepad.ts (pure map), ui/world/gamepadInput.ts (pad to key events of the player's bindings, renderer only). Not tried with a real pad.
+- D5: the pedigree (levels of ancestors) already existed (heredityVm.pedigreeVm); added pair suggestions: logic/pairSuggest.ts scores a pair by chance of a species the Codex lacks, rarity, shared ancestors; the breeding dialog stars the best partner and warns about shared ancestry. No save change.

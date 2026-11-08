@@ -229,6 +229,14 @@ $_female-soft: #ffe8ef;
     color: $c-primary;
   }
 
+  // D5: the recommended partner / a shared-ancestry warning.
+  .c-breed__pick-suggest {
+    font-size: $fs-xs;
+    font-weight: 700;
+    color: $c-primary;
+    text-align: center;
+  }
+
   // ---- results -----------------------------------------------------------------------------
   .c-breed__result {
     display: grid;

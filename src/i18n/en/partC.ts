@@ -856,6 +856,9 @@ export const partC = {
   },
 
   breed: {
+    suggestNew: "★ Suggested: {n}% chance of a new species",
+    suggestRare: "★ Suggested: good odds for a rare species",
+    suggestInbred: "Same bloodline ({n} shared ancestors)",
     title: "Choose a partner",
     boostTitle: "Add a flower to raise mutation (optional)",
     boostNone: "Add nothing",
