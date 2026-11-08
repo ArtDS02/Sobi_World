@@ -446,7 +446,10 @@ export function renderBattleLab(root: HTMLElement) {
     document.addEventListener('keydown', (e) => {
       const t = e.target as HTMLElement | null;
       if (!lab.root?.isConnected || e.ctrlKey || e.metaKey || e.altKey || (t && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(t.tagName)))) return;
-      if (e.code === 'Space') (e.preventDefault(), lab.root.querySelector<HTMLElement>('[data-pause]')?.click());
+      if (e.code === 'Space') {
+        e.preventDefault();
+        lab.root.querySelector<HTMLElement>('[data-pause]')?.click();
+      }
       else if (e.code === 'KeyR') lab.root.querySelector<HTMLElement>('[data-replay]')?.click();
     });
   }
