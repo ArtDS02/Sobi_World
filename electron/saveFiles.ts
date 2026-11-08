@@ -1,8 +1,11 @@
 // Desktop save files (spec §9.1, §9.2, R00-4). Pure Node: no Electron import, tested with a temp dir.
 // Main never validates a save: it hands JSON strings to the renderer, which runs core's parseSave.
+import { createHash } from 'node:crypto';
 import { constants, watch as watchDir } from 'node:fs';
 import * as fsp from 'node:fs/promises';
 import { join } from 'node:path';
+import { readImportFile, writeExportFile } from './importExport';
+import { watchResilient, type WatchFactory } from './saveWatcher';
 import type {
   BackupInfo,
   SaveCandidate,
@@ -47,6 +50,10 @@ export interface SaveFilesOptions {
   dir: string;
   now: () => number;
   fs?: Partial<FsOps>;
+  /** Where watcher failures are reported (the error log). */
+  onError?: (where: string, e: unknown) => void;
+  /** Replaces fs.watch (tests). */
+  watchFactory?: WatchFactory;
   sleep?: (ms: number) => Promise<void>;
 }
 
@@ -99,6 +106,9 @@ export function createSaveFiles(opts: SaveFilesOptions) {
   let queue: Promise<unknown> = Promise.resolve();
   // What this process last saw in save.json; undefined = never read nor written (no claim yet).
   let known: Stamp | undefined;
+  // B5: plus a hash of the text it saw then. A touched mtime (antivirus, a sync tool) over the same content is not an outside edit.
+  let knownHash: string | null = null;
+  const hashOf = (text: string) => createHash('sha1').update(text).digest('hex');
 
   const stampNow = async (): Promise<Stamp> => {
     try {
@@ -109,7 +119,22 @@ export function createSaveFiles(opts: SaveFilesOptions) {
     }
   };
   /** True when another program (the admin dashboard, a copy by hand) replaced save.json. */
-  const changedOutside = async () => known !== undefined && !sameStamp(await stampNow(), known);
+  const changedOutside = async () => {
+    if (known === undefined) return false;
+    const now = await stampNow();
+    if (sameStamp(now, known)) return false;
+    if (now !== null && knownHash !== null) {
+      try {
+        if (hashOf(await fsp.readFile(savePath, 'utf8')) === knownHash) {
+          known = now; // same content: only the stamp moved
+          return false;
+        }
+      } catch {
+        /* unreadable right now: treat the stamp change as real */
+      }
+    }
+    return true;
+  };
 
   /** Serializes every mutation so two writes never interleave. */
   const serial = <T>(fn: () => Promise<T>): Promise<T> => {
@@ -169,6 +194,7 @@ export function createSaveFiles(opts: SaveFilesOptions) {
     await fs.writeFile(tmpPath, json);
     await renameWithRetry(tmpPath, savePath);
     known = await stampNow();
+    knownHash = hashOf(json);
   }
 
   function sourcePath(source: SaveCandidateSource): string {
@@ -189,7 +215,9 @@ export function createSaveFiles(opts: SaveFilesOptions) {
       known = await stampNow();
       const read = async (source: SaveCandidateSource) => {
         try {
-          out.push({ source, json: await fsp.readFile(sourcePath(source), 'utf8') });
+          const json = await fsp.readFile(sourcePath(source), 'utf8');
+          if (source === 'save') knownHash = hashOf(json);
+          out.push({ source, json });
         } catch {
           // missing or unreadable: the next candidate is tried
         }
@@ -224,7 +252,10 @@ export function createSaveFiles(opts: SaveFilesOptions) {
         const from = sourcePath(source);
         if (!(await exists(from))) return;
         await renameWithRetry(from, join(dir, await freeName(dir, 'save.corrupt-')));
-        if (source === 'save') known = null;
+        if (source === 'save') {
+          known = null;
+          knownHash = null;
+        }
       });
     },
 
@@ -268,14 +299,19 @@ export function createSaveFiles(opts: SaveFilesOptions) {
       let timer: ReturnType<typeof setTimeout> | null = null;
       const check = () =>
         void serial(changedOutside).then((changed) => changed && onChange(), () => undefined);
-      const watcher = watchDir(dir, (_event, name) => {
-        if (name && name !== 'save.json') return;
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(check, WATCH_DEBOUNCE_MS);
+      const stop = watchResilient({
+        dir,
+        watch: opts.watchFactory ?? watchDir,
+        ...(opts.onError ? { onError: opts.onError } : {}),
+        onEvent: (name) => {
+          if (name && name !== 'save.json') return;
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(check, WATCH_DEBOUNCE_MS);
+        },
       });
       return () => {
         if (timer) clearTimeout(timer);
-        watcher.close();
+        stop();
       };
     },
 
@@ -292,9 +328,10 @@ export function createSaveFiles(opts: SaveFilesOptions) {
     },
 
     /** Writes an export to a path the player chose in the native dialog. */
-    exportTo: (path: string, json: string) => fsp.writeFile(path, json, 'utf8'),
+    exportTo: writeExportFile,
 
-    readExternal: (path: string) => fsp.readFile(path, 'utf8'),
+    /** Import file text, checked (JSON object, sane size) before the caller backs anything up. */
+    readExternal: readImportFile,
   };
 }
 

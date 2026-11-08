@@ -12,9 +12,10 @@ import {
   shell,
 } from 'electron';
 import * as fsp from 'node:fs/promises';
-import { extname, join, normalize, sep } from 'node:path';
+import { extname, join } from 'node:path';
 import type { IpcChannel, SaveCandidateSource } from '../src/platform/desktop/bridge';
 import { adoptLegacySaves, DATA_DIR_NAME, devUserDataDir, LEGACY_DATA_DIR_NAME } from './dataDir';
+import { resolveAppPath } from './appPath';
 import { createErrorLog, type ErrorLog } from './errorLog';
 import { createReloadLimiter } from './reloadLimiter';
 import { createSaveFiles, type SaveFiles } from './saveFiles';
@@ -119,7 +120,11 @@ if (!app.requestSingleInstanceLock()) {
     });
     process.on('uncaughtException', (e) => void errorLog?.log('main.uncaughtException', String(e?.stack ?? e)));
     process.on('unhandledRejection', (e) => void errorLog?.log('main.unhandledRejection', String((e as Error)?.stack ?? e)));
-    saves = createSaveFiles({ dir: join(app.getPath('userData'), 'saves'), now: Date.now });
+    saves = createSaveFiles({
+      dir: join(app.getPath('userData'), 'saves'),
+      now: Date.now,
+      onError: (where, e) => void errorLog?.log(where, String((e as Error)?.stack ?? e)),
+    });
     registerProtocol();
     lockDownSession();
     registerSaveIpc(saves, () => win);
@@ -138,8 +143,8 @@ if (!app.requestSingleInstanceLock()) {
 function registerProtocol() {
   protocol.handle(SCHEME, async (request) => {
     const url = new URL(request.url);
-    const file = normalize(join(DIST_DIR, decodeURIComponent(url.pathname)));
-    if (url.host !== 'game' || !file.startsWith(DIST_DIR + sep)) {
+    const file = resolveAppPath(DIST_DIR, url.pathname);
+    if (url.host !== 'game' || file === null) {
       return new Response('Not found', { status: 404 });
     }
     try {
