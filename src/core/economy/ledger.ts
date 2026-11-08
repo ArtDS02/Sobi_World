@@ -23,7 +23,7 @@ export interface TransactionRecord<Type extends string = string> extends Transac
 
 export type PostResult<T> =
   | { ok: true; balance: number; transactions: T[] }
-  | { ok: false; error: Extract<ErrorCode, 'INSUFFICIENT_GOLD'> };
+  | { ok: false; error: Extract<ErrorCode, 'INSUFFICIENT_GOLD' | 'INVALID_REQUEST'> };
 
 /**
  * `balance + amount` with its transaction prepended (newest first, capped). A balance never goes
@@ -37,7 +37,10 @@ export function postTransaction<T extends TransactionRecord>(
   ctx: ActionContext,
 ): PostResult<T> {
   amount = amount === 0 ? 0 : amount; // normalise -0 (e.g. -0 * price) so records read as 0
+  // Non-finite input would poison a balance forever (NaN compares false against everything): refuse it.
+  if (!Number.isFinite(amount) || !Number.isFinite(balance)) return { ok: false, error: 'INVALID_REQUEST' };
   const next = balance + amount;
+  if (!Number.isFinite(next)) return { ok: false, error: 'INVALID_REQUEST' };
   if (next < 0) return { ok: false, error: 'INSUFFICIENT_GOLD' };
   const { type, ...ref } = entry;
   const tx = { id: randomId(ctx.rng), at: ctx.now, type, amount, ...ref } as T;
@@ -46,7 +49,7 @@ export function postTransaction<T extends TransactionRecord>(
 
 export type CurrencyResult =
   | { ok: true; state: WorldSave }
-  | { ok: false; error: Extract<ErrorCode, 'INSUFFICIENT_GOLD'> };
+  | { ok: false; error: Extract<ErrorCode, 'INSUFFICIENT_GOLD' | 'INVALID_REQUEST'> };
 
 /** World-level change of one currency of the wallet (coins, gems, event tokens). */
 export function changeCurrency(

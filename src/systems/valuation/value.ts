@@ -9,14 +9,17 @@ export type ValueFactors = Readonly<Record<string, number>>;
 
 export function valueOf(base: number, factors: ValueFactors = {}): number {
   const raw = Object.values(factors).reduce((v, f) => v * f, base);
-  return Math.floor(raw + FLOOR_EPSILON);
+  return Number.isFinite(raw) ? Math.floor(raw + FLOOR_EPSILON) : 0;
 }
 
 /** A factor that rises linearly from `min` (score 0) to `min + span` (score 100). */
 export const linearFactor = (score: number, min: number, span: number): number => min + (span * score) / 100;
 
 /** Sobi World weight factor: min(weight / standard, cap) (GAME_BALANCE §2.5). */
-export const weightFactor = (weight: number, standard: number, cap: number): number => Math.min(weight / standard, cap);
+export const weightFactor = (weight: number, standard: number, cap: number): number => {
+  const f = Math.min(weight / standard, cap);
+  return Number.isFinite(f) ? f : 0;
+};
 
 /** Sobi World health factor: −perDay per day ill, floored (GAME_BALANCE §2.5). */
 export const healthFactor = (daysIll: number, perDay: number, floor: number): number => Math.max(floor, 1 - perDay * daysIll);
