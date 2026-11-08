@@ -14,6 +14,8 @@ export interface SettingsHandlers {
   importSave(): void;
   /** Null where the platform has no save folder (browser build). */
   openSaveFolder: (() => void) | null;
+  /** Photo album (D9): saves a PNG of the stage; null where the platform cannot. */
+  takePhoto: (() => void) | null;
   /** Flips musicOn / sfxOn / reduceMotion in the save. */
   toggle(key: SettingKey, value: boolean): void;
   /** Restore one backup (after a confirmation). */
@@ -96,6 +98,9 @@ export function renderSettingsScreen(
       ),
       el('p', { class: 'settings__hint', text: vi.settings.saveFolderHint }),
     ),
+    h.takePhoto
+      ? section(vi.settings.album, el('p', { class: 'settings__hint', text: vi.settings.albumHint }), el('div', { class: 'settings__actions' }, button(vi.settings.takePhoto, h.takePhoto)))
+      : null,
     section(
       vi.settings.backups,
       vm.backupsNote ? el('p', { class: 'c-empty', text: vm.backupsNote }) : null,

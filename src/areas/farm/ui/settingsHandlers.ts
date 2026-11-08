@@ -8,6 +8,7 @@ import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { openConfirmDialog, openDialog } from '../../../ui/components/dialog';
 import { saveCheckLines } from './saveCheckVm';
+import { pageCanvases, photoFileName, shootStage } from '../../../ui/photo';
 import { openImportDialog } from './dialogs';
 import type { SettingsHandlers } from './screens/settingsScreen';
 
@@ -53,6 +54,10 @@ export function settingsHandlers(d: SettingsDeps): SettingsHandlers {
       dialog.body.append(...saveCheckLines(found));
     },
     openSaveFolder: d.saveFolder && files ? () => void files.openSaveFolder() : null,
+    // D9: a PNG of the stage through the platform's save dialog (never a network call).
+    takePhoto: files?.savePhoto
+      ? () => void shootStage(pageCanvases()).then((png) => (png ? files.savePhoto!(png, photoFileName(new Date(d.now()))) : undefined))
+      : null,
     // Two confirmations (PG-4): the second names what is lost from the game itself.
     reset: () =>
       openConfirmDialog(d.dialogHost, vi.settings.reset, vi.settings.resetWarning, async () =>

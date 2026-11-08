@@ -69,6 +69,9 @@ export const partD = {
   },
 
   settings: {
+    album: "Photo album",
+    albumHint: "Saves a PNG of the stage as it is now (no interface). The photo stays on your computer and is sent nowhere.",
+    takePhoto: "📷 Take a photo",
     title: "Settings",
     music: "Music",
     sfx: "Sound effects",

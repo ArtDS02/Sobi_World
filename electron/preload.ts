@@ -20,6 +20,7 @@ const unin: UninBridge = {
     exportTo: (json, suggestedName) => invoke('unin:save:exportTo', json, suggestedName),
     importFrom: () => invoke('unin:save:importFrom'),
     openFolder: () => invoke('unin:save:openFolder'),
+    savePhoto: (png, suggestedName) => invoke('unin:save:savePhoto', png, suggestedName),
     onExternalChange(fn) {
       ipcRenderer.on(channel('unin:save:changed'), () => fn());
     },

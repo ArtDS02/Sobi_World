@@ -16,6 +16,7 @@ import { extname, join } from 'node:path';
 import type { IpcChannel, SaveCandidateSource } from '../src/platform/desktop/bridge';
 import { adoptLegacySaves, DATA_DIR_NAME, devUserDataDir, LEGACY_DATA_DIR_NAME } from './dataDir';
 import { resolveAppPath } from './appPath';
+import { writeBinaryFile } from './importExport';
 import { createErrorLog, type ErrorLog } from './errorLog';
 import { createReloadLimiter } from './reloadLimiter';
 import { createSaveFiles, type SaveFiles } from './saveFiles';
@@ -215,6 +216,17 @@ function registerSaveIpc(saves: SaveFiles, getWin: () => BrowserWindow | null) {
     const text = await saves.readExternal(path);
     await saves.backupNow(); // §9.3: the current save becomes a backup before an import
     return text;
+  });
+  handle('unin:save:savePhoto', async (png: Uint8Array, suggestedName: string) => {
+    // D9: the player picks where the photo goes; main only checks it is a PNG and writes it atomically.
+    const sig = [0x89, 0x50, 0x4e, 0x47];
+    if (!(png instanceof Uint8Array) || png.length < 8 || !sig.every((b, i) => png[i] === b)) throw new Error('not a PNG');
+    const win = getWin();
+    const options = { defaultPath: join(app.getPath('pictures'), suggestedName), filters: [{ name: 'PNG', extensions: ['png'] }] };
+    const r = win ? await dialog.showSaveDialog(win, options) : await dialog.showSaveDialog(options);
+    if (r.canceled || !r.filePath) return false;
+    await writeBinaryFile(r.filePath, png);
+    return true;
   });
   handle('unin:save:openFolder', async () => {
     const dir = join(app.getPath('userData'), 'saves');

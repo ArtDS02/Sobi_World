@@ -25,6 +25,7 @@ function fakeBridge(candidates: SaveCandidate[], failWrites = false) {
     exportTo: async () => true,
     importFrom: async () => null,
     openFolder: async () => {},
+    savePhoto: async () => true,
     onExternalChange: () => {},
   };
   return { bridge, writes, corrupt };

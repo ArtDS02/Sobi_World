@@ -21,6 +21,8 @@ export function phaserConfig(
     backgroundColor: FARM_FALLBACK.SKY,
     banner: false,
     audio: { noAudio: true },
+    // The photo album (D9) reads the canvas after the frame is drawn, so the drawing buffer must be kept.
+    render: { preserveDrawingBuffer: true },
     // The stage size comes from CSS; Phaser must not rewrite the host's width / height.
     scale: { mode: Phaser.Scale.NONE, expandParent: false },
     scene,
