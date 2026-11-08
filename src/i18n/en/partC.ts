@@ -523,6 +523,8 @@ export const partC = {
         locked: "Beat the boss of {zone} to open the Rift",
         best: "Record: floor {floor}",
         today: "Today: floor {floor}",
+        boardTitle: "Your scoreboard (one day, the same floors)",
+        boardRow: "{n}. Floor {floor} · {date}",
         start: "Enter the Rift",
         floor: "Floor {floor}",
         cleared: "{floor} floors cleared",

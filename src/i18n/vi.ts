@@ -1564,6 +1564,8 @@ export const vi = {
         locked: "Hạ trùm {zone} để mở Vết Nứt",
         best: "Kỷ lục: tầng {floor}",
         today: "Hôm nay: tầng {floor}",
+        boardTitle: "Bảng điểm của bạn (cùng một ngày, cùng các tầng)",
+        boardRow: "{n}. Tầng {floor} · {date}",
         start: "Vào Vết Nứt",
         floor: "Tầng {floor}",
         cleared: "Đã qua {floor} tầng",

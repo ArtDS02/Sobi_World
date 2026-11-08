@@ -1447,3 +1447,6 @@ Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật
 
 ### 2026-11-09 — D3 hội thi heo theo mùa (feat/pig-show)
 ✅ Nút "Dự thi" ở bảng heo: mỗi heo thi 1 lần mỗi mùa (28 ngày), điểm từ phẩm chất, độ hiếm, tính trạng, thân thiết, đời, phả hệ, chăm sóc + may mắn (rng inject); hạng 1–3 và quà tham gia trả Sobi Coin + Vé Lễ Hội qua ledger. Số liệu `content/farm/show.json`; không cần migration (trường tuỳ chọn). Decision 054.
+
+### 2026-11-09 — D4 Vết Nứt theo ngày (feat/rift-daily)
+✅ Mọi chuyến Vết Nứt trong một ngày game dùng cùng seed (cùng các tầng); mỗi chuyến kết thúc ghi một dòng vào bảng điểm local (slice Adventure v8 + migration), hiện top 5 giữa các tầng. Decision 055.

@@ -14,6 +14,12 @@ import { scaleStats } from './variants';
 /** The game day (days since the epoch, local) the Rift's rule follows. */
 export const riftDay = (now: number, dayOffsetMs = 0): number => Math.floor((now + dayOffsetMs) / DAY_MS);
 
+/** The seed of a Rift trip started on `day`: the same for every trip that day (31 bits, like the old random seed). */
+export const riftDaySeed = (day: number): number => hashSeed('rift-day', day) % 2 ** 31;
+
+/** How many finished trips the scoreboard keeps. */
+export const RIFT_BOARD_MAX = 20;
+
 /** The rule of a game day. */
 export function ruleOfDay(day: number): RiftRule {
   const i = Math.floor(mulberry32(hashSeed('rift-rule', day)).next() * RIFT.rules.length);

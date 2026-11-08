@@ -40,3 +40,4 @@ Branches (local only, nothing pushed): overnight-hardening (all work merged), ad
 - D7: bulk actions: Garden/Cloud harvest, water, fertilise (plots optional = all), Aquarium feed/treat all and Farm "Tắm tất cả" already existed as single actions; added Farm "Cho ăn tất cả" (actions/feedAll.ts): feedPig per hungry pig inside one action, same bag/XP as single feeds (test compares with one-by-one), stops when the feed runs out.
 - D2 done (feat/weekly-goals merged): core/goals/weekly.ts, content goals.json weekly, save v12 + migration test, settle step, 3 events, goals panel section, decision 053. 
 - D3 done (feat/pig-show): logic/show.ts, content/farm/show.json, lens carries showEntries + tokens, SHOW_ENTERED event, pig panel button, decision 054.
+- D4 done (feat/rift-daily): riftDaySeed, rift.board in Adventure slice v8, scoreboard in the Rift panel, decision 055.
