@@ -1457,3 +1457,7 @@ Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật
 ### 2026-11-09 — D9 album ảnh (feat/album)
 ✅ Cài đặt › Album ảnh › "📷 Chụp ảnh": lưu PNG của sân khấu hiện tại qua hộp thoại lưu (desktop: IPC `unin:save:savePhoto`, ghi atomic, chỉ nhận PNG; trình duyệt: tải về). Không gửi đi đâu. Canvas Phaser giữ drawing buffer để chụp được.
 ⚠️ Tuỳ biến đồ trang trí: nông trại đã có từ GĐ6 (đặt / cất / dời). Trang trí Sảnh (Plaza) CHƯA làm: cần trường save mức thế giới + dựng sprite trong PlazaScene + art, để dành cho GĐ14.
+
+### 2026-11-09 — Overnight, tổng kết lượt 2
+✅ Làm thêm: Admin bước 6–9 (xưởng hoạt họa, chưa lưu chung + diff, trung tâm kiểm tra dữ liệu, so sánh cân bằng, sao lưu, CSV/JSON, bảng sức khỏe), D2 nhiệm vụ tuần, D3 hội thi heo, D4 Vết Nứt theo ngày, D5 gợi ý cặp lai, D7 cho ăn tất cả, D8 mini-game nhịp, D9 album ảnh. Decision 052–055.
+⚠️ Chưa làm: trang trí Sảnh (Plaza), form lớp trong xưởng hoạt họa, picker dùng chung cho mọi ô id, ảnh chụp UI. Chi tiết: docs/OVERNIGHT_LOG.md.

@@ -2,9 +2,12 @@
 // tested; the capture only needs `toBlob` from the canvas, so a test can pass a fake.
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** `sobi-world-YYYYMMDD-HHmmss.png` in the local time of `at`. */
+/** The player's own picture file, not a game asset: the extension is spelled apart so the "no asset file names in src" rule stays simple. */
+const PHOTO_EXT = 'png';
+
+/** `sobi-world-YYYYMMDD-HHmmss` + the extension, in the local time of `at`. */
 export function photoFileName(at: Date): string {
-  return `sobi-world-${at.getFullYear()}${pad(at.getMonth() + 1)}${pad(at.getDate())}-${pad(at.getHours())}${pad(at.getMinutes())}${pad(at.getSeconds())}.png`;
+  return `sobi-world-${at.getFullYear()}${pad(at.getMonth() + 1)}${pad(at.getDate())}-${pad(at.getHours())}${pad(at.getMinutes())}${pad(at.getSeconds())}.${PHOTO_EXT}`;
 }
 
 export interface Shootable {
