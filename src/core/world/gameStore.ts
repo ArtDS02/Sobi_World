@@ -8,6 +8,7 @@ import { isSaveChangedExternally, type LoadSource } from '../save/port';
 import type { ErrorCode } from '../config/errors';
 import type { ActionContext, ActionResultOf } from '../types';
 import { createErrorGate } from './errorGate';
+import { inspectSave } from '../save/health';
 import { createPersister } from './persister';
 import { actionContext, type StoreDeps } from './storeDeps';
 import type { BoundAction, CatchupInfo, EventListener, EventOrigin, StoreSnapshot, StoreStatus } from './storeTypes';
@@ -155,7 +156,6 @@ export function createWorldStore(deps: StoreDeps) {
     await persister.idle(); // queued writes see `reloading` and skip
     await load().finally(() => (reloading = false));
   }
-
   const fresh = () => deps.codec.newWorld(ctx(), { reduceMotion: deps.prefersReducedMotion() });
 
   function becomeReady(save: WorldSave, loadSource: LoadSource | null) {
@@ -237,14 +237,12 @@ export function createWorldStore(deps: StoreDeps) {
       emit(done.events, 'action');
       return done;
     },
-
     /** Recovery screen "start new", after the player's explicit confirmation (§9.2). */
     async startNewGame(): Promise<void> {
       if (lockedStatus() || guard.isReadOnly()) return;
       becomeReady(fresh(), null);
       await persist();
     },
-
     /** Settings "play again" (PG-4): the farm is written and backed up first; a failure aborts. */
     async resetGame(): Promise<boolean> {
       const kept =
@@ -271,6 +269,8 @@ export function createWorldStore(deps: StoreDeps) {
       return { ok: true, state: parsed.save, events: [] };
     },
 
+    /** D1: what loading this save would find (a copy is read, nothing is repaired or written). */
+    inspectSave: () => (snapshot.save ? inspectSave(JSON.parse(JSON.stringify(snapshot.save)), deps.codec) : null),
     /** Flushes pending writes. */
     flush: () => persister.idle(),
     /** Writes the current state now and waits for the queue (main's flush before quit, §9.1). */

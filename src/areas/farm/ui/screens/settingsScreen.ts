@@ -18,6 +18,8 @@ export interface SettingsHandlers {
   toggle(key: SettingKey, value: boolean): void;
   /** Restore one backup (after a confirmation). */
   restore(name: string, label: string): void;
+  /** D1: reads the save like loading does and shows what it found. */
+  checkSave(): void;
   /** Start a new farm (after two confirmations, PG-4). */
   reset(): void;
 }
@@ -97,6 +99,9 @@ export function renderSettingsScreen(
     section(
       vi.settings.backups,
       vm.backupsNote ? el('p', { class: 'c-empty', text: vm.backupsNote }) : null,
+      vm.backupWarning ? el('p', { class: 'c-banner', attrs: { role: 'status' }, text: vm.backupWarning }) : null,
+      el('p', { class: 'settings__hint', text: vi.settings.checkSaveHint }),
+      el('div', { class: 'settings__actions' }, button(vi.settings.checkSave, h.checkSave, 'c-button--ghost')),
       vm.backups.length > 0
         ? el(
             'ul',

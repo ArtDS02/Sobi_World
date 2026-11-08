@@ -1428,3 +1428,8 @@ Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật
 ⚠️ Chưa làm: bước 5 (tên thay id), 6 (xưởng hoạt họa), 7.1/7.3, 8 (sửa mọi area), 9. Chi tiết: docs/ADMIN_UPGRADE_LOG.md.
 👉 Chủ dự án cần kiểm tra: mở `npm run admin`, thử Ctrl+K, thu gọn sidebar, nút 🕘 Sao lưu ở trang Nội dung.
 ➡️ Bước tiếp theo: bước 5 và 8.0 của kế hoạch admin.
+
+### 2026-11-09 — D1 Sức khoẻ save (feat/save-health)
+✅ Cài đặt có nút "Kiểm tra file lưu" (đọc lại như lúc mở game, báo từng khu, không sửa/ghi) và cảnh báo khi bản sao lưu mới nhất quá 7 ngày; màn recovery đã có chọn backup từ trước.
+🧪 Đã kiểm tra: typecheck, lint, guard; 1877 test xanh (trừ assetsCheck chậm sẵn).
+👉 Chủ dự án cần kiểm tra: Cài đặt → Kiểm tra file lưu trên bản desktop.

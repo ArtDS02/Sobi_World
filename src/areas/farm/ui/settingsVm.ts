@@ -2,6 +2,7 @@
 // and version. Pure.
 import type { AssetManifest } from '../../../core/assets/manifestSchema';
 import { SAVE } from '../../../core/config/save';
+import { backupIsStale } from '../../../core/save/health';
 import type { BackupInfo } from '../../../core/save/port';
 import type { FarmGame } from '../logic/types';
 import { formatDateTime, t } from '../../../i18n/format';
@@ -21,6 +22,8 @@ export type BackupsState = BackupInfo[] | null | undefined;
 export interface SettingsVm {
   lastExport: string;
   backupsNote: string | null;
+  /** The newest backup is older than a week (desktop only). */
+  backupWarning: string | null;
   backups: { name: string; label: string }[];
   credits: string[];
   version: string;
@@ -38,8 +41,10 @@ export function creditLines(manifest: AssetManifest | null): string[] {
 }
 
 /** The backup list part of the screen (also used by the recovery screen). */
-export function backupsVm(backups: BackupsState): Pick<SettingsVm, 'backups' | 'backupsNote'> {
+export function backupsVm(backups: BackupsState, now?: number): Pick<SettingsVm, 'backups' | 'backupsNote' | 'backupWarning'> {
+  const days = now !== undefined && backups ? Math.floor((now - (backups[0]?.at ?? 0)) / DAY_MS) : 0;
   return {
+    backupWarning: now !== undefined && backups && backups.length > 0 && backupIsStale(backups[0]!.at, now, SAVE.EXPORT_REMINDER_DAYS * DAY_MS) ? t(vi.settings.backupStale, { days }) : null,
     backupsNote:
       backups === undefined
         ? vi.settings.backupsUnavailable
@@ -60,6 +65,7 @@ export function settingsVm(
   backups: BackupsState,
   manifest: AssetManifest | null,
   version: string | null,
+  now?: number,
 ): SettingsVm {
   const at = save.settings.lastExportAt;
   const credits = creditLines(manifest);
@@ -67,7 +73,7 @@ export function settingsVm(
     lastExport: at
       ? t(vi.settings.lastExport, { date: formatDateTime(at) })
       : vi.settings.neverExported,
-    ...backupsVm(backups),
+    ...backupsVm(backups, now),
     credits: credits.length > 0 ? credits : [vi.settings.creditsEmpty],
     version: t(vi.desktop.version, { version: version ?? vi.settings.devVersion }),
   };
