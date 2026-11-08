@@ -77,6 +77,14 @@ describe('feedback table (§11.3)', () => {
     }
   });
 
+  it('B9: a full bag says how many piles were thrown away; a normal rake does not', () => {
+    const s = farm([makePig()]);
+    const full = toastText({ type: 'MANURE_CLEANED', piles: 5, kept: 2 }, s, s) ?? '';
+    expect(full).toContain('3');
+    expect(full).not.toBe(toastText({ type: 'MANURE_CLEANED', piles: 5, kept: 5 }, s, s));
+    expect(toastText({ type: 'MANURE_CLEANED', piles: 5, kept: 5 }, s, s)).not.toContain('bỏ đi');
+  });
+
   it('matches the spec rows', () => {
     expect(FEEDBACK_TABLE.PIG_BOUGHT).toMatchObject({ animation: 'bounce', sound: 'ui_click' });
     expect(FEEDBACK_TABLE.PIG_SOLD).toMatchObject({ vfx: ['fx_coin'], sound: 'coin_collect' });

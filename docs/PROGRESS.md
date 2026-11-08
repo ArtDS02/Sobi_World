@@ -1415,3 +1415,10 @@ Chưa kiểm: `npm run dist:win` (installer), chạy Electron thủ công, thử
 
 ### 2026-11-08 — Kế hoạch nâng cấp Admin được duyệt
 Danh sách việc đầy đủ (9 bước: tắt âm mặc định, hết giật màn hình, sidebar + tìm nhanh, rà lỗi, tên thay id, xưởng hoạt họa, an toàn dữ liệu, sửa mọi area, khép lại): `docs/ADMIN_UPGRADE_PLAN.md`. Chưa bắt đầu làm.
+
+### 2026-11-08 — Overnight hardening, nhóm A + B (nhánh `overnight-hardening`)
+✅ Đã làm: A1 tiền hữu hạn; A2 xử lý lỗi toàn cục (tick/dispatch/renderer/main + error.log); A3 save an toàn (lỗi code ≠ lỗi dữ liệu, tạo lại slice Area); B1 gộp ghi đĩa; B2 catch-up 30 ngày nhanh hơn (~0,85 → ~0,53 s); B3–B7 settings/watch/hash/import/export/app://; B8 hộp thoại câu cá; B9 thông báo dọn phân khi túi đầy. Decision 052.
+🧪 Đã kiểm tra: typecheck, lint, guard xanh; vitest 1860 test xanh (trừ `assetsCheck` đã chậm sẵn từ baseline, chưa chạy lại trong nhóm này).
+⚠️ Quyết định: slice Farm hỏng cũng được tạo lại (bản gốc giữ ở `before-slice-repair-*`); test cũ "slice hỏng bị từ chối" đổi thành "được tạo lại".
+👉 Chủ dự án cần kiểm tra: chơi thử thoát/mở lại game, màn "Game gặp lỗi", thông báo slice được sửa.
+➡️ Bước tiếp theo: nhóm C (nâng cấp Admin).

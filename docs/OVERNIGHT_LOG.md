@@ -1,4 +1,4 @@
-NEXT: B8 (fishing dialog)
+NEXT: C step 1 (sound off by default) on branch admin-upgrade
 
 # Overnight log (branch `overnight-hardening`)
 
@@ -18,8 +18,8 @@ Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume
 - [x] B5 external-edit content hash
 - [x] B6 import validation before backup, atomic export
 - [x] B7 app:// decodeURIComponent
-- [ ] B8 fishing dialog keys + injectable rng
-- [ ] B9 cleanManure full bag notice
+- [x] B8 fishing dialog keys + injectable rng
+- [x] B9 (XP kept per pile as before; toast says how many piles were thrown away) cleanManure full bag notice
 - [ ] C admin upgrade (9 steps, see ADMIN_UPGRADE_LOG.md)
 - [ ] D1..D9 features
 
@@ -27,3 +27,4 @@ Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume
 - Layout fixes for admin were already committed (a9d34e3) and the branch `overnight-hardening` already existed.
 
 - Group A: `npm run check` equivalent (typecheck, lint, guard, vitest minus assetsCheck) green after A3; tests that asserted "corrupt slice refused" (aquarium, cloud, garden, areaRegistry, worldSave) updated to assert repair.
+- Group B: typecheck/lint/guard green; vitest 1860 pass excluding assetsCheck (baseline-slow). assets:check not re-run yet.

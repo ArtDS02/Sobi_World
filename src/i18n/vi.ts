@@ -1066,6 +1066,7 @@ export const vi = {
     merchantDelivered: "Thương nhân trả {coins} Sobi Coin.",
     eggHatched: "Trứng nở: một chú {breed} hiếm đã vào chuồng!",
     manureCleaned: "Đã dọn {piles} đống phân, thu được {kept} phân bón.",
+    manureCleanedBagFull: "Túi đồ đầy: đã dọn {piles} đống phân nhưng chỉ giữ lại {kept} phân bón, {lost} đống bị bỏ đi.",
     itemSold: "Đã bán {quantity} {name} được {gold} Sobi Coin.",
     hungryZero: "{name} đói lả, ngừng lớn.",
     // NH-1: shown once when a pig drops into a worse care level.

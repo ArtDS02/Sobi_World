@@ -31,6 +31,7 @@ export const partC = {
     merchantDelivered: "The Merchant paid {coins} Sobi Coin.",
     eggHatched: "The egg hatched: a rare {breed} joined the pen!",
     manureCleaned: "Cleared {piles} manure piles and kept {kept} fertilizer.",
+    manureCleanedBagFull: "The bag is full: cleared {piles} piles but kept only {kept} fertilizer, {lost} piles were thrown away.",
     itemSold: "Sold {quantity} {name} for {gold} Sobi Coin.",
     hungryZero: "{name} is starving and has stopped growing.",
     needDropped: {
