@@ -6,12 +6,13 @@ import type { FileDialogs } from '../../../core/save/port';
 import type { BoundAction, FarmStore } from '../store';
 import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import { openConfirmDialog } from '../../../ui/components/dialog';
+import { openConfirmDialog, openDialog } from '../../../ui/components/dialog';
+import { saveCheckLines } from './saveCheckVm';
 import { openImportDialog } from './dialogs';
 import type { SettingsHandlers } from './screens/settingsScreen';
 
 export interface SettingsDeps {
-  store: Pick<FarmStore, 'getSnapshot' | 'worldSave' | 'markExported' | 'importSave' | 'restoreBackup' | 'resetGame'>;
+  store: Pick<FarmStore, 'getSnapshot' | 'worldSave' | 'inspectSave' | 'markExported' | 'importSave' | 'restoreBackup' | 'resetGame'>;
   now: () => number;
   act: (run: BoundAction) => void;
   /** Host of modal dialogs. */
@@ -44,6 +45,12 @@ export function settingsHandlers(d: SettingsDeps): SettingsHandlers {
         if (json === null) return;
         await d.store.importSave(json); // a rejection is toasted by the FeedbackDirector
       });
+    },
+    checkSave: () => {
+      const found = d.store.inspectSave();
+      if (!found) return;
+      const dialog = openDialog(d.dialogHost, vi.settings.checkTitle, vi.action.close);
+      dialog.body.append(...saveCheckLines(found));
     },
     openSaveFolder: d.saveFolder && files ? () => void files.openSaveFolder() : null,
     // Two confirmations (PG-4): the second names what is lost from the game itself.

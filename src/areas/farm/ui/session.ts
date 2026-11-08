@@ -66,7 +66,7 @@ export function createSession(d: SessionDeps) {
   return {
     loadBackups,
 
-    settingsVm: (save: FarmGame): SettingsVm => settingsVm(save, backups, d.manifest, d.version),
+    settingsVm: (save: FarmGame): SettingsVm => settingsVm(save, backups, d.manifest, d.version, d.now()),
 
     /** §10.3: coach card while the tutorial is not done (never on a read-only instance). */
     coach(snap: FarmSnapshot): HTMLElement | null {

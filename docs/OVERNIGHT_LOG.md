@@ -1,4 +1,4 @@
-NEXT: D1 (save health button) on branch feat/save-health; C remaining steps 5-9 are listed in ADMIN_UPGRADE_LOG.md
+NEXT: remaining D2..D9 not started; C steps 5-9 not done (see ADMIN_UPGRADE_LOG.md). Final report is the next thing if no more budget.
 
 # Overnight log (branch `overnight-hardening`)
 
@@ -21,7 +21,8 @@ Started 2026-11-08. Prompt: `docs/OVERNIGHT_PROMPT.md`. State lives here; resume
 - [x] B8 fishing dialog keys + injectable rng
 - [x] B9 (XP kept per pile as before; toast says how many piles were thrown away) cleanManure full bag notice
 - [~] C admin upgrade: steps 1, 2, 3, 4, 7.2 done and merged; 5, 6, 7.1, 7.3, 8, 9 NOT done (ADMIN_UPGRADE_LOG.md)
-- [ ] D1..D9 features
+- [x] D1 save health (feat/save-health merged): Settings → Kiểm tra file lưu (per-Area verdict, no repair/write), stale-backup banner (>7 days), recovery screen already picks a backup (existing)
+- [ ] D2..D9 not started (budget)
 
 ## Decisions / stuck items
 - Layout fixes for admin were already committed (a9d34e3) and the branch `overnight-hardening` already existed.
