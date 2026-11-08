@@ -8,6 +8,7 @@ import { vi } from '../../i18n/vi';
 import { el } from '../dom';
 import { localDay } from '../localDay';
 import { achievementsVm, boardVm, codexVm, dailyGoalsVm, loginVm } from './goalsVm';
+import { weeklyGoalsVm } from './weeklyVm';
 import { renderBoard, renderCodex, renderGoals } from './goalsScreens';
 
 export type OrdersTab = 'board' | 'farm';
@@ -39,6 +40,6 @@ export function renderOrdersPanel(d: WorldPanelDeps, tab: OrdersTab, setTab: (ta
 }
 
 export const renderGoalsPanel = (d: WorldPanelDeps): HTMLElement =>
-  renderGoals(dailyGoalsVm(d.world, d.goals, d.now), loginVm(d.world, d.goals, localDay(d.now)), achievementsVm(d.world, d.goals), d.act);
+  renderGoals(dailyGoalsVm(d.world, d.goals, d.now), weeklyGoalsVm(d.world, d.goals, d.now), loginVm(d.world, d.goals, localDay(d.now)), achievementsVm(d.world, d.goals), d.act);
 
 export const renderCodexPanel = (d: WorldPanelDeps): HTMLElement => renderCodex(codexVm(d.world, d.goals, d.codexKinds, d.assets), d.act);

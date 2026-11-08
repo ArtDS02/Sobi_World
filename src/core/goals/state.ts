@@ -28,6 +28,10 @@ export const dailyGoalSchema = z.object({
 });
 export type DailyGoal = z.infer<typeof dailyGoalSchema>;
 
+/** A weekly goal also pays gems. */
+export const weeklyGoalSchema = dailyGoalSchema.extend({ gems: z.number().int().min(0) });
+export type WeeklyGoal = z.infer<typeof weeklyGoalSchema>;
+
 export const goalsSchema = z.object({
   board: z.object({
     /** Orders made so far (the next one's seed). */
@@ -42,6 +46,12 @@ export const goalsSchema = z.object({
     goals: z.array(dailyGoalSchema),
     bonusClaimed: z.boolean(),
   }),
+  /** D2: the week's cross-Area goals (week = Monday-based index of the local game day; null = none yet). */
+  weekly: z.object({
+    week: z.number().int().nullable(),
+    goals: z.array(weeklyGoalSchema),
+    bonusClaimed: z.boolean(),
+  }),
 });
 export type GoalsState = z.infer<typeof goalsSchema>;
 
@@ -49,4 +59,8 @@ export type GoalsState = z.infer<typeof goalsSchema>;
 export const initialGoals = (now: number): GoalsState => ({
   board: { serial: 0, slots: [], nextAt: now },
   daily: { day: null, goals: [], bonusClaimed: false },
+  weekly: { week: null, goals: [], bonusClaimed: false },
 });
+
+/** The empty weekly block a v11 save gets when it is migrated. */
+export const initialWeekly = (): GoalsState['weekly'] => ({ week: null, goals: [], bonusClaimed: false });

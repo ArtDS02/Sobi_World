@@ -139,5 +139,111 @@
         "coins": [160, 220]
       }
     ]
+  },
+  "weekly": {
+    "count": 4,
+    "bonus": { "xp": 80, "coins": 300, "gems": 5, "eventTokens": 3 },
+    "templates": [
+      {
+        "id": "w_feed",
+        "metric": "feeds",
+        "area": "sobi_farm",
+        "fromWorldLevel": 1,
+        "min": 25,
+        "max": 45,
+        "coins": [200, 300],
+        "gems": [1, 2]
+      },
+      {
+        "id": "w_ship",
+        "metric": "pigsSold",
+        "area": "sobi_farm",
+        "fromWorldLevel": 2,
+        "min": 3,
+        "max": 6,
+        "coins": [250, 380],
+        "gems": [1, 3]
+      },
+      {
+        "id": "w_breed",
+        "metric": "breedings",
+        "area": "sobi_farm",
+        "fromWorldLevel": 3,
+        "min": 1,
+        "max": 3,
+        "coins": [250, 350],
+        "gems": [2, 3]
+      },
+      {
+        "id": "w_harvest",
+        "metric": "cropsHarvested",
+        "area": "sobi_garden",
+        "fromWorldLevel": 3,
+        "min": 30,
+        "max": 60,
+        "coins": [220, 340],
+        "gems": [1, 2]
+      },
+      {
+        "id": "w_craft",
+        "metric": "crafts",
+        "area": "sobi_garden",
+        "fromWorldLevel": 3,
+        "min": 4,
+        "max": 8,
+        "coins": [240, 360],
+        "gems": [1, 3]
+      },
+      {
+        "id": "w_fish",
+        "metric": "fishCaught",
+        "area": "sobi_aquarium",
+        "fromWorldLevel": 6,
+        "min": 10,
+        "max": 20,
+        "coins": [240, 360],
+        "gems": [1, 3]
+      },
+      {
+        "id": "w_flowers",
+        "metric": "flowersHarvested",
+        "area": "sobi_cloud",
+        "fromWorldLevel": 8,
+        "min": 8,
+        "max": 16,
+        "coins": [260, 380],
+        "gems": [2, 3]
+      },
+      {
+        "id": "w_potion",
+        "metric": "potionsBrewed",
+        "area": "sobi_cloud",
+        "fromWorldLevel": 8,
+        "min": 2,
+        "max": 4,
+        "coins": [280, 400],
+        "gems": [2, 3]
+      },
+      {
+        "id": "w_battle",
+        "metric": "battlesWon",
+        "area": "sobi_adventure",
+        "fromWorldLevel": 10,
+        "min": 5,
+        "max": 10,
+        "coins": [280, 420],
+        "gems": [2, 3]
+      },
+      {
+        "id": "w_clear",
+        "metric": "adventuresCleared",
+        "area": "sobi_adventure",
+        "fromWorldLevel": 10,
+        "min": 1,
+        "max": 2,
+        "coins": [300, 450],
+        "gems": [2, 4]
+      }
+    ]
   }
 }

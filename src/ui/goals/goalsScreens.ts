@@ -76,52 +76,51 @@ export function renderBoard(vm: BoardVm, act: Act): HTMLElement {
   );
 }
 
+/** The daily or the weekly goals: a title, the goals with their bars, and the bonus once every goal is claimed. */
+function goalSection(vm: DailyGoalsVm, copy: { title: string; hint: string; empty: string; bonusClaimed: string }, act: Act, kind: 'daily' | 'weekly'): HTMLElement {
+  return el(
+    'section',
+    { class: 'achievements__daily', data: { goals: kind } },
+    heading(copy.title, ''),
+    el('p', { class: 'achievements__hint', text: copy.hint }),
+    vm.goals.length === 0
+      ? el('p', { class: 'achievements__hint', text: copy.empty })
+      : el(
+          'ul',
+          { class: 'achievements__list' },
+          ...vm.goals.map((g) =>
+            el(
+              'li',
+              { class: `achievements__item is-${g.status === 'ready' ? 'claimable' : g.status}`, data: { goal: g.text } },
+              el(
+                'div',
+                { class: 'achievements__info' },
+                el('p', { class: 'achievements__name', text: g.text }),
+                bar(g.percent, 'achievements__bar'),
+                el('p', { class: 'achievements__meta', text: `${g.progress} · ${g.reward}` }),
+              ),
+              g.status === 'ready' ? button(g.claim, () => act(g.claim.run)) : el('span', { class: 'achievements__state', text: g.status === 'claimed' ? vi.goals.daily.claimed : '' }),
+            ),
+          ),
+        ),
+    vm.goals.length === 0
+      ? null
+      : el(
+          'div',
+          { class: `achievements__item${vm.bonus.claimed ? ' is-claimed' : ''}`, data: { goal: `${kind}-bonus` } },
+          el('div', { class: 'achievements__info' }, el('p', { class: 'achievements__name', text: vm.bonus.title }), el('p', { class: 'achievements__meta', text: vm.bonus.reward })),
+          vm.bonus.claimed ? el('span', { class: 'achievements__state', text: copy.bonusClaimed }) : button(vm.bonus.claim, () => act(vm.bonus.claim.run)),
+        ),
+  );
+}
+
 /** Daily goals (three light ones and their bonus), the login reward strip, and every achievement. */
-export function renderGoals(daily: DailyGoalsVm, login: LoginVm, achievements: { summary: string; items: AchievementVm[] }, act: Act): HTMLElement {
+export function renderGoals(daily: DailyGoalsVm, weekly: DailyGoalsVm, login: LoginVm, achievements: { summary: string; items: AchievementVm[] }, act: Act): HTMLElement {
   return el(
     'section',
     { class: 'achievements', data: { screen: 'achievements' } },
-    el(
-      'section',
-      { class: 'achievements__daily' },
-      heading(vi.goals.daily.title, ''),
-      el('p', { class: 'achievements__hint', text: vi.goals.daily.hint }),
-      daily.goals.length === 0
-        ? el('p', { class: 'achievements__hint', text: vi.goals.daily.empty })
-        : el(
-            'ul',
-            { class: 'achievements__list' },
-            ...daily.goals.map((g) =>
-              el(
-                'li',
-                { class: `achievements__item is-${g.status === 'ready' ? 'claimable' : g.status}`, data: { goal: g.text } },
-                el(
-                  'div',
-                  { class: 'achievements__info' },
-                  el('p', { class: 'achievements__name', text: g.text }),
-                  bar(g.percent, 'achievements__bar'),
-                  el('p', { class: 'achievements__meta', text: `${g.progress} · ${g.reward}` }),
-                ),
-                g.status === 'ready'
-                  ? button(g.claim, () => act(g.claim.run))
-                  : el('span', { class: 'achievements__state', text: g.status === 'claimed' ? vi.goals.daily.claimed : '' }),
-              ),
-            ),
-          ),
-      daily.goals.length === 0
-        ? null
-        : el(
-            'div',
-            { class: `achievements__item${daily.bonus.claimed ? ' is-claimed' : ''}`, data: { goal: 'bonus' } },
-            el(
-              'div',
-              { class: 'achievements__info' },
-              el('p', { class: 'achievements__name', text: daily.bonus.title }),
-              el('p', { class: 'achievements__meta', text: daily.bonus.reward }),
-            ),
-            daily.bonus.claimed ? el('span', { class: 'achievements__state', text: vi.goals.daily.bonusClaimed }) : button(daily.bonus.claim, () => act(daily.bonus.claim.run)),
-          ),
-    ),
+    goalSection(daily, { title: vi.goals.daily.title, hint: vi.goals.daily.hint, empty: vi.goals.daily.empty, bonusClaimed: vi.goals.daily.bonusClaimed }, act, 'daily'),
+    goalSection(weekly, { title: vi.goals.weekly.title, hint: vi.goals.weekly.hint, empty: vi.goals.weekly.empty, bonusClaimed: vi.goals.weekly.bonusClaimed }, act, 'weekly'),
     el(
       'section',
       { class: 'achievements__daily' },

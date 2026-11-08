@@ -12,6 +12,7 @@ import type { WorldSave } from '../save/world';
 import type { ActionContext } from '../types';
 import { claimable, type AchievementDef, type AchievementWorld, type Totals } from './achievements';
 import { advanceDaily, type DailyRules } from './daily';
+import { advanceWeekly, weekOfDay, type WeeklyRules } from './weekly';
 import { advanceBoard, type ItemValue, type OrderRules } from './orders';
 import { trackStats } from './stats';
 import { earnTokens, type FestivalRules } from '../live/festival';
@@ -20,6 +21,7 @@ import { advanceMerchant, type MerchantRules } from '../live/merchant';
 export interface GoalsRules {
   orders: OrderRules;
   daily: DailyRules;
+  weekly: WeeklyRules;
   codex: CodexRules;
   achievements: readonly AchievementDef[];
   levels: LevelTable;
@@ -94,6 +96,13 @@ export function settleWorld(
   if (daily.goals !== world.goals) {
     world = { ...world, goals: daily.goals };
     for (const id of daily.reached) events.push({ type: 'DAILY_GOAL_REACHED', id });
+  }
+
+  // 2b. The week's cross-Area goals (new on local Monday) and their progress.
+  const weekly = advanceWeekly(world.goals, weekOfDay(day), view, world.progression.stats, rules.weekly);
+  if (weekly.goals !== world.goals) {
+    world = { ...world, goals: weekly.goals };
+    for (const id of weekly.reached) events.push({ type: 'WEEKLY_GOAL_REACHED', id });
   }
 
   // 3. The Order Board: orders that came due.

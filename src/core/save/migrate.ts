@@ -3,7 +3,7 @@
 import type { z } from 'zod';
 import type { ErrorCode } from '../config/errors';
 import type { ActionContext } from '../types';
-import { initialGoals } from '../goals/state';
+import { initialGoals, initialWeekly } from '../goals/state';
 import { initialLive } from '../live/state';
 import { newPlayer } from '../player/player';
 import { renameRetiredIds } from './retiredIds';
@@ -76,6 +76,11 @@ const WORLD_MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
   },
   // v11 (GĐ12): the living world (festival bookkeeping, the merchant's orders, the Admin's switches). Nothing earned is touched.
   10: (raw) => ({ ...raw, schemaVersion: 11, live: raw.live ?? initialLive() }),
+  // v12 (D2): the weekly cross-Area goals. An empty block: this week's goals are drawn on the first tick. Nothing earned is touched.
+  11: (raw) => {
+    const goals = isObject(raw.goals) ? raw.goals : {};
+    return { ...raw, schemaVersion: 12, goals: { ...goals, weekly: goals.weekly ?? initialWeekly() } };
+  },
 };
 
 const isObject = (v: unknown): v is Raw => typeof v === 'object' && v !== null && !Array.isArray(v);

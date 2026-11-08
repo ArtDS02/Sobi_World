@@ -6,7 +6,7 @@ import { goalsSchema, initialGoals, type GoalsState } from '../goals/state';
 import { initialLive, liveSchema, type LiveState } from '../live/state';
 import { newPlayer, playerSchema, type PlayerSave } from '../player/player';
 
-export const WORLD_SAVE_VERSION = 11;
+export const WORLD_SAVE_VERSION = 12;
 
 export const CURRENCY_VALUES = ['coins', 'gems', 'eventTokens'] as const;
 export type Currency = (typeof CURRENCY_VALUES)[number];

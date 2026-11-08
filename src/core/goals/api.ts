@@ -1,6 +1,6 @@
 // The goals as the app uses them: the content's numbers bound to the pure functions, so the store, the screens
 // and the tests all go through one object. The Areas tell it what they offer (`totals`, the Codex kinds).
-import { ACHIEVEMENTS, CODEX, DAILY_GOALS, FESTIVALS_RULES, MERCHANT, ORDER_BOARD } from '../config/goals';
+import { ACHIEVEMENTS, CODEX, DAILY_GOALS, FESTIVALS_RULES, MERCHANT, ORDER_BOARD, WEEKLY_GOALS } from '../config/goals';
 import { CONTENT } from '../config/content';
 import { PROGRESSION } from '../config/progression';
 import { claimMilestone, claimableMilestones, codexCounts, type CodexKind } from '../collection/codex';
@@ -10,6 +10,7 @@ import type { WorldSave } from '../save/world';
 import type { ActionContext, ActionResultOf } from '../types';
 import { claimAchievement, claimable, type Totals } from './achievements';
 import { claimDailyBonus, claimDailyGoal } from './daily';
+import { claimWeeklyBonus, claimWeeklyGoal } from './weekly';
 import { buyShopEntry, claimGift } from '../live/festival';
 import { deliverOffer } from '../live/merchant';
 import { claimLoginReward } from './loginReward';
@@ -25,6 +26,7 @@ export const itemValue: ItemValue = (id) => {
 export const GOALS_RULES: GoalsRules = {
   orders: ORDER_BOARD,
   daily: DAILY_GOALS,
+  weekly: WEEKLY_GOALS,
   codex: CODEX,
   achievements: ACHIEVEMENTS,
   levels: PROGRESSION.levels,
@@ -76,13 +78,16 @@ export function createGoals(sources: GoalsSources) {
     claimableCount: (world: WorldSave): number =>
       claimable(ACHIEVEMENTS, world.progression.claimed, achievementWorld(world, GOALS_RULES.levels), totals()).length +
       claimableMilestones(CODEX, codexCounts(world.collection.discovered).total, world.collection.claimed).length +
-      world.goals.daily.goals.filter((g) => g.reached && !g.claimed).length,
+      world.goals.daily.goals.filter((g) => g.reached && !g.claimed).length +
+      world.goals.weekly.goals.filter((g) => g.reached && !g.claimed).length,
 
     // Actions (bound to their numbers; the screens dry-run them to know why a button is off).
     deliver: (slot: number): WorldAction => (w, c) => deliverOrder(w, { slot }, c, ORDER_BOARD, addXp),
     reroll: (slot: number): WorldAction => (w, c) => rerollOrder(w, { slot }, c, ORDER_BOARD, worldView(w, GOALS_RULES, sources.buildingsLv3?.(w)), itemValue),
     claimGoal: (index: number): WorldAction => (w, c) => claimDailyGoal(w, { index }, c),
     claimBonus: (): WorldAction => (w, c) => claimDailyBonus(w, c, DAILY_GOALS, addXp),
+    claimWeeklyGoal: (index: number): WorldAction => (w, c) => claimWeeklyGoal(w, { index }, c),
+    claimWeeklyBonus: (): WorldAction => (w, c) => claimWeeklyBonus(w, c, WEEKLY_GOALS, addXp),
     claimAchievement: (id: string): WorldAction => (w, c) =>
       claimAchievement(w, { id }, c, ACHIEVEMENTS, achievementWorld(w, GOALS_RULES.levels), totals(), addXp),
     claimLogin: (day: number): WorldAction => (w, c) => claimLoginReward(w, { day }, c, CONTENT.daily, addXp),

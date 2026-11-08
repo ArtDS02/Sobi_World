@@ -426,7 +426,7 @@ describe('save v11', () => {
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.fromVersion).toBe(10);
-    expect(r.save.schemaVersion).toBe(11);
+    expect(r.save.schemaVersion).toBe(12); // v10 → v11 (living world) → v12 (weekly goals)
     expect(r.save.live).toEqual(initialLive());
     expect(r.save.wallet).toEqual(rich.wallet);
     expect(r.save.inventory).toEqual(rich.inventory);

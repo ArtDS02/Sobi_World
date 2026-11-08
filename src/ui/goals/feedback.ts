@@ -29,6 +29,12 @@ export function goalsPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
       return { sound: 'coin_collect', toast: t(vi.goals.daily.reward, { coins: formatInt(e.coins) }) };
     case 'DAILY_BONUS_CLAIMED':
       return { sound: 'coin_collect', toast: t(vi.goals.daily.bonusReward, { coins: formatInt(e.coins), xp: e.xp }) };
+    case 'WEEKLY_GOAL_REACHED':
+      return { sound: 'level_up', toast: vi.goals.dot };
+    case 'WEEKLY_GOAL_CLAIMED':
+      return { sound: 'coin_collect', toast: t(vi.goals.weekly.reward, { coins: formatInt(e.coins), gems: e.gems }) };
+    case 'WEEKLY_BONUS_CLAIMED':
+      return { sound: 'coin_collect', toast: t(vi.goals.weekly.bonusReward, { coins: formatInt(e.coins), gems: e.gems, tokens: e.eventTokens, xp: e.xp }) };
     case 'DAILY_CLAIMED':
       return { sound: 'coin_collect', toast: t(vi.event.dailyClaimed, { streak: e.streak, what: [e.gold > 0 ? `${formatInt(e.gold)} ${vi.plazaBar.coins}` : '', e.food > 0 ? `${e.food} ${vi.shop.FOOD_BASIC}` : '', e.medicine > 0 ? `${e.medicine} ${vi.shop.MEDICINE_COMMON}` : ''].filter(Boolean).join(', ') }) };
     case 'ACHIEVEMENT_REACHED':
