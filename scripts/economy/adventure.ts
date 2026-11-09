@@ -181,7 +181,7 @@ export function adventureRoutine(b: Bot) {
 }
 
 /** What a tidy player keeps of each item; the rest of what can be sold is sold (a bag of 40 slots is for what is used). */
-const KEEP: Record<string, number> = { item_ancient_cog: 40, item_ancient_rune: 12, item_mountain_ore: 40, item_forest_herb: 40, item_beast_fang: 40, item_pure_water: 12, item_flower_rainbow_rose: 6, item_potion_battle: 3, item_potion_healing: 3, item_potion_mood: 3 };
+const KEEP: Record<string, number> = { item_ancient_cog: 40, item_ancient_rune: 12, item_mountain_ore: 40, item_forest_herb: 40, item_beast_fang: 40, item_pure_water: 12, item_flower_rainbow_rose: 12, item_potion_battle: 3, item_potion_healing: 3, item_potion_mood: 3 };
 
 function declutter(b: Bot) {
   for (const [id, item] of Object.entries(ITEMS)) {

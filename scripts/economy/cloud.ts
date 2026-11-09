@@ -10,6 +10,7 @@ import { cloudOf, hasCloud } from '../../src/areas/cloud/logic/save/lens';
 import { sellItem } from '../../src/areas/farm/logic/actions/sellItem';
 import { usePotion } from '../../src/areas/farm/logic/actions/usePotion';
 import { liftFarmAction } from '../../src/areas/farm/logic/world';
+import { keepForUpgrades } from './tiers';
 import type { Bot } from './week';
 
 const RESERVE = 400;
@@ -58,7 +59,7 @@ export function cloudRoutine(b: Bot) {
   }
   // What the bot does not keep is sold.
   for (const id of ['item_flower_cloud_daisy', 'item_flower_dandelion', 'item_flower_moon_lily', 'item_flower_star_orchid', 'item_flower_dream_bell', 'item_pure_water'] as const) {
-    const spare = b.bag(id) - FLOWERS_KEPT;
+    const spare = b.bag(id) - Math.max(FLOWERS_KEPT, keepForUpgrades(id));
     if (spare > 0) b.act('cloud sold', liftFarmAction((s, ctx) => sellItem(s, { itemId: id, quantity: spare }, ctx)));
   }
   for (const id of ['item_potion_healing', 'item_potion_mood'] as const) {

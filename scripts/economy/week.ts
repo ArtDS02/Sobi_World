@@ -37,6 +37,7 @@ import { adventureRoutine, newAdventureStats, type AdventureStats } from './adve
 import { aquariumRoutine } from './aquarium';
 import { cloudRoutine } from './cloud';
 import { liveRoutine, newLiveStats, type LiveStats } from './live';
+import { keepForUpgrades, newPlotStats, plotRoutine, type PlotStats } from './tiers';
 
 /** When a day's sessions happen (hour of the local day) — a person who plays morning, noon and evening. */
 export const SESSION_HOURS = [8, 13, 20] as const;
@@ -90,6 +91,8 @@ export interface WeekReport {
   adventure: AdventureStats;
   /** The living world (GĐ12): festival tokens and the merchant. */
   live: LiveStats;
+  /** Plot upgrade ranks and skins (decision 056). */
+  plot: PlotStats;
   /** The bag at the end, and the Adventure loot still waiting for room in it. */
   bag: Record<string, number>;
   pendingLoot: Record<string, number>;
@@ -120,6 +123,7 @@ export class Bot {
   gems = 0;
   adv: AdventureStats = newAdventureStats();
   live: LiveStats = newLiveStats();
+  plot: PlotStats = newPlotStats();
   /**
    * Opens the Adventure as soon as Sobi World level 8 is reached, ignoring World Development 20: the bot does not breed or collect
    * the Codex the way a collector does, so it reaches 20 much later than a player who plays that way.
@@ -172,6 +176,7 @@ export class Bot {
     this.world = r.state;
     this.ledger[label] = (this.ledger[label] ?? 0) + (r.state.wallet.coins - before.wallet.coins);
     this.gems += Math.max(0, r.state.wallet.gems - before.wallet.gems);
+    for (const e of r.events) if ('bonus' in e && typeof e.bonus === 'number') this.plot.bonusItems += e.bonus;
     this.settle(before, r.events);
     return true;
   }
@@ -232,7 +237,7 @@ function farmRoutine(b: Bot) {
   }
   // Crops beyond what the bot keeps for the mill and the orders are sold.
   for (const id of ['item_manure', 'item_grass', 'item_wheat', 'item_corn', 'item_potato', 'item_carrot'] as const) {
-    const spare = b.bag(id) - 30;
+    const spare = b.bag(id) - Math.max(30, keepForUpgrades(id));
     if (spare > 0) b.act('items sold', liftFarmAction((s, c) => sellItem(s, { itemId: id, quantity: spare }, c)));
   }
 }
@@ -289,6 +294,7 @@ export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7, option
       gardenRoutine(b);
       aquariumRoutine(b);
       cloudRoutine(b);
+      plotRoutine(b);
       liveRoutine(b);
       claimEverything(b, Math.floor(b.now / DAY_MS));
     }
@@ -318,5 +324,5 @@ export function simulateWeek(seed = 7, start = 20_000 * DAY_MS, days = 7, option
       codex: Object.values(b.world.collection.discovered).reduce((n, ids) => n + ids.length, 0),
     });
   }
-  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, cloudOpenAtHour: b.cloudAt, flowersHarvested: b.world.progression.stats.flowersHarvested ?? 0, potionsBrewed: b.world.progression.stats.potionsBrewed ?? 0, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems, adventure: b.adv, live: b.live, bag: b.world.inventory.items, pendingLoot: hasAdventure(b.world) ? adventureOf(b.world).pending : {}, world: b.world, end: b.now };
+  return { days: rows, levelAtHour: b.levelAt, gardenOpenAtHour: b.gardenAt, aquariumOpenAtHour: b.aquariumAt, cloudOpenAtHour: b.cloudAt, flowersHarvested: b.world.progression.stats.flowersHarvested ?? 0, potionsBrewed: b.world.progression.stats.potionsBrewed ?? 0, fishSick: b.fishSick, fishDied: b.fishDied, ledger: b.ledger, achievementsClaimed: b.achievements, gemsEarned: b.gems, adventure: b.adv, live: b.live, plot: b.plot, bag: b.world.inventory.items, pendingLoot: hasAdventure(b.world) ? adventureOf(b.world).pending : {}, world: b.world, end: b.now };
 }

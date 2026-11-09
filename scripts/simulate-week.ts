@@ -24,6 +24,8 @@ for (const [level, hour] of Object.entries(r.levelAtHour)) console.log(`  level 
 console.log(`\nSobi Garden opens: ${h1(r.gardenOpenAtHour)}`);
 console.log(`Sobi Aquarium opens: ${h1(r.aquariumOpenAtHour)}; fish illnesses ${r.fishSick}, fish lost ${r.fishDied}`);
 console.log(`Sobi Cloud opens: ${h1(r.cloudOpenAtHour)}; flowers picked ${r.flowersHarvested}, potions brewed ${r.potionsBrewed}`);
+const P = r.plot;
+console.log(`Plot upgrades (decision 056): ${P.upgrades} bought for ${n0(P.upgradeCoins)} coins; first reached ${Object.entries(P.firstRankAtHour).map(([k, h]) => `${k} @ day ${(h / 24 + 1).toFixed(1)}`).join(', ') || 'nothing'}; bumper-crop items ${P.bonusItems}; skins forged ${P.skinsForged} for ${P.skinGems} Gems`);
 const adv = r.adventure;
 console.log(`Sobi Adventure opens: ${h1(adv.openAtHour)}; ${adv.runs} runs (${adv.wins} cleared, ${adv.losses} lost), boss kills ${JSON.stringify(adv.clears)}, eggs hatched ${adv.eggsHatched}, rations eaten ${adv.rationsEaten}`);
 console.log(`First boss kills: ${Object.entries(adv.firstClearAtHour).map(([z, h]) => `${z} @ day ${(h / 24 + 1).toFixed(1)}`).join(', ') || 'none'}`);

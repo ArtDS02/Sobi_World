@@ -11,7 +11,7 @@ Branch `feature-plot-upgrade` (from `overnight-hardening`). Tick a step when its
 - [x] 3 Upgrade UI + Admin (Cloud banner rank line + button, Garden zone chip + button, shared upgrade dialog, plot cards, toasts, Admin catalog + labels)
 - [x] 4 Tier scenery (presentation): rank layers via `systems/animation/rankScenery.ts` + `ui/world/rankScenery.ts`, 26 placeholder ids, batch description `asset/batches/plot-rank-scenery.md`
 - [x] 5 Plot-skin forging (content `shared/plotSkins.json`, world save `cosmetics.plotSkins`, `forgePlotSkin` coins OR Gems, `applyTierSkin` / `applyZoneSkin`, forge dialog on `shopGrid`, rank frame, 12 placeholder beds)
-- [ ] 6 Economy bot + tuning
+- [x] 6 Economy bot + tuning (`scripts/economy/tiers.ts`: upgrades + Gem-only skin forging; no content numbers changed, reasons below)
 - [ ] 7 Tier-5 perk (optional)
 - [ ] 8 Audit, sandbox run, docs, freeze
 
@@ -34,3 +34,25 @@ Branch `feature-plot-upgrade` (from `overnight-hardening`). Tick a step when its
 - Step 5: the "rank shown by a frame laid over the skin" is a code-drawn rounded frame around the plots (bronze / silver / gold / violet for ranks 2–5), not art. The forge opens from a button in the dock's "Mở rộng" group (it squeezes the seed palette by one card on a 1280-wide window).
 - Step 5: the sandbox save made by `dev:max-save` before step 5 had no `cosmetics` and the game (rightly) refused it and moved it aside as `save.corrupt-*.json`; the sandbox-only file was patched by hand. Real v12 saves go through the migration, which adds the field.
 - Step 5 checked in the browser: forge dialog lists 4 cards (Crystal shows its hint because the lab has not made a Crystal Peony), Starry paid with 60 Gems (100,076 → 100,016, toast, card "Đã đúc", strip chip), applied to Tầng 9, plots drawn on the placeholder skin bed with the bronze rank frame; console clean.
+
+## Step 6 — economy (bot, seed 7, 3 sessions a day; `npm run sim:week -- 7 60` and `-- 7 120`)
+Three runs: **before** = the commit before this work (worktree of `b1edcfe3`); **rules only** = this branch with the old bot behaviour (tests the game rules in isolation: level 100 table + level rewards, no upgrades bought); **after** = this branch + the new bot (upgrades the lowest-ranked complete tier / zone once coins ≥ price + 5,000 and the materials are in the bag; forges a skin with Gems only, keeping 100 Gems back; stops selling the materials the upgrades need).
+
+| | before | rules only | after |
+|---|---|---|---|
+| Day 20 coins / XP | 20,121 / 13,307 | 20,121 / 13,307 | 20,064 / 13,986 |
+| Level 20 reached | day 45.5 (cap) | day 45.5 | day 42.5 |
+| Level 25 / 30 / 40 / 50 | cap at 20 | day 53.5 / 61.8 / 83.5 / 112.3 | day 49.5 / 57.8 / 79.8 / 108.5 |
+| Day 60: coins / Gems / level / XP | 84,615 / 633 / 20 / 114,848 | 98,153 / 632 / 29 / 117,009 | 34,249 / 607 / 31 / 131,836 |
+| Day 120: coins / Gems / level / XP | 30,515 / 856 / 20 / 348,014 | 150,577 / 885 / 52 / 351,543 | 107,169 / 836 / 53 / 366,719 |
+| Coins spent on upgrades (60 d / 120 d) | — | — | 148,200 (18 upgrades) / 991,200 (42 upgrades) |
+| Skins forged (Gems) | — | — | 2 (80 Gems): the other two stay locked (the bot never breeds a Crystal Peony and holds < 10 fish species) |
+| First rank 2 / 3 / 4 reached (Cloud, Garden) | — | — | day 23.5, 23.8 / 50.5, 51.3 / 80.5, 84.5 |
+| Bumper-crop items (60 d / 120 d) | — | — | 1,721 / 10,475 |
+
+Reading it:
+- **Level 100 table**: the first 45 days are untouched (level 20 at day 45.5 in the "rules only" run, identical to before). Levels 21–100 then arrive at the proposed pace (level 30 ≈ day 62, 40 ≈ day 84, 50 ≈ day 112; the 13-month target for level 100 is unchanged). The level rewards (1000 + 100 × (n − 21) coins + 1 Gem each) add ≈ 82k coins and 32 Gems by day 120, small next to the ~17k coins / day surplus the research measured.
+- **Ranks follow the level gates, not the coins**: rank 2 (gate level 12) at day ~24, rank 3 (25) at day ~50, rank 4 (40) at day ~80; rank 5 (60) is out of reach before day ~155 whatever the bot saves. So neither trigger of the brief fired (rank 2 is affordable long before day 40, and nothing is maxed before day 120). Nothing in `content/` was changed.
+- **Spend**: ~1M coins on upgrades by day 120 brings the bot's coins down from 150k to 107k; the money is no longer idle (the goal of the research §1.5).
+- **Gems**: still ~840 at day 120: the skins are only 4 (200 Gems in all) and two are locked for this bot, so Gems remain mostly unspent. A later batch of skins (decision 056 allows more via content) is the lever if the owner wants a bigger Gem sink.
+- The "after" run is 3 days earlier to level 20 than "before"/"rules only": the bot now keeps more daisies / roses (it no longer sells what the upgrades need), so it brews more potions and earns more crafting XP, plus the upgrades' one-off XP (50 × rank, 42 upgrades ≈ 5k XP). The game rules alone do not move the first 45 days (the "rules only" column).
