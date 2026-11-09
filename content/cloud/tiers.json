@@ -2,6 +2,7 @@
   "ids": ["cotton", "dew", "silk", "pearl", "radiance"],
   "groupFactor": 0.2,
   "xpPerTier": 50,
+  "freeWaterChance": 0.25,
   "steps": [
     { "worldLevel": 12, "baseCoins": 3000, "bonusPct": 5, "items": { "item_flower_cloud_daisy": 30 } },
     {

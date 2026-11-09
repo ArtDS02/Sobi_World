@@ -1,6 +1,6 @@
 # 056 — Plot upgrade tiers, plot-skin forging and World Level 100 (temporary gameplay thaw of decision 021)
 
-**Date:** 2026-11-09 · **Status:** Đang làm (in progress). Becomes "Đã làm, đóng băng lại" at the end of the work (step 8).
+**Date:** 2026-11-09 · **Status:** Đã làm, đóng băng lại (done, frozen again) — 2026-11-09. Work log and economy table: `docs/PLOT_UPGRADE_LOG.md`.
 
 ## Scope (owner-approved, exactly these three items; nothing else is unfrozen)
 1. **World Level cap 100** (was 20). Levels 1–20 and every existing gate stay as they are; levels 21–100 are appended.
@@ -17,7 +17,11 @@
 - Tier-5 perk (optional, last): Cloud 25 % free watering; Garden wilt after 72 h instead of 48 h. Dropped if it endangers `simulate()` determinism.
 
 ## Save changes
-World save v12 → v13 (`cosmetics.plotSkins`, tier-upgrade log nothing else). Cloud slice v2 → v3 (`tierLevels`, `tierSkins`). Garden slice v1 → v2 (`zoneLevels`, `zoneSkins`). Each with a migration and tests.
+World save v12 → v13 (`progression.levelRewardsPaid`, `cosmetics.plotSkins`). Cloud slice v2 → v3 (`tierLevels`, `tierSkins`). Garden slice v1 → v2 (`zoneLevels`, `zoneSkins`). Each with a migration and tests.
 
 ## Freeze
 When done: the laws above join the frozen list of decision 021 (levels 1–100, 5 tiers per tier/zone, cosmetic skin forging). Numbers stay tunable as 021 allows. Work log: `docs/PLOT_UPGRADE_LOG.md`.
+
+## Outcome (2026-11-09)
+Frozen laws added to decision 021's list: World Level 1–100 (curve above, rewards once through the ledger), 5 ranks per cloud tier / garden zone (yield bonus only, gates and prices above), cosmetic plot-skin forging (Gems or coins). Numbers stay tunable in Admin as 021 allows.
+Choices made along the way: item requirements are concrete item ids; the Cloud rank-5 free-watering perk shipped (25 %), the Garden 72 h wilt perk was dropped to keep `simulate()` determinism; the scenery is placeholder art (26 `scn_*` + 12 `skin_*` ids) pending the owner's batch `asset/batches/plot-rank-scenery.md`; only 4 skins exist, so Gems stay a mostly idle currency (more skins are a content-only change).

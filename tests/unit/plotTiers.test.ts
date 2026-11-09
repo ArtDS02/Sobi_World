@@ -6,7 +6,7 @@ import v12 from '../fixtures/save-v12-derived.json';
 import { migrate } from '../../src/core/save/migrate';
 import { cloudArea } from '../../src/areas/cloud';
 import { upgradeTier } from '../../src/areas/cloud/logic/actions/buildings';
-import { harvestFlowers } from '../../src/areas/cloud/logic/actions/plants';
+import { harvestFlowers, waterPlots } from '../../src/areas/cloud/logic/actions/plants';
 import { CLOUD_TIERS, PLOTS_PER_TIER, TIER_COUNT } from '../../src/areas/cloud/logic/config/content';
 import { cloudTierBonus, cloudTierLevel, cloudTierUpgrade } from '../../src/areas/cloud/logic/derived';
 import { cloudOf, withCloud } from '../../src/areas/cloud/logic/save/lens';
@@ -306,5 +306,31 @@ describe('a whole v12 world with old Cloud (v2) and Garden (v1) slices', () => {
     expect(gardenOf(r.save).zoneLevels).toEqual([]);
     expect(r.save.wallet.coins).toBe(old.wallet.coins);
     expect(cloudTierLevel(cloudOf(r.save), 5)).toBe(1);
+  });
+});
+
+describe('rank-5 perk: free watering on a Cloud tier', () => {
+  const dryTier = (tier: number): WorldSave => {
+    const w = cloudWorld({ item_pure_water: 15 }, 0);
+    const g = cloudOf(w);
+    return withCloud(w, { ...g, tierLevels: [tier], plots: g.plots.map(() => sow('flower_cloud_daisy')) });
+  };
+  it('rank 4 and below always pay one water per plot', () => {
+    const r = waterPlots(dryTier(4), {}, ctxAt(T0));
+    if (!r.ok) throw new Error('x');
+    expect(r.state.inventory.items.item_pure_water).toBe(0);
+  });
+  it('rank 5 waters some plots for free (~25 %), deterministically per seed, and the world event counts only what was spent', () => {
+    let free = 0;
+    for (let seed = 1; seed <= 200; seed += 1) {
+      const r = waterPlots(dryTier(5), {}, ctxAt(T0, seed));
+      if (!r.ok) throw new Error('x');
+      const ev = r.events.find((e) => e.type === 'CLOUD_WATERED') as unknown as { plots: number; free?: number };
+      free += ev.free ?? 0;
+      expect(r.state.inventory.items.item_pure_water).toBe(15 - (ev.plots - (ev.free ?? 0)));
+      expect(cloudEventsToWorld(r.events)).toContainEqual({ type: 'item.removed', area: 'sobi_cloud', itemId: 'item_pure_water', quantity: ev.plots - (ev.free ?? 0) });
+    }
+    expect(Math.abs(free / (200 * 15) - 0.25)).toBeLessThan(0.03);
+    expect(JSON.stringify(waterPlots(dryTier(5), {}, ctxAt(T0, 9)))).toBe(JSON.stringify(waterPlots(dryTier(5), {}, ctxAt(T0, 9))));
   });
 });

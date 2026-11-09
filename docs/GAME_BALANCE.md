@@ -180,7 +180,7 @@ Giá mua ở chợ: Thức ăn heo 6, Thức ăn cao cấp 15, Phân bón 12.
 
 | Thông số | Giá trị |
 |---|---|
-| EXP cần cho level n | `100 × n^1.5` (làm tròn) |
+| EXP cần cho level n | cấp 2–20: `100 × n^1.5` (làm tròn); cấp 21–100 (decision 056): `4000 + 300 × (n − 21)` mỗi cấp, cấp 100 = 1.335.135 KN (~13 tháng với bot 3 phiên/ngày). Thưởng mỗi cấp 21–100: `1000 + 100 × (n − 21)` xu + 1 Gem, trả một lần qua sổ cái |
 | EXP hành động | Cho ăn 1, dọn phân 2, vuốt ve 1, thu hoạch 2, chế biến 3, xuất chuồng 20, đơn hàng 15–40 |
 | World Development | Tổng level các Area + (mục Codex / 10) + số công trình Lv3 trở lên |
 
@@ -193,6 +193,13 @@ Giá mua ở chợ: Thức ăn heo 6, Thức ăn cao cấp 15, Phân bón 12.
 | Sobi Adventure | Farm Lv8, World Development ≥ 20 (nhận 1 heo phiêu lưu khởi đầu qua nhiệm vụ mở khóa) |
 
 ---
+
+### 7.1 Bậc nâng cấp tầng mây / khu đất và mẫu khuông (decision 056; số ở `content/cloud/tiers.json`, `content/garden/zones.json`, `content/shared/plotSkins.json`)
+- 5 bậc mỗi tầng mây / khu đất (bậc 1 = mặc định). Lợi ích duy nhất: **bội thu** — mỗi vật phẩm thu được có 5 / 10 / 15 / 20 % (bậc 2 / 3 / 4 / 5) ra thêm 1, tung bằng `ctx.rng` lúc thu hoạch; không thưởng KN, không đổi tốc độ, `simulate()` không đổi.
+- Điều kiện: tầng / khu đủ ô (15 / 24); cấp thế giới 12 / 25 / 40 / 60. Giá xu `base × (1 + k × (g − 1))` (Cloud 3k / 9k / 24k / 60k, k 0,2; Garden 4k / 12k / 32k / 80k, k 0,4) + vật phẩm theo từng bậc. Không trả bằng Gems. KN một lần = 50 × bậc mới.
+- Đặc quyền bậc 5: Cloud — 25 % mỗi lần tưới một ô không tốn Nước tinh khiết. (Garden chống héo 72 giờ **không làm**, xem `PLOT_UPGRADE_LOG.md` bước 7.)
+- Mẫu khuông (4 mẫu v1): chỉ thẩm mỹ, vĩnh viễn, đúc tức thì bằng vật liệu + xu **hoặc** Gems (1 Gem = 500 xu: 10.000 xu / 20 Gems cho mẫu thường, 30.000 / 60 cho mẫu hiếm), +30 KN một lần; không tính vào Codex / World Development.
+- Bot 120 ngày: bậc 2 ~ngày 24, bậc 3 ~ngày 50, bậc 4 ~ngày 80 (theo cổng cấp); ~1M xu cho nâng bậc; bảng so sánh trong `docs/PLOT_UPGRADE_LOG.md`.
 
 ## 8. Hệ thống gắn kết
 

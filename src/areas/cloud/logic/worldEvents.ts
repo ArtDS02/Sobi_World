@@ -19,7 +19,7 @@ export function cloudWorldEvents(e: CloudEvent): WorldEvent[] {
       return [...(flower ? removed(flower.seedItem, e.plots.length - e.bought) : []), ...coins(-e.gold)];
     }
     case 'CLOUD_WATERED':
-      return [...removed(WATER_ITEM, e.plots), ...coins(e.tip ?? 0)];
+      return [...removed(WATER_ITEM, e.plots - (e.free ?? 0)), ...coins(e.tip ?? 0)];
     case 'CLOUD_FERTILIZED':
       return removed(FERTILIZER_ITEM, e.plots.length);
     case 'CLOUD_HARVESTED': {

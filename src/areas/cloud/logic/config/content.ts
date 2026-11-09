@@ -78,6 +78,8 @@ export const tierOf = (plotIndex: number): number => Math.floor(plotIndex / PLOT
 /** The upgrade tiers of a cloud tier (decision 056). */
 export const CLOUD_TIERS: TierRules = CLOUD_CONTENT.tiers;
 export const MAX_TIER_LEVEL = CLOUD_TIERS.ids.length;
+/** Rank-5 perk: the chance a plot is watered for free. */
+export const CLOUD_FREE_WATER = CLOUD_CONTENT.tiers.freeWaterChance ?? 0;
 
 export const WATER_ITEM = 'item_pure_water';
 export const FERTILIZER_ITEM = 'item_fertilizer';

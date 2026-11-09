@@ -1,7 +1,7 @@
 // content/cloud/tiers.json and content/garden/zones.json — the upgrade tiers of a cloud tier / garden zone (decision 056).
 // Five tiers (1 = what everyone starts with); each step of `steps` raises a group by one tier.
 import { z } from 'zod';
-import { itemId, nonNeg, posInt } from '../fields';
+import { itemId, nonNeg, posInt, unit } from '../fields';
 
 export const plotTiersFileSchema = z
   .strictObject({
@@ -11,6 +11,8 @@ export const plotTiersFileSchema = z
     groupFactor: nonNeg,
     /** One-off XP of an upgrade = xpPerTier x the new tier. */
     xpPerTier: nonNeg,
+    /** Top-rank perk (Cloud): the chance a plot is watered without spending pure water. Absent = none. */
+    freeWaterChance: unit.optional(),
     /** `steps[n]` raises a group from tier n + 1 to n + 2: the world level, the coins for group 0, the items and the yield bonus it gives (percent). */
     steps: z
       .array(

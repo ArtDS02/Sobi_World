@@ -1,6 +1,6 @@
 # 021 — Đóng băng gameplay (GĐ13)
 
-> **Lưu ý 2026-11-09:** decision 056 mở băng tạm thời cho đúng World Level 100, nâng cấp tầng/khu và đúc mẫu khuông; xong sẽ đóng băng lại với luật mới.
+> **Lưu ý 2026-11-09:** decision 056 đã mở băng tạm thời cho đúng World Level 100, nâng cấp tầng/khu và đúc mẫu khuông, rồi **đóng băng lại**. Luật mới được thêm vào danh sách đã đóng băng: Sobi World Level 1–100 (thay cho 20 cấp), 5 bậc nâng cấp mỗi tầng mây / khu đất (chỉ bội thu), đúc mẫu khuông thẩm mỹ (xu hoặc Gems).
 
 **Ngày:** 2026-10-11 · **Trạng thái:** Đề xuất, có hiệu lực **sau khi chủ dự án chơi thử ≥ 7 ngày thật và duyệt GĐ13**. Từ lúc đó hết đổi cơ chế; chỉ sửa lỗi (ROADMAP GĐ13, decision 017).
 

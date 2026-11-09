@@ -7,9 +7,9 @@ import type { ItemId } from '../../../../core/config/ids';
 import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
 import { emptyPlot, plotStage, settlePlot, sow } from '../../../../systems/plants/plot';
-import { CB, FERTILIZER_ITEM, FLOWERS, PLOT_RULES, WATER_ITEM, WATER_MS, tierOf } from '../config/content';
+import { CB, CLOUD_FREE_WATER, MAX_TIER_LEVEL, FERTILIZER_ITEM, FLOWERS, PLOT_RULES, WATER_ITEM, WATER_MS, tierOf } from '../config/content';
 import { bonusItems } from '../../../../systems/plants/tiers';
-import { cloudTierBonus, isNightNow, needsWater, pickYield, seedUnlocked } from '../derived';
+import { cloudTierBonus, cloudTierLevel, isNightNow, needsWater, pickYield, seedUnlocked } from '../derived';
 import type { CloudEvent } from '../events';
 import { countOf, fits, give, pay, put, runCloud, take, type CloudResult } from './kit';
 
@@ -52,16 +52,25 @@ export function waterPlots(world: WorldSave, args: { plots?: number[]; score?: n
     const dry = wanted.filter((i) => needsWater(g.plots[i]!, ctx.now));
     if (dry.length === 0) return { ok: false, error: 'NOTHING_TO_DO' };
     const have = countOf(w, WATER_ITEM);
-    if (have === 0) return { ok: false, error: 'INSUFFICIENT_ITEM' };
-    const todo = dry.slice(0, have);
-    const taken = take(w, WATER_ITEM, todo.length);
+    // Decision 056, top rank perk: a plot on a rank-5 cloud tier has a chance to be watered for free (seeded rng, action-level only).
+    const free = (i: number) => cloudTierLevel(g, tierOf(i)) >= MAX_TIER_LEVEL && ctx.rng.next() < CLOUD_FREE_WATER;
+    const todo: number[] = [];
+    let cost = 0;
+    for (const i of dry) {
+      const isFree = free(i);
+      if (!isFree && cost >= have) continue;
+      todo.push(i);
+      if (!isFree) cost += 1;
+    }
+    if (todo.length === 0) return { ok: false, error: 'INSUFFICIENT_ITEM' };
+    const taken = take(w, WATER_ITEM, cost);
     if (!taken.ok) return taken;
     const plots = g.plots.map((p, i) => (todo.includes(i) ? { ...p, wetUntil: ctx.now + WATER_MS } : p));
     // D8: the timing mini-game's tip, scaled by its score; the plain watering pays none.
     const tip = args.score === undefined ? 0 : rhythmTip(args.score, todo.length, CONTENT.minigame.rhythm);
     const paid = tip > 0 ? pay(put(taken.world, { ...g, plots }), tip, 'MINIGAME_TIP', ctx) : { ok: true as const, state: put(taken.world, { ...g, plots }) };
     if (!paid.ok) return paid;
-    return { ok: true, world: paid.state, events: [{ type: 'CLOUD_WATERED', plots: todo.length, ...(tip > 0 ? { tip } : {}) }], xp: todo.length * CB.xp.water };
+    return { ok: true, world: paid.state, events: [{ type: 'CLOUD_WATERED', plots: todo.length, ...(cost < todo.length ? { free: todo.length - cost } : {}), ...(tip > 0 ? { tip } : {}) }], xp: todo.length * CB.xp.water };
   });
 }
 

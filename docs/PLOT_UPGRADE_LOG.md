@@ -12,8 +12,8 @@ Branch `feature-plot-upgrade` (from `overnight-hardening`). Tick a step when its
 - [x] 4 Tier scenery (presentation): rank layers via `systems/animation/rankScenery.ts` + `ui/world/rankScenery.ts`, 26 placeholder ids, batch description `asset/batches/plot-rank-scenery.md`
 - [x] 5 Plot-skin forging (content `shared/plotSkins.json`, world save `cosmetics.plotSkins`, `forgePlotSkin` coins OR Gems, `applyTierSkin` / `applyZoneSkin`, forge dialog on `shopGrid`, rank frame, 12 placeholder beds)
 - [x] 6 Economy bot + tuning (`scripts/economy/tiers.ts`: upgrades + Gem-only skin forging; no content numbers changed, reasons below)
-- [ ] 7 Tier-5 perk (optional)
-- [ ] 8 Audit, sandbox run, docs, freeze
+- [x] 7 Tier-5 perk: Cloud free watering done, Garden 72 h wilt dropped (reason below)
+- [x] 8 Audit, sandbox run, docs, freeze
 
 ## Self-made decisions
 (none yet)
@@ -56,3 +56,12 @@ Reading it:
 - **Spend**: ~1M coins on upgrades by day 120 brings the bot's coins down from 150k to 107k; the money is no longer idle (the goal of the research §1.5).
 - **Gems**: still ~840 at day 120: the skins are only 4 (200 Gems in all) and two are locked for this bot, so Gems remain mostly unspent. A later batch of skins (decision 056 allows more via content) is the lever if the owner wants a bigger Gem sink.
 - The "after" run is 3 days earlier to level 20 than "before"/"rules only": the bot now keeps more daisies / roses (it no longer sells what the upgrades need), so it brews more potions and earns more crafting XP, plus the upgrades' one-off XP (50 × rank, 42 upgrades ≈ 5k XP). The game rules alone do not move the first 45 days (the "rules only" column).
+
+## Step 7 — rank-5 perks
+- **Cloud (done)**: a plot on a rank-5 cloud tier is watered for free with `freeWaterChance` 0.25 (content `cloud/tiers.json`), rolled per plot with `ctx.rng` inside `waterPlots` only; `CLOUD_WATERED` carries `free`, the world event removes only the water really spent. `simulate()` untouched.
+- **Garden wilt 72 h (dropped)**: wilting is read from one global `PLOT_RULES.witherAfterMs` inside `plotStage` / `harvestYield` / `advancePlot`, which `simulateGarden` calls over slices of any length; a per-zone threshold would have to enter that closed form, and the slice-equals-jump guarantee (ARCHITECTURE §6) would need a new proof and migration of ripe-since stamps for rank-5 zones. The brief says to drop it if it endangers `simulate()` determinism, and rank 5 is out of reach before ~day 155 anyway, so the risk is not worth it now. Easy to revisit as its own decision.
+
+## Step 8 — IP self-audit (docs/IP_AUDIT_PROMPT.md, scope: what this work added)
+Names: Mây Bông · Mây Sương Sớm · Mây Lụa Trời · Mây Ngọc Trai · Mây Thiên Quang; Đất Vườn · Đất Mùn Tơi · Đất Phù Sa · Đất Hoàng Thổ · Đất Ngàn Mùa; skins Rừng Xanh, Biển Ngọc, Pha Lê, Tinh Tú; landmarks described in the batch file (greenhouse arch, rainbow archway, windmill, scarecrow…). All are plain Vietnamese descriptive words or generic farm / sky objects; no third-party character, creature, product or brand, no zodiac-pot theme, no volcano theme. Art descriptions say "original design" and forbid imitation. Nothing found; no change needed.
+- Step 8 sandbox run (`sandbox-plot`, own folder, real saves untouched): level-100 HUD ("Cấp 100 / Cấp cao nhất"), Cloud upgrade bought (−7,800 coins), Garden chip + button, skin forged with Gems (−60) and applied, rank frame, final reload with a clean console. Not exercised by hand in the browser: forging with coins, the "Giảm chuyển động" setting and the no-WebGL fallback (covered by unit tests of `sceneryMotion` / the actions, and by the code paths being frame-loop only).
+- Final gate: `npm run check` red only on the 2 known `studio.test.ts` tests; `npm run guard` and `npm run items:audit` clean.
