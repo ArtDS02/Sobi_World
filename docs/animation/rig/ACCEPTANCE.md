@@ -2,7 +2,11 @@
 
 Mỗi mục kiểm được: **[T]** = test tự động (`tests/unit/animationRig.test.ts`, `battlePerf.test.ts`), **[L]** = xem ở Admin "Xưởng rig sinh vật" (`#/rig-lab`, ×0,25, Hiện xương, Dải 8 khung), **[B]** = xem ở "Xưởng animation trận" / trận thật, **[O]** = chủ dự án chấm.
 
-Trạng thái 2026-11-06: 4 prototype + 18 chiến binh skin (R2b); ban đầu 2026-11-05 cho 4 prototype (`pig_boar`, `pig_turtle`, `fish_betta`, `octopus`): ✅ đạt · 🟡 đạt trên bản rig-proof, chờ art · ⬜ chưa kiểm.
+Ký hiệu: ✅ đạt · 🟡 đạt một phần / chờ art · ⬜ chưa kiểm.
+
+**Cập nhật 2026-11-09 (đọc trước):** từ decision 050 bổ sung (5) (2026-11-06), 43 sinh vật (21 chiến binh, 22 quái) chạy **pose to pose**: mỗi động tác hiện đúng key pose đã duyệt `cb_<art>_<pose>` vào mốc của nó, lưới chỉ thêm lấy đà / nén giãn / chân bám đất / đầu trễ nhịp; **không vẽ gì đè lên mặt, idle không chớp mắt** (`feel.blink` bỏ trống — chưa có tranh mắt nhắm được duyệt). Bạch Tuộc giữ skin một ảnh. Bản skin một ảnh của 18 chiến binh + 22 quái (bổ sung (3)/(4)) đã bị chủ dự án bác. Các dòng ghi "skin" / "layer vẽ tay" bên dưới là kết quả trước khi đổi; chủ dự án cần chấm lại A10–A13, B8 trên bản pose to pose. Test của bản này: `animationRig.test.ts` → "Pose to pose" (mỗi động tác hiện đúng tranh ở mốc; tranh `windup` của Hộ Pháp Cổ Đại, Heo Thiên Long; khung bay / bơi của Ưng Vách Đá, Cá Betta).
+
+Trạng thái gốc 2026-11-05 cho 4 prototype (`pig_boar`, `pig_turtle`, `fish_betta`, `octopus`), cập nhật 2026-11-06 khi chuyển sang skin:
 
 ## A. Character animation
 | # | Tiêu chí | Cách kiểm | Trạng thái |
@@ -13,9 +17,9 @@ Trạng thái 2026-11-06: 4 prototype + 18 chiến binh skin (R2b); ban đầu 2
 | A4 | Đổi hành động không nhảy hình: khung đầu của hành động mới cách khung trước < 6 px ở đầu / thân / chân | [T] | ✅ |
 | A5 | Tai / bờm / lá / vây trễ theo thân (lò xo): lệch ngược chiều gia tốc, về nghỉ trong < 3 s | [T] | ✅ |
 | A6 | Hai con cùng loài không cùng nhịp (thở, chớp lệch) | [T] | ✅ |
-| A7 | Idle không lặp máy móc: có fidget chen vào trong 20 s; chớp mắt có nhịp không đều, thỉnh thoảng chớp đôi | [T] | ✅ |
+| A7 | Idle không lặp máy móc: có fidget chen vào trong 20 s; chớp mắt có nhịp không đều, thỉnh thoảng chớp đôi | [T] | ✅ fidget; chớp mắt chỉ còn ở Bạch Tuộc (pose to pose không chớp mắt) |
 | A8 | Mỗi loài khác tempo / trọng lượng (rùa chậm & nặng nhất, cá nhẹ nhất; chu kỳ đi của rùa dài hơn heo rừng) | [T] | ✅ |
-| A9 | Mặt diễn: đánh (mắt giận / nhắm khi chạm), bị đánh (><, miệng run), thắng (^^, cười), KO (xoắn) | [T] có faces + [L] | ✅ |
+| A9 | Mặt diễn: đánh (mắt giận / nhắm khi chạm), bị đánh (><, miệng run), thắng (^^, cười), KO (xoắn) | [T] có faces + [L] | ✅ (pose to pose: biểu cảm là biểu cảm đã vẽ trong từng key pose) |
 | A10 | Không còn cảm giác "ảnh tĩnh di chuyển": xem dải 8 khung attack — chân / đầu / thân ở tư thế khác nhau từng khung | [L] | ✅ trên layer vẽ tay (2026-11-06: dải attack Heo Rừng / Cá Betta, `g_slam` Heo Rùa, `ultimate` Bạch Tuộc); ⬜ chủ dự án chấm |
 | A11 | Chuyển trạng thái mượt: idle → attack → hurt → idle trong trận, không giật | [B] | 🟡 (đã chạy trong Xưởng trận; chưa playtest trận thật) |
 | A12 | Tỉ lệ & nét vẽ đạt chuẩn Sobi Farm | [O] + [T] | 🟡 skin (2026-11-06): ở tư thế nghỉ trùng ảnh đã duyệt (test `skins`); chờ chủ dự án chấm lúc chuyển động |
@@ -52,4 +56,4 @@ Trạng thái 2026-11-06: 4 prototype + 18 chiến binh skin (R2b); ban đầu 2
 | D3 | Yêu cầu art cụ thể cho 4 prototype + ảnh guide | ✅ |
 | D4 | Script: `rig:parts`, `rig:fmt`, `rig:guide`, `rig:batch`, `rig:cut` | ✅ |
 | D5 | Màn kiểm tra trực quan (Xưởng rig) | ✅ |
-| D6 | Đổi nguồn art không đổi code / clip | ✅ cắt rời → skin: cùng id xương / clip; chỉ đo lại khớp và nhân hệ số biên độ (`skinRigs.py`) |
+| D6 | Đổi nguồn art không đổi code / clip | ✅ cắt rời → skin: cùng id xương / clip; chỉ đo lại khớp và nhân hệ số biên độ (`skinRigs.py`); skin → pose to pose: clip chung sinh lại bằng `poseClips.py`, thêm khe `pose` / `skin.poses` |

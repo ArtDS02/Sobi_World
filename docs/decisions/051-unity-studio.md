@@ -19,6 +19,10 @@ và muốn agent làm toàn bộ việc tạo asset lẫn animation.
    hash, hướng dẫn thêm mới, trang Admin "Xưởng asset".
 
 ## Thay thế
+> **Lưu ý 2026-11-09:** hai dòng dưới chỉ là ý định ban đầu. Cổng U1 không đạt (xem các cập nhật cuối file) nên **không có
+> gì bị thay**: art giữ tranh Gemini đã duyệt; rig (decision 050) vẫn lấy key pose `cb_<art>_<pose>` từ tranh Gemini, chạy
+> pose to pose. Studio chỉ còn tạo chuyển động cho tranh có sẵn (VFX trận).
+
 - Decision 017 / 022: bỏ "phong cách chuẩn Sobi Farm" và quy trình batch Gemini qua chủ dự án cho asset mới.
 - Decision 050: rig vẫn dùng runtime hiện có, nhưng nguồn layer / key pose là Studio thay cho tranh Gemini.
 - Luật bản quyền (048), gameplay freeze (021), save, `npm run check`: giữ nguyên.
