@@ -3,7 +3,7 @@
 // ui/goals/feedback.ts.
 import type { CodexEvent } from '../collection/codex';
 import type { EventBase, WorldEvent } from '../events';
-import type { WorldLevelUp } from '../progression/xp';
+import type { WorldLevelReward, WorldLevelUp } from '../progression/xp';
 import type { FestivalEvent } from '../live/festival';
 import type { MerchantEvent } from '../live/merchant';
 import type { TechEvent } from '../tech/tech';
@@ -13,7 +13,7 @@ import type { WeeklyEvent } from './weekly';
 import type { LoginEvent } from './loginReward';
 import type { BoardEvent } from './orders';
 
-export type GoalsEvent = BoardEvent | DailyEvent | WeeklyEvent | AchievementEvent | CodexEvent | LoginEvent | WorldLevelUp | TechEvent | FestivalEvent | MerchantEvent;
+export type GoalsEvent = BoardEvent | DailyEvent | WeeklyEvent | AchievementEvent | CodexEvent | LoginEvent | WorldLevelUp | WorldLevelReward | TechEvent | FestivalEvent | MerchantEvent;
 
 export const GOALS_EVENT_TYPES = [
   'BOARD_ORDER_NEW',
@@ -32,6 +32,7 @@ export const GOALS_EVENT_TYPES = [
   'CODEX_MILESTONE_CLAIMED',
   'DAILY_CLAIMED',
   'WORLD_LEVEL_UP',
+  'WORLD_LEVEL_REWARD',
   'TECH_UPGRADED',
   'FESTIVAL_TOKENS',
   'FESTIVAL_GIFT',
@@ -58,6 +59,8 @@ export function goalsWorldEvents(e: GoalsEvent): WorldEvent[] {
       return [{ type: 'codex.discovered', area: WORLD, kind: e.kind, id: e.id }, ...coins(e.coins)];
     case 'WORLD_LEVEL_UP':
       return [{ type: 'area.levelUp', area: WORLD, level: e.level }];
+    case 'WORLD_LEVEL_REWARD':
+      return [...coins(e.coins), ...(e.gems > 0 ? [{ type: 'currency.changed', area: WORLD, currency: 'gems', amount: e.gems } satisfies WorldEvent] : [])];
     case 'DAILY_GOAL_CLAIMED':
     case 'DAILY_BONUS_CLAIMED':
     case 'CODEX_MILESTONE_CLAIMED':

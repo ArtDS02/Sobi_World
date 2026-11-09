@@ -6,7 +6,9 @@ import v7 from '../fixtures/save-v7-real.json';
 import v8 from '../fixtures/save-v8-real.json';
 import v9 from '../fixtures/save-v9-real.json';
 import v10 from '../fixtures/save-v10-real.json';
+import v12 from '../fixtures/save-v12-derived.json';
 import { AREAS } from '../../src/app/areas';
+import { GOALS } from '../../src/app/goals';
 import { parseWorldSave, SAVE_CODEC } from '../../src/app/saveCodec';
 import { mulberry32 } from '../../src/core/rng';
 import { migrate } from '../../src/core/save/migrate';
@@ -20,6 +22,7 @@ const FIXTURES: [string, number, unknown][] = [
   ['v8 (world)', 8, v8],
   ['v9 (world + player)', 9, v9],
   ['v10 (world + goals)', 10, v10],
+  ['v12 (derived from the real v10 save, 114,848 XP = level 29)', 12, v12],
 ];
 
 function migrated(input: unknown): { save: WorldSave; fromVersion: number } {
@@ -66,6 +69,20 @@ describe('saves of every earlier version', () => {
       });
     });
   }
+
+  it('v12 → v13 (decision 056): the XP above level 20 pays its rewards once, then never again', () => {
+    const { save } = migrated(v12);
+    expect(save.progression.levelRewardsPaid).toBe(20);
+    const first = GOALS.settle(save, save, [], { now: 1_000, rng: mulberry32(3) });
+    const after = first.state;
+    expect(first.events.filter((e) => e.type === 'WORLD_LEVEL_REWARD')).toHaveLength(1);
+    expect(after.progression.levelRewardsPaid).toBe(29);
+    expect(after.wallet.gems).toBe(save.wallet.gems + 9);
+    const again = GOALS.settle(after, after, [], { now: 2_000, rng: mulberry32(4) });
+    expect(again.events.filter((e) => e.type === 'WORLD_LEVEL_REWARD')).toHaveLength(0);
+    const reloaded = migrated(JSON.parse(JSON.stringify(after)));
+    expect(reloaded.save.progression.levelRewardsPaid).toBe(after.progression.levelRewardsPaid);
+  });
 
   it('a save from a newer version is refused, not damaged', () => {
     const r = migrate({ ...(v10 as object), schemaVersion: WORLD_SAVE_VERSION + 1 }, SAVE_CODEC);

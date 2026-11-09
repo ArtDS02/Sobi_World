@@ -81,6 +81,12 @@ const WORLD_MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
     const goals = isObject(raw.goals) ? raw.goals : {};
     return { ...raw, schemaVersion: 12, goals: { ...goals, weekly: goals.weekly ?? initialWeekly() } };
   },
+  // v13 (decision 056): World Level 100. Levels were capped at 20 until now, so level 20 is the last reward already
+  // settled; the first run of the new version pays the rewards of every level above 20 the XP already reaches, once.
+  12: (raw) => {
+    const progression = isObject(raw.progression) ? raw.progression : {};
+    return { ...raw, schemaVersion: 13, progression: { ...progression, levelRewardsPaid: typeof progression.levelRewardsPaid === 'number' ? progression.levelRewardsPaid : 20 } };
+  },
 };
 
 const isObject = (v: unknown): v is Raw => typeof v === 'object' && v !== null && !Array.isArray(v);

@@ -46,6 +46,8 @@ export const partC = {
     died: "{name} did not make it...",
     troughUpgraded: "The trough reached level {level}! It holds {capacity} portions.",
     techUpgraded: "{name} reached level {level}!",
+    levelReward: "Level {level}: received {coins} coins and {gems} Gems",
+    levelRewardMany: "Sobi World now goes up to level 100 — you are at level {level}! Rewards for levels {from}–{level}: {coins} coins and {gems} Gems",
     festivalTokens: "+{tokens} Festival Tokens",
     festivalGift: "Festival gift: +{tokens} Festival Tokens",
     festivalBought: "Traded {cost} tokens for {what}.",

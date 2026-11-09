@@ -105,7 +105,9 @@ describe('progression', () => {
   it('the world level table follows GAME_BALANCE §7: the step from level n is 100 x n^1.5', () => {
     const xp = WORLD_LEVELS.xp;
     expect(xp[0]).toBe(0);
-    xp.slice(1).forEach((x, i) => expect(x - xp[i]!).toBe(Math.round(100 * (i + 1) ** 1.5)));
+    // Levels 1..20 keep the GAME_BALANCE §7 curve; 21..100 follow decision 056 (4000 + 300 x (n - 21)).
+    xp.slice(1, 20).forEach((x, i) => expect(x - xp[i]!).toBe(Math.round(100 * (i + 1) ** 1.5)));
+    xp.slice(20).forEach((x, i) => expect(x - xp[19 + i]!).toBe(4000 + 300 * i));
     expect(WORLD_LEVELS.maxLevel).toBe(xp.length);
   });
 

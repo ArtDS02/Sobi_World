@@ -51,7 +51,7 @@ describe('hud and palette', () => {
     expect(v.level).toBe('Cấp 2');
     expect(v.xp).toBe('150/383 KN');
     expect(v.xpProgress).toBe(17); // (150 − 100) / (383 − 100)
-    expect(hudVm({ ...w, progression: { ...w.progression, areas: { sobi_garden: { xp: 99_999 } } } }).xp).toBe('Cấp cao nhất');
+    expect(hudVm({ ...w, progression: { ...w.progression, areas: { sobi_garden: { xp: 9_999_999 } } } }).xp).toBe('Cấp cao nhất');
   });
 
   it('lists the five seeds with their price, what the bag holds and the growth time', () => {

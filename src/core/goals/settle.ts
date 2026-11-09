@@ -7,7 +7,7 @@ import { codexCounts, claimableMilestones, discover, type CodexRules } from '../
 import type { WorldEvent } from '../events';
 import type { GoalsEvent } from './events';
 import { levelFromXp, worldDevelopment, worldXp, type LevelTable, type WorldDevelopmentRules } from '../progression/levels';
-import { addWorldXp } from '../progression/xp';
+import { addWorldXp, payLevelRewards } from '../progression/xp';
 import type { WorldSave } from '../save/world';
 import type { ActionContext } from '../types';
 import { claimable, type AchievementDef, type AchievementWorld, type Totals } from './achievements';
@@ -70,6 +70,13 @@ export function settleWorld(
   const events: GoalsEvent[] = [];
   let world = after;
   const addXp = (w: WorldSave, xp: number) => addWorldXp(w, xp, rules.levels);
+
+  // 0. The rewards of the levels reached since the last payment (one event; decision 056).
+  const paid = payLevelRewards(world, rules.levels, ctx);
+  if (paid.state !== world) {
+    world = paid.state;
+    events.push(...paid.events);
+  }
 
   // 1. Counters and first discoveries from what happened.
   if (worldEvents.length > 0) {

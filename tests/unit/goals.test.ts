@@ -243,14 +243,14 @@ describe('achievements', () => {
     expect(fail(GOALS.claimAchievement('NOPE')(paid, ctx()))).toBe('INVALID_REQUEST');
   });
 
-  it('every achievement has a name, a Gem reward of 5-30 and a metric that exists', () => {
+  it('every achievement has a name, a Gem reward of 5-50 and a metric that exists', () => {
     const ids = ACHIEVEMENTS.map((d) => d.id);
     expect(new Set(ids).size).toBe(ids.length);
     const names = vi.achievements as Record<string, string>;
     for (const d of ACHIEVEMENTS) {
       expect(names[d.id], d.id).toBeTruthy();
       expect(d.gems).toBeGreaterThanOrEqual(5);
-      expect(d.gems).toBeLessThanOrEqual(30);
+      expect(d.gems).toBeLessThanOrEqual(50);
     }
     for (const id of Object.keys(DECORS)) expect(vi.decor[id as keyof typeof DECORS]).toBeTruthy();
   });

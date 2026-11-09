@@ -51,10 +51,10 @@ describe('topBarVm (§10.1)', () => {
 
   it('trough gauge with food; xp capped at max level', () => {
     const s = farm([], { trough: { food: 12, capacity: 30, lastResolvedAt: 0 } });
-    const vm = topBarVm({ ...s, player: { ...s.player, xp: 99_999 } });
+    const vm = topBarVm({ ...s, player: { ...s.player, xp: 9_999_999 } });
     expect(vm.trough).toBe('Máng ăn 12/30');
-    expect(vm.level).toBe('Cấp 20');
-    expect(vm.xp).toBe('67.135/67.135 KN');
+    expect(vm.level).toBe('Cấp 100');
+    expect(vm.xp).toBe('1.335.135/1.335.135 KN');
     expect(vm.xpProgress).toBe(100);
   });
 });

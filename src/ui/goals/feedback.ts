@@ -52,6 +52,16 @@ export function goalsPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
       return { sound: 'coin_collect', toast: null };
     case 'WORLD_LEVEL_UP':
       return { sound: 'level_up', toast: t(vi.event.levelUp, { level: e.level }) };
+    case 'WORLD_LEVEL_REWARD':
+      return {
+        sound: 'coin_collect',
+        toast: t(e.toLevel > e.fromLevel ? vi.event.levelRewardMany : vi.event.levelReward, {
+          from: e.fromLevel,
+          level: e.toLevel,
+          coins: formatInt(e.coins),
+          gems: e.gems,
+        }),
+      };
     case 'TECH_UPGRADED':
       return { sound: 'level_up', toast: t(vi.event.techUpgraded, { name: TECHS[e.techId]?.nameVi ?? e.techId, level: e.level }) };
     case 'FESTIVAL_TOKENS':

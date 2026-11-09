@@ -299,6 +299,8 @@ $sign-edge: #8a5a2b;
       color: #fff;
       text-shadow: 0 1px 0 #b8701a, 0 0 3px #b8701a;
     }
+    // Three digits (level 100) fit the star by shrinking the number a little.
+    &.is-wide b { font-size: $fs-sm; letter-spacing: -0.05rem; }
   }
 
   &__star-art { position: absolute; inset: 0; width: 100%; height: 100%; }

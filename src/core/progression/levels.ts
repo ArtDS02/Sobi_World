@@ -3,10 +3,32 @@
 // in content/shared/progression.json. World Development (a wider number: level + Codex + buildings) and the
 // world level gate new Areas and content. Pure.
 
+/** What reaching a level pays, once (decision 056). */
+export interface LevelReward {
+  level: number;
+  coins: number;
+  gems: number;
+}
+
 /** XP needed to reach level n + 1 at index n (index 0 = level 1 = 0 XP), and the cap. */
 export interface LevelTable {
   xp: readonly number[];
   maxLevel: number;
+  /** Rewards per level, increasing by level; absent = none (older callers and tests). */
+  rewards?: readonly LevelReward[];
+}
+
+/** The rewards of the levels after `paid` up to `level` (inclusive), summed. */
+export function levelRewardsBetween(paid: number, level: number, table: LevelTable): { coins: number; gems: number } {
+  let coins = 0;
+  let gems = 0;
+  for (const r of table.rewards ?? []) {
+    if (r.level > paid && r.level <= level) {
+      coins += r.coins;
+      gems += r.gems;
+    }
+  }
+  return { coins, gems };
 }
 
 /** Highest level whose threshold <= xp, capped at maxLevel. */

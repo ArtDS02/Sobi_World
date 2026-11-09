@@ -12,8 +12,8 @@ export const achievementSchema = z.strictObject({
   metric: z.enum(ACHIEVEMENT_METRIC_VALUES),
   /** Target value; 'ALL' = every entry the world offers for that metric (every species, every decoration…). */
   target: z.union([posInt, z.literal('ALL')]),
-  /** 5-30 Gems each (GAME_BALANCE §8). */
-  gems: posInt.max(30),
+  /** 5-30 Gems each (GAME_BALANCE §8); the level 30..100 milestones go up to 50 (decision 056). */
+  gems: posInt.max(50),
   xp: nonNeg,
 });
 

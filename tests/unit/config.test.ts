@@ -121,7 +121,7 @@ describe('levels (§6.4)', () => {
     expect(levelFromXp(100)).toBe(2);
     expect(levelFromXp(383)).toBe(3); // GAME_BALANCE §7: step n = 100 x n^1.5
     expect(levelFromXp(6143)).toBe(8);
-    expect(levelFromXp(999999)).toBe(WORLD_LEVELS.maxLevel);
+    expect(levelFromXp(9_999_999)).toBe(WORLD_LEVELS.maxLevel);
   });
 
   it('the old per-player-level trough rule survives for migrations only: 20 + 10 per level, max 120 (Q6)', () => {

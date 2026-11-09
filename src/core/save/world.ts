@@ -1,4 +1,4 @@
-// World save document v11 (ARCHITECTURE §9, AUDIT_AND_PLAN §d): world-level state shared by every Area,
+// World save document v13 (ARCHITECTURE §9, AUDIT_AND_PLAN §d): world-level state shared by every Area,
 // plus one opaque slice per Area under `areas` that the Area's own schema validates.
 import { z } from 'zod';
 import { CONTENT } from '../config/content';
@@ -6,7 +6,7 @@ import { goalsSchema, initialGoals, type GoalsState } from '../goals/state';
 import { initialLive, liveSchema, type LiveState } from '../live/state';
 import { newPlayer, playerSchema, type PlayerSave } from '../player/player';
 
-export const WORLD_SAVE_VERSION = 12;
+export const WORLD_SAVE_VERSION = 13;
 
 export const CURRENCY_VALUES = ['coins', 'gems', 'eventTokens'] as const;
 export type Currency = (typeof CURRENCY_VALUES)[number];
@@ -50,6 +50,8 @@ export interface WorldSave {
     stats: Record<string, number>; // stat id -> count, absent = 0
     claimed: Record<string, number>; // achievement id -> claimed at
     daily: { lastDay: number | null; streak: number };
+    /** Highest world level whose reward (content progression.worldLevel.rewards) was already paid (v13, decision 056). */
+    levelRewardsPaid: number;
   };
   /** Discovered ids per kind (`breed`, `crop`, `item`, later `fish`…) and the Codex milestones already claimed (v10). */
   collection: { discovered: Record<string, string[]>; claimed: string[] };
@@ -88,6 +90,7 @@ export const worldSaveSchema = z.object({
     stats: z.record(z.string(), nonNeg),
     claimed: z.record(z.string(), time),
     daily: z.object({ lastDay: z.number().int().nullable(), streak: z.number().int().min(0) }),
+    levelRewardsPaid: z.number().int().min(1),
   }),
   collection: z.object({ discovered: z.record(z.string(), z.array(z.string())), claimed: z.array(z.string()) }),
   goals: goalsSchema,
@@ -112,7 +115,7 @@ export function emptyWorld(now: number, settings: WorldSettings, firstArea: stri
     wallet: { coins: 0, gems: 0, eventTokens: 0 },
     inventory: { items: {} },
     transactions: [],
-    progression: { areas: {}, stats: {}, claimed: {}, daily: { lastDay: null, streak: 0 } },
+    progression: { areas: {}, stats: {}, claimed: {}, daily: { lastDay: null, streak: 0 }, levelRewardsPaid: 1 },
     collection: { discovered: {}, claimed: [] },
     goals: initialGoals(now),
     live: initialLive(),

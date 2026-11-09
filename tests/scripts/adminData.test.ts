@@ -76,7 +76,7 @@ describe('admin validation', () => {
     expect(bad('PIG_EARTH_PINK', { buyGold: 5000 }).some((i) => /Giá mua/.test(i.text))).toBe(true);
     expect(bad('PIG_EARTH_PINK', { sellGold: 99999 }).some((i) => /Giá bán phải thấp hơn/.test(i.text))).toBe(true);
     expect(bad('PIG_MYTHICAL', { breedable: true }).length).toBeGreaterThan(0);
-    expect(bad('PIG_EARTH_PINK', { unlockLevel: 99 }).some((i) => /Cấp mở khoá/.test(i.text))).toBe(true);
+    expect(bad('PIG_EARTH_PINK', { unlockLevel: 999 }).some((i) => /Cấp mở khoá/.test(i.text))).toBe(true);
     expect(bad('PIG_EARTH_PINK', { family: 'NOPE' }).some((i) => /Nhóm/.test(i.text))).toBe(true);
   });
 });

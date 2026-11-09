@@ -57,7 +57,7 @@ function levelPill(d: PlazaBarDeps, level: PlazaLevel) {
     { class: 'plazabar__level', attrs: { title: right } },
     el(
       'span',
-      { class: `plazabar__star${d.hasArt('ui_badge_level') ? ' has-art' : ''}` },
+      { class: `plazabar__star${d.hasArt('ui_badge_level') ? ' has-art' : ''}${level.level >= 100 ? ' is-wide' : ''}` },
       pick(d, 'ui_badge_level', 'plazabar__star-art'),
       el('b', { text: String(level.level) }),
     ),
