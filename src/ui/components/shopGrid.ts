@@ -17,9 +17,11 @@ export interface ShopBuyVm {
   price: string;
   /** Why it is off, null when it works. */
   reason: string | null;
+  /** Which currency icon the price carries (default: Sobi Coin). */
+  icon?: 'gem';
 }
 
-export type ShopKind = 'seed' | 'fertilizer' | 'water' | 'feed' | 'medicine' | 'fish' | 'item';
+export type ShopKind = 'seed' | 'fertilizer' | 'water' | 'feed' | 'medicine' | 'fish' | 'item' | 'skin';
 
 export interface ShopLineVm {
   itemId: string;
@@ -44,11 +46,12 @@ export interface ShopBalance {
 /** Read when drawn: the string table is filled with the chosen language in place. */
 function tagOf(kind: ShopKind): string {
   const h = vi.areaHud;
-  const tags: Record<ShopKind, string> = { seed: h.tagSeed, fertilizer: h.tagFertilizer, water: h.tagWater, feed: h.tagFeed, medicine: h.tagMedicine, fish: h.tagFish, item: h.tagItem };
+  const tags: Record<ShopKind, string> = { seed: h.tagSeed, fertilizer: h.tagFertilizer, water: h.tagWater, feed: h.tagFeed, medicine: h.tagMedicine, fish: h.tagFish, item: h.tagItem, skin: vi.plotSkin.tag };
   return tags[kind];
 }
 
 const coin = () => art(AREA_HUD_ART.coin, 'c-icon');
+const gem = () => art('ui_icon_gem', 'c-icon');
 
 /** "×10, ×50: Thiếu Sobi Coin" — the off buttons of a card and why, one line per reason. */
 function offLines(buys: readonly ShopBuyVm[]): string[] {
@@ -86,7 +89,7 @@ function card(l: ShopLineVm, onBuy: (itemId: string, count: number) => void): HT
             },
           },
           el('b', { text: b.label }),
-          el('small', {}, coin(), b.price),
+          el('small', {}, b.icon === 'gem' ? gem() : coin(), b.price),
         ),
       ),
     ),

@@ -274,6 +274,30 @@ function drawCloudScenery(r: Raster, id: string) {
   for (const dx of [-0.22, 0.22]) r.roundRect(w * (0.5 + dx) - 6, h * 0.82, 12, h * 0.1, 4, [70, 64, 88, 255]); // legs
 }
 
+/** A skinned plot bed (decision 056): the plain plot's shape in the skin's own colour, so a skin reads at a glance until the art arrives. */
+const SKIN_TINTS: Record<string, Rgba> = {
+  verdant: [112, 176, 92, 255],
+  pearl_sea: [120, 190, 210, 255],
+  crystal: [190, 170, 232, 255],
+  starry: [90, 90, 160, 255],
+};
+function drawSkinPlot(r: Raster, id: string) {
+  const [, name, kind] = /^skin_(.+?)_(cloud|soil_wet|soil)$/.exec(id) ?? [];
+  const tint = SKIN_TINTS[name ?? ''] ?? [200, 200, 200, 255];
+  const w = r.width;
+  const h = r.height;
+  if (kind === 'cloud') {
+    r.ellipse(w * 0.5, h * 0.58, w * 0.46, h * 0.34, shade(tint, 0.85));
+    r.ellipse(w * 0.34, h * 0.5, w * 0.26, h * 0.3, tint);
+    r.ellipse(w * 0.64, h * 0.48, w * 0.28, h * 0.3, tint);
+    return;
+  }
+  const soil: Rgba = kind === 'soil_wet' ? shade(tint, 0.55) : shade(tint, 0.75);
+  r.roundRect(4, h * 0.18, w - 8, h * 0.74, 20, shade(soil, 0.78));
+  r.roundRect(8, h * 0.14, w - 16, h * 0.7, 18, soil);
+  r.ellipse(w * 0.5, h * 0.48, w * 0.16, h * 0.14, tint);
+}
+
 /** Rank scenery (decision 056): a rough silhouette per kind so the layers read in the scene until the art arrives. */
 function drawScenery(r: Raster, id: string) {
   const w = r.width;
@@ -403,6 +427,7 @@ function render(
   if (id.startsWith('chr_')) drawCharacter(r, key);
   else if (id === 'ui_icon_lock') drawLock(r);
   else if (id.startsWith('scn_')) drawScenery(r, id);
+  else if (id.startsWith('skin_')) drawSkinPlot(r, id);
   else if (id.startsWith('crop_')) drawCrop(r, id);
   else if (id.startsWith('enemy_')) drawEnemy(r, id);
   else if (id === 'bg_adventure_forest') drawForestBackdrop(r);

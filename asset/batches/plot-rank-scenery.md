@@ -45,3 +45,15 @@ the scale in those tables, so keep the proportions).
 - Run `npm run art:process` / the `image-to-asset` skill as for the other batches, then `npm run assets:check`.
 - If a final size differs from the table, change `CATALOGUE_SIZES` in `scripts/assets/sizes.ts` and the `scale` in the scenery table, not the logic.
 - Motion in the game is code (bob, halo breath, lantern flicker); no extra frames are needed.
+
+## Plot skins (12 images) — decision 056
+Each skin has a cloud bed and two soil beds (dry, watered), the plots' own canvas **152 × 108** (same as `plot_cloud`, `plot_soil`, `plot_soil_wet`; same angle, same shadow, the plot's centre at the canvas centre). The skin only repaints the bed; the flower / crop stands on it as before. Original themes, by id (names in `vi.plotSkin.names`):
+
+| skin | Vietnamese name | look |
+|---|---|---|
+| `verdant` | Rừng Xanh | mossy green cloud with tiny ferns and clover; soil with leaf litter and small roots |
+| `pearl_sea` | Biển Ngọc | pale aqua cloud with foam curls and scattered pearl-white beads; soil like wet sand with small shells |
+| `crystal` | Pha Lê | lilac cloud with faceted translucent crystal shards around the rim; soil of dark slate with glinting crystal chips |
+| `starry` | Tinh Tú | deep indigo cloud sprinkled with tiny stars and a crescent edge; soil dusted with soft star-sparkle |
+
+ids: `skin_<skin>_cloud`, `skin_<skin>_soil`, `skin_<skin>_soil_wet` (e.g. `skin_starry_soil_wet`). The rank frame (bronze / silver / gold / violet, ranks 2–5) is drawn by the game around the plots, so the skin art does **not** include a rank border.

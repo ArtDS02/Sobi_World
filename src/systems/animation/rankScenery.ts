@@ -51,3 +51,17 @@ export function sceneryMotion(kind: SceneryKind, timeMs: number, night: boolean,
       return { dy: 0, alpha: 1 };
   }
 }
+
+/** The frame laid over a group's plots (decision 056): the rank shows on it, whatever skin the plots wear. */
+export interface RankFrame {
+  /** Design px: the rectangle around the plots. */
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  depth: number;
+}
+
+/** Frame colour by rank 2..5 (bronze, silver, gold, rainbow violet); rank 1 has no frame. */
+export const RANK_FRAME_COLORS: readonly number[] = [0xcd8a4a, 0xc8d0dc, 0xf2c94c, 0xa77bff];
+export const frameColor = (rank: number): number | null => (rank >= 2 ? (RANK_FRAME_COLORS[Math.min(rank, 5) - 2] ?? null) : null);

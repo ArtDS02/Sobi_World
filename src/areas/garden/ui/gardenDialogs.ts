@@ -9,14 +9,17 @@ import type { UiIcon } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import { buildWorkshop, buyPlots, collectCraft, startCraft, upgradeSprinkler, upgradeZone } from '../logic/actions/buildings';
+import { applyZoneSkin, buildWorkshop, buyPlots, collectCraft, startCraft, upgradeSprinkler, upgradeZone } from '../logic/actions/buildings';
 import { tierUpgradeBody } from '../../../ui/components/tierUpgradeDialog';
+import { skinForgeBody } from '../../../ui/components/skinForgeDialog';
+import { skinCardsVm, skinStripVm } from '../../../ui/world/skinForgeVm';
+import { skinOfGroup } from '../../../systems/plants/tiers';
 import { fertilizePlots, harvestPlots, waterPlots } from '../logic/actions/plants';
 import { buyShopItem } from '../logic/actions/shop';
 import { GB, type BuildingId } from '../logic/config/content';
 import { nextExpansion } from '../logic/derived';
 import { gardenOf } from '../logic/save/lens';
-import { expandVm, plotCardVm, sprinklerVm, workshopVm, type ButtonVm, type GardenRun, type RecipeVm } from './gardenVm';
+import { expandVm, plotCardVm, probe, sprinklerVm, workshopVm, type ButtonVm, type GardenRun, type RecipeVm } from './gardenVm';
 import { gardenShopVm } from './gardenShopVm';
 import { zoneRankVm } from './gardenRankVm';
 import { createLabController } from '../../../ui/components/labView';
@@ -49,6 +52,8 @@ export interface GardenDialogsDeps {
   dispatchResult: (run: GardenRun) => Promise<ReturnType<GardenRun>>;
   /** Re-draws the whole UI (a choice inside a dialog changed). */
   refresh: () => void;
+  /** The world action that forges a plot skin (decision 056); it lives in the world, not in the Garden. */
+  forgeSkin: (skinId: string, pay: 'coins' | 'gems') => GardenRun;
 }
 
 export function createGardenDialogs(d: GardenDialogsDeps) {
@@ -117,6 +122,27 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
   /** The rank upgrade of garden zone `group` (decision 056): before / after, the cost as have / need, and why the button is off. */
   function openRank(group: number) {
     openLive(vi.plotTier.upgradeTitle, (w) => tierUpgradeBody(zoneRankVm(w, group), () => run((s, c) => upgradeZone(s, { group }, c))));
+  }
+
+  /** The plot skin forge (decision 056): forge for coins or Gems, then dress the garden zone `group` on screen. */
+  function openForge(group: number) {
+    const buy = guardBuy((skinId, count) => run(d.forgeSkin(skinId, count === 2 ? 'gems' : 'coins')));
+    openLive(
+      vi.plotSkin.title,
+      (w) =>
+        skinForgeBody(
+          {
+            cards: skinCardsVm(w, (skinId, pay) => probe(w, d.forgeSkin(skinId, pay), d.now())),
+            strip: skinStripVm(w, skinOfGroup(gardenOf(w).zoneSkins, group)),
+            groupName: t(vi.garden.zoneTitle, { n: group + 1, name: vi.garden.zoneNames[group] ?? '' }),
+            coins: w.wallet.coins,
+            gems: w.wallet.gems,
+          },
+          { onForge: buy, onApply: (skinId) => run((s, c) => applyZoneSkin(s, { group, skinId }, c)) },
+        ),
+      (body) => dressShopDialog(body, 'garden'),
+      'shop',
+    );
   }
 
   function openPlot(index: number) {
@@ -250,6 +276,7 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
     openLab,
     openExpand,
     openRank,
+    openForge,
     openSprinkler,
     openPlot,
     openWorkshop,

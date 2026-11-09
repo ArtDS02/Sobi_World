@@ -2821,6 +2821,66 @@
       "asset": "props/scn_garden_market.png"
     },
     {
+      "id": "skin_verdant_cloud",
+      "status": "placeholder",
+      "asset": "props/skin_verdant_cloud.png"
+    },
+    {
+      "id": "skin_verdant_soil",
+      "status": "placeholder",
+      "asset": "props/skin_verdant_soil.png"
+    },
+    {
+      "id": "skin_verdant_soil_wet",
+      "status": "placeholder",
+      "asset": "props/skin_verdant_soil_wet.png"
+    },
+    {
+      "id": "skin_pearl_sea_cloud",
+      "status": "placeholder",
+      "asset": "props/skin_pearl_sea_cloud.png"
+    },
+    {
+      "id": "skin_pearl_sea_soil",
+      "status": "placeholder",
+      "asset": "props/skin_pearl_sea_soil.png"
+    },
+    {
+      "id": "skin_pearl_sea_soil_wet",
+      "status": "placeholder",
+      "asset": "props/skin_pearl_sea_soil_wet.png"
+    },
+    {
+      "id": "skin_crystal_cloud",
+      "status": "placeholder",
+      "asset": "props/skin_crystal_cloud.png"
+    },
+    {
+      "id": "skin_crystal_soil",
+      "status": "placeholder",
+      "asset": "props/skin_crystal_soil.png"
+    },
+    {
+      "id": "skin_crystal_soil_wet",
+      "status": "placeholder",
+      "asset": "props/skin_crystal_soil_wet.png"
+    },
+    {
+      "id": "skin_starry_cloud",
+      "status": "placeholder",
+      "asset": "props/skin_starry_cloud.png"
+    },
+    {
+      "id": "skin_starry_soil",
+      "status": "placeholder",
+      "asset": "props/skin_starry_soil.png"
+    },
+    {
+      "id": "skin_starry_soil_wet",
+      "status": "placeholder",
+      "asset": "props/skin_starry_soil_wet.png"
+    },
+    {
       "id": "prop_sign_plank",
       "status": "production",
       "asset": "props/prop_sign_plank.png"

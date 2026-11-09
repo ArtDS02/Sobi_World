@@ -2,7 +2,7 @@
 // systems/animation/rankScenery.ts, shown by the group on screen and its rank. Motion (a creature's bob, the halo's breath,
 // the lanterns' flicker at night) is code on the frame loop, so it works without WebGL; reduced motion freezes it.
 import type * as Phaser from 'phaser';
-import { sceneryMotion, type SceneryLayer } from '../../systems/animation/rankScenery';
+import { frameColor, sceneryMotion, type RankFrame, type SceneryLayer } from '../../systems/animation/rankScenery';
 
 type Img = Phaser.GameObjects.Image;
 
@@ -18,8 +18,16 @@ export class RankScenery {
   private group = 0;
   private rank = 1;
 
-  /** `fixed` makes an image of fixed art (the scene re-points it when its texture arrives late). */
-  constructor(layers: readonly SceneryLayer[], fixed: (x: number, y: number, id: string) => Img) {
+  private readonly frame: Phaser.GameObjects.Graphics | null;
+
+  /** `fixed` makes an image of fixed art (the scene re-points it when its texture arrives late); `frame` is the rank frame around the plots. */
+  constructor(
+    scene: Phaser.Scene,
+    layers: readonly SceneryLayer[],
+    fixed: (x: number, y: number, id: string) => Img,
+    private readonly frameRect?: RankFrame,
+  ) {
+    this.frame = frameRect ? scene.add.graphics().setDepth(frameRect.depth) : null;
     this.drawn = layers.map((layer) => {
       const arts = typeof layer.art === 'string' ? [layer.art] : layer.art;
       const images = arts.map((id) => {
@@ -36,10 +44,19 @@ export class RankScenery {
   draw(group: number, rank: number) {
     this.group = group;
     this.rank = rank;
+    this.drawFrame(rank);
     for (const { layer, images } of this.drawn) {
       const on = layer.minRank <= rank;
       images.forEach((img, i) => img.setVisible(on && (images.length === 1 || i === group)));
     }
+  }
+
+  private drawFrame(rank: number) {
+    const f = this.frameRect;
+    const colour = frameColor(rank);
+    this.frame?.clear();
+    if (!f || colour === null) return;
+    this.frame?.lineStyle(10, colour, 0.85).strokeRoundedRect(f.x, f.y, f.width, f.height, 36);
   }
 
   /** One frame of motion. */

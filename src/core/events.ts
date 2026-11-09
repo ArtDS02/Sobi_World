@@ -44,6 +44,8 @@ export type WorldEvent =
   | { type: 'tech.upgraded'; area: string; techId: string; level: number }
   | { type: 'creature.hatched'; area: string; creatureId: string; breed: string }
   | { type: 'plot.tierUpgraded'; area: string; group: number; tier: number }
+  | { type: 'plot.skinForged'; area: string; skinId: string }
+  | { type: 'plot.skinApplied'; area: string; group: number; skinId: string | null }
   | { type: 'time.dayChanged'; day: number };
 
 export type WorldEventType = WorldEvent['type'];
@@ -78,6 +80,8 @@ export const WORLD_EVENT_TYPES = [
   'tech.upgraded',
   'creature.hatched',
   'plot.tierUpgraded',
+  'plot.skinForged',
+  'plot.skinApplied',
   'time.dayChanged',
 ] as const satisfies readonly WorldEventType[];
 

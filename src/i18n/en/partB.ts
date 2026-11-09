@@ -471,6 +471,7 @@ export const partB = {
   },
 
   error: {
+    SKIN_LOCKED: "This skin's blueprint is not open yet.",
     INVALID_REQUEST: "Invalid request.",
     PIG_NOT_FOUND: "This pig could not be found.",
     INSUFFICIENT_GOLD: "Not enough Sobi Coin.",

@@ -259,3 +259,17 @@ CATALOGUE_SIZES.scn_garden_lanterns = { width: 900, height: 120 };
 CATALOGUE_SIZES.scn_garden_critter = { width: 120, height: 110 };
 CATALOGUE_SIZES.scn_garden_oldtree = { width: 300, height: 380 };
 CATALOGUE_SIZES.scn_garden_market = { width: 300, height: 260 };
+
+// Decision 056: the plot skins (a cloud bed, a dry and a watered soil bed per skin), the plots' own size.
+CATALOGUE_SIZES.skin_verdant_cloud = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_verdant_soil = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_verdant_soil_wet = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_pearl_sea_cloud = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_pearl_sea_soil = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_pearl_sea_soil_wet = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_crystal_cloud = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_crystal_soil = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_crystal_soil_wet = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_starry_cloud = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_starry_soil = { width: 152, height: 108 };
+CATALOGUE_SIZES.skin_starry_soil_wet = { width: 152, height: 108 };

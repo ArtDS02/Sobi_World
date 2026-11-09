@@ -65,6 +65,10 @@ export function cloudPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
       const id = CLOUD_TIERS.ids[e.tier - 1] ?? '';
       return { sound: 'level_up', toast: t(T.rankUp, { tier: vi.cloud.tierNames[e.group] ?? '', rank: e.tier, name: vi.cloud.rankNames[id as keyof typeof vi.cloud.rankNames] ?? id }) };
     }
+    case 'CLOUD_SKIN_APPLIED': {
+      const group = vi.cloud.tierNames[e.group] ?? '';
+      return { sound: 'notify', toast: e.skinId ? t(vi.plotSkin.applied, { group, name: vi.plotSkin.names[e.skinId as keyof typeof vi.plotSkin.names] ?? e.skinId }) : t(vi.plotSkin.plained, { group }) };
+    }
     case 'CLOUD_LEVEL_UP':
       return { sound: 'level_up', toast: t(T.levelUp, { level: e.level }) };
   }

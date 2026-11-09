@@ -42,6 +42,7 @@ export const CONTENT_FILES: readonly ContentFileDef[] = [
   def('shared/time.json', 'world', '🕒', 'Thời gian', 'Buổi trong ngày, bước mô phỏng, trần bù offline', s('shared', 'time'), 'timeFileSchema'),
   def('shared/health.json', 'world', '🩺', 'Sức khỏe', 'Bệnh, nguy kịch, chết, ân hạn, bảo vệ người mới', s('shared', 'health'), 'healthFileSchema'),
   def('shared/progression.json', 'world', '📈', 'Cấp Sobi World', 'KN từng cấp, Phát triển thế giới', s('shared', 'progression'), 'progressionFileSchema'),
+  def('shared/plotSkins.json', 'world', '🧱', 'Mẫu khuông', 'Đúc mẫu ngoại hình: vật liệu, giá xu / Gems, điều kiện mở bản thiết kế', s('shared', 'plotSkins'), 'plotSkinsFileSchema'),
   def('shared/bond.json', 'world', '💕', 'Thân thiết', 'Vuốt ve, món yêu thích, món ăn vặt', s('shared', 'bond'), 'bondFileSchema'),
   def('shared/minigame.json', 'world', '🎯', 'Mini-game nhịp', 'Tưới đúng nhịp: độ dài nhịp, vùng tốt, số lượt, tiền thưởng', s('shared', 'minigame'), 'minigameFileSchema'),
   def('shared/defaults.json', 'world', '🔇', 'Mặc định save mới', 'Âm thanh khi bắt đầu save mới (save cũ giữ lựa chọn riêng)', s('shared', 'defaults'), 'defaultsFileSchema'),

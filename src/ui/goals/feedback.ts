@@ -62,6 +62,8 @@ export function goalsPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
           gems: e.gems,
         }),
       };
+    case 'PLOT_SKIN_FORGED':
+      return { sound: 'level_up', toast: t(vi.plotSkin.forged, { name: vi.plotSkin.names[e.skinId as keyof typeof vi.plotSkin.names] ?? e.skinId }) };
     case 'TECH_UPGRADED':
       return { sound: 'level_up', toast: t(vi.event.techUpgraded, { name: TECHS[e.techId]?.nameVi ?? e.techId, level: e.level }) };
     case 'FESTIVAL_TOKENS':

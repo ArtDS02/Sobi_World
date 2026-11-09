@@ -7,7 +7,7 @@ import type { PlotStage } from '../../../systems/plants/plot';
 import { growthShare, harvestYield, plotStage } from '../../../systems/plants/plot';
 import { CB, CLOUD_TIERS, FLOWERS, MAX_PLOTS, MAX_SPRING_LEVEL, PLOTS_PER_TIER, PLOT_RULES, SPRING_LEVELS, TIER_COUNT, springLevel, tierOf } from './config/content';
 import type { CloudState } from './state';
-import { bonusPctOf, nextUpgrade, tierOfGroup, upgradeBlock, type UpgradeBlock, type UpgradeStep } from '../../../systems/plants/tiers';
+import { bonusPctOf, nextUpgrade, skinOfGroup, tierOfGroup, upgradeBlock, type UpgradeBlock, type UpgradeStep } from '../../../systems/plants/tiers';
 
 /** The crossing lab of a save (decision 035); empty when the save predates it. */
 export const labOf = (g: Pick<CloudState, 'lab'>): NonNullable<CloudState['lab']> => g.lab ?? { found: [], misses: {} };
@@ -117,6 +117,8 @@ export interface SceneState {
   night: boolean;
   /** Per cloud tier: its upgrade rank (1..5), its yield bonus (percent) and whether the tier owns all its plots and can still rise (the banner offers the upgrade then; decision 056). */
   ranks: { rank: number; bonus: number; open: boolean }[];
+  /** The plot skin each cloud tier wears (decision 056); null = the plain look. */
+  skins: (string | null)[];
 }
 
 export const sceneState = (g: CloudState, now: number, dayOffsetMs = 0): SceneState => ({
@@ -126,6 +128,7 @@ export const sceneState = (g: CloudState, now: number, dayOffsetMs = 0): SceneSt
   springLevel: g.spring.level,
   cauldron: { built: g.cauldron.built, busy: g.cauldron.job !== null, ready: cauldronReady(g, now) },
   night: isNightNow(now, dayOffsetMs),
+  skins: Array.from({ length: TIER_COUNT }, (_, group) => skinOfGroup(g.tierSkins, group)),
   ranks: Array.from({ length: TIER_COUNT }, (_, group) => {
     const { step, block } = cloudTierUpgrade(g, group, Infinity);
     return { rank: cloudTierLevel(g, group), bonus: cloudTierBonus(g, group), open: step !== null && block !== 'GROUP_INCOMPLETE' };

@@ -34,6 +34,8 @@ export interface GardenUiDeps {
   host: HTMLElement;
   leave: () => void;
   openPanel: (panel: PanelId) => void;
+  /** The world action that forges a plot skin (decision 056). */
+  forgeSkin: (skinId: string, pay: 'coins' | 'gems') => GardenRun;
 }
 
 export interface GardenUi {
@@ -64,7 +66,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
     return s.status === 'ready' && s.save && hasGarden(s.save) ? s.save : null;
   };
   const dispatch = (run: GardenRun) => void d.world.dispatch(run);
-  const dialogs = createGardenDialogs({ host: dialogHost, world, now: d.now, dispatch, dispatchResult: (run) => d.world.dispatch(run), refresh: () => refresh() });
+  const dialogs = createGardenDialogs({ host: dialogHost, world, now: d.now, dispatch, dispatchResult: (run) => d.world.dispatch(run), refresh: () => refresh(), forgeSkin: d.forgeSkin });
 
   const runs = {
     water: (w: WorldSave, c: Parameters<GardenRun>[1]) => waterPlots(w, {}, c),
@@ -150,7 +152,13 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
           ],
         },
         { label: vi.lab.group, actions: [{ label: vi.lab.open, reason: null, art: GARDEN_DOCK_ART.lab, tone: 'main', onClick: () => dialogs.openLab() }] },
-        { label: vi.areaHud.groupGrow, actions: [{ ...bulk.expand, art: GARDEN_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openExpand() }] },
+        {
+          label: vi.areaHud.groupGrow,
+          actions: [
+            { ...bulk.expand, art: GARDEN_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openExpand() },
+            { label: vi.plotSkin.open, reason: null, art: GARDEN_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openForge(zone()) },
+          ],
+        },
       ],
     });
   }

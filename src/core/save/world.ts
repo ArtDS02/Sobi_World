@@ -59,6 +59,8 @@ export interface WorldSave {
   goals: GoalsState;
   /** The festival, the merchant and the test switches (v11). */
   live: LiveState;
+  /** Cosmetic unlocks that belong to the player, not to an Area (v13, decision 056): the plot skins forged so far. */
+  cosmetics: { plotSkins: string[] };
   settings: WorldSettings;
   /** Area id -> that Area's state; validated by the Area's save spec. */
   areas: Record<string, unknown>;
@@ -95,6 +97,7 @@ export const worldSaveSchema = z.object({
   collection: z.object({ discovered: z.record(z.string(), z.array(z.string())), claimed: z.array(z.string()) }),
   goals: goalsSchema,
   live: liveSchema,
+  cosmetics: z.object({ plotSkins: z.array(z.string().min(1)) }),
   settings: z.object({
     musicOn: z.boolean(),
     sfxOn: z.boolean(),
@@ -119,6 +122,7 @@ export function emptyWorld(now: number, settings: WorldSettings, firstArea: stri
     collection: { discovered: {}, claimed: [] },
     goals: initialGoals(now),
     live: initialLive(),
+    cosmetics: { plotSkins: [] },
     settings,
     areas: {},
   };

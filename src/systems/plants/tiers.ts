@@ -76,3 +76,14 @@ export function bonusItems(quantity: number, pct: number, rng: Rng): number {
   for (let i = 0; i < quantity; i += 1) if (rng.next() * 100 < pct) extra += 1;
   return extra;
 }
+
+/** The skin worn by group `group` in a sparse list; null = the plain look. */
+export const skinOfGroup = (skins: readonly (string | null)[] | undefined, group: number): string | null => skins?.[group] ?? null;
+
+/** The list with group `group` wearing `skinId` (null = plain), padded with null. */
+export function withSkin(skins: readonly (string | null)[] | undefined, group: number, skinId: string | null): (string | null)[] {
+  const next = [...(skins ?? [])];
+  while (next.length <= group) next.push(null);
+  next[group] = skinId;
+  return next;
+}

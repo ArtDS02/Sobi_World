@@ -2,6 +2,7 @@
 import { AREA_HUD_ART, itemArtId } from '../../../core/config/assetIds';
 import { ITEMS, ITEM_IDS } from '../../../core/config/items';
 import { FLOWER_LIST } from './config/content';
+import { SKIN_ART_IDS } from '../../../core/config/plotSkins';
 import { sceneryArtIds } from '../../../systems/animation/rankScenery';
 import { CLOUD_SCENERY } from '../scene/cloudView';
 
@@ -37,6 +38,7 @@ export const cloudArtIds = (): string[] => [
   ...Object.values(CLOUD_DRESSING_ART),
   CLOUD_NPC_ART,
   ...sceneryArtIds(CLOUD_SCENERY),
+  ...SKIN_ART_IDS.filter((id) => id.endsWith('_cloud')),
   ...FLOWER_LIST.flatMap((f) => FLOWER_STAGES.map((s) => flowerArtId(f, s))),
   ...CLOUD_ITEM_IDS.map(itemArtId),
 ];

@@ -9,7 +9,7 @@ import type { UiIcon } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import { buildCauldron, buyPlots, collectBrew, collectWater, startBrew, upgradeSpring, upgradeTier } from '../logic/actions/buildings';
+import { applyTierSkin, buildCauldron, buyPlots, collectBrew, collectWater, startBrew, upgradeSpring, upgradeTier } from '../logic/actions/buildings';
 import { tierUpgradeBody } from '../../../ui/components/tierUpgradeDialog';
 import { fertilizePlots, harvestFlowers, waterPlots } from '../logic/actions/plants';
 import { buyShopItem } from '../logic/actions/shop';
@@ -22,6 +22,7 @@ import { crossFlowers } from '../logic/actions/lab';
 import { cloudLabInput, cloudReveal } from './cloudLabVm';
 import { cloudShopVm } from './cloudShopVm';
 import { plotRankLine, tierRankVm } from './cloudRankVm';
+import { cloudForgeBody } from './cloudForge';
 
 /** A button that always says why it is off. */
 export function actionButton(vm: ButtonVm, onClick: () => void, variant = ''): HTMLElement {
@@ -50,6 +51,8 @@ export interface CloudDialogsDeps {
   dispatchResult: (run: CloudRun) => Promise<ReturnType<CloudRun>>;
   /** Re-draws the whole UI (a choice inside a dialog changed). */
   refresh: () => void;
+  /** The world action that forges a plot skin (decision 056); it lives in the world, not in the Cloud. */
+  forgeSkin: (skinId: string, pay: 'coins' | 'gems') => CloudRun;
 }
 
 export function createCloudDialogs(d: CloudDialogsDeps) {
@@ -121,6 +124,12 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
   /** The rank upgrade of cloud tier `group` (decision 056): before / after, the cost as have / need, and why the button is off. */
   function openRank(group: number) {
     openLive(vi.plotTier.upgradeTitle, (w) => tierUpgradeBody(tierRankVm(w, group), () => run((s, c) => upgradeTier(s, { group }, c))));
+  }
+
+  /** The plot skin forge (decision 056): forge for coins or Gems, then dress the cloud tier `group` on screen. */
+  function openForge(group: number) {
+    const buy = guardBuy((skinId, count) => run(d.forgeSkin(skinId, count === 2 ? 'gems' : 'coins')));
+    openLive(vi.plotSkin.title, (w) => cloudForgeBody(w, group, d.now(), d.forgeSkin, buy, (skinId) => run((s2, c) => applyTierSkin(s2, { group, skinId }, c))), (body) => dressShopDialog(body, 'cloud'), 'shop');
   }
 
   function openPlot(index: number) {
@@ -254,6 +263,7 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
     openLab,
     openExpand,
     openRank,
+    openForge,
     openSpring,
     openPlot,
     openCauldron,

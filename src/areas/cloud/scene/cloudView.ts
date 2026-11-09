@@ -1,7 +1,8 @@
-import type { FlowerStage } from '../logic/art';
+import { CLOUD_PLOT_ART, type FlowerStage } from '../logic/art';
 import type { PlotView } from '../logic/derived';
 import { PLOTS_PER_TIER } from '../logic/config/content';
-import type { SceneryLayer } from '../../../systems/animation/rankScenery';
+import type { RankFrame, SceneryLayer } from '../../../systems/animation/rankScenery';
+import { skinArtId } from '../../../core/config/plotSkins';
 
 // Look of the Cloud scene (design px, depths, colours, motion). What grows where is content and state; these are the drawing
 // choices of the scene. Positions are measured on the backdrop (bg_cloud, the owner's mock-up with the interactive parts
@@ -145,3 +146,9 @@ export const CLOUD_SCENERY: readonly SceneryLayer[] = [
   { kind: 'critter', art: 'scn_cloud_critter', minRank: 4, x: 1100, y: 618, depth: 40 },
   { kind: 'waterfall', art: 'scn_cloud_waterfall', minRank: 5, x: 1500, y: 610, depth: 11, feet: true, scale: 0.7 },
 ];
+
+/** The art of a plot bed: the cloud tier's skin when it wears one (decision 056), else the plain bed. */
+export const bedArt = (skin: string | null | undefined): string => (skin ? skinArtId(skin, 'cloud') : CLOUD_PLOT_ART);
+
+/** The rank frame around a cloud tier's 5 x 3 plots (decision 056). */
+export const CLOUD_FRAME: RankFrame = { x: 446, y: 218, width: 840, height: 376, depth: 7 };

@@ -63,6 +63,10 @@ export function gardenPresentation(e: EventBase, origin: 'action' | 'tick' | 'ca
       const id = GARDEN_TIERS.ids[e.tier - 1] ?? '';
       return { sound: 'level_up', toast: t(T.rankUp, { zone: vi.garden.zoneNames[e.group] ?? '', rank: e.tier, name: vi.garden.rankNames[id as keyof typeof vi.garden.rankNames] ?? id }) };
     }
+    case 'GARDEN_SKIN_APPLIED': {
+      const group = vi.garden.zoneNames[e.group] ?? '';
+      return { sound: 'notify', toast: e.skinId ? t(vi.plotSkin.applied, { group, name: vi.plotSkin.names[e.skinId as keyof typeof vi.plotSkin.names] ?? e.skinId }) : t(vi.plotSkin.plained, { group }) };
+    }
     case 'GARDEN_LEVEL_UP':
       return { sound: 'level_up', toast: t(T.levelUp, { level: e.level }) };
   }

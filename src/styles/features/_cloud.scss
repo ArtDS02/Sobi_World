@@ -32,6 +32,35 @@
   60% { transform: translateY(0) rotate(2deg) scaleY(0.99); }
 }
 
+// The plot skin forge (decision 056): the shop grid with the strip that dresses the group on screen under it; shared with the Garden.
+.skin-forge { display: grid; gap: $sp-3; }
+
+.skin-strip {
+  display: grid;
+  gap: $sp-2;
+  padding: $sp-2 $sp-3;
+  background: $c-surface;
+  border: 3px solid $c-border;
+  border-radius: $radius-md;
+
+  small { color: $c-text-muted; }
+  &__chips { display: flex; flex-wrap: wrap; gap: $sp-2; }
+  &__chip {
+    min-height: $sp-touch-min;
+    padding: $sp-1 $sp-3;
+    font: inherit;
+    font-weight: $fw-bold;
+    color: $c-text;
+    cursor: pointer;
+    background: #ffffff;
+    border: 3px solid $c-border;
+    border-radius: 999px;
+
+    &.is-active { background: #efe6ff; border-color: #8a6cd6; }
+    &:focus-visible { outline: $focus-ring solid $c-primary; outline-offset: 2px; }
+  }
+}
+
 // The rank upgrade dialog of a cloud tier / garden zone (decision 056); shared with the Garden.
 .tier-dialog {
   display: grid;

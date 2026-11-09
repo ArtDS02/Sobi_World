@@ -940,6 +940,7 @@ export const vi = {
   // Every code in ERRORS must appear here. A test asserts the mapping is total.
   error: {
     INVALID_REQUEST: "Yêu cầu không hợp lệ.",
+    SKIN_LOCKED: "Chưa mở bản thiết kế của mẫu này.",
     PIG_NOT_FOUND: "Không tìm thấy heo này.",
     INSUFFICIENT_GOLD: "Không đủ Sobi Coin.",
     INSUFFICIENT_ITEM: "Không đủ vật phẩm.",
@@ -1086,6 +1087,35 @@ export const vi = {
   },
 
   // Plot ranks of a cloud tier / garden zone (decision 056): the upgrade dialog, the banner line and the plot card.
+  // Plot skins (decision 056): the forge, the skin strip and the toasts. Names and hints by skin id (content/shared/plotSkins.json).
+  plotSkin: {
+    title: "Xưởng đúc khuông",
+    open: "Xưởng đúc khuông",
+    intro: "Đúc mẫu ngoại hình cho tầng mây và khu đất. Mẫu chỉ để làm đẹp, không đổi sản lượng. Trả bằng Sobi Coin hoặc Gems (1 Gem = 500 xu).",
+    tag: "Mẫu",
+    names: { verdant: "Rừng Xanh", pearl_sea: "Biển Ngọc", crystal: "Pha Lê", starry: "Tinh Tú" },
+    hints: {
+      verdant: "Mở khi hạ trùm Rừng Thì Thầm",
+      pearl_sea: "Mở khi Codex có từ 10 loài cá",
+      crystal: "Mở khi phòng lai cho ra Mẫu Đơn Pha Lê",
+      starry: "Mở ở cấp Sobi World 30",
+    },
+    needs: "Cần: {items}",
+    owned: "Đã đúc",
+    ownedTag: "Đã có",
+    payCoins: "Trả xu",
+    payGems: "Trả Gems",
+    each: "{coins} xu hoặc {gems} Gems",
+    noMaterials: "Thiếu vật liệu",
+    noGems: "Không đủ Gems.",
+    stripTitle: "Mẫu cho {group}",
+    plain: "Mặc định",
+    stripHint: "Chọn để đổi ngay; chọn lại Mặc định để bỏ mẫu.",
+    forged: "Đã đúc mẫu {name}!",
+    applied: "{group} dùng mẫu {name}",
+    plained: "{group} về dáng mặc định",
+    balanceCoins: "Sobi Coin",
+  },
   plotTier: {
     short: "Bậc {rank}",
     shortBonus: "Bậc {rank} · +{bonus}%",

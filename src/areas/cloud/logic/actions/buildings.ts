@@ -9,7 +9,8 @@ import { affordableBatches, batchesReady, collectBatches, scaled, sped } from '.
 import { emptyPlot } from '../../../../systems/plants/plot';
 import { CAULDRON, CB, TIER_COUNT, WATER_ITEM, springLevel } from '../config/content';
 import { cloudTierUpgrade, nextExpansion, nextSpringLevel, springStock } from '../derived';
-import { withTier } from '../../../../systems/plants/tiers';
+import { ownsSkin } from '../../../../core/plots/skins';
+import { withSkin, withTier } from '../../../../systems/plants/tiers';
 import { fits, give, pay, put, runCloud, take, type CloudResult } from './kit';
 
 /** Opens the next plots: more on the first tier, then a whole cloud tier at a time (decision 023). */
@@ -160,6 +161,23 @@ export function upgradeTier(world: WorldSave, args: { group: number }, ctx: Acti
       world: put(bag, { ...g, tierLevels: withTier(g.tierLevels, group, step.tier) }),
       events: [{ type: 'CLOUD_TIER_UPGRADED', group, tier: step.tier, gold: step.coins, items: step.items }],
       xp: step.xp,
+    };
+  });
+}
+
+/**
+ * Dresses cloud tier `args.group` (0-based) in a plot skin the player owns, or back in the plain look (`skinId: null`). Free and
+ * undoable (decision 056): a skin only changes the picture of the tier's plots.
+ */
+export function applyTierSkin(world: WorldSave, args: { group: number; skinId: string | null }, ctx: ActionContext): CloudResult {
+  return runCloud(world, ctx, (w, g) => {
+    const { group, skinId } = args;
+    if (!Number.isInteger(group) || group < 0 || group >= TIER_COUNT) return { ok: false, error: 'INVALID_REQUEST' };
+    if (skinId !== null && !ownsSkin(w, skinId)) return { ok: false, error: 'INVALID_REQUEST' };
+    return {
+      ok: true,
+      world: put(w, { ...g, tierSkins: withSkin(g.tierSkins, group, skinId) }),
+      events: [{ type: 'CLOUD_SKIN_APPLIED', group, skinId }],
     };
   });
 }

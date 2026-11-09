@@ -59,6 +59,10 @@ export const LABEL: Record<string, string> = {
   'worldLevel.xp': 'KN cần cho cấp tiếp theo (số phần tử = cấp tối đa)',
   'worldLevel.rewards': 'Thưởng khi đạt cấp (một lần; cấp không có dòng = không thưởng)',
   // Rank upgrade of a cloud tier / garden zone (decision 056): cloud/tiers.json, garden/zones.json.
+  gemRate: 'Tỉ giá: 1 Gem = bao nhiêu xu (giá xu phải bằng Gems × tỉ giá)',
+  skins: 'Các mẫu khuông',
+  materials: 'Vật liệu cần để đúc',
+  unlock: 'Điều kiện mở bản thiết kế',
   ids: 'Mã bậc (bậc 1 trước; tên hiển thị ở bảng chuỗi)',
   groupFactor: 'Giá tăng mỗi tầng/khu (0,2 = +20 % so với tầng/khu đầu)',
   xpPerTier: 'KN một lần khi nâng bậc (× bậc mới)',

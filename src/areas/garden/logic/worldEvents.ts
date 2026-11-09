@@ -46,6 +46,8 @@ export function gardenWorldEvents(e: GardenEvent): WorldEvent[] {
       return [...coins(-e.gold), ...added(e.itemId, e.count)];
     case 'GARDEN_ZONE_UPGRADED':
       return [{ type: 'plot.tierUpgraded', area, group: e.group, tier: e.tier }, ...coins(-e.gold), ...Object.entries(e.items).flatMap(([id, n]) => removed(id, n))];
+    case 'GARDEN_SKIN_APPLIED':
+      return [{ type: 'plot.skinApplied', area, group: e.group, skinId: e.skinId }];
     case 'GARDEN_LEVEL_UP':
       return [{ type: 'area.levelUp', area, level: e.level }];
     default:

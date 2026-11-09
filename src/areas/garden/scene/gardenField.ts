@@ -6,6 +6,7 @@ import { BentPlant } from '../../../ui/world/bentPlant';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { opaqueSize } from '../../../ui/world/opaqueSize';
 import { CROP_STAGES, cropArtId, PLOT_ART, type CropStage } from '../logic/art';
+import { skinArtId } from '../../../core/config/plotSkins';
 import { CROPS, PLOTS_PER_ZONE } from '../logic/config/content';
 import type { PlotView } from '../logic/derived';
 import { cropStageOf, GARDEN_VIEW, plotCentre, plotIndex, slotsToDraw } from './gardenView';
@@ -108,7 +109,7 @@ export class GardenField {
   }
 
   /** Draws zone `zone` of the garden. */
-  draw(zone: number, plots: readonly PlotView[]) {
+  draw(zone: number, plots: readonly PlotView[], skin: string | null = null) {
     const key = (id: string) => (this.scene.textures.exists(textureKey(id)) ? textureKey(id) : FALLBACK_PROP_KEY);
     const owned = Math.min(PLOTS_PER_ZONE, Math.max(0, plots.length - zone * PLOTS_PER_ZONE));
     const drawn = slotsToDraw(owned, PLOTS_PER_ZONE);
@@ -121,7 +122,7 @@ export class GardenField {
         s.soil.setTexture(key(PLOT_ART.locked));
         return void s.crop.setVisible(false);
       }
-      s.soil.setTexture(key(view.watered ? PLOT_ART.wet : PLOT_ART.soil));
+      s.soil.setTexture(key(skin ? skinArtId(skin, view.watered ? 'soil_wet' : 'soil') : view.watered ? PLOT_ART.wet : PLOT_ART.soil));
       const crop = view.cropId ? CROPS[view.cropId] : undefined;
       if (!crop) return void s.crop.setVisible(false);
       const stage = cropStageOf(view);

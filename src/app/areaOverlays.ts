@@ -31,6 +31,7 @@ import { PLAZA_ID } from '../core/player/player';
 import type { WorldSave } from '../core/save/world';
 import type { GameStore } from '../core/world/gameStore';
 import { el } from '../ui/dom';
+import { GOALS } from './goals';
 import type { PanelId } from '../ui/components/popup';
 
 export interface AreaOverlaysDeps {
@@ -57,7 +58,7 @@ export function createAreaOverlays(d: AreaOverlaysDeps) {
   const adventureHost = el('div', { class: 'adventure-host' });
   const root = el('div', { class: 'area-overlays' }, gardenHost, aquariumHost, cloudHost, adventureHost);
   const common = { world: d.world, now: d.now, leave: d.leave, openPanel: d.openPanel };
-  const gardenUi = createGardenUi({ ...common, host: gardenHost });
+  const gardenUi = createGardenUi({ ...common, host: gardenHost, forgeSkin: GOALS.forgeSkin });
   const aquariumUi = createAquariumUi({
     ...common,
     host: aquariumHost,
@@ -66,7 +67,7 @@ export function createAreaOverlays(d: AreaOverlaysDeps) {
       return () => window.clearInterval(id);
     },
   });
-  const cloudUi = createCloudUi({ ...common, host: cloudHost });
+  const cloudUi = createCloudUi({ ...common, host: cloudHost, forgeSkin: GOALS.forgeSkin });
   const adventureUi = createAdventureUi({
     ...common,
     host: adventureHost,

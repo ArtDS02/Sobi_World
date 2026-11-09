@@ -1,0 +1,39 @@
+{
+  "gemRate": 500,
+  "xp": 30,
+  "skins": [
+    {
+      "id": "verdant",
+      "materials": { "item_forest_herb": 20, "item_beast_fang": 10, "item_corn": 20 },
+      "coins": 10000,
+      "gems": 20,
+      "unlock": { "kind": "areaRecord", "area": "sobi_adventure", "path": ["cleared"], "key": "zone_forest" }
+    },
+    {
+      "id": "pearl_sea",
+      "materials": { "item_scale": 30, "item_pearl": 2 },
+      "coins": 30000,
+      "gems": 60,
+      "unlock": { "kind": "codex", "codexKind": "fish", "count": 10 }
+    },
+    {
+      "id": "crystal",
+      "materials": { "item_mountain_ore": 30, "item_flower_crystal_peony": 5 },
+      "coins": 30000,
+      "gems": 60,
+      "unlock": {
+        "kind": "areaList",
+        "area": "sobi_cloud",
+        "path": ["lab", "found"],
+        "has": "flower_crystal_peony"
+      }
+    },
+    {
+      "id": "starry",
+      "materials": { "item_flower_moon_lily": 20, "item_ancient_rune": 2 },
+      "coins": 30000,
+      "gems": 60,
+      "unlock": { "kind": "worldLevel", "level": 30 }
+    }
+  ]
+}

@@ -39,6 +39,8 @@ export const cloudStateSchema = z.strictObject({
   lab: z.strictObject({ found: z.array(z.string()), misses: z.record(z.string(), z.number().int().min(0)) }).optional(),
   /** Upgrade tier of each cloud tier, in tier order (decision 056); sparse: a tier past the end is tier 1. */
   tierLevels: z.array(z.number().int().min(1).max(MAX_TIER_LEVEL)),
+  /** The plot skin each cloud tier wears (decision 056), in tier order; sparse, null or absent = the plain look. */
+  tierSkins: z.array(z.string().min(1).nullable()),
   /** Time the slice was simulated up to (epoch ms). */
   lastTickedAt: time,
 });
@@ -55,8 +57,8 @@ export const CLOUD_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
     const whole = plots.length > PLOTS_PER_TIER ? Math.min(MAX_PLOTS, Math.ceil(plots.length / PLOTS_PER_TIER) * PLOTS_PER_TIER) : plots.length;
     return { ...slice, version: 2, plots: [...plots, ...Array.from({ length: whole - plots.length }, emptyPlot)] };
   },
-  // v3 (decision 056): upgrade tiers per cloud tier. Every tier stays at tier 1.
-  2: (slice) => ({ ...slice, version: 3, tierLevels: Array.isArray(slice.tierLevels) ? slice.tierLevels : [] }),
+  // v3 (decision 056): upgrade tiers and plot skins per cloud tier. Every tier stays at tier 1 with the plain look.
+  2: (slice) => ({ ...slice, version: 3, tierLevels: Array.isArray(slice.tierLevels) ? slice.tierLevels : [], tierSkins: Array.isArray(slice.tierSkins) ? slice.tierSkins : [] }),
 };
 
 export const initialCloud = (now: number): CloudState => ({
@@ -65,5 +67,6 @@ export const initialCloud = (now: number): CloudState => ({
   spring: { level: 1, since: now },
   cauldron: { built: false, job: null },
   tierLevels: [],
+  tierSkins: [],
   lastTickedAt: now,
 });

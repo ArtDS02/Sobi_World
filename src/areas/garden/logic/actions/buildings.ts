@@ -9,7 +9,8 @@ import { affordableBatches, batchesReady, collectBatches, scaled, sped } from '.
 import { emptyPlot } from '../../../../systems/plants/plot';
 import { type BuildingId, BUILDING_IDS, GB, ZONE_COUNT } from '../config/content';
 import { gardenZoneUpgrade, nextExpansion, nextSprinkler } from '../derived';
-import { withTier } from '../../../../systems/plants/tiers';
+import { ownsSkin } from '../../../../core/plots/skins';
+import { withSkin, withTier } from '../../../../systems/plants/tiers';
 import { give, pay, put, runGarden, take, type GardenResult } from './kit';
 
 const isBuilding = (id: string): id is BuildingId => (BUILDING_IDS as readonly string[]).includes(id);
@@ -142,6 +143,23 @@ export function upgradeZone(world: WorldSave, args: { group: number }, ctx: Acti
       world: put(bag, { ...g, zoneLevels: withTier(g.zoneLevels, group, step.tier) }),
       events: [{ type: 'GARDEN_ZONE_UPGRADED', group, tier: step.tier, gold: step.coins, items: step.items }],
       xp: step.xp,
+    };
+  });
+}
+
+/**
+ * Dresses garden zone `args.group` (0-based) in a plot skin the player owns, or back in the plain look (`skinId: null`). Free and
+ * undoable (decision 056): a skin only changes the picture of the zone's plots.
+ */
+export function applyZoneSkin(world: WorldSave, args: { group: number; skinId: string | null }, ctx: ActionContext): GardenResult {
+  return runGarden(world, ctx, (w, g) => {
+    const { group, skinId } = args;
+    if (!Number.isInteger(group) || group < 0 || group >= ZONE_COUNT) return { ok: false, error: 'INVALID_REQUEST' };
+    if (skinId !== null && !ownsSkin(w, skinId)) return { ok: false, error: 'INVALID_REQUEST' };
+    return {
+      ok: true,
+      world: put(w, { ...g, zoneSkins: withSkin(g.zoneSkins, group, skinId) }),
+      events: [{ type: 'GARDEN_SKIN_APPLIED', group, skinId }],
     };
   });
 }

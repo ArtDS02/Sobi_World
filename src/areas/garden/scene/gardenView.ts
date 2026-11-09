@@ -1,7 +1,7 @@
 import type { CropStage } from '../logic/art';
 import { PLOTS_PER_ZONE } from '../logic/config/content';
 import type { PlotView } from '../logic/derived';
-import type { SceneryLayer } from '../../../systems/animation/rankScenery';
+import type { RankFrame, SceneryLayer } from '../../../systems/animation/rankScenery';
 
 // Look of the Garden scene (design px, depths, colours, motion). What grows where is content and state; these are the
 // drawing choices of the scene. Positions are measured on the backdrop (bg_garden, the owner's mock-up with the
@@ -138,3 +138,6 @@ export const GARDEN_SCENERY: readonly SceneryLayer[] = [
   { kind: 'critter', art: 'scn_garden_critter', minRank: 4, x: 700, y: 650, depth: 40 },
   { kind: 'market', art: 'scn_garden_market', minRank: 5, x: 1180, y: 800, depth: 12, feet: true, scale: 0.7 },
 ];
+
+/** The rank frame around a garden zone's 6 x 4 plots (decision 056). */
+export const GARDEN_FRAME: RankFrame = { x: 350, y: 227, width: 1090, height: 400, depth: 7 };

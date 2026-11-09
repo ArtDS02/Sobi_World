@@ -19,7 +19,7 @@ import { GardenField } from './gardenField';
 import { harvestFly, mist, NameTip, ripenSparkle, sprayBurst } from './gardenFx';
 import { GardenLife } from './gardenLife';
 import { RankScenery } from '../../../ui/world/rankScenery';
-import { GARDEN_DESIGN, GARDEN_SCENERY, GARDEN_VIEW, plotIndex } from './gardenView';
+import { GARDEN_DESIGN, GARDEN_FRAME, GARDEN_SCENERY, GARDEN_VIEW, plotIndex } from './gardenView';
 
 export const GARDEN_SCENE_KEY = 'garden';
 
@@ -69,7 +69,7 @@ export class GardenScene extends Phaser.Scene {
     this.paintSky();
     this.backdrop = this.fixed(GARDEN_DESIGN.width / 2, GARDEN_DESIGN.height / 2, GARDEN_BACKDROP_ART).setDepth(v.depth.ground);
     fitCamera(this, GARDEN_DESIGN, (view) => this.coverView(view));
-    this.scenery = new RankScenery(GARDEN_SCENERY, (x, y, id) => this.fixed(x, y, id));
+    this.scenery = new RankScenery(this, GARDEN_SCENERY, (x, y, id) => this.fixed(x, y, id), GARDEN_FRAME);
     this.field = new GardenField(this, { paused: () => this.deps.paused(), onSlot: (slot) => this.pickSlot(slot) });
     this.tip = new NameTip(this);
     this.drone = new GardenDrone(this, this.field, () => this.deps.reduceMotion());
@@ -235,13 +235,14 @@ export class GardenScene extends Phaser.Scene {
       state.mill,
       state.composter,
       state.zoneRanks[this.zone],
+      state.zoneSkins[this.zone],
     ]);
     if (!force && key === this.shown) return;
     this.shown = key;
     const calm = this.deps.reduceMotion() || this.moving;
     this.drone.check(state, this.zone, this.moving);
     const { harvested, ripened } = this.field.changes(this.zone, state.plots);
-    this.field.draw(this.zone, state.plots);
+    this.field.draw(this.zone, state.plots, state.zoneSkins[this.zone] ?? null);
     this.backdrop.setTint(GARDEN_VIEW.zoneTints[this.zone] ?? 0xffffff);
     this.scenery.draw(this.zone, state.zoneRanks[this.zone] ?? 1);
     if (!calm) this.celebrate(harvested, ripened);

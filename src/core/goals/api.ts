@@ -3,6 +3,8 @@
 import { ACHIEVEMENTS, CODEX, DAILY_GOALS, FESTIVALS_RULES, MERCHANT, ORDER_BOARD, WEEKLY_GOALS } from '../config/goals';
 import { CONTENT } from '../config/content';
 import { PROGRESSION } from '../config/progression';
+import { PLOT_SKIN_RULES } from '../config/plotSkins';
+import { forgePlotSkin } from '../plots/forge';
 import { claimMilestone, claimableMilestones, codexCounts, type CodexKind } from '../collection/codex';
 import { itemDef } from '../items/catalog';
 import { addWorldXp } from '../progression/xp';
@@ -95,6 +97,8 @@ export function createGoals(sources: GoalsSources) {
     claimFestivalGift: (): WorldAction => (w, c) => claimGift(w, c, FESTIVALS_RULES),
     buyFestivalItem: (entryId: string): WorldAction => (w, c) => buyShopEntry(w, { entryId }, c, FESTIVALS_RULES),
     deliverMerchant: (index: number): WorldAction => (w, c) => deliverOffer(w, { index }, c, MERCHANT, addXp),
+    /** Forges a plot skin for coins or Gems (decision 056). */
+    forgeSkin: (skinId: string, pay: 'coins' | 'gems'): WorldAction => (w, c) => forgePlotSkin(w, { skinId, pay }, c, PLOT_SKIN_RULES, GOALS_RULES.levels),
   };
 }
 

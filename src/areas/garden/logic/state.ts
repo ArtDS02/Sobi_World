@@ -44,6 +44,8 @@ export const gardenStateSchema = z.strictObject({
   lab: labSchema.optional(),
   /** Upgrade tier of each garden zone, in zone order (decision 056); sparse: a zone past the end is tier 1. */
   zoneLevels: z.array(z.number().int().min(1).max(MAX_TIER_LEVEL)),
+  /** The plot skin each garden zone wears (decision 056), in zone order; sparse, null or absent = the plain look. */
+  zoneSkins: z.array(z.string().min(1).nullable()),
   /** Time the slice was simulated up to (epoch ms). */
   lastTickedAt: time,
 });
@@ -53,8 +55,8 @@ export type GardenPlot = PlotState;
 export type GardenJob = ProductionJob;
 
 export const GARDEN_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
-  // v2 (decision 056): upgrade tiers per garden zone. Every zone stays at tier 1.
-  1: (slice) => ({ ...slice, version: 2, zoneLevels: Array.isArray(slice.zoneLevels) ? slice.zoneLevels : [] }),
+  // v2 (decision 056): upgrade tiers and plot skins per garden zone. Every zone stays at tier 1 with the plain look.
+  1: (slice) => ({ ...slice, version: 2, zoneLevels: Array.isArray(slice.zoneLevels) ? slice.zoneLevels : [], zoneSkins: Array.isArray(slice.zoneSkins) ? slice.zoneSkins : [] }),
 };
 
 export const initialGarden = (now: number): GardenState => ({
@@ -64,5 +66,6 @@ export const initialGarden = (now: number): GardenState => ({
   built: { mill: false, composter: false },
   jobs: { mill: null, composter: null },
   zoneLevels: [],
+  zoneSkins: [],
   lastTickedAt: now,
 });

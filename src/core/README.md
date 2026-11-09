@@ -19,3 +19,5 @@ Không import `systems/`, `areas/`, `ui/`, `app/`; không DOM, Node API, `Date.n
 | `assets/` | manifest asset (chỉ asset), tra theo id |
 | `config/` | cấu hình đọc từ `content/` |
 | `settings/` | `settings.json` riêng khỏi save: phím, nhân vật, ngôn ngữ, cỡ chữ, chế độ màu, rung màn hình (GĐ13) |
+
+- `plots/` — plot skins (decision 056): `skins.ts` (blueprint conditions read from the save as plain data, owned / forgeable / locked), `forge.ts` (`forgePlotSkin`: materials + coins OR Gems through the ledger, 30 XP, instant, cosmetic only). Owned skins live in the world save `cosmetics.plotSkins`; which tier / zone wears which is each Area's slice (`tierSkins`, `zoneSkins`).

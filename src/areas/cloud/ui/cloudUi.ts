@@ -37,6 +37,8 @@ export interface CloudUiDeps {
   host: HTMLElement;
   leave: () => void;
   openPanel: (panel: PanelId) => void;
+  /** The world action that forges a plot skin (decision 056). */
+  forgeSkin: (skinId: string, pay: 'coins' | 'gems') => CloudRun;
 }
 
 export interface CloudUi {
@@ -66,7 +68,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     return s.status === 'ready' && s.save && hasCloud(s.save) ? s.save : null;
   };
   const dispatch = (run: CloudRun) => void d.world.dispatch(run);
-  const dialogs = createCloudDialogs({ host: dialogHost, world, now: d.now, dayOffsetMs: offset, dispatch, dispatchResult: (run) => d.world.dispatch(run), refresh: () => refresh() });
+  const dialogs = createCloudDialogs({ host: dialogHost, world, now: d.now, dayOffsetMs: offset, dispatch, dispatchResult: (run) => d.world.dispatch(run), refresh: () => refresh(), forgeSkin: d.forgeSkin });
 
   const runs = {
     water: (w: WorldSave, c: Parameters<CloudRun>[1]) => waterPlots(w, {}, c),
@@ -123,7 +125,13 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
           ],
         },
         { label: vi.lab.group, actions: [{ label: vi.lab.open, reason: null, art: CLOUD_DOCK_ART.lab, tone: 'main', onClick: () => dialogs.openLab() }] },
-        { label: vi.areaHud.groupGrow, actions: [{ ...bulk.expand, art: CLOUD_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openExpand() }] },
+        {
+          label: vi.areaHud.groupGrow,
+          actions: [
+            { ...bulk.expand, art: CLOUD_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openExpand() },
+            { label: vi.plotSkin.open, reason: null, art: CLOUD_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openForge(actingTier(w, viewedTier())) },
+          ],
+        },
       ],
     });
   }
