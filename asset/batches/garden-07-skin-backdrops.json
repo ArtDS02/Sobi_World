@@ -1,0 +1,134 @@
+{
+  "id": "garden-07-skin-backdrops",
+  "area": "garden",
+  "title": "Nền vườn theo mẫu khuông (9 mẫu), sửa từ bg_garden",
+  "decisions": "Decision 056 (owner, 2026-11-09): instead of pasting decoration sprites over the scene, each plot skin gets its OWN backdrop (the existing bg_garden re-lit and re-coloured to the skin's mood), and the rank adds light, petals and fireflies by code on top. One sheet per skin, one cell, fit backdrop, same pixel size as the source. Cells are named bg_garden_<skin>; the game uses them for the tier / zone wearing that skin (SKIN_BACKDROP_READY in src/core/config/plotSkins.ts lists the ones delivered).",
+  "sheets": [
+    {
+      "name": "B1",
+      "title": "Nền verdant",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "public/assets/environment/bg_garden.png",
+      "prompt": "Edit this a farm garden game background picture into a lush green forest-glade mood: fresh spring greens, dappled sunlight, tiny ferns and clover on the grass, a soft green-gold sky. Keep the EXACT same image size, framing, composition, camera, island shapes, the cream field in the middle, every object position, art style and level of detail. Only change the colour grading, the light, the sky and the mood, plus a few small thematic touches (flowers, plants, glow) that stay on the existing shapes. Do NOT add any text, UI, characters or new large objects. Nothing may overlap the central field where game plots will be drawn. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bg_garden_verdant",
+          "desc": "a farm garden game background picture in a lush green forest-glade mood"
+        }
+      ]
+    },
+    {
+      "name": "B2",
+      "title": "Nền pearl_sea",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "public/assets/environment/bg_garden.png",
+      "prompt": "Edit this a farm garden game background picture into a calm pearly sea mood: pale aqua and pearl-white colours, soft foam-like cloud edges, shimmering turquoise sky with gentle sparkles. Keep the EXACT same image size, framing, composition, camera, island shapes, the cream field in the middle, every object position, art style and level of detail. Only change the colour grading, the light, the sky and the mood, plus a few small thematic touches (flowers, plants, glow) that stay on the existing shapes. Do NOT add any text, UI, characters or new large objects. Nothing may overlap the central field where game plots will be drawn. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bg_garden_pearl_sea",
+          "desc": "a farm garden game background picture in a calm pearly sea mood"
+        }
+      ]
+    },
+    {
+      "name": "B3",
+      "title": "Nền crystal",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "public/assets/environment/bg_garden.png",
+      "prompt": "Edit this a farm garden game background picture into a crystal-lilac mood: lilac and violet colours, faceted translucent crystal shards among the flowers, a pale amethyst sky with a faint prismatic glow. Keep the EXACT same image size, framing, composition, camera, island shapes, the cream field in the middle, every object position, art style and level of detail. Only change the colour grading, the light, the sky and the mood, plus a few small thematic touches (flowers, plants, glow) that stay on the existing shapes. Do NOT add any text, UI, characters or new large objects. Nothing may overlap the central field where game plots will be drawn. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bg_garden_crystal",
+          "desc": "a farm garden game background picture in a crystal-lilac mood"
+        }
+      ]
+    },
+    {
+      "name": "B4",
+      "title": "Nền starry",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "public/assets/environment/bg_garden.png",
+      "prompt": "Edit this a farm garden game background picture into a starry night mood: deep indigo and violet night sky full of tiny stars and a thin crescent moon, soft moonlit blue light on the clouds, a few glowing lanterns. Keep the EXACT same image size, framing, composition, camera, island shapes, the cream field in the middle, every object position, art style and level of detail. Only change the colour grading, the light, the sky and the mood, plus a few small thematic touches (flowers, plants, glow) that stay on the existing shapes. Do NOT add any text, UI, characters or new large objects. Nothing may overlap the central field where game plots will be drawn. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bg_garden_starry",
+          "desc": "a farm garden game background picture in a starry night mood"
+        }
+      ]
+    },
+    {
+      "name": "B5",
+      "title": "Nền blossom",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "public/assets/environment/bg_garden.png",
+      "prompt": "Edit this a farm garden game background picture into a cherry-blossom spring mood: soft pink and cream colours, blossom petals drifting, pink-blossomed trees and bushes, a rosy peach sky. Keep the EXACT same image size, framing, composition, camera, island shapes, the cream field in the middle, every object position, art style and level of detail. Only change the colour grading, the light, the sky and the mood, plus a few small thematic touches (flowers, plants, glow) that stay on the existing shapes. Do NOT add any text, UI, characters or new large objects. Nothing may overlap the central field where game plots will be drawn. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bg_garden_blossom",
+          "desc": "a farm garden game background picture in a cherry-blossom spring mood"
+        }
+      ]
+    },
+    {
+      "name": "B6",
+      "title": "Nền dew",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "public/assets/environment/bg_garden.png",
+      "prompt": "Edit this a farm garden game background picture into a fresh morning-dew mood: cool mint and pale green colours, glittering dew drops on leaves and petals, soft early-morning mist and a bright pale sky. Keep the EXACT same image size, framing, composition, camera, island shapes, the cream field in the middle, every object position, art style and level of detail. Only change the colour grading, the light, the sky and the mood, plus a few small thematic touches (flowers, plants, glow) that stay on the existing shapes. Do NOT add any text, UI, characters or new large objects. Nothing may overlap the central field where game plots will be drawn. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bg_garden_dew",
+          "desc": "a farm garden game background picture in a fresh morning-dew mood"
+        }
+      ]
+    },
+    {
+      "name": "B7",
+      "title": "Nền amber",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "public/assets/environment/bg_garden.png",
+      "prompt": "Edit this a farm garden game background picture into a warm amber autumn mood: honey-amber and gold colours, golden autumn leaves on the bushes, warm resin-like glow, a glowing amber late-afternoon sky. Keep the EXACT same image size, framing, composition, camera, island shapes, the cream field in the middle, every object position, art style and level of detail. Only change the colour grading, the light, the sky and the mood, plus a few small thematic touches (flowers, plants, glow) that stay on the existing shapes. Do NOT add any text, UI, characters or new large objects. Nothing may overlap the central field where game plots will be drawn. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bg_garden_amber",
+          "desc": "a farm garden game background picture in a warm amber autumn mood"
+        }
+      ]
+    },
+    {
+      "name": "B8",
+      "title": "Nền moonlit",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "public/assets/environment/bg_garden.png",
+      "prompt": "Edit this a farm garden game background picture into a silvery moonlit mood: silver-blue night colours, a large soft full moon in the sky, pale moonbeams on the clouds, calm and quiet. Keep the EXACT same image size, framing, composition, camera, island shapes, the cream field in the middle, every object position, art style and level of detail. Only change the colour grading, the light, the sky and the mood, plus a few small thematic touches (flowers, plants, glow) that stay on the existing shapes. Do NOT add any text, UI, characters or new large objects. Nothing may overlap the central field where game plots will be drawn. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bg_garden_moonlit",
+          "desc": "a farm garden game background picture in a silvery moonlit mood"
+        }
+      ]
+    },
+    {
+      "name": "B9",
+      "title": "Nền sunset",
+      "board": "sky",
+      "fit": "backdrop",
+      "editFrom": "public/assets/environment/bg_garden.png",
+      "prompt": "Edit this a farm garden game background picture into a golden sunset mood: orange, coral and pink colours, a low glowing sun near the horizon, golden rim light on every cloud and island. Keep the EXACT same image size, framing, composition, camera, island shapes, the cream field in the middle, every object position, art style and level of detail. Only change the colour grading, the light, the sky and the mood, plus a few small thematic touches (flowers, plants, glow) that stay on the existing shapes. Do NOT add any text, UI, characters or new large objects. Nothing may overlap the central field where game plots will be drawn. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bg_garden_sunset",
+          "desc": "a farm garden game background picture in a golden sunset mood"
+        }
+      ]
+    }
+  ]
+}

@@ -26,42 +26,14 @@ describe('what each rank shows', () => {
     expect(kinds(GARDEN_SCENERY, 4)).toEqual(expect.arrayContaining(['landmark', 'lanterns', 'critter']));
     expect(kinds(GARDEN_SCENERY, 5)).toEqual(expect.arrayContaining(['tree', 'market']));
   });
-  it('every rank shows at least as many layers as the one below (a rank look may replace the lower one, never leaves a hole)', () => {
+  it('every rank adds layers, never takes one away', () => {
     for (const layers of [CLOUD_SCENERY, GARDEN_SCENERY]) {
       for (let r = 2; r <= 5; r += 1) expect(layersAtRank(layers, r).length).toBeGreaterThanOrEqual(layersAtRank(layers, r - 1).length);
     }
   });
-  it('border / fence and path each have exactly one look at every rank from 2 up', () => {
-    for (const layers of [CLOUD_SCENERY, GARDEN_SCENERY]) {
-      for (let r = 2; r <= 5; r += 1) {
-        expect(layersAtRank(layers, r).filter((l) => l.kind === 'path')).toHaveLength(1);
-        expect(layersAtRank(layers, r).filter((l) => l.kind === 'border' || l.kind === 'fence')).toHaveLength(1);
-      }
-    }
-  });
-  it('rank 5 adds drifting petals / leaves and fireflies, still when motion is reduced', () => {
-    for (const layers of [CLOUD_SCENERY, GARDEN_SCENERY]) {
-      const drift = layersAtRank(layers, 5).filter((l) => l.drift);
-      expect(drift.map((l) => l.kind).sort()).toEqual(['firefly', 'petal']);
-      for (const l of drift) {
-        const a = driftPose(l.kind, l.drift!, 2, 0, true);
-        expect(driftPose(l.kind, l.drift!, 2, 99_999, true)).toEqual(a);
-        expect(a.x).toBeGreaterThanOrEqual(l.drift!.x0);
-        expect(a.x).toBeLessThanOrEqual(l.drift!.x1);
-      }
-      expect(layersAtRank(layers, 4).filter((l) => l.drift)).toEqual([]);
-    }
-  });
-  it('a petal falls over time and a firefly wanders', () => {
-    const petal = CLOUD_SCENERY.find((l) => l.kind === 'petal')!;
-    expect(driftPose('petal', petal.drift!, 0, 0, false).y).not.toBe(driftPose('petal', petal.drift!, 0, 3000, false).y);
-    const fly = CLOUD_SCENERY.find((l) => l.kind === 'firefly')!;
-    expect(driftPose('firefly', fly.drift!, 1, 0, false)).not.toEqual(driftPose('firefly', fly.drift!, 1, 1000, false));
-  });
   it('one landmark per cloud tier and per garden zone', () => {
     const landmark = (layers: typeof CLOUD_SCENERY) => layers.find((l) => l.kind === 'landmark')!.art as readonly string[];
     expect(landmark(CLOUD_SCENERY)).toHaveLength(TIER_COUNT);
-    for (const layers of [CLOUD_SCENERY, GARDEN_SCENERY]) for (const l of layers.filter((x) => x.kind === 'landmark')) expect(l.art).toHaveLength(layers === CLOUD_SCENERY ? TIER_COUNT : ZONE_COUNT);
     expect(landmark(GARDEN_SCENERY)).toHaveLength(ZONE_COUNT);
   });
 });
@@ -87,7 +59,19 @@ describe('art ids', () => {
   it('every id the scenes name is a manifest prop (placeholder until the art is made)', () => {
     const ids = new Map(manifest.props.map((p) => [p.id, p.status]));
     for (const id of [...sceneryArtIds(CLOUD_SCENERY), ...sceneryArtIds(GARDEN_SCENERY)]) expect(ids.has(id), id).toBe(true);
-    expect(sceneryArtIds(CLOUD_SCENERY)).toHaveLength(54);
-    expect(sceneryArtIds(GARDEN_SCENERY)).toHaveLength(30);
+    expect(sceneryArtIds(CLOUD_SCENERY)).toHaveLength(16);
+    expect(sceneryArtIds(GARDEN_SCENERY)).toHaveLength(10);
+  });
+});
+
+describe('drifting particles (kept for the optional sprite look)', () => {
+  const spec = { count: 4, x0: 0, x1: 100, y0: 0, y1: 200, periodMs: 1000 };
+  it('stays inside its box, frozen when still, falling over time', () => {
+    const still = driftPose('petal', spec, 1, 0, true);
+    expect(driftPose('petal', spec, 1, 55_555, true)).toEqual(still);
+    expect(still.x).toBeGreaterThanOrEqual(0);
+    expect(still.x).toBeLessThanOrEqual(100);
+    expect(driftPose('petal', spec, 0, 0, false).y).not.toBe(driftPose('petal', spec, 0, 400, false).y);
+    expect(driftPose('firefly', spec, 2, 0, false)).not.toEqual(driftPose('firefly', spec, 2, 700, false));
   });
 });

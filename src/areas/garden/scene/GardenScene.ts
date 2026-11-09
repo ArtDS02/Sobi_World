@@ -18,8 +18,9 @@ import { GardenDrone } from './gardenDrone';
 import { GardenField } from './gardenField';
 import { harvestFly, mist, NameTip, ripenSparkle, sprayBurst } from './gardenFx';
 import { GardenLife } from './gardenLife';
-import { RankScenery } from '../../../ui/world/rankScenery';
-import { skinTheme } from '../../../core/config/plotSkins';
+import { RankLook } from '../../../ui/world/rankLook';
+import { skinBackdropArt, skinTheme } from '../../../core/config/plotSkins';
+import { paintBackdrop } from '../../../ui/world/skinBackdrop';
 import { GARDEN_DESIGN, GARDEN_FRAME, GARDEN_SCENERY, GARDEN_VIEW, plotIndex } from './gardenView';
 
 export const GARDEN_SCENE_KEY = 'garden';
@@ -52,7 +53,7 @@ export class GardenScene extends Phaser.Scene {
   private tip!: NameTip;
   private shown = '';
   /** The rank scenery of the zone on screen (decision 056). */
-  private scenery!: RankScenery;
+  private scenery!: RankLook;
   /** The zone drawn, and whether a zone change is playing. */
   private zone = 0;
   private moving = false;
@@ -70,7 +71,7 @@ export class GardenScene extends Phaser.Scene {
     this.paintSky();
     this.backdrop = this.fixed(GARDEN_DESIGN.width / 2, GARDEN_DESIGN.height / 2, GARDEN_BACKDROP_ART).setDepth(v.depth.ground);
     fitCamera(this, GARDEN_DESIGN, (view) => this.coverView(view));
-    this.scenery = new RankScenery(this, GARDEN_SCENERY, (x, y, id) => this.fixed(x, y, id), GARDEN_FRAME);
+    this.scenery = new RankLook(this, GARDEN_SCENERY, (x, y, id) => this.fixed(x, y, id), { design: GARDEN_DESIGN, field: GARDEN_FRAME, depth: 3200, area: 'garden' });
     this.field = new GardenField(this, { paused: () => this.deps.paused(), onSlot: (slot) => this.pickSlot(slot) });
     this.tip = new NameTip(this);
     this.drone = new GardenDrone(this, this.field, () => this.deps.reduceMotion());
@@ -245,7 +246,7 @@ export class GardenScene extends Phaser.Scene {
     const { harvested, ripened } = this.field.changes(this.zone, state.plots);
     this.field.draw(this.zone, state.plots, state.zoneSkins[this.zone] ?? null);
     const theme = skinTheme(state.zoneSkins[this.zone]);
-    this.backdrop.setTint(theme?.backdrop ?? GARDEN_VIEW.zoneTints[this.zone] ?? 0xffffff);
+    paintBackdrop(this.backdrop, GARDEN_BACKDROP_ART, skinBackdropArt(state.zoneSkins[this.zone], 'garden'), state.zoneSkins[this.zone], GARDEN_VIEW.zoneTints[this.zone] ?? 0xffffff);
     this.scenery.draw(this.zone, state.zoneRanks[this.zone] ?? 1, theme);
     if (!calm) this.celebrate(harvested, ripened);
     this.drawSprinkler(state.sprinkler);

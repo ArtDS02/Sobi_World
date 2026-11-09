@@ -23,3 +23,18 @@ const THEMES: Readonly<Record<string, SkinTheme>> = Object.fromEntries(PLOT_SKIN
 
 /** The mood of the skin a tier / zone wears; null = the plain look (the scene keeps its own tint and colours). */
 export const skinTheme = (skinId: string | null | undefined): SkinTheme | null => (skinId ? (THEMES[skinId] ?? null) : null);
+
+/**
+ * Skins whose own backdrop picture exists (batches cloud-08 / garden-07): `bg_cloud_<skin>` and `bg_garden_<skin>`. A tier / zone
+ * wearing one of them shows that picture; any other skin keeps the plain backdrop tinted by the skin's mood. Add a skin id here when
+ * its two backdrops are delivered (and registered in the manifest).
+ */
+export const SKIN_BACKDROP_READY: readonly string[] = [];
+
+export type BackdropArea = 'cloud' | 'garden';
+
+/** The backdrop art id of a skin in an Area, or null when it has none yet. */
+export const skinBackdropArt = (skinId: string | null | undefined, area: BackdropArea): string | null => (skinId && SKIN_BACKDROP_READY.includes(skinId) ? `bg_${area}_${skinId}` : null);
+
+/** Every skin backdrop id the scenes may load (delivered ones only). */
+export const SKIN_BACKDROP_IDS = (area: BackdropArea): string[] => SKIN_BACKDROP_READY.map((id) => `bg_${area}_${id}`);

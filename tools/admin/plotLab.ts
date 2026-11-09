@@ -10,6 +10,7 @@ import { GARDEN_TIERS, ZONE_COUNT } from '../../src/areas/garden/logic/config/co
 import { PLOT_SKINS, skinTheme } from '../../src/core/config/plotSkins';
 import { bonusPctOf, nextUpgrade } from '../../src/systems/plants/tiers';
 import { layersAtRank, type SceneryLayer } from '../../src/systems/animation/rankScenery';
+import { atmosphereAt, particleCounts } from '../../src/systems/animation/rankAtmosphere';
 import { vi } from '../../src/i18n/vi';
 import { esc } from './labels';
 import { PlotLabScene, type PlotLabArea, type PlotLabState } from './plotLabScene';
@@ -18,7 +19,7 @@ import './rigLab.css';
 import './plotLab.css';
 
 const images = new Map<string, { asset?: string; status?: string }>();
-const state: PlotLabState = { area: 'cloud', group: 0, rank: 5, skin: null, night: false, still: false, images };
+const state: PlotLabState = { area: 'cloud', group: 0, rank: 5, skin: null, night: false, still: false, sprites: false, images };
 let game: Phaser.Game | null = null;
 let guard = 0;
 let auto = 0;
@@ -36,7 +37,15 @@ function shownArt(l: SceneryLayer, group: number): string[] {
   return [l.art[group] ?? l.art[0]!];
 }
 
+function atmosphereLine(): string {
+  const at = atmosphereAt(state.rank);
+  const parts = particleCounts(state.rank, skinTheme(state.skin)?.particles ?? 'both');
+  if (state.rank <= 1) return '<p><b>Không khí:</b> bậc 1 không thêm gì (cảnh y như bản thường).</p>';
+  return `<p><b>Không khí bậc ${state.rank}</b> (vẽ bằng code, đổi màu theo mẫu): vignette ${Math.round(at.vignette * 100)}% · ${at.rays} tia sáng · bloom ${Math.round(at.glow * 100)}% · ${at.sparkles} điểm lấp lánh · ${parts.petals} cánh hoa / lá rơi · ${parts.fireflies} đom đóm.</p>`;
+}
+
 function layerTable(): string {
+  if (!state.sprites) return '<p class="muted">Sprite trang trí dán thêm đang TẮT trong game (nhìn thô so với nền). Bật công tắc "Hiện sprite trang trí cũ" để so sánh.</p>';
   const a = AREAS[state.area];
   const rows = layersAtRank(a.scenery, state.rank).flatMap((l) =>
     shownArt(l, state.group).map((id) => {
@@ -70,7 +79,7 @@ function controls(): string {
     <div class="rl-row"><span class="rl-lbl">${state.area === 'cloud' ? 'Tầng' : 'Khu đất'}</span><div class="rl-chips">${Array.from({ length: a.groups }, (_, g) => chip(g === state.group, `data-group="${g}" title="${esc(a.groupName(g))}"`, String(g + 1))).join('')}</div></div>
     <div class="rl-row"><span class="rl-lbl">Bậc</span><div class="rl-chips">${a.rules.ids.map((id, i) => chip(i + 1 === state.rank, `data-rank="${i + 1}"`, `${i + 1} · ${a.rankName(id)}`)).join('')}${chip(auto !== 0, 'data-auto', auto ? '⏸ Dừng tự chạy' : '▶ Tự chạy bậc 1→5')}</div></div>
     <div class="rl-row"><span class="rl-lbl">Mẫu</span><div class="rl-chips">${chip(state.skin === null, 'data-skin=""', 'Mặc định')}${PLOT_SKINS.map((s) => chip(state.skin === s.id, `data-skin="${esc(s.id)}"`, skinName(s.id))).join('')}</div></div>
-    <div class="rl-row rl-opts">${toggle(state.night, 'data-night', 'Ban đêm (đèn nhấp nháy)')}${toggle(state.still, 'data-still', 'Giảm chuyển động')}</div>`;
+    <div class="rl-row rl-opts">${toggle(state.night, 'data-night', 'Ban đêm')}${toggle(state.sprites, 'data-sprites', 'Hiện sprite trang trí cũ (để so sánh)')}${toggle(state.still, 'data-still', 'Giảm chuyển động')}</div>`;
 }
 
 function mount(host: HTMLElement) {
@@ -106,7 +115,7 @@ export function renderPlotLab(root: HTMLElement) {
   const q = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
   const refresh = () => {
     q('.plot-controls').innerHTML = controls();
-    q('.plot-below').innerHTML = `${info()}${layerTable()}`;
+    q('.plot-below').innerHTML = `${info()}${atmosphereLine()}${layerTable()}`;
   };
   refresh();
   q('.plot-lab').addEventListener('click', (e) => {
@@ -129,6 +138,10 @@ export function renderPlotLab(root: HTMLElement) {
   q('.plot-lab').addEventListener('change', (e) => {
     const t = e.target as HTMLInputElement;
     if (t.hasAttribute('data-night')) state.night = t.checked;
+    if (t.hasAttribute('data-sprites')) {
+      state.sprites = t.checked;
+      refresh();
+    }
     if (t.hasAttribute('data-still')) state.still = t.checked;
   });
   mount(q('.plot-stage'));

@@ -1,10 +1,11 @@
 import { CLOUD_PLOT_ART, type FlowerStage } from '../logic/art';
 import type { PlotView } from '../logic/derived';
 import { PLOTS_PER_TIER } from '../logic/config/content';
-import { nn, type RankFrame, type SceneryLayer } from '../../../systems/animation/rankScenery';
-import { skinArtId, skinTheme } from '../../../core/config/plotSkins';
+import type { RankFrame, SceneryLayer } from '../../../systems/animation/rankScenery';
+import { skinArtId, skinBackdropArt, skinTheme } from '../../../core/config/plotSkins';
+import { paintBackdrop } from '../../../ui/world/skinBackdrop';
 
-export { skinTheme };
+export { skinTheme, skinBackdropArt, paintBackdrop };
 
 // Look of the Cloud scene (design px, depths, colours, motion). What grows where is content and state; these are the drawing
 // choices of the scene. Positions are measured on the backdrop (bg_cloud, the owner's mock-up with the interactive parts
@@ -141,23 +142,12 @@ export function flowerStageOf(view: Pick<PlotView, 'stage' | 'share'>): FlowerSt
  */
 export const CLOUD_SCENERY: readonly SceneryLayer[] = [
   { kind: 'halo', art: 'scn_cloud_halo', minRank: 5, x: 866, y: 400, depth: -980, additive: true },
-  { kind: 'landmark', art: nn('scn_cloud_accent_', 10), minRank: 5, x: 866, y: 225, depth: 6, feet: true, scale: 0.8 },
-  { kind: 'border', art: 'scn_cloud_border', minRank: 2, maxRank: 2, x: 866, y: 590, depth: 8 },
-  { kind: 'border', art: 'scn_cloud_border_r3', minRank: 3, maxRank: 3, x: 866, y: 590, depth: 8 },
-  { kind: 'border', art: 'scn_cloud_border_r4', minRank: 4, maxRank: 4, x: 866, y: 590, depth: 8 },
-  { kind: 'border', art: 'scn_cloud_border_r5', minRank: 5, x: 866, y: 590, depth: 8 },
-  { kind: 'path', art: 'scn_cloud_path', minRank: 2, maxRank: 2, x: 800, y: 640, depth: 9 },
-  { kind: 'path', art: 'scn_cloud_path_r3', minRank: 3, maxRank: 3, x: 800, y: 640, depth: 9 },
-  { kind: 'path', art: 'scn_cloud_path_r4', minRank: 4, maxRank: 4, x: 800, y: 640, depth: 9 },
-  { kind: 'path', art: 'scn_cloud_path_r5', minRank: 5, x: 800, y: 640, depth: 9 },
-  { kind: 'landmark', art: nn('scn_cloud_landmark_', 10), minRank: 3, x: 1300, y: 330, depth: 12, feet: true, scale: 0.5 },
-  { kind: 'landmark', art: nn('scn_cloud_landmark_', 10, '_b'), minRank: 4, x: 1440, y: 340, depth: 12, feet: true, scale: 0.5 },
-  { kind: 'lanterns', art: 'scn_cloud_lanterns', minRank: 4, maxRank: 4, x: 866, y: 232, depth: 9 },
-  { kind: 'lanterns', art: 'scn_cloud_lanterns_r5', minRank: 5, x: 866, y: 232, depth: 9 },
-  { kind: 'critter', art: ['scn_cloud_critter', ...nn('scn_cloud_critter_', 10).slice(1)], minRank: 4, x: 1100, y: 618, depth: 40 },
+  { kind: 'border', art: 'scn_cloud_border', minRank: 2, x: 866, y: 590, depth: 8 },
+  { kind: 'path', art: 'scn_cloud_path', minRank: 2, x: 800, y: 640, depth: 9 },
+  { kind: 'landmark', art: Array.from({ length: 10 }, (_, i) => `scn_cloud_landmark_${String(i + 1).padStart(2, '0')}`), minRank: 3, x: 1330, y: 330, depth: 12, feet: true, scale: 0.55 },
+  { kind: 'lanterns', art: 'scn_cloud_lanterns', minRank: 4, x: 866, y: 232, depth: 9 },
+  { kind: 'critter', art: 'scn_cloud_critter', minRank: 4, x: 1100, y: 618, depth: 40 },
   { kind: 'waterfall', art: 'scn_cloud_waterfall', minRank: 5, x: 1500, y: 610, depth: 11, feet: true, scale: 0.7 },
-  { kind: 'petal', art: 'scn_cloud_petal', minRank: 5, x: 0, y: 0, depth: 45, drift: { count: 7, x0: 430, x1: 1300, y0: 120, y1: 600, periodMs: 9000 } },
-  { kind: 'firefly', art: 'scn_cloud_firefly', minRank: 5, x: 0, y: 0, depth: 46, additive: true, drift: { count: 8, x0: 430, x1: 1300, y0: 200, y1: 620, periodMs: 6000 } },
 ];
 
 /** The art of a plot bed: the cloud tier's skin when it wears one (decision 056), else the plain bed. */

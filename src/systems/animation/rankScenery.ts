@@ -107,3 +107,10 @@ export function driftPose(kind: SceneryKind, d: DriftSpec, index: number, timeMs
 
 /** Art ids `<prefix>NN<suffix>` for groups 1..n (two digits), e.g. nn('scn_cloud_landmark_', 10, '_b'). */
 export const nn = (prefix: string, n: number, suffix = ''): string[] => Array.from({ length: n }, (_, i) => `${prefix}${String(i + 1).padStart(2, '0')}${suffix}`);
+
+/**
+ * Whether the pasted scenery sprites (borders, landmarks, critters…) are drawn. Off by default (owner, 2026-11-09: pasted pieces
+ * look crude against the backdrop); a rank's look is its atmosphere instead (rankAtmosphere.ts). The sprites and their art stay in
+ * the repo; flip this to bring them back, e.g. when backdrops with the pieces painted in are made.
+ */
+export const RANK_SPRITES_ON = false;

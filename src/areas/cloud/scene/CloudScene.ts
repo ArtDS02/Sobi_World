@@ -18,8 +18,8 @@ import { setViewedTier } from '../viewedTier';
 import { CloudBuildings } from './cloudBuildings';
 import { CloudDrone } from './cloudDrone';
 import { CloudTierBar, rankBadgeOf } from './cloudTierBar';
-import { RankScenery } from '../../../ui/world/rankScenery';
-import { bedArt, skinTheme, CLOUD_DESIGN, CLOUD_FRAME, CLOUD_SCENERY, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
+import { RankLook } from '../../../ui/world/rankLook';
+import { bedArt, paintBackdrop, skinBackdropArt, skinTheme, CLOUD_DESIGN, CLOUD_FRAME, CLOUD_SCENERY, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
 
 export const CLOUD_SCENE_KEY = 'cloud';
 
@@ -51,7 +51,7 @@ export class CloudScene extends Phaser.Scene {
   private buildings!: CloudBuildings;
   private drone!: CloudDrone;
   private nightWash!: Phaser.GameObjects.Rectangle;
-  private scenery!: RankScenery; // the rank scenery of the tier on screen (decision 056)
+  private scenery!: RankLook; // the rank scenery of the tier on screen (decision 056)
   private sky!: Phaser.GameObjects.Graphics;
   private backdrop!: Phaser.GameObjects.Image;
   private field!: Phaser.GameObjects.Container;
@@ -111,7 +111,7 @@ export class CloudScene extends Phaser.Scene {
       busy: () => this.moving,
       flowers: () => this.plots,
     });
-    this.scenery = new RankScenery(this, CLOUD_SCENERY, (x, y, id) => this.fixed(x, y, id), CLOUD_FRAME);
+    this.scenery = new RankLook(this, CLOUD_SCENERY, (x, y, id) => this.fixed(x, y, id), { design: CLOUD_DESIGN, field: CLOUD_FRAME, depth: 3200, area: 'cloud' });
     this.veil = makeVeil((x, y, art) => this.fixed(x, y, art));
     this.drone = new CloudDrone(this, {
       centre: (slot) => ({ x: plotCentre(slot).x + this.field.x, y: plotCentre(slot).y + this.field.y }),
@@ -294,6 +294,6 @@ export class CloudScene extends Phaser.Scene {
     const r = state.ranks[this.tier];
     this.scenery.draw(this.tier, r && plotIndex(this.tier, 0) < owned ? r.rank : 1, skinTheme(state.skins[this.tier]));
     this.bar.draw(this.tier, owned, r ? rankBadgeOf(r) : null);
-    this.backdrop.setTint(skinTheme(state.skins[this.tier])?.backdrop ?? CLOUD_VIEW.tierTints[this.tier] ?? 0xffffff);
+    paintBackdrop(this.backdrop, CLOUD_BACKDROP_ART, skinBackdropArt(state.skins[this.tier], 'cloud'), state.skins[this.tier], CLOUD_VIEW.tierTints[this.tier] ?? 0xffffff);
   }
 }

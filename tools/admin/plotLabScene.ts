@@ -6,9 +6,10 @@ import { CLOUD_BACKDROP_ART, CLOUD_PLOT_ART } from '../../src/areas/cloud/logic/
 import { CLOUD_DESIGN, CLOUD_FRAME, CLOUD_SCENERY, CLOUD_VIEW, plotCentre as cloudCentre } from '../../src/areas/cloud/scene/cloudView';
 import { GARDEN_BACKDROP_ART, PLOT_ART } from '../../src/areas/garden/logic/art';
 import { GARDEN_DESIGN, GARDEN_FRAME, GARDEN_SCENERY, GARDEN_VIEW } from '../../src/areas/garden/scene/gardenView';
-import { skinArtId, skinTheme } from '../../src/core/config/plotSkins';
+import { skinArtId, skinBackdropArt, skinTheme } from '../../src/core/config/plotSkins';
 import { type RankFrame, type SceneryLayer } from '../../src/systems/animation/rankScenery';
 import { RankScenery } from '../../src/ui/world/rankScenery';
+import { RankLook } from '../../src/ui/world/rankLook';
 
 export type PlotLabArea = 'cloud' | 'garden';
 
@@ -21,6 +22,8 @@ export interface PlotLabState {
   /** The skin worn, null = plain. */
   skin: string | null;
   night: boolean;
+  /** Also draw the old pasted sprites (RANK_SPRITES_ON is off in the game) to compare. */
+  sprites: boolean;
   /** "Giảm chuyển động": the scenery stands still. */
   still: boolean;
   /** Manifest rows by id (texture urls). */
@@ -63,7 +66,7 @@ const GEOMETRY: Record<PlotLabArea, Geometry> = {
 };
 
 export class PlotLabScene extends Phaser.Scene {
-  private built: { area: PlotLabArea; scenery: RankScenery; backdrop: Phaser.GameObjects.Image; beds: Phaser.GameObjects.Image[] } | null = null;
+  private built: { area: PlotLabArea; scenery: RankScenery; look: RankLook; backdrop: Phaser.GameObjects.Image; beds: Phaser.GameObjects.Image[] } | null = null;
   private fixedArt: [Phaser.GameObjects.Image, string][] = [];
   private asked = new Set<string>();
   private drawnKey = '';
@@ -96,7 +99,8 @@ export class PlotLabScene extends Phaser.Scene {
       this.fixedArt.push([img, id]);
       return img;
     }, g.frame);
-    this.built = { area, scenery, backdrop, beds };
+    const look = new RankLook(this, [], () => this.add.image(0, 0, '__WHITE'), { design: g.design, field: g.frame, depth: 3200, area });
+    this.built = { area, scenery, look, backdrop, beds };
     this.drawnKey = '';
   }
 
@@ -114,18 +118,23 @@ export class PlotLabScene extends Phaser.Scene {
     for (const [img, id] of this.fixedArt) if (this.want(id) && img.texture.key !== id) img.setTexture(id);
     const theme = skinTheme(s.skin);
     const bedId = g.bed(s.skin);
-    if (this.want(g.backdrop)) b.backdrop.setTexture(g.backdrop).setDisplaySize(g.design.width, g.design.height);
-    b.backdrop.setTint(theme?.backdrop ?? g.tint(s.group));
+    const own = skinBackdropArt(s.skin, s.area);
+    const art = own && this.want(own) ? own : g.backdrop;
+    if (this.want(art)) b.backdrop.setTexture(art).setDisplaySize(g.design.width, g.design.height);
+    if (art === own) b.backdrop.clearTint();
+    else b.backdrop.setTint(theme?.backdrop ?? g.tint(s.group));
     const wet = s.area === 'garden' && s.skin ? skinArtId(s.skin, 'soil_wet') : PLOT_ART.wet;
     b.beds.forEach((bed, i) => {
       const id = s.area === 'garden' && i % 5 === 2 ? wet : bedId;
       if (this.want(id)) bed.setTexture(id);
     });
-    const key = `${s.area}|${s.group}|${s.rank}|${s.skin}`;
+    const key = `${s.area}|${s.group}|${s.rank}|${s.skin}|${s.sprites}`;
     if (key !== this.drawnKey) {
       this.drawnKey = key;
-      b.scenery.draw(s.group, s.rank, theme);
+      b.scenery.draw(s.group, s.sprites ? s.rank : 1, theme);
+      b.look.draw(s.group, s.rank, theme);
     }
     b.scenery.update(time, s.night, s.still);
+    b.look.update(time, s.night, s.still);
   }
 }
