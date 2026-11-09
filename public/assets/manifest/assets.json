@@ -2692,192 +2692,192 @@
     },
     {
       "id": "scn_cloud_border",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_border.png"
     },
     {
       "id": "scn_cloud_path",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_path.png"
     },
     {
       "id": "scn_cloud_landmark_01",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_landmark_01.png"
     },
     {
       "id": "scn_cloud_landmark_02",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_landmark_02.png"
     },
     {
       "id": "scn_cloud_landmark_03",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_landmark_03.png"
     },
     {
       "id": "scn_cloud_landmark_04",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_landmark_04.png"
     },
     {
       "id": "scn_cloud_landmark_05",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_landmark_05.png"
     },
     {
       "id": "scn_cloud_landmark_06",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_landmark_06.png"
     },
     {
       "id": "scn_cloud_landmark_07",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_landmark_07.png"
     },
     {
       "id": "scn_cloud_landmark_08",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_landmark_08.png"
     },
     {
       "id": "scn_cloud_landmark_09",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_landmark_09.png"
     },
     {
       "id": "scn_cloud_landmark_10",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_landmark_10.png"
     },
     {
       "id": "scn_cloud_lanterns",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_lanterns.png"
     },
     {
       "id": "scn_cloud_critter",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_critter.png"
     },
     {
       "id": "scn_cloud_waterfall",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_waterfall.png"
     },
     {
       "id": "scn_cloud_halo",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_cloud_halo.png"
     },
     {
       "id": "scn_garden_fence",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_garden_fence.png"
     },
     {
       "id": "scn_garden_path",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_garden_path.png"
     },
     {
       "id": "scn_garden_landmark_01",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_garden_landmark_01.png"
     },
     {
       "id": "scn_garden_landmark_02",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_garden_landmark_02.png"
     },
     {
       "id": "scn_garden_landmark_03",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_garden_landmark_03.png"
     },
     {
       "id": "scn_garden_landmark_04",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_garden_landmark_04.png"
     },
     {
       "id": "scn_garden_lanterns",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_garden_lanterns.png"
     },
     {
       "id": "scn_garden_critter",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_garden_critter.png"
     },
     {
       "id": "scn_garden_oldtree",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_garden_oldtree.png"
     },
     {
       "id": "scn_garden_market",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/scn_garden_market.png"
     },
     {
       "id": "skin_verdant_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_verdant_cloud.png"
     },
     {
       "id": "skin_verdant_soil",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_verdant_soil.png"
     },
     {
       "id": "skin_verdant_soil_wet",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_verdant_soil_wet.png"
     },
     {
       "id": "skin_pearl_sea_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_pearl_sea_cloud.png"
     },
     {
       "id": "skin_pearl_sea_soil",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_pearl_sea_soil.png"
     },
     {
       "id": "skin_pearl_sea_soil_wet",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_pearl_sea_soil_wet.png"
     },
     {
       "id": "skin_crystal_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_crystal_cloud.png"
     },
     {
       "id": "skin_crystal_soil",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_crystal_soil.png"
     },
     {
       "id": "skin_crystal_soil_wet",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_crystal_soil_wet.png"
     },
     {
       "id": "skin_starry_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_starry_cloud.png"
     },
     {
       "id": "skin_starry_soil",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_starry_soil.png"
     },
     {
       "id": "skin_starry_soil_wet",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_starry_soil_wet.png"
     },
     {
