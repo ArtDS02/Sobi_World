@@ -1,6 +1,7 @@
 import type { FlowerStage } from '../logic/art';
 import type { PlotView } from '../logic/derived';
 import { PLOTS_PER_TIER } from '../logic/config/content';
+import type { SceneryLayer } from '../../../systems/animation/rankScenery';
 
 // Look of the Cloud scene (design px, depths, colours, motion). What grows where is content and state; these are the drawing
 // choices of the scene. Positions are measured on the backdrop (bg_cloud, the owner's mock-up with the interactive parts
@@ -98,8 +99,8 @@ export const CLOUD_VIEW = {
   },
   titleText: { fontPx: 32, color: '#7a4a24', stroke: '#fff4d6', strokePx: 6 },
   lockedText: { fontPx: 28, color: '#5a4a8a', background: '#fdf4ffe6' },
-  /** The rank line and the upgrade button (decision 056), under the title banner: offsets from the banner's centre. */
-  rank: { dy: 104, buttonDy: 148, fontPx: 24, color: '#5a3a14', background: '#fff4d6e6', buttonColor: '#ffffff', buttonBackground: '#7a62d8' },
+  /** The rank line and the upgrade button (decision 056), on the lower part of the title banner (the HUD's tray covers what lies under it): offsets from the banner's centre. */
+  rank: { dx: -58, dy: 40, buttonDx: 168, buttonDy: 40, fontPx: 20, color: '#5a3a14', background: '#fff4d6e6', buttonColor: '#ffffff', buttonBackground: '#7a62d8' },
   badge: { fontPx: 26, color: '#ffffff', background: 0xe0654f, readyBackground: 0x7a62d8, border: 0xffffff, height: 40, minWidth: 44 },
   /** A ripe flower breathes: scale swing and period. */
   ripePulse: { scale: 0.05, periodMs: 1400 },
@@ -129,3 +130,18 @@ export function flowerStageOf(view: Pick<PlotView, 'stage' | 'share'>): FlowerSt
   if (view.stage === 'wilted') return 'wilt';
   return view.share < 0.5 ? 'sprout' : 'grow';
 }
+
+/**
+ * Rank scenery of a cloud tier (decision 056), layered over the backdrop and under the plots' field: flower border and
+ * stepping stones (rank 2), the tier's landmark (3), lanterns and a small cloud creature (4), a cloud waterfall and a halo (5).
+ * Design px; depths sit between the backdrop and the plots.
+ */
+export const CLOUD_SCENERY: readonly SceneryLayer[] = [
+  { kind: 'halo', art: 'scn_cloud_halo', minRank: 5, x: 866, y: 400, depth: -980, additive: true },
+  { kind: 'border', art: 'scn_cloud_border', minRank: 2, x: 866, y: 590, depth: 8 },
+  { kind: 'path', art: 'scn_cloud_path', minRank: 2, x: 800, y: 640, depth: 9 },
+  { kind: 'landmark', art: Array.from({ length: 10 }, (_, i) => `scn_cloud_landmark_${String(i + 1).padStart(2, '0')}`), minRank: 3, x: 1330, y: 330, depth: 12, feet: true, scale: 0.55 },
+  { kind: 'lanterns', art: 'scn_cloud_lanterns', minRank: 4, x: 866, y: 232, depth: 9 },
+  { kind: 'critter', art: 'scn_cloud_critter', minRank: 4, x: 1100, y: 618, depth: 40 },
+  { kind: 'waterfall', art: 'scn_cloud_waterfall', minRank: 5, x: 1500, y: 610, depth: 11, feet: true, scale: 0.7 },
+];

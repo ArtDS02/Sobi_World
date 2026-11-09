@@ -6,3 +6,4 @@
 - `fitCamera.ts`, `keys.ts` — camera vừa khung và key texture dùng chung các scene.
 - `syringe.ts` — mũi tiêm chích vào sinh vật vừa khỏi bệnh (Farm, Aquarium); ảnh `fx_syringe` khi có, không thì hình vẽ bằng code.
 - `bentPlant.ts` — cây uốn theo thân trong gió (Rope dọc chép ảnh hoa; toán ở `systems/animation/plantBend.ts`), dùng cho mọi hoa Sobi Cloud và cây Sobi Garden.
+- `rankScenery.ts` + `tierUpgradeVm.ts` — cảnh theo bậc nâng cấp của một tầng mây / khu đất (decision 056): lớp hình theo bậc (`systems/animation/rankScenery.ts`) và dữ liệu hộp thoại Trước / Sau của việc nâng bậc (dùng chung Cloud, Garden). Chuyển động chạy trong vòng lặp khung, đứng yên khi giảm chuyển động.

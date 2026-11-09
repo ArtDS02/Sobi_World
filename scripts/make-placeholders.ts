@@ -274,6 +274,56 @@ function drawCloudScenery(r: Raster, id: string) {
   for (const dx of [-0.22, 0.22]) r.roundRect(w * (0.5 + dx) - 6, h * 0.82, 12, h * 0.1, 4, [70, 64, 88, 255]); // legs
 }
 
+/** Rank scenery (decision 056): a rough silhouette per kind so the layers read in the scene until the art arrives. */
+function drawScenery(r: Raster, id: string) {
+  const w = r.width;
+  const h = r.height;
+  const garden = id.startsWith('scn_garden');
+  const ground: Rgba = garden ? [150, 110, 70, 255] : [226, 230, 248, 255];
+  const green: Rgba = [96, 170, 84, 255];
+  const kind = id.replace(/^scn_(cloud|garden)_/, '');
+  if (kind === 'border' || kind === 'fence') {
+    const n = 12;
+    for (let i = 0; i < n; i += 1) {
+      const x = ((i + 0.5) * w) / n;
+      if (kind === 'fence') r.roundRect(x - 8, h * 0.2, 16, h * 0.7, 5, ground);
+      else {
+        r.ellipse(x, h * 0.6, 22, 14, green);
+        r.ellipse(x, h * 0.4, 12, 12, i % 2 ? [244, 150, 180, 255] : [250, 214, 110, 255]);
+      }
+    }
+    if (kind === 'fence') r.rect(0, h * 0.42, w, 14, shade(ground, 0.85));
+  } else if (kind === 'path') {
+    for (const [x, y] of [[0.2, 0.3], [0.45, 0.5], [0.7, 0.35], [0.55, 0.78], [0.25, 0.72]] as const) r.ellipse(w * x, h * y, w * 0.11, h * 0.14, [214, 206, 190, 255]);
+  } else if (kind.startsWith('landmark')) {
+    const hue = (Number(kind.slice(-2)) * 37) % 200;
+    const body: Rgba = [120 + (hue % 90), 140 + ((hue * 3) % 80), 190 - (hue % 70), 255];
+    r.ellipse(w / 2, h * 0.94, w * 0.36, h * 0.04, [0, 0, 0, 50]);
+    r.roundRect(w * 0.3, h * 0.36, w * 0.4, h * 0.56, 16, body);
+    r.ellipse(w / 2, h * 0.3, w * 0.3, h * 0.2, shade(body, 0.8));
+  } else if (kind === 'lanterns') {
+    for (const x of [0.04, 0.96]) {
+      r.rect(w * x - 5, h * 0.3, 10, h * 0.66, [110, 84, 60, 255]);
+      r.ellipse(w * x, h * 0.26, 18, 22, [255, 214, 120, 255]);
+    }
+  } else if (kind === 'critter') {
+    r.ellipse(w / 2, h * 0.58, w * 0.32, h * 0.3, [250, 232, 200, 255]);
+    for (const dx of [-0.1, 0.1]) r.ellipse(w * (0.5 + dx), h * 0.52, 6, 8, [60, 50, 40, 255]);
+  } else if (kind === 'waterfall') {
+    r.roundRect(w * 0.15, h * 0.04, w * 0.7, h * 0.92, 18, [150, 200, 245, 230]);
+    for (const x of [0.3, 0.5, 0.7]) r.rect(w * x - 5, h * 0.08, 10, h * 0.84, [235, 246, 255, 230]);
+  } else if (kind === 'halo') {
+    r.ellipse(w / 2, h / 2, w * 0.48, h * 0.46, [255, 244, 200, 40]);
+    r.ellipse(w / 2, h / 2, w * 0.34, h * 0.32, [255, 244, 200, 50]);
+  } else if (kind === 'oldtree') {
+    r.roundRect(w * 0.4, h * 0.45, w * 0.2, h * 0.5, 14, [110, 80, 54, 255]);
+    r.ellipse(w / 2, h * 0.32, w * 0.42, h * 0.28, green);
+  } else if (kind === 'market') {
+    r.roundRect(w * 0.12, h * 0.4, w * 0.76, h * 0.5, 12, ground);
+    r.roundRect(w * 0.06, h * 0.22, w * 0.88, h * 0.22, 12, [200, 90, 80, 255]);
+  } else drawStructure(r, ground);
+}
+
 /** Body colours of the enemy placeholders by element (one blob with eyes per enemy of content/adventure/enemies.json). */
 const ENEMY_COLOURS: Record<string, Rgba> = {
   enemy_mossling: [96, 150, 84, 255],
@@ -352,6 +402,7 @@ function render(
   const colour = PIG_COLOURS[id] ?? colourFor(id);
   if (id.startsWith('chr_')) drawCharacter(r, key);
   else if (id === 'ui_icon_lock') drawLock(r);
+  else if (id.startsWith('scn_')) drawScenery(r, id);
   else if (id.startsWith('crop_')) drawCrop(r, id);
   else if (id.startsWith('enemy_')) drawEnemy(r, id);
   else if (id === 'bg_adventure_forest') drawForestBackdrop(r);

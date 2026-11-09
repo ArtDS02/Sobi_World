@@ -2691,6 +2691,136 @@
       "asset": "props/plot_cloud.png"
     },
     {
+      "id": "scn_cloud_border",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_border.png"
+    },
+    {
+      "id": "scn_cloud_path",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_path.png"
+    },
+    {
+      "id": "scn_cloud_landmark_01",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_landmark_01.png"
+    },
+    {
+      "id": "scn_cloud_landmark_02",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_landmark_02.png"
+    },
+    {
+      "id": "scn_cloud_landmark_03",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_landmark_03.png"
+    },
+    {
+      "id": "scn_cloud_landmark_04",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_landmark_04.png"
+    },
+    {
+      "id": "scn_cloud_landmark_05",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_landmark_05.png"
+    },
+    {
+      "id": "scn_cloud_landmark_06",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_landmark_06.png"
+    },
+    {
+      "id": "scn_cloud_landmark_07",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_landmark_07.png"
+    },
+    {
+      "id": "scn_cloud_landmark_08",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_landmark_08.png"
+    },
+    {
+      "id": "scn_cloud_landmark_09",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_landmark_09.png"
+    },
+    {
+      "id": "scn_cloud_landmark_10",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_landmark_10.png"
+    },
+    {
+      "id": "scn_cloud_lanterns",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_lanterns.png"
+    },
+    {
+      "id": "scn_cloud_critter",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_critter.png"
+    },
+    {
+      "id": "scn_cloud_waterfall",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_waterfall.png"
+    },
+    {
+      "id": "scn_cloud_halo",
+      "status": "placeholder",
+      "asset": "props/scn_cloud_halo.png"
+    },
+    {
+      "id": "scn_garden_fence",
+      "status": "placeholder",
+      "asset": "props/scn_garden_fence.png"
+    },
+    {
+      "id": "scn_garden_path",
+      "status": "placeholder",
+      "asset": "props/scn_garden_path.png"
+    },
+    {
+      "id": "scn_garden_landmark_01",
+      "status": "placeholder",
+      "asset": "props/scn_garden_landmark_01.png"
+    },
+    {
+      "id": "scn_garden_landmark_02",
+      "status": "placeholder",
+      "asset": "props/scn_garden_landmark_02.png"
+    },
+    {
+      "id": "scn_garden_landmark_03",
+      "status": "placeholder",
+      "asset": "props/scn_garden_landmark_03.png"
+    },
+    {
+      "id": "scn_garden_landmark_04",
+      "status": "placeholder",
+      "asset": "props/scn_garden_landmark_04.png"
+    },
+    {
+      "id": "scn_garden_lanterns",
+      "status": "placeholder",
+      "asset": "props/scn_garden_lanterns.png"
+    },
+    {
+      "id": "scn_garden_critter",
+      "status": "placeholder",
+      "asset": "props/scn_garden_critter.png"
+    },
+    {
+      "id": "scn_garden_oldtree",
+      "status": "placeholder",
+      "asset": "props/scn_garden_oldtree.png"
+    },
+    {
+      "id": "scn_garden_market",
+      "status": "placeholder",
+      "asset": "props/scn_garden_market.png"
+    },
+    {
       "id": "prop_sign_plank",
       "status": "production",
       "asset": "props/prop_sign_plank.png"

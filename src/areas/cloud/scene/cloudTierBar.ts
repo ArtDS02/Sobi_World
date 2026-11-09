@@ -5,7 +5,8 @@ import * as Phaser from 'phaser';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { CLOUD_DRESSING_ART } from '../logic/art';
-import { CB, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
+import { CB, CLOUD_TIERS, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
+import { rankLine, rankOfGroup } from '../../../ui/world/tierUpgradeVm';
 import { CLOUD_VIEW, plotCentre, plotIndex, viewableTiers } from './cloudView';
 
 type Img = Phaser.GameObjects.Image;
@@ -31,6 +32,12 @@ export interface RankBadge {
   /** Whether the tier can be upgraded (all its plots owned, not at the top rank). */
   open: boolean;
 }
+
+/** The banner's line for a tier's rank (decision 056). */
+export const rankBadgeOf = (r: { rank: number; open: boolean }): RankBadge => ({
+  text: rankLine(rankOfGroup(CLOUD_TIERS, (id) => vi.cloud.rankNames[id as keyof typeof vi.cloud.rankNames] ?? id, r.rank), CLOUD_TIERS),
+  open: r.open,
+});
 
 /** The text style of words painted on wood. */
 export function signStyle(px: number, color: string, stroke: string, strokePx: number): Phaser.Types.GameObjects.Text.TextStyle {
@@ -76,12 +83,12 @@ export class CloudTierBar {
     this.note.on(Phaser.Input.Events.POINTER_DOWN, () => !d.paused() && d.onLocked());
     const rk = v.rank;
     this.rank = scene.add
-      .text(v.title.x, v.title.y + rk.dy, '', { fontFamily: v.label.fontFamily, fontSize: `${rk.fontPx}px`, color: rk.color, backgroundColor: rk.background, padding: { x: 14, y: 5 }, align: 'center' })
+      .text(v.title.x + rk.dx, v.title.y + rk.dy, '', { fontFamily: v.label.fontFamily, fontSize: `${rk.fontPx}px`, color: rk.color, backgroundColor: rk.background, padding: { x: 14, y: 5 }, align: 'center' })
       .setOrigin(0.5)
       .setDepth(v.depth.sign + 1)
       .setVisible(false);
     this.rankButton = scene.add
-      .text(v.title.x, v.title.y + rk.buttonDy, vi.plotTier.upgrade, { fontFamily: v.label.fontFamily, fontSize: `${rk.fontPx}px`, fontStyle: 'bold', color: rk.buttonColor, backgroundColor: rk.buttonBackground, padding: { x: 18, y: 6 } })
+      .text(v.title.x + rk.buttonDx, v.title.y + rk.buttonDy, vi.plotTier.upgrade, { fontFamily: v.label.fontFamily, fontSize: `${rk.fontPx}px`, fontStyle: 'bold', color: rk.buttonColor, backgroundColor: rk.buttonBackground, padding: { x: 18, y: 6 } })
       .setOrigin(0.5)
       .setDepth(v.depth.sign + 1)
       .setVisible(false)

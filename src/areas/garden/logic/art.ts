@@ -2,6 +2,8 @@
 import { AREA_HUD_ART, itemArtId } from '../../../core/config/assetIds';
 import { ITEMS, ITEM_IDS } from '../../../core/config/items';
 import { CROP_LIST, GB, type Crop } from './config/content';
+import { sceneryArtIds } from '../../../systems/animation/rankScenery';
+import { GARDEN_SCENERY } from '../scene/gardenView';
 
 /** The pictures of a crop on a plot, in the order it grows. */
 export const CROP_STAGES = ['sprout', 'grow', 'ripe', 'wilt'] as const;
@@ -29,6 +31,7 @@ export const gardenArtIds = (): string[] => [
   ...Object.values(GARDEN_DOCK_ART),
   GB.buildings.mill.art,
   GB.buildings.composter.art,
+  ...sceneryArtIds(GARDEN_SCENERY),
   ...CROP_LIST.flatMap((c) => CROP_STAGES.map((s) => cropArtId(c, s))),
   ...GARDEN_ITEM_IDS.map(itemArtId),
 ];

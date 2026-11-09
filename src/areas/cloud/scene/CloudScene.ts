@@ -10,21 +10,19 @@ import { fitCamera } from '../../../ui/world/fitCamera';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import type { WorldRect } from '../../../systems/layout/camera';
 import { CLOUD_BACKDROP_ART, CLOUD_PLOT_ART, FLOWER_STAGES, flowerArtId } from '../logic/art';
-import { CLOUD_TIERS, FLOWERS, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
-import { rankLine, rankOfGroup } from '../../../ui/world/tierUpgradeVm';
-import { vi } from '../../../i18n/vi';
+import { FLOWERS, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
 import type { SceneState } from '../logic/derived';
 import { CloudBird } from './cloudBird';
 import { bentFlower, brightOf, coverBackdrop, ensureFxTextures, paintSky, floatIdle, makeDrifts, makeVeil, moveDrifts, playTierMove, pressable, restFlowers, setBright, swayFlowers, type Drift, type PlotSprites } from './cloudFx';
 import { setViewedTier } from '../viewedTier';
 import { CloudBuildings } from './cloudBuildings';
 import { CloudDrone } from './cloudDrone';
-import { CloudTierBar } from './cloudTierBar';
-import { CLOUD_DESIGN, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
+import { CloudTierBar, rankBadgeOf } from './cloudTierBar';
+import { RankScenery } from '../../../ui/world/rankScenery';
+import { CLOUD_DESIGN, CLOUD_SCENERY, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
 
 export const CLOUD_SCENE_KEY = 'cloud';
 
-const rankNameOf = (id: string): string => vi.cloud.rankNames[id as keyof typeof vi.cloud.rankNames] ?? id;
 
 /** What a click on the canvas was on. */
 export type CloudPick =
@@ -53,6 +51,8 @@ export class CloudScene extends Phaser.Scene {
   private buildings!: CloudBuildings;
   private drone!: CloudDrone;
   private nightWash!: Phaser.GameObjects.Rectangle;
+  /** The rank scenery of the tier on screen (decision 056). */
+  private scenery!: RankScenery;
   private sky!: Phaser.GameObjects.Graphics;
   private backdrop!: Phaser.GameObjects.Image;
   private field!: Phaser.GameObjects.Container;
@@ -112,6 +112,7 @@ export class CloudScene extends Phaser.Scene {
       busy: () => this.moving,
       flowers: () => this.plots,
     });
+    this.scenery = new RankScenery(CLOUD_SCENERY, (x, y, id) => this.fixed(x, y, id));
     this.veil = makeVeil((x, y, art) => this.fixed(x, y, art));
     this.drone = new CloudDrone(this, {
       centre: (slot) => ({ x: plotCentre(slot).x + this.field.x, y: plotCentre(slot).y + this.field.y }),
@@ -135,6 +136,7 @@ export class CloudScene extends Phaser.Scene {
 
   override update(time: number, delta: number) {
     this.sync(false);
+    this.scenery.update(time, this.skyNight === true, this.deps.reduceMotion());
     if (this.deps.reduceMotion()) return restFlowers(this.plots);
     swayFlowers(this.plots, time);
     moveDrifts(this.drifts, this.view, time);
@@ -290,7 +292,8 @@ export class CloudScene extends Phaser.Scene {
   /** The tier bar and the tier's colour over the shared backdrop. */
   private drawTierBar(owned: number, state: SceneState) {
     const r = state.ranks[this.tier];
-    this.bar.draw(this.tier, owned, r ? { text: rankLine(rankOfGroup(CLOUD_TIERS, rankNameOf, r.rank), CLOUD_TIERS), open: r.open } : null);
+    this.scenery.draw(this.tier, r && plotIndex(this.tier, 0) < owned ? r.rank : 1);
+    this.bar.draw(this.tier, owned, r ? rankBadgeOf(r) : null);
     this.backdrop.setTint(CLOUD_VIEW.tierTints[this.tier] ?? 0xffffff);
   }
 }

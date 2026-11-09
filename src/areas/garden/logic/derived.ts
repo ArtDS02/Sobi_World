@@ -3,7 +3,7 @@ import type { PlotStage } from '../../../systems/plants/plot';
 import { growthShare, harvestYield, plotStage } from '../../../systems/plants/plot';
 import { RECIPES } from '../../../core/config/recipes';
 import { batchesReady } from '../../../core/production/production';
-import { CROPS, GARDEN_TIERS, GB, PLOT_RULES, MAX_PLOTS, PLOTS_PER_ZONE, zoneOf, type BuildingId } from './config/content';
+import { CROPS, GARDEN_TIERS, GB, PLOT_RULES, MAX_PLOTS, PLOTS_PER_ZONE, ZONE_COUNT, zoneOf, type BuildingId } from './config/content';
 import type { GardenState } from './state';
 import { bonusPctOf, nextUpgrade, tierOfGroup, upgradeBlock, type UpgradeBlock, type UpgradeStep } from '../../../systems/plants/tiers';
 
@@ -100,6 +100,8 @@ export interface SceneState {
   sprinkler: number;
   mill: WorkshopView;
   composter: WorkshopView;
+  /** Upgrade rank (1..5) of each garden zone (decision 056): the scenery of a zone follows it. */
+  zoneRanks: number[];
 }
 
 export function workshopView(g: GardenState, building: BuildingId, now: number): WorkshopView {
@@ -113,6 +115,7 @@ export const sceneState = (g: GardenState, now: number): SceneState => ({
   sprinkler: g.sprinkler,
   mill: workshopView(g, 'mill', now),
   composter: workshopView(g, 'composter', now),
+  zoneRanks: Array.from({ length: ZONE_COUNT }, (_, z) => gardenZoneLevel(g, z)),
 });
 
 /** The upgrade tier (1..5) of garden zone `group` (0-based). */

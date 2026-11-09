@@ -1,6 +1,7 @@
 import type { CropStage } from '../logic/art';
 import { PLOTS_PER_ZONE } from '../logic/config/content';
 import type { PlotView } from '../logic/derived';
+import type { SceneryLayer } from '../../../systems/animation/rankScenery';
 
 // Look of the Garden scene (design px, depths, colours, motion). What grows where is content and state; these are the
 // drawing choices of the scene. Positions are measured on the backdrop (bg_garden, the owner's mock-up with the
@@ -123,3 +124,17 @@ export function cropStageOf(view: Pick<PlotView, 'stage' | 'share'>): CropStage 
   if (view.stage === 'wilted') return 'wilt';
   return view.share < 0.5 ? 'sprout' : 'grow';
 }
+
+/**
+ * Rank scenery of a garden zone (decision 056), over the backdrop and under the plots: a fence and stepping stones (rank 2),
+ * the zone's landmark (3), lanterns and a small creature (4), an old tree and a village market (5). Design px.
+ */
+export const GARDEN_SCENERY: readonly SceneryLayer[] = [
+  { kind: 'tree', art: 'scn_garden_oldtree', minRank: 5, x: 330, y: 560, depth: 7, feet: true, scale: 0.8 },
+  { kind: 'fence', art: 'scn_garden_fence', minRank: 2, x: 895, y: 610, depth: 8 },
+  { kind: 'path', art: 'scn_garden_path', minRank: 2, x: 895, y: 690, depth: 9 },
+  { kind: 'landmark', art: Array.from({ length: 4 }, (_, i) => `scn_garden_landmark_${String(i + 1).padStart(2, '0')}`), minRank: 3, x: 1400, y: 690, depth: 12, feet: true, scale: 0.7 },
+  { kind: 'lanterns', art: 'scn_garden_lanterns', minRank: 4, x: 895, y: 232, depth: 9 },
+  { kind: 'critter', art: 'scn_garden_critter', minRank: 4, x: 700, y: 650, depth: 40 },
+  { kind: 'market', art: 'scn_garden_market', minRank: 5, x: 1180, y: 800, depth: 12, feet: true, scale: 0.7 },
+];

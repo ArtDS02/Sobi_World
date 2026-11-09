@@ -122,6 +122,18 @@
         "SOBIWORLD_SANDBOX": "C:\\Users\\ToraTech\\AppData\\Local\\Temp\\sobiworld-bend",
         "PORT": "5191"
       }
+    },
+    {
+      "name": "sandbox-plot",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/dev/sandbox.mjs"
+      ],
+      "port": 5192,
+      "env": {
+        "SOBIWORLD_SANDBOX": "C:\\Users\\ToraTech\\AppData\\Local\\Temp\\sobiworld-plot",
+        "PORT": "5192"
+      }
     }
   ]
 }

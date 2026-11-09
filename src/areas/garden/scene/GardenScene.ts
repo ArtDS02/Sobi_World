@@ -18,7 +18,8 @@ import { GardenDrone } from './gardenDrone';
 import { GardenField } from './gardenField';
 import { harvestFly, mist, NameTip, ripenSparkle, sprayBurst } from './gardenFx';
 import { GardenLife } from './gardenLife';
-import { GARDEN_DESIGN, GARDEN_VIEW, plotIndex } from './gardenView';
+import { RankScenery } from '../../../ui/world/rankScenery';
+import { GARDEN_DESIGN, GARDEN_SCENERY, GARDEN_VIEW, plotIndex } from './gardenView';
 
 export const GARDEN_SCENE_KEY = 'garden';
 
@@ -49,6 +50,8 @@ export class GardenScene extends Phaser.Scene {
   private backdrop!: Img;
   private tip!: NameTip;
   private shown = '';
+  /** The rank scenery of the zone on screen (decision 056). */
+  private scenery!: RankScenery;
   /** The zone drawn, and whether a zone change is playing. */
   private zone = 0;
   private moving = false;
@@ -66,6 +69,7 @@ export class GardenScene extends Phaser.Scene {
     this.paintSky();
     this.backdrop = this.fixed(GARDEN_DESIGN.width / 2, GARDEN_DESIGN.height / 2, GARDEN_BACKDROP_ART).setDepth(v.depth.ground);
     fitCamera(this, GARDEN_DESIGN, (view) => this.coverView(view));
+    this.scenery = new RankScenery(GARDEN_SCENERY, (x, y, id) => this.fixed(x, y, id));
     this.field = new GardenField(this, { paused: () => this.deps.paused(), onSlot: (slot) => this.pickSlot(slot) });
     this.tip = new NameTip(this);
     this.drone = new GardenDrone(this, this.field, () => this.deps.reduceMotion());
@@ -101,6 +105,7 @@ export class GardenScene extends Phaser.Scene {
 
   override update(time: number) {
     this.sync(false);
+    this.scenery.update(time, true, this.deps.reduceMotion());
     if (this.deps.reduceMotion()) this.field.rest();
     else this.field.sway(time);
   }
@@ -229,6 +234,7 @@ export class GardenScene extends Phaser.Scene {
       state.sprinkler,
       state.mill,
       state.composter,
+      state.zoneRanks[this.zone],
     ]);
     if (!force && key === this.shown) return;
     this.shown = key;
@@ -237,6 +243,7 @@ export class GardenScene extends Phaser.Scene {
     const { harvested, ripened } = this.field.changes(this.zone, state.plots);
     this.field.draw(this.zone, state.plots);
     this.backdrop.setTint(GARDEN_VIEW.zoneTints[this.zone] ?? 0xffffff);
+    this.scenery.draw(this.zone, state.zoneRanks[this.zone] ?? 1);
     if (!calm) this.celebrate(harvested, ripened);
     this.drawSprinkler(state.sprinkler);
     this.setWorkshop('mill', state.mill);

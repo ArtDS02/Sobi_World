@@ -231,3 +231,31 @@ export function placeholderSize(
     .replace(/\.\w+$/, '');
   return requiredSize(section, row, key) ?? CATALOGUE_SIZES[stem] ?? (isCombatPose(stem) ? sq(512) : sq(256));
 }
+
+// Decision 056: the rank scenery of the Cloud and the Garden (batch plot-rank-scenery); placeholders take these sizes.
+CATALOGUE_SIZES.scn_cloud_border = { width: 900, height: 110 };
+CATALOGUE_SIZES.scn_cloud_path = { width: 360, height: 150 };
+CATALOGUE_SIZES.scn_cloud_landmark_01 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_cloud_landmark_02 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_cloud_landmark_03 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_cloud_landmark_04 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_cloud_landmark_05 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_cloud_landmark_06 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_cloud_landmark_07 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_cloud_landmark_08 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_cloud_landmark_09 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_cloud_landmark_10 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_cloud_lanterns = { width: 900, height: 120 };
+CATALOGUE_SIZES.scn_cloud_critter = { width: 120, height: 110 };
+CATALOGUE_SIZES.scn_cloud_waterfall = { width: 220, height: 340 };
+CATALOGUE_SIZES.scn_cloud_halo = { width: 1000, height: 700 };
+CATALOGUE_SIZES.scn_garden_fence = { width: 900, height: 110 };
+CATALOGUE_SIZES.scn_garden_path = { width: 360, height: 150 };
+CATALOGUE_SIZES.scn_garden_landmark_01 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_garden_landmark_02 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_garden_landmark_03 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_garden_landmark_04 = { width: 280, height: 300 };
+CATALOGUE_SIZES.scn_garden_lanterns = { width: 900, height: 120 };
+CATALOGUE_SIZES.scn_garden_critter = { width: 120, height: 110 };
+CATALOGUE_SIZES.scn_garden_oldtree = { width: 300, height: 380 };
+CATALOGUE_SIZES.scn_garden_market = { width: 300, height: 260 };

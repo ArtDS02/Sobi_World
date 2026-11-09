@@ -9,7 +9,7 @@ Branch `feature-plot-upgrade` (from `overnight-hardening`). Tick a step when its
 - [x] 1 Level 100 (table 1–100, rewards through the ledger, save v13 `progression.levelRewardsPaid`, achievements 30…100, HUD 3-digit star)
 - [x] 2 Tier / zone upgrade logic (content `cloud/tiers.json`, `garden/zones.json`, `systems/plants/tiers.ts`, `upgradeTier` / `upgradeZone`, harvest bonus, Cloud slice v3, Garden slice v2)
 - [x] 3 Upgrade UI + Admin (Cloud banner rank line + button, Garden zone chip + button, shared upgrade dialog, plot cards, toasts, Admin catalog + labels)
-- [ ] 4 Tier scenery (presentation)
+- [x] 4 Tier scenery (presentation): rank layers via `systems/animation/rankScenery.ts` + `ui/world/rankScenery.ts`, 26 placeholder ids, batch description `asset/batches/plot-rank-scenery.md`
 - [ ] 5 Plot-skin forging
 - [ ] 6 Economy bot + tuning
 - [ ] 7 Tier-5 perk (optional)
@@ -28,3 +28,5 @@ Branch `feature-plot-upgrade` (from `overnight-hardening`). Tick a step when its
 - Step 3: the upgrade button appears when the tier / zone owns all its plots and a next rank exists; the world-level gate is explained inside the dialog (the button there says why it is off: plots → level → coins → items). The Cloud banner shows the rank line under the title banner (canvas), the Garden shows a chip + button inside the zone pill (DOM).
 - Step 3: unit tests are node-only (no DOM env in the repo), so the dialog DOM is checked in the step-8 sandbox run; the data is covered by `tests/unit/plotTierUi.test.ts`.
 - Step 3: guard limit is 300 lines per file: rank VMs live in `cloudRankVm.ts` / `gardenRankVm.ts`. `assetsCheck` / `phase11` timeouts appear at random on this loaded machine (they pass with `--testTimeout=120000`).
+- Step 4: no art is made; 26 `scn_*` manifest rows are `placeholder` with generated rough shapes (script `drawScenery`), listed in `docs/ASSET_TODO.md` and `asset/batches/plot-rank-scenery.md`. Motion is code on the frame loop (`sceneryMotion`), frozen for "Giảm chuyển động", static images need no WebGL. The Garden has no night in its scene, so its lanterns flicker softly all the time. Rank line / button sit on the lower part of the Cloud banner (the dock covers anything below it). A sandbox config `sandbox-plot` (port 5192, own folder `sobiworld-plot`, save from `dev:max-save` written straight there) was added to `.claude/launch.json`.
+- Step 4 checked in the browser: Cloud tier 1 at rank 5 shows border, stones, lanterns, landmark, waterfall; upgrade dialog bought tier 9 → rank 2 (−7,800 coins = 3000 × (1 + 0.2 × 8), items taken); Garden zone 3 (rank 2) shows chip + button, fence and stones; console clean.

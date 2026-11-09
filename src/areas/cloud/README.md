@@ -14,3 +14,7 @@ Area thứ tư: vườn hoa phép trên mây. Gieo hoa, tưới bằng Nước t
 - `feedback.ts`, `stage.ts` — như các Area khác.
 
 Nối với Area khác chỉ qua vật phẩm (`content/shared/items.json`): Healing Potion / Potion Vui Vẻ (`curesSickness`, `moodBoost`, `moodHours`) dùng cho heo (`farm/actions/usePotion`) và cá (`aquarium/actions/care useFishPotion`); hoa hiếm (`mutationBoost`) thêm vào lúc phối giống (`breedPigs`, `breedFish` nhận `boostItem`). Potion Chiến Đấu chờ GĐ10.
+
+## Bậc nâng cấp tầng mây (decision 056)
+- `content/cloud/tiers.json` (5 bậc, giá, vật phẩm, cổng cấp, % bội thu; sửa ở Admin) · `logic/actions/buildings.ts` `upgradeTier` (xu qua sổ cái `CLOUD_TIER_UPGRADE` + vật phẩm, KN một lần) · `harvestFlowers` thêm "bội thu" theo bậc của tầng (`ctx.rng`; `simulate()` không đổi) · slice v3 `tierLevels` (thưa, vắng = bậc 1).
+- UI: dòng bậc + nút Nâng bậc trên banner tầng (`scene/cloudTierBar.ts`), hộp thoại chung `ui/components/tierUpgradeDialog.ts`, cảnh theo bậc `CLOUD_SCENERY` (`scene/cloudView.ts`).

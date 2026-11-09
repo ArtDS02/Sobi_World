@@ -16,3 +16,7 @@ Area thứ hai: trồng cây từ hạt, tưới, bón phân, thu hoạch; chế
 
 Vòng lặp: phân heo (Farm, "Dọn phân") → Thùng ủ → phân bón → cây → Máy xay → thức ăn → heo (`feedPig` nhận `FOOD_PREMIUM`, `item_grass`).
 Area không import Area khác (guard: `npm run guard`).
+
+## Bậc nâng cấp khu đất (decision 056)
+- `content/garden/zones.json` · `logic/actions/buildings.ts` `upgradeZone` (xu qua sổ cái `GARDEN_ZONE_UPGRADE`) · `harvestPlots` thêm "bội thu" theo bậc của khu · slice v2 `zoneLevels` (thưa, vắng = bậc 1).
+- UI: chip bậc + nút Nâng bậc trong thanh khu (`ui/gardenUi.ts`), hộp thoại chung `ui/components/tierUpgradeDialog.ts`, cảnh theo bậc `GARDEN_SCENERY` (`scene/gardenView.ts`).
