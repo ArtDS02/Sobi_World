@@ -21,6 +21,12 @@ export const CLOUD_VIEW = {
   flowerOffsetY: 1,
   /** Flowers sway around their base like in a breeze: degrees by stage, each plant its own period and phase. */
   sway: { sprout: 1.6, grow: 2.6, ripe: 3.4, wilt: 1, periodMs: [2200, 3400], gustMs: 9000, gust: 0.45 },
+  /**
+   * Trial (2026-11-09): these flowers bend on their stem instead of tilting whole (systems/animation/plantBend.ts), same period,
+   * phase and gust. Degrees are the top's lean by stage; `root` / `stiff` are shares of the picture's height (soil mound that
+   * stays put, rigid bloom), `lag` the radians the top trails the stem.
+   */
+  bend: { arts: ['flower_cloud_daisy', 'flower_dream_bell'] as readonly string[], rows: 14, root: 0.1, stiff: 0.62, lag: 0.7, sprout: 2.4, grow: 3.8, ripe: 5, wilt: 1.4 },
   /** Feet of the spring and the cauldron on the two grass banks at the left, and their drawing scale. */
   spring: { x: 286, y: 372, scale: 0.9 },
   cauldron: { x: 222, y: 662, scale: 0.82 },

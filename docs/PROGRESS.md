@@ -13,6 +13,18 @@
 
 ## Nhật ký
 
+### 2026-11-09 — Admin: tab "🌿 Cây đung đưa" (nhóm Xưởng hoạt họa)
+✅ Đã làm: tab riêng `#/plant-lab` (không gom vào "Rig sinh vật": cây không có xương, để riêng cho khỏi lẫn). Trên cùng là nút chọn khu **🌸 Sobi Cloud / 🌱 Sobi Garden**: mỗi khu chỉ hiện cây của khu đó, trên nền và ô đất của khu đó. Bấm một cây → bên trái cách cũ (xoay cứng), bên phải uốn theo thân, cùng nhịp; "Cả khu" xem tất cả cây cùng lúc (chọn Uốn / Xoay cứng). Giai đoạn, tốc độ, gió giật, "Hiện thân" (đường uốn, chấm vàng = gốc, chấm xanh = bông cứng từ). Thanh trượt: gốc đứng yên, bông cứng từ, ngọn trễ nhịp, ngọn nghiêng theo giai đoạn — chỉ xem thử; "Sao chép số" ra dòng `CLOUD_VIEW.bend`. Nhãn "Đang thử" = loài đã uốn trong game. Garden chưa bật trong game, tab xem trước bằng số của Cloud. Thêm mục hướng dẫn (`guideWorld.ts`). `BentPlant` chép thêm depth của ảnh.
+📁 `tools/admin/{plantLab,plantLabScene}.ts`, `tools/admin/plantLab.css`, `tools/admin/{main,guideWorld}.ts`, `tools/admin/README.md`, `src/ui/world/bentPlant.ts`.
+🧪 `npm run check` như trước (chỉ 2 test studio hỏng vì thiếu tag `pre-unity-studio`). Mở admin: Cloud (so sánh + hiện thân), Garden (cả khu), thanh trượt (kẹp gốc / bông cứng), nút về số game, sao chép số — đúng, không lỗi console.
+
+### 2026-11-09 — Thử hoa uốn theo thân ở Sobi Cloud (chủ dự án yêu cầu làm thử)
+✅ Đã làm: bộ uốn cây dùng chung `systems/animation/plantBend.ts` (thuần, không cần dữ liệu riêng cho từng ảnh): gốc / ụ đất (`root` 10 % chiều cao) đứng yên, thân cong dần, phần ngọn từ `stiff` 62 % trở lên giữ cứng (bông chỉ xoay và dời theo thân, không méo), ngọn trễ nhịp thân `lag` 0,7 rad, thân giữ nguyên độ dài. Vẽ bằng `ui/world/bentPlant.ts`: một Rope dọc chép ảnh, vị trí, cỡ và tint của ảnh hoa mỗi khung; ảnh gốc vẫn ở đó cho tween hover, drone, sâu (chỉ trong suốt). Chỉ bật cho **Cúc Mây** và **Chuông Mộng** (`CLOUD_VIEW.bend.arts`); các hoa khác giữ cách xoay cứng cũ để so cạnh nhau. Nhịp, pha, gió giật giữ như cũ; độ nghiêng của ngọn: mầm 2,4°, lớn 3,8°, chín 5°, héo 1,4°. Không có WebGL hoặc bật giảm chuyển động → như cũ.
+📁 `src/systems/animation/plantBend.ts`, `src/ui/world/bentPlant.ts`, `src/areas/cloud/scene/{CloudScene,cloudFx,cloudView}.ts`, `tests/unit/plantBend.test.ts`.
+🧪 `npm run check`: typecheck, lint, guard, assets xanh; test 1957 / 1959 — 2 test `tests/scripts/studio.test.ts` hỏng vì checkout này thiếu tag git `pre-unity-studio` (không liên quan thay đổi). Xem trong game (sandbox-max, tầng 9 toàn Cúc Mây): gốc đứng yên, thân cong, bông nghiêng trái ↔ phải, không rách hình, không lỗi console.
+⚠️ Sâu của chim mây vẫn đặt theo ảnh thẳng (lệch vài px so với thân đã uốn). Chưa áp cho Sobi Garden.
+👉 Chủ dự án: trồng Cúc Mây / Chuông Mộng cạnh hoa khác ở Sobi Cloud, so cảm giác; chỉnh số ở `CLOUD_VIEW.bend` nếu cần.
+
 ### 2026-11-09 — Rà hiện trạng animation, cập nhật tài liệu cho khớp code
 ✅ Đã làm: đọc code + tài liệu animation, đối chiếu dữ liệu (`content/anim/rigs/*.json`, `battle_fx.json`, thư viện kịch bản). Cập nhật phần "Trạng thái hiện tại" (chuỗi nhánh GĐ14 chưa merge `main`; Studio chỉ còn chuyển động VFX; trận: 112 skill có kịch bản, 168 / 169 kịch bản còn `draft`; sinh vật: 43 con pose to pose, Bạch Tuộc skin một ảnh), `docs/animation/rig/ACCEPTANCE.md` (ghi chú pose to pose, A7, A9, D6), `ROADMAP.md` (thêm R1c, sửa R2b / R3 / R5), decision 051 (lưu ý mục "Thay thế" không còn hiệu lực).
 🧪 Chỉ sửa tài liệu, không chạy `npm run check`.

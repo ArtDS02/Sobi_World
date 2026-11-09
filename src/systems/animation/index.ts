@@ -3,6 +3,7 @@
 export { clipTime, EASE, mixPose, sampleClip, sampleFaces, sampleTrack, type Local, type LocalPose } from './clip';
 export { blinkAt, hashOf, noise } from './life';
 export { FALLBACK, Performer, type Frame, type Want } from './performer';
+export { bendRows, stemLean, type BendShape } from './plantBend';
 export { RIGS, rigImages, rigOf } from './rigs';
 export type { BodyPlan, ClipData, RigData } from '../../../content/schemas/anim/rig';
 export { buildSkin, deformSkin, type SkinMesh } from './skin';

@@ -1,0 +1,10 @@
+/* Admin "Cây đung đưa": the extras over the rig lab's look (rigLab.css) — area note, "on trial" tag, the two sides' captions, sliders. */
+.pl-status { margin: 0; font-size: 12px; line-height: 1.45; color: var(--rl-muted); background: var(--rl-bg); border-radius: 10px; padding: 8px 10px; }
+.pl-live { font-style: normal; font-weight: 700; color: #8bff8b; }
+.pl-sides { display: flex; gap: 8px; }
+.pl-sides span { background: var(--rl-brand-soft); color: #cbb8ff; border: 1px solid var(--rl-brand); border-radius: 9999px; padding: 4px 12px; font-weight: 700; font-size: 12px; white-space: nowrap; }
+.pl-tune { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px 18px; flex: 1; }
+.pl-slider { display: grid; grid-template-columns: 150px minmax(0, 1fr) 52px; align-items: center; gap: 8px; font-size: 13px; }
+.pl-slider input { width: 100%; accent-color: var(--rl-brand); }
+.pl-slider b { text-align: right; font-variant-numeric: tabular-nums; }
+.pl-copied { color: #8bff8b; font-size: 12px; }

@@ -116,4 +116,16 @@ export const WORLD_SECTIONS: GuideSection[] = [
     example: ['Bong Bóng Nước bay chậm quá: sửa tốc độ trong ô JSON → Áp dụng thử → ▶ Chạy → Lưu.'],
     notes: ['Ô JSON để trống = kỹ năng dùng hiệu ứng chung của hệ.', 'Cách viết JSON: docs/animation/COMBAT_ART_GUIDE.md §4.'],
   },
+  {
+    id: 'plant-lab', icon: '🌿', title: 'Cây đung đưa',
+    purpose: 'Xem cây / hoa của từng khu đung đưa thế nào: cách cũ (cả ảnh xoay quanh gốc) đặt cạnh cách mới (uốn theo thân: gốc đứng yên, thân cong, bông trễ nhịp). Chỉ xem, không lưu.',
+    steps: [
+      'Chọn khu ở trên cùng (Sobi Cloud / Sobi Garden): mỗi khu chỉ hiện cây của khu đó, trên nền và ô đất của khu đó.',
+      'Bấm một cây: bên trái là cách cũ, bên phải là cách mới, cùng nhịp. "Cả khu" để xem tất cả cây cùng lúc.',
+      'Chọn giai đoạn (mầm, đang lớn, chín, héo), tốc độ, bật "Hiện thân" để thấy đường uốn.',
+      'Kéo thanh trượt để thử số; ưng thì "Sao chép số" và gửi cho agent đưa vào game.',
+    ],
+    example: ['Bông Cúc Mây lắc mạnh quá: chọn Sobi Cloud → Cúc Mây → Chín → kéo "Ngọn nghiêng" xuống → Sao chép số.'],
+    notes: ['Nhãn "Đang thử" = cây đó đã uốn theo thân trong game. Garden chưa bật trong game; tab chỉ xem trước.', 'Số chạy trong game: CLOUD_VIEW.bend (src/areas/cloud/scene/cloudView.ts).'],
+  },
 ];

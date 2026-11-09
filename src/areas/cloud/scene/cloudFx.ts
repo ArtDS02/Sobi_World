@@ -3,6 +3,8 @@
 // what a click does.
 import * as Phaser from 'phaser';
 import type { WorldRect } from '../../../systems/layout/camera';
+import { BentPlant } from '../../../ui/world/bentPlant';
+import type { FlowerStage } from '../logic/art';
 import { PLOTS_PER_TIER } from '../logic/config/content';
 import { CLOUD_DESIGN, CLOUD_VIEW, plotCentre } from './cloudView';
 
@@ -120,20 +122,54 @@ export function bubbles(scene: Phaser.Scene, x: number, y: number) {
   }
 }
 
+/** What one plot of the tier on screen draws. */
+export interface PlotSprites {
+  bed: Img;
+  flower: Img;
+  bright: Phaser.FX.ColorMatrix | null;
+  /** The picture on the plot (null: no flower), for the sway and the caterpillars. */
+  stage: FlowerStage | null;
+  ripe: boolean;
+  /** The flower's art (null: no flower) and its bending drawing (null without WebGL). */
+  art: string | null;
+  bent: BentPlant | null;
+}
+
+/** The bending drawing of a flower (null without WebGL), right over it so the rows of the field still overlap in order. */
+export function bentFlower(scene: Phaser.Scene, field: Phaser.GameObjects.Container, flower: Img): BentPlant | null {
+  if (!BentPlant.canBend(scene)) return null;
+  const bent = new BentPlant(scene, flower, CLOUD_VIEW.bend.rows);
+  field.add(bent.rope);
+  return bent;
+}
+
+/** Motion reduced: every flower back to its plain, still picture. */
+export function restFlowers(plots: readonly PlotSprites[]) {
+  for (const p of plots) p.bent?.off();
+}
+
 /**
  * Flowers sway around their base in a light breeze: a small angle by stage, each plant its own period and phase, all of
- * them stirred together by a slow gust; a ripe flower also breathes (a small scale swing).
+ * them stirred together by a slow gust; a ripe flower also breathes (a small scale swing). Flowers on trial (`CLOUD_VIEW.bend`)
+ * bend on their stem instead of tilting whole.
  */
-export function swayFlowers(plots: readonly { flower: Img; stage: string | null; ripe: boolean }[], time: number) {
+export function swayFlowers(plots: readonly PlotSprites[], time: number) {
   const s = CLOUD_VIEW.sway;
+  const b = CLOUD_VIEW.bend;
   const r = CLOUD_VIEW.ripePulse;
   const gust = 1 + Math.sin((time / s.gustMs) * Math.PI * 2) * s.gust;
   plots.forEach((p, k) => {
-    if (!p.stage) return;
-    const amp = (s as unknown as Record<string, number>)[p.stage] ?? 0;
+    if (!p.stage) return void p.bent?.off();
     const period = s.periodMs[0] + ((k * 0.618) % 1) * (s.periodMs[1] - s.periodMs[0]);
-    p.flower.setAngle(Math.sin((time / period) * Math.PI * 2 + k * 1.7) * amp * gust);
+    const phase = (time / period) * Math.PI * 2 + k * 1.7;
     if (p.ripe) p.flower.setScale(CLOUD_VIEW.flowerScale * (1 + Math.sin((time / r.periodMs) * Math.PI * 2 + k) * r.scale));
+    if (p.bent && p.art && b.arts.includes(p.art)) {
+      p.flower.setAngle(0);
+      p.bent.draw(Phaser.Math.DegToRad((b as unknown as Record<string, number>)[p.stage] ?? 0) * gust, phase, b);
+      return;
+    }
+    p.bent?.off();
+    p.flower.setAngle(Math.sin(phase) * ((s as unknown as Record<string, number>)[p.stage] ?? 0) * gust);
   });
 }
 
