@@ -148,6 +148,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     const w = world();
     if (!w || !active) return;
     if (p.kind === 'locked') return dialogs.openExpand();
+    if (p.kind === 'rank') return dialogs.openRank(actingTier(w, viewedTier()));
     if (p.kind === 'building') {
       if (p.building === 'shop') return dialogs.openShop();
       return p.building === 'spring' ? dialogs.openSpring() : dialogs.openCauldron();

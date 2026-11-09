@@ -43,6 +43,29 @@
     @include mq(lg) { height: 2.9rem; gap: $sp-2; }
   }
 
+  &__rank {
+    padding: 0 $sp-2;
+    font-size: $fs-xs;
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0.85;
+  }
+
+  &__rank-up {
+    height: 1.9rem;
+    padding: 0 $sp-3;
+    font-size: $fs-xs;
+    font-weight: 700;
+    color: #ffffff;
+    cursor: pointer;
+    background: linear-gradient(180deg, #9599f2, $pz-violet 60%, $pz-violet-deep);
+    border: 0;
+    border-radius: 999px;
+    box-shadow: 0 2px 0 rgba(70, 72, 160, 0.35);
+
+    &:hover { filter: brightness(1.08); }
+  }
+
   &__zone-title {
     min-width: 9rem;
     max-width: 16rem;

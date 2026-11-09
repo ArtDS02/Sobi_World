@@ -8,7 +8,7 @@ Branch `feature-plot-upgrade` (from `overnight-hardening`). Tick a step when its
 ## Steps
 - [x] 1 Level 100 (table 1–100, rewards through the ledger, save v13 `progression.levelRewardsPaid`, achievements 30…100, HUD 3-digit star)
 - [x] 2 Tier / zone upgrade logic (content `cloud/tiers.json`, `garden/zones.json`, `systems/plants/tiers.ts`, `upgradeTier` / `upgradeZone`, harvest bonus, Cloud slice v3, Garden slice v2)
-- [ ] 3 Upgrade UI + Admin
+- [x] 3 Upgrade UI + Admin (Cloud banner rank line + button, Garden zone chip + button, shared upgrade dialog, plot cards, toasts, Admin catalog + labels)
 - [ ] 4 Tier scenery (presentation)
 - [ ] 5 Plot-skin forging
 - [ ] 6 Economy bot + tuning
@@ -25,3 +25,6 @@ Branch `feature-plot-upgrade` (from `overnight-hardening`). Tick a step when its
 - Step 2: new standard world event `plot.tierUpgraded` (ARCHITECTURE §7, count 28 → 29). Admin catalog lists both new content files.
 - Step 2: `cloud.test` v1→v2 migration test now chains v2→v3 because the slice version moved. The only red tests in the full run are timeouts of `assetsCheck` / `phase11` (machine-slow, already known in PROGRESS; they pass or fail at random between runs, never on an assertion) plus the 2 studio tests.
 - Step 2: no real save contains Cloud / Garden slices (fixtures hold only the farm), so the "save thật" check builds old-shape slices (v2 / v1) from live slices inside the real v12 fixture and runs the whole codec.
+- Step 3: the upgrade button appears when the tier / zone owns all its plots and a next rank exists; the world-level gate is explained inside the dialog (the button there says why it is off: plots → level → coins → items). The Cloud banner shows the rank line under the title banner (canvas), the Garden shows a chip + button inside the zone pill (DOM).
+- Step 3: unit tests are node-only (no DOM env in the repo), so the dialog DOM is checked in the step-8 sandbox run; the data is covered by `tests/unit/plotTierUi.test.ts`.
+- Step 3: guard limit is 300 lines per file: rank VMs live in `cloudRankVm.ts` / `gardenRankVm.ts`. `assetsCheck` / `phase11` timeouts appear at random on this loaded machine (they pass with `--testTimeout=120000`).

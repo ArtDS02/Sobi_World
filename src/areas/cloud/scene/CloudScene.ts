@@ -10,7 +10,9 @@ import { fitCamera } from '../../../ui/world/fitCamera';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import type { WorldRect } from '../../../systems/layout/camera';
 import { CLOUD_BACKDROP_ART, CLOUD_PLOT_ART, FLOWER_STAGES, flowerArtId } from '../logic/art';
-import { FLOWERS, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
+import { CLOUD_TIERS, FLOWERS, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
+import { rankLine, rankOfGroup } from '../../../ui/world/tierUpgradeVm';
+import { vi } from '../../../i18n/vi';
 import type { SceneState } from '../logic/derived';
 import { CloudBird } from './cloudBird';
 import { bentFlower, brightOf, coverBackdrop, ensureFxTextures, paintSky, floatIdle, makeDrifts, makeVeil, moveDrifts, playTierMove, pressable, restFlowers, setBright, swayFlowers, type Drift, type PlotSprites } from './cloudFx';
@@ -22,10 +24,13 @@ import { CLOUD_DESIGN, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewabl
 
 export const CLOUD_SCENE_KEY = 'cloud';
 
+const rankNameOf = (id: string): string => vi.cloud.rankNames[id as keyof typeof vi.cloud.rankNames] ?? id;
+
 /** What a click on the canvas was on. */
 export type CloudPick =
   | { kind: 'plot'; index: number }
   | { kind: 'locked' }
+  | { kind: 'rank' }
   | { kind: 'building'; building: 'spring' | 'cauldron' | 'shop' }
   | { kind: 'ground' };
 
@@ -99,6 +104,7 @@ export class CloudScene extends Phaser.Scene {
       paused: () => this.deps.paused(),
       onStep: (step) => this.changeTier(step),
       onLocked: () => this.deps.onPick({ kind: 'locked' }),
+      onRank: () => this.deps.onPick({ kind: 'rank' }),
     });
     this.bird = new CloudBird(this, {
       fixed: (x, y, id) => this.fixed(x, y, id),
@@ -252,11 +258,12 @@ export class CloudScene extends Phaser.Scene {
       state.plots.slice(first, first + PLOTS_PER_TIER).map((p) => [p.stage, p.flowerId, Math.floor(p.share * 8), p.watered, p.fertilized]),
       state.water,
       state.cauldron,
+      state.ranks[this.tier],
     ]);
     if (!force && key === this.shown) return;
     this.shown = key;
     this.drone.check(state, this.tier, this.moving);
-    this.drawTierBar(owned);
+    this.drawTierBar(owned, state);
     this.plots.forEach((sprites, slot) => {
       const view = state.plots[plotIndex(this.tier, slot)];
       sprites.stage = null;
@@ -281,8 +288,9 @@ export class CloudScene extends Phaser.Scene {
   }
 
   /** The tier bar and the tier's colour over the shared backdrop. */
-  private drawTierBar(owned: number) {
-    this.bar.draw(this.tier, owned);
+  private drawTierBar(owned: number, state: SceneState) {
+    const r = state.ranks[this.tier];
+    this.bar.draw(this.tier, owned, r ? { text: rankLine(rankOfGroup(CLOUD_TIERS, rankNameOf, r.rank), CLOUD_TIERS), open: r.open } : null);
     this.backdrop.setTint(CLOUD_VIEW.tierTints[this.tier] ?? 0xffffff);
   }
 }

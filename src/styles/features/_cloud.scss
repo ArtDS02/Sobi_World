@@ -32,6 +32,39 @@
   60% { transform: translateY(0) rotate(2deg) scaleY(0.99); }
 }
 
+// The rank upgrade dialog of a cloud tier / garden zone (decision 056); shared with the Garden.
+.tier-dialog {
+  display: grid;
+  gap: $sp-3;
+
+  &__ranks { display: flex; align-items: stretch; justify-content: center; gap: $sp-2; }
+  &__arrow { align-self: center; font-size: $fs-lg; font-weight: $fw-bold; }
+  &__rank {
+    display: grid;
+    flex: 1;
+    gap: $sp-1;
+    align-content: start;
+    padding: $sp-2 $sp-3;
+    background: $c-surface;
+    border: 3px solid $c-border;
+    border-radius: $radius-md;
+
+    small { color: $c-text-muted; }
+    span { font-size: $fs-xs; }
+    &.is-empty { opacity: 0.7; }
+  }
+  &__cost { display: grid; gap: $sp-1; margin: 0; padding: 0; list-style: none; }
+  &__cost li {
+    display: grid;
+    grid-template-columns: 1.4rem 1fr auto;
+    gap: $sp-2;
+    align-items: baseline;
+    &.is-ok { color: $c-text; }
+    &.is-short { color: $c-danger; }
+  }
+  &__source { grid-column: 2 / 4; color: $c-text-muted; }
+}
+
 .cloud-dialog {
   display: grid;
   gap: $sp-3;

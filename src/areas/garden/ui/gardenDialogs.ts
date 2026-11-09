@@ -9,7 +9,8 @@ import type { UiIcon } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import { buildWorkshop, buyPlots, collectCraft, startCraft, upgradeSprinkler } from '../logic/actions/buildings';
+import { buildWorkshop, buyPlots, collectCraft, startCraft, upgradeSprinkler, upgradeZone } from '../logic/actions/buildings';
+import { tierUpgradeBody } from '../../../ui/components/tierUpgradeDialog';
 import { fertilizePlots, harvestPlots, waterPlots } from '../logic/actions/plants';
 import { buyShopItem } from '../logic/actions/shop';
 import { GB, type BuildingId } from '../logic/config/content';
@@ -17,6 +18,7 @@ import { nextExpansion } from '../logic/derived';
 import { gardenOf } from '../logic/save/lens';
 import { expandVm, plotCardVm, sprinklerVm, workshopVm, type ButtonVm, type GardenRun, type RecipeVm } from './gardenVm';
 import { gardenShopVm } from './gardenShopVm';
+import { zoneRankVm } from './gardenRankVm';
 import { createLabController } from '../../../ui/components/labView';
 import { crossCrops } from '../logic/actions/lab';
 import { gardenLabInput, gardenReveal } from './gardenLabVm';
@@ -112,6 +114,11 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
     });
   }
 
+  /** The rank upgrade of garden zone `group` (decision 056): before / after, the cost as have / need, and why the button is off. */
+  function openRank(group: number) {
+    openLive(vi.plotTier.upgradeTitle, (w) => tierUpgradeBody(zoneRankVm(w, group), () => run((s, c) => upgradeZone(s, { group }, c))));
+  }
+
   function openPlot(index: number) {
     const only = { plots: [index] };
     openLive(t(vi.garden.plotTitle, { n: index + 1 }), (w, close) => {
@@ -125,6 +132,7 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
         'div',
         { class: 'garden-dialog' },
         el('p', { class: 'c-dialog__strong', text: `${card.cropName ?? ''} · ${card.stageText}` }),
+        el('p', { class: 'c-dialog__hint', text: card.rankLine }),
         ...card.lines.map((line) => el('p', { text: line })),
         el(
           'div',
@@ -241,6 +249,7 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
     openShop,
     openLab,
     openExpand,
+    openRank,
     openSprinkler,
     openPlot,
     openWorkshop,

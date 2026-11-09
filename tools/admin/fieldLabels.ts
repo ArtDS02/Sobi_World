@@ -58,6 +58,13 @@ export const LABEL: Record<string, string> = {
   maxLevel: 'Cấp tối đa',
   'worldLevel.xp': 'KN cần cho cấp tiếp theo (số phần tử = cấp tối đa)',
   'worldLevel.rewards': 'Thưởng khi đạt cấp (một lần; cấp không có dòng = không thưởng)',
+  // Rank upgrade of a cloud tier / garden zone (decision 056): cloud/tiers.json, garden/zones.json.
+  ids: 'Mã bậc (bậc 1 trước; tên hiển thị ở bảng chuỗi)',
+  groupFactor: 'Giá tăng mỗi tầng/khu (0,2 = +20 % so với tầng/khu đầu)',
+  xpPerTier: 'KN một lần khi nâng bậc (× bậc mới)',
+  steps: 'Các bước nâng bậc (bước 1: bậc 1 → 2…)',
+  baseCoins: 'Giá Sobi Coin cho tầng/khu đầu tiên',
+  bonusPct: 'Bội thu (% mỗi vật phẩm có thể ra thêm 1)',
   'worldDevelopment.perWorldLevel': 'Phát triển thế giới: mỗi cấp được',
   'worldDevelopment.codexEntriesPerPoint': 'Phát triển thế giới: mỗi bao nhiêu mục Codex được 1',
   'worldDevelopment.perBuildingLv3': 'Phát triển thế giới: mỗi công trình Lv3',

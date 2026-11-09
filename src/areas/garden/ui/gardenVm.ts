@@ -20,12 +20,15 @@ import { msToRipe, plotStage } from '../../../systems/plants/plot';
 import {
   CROP_LIST,
   CROPS,
+  GARDEN_TIERS,
   GB,
   PLOT_RULES,
+  zoneOf,
   type BuildingId,
 } from '../logic/config/content';
-import { isCovered, nextExpansion, nextSprinkler, plotViews, seedUnlocked, sprinklerCoverage, type Expansion } from '../logic/derived';
-import { emptyIn, unfertilizedIn } from './gardenZoneVm';
+import { gardenZoneLevel, isCovered, nextExpansion, nextSprinkler, plotViews, seedUnlocked, sprinklerCoverage, type Expansion } from '../logic/derived';
+import { emptyIn, gardenRankName, unfertilizedIn } from './gardenZoneVm';
+import { rankLine, rankOfGroup } from '../../../ui/world/tierUpgradeVm';
 import { gardenOf } from '../logic/save/lens';
 
 export type GardenRun = (world: WorldSave, ctx: ActionContext) => ActionResultOf<WorldSave>;
@@ -159,6 +162,8 @@ export interface PlotCardVm {
   water: ButtonVm | null;
   fertilize: ButtonVm | null;
   harvest: ButtonVm | null;
+  /** The rank and bonus of the zone the plot lies in (decision 056). */
+  rankLine: string;
 }
 
 export function plotCardVm(world: WorldSave, index: number, now: number, run: { water: GardenRun; fertilize: GardenRun; harvest: GardenRun }): PlotCardVm | null {
@@ -194,6 +199,7 @@ export function plotCardVm(world: WorldSave, index: number, now: number, run: { 
       ? { label: t(vi.garden.giveFertilizer, { count: fertilizers }), reason: plot.fertilized ? vi.garden.fertilizedState : fertilizers === 0 ? vi.garden.noFertilizer : null }
       : null,
     harvest: crop && plot.ripeAt !== null ? { label: vi.garden.harvestPlot, reason: null } : null,
+    rankLine: rankLine(rankOfGroup(GARDEN_TIERS, gardenRankName, gardenZoneLevel(g, zoneOf(index))), GARDEN_TIERS),
   };
 }
 

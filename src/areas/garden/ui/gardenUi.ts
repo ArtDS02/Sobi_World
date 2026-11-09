@@ -98,6 +98,8 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
       arrow(-1),
       el('span', { class: 'garden-ui__zone-title', text: v.title }),
       arrow(1),
+      v.rank ? el('span', { class: 'garden-ui__rank', text: v.rank.short, attrs: { title: v.rank.line } }) : null,
+      v.rank?.open ? el('button', { class: 'garden-ui__rank-up', text: vi.plotTier.upgrade, attrs: { type: 'button', title: v.rank.line }, on: { click: () => dialogs.openRank(z) } }) : null,
     );
   }
 

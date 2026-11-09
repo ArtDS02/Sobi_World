@@ -98,6 +98,8 @@ export const CLOUD_VIEW = {
   },
   titleText: { fontPx: 32, color: '#7a4a24', stroke: '#fff4d6', strokePx: 6 },
   lockedText: { fontPx: 28, color: '#5a4a8a', background: '#fdf4ffe6' },
+  /** The rank line and the upgrade button (decision 056), under the title banner: offsets from the banner's centre. */
+  rank: { dy: 104, buttonDy: 148, fontPx: 24, color: '#5a3a14', background: '#fff4d6e6', buttonColor: '#ffffff', buttonBackground: '#7a62d8' },
   badge: { fontPx: 26, color: '#ffffff', background: 0xe0654f, readyBackground: 0x7a62d8, border: 0xffffff, height: 40, minWidth: 44 },
   /** A ripe flower breathes: scale swing and period. */
   ripePulse: { scale: 0.05, periodMs: 1400 },

@@ -9,7 +9,8 @@ import type { UiIcon } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import { buildCauldron, buyPlots, collectBrew, collectWater, startBrew, upgradeSpring } from '../logic/actions/buildings';
+import { buildCauldron, buyPlots, collectBrew, collectWater, startBrew, upgradeSpring, upgradeTier } from '../logic/actions/buildings';
+import { tierUpgradeBody } from '../../../ui/components/tierUpgradeDialog';
 import { fertilizePlots, harvestFlowers, waterPlots } from '../logic/actions/plants';
 import { buyShopItem } from '../logic/actions/shop';
 import { CB } from '../logic/config/content';
@@ -20,6 +21,7 @@ import { createLabController } from '../../../ui/components/labView';
 import { crossFlowers } from '../logic/actions/lab';
 import { cloudLabInput, cloudReveal } from './cloudLabVm';
 import { cloudShopVm } from './cloudShopVm';
+import { plotRankLine, tierRankVm } from './cloudRankVm';
 
 /** A button that always says why it is off. */
 export function actionButton(vm: ButtonVm, onClick: () => void, variant = ''): HTMLElement {
@@ -116,6 +118,11 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
     });
   }
 
+  /** The rank upgrade of cloud tier `group` (decision 056): before / after, the cost as have / need, and why the button is off. */
+  function openRank(group: number) {
+    openLive(vi.plotTier.upgradeTitle, (w) => tierUpgradeBody(tierRankVm(w, group), () => run((s, c) => upgradeTier(s, { group }, c))));
+  }
+
   function openPlot(index: number) {
     const only = { plots: [index] };
     openLive(t(vi.cloud.plotTitle, { n: index + 1 }), (w, close) => {
@@ -129,6 +136,7 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
         'div',
         { class: 'cloud-dialog' },
         el('p', { class: 'c-dialog__strong', text: `${card.flowerName ?? ''} · ${card.stageText}` }),
+        el('p', { class: 'c-dialog__hint', text: plotRankLine(cloudOf(w), index) }),
         ...card.lines.map((line) => el('p', { text: line })),
         el(
           'div',
@@ -245,6 +253,7 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
     openShop,
     openLab,
     openExpand,
+    openRank,
     openSpring,
     openPlot,
     openCauldron,
