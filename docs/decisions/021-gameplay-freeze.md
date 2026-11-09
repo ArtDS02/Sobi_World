@@ -1,5 +1,7 @@
 # 021 — Đóng băng gameplay (GĐ13)
 
+> **Lưu ý 2026-11-09:** decision 056 mở băng tạm thời cho đúng World Level 100, nâng cấp tầng/khu và đúc mẫu khuông; xong sẽ đóng băng lại với luật mới.
+
 **Ngày:** 2026-10-11 · **Trạng thái:** Đề xuất, có hiệu lực **sau khi chủ dự án chơi thử ≥ 7 ngày thật và duyệt GĐ13**. Từ lúc đó hết đổi cơ chế; chỉ sửa lỗi (ROADMAP GĐ13, decision 017).
 
 > **Cập nhật 2026-10-17:** decision 037 mở băng cho riêng Adventure (Combat V2, bản đồ khám phá) và chốt WD 16 để mở Adventure.
