@@ -4,18 +4,22 @@ import areaRaw from '../../../../../content/garden/area.json';
 import balanceRaw from '../../../../../content/garden/balance.json';
 import cropsRaw from '../../../../../content/garden/crops.json';
 import hybridsRaw from '../../../../../content/garden/hybrids.json';
+import zonesRaw from '../../../../../content/garden/zones.json';
 import { areaManifestSchema } from '../../../../../content/schemas/area';
 import { gardenBalanceFileSchema } from '../../../../../content/schemas/garden/balance';
 import { cropsFileSchema } from '../../../../../content/schemas/garden/crops';
 import { hybridsFileSchema } from '../../../../../content/schemas/shared/hybrids';
+import { plotTiersFileSchema } from '../../../../../content/schemas/shared/plotTiers';
 import { loadContent } from '../../../../core/content/load';
 import type { CropRule, PlotRules } from '../../../../systems/plants/plot';
+import type { TierRules } from '../../../../systems/plants/tiers';
 
 export const GARDEN_CONTENT = {
   area: loadContent('garden/area.json', areaManifestSchema, areaRaw),
   balance: loadContent('garden/balance.json', gardenBalanceFileSchema, balanceRaw),
   crops: loadContent('garden/crops.json', cropsFileSchema, cropsRaw),
   hybrids: loadContent('garden/hybrids.json', hybridsFileSchema, hybridsRaw),
+  zones: loadContent('garden/zones.json', plotTiersFileSchema, zonesRaw),
 };
 
 export const GARDEN_AREA_ID = GARDEN_CONTENT.area.id;
@@ -65,6 +69,10 @@ for (const r of GARDEN_HYBRIDS.recipes) {
 export type BuildingId = 'mill' | 'composter';
 export const BUILDING_IDS: readonly BuildingId[] = ['mill', 'composter'];
 export const MAX_PLOTS = GB.plotExpansions.at(-1)?.plots ?? GB.startPlots;
+/** The upgrade tiers of a garden zone (decision 056). */
+export const GARDEN_TIERS: TierRules = GARDEN_CONTENT.zones;
+export const MAX_TIER_LEVEL = GARDEN_TIERS.ids.length;
+
 /** The field is shown one zone at a time (decision 028); a new zone opens whole. */
 export const PLOTS_PER_ZONE = GB.plotsPerZone;
 export const ZONE_COUNT = Math.ceil(MAX_PLOTS / PLOTS_PER_ZONE);

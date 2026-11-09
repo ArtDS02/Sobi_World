@@ -7,8 +7,9 @@ import { WORLD_LEVELS } from '../../../../core/config/progression';
 import { worldLevel } from '../../../../core/progression/levels';
 import { affordableBatches, batchesReady, collectBatches, scaled, sped } from '../../../../core/production/production';
 import { emptyPlot } from '../../../../systems/plants/plot';
-import { CAULDRON, CB, WATER_ITEM, springLevel } from '../config/content';
-import { nextExpansion, nextSpringLevel, springStock } from '../derived';
+import { CAULDRON, CB, TIER_COUNT, WATER_ITEM, springLevel } from '../config/content';
+import { cloudTierUpgrade, nextExpansion, nextSpringLevel, springStock } from '../derived';
+import { withTier } from '../../../../systems/plants/tiers';
 import { fits, give, pay, put, runCloud, take, type CloudResult } from './kit';
 
 /** Opens the next plots: more on the first tier, then a whole cloud tier at a time (decision 023). */
@@ -129,5 +130,36 @@ export function collectBrew(world: WorldSave, ctx: ActionContext): CloudResult {
       };
     }
     return { ok: false, error: 'INVENTORY_FULL' };
+  });
+}
+
+/**
+ * Raises cloud tier `args.group` (0-based) one upgrade tier (decision 056): the tier must own all its plots and the world
+ * level must be high enough; coins and items are paid together, coins through the ledger (CLOUD_TIER_UPGRADE).
+ */
+export function upgradeTier(world: WorldSave, args: { group: number }, ctx: ActionContext): CloudResult {
+  return runCloud(world, ctx, (w, g) => {
+    const { group } = args;
+    if (!Number.isInteger(group) || group < 0 || group >= TIER_COUNT) return { ok: false, error: 'INVALID_REQUEST' };
+    const { step, block } = cloudTierUpgrade(g, group, worldLevel(w, WORLD_LEVELS));
+    if (!step) return { ok: false, error: 'MAX_LEVEL_REACHED' };
+    if (block === 'GROUP_INCOMPLETE') return { ok: false, error: 'INVALID_REQUEST' };
+    if (block === 'LEVEL') return { ok: false, error: 'LEVEL_TOO_LOW' };
+    const needs = Object.entries(step.items);
+    if (needs.some(([id, n]) => (w.inventory.items[id] ?? 0) < n)) return { ok: false, error: 'INSUFFICIENT_ITEM' };
+    const paid = step.coins > 0 ? pay(w, -step.coins, 'CLOUD_TIER_UPGRADE', ctx, { refId: `tier${group + 1}`, note: `tier ${step.tier}` }) : { ok: true as const, state: w };
+    if (!paid.ok) return paid;
+    let bag = paid.state;
+    for (const [id, n] of needs) {
+      const taken = take(bag, id, n);
+      if (!taken.ok) return taken;
+      bag = taken.world;
+    }
+    return {
+      ok: true,
+      world: put(bag, { ...g, tierLevels: withTier(g.tierLevels, group, step.tier) }),
+      events: [{ type: 'CLOUD_TIER_UPGRADED', group, tier: step.tier, gold: step.coins, items: step.items }],
+      xp: step.xp,
+    };
   });
 }

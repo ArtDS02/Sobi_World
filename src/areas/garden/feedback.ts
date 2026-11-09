@@ -6,7 +6,7 @@ import type { ItemId } from '../../core/config/ids';
 import type { EventBase } from '../../core/events';
 import { formatInt, t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
-import { CROPS, type BuildingId } from './logic/config/content';
+import { CROPS, GARDEN_TIERS, type BuildingId } from './logic/config/content';
 import { isGardenEvent } from './logic/events';
 
 export interface Presentation {
@@ -30,7 +30,7 @@ export function gardenPresentation(e: EventBase, origin: 'action' | 'tick' | 'ca
       return { sound: 'water_splash', toast: t(T.fertilized, { count: e.plots.length }) };
     case 'GARDEN_HARVESTED': {
       const name = itemName(CROPS[e.cropId]?.produceItem ?? '');
-      return { sound: 'feed_munch', toast: t(e.left > 0 ? T.harvestedLeft : T.harvested, { quantity: e.quantity, name, left: e.left }) };
+      return { sound: 'feed_munch', toast: t(e.left > 0 ? T.harvestedLeft : e.bonus > 0 ? T.harvestedBonus : T.harvested, { quantity: e.quantity, name, left: e.left, bonus: e.bonus }) };
     }
     case 'GARDEN_CROP_RIPE':
       return { sound: 'notify', toast: t(T.ripe, { count: e.count }) };
@@ -58,6 +58,10 @@ export function gardenPresentation(e: EventBase, origin: 'action' | 'tick' | 'ca
       const name = CROPS[e.cropId]?.nameVi ?? '';
       if (e.success) return { sound: 'level_up', toast: e.firstTime ? t(L.first, { name }) : t(L.success, { count: e.seeds, name: itemName(e.seedItem ?? '') }) };
       return { sound: 'notify', toast: e.seeds > 0 && e.seedItem ? t(L.fail, { count: e.seeds, name: itemName(e.seedItem) }) : L.failEmpty };
+    }
+    case 'GARDEN_ZONE_UPGRADED': {
+      const id = GARDEN_TIERS.ids[e.tier - 1] ?? '';
+      return { sound: 'level_up', toast: t(T.rankUp, { zone: vi.garden.zoneNames[e.group] ?? '', rank: e.tier, name: vi.garden.rankNames[id as keyof typeof vi.garden.rankNames] ?? id }) };
     }
     case 'GARDEN_LEVEL_UP':
       return { sound: 'level_up', toast: t(T.levelUp, { level: e.level }) };

@@ -341,6 +341,8 @@ export const vi = {
     shopWaterLine: "Tưới cho hoa lớn đủ nhanh",
     needLevel: "Cần cấp {level}",
     // Cloud tiers (decision 023): one tier of 15 plots on screen at a time.
+    // Upgrade ranks of a cloud tier (decision 056); the ids are in content/cloud/tiers.json.
+    rankNames: { cotton: "Mây Bông", dew: "Mây Sương Sớm", silk: "Mây Lụa Trời", pearl: "Mây Ngọc Trai", radiance: "Mây Thiên Quang" },
     tierNames: ["Vườn Trên Mây", "Tầng Mây Cầu Vồng", "Tầng Mây Hoàng Hôn", "Tầng Mây Bồ Công Anh", "Tầng Mây Ngọc Bích", "Tầng Mây Hoa Anh Đào", "Tầng Mây Sao Băng", "Tầng Mây Ánh Trăng", "Tầng Mây Hoàng Kim", "Đỉnh Mây"],
     tierTitle: "Tầng {n} · {name}",
     tierUp: "Lên tầng trên",
@@ -412,6 +414,8 @@ export const vi = {
       fertilized: "Đã bón phân {count} ô",
       harvested: "Hái {quantity} {name}",
       harvestedNight: "Hái {quantity} {name} lúc tối: được gấp đôi!",
+      harvestedBonus: "Hái {quantity} {name} (bội thu +{bonus})",
+      rankUp: "{tier} lên bậc {rank}: {name}!",
       harvestedLeft: "Hái {quantity} {name}. Túi đồ đầy, còn {left} ô chưa hái.",
       ripe: "{count} ô hoa đã nở!",
       wilted: "{count} ô hoa đã héo, sản lượng giảm một nửa",
@@ -670,6 +674,8 @@ export const vi = {
     expandZone: "Mở khu {n} ({gold})",
     needLevel: "Cần cấp {level}",
     // Field zones (decision 028): one zone of 24 plots on screen at a time.
+    // Upgrade ranks of a garden zone (decision 056); the ids are in content/garden/zones.json.
+    rankNames: { garden: "Đất Vườn", mulch: "Đất Mùn Tơi", alluvium: "Đất Phù Sa", loess: "Đất Hoàng Thổ", evergrow: "Đất Ngàn Mùa" },
     zoneNames: ["Vườn Nhà", "Đồng Lúa Vàng", "Đồi Bắp Nắng", "Thung Lũng Rau Củ"],
     zoneTitle: "Khu {n} · {name}",
     zonePrev: "Khu trước",
@@ -738,6 +744,8 @@ export const vi = {
       fertilized: "Đã bón phân {count} ô",
       harvested: "Thu hoạch {quantity} {name}",
       harvestedLeft: "Thu hoạch {quantity} {name}. Túi đồ đầy, còn {left} ô chưa hái.",
+      harvestedBonus: "Thu hoạch {quantity} {name} (bội thu +{bonus})",
+      rankUp: "{zone} lên bậc {rank}: {name}!",
       ripe: "{count} cây đã chín!",
       wilted: "{count} cây đã héo, sản lượng giảm một nửa",
       plots: "Đã mở lên {plots} ô đất",

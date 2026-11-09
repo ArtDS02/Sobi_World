@@ -5,8 +5,9 @@ import { RECIPES } from '../../../core/config/recipes';
 import { batchesReady } from '../../../core/production/production';
 import type { PlotStage } from '../../../systems/plants/plot';
 import { growthShare, harvestYield, plotStage } from '../../../systems/plants/plot';
-import { CB, FLOWERS, MAX_PLOTS, MAX_SPRING_LEVEL, PLOTS_PER_TIER, PLOT_RULES, SPRING_LEVELS, springLevel, tierOf } from './config/content';
+import { CB, CLOUD_TIERS, FLOWERS, MAX_PLOTS, MAX_SPRING_LEVEL, PLOTS_PER_TIER, PLOT_RULES, SPRING_LEVELS, springLevel, tierOf } from './config/content';
 import type { CloudState } from './state';
+import { bonusPctOf, nextUpgrade, tierOfGroup, upgradeBlock, type UpgradeBlock, type UpgradeStep } from '../../../systems/plants/tiers';
 
 /** The crossing lab of a save (decision 035); empty when the save predates it. */
 export const labOf = (g: Pick<CloudState, 'lab'>): NonNullable<CloudState['lab']> => g.lab ?? { found: [], misses: {} };
@@ -124,3 +125,15 @@ export const sceneState = (g: CloudState, now: number, dayOffsetMs = 0): SceneSt
   cauldron: { built: g.cauldron.built, busy: g.cauldron.job !== null, ready: cauldronReady(g, now) },
   night: isNightNow(now, dayOffsetMs),
 });
+
+/** The upgrade tier (1..5) of cloud tier `group` (0-based). */
+export const cloudTierLevel = (g: Pick<CloudState, 'tierLevels'>, group: number): number => tierOfGroup(g.tierLevels, group);
+
+/** Yield bonus (percent) the plots of cloud tier `group` have. */
+export const cloudTierBonus = (g: Pick<CloudState, 'tierLevels'>, group: number): number => bonusPctOf(CLOUD_TIERS, cloudTierLevel(g, group));
+
+/** What upgrading cloud tier `group` takes and whether it can be done now (`block`: why not; coins and items are checked on buying). */
+export function cloudTierUpgrade(g: Pick<CloudState, 'tierLevels' | 'plots'>, group: number, worldLevel: number): { step: UpgradeStep | null; block: UpgradeBlock | null } {
+  const step = nextUpgrade(CLOUD_TIERS, group, cloudTierLevel(g, group));
+  return { step, block: upgradeBlock(step, { plotsOwned: g.plots.length, plotsPerGroup: PLOTS_PER_TIER, group, worldLevel }) };
+}

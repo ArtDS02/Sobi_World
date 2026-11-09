@@ -43,6 +43,7 @@ export type WorldEvent =
   | { type: 'adventure.finished'; area: string; zoneId: string; won: boolean }
   | { type: 'tech.upgraded'; area: string; techId: string; level: number }
   | { type: 'creature.hatched'; area: string; creatureId: string; breed: string }
+  | { type: 'plot.tierUpgraded'; area: string; group: number; tier: number }
   | { type: 'time.dayChanged'; day: number };
 
 export type WorldEventType = WorldEvent['type'];
@@ -76,6 +77,7 @@ export const WORLD_EVENT_TYPES = [
   'adventure.finished',
   'tech.upgraded',
   'creature.hatched',
+  'plot.tierUpgraded',
   'time.dayChanged',
 ] as const satisfies readonly WorldEventType[];
 

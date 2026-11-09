@@ -7,8 +7,9 @@ import type { WorldSave } from '../../../../core/save/world';
 import { CONTENT } from '../../../../core/config/content';
 import { rhythmTip } from '../../../../systems/minigame/rhythm';
 import { emptyPlot, harvestYield, plotStage, settlePlot, sow } from '../../../../systems/plants/plot';
-import { CROPS, GB, PLOT_RULES, WATER_MS } from '../config/content';
-import { isCovered, needsWater, seedUnlocked } from '../derived';
+import { CROPS, GB, PLOT_RULES, WATER_MS, zoneOf } from '../config/content';
+import { bonusItems } from '../../../../systems/plants/tiers';
+import { gardenZoneBonus, isCovered, needsWater, seedUnlocked } from '../derived';
 import type { GardenEvent } from '../events';
 import { countOf, fits, give, pay, put, runGarden, take, type GardenResult } from './kit';
 
@@ -86,18 +87,23 @@ export function harvestPlots(world: WorldSave, args: { plots?: number[] }, ctx: 
     let bag = w;
     let plots = g.plots;
     const quantity = new Map<string, number>();
+    const bonus = new Map<string, number>();
     const taken = new Map<string, number>();
     let count = 0;
     let wilted = 0;
     for (const i of ready) {
       const p = g.plots[i]!;
       const crop = CROPS[p.cropId!]!;
-      const n = harvestYield(p, crop, PLOT_RULES, ctx.now);
+      const base = harvestYield(p, crop, PLOT_RULES, ctx.now);
+      // Decision 056: the tier of the zone gives each item a chance of one more (seeded, so replays agree).
+      const extra = bonusItems(base, gardenZoneBonus(g, zoneOf(i)), ctx.rng);
+      const n = base + extra;
       if (!fits(bag, crop.produceItem, n)) break; // the bag is full: the rest waits
       const added = give(bag, { [crop.produceItem]: n });
       if (!added.ok) break;
       bag = added.world;
       plots = plots.map((q, j) => (j === i ? emptyPlot() : q));
+      bonus.set(crop.id, (bonus.get(crop.id) ?? 0) + extra);
       quantity.set(crop.id, (quantity.get(crop.id) ?? 0) + n);
       taken.set(crop.id, (taken.get(crop.id) ?? 0) + 1);
       count += 1;
@@ -108,6 +114,7 @@ export function harvestPlots(world: WorldSave, args: { plots?: number[] }, ctx: 
       type: 'GARDEN_HARVESTED' as const,
       cropId,
       quantity: q,
+      bonus: bonus.get(cropId) ?? 0,
       plots: taken.get(cropId) ?? 0,
       wilted,
       left: ready.length - count,

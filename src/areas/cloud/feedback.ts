@@ -6,7 +6,7 @@ import type { ItemId } from '../../core/config/ids';
 import type { EventBase } from '../../core/events';
 import { formatInt, t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
-import { FLOWERS } from './logic/config/content';
+import { CLOUD_TIERS, FLOWERS } from './logic/config/content';
 import { isCloudEvent } from './logic/events';
 
 export interface Presentation {
@@ -29,8 +29,8 @@ export function cloudPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
       return { sound: 'water_splash', toast: t(T.fertilized, { count: e.plots.length }) };
     case 'CLOUD_HARVESTED': {
       const name = itemName(FLOWERS[e.flowerId]?.produceItem ?? '');
-      const text = e.left > 0 ? T.harvestedLeft : e.night ? T.harvestedNight : T.harvested;
-      return { sound: 'feed_munch', toast: t(text, { quantity: e.quantity, name, left: e.left }) };
+      const text = e.left > 0 ? T.harvestedLeft : e.bonus > 0 ? T.harvestedBonus : e.night ? T.harvestedNight : T.harvested;
+      return { sound: 'feed_munch', toast: t(text, { quantity: e.quantity, name, left: e.left, bonus: e.bonus }) };
     }
     case 'CLOUD_FLOWER_RIPE':
       return { sound: 'notify', toast: t(T.ripe, { count: e.count }) };
@@ -60,6 +60,10 @@ export function cloudPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
       const name = FLOWERS[e.flowerId]?.nameVi ?? '';
       if (e.success) return { sound: 'level_up', toast: e.firstTime ? t(L.first, { name }) : t(L.success, { count: e.seeds, name: itemName(e.seedItem ?? '') }) };
       return { sound: 'notify', toast: e.seeds > 0 && e.seedItem ? t(L.fail, { count: e.seeds, name: itemName(e.seedItem) }) : L.failEmpty };
+    }
+    case 'CLOUD_TIER_UPGRADED': {
+      const id = CLOUD_TIERS.ids[e.tier - 1] ?? '';
+      return { sound: 'level_up', toast: t(T.rankUp, { tier: vi.cloud.tierNames[e.group] ?? '', rank: e.tier, name: vi.cloud.rankNames[id as keyof typeof vi.cloud.rankNames] ?? id }) };
     }
     case 'CLOUD_LEVEL_UP':
       return { sound: 'level_up', toast: t(T.levelUp, { level: e.level }) };

@@ -4,18 +4,22 @@ import areaRaw from '../../../../../content/cloud/area.json';
 import balanceRaw from '../../../../../content/cloud/balance.json';
 import flowersRaw from '../../../../../content/cloud/flowers.json';
 import hybridsRaw from '../../../../../content/cloud/hybrids.json';
+import tiersRaw from '../../../../../content/cloud/tiers.json';
 import { areaManifestSchema } from '../../../../../content/schemas/area';
 import { cloudBalanceFileSchema } from '../../../../../content/schemas/cloud/balance';
 import { flowersFileSchema, type FLOWER_KIND_VALUES } from '../../../../../content/schemas/cloud/flowers';
 import { hybridsFileSchema } from '../../../../../content/schemas/shared/hybrids';
+import { plotTiersFileSchema } from '../../../../../content/schemas/shared/plotTiers';
 import { loadContent } from '../../../../core/content/load';
 import type { CropRule, PlotRules } from '../../../../systems/plants/plot';
+import type { TierRules } from '../../../../systems/plants/tiers';
 
 export const CLOUD_CONTENT = {
   area: loadContent('cloud/area.json', areaManifestSchema, areaRaw),
   balance: loadContent('cloud/balance.json', cloudBalanceFileSchema, balanceRaw),
   flowers: loadContent('cloud/flowers.json', flowersFileSchema, flowersRaw),
   hybrids: loadContent('cloud/hybrids.json', hybridsFileSchema, hybridsRaw),
+  tiers: loadContent('cloud/tiers.json', plotTiersFileSchema, tiersRaw),
 };
 
 export const CLOUD_AREA_ID = CLOUD_CONTENT.area.id;
@@ -70,6 +74,10 @@ export const MAX_PLOTS = CB.plotExpansions.at(-1)?.plots ?? CB.startPlots;
 export const PLOTS_PER_TIER = CB.plotsPerTier;
 export const TIER_COUNT = Math.ceil(MAX_PLOTS / PLOTS_PER_TIER);
 export const tierOf = (plotIndex: number): number => Math.floor(plotIndex / PLOTS_PER_TIER);
+
+/** The upgrade tiers of a cloud tier (decision 056). */
+export const CLOUD_TIERS: TierRules = CLOUD_CONTENT.tiers;
+export const MAX_TIER_LEVEL = CLOUD_TIERS.ids.length;
 
 export const WATER_ITEM = 'item_pure_water';
 export const FERTILIZER_ITEM = 'item_fertilizer';

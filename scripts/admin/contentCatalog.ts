@@ -77,6 +77,7 @@ export const CONTENT_FILES: readonly ContentFileDef[] = [
 
   def('garden/crops.json', 'garden', '🌱', 'Cây trồng', 'Giờ lớn, sản lượng, tên', s('garden', 'crops'), 'cropsFileSchema'),
   def('garden/balance.json', 'garden', '🥕', 'Cân bằng Garden', 'Ô đất, khu, tưới, héo, công trình, cửa hàng', s('garden', 'balance'), 'gardenBalanceFileSchema'),
+  def('garden/zones.json', 'garden', '🌱', 'Bậc khu đất', 'Nâng bậc từng khu: giá, vật phẩm, cổng cấp, % bội thu', s('shared', 'plotTiers'), 'plotTiersFileSchema'),
   def('garden/hybrids.json', 'garden', '🧪', 'Lai giống cây', 'Công thức lai, tỉ lệ, phí lab', s('shared', 'hybrids'), 'hybridsFileSchema'),
   def('garden/area.json', 'garden', '🚪', 'Khu Garden', 'Điều kiện mở, công trình, sản phẩm', '/content/schemas/area.ts', 'areaManifestSchema'),
 
@@ -88,6 +89,7 @@ export const CONTENT_FILES: readonly ContentFileDef[] = [
 
   def('cloud/flowers.json', 'cloud', '🌸', 'Hoa', 'Giờ lớn, sản lượng, tên', s('cloud', 'flowers'), 'flowersFileSchema'),
   def('cloud/balance.json', 'cloud', '☁️', 'Cân bằng Cloud', 'Ô hoa, tầng mây, suối, vạc nấu', s('cloud', 'balance'), 'cloudBalanceFileSchema'),
+  def('cloud/tiers.json', 'cloud', '☁️', 'Bậc tầng mây', 'Nâng bậc từng tầng: giá, vật phẩm, cổng cấp, % bội thu', s('shared', 'plotTiers'), 'plotTiersFileSchema'),
   def('cloud/hybrids.json', 'cloud', '🧪', 'Lai giống hoa', 'Công thức lai, tỉ lệ, phí lab', s('shared', 'hybrids'), 'hybridsFileSchema'),
   def('cloud/area.json', 'cloud', '🚪', 'Khu Cloud', 'Điều kiện mở, công trình, sản phẩm', '/content/schemas/area.ts', 'areaManifestSchema'),
 

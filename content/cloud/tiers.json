@@ -1,0 +1,26 @@
+{
+  "ids": ["cotton", "dew", "silk", "pearl", "radiance"],
+  "groupFactor": 0.2,
+  "xpPerTier": 50,
+  "steps": [
+    { "worldLevel": 12, "baseCoins": 3000, "bonusPct": 5, "items": { "item_flower_cloud_daisy": 30 } },
+    {
+      "worldLevel": 25,
+      "baseCoins": 9000,
+      "bonusPct": 10,
+      "items": { "item_flower_rainbow_rose": 10, "item_scale": 20 }
+    },
+    {
+      "worldLevel": 40,
+      "baseCoins": 24000,
+      "bonusPct": 15,
+      "items": { "item_scale": 30, "item_ancient_cog": 10 }
+    },
+    {
+      "worldLevel": 60,
+      "baseCoins": 60000,
+      "bonusPct": 20,
+      "items": { "item_pearl": 2, "item_ancient_rune": 1, "item_flower_star_orchid": 10 }
+    }
+  ]
+}

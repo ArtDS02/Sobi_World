@@ -6,7 +6,7 @@ export type GardenEvent =
   | { type: 'GARDEN_PLANTED'; cropId: string; plots: number[]; bought: number; gold: number }
   | { type: 'GARDEN_WATERED'; plots: number; /** Coins of tip from the timing mini-game (D8). */ tip?: number }
   | { type: 'GARDEN_FERTILIZED'; plots: number[] }
-  | { type: 'GARDEN_HARVESTED'; cropId: string; quantity: number; plots: number; wilted: number; left: number }
+  | { type: 'GARDEN_HARVESTED'; cropId: string; /** All items taken, the bonus included. */ quantity: number; /** Of `quantity`, the extra items the zone tier gave (decision 056). */ bonus: number; plots: number; wilted: number; left: number }
   | { type: 'GARDEN_CROP_RIPE'; cropId: string; count: number }
   | { type: 'GARDEN_CROP_WILTED'; cropId: string; count: number }
   | { type: 'GARDEN_PLOTS_BOUGHT'; plots: number; gold: number; zone?: number }
@@ -17,12 +17,13 @@ export type GardenEvent =
   | { type: 'GARDEN_CRAFT_COLLECTED'; building: BuildingId; recipeId: string; batches: number; kept: number }
   | { type: 'GARDEN_SHOP_BOUGHT'; itemId: string; count: number; gold: number }
   | { type: 'GARDEN_CROSSED'; recipeId: string; cropId: string; success: boolean; firstTime: boolean; chance: number; seeds: number; seedItem: string | null }
+  | { type: 'GARDEN_ZONE_UPGRADED'; /** The zone (0-based) and the tier it reached. */ group: number; tier: number; gold: number; items: Readonly<Record<string, number>> }
   | { type: 'GARDEN_LEVEL_UP'; level: number };
 
 export const GARDEN_EVENT_TYPES = [
   'GARDEN_PLANTED', 'GARDEN_WATERED', 'GARDEN_FERTILIZED', 'GARDEN_HARVESTED', 'GARDEN_CROP_RIPE', 'GARDEN_CROP_WILTED',
   'GARDEN_PLOTS_BOUGHT', 'GARDEN_SPRINKLER_BOUGHT', 'GARDEN_BUILT', 'GARDEN_CRAFT_STARTED', 'GARDEN_BATCH_DONE',
-  'GARDEN_CRAFT_COLLECTED', 'GARDEN_SHOP_BOUGHT', 'GARDEN_CROSSED', 'GARDEN_LEVEL_UP',
+  'GARDEN_CRAFT_COLLECTED', 'GARDEN_SHOP_BOUGHT', 'GARDEN_CROSSED', 'GARDEN_ZONE_UPGRADED', 'GARDEN_LEVEL_UP',
 ] as const satisfies readonly GardenEvent['type'][];
 
 export const isGardenEvent = (e: { type: string }): e is GardenEvent => (GARDEN_EVENT_TYPES as readonly string[]).includes(e.type);

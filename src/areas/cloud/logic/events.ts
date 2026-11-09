@@ -4,7 +4,7 @@ export type CloudEvent =
   | { type: 'CLOUD_PLANTED'; flowerId: string; plots: number[]; bought: number; gold: number }
   | { type: 'CLOUD_WATERED'; plots: number; /** Coins of tip from the timing mini-game (D8). */ tip?: number }
   | { type: 'CLOUD_FERTILIZED'; plots: number[] }
-  | { type: 'CLOUD_HARVESTED'; flowerId: string; quantity: number; plots: number; wilted: number; left: number; night: boolean }
+  | { type: 'CLOUD_HARVESTED'; flowerId: string; /** All items taken, the bonus included. */ quantity: number; /** Of `quantity`, the extra items the tier bonus gave (decision 056). */ bonus: number; plots: number; wilted: number; left: number; night: boolean }
   | { type: 'CLOUD_FLOWER_RIPE'; flowerId: string; count: number }
   | { type: 'CLOUD_FLOWER_WILTED'; flowerId: string; count: number }
   | { type: 'CLOUD_PLOTS_BOUGHT'; plots: number; gold: number; /** The tier it opened (0-based), if any. */ tier?: number }
@@ -16,12 +16,13 @@ export type CloudEvent =
   | { type: 'CLOUD_BREW_COLLECTED'; recipeId: string; batches: number; kept: number }
   | { type: 'CLOUD_SHOP_BOUGHT'; itemId: string; count: number; gold: number }
   | { type: 'CLOUD_CROSSED'; recipeId: string; flowerId: string; success: boolean; firstTime: boolean; chance: number; seeds: number; seedItem: string | null }
+  | { type: 'CLOUD_TIER_UPGRADED'; /** The cloud tier (0-based) and the tier it reached. */ group: number; tier: number; gold: number; items: Readonly<Record<string, number>> }
   | { type: 'CLOUD_LEVEL_UP'; level: number };
 
 export const CLOUD_EVENT_TYPES = [
   'CLOUD_PLANTED', 'CLOUD_WATERED', 'CLOUD_FERTILIZED', 'CLOUD_HARVESTED', 'CLOUD_FLOWER_RIPE', 'CLOUD_FLOWER_WILTED', 'CLOUD_PLOTS_BOUGHT',
   'CLOUD_WATER_COLLECTED', 'CLOUD_SPRING_UPGRADED', 'CLOUD_CAULDRON_BUILT', 'CLOUD_BREW_STARTED', 'CLOUD_BREW_DONE', 'CLOUD_BREW_COLLECTED',
-  'CLOUD_SHOP_BOUGHT', 'CLOUD_CROSSED', 'CLOUD_LEVEL_UP',
+  'CLOUD_SHOP_BOUGHT', 'CLOUD_CROSSED', 'CLOUD_TIER_UPGRADED', 'CLOUD_LEVEL_UP',
 ] as const satisfies readonly CloudEvent['type'][];
 
 export const isCloudEvent = (e: { type: string }): e is CloudEvent => (CLOUD_EVENT_TYPES as readonly string[]).includes(e.type);

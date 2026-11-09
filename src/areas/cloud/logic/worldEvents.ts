@@ -46,6 +46,8 @@ export function cloudWorldEvents(e: CloudEvent): WorldEvent[] {
     }
     case 'CLOUD_SHOP_BOUGHT':
       return [...coins(-e.gold), ...added(e.itemId, e.count)];
+    case 'CLOUD_TIER_UPGRADED':
+      return [{ type: 'plot.tierUpgraded', area, group: e.group, tier: e.tier }, ...coins(-e.gold), ...Object.entries(e.items).flatMap(([id, n]) => removed(id, n))];
     case 'CLOUD_LEVEL_UP':
       return [{ type: 'area.levelUp', area, level: e.level }];
     default:

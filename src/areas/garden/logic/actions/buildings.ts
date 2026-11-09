@@ -7,8 +7,9 @@ import { worldLevel } from '../../../../core/progression/levels';
 import { techBonus, recipeLocked } from '../../../../core/config/tech';
 import { affordableBatches, batchesReady, collectBatches, scaled, sped } from '../../../../core/production/production';
 import { emptyPlot } from '../../../../systems/plants/plot';
-import { type BuildingId, BUILDING_IDS, GB } from '../config/content';
-import { nextExpansion, nextSprinkler } from '../derived';
+import { type BuildingId, BUILDING_IDS, GB, ZONE_COUNT } from '../config/content';
+import { gardenZoneUpgrade, nextExpansion, nextSprinkler } from '../derived';
+import { withTier } from '../../../../systems/plants/tiers';
 import { give, pay, put, runGarden, take, type GardenResult } from './kit';
 
 const isBuilding = (id: string): id is BuildingId => (BUILDING_IDS as readonly string[]).includes(id);
@@ -113,3 +114,34 @@ export function collectCraft(world: WorldSave, args: { building: string }, ctx: 
   });
 }
 
+
+/**
+ * Raises garden zone `args.group` (0-based) one upgrade tier (decision 056): the zone must own all its plots and the world
+ * level must be high enough; coins and items are paid together, coins through the ledger (GARDEN_ZONE_UPGRADE).
+ */
+export function upgradeZone(world: WorldSave, args: { group: number }, ctx: ActionContext): GardenResult {
+  return runGarden(world, ctx, (w, g) => {
+    const { group } = args;
+    if (!Number.isInteger(group) || group < 0 || group >= ZONE_COUNT) return { ok: false, error: 'INVALID_REQUEST' };
+    const { step, block } = gardenZoneUpgrade(g, group, worldLevel(w, WORLD_LEVELS));
+    if (!step) return { ok: false, error: 'MAX_LEVEL_REACHED' };
+    if (block === 'GROUP_INCOMPLETE') return { ok: false, error: 'INVALID_REQUEST' };
+    if (block === 'LEVEL') return { ok: false, error: 'LEVEL_TOO_LOW' };
+    const needs = Object.entries(step.items);
+    if (needs.some(([id, n]) => (w.inventory.items[id] ?? 0) < n)) return { ok: false, error: 'INSUFFICIENT_ITEM' };
+    const paid = step.coins > 0 ? pay(w, -step.coins, 'GARDEN_ZONE_UPGRADE', ctx, { refId: `zone${group + 1}`, note: `tier ${step.tier}` }) : { ok: true as const, state: w };
+    if (!paid.ok) return paid;
+    let bag = paid.state;
+    for (const [id, n] of needs) {
+      const taken = take(bag, id, n);
+      if (!taken.ok) return taken;
+      bag = taken.world;
+    }
+    return {
+      ok: true,
+      world: put(bag, { ...g, zoneLevels: withTier(g.zoneLevels, group, step.tier) }),
+      events: [{ type: 'GARDEN_ZONE_UPGRADED', group, tier: step.tier, gold: step.coins, items: step.items }],
+      xp: step.xp,
+    };
+  });
+}

@@ -246,8 +246,9 @@ describe('cloud tiers (decision 023)', () => {
     const g = cloudOf(w);
     const plots = Array.from({ length: 18 }, (_, i) => (i === 0 ? { ...emptyPlot(), cropId: FLOWER_LIST[0]!.id } : emptyPlot()));
     const v1 = { ...g, version: 1, plots };
-    const migrated = cloudStateSchema.parse(CLOUD_MIGRATIONS[1]!(v1));
-    expect(migrated.version).toBe(2);
+    // v1 → v2 (decision 023) and then v2 → v3 (decision 056: tierLevels), as the codec chains them.
+    const migrated = cloudStateSchema.parse({ ...CLOUD_MIGRATIONS[2]!({ ...CLOUD_MIGRATIONS[1]!(v1), version: 2 }), version: 3 });
+    expect(migrated.version).toBe(3);
     expect(migrated.plots).toHaveLength(30);
     expect(migrated.plots[0]!.cropId).toBe(FLOWER_LIST[0]!.id);
     expect(CLOUD_MIGRATIONS[1]!({ ...g, version: 1, plots: plots.slice(0, 12) }).plots).toHaveLength(12);

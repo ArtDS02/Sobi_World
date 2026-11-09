@@ -3,8 +3,9 @@ import type { PlotStage } from '../../../systems/plants/plot';
 import { growthShare, harvestYield, plotStage } from '../../../systems/plants/plot';
 import { RECIPES } from '../../../core/config/recipes';
 import { batchesReady } from '../../../core/production/production';
-import { CROPS, GB, PLOT_RULES, MAX_PLOTS, PLOTS_PER_ZONE, zoneOf, type BuildingId } from './config/content';
+import { CROPS, GARDEN_TIERS, GB, PLOT_RULES, MAX_PLOTS, PLOTS_PER_ZONE, zoneOf, type BuildingId } from './config/content';
 import type { GardenState } from './state';
+import { bonusPctOf, nextUpgrade, tierOfGroup, upgradeBlock, type UpgradeBlock, type UpgradeStep } from '../../../systems/plants/tiers';
 
 /** The crossing lab of a save (decision 035); empty when the save predates it. */
 export const labOf = (g: Pick<GardenState, 'lab'>): NonNullable<GardenState['lab']> => g.lab ?? { found: [], misses: {} };
@@ -113,3 +114,15 @@ export const sceneState = (g: GardenState, now: number): SceneState => ({
   mill: workshopView(g, 'mill', now),
   composter: workshopView(g, 'composter', now),
 });
+
+/** The upgrade tier (1..5) of garden zone `group` (0-based). */
+export const gardenZoneLevel = (g: Pick<GardenState, 'zoneLevels'>, group: number): number => tierOfGroup(g.zoneLevels, group);
+
+/** Yield bonus (percent) the plots of garden zone `group` have. */
+export const gardenZoneBonus = (g: Pick<GardenState, 'zoneLevels'>, group: number): number => bonusPctOf(GARDEN_TIERS, gardenZoneLevel(g, group));
+
+/** What upgrading garden zone `group` takes and whether it can be done now (`block`: why not; coins and items are checked on buying). */
+export function gardenZoneUpgrade(g: Pick<GardenState, 'zoneLevels' | 'plots'>, group: number, worldLevel: number): { step: UpgradeStep | null; block: UpgradeBlock | null } {
+  const step = nextUpgrade(GARDEN_TIERS, group, gardenZoneLevel(g, group));
+  return { step, block: upgradeBlock(step, { plotsOwned: g.plots.length, plotsPerGroup: PLOTS_PER_ZONE, group, worldLevel }) };
+}

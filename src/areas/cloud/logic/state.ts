@@ -4,9 +4,9 @@ import { z } from 'zod';
 import type { Raw } from '../../../core/save/migrate';
 import type { ProductionJob } from '../../../core/production/production';
 import { emptyPlot, type PlotState } from '../../../systems/plants/plot';
-import { CB, MAX_PLOTS, MAX_SPRING_LEVEL, PLOTS_PER_TIER } from './config/content';
+import { CB, MAX_PLOTS, MAX_SPRING_LEVEL, MAX_TIER_LEVEL, PLOTS_PER_TIER } from './config/content';
 
-export const CLOUD_STATE_VERSION = 2;
+export const CLOUD_STATE_VERSION = 3;
 
 const time = z.number().finite();
 
@@ -37,6 +37,8 @@ export const cloudStateSchema = z.strictObject({
   cauldron: z.strictObject({ built: z.boolean(), job: jobSchema.nullable() }),
   /** The crossing lab (decision 035): flowers it has given (their seed is sold from then on) and failed tries per recipe. */
   lab: z.strictObject({ found: z.array(z.string()), misses: z.record(z.string(), z.number().int().min(0)) }).optional(),
+  /** Upgrade tier of each cloud tier, in tier order (decision 056); sparse: a tier past the end is tier 1. */
+  tierLevels: z.array(z.number().int().min(1).max(MAX_TIER_LEVEL)),
   /** Time the slice was simulated up to (epoch ms). */
   lastTickedAt: time,
 });
@@ -53,6 +55,8 @@ export const CLOUD_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
     const whole = plots.length > PLOTS_PER_TIER ? Math.min(MAX_PLOTS, Math.ceil(plots.length / PLOTS_PER_TIER) * PLOTS_PER_TIER) : plots.length;
     return { ...slice, version: 2, plots: [...plots, ...Array.from({ length: whole - plots.length }, emptyPlot)] };
   },
+  // v3 (decision 056): upgrade tiers per cloud tier. Every tier stays at tier 1.
+  2: (slice) => ({ ...slice, version: 3, tierLevels: Array.isArray(slice.tierLevels) ? slice.tierLevels : [] }),
 };
 
 export const initialCloud = (now: number): CloudState => ({
@@ -60,5 +64,6 @@ export const initialCloud = (now: number): CloudState => ({
   plots: Array.from({ length: CB.startPlots }, emptyPlot),
   spring: { level: 1, since: now },
   cauldron: { built: false, job: null },
+  tierLevels: [],
   lastTickedAt: now,
 });

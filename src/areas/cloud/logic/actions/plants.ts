@@ -7,8 +7,9 @@ import type { ItemId } from '../../../../core/config/ids';
 import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
 import { emptyPlot, plotStage, settlePlot, sow } from '../../../../systems/plants/plot';
-import { CB, FERTILIZER_ITEM, FLOWERS, PLOT_RULES, WATER_ITEM, WATER_MS } from '../config/content';
-import { isNightNow, needsWater, pickYield, seedUnlocked } from '../derived';
+import { CB, FERTILIZER_ITEM, FLOWERS, PLOT_RULES, WATER_ITEM, WATER_MS, tierOf } from '../config/content';
+import { bonusItems } from '../../../../systems/plants/tiers';
+import { cloudTierBonus, isNightNow, needsWater, pickYield, seedUnlocked } from '../derived';
 import type { CloudEvent } from '../events';
 import { countOf, fits, give, pay, put, runCloud, take, type CloudResult } from './kit';
 
@@ -95,18 +96,23 @@ export function harvestFlowers(world: WorldSave, args: { plots?: number[] }, ctx
     let bag = w;
     let plots = g.plots;
     const quantity = new Map<string, number>();
+    const bonus = new Map<string, number>();
     const taken = new Map<string, number>();
     let count = 0;
     let wilted = 0;
     for (const i of ready) {
       const p = g.plots[i]!;
       const flower = FLOWERS[p.cropId!]!;
-      const n = pickYield(p, ctx.now, ctx.dayOffsetMs ?? 0);
+      const base = pickYield(p, ctx.now, ctx.dayOffsetMs ?? 0);
+      // Decision 056: the tier of the cloud tier gives each item a chance of one more (seeded, so replays agree).
+      const extra = bonusItems(base, cloudTierBonus(g, tierOf(i)), ctx.rng);
+      const n = base + extra;
       if (!fits(bag, flower.produceItem, n)) break; // the bag is full: the rest waits
       const added = give(bag, { [flower.produceItem]: n });
       if (!added.ok) break;
       bag = added.world;
       plots = plots.map((q, j) => (j === i ? emptyPlot() : q));
+      bonus.set(flower.id, (bonus.get(flower.id) ?? 0) + extra);
       quantity.set(flower.id, (quantity.get(flower.id) ?? 0) + n);
       taken.set(flower.id, (taken.get(flower.id) ?? 0) + 1);
       count += 1;
@@ -117,6 +123,7 @@ export function harvestFlowers(world: WorldSave, args: { plots?: number[] }, ctx
       type: 'CLOUD_HARVESTED' as const,
       flowerId,
       quantity: q,
+      bonus: bonus.get(flowerId) ?? 0,
       plots: taken.get(flowerId) ?? 0,
       wilted,
       left: ready.length - count,
