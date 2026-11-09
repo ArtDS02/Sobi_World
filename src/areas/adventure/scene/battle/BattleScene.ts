@@ -102,6 +102,15 @@ export class BattleScene extends Phaser.Scene {
     if (!this.load.isLoading()) this.load.start();
   }
 
+  /** Drops what earlier steps left on the stage (effects still playing, statuses, their pending loops) without playing their expiry. */
+  private restart() {
+    this.fx.clear();
+    this.loops = [];
+    this.held.clear();
+    // Forgetting the statuses seen makes the next frame a first sight: no expire script for the statuses of the previous step.
+    this.badges.hideAll();
+  }
+
   override update() {
     const now = performance.now();
     const dt = Math.min(0.05, this.last ? (now - this.last) / 1000 : 0.016);
@@ -126,6 +135,7 @@ export class BattleScene extends Phaser.Scene {
       this.key = p.key;
       this.lostAtStep = this.lost;
       this.fx.screen.reset();
+      if (p.fresh) this.restart();
       const sides = new Map(units.map((u) => [u.id, u.side] as const));
       this.cues = stepPlan(p, sides, s.reduce).map((c) => ({ ...c, done: false }));
       // A step already under way when it first shows (a reload) skips what is long past.

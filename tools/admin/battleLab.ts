@@ -137,7 +137,9 @@ function play(enter = false) {
   lab.lastEnter = enter;
   const motion = stepMotion(battleOf(), eventsOf(), lab.fast);
   lab.counter += 1;
-  lab.step = { key: `lab:${lab.counter}`, at: performance.now() + (enter ? 1100 : 150), fx: { floaters: [], banner: null, shake: false, shakeAt: 0 }, motion, enter, shown: 0 };
+  // Every play is a new scenario: the stage drops what the last one left (its statuses would otherwise expire, loop and burst over the
+  // start of this one).
+  lab.step = { key: `lab:${lab.counter}`, at: performance.now() + (enter ? 1100 : 150), fx: { floaters: [], banner: null, shake: false, shakeAt: 0 }, motion, enter, shown: 0, fresh: true };
 }
 
 /** The statuses the played skill has put on a unit so far (their badges show by its head, decision 044). */

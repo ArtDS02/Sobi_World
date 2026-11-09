@@ -24,6 +24,9 @@ export interface PlayingStep {
   /** How far into the step it was when it first showed (ms): the numbers and the banner are timed from it, so their markup stays the
    * same through the redraws of the step and they are not rebuilt (and restarted) every second. */
   shown: number;
+  /** The stage starts clean for this step: what earlier steps left (effects still playing, statuses and their loops) goes away without
+   * playing its ending. Admin's battle lab sets it on every replay; the game never does (its statuses carry over between steps). */
+  fresh?: boolean;
 }
 
 /** The step whose effects are playing and when it began (a redraw resumes them where they were). */

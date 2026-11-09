@@ -73,6 +73,10 @@ export class FxPlayer {
 
   clear() {
     this.screen.reset();
+    // Effects waiting to start (a teleport light, a burst's `wait`), the flash fading and the camera shake end with the rest.
+    this.scene.time.removeAllEvents();
+    this.scene.tweens.killTweensOf(this.flashRect);
+    this.scene.cameras.main.resetFX();
     for (const x of this.timed) x.done?.();
     this.timed = [];
     this.bursts.clear();
