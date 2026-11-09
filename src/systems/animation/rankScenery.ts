@@ -3,14 +3,28 @@
 // Rank 2: border and path. Rank 3: the landmark of that tier / zone. Rank 4: lanterns, night glow, a small creature.
 // Rank 5: the large accent (Cloud: cloud waterfall and halo; Garden: old tree and a small village market).
 
-export type SceneryKind = 'border' | 'fence' | 'path' | 'landmark' | 'lanterns' | 'critter' | 'waterfall' | 'halo' | 'tree' | 'market';
+export type SceneryKind = 'border' | 'fence' | 'path' | 'landmark' | 'lanterns' | 'critter' | 'waterfall' | 'halo' | 'tree' | 'market' | 'petal' | 'firefly';
+
+/** A layer of small sprites that drift over an area (falling petals, wandering fireflies); `count` copies, each at its own phase. */
+export interface DriftSpec {
+  count: number;
+  /** Design px box the sprites move in. */
+  x0: number;
+  x1: number;
+  y0: number;
+  y1: number;
+  /** Milliseconds of one fall / one wander loop. */
+  periodMs: number;
+}
 
 export interface SceneryLayer {
   kind: SceneryKind;
   /** One art id, or one per tier / zone (index = group) for the landmarks. */
   art: string | readonly string[];
-  /** The rank (1..5) from which the layer shows. */
+  /** The rank (1..5) from which the layer shows, and the last rank it shows at (default: all the way up). A higher rank's look replaces a lower one when `maxRank` ends it. */
   minRank: number;
+  maxRank?: number;
+  drift?: DriftSpec;
   /** Design px: where it stands (centre of the art, or its feet for `feet`). */
   x: number;
   y: number;
@@ -25,7 +39,7 @@ export interface SceneryLayer {
 export const sceneryArtIds = (layers: readonly SceneryLayer[]): string[] => layers.flatMap((l) => (typeof l.art === 'string' ? [l.art] : [...l.art]));
 
 /** The layers a rank shows. */
-export const layersAtRank = (layers: readonly SceneryLayer[], rank: number): SceneryLayer[] => layers.filter((l) => l.minRank <= rank);
+export const layersAtRank = (layers: readonly SceneryLayer[], rank: number): SceneryLayer[] => layers.filter((l) => l.minRank <= rank && rank <= (l.maxRank ?? 5));
 
 export interface SceneryPose {
   /** Vertical offset in design px. */
@@ -65,3 +79,31 @@ export interface RankFrame {
 /** Frame colour by rank 2..5 (bronze, silver, gold, rainbow violet); rank 1 has no frame. */
 export const RANK_FRAME_COLORS: readonly number[] = [0xcd8a4a, 0xc8d0dc, 0xf2c94c, 0xa77bff];
 export const frameColor = (rank: number): number | null => (rank >= 2 ? (RANK_FRAME_COLORS[Math.min(rank, 5) - 2] ?? null) : null);
+
+export interface DriftPose {
+  x: number;
+  y: number;
+  alpha: number;
+}
+
+const frac = (v: number): number => v - Math.floor(v);
+
+/** Where sprite `index` of a drifting layer is at `timeMs`; frozen at a resting spot when motion is reduced. Pure and deterministic. */
+export function driftPose(kind: SceneryKind, d: DriftSpec, index: number, timeMs: number, still: boolean): DriftPose {
+  const w = d.x1 - d.x0;
+  const h = d.y1 - d.y0;
+  const spot = frac(index * 0.6180339);
+  if (still) return { x: d.x0 + w * spot, y: d.y0 + h * frac(index * 0.37 + 0.2), alpha: kind === 'firefly' ? 0.7 : 0.9 };
+  const phase = frac(timeMs / d.periodMs + index / d.count);
+  if (kind === 'petal') {
+    return { x: d.x0 + w * spot + Math.sin(timeMs / 700 + index) * 30, y: d.y0 + h * phase, alpha: Math.min(1, phase * 6, (1 - phase) * 6) };
+  }
+  return {
+    x: d.x0 + w * spot + Math.sin(timeMs / 1300 + index * 2) * 50,
+    y: d.y0 + h * frac(index * 0.37 + 0.2) + Math.cos(timeMs / 1700 + index) * 30,
+    alpha: 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(timeMs / 450 + index * 1.7)),
+  };
+}
+
+/** Art ids `<prefix>NN<suffix>` for groups 1..n (two digits), e.g. nn('scn_cloud_landmark_', 10, '_b'). */
+export const nn = (prefix: string, n: number, suffix = ''): string[] => Array.from({ length: n }, (_, i) => `${prefix}${String(i + 1).padStart(2, '0')}${suffix}`);

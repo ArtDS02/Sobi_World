@@ -40,8 +40,8 @@ function world(bag: Record<string, number> = {}, coins = 100_000, gems = 100, le
 const STARRY_BAG = { item_flower_moon_lily: 20, item_ancient_rune: 2 };
 
 describe('content', () => {
-  it('has the four v1 skins, each priced the same in coins and Gems (1 Gem = 500 coins)', () => {
-    expect(PLOT_SKIN_RULES.skins.map((s) => s.id)).toEqual(['verdant', 'pearl_sea', 'crystal', 'starry']);
+  it('has the nine skins, each priced the same in coins and Gems (1 Gem = 500 coins)', () => {
+    expect(PLOT_SKIN_RULES.skins.map((s) => s.id)).toEqual(['verdant', 'pearl_sea', 'crystal', 'starry', 'blossom', 'dew', 'amber', 'moonlit', 'sunset']);
     expect(PLOT_SKIN_RULES.gemRate).toBe(500);
     for (const s of PLOT_SKIN_RULES.skins) expect(s.coins).toBe(s.gems * 500);
     expect([skin('verdant').coins, skin('verdant').gems]).toEqual([10_000, 20]);
@@ -58,7 +58,7 @@ describe('content', () => {
     expect(plotSkinsFileSchema.safeParse(dup).success).toBe(false);
   });
   it('every skin has a cloud bed and a dry and a watered soil bed', () => {
-    expect(SKIN_ART_IDS).toHaveLength(12);
+    expect(SKIN_ART_IDS).toHaveLength(27);
     expect(skinArtId('crystal', 'soil_wet')).toBe('skin_crystal_soil_wet');
   });
 });

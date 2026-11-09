@@ -1,0 +1,168 @@
+{
+  "id": "plots-02-skins",
+  "area": "cloud",
+  "title": "Mẫu khuông đợt 2: Hoa Đào, Sương Mai, Hổ Phách, Đêm Trăng, Hoàng Hôn (mỗi mẫu 3 ảnh)",
+  "decisions": "Decision 056 second wave: 5 more skins (9 in all). Same bed as the plain plot art (152x108).",
+  "sheets": [
+    {
+      "name": "K5",
+      "title": "Mẫu blossom",
+      "board": "building",
+      "grid": [
+        1,
+        3
+      ],
+      "fit": "shared",
+      "size": [
+        152,
+        108
+      ],
+      "views": [
+        "plot"
+      ],
+      "notes": "All three are the same empty bed of one skin, the same size and shape, same colours and theme. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "skin_blossom_cloud",
+          "desc": "Cloud bed: a puffy bed of pink cloud puffs strewn with falling blossom petals"
+        },
+        {
+          "stem": "skin_blossom_soil",
+          "desc": "Dry soil bed: a tilled soil bed with a low frame, soil covered with pink petals"
+        },
+        {
+          "stem": "skin_blossom_soil_wet",
+          "desc": "Watered soil bed: the same dry bed but darker and glistening wet, soil covered with pink petals"
+        }
+      ]
+    },
+    {
+      "name": "K6",
+      "title": "Mẫu dew",
+      "board": "building",
+      "grid": [
+        1,
+        3
+      ],
+      "fit": "shared",
+      "size": [
+        152,
+        108
+      ],
+      "views": [
+        "plot"
+      ],
+      "notes": "All three are the same empty bed of one skin, the same size and shape, same colours and theme. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "skin_dew_cloud",
+          "desc": "Cloud bed: a puffy bed of pale mint cloud beaded with glittering dew drops"
+        },
+        {
+          "stem": "skin_dew_soil",
+          "desc": "Dry soil bed: a tilled soil bed with a low frame, soil with dew drops on tiny leaves"
+        },
+        {
+          "stem": "skin_dew_soil_wet",
+          "desc": "Watered soil bed: the same dry bed but darker and glistening wet, soil with dew drops on tiny leaves"
+        }
+      ]
+    },
+    {
+      "name": "K7",
+      "title": "Mẫu amber",
+      "board": "building",
+      "grid": [
+        1,
+        3
+      ],
+      "fit": "shared",
+      "size": [
+        152,
+        108
+      ],
+      "views": [
+        "plot"
+      ],
+      "notes": "All three are the same empty bed of one skin, the same size and shape, same colours and theme. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "skin_amber_cloud",
+          "desc": "Cloud bed: a puffy bed of warm honey-amber cloud with glossy resin swirls"
+        },
+        {
+          "stem": "skin_amber_soil",
+          "desc": "Dry soil bed: a tilled soil bed with a low frame, soil with amber crystal chips and pebbles"
+        },
+        {
+          "stem": "skin_amber_soil_wet",
+          "desc": "Watered soil bed: the same dry bed but darker and glistening wet, soil with amber crystal chips and pebbles"
+        }
+      ]
+    },
+    {
+      "name": "K8",
+      "title": "Mẫu moonlit",
+      "board": "building",
+      "grid": [
+        1,
+        3
+      ],
+      "fit": "shared",
+      "size": [
+        152,
+        108
+      ],
+      "views": [
+        "plot"
+      ],
+      "notes": "All three are the same empty bed of one skin, the same size and shape, same colours and theme. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "skin_moonlit_cloud",
+          "desc": "Cloud bed: a puffy bed of silver-blue cloud with a soft glowing crescent edge"
+        },
+        {
+          "stem": "skin_moonlit_soil",
+          "desc": "Dry soil bed: a tilled soil bed with a low frame, soil dusted with moonlight and pale stones"
+        },
+        {
+          "stem": "skin_moonlit_soil_wet",
+          "desc": "Watered soil bed: the same dry bed but darker and glistening wet, soil dusted with moonlight and pale stones"
+        }
+      ]
+    },
+    {
+      "name": "K9",
+      "title": "Mẫu sunset",
+      "board": "building",
+      "grid": [
+        1,
+        3
+      ],
+      "fit": "shared",
+      "size": [
+        152,
+        108
+      ],
+      "views": [
+        "plot"
+      ],
+      "notes": "All three are the same empty bed of one skin, the same size and shape, same colours and theme. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "skin_sunset_cloud",
+          "desc": "Cloud bed: a puffy bed of orange-to-pink gradient cloud with golden rim light"
+        },
+        {
+          "stem": "skin_sunset_soil",
+          "desc": "Dry soil bed: a tilled soil bed with a low frame, soil in warm terracotta tones with golden flecks"
+        },
+        {
+          "stem": "skin_sunset_soil_wet",
+          "desc": "Watered soil bed: the same dry bed but darker and glistening wet, soil in warm terracotta tones with golden flecks"
+        }
+      ]
+    }
+  ]
+}

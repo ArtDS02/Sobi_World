@@ -280,6 +280,11 @@ const SKIN_TINTS: Record<string, Rgba> = {
   pearl_sea: [120, 190, 210, 255],
   crystal: [190, 170, 232, 255],
   starry: [90, 90, 160, 255],
+  blossom: [244, 170, 196, 255],
+  dew: [170, 224, 214, 255],
+  amber: [226, 170, 80, 255],
+  moonlit: [120, 130, 190, 255],
+  sunset: [246, 150, 96, 255],
 };
 function drawSkinPlot(r: Raster, id: string) {
   const [, name, kind] = /^skin_(.+?)_(cloud|soil_wet|soil)$/.exec(id) ?? [];
@@ -305,7 +310,9 @@ function drawScenery(r: Raster, id: string) {
   const garden = id.startsWith('scn_garden');
   const ground: Rgba = garden ? [150, 110, 70, 255] : [226, 230, 248, 255];
   const green: Rgba = [96, 170, 84, 255];
-  const kind = id.replace(/^scn_(cloud|garden)_/, '');
+  const raw = id.replace(/^scn_(cloud|garden)_/, '');
+  // Rank variants (`border_r3`), per-group ids (`landmark_02_b`, `critter_03`) and the big accents read as their base kind.
+  const kind = raw.replace(/_r\d$/, '').replace(/_\d+(_b)?$/, '').replace(/^accent$/, 'landmark');
   if (kind === 'border' || kind === 'fence') {
     const n = 12;
     for (let i = 0; i < n; i += 1) {
@@ -319,8 +326,10 @@ function drawScenery(r: Raster, id: string) {
     if (kind === 'fence') r.rect(0, h * 0.42, w, 14, shade(ground, 0.85));
   } else if (kind === 'path') {
     for (const [x, y] of [[0.2, 0.3], [0.45, 0.5], [0.7, 0.35], [0.55, 0.78], [0.25, 0.72]] as const) r.ellipse(w * x, h * y, w * 0.11, h * 0.14, [214, 206, 190, 255]);
-  } else if (kind.startsWith('landmark')) {
-    const hue = (Number(kind.slice(-2)) * 37) % 200;
+  } else if (kind === 'petal' || kind === 'leaf' || kind === 'firefly') {
+    r.ellipse(w / 2, h / 2, w * 0.3, h * 0.2, kind === 'firefly' ? [255, 240, 150, 255] : kind === 'leaf' ? [120, 180, 90, 255] : [250, 190, 210, 255]);
+  } else if (kind === 'landmark') {
+    const hue = (Number(raw.replace(/\D/g, '').slice(0, 2)) * 37) % 200;
     const body: Rgba = [120 + (hue % 90), 140 + ((hue * 3) % 80), 190 - (hue % 70), 255];
     r.ellipse(w / 2, h * 0.94, w * 0.36, h * 0.04, [0, 0, 0, 50]);
     r.roundRect(w * 0.3, h * 0.36, w * 0.4, h * 0.56, 16, body);

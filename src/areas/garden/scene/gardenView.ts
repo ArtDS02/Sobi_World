@@ -1,7 +1,7 @@
 import type { CropStage } from '../logic/art';
 import { PLOTS_PER_ZONE } from '../logic/config/content';
 import type { PlotView } from '../logic/derived';
-import type { RankFrame, SceneryLayer } from '../../../systems/animation/rankScenery';
+import { nn, type RankFrame, type SceneryLayer } from '../../../systems/animation/rankScenery';
 
 // Look of the Garden scene (design px, depths, colours, motion). What grows where is content and state; these are the
 // drawing choices of the scene. Positions are measured on the backdrop (bg_garden, the owner's mock-up with the
@@ -131,12 +131,23 @@ export function cropStageOf(view: Pick<PlotView, 'stage' | 'share'>): CropStage 
  */
 export const GARDEN_SCENERY: readonly SceneryLayer[] = [
   { kind: 'tree', art: 'scn_garden_oldtree', minRank: 5, x: 330, y: 560, depth: 7, feet: true, scale: 0.8 },
-  { kind: 'fence', art: 'scn_garden_fence', minRank: 2, x: 895, y: 610, depth: 8 },
-  { kind: 'path', art: 'scn_garden_path', minRank: 2, x: 895, y: 690, depth: 9 },
-  { kind: 'landmark', art: Array.from({ length: 4 }, (_, i) => `scn_garden_landmark_${String(i + 1).padStart(2, '0')}`), minRank: 3, x: 1400, y: 690, depth: 12, feet: true, scale: 0.7 },
-  { kind: 'lanterns', art: 'scn_garden_lanterns', minRank: 4, x: 895, y: 232, depth: 9 },
-  { kind: 'critter', art: 'scn_garden_critter', minRank: 4, x: 700, y: 650, depth: 40 },
+  { kind: 'landmark', art: nn('scn_garden_accent_', 4), minRank: 5, x: 895, y: 222, depth: 6, feet: true, scale: 0.8 },
+  { kind: 'fence', art: 'scn_garden_fence', minRank: 2, maxRank: 2, x: 895, y: 610, depth: 8 },
+  { kind: 'fence', art: 'scn_garden_fence_r3', minRank: 3, maxRank: 3, x: 895, y: 610, depth: 8 },
+  { kind: 'fence', art: 'scn_garden_fence_r4', minRank: 4, maxRank: 4, x: 895, y: 610, depth: 8 },
+  { kind: 'fence', art: 'scn_garden_fence_r5', minRank: 5, x: 895, y: 610, depth: 8 },
+  { kind: 'path', art: 'scn_garden_path', minRank: 2, maxRank: 2, x: 895, y: 690, depth: 9 },
+  { kind: 'path', art: 'scn_garden_path_r3', minRank: 3, maxRank: 3, x: 895, y: 690, depth: 9 },
+  { kind: 'path', art: 'scn_garden_path_r4', minRank: 4, maxRank: 4, x: 895, y: 690, depth: 9 },
+  { kind: 'path', art: 'scn_garden_path_r5', minRank: 5, x: 895, y: 690, depth: 9 },
+  { kind: 'landmark', art: nn('scn_garden_landmark_', 4), minRank: 3, x: 1400, y: 690, depth: 12, feet: true, scale: 0.7 },
+  { kind: 'landmark', art: nn('scn_garden_landmark_', 4, '_b'), minRank: 4, x: 600, y: 730, depth: 12, feet: true, scale: 0.6 },
+  { kind: 'lanterns', art: 'scn_garden_lanterns', minRank: 4, maxRank: 4, x: 895, y: 232, depth: 9 },
+  { kind: 'lanterns', art: 'scn_garden_lanterns_r5', minRank: 5, x: 895, y: 232, depth: 9 },
+  { kind: 'critter', art: ['scn_garden_critter', ...nn('scn_garden_critter_', 4).slice(1)], minRank: 4, x: 700, y: 650, depth: 40 },
   { kind: 'market', art: 'scn_garden_market', minRank: 5, x: 1180, y: 800, depth: 12, feet: true, scale: 0.7 },
+  { kind: 'petal', art: 'scn_garden_leaf', minRank: 5, x: 0, y: 0, depth: 45, drift: { count: 7, x0: 340, x1: 1440, y0: 120, y1: 640, periodMs: 9000 } },
+  { kind: 'firefly', art: 'scn_garden_firefly', minRank: 5, x: 0, y: 0, depth: 46, additive: true, drift: { count: 8, x0: 340, x1: 1440, y0: 200, y1: 660, periodMs: 6000 } },
 ];
 
 /** The rank frame around a garden zone's 6 x 4 plots (decision 056). */

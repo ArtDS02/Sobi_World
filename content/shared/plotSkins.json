@@ -34,6 +34,46 @@
       "coins": 30000,
       "gems": 60,
       "unlock": { "kind": "worldLevel", "level": 30 }
+    },
+    {
+      "id": "blossom",
+      "materials": { "item_flower_rainbow_rose": 10, "item_flower_star_orchid": 5 },
+      "coins": 30000,
+      "gems": 60,
+      "unlock": { "kind": "worldLevel", "level": 40 }
+    },
+    {
+      "id": "dew",
+      "materials": { "item_flower_cloud_daisy": 20, "item_scale": 10 },
+      "coins": 30000,
+      "gems": 60,
+      "unlock": { "kind": "codex", "codexKind": "flower", "count": 10 }
+    },
+    {
+      "id": "amber",
+      "materials": { "item_mountain_ore": 20, "item_beast_fang": 15, "item_ancient_cog": 5 },
+      "coins": 30000,
+      "gems": 60,
+      "unlock": {
+        "kind": "areaRecord",
+        "area": "sobi_adventure",
+        "path": ["cleared"],
+        "key": "zone_mountain"
+      }
+    },
+    {
+      "id": "moonlit",
+      "materials": { "item_flower_dream_bell": 15, "item_pearl": 1 },
+      "coins": 30000,
+      "gems": 60,
+      "unlock": { "kind": "worldLevel", "level": 60 }
+    },
+    {
+      "id": "sunset",
+      "materials": { "item_flower_sun_tulip": 15, "item_sunflower": 10 },
+      "coins": 30000,
+      "gems": 60,
+      "unlock": { "kind": "codex", "codexKind": "crop", "count": 8 }
     }
   ]
 }

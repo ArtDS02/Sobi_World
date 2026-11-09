@@ -1,0 +1,175 @@
+{
+  "id": "garden-06-rank-scenery-2",
+  "area": "garden",
+  "title": "Cảnh bậc nâng cấp khu đất, đợt 2: hàng rào / lối riêng từng bậc, vật mốc phụ, điểm nhấn bậc 5, sinh vật, hạt bay",
+  "decisions": "Decision 056 second wave. Same scheme as cloud-07 for the 4 garden zones (themes follow vi.garden.zoneNames); critters 02-04 (critter_01 is the first batch).",
+  "sheets": [
+    {
+      "name": "GS1",
+      "title": "Hàng rào bậc 3-5 + lối lát bậc 3",
+      "board": "item",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "item"
+      ],
+      "cells": [
+        {
+          "stem": "scn_garden_fence_r3",
+          "desc": "a sturdy wooden fence with neat pickets and small flower boxes, one long horizontal strip Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_fence_r4",
+          "desc": "a painted fence with scalloped pickets, flower boxes and tiny lanterns, one long horizontal strip Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_fence_r5",
+          "desc": "a grand ornate fence with carved posts, climbing roses and golden caps, one long horizontal strip Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_path_r3",
+          "desc": "five flat beige stepping stones set in neat grass Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "GS2",
+      "title": "Lối lát bậc 4-5, đèn bậc 5, lá bay, đom đóm",
+      "board": "item",
+      "grid": [
+        1,
+        5
+      ],
+      "fit": "each",
+      "views": [
+        "item"
+      ],
+      "cells": [
+        {
+          "stem": "scn_garden_path_r4",
+          "desc": "five carved stone slabs with moss and little flowers Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_path_r5",
+          "desc": "five polished cobblestone slabs with a warm golden shimmer Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_lanterns_r5",
+          "desc": "two ornate wooden lantern posts far apart at the left and right ends with bright golden lanterns, nothing between them Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_leaf",
+          "desc": "one single small green leaf, drifting, centred Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_firefly",
+          "desc": "one single tiny glowing firefly with soft yellow light, centred Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "GS3",
+      "title": "Vật mốc phụ khu 1-4",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "shared",
+      "size": [
+        280,
+        300
+      ],
+      "views": [
+        "building"
+      ],
+      "cells": [
+        {
+          "stem": "scn_garden_landmark_01_b",
+          "desc": "a wooden bench under a flower trellis Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_landmark_02_b",
+          "desc": "a hay cart with a pitchfork Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_landmark_03_b",
+          "desc": "a stone well with a wooden bucket Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_landmark_04_b",
+          "desc": "a seed-sorting table with crates Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "GS4",
+      "title": "Điểm nhấn bậc 5 khu 1-4",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "shared",
+      "size": [
+        320,
+        360
+      ],
+      "views": [
+        "building"
+      ],
+      "cells": [
+        {
+          "stem": "scn_garden_accent_01",
+          "desc": "a big orchard arbor with fruit trees Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_accent_02",
+          "desc": "a tall grain silo with golden wheat bundles Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_accent_03",
+          "desc": "a harvest-festival maypole with coloured ribbons Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_accent_04",
+          "desc": "a cosy farmhouse with a vegetable garden Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "GS5",
+      "title": "Sinh vật vườn 2-4",
+      "board": "creature",
+      "grid": [
+        1,
+        3
+      ],
+      "fit": "shared",
+      "size": [
+        120,
+        110
+      ],
+      "views": [
+        "creature_left"
+      ],
+      "cells": [
+        {
+          "stem": "scn_garden_critter_02",
+          "desc": "a tiny duckling, sitting, friendly Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_critter_03",
+          "desc": "a baby chick in a leaf hat, sitting, friendly Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_garden_critter_04",
+          "desc": "a little snail with a flower on its shell, sitting, friendly Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    }
+  ]
+}

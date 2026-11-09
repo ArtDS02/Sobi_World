@@ -2,7 +2,7 @@
 // systems/animation/rankScenery.ts, shown by the group on screen and its rank. Motion (a creature's bob, the halo's breath,
 // the lanterns' flicker at night) is code on the frame loop, so it works without WebGL; reduced motion freezes it.
 import type * as Phaser from 'phaser';
-import { frameColor, sceneryMotion, type RankFrame, type SceneryLayer } from '../../systems/animation/rankScenery';
+import { driftPose, frameColor, sceneryMotion, type RankFrame, type SceneryLayer } from '../../systems/animation/rankScenery';
 
 type Img = Phaser.GameObjects.Image;
 
@@ -29,7 +29,7 @@ export class RankScenery {
   ) {
     this.frame = frameRect ? scene.add.graphics().setDepth(frameRect.depth) : null;
     this.drawn = layers.map((layer) => {
-      const arts = typeof layer.art === 'string' ? [layer.art] : layer.art;
+      const arts = layer.drift ? Array.from({ length: layer.drift.count }, () => layer.art as string) : typeof layer.art === 'string' ? [layer.art] : layer.art;
       const images = arts.map((id) => {
         const img = fixed(layer.x, layer.y, id).setDepth(layer.depth).setScale(layer.scale ?? 1).setVisible(false);
         if (layer.feet) img.setOrigin(0.5, 1);
@@ -46,8 +46,8 @@ export class RankScenery {
     this.rank = rank;
     this.drawFrame(rank);
     for (const { layer, images } of this.drawn) {
-      const on = layer.minRank <= rank;
-      images.forEach((img, i) => img.setVisible(on && (images.length === 1 || i === group)));
+      const on = layer.minRank <= rank && rank <= (layer.maxRank ?? 5);
+      images.forEach((img, i) => img.setVisible(on && (layer.drift !== undefined || images.length === 1 || i === group)));
     }
   }
 
@@ -62,7 +62,15 @@ export class RankScenery {
   /** One frame of motion. */
   update(timeMs: number, night: boolean, still: boolean) {
     for (const { layer, images, baseY } of this.drawn) {
-      if (layer.minRank > this.rank) continue;
+      if (layer.minRank > this.rank || this.rank > (layer.maxRank ?? 5)) continue;
+      if (layer.drift) {
+        const d = layer.drift;
+        images.forEach((img, i) => {
+          const p = driftPose(layer.kind, d, i, timeMs, still);
+          img.setPosition(p.x, p.y).setAlpha(p.alpha);
+        });
+        continue;
+      }
       const pose = sceneryMotion(layer.kind, timeMs, night, still);
       for (const img of images) img.setY(baseY + pose.dy).setAlpha(pose.alpha);
     }
