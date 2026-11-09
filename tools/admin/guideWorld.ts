@@ -117,6 +117,18 @@ export const WORLD_SECTIONS: GuideSection[] = [
     notes: ['Ô JSON để trống = kỹ năng dùng hiệu ứng chung của hệ.', 'Cách viết JSON: docs/animation/COMBAT_ART_GUIDE.md §4.'],
   },
   {
+    id: 'plot-lab', icon: '🧱', title: 'Khuông & cảnh bậc',
+    purpose: 'Xem một tầng mây / khu đất đúng như game vẽ ở từng bậc nâng cấp (1-5) và từng mẫu khuông: nền, ô đất, khung viền, mọi lớp trang trí, hạt bay. Chỉ xem, không lưu.',
+    steps: [
+      'Chọn Sobi Cloud hoặc Sobi Garden, rồi tầng / khu (số) để thấy vật mốc và sinh vật riêng của nó.',
+      'Bấm từng bậc 1-5, hoặc "Tự chạy bậc 1→5" để xem cảnh lớn dần. Chọn mẫu để thấy cả cảnh đổi màu theo chủ đề của mẫu.',
+      'Bảng bên dưới liệt kê các lớp đang hiện: tên ảnh, loại, từ bậc nào, và ảnh còn là placeholder hay đã là art thật. Dòng thông tin ghi giá và vật phẩm để nâng bậc kế tiếp.',
+      'Bật "Ban đêm" để xem đèn nhấp nháy; "Giảm chuyển động" để kiểm tra cảnh đứng yên.',
+    ],
+    example: ['Kiểm tầng 9 mẫu Tinh Tú ở bậc 5: Sobi Cloud → 9 → bậc 5 → Tinh Tú → xem đom đóm, khung tím và bảng lớp.'],
+    notes: ['Số bậc, giá, vật phẩm: "Nội dung game" → Bậc tầng mây / Bậc khu đất. Mẫu, giá, chủ đề màu: Mẫu khuông.', 'Ảnh vàng "placeholder" là hình tạm, chờ art thật (asset/batches/).'],
+  },
+  {
     id: 'plant-lab', icon: '🌿', title: 'Cây đung đưa',
     purpose: 'Xem cây / hoa của từng khu uốn theo thân trong gió (gốc đứng yên, thân cong, bông trễ nhịp), đặt cạnh cách cũ (cả ảnh xoay quanh gốc) để so, và thử số. Chỉ xem, không lưu.',
     steps: [

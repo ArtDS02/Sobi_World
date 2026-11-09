@@ -1,6 +1,6 @@
 // Sobi World admin dashboard entry (admin.html, `npm run admin`; decisions A7-1, AD-1, 036). Hash routes:
 // #/ overview · #/users[/<id>] · #/content[/<file>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
-// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/battle-lab · #/rig-lab · #/plant-lab · #/assets · #/library · #/desktop · #/guide[/<section>]
+// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/battle-lab · #/rig-lab · #/plant-lab · #/plot-lab · #/assets · #/library · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
 import { renderBalance } from './balance';
 import { preloadChecks, problemCount, renderChecks } from './checks';
@@ -13,6 +13,7 @@ import { editorDirty, renderMapEditor } from './mapEditor';
 import { renderMapAssets } from './mapAssetsPage';
 import { renderBattleLab } from './battleLab';
 import { renderPlantLab } from './plantLab';
+import { renderPlotLab } from './plotLab';
 import { renderRigLab } from './rigLab';
 import { breedingDirty, renderBreeding } from './breeding';
 import { contentDirty, renderContent } from './contentPage';
@@ -62,13 +63,13 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
   ['Sobi Garden', [['content/garden%2Fcrops.json', '🌱', 'Cây trồng', 'content'], ['content/garden%2Fhybrids.json', '🧪', 'Công thức lai', 'content'], ['content/garden%2Fbalance.json', '⚙️', 'Cân bằng Garden', 'content'], ['content/garden%2Farea.json', '🚪', 'Mở khu Garden', 'content']]],
   ['Sobi Aquarium', [['content/aquarium%2Ffish.json', '🐟', 'Loài cá', 'content'], ['content/aquarium%2Fhybrids.json', '🧪', 'Cặp lai cá', 'content'], ['content/aquarium%2Fbalance.json', '⚙️', 'Cân bằng Aquarium', 'content'], ['content/aquarium%2Farea.json', '🚪', 'Mở khu Aquarium', 'content']]],
   ['Sobi Cloud', [['content/cloud%2Fflowers.json', '🌸', 'Loài hoa', 'content'], ['content/cloud%2Fhybrids.json', '🧪', 'Công thức lai hoa', 'content'], ['content/cloud%2Fbalance.json', '⚙️', 'Cân bằng Cloud', 'content'], ['content/cloud%2Farea.json', '🚪', 'Mở khu Cloud', 'content']]],
-  ['Xưởng hoạt họa', [['battle-lab', '✨', 'Animation trận', 'battle-lab'], ['rig-lab', '🦴', 'Rig sinh vật', 'battle-lab'], ['plant-lab', '🌿', 'Cây đung đưa', 'plant-lab']]],
+  ['Xưởng hoạt họa', [['battle-lab', '✨', 'Animation trận', 'battle-lab'], ['rig-lab', '🦴', 'Rig sinh vật', 'battle-lab'], ['plant-lab', '🌿', 'Cây đung đưa', 'plant-lab'], ['plot-lab', '🧱', 'Khuông & cảnh bậc', 'plant-lab']]],
   ['Asset', [['assets', '📥', 'Asset nguồn', 'asset-source'], ['library', '🖼️', 'Thư viện asset', 'asset-library']]],
   ['Hệ thống', [['checks', '🔎', 'Kiểm tra dữ liệu', 'checks'], ['desktop', '🎮', 'Bản desktop', 'desktop'], ['guide', '📘', 'Hướng dẫn', 'overview']]],
 ];
 const ALL = NAV.flatMap(([, items]) => items);
 /** The world / adventure / animation pages share one design (worldUi.css, `.wpage`). The Map Editor is a full-screen tool with its own dark theme. */
-const WORLD_PAGES = new Set(['daynight', 'adventure', 'adventure-world', 'adventure-network', 'adventure-assets', 'adventure-maps', 'battle-lab', 'rig-lab', 'plant-lab']);
+const WORLD_PAGES = new Set(['daynight', 'adventure', 'adventure-world', 'adventure-network', 'adventure-assets', 'adventure-maps', 'battle-lab', 'rig-lab', 'plant-lab', 'plot-lab']);
 /** Pages that edit the species draft: the header save belongs to them. */
 const SPECIES_PAGES = new Set(['pigs', 'validation']);
 /** `#/<page>?key=value` links (overview cards) preset that page's list filters. */
@@ -244,6 +245,7 @@ function render() {
     'battle-lab': () => renderBattleLab(content),
     'rig-lab': () => renderRigLab(content),
     'plant-lab': () => renderPlantLab(content),
+    'plot-lab': () => renderPlotLab(content),
     balance: () => renderBalance(content, render),
     checks: () => renderChecks(content, render),
     layout: () => renderLayout(content, render),

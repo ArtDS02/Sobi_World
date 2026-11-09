@@ -26,3 +26,5 @@ Quy tắc:
   Sửa code admin thì bấm F5.
 - Chữ của admin là tiếng Việt viết thẳng ở đây (công cụ dev, không qua `src/i18n`).
 - Test: `tests/scripts/admin*.test.ts`, `tests/unit/adminData.test.ts`.
+
+- `plotLab.ts` + `plotLabScene.ts` — trang "Khuông & cảnh bậc" (`#/plot-lab`): xem một tầng mây / khu đất ở từng bậc nâng cấp và từng mẫu khuông bằng chính code của game (cảnh, chủ đề màu, khung viền, hạt bay), kèm bảng lớp đang hiện và trạng thái ảnh. Chỉ xem, không lưu.
