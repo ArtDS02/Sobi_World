@@ -118,7 +118,7 @@ export const WORLD_SECTIONS: GuideSection[] = [
   },
   {
     id: 'plant-lab', icon: '🌿', title: 'Cây đung đưa',
-    purpose: 'Xem cây / hoa của từng khu đung đưa thế nào: cách cũ (cả ảnh xoay quanh gốc) đặt cạnh cách mới (uốn theo thân: gốc đứng yên, thân cong, bông trễ nhịp). Chỉ xem, không lưu.',
+    purpose: 'Xem cây / hoa của từng khu uốn theo thân trong gió (gốc đứng yên, thân cong, bông trễ nhịp), đặt cạnh cách cũ (cả ảnh xoay quanh gốc) để so, và thử số. Chỉ xem, không lưu.',
     steps: [
       'Chọn khu ở trên cùng (Sobi Cloud / Sobi Garden): mỗi khu chỉ hiện cây của khu đó, trên nền và ô đất của khu đó.',
       'Bấm một cây: bên trái là cách cũ, bên phải là cách mới, cùng nhịp. "Cả khu" để xem tất cả cây cùng lúc.',
@@ -126,6 +126,6 @@ export const WORLD_SECTIONS: GuideSection[] = [
       'Kéo thanh trượt để thử số; ưng thì "Sao chép số" và gửi cho agent đưa vào game.',
     ],
     example: ['Bông Cúc Mây lắc mạnh quá: chọn Sobi Cloud → Cúc Mây → Chín → kéo "Ngọn nghiêng" xuống → Sao chép số.'],
-    notes: ['Nhãn "Đang thử" = cây đó đã uốn theo thân trong game. Garden chưa bật trong game; tab chỉ xem trước.', 'Số chạy trong game: CLOUD_VIEW.bend (src/areas/cloud/scene/cloudView.ts).'],
+    notes: ['Mọi cây / hoa của Sobi Cloud và Sobi Garden đều uốn theo thân trong game; mỗi khu có bộ số riêng.', 'Số chạy trong game: CLOUD_VIEW.bend (src/areas/cloud/scene/cloudView.ts), GARDEN_VIEW.bend (src/areas/garden/scene/gardenView.ts).'],
   },
 ];

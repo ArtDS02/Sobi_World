@@ -3,6 +3,7 @@
 // what a click does.
 import * as Phaser from 'phaser';
 import type { WorldRect } from '../../../systems/layout/camera';
+import { breezeAt } from '../../../systems/animation';
 import { BentPlant } from '../../../ui/world/bentPlant';
 import type { FlowerStage } from '../logic/art';
 import { PLOTS_PER_TIER } from '../logic/config/content';
@@ -130,8 +131,7 @@ export interface PlotSprites {
   /** The picture on the plot (null: no flower), for the sway and the caterpillars. */
   stage: FlowerStage | null;
   ripe: boolean;
-  /** The flower's art (null: no flower) and its bending drawing (null without WebGL). */
-  art: string | null;
+  /** The flower's bending drawing (null without WebGL: the flower tilts whole instead). */
   bent: BentPlant | null;
 }
 
@@ -149,27 +149,18 @@ export function restFlowers(plots: readonly PlotSprites[]) {
 }
 
 /**
- * Flowers sway around their base in a light breeze: a small angle by stage, each plant its own period and phase, all of
- * them stirred together by a slow gust; a ripe flower also breathes (a small scale swing). Flowers on trial (`CLOUD_VIEW.bend`)
- * bend on their stem instead of tilting whole.
+ * Flowers bend on their stem in a light breeze (`CLOUD_VIEW.bend`): each plant its own period and phase, all of them stirred
+ * together by a slow gust; a ripe flower also breathes (a small scale swing). Without WebGL a flower tilts whole instead.
  */
 export function swayFlowers(plots: readonly PlotSprites[], time: number) {
-  const s = CLOUD_VIEW.sway;
   const b = CLOUD_VIEW.bend;
   const r = CLOUD_VIEW.ripePulse;
-  const gust = 1 + Math.sin((time / s.gustMs) * Math.PI * 2) * s.gust;
   plots.forEach((p, k) => {
     if (!p.stage) return void p.bent?.off();
-    const period = s.periodMs[0] + ((k * 0.618) % 1) * (s.periodMs[1] - s.periodMs[0]);
-    const phase = (time / period) * Math.PI * 2 + k * 1.7;
+    const { phase, gust } = breezeAt(time, k, CLOUD_VIEW.sway);
     if (p.ripe) p.flower.setScale(CLOUD_VIEW.flowerScale * (1 + Math.sin((time / r.periodMs) * Math.PI * 2 + k) * r.scale));
-    if (p.bent && p.art && b.arts.includes(p.art)) {
-      p.flower.setAngle(0);
-      p.bent.draw(Phaser.Math.DegToRad((b as unknown as Record<string, number>)[p.stage] ?? 0) * gust, phase, b);
-      return;
-    }
-    p.bent?.off();
-    p.flower.setAngle(Math.sin(phase) * ((s as unknown as Record<string, number>)[p.stage] ?? 0) * gust);
+    if (p.bent) p.bent.draw(Phaser.Math.DegToRad(b[p.stage]) * gust, phase, b);
+    else p.flower.setAngle(Math.sin(phase) * CLOUD_VIEW.sway[p.stage] * gust);
   });
 }
 

@@ -101,7 +101,8 @@ export class GardenScene extends Phaser.Scene {
 
   override update(time: number) {
     this.sync(false);
-    if (!this.deps.reduceMotion()) this.field.sway(time);
+    if (this.deps.reduceMotion()) this.field.rest();
+    else this.field.sway(time);
   }
 
   /** An image of fixed art (see fixedArt). */

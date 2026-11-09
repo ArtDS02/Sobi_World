@@ -165,7 +165,7 @@ export class CloudScene extends Phaser.Scene {
     const flowerY = y + v.flowerOffsetY;
     const flower = this.add.image(x, flowerY, FALLBACK_PROP_KEY).setOrigin(0.5, 1).setVisible(false);
     this.field.add(flower);
-    const sprites: PlotSprites = { bed, flower, bright: brightOf(bed), stage: null, ripe: false, art: null, bent: bentFlower(this, this.field, flower) };
+    const sprites: PlotSprites = { bed, flower, bright: brightOf(bed), stage: null, ripe: false, bent: bentFlower(this, this.field, flower) };
     const lift = (dy: number) => {
       if (this.deps.reduceMotion()) return;
       this.tweens.add({ targets: bed, y: y - dy, duration: v.hover.ms, ease: 'Sine.easeOut' });
@@ -261,7 +261,6 @@ export class CloudScene extends Phaser.Scene {
       const view = state.plots[plotIndex(this.tier, slot)];
       sprites.stage = null;
       sprites.ripe = false;
-      sprites.art = null;
       if (!view) {
         sprites.bed.setTexture(KEY(CLOUD_PLOT_ART, this.textures)).setTint(CLOUD_VIEW.unbuilt.tint).setAlpha(CLOUD_VIEW.unbuilt.alpha);
         sprites.flower.setVisible(false);
@@ -274,7 +273,6 @@ export class CloudScene extends Phaser.Scene {
       const stage = flowerStageOf(view);
       if (!FLOWER_STAGES.includes(stage)) return;
       sprites.stage = stage;
-      sprites.art = flower.art;
       sprites.flower.setTexture(KEY(flowerArtId(flower, stage), this.textures)).setVisible(true).setScale(CLOUD_VIEW.flowerScale);
       sprites.flower.setTint(view.fertilized && !this.drone.holding(slot) ? 0xf4ffd8 : 0xffffff);
     });

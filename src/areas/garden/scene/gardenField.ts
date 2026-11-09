@@ -1,6 +1,8 @@
-// The field of one zone (decision 028): 24 plot slots on the lawn, the crops growing on them, swaying in a breeze. The
-// whole field is one container, so changing zone slides it out sideways and the next zone in. Draws and reports clicks.
+// The field of one zone (decision 028): 24 plot slots on the lawn, the crops growing on them, bending on their stem in a breeze.
+// The whole field is one container, so changing zone slides it out sideways and the next zone in. Draws and reports clicks.
 import * as Phaser from 'phaser';
+import { breezeAt } from '../../../systems/animation';
+import { BentPlant } from '../../../ui/world/bentPlant';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { opaqueSize } from '../../../ui/world/opaqueSize';
 import { CROP_STAGES, cropArtId, PLOT_ART, type CropStage } from '../logic/art';
@@ -17,6 +19,8 @@ interface Slot {
   ripe: boolean;
   /** The crop's drawing scale: the shared crop scale, smaller for a drawing too big for its bed. */
   scale: number;
+  /** The crop's bending drawing (null without WebGL: the crop tilts whole instead). */
+  bent: BentPlant | null;
 }
 
 export interface FieldDeps {
@@ -61,7 +65,10 @@ export class GardenField {
       const { x, y } = plotCentre(slot);
       const crop = scene.add.image(x, y + v.cropBaseY * v.plotScale, FALLBACK_PROP_KEY).setOrigin(0.5, 1).setScale(v.cropScale).setVisible(false);
       this.container.add(crop);
-      this.slots.push({ soil, crop, stage: null, ripe: false, scale: v.cropScale });
+      // The bending drawing sits right over its crop, so the rows of the field still overlap in order.
+      const bent = BentPlant.canBend(scene) ? new BentPlant(scene, crop, v.bend.rows) : null;
+      if (bent) this.container.add(bent.rope);
+      this.slots.push({ soil, crop, stage: null, ripe: false, scale: v.cropScale, bent });
     });
   }
 
@@ -149,18 +156,26 @@ export class GardenField {
     for (const slot of [...this.waiting]) this.release(slot, true);
   }
 
-  /** Crops sway around their base; a ripe crop also breathes. */
+  /**
+   * Crops bend on their stem in the breeze (`GARDEN_VIEW.bend`); a ripe crop also breathes. While a hop or a bounce tween plays on a
+   * crop it keeps that tween's scale (the bend follows it). Without WebGL a crop tilts whole instead.
+   */
   sway(time: number) {
-    const s = GARDEN_VIEW.sway;
+    const b = GARDEN_VIEW.bend;
     const r = GARDEN_VIEW.ripePulse;
-    const gust = 1 + Math.sin((time / s.gustMs) * Math.PI * 2) * s.gust;
     this.slots.forEach((p, k) => {
-      if (!p.stage || this.scene.tweens.isTweening(p.crop)) return;
-      const amp = s[p.stage];
-      const period = s.periodMs[0] + ((k * 0.618) % 1) * (s.periodMs[1] - s.periodMs[0]);
-      p.crop.setAngle(Math.sin((time / period) * Math.PI * 2 + k * 1.7) * amp * gust);
-      if (p.ripe) p.crop.setScale(p.scale * (1 + Math.sin((time / r.periodMs) * Math.PI * 2 + k) * r.scale));
+      if (!p.stage) return void p.bent?.off();
+      const busy = this.scene.tweens.isTweening(p.crop);
+      const { phase, gust } = breezeAt(time, k, GARDEN_VIEW.sway);
+      if (p.ripe && !busy) p.crop.setScale(p.scale * (1 + Math.sin((time / r.periodMs) * Math.PI * 2 + k) * r.scale));
+      if (p.bent) p.bent.draw(Phaser.Math.DegToRad(b[p.stage]) * gust, phase, b);
+      else if (!busy) p.crop.setAngle(Math.sin(phase) * GARDEN_VIEW.sway[p.stage] * gust);
     });
+  }
+
+  /** Motion reduced: every crop back to its plain, still picture. */
+  rest() {
+    for (const p of this.slots) p.bent?.off();
   }
 
   /** Slides the field out towards −dir, calls `swap` (draw the next zone), and slides it in from +dir. */

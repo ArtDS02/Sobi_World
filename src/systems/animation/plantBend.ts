@@ -11,6 +11,21 @@ export interface BendShape {
   lag: number;
 }
 
+/** The breeze over a field of plants, as the scene configs give it. */
+export interface Breeze {
+  /** Each plant's sway period lies in this range (ms). */
+  periodMs: readonly number[];
+  /** The slow gust that stirs every plant together: its period (ms) and how much it adds or takes off (share of the sway). */
+  gustMs: number;
+  gust: number;
+}
+
+/** Plant `k`'s sway phase at `time` (its own period and phase: never two neighbours in step) and the gust factor around 1. */
+export function breezeAt(time: number, k: number, b: Breeze): { phase: number; gust: number } {
+  const period = b.periodMs[0]! + ((k * 0.618) % 1) * (b.periodMs[1]! - b.periodMs[0]!);
+  return { phase: (time / period) * Math.PI * 2 + k * 1.7, gust: 1 + Math.sin((time / b.gustMs) * Math.PI * 2) * b.gust };
+}
+
 /** The stem's lean (radians, + to the right) at height share `s` (0 bottom, 1 top), for a top lean `amp` at sway phase `phase`. */
 export function stemLean(s: number, amp: number, phase: number, shape: BendShape): number {
   const u = Math.min(Math.max((s - shape.root) / (shape.stiff - shape.root), 0), 1);

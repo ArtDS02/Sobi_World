@@ -1,7 +1,7 @@
 // Plants bending in a breeze (systems/animation/plantBend.ts): flat at rest, soil mound fixed, stem keeps its length, rigid top
 // that trails the stem.
 import { describe, expect, it } from 'vitest';
-import { bendRows, stemLean, type BendShape } from '../../src/systems/animation';
+import { bendRows, breezeAt, stemLean, type BendShape } from '../../src/systems/animation';
 
 const shape: BendShape = { root: 0.1, stiff: 0.62, lag: 0.7 };
 const ROWS = 14;
@@ -61,5 +61,16 @@ describe('plant bend', () => {
     };
     expect(peak(1) - peak(0.2)).toBeGreaterThan(0.5);
     expect(peak(1)).toBeCloseTo(Math.PI / 2 + shape.lag, 2);
+  });
+
+  it('gives neighbours their own rhythm and one shared gust', () => {
+    const breeze = { periodMs: [2200, 3400], gustMs: 9000, gust: 0.45 };
+    const a = breezeAt(1000, 0, breeze);
+    const b = breezeAt(1000, 1, breeze);
+    expect(a.phase).not.toBeCloseTo(b.phase);
+    expect(a.gust).toBeCloseTo(b.gust);
+    // Plant 0 completes one sway in the shortest period; the gust stays within its share around 1.
+    expect(breezeAt(2200, 0, breeze).phase - breezeAt(0, 0, breeze).phase).toBeCloseTo(Math.PI * 2);
+    for (let t = 0; t < 9000; t += 500) expect(Math.abs(breezeAt(t, 3, breeze).gust - 1)).toBeLessThanOrEqual(0.45 + 1e-9);
   });
 });

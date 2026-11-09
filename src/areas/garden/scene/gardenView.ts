@@ -31,8 +31,18 @@ export const GARDEN_VIEW = {
   mill: { x: 185, y: 364, scale: 1 },
   composter: { x: 165, y: 615, scale: 1 },
   sprinkler: { x: 1530, y: 380, scale: 1.2 },
-  /** Crops sway around their base like in a breeze: degrees by stage, each plant its own period and phase. */
+  /**
+   * Crops sway in a breeze: each plant its own period and phase, all stirred by one slow gust. Degrees by stage are the whole
+   * picture's tilt around its base, used only without WebGL (where crops cannot bend).
+   */
   sway: { sprout: 1.4, grow: 2.2, ripe: 2.8, wilt: 0.8, periodMs: [2400, 3600], gustMs: 9000, gust: 0.4 },
+  /**
+   * Crops bend on their stem (systems/animation/plantBend.ts, owner-approved 2026-11-09), on the sway's rhythm: the soil mound
+   * (`root`, share of the picture's height) stays put, the top from `stiff` up turns without bending, and trails the stem by
+   * `lag` radians. Degrees are the top's lean by stage (the Cloud's, scaled to the Garden's calmer sway). Tuned in the admin's
+   * "Cây đung đưa" page.
+   */
+  bend: { rows: 14, root: 0.1, stiff: 0.62, lag: 0.7, sprout: 2.1, grow: 3.3, ripe: 4.2, wilt: 1.2 },
   /** Changing zone (decision 028): the field slides out sideways and the next one slides in. */
   zoneMove: { px: 420, outMs: 260, inMs: 380 },
   /** The building's name in a small bubble over it while hovered (no signs: owner's ask). */

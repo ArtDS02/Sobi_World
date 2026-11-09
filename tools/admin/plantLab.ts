@@ -1,6 +1,7 @@
-// Admin "Cây đung đưa": how the plants of one area sway — the old whole-picture tilt beside the stem bend (systems/animation/plantBend.ts),
-// or every plant of the area at once — with the bend's numbers tunable live. One area at a time (its own backdrop, plot art and plants;
-// never mixed). Reads only: the numbers the game runs are in code (`CLOUD_VIEW.bend`); "Sao chép số" copies the tuned ones to hand over.
+// Admin "Cây đung đưa": how the plants of one area bend in the breeze (systems/animation/plantBend.ts) — beside the old whole-picture
+// tilt, or every plant of the area at once — with the bend's numbers tunable live. One area at a time (its own backdrop, plot art,
+// plants and numbers; never mixed). Reads only: the numbers the game runs are in code (`CLOUD_VIEW.bend`, `GARDEN_VIEW.bend`);
+// "Sao chép số" copies the tuned line of the area on screen to hand over.
 import * as Phaser from 'phaser';
 import { CLOUD_BACKDROP_ART, CLOUD_PLOT_ART } from '../../src/areas/cloud/logic/art';
 import { FLOWER_LIST } from '../../src/areas/cloud/logic/config/content';
@@ -17,12 +18,11 @@ import './plantLab.css';
 type AreaId = 'cloud' | 'garden';
 interface AreaDef extends LabArea {
   label: string;
-  /** Plants (art ids) that bend in the game today. */
-  live: readonly string[];
-  note: string;
+  /** The bend the game runs in this area, and where it is written. */
+  bend: Tune & { rows: number };
+  source: string;
 }
 
-const B = CLOUD_VIEW.bend;
 const AREAS: Record<AreaId, AreaDef> = {
   cloud: {
     label: '🌸 Sobi Cloud',
@@ -30,8 +30,8 @@ const AREAS: Record<AreaId, AreaDef> = {
     plot: CLOUD_PLOT_ART,
     plants: FLOWER_LIST.map((f) => ({ id: f.id, name: f.nameVi, art: f.art })),
     sway: CLOUD_VIEW.sway,
-    live: B.arts,
-    note: 'Trong game: uốn theo thân đang thử cho các hoa có nhãn "Đang thử"; hoa khác vẫn xoay cứng.',
+    bend: CLOUD_VIEW.bend,
+    source: 'CLOUD_VIEW.bend (src/areas/cloud/scene/cloudView.ts)',
   },
   garden: {
     label: '🌱 Sobi Garden',
@@ -39,16 +39,19 @@ const AREAS: Record<AreaId, AreaDef> = {
     plot: PLOT_ART.soil,
     plants: CROP_LIST.map((c) => ({ id: c.id, name: c.nameVi, art: c.art })),
     sway: GARDEN_VIEW.sway,
-    live: [],
-    note: 'Trong game: Garden chưa bật uốn theo thân (mọi cây vẫn xoay cứng). Ở đây xem trước bằng số của Cloud.',
+    bend: GARDEN_VIEW.bend,
+    source: 'GARDEN_VIEW.bend (src/areas/garden/scene/gardenView.ts)',
   },
 };
 const STAGES: readonly [Stage, string][] = [['sprout', '🌱 Mầm'], ['grow', '🌿 Đang lớn'], ['ripe', '🌼 Chín'], ['wilt', '🥀 Héo']];
 const SPEEDS = [1, 0.5, 0.25];
-const gameTune = (): Tune => ({ root: B.root, stiff: B.stiff, lag: B.lag, sprout: B.sprout, grow: B.grow, ripe: B.ripe, wilt: B.wilt });
+const gameTune = (id: AreaId): Tune => {
+  const b = AREAS[id].bend;
+  return { root: b.root, stiff: b.stiff, lag: b.lag, sprout: b.sprout, grow: b.grow, ripe: b.ripe, wilt: b.wilt };
+};
 
 const images = new Map<string, { asset?: string }>();
-const tunes: Record<AreaId, Tune> = { cloud: gameTune(), garden: gameTune() };
+const tunes: Record<AreaId, Tune> = { cloud: gameTune('cloud'), garden: gameTune('garden') };
 const picked: Record<AreaId, string> = { cloud: AREAS.cloud.plants[0]?.id ?? '', garden: AREAS.garden.plants[0]?.id ?? '' };
 const ui = { area: 'cloud' as AreaId, q: '', copied: false };
 const state: PlantLabState = { area: AREAS.cloud, plant: picked.cloud, stage: 'ripe', view: 'compare', allBend: true, speed: 1, gust: true, stem: false, tune: tunes.cloud, images };
@@ -76,7 +79,7 @@ function grid(): string {
       const on = state.view === 'compare' && p.id === state.plant;
       return `<button class="rl-card${on ? ' on' : ''}" data-plant="${esc(p.id)}" title="${esc(p.id)}">
         <span class="rl-thumb">${img ? `<img src="${esc(img)}" loading="lazy" alt="">` : '❔'}</span>
-        <b>${esc(p.name)}</b><small>${a.live.includes(p.art) ? '<em class="pl-live">Đang thử</em>' : 'Xoay cứng'}</small></button>`;
+        <b>${esc(p.name)}</b><small>${esc(p.id)}</small></button>`;
     })
     .join('');
   return cards || '<p class="rl-empty">Không có cây phù hợp.</p>';
@@ -86,7 +89,7 @@ function sidebar(): string {
   const a = AREAS[ui.area];
   const tabs = (Object.keys(AREAS) as AreaId[]).map((id) => `<button class="rl-tab${ui.area === id ? ' on' : ''}" data-area="${id}">${AREAS[id].label} <i>${AREAS[id].plants.length}</i></button>`).join('');
   return `<div class="rl-tabs">${tabs}</div>
-    <p class="pl-status">${esc(a.note)}</p>
+    <p class="pl-status">Trong game: mọi cây của khu này uốn theo thân. Số đang chạy: <code>${esc(a.source)}</code>.</p>
     <input class="rl-search" type="search" placeholder="Tìm cây theo tên hoặc id…" value="${esc(ui.q)}" data-search>
     <button class="rl-all${state.view === 'all' ? ' on' : ''}" data-all>🌾 Cả khu — xem tất cả cây</button>
     <div class="rl-grid">${grid()}</div>`;
@@ -153,11 +156,13 @@ function mount(host: HTMLElement) {
   (window as unknown as { plantLab?: { game: Phaser.Game; state: PlantLabState } }).plantLab = { game, state };
 }
 
-/** The tuned numbers as the line of `CLOUD_VIEW.bend` in src/areas/cloud/scene/cloudView.ts. */
+/** The tuned numbers as the `bend` line of the area on screen, with where it goes. */
 function numbers(): string {
+  const a = AREAS[ui.area];
   const t = state.tune;
   const r = (v: number) => Number(v.toFixed(2));
-  return `bend: { arts: ${JSON.stringify([...B.arts]).replaceAll('"', "'").replaceAll(',', ', ')} as readonly string[], rows: ${B.rows}, root: ${r(t.root)}, stiff: ${r(t.stiff)}, lag: ${r(t.lag)}, sprout: ${r(t.sprout)}, grow: ${r(t.grow)}, ripe: ${r(t.ripe)}, wilt: ${r(t.wilt)} },`;
+  return `// ${a.source}
+bend: { rows: ${a.bend.rows}, root: ${r(t.root)}, stiff: ${r(t.stiff)}, lag: ${r(t.lag)}, sprout: ${r(t.sprout)}, grow: ${r(t.grow)}, ripe: ${r(t.ripe)}, wilt: ${r(t.wilt)} },`;
 }
 
 export function renderPlantLab(root: HTMLElement) {
@@ -176,7 +181,7 @@ export function renderPlantLab(root: HTMLElement) {
         <div class="rl-head"></div>
         <div class="rl-stage"></div>
         <div class="rl-toolbar"></div>
-        <p class="rl-note">Uốn theo thân: ụ đất dưới cùng (<b>gốc đứng yên</b>) không động, thân cong dần lên trên, phần từ <b>bông cứng từ</b> trở lên chỉ nghiêng và dời theo thân (không méo), ngọn đổi chiều chậm hơn thân (<b>ngọn trễ nhịp</b>). Nhịp và gió giật giống hệt trong game. Kéo thanh trượt chỉ để xem thử, không lưu: số chạy trong game nằm ở <code>CLOUD_VIEW.bend</code> (<code>src/areas/cloud/scene/cloudView.ts</code>).</p>
+        <p class="rl-note">Uốn theo thân: ụ đất dưới cùng (<b>gốc đứng yên</b>) không động, thân cong dần lên trên, phần từ <b>bông cứng từ</b> trở lên chỉ nghiêng và dời theo thân (không méo), ngọn đổi chiều chậm hơn thân (<b>ngọn trễ nhịp</b>). Nhịp và gió giật giống hệt trong game. Kéo thanh trượt chỉ để xem thử, không lưu: số chạy trong game của mỗi khu ghi ở dòng trạng thái bên trái; "Sao chép số" chép đúng dòng của khu đang xem.</p>
       </div>
     </section>`;
   const q = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
@@ -199,7 +204,7 @@ export function renderPlantLab(root: HTMLElement) {
     if (d.stage) state.stage = d.stage as Stage;
     if (d.speed) state.speed = Number(d.speed);
     if (d.bend) state.allBend = d.bend === '1';
-    if (t.hasAttribute('data-reset')) Object.assign(state.tune, gameTune());
+    if (t.hasAttribute('data-reset')) Object.assign(state.tune, gameTune(ui.area));
     if (t.hasAttribute('data-copy')) {
       const text = numbers();
       if (navigator.clipboard) void navigator.clipboard.writeText(text).catch(() => window.prompt('Sao chép dòng này:', text));

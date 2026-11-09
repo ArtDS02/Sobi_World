@@ -1,9 +1,9 @@
 // The stage of the admin "Cây đung đưa" page (plantLab.ts): one area's plants on that area's backdrop and plot art, either one plant
 // twice side by side (the old whole-picture tilt on the left, the stem bend on the right, same rhythm) or every plant of the area at
-// once. Draws what `PlantLabState` says each frame; the sway rhythm and the bend are the game's own (cloudFx / gardenField formulas,
-// systems/animation/plantBend.ts, ui/world/bentPlant.ts).
+// once. Draws what `PlantLabState` says each frame with the game's own breeze and bend (systems/animation/plantBend.ts,
+// ui/world/bentPlant.ts).
 import * as Phaser from 'phaser';
-import { bendRows } from '../../src/systems/animation';
+import { bendRows, breezeAt } from '../../src/systems/animation';
 import { BentPlant } from '../../src/ui/world/bentPlant';
 
 export type Stage = 'sprout' | 'grow' | 'ripe' | 'wilt';
@@ -50,7 +50,6 @@ interface Slot {
 }
 
 const ROWS = 14;
-const TAU = Math.PI * 2;
 
 export class PlantLabScene extends Phaser.Scene {
   private slots: Slot[] = [];
@@ -163,9 +162,9 @@ export class PlantLabScene extends Phaser.Scene {
     sl.img.setVisible(true).setPosition(it.x, it.y).setScale(scale).setDepth(11 + i * 2);
     // The game's rhythm: each plant its own period and phase, all stirred by one slow gust.
     const sw = area.sway;
-    const gust = this.s.gust ? 1 + Math.sin((this.clock / sw.gustMs) * TAU) * sw.gust : 1;
-    const period = sw.periodMs[0]! + ((it.k * 0.618) % 1) * (sw.periodMs[1]! - sw.periodMs[0]!);
-    const phase = (this.clock / period) * TAU + it.k * 1.7;
+    const breeze = breezeAt(this.clock, it.k, sw);
+    const phase = breeze.phase;
+    const gust = this.s.gust ? breeze.gust : 1;
     if (!it.bend) {
       sl.bent.off();
       sl.img.setAngle(Math.sin(phase) * sw[stage] * gust);
