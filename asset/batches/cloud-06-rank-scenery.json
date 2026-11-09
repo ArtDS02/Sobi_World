@@ -1,0 +1,140 @@
+{
+  "id": "cloud-06-rank-scenery",
+  "area": "cloud",
+  "title": "Cảnh theo bậc nâng cấp tầng mây: viền hoa, lối lát, 10 vật mốc, đèn, sinh vật, thác, vầng sáng",
+  "decisions": "Decision 056 (plot upgrade ranks). Layers shown by rank over the Cloud scene (CLOUD_SCENERY in cloudView.ts); manifest rows scn_cloud_* exist as placeholders, sizes from scripts/assets/sizes.ts. Each asset stands alone on the flat grey. Landmarks are themed on vi.cloud.tierNames and share one canvas 280x300 standing on the bottom edge. scn_cloud_halo is a soft glow that the game blends additively; if a flat-grey cut cannot keep its softness it is better drawn in code (note for triage). No rank border on the art: the game draws the rank frame.",
+  "sheets": [
+    {
+      "name": "CR1",
+      "title": "Viền hoa, lối lát, đèn, sinh vật mây",
+      "board": "item",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "item"
+      ],
+      "cells": [
+        {
+          "stem": "scn_cloud_border",
+          "desc": "a low wide edging of small pastel flowers and leaves, one long horizontal strip, repeatable look Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_path",
+          "desc": "five soft pale-lilac round stepping stones in a gentle curve, like pressed cloud Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_lanterns",
+          "desc": "two slim wooden lantern posts far apart at the left and right ends with warm yellow paper lanterns on top, nothing between them Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_critter",
+          "desc": "a tiny round cloud-puff creature with two dot eyes, sitting, friendly Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "CR2",
+      "title": "Vật mốc tầng 1-5",
+      "board": "building",
+      "grid": [
+        1,
+        5
+      ],
+      "fit": "shared",
+      "size": [
+        280,
+        300
+      ],
+      "views": [
+        "building"
+      ],
+      "cells": [
+        {
+          "stem": "scn_cloud_landmark_01",
+          "desc": "a tiny glass greenhouse arch with climbing vines Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_landmark_02",
+          "desc": "a rainbow-coloured archway of soft cloud Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_landmark_03",
+          "desc": "a slim sunset-orange lantern tower Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_landmark_04",
+          "desc": "a giant dandelion-fluff globe on a stem Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_landmark_05",
+          "desc": "a jade-green open gazebo with a round roof Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "CR3",
+      "title": "Vật mốc tầng 6-10",
+      "board": "building",
+      "grid": [
+        1,
+        5
+      ],
+      "fit": "shared",
+      "size": [
+        280,
+        300
+      ],
+      "views": [
+        "building"
+      ],
+      "cells": [
+        {
+          "stem": "scn_cloud_landmark_06",
+          "desc": "a small blossom tree with pink petals falling Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_landmark_07",
+          "desc": "a little brass star-gazing telescope on a tripod Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_landmark_08",
+          "desc": "a round stone sundial with a crescent moon mark Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_landmark_09",
+          "desc": "a golden bell hanging from a wooden frame Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_landmark_10",
+          "desc": "a small summit flag on a cloud peak Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "CR4",
+      "title": "Thác mây + vầng sáng",
+      "board": "sky",
+      "grid": [
+        1,
+        2
+      ],
+      "fit": "each",
+      "views": [
+        "item"
+      ],
+      "cells": [
+        {
+          "stem": "scn_cloud_waterfall",
+          "desc": "a soft cascade of pale-blue cloud water pouring from a small cloud ledge, white streaks, foamy base Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "scn_cloud_halo",
+          "desc": "a very soft warm-white round glow with a few faint rays, no hard edge Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    }
+  ]
+}

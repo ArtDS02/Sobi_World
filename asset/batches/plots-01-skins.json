@@ -1,0 +1,136 @@
+{
+  "id": "plots-01-skins",
+  "area": "cloud",
+  "title": "Mẫu khuông: 4 mẫu x (ô mây, đất khô, đất ướt)",
+  "decisions": "Decision 056. Same empty bed as the plain plot art (plot_cloud, plot_soil, plot_soil_wet): 152x108, three-quarter view, nothing grows on it. The game draws the rank frame; no border in the art.",
+  "sheets": [
+    {
+      "name": "K1",
+      "title": "Mẫu verdant",
+      "board": "building",
+      "grid": [
+        1,
+        3
+      ],
+      "fit": "shared",
+      "size": [
+        152,
+        108
+      ],
+      "views": [
+        "plot"
+      ],
+      "notes": "All three are the same empty bed of one skin, the same size and shape, same colours and theme. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "skin_verdant_cloud",
+          "desc": "Cloud bed: a puffy bed of mossy green cloud with tiny ferns and clover"
+        },
+        {
+          "stem": "skin_verdant_soil",
+          "desc": "Dry soil bed: a tilled soil bed with a low frame, soil with leaf litter and small roots, tinted to the theme"
+        },
+        {
+          "stem": "skin_verdant_soil_wet",
+          "desc": "Watered soil bed: the same dry bed but darker and glistening wet, soil with leaf litter and small roots"
+        }
+      ]
+    },
+    {
+      "name": "K2",
+      "title": "Mẫu pearl_sea",
+      "board": "building",
+      "grid": [
+        1,
+        3
+      ],
+      "fit": "shared",
+      "size": [
+        152,
+        108
+      ],
+      "views": [
+        "plot"
+      ],
+      "notes": "All three are the same empty bed of one skin, the same size and shape, same colours and theme. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "skin_pearl_sea_cloud",
+          "desc": "Cloud bed: a puffy bed of pale aqua cloud with foam curls and pearl-white beads"
+        },
+        {
+          "stem": "skin_pearl_sea_soil",
+          "desc": "Dry soil bed: a tilled soil bed with a low frame, wet-sand soil with small shells, tinted to the theme"
+        },
+        {
+          "stem": "skin_pearl_sea_soil_wet",
+          "desc": "Watered soil bed: the same dry bed but darker and glistening wet, wet-sand soil with small shells"
+        }
+      ]
+    },
+    {
+      "name": "K3",
+      "title": "Mẫu crystal",
+      "board": "building",
+      "grid": [
+        1,
+        3
+      ],
+      "fit": "shared",
+      "size": [
+        152,
+        108
+      ],
+      "views": [
+        "plot"
+      ],
+      "notes": "All three are the same empty bed of one skin, the same size and shape, same colours and theme. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "skin_crystal_cloud",
+          "desc": "Cloud bed: a puffy bed of lilac cloud with faceted translucent crystal shards around the rim"
+        },
+        {
+          "stem": "skin_crystal_soil",
+          "desc": "Dry soil bed: a tilled soil bed with a low frame, dark slate soil with glinting crystal chips, tinted to the theme"
+        },
+        {
+          "stem": "skin_crystal_soil_wet",
+          "desc": "Watered soil bed: the same dry bed but darker and glistening wet, dark slate soil with glinting crystal chips"
+        }
+      ]
+    },
+    {
+      "name": "K4",
+      "title": "Mẫu starry",
+      "board": "building",
+      "grid": [
+        1,
+        3
+      ],
+      "fit": "shared",
+      "size": [
+        152,
+        108
+      ],
+      "views": [
+        "plot"
+      ],
+      "notes": "All three are the same empty bed of one skin, the same size and shape, same colours and theme. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "skin_starry_cloud",
+          "desc": "Cloud bed: a puffy bed of deep indigo cloud sprinkled with tiny stars and a crescent edge"
+        },
+        {
+          "stem": "skin_starry_soil",
+          "desc": "Dry soil bed: a tilled soil bed with a low frame, soil dusted with soft star sparkle, tinted to the theme"
+        },
+        {
+          "stem": "skin_starry_soil_wet",
+          "desc": "Watered soil bed: the same dry bed but darker and glistening wet, soil dusted with soft star sparkle"
+        }
+      ]
+    }
+  ]
+}
