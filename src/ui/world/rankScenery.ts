@@ -6,6 +6,9 @@ import { driftPose, frameColor, sceneryMotion, type RankFrame, type SceneryLayer
 
 type Img = Phaser.GameObjects.Image;
 
+/** What a plot skin asks of the scenery (core/config/plotSkins.ts SkinTheme). */
+export type SceneryTheme = { scenery: number; frame: number; particles: 'petal' | 'firefly' | 'both' | 'none' };
+
 interface Drawn {
   layer: SceneryLayer;
   /** One image per art id (landmarks have one per group; the others one). */
@@ -41,19 +44,26 @@ export class RankScenery {
   }
 
   /** Shows the layers of `rank` for group `group` (a landmark only for its own tier / zone). */
-  draw(group: number, rank: number) {
+  draw(group: number, rank: number, theme: SceneryTheme | null = null) {
     this.group = group;
     this.rank = rank;
-    this.drawFrame(rank);
+    this.drawFrame(rank, theme?.frame);
     for (const { layer, images } of this.drawn) {
-      const on = layer.minRank <= rank && rank <= (layer.maxRank ?? 5);
-      images.forEach((img, i) => img.setVisible(on && (layer.drift !== undefined || images.length === 1 || i === group)));
+      const parts = theme?.particles ?? 'both';
+      const wanted = layer.kind === 'petal' ? parts === 'petal' || parts === 'both' : layer.kind === 'firefly' ? parts === 'firefly' || parts === 'both' : true;
+      const on = wanted && layer.minRank <= rank && rank <= (layer.maxRank ?? 5);
+      images.forEach((img, i) => {
+        img.setVisible(on && (layer.drift !== undefined || images.length === 1 || i === group));
+        // The skin's mood tints the whole scenery so it agrees with the plots; additive glows keep their own light.
+        if (theme && !layer.additive) img.setTint(theme.scenery);
+        else img.clearTint();
+      });
     }
   }
 
-  private drawFrame(rank: number) {
+  private drawFrame(rank: number, themed?: number) {
     const f = this.frameRect;
-    const colour = frameColor(rank);
+    const colour = frameColor(rank) === null ? null : (themed ?? frameColor(rank));
     this.frame?.clear();
     if (!f || colour === null) return;
     this.frame?.lineStyle(10, colour, 0.85).strokeRoundedRect(f.x, f.y, f.width, f.height, 36);

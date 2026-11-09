@@ -1,7 +1,7 @@
 // content/shared/plotSkins.json — the plot skins (decision 056): permanent, cosmetic-only looks for a cloud tier / garden zone,
 // forged once for materials plus Sobi Coin OR Gems (the player chooses). Nothing here changes yield, speed or Codex.
 import { z } from 'zod';
-import { itemId, nonNeg, posInt } from '../fields';
+import { color, itemId, nonNeg, posInt } from '../fields';
 
 /** What opens a skin's blueprint, read from the world save without knowing the Areas (the path is read as plain data). */
 const unlockSchema = z.discriminatedUnion('kind', [
@@ -30,6 +30,17 @@ export const plotSkinsFileSchema = z
           coins: posInt,
           gems: posInt,
           unlock: unlockSchema,
+          /** The mood the skin gives the WHOLE cloud tier / garden zone it dresses, so plots, backdrop, frame and scenery agree (decision 056). */
+          theme: z.strictObject({
+            /** Tint over the backdrop of the tier / zone. */
+            backdrop: color,
+            /** Tint over every scenery layer (border, path, landmarks, lanterns, critter, accents, particles). */
+            scenery: color,
+            /** Colour of the rank frame around the plots. */
+            frame: color,
+            /** Which drifting particles show at rank 5: falling petals / leaves, wandering fireflies, both, or none. */
+            particles: z.enum(['petal', 'firefly', 'both', 'none']),
+          }),
         }),
       )
       .min(1),

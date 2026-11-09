@@ -1,5 +1,4 @@
-// Per-session UI around the farm (spec §9.2, §9.3, §9.5, §10.3): the tutorial step, the export
-// reminder (once per session), the save error / recovered banner, the backup list, the away
+// Per-session UI around the farm (spec §9.2, §9.3, §9.5, §10.3): the tutorial step, the save error / recovered banner, the backup list, the away
 // summary and the recovery screen. State here is never saved, except through actions.
 import type { SummaryLine } from '../../../core/area-registry/registry';
 import type { GameEvent } from '../logic/events';
@@ -16,7 +15,6 @@ import { el } from '../../../ui/dom';
 import { renderRecoveryScreen } from './screens/statusScreen';
 import {
   backupsVm,
-  exportReminderDue,
   settingsVm,
   type BackupsState,
   type SettingsVm,
@@ -47,7 +45,6 @@ export interface SessionDeps {
 
 export function createSession(d: SessionDeps) {
   let step = 0;
-  let reminderDismissed = false;
   let backups: BackupsState = d.hasBackups ? null : undefined;
   let lastSaveError = false;
   let recoveredUntil = 0;
@@ -94,28 +91,8 @@ export function createSession(d: SessionDeps) {
       lastSaveError = snap.saveError;
       if (snap.saveError) return banner(vi.saveStatus.error, 'alert');
       if (d.now() < recoveredUntil) return banner(vi.saveStatus.recovered, 'status');
-      const save = snap.save;
-      if (!save || snap.readOnly || reminderDismissed || !exportReminderDue(save, d.now())) {
-        return null;
-      }
-      return el(
-        'div',
-        { class: 'c-banner', attrs: { role: 'status' } },
-        el('span', { text: vi.settings.exportReminder }),
-        button(vi.settings.export, () => {
-          reminderDismissed = true;
-          d.settings.exportSave();
-          d.rerender();
-        }),
-        button(
-          vi.action.close,
-          () => {
-            reminderDismissed = true;
-            d.rerender();
-          },
-          'c-button--ghost',
-        ),
-      );
+      // No export nag: exporting is manual (Settings); the stale-backup note lives there too.
+      return null;
     },
 
     /** §9.5: one summary modal for a long catch-up. */
@@ -140,14 +117,6 @@ export function createSession(d: SessionDeps) {
     },
   };
 }
-
-const button = (text: string, onClick: () => void, variant = '') =>
-  el('button', {
-    class: `c-button ${variant}`.trim(),
-    text,
-    attrs: { type: 'button' },
-    on: { click: onClick },
-  });
 
 const banner = (text: string, role: 'alert' | 'status') =>
   el('div', { class: 'c-banner', attrs: { role } }, el('span', { text }));

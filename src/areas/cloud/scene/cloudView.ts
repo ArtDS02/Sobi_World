@@ -2,7 +2,9 @@ import { CLOUD_PLOT_ART, type FlowerStage } from '../logic/art';
 import type { PlotView } from '../logic/derived';
 import { PLOTS_PER_TIER } from '../logic/config/content';
 import { nn, type RankFrame, type SceneryLayer } from '../../../systems/animation/rankScenery';
-import { skinArtId } from '../../../core/config/plotSkins';
+import { skinArtId, skinTheme } from '../../../core/config/plotSkins';
+
+export { skinTheme };
 
 // Look of the Cloud scene (design px, depths, colours, motion). What grows where is content and state; these are the drawing
 // choices of the scene. Positions are measured on the backdrop (bg_cloud, the owner's mock-up with the interactive parts

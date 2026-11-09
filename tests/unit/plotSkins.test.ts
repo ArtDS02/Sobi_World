@@ -1,6 +1,7 @@
 // Decision 056: forging plot skins — the content rules, the blueprint conditions, paying in coins or Gems through the ledger,
 // applying a skin to a cloud tier / garden zone, the forge's card data, and the world save's `cosmetics`.
 import { describe, expect, it } from 'vitest';
+import plotSkinsRaw from '../../content/shared/plotSkins.json';
 import { plotSkinsFileSchema } from '../../content/schemas/shared/plotSkins';
 import { GOALS } from '../../src/app/goals';
 import { SAVE_CODEC } from '../../src/app/saveCodec';
@@ -12,7 +13,7 @@ import { gardenArea } from '../../src/areas/garden';
 import { applyZoneSkin } from '../../src/areas/garden/logic/actions/buildings';
 import { sceneState as gardenScene } from '../../src/areas/garden/logic/derived';
 import { gardenOf } from '../../src/areas/garden/logic/save/lens';
-import { PLOT_SKIN_RULES, SKIN_ART_IDS, skinArtId } from '../../src/core/config/plotSkins';
+import { PLOT_SKIN_RULES, SKIN_ART_IDS, skinArtId, skinTheme } from '../../src/core/config/plotSkins';
 import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { goalsEventsToWorld } from '../../src/core/goals/events';
 import { skinStatus, unlockMet } from '../../src/core/plots/skins';
@@ -48,7 +49,7 @@ describe('content', () => {
     expect([skin('starry').coins, skin('starry').gems]).toEqual([30_000, 60]);
   });
   it('the schema refuses a price that is not gems x gemRate, and a duplicate id', () => {
-    const base = structuredClone(PLOT_SKIN_RULES);
+    const base = structuredClone(plotSkinsRaw);
     expect(plotSkinsFileSchema.safeParse(base).success).toBe(true);
     const off = structuredClone(base);
     off.skins[0]!.coins += 1;
@@ -60,6 +61,25 @@ describe('content', () => {
   it('every skin has a cloud bed and a dry and a watered soil bed', () => {
     expect(SKIN_ART_IDS).toHaveLength(27);
     expect(skinArtId('crystal', 'soil_wet')).toBe('skin_crystal_soil_wet');
+  });
+});
+
+describe('skin themes (the whole tier / zone follows the skin)', () => {
+  it('every skin has a theme with a backdrop tint, a scenery tint, a frame colour and its particles', () => {
+    for (const s of PLOT_SKIN_RULES.skins) {
+      const t = skinTheme(s.id)!;
+      expect(t, s.id).not.toBeNull();
+      for (const c of [t.backdrop, t.scenery, t.frame]) expect(c).toBeGreaterThanOrEqual(0);
+      expect(['petal', 'firefly', 'both', 'none']).toContain(t.particles);
+    }
+  });
+  it('the plain look has no theme (the scene keeps its own tint), and an unknown skin neither', () => {
+    expect(skinTheme(null)).toBeNull();
+    expect(skinTheme(undefined)).toBeNull();
+    expect(skinTheme('nope')).toBeNull();
+  });
+  it('themes differ per skin so the tiers do not all look alike', () => {
+    expect(new Set(PLOT_SKIN_RULES.skins.map((s) => skinTheme(s.id)!.backdrop)).size).toBe(PLOT_SKIN_RULES.skins.length);
   });
 });
 

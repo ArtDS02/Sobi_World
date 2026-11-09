@@ -19,7 +19,7 @@ import { CloudBuildings } from './cloudBuildings';
 import { CloudDrone } from './cloudDrone';
 import { CloudTierBar, rankBadgeOf } from './cloudTierBar';
 import { RankScenery } from '../../../ui/world/rankScenery';
-import { bedArt, CLOUD_DESIGN, CLOUD_FRAME, CLOUD_SCENERY, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
+import { bedArt, skinTheme, CLOUD_DESIGN, CLOUD_FRAME, CLOUD_SCENERY, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
 
 export const CLOUD_SCENE_KEY = 'cloud';
 
@@ -292,8 +292,8 @@ export class CloudScene extends Phaser.Scene {
   /** The tier bar and the tier's colour over the shared backdrop. */
   private drawTierBar(owned: number, state: SceneState) {
     const r = state.ranks[this.tier];
-    this.scenery.draw(this.tier, r && plotIndex(this.tier, 0) < owned ? r.rank : 1);
+    this.scenery.draw(this.tier, r && plotIndex(this.tier, 0) < owned ? r.rank : 1, skinTheme(state.skins[this.tier]));
     this.bar.draw(this.tier, owned, r ? rankBadgeOf(r) : null);
-    this.backdrop.setTint(CLOUD_VIEW.tierTints[this.tier] ?? 0xffffff);
+    this.backdrop.setTint(skinTheme(state.skins[this.tier])?.backdrop ?? CLOUD_VIEW.tierTints[this.tier] ?? 0xffffff);
   }
 }

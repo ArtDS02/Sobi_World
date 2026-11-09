@@ -19,6 +19,7 @@ import { GardenField } from './gardenField';
 import { harvestFly, mist, NameTip, ripenSparkle, sprayBurst } from './gardenFx';
 import { GardenLife } from './gardenLife';
 import { RankScenery } from '../../../ui/world/rankScenery';
+import { skinTheme } from '../../../core/config/plotSkins';
 import { GARDEN_DESIGN, GARDEN_FRAME, GARDEN_SCENERY, GARDEN_VIEW, plotIndex } from './gardenView';
 
 export const GARDEN_SCENE_KEY = 'garden';
@@ -243,8 +244,9 @@ export class GardenScene extends Phaser.Scene {
     this.drone.check(state, this.zone, this.moving);
     const { harvested, ripened } = this.field.changes(this.zone, state.plots);
     this.field.draw(this.zone, state.plots, state.zoneSkins[this.zone] ?? null);
-    this.backdrop.setTint(GARDEN_VIEW.zoneTints[this.zone] ?? 0xffffff);
-    this.scenery.draw(this.zone, state.zoneRanks[this.zone] ?? 1);
+    const theme = skinTheme(state.zoneSkins[this.zone]);
+    this.backdrop.setTint(theme?.backdrop ?? GARDEN_VIEW.zoneTints[this.zone] ?? 0xffffff);
+    this.scenery.draw(this.zone, state.zoneRanks[this.zone] ?? 1, theme);
     if (!calm) this.celebrate(harvested, ripened);
     this.drawSprinkler(state.sprinkler);
     this.setWorkshop('mill', state.mill);
