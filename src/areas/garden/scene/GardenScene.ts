@@ -156,6 +156,7 @@ export class GardenScene extends Phaser.Scene {
     const v = GARDEN_VIEW;
     const img = this.fixed(at.x, at.y, art).setOrigin(0.5, 1).setScale(at.scale).setDepth(v.depth.building + at.y * 0.01);
     img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: 20 });
+    if (id === 'shop') img.setFlipX(true); // the stall stands at the right edge: it faces left, toward the garden
     img.on(Phaser.Input.Events.POINTER_DOWN, () => !this.deps.paused() && this.deps.onPick({ kind: 'building', building: id }));
     const swell = (on: boolean) => {
       this.tweens.killTweensOf(img);

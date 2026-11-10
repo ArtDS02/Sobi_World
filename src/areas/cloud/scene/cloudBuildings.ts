@@ -81,6 +81,7 @@ export class CloudBuildings {
     const v = CLOUD_VIEW;
     const img = this.d.fixed(at.x, at.y, art).setOrigin(0.5, 1).setScale(at.scale).setDepth(v.depth.building + at.y * 0.01);
     img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: 20 });
+    if (id === 'shop') img.setFlipX(true); // the stall stands on the right bank: it faces left, toward the island
     img.on(Phaser.Input.Events.POINTER_DOWN, () => !this.d.paused() && this.d.onPick(id));
     this.hoverAnswer(img, id);
     const side = id === 'cauldron' ? -0.34 : 0.34;
