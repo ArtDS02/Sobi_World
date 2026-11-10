@@ -1,0 +1,24 @@
+{
+  "id": "cloud-10-caterpillar",
+  "area": "cloud",
+  "title": "Sâu trang trí của Sobi Cloud: 4 tư thế (trườn duỗi, trườn co, bám thân hoa, bị chim bắt)",
+  "decisions": "Decision 057 (B4): the decorative caterpillar of the Cloud (cloudBird.ts: appears on a growing / ripe flower, wriggles and inches along the stem, the cloud bird flies over and pecks it away; no gameplay) is a 30x16 code-drawn blob today (texture key cloud_fx_pest, no manifest row). This batch gives it real art in four poses the scene logic already has a moment for. No manifest id exists to keep, so four NEW rows (section props, 96x64) are added on delivery: prop_cloud_caterpillar_a / _b (the two frames of the inching loop, swapped by code), _perch (resting on the stem while the bird has not noticed it), _caught (the instant the bird pecks it, before it pops away). Drawn facing RIGHT; the scene flips it at random. Shown at about 45x30 px, so shapes must stay simple and readable. Original design: a plain garden caterpillar in the cloud palette, no resemblance to any existing character.",
+  "sheets": [
+    {
+      "name": "C",
+      "title": "Sâu mây: 4 tư thế",
+      "board": "creature",
+      "grid": [1, 4],
+      "fit": "shared",
+      "size": [96, 64],
+      "views": [],
+      "notes": "All four cells are the SAME tiny cute caterpillar drawn at the SAME scale and in the same colours, body in pure side view FACING RIGHT: a chubby body of five or six round segments in soft mint green with a paler cream belly, tiny lilac spots on its back like little clouds, two short curled antennae, one big friendly dark eye with a white highlight, rosy cheek, a tiny smile, six stubby feet. Rounded, chunky, toy-like, very simple shapes that still read when the sprite is only 45 pixels wide. It floats in empty space: no leaf, no stem, no flower, no ground, no cloud, no shadow under it. Cute, never gross or scary. Original design, no resemblance to any character of any other game, film, book or brand.",
+      "cells": [
+        { "stem": "prop_cloud_caterpillar_a", "desc": "Crawling, stretched out long and low: the body is almost flat, head reaching forward" },
+        { "stem": "prop_cloud_caterpillar_b", "desc": "Crawling, bunched up: the middle of the body arched up into a high hump like an inchworm, head and tail close together" },
+        { "stem": "prop_cloud_caterpillar_perch", "desc": "Resting: the front half raised upright and the back half flat, looking up happily, antennae relaxed" },
+        { "stem": "prop_cloud_caterpillar_caught", "desc": "Startled: curled into a loose C shape, eye wide, mouth a small round O, antennae sticking straight up, two tiny surprise lines above the head" }
+      ]
+    }
+  ]
+}

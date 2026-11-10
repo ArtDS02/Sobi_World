@@ -4,6 +4,9 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
+## Cloud caterpillar (decision 057, B4)
+To render: batch `cloud-10-caterpillar`, 1 sheet **C** (4 poses, 96×64 each): `prop_cloud_caterpillar_a`, `_b`, `_perch`, `_caught`. Prompt in `asset/batches/cloud-10-caterpillar.md`, files in `art_inbox/.batch/cloud-10-caterpillar/`. Today the caterpillar is a 30×16 code-drawn blob (`cloud_fx_pest` in `cloudFx.ts`, no manifest row). On delivery: add the 4 rows (section props) and point `cloudBird.ts` at them (inching = swap `_a` / `_b`, `_perch` while resting, `_caught` when pecked), keeping the code blob as the fallback.
+
 ## Plot skins — second stage (decision 056)
 Delivered 2026-11-10 (46 images wired): beds of Hoa Đào, Sương Mai, Đêm Trăng, Hoàng Hôn; backdrops of 8 skins (all but Đêm Trăng) for Cloud + Garden; Cloud spring + cauldron of all 9 skins.
 **Still to render (re-do):**
