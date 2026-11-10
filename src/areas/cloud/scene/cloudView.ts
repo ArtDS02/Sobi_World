@@ -115,6 +115,17 @@ export function plotCentre(slot: number): { x: number; y: number } {
   return { x: field.x + (slot % columns) * field.stepX, y: field.y + Math.floor(slot / columns) * field.stepY };
 }
 
+/** The tier a fresh look at the Cloud opens on: the highest one with an owned plot. */
+export const topOwnedTier = (owned: number): number => Math.floor((owned - 1) / PLOTS_PER_TIER);
+
+/** What a click on the canvas was on. */
+export type CloudPick =
+  | { kind: 'plot'; index: number }
+  | { kind: 'locked' }
+  | { kind: 'rank' }
+  | { kind: 'building'; building: 'spring' | 'cauldron' }
+  | { kind: 'ground' };
+
 /** The plot index of `slot` on `tier`. */
 export const plotIndex = (tier: number, slot: number): number => tier * PLOTS_PER_TIER + slot;
 

@@ -1,11 +1,18 @@
 import type { CropStage } from '../logic/art';
-import { PLOTS_PER_ZONE } from '../logic/config/content';
+import { PLOTS_PER_ZONE, type BuildingId } from '../logic/config/content';
 import type { PlotView } from '../logic/derived';
 import type { RankFrame, SceneryLayer } from '../../../systems/animation/rankScenery';
 
 // Look of the Garden scene (design px, depths, colours, motion). What grows where is content and state; these are the
 // drawing choices of the scene. Positions are measured on the backdrop (bg_garden, the owner's mock-up with the
 // interactive parts removed — sheet E of garden-01-scene, GĐ14): backdrop px − 106 = design x, design y = backdrop y.
+/** What a click on the canvas was on. */
+export type GardenPick =
+  | { kind: 'plot'; index: number }
+  | { kind: 'locked' }
+  | { kind: 'building'; building: BuildingId | 'sprinkler' }
+  | { kind: 'ground' };
+
 export const GARDEN_DESIGN = { width: 1600, height: 900 } as const;
 
 export const GARDEN_VIEW = {

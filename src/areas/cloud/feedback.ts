@@ -3,7 +3,8 @@
 import type { AudioKey } from '../../core/config/assetIds';
 import { RECIPES } from '../../core/config/recipes';
 import type { ItemId } from '../../core/config/ids';
-import type { EventBase } from '../../core/events';
+import type { AreaVfx, EventBase } from '../../core/events';
+import { upgradeVfx } from '../../systems/animation/upgradeFx';
 import { formatInt, t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 import { CLOUD_TIERS, FLOWERS } from './logic/config/content';
@@ -12,6 +13,8 @@ import { isCloudEvent } from './logic/events';
 export interface Presentation {
   sound: AudioKey | null;
   toast: string | null;
+  /** A one-shot picture the scene plays (decision 057, B6: the upgrade effect). */
+  vfx?: AreaVfx;
 }
 
 const T = vi.cloud.toast;
@@ -37,7 +40,7 @@ export function cloudPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
     case 'CLOUD_FLOWER_WILTED':
       return { sound: 'notify', toast: t(T.wilted, { count: e.count }) };
     case 'CLOUD_PLOTS_BOUGHT':
-      return { sound: 'level_up', toast: e.tier !== undefined ? t(T.tier, { name: vi.cloud.tierNames[e.tier] ?? '' }) : t(T.plots, { plots: e.plots }) };
+      return { sound: 'level_up', toast: e.tier !== undefined ? t(T.tier, { name: vi.cloud.tierNames[e.tier] ?? '' }) : t(T.plots, { plots: e.plots }), ...(e.tier !== undefined ? { vfx: upgradeVfx({ area: 'cloud', group: e.tier, rank: 1, opened: true }) } : {}) };
     case 'CLOUD_WATER_COLLECTED':
       return { sound: 'water_splash', toast: t(T.water, { quantity: e.quantity }) };
     case 'CLOUD_SPRING_UPGRADED':
@@ -63,7 +66,7 @@ export function cloudPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
     }
     case 'CLOUD_TIER_UPGRADED': {
       const id = CLOUD_TIERS.ids[e.tier - 1] ?? '';
-      return { sound: 'level_up', toast: t(T.rankUp, { tier: vi.cloud.tierNames[e.group] ?? '', rank: e.tier, name: vi.cloud.rankNames[id as keyof typeof vi.cloud.rankNames] ?? id }) };
+      return { sound: 'level_up', toast: t(T.rankUp, { tier: vi.cloud.tierNames[e.group] ?? '', rank: e.tier, name: vi.cloud.rankNames[id as keyof typeof vi.cloud.rankNames] ?? id }), vfx: upgradeVfx({ area: 'cloud', group: e.group, rank: e.tier, opened: false }) };
     }
     case 'CLOUD_SKIN_APPLIED': {
       const group = vi.cloud.tierNames[e.group] ?? '';

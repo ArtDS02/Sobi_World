@@ -142,7 +142,7 @@ export async function start(root: HTMLElement) {
     give: (save, gift, ctx) => AREAS.give(save, gift, ctx),
     keys, sound: (key) => audio.play(key), // the battle and the map cue their own sounds (audio is made below)
   });
-  let director: FeedbackDirector | null = null, adventureScene: AdventureScene | null = null;
+  let director: FeedbackDirector | null = null; const vfxScenes: Pick<AdventureScene, 'playVfx'>[] = []; // each scene plays only its own effects
   const host: WorldHost = {
     setPrompt(next) {
       prompt = next;
@@ -243,13 +243,13 @@ export async function start(root: HTMLElement) {
         reduceMotion: () => host.reduceMotion(),
         paused: () => host.paused(),
       });
-      const adventure = (adventureScene = new AdventureScene({ read: () => overlays.adventureUi.sceneState(), report: overlays.adventureUi.scene, input, reduceMotion: () => host.reduceMotion(), paused: () => host.paused(), image: manifestImages(assets.registry) }));
+      const adventure = new AdventureScene({ read: () => overlays.adventureUi.sceneState(), report: overlays.adventureUi.scene, input, reduceMotion: () => host.reduceMotion(), paused: () => host.paused(), image: manifestImages(assets.registry) });
       const cloud = new CloudScene({
         read: () => overlays.cloudUi.sceneState(),
         onPick: (pick) => overlays.cloudUi.pick(pick),
-        reduceMotion: () => host.reduceMotion(), effects: () => host.effects(),
-        paused: () => host.paused(),
+        reduceMotion: () => host.reduceMotion(), effects: () => host.effects(), paused: () => host.paused(),
       });
+      vfxScenes.push(adventure, cloud, garden);
       farmView = createFarmView(
         stage,
         {
@@ -281,7 +281,7 @@ export async function start(root: HTMLElement) {
     audio,
     toast: mounted.toast,
     away: mounted.showAway,
-    shake: () => settings.getSnapshot().settings.screenShake, areaVfx: (vfx, still) => adventureScene?.playVfx(vfx, still),
+    shake: () => settings.getSnapshot().settings.screenShake, areaVfx: (vfx, still) => vfxScenes.forEach((s) => s.playVfx(vfx, still)),
     other: (event, origin) => {
       if (event.type === 'AREA_UNLOCKED' && origin !== 'catchup') {
         const name = AREAS.get((event as unknown as { areaId: string }).areaId)?.manifest.name.vi ?? '';

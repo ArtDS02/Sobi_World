@@ -9,6 +9,9 @@ import type { SceneryTheme } from './rankScenery';
 
 const PETAL = 'atmo_petal';
 const RAY = 'atmo_ray';
+/** The petal and ray textures, for the upgrade burst (ui/world/upgradeBurst.ts). */
+export const PETAL_TEXTURE = PETAL;
+export const RAY_TEXTURE = RAY;
 const VIGNETTE = 'atmo_vignette';
 
 function canvas(scene: Phaser.Scene, key: string, w: number, h: number, paint: (ctx: CanvasRenderingContext2D) => void) {
@@ -17,6 +20,8 @@ function canvas(scene: Phaser.Scene, key: string, w: number, h: number, paint: (
   paint(tex.getContext());
   tex.refresh();
 }
+
+export const ensureAtmosphereTextures = (scene: Phaser.Scene) => ensureTextures(scene);
 
 function ensureTextures(scene: Phaser.Scene) {
   ensureSoftTextures(scene);

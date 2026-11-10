@@ -22,17 +22,13 @@ import { RankLook } from '../../../ui/world/rankLook';
 import { skinBackdropArt, skinBuildingArt, skinTheme } from '../../../core/config/plotSkins';
 import { themeBuildings } from './gardenSkin';
 import { paintBackdrop } from '../../../ui/world/skinBackdrop';
-import { GARDEN_DESIGN, GARDEN_FRAME, GARDEN_SCENERY, GARDEN_VIEW, plotIndex } from './gardenView';
+import { playUpgradeVfx } from '../../../ui/world/upgradeBurst';
+import type { AreaVfx } from '../../../core/events';
+import { GARDEN_DESIGN, GARDEN_FRAME, GARDEN_SCENERY, GARDEN_VIEW, plotIndex, type GardenPick } from './gardenView';
 
 export const GARDEN_SCENE_KEY = 'garden';
 
-/** What a click on the canvas was on. */
-export type GardenPick =
-  | { kind: 'plot'; index: number }
-  | { kind: 'locked' }
-  | { kind: 'building'; building: BuildingId | 'sprinkler' }
-  | { kind: 'ground' };
-
+export type { GardenPick } from './gardenView';
 export interface GardenSceneDeps {
   /** The garden now (null before the world is loaded or while the Garden is closed). */
   read: () => SceneState | null;
@@ -112,6 +108,14 @@ export class GardenScene extends Phaser.Scene {
     this.scenery.update(time, true, this.deps.reduceMotion(), this.deps.effects());
     if (this.deps.reduceMotion()) this.field.rest();
     else this.field.sway(time);
+  }
+
+  /** The upgrade effect of the FeedbackDirector on the zone on screen (decision 057, B6). */
+  playVfx(vfx: AreaVfx, still: boolean) {
+    if (!this.sys.isActive() || !this.field) return;
+    this.sync(false);
+    const owned = Math.min(PLOTS_PER_ZONE, Math.max(0, (this.deps.read()?.plots.length ?? 0) - this.zone * PLOTS_PER_ZONE));
+    playUpgradeVfx(this, vfx, { area: 'garden', shown: this.moving ? -1 : this.zone, field: GARDEN_FRAME, plots: Array.from({ length: owned }, (_, slot) => this.field.centre(slot)), theme: skinTheme(this.deps.read()?.zoneSkins[this.zone]), mode: this.deps.effects(), still });
   }
 
   /** An image of fixed art (see fixedArt). */

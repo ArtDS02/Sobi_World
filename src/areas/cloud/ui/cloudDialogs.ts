@@ -123,7 +123,7 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
 
   /** The rank upgrade of cloud tier `group` (decision 056): before / after, the cost as have / need, and why the button is off. */
   function openRank(group: number) {
-    openLive(vi.plotTier.upgradeTitle, (w) => tierUpgradeBody(tierRankVm(w, group), () => run((s, c) => upgradeTier(s, { group }, c))));
+    openLive(vi.plotTier.upgradeTitle, (w, close) => tierUpgradeBody(tierRankVm(w, group), () => (run((s, c) => upgradeTier(s, { group }, c)), close()))); // closes so the upgrade effect is seen (decision 057, B6)
   }
 
   /** The plot skin forge (decision 056): forge for coins or Gems, then dress the cloud tier `group` on screen. */

@@ -3,7 +3,8 @@
 import type { AudioKey } from '../../core/config/assetIds';
 import { RECIPES } from '../../core/config/recipes';
 import type { ItemId } from '../../core/config/ids';
-import type { EventBase } from '../../core/events';
+import type { AreaVfx, EventBase } from '../../core/events';
+import { upgradeVfx } from '../../systems/animation/upgradeFx';
 import { formatInt, t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 import { CROPS, GARDEN_TIERS, type BuildingId } from './logic/config/content';
@@ -12,6 +13,8 @@ import { isGardenEvent } from './logic/events';
 export interface Presentation {
   sound: AudioKey | null;
   toast: string | null;
+  /** A one-shot picture the scene plays (decision 057, B6: the upgrade effect). */
+  vfx?: AreaVfx;
 }
 
 const T = vi.garden.toast;
@@ -37,7 +40,7 @@ export function gardenPresentation(e: EventBase, origin: 'action' | 'tick' | 'ca
     case 'GARDEN_CROP_WILTED':
       return { sound: 'notify', toast: t(T.wilted, { count: e.count }) };
     case 'GARDEN_PLOTS_BOUGHT':
-      return { sound: 'level_up', toast: e.zone !== undefined ? t(T.zone, { name: vi.garden.zoneNames[e.zone] ?? '' }) : t(T.plots, { plots: e.plots }) };
+      return { sound: 'level_up', toast: e.zone !== undefined ? t(T.zone, { name: vi.garden.zoneNames[e.zone] ?? '' }) : t(T.plots, { plots: e.plots }), ...(e.zone !== undefined ? { vfx: upgradeVfx({ area: 'garden', group: e.zone, rank: 1, opened: true }) } : {}) };
     case 'GARDEN_SPRINKLER_BOUGHT':
       return { sound: 'level_up', toast: t(T.sprinkler, { level: e.level }) };
     case 'GARDEN_BUILT':
@@ -61,7 +64,7 @@ export function gardenPresentation(e: EventBase, origin: 'action' | 'tick' | 'ca
     }
     case 'GARDEN_ZONE_UPGRADED': {
       const id = GARDEN_TIERS.ids[e.tier - 1] ?? '';
-      return { sound: 'level_up', toast: t(T.rankUp, { zone: vi.garden.zoneNames[e.group] ?? '', rank: e.tier, name: vi.garden.rankNames[id as keyof typeof vi.garden.rankNames] ?? id }) };
+      return { sound: 'level_up', toast: t(T.rankUp, { zone: vi.garden.zoneNames[e.group] ?? '', rank: e.tier, name: vi.garden.rankNames[id as keyof typeof vi.garden.rankNames] ?? id }), vfx: upgradeVfx({ area: 'garden', group: e.group, rank: e.tier, opened: false }) };
     }
     case 'GARDEN_SKIN_APPLIED': {
       const group = vi.garden.zoneNames[e.group] ?? '';

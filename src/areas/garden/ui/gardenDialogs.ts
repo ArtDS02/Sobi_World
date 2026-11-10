@@ -121,7 +121,7 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
 
   /** The rank upgrade of garden zone `group` (decision 056): before / after, the cost as have / need, and why the button is off. */
   function openRank(group: number) {
-    openLive(vi.plotTier.upgradeTitle, (w) => tierUpgradeBody(zoneRankVm(w, group), () => run((s, c) => upgradeZone(s, { group }, c))));
+    openLive(vi.plotTier.upgradeTitle, (w, close) => tierUpgradeBody(zoneRankVm(w, group), () => (run((s, c) => upgradeZone(s, { group }, c)), close()))); // closes so the upgrade effect is seen (decision 057, B6)
   }
 
   /** The plot skin forge (decision 056): forge for coins or Gems, then dress the garden zone `group` on screen. */

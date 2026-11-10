@@ -20,18 +20,13 @@ import { CloudDrone } from './cloudDrone';
 import { CloudTierBar, rankBadgeOf } from './cloudTierBar';
 import { canHarvest, watchHarvestCursor } from '../../../ui/world/harvestCursor';
 import { RankLook } from '../../../ui/world/rankLook';
-import { bedArt, paintBackdrop, skinBackdropArt, skinTheme, CLOUD_DESIGN, CLOUD_FRAME, CLOUD_SCENERY, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
+import { playUpgradeVfx } from '../../../ui/world/upgradeBurst';
+import type { AreaVfx } from '../../../core/events';
+import { bedArt, paintBackdrop, skinBackdropArt, skinTheme, topOwnedTier, CLOUD_DESIGN, CLOUD_FRAME, CLOUD_SCENERY, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers, type CloudPick } from './cloudView';
 
 export const CLOUD_SCENE_KEY = 'cloud';
 
-/** What a click on the canvas was on. */
-export type CloudPick =
-  | { kind: 'plot'; index: number }
-  | { kind: 'locked' }
-  | { kind: 'rank' }
-  | { kind: 'building'; building: 'spring' | 'cauldron' }
-  | { kind: 'ground' };
-
+export type { CloudPick } from './cloudView';
 export interface CloudSceneDeps {
   /** The cloud now (null before the world is loaded or while the Cloud is closed). */
   read: () => SceneState | null;
@@ -43,9 +38,6 @@ export interface CloudSceneDeps {
 }
 
 const KEY = (id: string, textures: Phaser.Textures.TextureManager) => (textures.exists(textureKey(id)) ? textureKey(id) : FALLBACK_PROP_KEY);
-
-/** The tier a fresh look at the Cloud opens on: the highest one with an owned plot. */
-const topOwnedTier = (owned: number): number => Math.floor((owned - 1) / PLOTS_PER_TIER);
 
 export class CloudScene extends Phaser.Scene {
   private plots: PlotSprites[] = [];
@@ -142,6 +134,14 @@ export class CloudScene extends Phaser.Scene {
     this.bird.update(time, delta);
   }
 
+  /** The upgrade effect of the FeedbackDirector on the tier on screen (decision 057, B6); a tier that was just opened is shown first. */
+  playVfx(vfx: AreaVfx, still: boolean) {
+    if (!this.sys.isActive() || this.plots.length === 0) return;
+    this.sync(false);
+    const owned = Math.max(0, (this.deps.read()?.plots.length ?? 0) - plotIndex(this.tier, 0));
+    playUpgradeVfx(this, vfx, { area: 'cloud', shown: this.moving ? -1 : this.tier, field: CLOUD_FRAME, plots: this.plots.slice(0, owned).map((_, slot) => plotCentre(slot)), theme: skinTheme(this.deps.read()?.skins[this.tier]), mode: this.deps.effects(), still });
+  }
+
   /** An image of fixed art (see fixedArt). */
   private fixed(x: number, y: number, id: string): Phaser.GameObjects.Image {
     const img = this.add.image(x, y, KEY(id, this.textures));
@@ -211,12 +211,11 @@ export class CloudScene extends Phaser.Scene {
     const max = viewableTiers(state.plots.length, TIER_COUNT) - 1;
     const next = Math.min(Math.max(this.tier + step, 0), max);
     if (next === this.tier) return;
+    this.drone.reset();
     if (this.deps.reduceMotion()) {
       this.tier = next;
-      this.drone.reset();
       return void this.sync(true);
     }
-    this.drone.reset();
     this.moving = true;
     for (const p of this.plots) setBright(p.bright, false);
     this.bird.clearPests();
