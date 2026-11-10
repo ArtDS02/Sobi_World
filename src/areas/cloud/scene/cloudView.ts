@@ -64,7 +64,7 @@ export const CLOUD_VIEW = {
    */
   bird: { x: 1257, y: 118, size: 116, speed: 230, restMs: [4500, 9000], area: { x0: 520, x1: 1420, y0: 150, y1: 560 }, catchMs: 520, wingHz: { rest: 2.2, fly: 4.5 } },
   /** Decorative caterpillars (no gameplay): one may appear on a growing flower now and then, at most `max` at a time. */
-  pest: { everyMs: [9000, 18000], max: 2, width: 30, height: 16, scale: 1.5, noticeMs: 2500 },
+  pest: { everyMs: [9000, 18000], max: 2, width: 30, height: 16, scale: 1.5, artScale: 0.55, noticeMs: 2500 },
   /** Small clouds drifting across the sky behind the island (existing env art), each its own speed and height. */
   drift: [
     { art: 'env_cloud_a', y: 70, scale: 0.55, alpha: 0.9, seconds: 140, start: 0.15 },

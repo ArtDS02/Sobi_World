@@ -29,7 +29,11 @@ export const CLOUD_ITEM_IDS = ITEM_IDS.filter((id) => ITEMS[id].category === 'FL
 /** The icons on the bottom tray's action cards (decision 031); sowing shows the chosen seed instead. */
 export const CLOUD_DOCK_ART = { collect: 'ui_item_pure_water', water: 'ui_icon_water', harvest: 'ui_item_flower_cloud_daisy', fertilize: 'ui_item_fertilizer', expand: 'ui_btn_tier_up', lab: 'ui_btn_breed' } as const;
 
+/** The decorative caterpillar's poses (decision 057, B4): the two frames of its inching, resting, and the moment the bird pecks it. */
+export const CLOUD_PEST_ART = { a: 'prop_cloud_caterpillar_a', b: 'prop_cloud_caterpillar_b', perch: 'prop_cloud_caterpillar_perch', caught: 'prop_cloud_caterpillar_caught' } as const;
+
 export const cloudArtIds = (): string[] => [
+  ...Object.values(CLOUD_PEST_ART),
   ...Object.values(AREA_HUD_ART),
   ...Object.values(CLOUD_DOCK_ART),
   CLOUD_PLOT_ART,

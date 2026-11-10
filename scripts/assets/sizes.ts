@@ -297,3 +297,6 @@ for (const skin of ['verdant', 'pearl_sea', 'crystal', 'starry', 'blossom', 'dew
     CATALOGUE_SIZES[`${base}_${skin}`] = CATALOGUE_SIZES[base]!;
   }
 }
+
+// Decision 057 (B4): the Cloud's decorative caterpillar, four poses at one scale (batch cloud-10-caterpillar).
+for (const pose of ['a', 'b', 'perch', 'caught']) CATALOGUE_SIZES[`prop_cloud_caterpillar_${pose}`] = { width: 96, height: 64 };

@@ -2912,17 +2912,17 @@
     },
     {
       "id": "skin_amber_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_amber_cloud.png"
     },
     {
       "id": "skin_amber_soil",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_amber_soil.png"
     },
     {
       "id": "skin_amber_soil_wet",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_amber_soil_wet.png"
     },
     {
@@ -2954,6 +2954,26 @@
       "id": "skin_sunset_soil_wet",
       "status": "production",
       "asset": "props/skin_sunset_soil_wet.png"
+    },
+    {
+      "id": "prop_cloud_caterpillar_a",
+      "status": "production",
+      "asset": "props/prop_cloud_caterpillar_a.png"
+    },
+    {
+      "id": "prop_cloud_caterpillar_b",
+      "status": "production",
+      "asset": "props/prop_cloud_caterpillar_b.png"
+    },
+    {
+      "id": "prop_cloud_caterpillar_perch",
+      "status": "production",
+      "asset": "props/prop_cloud_caterpillar_perch.png"
+    },
+    {
+      "id": "prop_cloud_caterpillar_caught",
+      "status": "production",
+      "asset": "props/prop_cloud_caterpillar_caught.png"
     },
     {
       "id": "prop_sign_plank",
@@ -9977,6 +9997,126 @@
       "id": "bld_cauldron_sunset",
       "status": "production",
       "asset": "buildings/bld_cauldron_sunset.png"
+    },
+    {
+      "id": "bld_feed_mill_verdant",
+      "status": "production",
+      "asset": "buildings/bld_feed_mill_verdant.png"
+    },
+    {
+      "id": "bld_composter_verdant",
+      "status": "production",
+      "asset": "buildings/bld_composter_verdant.png"
+    },
+    {
+      "id": "bld_sprinkler_verdant",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_verdant.png"
+    },
+    {
+      "id": "bld_feed_mill_pearl_sea",
+      "status": "production",
+      "asset": "buildings/bld_feed_mill_pearl_sea.png"
+    },
+    {
+      "id": "bld_composter_pearl_sea",
+      "status": "production",
+      "asset": "buildings/bld_composter_pearl_sea.png"
+    },
+    {
+      "id": "bld_sprinkler_pearl_sea",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_pearl_sea.png"
+    },
+    {
+      "id": "bld_feed_mill_crystal",
+      "status": "production",
+      "asset": "buildings/bld_feed_mill_crystal.png"
+    },
+    {
+      "id": "bld_composter_crystal",
+      "status": "production",
+      "asset": "buildings/bld_composter_crystal.png"
+    },
+    {
+      "id": "bld_sprinkler_crystal",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_crystal.png"
+    },
+    {
+      "id": "bld_feed_mill_blossom",
+      "status": "production",
+      "asset": "buildings/bld_feed_mill_blossom.png"
+    },
+    {
+      "id": "bld_composter_blossom",
+      "status": "production",
+      "asset": "buildings/bld_composter_blossom.png"
+    },
+    {
+      "id": "bld_sprinkler_blossom",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_blossom.png"
+    },
+    {
+      "id": "bld_feed_mill_dew",
+      "status": "production",
+      "asset": "buildings/bld_feed_mill_dew.png"
+    },
+    {
+      "id": "bld_composter_dew",
+      "status": "production",
+      "asset": "buildings/bld_composter_dew.png"
+    },
+    {
+      "id": "bld_sprinkler_dew",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_dew.png"
+    },
+    {
+      "id": "bld_feed_mill_amber",
+      "status": "production",
+      "asset": "buildings/bld_feed_mill_amber.png"
+    },
+    {
+      "id": "bld_composter_amber",
+      "status": "production",
+      "asset": "buildings/bld_composter_amber.png"
+    },
+    {
+      "id": "bld_sprinkler_amber",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_amber.png"
+    },
+    {
+      "id": "bld_feed_mill_moonlit",
+      "status": "production",
+      "asset": "buildings/bld_feed_mill_moonlit.png"
+    },
+    {
+      "id": "bld_composter_moonlit",
+      "status": "production",
+      "asset": "buildings/bld_composter_moonlit.png"
+    },
+    {
+      "id": "bld_sprinkler_moonlit",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_moonlit.png"
+    },
+    {
+      "id": "bld_feed_mill_sunset",
+      "status": "production",
+      "asset": "buildings/bld_feed_mill_sunset.png"
+    },
+    {
+      "id": "bld_composter_sunset",
+      "status": "production",
+      "asset": "buildings/bld_composter_sunset.png"
+    },
+    {
+      "id": "bld_sprinkler_sunset",
+      "status": "production",
+      "asset": "buildings/bld_sprinkler_sunset.png"
     }
   ],
   "environment": [
@@ -10590,6 +10730,16 @@
       "id": "bg_garden_sunset",
       "status": "production",
       "asset": "environment/bg_garden_sunset.png"
+    },
+    {
+      "id": "bg_cloud_moonlit",
+      "status": "production",
+      "asset": "environment/bg_cloud_moonlit.png"
+    },
+    {
+      "id": "bg_garden_moonlit",
+      "status": "production",
+      "asset": "environment/bg_garden_moonlit.png"
     },
     {
       "id": "bg_plaza",

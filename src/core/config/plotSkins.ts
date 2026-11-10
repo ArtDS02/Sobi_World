@@ -29,8 +29,8 @@ export const skinTheme = (skinId: string | null | undefined): SkinTheme | null =
  * wearing one of them shows that picture; any other skin keeps the plain backdrop tinted by the skin's mood. Add a skin id here when
  * its two backdrops are delivered (and registered in the manifest).
  */
-// Delivered 2026-11-10: all but `moonlit` (its garden backdrop was rejected: a white glow over the field).
-export const SKIN_BACKDROP_READY: readonly string[] = ['verdant', 'pearl_sea', 'crystal', 'starry', 'blossom', 'dew', 'amber', 'sunset'];
+// Delivered 2026-11-10: all nine skins, both Areas.
+export const SKIN_BACKDROP_READY: readonly string[] = ['verdant', 'pearl_sea', 'crystal', 'starry', 'blossom', 'dew', 'amber', 'moonlit', 'sunset'];
 
 export type BackdropArea = 'cloud' | 'garden';
 
@@ -52,10 +52,11 @@ export const SKIN_BUILDING_PARTS: Readonly<Record<BackdropArea, readonly string[
  * shows its themed buildings; any other skin keeps the plain ones. Add a skin id here once ALL the Area's buildings for it are
  * delivered and registered in the manifest.
  */
-// Delivered 2026-11-10: every Cloud set (spring + cauldron); no Garden set yet (the plain buildings stay).
+// Delivered 2026-11-10: every Cloud set (spring + cauldron); every Garden set but `starry` (its mill was drawn as a windmill
+// tower, a different building: rejected, so Tinh Tú keeps the plain Garden buildings).
 export const SKIN_BUILDING_READY: Readonly<Record<BackdropArea, readonly string[]>> = {
   cloud: ['verdant', 'pearl_sea', 'crystal', 'starry', 'blossom', 'dew', 'amber', 'moonlit', 'sunset'],
-  garden: [],
+  garden: ['verdant', 'pearl_sea', 'crystal', 'blossom', 'dew', 'amber', 'moonlit', 'sunset'],
 };
 
 /** The art id of a building for a skin: its themed art when delivered, else the plain art. */

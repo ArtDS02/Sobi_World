@@ -38,8 +38,7 @@ export interface GardenSceneDeps {
   read: () => SceneState | null;
   onPick: (pick: GardenPick) => void;
   reduceMotion: () => boolean;
-  /** The effects intensity (decision 057, B8). */
-  effects: () => 'off' | 'light' | 'full';
+  effects: () => 'off' | 'light' | 'full'; // the effects intensity (decision 057, B8)
   /** A panel or dialog covers the world: clicks on the canvas are ignored. */
   paused: () => boolean;
 }

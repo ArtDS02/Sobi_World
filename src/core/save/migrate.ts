@@ -86,13 +86,10 @@ const WORLD_MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
   12: (raw) => {
     const progression = isObject(raw.progression) ? raw.progression : {};
     const cosmetics = isObject(raw.cosmetics) ? raw.cosmetics : {};
-    const settings = isObject(raw.settings) ? raw.settings : {};
-    // Effects intensity (decision 057, B8): the full look, or the gentle one for a save that already asks for less motion.
-    const effects = settings.effects === 'off' || settings.effects === 'light' || settings.effects === 'full' ? settings.effects : settings.reduceMotion === true ? 'light' : 'full';
     return {
       ...raw,
       schemaVersion: 13,
-      settings: { ...settings, effects },
+      settings: withEffects(raw.settings),
       progression: { ...progression, levelRewardsPaid: typeof progression.levelRewardsPaid === 'number' ? progression.levelRewardsPaid : 20 },
       // Plot skins (decision 056): none forged yet.
       cosmetics: { ...cosmetics, plotSkins: Array.isArray(cosmetics.plotSkins) ? cosmetics.plotSkins : [] },
@@ -101,6 +98,21 @@ const WORLD_MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
 };
 
 const isObject = (v: unknown): v is Raw => typeof v === 'object' && v !== null && !Array.isArray(v);
+
+/** Effects intensity (decision 057, B8): kept when valid, else the full look, or the gentle one for a save that already asks for less motion. */
+function withEffects(value: unknown): Raw {
+  const settings = isObject(value) ? value : {};
+  const effects = settings.effects === 'off' || settings.effects === 'light' || settings.effects === 'full' ? settings.effects : settings.reduceMotion === true ? 'light' : 'full';
+  return { ...settings, effects };
+}
+
+/**
+ * v13 is not released yet and gained fields while in development (decision 057). A v13 save written by an earlier development
+ * build is completed here instead of being refused as corrupt; nothing it holds is changed.
+ */
+function completeUnreleased(raw: Raw): Raw {
+  return isObject(raw.settings) && raw.settings.effects === undefined ? { ...raw, settings: withEffects(raw.settings) } : raw;
+}
 
 function migrateArea(slice: unknown, spec: AreaSaveSpec): unknown {
   if (!isObject(slice) || !spec.version) return slice;
@@ -149,7 +161,7 @@ function migrateUnsafe(input: unknown, codec: SaveCodec): MigrateResult {
     }
   }
 
-  const world = worldSaveSchema.safeParse(raw);
+  const world = worldSaveSchema.safeParse(isObject(raw) ? completeUnreleased(raw) : raw);
   if (!world.success) return { ok: false, error: 'SAVE_CORRUPT' };
   const areas: Raw = { ...world.data.areas };
   const repairedAreas: string[] = [];

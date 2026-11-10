@@ -93,8 +93,14 @@ describe('the setting in the save', () => {
     const save = migrated(v12);
     expect(worldSaveSchema.safeParse(save).success).toBe(true);
     expect(worldSaveSchema.safeParse({ ...save, settings: { ...save.settings, effects: 'max' } }).success).toBe(false);
-    const { effects: _gone, ...rest } = save.settings;
+    const rest: Record<string, unknown> = { ...save.settings };
+    delete rest.effects;
     expect(worldSaveSchema.safeParse({ ...save, settings: rest }).success).toBe(false);
+    // A v13 save written by a development build before the field existed is completed on load, not refused as corrupt.
+    const early = migrate({ ...save, settings: rest }, SAVE_CODEC);
+    expect(early.ok && early.save.settings.effects).toBe('full');
+    const calm = migrate({ ...save, settings: { ...rest, reduceMotion: true } }, SAVE_CODEC);
+    expect(calm.ok && calm.save.settings.effects).toBe('light');
   });
 });
 

@@ -151,8 +151,7 @@ export async function start(root: HTMLElement) {
     // A station leads to a panel (`panel:orders`), a door to a place.
     go: (place) => (place.startsWith('panel:') ? app?.openPanel(place.slice(6) as PanelId) : void flow.go(place)),
     now: () => clock.now(),
-    reduceMotion: () => store.getSnapshot().save?.settings.reduceMotion ?? false,
-    effects: () => store.getSnapshot().save?.settings.effects ?? 'full',
+    reduceMotion: () => store.getSnapshot().save?.settings.reduceMotion ?? false, effects: () => store.getSnapshot().save?.settings.effects ?? 'full',
     paused: () => app?.isModalOpen() ?? false,
     denied: () => director?.denied(),
   };
@@ -234,8 +233,7 @@ export async function start(root: HTMLElement) {
       const garden = new GardenScene({
         read: () => overlays.gardenUi.sceneState(),
         onPick: (pick) => overlays.gardenUi.pick(pick),
-        reduceMotion: () => host.reduceMotion(),
-        effects: () => host.effects(),
+        reduceMotion: () => host.reduceMotion(), effects: () => host.effects(),
         paused: () => host.paused(),
       });
       const aquarium = new AquariumScene({
@@ -249,8 +247,7 @@ export async function start(root: HTMLElement) {
       const cloud = new CloudScene({
         read: () => overlays.cloudUi.sceneState(),
         onPick: (pick) => overlays.cloudUi.pick(pick),
-        reduceMotion: () => host.reduceMotion(),
-        effects: () => host.effects(),
+        reduceMotion: () => host.reduceMotion(), effects: () => host.effects(),
         paused: () => host.paused(),
       });
       farmView = createFarmView(

@@ -6,7 +6,8 @@
 // the next frame in; without them the picture squashes a little for a beat.
 import * as Phaser from 'phaser';
 import { loopFrameAt } from '../../../systems/animation/poseFade';
-import { CLOUD_BIRD_WINGS, CLOUD_DRESSING_ART } from '../logic/art';
+import { CLOUD_BIRD_WINGS, CLOUD_DRESSING_ART, CLOUD_PEST_ART } from '../logic/art';
+import { textureKey } from '../../../ui/world/keys';
 import { FX_KEYS } from './cloudFx';
 import { CLOUD_VIEW } from './cloudView';
 
@@ -32,6 +33,8 @@ export interface BirdDeps {
 interface Pest {
   slot: number;
   img: Img;
+  /** Swaps the inching frames (drawn art only). */
+  timer?: Phaser.Time.TimerEvent;
 }
 
 type Flight = { from: Point; ctrl: Point; to: Point; t: number; ms: number; pest: Pest | null };
@@ -82,7 +85,10 @@ export class CloudBird {
 
   /** The tier changed: the caterpillars of the old one go away. */
   clearPests() {
-    for (const p of this.pests) this.pop(p.img, false);
+    for (const p of this.pests) {
+      p.timer?.remove();
+      this.pop(p.img, false);
+    }
     this.pests = [];
     if (this.flight?.pest) this.flight.pest = null;
   }
@@ -90,7 +96,10 @@ export class CloudBird {
   /** Caterpillars whose flower is gone (picked, wilted, another tier) leave. */
   keepOnly(slots: ReadonlySet<number>) {
     const gone = this.pests.filter((p) => !slots.has(p.slot));
-    for (const p of gone) this.pop(p.img, false);
+    for (const p of gone) {
+      p.timer?.remove();
+      this.pop(p.img, false);
+    }
     this.pests = this.pests.filter((p) => slots.has(p.slot));
     if (this.flight?.pest && !this.pests.includes(this.flight.pest)) this.flight.pest = null;
   }
@@ -168,6 +177,9 @@ export class CloudBird {
   /** The bird pecks the caterpillar: it pops away and the bird hops. */
   private catch(p: Pest) {
     this.pests = this.pests.filter((q) => q !== p);
+    p.timer?.remove();
+    const caught = textureKey(CLOUD_PEST_ART.caught);
+    if (p.timer && this.scene.textures.exists(caught)) p.img.setTexture(caught);
     this.pop(p.img, true);
     this.scene.tweens.add({ targets: this.img, y: this.img.y - 12, duration: 140, yoyo: true, ease: 'Quad.easeOut' });
   }
@@ -187,12 +199,27 @@ export class CloudBird {
     const free = spots.filter((s) => !this.pests.some((p) => p.slot === s.slot));
     const spot = free[Phaser.Math.Between(0, free.length - 1)];
     if (!spot) return;
-    const img = this.scene.add.image(spot.x, spot.y, FX_KEYS.pest).setDepth(CLOUD_VIEW.depth.pest).setScale(0).setFlipX(Math.random() < 0.5);
-    const k = CLOUD_VIEW.pest.scale;
+    // Drawn art when it is loaded (batch cloud-10-caterpillar), else the small code-drawn blob.
+    const key = (pose: keyof typeof CLOUD_PEST_ART) => textureKey(CLOUD_PEST_ART[pose]);
+    const drawn = (['a', 'b', 'perch'] as const).every((pose) => this.scene.textures.exists(key(pose)));
+    const img = this.scene.add.image(spot.x, spot.y, drawn ? key('perch') : FX_KEYS.pest).setDepth(CLOUD_VIEW.depth.pest).setScale(0).setFlipX(Math.random() < 0.5);
+    const k = drawn ? CLOUD_VIEW.pest.artScale : CLOUD_VIEW.pest.scale;
     this.scene.tweens.add({ targets: img, scale: k, duration: 260, ease: 'Back.easeOut' });
-    // It wriggles and inches along the stem.
-    this.scene.tweens.add({ targets: img, scaleX: k * 1.12, scaleY: k * 0.9, duration: 380, yoyo: true, repeat: -1, delay: 260, ease: 'Sine.easeInOut' });
+    let timer: Phaser.Time.TimerEvent | undefined;
+    if (drawn) {
+      // It rests a moment, then inches along the stem: the two frames swap (they stay still for "Giảm chuyển động").
+      let frame = 0;
+      const step = () => {
+        if (this.d.reduceMotion()) return;
+        frame = 1 - frame;
+        img.setTexture(key(frame ? 'b' : 'a'));
+      };
+      timer = this.scene.time.addEvent({ delay: 420, startAt: -900, loop: true, callback: step });
+    } else {
+      // It wriggles and inches along the stem.
+      this.scene.tweens.add({ targets: img, scaleX: k * 1.12, scaleY: k * 0.9, duration: 380, yoyo: true, repeat: -1, delay: 260, ease: 'Sine.easeInOut' });
+    }
     this.scene.tweens.add({ targets: img, x: spot.x + 6, duration: 1600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-    this.pests.push({ slot: spot.slot, img });
+    this.pests.push({ slot: spot.slot, img, ...(timer ? { timer } : {}) });
   }
 }
