@@ -2,7 +2,7 @@
 import { AREA_HUD_ART, itemArtId } from '../../../core/config/assetIds';
 import { ITEMS, ITEM_IDS } from '../../../core/config/items';
 import { CROP_LIST, GB, type Crop } from './config/content';
-import { SKIN_ART_IDS, SKIN_BACKDROP_IDS } from '../../../core/config/plotSkins';
+import { SKIN_ART_IDS, SKIN_BACKDROP_IDS, SKIN_BUILDING_IDS } from '../../../core/config/plotSkins';
 import { RANK_SPRITES_ON, sceneryArtIds } from '../../../systems/animation/rankScenery';
 import { GARDEN_SCENERY } from '../scene/gardenView';
 
@@ -35,6 +35,7 @@ export const gardenArtIds = (): string[] => [
   ...(RANK_SPRITES_ON ? sceneryArtIds(GARDEN_SCENERY) : []),
   ...SKIN_ART_IDS.filter((id) => !id.endsWith('_cloud')),
   ...SKIN_BACKDROP_IDS('garden'),
+  ...SKIN_BUILDING_IDS('garden'),
   ...CROP_LIST.flatMap((c) => CROP_STAGES.map((s) => cropArtId(c, s))),
   ...GARDEN_ITEM_IDS.map(itemArtId),
 ];

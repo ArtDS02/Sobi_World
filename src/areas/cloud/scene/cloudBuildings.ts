@@ -11,6 +11,7 @@ import type { SceneState } from '../logic/derived';
 import { bubbles, drawBadge, splash, type Badge } from './cloudFx';
 import { stallKey } from '../../../ui/world/codeStall';
 import { textureKey } from '../../../ui/world/keys';
+import { skinBuildingArt } from '../../../core/config/plotSkins';
 import { CLOUD_VIEW } from './cloudView';
 
 type Img = Phaser.GameObjects.Image;
@@ -36,6 +37,8 @@ export class CloudBuildings {
   private brew: Phaser.Tweens.Tween | null = null;
   /** The building whose hover answer is repeating, and its timer. */
   private hovered: { id: BuildingId; timer: Phaser.Time.TimerEvent } | null = null;
+  /** The plain art of each building, to put back or theme by skin (decision 056). */
+  private readonly plain = new Map<BuildingId, string>();
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -45,6 +48,7 @@ export class CloudBuildings {
     this.make('spring', CLOUD_BUILDING_ART.spring, v.spring);
     this.make('cauldron', CLOUD_BUILDING_ART.cauldron, v.cauldron);
     this.make('shop', v.shop.art, v.shop);
+    this.plain.set('spring', CLOUD_BUILDING_ART.spring).set('cauldron', CLOUD_BUILDING_ART.cauldron).set('shop', v.shop.art);
     const shop = this.list.get('shop')!.img;
     if (!scene.textures.exists(textureKey(v.shop.art))) shop.setTexture(stallKey(scene, v.shop.art, v.shop.colours));
     this.plank(v.springLabel, vi.cloud.spring, 'spring');
@@ -53,7 +57,16 @@ export class CloudBuildings {
   }
 
   /** Counters, the unbuilt cauldron's grey, and the brewing swell. */
-  draw(state: SceneState) {
+  /** The buildings in the theme of the skin the cloud tier on screen wears (the plain ones when it has none or none are delivered). */
+  setSkin(skin: string | null | undefined) {
+    for (const [id, b] of this.list) {
+      const key = textureKey(skinBuildingArt(this.plain.get(id) ?? '', skin, 'cloud'));
+      if (b.img.texture.key !== key && this.scene.textures.exists(key)) b.img.setTexture(key);
+    }
+  }
+
+  draw(state: SceneState, skin?: string | null) {
+    this.setSkin(skin);
     const spring = this.list.get('spring');
     if (spring) drawBadge(spring.badge, state.water > 0 ? `${state.water}` : '', state.water >= state.waterCapacity);
     const cauldron = this.list.get('cauldron');

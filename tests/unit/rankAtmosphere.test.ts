@@ -1,6 +1,6 @@
 // Decision 056: a rank's look is atmosphere (light and life added by code), not pasted sprites; plus the skin backdrops.
 import { describe, expect, it } from 'vitest';
-import { PLOT_SKINS, skinBackdropArt, SKIN_BACKDROP_IDS, SKIN_BACKDROP_READY } from '../../src/core/config/plotSkins';
+import { PLOT_SKINS, skinBackdropArt, skinBuildingArt, SKIN_BACKDROP_IDS, SKIN_BACKDROP_READY, SKIN_BUILDING_IDS, SKIN_BUILDING_PARTS, SKIN_BUILDING_READY } from '../../src/core/config/plotSkins';
 import { ATMOSPHERE, atmosphereAt, ATMOSPHERE_MAX, breathe, particleCounts } from '../../src/systems/animation/rankAtmosphere';
 import { RANK_SPRITES_ON } from '../../src/systems/animation/rankScenery';
 
@@ -52,5 +52,20 @@ describe('skin backdrops', () => {
     }
     expect(skinBackdropArt(null, 'cloud')).toBeNull();
     expect(SKIN_BACKDROP_IDS('garden')).toEqual(SKIN_BACKDROP_READY.map((id) => `bg_garden_${id}`));
+  });
+});
+
+describe('skin buildings', () => {
+  it('a building keeps its plain art unless the skin\'s themed set was delivered for that Area', () => {
+    expect(skinBuildingArt('bld_feed_mill', null, 'garden')).toBe('bld_feed_mill');
+    expect(skinBuildingArt('bld_feed_mill', 'nope', 'garden')).toBe('bld_feed_mill');
+    for (const area of ['cloud', 'garden'] as const) {
+      expect(SKIN_BUILDING_IDS(area)).toHaveLength(SKIN_BUILDING_READY[area].length * SKIN_BUILDING_PARTS[area].length);
+      for (const skin of SKIN_BUILDING_READY[area]) expect(skinBuildingArt(SKIN_BUILDING_PARTS[area][0]!, skin, area)).toBe(`${SKIN_BUILDING_PARTS[area][0]}_${skin}`);
+    }
+  });
+  it('lists the buildings of each Area that a skin re-themes', () => {
+    expect(SKIN_BUILDING_PARTS.cloud).toEqual(['bld_cloud_spring', 'bld_cauldron', 'bld_shop_cloud']);
+    expect(SKIN_BUILDING_PARTS.garden).toEqual(['bld_feed_mill', 'bld_composter', 'bld_sprinkler', 'bld_shop_garden']);
   });
 });

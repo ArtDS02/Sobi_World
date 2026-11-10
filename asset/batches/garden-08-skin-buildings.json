@@ -1,0 +1,710 @@
+{
+  "id": "garden-08-skin-buildings",
+  "area": "garden",
+  "title": "Công trình Garden theo mẫu khuông: máy xay, thùng ủ, vòi tưới, cửa hàng (9 mẫu × 4)",
+  "decisions": "Decision 056 (owner, 2026-11-09): backdrops, plot skins and light effects change per skin, so the buildings standing on the scene need the same concept or they look out of place. One sheet per skin, each cell = the game's current building re-themed (attached as a game-art hint in the same order). Cells are named <building>_<skin>; the game uses them for the tier / zone wearing that skin once the skin is listed in SKIN_BUILDING_READY (src/core/config/plotSkins.ts). Sizes are the current building canvases (bld_feed_mill 260x260, bld_composter 220x200, bld_sprinkler 120x200, bld_shop_garden 260x240).",
+  "sheets": [
+    {
+      "name": "S1",
+      "title": "Công trình mẫu verdant",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "building"
+      ],
+      "hints": [
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_feed_mill.png",
+          "box": [
+            0,
+            0,
+            260,
+            260
+          ],
+          "what": "the game's current feed mill (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_composter.png",
+          "box": [
+            0,
+            0,
+            220,
+            200
+          ],
+          "what": "the game's current composting bin (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_sprinkler.png",
+          "box": [
+            0,
+            0,
+            120,
+            200
+          ],
+          "what": "the game's current sprinkler on a post (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_shop_garden.png",
+          "box": [
+            0,
+            0,
+            260,
+            240
+          ],
+          "what": "the game's current small shop stall (keep its shape)"
+        }
+      ],
+      "notes": "One theme for the whole sheet: a lush green forest-glade mood: mossy wood, leaf and fern trim, fresh greens. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bld_feed_mill_verdant",
+          "desc": "The feed mill from its attached picture, re-themed: a lush green forest-glade mood: mossy wood, leaf and fern trim, fresh greens. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_composter_verdant",
+          "desc": "The composting bin from its attached picture, re-themed: a lush green forest-glade mood: mossy wood, leaf and fern trim, fresh greens. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_sprinkler_verdant",
+          "desc": "The sprinkler on a post from its attached picture, re-themed: a lush green forest-glade mood: mossy wood, leaf and fern trim, fresh greens. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_shop_garden_verdant",
+          "desc": "The small shop stall from its attached picture, re-themed: a lush green forest-glade mood: mossy wood, leaf and fern trim, fresh greens. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "S2",
+      "title": "Công trình mẫu pearl_sea",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "building"
+      ],
+      "hints": [
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_feed_mill.png",
+          "box": [
+            0,
+            0,
+            260,
+            260
+          ],
+          "what": "the game's current feed mill (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_composter.png",
+          "box": [
+            0,
+            0,
+            220,
+            200
+          ],
+          "what": "the game's current composting bin (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_sprinkler.png",
+          "box": [
+            0,
+            0,
+            120,
+            200
+          ],
+          "what": "the game's current sprinkler on a post (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_shop_garden.png",
+          "box": [
+            0,
+            0,
+            260,
+            240
+          ],
+          "what": "the game's current small shop stall (keep its shape)"
+        }
+      ],
+      "notes": "One theme for the whole sheet: a calm pearly-sea mood: pearl-white and aqua materials, shell and foam trim. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bld_feed_mill_pearl_sea",
+          "desc": "The feed mill from its attached picture, re-themed: a calm pearly-sea mood: pearl-white and aqua materials, shell and foam trim. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_composter_pearl_sea",
+          "desc": "The composting bin from its attached picture, re-themed: a calm pearly-sea mood: pearl-white and aqua materials, shell and foam trim. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_sprinkler_pearl_sea",
+          "desc": "The sprinkler on a post from its attached picture, re-themed: a calm pearly-sea mood: pearl-white and aqua materials, shell and foam trim. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_shop_garden_pearl_sea",
+          "desc": "The small shop stall from its attached picture, re-themed: a calm pearly-sea mood: pearl-white and aqua materials, shell and foam trim. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "S3",
+      "title": "Công trình mẫu crystal",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "building"
+      ],
+      "hints": [
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_feed_mill.png",
+          "box": [
+            0,
+            0,
+            260,
+            260
+          ],
+          "what": "the game's current feed mill (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_composter.png",
+          "box": [
+            0,
+            0,
+            220,
+            200
+          ],
+          "what": "the game's current composting bin (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_sprinkler.png",
+          "box": [
+            0,
+            0,
+            120,
+            200
+          ],
+          "what": "the game's current sprinkler on a post (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_shop_garden.png",
+          "box": [
+            0,
+            0,
+            260,
+            240
+          ],
+          "what": "the game's current small shop stall (keep its shape)"
+        }
+      ],
+      "notes": "One theme for the whole sheet: a crystal-lilac mood: lilac and violet materials with faceted translucent crystal accents. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bld_feed_mill_crystal",
+          "desc": "The feed mill from its attached picture, re-themed: a crystal-lilac mood: lilac and violet materials with faceted translucent crystal accents. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_composter_crystal",
+          "desc": "The composting bin from its attached picture, re-themed: a crystal-lilac mood: lilac and violet materials with faceted translucent crystal accents. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_sprinkler_crystal",
+          "desc": "The sprinkler on a post from its attached picture, re-themed: a crystal-lilac mood: lilac and violet materials with faceted translucent crystal accents. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_shop_garden_crystal",
+          "desc": "The small shop stall from its attached picture, re-themed: a crystal-lilac mood: lilac and violet materials with faceted translucent crystal accents. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "S4",
+      "title": "Công trình mẫu starry",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "building"
+      ],
+      "hints": [
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_feed_mill.png",
+          "box": [
+            0,
+            0,
+            260,
+            260
+          ],
+          "what": "the game's current feed mill (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_composter.png",
+          "box": [
+            0,
+            0,
+            220,
+            200
+          ],
+          "what": "the game's current composting bin (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_sprinkler.png",
+          "box": [
+            0,
+            0,
+            120,
+            200
+          ],
+          "what": "the game's current sprinkler on a post (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_shop_garden.png",
+          "box": [
+            0,
+            0,
+            260,
+            240
+          ],
+          "what": "the game's current small shop stall (keep its shape)"
+        }
+      ],
+      "notes": "One theme for the whole sheet: a starry-night mood: deep indigo materials with tiny stars, a crescent motif and soft glowing lamps. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bld_feed_mill_starry",
+          "desc": "The feed mill from its attached picture, re-themed: a starry-night mood: deep indigo materials with tiny stars, a crescent motif and soft glowing lamps. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_composter_starry",
+          "desc": "The composting bin from its attached picture, re-themed: a starry-night mood: deep indigo materials with tiny stars, a crescent motif and soft glowing lamps. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_sprinkler_starry",
+          "desc": "The sprinkler on a post from its attached picture, re-themed: a starry-night mood: deep indigo materials with tiny stars, a crescent motif and soft glowing lamps. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_shop_garden_starry",
+          "desc": "The small shop stall from its attached picture, re-themed: a starry-night mood: deep indigo materials with tiny stars, a crescent motif and soft glowing lamps. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "S5",
+      "title": "Công trình mẫu blossom",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "building"
+      ],
+      "hints": [
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_feed_mill.png",
+          "box": [
+            0,
+            0,
+            260,
+            260
+          ],
+          "what": "the game's current feed mill (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_composter.png",
+          "box": [
+            0,
+            0,
+            220,
+            200
+          ],
+          "what": "the game's current composting bin (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_sprinkler.png",
+          "box": [
+            0,
+            0,
+            120,
+            200
+          ],
+          "what": "the game's current sprinkler on a post (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_shop_garden.png",
+          "box": [
+            0,
+            0,
+            260,
+            240
+          ],
+          "what": "the game's current small shop stall (keep its shape)"
+        }
+      ],
+      "notes": "One theme for the whole sheet: a cherry-blossom spring mood: soft pink and cream materials with blossom petals and branches. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bld_feed_mill_blossom",
+          "desc": "The feed mill from its attached picture, re-themed: a cherry-blossom spring mood: soft pink and cream materials with blossom petals and branches. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_composter_blossom",
+          "desc": "The composting bin from its attached picture, re-themed: a cherry-blossom spring mood: soft pink and cream materials with blossom petals and branches. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_sprinkler_blossom",
+          "desc": "The sprinkler on a post from its attached picture, re-themed: a cherry-blossom spring mood: soft pink and cream materials with blossom petals and branches. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_shop_garden_blossom",
+          "desc": "The small shop stall from its attached picture, re-themed: a cherry-blossom spring mood: soft pink and cream materials with blossom petals and branches. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "S6",
+      "title": "Công trình mẫu dew",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "building"
+      ],
+      "hints": [
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_feed_mill.png",
+          "box": [
+            0,
+            0,
+            260,
+            260
+          ],
+          "what": "the game's current feed mill (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_composter.png",
+          "box": [
+            0,
+            0,
+            220,
+            200
+          ],
+          "what": "the game's current composting bin (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_sprinkler.png",
+          "box": [
+            0,
+            0,
+            120,
+            200
+          ],
+          "what": "the game's current sprinkler on a post (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_shop_garden.png",
+          "box": [
+            0,
+            0,
+            260,
+            240
+          ],
+          "what": "the game's current small shop stall (keep its shape)"
+        }
+      ],
+      "notes": "One theme for the whole sheet: a fresh morning-dew mood: cool mint and pale green materials with glittering dew drops. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bld_feed_mill_dew",
+          "desc": "The feed mill from its attached picture, re-themed: a fresh morning-dew mood: cool mint and pale green materials with glittering dew drops. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_composter_dew",
+          "desc": "The composting bin from its attached picture, re-themed: a fresh morning-dew mood: cool mint and pale green materials with glittering dew drops. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_sprinkler_dew",
+          "desc": "The sprinkler on a post from its attached picture, re-themed: a fresh morning-dew mood: cool mint and pale green materials with glittering dew drops. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_shop_garden_dew",
+          "desc": "The small shop stall from its attached picture, re-themed: a fresh morning-dew mood: cool mint and pale green materials with glittering dew drops. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "S7",
+      "title": "Công trình mẫu amber",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "building"
+      ],
+      "hints": [
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_feed_mill.png",
+          "box": [
+            0,
+            0,
+            260,
+            260
+          ],
+          "what": "the game's current feed mill (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_composter.png",
+          "box": [
+            0,
+            0,
+            220,
+            200
+          ],
+          "what": "the game's current composting bin (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_sprinkler.png",
+          "box": [
+            0,
+            0,
+            120,
+            200
+          ],
+          "what": "the game's current sprinkler on a post (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_shop_garden.png",
+          "box": [
+            0,
+            0,
+            260,
+            240
+          ],
+          "what": "the game's current small shop stall (keep its shape)"
+        }
+      ],
+      "notes": "One theme for the whole sheet: a warm amber-autumn mood: honey-gold materials, glossy resin accents and golden leaves. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bld_feed_mill_amber",
+          "desc": "The feed mill from its attached picture, re-themed: a warm amber-autumn mood: honey-gold materials, glossy resin accents and golden leaves. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_composter_amber",
+          "desc": "The composting bin from its attached picture, re-themed: a warm amber-autumn mood: honey-gold materials, glossy resin accents and golden leaves. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_sprinkler_amber",
+          "desc": "The sprinkler on a post from its attached picture, re-themed: a warm amber-autumn mood: honey-gold materials, glossy resin accents and golden leaves. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_shop_garden_amber",
+          "desc": "The small shop stall from its attached picture, re-themed: a warm amber-autumn mood: honey-gold materials, glossy resin accents and golden leaves. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "S8",
+      "title": "Công trình mẫu moonlit",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "building"
+      ],
+      "hints": [
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_feed_mill.png",
+          "box": [
+            0,
+            0,
+            260,
+            260
+          ],
+          "what": "the game's current feed mill (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_composter.png",
+          "box": [
+            0,
+            0,
+            220,
+            200
+          ],
+          "what": "the game's current composting bin (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_sprinkler.png",
+          "box": [
+            0,
+            0,
+            120,
+            200
+          ],
+          "what": "the game's current sprinkler on a post (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_shop_garden.png",
+          "box": [
+            0,
+            0,
+            260,
+            240
+          ],
+          "what": "the game's current small shop stall (keep its shape)"
+        }
+      ],
+      "notes": "One theme for the whole sheet: a silvery moonlit mood: silver-blue materials, pale moon motifs and soft glow. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bld_feed_mill_moonlit",
+          "desc": "The feed mill from its attached picture, re-themed: a silvery moonlit mood: silver-blue materials, pale moon motifs and soft glow. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_composter_moonlit",
+          "desc": "The composting bin from its attached picture, re-themed: a silvery moonlit mood: silver-blue materials, pale moon motifs and soft glow. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_sprinkler_moonlit",
+          "desc": "The sprinkler on a post from its attached picture, re-themed: a silvery moonlit mood: silver-blue materials, pale moon motifs and soft glow. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_shop_garden_moonlit",
+          "desc": "The small shop stall from its attached picture, re-themed: a silvery moonlit mood: silver-blue materials, pale moon motifs and soft glow. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    },
+    {
+      "name": "S9",
+      "title": "Công trình mẫu sunset",
+      "board": "building",
+      "grid": [
+        1,
+        4
+      ],
+      "fit": "each",
+      "views": [
+        "building"
+      ],
+      "hints": [
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_feed_mill.png",
+          "box": [
+            0,
+            0,
+            260,
+            260
+          ],
+          "what": "the game's current feed mill (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_composter.png",
+          "box": [
+            0,
+            0,
+            220,
+            200
+          ],
+          "what": "the game's current composting bin (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_sprinkler.png",
+          "box": [
+            0,
+            0,
+            120,
+            200
+          ],
+          "what": "the game's current sprinkler on a post (keep its shape)"
+        },
+        {
+          "game": true,
+          "from": "public/assets/buildings/bld_shop_garden.png",
+          "box": [
+            0,
+            0,
+            260,
+            240
+          ],
+          "what": "the game's current small shop stall (keep its shape)"
+        }
+      ],
+      "notes": "One theme for the whole sheet: a golden-sunset mood: orange, coral and pink materials with golden rim light. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "bld_feed_mill_sunset",
+          "desc": "The feed mill from its attached picture, re-themed: a golden-sunset mood: orange, coral and pink materials with golden rim light. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_composter_sunset",
+          "desc": "The composting bin from its attached picture, re-themed: a golden-sunset mood: orange, coral and pink materials with golden rim light. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_sprinkler_sunset",
+          "desc": "The sprinkler on a post from its attached picture, re-themed: a golden-sunset mood: orange, coral and pink materials with golden rim light. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        },
+        {
+          "stem": "bld_shop_garden_sunset",
+          "desc": "The small shop stall from its attached picture, re-themed: a golden-sunset mood: orange, coral and pink materials with golden rim light. Keep the SAME shape, proportions, pose, size and ground contact as the game building in the attached picture so it drops into the same spot; only re-theme its materials, colours, small decorations and light to the mood. Stands alone, one object, nothing around it, no text. Original design, no resemblance to any other game, film or brand."
+        }
+      ]
+    }
+  ]
+}

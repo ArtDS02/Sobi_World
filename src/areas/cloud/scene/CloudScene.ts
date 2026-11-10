@@ -285,7 +285,7 @@ export class CloudScene extends Phaser.Scene {
       sprites.flower.setTexture(KEY(flowerArtId(flower, stage), this.textures)).setVisible(true).setScale(CLOUD_VIEW.flowerScale);
       sprites.flower.setTint(view.fertilized && !this.drone.holding(slot) ? 0xf4ffd8 : 0xffffff);
     });
-    this.buildings.draw(state);
+    this.buildings.draw(state, state.skins[this.tier]);
     this.bird.keepOnly(new Set(this.plots.flatMap((p, slot) => (p.stage === 'grow' || p.stage === 'ripe' ? [slot] : []))));
   }
 

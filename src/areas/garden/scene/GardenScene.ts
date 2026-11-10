@@ -19,7 +19,8 @@ import { GardenField } from './gardenField';
 import { harvestFly, mist, NameTip, ripenSparkle, sprayBurst } from './gardenFx';
 import { GardenLife } from './gardenLife';
 import { RankLook } from '../../../ui/world/rankLook';
-import { skinBackdropArt, skinTheme } from '../../../core/config/plotSkins';
+import { skinBackdropArt, skinBuildingArt, skinTheme } from '../../../core/config/plotSkins';
+import { themeBuildings } from './gardenSkin';
 import { paintBackdrop } from '../../../ui/world/skinBackdrop';
 import { GARDEN_DESIGN, GARDEN_FRAME, GARDEN_SCENERY, GARDEN_VIEW, plotIndex } from './gardenView';
 
@@ -49,6 +50,9 @@ const KEY = (id: string, textures: Phaser.Textures.TextureManager) => (textures.
 export class GardenScene extends Phaser.Scene {
   private field!: GardenField;
   private workshops = new Map<Place, { img: Img; badge: Phaser.GameObjects.Text; scale: number }>();
+  /** The plain art of each building and the skin of the zone on screen (decision 056). */
+  private plainArt = new Map<Place, string>();
+  private zoneSkin: string | null = null;
   private backdrop!: Img;
   private tip!: NameTip;
   private shown = '';
@@ -79,6 +83,7 @@ export class GardenScene extends Phaser.Scene {
     this.makeBuilding('composter', GB.buildings.composter.art, v.composter, vi.garden.composter);
     this.makeBuilding('sprinkler', SPRINKLER_ART, v.sprinkler, vi.garden.sprinkler);
     this.makeBuilding('shop', v.shop.art, v.shop, vi.garden.shop);
+    this.plainArt.set('mill', GB.buildings.mill.art).set('composter', GB.buildings.composter.art).set('shop', v.shop.art);
     const shop = this.workshops.get('shop')!.img;
     if (!this.textures.exists(textureKey(v.shop.art))) shop.setTexture(stallKey(this, v.shop.art, v.shop.colours));
     new GardenLife(this, () => this.deps.reduceMotion());
@@ -249,6 +254,8 @@ export class GardenScene extends Phaser.Scene {
     paintBackdrop(this.backdrop, GARDEN_BACKDROP_ART, skinBackdropArt(state.zoneSkins[this.zone], 'garden'), state.zoneSkins[this.zone], GARDEN_VIEW.zoneTints[this.zone] ?? 0xffffff);
     this.scenery.draw(this.zone, state.zoneRanks[this.zone] ?? 1, theme);
     if (!calm) this.celebrate(harvested, ripened);
+    this.zoneSkin = state.zoneSkins[this.zone] ?? null;
+    themeBuildings(this.textures, this.workshops, this.plainArt, this.zoneSkin);
     this.drawSprinkler(state.sprinkler);
     this.setWorkshop('mill', state.mill);
     this.setWorkshop('composter', state.composter);
@@ -273,8 +280,9 @@ export class GardenScene extends Phaser.Scene {
     if (!s) return;
     const v = GARDEN_VIEW;
     const own = `${SPRINKLER_ART}_l${level}`;
-    const painted = level >= 2 && this.textures.exists(textureKey(own));
-    s.img.setTexture(KEY(painted ? own : SPRINKLER_ART, this.textures)).setTint(level > 0 ? 0xffffff : v.unbuiltTint);
+    const themed = skinBuildingArt(SPRINKLER_ART, this.zoneSkin, 'garden');
+    const painted = themed === SPRINKLER_ART && level >= 2 && this.textures.exists(textureKey(own));
+    s.img.setTexture(KEY(painted ? own : themed, this.textures)).setTint(level > 0 ? 0xffffff : v.unbuiltTint);
     s.scale = v.sprinkler.scale * (painted ? 1 : 1 + Math.max(0, level - 1) * v.sprinklerGrow);
     if (!this.tweens.isTweening(s.img)) s.img.setScale(s.scale);
   }

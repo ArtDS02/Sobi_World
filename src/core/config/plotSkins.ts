@@ -38,3 +38,22 @@ export const skinBackdropArt = (skinId: string | null | undefined, area: Backdro
 
 /** Every skin backdrop id the scenes may load (delivered ones only). */
 export const SKIN_BACKDROP_IDS = (area: BackdropArea): string[] => SKIN_BACKDROP_READY.map((id) => `bg_${area}_${id}`);
+
+/** The buildings standing on each Area's scene that a skin re-themes (batches cloud-09 / garden-08), by their plain art id. */
+export const SKIN_BUILDING_PARTS: Readonly<Record<BackdropArea, readonly string[]>> = {
+  cloud: ['bld_cloud_spring', 'bld_cauldron', 'bld_shop_cloud'],
+  garden: ['bld_feed_mill', 'bld_composter', 'bld_sprinkler', 'bld_shop_garden'],
+};
+
+/**
+ * Skins whose themed buildings exist in an Area (`<building>_<skin>`, e.g. bld_feed_mill_starry). A tier / zone wearing one of them
+ * shows its themed buildings; any other skin keeps the plain ones. Add a skin id here once ALL the Area's buildings for it are
+ * delivered and registered in the manifest.
+ */
+export const SKIN_BUILDING_READY: Readonly<Record<BackdropArea, readonly string[]>> = { cloud: [], garden: [] };
+
+/** The art id of a building for a skin: its themed art when delivered, else the plain art. */
+export const skinBuildingArt = (base: string, skinId: string | null | undefined, area: BackdropArea): string => (skinId && SKIN_BUILDING_READY[area].includes(skinId) ? `${base}_${skinId}` : base);
+
+/** Every themed building id the scenes may load (delivered ones only). */
+export const SKIN_BUILDING_IDS = (area: BackdropArea): string[] => SKIN_BUILDING_READY[area].flatMap((skin) => SKIN_BUILDING_PARTS[area].map((p) => `${p}_${skin}`));
