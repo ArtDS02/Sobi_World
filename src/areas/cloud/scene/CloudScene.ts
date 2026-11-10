@@ -37,6 +37,8 @@ export interface CloudSceneDeps {
   read: () => SceneState | null;
   onPick: (pick: CloudPick) => void;
   reduceMotion: () => boolean;
+  /** The effects intensity (decision 057, B8). */
+  effects: () => 'off' | 'light' | 'full';
   /** A panel or dialog covers the world: clicks on the canvas are ignored. */
   paused: () => boolean;
 }
@@ -135,7 +137,7 @@ export class CloudScene extends Phaser.Scene {
 
   override update(time: number, delta: number) {
     this.sync(false);
-    this.scenery.update(time, this.skyNight === true, this.deps.reduceMotion());
+    this.scenery.update(time, this.skyNight === true, this.deps.reduceMotion(), this.deps.effects());
     if (this.deps.reduceMotion()) return restFlowers(this.plots);
     swayFlowers(this.plots, time);
     moveDrifts(this.drifts, this.view, time);

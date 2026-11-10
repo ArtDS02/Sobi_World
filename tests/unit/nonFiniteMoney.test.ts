@@ -7,7 +7,7 @@ import { valueOf, weightFactor } from '../../src/systems/valuation/value';
 
 const none: TransactionRecord[] = [];
 const ctx = () => ({ now: 1_000, rng: mulberry32(7) });
-const settings = { musicOn: true, sfxOn: true, reduceMotion: false, tutorialDone: false, lastExportAt: null };
+const settings = { musicOn: true, sfxOn: true, reduceMotion: false, effects: 'full' as const, tutorialDone: false, lastExportAt: null };
 
 describe('ledger refuses non-finite numbers', () => {
   it.each([NaN, Infinity, -Infinity])('amount %s is rejected', (amount) => {

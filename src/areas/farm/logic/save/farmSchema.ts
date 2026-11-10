@@ -183,6 +183,8 @@ const shapeSchema = z.object({
     musicOn: z.boolean(),
     sfxOn: z.boolean(),
     reduceMotion: z.boolean(),
+    // Decision 057 (B8): absent in every legacy farm save, which then gets the full look.
+    effects: z.enum(['off', 'light', 'full']).default('full'),
     tutorialDone: z.boolean(),
     lastExportAt: time.nullable(),
   }),

@@ -38,6 +38,8 @@ export interface GardenSceneDeps {
   read: () => SceneState | null;
   onPick: (pick: GardenPick) => void;
   reduceMotion: () => boolean;
+  /** The effects intensity (decision 057, B8). */
+  effects: () => 'off' | 'light' | 'full';
   /** A panel or dialog covers the world: clicks on the canvas are ignored. */
   paused: () => boolean;
 }
@@ -112,7 +114,7 @@ export class GardenScene extends Phaser.Scene {
 
   override update(time: number) {
     this.sync(false);
-    this.scenery.update(time, true, this.deps.reduceMotion());
+    this.scenery.update(time, true, this.deps.reduceMotion(), this.deps.effects());
     if (this.deps.reduceMotion()) this.field.rest();
     else this.field.sway(time);
   }

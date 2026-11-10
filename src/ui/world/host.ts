@@ -22,6 +22,8 @@ export interface WorldHost {
   now(): number;
   /** The player asked for less motion: ambient movement stops. */
   reduceMotion(): boolean;
+  /** The effects intensity the player chose (decision 057, B8): how much light and how many particles to show. */
+  effects(): 'off' | 'light' | 'full';
   /** A panel or dialog covers the world: clicks on the world are left alone. */
   paused(): boolean;
   /** An interaction that did nothing (a closed door): the error feedback. */

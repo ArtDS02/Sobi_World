@@ -1,6 +1,7 @@
 // The look of a cloud tier / garden zone by rank (decision 056): the atmosphere (light, petals, fireflies; always) plus, when
 // RANK_SPRITES_ON, the pasted scenery sprites. One object for the scenes: draw() on a rank / skin change, update() every frame.
 import type * as Phaser from 'phaser';
+import type { EffectsMode } from '../../systems/animation/rankAtmosphere';
 import { RANK_SPRITES_ON, type SceneryLayer } from '../../systems/animation/rankScenery';
 import { RankAtmosphere, type AtmosphereDeps } from './rankAtmosphere';
 import { RankScenery, type SceneryTheme } from './rankScenery';
@@ -21,8 +22,9 @@ export class RankLook {
     this.atmosphere.set(rank, theme);
   }
 
-  update(timeMs: number, night: boolean, still: boolean) {
-    this.sprites.update(timeMs, night, still);
-    this.atmosphere.update(timeMs, still);
+  /** `effects`: the intensity setting (decision 057, B8); below "full" the lanterns do not flicker either. */
+  update(timeMs: number, night: boolean, still: boolean, effects: EffectsMode = 'full') {
+    this.sprites.update(timeMs, night, still || effects !== 'full');
+    this.atmosphere.update(timeMs, still, effects);
   }
 }

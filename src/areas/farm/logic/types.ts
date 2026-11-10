@@ -72,6 +72,8 @@ export interface FarmGame {
     musicOn: boolean;
     sfxOn: boolean;
     reduceMotion: boolean;
+    /** Effects intensity (decision 057, B8), a world setting like the others. */
+    effects: 'off' | 'light' | 'full';
     tutorialDone: boolean;
     lastExportAt: number | null;
   };

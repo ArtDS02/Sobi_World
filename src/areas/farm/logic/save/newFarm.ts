@@ -32,6 +32,7 @@ export function newGame(ctx: ActionContext, opts: { reduceMotion?: boolean } = {
       musicOn: CONTENT.defaults.newSave.musicOn,
       sfxOn: CONTENT.defaults.newSave.sfxOn,
       reduceMotion: opts.reduceMotion ?? false,
+      effects: opts.reduceMotion ? 'light' : 'full',
       tutorialDone: false,
       lastExportAt: null,
     },

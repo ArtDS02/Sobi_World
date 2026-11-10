@@ -1,6 +1,6 @@
 // What the settings screen's buttons do (spec §9.2, §9.3, §12): toggles through the store,
 // export / import through the platform's file dialogs, backup restore after a confirmation.
-import { setSetting } from '../logic/actions/setSetting';
+import { setEffects, setSetting } from '../logic/actions/setSetting';
 import { exportSave } from '../../../core/save/exportImport';
 import type { FileDialogs } from '../../../core/save/port';
 import type { BoundAction, FarmStore } from '../store';
@@ -30,6 +30,7 @@ export function settingsHandlers(d: SettingsDeps): SettingsHandlers {
   const files = d.files;
   return {
     toggle: (key, value) => d.act((s, c) => setSetting(s, { key, value }, c)),
+    setEffects: (value) => d.act((s, c) => setEffects(s, { value }, c)),
     exportSave: () => {
       const save = d.store.worldSave();
       if (!save || !files) return;

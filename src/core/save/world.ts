@@ -22,10 +22,16 @@ export interface WorldTransaction {
   note?: string;
 }
 
+/** How much light and how many particles the scenes show (decision 057, B8): for slow machines and light-sensitive players. */
+export const EFFECTS_MODES = ['off', 'light', 'full'] as const;
+export type EffectsMode = (typeof EFFECTS_MODES)[number];
+
 export interface WorldSettings {
   musicOn: boolean;
   sfxOn: boolean;
   reduceMotion: boolean;
+  /** Independent of reduceMotion (that one stops movement; this one is the amount of light and particles). */
+  effects: EffectsMode;
   tutorialDone: boolean;
   lastExportAt: number | null;
 }
@@ -102,6 +108,7 @@ export const worldSaveSchema = z.object({
     musicOn: z.boolean(),
     sfxOn: z.boolean(),
     reduceMotion: z.boolean(),
+    effects: z.enum(EFFECTS_MODES),
     tutorialDone: z.boolean(),
     lastExportAt: time.nullable(),
   }),
@@ -133,6 +140,8 @@ export const defaultSettings = (opts: { reduceMotion?: boolean } = {}): WorldSet
   musicOn: CONTENT.defaults.newSave.musicOn,
   sfxOn: CONTENT.defaults.newSave.sfxOn,
   reduceMotion: opts.reduceMotion ?? false,
+  // A player whose system asks for less motion starts on the gentle level; everyone else on the full look.
+  effects: opts.reduceMotion ? 'light' : 'full',
   tutorialDone: false,
   lastExportAt: null,
 });

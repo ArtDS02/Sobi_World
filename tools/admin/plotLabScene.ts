@@ -26,6 +26,8 @@ export interface PlotLabState {
   sprites: boolean;
   /** "Giảm chuyển động": the scenery stands still. */
   still: boolean;
+  /** Effects intensity (decision 057, B8). */
+  effects: 'off' | 'light' | 'full';
   /** Manifest rows by id (texture urls). */
   images: ReadonlyMap<string, { asset?: string }>;
 }
@@ -135,6 +137,6 @@ export class PlotLabScene extends Phaser.Scene {
       b.look.draw(s.group, s.rank, theme);
     }
     b.scenery.update(time, s.night, s.still);
-    b.look.update(time, s.night, s.still);
+    b.look.update(time, s.night, s.still, s.effects);
   }
 }

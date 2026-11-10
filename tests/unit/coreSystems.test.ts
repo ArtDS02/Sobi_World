@@ -15,7 +15,7 @@ import { buyItem } from '../../src/areas/farm/logic/actions/buyItem';
 import { inv, makeState } from './stateFactory';
 
 const ctx = (now = 1_000) => ({ now, rng: mulberry32(7) });
-const settings = { musicOn: true, sfxOn: true, reduceMotion: false, tutorialDone: false, lastExportAt: null };
+const settings = { musicOn: true, sfxOn: true, reduceMotion: false, effects: 'full' as const, tutorialDone: false, lastExportAt: null };
 
 describe('economy: one ledger for every currency', () => {
   it('posts a signed change with a transaction, newest first, capped', () => {

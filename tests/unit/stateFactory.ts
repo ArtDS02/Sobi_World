@@ -31,6 +31,7 @@ export function makeState(pigs: Pig[] = [], troughFood = 0): FarmGame {
       musicOn: true,
       sfxOn: true,
       reduceMotion: false,
+      effects: 'full',
       tutorialDone: false,
       lastExportAt: null,
     },

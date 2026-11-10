@@ -152,6 +152,7 @@ export async function start(root: HTMLElement) {
     go: (place) => (place.startsWith('panel:') ? app?.openPanel(place.slice(6) as PanelId) : void flow.go(place)),
     now: () => clock.now(),
     reduceMotion: () => store.getSnapshot().save?.settings.reduceMotion ?? false,
+    effects: () => store.getSnapshot().save?.settings.effects ?? 'full',
     paused: () => app?.isModalOpen() ?? false,
     denied: () => director?.denied(),
   };
@@ -234,6 +235,7 @@ export async function start(root: HTMLElement) {
         read: () => overlays.gardenUi.sceneState(),
         onPick: (pick) => overlays.gardenUi.pick(pick),
         reduceMotion: () => host.reduceMotion(),
+        effects: () => host.effects(),
         paused: () => host.paused(),
       });
       const aquarium = new AquariumScene({
@@ -248,6 +250,7 @@ export async function start(root: HTMLElement) {
         read: () => overlays.cloudUi.sceneState(),
         onPick: (pick) => overlays.cloudUi.pick(pick),
         reduceMotion: () => host.reduceMotion(),
+        effects: () => host.effects(),
         paused: () => host.paused(),
       });
       farmView = createFarmView(

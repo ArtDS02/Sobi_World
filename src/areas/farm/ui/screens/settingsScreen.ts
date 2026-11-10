@@ -1,6 +1,6 @@
 // Settings (spec §9.3, §10.4, §12): sound and motion toggles, export / import / open the save
 // folder, backups with restore, credits and version.
-import type { SettingKey } from '../../logic/actions/setSetting';
+import { EFFECTS_VALUES, type SettingKey } from '../../logic/actions/setSetting';
 import type { FarmGame } from '../../logic/types';
 import { vi } from '../../../../i18n/vi';
 import { renderDisplaySettings, type DisplayChoice } from '../../../../ui/components/displaySettings';
@@ -18,6 +18,8 @@ export interface SettingsHandlers {
   takePhoto: (() => void) | null;
   /** Flips musicOn / sfxOn / reduceMotion in the save. */
   toggle(key: SettingKey, value: boolean): void;
+  /** Effects intensity (decision 057, B8). */
+  setEffects(value: EffectsValue): void;
   /** Restore one backup (after a confirmation). */
   restore(name: string, label: string): void;
   /** D1: reads the save like loading does and shows what it found. */
@@ -68,6 +70,36 @@ function toggle(
   );
 }
 
+type EffectsValue = (typeof EFFECTS_VALUES)[number];
+
+/** Off / Light / Full: one radio group, the arrow keys move inside it like any radio group. */
+function effectsChoice(current: EffectsValue, h: SettingsHandlers): HTMLElement[] {
+  const s = vi.settings;
+  const group = el(
+    'div',
+    { class: 'settings__choices', attrs: { role: 'radiogroup', 'aria-label': s.effects, 'aria-describedby': 'settings-effects-hint' } },
+    ...EFFECTS_VALUES.map((id) =>
+      el('button', {
+        class: `c-button${id === current ? '' : ' c-button--ghost'}`,
+        text: s.effectsModes[id],
+        attrs: { type: 'button', role: 'radio', 'aria-checked': String(id === current), tabindex: id === current ? '0' : '-1', 'data-value': id },
+        on: { click: () => id !== current && h.setEffects(id) },
+      }),
+    ),
+  );
+  group.addEventListener('keydown', (e) => {
+    const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+    if (!step) return;
+    e.preventDefault();
+    const next = EFFECTS_VALUES[(EFFECTS_VALUES.indexOf(current) + step + EFFECTS_VALUES.length) % EFFECTS_VALUES.length]!;
+    h.setEffects(next);
+  });
+  return [
+    el('div', { class: 'settings__toggle', data: { setting: 'effects' } }, el('span', { class: 'settings__label', text: s.effects }), group),
+    el('p', { class: 'settings__hint', text: s.effectsHint, attrs: { id: 'settings-effects-hint' } }),
+  ];
+}
+
 export function renderSettingsScreen(
   save: FarmGame,
   vm: SettingsVm,
@@ -81,6 +113,7 @@ export function renderSettingsScreen(
     section(
       vi.settings.sound,
       ...TOGGLES.map(([key, label]) => toggle(save.settings, key, label, h)),
+      ...effectsChoice(save.settings.effects, h),
     ),
     ...(display ? renderDisplaySettings(display) : []),
     keys ? renderKeySettings(keys) : null,

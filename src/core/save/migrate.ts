@@ -86,9 +86,13 @@ const WORLD_MIGRATIONS: Record<number, (raw: Raw) => Raw> = {
   12: (raw) => {
     const progression = isObject(raw.progression) ? raw.progression : {};
     const cosmetics = isObject(raw.cosmetics) ? raw.cosmetics : {};
+    const settings = isObject(raw.settings) ? raw.settings : {};
+    // Effects intensity (decision 057, B8): the full look, or the gentle one for a save that already asks for less motion.
+    const effects = settings.effects === 'off' || settings.effects === 'light' || settings.effects === 'full' ? settings.effects : settings.reduceMotion === true ? 'light' : 'full';
     return {
       ...raw,
       schemaVersion: 13,
+      settings: { ...settings, effects },
       progression: { ...progression, levelRewardsPaid: typeof progression.levelRewardsPaid === 'number' ? progression.levelRewardsPaid : 20 },
       // Plot skins (decision 056): none forged yet.
       cosmetics: { ...cosmetics, plotSkins: Array.isArray(cosmetics.plotSkins) ? cosmetics.plotSkins : [] },

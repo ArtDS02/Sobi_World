@@ -19,7 +19,7 @@ import './rigLab.css';
 import './plotLab.css';
 
 const images = new Map<string, { asset?: string; status?: string }>();
-const state: PlotLabState = { area: 'cloud', group: 0, rank: 5, skin: null, night: false, still: false, sprites: false, images };
+const state: PlotLabState = { area: 'cloud', group: 0, rank: 5, skin: null, night: false, still: false, sprites: false, effects: 'full', images };
 let game: Phaser.Game | null = null;
 let guard = 0;
 let auto = 0;
@@ -79,7 +79,8 @@ function controls(): string {
     <div class="rl-row"><span class="rl-lbl">${state.area === 'cloud' ? 'Tầng' : 'Khu đất'}</span><div class="rl-chips">${Array.from({ length: a.groups }, (_, g) => chip(g === state.group, `data-group="${g}" title="${esc(a.groupName(g))}"`, String(g + 1))).join('')}</div></div>
     <div class="rl-row"><span class="rl-lbl">Bậc</span><div class="rl-chips">${a.rules.ids.map((id, i) => chip(i + 1 === state.rank, `data-rank="${i + 1}"`, `${i + 1} · ${a.rankName(id)}`)).join('')}${chip(auto !== 0, 'data-auto', auto ? '⏸ Dừng tự chạy' : '▶ Tự chạy bậc 1→5')}</div></div>
     <div class="rl-row"><span class="rl-lbl">Mẫu</span><div class="rl-chips">${chip(state.skin === null, 'data-skin=""', 'Mặc định')}${PLOT_SKINS.map((s) => chip(state.skin === s.id, `data-skin="${esc(s.id)}"`, skinName(s.id))).join('')}</div></div>
-    <div class="rl-row rl-opts">${toggle(state.night, 'data-night', 'Ban đêm')}${toggle(state.sprites, 'data-sprites', 'Hiện sprite trang trí cũ (để so sánh)')}${toggle(state.still, 'data-still', 'Giảm chuyển động')}</div>`;
+    <div class="rl-row rl-opts">${toggle(state.night, 'data-night', 'Ban đêm')}${toggle(state.sprites, 'data-sprites', 'Hiện sprite trang trí cũ (để so sánh)')}${toggle(state.still, 'data-still', 'Giảm chuyển động')}</div>
+    <div class="rl-row"><span class="rl-lbl">Cường độ hiệu ứng</span><div class="rl-chips">${(['off', 'light', 'full'] as const).map((m) => chip(state.effects === m, `data-effects="${m}"`, { off: 'Tắt', light: 'Nhẹ', full: 'Đầy đủ' }[m])).join('')}</div></div>`;
 }
 
 function mount(host: HTMLElement) {
@@ -126,6 +127,7 @@ export function renderPlotLab(root: HTMLElement) {
     if (d.group) state.group = Number(d.group);
     if (d.rank) state.rank = Number(d.rank);
     if (d.skin !== undefined) state.skin = d.skin || null;
+    if (d.effects) state.effects = d.effects as PlotLabState['effects'];
     if (t.hasAttribute('data-auto')) {
       window.clearInterval(auto);
       auto = auto ? 0 : window.setInterval(() => {

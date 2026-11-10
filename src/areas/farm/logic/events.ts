@@ -63,7 +63,9 @@ export type GameEvent =
       type: 'SETTING_CHANGED';
       key: 'musicOn' | 'sfxOn' | 'reduceMotion' | 'tutorialDone';
       value: boolean;
-    };
+    }
+  // Decision 057 (B8): the effects intensity, a three-way choice.
+  | { type: 'SETTING_CHANGED'; key: 'effects'; value: 'off' | 'light' | 'full' };
 
 export type GameEventType = GameEvent['type'];
 
