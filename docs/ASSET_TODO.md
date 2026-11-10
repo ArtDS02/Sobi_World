@@ -4,6 +4,9 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
+## Harvest-hand pointer (decision 057, B3)
+Today: an inline SVG drawn in code (`src/ui/world/harvestCursor.ts`, 32×32, hotspot 10,5): an open hand with a small leaf. Final art wanted: one pointer picture `ui_cursor_harvest` (32×32 PNG, transparent, hotspot between thumb and forefinger, brown outline like the HUD icons); optional 2× version (64×64) for high-DPI screens. Swap = replace the SVG string by the manifest image's URL.
+
 ## Cloud caterpillar (decision 057, B4)
 ✅ Delivered 2026-11-10: `prop_cloud_caterpillar_a` / `_b` / `_perch` / `_caught` (batch `cloud-10-caterpillar`, top row of the sheet) wired into `cloudBird.ts`; the code-drawn blob stays as the fallback.
 

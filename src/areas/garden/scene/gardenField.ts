@@ -3,6 +3,7 @@
 import * as Phaser from 'phaser';
 import { breezeAt } from '../../../systems/animation';
 import { BentPlant } from '../../../ui/world/bentPlant';
+import { canHarvest } from '../../../ui/world/harvestCursor';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { opaqueSize } from '../../../ui/world/opaqueSize';
 import { CROP_STAGES, cropArtId, PLOT_ART, type CropStage } from '../logic/art';
@@ -100,6 +101,11 @@ export class GardenField {
       this.seen.set(slot, now);
     }
     return { harvested, ripened };
+  }
+
+  /** The soil and crop pictures of every slot of `zone` whose crop can be picked now (ripe or wilted): the harvest hand shows over them. */
+  harvestable(zone: number, plots: readonly PlotView[]): Phaser.GameObjects.Image[] {
+    return this.slots.flatMap((s, slot) => (canHarvest(plots[plotIndex(zone, slot)]?.stage) ? [s.soil, s.crop] : []));
   }
 
   /** A crop that just ripened hops once. */

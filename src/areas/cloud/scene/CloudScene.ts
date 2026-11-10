@@ -18,6 +18,7 @@ import { setViewedTier } from '../viewedTier';
 import { CloudBuildings } from './cloudBuildings';
 import { CloudDrone } from './cloudDrone';
 import { CloudTierBar, rankBadgeOf } from './cloudTierBar';
+import { canHarvest, watchHarvestCursor } from '../../../ui/world/harvestCursor';
 import { RankLook } from '../../../ui/world/rankLook';
 import { bedArt, paintBackdrop, skinBackdropArt, skinTheme, CLOUD_DESIGN, CLOUD_FRAME, CLOUD_SCENERY, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers } from './cloudView';
 
@@ -119,10 +120,9 @@ export class CloudScene extends Phaser.Scene {
       show: (slot) => this.plots[slot]?.flower.setTint(0xf4ffd8),
     });
     this.events.on(Phaser.Scenes.Events.SLEEP, () => this.drone.reset());
-    this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
-      if (this.deps.paused() || over.length > 0) return;
-      this.deps.onPick({ kind: 'ground' });
-    });
+    this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => void (!this.deps.paused() && over.length === 0 && this.deps.onPick({ kind: 'ground' })));
+    // The harvest hand over a flower that can be picked (decision 057, B3).
+    watchHarvestCursor(this, { blocked: () => this.deps.paused() || this.moving, targets: () => this.plots.flatMap((p, slot) => (canHarvest(this.deps.read()?.plots[plotIndex(this.tier, slot)]?.stage) ? [p.bed, p.flower] : [])) });
     this.events.on(Phaser.Scenes.Events.WAKE, () => this.sync(true));
     const onTexture = (key: string) => {
       for (const [img, id] of this.fixedArt) if (textureKey(id) === key) img.setTexture(key);

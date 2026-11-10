@@ -17,6 +17,7 @@ import { GardenDrone } from './gardenDrone';
 import { GardenField } from './gardenField';
 import { harvestFly, mist, NameTip, ripenSparkle, sprayBurst } from './gardenFx';
 import { GardenLife } from './gardenLife';
+import { watchHarvestCursor } from '../../../ui/world/harvestCursor';
 import { RankLook } from '../../../ui/world/rankLook';
 import { skinBackdropArt, skinBuildingArt, skinTheme } from '../../../core/config/plotSkins';
 import { themeBuildings } from './gardenSkin';
@@ -85,10 +86,9 @@ export class GardenScene extends Phaser.Scene {
     this.plainArt.set('mill', GB.buildings.mill.art).set('composter', GB.buildings.composter.art); // no shop stall: it opens from the right-hand menu (decision 057)
     new GardenLife(this, () => this.deps.reduceMotion());
     this.zone = Math.max(0, viewedZone());
-    this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
-      if (this.deps.paused() || over.length > 0) return;
-      this.deps.onPick({ kind: 'ground' });
-    });
+    this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => void (!this.deps.paused() && over.length === 0 && this.deps.onPick({ kind: 'ground' })));
+    // The harvest hand over a crop that can be picked (decision 057, B3).
+    watchHarvestCursor(this, { blocked: () => this.deps.paused() || this.moving, targets: () => this.field.harvestable(this.zone, this.deps.read()?.plots ?? []) });
     const offZone = onViewedZone((zone, from) => this.changeZone(zone, from));
     const onTexture = (key: string) => {
       for (const [img, id] of this.fixedArt) if (textureKey(id) === key) img.setTexture(key);
