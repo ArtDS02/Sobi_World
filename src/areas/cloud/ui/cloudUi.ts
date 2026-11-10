@@ -6,7 +6,8 @@ import { AREA_HUD_ART } from '../../../core/config/assetIds';
 import { areaDock, hudLevel, hudNav, hudPill, hudPills } from '../../../ui/components/areaHud';
 import type { PanelId } from '../../../ui/components/popup';
 import { createSideMenu } from '../../../ui/components/sideMenu';
-import { SIDE_MENU_DEFAULT_POS, sideMenuItems, upgradeReason } from '../../../ui/world/sideMenuVm';
+import { sideMenuItems, upgradeReason } from '../../../ui/world/sideMenuVm';
+import { CLOUD_LAYOUT } from '../../../core/config/areaLayout';
 import { el, patch } from '../../../ui/dom';
 import type { GameStore } from '../../../core/world/gameStore';
 import type { WorldSave } from '../../../core/save/world';
@@ -146,7 +147,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
         shop: { reason: null, onClick: () => dialogs.openShop() },
         bag: { reason: null, onClick: () => d.openPanel('inventory') },
       }),
-      SIDE_MENU_DEFAULT_POS,
+      CLOUD_LAYOUT.sideMenu,
     );
   }
 

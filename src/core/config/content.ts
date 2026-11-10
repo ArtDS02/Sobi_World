@@ -17,6 +17,9 @@ import healthRaw from '../../../content/shared/health.json';
 import inventoryRaw from '../../../content/shared/inventory.json';
 import itemsRaw from '../../../content/shared/items.json';
 import plotSkinsRaw from '../../../content/shared/plotSkins.json';
+import cloudLayoutRaw from '../../../content/cloud/layout.json';
+import gardenLayoutRaw from '../../../content/garden/layout.json';
+import aquariumLayoutRaw from '../../../content/aquarium/layout.json';
 import progressionRaw from '../../../content/shared/progression.json';
 import recipesRaw from '../../../content/shared/recipes.json';
 import qualityRaw from '../../../content/shared/quality.json';
@@ -45,6 +48,7 @@ import { healthFileSchema } from '../../../content/schemas/shared/health';
 import { inventoryFileSchema } from '../../../content/schemas/shared/inventory';
 import { itemsFileSchema } from '../../../content/schemas/shared/items';
 import { plotSkinsFileSchema } from '../../../content/schemas/shared/plotSkins';
+import { aquariumLayoutFileSchema, cloudLayoutFileSchema, gardenLayoutFileSchema } from '../../../content/schemas/shared/areaLayout';
 import { progressionFileSchema } from '../../../content/schemas/shared/progression';
 import { recipesFileSchema } from '../../../content/schemas/shared/recipes';
 import { qualityFileSchema } from '../../../content/schemas/shared/quality';
@@ -64,6 +68,9 @@ export const CONTENT = {
   inventory: loadContent('shared/inventory.json', inventoryFileSchema, inventoryRaw),
   progression: loadContent('shared/progression.json', progressionFileSchema, progressionRaw),
   plotSkins: loadContent('shared/plotSkins.json', plotSkinsFileSchema, plotSkinsRaw),
+  cloudLayout: loadContent('cloud/layout.json', cloudLayoutFileSchema, cloudLayoutRaw),
+  gardenLayout: loadContent('garden/layout.json', gardenLayoutFileSchema, gardenLayoutRaw),
+  aquariumLayout: loadContent('aquarium/layout.json', aquariumLayoutFileSchema, aquariumLayoutRaw),
   recipes: loadContent('shared/recipes.json', recipesFileSchema, recipesRaw),
   quality: loadContent('shared/quality.json', qualityFileSchema, qualityRaw),
   defaults: loadContent('shared/defaults.json', defaultsFileSchema, defaultsRaw),

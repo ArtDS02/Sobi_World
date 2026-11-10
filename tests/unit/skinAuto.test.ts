@@ -184,8 +184,10 @@ describe('save', () => {
 
   it('a slice written by a development build before the field existed still loads (no save is refused)', () => {
     const w = world();
-    const { tierSkinAuto: _c, ...oldCloud } = cloudOf(w);
-    const { zoneSkinAuto: _g, ...oldGarden } = gardenOf(w);
+    // What such a build wrote to disk: the same slices without the new key (JSON drops an undefined field).
+    const oldCloud = JSON.parse(JSON.stringify({ ...cloudOf(w), tierSkinAuto: undefined })) as ReturnType<typeof cloudOf>;
+    const oldGarden = JSON.parse(JSON.stringify({ ...gardenOf(w), zoneSkinAuto: undefined })) as ReturnType<typeof gardenOf>;
+    expect('tierSkinAuto' in oldCloud || 'zoneSkinAuto' in oldGarden).toBe(false);
     expect(cloudStateSchema.safeParse(oldCloud).success).toBe(true);
     expect(gardenStateSchema.safeParse(oldGarden).success).toBe(true);
     expect(cloudScene(oldCloud, JAN).skins[0]).toBeNull();

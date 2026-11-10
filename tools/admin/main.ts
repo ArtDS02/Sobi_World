@@ -1,6 +1,6 @@
 // Sobi World admin dashboard entry (admin.html, `npm run admin`; decisions A7-1, AD-1, 036). Hash routes:
 // #/ overview · #/users[/<id>] · #/content[/<file>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
-// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/battle-lab · #/rig-lab · #/plant-lab · #/plot-lab · #/assets · #/library · #/desktop · #/guide[/<section>]
+// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/battle-lab · #/rig-lab · #/plant-lab · #/plot-lab · #/area-layout · #/assets · #/library · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
 import { renderBalance } from './balance';
 import { preloadChecks, problemCount, renderChecks } from './checks';
@@ -14,6 +14,7 @@ import { renderMapAssets } from './mapAssetsPage';
 import { renderBattleLab } from './battleLab';
 import { renderPlantLab } from './plantLab';
 import { renderPlotLab } from './plotLab';
+import { areaLayoutDirty, renderAreaLayout } from './areaLayout';
 import { renderRigLab } from './rigLab';
 import { breedingDirty, renderBreeding } from './breeding';
 import { contentDirty, renderContent } from './contentPage';
@@ -50,7 +51,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
     ['layout', '🗺️', 'Bố cục cảnh', 'layout'],
     ['seasons', '🍂', 'Mùa & hiệu ứng', 'seasons'],
   ]],
-  ['Thế giới (dùng chung)', [['daynight', '🌗', 'Ngày / Đêm', 'daynight']]],
+  ['Thế giới (dùng chung)', [['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['area-layout', '📐', 'Bố cục khu', 'layout']]],
   ['Phiêu lưu', [
     ['adventure', '⚔️', 'Mô phỏng trận', 'battle-sim'],
     ['adventure-world', '🧭', 'Quản lý map', 'map-manage'],
@@ -97,6 +98,7 @@ const DIRTY: DirtySource[] = [
   { page: 'products', label: 'Cửa hàng', dirty: productsDirty },
   { page: 'breeding', label: 'Phối giống', dirty: breedingDirty },
   { page: 'layout', label: 'Bố cục', dirty: layoutDirty },
+  { page: 'area-layout', label: 'Bố cục khu', dirty: areaLayoutDirty },
   { page: 'users', label: 'Người chơi', dirty: userDirty },
   { page: 'content', label: 'Nội dung', dirty: contentDirty },
   { page: 'adventure-editor', label: 'Map Editor', dirty: editorDirty },
@@ -119,7 +121,7 @@ function shell() {
   const { page } = route();
   const errors = state.issues.filter((i) => i.level === 'error').length;
   const dirtyOf: Record<string, () => boolean> = {
-    pigs: () => state.dirty, products: productsDirty, breeding: breedingDirty, layout: layoutDirty, users: userDirty, content: contentDirty,
+    pigs: () => state.dirty, products: productsDirty, breeding: breedingDirty, layout: layoutDirty, 'area-layout': areaLayoutDirty, users: userDirty, content: contentDirty,
   };
   const prefs = readPrefs();
   const hash = location.hash.slice(2).split('?')[0];
@@ -246,6 +248,7 @@ function render() {
     'rig-lab': () => renderRigLab(content),
     'plant-lab': () => renderPlantLab(content),
     'plot-lab': () => renderPlotLab(content),
+    'area-layout': () => renderAreaLayout(content),
     balance: () => renderBalance(content, render),
     checks: () => renderChecks(content, render),
     layout: () => renderLayout(content, render),

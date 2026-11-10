@@ -1,6 +1,7 @@
 import type { CropStage } from '../logic/art';
 import { PLOTS_PER_ZONE, type BuildingId } from '../logic/config/content';
 import type { PlotView } from '../logic/derived';
+import { GARDEN_LAYOUT, grid, need, scaled, spotsOf } from '../../../core/config/areaLayout';
 import type { RankFrame, SceneryLayer } from '../../../systems/animation/rankScenery';
 
 // Look of the Garden scene (design px, depths, colours, motion). What grows where is content and state; these are the
@@ -15,10 +16,14 @@ export type GardenPick =
 
 export const GARDEN_DESIGN = { width: 1600, height: 900 } as const;
 
+/** Where the fixed things stand: content/garden/layout.json (decision 057, B5), moved by drag and drop in the admin. */
+const SPOTS = spotsOf(GARDEN_LAYOUT);
+const FIELD = grid(need(SPOTS, 'field'));
+
 export const GARDEN_VIEW = {
   columns: 6,
   /** Centre of the first plot and the step between two plots: four rows of six fill the lawn inside the path. */
-  field: { x: 450, y: 287, stepX: 178, stepY: 93 },
+  field: FIELD,
   /** Plot art canvas and the scale it is drawn at (four rows must fit the lawn; the mock-up shows two). */
   plotSize: { width: 152, height: 108 },
   plotScale: 0.86,
@@ -36,9 +41,9 @@ export const GARDEN_VIEW = {
    */
   cropFit: { width: 112, height: { sprout: 58, grow: 92, ripe: 118, wilt: 88 } satisfies Record<CropStage, number> },
   /** Feet of the workshops and the sprinkler on the empty grass spots of the backdrop, and their drawing scale. */
-  mill: { x: 185, y: 364, scale: 1 },
-  composter: { x: 165, y: 615, scale: 1 },
-  sprinkler: { x: 1530, y: 380, scale: 1.2 },
+  mill: scaled(need(SPOTS, 'mill')),
+  composter: scaled(need(SPOTS, 'composter')),
+  sprinkler: scaled(need(SPOTS, 'sprinkler')),
   /**
    * Crops sway in a breeze: each plant its own period and phase, all stirred by one slow gust. Degrees by stage are the whole
    * picture's tilt around its base, used only without WebGL (where crops cannot bend).
@@ -145,4 +150,5 @@ export const GARDEN_SCENERY: readonly SceneryLayer[] = [
 ];
 
 /** The rank frame around a garden zone's 6 x 4 plots (decision 056). */
-export const GARDEN_FRAME: RankFrame = { x: 350, y: 227, width: 1090, height: 400, depth: 7 };
+/** The rank frame around the plots: it follows the field (100 px left of and 60 px above the first plot's centre). */
+export const GARDEN_FRAME: RankFrame = { x: FIELD.x - 100, y: FIELD.y - 60, width: 1090, height: 400, depth: 7 };

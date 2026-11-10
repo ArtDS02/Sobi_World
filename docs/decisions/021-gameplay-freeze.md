@@ -2,7 +2,7 @@
 
 > **Lưu ý 2026-11-09:** decision 056 đã mở băng tạm thời cho đúng World Level 100, nâng cấp tầng/khu và đúc mẫu khuông, rồi **đóng băng lại**. Luật mới được thêm vào danh sách đã đóng băng: Sobi World Level 1–100 (thay cho 20 cấp), 5 bậc nâng cấp mỗi tầng mây / khu đất (chỉ bội thu), đúc mẫu khuông thẩm mỹ (xu hoặc Gems).
 
-> **Lưu ý 2026-11-10:** decision 057 đang mở băng tạm thời cho đúng tám mục B1–B8 (HUD mở rộng bên phải, mua / túi không giới hạn số lượng, con trỏ thu hoạch, art sâu Cloud, Admin kéo/thả bố cục, hiệu ứng nâng cấp, đổi mẫu tự động theo giờ / mùa, cường độ hiệu ứng). Xong sẽ đóng băng lại và thêm luật mới vào danh sách.
+> **Lưu ý 2026-11-10:** decision 057 đã mở băng tạm thời cho đúng tám mục B1–B8 (HUD mở rộng bên phải, mua / túi không giới hạn số lượng, con trỏ thu hoạch, art sâu Cloud, Admin kéo/thả bố cục, hiệu ứng nâng cấp, đổi mẫu tự động theo giờ / mùa, cường độ hiệu ứng), rồi **đóng băng lại** cùng ngày. Luật mới được thêm vào danh sách đã đóng băng: menu HUD bên phải ở mọi khu; mua và túi đồ không giới hạn số lượng; tầng mây / khu đất tự đổi mẫu theo giờ hoặc theo mùa (chỉ hiển thị, chỉ dùng mẫu đã đúc, không đổi mẫu người chơi đã chọn); cường độ hiệu ứng Tắt / Nhẹ / Đầy đủ.
 
 **Ngày:** 2026-10-11 · **Trạng thái:** Đề xuất, có hiệu lực **sau khi chủ dự án chơi thử ≥ 7 ngày thật và duyệt GĐ13**. Từ lúc đó hết đổi cơ chế; chỉ sửa lỗi (ROADMAP GĐ13, decision 017).
 

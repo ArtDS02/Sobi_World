@@ -28,3 +28,4 @@ Quy tắc:
 - Test: `tests/scripts/admin*.test.ts`, `tests/unit/adminData.test.ts`.
 
 - `plotLab.ts` + `plotLabScene.ts` — trang "Khuông & cảnh bậc" (`#/plot-lab`): xem một tầng mây / khu đất ở từng bậc nâng cấp và từng mẫu khuông bằng chính code của game (cảnh, chủ đề màu, khung viền, hạt bay), kèm bảng lớp đang hiện và trạng thái ảnh. Chỉ xem, không lưu.
+- `areaLayout.ts` + `areaLayoutModel.ts` (thuần, có test) + `areaLayout.css` — trang "Bố cục khu" (`#/area-layout`, decision 057 B5): kéo-thả vị trí ô trồng, công trình, bảng tên, chỗ câu của Sobi Cloud / Garden / Aquarium trên chính ảnh nền của khu; lưu vào `content/<area>/layout.json` qua API nội dung. Farm và Sảnh vẫn dùng "Bố cục cảnh".

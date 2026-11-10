@@ -1,0 +1,31 @@
+/* Admin "Bố cục khu" (decision 057, B5): the Area's backdrop with a draggable pin per spot. */
+.al-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 12px 0; }
+.al-bar .chips { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.al-error { white-space: pre-line; color: #ff8a80; font-weight: 600; }
+.al-work { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start; }
+@media (max-width: 1100px) { .al-work { grid-template-columns: 1fr; } }
+
+.al-stage { position: relative; width: 100%; overflow: hidden; background: #cfd8ea; border: 2px solid #8b93a7; border-radius: 8px; user-select: none; touch-action: none; }
+.al-bg { position: absolute; top: 0; left: 50%; height: 100%; transform: translateX(-50%); pointer-events: none; }
+.al-nobg { position: absolute; inset: 0; display: grid; place-items: center; }
+
+.al-shape { position: absolute; pointer-events: none; box-sizing: border-box; }
+.al-shape--cell { border: 2px dashed rgba(255, 255, 255, 0.9); background: rgba(70, 120, 60, 0.18); border-radius: 10px; }
+.al-shape--box { border: 2px dashed #ffd54a; background: rgba(255, 213, 74, 0.15); }
+
+.al-menu { position: absolute; right: 1.2%; width: 3.4%; aspect-ratio: 1; display: grid; place-items: center; font-style: normal; font-weight: 700; color: #4a3f7a; background: #ffffffd9; border: 2px solid #8a6cd6; border-radius: 50%; pointer-events: none; }
+
+.al-pin { position: absolute; width: 18px; height: 18px; padding: 0; margin: -9px 0 0 -9px; background: #ff5a7a; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); cursor: grab; }
+.al-pin:active { cursor: grabbing; }
+.al-pin span { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); padding: 1px 6px; font-size: 12px; font-weight: 600; white-space: nowrap; color: #ffffff; background: rgba(30, 30, 50, 0.78); border-radius: 6px; pointer-events: none; }
+.al-pin.is-sel { background: #7a62d8; outline: 3px solid #ffd54a; outline-offset: 2px; z-index: 2; }
+.al-pin:focus-visible { outline: 3px solid #ffd54a; outline-offset: 2px; }
+
+.al-panel { display: grid; gap: 8px; }
+.al-row { padding: 8px 10px; color: inherit; background: rgba(255, 255, 255, 0.06); border: 2px solid rgba(255, 255, 255, 0.16); border-radius: 8px; }
+.al-row b { color: inherit; opacity: 1; }
+.al-row.is-sel { border-color: #7a62d8; }
+.al-row code { font-size: 12px; opacity: 0.7; }
+.al-fields { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.al-fields label { display: grid; gap: 2px; font-size: 12px; color: inherit; opacity: 0.9; }
+.al-fields input { width: 84px; }

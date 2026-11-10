@@ -3,6 +3,7 @@ import type { PlotView } from '../logic/derived';
 import { PLOTS_PER_TIER } from '../logic/config/content';
 import type { RankFrame, SceneryLayer } from '../../../systems/animation/rankScenery';
 import { skinArtId, skinBackdropArt, skinTheme } from '../../../core/config/plotSkins';
+import { at, CLOUD_LAYOUT, grid, need, scaled, spotsOf } from '../../../core/config/areaLayout';
 import { paintBackdrop } from '../../../ui/world/skinBackdrop';
 
 export { skinTheme, skinBackdropArt, paintBackdrop };
@@ -12,10 +13,14 @@ export { skinTheme, skinBackdropArt, paintBackdrop };
 // removed — sheet E of batch cloud-04-scene, decision 023): backdrop px × 1.25 − 108 = design x, × 1.25 = design y.
 export const CLOUD_DESIGN = { width: 1600, height: 900 } as const;
 
+/** Where the fixed things stand: content/cloud/layout.json (decision 057, B5), moved by drag and drop in the admin. */
+const SPOTS = spotsOf(CLOUD_LAYOUT);
+const FIELD = grid(need(SPOTS, 'field'));
+
 export const CLOUD_VIEW = {
   columns: 5,
   /** Centre of the first plot and the step between two plots (the cream field of the island). */
-  field: { x: 536, y: 288, stepX: 165, stepY: 118 },
+  field: FIELD,
   plotSize: { width: 152, height: 108 },
   /** Flowers are drawn a little smaller than their canvas so a bloom does not hide the plot above it. */
   flowerScale: 0.88,
@@ -36,11 +41,11 @@ export const CLOUD_VIEW = {
    */
   bend: { rows: 14, root: 0.1, stiff: 0.62, lag: 0.7, sprout: 2.4, grow: 3.8, ripe: 5, wilt: 1.4 },
   /** Feet of the spring and the cauldron on the two grass banks at the left, and their drawing scale. */
-  spring: { x: 286, y: 372, scale: 0.9 },
-  cauldron: { x: 222, y: 662, scale: 0.82 },
+  spring: scaled(need(SPOTS, 'spring')),
+  cauldron: scaled(need(SPOTS, 'cauldron')),
   /** Wooden label planks (centre). */
-  springLabel: { x: 284, y: 440 },
-  cauldronLabel: { x: 340, y: 624 },
+  springLabel: at(need(SPOTS, 'springLabel')),
+  cauldronLabel: at(need(SPOTS, 'cauldronLabel')),
   plank: { width: 230, height: 84 },
   /** Where the name goes on the plank and on the tier banner (shares of the art, decision 035): right of the painted
    *  cloud, inside the edges; `dy` moves the face down from the art's centre. */
@@ -51,9 +56,9 @@ export const CLOUD_VIEW = {
    * The tier's title banner (centre) on the green knoll under the field, and the arrows that change tier. Raised 26 px from
    * the knoll's centre (decision 031) so the arrows stay clear of the HUD's bottom tray in the smallest window (1024 × 640).
    */
-  title: { x: 800, y: 680, width: 480, height: 183 },
-  tierUp: { x: 1074, y: 686 },
-  tierDown: { x: 526, y: 686 },
+  title: { ...at(need(SPOTS, 'title')), width: 480, height: 183 },
+  tierUp: at(need(SPOTS, 'tierUp')),
+  tierDown: at(need(SPOTS, 'tierDown')),
   /** Share of the banner's width the title may use (a long tier name shrinks to fit). */
   titleFit: 0.6,
   arrowSize: 78,
@@ -62,7 +67,7 @@ export const CLOUD_VIEW = {
    * after the caterpillars one by one. Flight is a smooth curve at `speed` design px per second. With its drawn wing frames
    * (decision 050 (5)) it beats its wings `wingHz` times a second, slowly hovering, fast in flight.
    */
-  bird: { x: 1257, y: 118, size: 116, speed: 230, restMs: [4500, 9000], area: { x0: 520, x1: 1420, y0: 150, y1: 560 }, catchMs: 520, wingHz: { rest: 2.2, fly: 4.5 } },
+  bird: { ...at(need(SPOTS, 'bird')), size: 116, speed: 230, restMs: [4500, 9000], area: { x0: 520, x1: 1420, y0: 150, y1: 560 }, catchMs: 520, wingHz: { rest: 2.2, fly: 4.5 } },
   /** Decorative caterpillars (no gameplay): one may appear on a growing flower now and then, at most `max` at a time. */
   pest: { everyMs: [9000, 18000], max: 2, width: 30, height: 16, scale: 1.5, artScale: 0.55, noticeMs: 2500 },
   /** Small clouds drifting across the sky behind the island (existing env art), each its own speed and height. */
@@ -162,4 +167,5 @@ export const CLOUD_SCENERY: readonly SceneryLayer[] = [
 export const bedArt = (skin: string | null | undefined): string => (skin ? skinArtId(skin, 'cloud') : CLOUD_PLOT_ART);
 
 /** The rank frame around a cloud tier's 5 x 3 plots (decision 056). */
-export const CLOUD_FRAME: RankFrame = { x: 446, y: 218, width: 840, height: 376, depth: 7 };
+/** The rank frame around the plots: it follows the field (90 px left of and 70 px above the first plot's centre). */
+export const CLOUD_FRAME: RankFrame = { x: FIELD.x - 90, y: FIELD.y - 70, width: 840, height: 376, depth: 7 };

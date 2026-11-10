@@ -4,7 +4,8 @@
 // the app into the shell's overlay; the dialogs are aquariumDialogs.ts.
 import type { PanelId } from '../../../ui/components/popup';
 import { createSideMenu } from '../../../ui/components/sideMenu';
-import { SIDE_MENU_DEFAULT_POS, sideMenuItems } from '../../../ui/world/sideMenuVm';
+import { sideMenuItems } from '../../../ui/world/sideMenuVm';
+import { AQUARIUM_LAYOUT } from '../../../core/config/areaLayout';
 import { AREA_HUD_ART, itemArtId } from '../../../core/config/assetIds';
 import { FISH } from '../logic/config/content';
 import type { AquariumEvent } from '../logic/events';
@@ -146,7 +147,7 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
         shop: { reason: null, onClick: () => dialogs.openShop() },
         bag: { reason: null, onClick: () => d.openPanel('inventory') },
       }),
-      SIDE_MENU_DEFAULT_POS,
+      AQUARIUM_LAYOUT.sideMenu,
     );
     dialogs.follow(w);
   }

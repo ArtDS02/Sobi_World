@@ -1,3 +1,4 @@
+import { AQUARIUM_LAYOUT, at, boxed, need, scaled, spotsOf } from '../../../core/config/areaLayout';
 import type { FishView } from '../logic/derived';
 
 // Look of the Aquarium scene (design px, depths, colours). What swims is state; these are the drawing choices of the
@@ -49,21 +50,20 @@ export interface AquariumPlace {
 const PEARLS = 'prop_orange_pearls';
 const PEARL_PILE = 'prop_pearl_pile';
 
-/** The five places, by tank level (index 0 = level 1). A level past the list draws the last place. */
-export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
+/** What the code keeps of a place: its picture, its water, and which props it has. Where they stand is content (content/aquarium/layout.json, decision 057 B5). */
+type PlaceLook = Omit<AquariumPlace, 'eggs' | 'scales' | 'shop' | 'plaque' | 'rod' | 'bite' | 'dock'> & { shopArt: string; hasRod: boolean; biteKind: 'ripple' | 'glow' | null };
+
+/** The five places, by tank level (index 0 = level 1). */
+const PLACE_LOOKS: readonly PlaceLook[] = [
   {
     // Level 1: the round glass tank on the wooden dock (the tank and the rod are painted in the backdrop).
     art: 'bg_aquarium',
     water: { left: 390, right: 1250, top: 305, bottom: 515 },
     surface: true,
     murk: { left: 360, right: 1280, top: 290, bottom: 600 },
-    eggs: { x: 480, y: 578 },
-    scales: { x: 1110, y: 598 },
-    shop: { x: 1370, y: 735, art: 'bld_shop_aquarium' },
-    plaque: { x: 800, y: 643 },
-    rod: null,
-    bite: { x: 1585, y: 470, kind: 'ripple' },
-    dock: { x: 1565, y: 380, width: 180, height: 260 },
+    shopArt: 'bld_shop_aquarium',
+    hasRod: false,
+    biteKind: 'ripple',
     decor: [{ art: PEARLS, x: 930, y: 590 }],
   },
   {
@@ -72,13 +72,9 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     water: { left: 290, right: 1340, top: 370, bottom: 630 },
     surface: true,
     murk: { left: -400, right: 2000, top: 330, bottom: 1300 },
-    eggs: { x: 560, y: 712 },
-    scales: { x: 1130, y: 728 },
-    shop: { x: 1340, y: 772, art: 'bld_shop_aquarium_sea' },
-    plaque: { x: 800, y: 700 },
-    rod: { x: 1520, y: 318, scale: 0.85 },
-    bite: null,
-    dock: { x: 1555, y: 220, width: 190, height: 250 },
+    shopArt: 'bld_shop_aquarium_sea',
+    hasRod: true,
+    biteKind: null,
     decor: [
       { art: PEARLS, x: 470, y: 722 },
       { art: PEARL_PILE, x: 1290, y: 722 },
@@ -90,13 +86,9 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     water: { left: 290, right: 1340, top: 330, bottom: 615 },
     surface: true,
     murk: { left: -400, right: 2000, top: 292, bottom: 1300 },
-    eggs: { x: 560, y: 700 },
-    scales: { x: 1060, y: 712 },
-    shop: { x: 1330, y: 768, art: 'bld_shop_aquarium_sea' },
-    plaque: { x: 800, y: 700 },
-    rod: { x: 1525, y: 282, scale: 0.85 },
-    bite: null,
-    dock: { x: 1560, y: 185, width: 190, height: 250 },
+    shopArt: 'bld_shop_aquarium_sea',
+    hasRod: true,
+    biteKind: null,
     decor: [{ art: PEARL_PILE, x: 1290, y: 702 }],
   },
   {
@@ -105,13 +97,9 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     water: { left: 300, right: 1300, top: 325, bottom: 620 },
     surface: true,
     murk: { left: -400, right: 2000, top: 288, bottom: 1300 },
-    eggs: { x: 600, y: 718 },
-    scales: { x: 1090, y: 728 },
-    shop: { x: 1330, y: 782, art: 'bld_shop_aquarium_sea' },
-    plaque: { x: 800, y: 700 },
-    rod: { x: 1505, y: 288, scale: 0.85 },
-    bite: null,
-    dock: { x: 1540, y: 190, width: 190, height: 250 },
+    shopArt: 'bld_shop_aquarium_sea',
+    hasRod: true,
+    biteKind: null,
     decor: [],
   },
   {
@@ -120,19 +108,32 @@ export const AQUARIUM_PLACES: readonly AquariumPlace[] = [
     water: { left: 290, right: 1340, top: 245, bottom: 620 },
     surface: false,
     murk: { left: -400, right: 2000, top: -400, bottom: 1300 },
-    eggs: { x: 620, y: 732 },
-    scales: { x: 1110, y: 742 },
-    shop: { x: 1340, y: 790, art: 'bld_shop_aquarium_sea' },
-    plaque: { x: 800, y: 700 },
-    rod: null,
-    bite: { x: 1485, y: 238, kind: 'glow' },
-    dock: { x: 1485, y: 150, width: 120, height: 300 },
+    shopArt: 'bld_shop_aquarium_sea',
+    hasRod: false,
+    biteKind: 'glow',
     decor: [
       { art: PEARLS, x: 500, y: 736 },
       { art: PEARL_PILE, x: 1280, y: 742 },
     ],
   },
 ];
+
+function placeOf({ shopArt, hasRod, biteKind, ...look }: PlaceLook, index: number): AquariumPlace {
+  const s = spotsOf(AQUARIUM_LAYOUT, index);
+  return {
+    ...look,
+    eggs: at(need(s, 'eggs')),
+    scales: at(need(s, 'scales')),
+    shop: { ...at(need(s, 'shop')), art: shopArt },
+    plaque: at(need(s, 'plaque')),
+    rod: hasRod ? scaled(need(s, 'rod')) : null,
+    bite: biteKind ? { ...at(need(s, 'bite')), kind: biteKind } : null,
+    dock: boxed(need(s, 'dock')),
+  };
+}
+
+/** The five places with their props placed. A level past the list draws the last place. */
+export const AQUARIUM_PLACES: readonly AquariumPlace[] = PLACE_LOOKS.map(placeOf);
 
 /** The place drawn for a tank level. */
 export const aquariumPlace = (level: number): AquariumPlace => AQUARIUM_PLACES[Math.min(AQUARIUM_PLACES.length, Math.max(1, level)) - 1]!;
