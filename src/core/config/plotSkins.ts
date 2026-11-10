@@ -41,8 +41,9 @@ export const SKIN_BACKDROP_IDS = (area: BackdropArea): string[] => SKIN_BACKDROP
 
 /** The buildings standing on each Area's scene that a skin re-themes (batches cloud-09 / garden-08), by their plain art id. */
 export const SKIN_BUILDING_PARTS: Readonly<Record<BackdropArea, readonly string[]>> = {
-  cloud: ['bld_cloud_spring', 'bld_cauldron', 'bld_shop_cloud'],
-  garden: ['bld_feed_mill', 'bld_composter', 'bld_sprinkler', 'bld_shop_garden'],
+  // No shop stalls: the shop building is gone from the scenes (it opens from the HUD).
+  cloud: ['bld_cloud_spring', 'bld_cauldron'],
+  garden: ['bld_feed_mill', 'bld_composter', 'bld_sprinkler'],
 };
 
 /**

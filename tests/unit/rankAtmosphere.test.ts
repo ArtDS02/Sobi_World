@@ -65,7 +65,7 @@ describe('skin buildings', () => {
     }
   });
   it('lists the buildings of each Area that a skin re-themes', () => {
-    expect(SKIN_BUILDING_PARTS.cloud).toEqual(['bld_cloud_spring', 'bld_cauldron', 'bld_shop_cloud']);
-    expect(SKIN_BUILDING_PARTS.garden).toEqual(['bld_feed_mill', 'bld_composter', 'bld_sprinkler', 'bld_shop_garden']);
+    expect(SKIN_BUILDING_PARTS.cloud).toEqual(['bld_cloud_spring', 'bld_cauldron']);
+    expect(SKIN_BUILDING_PARTS.garden).toEqual(['bld_feed_mill', 'bld_composter', 'bld_sprinkler']);
   });
 });
