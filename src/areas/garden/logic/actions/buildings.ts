@@ -100,9 +100,10 @@ export function collectCraft(world: WorldSave, args: { building: string }, ctx: 
     if (!job || !recipe) return { ok: false, error: 'NOTHING_TO_COLLECT' };
     const ready = batchesReady(job, recipe, ctx.now);
     if (ready <= 0) return { ok: false, error: 'NOTHING_TO_COLLECT' };
-    for (let n = ready; n >= 1; n -= 1) {
+    {
+      const n = ready; // the bag has no limit (decision 057): every ready batch is taken
       const given = give(w, scaled(recipe.outputs, n));
-      if (!given.ok) continue;
+      if (!given.ok) return given;
       const next = collectBatches(job, n);
       return {
         ok: true,
@@ -111,7 +112,6 @@ export function collectCraft(world: WorldSave, args: { building: string }, ctx: 
         xp: n * GB.xp.craft,
       };
     }
-    return { ok: false, error: 'INVENTORY_FULL' };
   });
 }
 

@@ -1,13 +1,14 @@
 // The Aquarium's shop (decision 032): fish feed, medicine and young fish of the common species at the prices of
 // content/aquarium/balance.json `shop`, bought in any count up to SHOP_MAX at once. Coins go out through the ledger;
 // the items land in the shared bag (all or nothing). A bought fish waits in the bag until it is put in the tank.
+import { PURCHASE_QTY_MAX } from '../../../../core/inventory/quantity';
 import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
 import { AB } from '../config/content';
 import { give, pay, runAquarium, type AquariumResult } from './kit';
 
-/** Most units of one item bought in one go. */
-export const SHOP_MAX = 999;
+/** Most units of one item bought in one go: only the technical ceiling (decision 057, B2). */
+export const SHOP_MAX = PURCHASE_QTY_MAX;
 
 /** The shop's line for an item, or undefined when it does not sell it. */
 export const shopLine = (itemId: string) => AB.shop.find((l) => l.itemId === itemId);

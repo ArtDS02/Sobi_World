@@ -1,5 +1,6 @@
 // Button availability by dry-running the real action: the disabled reason always matches what
 // dispatch would answer. Pure (no DOM), unit-tested.
+import { maxAffordable } from '../../../core/inventory/quantity';
 import { buyDecor } from '../logic/actions/buyDecor';
 import { buyPig } from '../logic/actions/buyPig';
 import { buyProduct } from '../logic/actions/buyProduct';
@@ -181,6 +182,8 @@ export function productPurchase(save: FarmGame, productId: string, count: number
     total: t(vi.shop.total, { gold: formatInt((p?.priceGold ?? 0) * Math.max(0, count)) }),
     confirm: vm(save, now, vi.action.buy, (s, c) => buyProduct(s, { productId, count }, c)),
     max: BALANCE.SHOP_MAX_QUANTITY,
+    /** The most packs the coins pay for now (0 = none). */
+    affordable: maxAffordable(save.player.gold, p?.priceGold ?? 0, BALANCE.SHOP_MAX_QUANTITY),
   };
 }
 

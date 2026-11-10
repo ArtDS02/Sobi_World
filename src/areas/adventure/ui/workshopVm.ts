@@ -5,6 +5,7 @@ import type { RosterEntry } from '../../../core/area-registry/registry';
 import { itemArtId } from '../../../core/config/assetIds';
 import type { ErrorCode } from '../../../core/config/errors';
 import type { ItemId } from '../../../core/config/ids';
+import { maxAffordable } from '../../../core/inventory/quantity';
 import type { WorldSave } from '../../../core/save/world';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
@@ -12,8 +13,6 @@ import type { ShopLineVm } from '../../../ui/components/shopGrid';
 import { buyWorkshopItem, forge, missingFor, useTome } from '../logic/actions/workshop';
 import { BATTLE_ITEMS, TOMES, WORKSHOP } from '../logic/config/content';
 import { errorText, nameOfItem, probe, type ButtonVm } from './vmKit';
-
-export const SHOP_COUNTS = [1, 5, 10] as const;
 
 const W = () => vi.adventure.workshop;
 const have = (w: WorldSave, id: string) => w.inventory.items[id] ?? 0;
@@ -35,12 +34,16 @@ export function workshopShopVm(world: WorldSave, now: number): ShopLineVm[] {
     art: itemArtId(l.itemId as ItemId),
     each: t(W().each, { gold: formatInt(l.price) }),
     owned: t(W().owned, { count: formatInt(have(world, l.itemId)) }),
-    buys: SHOP_COUNTS.map((count) => ({
-      count,
-      label: t(W().buy, { count }),
-      price: formatInt(l.price * count),
-      reason: reasonOf(probe(world, (w, c) => buyWorkshopItem(w, { itemId: l.itemId, count }, c), now)),
-    })),
+    buys: [],
+    qty: {
+      max: maxAffordable(world.wallet.coins, l.price),
+      quote: (count) => ({
+        count,
+        label: t(W().buy, { count: formatInt(count) }),
+        price: formatInt(l.price * count),
+        reason: reasonOf(probe(world, (w, c) => buyWorkshopItem(w, { itemId: l.itemId, count }, c), now)),
+      }),
+    },
   }));
 }
 

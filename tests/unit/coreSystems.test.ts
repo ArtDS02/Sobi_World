@@ -5,7 +5,7 @@ import { WORLD_DEVELOPMENT, WORLD_LEVELS } from '../../src/core/config/progressi
 import { changeCurrency, postTransaction, type TransactionRecord } from '../../src/core/economy/ledger';
 
 const none: TransactionRecord[] = [];
-import { addAllToBag, addToBag, countOf, takeFromBag, usedSlots } from '../../src/core/inventory/bag';
+import { addAllToBag, addToBag, countOf, takeFromBag } from '../../src/core/inventory/bag';
 import { isFood, itemDef } from '../../src/core/items/catalog';
 import { levelFromXp, levelProgress, nextLevelXp, unlockGaps, worldDevelopment, worldLevel, worldXp } from '../../src/core/progression/levels';
 import { SAVE } from '../../src/core/config/save';
@@ -44,12 +44,12 @@ describe('economy: one ledger for every currency', () => {
 });
 
 describe('inventory: the shared bag', () => {
-  const rules = { slots: 2, stack: 10 };
+  const rules = { stack: 10 };
 
-  it('counts slots by stacks and refuses what does not fit', () => {
-    expect(usedSlots({ A: 10, B: 1, C: 0 }, rules)).toBe(2);
+  // Decision 057 (B2): the slot limit is gone for good, so nothing is ever refused for room.
+  it('adds any amount: there is no slot limit', () => {
     expect(addToBag({ A: 10 }, 'A', 10, rules)).toEqual({ ok: true, items: { A: 20 } });
-    expect(addToBag({ A: 20 }, 'A', 1, rules)).toEqual({ ok: false, error: 'INVENTORY_FULL' });
+    expect(addToBag({ A: 20 }, 'A', 1, rules)).toEqual({ ok: true, items: { A: 21 } });
     expect(addToBag({ A: 10 }, 'B', 5, rules)).toEqual({ ok: true, items: { A: 10, B: 5 } });
   });
 
@@ -64,7 +64,8 @@ describe('inventory: the shared bag', () => {
 
   it('adds a reward all or nothing', () => {
     expect(addAllToBag({ A: 1 }, { A: 2, B: 3 }, rules)).toEqual({ ok: true, items: { A: 3, B: 3 } });
-    expect(addAllToBag({ A: 10, B: 10 }, { A: 0, C: 1 }, rules)).toEqual({ ok: false, error: 'INVENTORY_FULL' });
+    expect(addAllToBag({ A: 10, B: 10 }, { A: 0, C: 1 }, rules)).toEqual({ ok: true, items: { A: 10, B: 10, C: 1 } });
+    expect(addAllToBag({ A: 1 }, { A: 2, B: -1 }, rules)).toEqual({ ok: false, error: 'INVALID_REQUEST' });
   });
 
   it('the shipped bag has no slot limit (decision 038); without `slots` nothing is ever refused for room', () => {

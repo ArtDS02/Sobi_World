@@ -6,7 +6,7 @@ export type GardenEvent =
   | { type: 'GARDEN_PLANTED'; cropId: string; plots: number[]; bought: number; gold: number }
   | { type: 'GARDEN_WATERED'; plots: number; /** Coins of tip from the timing mini-game (D8). */ tip?: number }
   | { type: 'GARDEN_FERTILIZED'; plots: number[] }
-  | { type: 'GARDEN_HARVESTED'; cropId: string; /** All items taken, the bonus included. */ quantity: number; /** Of `quantity`, the extra items the zone tier gave (decision 056). */ bonus: number; plots: number; wilted: number; left: number }
+  | { type: 'GARDEN_HARVESTED'; cropId: string; /** All items taken, the bonus included. */ quantity: number; /** Of `quantity`, the extra items the zone tier gave (decision 056). */ bonus: number; plots: number; wilted: number }
   | { type: 'GARDEN_CROP_RIPE'; cropId: string; count: number }
   | { type: 'GARDEN_CROP_WILTED'; cropId: string; count: number }
   | { type: 'GARDEN_PLOTS_BOUGHT'; plots: number; gold: number; zone?: number }

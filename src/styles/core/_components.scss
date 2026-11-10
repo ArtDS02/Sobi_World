@@ -432,6 +432,18 @@
     color: $c-text-muted;
   }
 
+  // A field with a button beside it (the shop quantity and its "Max", decision 057).
+  &__row {
+    display: flex;
+    gap: $sp-2;
+    align-items: center;
+
+    > .c-input {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+
   &__footer {
     display: grid;
 

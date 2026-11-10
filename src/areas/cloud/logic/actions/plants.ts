@@ -11,7 +11,7 @@ import { CB, CLOUD_FREE_WATER, MAX_TIER_LEVEL, FERTILIZER_ITEM, FLOWERS, PLOT_RU
 import { bonusItems } from '../../../../systems/plants/tiers';
 import { cloudTierBonus, cloudTierLevel, isNightNow, needsWater, pickYield, seedUnlocked } from '../derived';
 import type { CloudEvent } from '../events';
-import { countOf, fits, give, pay, put, runCloud, take, type CloudResult } from './kit';
+import { countOf, give, pay, put, runCloud, take, type CloudResult } from './kit';
 
 const distinct = (list: readonly number[]): number[] => [...new Set(list)].sort((a, b) => a - b);
 const valid = (plots: readonly number[], count: number): boolean => plots.length > 0 && plots.every((i) => Number.isInteger(i) && i >= 0 && i < count);
@@ -116,9 +116,8 @@ export function harvestFlowers(world: WorldSave, args: { plots?: number[] }, ctx
       // Decision 056: the tier of the cloud tier gives each item a chance of one more (seeded, so replays agree).
       const extra = bonusItems(base, cloudTierBonus(g, tierOf(i)), ctx.rng);
       const n = base + extra;
-      if (!fits(bag, flower.produceItem, n)) break; // the bag is full: the rest waits
-      const added = give(bag, { [flower.produceItem]: n });
-      if (!added.ok) break;
+      const added = give(bag, { [flower.produceItem]: n }); // the bag has no limit (decision 057): every ready plot is taken
+      if (!added.ok) return added;
       bag = added.world;
       plots = plots.map((q, j) => (j === i ? emptyPlot() : q));
       bonus.set(flower.id, (bonus.get(flower.id) ?? 0) + extra);
@@ -127,7 +126,6 @@ export function harvestFlowers(world: WorldSave, args: { plots?: number[] }, ctx
       count += 1;
       if (plotStage(p, PLOT_RULES, ctx.now) === 'wilted') wilted += 1;
     }
-    if (count === 0) return { ok: false, error: 'INVENTORY_FULL' };
     const events: CloudEvent[] = [...quantity].map(([flowerId, q]) => ({
       type: 'CLOUD_HARVESTED' as const,
       flowerId,
@@ -135,7 +133,6 @@ export function harvestFlowers(world: WorldSave, args: { plots?: number[] }, ctx
       bonus: bonus.get(flowerId) ?? 0,
       plots: taken.get(flowerId) ?? 0,
       wilted,
-      left: ready.length - count,
       night: night && FLOWERS[flowerId]?.kind === 'NIGHT',
     }));
     return { ok: true, world: put(bag, { ...g, plots }), events, xp: count * CB.xp.harvest };

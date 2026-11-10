@@ -4,7 +4,7 @@ import type { ErrorCode } from '../../../../core/config/errors';
 import { INVENTORY } from '../../../../core/config/inventory';
 import { WORLD_LEVELS } from '../../../../core/config/progression';
 import { changeCurrency } from '../../../../core/economy/ledger';
-import { addAllToBag, addToBag, takeFromBag } from '../../../../core/inventory/bag';
+import { addAllToBag, takeFromBag } from '../../../../core/inventory/bag';
 import { areaXp, worldLevel } from '../../../../core/progression/levels';
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext, ActionResultOf } from '../../../../core/types';
@@ -50,13 +50,12 @@ export function take(w: WorldSave, itemId: string, qty: number): Step {
   return bag.ok ? { ok: true, world: { ...w, inventory: { items: bag.items } } } : bag;
 }
 
-/** The world with items added to the bag (all or nothing), or INVENTORY_FULL. */
+/** The world with items added to the bag (all or nothing; the bag has no limit, only a bad quantity is refused). */
 export function give(w: WorldSave, gains: Readonly<Record<string, number>>): Step {
   const bag = addAllToBag(w.inventory.items, gains, INVENTORY);
   return bag.ok ? { ok: true, world: { ...w, inventory: { items: bag.items } } } : bag;
 }
 
-export const fits = (w: WorldSave, itemId: string, qty: number): boolean => addToBag(w.inventory.items, itemId, qty, INVENTORY).ok;
 
 /** Coins out (negative) or in, through the ledger. */
 export function pay(w: WorldSave, amount: number, type: string, ctx: ActionContext, ref: { refId?: string; note?: string } = {}) {

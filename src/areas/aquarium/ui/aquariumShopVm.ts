@@ -4,6 +4,7 @@
 import { itemArtId, UI_ICON } from '../../../core/config/assetIds';
 import type { ErrorCode } from '../../../core/config/errors';
 import type { ItemId } from '../../../core/config/ids';
+import { maxAffordable } from '../../../core/inventory/quantity';
 import { ITEMS } from '../../../core/config/items';
 import type { WorldSave } from '../../../core/save/world';
 import { formatDuration, formatInt, t } from '../../../i18n/format';
@@ -12,9 +13,6 @@ import type { ShopKind, ShopLineVm } from '../../../ui/components/shopGrid';
 import { buyShopItem } from '../logic/actions/shop';
 import { AB, FEED_ITEM, fishOfItem, HOUR_MS, MEDICINE_ITEM } from '../logic/config/content';
 import { probe } from './vmKit';
-
-/** Counts the buy buttons offer. */
-export const SHOP_COUNTS = [1, 10, 50] as const;
 
 const reasonOf = (e: ErrorCode): string => (e === 'INSUFFICIENT_GOLD' ? vi.aquarium.noGold : vi.error[e]);
 
@@ -40,9 +38,13 @@ export function aquariumShopVm(world: WorldSave, now: number, dayOffsetMs = 0): 
       art: l.itemId === MEDICINE_ITEM ? UI_ICON.treat : itemArtId(l.itemId),
       each: t(A.shopEach, { gold: formatInt(l.price) }),
       owned: t(A.shopOwned, { count: formatInt(world.inventory.items[l.itemId] ?? 0) }),
-      buys: SHOP_COUNTS.map((count) => {
+      buys: [],
+    qty: {
+      max: maxAffordable(world.wallet.coins, l.price),
+      quote: (count) => {
         const e = probe(world, (w, c) => buyShopItem(w, { itemId: l.itemId, count }, c), now, dayOffsetMs);
-        return { count, label: t(A.shopBuy, { count }), price: formatInt(l.price * count), reason: e ? reasonOf(e) : null };
-      }),
+        return { count, label: t(A.shopBuy, { count: formatInt(count) }), price: formatInt(l.price * count), reason: e ? reasonOf(e) : null };
+      },
+    },
   }));
 }

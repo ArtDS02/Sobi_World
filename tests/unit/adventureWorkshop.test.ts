@@ -22,7 +22,13 @@ describe('the Adventure Shop', () => {
     expect(err(buyWorkshopItem(w0, { itemId: 'item_corn', count: 1 }, ctxAt(T0)))).toBe('INVALID_REQUEST');
     const poor = { ...w0, wallet: { ...w0.wallet, coins: 0 } };
     expect(err(buyWorkshopItem(poor, { itemId: line.itemId, count: 1 }, ctxAt(T0)))).toBe('INSUFFICIENT_GOLD');
-    expect(workshopShopVm(poor, T0)[0]!.buys[0]!.reason).toBeTruthy();
+    expect(workshopShopVm(poor, T0)[0]!.qty!.quote(1).reason).toBeTruthy();
+    expect(workshopShopVm(poor, T0)[0]!.qty!.max).toBe(0);
+    // Decision 057 (B2): any whole count up to the technical ceiling.
+    const rich = { ...w0, wallet: { ...w0.wallet, coins: line.price * 5000 } };
+    expect(ok(buyWorkshopItem(rich, { itemId: line.itemId, count: 5000 }, ctxAt(T0))).inventory.items[line.itemId]).toBe(5000);
+    expect(workshopShopVm(rich, T0)[0]!.qty!.max).toBe(5000);
+    expect(err(buyWorkshopItem(rich, { itemId: line.itemId, count: 1_000_000 }, ctxAt(T0)))).toBe('INVALID_REQUEST');
   });
 });
 

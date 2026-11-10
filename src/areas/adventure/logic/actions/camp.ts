@@ -60,7 +60,7 @@ export function unequipSlotOf(world: WorldSave, args: { key: string; slot: Equip
     const off = f ? unequipSlot(f.loadout, args.slot) : null;
     if (!f || !off?.removed) return { ok: false, error: 'NOTHING_TO_DO' };
     const back = giveSome(w, { [off.removed]: 1 });
-    if (back.left[off.removed]) return { ok: false, error: 'INVENTORY_FULL' };
+    if (back.left[off.removed]) return { ok: false, error: 'INVALID_REQUEST' };
     return {
       ok: true,
       world: put(back.world, { ...a, fighters: { ...a.fighters, [args.key]: { ...f, loadout: off.loadout } } }),
@@ -69,12 +69,12 @@ export function unequipSlotOf(world: WorldSave, args: { key: string; slot: Equip
   });
 }
 
-/** Moves the loot waiting into the bag, as much as fits; the rest keeps waiting. */
+/** Moves all the loot waiting into the bag. */
 export function collectLoot(world: WorldSave, ctx: ActionContext): AdventureResult {
   return runAdventure(world, ctx, (w, a) => {
     if (Object.keys(a.pending).length === 0) return { ok: false, error: 'NOTHING_TO_COLLECT' };
     const r = giveSome(w, a.pending);
-    if (Object.keys(r.given).length === 0) return { ok: false, error: 'INVENTORY_FULL' };
+    if (Object.keys(r.given).length === 0) return { ok: false, error: 'NOTHING_TO_COLLECT' };
     const left = Object.values(r.left).reduce((n, v) => n + v, 0);
     return { ok: true, world: put(r.world, { ...a, pending: r.left }), events: [{ type: 'ADVENTURE_LOOT_COLLECTED', items: r.given, left }] };
   });

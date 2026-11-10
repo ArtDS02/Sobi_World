@@ -29,8 +29,8 @@ export function cloudPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
       return { sound: 'water_splash', toast: t(T.fertilized, { count: e.plots.length }) };
     case 'CLOUD_HARVESTED': {
       const name = itemName(FLOWERS[e.flowerId]?.produceItem ?? '');
-      const text = e.left > 0 ? T.harvestedLeft : e.bonus > 0 ? T.harvestedBonus : e.night ? T.harvestedNight : T.harvested;
-      return { sound: 'feed_munch', toast: t(text, { quantity: e.quantity, name, left: e.left, bonus: e.bonus }) };
+      const text = e.bonus > 0 ? T.harvestedBonus : e.night ? T.harvestedNight : T.harvested;
+      return { sound: 'feed_munch', toast: t(text, { quantity: e.quantity, name, bonus: e.bonus }) };
     }
     case 'CLOUD_FLOWER_RIPE':
       return { sound: 'notify', toast: t(T.ripe, { count: e.count }) };
@@ -39,7 +39,7 @@ export function cloudPresentation(e: EventBase, origin: 'action' | 'tick' | 'cat
     case 'CLOUD_PLOTS_BOUGHT':
       return { sound: 'level_up', toast: e.tier !== undefined ? t(T.tier, { name: vi.cloud.tierNames[e.tier] ?? '' }) : t(T.plots, { plots: e.plots }) };
     case 'CLOUD_WATER_COLLECTED':
-      return { sound: 'water_splash', toast: t(e.left > 0 ? T.waterLeft : T.water, { quantity: e.quantity, left: e.left }) };
+      return { sound: 'water_splash', toast: t(T.water, { quantity: e.quantity }) };
     case 'CLOUD_SPRING_UPGRADED':
       return { sound: 'level_up', toast: t(T.spring, { level: e.level }) };
     case 'CLOUD_CAULDRON_BUILT':

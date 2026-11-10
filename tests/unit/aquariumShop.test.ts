@@ -70,7 +70,11 @@ describe('the Aquarium shop', () => {
     expect(lines.map((l) => l.itemId)).toEqual(AB.shop.map((l) => l.itemId));
     const feed = lines.find((l) => l.itemId === 'FOOD_FISH')!;
     expect(feed).toMatchObject({ kind: 'feed', owned: 'Đang có 3', art: 'ui_item_food_fish', line: 'Tăng 50 độ no cho một con cá' });
-    expect(feed.buys.map((b) => b.reason)).toEqual([null, null, 'Thiếu Sobi Coin']);
+    // Decision 057 (B2): any count; 300 coins pay for 15 feed at 20 each.
+    expect(feed.buys).toEqual([]);
+    expect(feed.qty!.max).toBe(15);
+    expect([1, 15, 16].map((n) => feed.qty!.quote(n).reason)).toEqual([null, null, 'Thiếu Sobi Coin']);
+    expect(feed.qty!.quote(15)).toMatchObject({ count: 15, label: '×15', price: '300' });
     expect(lines.find((l) => l.itemId === 'MEDICINE_COMMON')).toMatchObject({ kind: 'medicine', art: 'ui_btn_heal' });
     const goldfish = lines.find((l) => l.itemId === 'item_fish_goldfish')!;
     expect(goldfish.kind).toBe('fish');

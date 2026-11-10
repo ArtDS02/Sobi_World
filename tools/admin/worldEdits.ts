@@ -11,10 +11,8 @@ import { rewindAquariumInWorld } from '../../src/areas/aquarium/logic/rewind';
 import { rewindCloudInWorld } from '../../src/areas/cloud/logic/rewind';
 import { rewindGardenInWorld } from '../../src/areas/garden/logic/rewind';
 import type { FarmGame } from '../../src/areas/farm/logic/types';
-import { INVENTORY } from '../../src/core/config/inventory';
 import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { changeCurrency } from '../../src/core/economy/ledger';
-import { usedSlots } from '../../src/core/inventory/bag';
 import { areaXp, levelProgress, worldXp } from '../../src/core/progression/levels';
 import type { Rng } from '../../src/core/rng';
 import { worldSaveSchema, type Currency, type WorldSave } from '../../src/core/save/world';
@@ -67,7 +65,7 @@ export function summary(w: WorldSave) {
     pigs: farm?.pigs.length ?? 0,
     slots: farm?.player.unlockedSlots ?? 0,
     sick: farm?.pigs.filter((p) => p.isSick).length ?? 0,
-    bagSlots: usedSlots(w.inventory.items, INVENTORY),
+    bagSlots: Object.values(w.inventory.items).filter((n) => n > 0).length,
     codex,
   };
 }

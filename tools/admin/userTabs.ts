@@ -3,7 +3,6 @@
 // userParts.ts. Item names and pictures come from idNames.ts.
 import { AREAS } from '../../src/app/areas';
 import { ACHIEVEMENTS, CODEX as CODEX_RULES } from '../../src/core/config/goals';
-import { INVENTORY } from '../../src/core/config/inventory';
 import { ITEMS } from '../../src/core/config/items';
 import { WORLD_LEVELS } from '../../src/core/config/progression';
 import { areaXp } from '../../src/core/progression/levels';
@@ -62,7 +61,7 @@ function overview(): string {
       <dt>Khu đang đứng</dt><dd>${esc(AREAS.get(w.world.currentArea)?.manifest.name.vi ?? w.world.currentArea)}</dd></dl></section>
     <section class="panel"><h3>Cấp Sobi World ${s.level}</h3><div class="progress"><span style="width:${s.percent}%"></span></div>
       <p class="muted">${gold(s.xp)} KN${s.nextXp !== null ? ` · cấp sau ở ${gold(s.nextXp)} KN` : ' · cấp tối đa'}</p>
-      <dl class="kv"><dt>Túi đồ</dt><dd>${INVENTORY.slots === undefined ? `${s.bagSlots} ô (không giới hạn)` : `${s.bagSlots}/${INVENTORY.slots} ô`}</dd><dt>Bộ sưu tập</dt><dd>${s.codex} mục</dd>
+      <dl class="kv"><dt>Túi đồ</dt><dd>${s.bagSlots} loại (không giới hạn)</dd><dt>Bộ sưu tập</dt><dd>${s.codex} mục</dd>
       <dt>Heo</dt><dd>${s.pigs}/${s.slots} chuồng${s.sick ? ` · <span class="badge status-error">${s.sick} ốm</span>` : ''}</dd></dl></section>
   </div>
   <section class="panel"><h3>Cài đặt trong game</h3><div class="check-grid">
@@ -103,12 +102,7 @@ function bag(): string {
       <input type="number" min="0" step="1" value="${n}" data-item="${esc(id)}" aria-label="${esc(nameOf(id) ?? id)}" /></div>`;
   };
   const used = W.summary(w).bagSlots;
-  const limit = INVENTORY.slots;
-  const head = limit === undefined
-    ? `<section class="panel"><h3>Túi đồ chung <span class="muted">${used} ô, không giới hạn (decision 038)</span></h3></section>`
-    : `<section class="panel"><h3>Túi đồ chung <span class="muted">${used}/${limit} ô (mỗi ô tối đa ${INVENTORY.stack})</span></h3>
-      <div class="progress"><span style="width:${Math.min(100, (used / limit) * 100)}%"></span></div>
-      ${used > limit ? '<p class="issue warn">Túi đang vượt số ô: game vẫn giữ đồ nhưng người chơi không nhận thêm được cho tới khi dùng bớt.</p>' : ''}</section>`;
+  const head = `<section class="panel"><h3>Túi đồ chung <span class="muted">${used} loại vật phẩm, không giới hạn (decision 038, 057)</span></h3></section>`;
   return `${head}
     <div class="toolbar"><input type="search" class="search-input" placeholder="Tìm vật phẩm…" data-bag-search />
       <select data-bag-cat><option value="">Mọi loại</option>${cats.map((c) => `<option value="${esc(c)}">${esc(ENUM_LABEL[c] ?? humanize(c))}</option>`).join('')}</select>

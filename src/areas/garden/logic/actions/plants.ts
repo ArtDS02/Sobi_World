@@ -11,7 +11,7 @@ import { CROPS, GB, PLOT_RULES, WATER_MS, zoneOf } from '../config/content';
 import { bonusItems } from '../../../../systems/plants/tiers';
 import { gardenZoneBonus, isCovered, needsWater, seedUnlocked } from '../derived';
 import type { GardenEvent } from '../events';
-import { countOf, fits, give, pay, put, runGarden, take, type GardenResult } from './kit';
+import { countOf, give, pay, put, runGarden, take, type GardenResult } from './kit';
 
 const distinct = (list: readonly number[]): number[] => [...new Set(list)].sort((a, b) => a - b);
 const valid = (plots: readonly number[], count: number): boolean => plots.length > 0 && plots.every((i) => Number.isInteger(i) && i >= 0 && i < count);
@@ -98,9 +98,8 @@ export function harvestPlots(world: WorldSave, args: { plots?: number[] }, ctx: 
       // Decision 056: the tier of the zone gives each item a chance of one more (seeded, so replays agree).
       const extra = bonusItems(base, gardenZoneBonus(g, zoneOf(i)), ctx.rng);
       const n = base + extra;
-      if (!fits(bag, crop.produceItem, n)) break; // the bag is full: the rest waits
-      const added = give(bag, { [crop.produceItem]: n });
-      if (!added.ok) break;
+      const added = give(bag, { [crop.produceItem]: n }); // the bag has no limit (decision 057): every ready plot is taken
+      if (!added.ok) return added;
       bag = added.world;
       plots = plots.map((q, j) => (j === i ? emptyPlot() : q));
       bonus.set(crop.id, (bonus.get(crop.id) ?? 0) + extra);
@@ -109,7 +108,6 @@ export function harvestPlots(world: WorldSave, args: { plots?: number[] }, ctx: 
       count += 1;
       if (plotStage(p, PLOT_RULES, ctx.now) === 'wilted') wilted += 1;
     }
-    if (count === 0) return { ok: false, error: 'INVENTORY_FULL' };
     const events: GardenEvent[] = [...quantity].map(([cropId, q]) => ({
       type: 'GARDEN_HARVESTED' as const,
       cropId,
@@ -117,7 +115,6 @@ export function harvestPlots(world: WorldSave, args: { plots?: number[] }, ctx: 
       bonus: bonus.get(cropId) ?? 0,
       plots: taken.get(cropId) ?? 0,
       wilted,
-      left: ready.length - count,
     }));
     return { ok: true, world: put(bag, { ...g, plots }), events, xp: count * GB.xp.harvest };
   });

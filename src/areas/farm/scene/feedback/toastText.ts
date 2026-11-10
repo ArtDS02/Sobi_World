@@ -29,10 +29,7 @@ export function toastText(
     case 'TROUGH_UPGRADED':
       return t(vi.event.troughUpgraded, { level: event.level, capacity: event.capacity });
     case 'MANURE_CLEANED':
-      // A full bag throws part of the piles away: say so (the XP stays per pile raked, as before).
-      return event.kept < event.piles
-        ? t(vi.event.manureCleanedBagFull, { piles: event.piles, kept: event.kept, lost: event.piles - event.kept })
-        : t(vi.event.manureCleaned, { piles: event.piles, kept: event.kept });
+      return t(vi.event.manureCleaned, { piles: event.piles, kept: event.kept });
     case 'ITEM_SOLD':
       return t(vi.event.itemSold, { name: vi.shop[event.itemId], quantity: event.quantity, gold: formatInt(event.gold) });
     case 'PIG_BECAME_CRITICAL':

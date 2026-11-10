@@ -30,7 +30,7 @@ export function gardenPresentation(e: EventBase, origin: 'action' | 'tick' | 'ca
       return { sound: 'water_splash', toast: t(T.fertilized, { count: e.plots.length }) };
     case 'GARDEN_HARVESTED': {
       const name = itemName(CROPS[e.cropId]?.produceItem ?? '');
-      return { sound: 'feed_munch', toast: t(e.left > 0 ? T.harvestedLeft : e.bonus > 0 ? T.harvestedBonus : T.harvested, { quantity: e.quantity, name, left: e.left, bonus: e.bonus }) };
+      return { sound: 'feed_munch', toast: t(e.bonus > 0 ? T.harvestedBonus : T.harvested, { quantity: e.quantity, name, bonus: e.bonus }) };
     }
     case 'GARDEN_CROP_RIPE':
       return { sound: 'notify', toast: t(T.ripe, { count: e.count }) };

@@ -159,10 +159,22 @@ export function openBuyItemDialog(
     slot.replaceChildren(actionButton(vm.confirm, () => void act(vm.confirm.run).then(d.close)));
   };
   input.addEventListener('input', refresh);
+  // Decision 057 (B2): "Max" fills in the most the coins pay for (at least 1, so the button below says why it is off).
+  const max = el('button', {
+    class: 'c-button c-button--ghost',
+    text: vi.areaHud.qtyMax,
+    attrs: { type: 'button' },
+    on: {
+      click: () => {
+        input.value = String(Math.max(1, first.affordable));
+        refresh();
+      },
+    },
+  });
   d.body.append(
     el('p', { text: first.desc }),
     el('label', { class: 'c-dialog__hint', text: vi.shop.quantity }),
-    input,
+    el('div', { class: 'c-dialog__row' }, input, max),
     total,
   );
   d.footer.append(slot);

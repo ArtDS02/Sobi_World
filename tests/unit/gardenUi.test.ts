@@ -192,9 +192,10 @@ describe('the scene', () => {
 
 describe('presentation of the Garden events', () => {
   it('a toast and a sound for what matters, nothing for a catch-up', () => {
-    const harvested = gardenPresentation({ type: 'GARDEN_HARVESTED', cropId: 'crop_corn', quantity: 6, plots: 2, wilted: 0, left: 0 } as never, 'action');
+    const harvested = gardenPresentation({ type: 'GARDEN_HARVESTED', cropId: 'crop_corn', quantity: 6, bonus: 0, plots: 2, wilted: 0 } as never, 'action');
     expect(harvested).toEqual({ sound: 'feed_munch', toast: 'Thu hoạch 6 Bắp' });
-    expect(gardenPresentation({ type: 'GARDEN_HARVESTED', cropId: 'crop_corn', quantity: 3, plots: 1, wilted: 0, left: 2 } as never, 'action')!.toast).toContain('Túi đồ đầy, còn 2 ô');
+    // Decision 057 (B2): the bag has no limit, so a harvest never reports plots left behind.
+    expect(harvested!.toast).not.toContain('Túi đồ đầy');
     expect(gardenPresentation({ type: 'GARDEN_CROP_RIPE', cropId: 'crop_corn', count: 4 } as never, 'tick')).toEqual({ sound: 'notify', toast: '4 cây đã chín!' });
     expect(gardenPresentation({ type: 'GARDEN_CROP_RIPE', cropId: 'crop_corn', count: 4 } as never, 'catchup')).toBeNull();
     expect(gardenPresentation({ type: 'PIG_FED' } as never, 'action')).toBeNull();
@@ -285,9 +286,14 @@ describe('area shops (decision 029)', () => {
     const wheat = lines.find((l) => l.itemId === 'item_seed_wheat')!;
     expect(wheat).toMatchObject({ name: expect.any(String), owned: 'Đang có 3', art: 'ui_item_seed_wheat' });
     expect(wheat.line).toContain('thu 3');
-    expect(wheat.buys.map((b) => b.count)).toEqual([1, 10, 50]);
-    expect(wheat.buys.map((b) => b.reason)).toEqual([null, null, 'Thiếu Sobi Coin']);
-    expect(lines.find((l) => l.itemId === 'item_fertilizer')!.buys[2]!.reason).toBe('Thiếu Sobi Coin');
+    // Decision 057 (B2): any count; 100 coins pay for 25 wheat seeds at 4 each and 2 fertilizer at 50 each.
+    expect(wheat.buys).toEqual([]);
+    expect(wheat.qty!.max).toBe(25);
+    expect([1, 25, 26].map((n) => wheat.qty!.quote(n).reason)).toEqual([null, null, 'Thiếu Sobi Coin']);
+    expect(wheat.qty!.quote(25)).toMatchObject({ count: 25, label: '×25', price: '100' });
+    const fertilizer = lines.find((l) => l.itemId === 'item_fertilizer')!;
+    expect(fertilizer.qty!.max).toBe(2);
+    expect(fertilizer.qty!.quote(3).reason).toBe('Thiếu Sobi Coin');
   });
 
   it('tags each card with its kind of goods (decision 031)', () => {

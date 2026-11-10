@@ -11,7 +11,7 @@ import { CAULDRON, CB, TIER_COUNT, WATER_ITEM, springLevel } from '../config/con
 import { cloudTierUpgrade, nextExpansion, nextSpringLevel, springStock } from '../derived';
 import { ownsSkin } from '../../../../core/plots/skins';
 import { withSkin, withTier } from '../../../../systems/plants/tiers';
-import { fits, give, pay, put, runCloud, take, type CloudResult } from './kit';
+import { give, pay, put, runCloud, take, type CloudResult } from './kit';
 
 /** Opens the next plots: more on the first tier, then a whole cloud tier at a time (decision 023). */
 export function buyPlots(world: WorldSave, ctx: ActionContext): CloudResult {
@@ -31,7 +31,7 @@ export function buyPlots(world: WorldSave, ctx: ActionContext): CloudResult {
 }
 
 /**
- * Takes the pure water waiting in the spring into the bag: as many as the bag has room for. The part of the interval already
+ * Takes all the pure water waiting in the spring into the bag (the bag has no limit). The part of the interval already
  * flowing is kept; a full spring starts over from now.
  */
 export function collectWater(world: WorldSave, ctx: ActionContext): CloudResult {
@@ -39,16 +39,14 @@ export function collectWater(world: WorldSave, ctx: ActionContext): CloudResult 
     const stock = springStock(g, ctx.now);
     if (stock <= 0) return { ok: false, error: 'NOTHING_TO_COLLECT' };
     const level = springLevel(g.spring.level);
-    let n = stock;
-    while (n > 0 && !fits(w, WATER_ITEM, n)) n -= 1;
-    if (n === 0) return { ok: false, error: 'INVENTORY_FULL' };
+    const n = stock;
     const given = give(w, { [WATER_ITEM]: n });
     if (!given.ok) return given;
-    const since = stock >= level.capacity ? ctx.now - (n >= stock ? 0 : (stock - n) * level.intervalMs) : g.spring.since + n * level.intervalMs;
+    const since = stock >= level.capacity ? ctx.now : g.spring.since + n * level.intervalMs;
     return {
       ok: true,
       world: put(given.world, { ...g, spring: { ...g.spring, since } }),
-      events: [{ type: 'CLOUD_WATER_COLLECTED', quantity: n, left: stock - n }],
+      events: [{ type: 'CLOUD_WATER_COLLECTED', quantity: n }],
     };
   });
 }
@@ -119,9 +117,10 @@ export function collectBrew(world: WorldSave, ctx: ActionContext): CloudResult {
     if (!job || !recipe) return { ok: false, error: 'NOTHING_TO_COLLECT' };
     const ready = batchesReady(job, recipe, ctx.now);
     if (ready <= 0) return { ok: false, error: 'NOTHING_TO_COLLECT' };
-    for (let n = ready; n >= 1; n -= 1) {
+    {
+      const n = ready; // the bag has no limit (decision 057): every ready batch is taken
       const given = give(w, scaled(recipe.outputs, n));
-      if (!given.ok) continue;
+      if (!given.ok) return given;
       const next = collectBatches(job, n);
       return {
         ok: true,
@@ -130,7 +129,6 @@ export function collectBrew(world: WorldSave, ctx: ActionContext): CloudResult {
         xp: n * CB.xp.craft,
       };
     }
-    return { ok: false, error: 'INVENTORY_FULL' };
   });
 }
 

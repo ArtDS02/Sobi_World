@@ -219,7 +219,7 @@ describe('buyItem (§8.10)', () => {
     expect(r.state.transactions[0]).toMatchObject({ type: 'SHOP_PURCHASE', amount: -75 });
   });
 
-  it.each([0, 100, 1.5, -1, Number.NaN])('quantity %s → INVALID_REQUEST', (quantity) => {
+  it.each([0, 1_000_000, 1.5, -1, Number.NaN])('quantity %s → INVALID_REQUEST (decision 057: only the technical ceiling of 999,999 limits a count)', (quantity) => {
     expectError(
       (s) => buyItem(s, { itemId: 'FOOD_BASIC', quantity }, ctx()),
       start(),

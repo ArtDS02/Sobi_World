@@ -78,12 +78,12 @@ describe('feedback table (§11.3)', () => {
     }
   });
 
-  it('B9: a full bag says how many piles were thrown away; a normal rake does not', () => {
+  it('a rake keeps every pile: the bag has no limit (decision 057), so nothing is ever "thrown away"', () => {
     const s = farm([makePig()]);
-    const full = toastText({ type: 'MANURE_CLEANED', piles: 5, kept: 2 }, s, s) ?? '';
-    expect(full).toContain('3');
-    expect(full).not.toBe(toastText({ type: 'MANURE_CLEANED', piles: 5, kept: 5 }, s, s));
-    expect(toastText({ type: 'MANURE_CLEANED', piles: 5, kept: 5 }, s, s)).not.toContain('bỏ đi');
+    const text = toastText({ type: 'MANURE_CLEANED', piles: 5, kept: 5 }, s, s) ?? '';
+    expect(text).toContain('5');
+    expect(text).not.toContain('bỏ đi');
+    expect(text).not.toContain('Túi đồ đầy');
   });
 
   it('matches the spec rows', () => {

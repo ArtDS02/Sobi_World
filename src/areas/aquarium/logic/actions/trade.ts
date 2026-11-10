@@ -8,7 +8,7 @@ import { AB, PEARL_ITEM, SCALE_ITEM, fishOfItem } from '../config/content';
 import { nextTankLevel } from '../derived';
 import { isAdult, isPet } from '../fishLife';
 import { fishQuote } from '../pricing';
-import { fits, give, pay, put, runAquarium, take, countOf, type AquariumResult } from './kit';
+import { give, pay, put, runAquarium, take, countOf, type AquariumResult } from './kit';
 
 /** Sells a fish out of the tank (adult size on, not a pet): the price is the quote of the moment. */
 export function sellFish(world: WorldSave, args: { fishId: string }, ctx: ActionContext): AquariumResult {
@@ -45,13 +45,11 @@ export function sellCatch(world: WorldSave, args: { itemId: string; quantity: nu
   });
 }
 
-/** Moves the scales of the tank into the bag (what fits; the rest waits in the tank). */
+/** Moves all the scales of the tank into the bag (the bag has no limit). */
 export function collectScales(world: WorldSave, _args: Record<string, never>, ctx: ActionContext): AquariumResult {
   return runAquarium(world, ctx, (w, a) => {
     if (a.tank.scales <= 0) return { ok: false, error: 'NOTHING_TO_COLLECT' };
-    let n = a.tank.scales;
-    while (n > 0 && !fits(w, SCALE_ITEM, n)) n -= 1;
-    if (n === 0) return { ok: false, error: 'INVENTORY_FULL' };
+    const n = a.tank.scales;
     const bag = give(w, { [SCALE_ITEM]: n });
     if (!bag.ok) return bag;
     const left = a.tank.scales - n;

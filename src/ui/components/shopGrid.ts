@@ -1,9 +1,10 @@
 // An Area's shop (decision 029, laid out again by decision 031), shared by the Garden, the Cloud and the Aquarium: a head with the
 // intro and the Sobi Coin balance, then a grid of cards — the item's picture, a tag (seed, fertilizer…), its name, what
-// it does, the price of one, what the bag holds — each with buy buttons for a few counts that show the total. Only the
-// grid scrolls. Every button says why it is off, and the card writes it out too. Plain DOM from view data; the Area
+// it does, the price of one, what the bag holds — each with a quantity field, a "Max" button and one buy button that shows
+// the total (decision 057, B2: any quantity; a skin card keeps its fixed buttons). Only the grid scrolls. Every button says why it is off, and the card writes it out too. Plain DOM from view data; the Area
 // decides what is sold and runs the purchase. `theme` picks the Area's colours.
 import { AREA_HUD_ART } from '../../core/config/assetIds';
+import { clampQty, PURCHASE_QTY_MAX } from '../../core/inventory/quantity';
 import { t } from '../../i18n/format';
 import { vi } from '../../i18n/vi';
 import { el } from '../dom';
@@ -35,7 +36,15 @@ export interface ShopLineVm {
   each: string;
   /** "Đang có 4". */
   owned: string;
+  /** Fixed buttons (a skin: coins or Gems). Empty when `qty` is set. */
   buys: ShopBuyVm[];
+  /** Any-quantity purchase: the most the balance pays for (0 = none) and a dry-run of the real purchase for a count. */
+  qty?: ShopQtyVm;
+}
+
+export interface ShopQtyVm {
+  max: number;
+  quote: (count: number) => ShopBuyVm;
 }
 
 export interface ShopBalance {
@@ -60,6 +69,86 @@ function offLines(buys: readonly ShopBuyVm[]): string[] {
   return [...byReason].map(([reason, labels]) => (labels.length === buys.length ? reason : t(vi.areaHud.offFor, { counts: labels.join(', '), reason })));
 }
 
+/** The count last typed for an item, so a shop that redraws after a purchase keeps what the player entered. */
+const QTY_MEMORY = new Map<string, number>();
+
+/** The quantity row of a card: number field + "Max", one buy button with the total, and why it is off. */
+function qtyBuy(l: ShopLineVm, q: ShopQtyVm, onBuy: (itemId: string, count: number) => void): HTMLElement[] {
+  const h = vi.areaHud;
+  const input = el('input', {
+    class: 'c-shop__qty',
+    attrs: { type: 'number', min: '1', max: String(PURCHASE_QTY_MAX), step: '1', inputmode: 'numeric', value: String(clampQty(QTY_MEMORY.get(l.itemId) ?? 1)), 'aria-label': t(h.qtyOf, { name: l.name }), title: h.qty },
+  });
+  const label = el('b');
+  const price = el('span');
+  const buy = el('button', { class: 'c-shop__buy c-shop__buy--wide', attrs: { type: 'button' } }, label, el('small', {}, coin(), price));
+  const note = el('p', { class: 'c-shop__off', attrs: { role: 'note' } });
+  const count = () => clampQty(Number(input.value));
+  const refresh = () => {
+    const b = q.quote(count());
+    QTY_MEMORY.set(l.itemId, b.count);
+    label.textContent = b.label;
+    price.textContent = b.price;
+    buy.title = b.reason ? `${b.label} — ${b.reason}` : `${b.label} · ${b.price}`;
+    buy.toggleAttribute('disabled', b.reason !== null);
+    buy.setAttribute('aria-disabled', String(b.reason !== null));
+    note.textContent = b.reason ?? '';
+    note.hidden = b.reason === null;
+  };
+  // Typing never leaves a bad number behind: the field shows the clamped whole count once it loses focus.
+  input.addEventListener('input', refresh);
+  input.addEventListener('change', () => {
+    input.value = String(count());
+    refresh();
+  });
+  buy.addEventListener('click', () => {
+    const b = q.quote(count());
+    if (b.reason) return;
+    buy.classList.add('is-busy');
+    onBuy(l.itemId, b.count);
+  });
+  const none = q.max < 1;
+  const max = el('button', {
+    class: 'c-shop__max',
+    text: h.qtyMax,
+    attrs: { type: 'button', title: none ? `${h.qtyMax} — ${q.quote(1).reason ?? ''}` : t(h.qtyMaxHint, { count: q.max }), ...(none ? { disabled: '', 'aria-disabled': 'true' } : {}) },
+    on: {
+      click: () => {
+        input.value = String(clampQty(q.max));
+        refresh();
+      },
+    },
+  });
+  refresh();
+  return [el('div', { class: 'c-shop__buys c-shop__buys--qty' }, input, max, buy), note];
+}
+
+/** The fixed buttons of a card (a skin: coins or Gems). */
+function fixedBuys(l: ShopLineVm, onBuy: (itemId: string, count: number) => void): HTMLElement {
+  return el(
+    'div',
+    { class: 'c-shop__buys' },
+    ...l.buys.map((b) =>
+      el(
+        'button',
+        {
+          class: 'c-shop__buy',
+          attrs: { type: 'button', title: b.reason ? `${b.label} — ${b.reason}` : `${b.label} · ${b.price}`, ...(b.reason ? { disabled: '', 'aria-disabled': 'true' } : {}) },
+          on: {
+            click: (e) => {
+              if (b.reason) return;
+              (e.currentTarget as HTMLElement).classList.add('is-busy');
+              onBuy(l.itemId, b.count);
+            },
+          },
+        },
+        el('b', { text: b.label }),
+        el('small', {}, b.icon === 'gem' ? gem() : coin(), b.price),
+      ),
+    ),
+    );
+}
+
 function card(l: ShopLineVm, onBuy: (itemId: string, count: number) => void): HTMLElement {
   const off = offLines(l.buys);
   return el(
@@ -71,28 +160,7 @@ function card(l: ShopLineVm, onBuy: (itemId: string, count: number) => void): HT
     el('h3', { class: 'c-shop__name', text: l.name, attrs: { title: l.name } }),
     el('p', { class: 'c-shop__line', text: l.line, attrs: { title: l.line } }),
     el('p', { class: 'c-shop__each' }, coin(), el('b', { text: l.each })),
-    el(
-      'div',
-      { class: 'c-shop__buys' },
-      ...l.buys.map((b) =>
-        el(
-          'button',
-          {
-            class: 'c-shop__buy',
-            attrs: { type: 'button', title: b.reason ? `${b.label} — ${b.reason}` : `${b.label} · ${b.price}`, ...(b.reason ? { disabled: '', 'aria-disabled': 'true' } : {}) },
-            on: {
-              click: (e) => {
-                if (b.reason) return;
-                (e.currentTarget as HTMLElement).classList.add('is-busy');
-                onBuy(l.itemId, b.count);
-              },
-            },
-          },
-          el('b', { text: b.label }),
-          el('small', {}, b.icon === 'gem' ? gem() : coin(), b.price),
-        ),
-      ),
-    ),
+    ...(l.qty ? qtyBuy(l, l.qty, onBuy) : [fixedBuys(l, onBuy)]),
     off.length ? el('p', { class: 'c-shop__off', attrs: { role: 'note' } }, ...off.map((text) => el('span', { text }))) : null,
   );
 }

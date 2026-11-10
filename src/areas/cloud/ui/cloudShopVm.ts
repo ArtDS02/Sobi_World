@@ -4,6 +4,7 @@
 import { itemArtId } from '../../../core/config/assetIds';
 import type { ErrorCode } from '../../../core/config/errors';
 import type { ItemId } from '../../../core/config/ids';
+import { maxAffordable } from '../../../core/inventory/quantity';
 import type { WorldSave } from '../../../core/save/world';
 import { formatDuration, formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
@@ -11,9 +12,6 @@ import type { ShopKind, ShopLineVm } from '../../../ui/components/shopGrid';
 import { buyShopItem } from '../logic/actions/shop';
 import { flowerBySeed, CB } from '../logic/config/content';
 import { probe } from './cloudVm';
-
-/** Counts the buy buttons offer. */
-export const SHOP_COUNTS = [1, 10, 50] as const;
 
 const reasonOf = (e: ErrorCode): string => (e === 'INSUFFICIENT_GOLD' ? vi.cloud.noGold : e === 'HYBRID_LOCKED' ? vi.lab.lockedShop : vi.error[e]);
 
@@ -36,9 +34,13 @@ export function cloudShopVm(world: WorldSave, now: number): ShopLineVm[] {
     art: itemArtId(l.itemId),
     each: t(vi.cloud.shopEach, { gold: formatInt(l.price) }),
     owned: t(vi.cloud.shopOwned, { count: formatInt(world.inventory.items[l.itemId] ?? 0) }),
-    buys: SHOP_COUNTS.map((count) => {
-      const e = probe(world, (w, c) => buyShopItem(w, { itemId: l.itemId, count }, c), now);
-      return { count, label: t(vi.cloud.shopBuy, { count }), price: formatInt(l.price * count), reason: e ? reasonOf(e) : null };
-    }),
+    buys: [],
+    qty: {
+      max: maxAffordable(world.wallet.coins, l.price),
+      quote: (count) => {
+        const e = probe(world, (w, c) => buyShopItem(w, { itemId: l.itemId, count }, c), now);
+        return { count, label: t(vi.cloud.shopBuy, { count: formatInt(count) }), price: formatInt(l.price * count), reason: e ? reasonOf(e) : null };
+      },
+    },
   }));
 }

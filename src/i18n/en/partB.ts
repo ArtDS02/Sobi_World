@@ -281,7 +281,6 @@ export const partB = {
       wateredTip: "Watered {count} plots on the beat, +{tip} Sobi Coin tip",
       fertilized: "Fertilized {count} plots",
       harvested: "Harvested {quantity} {name}",
-      harvestedLeft: "Harvested {quantity} {name}. Bag full, {left} plots left unpicked.",
       harvestedBonus: "Harvested {quantity} {name} (bumper crop +{bonus})",
       rankUp: "{zone} reached rank {rank}: {name}!",
       ripe: "Plants ripe: {count}!",
@@ -331,6 +330,10 @@ export const partB = {
     tagMedicine: "Medicine",
     tagFish: "Young fish",
     offFor: "{counts}: {reason}",
+    qty: "Quantity",
+    qtyOf: "Quantity of {name}",
+    qtyMax: "Max",
+    qtyMaxHint: "The most you can buy now: {count}",
   },
 
   dayPhase: {

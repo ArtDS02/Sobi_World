@@ -4,11 +4,11 @@ export type CloudEvent =
   | { type: 'CLOUD_PLANTED'; flowerId: string; plots: number[]; bought: number; gold: number }
   | { type: 'CLOUD_WATERED'; plots: number; /** Of `plots`, the ones the rank-5 perk watered for free (decision 056). */ free?: number; /** Coins of tip from the timing mini-game (D8). */ tip?: number }
   | { type: 'CLOUD_FERTILIZED'; plots: number[] }
-  | { type: 'CLOUD_HARVESTED'; flowerId: string; /** All items taken, the bonus included. */ quantity: number; /** Of `quantity`, the extra items the tier bonus gave (decision 056). */ bonus: number; plots: number; wilted: number; left: number; night: boolean }
+  | { type: 'CLOUD_HARVESTED'; flowerId: string; /** All items taken, the bonus included. */ quantity: number; /** Of `quantity`, the extra items the tier bonus gave (decision 056). */ bonus: number; plots: number; wilted: number; night: boolean }
   | { type: 'CLOUD_FLOWER_RIPE'; flowerId: string; count: number }
   | { type: 'CLOUD_FLOWER_WILTED'; flowerId: string; count: number }
   | { type: 'CLOUD_PLOTS_BOUGHT'; plots: number; gold: number; /** The tier it opened (0-based), if any. */ tier?: number }
-  | { type: 'CLOUD_WATER_COLLECTED'; quantity: number; left: number }
+  | { type: 'CLOUD_WATER_COLLECTED'; quantity: number }
   | { type: 'CLOUD_SPRING_UPGRADED'; level: number; gold: number; materials: Readonly<Record<string, number | undefined>> }
   | { type: 'CLOUD_CAULDRON_BUILT'; gold: number }
   | { type: 'CLOUD_BREW_STARTED'; recipeId: string; batches: number }

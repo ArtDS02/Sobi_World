@@ -46,20 +46,17 @@ export function take(w: WorldSave, itemId: string, qty: number): Step {
   return bag.ok ? { ok: true, world: { ...w, inventory: { items: bag.items } } } : bag;
 }
 
-/** As many of `items` as fit in the bag go in; what did not fit is returned (nothing is lost). */
+/** All of `items` go into the bag (it has no limit, decision 057); `left` only holds what a bad quantity kept out. */
 export function giveSome(w: WorldSave, items: Readonly<Record<string, number>>): { world: WorldSave; given: Record<string, number>; left: Record<string, number> } {
   let bag = w.inventory.items;
   const given: Record<string, number> = {};
   const left: Record<string, number> = {};
   for (const [id, want] of Object.entries(items)) {
-    let n = want;
-    while (n > 0 && !addToBag(bag, id, n, INVENTORY).ok) n -= 1;
-    if (n > 0) {
-      const r = addToBag(bag, id, n, INVENTORY);
-      if (r.ok) bag = r.items;
-      given[id] = n;
-    }
-    if (want - n > 0) left[id] = want - n;
+    const r = want > 0 ? addToBag(bag, id, want, INVENTORY) : null;
+    if (r?.ok) {
+      bag = r.items;
+      given[id] = want;
+    } else if (want > 0) left[id] = want;
   }
   return { world: { ...w, inventory: { items: bag } }, given, left };
 }

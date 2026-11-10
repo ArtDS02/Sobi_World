@@ -1,13 +1,14 @@
 // The Cloud's shop (decision 029): seeds and supplies at the prices of content/cloud/balance.json `shop`, bought in any
 // count up to SHOP_MAX at once. Coins go out through the ledger; the items land in the shared bag (all or nothing).
+import { PURCHASE_QTY_MAX } from '../../../../core/inventory/quantity';
 import type { ActionContext } from '../../../../core/types';
 import type { WorldSave } from '../../../../core/save/world';
 import { CB, flowerBySeed } from '../config/content';
 import { seedUnlocked } from '../derived';
 import { give, pay, runCloud, type CloudResult } from './kit';
 
-/** Most units of one item bought in one go. */
-export const SHOP_MAX = 999;
+/** Most units of one item bought in one go: only the technical ceiling (decision 057, B2). */
+export const SHOP_MAX = PURCHASE_QTY_MAX;
 
 /** The shop's line for an item, or undefined when it does not sell it. */
 export const shopLine = (itemId: string) => CB.shop.find((l) => l.itemId === itemId);

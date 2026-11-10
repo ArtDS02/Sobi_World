@@ -5,6 +5,7 @@
 import type { RosterEntry } from '../../../../core/area-registry/registry';
 import { INVENTORY } from '../../../../core/config/inventory';
 import { addToBag } from '../../../../core/inventory/bag';
+import { PURCHASE_QTY_MAX } from '../../../../core/inventory/quantity';
 import type { WorldSave } from '../../../../core/save/world';
 import type { ActionContext } from '../../../../core/types';
 import { addExp } from '../../../../systems/combat/stats';
@@ -13,17 +14,19 @@ import type { AdventureEvent } from '../events';
 import { fighterOf } from './camp';
 import { countOf, put, runAdventure, spend, take, type AdventureResult, type Body } from './kit';
 
-/** Most of one line bought, or one recipe made, in one go. */
+/** Most times one recipe is made, or books used, in one go. */
 export const WORKSHOP_MAX = 99;
 
 const valid = (n: number) => Number.isInteger(n) && n >= 1 && n <= WORKSHOP_MAX;
+/** A shop count: any whole number up to the technical ceiling (decision 057, B2). */
+const validBuy = (n: number) => Number.isInteger(n) && n >= 1 && n <= PURCHASE_QTY_MAX;
 
 /** Items into the bag, all of them or none. */
-function bagAll(w: WorldSave, items: Readonly<Record<string, number>>): { ok: true; world: WorldSave } | { ok: false; error: 'INVENTORY_FULL' } {
+function bagAll(w: WorldSave, items: Readonly<Record<string, number>>): { ok: true; world: WorldSave } | { ok: false; error: 'INVALID_REQUEST' } {
   let bag = w.inventory.items;
   for (const [id, n] of Object.entries(items)) {
     const r = addToBag(bag, id, n, INVENTORY);
-    if (!r.ok) return { ok: false, error: 'INVENTORY_FULL' };
+    if (!r.ok) return { ok: false, error: 'INVALID_REQUEST' };
     bag = r.items;
   }
   return { ok: true, world: { ...w, inventory: { items: bag } } };
@@ -33,7 +36,7 @@ function bagAll(w: WorldSave, items: Readonly<Record<string, number>>): { ok: tr
 export function buyWorkshopItem(world: WorldSave, args: { itemId: string; count: number }, ctx: ActionContext): AdventureResult {
   return runAdventure(world, ctx, (w): Body => {
     const line = WORKSHOP.shop.find((l) => l.itemId === args.itemId);
-    if (!line || !valid(args.count)) return { ok: false, error: 'INVALID_REQUEST' };
+    if (!line || !validBuy(args.count)) return { ok: false, error: 'INVALID_REQUEST' };
     const coins = line.price * args.count;
     const paid = spend(w, 'coins', coins, 'ADVENTURE_SHOP', ctx, `${line.itemId} x${args.count}`);
     if (!paid.ok) return paid;
