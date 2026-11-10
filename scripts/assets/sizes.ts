@@ -290,3 +290,10 @@ CATALOGUE_SIZES.skin_moonlit_soil_wet = { width: 152, height: 108 };
 CATALOGUE_SIZES.skin_sunset_cloud = { width: 152, height: 108 };
 CATALOGUE_SIZES.skin_sunset_soil = { width: 152, height: 108 };
 CATALOGUE_SIZES.skin_sunset_soil_wet = { width: 152, height: 108 };
+
+// Per-skin backdrops and buildings (batches cloud-08/09, garden-07/08): the plain art's own canvas, one per skin.
+for (const skin of ['verdant', 'pearl_sea', 'crystal', 'starry', 'blossom', 'dew', 'amber', 'moonlit', 'sunset']) {
+  for (const base of ['bg_cloud', 'bg_garden', 'bld_cloud_spring', 'bld_cauldron', 'bld_feed_mill', 'bld_composter', 'bld_sprinkler']) {
+    CATALOGUE_SIZES[`${base}_${skin}`] = CATALOGUE_SIZES[base]!;
+  }
+}

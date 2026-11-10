@@ -81,3 +81,19 @@ Names: Mây Bông · Mây Sương Sớm · Mây Lụa Trời · Mây Ngọc Trai
 - Cancelled: second-wave sprite batches `cloud-07-rank-scenery-2`, `garden-06-rank-scenery-2` and their 58 placeholder rows. Still to render: `plots-02-skins` (5 new skins' beds) plus the two backdrop batches.
 - Buildings per skin (owner: buildings must match the layout concept): batches `cloud-09-skin-buildings` (9 sheets S1–S9 × spring / cauldron / shop = 27 images) and `garden-08-skin-buildings` (9 sheets × mill / composter / sprinkler / shop = 36 images). Each cell is the game's current building (attached as a game-art hint) re-themed to the skin's mood, same canvas size as the plain art. Code is ready: `SKIN_BUILDING_READY` (per Area, in `src/core/config/plotSkins.ts`) lists the skins whose WHOLE set for that Area is delivered; `CloudBuildings.setSkin` and `themeBuildings` (garden) swap the pictures for the tier / zone wearing the skin, plain art otherwise. Manifest rows `bld_<building>_<skin>` (section buildings) are added on delivery.
 - Owner decision (2026-11-10): the shop building is removed from the scenes (shop opens from the right-hand HUD, B1). The shop cells were dropped from `cloud-09-skin-buildings` (now 18 images: spring + cauldron × 9) and `garden-08-skin-buildings` (27 images: mill + composter + sprinkler × 9); `SKIN_BUILDING_PARTS` no longer lists shops. Batches re-prepped.
+
+## Part A (2026-11-10): rendered batches wired
+Baseline before any change: `npm run check` red only on the 2 known `studio.test.ts` tests (2040 pass).
+- Triage (one contact sheet per family, variant a):
+  - `plots-02-skins`: K5 Hoa Đào, K6 Sương Mai, K8 Đêm Trăng, K9 Hoàng Hôn accepted (12 beds). **K7 Hổ Phách rejected**: 6 objects for 3 cells (two stacked per cell), the even-grid cut gives two tiny beds per image.
+  - `cloud-08-skin-backdrops`: B1–B9 accepted (layout kept, middle empty). Rừng Xanh has a smaller cream field than the plain art; checked in plot-lab, the 15 plots still sit inside it.
+  - `garden-07-skin-backdrops`: 8 accepted. **B8 Đêm Trăng rejected**: white-pink glow over the whole field (a washed-out area under the plots, against the "no bloom over the plots" rule) and a near-grey scene.
+  - `cloud-09-skin-buildings`: S1–S9 accepted (18). Note: the Tinh Tú cauldron is drawn empty.
+  - `garden-08-skin-buildings`: only S1 rendered; **rejected** (the three buildings stand on clouds, the mill is a different shape). The owner already changed the batch to the `building_grass` view (uncommitted JSON edit, committed here with a re-run of `batch.mjs prep` so the prompt matches). S2–S9 not rendered.
+- Wiring: 46 images through `art:process --list` (only these stems, so no unrelated pending inbox file was touched; `git status` showed only batch files). Manifest: 12 skin rows → production, 16 `bg_<area>_<skin>` rows (environment), 18 `bld_cloud_spring_<skin>` / `bld_cauldron_<skin>` rows (buildings). Sizes of the per-skin ids added to `scripts/assets/sizes.ts`.
+- `SKIN_BACKDROP_READY` = 8 skins (not `moonlit`: pair incomplete). `SKIN_BUILDING_READY.cloud` = all 9; `.garden` = [] (plain buildings stay, as the owner asked).
+- Self-made: ONE commit for the three families instead of three (they share one manifest file, which cannot be split without interactive staging; a commit with manifest rows but no files would fail `assets:check`).
+- Seen in Admin plot-lab (Cloud + Garden, rank 5, several skins): backdrop + beds + particles agree, nothing washed white, console clean. Theme numbers left as they are.
+
+## Tiến độ phần B (decision 057)
+Order: 057 → B2 → B8 → B1 → B3 → B6 → B7 → B5 → B4. One line per item: done / in progress / not started.

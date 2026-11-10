@@ -5,7 +5,13 @@
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
 ## Plot skins — second stage (decision 056)
-To render: `plots-02-skins` (15 beds), `cloud-08-skin-backdrops` + `garden-07-skin-backdrops` (18 backdrops), `cloud-09-skin-buildings` (18: spring + cauldron) + `garden-08-skin-buildings` (27: mill + composter + sprinkler); no shop stalls. Prompts in `asset/batches/<id>.md`, files in `art_inbox/.batch/<id>/`.
+Delivered 2026-11-10 (46 images wired): beds of Hoa Đào, Sương Mai, Đêm Trăng, Hoàng Hôn; backdrops of 8 skins (all but Đêm Trăng) for Cloud + Garden; Cloud spring + cauldron of all 9 skins.
+**Still to render (re-do):**
+- `plots-02-skins` sheet **K7** (Hổ Phách, 3 beds): the sheet drew 6 objects (two per cell), so the cut failed. Regenerate with exactly 3 objects, one per cell.
+- `garden-07-skin-backdrops` sheet **B8** (`bg_garden_moonlit`): the field is a white-pink glow and the scene is nearly grey; keep the plain field colours, only a moonlit mood. Until then Đêm Trăng keeps the tinted plain backdrop in both Areas (`bg_cloud_moonlit` is accepted and waits as a candidate).
+- `garden-08-skin-buildings` sheets **S1–S9** (27: mill + composter + sprinkler): S1 (Rừng Xanh) was drawn on a CLOUD base and the mill changed shape (tall stilts): rejected. The batch now uses the `building_grass` view (owner edit, prompt re-prepped 2026-11-10); S2–S9 not rendered yet. The Garden keeps its plain buildings meanwhile.
+- Note: `bld_cauldron_starry` was accepted although its pot is drawn empty (no brew); re-render S4 if the owner wants the bubbling brew back.
+Prompts in `asset/batches/<id>.md`, files in `art_inbox/.batch/<id>/`.
 
 ## Plot upgrade ranks — scenery per rank (decision 056)
 Placeholders only (`npm run assets:placeholders`, manifest rows `status: placeholder`): 26 images `scn_cloud_*` / `scn_garden_*` — flower border / fence, stepping stones, 10 Cloud + 4 Garden landmarks, lanterns, small creature, cloud waterfall + halo, old tree, village market. Full list, sizes and original-design descriptions: `asset/batches/cloud-06-rank-scenery`, `garden-05-rank-scenery`, `plots-01-skins` (.json + .md, working files in `art_inbox/.batch/<id>/`). Plot skins: 12 placeholder beds `skin_<verdant|pearl_sea|crystal|starry>_<cloud|soil|soil_wet>` (152×108), described in the same batch file. The rank frame around the plots is code-drawn (colours in `RANK_FRAME_COLORS`). Also later: a small VFX when a rank is raised or a skin is forged (today: toast + sound only).

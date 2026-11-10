@@ -2882,32 +2882,32 @@
     },
     {
       "id": "skin_blossom_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_blossom_cloud.png"
     },
     {
       "id": "skin_blossom_soil",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_blossom_soil.png"
     },
     {
       "id": "skin_blossom_soil_wet",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_blossom_soil_wet.png"
     },
     {
       "id": "skin_dew_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_dew_cloud.png"
     },
     {
       "id": "skin_dew_soil",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_dew_soil.png"
     },
     {
       "id": "skin_dew_soil_wet",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_dew_soil_wet.png"
     },
     {
@@ -2927,32 +2927,32 @@
     },
     {
       "id": "skin_moonlit_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_moonlit_cloud.png"
     },
     {
       "id": "skin_moonlit_soil",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_moonlit_soil.png"
     },
     {
       "id": "skin_moonlit_soil_wet",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_moonlit_soil_wet.png"
     },
     {
       "id": "skin_sunset_cloud",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_sunset_cloud.png"
     },
     {
       "id": "skin_sunset_soil",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_sunset_soil.png"
     },
     {
       "id": "skin_sunset_soil_wet",
-      "status": "placeholder",
+      "status": "production",
       "asset": "props/skin_sunset_soil_wet.png"
     },
     {
@@ -9887,6 +9887,96 @@
       "id": "bld_cauldron",
       "status": "production",
       "asset": "buildings/bld_cauldron.png"
+    },
+    {
+      "id": "bld_cloud_spring_verdant",
+      "status": "production",
+      "asset": "buildings/bld_cloud_spring_verdant.png"
+    },
+    {
+      "id": "bld_cauldron_verdant",
+      "status": "production",
+      "asset": "buildings/bld_cauldron_verdant.png"
+    },
+    {
+      "id": "bld_cloud_spring_pearl_sea",
+      "status": "production",
+      "asset": "buildings/bld_cloud_spring_pearl_sea.png"
+    },
+    {
+      "id": "bld_cauldron_pearl_sea",
+      "status": "production",
+      "asset": "buildings/bld_cauldron_pearl_sea.png"
+    },
+    {
+      "id": "bld_cloud_spring_crystal",
+      "status": "production",
+      "asset": "buildings/bld_cloud_spring_crystal.png"
+    },
+    {
+      "id": "bld_cauldron_crystal",
+      "status": "production",
+      "asset": "buildings/bld_cauldron_crystal.png"
+    },
+    {
+      "id": "bld_cloud_spring_starry",
+      "status": "production",
+      "asset": "buildings/bld_cloud_spring_starry.png"
+    },
+    {
+      "id": "bld_cauldron_starry",
+      "status": "production",
+      "asset": "buildings/bld_cauldron_starry.png"
+    },
+    {
+      "id": "bld_cloud_spring_blossom",
+      "status": "production",
+      "asset": "buildings/bld_cloud_spring_blossom.png"
+    },
+    {
+      "id": "bld_cauldron_blossom",
+      "status": "production",
+      "asset": "buildings/bld_cauldron_blossom.png"
+    },
+    {
+      "id": "bld_cloud_spring_dew",
+      "status": "production",
+      "asset": "buildings/bld_cloud_spring_dew.png"
+    },
+    {
+      "id": "bld_cauldron_dew",
+      "status": "production",
+      "asset": "buildings/bld_cauldron_dew.png"
+    },
+    {
+      "id": "bld_cloud_spring_amber",
+      "status": "production",
+      "asset": "buildings/bld_cloud_spring_amber.png"
+    },
+    {
+      "id": "bld_cauldron_amber",
+      "status": "production",
+      "asset": "buildings/bld_cauldron_amber.png"
+    },
+    {
+      "id": "bld_cloud_spring_moonlit",
+      "status": "production",
+      "asset": "buildings/bld_cloud_spring_moonlit.png"
+    },
+    {
+      "id": "bld_cauldron_moonlit",
+      "status": "production",
+      "asset": "buildings/bld_cauldron_moonlit.png"
+    },
+    {
+      "id": "bld_cloud_spring_sunset",
+      "status": "production",
+      "asset": "buildings/bld_cloud_spring_sunset.png"
+    },
+    {
+      "id": "bld_cauldron_sunset",
+      "status": "production",
+      "asset": "buildings/bld_cauldron_sunset.png"
     }
   ],
   "environment": [
@@ -10420,6 +10510,86 @@
       "id": "bg_garden",
       "status": "production",
       "asset": "environment/bg_garden.png"
+    },
+    {
+      "id": "bg_cloud_verdant",
+      "status": "production",
+      "asset": "environment/bg_cloud_verdant.png"
+    },
+    {
+      "id": "bg_garden_verdant",
+      "status": "production",
+      "asset": "environment/bg_garden_verdant.png"
+    },
+    {
+      "id": "bg_cloud_pearl_sea",
+      "status": "production",
+      "asset": "environment/bg_cloud_pearl_sea.png"
+    },
+    {
+      "id": "bg_garden_pearl_sea",
+      "status": "production",
+      "asset": "environment/bg_garden_pearl_sea.png"
+    },
+    {
+      "id": "bg_cloud_crystal",
+      "status": "production",
+      "asset": "environment/bg_cloud_crystal.png"
+    },
+    {
+      "id": "bg_garden_crystal",
+      "status": "production",
+      "asset": "environment/bg_garden_crystal.png"
+    },
+    {
+      "id": "bg_cloud_starry",
+      "status": "production",
+      "asset": "environment/bg_cloud_starry.png"
+    },
+    {
+      "id": "bg_garden_starry",
+      "status": "production",
+      "asset": "environment/bg_garden_starry.png"
+    },
+    {
+      "id": "bg_cloud_blossom",
+      "status": "production",
+      "asset": "environment/bg_cloud_blossom.png"
+    },
+    {
+      "id": "bg_garden_blossom",
+      "status": "production",
+      "asset": "environment/bg_garden_blossom.png"
+    },
+    {
+      "id": "bg_cloud_dew",
+      "status": "production",
+      "asset": "environment/bg_cloud_dew.png"
+    },
+    {
+      "id": "bg_garden_dew",
+      "status": "production",
+      "asset": "environment/bg_garden_dew.png"
+    },
+    {
+      "id": "bg_cloud_amber",
+      "status": "production",
+      "asset": "environment/bg_cloud_amber.png"
+    },
+    {
+      "id": "bg_garden_amber",
+      "status": "production",
+      "asset": "environment/bg_garden_amber.png"
+    },
+    {
+      "id": "bg_cloud_sunset",
+      "status": "production",
+      "asset": "environment/bg_cloud_sunset.png"
+    },
+    {
+      "id": "bg_garden_sunset",
+      "status": "production",
+      "asset": "environment/bg_garden_sunset.png"
     },
     {
       "id": "bg_plaza",

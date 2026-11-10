@@ -14,7 +14,7 @@
       ],
       "fit": "each",
       "views": [
-        "building"
+        "building_grass"
       ],
       "hints": [
         {
@@ -51,7 +51,7 @@
           "what": "the game's current sprinkler on a post (keep its shape)"
         }
       ],
-      "notes": "One theme for the whole sheet: a lush green forest-glade mood: mossy wood, leaf and fern trim, fresh greens. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "notes": "One theme for the whole sheet: a lush green forest-glade mood: mossy wood, leaf and fern trim, fresh greens. Same hand and scale across the cells, matching the style of image 1. These buildings stand on the ground of a garden: the base is grass and soil like the attached game pictures, never a cloud; no cloud under or around any object. Original design, no resemblance to any other game, film or brand.",
       "cells": [
         {
           "stem": "bld_feed_mill_verdant",
@@ -77,7 +77,7 @@
       ],
       "fit": "each",
       "views": [
-        "building"
+        "building_grass"
       ],
       "hints": [
         {
@@ -114,7 +114,7 @@
           "what": "the game's current sprinkler on a post (keep its shape)"
         }
       ],
-      "notes": "One theme for the whole sheet: a calm pearly-sea mood: pearl-white and aqua materials, shell and foam trim. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "notes": "One theme for the whole sheet: a calm pearly-sea mood: pearl-white and aqua materials, shell and foam trim. Same hand and scale across the cells, matching the style of image 1. These buildings stand on the ground of a garden: the base is grass and soil like the attached game pictures, never a cloud; no cloud under or around any object. Original design, no resemblance to any other game, film or brand.",
       "cells": [
         {
           "stem": "bld_feed_mill_pearl_sea",
@@ -140,7 +140,7 @@
       ],
       "fit": "each",
       "views": [
-        "building"
+        "building_grass"
       ],
       "hints": [
         {
@@ -177,7 +177,7 @@
           "what": "the game's current sprinkler on a post (keep its shape)"
         }
       ],
-      "notes": "One theme for the whole sheet: a crystal-lilac mood: lilac and violet materials with faceted translucent crystal accents. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "notes": "One theme for the whole sheet: a crystal-lilac mood: lilac and violet materials with faceted translucent crystal accents. Same hand and scale across the cells, matching the style of image 1. These buildings stand on the ground of a garden: the base is grass and soil like the attached game pictures, never a cloud; no cloud under or around any object. Original design, no resemblance to any other game, film or brand.",
       "cells": [
         {
           "stem": "bld_feed_mill_crystal",
@@ -203,7 +203,7 @@
       ],
       "fit": "each",
       "views": [
-        "building"
+        "building_grass"
       ],
       "hints": [
         {
@@ -240,7 +240,7 @@
           "what": "the game's current sprinkler on a post (keep its shape)"
         }
       ],
-      "notes": "One theme for the whole sheet: a starry-night mood: deep indigo materials with tiny stars, a crescent motif and soft glowing lamps. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "notes": "One theme for the whole sheet: a starry-night mood: deep indigo materials with tiny stars, a crescent motif and soft glowing lamps. Same hand and scale across the cells, matching the style of image 1. These buildings stand on the ground of a garden: the base is grass and soil like the attached game pictures, never a cloud; no cloud under or around any object. Original design, no resemblance to any other game, film or brand.",
       "cells": [
         {
           "stem": "bld_feed_mill_starry",
@@ -266,7 +266,7 @@
       ],
       "fit": "each",
       "views": [
-        "building"
+        "building_grass"
       ],
       "hints": [
         {
@@ -303,7 +303,7 @@
           "what": "the game's current sprinkler on a post (keep its shape)"
         }
       ],
-      "notes": "One theme for the whole sheet: a cherry-blossom spring mood: soft pink and cream materials with blossom petals and branches. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "notes": "One theme for the whole sheet: a cherry-blossom spring mood: soft pink and cream materials with blossom petals and branches. Same hand and scale across the cells, matching the style of image 1. These buildings stand on the ground of a garden: the base is grass and soil like the attached game pictures, never a cloud; no cloud under or around any object. Original design, no resemblance to any other game, film or brand.",
       "cells": [
         {
           "stem": "bld_feed_mill_blossom",
@@ -329,7 +329,7 @@
       ],
       "fit": "each",
       "views": [
-        "building"
+        "building_grass"
       ],
       "hints": [
         {
@@ -366,7 +366,7 @@
           "what": "the game's current sprinkler on a post (keep its shape)"
         }
       ],
-      "notes": "One theme for the whole sheet: a fresh morning-dew mood: cool mint and pale green materials with glittering dew drops. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "notes": "One theme for the whole sheet: a fresh morning-dew mood: cool mint and pale green materials with glittering dew drops. Same hand and scale across the cells, matching the style of image 1. These buildings stand on the ground of a garden: the base is grass and soil like the attached game pictures, never a cloud; no cloud under or around any object. Original design, no resemblance to any other game, film or brand.",
       "cells": [
         {
           "stem": "bld_feed_mill_dew",
@@ -392,7 +392,7 @@
       ],
       "fit": "each",
       "views": [
-        "building"
+        "building_grass"
       ],
       "hints": [
         {
@@ -429,7 +429,7 @@
           "what": "the game's current sprinkler on a post (keep its shape)"
         }
       ],
-      "notes": "One theme for the whole sheet: a warm amber-autumn mood: honey-gold materials, glossy resin accents and golden leaves. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "notes": "One theme for the whole sheet: a warm amber-autumn mood: honey-gold materials, glossy resin accents and golden leaves. Same hand and scale across the cells, matching the style of image 1. These buildings stand on the ground of a garden: the base is grass and soil like the attached game pictures, never a cloud; no cloud under or around any object. Original design, no resemblance to any other game, film or brand.",
       "cells": [
         {
           "stem": "bld_feed_mill_amber",
@@ -455,7 +455,7 @@
       ],
       "fit": "each",
       "views": [
-        "building"
+        "building_grass"
       ],
       "hints": [
         {
@@ -492,7 +492,7 @@
           "what": "the game's current sprinkler on a post (keep its shape)"
         }
       ],
-      "notes": "One theme for the whole sheet: a silvery moonlit mood: silver-blue materials, pale moon motifs and soft glow. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "notes": "One theme for the whole sheet: a silvery moonlit mood: silver-blue materials, pale moon motifs and soft glow. Same hand and scale across the cells, matching the style of image 1. These buildings stand on the ground of a garden: the base is grass and soil like the attached game pictures, never a cloud; no cloud under or around any object. Original design, no resemblance to any other game, film or brand.",
       "cells": [
         {
           "stem": "bld_feed_mill_moonlit",
@@ -518,7 +518,7 @@
       ],
       "fit": "each",
       "views": [
-        "building"
+        "building_grass"
       ],
       "hints": [
         {
@@ -555,7 +555,7 @@
           "what": "the game's current sprinkler on a post (keep its shape)"
         }
       ],
-      "notes": "One theme for the whole sheet: a golden-sunset mood: orange, coral and pink materials with golden rim light. Same hand and scale across the cells, matching the style of image 1. Original design, no resemblance to any other game, film or brand.",
+      "notes": "One theme for the whole sheet: a golden-sunset mood: orange, coral and pink materials with golden rim light. Same hand and scale across the cells, matching the style of image 1. These buildings stand on the ground of a garden: the base is grass and soil like the attached game pictures, never a cloud; no cloud under or around any object. Original design, no resemblance to any other game, film or brand.",
       "cells": [
         {
           "stem": "bld_feed_mill_sunset",
