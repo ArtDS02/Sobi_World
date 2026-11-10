@@ -5,6 +5,7 @@ import type { ErrorCode } from '../../core/config/errors';
 import type { ItemId } from '../../core/config/ids';
 import { PLOT_SKIN_RULES, skinArtId } from '../../core/config/plotSkins';
 import { WORLD_LEVELS } from '../../core/config/progression';
+import { shownSkin, SKIN_AUTO_MODES, type SkinAutoMode, type SkinMoment } from '../../core/plots/skinAuto';
 import { skinStatus, type SkinDef } from '../../core/plots/skins';
 import type { WorldSave } from '../../core/save/world';
 import { formatInt, t } from '../../i18n/format';
@@ -71,3 +72,27 @@ export function skinStripVm(world: WorldSave, wearing: string | null): SkinChipV
   ];
 }
 
+export interface SkinAutoChipVm {
+  /** null = off: the group wears the skin chosen in the strip. */
+  mode: SkinAutoMode | null;
+  name: string;
+  active: boolean;
+}
+
+export interface SkinAutoVm {
+  chips: SkinAutoChipVm[];
+  /** With a mode on: what the group shows at this moment ("Đang hiện: Đêm Trăng"); null when off. */
+  showing: string | null;
+}
+
+/** The "change by itself" row (decision 057, B7): off / by time of day / by season, and what the group shows right now. */
+export function skinAutoVm(world: WorldSave, wearing: string | null, mode: SkinAutoMode | null, moment: SkinMoment): SkinAutoVm {
+  const shown = shownSkin(wearing, mode, moment, world.cosmetics.plotSkins);
+  return {
+    chips: [
+      { mode: null, name: vi.plotSkin.auto.off, active: mode === null },
+      ...SKIN_AUTO_MODES.map((m) => ({ mode: m, name: vi.plotSkin.auto[m], active: mode === m })),
+    ],
+    showing: mode ? t(vi.plotSkin.auto.showing, { name: shown ? nameOf(shown) : vi.plotSkin.plain }) : null,
+  };
+}

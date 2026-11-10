@@ -70,6 +70,8 @@ export function gardenPresentation(e: EventBase, origin: 'action' | 'tick' | 'ca
       const group = vi.garden.zoneNames[e.group] ?? '';
       return { sound: 'notify', toast: e.skinId ? t(vi.plotSkin.applied, { group, name: vi.plotSkin.names[e.skinId as keyof typeof vi.plotSkin.names] ?? e.skinId }) : t(vi.plotSkin.plained, { group }) };
     }
+    case 'GARDEN_SKIN_AUTO_SET':
+      return { sound: 'notify', toast: t(vi.plotSkin.autoSet[e.mode ?? 'off'], { group: vi.garden.zoneNames[e.group] ?? '' }) };
     case 'GARDEN_LEVEL_UP':
       return { sound: 'level_up', toast: t(T.levelUp, { level: e.level }) };
   }

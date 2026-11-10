@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { Raw } from '../../../core/save/migrate';
 import type { PlotState } from '../../../systems/plants/plot';
 import type { ProductionJob } from '../../../core/production/production';
+import { SKIN_AUTO_MODES } from '../../../core/plots/skinAuto';
 import { emptyPlot } from '../../../systems/plants/plot';
 import { GB, MAX_TIER_LEVEL } from './config/content';
 
@@ -46,6 +47,8 @@ export const gardenStateSchema = z.strictObject({
   zoneLevels: z.array(z.number().int().min(1).max(MAX_TIER_LEVEL)),
   /** The plot skin each garden zone wears (decision 056), in zone order; sparse, null or absent = the plain look. */
   zoneSkins: z.array(z.string().min(1).nullable()),
+  /** Zones that change their look by themselves (decision 057, B7), in zone order: by time of day or by season; sparse, null or absent = off. `zoneSkins` is untouched by it. */
+  zoneSkinAuto: z.array(z.enum(SKIN_AUTO_MODES).nullable()).optional(),
   /** Time the slice was simulated up to (epoch ms). */
   lastTickedAt: time,
 });
@@ -56,7 +59,8 @@ export type GardenJob = ProductionJob;
 
 export const GARDEN_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
   // v2 (decision 056): upgrade tiers and plot skins per garden zone. Every zone stays at tier 1 with the plain look.
-  1: (slice) => ({ ...slice, version: 2, zoneLevels: Array.isArray(slice.zoneLevels) ? slice.zoneLevels : [], zoneSkins: Array.isArray(slice.zoneSkins) ? slice.zoneSkins : [] }),
+  // Decision 057 (B7) folds `zoneSkinAuto` in (v2 is not released): no zone changes its look by itself.
+  1: (slice) => ({ ...slice, version: 2, zoneLevels: Array.isArray(slice.zoneLevels) ? slice.zoneLevels : [], zoneSkins: Array.isArray(slice.zoneSkins) ? slice.zoneSkins : [], zoneSkinAuto: Array.isArray(slice.zoneSkinAuto) ? slice.zoneSkinAuto : [] }),
 };
 
 export const initialGarden = (now: number): GardenState => ({
@@ -67,5 +71,6 @@ export const initialGarden = (now: number): GardenState => ({
   jobs: { mill: null, composter: null },
   zoneLevels: [],
   zoneSkins: [],
+  zoneSkinAuto: [],
   lastTickedAt: now,
 });

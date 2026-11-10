@@ -16,6 +16,7 @@ import { GARDEN_DOCK_ART } from '../logic/art';
 import { fertilizePlots, harvestPlots, plantCrops, waterPlots } from '../logic/actions/plants';
 import { gardenZoneLevel, nextExpansion, ownedZones, sceneState, type SceneState } from '../logic/derived';
 import { hasGarden, gardenOf } from '../logic/save/lens';
+import { localOffsetMs } from '../../../ui/localDay';
 import type { GardenPick } from '../scene/GardenScene';
 import { createGardenDialogs } from './gardenDialogs';
 import { onViewedZone, setViewedZone, viewedZone } from '../viewedZone';
@@ -219,7 +220,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
       const w = world();
       if (!w) return null;
       const now = d.now();
-      if (!sceneCache || sceneCache.world !== w || now - sceneCache.now > 1000) sceneCache = { world: w, now, state: sceneState(gardenOf(w), now) };
+      if (!sceneCache || sceneCache.world !== w || now - sceneCache.now > 1000) sceneCache = { world: w, now, state: sceneState(gardenOf(w), now, localOffsetMs(now), w.cosmetics.plotSkins) };
       return sceneCache.state;
     },
     pick,

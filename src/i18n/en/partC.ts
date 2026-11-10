@@ -70,6 +70,15 @@ export const partC = {
     forged: "Forged the {name} skin!",
     applied: "{group} now wears {name}",
     plained: "{group} is back to the plain look",
+    auto: {
+      title: "Change by itself",
+      off: "Off",
+      time: "By time of day",
+      season: "By season",
+      hint: "Only skins you have forged are used. When none fits, the skin you picked above stays.",
+      showing: "Showing now: {name}",
+    },
+    autoSet: { time: "{group} now changes its skin by the time of day", season: "{group} now changes its skin by the season", off: "{group} no longer changes its skin by itself" },
     balanceCoins: "Sobi Coin",
   },
   plotTier: {

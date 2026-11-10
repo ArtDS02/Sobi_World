@@ -194,7 +194,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
       const w = world();
       if (!w) return null;
       const now = d.now();
-      if (!sceneCache || sceneCache.world !== w || now - sceneCache.now > 1000) sceneCache = { world: w, now, state: sceneState(cloudOf(w), now, offset()) };
+      if (!sceneCache || sceneCache.world !== w || now - sceneCache.now > 1000) sceneCache = { world: w, now, state: sceneState(cloudOf(w), now, offset(), w.cosmetics.plotSkins) };
       return sceneCache.state;
     },
     pick,

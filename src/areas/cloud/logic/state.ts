@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import type { Raw } from '../../../core/save/migrate';
 import type { ProductionJob } from '../../../core/production/production';
+import { SKIN_AUTO_MODES } from '../../../core/plots/skinAuto';
 import { emptyPlot, type PlotState } from '../../../systems/plants/plot';
 import { CB, MAX_PLOTS, MAX_SPRING_LEVEL, MAX_TIER_LEVEL, PLOTS_PER_TIER } from './config/content';
 
@@ -41,6 +42,8 @@ export const cloudStateSchema = z.strictObject({
   tierLevels: z.array(z.number().int().min(1).max(MAX_TIER_LEVEL)),
   /** The plot skin each cloud tier wears (decision 056), in tier order; sparse, null or absent = the plain look. */
   tierSkins: z.array(z.string().min(1).nullable()),
+  /** Tiers that change their look by themselves (decision 057, B7), in tier order: by time of day or by season; sparse, null or absent = off. `tierSkins` is untouched by it. */
+  tierSkinAuto: z.array(z.enum(SKIN_AUTO_MODES).nullable()).optional(),
   /** Time the slice was simulated up to (epoch ms). */
   lastTickedAt: time,
 });
@@ -58,7 +61,8 @@ export const CLOUD_MIGRATIONS: Record<number, (slice: Raw) => Raw> = {
     return { ...slice, version: 2, plots: [...plots, ...Array.from({ length: whole - plots.length }, emptyPlot)] };
   },
   // v3 (decision 056): upgrade tiers and plot skins per cloud tier. Every tier stays at tier 1 with the plain look.
-  2: (slice) => ({ ...slice, version: 3, tierLevels: Array.isArray(slice.tierLevels) ? slice.tierLevels : [], tierSkins: Array.isArray(slice.tierSkins) ? slice.tierSkins : [] }),
+  // Decision 057 (B7) folds `tierSkinAuto` in (v3 is not released): no tier changes its look by itself.
+  2: (slice) => ({ ...slice, version: 3, tierLevels: Array.isArray(slice.tierLevels) ? slice.tierLevels : [], tierSkins: Array.isArray(slice.tierSkins) ? slice.tierSkins : [], tierSkinAuto: Array.isArray(slice.tierSkinAuto) ? slice.tierSkinAuto : [] }),
 };
 
 export const initialCloud = (now: number): CloudState => ({
@@ -68,5 +72,6 @@ export const initialCloud = (now: number): CloudState => ({
   cauldron: { built: false, job: null },
   tierLevels: [],
   tierSkins: [],
+  tierSkinAuto: [],
   lastTickedAt: now,
 });

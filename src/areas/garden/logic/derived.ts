@@ -5,7 +5,8 @@ import { RECIPES } from '../../../core/config/recipes';
 import { batchesReady } from '../../../core/production/production';
 import { CROPS, GARDEN_TIERS, GB, PLOT_RULES, MAX_PLOTS, PLOTS_PER_ZONE, ZONE_COUNT, zoneOf, type BuildingId } from './config/content';
 import type { GardenState } from './state';
-import { bonusPctOf, nextUpgrade, skinOfGroup, tierOfGroup, upgradeBlock, type UpgradeBlock, type UpgradeStep } from '../../../systems/plants/tiers';
+import { shownSkins, skinMoment } from '../../../core/plots/skinAuto';
+import { bonusPctOf, nextUpgrade, tierOfGroup, upgradeBlock, type UpgradeBlock, type UpgradeStep } from '../../../systems/plants/tiers';
 
 /** The crossing lab of a save (decision 035); empty when the save predates it. */
 export const labOf = (g: Pick<GardenState, 'lab'>): NonNullable<GardenState['lab']> => g.lab ?? { found: [], misses: {} };
@@ -102,7 +103,7 @@ export interface SceneState {
   composter: WorkshopView;
   /** Upgrade rank (1..5) of each garden zone (decision 056): the scenery of a zone follows it. */
   zoneRanks: number[];
-  /** The plot skin each garden zone wears (decision 056); null = the plain look. */
+  /** The plot skin each garden zone shows now (decision 056): the assigned one, or the moment's pick for a zone on automatic (decision 057, B7); null = the plain look. */
   zoneSkins: (string | null)[];
 }
 
@@ -112,13 +113,14 @@ export function workshopView(g: GardenState, building: BuildingId, now: number):
   return { built: g.built[building], busy: job !== null, ready: job && recipe ? batchesReady(job, recipe, now) : 0 };
 }
 
-export const sceneState = (g: GardenState, now: number): SceneState => ({
+/** `dayOffsetMs`: local time minus UTC; `ownedSkins`: the skins the player has forged (what an automatic zone may show). */
+export const sceneState = (g: GardenState, now: number, dayOffsetMs = 0, ownedSkins: readonly string[] = []): SceneState => ({
   plots: plotViews(g, now),
   sprinkler: g.sprinkler,
   mill: workshopView(g, 'mill', now),
   composter: workshopView(g, 'composter', now),
   zoneRanks: Array.from({ length: ZONE_COUNT }, (_, z) => gardenZoneLevel(g, z)),
-  zoneSkins: Array.from({ length: ZONE_COUNT }, (_, z) => skinOfGroup(g.zoneSkins, z)),
+  zoneSkins: shownSkins(g.zoneSkins, g.zoneSkinAuto, ZONE_COUNT, skinMoment(now, dayOffsetMs), ownedSkins),
 });
 
 /** The upgrade tier (1..5) of garden zone `group` (0-based). */

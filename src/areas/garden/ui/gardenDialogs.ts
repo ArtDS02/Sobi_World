@@ -9,17 +9,15 @@ import type { UiIcon } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import { applyZoneSkin, buildWorkshop, buyPlots, collectCraft, startCraft, upgradeSprinkler, upgradeZone } from '../logic/actions/buildings';
+import { applyZoneSkin, setZoneSkinAuto, buildWorkshop, buyPlots, collectCraft, startCraft, upgradeSprinkler, upgradeZone } from '../logic/actions/buildings';
 import { tierUpgradeBody } from '../../../ui/components/tierUpgradeDialog';
-import { skinForgeBody } from '../../../ui/components/skinForgeDialog';
-import { skinCardsVm, skinStripVm } from '../../../ui/world/skinForgeVm';
-import { skinOfGroup } from '../../../systems/plants/tiers';
+import { gardenForgeBody } from './gardenForge';
 import { fertilizePlots, harvestPlots, waterPlots } from '../logic/actions/plants';
 import { buyShopItem } from '../logic/actions/shop';
 import { GB, type BuildingId } from '../logic/config/content';
 import { nextExpansion } from '../logic/derived';
 import { gardenOf } from '../logic/save/lens';
-import { expandVm, plotCardVm, probe, sprinklerVm, workshopVm, type ButtonVm, type GardenRun, type RecipeVm } from './gardenVm';
+import { expandVm, plotCardVm, sprinklerVm, workshopVm, type ButtonVm, type GardenRun, type RecipeVm } from './gardenVm';
 import { gardenShopVm } from './gardenShopVm';
 import { zoneRankVm } from './gardenRankVm';
 import { createLabController } from '../../../ui/components/labView';
@@ -127,22 +125,8 @@ export function createGardenDialogs(d: GardenDialogsDeps) {
   /** The plot skin forge (decision 056): forge for coins or Gems, then dress the garden zone `group` on screen. */
   function openForge(group: number) {
     const buy = guardBuy((skinId, count) => run(d.forgeSkin(skinId, count === 2 ? 'gems' : 'coins')));
-    openLive(
-      vi.plotSkin.title,
-      (w) =>
-        skinForgeBody(
-          {
-            cards: skinCardsVm(w, (skinId, pay) => probe(w, d.forgeSkin(skinId, pay), d.now())),
-            strip: skinStripVm(w, skinOfGroup(gardenOf(w).zoneSkins, group)),
-            groupName: t(vi.garden.zoneTitle, { n: group + 1, name: vi.garden.zoneNames[group] ?? '' }),
-            coins: w.wallet.coins,
-            gems: w.wallet.gems,
-          },
-          { onForge: buy, onApply: (skinId) => run((s, c) => applyZoneSkin(s, { group, skinId }, c)) },
-        ),
-      (body) => dressShopDialog(body, 'garden'),
-      'shop',
-    );
+    const apply = (skinId: string | null) => run((s, c) => applyZoneSkin(s, { group, skinId }, c));
+    openLive(vi.plotSkin.title, (w) => gardenForgeBody(w, group, d.now(), d.forgeSkin, buy, apply, (mode) => run((s, c) => setZoneSkinAuto(s, { group, mode }, c))), (body) => dressShopDialog(body, 'garden'), 'shop');
   }
 
   function openPlot(index: number) {

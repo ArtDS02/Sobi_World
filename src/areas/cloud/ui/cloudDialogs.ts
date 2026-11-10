@@ -9,7 +9,7 @@ import type { UiIcon } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
-import { applyTierSkin, buildCauldron, buyPlots, collectBrew, collectWater, startBrew, upgradeSpring, upgradeTier } from '../logic/actions/buildings';
+import { applyTierSkin, setTierSkinAuto, buildCauldron, buyPlots, collectBrew, collectWater, startBrew, upgradeSpring, upgradeTier } from '../logic/actions/buildings';
 import { tierUpgradeBody } from '../../../ui/components/tierUpgradeDialog';
 import { fertilizePlots, harvestFlowers, waterPlots } from '../logic/actions/plants';
 import { buyShopItem } from '../logic/actions/shop';
@@ -129,7 +129,7 @@ export function createCloudDialogs(d: CloudDialogsDeps) {
   /** The plot skin forge (decision 056): forge for coins or Gems, then dress the cloud tier `group` on screen. */
   function openForge(group: number) {
     const buy = guardBuy((skinId, count) => run(d.forgeSkin(skinId, count === 2 ? 'gems' : 'coins')));
-    openLive(vi.plotSkin.title, (w) => cloudForgeBody(w, group, d.now(), d.forgeSkin, buy, (skinId) => run((s2, c) => applyTierSkin(s2, { group, skinId }, c))), (body) => dressShopDialog(body, 'cloud'), 'shop');
+    openLive(vi.plotSkin.title, (w) => cloudForgeBody(w, group, d.now(), d.forgeSkin, buy, (skinId) => run((s2, c) => applyTierSkin(s2, { group, skinId }, c)), (mode) => run((s2, c) => setTierSkinAuto(s2, { group, mode }, c))), (body) => dressShopDialog(body, 'cloud'), 'shop');
   }
 
   function openPlot(index: number) {

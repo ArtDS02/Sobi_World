@@ -10,6 +10,7 @@ import { emptyPlot } from '../../../../systems/plants/plot';
 import { type BuildingId, BUILDING_IDS, GB, ZONE_COUNT } from '../config/content';
 import { gardenZoneUpgrade, nextExpansion, nextSprinkler } from '../derived';
 import { ownsSkin } from '../../../../core/plots/skins';
+import { isSkinAutoMode, withAuto, type SkinAutoMode } from '../../../../core/plots/skinAuto';
 import { withSkin, withTier } from '../../../../systems/plants/tiers';
 import { give, pay, put, runGarden, take, type GardenResult } from './kit';
 
@@ -160,6 +161,23 @@ export function applyZoneSkin(world: WorldSave, args: { group: number; skinId: s
       ok: true,
       world: put(w, { ...g, zoneSkins: withSkin(g.zoneSkins, group, skinId) }),
       events: [{ type: 'GARDEN_SKIN_APPLIED', group, skinId }],
+    };
+  });
+}
+
+/**
+ * Lets garden zone `args.group` (0-based) change its look by itself: by the time of day, by the season, or not at all (`mode: null`).
+ * Free, undoable and presentation only (decision 057, B7): the skin the player assigned stays saved as it is.
+ */
+export function setZoneSkinAuto(world: WorldSave, args: { group: number; mode: SkinAutoMode | null }, ctx: ActionContext): GardenResult {
+  return runGarden(world, ctx, (w, g) => {
+    const { group, mode } = args;
+    if (!Number.isInteger(group) || group < 0 || group >= ZONE_COUNT) return { ok: false, error: 'INVALID_REQUEST' };
+    if (mode !== null && !isSkinAutoMode(mode)) return { ok: false, error: 'INVALID_REQUEST' };
+    return {
+      ok: true,
+      world: put(w, { ...g, zoneSkinAuto: withAuto(g.zoneSkinAuto, group, mode) }),
+      events: [{ type: 'GARDEN_SKIN_AUTO_SET', group, mode }],
     };
   });
 }

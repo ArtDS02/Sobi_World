@@ -2,6 +2,11 @@
 // forged once for materials plus Sobi Coin OR Gems (the player chooses). Nothing here changes yield, speed or Codex.
 import { z } from 'zod';
 import { color, itemId, nonNeg, posInt } from '../fields';
+import { DAY_PHASES } from '../vocab';
+
+const skinId = z.string().regex(/^[a-z][a-z0-9_]*$/);
+/** Skins wished for at one moment, best first: the first one the player owns is shown. */
+const wishes = z.array(skinId);
 
 /** What opens a skin's blueprint, read from the world save without knowing the Areas (the path is read as plain data). */
 const unlockSchema = z.discriminatedUnion('kind', [
@@ -22,10 +27,18 @@ export const plotSkinsFileSchema = z
     gemRate: posInt,
     /** One-off XP of forging a skin (world XP). */
     xp: nonNeg,
+    /**
+     * Automatic skin (decision 057, B7): a cloud tier / garden zone set to "by time of day" or "by season" shows the first skin of
+     * the moment's list that the player owns; an empty list, or none owned, keeps the skin the player chose. Presentation only.
+     */
+    auto: z.strictObject({
+      time: z.record(z.enum(DAY_PHASES), wishes),
+      season: z.record(z.enum(['spring', 'summer', 'autumn', 'winter']), wishes),
+    }),
     skins: z
       .array(
         z.strictObject({
-          id: z.string().regex(/^[a-z][a-z0-9_]*$/),
+          id: skinId,
           materials: z.partialRecord(itemId, posInt),
           coins: posInt,
           gems: posInt,
@@ -52,4 +65,9 @@ export const plotSkinsFileSchema = z
       seen.add(s.id);
       if (s.coins !== s.gems * f.gemRate) ctx.addIssue({ code: 'custom', message: `skins[${i}] (${s.id}): coins must be gems x gemRate so the two prices are worth the same` });
     });
+    for (const [mode, table] of Object.entries(f.auto)) {
+      for (const [moment, list] of Object.entries(table)) {
+        for (const id of list) if (!seen.has(id)) ctx.addIssue({ code: 'custom', message: `auto.${mode}.${moment}: unknown skin ${id}` });
+      }
+    }
   });

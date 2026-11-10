@@ -19,12 +19,13 @@ export type GardenEvent =
   | { type: 'GARDEN_CROSSED'; recipeId: string; cropId: string; success: boolean; firstTime: boolean; chance: number; seeds: number; seedItem: string | null }
   | { type: 'GARDEN_ZONE_UPGRADED'; /** The zone (0-based) and the tier it reached. */ group: number; tier: number; gold: number; items: Readonly<Record<string, number>> }
   | { type: 'GARDEN_SKIN_APPLIED'; /** The garden zone (0-based) and the skin it wears now (null = the plain look). */ group: number; skinId: string | null }
+  | { type: 'GARDEN_SKIN_AUTO_SET'; /** The garden zone (0-based) and how it changes its look by itself now (null = it does not). */ group: number; mode: 'time' | 'season' | null }
   | { type: 'GARDEN_LEVEL_UP'; level: number };
 
 export const GARDEN_EVENT_TYPES = [
   'GARDEN_PLANTED', 'GARDEN_WATERED', 'GARDEN_FERTILIZED', 'GARDEN_HARVESTED', 'GARDEN_CROP_RIPE', 'GARDEN_CROP_WILTED',
   'GARDEN_PLOTS_BOUGHT', 'GARDEN_SPRINKLER_BOUGHT', 'GARDEN_BUILT', 'GARDEN_CRAFT_STARTED', 'GARDEN_BATCH_DONE',
-  'GARDEN_CRAFT_COLLECTED', 'GARDEN_SHOP_BOUGHT', 'GARDEN_CROSSED', 'GARDEN_ZONE_UPGRADED', 'GARDEN_SKIN_APPLIED', 'GARDEN_LEVEL_UP',
+  'GARDEN_CRAFT_COLLECTED', 'GARDEN_SHOP_BOUGHT', 'GARDEN_CROSSED', 'GARDEN_ZONE_UPGRADED', 'GARDEN_SKIN_APPLIED', 'GARDEN_SKIN_AUTO_SET', 'GARDEN_LEVEL_UP',
 ] as const satisfies readonly GardenEvent['type'][];
 
 export const isGardenEvent = (e: { type: string }): e is GardenEvent => (GARDEN_EVENT_TYPES as readonly string[]).includes(e.type);

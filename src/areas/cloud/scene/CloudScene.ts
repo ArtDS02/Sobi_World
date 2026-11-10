@@ -293,6 +293,6 @@ export class CloudScene extends Phaser.Scene {
     const r = state.ranks[this.tier];
     this.scenery.draw(this.tier, r && plotIndex(this.tier, 0) < owned ? r.rank : 1, skinTheme(state.skins[this.tier]));
     this.bar.draw(this.tier, owned, r ? rankBadgeOf(r) : null);
-    paintBackdrop(this.backdrop, CLOUD_BACKDROP_ART, skinBackdropArt(state.skins[this.tier], 'cloud'), state.skins[this.tier], CLOUD_VIEW.tierTints[this.tier] ?? 0xffffff);
+    paintBackdrop(this.backdrop, CLOUD_BACKDROP_ART, skinBackdropArt(state.skins[this.tier], 'cloud'), state.skins[this.tier], CLOUD_VIEW.tierTints[this.tier] ?? 0xffffff, { group: this.tier, mode: this.deps.effects(), still: this.deps.reduceMotion() || this.moving });
   }
 }

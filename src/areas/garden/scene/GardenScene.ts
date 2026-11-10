@@ -252,7 +252,7 @@ export class GardenScene extends Phaser.Scene {
     const { harvested, ripened } = this.field.changes(this.zone, state.plots);
     this.field.draw(this.zone, state.plots, state.zoneSkins[this.zone] ?? null);
     const theme = skinTheme(state.zoneSkins[this.zone]);
-    paintBackdrop(this.backdrop, GARDEN_BACKDROP_ART, skinBackdropArt(state.zoneSkins[this.zone], 'garden'), state.zoneSkins[this.zone], GARDEN_VIEW.zoneTints[this.zone] ?? 0xffffff);
+    paintBackdrop(this.backdrop, GARDEN_BACKDROP_ART, skinBackdropArt(state.zoneSkins[this.zone], 'garden'), state.zoneSkins[this.zone], GARDEN_VIEW.zoneTints[this.zone] ?? 0xffffff, { group: this.zone, mode: this.deps.effects(), still: this.deps.reduceMotion() || this.moving });
     this.scenery.draw(this.zone, state.zoneRanks[this.zone] ?? 1, theme);
     if (!calm) this.celebrate(harvested, ripened);
     this.zoneSkin = state.zoneSkins[this.zone] ?? null;

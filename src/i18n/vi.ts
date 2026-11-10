@@ -1136,6 +1136,15 @@ export const vi = {
     forged: "Đã đúc mẫu {name}!",
     applied: "{group} dùng mẫu {name}",
     plained: "{group} về dáng mặc định",
+    auto: {
+      title: "Tự đổi mẫu",
+      off: "Tắt",
+      time: "Theo giờ trong ngày",
+      season: "Theo mùa",
+      hint: "Chỉ dùng mẫu bạn đã đúc. Lúc không có mẫu hợp thì giữ mẫu bạn chọn ở trên.",
+      showing: "Đang hiện: {name}",
+    },
+    autoSet: { time: "{group} tự đổi mẫu theo giờ trong ngày", season: "{group} tự đổi mẫu theo mùa", off: "{group} thôi tự đổi mẫu" },
     balanceCoins: "Sobi Coin",
   },
   plotTier: {

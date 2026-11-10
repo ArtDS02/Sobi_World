@@ -1,6 +1,22 @@
 {
   "gemRate": 500,
   "xp": 30,
+  "auto": {
+    "time": {
+      "dawn": ["dew", "blossom"],
+      "morning": ["verdant", "blossom"],
+      "day": [],
+      "afternoon": ["amber", "pearl_sea"],
+      "sunset": ["sunset", "amber"],
+      "night": ["moonlit", "starry", "crystal"]
+    },
+    "season": {
+      "spring": ["blossom", "verdant", "dew"],
+      "summer": ["pearl_sea", "verdant", "sunset"],
+      "autumn": ["amber", "sunset"],
+      "winter": ["crystal", "dew", "moonlit"]
+    }
+  },
   "skins": [
     {
       "id": "verdant",

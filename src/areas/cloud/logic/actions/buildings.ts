@@ -10,6 +10,7 @@ import { emptyPlot } from '../../../../systems/plants/plot';
 import { CAULDRON, CB, TIER_COUNT, WATER_ITEM, springLevel } from '../config/content';
 import { cloudTierUpgrade, nextExpansion, nextSpringLevel, springStock } from '../derived';
 import { ownsSkin } from '../../../../core/plots/skins';
+import { isSkinAutoMode, withAuto, type SkinAutoMode } from '../../../../core/plots/skinAuto';
 import { withSkin, withTier } from '../../../../systems/plants/tiers';
 import { give, pay, put, runCloud, take, type CloudResult } from './kit';
 
@@ -176,6 +177,23 @@ export function applyTierSkin(world: WorldSave, args: { group: number; skinId: s
       ok: true,
       world: put(w, { ...g, tierSkins: withSkin(g.tierSkins, group, skinId) }),
       events: [{ type: 'CLOUD_SKIN_APPLIED', group, skinId }],
+    };
+  });
+}
+
+/**
+ * Lets cloud tier `args.group` (0-based) change its look by itself: by the time of day, by the season, or not at all (`mode: null`).
+ * Free, undoable and presentation only (decision 057, B7): the skin the player assigned stays saved as it is.
+ */
+export function setTierSkinAuto(world: WorldSave, args: { group: number; mode: SkinAutoMode | null }, ctx: ActionContext): CloudResult {
+  return runCloud(world, ctx, (w, g) => {
+    const { group, mode } = args;
+    if (!Number.isInteger(group) || group < 0 || group >= TIER_COUNT) return { ok: false, error: 'INVALID_REQUEST' };
+    if (mode !== null && !isSkinAutoMode(mode)) return { ok: false, error: 'INVALID_REQUEST' };
+    return {
+      ok: true,
+      world: put(w, { ...g, tierSkinAuto: withAuto(g.tierSkinAuto, group, mode) }),
+      events: [{ type: 'CLOUD_SKIN_AUTO_SET', group, mode }],
     };
   });
 }
