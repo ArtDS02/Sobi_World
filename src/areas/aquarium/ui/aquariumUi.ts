@@ -3,6 +3,8 @@
 // store and acts through the Aquarium's actions; the canvas (AquariumScene) only reports clicks to `pick`. Mounted by
 // the app into the shell's overlay; the dialogs are aquariumDialogs.ts.
 import type { PanelId } from '../../../ui/components/popup';
+import { createSideMenu } from '../../../ui/components/sideMenu';
+import { SIDE_MENU_DEFAULT_POS, sideMenuItems } from '../../../ui/world/sideMenuVm';
 import { AREA_HUD_ART, itemArtId } from '../../../core/config/assetIds';
 import { FISH } from '../logic/config/content';
 import type { AquariumEvent } from '../logic/events';
@@ -52,7 +54,10 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
   const bottom = el('div', { class: 'aquarium-ui__bottom a-hud__bottom' });
   const dialogHost = el('div', { class: 'app__dialogs' });
   d.host.classList.add('aquarium-ui');
-  d.host.append(hud, bottom, dialogHost);
+  // The right-hand menu (decision 057, B1): the tank upgrade (more room for fish), the shop and the bag.
+  const side = el('div', { class: 'aquarium-ui__side' });
+  d.host.append(hud, bottom, side, dialogHost);
+  const menu = createSideMenu(side);
   let active = false;
   let sceneCache: { world: WorldSave; now: number; state: SceneState } | null = null;
 
@@ -80,8 +85,6 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
       hudPills(hudPill(AREA_HUD_ART.coin, v.coins, vi.aquarium.coins), hudPill(HUD_ART.water, v.waterText, vi.aquarium.hud.waterLabel), hudLevel(v)),
       hudNav(vi.aquarium.title, [
         { icon: HUD_ART.plaza, label: vi.aquarium.plaza, onClick: d.leave },
-        { icon: AREA_HUD_ART.shop, label: vi.aquarium.shop, onClick: () => dialogs.openShop() },
-        { icon: HUD_ART.items, label: vi.aquarium.items, onClick: () => d.openPanel('inventory') },
         { icon: HUD_ART.menu, label: vi.aquarium.menu, onClick: () => d.openPanel('menu') },
       ]),
     );
@@ -120,7 +123,6 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
           label: vi.areaHud.groupTank,
           actions: [
             { ...bar.bag, art: BAR_ART.bag, onClick: () => dialogs.openBag() },
-            { ...bar.tank, art: BAR_ART.tank, tone: 'grow', onClick: () => dialogs.openTank() },
             { ...bar.breed, art: BAR_ART.breed, onClick: () => dialogs.openBreed() },
           ],
         },
@@ -138,6 +140,14 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
     }
     patch(hud, renderHud(w));
     patch(bottom, renderBottom(w));
+    menu.render(
+      sideMenuItems('aquarium', {
+        expand: { reason: null, onClick: () => dialogs.openTank(), icon: BAR_ART.tank },
+        shop: { reason: null, onClick: () => dialogs.openShop() },
+        bag: { reason: null, onClick: () => d.openPanel('inventory') },
+      }),
+      SIDE_MENU_DEFAULT_POS,
+    );
     dialogs.follow(w);
   }
   const off = d.world.subscribe(refresh);
@@ -158,6 +168,7 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
       active = next;
       d.host.classList.toggle('is-active', next);
       if (!next) dialogs.close();
+      if (!next) menu.close();
       refresh();
     },
     sceneState() {
@@ -178,6 +189,7 @@ export function createAquariumUi(d: AquariumUiDeps): AquariumUi {
     },
     dispose: () => {
       off();
+      menu.dispose();
       dialogs.close();
     },
   };

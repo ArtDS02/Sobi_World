@@ -1,0 +1,128 @@
+// The right-hand menu of an Area (decision 057, B1; ui/components/sideMenu.ts): one violet circle at the right edge, a white
+// menu that drops down from it. The drop is the only motion and "Giảm chuyển động" switches it off.
+@use '../core/tokens' as *;
+@use '../core/mixins' as *;
+
+$_ink: #4a3a7a;
+$_muted: #8a7aa8;
+$_rim: #ece4fb;
+
+.c-sidemenu-host {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.c-sidemenu {
+  position: absolute;
+  top: var(--side-top, 23%);
+  right: $sp-3;
+  display: flex;
+  flex-direction: column;
+  gap: $sp-2;
+  align-items: flex-end;
+
+  &__toggle {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    color: $pz-text-on-violet;
+    cursor: pointer;
+    background: linear-gradient(180deg, #9599f2, $pz-violet 60%, $pz-violet-deep);
+    border: 3px solid $pz-violet-rim;
+    border-radius: 50%;
+    box-shadow: 0 3px 0 rgba(70, 72, 160, 0.35);
+    pointer-events: auto;
+    transition: transform $dur-fast ease-out, filter $dur-fast ease-out;
+
+    &:hover { transform: translateY(-2px); filter: brightness(1.08); }
+    &:active { transform: translateY(1px) scale(0.96); }
+    &:focus-visible { outline: $focus-ring solid #fff; outline-offset: 2px; }
+  }
+
+  // Three dots; they turn into a line of three when the menu is open (a state shown by shape, not only by colour).
+  &__dots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+
+    i { display: block; width: 0.42rem; height: 0.42rem; background: currentColor; border-radius: 50%; }
+  }
+
+  &.is-open &__dots { flex-direction: row; }
+
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 14.5rem;
+    max-width: calc(100vw - #{$sp-6});
+    max-height: calc(100vh - 16rem);
+    padding: $sp-2;
+    overflow-y: auto;
+    pointer-events: auto;
+    background: rgba(255, 255, 255, 0.95);
+    border: 3px solid $_rim;
+    border-radius: 1.1rem;
+    box-shadow: 0 6px 18px rgba(60, 50, 120, 0.25);
+    transform-origin: top right;
+
+    &.is-fresh { animation: c-sidemenu-drop 220ms ease-out; }
+  }
+
+  &__item {
+    display: flex;
+    gap: $sp-2;
+    align-items: center;
+    min-height: 2.9rem;
+    padding: 0.3rem $sp-2;
+    font: inherit;
+    color: $_ink;
+    text-align: left;
+    cursor: pointer;
+    background: #f6f2ff;
+    border: 0;
+    border-radius: 0.8rem;
+    transition: background $dur-fast ease-out, transform $dur-fast ease-out;
+
+    &:hover { background: #ebe3ff; transform: translateX(-2px); }
+    &:focus-visible { outline: $focus-ring solid $pz-violet; outline-offset: 1px; }
+
+    &.is-off {
+      cursor: not-allowed;
+      background: #f3f1f6;
+
+      .c-icon { filter: grayscale(1); opacity: 0.6; }
+      b { color: $_muted; }
+      &:hover { transform: none; background: #f3f1f6; }
+    }
+  }
+
+  &__icon .c-icon { width: 2rem; height: 2rem; }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.2;
+
+    b { font-size: $fs-sm; }
+    small { font-size: $fs-xs; color: $_muted; }
+  }
+}
+
+@keyframes c-sidemenu-drop {
+  from { opacity: 0; transform: translateY(-0.6rem) scaleY(0.4); }
+  to { opacity: 1; transform: none; }
+}
+
+.is-reduced-motion .c-sidemenu__panel.is-fresh { animation: none; }
+.is-reduced-motion .c-sidemenu__toggle,
+.is-reduced-motion .c-sidemenu__item { transition: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .c-sidemenu__panel.is-fresh { animation: none; }
+}

@@ -15,6 +15,7 @@ import {
 import { mountPlaceVeil } from '../../../ui/components/placeVeil';
 import { createToaster } from '../../../ui/components/toast';
 import { renderHud } from './components/hud';
+import { farmSideMenu } from './farmSideMenu';
 import { plazaHud } from './plazaHud';
 import { openBreedDialog } from './breedDialog';
 import { openPedigreeDialog } from './heredityViews';
@@ -233,17 +234,14 @@ export function mountApp(
   function render(snap: FarmSnapshot) {
     const ready = snap.status === 'ready' && !!snap.save;
     appEl.classList.toggle('is-ready', ready);
-    appEl.classList.toggle('is-plaza', ui.place === 'plaza');
-    appEl.classList.toggle('is-garden', ui.place === 'garden');
-    appEl.classList.toggle('is-aquarium', ui.place === 'aquarium');
-    appEl.classList.toggle('is-cloud', ui.place === 'cloud');
-    appEl.classList.toggle('is-adventure', ui.place === 'adventure');
+    for (const p of ['plaza', 'garden', 'aquarium', 'cloud', 'adventure'] as const) appEl.classList.toggle(`is-${p}`, ui.place === p);
     appEl.classList.toggle('is-reduced-motion', !!snap.save?.settings.reduceMotion);
     farm?.setSelected(ui.selectedPigId);
     patch(banner, snap.readOnly ? renderMultiTabBanner() : null);
     patch(saveBanner, session.banners(snap));
     if (snap.status !== 'ready' || !snap.save) {
       patch(topbar, null);
+      side.render(null);
       patch(hint, null);
       patch(coach, null);
       renderPopup(null);
@@ -268,6 +266,7 @@ export function mountApp(
         plaza: ui.place === 'plaza' ? plazaHud(opts, toast) : undefined,
       }),
     );
+    side.render(ui.place === 'area' ? save : null);
     patch(coach, ui.place === 'area' ? session.coach(snap) : null);
     patch(main, null);
     farm?.setVisible(true); // after main is emptied, so the canvas measures its final host
@@ -276,6 +275,7 @@ export function mountApp(
     guide?.sync();
   }
 
+  const side = farmSideMenu(worldEl, { now, openSlots: () => ((ui.shopTab = 'slots'), go('shop')), openShop: () => go('shop'), openBag: () => go('inventory') });
   const offState = store.subscribe(render);
   rerender();
   return {

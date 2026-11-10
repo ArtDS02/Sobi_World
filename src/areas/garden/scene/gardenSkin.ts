@@ -1,4 +1,4 @@
-// The Garden's buildings in the theme of the skin the zone on screen wears (decision 056): mill, composter and shop swap to their
+// The Garden's buildings in the theme of the skin the zone on screen wears (decision 056): mill, composter and sprinkler swap to their
 // `<art>_<skin>` picture when that skin's themed set was delivered; otherwise they keep the plain art.
 import type * as Phaser from 'phaser';
 import { skinBuildingArt } from '../../../core/config/plotSkins';

@@ -28,7 +28,7 @@ export type CloudPick =
   | { kind: 'plot'; index: number }
   | { kind: 'locked' }
   | { kind: 'rank' }
-  | { kind: 'building'; building: 'spring' | 'cauldron' | 'shop' }
+  | { kind: 'building'; building: 'spring' | 'cauldron' }
   | { kind: 'ground' };
 
 export interface CloudSceneDeps {

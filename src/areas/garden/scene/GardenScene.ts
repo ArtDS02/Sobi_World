@@ -7,7 +7,6 @@ import * as Phaser from 'phaser';
 import type { WorldRect } from '../../../systems/layout/camera';
 import { vi } from '../../../i18n/vi';
 import { itemArtId } from '../../../core/config/assetIds';
-import { stallKey } from '../../../ui/world/codeStall';
 import { fitCamera } from '../../../ui/world/fitCamera';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { GARDEN_BACKDROP_ART, SPRINKLER_ART } from '../logic/art';
@@ -30,7 +29,7 @@ export const GARDEN_SCENE_KEY = 'garden';
 export type GardenPick =
   | { kind: 'plot'; index: number }
   | { kind: 'locked' }
-  | { kind: 'building'; building: BuildingId | 'sprinkler' | 'shop' }
+  | { kind: 'building'; building: BuildingId | 'sprinkler' }
   | { kind: 'ground' };
 
 export interface GardenSceneDeps {
@@ -44,7 +43,7 @@ export interface GardenSceneDeps {
 }
 
 type Img = Phaser.GameObjects.Image;
-type Place = BuildingId | 'sprinkler' | 'shop';
+type Place = BuildingId | 'sprinkler';
 
 const KEY = (id: string, textures: Phaser.Textures.TextureManager) => (textures.exists(textureKey(id)) ? textureKey(id) : FALLBACK_PROP_KEY);
 
@@ -83,10 +82,7 @@ export class GardenScene extends Phaser.Scene {
     this.makeBuilding('mill', GB.buildings.mill.art, v.mill, vi.garden.mill);
     this.makeBuilding('composter', GB.buildings.composter.art, v.composter, vi.garden.composter);
     this.makeBuilding('sprinkler', SPRINKLER_ART, v.sprinkler, vi.garden.sprinkler);
-    this.makeBuilding('shop', v.shop.art, v.shop, vi.garden.shop);
-    this.plainArt.set('mill', GB.buildings.mill.art).set('composter', GB.buildings.composter.art).set('shop', v.shop.art);
-    const shop = this.workshops.get('shop')!.img;
-    if (!this.textures.exists(textureKey(v.shop.art))) shop.setTexture(stallKey(this, v.shop.art, v.shop.colours));
+    this.plainArt.set('mill', GB.buildings.mill.art).set('composter', GB.buildings.composter.art); // no shop stall: it opens from the right-hand menu (decision 057)
     new GardenLife(this, () => this.deps.reduceMotion());
     this.zone = Math.max(0, viewedZone());
     this.input.on(Phaser.Input.Events.POINTER_DOWN, (_p: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
@@ -157,7 +153,6 @@ export class GardenScene extends Phaser.Scene {
     const v = GARDEN_VIEW;
     const img = this.fixed(at.x, at.y, art).setOrigin(0.5, 1).setScale(at.scale).setDepth(v.depth.building + at.y * 0.01);
     img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: 20 });
-    if (id === 'shop') img.setFlipX(true); // the stall stands at the right edge: it faces left, toward the garden
     img.on(Phaser.Input.Events.POINTER_DOWN, () => !this.deps.paused() && this.deps.onPick({ kind: 'building', building: id }));
     const swell = (on: boolean) => {
       this.tweens.killTweensOf(img);

@@ -9,13 +9,12 @@ import { vi } from '../../../i18n/vi';
 import { CLOUD_BUILDING_ART, CLOUD_DRESSING_ART } from '../logic/art';
 import type { SceneState } from '../logic/derived';
 import { bubbles, drawBadge, splash, type Badge } from './cloudFx';
-import { stallKey } from '../../../ui/world/codeStall';
 import { textureKey } from '../../../ui/world/keys';
 import { skinBuildingArt } from '../../../core/config/plotSkins';
 import { CLOUD_VIEW } from './cloudView';
 
 type Img = Phaser.GameObjects.Image;
-export type BuildingId = 'spring' | 'cauldron' | 'shop';
+export type BuildingId = 'spring' | 'cauldron';
 
 export interface BuildingsDeps {
   fixed: (x: number, y: number, id: string) => Img;
@@ -47,13 +46,10 @@ export class CloudBuildings {
     const v = CLOUD_VIEW;
     this.make('spring', CLOUD_BUILDING_ART.spring, v.spring);
     this.make('cauldron', CLOUD_BUILDING_ART.cauldron, v.cauldron);
-    this.make('shop', v.shop.art, v.shop);
-    this.plain.set('spring', CLOUD_BUILDING_ART.spring).set('cauldron', CLOUD_BUILDING_ART.cauldron).set('shop', v.shop.art);
-    const shop = this.list.get('shop')!.img;
-    if (!scene.textures.exists(textureKey(v.shop.art))) shop.setTexture(stallKey(scene, v.shop.art, v.shop.colours));
+    // No shop stall on the island (decision 057, B1): the shop opens from the right-hand menu.
+    this.plain.set('spring', CLOUD_BUILDING_ART.spring).set('cauldron', CLOUD_BUILDING_ART.cauldron);
     this.plank(v.springLabel, vi.cloud.spring, 'spring');
     this.plank(v.cauldronLabel, vi.cloud.cauldron, 'cauldron');
-    this.plank(v.shopLabel, vi.cloud.shop, 'shop');
   }
 
   /** Counters, the unbuilt cauldron's grey, and the brewing swell. */
@@ -81,7 +77,6 @@ export class CloudBuildings {
     const v = CLOUD_VIEW;
     const img = this.d.fixed(at.x, at.y, art).setOrigin(0.5, 1).setScale(at.scale).setDepth(v.depth.building + at.y * 0.01);
     img.setInteractive({ useHandCursor: true, pixelPerfect: true, alphaTolerance: 20 });
-    if (id === 'shop') img.setFlipX(true); // the stall stands on the right bank: it faces left, toward the island
     img.on(Phaser.Input.Events.POINTER_DOWN, () => !this.d.paused() && this.d.onPick(id));
     this.hoverAnswer(img, id);
     const side = id === 'cauldron' ? -0.34 : 0.34;

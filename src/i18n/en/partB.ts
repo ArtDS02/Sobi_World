@@ -314,6 +314,20 @@ export const partB = {
     pigsIcon: "🐷",
   },
 
+  sideMenu: {
+    title: "Area tools",
+    open: "Open the tools menu",
+    close: "Close the tools menu",
+    expandArea: "Expand the area",
+    expandPlots: "Add room",
+    upgrade: "Upgrade the area",
+    forge: "Skin forge",
+    shop: "Shop",
+    bag: "Bag",
+    upgradeNeedPlots: "Open every plot of this area first",
+    upgradeMax: "Already at the top rank",
+    slotsMax: "Every pen is open",
+  },
   areaHud: {
     owned: "{count} owned",
     groupCare: "Care",

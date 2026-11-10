@@ -5,6 +5,8 @@
 import { AREA_HUD_ART } from '../../../core/config/assetIds';
 import { areaDock, hudLevel, hudNav, hudPill, hudPills } from '../../../ui/components/areaHud';
 import type { PanelId } from '../../../ui/components/popup';
+import { createSideMenu } from '../../../ui/components/sideMenu';
+import { SIDE_MENU_DEFAULT_POS, sideMenuItems, upgradeReason } from '../../../ui/world/sideMenuVm';
 import { el, patch } from '../../../ui/dom';
 import type { GameStore } from '../../../core/world/gameStore';
 import type { WorldSave } from '../../../core/save/world';
@@ -14,6 +16,8 @@ import { CLOUD_DOCK_ART } from '../logic/art';
 import { collectWater } from '../logic/actions/buildings';
 import { fertilizePlots, harvestFlowers, plantFlowers, waterPlots } from '../logic/actions/plants';
 import { sceneState, type SceneState } from '../logic/derived';
+import { CLOUD_TIERS, PLOTS_PER_TIER } from '../logic/config/content';
+import { cloudTierLevel, nextExpansion } from '../logic/derived';
 import { cloudOf, hasCloud } from '../logic/save/lens';
 import type { CloudPick } from '../scene/CloudScene';
 import { createCloudDialogs } from './cloudDialogs';
@@ -57,7 +61,10 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
   const bottom = el('div', { class: 'cloud-ui__bottom a-hud__bottom' });
   const dialogHost = el('div', { class: 'app__dialogs' });
   d.host.classList.add('cloud-ui');
-  d.host.append(hud, bottom, dialogHost);
+  // The right-hand menu (decision 057, B1) has its own host: the HUD redraws every second, the menu only when it changes.
+  const side = el('div', { class: 'cloud-ui__side' });
+  d.host.append(hud, bottom, side, dialogHost);
+  const menu = createSideMenu(side);
   const offset = () => d.dayOffsetMs?.() ?? -new Date(d.now()).getTimezoneOffset() * 60_000;
   let active = false;
   let selected = 'flower_cloud_daisy';
@@ -86,8 +93,6 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
       hudPills(hudPill(AREA_HUD_ART.coin, v.coins, vi.cloud.coins), hudPill(CLOUD_DOCK_ART.collect, v.water, vi.shop.item_pure_water), hudLevel(v)),
       hudNav(vi.cloud.title, [
         { icon: AREA_HUD_ART.plaza, label: vi.cloud.plaza, onClick: d.leave },
-        { icon: AREA_HUD_ART.shop, label: vi.cloud.shop, onClick: () => dialogs.openShop() },
-        { icon: AREA_HUD_ART.items, label: vi.cloud.items, onClick: () => d.openPanel('inventory') },
         { icon: AREA_HUD_ART.menu, label: vi.cloud.menu, onClick: () => d.openPanel('menu') },
       ]),
     );
@@ -125,15 +130,24 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
           ],
         },
         { label: vi.lab.group, actions: [{ label: vi.lab.open, reason: null, art: CLOUD_DOCK_ART.lab, tone: 'main', onClick: () => dialogs.openLab() }] },
-        {
-          label: vi.areaHud.groupGrow,
-          actions: [
-            { ...bulk.expand, art: CLOUD_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openExpand() },
-            { label: vi.plotSkin.open, reason: null, art: CLOUD_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openForge(actingTier(w, viewedTier())) },
-          ],
-        },
       ],
     });
+  }
+
+  /** Expand, upgrade, forge, shop, bag: moved here from the dock, the top buttons and the stall on the island. */
+  function renderMenu(w: WorldSave) {
+    const g = cloudOf(w);
+    const tier = actingTier(w, viewedTier());
+    menu.render(
+      sideMenuItems('cloud', {
+        expand: { reason: nextExpansion(g) ? null : vi.cloud.expandMax, onClick: () => dialogs.openExpand(), icon: CLOUD_DOCK_ART.expand },
+        upgrade: { reason: upgradeReason({ plotsOwned: g.plots.length, plotsPerGroup: PLOTS_PER_TIER, group: tier, atTop: cloudTierLevel(g, tier) >= CLOUD_TIERS.ids.length }), onClick: () => dialogs.openRank(tier) },
+        forge: { reason: null, onClick: () => dialogs.openForge(tier) },
+        shop: { reason: null, onClick: () => dialogs.openShop() },
+        bag: { reason: null, onClick: () => d.openPanel('inventory') },
+      }),
+      SIDE_MENU_DEFAULT_POS,
+    );
   }
 
   function refresh() {
@@ -142,8 +156,10 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     if (!w) {
       patch(hud, null);
       patch(bottom, null);
+      menu.render(null);
       return;
     }
+    renderMenu(w);
     patch(hud, renderHud(w));
     patch(bottom, renderBottom(w));
     dialogs.follow(w);
@@ -157,10 +173,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     if (!w || !active) return;
     if (p.kind === 'locked') return dialogs.openExpand();
     if (p.kind === 'rank') return dialogs.openRank(actingTier(w, viewedTier()));
-    if (p.kind === 'building') {
-      if (p.building === 'shop') return dialogs.openShop();
-      return p.building === 'spring' ? dialogs.openSpring() : dialogs.openCauldron();
-    }
+    if (p.kind === 'building') return p.building === 'spring' ? dialogs.openSpring() : dialogs.openCauldron();
     if (p.kind !== 'plot') return;
     const plot = cloudOf(w).plots[p.index];
     if (!plot) return;
@@ -174,6 +187,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
       active = next;
       d.host.classList.toggle('is-active', next);
       if (!next) dialogs.close();
+      if (!next) menu.close();
       refresh();
     },
     sceneState() {
@@ -188,6 +202,7 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     dispose: () => {
       off();
       offTier();
+      menu.dispose();
       dialogs.close();
     },
   };

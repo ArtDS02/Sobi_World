@@ -5,6 +5,8 @@
 import { AREA_HUD_ART } from '../../../core/config/assetIds';
 import { areaDock, hudLevel, hudNav, hudPill, hudPills } from '../../../ui/components/areaHud';
 import type { PanelId } from '../../../ui/components/popup';
+import { createSideMenu } from '../../../ui/components/sideMenu';
+import { SIDE_MENU_DEFAULT_POS, sideMenuItems, upgradeReason } from '../../../ui/world/sideMenuVm';
 import { el, patch } from '../../../ui/dom';
 import type { GameStore } from '../../../core/world/gameStore';
 import type { WorldSave } from '../../../core/save/world';
@@ -12,13 +14,13 @@ import { t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { GARDEN_DOCK_ART } from '../logic/art';
 import { fertilizePlots, harvestPlots, plantCrops, waterPlots } from '../logic/actions/plants';
-import { ownedZones, sceneState, type SceneState } from '../logic/derived';
+import { gardenZoneLevel, nextExpansion, ownedZones, sceneState, type SceneState } from '../logic/derived';
 import { hasGarden, gardenOf } from '../logic/save/lens';
 import type { GardenPick } from '../scene/GardenScene';
 import { createGardenDialogs } from './gardenDialogs';
 import { onViewedZone, setViewedZone, viewedZone } from '../viewedZone';
 import { bulkVm, hudVm, paletteVm, type GardenRun } from './gardenVm';
-import { GARDEN_HYBRIDS } from '../logic/config/content';
+import { GARDEN_HYBRIDS, GARDEN_TIERS, PLOTS_PER_ZONE } from '../logic/config/content';
 
 /** The parents of the first recipe that gives `cropId`. */
 const firstRecipe = (cropId: string): [string | null, string | null] => {
@@ -54,7 +56,10 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
   const bottom = el('div', { class: 'garden-ui__bottom a-hud__bottom' });
   const dialogHost = el('div', { class: 'app__dialogs' });
   d.host.classList.add('garden-ui');
-  d.host.append(hud, bottom, dialogHost);
+  // The right-hand menu (decision 057, B1) has its own host: the HUD redraws every second, the menu only when it changes.
+  const side = el('div', { class: 'garden-ui__side' });
+  d.host.append(hud, bottom, side, dialogHost);
+  const menu = createSideMenu(side);
   let active = false;
   let selected = 'crop_wheat';
   let sceneCache: { world: WorldSave; now: number; state: SceneState } | null = null;
@@ -114,8 +119,6 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
       renderZones(w),
       hudNav(vi.garden.title, [
         { icon: AREA_HUD_ART.plaza, label: vi.garden.plaza, onClick: d.leave },
-        { icon: AREA_HUD_ART.shop, label: vi.garden.shop, onClick: () => dialogs.openShop() },
-        { icon: AREA_HUD_ART.items, label: vi.garden.items, onClick: () => d.openPanel('inventory') },
         { icon: AREA_HUD_ART.menu, label: vi.garden.menu, onClick: () => d.openPanel('menu') },
       ]),
     );
@@ -152,15 +155,24 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
           ],
         },
         { label: vi.lab.group, actions: [{ label: vi.lab.open, reason: null, art: GARDEN_DOCK_ART.lab, tone: 'main', onClick: () => dialogs.openLab() }] },
-        {
-          label: vi.areaHud.groupGrow,
-          actions: [
-            { ...bulk.expand, art: GARDEN_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openExpand() },
-            { label: vi.plotSkin.open, reason: null, art: GARDEN_DOCK_ART.expand, tone: 'grow', onClick: () => dialogs.openForge(zone()) },
-          ],
-        },
       ],
     });
+  }
+
+  /** Expand, upgrade, forge, shop, bag: moved here from the dock, the top buttons and the stall on the lawn (decision 057, B1). */
+  function renderMenu(w: WorldSave) {
+    const g = gardenOf(w);
+    const z = zone();
+    menu.render(
+      sideMenuItems('garden', {
+        expand: { reason: nextExpansion(g) ? null : vi.garden.expandMax, onClick: () => dialogs.openExpand(), icon: GARDEN_DOCK_ART.expand },
+        upgrade: { reason: upgradeReason({ plotsOwned: g.plots.length, plotsPerGroup: PLOTS_PER_ZONE, group: z, atTop: gardenZoneLevel(g, z) >= GARDEN_TIERS.ids.length }), onClick: () => dialogs.openRank(z) },
+        forge: { reason: null, onClick: () => dialogs.openForge(z) },
+        shop: { reason: null, onClick: () => dialogs.openShop() },
+        bag: { reason: null, onClick: () => d.openPanel('inventory') },
+      }),
+      SIDE_MENU_DEFAULT_POS,
+    );
   }
 
   function refresh() {
@@ -169,8 +181,10 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
     if (!w) {
       patch(hud, null);
       patch(bottom, null);
+      menu.render(null);
       return;
     }
+    renderMenu(w);
     settleZone(w);
     patch(hud, renderHud(w));
     patch(bottom, renderBottom(w));
@@ -184,10 +198,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
     const w = world();
     if (!w || !active) return;
     if (p.kind === 'locked') return dialogs.openExpand();
-    if (p.kind === 'building') {
-      if (p.building === 'shop') return dialogs.openShop();
-      return p.building === 'sprinkler' ? dialogs.openSprinkler() : dialogs.openWorkshop(p.building);
-    }
+    if (p.kind === 'building') return p.building === 'sprinkler' ? dialogs.openSprinkler() : dialogs.openWorkshop(p.building);
     if (p.kind !== 'plot') return;
     const plot = gardenOf(w).plots[p.index];
     if (!plot) return;
@@ -201,6 +212,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
       active = next;
       d.host.classList.toggle('is-active', next);
       if (!next) dialogs.close();
+      if (!next) menu.close();
       refresh();
     },
     sceneState() {
@@ -215,6 +227,7 @@ export function createGardenUi(d: GardenUiDeps): GardenUi {
     dispose: () => {
       off();
       offZone();
+      menu.dispose();
       dialogs.close();
     },
   };

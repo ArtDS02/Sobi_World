@@ -797,6 +797,22 @@ export const vi = {
     qtyMaxHint: "Nhiều nhất mua được lúc này: {count}",
   },
 
+  /** The right-hand menu of an Area (decision 057, B1). */
+  sideMenu: {
+    title: "Tiện ích khu vực",
+    open: "Mở bảng tiện ích",
+    close: "Thu bảng tiện ích",
+    expandArea: "Mở rộng khu vực",
+    expandPlots: "Mở rộng ô",
+    upgrade: "Nâng cấp khu vực",
+    forge: "Xưởng đúc khuông",
+    shop: "Cửa hàng",
+    bag: "Túi vật phẩm",
+    upgradeNeedPlots: "Mở đủ ô của khu này trước",
+    upgradeMax: "Đã đạt bậc cao nhất",
+    slotsMax: "Đã mở hết chuồng",
+  },
+
   /** Day / night (DN): HUD clock icon + phase name per phase. */
   dayPhase: {
     dawn: { icon: "🌅", name: "Bình minh" },
