@@ -13,6 +13,12 @@
 
 ## Nhật ký
 
+### 2026-11-12 — VFX 3D: hệ Nước dựng lại (P3, 6 / 6 skill), tự chấm (decision 059, commit cục bộ)
+✅ Đã làm: `bubble_shot`, `bubble_spray`, `tsunami_sweep` (`waterFx.ts`), `ice_bloom`, `frost_breath` (`frostFx.ts`); `waterParts.ts` thêm vỏ bong bóng và con sóng nhìn ngang; bỏ `bubbles.ts`, `tsunami.ts`, `iceFx.ts`. Kịch bản (`battle_fx.json`) của 5 skill không đổi.
+🧪 `npm run check` đầy đủ sau hệ Sét và Nước: typecheck, lint, guard, assets:check xanh; test 2117 / 2121, vẫn 4 đỏ có từ trước (2 `studio.test`, `assets.test`, `decor.test`). Ảnh `docs/animation/vfx3d/water/`. Tự chấm 7–8 (bảng ở `SCORES.md`).
+⚠️ Cột nước từng mục tiêu của Sóng Thần còn to.
+👉 Chủ dự án: chấm hệ Nước. Còn lại chưa dựng lại: Lửa 9, Thiên nhiên 7, Đất 5, Kim 6, Ánh sáng 3, Bóng tối 7, Hư không 4, hệ trống / class / hỗ trợ 57; 22 skill mới (decision 060) chưa bắt đầu.
+
 ### 2026-11-12 — VFX 3D: hệ Sét dựng lại (P3, 7 / 7 skill), tự chấm (decision 059, commit cục bộ)
 ✅ Đã làm: `thunder_strike`, `spark_peck`, `lightning_dive` (`stormFx.ts`), `call_thunder`, `thunder_command`, `thunder_rush` (`stormArea.ts`) trên bộ phần giông bão (`stormParts.ts`: mây có khối, sét phân nhánh vẽ lại mỗi 45 ms, lóe, vòng chấn, vết cháy, điện bò); bỏ `lightningFx.ts`, `lightningArea.ts`. Kịch bản 6 skill: `tint` tối nền. Sửa lỗi `struck` lẫn phe.
 🧪 typecheck, lint, guard xanh; test `battleFxContent`, `battleScript` qua. Ảnh `docs/animation/vfx3d/lightning/`. Tự chấm 6,5–8 (bảng ở `SCORES.md`).

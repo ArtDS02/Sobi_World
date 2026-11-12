@@ -165,3 +165,72 @@ export function whirl(root: THREE.Object3D) {
     },
   };
 }
+
+const BUBBLE_FRAG = `
+varying vec3 vN; varying vec3 vP; varying vec3 vV; uniform float uT, uFade;
+void main(){
+  vec3 n=normalize(vN); float f=1.-abs(dot(n,normalize(vV)));
+  // A thin skin: clear in the middle, a bright rim whose colour slides round like oil on water.
+  float rim=pow(f,2.2);
+  vec3 oil=.6+.4*cos(6.2832*(f*1.3+vP.y*.6+uT*.25)+vec3(0.,2.1,4.2));
+  vec3 col=mix(vec3(.35,.72,1.),oil,.45)*(.55+.9*rim);
+  float spec=smoothstep(.9,.97,dot(n,normalize(vec3(-.45,.7,.55))));
+  float spec2=smoothstep(.95,.99,dot(n,normalize(vec3(.5,-.45,.7))))*.5;
+  col+=vec3(1.3)*(spec+spec2);
+  gl_FragColor=vec4(col,(.16+.75*rim+spec+spec2)*uFade);
+}`;
+/** A soap-bubble skin for a sphere: `set(sec, fade)`. */
+export function bubbleSkin() {
+  const mat = new THREE.ShaderMaterial({ uniforms: { uT: { value: 0 }, uFade: { value: 1 } }, vertexShader: LIQUID_VERT, fragmentShader: BUBBLE_FRAG, transparent: true, depthWrite: false, depthTest: false });
+  const u = mat.uniforms as U;
+  return {
+    mat,
+    set(sec: number, fade: number) {
+      u.uT!.value = sec;
+      u.uFade!.value = fade;
+    },
+  };
+}
+
+const SURGE_FRAG = `
+${NOISE}${RAMPS}
+varying vec2 vUv; uniform float uT, uFade, uCurl;
+void main(){
+  float x=vUv.x, y=vUv.y;
+  // Seen from the side: the back of the wave climbs to a crest near the front, which leans over and curls.
+  float back=smoothstep(0.,.72,x);
+  float n=fbm(vec2(x*5.-uT*1.5,y*3.+uT));
+  float top=.18+.62*pow(back,1.6)+.05*n;
+  float front=.86+.1*uCurl*smoothstep(.45,.95,y)-.16*smoothstep(.0,.5,y)*(1.-y);
+  float body=smoothstep(top,top-.04,y)*smoothstep(front,front-.03,x)*smoothstep(0.,.05,x+y*.3);
+  // The curl: a lip hanging ahead of the face, hollow underneath.
+  vec2 c=vec2(.8+.06*uCurl,.74); float lip=smoothstep(.17,.14,length((vUv-c)*vec2(1.,1.25)))*step(.62,y);
+  float hollow=smoothstep(.1,.07,length((vUv-vec2(.86+.06*uCurl,.6))*vec2(1.,1.2)));
+  float shape=clamp(max(body,lip)-hollow*uCurl,0.,1.);
+  vec3 col=waterRamp(.1+.42*y+.18*n);
+  float streak=fbm(vec2(x*3.-uT*2.+y*2.,y*9.));
+  float foam=clamp(smoothstep(top-.1,top-.02,y)+lip*smoothstep(.66,.8,y)+smoothstep(.62,.72,streak)*.4*y,0.,1.);
+  col=mix(col,vec3(.94,1.,1.),foam);
+  gl_FragColor=vec4(col,shape*(.62+.38*foam)*uFade);
+}`;
+/** A great wave seen from the side, travelling toward +x of its plane (flip the mesh's x scale to turn it): `set(sec, fade, curl 0..1)`. */
+export function surge(root: THREE.Object3D) {
+  const mat = new THREE.ShaderMaterial({ uniforms: { uT: { value: 0 }, uFade: { value: 0 }, uCurl: { value: 0 } }, vertexShader: UV_VERT, fragmentShader: SURGE_FRAG, transparent: true, depthWrite: false, depthTest: false, side: THREE.DoubleSide });
+  const geo = new THREE.PlaneGeometry(1, 1);
+  geo.translate(-0.36, 0.5, 0);
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.rotation.x = -0.3;
+  mesh.visible = false;
+  mesh.renderOrder = 4;
+  root.add(mesh);
+  const u = mat.uniforms as U;
+  return {
+    mesh,
+    set(sec: number, fade: number, curl: number) {
+      mesh.visible = fade > 0.01;
+      u.uT!.value = sec;
+      u.uFade!.value = fade;
+      u.uCurl!.value = curl;
+    },
+  };
+}

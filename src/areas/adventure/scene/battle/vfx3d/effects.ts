@@ -1,6 +1,5 @@
 // The 3D effects of the battle (prototype, decision 059), by the id a script's `vfx3d` act names (VFX3D_IDS of the script schema).
 import type { VFX3D_IDS } from '../../../../../../content/schemas/adventure/battleScript';
-import { bubbleShot, bubbleSpray } from './bubbles';
 import { boulderSmash, quakeSpikes, rockFist, sealQuake, tuskCharge } from './earthFx';
 import { lightRay, luminaRay, runeBeam } from './lightFx';
 import { callThunder, thunderCommand, thunderRush } from './stormArea';
@@ -18,12 +17,12 @@ import { flamePillars, lavaFlood, magmaCone, meteorRain } from './fireArea';
 import { clawClamp, hammerSlam, jawFlame, lavaGlob } from './fireHits';
 import { forgeUlt } from './fireUlts';
 import { phoenixRebirth } from './phoenixFx';
-import { frostBreath, iceBloom } from './iceFx';
+import { frostBreath, iceBloom } from './frostFx';
 import { corruptBloom, rootBind, rootQuake, thornStorm } from './natureArea';
 import { sporeCone, thornVolley, vineWhip } from './natureHits';
 import type { Vfx3dFactory } from './stage3d';
 import { tridentSea } from './tridentSea';
-import { tsunamiSweep } from './tsunami';
+import { bubbleShot, bubbleSpray, tsunamiSweep } from './waterFx';
 
 export const VFX3D: Record<(typeof VFX3D_IDS)[number], Vfx3dFactory> = {
   trident_sea: tridentSea,

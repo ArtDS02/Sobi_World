@@ -40,3 +40,13 @@ FPS đo bằng `npx tsx scripts/animation/fps.ts` trên RTX 3050 (Chrome headles
 | `skill_e_thunder_charge` Lao Sấm | `thunder_rush` | 7 | đường sét bắn theo cú lao xuyên hàng, quất xuống từng mục tiêu | như trên |
 
 Lỗi đã sửa trong lúc làm: danh sách mục tiêu của lượt (`struck`) gồm cả đồng đội nhận hiệu quả phụ, nên tuyệt kỹ Sét từng đánh cả vào phe mình; nay lọc theo phe của điểm neo.
+
+### Hệ Nước (tự chấm 2026-11-12, ảnh `docs/animation/vfx3d/water/*_sheet.jpg`, chụp sau lần sửa cuối)
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_ult_trident` Đinh Ba Hải Vương | `trident_sea` | 8 | (pilot) | như bảng pilot |
+| `skill_nh_bubble` Bong Bóng Nước | `bubble_shot` | 7,5 | bong bóng xà phòng có viền ngũ sắc phồng ở người tung, bay vòng cung, nuốt kẻ địch, vỡ thành giọt + vòng nước | lúc vỡ hơi nhỏ so với bong bóng |
+| `skill_nh_tsunami` Sóng Thần Cổ | `tsunami_sweep` | 7 | con sóng nhìn ngang có mào cuộn dựng lên cạnh người tung, chạy qua, đổ lên hàng địch; cột nước từng con; tấm nước rút đi | cột nước từng con còn to, che quái trong khoảng 300 ms; mép sau sóng còn phẳng |
+| `skill_e_bubble` Phun Bọt | `bubble_spray` | 7 | luồng bọt nhỏ từ miệng quái, ba bong bóng vừa vỡ lần lượt trên mục tiêu, vũng nước | luồng bọt hơi mảnh |
+| `skill_cl_freeze` Đóng Băng | `ice_bloom` | 7 | tuyết xoáy vào, sương giá bò trên đất, vòng tinh thể băng bật lên, hoa tuyết tung | trong Battle Lab trạng thái Đóng băng luôn trúng nên khối băng của trạng thái che mất tinh thể |
+| `skill_e_frost_breath` Hơi Thở Băng | `frost_breath` | 7 | luồng hơi lạnh hình nón cuộn từ miệng quái, hoa tuyết, vệt sáng lạnh, sương giá và tinh thể nhỏ ở đích | như trên |
