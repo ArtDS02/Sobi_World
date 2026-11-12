@@ -13,6 +13,13 @@
 
 ## Nhật ký
 
+### 2026-11-12 — VFX 3D: hạ tầng hình ảnh (P1) và ba skill pilot dựng lại (P2), tự chấm (decision 059, commit cục bộ)
+✅ Đã làm: hậu kỳ HDR + bloom + lớp cộng sáng thật (`post3d.ts`, `stage3d.ts`), atlas 16 hình hạt, hạt dạng quad, sét phân nhánh, bộ emitter, phần nước / giông / lửa / phượng hoàng; nối Cường độ hiệu ứng (off / light / full) vào lớp 3D; env có mục tiêu thật của lượt đánh. Dựng lại `skill_ult_trident`, `skill_ult_phoenix`, `skill_ld_chain` kèm hợp đồng nhìn thấy; `battle_fx.json` của Chuỗi Sét và Phượng Hoàng chỉnh mốc trình diễn (không đổi `timing`).
+📁 `src/areas/adventure/scene/battle/vfx3d/{post3d,glsl,atlas,quads,lines,fxKit,waterParts,stormParts,stormFx,flameParts,phoenixParts,phoenixFx,tridentSea,stage3d}.ts`, `fxActs.ts`, `fxPlayer.ts`, `BattleScene.ts`, `ui/battleScript.ts`, `ui/adventureUi.ts`, `scripts/animation/{shots,fps}.ts`, `scripts/anim-review/lib/session.ts`.
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121, 4 đỏ có từ trước (2 `studio.test` thiếu tag `pre-unity-studio`, `assets.test` + `decor.test` do `content/farm/layout.json` của chủ dự án). FPS trên RTX 3050 (Chrome headless, 1600 × 900): 60 fps cả ba. Ảnh: `docs/animation/vfx3d/pilot/`.
+⚠️ Tự quyết: tắt quản lý màu của Three trong lớp 3D; mức `off` vẫn vẽ hiệu ứng skill tối thiểu; Chuỗi Sét bỏ hit-stop ở tia đầu, hai tia đầu chỉ chớp nhẹ. Chưa đo Electron, chưa xem clip chuyển động. 109 skill còn lại chưa dựng lại; 22 skill mới (decision 060) chưa bắt đầu.
+👉 Chủ dự án: chấm ba pilot (bảng tự chấm ở `docs/animation/vfx3d/SCORES.md`, có cách mở Chuỗi Sét trong Battle Lab).
+
 ### 2026-11-12 — Handover cho Fable 5.2 làm tiếp VFX 3D (chưa commit)
 ✅ Đã làm: `docs/handover/FABLE_VFX3D_HANDOVER.md` (kế hoạch theo cổng, kiến trúc, bẫy, luật), `docs/handover/FABLE_SESSION_PROMPT.md` (prompt mở phiên), `docs/handover/VFX3D_SKILL_INVENTORY.md` (sinh tự động 112 skill), `docs/animation/SKILL_DESCRIPTION_STANDARD.md` (chuẩn mô tả + hợp đồng nhìn thấy + chuẩn từng hệ), `docs/animation/NEW_SKILLS_PROPOSAL.md` + `new_skills.draft.json` (22 skill mới, **chưa áp dụng**, cần decision 060), công cụ `scripts/animation/{shots,skillInventory,checkNewSkills}.ts`.
 🧪 `checkNewSkills.ts`: 22/22 skill hợp lệ theo schema thật; `shots.ts` chạy thử trên skill_ult_trident; lint, guard, typecheck scripts xanh. Chưa chạy lại `npm run check` đầy đủ sau các file này (chỉ thêm tài liệu và script).

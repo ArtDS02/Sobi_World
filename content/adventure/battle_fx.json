@@ -3620,13 +3620,20 @@
       "stagger": 220,
       "script": [
         { "do": "vfx3d", "at": 0, "who": "foeside", "dur": 1550, "fx": "chain_lightning" },
+        { "do": "tint", "at": 0, "who": "field", "dur": 1350, "color": "#0c1030", "alpha": 0.5, "fade": 180 },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_charge" },
         { "do": "pose", "at": 0, "who": "actor", "dur": 320, "pose": "cast" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_thunder_cast" },
-        { "do": "shake", "at": 320, "who": "field", "dur": 160, "amount": 4, "dir": [0, 1] },
-        { "do": "stop", "at": 320, "who": "actor", "dur": 40 },
+        { "do": "shake", "at": 320, "who": "field", "dur": 140, "amount": 4, "dir": [0, 1] },
         { "do": "sound", "at": 320, "who": "actor", "sound": "adv_thunder_hit" },
-        { "do": "flash", "at": 320, "who": "field", "dur": 60, "color": "#ffffff", "alpha": 0.35 }
+        { "do": "flash", "at": 320, "who": "field", "dur": 60, "color": "#fff6c8", "alpha": 0.14 },
+        { "do": "shake", "at": 540, "who": "field", "dur": 140, "amount": 4, "dir": [0, 1] },
+        { "do": "sound", "at": 540, "who": "actor", "sound": "adv_thunder_hit" },
+        { "do": "flash", "at": 540, "who": "field", "dur": 60, "color": "#fff6c8", "alpha": 0.14 },
+        { "do": "shake", "at": 760, "who": "field", "dur": 220, "amount": 8, "dir": [0, 1] },
+        { "do": "stop", "at": 760, "who": "actor", "dur": 50 },
+        { "do": "sound", "at": 760, "who": "actor", "sound": "adv_thunder_hit" },
+        { "do": "flash", "at": 760, "who": "field", "dur": 90, "color": "#ffffff", "alpha": 0.34 }
       ]
     },
     "skill_ld_call_thunder": {
@@ -4072,17 +4079,17 @@
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_roar" },
         { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#ff7a2a", "style": "slash" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
-        { "do": "tint", "at": 0, "who": "field", "dur": 3400, "color": "#ff6a2a", "alpha": 0.25, "fade": 300 },
+        { "do": "tint", "at": 0, "who": "field", "dur": 3400, "color": "#1a0a14", "alpha": 0.5, "fade": 300 },
         { "do": "glow", "at": 500, "who": "actor", "dur": 500, "color": "#ff7a2a", "bright": 1.6 },
         { "do": "sound", "at": 500, "who": "actor", "sound": "adv_phoenix" },
-        { "do": "shake", "at": 1500, "who": "field", "dur": 260, "amount": 10 },
+        { "do": "shake", "at": 1300, "who": "field", "dur": 260, "amount": 10 },
         { "do": "sound", "at": 1500, "who": "actor", "sound": "adv_fire_hit" },
-        { "do": "stop", "at": 1700, "who": "actor", "dur": 220, "tier": "ultimate" },
-        { "do": "punch", "at": 1680, "who": "field", "dur": 240, "zoom": 1.06 },
-        { "do": "flash", "at": 1700, "who": "field", "dur": 120, "color": "$glow", "alpha": 0.35 },
+        { "do": "stop", "at": 1300, "who": "actor", "dur": 220, "tier": "ultimate" },
+        { "do": "punch", "at": 1280, "who": "field", "dur": 240, "zoom": 1.06 },
+        { "do": "flash", "at": 1300, "who": "field", "dur": 120, "color": "$glow", "alpha": 0.35 },
         { "do": "sound", "at": 2400, "who": "actor", "sound": "adv_heal" },
-        { "do": "flash", "at": 2500, "who": "field", "dur": 200, "color": "#ffe0a0", "alpha": 0.4 },
-        { "do": "shake", "at": 2500, "who": "field", "dur": 300, "amount": 12, "dir": [0, 1] },
+        { "do": "flash", "at": 2050, "who": "field", "dur": 160, "color": "#ffe0a0", "alpha": 0.3 },
+        { "do": "shake", "at": 2050, "who": "field", "dur": 220, "amount": 6, "dir": [0, 1] },
         { "do": "letterbox", "at": 3080, "who": "field", "dur": 240, "on": false }
       ]
     },

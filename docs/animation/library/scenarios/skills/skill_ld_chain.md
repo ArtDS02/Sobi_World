@@ -47,3 +47,19 @@ B1 nhịp `{ release 320, impact 320, end 1300 }`, `stagger 220` · B2 sừng, m
 
 ## 7. Nghiệm thu
 Audit hết `SHARED_FLIPBOOK_HERO`; capture: 3 khung impact, mỗi khung tia **xuất phát từ con trước**; độ dày tia giảm dần.
+
+## Hợp đồng nhìn thấy (bản 3D, 2026-11-12, `chain_lightning`)
+```
+Skill: skill_ld_chain — Chuỗi Sét   Hệ: SẤM   Bậc: T1 × 3   Đích: kẻ địch ngẫu nhiên × 3   Kết thúc: 1550 ms
+descVi: "Ba tia sét đánh vào kẻ địch ngẫu nhiên."
+PHẢI THẤY:
+  1. Nền tối lại; một đám MÂY GIÔNG có khối (bụng tối, đỉnh nhạt) cuộn tới trên hàng địch; tia nhỏ nháy dưới bụng mây (0–320).
+  2. Đúng BA tia sét, lần lượt 320 / 540 / 760 ms, mỗi tia từ mây xuống MỘT kẻ địch thật sự bị đánh (ngẫu nhiên, lấy từ lượt đánh); tia gấp khúc, PHÂN NHÁNH, vẽ lại đường đi mỗi 45 ms (giật).
+  3. Giữa hai kẻ địch bị đánh liên tiếp có một cung điện mảnh nhảy sang (chuỗi).
+  4. Ở mỗi điểm trúng: lóe sáng + sao bốn cánh, vòng sáng lan trên đất, tia lửa bắn vệt, điện bò trên đất, vết cháy, khói mỏng. Mây sáng lên từ bên trong mỗi lần đánh.
+  5. Tia thứ ba to nhất (1-2-BỤP): rung mạnh hơn, chớp trắng.
+KHÔNG ĐƯỢC: tia mượt như dây; sét cộng màu trên nền sáng (phải tối nền); chớp mạnh hơn 2 lần / giây (hai tia đầu chỉ chớp nhẹ 0,14); vẽ choáng.
+NHỊP: Mây 0–320 · Tia 1 320 · Tia 2 540 · Tia 3 760 (hit-stop 50) · Dư âm 760–1400
+HÌNH CHỦ ĐẠO: tia sét phân nhánh — biến hình (đổi đường đi liên tục) + hạt sinh từ chính nó (tia lửa, điện bò)
+KIỂM: −120 mây + tia nhỏ; +20 tia 1 và lóe sáng; +240 cung điện nhảy sang con thứ hai; +460 tia 3; +900 mây tan, vết cháy mờ. FPS ≥ 50.
+```

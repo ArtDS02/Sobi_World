@@ -114,7 +114,16 @@ export class ActPlayer {
         const w = this.scene.scale.width;
         const hgt = this.scene.scale.height;
         const p = a ? { x: (a.mid ?? a.feet).x, y: (a.mid ?? a.feet).y, width: a.width } : { x: w / 2, y: hgt * 0.7, width: w * 0.3 };
-        this.h.stage3d?.play(VFX3D[act.fx], p.x, p.y, p.width, act.dur, this.h.add, act.size ?? 1, from ? { x: from.feet.x, y: from.feet.y } : undefined, { color: (act.color as number | undefined) ?? null, row: !a || !!cue.unit?.startsWith('@') });
+        const row = !a || !!cue.unit?.startsWith('@');
+        // The units the effect lands on (each foe of a row gets its own hit) and the acting side's units (a team buff shows on each).
+        const units = [...anchors].filter(([id]) => !id.startsWith('@')).map(([, u]) => u);
+        const feetOf = (side: FxAnchor['side'] | undefined) => units.filter((u) => u.side === side).map((u) => ({ x: u.feet.x, y: u.feet.y }));
+        const actingSide = from?.side ?? (a ? (a.side === 'ally' ? 'enemy' : 'ally') : undefined);
+        this.h.stage3d?.play(VFX3D[act.fx], p.x, p.y, p.width, act.dur, this.h.add, {
+          scale: act.size ?? 1, from: from ? { x: from.feet.x, y: from.feet.y } : undefined, color: (act.color as number | undefined) ?? null, row,
+          targets: row ? feetOf(a?.side) : a ? [{ x: a.feet.x, y: a.feet.y }] : [], friends: feetOf(actingSide),
+          struck: (cue.struck ?? []).map((id) => anchors.get(id)).filter((u): u is FxAnchor => !!u).map((u) => ({ x: u.feet.x, y: u.feet.y })), ...(a ? { heightPx: a.height } : {}),
+        });
         return;
       }
       case 'ribbon':

@@ -48,14 +48,15 @@ const SEED_SCRIPT = `
   })();
 `;
 
-export async function openBrowser(): Promise<{ browser: Browser; gpu: string }> {
-  const args = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--disk-cache-size=1', '--media-cache-size=1', '--force-device-scale-factor=1'];
+export async function openBrowser(realGpu = false): Promise<{ browser: Browser; gpu: string }> {
+  // `realGpu`: the machine's own GPU (a look at the true picture and its cost); the default software GPU is the same on every machine.
+  const args = [...(realGpu ? ['--use-angle=d3d11', '--enable-gpu'] : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader']), '--ignore-gpu-blocklist', '--disk-cache-size=1', '--media-cache-size=1', '--force-device-scale-factor=1'];
   const channel = process.env.ANIM_BROWSER ?? 'chrome';
   const choices = [channel, ...['chrome', 'msedge'].filter((c) => c !== channel)];
   let last: unknown;
   for (const c of choices) {
     try {
-      return { browser: await chromium.launch({ channel: c, headless: true, args }), gpu: `swiftshader/${c}` };
+      return { browser: await chromium.launch({ channel: c, headless: true, args }), gpu: `${realGpu ? 'gpu' : 'swiftshader'}/${c}` };
     } catch (e) {
       last = e;
     }
@@ -72,7 +73,7 @@ export interface Lab {
 }
 
 /** Opens the Battle Lab in a new context with the fake clock running naturally until `measure` pauses it. */
-export async function openLab(browser: Browser, base: string, runId: string): Promise<Lab> {
+export async function openLab(browser: Browser, base: string, runId: string, query = ''): Promise<Lab> {
   const context = await browser.newContext({ viewport: { width: 1600, height: 900 }, serviceWorkers: 'block', deviceScaleFactor: 1, reducedMotion: 'no-preference' });
   await context.clock.install({ time: 0 });
   await context.addInitScript(SEED_SCRIPT);
@@ -86,7 +87,7 @@ export async function openLab(browser: Browser, base: string, runId: string): Pr
   page.on('response', (r) => {
     if (r.status() >= 400) missing.push(`${r.status()} ${r.url().replace(base, '')}`);
   });
-  await page.goto(`${base}/admin.html?run=${encodeURIComponent(runId)}#/battle-lab`, { waitUntil: 'load' });
+  await page.goto(`${base}/admin.html?run=${encodeURIComponent(runId)}${query}#/battle-lab`, { waitUntil: 'load' });
   await waitFor(page, 'window.__animLab && window.__animLab.ready()', 'the lab stage');
   const stageEl = page.locator('[data-stage]');
   return { page, context, errors, missing, stage: async () => stageEl.screenshot({ type: 'png', animations: 'allow', caret: 'initial' }) };

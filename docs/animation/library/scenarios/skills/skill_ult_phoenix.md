@@ -50,3 +50,20 @@ B1 nhịp (giữ) · B2 bùng lửa; quái bật; đội sáng · B3 chim lượ
 
 ## 7. Nghiệm thu
 Audit hết `STATIC_HERO`; capture: `shapeIoU` < 0,85 (vỗ cánh + lửa); khung ~1400 chim **co sáng**; khung ~2600 lông vàng rơi trên phe ta.
+
+## Hợp đồng nhìn thấy (bản 3D, 2026-11-12, `phoenix_rebirth`)
+```
+Skill: skill_ult_phoenix — Phượng Hoàng Tái Sinh   Hệ: LỬA   Bậc: T4   Đích: mọi kẻ địch + cả đội   Kết thúc: 3400 ms
+descVi: "Tuyệt kỹ: lửa phượng hoàng đánh mọi kẻ địch và gây Bỏng, cả đội nhận Bất khuất."
+PHẢI THẤY:
+  1. Tàn lửa xoáy tụ thành một nụ lửa trên đầu người tung (0–450).
+  2. Nụ lửa nổ, một con PHƯỢNG HOÀNG bung cánh (cánh lông vũ nhiều lớp, cổ cong, mào, đuôi dài có "mắt lửa"), khựng lại giơ cánh.
+  3. Chim cụp cánh LAO đầu xuống hàng địch, kéo vệt lửa; chạm đúng 1300 ms.
+  4. Hàng địch bốc lửa: MỖI kẻ địch một ngọn lửa riêng (lệch 90 ms), một ngọn lớn ở giữa, vòng lửa trên đất, tia lửa bắn vệt, vết cháy.
+  5. TÁI SINH (1750–2650): từ đám lửa, phượng hoàng lớn (sải cánh khoảng 1/3 màn) vươn lên, cánh đang cụp bật XÒE ra ở 2050 kèm vòng sáng và chớp; lông vũ vàng bay ra.
+  6. Phượng hoàng tan lên thành ánh sáng; trên MỖI đồng đội một ngọn lửa vàng dựng lên, vòng sáng mở, sao bay lên (Bất khuất, hiệu quả chắc chắn).
+KHÔNG ĐƯỢC: chim chỉ là quầng sáng cộng màu (phải có thân sơn màu, đọc được trên nền sáng); khói che thân chim; chớp mạnh quá 2 lần / giây.
+NHỊP: Tụ 0–450 · Bung cánh 420–750 · Lấy đà 700–860 · Lao 860–1300 · IMPACT 1300 + hit-stop ultimate · Lửa 1300–2550 · Tái sinh 1750–2650 (xòe 2050) · Ban phúc 2450–3350
+HÌNH CHỦ ĐẠO: con phượng hoàng — biến hình (cánh mở / cụp / uốn, đuôi bay) + hạt sinh từ chính nó (lửa trên cánh, lông vũ)
+KIỂM: −650 chim bung cánh trên người tung; −200 chim đang lao có vệt; +500 lửa ở từng kẻ địch; +1000 phượng hoàng lớn đã xòe cánh; +1600 lửa vàng trên đồng đội. FPS ≥ 50.
+```

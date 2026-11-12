@@ -2,7 +2,7 @@
 // `chain_lightning` (Chuỗi Sét): a bolt leaps from the caster and chains over three foes. `spark_peck` (Mổ Tia Điện): a quick arc.
 // `lightning_dive` (Bổ Nhào): a blazing streak from the sky and a crashing bolt. Times are ms from the start of the act.
 import * as THREE from 'three';
-import { chestOf, mouthOf, shards, slots } from './earthParts';
+import { chestOf, mouthOf, shards } from './earthParts';
 import { clamp, cloud, easeOut, rng, ripple, smooth } from './effectParts';
 import { bolt, flick, glare, sigil } from './lightningParts';
 import { sparks } from './metalParts';
@@ -34,38 +34,6 @@ export function thunderStrike(env: Vfx3dEnv): Vfx3dHandle {
       glint(new THREE.Vector3(goal.x, 0.6, goal.z), t, 3);
       ring.set(t, smooth(0, 0.06, t) * (1 - smooth(0.35, 0.8, t)));
       scorch.set(t * 0.2, smooth(0, 0.1, t) * 0.8 * (1 - smooth(0.5, 1, t)));
-    },
-    dispose() {
-      env.scene.remove(root);
-      disposeTree(root);
-    },
-  };
-}
-
-export function chainLightning(env: Vfx3dEnv): Vfx3dHandle {
-  const root = new THREE.Group();
-  env.scene.add(root);
-  const mouth = mouthOf(env);
-  const spots = slots(env).map((s) => s.clone().setY(0.6));
-  const order = [spots[0]!, spots[2]!, spots[1]!];
-  const legs = order.map((p, i) => bolt(root, i === 0 ? mouth : order[i - 1]!, p, 181 + i, 0xffe25a, 0.07, 0.5));
-  const t0 = [320, 540, 760];
-  const sparksAt = order.map(() => sparks(root, 50));
-  const glints = order.map(() => glare(root, 0xfff0a0));
-  const rings = order.map((p) => {
-    const r = ripple(root, 2.2, 1.7, 0xffe25a, 0xffffff);
-    r.mesh.position.set(p.x, 0.02, p.z);
-    return r;
-  });
-  return {
-    update(ms) {
-      order.forEach((p, i) => {
-        legs[i]!.set(flick(ms, t0[i]!, 300));
-        const t = (ms - t0[i]!) / 1000;
-        sparksAt[i]!.set(t, p, 1, 0.6);
-        glints[i]!(p, t, 2.4);
-        rings[i]!.set(t, smooth(0, 0.06, t) * (1 - smooth(0.3, 0.7, t)));
-      });
     },
     dispose() {
       env.scene.remove(root);

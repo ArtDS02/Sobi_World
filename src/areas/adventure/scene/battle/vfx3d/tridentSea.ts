@@ -1,231 +1,224 @@
-// "Đinh Ba Hải Vương" in 3D (prototype, decision 059): water gathers in the sky, a trident of light falls on the middle of the foes' row,
-// and on landing a crown of drops leaps up while three walls of water ("a million waves") sweep outward over the ground, ripples
-// running ahead of them. Timeline in ms (the skill's impact is at 1100): gather 0–550, fall 550–1100, impact 1100, waves 1100–2500.
+// "Đinh Ba Hải Vương" in 3D (decision 059). Water is drawn up into a whirl in the sky, where it sets into a trident of living water;
+// the trident hangs, then falls on the middle of the foes' row. Where it lands a crown of water leaps up, a geyser shoots through
+// it, and three walls of water ("a million waves") roll outward, each higher and further; as the first wall reaches a foe that foe
+// gets its own burst of water. A sheet of foam is left on the ground and rain falls back. Times are ms from the start of the act; the
+// skill's impact is at 1100.
 import * as THREE from 'three';
-import { POINT_SCALE, RIPPLE_FRAG, RIPPLE_VERT, clamp, easeOut, easeOut3, rng, smooth, sprite } from './effectParts';
+import { F } from './atlas';
+import { clamp, easeOut, easeOut3, easeOutBack, ripple, smooth, sprite } from './effectParts';
+import { burst, gather, h, pulse, rise } from './fxKit';
+import { lines } from './lines';
+import { lightBlend, quads } from './quads';
 import { disposeTree, type Vfx3dEnv, type Vfx3dHandle } from './stage3d';
+import { liquid, pool, waveRing, whirl } from './waterParts';
 
 const IMPACT = 1100;
-/** A wall of water in the shape of a ring: its height and reach come from uniforms, its crest curls outward and glows white. */
-const WAVE_VERT = `
-varying vec2 vUv; varying float vY;
-uniform float uR, uH, uT, uLean;
-void main(){
-  vUv=uv; float y01=uv.y; float ang=uv.x*6.2832; vY=y01;
-  float wob=1.+.2*sin(ang*9.+uT*9.)+.12*sin(ang*17.-uT*6.);
-  float rad=uR+uLean*y01*y01*uH*.9;
-  vec3 pos=vec3(cos(ang)*rad, y01*uH*wob, sin(ang)*rad);
-  gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.);
-}`;
-const WAVE_FRAG = `
-varying vec2 vUv; varying float vY; uniform float uFade, uT; uniform vec3 uDeep, uMid, uFoam;
-void main(){
-  float ang=vUv.x*6.2832;
-  float bands=.5+.5*sin(vY*16.-uT*7.+ang*3.);
-  vec3 col=mix(uDeep,uMid,smoothstep(0.,.7,vY));
-  col+=bands*.07;
-  float crest=smoothstep(.72,.97,vY+.05*sin(ang*22.+uT*11.));
-  col=mix(col,uFoam,crest);
-  float rim=smoothstep(0.,.12,vY);
-  float al=(.78+.2*crest)*rim*uFade*(1.-smoothstep(.97,1.,vY)*.5);
-  gl_FragColor=vec4(col,al);
-}`;
+const SKY = 4.3;
+const WATER = [0.3, 0.7, 1] as const;
+const FOAM = [0.9, 0.98, 1] as const;
+const DEEP = [0.2, 0.62, 1.1] as const;
+/** The waves' ring is flattened: wide across the stage, shallow into it. */
+const RX = 1.3;
+const RZ = 0.78;
+
+/** The trident, point down, about 3.4 world units tall, with its tip at the group's origin. */
+function trident(mat: THREE.Material): THREE.Group {
+  const g = new THREE.Group();
+  const add = (geo: THREE.BufferGeometry, x = 0, y = 0, rz = 0) => {
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, 0);
+    m.rotation.z = rz;
+    g.add(m);
+  };
+  // Built point up, then turned over.
+  add(new THREE.CylinderGeometry(0.085, 0.11, 2.2, 14), 0, 1.1);
+  add(new THREE.SphereGeometry(0.17, 14, 10), 0, 0.02);
+  add(new THREE.TorusGeometry(0.2, 0.065, 10, 20), 0, 2.2, 0);
+  add(new THREE.ConeGeometry(0.17, 1.15, 14), 0, 2.85);
+  for (const s of [-1, 1]) {
+    const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 2.15, 0), new THREE.Vector3(s * 0.34, 2.2, 0), new THREE.Vector3(s * 0.62, 2.42, 0), new THREE.Vector3(s * 0.66, 2.8, 0)]);
+    add(new THREE.TubeGeometry(curve, 22, 0.085, 10));
+    add(new THREE.ConeGeometry(0.14, 0.75, 12), s * 0.66, 3.12);
+    // A barb on the outside of each side prong.
+    add(new THREE.ConeGeometry(0.07, 0.34, 8), s * 0.8, 2.72, -s * 2.3);
+  }
+  g.children.forEach((c) => c.position.y -= 3.42);
+  g.rotation.z = Math.PI;
+  const holder = new THREE.Group();
+  holder.add(g);
+  return holder;
+}
 
 export function tridentSea(env: Vfx3dEnv): Vfx3dHandle {
-  const U = env.unit;
+  const q = env.quality;
   const root = new THREE.Group();
   root.position.copy(env.origin);
   env.scene.add(root);
-  const rand = rng(7);
-  const cyan = new THREE.Color(0x4cc8ff);
+  const targets = env.targets.map((t) => t.clone().sub(env.origin));
+  const dist = (p: THREE.Vector3) => Math.hypot(p.x / RX, p.z / RZ);
+  const reach = Math.max(1.6, ...targets.map(dist)) + 0.9;
 
-  // ---- the trident (about 2.8 units tall at scale 1, tip down) ----
-  const tri = new THREE.Group();
-  const steel = new THREE.MeshStandardMaterial({ color: 0xe6f4ff, metalness: 0.6, roughness: 0.3, emissive: 0x1f7fd6, emissiveIntensity: 0.55, transparent: true });
-  const part = (geo: THREE.BufferGeometry, x = 0, y = 0, z = 0) => {
-    const m = new THREE.Mesh(geo, steel);
-    m.position.set(x, y, z);
-    tri.add(m);
-    return m;
-  };
-  part(new THREE.CylinderGeometry(0.12, 0.12, 2.4, 14), 0, 1.2, 0);
-  part(new THREE.CylinderGeometry(0.2, 0.2, 0.16, 14), 0, 2.38, 0);
-  // Three prongs at the top: the middle one straight, the sides curved up and out.
-  part(new THREE.ConeGeometry(0.2, 0.8, 12), 0, 2.88, 0);
-  for (const s of [-1, 1]) {
-    const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 2.4, 0), new THREE.Vector3(s * 0.32, 2.45, 0), new THREE.Vector3(s * 0.55, 2.62, 0), new THREE.Vector3(s * 0.55, 2.95, 0)]);
-    part(new THREE.TubeGeometry(curve, 20, 0.1, 10));
-    const tip = part(new THREE.ConeGeometry(0.16, 0.6, 12), s * 0.55, 3.2, 0);
-    tip.rotation.z = 0;
-  }
-  // Invert: the trident falls point down, so the whole group is turned upside down around its middle.
-  tri.rotation.z = Math.PI;
-  const triHolder = new THREE.Group();
-  triHolder.add(tri);
-  tri.position.y = 3.1;
-  root.add(triHolder);
-  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: sprite(), color: cyan, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false }));
+  const water = liquid();
+  const tri = trident(water.mat);
+  root.add(tri);
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: sprite(), color: 0x4cc8ff, transparent: true, depthWrite: false, depthTest: false }));
+  lightBlend(halo.material);
   root.add(halo);
-  const triPointLight = new THREE.PointLight(0x4cc8ff, 0, 7 * U, 1.6);
-  root.add(triPointLight);
+  const sky = whirl(root);
+  sky.mesh.rotation.x = -Math.PI / 2;
+  sky.mesh.position.y = SKY + 0.5;
+  const ropes = lines(root, 3 * 26 + 24);
+  const drops = quads(root, Math.round(520 * q), false, F.drop);
+  const glints = quads(root, Math.round(260 * q), true, F.soft);
+  const ND = drops.n;
+  const NG = glints.n;
 
-  // ---- ripples on the ground ----
-  const rippleMat = new THREE.ShaderMaterial({
-    uniforms: { uT: { value: 0 }, uFade: { value: 0 }, uCol: { value: new THREE.Color(0x2a9bff) }, uFoam: { value: new THREE.Color(0xe8fbff) } },
-    vertexShader: RIPPLE_VERT,
-    fragmentShader: RIPPLE_FRAG,
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
+  const sheet = pool(root, reach * 2 * RX * 1.05, reach * 2 * RZ * 1.05);
+  const rings = ripple(root, reach * 2 * RX, reach * 2 * RZ, 0x2a9bff, 0xe8fbff);
+  const walls = [0, 1, 2].map((i) => {
+    const w = waveRing(root, 0.42 + i * 0.06);
+    w.mesh.scale.set(RX, 1, RZ);
+    return { w, start: IMPACT + 60 + i * 190, len: 1150 + i * 130, reach: reach * (0.62 + i * 0.19), peak: 0.55 + i * 0.2 };
   });
-  const ripple = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), rippleMat);
-  ripple.rotation.x = -Math.PI / 2;
-  ripple.position.y = 0.02;
-  ripple.scale.set(4.4 * U, 4.4 * U * 0.8, 1);
-  root.add(ripple);
+  const crown = waveRing(root, 0.32, 1);
+  crown.mesh.scale.set(RX, 1, RZ);
+  const geyser = waveRing(root, -0.12, 0.7);
+  // Each foe is struck when the first wall reaches it, never two at the same moment.
+  const first = walls[0]!;
+  const hits = targets
+    .map((p) => ({ p, t: first.start + first.len * (1 - Math.cbrt(1 - clamp((dist(p) - 0.2) / first.reach, 0, 0.98))) }))
+    .sort((a, b) => a.t - b.t);
+  hits.forEach((x, i) => (x.t = i === 0 ? x.t : Math.max(x.t, hits[i - 1]!.t + 110)));
+  const spouts = hits.map(() => waveRing(root, 0.5, 1));
+  const tmp = new THREE.Vector3();
+  const a = new THREE.Vector3();
+  const b = new THREE.Vector3();
 
-  // ---- the walls of water ----
-  const waveGeo = new THREE.CylinderGeometry(1, 1, 1, 96, 1, true);
-  const waves = [0, 1, 2].map((i) => {
-    const mat = new THREE.ShaderMaterial({
-      uniforms: {
-        uR: { value: 0 }, uH: { value: 0 }, uT: { value: 0 }, uLean: { value: 0.35 }, uFade: { value: 0 },
-        uDeep: { value: new THREE.Color(0x0a4a9a) }, uMid: { value: new THREE.Color(0x2fa8ec) }, uFoam: { value: new THREE.Color(0xf2fdff) },
-      },
-      vertexShader: WAVE_VERT,
-      fragmentShader: WAVE_FRAG,
-      transparent: true,
-      depthWrite: false,
-      side: THREE.DoubleSide,
-    });
-    const m = new THREE.Mesh(waveGeo, mat);
-    m.scale.set(1.25, 1, 0.9);
-    m.visible = false;
-    root.add(m);
-    return { m, mat, start: IMPACT + i * 150, len: 1250 + i * 120, reach: (0.85 + i * 0.4) * U, peak: Math.max(0.55, (0.62 - i * 0.1) * U) };
-  });
-  // A column of water thrown up at the point of impact.
-  const colMat = waves[0]!.mat.clone();
-  colMat.uniforms.uLean = { value: -0.1 };
-  const column = new THREE.Mesh(waveGeo, colMat);
-  column.visible = false;
-  root.add(column);
-
-  // ---- drops: the crown at the impact, the spray riding the waves, the gathering sky ----
-  const dropTex = sprite();
-  const mkPoints = (n: number, size: number, color: number, add = true) => {
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(n * 3), 3));
-    const pts = new THREE.Points(geo, new THREE.PointsMaterial({ map: dropTex, size: size * POINT_SCALE, color, transparent: true, depthWrite: false, blending: add ? THREE.AdditiveBlending : THREE.NormalBlending, sizeAttenuation: true, opacity: 0.9 }));
-    pts.frustumCulled = false;
-    root.add(pts);
-    return { pts, pos: geo.attributes.position as THREE.BufferAttribute, n };
-  };
-  const crown = mkPoints(240, 0.16 * U, 0xdff6ff);
-  const crownSeed = Array.from({ length: crown.n }, () => [rand() * 6.2832, 1.2 + rand() * 3.4, 3 + rand() * 5.5, rand() * 120] as const);
-  const spray = mkPoints(260, 0.11 * U, 0xf2fdff);
-  const spraySeed = Array.from({ length: spray.n }, (_, i) => [rand() * 6.2832, 0.35 + rand() * 0.65, rand(), i % 3] as const);
-  const sky = mkPoints(140, 0.05 * U, 0x9fe0ff);
-  const skySeed = Array.from({ length: sky.n }, () => [rand() * 6.2832, 0.6 + rand() * 1.6, rand(), rand() * 0.5] as const);
-
-  const SKY_Y = 3.6;
-  const TRI = 0.95; // the trident is about 3.3 world units tall: three times a fighter
   return {
-    update(ms: number) {
-      // -- trident: appears while the water gathers, falls with gravity-like acceleration, sticks in the ground, then dissolves --
-      const appear = smooth(150, 520, ms);
-      const fall = clamp((ms - 550) / (IMPACT - 550));
-      const y = SKY_Y * (1 - fall * fall * fall) + 0.05 * fall - smooth(1700, 2500, ms) * 0.9;
-      const sc = TRI * (0.5 + 0.5 * appear);
-      triHolder.position.set(0, y, 0);
-      triHolder.scale.setScalar(sc);
-      triHolder.rotation.y = ms * 0.0012;
-      steel.opacity = appear * (1 - smooth(1900, 2500, ms));
-      steel.emissiveIntensity = 0.55 + 1.3 * Math.exp(-Math.max(0, ms - IMPACT) / 260) + 0.15 * Math.sin(ms * 0.012);
-      triHolder.visible = steel.opacity > 0.01;
-      const haloS = (ms < IMPACT ? 0.5 + fall * 0.4 : 0.5 + 0.8 * Math.exp(-(ms - IMPACT) / 220)) * 2.2 * appear;
-      halo.position.set(0, y + sc * 0.4, 0);
-      halo.scale.set(haloS, haloS, 1);
-      (halo.material as THREE.SpriteMaterial).opacity = 0.9 * (1 - smooth(1500, 2300, ms));
-      triPointLight.position.set(0, y + sc * 0.4, 0);
-      triPointLight.intensity = 3.5 * U * (ms < IMPACT ? appear * 0.7 : Math.exp(-(ms - IMPACT) / 380));
-
-      // -- ground ripples --
-      const rt = (ms - IMPACT) / 1000;
-      ripple.visible = rt > 0;
-      rippleMat.uniforms.uT!.value = Math.max(0, rt);
-      rippleMat.uniforms.uFade!.value = smooth(0, 120, ms - IMPACT) * (1 - smooth(1500, 2600, ms - IMPACT));
-
-      // -- the three walls --
-      for (const w of waves) {
-        const u = (ms - w.start) / w.len;
-        w.m.visible = u > 0 && u < 1;
-        if (!w.m.visible) continue;
-        const rr = 0.08 * U + w.reach * easeOut3(u);
-        const h = w.peak * Math.sin(Math.PI * Math.min(1, u * 0.85 + 0.0)) ** 0.7 * (1 - 0.25 * u);
-        const uni = w.mat.uniforms as Record<string, { value: number }>;
-        uni.uR!.value = rr;
-        uni.uH!.value = Math.max(0.001, h);
-        uni.uT!.value = ms / 1000;
-        uni.uFade!.value = smooth(0, 0.12, u) * (1 - smooth(0.7, 1, u));
+    update(ms) {
+      const sec = ms / 1000;
+      const hit = ms - IMPACT;
+      // -- the whirl in the sky and the water drawn up into it --
+      const whirlK = smooth(0, 420, ms) * (1 - smooth(560, 900, ms));
+      sky.mesh.scale.setScalar(3.6 * (0.5 + 0.5 * easeOut(clamp(ms / 420))) * (1 - 0.55 * smooth(450, 900, ms)));
+      sky.set(sec, whirlK, smooth(200, 700, ms));
+      let n = 0;
+      const pullK = clamp(ms / 640);
+      for (let r = 0; r < 3; r++) {
+        const segs = 26;
+        const head = pullK * 1.5 - r * 0.12;
+        for (let s = 0; s < segs; s++) {
+          const u0 = s / segs;
+          const u1 = (s + 1) / segs;
+          if (u1 > head || u0 < head - 0.55) continue;
+          const pt = (u: number, out: THREE.Vector3) => {
+            const ang = r * 2.094 + u * 7.5 + 0.6;
+            const rad = 2.3 * (1 - u) ** 1.2 + 0.08;
+            return out.set(Math.cos(ang) * rad * RX, 0.1 + SKY * u ** 0.8, Math.sin(ang) * rad * RZ);
+          };
+          const tail = clamp((u0 - (head - 0.55)) / 0.55);
+          ropes.put(n++, pt(u0, a), pt(u1, b), 0.03 + 0.07 * tail, 0.03 + 0.07 * clamp((u1 - (head - 0.55)) / 0.55), DEEP[0], DEEP[1], DEEP[2], tail);
+        }
       }
-      const cu = (ms - IMPACT) / 900;
-      column.visible = cu > 0 && cu < 1;
-      if (column.visible) {
-        const rr = (0.12 + 0.12 * U) * (1 + 0.5 * cu);
-        const h = (0.5 + 0.9 * U) * Math.sin(Math.PI * Math.min(1, cu * 0.8)) ** 0.6;
-        const uni = colMat.uniforms as Record<string, { value: number }>;
-        uni.uR!.value = rr;
-        uni.uH!.value = Math.max(0.001, h);
-        uni.uT!.value = ms / 1000;
-        uni.uFade!.value = smooth(0, 0.1, cu) * (1 - smooth(0.6, 1, cu));
+      // -- the trident: sets in the whirl (overshoot), hangs and winds up, falls ever faster, bites into the ground --
+      const born = clamp((ms - 280) / 300);
+      const wind = smooth(560, 720, ms) * (1 - smooth(720, 800, ms));
+      const fall = clamp((ms - 760) / (IMPACT - 760));
+      const sink = 0.42 * smooth(0, 60, hit) + 1.3 * smooth(900, 1500, hit);
+      const y = ms < IMPACT ? SKY * (1 - fall * fall * fall) + 0.3 * wind : -sink;
+      const live = born * (1 - smooth(1000, 1500, hit));
+      const squash = hit > 0 ? 1 - 0.16 * Math.exp(-hit / 70) * Math.cos(hit / 38) : 1 + 0.2 * fall * fall;
+      tri.position.set(0, y, 0);
+      tri.scale.set((0.4 + 0.6 * easeOutBack(born)) / Math.sqrt(squash), (0.4 + 0.6 * easeOutBack(born)) * squash, 0.4 + 0.6 * easeOutBack(born));
+      tri.rotation.y = 9 * (1 - easeOut3(clamp((ms - 280) / 760)));
+      tri.rotation.z = 0.05 * Math.exp(-Math.max(0, hit) / 120) * Math.sin(hit / 24) * (hit > 0 ? 1 : 0);
+      tri.visible = live > 0.01;
+      const flash = pulse(ms, 300, 60, 160) + pulse(ms, IMPACT, 30, 200) * 1.4;
+      water.set(sec, live, flash);
+      // The streak it leaves while falling: a few lines trailing up behind the prongs.
+      if (fall > 0.05 && hit < 60) {
+        for (let s = 0; s < 8; s++) {
+          const x = (h(s, 0, 5) - 0.5) * 1.3;
+          const lenS = (0.8 + 2.2 * h(s, 1, 5)) * fall;
+          ropes.put(n++, a.set(x, y + 0.2 + 3 * h(s, 2, 5), 0.02 * s), b.set(x, y + 0.2 + 3 * h(s, 2, 5) + lenS, 0.02 * s), 0.05, 0.01, WATER[0], WATER[1], WATER[2], 0.55 * fall * (1 - smooth(0, 60, hit)));
+        }
       }
+      ropes.show(n, 1 - smooth(900, 1150, ms) * (hit > 60 ? 1 : 0));
+      ropes.flush();
+      const hs = (1.2 + 2.2 * flash) * (0.5 + 0.5 * born) * (1 - smooth(600, 1300, hit));
+      halo.position.set(0, Math.max(0.3, y + 1.6), 0.1);
+      halo.scale.set(hs * 2.2, hs * 2.2, 1);
+      halo.material.opacity = 0.5 * live + 0.5 * Math.min(1, flash);
+      halo.visible = hs > 0.05;
 
-      // -- crown of drops: ballistic from the impact --
-      const ct = Math.max(0, ms - IMPACT) / 1000;
-      for (let i = 0; i < crown.n; i++) {
-        const [a, vh, vy, delay] = crownSeed[i]!;
-        const t = ct - delay / 1000;
-        if (t <= 0 || t > 1.5) {
-          crown.pos.setXYZ(i, 0, -50, 0);
+      // -- drops (paint): drawn up, the impact's crown, each foe's burst, the rain falling back --
+      let d = 0;
+      const take = (share: number) => {
+        const from = d;
+        d += Math.floor(ND * share);
+        return [from, d - from] as const;
+      };
+      const [g0, gn] = take(0.14);
+      gather(drops, g0, gn, 1, { k: clamp(ms / 700), to: tmp.set(0, SKY, 0), radius: 3.2, turns: 1.2, size: 0.16, color: WATER, frame: F.drop, tall: 5, alpha: 0.9 });
+      const [c0, cn] = take(0.36);
+      burst(drops, c0, cn, 2, { sec: hit / 1000, at: tmp.set(0, 0.1, 0), life: 1.25, speed: 4.6, up: 8.5, grav: 13, drag: 1.1, size: 0.2, color: FOAM, to: WATER, frame: F.drop, stretch: 0.045, flat: 0.55, alpha: 0.95 });
+      const each = Math.floor((ND * 0.3) / Math.max(1, hits.length));
+      hits.forEach((x, i) => {
+        burst(drops, d, each, 10 + i, { sec: (ms - x.t) / 1000, at: tmp.set(x.p.x, 0.15, x.p.z), life: 0.9, speed: 2.2, up: 6.5, grav: 13, size: 0.17, color: FOAM, to: WATER, frame: F.drop, stretch: 0.04, wide: 0.7, alpha: 0.95 });
+        d += each;
+        const k = (ms - x.t) / 620;
+        spouts[i]!.mesh.position.set(x.p.x, 0, x.p.z);
+        spouts[i]!.set(0.22 + 0.5 * easeOut(clamp(k)), (0.9 + 0.7 * env.tall) * Math.sin(Math.PI * clamp(k) ** 0.6), sec + i, k > 0 && k < 1 ? smooth(0, 0.1, k) * (1 - smooth(0.6, 1, k)) : 0);
+      });
+      // Rain falling back over the whole row once the waves have passed.
+      for (let i = d; i < ND; i++) {
+        const k = i - d;
+        const t = (ms - 1750 - h(k, 0, 9) * 800) / 520;
+        if (t <= 0 || t >= 1) {
+          drops.hide(i);
           continue;
         }
-        const x = Math.cos(a) * vh * t * U * 0.3 * 1.25;
-        const z = Math.sin(a) * vh * t * U * 0.3 * 0.9;
-        const yy = Math.max(0, (vy * t - 4.9 * t * t) * U * 0.26);
-        crown.pos.setXYZ(i, x, yy, z);
+        const rx = (h(k, 1, 9) - 0.5) * 2 * reach * RX;
+        drops.put(i, rx, 4.2 * (1 - t * t), (h(k, 2, 9) - 0.5) * 2 * reach * RZ, 0.1, WATER[0], WATER[1], WATER[2], 0.8 * smooth(0, 0.15, t));
+        drops.stretch(i, 0, -0.5 * t - 0.12, 0);
+        drops.look(i, F.drop, 0, 0.4);
       }
-      crown.pos.needsUpdate = true;
-      (crown.pts.material as THREE.PointsMaterial).opacity = 0.9 * (1 - smooth(1100, 1500, ms - IMPACT));
+      drops.flush();
 
-      // -- spray riding the three wave fronts --
-      for (let i = 0; i < spray.n; i++) {
-        const [a, hh, r2, k] = spraySeed[i]!;
-        const w = waves[k]!;
+      // -- light: the flash of foam at the impact, spray riding the walls, mist lifting at the end --
+      const [f0, fn] = [0, Math.floor(NG * 0.3)];
+      burst(glints, f0, fn, 3, { sec: hit / 1000, at: tmp.set(0, 0.2, 0), life: 0.7, speed: 5.5, up: 5, grav: 6, drag: 2.4, size: 0.5, color: [0.5, 0.75, 0.95], to: [0.1, 0.3, 0.6], frame: F.foam, alpha: 0.55 });
+      const sprayN = Math.floor(NG * 0.45);
+      for (let k = 0; k < sprayN; k++) {
+        const i = fn + k;
+        const w = walls[k % 3]!;
         const u = (ms - w.start) / w.len;
         if (u <= 0 || u >= 1) {
-          spray.pos.setXYZ(i, 0, -50, 0);
+          glints.hide(i);
           continue;
         }
-        const rr = 0.08 * U + w.reach * easeOut3(u);
-        const h = w.peak * Math.sin(Math.PI * Math.min(1, u * 0.85)) ** 0.7;
-        const lift = h * (hh + 0.35 * r2) + 0.05 * U * Math.sin(ms * 0.01 + i);
-        spray.pos.setXYZ(i, Math.cos(a) * rr * 1.25 * 1.04, lift, Math.sin(a) * rr * 0.9 * 1.04);
+        const ang = h(k, 0, 4) * 6.2832;
+        const rr = (0.2 + w.reach * easeOut3(u)) * 1.03;
+        const hh = w.peak * Math.sin(Math.PI * Math.min(1, u * 0.9)) ** 0.7 * (0.75 + 0.5 * h(k, 1, 4)) + 0.12 * Math.sin(ms * 0.012 + k);
+        glints.put(i, Math.cos(ang) * rr * RX, hh, Math.sin(ang) * rr * RZ, 0.16 + 0.14 * h(k, 2, 4), 0.75, 0.95, 1.1, 0.7 * smooth(0, 0.1, u) * (1 - smooth(0.7, 1, u)));
+        glints.look(i, k % 4 === 0 ? F.star : F.soft, k);
       }
-      spray.pos.needsUpdate = true;
-      (spray.pts.material as THREE.PointsMaterial).opacity = 0.85 * (1 - smooth(2200, 2700, ms));
+      rise(glints, fn + sprayN, NG - fn - sprayN, 6, { sec: (ms - 1500) / 1000, dur: 0.9, life: 0.9, at: (_b, k) => tmp.set((h(k, 8, 6) - 0.5) * 2 * reach * RX * 0.8, 0.15, (h(k, 9, 6) - 0.5) * 2 * reach * RZ * 0.8), rise: 0.9, jitter: 0.3, size: 0.7, color: [0.25, 0.4, 0.5], to: [0.05, 0.1, 0.15], frame: F.smoke, grow: 1.8, alpha: 0.5 });
+      glints.flush();
 
-      // -- the gathering sky: drops spiral in toward the trident's start, then are gone --
-      const gt = clamp(ms / 650);
-      for (let i = 0; i < sky.n; i++) {
-        const [a, r0, h0, off] = skySeed[i]!;
-        const k = clamp(gt * 1.4 - off);
-        const rad = r0 * U * 0.4 * (1 - easeOut(k));
-        const ang = a + k * 6;
-        sky.pos.setXYZ(i, Math.cos(ang) * rad, SKY_Y + (h0 - 0.5) * 0.4 * U * (1 - k), Math.sin(ang) * rad * 0.8);
+      // -- the ground: a sheet of foaming water spreading, rings running over it --
+      sheet.set(easeOut3(clamp(hit / 900)), sec, hit > 0 ? smooth(0, 120, hit) * (1 - smooth(1300, 1850, hit)) : 0);
+      rings.set(hit / 1000, hit > 0 ? smooth(0, 100, hit) * (1 - smooth(1100, 1700, hit)) * 0.8 : 0);
+
+      // -- the crown and the geyser at the point of impact, then the three walls --
+      const ck = hit / 700;
+      crown.set(0.3 + 0.9 * easeOut3(clamp(ck)), 1.5 * Math.sin(Math.PI * clamp(ck) ** 0.55), sec, ck > 0 && ck < 1 ? smooth(0, 0.06, ck) * (1 - smooth(0.55, 1, ck)) : 0);
+      const gk = hit / 950;
+      geyser.set(0.24 * (1 + 0.6 * gk), 4.4 * Math.sin(Math.PI * clamp(gk) ** 0.5), sec * 1.6, gk > 0 && gk < 1 ? smooth(0, 0.05, gk) * (1 - smooth(0.5, 1, gk)) : 0);
+      for (const w of walls) {
+        const u = (ms - w.start) / w.len;
+        w.w.set(0.2 + w.reach * easeOut3(clamp(u)), w.peak * Math.sin(Math.PI * Math.min(1, clamp(u) * 0.9)) ** 0.7, sec, u > 0 && u < 1 ? smooth(0, 0.1, u) * (1 - smooth(0.5, 0.95, u)) : 0);
       }
-      sky.pos.needsUpdate = true;
-      (sky.pts.material as THREE.PointsMaterial).opacity = 0.9 * smooth(0, 150, ms) * (1 - smooth(500, 900, ms));
     },
     dispose() {
       env.scene.remove(root);

@@ -59,3 +59,20 @@ Dự phòng: chưa có `fx_water_column` → `fx_splash` size 2 + `burst drop_ri
 - `anim:audit`: không `STATIC_HERO`, `FEW_LAYERS`.
 - Capture: 3 khung impact khác nhau (1100, 1450, 1800) mỗi khung một cột nước ở một quái; khung 1750 sân gần như đứng yên; cột thứ ba to hơn hai cột đầu; khung 3000 đinh ba đã chìm một phần.
 - Rubric ultimate ≥ 90 ở C3 (chờ playtest C5).
+
+## Hợp đồng nhìn thấy (bản 3D, 2026-11-12, `trident_sea`)
+```
+Skill: skill_ult_trident — Đinh Ba Hải Vương   Hệ: NƯỚC   Bậc: T4   Đích: mọi kẻ địch   Kết thúc: 3200 ms
+descVi: "Tuyệt kỹ: đinh ba triệu sóng đánh mọi kẻ địch, làm Ướt và 30% làm choáng."
+PHẢI THẤY:
+  1. Cut-in xanh nước (2D có sẵn); ba dải nước xoắn từ đất lên một xoáy nước trên trời, giọt nước bị hút vào.
+  2. Trong xoáy, nước kết thành MỘT cây đinh ba bằng nước (thân xanh, viền trắng), to hơn ba lần một chiến binh, bật ra có nảy.
+  3. Đinh ba khựng lại lấy đà rồi RƠI nhanh dần, vệt sáng kéo theo; cắm xuống giữa hàng địch đúng 1100 ms, thân lún và rung.
+  4. Vương miện nước và một cột nước vọt lên ở chỗ cắm; giọt bắn tung thành vệt.
+  5. BA bức sóng có mào bọt lan ra, bức sau cao và xa hơn bức trước; khi bức đầu tới mỗi kẻ địch, con đó có cột nước RIÊNG (lệch ≥ 110 ms).
+  6. Dư âm: tấm nước có viền bọt loang trên đất, gợn sóng, mưa rơi lại, sương bốc.
+KHÔNG ĐƯỢC: vẽ choáng (trạng thái lo); vẽ Ướt thành vụ nổ riêng; nước cháy trắng che mất quái.
+NHỊP (ms từ đầu act): Tụ 0–560 · Hình thành 280–580 · Lấy đà 560–760 · Rơi 760–1100 · IMPACT 1100 (hit-stop ultimate ở 1300 theo kịch bản cũ) · Sóng 1160–2700 · Dư âm 1750–3000
+HÌNH CHỦ ĐẠO: cây đinh ba nước — biến hình (nảy khi sinh, kéo dài khi rơi, lún khi cắm) + hạt sinh từ chính nó (vương miện, cột nước)
+KIỂM: −550 thấy xoáy và dải nước; −250 thấy đinh ba hoàn chỉnh; +150 vương miện + cột nước; +700 ≥ 2 bức sóng; +1100 cột nước ở kẻ địch; +1600 tấm nước và gợn. FPS ≥ 50 trên RTX 3050.
+```

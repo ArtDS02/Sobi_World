@@ -25,6 +25,8 @@ export interface ScriptCue {
   look: BattleLook;
   /** The skill's name, on the cut-in of an Ultimate (ANIM-112): shown in its band. */
   title?: string | null;
+  /** The units the beat really lands on, in order (a 3D effect over a row strikes these, not every unit of the row). */
+  struck?: readonly string[];
 }
 
 /** A move of a body (`move`, `pose`, `glow` acts) on the step's clock. */
@@ -117,7 +119,7 @@ function run(c: Ctx, acts: readonly Act[], start: number, k: number, actor: stri
         c.out.moves.push({ unit, at, dur: move.dur, act: move, toward });
         return;
       }
-      c.out.cues.push({ at, act: a, unit, from: actor, look, ...(a.do === 'cutin' ? { title } : {}) });
+      c.out.cues.push({ at, act: a, unit, from: actor, look, ...(a.do === 'cutin' ? { title } : {}), ...(a.do === 'vfx3d' ? { struck: targets } : {}) });
     });
   }
 }

@@ -48,7 +48,8 @@ export class FxPlayer {
   readonly bursts: Bursts;
   readonly screen: ScreenFx;
   private acts: ActPlayer;
-  private stage3d: Stage3d | null;
+  /** The 3D layer (null when switched off); the scene hands it the player's effects setting. */
+  readonly stage3d: Stage3d | null;
   private timed: Timed[] = [];
   private strokes: Phaser.GameObjects.Graphics;
   private dim: Phaser.GameObjects.Rectangle;

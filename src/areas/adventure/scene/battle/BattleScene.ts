@@ -29,6 +29,8 @@ export interface BattleStageState {
   units: readonly StageUnit[];
   step: Readonly<PlayingStep>;
   reduce: boolean;
+  /** The effects setting (decision 057, B8): the 3D layer draws less below `full`. Absent = full. */
+  effects?: 'off' | 'light' | 'full' | undefined;
   sound?: ((key: CueSound) => void) | undefined;
 }
 
@@ -146,6 +148,7 @@ export class BattleScene extends Phaser.Scene {
       this.holdUntil = 0;
     }
     // Slow motion (screenFx.slowMo) stretches the stage's clock: cues, poses, tweens, particles all read it; reduced motion has none.
+    this.fx.stage3d?.setMode(s.effects ?? 'full');
     const scale = s.reduce ? 1 : this.fx.screen.timeScale(now);
     this.lost += Math.min(50, now - (this.stageLast || now)) * (1 - scale);
     this.stageLast = now;

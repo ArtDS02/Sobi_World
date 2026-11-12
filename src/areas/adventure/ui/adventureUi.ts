@@ -265,7 +265,7 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     battleStage: () => {
       if (!active) return null;
       const units = battleOn ? measureStage(main, stageCache, drawn, d.host) : [];
-      return { active: battleOn, units, step: playingStep(), reduce: reduceNow(), sound: stageSound };
+      return { active: battleOn, units, step: playingStep(), reduce: reduceNow(), effects: world()?.settings.effects, sound: stageSound };
     },
     dispose: () => {
       off();
