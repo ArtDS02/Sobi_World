@@ -3,9 +3,8 @@ import type { VFX3D_IDS } from '../../../../../../content/schemas/adventure/batt
 import { bubbleShot, bubbleSpray } from './bubbles';
 import { boulderSmash, quakeSpikes, rockFist, sealQuake, tuskCharge } from './earthFx';
 import { lightRay, luminaRay, runeBeam } from './lightFx';
-import { callThunder, thunderCommand, thunderRush } from './lightningArea';
-import { lightningDive, sparkPeck, thunderStrike } from './lightningFx';
-import { chainLightning } from './stormFx';
+import { callThunder, thunderCommand, thunderRush } from './stormArea';
+import { chainLightning, lightningDive, sparkPeck, thunderStrike } from './stormFx';
 import { armorBreak, bronzeFist, metalClaw, steelCharge, steelSlash } from './metalFx';
 import { steelCavalry } from './metalUlt';
 import { curseEyes, nightNet, nightWeave } from './darkArea';

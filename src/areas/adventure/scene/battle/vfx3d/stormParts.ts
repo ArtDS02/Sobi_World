@@ -6,8 +6,8 @@ import { F } from './atlas';
 import { clamp, smooth } from './effectParts';
 import { burst, h, rise, type Rgb } from './fxKit';
 import { NOISE, UV_VERT } from './glsl';
-import { forked, type Lines } from './lines';
-import { lightBlend, type Quads } from './quads';
+import { forked, lines, type Lines } from './lines';
+import { lightBlend, quads, type Quads } from './quads';
 
 type U = Record<string, { value: number }>;
 export const BOLT: Rgb = [1, 0.8, 0.16];
@@ -146,9 +146,10 @@ export function landing(light: Quads, from: number, count: number, smoke: Quads,
   burst(light, from + 2 + sparks, count - sparks - 2, seed + 1, { sec, at, life: 0.9, speed: 2.4 * power, up: 3.2 * power, grav: 3, drag: 1.5, size: 0.11, color: [1.4, 1.1, 0.4], to: [0.8, 0.3, 0.02], frame: F.ember, alpha: 0.9 });
   // The glare: a hot disc and a four-point star that snap open and die in a tenth of a second.
   const g = age >= 0 ? Math.exp(-age / 90) : 0;
-  light.put(from, p.x, 0.5, p.z, (1.6 + 2.2 * g) * power, 1.5, 1.3, 0.7, g);
+  const big = Math.sqrt(power);
+  light.put(from, p.x, 0.5, p.z, (1.2 + 1.5 * g) * big, 1.5, 1.3, 0.7, g * 0.85);
   light.look(from, F.soft);
-  light.put(from + 1, p.x, 0.5, p.z, (2.4 + 3 * g) * power, 1.8, 1.7, 1.3, g * 0.9);
+  light.put(from + 1, p.x, 0.5, p.z, (2 + 2.2 * g) * big, 1.8, 1.7, 1.3, g * 0.9);
   light.look(from + 1, F.star, 0.4);
   rise(smoke, sFrom, sCount, seed + 2, { sec: sec - 0.08, dur: 0.25, life: 0.9, at: () => at, rise: 1.3, jitter: 0.5, size: 0.7 * power, color: [0.3, 0.29, 0.36], to: [0.16, 0.15, 0.2], frame: F.smoke, grow: 2, alpha: 0.5 });
   // Arcs crawling out over the ground for a moment after the hit.
@@ -161,4 +162,56 @@ export function landing(light: Quads, from: number, count: number, smoke: Quads,
     }
   }
   return n;
+}
+
+export interface StormRig {
+  bolts: Lines;
+  light: Quads;
+  /** Next free segment of `bolts`: effects write their strikes from here and move it on. */
+  n: number;
+  /** Starts a frame (no segment written yet). */
+  begin(): void;
+  /** Everything hit number `i` leaves at `p`, `age` ms after it landed (create the spots first with `spot`). */
+  hit(i: number, age: number, power?: number): void;
+  /** Declares hit `i` at ground point `p` (its scorch and ring are built once). */
+  spot(i: number, p: THREE.Vector3, ringSize?: number): THREE.Vector3;
+  /** Ends the frame: shows the segments written and uploads the particles. */
+  end(): void;
+  /** First free particle of `light` after the hits' own. */
+  spare: number;
+}
+/** The shared furniture of a lightning effect with up to `hits` strikes: the bolt lines, the particles and each strike's ground marks. */
+export function stormRig(root: THREE.Object3D, hits: number, quality: number, spare = 0): StormRig {
+  const per = Math.max(24, Math.round(90 * quality));
+  const bolts = lines(root, 400 + hits * 260);
+  const light = quads(root, hits * per + spare, true);
+  const smoke = quads(root, hits * 10, false, F.smoke);
+  const spots: { p: THREE.Vector3; mark: ReturnType<typeof scorch>; ring: ReturnType<typeof shock> }[] = [];
+  const rig: StormRig = {
+    bolts,
+    light,
+    n: 0,
+    spare: hits * per,
+    begin() {
+      rig.n = 0;
+    },
+    spot(i, p, ringSize = 3.4) {
+      const g = p.clone().setY(0);
+      spots[i] = { p: g, mark: scorch(root, g, 1.15), ring: shock(root, g, ringSize) };
+      return g;
+    },
+    hit(i, age, power = 1) {
+      const s = spots[i]!;
+      rig.n = landing(light, i * per, per, smoke, i * 10, 10, bolts, rig.n, s.p, age, 20 + i, power);
+      s.mark(age > 0 ? smooth(0, 40, age) * (1 - smooth(450, 800, age)) : 0, Math.exp(-Math.max(0, age) / 260));
+      s.ring(age / 380, age > 0 ? 1 - smooth(200, 380, age) : 0);
+    },
+    end() {
+      bolts.show(rig.n, 1);
+      bolts.flush();
+      light.flush();
+      smoke.flush();
+    },
+  };
+  return rig;
 }

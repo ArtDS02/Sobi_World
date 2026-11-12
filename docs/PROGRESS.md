@@ -13,6 +13,12 @@
 
 ## Nhật ký
 
+### 2026-11-12 — VFX 3D: hệ Sét dựng lại (P3, 7 / 7 skill), tự chấm (decision 059, commit cục bộ)
+✅ Đã làm: `thunder_strike`, `spark_peck`, `lightning_dive` (`stormFx.ts`), `call_thunder`, `thunder_command`, `thunder_rush` (`stormArea.ts`) trên bộ phần giông bão (`stormParts.ts`: mây có khối, sét phân nhánh vẽ lại mỗi 45 ms, lóe, vòng chấn, vết cháy, điện bò); bỏ `lightningFx.ts`, `lightningArea.ts`. Kịch bản 6 skill: `tint` tối nền. Sửa lỗi `struck` lẫn phe.
+🧪 typecheck, lint, guard xanh; test `battleFxContent`, `battleScript` qua. Ảnh `docs/animation/vfx3d/lightning/`. Tự chấm 6,5–8 (bảng ở `SCORES.md`).
+⚠️ Mổ Tia Điện còn 6,5 (dưới 7): tia xuất phát sớm hơn cú lao của quái. Nền không tối lại ở đòn do quái tung dù kịch bản có `tint`: chưa tìm nguyên nhân.
+👉 Chủ dự án: chấm hệ Sét. Còn lại chưa dựng lại: Nước 5, Lửa 9, Thiên nhiên 7, Đất 5, Kim 6, Ánh sáng 3, Bóng tối 7, Hư không 4, hệ trống / class / hỗ trợ 57; 22 skill mới (decision 060) chưa bắt đầu.
+
 ### 2026-11-12 — VFX 3D: hạ tầng hình ảnh (P1) và ba skill pilot dựng lại (P2), tự chấm (decision 059, commit cục bộ)
 ✅ Đã làm: hậu kỳ HDR + bloom + lớp cộng sáng thật (`post3d.ts`, `stage3d.ts`), atlas 16 hình hạt, hạt dạng quad, sét phân nhánh, bộ emitter, phần nước / giông / lửa / phượng hoàng; nối Cường độ hiệu ứng (off / light / full) vào lớp 3D; env có mục tiêu thật của lượt đánh. Dựng lại `skill_ult_trident`, `skill_ult_phoenix`, `skill_ld_chain` kèm hợp đồng nhìn thấy; `battle_fx.json` của Chuỗi Sét và Phượng Hoàng chỉnh mốc trình diễn (không đổi `timing`).
 📁 `src/areas/adventure/scene/battle/vfx3d/{post3d,glsl,atlas,quads,lines,fxKit,waterParts,stormParts,stormFx,flameParts,phoenixParts,phoenixFx,tridentSea,stage3d}.ts`, `fxActs.ts`, `fxPlayer.ts`, `BattleScene.ts`, `ui/battleScript.ts`, `ui/adventureUi.ts`, `scripts/animation/{shots,fps}.ts`, `scripts/anim-review/lib/session.ts`.

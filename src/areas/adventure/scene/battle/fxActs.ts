@@ -122,7 +122,7 @@ export class ActPlayer {
         this.h.stage3d?.play(VFX3D[act.fx], p.x, p.y, p.width, act.dur, this.h.add, {
           scale: act.size ?? 1, from: from ? { x: from.feet.x, y: from.feet.y } : undefined, color: (act.color as number | undefined) ?? null, row,
           targets: row ? feetOf(a?.side) : a ? [{ x: a.feet.x, y: a.feet.y }] : [], friends: feetOf(actingSide),
-          struck: (cue.struck ?? []).map((id) => anchors.get(id)).filter((u): u is FxAnchor => !!u).map((u) => ({ x: u.feet.x, y: u.feet.y })), ...(a ? { heightPx: a.height } : {}),
+          struck: (cue.struck ?? []).map((id) => anchors.get(id)).filter((u): u is FxAnchor => !!u && (!a || u.side === a.side)).map((u) => ({ x: u.feet.x, y: u.feet.y })), ...(a ? { heightPx: a.height } : {}),
         });
         return;
       }
