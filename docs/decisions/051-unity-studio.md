@@ -1,6 +1,6 @@
 # 051 — Sobi Studio: Unity làm xưởng tạo lại toàn bộ asset và animation
 
-**Ngày:** 2026-11-07. **Trạng thái:** đã duyệt (chủ dự án giao agent tự quyết mọi chi tiết, chỉ duyệt kết quả).
+**Ngày:** 2026-11-07. **Trạng thái:** ~~đã duyệt~~ **bị thay bằng decision 058 (2026-11-11): bỏ Unity, animation / VFX bằng code Phaser.** Giữ làm lịch sử.
 
 ## Bối cảnh
 Art hiện tại (2547 PNG, ảnh Gemini do chủ dự án render) lệch phong cách giữa các bộ. Tranh chuyển động vẽ lại từng khung

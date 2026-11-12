@@ -1,5 +1,7 @@
 # Sobi Studio — dùng Unity tạo lại toàn bộ asset và animation
 
+> **KHÔNG CÒN HIỆU LỰC (2026-11-11):** decision 058 bỏ Unity, thay bằng animation / VFX bằng code Phaser. Tài liệu giữ làm lịch sử.
+
 **Trạng thái:** ĐÃ DUYỆT 2026-11-07 — `docs/decisions/051-unity-studio.md`. Chủ dự án giao agent tự quyết mọi mục
 §10 (đã chốt ở §10) và làm từ đầu tới cuối; chủ dự án chỉ cài đặt và duyệt kết quả. Yêu cầu bắt buộc thêm: **dễ chỉnh
 sửa, dễ cập nhật, dễ mở rộng** (§12).

@@ -1,5 +1,7 @@
 # Sobi Studio — trạng thái (decision 051)
 
+> **ĐÃ NGỪNG (2026-11-11):** decision 058 bỏ Unity khỏi quy trình. Nội dung dưới đây là lịch sử; 22 sheet VFX đã nhập vẫn ở trong game.
+
 Cập nhật: 2026-11-07. Nhánh `phase-14-unity-studio`.
 
 ## ✅ VFX trận bằng chuyển động: 22 / 23 sheet xong (2026-11-08)
