@@ -6,6 +6,7 @@ Mọi font, âm thanh, thư viện, ảnh không do dự án tự tạo phải c
 |---|---|---|---|
 | `@fontsource/baloo-2` (Baloo 2) | UI | OFL-1.1 | Dùng thương mại được; không bán riêng font; giữ file license khi đóng gói |
 | `phaser` | game | MIT | |
+| `three` (+ `@types/three`, dev) | lớp hiệu ứng 3D của trận (thử nghiệm, decision 059) | MIT | Đóng gói cùng game, không tải CDN |
 | `idb` | lưu trữ | ISC | |
 | `zod` | schema | MIT | |
 | `electron` (+ `electron-builder`) | bản desktop | MIT | |

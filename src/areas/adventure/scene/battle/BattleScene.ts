@@ -200,7 +200,8 @@ export class BattleScene extends Phaser.Scene {
       const span = Math.max(...row.map((u) => u.feet.x + u.width / 2)) - Math.min(...row.map((u) => u.feet.x - u.width / 2));
       const width = Math.max(row.reduce((sum, u) => sum + u.width, 0) / row.length, span * 0.6);
       const height = row.reduce((sum, u) => sum + u.height, 0) / row.length;
-      fxAnchors.set(`@${side}`, { side, width, height, feet: { x, y }, chest: { x, y: y - height * 0.45 }, head: { x, y: y - height * 0.58 }, picture: null });
+      const midY = row.reduce((sum, u) => sum + u.feet.y, 0) / row.length;
+      fxAnchors.set(`@${side}`, { side, width, height, feet: { x, y }, mid: { x, y: midY }, chest: { x, y: y - height * 0.45 }, head: { x, y: y - height * 0.58 }, picture: null });
     }
     for (const c of this.cues) {
       if (c.done || c.at > t) continue;

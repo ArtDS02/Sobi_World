@@ -1,7 +1,7 @@
 // Plays the cues of a battle step (ui/battlePlan.ts) in the battle scene (decision 042): the magic circle laid under a caster, power
 // gathering, the shot flying in its element's look, what lands (the look's bursts, its stroke — slash, bolt, beam of light, swirl,
 // vines —, a ring on the ground, the flash and the shake), the bursts of the reactions, the teleport lights and the screen dimming for
-// an Ultimate. Pictures are the textures of fxTextures.ts or manifest images; strokes are drawn on one additive Graphics each frame.
+// an Ultimate, and the 3D layer (vfx3d/). Pictures are fxTextures.ts textures or manifest images; strokes are drawn on one additive Graphics.
 import * as Phaser from 'phaser';
 import type { BattleLook, ReactionFx } from '../../../../../content/schemas/adventure/battleFx';
 import { BATTLE_FX } from '../../logic/config/content';
@@ -11,6 +11,7 @@ import { ghostImages, type Ghost } from './fxGhosts';
 import { AIR_DEPTH, GROUND_DEPTH, Bursts, type BurstSpot } from './fxBursts';
 import { playStroke } from './fxStrokes';
 import { ScreenFx } from './screenFx';
+import { Stage3d } from './vfx3d/stage3d';
 import { CIRCLE_KEY, PILLAR_KEY, shapeKey } from './fxTextures';
 
 /** A unit as the effects see it (game px). */
@@ -20,6 +21,8 @@ export interface FxAnchor extends BurstSpot {
   height: number;
   /** The unit's picture now (the cut-in portrait). */
   picture: Phaser.GameObjects.Image | null;
+  /** For a row (`@enemy`, `@ally`): the middle of its feet, where a 3D effect over the whole row stands. */
+  mid?: { x: number; y: number };
   /** What a ghost of it copies now (its picture, or its puppet's parts: decision 050). */
   ghosts?: () => Ghost[];
   /** Where a named part of its puppet is now (`mouth`, `tail`: the rig's anchors), null when it has none. */
@@ -39,15 +42,13 @@ const isShape = (ref: string) => !ref.startsWith('fx_');
 const TRAIL_STEP_PX = 9;
 
 /** What the effects ask of the scene: to hold the stage still (hit stop), every fighter's ghost pictures (a colour split). */
-export interface FxHooks {
-  hold(ms: number): void;
-  ghosts(): Ghost[];
-}
+export interface FxHooks { hold(ms: number): void; ghosts(): Ghost[] }
 
 export class FxPlayer {
   readonly bursts: Bursts;
   readonly screen: ScreenFx;
   private acts: ActPlayer;
+  private stage3d: Stage3d | null;
   private timed: Timed[] = [];
   private strokes: Phaser.GameObjects.Graphics;
   private dim: Phaser.GameObjects.Rectangle;
@@ -60,7 +61,8 @@ export class FxPlayer {
   ) {
     this.bursts = new Bursts(scene);
     this.screen = new ScreenFx(scene, hooks.hold);
-    this.acts = new ActPlayer({ scene, bursts: this.bursts, screen: this.screen, add: (dur, step, done) => this.add(dur, step, done), flash: (c, a, ms) => this.flash(c, a, ms), hold: hooks.hold, ghosts: hooks.ghosts });
+    this.stage3d = Stage3d.enabled() ? new Stage3d(scene, AIR_DEPTH + 3) : null;
+    this.acts = new ActPlayer({ scene, bursts: this.bursts, screen: this.screen, stage3d: this.stage3d, add: (dur, step, done) => this.add(dur, step, done), flash: (c, a, ms) => this.flash(c, a, ms), hold: hooks.hold, ghosts: hooks.ghosts });
     this.strokes = scene.add.graphics().setDepth(AIR_DEPTH + 1).setBlendMode(Phaser.BlendModes.ADD);
     this.dim = scene.add.rectangle(0, 0, 10, 10, 0x0e0a1e, 1).setOrigin(0).setDepth(AIR_DEPTH - 10).setAlpha(0);
     this.flashRect = scene.add.rectangle(0, 0, 10, 10, 0xffffff, 1).setOrigin(0).setDepth(AIR_DEPTH + 10).setAlpha(0);
@@ -68,17 +70,17 @@ export class FxPlayer {
 
   /** Something is still on screen (the scene keeps drawing while it is). */
   busy(): boolean {
-    return this.timed.length > 0 || this.bursts.alive() > 0 || this.dim.alpha > 0.01 || this.flashRect.alpha > 0.01;
+    return this.timed.length > 0 || (this.stage3d?.alive() ?? 0) > 0 || this.bursts.alive() > 0 || this.dim.alpha > 0.01 || this.flashRect.alpha > 0.01;
   }
 
   clear() {
     this.screen.reset();
-    // Effects waiting to start (a teleport light, a burst's `wait`), the flash fading and the camera shake end with the rest.
-    this.scene.time.removeAllEvents();
+    this.scene.time.removeAllEvents(); // waiting effects, the flash fading, the camera shake end with the rest
     this.scene.tweens.killTweensOf(this.flashRect);
     this.scene.cameras.main.resetFX();
     for (const x of this.timed) x.done?.();
     this.timed = [];
+    this.stage3d?.clear();
     this.bursts.clear();
     this.strokes.clear();
     this.dimTo = 0;
@@ -129,8 +131,7 @@ export class FxPlayer {
       case 'circle': {
         const a = unitOf(cue.unit);
         if (!a) return;
-        // Three layers (ANIM-022): the outer ring turning one way, a smaller ring the other, the element's glyph at the heart beating, and
-        // a column of light when the spell is let go. Over the ground marks, under the bodies.
+        // Three layers (ANIM-022): the outer ring turning one way, a smaller one the other, the element's glyph beating, a column of light on release.
         const add = (key: string, tint: number) => this.scene.add.image(a.feet.x, a.feet.y, key).setDepth(GROUND_DEPTH + 3).setBlendMode(Phaser.BlendModes.ADD).setTint(tint);
         const outer = add(CIRCLE_KEY, cue.look.color);
         const mid = add(CIRCLE_KEY, cue.look.glow);
@@ -158,7 +159,7 @@ export class FxPlayer {
         return;
       }
       case 'still': {
-        // Reduced motion (ANIM-111): a steady ring on the ground, fading in and out, no turning, flashing or shaking.
+        // Reduced motion (ANIM-111): a steady ring, fading in and out; no turning, flashing or shaking.
         const a = unitOf(cue.unit);
         if (!a) return;
         const ring = this.scene.add.image(a.feet.x, a.feet.y, CIRCLE_KEY).setDepth(GROUND_DEPTH + 3).setBlendMode(Phaser.BlendModes.ADD).setTint(cue.role === 'actor' ? cue.look.glow : cue.look.color);
@@ -222,8 +223,7 @@ export class FxPlayer {
     let last = { x: from.chest.x, y: from.chest.y };
     let travelled = 0;
     this.add(dur, (t, _g, dt) => {
-      // It sets off slowly and speeds up (smoothstep, ANIM-042), the core and its halo beat, and the trail is laid by distance
-      // flown rather than by time, so it stays even at x2 and over a hit stop.
+      // Slow start then faster (smoothstep, ANIM-042); the core and halo beat; the trail is laid by distance flown, so it stays even at x2.
       const e = t * t * (3 - 2 * t);
       const x = Phaser.Math.Linear(from.chest.x, to.chest.x, e);
       const y = Phaser.Math.Linear(from.chest.y, to.chest.y, e) - Math.sin(e * Math.PI) * p.arc;
@@ -292,5 +292,6 @@ export class FxPlayer {
       else x.done?.();
     }
     this.timed = keep;
+    this.stage3d?.render();
   }
 }

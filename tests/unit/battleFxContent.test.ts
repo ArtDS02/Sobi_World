@@ -44,7 +44,8 @@ describe('battle animation content (decision 044)', () => {
     for (const l of Object.values(BATTLE_FX.elements)) if (l?.boom?.startsWith('fx_')) named.add(l.boom);
     const missing = [...named].filter((id) => !ids.has(id));
     expect(missing).toEqual([]);
-    expect(named.size).toBeGreaterThan(100);
+    // A sanity floor (the list was read at all). It was 100 until the 3D layer (decision 059) replaced the pictures of many skills.
+    expect(named.size).toBeGreaterThan(50);
   });
 
   it('every burst a script names exists (or is a sprite, a strip, or the element particle)', () => {

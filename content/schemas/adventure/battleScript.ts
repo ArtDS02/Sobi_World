@@ -29,6 +29,9 @@ export const MOVE_VALUES = [
 export const PROP_PATHS = ['fall', 'rise', 'sweep', 'orbit', 'pop', 'grow', 'throw', 'fly', 'stretch', 'hover'] as const;
 export const PROP_EASE_VALUES = ['linear', 'inQuad', 'outQuad', 'inOutSine', 'inBack', 'outBack', 'spring'] as const;
 export const DECAL_KINDS = ['puddle', 'scorch', 'crack', 'rune', 'ring'] as const;
+/** 3D effects drawn by the battle's WebGL layer (prototype, decision 059): the ids of scene/battle/vfx3d/effects.ts. */
+export const VFX3D_IDS = ['trident_sea', 'bubble_shot', 'bubble_spray', 'tsunami_sweep', 'ice_bloom', 'frost_breath', 'claw_clamp', 'jaw_flame', 'hammer_slam', 'lava_glob', 'lava_flood', 'magma_cone', 'meteor_rain', 'flame_pillars', 'forge_ult', 'phoenix_rebirth', 'thorn_volley', 'vine_whip', 'spore_cone', 'root_bind', 'root_quake', 'corrupt_bloom', 'thorn_storm', 'boulder_smash', 'quake_spikes', 'tusk_charge', 'rock_fist', 'seal_quake', 'steel_slash', 'armor_break', 'steel_charge', 'steel_cavalry', 'metal_claw', 'bronze_fist', 'thunder_strike', 'chain_lightning', 'call_thunder', 'thunder_command', 'spark_peck', 'lightning_dive', 'thunder_rush', 'light_ray', 'lumina_ray', 'rune_beam', 'ink_spray', 'night_net', 'nightmare', 'night_weave', 'shadow_bite', 'wraith_touch', 'curse_eyes', 'void_fist', 'void_vortex', 'sky_bell', 'mythic_awakening',
+  'heal_bloom', 'buff_up', 'shield_dome', 'cleanse', 'mp_channel', 'doom_mark', 'ground_stomp', 'class_strike', 'class_combo', 'class_orb', 'class_rain', 'class_meteor', 'ult_party'] as const;
 
 /** A colour, or the colour of the beat's look (`$color`) or its glow (`$glow`). */
 export const paint = z.union([color, z.enum(['$color', '$glow'])]);
@@ -203,6 +206,8 @@ export const actSchema = z.discriminatedUnion('do', [
   /** The edges of the screen darken in a colour for `dur`. */
   z.strictObject({ do: z.literal('vignette'), ...lasting, color: paint, alpha: z.number().finite().min(0).max(1) }),
   z.strictObject({ do: z.literal('flash'), ...lasting, color: paint, alpha: z.number().finite().min(0).max(1) }),
+  /** A 3D effect (prototype, decision 059): `fx` names it; `size` scales it. Skipped without WebGL or with `?vfx3d=0`. */
+  z.strictObject({ do: z.literal('vfx3d'), ...lasting, fx: z.enum(VFX3D_IDS), size: z.number().finite().positive().max(4).optional(), color: paint.optional() }),
   /** A sound of the manifest (`adv_…`; a missing file is silence). Plays with reduced motion too. */
   z.strictObject({ do: z.literal('sound'), ...base, sound: z.string().regex(/^adv_[a-z0-9_]+$/) }),
   /** The opening of an Ultimate: a band in the colour sweeps across, the actor's picture slides in, the rest darkens. */

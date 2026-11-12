@@ -14,6 +14,8 @@ import { playRibbon } from './fxRibbon';
 import { stripFrameMs, stripRange, stripStill } from './stripTiming';
 import type { FxAnchor, Timed } from './fxPlayer';
 import type { ScreenFx } from './screenFx';
+import { VFX3D } from './vfx3d/effects';
+import type { Stage3d } from './vfx3d/stage3d';
 import { SHADOW_KEY, VIGNETTE_KEY, decalKey, shapeKey } from './fxTextures';
 
 type AddTimed = (dur: number, step: Timed['step'], done?: () => void) => void;
@@ -29,6 +31,8 @@ export interface ActHost {
   hold(ms: number): void;
   /** Hit stop tiers, slow motion, directional shake, letterbox, vignette (ANIM-004). */
   screen: ScreenFx;
+  /** The 3D layer (prototype, decision 059); null when it is switched off. */
+  stage3d: Stage3d | null;
   /** Every unit's ghost pictures now (the colour split copies them: pictures, or puppets' parts). */
   ghosts(): Ghost[];
 }
@@ -105,6 +109,14 @@ export class ActPlayer {
       case 'beam':
         if (from && a) beam(this.h, from, a, act.color as number, act.width ?? 26, act.dur, !!act.through);
         return;
+      case 'vfx3d': {
+        // Over a unit, or the middle of the stage for `field`; a row (`foeside`) is one spot as wide as the row.
+        const w = this.scene.scale.width;
+        const hgt = this.scene.scale.height;
+        const p = a ? { x: (a.mid ?? a.feet).x, y: (a.mid ?? a.feet).y, width: a.width } : { x: w / 2, y: hgt * 0.7, width: w * 0.3 };
+        this.h.stage3d?.play(VFX3D[act.fx], p.x, p.y, p.width, act.dur, this.h.add, act.size ?? 1, from ? { x: from.feet.x, y: from.feet.y } : undefined, { color: (act.color as number | undefined) ?? null, row: !a || !!cue.unit?.startsWith('@') });
+        return;
+      }
       case 'ribbon':
         return playRibbon(this.h, act, a, from);
       case 'tether':
