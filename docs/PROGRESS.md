@@ -6,12 +6,102 @@
 **Tiến độ GĐ14:** 28 dòng manifest còn `placeholder`. Xong (chờ duyệt): **Cloud** (cloud-01..04, 10 tầng mây: decision 023), **Sảnh** (world-01-scene, bỏ nhân vật ở Sảnh: decision 024, 025), **Garden** (garden-01..03 + cảnh theo ảnh mẫu: decision 027; 4 khu trồng, drone bón phân: decision 028). **Aquarium** (12 cá, icon, vật phẩm; cảnh 5 nơi theo cấp bể, HUD theo ảnh mẫu: decision 030). **Adventure** (giao diện theo ảnh mẫu, 212 asset batch adventure-03..10, 2026-10-23, chờ duyệt; còn tạo lại sheet K5, CP2; animation trận bằng code + pipeline / prompt AI: decision 040, 2026-10-24, chờ duyệt). Còn lại: Aquarium (ảnh Gà Mái; cấp bể 5: decision 026 chờ duyệt số), Farm (6 giống heo), `ui_icon_lock`; ngoài manifest: NPC, icon thời tiết / công nghệ / tính trạng, lễ hội, VFX, nhạc nền từng Area + Sảnh, SFX, icon app; cuối cùng `assets:release`, e2e, build.
 **Chờ chủ dự án:** duyệt HUD dùng chung (cả Farm) + cửa hàng mới (decision 031); duyệt Cloud, Sảnh, Garden, cảnh Aquarium (decision 030); duyệt giá / cấp khu Garden 2–4 và vòi tưới cấp 4–5 (decision 028) và giá cửa hàng (decision 029);  duyệt số cấp bể 5; chốt `asset/FIRST_GUARDIANS_ART_PLAN.md` (đề xuất 9 nguyên tố: ngoài Spec V2, cần decision riêng).
 **Save format:** v11 (Cloud save v2 từ decision 023; Adventure slice v5 từ decision 043).
-**Sobi Studio (decision 051):** Unity chỉ còn dùng để **tạo chuyển động trên tranh đã duyệt**; hướng "tạo lại toàn bộ asset" và vẽ hình VFX bằng Unity **không đạt, đã dừng** (2026-11-07). VFX trận: 22 / 23 sheet có chuyển động 8 khung @24 fps, đã nằm trong game (`fx_wave_rise` giữ nguyên); chờ chủ dự án xem (`docs/studio/vfx/`). Chi tiết `docs/studio/STATUS.md`.
+**Sobi Studio (decision 051) — ĐÃ BỎ (decision 058, 2026-11-11):** Unity không còn trong quy trình; animation / VFX mới làm bằng code Phaser qua FeedbackDirector, bắt đầu bằng rà từng skill đối chiếu mô tả. Art Gemini đã duyệt và 22 / 23 sheet VFX trận có chuyển động (8 khung @24 fps, `docs/studio/vfx/`) giữ nguyên trong game. Dọn `studio/` chờ phiên riêng.
 **Animation trận — VFX / kịch bản (decision 042, 044, 049):** sân Phaser, mọi animation khai báo trong `content/adventure/battle_fx.json`: kịch bản cho đủ 112 skill, 26 hành động chung, 25 trạng thái, 6 phản ứng nguyên tố; 8 / 112 skill khai `gesture` (còn lại suy từ kịch bản). Thư viện `docs/animation/library/scenarios/`: 169 kịch bản, 168 còn `draft`, 1 `built`.
 **Animation sinh vật (decision 050):** puppet rig (`docs/animation/rig/`), 44 rig: 21 chiến binh + 22 quái chạy **pose to pose** trên 6 key pose đã duyệt (bổ sung (5), 2026-11-06; bản skin một ảnh (3)/(4) đã bị bác), 25 clip / con gồm 10 cử chỉ skill + tuyệt kỹ; Bạch Tuộc giữ skin một ảnh (chưa có key pose). Tranh vẽ thêm: lấy đà (`windup`) cho Hộ Pháp Cổ Đại, Heo Thiên Long; khung bay / bơi cho Ưng Vách Đá, Cá Betta (cả Aquarium). Sheet bơi Aquarium (`rig-05`) đánh giá không khả thi cho cá (lệch nhận diện giữa các khung), chờ chủ dự án chọn hướng; Chim Sẻ Sấm (S1) dùng được, chưa cắt. Farm / Garden / Cloud / Sảnh chưa dùng rig (roadmap R5). Chờ chủ dự án chấm ACCEPTANCE A10–A13, B8.
 **Bước tiếp theo:** bản đồ v2 (decision 045): code và art đã vào game (2026-11-01: batch 15, bộ ghép vẽ lại đủ 36 sheet + CE + I1, 151 asset kit đang dùng). Còn: kit chưa có chỗ dùng (đạo cụ nhỏ, cầu, lớp che dạng dải: cần bố cục đặt đạo cụ), mép chuyển tiếp mềm bằng code, key pose quái biển / rương giả (`docs/ASSET_TODO.md`). Trước đó: chủ dự án chơi thử trận mới (Phaser, decision 042) và tạo ảnh key pose theo `docs/animation/COMBAT_ART_GUIDE.md`; tạo lại 2 sheet K5, CP2; sau đó Farm (6 giống heo), `ui_icon_lock`, VFX / âm thanh.
 
 ## Nhật ký
+
+### 2026-11-12 — Handover cho Fable 5.2 làm tiếp VFX 3D (chưa commit)
+✅ Đã làm: `docs/handover/FABLE_VFX3D_HANDOVER.md` (kế hoạch theo cổng, kiến trúc, bẫy, luật), `docs/handover/FABLE_SESSION_PROMPT.md` (prompt mở phiên), `docs/handover/VFX3D_SKILL_INVENTORY.md` (sinh tự động 112 skill), `docs/animation/SKILL_DESCRIPTION_STANDARD.md` (chuẩn mô tả + hợp đồng nhìn thấy + chuẩn từng hệ), `docs/animation/NEW_SKILLS_PROPOSAL.md` + `new_skills.draft.json` (22 skill mới, **chưa áp dụng**, cần decision 060), công cụ `scripts/animation/{shots,skillInventory,checkNewSkills}.ts`.
+🧪 `checkNewSkills.ts`: 22/22 skill hợp lệ theo schema thật; `shots.ts` chạy thử trên skill_ult_trident; lint, guard, typecheck scripts xanh. Chưa chạy lại `npm run check` đầy đủ sau các file này (chỉ thêm tài liệu và script).
+⚠️ Skill mới chưa vào `content/` (gameplay đóng băng). Cây làm việc còn nhiều thay đổi chưa commit, gồm hai thay đổi không phải của 3D (`content/farm/layout.json`, `tools/admin/battleLab.ts`).
+👉 Chủ dự án: mở phiên Fable bằng prompt trong `docs/handover/FABLE_SESSION_PROMPT.md`; duyệt (hoặc sửa) `NEW_SKILLS_PROPOSAL.md`; quyết có commit phần 3D hiện có trước khi Fable làm tiếp không.
+
+### 2026-11-11 — Chỉnh điểm yếu của VFX 3D (decision 059, chưa commit)
+✅ Đã làm: chỉnh 17 hiệu ứng yếu nhất (bàn tay hồn ma, lưới đêm, mây giông, nắm đấm đá / đồng, càng, hàm, kỵ sĩ, chuông, tia nhiều màu, vòng rune, gai, hoa, vệt vuốt); ảnh `docs/animation/vfx3d/weak_fixes_3d.jpg`. Trước đó đã chạy `npm run check` đầy đủ: sửa layout `battle_fx.json` bằng `npm run content:fmt`.
+🧪 typecheck, lint, guard xanh; test liên quan qua. Chưa chạy lại `npm run check` đầy đủ sau đợt chỉnh này, chưa đo FPS.
+⚠️ Còn: 4 tuyệt kỹ hỗ trợ cùng một hình, đòn class giống nhau, kỵ sĩ phẳng, Phượng Hoàng thiếu lông đuôi.
+👉 Chủ dự án: xem lại trong Admin → Animation trận; quyết định giữ hay gỡ lớp 3D.
+
+### 2026-11-11 — VFX 3D cho 57 skill hệ trống / class / hỗ trợ: cả 112 skill đã có 3D (decision 059, chưa commit)
+✅ Đã làm: 13 hiệu ứng tham số hóa (`supportFx.ts`, `classFx.ts`, `partyUlt.ts`); act `vfx3d` thêm `color`; env thêm `color`, `row`; `battle_fx.json` thay act 2D của 57 skill bằng một `vfx3d`, mốc `at` căn theo `timing.impact`; bảng ở `docs/animation/SKILL_REVIEW.md`; ảnh `docs/animation/vfx3d/classless_group_3d.jpg`.
+🧪 typecheck, lint, guard xanh; 78 test liên quan qua. Chụp 14 mẫu đại diện ở Battle Lab (không chụp từng skill trong 57). Chưa chạy `npm run check` đầy đủ, chưa đo FPS.
+⚠️ Các skill cùng loại trông giống nhau (khác màu); 4 tuyệt kỹ hỗ trợ cùng một hình; chỉ xem mẫu, chưa xem mọi skill.
+👉 Chủ dự án: xem trong Admin → Animation trận; quyết định giữ hay gỡ lớp 3D (decision 059); nếu giữ: chạy `npm run check` đầy đủ, đo FPS trên máy thật, chỉnh các điểm yếu, rồi commit.
+
+### 2026-11-11 — VFX 3D cho nhóm Hư không (decision 059, chưa commit)
+✅ Đã làm: 4 hiệu ứng 3D cho 4 skill Hư không (`voidFx.ts`); `battle_fx.json` thay act 2D bằng `vfx3d`; bảng ở `docs/animation/SKILL_REVIEW.md`; ảnh `docs/animation/vfx3d/void_group_3d.jpg`. Tổng 55 skill đã có VFX 3D.
+🧪 typecheck, lint, guard xanh; 78 test liên quan qua. Chụp ở Battle Lab. Chưa chạy `npm run check` đầy đủ, chưa đo FPS.
+⚠️ Chuông ở sát mép phải; 4 tia nhiều màu cộng lại thành trắng. Còn lại chưa làm: skill hệ trống (`null`: 14 unique, 4 ultimate, 16 class, 8 enemy) và class SELF.
+👉 Chủ dự án: xem 4 skill trong Admin → Animation trận; chọn việc tiếp (hệ trống / SELF) hoặc chỉnh Hư không.
+
+### 2026-11-11 — VFX 3D cho nhóm Bóng tối (decision 059, chưa commit)
+✅ Đã làm: 7 hiệu ứng 3D cho 7 skill Bóng tối (`darkFx.ts`, `darkArea.ts`); `battle_fx.json` thay act 2D bằng `vfx3d`; hạ ngưỡng "50 ảnh" trong `tests/unit/battleFxContent.test.ts` (đã ghi lý do ở decision 059); bảng ở `docs/animation/SKILL_REVIEW.md`; ảnh `docs/animation/vfx3d/dark_group_3d.jpg`. Tổng 51 skill đã có VFX 3D.
+🧪 typecheck, lint, guard xanh; 78 test liên quan qua. Chụp ở Battle Lab. Chưa chạy `npm run check` đầy đủ, chưa đo FPS.
+⚠️ Chạm Hồn Ma yếu (bàn tay khó nhận ra); lưới đêm ở cao nên mờ.
+👉 Chủ dự án: xem 7 skill trong Admin → Animation trận; chọn nhóm tiếp (Hư không, hệ trống, class SELF) hoặc chỉnh Bóng tối.
+
+### 2026-11-11 — VFX 3D cho nhóm Ánh sáng (decision 059, chưa commit)
+✅ Đã làm: 3 hiệu ứng 3D cho 3 skill Ánh sáng (`lightFx.ts`); `battle_fx.json` thay act 2D (kể cả `beam`) bằng `vfx3d`; bảng ở `docs/animation/SKILL_REVIEW.md`; ảnh `docs/animation/vfx3d/light_group_3d.jpg`. Tổng 44 skill đã có VFX 3D.
+🧪 typecheck, lint, guard xanh; 78 test liên quan qua. Chụp ở Battle Lab. Chưa chạy `npm run check` đầy đủ, chưa đo FPS.
+⚠️ Vòng rune trên đầu của Tia Rune mờ; tia của Tia Sáng mảnh.
+👉 Chủ dự án: xem 3 skill trong Admin → Animation trận; chọn nhóm tiếp (Bóng tối, Hư không, hệ trống, class SELF) hoặc chỉnh Ánh sáng.
+
+### 2026-11-11 — VFX 3D cho nhóm Sét (decision 059, chưa commit)
+✅ Đã làm: 7 hiệu ứng 3D cho 7 skill Sét (`lightningFx.ts`, `lightningArea.ts`, `lightningParts.ts`); `battle_fx.json` thay act 2D bằng `vfx3d`; bảng ở `docs/animation/SKILL_REVIEW.md`; ảnh `docs/animation/vfx3d/lightning_group_3d.jpg`. Tổng 41 skill đã có VFX 3D.
+🧪 typecheck, lint, guard xanh; 78 test liên quan qua. Chụp ở Battle Lab. Chưa chạy `npm run check` đầy đủ, chưa đo FPS.
+⚠️ Mổ Tia Điện nhỏ; mây giông là dải tối chưa có hình mây; Chuỗi Sét, Mổ Tia Điện, Bổ Nhào chụp lần đầu, chưa xem lại sau khi chỉnh tia.
+👉 Chủ dự án: xem 7 skill trong Admin → Animation trận; chọn nhóm tiếp (Ánh sáng, Bóng tối, Hư không, hệ trống, class SELF) hoặc chỉnh Sét.
+
+### 2026-11-11 — VFX 3D cho nhóm Kim (decision 059, chưa commit)
+✅ Đã làm: 6 hiệu ứng 3D cho 6 skill Kim (`metalFx.ts`, `metalUlt.ts`, `metalParts.ts`); `battle_fx.json` thay act 2D bằng `vfx3d` và chỉnh `timing.end`; bảng ở `docs/animation/SKILL_REVIEW.md`; ảnh `docs/animation/vfx3d/metal_group_3d.jpg`. Tổng 34 skill đã có VFX 3D.
+🧪 typecheck, lint, guard xanh; 78 test liên quan qua. Chụp ở Battle Lab. Chưa chạy `npm run check` đầy đủ, chưa đo FPS.
+⚠️ Kỵ sĩ đồng còn là bóng nâu phẳng; nắm đấm đồng là khối nâu; vệt vuốt nhỏ.
+👉 Chủ dự án: xem 6 skill trong Admin → Animation trận; chọn nhóm tiếp theo (Sét, Ánh sáng, Bóng tối, Hư không, hệ trống, class SELF) hoặc chỉnh Kim.
+
+### 2026-11-11 — VFX 3D cho nhóm Đất (decision 059, chưa commit)
+✅ Đã làm: 5 hiệu ứng 3D cho 5 skill Đất (`earthFx.ts`); `battle_fx.json` thay act 2D bằng `vfx3d` và chỉnh `timing.end`; bảng ở `docs/animation/SKILL_REVIEW.md`; ảnh `docs/animation/vfx3d/earth_group_3d.jpg`. Tổng 28 skill đã có VFX 3D.
+🧪 typecheck, lint, guard xanh; 78 test liên quan qua. Chụp ở Battle Lab. Chưa chạy `npm run check` đầy đủ, chưa đo FPS.
+⚠️ Nắm đấm đá giống cột đá; Húc Nanh chủ yếu là bụi.
+👉 Chủ dự án: xem 5 skill trong Admin → Animation trận; chọn nhóm tiếp theo (Kim, Sét, Ánh sáng, Bóng tối, Hư không) hoặc chỉnh Đất.
+
+### 2026-11-11 — VFX 3D cho nhóm Thiên nhiên (decision 059, chưa commit)
+✅ Đã làm: 7 hiệu ứng 3D cho 7 skill Thiên nhiên (`natureHits.ts`, `natureArea.ts`, `natureParts.ts`); `battle_fx.json` thay act 2D bằng `vfx3d` và chỉnh `timing.end`; bảng đối chiếu ở `docs/animation/SKILL_REVIEW.md`; ảnh `docs/animation/vfx3d/nature_group_3d.jpg`.
+🧪 typecheck, lint, guard xanh; 78 test liên quan qua. Chụp ở Battle Lab. Chưa chạy `npm run check` đầy đủ, chưa đo FPS. Tổng cộng 23 skill đã có VFX 3D.
+⚠️ Gai nhỏ / tối màu, hoa Nhiễm Độc đơn giản; chưa chỉnh sau lần xem đầu.
+👉 Chủ dự án: xem 7 skill trong Admin → Animation trận; chọn nhóm tiếp theo (Đất, Kim, Sét…) hoặc chỉnh Thiên nhiên.
+
+### 2026-11-11 — Chỉnh nhóm Lửa lần 2 (decision 059, chưa commit)
+✅ Đã làm: Phượng Hoàng dựng lại (chim xòe cánh vỗ, đuôi rủ, bóng lớn); búa và đe là sắt có khối với mặt sáng; hàm Cắn Than Hồng nanh trắng nóng + chớp. Ảnh `docs/animation/vfx3d/fire_fixes_3d.jpg`; bảng ở `docs/animation/SKILL_REVIEW.md` cập nhật.
+🧪 typecheck, lint, guard xanh; 78 test liên quan qua. Chưa chạy `npm run check` đầy đủ, chưa đo FPS.
+⚠️ Còn thô: thanh hàm là phiến đỏ phẳng; chim chưa có lông đuôi thật; Càng Nung nhỏ. Tôi mất thời gian vì chụp sai mốc (xem decision 059).
+👉 Chủ dự án: xem lại 4 skill đã chỉnh; chọn nhóm tiếp theo.
+
+### 2026-11-11 — VFX 3D cho nhóm Lửa (decision 059, chưa commit)
+✅ Đã làm: 10 hiệu ứng 3D cho 10 skill Lửa (`fireHits.ts`, `fireArea.ts`, `fireUlts.ts`, `fireParts.ts`); `battle_fx.json` thay act 2D bằng `vfx3d` và chỉnh `timing.end`; bảng đối chiếu mô tả ở `docs/animation/SKILL_REVIEW.md`; ảnh `docs/animation/vfx3d/fire_group_3d.jpg`.
+🧪 typecheck, lint, guard xanh; 78 test animation / battle / content qua. Chụp ở Battle Lab. Chưa chạy `npm run check` đầy đủ, chưa đo FPS.
+⚠️ Yếu: hình Phượng Hoàng, hàm Cắn Than Hồng, búa / đe còn khối phẳng. Càng Nung và Phun Dung Nham (người chơi) mới chụp lúc dựng.
+👉 Chủ dự án: xem 10 skill Lửa trong Admin → Animation trận, chấm; chọn nhóm tiếp theo hoặc chỉnh Lửa.
+
+### 2026-11-11 — Mở rộng VFX 3D sang cả nhóm Nước (decision 059, chưa commit)
+✅ Đã làm: 5 hiệu ứng 3D mới (bong bóng, phun bọt, sóng thần, đóng băng, hơi thở băng) + sửa Đinh Ba; `battle_fx.json` của 5 skill thay act 2D bằng `vfx3d`; hai skill băng bỏ bọc băng của skill (trạng thái tự vẽ); sửa cỡ hạt (nhân `POINT_SCALE`); `timing.end` của 5 skill tăng bằng độ dài act 3D.
+🧪 typecheck, lint, guard xanh; 78 test animation / battle / content qua. Chụp từng skill ở Battle Lab (`docs/animation/vfx3d/water_group_3d.jpg`). Chưa chạy `npm run check` đầy đủ, chưa đo FPS lại.
+⚠️ Sóng thần còn giống khối sóng có đuôi mờ; cue choáng 30 % của Đinh Ba chưa làm; bong bóng chưa có bloom; lượt của 5 skill dài hơn 150–650 ms.
+👉 Chủ dự án: xem 6 skill Nước trong Admin → Animation trận; chấm; quyết định mở rộng nhóm Lửa hay chỉnh nhóm Nước.
+
+### 2026-11-11 — Thử lớp VFX 3D (Three.js) cho Đinh Ba Hải Vương (decision 059, chưa commit)
+✅ Đã làm: act `vfx3d` + lớp `vfx3d/` (renderer Three.js → texture Phaser, camera cố định, hiệu ứng là hàm thuần theo đồng hồ trận), hiệu ứng `trident_sea`; `battle_fx.json` của `skill_ult_trident` thay các act 2D bằng 3D; thêm `three` + `@types/three`; ghi `THIRD_PARTY.md`, decision 059.
+🧪 typecheck, lint, guard xanh; 78 test animation / battle / content qua. Chụp trước / sau bằng Playwright ở Battle Lab. Đo khung bằng GPU phần mềm: 25,1 → 32,6 ms. Chưa chạy `npm run check` đầy đủ.
+⚠️ Chưa đo trên GPU thật, chưa thử Electron, chưa có bloom / chất lượng thấp / setting Cường độ; mới 1 skill. Phiên thử đã chạy server dev admin cổng 5175.
+👉 Chủ dự án: xem Đinh Ba Hải Vương trong Admin → Animation trận, chấm 3D so với 2D; quyết định mở rộng hay gỡ.
+
+### 2026-11-11 — Bỏ phương án Unity, chuyển animation / VFX sang code Phaser (decision 058, nhánh `feature-plot-upgrade`)
+✅ Đã làm: chủ dự án bác phương án Unity Studio; viết decision 058 thay 051 (art giữ nguyên, animation / VFX bằng code qua FeedbackDirector, không 3D), đánh dấu 051, `UNITY_STUDIO_PLAN.md`, `docs/studio/STATUS.md` là hết hiệu lực, cập nhật dòng Sobi Studio ở trên.
+🧪 Chỉ sửa tài liệu, không chạy `npm run check`.
+⚠️ Chưa làm: dọn `studio/`, `scripts/studio/`, `tests/scripts/studio.test.ts` (2 test hỏng vì thiếu tag `pre-unity-studio`), dòng Unity ở `THIRD_PARTY.md`; chưa bắt đầu rà skill.
+👉 Chủ dự án: xác nhận decision 058; cho phép bắt đầu rà nhóm skill đầu tiên (bảng skill → mô tả → hiệu ứng); trả lời các câu mở trong `docs/research/2d-3d-strategy/00_EXECUTIVE_SUMMARY.md`.
 
 ### 2026-11-10 — Decision 057 xong B6, B7, B5 (tiếp phiên trước bị dừng giữa chừng); đóng băng lại (nhánh `feature-plot-upgrade`, chưa merge)
 ✅ Đã làm: **B6** hiệu ứng nâng bậc / mở tầng - khu (vòng sáng, từng ô sáng lần lượt, cánh hoa bay, vệt sáng mờ trên trời; lớn dần theo bậc; theo cài đặt Cường độ hiệu ứng, tắt khi Giảm chuyển động) qua bảng feedback → FeedbackDirector → scene Cloud / Garden. **B7** tầng mây / khu đất tự đổi mẫu theo giờ trong ngày hoặc theo mùa (bảng `auto` trong `content/shared/plotSkins.json`; chỉ hiện mẫu đã đúc, không có mẫu hợp thì giữ mẫu người chơi chọn; save chỉ thêm cờ `tierSkinAuto` / `zoneSkinAuto`), hàng nút "Tự đổi mẫu" trong Xưởng đúc khuông, nền chuyển mềm 0,9 giây. **B5** vị trí trong cảnh của Cloud, Garden, Aquarium chuyển sang `content/<area>/layout.json`; Admin có trang "📐 Bố cục khu" kéo-thả. Decision 057 chuyển "Đã làm, đóng băng lại", ghi chú ở decision 021.
