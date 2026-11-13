@@ -66,3 +66,16 @@ Lỗi đã sửa trong lúc làm: danh sách mục tiêu của lượt (`struck`
 | `skill_e_idol_flame` Lửa Tượng Thần | `flame_pillars` | 7 | vòng lửa xoay khép lại trên hàng rồi cột lửa cao dựng dưới từng mục tiêu, vòng chấn, vết cháy | vòng lửa trên cao còn nhạt |
 
 Thay đổi chung trong lúc làm hệ Lửa: lớp nén sáng giữ sắc độ lâu hơn (lửa chồng nhiều lớp không còn ngả kem / hồng). Ảnh hệ Sét và Nước chụp trước thay đổi này.
+
+### Hệ Thiên nhiên (tự chấm 2026-11-13, ảnh `docs/animation/vfx3d/nature/*_sheet.jpg`, chụp sau lần sửa cuối)
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_mm_poison_thorn` Gai Độc | `thorn_volley` | 7 | nụ hoa mọc trước người tung, giật lùi mỗi phát; năm gai sẫm màu bay lần lượt có ánh sáng bám theo, cắm và rung trên kẻ địch, nhựa bắn, lá rơi | gai là hình lá dẹt kéo dài, chưa có khối |
+| `skill_e_vine_lash` Quất Dây Leo | `vine_whip` | 7,5 | dây leo có đốt vươn ra, cong ra sau lấy đà rồi quất vòng cung xuống mục tiêu; vệt chém sáng, lá tung, vòng chấn | lá trên dây gần như không thấy |
+| `skill_e_poison_spore` Bào Tử Độc | `spore_cone` | 7 | luồng bào tử hình nón từ miệng quái, phủ lên mục tiêu rồi treo thành đám mây tím cuộn, đốm phấn vàng xanh | — |
+| `skill_mm_binding_roots` Rễ Trói | `root_bind` | 7 | rễ phá đất dưới từng kẻ địch (lệch 110 ms), hai rễ xoắn ngược chiều quấn lên rồi siết lại ở 900 ms, đất văng, lá rụng | hai rễ xoắn đối xứng nhìn hơi "hình học" |
+| `skill_e_root_quake` Rễ Rung Chuyển | `root_quake` | 7 | vết nứt sáng chạy trên đất từ quái tới từng mục tiêu, ba rễ to quật lên dưới mỗi con, đất và bụi tung, vòng chấn | rễ giống gai nhọn hơn là rễ |
+| `skill_e_corrupt_bloom` Hoa Nhiễm Độc | `corrupt_bloom` | 7 | thân cong mọc lên trước quái, hoa tím hai vòng cánh nở, giật lùi mỗi lần phun; mỗi mục tiêu một cục độc bay vòng cung, vỡ thành giọt và mây độc | hoa còn phẳng như hình dán |
+| `skill_e_thorn_storm` Bão Gai | `thorn_storm` | 7 | lốc gai và lá xoáy quanh quái, siết lại rồi lao dọc hàng; ba đợt gió có vệt chém trên từng mục tiêu | lốc đọc là "gió xanh" nhiều hơn là "gai" |
+
+Bài học: hình `streak` của atlas rất mảnh, hạt kéo dài bằng hình đó chỉ là sợi chỉ; vật bay cần thấy rõ (gai) dùng hình `leaf` kéo dài, màu tương phản với nền và có ánh sáng bám theo.

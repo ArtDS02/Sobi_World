@@ -13,6 +13,12 @@
 
 ## Nhật ký
 
+### 2026-11-13 — VFX 3D: hệ Thiên nhiên dựng lại (P3, 7 / 7 skill), tự chấm (decision 059, commit cục bộ)
+✅ Đã làm: `thorn_volley`, `vine_whip`, `spore_cone` (`plantHits.ts`), `root_bind`, `root_quake`, `corrupt_bloom`, `thorn_storm` (`plantArea.ts`) trên `plantParts.ts` (thân dây / rễ là dải luôn quay về camera, uốn theo đường đi cho từng khung; lá bay, hoa nở, mây bào tử); bỏ `natureHits.ts`, `natureArea.ts` (`natureParts.ts` còn vì các hệ chưa làm dùng `seeds`). `battle_fx.json` không đổi.
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2116 / 2121: 4 đỏ có từ trước + `assetsCheck` quá 20 s (máy chậm, đã ghi trong handover). Ảnh `docs/animation/vfx3d/nature/`. Tự chấm 7–7,5 (bảng ở `SCORES.md`).
+⚠️ Gai của Gai Độc lúc đầu chìm hẳn vào nền cỏ (nhỏ, nhạt): đã đổi sang gai sẫm, to, có ánh sáng bám theo. Chưa đo FPS riêng cho hệ này.
+👉 Chủ dự án: chấm hệ Thiên nhiên. Còn lại chưa dựng lại: Đất 5, Kim 6, Ánh sáng 3, Bóng tối 7, Hư không 4, hệ trống / class / hỗ trợ 57; 22 skill mới (decision 060) chưa bắt đầu.
+
 ### 2026-11-13 — VFX 3D: hệ Lửa dựng lại (P3, 10 / 10 skill), tự chấm (decision 059, commit cục bộ)
 ✅ Đã làm: `claw_clamp`, `jaw_flame`, `hammer_slam`, `lava_glob` (`fireHits.ts`), `lava_flood`, `magma_cone`, `meteor_rain`, `flame_pillars` (`fireArea.ts`), `forge_ult` (`fireUlts.ts`) viết lại trên `flameParts.ts` (ngọn lửa fbm, sắt nung, dung nham có vỏ nứt, vụ nổ lửa, khói); bỏ `fireParts.ts`. `battle_fx.json`: chỉ đổi màu `tint` của Lò Rèn sang tối ấm. Lớp nén sáng (`post3d.ts`) giữ sắc độ lâu hơn.
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121, 4 đỏ có từ trước (2 `studio.test`, `assets.test`, `decor.test`). Ảnh `docs/animation/vfx3d/fire/`. Tự chấm 7–7,5 (bảng ở `SCORES.md`).
