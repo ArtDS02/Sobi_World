@@ -3874,7 +3874,7 @@
         { "do": "move", "at": 0, "who": "actor", "dur": 500, "move": "cast_roar" },
         { "do": "cutin", "at": 0, "who": "actor", "dur": 500, "color": "#ff5a2a", "style": "slash" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_ult_cutin" },
-        { "do": "tint", "at": 0, "who": "field", "dur": 3300, "color": "#5a0a0a", "alpha": 0.35, "fade": 300 },
+        { "do": "tint", "at": 0, "who": "field", "dur": 3300, "color": "#1a0a14", "alpha": 0.45, "fade": 300 },
         { "do": "sound", "at": 500, "who": "actor", "sound": "adv_forge" },
         { "do": "shake", "at": 1200, "who": "field", "dur": 260, "amount": 6, "dir": [0, 1] },
         { "do": "sound", "at": 1200, "who": "actor", "sound": "adv_forge" },

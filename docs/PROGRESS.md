@@ -13,6 +13,12 @@
 
 ## Nhật ký
 
+### 2026-11-13 — VFX 3D: hệ Lửa dựng lại (P3, 10 / 10 skill), tự chấm (decision 059, commit cục bộ)
+✅ Đã làm: `claw_clamp`, `jaw_flame`, `hammer_slam`, `lava_glob` (`fireHits.ts`), `lava_flood`, `magma_cone`, `meteor_rain`, `flame_pillars` (`fireArea.ts`), `forge_ult` (`fireUlts.ts`) viết lại trên `flameParts.ts` (ngọn lửa fbm, sắt nung, dung nham có vỏ nứt, vụ nổ lửa, khói); bỏ `fireParts.ts`. `battle_fx.json`: chỉ đổi màu `tint` của Lò Rèn sang tối ấm. Lớp nén sáng (`post3d.ts`) giữ sắc độ lâu hơn.
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121, 4 đỏ có từ trước (2 `studio.test`, `assets.test`, `decor.test`). Ảnh `docs/animation/vfx3d/fire/`. Tự chấm 7–7,5 (bảng ở `SCORES.md`).
+⚠️ Càng Nung và Cắn Than Hồng dùng chung một khung (khác nanh, màu, nhiệt). Ảnh hệ Sét và Nước chụp trước khi đổi nén sáng, chưa chụp lại. FPS trên RTX 3050 (Chrome headless, 1600 × 900): Lò Rèn, Mưa Thiên Thạch, Lửa Tượng Thần 60 fps; chưa đo trong Electron.
+👉 Chủ dự án: chấm hệ Lửa. Còn lại chưa dựng lại: Thiên nhiên 7, Đất 5, Kim 6, Ánh sáng 3, Bóng tối 7, Hư không 4, hệ trống / class / hỗ trợ 57; 22 skill mới (decision 060) chưa bắt đầu.
+
 ### 2026-11-12 — VFX 3D: hệ Nước dựng lại (P3, 6 / 6 skill), tự chấm (decision 059, commit cục bộ)
 ✅ Đã làm: `bubble_shot`, `bubble_spray`, `tsunami_sweep` (`waterFx.ts`), `ice_bloom`, `frost_breath` (`frostFx.ts`); `waterParts.ts` thêm vỏ bong bóng và con sóng nhìn ngang; bỏ `bubbles.ts`, `tsunami.ts`, `iceFx.ts`. Kịch bản (`battle_fx.json`) của 5 skill không đổi.
 🧪 `npm run check` đầy đủ sau hệ Sét và Nước: typecheck, lint, guard, assets:check xanh; test 2117 / 2121, vẫn 4 đỏ có từ trước (2 `studio.test`, `assets.test`, `decor.test`). Ảnh `docs/animation/vfx3d/water/`. Tự chấm 7–8 (bảng ở `SCORES.md`).

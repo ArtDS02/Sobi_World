@@ -35,7 +35,7 @@ vec3 tone(vec3 c){
   float t=.82+.18*(1.-exp(-(m-.82)/.42));
   vec3 kept=c*(t/m);
   // Far over the top the colour heats toward white (a core), but never all the way: the hue survives.
-  return mix(kept,vec3(t),smoothstep(1.5,4.,m)*.55);
+  return mix(kept,vec3(t),smoothstep(2.4,6.,m)*.45);
 }
 void main(){
   vec2 uv=vec2(vUv.x,fract(vUv.y*2.));

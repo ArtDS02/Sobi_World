@@ -50,3 +50,19 @@ Lỗi đã sửa trong lúc làm: danh sách mục tiêu của lượt (`struck`
 | `skill_e_bubble` Phun Bọt | `bubble_spray` | 7 | luồng bọt nhỏ từ miệng quái, ba bong bóng vừa vỡ lần lượt trên mục tiêu, vũng nước | luồng bọt hơi mảnh |
 | `skill_cl_freeze` Đóng Băng | `ice_bloom` | 7 | tuyết xoáy vào, sương giá bò trên đất, vòng tinh thể băng bật lên, hoa tuyết tung | trong Battle Lab trạng thái Đóng băng luôn trúng nên khối băng của trạng thái che mất tinh thể |
 | `skill_e_frost_breath` Hơi Thở Băng | `frost_breath` | 7 | luồng hơi lạnh hình nón cuộn từ miệng quái, hoa tuyết, vệt sáng lạnh, sương giá và tinh thể nhỏ ở đích | như trên |
+
+### Hệ Lửa (tự chấm 2026-11-13, ảnh `docs/animation/vfx3d/fire/*_sheet.jpg`, chụp sau lần sửa cuối)
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_ult_phoenix` Phượng Hoàng Tái Sinh | `phoenix_rebirth` | 7,5 | (pilot, chụp lại sau khi đổi cách nén sáng: không đổi dáng) | như bảng pilot |
+| `skill_ult_hg` Lò Rèn Nguyên Thủy | `forge_ult` | 7,5 | đe sắt đen rơi xuống giữa hàng, búa khổng lồ giơ lên rồi nện ba nhát, mỗi nhát sắt nóng hơn (đen → đỏ → vàng), tia lửa phun, vòng lửa lan xa dần, lửa dưới từng kẻ địch cao dần, dung nham; tàn lửa bay sang từng đồng đội + ngọn lửa (tăng công) | đe che kẻ địch đứng giữa; búa cuối gần như vàng phẳng |
+| `skill_hg_hot_claw` Càng Nung | `claw_clamp` | 7 | càng sắt đen hai gọng mở rộng quanh kẻ địch, nung đỏ rồi sập lại, tia lửa, vòng nhiệt | lúc sập hai gọng chồng lên nhau, khó thấy kẻ địch ở giữa |
+| `skill_e_ember_bite` Cắn Than Hồng | `jaw_flame` | 7 | hai hàm than có nanh, đỏ rực dần, cắn sập, tàn lửa | cùng khung với Càng Nung (khác ở nanh và màu than) |
+| `skill_hg_inferno_hammer` Búa Hỏa Ngục | `hammer_slam` | 7,5 | búa hiện trên cao nghiêng ra sau, nhấc thêm lấy đà, giáng trong 110 ms, bẹp và nảy; cột lửa, vũng dung nham nứt, vòng chấn, khói | đầu búa lúc nóng nhất gần trắng |
+| `skill_e_lava_spit` Phun Dung Nham (quái) | `lava_glob` | 7,5 | cục dung nham lắc lư bay vòng cung kéo lửa, vỡ thành vũng dung nham có vỏ nứt, ba ngọn lửa liếm, giọt văng | — |
+| `skill_hg_lava` Phun Dung Nham | `lava_flood` | 7 | dung nham trào và loang dưới cả hàng, mỗi kẻ địch một cột lửa + giọt dung nham lệch 120 ms, bong bóng khí | cột lửa mảnh |
+| `skill_e_magma_breath` Hơi Thở Dung Nham | `magma_cone` | 7 | luồng lửa hình nón và giọt dung nham từ miệng quái quét qua hàng, vũng dung nham, lửa nghiêng theo luồng ở từng mục tiêu | luồng còn mỏng so với "hơi thở" |
+| `skill_e_meteor` Mưa Thiên Thạch | `meteor_rain` | 7 | đá cháy rơi chéo, mỗi mục tiêu một viên lệch 100 ms rồi một viên lớn giữa hàng; cột lửa, vòng chấn, vết cháy | đuôi lửa của thiên thạch còn là các đốm nhạt |
+| `skill_e_idol_flame` Lửa Tượng Thần | `flame_pillars` | 7 | vòng lửa xoay khép lại trên hàng rồi cột lửa cao dựng dưới từng mục tiêu, vòng chấn, vết cháy | vòng lửa trên cao còn nhạt |
+
+Thay đổi chung trong lúc làm hệ Lửa: lớp nén sáng giữ sắc độ lâu hơn (lửa chồng nhiều lớp không còn ngả kem / hồng). Ảnh hệ Sét và Nước chụp trước thay đổi này.
