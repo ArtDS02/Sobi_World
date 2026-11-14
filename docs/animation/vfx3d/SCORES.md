@@ -110,3 +110,19 @@ Kỵ sĩ là hình gốc vẽ bằng code (ngựa có giáp, người đội mũ
 
 Ký hiệu rune là các nét vẽ ngẫu nhiên theo ô (shader), không lấy từ bảng chữ hay biểu tượng nào có sẵn.
 FPS trên RTX 3050 (Chrome headless, 1600 × 900): Tia Lumina, Đoàn Kỵ Thép, Địa Chấn Phong Ấn, Bão Gai đều 60 fps.
+
+### Hệ Bóng tối (tự chấm 2026-11-14, ảnh `docs/animation/vfx3d/dark/*_sheet.jpg`, chụp sau lần sửa cuối; phiên Fable dựng, phiên Opus chỉnh và chấm)
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_dm_ink` Phun Mực | `ink_spray` | 7 | luồng mực đặc bắn vòng cung từ người tung, mảng mực úp lên đầu kẻ địch đúng nhịp trúng, chảy xệ thành giọt dọc thân, thành vũng dưới chân; kẻ địch thấy lại sau ~150 ms | luồng mực là dải đen phẳng, chưa có ánh bóng / viền tím |
+| `skill_dm_nightmare` Ác Mộng | `nightmare` | 7,5 | khói đen dâng sau kẻ địch, mặt nạ dài hiện ra trên đầu nó, lắc lư, mở mắt tím rồi nhe răng; hai tay bóng vươn quanh; đúng nhịp trúng mặt nạ lao xuống úp vào kẻ địch rồi tan trong ~250 ms | lúc treo trên cao, đầu tay bóng có thể chạm kẻ địch đứng sau |
+| `skill_e_shadow_bite` Cắn Trong Bóng Tối | `shadow_bite` | 7 | vũng bóng trượt từ chỗ quái biến mất tới dưới mục tiêu, hàm bóng hai dải răng trồi lên há rộng quanh mục tiêu, sập lại đúng nhịp trúng với khe sáng tím, tan ngay sau đó | lúc sập, dải hàm che ngang ngực mục tiêu khoảng 200 ms |
+| `skill_e_wraith_touch` Chạm Hồn Ma | `wraith_touch` | 7 | sương lạnh bên cạnh mục tiêu, cánh tay nhợt mọc lên vòng qua, bàn tay năm ngón xòe trên cao rồi lật úp, các ngón cong như móng chụp lấy đầu mục tiêu; hồn trắng xanh bị rút bay lên | cánh tay là ống trơn, chưa có đốt; nhìn xa giống cần câu |
+| `skill_dm_night_net` Lưới Đêm | `night_net` | 7 | sao tụ trên hàng địch, lưới đêm dệt từ giữa ra, nghiêng dần và rơi phủ cả hàng, siết lại; mỗi kẻ địch một vòng tím và mảnh bóng lệch 80 ms | lưới là ô trám đều, hơi giống lưới rào; mảng tím đậm quanh mục tiêu sau cú trúng là hiệu ứng trúng chung của hệ (2D), không thuộc skill |
+| `skill_ult_dm` Lưới Dệt Đêm | `night_weave` | 7,5 | trời đen tụ trên hàng địch, các sợi chỉ bay từ người tung lên đan chéo, tấm lưới lớn dệt ra và hạ xuống cả hàng, ba sợi quấn kén quanh từng kẻ địch (lệch 150 ms), siết ở 1500, giật siết bung sao và vòng lớn ở 2050 | sợi chỉ lúc bay gần trắng (đọc như ánh sáng hơn là chỉ đêm) |
+| `skill_e_curse` Lời Nguyền | `curse_eyes` | 7 | một con mắt lớn mở trên quái, nhìn dọc hàng; rồi trên mỗi mục tiêu một con mắt nhỏ mở (lệch 120 ms), nhỏ lệ mực xuống, mảng bóng tối và vòng tím | mắt của mục tiêu đứng trước đè lên thân con đứng sau |
+
+Lỗi đã sửa trong lúc chấm (bản Fable bị ngắt trước khi chấm): Phun Mực, Ác Mộng, Cắn Trong Bóng Tối che kín mục tiêu 300–600 ms (hình quá to, tan chậm); Chạm Hồn Ma mọc xuyên qua con heo bên cạnh, bàn tay xòe ngang thay vì nắm; quầng khói của Lời Nguyền thành cột đen treo từ mép trên; lưới của Lưới Đêm bị cắt ở mép trên khung; mảnh khói trong `blot` dày và che mục tiêu (đã làm mảnh hơn cho cả hệ).
+Bài học: lớp 3D luôn vẽ **đè lên** sinh vật (không có chiều sâu so với sprite), nên vật "sau lưng" mục tiêu thực ra che mặt nó; vật cần đứng cạnh mục tiêu phải đặt **bên cạnh**, về phía trống (phía người tung), không về phía đồng đội của mục tiêu.
+Mặt nạ, mắt, hàm, bàn tay là hình gốc vẽ bằng shader / code, không dựa trên nhân vật hay biểu tượng nào.
+FPS trên RTX 3050 (Chrome headless, 1600 × 900): Lưới Dệt Đêm 60,1, Lưới Đêm 60,2, Ác Mộng 60,3 fps.

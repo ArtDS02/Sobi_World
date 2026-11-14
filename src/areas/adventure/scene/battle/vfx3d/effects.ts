@@ -8,8 +8,8 @@ import { chainLightning, lightningDive, sparkPeck, thunderStrike } from './storm
 import { bronzeFist } from './steelFist';
 import { armorBreak, metalClaw, steelCharge, steelSlash } from './steelFx';
 import { steelCavalry } from './steelUlt';
-import { curseEyes, nightNet, nightWeave } from './darkArea';
-import { inkSpray, nightmare, shadowBite, wraithTouch } from './darkFx';
+import { curseEyes, nightNet, nightWeave } from './shadeArea';
+import { inkSpray, nightmare, shadowBite, wraithTouch } from './shadeFx';
 import { classCombo, classMeteor, classOrb, classRain, classStrike, groundStomp } from './classFx';
 import { ultParty } from './partyUlt';
 import { buffUp, cleanse, doomMark, healBloom, mpChannel, shieldDome } from './supportFx';

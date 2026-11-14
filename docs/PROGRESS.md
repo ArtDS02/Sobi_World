@@ -13,6 +13,11 @@
 
 ## Nhật ký
 
+### 2026-11-14 — VFX 3D: hệ Bóng tối dựng lại (P3, 7 / 7 skill), tự chấm (decision 059)
+✅ Đã làm: `ink_spray`, `nightmare`, `shadow_bite`, `wraith_touch` (`shadeFx.ts`), `night_net`, `night_weave`, `curse_eyes` (`shadeArea.ts`) trên `shadeParts.ts` (khối mù đen mực viền tím mép bị nhiễu ăn, mắt, hàm bóng hai dải răng, lưới đêm có sao ở nút, mảnh mực); bỏ `darkFx.ts`, `darkArea.ts`. Phiên Fable dựng, bị ngắt trước khi chấm; phiên này chỉnh 6 skill che mục tiêu / sai vị trí rồi chấm. `battle_fx.json` không đổi. Tiêu chuẩn duyệt: `docs/animation/VFX3D_REVIEW_STANDARD.md`.
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2115 / 2121: 4 đỏ có từ trước + 2 `assetsCheck` quá 20 s (máy chậm). FPS trên RTX 3050: Lưới Dệt Đêm, Lưới Đêm, Ác Mộng 60 fps. Ảnh `docs/animation/vfx3d/dark/`. Tự chấm 7–7,5. Chỉ xem khung tĩnh, chưa xem clip.
+👉 Chủ dự án: chấm hệ Bóng tối. Còn lại chưa dựng lại: Hư không 4, hệ trống / class / hỗ trợ 57; 22 skill mới (decision 060) chưa bắt đầu.
+
 ### 2026-11-14 — VFX 3D: hệ Ánh sáng dựng lại (P3, 3 / 3 skill), tự chấm (decision 059, commit cục bộ)
 ✅ Đã làm: `light_ray`, `lumina_ray`, `rune_beam` (`glowFx.ts`) trên `glowParts.ts` (tia sáng có lõi trắng, vệt chạy dọc và lớp sơn ấm bên dưới; hào quang có tia mặt trời hoặc dải ký hiệu rune; lóe sáng dịu; đốm sáng bay lên); bỏ `lightFx.ts`. `battle_fx.json` không đổi.
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2115 / 2121: 4 đỏ có từ trước + 2 `assetsCheck` quá 20 s (máy chậm). FPS trên RTX 3050: Tia Lumina, Đoàn Kỵ Thép, Địa Chấn Phong Ấn, Bão Gai 60 fps. Ảnh `docs/animation/vfx3d/light/`. Tự chấm 7,5–8.

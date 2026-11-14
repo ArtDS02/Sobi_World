@@ -50,7 +50,8 @@ Phản hồi đã có của chủ dự án (2026-11-12): Đinh Ba ~7, "cần sin
 6. **Từng mục tiêu.** Đích nhiều con: lấy `env.struck` (đúng mục tiêu của lượt, theo thứ tự). Mỗi con một điểm trúng riêng, lệch nhau 80–160 ms. Không dùng một vụ nổ giữa hàng thay cho từng con.
 7. **Nhiều nhịp: 1-2-…-BỤP.** Đúng `hits` nhịp; nhịp cuối to nhất (rung, chớp mạnh nhất). Các nhịp đầu chỉ chớp nhẹ.
 8. **Không vẽ kết quả của xác suất.** Bọc băng, bỏng, choáng, Phong ấn… do trạng thái tự vẽ. Skill chỉ vẽ phần chắc chắn xảy ra.
-9. **Không che mục tiêu lâu.** Lóe sáng, khối khiên, cột nước… không che kín mục tiêu quá ~150 ms. Đây là điểm yếu Fable ghi nhiều nhất ở cột "Còn yếu".
+9. **Không che mục tiêu lâu.** Lóe sáng, khối khiên, cột nước, mảng mực… không che kín mục tiêu quá ~150–250 ms. Đây là điểm yếu Fable ghi nhiều nhất ở cột "Còn yếu"; hệ Bóng tối mắc nhiều nhất vì vật liệu là "sơn" đặc.
+   **Lớp 3D luôn vẽ đè lên sinh vật** (không có chiều sâu so với sprite): vật đặt "sau lưng" mục tiêu thực ra che mặt nó. Vật đứng cạnh mục tiêu đặt **bên cạnh**, về phía trống (phía người tung), không về phía đồng đội của mục tiêu. Cỡ hình chủ đạo của đòn một mục tiêu nên cỡ thân mục tiêu (`0,5 + env.tall × 0,25` là mốc đã dùng), không to gấp đôi.
 10. **Nền phục vụ hệ.** Sét, Bóng tối, đòn mạnh có thể tối nền bằng `tint` trong kịch bản (`battle_fx.json`), trong giới hạn bậc lực. Không đổi `timing` nếu không cần.
 11. **Bậc lực đúng bảng** (`STANDARDS.md` §4): hit-stop, rung, chớp, punch không vượt bậc. Hỗ trợ (T0) không rung, không chớp trắng.
 12. **Hình gốc 100 %** (decision 048): kỵ sĩ, phượng hoàng, rune, mặt nạ… đều vẽ bằng code từ hình cơ bản, không dựa trên nhân vật / biểu tượng / chữ có sẵn. Ghi một câu xác nhận vào SCORES khi hình dễ gây nghi vấn.
@@ -67,7 +68,7 @@ Mỗi hệ có một bộ phần riêng (`<chất liệu>Parts.ts`). Skill trong
 | Đất | `stoneParts` | đá có mặt cắt, ba tông phẳng (sáng từ trên) và hạt sạn; tảng / gai có hình từ seed; vết nứt chạy trên đất; mảnh vụn văng, bụi lăn | phát sáng (trừ ánh trong vết nứt khi cần); nhẹ, lơ lửng |
 | Kim | `steelParts` | kim loại bóng vẽ bằng dải phản chiếu và điểm sáng cứng (thép hoặc đồng); cung chém quét rồi mảnh dần; tia "keng" trắng; khiên ghép mảnh khóa lại hoặc vỡ tung | mềm, mờ nhòe; khói |
 | Ánh sáng | `glowParts` | tia có lõi trắng, thân vàng với vệt chạy dọc, mảng ấm sơn dưới để đọc được trên trời sáng; hào quang có tia nắng; vòng rune; đốm sáng dịu bay lên | rung, khói; chuyển động giật |
-| Bóng tối (đang làm) | `shadeParts` | khối "mù" đen mực, viền tím mảnh, mép bị nhiễu chậm ăn mòn; mắt mở; hàm bóng có răng; lưới đêm có sao ở nút; **sơn, không chiếu sáng**: che thứ phía sau, chuyển động chậm | sáng chói; nét cứng |
+| Bóng tối | `shadeParts` | khối "mù" đen mực, viền tím mảnh, mép bị nhiễu chậm ăn mòn; mắt mở; hàm bóng hai dải răng (không phải cả đĩa); lưới đêm có sao ở nút; mảnh mực mảnh; **sơn, không chiếu sáng**: chuyển động chậm, ánh duy nhất là viền tím; vì sơn che thứ phía sau nên phải nhỏ và tan nhanh ở chỗ mục tiêu | sáng chói; nét cứng; khối đặc che mục tiêu |
 | Hư không (chưa dựng) | — | (theo `SKILL_DESCRIPTION_STANDARD.md` §3) vòng, khe nứt, lõi đen, mảnh vỡ trôi; vặn không gian, tách màu | màu ngoài tím lam; vật liệu "thật" |
 | Không hệ / class / hỗ trợ (chưa dựng) | — | làm **riêng từng loại** (hồi, tăng, khiên, thanh tẩy, đòn class, tuyệt kỹ hỗ trợ); đổi màu theo `$color` của người tung; hỗ trợ luôn nhẹ, ấm, đi lên | một hình đổi màu cho cả nhóm; bốn tuyệt kỹ hỗ trợ trùng hình |
 
@@ -110,7 +111,7 @@ Mỗi hệ có một bộ phần riêng (`<chất liệu>Parts.ts`). Skill trong
 - `assetsCheck` đôi khi quá 20 s vì máy chậm; chạy riêng với `--testTimeout 120000` thì qua.
 
 ## 8. Việc còn lại (2026-11-14)
-1. **Bóng tối (7):** code đã có trong cây làm việc (`shadeFx.ts`, `shadeArea.ts`, `shadeParts.ts`). Còn chụp lại `skill_dm_ink`, `skill_dm_nightmare`, `skill_e_shadow_bite`, rồi tự chấm, ghi SCORES, check và commit.
+1. ~~Bóng tối (7)~~: xong 2026-11-14, tự chấm 7–7,5 (`docs/animation/vfx3d/dark/`), chờ chủ dự án chấm.
 2. **Hư không (4):** đang dùng bản cũ (`voidFx.ts`, `voidUlts.ts`).
 3. **Không hệ / class / hỗ trợ (57):** đang dùng 13 hiệu ứng chung (`supportFx.ts`, `classFx.ts`, `partyUlt.ts`). Phải tách theo loại.
 4. **22 skill mới (P4):** viết decision 060 trước khi sửa `content/`, rồi dựng theo file này.
