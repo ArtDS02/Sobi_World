@@ -3310,7 +3310,7 @@
       "gesture": "brace",
       "timing": { "release": 300, "impact": 780, "end": 1750 },
       "script": [
-        { "do": "vfx3d", "at": 450, "who": "actor", "dur": 1300, "fx": "shield_dome", "color": "#c0a070" },
+        { "do": "vfx3d", "at": 450, "who": "actor", "dur": 1300, "fx": "stone_skin", "color": "#c0a070" },
         { "do": "pose", "at": 0, "who": "actor", "dur": 300, "pose": "cast" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "glow", "at": 0, "who": "actor", "dur": 300, "color": "#e0b870" },
@@ -3324,7 +3324,14 @@
       "timing": { "release": 350, "impact": 900, "end": 1870 },
       "stagger": 110,
       "script": [
-        { "do": "vfx3d", "at": 570, "who": "allyside", "dur": 1300, "fx": "shield_dome", "color": "#c0a070" },
+        {
+          "do": "vfx3d",
+          "at": 330,
+          "who": "allyside",
+          "dur": 1540,
+          "fx": "mountain_shell",
+          "color": "#c0a070"
+        },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "shake", "at": 0, "who": "field", "dur": 300, "amount": 2 },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_earth_cast" },
@@ -3721,7 +3728,7 @@
     "skill_tg_bronze_wall": {
       "timing": { "release": 250, "impact": 520, "end": 1490 },
       "script": [
-        { "do": "vfx3d", "at": 190, "who": "actor", "dur": 1300, "fx": "shield_dome", "color": "#d89a50" },
+        { "do": "vfx3d", "at": 190, "who": "actor", "dur": 1300, "fx": "bronze_wall", "color": "#d89a50" },
         { "do": "pose", "at": 0, "who": "actor", "dur": 250, "pose": "cast" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_metal_cast" },
@@ -4184,7 +4191,7 @@
     "skill_cl_taunt": {
       "timing": { "release": 300, "impact": 600, "end": 1570 },
       "script": [
-        { "do": "vfx3d", "at": 270, "who": "actor", "dur": 1300, "fx": "shield_dome", "color": "#ffa040" },
+        { "do": "vfx3d", "at": 270, "who": "actor", "dur": 1300, "fx": "taunt_call", "color": "#ffa040" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_whoosh" },
         { "do": "move", "at": 300, "who": "foes", "dur": 500, "move": "look", "deg": 6 },
@@ -4195,7 +4202,7 @@
     "skill_cl_hold_fast": {
       "timing": { "release": 250, "impact": 650, "end": 1620 },
       "script": [
-        { "do": "vfx3d", "at": 320, "who": "actor", "dur": 1300, "fx": "shield_dome", "color": "#9ab8ff" },
+        { "do": "vfx3d", "at": 250, "who": "actor", "dur": 1370, "fx": "hold_fast", "color": "#9ab8ff" },
         { "do": "move", "at": 0, "who": "actor", "dur": 650, "move": "cast_bow" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_guard" },
         { "do": "move", "at": 650, "who": "actor", "dur": 200, "move": "shake", "x": 1 },
@@ -4206,7 +4213,7 @@
       "timing": { "release": 300, "impact": 850, "end": 1820 },
       "stagger": 120,
       "script": [
-        { "do": "vfx3d", "at": 520, "who": "allyside", "dur": 1300, "fx": "shield_dome", "color": "#cfe0ff" },
+        { "do": "vfx3d", "at": 330, "who": "allyside", "dur": 1490, "fx": "shield_wall", "color": "#cfe0ff" },
         { "do": "pose", "at": 0, "who": "actor", "dur": 300, "pose": "cast" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_guard" },
@@ -4270,7 +4277,7 @@
     "skill_cl_fortress": {
       "timing": { "release": 300, "impact": 800, "end": 1770 },
       "script": [
-        { "do": "vfx3d", "at": 470, "who": "actor", "dur": 1300, "fx": "shield_dome", "color": "#ffd66a" },
+        { "do": "vfx3d", "at": 330, "who": "actor", "dur": 1440, "fx": "fortress", "color": "#ffd66a" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "shake", "at": 500, "who": "field", "dur": 150, "amount": 2 },
         { "do": "sound", "at": 500, "who": "actor", "sound": "adv_bonk" },
@@ -4701,7 +4708,7 @@
     "skill_cl_undying": {
       "timing": { "release": 300, "impact": 650, "end": 1620 },
       "script": [
-        { "do": "vfx3d", "at": 320, "who": "target", "dur": 1300, "fx": "shield_dome", "color": "#fff0a0" },
+        { "do": "vfx3d", "at": 320, "who": "target", "dur": 1300, "fx": "undying_spark", "color": "#fff0a0" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "pose", "at": 0, "who": "actor", "dur": 300, "pose": "cast" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_cast" },
@@ -4854,7 +4861,7 @@
     "skill_e_bark_skin": {
       "timing": { "release": 250, "impact": 750, "end": 1720 },
       "script": [
-        { "do": "vfx3d", "at": 420, "who": "actor", "dur": 1300, "fx": "shield_dome", "color": "#7ccf5a" },
+        { "do": "vfx3d", "at": 330, "who": "actor", "dur": 1390, "fx": "bark_skin", "color": "#7ccf5a" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_nature_cast" },
         { "do": "sound", "at": 750, "who": "actor", "sound": "adv_guard" }
@@ -4916,7 +4923,7 @@
     "skill_e_iron_shell": {
       "timing": { "release": 250, "impact": 750, "end": 1720 },
       "script": [
-        { "do": "vfx3d", "at": 420, "who": "actor", "dur": 1300, "fx": "shield_dome", "color": "#c8d0dc" },
+        { "do": "vfx3d", "at": 420, "who": "actor", "dur": 1300, "fx": "iron_shell", "color": "#c8d0dc" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_metal_cast" },
         { "do": "flash", "at": 750, "who": "field", "dur": 220, "color": "#ffffff", "alpha": 0.1 },
@@ -5067,7 +5074,7 @@
       "timing": { "release": 300, "impact": 800, "end": 1770 },
       "stagger": 110,
       "script": [
-        { "do": "vfx3d", "at": 470, "who": "allyside", "dur": 1300, "fx": "shield_dome", "color": "#c0a070" },
+        { "do": "vfx3d", "at": 330, "who": "allyside", "dur": 1440, "fx": "stone_guard", "color": "#c0a070" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_earth_cast" },
         { "do": "sound", "at": 300, "who": "actor", "sound": "adv_guard" },

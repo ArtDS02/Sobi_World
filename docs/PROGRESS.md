@@ -13,6 +13,11 @@
 
 ## Nhật ký
 
+### 2026-11-15 — VFX 3D: khiên / thủ / khiêu khích dựng lại theo từng loại (11 skill), tự chấm (decision 059)
+✅ Đã làm: 11 hiệu ứng mới thay `shield_dome` dùng chung: `stone_skin`, `bronze_wall`, `iron_shell`, `taunt_call`, `hold_fast`, `fortress`, `bark_skin` (`guardFx.ts`), `mountain_shell`, `shield_wall`, `stone_guard`, `undying_spark` (`guardTeam.ts`), dùng lại đá (`stoneParts`), mảnh khiên (`steelParts`), vòm lục giác (`boonParts`). `battle_fx.json`: act `vfx3d` đổi `fx` và mốc (không đổi `timing`).
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121: chỉ 4 đỏ có từ trước. Ảnh `docs/animation/vfx3d/support/`. Tự chấm 7–7,5.
+👉 Chủ dự án: chấm nhóm khiên / thủ. Còn lại: đòn class 15, tuyệt kỹ hỗ trợ 4; 22 skill mới (decision 060).
+
 ### 2026-11-15 — VFX 3D: hỗ trợ tăng chỉ số dựng lại theo từng loại (12 skill), tự chấm (decision 059)
 ✅ Đã làm: 12 hiệu ứng mới thay `buff_up` dùng chung: `forge_fire`, `phase_shift`, `aim_focus`, `wind_dash`, `focus_charge`, `cheer_burst` (`boonUp.ts`), `ink_veil`, `guiding_lamp`, `swift_bolt`, `rally_wave`, `howl_wave`, `roar_wave` (`boonTeam.ts`); mũi tên theo màu chỉ số. `battle_fx.json`: act `vfx3d` của 12 skill đổi `fx` và mốc (không đổi `timing`).
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121: chỉ 4 đỏ có từ trước. Ảnh `docs/animation/vfx3d/support/`. Tự chấm 7–7,5.

@@ -19,6 +19,8 @@ import { auraRegen, blossomRegen, healingRain, purify, tideSong } from './mendAr
 import { doomSigil, mpStream, voidVeil } from './boonSpecial';
 import { aimFocus, cheerBurst, focusCharge, forgeFire, phaseShift, windDash } from './boonUp';
 import { guidingLamp, howlWave, inkVeil, rallyWave, roarWave, swiftBolt } from './boonTeam';
+import { barkSkin, bronzeWall, fortress, holdFast, ironShell, stoneSkin, tauntCall } from './guardFx';
+import { mountainShell, shieldWall, stoneGuard, undyingSpark } from './guardTeam';
 import { mythicAwakening, skyBellUlt } from './riftUlts';
 import { flamePillars, lavaFlood, magmaCone, meteorRain } from './fireArea';
 import { clawClamp, hammerSlam, jawFlame, lavaGlob } from './fireHits';
@@ -113,6 +115,17 @@ export const VFX3D: Record<(typeof VFX3D_IDS)[number], Vfx3dFactory> = {
   rally_wave: rallyWave,
   howl_wave: howlWave,
   roar_wave: roarWave,
+  stone_skin: stoneSkin,
+  bronze_wall: bronzeWall,
+  iron_shell: ironShell,
+  taunt_call: tauntCall,
+  hold_fast: holdFast,
+  fortress,
+  bark_skin: barkSkin,
+  mountain_shell: mountainShell,
+  shield_wall: shieldWall,
+  stone_guard: stoneGuard,
+  undying_spark: undyingSpark,
   heal_bloom: healBloom,
   buff_up: buffUp,
   shield_dome: shieldDome,

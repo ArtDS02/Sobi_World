@@ -175,3 +175,20 @@ Trước đây 12 skill này dùng chung `buff_up` đổi màu. Mũi tên luôn 
 | `skill_e_howl` Tru Lên | `howl_wave` | 7 | ba vòng sóng âm lan từ miệng quái ra cả bọn; mũi tên cam | — |
 | `skill_e_dragon_roar` Tiếng Gầm Rồng | `roar_wave` | 7 | bốn vòng sóng âm đỏ rộng hơn, tàn lửa phun từ miệng; mũi tên cam cho cả bọn, tím cho chính nó | cùng khung với Tru Lên (khác cỡ, màu, tàn lửa) |
 Bài học: lớp "sơn" (vật liệu thường) và lớp "ánh sáng" (cộng) được ghép riêng ở hậu kỳ, nên một vật sơn **luôn che** vật ánh sáng nằm sau nó, bất kể `renderOrder`. Lồng đèn của Đèn Dẫn Lối từng bị lớp sơn ấm của tia (`ray`) che mất; tia sáng nối từ một vật sáng nên là đoạn sáng thuần (`lines.ts`).
+
+### Hỗ trợ — khiên, thủ, khiêu khích (tự chấm 2026-11-15, ảnh `docs/animation/vfx3d/support/*_sheet.jpg`, chụp sau lần sửa cuối)
+Trước đây 11 skill này dùng chung `shield_dome` đổi màu.
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_qs_stone_skin` Da Đá | `stone_skin` | 7 | bảy viên đá bay vào từ vòng rộng, bám vào thân người tung đúng nhịp rồi vụn đi; vòm lục giác màu đá khép lại; mũi tên thủ | — |
+| `skill_qs_mountain_shell` Mai Núi | `mountain_shell` | 7,5 | vòng gai đá trồi quanh từng bạn như cái mai (lệch 110 ms) rồi lún, đá vụn, bụi; mũi tên thủ + thủ phép | — |
+| `skill_tg_bronze_wall` Tường Khiên Đồng | `bronze_wall` | 7,5 | các mảnh đồng bay vào ghép thành khiên chắn về phía địch, keng sáng; ba vòng cam lan ra (khiêu khích); mũi tên thủ | — |
+| `skill_e_iron_shell` Vỏ Sắt | `iron_shell` | 7 | như trên bằng thép, không có vòng khiêu khích | cùng khung với Tường Khiên Đồng |
+| `skill_cl_taunt` Khiêu Khích | `taunt_call` | 7 | ba vòng cam lan từ người tung, vòm nhỏ khép lại | — |
+| `skill_cl_hold_fast` Thủ Vững | `hold_fast` | 7 | vòng in xuống đất, vòm lam lóe khi khóa, mũi tên thủ và dấu cộng nhỏ | — |
+| `skill_cl_fortress` Pháo Đài Sống | `fortress` | 7,5 | vòm lớn khép trên người tung, năm cụm gai đá trồi quanh chân, vòng khiêu khích; mũi tên thủ | — |
+| `skill_cl_shield_wall` Tường Khiên | `shield_wall` | 7 | vòm lục giác khép trên từng bạn (lệch 110 ms), lóe khi khóa | trùng chỗ với vòm khiên của trạng thái |
+| `skill_cl_undying` Tinh Thần Bất Khuất | `undying_spark` | 7 | tia vàng xoắn từ trên xuống vào đồng đội, bung lông sáng và vòng vàng (cánh là của trạng thái) | tia nhỏ |
+| `skill_e_bark_skin` Vỏ Cây Cứng | `bark_skin` | 7 | ba dây vỏ cây nâu quấn lên thân quái, vòm xanh khép lại; mũi tên thủ | — |
+| `skill_e_stone_guard` Thủ Đá | `stone_guard` | 7 | phiến đá trồi lên trước từng con (lệch 110 ms) rồi lún, đá vụn; mũi tên thủ | — |
+Bài học: khiên đứng thẳng trước một đơn vị che mặt nó vì lớp 3D vẽ đè; đặt khiên lệch về phía địch và cho tan trong ~350 ms.
