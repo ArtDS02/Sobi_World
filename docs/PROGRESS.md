@@ -13,6 +13,11 @@
 
 ## Nhật ký
 
+### 2026-11-14 — VFX 3D: hệ Ánh sáng dựng lại (P3, 3 / 3 skill), tự chấm (decision 059, commit cục bộ)
+✅ Đã làm: `light_ray`, `lumina_ray`, `rune_beam` (`glowFx.ts`) trên `glowParts.ts` (tia sáng có lõi trắng, vệt chạy dọc và lớp sơn ấm bên dưới; hào quang có tia mặt trời hoặc dải ký hiệu rune; lóe sáng dịu; đốm sáng bay lên); bỏ `lightFx.ts`. `battle_fx.json` không đổi.
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2115 / 2121: 4 đỏ có từ trước + 2 `assetsCheck` quá 20 s (máy chậm). FPS trên RTX 3050: Tia Lumina, Đoàn Kỵ Thép, Địa Chấn Phong Ấn, Bão Gai 60 fps. Ảnh `docs/animation/vfx3d/light/`. Tự chấm 7,5–8.
+👉 Chủ dự án: chấm hệ Ánh sáng. Còn lại chưa dựng lại: Bóng tối 7, Hư không 4, hệ trống / class / hỗ trợ 57; 22 skill mới (decision 060) chưa bắt đầu.
+
 ### 2026-11-14 — VFX 3D: hệ Kim dựng lại (P3, 6 / 6 skill), tự chấm (decision 059, commit cục bộ)
 ✅ Đã làm: `steel_slash`, `armor_break`, `steel_charge`, `metal_claw` (`steelFx.ts`), `bronze_fist` (`steelFist.ts`), `steel_cavalry` (`steelUlt.ts`) trên `steelParts.ts` (kim loại bóng dạng dải phản chiếu, vệt chém lưỡi liềm dày / mảnh, tia lửa va chạm, khiên tám mảnh ghép / vỡ); kỵ sĩ là tranh gốc vẽ bằng code hai tư thế phi. Bỏ `metalFx.ts`, `metalUlt.ts` (`metalParts.ts` còn vì các hệ chưa làm dùng). `battle_fx.json` không đổi.
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2115 / 2121: 4 đỏ có từ trước + 2 `assetsCheck` quá 20 s (máy chậm). Ảnh `docs/animation/vfx3d/metal/`. Tự chấm 7–7,5.

@@ -2,7 +2,7 @@
 import type { VFX3D_IDS } from '../../../../../../content/schemas/adventure/battleScript';
 import { boulderSmash, quakeSpikes, rockFist, tuskCharge } from './stoneFx';
 import { sealQuake } from './stoneSeal';
-import { lightRay, luminaRay, runeBeam } from './lightFx';
+import { lightRay, luminaRay, runeBeam } from './glowFx';
 import { callThunder, thunderCommand, thunderRush } from './stormArea';
 import { chainLightning, lightningDive, sparkPeck, thunderStrike } from './stormFx';
 import { bronzeFist } from './steelFist';

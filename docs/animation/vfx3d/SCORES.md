@@ -100,3 +100,13 @@ Bài học: hình `streak` của atlas rất mảnh, hạt kéo dài bằng hìn
 | `skill_ult_tg` Đoàn Kỵ Thép | `steel_cavalry` | 7,5 | ba kỵ sĩ thép cầm thương dàn hàng sau người tung, lao qua hàng địch ba lượt (1350 / 1600 / 1850) rồi cùng đánh ở 2200; mỗi lượt một đường thương sáng trên từng kẻ địch; cuối cùng các mảnh thép ghép thành khiên trước người tung | kỵ sĩ là tranh phẳng hai tư thế; khuôn mặt / chi tiết ngựa đơn giản |
 
 Kỵ sĩ là hình gốc vẽ bằng code (ngựa có giáp, người đội mũ có ngù, khiên tròn, thương có cờ): không dựa trên nhân vật hay thương hiệu nào.
+
+### Hệ Ánh sáng (tự chấm 2026-11-14, ảnh `docs/animation/vfx3d/light/*_sheet.jpg`, chụp sau lần sửa cuối)
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_qt_ray` Tia Sáng | `light_ray` | 7,5 | đốm sáng tụ trước người tung thành một hào quang nhỏ, tia mảnh bắn tới kẻ địch đúng nhịp trúng, lóe sao dịu, vòng sáng dưới chân, đốm sáng bay lên | — |
+| `skill_qt_lumina` Tia Lumina | `lumina_ray` | 8 | mặt trời (hào quang có tia) mở sau lưng người tung, tia rộng xuyên qua kẻ địch, cột sáng dựng lên tới trời ở chỗ trúng, vương miện sáng trên đất | lóe sáng ở điểm trúng còn che kẻ địch khoảng 150 ms |
+| `skill_e_rune_beam` Tia Rune | `rune_beam` | 7,5 | bánh xe có dải ký hiệu rune xoay trước quái, sáng dần, bắn tia xâu các vòng trượt về phía mục tiêu, một vòng rune đóng xuống đất dưới mục tiêu | màu xanh lam của rune bị bloom làm ngả trắng |
+
+Ký hiệu rune là các nét vẽ ngẫu nhiên theo ô (shader), không lấy từ bảng chữ hay biểu tượng nào có sẵn.
+FPS trên RTX 3050 (Chrome headless, 1600 × 900): Tia Lumina, Đoàn Kỵ Thép, Địa Chấn Phong Ấn, Bão Gai đều 60 fps.
