@@ -13,6 +13,12 @@
 
 ## Nhật ký
 
+### 2026-11-14 — VFX 3D: hệ Kim dựng lại (P3, 6 / 6 skill), tự chấm (decision 059, commit cục bộ)
+✅ Đã làm: `steel_slash`, `armor_break`, `steel_charge`, `metal_claw` (`steelFx.ts`), `bronze_fist` (`steelFist.ts`), `steel_cavalry` (`steelUlt.ts`) trên `steelParts.ts` (kim loại bóng dạng dải phản chiếu, vệt chém lưỡi liềm dày / mảnh, tia lửa va chạm, khiên tám mảnh ghép / vỡ); kỵ sĩ là tranh gốc vẽ bằng code hai tư thế phi. Bỏ `metalFx.ts`, `metalUlt.ts` (`metalParts.ts` còn vì các hệ chưa làm dùng). `battle_fx.json` không đổi.
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2115 / 2121: 4 đỏ có từ trước + 2 `assetsCheck` quá 20 s (máy chậm). Ảnh `docs/animation/vfx3d/metal/`. Tự chấm 7–7,5.
+⚠️ Bản đầu: Vuốt Thép là một khối trắng to, thép tối xỉn, đoàn kỵ cháy trắng; đã sửa và chụp lại. Chưa đo FPS riêng cho hệ này.
+👉 Chủ dự án: chấm hệ Kim. Còn lại chưa dựng lại: Ánh sáng 3, Bóng tối 7, Hư không 4, hệ trống / class / hỗ trợ 57; 22 skill mới (decision 060) chưa bắt đầu.
+
 ### 2026-11-14 — VFX 3D: hệ Đất dựng lại (P3, 5 / 5 skill), tự chấm (decision 059, commit cục bộ)
 ✅ Đã làm: `boulder_smash`, `quake_spikes`, `tusk_charge`, `rock_fist` (`stoneFx.ts`), `seal_quake` (`stoneSeal.ts`) trên `stoneParts.ts` (đá mặt cắt ba tông, tảng đá / gai đá méo theo seed, vết nứt lan, mảnh vụn và bụi); bỏ `earthFx.ts` (`earthParts.ts` còn vì các hệ chưa làm dùng). `battle_fx.json` không đổi.
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2115 / 2121: 4 đỏ có từ trước + 2 test `assetsCheck` quá 20 s; chạy riêng `assetsCheck` với `--testTimeout 120000` thì 9 / 9 qua (máy chậm). Sau lần check đó chỉ còn chỉnh hình nắm đấm / ngà: đã chạy lại typecheck, lint, guard (xanh), chưa chạy lại toàn bộ test. Ảnh `docs/animation/vfx3d/earth/`. Tự chấm 7–7,5.

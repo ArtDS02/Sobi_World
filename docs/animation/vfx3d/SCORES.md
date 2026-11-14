@@ -88,3 +88,15 @@ Bài học: hình `streak` của atlas rất mảnh, hạt kéo dài bằng hìn
 | `skill_e_tusk_charge` Húc Nanh | `tusk_charge` | 7 | bụi tung dọc đường lao, hai chiếc ngà cong màu ngà voi móc từ dưới đất lên qua mục tiêu, lóe sáng, mảnh vụn, vết nứt | gốc ngà bị cắt phẳng; ngà là dải dẹt tô bóng chứ không phải khối |
 | `skill_e_rock_slam` Nện Đá | `rock_fist` | 7 | nắm đấm đá (bàn tay khối, bốn đốt, ngón cái, cổ tay sáu cạnh) kết lại trên cao, nghiêng lấy đà, giáng trong 100 ms, bẹp và nảy; hố nứt, mảnh vụn, bụi, vòng chấn | các đốt ngón chưa tách rõ, nhìn xa giống búa đá |
 | `skill_e_seal_quake` Địa Chấn Phong Ấn | `seal_quake` | 7,5 | ấn vàng (hai vòng xoay ngược, khung vuông vỡ) cháy trên đất dưới cả hàng, vết nứt lan và sáng lên, ấn rách ra ở 1200 ms, phiến đá có vân sáng trồi dưới từng mục tiêu, giật thêm một nhịp ở 1700 | — |
+
+### Hệ Kim (tự chấm 2026-11-14, ảnh `docs/animation/vfx3d/metal/*_sheet.jpg`, chụp sau lần sửa cuối)
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_tg_steel_slash` Chém Thép | `steel_slash` | 7,5 | một vệt chém lưỡi liềm lớn vẽ trong 70 ms, đứng yên qua nhịp hit-stop, rồi một đường sáng mảnh xuyên qua kẻ địch lóe lên và tia lửa bung ra ở 600 ms | vệt chém là mảng sáng phẳng, chưa có thớ |
+| `skill_tg_armor_break` Phá Giáp | `armor_break` | 7,5 | giáp của kẻ địch hiện thành tấm khiên tám mảnh có ánh lướt qua, một nhát chém vàng giáng xuống, vết nứt sáng lan 100 ms rồi các mảnh văng tung và rơi | khiên che gần hết kẻ địch trước khi vỡ |
+| `skill_tg_steel_charge` Húc Thép | `steel_charge` | 7,5 | bánh thép mười hai răng quay tít tại chỗ lấy đà, lao đi có vệt gió và tia lửa dưới đất, dừng khựng trên kẻ địch, bẹp và nảy; tia lửa, bụi, vết nứt | — |
+| `skill_e_metal_claw` Vuốt Thép | `metal_claw` | 7 | ba lượt vuốt (400 / 480 / 560), mỗi lượt ba vệt mảnh song song, lượt thứ hai chéo ngược, lượt cuối rộng nhất; tia lửa mỗi lượt | lóe sáng giữa mục tiêu còn to |
+| `skill_e_bronze_crush` Nghiền Đồng | `bronze_fist` | 7 | găng đồng (mu bàn tay, bốn ngón hai đốt, ngón cái, cổ tay loe có đai) rơi xuống, nghiêng lấy đà, giáng trong 100 ms rồi xoay nghiến, tia lửa phun ngang nửa giây | nhìn từ trên xuống thấy nhiều mặt cổ tay hơn là nắm đấm |
+| `skill_ult_tg` Đoàn Kỵ Thép | `steel_cavalry` | 7,5 | ba kỵ sĩ thép cầm thương dàn hàng sau người tung, lao qua hàng địch ba lượt (1350 / 1600 / 1850) rồi cùng đánh ở 2200; mỗi lượt một đường thương sáng trên từng kẻ địch; cuối cùng các mảnh thép ghép thành khiên trước người tung | kỵ sĩ là tranh phẳng hai tư thế; khuôn mặt / chi tiết ngựa đơn giản |
+
+Kỵ sĩ là hình gốc vẽ bằng code (ngựa có giáp, người đội mũ có ngù, khiên tròn, thương có cờ): không dựa trên nhân vật hay thương hiệu nào.
