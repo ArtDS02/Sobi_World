@@ -10,9 +10,6 @@ import { armorBreak, metalClaw, steelCharge, steelSlash } from './steelFx';
 import { steelCavalry } from './steelUlt';
 import { curseEyes, nightNet, nightWeave } from './shadeArea';
 import { inkSpray, nightmare, shadowBite, wraithTouch } from './shadeFx';
-import { classCombo, classMeteor, classOrb, classRain, classStrike, groundStomp } from './classFx';
-import { ultParty } from './partyUlt';
-import { buffUp, cleanse, doomMark, healBloom, mpChannel, shieldDome } from './supportFx';
 import { voidFist, voidVortex } from './riftFx';
 import { dawnMend, mendCross, secondWind, sproutMend, wardMend, waveMend } from './mendFx';
 import { auraRegen, blossomRegen, healingRain, purify, tideSong } from './mendArea';
@@ -149,17 +146,4 @@ export const VFX3D: Record<(typeof VFX3D_IDS)[number], Vfx3dFactory> = {
   holy_mountain: holyMountain,
   moon_lanterns: moonLanterns,
   mother_forest: motherForest,
-  heal_bloom: healBloom,
-  buff_up: buffUp,
-  shield_dome: shieldDome,
-  cleanse,
-  mp_channel: mpChannel,
-  doom_mark: doomMark,
-  ground_stomp: groundStomp,
-  class_strike: classStrike,
-  class_combo: classCombo,
-  class_orb: classOrb,
-  class_rain: classRain,
-  class_meteor: classMeteor,
-  ult_party: ultParty,
 };
