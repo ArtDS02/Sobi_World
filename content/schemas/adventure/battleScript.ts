@@ -34,7 +34,8 @@ export const VFX3D_IDS = ['trident_sea', 'bubble_shot', 'bubble_spray', 'tsunami
   'heal_bloom', 'buff_up', 'shield_dome', 'cleanse', 'mp_channel', 'doom_mark', 'ground_stomp', 'class_strike', 'class_combo', 'class_orb', 'class_rain', 'class_meteor', 'ult_party',
   'wave_mend', 'dawn_mend', 'sprout_mend', 'mend_cross', 'second_wind', 'ward_mend', 'tide_song', 'blossom_regen', 'healing_rain', 'aura_regen', 'purify', 'mp_stream', 'doom_sigil', 'void_veil',
   'ink_veil', 'guiding_lamp', 'swift_bolt', 'forge_fire', 'phase_shift', 'aim_focus', 'wind_dash', 'focus_charge', 'cheer_burst', 'rally_wave', 'howl_wave', 'roar_wave',
-  'stone_skin', 'bronze_wall', 'iron_shell', 'taunt_call', 'hold_fast', 'fortress', 'bark_skin', 'mountain_shell', 'shield_wall', 'stone_guard', 'undying_spark'] as const;
+  'stone_skin', 'bronze_wall', 'iron_shell', 'taunt_call', 'hold_fast', 'fortress', 'bark_skin', 'mountain_shell', 'shield_wall', 'stone_guard', 'undying_spark',
+  'power_cleave', 'armor_crush', 'rend_tear', 'vital_pierce', 'finisher_x', 'combo_slash', 'spell_lance', 'seal_stamp', 'energy_orb', 'shadow_dance', 'stomp_quake', 'tremor_heave', 'element_rain', 'spell_storm', 'star_fall'] as const;
 
 /** A colour, or the colour of the beat's look (`$color`) or its glow (`$glow`). */
 export const paint = z.union([color, z.enum(['$color', '$glow'])]);

@@ -4237,8 +4237,8 @@
           "do": "vfx3d",
           "at": 200,
           "who": "target",
-          "dur": 900,
-          "fx": "class_strike",
+          "dur": 950,
+          "fx": "armor_crush",
           "color": "$color",
           "size": 1
         },
@@ -4262,7 +4262,7 @@
           "at": 100,
           "who": "foeside",
           "dur": 1500,
-          "fx": "ground_stomp",
+          "fx": "stomp_quake",
           "color": "$color",
           "size": 1
         },
@@ -4296,7 +4296,7 @@
           "at": 450,
           "who": "foeside",
           "dur": 1500,
-          "fx": "ground_stomp",
+          "fx": "tremor_heave",
           "color": "$color",
           "size": 1.2
         },
@@ -4319,7 +4319,7 @@
           "at": 100,
           "who": "target",
           "dur": 900,
-          "fx": "class_strike",
+          "fx": "power_cleave",
           "color": "$color",
           "size": 1.1
         },
@@ -4355,8 +4355,8 @@
           "do": "vfx3d",
           "at": 0,
           "who": "target",
-          "dur": 1400,
-          "fx": "class_combo",
+          "dur": 1550,
+          "fx": "combo_slash",
           "color": "$color",
           "size": 1
         },
@@ -4386,8 +4386,8 @@
           "do": "vfx3d",
           "at": 140,
           "who": "target",
-          "dur": 900,
-          "fx": "class_strike",
+          "dur": 1010,
+          "fx": "rend_tear",
           "color": "$color",
           "size": 1
         },
@@ -4420,8 +4420,8 @@
           "do": "vfx3d",
           "at": 140,
           "who": "target",
-          "dur": 900,
-          "fx": "class_strike",
+          "dur": 910,
+          "fx": "vital_pierce",
           "color": "$color",
           "size": 0.9
         },
@@ -4441,8 +4441,8 @@
           "do": "vfx3d",
           "at": 520,
           "who": "target",
-          "dur": 900,
-          "fx": "class_strike",
+          "dur": 1180,
+          "fx": "finisher_x",
           "color": "$color",
           "size": 1.5
         },
@@ -4468,10 +4468,10 @@
       "script": [
         {
           "do": "vfx3d",
-          "at": 930,
+          "at": 0,
           "who": "foeside",
-          "dur": 1400,
-          "fx": "class_combo",
+          "dur": 2330,
+          "fx": "shadow_dance",
           "color": "$color",
           "size": 1
         },
@@ -4496,7 +4496,7 @@
           "at": 0,
           "who": "target",
           "dur": 1200,
-          "fx": "class_orb",
+          "fx": "energy_orb",
           "color": "$color",
           "size": 1
         },
@@ -4527,8 +4527,8 @@
           "do": "vfx3d",
           "at": 0,
           "who": "foeside",
-          "dur": 1500,
-          "fx": "class_rain",
+          "dur": 1650,
+          "fx": "element_rain",
           "color": "$color",
           "size": 1
         },
@@ -4546,8 +4546,8 @@
           "do": "vfx3d",
           "at": 170,
           "who": "target",
-          "dur": 900,
-          "fx": "class_strike",
+          "dur": 930,
+          "fx": "spell_lance",
           "color": "$color",
           "size": 0.9
         },
@@ -4581,7 +4581,7 @@
           "at": 520,
           "who": "target",
           "dur": 900,
-          "fx": "class_strike",
+          "fx": "seal_stamp",
           "color": "$color",
           "size": 1
         },
@@ -4601,7 +4601,7 @@
           "at": 230,
           "who": "foeside",
           "dur": 1800,
-          "fx": "class_meteor",
+          "fx": "star_fall",
           "color": "$color",
           "size": 1
         },
@@ -4626,8 +4626,8 @@
           "do": "vfx3d",
           "at": 240,
           "who": "foeside",
-          "dur": 1500,
-          "fx": "class_rain",
+          "dur": 1510,
+          "fx": "spell_storm",
           "color": "$color",
           "size": 1.2
         },

@@ -192,3 +192,23 @@ Trước đây 11 skill này dùng chung `shield_dome` đổi màu.
 | `skill_e_bark_skin` Vỏ Cây Cứng | `bark_skin` | 7 | ba dây vỏ cây nâu quấn lên thân quái, vòm xanh khép lại; mũi tên thủ | — |
 | `skill_e_stone_guard` Thủ Đá | `stone_guard` | 7 | phiến đá trồi lên trước từng con (lệch 110 ms) rồi lún, đá vụn; mũi tên thủ | — |
 Bài học: khiên đứng thẳng trước một đơn vị che mặt nó vì lớp 3D vẽ đè; đặt khiên lệch về phía địch và cho tan trong ~350 ms.
+
+### Đòn class (tự chấm 2026-11-15, ảnh `docs/animation/vfx3d/class/*_sheet.jpg`, chụp sau lần sửa cuối)
+Trước đây 15 skill này dùng chung 6 hiệu ứng (`class_strike` cho 6 skill khác nhau). Nay mỗi skill một hình, màu theo hệ người tung (`$color`, giữ dưới ngưỡng bloom). Battle Lab dùng heo không hệ nên ảnh có màu kem; với người tung có hệ, đòn mang màu hệ đó.
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_cl_power_strike` Chém Mạnh | `power_cleave` | 7 | vệt lóe chạy dọc lưỡi trước, rồi một nhát lưỡi liềm lớn trong 70 ms có bóng phụ, keng, vòng xé trên đất | lóe trúng chung che mục tiêu ~100 ms |
+| `skill_cl_armor_crush` Phá Giáp | `armor_crush` | 7 | nhát chém dọc giáng thẳng xuống, mảnh giáp xám văng | — |
+| `skill_cl_rend` Xé Giáp | `rend_tear` | 7 | ba vệt xé mảnh lần lượt cách 40 ms, vảy giáp bay | — |
+| `skill_cl_vital` Đòn Hiểm | `vital_pierce` | 7 | vòng ngắm thu vào mục tiêu, một mũi đâm mảnh như kim xuyên qua, lóe sao | — |
+| `skill_cl_finisher` Tuyệt Kỹ | `finisher_x` | 7 | đốm tụ vào người tung khi lấy đà, hai nhát lớn chéo thành chữ X, keng mạnh, hai vòng rộng | màn trắng do `flash` của kịch bản |
+| `skill_cl_combo` Liên Hoàn | `combo_slash` | 7 | ba nhát 220 / 470 / 720 chéo qua lại, nhát cuối rộng nhất (1-2-BỤP) | — |
+| `skill_cl_pierce` Xuyên Phép | `spell_lance` | 7 | vòng rune mở trước người tung, mũi thương sáng bắn xuyên qua mục tiêu ra phía sau, vòng sáng nơi đi vào | — |
+| `skill_cl_seal` Phong Ấn | `seal_stamp` | 7 | vòng ấn vẽ trên đầu mục tiêu, xoay, thu nhỏ và đóng xuống ngực đúng nhịp, lóe (khóa là của trạng thái) | — |
+| `skill_cl_energy_orb` Cầu Năng Lượng | `energy_orb` | 7 | đốm xoáy vào tay người tung thành quả cầu, phồng lên, bay vòng cung có đuôi, nổ thành vòng | — |
+| `skill_cl_shadow_dance` Bóng Ảnh | `shadow_dance` | 7 | bốn lượt lướt bóng cắt qua kẻ địch ngẫu nhiên (300 / 520 / 740 / 1150, lượt cuối rộng nhất), khói tối; mũi tên né cho người tung | vệt cắt nhỏ |
+| `skill_cl_stomp` Dậm Đất | `stomp_quake` | 7 | vòng dậm dưới người tung, vết nứt chạy trên đất tới từng kẻ địch, đá vụn và bụi bật lên nơi tới | — |
+| `skill_cl_tremor` Chấn Động | `tremor_heave` | 7,5 | đất trồi dưới từng kẻ địch (lệch 80 ms): ba phiến đá bật lên qua vòng bụi | — |
+| `skill_cl_elemental_rain` Mưa Nguyên Tố | `element_rain` | 7 | vòng ấn mở trên hàng địch, vệt mưa màu hệ trút xuống, tóe trên từng con | — |
+| `skill_cl_spell_storm` Bão Phép | `spell_storm` | 7 | bánh xe rune xoay trên hàng, đốm xoáy quanh, tia phân nhánh đánh xuống từng con | — |
+| `skill_cl_meteor` Thiên Thạch | `star_fall` | 7 | thiên thạch màu hệ rơi chéo, đuôi sáng dài, nổ giữa hàng, hai vòng rộng, lóe trên từng con | màn trắng do `flash` của kịch bản |

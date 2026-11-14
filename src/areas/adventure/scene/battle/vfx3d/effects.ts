@@ -21,6 +21,9 @@ import { aimFocus, cheerBurst, focusCharge, forgeFire, phaseShift, windDash } fr
 import { guidingLamp, howlWave, inkVeil, rallyWave, roarWave, swiftBolt } from './boonTeam';
 import { barkSkin, bronzeWall, fortress, holdFast, ironShell, stoneSkin, tauntCall } from './guardFx';
 import { mountainShell, shieldWall, stoneGuard, undyingSpark } from './guardTeam';
+import { armorCrush, comboSlash, finisherX, powerCleave, rendTear, vitalPierce } from './classHit';
+import { energyOrb, sealStamp, spellLance } from './classCast';
+import { elementRain, shadowDance, spellStorm, starFall, stompQuake, tremorHeave } from './classArea';
 import { mythicAwakening, skyBellUlt } from './riftUlts';
 import { flamePillars, lavaFlood, magmaCone, meteorRain } from './fireArea';
 import { clawClamp, hammerSlam, jawFlame, lavaGlob } from './fireHits';
@@ -126,6 +129,21 @@ export const VFX3D: Record<(typeof VFX3D_IDS)[number], Vfx3dFactory> = {
   shield_wall: shieldWall,
   stone_guard: stoneGuard,
   undying_spark: undyingSpark,
+  power_cleave: powerCleave,
+  armor_crush: armorCrush,
+  rend_tear: rendTear,
+  vital_pierce: vitalPierce,
+  finisher_x: finisherX,
+  combo_slash: comboSlash,
+  spell_lance: spellLance,
+  seal_stamp: sealStamp,
+  energy_orb: energyOrb,
+  shadow_dance: shadowDance,
+  stomp_quake: stompQuake,
+  tremor_heave: tremorHeave,
+  element_rain: elementRain,
+  spell_storm: spellStorm,
+  star_fall: starFall,
   heal_bloom: healBloom,
   buff_up: buffUp,
   shield_dome: shieldDome,
