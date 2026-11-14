@@ -17,6 +17,8 @@ import { voidFist, voidVortex } from './riftFx';
 import { dawnMend, mendCross, secondWind, sproutMend, wardMend, waveMend } from './mendFx';
 import { auraRegen, blossomRegen, healingRain, purify, tideSong } from './mendArea';
 import { doomSigil, mpStream, voidVeil } from './boonSpecial';
+import { aimFocus, cheerBurst, focusCharge, forgeFire, phaseShift, windDash } from './boonUp';
+import { guidingLamp, howlWave, inkVeil, rallyWave, roarWave, swiftBolt } from './boonTeam';
 import { mythicAwakening, skyBellUlt } from './riftUlts';
 import { flamePillars, lavaFlood, magmaCone, meteorRain } from './fireArea';
 import { clawClamp, hammerSlam, jawFlame, lavaGlob } from './fireHits';
@@ -99,6 +101,18 @@ export const VFX3D: Record<(typeof VFX3D_IDS)[number], Vfx3dFactory> = {
   mp_stream: mpStream,
   doom_sigil: doomSigil,
   void_veil: voidVeil,
+  ink_veil: inkVeil,
+  guiding_lamp: guidingLamp,
+  swift_bolt: swiftBolt,
+  forge_fire: forgeFire,
+  phase_shift: phaseShift,
+  aim_focus: aimFocus,
+  wind_dash: windDash,
+  focus_charge: focusCharge,
+  cheer_burst: cheerBurst,
+  rally_wave: rallyWave,
+  howl_wave: howlWave,
+  roar_wave: roarWave,
   heal_bloom: healBloom,
   buff_up: buffUp,
   shield_dome: shieldDome,

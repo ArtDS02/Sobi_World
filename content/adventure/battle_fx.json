@@ -3407,7 +3407,7 @@
     "skill_dm_ink_veil": {
       "timing": { "release": 320, "impact": 820, "end": 1770 },
       "script": [
-        { "do": "vfx3d", "at": 520, "who": "allyside", "dur": 1250, "fx": "buff_up", "color": "#5ae0c8" },
+        { "do": "vfx3d", "at": 520, "who": "allyside", "dur": 1250, "fx": "ink_veil", "color": "#5ae0c8" },
         { "do": "pose", "at": 0, "who": "actor", "dur": 320, "pose": "cast" },
         { "do": "move", "at": 0, "who": "actor", "dur": 320, "move": "spin" },
         { "do": "tint", "at": 0, "who": "field", "dur": 1300, "color": "#1a0a2a", "alpha": 0.1 },
@@ -3539,7 +3539,7 @@
       "timing": { "release": 300, "impact": 800, "end": 1750 },
       "stagger": 120,
       "script": [
-        { "do": "vfx3d", "at": 500, "who": "allyside", "dur": 1250, "fx": "buff_up", "color": "#ffe9a0" },
+        { "do": "vfx3d", "at": 300, "who": "allyside", "dur": 1450, "fx": "guiding_lamp", "color": "#ffe9a0" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "pose", "at": 0, "who": "actor", "dur": 300, "pose": "cast" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_light_cast" },
@@ -3607,7 +3607,7 @@
       "timing": { "release": 260, "impact": 700, "end": 1650 },
       "stagger": 100,
       "script": [
-        { "do": "vfx3d", "at": 400, "who": "allyside", "dur": 1250, "fx": "buff_up", "color": "#ffe25a" },
+        { "do": "vfx3d", "at": 300, "who": "allyside", "dur": 1350, "fx": "swift_bolt", "color": "#ffe25a" },
         { "do": "pose", "at": 0, "who": "actor", "dur": 260, "pose": "cast" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_thunder_cast" },
@@ -3807,7 +3807,7 @@
     "skill_hg_forge_fire": {
       "timing": { "release": 300, "impact": 950, "end": 1900 },
       "script": [
-        { "do": "vfx3d", "at": 650, "who": "actor", "dur": 1250, "fx": "buff_up", "color": "#ff7a3a" },
+        { "do": "vfx3d", "at": 300, "who": "actor", "dur": 1600, "fx": "forge_fire", "color": "#ff7a3a" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "shake", "at": 280, "who": "field", "dur": 260, "amount": 2 },
         { "do": "sound", "at": 280, "who": "actor", "sound": "adv_forge" },
@@ -4004,7 +4004,7 @@
     "skill_hk_phase_shift": {
       "timing": { "release": 300, "impact": 750, "end": 1700 },
       "script": [
-        { "do": "vfx3d", "at": 450, "who": "actor", "dur": 1250, "fx": "buff_up", "color": "#b48aff" },
+        { "do": "vfx3d", "at": 300, "who": "actor", "dur": 1400, "fx": "phase_shift", "color": "#b48aff" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "pose", "at": 0, "who": "actor", "dur": 300, "pose": "cast" },
         { "do": "glow", "at": 0, "who": "actor", "dur": 300, "color": "#b48aff" },
@@ -4334,7 +4334,7 @@
       "timing": { "release": 250, "impact": 650, "end": 1600 },
       "stagger": 100,
       "script": [
-        { "do": "vfx3d", "at": 350, "who": "actor", "dur": 1250, "fx": "buff_up", "color": "#fff0a0" },
+        { "do": "vfx3d", "at": 300, "who": "actor", "dur": 1300, "fx": "aim_focus", "color": "#fff0a0" },
         { "do": "move", "at": 0, "who": "actor", "dur": 650, "move": "cast_bow" },
         { "do": "sound", "at": 250, "who": "actor", "sound": "adv_whoosh" },
         { "do": "glow", "at": 650, "who": "actor", "dur": 300, "color": "#ffe36a" },
@@ -4397,7 +4397,7 @@
     "skill_cl_dash": {
       "timing": { "release": 200, "impact": 700, "end": 1650 },
       "script": [
-        { "do": "vfx3d", "at": 400, "who": "actor", "dur": 1250, "fx": "buff_up", "color": "#5ae0c8" },
+        { "do": "vfx3d", "at": 300, "who": "actor", "dur": 1350, "fx": "wind_dash", "color": "#5ae0c8" },
         { "do": "move", "at": 0, "who": "actor", "dur": 200, "move": "squash", "scale": 0.9 },
         { "do": "move", "at": 200, "who": "actor", "dur": 500, "move": "dash_through" },
         { "do": "trail", "at": 200, "who": "actor", "dur": 500, "every": 30 },
@@ -4504,7 +4504,7 @@
     "skill_cl_focus": {
       "timing": { "release": 250, "impact": 700, "end": 1650 },
       "script": [
-        { "do": "vfx3d", "at": 400, "who": "actor", "dur": 1250, "fx": "buff_up", "color": "#b06aff" },
+        { "do": "vfx3d", "at": 300, "who": "actor", "dur": 1350, "fx": "focus_charge", "color": "#b06aff" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "move", "at": 0, "who": "actor", "dur": 1050, "move": "float", "y": 8 },
         { "do": "sound", "at": 250, "who": "actor", "sound": "adv_cast" },
@@ -4644,7 +4644,7 @@
     "skill_cl_cheer": {
       "timing": { "release": 350, "impact": 650, "end": 1600 },
       "script": [
-        { "do": "vfx3d", "at": 350, "who": "target", "dur": 1250, "fx": "buff_up", "color": "#ff9a4a" },
+        { "do": "vfx3d", "at": 350, "who": "target", "dur": 1250, "fx": "cheer_burst", "color": "#ff9a4a" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_cheer" },
         { "do": "move", "at": 650, "who": "targets", "dur": 300, "move": "hop", "y": 14, "n": 2 },
@@ -4679,7 +4679,7 @@
       "timing": { "release": 350, "impact": 850, "end": 1800 },
       "stagger": 100,
       "script": [
-        { "do": "vfx3d", "at": 550, "who": "allyside", "dur": 1250, "fx": "buff_up", "color": "#ff9a4a" },
+        { "do": "vfx3d", "at": 300, "who": "allyside", "dur": 1500, "fx": "rally_wave", "color": "#ff9a4a" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_bow" },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_cheer" },
         { "do": "move", "at": 850, "who": "allies", "dur": 300, "move": "hop", "y": 20 },
@@ -4802,7 +4802,7 @@
     "skill_e_howl": {
       "timing": { "release": 400, "impact": 900, "end": 1850 },
       "script": [
-        { "do": "vfx3d", "at": 600, "who": "allyside", "dur": 1250, "fx": "buff_up", "color": "#ff7a3a" },
+        { "do": "vfx3d", "at": 300, "who": "allyside", "dur": 1550, "fx": "howl_wave", "color": "#ff7a3a" },
         { "do": "move", "at": 0, "who": "actor", "dur": 700, "move": "cast_roar" },
         { "do": "tint", "at": 0, "who": "field", "dur": 1300, "color": "#100820", "alpha": 0.15 },
         { "do": "sound", "at": 0, "who": "actor", "sound": "adv_roar" },
@@ -5034,7 +5034,7 @@
     "skill_e_dragon_roar": {
       "timing": { "release": 350, "impact": 850, "end": 1800 },
       "script": [
-        { "do": "vfx3d", "at": 550, "who": "allyside", "dur": 1250, "fx": "buff_up", "color": "#ff5a3a" },
+        { "do": "vfx3d", "at": 300, "who": "allyside", "dur": 1500, "fx": "roar_wave", "color": "#ff5a3a" },
         { "do": "move", "at": 0, "who": "actor", "dur": 420, "move": "cast_roar" },
         { "do": "sound", "at": 350, "who": "actor", "sound": "adv_roar" },
         { "do": "shake", "at": 350, "who": "field", "dur": 400, "amount": 2 },

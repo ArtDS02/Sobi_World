@@ -157,3 +157,21 @@ Trước đây 15 skill này dùng chung `heal_bloom` / `cleanse` / `mp_channel`
 | `skill_cl_channel` Truyền Năng | `mp_stream` | 7 | bảy quả cầu xanh lam có đuôi bay vòng cung từ người tung sang đồng đội, đồng đội hút đốm vào, vòng xanh | — |
 | `skill_e_doom_mark` Dấu Diệt Vong | `doom_sigil` | 7 | vòng ấn tối vẽ trên không trên mục tiêu, ba đốm đêm bay vòng, ấn giáng xuống in vào đất dưới mục tiêu, khói tối bung (dấu đếm ngược là của trạng thái) | — |
 Bộ phần chung mới: `boonParts.ts` (dấu cộng, mũi tên theo màu chỉ số, vòm lục giác, cột sáng, vòng ấn). Lá bùa, vòng ấn là hình gốc (vòng + vạch + nan), không có chữ hay ký hiệu có sẵn.
+
+### Hỗ trợ — tăng chỉ số (tự chấm 2026-11-15, ảnh `docs/animation/vfx3d/support/*_sheet.jpg`, chụp sau lần sửa cuối)
+Trước đây 12 skill này dùng chung `buff_up` đổi màu. Mũi tên luôn theo màu chỉ số (công cam, công phép tím, chính xác vàng trắng, né ngọc, tốc độ vàng, MP lam).
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_hg_forge_fire` Lửa Rèn | `forge_fire` | 7,5 | bốn lưỡi lửa liếm lên quanh người tung, cao dần, tàn lửa bay; vòng lửa; mũi tên cam + tím | — |
+| `skill_hk_phase_shift` Lệch Pha | `phase_shift` | 7 | hai khe nứt hư không đứng hai bên người tung, chập chờn, khép lại đúng nhịp; sao văng; mũi tên ngọc + lam | — |
+| `skill_cl_aim` Ngắm Chuẩn | `aim_focus` | 7 | vòng ngắm thu dần về đầu người tung, khóa lại có lóe sáng; mũi tên vàng trắng + cam | vòng ngắm nhỏ |
+| `skill_cl_dash` Lướt Gió | `wind_dash` | 7 | vệt gió thổi ngang qua người tung từ sau ra trước, lá xoay; mũi tên ngọc + vàng | — |
+| `skill_cl_focus` Tập Trung | `focus_charge` | 7 | đốm tím xoáy vào ngực người tung, vòng tím nở ra; mũi tên tím + lam | — |
+| `skill_cl_cheer` Cổ Vũ | `cheer_burst` | 7 | chùm tia lửa nhiều màu bắn lên trên đồng đội rồi rơi quanh; mũi tên cam + tím | huy hiệu trạng thái che bớt tia lúc trúng |
+| `skill_dm_ink_veil` Màn Mực | `ink_veil` | 7 | màn khói mực mỏng trôi qua từng bạn (lệch 110 ms) rồi tan; mũi tên ngọc | — |
+| `skill_qt_guiding_lamp` Đèn Dẫn Lối | `guiding_lamp` | 7 | lồng đèn sáng bay lên trên cả đội, tia sáng chiếu xuống từng bạn; mũi tên vàng trắng + tím | — |
+| `skill_ld_swift_bolt` Tốc Lôi | `swift_bolt` | 7 | tia điện nhỏ bò lên thân từng bạn (vẽ lại mỗi 50 ms), vệt vàng chạy ra sau; mũi tên vàng | — |
+| `skill_cl_rally` Khích Lệ | `rally_wave` | 7 | hai vòng sáng ấm lan từ người tung qua cả đội, tàn lửa bốc trên từng bạn; mũi tên cam + tím | — |
+| `skill_e_howl` Tru Lên | `howl_wave` | 7 | ba vòng sóng âm lan từ miệng quái ra cả bọn; mũi tên cam | — |
+| `skill_e_dragon_roar` Tiếng Gầm Rồng | `roar_wave` | 7 | bốn vòng sóng âm đỏ rộng hơn, tàn lửa phun từ miệng; mũi tên cam cho cả bọn, tím cho chính nó | cùng khung với Tru Lên (khác cỡ, màu, tàn lửa) |
+Bài học: lớp "sơn" (vật liệu thường) và lớp "ánh sáng" (cộng) được ghép riêng ở hậu kỳ, nên một vật sơn **luôn che** vật ánh sáng nằm sau nó, bất kể `renderOrder`. Lồng đèn của Đèn Dẫn Lối từng bị lớp sơn ấm của tia (`ray`) che mất; tia sáng nối từ một vật sáng nên là đoạn sáng thuần (`lines.ts`).

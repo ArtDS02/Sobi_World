@@ -13,6 +13,11 @@
 
 ## Nhật ký
 
+### 2026-11-15 — VFX 3D: hỗ trợ tăng chỉ số dựng lại theo từng loại (12 skill), tự chấm (decision 059)
+✅ Đã làm: 12 hiệu ứng mới thay `buff_up` dùng chung: `forge_fire`, `phase_shift`, `aim_focus`, `wind_dash`, `focus_charge`, `cheer_burst` (`boonUp.ts`), `ink_veil`, `guiding_lamp`, `swift_bolt`, `rally_wave`, `howl_wave`, `roar_wave` (`boonTeam.ts`); mũi tên theo màu chỉ số. `battle_fx.json`: act `vfx3d` của 12 skill đổi `fx` và mốc (không đổi `timing`).
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121: chỉ 4 đỏ có từ trước. Ảnh `docs/animation/vfx3d/support/`. Tự chấm 7–7,5.
+👉 Chủ dự án: chấm nhóm tăng chỉ số. Còn lại: khiên / thủ 11, đòn class 15, tuyệt kỹ hỗ trợ 4; 22 skill mới (decision 060).
+
 ### 2026-11-15 — VFX 3D: hỗ trợ hồi máu / thanh tẩy / đặc biệt dựng lại theo từng loại (15 skill), tự chấm (decision 059)
 ✅ Đã làm: 14 hiệu ứng mới thay `heal_bloom` / `cleanse` / `mp_channel` / `doom_mark` dùng chung: `wave_mend`, `dawn_mend`, `sprout_mend`, `mend_cross`, `second_wind`, `ward_mend` (`mendFx.ts`), `tide_song`, `blossom_regen`, `healing_rain`, `aura_regen`, `purify` (`mendArea.ts`), `mp_stream`, `doom_sigil`, `void_veil` (`boonSpecial.ts`); bộ phần chung `boonParts.ts`. Skill của dòng nguyên tố dùng chất liệu của dòng (nước, ánh sáng, cây, hư không). `battle_fx.json`: act `vfx3d` của 15 skill đổi `fx`, `at = impact − đỉnh hiệu ứng`, `dur` tới `timing.end` (không đổi `timing`).
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121: chỉ 4 đỏ có từ trước. Ảnh `docs/animation/vfx3d/support/`. Tự chấm 7–7,5. Chỉ xem khung tĩnh.

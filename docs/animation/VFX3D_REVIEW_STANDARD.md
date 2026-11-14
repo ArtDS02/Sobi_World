@@ -52,6 +52,7 @@ Phản hồi đã có của chủ dự án (2026-11-12): Đinh Ba ~7, "cần sin
 8. **Không vẽ kết quả của xác suất.** Bọc băng, bỏng, choáng, Phong ấn… do trạng thái tự vẽ. Skill chỉ vẽ phần chắc chắn xảy ra.
 9. **Không che mục tiêu lâu.** Lóe sáng, khối khiên, cột nước, mảng mực… không che kín mục tiêu quá ~150–250 ms. Đây là điểm yếu Fable ghi nhiều nhất ở cột "Còn yếu"; hệ Bóng tối mắc nhiều nhất vì vật liệu là "sơn" đặc.
    **Lớp 3D luôn vẽ đè lên sinh vật** (không có chiều sâu so với sprite): vật đặt "sau lưng" mục tiêu thực ra che mặt nó. Vật đứng cạnh mục tiêu đặt **bên cạnh**, về phía trống (phía người tung), không về phía đồng đội của mục tiêu. Cỡ hình chủ đạo của đòn một mục tiêu nên cỡ thân mục tiêu (`0,5 + env.tall × 0,25` là mốc đã dùng), không to gấp đôi.
+   **Sơn luôn che ánh sáng.** Lớp sơn (vật liệu thường) và lớp ánh sáng (cộng) được ghép riêng ở hậu kỳ: một vật sơn che mọi vật ánh sáng nằm sau nó, bất kể `renderOrder`. Tia nối từ một vật sáng (lồng đèn, cổng) dùng đoạn sáng thuần (`lines.ts`), không dùng `ray` (có lớp sơn ấm).
 10. **Nền phục vụ hệ.** Sét, Bóng tối, đòn mạnh có thể tối nền bằng `tint` trong kịch bản (`battle_fx.json`), trong giới hạn bậc lực. Không đổi `timing` nếu không cần.
 11. **Bậc lực đúng bảng** (`STANDARDS.md` §4): hit-stop, rung, chớp, punch không vượt bậc. Hỗ trợ (T0) không rung, không chớp trắng.
 12. **Hình gốc 100 %** (decision 048): kỵ sĩ, phượng hoàng, rune, mặt nạ… đều vẽ bằng code từ hình cơ bản, không dựa trên nhân vật / biểu tượng / chữ có sẵn. Ghi một câu xác nhận vào SCORES khi hình dễ gây nghi vấn.
