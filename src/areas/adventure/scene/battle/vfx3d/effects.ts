@@ -14,6 +14,9 @@ import { classCombo, classMeteor, classOrb, classRain, classStrike, groundStomp 
 import { ultParty } from './partyUlt';
 import { buffUp, cleanse, doomMark, healBloom, mpChannel, shieldDome } from './supportFx';
 import { voidFist, voidVortex } from './riftFx';
+import { dawnMend, mendCross, secondWind, sproutMend, wardMend, waveMend } from './mendFx';
+import { auraRegen, blossomRegen, healingRain, purify, tideSong } from './mendArea';
+import { doomSigil, mpStream, voidVeil } from './boonSpecial';
 import { mythicAwakening, skyBellUlt } from './riftUlts';
 import { flamePillars, lavaFlood, magmaCone, meteorRain } from './fireArea';
 import { clawClamp, hammerSlam, jawFlame, lavaGlob } from './fireHits';
@@ -82,6 +85,20 @@ export const VFX3D: Record<(typeof VFX3D_IDS)[number], Vfx3dFactory> = {
   void_vortex: voidVortex,
   sky_bell: skyBellUlt,
   mythic_awakening: mythicAwakening,
+  wave_mend: waveMend,
+  dawn_mend: dawnMend,
+  sprout_mend: sproutMend,
+  mend_cross: mendCross,
+  second_wind: secondWind,
+  ward_mend: wardMend,
+  tide_song: tideSong,
+  blossom_regen: blossomRegen,
+  healing_rain: healingRain,
+  aura_regen: auraRegen,
+  purify,
+  mp_stream: mpStream,
+  doom_sigil: doomSigil,
+  void_veil: voidVeil,
   heal_bloom: healBloom,
   buff_up: buffUp,
   shield_dome: shieldDome,

@@ -137,3 +137,23 @@ FPS trên RTX 3050 (Chrome headless, 1600 × 900): Lưới Dệt Đêm 60,1, Lư
 
 Bản cũ (`voidFx.ts`, `voidUlts.ts`) bỏ; bộ phần mới `riftParts.ts` (khe nứt có sao bên trong và viền tách màu, lõi đêm trong vòng xoáy, chuông trời sao, mảnh không gian). Chuông, cổng, khe nứt là hình gốc vẽ bằng shader.
 FPS trên RTX 3050 (Chrome headless, 1600 × 900): Bầu Trời Trong Chuông 60,2, Huyền Thoại Thức Tỉnh 60,1, Xoáy Hư Không 60,4 fps.
+
+### Hỗ trợ — hồi máu, thanh tẩy, đặc biệt (tự chấm 2026-11-15, ảnh `docs/animation/vfx3d/support/*_sheet.jpg`, chụp sau lần sửa cuối)
+Trước đây 15 skill này dùng chung `heal_bloom` / `cleanse` / `mp_channel` / `doom_mark` đổi màu. Nay mỗi loại một hình; skill của một dòng nguyên tố dùng chất liệu của dòng đó.
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_nh_soothe` Sóng Vỗ Về | `wave_mend` | 7 | giọt nước xoáy lên quanh đồng đội, vũng nước loang, giọt và dấu cộng xanh ngọc bay lên | — |
+| `skill_nh_tide_song` Khúc Ca Triều | `tide_song` | 7 | dải nước uốn sóng chảy từ người tung dọc cả đội; ở mỗi bạn (lệch 110 ms) nước xoáy lên, một vệt tối bị rửa trôi, dấu cộng | dải nước đọc như dây hơn là dòng nước |
+| `skill_qt_first_light` Ánh Sáng Đầu Tiên | `dawn_mend` | 7 | hào quang mặt trời hạ xuống trên đầu đồng đội, cột sáng mờ, vệt tối bốc lên cháy thành ánh vàng (xóa trạng thái xấu, kể cả Diệt vong), dấu cộng | — |
+| `skill_mm_sprout` Chồi Non | `sprout_mend` | 7 | chồi non mọc ở chân đồng đội, xòe hai lá; đốm xanh và dấu cộng bay lên kéo dài (Hồi phục) | chồi nhỏ ở cỡ khung chiến đấu |
+| `skill_mm_blossom` Hoa Hồi Sinh | `blossom_regen` | 7,5 | ở chân mỗi bạn một bông hoa hồng nở, cánh hoa xoáy lên quanh thân, dấu cộng kéo dài | — |
+| `skill_cl_second_wind` Hồi Sức | `second_wind` | 7 | luồng gió xoắn lên quanh người tung, một vệt tối bị hất văng ra và tan thành sáng, dấu cộng | vệt gió mảnh |
+| `skill_cl_mend`, `skill_e_soothe` Hồi Phục, Nước Mát | `mend_cross` | 7 | vòng ấn vẽ trên đất theo màu act, cột sáng mềm, đốm tụ vào rồi bung, dấu cộng | cùng một hình cho hai skill cùng loại (hồi một mục tiêu) |
+| `skill_cl_healing_rain` Mưa Hồi Phục | `healing_rain` | 7 | đám mây nhạt tụ trên cả đội, giọt sáng rơi xuống từng bạn, vòng nước, dấu cộng | — |
+| `skill_cl_aura` Hào Quang | `aura_regen` | 7 | vòng sáng chạy trên đất từ người tung qua cả đội, mỗi bạn một cột sáng, dấu cộng xanh lá và mũi tên xanh lam (tăng thủ) | — |
+| `skill_e_holy_ward` Bùa Hộ Thân | `ward_mend` | 7 | lá bùa sáng vẽ trên đầu đồng bọn, vỡ thành đốm rơi xuống, vệt tối bị đốt đi, dấu cộng | bùa hơi cao khi mục tiêu đứng sau |
+| `skill_hk_void_veil` Màn Hư Vô | `void_veil` | 7 | bức màn sao và đêm mỏng quét ngang cả sân; mỗi đơn vị (cả hai phe) mảnh sáng trạng thái bay khỏi khi màn đi qua | màn là tường hạt, chưa có mặt vải |
+| `skill_cl_purify` Thanh Tẩy | `purify` | 7 | dải sáng trắng quét qua cả đội, vệt tối bốc lên từ từng bạn và tan thành tia sáng, vòng sạch dưới chân | — |
+| `skill_cl_channel` Truyền Năng | `mp_stream` | 7 | bảy quả cầu xanh lam có đuôi bay vòng cung từ người tung sang đồng đội, đồng đội hút đốm vào, vòng xanh | — |
+| `skill_e_doom_mark` Dấu Diệt Vong | `doom_sigil` | 7 | vòng ấn tối vẽ trên không trên mục tiêu, ba đốm đêm bay vòng, ấn giáng xuống in vào đất dưới mục tiêu, khói tối bung (dấu đếm ngược là của trạng thái) | — |
+Bộ phần chung mới: `boonParts.ts` (dấu cộng, mũi tên theo màu chỉ số, vòm lục giác, cột sáng, vòng ấn). Lá bùa, vòng ấn là hình gốc (vòng + vạch + nan), không có chữ hay ký hiệu có sẵn.

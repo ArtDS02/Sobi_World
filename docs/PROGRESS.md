@@ -13,6 +13,11 @@
 
 ## Nhật ký
 
+### 2026-11-15 — VFX 3D: hỗ trợ hồi máu / thanh tẩy / đặc biệt dựng lại theo từng loại (15 skill), tự chấm (decision 059)
+✅ Đã làm: 14 hiệu ứng mới thay `heal_bloom` / `cleanse` / `mp_channel` / `doom_mark` dùng chung: `wave_mend`, `dawn_mend`, `sprout_mend`, `mend_cross`, `second_wind`, `ward_mend` (`mendFx.ts`), `tide_song`, `blossom_regen`, `healing_rain`, `aura_regen`, `purify` (`mendArea.ts`), `mp_stream`, `doom_sigil`, `void_veil` (`boonSpecial.ts`); bộ phần chung `boonParts.ts`. Skill của dòng nguyên tố dùng chất liệu của dòng (nước, ánh sáng, cây, hư không). `battle_fx.json`: act `vfx3d` của 15 skill đổi `fx`, `at = impact − đỉnh hiệu ứng`, `dur` tới `timing.end` (không đổi `timing`).
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121: chỉ 4 đỏ có từ trước. Ảnh `docs/animation/vfx3d/support/`. Tự chấm 7–7,5. Chỉ xem khung tĩnh.
+👉 Chủ dự án: chấm nhóm hỗ trợ hồi máu. Còn lại: tăng chỉ số 12, khiên / thủ 11, đòn class 15, tuyệt kỹ hỗ trợ 4; 22 skill mới (decision 060).
+
 ### 2026-11-15 — VFX 3D: hệ Hư không dựng lại (P3, 4 / 4 skill), tự chấm (decision 059)
 ✅ Đã làm: `void_fist`, `void_vortex` (`riftFx.ts`), `sky_bell`, `mythic_awakening` (`riftUlts.ts`) trên `riftParts.ts` (khe nứt không gian có sao bên trong, viền tách màu lam / hồng; lõi đêm trong vòng xoáy; chuông trời sao trong suốt có vết nứt; mảnh không gian treo rồi tắt); bỏ `voidFx.ts`, `voidUlts.ts`. `battle_fx.json` không đổi.
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121: chỉ 4 đỏ có từ trước. FPS trên RTX 3050: 60 fps (hai tuyệt kỹ, Xoáy). Ảnh `docs/animation/vfx3d/void/`. Tự chấm 7–7,5. Chỉ xem khung tĩnh.

@@ -31,7 +31,8 @@ export const PROP_EASE_VALUES = ['linear', 'inQuad', 'outQuad', 'inOutSine', 'in
 export const DECAL_KINDS = ['puddle', 'scorch', 'crack', 'rune', 'ring'] as const;
 /** 3D effects drawn by the battle's WebGL layer (prototype, decision 059): the ids of scene/battle/vfx3d/effects.ts. */
 export const VFX3D_IDS = ['trident_sea', 'bubble_shot', 'bubble_spray', 'tsunami_sweep', 'ice_bloom', 'frost_breath', 'claw_clamp', 'jaw_flame', 'hammer_slam', 'lava_glob', 'lava_flood', 'magma_cone', 'meteor_rain', 'flame_pillars', 'forge_ult', 'phoenix_rebirth', 'thorn_volley', 'vine_whip', 'spore_cone', 'root_bind', 'root_quake', 'corrupt_bloom', 'thorn_storm', 'boulder_smash', 'quake_spikes', 'tusk_charge', 'rock_fist', 'seal_quake', 'steel_slash', 'armor_break', 'steel_charge', 'steel_cavalry', 'metal_claw', 'bronze_fist', 'thunder_strike', 'chain_lightning', 'call_thunder', 'thunder_command', 'spark_peck', 'lightning_dive', 'thunder_rush', 'light_ray', 'lumina_ray', 'rune_beam', 'ink_spray', 'night_net', 'nightmare', 'night_weave', 'shadow_bite', 'wraith_touch', 'curse_eyes', 'void_fist', 'void_vortex', 'sky_bell', 'mythic_awakening',
-  'heal_bloom', 'buff_up', 'shield_dome', 'cleanse', 'mp_channel', 'doom_mark', 'ground_stomp', 'class_strike', 'class_combo', 'class_orb', 'class_rain', 'class_meteor', 'ult_party'] as const;
+  'heal_bloom', 'buff_up', 'shield_dome', 'cleanse', 'mp_channel', 'doom_mark', 'ground_stomp', 'class_strike', 'class_combo', 'class_orb', 'class_rain', 'class_meteor', 'ult_party',
+  'wave_mend', 'dawn_mend', 'sprout_mend', 'mend_cross', 'second_wind', 'ward_mend', 'tide_song', 'blossom_regen', 'healing_rain', 'aura_regen', 'purify', 'mp_stream', 'doom_sigil', 'void_veil'] as const;
 
 /** A colour, or the colour of the beat's look (`$color`) or its glow (`$glow`). */
 export const paint = z.union([color, z.enum(['$color', '$glow'])]);
