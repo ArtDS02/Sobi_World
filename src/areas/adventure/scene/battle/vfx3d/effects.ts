@@ -24,6 +24,7 @@ import { mountainShell, shieldWall, stoneGuard, undyingSpark } from './guardTeam
 import { armorCrush, comboSlash, finisherX, powerCleave, rendTear, vitalPierce } from './classHit';
 import { energyOrb, sealStamp, spellLance } from './classCast';
 import { elementRain, shadowDance, spellStorm, starFall, stompQuake, tremorHeave } from './classArea';
+import { holyMountain, moonLanterns, motherForest, oceanSong } from './supportUlts';
 import { mythicAwakening, skyBellUlt } from './riftUlts';
 import { flamePillars, lavaFlood, magmaCone, meteorRain } from './fireArea';
 import { clawClamp, hammerSlam, jawFlame, lavaGlob } from './fireHits';
@@ -144,6 +145,10 @@ export const VFX3D: Record<(typeof VFX3D_IDS)[number], Vfx3dFactory> = {
   element_rain: elementRain,
   spell_storm: spellStorm,
   star_fall: starFall,
+  ocean_song: oceanSong,
+  holy_mountain: holyMountain,
+  moon_lanterns: moonLanterns,
+  mother_forest: motherForest,
   heal_bloom: healBloom,
   buff_up: buffUp,
   shield_dome: shieldDome,

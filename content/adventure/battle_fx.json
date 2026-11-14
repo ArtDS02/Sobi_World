@@ -3261,7 +3261,7 @@
       "circleMs": 820,
       "stagger": 150,
       "script": [
-        { "do": "vfx3d", "at": 0, "who": "allyside", "dur": 3100, "fx": "ult_party", "color": "#5ac8ff" },
+        { "do": "vfx3d", "at": 0, "who": "allyside", "dur": 3100, "fx": "ocean_song" },
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
@@ -3370,7 +3370,7 @@
       "circleMs": 900,
       "stagger": 150,
       "script": [
-        { "do": "vfx3d", "at": 150, "who": "allyside", "dur": 3100, "fx": "ult_party", "color": "#c0a070" },
+        { "do": "vfx3d", "at": 150, "who": "allyside", "dur": 3100, "fx": "holy_mountain" },
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
@@ -3573,7 +3573,7 @@
       "circleMs": 700,
       "stagger": 150,
       "script": [
-        { "do": "vfx3d", "at": 0, "who": "allyside", "dur": 3100, "fx": "ult_party", "color": "#ffe9a0" },
+        { "do": "vfx3d", "at": 0, "who": "allyside", "dur": 3100, "fx": "moon_lanterns" },
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },
@@ -3960,7 +3960,7 @@
       "circleMs": 880,
       "stagger": 120,
       "script": [
-        { "do": "vfx3d", "at": 0, "who": "allyside", "dur": 3100, "fx": "ult_party", "color": "#7ccf5a" },
+        { "do": "vfx3d", "at": 0, "who": "allyside", "dur": 3100, "fx": "mother_forest" },
         { "do": "letterbox", "at": 0, "who": "field", "dur": 240, "on": true },
         { "do": "vignette", "at": 0, "who": "field", "dur": 900, "color": "#0a0612", "alpha": 0.5 },
         { "do": "punch", "at": 0, "who": "actor", "dur": 620, "zoom": 1.08 },

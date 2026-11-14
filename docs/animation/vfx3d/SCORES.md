@@ -212,3 +212,13 @@ Trước đây 15 skill này dùng chung 6 hiệu ứng (`class_strike` cho 6 sk
 | `skill_cl_elemental_rain` Mưa Nguyên Tố | `element_rain` | 7 | vòng ấn mở trên hàng địch, vệt mưa màu hệ trút xuống, tóe trên từng con | — |
 | `skill_cl_spell_storm` Bão Phép | `spell_storm` | 7 | bánh xe rune xoay trên hàng, đốm xoáy quanh, tia phân nhánh đánh xuống từng con | — |
 | `skill_cl_meteor` Thiên Thạch | `star_fall` | 7 | thiên thạch màu hệ rơi chéo, đuôi sáng dài, nổ giữa hàng, hai vòng rộng, lóe trên từng con | màn trắng do `flash` của kịch bản |
+
+### Tuyệt kỹ hỗ trợ (tự chấm 2026-11-15, ảnh `docs/animation/vfx3d/support/skill_ult_{nh,qs,qt,mm}_sheet.jpg`, chụp ở mốc tuyệt đối 700–3000 ms sau lần sửa cuối)
+Trước đây cả bốn dùng chung `ult_party` đổi màu. Act ở phe ta không biết vị trí phe địch, nên phần "lên mọi kẻ địch" dùng vị trí đối xứng qua giữa sân (sân bố trí đối xứng).
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_ult_nh` Tiếng Hát Đại Dương | `ocean_song` | 7 | nước xoáy lên quanh từng bạn, vệt tối bị rửa trôi, mưa hồi máu và dấu cộng xanh ngọc (1350); rồi vương miện nước bùng trên từng kẻ địch, giọt văng (Ướt, 2200) | xoáy nước nhỏ so với một tuyệt kỹ |
+| `skill_ult_qs` Núi Thiêng Trỗi Dậy | `holy_mountain` | 7 | núi gai đá trồi lên sau cả đội, đá vụn và bụi; vòm đá vàng khép trên từng bạn (khiên, 1700); vòng khiêu khích lan từ người tung (2150) | núi là cụm gai, chưa có dáng núi |
+| `skill_ult_qt` Lồng Đèn Trung Thu | `moon_lanterns` | 7,5 | lồng đèn giấy phát sáng (thân cam, nắp tối) bay lên quanh cả đội, lắc lư; ở 1750 mỗi lồng đèn hạ xuống một bạn, bung lông sáng và dấu cộng (Bất khuất, hồi máu); số còn lại bay lên trời và tắt | — |
+| `skill_ult_mm` Rừng Mẹ Ôm Ấp | `mother_forest` | 7 | bốn dây leo lớn mọc lên vòng qua đầu cả đội, hoa hồng nở trên dây, cánh hoa và dấu cộng rơi (hồi máu, Hồi phục, 1500); mây bào tử tím trôi sang hàng địch (Trúng độc, 2100) | — |
+Lồng đèn là hình lồng đèn giấy chung chung (thân sáng + hai nắp), không theo mẫu có bản quyền nào.

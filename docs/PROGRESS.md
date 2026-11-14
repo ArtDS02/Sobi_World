@@ -13,6 +13,11 @@
 
 ## Nhật ký
 
+### 2026-11-15 — VFX 3D: 4 tuyệt kỹ hỗ trợ, mỗi cái một hình; cả 112 skill đã dựng lại (decision 059)
+✅ Đã làm: `ocean_song`, `holy_mountain`, `moon_lanterns`, `mother_forest` (`supportUlts.ts`) thay `ult_party` dùng chung. Phần "lên mọi kẻ địch" của tuyệt kỹ đứng ở phe ta dùng vị trí đối xứng qua giữa sân. Từ đây **cả 112 skill hiện có đã dựng lại** theo `docs/animation/VFX3D_REVIEW_STANDARD.md`.
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121: chỉ 4 đỏ có từ trước. FPS RTX 3050: cả bốn 60 fps. Ảnh `docs/animation/vfx3d/support/`. Tự chấm 7–7,5.
+👉 Chủ dự án: chấm toàn bộ (bảng ở `docs/animation/vfx3d/SCORES.md`). Còn lại: 22 skill mới (decision 060), chốt P5.
+
 ### 2026-11-15 — VFX 3D: đòn class dựng lại theo từng skill (15 skill), tự chấm (decision 059)
 ✅ Đã làm: 15 hiệu ứng mới thay 6 hiệu ứng dùng chung (`class_strike`, `class_combo`, `class_orb`, `ground_stomp`, `class_rain`, `class_meteor`): `power_cleave`, `armor_crush`, `rend_tear`, `vital_pierce`, `finisher_x`, `combo_slash` (`classHit.ts`), `spell_lance`, `seal_stamp`, `energy_orb` (`classCast.ts`), `shadow_dance`, `stomp_quake`, `tremor_heave`, `element_rain`, `spell_storm`, `star_fall` (`classArea.ts`), màu theo hệ người tung. `battle_fx.json`: act `vfx3d` đổi `fx` và mốc (không đổi `timing`).
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121: chỉ 4 đỏ có từ trước. Ảnh `docs/animation/vfx3d/class/`. Tự chấm 7–7,5.
