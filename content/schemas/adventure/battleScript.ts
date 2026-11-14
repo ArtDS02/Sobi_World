@@ -35,7 +35,8 @@ export const VFX3D_IDS = ['trident_sea', 'bubble_shot', 'bubble_spray', 'tsunami
   'ink_veil', 'guiding_lamp', 'swift_bolt', 'forge_fire', 'phase_shift', 'aim_focus', 'wind_dash', 'focus_charge', 'cheer_burst', 'rally_wave', 'howl_wave', 'roar_wave',
   'stone_skin', 'bronze_wall', 'iron_shell', 'taunt_call', 'hold_fast', 'fortress', 'bark_skin', 'mountain_shell', 'shield_wall', 'stone_guard', 'undying_spark',
   'power_cleave', 'armor_crush', 'rend_tear', 'vital_pierce', 'finisher_x', 'combo_slash', 'spell_lance', 'seal_stamp', 'energy_orb', 'shadow_dance', 'stomp_quake', 'tremor_heave', 'element_rain', 'spell_storm', 'star_fall',
-  'ocean_song', 'holy_mountain', 'moon_lanterns', 'mother_forest'] as const;
+  'ocean_song', 'holy_mountain', 'moon_lanterns', 'mother_forest',
+  'glare_flash', 'halo_burst', 'prism_lance', 'prism_split', 'dawn_spears', 'void_drain', 'rift_pulse', 'null_gaze', 'void_stars', 'null_ward', 'tide_slap', 'whirlpool_row', 'great_whirlpool', 'rising_tide', 'shield_bash', 'spike_rain', 'spike_barrage', 'iron_oath', 'boulder_toss', 'sand_veil', 'boulder_roll', 'dust_cloud'] as const;
 
 /** A colour, or the colour of the beat's look (`$color`) or its glow (`$glow`). */
 export const paint = z.union([color, z.enum(['$color', '$glow'])]);

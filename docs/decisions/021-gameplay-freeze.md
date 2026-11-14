@@ -4,6 +4,8 @@
 
 > **Lưu ý 2026-11-10:** decision 057 đã mở băng tạm thời cho đúng tám mục B1–B8 (HUD mở rộng bên phải, mua / túi không giới hạn số lượng, con trỏ thu hoạch, art sâu Cloud, Admin kéo/thả bố cục, hiệu ứng nâng cấp, đổi mẫu tự động theo giờ / mùa, cường độ hiệu ứng), rồi **đóng băng lại** cùng ngày. Luật mới được thêm vào danh sách đã đóng băng: menu HUD bên phải ở mọi khu; mua và túi đồ không giới hạn số lượng; tầng mây / khu đất tự đổi mẫu theo giờ hoặc theo mùa (chỉ hiển thị, chỉ dùng mẫu đã đúc, không đổi mẫu người chơi đã chọn); cường độ hiệu ứng Tắt / Nhẹ / Đầy đủ.
 
+> **Lưu ý 2026-11-15:** decision 060 đã mở băng tạm thời cho đúng 22 skill mới (12 skill quái gắn vào 8 quái, 10 skill riêng của loài thay một ô Unique của 10 loài), rồi **đóng băng lại**. Không đổi schema, skill cũ, công thức hay save.
+
 **Ngày:** 2026-10-11 · **Trạng thái:** Đề xuất, có hiệu lực **sau khi chủ dự án chơi thử ≥ 7 ngày thật và duyệt GĐ13**. Từ lúc đó hết đổi cơ chế; chỉ sửa lỗi (ROADMAP GĐ13, decision 017).
 
 > **Cập nhật 2026-10-17:** decision 037 mở băng cho riêng Adventure (Combat V2, bản đồ khám phá) và chốt WD 16 để mở Adventure.

@@ -13,6 +13,12 @@
 
 ## Nhật ký
 
+### 2026-11-15 — 22 skill mới (decision 060) vào game, mỗi skill một VFX 3D riêng, tự chấm
+✅ Đã làm: decision 060 (mở băng hẹp, ghi vào 021); `skills.json` thêm 22 skill đúng bản nháp đã duyệt; 8 quái thêm một skill quái; 10 loài thay một ô Unique (`species.<id>.unique`); 3 skill quái VOID + Giáo Lăng Kính chưa gắn quái. 22 hiệu ứng mới (`glowExtra`, `riftExtra`, `waterExtra`, `steelExtra`, `stoneExtra`), kịch bản `battle_fx.json` nhân từ skill cùng dạng; hợp đồng nhìn thấy ở `scenarios/skills/<id>.md`; `VFX3D_SKILL_INVENTORY.md` sinh lại (134 skill).
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test chỉ 4 đỏ có từ trước. FPS RTX 3050 60 fps. Ảnh `docs/animation/vfx3d/new/`. Tự chấm 7–7,5.
+⚠️ Chưa chạy bot cân bằng / kinh tế sau khi thêm skill (decision 060 ghi rõ). Loài / ô / quái theo cột gợi ý của đề xuất. Tên / mô tả tiếng Anh của 22 skill thêm vào `content/i18n/en.json`.
+👉 Chủ dự án: chấm 22 skill mới; chạy hoặc giao chạy bot cân bằng; đổi loài / ô nếu muốn (một phần tử của `species.<id>.unique`).
+
 ### 2026-11-15 — VFX 3D: 4 tuyệt kỹ hỗ trợ, mỗi cái một hình; cả 112 skill đã dựng lại (decision 059)
 ✅ Đã làm: `ocean_song`, `holy_mountain`, `moon_lanterns`, `mother_forest` (`supportUlts.ts`) thay `ult_party` dùng chung. Phần "lên mọi kẻ địch" của tuyệt kỹ đứng ở phe ta dùng vị trí đối xứng qua giữa sân. Từ đây **cả 112 skill hiện có đã dựng lại** theo `docs/animation/VFX3D_REVIEW_STANDARD.md`.
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121: chỉ 4 đỏ có từ trước. FPS RTX 3050: cả bốn 60 fps. Ảnh `docs/animation/vfx3d/support/`. Tự chấm 7–7,5.

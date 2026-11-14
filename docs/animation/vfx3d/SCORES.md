@@ -222,3 +222,31 @@ Trước đây cả bốn dùng chung `ult_party` đổi màu. Act ở phe ta kh
 | `skill_ult_qt` Lồng Đèn Trung Thu | `moon_lanterns` | 7,5 | lồng đèn giấy phát sáng (thân cam, nắp tối) bay lên quanh cả đội, lắc lư; ở 1750 mỗi lồng đèn hạ xuống một bạn, bung lông sáng và dấu cộng (Bất khuất, hồi máu); số còn lại bay lên trời và tắt | — |
 | `skill_ult_mm` Rừng Mẹ Ôm Ấp | `mother_forest` | 7 | bốn dây leo lớn mọc lên vòng qua đầu cả đội, hoa hồng nở trên dây, cánh hoa và dấu cộng rơi (hồi máu, Hồi phục, 1500); mây bào tử tím trôi sang hàng địch (Trúng độc, 2100) | — |
 Lồng đèn là hình lồng đèn giấy chung chung (thân sáng + hai nắp), không theo mẫu có bản quyền nào.
+
+### 22 skill mới (decision 060, tự chấm 2026-11-15, ảnh `docs/animation/vfx3d/new/*_sheet.jpg`, chụp sau lần sửa cuối)
+Bộ phần dùng lại của hệ; file `glowExtra.ts`, `riftExtra.ts`, `waterExtra.ts`, `steelExtra.ts`, `stoneExtra.ts`. Hợp đồng nhìn thấy ở `docs/animation/library/scenarios/skills/<id>.md`.
+| Skill | Hiệu ứng | Tự chấm | Còn yếu |
+|---|---|---|---|
+| `skill_e_glare` Chói Lòa | `glare_flash` | 7 | chớp ở mắt nhỏ ở cỡ khung |
+| `skill_e_halo_burst` Vầng Sáng Nổ | `halo_burst` | 7 | — |
+| `skill_e_prism_lance` Giáo Lăng Kính | `prism_lance` | 7 | vệt bảy màu mảnh |
+| `skill_qt_prism` Lăng Kính Tán Sắc | `prism_split` | 7,5 | viên lăng kính đơn giản |
+| `skill_qt_dawn_spear` Giáo Rạng Đông | `dawn_spears` | 7 | giáo mảnh |
+| `skill_e_void_touch` Chạm Hư Vô | `void_drain` | 7 | đốm trạng thái nhỏ |
+| `skill_e_rift_pulse` Xung Khe Nứt | `rift_pulse` | 7 | — |
+| `skill_e_null_gaze` Ánh Nhìn Trống Rỗng | `null_gaze` | 7 | — |
+| `skill_hk_star_fall` Sao Rơi Vô Định | `void_stars` | 7 | sao rơi nhanh, chỉ thấy rõ ở khung sát nhịp |
+| `skill_hk_null_ward` Kết Giới Trống | `null_ward` | 7 | — |
+| `skill_e_tide_slap` Quật Sóng | `tide_slap` | 7 | — |
+| `skill_e_whirlpool` Xoáy Nước | `whirlpool_row` | 7 | — |
+| `skill_nh_whirlpool` Xoáy Nước Cổ | `great_whirlpool` | 7 | cùng khung với Xoáy Nước (to hơn, nhiều bọt hơn) |
+| `skill_nh_rising_tide` Triều Dâng | `rising_tide` | 7 | — |
+| `skill_e_shield_bash` Húc Khiên | `shield_bash` | 7 | — |
+| `skill_e_spike_volley` Mưa Chông | `spike_rain` | 7 | — |
+| `skill_tg_spike_barrage` Mưa Chông Thép | `spike_barrage` | 7 | — |
+| `skill_tg_iron_oath` Lời Thề Sắt | `iron_oath` | 7 | — |
+| `skill_e_boulder_toss` Ném Tảng | `boulder_toss` | 7,5 | — |
+| `skill_e_sand_veil` Màn Cát | `sand_veil` | 7 | — |
+| `skill_qs_boulder_roll` Lăn Tảng | `boulder_roll` | 7,5 | — |
+| `skill_qs_dust_cloud` Mây Bụi | `dust_cloud` | 7 | — |
+Bài học: `lines.ts` vẽ lõi trắng, màu chỉ ở quầng, nên tia nhiều màu (cầu vồng) phải là chuỗi hạt sơn. FPS RTX 3050: Lăng Kính Tán Sắc, Xoáy Nước Cổ, Màn Cát, Mưa Chông đều 60 fps.

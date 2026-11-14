@@ -22,6 +22,11 @@ import { armorCrush, comboSlash, finisherX, powerCleave, rendTear, vitalPierce }
 import { energyOrb, sealStamp, spellLance } from './classCast';
 import { elementRain, shadowDance, spellStorm, starFall, stompQuake, tremorHeave } from './classArea';
 import { holyMountain, moonLanterns, motherForest, oceanSong } from './supportUlts';
+import { dawnSpears, glareFlash, haloBurst, prismLance, prismSplit } from './glowExtra';
+import { nullGaze, nullWard, riftPulse, voidDrain, voidStars } from './riftExtra';
+import { greatWhirlpool, risingTide, tideSlap, whirlpoolRow } from './waterExtra';
+import { ironOath, shieldBash, spikeBarrage, spikeRain } from './steelExtra';
+import { boulderRoll, boulderToss, dustCloud, sandVeil } from './stoneExtra';
 import { mythicAwakening, skyBellUlt } from './riftUlts';
 import { flamePillars, lavaFlood, magmaCone, meteorRain } from './fireArea';
 import { clawClamp, hammerSlam, jawFlame, lavaGlob } from './fireHits';
@@ -146,4 +151,26 @@ export const VFX3D: Record<(typeof VFX3D_IDS)[number], Vfx3dFactory> = {
   holy_mountain: holyMountain,
   moon_lanterns: moonLanterns,
   mother_forest: motherForest,
+  glare_flash: glareFlash,
+  halo_burst: haloBurst,
+  prism_lance: prismLance,
+  prism_split: prismSplit,
+  dawn_spears: dawnSpears,
+  void_drain: voidDrain,
+  rift_pulse: riftPulse,
+  null_gaze: nullGaze,
+  void_stars: voidStars,
+  null_ward: nullWard,
+  tide_slap: tideSlap,
+  whirlpool_row: whirlpoolRow,
+  great_whirlpool: greatWhirlpool,
+  rising_tide: risingTide,
+  shield_bash: shieldBash,
+  spike_rain: spikeRain,
+  spike_barrage: spikeBarrage,
+  iron_oath: ironOath,
+  boulder_toss: boulderToss,
+  sand_veil: sandVeil,
+  boulder_roll: boulderRoll,
+  dust_cloud: dustCloud,
 };

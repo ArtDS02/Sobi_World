@@ -325,7 +325,7 @@
         "eva": 5,
         "crit": 4
       },
-      "skills": ["skill_e_rock_slam", "skill_e_iron_shell"],
+      "skills": ["skill_e_rock_slam", "skill_e_iron_shell", "skill_e_boulder_toss"],
       "exp": 10.5,
       "coins": 7,
       "drops": [
@@ -408,7 +408,7 @@
         "eva": 5,
         "crit": 4
       },
-      "skills": ["skill_e_rock_slam", "skill_e_stone_guard"],
+      "skills": ["skill_e_rock_slam", "skill_e_stone_guard", "skill_e_sand_veil"],
       "exp": 15.9,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.016, "min": 1, "max": 1 }],
@@ -430,7 +430,7 @@
         "eva": 12,
         "crit": 10
       },
-      "skills": ["skill_e_rune_beam", "skill_e_holy_ward"],
+      "skills": ["skill_e_rune_beam", "skill_e_holy_ward", "skill_e_glare"],
       "exp": 15.9,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.016, "min": 1, "max": 1 }],
@@ -525,7 +525,7 @@
         "eva": 5,
         "crit": 6
       },
-      "skills": ["skill_e_bronze_crush", "skill_e_stone_guard", "skill_e_doom_mark"],
+      "skills": ["skill_e_bronze_crush", "skill_e_stone_guard", "skill_e_doom_mark", "skill_e_spike_volley"],
       "statusResist": { "stun": 0.5, "freeze": 0.5, "disable": 0.5 },
       "statusImmune": ["doom"],
       "phases": [
@@ -561,7 +561,7 @@
         "eva": 5,
         "crit": 4
       },
-      "skills": ["skill_e_bubble", "skill_e_iron_shell"],
+      "skills": ["skill_e_bubble", "skill_e_iron_shell", "skill_e_tide_slap"],
       "exp": 16.2,
       "coins": 10,
       "drops": [{ "itemId": "item_mountain_ore", "chance": 0.2, "min": 1, "max": 2 }],
@@ -605,7 +605,7 @@
         "eva": 8,
         "crit": 6
       },
-      "skills": ["skill_e_bubble", "skill_e_frost_breath"],
+      "skills": ["skill_e_bubble", "skill_e_frost_breath", "skill_e_whirlpool"],
       "exp": 16.2,
       "coins": 10,
       "drops": [{ "itemId": "item_beast_fang", "chance": 0.2, "min": 1, "max": 1 }],
@@ -627,7 +627,7 @@
         "eva": 10,
         "crit": 5
       },
-      "skills": ["skill_e_rune_beam", "skill_e_soothe"],
+      "skills": ["skill_e_rune_beam", "skill_e_soothe", "skill_e_halo_burst"],
       "exp": 15.6,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.15, "min": 1, "max": 1 }],
@@ -673,7 +673,7 @@
         "eva": 5,
         "crit": 4
       },
-      "skills": ["skill_e_metal_claw", "skill_e_iron_shell", "skill_e_bubble"],
+      "skills": ["skill_e_metal_claw", "skill_e_iron_shell", "skill_e_bubble", "skill_e_shield_bash"],
       "exp": 26.4,
       "coins": 17,
       "drops": [
