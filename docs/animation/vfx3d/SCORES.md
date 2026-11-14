@@ -126,3 +126,14 @@ Lỗi đã sửa trong lúc chấm (bản Fable bị ngắt trước khi chấm)
 Bài học: lớp 3D luôn vẽ **đè lên** sinh vật (không có chiều sâu so với sprite), nên vật "sau lưng" mục tiêu thực ra che mặt nó; vật cần đứng cạnh mục tiêu phải đặt **bên cạnh**, về phía trống (phía người tung), không về phía đồng đội của mục tiêu.
 Mặt nạ, mắt, hàm, bàn tay là hình gốc vẽ bằng shader / code, không dựa trên nhân vật hay biểu tượng nào.
 FPS trên RTX 3050 (Chrome headless, 1600 × 900): Lưới Dệt Đêm 60,1, Lưới Đêm 60,2, Ác Mộng 60,3 fps.
+
+### Hệ Hư không (tự chấm 2026-11-15, ảnh `docs/animation/vfx3d/void/*_sheet.jpg`, chụp sau lần sửa cuối)
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_hk_pure_impact` Va Chạm Thuần | `void_fist` | 7,5 | đốm không gian bị hút vào một lõi đêm trước người tung, lõi co mạnh (lấy đà), bắn thẳng tới kẻ địch để lại vệt rách; đúng nhịp trúng không gian nứt hình sao quanh kẻ địch, viền tách màu lam / hồng, mảnh vỡ treo rồi tắt, vòng xé trên đất | lõi đêm khá nhỏ lúc bay |
+| `skill_hk_void_vortex` Xoáy Hư Không | `void_vortex` | 7 | xoáy đêm mở trên đất dưới hàng địch, quay nhanh dần, vệt không gian xoắn vào và lên thành phễu; đúng nhịp trúng từng kẻ địch bị nứt (lệch 60 ms), mảnh vỡ, vòng; xoáy co về một điểm rồi tắt | vệt xoắn mảnh, gần trắng; xoáy vẫn đè lên chân kẻ địch đứng trước |
+| `skill_ult_hk` Bầu Trời Trong Chuông | `sky_bell` | 7 | khe nứt mở trên cao, chuông trời sao trong suốt viền tím hạ xuống phủ cả hàng (khe khép lại), ba tiếng ngân 1200 / 1600 / 2000: chuông lắc, vòng lan rộng dần, vết nứt sáng dần; tiếng thứ ba chuông vỡ thành mảnh, từ mỗi kẻ địch mảnh sáng bay đi (xóa trạng thái tốt) | dáng chuông hơi cao, giống chụp đèn; nền bị flash trắng của kịch bản lúc vỡ |
+| `skill_ult_mythical` Huyền Thoại Thức Tỉnh | `mythic_awakening` | 7 | cổng đêm lớn mở trên người tung, hút đốm sao, quay nhanh dần; vệt rách phóng từ cổng tới từng kẻ địch (1700 + 100 ms mỗi con) có đầu sáng, nứt hình sao, mảnh vỡ, vòng; rồi cổng đổ đốm xuống từng đồng đội, đốm xanh lá (hồi máu) và vệt cam (tăng công) bay lên | cổng là đĩa đen tròn, dễ đọc như "lỗ đen" chung chung; lúc trúng màn trắng xóa do flash 0,6 của kịch bản |
+
+Bản cũ (`voidFx.ts`, `voidUlts.ts`) bỏ; bộ phần mới `riftParts.ts` (khe nứt có sao bên trong và viền tách màu, lõi đêm trong vòng xoáy, chuông trời sao, mảnh không gian). Chuông, cổng, khe nứt là hình gốc vẽ bằng shader.
+FPS trên RTX 3050 (Chrome headless, 1600 × 900): Bầu Trời Trong Chuông 60,2, Huyền Thoại Thức Tỉnh 60,1, Xoáy Hư Không 60,4 fps.

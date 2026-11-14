@@ -13,8 +13,8 @@ import { inkSpray, nightmare, shadowBite, wraithTouch } from './shadeFx';
 import { classCombo, classMeteor, classOrb, classRain, classStrike, groundStomp } from './classFx';
 import { ultParty } from './partyUlt';
 import { buffUp, cleanse, doomMark, healBloom, mpChannel, shieldDome } from './supportFx';
-import { voidFist, voidVortex } from './voidFx';
-import { mythicAwakening, skyBell } from './voidUlts';
+import { voidFist, voidVortex } from './riftFx';
+import { mythicAwakening, skyBellUlt } from './riftUlts';
 import { flamePillars, lavaFlood, magmaCone, meteorRain } from './fireArea';
 import { clawClamp, hammerSlam, jawFlame, lavaGlob } from './fireHits';
 import { forgeUlt } from './fireUlts';
@@ -80,7 +80,7 @@ export const VFX3D: Record<(typeof VFX3D_IDS)[number], Vfx3dFactory> = {
   curse_eyes: curseEyes,
   void_fist: voidFist,
   void_vortex: voidVortex,
-  sky_bell: skyBell,
+  sky_bell: skyBellUlt,
   mythic_awakening: mythicAwakening,
   heal_bloom: healBloom,
   buff_up: buffUp,

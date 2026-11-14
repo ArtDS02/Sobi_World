@@ -13,6 +13,11 @@
 
 ## Nhật ký
 
+### 2026-11-15 — VFX 3D: hệ Hư không dựng lại (P3, 4 / 4 skill), tự chấm (decision 059)
+✅ Đã làm: `void_fist`, `void_vortex` (`riftFx.ts`), `sky_bell`, `mythic_awakening` (`riftUlts.ts`) trên `riftParts.ts` (khe nứt không gian có sao bên trong, viền tách màu lam / hồng; lõi đêm trong vòng xoáy; chuông trời sao trong suốt có vết nứt; mảnh không gian treo rồi tắt); bỏ `voidFx.ts`, `voidUlts.ts`. `battle_fx.json` không đổi.
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2117 / 2121: chỉ 4 đỏ có từ trước. FPS trên RTX 3050: 60 fps (hai tuyệt kỹ, Xoáy). Ảnh `docs/animation/vfx3d/void/`. Tự chấm 7–7,5. Chỉ xem khung tĩnh.
+👉 Chủ dự án: chấm hệ Hư không. Còn lại: hệ trống / class / hỗ trợ 57; 22 skill mới (decision 060).
+
 ### 2026-11-14 — VFX 3D: hệ Bóng tối dựng lại (P3, 7 / 7 skill), tự chấm (decision 059)
 ✅ Đã làm: `ink_spray`, `nightmare`, `shadow_bite`, `wraith_touch` (`shadeFx.ts`), `night_net`, `night_weave`, `curse_eyes` (`shadeArea.ts`) trên `shadeParts.ts` (khối mù đen mực viền tím mép bị nhiễu ăn, mắt, hàm bóng hai dải răng, lưới đêm có sao ở nút, mảnh mực); bỏ `darkFx.ts`, `darkArea.ts`. Phiên Fable dựng, bị ngắt trước khi chấm; phiên này chỉnh 6 skill che mục tiêu / sai vị trí rồi chấm. `battle_fx.json` không đổi. Tiêu chuẩn duyệt: `docs/animation/VFX3D_REVIEW_STANDARD.md`.
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2115 / 2121: 4 đỏ có từ trước + 2 `assetsCheck` quá 20 s (máy chậm). FPS trên RTX 3050: Lưới Dệt Đêm, Lưới Đêm, Ác Mộng 60 fps. Ảnh `docs/animation/vfx3d/dark/`. Tự chấm 7–7,5. Chỉ xem khung tĩnh, chưa xem clip.

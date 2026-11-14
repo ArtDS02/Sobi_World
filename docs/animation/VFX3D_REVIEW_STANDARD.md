@@ -69,7 +69,7 @@ Mỗi hệ có một bộ phần riêng (`<chất liệu>Parts.ts`). Skill trong
 | Kim | `steelParts` | kim loại bóng vẽ bằng dải phản chiếu và điểm sáng cứng (thép hoặc đồng); cung chém quét rồi mảnh dần; tia "keng" trắng; khiên ghép mảnh khóa lại hoặc vỡ tung | mềm, mờ nhòe; khói |
 | Ánh sáng | `glowParts` | tia có lõi trắng, thân vàng với vệt chạy dọc, mảng ấm sơn dưới để đọc được trên trời sáng; hào quang có tia nắng; vòng rune; đốm sáng dịu bay lên | rung, khói; chuyển động giật |
 | Bóng tối | `shadeParts` | khối "mù" đen mực, viền tím mảnh, mép bị nhiễu chậm ăn mòn; mắt mở; hàm bóng hai dải răng (không phải cả đĩa); lưới đêm có sao ở nút; mảnh mực mảnh; **sơn, không chiếu sáng**: chuyển động chậm, ánh duy nhất là viền tím; vì sơn che thứ phía sau nên phải nhỏ và tan nhanh ở chỗ mục tiêu | sáng chói; nét cứng; khối đặc che mục tiêu |
-| Hư không (chưa dựng) | — | (theo `SKILL_DESCRIPTION_STANDARD.md` §3) vòng, khe nứt, lõi đen, mảnh vỡ trôi; vặn không gian, tách màu | màu ngoài tím lam; vật liệu "thật" |
+| Hư không | `riftParts` | khe nứt không gian (bên trong là đêm có sao, viền tách màu lam một bên / hồng một bên); lõi đêm trong vòng sáng xoáy (cổng, nắm đấm "không"); chuông trời sao trong suốt viền tím, nứt sáng trước khi vỡ; mảnh không gian bay chậm, khựng lại, treo rồi tắt; hút vào → vặn → vỡ → lặng | màu ngoài tím lam; vật liệu "thật"; khe nứt to che mục tiêu |
 | Không hệ / class / hỗ trợ (chưa dựng) | — | làm **riêng từng loại** (hồi, tăng, khiên, thanh tẩy, đòn class, tuyệt kỹ hỗ trợ); đổi màu theo `$color` của người tung; hỗ trợ luôn nhẹ, ấm, đi lên | một hình đổi màu cho cả nhóm; bốn tuyệt kỹ hỗ trợ trùng hình |
 
 ## 5. Chuẩn code
@@ -112,7 +112,7 @@ Mỗi hệ có một bộ phần riêng (`<chất liệu>Parts.ts`). Skill trong
 
 ## 8. Việc còn lại (2026-11-14)
 1. ~~Bóng tối (7)~~: xong 2026-11-14, tự chấm 7–7,5 (`docs/animation/vfx3d/dark/`), chờ chủ dự án chấm.
-2. **Hư không (4):** đang dùng bản cũ (`voidFx.ts`, `voidUlts.ts`).
+2. ~~Hư không (4)~~: xong 2026-11-15, tự chấm 7–7,5 (`docs/animation/vfx3d/void/`), chờ chủ dự án chấm.
 3. **Không hệ / class / hỗ trợ (57):** đang dùng 13 hiệu ứng chung (`supportFx.ts`, `classFx.ts`, `partyUlt.ts`). Phải tách theo loại.
 4. **22 skill mới (P4):** viết decision 060 trước khi sửa `content/`, rồi dựng theo file này.
 5. **Chốt (P5):** `npm run check` đầy đủ, đo FPS trong Electron, cập nhật decision 059, `PROGRESS.md`, `THIRD_PARTY.md`.
