@@ -1,6 +1,7 @@
 // The 3D effects of the battle (prototype, decision 059), by the id a script's `vfx3d` act names (VFX3D_IDS of the script schema).
 import type { VFX3D_IDS } from '../../../../../../content/schemas/adventure/battleScript';
-import { boulderSmash, quakeSpikes, rockFist, sealQuake, tuskCharge } from './earthFx';
+import { boulderSmash, quakeSpikes, rockFist, tuskCharge } from './stoneFx';
+import { sealQuake } from './stoneSeal';
 import { lightRay, luminaRay, runeBeam } from './lightFx';
 import { callThunder, thunderCommand, thunderRush } from './stormArea';
 import { chainLightning, lightningDive, sparkPeck, thunderStrike } from './stormFx';

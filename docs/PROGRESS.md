@@ -13,6 +13,12 @@
 
 ## Nhật ký
 
+### 2026-11-14 — VFX 3D: hệ Đất dựng lại (P3, 5 / 5 skill), tự chấm (decision 059, commit cục bộ)
+✅ Đã làm: `boulder_smash`, `quake_spikes`, `tusk_charge`, `rock_fist` (`stoneFx.ts`), `seal_quake` (`stoneSeal.ts`) trên `stoneParts.ts` (đá mặt cắt ba tông, tảng đá / gai đá méo theo seed, vết nứt lan, mảnh vụn và bụi); bỏ `earthFx.ts` (`earthParts.ts` còn vì các hệ chưa làm dùng). `battle_fx.json` không đổi.
+🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2115 / 2121: 4 đỏ có từ trước + 2 test `assetsCheck` quá 20 s; chạy riêng `assetsCheck` với `--testTimeout 120000` thì 9 / 9 qua (máy chậm). Sau lần check đó chỉ còn chỉnh hình nắm đấm / ngà: đã chạy lại typecheck, lint, guard (xanh), chưa chạy lại toàn bộ test. Ảnh `docs/animation/vfx3d/earth/`. Tự chấm 7–7,5.
+⚠️ Nắm đấm đá và ngà lúc đầu dưới 7 (giống chồng đá / dải nhạt), đã nắn lại và chụp cận. Chưa đo FPS riêng cho hệ này.
+👉 Chủ dự án: chấm hệ Đất. Còn lại chưa dựng lại: Kim 6, Ánh sáng 3, Bóng tối 7, Hư không 4, hệ trống / class / hỗ trợ 57; 22 skill mới (decision 060) chưa bắt đầu.
+
 ### 2026-11-13 — VFX 3D: hệ Thiên nhiên dựng lại (P3, 7 / 7 skill), tự chấm (decision 059, commit cục bộ)
 ✅ Đã làm: `thorn_volley`, `vine_whip`, `spore_cone` (`plantHits.ts`), `root_bind`, `root_quake`, `corrupt_bloom`, `thorn_storm` (`plantArea.ts`) trên `plantParts.ts` (thân dây / rễ là dải luôn quay về camera, uốn theo đường đi cho từng khung; lá bay, hoa nở, mây bào tử); bỏ `natureHits.ts`, `natureArea.ts` (`natureParts.ts` còn vì các hệ chưa làm dùng `seeds`). `battle_fx.json` không đổi.
 🧪 `npm run check`: typecheck, lint, guard, assets:check xanh; test 2116 / 2121: 4 đỏ có từ trước + `assetsCheck` quá 20 s (máy chậm, đã ghi trong handover). Ảnh `docs/animation/vfx3d/nature/`. Tự chấm 7–7,5 (bảng ở `SCORES.md`).

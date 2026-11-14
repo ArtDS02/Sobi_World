@@ -79,3 +79,12 @@ Thay đổi chung trong lúc làm hệ Lửa: lớp nén sáng giữ sắc độ
 | `skill_e_thorn_storm` Bão Gai | `thorn_storm` | 7 | lốc gai và lá xoáy quanh quái, siết lại rồi lao dọc hàng; ba đợt gió có vệt chém trên từng mục tiêu | lốc đọc là "gió xanh" nhiều hơn là "gai" |
 
 Bài học: hình `streak` của atlas rất mảnh, hạt kéo dài bằng hình đó chỉ là sợi chỉ; vật bay cần thấy rõ (gai) dùng hình `leaf` kéo dài, màu tương phản với nền và có ánh sáng bám theo.
+
+### Hệ Đất (tự chấm 2026-11-14, ảnh `docs/animation/vfx3d/earth/*_sheet.jpg`, chụp sau lần sửa cuối)
+| Skill | Hiệu ứng | Tự chấm | Thấy gì | Còn yếu |
+|---|---|---|---|---|
+| `skill_qs_rock_smash` Đập Đá | `boulder_smash` | 7,5 | đất nứt trước người tung, tảng đá có mặt cắt trồi lên, lơ lửng một nhịp rồi bay vòng cung xoay tới mục tiêu; vỡ thành sáu mảnh lớn lăn đi, mảnh vụn, bụi, vết nứt, vòng chấn | — |
+| `skill_qs_quake` Địa Chấn Cổ | `quake_spikes` | 7,5 | cú dậm làm nứt đất dưới người tung, bụi chạy sát đất tới hàng địch, mỗi kẻ địch một cụm sáu gai đá trồi lên có nảy (lệch 130 ms) rồi lún xuống | — |
+| `skill_e_tusk_charge` Húc Nanh | `tusk_charge` | 7 | bụi tung dọc đường lao, hai chiếc ngà cong màu ngà voi móc từ dưới đất lên qua mục tiêu, lóe sáng, mảnh vụn, vết nứt | gốc ngà bị cắt phẳng; ngà là dải dẹt tô bóng chứ không phải khối |
+| `skill_e_rock_slam` Nện Đá | `rock_fist` | 7 | nắm đấm đá (bàn tay khối, bốn đốt, ngón cái, cổ tay sáu cạnh) kết lại trên cao, nghiêng lấy đà, giáng trong 100 ms, bẹp và nảy; hố nứt, mảnh vụn, bụi, vòng chấn | các đốt ngón chưa tách rõ, nhìn xa giống búa đá |
+| `skill_e_seal_quake` Địa Chấn Phong Ấn | `seal_quake` | 7,5 | ấn vàng (hai vòng xoay ngược, khung vuông vỡ) cháy trên đất dưới cả hàng, vết nứt lan và sáng lên, ấn rách ra ở 1200 ms, phiến đá có vân sáng trồi dưới từng mục tiêu, giật thêm một nhịp ở 1700 | — |
