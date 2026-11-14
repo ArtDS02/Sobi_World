@@ -108,3 +108,11 @@ và `three`; trả `battle_fx.json` về HEAD.
 - **Pilot dựng lại**: `trident_sea` (`tridentSea.ts`), `phoenix_rebirth` (`phoenixFx.ts`), `chain_lightning` (`stormFx.ts`); hợp đồng nhìn thấy ở cuối ba file kịch bản; điểm tự chấm 8 / 7,5 / 7,5 ở `docs/animation/vfx3d/SCORES.md`. Kịch bản: Chuỗi Sét thêm `tint` tối nền, chớp / rung theo từng tia; Phượng Hoàng đổi `tint` sang tối ấm và dời rung / hit-stop / chớp về 1300 và 2050.
 - **Công cụ**: `shots.ts` chụp sân ở 1600 × 900 (trước đây khung lab chỉ 604 px), thêm `--crop`, `--gpu`, `--mode`; `fps.ts` đo FPS trên GPU thật. Đo trên RTX 3050: 60 fps cả ba pilot.
 - **Chưa làm / chưa kiểm**: chưa đo trong Electron; chưa xem clip chuyển động (chỉ khung tĩnh); `shots.ts` kẹt ở vài mốc thời gian (Playwright chờ phần tử "ổn định"), đổi mốc thì chụp được; 109 skill còn lại vẫn là hình cũ.
+
+## Dựng lại toàn bộ theo tiêu chuẩn (2026-11-14 → 2026-11-15, phiên Fable rồi phiên Opus)
+- Tiêu chuẩn duyệt: `docs/animation/VFX3D_REVIEW_STANDARD.md` (thước 5 × 2, quy tắc hình, chất liệu từng hệ, chuẩn code, quy trình một hệ). Điểm tự chấm từng skill: `docs/animation/vfx3d/SCORES.md`; ảnh: `docs/animation/vfx3d/<nhóm>/`.
+- **Cả 112 skill cũ đã dựng lại**, mỗi hệ một bộ phần: `stormParts` (Sét), `waterParts` (Nước), `flameParts` / `phoenixParts` (Lửa), `plantParts` (Thiên nhiên), `stoneParts` (Đất), `steelParts` (Kim), `glowParts` (Ánh sáng), `shadeParts` (Bóng tối), `riftParts` (Hư không), `boonParts` (hỗ trợ). 57 skill không hệ / class / hỗ trợ trước dùng chung 13 hiệu ứng đổi màu, nay mỗi loại (hoặc mỗi skill) một hình; 13 hiệu ứng chung và các file chỉ chúng dùng đã gỡ.
+- **22 skill mới** (decision 060) có hiệu ứng riêng (`*Extra.ts`). Tổng 134 skill, 134 hiệu ứng.
+- Đo FPS (Chrome headless, D3D11, RTX 3050, 1600 × 900, chế độ đầy đủ): mọi skill nặng nhất của từng nhóm 60 fps. **Chưa đo trong Electron**, chưa xem clip chuyển động (chỉ khung tĩnh dày).
+- Thư viện: không thêm gì ngoài `three` (đã ghi ở `docs/THIRD_PARTY.md`).
+- Chủ dự án chưa chấm số các hệ đã dựng lại; điểm của chủ dự án là điểm cuối.

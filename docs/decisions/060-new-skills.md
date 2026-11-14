@@ -41,6 +41,20 @@ Loài và ô lấy đúng cột "Loài gợi ý (ô)" của đề xuất. Mỗi 
 **Animation:** mỗi skill mới có kịch bản trong `battle_fx.json` với một act `vfx3d` riêng, dựng theo `docs/animation/VFX3D_REVIEW_STANDARD.md`; đòn nhiều nhịp dùng `stagger` như Chuỗi Sét.
 
 ## Hệ quả
-- Đổi độ khó khi gặp 8 quái trên (thêm một lựa chọn skill) và bộ skill của 10 loài. Số liệu nằm trong khoảng của skill cùng loại; **chưa chạy bot cân bằng / kinh tế** (`scripts/economy/`): việc của chủ dự án hoặc phiên sau, trước khi đóng băng lại.
+- Đổi độ khó khi gặp 8 quái trên (thêm một lựa chọn skill) và bộ skill của 10 loài. Số liệu nằm trong khoảng của skill cùng loại; kết quả bot cân bằng ở mục cuối.
 - Không đổi save: skill là dữ liệu tĩnh, save chỉ lưu level / id loài.
 - Sau khi áp dụng, gameplay đóng băng lại như decision 021.
+
+## Bot cân bằng sau khi áp dụng (2026-11-15)
+So cùng seed, bản trước (`d733d686`) và sau: `npx tsx scripts/sim-adventure.ts 400 1 <zone> rare`, `npx tsx scripts/simulate-week.ts 1 30 adventure`.
+- **Rừng** (mặc định) và **tuần 30 ngày có Adventure**: **không đổi** (quái Rừng không được thêm skill; bot chưa tới cấp mở ô 2 / 3).
+- **Núi: khó hơn rõ rệt** (quái đất / kim được Ném Tảng, Màn Cát, Húc Khiên…). Tỉ lệ thắng cả chuyến, trang bị hiếm:
+  | Đội | Lv 7 | Lv 9 | Lv 11 | Lv 13 |
+  |---|---|---|---|---|
+  | tank+dps+support | 11 → 3,8 | 40,3 → 32 | 74 → 68,5 | 89,8 → 84,3 |
+  | starter trio | 48,5 → 40 | 94,5 → 89,8 | 93,5 → 85,3 | 99 → 97 |
+  | void trio | 0 → 0 | 0 → 0 | 57 → 37,8 | 92,5 → 86,3 |
+  | dark+light | 1,5 → 0,8 | 95,3 → 92 | 61,5 → 44,5 | 87 → 82,8 |
+  Từ Lv 16 trở lên gần như không đổi (≥ 98 %). Bảng "mỗi dòng × class ở Lv 13" giảm 0–10 điểm (Quy Sơn tanker 94,5 → 87,5, Quang Trụ tanker 93,5 → 83,5).
+- **Phế tích**: gần như không đổi, dao động hai chiều trong biên nhiễu (starter trio Lv 20: 15 → 10; nature poison Lv 20: 48 → 56,8; tank+dps+support Lv 24: 0,8 → 3,8).
+- **Chủ dự án cần quyết**: chấp nhận Núi khó hơn, hay giảm số (ví dụ power Ném Tảng 1,7 → 1,4, hoặc chỉ gắn skill mới cho quái từ Lv cao). Phiên này **không tự chỉnh số** (decision 021).

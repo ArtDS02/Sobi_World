@@ -111,10 +111,8 @@ Mỗi hệ có một bộ phần riêng (`<chất liệu>Parts.ts`). Skill trong
 - `assets.test`, `decor.test` (do `content/farm/layout.json` chủ dự án đang sửa).
 - `assetsCheck` đôi khi quá 20 s vì máy chậm; chạy riêng với `--testTimeout 120000` thì qua.
 
-## 8. Việc còn lại (2026-11-14)
-1. ~~Bóng tối (7)~~: xong 2026-11-14, tự chấm 7–7,5 (`docs/animation/vfx3d/dark/`), chờ chủ dự án chấm.
-2. ~~Hư không (4)~~: xong 2026-11-15, tự chấm 7–7,5 (`docs/animation/vfx3d/void/`), chờ chủ dự án chấm.
-3. **Không hệ / class / hỗ trợ (57):** đang dùng 13 hiệu ứng chung (`supportFx.ts`, `classFx.ts`, `partyUlt.ts`). Phải tách theo loại.
-4. **22 skill mới (P4):** viết decision 060 trước khi sửa `content/`, rồi dựng theo file này.
-5. **Chốt (P5):** `npm run check` đầy đủ, đo FPS trong Electron, cập nhật decision 059, `PROGRESS.md`, `THIRD_PARTY.md`.
-6. **Chủ dự án:** chấm từng hệ đã dựng (điểm chủ dự án là điểm cuối).
+## 8. Việc còn lại (2026-11-15)
+Đã dựng lại: cả 112 skill cũ (9 hệ + không hệ / class / hỗ trợ) và 22 skill mới (decision 060). Còn:
+1. **Chủ dự án chấm** từng nhóm (`docs/animation/vfx3d/SCORES.md`); điểm của chủ dự án là điểm cuối, nhóm nào dưới 7 thì làm lại theo file này.
+2. **Đo FPS trong Electron** (mới đo Chrome headless) và **xem clip chuyển động** trong game (mới xem khung tĩnh).
+3. Quyết độ khó vùng Núi sau 22 skill mới (bot cân bằng ở decision 060: Núi khó hơn ở Lv 7–13).
