@@ -8,7 +8,7 @@ import * as Phaser from 'phaser';
 import battleFxRaw from '../../content/adventure/battle_fx.json';
 import { battleFxFileSchema } from '../../content/schemas/adventure/battleFx';
 import { BattleScene, type BattleStageState } from '../../src/areas/adventure/scene/battle/BattleScene';
-import { BATTLE_FX, CLASS_LIST, ELEMENT_NAMES, ENEMY_LIST, REACTIONS as REACTION_ROWS, SKILL_LIST, SKILLS, TREES } from '../../src/areas/adventure/logic/config/content';
+import { BATTLE_FX, CLASS_LIST, ELEMENT_LIST, ELEMENT_NAMES, ENEMY_LIST, REACTIONS as REACTION_ROWS, SKILL_LIST, SKILLS, TREES } from '../../src/areas/adventure/logic/config/content';
 import { reactionArt } from '../../src/areas/adventure/ui/vmKit';
 import { stepMotion } from '../../src/areas/adventure/ui/battleMotion';
 import type { PlayingStep } from '../../src/areas/adventure/ui/battleFxView';
@@ -32,11 +32,13 @@ const lab = {
   skill: '' as string,
   /** Filter of the skill dropdown by skill type ('' = every type). */
   skillType: '' as string,
+  /** Filter of the skill dropdown by element ('' = every element, 'NONE' = skills without one). */
+  skillElem: '' as string,
   attacker: 'pig_knight',
   target: 'enemy_forest_wolf',
   fromEnemy: false,
   /** What the side that is not striking remembers of its skill choice (the two config blocks each keep their own). */
-  mem: { ally: { skillType: '', skill: '' }, enemy: { skillType: '', skill: '' } } as Record<'ally' | 'enemy', { skillType: string; skill: string }>,
+  mem: { ally: { skillType: '', skillElem: '', skill: '' }, enemy: { skillType: '', skillElem: '', skill: '' } } as Record<'ally' | 'enemy', { skillType: string; skillElem: string; skill: string }>,
   crit: false,
   ko: false,
   fast: false,
@@ -329,7 +331,9 @@ export function renderBattleLab(root: HTMLElement) {
     enemy: [['', 'Mọi loại', '🗂️'], ['enemy', 'Kỹ năng quái', '👹']],
   };
   /** The skill choice shown in a block: the striking side's is live, the other side's is remembered. */
-  const choice = (side: Side) => (side === cur ? { type: lab.skillType, skill: lab.skill } : { type: lab.mem[side].skillType, skill: lab.mem[side].skill });
+  const choice = (side: Side) => (side === cur ? { type: lab.skillType, elem: lab.skillElem, skill: lab.skill } : { type: lab.mem[side].skillType, elem: lab.mem[side].skillElem, skill: lab.mem[side].skill });
+  const elemOptions = [['', 'Mọi nguyên tố', '🌐'], ['NONE', 'Không hệ', '⚪'], ...ELEMENT_LIST.map((e) => [e.id, e.nameVi, ''] as const)] as readonly (readonly [string, string, string])[];
+  const elemOk = (el: string | undefined | null, f: string) => !f || (f === 'NONE' ? !el || el === 'SELF' : el === f);
   const element = SKILLS[lab.skill]?.element ?? null;
   const look = lookOf(element === 'SELF' ? null : element, lab.skill || null);
   const allyArt = lab.fromEnemy ? lab.target : lab.attacker;
@@ -343,7 +347,7 @@ export function renderBattleLab(root: HTMLElement) {
   const sideBlock = (side: Side) => {
     const ally = side === 'ally';
     const c = choice(side);
-    const list = SKILL_LIST.filter((x) => ((x.type === 'enemy') === !ally && (!c.type || x.type === c.type)) || x.id === c.skill);
+    const list = SKILL_LIST.filter((x) => ((x.type === 'enemy') === !ally && (!c.type || x.type === c.type) && elemOk(x.element, c.elem)) || x.id === c.skill);
     const mine = ally ? allyArt : foeArt;
     const other = ally ? foeArt : allyArt;
     const chips = ally ? lab.allies : lab.foes;
@@ -352,6 +356,7 @@ export function renderBattleLab(root: HTMLElement) {
         <button type="button" class="bside__act" data-act="${side}" aria-pressed="${side === cur}">${side === cur ? '● Đang ra đòn' : '○ Cho bên này ra đòn'}</button></div>
       <div class="blab__grid">
         <label class="field"><span>Loại kỹ năng</span><select data-skilltype="${side}" data-rich>${SKILL_TYPES[side].map(([v, l, i]) => opt(v, l, c.type, { icon: i })).join('')}</select></label>
+        <label class="field"><span>Nguyên tố</span><select data-skillelem="${side}" data-rich>${elemOptions.map(([v, l, i]) => opt(v, l, c.elem, v && v !== 'NONE' ? { img: pic(`ui_icon_elem_${v.toLowerCase()}`) } : { icon: i })).join('')}</select></label>
         <div class="field blab__wide"><span>Kỹ năng</span><div class="blab__row"><select data-skill="${side}" data-rich>${opt('', 'Đánh thường', c.skill, { img: pic('ui_icon_adv_attack'), sub: 'Đòn thường, không kỹ năng' })}${list.map((x) => opt(x.id, x.nameVi, c.skill, { img: skillPic(x.id, x.element ?? null), sub: `${x.element ? (ELEMENT_NAMES[x.element as keyof typeof ELEMENT_NAMES]?.nameVi ?? x.element) : 'Không hệ'} · ${x.category}${BATTLE_FX.skills[x.id] ? ' · ★ có animation riêng' : ''}` })).join('')}</select>${ally ? '<button type="button" class="btn blab__tree" data-tree>🌳 Cây kỹ năng</button>' : ''}</div></div>
         <label class="field"><span>${ally ? 'Bên ra đòn' : 'Quái ra đòn'}</span><select data-art="${side}" data-rich>${picks(ally ? animals : monsters, mine)}</select></label>
         <div class="field"><span>${ally ? 'Đội hình (phe ta)' : 'Đội hình (phe địch)'}</span><div class="blab__team">${[0, 1, 2].map((n) => `<button type="button" class="blab__chip${n < chips ? ' is-on' : ''}" data-team="${side}:${n}" title="${n + 1} ${ally ? 'đồng đội' : 'quái'}">${pic(mine) ? `<img src="${pic(mine)}" alt="" />` : '🐷'}</button>`).join('')}</div></div>
@@ -423,8 +428,9 @@ export function renderBattleLab(root: HTMLElement) {
   // Choosing a skill (or its type) in a block makes that side the one that strikes: the sides swap their remembered choices and arts.
   const strike = (side: Side) => {
     if (side === cur) return;
-    lab.mem[cur] = { skillType: lab.skillType, skill: lab.skill };
+    lab.mem[cur] = { skillType: lab.skillType, skillElem: lab.skillElem, skill: lab.skill };
     lab.skillType = lab.mem[side].skillType;
+    lab.skillElem = lab.mem[side].skillElem;
     lab.skill = lab.mem[side].skill;
     lab.fromEnemy = side === 'enemy';
     [lab.attacker, lab.target] = [lab.target, lab.attacker];
@@ -446,6 +452,14 @@ export function renderBattleLab(root: HTMLElement) {
       redo();
     };
   }
+  for (const sel of root.querySelectorAll<HTMLSelectElement>('select[data-skillelem]')) {
+    sel.onchange = () => {
+      strike(sel.dataset.skillelem as Side);
+      lab.skillElem = sel.value;
+      if (lab.skill && !elemOk(SKILLS[lab.skill]?.element, lab.skillElem)) lab.skill = '';
+      redo();
+    };
+  }
   // A creature picker sets the art of the ally or of the foe, whichever side strikes.
   for (const sel of root.querySelectorAll<HTMLSelectElement>('select[data-art]')) {
     sel.onchange = () => {
@@ -455,7 +469,7 @@ export function renderBattleLab(root: HTMLElement) {
       redo();
     };
   }
-  q('[data-tree]').onclick = () => openTreeDialog(pic, skillPic, (id) => (strike('ally'), (lab.skill = id), (lab.skillType = ''), (lab.message = ''), redo()));
+  q('[data-tree]').onclick = () => openTreeDialog(pic, skillPic, (id) => (strike('ally'), (lab.skill = id), (lab.skillType = ''), (lab.skillElem = ''),(lab.message = ''), redo()));
   for (const chip of root.querySelectorAll<HTMLButtonElement>('[data-team]')) {
     chip.onclick = () => {
       const [side, i] = chip.dataset.team!.split(':');
