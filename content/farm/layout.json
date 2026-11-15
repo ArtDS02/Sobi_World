@@ -5,233 +5,109 @@
   "placements": [
     { "id": "env_cloud_1", "layer": 0, "x": 0.22, "y": 0.03, "originY": 0 },
     { "id": "env_cloud_2", "layer": 0, "x": 0.72, "y": 0.08, "originY": 0 },
-    { "id": "prop_mud_puddle", "layer": 2, "x": 0.6, "y": 0.8444, "width": 220 },
+    { "id": "prop_mud_puddle", "layer": 2, "x": 0.525, "y": 0.8, "width": 220 },
+    { "id": "prop_bush", "layer": 4, "x": 0.3875, "y": 0.4222, "width": 126 },
+    { "id": "prop_bush", "layer": 3, "x": 0.45, "y": 0.4, "width": 113 },
     {
       "id": "prop_pig_house",
       "layer": 4,
-      "x": 0.1219,
-      "y": 0.3833,
-      "width": 285,
+      "x": 0.1188,
+      "y": 0.5,
       "action": "collection",
-      "signed": true
+      "signed": true,
+      "width": 285
     },
     {
       "id": "prop_hay_shed",
       "layer": 4,
-      "x": 0.2813,
-      "y": 0.3722,
-      "width": 190,
+      "x": 0.2875,
+      "y": 0.4556,
       "action": "inventory",
-      "signed": true
+      "signed": true,
+      "width": 190
     },
-    { "id": "prop_red_tree", "layer": 4, "x": 0.3875, "y": 0.35, "width": 120 },
+    { "id": "prop_red_tree", "layer": 0, "x": 0.4125, "y": 0.4, "width": 277 },
     {
       "id": "prop_order_board",
       "layer": 4,
       "x": 0.6625,
-      "y": 0.3722,
-      "width": 150,
+      "y": 0.4333,
       "role": "orderBoard",
       "action": "orders",
       "signed": true,
+      "width": 150,
       "badge": "orders"
     },
     {
       "id": "prop_shop_stall",
       "layer": 4,
-      "x": 0.8469,
-      "y": 0.3833,
-      "width": 290,
+      "x": 0.8688,
+      "y": 0.5111,
       "action": "shop",
-      "signed": true
+      "signed": true,
+      "width": 290
     },
     {
       "id": "prop_water_well",
       "layer": 4,
       "x": 0.075,
-      "y": 0.6222,
-      "width": 160,
+      "y": 0.7,
       "action": "cleanAll",
-      "signed": true
+      "signed": true,
+      "width": 205
     },
-    { "id": "prop_water_bowl", "layer": 4, "x": 0.1688, "y": 0.7111, "width": 130 },
-    { "id": "prop_food_sack", "layer": 4, "x": 0.0594, "y": 0.9222, "width": 100 },
+    { "id": "prop_water_bowl", "layer": 4, "x": 0.1563, "y": 0.7444, "width": 130 },
+    { "id": "prop_food_sack", "layer": 4, "x": 0.0563, "y": 0.9222, "width": 100 },
     {
       "id": "prop_feed_trough",
       "layer": 4,
-      "x": 0.1625,
-      "y": 0.9444,
-      "width": 230,
+      "x": 0.1375,
+      "y": 0.9556,
       "role": "trough",
       "action": "trough",
-      "signed": true
+      "signed": true,
+      "width": 230
     },
-    { "id": "prop_apple_crate", "layer": 4, "x": 0.925, "y": 0.6444, "width": 150 },
-    { "id": "prop_sunflower", "layer": 4, "x": 0.9375, "y": 0.9556, "width": 120 },
-    { "id": "prop_rock", "layer": 4, "x": 0.8406, "y": 0.8889, "width": 90 },
-    { "id": "prop_mushroom", "layer": 4, "x": 0.6844, "y": 0.9778, "width": 62 },
-    { "id": "prop_bush", "layer": 4, "x": 0.7625, "y": 0.9833, "width": 160 },
+    { "id": "prop_apple_crate", "layer": 4, "x": 0.7938, "y": 0.5333, "width": 150 },
+    { "id": "prop_sunflower", "layer": 1, "x": 0.9813, "y": 0.8889, "width": 120 },
+    { "id": "prop_rock", "layer": 5, "x": 0.1, "y": 0.9778, "width": 90 },
+    { "id": "prop_bush", "layer": 4, "x": 0.2813, "y": 0.9667, "width": 160 },
     {
       "id": "prop_windmill",
       "layer": 4,
       "x": 0.5313,
-      "y": 0.3667,
+      "y": 0.4222,
       "width": 170,
       "decor": "DECOR_WINDMILL",
       "spot": 0
     },
     {
-      "id": "prop_fence_section",
-      "layer": 4,
-      "x": 0.5625,
-      "y": 0.9778,
-      "width": 150,
-      "decor": "DECOR_FENCE",
-      "spot": 0
-    },
-    {
-      "id": "prop_veggie_patch",
-      "layer": 4,
-      "x": 0.4063,
-      "y": 0.9889,
-      "width": 200,
-      "decor": "DECOR_VEGGIE_PATCH",
-      "spot": 0
-    },
-    {
-      "id": "prop_sunflower",
-      "layer": 4,
-      "x": 0.2938,
-      "y": 0.9778,
-      "width": 100,
-      "decor": "DECOR_SUNFLOWERS",
-      "spot": 0
-    },
-    {
       "id": "prop_wheelbarrow",
       "layer": 4,
-      "x": 0.0688,
-      "y": 0.8,
+      "x": 0.1188,
+      "y": 0.8556,
       "width": 120,
       "decor": "DECOR_WHEELBARROW",
       "spot": 0
     },
-    {
-      "id": "prop_hay_bale",
-      "layer": 4,
-      "x": 0.9313,
-      "y": 0.7889,
-      "width": 110,
-      "decor": "DECOR_HAY_BALE",
-      "spot": 0
-    },
-    {
-      "id": "prop_windmill",
-      "layer": 4,
-      "x": 0.12,
-      "y": 0.55,
-      "width": 170,
-      "decor": "DECOR_WINDMILL",
-      "spot": 1
-    },
-    {
-      "id": "prop_windmill",
-      "layer": 4,
-      "x": 0.9,
-      "y": 0.52,
-      "width": 170,
-      "decor": "DECOR_WINDMILL",
-      "spot": 2
-    },
-    {
-      "id": "prop_fence_section",
-      "layer": 4,
-      "x": 0.12,
-      "y": 0.7,
-      "width": 150,
-      "decor": "DECOR_FENCE",
-      "spot": 1
-    },
-    {
-      "id": "prop_fence_section",
-      "layer": 4,
-      "x": 0.88,
-      "y": 0.88,
-      "width": 150,
-      "decor": "DECOR_FENCE",
-      "spot": 2
-    },
-    {
-      "id": "prop_veggie_patch",
-      "layer": 4,
-      "x": 0.62,
-      "y": 0.99,
-      "width": 200,
-      "decor": "DECOR_VEGGIE_PATCH",
-      "spot": 1
-    },
-    {
-      "id": "prop_veggie_patch",
-      "layer": 4,
-      "x": 0.85,
-      "y": 0.7,
-      "width": 200,
-      "decor": "DECOR_VEGGIE_PATCH",
-      "spot": 2
-    },
+    { "id": "prop_bush", "layer": 4, "x": 0.9375, "y": 1.0444, "width": 301 },
     {
       "id": "prop_sunflower",
-      "layer": 4,
-      "x": 0.8,
-      "y": 0.98,
+      "layer": 1,
+      "x": 0.2875,
+      "y": 0.8889,
       "width": 100,
       "decor": "DECOR_SUNFLOWERS",
       "spot": 1
     },
     {
-      "id": "prop_sunflower",
-      "layer": 4,
-      "x": 0.06,
-      "y": 0.96,
-      "width": 100,
-      "decor": "DECOR_SUNFLOWERS",
-      "spot": 2
-    },
-    {
-      "id": "prop_wheelbarrow",
-      "layer": 4,
-      "x": 0.93,
-      "y": 0.62,
-      "width": 120,
-      "decor": "DECOR_WHEELBARROW",
-      "spot": 1
-    },
-    {
-      "id": "prop_wheelbarrow",
-      "layer": 4,
-      "x": 0.5,
-      "y": 0.62,
-      "width": 120,
-      "decor": "DECOR_WHEELBARROW",
-      "spot": 2
-    },
-    {
       "id": "prop_hay_bale",
       "layer": 4,
-      "x": 0.07,
-      "y": 0.62,
+      "x": 0.1,
+      "y": 0.5333,
       "width": 110,
       "decor": "DECOR_HAY_BALE",
       "spot": 1
-    },
-    {
-      "id": "prop_hay_bale",
-      "layer": 4,
-      "x": 0.7,
-      "y": 0.7,
-      "width": 110,
-      "decor": "DECOR_HAY_BALE",
-      "spot": 2
     }
   ]
 }
