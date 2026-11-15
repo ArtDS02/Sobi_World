@@ -5,6 +5,8 @@
 >
 > **Nguyên tắc cốt lõi:** Không phải mọi animation đều cần sprite sheet. Chuyển động đơn giản dùng CSS/transform; chuyển động làm thay đổi hình ảnh dùng sprite/frame animation; chuyển động nhân vật kết hợp animation state + movement; animation hiếm dùng Special Animation System.
 
+> **Animation skill trận Adventure:** từ decision 059 làm bằng lớp VFX 3D; tiêu chuẩn riêng, đã duyệt: `docs/SKILL_ANIMATION_STANDARD.md`.
+
 ---
 
 # 1. MỤC TIÊU

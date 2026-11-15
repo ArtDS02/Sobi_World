@@ -5,7 +5,7 @@
 ```
 
 ## 1. Ý tưởng
-Skill mới (decision 060): "Quật sóng vào một mục tiêu, có thể làm nó Ướt.". Hình chủ đạo và chất liệu theo bộ phần của hệ (WATER), quy tắc ở `docs/animation/VFX3D_REVIEW_STANDARD.md`.
+Skill mới (decision 060): "Quật sóng vào một mục tiêu, có thể làm nó Ướt.". Hình chủ đạo và chất liệu theo bộ phần của hệ (WATER), quy tắc ở `docs/SKILL_ANIMATION_STANDARD.md`.
 
 ## 2. Hiện tại
 Dựng trên lớp 3D (decision 059): vfx3d `tide_slap` (at 240 ms, dur 810 ms).

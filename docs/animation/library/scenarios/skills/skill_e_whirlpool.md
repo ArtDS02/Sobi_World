@@ -5,7 +5,7 @@
 ```
 
 ## 1. Ý tưởng
-Skill mới (decision 060): "Xoáy nước cuốn cả đội, có thể làm Chậm.". Hình chủ đạo và chất liệu theo bộ phần của hệ (WATER), quy tắc ở `docs/animation/VFX3D_REVIEW_STANDARD.md`.
+Skill mới (decision 060): "Xoáy nước cuốn cả đội, có thể làm Chậm.". Hình chủ đạo và chất liệu theo bộ phần của hệ (WATER), quy tắc ở `docs/SKILL_ANIMATION_STANDARD.md`.
 
 ## 2. Hiện tại
 Dựng trên lớp 3D (decision 059): vfx3d `whirlpool_row` (at 550 ms, dur 1450 ms); stagger 120 ms.

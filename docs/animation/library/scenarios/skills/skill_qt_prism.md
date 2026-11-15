@@ -5,7 +5,7 @@
 ```
 
 ## 1. Ý tưởng
-Skill mới (decision 060): "Tán tia sáng thành bảy màu đánh mọi kẻ địch, dễ làm Giảm chính xác.". Hình chủ đạo và chất liệu theo bộ phần của hệ (LIGHT), quy tắc ở `docs/animation/VFX3D_REVIEW_STANDARD.md`.
+Skill mới (decision 060): "Tán tia sáng thành bảy màu đánh mọi kẻ địch, dễ làm Giảm chính xác.". Hình chủ đạo và chất liệu theo bộ phần của hệ (LIGHT), quy tắc ở `docs/SKILL_ANIMATION_STANDARD.md`.
 
 ## 2. Hiện tại
 Dựng trên lớp 3D (decision 059): vfx3d `prism_split` (at 300 ms, dur 1250 ms); stagger 60 ms.

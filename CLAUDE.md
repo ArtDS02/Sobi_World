@@ -10,5 +10,6 @@ Bắt đầu mỗi phiên: đọc `docs/AGENT_RULES.md` rồi `docs/PROGRESS.md`
 - Cổng chất lượng: `npm run check` xanh trước khi commit. File LF (`.gitattributes`).
 - Gameplay trước, art sau (decision 017, AGENT_RULES §8): art/animation/VFX/âm thanh chỉ làm ở GĐ14; trước đó dùng placeholder và ghi `docs/ASSET_TODO.md`.
 - **Bản quyền (decision 048, AGENT_RULES §9)**: không tạo asset/tên/mô tả có hình ảnh hoặc tên liên quan nhân vật, sinh vật, sản phẩm, thương hiệu có bản quyền của bên thứ ba; mọi thiết kế phải gốc. Rà soát bằng `docs/IP_AUDIT_PROMPT.md`.
+- **Animation skill** (VFX 3D trận Adventure): làm và duyệt theo `docs/SKILL_ANIMATION_STANDARD.md` (chuẩn đã duyệt, 134 skill mẫu); skill mới đi đủ quy trình §2 của file đó.
 - Skill `image-to-asset` dùng cho art (từ GĐ14). Guard kiến trúc: `scripts/guard/` (`npm run guard`).
 - Comment code tiếng Anh. Trả lời tiếng Việt, báo cáo theo mẫu trong AGENT_RULES §7.

@@ -66,3 +66,8 @@ Cuối mỗi bước lớn và cuối giai đoạn, báo theo mẫu:
 - Phần mềm, font, âm thanh, thư viện bên thứ ba phải có giấy phép cho phép dùng thương mại; ghi nguồn + license vào `docs/THIRD_PARTY.md`.
 - Nội dung vi phạm có từ trước rule đã được xử lý ngày 2026-11-05 (`docs/IP_AUDIT_REPORT.md` mục G): Thor → Heo Sấm, Superman → Heo Anh Hùng, Battlebot → Heo Chiến Giáp, 2 loài cá đổi màu, Loki bỏ khỏi danh mục, Treant / Mimic đổi tên hiển thị. Id cũ được alias trong save (`src/core/save/retiredIds.ts`). Không thêm nội dung mới cùng kiểu.
 - Rà soát toàn game theo `docs/IP_AUDIT_PROMPT.md` trước mỗi lần phát hành/tag giai đoạn và khi nghi ngờ.
+
+## 10. Animation skill (decision 059, 060)
+- Mọi animation skill mới hoặc sửa lại phải theo `docs/SKILL_ANIMATION_STANDARD.md`: hợp đồng nhìn thấy trước khi code, bộ phần của hệ, quy tắc hình §3, chụp sau lần sửa cuối, tự chấm ≥ 7, ghi `docs/animation/vfx3d/SCORES.md`.
+- Mức chủ dự án đã duyệt (2026-11-15, 134 skill) là chuẩn tối thiểu; không nhận skill thấp hơn mức skill cùng hệ, cùng loại đòn.
+- Thêm skill là đổi gameplay: cần decision trước khi sửa `content/` (mẫu decision 060) và bot cân bằng trước / sau.

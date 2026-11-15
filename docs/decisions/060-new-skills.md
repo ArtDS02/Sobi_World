@@ -38,7 +38,7 @@ Gắn vào quái theo cột "Gợi ý quái dùng" của đề xuất (thêm và
 | `PIG_CRYSTAL` | 2 (Lv 10) | `skill_qs_dust_cloud` | `skill_qs_mountain_shell` |
 Loài và ô lấy đúng cột "Loài gợi ý (ô)" của đề xuất. Mỗi loài mất skill của dòng ở ô đó (đề xuất §3 đã nêu); chủ dự án đổi được bằng cách sửa một phần tử của `species.<id>.unique`.
 
-**Animation:** mỗi skill mới có kịch bản trong `battle_fx.json` với một act `vfx3d` riêng, dựng theo `docs/animation/VFX3D_REVIEW_STANDARD.md`; đòn nhiều nhịp dùng `stagger` như Chuỗi Sét.
+**Animation:** mỗi skill mới có kịch bản trong `battle_fx.json` với một act `vfx3d` riêng, dựng theo `docs/SKILL_ANIMATION_STANDARD.md`; đòn nhiều nhịp dùng `stagger` như Chuỗi Sét.
 
 ## Hệ quả
 - Đổi độ khó khi gặp 8 quái trên (thêm một lựa chọn skill) và bộ skill của 10 loài. Số liệu nằm trong khoảng của skill cùng loại; kết quả bot cân bằng ở mục cuối.

@@ -5,7 +5,7 @@
 ```
 
 ## 1. Ý tưởng
-Skill mới (decision 060): "Ba mũi giáo ánh sáng liên tiếp vào một kẻ địch.". Hình chủ đạo và chất liệu theo bộ phần của hệ (LIGHT), quy tắc ở `docs/animation/VFX3D_REVIEW_STANDARD.md`.
+Skill mới (decision 060): "Ba mũi giáo ánh sáng liên tiếp vào một kẻ địch.". Hình chủ đạo và chất liệu theo bộ phần của hệ (LIGHT), quy tắc ở `docs/SKILL_ANIMATION_STANDARD.md`.
 
 ## 2. Hiện tại
 Dựng trên lớp 3D (decision 059): vfx3d `dawn_spears` (at 0 ms, dur 1550 ms); stagger 220 ms.

@@ -5,7 +5,7 @@
 ```
 
 ## 1. Ý tưởng
-Skill mới (decision 060): "Cả đội tăng thủ vật lý và nhận khiên 12% máu.". Hình chủ đạo và chất liệu theo bộ phần của hệ (SUPPORT), quy tắc ở `docs/animation/VFX3D_REVIEW_STANDARD.md`.
+Skill mới (decision 060): "Cả đội tăng thủ vật lý và nhận khiên 12% máu.". Hình chủ đạo và chất liệu theo bộ phần của hệ (SUPPORT), quy tắc ở `docs/SKILL_ANIMATION_STANDARD.md`.
 
 ## 2. Hiện tại
 Dựng trên lớp 3D (decision 059): vfx3d `iron_oath` (at 380 ms, dur 1440 ms); stagger 120 ms.

@@ -5,7 +5,7 @@
 ```
 
 ## 1. Ý tưởng
-Skill mới (decision 060): "Chông thép rơi xuống cả đội, có thể Giảm thủ.". Hình chủ đạo và chất liệu theo bộ phần của hệ (METAL), quy tắc ở `docs/animation/VFX3D_REVIEW_STANDARD.md`.
+Skill mới (decision 060): "Chông thép rơi xuống cả đội, có thể Giảm thủ.". Hình chủ đạo và chất liệu theo bộ phần của hệ (METAL), quy tắc ở `docs/SKILL_ANIMATION_STANDARD.md`.
 
 ## 2. Hiện tại
 Dựng trên lớp 3D (decision 059): vfx3d `spike_rain` (at 450 ms, dur 1950 ms).
