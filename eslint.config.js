@@ -38,12 +38,6 @@ export default tseslint.config(
       'coverage',
       'node_modules',
       '.claude',
-      // Unity caches of the offline art studio (decision 051)
-      'studio/Library',
-      'studio/Temp',
-      'studio/Logs',
-      'studio/UserSettings',
-      'studio/.cache',
     ],
   },
   js.configs.recommended,

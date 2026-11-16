@@ -25,7 +25,12 @@ không đạt cổng U1; VFX vẽ bằng Unity không đạt; chỉ phần "chuy
 - Decision 051 và `docs/UNITY_STUDIO_PLAN.md`: **không còn hiệu lực** (giữ làm lịch sử).
 - Phần "chủ dự án chờ chọn phương án hẹp" của 051 được đóng bằng quyết định này.
 
-## Việc dọn dẹp (chưa làm, cần phiên riêng)
+## Việc dọn dẹp (đã làm 2026-11-16, chủ dự án yêu cầu dọn rác)
+`studio/`, `scripts/studio/`, `tests/scripts/studio.test.ts`, lệnh `npm run studio`, `docs/studio/`,
+`docs/UNITY_STUDIO_PLAN.md`, dòng Unity trong `THIRD_PARTY.md` đã gỡ khỏi nhánh. Bản đầy đủ còn ở nhánh
+`phase-14-unity-studio` (có trên `origin`) và tag `u00`…`u08`. Sheet VFX đã nhập trong `public/` không đổi.
+
+Ghi chú gốc:
 - `studio/`, `scripts/studio/`, `tests/scripts/studio.test.ts` còn trong git. Test này hỏng khi thiếu tag `pre-unity-studio`
   (2 test). Khi dọn, phải giữ nguồn của 22 sheet VFX đã nhập (tag `pre-unity-studio` dùng làm nguồn tranh gốc) và cập nhật
   `docs/THIRD_PARTY.md` (dòng Unity). Đề xuất: lưu `studio/` vào một tag rồi xoá khỏi nhánh, sau khi chủ dự án đồng ý.

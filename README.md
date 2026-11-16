@@ -18,7 +18,7 @@ Phát triển tiếp từ game nuôi heo **Sobi Farm** (Area đầu tiên).
 | [docs/HUONG_DAN_TRIEN_KHAI.md](docs/HUONG_DAN_TRIEN_KHAI.md) | Prompt từng giai đoạn |
 | [docs/PROGRESS.md](docs/PROGRESS.md) | Trạng thái hiện tại |
 | [docs/decisions/](docs/decisions/) | Quyết định đã chốt |
-| [docs/archive/sobi-farm/](docs/archive/sobi-farm/) | Tài liệu Sobi Farm cũ (README cũ có chi tiết lưu game, asset, credits) |
+| [docs/archive/plans/](docs/archive/plans/) | Kế hoạch cũ đã xong (chỉ tham khảo). Tài liệu Sobi Farm cũ: tag git `sobi-farm-final` |
 
 ## Lệnh
 
@@ -37,4 +37,4 @@ Phát triển tiếp từ game nuôi heo **Sobi Farm** (Area đầu tiên).
 ## Credits
 
 Hình và hiệu ứng âm thanh: tác phẩm gốc của dự án (vẽ/tổng hợp bằng code và cắt từ sheet tham chiếu của dự án).
-Nhạc nền `music_farm`: tạo bằng Mureka AI cho dự án. Chi tiết: `docs/archive/sobi-farm/README.md` mục Credits.
+Nhạc nền `music_farm`: tạo bằng Mureka AI cho dự án. Giấy phép: `docs/THIRD_PARTY.md`.

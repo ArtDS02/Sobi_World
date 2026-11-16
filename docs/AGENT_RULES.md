@@ -8,7 +8,7 @@
 - Cuối mỗi phiên: cập nhật `docs/PROGRESS.md` (đã làm gì, đang dở gì, quyết định đã đưa ra, vấn đề còn mở).
 - Quyết định kỹ thuật quan trọng: ghi một file ngắn trong `docs/decisions/` (bối cảnh, lựa chọn, lý do), đánh số tiếp theo.
 - `docs/decisions/` thắng `GAME_BALANCE.md` và tài liệu cũ khi mâu thuẫn về con số đã chốt.
-- `docs/archive/sobi-farm/` chỉ để tham khảo lịch sử (spec v4, DECISIONS cũ). Không làm theo nếu mâu thuẫn với tài liệu Sobi World.
+- `docs/archive/plans/` (kế hoạch cũ đã xong) và tài liệu Sobi Farm cũ (tag git `sobi-farm-final`: spec v4, DECISIONS cũ) chỉ để tham khảo lịch sử. Không làm theo nếu mâu thuẫn với tài liệu Sobi World.
 
 ## 2. An toàn
 - Làm trên nhánh git riêng cho từng giai đoạn: `phase-XX-<ten>`, tách từ `main`; xong giai đoạn thì merge về `main` và gắn tag `phase-XX`.

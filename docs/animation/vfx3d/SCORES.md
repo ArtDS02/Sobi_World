@@ -2,7 +2,7 @@
 
 > **2026-11-15 — chủ dự án duyệt toàn bộ 134 skill** ở đúng mức tự chấm trong các bảng dưới ("đủ đẹp, ổn"). Các bảng này là mốc chuẩn của `docs/SKILL_ANIMATION_STANDARD.md`.
 
-Thang 10, tiêu chí ở `docs/handover/FABLE_VFX3D_HANDOVER.md` mục 3. Cổng thử: cả 3 skill pilot phải ≥ 7 mới mở rộng.
+Thang 10, tiêu chí ở `docs/SKILL_ANIMATION_STANDARD.md` (thước chấm). Cổng thử: cả 3 skill pilot phải ≥ 7 mới mở rộng.
 
 | Ngày | Skill | Điểm | Nhận xét của chủ dự án |
 |---|---|---|---|

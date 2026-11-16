@@ -3,7 +3,7 @@
 ## A. Chuẩn bị (làm 1 lần) — ✅ ĐÃ XONG 2026-10-04
 
 > Repo `Sobi_World` đã nhập lịch sử Sobi Farm (tag `sobi-farm-final`); tài liệu ở `docs/`, tài liệu cũ ở
-> `docs/archive/sobi-farm/`, quyết định đã chốt ở `docs/decisions/`. Bản gốc Sobi Farm giữ ở `D:\Local\Sobi_Farm`.
+> tag `sobi-farm-final` (đã gỡ khỏi `docs/archive/` ngày 2026-11-16), quyết định đã chốt ở `docs/decisions/`. Bản gốc Sobi Farm giữ ở `D:\Local\Sobi_Farm`.
 
 1. Tạo thư mục `Sobi_World/docs/`.
 2. Chép vào `docs/` 6 file: `SOBI_WORLD_PROJECT_SPEC_V2.md`, `ARCHITECTURE.md`, `GAME_BALANCE.md`, `ROADMAP.md`, `AGENT_RULES.md`, `HUONG_DAN_TRIEN_KHAI.md`.
