@@ -68,11 +68,13 @@ describe('battles on the map', () => {
     expect(adventureOf(w).run!.defeated).toContain(`${F1.id}/${g.id}`);
     expect(err(engage(w, { ...tileCenter(F1, g.x, g.y), groupId: g.id }, ctxAt(T0)))).toBe('ALREADY_OPENED');
   });
-  it('the guardian cannot be fled and lights its area\'s portal', () => {
+  it('the guardian can be fled too (decision 063): it stays unbeaten; beating it lights the portal', () => {
     let w = start(strong(adventureWorld()));
     const g = F1.groups.find((x) => x.kind === 'elite')!;
     w = ok(engage(w, { ...tileCenter(F1, g.x, g.y), groupId: g.id }, ctxAt(T0)));
-    expect(err(flee(w, ctxAt(T0)))).toBe('CANNOT_FLEE');
+    const fled = ok(flee(w, ctxAt(T0)));
+    expect(adventureOf(fled).run).toMatchObject({ phase: 'explore', graceUntil: T0 + AB.explore.graceMs });
+    expect(adventureOf(fled).run!.defeated).not.toContain(`${F1.id}/${g.id}`);
     w = fight(w);
     expect(adventureOf(w).activePortals).toContain(F1.id);
   });

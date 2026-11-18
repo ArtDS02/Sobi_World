@@ -89,6 +89,7 @@ export function unitOnField(
   floaters: readonly FloaterVm[],
   elapsed: number,
   falling: boolean,
+  think: { delay: number; ms: number } | null = null,
 ): HTMLElement {
   const aim = ctx.state.aim;
   const can = !!aim && aimable(u, aim.action, vm.actor);
@@ -185,6 +186,10 @@ export function unitOnField(
           )
         : null,
     ),
+    // An enemy about to act seems to think first: three dots over its head for the length of the pause (decision 062).
+    think
+      ? el('span', { class: 'adventure-ui__think', attrs: { style: `--think-delay:${think.delay}ms;--think-ms:${think.ms}ms`, 'aria-hidden': 'true' } }, el('i'), el('i'), el('i'))
+      : null,
     floaters.length > 0
       ? el('span', { class: 'adventure-ui__floats' }, ...floaters.map((f) => floaterEl(f, elapsed)))
       : null,

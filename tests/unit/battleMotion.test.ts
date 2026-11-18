@@ -70,6 +70,20 @@ describe('battle motion (GĐ14 vertical slice)', () => {
     expect(r.at).toBeGreaterThan(ko.beats[0]!.impact);
   });
 
+  it('an enemy thinks 2-3 s before it acts; an ally and a lost turn do not (decision 062)', () => {
+    const turn = (actor: string): BattleEvent[] => [{ type: 'turn', actor }, { type: 'use', actor, skillId: 'skill_mm_poison_thorn', ultimate: false }, hit(actor, actor === foe ? ally : foe)];
+    const m = stepMotion(battle, [...turn(ally), ...turn(foe)]);
+    expect(m.beats[0]!.thinkMs).toBe(0);
+    const think = m.beats[1]!;
+    expect(think.thinkMs).toBeGreaterThanOrEqual(2000);
+    expect(think.thinkMs).toBeLessThanOrEqual(3000);
+    expect(think.start).toBeCloseTo(think.thinkAt + think.thinkMs);
+    expect(think.thinkAt).toBeCloseTo(m.beats[0]!.end + 80 * m.speed);
+    const lost: BattleEvent[] = [{ type: 'turn', actor: foe }, { type: 'skip', actor: foe, reason: 'stun' }];
+    const stunned = stepMotion(battle, lost);
+    expect(stunned.beats.every((b) => b.thinkMs === 0)).toBe(true);
+  });
+
   it('an item is a support beat; damage over time alone is a quiet beat', () => {
     const potion: BattleEvent[] = [{ type: 'turn', actor: ally }, { type: 'heal', actor: ally, target: ally, amount: 30, skillId: null }];
     const item = stepMotion(battle, potion);
@@ -88,8 +102,12 @@ describe('battle motion (GĐ14 vertical slice)', () => {
     ]).flat();
     const slow = stepMotion(battle, many);
     expect(slow.beats).toHaveLength(8);
-    expect(slow.total).toBeLessThanOrEqual(STEP_MAX_MS + 1e-6);
-    expect(stepMotion(battle, many, true).total).toBeCloseTo(slow.total * FAST_SHARE);
+    // The enemies' thinking pauses (decision 062) come on top of the squeezed motion.
+    const thinks = (m: typeof slow) => m.beats.reduce((n, x) => n + x.thinkMs, 0);
+    expect(slow.total - thinks(slow)).toBeLessThanOrEqual(STEP_MAX_MS + 1e-6);
+    const fast = stepMotion(battle, many, true);
+    expect(Math.abs(fast.total - slow.total * FAST_SHARE)).toBeLessThan(8);
+    expect(thinks(fast)).toBeLessThan(thinks(slow));
     expect(stepMotion(null, many).beats).toEqual([]);
     expect(stepMotion(battle, []).total).toBe(0);
   });

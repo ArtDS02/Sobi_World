@@ -38,7 +38,24 @@
     "scoreLuck": 0.6,
     "missCooldownShare": 0.5,
     "oyster": { "item": "item_pearl", "weight": 3 },
-    "depthLuck": [0, 0.4, 0.9]
+    "depthLuck": [0, 0.4, 0.9],
+    "size": {
+      "byRarity": {
+        "COMMON": [8, 24],
+        "UNCOMMON": [14, 36],
+        "RARE": [20, 55],
+        "EPIC": [30, 80],
+        "LEGENDARY": [50, 140]
+      },
+      "byShadow": { "small": [0, 0.35], "medium": [0.25, 0.65], "big": [0.55, 0.9], "golden": [0.9, 1] }
+    },
+    "record": { "coins": 25 },
+    "events": {
+      "school": { "chance": 0.08, "extra": [1, 2] },
+      "giant": { "chance": 0.05, "minDepth": 2, "sizeFactor": 1.5, "coins": 60 },
+      "bottle": { "chance": 0.06, "coins": [20, 60] },
+      "chest": { "chance": 0.04, "minDepth": 1, "items": { "item_pearl": 1, "FOOD_FISH": 3 } }
+    }
   },
   "breeding": { "cooldownHours": 12, "eggHours": 6, "maxEggs": 2, "minHunger": 50, "feed": 2 },
   "sell": { "minShare": 0.4 },

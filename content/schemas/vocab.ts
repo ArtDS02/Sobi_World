@@ -57,6 +57,8 @@ export const STAT_ID_VALUES = [
   'cropsPlanted', 'cropsHarvested', 'crafts', 'boardOrders', 'dailyGoalsDone',
   // GĐ8: world counters of the Aquarium's standard events (fish.caught, tank.cleaned).
   'fishCaught', 'tanksCleaned',
+  // Decision 061: catches with a big / golden shadow, and catches cast far out (core/goals/stats.ts).
+  'bigFishCaught', 'farCatches',
   // GĐ9: world counters of the Cloud's standard events (flower.harvested, potion.brewed).
   'flowersHarvested', 'potionsBrewed',
   // GĐ10: world counters of the Adventure's standard events (battle.won, adventure.finished).

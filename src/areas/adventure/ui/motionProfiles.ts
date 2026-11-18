@@ -65,6 +65,8 @@ export const QUIET_MS = BATTLE_FX.pacing.quiet;
 export const BEAT_GAP_MS = BATTLE_FX.pacing.gap;
 /** A whole step never plays longer than this (ms, normal speed): longer steps are squeezed, so the battle never waits on its art. */
 export const STEP_MAX_MS = BATTLE_FX.pacing.stepMax;
+/** How long an enemy seems to think before its turn (ms, normal speed; a time between min and max is drawn per turn). */
+export const THINK_MS = BATTLE_FX.pacing.think;
 /** Speed x2 plays the motion at this share of its time. */
 export const FAST_SHARE = BATTLE_FX.pacing.fast;
 

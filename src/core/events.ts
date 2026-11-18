@@ -29,7 +29,7 @@ export type WorldEvent =
   | { type: 'creature.purposeSet'; area: string; creatureId: string; purpose: string }
   | { type: 'crop.planted'; area: string; plotId: string; cropId: string }
   | { type: 'crop.harvested'; area: string; plotId: string; cropId: string; quantity: number }
-  | { type: 'fish.caught'; area: string; speciesId: string; itemId: string }
+  | { type: 'fish.caught'; area: string; speciesId: string; itemId: string; /** Shadow size and cast depth (decision 061), when the rod's screen gave them. */ shadow?: string; depth?: number }
   | { type: 'tank.cleaned'; area: string }
   | { type: 'flower.harvested'; area: string; flowerId: string; itemId: string; quantity: number }
   | { type: 'potion.brewed'; area: string; itemId: string; quantity: number }

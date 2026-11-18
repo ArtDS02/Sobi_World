@@ -12,6 +12,7 @@ import { FISH } from '../logic/config/content';
 import type { AquariumEvent } from '../logic/events';
 import type { CastDepth } from '../logic/fishing';
 import { dockVm } from './dockVm';
+import { castNotes, catchBookView } from './fishingLog';
 import { linePath, rodArena, rodScene, rodSteps as steps, rodTag as tag, waterX, type SceneParts } from './fishingScene';
 import { actionButton, type DialogKit } from './dialogKit';
 import {
@@ -38,7 +39,7 @@ type Phase =
   | { kind: 'aim'; startedAt: number }
   | { kind: 'wait'; depth: CastDepth; power: number; size: ShadowSize; landedAt: number; bite: number; nibbles: number[]; early: number; startledAt: number | null }
   | { kind: 'fight'; depth: CastDepth; power: number; size: ShadowSize; reaction: number; fight: Fight; last: number; noteUntil: number }
-  | { kind: 'result'; text: string; good: boolean; art: string | null; rare: boolean; isNew: boolean; size: ShadowSize | null };
+  | { kind: 'result'; text: string; good: boolean; art: string | null; rare: boolean; isNew: boolean; size: ShadowSize | null; notes: string[] };
 
 /** Catches in a row this session (presentation only). */
 let streak = 0;
@@ -53,6 +54,7 @@ export function openFishing(k: DialogKit) {
   let phase: Phase = { kind: 'idle' };
   let holding = false;
   let showOdds = false;
+  let showBook = false;
   /** The dialog body while open (the keys stop listening once it is gone). */
   let root: HTMLElement | null = null;
   /** The live parts the frame loop moves (re-found after every render). */
@@ -72,28 +74,21 @@ export function openFishing(k: DialogKit) {
     landing = true;
     phase = { kind: 'idle' };
     const before = new Set(k.world()?.collection.discovered.fish ?? []);
-    const r = await k.dispatch((s, c) => castLine(s, { score, depth }, c)).finally(() => (landing = false));
+    const r = await k.dispatch((s, c) => castLine(s, { score, depth, ...(size ? { shadow: size } : {}) }, c)).finally(() => (landing = false));
     const cast = (r.events ?? []).find((e): e is AquariumEvent & { type: 'AQUARIUM_CAST' } => e.type === 'AQUARIUM_CAST');
     if (!r.ok || !cast) return set({ kind: 'idle' });
     if (cast.itemId === null) {
       streak = 0;
-      return set({ kind: 'result', text: miss ?? F.missed, good: false, art: null, rare: false, isNew: false, size: null });
+      return set({ kind: 'result', text: miss ?? F.missed, good: false, art: null, rare: false, isNew: false, size: null, notes: [] });
     }
     streak += 1;
     const species = cast.speciesId ? FISH[cast.speciesId] : undefined;
     const name = species?.nameVi ?? F.oyster;
     const isNew = !!species && !before.has(species.id);
-    const q = F.quality;
-    const label = score >= 0.85 ? q.perfect : score >= 0.6 ? q.good : q.ok;
-    set({
-      kind: 'result',
-      text: `${label} ${t(isNew ? F.caughtNew : F.caught, { name })}`,
-      good: true,
-      art: species?.art ?? null,
-      rare: !!species && species.rarity !== 'COMMON' && species.rarity !== 'UNCOMMON',
-      isNew,
-      size,
-    });
+    const label = score >= 0.85 ? F.quality.perfect : score >= 0.6 ? F.quality.good : F.quality.ok;
+    const rare = !!species && species.rarity !== 'COMMON' && species.rarity !== 'UNCOMMON';
+    // Decision 061: the notes say the size, a new best of the species and what else the cast brought.
+    set({ kind: 'result', text: `${label} ${t(isNew ? F.caughtNew : F.caught, { name })}`, good: true, art: species?.art ?? null, rare, isNew, size, notes: castNotes(cast) });
   }
 
   /** The fish is on: a pull `sinceBite` ms after the bite, or none at all (it hooked itself, reaction 0). */
@@ -259,6 +254,7 @@ export function openFishing(k: DialogKit) {
               phase.art ? art(phase.art, 'aquarium-rod__catch') : el('span', { class: 'aquarium-rod__catch is-empty', text: phase.good ? '🦪' : '💨' }),
               el('b', { text: phase.text }),
               phase.good && phase.size ? tag(F.shadow[phase.size], `is-${phase.size}`) : null,
+              ...phase.notes.map((n) => el('small', { class: 'aquarium-rod__note', text: n })),
             )
           : scene();
       stage = el(
@@ -292,7 +288,8 @@ export function openFishing(k: DialogKit) {
         ),
       ),
     );
-    return (root = el('div', { class: 'aquarium-dialog' }, stage, odds));
+    const log = catchBookView(w, showBook, (open) => (showBook = open));
+    return (root = el('div', { class: 'aquarium-dialog' }, stage, odds, log));
   }, (body) => body.closest('.c-dialog__panel')?.classList.add('c-dialog__panel--rod'), 'orders');
   k.onFrame(frame); // the power marker, the bobber and the fight move on the frame loop
   k.onClose(detach); // after open(): the keys go the moment the dialog closes

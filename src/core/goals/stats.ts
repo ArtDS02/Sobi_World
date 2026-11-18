@@ -11,7 +11,11 @@ export function statDeltas(e: WorldEvent): Readonly<Record<string, number>> {
     case 'crop.harvested':
       return { cropsHarvested: e.quantity };
     case 'fish.caught':
-      return { fishCaught: 1 };
+      return {
+        fishCaught: 1,
+        ...(e.shadow === 'big' || e.shadow === 'golden' ? { bigFishCaught: 1 } : {}),
+        ...(e.depth === 2 ? { farCatches: 1 } : {}),
+      };
     case 'tank.cleaned':
       return { tanksCleaned: 1 };
     case 'flower.harvested':

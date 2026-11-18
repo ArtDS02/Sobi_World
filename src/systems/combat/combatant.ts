@@ -34,6 +34,7 @@ export function combatantOf(init: CombatantInit): Combatant {
     phases: [...(init.phases ?? [])].map((p) => cloneData(p)),
     phase: 0,
     intent: null,
+    ...(init.iq !== undefined ? { iq: Math.max(0, Math.min(1, init.iq)) } : {}),
   };
 }
 

@@ -22,6 +22,7 @@ import { PaintedArt } from './mapScene';
 import { buildMap, edgeColour, refreshThings, type MapObjects } from './mapView';
 import type { AdventureSceneState, SceneReport } from './sceneState';
 import { Walker } from './walker';
+import { BattleAmbient, styleOfBackdrop } from './battleAmbient';
 
 export const ADVENTURE_SCENE_KEY = 'adventure';
 export { ADVENTURE_DESIGN };
@@ -47,6 +48,7 @@ const ARRIVE_MS = 520;
 export class AdventureScene extends Phaser.Scene {
   private backdrop!: Phaser.GameObjects.Image;
   private backdropId = '';
+  private ambient!: BattleAmbient;
   private walker!: Walker;
   private map: AreaMap | null = null;
   private objs: MapObjects | null = null;
@@ -76,6 +78,7 @@ export class AdventureScene extends Phaser.Scene {
   create() {
     this.backdrop = this.add.image(ADVENTURE_DESIGN.width / 2, ADVENTURE_DESIGN.height / 2, FALLBACK_PROP_KEY).setDepth(-1000);
     this.walker = new Walker(this);
+    this.ambient = new BattleAmbient(this);
     this.camera = new MapCamera(this.cameras.main);
     const onTexture = () => (this.texturesChanged = true);
     this.textures.on(Phaser.Textures.Events.ADD, onTexture);
@@ -100,6 +103,7 @@ export class AdventureScene extends Phaser.Scene {
       this.events.off(Phaser.Scenes.Events.WAKE, runStage);
       this.events.off(Phaser.Scenes.Events.SLEEP, sleepStage);
       this.textures.off(Phaser.Textures.Events.ADD, onTexture);
+      this.ambient.destroy();
       this.input.keyboard?.off('keydown-SPACE', use);
       for (const off of this.offs) off();
     });
@@ -167,8 +171,15 @@ export class AdventureScene extends Phaser.Scene {
     if (!s || s.mode !== 'explore' || !map) {
       if (this.map || !this.backdrop.visible || this.texturesChanged || (s?.backdrop ?? '') !== this.backdropId) this.showBackdrop(s);
       this.texturesChanged = false;
+      // The air over the painting while a battle is on (decision 063).
+      const zoom = fitZoom(this.scale);
+      const w = this.scale.width / zoom;
+      const h = this.scale.height / zoom;
+      const view = { w, h, x: ADVENTURE_DESIGN.width / 2 - w / 2, y: ADVENTURE_DESIGN.height / 2 - h / 2 };
+      this.ambient.update(s?.mode === 'battle' ? styleOfBackdrop(s.backdrop) : null, delta, this.deps.reduceMotion(), view);
       return;
     }
+    this.ambient.update(null, delta, true, { x: 0, y: 0, w: 0, h: 0 });
     // The area is built again when its corruption changes (its zone just purified).
     if (this.map?.id !== map.id || this.texturesChanged || s.corruption !== this.builtCorruption) this.enterMap(s, map);
     this.texturesChanged = false;

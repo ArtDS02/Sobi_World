@@ -33,6 +33,8 @@ export const enemySchema = z.strictObject({
   coins: nonNeg,
   drops: z.array(dropSchema),
   boss: z.boolean().optional(),
+  /** How cleverly it fights (decision 062): 0 = near random and forgets support skills, 1 = focuses fire, combines skills, uses support well. Later zones are smarter. */
+  iq: unit.default(0.5),
   art: assetId,
 });
 

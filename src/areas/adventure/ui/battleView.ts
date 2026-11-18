@@ -29,6 +29,10 @@ export function renderBattle(ctx: ViewCtx, replay?: Run): HTMLElement {
   const step = stepEffects(run, run.battle, state.fast);
   const live = step.elapsed < step.motion.total + FX_MS;
   const floatersOf = (id: string) => (live ? step.fx.floaters.filter((f) => f.unit === id) : []);
+  const thinkOf = (id: string) => {
+    const b = live ? step.motion.beats.find((x) => x.actor === id && x.thinkMs > 0) : undefined;
+    return b ? { delay: Math.round(b.thinkAt - step.shown), ms: b.thinkMs } : null;
+  };
   const fxBanner = live ? step.fx.banner : null;
   const actor = vm.units.find((u) => u.id === vm.actor);
   const mine = actor?.side === 'ally';
@@ -85,7 +89,7 @@ export function renderBattle(ctx: ViewCtx, replay?: Run): HTMLElement {
         unitOnField(u, i, vm, ctx, run, floatersOf(u.id), step.shown, fallsLater(u)),
       ),
       ...enemies.map((u, i) =>
-        unitOnField(u, i, vm, ctx, run, floatersOf(u.id), step.shown, fallsLater(u)),
+        unitOnField(u, i, vm, ctx, run, floatersOf(u.id), step.shown, fallsLater(u), thinkOf(u.id)),
       ),
       sideAim && (aim.aim === 'enemies' || aim.aim === 'all')
         ? sideMarker('enemy', enemies, aim, ctx)

@@ -5,7 +5,8 @@
 // STEP_MAX_MS. Presentation only: it reads the step's events and never touches the battle. Pure.
 import type { BattleEvent, BattleState, Element } from '../../../systems/combat/types';
 import { SKILLS } from '../logic/config/content';
-import { BEAT_GAP_MS, CIRCLE_MS, FAST_SHARE, QUIET_MS, STEP_MAX_MS, skillFx, timingOf, type Delivery, type Pose, type Timing } from './motionProfiles';
+import { hashSeed, mulberry32 } from '../../../core/rng';
+import { BEAT_GAP_MS, CIRCLE_MS, FAST_SHARE, QUIET_MS, STEP_MAX_MS, THINK_MS, skillFx, timingOf, type Delivery, type Pose, type Timing } from './motionProfiles';
 
 export interface MotionBeat {
   /** Who acts (null: a beat of damage over time only). */
@@ -18,6 +19,9 @@ export interface MotionBeat {
   targets: string[];
   /** A skill is cast inside a magic circle first (adventure-big-update-1 §6): the circle shows from `start` to `cast`. */
   circle: boolean;
+  /** An enemy's turn opens with a pause as if it were thinking: it lasts from `thinkAt` for `thinkMs` (0: none), then the beat starts. */
+  thinkAt: number;
+  thinkMs: number;
   /** Times from the start of the step (ms): the circle ends at `cast` (= `start` without one), the wind-up at `release`. */
   start: number;
   cast: number;
@@ -182,9 +186,14 @@ export function stepMotion(battle: BattleState | null, log: readonly { type: str
   const beats: MotionBeat[] = [];
   let clock = 0;
   drafts.forEach((d, b) => {
+    // An enemy that acts thinks first (decision 062); a turn lost to a status does not. The pause is not squeezed with the rest.
+    const acts = d.actor !== null && d.pose !== null && d.pose !== 'stunned' && battle.combatants.find((c) => c.id === d.actor)?.side === 'enemy';
+    const thinkMs = acts ? Math.round((THINK_MS.min + (THINK_MS.max - THINK_MS.min) * mulberry32(hashSeed('think', battle.seed, battle.counter, b)).next()) * (fast ? FAST_SHARE : 1)) : 0;
+    const thinkAt = clock;
+    clock += thinkMs;
     const t = scaleTiming(timings[b]!, k);
     const c = circles[b]! * k;
-    const beat: MotionBeat = { actor: d.actor, pose: d.pose, delivery: d.delivery, element: d.element, skillId: d.skillId, targets: d.targets, circle: c > 0, start: clock, cast: clock + c, release: clock + t.release, impact: clock + t.impact, end: clock + t.end };
+    const beat: MotionBeat = { actor: d.actor, pose: d.pose, delivery: d.delivery, element: d.element, skillId: d.skillId, targets: d.targets, circle: c > 0, thinkAt, thinkMs, start: clock, cast: clock + c, release: clock + t.release, impact: clock + t.impact, end: clock + t.end };
     beats.push(beat);
     const stagger = staggerOf(d.skillId) * k;
     const landsOn = (target: string) => beat.impact + Math.max(0, d.targets.indexOf(target)) * stagger;

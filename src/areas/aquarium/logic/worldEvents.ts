@@ -27,8 +27,11 @@ export function aquariumWorldEvents(e: AquariumEvent): WorldEvent[] {
       return [{ type: 'tank.cleaned', area }];
     case 'AQUARIUM_CAST': {
       if (!e.itemId || e.quantity === 0) return [];
-      const caught: WorldEvent[] = e.speciesId ? [{ type: 'fish.caught', area, speciesId: e.speciesId, itemId: e.itemId }] : [];
-      return [...added(e.itemId, e.quantity), ...caught];
+      const caught: WorldEvent[] = e.speciesId
+        ? [{ type: 'fish.caught', area, speciesId: e.speciesId, itemId: e.itemId, ...(e.shadow ? { shadow: e.shadow } : {}), ...(e.depth !== undefined ? { depth: e.depth } : {}) }]
+        : [];
+      const bonus = Object.entries(e.bonusItems ?? {}).flatMap(([id, n]) => added(id, n));
+      return [...added(e.itemId, e.quantity), ...bonus, ...coins(e.bonusCoins ?? 0), ...caught];
     }
     case 'AQUARIUM_RELEASED': {
       const species = FISH[e.speciesId];

@@ -101,6 +101,8 @@ export const aquariumStateSchema = z.strictObject({
   memorials: z.array(memorialSchema),
   /** Failed tries per crossing recipe (decision 035): each raises the next one's chance. */
   crossMisses: z.record(z.string(), z.number().int().min(0)).optional(),
+  /** The catch book (decision 061): per species, catches, best size (cm) and the first catch. */
+  catchBook: z.record(speciesId, z.strictObject({ count: z.number().int().min(1), bestCm: z.number().int().min(1), firstAt: time })).optional(),
   /** Time the slice was simulated up to (epoch ms). */
   lastTickedAt: time,
 });

@@ -6,7 +6,7 @@ import { deliveryOf } from '../../src/areas/adventure/ui/battleMotion';
 import { altOf, gestureOf, perfOf } from '../../src/areas/adventure/ui/battlePerf';
 import { Performer, RIGS } from '../../src/systems/animation';
 
-const beat = { actor: 'a', pose: 'attack', delivery: 'melee', element: null, skillId: null, targets: ['f'], circle: false, start: 0, cast: 0, release: 220, impact: 330, end: 650 };
+const beat = { actor: 'a', pose: 'attack', delivery: 'melee', element: null, skillId: null, targets: ['f'], circle: false, thinkAt: 0, thinkMs: 0, start: 0, cast: 0, release: 220, impact: 330, end: 650 };
 const step = (extra: Partial<PlayingStep['motion']> = {}) =>
   ({ key: 's1', at: 0, enter: false, motion: { beats: [beat], reactions: [{ unit: 'f', kind: 'hit', at: 330 }], marks: [], eventAt: [], total: 650, speed: 1, ...extra } }) as unknown as PlayingStep;
 

@@ -13,6 +13,12 @@
 
 ## Nhật ký
 
+### 2026-11-18 — Adventure: bỏ chạy mọi trận / mọi lượt, hiệu ứng môi trường trong trận (decision 063)
+Xem decision 063. Chưa xem bằng mắt trong game: cần chủ dự án kiểm tra mật độ lá / tuyết / bong bóng từng zone.
+
+### 2026-11-18 — Adventure: nút chung ẩn trong trận, thanh lượt cố định, HUD đội to hơn, quái nghĩ 2–3 s, quái thông minh dần (decision 062)
+Ý chính: xem decision 062. `npm run check`: chỉ còn 3 test về layout trại / asset farm (`decor`, `assets`, `assetsCheck`) không liên quan thay đổi này. Chưa xem bằng mắt trong Electron: cần chủ dự án kiểm tra chiều rộng thanh lượt, cỡ HUD đội, ba chấm "đang nghĩ" và độ khó Núi / Biển.
+
 ### 2026-11-16 — Admin "Dữ liệu chiến đấu" (Combat Database) + audit dữ liệu combat
 ✅ Đã làm: trang Admin mới `#/combat-db` (nhóm Phiêu lưu): 4 tab Chiến binh / Quái vật / Kỹ năng / Báo cáo dữ liệu, ô thống kê thật, bộ lọc kết hợp (class, nguyên tố chính / phụ, dòng, độ hiếm, loại quái, vùng, thẻ, trạng thái dữ liệu, kỹ năng, loại kỹ năng; skill: loại, hệ, kiểu, mục tiêu, tác dụng, trạng thái, dùng chung, animation, icon), sắp xếp, Thẻ / Bảng so sánh, panel chi tiết một lớp (Tổng quan với thanh chỉ số theo cấp + class, Kỹ năng riêng / chung, Thuộc tính chiến đấu, Animation & VFX, Dữ liệu khác) và chi tiết kỹ năng (entity đang dùng, nút "▶ Xem" mở Xưởng animation trận đúng skill). Chỉ đọc, không có bản sao dữ liệu: `tools/admin/combatDbModel.ts` đọc module content của Adventure, species Farm, cá Aquarium, rig, battle_fx, manifest; chỉ số bằng `deriveStats` / `withClass` của game. Audit đầy đủ: `docs/research/COMBAT_DATA_AUDIT.md` (22 chiến binh, 33 quái, 134 skill, 4 class, 9 hệ).
 ⚠️ Quyết định tự đưa ra: "Riêng" của chiến binh = 4 ô Độc nhất + Tuyệt kỹ (ghi rõ của dòng / riêng loài), "Chung" = cây class mặc định; quái không có cờ boss nằm trong nhóm trùm hiển thị là "Hộ tống trùm"; icon skill riêng là mục tuỳ chọn (game dùng icon nguyên tố). Thêm `presetBattleLab` / `presetRigLab` (chỉ đặt lựa chọn ban đầu) vào hai trang Xưởng.

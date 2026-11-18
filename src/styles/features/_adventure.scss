@@ -748,20 +748,22 @@ $adv-pink: #ef5a78;
     display: flex;
     gap: $sp-2;
     align-items: center;
-    max-width: min(50rem, calc(100% - 34rem));
+    width: 36rem; // fixed: the bar never moves or resizes, only what is inside it slides
+    max-width: calc(100% - 34rem);
     pointer-events: none;
     transform: translateX(-50%);
 
     > * { pointer-events: auto; }
   }
 
-  &__pills { display: grid; flex: none; gap: 3px; justify-items: end; }
+  &__pills { display: grid; flex: none; gap: 3px; justify-items: end; min-width: 6.5rem; }
   &__round-pill { padding: 1px $sp-3; font-size: $fs-xs; font-weight: $fw-bold; color: #fff; white-space: nowrap; background: $adv-navy; border: 2px solid rgba(255, 255, 255, 0.6); border-radius: 999px; }
 
   &__turns {
     position: relative;
     display: flex;
     gap: 6px;
+    flex: 1;
     align-items: center;
     min-width: 0;
     padding: 5px 12px 5px 6px;
@@ -810,6 +812,28 @@ $adv-pink: #ef5a78;
       box-shadow: 0 0 0 3px #f5a623, 0 0 16px 4px rgba(255, 210, 90, 0.95);
     }
     &.is-now.is-enemy { box-shadow: 0 0 0 3px #b06ae0, 0 0 16px 4px rgba(200, 140, 255, 0.95); }
+  }
+
+  // Three dots over an enemy that is about to act (decision 062): shown from --think-delay for --think-ms.
+  &__think {
+    position: absolute;
+    top: -0.6rem;
+    left: 50%;
+    z-index: 6;
+    display: flex;
+    gap: 4px;
+    padding: 4px 9px;
+    pointer-events: none;
+    background: #fff;
+    border: 2px solid #9a6ad6;
+    border-radius: 999px;
+    opacity: 0;
+    transform: translateX(-50%);
+    animation: adventure-think-show var(--think-ms, 2400ms) linear var(--think-delay, 0ms) both;
+
+    i { width: 0.45rem; height: 0.45rem; background: #9a6ad6; border-radius: 50%; animation: adventure-think-dot 0.9s ease-in-out infinite; }
+    i:nth-child(2) { animation-delay: 0.15s; }
+    i:nth-child(3) { animation-delay: 0.3s; }
   }
 
   &__turn-art { width: 100%; height: 100%; object-fit: contain; }
@@ -965,7 +989,7 @@ $adv-pink: #ef5a78;
     left: 0;
     z-index: 20;
     display: grid;
-    grid-template-columns: 17rem minmax(0, 1fr) 8.5rem;
+    grid-template-columns: 23rem minmax(0, 1fr) 8.5rem;
     gap: $sp-3;
     align-items: end;
     pointer-events: none;
@@ -975,8 +999,8 @@ $adv-pink: #ef5a78;
 
   &__party {
     display: grid;
-    gap: 3px;
-    padding: $sp-2;
+    gap: 5px;
+    padding: $sp-3;
     background: linear-gradient($adv-cream, #fbefd2);
     border: 3px solid $adv-wood;
     border-radius: 1rem;
@@ -985,25 +1009,25 @@ $adv-pink: #ef5a78;
 
   &__teamrow {
     display: flex;
-    gap: $sp-2;
+    gap: $sp-3;
     align-items: center;
-    padding: 2px 4px;
+    padding: 3px 6px;
     border-radius: 0.8rem;
 
     &.is-active { background: #fff1c4; box-shadow: 0 0 0 2px $c-honey; }
     &.is-down { filter: grayscale(1); opacity: 0.55; }
   }
 
-  &__teamrow-art { flex: none; width: 2.5rem; height: 2.5rem; object-fit: contain; background: #fff; border: 2px solid #e5cf9f; border-radius: 50%; }
+  &__teamrow-art { flex: none; width: 3.4rem; height: 3.4rem; object-fit: contain; background: #fff; border: 2px solid #e5cf9f; border-radius: 50%; }
   &__teamrow-text {
     display: grid;
     flex: 1;
     gap: 2px;
     min-width: 0;
-    b { display: flex; gap: 4px; align-items: center; font-size: 0.78rem; span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } small { flex: none; padding: 0 4px; font-size: 0.6rem; color: #fff; background: #d48a1a; border-radius: 999px; } }
+    b { display: flex; gap: 4px; align-items: center; font-size: 1.02rem; span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } small { flex: none; padding: 0 6px; font-size: 0.78rem; color: #fff; background: #d48a1a; border-radius: 999px; } }
   }
-  &__teamrow-hp { position: relative; .adventure-ui__meter { height: 0.85rem; } small { position: absolute; inset: 0; display: grid; place-items: center; font-size: 0.6rem; font-weight: $fw-bold; color: #fff; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6); } }
-  &__teamrow-sub { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; .adventure-ui__meter { height: 0.32rem; } }
+  &__teamrow-hp { position: relative; .adventure-ui__meter { height: 1.2rem; } small { position: absolute; inset: 0; display: grid; place-items: center; font-size: 0.82rem; font-weight: $fw-bold; color: #fff; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6); } }
+  &__teamrow-sub { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; .adventure-ui__meter { height: 0.5rem; } }
 
   &__cmd {
     position: relative;
@@ -1264,7 +1288,7 @@ $adv-pink: #ef5a78;
   .adventure-ui__unit.is-elite .adventure-ui__unit-art { width: 7.5rem; height: 7.5rem; }
   .adventure-ui__unit.is-boss .adventure-ui__unit-art { width: 9.5rem; height: 9.5rem; }
   .adventure-ui__field { bottom: 7.4rem; }
-  .adventure-ui__dock { grid-template-columns: 14rem minmax(0, 1fr) 6.5rem; }
+  .adventure-ui__dock { grid-template-columns: 19rem minmax(0, 1fr) 6.5rem; }
   .adventure-ui__attack { width: 6.5rem; height: 6.5rem; .adv-icon { width: 2.2rem; height: 2.2rem; } }
   .adventure-ui__attack-gap { width: 6.5rem; }
   .adventure-ui__plate { min-width: 7rem; }
@@ -1291,7 +1315,6 @@ $adv-pink: #ef5a78;
   &.is-dock-hidden .adventure-ui__dock { opacity: 0; transform: translateY(110%); pointer-events: none; > * { pointer-events: none; } }
   &.is-dock-compact .adventure-ui__dock { transform: translateY(14%); }
   &.is-plates-hp-only .adventure-ui__plate-name, &.is-plates-hp-only .adventure-ui__plate-sub { opacity: 0; }
-  &.is-hud-resolving .adventure-ui__turnbar, &.is-hud-result .adventure-ui__turnbar { transform: scale(0.82); transform-origin: top center; }
   &.is-hud-moving.is-dock-hidden .adventure-ui__dock { animation: adventure-dock-out 0.22s ease-in both; }
   &.is-hud-moving:not(.is-dock-hidden) .adventure-ui__dock { animation: adventure-dock-in 0.22s ease-out both; }
   &.is-hud-moving.is-plates-hp-only .adventure-ui__plate-name, &.is-hud-moving.is-plates-hp-only .adventure-ui__plate-sub { animation: adventure-plate-out 0.18s ease-in both; }
@@ -1599,6 +1622,8 @@ $adv-pink: #ef5a78;
 }
 
 // The turn bar slides (ANIM-081): a slot that moved up the line starts where it was (--turn-shift) and glides home; a new slot pops in.
+@keyframes adventure-think-show { 0% { opacity: 0; } 6%, 94% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes adventure-think-dot { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-3px); opacity: 1; } }
 @keyframes adventure-turn-slide {
   from { transform: translateX(var(--turn-shift, 0)); }
   to { transform: none; }

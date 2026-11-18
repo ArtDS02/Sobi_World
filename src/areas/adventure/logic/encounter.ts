@@ -50,6 +50,7 @@ export const enemyInits = (ids: readonly string[]): CombatantInit[] =>
       rageMax: 0,
       mods,
       phases: e.phases,
+      iq: e.iq,
     };
   });
 

@@ -1,5 +1,7 @@
 // The Aquarium's own events (the screens and the FeedbackDirector read these; world systems get the
 // standard ones through worldEvents.ts).
+import type { CastEvent, ShadowSize } from './fishing';
+
 export type AquariumEvent =
   | { type: 'AQUARIUM_FISH_FED'; fishId: string; itemId: string; favorite?: boolean; /** Fed with feed bought on the spot, not from the bag. */ bought?: boolean }
   | { type: 'AQUARIUM_FEED_BOUGHT'; quantity: number; gold: number }
@@ -9,7 +11,11 @@ export type AquariumEvent =
   | { type: 'AQUARIUM_FISH_POTION'; fishId: string; itemId: string; cured: boolean }
   | { type: 'AQUARIUM_TRAIT_REVEALED'; fishId: string; name: string; traitId: string }
   | { type: 'AQUARIUM_WATER_CHANGED' }
-  | { type: 'AQUARIUM_CAST'; speciesId: string | null; itemId: string | null; quantity: number; score: number; night: boolean }
+  | {
+      type: 'AQUARIUM_CAST'; speciesId: string | null; itemId: string | null; quantity: number; score: number; night: boolean;
+      /** Decision 061 (casts with a shadow): where the line landed, the shadow, the size in cm, a new best, and what else came up. */
+      depth?: 0 | 1 | 2; shadow?: ShadowSize; sizeCm?: number; record?: boolean; event?: CastEvent['kind']; bonusCoins?: number; bonusItems?: Record<string, number>;
+    }
   | { type: 'AQUARIUM_RELEASED'; fishId: string; speciesId: string }
   | { type: 'AQUARIUM_FISH_SOLD'; fishId: string; speciesId: string; gold: number }
   | { type: 'AQUARIUM_CATCH_SOLD'; itemId: string; quantity: number; gold: number }

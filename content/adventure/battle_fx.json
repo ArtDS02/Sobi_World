@@ -5,6 +5,7 @@
     "quiet": 360,
     "gap": 80,
     "stepMax": 5600,
+    "think": { "min": 2000, "max": 3000 },
     "fast": 0.55
   },
   "deliveries": {

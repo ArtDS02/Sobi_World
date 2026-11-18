@@ -164,6 +164,8 @@ export const battleFxFileSchema = z
       quiet: nonNeg,
       gap: nonNeg,
       stepMax: posInt,
+      /** An enemy "thinks" before it acts so its turn does not feel instant: a time drawn between `min` and `max` (ms, normal speed). Not squeezed under `stepMax`. */
+      think: z.strictObject({ min: nonNeg, max: nonNeg }).refine((t) => t.max >= t.min, 'think.max must be at least think.min'),
       fast: z.number().finite().positive().max(1),
     }),
     deliveries: z.strictObject({ melee: timing, slam: timing, projectile: timing, burst: timing, aura: timing, ultimate: timing }),

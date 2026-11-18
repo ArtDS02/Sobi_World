@@ -1,6 +1,12 @@
 // Placeholder app icon (spec §13.3): build/icon.png (1024) and build/icon.ico (256, PNG-in-ICO).
 // Pure Node (zlib only). Draws a pink pig face; replace with the real art later (art standard §7.3).
 import { mkdirSync, writeFileSync } from 'node:fs';
+
+// The real icon (build/icon-source.png, from the owner's art, 2026-11-18) replaced this placeholder: it only runs with --force.
+if (!process.argv.includes('--force')) {
+  console.log('build/icon.* is the real art now; pass --force to overwrite it with the placeholder.');
+  process.exit(0);
+}
 import { deflateSync } from 'node:zlib';
 
 const CRC_TABLE = Array.from({ length: 256 }, (_, n) => {

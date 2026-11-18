@@ -108,17 +108,20 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
   };
   const dialogs = createAdventureDialogs({ host: dialogHost, world, now: d.now, dispatch: (run) => void dispatch(run), roster: d.roster, position: () => lastPos });
 
-  function renderHud(w: WorldSave): HTMLElement {
+  /** `inBattle`: the fight keeps the screen to itself — no way out to the plaza, no bag, no menu until it is over. */
+  function renderHud(w: WorldSave, inBattle: boolean): HTMLElement {
     const v = hudVm(w);
     return el(
       'div',
       { class: 'adventure-ui__inner' },
       hudPills(hudPill(AREA_HUD_ART.coin, v.coins, vi.adventure.coins), hudLevel(v)),
-      hudNav(vi.adventure.title, [
-        { icon: AREA_HUD_ART.plaza, label: vi.adventure.plaza, onClick: d.leave },
-        { icon: AREA_HUD_ART.items, label: vi.adventure.items, onClick: () => d.openPanel('inventory') },
-        { icon: AREA_HUD_ART.menu, label: vi.adventure.menu, onClick: () => d.openPanel('menu') },
-      ]),
+      inBattle
+        ? null
+        : hudNav(vi.adventure.title, [
+          { icon: AREA_HUD_ART.plaza, label: vi.adventure.plaza, onClick: d.leave },
+          { icon: AREA_HUD_ART.items, label: vi.adventure.items, onClick: () => d.openPanel('inventory') },
+          { icon: AREA_HUD_ART.menu, label: vi.adventure.menu, onClick: () => d.openPanel('menu') },
+        ]),
     );
   }
 
@@ -155,9 +158,10 @@ export function createAdventureUi(d: AdventureUiDeps): AdventureUi {
     const rift = run?.phase === 'explore' && !!run.rift && !report;
     const exploring = run?.phase === 'explore' && !run.rift && !report;
     d.host.classList.toggle('is-exploring', exploring);
-    patch(hud, renderHud(w));
+    const inBattle = run?.phase === 'battle' || !!report?.battle;
+    patch(hud, renderHud(w, inBattle));
     const ctx = ctxFor(w);
-    d.host.classList.toggle('is-battle', run?.phase === 'battle' || !!report?.battle);
+    d.host.classList.toggle('is-battle', inBattle);
     d.host.classList.toggle('is-report', !!report);
     battleOn = active && (run?.phase === 'battle' || !!report?.battle);
     drawn += 1;

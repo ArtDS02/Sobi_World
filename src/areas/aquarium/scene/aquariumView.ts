@@ -173,7 +173,7 @@ export const AQUARIUM_VIEW = {
     arrive: 90,
     /** How far up or down one leg may go: fish mostly swim level. */
     climb: 120,
-    wagHz: [0.9, 3.2] as const,
+    wagHz: [0.4, 1.3] as const,
     /** The whole fish rocks this much (rad) against its tail; the body bends this share of its height at the tail. */
     wagRad: [0.01, 0.04] as const,
     bend: [0.05, 0.17] as const,

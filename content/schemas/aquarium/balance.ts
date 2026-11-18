@@ -1,9 +1,12 @@
 // content/aquarium/balance.json — the Aquarium's numbers (GAME_BALANCE §9): the tank and its upgrades, how fish live,
 // the fishing rod, eggs and what each action earns.
 import { z } from 'zod';
+import { RARITY_VALUES } from '../vocab';
 import { itemId, nonNeg, percent, posInt, unit } from '../fields';
 
 const materials = z.partialRecord(itemId, posInt);
+const range = z.tuple([unit, unit]);
+const depthIdx = z.number().int().min(0).max(2);
 
 export const aquariumBalanceFileSchema = z
   .strictObject({
@@ -54,6 +57,20 @@ export const aquariumBalanceFileSchema = z
        * weight × (1 + depthLuck[depth] × rarity step).
        */
       depthLuck: z.tuple([nonNeg, nonNeg, nonNeg]),
+      /** Size of a catch in cm (decision 061): the species' range by rarity, and where in it each shadow lands (shares 0..1). */
+      size: z.strictObject({
+        byRarity: z.record(z.enum(RARITY_VALUES), z.tuple([posInt, posInt])),
+        byShadow: z.strictObject({ small: range, medium: range, big: range, golden: range }),
+      }),
+      /** Coins for beating the species' best size (not for the first catch). */
+      record: z.strictObject({ coins: nonNeg }),
+      /** At most one per successful cast with a shadow (chances add up; a depth floor each). */
+      events: z.strictObject({
+        school: z.strictObject({ chance: unit, extra: z.tuple([posInt, posInt]) }),
+        giant: z.strictObject({ chance: unit, minDepth: depthIdx, sizeFactor: z.number().finite().min(1), coins: nonNeg }),
+        bottle: z.strictObject({ chance: unit, coins: z.tuple([posInt, posInt]) }),
+        chest: z.strictObject({ chance: unit, minDepth: depthIdx, items: materials }),
+      }),
     }),
     breeding: z.strictObject({
       /** Hours before a pair can have eggs again. */

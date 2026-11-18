@@ -632,6 +632,7 @@ $rod-waterline: 46%;
 
     &.is-empty { display: grid; place-items: center; font-size: 2.6rem; }
   }
+  &__note { display: block; font-weight: $fw-bold; color: $c-text-muted; }
   &__streak {
     display: inline-flex;
     gap: $sp-1;

@@ -347,6 +347,35 @@ describe('Taunt, intents, AI, determinism', () => {
     const { state } = startBattle(1, [unit('a', 'ally', { skills: slots('heal'), stats: { atk: 1 } }), unit('b', 'ally', { hp: 10, stats: { spd: 1 } }), unit('e', 'enemy', { stats: { spd: 1 } })], ctx);
     expect(chooseAction(state, ctx)).toEqual({ kind: 'skill', skillId: 'heal', target: 'b' });
   });
+
+  it('an enemy plays by its iq (decision 062): a clumsy one forgets to heal and misses the kill, a clever one does not', () => {
+    const build = (iq: number | undefined) =>
+      startBattle(1, [unit('p', 'ally', { hp: 500, stats: { spd: 1, hp: 500 } }), unit('q', 'ally', { hp: 5, stats: { spd: 1, hp: 500 } }), unit('e', 'enemy', { skills: slots('heal'), iq, stats: { spd: 50, atk: 40 } }), unit('f', 'enemy', { hp: 10, stats: { spd: 1, hp: 400 } })], ctx).state;
+    const heals = (iq: number | undefined) => {
+      const state = build(iq);
+      let n = 0;
+      for (let seed = 0; seed < 60; seed += 1) {
+        const a = chooseAction(state, ctx, 'e', seed);
+        if (a?.kind === 'skill' && a.skillId === 'heal') n += 1;
+      }
+      return n;
+    };
+    expect(heals(1)).toBe(60); // the hurt friend is healed every time
+    expect(heals(0)).toBeLessThan(40); // a clumsy one often attacks instead
+    expect(heals(undefined)).toBe(60); // no iq = the plain AI, as before
+    // Focus fire: a clever one finishes the nearly dead, a clumsy one picks without looking at who is nearly dead.
+    const aim = (iq: number) => {
+      const state = startBattle(1, [unit('p', 'ally', { hp: 500, stats: { spd: 1, hp: 500 } }), unit('q', 'ally', { hp: 5, stats: { spd: 1, hp: 500 } }), unit('e', 'enemy', { iq, stats: { spd: 50, atk: 40 } })], ctx).state;
+      let hits = 0;
+      for (let seed = 0; seed < 60; seed += 1) {
+        const a = chooseAction(state, ctx, 'e', seed);
+        if (a?.kind === 'attack' && a.target === 'q') hits += 1;
+      }
+      return hits;
+    };
+    expect(aim(1)).toBe(60);
+    expect(aim(0)).toBeLessThan(55);
+  });
 });
 
 describe('stats and levels', () => {

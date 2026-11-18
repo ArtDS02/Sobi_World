@@ -61,3 +61,48 @@ export function cast(rng: Rng, score: number, night: boolean, sky: FishingSky = 
 /** Seconds of the cooldown a cast leaves: a miss only costs part of it. */
 export const cooldownAfter = (c: Catch): number =>
   c.kind === 'miss' ? AB.fishing.cooldownSec * AB.fishing.missCooldownShare : AB.fishing.cooldownSec;
+
+/** The shadow under the water that tells a fish's size (decision 035); the rod's screen draws it, the log keeps its cm. */
+export type ShadowSize = 'small' | 'medium' | 'big' | 'golden';
+export const isShadow = (s: unknown): s is ShadowSize => s === 'small' || s === 'medium' || s === 'big' || s === 'golden';
+
+const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
+
+/** Length in cm of a catch (decision 061): the species' range by rarity, the shadow picks where in it (`roll` 0..1 within). */
+export function sizeCmOf(species: FishSpecies, shadow: ShadowSize, roll: number): number {
+  const [lo, hi] = AB.fishing.size.byRarity[species.rarity];
+  const [from, to] = AB.fishing.size.byShadow[shadow];
+  return Math.round(lerp(lo, hi, lerp(from, to, Math.min(1, Math.max(0, roll)))));
+}
+
+/** What a cast may bring besides its fish (decision 061): at most one. */
+export type CastEvent =
+  | { kind: 'school'; extra: number }
+  | { kind: 'giant'; coins: number }
+  | { kind: 'bottle'; coins: number }
+  | { kind: 'chest'; items: Readonly<Record<string, number>> };
+
+/** One draw over the events (chances add up), skipping those that need a deeper cast; `null` = nothing special. */
+export function drawCastEvent(rng: Rng, depth: CastDepth): CastEvent | null {
+  const E = AB.fishing.events;
+  let roll = rng.next();
+  const pickInt = (lo: number, hi: number) => lo + Math.floor(rng.next() * (hi - lo + 1));
+  if ((roll -= E.school.chance) < 0) return { kind: 'school', extra: pickInt(E.school.extra[0], E.school.extra[1]) };
+  if (depth >= E.giant.minDepth && (roll -= E.giant.chance) < 0) return { kind: 'giant', coins: E.giant.coins };
+  if ((roll -= E.bottle.chance) < 0) return { kind: 'bottle', coins: pickInt(E.bottle.coins[0], E.bottle.coins[1]) };
+  if (depth >= E.chest.minDepth && roll - E.chest.chance < 0) return { kind: 'chest', items: E.chest.items };
+  return null;
+}
+
+/** A species' entry of the catch book (areas.sobi_aquarium.catchBook). */
+export interface CatchRecord {
+  count: number;
+  bestCm: number;
+  firstAt: number;
+}
+
+/** The entry after one more catch of `cm`, and whether it beat an earlier best (the first catch is no record). */
+export function recordCatch(prev: CatchRecord | undefined, cm: number, now: number): { entry: CatchRecord; record: boolean } {
+  if (!prev) return { entry: { count: 1, bestCm: cm, firstAt: now }, record: false };
+  return { entry: { ...prev, count: prev.count + 1, bestCm: Math.max(prev.bestCm, cm) }, record: cm > prev.bestCm };
+}

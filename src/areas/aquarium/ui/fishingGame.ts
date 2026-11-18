@@ -9,7 +9,7 @@
 // A shadow under the water says how big the fish is (a golden one is rare and worth a lot). The score sent to castLine
 // mixes the reaction, the fight and the fish's size, plus a little for a streak of catches. Pure: time and randomness
 // come in as numbers; the dialog (fishingDialog.ts) draws it.
-import type { CastDepth } from '../logic/fishing';
+import type { CastDepth, ShadowSize } from '../logic/fishing';
 
 export const ROD = {
   powerPeriodMs: 2000,
@@ -49,7 +49,7 @@ export const ROD = {
   },
 } as const;
 
-export type ShadowSize = 'small' | 'medium' | 'big' | 'golden';
+export type { ShadowSize };
 
 /** Power 0..1 `elapsed` ms after the swing started (a triangle wave). */
 export function powerAt(elapsedMs: number): number {

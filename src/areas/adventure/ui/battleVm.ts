@@ -14,7 +14,7 @@ import { titleOf } from '../logic/bonds';
 import { BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, MAPS, REACTIONS, SKILLS } from '../logic/config/content';
 import { enemyIdOf } from '../logic/encounter';
 import { expShare } from '../logic/fighters';
-import { canFlee, corruptionOfTags, foeClass, type FoeClass } from '../logic/foes';
+import { corruptionOfTags, foeClass, type FoeClass } from '../logic/foes';
 import { escapeIn } from './battleFloaters';
 import { logLine } from './battleLog';
 import type { Run } from '../logic/state';
@@ -211,7 +211,7 @@ export function foughtKind(run: Run): FoeClass {
   return MAPS[mapId ?? '']?.groups.find((g) => g.id === groupId)?.kind ?? 'normal';
 }
 
-function actionsOf(world: WorldSave, run: Run, battle: BattleState, cur: Combatant): BattleActionVm[] {
+function actionsOf(world: WorldSave, battle: BattleState, cur: Combatant): BattleActionVm[] {
   const out: BattleActionVm[] = [];
   const why = (a: BattleAction): string | null => {
     const e = canAct(battle, a, COMBAT_CONTEXT);
@@ -253,7 +253,7 @@ function actionsOf(world: WorldSave, run: Run, battle: BattleState, cur: Combata
     const detail = (vi.adventure.battle.itemDetail as Record<string, string>)[item.itemId] ?? '';
     out.push({ kind: 'item', tab: 'item', id: item.itemId, label: `${nameOfItem(item.itemId)} (x${have})`, detail, art: itemArtId(item.itemId as ItemId), mp: 0, aim: TARGET_AIM[item.target] ?? 'self', reason: null, element: null, category: 'support' });
   }
-  out.push({ kind: 'flee', tab: 'basic', id: 'flee', label: vi.adventure.battle.flee, detail: '', art: ACTION_ART.flee, mp: 0, aim: null, reason: !run.rift && canFlee({ kind: foughtKind(run) }) ? null : vi.adventure.battle.fleeOff, element: null, category: 'support' });
+  out.push({ kind: 'flee', tab: 'basic', id: 'flee', label: vi.adventure.battle.flee, detail: '', art: ACTION_ART.flee, mp: 0, aim: null, reason: null, element: null, category: 'support' });
   return out;
 }
 
@@ -284,7 +284,7 @@ export function battleVm(world: WorldSave, run: Run): BattleVm | null {
     units,
     order,
     actor: cur?.id ?? null,
-    actions: cur && cur.side === 'ally' ? actionsOf(world, run, battle, cur) : [],
+    actions: cur && cur.side === 'ally' ? actionsOf(world, battle, cur) : [],
     log: run.log.map((e) => logLine(e as BattleEvent, nameOf)).filter((l): l is string => l !== null),
     riftFloor: run.rift ? run.rift.floor + 1 : null,
     affix: affix ? { name: affix.nameVi, art: affix.art } : null,

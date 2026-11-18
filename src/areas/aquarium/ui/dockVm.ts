@@ -2,6 +2,7 @@
 import { itemArtId } from '../../../core/config/assetIds';
 import type { WorldSave } from '../../../core/save/world';
 import { vi } from '../../../i18n/vi';
+import { FISH_LIST } from '../logic/config/content';
 import { castCooldownLeft, isNightNow } from '../logic/derived';
 import { catchOdds, type CastDepth } from '../logic/fishing';
 import { skyForRod } from '../logic/sky';
@@ -41,3 +42,22 @@ export function dockVm(world: WorldSave, now: number, dayOffsetMs: number, score
   return { cooldownMs: castCooldownLeft(a, now), night, period: night ? vi.aquarium.fishing.night : vi.aquarium.fishing.day, odds };
 }
 
+
+export interface BookRow {
+  name: string;
+  art: string;
+  rarity: string;
+  /** Times caught (0 = not yet: the row shows a shadow). */
+  count: number;
+  bestCm: number | null;
+}
+
+/** The catch book (decision 061): every species the rod can bring, with what the player has caught of it. */
+export function catchBookVm(world: WorldSave): { rows: BookRow[]; found: number } {
+  const book = aquariumOf(world).catchBook ?? {};
+  const rows = FISH_LIST.filter((f) => f.catchWeight > 0).map((f): BookRow => {
+    const e = book[f.id];
+    return { name: e ? f.nameVi : '???', art: f.art, rarity: f.rarity, count: e?.count ?? 0, bestCm: e?.bestCm ?? null };
+  });
+  return { rows, found: rows.filter((r) => r.count > 0).length };
+}

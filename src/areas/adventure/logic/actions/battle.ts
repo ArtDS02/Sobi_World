@@ -11,11 +11,11 @@ import type { BattleAction, BattleState } from '../../../../systems/combat/types
 import { titlesOf } from '../bonds';
 import { AB, BATTLE_ITEMS, COMBAT_CONTEXT, ENEMIES, LOOT_TABLES, MAPS, type Affix } from '../config/content';
 import { addCount, enemyIdOf, playEnemies, randInt, rollTable } from '../encounter';
-import { canFlee, foeReward, groupNow, staysBeaten, zonePurified } from '../foes';
+import { foeReward, groupNow, staysBeaten, zonePurified } from '../foes';
 import { affixOfTags } from '../variants';
 import { countOf, credit, runAdventure, take, type AdventureResult } from './kit';
 import { settleRiftFloor } from './rift';
-import { announceTitles, carryOver, cheer, commit, finish, giveExp, levelMarks, lootSince, makeReport, recordFeats, setFighter, stepOf, updateFeats, type Step } from './trip';
+import { announceTitles, carryOver, cheer, commit, finish, giveExp, homeResult, levelMarks, lootSince, makeReport, recordFeats, setFighter, stepOf, updateFeats, type Step } from './trip';
 
 const STEP_ERRORS: Record<string, ErrorCode> = {
   BATTLE_OVER: 'WRONG_PHASE',
@@ -196,7 +196,10 @@ export function battleAct(world: WorldSave, args: { action: BattleAction | 'auto
   });
 }
 
-/** Running from a group that comes back (a normal or a mutant one; never from a group beaten for good or a Rift floor): the damage taken stays, the group stays, a short grace follows. */
+/**
+ * Running from a battle, on any turn of ours (decision 063): the damage taken stays, the group stays (a guardian or a boss is not beaten and
+ * waits where it was), a short grace follows. From a Rift floor it leaves the Rift keeping what the party won.
+ */
 export function flee(world: WorldSave, ctx: ActionContext): AdventureResult {
   return runAdventure(world, ctx, (w, a) => {
     const st = stepOf(w, a, ctx);
@@ -204,8 +207,16 @@ export function flee(world: WorldSave, ctx: ActionContext): AdventureResult {
     const { run } = st;
     if (run.phase !== 'battle' || !run.battle) return { ok: false, error: 'WRONG_PHASE' };
     const fought = foughtGroup(st).group;
-    if (run.rift || !fought || !canFlee(fought)) return { ok: false, error: 'CANNOT_FLEE' };
+    if (!run.rift && !fought) return { ok: false, error: 'CANNOT_FLEE' };
+    const cur = current(run.battle);
+    if (!cur || cur.side !== 'ally' || run.battle.outcome) return { ok: false, error: 'NOT_YOUR_TURN' };
     carryOver(st, run.battle);
+    if (run.rift) {
+      run.log = [];
+      st.events.push({ type: 'ADVENTURE_FLED' });
+      finish(st, homeResult(run));
+      return commit(st);
+    }
     run.battle = null;
     run.phase = 'explore';
     run.fighting = null;

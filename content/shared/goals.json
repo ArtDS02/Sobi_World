@@ -94,6 +94,24 @@
         "coins": [60, 100]
       },
       {
+        "id": "fish_big",
+        "metric": "bigFishCaught",
+        "area": "sobi_aquarium",
+        "fromWorldLevel": 6,
+        "min": 1,
+        "max": 3,
+        "coins": [80, 130]
+      },
+      {
+        "id": "fish_far",
+        "metric": "farCatches",
+        "area": "sobi_aquarium",
+        "fromWorldLevel": 6,
+        "min": 2,
+        "max": 4,
+        "coins": [70, 110]
+      },
+      {
         "id": "tank",
         "metric": "tanksCleaned",
         "area": "sobi_aquarium",

@@ -20,6 +20,7 @@
       "exp": 1.1,
       "coins": 2,
       "drops": [{ "itemId": "item_forest_herb", "chance": 0.2, "min": 1, "max": 2 }],
+      "iq": 0.15,
       "art": "enemy_mossling"
     },
     {
@@ -42,6 +43,7 @@
       "exp": 1.6,
       "coins": 2,
       "drops": [{ "itemId": "item_forest_herb", "chance": 0.16, "min": 1, "max": 2 }],
+      "iq": 0.15,
       "art": "enemy_thorn_sprout"
     },
     {
@@ -64,6 +66,7 @@
       "exp": 1.6,
       "coins": 2,
       "drops": [{ "itemId": "item_forest_herb", "chance": 0.1, "min": 1, "max": 1 }],
+      "iq": 0.15,
       "art": "enemy_gale_sparrow"
     },
     {
@@ -86,6 +89,7 @@
       "exp": 1.9,
       "coins": 3,
       "drops": [{ "itemId": "item_beast_fang", "chance": 0.12, "min": 1, "max": 1 }],
+      "iq": 0.15,
       "art": "enemy_ember_fox"
     },
     {
@@ -108,6 +112,7 @@
       "exp": 1.6,
       "coins": 3,
       "drops": [{ "itemId": "item_forest_herb", "chance": 0.16, "min": 1, "max": 2 }],
+      "iq": 0.15,
       "art": "enemy_dew_frog"
     },
     {
@@ -130,6 +135,7 @@
       "exp": 2.7,
       "coins": 4,
       "drops": [{ "itemId": "item_beast_fang", "chance": 0.24, "min": 1, "max": 2 }],
+      "iq": 0.15,
       "art": "enemy_forest_wolf"
     },
     {
@@ -156,6 +162,7 @@
         { "itemId": "item_beast_fang", "chance": 0.28, "min": 1, "max": 2 },
         { "itemId": "item_equip_wood_sword", "chance": 0.048, "min": 1, "max": 1 }
       ],
+      "iq": 0.3,
       "art": "enemy_bramble_boar"
     },
     {
@@ -182,6 +189,7 @@
         { "itemId": "item_beast_fang", "chance": 0.4, "min": 1, "max": 3 },
         { "itemId": "item_equip_leaf_vest", "chance": 0.06, "min": 1, "max": 1 }
       ],
+      "iq": 0.3,
       "art": "enemy_wolf_alpha"
     },
     {
@@ -218,6 +226,7 @@
         { "itemId": "item_forest_herb", "chance": 1, "min": 3, "max": 5 }
       ],
       "boss": true,
+      "iq": 0.4,
       "art": "enemy_old_treant"
     },
     {
@@ -240,6 +249,7 @@
       "exp": 5.4,
       "coins": 4,
       "drops": [{ "itemId": "item_mountain_ore", "chance": 0.12, "min": 1, "max": 2 }],
+      "iq": 0.4,
       "art": "enemy_rock_beetle"
     },
     {
@@ -262,6 +272,7 @@
       "exp": 5.7,
       "coins": 4,
       "drops": [{ "itemId": "item_mountain_ore", "chance": 0.08, "min": 1, "max": 1 }],
+      "iq": 0.4,
       "art": "enemy_cliff_hawk"
     },
     {
@@ -284,6 +295,7 @@
       "exp": 5.9,
       "coins": 4,
       "drops": [{ "itemId": "item_beast_fang", "chance": 0.16, "min": 1, "max": 2 }],
+      "iq": 0.4,
       "art": "enemy_lava_newt"
     },
     {
@@ -306,6 +318,7 @@
       "exp": 5.7,
       "coins": 4,
       "drops": [{ "itemId": "item_mountain_ore", "chance": 0.1, "min": 1, "max": 2 }],
+      "iq": 0.4,
       "art": "enemy_snow_goat"
     },
     {
@@ -332,6 +345,7 @@
         { "itemId": "item_mountain_ore", "chance": 0.24, "min": 1, "max": 2 },
         { "itemId": "item_ancient_cog", "chance": 0.016, "min": 1, "max": 1 }
       ],
+      "iq": 0.5,
       "art": "enemy_ore_golem"
     },
     {
@@ -358,6 +372,7 @@
         { "itemId": "item_mountain_ore", "chance": 0.32, "min": 1, "max": 2 },
         { "itemId": "item_ancient_cog", "chance": 0.024, "min": 1, "max": 1 }
       ],
+      "iq": 0.5,
       "art": "enemy_thunder_ram"
     },
     {
@@ -390,6 +405,7 @@
         { "itemId": "item_ancient_cog", "chance": 0.5, "min": 1, "max": 1 }
       ],
       "boss": true,
+      "iq": 0.6,
       "art": "enemy_magma_drake"
     },
     {
@@ -412,6 +428,7 @@
       "exp": 15.9,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.016, "min": 1, "max": 1 }],
+      "iq": 0.5,
       "art": "enemy_stone_sentinel"
     },
     {
@@ -434,6 +451,7 @@
       "exp": 15.9,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.016, "min": 1, "max": 1 }],
+      "iq": 0.5,
       "art": "enemy_rune_wisp"
     },
     {
@@ -457,6 +475,7 @@
       "exp": 17,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.016, "min": 1, "max": 1 }],
+      "iq": 0.5,
       "art": "enemy_tide_wraith"
     },
     {
@@ -479,6 +498,7 @@
       "exp": 18.1,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_rune", "chance": 0.012, "min": 1, "max": 1 }],
+      "iq": 0.5,
       "art": "enemy_ember_idol"
     },
     {
@@ -506,6 +526,7 @@
         { "itemId": "item_ancient_rune", "chance": 0.06, "min": 1, "max": 1 },
         { "itemId": "item_ancient_cog", "chance": 0.08, "min": 1, "max": 1 }
       ],
+      "iq": 0.6,
       "art": "enemy_shadow_priest"
     },
     {
@@ -543,6 +564,7 @@
         { "itemId": "item_ancient_cog", "chance": 0.5, "min": 1, "max": 1 }
       ],
       "boss": true,
+      "iq": 0.7,
       "art": "enemy_ancient_guardian"
     },
     {
@@ -565,6 +587,7 @@
       "exp": 16.2,
       "coins": 10,
       "drops": [{ "itemId": "item_mountain_ore", "chance": 0.2, "min": 1, "max": 2 }],
+      "iq": 0.75,
       "art": "enemy_reef_crab"
     },
     {
@@ -587,6 +610,7 @@
       "exp": 15.6,
       "coins": 10,
       "drops": [{ "itemId": "item_beast_fang", "chance": 0.2, "min": 1, "max": 1 }],
+      "iq": 0.75,
       "art": "enemy_salt_gull"
     },
     {
@@ -609,6 +633,7 @@
       "exp": 16.2,
       "coins": 10,
       "drops": [{ "itemId": "item_beast_fang", "chance": 0.2, "min": 1, "max": 1 }],
+      "iq": 0.75,
       "art": "enemy_coral_eel"
     },
     {
@@ -631,6 +656,7 @@
       "exp": 15.6,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.15, "min": 1, "max": 1 }],
+      "iq": 0.75,
       "art": "enemy_drift_jelly"
     },
     {
@@ -653,6 +679,7 @@
       "exp": 16.8,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.15, "min": 1, "max": 1 }],
+      "iq": 0.75,
       "art": "enemy_brine_wraith"
     },
     {
@@ -680,6 +707,7 @@
         { "itemId": "item_mountain_ore", "chance": 0.5, "min": 1, "max": 2 },
         { "itemId": "item_ancient_cog", "chance": 0.3, "min": 1, "max": 1 }
       ],
+      "iq": 0.85,
       "art": "enemy_shell_knight"
     },
     {
@@ -717,6 +745,7 @@
         { "itemId": "item_ancient_cog", "chance": 0.5, "min": 1, "max": 1 }
       ],
       "boss": true,
+      "iq": 0.95,
       "art": "enemy_abyss_kraken"
     },
     {
@@ -743,6 +772,7 @@
         { "itemId": "item_beast_fang", "chance": 0.28, "min": 1, "max": 2 },
         { "itemId": "item_equip_wood_sword", "chance": 0.048, "min": 1, "max": 1 }
       ],
+      "iq": 0.3,
       "art": "enemy_mimic"
     },
     {
@@ -769,6 +799,7 @@
         { "itemId": "item_mountain_ore", "chance": 0.24, "min": 1, "max": 2 },
         { "itemId": "item_ancient_cog", "chance": 0.016, "min": 1, "max": 1 }
       ],
+      "iq": 0.5,
       "art": "enemy_mimic"
     },
     {
@@ -791,6 +822,7 @@
       "exp": 15.9,
       "coins": 10,
       "drops": [{ "itemId": "item_ancient_cog", "chance": 0.016, "min": 1, "max": 1 }],
+      "iq": 0.6,
       "art": "enemy_mimic",
       "tags": ["elite"]
     },
@@ -814,6 +846,7 @@
       "exp": 16.2,
       "coins": 10,
       "drops": [{ "itemId": "item_mountain_ore", "chance": 0.2, "min": 1, "max": 2 }],
+      "iq": 0.85,
       "art": "enemy_mimic",
       "tags": ["elite"]
     }

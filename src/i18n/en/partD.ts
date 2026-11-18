@@ -372,6 +372,8 @@ export const partD = {
         craft: "Process {n} batches",
         board: "Deliver {n} orders from the Plaza board",
         fish: "Catch {n} fish",
+        fish_big: "Catch {n} big fish (big or golden shadow)",
+        fish_far: "Catch {n} fish far out",
         tank: "Change the tank water {n} times",
         flower: "Pick {n} flowers",
         potion: "Brew {n} potions",

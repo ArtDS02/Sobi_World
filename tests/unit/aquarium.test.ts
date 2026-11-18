@@ -6,7 +6,7 @@ import { SAVE_CODEC, parseWorldSave } from '../../src/app/saveCodec';
 import { aquariumArea } from '../../src/areas/aquarium';
 import { AB, AQUARIUM_AREA_ID, FISH, FISH_LIST, tankCapacity } from '../../src/areas/aquarium/logic/config/content';
 import { castCooldownLeft, nextTankLevel, tankFree } from '../../src/areas/aquarium/logic/derived';
-import { cast, catchOdds } from '../../src/areas/aquarium/logic/fishing';
+import { cast, catchOdds, drawCastEvent, recordCatch, sizeCmOf } from '../../src/areas/aquarium/logic/fishing';
 import { fishQuote } from '../../src/areas/aquarium/logic/pricing';
 import { aquariumOf, withAquarium } from '../../src/areas/aquarium/logic/save/lens';
 import { simulateAquarium } from '../../src/areas/aquarium/logic/simulate';
@@ -463,5 +463,61 @@ describe('links with the rest of the world', () => {
     const a = aquariumOf(tankWorld([fish({ hunger: 10, isSick: true, lastSickAt: T0 })], {}, 0, { water: 20, scales: 2 }));
     const keys = aquariumSuggestions(a, T0 + H).sort((x, y) => y.priority - x.priority).map((s) => s.key);
     expect(keys).toEqual(['suggest.aquarium.treat', 'suggest.aquarium.feed', 'suggest.aquarium.water', 'suggest.aquarium.scales', 'suggest.aquarium.fish']);
+  });
+});
+
+describe('the fishing log and cast events (decision 061)', () => {
+  const koi = FISH_LIST.find((f) => f.catchWeight > 0)!;
+
+  it('a bigger shadow means a longer fish, inside the rarity range', () => {
+    const [lo, hi] = AB.fishing.size.byRarity[koi.rarity];
+    const small = sizeCmOf(koi, 'small', 0);
+    const golden = sizeCmOf(koi, 'golden', 1);
+    expect(small).toBeGreaterThanOrEqual(lo);
+    expect(golden).toBeLessThanOrEqual(hi);
+    expect(sizeCmOf(koi, 'big', 0.5)).toBeGreaterThan(sizeCmOf(koi, 'small', 0.5));
+  });
+
+  it('the first catch is no record; a longer one later is; a shorter one keeps the best', () => {
+    const first = recordCatch(undefined, 20, 5);
+    expect(first).toEqual({ entry: { count: 1, bestCm: 20, firstAt: 5 }, record: false });
+    const longer = recordCatch(first.entry, 25, 9);
+    expect(longer).toEqual({ entry: { count: 2, bestCm: 25, firstAt: 5 }, record: true });
+    expect(recordCatch(longer.entry, 10, 11)).toEqual({ entry: { count: 3, bestCm: 25, firstAt: 5 }, record: false });
+  });
+
+  it('draws at most one event; deep-only events need the depth', () => {
+    const E = AB.fishing.events;
+    expect(drawCastEvent(sequenceRng([0.999]), 2)).toBeNull();
+    expect(drawCastEvent(sequenceRng([0, 0]), 0)).toMatchObject({ kind: 'school' });
+    const giantRoll = E.school.chance + E.giant.chance / 2;
+    expect(drawCastEvent(sequenceRng([giantRoll]), 2)).toMatchObject({ kind: 'giant' });
+    expect(drawCastEvent(sequenceRng([giantRoll, 0]), 1)?.kind).not.toBe('giant');
+    const chestRoll = E.school.chance + E.giant.chance + E.bottle.chance + E.chest.chance / 2;
+    expect(drawCastEvent(sequenceRng([chestRoll]), 0)?.kind).not.toBe('chest');
+    expect(drawCastEvent(sequenceRng([chestRoll]), 2)).toMatchObject({ kind: 'chest' });
+  });
+
+  it('a cast with a shadow writes the catch book, pays a record once and reports depth and shadow', () => {
+    const w0 = tankWorld([fish()], {}, 0);
+    const r1 = castLine(w0, { score: 0.95, depth: 2, shadow: 'golden' }, ctxAt(NOON, 1));
+    if (!r1.ok) throw new Error(r1.error);
+    const entries = Object.entries(aquariumOf(r1.state).catchBook ?? {});
+    expect(entries).toHaveLength(1);
+    expect(entries[0]![1].count).toBe(1);
+    const cast1 = r1.events.find((e) => e.type === 'AQUARIUM_CAST');
+    expect(cast1).toMatchObject({ depth: 2, shadow: 'golden', record: false });
+    expect(cast1).toHaveProperty('sizeCm');
+    expect(aquariumEventsToWorld(r1.events).find((e) => e.type === 'fish.caught')).toMatchObject({ shadow: 'golden', depth: 2 });
+    expect(fail(castLine(w0, { score: 0.9, shadow: 'huge' as never }, ctxAt(NOON)))).toBe('INVALID_REQUEST');
+  });
+
+  it('a cast without a shadow stays the plain catch: no size, no event, no book', () => {
+    const r = castLine(tankWorld([fish()], {}), { score: 0.9 }, ctxAt(NOON));
+    if (!r.ok) throw new Error(r.error);
+    expect(aquariumOf(r.state).catchBook).toBeUndefined();
+    const ev = r.events.find((e) => e.type === 'AQUARIUM_CAST')!;
+    expect(ev).not.toHaveProperty('sizeCm');
+    expect(ev).not.toHaveProperty('event');
   });
 });

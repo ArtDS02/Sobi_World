@@ -158,6 +158,11 @@ export interface Combatant {
   phase: number;
   /** What it will do this round (enemies, §15.4). */
   intent: BattleAction | null;
+  /**
+   * How well the AI plays it, 0 (picks almost at random, forgets its support skills) to 1 (focuses fire, combines skills, uses support well).
+   * Absent = the plain AI every ally and Auto uses (and battles saved before this field).
+   */
+  iq?: number | undefined;
 }
 
 export interface CombatantInit {
@@ -180,6 +185,8 @@ export interface CombatantInit {
   phases?: readonly Phase[] | undefined;
   /** Statuses it already carries when the battle starts (an enemy variant, a Rift rule); a Shield absorbs `amountPct` of its max HP. */
   statuses?: readonly { status: StatusId; turns: number; amountPct?: number | undefined }[] | undefined;
+  /** See `Combatant.iq`. */
+  iq?: number | undefined;
 }
 
 export type { CombatContext, CombatRules, ElementChart, ReactionDef, StatusDef } from './context';
