@@ -98,6 +98,18 @@ export const WORLD_SECTIONS: GuideSection[] = [
     notes: ['Trang này không có undo, không có bản nháp. Không xoá được id đã publish.'],
   },
   {
+    id: 'combat-db', icon: '📖', title: 'Dữ liệu chiến đấu',
+    purpose: 'Tra cứu toàn bộ chiến binh, quái vật và kỹ năng của Phiêu lưu: ảnh, chỉ số, class, nguyên tố, kỹ năng riêng / chung, tương khắc, animation. Chỉ đọc: mọi số lấy từ content/adventure và hàm tính của game.',
+    steps: [
+      'Chọn tab Chiến binh, Quái vật, Kỹ năng hoặc Báo cáo dữ liệu.',
+      'Lọc kết hợp (class, nguyên tố, loại quái, trạng thái dữ liệu, kỹ năng…), sắp xếp, đổi giữa Thẻ và Bảng so sánh.',
+      'Bấm một thẻ để mở bảng chi tiết bên phải: Tổng quan, Kỹ năng, Thuộc tính chiến đấu, Animation & VFX, Dữ liệu khác.',
+      'Bấm một kỹ năng để xem chi tiết kỹ năng và các entity đang dùng nó; "▶ Xem" mở Xưởng animation trận đúng kỹ năng đó.',
+    ],
+    example: ['Tìm quái hệ Nước ở vùng Biển chưa có rig: tab Quái vật → Nguyên tố Nước → Vùng Biển → Trạng thái "Thiếu dữ liệu".'],
+    notes: ['Sửa số liệu ở "Nội dung game". Tab Báo cáo dữ liệu liệt kê entity thiếu ảnh / rig / animation và dữ liệu lệch giữa các file.'],
+  },
+  {
     id: 'battle-sim', icon: '⚔️', title: 'Mô phỏng trận',
     purpose: 'Cho một đội đi hết một vùng nhiều lần bằng đúng luật đánh của game, để xem tỉ lệ thắng, số lượt, máu còn lại. Dùng khi cân bằng độ khó. Không lưu gì.',
     steps: ['Chọn vùng, cấp đội, trang bị, đồ mang theo.', 'Chọn 3 bạn đồng hành: dòng Guardian, class, độ hiếm, số tim.', 'Kết quả hiện ngay bên dưới; đổi lựa chọn là chạy lại.'],

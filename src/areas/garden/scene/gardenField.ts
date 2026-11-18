@@ -6,6 +6,7 @@ import { BentPlant } from '../../../ui/world/bentPlant';
 import { canHarvest } from '../../../ui/world/harvestCursor';
 import { FALLBACK_PROP_KEY, textureKey } from '../../../ui/world/keys';
 import { opaqueSize } from '../../../ui/world/opaqueSize';
+import { makePlotShadow } from '../../../ui/world/plotShadow';
 import { CROP_STAGES, cropArtId, PLOT_ART, type CropStage } from '../logic/art';
 import { skinArtId } from '../../../core/config/plotSkins';
 import { CROPS, PLOTS_PER_ZONE } from '../logic/config/content';
@@ -15,6 +16,7 @@ import { cropStageOf, GARDEN_VIEW, plotCentre, plotIndex, slotsToDraw } from './
 type Img = Phaser.GameObjects.Image;
 
 interface Slot {
+  shadow: Img;
   soil: Img;
   crop: Img;
   stage: CropStage | null;
@@ -55,7 +57,12 @@ export class GardenField {
     const v = GARDEN_VIEW;
     this.container = scene.add.container(0, 0).setDepth(v.depth.plot);
     const key = (id: string) => (scene.textures.exists(textureKey(id)) ? textureKey(id) : FALLBACK_PROP_KEY);
-    // Beds first, then every crop above every bed (row order keeps a lower row's crops in front).
+    // Shadows, then beds, then every crop above every bed (row order keeps a lower row's crops in front).
+    const shadows = Array.from({ length: PLOTS_PER_ZONE }, (_, slot) => {
+      const { x, y } = plotCentre(slot);
+      return makePlotShadow(scene, x, y, v.plotScale, v.shadow);
+    });
+    this.container.add(shadows);
     const soils = Array.from({ length: PLOTS_PER_ZONE }, (_, slot) => {
       const { x, y } = plotCentre(slot);
       const soil = scene.add.image(x, y, key(PLOT_ART.soil)).setScale(v.plotScale).setInteractive({ useHandCursor: true });
@@ -70,7 +77,7 @@ export class GardenField {
       // The bending drawing sits right over its crop, so the rows of the field still overlap in order.
       const bent = BentPlant.canBend(scene) ? new BentPlant(scene, crop, v.bend.rows) : null;
       if (bent) this.container.add(bent.rope);
-      this.slots.push({ soil, crop, stage: null, ripe: false, scale: v.cropScale, bent });
+      this.slots.push({ shadow: shadows[slot]!, soil, crop, stage: null, ripe: false, scale: v.cropScale, bent });
     });
   }
 
@@ -124,11 +131,14 @@ export class GardenField {
       s.stage = null;
       s.ripe = false;
       s.soil.setVisible(slot < drawn);
+      s.shadow.setVisible(slot < drawn);
       if (slot >= drawn || !view) {
-        s.soil.setTexture(key(PLOT_ART.locked));
+        s.soil.setTexture(key(PLOT_ART.locked)).setTint(0xffffff);
         return void s.crop.setVisible(false);
       }
-      s.soil.setTexture(key(skin ? skinArtId(skin, view.watered ? 'soil_wet' : 'soil') : view.watered ? PLOT_ART.wet : PLOT_ART.soil));
+      // A skin has one bed: watered shows as a slightly darker tint of it, so every bed of the zone keeps the same shape.
+      if (skin) s.soil.setTexture(key(skinArtId(skin, 'soil'))).setTint(view.watered ? GARDEN_VIEW.skinWetTint : 0xffffff);
+      else s.soil.setTexture(key(view.watered ? PLOT_ART.wet : PLOT_ART.soil)).setTint(0xffffff);
       const crop = view.cropId ? CROPS[view.cropId] : undefined;
       if (!crop) return void s.crop.setVisible(false);
       const stage = cropStageOf(view);

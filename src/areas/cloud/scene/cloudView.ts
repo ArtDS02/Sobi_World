@@ -22,11 +22,19 @@ export const CLOUD_VIEW = {
   /** Centre of the first plot and the step between two plots (the cream field of the island). */
   field: FIELD,
   plotSize: { width: 152, height: 108 },
+  /**
+   * The scale a bed is drawn at. The skins' beds fill their canvas more than the plain one, so beds are drawn a little smaller and
+   * the grid is centred on the cream field: every backdrop keeps them off the fences and the grass (owner review 2026-11-16).
+   */
+  plotScale: 0.88,
+  /** Soft shadow under each bed (ui/world/plotShadow.ts), plot-art px: a cool shade on the cream cloud. */
+  shadow: { color: 0x6a6a9a, alpha: 0.26, width: 150, height: 46, dy: 30 },
   /** Flowers are drawn a little smaller than their canvas so a bloom does not hide the plot above it. */
   flowerScale: 0.88,
   /**
-   * Where a flower's canvas bottom sits, from the plot's centre. Measured: the soil hollow of plot_cloud is centred 10.6 px
-   * above the plot's centre, the flower art's base is 6 px above its canvas bottom; +1 puts the base in the soil's middle.
+   * Where a flower's canvas bottom sits, from the plot's centre. Measured: the sunken centre of plot_cloud (cloud-11-plot,
+   * like the skin beds) is about 9 px above the plot's centre, the flower art's base is 6 px above its canvas bottom; +1 puts
+   * the base in the middle of the hollow.
    */
   flowerOffsetY: 1,
   /**
@@ -105,8 +113,6 @@ export const CLOUD_VIEW = {
   },
   titleText: { fontPx: 32, color: '#7a4a24', stroke: '#fff4d6', strokePx: 6 },
   lockedText: { fontPx: 28, color: '#5a4a8a', background: '#fdf4ffe6' },
-  /** The rank line and the upgrade button (decision 056), on the lower part of the title banner (the HUD's tray covers what lies under it): offsets from the banner's centre. */
-  rank: { dx: -58, dy: 40, buttonDx: 168, buttonDy: 40, fontPx: 20, color: '#5a3a14', background: '#fff4d6e6', buttonColor: '#ffffff', buttonBackground: '#7a62d8' },
   badge: { fontPx: 26, color: '#ffffff', background: 0xe0654f, readyBackground: 0x7a62d8, border: 0xffffff, height: 40, minWidth: 44 },
   /** A ripe flower breathes: scale swing and period. */
   ripePulse: { scale: 0.05, periodMs: 1400 },
@@ -127,7 +133,6 @@ export const topOwnedTier = (owned: number): number => Math.floor((owned - 1) / 
 export type CloudPick =
   | { kind: 'plot'; index: number }
   | { kind: 'locked' }
-  | { kind: 'rank' }
   | { kind: 'building'; building: 'spring' | 'cauldron' }
   | { kind: 'ground' };
 
@@ -166,6 +171,5 @@ export const CLOUD_SCENERY: readonly SceneryLayer[] = [
 /** The art of a plot bed: the cloud tier's skin when it wears one (decision 056), else the plain bed. */
 export const bedArt = (skin: string | null | undefined): string => (skin ? skinArtId(skin, 'cloud') : CLOUD_PLOT_ART);
 
-/** The rank frame around a cloud tier's 5 x 3 plots (decision 056). */
-/** The rank frame around the plots: it follows the field (90 px left of and 70 px above the first plot's centre). */
-export const CLOUD_FRAME: RankFrame = { x: FIELD.x - 90, y: FIELD.y - 70, width: 840, height: 376, depth: 7 };
+/** The rank frame around a cloud tier's 5 x 3 plots (decision 056): it follows the field, 90 px beside and 70 px above / below the outer plots' centres. */
+export const CLOUD_FRAME: RankFrame = { x: FIELD.x - 90, y: FIELD.y - 70, width: 4 * FIELD.stepX + 180, height: 2 * FIELD.stepY + 140, depth: 7 };

@@ -1148,11 +1148,8 @@ export const vi = {
     balanceCoins: "Sobi Coin",
   },
   plotTier: {
-    short: "Bậc {rank}",
-    shortBonus: "Bậc {rank} · +{bonus}%",
     line: "Bậc {rank}/{max} · {name} · +{bonus}% bội thu",
     lineBase: "Bậc {rank}/{max} · {name}",
-    upgrade: "Nâng bậc",
     upgradeTitle: "Nâng bậc",
     upgradeTo: "Nâng lên bậc {rank}",
     before: "Hiện tại",

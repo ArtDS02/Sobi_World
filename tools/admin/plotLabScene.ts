@@ -2,6 +2,7 @@
 // with the tier's tint or the skin's mood, the plots on the plain or skinned bed, the rank frame and every scenery layer of the
 // chosen rank (src/systems/animation/rankScenery.ts, drawn by ui/world/rankScenery.ts). Reads `PlotLabState` each frame.
 import * as Phaser from 'phaser';
+import { makePlotShadow, type PlotShadowLook } from '../../src/ui/world/plotShadow';
 import { CLOUD_BACKDROP_ART, CLOUD_PLOT_ART } from '../../src/areas/cloud/logic/art';
 import { CLOUD_DESIGN, CLOUD_FRAME, CLOUD_SCENERY, CLOUD_VIEW, plotCentre as cloudCentre } from '../../src/areas/cloud/scene/cloudView';
 import { GARDEN_BACKDROP_ART, PLOT_ART } from '../../src/areas/garden/logic/art';
@@ -40,6 +41,7 @@ interface Geometry {
   /** Centres of the plots and the scale of a bed. */
   slots: { x: number; y: number }[];
   scale: number;
+  shadow: PlotShadowLook;
   tint: (group: number) => number;
   bed: (skin: string | null) => string;
 }
@@ -51,7 +53,8 @@ const GEOMETRY: Record<PlotLabArea, Geometry> = {
     scenery: CLOUD_SCENERY,
     frame: CLOUD_FRAME,
     slots: Array.from({ length: 15 }, (_, i) => cloudCentre(i)),
-    scale: 1,
+    scale: CLOUD_VIEW.plotScale,
+    shadow: CLOUD_VIEW.shadow,
     tint: (g) => CLOUD_VIEW.tierTints[g] ?? 0xffffff,
     bed: (skin) => (skin ? skinArtId(skin, 'cloud') : CLOUD_PLOT_ART),
   },
@@ -62,6 +65,7 @@ const GEOMETRY: Record<PlotLabArea, Geometry> = {
     frame: GARDEN_FRAME,
     slots: Array.from({ length: 24 }, (_, i) => ({ x: GARDEN_VIEW.field.x + (i % GARDEN_VIEW.columns) * GARDEN_VIEW.field.stepX, y: GARDEN_VIEW.field.y + Math.floor(i / GARDEN_VIEW.columns) * GARDEN_VIEW.field.stepY })),
     scale: GARDEN_VIEW.plotScale,
+    shadow: GARDEN_VIEW.shadow,
     tint: (g) => GARDEN_VIEW.zoneTints[g] ?? 0xffffff,
     bed: (skin) => (skin ? skinArtId(skin, 'soil') : PLOT_ART.soil),
   },
@@ -95,6 +99,7 @@ export class PlotLabScene extends Phaser.Scene {
     this.fixedArt = [];
     const g = GEOMETRY[area];
     const backdrop = this.add.image(g.design.width / 2, g.design.height / 2, '__WHITE').setDepth(-1000);
+    for (const p of g.slots) makePlotShadow(this, p.x, p.y, g.scale, g.shadow).setDepth(9);
     const beds = g.slots.map((p) => this.add.image(p.x, p.y, '__WHITE').setScale(g.scale).setDepth(10));
     const scenery = new RankScenery(this, g.scenery, (x, y, id) => {
       const img = this.add.image(x, y, '__WHITE');
@@ -125,10 +130,12 @@ export class PlotLabScene extends Phaser.Scene {
     if (this.want(art)) b.backdrop.setTexture(art).setDisplaySize(g.design.width, g.design.height);
     if (art === own) b.backdrop.clearTint();
     else b.backdrop.setTint(theme?.backdrop ?? g.tint(s.group));
-    const wet = s.area === 'garden' && s.skin ? skinArtId(s.skin, 'soil_wet') : PLOT_ART.wet;
+    // Every fifth garden bed shows the watered look: the plain wet bed, or the skin's own bed tinted (as GardenField does).
     b.beds.forEach((bed, i) => {
-      const id = s.area === 'garden' && i % 5 === 2 ? wet : bedId;
+      const watered = s.area === 'garden' && i % 5 === 2;
+      const id = watered && !s.skin ? PLOT_ART.wet : bedId;
       if (this.want(id)) bed.setTexture(id);
+      bed.setTint(watered && s.skin ? GARDEN_VIEW.skinWetTint : 0xffffff);
     });
     const key = `${s.area}|${s.group}|${s.rank}|${s.skin}|${s.sprites}`;
     if (key !== this.drawnKey) {

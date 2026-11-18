@@ -1,6 +1,6 @@
 // Sobi World admin dashboard entry (admin.html, `npm run admin`; decisions A7-1, AD-1, 036). Hash routes:
 // #/ overview · #/users[/<id>] · #/content[/<file>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
-// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/battle-lab · #/rig-lab · #/plant-lab · #/plot-lab · #/area-layout · #/assets · #/library · #/desktop · #/guide[/<section>]
+// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/combat-db[/<tab>] · #/battle-lab · #/rig-lab · #/plant-lab · #/plot-lab · #/area-layout · #/assets · #/library · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
 import { renderBalance } from './balance';
 import { preloadChecks, problemCount, renderChecks } from './checks';
@@ -12,6 +12,7 @@ import { renderMapNetwork } from './mapNetworkPage';
 import { editorDirty, renderMapEditor } from './mapEditor';
 import { renderMapAssets } from './mapAssetsPage';
 import { renderBattleLab } from './battleLab';
+import { renderCombatDb } from './combatDb';
 import { renderPlantLab } from './plantLab';
 import { renderPlotLab } from './plotLab';
 import { areaLayoutDirty, renderAreaLayout } from './areaLayout';
@@ -53,6 +54,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
   ]],
   ['Thế giới (dùng chung)', [['daynight', '🌗', 'Ngày / Đêm', 'daynight'], ['area-layout', '📐', 'Bố cục khu', 'layout']]],
   ['Phiêu lưu', [
+    ['combat-db', '📖', 'Dữ liệu chiến đấu', 'combat-db'],
     ['adventure', '⚔️', 'Mô phỏng trận', 'battle-sim'],
     ['adventure-world', '🧭', 'Quản lý map', 'map-manage'],
     ['adventure-network', '🕸️', 'Mạng map', 'map-network'],
@@ -70,7 +72,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
 ];
 const ALL = NAV.flatMap(([, items]) => items);
 /** The world / adventure / animation pages share one design (worldUi.css, `.wpage`). The Map Editor is a full-screen tool with its own dark theme. */
-const WORLD_PAGES = new Set(['daynight', 'adventure', 'adventure-world', 'adventure-network', 'adventure-assets', 'adventure-maps', 'battle-lab', 'rig-lab', 'plant-lab', 'plot-lab']);
+const WORLD_PAGES = new Set(['daynight', 'combat-db', 'adventure', 'adventure-world', 'adventure-network', 'adventure-assets', 'adventure-maps', 'battle-lab', 'rig-lab', 'plant-lab', 'plot-lab']);
 /** Pages that edit the species draft: the header save belongs to them. */
 const SPECIES_PAGES = new Set(['pigs', 'validation']);
 /** `#/<page>?key=value` links (overview cards) preset that page's list filters. */
@@ -244,6 +246,7 @@ function render() {
     'adventure-editor': () => renderMapEditor(content, id),
     'adventure-assets': () => renderMapAssets(content),
     'adventure-maps': () => renderAdventureMaps(content, id),
+    'combat-db': () => renderCombatDb(content, id),
     'battle-lab': () => renderBattleLab(content),
     'rig-lab': () => renderRigLab(content),
     'plant-lab': () => renderPlantLab(content),

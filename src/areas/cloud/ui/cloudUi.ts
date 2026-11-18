@@ -173,7 +173,6 @@ export function createCloudUi(d: CloudUiDeps): CloudUi {
     const w = world();
     if (!w || !active) return;
     if (p.kind === 'locked') return dialogs.openExpand();
-    if (p.kind === 'rank') return dialogs.openRank(actingTier(w, viewedTier()));
     if (p.kind === 'building') return p.building === 'spring' ? dialogs.openSpring() : dialogs.openCauldron();
     if (p.kind !== 'plot') return;
     const plot = cloudOf(w).plots[p.index];

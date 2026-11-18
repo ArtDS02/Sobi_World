@@ -33,7 +33,7 @@ export const gardenArtIds = (): string[] => [
   GB.buildings.mill.art,
   GB.buildings.composter.art,
   ...(RANK_SPRITES_ON ? sceneryArtIds(GARDEN_SCENERY) : []),
-  ...SKIN_ART_IDS.filter((id) => !id.endsWith('_cloud')),
+  ...SKIN_ART_IDS.filter((id) => id.endsWith('_soil')), // a skin's watered bed is its dry bed tinted (gardenField), so _soil_wet is not loaded
   ...SKIN_BACKDROP_IDS('garden'),
   ...SKIN_BUILDING_IDS('garden'),
   ...CROP_LIST.flatMap((c) => CROP_STAGES.map((s) => cropArtId(c, s))),

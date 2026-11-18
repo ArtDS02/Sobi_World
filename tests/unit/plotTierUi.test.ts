@@ -8,9 +8,7 @@ import { CLOUD_TIERS, PLOTS_PER_TIER } from '../../src/areas/cloud/logic/config/
 import { cloudOf, withCloud } from '../../src/areas/cloud/logic/save/lens';
 import { plotRankLine, tierRankVm } from '../../src/areas/cloud/ui/cloudRankVm';
 import { gardenArea } from '../../src/areas/garden';
-import { PLOTS_PER_ZONE } from '../../src/areas/garden/logic/config/content';
 import { gardenOf, withGarden } from '../../src/areas/garden/logic/save/lens';
-import { zoneVm } from '../../src/areas/garden/ui/gardenZoneVm';
 import { plotCardVm as gardenPlotCard } from '../../src/areas/garden/ui/gardenVm';
 import { zoneRankVm } from '../../src/areas/garden/ui/gardenRankVm';
 import { WORLD_LEVELS } from '../../src/core/config/progression';
@@ -83,14 +81,6 @@ describe('the banner and the zone chip', () => {
     expect(sceneState(full, T0).ranks[0]!.open).toBe(true);
     expect(sceneState({ ...full, tierLevels: [3] }, T0).ranks[0]).toEqual({ rank: 3, bonus: 10, open: true });
     expect(sceneState({ ...full, tierLevels: [5] }, T0).ranks[0]).toEqual({ rank: 5, bonus: 20, open: false });
-  });
-  it('a garden zone chip shows the rank, its bonus, and the upgrade once the zone is full', () => {
-    expect(zoneVm(gardenWorld(21, 60, 0), 0).rank?.open).toBe(false);
-    const full = gardenWorld(PLOTS_PER_ZONE, 60, 0);
-    expect(zoneVm(full, 0).rank).toMatchObject({ short: 'Bậc 1', open: true });
-    const g = gardenOf(full);
-    expect(zoneVm(withGarden(full, { ...g, zoneLevels: [4] }), 0).rank).toMatchObject({ short: 'Bậc 4 · +15%', open: true });
-    expect(zoneVm(full, 1).rank).toBeNull(); // a zone that is not open has no rank
   });
 });
 

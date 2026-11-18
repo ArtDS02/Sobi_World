@@ -1,0 +1,60 @@
+{
+  "id": "cloud-11-plot",
+  "area": "cloud",
+  "title": "Ô mây mặc định (plot_cloud) vẽ lại: 3 hướng để chọn",
+  "decisions": "Owner review 2026-11-16: the plain cloud bed plot_cloud (a white ring around a dark soil hole, from cloud-03-world) looks poor next to the nine skin beds of plots-01 / plots-02. This batch redraws only plot_cloud, in the skin beds' family (same 152x108 canvas, same shared fit, same plot view, drawn about 134x95 in game at CLOUD_VIEW.plotScale 0.88), so the plain bed and the skins read as one set. Three design directions on one sheet; only the chosen one ships, under the id plot_cloud (manifest row unchanged). plot_cloud_b / plot_cloud_c are candidate names only: if one of them is picked, its candidate is copied to art_inbox/plot_cloud.png (deliver plot_cloud=<v> does not apply). If the chosen bed has no soil, CLOUD_VIEW.flowerOffsetY is re-measured on it. The two attached skin beds are game art for shape, size and material only (game: true), not designs to copy. Delivery note (2026-11-16): the rendered sheet P came back portrait, 2 rows x 1 column, both beds in the no-soil direction (a puffy cushion around a softer sunken centre); the grid is recorded as [2, 1] with the top bed as plot_cloud and the bottom one as plot_cloud_b. Direction (3) was not drawn.",
+  "sheets": [
+    {
+      "name": "P",
+      "title": "Ô mây mặc định: 3 hướng",
+      "board": "building",
+      "grid": [
+        2,
+        1
+      ],
+      "fit": "shared",
+      "size": [
+        152,
+        108
+      ],
+      "views": [
+        "plot"
+      ],
+      "hints": [
+        {
+          "from": "public/assets/props/skin_dew_cloud.png",
+          "box": [
+            0,
+            0,
+            152,
+            108
+          ],
+          "what": "a coloured skin version of this same cloud bed in my game",
+          "game": true
+        },
+        {
+          "from": "public/assets/props/skin_moonlit_cloud.png",
+          "box": [
+            0,
+            0,
+            152,
+            108
+          ],
+          "what": "another coloured skin version of this same cloud bed in my game",
+          "game": true
+        }
+      ],
+      "notes": "All three are the PLAIN default version of the cloud bed in images 2 and 3: the same size, the same plump rounded cushion shape and outline weight, seen from the same angle, filling the cell the same way, but in natural cloud colours (soft white with pale sky-blue and faint lilac shading on the shadow side, warm cream highlights). Clean, soft and inviting, a little prettier than images 2 and 3, never busy. No flowers, no plants, no crystals, no stars, no faces. Each one is a single bed seen once: do not draw a second copy of any bed. Original design, no resemblance to any other game, film or brand.",
+      "cells": [
+        {
+          "stem": "plot_cloud",
+          "desc": "Cloud bed with a soil nest: a plump puffy cushion of soft white cloud, gently domed, with a small neat oval of dark rich soil nestled in a shallow dip on its top, the cloud puffs curling softly over the soil's rim"
+        },
+        {
+          "stem": "plot_cloud_b",
+          "desc": "Cloud bed with a soft dip: a plump puffy cushion of soft white cloud with a ring of round puffs around a slightly sunken centre of smoother pale-blue cloud, no soil"
+        }
+      ]
+    }
+  ]
+}

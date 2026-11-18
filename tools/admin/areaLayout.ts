@@ -37,7 +37,7 @@ const AREAS: Record<AreaId, AreaDef> = {
     schema: cloudLayoutFileSchema,
     backdrop: () => CLOUD_BACKDROP_ART,
     viewLabel: () => 'Đảo mây (mọi tầng dùng chung)',
-    grid: { columns: CLOUD_VIEW.columns, rows: PLOTS_PER_TIER / CLOUD_VIEW.columns, cell: CLOUD_VIEW.plotSize },
+    grid: { columns: CLOUD_VIEW.columns, rows: PLOTS_PER_TIER / CLOUD_VIEW.columns, cell: { width: CLOUD_VIEW.plotSize.width * CLOUD_VIEW.plotScale, height: CLOUD_VIEW.plotSize.height * CLOUD_VIEW.plotScale } },
   },
   garden: {
     label: '🌱 Sobi Garden',

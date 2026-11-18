@@ -5,8 +5,7 @@ import * as Phaser from 'phaser';
 import { formatInt, t } from '../../../i18n/format';
 import { vi } from '../../../i18n/vi';
 import { CLOUD_DRESSING_ART } from '../logic/art';
-import { CB, CLOUD_TIERS, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
-import { rankLine, rankOfGroup } from '../../../ui/world/tierUpgradeVm';
+import { CB, PLOTS_PER_TIER, TIER_COUNT } from '../logic/config/content';
 import { CLOUD_VIEW, plotCentre, plotIndex, viewableTiers } from './cloudView';
 
 type Img = Phaser.GameObjects.Image;
@@ -22,22 +21,7 @@ export interface TierBarDeps {
   onStep: (step: number) => void;
   /** The closed tier's notice was clicked. */
   onLocked: () => void;
-  /** The rank line or the upgrade button was clicked (decision 056). */
-  onRank: () => void;
 }
-
-/** What the banner shows of the tier on screen. */
-export interface RankBadge {
-  text: string;
-  /** Whether the tier can be upgraded (all its plots owned, not at the top rank). */
-  open: boolean;
-}
-
-/** The banner's line for a tier's rank (decision 056). */
-export const rankBadgeOf = (r: { rank: number; open: boolean }): RankBadge => ({
-  text: rankLine(rankOfGroup(CLOUD_TIERS, (id) => vi.cloud.rankNames[id as keyof typeof vi.cloud.rankNames] ?? id, r.rank), CLOUD_TIERS),
-  open: r.open,
-});
 
 /** The text style of words painted on wood. */
 export function signStyle(px: number, color: string, stroke: string, strokePx: number): Phaser.Types.GameObjects.Text.TextStyle {
@@ -52,8 +36,6 @@ export class CloudTierBar {
   private readonly up: Img;
   private readonly down: Img;
   private readonly note: Phaser.GameObjects.Text;
-  private readonly rank: Phaser.GameObjects.Text;
-  private readonly rankButton: Phaser.GameObjects.Text;
 
   /** `field` is the container of the plots: the closed tier's notice moves with them. */
   constructor(scene: Phaser.Scene, field: Phaser.GameObjects.Container, d: TierBarDeps) {
@@ -81,20 +63,6 @@ export class CloudTierBar {
       .setInteractive({ useHandCursor: true });
     field.add(this.note);
     this.note.on(Phaser.Input.Events.POINTER_DOWN, () => !d.paused() && d.onLocked());
-    const rk = v.rank;
-    this.rank = scene.add
-      .text(v.title.x + rk.dx, v.title.y + rk.dy, '', { fontFamily: v.label.fontFamily, fontSize: `${rk.fontPx}px`, color: rk.color, backgroundColor: rk.background, padding: { x: 14, y: 5 }, align: 'center' })
-      .setOrigin(0.5)
-      .setDepth(v.depth.sign + 1)
-      .setVisible(false);
-    this.rankButton = scene.add
-      .text(v.title.x + rk.buttonDx, v.title.y + rk.buttonDy, vi.plotTier.upgrade, { fontFamily: v.label.fontFamily, fontSize: `${rk.fontPx}px`, fontStyle: 'bold', color: rk.buttonColor, backgroundColor: rk.buttonBackground, padding: { x: 18, y: 6 } })
-      .setOrigin(0.5)
-      .setDepth(v.depth.sign + 1)
-      .setVisible(false)
-      .setInteractive({ useHandCursor: true });
-    this.rankButton.on(Phaser.Input.Events.POINTER_DOWN, () => !d.paused() && d.onRank());
-    this.rank.setInteractive({ useHandCursor: true }).on(Phaser.Input.Events.POINTER_DOWN, () => !d.paused() && d.onRank());
   }
 
   /** The title's scale so it stays inside the banner (Text.width is the unscaled width). */
@@ -102,8 +70,8 @@ export class CloudTierBar {
     return Math.min(1, (CLOUD_VIEW.title.width * CLOUD_VIEW.titleFit) / Math.max(this.title.width, 1));
   }
 
-  /** Name of `tier`, which arrows show, and the notice when it is not open yet (`owned` plots). */
-  draw(tier: number, owned: number, badge: RankBadge | null) {
+  /** Name of `tier`, which arrows show, and the notice when it is not open yet (`owned` plots). The rank and its upgrade live in the right-hand menu (decision 057, B1). */
+  draw(tier: number, owned: number) {
     const name = vi.cloud.tierNames[tier] ?? '';
     const tf = CLOUD_VIEW.titleFace;
     const face = { x: CLOUD_VIEW.title.x + ((tf.from + tf.to) / 2 - 0.5) * CLOUD_VIEW.title.width, y: CLOUD_VIEW.title.y + tf.dy * CLOUD_VIEW.title.height, width: (tf.to - tf.from) * CLOUD_VIEW.title.width, height: tf.height * CLOUD_VIEW.title.height };
@@ -113,10 +81,6 @@ export class CloudTierBar {
     this.down.setVisible(tier > 0);
     this.up.setVisible(tier < viewable - 1);
     const step = plotIndex(tier, 0) >= owned ? tierStep(tier) : undefined;
-    const open = plotIndex(tier, 0) < owned && badge !== null;
-    this.rank.setVisible(open);
-    this.rankButton.setVisible(open && badge.open);
-    if (open) this.rank.setText(badge.text);
     this.note.setVisible(Boolean(step));
     if (step) this.note.setText(t(vi.cloud.tierLocked, { n: tier + 1, level: step.level ?? 1, gold: `${formatInt(step.price)} ${vi.cloud.coins}` }));
   }

@@ -2,7 +2,7 @@
   "id": "plots-01-skins",
   "area": "cloud",
   "title": "Mẫu khuông: 4 mẫu x (ô mây, đất khô, đất ướt)",
-  "decisions": "Decision 056. Same empty bed as the plain plot art (plot_cloud, plot_soil, plot_soil_wet): 152x108, three-quarter view, nothing grows on it. The game draws the rank frame; no border in the art.",
+  "decisions": "Decision 056. Same empty bed as the plain plot art (plot_cloud, plot_soil, plot_soil_wet): 152x108, three-quarter view, nothing grows on it. The game draws the rank frame; no border in the art. Delivery note (2026-11-16): sheet K3 came back as 2 rows x 3 (each bed drawn twice); the grid is recorded as [2, 3] and only the top row is used (the old 1 x 3 cut put two small beds in every image).",
   "sheets": [
     {
       "name": "K1",
@@ -73,7 +73,7 @@
       "title": "Mẫu crystal",
       "board": "building",
       "grid": [
-        1,
+        2,
         3
       ],
       "fit": "shared",
@@ -97,6 +97,18 @@
         {
           "stem": "skin_crystal_soil_wet",
           "desc": "Watered soil bed: the same dry bed but darker and glistening wet, dark slate soil with glinting crystal chips"
+        },
+        {
+          "stem": "-",
+          "desc": "(a second copy of the bed above, not used)"
+        },
+        {
+          "stem": "-",
+          "desc": "(a second copy of the bed above, not used)"
+        },
+        {
+          "stem": "-",
+          "desc": "(a second copy of the bed above, not used)"
         }
       ]
     },

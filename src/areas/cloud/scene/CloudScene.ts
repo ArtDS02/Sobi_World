@@ -17,9 +17,10 @@ import { bentFlower, brightOf, coverBackdrop, ensureFxTextures, paintSky, floatI
 import { setViewedTier } from '../viewedTier';
 import { CloudBuildings } from './cloudBuildings';
 import { CloudDrone } from './cloudDrone';
-import { CloudTierBar, rankBadgeOf } from './cloudTierBar';
+import { CloudTierBar } from './cloudTierBar';
 import { canHarvest, watchHarvestCursor } from '../../../ui/world/harvestCursor';
 import { RankLook } from '../../../ui/world/rankLook';
+import { makePlotShadow } from '../../../ui/world/plotShadow';
 import { playUpgradeVfx } from '../../../ui/world/upgradeBurst';
 import type { AreaVfx } from '../../../core/events';
 import { bedArt, paintBackdrop, skinBackdropArt, skinTheme, topOwnedTier, CLOUD_DESIGN, CLOUD_FRAME, CLOUD_SCENERY, CLOUD_VIEW, flowerStageOf, plotCentre, plotIndex, viewableTiers, type CloudPick } from './cloudView';
@@ -96,7 +97,6 @@ export class CloudScene extends Phaser.Scene {
       paused: () => this.deps.paused(),
       onStep: (step) => this.changeTier(step),
       onLocked: () => this.deps.onPick({ kind: 'locked' }),
-      onRank: () => this.deps.onPick({ kind: 'rank' }),
     });
     this.bird = new CloudBird(this, {
       fixed: (x, y, id) => this.fixed(x, y, id),
@@ -161,8 +161,8 @@ export class CloudScene extends Phaser.Scene {
 
   private makeBed(slot: number): Phaser.GameObjects.Image {
     const { x, y } = plotCentre(slot);
-    const bed = this.add.image(x, y, KEY(CLOUD_PLOT_ART, this.textures)).setInteractive({ useHandCursor: true });
-    this.field.add(bed);
+    const bed = this.add.image(x, y, KEY(CLOUD_PLOT_ART, this.textures)).setScale(CLOUD_VIEW.plotScale).setInteractive({ useHandCursor: true });
+    this.field.add([makePlotShadow(this, x, y, CLOUD_VIEW.plotScale, CLOUD_VIEW.shadow), bed]);
     return bed;
   }
 
@@ -292,7 +292,7 @@ export class CloudScene extends Phaser.Scene {
   private drawTierBar(owned: number, state: SceneState) {
     const r = state.ranks[this.tier];
     this.scenery.draw(this.tier, r && plotIndex(this.tier, 0) < owned ? r.rank : 1, skinTheme(state.skins[this.tier]));
-    this.bar.draw(this.tier, owned, r ? rankBadgeOf(r) : null);
+    this.bar.draw(this.tier, owned);
     paintBackdrop(this.backdrop, CLOUD_BACKDROP_ART, skinBackdropArt(state.skins[this.tier], 'cloud'), state.skins[this.tier], CLOUD_VIEW.tierTints[this.tier] ?? 0xffffff, { group: this.tier, mode: this.deps.effects(), still: this.deps.reduceMotion() || this.moving });
   }
 }

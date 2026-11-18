@@ -5,7 +5,7 @@
     {
       "id": "island",
       "spots": {
-        "field": { "x": 536, "y": 288, "stepX": 165, "stepY": 118 },
+        "field": { "x": 554, "y": 306, "stepX": 156, "stepY": 112 },
         "spring": { "x": 286, "y": 372, "scale": 0.9 },
         "cauldron": { "x": 222, "y": 662, "scale": 0.82 },
         "springLabel": { "x": 284, "y": 440 },

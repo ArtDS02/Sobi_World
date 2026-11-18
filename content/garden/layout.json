@@ -5,7 +5,7 @@
     {
       "id": "field",
       "spots": {
-        "field": { "x": 450, "y": 287, "stepX": 178, "stepY": 93 },
+        "field": { "x": 450, "y": 296, "stepX": 170, "stepY": 86 },
         "mill": { "x": 185, "y": 364, "scale": 1 },
         "composter": { "x": 165, "y": 615, "scale": 1 },
         "sprinkler": { "x": 1530, "y": 380, "scale": 1.2 }

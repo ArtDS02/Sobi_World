@@ -14,7 +14,7 @@ import { gridCells, moveSpot, nudgeSpot, OUTSIDE_PX, patchSpot, sameLayout, toDe
 
 describe('the positions the game shipped with did not move', () => {
   it('Cloud', () => {
-    expect(CLOUD_VIEW.field).toEqual({ x: 536, y: 288, stepX: 165, stepY: 118 });
+    expect(CLOUD_VIEW.field).toEqual({ x: 554, y: 306, stepX: 156, stepY: 112 }); // re-centred on the cream field, owner review 2026-11-16
     expect(CLOUD_VIEW.spring).toEqual({ x: 286, y: 372, scale: 0.9 });
     expect(CLOUD_VIEW.cauldron).toEqual({ x: 222, y: 662, scale: 0.82 });
     expect(CLOUD_VIEW.springLabel).toEqual({ x: 284, y: 440 });
@@ -23,16 +23,16 @@ describe('the positions the game shipped with did not move', () => {
     expect(CLOUD_VIEW.tierUp).toEqual({ x: 1074, y: 686 });
     expect(CLOUD_VIEW.tierDown).toEqual({ x: 526, y: 686 });
     expect(CLOUD_VIEW.bird).toMatchObject({ x: 1257, y: 118, size: 116 });
-    expect(CLOUD_FRAME).toEqual({ x: 446, y: 218, width: 840, height: 376, depth: 7 });
-    expect(plotCentre(6)).toEqual({ x: 536 + 165, y: 288 + 118 });
+    expect(CLOUD_FRAME).toEqual({ x: 464, y: 236, width: 804, height: 364, depth: 7 });
+    expect(plotCentre(6)).toEqual({ x: 554 + 156, y: 306 + 112 });
   });
 
   it('Garden', () => {
-    expect(GARDEN_VIEW.field).toEqual({ x: 450, y: 287, stepX: 178, stepY: 93 });
+    expect(GARDEN_VIEW.field).toEqual({ x: 450, y: 296, stepX: 170, stepY: 86 }); // centred on the lawn, owner review 2026-11-16
     expect(GARDEN_VIEW.mill).toEqual({ x: 185, y: 364, scale: 1 });
     expect(GARDEN_VIEW.composter).toEqual({ x: 165, y: 615, scale: 1 });
     expect(GARDEN_VIEW.sprinkler).toEqual({ x: 1530, y: 380, scale: 1.2 });
-    expect(GARDEN_FRAME).toEqual({ x: 350, y: 227, width: 1090, height: 400, depth: 7 });
+    expect(GARDEN_FRAME).toEqual({ x: 350, y: 236, width: 1050, height: 378, depth: 7 });
   });
 
   it('Aquarium: five places, each with its props', () => {

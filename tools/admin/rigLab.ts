@@ -36,6 +36,12 @@ const lab = {
   root: null as HTMLElement | null,
 };
 
+/** Opens the lab on one rig (Admin "Dữ liệu chiến đấu" → Rig sinh vật): set before navigating to #/rig-lab. */
+export function presetRigLab(rig: string) {
+  if (!RIGS.has(rig)) return;
+  Object.assign(lab, { rig, all: false, cat: 'all', q: '' });
+}
+
 class RigLabScene extends Phaser.Scene {
   private puppets = new Map<string, Puppet>();
   private olds = new Map<string, Phaser.GameObjects.Image>();

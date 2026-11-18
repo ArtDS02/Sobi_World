@@ -82,11 +82,8 @@ export const partC = {
     balanceCoins: "Sobi Coin",
   },
   plotTier: {
-    short: "Rank {rank}",
-    shortBonus: "Rank {rank} · +{bonus}%",
     line: "Rank {rank}/{max} · {name} · +{bonus}% bumper crop",
     lineBase: "Rank {rank}/{max} · {name}",
-    upgrade: "Upgrade rank",
     upgradeTitle: "Upgrade rank",
     upgradeTo: "Upgrade to rank {rank}",
     before: "Now",

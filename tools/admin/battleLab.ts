@@ -107,6 +107,11 @@ const hook = {
 };
 (window as unknown as { __animLab?: typeof hook }).__animLab = hook;
 
+/** Opens the lab on a striker, a target and a skill (Admin "Dữ liệu chiến đấu" → ▶ Xem): set before navigating to #/battle-lab. */
+export function presetBattleLab(o: { attacker: string; target: string; skill: string; fromEnemy: boolean }) {
+  Object.assign(lab, o, { skillType: '', skillElem: '', status: '', reaction: '', phase: false, win: false, ko: false });
+}
+
 /** The events a skill would make on the lab's field (enough for the motion to cut its beat): every target of an area skill, the statuses it puts on, the chosen reaction, phase change and victory. */
 function eventsOf(): BattleEvent[] {
   const s = lab.skill ? SKILLS[lab.skill] : undefined;

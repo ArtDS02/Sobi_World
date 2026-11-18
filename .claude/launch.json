@@ -134,6 +134,18 @@
         "SOBIWORLD_SANDBOX": "C:\\Users\\ToraTech\\AppData\\Local\\Temp\\sobiworld-plot",
         "PORT": "5192"
       }
+    },
+    {
+      "name": "sandbox-popups",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/dev/sandbox.mjs"
+      ],
+      "port": 5193,
+      "env": {
+        "SOBIWORLD_SANDBOX": "C:\\Users\\ToraTech\\AppData\\Local\\Temp\\sobiworld-popups",
+        "PORT": "5193"
+      }
     }
   ]
 }

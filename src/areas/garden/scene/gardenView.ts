@@ -24,9 +24,16 @@ export const GARDEN_VIEW = {
   columns: 6,
   /** Centre of the first plot and the step between two plots: four rows of six fill the lawn inside the path. */
   field: FIELD,
-  /** Plot art canvas and the scale it is drawn at (four rows must fit the lawn; the mock-up shows two). */
+  /**
+   * Plot art canvas and the scale it is drawn at. Four rows of six stay inside the lawn of every backdrop, plain and per skin,
+   * with a margin to the path and the fences (owner review 2026-11-16: the grid is centred on the lawn, x 350-1400, y 245-610).
+   */
   plotSize: { width: 152, height: 108 },
-  plotScale: 0.86,
+  plotScale: 0.8,
+  /** Soft shadow under each bed (ui/world/plotShadow.ts), plot-art px. */
+  shadow: { color: 0x3b2a14, alpha: 0.34, width: 156, height: 52, dy: 30 },
+  /** A watered bed of a skin: the same bed as the dry one, a little darker (one skin = one bed shape, owner review 2026-11-16). */
+  skinWetTint: 0xc8bcb2,
   /**
    * Crops share the plot's scale. Where a crop's canvas bottom sits below the plot's centre, in plot-art px: measured, the
    * soil of plot_soil is centred on the art's centre and a crop's soil mound ends at its canvas bottom; +16 puts the mound
@@ -149,6 +156,5 @@ export const GARDEN_SCENERY: readonly SceneryLayer[] = [
   { kind: 'market', art: 'scn_garden_market', minRank: 5, x: 1180, y: 800, depth: 12, feet: true, scale: 0.7 },
 ];
 
-/** The rank frame around a garden zone's 6 x 4 plots (decision 056). */
-/** The rank frame around the plots: it follows the field (100 px left of and 60 px above the first plot's centre). */
-export const GARDEN_FRAME: RankFrame = { x: FIELD.x - 100, y: FIELD.y - 60, width: 1090, height: 400, depth: 7 };
+/** The rank frame around a garden zone's 6 x 4 plots (decision 056): it follows the field, 100 px beside and 60 px above / below the outer plots' centres. */
+export const GARDEN_FRAME: RankFrame = { x: FIELD.x - 100, y: FIELD.y - 60, width: 5 * FIELD.stepX + 200, height: 3 * FIELD.stepY + 120, depth: 7 };
