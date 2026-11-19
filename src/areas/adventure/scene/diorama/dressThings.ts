@@ -13,14 +13,17 @@ import { cardOf, forestKit, type ArtFn } from './artKit';
 import { buildBarrier } from './barriers';
 import { TILT, cardBatch, shadowStandIns, type CardLook, type CardUniforms, type Placed } from './cards';
 import { decksOf, deckAt } from './decks';
-import { reedCard } from './extraArt';
+import { reedCard, softEdges } from './extraArt';
 import { heightAt, weightsAt, type Grid } from './field';
 import { Foes } from './foes';
+import { LandmarkGlow } from './landmarkGlow';
 import { hash2, noise2 } from './noise';
 import { tuftCard, type Card } from './textures';
 
 /** Height of a tall landmark (an oak, a dead tree) as a multiple of its footprint's width over the picture's aspect (a wide one keeps 1.45). */
 const LANDMARK = 1.6;
+/** Landmarks drawn larger than their footprint says, kept whole (their grey stones are no painted shadow) and alive with a soft glow. */
+const LANDMARKS: Readonly<Record<string, { scale: number; glow: boolean }>> = { prop_adv_lm_f2: { scale: 1.2, glow: true } };
 const FOE_H: Record<string, number> = { normal: 1.7, elite: 2.3, mutant: 2.0, subboss: 2.6, boss: 3.2, special: 2.2 };
 
 export interface Things {
@@ -28,6 +31,15 @@ export interface Things {
   foes: Foes;
   /** Breathes the glow of the exits (call each frame with the clock, seconds). */
   glow(t: number): void;
+}
+
+/** A soft dark ellipse lying on the ground (a thing's contact shadow), `w` × `d` tiles. */
+function contactShadow(blob: THREE.Texture, x: number, y: number, z: number, w: number, d: number): THREE.Mesh {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: blob, color: 0x050c05, transparent: true, opacity: 0.55, depthWrite: false }));
+  m.position.set(x, y + 0.05, z);
+  m.scale.set(w, 1, d);
+  m.renderOrder = 3;
+  return m;
 }
 
 export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUniforms, quality: number, blob: THREE.Texture, s: AdventureSceneState): Promise<Things> {
@@ -40,6 +52,9 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
     group.add(cardBatch(card, items, u, look));
     if (shadow) group.add(shadowStandIns(items, card.aspect, shadow[0], shadow[1]));
   };
+
+  /** Things that move on their own each frame (a landmark's glow). */
+  const lives: ((t: number) => void)[] = [];
 
   // Grass tufts and flowers on the open grass. Low: at most half a tile.
   const tufts: Placed[][] = [[], [], []];
@@ -78,22 +93,33 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
   // The landmark props: they stand on the back half of their footprint, their picture overhangs the front.
   for (const p of map.props) {
     const def = PROPS[p.prop];
-    const card = def ? await cardOf(art, def.art) : null;
-    if (!def || !card) continue;
+    const plain = def ? await cardOf(art, def.art) : null;
+    if (!def || !plain) continue;
     const x = p.x + def.w / 2;
     const z = p.y + def.h - 0.3;
+    const look = LANDMARKS[p.prop];
+    const card = look ? await cardOf(art, def.art, true) : plain;
     // A landmark is the biggest thing in the area: drawn well above the ordinary trees (about 1/6 of the frame wide).
-    add(card, [{ x, z, y: ground(x, z), h: (def.w / card.aspect) * (card.aspect < 1 ? LANDMARK : 1.45) }], { sway: 0.35, tilt: TILT, see: true }, [[0.7, 0.4, 0.26], 0.14]);
+    if (!card) continue;
+    const h = (def.w / card.aspect) * (card.aspect < 1 ? LANDMARK : 1.45) * (look?.scale ?? 1);
+    add(card, [{ x, z, y: ground(x, z), h }], { sway: 0.35, tilt: TILT, see: true }, [[0.7, 0.4, 0.26], 0.14]);
+    if (look?.glow) {
+      const lg = new LandmarkGlow(new THREE.Vector3(x, ground(x, z), z), h * card.aspect, h, blob);
+      group.add(lg.group);
+      lives.push((t) => lg.update(t, 1));
+    }
   }
 
   // Hand-placed decorations (decision 047) and the things of the area, one batch per picture.
   const pictures = new Map<string, { card: Card; items: Placed[] }>();
-  const put = async (id: string, state: string | undefined, x: number, z: number, width: number) => {
-    const key = `${id}|${state ?? ''}`;
+  const put = async (id: string, state: string | undefined, x: number, z: number, width: number, keep: boolean | number = false) => {
+    const key = `${id}|${state ?? ''}|${keep}`;
     let p = pictures.get(key);
     if (!p) {
-      const card = await cardOf(art, id, false, state);
-      if (!card) return;
+      const loaded = await cardOf(art, id, keep, state);
+      if (!loaded) return;
+      // The log tunnel's picture is cut by its own frame at the top and the right: those edges melt into the woods.
+      const card = id.endsWith('exit_log_tunnel') ? softEdges(loaded, { top: 0.16, right: 0.2 }) : loaded;
       p = { card, items: [] };
       pictures.set(key, p);
     }
@@ -135,7 +161,10 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
         continue;
       }
     }
-    await put(a.id, a.state, t.x + t.w / 2, t.y + t.h - 0.12, Math.max(1.1, t.w + 0.4));
+    // A boulder gate: its painted ground shadow is cut away (it would show as a hard band) and a soft round one lies under it.
+    const boulder = t.kind === 'gate' && a.id.includes('boulder');
+    if (boulder) group.add(contactShadow(blob, t.x + t.w / 2, ground(t.x + t.w / 2, t.y + t.h - 0.3), t.y + t.h - 0.35, t.w * 0.95, 2));
+    await put(a.id, a.state, t.x + t.w / 2, t.y + t.h - 0.12, Math.max(1.1, t.w + 0.4), boulder ? 0.85 : false);
   }
   for (const { card, items } of pictures.values()) add(card, items, { sway: 0, tilt: TILT, see: true }, [[0.5, 0.4, 0.4], 0]);
 
@@ -169,6 +198,9 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
     foes.addChest({ id: c.id, card, openCard, x: c.x + 0.5, z: c.y + 0.9, phase: hash2(c.x, c.y, 23) * 6 });
     foes.setChest(c.id, s.openedChests.includes(c.id));
   }
-  const glow = (t: number) => glows.forEach((s, i) => (s.material.opacity = 0.32 + 0.2 * (0.5 + 0.5 * Math.sin(t * 1.7 + i * 2))));
+  const glow = (t: number) => {
+    lives.forEach((f) => f(t));
+    glows.forEach((s, i) => (s.material.opacity = 0.32 + 0.2 * (0.5 + 0.5 * Math.sin(t * 1.7 + i * 2))));
+  };
   return { group, foes, glow };
 }

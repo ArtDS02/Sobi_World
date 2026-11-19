@@ -7,7 +7,7 @@ import type { AreaMap } from '../../logic/config/content';
 import { blockedTiles, type Thing } from '../../logic/maps';
 import { K, MARGIN, type Kind } from './kinds';
 import { noise2 } from './noise';
-import { raiseAroundHighGround, stairHeight, stairsOf, type Stair } from './plateau';
+import { pitLevels, raiseAroundHighGround, stairHeight, stairsOf, type Stair } from './plateau';
 
 export { K, MARGIN };
 
@@ -42,13 +42,14 @@ export function gridOf(map: AreaMap, opened: ReadonlySet<string> = new Set(), cl
   const height = new Float32Array(W * H);
   const elev = map.scene?.elevation;
   const fall = new Uint8Array(map.cols * map.rows);
+  const pits = pitLevels(map);
   for (let y = 0; y < map.rows; y += 1)
     for (let x = 0; x < map.cols; x += 1) {
       const k = kindOf(map.terrain[y]?.[x] ?? '#');
       const i = (y + MARGIN) * W + x + MARGIN;
       kind[i] = k;
       if (map.terrain[y]?.[x] === 'w') fall[y * map.cols + x] = 1;
-      const lv = Number(elev?.[y]?.[x] ?? 0) * LEVEL;
+      const lv = (pits.get(y * map.cols + x) ?? Number(elev?.[y]?.[x] ?? 0)) * LEVEL;
       height[i] = k === K.water || k === K.bridge ? WATER_BED : k === K.rock ? Math.max(lv, LEVEL * 1.6) : lv;
     }
   const ramps = raiseAroundHighGround(map, kind, height, W);

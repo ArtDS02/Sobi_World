@@ -48,8 +48,12 @@ export function texture(canvas: HTMLCanvasElement, srgb = true): THREE.CanvasTex
   return t;
 }
 
-/** A kit picture as a card: painted shadow taken out, cropped to its drawn pixels. */
-export function loadCard(url: string, keepShadow = false): Promise<Card> {
+/**
+ * A kit picture as a card: painted shadow taken out, cropped to its drawn pixels. `keepShadow` true leaves the picture whole (a grey
+ * stone is not mistaken for a shadow); a number (share of the height, 0–1) leaves it whole above that line and drops what lies below
+ * (a boulder's painted ground shadow, which the scene replaces with a soft one).
+ */
+export function loadCard(url: string, keepShadow: boolean | number = false): Promise<Card> {
   const key = `${url}|${keepShadow}`;
   let p = loaded.get(key);
   if (!p) {
@@ -68,7 +72,8 @@ export function loadCard(url: string, keepShadow = false): Promise<Card> {
       for (let y = 0; y < c.height; y += 1)
         for (let x = 0; x < c.width; x += 1) {
           const o = (y * c.width + x) * 4;
-          if (!keepShadow && px[o + 3]! > 0 && isPaintedShadow(px[o]!, px[o + 1]!, px[o + 2]!, px[o + 3]!, y / c.height)) px[o + 3] = 0;
+          if (typeof keepShadow === 'number' && y / c.height > keepShadow) px[o + 3] = 0;
+          else if (!keepShadow && px[o + 3]! > 0 && isPaintedShadow(px[o]!, px[o + 1]!, px[o + 2]!, px[o + 3]!, y / c.height)) px[o + 3] = 0;
           if (px[o + 3]! > 40) {
             if (x < x0) x0 = x;
             if (x > x1) x1 = x;

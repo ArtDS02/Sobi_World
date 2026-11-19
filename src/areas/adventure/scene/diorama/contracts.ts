@@ -10,11 +10,17 @@ export interface SceneContract {
   /** Shares of the standing trees: oak, fir, big canopy, blossom (they need not sum to 1). */
   trees: readonly [number, number, number, number];
   /** Offsets from the day / golden / night presets: saturation, warmth (+ warm / - cool), far fog 0–0.6 and its tint. */
-  light: { sat: number; warm: number; fog: number; fogTint: number; /** Overall brightness, 1 = the preset's (default). */ dim?: number };
+  light: { sat: number; warm: number; fog: number; fogTint: number; /** Overall brightness, 1 = the preset's (default). */ dim?: number; /** Extra moon fill at night (hemisphere light), 0 = the preset's. */ moon?: number };
   /** What drifts through the air (default: everything on): butterflies, blossom petals, a multiple of the falling leaves. */
   life?: { wings: boolean; petals: boolean; leaves: number };
   /** Lily pads on the calm water (default true). */
   lilies?: boolean;
+  /** Gain of the wind on every standing picture (default 1). */
+  wind?: number;
+  /** How far the dirt paths are darkened and cooled, 0–1 (default 0). */
+  pathTone?: number;
+  /** Light added to the bridge decks in shade, 0–1 (default 0), so a tree's shadow never turns the planks black. */
+  deckLift?: number;
   /** Trees and stones made of corruption around a centre (tile), share of the tiles at the centre. */
   corrupt?: { x: number; y: number; r: number; share: number };
   accent: Accent;
@@ -54,13 +60,21 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
   // cooler than the other woods, with no butterflies, petals or lily pads: falling needles and leaves, dust in the light.
   map_forest_deep: {
     trees: [0.3, 0.5, 0.2, 0],
-    light: { sat: -0.12, warm: -0.07, fog: 0.3, fogTint: TINT_DEEP, dim: 0.6 },
+    light: { sat: -0.12, warm: -0.07, fog: 0.3, fogTint: TINT_DEEP, dim: 0.6, moon: 0.45 },
     life: { wings: false, petals: false, leaves: 1.5 },
     lilies: false,
+    wind: 1.8,
+    pathTone: 1,
+    deckLift: 1,
+    // The south exit (the log tunnel) and the way to it stand clear of tall crowns, so the exit reads whole; the ring's plateau too.
+    keepLow: [
+      { x: 38, y: 27, w: 12, h: 14 },
+      { x: 7, y: 0, w: 18, h: 9 },
+    ],
     accent: 'sunShafts',
     spots: [
       { name: '1 · Start', x: 2, y: 21 },
-      { name: '2 · Stone ring', x: 14, y: 9 },
+      { name: '2 · Stone ring', x: 13, y: 7 },
       { name: '3 · Long bridge', x: 40, y: 8 },
       { name: '4 · Wide bridge', x: 25, y: 20 },
       { name: '5 · Middle lake', x: 34, y: 16 },

@@ -127,6 +127,8 @@ export interface LightTweak {
   fogTint: number;
   /** Overall brightness of the picture, 1 = the preset's. */
   dim?: number;
+  /** Added to the hemisphere light at night, so paths stay readable beyond the lantern. */
+  moon?: number;
 }
 const NO_TWEAK: LightTweak = { sat: 0, warm: 0, fog: 0, fogTint: 0xbcd2e0 };
 
@@ -189,7 +191,7 @@ export class Look {
     this.sun.intensity = p.sunI;
     this.hemi.color.set(p.sky);
     this.hemi.groundColor.set(p.ground);
-    this.hemi.intensity = p.hemiI;
+    this.hemi.intensity = p.hemiI + (p === PRESETS.night ? (tweak.moon ?? 0) : 0);
     this.lantern.intensity = p.lantern;
     this.lantern.visible = p.lantern > 0;
     this.scene.background = new THREE.Color(p.clear);
@@ -203,7 +205,7 @@ export class Look {
     this.final.uniforms.uWarm!.value = p.warm + tweak.warm;
     this.final.uniforms.uFog!.value = tweak.fog * (p === PRESETS.night ? 0.6 : 1);
     (this.final.uniforms.uFogCol!.value as THREE.Color).set(tweak.fogTint);
-    this.final.uniforms.uDim!.value = tweak.dim ?? 1;
+    this.final.uniforms.uDim!.value = p === PRESETS.night ? 1 : (tweak.dim ?? 1);
     this.scene.traverse((o) => {
       const m = (o as THREE.Mesh).material as THREE.Material | undefined;
       if (m) m.needsUpdate = true;

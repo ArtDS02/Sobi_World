@@ -80,3 +80,31 @@ export function birdTexture(): THREE.Texture {
   g.fill();
   return texture(c);
 }
+
+const softened = new WeakMap<THREE.Texture, Card>();
+/**
+ * A picture cut off by its own frame (a log running out of the picture) with those edges dissolved: alpha fades over `top` / `right`
+ * (shares of the picture) so the cut melts into the foliage round it instead of showing as a straight edge.
+ */
+export function softEdges(card: Card, edges: { top?: number; right?: number }): Card {
+  const have = softened.get(card.tex);
+  if (have) return have;
+  const src = card.tex.image as HTMLCanvasElement;
+  const [c, g] = canvas(src.width, src.height);
+  g.drawImage(src, 0, 0);
+  // Erase more and more towards the edge: nothing at the start of the band, all of it at the edge.
+  g.globalCompositeOperation = 'destination-out';
+  const band = (x0: number, y0: number, x1: number, y1: number, rx: number, ry: number, rw: number, rh: number) => {
+    const grad = g.createLinearGradient(x0, y0, x1, y1);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,1)');
+    g.fillStyle = grad;
+    g.fillRect(rx, ry, rw, rh);
+  };
+  const [tw, th] = [src.width, src.height];
+  if (edges.top) band(0, th * edges.top, 0, 0, 0, 0, tw, th * edges.top);
+  if (edges.right) band(tw * (1 - edges.right), 0, tw, 0, tw * (1 - edges.right), 0, tw * edges.right, th);
+  const out: Card = { tex: texture(c), aspect: card.aspect, normal: card.normal };
+  softened.set(card.tex, out);
+  return out;
+}

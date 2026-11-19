@@ -19,6 +19,7 @@ import { dressThings, type Things } from './dressThings';
 import { disposeTree } from './disposeTree';
 import { gpuNameOf } from './gpuProbe';
 import { dressTrees } from './dressTrees';
+import { disposeRuneTexture } from './landmarkGlow';
 import { gridOf, heightAt, type Grid } from './field';
 import type { Foes } from './foes';
 import { buildBridges, buildGround, type GroundUniforms } from './ground';
@@ -152,7 +153,7 @@ export class DioramaView {
     const blob = blobTexture();
     const decks = decksOf(g);
     const root = new THREE.Group();
-    root.add(buildGround(this.renderer, g, grass, this.opts.quality, this.groundU), buildCliffs(g, { strip: cliff, endL, endR }), ...(stone ? [buildStairs(g.stairs, stone)] : []), buildBridges(decks), buildWater(g, this.waterU), ...(contract.lilies === false ? [] : [buildLilies(g)]));
+    root.add(buildGround(this.renderer, g, grass, this.opts.quality, this.groundU, contract.pathTone), buildCliffs(g, { strip: cliff, endL, endR }), ...(stone ? [buildStairs(g.stairs, stone)] : []), buildBridges(decks, contract.deckLift), buildWater(g, this.waterU), ...(contract.lilies === false ? [] : [buildLilies(g)]));
     root.add(await dressTrees(this.art, blockerPlan(map, opened, closed, g), map, g, this.cardU, contract, this.opts.quality === 'light'));
     const things = await dressThings(this.art, map, g, this.cardU, quality, blob, s);
     root.add(things.group);
@@ -200,7 +201,7 @@ export class DioramaView {
     this.waterU.uGlint.value = p.glint;
     this.groundU.uCloud.value = o.time === 'night' ? 0.06 : 0.16;
     this.groundU.uNight.value = o.time === 'night' ? 1 : 0;
-    this.cardU.uWind.value = o.wind ? 1 : 0;
+    this.cardU.uWind.value = o.wind ? (this.contract.wind ?? 1) : 0;
     this.life?.setMood(p.fireflies, o.time === 'day' ? 1 : o.time === 'golden' ? 0.6 : 0);
     this.birds?.setSky(p.sunDir, o.time === 'night' ? 0 : 1);
     this.shafts?.setSun(o.time === 'night' ? 0 : o.time === 'golden' ? 0.5 : 1, o.time === 'golden' ? 0xffa860 : 0xffd98a, o.time === 'golden');
@@ -289,6 +290,7 @@ export class DioramaView {
   dispose() {
     this.leave();
     disposeShaftTexture();
+    disposeRuneTexture();
     this.look.composer.dispose();
     this.renderer.dispose();
     this.renderer.domElement.remove();

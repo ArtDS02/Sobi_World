@@ -16,7 +16,7 @@ export const registryArt =
 export const forestKit = (name: string): string => `adv_map_forest_${name}`;
 
 /** A picture as a card (see `loadCard`), or null when it has no URL or cannot be loaded. */
-export function cardOf(art: ArtFn, id: string, keepShadow = false, state?: string): Promise<Card | null> {
+export function cardOf(art: ArtFn, id: string, keepShadow: boolean | number = false, state?: string): Promise<Card | null> {
   const url = art(id, state);
   return url ? loadCard(url, keepShadow).catch(() => null) : Promise.resolve(null);
 }

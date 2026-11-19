@@ -17,7 +17,7 @@ export interface GroundUniforms {
   uNight: { value: number };
 }
 
-export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE.Texture, quality: 'full' | 'light', uniforms: GroundUniforms): THREE.Group {
+export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE.Texture, quality: 'full' | 'light', uniforms: GroundUniforms, pathTone = 0): THREE.Group {
   const w = g.W * RES;
   const h = g.H * RES;
   const geo = new THREE.PlaneGeometry(g.W, g.H, w, h);
@@ -38,7 +38,7 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
   geo.setAttribute('aSplat', new THREE.BufferAttribute(splat, 4));
   geo.setAttribute('aMoss', new THREE.BufferAttribute(moss, 1));
   geo.computeVertexNormals();
-  const painted = paintGround(renderer, geo, g, grass, quality);
+  const painted = paintGround(renderer, geo, g, grass, quality, pathTone);
   const mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
   mat.addEventListener('dispose', () => painted.dispose());
   mat.onBeforeCompile = (sh) => {
@@ -141,7 +141,7 @@ function chunkGround(geo: THREE.PlaneGeometry, mat: THREE.Material, w: number, h
  * shadow).
  * Everything is made of the code-drawn planks.
  */
-export function buildBridges(decks: readonly Deck[]): THREE.Group {
+export function buildBridges(decks: readonly Deck[], lift = 0): THREE.Group {
   const group = new THREE.Group();
   const planks = plankTexture();
   const wood = new THREE.MeshLambertMaterial({ color: 0x6a4428 });
@@ -158,7 +158,7 @@ export function buildBridges(decks: readonly Deck[]): THREE.Group {
     tex.repeat.set(along ? w : 1, along ? 1 : d);
     if (!along) tex.rotation = Math.PI / 2;
     tex.needsUpdate = true;
-    const deck = new THREE.Mesh(new THREE.BoxGeometry(w, DECK_TOP, d), new THREE.MeshLambertMaterial({ map: tex }));
+    const deck = new THREE.Mesh(new THREE.BoxGeometry(w, DECK_TOP, d), new THREE.MeshLambertMaterial({ map: tex, emissiveMap: lift ? tex : null, emissive: new THREE.Color(lift * 0.55, lift * 0.5, lift * 0.45) }));
     deck.position.set(cx, DECK_TOP / 2, cz);
     deck.castShadow = deck.receiveShadow = true;
     group.add(deck);

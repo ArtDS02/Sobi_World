@@ -132,3 +132,42 @@ export function stairsOf(map: AreaMap, ramps: readonly Ramp[]): Stair[] {
   }
   return out;
 }
+
+/**
+ * Pits: a patch of level ground (elevation 0) that high ground (elevation above 0) closes in on every side, such as a clearing cut
+ * into a plateau. Drawn as it is, it would be a hole with cliff walls; it is the plateau's own floor, so it takes the height of the
+ * lowest wall round it. Returns the level of each such tile (index in the area's grid). Drawing only: the walkable tiles are unchanged.
+ */
+export function pitLevels(map: AreaMap): Map<number, number> {
+  const elev = map.scene?.elevation;
+  const level = (x: number, y: number) => Number(elev?.[y]?.[x] ?? 0);
+  const walk = (x: number, y: number) => ['.', ',', 'c', 's'].includes(map.terrain[y]?.[x] ?? '#');
+  const inside = (x: number, y: number) => x >= 0 && y >= 0 && x < map.cols && y < map.rows;
+  const out = new Map<number, number>();
+  const seen = new Set<number>();
+  for (let y = 0; y < map.rows; y += 1)
+    for (let x = 0; x < map.cols; x += 1) {
+      if (seen.has(y * map.cols + x) || level(x, y) !== 0 || !walk(x, y)) continue;
+      const cells: number[] = [y * map.cols + x];
+      seen.add(cells[0]!);
+      let wall = Infinity;
+      let closed = true;
+      for (let q = 0; q < cells.length; q += 1) {
+        const [cx, cy] = [cells[q]! % map.cols, Math.floor(cells[q]! / map.cols)];
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+          const [nx, ny] = [cx + dx, cy + dy];
+          const k = ny * map.cols + nx;
+          if (!inside(nx, ny)) closed = false;
+          else if (level(nx, ny) === 0 && walk(nx, ny)) {
+            if (!seen.has(k)) {
+              seen.add(k);
+              cells.push(k);
+            }
+          } else if (level(nx, ny) > 0) wall = Math.min(wall, level(nx, ny));
+          else closed = false;
+        }
+      }
+      if (closed && wall < Infinity && cells.length < 40) for (const c of cells) out.set(c, wall);
+    }
+  return out;
+}

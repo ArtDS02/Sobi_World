@@ -8,6 +8,7 @@ import { GLSL_NOISE } from './noise';
 
 const FLAT = /* glsl */ `
 uniform sampler2D tGrass;
+uniform float uTone;
 ${GLSL_NOISE}
 float edge(float w, float n, float soft){ return smoothstep(.5 - soft, .5 + soft, w + (n - .5) * .34); }
 vec3 srgb(vec3 c){ return pow(c, vec3(2.2)); }
@@ -29,6 +30,8 @@ vec3 flatGround(vec2 wp, vec4 sp, float mo){
   grass *= mix(1., .72, smoothstep(.05, .45, sp.y));
   vec3 path = mix(srgb(vec3(.88, .77, .58)), srgb(vec3(.8, .67, .47)), smoothstep(.35, .7, n1));
   path *= .95 + .1 * dNoise(wp * 3.);
+  // A darker, cooler dirt (a deep wood: damp earth under the pines, not sun-baked sand).
+  path = mix(path, path * vec3(.5, .56, .5), uTone);
   float pebble = smoothstep(.06, .0, length(fract(wp * 3.1 + dNoise(wp * 2.) * .4) - .5)) * step(.82, dHash(floor(wp * 3.1 + dNoise(wp * 2.) * .4)));
   path = mix(path, srgb(vec3(.7, .64, .56)), pebble);
   path *= .9 + .1 * smoothstep(.5, .95, sp.x);
@@ -54,7 +57,7 @@ vec3 flatGround(vec2 wp, vec4 sp, float mo){
 const PX = { full: 32, light: 16 } as const;
 
 /** Paints the ground colour of `geo` (the ground mesh with its `aSplat` shares) over the whole grid; the caller owns the target. */
-export function paintGround(renderer: THREE.WebGLRenderer, geo: THREE.BufferGeometry, g: Grid, grass: THREE.Texture, quality: 'full' | 'light'): THREE.WebGLRenderTarget {
+export function paintGround(renderer: THREE.WebGLRenderer, geo: THREE.BufferGeometry, g: Grid, grass: THREE.Texture, quality: 'full' | 'light', pathTone = 0): THREE.WebGLRenderTarget {
   const px = PX[quality];
   const rt = new THREE.WebGLRenderTarget(g.W * px, g.H * px, {
     type: THREE.HalfFloatType,
@@ -63,7 +66,7 @@ export function paintGround(renderer: THREE.WebGLRenderer, geo: THREE.BufferGeom
     depthBuffer: false,
   });
   const mat = new THREE.ShaderMaterial({
-    uniforms: { tGrass: { value: grass }, uSize: { value: new THREE.Vector2(g.W, g.H) } },
+    uniforms: { tGrass: { value: grass }, uTone: { value: pathTone }, uSize: { value: new THREE.Vector2(g.W, g.H) } },
     side: THREE.DoubleSide,
     vertexShader: `attribute vec4 aSplat; attribute float aMoss; uniform vec2 uSize; varying vec2 vW; varying vec4 vS; varying float vM;
       void main(){ vW = position.xz; vS = aSplat; vM = aMoss; gl_Position = vec4(((position.xz + ${MARGIN}.) / uSize) * 2. - 1., 0., 1.); }`,
