@@ -9,3 +9,10 @@ art_inbox/
 saves-export/
 
 .admin-backups/
+
+# Unity editor cache left from the retired studio (decision 051); never commit
+studio/Library/
+studio/Logs/
+studio/Temp/
+studio/UserSettings/
+studio/obj/
