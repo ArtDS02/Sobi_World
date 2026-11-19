@@ -7,11 +7,11 @@ import { PNG } from 'pngjs';
 
 const TILE = 40;
 export interface Step { step: string; pass: boolean; detail: Record<string, unknown> }
-export interface Run { mapId: string; x: number; y: number; phase: string; chests: string[]; tx: number; ty: number }
+export interface Run { mapId: string; x: number; y: number; phase: string; chests: string[]; defeated: string[]; tx: number; ty: number }
 export interface Session { context: BrowserContext; page: Page }
 export interface Env { browser: Browser; base: string; view: string; out: string; save: string; errors: string[]; steps: Step[] }
-interface SaveFile { progression: { areas: Record<string, unknown> }; wallet: { coins: number }; settings: { tutorialDone: boolean }; areas: { sobi_adventure: { openedChests: string[]; run: { mapId: string; x: number; y: number; facing: string; phase: string; team: { stats: object; hp: number }[] } } } }
-interface MapJson { id: string; cols: number; rows: number; terrain: string[]; chests: { id: string; x: number; y: number }[] }
+interface SaveFile { progression: { areas: Record<string, unknown> }; wallet: { coins: number }; settings: { tutorialDone: boolean }; areas: { sobi_adventure: { openedChests: string[]; run: { mapId: string; x: number; y: number; facing: string; phase: string; defeated?: string[]; team: { stats: object; hp: number }[] } } } }
+export interface MapJson { id: string; cols: number; rows: number; terrain: string[]; spawn: { x: number; y: number }; chests: { id: string; x: number; y: number }[]; groups: { id: string; x: number; y: number; kind: string }[]; exits: { x: number; y: number; w: number; h: number; to: string; facing: string; lock?: string; arriveX: number; arriveY: number }[] }
 
 export const hasRun = (env: Env) => (JSON.parse(readFileSync(env.save, 'utf8')) as { areas: { sobi_adventure?: { run: object | null } } }).areas.sobi_adventure?.run != null;
 export const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
@@ -19,7 +19,7 @@ const readSave = (env: Env) => JSON.parse(readFileSync(env.save, 'utf8')) as Sav
 
 export function readRun(env: Env): Run {
   const a = readSave(env).areas.sobi_adventure;
-  return { mapId: a.run.mapId, x: a.run.x, y: a.run.y, phase: a.run.phase, chests: a.openedChests, tx: a.run.x / TILE, ty: a.run.y / TILE };
+  return { mapId: a.run.mapId, x: a.run.x, y: a.run.y, phase: a.run.phase, chests: a.openedChests, defeated: [...(a.run.defeated ?? [])], tx: a.run.x / TILE, ty: a.run.y / TILE };
 }
 
 /** Puts the party on a tile of an area (the page must be closed: the game would write its own state over the edit). */

@@ -4,6 +4,22 @@
 
 > **Chính sách (decision 017, gameplay trước, art sau):** danh sách này là backlog của **GĐ14** (art, animation, VFX, âm thanh). Các giai đoạn gameplay GĐ10–GĐ13 chỉ **thêm dòng** vào đây và dùng placeholder; không làm art, và không quay lại phase đã nghiệm thu để làm art hay polish UI. Ảnh tham khảo: `asset/reference/<area>/` (README ở đó). Kế hoạch batch GĐ14 (decision 022): `asset/batches/README.md`.
 
+## Diorama vùng Rừng (decision 064)
+The 6 forest maps render as a Three.js diorama (`src/areas/adventure/scene/diorama/`); things below are still drawn in code or reuse a kit picture that does not fit. Real art wanted (original designs only, decision 048; transparent PNG, painted style like the kit):
+- **Water gate picture:** kit `adv_gate_water.png` is actually a fire gate (hue-shifted in code). Needs a real water gate (arch of wet stone with a water curtain), same size as the other gates.
+- **Water wheel:** unlit frame + turning frames (4-6, loopable) for the marsh mill; today lit glints are added in code.
+- **Cracked boulder gate:** a boulder with a visible crack and a soft ground shadow baked in (no hard shadow edge); deep + falls.
+- **Log tunnel:** hollow log without a hard frame cut at the ends (currently cropped).
+- **Bramble gate:** drawn tall (about 2 tiles high, thorny wall with a narrow dark gap); hollow.
+- **Mossy ground tile:** seamless moss/leaf-litter tile (+1 variant) for the forest floor.
+- **Sun-shaft sprite:** painted soft light shaft (additive, tileable vertically) replacing the code gradient.
+- **Ink puddle + tendril:** the corruption ink pool and a rising tendril (2 frames) for heart and marsh rim.
+- **Spore / small mushroom:** spore puff (3 frames) and a small mushroom picture for the hollow.
+- **Waterfall sheet with plunge pool:** full-height waterfall sheet (loop, 4-6 frames), foam rings, plunge-pool pool picture; falls.
+- **Fish sprite:** small jumping fish (2-3 frames) for pools.
+- **Rainbow:** soft translucent rainbow arc for the falls spray.
+- **Stone-ring runes:** glowing rune set (6-8 glyphs, lit + unlit) for the deep stone ring.
+
 ## Harvest-hand pointer (decision 057, B3)
 Today: an inline SVG drawn in code (`src/ui/world/harvestCursor.ts`, 32×32, hotspot 10,5): an open hand with a small leaf. Final art wanted: one pointer picture `ui_cursor_harvest` (32×32 PNG, transparent, hotspot between thumb and forefinger, brown outline like the HUD icons); optional 2× version (64×64) for high-DPI screens. Swap = replace the SVG string by the manifest image's URL.
 

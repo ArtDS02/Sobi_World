@@ -4,10 +4,12 @@
 import { describe, expect, it } from 'vitest';
 import { parseWorldSave } from '../../src/app/saveCodec';
 import { adventureArea } from '../../src/areas/adventure';
+import { battleAct, engage, startRun } from '../../src/areas/adventure/logic/actions/run';
 import { claimStarter, collectLoot, equipItem, starterGift, unequipSlotOf } from '../../src/areas/adventure/logic/actions/camp';
 import { changeClass, resetTree, saveFormation, setLeader, setLoadout, stepNode, useScroll } from '../../src/areas/adventure/logic/actions/growth';
 import { adventureArtIds } from '../../src/areas/adventure/logic/art';
-import { AB, CLASSES, ELEMENT_LIST, LINEAGE_LIST, SKILL_LIST, STATUS_LIST, TREES, ZONE_LIST, contentProblems, identityOf } from '../../src/areas/adventure/logic/config/content';
+import { tileCenter } from '../../src/areas/adventure/logic/maps';
+import { AB, CLASSES, MAPS, ELEMENT_LIST, LINEAGE_LIST, SKILL_LIST, STATUS_LIST, TREES, ZONE_LIST, contentProblems, identityOf } from '../../src/areas/adventure/logic/config/content';
 import { fighterSkills, fighterStats, newFighter, whyNotReady } from '../../src/areas/adventure/logic/fighters';
 import { adventureOf, withAdventure } from '../../src/areas/adventure/logic/save/lens';
 import { ADVENTURE_MIGRATIONS } from '../../src/areas/adventure/logic/migrations';
@@ -18,7 +20,7 @@ import { adventureEventsToWorld } from '../../src/areas/adventure/logic/worldEve
 import type { CreatureGift } from '../../src/core/area-registry/registry';
 import { ELEMENTS, STATUS_IDS } from '../../src/systems/combat/types';
 import { ELEMENT_VALUES, STATUS_VALUES } from '../../content/schemas/adventure/combat';
-import { T0, adventureWorld, ctxAt, entry, err, ok, squad, strong, migrateOn } from './adventureKit';
+import { T0, adventureWorld, ctxAt, entry, err, keys, ok, squad, strong, migrateOn } from './adventureKit';
 
 const roster = squad;
 const knight = entry('a');
@@ -149,6 +151,22 @@ describe('the save (v2)', () => {
     const back = parseWorldSave(JSON.stringify(w));
     expect(back.ok && back.save).toEqual(w);
   });
+  it('a battle saved while a smart enemy (with an iq) fights is kept by the schema and the codec, not reset as damaged', () => {
+    const map = MAPS.map_forest_edge!;
+    const g = map.groups.find((x) => x.kind === 'normal')!;
+    const started = ok(startRun(strong(adventureWorld()), { zoneId: 'zone_forest', keys, roster: squad }, ctxAt(T0)));
+    const w0 = ok(engage(started, { ...tileCenter(map, g.x, g.y), groupId: g.id, quick: false }, ctxAt(T0)));
+    const a = adventureOf(w0);
+    const battle = a.run!.battle!;
+    expect(a.run!.phase).toBe('battle');
+    const combatants = battle.combatants.map((c) => (c.side === 'enemy' ? { ...c, iq: 0.4 } : c));
+    const w = withAdventure(w0, { ...a, run: { ...a.run!, battle: { ...battle, combatants } } });
+    expect(() => adventureStateSchema.parse(adventureOf(w))).not.toThrow();
+    const back = parseWorldSave(JSON.stringify(w));
+    expect(back.ok && back.save).toEqual(w);
+    expect(ok(battleAct(w, { action: 'auto' }, ctxAt(T0, 3)))).toBeTruthy();
+  });
+
   it('migrates a v1 slice: levels kept with their SP, a trip in progress closed with its loot and energy back, cleared zones light their portals', () => {
     const v1 = {
       version: 1,

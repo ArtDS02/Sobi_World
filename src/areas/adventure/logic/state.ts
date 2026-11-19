@@ -127,6 +127,8 @@ const combatantSchema = z.strictObject({
   phases: z.array(z.strictObject({ hpBelow: z.number(), addSkills: z.array(z.string()), statuses: z.array(z.strictObject({ status, turns: z.number().int() })), element: element.optional() })),
   phase: z.number().int().min(0),
   intent: actionSchema.nullable(),
+  iq: z.number().optional(), // a smart enemy's AI skill (Combatant.iq): a save made mid-battle must keep it
+
 });
 
 const battleSchema = z.strictObject({
@@ -250,7 +252,6 @@ export const adventureStateSchema = z.strictObject({
   /** Time the slice was simulated up to (epoch ms). */
   lastTickedAt: time,
 });
-
 export type AdventureState = z.infer<typeof adventureStateSchema>;
 export type Fighter = z.infer<typeof fighterSchema> & { loadout: Loadout };
 export type BattleReport = Omit<z.infer<typeof reportSchema>, 'battle' | 'log'> & { battle: BattleState | null; log: { type: string }[] };
@@ -258,7 +259,6 @@ export type Run = Omit<z.infer<typeof runSchema>, 'battle' | 'log' | 'report'> &
 export type RunMember = z.infer<typeof memberSchema>;
 export type MemberMods = RunMember['mods'];
 export const CATEGORIES = CATEGORY_VALUES;
-
 export const newFighterFields = (): Omit<Fighter, 'level' | 'exp' | 'loadout' | 'energy' | 'energyAt' | 'exhaustedUntil'> => ({
   classId: null,
   sp: 0,

@@ -548,3 +548,36 @@ Bằng chứng:
 - Ảnh động đi trong rừng rậm (`dioramaWalk.ts --from 48,24`): `art_inbox/diorama_shots/g0d/g0d_forest_walk.webp`.
 - 60 FPS ở cả 8 chỗ.
 
+
+---
+
+## 16. Diorama vào game: 6 map vùng Rừng (2026-11-19, decision 064)
+
+Chủ dự án quyết cổng G0: đi tiếp Diorama. Vòng lặp nhiều agent (`docs/AGENT_LOOP.md`, sổ `docs/agent-loop/forest-diorama/STATE.md`) đưa renderer từ Admin vào game cho cả 6 map Rừng. Chuẩn: `docs/maps/MAP_SCENE_STANDARD.md`. Điểm reviewer độc lập: `docs/maps/diorama/SCORES.md`.
+
+**Kiến trúc đã chốt:**
+- Renderer dùng chung ở `src/areas/adventure/scene/diorama/` (Admin lab import lại). `walk.ts` (va chạm theo trường mịn) đã xóa: va chạm vẫn là `walkableOf` / `stepCharacter` theo ô; cảnh phải khớp ô (`blockerPlan` + test 6 map: mọi ô chặn có vật nhìn thấy, không gốc cây trên ô đi được, mép đi được / chặn lệch ≤ 0,25 ô).
+- `MapRenderer` (`ClassicRenderer` 2D giữ nguyên, `DioramaRenderer` chép texture Three sang Phaser như lớp VFX trận). Luật (chạm quái, tương tác, cổng, lưu) ở lại AdventureScene, chung cho hai renderer.
+- Cài đặt theo máy (`settings.json`, không đụng save): Kiểu bản đồ Diorama / 2D cổ điển, Chất lượng Tự động / Đẹp / Nhẹ. GPU phần mềm ⇒ 2D; chậm ⇒ Nhẹ ⇒ 2D.
+- Dữ liệu riêng từng map ở `contracts.ts` (ánh sáng, đời sống, gió, tông đất, điểm nhấn) + module điểm nhấn: vệt nắng, mực tha hóa, bào tử, thác, sương, guồng nước.
+
+**Điểm (thước §2.5, ngưỡng > 7,5):**
+
+| Map | Vòng | Điểm | FPS RTX 2060 Đẹp | FPS GPU tích hợp AMD Nhẹ |
+|---|---|---|---|---|
+| Bìa Rừng | 3 | 9,0 | 144 (cả 6 điểm) | 117–144 |
+| Rừng Sâu | 2 | 8,0 | 115–144 | 92–124 |
+| Lõi Rừng | 1 | 8,0 | 144 | 98–113 |
+| Thung Nấm | 1 | 8,0 | 93–144 | 96–130 |
+| Thác Rêu | 2 | 8,0 | 114–138 | 55–86 |
+| Đầm Sương | 1 | 8,0 | 102–144 | 90–123 |
+
+**Bài học:**
+1. **Đo đúng máy.** Chrome headless `--gpu` mặc định chạy GPU tích hợp (AMD Radeon), không phải GPU rời; máy đo thật là RTX 2060, không phải RTX 3050. Số "60 FPS RTX 3050" của G0 thật ra là GPU tích hợp. Script chụp nay nhận `ANIM_GPU=high | low` và in chuỗi adapter. Số "32–48 FPS không GPU" của G0 sai: bộ đếm cũ kẹp 50 ms nên không đọc được dưới 20; thực tế SwiftShader 2–4 FPS ⇒ GPU phần mềm tự lùi 2D.
+2. **Chi phí chính không ở hình học.** MSAA 4× trên đích half-float tốn nhất (34 → 61 FPS khi bỏ, thay FXAA); nhiễu từng điểm ảnh ở shader mặt đất ⇒ nướng màu đất một lần mỗi map; 2000 khối bóng không cắt khung ⇒ chia khúc 12 ô + cắt khung.
+3. **Ép mép 0,25 ô cho mọi ranh giới làm lộ lưới.** Chỉ ranh giới đi được / chặn cần khớp ô (bo góc); ranh giới giữa hai chất liệu đi được (cỏ / đất / rêu) phải mềm như G0.
+4. **Reviewer độc lập bắt được điều coder bỏ qua**: thiếu cao nguyên + vật mốc (Bìa Rừng v1 6,5), vật mốc < 1/8 khung, màu ngày "giống Bìa Rừng", khối tối mép cứng (thường là một tranh kit bị cắt khung, một hố cao nguyên vẽ thành vách, hoặc bộ lọc bóng xóa mất phần xám của tranh vật mốc).
+5. **Gió phải chứng minh bằng số**: chụp đoạn đứng yên (camera đứng) và đo khác biệt từng góc ¼ khung giữa hai khung liên tiếp (gió tắt ≈ 0,2–0,9, gió bật ≥ 2,5).
+6. **Lỗi chung sửa một lần ở map sau** (đêm trong rừng quá tối, bóng cầu tròn đen, tán rìa đứng yên) và kiểm hồi quy bằng ảnh các map đã đạt.
+
+**Còn yếu (đều đã đạt ngưỡng, chưa sửa):** xem cột "Còn yếu" của `docs/maps/diorama/SCORES.md`; nhu cầu art ở `docs/ASSET_TODO.md` mục "Diorama vùng Rừng".

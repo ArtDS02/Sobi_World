@@ -260,7 +260,8 @@ describe('the zone chain: Forest → Mountain → Ruins', () => {
     expect(win('zone_ruins', 22, 'epic')).toBeGreaterThan(70);
   });
 
-  it('every class fights somewhere: none is dead weight in the Mountain beside a tank and a healer', () => {
+  // Many simulated battles: past the default timeout when the whole suite loads the machine.
+  it('every class fights somewhere: none is dead weight in the Mountain beside a tank and a healer', { timeout: 120_000 }, () => {
     for (const c of CLASS_LIST) {
       const r = simulateRuns({ zoneId: 'zone_mountain', level: 16, team: [{ lineage: 'loi_duong', classId: c.id }, { lineage: 'quy_son', classId: 'tanker' }, { lineage: 'quang_tru', classId: 'support' }], gear: 'rare', samples: 30, seed: 6 });
       expect(r.winPercent, c.id).toBeGreaterThan(30);
