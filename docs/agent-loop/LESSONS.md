@@ -80,3 +80,20 @@ Lỗi lộ ra, đã sửa trong skill:
 4. Explore không có công cụ Write; lần này tự ghi qua Bash được, nhưng không bảo đảm. → bảng bước R ghi rõ, kiểm file.
 
 Chưa kiểm bằng lần chạy này: designer (D), reviewer (V), vòng sửa (F), nâng opus, resume §6 — đã kiểm ở forest-diorama (cùng luật, nay viết thành mẫu); lô skill chiến đấu ở bước 3 sẽ là lần chạy đủ bước đầu tiên.
+
+## 7. Lần chạy đủ đầu tiên: `battle-skill-expansion` tới cổng duyệt (2026-11-20)
+
+Đường đi: P → R1 ∥ R2 (song song) → D (opus) → Chỉ đạo kiểm máy → ⏸ cổng duyệt. Sổ `docs/agent-loop/battle-skill-expansion/STATE.md`.
+
+| Bước | Agent · model | Token | Thời gian |
+|---|---|---|---|
+| R1 dữ liệu | Explore · sonnet | 122k | 3,3′ |
+| R2 lore | Explore · sonnet | 130k | 3,6′ |
+| D thiết kế | designer · opus | 124k | 8,7′ |
+
+Hiệu quả: chạy `npm run skill:audit` (công cụ của lần chạy thử) trước, rồi tách research thành 2 mảng độc lập chạy song song. Designer nhận file ngắn thay vì phải tự đọc lore và dữ liệu, nên 1 lần opus đã ra bản 245 dòng có tham chiếu file:dòng. Chỉ đạo kiểm máy (1 lệnh `node -e`) cả 14 bia lore, 5 quái, 2 lối tắt, 7 ô loài, 34 id + 34 tên: tất cả khớp.
+
+Lỗi, đã sửa trong skill:
+1. **Explore ghi file hỏng lần 2**: heredoc lỗi, agent chuyển sang PowerShell và **bỏ hết dấu tiếng Việt** (R1). → Bước R: Explore chỉ trả lời, Chỉ đạo ghi file bằng Write (`briefs.md` mẫu R, SKILL bảng bước).
+2. **Chỉ đạo vẫn đoán giờ** ngay sau khi viết luật 12 (ghi 01:20–01:23, thật 01:16–01:17). → Luật 12: `t=$(date +%H:%M)` trong cùng lệnh ghi STATE.
+3. Thêm luật 13: kiểm tham chiếu của design bằng máy trước cổng duyệt (design nêu nhiều id thật, sai một id là chủ dự án duyệt trên dữ liệu sai).

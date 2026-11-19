@@ -33,7 +33,7 @@ already summarised. Answers to the owner: Vietnamese, AGENT_RULES §7 format. Le
 |---|---|---|---|---|---|---|---|
 | P | Plan | Chỉ đạo | owner request, rules, area docs | STATE: units, order, pilot, threshold, rubric, known reds | units each ≤ 1 coder round of work (~40 min / ~250k) | — | scope / gameplay / save change, new art, unclear goal |
 | B | Baseline | checker · haiku | brief K0 | known-red list in STATE | — | 1 | reds you cannot explain |
-| R | Research | Explore · sonnet (haiku for pure listing); it has no Write tool — writes via Bash, verify the file | brief R | `docs/agent-loop/<task>/research.md` ≤ 60 lines | names real files / ids / scores to reuse | 1 | — |
+| R | Research | Explore · sonnet (haiku for pure listing). It has no Write tool: it **returns** the text and **you** write `research.md` with Write (its own Bash / PowerShell writes lost the Vietnamese diacritics) | brief R | `docs/agent-loop/<task>/research.md` ≤ 60 lines | names real files / ids / scores to reuse | 1 | — |
 | D | Design | designer · **opus** | brief D + research.md | `design.md`: per-unit contract with numbered, **measurable** checks | every check verifiable from a screenshot, a number or a test | 1 (+1 revise) | "Cần chủ dự án quyết" not empty; decision needed before `content/` |
 | C | Code | coder · sonnet | brief C (unit) | code + report file + contract checklist | self-check green; every PHẢI THẤY marked built | — | coder says the design cannot be built |
 | K | Check | checker · haiku | brief K (commands verbatim) | XANH / ĐỎ + new failures only | `npm run check` green vs baseline; capture done if visible | 2 per round | red that is pre-existing but unknown |
@@ -75,6 +75,9 @@ holds the acceptance checks. Owner gate in the plan (G0, G1…) → stop after t
 11. Perf numbers name the GPU: `ANIM_GPU=high` (discrete) / `low` (integrated); the report prints the adapter.
 12. STATE is written **before** each hand-off and **right after** each report — one line per report, with
     the time from `date +%H:%M` (never estimated) and the agent's tokens / minutes from its completion notice.
+    Put `t=$(date +%H:%M)` **in the same command** that writes STATE and use `$t`; never type a time.
+13. **Before an owner gate, verify the design mechanically**: every id / lore key / enemy / slot the design cites
+    exists in `content/`, new ids and names do not collide (one `node -e` script). Send the gate only when clean.
 
 ## 3. Rubrics and thresholds (write the chosen one into design.md)
 

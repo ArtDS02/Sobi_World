@@ -11,8 +11,7 @@ Báo mọi bước đỏ: file:dòng + 1–3 dòng log, và tổng test. Không 
 
 ## R — research (Explore, sonnet; haiku nếu chỉ liệt kê)
 ```
-Tìm cái có sẵn để việc <task> dùng lại, KHÔNG thiết kế. Đọc: <file / thư mục>. Trả lời ≤ 60 dòng vào
-docs/agent-loop/<task>/research.md:
+Tìm cái có sẵn để việc <task> dùng lại, KHÔNG thiết kế. Đọc: <file / thư mục>. KHÔNG ghi file (Chỉ đạo ghi research.md từ câu trả lời). Trả lời ≤ 60 dòng, tiếng Việt có dấu:
 1. Mẫu tốt nhất cùng loại (id, file:dòng, điểm đã duyệt nếu có).
 2. Số liệu / bảng liên quan (đường dẫn, không chép bảng dài).
 3. Ràng buộc từ decision / chuẩn (số decision, mục).
