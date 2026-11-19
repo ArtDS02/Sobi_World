@@ -19,7 +19,8 @@ export class Life {
   private fireflies = 0;
   private daylight = 1;
 
-  constructor(butterfly: Card | null, quality: number) {
+  /** `mix`: which of the optional kinds show (butterflies, blossom petals) and the multiple of the falling leaves (default: all, 1). */
+  constructor(butterfly: Card | null, quality: number, mix: { wings: boolean; petals: boolean; leaves: number } = { wings: true, petals: true, leaves: 1 }) {
     const blob = blobTexture();
     const leaf = leafTexture();
     const add = (kind: Mote['kind'], n: number, make: (i: number) => THREE.SpriteMaterial) => {
@@ -31,12 +32,12 @@ export class Life {
     };
     add('fly', 46, () => new THREE.SpriteMaterial({ map: blob, color: new THREE.Color(2.2, 2.0, 0.75), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
     const leafTones = [0x8fbf45, 0xc9b23a, 0x6e9e34, 0xe08a3a];
-    add('leaf', 44, (i) => new THREE.SpriteMaterial({ map: leaf, color: leafTones[i % leafTones.length], transparent: true, depthWrite: false }));
+    add('leaf', 44 * mix.leaves, (i) => new THREE.SpriteMaterial({ map: leaf, color: leafTones[i % leafTones.length], transparent: true, depthWrite: false }));
     // Petals (and a few close leaves above): they drift near the camera in the gusts, so the wind shows even where the trees stand still.
     const petalTones = [0xffc4dc, 0xffffff, 0xffe2a8];
-    add('petal', 26, (i) => new THREE.SpriteMaterial({ map: leaf, color: petalTones[i % petalTones.length], transparent: true, depthWrite: false }));
+    if (mix.petals) add('petal', 26, (i) => new THREE.SpriteMaterial({ map: leaf, color: petalTones[i % petalTones.length], transparent: true, depthWrite: false }));
     add('mote', 40, () => new THREE.SpriteMaterial({ map: blob, color: new THREE.Color(1.3, 1.2, 0.9), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.5 }));
-    if (butterfly) add('wing', 4, () => new THREE.SpriteMaterial({ map: butterfly.tex, transparent: true, alphaTest: 0.4 }));
+    if (butterfly && mix.wings) add('wing', 4, () => new THREE.SpriteMaterial({ map: butterfly.tex, transparent: true, alphaTest: 0.4 }));
   }
 
   /** How much of each kind shows: fireflies 0–1, daylight 0–1 (motes, butterflies). */

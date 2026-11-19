@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { GLSL_NOISE } from './noise';
 import { DECK_TOP, type Deck } from './decks';
-import { MARGIN, RES, heightAt, weightsAt, type Grid } from './field';
+import { MARGIN, RES, heightAt, mossAt, weightsAt, type Grid } from './field';
 import { paintGround } from './groundPaint';
 import { plankTexture, softRectTexture } from './textures';
 
@@ -26,14 +26,17 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
   geo.translate(g.W / 2 - MARGIN, 0, g.H / 2 - MARGIN);
   const pos = geo.attributes.position as THREE.BufferAttribute;
   const splat = new Float32Array(pos.count * 4);
+  const moss = new Float32Array(pos.count);
   for (let i = 0; i < pos.count; i += 1) {
     const u = pos.getX(i);
     const v = pos.getZ(i);
     pos.setY(i, heightAt(g, u, v));
     const s = weightsAt(g, u, v);
     splat.set(s, i * 4);
+    moss[i] = mossAt(g, u, v);
   }
   geo.setAttribute('aSplat', new THREE.BufferAttribute(splat, 4));
+  geo.setAttribute('aMoss', new THREE.BufferAttribute(moss, 1));
   geo.computeVertexNormals();
   const painted = paintGround(renderer, geo, g, grass, quality);
   const mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
@@ -117,6 +120,7 @@ function chunkGround(geo: THREE.PlaneGeometry, mat: THREE.Material, w: number, h
       part.setAttribute('normal', geo.attributes.normal!);
       part.setAttribute('uv', geo.attributes.uv!);
       part.setAttribute('aSplat', geo.attributes.aSplat!);
+      part.setAttribute('aMoss', geo.attributes.aMoss!);
       part.setIndex(idx);
       const box = new THREE.Box3();
       const p = new THREE.Vector3();

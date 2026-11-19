@@ -11,7 +11,7 @@ uniform sampler2D tGrass;
 ${GLSL_NOISE}
 float edge(float w, float n, float soft){ return smoothstep(.5 - soft, .5 + soft, w + (n - .5) * .34); }
 vec3 srgb(vec3 c){ return pow(c, vec3(2.2)); }
-vec3 flatGround(vec2 wp, vec4 sp){
+vec3 flatGround(vec2 wp, vec4 sp, float mo){
   float n1 = dFbm(wp * 1.7);
   float n2 = dFbm(wp * .23 + 3.1);
   float detail = dot(texture2D(tGrass, wp * .21).rgb, vec3(.33));
@@ -43,7 +43,11 @@ vec3 flatGround(vec2 wp, vec4 sp){
   col = mix(col, bank, smoothstep(.15, .55, sp.z + (n1 - .5) * .5));
   // Flat rock tops are mossy ground.
   vec3 moss = mix(grass * vec3(.86, .92, .8), srgb(vec3(.5, .55, .4)), .35);
-  return mix(col, moss, edge(sp.w, n1, .15));
+  col = mix(col, moss, edge(sp.w, n1, .15));
+  // The moss floor (the c tiles): dark, cool green with a spongy mottle and a few lighter cushions, melting into the grass at its rim.
+  vec3 deepMoss = mix(srgb(vec3(.15, .26, .15)), srgb(vec3(.24, .36, .19)), smoothstep(.35, .75, dFbm(wp * 2.4 + 7.)));
+  deepMoss = mix(deepMoss, srgb(vec3(.31, .44, .22)), step(.8, dHash(floor(wp * 4.))) * .5);
+  return mix(col, deepMoss, smoothstep(.12, .6, mo + (n1 - .5) * .3));
 }`;
 
 /** Pixels per tile of the painted ground. */
@@ -61,11 +65,11 @@ export function paintGround(renderer: THREE.WebGLRenderer, geo: THREE.BufferGeom
   const mat = new THREE.ShaderMaterial({
     uniforms: { tGrass: { value: grass }, uSize: { value: new THREE.Vector2(g.W, g.H) } },
     side: THREE.DoubleSide,
-    vertexShader: `attribute vec4 aSplat; uniform vec2 uSize; varying vec2 vW; varying vec4 vS;
-      void main(){ vW = position.xz; vS = aSplat; gl_Position = vec4(((position.xz + ${MARGIN}.) / uSize) * 2. - 1., 0., 1.); }`,
+    vertexShader: `attribute vec4 aSplat; attribute float aMoss; uniform vec2 uSize; varying vec2 vW; varying vec4 vS; varying float vM;
+      void main(){ vW = position.xz; vS = aSplat; vM = aMoss; gl_Position = vec4(((position.xz + ${MARGIN}.) / uSize) * 2. - 1., 0., 1.); }`,
     fragmentShader: `${FLAT}
-      varying vec2 vW; varying vec4 vS;
-      void main(){ gl_FragColor = vec4(flatGround(vW, vS), 1.); }`,
+      varying vec2 vW; varying vec4 vS; varying float vM;
+      void main(){ gl_FragColor = vec4(flatGround(vW, vS, vM), 1.); }`,
   });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.frustumCulled = false;

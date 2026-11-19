@@ -10,7 +10,11 @@ export interface SceneContract {
   /** Shares of the standing trees: oak, fir, big canopy, blossom (they need not sum to 1). */
   trees: readonly [number, number, number, number];
   /** Offsets from the day / golden / night presets: saturation, warmth (+ warm / - cool), far fog 0–0.6 and its tint. */
-  light: { sat: number; warm: number; fog: number; fogTint: number };
+  light: { sat: number; warm: number; fog: number; fogTint: number; /** Overall brightness, 1 = the preset's (default). */ dim?: number };
+  /** What drifts through the air (default: everything on): butterflies, blossom petals, a multiple of the falling leaves. */
+  life?: { wings: boolean; petals: boolean; leaves: number };
+  /** Lily pads on the calm water (default true). */
+  lilies?: boolean;
   /** Trees and stones made of corruption around a centre (tile), share of the tiles at the centre. */
   corrupt?: { x: number; y: number; r: number; share: number };
   accent: Accent;
@@ -22,6 +26,7 @@ export interface SceneContract {
 
 const TINT_SKY = 0xbcd2e0;
 const TINT_VIOLET = 0x6a5688;
+const TINT_DEEP = 0x8fb4b4;
 const TINT_TEAL = 0x9cc4b8;
 
 export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
@@ -45,10 +50,13 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
       { name: '6 · Under the canopy', x: 52, y: 26 },
     ],
   },
-  // Rừng Sâu: dense pines, sun slanting through the canopy. TODO(M4): sun shafts, moss ground tint.
+  // Rừng Sâu: dense pines, sun slanting through the canopy (sunShafts.ts), the moss floor of the `c` tiles (ground.ts). Darker and
+  // cooler than the other woods, with no butterflies, petals or lily pads: falling needles and leaves, dust in the light.
   map_forest_deep: {
     trees: [0.3, 0.5, 0.2, 0],
-    light: { sat: -0.08, warm: -0.02, fog: 0.3, fogTint: TINT_SKY },
+    light: { sat: -0.12, warm: -0.07, fog: 0.3, fogTint: TINT_DEEP, dim: 0.6 },
+    life: { wings: false, petals: false, leaves: 1.5 },
+    lilies: false,
     accent: 'sunShafts',
     spots: [
       { name: '1 · Start', x: 2, y: 21 },
@@ -57,7 +65,7 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
       { name: '4 · Wide bridge', x: 25, y: 20 },
       { name: '5 · Middle lake', x: 34, y: 16 },
       { name: '6 · Moss floor', x: 44, y: 25 },
-      { name: '7 · East exit', x: 55, y: 27 },
+      { name: '7 · Boulder gate', x: 7, y: 27 },
     ],
   },
   // Lõi Rừng: the corrupted heart. TODO(M4): ink crawling round the dead oak, grey ground gradient.

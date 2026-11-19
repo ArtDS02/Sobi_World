@@ -19,10 +19,11 @@ import { dressThings, type Things } from './dressThings';
 import { disposeTree } from './disposeTree';
 import { gpuNameOf } from './gpuProbe';
 import { dressTrees } from './dressTrees';
-import { gridOf, type Grid } from './field';
+import { gridOf, heightAt, type Grid } from './field';
 import type { Foes } from './foes';
 import { buildBridges, buildGround, type GroundUniforms } from './ground';
 import { Life } from './life';
+import { SunShafts, shaftSpots, disposeShaftTexture } from './sunShafts';
 import { FollowCam } from './followCam';
 import { Look, PRESETS, type TimeOfDay } from './look';
 import { Party, type PartyPose } from './party';
@@ -75,6 +76,7 @@ export class DioramaView {
   private life: Life | null = null;
   private bursts: Bursts | null = null;
   private birds: Birds | null = null;
+  private shafts: SunShafts | null = null;
   private tile = 40;
   private w = 1;
   private h = 1;
@@ -150,7 +152,7 @@ export class DioramaView {
     const blob = blobTexture();
     const decks = decksOf(g);
     const root = new THREE.Group();
-    root.add(buildGround(this.renderer, g, grass, this.opts.quality, this.groundU), buildCliffs(g, { strip: cliff, endL, endR }), ...(stone ? [buildStairs(g.stairs, stone)] : []), buildBridges(decks), buildWater(g, this.waterU), buildLilies(g));
+    root.add(buildGround(this.renderer, g, grass, this.opts.quality, this.groundU), buildCliffs(g, { strip: cliff, endL, endR }), ...(stone ? [buildStairs(g.stairs, stone)] : []), buildBridges(decks), buildWater(g, this.waterU), ...(contract.lilies === false ? [] : [buildLilies(g)]));
     root.add(await dressTrees(this.art, blockerPlan(map, opened, closed, g), map, g, this.cardU, contract, this.opts.quality === 'light'));
     const things = await dressThings(this.art, map, g, this.cardU, quality, blob, s);
     root.add(things.group);
@@ -161,16 +163,18 @@ export class DioramaView {
       s.followers.map((f) => f.art),
     );
     root.add(party.group);
-    const life = new Life(butterfly, particles);
+    const life = new Life(butterfly, particles, contract.life);
     const bursts = new Bursts(blob);
     const birds = new Birds(blob);
     root.add(life.group, bursts.group, birds.group);
+    const shafts = contract.accent === 'sunShafts' ? new SunShafts(shaftSpots(g), blob, (x, z) => heightAt(g, x, z), quality < 1 ? 3 : 6) : null;
+    if (shafts) root.add(shafts.group);
     if (gen !== this.gen) return disposeTree(root);
     this.g = g;
     this.decks = decks;
     this.contract = contract;
     this.tile = map.tile;
-    [this.root, this.things, this.party, this.life, this.bursts, this.birds] = [root, things, party, life, bursts, birds];
+    [this.root, this.things, this.party, this.life, this.bursts, this.birds, this.shafts] = [root, things, party, life, bursts, birds, shafts];
     this.scene.add(root);
     this.setOpts(this.opts);
     this.ready = true;
@@ -184,7 +188,7 @@ export class DioramaView {
       this.scene.remove(this.root);
       disposeTree(this.root);
     }
-    [this.root, this.g, this.things, this.party, this.life, this.bursts, this.birds, this.prev] = [null, null, null, null, null, null, null, null];
+    [this.root, this.g, this.things, this.party, this.life, this.bursts, this.birds, this.shafts, this.prev] = [null, null, null, null, null, null, null, null, null];
   }
 
   setOpts(o: ViewOpts) {
@@ -199,6 +203,7 @@ export class DioramaView {
     this.cardU.uWind.value = o.wind ? 1 : 0;
     this.life?.setMood(p.fireflies, o.time === 'day' ? 1 : o.time === 'golden' ? 0.6 : 0);
     this.birds?.setSky(p.sunDir, o.time === 'night' ? 0 : 1);
+    this.shafts?.setSun(o.time === 'night' ? 0 : o.time === 'golden' ? 0.5 : 1, o.time === 'golden' ? 0xffa860 : 0xffd98a, o.time === 'golden');
   }
 
   /** Height of the ground under a point of the area (game px), a deck counting as ground. */
@@ -226,12 +231,8 @@ export class DioramaView {
     return gpuNameOf(this.renderer);
   }
 
-  hide() {
-    this.visible = false;
-  }
-  show() {
-    this.visible = true;
-  }
+  hide = () => void (this.visible = false);
+  show = () => void (this.visible = true);
 
   private ground = (x: number, z: number) => (this.g ? standAt(this.g, this.decks, x, z) : 0);
 
@@ -268,6 +269,7 @@ export class DioramaView {
     this.life!.update(t, this.cam.target, this.opts.wind ? 1 : 0.2, this.ground);
     this.burstDriver.update(this.bursts!, this.g, this.decks, this.things!.foes, this.cam.target, at, t, dt, lead.moving);
     this.birds!.update(t, this.cam.target, this.ground);
+    this.shafts?.update(t, this.cam.target, at);
     this.look.follow(this.cam.target, at);
     this.renderer.info.reset();
     this.look.composer.render();
@@ -286,6 +288,7 @@ export class DioramaView {
 
   dispose() {
     this.leave();
+    disposeShaftTexture();
     this.look.composer.dispose();
     this.renderer.dispose();
     this.renderer.domElement.remove();

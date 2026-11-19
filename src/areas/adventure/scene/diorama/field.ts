@@ -150,13 +150,13 @@ function fields(g: Grid): Fields {
       water[o] = k === K.water ? 1 : k === K.bridge ? 0.7 : 0;
       rock[o] = k === K.rock ? 1 : 0;
       path[o] = ks === K.path ? 1 : ks === K.bridge ? 0.3 : 0;
-      moss[o] = ks === K.moss ? 0.3 : 0;
+      moss[o] = ks === K.moss ? 1 : 0;
       hgt[o] = g.height[t]!;
     }
   const strict = [forest, water, rock].map((c) => blur(c, w, h, RES * 0.3));
   const soft = [path, moss].map((c) => blur(c, w, h, RES * 0.55));
   // Moss floor (walkable) shades like a faint wood but never counts as blocked: its share stays under 0.5.
-  const mossShare = soft[1]!.map((v, o) => Math.max(v, strict[0]![o]!));
+  const mossShare = soft[1]!.map((v, o) => Math.max(v * 0.3, strict[0]![o]!));
   const height = blur(hgt, w, h, RES * 0.3);
   // Under a flight of steps the ground lies just below the treads, so the blur of the high ground beside it never rises over them.
   for (const s of g.stairs)
@@ -172,7 +172,7 @@ function fields(g: Grid): Fields {
   const f: Fields = {
     w,
     h,
-    ch: [soft[0]!, mossShare, strict[1]!, strict[2]!],
+    ch: [soft[0]!, mossShare, strict[1]!, strict[2]!, soft[1]!],
     height,
   };
   FIELDS.set(g, f);
@@ -201,6 +201,12 @@ export function heightAt(g: Grid, u: number, v: number): number {
 export function weightsAt(g: Grid, u: number, v: number): [number, number, number, number] {
   const f = fields(g);
   return [sample(f, f.ch[0]!, u, v), sample(f, f.ch[1]!, u, v), sample(f, f.ch[2]!, u, v), sample(f, f.ch[3]!, u, v)];
+}
+
+/** Share of the dark moss floor (the `c` tiles) at (u, v), 0–1. */
+export function mossAt(g: Grid, u: number, v: number): number {
+  const f = fields(g);
+  return sample(f, f.ch[4]!, u, v);
 }
 
 /** Kind of the tile at area tile (x, y) (forest outside). */
