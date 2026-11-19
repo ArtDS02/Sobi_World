@@ -68,11 +68,12 @@ Khuôn — ghi trong `docs/agent-loop/<task>/design.md` hoặc `docs/maps/dioram
 
 | Máy | Mức | Yêu cầu |
 |---|---|---|
-| RTX 3050 | Đẹp | 60 FPS (giới hạn vsync) ở mọi điểm duyệt × 3 giờ; khung chậm nhất ≤ 25 ms |
-| Không GPU (SwiftShader) | Nhẹ | ≥ 30 FPS trung bình ở mọi điểm duyệt |
+| GPU rời (RTX 3050 trở lên; máy đo thật là RTX 2060, `ANIM_GPU=high`) | Đẹp | 60 FPS (giới hạn vsync) ở mọi điểm duyệt × 3 giờ; khung chậm nhất ≤ 25 ms |
+| Không GPU rời = GPU tích hợp (Intel / AMD, `ANIM_GPU=low`) | Nhẹ | ≥ 30 FPS trung bình ở mọi điểm duyệt |
+| GPU phần mềm (SwiftShader, llvmpipe) | — | không chạy diorama: tự lùi 2D cổ điển (đo 2–4 FPS ở Nhẹ, 2026-11-19); kiểm bằng test `quality.ts` |
 | Mọi máy | — | dựng map ≤ 1,5 s (RTX) / ≤ 4 s (không GPU); đổi map 6 lần không tăng bộ nhớ GPU (`renderer.info.memory`) quá 5 % |
 
-**Tự lùi**: chuỗi renderer WebGL chứa `SwiftShader|llvmpipe|Software|Basic Render` ⇒ Nhẹ ngay. Ở Đẹp, đo 3 s sau 2 s khởi động: < 45 FPS ⇒ Nhẹ. Ở Nhẹ < 24 FPS trong 5 s, mất WebGL context, hoặc dựng quá 6 s ⇒ 2D cổ điển trong phiên. Kết quả dò chỉ giữ trong bộ nhớ.
+**Tự lùi**: chuỗi renderer WebGL chứa `SwiftShader|llvmpipe|Software|Basic Render` ⇒ 2D cổ điển ngay. Ở Đẹp, đo 3 s sau 2 s khởi động: < 45 FPS ⇒ Nhẹ. Ở Nhẹ < 24 FPS trong 5 s, mất WebGL context, hoặc dựng quá 6 s ⇒ 2D cổ điển trong phiên. Kết quả dò chỉ giữ trong bộ nhớ.
 
 # 8. THƯỚC CHẤM (5 TIÊU CHÍ × 0–2 = 10, bước 0,5)
 
