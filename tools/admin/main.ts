@@ -1,6 +1,6 @@
 // Sobi World admin dashboard entry (admin.html, `npm run admin`; decisions A7-1, AD-1, 036). Hash routes:
 // #/ overview · #/users[/<id>] · #/content[/<file>] · #/pigs[?filters] · #/pigs/<ID> | #/pigs/new[?art=pig_x] · #/validation
-// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/combat-db[/<tab>] · #/battle-lab · #/rig-lab · #/plant-lab · #/plot-lab · #/area-layout · #/assets · #/library · #/desktop · #/guide[/<section>]
+// #/breeding · #/products · #/layout · #/seasons · #/daynight · #/adventure · #/adventure-world · #/adventure-network · #/adventure-editor/<mapId> · #/adventure-assets · #/adventure-maps[/<mapId>] · #/diorama-lab · #/combat-db[/<tab>] · #/battle-lab · #/rig-lab · #/plant-lab · #/plot-lab · #/area-layout · #/assets · #/library · #/desktop · #/guide[/<section>]
 import { renderAssets } from './assets';
 import { renderBalance } from './balance';
 import { preloadChecks, problemCount, renderChecks } from './checks';
@@ -12,6 +12,7 @@ import { renderMapNetwork } from './mapNetworkPage';
 import { editorDirty, renderMapEditor } from './mapEditor';
 import { renderMapAssets } from './mapAssetsPage';
 import { renderBattleLab } from './battleLab';
+import { renderDioramaLab } from './diorama/dioramaLab';
 import { renderCombatDb } from './combatDb';
 import { renderPlantLab } from './plantLab';
 import { renderPlotLab } from './plotLab';
@@ -61,6 +62,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
     ['adventure-editor', '✏️', 'Map Editor', 'map-editor'],
     ['adventure-assets', '🌲', 'Asset bản đồ', 'map-assets'],
     ['adventure-maps', '🗺️', 'Bản đồ khu', 'adventure-maps'],
+    ['diorama-lab', '🏞️', 'Diorama map (G0)', 'adventure-maps'],
   ]],
   // Plan 8.3: each Area has its own group; its pages are the content files that belong to it (shortcuts into "Nội dung game").
   ['Sobi Garden', [['content/garden%2Fcrops.json', '🌱', 'Cây trồng', 'content'], ['content/garden%2Fhybrids.json', '🧪', 'Công thức lai', 'content'], ['content/garden%2Fbalance.json', '⚙️', 'Cân bằng Garden', 'content'], ['content/garden%2Farea.json', '🚪', 'Mở khu Garden', 'content']]],
@@ -72,7 +74,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
 ];
 const ALL = NAV.flatMap(([, items]) => items);
 /** The world / adventure / animation pages share one design (worldUi.css, `.wpage`). The Map Editor is a full-screen tool with its own dark theme. */
-const WORLD_PAGES = new Set(['daynight', 'combat-db', 'adventure', 'adventure-world', 'adventure-network', 'adventure-assets', 'adventure-maps', 'battle-lab', 'rig-lab', 'plant-lab', 'plot-lab']);
+const WORLD_PAGES = new Set(['daynight', 'combat-db', 'adventure', 'adventure-world', 'adventure-network', 'adventure-assets', 'adventure-maps', 'diorama-lab', 'battle-lab', 'rig-lab', 'plant-lab', 'plot-lab']);
 /** Pages that edit the species draft: the header save belongs to them. */
 const SPECIES_PAGES = new Set(['pigs', 'validation']);
 /** `#/<page>?key=value` links (overview cards) preset that page's list filters. */
@@ -248,6 +250,7 @@ function render() {
     'adventure-maps': () => renderAdventureMaps(content, id),
     'combat-db': () => renderCombatDb(content, id),
     'battle-lab': () => renderBattleLab(content),
+    'diorama-lab': () => renderDioramaLab(content),
     'rig-lab': () => renderRigLab(content),
     'plant-lab': () => renderPlantLab(content),
     'plot-lab': () => renderPlotLab(content),

@@ -1,6 +1,6 @@
 # Làm lại giao diện map Sobi Adventure — học từ bộ VFX skill
 
-Ngày: 2026-11-18 · Trạng thái: **nghiên cứu + đề xuất, chưa code**, chờ chủ dự án chọn hướng. Cập nhật cùng ngày: 12 góp ý chơi thử (mục 5–8), trả lời của chủ dự án + tháp dịch chuyển (mục 9), hướng làm lại từ đầu "Diorama 2.5D" (mục 10), phương án theo tiền đề agent làm hết (mục 11).
+Ngày: 2026-11-18 · Trạng thái: **nghiên cứu + đề xuất, chưa code**, chờ chủ dự án chọn hướng. Cập nhật cùng ngày: 12 góp ý chơi thử (mục 5–8), trả lời của chủ dự án + tháp dịch chuyển (mục 9), hướng làm lại từ đầu "Diorama 2.5D" (mục 10), phương án theo tiền đề agent làm hết (mục 11), kết quả prototype G0 (mục 12) lượt sửa sau góp ý (mục 13) lượt 3 (mục 14) và sửa che khuất trong rừng (mục 15).
 Đầu vào: chụp map trong game (sandbox Adventure, 1600 × 900, Rừng Thì Thầm), tờ ghép 18 nền `public/assets/environment/adventure_v3/`, code `src/areas/adventure/scene/map*.ts`, `docs/SKILL_ANIMATION_STANDARD.md`, decision 045 / 046 / 059.
 
 ---
@@ -418,3 +418,133 @@ Giữa các cổng agent tự chạy, không hỏi thêm, trừ khi đụng game
 ### 11.5. Bước tiếp theo đề xuất
 
 **G0 — prototype diorama một đoạn Bìa Rừng**, chỉ trong dev / sandbox, không đụng `content/` hay save. Dùng kit Rừng hiện có làm tranh đứng, texture sinh bằng code, sprite đội + 2–3 quái hiện tại làm tranh đứng. Cần chủ dự án: **không cần render ảnh nào** ở bước này.
+
+---
+
+## 12. Kết quả G0 — prototype diorama trên Bìa Rừng (2026-11-18)
+
+**Ở đâu:** Admin → Phiêu lưu → **🏞️ Diorama map (G0)** (`#/diorama-lab`). Đi bằng W A S D / phím mũi tên. Có nút chọn ngày / chiều / đêm, mức Đẹp / Nhẹ, bật tắt gió, và 4 điểm duyệt. Chỉ có trong Admin: game, `content/` và save không đổi.
+
+**Bằng chứng:**
+- So cạnh map hiện tại ở 4 điểm: `docs/maps/diorama/g0_compare_day.jpg`. Cột trái là nền vẽ v3 cắt đúng khung game (40 ô, chưa có sprite); cột phải là diorama (khung 30 ô).
+- Ngày / chiều / đêm: `docs/maps/diorama/g0_times.jpg`.
+- Ảnh gốc 1600 × 900 (12 ảnh) + ảnh động đi bộ 22 giây: `art_inbox/diorama_shots/g0/` (`g0_walk.webp`).
+- Chụp lại: `npx tsx scripts/maps/dioramaShots.ts --base <admin> --out <thư mục> --gpu` và `scripts/maps/dioramaWalk.ts`.
+
+**Đã dựng (đều từ dữ liệu hiện có, không vẽ ảnh mới):**
+
+| Phần | Cách làm |
+|---|---|
+| Địa hình | Lưới `maps.json` → trường mịn: lấy mẫu ô, uốn nhiễu, làm mờ Gauss, nên mép cong tự nhiên, không còn bậc thang. Có độ cao (`elevation`); cao nguyên được bao vách đá, bậc thang là dốc |
+| Mặt đất | Một shader trộn cỏ (3 tông theo mảng + nét cọ + hoa nhỏ), đường đất (2 tông + sỏi), nền rừng, bờ, đá; mặt vách có vân lớp và mép cỏ; bóng mây trôi |
+| Vách cao nguyên | Dải vách của kit dựng đứng dọc mọi chỗ đất tụt |
+| Nước | Khoảng cách tới bờ có dấu + tỉ lệ nước mịn: màu nông → sâu, gợn chảy, bọt mép thở, tia lấp lánh, lá sen + hoa |
+| Cầu | Một sàn ván thẳng có lan can cho mỗi cụm ô cầu |
+| Cây, bụi, đá | Kit Rừng (sồi, thông, tán lớn, hoa anh đào, bụi, đá, gốc): tranh đứng, **bóng thật**, **gió lay ngọn**, **mờ dần khi che đội**; bóng vẽ sẵn trong ảnh được tự xóa |
+| Đội, quái, rương | Sprite hiện có làm tranh đứng; quái thở, cỡ theo loại; rương to hơn, có tia sáng |
+| Ánh sáng & hậu kỳ | Mặt trời có bóng mềm theo camera; ngày / chiều (bóng dài) / đêm (trăng xanh + đèn ấm quanh đội); bloom có ngưỡng, mờ trên dưới kiểu sa bàn, chỉnh màu, vignette |
+| Sự sống | Đom đóm (chiều, đêm), lá rơi xoay, bụi nắng, bướm vỗ cánh |
+| Đi lại | Đúng luật va chạm của game (`walkableOf`, `stepCharacter`), camera bám mềm, không lộ mép thế giới (rừng nối dài bằng code) |
+
+**Hiệu năng** (đo bằng `dioramaShots.ts`):
+
+| Máy | Mức Đẹp | Mức Nhẹ |
+|---|---|---|
+| RTX 3050 | 60 FPS mọi điểm (giới hạn vsync) | 60 FPS |
+| Không GPU (SwiftShader, CPU) | — | 32–48 FPS |
+
+**Tự chấm** (thước 10 điểm, mục 2.5), **7,5 / 10**:
+
+| # | Tiêu chí | Điểm | Ghi chú |
+|---|---|---|---|
+| 1 | Đủ những gì G0 hứa | 1,5 | thiếu mưa, tha hóa |
+| 2 | Đọc được lối đi | 1,5 | lối rõ, mép mịn; va chạm vẫn theo ô nên lệch mép vẽ tối đa ~0,5 ô |
+| 3 | Sống | 1,5 | gió, nước, đom đóm, lá, bướm, thở, bóng mây; ảnh tĩnh không thể hiện hết, xem ảnh động |
+| 4 | Chất liệu & màu | 1,0 | nước, cây, ánh sáng tốt; mặt đất còn ít chi tiết hơn tranh v3 |
+| 5 | Hiệu năng & an toàn | 2,0 | 60 FPS; mức Nhẹ chạy được cả không GPU; không chớp |
+
+**Nói thẳng điều so cạnh cho thấy:**
+- **Diorama hơn** ở: chiều sâu (cây che đội thật, bóng thật), ánh sáng theo giờ, chuyển động, mép map không lộ, và chỗ trông đi được thì gần như đúng là đi được.
+- **Tranh v3 còn hơn** ở: độ chi tiết mặt đất (hoa, cỏ vẽ tay, bờ có nét) và cảnh cao nguyên có bậc đá đẹp (điểm 4).
+- Lý do: bố cục v3 được vẽ cho một tấm tranh phẳng. Cao nguyên thấp, cầu bị biến thành sàn rộng, đất trống nhiều. **Bố cục mới thiết kế cho diorama** (mục 10.5) cộng **vài lô tranh đứng chi tiết** (đá bậc, hoa, cỏ cao, bờ đá) sẽ lấp phần này. Đó là việc của bước 1–3, không phải giới hạn của nền tảng.
+
+**Giới hạn đã biết của G0:**
+- Va chạm vẫn theo ô. Bước renderer thật sẽ dùng chính đường mép mịn.
+- Chưa có tương tác (đánh, mở rương), tha hóa, mưa, tháp.
+- Mép mặt đất ở xa còn nhìn hơi phẳng.
+
+**Lỗi asset phát hiện khi làm** (ngoài phạm vi, chưa sửa): `public/assets/props/chr_so_down_idle.png` là **nguyên một sheet 6 hình nền trắng** (843 × 1264), từ commit `99e2f228`. Mọi khung khác là 96 × 144. Trong game, So đứng quay mặt xuống sẽ hiện sai. Prototype tạm dùng khung `down_walk1` thay.
+
+**Cổng G0 — chủ dự án quyết:** đi tiếp hướng diorama (bước 1: decision + chuẩn, rồi thiết kế lại vùng Rừng), hay quay về hướng A?
+
+---
+
+## 13. G0 lượt 2 — sửa theo 7 góp ý của chủ dự án (2026-11-18)
+
+Bằng chứng: `docs/maps/diorama/g0b_before_after.jpg` (lượt 1 ↔ lượt 2 ở 4 điểm), `docs/maps/diorama/g0b_times.jpg`, ảnh gốc + ảnh động đi bộ qua cầu `art_inbox/diorama_shots/g0b/` (`g0b_walk.webp`).
+
+| # | Góp ý | Nguyên nhân | Đã sửa |
+|---|---|---|---|
+| 1 | Cây như tờ giấy | Tranh dựng thẳng đứng bị góc nhìn từ trên ép còn ~62 % chiều cao; ánh sáng phẳng; bóng đổ từ một tấm phẳng thành vệt mỏng | Mọi tranh **nghiêng 26° về camera** (giữ ~93 % chiều cao); **normal map "gối phồng"** sinh từ hình tán, nên có mặt sáng và mặt tối như một khối; **bóng đổ từ khối tròn ẩn** (tán + thân), không từ tấm phẳng |
+| 2 | Đi qua cầu bị lọt xuống | Chân đội lấy độ cao mặt đất (lòng sông −0,45) | Có mặt sàn riêng (`decksOf`, `standAt`): trên cầu, chân đứng ở mặt ván. Ảnh động đã đi qua cầu |
+| 3 | Gốc cây lộ vòng tròn | Kit vẽ sẵn bóng là ellipse xám **đặc** (alpha 255), quy tắc cũ chỉ bắt điểm trong suốt | Quy tắc mới: phần dưới tranh, điểm xám không màu thì xóa. Đã thử trên 8 tranh kit, sạch |
+| 4 | Chỗ trống vẫn bị chặn | Va chạm theo lưới ô của tranh v3; hình vẽ đã cong và mờ mép nên lệch tới 1 ô; ô `#` lẻ không có cây | **Va chạm sinh từ chính trường đã vẽ** (`walk.ts`, ô 0,25): rừng / nước / đá vượt 0,5 thì chặn, **cây trồng đúng trên ngưỡng đó**. Vật (rương, đá truyền thuyết…) và đạo cụ giữ ô chân |
+| 5 | Vào tán rừng không thấy gì | Nhiều tán chồng nhau, mỗi cây chỉ mờ còn 32 % | **Vòng nhìn xuyên quanh đội**: mọi tranh đứng trước đội (gần camera hơn) bị khoét một vòng tròn theo màn hình, mép mềm, xuyên mọi lớp |
+| 6 | Quái là ảnh dựng đứng, trông giả | Ảnh tĩnh, bị ép bởi góc nhìn | Nghiêng về camera (đúng tỉ lệ), **thở co giãn**, **nhảy nhẹ** theo nhịp riêng, **quay mặt về phía đội** khi lại gần (lật kiểu giấy cắt, qua mép mỏng), nghiêng người khi đội ở gần, bóng tiếp đất; quái đứng nước tạo **gợn tròn**. Rương sáng và nảy khi lại gần |
+| 7 | Cần sinh động hơn | — | **Gió giật** chạy thành sóng qua cả rừng và cỏ; **cỏ và bụi rẽ ra** khi đội đi qua; **bụi đất** dưới chân khi đi; **gợn nước** (cá nhảy quanh tầm nhìn, chân đội lội mép nước) |
+
+**Hiệu năng sau lượt 2:**
+- RTX 3050: 60 FPS ở mọi điểm, mọi giờ.
+- Không GPU (mức Nhẹ): 34–49 FPS.
+
+**Nói thẳng về góp ý 1 và 6:** cây và quái vẫn là tranh 2D, chỉ được làm cho có khối, có sáng tối và có chuyển động. Khi đi vòng quanh một vật, góc nhìn của nó không đổi (camera cố định hướng), nên nhìn kỹ vẫn biết là tranh. Hai bước tiếp theo nếu cần hơn nữa:
+- **Cây nhiều lớp:** tách tán thành 2–3 lớp ở độ sâu khác nhau, có thị sai khi camera trôi. Không cần ảnh mới, agent làm được.
+- **Thử 1 quái 3D bằng image-to-3D:** chủ dự án đã đồng ý cho chuyển sinh vật sang 3D (mục 11). Cần chủ dự án đưa 1 tranh đã duyệt lên một dịch vụ có giấy phép thương mại. Agent đặt kết quả vào diorama cạnh bản tranh để so. Rủi ro đã ghi ở mục 11.1: rig và animation cho sinh vật không phải người.
+
+**Giới hạn đã biết:**
+- Ảnh chụp tĩnh dùng nút nhảy điểm, nên đồng đội đứng dồn sát chân trưởng nhóm; khi đi họ tự giãn hàng (xem ảnh động).
+- Khu ẩn dưới tán (lớp che của game) trong diorama là đất trống, vì tán chỉ trồng trên ô rừng. Bố cục mới sẽ thiết kế lại.
+
+---
+
+## 14. G0 lượt 3 (2026-11-18)
+
+Bằng chứng:
+- So lượt 2 ↔ lượt 3 ở 4 điểm: `docs/maps/diorama/g0c_before_after.jpg`.
+- Cận cảnh: `docs/maps/diorama/g0c_closeup.jpg`.
+- Ảnh gốc + ảnh động đi bộ: `art_inbox/diorama_shots/g0c/` (`g0c_walk.webp`).
+
+| Việc | Cách làm (agent tự làm, không ảnh mới) |
+|---|---|
+| Cây nhiều lớp | Mỗi cây 3 lớp, dời dọc hướng nhìn nên vẫn khớp nhau trên màn hình: mặt tán phía sau (chính tranh, tối hơn), cây, và **lớp chùm lá sáng phía trước** cắt từ phần sáng bên trong tán (`extraArt.ts` `leafLayer`). Mỗi lớp lắc một nhịp khác, nên khi có gió tán cây chuyển động thành từng lớp lá |
+| Viền cỏ dọc đường | Hàng cỏ dày ở mọi mép đường đất, như nét viền trong tranh v3 |
+| Sậy bờ nước | Cụm sậy (lá + bông nâu) theo từng đoạn bờ, có lắc gió và rẽ ra khi đội đi qua |
+| Chim bay | Đàn chim chữ V bay ngang trời mỗi ~17 giây (ngày, chiều), **bóng chim lướt trên mặt đất** theo hướng nắng (`birds.ts`) |
+| Camera nhìn trước | Camera dời nhẹ về phía đội đang đi (trái / phải 2,6, lên / xuống 1,6 ô), mềm trong 0,7 giây |
+| Vòng nhìn xuyên | Dither mịn (không còn lưới chấm 4 × 4), giữa vòng trong hẳn |
+| Đồng đội khi vào map | Xếp hàng về phía trống nhất, không dồn vào chân trưởng nhóm |
+| Không đặt cỏ / sậy trên mặt cầu | — |
+
+- Đã thử sỏi trên đường, nhưng trông như hạt bẩn nên bỏ.
+- 60 FPS ở mọi điểm, mọi giờ (RTX 3050).
+- **Còn lại:** cây và quái vẫn là tranh 2D (xem mục 13). Cầu vẫn là sàn rộng theo khung ô cầu của bố cục v3. Vách cao nguyên vẫn thấp. Hai việc này sẽ giải ở bước thiết kế lại bố cục.
+
+---
+
+## 15. Sửa che khuất trong rừng rậm (2026-11-18)
+
+**Góp ý:** vào nhiều khu rừng rậm vẫn bị thân cây che, cây che mất người.
+
+**Nguyên nhân:** vòng nhìn xuyên đang so **độ sâu từng điểm ảnh** với đội (phải gần camera hơn 0,35). Cây mọc sát mép chỗ đứng (gốc gần cùng hàng với đội) chỉ gần hơn rất ít, nên không bị khoét, và thân cây của nó che đội.
+
+**Đã sửa:**
+- **Khoét theo gốc cây:** mọi tranh đứng có gốc ngang hàng hoặc ở trước đội (z gốc > z đội − 0,2) đều bị khoét vòng tròn quanh đội trên màn hình, xuyên mọi lớp. Hai lớp phụ của cây (tán sau, lá trước) dùng gốc thật của cây, nên cả 3 lớp bị khoét như nhau.
+- Vòng to hơn (20 % chiều cao khung), giữa vòng trong hẳn.
+- **Bóng viền nhân vật:** đội và đồng đội có thêm một bản vẽ màu ấm, mờ 50 %, **chỉ hiện ở chỗ có vật gần hơn che** (depth test "greater"). Kể cả khi vòng khoét chưa đủ, người chơi vẫn thấy dáng đội.
+
+**Kiểm tra tự động:**
+- `scripts/maps/denseSpots.ts` tìm 8 chỗ đứng được mà rừng dày nhất ở phía trước trong Bìa Rừng.
+- `dioramaShots.ts --spots` chụp cả 8 chỗ: đội đều thấy rõ (`docs/maps/diorama/g0d_dense_spots.jpg`).
+- Ảnh động đi trong rừng rậm (`dioramaWalk.ts --from 48,24`): `art_inbox/diorama_shots/g0d/g0d_forest_walk.webp`.
+- 60 FPS ở cả 8 chỗ.
+

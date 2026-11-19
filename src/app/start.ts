@@ -127,7 +127,7 @@ export async function start(root: HTMLElement) {
   };
   let app: MountedApp | null = null;
   // The dock leads into an Area only once the plaza is drawn (before that the game is still loading its art).
-  let plazaUp = false;
+  let plazaUp = false; let launched = false; // launched: store.init() done, a later catch-up is the window returning
   // The sky of the day over the world, and the chips that open its panels (GĐ12).
   let place: string = PLAZA_ID;
   const sky = createSkyLayer({ save: () => world.getSnapshot().save, now: () => clock.now(), open: (panel) => app?.openPanel(panel) });
@@ -280,7 +280,7 @@ export async function start(root: HTMLElement) {
     effects: () => farmView?.effects() ?? noEffects,
     audio,
     toast: mounted.toast,
-    away: mounted.showAway,
+    away: (events, awayMs) => launched && mounted.showAway(events, awayMs), // silent on launch; shown when the window returns
     shake: () => settings.getSnapshot().settings.screenShake, areaVfx: (vfx, still) => vfxScenes.forEach((s) => s.playVfx(vfx, still)),
     other: (event, origin) => {
       if (event.type === 'AREA_UNLOCKED' && origin !== 'catchup') {
@@ -295,5 +295,5 @@ export async function start(root: HTMLElement) {
   root.addEventListener('click', (e) => {
     if (e.target instanceof Element && e.target.closest('button:not(:disabled)')) director?.uiClick();
   });
-  await store.init();
+  launched = (await store.init(), true);
 }

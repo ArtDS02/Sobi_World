@@ -13,6 +13,17 @@
 
 ## Nhật ký
 
+### 2026-11-18 — Map Adventure: nghiên cứu làm lại + prototype G0 "Diorama 2.5D" (Admin, chưa vào game)
+✅ Đã làm: nghiên cứu + đề xuất ở `docs/research/ADVENTURE_MAP_VFX_LESSONS.md` (chẩn đoán 12 góp ý chơi thử có nguyên nhân trong code, các câu chủ dự án đã trả lời: tháp dịch chuyển mỗi vùng 1 tháp, đi tới là kích hoạt, bỏ 18 cổng và "Đi nhanh", thua về chỗ đứng trước trận, giữ quái đứng yên, chọn mọi ý vòng khám phá, làm lại bố cục 18 map; khuyến nghị giữ sinh vật 2D làm tranh đứng). Prototype G0: trang Admin `#/diorama-lab` (`tools/admin/diorama/`) dựng Bìa Rừng bằng Three.js từ chính lưới `maps.json` + kit Rừng có sẵn; công cụ chụp `scripts/maps/dioramaShots.ts`, `dioramaWalk.ts`.
+📁 File: `tools/admin/diorama/*`, `tools/admin/main.ts` (route), `tools/admin/README.md`, `scripts/maps/*`, `docs/maps/diorama/g0_*.jpg`, `docs/research/ADVENTURE_MAP_VFX_LESSONS.md` §12.
+🧪 Đã kiểm tra: typecheck, lint xanh; 60 FPS RTX 3050 (Đẹp / Nhẹ), 32–48 FPS không GPU (Nhẹ); 12 ảnh 1600 × 900 + ảnh động đi bộ; tự chấm 7,5 / 10. `npm run check`: guard đỏ ở `src/areas/adventure/scene/AdventureScene.ts` (311 dòng, có từ commit b15376af, không do phiên này); test đỏ: `assets`, `decor` (đỏ đã biết) và `phase11` balance guard (không đụng `src/`).
+⚠️ Phát hiện: `public/assets/props/chr_so_down_idle.png` là nguyên sheet 6 hình nền trắng (commit 99e2f228) — So đứng quay xuống hiện sai trong game; chưa sửa.
+👉 Chủ dự án: xem `docs/maps/diorama/g0_compare_day.jpg`, `g0_times.jpg`, `art_inbox/diorama_shots/g0/g0_walk.webp`, hoặc tự đi trong Admin → quyết cổng G0 (đi tiếp diorama hay quay về hướng A).
+➡️ Bước tiếp theo (nếu đi tiếp): decision mới + `docs/maps/MAP_SCENE_STANDARD.md`, thiết kế lại bố cục vùng Rừng cho diorama.
+**Lượt 2 (cùng ngày, sau 7 góp ý chủ dự án):** tranh đứng nghiêng về camera + normal map "gối phồng" + bóng từ khối tròn ẩn; đứng trên mặt cầu; xóa bóng ellipse vẽ sẵn ở gốc cây; va chạm sinh từ trường đã vẽ (`walk.ts`), cây trồng đúng ngưỡng chặn; vòng nhìn xuyên tán quanh đội; quái thở / nhảy / quay mặt về đội; gió giật, cỏ rẽ khi đi, bụi chân, gợn nước. 60 FPS RTX 3050, 34–49 FPS không GPU (Nhẹ). Chi tiết `docs/research/ADVENTURE_MAP_VFX_LESSONS.md` §13, ảnh `docs/maps/diorama/g0b_*.jpg`.
+**Lượt 3:** cây 3 lớp (tán sau tối + chùm lá sáng phía trước lắc riêng), viền cỏ dọc đường, sậy bờ nước, đàn chim có bóng trên đất, camera nhìn trước theo hướng đi, vòng nhìn xuyên mịn, đồng đội xếp hàng khi vào map. 60 FPS. Chi tiết §14, ảnh `docs/maps/diorama/g0c_*.jpg`.
+**Sửa che khuất rừng rậm:** khoét theo gốc cây (không theo độ sâu điểm ảnh), vòng to hơn, bóng viền nhân vật hiện xuyên vật che; công cụ `scripts/maps/denseSpots.ts` + `dioramaShots.ts --spots` kiểm 8 chỗ rậm nhất, đều thấy đội. Chi tiết §15.
+
 ### 2026-11-18 — Adventure: bỏ chạy mọi trận / mọi lượt, hiệu ứng môi trường trong trận (decision 063)
 Xem decision 063. Chưa xem bằng mắt trong game: cần chủ dự án kiểm tra mật độ lá / tuyết / bong bóng từng zone.
 
