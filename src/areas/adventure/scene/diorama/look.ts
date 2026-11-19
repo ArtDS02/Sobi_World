@@ -159,7 +159,8 @@ export class Look {
     this.sun.shadow.normalBias = 0.03;
     this.sun.shadow.radius = 3;
     scene.add(this.sun, this.sun.target, this.hemi, this.lantern);
-    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType });
+    // A stencil, so the see-through ghosts of the party never draw over the party itself (party.ts).
+    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, stencilBuffer: true });
     this.composer = new EffectComposer(renderer, target);
     this.composer.addPass(new RenderPass(scene, camera));
     this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.4, 0.45, 0.92);

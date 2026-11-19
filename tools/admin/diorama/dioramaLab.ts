@@ -1,7 +1,7 @@
 // Admin "Diorama map": the diorama renderer (src/areas/adventure/scene/diorama/) on any of the six Forest maps, to review it before it
 // is in the game. Walk with WASD / arrows (the game's own `walkableOf` + `stepCharacter`, labDriver.ts); map, time of day, quality and
 // wind switch live; the review points of the map's contract put the party where the comparison shots are taken; the simulation buttons
-// put the groups to sleep, defeat them, make them golden, open the chests. Reads the game's content; writes nothing.
+// put the groups to sleep, defeat them, make them golden, open the chests; exits and gates start shut (a fresh save) and open on a switch. Reads the game's content; writes nothing.
 import { MAPS } from '../../../src/areas/adventure/logic/config/content';
 import { CONTRACT_IDS, reviewSpots } from '../../../src/areas/adventure/scene/diorama/contracts';
 import { DioramaView, type ViewOpts } from '../../../src/areas/adventure/scene/diorama/dioramaView';
@@ -27,6 +27,8 @@ const ui = {
   time: 'day' as ViewOpts['time'],
   quality: 'full' as ViewOpts['quality'],
   wind: true,
+  /** Exits and gates open (rebuilds the map); default shut, as in a fresh save. */
+  gates: false,
 };
 const sim = { asleep: false, defeated: false, golden: false, chests: false };
 let live: { dispose(): void } | null = null;
@@ -45,6 +47,7 @@ export function renderDioramaLab(content: HTMLElement) {
         <span class="dio__group">${(['day', 'golden', 'night'] as const).map((t) => chip(ui.time === t, `data-time="${t}"`, { day: '☀️ Ngày', golden: '🌇 Chiều', night: '🌙 Đêm' }[t])).join('')}</span>
         <span class="dio__group">${(['full', 'light'] as const).map((q) => chip(ui.quality === q, `data-quality="${q}"`, q === 'full' ? 'Đẹp' : 'Nhẹ')).join('')}</span>
         ${chip(ui.wind, 'data-wind', '🍃 Gió')}
+        ${chip(ui.gates, 'data-gates', ui.gates ? '🚪 Cổng mở' : '🌿 Cổng đóng')}
         <span class="dio__group">${spots.map((s, i) => chip(false, `data-spot="${i}"`, s.name)).join('')}</span>
         <span class="dio__group">${[
           ['asleep', '💤 Ngủ'],
@@ -80,6 +83,11 @@ export function renderDioramaLab(content: HTMLElement) {
       b.classList.toggle('is-on', sim[k]);
       return;
     }
+    if (b.dataset.gates !== undefined) {
+      ui.gates = !ui.gates;
+      renderDioramaLab(content);
+      return;
+    }
     if (b.dataset.time) ui.time = b.dataset.time as ViewOpts['time'];
     if (b.dataset.wind !== undefined) ui.wind = !ui.wind;
     if (b.dataset.quality && b.dataset.quality !== ui.quality) {
@@ -97,7 +105,9 @@ function mount(stage: HTMLElement) {
   live?.dispose();
   window.clearInterval(guard);
   const map = MAPS[ui.map]!;
-  const state = labState(map);
+  const state = labState(map, ui.gates);
+  // What the game hands the view: the exits that are shut block their tiles.
+  const closed = map.exits.filter((e) => !state.exits.find((x) => x.id === e.id)?.open);
   let view: DioramaView | null = null;
   let driver: LabDriver | null = null;
   let raf = 0;
@@ -154,7 +164,7 @@ function mount(stage: HTMLElement) {
       view.setSize(stage.clientWidth, stage.clientHeight);
       fit.observe(stage);
       driver = new LabDriver(map, LAB_TEAM.length);
-      await view.enter(map, state);
+      await view.enter(map, state, closed);
       stage.querySelector('.dio__loading')?.remove();
       last = performance.now();
       win.t0 = last;

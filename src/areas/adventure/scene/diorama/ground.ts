@@ -6,13 +6,15 @@ import { GLSL_NOISE } from './noise';
 import { DECK_TOP, type Deck } from './decks';
 import { MARGIN, RES, heightAt, weightsAt, type Grid } from './field';
 import { paintGround } from './groundPaint';
-import { plankTexture } from './textures';
+import { plankTexture, softRectTexture } from './textures';
 
 export interface GroundUniforms {
   uTime: { value: number };
   uCloud: { value: number };
   /** The party on screen (device px) and the radius of the see-through circle: the ground in it is never left in shadow. */
   uSee: { value: THREE.Vector3 };
+  /** 1 at night: the dirt paths keep their warm brown under the blue moon (a light of their own hue, as bright as the moon's). */
+  uNight: { value: number };
 }
 
 export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE.Texture, quality: 'full' | 'light', uniforms: GroundUniforms): THREE.Group {
@@ -42,15 +44,16 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
     sh.uniforms.uTime = uniforms.uTime;
     sh.uniforms.uCloud = uniforms.uCloud;
     sh.uniforms.uSee = uniforms.uSee;
+    sh.uniforms.uNight = uniforms.uNight;
     sh.vertexShader = sh.vertexShader
-      .replace('#include <common>', '#include <common>\nvarying vec3 vGW;\nvarying vec3 vGN;')
-      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvGW = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvGN = normalize(mat3(modelMatrix) * objectNormal);');
+      .replace('#include <common>', '#include <common>\nattribute vec4 aSplat;\nvarying vec3 vGW;\nvarying vec3 vGN;\nvarying float vPath;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvGW = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvGN = normalize(mat3(modelMatrix) * objectNormal);\nvPath = aSplat.x;');
     sh.fragmentShader = sh.fragmentShader
       .replace(
         '#include <common>',
         `#include <common>
-uniform sampler2D tPaint; uniform vec2 uSize; uniform float uTime; uniform float uCloud; uniform vec3 uSee;
-varying vec3 vGW; varying vec3 vGN;
+uniform sampler2D tPaint; uniform vec2 uSize; uniform float uTime; uniform float uCloud; uniform vec3 uSee; uniform float uNight;
+varying vec3 vGW; varying vec3 vGN; varying float vPath;
 ${GLSL_NOISE}
 vec3 srgb(vec3 c){ return pow(c, vec3(2.2)); }`,
       )
@@ -58,6 +61,14 @@ vec3 srgb(vec3 c){ return pow(c, vec3(2.2)); }`,
         '#include <opaque_fragment>',
         `// Under the crowns the party is seen through, the ground it reveals is lit like the open ground, with a soft edge (no dark disc).
 outgoingLight = max(outgoingLight, diffuseColor.rgb * (.8 * seeLift));
+// At night a dirt path is lit by a light of its own warm hue, as bright as the moon and the lantern there (with a floor), so it stays a
+// dark warm brown a step lighter than the grass, instead of the flat grey-blue the moon makes of it.
+if (uNight > 0.) {
+  float pathK = smoothstep(.3, .62, vPath) * step(.9, vGN.y) * uNight;
+  vec3 lw = vec3(.2126, .7152, .0722);
+  float lit = dot(outgoingLight, lw) / max(1e-3, dot(diffuseColor.rgb, lw));
+  outgoingLight = mix(outgoingLight, diffuseColor.rgb * max(lit * 1.15, .17) * vec3(1.08, .94, .76), pathK);
+}
 #include <opaque_fragment>`,
       )
       .replace(
@@ -121,12 +132,23 @@ function chunkGround(geo: THREE.PlaneGeometry, mat: THREE.Material, w: number, h
 
 /**
  * One straight deck per group of bridge tiles (its bounding box: today's grids paint bridges with ragged edges), planks across the
- * way, a rail of posts and a beam along both long sides.
+ * way, a heavy side beam along each long edge, a row of piles driven into the river bed along both long sides (the posts of the rail,
+ * cross-braced under the deck) with the rail beam on top, and the deck's soft shadow on the water (the water is unlit: it takes no real
+ * shadow).
+ * Everything is made of the code-drawn planks.
  */
 export function buildBridges(decks: readonly Deck[]): THREE.Group {
   const group = new THREE.Group();
   const planks = plankTexture();
   const wood = new THREE.MeshLambertMaterial({ color: 0x6a4428 });
+  const grain = planks.clone();
+  grain.repeat.set(0.25, 1);
+  grain.needsUpdate = true;
+  // The structure under the deck: the same planks, darker (wet and in shade).
+  const under = new THREE.MeshLambertMaterial({ map: grain, color: 0x8a6e58 });
+  // A pile: from the river bed up through the deck's edge to the top of the rail.
+  const pile = new THREE.CylinderGeometry(0.075, 0.1, 1.55, 7).translate(0, -0.155, 0);
+  const shade = new THREE.MeshBasicMaterial({ map: softRectTexture(), color: 0x06121a, transparent: true, opacity: 0.7, depthWrite: false });
   for (const { cx, cz, w, d, along } of decks) {
     const tex = planks.clone();
     tex.repeat.set(along ? w : 1, along ? 1 : d);
@@ -136,18 +158,43 @@ export function buildBridges(decks: readonly Deck[]): THREE.Group {
     deck.position.set(cx, DECK_TOP / 2, cz);
     deck.castShadow = deck.receiveShadow = true;
     group.add(deck);
+    // The shadow on the water (drawn after it): under the whole deck, cast out north-east of it (the sun stands south-west by day), and a
+    // narrow dark band under its camera side.
+    const s = new THREE.Mesh(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), shade);
+    s.position.set(cx + 0.3, -0.105, cz - 0.15);
+    s.scale.set(w + 0.6, 1, d + 1.5);
+    s.renderOrder = 3;
+    group.add(s);
+    const len = along ? w : d;
     for (const side of [-1, 1]) {
-      const len = along ? w : d;
       const n = Math.max(2, Math.round(len / 1.1) + 1);
+      const step = len / (n - 1);
+      const edge = (along ? d : w) / 2;
+      const at = (k: number, out: number, y: number, m: THREE.Object3D) => m.position.set(along ? cx + k : cx + side * (edge + out), y, along ? cz + side * (edge + out) : cz + k);
       for (let i = 0; i < n; i += 1) {
-        const k = -len / 2 + (len * i) / (n - 1);
-        const post = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.085, 0.62, 6), wood);
-        post.position.set(along ? cx + k : cx + side * (w / 2 - 0.06), 0.3, along ? cz + side * (d / 2 - 0.06) : cz + k);
+        const k = -len / 2 + step * i;
+        const post = new THREE.Mesh(pile, wood);
+        at(k, 0.2, 0, post);
         post.castShadow = true;
         group.add(post);
+        // A cross-brace from this pile down to the next, between the deck and the water (and on under it).
+        if (i < n - 1) {
+          const drop = 0.5;
+          const brace = new THREE.Mesh(new THREE.BoxGeometry(Math.hypot(step, drop), 0.055, 0.055), under);
+          at(k + step / 2, 0.2, -0.04, brace);
+          const a = (i % 2 ? 1 : -1) * Math.atan2(drop, step);
+          if (along) brace.rotation.z = a;
+          else brace.rotation.set(a, Math.PI / 2, 0, 'YXZ');
+          group.add(brace);
+        }
       }
+      // The heavy side beam (stringer) the planks rest on, hanging below the deck's edge down to the water.
+      const stringer = new THREE.Mesh(new THREE.BoxGeometry(along ? len + 0.2 : 0.16, 0.28, along ? 0.16 : len + 0.2), under);
+      at(0, 0.03, -0.06, stringer);
+      stringer.castShadow = true;
+      group.add(stringer);
       const beam = new THREE.Mesh(new THREE.BoxGeometry(along ? len : 0.09, 0.08, along ? 0.09 : len), wood);
-      beam.position.set(along ? cx : cx + side * (w / 2 - 0.06), 0.56, along ? cz + side * (d / 2 - 0.06) : cz);
+      at(0, 0.2, 0.56, beam);
       beam.castShadow = true;
       group.add(beam);
     }

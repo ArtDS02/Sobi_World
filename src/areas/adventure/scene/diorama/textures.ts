@@ -194,6 +194,22 @@ export function blobTexture(): THREE.Texture {
   return texture(c, false);
 }
 
+/** A soft-edged rectangle, white in the middle and fading out over its outer twelfth on every side (the shadow of a deck). */
+export function softRectTexture(): THREE.Texture {
+  const [c, g] = canvas(64, 64);
+  const d = g.createImageData(64, 64);
+  const edge = (v: number) => Math.min(1, Math.max(0, (Math.min(v, 63 - v) + 0.5) / 5));
+  for (let y = 0; y < 64; y += 1)
+    for (let x = 0; x < 64; x += 1) {
+      const i = (y * 64 + x) * 4;
+      const a = edge(x) * edge(y);
+      d.data[i] = d.data[i + 1] = d.data[i + 2] = 255;
+      d.data[i + 3] = Math.round(a * a * (3 - 2 * a) * 255);
+    }
+  g.putImageData(d, 0, 0);
+  return texture(c, false);
+}
+
 /** A leaf shape (falling leaves). */
 export function leafTexture(): THREE.Texture {
   const [c, g] = canvas(32, 32);

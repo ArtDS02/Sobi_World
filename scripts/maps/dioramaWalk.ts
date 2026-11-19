@@ -1,6 +1,7 @@
 // A walking video of the diorama map (Admin "Diorama map"): the stage full frame at 1600 × 900, the party walking a fixed route with the
 // keys by day, then the light turning to evening and night. Tooling only: frames are grabbed while it walks (`<out>/walk/NNNN.jpg`,
-// about 10 a second; no video encoder needed) and stitched afterwards (e.g. an animated WebP with Pillow).
+// about 10 a second; no video encoder needed) and stitched afterwards (e.g. an animated WebP with Pillow). The day part ends with the
+// party standing still for a few seconds (the frames printed as "still frames"), to see the wind and the water move frame to frame.
 // Usage: npx tsx scripts/maps/dioramaWalk.ts --base http://localhost:5175 --out art_inbox/diorama_shots/g0 [--gpu] [--from x,y]
 //        [--map <mapId>|all  (default map_forest_edge: the fixed route from its spawn; any other map starts on its second review
 //        point and wanders; `all` writes to <out>/<mapId>/walk)]
@@ -104,6 +105,12 @@ for (const mapId of maps) {
     await hold('s', 900);
     await hold('a', 1600);
   }
+  // The still segment: the party stands and the camera settles (its look-ahead eases back in ~0.7 s), then more than 3 s of frames
+  // with nothing moving but the scene itself (wind, water, life), to judge its motion frame to frame.
+  await page.waitForTimeout(1200);
+  const still0 = n;
+  await page.waitForTimeout(3600);
+  console.log(`${mapId}: still frames ${String(still0).padStart(4, '0')}–${String(n - 1).padStart(4, '0')}`);
   await set('golden');
   await hold('w', 1200);
   await hold('d', 1800);

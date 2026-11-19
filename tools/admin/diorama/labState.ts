@@ -1,4 +1,5 @@
-// A plain scene state for the diorama lab: every group awake, every chest shut, gates shut, a team of three pigs. The lab has no game
+// A plain scene state for the diorama lab: every group awake, every chest shut, exits and gates shut as in a fresh save (or all open), a
+// team of three pigs. The lab has no game
 // behind it; this is what the game would hand the view.
 import { ENEMIES, type AreaMap } from '../../../src/areas/adventure/logic/config/content';
 import type { AdventureSceneState, SceneGroup } from '../../../src/areas/adventure/scene/sceneState';
@@ -25,7 +26,8 @@ export function labGroups(map: AreaMap): SceneGroup[] {
   }));
 }
 
-export function labState(map: AreaMap): AdventureSceneState {
+/** `open`: every exit open and every gate opened; else shut as in a fresh save (an exit with a lock is closed, no gate opened). */
+export function labState(map: AreaMap, open = false): AdventureSceneState {
   return {
     mode: 'explore',
     mapId: map.id,
@@ -34,8 +36,8 @@ export function labState(map: AreaMap): AdventureSceneState {
     leader: 'so',
     followers: LAB_TEAM.map((art) => ({ art, down: false })),
     groups: labGroups(map),
-    exits: map.exits.map((e) => ({ id: e.id, open: true, lock: null, forward: true })),
-    openedGates: [],
+    exits: map.exits.map((e) => ({ id: e.id, open: open || !e.lock, lock: open ? null : (e.lock ?? null), forward: true })),
+    openedGates: open ? map.gates.map((g) => g.id) : [],
     openedChests: [],
     litPuzzles: [],
     corruption: 0,

@@ -3,7 +3,7 @@
 // leader faces and whether it moves; this only poses the pictures. World units: one tile = 1 (game px / tile).
 import * as THREE from 'three';
 import { cardOf, type ArtFn } from './artKit';
-import { cardSprite, setSprite, withXray, type CardUniforms } from './cards';
+import { TILT, cardSprite, setSprite, withXray, type CardUniforms } from './cards';
 import type { Card } from './textures';
 
 export type Face = 'up' | 'down' | 'left' | 'right';
@@ -12,6 +12,10 @@ const FRAMES = ['idle', 'walk1', 'walk2'] as const;
 const CYCLE = ['walk1', 'idle', 'walk2', 'idle'] as const;
 const LEADER_H = 1.95;
 const FOLLOWER_H = 1.25;
+// Depth pulls toward the camera (world units): the leader is drawn over any foe or companion within ~1.5 tiles in front of it, and the
+// companions over the foes near them; only the depth changes, never the place on screen (cards.ts `near`).
+const LEADER_NEAR = 2.4;
+const FOLLOWER_NEAR = 1.6;
 
 /** Where the party is this frame (game px, feet). */
 export interface PartyPose {
@@ -59,9 +63,16 @@ export class Party {
     }
     const first = this.leaderCards.get('down_idle');
     this.followerCards = (await Promise.all(followerArts.map((id) => cardOf(art, id, true)))).filter((c): c is Card => !!c);
-    this.leader = first ? withXray(cardSprite(first, this.u), first, this.u) : null;
-    this.followers = this.followerCards.map((c) => withXray(cardSprite(c, this.u), c, this.u));
+    this.leader = first ? withXray(cardSprite(first, this.u, { sway: 0, tilt: TILT, near: LEADER_NEAR }), first, this.u, LEADER_NEAR) : null;
+    this.followers = this.followerCards.map((c) => withXray(cardSprite(c, this.u, { sway: 0, tilt: TILT, near: FOLLOWER_NEAR }), c, this.u, FOLLOWER_NEAR));
     const bodies = [...(this.leader ? [this.leader] : []), ...this.followers];
+    // The party marks its pixels in the stencil and the see-through ghosts skip them: a companion hidden behind the leader must not
+    // paint its warm ghost over the leader's face (only what hides it in the scene shows the ghost).
+    for (const b of bodies) {
+      Object.assign(b.material as THREE.Material, { stencilWrite: true, stencilRef: 1, stencilFunc: THREE.AlwaysStencilFunc, stencilZPass: THREE.ReplaceStencilOp });
+      const ghost = b.userData.xray as THREE.Mesh | undefined;
+      if (ghost) Object.assign(ghost.material as THREE.Material, { stencilWrite: true, stencilRef: 1, stencilFunc: THREE.NotEqualStencilFunc, stencilZPass: THREE.KeepStencilOp });
+    }
     this.shadows = bodies.map(() => new THREE.Mesh(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), this.shadowMat));
     this.group.add(...bodies, ...this.shadows);
   }
@@ -110,7 +121,12 @@ export class Party {
     const dz = Math.abs(ahead.y - z);
     // 1 when the line to the one ahead is vertical (within about 30 degrees), 0 when it is sideways.
     const vertical = Math.min(1, Math.max(0, (dz / (dx + dz + 1e-3) - 0.6) / 0.25));
-    const want = (i % 2 === 0 ? 1 : -1) * 0.4 * vertical;
+    // 1 when the companion stands within about a tile of the leader (it would cover the leader's head or body): it steps aside, away
+    // from the leader.
+    const lx = pose.leader.x / this.tile;
+    const close = Math.min(1, Math.max(0, (1.1 - Math.hypot(lx - x, pose.leader.y / this.tile - z)) / 0.4));
+    const side = close > vertical && Math.abs(x - lx) > 0.05 ? Math.sign(x - lx) : i % 2 === 0 ? 1 : -1;
+    const want = side * 0.4 * Math.max(vertical, close);
     return [want, -want, 0].find((o) => free(x + o, z)) ?? 0;
   }
 

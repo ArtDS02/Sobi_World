@@ -34,6 +34,11 @@ export interface CardLook {
   see?: boolean;
   /** How far this layer's foot was moved along z from the real foot (layered trees), so all layers are cut alike. */
   shift?: number;
+  /**
+   * Depth pull toward the camera, world units (the party): the picture stays where it is on screen, only its depth is nearer, so a
+   * foe or a companion standing within that distance in front never covers it.
+   */
+  near?: number;
 }
 
 /** Lean of the cards toward the camera (the camera looks down 52°): a picture keeps ~93 % of its height on screen. */
@@ -54,11 +59,15 @@ vec3 cardAt = vec3(cardM[3]);
 float cardW = length(cardM[0].xyz) * sign(cardM[0][0]);
 float cardH = length(cardM[1].xyz);
 float cardTop = uv.y * uv.y;
-// Layered wind: a slow gust front travelling over the map, a steady sway in it and a quicker flutter, so motion shows between frames 0.1 s apart.
-float gust = .6 + .9 * smoothstep(.3, 1., .5 + .5 * sin(uTime * .9 - cardAt.x * .2 - cardAt.z * .09));
-float swayW = .066 * uWind * uSway * cardTop * cardH / max(.3, abs(cardW));
-transformed.x += sin(uTime * 2.2 + cardAt.x * .7 + cardAt.z * 1.3) * swayW * gust;
-transformed.x += sin(uTime * 4.9 + cardAt.x * 2.1 + cardAt.z * .6) * swayW * .32 * gust;
+// Layered wind (each layer its own rhythm, so it never reads as one jelly wobble): a gust front travelling west to east over the map
+// leans the tops downwind while it passes, a steady sway rides on it, and a quicker flutter on top moves the leaves and blades between
+// frames 0.1 s apart. Short cards (grass, reeds) sway as if a little taller, so a blade's motion is seen at all.
+float front = uTime * .75 - cardAt.x * .16 - cardAt.z * .07;
+float gust = smoothstep(.25, 1., .5 + .5 * sin(front)) * (.65 + .35 * sin(front * .37 + 1.3));
+float swayW = .066 * uWind * uSway * cardTop * max(cardH, .75) / max(.3, abs(cardW));
+transformed.x += sin(uTime * 2.1 + cardAt.x * .7 + cardAt.z * 1.3) * swayW * (.55 + .8 * gust);
+transformed.x += gust * swayW * 1.1 * sign(cardW);
+transformed.x += sin(uTime * 5.7 + cardAt.x * 2.1 + cardAt.z * .6 + uv.x * 2.4) * swayW * (.22 + .3 * gust);
 transformed.z += sin(uTime * 1.7 + cardAt.x * .5 + cardAt.z * 1.1) * swayW * .18;
 vec2 away = cardAt.xz - uPlayer.xz;
 float near = smoothstep(1.4, .15, length(away));
@@ -101,7 +110,7 @@ if (uSeeOn > .5 && vFootZ > uPlayer.z - .2) {
 }`,
     );
   };
-  mat.customProgramCacheKey = () => `card-${look.sway}-${look.tilt}-${look.push ?? 0}-${look.see ? 1 : 0}-${look.shift ?? 0}`;
+  mat.customProgramCacheKey = () => `card-${look.sway}-${look.tilt}-${look.push ?? 0}-${look.see ? 1 : 0}-${look.shift ?? 0}-${look.near ?? 0}`;
   return mat;
 }
 
@@ -113,13 +122,19 @@ function patchVertex(sh: THREE.WebGLProgramParametersWithUniforms, u: CardUnifor
     uPush: { value: look.push ?? 0 },
     uSeeOn: { value: look.see ? 1 : 0 },
     uShift: { value: look.shift ?? 0 },
+    uNear: { value: look.near ?? 0 },
   });
   sh.vertexShader = sh.vertexShader
     .replace(
       '#include <common>',
-      '#include <common>\nuniform float uTime; uniform float uWind; uniform vec3 uPlayer; uniform float uSway; uniform float uTilt; uniform float uPush; uniform float uShift;\nvarying float vFootZ;',
+      '#include <common>\nuniform float uTime; uniform float uWind; uniform vec3 uPlayer; uniform float uSway; uniform float uTilt; uniform float uPush; uniform float uShift; uniform float uNear;\nvarying float vFootZ;',
     )
-    .replace('#include <begin_vertex>', `#include <begin_vertex>\n${VERTEX}`);
+    .replace('#include <begin_vertex>', `#include <begin_vertex>\n${VERTEX}`)
+    .replace(
+      '#include <project_vertex>',
+      // Same place on screen, nearer depth: the projected depth of the point pulled `uNear` toward the camera.
+      '#include <project_vertex>\nif (uNear > 0.) { vec4 nearP = projectionMatrix * vec4(mvPosition.xyz + vec3(0., 0., uNear), 1.); gl_Position.z = nearP.z / nearP.w * gl_Position.w; }',
+    );
   if (lit) sh.vertexShader = sh.vertexShader.replace('#include <beginnormal_vertex>', 'vec3 objectNormal = normalize(vec3(0., .78, .62));');
 }
 
@@ -127,7 +142,7 @@ function patchVertex(sh: THREE.WebGLProgramParametersWithUniforms, u: CardUnifor
  * The party seen through what hides it: the same picture drawn only where something nearer covers it (depth test "greater"), as a
  * warm see-through ghost, so the party is never lost in the woods.
  */
-export function xrayMaterial(card: Card, u: CardUniforms): THREE.MeshBasicMaterial {
+export function xrayMaterial(card: Card, u: CardUniforms, near = 0): THREE.MeshBasicMaterial {
   const mat = new THREE.MeshBasicMaterial({
     map: card.tex,
     color: 0xffe2a8,
@@ -139,10 +154,10 @@ export function xrayMaterial(card: Card, u: CardUniforms): THREE.MeshBasicMateri
     side: THREE.DoubleSide,
   });
   mat.onBeforeCompile = (sh) => {
-    patchVertex(sh, u, { sway: 0, tilt: TILT }, false);
+    patchVertex(sh, u, { sway: 0, tilt: TILT, near }, false);
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vFootZ;');
   };
-  mat.customProgramCacheKey = () => 'card-xray';
+  mat.customProgramCacheKey = () => `card-xray-${near}`;
   return mat;
 }
 
@@ -248,8 +263,8 @@ export function setSprite(mesh: THREE.Mesh, card: Card, h: number, flip = false)
 }
 
 /** Gives a sprite its see-through ghost (xrayMaterial), drawn after everything and only where something hides it. */
-export function withXray(mesh: THREE.Mesh, card: Card, u: CardUniforms): THREE.Mesh {
-  const ghost = new THREE.Mesh(PLANE, xrayMaterial(card, u));
+export function withXray(mesh: THREE.Mesh, card: Card, u: CardUniforms, near = 0): THREE.Mesh {
+  const ghost = new THREE.Mesh(PLANE, xrayMaterial(card, u, near));
   ghost.renderOrder = 20;
   mesh.add(ghost);
   mesh.userData.xray = ghost;

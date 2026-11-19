@@ -58,7 +58,7 @@ export class DioramaView {
   private readonly camera = new THREE.PerspectiveCamera(22, 16 / 9, 1, 220);
   private readonly look: Look;
   private readonly cardU: CardUniforms = newCardUniforms();
-  private readonly groundU: GroundUniforms = { uTime: { value: 0 }, uCloud: { value: 0.16 }, uSee: this.cardU.uSee };
+  private readonly groundU: GroundUniforms = { uTime: { value: 0 }, uCloud: { value: 0.16 }, uSee: this.cardU.uSee, uNight: { value: 0 } };
   private readonly waterU: WaterUniforms = {
     uTime: { value: 0 },
     uLight: { value: new THREE.Color(1, 1, 1) },
@@ -195,6 +195,7 @@ export class DioramaView {
     this.waterU.uLight.value.setRGB(...p.water);
     this.waterU.uGlint.value = p.glint;
     this.groundU.uCloud.value = o.time === 'night' ? 0.06 : 0.16;
+    this.groundU.uNight.value = o.time === 'night' ? 1 : 0;
     this.cardU.uWind.value = o.wind ? 1 : 0;
     this.life?.setMood(p.fireflies, o.time === 'day' ? 1 : o.time === 'golden' ? 0.6 : 0);
     this.birds?.setSky(p.sunDir, o.time === 'night' ? 0 : 1);

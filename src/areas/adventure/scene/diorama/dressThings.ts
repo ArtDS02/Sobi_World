@@ -10,6 +10,7 @@ import { chestArt, exitArt, MIMIC_ART } from '../mapKit';
 import { thingArt, zoneOfMapId } from '../mapView';
 import type { AdventureSceneState } from '../sceneState';
 import { cardOf, forestKit, type ArtFn } from './artKit';
+import { buildBarrier } from './barriers';
 import { TILT, cardBatch, shadowStandIns, type CardLook, type CardUniforms, type Placed } from './cards';
 import { decksOf, deckAt } from './decks';
 import { reedCard } from './extraArt';
@@ -109,16 +110,31 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
       const open = s.exits.find((x) => x.id === t.id)?.open ?? true;
       const id = exitArt(zone, e?.kind, open);
       const wide = Math.max(t.w, t.h) + 1.7;
-      if (id) await put(id, undefined, t.x + t.w / 2, t.y + t.h - 0.1, wide);
-      // A soft glow on the ground at the exit: warm gold when it is open, an ember red when brambles bar it. It stands on the ground, never over the party.
-      const spot = new THREE.Sprite(new THREE.SpriteMaterial({ map: blob, color: open ? new THREE.Color(1.6, 1.35, 0.6) : new THREE.Color(1.6, 0.6, 0.3), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.5 }));
-      spot.position.set(t.x + t.w / 2, ground(t.x + t.w / 2, t.y + t.h / 2) + 0.35, t.y + t.h / 2);
-      spot.scale.set(wide * 1.5, wide * 0.8, 1);
-      glows.push(spot);
-      group.add(spot);
+      // Shut: what the 2D map draws barring it (the zone's bramble), as a thorny wall over the exit's tiles; open: the passage.
+      const bar = !open && id ? await cardOf(art, id) : null;
+      if (bar) group.add(buildBarrier(bar, t, u, ground, 41));
+      else if (id) await put(id, undefined, t.x + t.w / 2, t.y + t.h - 0.1, wide);
+      // A soft warm-gold glow on the ground at an open exit (a shut one has its ember thorns: a glow there showed through the bramble
+      // as a box). It stands on the ground, never over the party.
+      if (open) {
+        const spot = new THREE.Sprite(new THREE.SpriteMaterial({ map: blob, color: new THREE.Color(1.6, 1.35, 0.6), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.5 }));
+        spot.position.set(t.x + t.w / 2, ground(t.x + t.w / 2, t.y + t.h / 2) + 0.35, t.y + t.h / 2);
+        spot.scale.set(wide * 1.5, wide * 0.8, 1);
+        glows.push(spot);
+        group.add(spot);
+      }
       continue;
     }
     const a = thingArt(t, map, s, has);
+    if (t.kind === 'gate' && !a.id.startsWith('adv_map_') && !a.id.startsWith('adv_tile_')) {
+      // An element gate (the 2D map hides it once opened): while shut, a thorny wall over its tiles, like a shut exit.
+      if (s.openedGates.includes(t.id)) continue;
+      const bar = await cardOf(art, a.id, false, a.state);
+      if (bar) {
+        group.add(buildBarrier(bar, t, u, ground, 43));
+        continue;
+      }
+    }
     await put(a.id, a.state, t.x + t.w / 2, t.y + t.h - 0.12, Math.max(1.1, t.w + 0.4));
   }
   for (const { card, items } of pictures.values()) add(card, items, { sway: 0, tilt: TILT, see: true }, [[0.5, 0.4, 0.4], 0]);

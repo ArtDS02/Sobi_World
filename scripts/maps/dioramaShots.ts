@@ -3,6 +3,7 @@
 // Usage: npx tsx scripts/maps/dioramaShots.ts --base http://localhost:5175 --out art_inbox/diorama_shots/g0 [--gpu] [--times day,night]
 //        [--map <mapId>|all  (default map_forest_edge; `all` writes to <out>/<mapId>/)] [--quality full|light]
 //        [--spots x,y;x,y…  (tiles; instead of the map's review points, e.g. from denseSpots.ts; one map only)]
+//        [--gates closed|open  (default closed: exits with a lock and gates shut, as in a fresh save)]
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { CONTRACT_IDS } from '../../src/areas/adventure/scene/diorama/contracts';
@@ -17,6 +18,7 @@ const out = arg('out', 'art_inbox/diorama_shots/g0');
 const times = arg('times', 'day,golden,night').split(',');
 const quality = arg('quality', 'full');
 const which = arg('map', 'map_forest_edge');
+const gates = arg('gates', 'closed');
 const maps = which === 'all' ? CONTRACT_IDS : [which];
 const custom = arg('spots', '')
   .split(';')
@@ -33,12 +35,18 @@ const built = (id: string) => page.waitForFunction((m) => (window as unknown as 
 // A fixed 1600 × 900 stage, whatever the admin layout around it.
 await page.addStyleTag({ content: '.dio__stage{width:1600px!important;height:900px!important;aspect-ratio:auto!important;flex:none}' });
 await page.waitForSelector('[data-map]');
-const report: string[] = [`gpu: ${gpu}`, `quality: ${quality}`];
+const report: string[] = [`gpu: ${gpu}`, `quality: ${quality}`, `gates: ${gates}`];
 for (const mapId of maps) {
   const dir = maps.length > 1 ? join(out, mapId) : out;
   mkdirSync(dir, { recursive: true });
   await page.selectOption('[data-map]', mapId);
   await built(mapId);
+  // The lab keeps its switch across maps: set it to what was asked.
+  const shut = await page.evaluate(() => document.querySelector('[data-gates]')?.classList.contains('is-on') !== true);
+  if (shut !== (gates === 'closed')) {
+    await page.click('[data-gates]');
+    await built(mapId);
+  }
   if (quality === 'light') {
     await page.click('[data-quality="light"]');
     await built(mapId);
