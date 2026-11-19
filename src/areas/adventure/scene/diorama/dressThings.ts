@@ -1,6 +1,6 @@
 // What stands on the open ground of the diorama: grass tufts and flowers that bend away from the party, a border of grass along the
 // paths, reeds on the banks (never above half a tile on a tile one can walk on), the landmark props, the decorations, the things of the
-// area (stones, gates, springs, travellers, exits…), the waterfall, and the enemy groups and chests (foes.ts brings those to life).
+// area (stones, gates, springs, travellers, exits…) and the enemy groups and chests (foes.ts brings those to life).
 // Pictures come by id through the host's resolver; what each thing shows follows the scene state, as in the 2D map (`thingArt`).
 import * as THREE from 'three';
 import { ENEMIES, PROPS, type AreaMap } from '../../logic/config/content';
@@ -9,7 +9,7 @@ import { decorOf } from '../../logic/scenery';
 import { chestArt, exitArt, MIMIC_ART } from '../mapKit';
 import { thingArt, zoneOfMapId } from '../mapView';
 import type { AdventureSceneState } from '../sceneState';
-import { cardOf, forestKit, type ArtFn } from './artKit';
+import { cardOf, type ArtFn } from './artKit';
 import { buildBarrier } from './barriers';
 import { TILT, cardBatch, shadowStandIns, type CardLook, type CardUniforms, type Placed } from './cards';
 import { decksOf, deckAt } from './decks';
@@ -29,6 +29,7 @@ const LANDMARKS: Readonly<Record<string, { scale: number; glow: boolean; spores?
   prop_adv_lm_f2: { scale: 1.2, glow: true },
   prop_adv_lm_f3: { scale: 1.15, glow: false },
   prop_adv_lm_n1: { scale: 1.1, glow: false, spores: true },
+  prop_adv_lm_n2: { scale: 1.35, glow: false },
 };
 const FOE_H: Record<string, number> = { normal: 1.7, elite: 2.3, mutant: 2.0, subboss: 2.6, boss: 3.2, special: 2.2 };
 
@@ -182,17 +183,7 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
   }
   for (const { card, items } of pictures.values()) add(card, items, { sway: 0, tilt: TILT, see: true }, [[0.5, 0.4, 0.4], 0]);
 
-  // The waterfall: the kit's picture over the `w` tiles, as wide as they are, its foot on their lowest row.
-  // TODO(M4): falling-water shader, spray and the ring of foam at the foot.
-  const falls = [...g.fall].flatMap((v, i) => (v ? [{ x: i % g.cols, y: Math.floor(i / g.cols) }] : []));
-  const fallCard = falls.length ? await cardOf(art, forestKit('edge_waterfall')) : null;
-  if (fallCard) {
-    const x0 = Math.min(...falls.map((f) => f.x));
-    const x1 = Math.max(...falls.map((f) => f.x)) + 1;
-    const z1 = Math.max(...falls.map((f) => f.y)) + 1;
-    const cx = (x0 + x1) / 2;
-    add(fallCard, [{ x: cx, z: z1 - 0.15, y: ground(cx, z1 - 0.15), h: (x1 - x0 + 0.4) / fallCard.aspect }], { sway: 0, tilt: TILT });
-  }
+  // The waterfall is drawn by waterfall.ts (the view builds it from the `w` tiles).
 
   // Enemy groups and chests (a boss of the corruption stands in a pool of its ink).
   const foes = new Foes(u, blob, ground);

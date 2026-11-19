@@ -25,6 +25,8 @@ export interface SceneContract {
   barrier?: number;
   /** Small mushroom clusters (the landmark's picture scaled down) beside the woods' edge: share of the bush tiles that carry one (default 0). */
   mushrooms?: number;
+  /** Stretch of every elevation level (default 1): a map whose cliffs must read tall. Drawing only; the walkable tiles are unchanged. */
+  rise?: number;
   /** Light added to the bridge decks in shade, 0–1 (default 0), so a tree's shadow never turns the planks black. */
   deckLift?: number;
   /** Trees and stones made of corruption around a centre (tile), share of the tiles at the centre. */
@@ -44,6 +46,7 @@ const TINT_SKY = 0xbcd2e0;
 const TINT_VIOLET = 0x6a5688;
 const TINT_DEEP = 0x8fb4b4;
 const TINT_TEAL = 0x9cc4b8;
+const TINT_MIST = 0xc6e0f0;
 
 export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
   // Bìa Rừng: the opening morning. Must stay as the approved G0 look.
@@ -148,18 +151,31 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
       { name: '6 · Bramble gate', x: 54, y: 26 },
     ],
   },
-  // Thác Rêu: the waterfall off the big cliff. TODO(M4): falling-water shader, mist, rainbow.
+  // Thác Rêu: the waterfall off the big cliff (waterfall.ts, the pool's foam ring in water.ts): cool, damp, bright light, a plateau drawn
+  // half again as tall so the falls drop a long way, the ancient stump and the way to the south exit kept clear of crowns.
   map_forest_falls: {
     trees: [0.35, 0.45, 0.2, 0],
-    light: { sat: 0, warm: 0, fog: 0.2, fogTint: TINT_SKY },
+    light: { sat: 0.1, warm: -0.04, fog: 0.3, fogTint: TINT_MIST, moon: 0.4 },
+    life: { wings: false, petals: false, leaves: 0.8, flies: 0.8 },
+    wind: 0.9,
+    nightLift: 0.5,
+    deckLift: 1,
+    rise: 1.45,
+    keepLow: [
+      { x: 31, y: 12, w: 19, h: 9 },
+      { x: 17, y: 27, w: 20, h: 13 },
+      { x: 5, y: 22, w: 15, h: 13 },
+      { x: 60, y: 22, w: 12, h: 10 },
+    ],
     accent: 'waterfall',
     spots: [
       { name: '1 · Start', x: 2, y: 20 },
       { name: '2 · Falls pool', x: 47, y: 20 },
-      { name: '3 · Ancient stump', x: 24, y: 30 },
+      { name: '3 · Ancient stump', x: 25, y: 35 },
       { name: '4 · Bridge', x: 41, y: 24 },
       { name: '5 · Plateau', x: 20, y: 6 },
       { name: '6 · East exit', x: 70, y: 26 },
+      { name: '7 · Boulder gate', x: 9, y: 23 },
     ],
   },
   // Đầm Sương: cold marsh. TODO(M4): drifting low mist, dense reeds.

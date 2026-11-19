@@ -13,7 +13,8 @@ export interface WaterUniforms {
   uGlint: { value: number };
 }
 
-export function buildWater(g: Grid, u: WaterUniforms): THREE.Mesh {
+/** `foot`: where a waterfall plunges in (tiles) and how far its foam reaches; the pool turns white there and rings spread from it. */
+export function buildWater(g: Grid, u: WaterUniforms, foot?: { x: number; z: number; r: number }): THREE.Mesh {
   const dist = waterDistance(g, RES);
   // Bytes (signed distance −2 … +4 tiles), so the texture filters linearly everywhere.
   // R: the distance; G: the water share itself, smooth, which draws the edge (a distance from a sampled mask would step).
@@ -39,13 +40,14 @@ export function buildWater(g: Grid, u: WaterUniforms): THREE.Mesh {
       uGlint: u.uGlint,
       uShallow: { value: new THREE.Color(0x63d4d0) },
       uDeep: { value: new THREE.Color(0x2a6fb8) },
+      uFall: { value: new THREE.Vector3(foot?.x ?? 0, foot?.z ?? 0, foot?.r ?? 0) },
     },
     vertexShader: /* glsl */ `
       varying vec3 vW;
       void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
     fragmentShader: /* glsl */ `
       uniform sampler2D tDist; uniform vec2 uSize; uniform float uTime; uniform vec3 uLight; uniform float uGlint;
-      uniform vec3 uShallow; uniform vec3 uDeep;
+      uniform vec3 uShallow; uniform vec3 uDeep; uniform vec3 uFall;
       varying vec3 vW;
       ${GLSL_NOISE}
       void main(){
@@ -63,6 +65,13 @@ export function buildWater(g: Grid, u: WaterUniforms): THREE.Mesh {
         float foamEdge = .28 + .16 * rip + .05 * sin(uTime * 1.7 + vW.x * 1.3);
         float foam = 1. - smoothstep(.02, foamEdge, d);
         col = mix(col, vec3(.97, 1., 1.), foam * .8);
+        if (uFall.z > 0.) {
+          // The plunge pool of a waterfall: a churning white core and rings of foam that spread out from it.
+          float fd = length((vW.xz - uFall.xy) * vec2(.62, 1.));
+          float core = (1. - smoothstep(.3, uFall.z, fd)) * (.55 + .45 * dNoise(vW.xz * 5. + vec2(0., uTime * 1.5)));
+          float ring = (1. - smoothstep(.5, uFall.z * 1.9, fd)) * smoothstep(.55, .95, .5 + .5 * sin(fd * 9. - uTime * 2.6 + rip * 3.)) * smoothstep(.3, .8, fd) * .5;
+          col = mix(col, vec3(.98, 1., 1.), clamp(core + ring, 0., 1.) * .78);
+        }
         float glint = pow(dNoise(vW.xz * 3.5 + vec2(uTime * .4, -uTime * .9)), 46.) * 7. * uGlint;
         col += vec3(glint);
         col *= uLight;

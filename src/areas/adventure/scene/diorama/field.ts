@@ -34,8 +34,8 @@ const WATER_BED = -0.45;
 const kindOf = (c: string): Kind =>
   c === ',' || c === 's' ? K.path : c === '~' || c === 'w' ? K.water : c === '=' ? K.bridge : c === 'F' ? K.rock : c === '^' ? K.high : c === '#' ? K.forest : c === 'c' ? K.moss : K.grass;
 
-/** The grid of an area, with `opened` gates open and `closed` more blocking rectangles (as in `blockedTiles`). */
-export function gridOf(map: AreaMap, opened: ReadonlySet<string> = new Set(), closed: readonly Pick<Thing, 'x' | 'y' | 'w' | 'h'>[] = []): Grid {
+/** The grid of an area, with `opened` gates open and `closed` more blocking rectangles (as in `blockedTiles`); `rise` stretches every elevation level (a map of tall cliffs; drawing only). */
+export function gridOf(map: AreaMap, opened: ReadonlySet<string> = new Set(), closed: readonly Pick<Thing, 'x' | 'y' | 'w' | 'h'>[] = [], rise = 1): Grid {
   const W = map.cols + MARGIN * 2;
   const H = map.rows + MARGIN * 2;
   const kind = new Uint8Array(W * H).fill(K.forest);
@@ -49,8 +49,8 @@ export function gridOf(map: AreaMap, opened: ReadonlySet<string> = new Set(), cl
       const i = (y + MARGIN) * W + x + MARGIN;
       kind[i] = k;
       if (map.terrain[y]?.[x] === 'w') fall[y * map.cols + x] = 1;
-      const lv = (pits.get(y * map.cols + x) ?? Number(elev?.[y]?.[x] ?? 0)) * LEVEL;
-      height[i] = k === K.water || k === K.bridge ? WATER_BED : k === K.rock ? Math.max(lv, LEVEL * 1.6) : lv;
+      const lv = (pits.get(y * map.cols + x) ?? Number(elev?.[y]?.[x] ?? 0)) * LEVEL * rise;
+      height[i] = k === K.water || k === K.bridge ? WATER_BED : k === K.rock ? Math.max(lv, LEVEL * rise * 1.6) : lv;
     }
   const ramps = raiseAroundHighGround(map, kind, height, W);
   const stairs = stairsOf(map, ramps);
