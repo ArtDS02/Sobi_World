@@ -1,11 +1,11 @@
 # STATE — forest-diorama (6 map vùng Rừng sang Diorama 2.5D, chạy trong game)
 Nhánh: map-diorama-forest (tách từ new-ideas/update-3d-adventure @ 2ad31ee6)   Commit xanh gần nhất: xem Xong
-Mốc hiện tại: M3 review Bìa Rừng   Vòng: 2/3
-Đang làm: reviewer chấm Bìa Rừng vòng 2 — ảnh art_inbox/diorama_shots/m3r2/map_forest_edge (walk 0000..0092 bước 13). FPS vòng này đo khi máy chạy game khác: RTX Đẹp 56/60/65/110/87/77, AMD Nhẹ 113–137 — đo lại ở M5 khi máy rảnh
+Mốc hiện tại: M3 review Bìa Rừng   Vòng: 3/3 (coder opus mới)
+Đang làm: coder OPUS mới — Bìa Rừng vòng 3 (5 lỗi reviewer v2)
 Brief đang chạy: xem mục Brief cuối file
-Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127 | M3a ✅ 3602a56f module diorama ở src/areas/adventure/scene/diorama, blockerPlan+test, lab 6 map, --map | M3a-perf+M3b ✅ c0522d2b check xanh 2166, e2e adventure 2/2 | M3c ✅ 45a87b5a diorama trong game, cài đặt, quality.ts; check xanh 2182, build xanh | M3 chơi thử ✅ (commit này) gameForest.ts --battle --chest --exit --reload: diorama = classic, đều PASS (rương xác nhận bằng mắt) | edge v2 code ✅ (commit này)
+Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127 | M3a ✅ 3602a56f module diorama ở src/areas/adventure/scene/diorama, blockerPlan+test, lab 6 map, --map | M3a-perf+M3b ✅ c0522d2b check xanh 2166, e2e adventure 2/2 | M3c ✅ 45a87b5a diorama trong game, cài đặt, quality.ts; check xanh 2182, build xanh | M3 chơi thử ✅ (commit này) gameForest.ts --battle --chest --exit --reload: diorama = classic, đều PASS (rương xác nhận bằng mắt) | edge v2 code ✅ bc56ad3f
 Còn lại: M3 review Bìa Rừng (checker chụp → reviewer chấm) → M4 deep, heart, hollow, falls, marsh → M5
-Điểm reviewer: edge v1 6,5 ✗ (1:0,5 2:1,5 3:1,5 4:1,5 5:1,5)   FPS edge: RTX 2060 Đẹp 144/140/141/144/143/135; AMD iGPU Nhẹ 124/141/127/117/114/110; SwiftShader → lùi 2D
+Điểm reviewer: edge v1 6,5 ✗ | edge v2 7,5 ✗ (1,5 mỗi tiêu chí)   FPS edge: RTX 2060 Đẹp 144/140/141/144/143/135; AMD iGPU Nhẹ 124/141/127/117/114/110; SwiftShader → lùi 2D
 Lỗi đang mở: e2e đỏ CÓ SẴN (đã xác nhận ở 2ad31ee6: aquarium:63, away:41, garden:73 treo 2,6 h, live:25; species:103 cùng khẳng định schemaVersion 11 cũ — save đã 13+; perf plaza 16 FPS môi trường) — ngoài phạm vi, không thuộc npm run check, báo chủ dự án. SwiftShader 2–4 FPS → tự lùi 2D (chỉ test đơn vị, chưa thấy trong game). Diorama dựng lại (đứng ~1 s) khi mở cổng/thắp đố/đổi đội giữa map. warp() không có hình riêng (flash che). Máy đo: dGPU là RTX 2060, headless --gpu mặc định = AMD iGPU. Báo chủ dự án: layout.json 15 chỗ đặt decor (141e330e).
 Chờ chủ dự án: —
 Ghi chú: `package-lock.json` (sửa) và `studio/` (chưa track) có sẵn trước phiên, không thuộc việc này — KHÔNG commit.
@@ -61,3 +61,10 @@ dioramaProfile --gpu --quality full (ANIM_GPU=high) + --quality light (ANIM_GPU=
 3. Chỗ rậm: bỏ vũng tối tròn dưới chân đội (khoét + bóng), đội không chồng dọc.
 4. Gió tán lá thấy được giữa 2 khung liên tiếp; lá rơi / phấn hoa.
 5. Camera in-game: đội trong 60 % giữa khung ở Start; quái trung lập không đè đầu đội.
+
+## Brief Bìa Rừng vòng 3 (coder OPUS mới) — reviewer v2 7,5
+1. Cổng Đông (61,20) khi đóng: đọc rõ là bụi gai chặn (exit_bramble / gate_f1_bramble của kit, dây gai, viền đỏ); lab có nút cổng đóng/mở; điểm duyệt 5 chụp ở trạng thái đóng.
+2. Gió chứng minh được: dioramaWalk thêm đoạn đứng yên (camera đứng) ≥ 3 s; biên độ lay theo lớp thấy được giữa 2 khung 100 ms, không "thạch".
+3. Đội luôn trên cùng: quái trung lập + thú đồng đội không đè đầu trưởng nhóm (thứ tự vẽ / đẩy ra).
+4. Đêm: đất giữ nâu ấm tối, không xám xanh.
+5. Cầu: trụ + bóng dưới cầu bằng code.
