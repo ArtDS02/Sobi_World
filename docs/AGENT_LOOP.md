@@ -82,3 +82,9 @@ Sổ STATE thắng trí nhớ của phiên. Nếu STATE và git mâu thuẫn, ti
 Ngày 2026-11-19, nhánh `new-ideas/update-3d-adventure`:
 - guard: `src/areas/adventure/scene/AdventureScene.ts` quá dài (311 dòng, từ `b15376af`).
 - test: `assets`, `decor`, balance guard `phase11`.
+
+Baseline 2026-11-19, nhánh `map-diorama-forest` (checker, `npm run check` đủ 5 bước): typecheck, lint, assets:check xanh; guard đỏ (trên); test 11 đỏ / 2127 ở 4 file:
+- `tests/unit/assets.test.ts:128` (A4 decor cắt sai cỡ), `tests/unit/decor.test.ts:74` (`DECOR_HAY_BALE` thiếu chỗ đặt).
+- `tests/unit/phase11.test.ts:248` balance guard: **quá giờ** khi chạy cả bộ (55 s), chạy riêng thì xanh.
+- `tests/scripts/assetsCheck.test.ts`: 8 / 9 quá giờ **kể cả chạy riêng** — `beforeEach` chép cả `public/assets` (561 MB) cho mỗi test.
+Việc `forest-diorama` M1 sửa hết các đỏ này.
