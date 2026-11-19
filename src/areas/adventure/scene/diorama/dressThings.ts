@@ -14,7 +14,8 @@ import { buildBarrier } from './barriers';
 import { TILT, cardBatch, shadowStandIns, type CardLook, type CardUniforms, type Placed } from './cards';
 import { decksOf, deckAt } from './decks';
 import { reedCard, softEdges } from './extraArt';
-import { heightAt, weightsAt, type Grid } from './field';
+import { K, heightAt, kindAt, weightsAt, type Grid } from './field';
+import { crackCard } from './cracks';
 import { Foes } from './foes';
 import { InkPool } from './inkPool';
 import { LandmarkGlow } from './landmarkGlow';
@@ -25,11 +26,11 @@ import { tuftCard, type Card } from './textures';
 /** Height of a tall landmark (an oak, a dead tree) as a multiple of its footprint's width over the picture's aspect (a wide one keeps 1.45). */
 const LANDMARK = 1.6;
 /** Landmarks drawn larger than their footprint says, kept whole (their grey stones are no painted shadow) and alive with a soft glow. */
-const LANDMARKS: Readonly<Record<string, { scale: number; glow: boolean; spores?: boolean }>> = {
+const LANDMARKS: Readonly<Record<string, { scale: number; glow: boolean; spores?: boolean; /** No cast shadow from a stand-in (it showed as a hard block): a soft round one under it. */ soft?: boolean }>> = {
   prop_adv_lm_f2: { scale: 1.2, glow: true },
   prop_adv_lm_f3: { scale: 1.15, glow: false },
   prop_adv_lm_n1: { scale: 1.1, glow: false, spores: true },
-  prop_adv_lm_n2: { scale: 1.35, glow: false },
+  prop_adv_lm_n2: { scale: 1.35, glow: false, soft: true },
 };
 const FOE_H: Record<string, number> = { normal: 1.7, elite: 2.3, mutant: 2.0, subboss: 2.6, boss: 3.2, special: 2.2 };
 
@@ -49,8 +50,8 @@ function contactShadow(blob: THREE.Texture, x: number, y: number, z: number, w: 
   return m;
 }
 
-export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUniforms, quality: number, blob: THREE.Texture, s: AdventureSceneState, opts: { inkPools?: boolean; /** Share of the landmark's spores (default 1). */ spore?: number; /** Height of a shut barrier as a multiple of the default (a taller wall with a soft shadow at its foot). */ barrier?: number } = {}): Promise<Things> {
-  const { inkPools = false, spore = 1, barrier = 1 } = opts;
+export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUniforms, quality: number, blob: THREE.Texture, s: AdventureSceneState, opts: { inkPools?: boolean; /** Share of the landmark's spores (default 1). */ spore?: number; /** Height of a shut barrier as a multiple of the default (a taller wall with a soft shadow at its foot). */ barrier?: number; /** Flowers and grass streaks on the high ground (a plateau of tall cliffs). */ plateau?: boolean } = {}): Promise<Things> {
+  const { inkPools = false, spore = 1, barrier = 1, plateau = false } = opts;
   const group = new THREE.Group();
   const ground = (x: number, z: number) => heightAt(g, x, z);
   const r = (x: number, y: number, k: number) => hash2(Math.round(x * 97), Math.round(y * 89), k);
@@ -77,6 +78,24 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
       tufts[v]!.push({ x: jx, z: jz, y: ground(jx, jz), h: 0.3 + r(x, z, 19) * 0.2, flip: r(x, z, 20) < 0.5 });
     }
   tufts.forEach((items, i) => add(tuftCard(100 + i, i === 2), items, { sway: 1.6, tilt: TILT, push: 0.28 }));
+
+  // The high ground of a map of tall cliffs: patches of flowers and darker grass streaks, so the plateau is no flat green sheet.
+  if (plateau) {
+    const flowers: Placed[] = [];
+    const streaks: Placed[] = [];
+    for (let z = 0.1; z < g.rows; z += 0.28)
+      for (let x = 0.1; x < g.cols; x += 0.28) {
+        const jx = x + (r(x, z, 41) - 0.5) * 0.28;
+        const jz = z + (r(x, z, 42) - 0.5) * 0.28;
+        if (kindAt(g, Math.floor(jx), Math.floor(jz)) !== K.high || !walkable(jx, jz)) continue;
+        const patch = noise2(jx * 0.3, jz * 0.3, 51);
+        const at = { x: jx, z: jz, y: ground(jx, jz), h: 0.3 + r(x, z, 43) * 0.2, flip: r(x, z, 44) < 0.5 };
+        if (patch > 0.6 && r(x, z, 45) < 0.5) flowers.push(at);
+        else if (patch < 0.38 && r(x, z, 46) < 0.3) streaks.push({ ...at, h: 0.4 + r(x, z, 47) * 0.1 });
+      }
+    add(tuftCard(300, true), flowers, { sway: 1.6, tilt: TILT, push: 0.28 });
+    add(tuftCard(400, false), streaks, { sway: 1.4, tilt: TILT, push: 0.25 });
+  }
 
   // A dense border of grass along every path and reeds on the banks (never on a bridge deck).
   const edge: Placed[] = [];
@@ -110,7 +129,8 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
     // A landmark is the biggest thing in the area: drawn well above the ordinary trees (about 1/6 of the frame wide).
     if (!card) continue;
     const h = (def.w / card.aspect) * (card.aspect < 1 ? LANDMARK : 1.45) * (look?.scale ?? 1);
-    add(card, [{ x, z, y: ground(x, z), h }], { sway: 0.35, tilt: TILT, see: true }, [[0.7, 0.4, 0.26], 0.14]);
+    add(card, [{ x, z, y: ground(x, z), h }], { sway: 0.35, tilt: TILT, see: true }, look?.soft ? undefined : [[0.7, 0.4, 0.26], 0.14]);
+    if (look?.soft) group.add(contactShadow(blob, x, ground(x, z), z - 0.2, def.w * 1.5, 2.6));
     if (look?.glow) {
       const lg = new LandmarkGlow(new THREE.Vector3(x, ground(x, z), z), h * card.aspect, h, blob);
       group.add(lg.group);
@@ -137,9 +157,11 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
       pictures.set(key, p);
     }
     p.items.push({ x, z, y: ground(x, z), h: width / p.card.aspect, flip: false });
+    return width / p.card.aspect;
   };
   for (const d of decorOf(map)) await put(d.art, undefined, d.x, d.y, d.w);
   const has = (id: string) => art(id) !== null;
+  const cracks: Placed[] = [];
   const glows: THREE.Sprite[] = [];
   const zone = zoneOfMapId(map);
   for (const t of thingsOf(map)) {
@@ -179,9 +201,12 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
     // A boulder gate: its painted ground shadow is cut away (it would show as a hard band) and a soft round one lies under it.
     const boulder = t.kind === 'gate' && a.id.includes('boulder');
     if (boulder) group.add(contactShadow(blob, t.x + t.w / 2, ground(t.x + t.w / 2, t.y + t.h - 0.3), t.y + t.h - 0.35, t.w * 0.95, 2));
-    await put(a.id, a.state, t.x + t.w / 2, t.y + t.h - 0.12, Math.max(1.1, t.w + 0.4), boulder ? 0.85 : false);
+    const bh = await put(a.id, a.state, t.x + t.w / 2, t.y + t.h - 0.12, Math.max(1.1, t.w + 0.4), boulder ? 0.85 : false);
+    // The cracks of a stone that has a crack (drawn in code), in front of its picture.
+    if (boulder && bh && t.kind === 'gate' && !s.openedGates.includes(t.id)) cracks.push({ x: t.x + t.w / 2, z: t.y + t.h - 0.04, y: ground(t.x + t.w / 2, t.y + t.h - 0.04) + bh * 0.2, h: bh * 0.62, flip: false });
   }
   for (const { card, items } of pictures.values()) add(card, items, { sway: 0, tilt: TILT, see: true }, [[0.5, 0.4, 0.4], 0]);
+  add(crackCard(), cracks, { sway: 0, tilt: TILT, see: true });
 
   // The waterfall is drawn by waterfall.ts (the view builds it from the `w` tiles).
 

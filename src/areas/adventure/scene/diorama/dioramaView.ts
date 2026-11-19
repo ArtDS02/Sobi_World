@@ -32,6 +32,7 @@ import { Party } from './party';
 import type { ViewFrame, ViewOpts } from './viewTypes';
 import { blobTexture, loadCrop, loadTiling } from './textures';
 import { buildWater, type WaterUniforms } from './water';
+import { disposeCracks } from './cracks';
 import { Waterfall, disposeFallTextures, fallSite, footOf } from './waterfall';
 
 export type { ViewOpts, ViewFrame } from './viewTypes';
@@ -143,9 +144,9 @@ export class DioramaView {
     this.groundU.uInk.value.set(contract.ink?.x ?? 0, contract.ink?.y ?? 0, contract.ink?.r ?? 0);
     const decks = decksOf(g);
     const root = new THREE.Group();
-    root.add(buildGround(this.renderer, g, grass, this.opts.quality, this.groundU, contract.pathTone), buildCliffs(g, { strip: cliff, endL, endR }), ...(stone ? [buildStairs(g.stairs, stone)] : []), buildBridges(decks, contract.deckLift), buildWater(g, this.waterU, site ? footOf(site) : undefined), ...(contract.lilies === false ? [] : [buildLilies(g)]));
+    root.add(buildGround(this.renderer, g, grass, this.opts.quality, this.groundU, contract.pathTone), buildCliffs(g, { strip: cliff, endL, endR }, (contract.rise ?? 1) > 1), ...(stone ? [buildStairs(g.stairs, stone, (contract.rise ?? 1) <= 1)] : []), buildBridges(decks, contract.deckLift), buildWater(g, this.waterU, site ? footOf(site) : undefined, contract.pool), ...(contract.lilies === false ? [] : [buildLilies(g)]));
     root.add(await dressTrees(this.art, blockerPlan(map, opened, closed, g), map, g, this.cardU, contract, this.opts.quality === 'light'));
-    const things = await dressThings(this.art, map, g, this.cardU, quality, blob, s, { inkPools: contract.accent === 'corruptionInk', spore: this.opts.particles ?? 1, barrier: contract.barrier });
+    const things = await dressThings(this.art, map, g, this.cardU, quality, blob, s, { inkPools: contract.accent === 'corruptionInk', spore: this.opts.particles ?? 1, barrier: contract.barrier, plateau: (contract.rise ?? 1) > 1 });
     root.add(things.group);
     const fall = site ? Waterfall.create(site, g, this.waterU.uLight, fallKit, blob, quality) : null;
     if (fall) root.add(fall.group);
@@ -287,6 +288,7 @@ export class DioramaView {
     this.leave();
     disposeShaftTexture();
     disposeFallTextures();
+    disposeCracks();
     disposeRuneTexture();
     this.look.composer.dispose();
     this.renderer.dispose();

@@ -14,7 +14,15 @@ export interface WaterUniforms {
 }
 
 /** `foot`: where a waterfall plunges in (tiles) and how far its foam reaches; the pool turns white there and rings spread from it. */
-export function buildWater(g: Grid, u: WaterUniforms, foot?: { x: number; z: number; r: number }): THREE.Mesh {
+/** `pool`: a calmer palette for a map's water (shallow and deep colours, the depth over which they blend, how stretched the flow ripples are). */
+export interface PoolLook {
+  shallow: number;
+  deep: number;
+  ramp: number;
+  stretch: number;
+}
+
+export function buildWater(g: Grid, u: WaterUniforms, foot?: { x: number; z: number; r: number }, pool?: PoolLook): THREE.Mesh {
   const dist = waterDistance(g, RES);
   // Bytes (signed distance −2 … +4 tiles), so the texture filters linearly everywhere.
   // R: the distance; G: the water share itself, smooth, which draws the edge (a distance from a sampled mask would step).
@@ -38,8 +46,10 @@ export function buildWater(g: Grid, u: WaterUniforms, foot?: { x: number; z: num
       uTime: u.uTime,
       uLight: u.uLight,
       uGlint: u.uGlint,
-      uShallow: { value: new THREE.Color(0x63d4d0) },
-      uDeep: { value: new THREE.Color(0x2a6fb8) },
+      uShallow: { value: new THREE.Color(pool?.shallow ?? 0x63d4d0) },
+      uRamp: { value: pool?.ramp ?? 1.8 },
+      uStretch: { value: pool?.stretch ?? 1 },
+      uDeep: { value: new THREE.Color(pool?.deep ?? 0x2a6fb8) },
       uFall: { value: new THREE.Vector3(foot?.x ?? 0, foot?.z ?? 0, foot?.r ?? 0) },
     },
     vertexShader: /* glsl */ `
@@ -47,7 +57,7 @@ export function buildWater(g: Grid, u: WaterUniforms, foot?: { x: number; z: num
       void main(){ vec4 w = modelMatrix * vec4(position, 1.); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
     fragmentShader: /* glsl */ `
       uniform sampler2D tDist; uniform vec2 uSize; uniform float uTime; uniform vec3 uLight; uniform float uGlint;
-      uniform vec3 uShallow; uniform vec3 uDeep; uniform vec3 uFall;
+      uniform vec3 uShallow; uniform vec3 uDeep; uniform vec3 uFall; uniform float uRamp; uniform float uStretch;
       varying vec3 vW;
       ${GLSL_NOISE}
       void main(){
@@ -57,12 +67,12 @@ export function buildWater(g: Grid, u: WaterUniforms, foot?: { x: number; z: num
         if (edgeW <= 0.) discard;
         float d = max(dw.r * 6. - 2., (dw.g - .5) * .6);
         vec2 flow = vW.xz + vec2(sin(vW.z * .4) * .3, -uTime * .55);
-        float rip = dFbm(flow * vec2(1.3, .7));
-        vec3 col = mix(uShallow, uDeep, smoothstep(.15, 1.8, d + (rip - .5) * .3));
+        float rip = dFbm(flow * vec2(1.3, .7) * vec2(1., uStretch));
+        vec3 col = mix(uShallow, uDeep, smoothstep(.15, uRamp, d + (rip - .5) * .3));
         col *= .9 + .2 * dFbm(vW.xz * 2.4 + vec2(uTime * .12, -uTime * .4));
         float crest = smoothstep(.035, .0, abs(fract(dNoise(flow * vec2(1.6, .5)) * 3.) - .5)) * smoothstep(.4, 1.2, d);
         col = mix(col, vec3(.8, .95, 1.), crest * .22);
-        float foamEdge = .28 + .16 * rip + .05 * sin(uTime * 1.7 + vW.x * 1.3);
+        float foamEdge = .28 + .16 * rip + .05 * sin(uTime * 1.7 + vW.x * 1.3) + (uFall.z > 0. ? .06 * sin(uTime * 1.2 + vW.z * 1.7 + rip * 9.) : 0.);
         float foam = 1. - smoothstep(.02, foamEdge, d);
         col = mix(col, vec3(.97, 1., 1.), foam * .8);
         if (uFall.z > 0.) {

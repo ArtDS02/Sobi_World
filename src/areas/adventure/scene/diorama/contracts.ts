@@ -2,6 +2,7 @@
 // light leans off the three presets, the mix of trees, the one accent only this map has, and the fixed review points the shots are
 // taken at. Plain data: the view reads it for light, fog and trees now; accents flagged TODO(M4) are drawn in a later step.
 import type { AreaMap } from '../../logic/config/content';
+import type { PoolLook } from './water';
 
 /** The one thing only this map has (the standard's "ĐIỂM NHẤN"). */
 export type Accent = 'lotus' | 'sunShafts' | 'corruptionInk' | 'spores' | 'waterfall' | 'lowMist';
@@ -25,6 +26,8 @@ export interface SceneContract {
   barrier?: number;
   /** Small mushroom clusters (the landmark's picture scaled down) beside the woods' edge: share of the bush tiles that carry one (default 0). */
   mushrooms?: number;
+  /** A calmer palette for the map's water (water.ts `PoolLook`). */
+  pool?: PoolLook;
   /** Stretch of every elevation level (default 1): a map whose cliffs must read tall. Drawing only; the walkable tiles are unchanged. */
   rise?: number;
   /** Light added to the bridge decks in shade, 0–1 (default 0), so a tree's shadow never turns the planks black. */
@@ -46,7 +49,7 @@ const TINT_SKY = 0xbcd2e0;
 const TINT_VIOLET = 0x6a5688;
 const TINT_DEEP = 0x8fb4b4;
 const TINT_TEAL = 0x9cc4b8;
-const TINT_MIST = 0xc6e0f0;
+const TINT_MIST = 0xb4d8ee;
 
 export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
   // Bìa Rừng: the opening morning. Must stay as the approved G0 look.
@@ -155,9 +158,11 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
   // half again as tall so the falls drop a long way, the ancient stump and the way to the south exit kept clear of crowns.
   map_forest_falls: {
     trees: [0.35, 0.45, 0.2, 0],
-    light: { sat: 0.1, warm: -0.04, fog: 0.3, fogTint: TINT_MIST, moon: 0.4 },
-    life: { wings: false, petals: false, leaves: 0.8, flies: 0.8 },
-    wind: 0.9,
+    light: { sat: 0.05, warm: -0.08, fog: 0.4, fogTint: TINT_MIST, moon: 0.4 },
+    life: { wings: false, petals: false, leaves: 1.4, flies: 0.8 },
+    pool: { shallow: 0x8fc9c0, deep: 0x336f86, ramp: 3.4, stretch: 0.5 },
+    pathTone: 0.35,
+    wind: 1.3,
     nightLift: 0.5,
     deckLift: 1,
     rise: 1.45,
@@ -170,7 +175,7 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
     accent: 'waterfall',
     spots: [
       { name: '1 · Start', x: 2, y: 20 },
-      { name: '2 · Falls pool', x: 47, y: 20 },
+      { name: '2 · Falls foot', x: 40, y: 18 },
       { name: '3 · Ancient stump', x: 25, y: 35 },
       { name: '4 · Bridge', x: 41, y: 24 },
       { name: '5 · Plateau', x: 20, y: 6 },

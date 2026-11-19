@@ -31,7 +31,8 @@ interface Piece {
   low: number;
 }
 
-export function buildCliffs(g: Grid, art: CliffArt): THREE.Group {
+/** `tall`: the faces are very high (a map of big cliffs): the end pieces keep their own shape and sit on the lip as caps, never stretched down the face. */
+export function buildCliffs(g: Grid, art: CliffArt, tall = false): THREE.Group {
   const group = new THREE.Group();
   art.strip.wrapS = THREE.RepeatWrapping;
   const pos: number[] = [];
@@ -93,7 +94,7 @@ export function buildCliffs(g: Grid, art: CliffArt): THREE.Group {
 
   // Where a face stops: the kit's end pieces, a little in front of the strip, so it ends rounded instead of cut.
   for (const [tex, left] of [[art.endL, true], [art.endR, false]] as const) {
-    if (!tex) continue;
+    if (!tex || tall) continue;
     const p: number[] = [];
     const t: number[] = [];
     const ix: number[] = [];
@@ -102,10 +103,11 @@ export function buildCliffs(g: Grid, art: CliffArt): THREE.Group {
       const x = left ? e.x : e.x + STEP;
       const z = (left ? e.za : e.zb) + 0.3;
       const top = left ? e.top0 : e.top1;
-      const w = Math.min(END_MAX, (top - e.low) * END_ASPECT);
+      const hh = tall ? Math.min(top - e.low, END_MAX / END_ASPECT) : top - e.low;
+      const w = Math.min(END_MAX, hh * END_ASPECT);
       const [xa, xb] = left ? [x - w * 0.3, x + w * 0.7] : [x - w * 0.7, x + w * 0.3];
       const b = p.length / 3;
-      p.push(xa, e.low, z, xb, e.low, z, xb, top, z, xa, top, z);
+      p.push(xa, top - hh, z, xb, top - hh, z, xb, top, z, xa, top, z);
       t.push(0, 0, 1, 0, 1, 1, 0, 1);
       ix.push(b, b + 1, b + 2, b, b + 2, b + 3);
     }
@@ -126,7 +128,7 @@ export function buildCliffs(g: Grid, art: CliffArt): THREE.Group {
  * The flights of stone steps: a tread and a riser per step, from the kit's stairs picture, standing exactly where the walker's feet
  * stand (`stairHeight`), so the party climbs real steps. The lowest riser reaches below the ground, the top tread meets the high ground.
  */
-export function buildStairs(stairs: readonly Stair[], stone: THREE.Texture): THREE.Group {
+export function buildStairs(stairs: readonly Stair[], stone: THREE.Texture, shaded = true): THREE.Group {
   const group = new THREE.Group();
   for (const s of stairs) {
     const along = Math.abs(s.dx) * (s.x1 - s.x0) + Math.abs(s.dz) * (s.z1 - s.z0);
@@ -164,8 +166,8 @@ export function buildStairs(stairs: readonly Stair[], stone: THREE.Texture): THR
     geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
     geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
     geo.setIndex(idx);
-    const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: stone, side: THREE.DoubleSide }));
-    mesh.castShadow = mesh.receiveShadow = true;
+    const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: stone, side: THREE.DoubleSide, emissive: shaded ? 0x000000 : 0x55603f }));
+    mesh.castShadow = mesh.receiveShadow = shaded;
     group.add(mesh);
   }
   return group;
