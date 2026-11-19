@@ -2,6 +2,8 @@
 
 Áp dụng khi chủ dự án giao việc lớn, nhiều bước (ví dụ làm lại map Adventure). Sửa nhỏ (≤ vài file, rõ cách làm) thì phiên chính tự làm, không mở vòng lặp.
 
+**Chạy bằng skill:** `/agent-loop <mô tả task>` (hoặc `/agent-loop tiếp tục`). Skill `.claude/skills/agent-loop/` là bản thực thi của tài liệu này: bảng bước (đầu vào / đầu ra / agent · model / cổng / số vòng / khi nào báo chủ dự án), luật cứng, mẫu brief / design / STATE / báo cáo. Tài liệu này giữ lý do; bài học và bằng chứng ở `docs/agent-loop/LESSONS.md`. Mâu thuẫn giữa hai bên: sửa cả hai trong cùng commit.
+
 ## 1. Vai trò và model
 
 | Vai | Ở đâu | Model | Khi nào chạy |
@@ -37,8 +39,11 @@ Chỉ đạo: brief + tiêu chí xong
 5. **Kiểm rẻ trước.** coder tự chạy typecheck + lint + test liên quan tới file đã sửa; checker chạy `npm run check` đầy đủ một lần; ảnh / FPS chỉ khi việc có phần nhìn thấy và mọi cổng trước đã xanh.
 6. **Chỉ báo lỗi mới.** So với danh sách đỏ sẵn ở mục 6; lỗi có từ trước không làm hỏng vòng.
 7. **Chỉ đạo không đọc lại toàn bộ.** Xem `git diff --stat` + báo cáo; chỉ mở đoạn diff rủi ro (save, core, tiền).
-8. **Không chạy song song hai coder trên cùng file.** Việc chia được theo vùng / file thì mỗi coder dùng `isolation: "worktree"`.
-9. **Chỉ hai file trên đĩa cho mỗi việc:** `docs/agent-loop/<việc>/design.md` (thiết kế) và `STATE.md` (sổ trạng thái, mục 5), đều được commit. Báo cáo đầy đủ của agent chỉ nằm trong phiên; STATE giữ một dòng tóm tắt mỗi báo cáo.
+8. **Không chạy song song hai coder trên cùng file.** Việc chia được theo vùng / file thì mỗi coder dùng `isolation: "worktree"` với `npm ci` riêng (cấm junction / symlink `node_modules`).
+9. **File trên đĩa cho mỗi việc (được commit):** `docs/agent-loop/<việc>/STATE.md` (sổ trạng thái, mục 5), `design.md` (thiết kế), `research.md` nếu có bước nghiên cứu. Báo cáo + số đo của agent ghi thêm vào `art_inbox/agent-loop/<việc>/<đơn vị>/v<n>/report.md` (không commit) để mất tin nhắn không mất số; STATE giữ một dòng tóm tắt mỗi báo cáo.
+10. **Reviewer mới cho mỗi đơn vị** (map, lô skill): reviewer dùng lại qua nhiều đơn vị tích ảnh cũ, 73k → 230k token (LESSONS §2.1). Coder cũng mới cho mỗi đơn vị; chỉ tiếp tục trong vòng sửa cùng đơn vị.
+11. **Chỉ chấm đơn vị đã dựng đủ hợp đồng** (coder đánh dấu từng mục ✅ / ⏳). **Cùng lỗi thẩm mỹ 2 lần liên tiếp → nâng coder opus ngay.**
+12. **Chỉ đạo không tự mở ảnh**, lệnh dài luôn có giới hạn thời gian.
 
 ## 4. Điểm dừng chờ chủ dự án
 
@@ -88,3 +93,4 @@ Baseline 2026-11-19, nhánh `map-diorama-forest` (checker, `npm run check` đủ
 - `tests/unit/phase11.test.ts:248` balance guard: **quá giờ** khi chạy cả bộ (55 s), chạy riêng thì xanh.
 - `tests/scripts/assetsCheck.test.ts`: 8 / 9 quá giờ **kể cả chạy riêng** — `beforeEach` chép cả `public/assets` (561 MB) cho mỗi test.
 Việc `forest-diorama` M1 đã sửa hết (2026-11-19): **đỏ sẵn hiện rỗng**, `npm run check` xanh 2127 / 2127.
+2026-11-20 (`ed3c5905`): vẫn rỗng, `npm run check` xanh 2190 / 2190. E2E (`npm run test:e2e`, ngoài `check`) có đỏ sẵn: aquarium, away, garden (treo), live, species — xem `docs/agent-loop/forest-diorama/STATE.md`.

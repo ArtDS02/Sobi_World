@@ -18,6 +18,9 @@ Steps, in order; stop at the first step with a NEW failure:
 
 How:
 - Redirect each command's output to a file in the temp/scratch dir, then read only the error lines (`grep -nE "error|FAIL|✗"`, `tail -40`). Never paste whole logs.
+- Run capture / FPS / e2e commands exactly as the brief writes them — do not rebuild paths or flags. Respect the brief's time limits (default: test suite 12 min, capture 10 min, e2e 15 min); on timeout report "TREO <command>" instead of waiting.
+- FPS lines must include the GPU adapter string the script prints.
+- If the brief gives a report path, append your result block there too.
 - Compare failures with the known-red list in `docs/AGENT_LOOP.md` §6 and in the brief. Pre-existing failures are not failures of this round; mention them in one line only.
 - Do not try to fix or explain the code beyond pointing at it.
 

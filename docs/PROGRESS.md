@@ -14,6 +14,13 @@
 
 ## Nhật ký
 
+### 2026-11-20 — Skill `/agent-loop` + công cụ `npm run skill:audit`
+✅ Đã làm: đóng gói `docs/AGENT_LOOP.md` + 4 agent thành skill `.claude/skills/agent-loop/` (bảng bước P → B → R → D → C → K → V → F → M → T với đầu vào / đầu ra / agent · model / cổng / số vòng / khi nào báo chủ dự án; luật cứng; mẫu brief, design, STATE, báo cáo). Bài học có bằng chứng: `docs/agent-loop/LESSONS.md` (forest-diorama: 56 lượt agent ~5,3 triệu token; reviewer dùng lại qua nhiều map 73k → 230k; Chỉ đạo ngữ cảnh ~433k). Chạy thử trên việc thật `skill-audit-tool`: `npm run skill:audit` (kiểm kê 134 skill theo hệ / vai trò / bậc + điểm SCORES), 1 vòng, ~140k token agent con.
+📁 File: `.claude/skills/agent-loop/**`, `.claude/agents/*.md`, `docs/AGENT_LOOP.md`, `CLAUDE.md`, `docs/agent-loop/LESSONS.md`, `docs/agent-loop/skill-audit-tool/`, `scripts/audit/skillAudit*.ts`, `tests/scripts/skillAudit.test.ts`.
+🧪 Đã kiểm tra: `npm run check` xanh 2190 / 2190; `skill:audit --json` hợp lệ.
+⚠️ Chạy thử lộ 4 lỗi quy trình (coder báo đã ghi file mà không ghi, ✅ cho cờ chưa chạy, giờ STATE ước đoán, Explore không có Write) — đã sửa trong skill. `package-lock.json` trên máy bị npm 10.9 bỏ trường `libc`: không commit.
+👉 Chủ dự án: việc lớn sau gọi `/agent-loop <mô tả>`; "tiếp tục việc còn đang dang dở" = `/agent-loop tiếp tục`.
+
 ### 2026-11-20 — Map Adventure: 6 map vùng Rừng chạy Diorama 2.5D trong game (decision 064)
 ✅ Đã làm (vòng lặp nhiều agent, `docs/agent-loop/forest-diorama/`): renderer dùng chung `src/areas/adventure/scene/diorama/` (Three.js vẽ ra canvas riêng, chép vào Phaser mỗi khung như `stage3d.ts`); `MapRenderer` với `ClassicRenderer` (2D cũ, không đổi) và `DioramaRenderer`; luật chơi (chạm quái, rương, cổng, focus, save) vẫn ở `AdventureScene`, va chạm theo ô như 2D (`walk.ts` đã xóa, `blockerPlan` bảo đảm ô chặn nào cũng có vật chặn nhìn thấy). Hợp đồng cảnh riêng từng map ở `diorama/contracts.ts` + module điểm nhấn (nắng xuyên tán, mực loang, nấm, thác, sương, đầm lầy…). Cài đặt máy (không vào save): **Kiểu bản đồ** Diorama / 2D cổ điển, **Chất lượng** Tự động / Đẹp / Nhẹ; `quality.ts`: GPU phần mềm → 2D, FPS < 45 → Nhẹ, Nhẹ < 24 → 2D. Admin `#/diorama-lab` chọn đủ 6 map. Sửa hết đỏ sẵn của `npm run check` (guard AdventureScene, test assets / decor / phase11 / assetsCheck, ảnh `chr_so_down_idle`).
 🐞 Sửa lỗi save: `src/areas/adventure/logic/state.ts` `combatantSchema` thiếu `iq` (decision 062) → save giữa trận với quái thông minh không đọc được, cả slice Adventure bị reset. Thêm trường tùy chọn (save cũ vẫn mở được) + test hồi quy.
