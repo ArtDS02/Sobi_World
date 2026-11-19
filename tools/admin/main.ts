@@ -62,7 +62,7 @@ const NAV: readonly (readonly [group: string | null, items: readonly NavItem[]])
     ['adventure-editor', '✏️', 'Map Editor', 'map-editor'],
     ['adventure-assets', '🌲', 'Asset bản đồ', 'map-assets'],
     ['adventure-maps', '🗺️', 'Bản đồ khu', 'adventure-maps'],
-    ['diorama-lab', '🏞️', 'Diorama map (G0)', 'adventure-maps'],
+    ['diorama-lab', '🏞️', 'Diorama map', 'adventure-maps'],
   ]],
   // Plan 8.3: each Area has its own group; its pages are the content files that belong to it (shortcuts into "Nội dung game").
   ['Sobi Garden', [['content/garden%2Fcrops.json', '🌱', 'Cây trồng', 'content'], ['content/garden%2Fhybrids.json', '🧪', 'Công thức lai', 'content'], ['content/garden%2Fbalance.json', '⚙️', 'Cân bằng Garden', 'content'], ['content/garden%2Farea.json', '🚪', 'Mở khu Garden', 'content']]],

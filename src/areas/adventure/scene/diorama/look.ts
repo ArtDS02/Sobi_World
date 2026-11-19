@@ -42,10 +42,12 @@ const FINAL = {
     uTilt: { value: 1 },
     uSat: { value: 1 },
     uWarm: { value: 0 },
+    uFog: { value: 0 },
+    uFogCol: { value: new THREE.Color(0xbcd2e0) },
   },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }',
   fragmentShader: /* glsl */ `
-    uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uTilt; uniform float uSat; uniform float uWarm;
+    uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uTilt; uniform float uSat; uniform float uWarm; uniform float uFog; uniform vec3 uFogCol;
     varying vec2 vUv;
     void main(){
       float b = smoothstep(.24, .52, abs(vUv.y - .46)) * uTilt * 2.4;
@@ -60,6 +62,9 @@ const FINAL = {
         c = s / 13.;
       }
       float l = dot(c, vec3(.2126, .7152, .0722));
+      // Far haze: the top of the frame (the far side of the diorama) melts into the fog colour.
+      c = mix(c, uFogCol * (.35 + l), uFog * smoothstep(.5, 1., vUv.y) * .75);
+      l = dot(c, vec3(.2126, .7152, .0722));
       c = mix(vec3(l), c, uSat);
       c *= vec3(1. + uWarm, 1., 1. - uWarm);
       vec2 q = vUv - .5;
@@ -67,6 +72,14 @@ const FINAL = {
       gl_FragColor = vec4(c, 1.);
     }`,
 };
+
+export interface LightTweak {
+  sat: number;
+  warm: number;
+  fog: number;
+  fogTint: number;
+}
+const NO_TWEAK: LightTweak = { sat: 0, warm: 0, fog: 0, fogTint: 0xbcd2e0 };
 
 export class Look {
   readonly sun = new THREE.DirectionalLight(0xffffff, 2);
@@ -114,7 +127,8 @@ export class Look {
     (this.final.uniforms.uRes!.value as THREE.Vector2).set(w, h);
   }
 
-  apply(p: Preset, opts: { shadows: boolean; bloom: boolean; tilt: boolean }) {
+  /** `tweak`: the map's offsets from the preset (saturation, warmth) and its far fog, 0–0.6, tinted. */
+  apply(p: Preset, opts: { shadows: boolean; bloom: boolean; tilt: boolean }, tweak: LightTweak = NO_TWEAK) {
     this.preset = p;
     this.sun.color.set(p.sun);
     this.sun.intensity = p.sunI;
@@ -128,8 +142,10 @@ export class Look {
     this.bloom.enabled = opts.bloom;
     this.bloom.strength = p.bloom;
     this.final.uniforms.uTilt!.value = opts.tilt ? 1 : 0;
-    this.final.uniforms.uSat!.value = p.sat;
-    this.final.uniforms.uWarm!.value = p.warm;
+    this.final.uniforms.uSat!.value = p.sat + tweak.sat;
+    this.final.uniforms.uWarm!.value = p.warm + tweak.warm;
+    this.final.uniforms.uFog!.value = tweak.fog * (p === PRESETS.night ? 0.6 : 1);
+    (this.final.uniforms.uFogCol!.value as THREE.Color).set(tweak.fogTint);
     this.scene.traverse((o) => {
       const m = (o as THREE.Mesh).material as THREE.Material | undefined;
       if (m) m.needsUpdate = true;

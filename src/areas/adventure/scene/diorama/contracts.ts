@@ -1,0 +1,126 @@
+// The scene contract of each Forest map (docs/agent-loop/forest-diorama/design.md §C, docs/maps/MAP_SCENE_STANDARD.md §2): how the
+// light leans off the three presets, the mix of trees, the one accent only this map has, and the fixed review points the shots are
+// taken at. Plain data: the view reads it for light, fog and trees now; accents flagged TODO(M4) are drawn in a later step.
+import type { AreaMap } from '../../logic/config/content';
+
+/** The one thing only this map has (the standard's "ĐIỂM NHẤN"). */
+export type Accent = 'lotus' | 'sunShafts' | 'corruptionInk' | 'spores' | 'waterfall' | 'lowMist';
+
+export interface SceneContract {
+  /** Shares of the standing trees: oak, fir, big canopy, blossom (they need not sum to 1). */
+  trees: readonly [number, number, number, number];
+  /** Offsets from the day / golden / night presets: saturation, warmth (+ warm / - cool), far fog 0–0.6 and its tint. */
+  light: { sat: number; warm: number; fog: number; fogTint: number };
+  /** Trees and stones made of corruption around a centre (tile), share of the tiles at the centre. */
+  corrupt?: { x: number; y: number; r: number; share: number };
+  accent: Accent;
+  /** Review points: a tile, or a group's tile (`group`). */
+  spots: readonly { name: string; x?: number; y?: number; group?: string }[];
+}
+
+const TINT_SKY = 0xbcd2e0;
+const TINT_VIOLET = 0x6a5688;
+const TINT_TEAL = 0x9cc4b8;
+
+export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
+  // Bìa Rừng: the opening morning. Must stay as the approved G0 look.
+  map_forest_edge: {
+    trees: [0.45, 0.2, 0.15, 0.2],
+    light: { sat: 0, warm: 0.02, fog: 0.1, fogTint: TINT_SKY },
+    accent: 'lotus',
+    spots: [
+      { name: '1 · Start', x: 3, y: 18 },
+      { name: '2 · Wooden bridge', x: 22, y: 16 },
+      { name: '3 · Lotus pond', x: 24, y: 24 },
+      { name: '4 · Steps to the giant oak', x: 45, y: 13 },
+      { name: '5 · East exit', x: 57, y: 20 },
+      { name: '6 · Under the canopy', x: 52, y: 26 },
+    ],
+  },
+  // Rừng Sâu: dense pines, sun slanting through the canopy. TODO(M4): sun shafts, moss ground tint.
+  map_forest_deep: {
+    trees: [0.3, 0.5, 0.2, 0],
+    light: { sat: -0.08, warm: -0.02, fog: 0.3, fogTint: TINT_SKY },
+    accent: 'sunShafts',
+    spots: [
+      { name: '1 · Start', x: 2, y: 21 },
+      { name: '2 · Stone ring', x: 14, y: 9 },
+      { name: '3 · Long bridge', x: 40, y: 8 },
+      { name: '4 · Wide bridge', x: 25, y: 20 },
+      { name: '5 · Middle lake', x: 34, y: 16 },
+      { name: '6 · Moss floor', x: 44, y: 25 },
+      { name: '7 · East exit', x: 55, y: 27 },
+    ],
+  },
+  // Lõi Rừng: the corrupted heart. TODO(M4): ink crawling round the dead oak, grey ground gradient.
+  map_forest_heart: {
+    trees: [0.4, 0.4, 0.2, 0],
+    light: { sat: -0.15, warm: -0.03, fog: 0.4, fogTint: TINT_VIOLET },
+    corrupt: { x: 21, y: 12, r: 11, share: 0.35 },
+    accent: 'corruptionInk',
+    spots: [
+      { name: '1 · Start', x: 2, y: 14 },
+      { name: '2 · Dead giant tree', x: 20, y: 11 },
+      { name: '3 · Boss', group: 'g_f3_boss' },
+      { name: '4 · Shadow gate', x: 10, y: 17 },
+      { name: '5 · Under the canopy', x: 31, y: 4 },
+      { name: '6 · Exit', x: 46, y: 13 },
+    ],
+  },
+  // Thung Nấm: damp hollow, spores. TODO(M4): spores round the giant mushroom, low mist.
+  map_forest_hollow: {
+    trees: [0.35, 0.3, 0.35, 0],
+    light: { sat: 0.05, warm: -0.02, fog: 0.35, fogTint: TINT_TEAL },
+    accent: 'spores',
+    spots: [
+      { name: '1 · Start', x: 40, y: 33 },
+      { name: '2 · Giant mushroom', x: 36, y: 21 },
+      { name: '3 · Bridge', x: 23, y: 19 },
+      { name: '4 · Hidden nook', x: 12, y: 21 },
+      { name: '5 · Plateau', x: 15, y: 6 },
+      { name: '6 · Bramble gate', x: 54, y: 26 },
+    ],
+  },
+  // Thác Rêu: the waterfall off the big cliff. TODO(M4): falling-water shader, mist, rainbow.
+  map_forest_falls: {
+    trees: [0.35, 0.45, 0.2, 0],
+    light: { sat: 0, warm: 0, fog: 0.2, fogTint: TINT_SKY },
+    accent: 'waterfall',
+    spots: [
+      { name: '1 · Start', x: 2, y: 20 },
+      { name: '2 · Falls pool', x: 47, y: 20 },
+      { name: '3 · Ancient stump', x: 24, y: 30 },
+      { name: '4 · Bridge', x: 41, y: 24 },
+      { name: '5 · Plateau', x: 20, y: 6 },
+      { name: '6 · East exit', x: 70, y: 26 },
+    ],
+  },
+  // Đầm Sương: cold marsh. TODO(M4): drifting low mist, dense reeds.
+  map_forest_marsh: {
+    trees: [0.3, 0.3, 0.3, 0],
+    light: { sat: -0.1, warm: -0.04, fog: 0.3, fogTint: TINT_TEAL },
+    corrupt: { x: 40, y: 22, r: 90, share: 0.2 },
+    accent: 'lowMist',
+    spots: [
+      { name: '1 · Start', x: 2, y: 28 },
+      { name: '2 · Cross bridge', x: 41, y: 33 },
+      { name: '3 · Ruined hut', x: 50, y: 38 },
+      { name: '4 · Water wheel', x: 45, y: 21 },
+      { name: '5 · North-east pond', x: 70, y: 8 },
+      { name: '6 · North-west rim', x: 31, y: 11 },
+    ],
+  },
+};
+
+/** The map ids that have a contract, in the order of the Forest. */
+export const CONTRACT_IDS: readonly string[] = Object.keys(CONTRACTS);
+
+/** The review points of an area as tiles (a group's point is its own tile). */
+export function reviewSpots(map: AreaMap): { name: string; x: number; y: number }[] {
+  return (CONTRACTS[map.id]?.spots ?? []).flatMap((s) => {
+    const g = s.group ? map.groups.find((x) => x.id === s.group) : undefined;
+    const x = s.x ?? g?.x;
+    const y = s.y ?? g?.y;
+    return x === undefined || y === undefined ? [] : [{ name: s.name, x, y }];
+  });
+}

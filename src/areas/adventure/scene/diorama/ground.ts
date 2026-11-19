@@ -3,7 +3,8 @@
 // shares baked on the vertices, with noise on every border so edges curve. Steep slopes turn to rock. Cloud shadows drift over it.
 import * as THREE from 'three';
 import { GLSL_NOISE } from './noise';
-import { DECK_TOP, MARGIN, RES, heightAt, weightsAt, type Deck, type Grid } from './field';
+import { DECK_TOP, type Deck } from './decks';
+import { MARGIN, RES, heightAt, weightsAt, type Grid } from './field';
 import { plankTexture } from './textures';
 
 export interface GroundUniforms {

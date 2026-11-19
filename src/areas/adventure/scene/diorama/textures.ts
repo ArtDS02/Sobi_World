@@ -13,6 +13,14 @@ export interface Card {
 }
 
 const loaded = new Map<string, Promise<Card>>();
+const tilings: THREE.Texture[] = [];
+
+/** Frees the kit's picture cache (cards and ground tilings). The scene calls it on shutdown, after `DioramaView.dispose()`. */
+export function disposeKit() {
+  for (const p of loaded.values()) void p.then((c) => { c.tex.dispose(); c.normal?.dispose(); });
+  loaded.clear();
+  tilings.splice(0).forEach((t) => t.dispose());
+}
 
 const img = (url: string) =>
   new Promise<HTMLImageElement>((ok, fail) => {
@@ -88,6 +96,7 @@ export function loadCard(url: string, keepShadow = false): Promise<Card> {
 export async function loadTiling(url: string): Promise<THREE.Texture> {
   const t = texture((await toCanvas(url)) as HTMLCanvasElement);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  tilings.push(t);
   return t;
 }
 
