@@ -14,6 +14,8 @@ export interface SceneContract {
   /** Trees and stones made of corruption around a centre (tile), share of the tiles at the centre. */
   corrupt?: { x: number; y: number; r: number; share: number };
   accent: Accent;
+  /** Tiles (areas, margin forest too) where the woods stand low (bushes, not tall trees), so a landmark, the steps or an exit is never hidden behind a crown. Blocking is unchanged. */
+  keepLow?: readonly { x: number; y: number; w: number; h: number }[];
   /** Review points: a tile, or a group's tile (`group`). */
   spots: readonly { name: string; x?: number; y?: number; group?: string }[];
 }
@@ -28,12 +30,18 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
     trees: [0.45, 0.2, 0.15, 0.2],
     light: { sat: 0, warm: 0.02, fog: 0.1, fogTint: TINT_SKY },
     accent: 'lotus',
+    // The plateau and its steps (the giant oak must stand clear above them), and the way to the east exit.
+    keepLow: [
+      { x: 36, y: 6, w: 20, h: 8 },
+      { x: 54, y: 22, w: 12, h: 6 },
+      { x: 64, y: 15, w: 14, h: 7 },
+    ],
     spots: [
       { name: '1 · Start', x: 3, y: 18 },
       { name: '2 · Wooden bridge', x: 22, y: 16 },
       { name: '3 · Lotus pond', x: 24, y: 24 },
-      { name: '4 · Steps to the giant oak', x: 45, y: 13 },
-      { name: '5 · East exit', x: 57, y: 20 },
+      { name: '4 · Steps to the giant oak', x: 42, y: 6 },
+      { name: '5 · East exit', x: 61, y: 20 },
       { name: '6 · Under the canopy', x: 52, y: 26 },
     ],
   },

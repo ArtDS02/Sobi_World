@@ -67,6 +67,10 @@ export interface ChestSpec {
 
 const NOTICE = 6.5;
 const CHEST_H = 1.05;
+const smooth = (a: number, b: number, x: number) => {
+  const k = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return k * k * (3 - 2 * k);
+};
 const CALM: FoeState = { asleep: false, defeated: false, golden: false, disguised: false };
 
 export class Foes {
@@ -170,7 +174,12 @@ export class Foes {
       // A paper turn: the width runs through a thin edge, never fully flat.
       const turn = Math.sign(f.face || 1) * Math.max(0.08, Math.abs(f.face));
       f.mesh.scale.set(f.h * f.card.aspect * sx * turn, f.h * sy, 1);
-      f.mesh.position.set(f.x, this.ground(f.x, f.z) - 0.03 + hop, f.z);
+      // A foe standing just in front of the party is drawn a little further back, so its picture never covers the party's head.
+      const reach = Math.max(1.2, f.h * 0.6);
+      const back = 1 - smooth(reach * 0.55, reach, dist);
+      const zd = f.z - back * Math.max(0, f.z - party.z + 0.12);
+      f.mesh.position.set(f.x, this.ground(f.x, zd) - 0.03 + hop, zd);
+      f.shadow.position.set(f.x, this.ground(f.x, zd) + 0.03, zd - 0.05);
       f.mesh.rotation.z = Math.sin(t * 1.3 + f.phase) * 0.03 + near * 0.06 * Math.sign(party.x - f.x);
       f.shadow.scale.set(f.h * f.card.aspect * 0.85 * (1 - hop * 0.8), 1, f.h * f.card.aspect * 0.36 * (1 - hop * 0.8));
       if (f.ring.visible) f.ring.material.opacity = 0.4 + 0.2 * Math.sin(t * 2.2 + f.phase);

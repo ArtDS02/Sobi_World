@@ -54,10 +54,12 @@ vec3 cardAt = vec3(cardM[3]);
 float cardW = length(cardM[0].xyz) * sign(cardM[0][0]);
 float cardH = length(cardM[1].xyz);
 float cardTop = uv.y * uv.y;
-float gust = .55 + .8 * smoothstep(.35, 1., .5 + .5 * sin(uTime * .55 - cardAt.x * .16 - cardAt.z * .07));
-float swayW = .045 * uWind * uSway * cardTop * cardH / max(.3, abs(cardW));
-transformed.x += sin(uTime * 1.55 + cardAt.x * .7 + cardAt.z * 1.3) * swayW * gust;
-transformed.x += sin(uTime * 3.7 + cardAt.x * 2.1) * swayW * .3;
+// Layered wind: a slow gust front travelling over the map, a steady sway in it and a quicker flutter, so motion shows between frames 0.1 s apart.
+float gust = .6 + .9 * smoothstep(.3, 1., .5 + .5 * sin(uTime * .9 - cardAt.x * .2 - cardAt.z * .09));
+float swayW = .066 * uWind * uSway * cardTop * cardH / max(.3, abs(cardW));
+transformed.x += sin(uTime * 2.2 + cardAt.x * .7 + cardAt.z * 1.3) * swayW * gust;
+transformed.x += sin(uTime * 4.9 + cardAt.x * 2.1 + cardAt.z * .6) * swayW * .32 * gust;
+transformed.z += sin(uTime * 1.7 + cardAt.x * .5 + cardAt.z * 1.1) * swayW * .18;
 vec2 away = cardAt.xz - uPlayer.xz;
 float near = smoothstep(1.4, .15, length(away));
 transformed.x += sign(away.x + 1e-4) * sign(cardW) * uPush * cardTop * near / max(.3, abs(cardW));

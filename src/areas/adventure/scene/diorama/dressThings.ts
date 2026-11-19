@@ -18,11 +18,15 @@ import { Foes } from './foes';
 import { hash2, noise2 } from './noise';
 import { tuftCard, type Card } from './textures';
 
+/** Height of a tall landmark (an oak, a dead tree) as a multiple of its footprint's width over the picture's aspect (a wide one keeps 1.45). */
+const LANDMARK = 1.6;
 const FOE_H: Record<string, number> = { normal: 1.7, elite: 2.3, mutant: 2.0, subboss: 2.6, boss: 3.2, special: 2.2 };
 
 export interface Things {
   group: THREE.Group;
   foes: Foes;
+  /** Breathes the glow of the exits (call each frame with the clock, seconds). */
+  glow(t: number): void;
 }
 
 export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUniforms, quality: number, blob: THREE.Texture, s: AdventureSceneState): Promise<Things> {
@@ -77,7 +81,8 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
     if (!def || !card) continue;
     const x = p.x + def.w / 2;
     const z = p.y + def.h - 0.3;
-    add(card, [{ x, z, y: ground(x, z), h: (def.w / card.aspect) * 1.45 }], { sway: 0.35, tilt: TILT, see: true }, [[0.7, 0.4, 0.26], 0.14]);
+    // A landmark is the biggest thing in the area: drawn well above the ordinary trees (about 1/6 of the frame wide).
+    add(card, [{ x, z, y: ground(x, z), h: (def.w / card.aspect) * (card.aspect < 1 ? LANDMARK : 1.45) }], { sway: 0.35, tilt: TILT, see: true }, [[0.7, 0.4, 0.26], 0.14]);
   }
 
   // Hand-placed decorations (decision 047) and the things of the area, one batch per picture.
@@ -95,6 +100,7 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
   };
   for (const d of decorOf(map)) await put(d.art, undefined, d.x, d.y, d.w);
   const has = (id: string) => art(id) !== null;
+  const glows: THREE.Sprite[] = [];
   const zone = zoneOfMapId(map);
   for (const t of thingsOf(map)) {
     if (t.kind === 'chest') continue;
@@ -102,7 +108,14 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
       const e = map.exits.find((x) => x.id === t.id);
       const open = s.exits.find((x) => x.id === t.id)?.open ?? true;
       const id = exitArt(zone, e?.kind, open);
-      if (id) await put(id, undefined, t.x + t.w / 2, t.y + t.h - 0.1, (t.w + 1) * 1.05);
+      const wide = Math.max(t.w, t.h) + 1.7;
+      if (id) await put(id, undefined, t.x + t.w / 2, t.y + t.h - 0.1, wide);
+      // A soft glow on the ground at the exit: warm gold when it is open, an ember red when brambles bar it. It stands on the ground, never over the party.
+      const spot = new THREE.Sprite(new THREE.SpriteMaterial({ map: blob, color: open ? new THREE.Color(1.6, 1.35, 0.6) : new THREE.Color(1.6, 0.6, 0.3), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.5 }));
+      spot.position.set(t.x + t.w / 2, ground(t.x + t.w / 2, t.y + t.h / 2) + 0.35, t.y + t.h / 2);
+      spot.scale.set(wide * 1.5, wide * 0.8, 1);
+      glows.push(spot);
+      group.add(spot);
       continue;
     }
     const a = thingArt(t, map, s, has);
@@ -140,5 +153,6 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
     foes.addChest({ id: c.id, card, openCard, x: c.x + 0.5, z: c.y + 0.9, phase: hash2(c.x, c.y, 23) * 6 });
     foes.setChest(c.id, s.openedChests.includes(c.id));
   }
-  return { group, foes };
+  const glow = (t: number) => glows.forEach((s, i) => (s.material.opacity = 0.32 + 0.2 * (0.5 + 0.5 * Math.sin(t * 1.7 + i * 2))));
+  return { group, foes, glow };
 }

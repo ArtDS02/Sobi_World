@@ -58,7 +58,10 @@ const LOW = {
 export async function dressTrees(art: ArtFn, plan: BlockerPlan, map: AreaMap, g: Grid, u: CardUniforms, c: SceneContract, light = false): Promise<THREE.Group> {
   const group = new THREE.Group();
   const opts = { mix: c.trees, corrupt: c.corrupt };
-  const feet = [...placeFeet(plan, opts), ...marginTrees(map, opts)];
+  // Where the contract keeps the woods low, a tall tree is drawn as a bush (the tile still blocks, its foot is unchanged).
+  const low = c.keepLow ?? [];
+  const kept = (f: Foot) => low.some((r) => f.x >= r.x && f.x < r.x + r.w && f.z >= r.y && f.z < r.y + r.h);
+  const feet = [...placeFeet(plan, opts), ...marginTrees(map, opts)].map((f): Foot => (f.kind === 'tree' && kept(f) ? { ...f, kind: 'bush' } : f));
   const at = (f: Foot, h: number): Placed => ({
     x: f.x,
     z: f.z,

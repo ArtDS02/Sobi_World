@@ -1,32 +1,57 @@
 // Ground details of the diorama (G0) the height field alone does not show: painted cliff faces stood along every drop of high ground
-// (the kit's cliff strip, so a plateau reads as a cliff and not a smudge), and lily pads with a few flowers floating on calm water.
+// (the kit's cliff strip, with its two end pieces where a face stops, so a plateau reads as a cliff and not a smudge), the flights of
+// stone steps where a path climbs onto it, and lily pads with a few flowers floating on calm water.
 import * as THREE from 'three';
 import { heightAt, weightsAt, type Grid } from './field';
+import { TREAD, stairHeight, type Stair } from './plateau';
 import { hash2, noise2 } from './noise';
 import { texture } from './textures';
 
 /** Where the ground drops by more than this between a tile and the one below it, a cliff face stands. */
 const DROP = 0.7;
-/** Width of one face piece, and texture u per world unit (the strip is 4:1 and a face about 2 units tall). */
+/** Width of one face piece, and the strip picture's width / height (a face keeps the picture's shape at its own height). */
 const STEP = 0.5;
-const U_PER = 0.126;
+const STRIP_ASPECT = 4.13;
+/** Width / height of an end piece's picture, and the widest it is drawn (world units). */
+const END_ASPECT = 1.73;
+const END_MAX = 2.4;
 
-export function buildCliffs(g: Grid, strip: THREE.Texture): THREE.Mesh {
-  strip.wrapS = THREE.RepeatWrapping;
+export interface CliffArt {
+  strip: THREE.Texture;
+  endL: THREE.Texture | null;
+  endR: THREE.Texture | null;
+}
+
+interface Piece {
+  x: number;
+  za: number;
+  zb: number;
+  top0: number;
+  top1: number;
+  low: number;
+}
+
+export function buildCliffs(g: Grid, art: CliffArt): THREE.Group {
+  const group = new THREE.Group();
+  art.strip.wrapS = THREE.RepeatWrapping;
   const pos: number[] = [];
   const uv: number[] = [];
   const idx: number[] = [];
-  const quad = (x0: number, x1: number, z0: number, z1: number, yTop0: number, yTop1: number, yBot: number, u: number) => {
-    const b = pos.length / 3;
-    pos.push(x0, yBot, z0, x1, yBot, z1, x1, yTop1, z1, x0, yTop0, z0);
-    uv.push(u, 0, u + STEP * U_PER, 0, u + STEP * U_PER, 1, u, 1);
-    idx.push(b, b + 1, b + 2, b, b + 2, b + 3);
-  };
-  for (let y = 0; y < g.rows; y += 1)
+  const runs: { first: Piece; last: Piece; list: Piece[] }[] = [];
+  // The last row that stood a face at each column: a drop seen again by the next row's window is the same drop.
+  const lastRow = new Map<number, number>();
+  const inStairs = (x: number, z: number) => g.stairs.some((s) => stairHeight(s, x, z) !== null);
+  for (let y = 0; y < g.rows; y += 1) {
+    let run: { first: Piece; last: Piece; list: Piece[] } | null = null;
     for (let x = 0; x < g.cols; x += STEP) {
       const top = heightAt(g, x + STEP / 2, y + 0.2);
       const low = heightAt(g, x + STEP / 2, y + 1.8);
-      if (top - low < DROP) continue;
+      if (top - low < DROP || inStairs(x + STEP / 2, y + 0.5) || inStairs(x + STEP / 2, y + 1.5) || lastRow.get(Math.round(x / STEP)) === y - 1) {
+        run = null;
+        if (top - low >= DROP && lastRow.get(Math.round(x / STEP)) === y - 1) lastRow.set(Math.round(x / STEP), y);
+        continue;
+      }
+      lastRow.set(Math.round(x / STEP), y);
       // The face stands where the ground crosses half way down, sampled at both ends of the piece so it follows the edge.
       const edgeZ = (cx: number) => {
         for (let z = y + 0.2; z < y + 1.8; z += 0.05) if (heightAt(g, cx, z) < (top + low) / 2) return z;
@@ -34,17 +59,116 @@ export function buildCliffs(g: Grid, strip: THREE.Texture): THREE.Mesh {
       };
       const za = edgeZ(x);
       const zb = edgeZ(x + STEP);
-      quad(x, x + STEP, za + 0.18, zb + 0.18, heightAt(g, x, za - 0.25) + 0.08, heightAt(g, x + STEP, zb - 0.25) + 0.08, low - 0.05, x * U_PER);
+      const piece: Piece = { x, za, zb, top0: heightAt(g, x, za - 0.25) + 0.08, top1: heightAt(g, x + STEP, zb - 0.25) + 0.08, low: low - 0.05 };
+      if (run) {
+        run.last = piece;
+        run.list.push(piece);
+      } else {
+        run = { first: piece, last: piece, list: [piece] };
+        runs.push(run);
+      }
+    }
+  }
+  // A face of less than two tiles is a nick in the ground, not a cliff: it is left to the ground's own stone.
+  runs.splice(0, runs.length, ...runs.filter((r) => r.list.length >= 4));
+  for (const r of runs)
+    for (const piece of r.list) {
+      const { x, za, zb } = piece;
+      // One picture over a whole face keeps its shape: u runs with the width at the face's own height.
+      const perU = 1 / (Math.max(0.8, Math.max(piece.top0, piece.top1) - piece.low) * STRIP_ASPECT);
+      const b = pos.length / 3;
+      // The face leans back a little (its foot in front of the drop, its lip over it), so it stands clear of the sloped ground.
+      pos.push(x, piece.low, za + 0.45, x + STEP, piece.low, zb + 0.45, x + STEP, piece.top1, zb + 0.12, x, piece.top0, za + 0.12);
+      uv.push(x * perU, 0, (x + STEP) * perU, 0, (x + STEP) * perU, 1, x * perU, 1);
+      idx.push(b, b + 1, b + 2, b, b + 2, b + 3);
     }
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
   geo.setIndex(idx);
   geo.computeVertexNormals();
-  const mat = new THREE.MeshLambertMaterial({ map: strip, side: THREE.DoubleSide });
-  const mesh = new THREE.Mesh(geo, mat);
+  const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: art.strip, side: THREE.DoubleSide }));
   mesh.castShadow = mesh.receiveShadow = true;
-  return mesh;
+  group.add(mesh);
+
+  // Where a face stops: the kit's end pieces, a little in front of the strip, so it ends rounded instead of cut.
+  for (const [tex, left] of [[art.endL, true], [art.endR, false]] as const) {
+    if (!tex) continue;
+    const p: number[] = [];
+    const t: number[] = [];
+    const ix: number[] = [];
+    for (const r of runs) {
+      const e = left ? r.first : r.last;
+      const x = left ? e.x : e.x + STEP;
+      const z = (left ? e.za : e.zb) + 0.3;
+      const top = left ? e.top0 : e.top1;
+      const w = Math.min(END_MAX, (top - e.low) * END_ASPECT);
+      const [xa, xb] = left ? [x - w * 0.3, x + w * 0.7] : [x - w * 0.7, x + w * 0.3];
+      const b = p.length / 3;
+      p.push(xa, e.low, z, xb, e.low, z, xb, top, z, xa, top, z);
+      t.push(0, 0, 1, 0, 1, 1, 0, 1);
+      ix.push(b, b + 1, b + 2, b, b + 2, b + 3);
+    }
+    if (!ix.length) continue;
+    const eg = new THREE.BufferGeometry();
+    eg.setAttribute('position', new THREE.Float32BufferAttribute(p, 3));
+    eg.setAttribute('uv', new THREE.Float32BufferAttribute(t, 2));
+    eg.setIndex(ix);
+    eg.computeVertexNormals();
+    const em = new THREE.Mesh(eg, new THREE.MeshLambertMaterial({ map: tex, alphaTest: 0.5, side: THREE.DoubleSide }));
+    em.castShadow = em.receiveShadow = true;
+    group.add(em);
+  }
+  return group;
+}
+
+/**
+ * The flights of stone steps: a tread and a riser per step, from the kit's stairs picture, standing exactly where the walker's feet
+ * stand (`stairHeight`), so the party climbs real steps. The lowest riser reaches below the ground, the top tread meets the high ground.
+ */
+export function buildStairs(stairs: readonly Stair[], stone: THREE.Texture): THREE.Group {
+  const group = new THREE.Group();
+  for (const s of stairs) {
+    const along = Math.abs(s.dx) * (s.x1 - s.x0) + Math.abs(s.dz) * (s.z1 - s.z0);
+    const wide = Math.abs(s.dz) * (s.x1 - s.x0) + Math.abs(s.dx) * (s.z1 - s.z0);
+    const n = Math.max(1, Math.round(along / TREAD));
+    const depth = along / n;
+    // The treads run a little into the rock on both sides, so no ground shows between them and the wall.
+    const tuck = 0.3;
+    // (along the climb from the foot, across, height) to world.
+    const at = (a: number, l: number, y: number): number[] => (s.dz ? [s.x0 + l, y, s.dz < 0 ? s.z1 - a : s.z0 + a] : [s.dx > 0 ? s.x0 + a : s.x1 - a, y, s.z0 + l]);
+    const pos: number[] = [];
+    const nor: number[] = [];
+    const uv: number[] = [];
+    const idx: number[] = [];
+    const quad = (c: number[][], face: number[], u: number, v: number) => {
+      const b = pos.length / 3;
+      c.forEach((q, i) => {
+        pos.push(...q);
+        nor.push(...face);
+        uv.push(i === 1 || i === 2 ? u : 0, i >= 2 ? v : 0);
+      });
+      idx.push(b, b + 1, b + 2, b, b + 2, b + 3);
+    };
+    for (let k = 0; k < n; k += 1) {
+      const h = (s.top * (k + 1)) / n;
+      const lowH = k === 0 ? -0.25 : (s.top * k) / n;
+      const a0 = k * depth;
+      const a1 = a0 + depth;
+      // Both faces are drawn double-sided with a stated normal, so the corner order does not matter.
+      quad([at(a0, -tuck, h), at(a0, wide + tuck, h), at(a1, wide + tuck, h), at(a1, -tuck, h)], [0, 1, 0], (wide + tuck * 2) / 0.8, depth / 0.25);
+      quad([at(a0, -tuck, lowH), at(a0, wide + tuck, lowH), at(a0, wide + tuck, h), at(a0, -tuck, h)], [-s.dx, 0, -s.dz], (wide + tuck * 2) / 0.8, (h - lowH) / 0.25);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    geo.setIndex(idx);
+    const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: stone, side: THREE.DoubleSide }));
+    mesh.castShadow = mesh.receiveShadow = true;
+    group.add(mesh);
+  }
+  return group;
 }
 
 function padTexture(): THREE.Texture {

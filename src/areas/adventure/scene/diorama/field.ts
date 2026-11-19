@@ -5,23 +5,12 @@
 // Pure (no Three, no DOM).
 import type { AreaMap } from '../../logic/config/content';
 import { blockedTiles, type Thing } from '../../logic/maps';
+import { K, MARGIN, type Kind } from './kinds';
 import { noise2 } from './noise';
+import { raiseAroundHighGround, stairHeight, stairsOf, type Stair } from './plateau';
 
-/** Ground kinds of a tile. */
-export const K = {
-  grass: 0,
-  path: 1,
-  forest: 2,
-  water: 3,
-  rock: 4,
-  bridge: 5,
-  high: 6,
-  moss: 7,
-} as const;
-type Kind = (typeof K)[keyof typeof K];
+export { K, MARGIN };
 
-/** Tiles of forest drawn around the area so the world never ends at its edge. */
-export const MARGIN = 10;
 
 export interface Grid {
   cols: number;
@@ -34,9 +23,12 @@ export interface Grid {
   /** Per tile of the area itself (cols × rows): blocked for the walker (the game's `blockedTiles`), and waterfall tiles (`w`). */
   blocked: Uint8Array;
   fall: Uint8Array;
+  /** The stone steps where a path climbs onto high ground (drawn and stood on as steps, not a slope). */
+  stairs: Stair[];
 }
 
-const LEVEL = 1.05;
+/** Height of one elevation level, world units (a tile is 1): a level reads as a clear step up, two as a plateau. */
+const LEVEL = 1.5;
 const WATER_BED = -0.45;
 
 const kindOf = (c: string): Kind =>
@@ -59,7 +51,10 @@ export function gridOf(map: AreaMap, opened: ReadonlySet<string> = new Set(), cl
       const lv = Number(elev?.[y]?.[x] ?? 0) * LEVEL;
       height[i] = k === K.water || k === K.bridge ? WATER_BED : k === K.rock ? Math.max(lv, LEVEL * 1.6) : lv;
     }
-  raiseAroundHighGround(map, kind, height, W);
+  const ramps = raiseAroundHighGround(map, kind, height, W);
+  const stairs = stairsOf(map, ramps);
+  // A path that only runs alongside the high ground stays level: the drop shows as a cliff face, not a slope.
+  for (const r of ramps) if (!stairs.some((s) => r.x >= s.x0 && r.x < s.x1 && r.y >= s.z0 && r.y < s.z1)) height[(r.y + MARGIN) * W + r.x + MARGIN] = 0;
   // The world beyond: forest rising a little, so the edge reads as woods, not a wall.
   for (let y = 0; y < H; y += 1)
     for (let x = 0; x < W; x += 1) {
@@ -75,54 +70,11 @@ export function gridOf(map: AreaMap, opened: ReadonlySet<string> = new Set(), cl
     H,
     blocked: Uint8Array.from(blockedTiles(map, opened, closed), (b) => (b ? 1 : 0)),
     fall,
+    stairs,
   };
 }
 
 const clampI = (v: number, n: number) => (v < 0 ? 0 : v >= n ? n - 1 : v);
-
-/**
- * Today's grids mark a plateau's cliffs as plain blocked tiles: around high ground, those become rock at the plateau's height (a cliff
- * mass with a face, not a wood that would hide the plateau), and the paths that leave it ramp down over a few tiles (stairs).
- */
-function raiseAroundHighGround(map: AreaMap, kind: Uint8Array, height: Float32Array, W: number) {
-  const n = map.cols * map.rows;
-  const dist = new Int16Array(n).fill(99);
-  const top = new Float32Array(n);
-  const queue: number[] = [];
-  for (let i = 0; i < n; i += 1) {
-    const t = (Math.floor(i / map.cols) + MARGIN) * W + (i % map.cols) + MARGIN;
-    if (kind[t] === K.high && height[t]! > 0) {
-      dist[i] = 0;
-      top[i] = height[t]!;
-      queue.push(i);
-    }
-  }
-  for (let q = 0; q < queue.length; q += 1) {
-    const i = queue[q]!;
-    const x = i % map.cols;
-    const y = Math.floor(i / map.cols);
-    for (let dy = -1; dy <= 1; dy += 1)
-      for (let dx = -1; dx <= 1; dx += 1) {
-        const nx = x + dx;
-        const ny = y + dy;
-        if (nx < 0 || ny < 0 || nx >= map.cols || ny >= map.rows) continue;
-        const j = ny * map.cols + nx;
-        if (dist[j]! <= dist[i]! + 1) continue;
-        dist[j] = dist[i]! + 1;
-        top[j] = top[i]!;
-        if (dist[j]! < 5) queue.push(j);
-      }
-  }
-  for (let i = 0; i < n; i += 1) {
-    const t = (Math.floor(i / map.cols) + MARGIN) * W + (i % map.cols) + MARGIN;
-    const d = dist[i]!;
-    if ((kind[t] === K.forest || kind[t] === K.rock) && d <= 3) {
-      kind[t] = K.rock;
-      height[t] = top[i]!;
-    } else if (kind[t] === K.path && d <= 4 && height[t] === 0) height[t] = top[i]! * Math.max(0, 1 - d / 4.5);
-  }
-}
-
 /** Samples per tile of the smooth fields (the ground mesh uses the same spacing). */
 export const RES = 4;
 
@@ -205,11 +157,23 @@ function fields(g: Grid): Fields {
   const soft = [path, moss].map((c) => blur(c, w, h, RES * 0.55));
   // Moss floor (walkable) shades like a faint wood but never counts as blocked: its share stays under 0.5.
   const mossShare = soft[1]!.map((v, o) => Math.max(v, strict[0]![o]!));
+  const height = blur(hgt, w, h, RES * 0.3);
+  // Under a flight of steps the ground lies just below the treads, so the blur of the high ground beside it never rises over them.
+  for (const s of g.stairs)
+    for (let j = 0; j < h; j += 1)
+      for (let i = 0; i < w; i += 1) {
+        const [u, v] = [i / RES - MARGIN, j / RES - MARGIN];
+        const here = stairHeight(s, u, v);
+        if (here === null) continue;
+        // The lower of the treads a quarter tile either way, so the ground between two sample rows never rises over a tread.
+        const lo = Math.min(here, stairHeight(s, u + s.dx * 0.26, v + s.dz * 0.26) ?? here, stairHeight(s, u - s.dx * 0.26, v - s.dz * 0.26) ?? here);
+        if (height[j * w + i]! > lo - 0.06) height[j * w + i] = lo - 0.06;
+      }
   const f: Fields = {
     w,
     h,
     ch: [soft[0]!, mossShare, strict[1]!, strict[2]!],
-    height: blur(hgt, w, h, RES * 0.3),
+    height,
   };
   FIELDS.set(g, f);
   return f;

@@ -11,6 +11,8 @@ import { plankTexture } from './textures';
 export interface GroundUniforms {
   uTime: { value: number };
   uCloud: { value: number };
+  /** The party on screen (device px) and the radius of the see-through circle: the ground in it is never left in shadow. */
+  uSee: { value: THREE.Vector3 };
 }
 
 export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE.Texture, quality: 'full' | 'light', uniforms: GroundUniforms): THREE.Group {
@@ -39,6 +41,7 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
     sh.uniforms.uSize = { value: new THREE.Vector2(g.W, g.H) };
     sh.uniforms.uTime = uniforms.uTime;
     sh.uniforms.uCloud = uniforms.uCloud;
+    sh.uniforms.uSee = uniforms.uSee;
     sh.vertexShader = sh.vertexShader
       .replace('#include <common>', '#include <common>\nvarying vec3 vGW;\nvarying vec3 vGN;')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvGW = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvGN = normalize(mat3(modelMatrix) * objectNormal);');
@@ -46,15 +49,24 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
       .replace(
         '#include <common>',
         `#include <common>
-uniform sampler2D tPaint; uniform vec2 uSize; uniform float uTime; uniform float uCloud;
+uniform sampler2D tPaint; uniform vec2 uSize; uniform float uTime; uniform float uCloud; uniform vec3 uSee;
 varying vec3 vGW; varying vec3 vGN;
 ${GLSL_NOISE}
 vec3 srgb(vec3 c){ return pow(c, vec3(2.2)); }`,
       )
       .replace(
+        '#include <opaque_fragment>',
+        `// Under the crowns the party is seen through, the ground it reveals is lit like the open ground, with a soft edge (no dark disc).
+outgoingLight = max(outgoingLight, diffuseColor.rgb * (.8 * seeLift));
+#include <opaque_fragment>`,
+      )
+      .replace(
         '#include <map_fragment>',
         `vec2 wp = vGW.xz;
 vec3 col = texture2D(tPaint, (wp + ${MARGIN}.) / uSize).rgb;
+// In the see-through circle the dark forest floor is shown as leafy grass, so it is no dark disc round the party.
+float seeLift = uSee.z > 0. ? 1. - smoothstep(uSee.z * .5, uSee.z * 1.25, distance(gl_FragCoord.xy, uSee.xy)) : 0.;
+col = mix(col, max(col, srgb(vec3(.38, .54, .26)) * (.8 + .4 * dFbm(wp * 1.3))), seeLift);
 // Cliff faces show the stone: strata, vertical cracks, dark at the foot, a grass lip on top (only where the ground is steep).
 if (vGN.y < .9) {
   float steep = 1. - smoothstep(.45, .8, vGN.y);

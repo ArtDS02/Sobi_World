@@ -31,6 +31,8 @@ export class Party {
   private readonly leaderCards = new Map<string, Card>();
   private followerCards: Card[] = [];
   private readonly shadowMat: THREE.MeshBasicMaterial;
+  /** How far each companion's drawn place is moved sideways (tiles), eased, so a straight trail up or down does not stack them. */
+  private spread: number[] = [];
 
   constructor(
     private readonly u: CardUniforms,
@@ -76,7 +78,7 @@ export class Party {
     return new THREE.Vector3(x, ground(x, z), z);
   }
 
-  update(pose: PartyPose, dtMs: number, t: number, ground: (x: number, z: number) => number) {
+  update(pose: PartyPose, dtMs: number, t: number, ground: (x: number, z: number) => number, free: (x: number, z: number) => boolean = () => true) {
     const { leader, share } = pose;
     if (leader.moving) this.frames += (dtMs / 1000) * 8 * Math.max(0.25, share);
     if (!this.leader) return;
@@ -90,8 +92,26 @@ export class Party {
       if (!at) return;
       setSprite(m, this.followerCards[i]!, FOLLOWER_H, leader.moving && leader.x < at.x);
       const hop = leader.moving ? Math.abs(Math.sin(this.frames * Math.PI * 0.5 + i * 0.9)) * 0.1 : 0;
-      this.stand(m, this.shadows[i + 1]!, at.x / this.tile, at.y / this.tile, ground, hop, 1 + Math.sin(t * 2.2 + i) * 0.015, 0.75);
+      const [x, z] = [at.x / this.tile, at.y / this.tile];
+      const side = this.sideOf(i, x, z, pose, free);
+      this.spread[i] = (this.spread[i] ?? 0) + (side - (this.spread[i] ?? 0)) * (1 - Math.exp(-dtMs / 260));
+      const sx = x + this.spread[i]!;
+      this.stand(m, this.shadows[i + 1]!, free(sx, z) ? sx : x, z, ground, hop, 1 + Math.sin(t * 2.2 + i) * 0.015, 0.75);
     });
+  }
+
+  /**
+   * The sideways offset (tiles, at most 0.4) of companion `i`: when the trail runs straight up or down they would stack behind the
+   * leader, so they stand to alternate sides. Only drawn: the walker's trail is untouched, and the offset never enters a blocked tile.
+   */
+  private sideOf(i: number, x: number, z: number, pose: PartyPose, free: (x: number, z: number) => boolean): number {
+    const ahead = i === 0 ? { x: pose.leader.x / this.tile, y: pose.leader.y / this.tile } : { x: pose.followers[i - 1]!.x / this.tile, y: pose.followers[i - 1]!.y / this.tile };
+    const dx = Math.abs(ahead.x - x);
+    const dz = Math.abs(ahead.y - z);
+    // 1 when the line to the one ahead is vertical (within about 30 degrees), 0 when it is sideways.
+    const vertical = Math.min(1, Math.max(0, (dz / (dx + dz + 1e-3) - 0.6) / 0.25));
+    const want = (i % 2 === 0 ? 1 : -1) * 0.4 * vertical;
+    return [want, -want, 0].find((o) => free(x + o, z)) ?? 0;
   }
 
   private stand(m: THREE.Mesh, sh: THREE.Mesh, x: number, z: number, ground: (x: number, z: number) => number, lift: number, sy: number, shadowW: number) {

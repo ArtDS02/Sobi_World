@@ -1,6 +1,7 @@
 // Bridge decks of the diorama: one straight deck per group of bridge tiles, and where a walker's feet stand (on a deck, else on the
 // ground). Pure (no Three, no DOM).
 import { K, heightAt, kindAt, type Grid } from './field';
+import { stairHeight } from './plateau';
 
 /** A bridge deck: centre, size (world units) and whether the way runs along x. */
 export interface Deck {
@@ -50,6 +51,13 @@ export function decksOf(g: Grid): Deck[] {
 export const deckAt = (decks: readonly Deck[], x: number, z: number): Deck | undefined =>
   decks.find((k) => Math.abs(x - k.cx) <= k.w / 2 && Math.abs(z - k.cz) <= k.d / 2);
 
-/** Where a walker's feet stand at (x, z): on a deck, else on the ground. */
-export const standAt = (g: Grid, decks: readonly Deck[], x: number, z: number): number => (deckAt(decks, x, z) ? DECK_TOP : heightAt(g, x, z));
+/** Where a walker's feet stand at (x, z): on a deck, else on a tread of the steps, else on the ground. */
+export function standAt(g: Grid, decks: readonly Deck[], x: number, z: number): number {
+  if (deckAt(decks, x, z)) return DECK_TOP;
+  for (const s of g.stairs) {
+    const h = stairHeight(s, x, z);
+    if (h !== null) return h;
+  }
+  return heightAt(g, x, z);
+}
 

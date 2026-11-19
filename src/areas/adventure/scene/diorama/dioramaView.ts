@@ -14,7 +14,7 @@ import { BurstDriver } from './burstDriver';
 import { newCardUniforms, type CardUniforms } from './cards';
 import { CONTRACTS, type SceneContract } from './contracts';
 import { decksOf, standAt, type Deck } from './decks';
-import { buildCliffs, buildLilies } from './details';
+import { buildCliffs, buildLilies, buildStairs } from './details';
 import { dressThings, type Things } from './dressThings';
 import { disposeTree } from './disposeTree';
 import { gpuNameOf } from './gpuProbe';
@@ -23,9 +23,10 @@ import { gridOf, type Grid } from './field';
 import type { Foes } from './foes';
 import { buildBridges, buildGround, type GroundUniforms } from './ground';
 import { Life } from './life';
+import { FollowCam } from './followCam';
 import { Look, PRESETS, type TimeOfDay } from './look';
 import { Party, type PartyPose } from './party';
-import { blobTexture, loadTiling } from './textures';
+import { blobTexture, loadCrop, loadTiling } from './textures';
 import { buildWater, type WaterUniforms } from './water';
 
 export interface ViewOpts {
@@ -50,10 +51,6 @@ const NEUTRAL: SceneContract = {
   accent: 'lotus',
   spots: [],
 };
-const PITCH = THREE.MathUtils.degToRad(52);
-/** Camera distance: about 34 tiles show across at 16:9 (the first version, 41, showed 28). */
-const DIST = 49;
-const FOLLOW_S = 0.14;
 
 export class DioramaView {
   readonly renderer: THREE.WebGLRenderer;
@@ -61,15 +58,13 @@ export class DioramaView {
   private readonly camera = new THREE.PerspectiveCamera(22, 16 / 9, 1, 220);
   private readonly look: Look;
   private readonly cardU: CardUniforms = newCardUniforms();
-  private readonly groundU: GroundUniforms = { uTime: { value: 0 }, uCloud: { value: 0.16 } };
+  private readonly groundU: GroundUniforms = { uTime: { value: 0 }, uCloud: { value: 0.16 }, uSee: this.cardU.uSee };
   private readonly waterU: WaterUniforms = {
     uTime: { value: 0 },
     uLight: { value: new THREE.Color(1, 1, 1) },
     uGlint: { value: 1 },
   };
-  private readonly target = new THREE.Vector3();
-  /** Where the camera leads the party (it looks a little ahead of where it walks). */
-  private readonly lead = new THREE.Vector3();
+  private readonly cam = new FollowCam(this.camera);
   private readonly v = new THREE.Vector3();
   private root: THREE.Group | null = null;
   private g: Grid | null = null;
@@ -142,15 +137,20 @@ export class DioramaView {
     const contract = CONTRACTS[map.id] ?? NEUTRAL;
     const quality = this.opts.quality === 'full' ? 1 : 0.55;
     const particles = quality * (this.opts.particles ?? 1);
-    const [grass, cliff, butterfly] = await Promise.all([
+    const tile = (name: string) => (this.art(forestKit(name)) ? loadTiling(this.url(forestKit(name))) : Promise.resolve(null));
+    const [grass, cliff, endL, endR, stone, butterfly] = await Promise.all([
       loadTiling(this.url('adv_map_forest_tile_grass_a')),
       loadTiling(this.url(forestKit('edge_cliff'))),
+      tile('edge_cliff_end_l'),
+      tile('edge_cliff_end_r'),
+      // One step of the kit's stairs picture (its middle band), for the treads and risers of the flights of steps.
+      g.stairs.length && this.art(forestKit('edge_stairs')) ? loadCrop(this.url(forestKit('edge_stairs')), 0.43, 0.34, 0.57, 0.5) : Promise.resolve(null),
       cardOf(this.art, 'prop_butterfly_red', true),
     ]);
     const blob = blobTexture();
     const decks = decksOf(g);
     const root = new THREE.Group();
-    root.add(buildGround(this.renderer, g, grass, this.opts.quality, this.groundU), buildCliffs(g, cliff), buildBridges(decks), buildWater(g, this.waterU), buildLilies(g));
+    root.add(buildGround(this.renderer, g, grass, this.opts.quality, this.groundU), buildCliffs(g, { strip: cliff, endL, endR }), ...(stone ? [buildStairs(g.stairs, stone)] : []), buildBridges(decks), buildWater(g, this.waterU), buildLilies(g));
     root.add(await dressTrees(this.art, blockerPlan(map, opened, closed, g), map, g, this.cardU, contract, this.opts.quality === 'light'));
     const things = await dressThings(this.art, map, g, this.cardU, quality, blob, s);
     root.add(things.group);
@@ -234,18 +234,11 @@ export class DioramaView {
 
   private ground = (x: number, z: number) => (this.g ? standAt(this.g, this.decks, x, z) : 0);
 
-  /** Eases the camera's look-at point after the party, kept inside the area. */
-  private aim(at: THREE.Vector3, heading: { x: number; y: number }, snap: boolean, dt: number) {
-    const g = this.g!;
-    const halfW = Math.tan(THREE.MathUtils.degToRad(11)) * DIST * this.camera.aspect * 0.92;
-    if (snap) this.lead.set(0, 0, 0);
-    else if (this.opts.wind) this.lead.lerp(this.v.set(heading.x * 2.6, 0, heading.y * 1.6), 1 - Math.exp(-dt / 0.7));
-    const want = new THREE.Vector3(THREE.MathUtils.clamp(at.x + this.lead.x, halfW, g.cols - halfW), 0, THREE.MathUtils.clamp(at.z + 0.6 + this.lead.z, 11.4, g.rows - 6.6));
-    if (snap) this.target.copy(want);
-    else this.target.lerp(want, 1 - Math.exp(-dt / FOLLOW_S));
-    this.camera.position.set(this.target.x, this.target.y + Math.sin(PITCH) * DIST, this.target.z + Math.cos(PITCH) * DIST);
-    this.camera.lookAt(this.target);
-  }
+  /** True where the party may stand (a tile the game does not block): what a drawn-only offset must never leave. */
+  private free = (x: number, z: number): boolean => {
+    const g = this.g;
+    return !!g && x >= 0 && z >= 0 && x < g.cols && z < g.rows && !g.blocked[Math.floor(z) * g.cols + Math.floor(x)];
+  };
 
   /** One tick: poses the party and everything alive, then draws (unless hidden or still building). */
   frame(f: ViewFrame) {
@@ -265,15 +258,16 @@ export class DioramaView {
           }
         : { x: 0, y: 0 };
     this.prev = { x: lead.x, y: lead.y };
-    this.party.update(f.pose, dt * 1000, t, this.ground);
+    this.party.update(f.pose, dt * 1000, t, this.ground, this.free);
     const at = this.party.world(f.pose, this.ground);
-    this.aim(at, moved, !!f.snap, dt);
+    this.cam.aim(at, moved, !!f.snap, dt, this.g, this.opts.wind);
     this.seeThrough(at);
     this.things!.foes.update(t, dt, at);
-    this.life!.update(t, this.target, this.opts.wind ? 1 : 0.2, this.ground);
-    this.burstDriver.update(this.bursts!, this.g, this.decks, this.things!.foes, this.target, at, t, dt, lead.moving);
-    this.birds!.update(t, this.target, this.ground);
-    this.look.follow(this.target, at);
+    this.things!.glow(t);
+    this.life!.update(t, this.cam.target, this.opts.wind ? 1 : 0.2, this.ground);
+    this.burstDriver.update(this.bursts!, this.g, this.decks, this.things!.foes, this.cam.target, at, t, dt, lead.moving);
+    this.birds!.update(t, this.cam.target, this.ground);
+    this.look.follow(this.cam.target, at);
     this.renderer.info.reset();
     this.look.composer.render();
   }

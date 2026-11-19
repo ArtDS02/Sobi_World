@@ -8,7 +8,7 @@ import { blobTexture, leafTexture, type Card } from './textures';
 interface Mote {
   s: THREE.Sprite;
   seed: number;
-  kind: 'fly' | 'leaf' | 'mote' | 'wing';
+  kind: 'fly' | 'leaf' | 'petal' | 'mote' | 'wing';
 }
 
 const BOX = { x: 17, z: 11 };
@@ -31,7 +31,10 @@ export class Life {
     };
     add('fly', 46, () => new THREE.SpriteMaterial({ map: blob, color: new THREE.Color(2.2, 2.0, 0.75), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
     const leafTones = [0x8fbf45, 0xc9b23a, 0x6e9e34, 0xe08a3a];
-    add('leaf', 30, (i) => new THREE.SpriteMaterial({ map: leaf, color: leafTones[i % leafTones.length], transparent: true, depthWrite: false }));
+    add('leaf', 44, (i) => new THREE.SpriteMaterial({ map: leaf, color: leafTones[i % leafTones.length], transparent: true, depthWrite: false }));
+    // Petals (and a few close leaves above): they drift near the camera in the gusts, so the wind shows even where the trees stand still.
+    const petalTones = [0xffc4dc, 0xffffff, 0xffe2a8];
+    add('petal', 26, (i) => new THREE.SpriteMaterial({ map: leaf, color: petalTones[i % petalTones.length], transparent: true, depthWrite: false }));
     add('mote', 40, () => new THREE.SpriteMaterial({ map: blob, color: new THREE.Color(1.3, 1.2, 0.9), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.5 }));
     if (butterfly) add('wing', 4, () => new THREE.SpriteMaterial({ map: butterfly.tex, transparent: true, alphaTest: 0.4 }));
   }
@@ -59,15 +62,27 @@ export class Life {
         m.s.material.opacity = this.fireflies * (0.25 + pulse * 0.75);
         m.s.visible = this.fireflies > 0.01;
       } else if (m.kind === 'leaf') {
-        const life = 7 + r(3) * 5;
+        const life = 4.5 + r(3) * 3.5;
         const k = ((t + r(4) * life) % life) / life;
         const x = wrap(bx + k * 3 * wind + Math.sin(t * 1.3 + r(5) * 9) * 0.6, at.x, BOX.x);
         const z = wrap(bz + k * 1.2, at.z, BOX.z);
         const y = ground(x, z) + (1 - k) * (4 + r(6) * 2.5);
         m.s.position.set(x, y, z);
-        m.s.scale.set(0.2, 0.2 * Math.abs(Math.cos(t * 2.2 + r(7) * 6)) + 0.04, 1);
+        const size = r(10) > 0.65 ? 0.32 : 0.2;
+        m.s.scale.set(size, size * Math.abs(Math.cos(t * 2.2 + r(7) * 6)) + 0.04, 1);
         m.s.material.rotation = t * (1 + r(8)) + r(9) * 6;
         m.s.material.opacity = Math.min(1, (1 - k) * 4) * Math.min(1, k * 10);
+      } else if (m.kind === 'petal') {
+        // Falls from about 3.5 units in 4–6 s, blown across with a swing, tumbling.
+        const life = 4 + r(3) * 2;
+        const k = ((t + r(4) * life) % life) / life;
+        const x = wrap(bx + k * 4.5 * wind + Math.sin(t * 1.9 + r(5) * 9) * 0.5, at.x, BOX.x);
+        const z = wrap(bz + k * 1.5 + Math.cos(t * 1.4 + r(6) * 9) * 0.3, at.z, BOX.z);
+        m.s.position.set(x, ground(x, z) + (1 - k) * 3.5 + 0.3, z);
+        m.s.scale.set(0.15, 0.15 * Math.abs(Math.cos(t * 3 + r(7) * 6)) + 0.03, 1);
+        m.s.material.rotation = t * (1.5 + r(8)) + r(9) * 6;
+        m.s.material.opacity = Math.min(1, (1 - k) * 4) * Math.min(1, k * 8) * this.daylight;
+        m.s.visible = this.daylight > 0.05;
       } else if (m.kind === 'mote') {
         const x = wrap(bx + t * 0.25 * wind, at.x, BOX.x);
         const z = wrap(bz + Math.sin(t * 0.2 + r(3) * 9) * 0.8, at.z, BOX.z);

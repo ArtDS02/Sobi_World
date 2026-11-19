@@ -29,7 +29,8 @@ describe('assets:check (art standard §7.4)', () => {
     expect(checkAssets('public/assets')).toEqual([]);
   });
 
-  it('placeholders regenerate exactly the files the manifest lists', () => {
+  // Draws every placeholder picture of the manifest: minutes on a busy machine.
+  it('placeholders regenerate exactly the files the manifest lists', { timeout: 300_000 }, () => {
     // Back to wave 0: every row placeholder, so the generator owns every pig file again.
     const m = readManifest();
     for (const v of Object.values(m))

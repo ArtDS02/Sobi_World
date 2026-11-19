@@ -100,6 +100,19 @@ export async function loadTiling(url: string): Promise<THREE.Texture> {
   return t;
 }
 
+/** A window of a kit picture (shares of its width and height) as a plain repeating texture, for faces built in code (stair treads and risers). */
+export async function loadCrop(url: string, u0: number, v0: number, u1: number, v1: number): Promise<THREE.Texture> {
+  const src = await toCanvas(url);
+  const c = document.createElement('canvas');
+  c.width = Math.max(2, Math.round(src.width * (u1 - u0)));
+  c.height = Math.max(2, Math.round(src.height * (v1 - v0)));
+  c.getContext('2d')!.drawImage(src, src.width * u0, src.height * v0, c.width, c.height, 0, 0, c.width, c.height);
+  const t = texture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  tilings.push(t);
+  return t;
+}
+
 async function toCanvas(url: string): Promise<HTMLCanvasElement> {
   const i = await img(url);
   const c = document.createElement('canvas');
