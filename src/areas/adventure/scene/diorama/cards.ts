@@ -39,6 +39,8 @@ export interface CardLook {
    * foe or a companion standing within that distance in front never covers it.
    */
   near?: number;
+  /** Share (0–1) the picture is drained toward a cool violet-grey (a sick wood), 0 = none. */
+  sick?: number;
 }
 
 /** Lean of the cards toward the camera (the camera looks down 52°): a picture keeps ~93 % of its height on screen. */
@@ -64,7 +66,9 @@ float cardTop = uv.y * uv.y;
 // frames 0.1 s apart. Short cards (grass, reeds) sway as if a little taller, so a blade's motion is seen at all.
 float front = uTime * .75 - cardAt.x * .16 - cardAt.z * .07;
 float gust = smoothstep(.25, 1., .5 + .5 * sin(front)) * (.65 + .35 * sin(front * .37 + 1.3));
-float swayW = .066 * uWind * uSway * cardTop * max(cardH, .75) / max(.3, abs(cardW));
+// Far from the party (the margin woods at the frame edges) the sway grows, so those crowns move visibly in a still frame too.
+float swayFar = 1. + .9 * smoothstep(5., 14., length(cardAt.xz - uPlayer.xz));
+float swayW = .066 * uWind * uSway * swayFar * cardTop * max(cardH, .75) / max(.3, abs(cardW));
 transformed.x += sin(uTime * 2.1 + cardAt.x * .7 + cardAt.z * 1.3) * swayW * (.55 + .8 * gust);
 transformed.x += gust * swayW * 1.1 * sign(cardW);
 transformed.x += sin(uTime * 5.7 + cardAt.x * 2.1 + cardAt.z * .6 + uv.x * 2.4) * swayW * (.22 + .3 * gust);
@@ -99,7 +103,10 @@ export function cardMaterial(card: Card, u: CardUniforms, look: CardLook, tint =
   }
   mat.onBeforeCompile = (sh) => {
     patchVertex(sh, u, look, true);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>\nuniform vec3 uSee; uniform float uSeeOn; uniform vec3 uPlayer;\nvarying float vFootZ;\n${DITHER}`).replace(
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>\nuniform vec3 uSee; uniform float uSeeOn; uniform vec3 uPlayer; uniform float uSick;\nvarying float vFootZ;\n${DITHER}`).replace(
+      '#include <map_fragment>',
+      `#include <map_fragment>\ndiffuseColor.rgb = mix(diffuseColor.rgb, vec3(dot(diffuseColor.rgb, vec3(.2126, .7152, .0722))) * vec3(.92, .84, 1.08), uSick);`,
+    ).replace(
       '#include <clipping_planes_fragment>',
       // A card standing level with the party or in front of it (judged by its foot, not by the depth of each pixel: a tree right
       // beside the party is barely nearer the camera yet hides it) opens a circle around the party on screen.
@@ -110,7 +117,7 @@ if (uSeeOn > .5 && vFootZ > uPlayer.z - .2) {
 }`,
     );
   };
-  mat.customProgramCacheKey = () => `card-${look.sway}-${look.tilt}-${look.push ?? 0}-${look.see ? 1 : 0}-${look.shift ?? 0}-${look.near ?? 0}`;
+  mat.customProgramCacheKey = () => `card-${look.sway}-${look.tilt}-${look.push ?? 0}-${look.see ? 1 : 0}-${look.shift ?? 0}-${look.near ?? 0}-${look.sick ?? 0}`;
   return mat;
 }
 
@@ -123,11 +130,12 @@ function patchVertex(sh: THREE.WebGLProgramParametersWithUniforms, u: CardUnifor
     uSeeOn: { value: look.see ? 1 : 0 },
     uShift: { value: look.shift ?? 0 },
     uNear: { value: look.near ?? 0 },
+    uSick: { value: look.sick ?? 0 },
   });
   sh.vertexShader = sh.vertexShader
     .replace(
       '#include <common>',
-      '#include <common>\nuniform float uTime; uniform float uWind; uniform vec3 uPlayer; uniform float uSway; uniform float uTilt; uniform float uPush; uniform float uShift; uniform float uNear;\nvarying float vFootZ;',
+      '#include <common>\nuniform float uTime; uniform float uWind; uniform vec3 uPlayer; uniform float uSway; uniform float uTilt; uniform float uPush; uniform float uShift; uniform float uNear; uniform float uSick;\nvarying float vFootZ;',
     )
     .replace('#include <begin_vertex>', `#include <begin_vertex>\n${VERTEX}`)
     .replace(

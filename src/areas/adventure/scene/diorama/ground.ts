@@ -15,6 +15,8 @@ export interface GroundUniforms {
   uSee: { value: THREE.Vector3 };
   /** 1 at night: the dirt paths keep their warm brown under the blue moon (a light of their own hue, as bright as the moon's). */
   uNight: { value: number };
+  /** The corruption's ink round a centre: x, z (tiles) and radius (0 = none): the ground greys toward it and ink crawls out of it. */
+  uInk: { value: THREE.Vector3 };
 }
 
 export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE.Texture, quality: 'full' | 'light', uniforms: GroundUniforms, pathTone = 0): THREE.Group {
@@ -48,6 +50,7 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
     sh.uniforms.uCloud = uniforms.uCloud;
     sh.uniforms.uSee = uniforms.uSee;
     sh.uniforms.uNight = uniforms.uNight;
+    sh.uniforms.uInk = uniforms.uInk;
     sh.vertexShader = sh.vertexShader
       .replace('#include <common>', '#include <common>\nattribute vec4 aSplat;\nvarying vec3 vGW;\nvarying vec3 vGN;\nvarying float vPath;')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvGW = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvGN = normalize(mat3(modelMatrix) * objectNormal);\nvPath = aSplat.x;');
@@ -55,7 +58,7 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
       .replace(
         '#include <common>',
         `#include <common>
-uniform sampler2D tPaint; uniform vec2 uSize; uniform float uTime; uniform float uCloud; uniform vec3 uSee; uniform float uNight;
+uniform sampler2D tPaint; uniform vec2 uSize; uniform float uTime; uniform float uCloud; uniform vec3 uSee; uniform float uNight; uniform vec3 uInk;
 varying vec3 vGW; varying vec3 vGN; varying float vPath;
 ${GLSL_NOISE}
 vec3 srgb(vec3 c){ return pow(c, vec3(2.2)); }`,
@@ -67,10 +70,12 @@ outgoingLight = max(outgoingLight, diffuseColor.rgb * (.8 * seeLift));
 // At night a dirt path is lit by a light of its own warm hue, as bright as the moon and the lantern there (with a floor), so it stays a
 // dark warm brown a step lighter than the grass, instead of the flat grey-blue the moon makes of it.
 if (uNight > 0.) {
+  // The moon on open ground: never darker than a dim cool fraction of its own colour, so clearings read well away from the lantern.
+  outgoingLight = max(outgoingLight, diffuseColor.rgb * vec3(.72, .86, 1.1) * (.2 * uNight));
   float pathK = smoothstep(.3, .62, vPath) * step(.9, vGN.y) * uNight;
   vec3 lw = vec3(.2126, .7152, .0722);
   float lit = dot(outgoingLight, lw) / max(1e-3, dot(diffuseColor.rgb, lw));
-  outgoingLight = mix(outgoingLight, diffuseColor.rgb * max(lit * 1.15, .17) * vec3(1.08, .94, .76), pathK);
+  outgoingLight = mix(outgoingLight, diffuseColor.rgb * max(lit * 1.15, .27) * vec3(1.08, .94, .76), pathK);
 }
 #include <opaque_fragment>`,
       )
@@ -90,6 +95,25 @@ if (vGN.y < .9) {
   face *= .62 + .38 * smoothstep(.0, .9, vGW.y);
   col = mix(col, face, steep);
   col = mix(col, srgb(vec3(.5, .7, .3)), smoothstep(.62, .78, vGN.y) * (1. - smoothstep(.78, .9, vGN.y)) * step(.5, vGW.y) * .6);
+}
+// Corruption: the ground greys (violet cast) toward the dead tree, and black ink with a purple rim crawls out of its foot: a noisy
+// edge that tendrils out along the angle and breathes on a 3 s pulse, thin where a path runs.
+if (uInk.z > 0. && vGN.y > .9) {
+  vec2 dv = wp - uInk.xy;
+  float dist = length(dv);
+  float lum = dot(col, vec3(.2126, .7152, .0722));
+  float grey = .3 + .4 * (1. - smoothstep(1.5, uInk.z * 2.4, dist));
+  col = mix(col, vec3(lum) * vec3(.86, .78, .98) * .9, grey);
+  float pulse = .5 + .5 * sin(uTime * 2.0944);
+  vec2 dir = dv / max(dist, .001);
+  float reach = uInk.z * (.5 + .55 * dFbm(dir * 1.7 + 4.)) * (.94 + .1 * pulse);
+  float field = reach - dist + (dFbm(wp * 2.2 + vec2(uTime * .05, -uTime * .035)) - .5) * 1.6;
+  float pathK = smoothstep(.3, .62, vPath) * .8;
+  float core = smoothstep(.05, .6, field) * (1. - pathK);
+  float rim = smoothstep(-.5, .12, field) * (1. - smoothstep(.12, .7, field)) * (1. - pathK * .9);
+  float mottle = .88 + .12 * dNoise(wp * 5.);
+  col = mix(col, srgb(vec3(.08, .04, .11)) * (.7 + .6 * mottle), core * .95 * mottle);
+  col = mix(col, srgb(vec3(.48, .3, .7)) * (.85 + .3 * pulse), rim * .95);
 }
 // Drifting cloud shadows.
 float cl = smoothstep(.56, .74, dFbm(wp * .045 + vec2(uTime * .006, uTime * .004)));
@@ -152,7 +176,7 @@ export function buildBridges(decks: readonly Deck[], lift = 0): THREE.Group {
   const under = new THREE.MeshLambertMaterial({ map: grain, color: 0x8a6e58 });
   // A pile: from the river bed up through the deck's edge to the top of the rail.
   const pile = new THREE.CylinderGeometry(0.075, 0.1, 1.55, 7).translate(0, -0.155, 0);
-  const shade = new THREE.MeshBasicMaterial({ map: softRectTexture(), color: 0x06121a, transparent: true, opacity: 0.7, depthWrite: false });
+  const shade = new THREE.MeshBasicMaterial({ map: softRectTexture(), color: 0x06121a, transparent: true, opacity: 0.5, depthWrite: false });
   for (const { cx, cz, w, d, along } of decks) {
     const tex = planks.clone();
     tex.repeat.set(along ? w : 1, along ? 1 : d);
@@ -160,7 +184,8 @@ export function buildBridges(decks: readonly Deck[], lift = 0): THREE.Group {
     tex.needsUpdate = true;
     const deck = new THREE.Mesh(new THREE.BoxGeometry(w, DECK_TOP, d), new THREE.MeshLambertMaterial({ map: tex, emissiveMap: lift ? tex : null, emissive: new THREE.Color(lift * 0.55, lift * 0.5, lift * 0.45) }));
     deck.position.set(cx, DECK_TOP / 2, cz);
-    deck.castShadow = deck.receiveShadow = true;
+    // It casts but takes no real shadow: a tree's round crown shadow lay on the planks like a black blob.
+    deck.castShadow = true;
     group.add(deck);
     // The shadow on the water (drawn after it): under the whole deck, cast out north-east of it (the sun stands south-west by day), and a
     // narrow dark band under its camera side.

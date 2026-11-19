@@ -16,6 +16,7 @@ import { decksOf, deckAt } from './decks';
 import { reedCard, softEdges } from './extraArt';
 import { heightAt, weightsAt, type Grid } from './field';
 import { Foes } from './foes';
+import { InkPool } from './inkPool';
 import { LandmarkGlow } from './landmarkGlow';
 import { hash2, noise2 } from './noise';
 import { tuftCard, type Card } from './textures';
@@ -23,7 +24,7 @@ import { tuftCard, type Card } from './textures';
 /** Height of a tall landmark (an oak, a dead tree) as a multiple of its footprint's width over the picture's aspect (a wide one keeps 1.45). */
 const LANDMARK = 1.6;
 /** Landmarks drawn larger than their footprint says, kept whole (their grey stones are no painted shadow) and alive with a soft glow. */
-const LANDMARKS: Readonly<Record<string, { scale: number; glow: boolean }>> = { prop_adv_lm_f2: { scale: 1.2, glow: true } };
+const LANDMARKS: Readonly<Record<string, { scale: number; glow: boolean }>> = { prop_adv_lm_f2: { scale: 1.2, glow: true }, prop_adv_lm_f3: { scale: 1.15, glow: false } };
 const FOE_H: Record<string, number> = { normal: 1.7, elite: 2.3, mutant: 2.0, subboss: 2.6, boss: 3.2, special: 2.2 };
 
 export interface Things {
@@ -42,7 +43,7 @@ function contactShadow(blob: THREE.Texture, x: number, y: number, z: number, w: 
   return m;
 }
 
-export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUniforms, quality: number, blob: THREE.Texture, s: AdventureSceneState): Promise<Things> {
+export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUniforms, quality: number, blob: THREE.Texture, s: AdventureSceneState, inkPools = false): Promise<Things> {
   const group = new THREE.Group();
   const ground = (x: number, z: number) => heightAt(g, x, z);
   const r = (x: number, y: number, k: number) => hash2(Math.round(x * 97), Math.round(y * 89), k);
@@ -180,11 +181,16 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
     add(fallCard, [{ x: cx, z: z1 - 0.15, y: ground(cx, z1 - 0.15), h: (x1 - x0 + 0.4) / fallCard.aspect }], { sway: 0, tilt: TILT });
   }
 
-  // Enemy groups and chests.
+  // Enemy groups and chests (a boss of the corruption stands in a pool of its ink).
   const foes = new Foes(u, blob, ground);
   group.add(foes.group);
   const mimic = await cardOf(art, MIMIC_ART, true);
   for (const gr of map.groups) {
+    if (inkPools && gr.kind === 'boss') {
+      const pool = new InkPool(blob, gr.x + 0.5, ground(gr.x + 0.5, gr.y + 0.9), gr.y + 0.9);
+      group.add(pool.group);
+      lives.push((t) => pool.update(t));
+    }
     const view = s.groups.find((x) => x.id === gr.id);
     const id = view?.art ?? ENEMIES[gr.pool[0]?.enemies[0] ?? '']?.art;
     const card = id ? await cardOf(art, id, true) : null;

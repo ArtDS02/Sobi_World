@@ -1,11 +1,11 @@
 # STATE — forest-diorama (6 map vùng Rừng sang Diorama 2.5D, chạy trong game)
 Nhánh: map-diorama-forest (tách từ new-ideas/update-3d-adventure @ 2ad31ee6)   Commit xanh gần nhất: xem Xong
-Mốc hiện tại: M4 — Lõi Rừng (map_forest_heart)   Vòng: 1/3
-Đang làm: coder (sonnet mới) — M4 heart vòng 1 (brief mẫu M4, mục C3 + lỗi chung đêm/bóng cầu/gió rìa)
+Mốc hiện tại: M4 — Thung Nấm (map_forest_hollow)   Vòng: 1/3
+Đang làm: coder (sonnet mới) — M4 hollow vòng 1 (mục C4 + lỗi chung: gió tán khi tĩnh đo bằng số, rừng đêm ngoài vòng đèn)
 Brief đang chạy: xem mục Brief cuối file
-Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127 | M3a ✅ 3602a56f module diorama ở src/areas/adventure/scene/diorama, blockerPlan+test, lab 6 map, --map | M3a-perf+M3b ✅ c0522d2b check xanh 2166, e2e adventure 2/2 | M3c ✅ 45a87b5a diorama trong game, cài đặt, quality.ts; check xanh 2182, build xanh | M3 chơi thử ✅ (commit này) gameForest.ts --battle --chest --exit --reload: diorama = classic, đều PASS (rương xác nhận bằng mắt) | edge v2 code ✅ bc56ad3f | M3 Bìa Rừng ✅ ecdb7eba reviewer 9,0, check xanh 2182 | deep v1 code ✅ 38309c09 | M4 deep ✅ (commit này) reviewer 8,0
-Còn lại: M4 heart → hollow → falls → marsh → M5
-Điểm reviewer: edge v1 6,5 ✗ | edge v2 7,5 ✗ | edge v3 9,0 ✓ (2/2/1,5/2/2) | deep v1 7,5 ✗ | deep v2 8,0 ✓ (1,5/1,5/1,5/1,5/2)   FPS edge v3 (máy rảnh): RTX 2060 Đẹp 144×6; AMD iGPU Nhẹ 131/144/135/134/117/118
+Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127 | M3a ✅ 3602a56f module diorama ở src/areas/adventure/scene/diorama, blockerPlan+test, lab 6 map, --map | M3a-perf+M3b ✅ c0522d2b check xanh 2166, e2e adventure 2/2 | M3c ✅ 45a87b5a diorama trong game, cài đặt, quality.ts; check xanh 2182, build xanh | M3 chơi thử ✅ (commit này) gameForest.ts --battle --chest --exit --reload: diorama = classic, đều PASS (rương xác nhận bằng mắt) | edge v2 code ✅ bc56ad3f | M3 Bìa Rừng ✅ ecdb7eba reviewer 9,0, check xanh 2182 | deep v1 code ✅ 38309c09 | M4 deep ✅ b90208ee reviewer 8,0 | M4 heart ✅ (commit này) reviewer 8,0
+Còn lại: M4 hollow → falls → marsh → M5
+Điểm reviewer: edge v1 6,5 ✗ | edge v2 7,5 ✗ | edge v3 9,0 ✓ (2/2/1,5/2/2) | deep v1 7,5 ✗ | deep v2 8,0 ✓ | heart v1 8,0 ✓ (1,5/1,5/1,5/1,5/2)   FPS edge v3 (máy rảnh): RTX 2060 Đẹp 144×6; AMD iGPU Nhẹ 131/144/135/134/117/118
 Lỗi đang mở: e2e đỏ CÓ SẴN (đã xác nhận ở 2ad31ee6: aquarium:63, away:41, garden:73 treo 2,6 h, live:25; species:103 cùng khẳng định schemaVersion 11 cũ — save đã 13+; perf plaza 16 FPS môi trường) — ngoài phạm vi, không thuộc npm run check, báo chủ dự án. SwiftShader 2–4 FPS → tự lùi 2D (chỉ test đơn vị, chưa thấy trong game). Diorama dựng lại (đứng ~1 s) khi mở cổng/thắp đố/đổi đội giữa map. warp() không có hình riêng (flash che). Máy đo: dGPU là RTX 2060, headless --gpu mặc định = AMD iGPU. Báo chủ dự án: layout.json 15 chỗ đặt decor (141e330e).
 Chờ chủ dự án: —
 Ghi chú: `package-lock.json` (sửa) và `studio/` (chưa track) có sẵn trước phiên, không thuộc việc này — KHÔNG commit.

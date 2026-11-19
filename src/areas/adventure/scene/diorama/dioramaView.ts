@@ -60,7 +60,7 @@ export class DioramaView {
   private readonly camera = new THREE.PerspectiveCamera(22, 16 / 9, 1, 220);
   private readonly look: Look;
   private readonly cardU: CardUniforms = newCardUniforms();
-  private readonly groundU: GroundUniforms = { uTime: { value: 0 }, uCloud: { value: 0.16 }, uSee: this.cardU.uSee, uNight: { value: 0 } };
+  private readonly groundU: GroundUniforms = { uTime: { value: 0 }, uCloud: { value: 0.16 }, uSee: this.cardU.uSee, uNight: { value: 0 }, uInk: { value: new THREE.Vector3() } };
   private readonly waterU: WaterUniforms = {
     uTime: { value: 0 },
     uLight: { value: new THREE.Color(1, 1, 1) },
@@ -151,11 +151,12 @@ export class DioramaView {
       cardOf(this.art, 'prop_butterfly_red', true),
     ]);
     const blob = blobTexture();
+    this.groundU.uInk.value.set(contract.ink?.x ?? 0, contract.ink?.y ?? 0, contract.ink?.r ?? 0);
     const decks = decksOf(g);
     const root = new THREE.Group();
     root.add(buildGround(this.renderer, g, grass, this.opts.quality, this.groundU, contract.pathTone), buildCliffs(g, { strip: cliff, endL, endR }), ...(stone ? [buildStairs(g.stairs, stone)] : []), buildBridges(decks, contract.deckLift), buildWater(g, this.waterU), ...(contract.lilies === false ? [] : [buildLilies(g)]));
     root.add(await dressTrees(this.art, blockerPlan(map, opened, closed, g), map, g, this.cardU, contract, this.opts.quality === 'light'));
-    const things = await dressThings(this.art, map, g, this.cardU, quality, blob, s);
+    const things = await dressThings(this.art, map, g, this.cardU, quality, blob, s, contract.accent === 'corruptionInk');
     root.add(things.group);
     const party = new Party(this.cardU, blob, map.tile);
     await party.setTeam(
@@ -164,7 +165,7 @@ export class DioramaView {
       s.followers.map((f) => f.art),
     );
     root.add(party.group);
-    const life = new Life(butterfly, particles, contract.life);
+    const life = new Life(butterfly, particles, contract.life, contract.ink ?? null);
     const bursts = new Bursts(blob);
     const birds = new Birds(blob);
     root.add(life.group, bursts.group, birds.group);

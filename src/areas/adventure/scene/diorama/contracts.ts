@@ -12,7 +12,7 @@ export interface SceneContract {
   /** Offsets from the day / golden / night presets: saturation, warmth (+ warm / - cool), far fog 0–0.6 and its tint. */
   light: { sat: number; warm: number; fog: number; fogTint: number; /** Overall brightness, 1 = the preset's (default). */ dim?: number; /** Extra moon fill at night (hemisphere light), 0 = the preset's. */ moon?: number };
   /** What drifts through the air (default: everything on): butterflies, blossom petals, a multiple of the falling leaves. */
-  life?: { wings: boolean; petals: boolean; leaves: number };
+  life?: { wings: boolean; petals: boolean; leaves: number; /** Dry grey-brown leaves that fall slowly (default false). */ dry?: boolean; /** Multiple of the fireflies (default 1). */ flies?: number; /** Share of ink flakes rising round the `ink` centre. */ flakes?: number };
   /** Lily pads on the calm water (default true). */
   lilies?: boolean;
   /** Gain of the wind on every standing picture (default 1). */
@@ -23,6 +23,10 @@ export interface SceneContract {
   deckLift?: number;
   /** Trees and stones made of corruption around a centre (tile), share of the tiles at the centre. */
   corrupt?: { x: number; y: number; r: number; share: number };
+  /** How far the standing trees are drained toward violet-grey, 0–1 (default 0). */
+  sick?: number;
+  /** The corruption's ink (ground.ts, life.ts): its centre (tiles) and reach. */
+  ink?: { x: number; y: number; r: number };
   accent: Accent;
   /** Tiles (areas, margin forest too) where the woods stand low (bushes, not tall trees), so a landmark, the steps or an exit is never hidden behind a crown. Blocking is unchanged. */
   keepLow?: readonly { x: number; y: number; w: number; h: number }[];
@@ -82,11 +86,24 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
       { name: '7 · Boulder gate', x: 7, y: 27 },
     ],
   },
-  // Lõi Rừng: the corrupted heart. TODO(M4): ink crawling round the dead oak, grey ground gradient.
+  // Lõi Rừng: the corrupted heart: ink crawling round the dead tree, the ground greying toward it (ground.ts), dry leaves and ink flakes
+  // in the air (life.ts), darker and cooler than the other woods, no water, no butterflies.
   map_forest_heart: {
     trees: [0.4, 0.4, 0.2, 0],
-    light: { sat: -0.15, warm: -0.03, fog: 0.4, fogTint: TINT_VIOLET },
-    corrupt: { x: 21, y: 12, r: 11, share: 0.35 },
+    light: { sat: -0.15, warm: -0.03, fog: 0.4, fogTint: TINT_VIOLET, dim: 0.82, moon: 0.5 },
+    life: { wings: false, petals: false, leaves: 0.7, dry: true, flies: 0.3, flakes: 1 },
+    lilies: false,
+    wind: 1.2,
+    pathTone: 0.5,
+    corrupt: { x: 21, y: 12, r: 12, share: 0.5 },
+    ink: { x: 22, y: 13, r: 6 },
+    sick: 0.55,
+    // The dead tree's north side, and the boss's clearing: low woods so neither hides behind a crown.
+    keepLow: [
+      { x: 16, y: 3, w: 12, h: 6 },
+      { x: 34, y: 15, w: 14, h: 6 },
+      { x: 34, y: 5, w: 14, h: 6 },
+    ],
     accent: 'corruptionInk',
     spots: [
       { name: '1 · Start', x: 2, y: 14 },

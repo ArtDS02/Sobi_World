@@ -58,6 +58,7 @@ const LOW = {
 export async function dressTrees(art: ArtFn, plan: BlockerPlan, map: AreaMap, g: Grid, u: CardUniforms, c: SceneContract, light = false): Promise<THREE.Group> {
   const group = new THREE.Group();
   const opts = { mix: c.trees, corrupt: c.corrupt };
+  const sick = c.sick ?? 0;
   // Where the contract keeps the woods low, a tall tree is drawn as a bush (the tile still blocks, its foot is unchanged).
   const low = c.keepLow ?? [];
   const kept = (f: Foot) => low.some((r) => f.x >= r.x && f.x < r.x + r.w && f.z >= r.y && f.z < r.y + r.h);
@@ -94,16 +95,16 @@ export async function dressTrees(art: ArtFn, plan: BlockerPlan, map: AreaMap, g:
       add(
         { tex: card.tex, aspect: card.aspect },
         items.map((it) => ({ ...toCam(it, -0.35), h: it.h * 1.012 })),
-        { sway: 0.6, tilt: TILT, see: true, shift: -0.35 * VIEW_BACK },
+        { sway: 0.6, tilt: TILT, see: true, shift: -0.35 * VIEW_BACK, sick },
         undefined,
         0x6f7f66,
         2,
       );
-    add(card, items, { sway: 1, tilt: TILT, see: true }, [k.crown, k.trunk]);
+    add(card, items, { sway: 1, tilt: TILT, see: true, sick }, [k.crown, k.trunk]);
     add(
       leafLayer(card),
       items.map((it) => toCam(it, 0.3)),
-      { sway: 1.8, tilt: TILT, see: true, shift: 0.3 * VIEW_BACK },
+      { sway: 1.8, tilt: TILT, see: true, shift: 0.3 * VIEW_BACK, sick },
     );
   });
   const oak = TREES[0]!;
@@ -123,7 +124,7 @@ export async function dressTrees(art: ArtFn, plan: BlockerPlan, map: AreaMap, g:
     add(
       card,
       mine.filter((f) => !f.bad).map((f) => at(f, h(f))),
-      low.look,
+      { ...low.look, sick },
       [low.crown, 0],
     );
     add(
