@@ -1,12 +1,12 @@
 # STATE — forest-diorama (6 map vùng Rừng sang Diorama 2.5D, chạy trong game)
 Nhánh: map-diorama-forest (tách từ new-ideas/update-3d-adventure @ 2ad31ee6)   Commit xanh gần nhất: (M0)
 Mốc hiện tại: M3 — renderer dùng chung + Bìa Rừng trong game   Vòng: 1/3
-Đang làm: đo FPS trên RTX 3050 (ANIM_GPU=high); headless --gpu mặc định là GPU tích hợp AMD Radeon
+Đang làm: (chuẩn bị M3c)
 Brief đang chạy: xem mục "Brief M1" cuối file.
-Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127 | M3a ✅ 3602a56f module diorama ở src/areas/adventure/scene/diorama, blockerPlan+test, lab 6 map, --map | M3a-perf+M3b ✅ (commit này) check xanh 2166, e2e adventure 2/2
+Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127 | M3a ✅ 3602a56f module diorama ở src/areas/adventure/scene/diorama, blockerPlan+test, lab 6 map, --map | M3a-perf+M3b ✅ c0522d2b check xanh 2166, e2e adventure 2/2
 Còn lại: M3a-perf+mép, M3b → checker chung → M3c DioramaRenderer trong game + cài đặt + quality.ts → chơi thử Bìa Rừng → reviewer edge → M4 → M5
-Điểm reviewer: —   FPS edge (AMD iGPU): Đẹp 47/61/53/56/40/39, Nhẹ 80/114/104/91/78/81; SwiftShader Nhẹ 960: 2–4 (→ lùi 2D). RTX: chưa đo
-Lỗi đang mở: SwiftShader 2–4 FPS → tự lùi 2D (báo chủ dự án). Mọi số "RTX 3050" trước đây (cả G0) thật ra đo trên AMD iGPU. Báo chủ dự án: layout.json 15 chỗ đặt decor (141e330e).
+Điểm reviewer: —   FPS edge: dGPU RTX 2060 (ANIM_GPU=high) Đẹp 140/143/144/141/121/117; AMD iGPU Đẹp 47–61/39, Nhẹ 78–114; SwiftShader Nhẹ 2–4 (→ lùi 2D)
+Lỗi đang mở: SwiftShader 2–4 FPS → tự lùi 2D (báo chủ dự án). Máy đo: dGPU là RTX 2060 (không phải 3050); headless --gpu mặc định = AMD iGPU; cả số G0 cũ là iGPU. Báo chủ dự án: layout.json 15 chỗ đặt decor (141e330e).
 Chờ chủ dự án: —
 Ghi chú: `package-lock.json` (sửa) và `studio/` (chưa track) có sẵn trước phiên, không thuộc việc này — KHÔNG commit.
 

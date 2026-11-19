@@ -51,8 +51,9 @@ const SEED_SCRIPT = `
 export async function openBrowser(realGpu = false): Promise<{ browser: Browser; gpu: string }> {
   // `realGpu`: the machine's own GPU (a look at the true picture and its cost); the default software GPU is the same on every machine.
   const args = [...(realGpu ? ['--use-angle=d3d11', '--enable-gpu'] : ['--use-angle=swiftshader', '--enable-unsafe-swiftshader']), '--ignore-gpu-blocklist', '--disk-cache-size=1', '--media-cache-size=1', '--force-device-scale-factor=1'];
-  // ANIM_LOW_POWER_GPU=1 picks the integrated GPU on a dual-GPU machine (the "no discrete GPU" budget of MAP_SCENE_STANDARD).
-  if (realGpu && process.env.ANIM_LOW_POWER_GPU === '1') args.push('--force_low_power_gpu');
+  // ANIM_GPU=high | low picks the discrete or the integrated GPU of a dual-GPU machine (Chrome's default is the integrated one).
+  if (realGpu && process.env.ANIM_GPU === 'high') args.push('--force_high_performance_gpu');
+  if (realGpu && process.env.ANIM_GPU === 'low') args.push('--force_low_power_gpu');
   const channel = process.env.ANIM_BROWSER ?? 'chrome';
   const choices = [channel, ...['chrome', 'msedge'].filter((c) => c !== channel)];
   let last: unknown;
