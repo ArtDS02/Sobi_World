@@ -1,14 +1,12 @@
 # STATE — forest-diorama (6 map vùng Rừng sang Diorama 2.5D, chạy trong game)
 Nhánh: map-diorama-forest (tách từ new-ideas/update-3d-adventure @ 2ad31ee6)   Commit xanh gần nhất: (M0)
-Mốc hiện tại: M1 — sửa đỏ sẵn   Vòng: 1/3
-Đang làm: coder (sonnet) M1 sửa đỏ sẵn (M2 đã xong)   (bắt đầu 2026-11-19)
+Mốc hiện tại: M3 — renderer dùng chung + Bìa Rừng trong game   Vòng: 1/3
+Đang làm: (chuẩn bị M3a)
 Brief đang chạy: xem mục "Brief M1" cuối file.
-Xong: M0 ✅ 237df342 baseline | M2 ✅ (commit này) decision 064 + MAP_SCENE_STANDARD + design.md; F đã quyết: va chạm theo ô, mặc định diorama ~34 ô, giờ theo đồng hồ game
-Còn lại: M1 → M2 designer → M3 Bìa Rừng trong game → M4 deep, heart, hollow, falls, marsh → M5 kiểm tổng
+Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127
+Còn lại: M3a chuyển module + blockerPlan + lab 6 map → M3b MapRenderer/ClassicRenderer → M3c DioramaRenderer trong game + cài đặt → chơi thử Bìa Rừng → M4 deep, heart, hollow, falls, marsh → M5
 Điểm reviewer: —   FPS: —
-Lỗi đang mở (baseline): guard AdventureScene.ts 311>300; assets.test.ts:128 A4; decor.test.ts:74 HAY_BALE;
-  phase11.test.ts:248 quá giờ khi chạy cả bộ (riêng: xanh); assetsCheck.test.ts quá giờ cả khi chạy riêng (beforeEach chép 561 MB);
-  chr_so_down_idle.png là sheet 6 hình (khôi phục bản 3b10d833, 22 KB).
+Lỗi đang mở: — (đỏ sẵn rỗng). Báo chủ dự án: layout.json khôi phục 15 chỗ đặt decor mất ở 141e330e, kiểm chồng hình trong Admin.
 Chờ chủ dự án: —
 Ghi chú: `package-lock.json` (sửa) và `studio/` (chưa track) có sẵn trước phiên, không thuộc việc này — KHÔNG commit.
 

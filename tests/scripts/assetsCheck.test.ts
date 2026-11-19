@@ -1,4 +1,4 @@
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { PNG } from 'pngjs';
@@ -16,14 +16,16 @@ const blankPng = (w: number, h: number) => PNG.sync.write(new PNG({ width: w, he
 
 beforeEach(() => {
   root = mkdtempSync(join(tmpdir(), 'unin-assets-'));
-  cpSync('public/assets', root, { recursive: true });
+  // Only the manifest is copied (public/assets is hundreds of MB); each test writes the few files it touches.
+  cpSync('public/assets/manifest', join(root, 'manifest'), { recursive: true });
+  for (const dir of ['ui', 'fx', 'audio', join('pigs', 'base')]) mkdirSync(join(root, dir), { recursive: true });
 });
 afterEach(() => rmSync(root, { recursive: true, force: true }));
 
 describe('assets:check (art standard §7.4)', () => {
   // Reads every PNG on disk: slower than a unit test once the whole suite runs in parallel.
   // Reads every shipped PNG (decision 044 added ~380 battle pictures).
-  it('the shipped assets pass', { timeout: 45_000 }, () => {
+  it('the shipped assets pass', { timeout: 180_000 }, () => {
     expect(checkAssets('public/assets')).toEqual([]);
   });
 
@@ -35,7 +37,10 @@ describe('assets:check (art standard §7.4)', () => {
     const parsed = parseManifest(m);
     if (!parsed.ok) throw new Error(parsed.message);
     writeManifest(m);
-    rmSync(join(root, 'pigs'), { recursive: true });
+    rmSync(join(root, 'pigs'), { recursive: true, force: true });
+    // The generator does not draw the season variants of props and buildings: copy just those files.
+    const seasonal = (src: string) => !src.endsWith('.png') || /_(spring|summer|autumn|winter).png$/.test(src);
+    for (const dir of ['props', 'buildings']) cpSync(join('public/assets', dir), join(root, dir), { recursive: true, filter: seasonal });
     makePlaceholders(parsed.manifest, root);
     expect(checkAssets(root)).toEqual([]);
   }, 60_000); // draws every placeholder PNG: ~8 s on a busy machine, past the 5 s default
@@ -68,7 +73,7 @@ describe('assets:check (art standard §7.4)', () => {
     const m = readManifest();
     m.ui.push({ ...m.ui[0] });
     writeManifest(m);
-    rmSync(join(root, 'fx', 'fx_coin.png'));
+    rmSync(join(root, 'fx', 'fx_coin.png'), { force: true });
     writeFileSync(join(root, 'ui', 'ui_icon_unused.png'), blankPng(128, 128));
     const errors = checkAssets(root).join('\n');
     expect(errors).toContain('ui_icon_hunger: duplicate id');

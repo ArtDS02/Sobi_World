@@ -245,7 +245,7 @@ describe('the zone chain: Forest → Mountain → Ruins', () => {
     expect(ids('treasure_mountain')).not.toContain('item_ancient_rune');
   });
 
-  it('balance guard (decision 037): a balanced team needs levels in each zone, and gear helps', () => {
+  it('balance guard (decision 037): a balanced team needs levels in each zone, and gear helps', { timeout: 180_000 }, () => {
     const team = [
       { lineage: 'thiet_giap' as const, classId: 'tanker' as const },
       { lineage: 'hoa_giai' as const, classId: 'striker' as const },

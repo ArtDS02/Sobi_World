@@ -87,4 +87,4 @@ Baseline 2026-11-19, nhánh `map-diorama-forest` (checker, `npm run check` đủ
 - `tests/unit/assets.test.ts:128` (A4 decor cắt sai cỡ), `tests/unit/decor.test.ts:74` (`DECOR_HAY_BALE` thiếu chỗ đặt).
 - `tests/unit/phase11.test.ts:248` balance guard: **quá giờ** khi chạy cả bộ (55 s), chạy riêng thì xanh.
 - `tests/scripts/assetsCheck.test.ts`: 8 / 9 quá giờ **kể cả chạy riêng** — `beforeEach` chép cả `public/assets` (561 MB) cho mỗi test.
-Việc `forest-diorama` M1 sửa hết các đỏ này.
+Việc `forest-diorama` M1 đã sửa hết (2026-11-19): **đỏ sẵn hiện rỗng**, `npm run check` xanh 2127 / 2127.
