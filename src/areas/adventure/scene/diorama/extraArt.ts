@@ -42,14 +42,15 @@ export function leafLayer(card: Card): Card {
 }
 
 /** A clump of reeds: thin dark blades, a few brown heads. */
-export function reedCard(seed: number): Card {
+export function reedCard(seed: number, pale = false): Card {
   const [c, g] = canvas(96, 160);
   const r = rng(seed);
   for (let i = 0; i < 9; i += 1) {
     const x = 22 + r() * 52;
     const lean = (r() - 0.5) * 22;
     const top = 20 + r() * 50;
-    g.strokeStyle = ['#4d7a2e', '#5f8f35', '#6e9c3c', '#3f6a28'][i % 4]!;
+    // Pale straw and grey-green stems (a cold marsh) read as light reeds against the dark water, not as dark specks.
+    g.strokeStyle = (pale ? ['#c9c48e', '#b8b98a', '#d8d4a4', '#a2ae86'] : ['#4d7a2e', '#5f8f35', '#6e9c3c', '#3f6a28'])[i % 4]!;
     g.lineWidth = 3 + r() * 2;
     g.lineCap = 'round';
     g.beginPath();
@@ -57,7 +58,7 @@ export function reedCard(seed: number): Card {
     g.quadraticCurveTo(x + lean * 0.4, (160 + top) / 2, x + lean, top);
     g.stroke();
     if (i % 3 === 0) {
-      g.fillStyle = '#7a4a26';
+      g.fillStyle = pale ? '#8a7860' : '#7a4a26';
       g.beginPath();
       g.ellipse(x + lean, top + 8, 4, 11, 0, 0, Math.PI * 2);
       g.fill();
@@ -106,5 +107,19 @@ export function softEdges(card: Card, edges: { top?: number; right?: number }): 
   if (edges.right) band(tw * (1 - edges.right), 0, tw, 0, tw * (1 - edges.right), 0, tw * edges.right, th);
   const out: Card = { tex: texture(c), aspect: card.aspect, normal: card.normal };
   softened.set(card.tex, out);
+  return out;
+}
+
+const recolored = new WeakMap<THREE.Texture, Card>();
+/** The same picture with its hues turned by a CSS filter (e.g. `hue-rotate(185deg)`: a fire gate's flames become cold blue ones). */
+export function recolor(card: Card, filter: string): Card {
+  const have = recolored.get(card.tex);
+  if (have) return have;
+  const src = card.tex.image as HTMLCanvasElement;
+  const [c, g] = canvas(src.width, src.height);
+  g.filter = filter;
+  g.drawImage(src, 0, 0);
+  const out: Card = { tex: texture(c), aspect: card.aspect, normal: card.normal };
+  recolored.set(card.tex, out);
   return out;
 }

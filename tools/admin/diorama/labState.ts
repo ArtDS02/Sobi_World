@@ -26,8 +26,8 @@ export function labGroups(map: AreaMap): SceneGroup[] {
   }));
 }
 
-/** `open`: every exit open and every gate opened; else shut as in a fresh save (an exit with a lock is closed, no gate opened). */
-export function labState(map: AreaMap, open = false): AdventureSceneState {
+/** `open`: every exit open and every gate opened; else shut as in a fresh save (an exit with a lock is closed, no gate opened). `lit`: every element device lit (a water wheel turns). */
+export function labState(map: AreaMap, open = false, lit = false): AdventureSceneState {
   return {
     mode: 'explore',
     mapId: map.id,
@@ -39,7 +39,7 @@ export function labState(map: AreaMap, open = false): AdventureSceneState {
     exits: map.exits.map((e) => ({ id: e.id, open: open || !e.lock, lock: open ? null : (e.lock ?? null), forward: true })),
     openedGates: open ? map.gates.map((g) => g.id) : [],
     openedChests: [],
-    litPuzzles: [],
+    litPuzzles: lit ? map.puzzles.map((p) => p.id) : [],
     corruption: 0,
     foundSecrets: [],
     usedSpots: [],

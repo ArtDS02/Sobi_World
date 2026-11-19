@@ -82,7 +82,7 @@ export interface FeetOpts {
   /** Shares of the tree pictures, in order (they need not sum to 1). */
   mix: readonly number[];
   /** Corruption's reach: tiles within `r` of (x, y) are corrupt with this chance (centre) falling off to 0 at the rim. */
-  corrupt?: { x: number; y: number; r: number; share: number };
+  corrupt?: { x: number; y: number; r: number; share: number; /** Toward the rim of the ellipse (half-width `r`, 16:9 tall) instead of the centre. */ rim?: boolean };
 }
 
 const RADIUS = { tree: 0.22, bush: 0.3, rock: 0.3, stump: 0.25 } as const;
@@ -116,7 +116,8 @@ export function placeFeet(plan: BlockerPlan, opts: FeetOpts): Foot[] {
 function isBad(opts: FeetOpts, x: number, z: number, tx: number, ty: number): boolean {
   const c = opts.corrupt;
   if (!c) return false;
-  const near = 1 - Math.hypot(x - c.x, z - c.y) / c.r;
+  // A rim map: none inside 55 % of the ellipse, full at its edge (and beyond, in the margin woods).
+  const near = c.rim ? (Math.hypot((x - c.x) / c.r, (z - c.y) / (c.r * 0.5625)) - 0.55) / 0.45 : 1 - Math.hypot(x - c.x, z - c.y) / c.r;
   return near > 0 && hash2(tx, ty, 48) < c.share * Math.min(1, near * 1.6);
 }
 

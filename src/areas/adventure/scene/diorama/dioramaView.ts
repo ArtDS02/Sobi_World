@@ -20,23 +20,22 @@ import { dressThings, type Things } from './dressThings';
 import { disposeTree } from './disposeTree';
 import { gpuNameOf } from './gpuProbe';
 import { dressTrees } from './dressTrees';
-import { disposeRuneTexture } from './landmarkGlow';
 import { gridOf, heightAt, type Grid } from './field';
 import type { Foes } from './foes';
 import { buildBridges, buildGround, setGroundMood, type GroundUniforms } from './ground';
 import { Life } from './life';
-import { SunShafts, shaftSpots, disposeShaftTexture } from './sunShafts';
+import { Mist } from './mist';
+import { SunShafts, shaftSpots } from './sunShafts';
 import { FollowCam } from './followCam';
 import { Look, PRESETS } from './look';
 import { Party } from './party';
 import type { ViewFrame, ViewOpts } from './viewTypes';
 import { blobTexture, loadCrop, loadTiling } from './textures';
 import { buildWater, type WaterUniforms } from './water';
-import { disposeCracks } from './cracks';
-import { Waterfall, disposeFallTextures, fallSite, footOf } from './waterfall';
+import { disposeAccentTextures } from './disposeTextures';
+import { Waterfall, fallSite, footOf } from './waterfall';
 
 export type { ViewOpts, ViewFrame } from './viewTypes';
-
 const NEUTRAL: SceneContract = { trees: [0.45, 0.2, 0.15, 0.2], light: { sat: 0, warm: 0, fog: 0, fogTint: 0xbcd2e0 }, accent: 'lotus', spots: [] };
 
 export class DioramaView {
@@ -45,7 +44,7 @@ export class DioramaView {
   private readonly camera = new THREE.PerspectiveCamera(22, 16 / 9, 1, 220);
   private readonly look: Look;
   private readonly cardU: CardUniforms = newCardUniforms();
-  private readonly groundU: GroundUniforms = { uTime: { value: 0 }, uCloud: { value: 0.16 }, uSee: this.cardU.uSee, uNight: { value: 0 }, uLift: { value: 0 }, uBreeze: { value: 1 }, uSeeTint: { value: new THREE.Color(1, 1, 1) }, uInk: { value: new THREE.Vector3() } };
+  private readonly groundU: GroundUniforms = { uTime: { value: 0 }, uCloud: { value: 0.16 }, uSee: this.cardU.uSee, uNight: { value: 0 }, uLift: { value: 0 }, uBreeze: { value: 1 }, uSeeTint: { value: new THREE.Color(1, 1, 1) }, uInk: { value: new THREE.Vector3() }, uChill: { value: 0 } };
   private readonly waterU: WaterUniforms = {
     uTime: { value: 0 },
     uLight: { value: new THREE.Color(1, 1, 1) },
@@ -65,6 +64,7 @@ export class DioramaView {
   private shafts: SunShafts | null = null;
   private cover: CanopyCover | null = null;
   private fall: Waterfall | null = null;
+  private mist: Mist | null = null;
   private tile = 40;
   private w = 1;
   private h = 1;
@@ -142,11 +142,12 @@ export class DioramaView {
     ]);
     const blob = blobTexture();
     this.groundU.uInk.value.set(contract.ink?.x ?? 0, contract.ink?.y ?? 0, contract.ink?.r ?? 0);
+    this.groundU.uChill.value = contract.chill ?? 0;
     const decks = decksOf(g);
     const root = new THREE.Group();
     root.add(buildGround(this.renderer, g, grass, this.opts.quality, this.groundU, contract.pathTone), buildCliffs(g, { strip: cliff, endL, endR }, (contract.rise ?? 1) > 1), ...(stone ? [buildStairs(g.stairs, stone, (contract.rise ?? 1) <= 1)] : []), buildBridges(decks, contract.deckLift), buildWater(g, this.waterU, site ? footOf(site) : undefined, contract.pool), ...(contract.lilies === false ? [] : [buildLilies(g)]));
     root.add(await dressTrees(this.art, blockerPlan(map, opened, closed, g), map, g, this.cardU, contract, this.opts.quality === 'light'));
-    const things = await dressThings(this.art, map, g, this.cardU, quality, blob, s, { inkPools: contract.accent === 'corruptionInk', spore: this.opts.particles ?? 1, barrier: contract.barrier, plateau: (contract.rise ?? 1) > 1 });
+    const things = await dressThings(this.art, map, g, this.cardU, quality, blob, s, { reeds: contract.reeds, deviceScale: contract.deviceScale, inkPools: contract.accent === 'corruptionInk', spore: this.opts.particles ?? 1, barrier: contract.barrier, plateau: (contract.rise ?? 1) > 1 });
     root.add(things.group);
     const fall = site ? Waterfall.create(site, g, this.waterU.uLight, fallKit, blob, quality) : null;
     if (fall) root.add(fall.group);
@@ -163,6 +164,8 @@ export class DioramaView {
     root.add(life.group, bursts.group, birds.group);
     const shafts = contract.accent === 'sunShafts' ? new SunShafts(shaftSpots(g), blob, (x, z) => heightAt(g, x, z), quality < 1 ? 3 : 6) : null;
     if (shafts) root.add(shafts.group);
+    const mist = contract.accent === 'lowMist' ? new Mist(g, decks, quality < 1 ? 16 : 30) : null;
+    if (mist) root.add(mist.group);
     const cover = contract.accent === 'spores' ? await CanopyCover.build(this.art, map, g, this.cardU) : null;
     if (cover) root.add(cover.group);
     if (gen !== this.gen) return disposeTree(root);
@@ -170,7 +173,7 @@ export class DioramaView {
     this.decks = decks;
     this.contract = contract;
     this.tile = map.tile;
-    [this.root, this.things, this.party, this.life, this.bursts, this.birds, this.shafts, this.cover, this.fall] = [root, things, party, life, bursts, birds, shafts, cover, fall];
+    [this.root, this.things, this.party, this.life, this.bursts, this.birds, this.shafts, this.cover, this.fall, this.mist] = [root, things, party, life, bursts, birds, shafts, cover, fall, mist];
     this.scene.add(root);
     this.setOpts(this.opts);
     this.ready = true;
@@ -184,7 +187,7 @@ export class DioramaView {
       this.scene.remove(this.root);
       disposeTree(this.root);
     }
-    [this.root, this.g, this.things, this.party, this.life, this.bursts, this.birds, this.shafts, this.cover, this.fall, this.prev] = [null, null, null, null, null, null, null, null, null, null, null];
+    [this.root, this.g, this.things, this.party, this.life, this.bursts, this.birds, this.shafts, this.cover, this.fall, this.mist, this.prev] = [null, null, null, null, null, null, null, null, null, null, null, null];
   }
 
   setOpts(o: ViewOpts) {
@@ -199,6 +202,7 @@ export class DioramaView {
     this.life?.setMood(p.fireflies, o.time === 'day' ? 1 : o.time === 'golden' ? 0.6 : 0);
     this.birds?.setSky(p.sunDir, o.time === 'night' ? 0 : 1);
     this.fall?.setMood(o.time, p.water);
+    this.mist?.setTime(o.time);
     this.shafts?.setSun(o.time === 'night' ? 0 : o.time === 'golden' ? 0.5 : 1, o.time === 'golden' ? 0xffa860 : 0xffd98a, o.time === 'golden');
   }
 
@@ -267,6 +271,7 @@ export class DioramaView {
     this.birds!.update(t, this.cam.target, this.ground);
     this.shafts?.update(t, this.cam.target, at);
     this.cover?.update(at, dt);
+    this.mist?.update(t, this.cam.target, at, this.ground);
     this.fall?.update(t, at, this.opts.wind, (x, z, size) => this.bursts?.ripple(x, z, size));
     this.look.follow(this.cam.target, at);
     this.renderer.info.reset();
@@ -286,10 +291,7 @@ export class DioramaView {
 
   dispose() {
     this.leave();
-    disposeShaftTexture();
-    disposeFallTextures();
-    disposeCracks();
-    disposeRuneTexture();
+    disposeAccentTextures();
     this.look.composer.dispose();
     this.renderer.dispose();
     this.renderer.domElement.remove();

@@ -3,6 +3,7 @@
 // Usage: npx tsx scripts/maps/dioramaShots.ts --base http://localhost:5175 --out art_inbox/diorama_shots/g0 [--gpu] [--times day,night]
 //        [--map <mapId>|all  (default map_forest_edge; `all` writes to <out>/<mapId>/)] [--quality full|light]
 //        [--spots x,y;x,y…  (tiles; instead of the map's review points, e.g. from denseSpots.ts; one map only)]
+//        [--lit  (element devices lit: a water wheel turns)]
 //        [--gates closed|open  (default closed: exits with a lock and gates shut, as in a fresh save)]
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -19,6 +20,7 @@ const times = arg('times', 'day,golden,night').split(',');
 const quality = arg('quality', 'full');
 const which = arg('map', 'map_forest_edge');
 const gates = arg('gates', 'closed');
+const lit = process.argv.includes('--lit');
 const maps = which === 'all' ? CONTRACT_IDS : [which];
 const custom = arg('spots', '')
   .split(';')
@@ -45,6 +47,10 @@ for (const mapId of maps) {
   const shut = await page.evaluate(() => document.querySelector('[data-gates]')?.classList.contains('is-on') !== true);
   if (shut !== (gates === 'closed')) {
     await page.click('[data-gates]');
+    await built(mapId);
+  }
+  if ((await page.evaluate(() => document.querySelector('[data-lit]')?.classList.contains('is-on') === true)) !== lit) {
+    await page.click('[data-lit]');
     await built(mapId);
   }
   if (quality === 'light') {

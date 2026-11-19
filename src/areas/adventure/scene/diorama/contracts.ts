@@ -30,10 +30,18 @@ export interface SceneContract {
   pool?: PoolLook;
   /** Stretch of every elevation level (default 1): a map whose cliffs must read tall. Drawing only; the walkable tiles are unchanged. */
   rise?: number;
+  /** How far the open grass is drained toward a cold blue-grey, 0–1 (default 0): a marsh's own colour, not the other woods' green. */
+  chill?: number;
+  /** A cold multiplier on the trees, bushes and stones (0xrrggbb), default none. */
+  treeTint?: number;
+  /** Reeds on the banks: a multiple of their density, drawn pale straw (default 1 = the plain green ones). */
+  reeds?: number;
+  /** Drawn size of an element device (a water wheel) as a multiple of its footprint-based default. */
+  deviceScale?: number;
   /** Light added to the bridge decks in shade, 0–1 (default 0), so a tree's shadow never turns the planks black. */
   deckLift?: number;
   /** Trees and stones made of corruption around a centre (tile), share of the tiles at the centre. */
-  corrupt?: { x: number; y: number; r: number; share: number };
+  corrupt?: { x: number; y: number; r: number; share: number; /** Heavy toward the rim of the ellipse of half-width `r` (the map's edge), none at the middle. */ rim?: boolean };
   /** How far the standing trees are drained toward violet-grey, 0–1 (default 0). */
   sick?: number;
   /** The corruption's ink (ground.ts, life.ts): its centre (tiles) and reach. */
@@ -50,6 +58,7 @@ const TINT_VIOLET = 0x6a5688;
 const TINT_DEEP = 0x8fb4b4;
 const TINT_TEAL = 0x9cc4b8;
 const TINT_MIST = 0xb4d8ee;
+const TINT_COLD = 0xa9bfd0;
 
 export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
   // Bìa Rừng: the opening morning. Must stay as the approved G0 look.
@@ -183,17 +192,35 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
       { name: '7 · Boulder gate', x: 9, y: 23 },
     ],
   },
-  // Đầm Sương: cold marsh. TODO(M4): drifting low mist, dense reeds.
+  // Đầm Sương: the cold marsh (mist.ts): blue-grey grass and trees, dark still water, pale reeds, low mist drifting over the water and
+  // the meadows (never near the party or the bridges), the most fireflies of the zone, corruption heavy toward the rims only.
   map_forest_marsh: {
     trees: [0.3, 0.3, 0.3, 0],
-    light: { sat: -0.1, warm: -0.04, fog: 0.3, fogTint: TINT_TEAL },
-    corrupt: { x: 40, y: 22, r: 90, share: 0.2 },
+    light: { sat: -0.12, warm: -0.04, fog: 0.4, fogTint: TINT_COLD, moon: 0.45 },
+    life: { wings: false, petals: false, leaves: 0.5, flies: 2.2 },
+    pool: { shallow: 0x4f7c86, deep: 0x1d3c4e, ramp: 3, stretch: 0.6 },
+    corrupt: { x: 40, y: 22, r: 40, share: 0.24, rim: true },
+    chill: 0.85,
+    treeTint: 0xa6c0cc,
+    sick: 0.3,
+    reeds: 2.4,
+    deviceScale: 2.2,
+    wind: 1.1,
+    pathTone: 0.55,
+    nightLift: 0.6,
+    deckLift: 1,
+    barrier: 1.5,
+    // The hut by the marsh, the wheel's meadow and the bridge's banks stand clear of tall crowns.
+    keepLow: [
+      { x: 33, y: 35, w: 30, h: 14 },
+      { x: 38, y: 15, w: 14, h: 9 },
+    ],
     accent: 'lowMist',
     spots: [
       { name: '1 · Start', x: 2, y: 28 },
       { name: '2 · Cross bridge', x: 41, y: 33 },
-      { name: '3 · Ruined hut', x: 50, y: 38 },
-      { name: '4 · Water wheel', x: 45, y: 21 },
+      { name: '3 · Ruined hut', x: 47, y: 37 },
+      { name: '4 · Water wheel', x: 45, y: 24 },
       { name: '5 · North-east pond', x: 70, y: 8 },
       { name: '6 · North-west rim', x: 31, y: 11 },
     ],

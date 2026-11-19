@@ -60,6 +60,7 @@ export async function dressTrees(art: ArtFn, plan: BlockerPlan, map: AreaMap, g:
   const group = new THREE.Group();
   const opts = { mix: c.trees, corrupt: c.corrupt };
   const sick = c.sick ?? 0;
+  const cold = c.treeTint;
   // Where the contract keeps the woods low, a tall tree is drawn as a bush (the tile still blocks, its foot is unchanged).
   const low = c.keepLow ?? [];
   const kept = (f: Foot) => low.some((r) => f.x >= r.x && f.x < r.x + r.w && f.z >= r.y && f.z < r.y + r.h);
@@ -101,11 +102,13 @@ export async function dressTrees(art: ArtFn, plan: BlockerPlan, map: AreaMap, g:
         0x6f7f66,
         2,
       );
-    add(card, items, { sway: 1, tilt: TILT, see: true, sick }, [k.crown, k.trunk]);
+    add(card, items, { sway: 1, tilt: TILT, see: true, sick }, [k.crown, k.trunk], cold);
     add(
       leafLayer(card),
       items.map((it) => toCam(it, 0.3)),
       { sway: 1.8, tilt: TILT, see: true, shift: 0.3 * VIEW_BACK, sick },
+      undefined,
+      cold,
     );
   });
   const oak = TREES[0]!;
@@ -127,6 +130,7 @@ export async function dressTrees(art: ArtFn, plan: BlockerPlan, map: AreaMap, g:
       mine.filter((f) => !f.bad).map((f) => at(f, h(f))),
       { ...low.look, sick },
       [low.crown, 0],
+      cold,
     );
     add(
       bad,

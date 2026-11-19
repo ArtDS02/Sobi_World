@@ -23,6 +23,8 @@ export interface GroundUniforms {
   uSeeTint: { value: THREE.Color };
   /** The corruption's ink round a centre: x, z (tiles) and radius (0 = none): the ground greys toward it and ink crawls out of it. */
   uInk: { value: THREE.Vector3 };
+  /** 0–1, how far the open grass is drained toward a cold blue-grey (a marsh). */
+  uChill: { value: number };
 }
 
 /** Sets the ground's light of the hour: the clouds, the night floors, the breeze (off with the wind) and the tint of the see-through lift. */
@@ -69,6 +71,7 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
     sh.uniforms.uBreeze = uniforms.uBreeze;
     sh.uniforms.uSeeTint = uniforms.uSeeTint;
     sh.uniforms.uInk = uniforms.uInk;
+    sh.uniforms.uChill = uniforms.uChill;
     sh.vertexShader = sh.vertexShader
       .replace('#include <common>', '#include <common>\nattribute vec4 aSplat;\nvarying vec3 vGW;\nvarying vec3 vGN;\nvarying float vPath;')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvGW = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvGN = normalize(mat3(modelMatrix) * objectNormal);\nvPath = aSplat.x;');
@@ -76,7 +79,7 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
       .replace(
         '#include <common>',
         `#include <common>
-uniform sampler2D tPaint; uniform vec2 uSize; uniform float uTime; uniform float uCloud; uniform vec3 uSee; uniform float uNight; uniform float uLift; uniform float uBreeze; uniform vec3 uSeeTint; uniform vec3 uInk;
+uniform sampler2D tPaint; uniform vec2 uSize; uniform float uTime; uniform float uCloud; uniform vec3 uSee; uniform float uNight; uniform float uLift; uniform float uBreeze; uniform vec3 uSeeTint; uniform vec3 uInk; uniform float uChill;
 varying vec3 vGW; varying vec3 vGN; varying float vPath;
 ${GLSL_NOISE}
 vec3 srgb(vec3 c){ return pow(c, vec3(2.2)); }`,
@@ -139,6 +142,11 @@ if (uInk.z > 0. && vGN.y > .9) {
   float mottle = .88 + .12 * dNoise(wp * 5.);
   col = mix(col, srgb(vec3(.08, .04, .11)) * (.7 + .6 * mottle), core * .95 * mottle);
   col = mix(col, srgb(vec3(.48, .3, .7)) * (.85 + .3 * pulse), rim * .95);
+}
+// A cold marsh: the open grass drains toward a blue-grey (less on the dirt paths, which keep their own colour).
+if (uChill > 0. && vGN.y > .9) {
+  float lc = dot(col, vec3(.2126, .7152, .0722));
+  col = mix(col, lc * vec3(.8, 1., 1.14), uChill * (1. - .5 * smoothstep(.3, .62, vPath)));
 }
 // Drifting cloud shadows.
 float cl = smoothstep(.56, .74, dFbm(wp * .045 + vec2(uTime * .006, uTime * .004)));

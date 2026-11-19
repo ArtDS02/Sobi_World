@@ -29,6 +29,8 @@ const ui = {
   wind: true,
   /** Exits and gates open (rebuilds the map); default shut, as in a fresh save. */
   gates: false,
+  /** Element devices lit (a water wheel turns; rebuilds the map). */
+  lit: false,
 };
 const sim = { asleep: false, defeated: false, golden: false, chests: false };
 let live: { dispose(): void } | null = null;
@@ -48,6 +50,7 @@ export function renderDioramaLab(content: HTMLElement) {
         <span class="dio__group">${(['full', 'light'] as const).map((q) => chip(ui.quality === q, `data-quality="${q}"`, q === 'full' ? 'Đẹp' : 'Nhẹ')).join('')}</span>
         ${chip(ui.wind, 'data-wind', '🍃 Gió')}
         ${chip(ui.gates, 'data-gates', ui.gates ? '🚪 Cổng mở' : '🌿 Cổng đóng')}
+        ${chip(ui.lit, 'data-lit', ui.lit ? '💧 Đã thắp' : '🌑 Chưa thắp')}
         <span class="dio__group">${spots.map((s, i) => chip(false, `data-spot="${i}"`, s.name)).join('')}</span>
         <span class="dio__group">${[
           ['asleep', '💤 Ngủ'],
@@ -88,6 +91,11 @@ export function renderDioramaLab(content: HTMLElement) {
       renderDioramaLab(content);
       return;
     }
+    if (b.dataset.lit !== undefined) {
+      ui.lit = !ui.lit;
+      renderDioramaLab(content);
+      return;
+    }
     if (b.dataset.time) ui.time = b.dataset.time as ViewOpts['time'];
     if (b.dataset.wind !== undefined) ui.wind = !ui.wind;
     if (b.dataset.quality && b.dataset.quality !== ui.quality) {
@@ -105,7 +113,7 @@ function mount(stage: HTMLElement) {
   live?.dispose();
   window.clearInterval(guard);
   const map = MAPS[ui.map]!;
-  const state = labState(map, ui.gates);
+  const state = labState(map, ui.gates, ui.lit);
   // What the game hands the view: the exits that are shut block their tiles.
   const closed = map.exits.filter((e) => !state.exits.find((x) => x.id === e.id)?.open);
   let view: DioramaView | null = null;

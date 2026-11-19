@@ -13,24 +13,26 @@ import { cardOf, type ArtFn } from './artKit';
 import { buildBarrier } from './barriers';
 import { TILT, cardBatch, shadowStandIns, type CardLook, type CardUniforms, type Placed } from './cards';
 import { decksOf, deckAt } from './decks';
-import { reedCard, softEdges } from './extraArt';
+import { recolor, reedCard, softEdges } from './extraArt';
 import { K, heightAt, kindAt, weightsAt, type Grid } from './field';
 import { crackCard } from './cracks';
 import { Foes } from './foes';
 import { InkPool } from './inkPool';
 import { LandmarkGlow } from './landmarkGlow';
 import { Spores } from './spores';
+import { WheelSpin, WindowLamp } from './marshLife';
 import { hash2, noise2 } from './noise';
 import { tuftCard, type Card } from './textures';
 
 /** Height of a tall landmark (an oak, a dead tree) as a multiple of its footprint's width over the picture's aspect (a wide one keeps 1.45). */
 const LANDMARK = 1.6;
 /** Landmarks drawn larger than their footprint says, kept whole (their grey stones are no painted shadow) and alive with a soft glow. */
-const LANDMARKS: Readonly<Record<string, { scale: number; glow: boolean; spores?: boolean; /** No cast shadow from a stand-in (it showed as a hard block): a soft round one under it. */ soft?: boolean }>> = {
+const LANDMARKS: Readonly<Record<string, { scale: number; glow: boolean; spores?: boolean; /** A warm lamp in the window (u, v on the picture). */ lamp?: readonly [number, number]; /** No cast shadow from a stand-in (it showed as a hard block): a soft round one under it. */ soft?: boolean }>> = {
   prop_adv_lm_f2: { scale: 1.2, glow: true },
   prop_adv_lm_f3: { scale: 1.15, glow: false },
   prop_adv_lm_n1: { scale: 1.1, glow: false, spores: true },
   prop_adv_lm_n2: { scale: 1.35, glow: false, soft: true },
+  prop_adv_lm_n3: { scale: 1.55, glow: false, soft: true, lamp: [0.385, 0.36] },
 };
 const FOE_H: Record<string, number> = { normal: 1.7, elite: 2.3, mutant: 2.0, subboss: 2.6, boss: 3.2, special: 2.2 };
 
@@ -50,8 +52,8 @@ function contactShadow(blob: THREE.Texture, x: number, y: number, z: number, w: 
   return m;
 }
 
-export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUniforms, quality: number, blob: THREE.Texture, s: AdventureSceneState, opts: { inkPools?: boolean; /** Share of the landmark's spores (default 1). */ spore?: number; /** Height of a shut barrier as a multiple of the default (a taller wall with a soft shadow at its foot). */ barrier?: number; /** Flowers and grass streaks on the high ground (a plateau of tall cliffs). */ plateau?: boolean } = {}): Promise<Things> {
-  const { inkPools = false, spore = 1, barrier = 1, plateau = false } = opts;
+export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUniforms, quality: number, blob: THREE.Texture, s: AdventureSceneState, opts: { /** Multiple of the reeds' density, drawn pale (default 1 = plain green). */ reeds?: number; /** Drawn size of an element device as a multiple of its default. */ deviceScale?: number; inkPools?: boolean; /** Share of the landmark's spores (default 1). */ spore?: number; /** Height of a shut barrier as a multiple of the default (a taller wall with a soft shadow at its foot). */ barrier?: number; /** Flowers and grass streaks on the high ground (a plateau of tall cliffs). */ plateau?: boolean } = {}): Promise<Things> {
+  const { inkPools = false, spore = 1, barrier = 1, plateau = false, reeds: reedK = 1, deviceScale = 1 } = opts;
   const group = new THREE.Group();
   const ground = (x: number, z: number) => heightAt(g, x, z);
   const r = (x: number, y: number, k: number) => hash2(Math.round(x * 97), Math.round(y * 89), k);
@@ -109,13 +111,13 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
       const [path, forest, water, rk] = weightsAt(g, jx, jz);
       const at = { x: jx, z: jz, y: ground(jx, jz), flip: r(x, z, 32) < 0.5 };
       if (forest < 0.2 && water < 0.2 && rk < 0.2 && path > 0.3 && path < 0.5 && r(x, z, 33) < 0.7) edge.push({ ...at, h: 0.3 + r(x, z, 34) * 0.2 });
-      if (water > 0.24 && water < 0.47 && noise2(jx * 0.6, jz * 0.6, 12) > 0.42 && r(x, z, 37) < 0.45) {
+      if (water > (reedK > 1 ? 0.14 : 0.24) && water < (reedK > 1 ? 0.52 : 0.47) && noise2(jx * 0.6, jz * 0.6, 12) > (reedK > 1 ? 0.34 : 0.42) && r(x, z, 37) < 0.45 * Math.min(reedK, 2.2)) {
         const tall = 0.7 + r(x, z, 38) * 0.45;
         reeds.push({ ...at, h: walkable(jx, jz) ? Math.min(0.5, tall) : tall });
       }
     }
   add(tuftCard(200, false), edge, { sway: 1.4, tilt: TILT, push: 0.25 });
-  add(reedCard(7), reeds, { sway: 1.2, tilt: TILT, push: 0.2 });
+  add(reedCard(7, reedK > 1), reeds, { sway: 1.2, tilt: TILT, push: 0.2 });
 
   // The landmark props: they stand on the back half of their footprint, their picture overhangs the front.
   for (const p of map.props) {
@@ -135,6 +137,11 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
       const lg = new LandmarkGlow(new THREE.Vector3(x, ground(x, z), z), h * card.aspect, h, blob);
       group.add(lg.group);
       lives.push((t) => lg.update(t, 1));
+    }
+    if (look?.lamp) {
+      const lamp = new WindowLamp(new THREE.Vector3(x, ground(x, z), z), h * card.aspect, h, blob, look.lamp[0], look.lamp[1]);
+      group.add(lamp.group);
+      lives.push((t) => lamp.update(t));
     }
     if (look?.spores) {
       const sp = new Spores(new THREE.Vector3(x, ground(x, z), z), h * card.aspect, h, blob, Math.max(4, Math.round(26 * quality * spore)));
@@ -191,7 +198,9 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
     if (t.kind === 'gate' && !a.id.startsWith('adv_map_') && !a.id.startsWith('adv_tile_')) {
       // An element gate (the 2D map hides it once opened): while shut, a thorny wall over its tiles, like a shut exit.
       if (s.openedGates.includes(t.id)) continue;
-      const bar = await cardOf(art, a.id, false, a.state);
+      const plainBar = await cardOf(art, a.id, false, a.state);
+      // The water gate's picture is a fire's flames (TODO in docs/ASSET_TODO.md): turned to cold blue so it reads as the element it asks for.
+      const bar = plainBar && a.id === 'adv_gate_water' ? recolor(plainBar, 'hue-rotate(185deg) saturate(1.15)') : plainBar;
       if (bar) {
         group.add(buildBarrier(bar, t, u, ground, 43, 1.25 * barrier));
         if (barrier > 1) group.add(contactShadow(blob, t.x + t.w / 2, ground(t.x + t.w / 2, t.y + t.h), t.y + t.h - 0.1, t.w + 1.4, 1.8));
@@ -201,7 +210,15 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
     // A boulder gate: its painted ground shadow is cut away (it would show as a hard band) and a soft round one lies under it.
     const boulder = t.kind === 'gate' && a.id.includes('boulder');
     if (boulder) group.add(contactShadow(blob, t.x + t.w / 2, ground(t.x + t.w / 2, t.y + t.h - 0.3), t.y + t.h - 0.35, t.w * 0.95, 2));
-    const bh = await put(a.id, a.state, t.x + t.w / 2, t.y + t.h - 0.12, Math.max(1.1, t.w + 0.4), boulder ? 0.85 : false);
+    const wide = Math.max(1.1, t.w + 0.4) * (t.kind === 'puzzle' ? deviceScale : 1);
+    const bh = await put(a.id, a.state, t.x + t.w / 2, t.y + t.h - 0.12, wide, boulder ? 0.85 : false);
+    // A lit water wheel turns: glints ride its rim and drops spill off it.
+    if (t.kind === 'puzzle' && a.id.includes('wheel') && s.litPuzzles.includes(t.id) && bh) {
+      const foot = new THREE.Vector3(t.x + t.w / 2, ground(t.x + t.w / 2, t.y + t.h - 0.12), t.y + t.h - 0.12);
+      const spin = new WheelSpin(foot, wide, bh, blob);
+      group.add(spin.group);
+      lives.push((tt) => spin.update(tt));
+    }
     // The cracks of a stone that has a crack (drawn in code), in front of its picture.
     if (boulder && bh && t.kind === 'gate' && !s.openedGates.includes(t.id)) cracks.push({ x: t.x + t.w / 2, z: t.y + t.h - 0.04, y: ground(t.x + t.w / 2, t.y + t.h - 0.04) + bh * 0.2, h: bh * 0.62, flip: false });
   }
