@@ -8,7 +8,16 @@ import { blockedTiles, type Thing } from '../../logic/maps';
 import { noise2 } from './noise';
 
 /** Ground kinds of a tile. */
-export const K = { grass: 0, path: 1, forest: 2, water: 3, rock: 4, bridge: 5, high: 6, moss: 7 } as const;
+export const K = {
+  grass: 0,
+  path: 1,
+  forest: 2,
+  water: 3,
+  rock: 4,
+  bridge: 5,
+  high: 6,
+  moss: 7,
+} as const;
 type Kind = (typeof K)[keyof typeof K];
 
 /** Tiles of forest drawn around the area so the world never ends at its edge. */
@@ -31,11 +40,7 @@ const LEVEL = 1.05;
 const WATER_BED = -0.45;
 
 const kindOf = (c: string): Kind =>
-  c === ',' || c === 's'
-    ? K.path
-    : c === '~' || c === 'w'
-      ? K.water
-      : c === '=' ? K.bridge : c === 'F' ? K.rock : c === '^' ? K.high : c === '#' ? K.forest : c === 'c' ? K.moss : K.grass;
+  c === ',' || c === 's' ? K.path : c === '~' || c === 'w' ? K.water : c === '=' ? K.bridge : c === 'F' ? K.rock : c === '^' ? K.high : c === '#' ? K.forest : c === 'c' ? K.moss : K.grass;
 
 /** The grid of an area, with `opened` gates open and `closed` more blocking rectangles (as in `blockedTiles`). */
 export function gridOf(map: AreaMap, opened: ReadonlySet<string> = new Set(), closed: readonly Pick<Thing, 'x' | 'y' | 'w' | 'h'>[] = []): Grid {
@@ -61,7 +66,16 @@ export function gridOf(map: AreaMap, opened: ReadonlySet<string> = new Set(), cl
       const out = x < MARGIN || y < MARGIN || x >= W - MARGIN || y >= H - MARGIN;
       if (out) height[y * W + x] = 0.15 + noise2(x * 0.3, y * 0.3, 5) * 0.5;
     }
-  return { cols: map.cols, rows: map.rows, kind, height, W, H, blocked: Uint8Array.from(blockedTiles(map, opened, closed), (b) => (b ? 1 : 0)), fall };
+  return {
+    cols: map.cols,
+    rows: map.rows,
+    kind,
+    height,
+    W,
+    H,
+    blocked: Uint8Array.from(blockedTiles(map, opened, closed), (b) => (b ? 1 : 0)),
+    fall,
+  };
 }
 
 const clampI = (v: number, n: number) => (v < 0 ? 0 : v >= n ? n - 1 : v);
@@ -112,13 +126,22 @@ function raiseAroundHighGround(map: AreaMap, kind: Uint8Array, height: Float32Ar
 /** Samples per tile of the smooth fields (the ground mesh uses the same spacing). */
 export const RES = 4;
 
-/** Furthest a point is bent (tiles): the drawn 0.5 edge stays within this of the tile boundary. */
+/** Furthest a point is bent (tiles) at a walkable ↔ blocked boundary: the drawn 0.5 edge stays within this (and the blur's corner rounding) of the tile boundary. */
 export const WARP_MAX = 0.12;
+
+/** Furthest a point is bent between two WALKABLE materials (grass / path / moss / the shore's sand): free, soft and organic like G0. */
+export const SOFT_WARP = 0.45;
 
 /** The point after the noise bend (area tile coordinates in, out). */
 export function warp(u: number, v: number): [number, number] {
   const a = WARP_MAX * 2;
   return [u + (noise2(u * 0.45, v * 0.45, 11) - 0.5) * a, v + (noise2(u * 0.45, v * 0.45, 23) - 0.5) * a];
+}
+
+/** The wide bend of the walkable materials (never used where the walker is blocked). */
+export function softWarp(u: number, v: number): [number, number] {
+  const a = SOFT_WARP * 2;
+  return [u + (noise2(u * 0.45, v * 0.45, 31) - 0.5) * a, v + (noise2(u * 0.45, v * 0.45, 43) - 0.5) * a];
 }
 
 /** Separable gaussian blur of a (w × h) field, `sigma` in samples. */
@@ -157,21 +180,37 @@ function fields(g: Grid): Fields {
   if (have) return have;
   const w = g.W * RES + 1;
   const h = g.H * RES + 1;
-  const ch = [0, 1, 2, 3].map(() => new Float32Array(w * h));
+  // Blocked boundaries (woods, water, rock): a small bend and a narrow blur, so the edge is rounded but stays at the tile's boundary.
+  // Walkable materials (path, moss): G0's wide bend and blur, so grass melts into dirt and moss like painted ground.
+  const field = () => new Float32Array(w * h);
+  const [forest, water, rock, path, moss] = [field(), field(), field(), field(), field()] as [Float32Array, Float32Array, Float32Array, Float32Array, Float32Array];
   const hgt = new Float32Array(w * h);
   for (let j = 0; j < h; j += 1)
     for (let i = 0; i < w; i += 1) {
       const [wu, wv] = warp(i / RES - MARGIN, j / RES - MARGIN);
+      const [su, sv] = softWarp(i / RES - MARGIN, j / RES - MARGIN);
       const t = clampI(Math.floor(wv) + MARGIN, g.H) * g.W + clampI(Math.floor(wu) + MARGIN, g.W);
+      const ts = clampI(Math.floor(sv) + MARGIN, g.H) * g.W + clampI(Math.floor(su) + MARGIN, g.W);
       const k = g.kind[t]!;
+      const ks = g.kind[ts]!;
       const o = j * w + i;
-      ch[0]![o] = k === K.path ? 1 : k === K.bridge ? 0.3 : 0;
-      ch[1]![o] = k === K.forest ? 1 : k === K.moss ? 0.3 : 0;
-      ch[2]![o] = k === K.water ? 1 : k === K.bridge ? 0.7 : 0;
-      ch[3]![o] = k === K.rock ? 1 : 0;
+      forest[o] = k === K.forest ? 1 : 0;
+      water[o] = k === K.water ? 1 : k === K.bridge ? 0.7 : 0;
+      rock[o] = k === K.rock ? 1 : 0;
+      path[o] = ks === K.path ? 1 : ks === K.bridge ? 0.3 : 0;
+      moss[o] = ks === K.moss ? 0.3 : 0;
       hgt[o] = g.height[t]!;
     }
-  const f: Fields = { w, h, ch: ch.map((c) => blur(c, w, h, RES * 0.2)), height: blur(hgt, w, h, RES * 0.3) };
+  const strict = [forest, water, rock].map((c) => blur(c, w, h, RES * 0.3));
+  const soft = [path, moss].map((c) => blur(c, w, h, RES * 0.55));
+  // Moss floor (walkable) shades like a faint wood but never counts as blocked: its share stays under 0.5.
+  const mossShare = soft[1]!.map((v, o) => Math.max(v, strict[0]![o]!));
+  const f: Fields = {
+    w,
+    h,
+    ch: [soft[0]!, mossShare, strict[1]!, strict[2]!],
+    height: blur(hgt, w, h, RES * 0.3),
+  };
   FIELDS.set(g, f);
   return f;
 }

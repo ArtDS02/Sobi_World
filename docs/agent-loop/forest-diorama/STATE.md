@@ -1,12 +1,12 @@
 # STATE — forest-diorama (6 map vùng Rừng sang Diorama 2.5D, chạy trong game)
 Nhánh: map-diorama-forest (tách từ new-ideas/update-3d-adventure @ 2ad31ee6)   Commit xanh gần nhất: (M0)
 Mốc hiện tại: M3 — renderer dùng chung + Bìa Rừng trong game   Vòng: 1/3
-Đang làm: (chuẩn bị M3a-perf: FPS Đẹp Bìa Rừng 31–45, Nhẹ 42–70; G0 ghi 60)
+Đang làm: đo FPS trên RTX 3050 (ANIM_GPU=high); headless --gpu mặc định là GPU tích hợp AMD Radeon
 Brief đang chạy: xem mục "Brief M1" cuối file.
-Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127 | M3a ✅ (commit này) module diorama ở src/areas/adventure/scene/diorama, blockerPlan+test, lab 6 map, --map
-Còn lại: M3a chuyển module + blockerPlan + lab 6 map → M3b MapRenderer/ClassicRenderer → M3c DioramaRenderer trong game + cài đặt → chơi thử Bìa Rừng → M4 deep, heart, hollow, falls, marsh → M5
-Điểm reviewer: —   FPS: edge M3a Đẹp 38/45/39/39/33/31, Nhẹ 57/70/57/56/44/42 (headless --gpu)
-Lỗi đang mở: M3a FPS 28–38 headless --gpu (G0 ghi 60) — đang kiểm. Mép sắc hơn G0 (WARP_MAX 0,12) để khớp ô ≤0,25. Báo chủ dự án: layout.json khôi phục 15 chỗ đặt decor (141e330e).
+Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127 | M3a ✅ 3602a56f module diorama ở src/areas/adventure/scene/diorama, blockerPlan+test, lab 6 map, --map | M3a-perf+M3b ✅ (commit này) check xanh 2166, e2e adventure 2/2
+Còn lại: M3a-perf+mép, M3b → checker chung → M3c DioramaRenderer trong game + cài đặt + quality.ts → chơi thử Bìa Rừng → reviewer edge → M4 → M5
+Điểm reviewer: —   FPS edge (AMD iGPU): Đẹp 47/61/53/56/40/39, Nhẹ 80/114/104/91/78/81; SwiftShader Nhẹ 960: 2–4 (→ lùi 2D). RTX: chưa đo
+Lỗi đang mở: SwiftShader 2–4 FPS → tự lùi 2D (báo chủ dự án). Mọi số "RTX 3050" trước đây (cả G0) thật ra đo trên AMD iGPU. Báo chủ dự án: layout.json 15 chỗ đặt decor (141e330e).
 Chờ chủ dự án: —
 Ghi chú: `package-lock.json` (sửa) và `studio/` (chưa track) có sẵn trước phiên, không thuộc việc này — KHÔNG commit.
 
@@ -34,3 +34,11 @@ Chưa gắn vào AdventureScene (M3b/M3c). Mỗi file ≤ 300 dòng. Tự kiểm
 ## Bài học sự cố (2026-11-19)
 - Không nối junction/symlink node_modules vào worktree tạm: xóa worktree đã xóa luôn node_modules thật. Brief sau: worktree tạm dùng `npm ci` riêng hoặc không dùng worktree.
 - Báo cáo vòng 2 của coder M3a bị mất (handback lần 2 bị từ chối) — đo FPS lại bằng checker.
+
+## Brief M3a-perf+mép (coder A, sonnet mới)
+FPS Bìa Rừng Đẹp 31–45 (mục tiêu ≥58 cả 6 điểm, headless dioramaShots --gpu), Nhẹ 42–70. Tìm nguyên nhân (renderer.info draw calls/tam giác; 1409 cây ngoài mép, cây 3 lớp, bóng, fog pass, cấp phát mỗi khung) và sửa (instancing/gộp, cắt cây ngoài khung, LOD...).
+Mép: ranh giới vật liệu giữa hai ô ĐI ĐƯỢC (cỏ/đất/rêu) phải mềm, uốn như G0 (không ép 0,25); ranh giới đi được/chặn (nước, rừng, vách): bo góc, không bậc thang, vẫn lệch ≤0,25 ô (test). Ảnh day_3 cho thấy bậc thang vuông.
+Cấm junction/symlink node_modules vào worktree. Chỉ sửa diorama/, tools/admin/diorama, scripts/maps, tests/unit/dioramaBlockers.test.ts.
+
+## Brief M3b (coder B, sonnet mới)
+Theo design.md §A4: scene/mapRenderer.ts (interface), scene/classicRenderer.ts bọc code 2D hiện có (không đổi pixel), coverUnder thuần + test, updateFocus dùng renderer.chestHint, walker.followerSpots(). Chỉ sửa src/areas/adventure/scene/* NGOÀI diorama/ + test mới. Không đổi luật/save.

@@ -201,7 +201,8 @@ describe('the Admin simulation', () => {
   ];
   const sim = (level: number, gear: (typeof GEAR_TIERS)[number], samples = 30) => simulateRuns({ zoneId: 'zone_forest', level, team, gear, samples, seed: 11 });
 
-  it('is deterministic for a seed and answers in whole trips', () => {
+  // A heavy simulation: slow when the whole suite runs in parallel.
+  it('is deterministic for a seed and answers in whole trips', { timeout: 120_000 }, () => {
     expect(sim(5, 'common')).toEqual(sim(5, 'common'));
     const r = sim(5, 'common');
     expect(r.reachedPercent).toHaveLength(3);

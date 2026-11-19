@@ -13,13 +13,12 @@ import { distanceToThing, thingsOf, walkableOf } from '../logic/maps';
 import { BATTLE_SCENE_KEY } from './battle/BattleScene';
 
 export { BattleScene, manifestImages } from './battle/BattleScene';
-import { updateGroups } from './mapGroups';
-import { ADVENTURE_DESIGN, fitZoom, MapCamera } from './mapCamera';
-import { fadeCovers } from './mapCovers';
-import { fadeScenery } from './mapScenery';
+import { ADVENTURE_DESIGN, fitZoom } from './mapCamera';
+import { ClassicRenderer } from './classicRenderer';
+import { coverUnder } from './coverUnder';
+import { touchGroups } from './foeTouch';
+import type { MapRenderer } from './mapRenderer';
 import { playMapVfx } from './mapVfx';
-import { PaintedArt } from './mapScene';
-import { buildMap, edgeColour, refreshThings, type MapObjects } from './mapView';
 import type { AdventureSceneState, SceneReport } from './sceneState';
 import { Walker } from './walker';
 import { BattleAmbient, styleOfBackdrop } from './battleAmbient';
@@ -38,6 +37,11 @@ export interface AdventureSceneDeps {
   image?(id: string): { url: string } | null;
 }
 
+/** The one place that picks how the map is drawn (the classic 2D drawing for now). */
+function createRenderer(scene: Phaser.Scene, walker: Walker, deps: AdventureSceneDeps): MapRenderer {
+  return new ClassicRenderer(scene, walker, deps);
+}
+
 const MOVE_EVERY_MS = 3000;
 const REST_SAVE_MS = 600;
 /** The teleport through a gate: the party dissolves into light, the screen flashes, then the next area fades in (ms). */
@@ -50,7 +54,7 @@ export class AdventureScene extends Phaser.Scene {
   private ambient!: BattleAmbient;
   private walker!: Walker;
   private map: AreaMap | null = null;
-  private objs: MapObjects | null = null;
+  private mapRenderer!: MapRenderer;
   private placeKey = '';
   private walk: { gates: string; ground: Walkable } | null = null;
   private focus: string | null = null;
@@ -63,11 +67,9 @@ export class AdventureScene extends Phaser.Scene {
   /** A teleport under way: when it started and the gate it goes through; the moment the party arrived somewhere. */
   private warp: { at: number; exitId: string; pos: { x: number; y: number; facing: 'up' | 'down' | 'left' | 'right' } } | null = null;
   private arrivedAt = -Infinity;
-  private camera!: MapCamera;
   /** The cover the party stands under (decision 045). */
   private coverIn: string | null = null;
   private builtCorruption = -1;
-  private readonly painted = new PaintedArt(this, (id) => this.deps.image?.(id) ?? null);
   private offs: (() => void)[] = [];
 
   constructor(private readonly deps: AdventureSceneDeps) {
@@ -78,7 +80,7 @@ export class AdventureScene extends Phaser.Scene {
     this.backdrop = this.add.image(ADVENTURE_DESIGN.width / 2, ADVENTURE_DESIGN.height / 2, FALLBACK_PROP_KEY).setDepth(-1000);
     this.walker = new Walker(this);
     this.ambient = new BattleAmbient(this);
-    this.camera = new MapCamera(this.cameras.main);
+    this.mapRenderer = createRenderer(this, this.walker, this.deps);
     const onTexture = () => (this.texturesChanged = true);
     this.textures.on(Phaser.Textures.Events.ADD, onTexture);
     const use = () => this.useFocus();
@@ -110,7 +112,7 @@ export class AdventureScene extends Phaser.Scene {
 
   /** A one-shot picture of the FeedbackDirector (decision 045), see mapVfx.ts. */
   playVfx(vfx: AreaVfx, still: boolean) {
-    if (this.map && this.objs && this.sys.isActive()) playMapVfx(this, this.map, this.walker.position, vfx, still);
+    if (this.map && this.mapRenderer.ready() && this.sys.isActive()) playMapVfx(this, this.map, this.walker.position, vfx, still);
   }
 
   private useFocus() {
@@ -120,13 +122,8 @@ export class AdventureScene extends Phaser.Scene {
   }
 
   private showBackdrop(s: AdventureSceneState | null) {
-    if (this.objs) {
-      this.objs.layer.destroy();
-      this.objs = null;
-      this.map = null;
-    }
-    this.camera.reset();
-    this.walker.setVisible(false);
+    this.mapRenderer.hide();
+    this.map = null;
     const cam = this.cameras.main;
     cam.removeBounds();
     cam.setBackgroundColor('rgba(0,0,0,0)');
@@ -144,16 +141,12 @@ export class AdventureScene extends Phaser.Scene {
   }
 
   private enterMap(s: AdventureSceneState, map: AreaMap) {
-    this.objs?.layer.destroy();
-    this.painted.enter(map);
+    this.mapRenderer.leave();
+    this.mapRenderer.enter(map, s);
     this.map = map;
-    this.objs = buildMap(this, map, s, !this.deps.reduceMotion());
     this.builtCorruption = s.corruption;
     this.walk = null;
     this.backdrop.setVisible(false);
-    this.walker.setVisible(true);
-    this.cameras.main.setBackgroundColor(edgeColour(map));
-    this.camera.reset();
   }
 
   private ground(s: AdventureSceneState, map: AreaMap): Walkable {
@@ -182,11 +175,10 @@ export class AdventureScene extends Phaser.Scene {
     // The area is built again when its corruption changes (its zone just purified).
     if (this.map?.id !== map.id || this.texturesChanged || s.corruption !== this.builtCorruption) this.enterMap(s, map);
     this.texturesChanged = false;
-    this.camera.fit(map, fitZoom(this.scale));
     if (s.placeKey !== this.placeKey) {
       const arrived = this.placeKey !== '';
       this.placeKey = s.placeKey;
-      this.camera.snapNext();
+      this.mapRenderer.snapCamera();
       this.walker.place(s.pos);
       this.saved = { x: s.pos.x, y: s.pos.y };
       this.exitLock = true;
@@ -198,27 +190,24 @@ export class AdventureScene extends Phaser.Scene {
       }
     }
     this.walker.setFollowers(s.followers);
-    const still = s.paused || this.deps.paused() || this.warp !== null;
+    const still = s.paused || this.deps.paused() || this.warp !== null || !this.mapRenderer.ready();
     const dir = still ? { x: 0, y: 0 } : inputVector(this.deps.input.held());
     this.walker.update(dir, delta, this.ground(s, map), s.leader === 'bi' ? 'chr_bi' : 'chr_so', !this.deps.reduceMotion());
     // The party dissolves into the gate's light, or comes out of it.
     const warpK = this.warp ? Math.min(1, (time - this.warp.at) / WARP_MS) : Math.max(0, 1 - (time - this.arrivedAt) / ARRIVE_MS);
-    this.walker.setWarp(this.deps.reduceMotion() ? 0 : warpK);
+    this.mapRenderer.warp(warpK);
     if (this.warp && time - this.warp.at >= WARP_MS) {
       const w = this.warp;
       this.warp = null;
       this.deps.report.exit(w.exitId, w.pos);
     }
     const pos = this.walker.position;
-    this.camera.follow(pos, delta, this.deps.reduceMotion());
     // Under a cover not found yet: save the spot now, so the hidden place counts at once.
-    const cover = fadeCovers(map, this.objs!.covers, pos, delta, this.deps.reduceMotion(), this.coverIn);
-    this.coverIn = cover.under;
-    fadeScenery(map, this.objs!.scenery, pos, delta, this.deps.reduceMotion());
-    if (cover.entered && !s.foundSecrets.includes(cover.entered) && !s.paused) this.deps.report.move(pos);
-    refreshThings(this, map, this.objs!, s, time, pos);
-    this.objs!.dressing.update(time, pos);
-    this.touchLockUntil = updateGroups(s, map, this.objs!, pos, time, this.deps.reduceMotion(), s.paused, this.touchLockUntil, this.deps.report);
+    const under = coverUnder(map, pos);
+    if (under && under !== this.coverIn && !s.foundSecrets.includes(under) && !s.paused) this.deps.report.move(pos);
+    this.coverIn = under;
+    this.mapRenderer.frame(s, this.walker, time, delta);
+    this.touchLockUntil = touchGroups(s, map, pos, s.paused, this.touchLockUntil, this.deps.report);
     this.updateFocus(s, map);
     this.updateExit(s, map);
     this.saveNow(s, delta);
@@ -232,9 +221,8 @@ export class AdventureScene extends Phaser.Scene {
       const d = distanceToThing(map, pos, t);
       if (d <= AB.explore.reach && (!best || d < best.d)) best = { id: t.id, d };
       if (t.kind === 'chest') {
-        const sp = this.objs!.sparkles.get(t.id);
         const near = !s.openedChests.includes(t.id) && d < AB.explore.chestHint * map.tile;
-        sp?.setAlpha(near ? 0.5 + 0.5 * Math.sin(this.time.now / 180) : 0);
+        this.mapRenderer.chestHint(t.id, near ? 0.5 + 0.5 * Math.sin(this.time.now / 180) : 0);
       }
     }
     const id = best?.id ?? null;

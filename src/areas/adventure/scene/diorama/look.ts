@@ -6,6 +6,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 
 export type TimeOfDay = 'day' | 'golden' | 'night';
@@ -30,9 +31,54 @@ export interface Preset {
 }
 
 export const PRESETS: Record<TimeOfDay, Preset> = {
-  day: { sun: 0xffe7c2, sunI: 3.1, sunDir: [-0.55, 1, 0.62], sky: 0xc9e2ff, ground: 0x5d7a46, hemiI: 1.0, water: [1, 1, 1], glint: 1, bloom: 0.32, sat: 1.08, warm: 0.02, fireflies: 0, lantern: 0, clear: 0x1f3a1a },
-  golden: { sun: 0xffc488, sunI: 2.5, sunDir: [-0.95, 0.55, 0.35], sky: 0xffd6a8, ground: 0x5c4a2c, hemiI: 0.95, water: [1.05, 0.86, 0.72], glint: 1.4, bloom: 0.5, sat: 1.0, warm: 0.035, fireflies: 0.35, lantern: 0, clear: 0x2a2416 },
-  night: { sun: 0x8fb0ff, sunI: 0.75, sunDir: [0.5, 1, 0.45], sky: 0x31447a, ground: 0x0f1a14, hemiI: 0.55, water: [0.26, 0.32, 0.55], glint: 0.8, bloom: 0.85, sat: 0.92, warm: -0.06, fireflies: 1, lantern: 7, clear: 0x070b12 },
+  day: {
+    sun: 0xffe7c2,
+    sunI: 3.1,
+    sunDir: [-0.55, 1, 0.62],
+    sky: 0xc9e2ff,
+    ground: 0x5d7a46,
+    hemiI: 1.0,
+    water: [1, 1, 1],
+    glint: 1,
+    bloom: 0.32,
+    sat: 1.08,
+    warm: 0.02,
+    fireflies: 0,
+    lantern: 0,
+    clear: 0x1f3a1a,
+  },
+  golden: {
+    sun: 0xffc488,
+    sunI: 2.5,
+    sunDir: [-0.95, 0.55, 0.35],
+    sky: 0xffd6a8,
+    ground: 0x5c4a2c,
+    hemiI: 0.95,
+    water: [1.05, 0.86, 0.72],
+    glint: 1.4,
+    bloom: 0.5,
+    sat: 1.0,
+    warm: 0.035,
+    fireflies: 0.35,
+    lantern: 0,
+    clear: 0x2a2416,
+  },
+  night: {
+    sun: 0x8fb0ff,
+    sunI: 0.75,
+    sunDir: [0.5, 1, 0.45],
+    sky: 0x31447a,
+    ground: 0x0f1a14,
+    hemiI: 0.55,
+    water: [0.26, 0.32, 0.55],
+    glint: 0.8,
+    bloom: 0.85,
+    sat: 0.92,
+    warm: -0.06,
+    fireflies: 1,
+    lantern: 7,
+    clear: 0x070b12,
+  },
 };
 
 const FINAL = {
@@ -88,6 +134,7 @@ export class Look {
   readonly composer: EffectComposer;
   private readonly bloom: UnrealBloomPass;
   private readonly final: ShaderPass;
+  private readonly fxaa: ShaderPass;
   preset: Preset = PRESETS.day;
 
   constructor(
@@ -98,9 +145,9 @@ export class Look {
     renderer.toneMapping = THREE.NeutralToneMapping;
     renderer.toneMappingExposure = 1;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(2048, 2048);
+    this.sun.shadow.mapSize.set(1536, 1536);
     const sc = this.sun.shadow.camera;
     sc.left = -26;
     sc.right = 26;
@@ -112,7 +159,7 @@ export class Look {
     this.sun.shadow.normalBias = 0.03;
     this.sun.shadow.radius = 3;
     scene.add(this.sun, this.sun.target, this.hemi, this.lantern);
-    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
+    const target = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType });
     this.composer = new EffectComposer(renderer, target);
     this.composer.addPass(new RenderPass(scene, camera));
     this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.4, 0.45, 0.92);
@@ -120,15 +167,19 @@ export class Look {
     this.final = new ShaderPass(FINAL);
     this.composer.addPass(this.final);
     this.composer.addPass(new OutputPass());
+    // Edge smoothing by one cheap pass on the finished picture: multisampling the half-float target cost more than all the rest.
+    this.fxaa = new ShaderPass(FXAAShader);
+    this.composer.addPass(this.fxaa);
   }
 
   setSize(w: number, h: number) {
     this.composer.setSize(w, h);
     (this.final.uniforms.uRes!.value as THREE.Vector2).set(w, h);
+    (this.fxaa.uniforms.resolution!.value as THREE.Vector2).set(1 / w, 1 / h);
   }
 
   /** `tweak`: the map's offsets from the preset (saturation, warmth) and its far fog, 0–0.6, tinted. */
-  apply(p: Preset, opts: { shadows: boolean; bloom: boolean; tilt: boolean }, tweak: LightTweak = NO_TWEAK) {
+  apply(p: Preset, opts: { shadows: boolean; bloom: boolean; tilt: boolean; smooth?: boolean }, tweak: LightTweak = NO_TWEAK) {
     this.preset = p;
     this.sun.color.set(p.sun);
     this.sun.intensity = p.sunI;
@@ -136,10 +187,12 @@ export class Look {
     this.hemi.groundColor.set(p.ground);
     this.hemi.intensity = p.hemiI;
     this.lantern.intensity = p.lantern;
+    this.lantern.visible = p.lantern > 0;
     this.scene.background = new THREE.Color(p.clear);
     this.renderer.shadowMap.enabled = opts.shadows;
     this.sun.castShadow = opts.shadows;
     this.bloom.enabled = opts.bloom;
+    this.fxaa.enabled = opts.smooth ?? true;
     this.bloom.strength = p.bloom;
     this.final.uniforms.uTilt!.value = opts.tilt ? 1 : 0;
     this.final.uniforms.uSat!.value = p.sat + tweak.sat;

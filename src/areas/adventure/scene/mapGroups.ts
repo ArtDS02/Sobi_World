@@ -1,27 +1,13 @@
-// The enemy groups on an Adventure map, each frame (split out of AdventureScene): they stand and breathe, show their label when the party
-// is near, and report a touch when the party walks into one.
+// The enemy groups on an Adventure map, each frame (the classic 2D renderer's part): they stand and breathe and show their label when
+// the party is near. Touching one is a rule, in foeTouch.ts.
 import { AB, type AreaMap } from '../logic/config/content';
 import { groupPosition } from '../logic/maps';
 import { placeMarks } from './foeMarks';
 import type { MapObjects } from './mapView';
-import type { AdventureSceneState, SceneReport, ScenePos } from './sceneState';
+import type { AdventureSceneState } from './sceneState';
 
-const TOUCH_LOCK_MS = 1200;
-
-/** Shown and moved for one frame; returns the time before which a new touch is ignored (`touchLockUntil` goes in and comes out). */
-export function updateGroups(
-  s: AdventureSceneState,
-  map: AreaMap,
-  objs: MapObjects,
-  pos: ScenePos,
-  time: number,
-  reduceMotion: boolean,
-  paused: boolean,
-  touchLockUntil: number,
-  report: SceneReport,
-): number {
-  const now = s.now;
-  let lock = touchLockUntil;
+/** Shown and moved for one frame. */
+export function updateGroups(s: AdventureSceneState, map: AreaMap, objs: MapObjects, pos: { x: number; y: number }, time: number, reduceMotion: boolean) {
   for (const g of s.groups) {
     const view = objs.groups.get(g.id);
     const row = map.groups.find((x) => x.id === g.id);
@@ -43,10 +29,5 @@ export function updateGroups(
     if (d < AB.explore.foeInfo * map.tile && !g.disguised) {
       view.label.setPosition(at.x, at.y - view.img.displayHeight - 4).setVisible(true);
     }
-    if (!paused && now >= s.graceUntil && now >= lock && d < AB.explore.touch * (g.asleep ? AB.foes.sleepTouch : 1)) {
-      lock = now + TOUCH_LOCK_MS;
-      report.touch(g.id, pos);
-    }
   }
-  return lock;
 }

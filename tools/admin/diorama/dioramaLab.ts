@@ -17,10 +17,17 @@ export interface LabHandle {
   readonly fps: number;
   readonly mapId: string;
   setOpts(o: ViewOpts): void;
+  /** Draw calls, triangles and live objects of the last frame (for the FPS profile). */
+  stats(): { calls: number; triangles: number; meshes: number };
   goto(x: number, y: number): void;
 }
 
-const ui = { map: 'map_forest_edge', time: 'day' as ViewOpts['time'], quality: 'full' as ViewOpts['quality'], wind: true };
+const ui = {
+  map: 'map_forest_edge',
+  time: 'day' as ViewOpts['time'],
+  quality: 'full' as ViewOpts['quality'],
+  wind: true,
+};
 const sim = { asleep: false, defeated: false, golden: false, chests: false };
 let live: { dispose(): void } | null = null;
 let guard = 0;
@@ -39,7 +46,14 @@ export function renderDioramaLab(content: HTMLElement) {
         <span class="dio__group">${(['full', 'light'] as const).map((q) => chip(ui.quality === q, `data-quality="${q}"`, q === 'full' ? 'Đẹp' : 'Nhẹ')).join('')}</span>
         ${chip(ui.wind, 'data-wind', '🍃 Gió')}
         <span class="dio__group">${spots.map((s, i) => chip(false, `data-spot="${i}"`, s.name)).join('')}</span>
-        <span class="dio__group">${[['asleep', '💤 Ngủ'], ['defeated', '🏆 Đã thắng'], ['golden', '✨ Tinh anh'], ['chests', '📦 Rương mở']].map(([k, l]) => chip(sim[k as keyof typeof sim], `data-sim="${k}"`, l!)).join('')}</span>
+        <span class="dio__group">${[
+          ['asleep', '💤 Ngủ'],
+          ['defeated', '🏆 Đã thắng'],
+          ['golden', '✨ Tinh anh'],
+          ['chests', '📦 Rương mở'],
+        ]
+          .map(([k, l]) => chip(sim[k as keyof typeof sim], `data-sim="${k}"`, l!))
+          .join('')}</span>
         <span class="dio__fps" data-fps>…</span>
       </header>
       <div class="dio__stage" data-stage><p class="dio__loading">Đang dựng diorama…</p></div>
@@ -89,6 +103,7 @@ function mount(stage: HTMLElement) {
   let raf = 0;
   let fps = 0;
   let last = 0;
+  const win = { n: 0, t0: 0 };
   let built = false;
   let snap = true;
   const handle: LabHandle = {
@@ -100,6 +115,7 @@ function mount(stage: HTMLElement) {
     },
     mapId: ui.map,
     setOpts: (o) => view?.setOpts(o),
+    stats: () => view?.stats() ?? { calls: 0, triangles: 0, meshes: 0 },
     goto: (x, y) => {
       driver?.goto(x, y);
       snap = true;
@@ -111,8 +127,20 @@ function mount(stage: HTMLElement) {
     const dtMs = Math.min(50, now - last);
     last = now;
     if (!view?.ready || !driver) return;
-    fps = fps ? fps * 0.95 + (1000 / Math.max(1, dtMs)) * 0.05 : 60;
-    for (const f of view.foes?.foes ?? []) view.foes!.setFoe(f.id, { asleep: sim.asleep, defeated: sim.defeated, golden: sim.golden, disguised: false });
+    // Frames counted over real time (a frame-weighted average would hide a slow renderer behind the 50 ms step clamp).
+    win.n += 1;
+    if (now - win.t0 >= 700) {
+      fps = (win.n * 1000) / (now - win.t0);
+      win.n = 0;
+      win.t0 = now;
+    }
+    for (const f of view.foes?.foes ?? [])
+      view.foes!.setFoe(f.id, {
+        asleep: sim.asleep,
+        defeated: sim.defeated,
+        golden: sim.golden,
+        disguised: false,
+      });
     for (const c of map.chests) view.foes?.setChest(c.id, sim.chests);
     view.frame({ dt: dtMs / 1000, pose: driver.step(dtMs), snap });
     snap = false;
@@ -129,6 +157,7 @@ function mount(stage: HTMLElement) {
       await view.enter(map, state);
       stage.querySelector('.dio__loading')?.remove();
       last = performance.now();
+      win.t0 = last;
       raf = requestAnimationFrame(frame);
     })
     .catch((e: unknown) => {

@@ -35,6 +35,8 @@ export class Walker {
   private followers: Phaser.GameObjects.Image[] = [];
   /** How far the party has dissolved into a gate's light (0 = solid, 1 = gone). */
   private warp = 0;
+  /** Whether the sprites are shown (a renderer that draws the party itself hides them). */
+  private shown = true;
 
   constructor(private readonly scene: Phaser.Scene) {
     this.leader = scene.add.image(0, 0, FALLBACK_PROP_KEY).setOrigin(0.5, 1);
@@ -79,7 +81,7 @@ export class Walker {
   /** The followers' pictures (one per team member). */
   setFollowers(arts: { art: string; down: boolean }[]) {
     while (this.followers.length > arts.length) this.followers.pop()!.destroy();
-    while (this.followers.length < arts.length) this.followers.push(this.scene.add.image(0, 0, FALLBACK_PROP_KEY).setOrigin(0.5, 1));
+    while (this.followers.length < arts.length) this.followers.push(this.scene.add.image(0, 0, FALLBACK_PROP_KEY).setOrigin(0.5, 1).setVisible(this.shown));
     arts.forEach((a, i) => {
       const img = this.followers[i]!;
       const k = this.scene.textures.exists(textureKey(a.art)) ? textureKey(a.art) : FALLBACK_PROP_KEY;
@@ -157,7 +159,7 @@ export class Walker {
   private drawShadow(i: number, x: number, y: number, width: number, lift: number, depth: number) {
     const sh = this.shadow(i);
     const k = Math.max(0.6, 1 - lift / 24);
-    sh.setVisible(true).setPosition(x, y - 2).setDisplaySize(width * k, width * k * 0.28).setAlpha(k).setDepth(depth - 0.5);
+    sh.setVisible(this.shown).setPosition(x, y - 2).setDisplaySize(width * k, width * k * 0.28).setAlpha(k).setDepth(depth - 0.5);
   }
 
   /** The point `dist` px back along the trail. */
@@ -185,9 +187,16 @@ export class Walker {
     if (k <= 0) this.leader.setAlpha(1);
   }
 
-  setVisible(on: boolean) {
+  /** Shows or hides the sprites (leader, followers, shadows); the walk itself keeps running while they are hidden. */
+  setSpritesVisible(on: boolean) {
+    this.shown = on;
     this.leader.setVisible(on);
     for (const f of this.followers) f.setVisible(on);
     if (!on) for (const sh of this.shadows) sh.setVisible(false);
+  }
+
+  /** Where the followers stand now on the leader's trail (read-only; the same spots their sprites are drawn at), nearest first. */
+  followerSpots(): readonly Vec[] {
+    return this.followers.map((_, i) => this.pointBehind((i + 1) * GAP));
   }
 }

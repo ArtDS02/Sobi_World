@@ -7,7 +7,7 @@ import { hashSeed, mulberry32 } from '../../../core/rng';
 import { textureKey } from '../../../ui/world/keys';
 import { COVER_ART } from './mapKit';
 import type { AreaMap } from '../logic/config/content';
-import { coverAt } from '../logic/maps';
+import { coverUnder } from './coverUnder';
 
 /** How see-through a cover is with the party under it (gone: the ground beneath shows clearly), and how fast it fades (ms to close
  * ~63 % of the way). */
@@ -56,16 +56,12 @@ export function drawCover(scene: Phaser.Scene, map: AreaMap, c: AreaMap['covers'
   return box;
 }
 
-/**
- * Fades the covers toward see-through over the party and back; returns the cover the party has just stepped under (once per entry), or
- * null.
- */
-export function fadeCovers(map: AreaMap, covers: ReadonlyMap<string, Phaser.GameObjects.Container>, pos: { x: number; y: number }, delta: number, still: boolean, was: string | null): { under: string | null; entered: string | null } {
-  const under = coverAt(map, pos)?.id ?? null;
+/** Fades the covers toward see-through over the party and back (which cover it stands under: `coverUnder`). */
+export function fadeCovers(map: AreaMap, covers: ReadonlyMap<string, Phaser.GameObjects.Container>, pos: { x: number; y: number }, delta: number, still: boolean) {
+  const under = coverUnder(map, pos);
   const k = still ? 1 : 1 - Math.exp(-delta / FADE_MS);
   for (const [id, g] of covers) {
     const target = id === under ? UNDER_ALPHA : 1;
     g.setAlpha(g.alpha + (target - g.alpha) * k);
   }
-  return { under, entered: under !== was ? under : null };
 }
