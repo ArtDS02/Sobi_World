@@ -45,6 +45,7 @@ export function labState(map: AreaMap): AdventureSceneState {
     portalLit: false,
     now: 0,
     graceUntil: 0,
+    sky: 'day',
     backdrop: '',
     paused: false,
   };

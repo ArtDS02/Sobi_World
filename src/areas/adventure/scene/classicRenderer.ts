@@ -74,6 +74,10 @@ export class ClassicRenderer implements MapRenderer {
     return { x: px.x, y: px.y };
   }
 
+  overlayScale(): number | null {
+    return null;
+  }
+
   snapCamera() {
     this.camera.snapNext();
   }
@@ -85,8 +89,13 @@ export class ClassicRenderer implements MapRenderer {
     this.walker.setSpritesVisible(false);
   }
 
-  show() {
-    this.walker.setSpritesVisible(true);
+  /** Nothing of the 2D map is kept on the GPU, and the area is built again on waking only if the scene says so (it does not need to). */
+  suspend(): boolean {
+    return false;
+  }
+
+  dispose() {
+    this.leave();
   }
 
   leave() {

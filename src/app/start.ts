@@ -13,7 +13,7 @@ import { createFarmView, type FarmView } from '../areas/farm/scene/farmView';
 import { noEffects } from '../areas/farm/scene/feedback/effects';
 import { createFeedbackDirector, type FeedbackDirector } from '../areas/farm/scene/feedback/FeedbackDirector';
 import { PLAZA_ID } from '../core/player/player';
-import { createDisplay } from './display';
+import { createDisplay, mapLookOf } from './display';
 import { createSettingsStore } from '../core/settings/settings';
 import type { PanelId } from '../ui/components/popup';
 import { renderWorldPrompt } from '../ui/components/worldPrompt';
@@ -29,7 +29,7 @@ import { createGameStore } from './gameStore';
 import { parseWorldSave } from './saveCodec';
 import { AquariumScene, AQUARIUM_SCENE_KEY } from '../areas/aquarium/scene/AquariumScene';
 import { bindAquariumStage } from '../areas/aquarium/stage';
-import { AdventureScene, ADVENTURE_SCENE_KEY, BattleScene, manifestImages } from '../areas/adventure/scene/AdventureScene';
+import { AdventureScene, ADVENTURE_SCENE_KEY, BattleScene, dioramaFellBack, manifestImages, registryArt } from '../areas/adventure/scene/AdventureScene';
 import { bindAdventureStage } from '../areas/adventure/stage';
 import { CloudScene, CLOUD_SCENE_KEY } from '../areas/cloud/scene/CloudScene';
 import { bindCloudStage } from '../areas/cloud/stage';
@@ -98,7 +98,7 @@ export async function start(root: HTMLElement) {
   const settings = createSettingsStore(platform.settings);
   await settings.init();
   const keys = () => settings.getSnapshot().settings.keys;
-  const displayChoice = createDisplay(settings, () => store.persistNow(), () => location.reload());
+  const displayChoice = createDisplay(settings, () => store.persistNow(), () => location.reload(), dioramaFellBack);
   const input = createControlInput(document, keys);
   const keySettings = createKeySettings(settings, input);
   // The key hint over the world: scenes report it, the DOM shows it with the player's own keys.
@@ -243,7 +243,7 @@ export async function start(root: HTMLElement) {
         reduceMotion: () => host.reduceMotion(),
         paused: () => host.paused(),
       });
-      const adventure = new AdventureScene({ read: () => overlays.adventureUi.sceneState(), report: overlays.adventureUi.scene, input, reduceMotion: () => host.reduceMotion(), paused: () => host.paused(), image: manifestImages(assets.registry) });
+      const adventure = new AdventureScene({ read: () => overlays.adventureUi.sceneState(), report: overlays.adventureUi.scene, input, reduceMotion: () => host.reduceMotion(), paused: () => host.paused(), image: manifestImages(assets.registry), art: registryArt(assets.registry), mapLook: mapLookOf(settings, () => host.effects()) });
       const cloud = new CloudScene({
         read: () => overlays.cloudUi.sceneState(),
         onPick: (pick) => overlays.cloudUi.pick(pick),

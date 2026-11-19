@@ -1,5 +1,7 @@
 // The plain state the Adventure's scene draws (scene/sceneState.ts), built from the world: where the party stands and when it must be put
 // back, the leader and followers, the groups of the area (their look, elements, beaten or not), what is opened or used. Pure.
+import { HOUR_MS, isNight } from '../../../core/clock';
+import { TIME } from '../../../core/config/time';
 import type { WorldSave } from '../../../core/save/world';
 import { exitLock, groupEnemies, groupKey, portalLit } from '../logic/actions/trip';
 import { CAMP_ART } from '../logic/art';
@@ -9,6 +11,12 @@ import { areaCorruption, corruptionOf, foeClass, groupNow, grownElement, zonePur
 import { groupAffix } from '../logic/variants';
 import { localOffsetMs } from '../../../ui/localDay';
 import type { AdventureSceneState } from '../scene/sceneState';
+
+/** The light of the game clock: night, the game hour before it (golden), else day. */
+export function skyOf(now: number, dayOffsetMs: number): AdventureSceneState['sky'] {
+  if (isNight(now, dayOffsetMs, TIME)) return 'night';
+  return isNight(now + HOUR_MS, dayOffsetMs, TIME) ? 'golden' : 'day';
+}
 
 export function sceneVm(world: WorldSave | null, now: number, paused: boolean, zoneId: string): AdventureSceneState | null {
   if (!world) return null;
@@ -24,6 +32,7 @@ export function sceneVm(world: WorldSave | null, now: number, paused: boolean, z
     litPuzzles: a.litPuzzles,
     backdrop: run?.rift ? RIFT.backdrop : run ? zone.backdrop : CAMP_ART.backdrop,
     now,
+    sky: skyOf(now, localOffsetMs(now)),
     paused,
   };
   // The board of a battle just won keeps the battle's picture behind it.

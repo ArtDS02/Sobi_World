@@ -1,6 +1,6 @@
 // The accessibility and language sections of the settings screen (GĐ13): text size, easy-to-see colors,
 // screen shake and language. The choices live in settings.json (core/settings) and apply to every Area.
-import { COLOR_MODES, LANGUAGE_IDS, TEXT_SIZES, type DisplayPrefs } from '../../core/settings/settings';
+import { COLOR_MODES, LANGUAGE_IDS, MAP_QUALITIES, MAP_VIEWS, TEXT_SIZES, type DisplayPrefs } from '../../core/settings/settings';
 import { vi } from '../../i18n/vi';
 import { el } from '../dom';
 
@@ -9,6 +9,8 @@ export interface DisplayChoice {
   choose<K extends keyof DisplayPrefs>(key: K, value: DisplayPrefs[K]): void;
   /** The last write of settings.json failed (the change still holds until the game closes). */
   saveFailed(): boolean;
+  /** The map style fell back to 2D for this session because the device is too slow (optional: shown as a note). */
+  mapSlow?(): boolean;
   subscribe(fn: () => void): () => void;
 }
 
@@ -60,6 +62,9 @@ export function renderDisplaySettings(choice: DisplayChoice): HTMLElement[] {
       }),
     ),
     el('p', { class: 'settings__hint', text: s.shakeHint }),
+    options(s.mapView, MAP_VIEWS, s.mapViews, prefs.mapView, (v) => choice.choose('mapView', v), 'mapView'),
+    options(s.mapQuality, MAP_QUALITIES, s.mapQualities, prefs.mapQuality, (v) => choice.choose('mapQuality', v), 'mapQuality'),
+    choice.mapSlow?.() ? el('p', { class: 'settings__hint', text: s.mapSlow }) : null,
     choice.saveFailed() ? el('p', { class: 'settings__hint settings__hint--error', text: s.settingsSaveError }) : null,
   );
   const language = el(

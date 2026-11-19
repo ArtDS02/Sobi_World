@@ -1,12 +1,12 @@
 # STATE — forest-diorama (6 map vùng Rừng sang Diorama 2.5D, chạy trong game)
 Nhánh: map-diorama-forest (tách từ new-ideas/update-3d-adventure @ 2ad31ee6)   Commit xanh gần nhất: (M0)
 Mốc hiện tại: M3 — renderer dùng chung + Bìa Rừng trong game   Vòng: 1/3
-Đang làm: (chuẩn bị M3c)
+Đang làm: SONG SONG: coder (sonnet mới) mở rộng gameForest.ts: rương, sang map kế, lưu/mở lại (chơi thử M3) || checker: e2e ở commit gốc 2ad31ee6 (worktree, npm ci riêng) để xác nhận 6 đỏ e2e có sẵn
 Brief đang chạy: xem mục "Brief M1" cuối file.
-Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127 | M3a ✅ 3602a56f module diorama ở src/areas/adventure/scene/diorama, blockerPlan+test, lab 6 map, --map | M3a-perf+M3b ✅ c0522d2b check xanh 2166, e2e adventure 2/2
+Xong: M0 ✅ 237df342 | M2 ✅ 3be15092 (kèm ảnh chr_so_down_idle đã sửa) | M1 ✅ (commit sau) check xanh 2127/2127 | M3a ✅ 3602a56f module diorama ở src/areas/adventure/scene/diorama, blockerPlan+test, lab 6 map, --map | M3a-perf+M3b ✅ c0522d2b check xanh 2166, e2e adventure 2/2 | M3c ✅ (commit này) diorama trong game, cài đặt, quality.ts; check xanh 2182, build xanh
 Còn lại: M3a-perf+mép, M3b → checker chung → M3c DioramaRenderer trong game + cài đặt + quality.ts → chơi thử Bìa Rừng → reviewer edge → M4 → M5
 Điểm reviewer: —   FPS edge: dGPU RTX 2060 (ANIM_GPU=high) Đẹp 140/143/144/141/121/117; AMD iGPU Đẹp 47–61/39, Nhẹ 78–114; SwiftShader Nhẹ 2–4 (→ lùi 2D)
-Lỗi đang mở: SwiftShader 2–4 FPS → tự lùi 2D (báo chủ dự án). Máy đo: dGPU là RTX 2060 (không phải 3050); headless --gpu mặc định = AMD iGPU; cả số G0 cũ là iGPU. Báo chủ dự án: layout.json 15 chỗ đặt decor (141e330e).
+Lỗi đang mở: e2e 6 đỏ (aquarium:63, away:41, garden:73, live:25 + species:103 schemaVersion 11 cũ, save đã 13+; perf plaza 16 FPS) — nghi có sẵn, không thuộc npm run check. SwiftShader 2–4 FPS → tự lùi 2D (chỉ test đơn vị, chưa thấy trong game). Diorama dựng lại (đứng ~1 s) khi mở cổng/thắp đố/đổi đội giữa map. warp() không có hình riêng (flash che). Máy đo: dGPU là RTX 2060, headless --gpu mặc định = AMD iGPU. Báo chủ dự án: layout.json 15 chỗ đặt decor (141e330e).
 Chờ chủ dự án: —
 Ghi chú: `package-lock.json` (sửa) và `studio/` (chưa track) có sẵn trước phiên, không thuộc việc này — KHÔNG commit.
 
@@ -42,3 +42,10 @@ Cấm junction/symlink node_modules vào worktree. Chỉ sửa diorama/, tools/a
 
 ## Brief M3b (coder B, sonnet mới)
 Theo design.md §A4: scene/mapRenderer.ts (interface), scene/classicRenderer.ts bọc code 2D hiện có (không đổi pixel), coverUnder thuần + test, updateFocus dùng renderer.chestHint, walker.followerSpots(). Chỉ sửa src/areas/adventure/scene/* NGOÀI diorama/ + test mới. Không đổi luật/save.
+
+## Brief M3c (coder sonnet mới)
+design.md §A3, A4, A6, B. diorama/dioramaRenderer.ts implements MapRenderer (chép texture sang Phaser CanvasTexture, depth −1000, không rAF riêng);
+createRenderer chọn Diorama khi mapView=diorama + zone_forest + có contract; đồng bộ groups/chests/gates/followers/leader/corruption/sky; nhãn Phaser qua screenOf;
+hide/show khi vào/ra trận (sửa showBackdrop); dựng bất đồng bộ — Walker đứng tới khi ready, >6 s/lỗi/mất context → Classic; dispose + disposeKit khi shutdown.
+Cài đặt mapView/mapQuality trong settings.json (optional, không đụng save), UI displaySettings, i18n vi+en; quality.ts (chuỗi GPU SwiftShader/llvmpipe → 2D luôn; đo FPS → Nhẹ → 2D) + test.
+Camera ~34 ô ngang. Kiểm: check + chạy game thật vào Bìa Rừng (Playwright), ảnh chụp.

@@ -16,6 +16,8 @@ import { CONTRACTS, type SceneContract } from './contracts';
 import { decksOf, standAt, type Deck } from './decks';
 import { buildCliffs, buildLilies } from './details';
 import { dressThings, type Things } from './dressThings';
+import { disposeTree } from './disposeTree';
+import { gpuNameOf } from './gpuProbe';
 import { dressTrees } from './dressTrees';
 import { gridOf, type Grid } from './field';
 import type { Foes } from './foes';
@@ -31,6 +33,8 @@ export interface ViewOpts {
   quality: 'full' | 'light';
   /** Wind and ambient life (false: reduced motion, the scene stands still). */
   wind: boolean;
+  /** Share of the ambient particles (fireflies, leaves, motes, butterflies) drawn, 0–1 (default 1); read when the area is built. */
+  particles?: number;
 }
 
 /** One tick of the host: seconds since the last one, the party's pose (game px) and whether the camera jumps there. */
@@ -47,7 +51,8 @@ const NEUTRAL: SceneContract = {
   spots: [],
 };
 const PITCH = THREE.MathUtils.degToRad(52);
-const DIST = 41;
+/** Camera distance: about 34 tiles show across at 16:9 (the first version, 41, showed 28). */
+const DIST = 49;
 const FOLLOW_S = 0.14;
 
 export class DioramaView {
@@ -136,6 +141,7 @@ export class DioramaView {
     const g = gridOf(map, opened, closed);
     const contract = CONTRACTS[map.id] ?? NEUTRAL;
     const quality = this.opts.quality === 'full' ? 1 : 0.55;
+    const particles = quality * (this.opts.particles ?? 1);
     const [grass, cliff, butterfly] = await Promise.all([
       loadTiling(this.url('adv_map_forest_tile_grass_a')),
       loadTiling(this.url(forestKit('edge_cliff'))),
@@ -155,7 +161,7 @@ export class DioramaView {
       s.followers.map((f) => f.art),
     );
     root.add(party.group);
-    const life = new Life(butterfly, quality);
+    const life = new Life(butterfly, particles);
     const bursts = new Bursts(blob);
     const birds = new Birds(blob);
     root.add(life.group, bursts.group, birds.group);
@@ -199,17 +205,29 @@ export class DioramaView {
     return this.g ? standAt(this.g, this.decks, px.x / this.tile, px.y / this.tile) : 0;
   }
 
-  /** Where a point of the area (game px, on the ground) is in the picture, CSS px from its top-left. */
-  screenOf(px: { x: number; y: number }): { x: number; y: number } {
+  /** Where a point of the area (game px, on the ground, `lift` tiles above it) is in the picture, CSS px from its top-left. */
+  screenOf(px: { x: number; y: number }, lift = 0): { x: number; y: number } {
     this.camera.updateMatrixWorld();
-    this.v.set(px.x / this.tile, this.groundAt(px), px.y / this.tile).project(this.camera);
+    this.v.set(px.x / this.tile, this.groundAt(px) + lift, px.y / this.tile).project(this.camera);
     return { x: (this.v.x * 0.5 + 0.5) * this.w, y: (1 - (this.v.y * 0.5 + 0.5)) * this.h };
+  }
+
+  /** Pulses the hint of a chest the party is near at strength `k` (0 = none). */
+  hintChest = (id: string, k: number) => this.things?.foes.hint(id, k);
+
+  /** Greys the companions that are knocked out (in team order). */
+  setDown(down: readonly boolean[]) {
+    this.party?.setDown(down);
+  }
+
+  /** The graphics card's name ('' when the browser hides it). */
+  gpuName(): string {
+    return gpuNameOf(this.renderer);
   }
 
   hide() {
     this.visible = false;
   }
-
   show() {
     this.visible = true;
   }
@@ -222,7 +240,7 @@ export class DioramaView {
     const halfW = Math.tan(THREE.MathUtils.degToRad(11)) * DIST * this.camera.aspect * 0.92;
     if (snap) this.lead.set(0, 0, 0);
     else if (this.opts.wind) this.lead.lerp(this.v.set(heading.x * 2.6, 0, heading.y * 1.6), 1 - Math.exp(-dt / 0.7));
-    const want = new THREE.Vector3(THREE.MathUtils.clamp(at.x + this.lead.x, halfW, g.cols - halfW), 0, THREE.MathUtils.clamp(at.z + 0.6 + this.lead.z, 9.5, g.rows - 5.5));
+    const want = new THREE.Vector3(THREE.MathUtils.clamp(at.x + this.lead.x, halfW, g.cols - halfW), 0, THREE.MathUtils.clamp(at.z + 0.6 + this.lead.z, 11.4, g.rows - 6.6));
     if (snap) this.target.copy(want);
     else this.target.lerp(want, 1 - Math.exp(-dt / FOLLOW_S));
     this.camera.position.set(this.target.x, this.target.y + Math.sin(PITCH) * DIST, this.target.z + Math.cos(PITCH) * DIST);
@@ -269,9 +287,7 @@ export class DioramaView {
     this.cardU.uSee.value.set((this.v.x * 0.5 + 0.5) * this.w * pr, (this.v.y * 0.5 + 0.5) * this.h * pr, this.h * pr * 0.2);
   }
 
-  private url(id: string): string {
-    return this.art(id) ?? '';
-  }
+  private url = (id: string): string => this.art(id) ?? '';
 
   dispose() {
     this.leave();
@@ -279,13 +295,4 @@ export class DioramaView {
     this.renderer.dispose();
     this.renderer.domElement.remove();
   }
-}
-
-function disposeTree(root: THREE.Object3D) {
-  root.traverse((o) => {
-    const m = o as THREE.Mesh;
-    m.geometry?.dispose();
-    const mats = Array.isArray(m.material) ? m.material : m.material ? [m.material] : [];
-    mats.forEach((x) => x.dispose());
-  });
 }

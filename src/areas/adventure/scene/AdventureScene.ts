@@ -13,11 +13,15 @@ import { distanceToThing, thingsOf, walkableOf } from '../logic/maps';
 import { BATTLE_SCENE_KEY } from './battle/BattleScene';
 
 export { BattleScene, manifestImages } from './battle/BattleScene';
+export { registryArt } from './diorama/artKit';
+export { dioramaFellBack } from './diorama/quality';
 import { ADVENTURE_DESIGN, fitZoom } from './mapCamera';
-import { ClassicRenderer } from './classicRenderer';
 import { coverUnder } from './coverUnder';
 import { touchGroups } from './foeTouch';
+import type { ArtFn } from './diorama/artKit';
+import type { MapLook } from './mapLook';
 import type { MapRenderer } from './mapRenderer';
+import { RendererSwitch } from './rendererSwitch';
 import { playMapVfx } from './mapVfx';
 import type { AdventureSceneState, SceneReport } from './sceneState';
 import { Walker } from './walker';
@@ -35,11 +39,15 @@ export interface AdventureSceneDeps {
   paused(): boolean;
   /** The url of a manifest image, for the art loaded only when needed (a painted area's background). */
   image?(id: string): { url: string } | null;
+  /** The map's style and quality from the player's settings (absent: the classic 2D drawing always). */
+  mapLook?(): MapLook;
+  /** Pictures by id and state for the diorama (absent: the classic 2D drawing always). */
+  art?: ArtFn;
 }
 
-/** The one place that picks how the map is drawn (the classic 2D drawing for now). */
+/** The one place that picks how the map is drawn: the diorama of a Forest area when the settings say so, else the classic 2D drawing. */
 function createRenderer(scene: Phaser.Scene, walker: Walker, deps: AdventureSceneDeps): MapRenderer {
-  return new ClassicRenderer(scene, walker, deps);
+  return new RendererSwitch(scene, walker, deps);
 }
 
 const MOVE_EVERY_MS = 3000;
@@ -96,6 +104,8 @@ export class AdventureScene extends Phaser.Scene {
     };
     const sleepStage = () => {
       if (stage() && this.scene.isActive(BATTLE_SCENE_KEY)) this.scene.sleep(BATTLE_SCENE_KEY);
+      // Asleep (the Adventure is left): a diorama gives its GPU share back and is built again on waking.
+      if (this.mapRenderer.suspend()) this.map = null;
     };
     runStage();
     this.events.on(Phaser.Scenes.Events.WAKE, runStage);
@@ -105,6 +115,7 @@ export class AdventureScene extends Phaser.Scene {
       this.events.off(Phaser.Scenes.Events.SLEEP, sleepStage);
       this.textures.off(Phaser.Textures.Events.ADD, onTexture);
       this.ambient.destroy();
+      this.mapRenderer.dispose();
       this.input.keyboard?.off('keydown-SPACE', use);
       for (const off of this.offs) off();
     });
@@ -112,7 +123,13 @@ export class AdventureScene extends Phaser.Scene {
 
   /** A one-shot picture of the FeedbackDirector (decision 045), see mapVfx.ts. */
   playVfx(vfx: AreaVfx, still: boolean) {
-    if (this.map && this.mapRenderer.ready() && this.sys.isActive()) playMapVfx(this, this.map, this.walker.position, vfx, still);
+    if (this.map && this.mapRenderer.ready() && this.sys.isActive()) playMapVfx(this, this.map, this.walker.position, vfx, still, this.overlay());
+  }
+
+  /** Where one-shot effects stand when the map is drawn fixed on the screen (a diorama); undefined for the 2D map's own world. */
+  private overlay() {
+    const k = this.mapRenderer.overlayScale();
+    return k === null ? undefined : { screenOf: (p: { x: number; y: number }) => this.mapRenderer.screenOf(p), k };
   }
 
   private useFocus() {
@@ -141,7 +158,6 @@ export class AdventureScene extends Phaser.Scene {
   }
 
   private enterMap(s: AdventureSceneState, map: AreaMap) {
-    this.mapRenderer.leave();
     this.mapRenderer.enter(map, s);
     this.map = map;
     this.builtCorruption = s.corruption;

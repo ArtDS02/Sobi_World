@@ -149,10 +149,10 @@ export class Look {
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(1536, 1536);
     const sc = this.sun.shadow.camera;
-    sc.left = -26;
-    sc.right = 26;
-    sc.top = 22;
-    sc.bottom = -22;
+    sc.left = -31;
+    sc.right = 31;
+    sc.top = 26;
+    sc.bottom = -26;
     sc.near = 1;
     sc.far = 80;
     this.sun.shadow.bias = -0.0006;

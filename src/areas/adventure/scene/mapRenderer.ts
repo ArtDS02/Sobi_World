@@ -5,7 +5,7 @@ import type { AdventureSceneState } from './sceneState';
 import type { Walker } from './walker';
 
 export interface MapRenderer {
-  /** Builds the drawing of `map` for the state `s` (the previous one, if any, was left first). */
+  /** Builds the drawing of `map` for the state `s`; the previous one is left first. A renderer that kept the very same map (see `hide`) shows it again. */
   enter(map: AreaMap, s: AdventureSceneState): void;
   /** True once the drawing is built and may be shown; until then the party stands still. */
   ready(): boolean;
@@ -17,12 +17,16 @@ export interface MapRenderer {
   warp(k: number): void;
   /** Where a point of the area (design px) is drawn, in the scene's own coordinates (for labels and one-shot effects over the map). */
   screenOf(px: { x: number; y: number }): { x: number; y: number };
+  /** The size of things drawn over the map at `screenOf` points (they are fixed on the screen then); null: they live in the map's own world. */
+  overlayScale(): number | null;
   /** The camera jumps to the party on the next frame (they were put somewhere else). */
   snapCamera(): void;
-  /** The map is left for the camp or a battle: stops drawing it; a renderer may keep what it built for `show`. */
+  /** The map is left for the camp or a battle: stops drawing it; a renderer may keep what it built for `enter` to show again. */
   hide(): void;
-  /** The same map is drawn again after `hide` (only for a renderer that kept its drawing). */
-  show(): void;
+  /** The scene goes to sleep (the Adventure is left): frees what must not stay on the GPU. True when the map must be entered again on waking. */
+  suspend(): boolean;
   /** Drops the drawing of the current map (another area, or the area must be built again). */
   leave(): void;
+  /** The scene is over: frees everything. */
+  dispose(): void;
 }

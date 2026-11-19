@@ -42,6 +42,8 @@ interface Chest {
   z: number;
   phase: number;
   opened: boolean;
+  /** The host's hint strength, 0–1 (the party is near and the chest is unopened). */
+  hint: number;
 }
 
 export interface FoeSpec {
@@ -117,7 +119,7 @@ export class Foes {
     glint.position.set(s.x, this.ground(s.x, s.z) + 1.15, s.z);
     this.group.add(glint);
     this.shadow(s.x, s.z, CHEST_H * s.card.aspect * 0.9);
-    this.chests.push({ id: s.id, shut, open, card: s.card, glint, x: s.x, z: s.z, phase: s.phase, opened: false });
+    this.chests.push({ id: s.id, shut, open, card: s.card, glint, x: s.x, z: s.z, phase: s.phase, opened: false, hint: 0 });
   }
 
   /** Sets what a group looks like now (asleep, defeated, golden, a mimic still disguised). */
@@ -140,6 +142,12 @@ export class Foes {
     c.shut.visible = !c.opened;
     if (c.open) c.open.visible = c.opened;
     c.glint.visible = !opened;
+  }
+
+  /** Strengthens the glint of a chest the party has in reach (the 2D map's sparkle). */
+  hint(id: string, k: number) {
+    const c = this.chests.find((x) => x.id === id);
+    if (c) c.hint = k;
   }
 
   /** Poses everything for time `t` (s), `dt` (s) since the last frame, the party at `party`. */
@@ -168,7 +176,7 @@ export class Foes {
       if (f.ring.visible) f.ring.material.opacity = 0.4 + 0.2 * Math.sin(t * 2.2 + f.phase);
     }
     for (const c of this.chests) {
-      const near = Math.max(0, 1 - Math.hypot(party.x - c.x, party.z - c.z) / 4);
+      const near = Math.max(c.hint, 1 - Math.hypot(party.x - c.x, party.z - c.z) / 4, 0);
       const p = Math.max(0, Math.sin(t * 1.6 + c.phase));
       c.glint.scale.setScalar(0.25 + p * 0.35 + near * 0.3);
       c.glint.material.opacity = 0.2 + p * 0.7 + near * 0.3;

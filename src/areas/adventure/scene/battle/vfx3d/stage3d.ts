@@ -199,6 +199,8 @@ export class Stage3d {
   /** Starts `fx` on the ground under the screen point (x, y); `widthPx` is the anchor's width, `dur` the act's length. */
   play(factory: Vfx3dFactory, x: number, y: number, widthPx: number, dur: number, add: AddTimed, opts: PlayOpts = {}) {
     if (!this.init()) return;
+    // The diorama of the map leaves this flag on: the effects of the battle are made display-referred (see init).
+    THREE.ColorManagement.enabled = false;
     this.fit();
     const o = this.ground(x, y);
     const a = this.ground(x - widthPx / 2, y);

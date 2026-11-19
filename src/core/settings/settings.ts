@@ -19,15 +19,23 @@ export type TextSize = (typeof TEXT_SIZES)[number];
 export const COLOR_MODES = ['normal', 'easy'] as const;
 export type ColorMode = (typeof COLOR_MODES)[number];
 
+/** How an Adventure map is drawn: the Three.js diorama or the classic 2D, and how hard the diorama may work (`auto` measures the device). */
+export const MAP_VIEWS = ['diorama', 'classic'] as const;
+export type MapView = (typeof MAP_VIEWS)[number];
+export const MAP_QUALITIES = ['auto', 'full', 'light'] as const;
+export type MapQuality = (typeof MAP_QUALITIES)[number];
+
 export interface DisplayPrefs {
   language: LanguageId;
   textSize: TextSize;
   colorMode: ColorMode;
   /** Off removes the shake of objects after an action; "reduce motion" (in the save) removes all movement. */
   screenShake: boolean;
+  mapView: MapView;
+  mapQuality: MapQuality;
 }
 
-export const DEFAULT_DISPLAY: DisplayPrefs = { language: 'vi', textSize: 'normal', colorMode: 'normal', screenShake: true };
+export const DEFAULT_DISPLAY: DisplayPrefs = { language: 'vi', textSize: 'normal', colorMode: 'normal', screenShake: true, mapView: 'diorama', mapQuality: 'auto' };
 
 export interface GameSettings extends DisplayPrefs {
   version: typeof SETTINGS_VERSION;
@@ -51,6 +59,8 @@ const fileSchema = z.object({
   textSize: z.enum(TEXT_SIZES).optional(),
   colorMode: z.enum(COLOR_MODES).optional(),
   screenShake: z.boolean().optional(),
+  mapView: z.enum(MAP_VIEWS).optional(),
+  mapQuality: z.enum(MAP_QUALITIES).optional(),
 });
 
 /**
@@ -78,6 +88,8 @@ export function parseSettings(text: string | null): GameSettings {
     textSize: file.data.textSize ?? DEFAULT_DISPLAY.textSize,
     colorMode: file.data.colorMode ?? DEFAULT_DISPLAY.colorMode,
     screenShake: file.data.screenShake ?? DEFAULT_DISPLAY.screenShake,
+    mapView: file.data.mapView ?? DEFAULT_DISPLAY.mapView,
+    mapQuality: file.data.mapQuality ?? DEFAULT_DISPLAY.mapQuality,
   };
   // Clashing keys fall back to the defaults, but the player's character and display choices are kept.
   return validKeys(keys)

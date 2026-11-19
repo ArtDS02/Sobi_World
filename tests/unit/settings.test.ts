@@ -172,6 +172,13 @@ describe('display settings (GĐ13)', () => {
     expect(parseSettings(JSON.stringify({ language: 'fr' }))).toEqual(defaultGameSettings());
   });
 
+  it('map style and quality default to the diorama on auto; an old file reads as the defaults, a bad value too', () => {
+    expect(parseSettings(null)).toMatchObject({ mapView: 'diorama', mapQuality: 'auto' });
+    expect(parseSettings(JSON.stringify({ language: 'en' }))).toMatchObject({ mapView: 'diorama', mapQuality: 'auto' });
+    expect(parseSettings(JSON.stringify({ mapView: 'classic', mapQuality: 'light' }))).toMatchObject({ mapView: 'classic', mapQuality: 'light' });
+    expect(parseSettings(JSON.stringify({ mapView: 'hologram' }))).toEqual(defaultGameSettings());
+  });
+
   it('survive clashing keys (only the keys go back to the default)', () => {
     const got = parseSettings(JSON.stringify({ language: 'en', keys: { interact: ['KeyI', null] } }));
     expect(got.keys).toEqual(DEFAULT_KEYS);

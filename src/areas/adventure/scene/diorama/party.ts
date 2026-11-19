@@ -64,6 +64,11 @@ export class Party {
     this.group.add(...bodies, ...this.shadows);
   }
 
+  /** Greys the companions that are knocked out (same order as `setTeam`'s list; a picture that did not load keeps its place). */
+  setDown(down: readonly boolean[]) {
+    this.followers.forEach((m, i) => (m.material as THREE.MeshLambertMaterial).color.setHex(down[i] ? 0x6a6a6a : 0xffffff));
+  }
+
   /** World position of the leader's feet. */
   world(pose: PartyPose, ground: (x: number, z: number) => number): THREE.Vector3 {
     const x = pose.leader.x / this.tile;

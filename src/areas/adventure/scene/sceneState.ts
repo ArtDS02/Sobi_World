@@ -58,6 +58,8 @@ export interface AdventureSceneState {
   graceUntil: number;
   /** The picture behind the camp and the battle. */
   backdrop: string;
+  /** The light of the game clock now: day, the hour before night, night (the diorama's time of day; not saved). */
+  sky: 'day' | 'golden' | 'night';
   /** A dialog covers the world, or an action is on its way: the walker stands still. */
   paused: boolean;
 }
