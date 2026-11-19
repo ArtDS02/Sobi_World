@@ -15,8 +15,23 @@ export interface GroundUniforms {
   uSee: { value: THREE.Vector3 };
   /** 1 at night: the dirt paths keep their warm brown under the blue moon (a light of their own hue, as bright as the moon's). */
   uNight: { value: number };
+  /** 0–1, how far the night floors of open ground and paths are raised (a dark map keeps them readable well past the lantern). */
+  uLift: { value: number };
+  /** 1 with the wind on, 0 when motion is reduced: gusts that run over the open grass as soft light and shade. */
+  uBreeze: { value: number };
+  /** Colour of the light the ground is lifted with under the see-through crowns: the colour of the sun of the hour (a white lift made a pale disc at golden hour). */
+  uSeeTint: { value: THREE.Color };
   /** The corruption's ink round a centre: x, z (tiles) and radius (0 = none): the ground greys toward it and ink crawls out of it. */
   uInk: { value: THREE.Vector3 };
+}
+
+/** Sets the ground's light of the hour: the clouds, the night floors, the breeze (off with the wind) and the tint of the see-through lift. */
+export function setGroundMood(u: GroundUniforms, time: 'day' | 'golden' | 'night', wind: boolean, nightLift: number) {
+  u.uCloud.value = time === 'night' ? 0.06 : 0.16;
+  u.uNight.value = time === 'night' ? 1 : 0;
+  u.uLift.value = nightLift;
+  u.uBreeze.value = wind ? 1 : 0;
+  u.uSeeTint.value.set(time === 'golden' ? 0xffc890 : 0xffffff);
 }
 
 export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE.Texture, quality: 'full' | 'light', uniforms: GroundUniforms, pathTone = 0): THREE.Group {
@@ -50,6 +65,9 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
     sh.uniforms.uCloud = uniforms.uCloud;
     sh.uniforms.uSee = uniforms.uSee;
     sh.uniforms.uNight = uniforms.uNight;
+    sh.uniforms.uLift = uniforms.uLift;
+    sh.uniforms.uBreeze = uniforms.uBreeze;
+    sh.uniforms.uSeeTint = uniforms.uSeeTint;
     sh.uniforms.uInk = uniforms.uInk;
     sh.vertexShader = sh.vertexShader
       .replace('#include <common>', '#include <common>\nattribute vec4 aSplat;\nvarying vec3 vGW;\nvarying vec3 vGN;\nvarying float vPath;')
@@ -58,24 +76,31 @@ export function buildGround(renderer: THREE.WebGLRenderer, g: Grid, grass: THREE
       .replace(
         '#include <common>',
         `#include <common>
-uniform sampler2D tPaint; uniform vec2 uSize; uniform float uTime; uniform float uCloud; uniform vec3 uSee; uniform float uNight; uniform vec3 uInk;
+uniform sampler2D tPaint; uniform vec2 uSize; uniform float uTime; uniform float uCloud; uniform vec3 uSee; uniform float uNight; uniform float uLift; uniform float uBreeze; uniform vec3 uSeeTint; uniform vec3 uInk;
 varying vec3 vGW; varying vec3 vGN; varying float vPath;
 ${GLSL_NOISE}
 vec3 srgb(vec3 c){ return pow(c, vec3(2.2)); }`,
       )
       .replace(
         '#include <opaque_fragment>',
-        `// Under the crowns the party is seen through, the ground it reveals is lit like the open ground, with a soft edge (no dark disc).
-outgoingLight = max(outgoingLight, diffuseColor.rgb * (.8 * seeLift));
+        `// Gusts over the grass: a travelling band of light (the front the trees lean to) with a finer sheen moving faster inside it, so open ground
+// is never still in a frame 0.1 s later. Gentle (a few percent) and weaker on the dirt paths.
+if (uBreeze > 0. && vGN.y > .9) {
+  float band = sin(wp.x * .55 + wp.y * .25 - uTime * 2.2);
+  float sheen = dNoise(wp * 1.6 + vec2(uTime * 1.7, uTime * .6));
+  outgoingLight *= 1. + uBreeze * (1. - .7 * smoothstep(.3, .62, vPath)) * (.05 * band * smoothstep(-.3, 1., band) + .1 * (sheen - .5));
+}
+// Under the crowns the party is seen through, the ground it reveals is lit like the open ground, with a soft edge (no dark disc).
+outgoingLight = max(outgoingLight, diffuseColor.rgb * uSeeTint * (.8 * seeLift));
 // At night a dirt path is lit by a light of its own warm hue, as bright as the moon and the lantern there (with a floor), so it stays a
 // dark warm brown a step lighter than the grass, instead of the flat grey-blue the moon makes of it.
 if (uNight > 0.) {
   // The moon on open ground: never darker than a dim cool fraction of its own colour, so clearings read well away from the lantern.
-  outgoingLight = max(outgoingLight, diffuseColor.rgb * vec3(.72, .86, 1.1) * (.2 * uNight));
+  outgoingLight = max(outgoingLight, diffuseColor.rgb * vec3(.72, .86, 1.1) * ((.2 + .28 * uLift) * uNight));
   float pathK = smoothstep(.3, .62, vPath) * step(.9, vGN.y) * uNight;
   vec3 lw = vec3(.2126, .7152, .0722);
   float lit = dot(outgoingLight, lw) / max(1e-3, dot(diffuseColor.rgb, lw));
-  outgoingLight = mix(outgoingLight, diffuseColor.rgb * max(lit * 1.15, .27) * vec3(1.08, .94, .76), pathK);
+  outgoingLight = mix(outgoingLight, diffuseColor.rgb * max(lit * 1.15, .27 + .26 * uLift) * vec3(1.08, .94, .76), pathK);
 }
 #include <opaque_fragment>`,
       )

@@ -9,6 +9,7 @@ import { marginTrees, placeFeet, type BlockerPlan, type Foot } from './blockers'
 import { TILT, cardBatch, shadowStandIns, type CardLook, type CardUniforms, type Placed } from './cards';
 import type { SceneContract } from './contracts';
 import { leafLayer } from './extraArt';
+import { mushroomClusters } from './mushrooms';
 import { heightAt, type Grid } from './field';
 import type { Card } from './textures';
 
@@ -133,6 +134,10 @@ export async function dressTrees(art: ArtFn, plan: BlockerPlan, map: AreaMap, g:
       low.look,
       [low.crown, 0],
     );
+  }
+  if (c.mushrooms) {
+    const clusters = await mushroomClusters(art, feet, g, u, c.mushrooms);
+    if (clusters) group.add(clusters);
   }
   return group;
 }

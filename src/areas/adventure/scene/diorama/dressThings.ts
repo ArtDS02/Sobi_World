@@ -18,13 +18,18 @@ import { heightAt, weightsAt, type Grid } from './field';
 import { Foes } from './foes';
 import { InkPool } from './inkPool';
 import { LandmarkGlow } from './landmarkGlow';
+import { Spores } from './spores';
 import { hash2, noise2 } from './noise';
 import { tuftCard, type Card } from './textures';
 
 /** Height of a tall landmark (an oak, a dead tree) as a multiple of its footprint's width over the picture's aspect (a wide one keeps 1.45). */
 const LANDMARK = 1.6;
 /** Landmarks drawn larger than their footprint says, kept whole (their grey stones are no painted shadow) and alive with a soft glow. */
-const LANDMARKS: Readonly<Record<string, { scale: number; glow: boolean }>> = { prop_adv_lm_f2: { scale: 1.2, glow: true }, prop_adv_lm_f3: { scale: 1.15, glow: false } };
+const LANDMARKS: Readonly<Record<string, { scale: number; glow: boolean; spores?: boolean }>> = {
+  prop_adv_lm_f2: { scale: 1.2, glow: true },
+  prop_adv_lm_f3: { scale: 1.15, glow: false },
+  prop_adv_lm_n1: { scale: 1.1, glow: false, spores: true },
+};
 const FOE_H: Record<string, number> = { normal: 1.7, elite: 2.3, mutant: 2.0, subboss: 2.6, boss: 3.2, special: 2.2 };
 
 export interface Things {
@@ -43,7 +48,8 @@ function contactShadow(blob: THREE.Texture, x: number, y: number, z: number, w: 
   return m;
 }
 
-export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUniforms, quality: number, blob: THREE.Texture, s: AdventureSceneState, inkPools = false): Promise<Things> {
+export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUniforms, quality: number, blob: THREE.Texture, s: AdventureSceneState, opts: { inkPools?: boolean; /** Share of the landmark's spores (default 1). */ spore?: number; /** Height of a shut barrier as a multiple of the default (a taller wall with a soft shadow at its foot). */ barrier?: number } = {}): Promise<Things> {
+  const { inkPools = false, spore = 1, barrier = 1 } = opts;
   const group = new THREE.Group();
   const ground = (x: number, z: number) => heightAt(g, x, z);
   const r = (x: number, y: number, k: number) => hash2(Math.round(x * 97), Math.round(y * 89), k);
@@ -109,6 +115,11 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
       group.add(lg.group);
       lives.push((t) => lg.update(t, 1));
     }
+    if (look?.spores) {
+      const sp = new Spores(new THREE.Vector3(x, ground(x, z), z), h * card.aspect, h, blob, Math.max(4, Math.round(26 * quality * spore)));
+      group.add(sp.group);
+      lives.push((t) => sp.update(t, 1));
+    }
   }
 
   // Hand-placed decorations (decision 047) and the things of the area, one batch per picture.
@@ -139,7 +150,8 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
       const wide = Math.max(t.w, t.h) + 1.7;
       // Shut: what the 2D map draws barring it (the zone's bramble), as a thorny wall over the exit's tiles; open: the passage.
       const bar = !open && id ? await cardOf(art, id) : null;
-      if (bar) group.add(buildBarrier(bar, t, u, ground, 41));
+      if (bar) group.add(buildBarrier(bar, t, u, ground, 41, 1.25 * barrier));
+      if (bar && barrier > 1) group.add(contactShadow(blob, t.x + t.w / 2, ground(t.x + t.w / 2, t.y + t.h), t.y + t.h - 0.1, t.w + 1.4, 1.8));
       else if (id) await put(id, undefined, t.x + t.w / 2, t.y + t.h - 0.1, wide);
       // A soft warm-gold glow on the ground at an open exit (a shut one has its ember thorns: a glow there showed through the bramble
       // as a box). It stands on the ground, never over the party.
@@ -158,7 +170,8 @@ export async function dressThings(art: ArtFn, map: AreaMap, g: Grid, u: CardUnif
       if (s.openedGates.includes(t.id)) continue;
       const bar = await cardOf(art, a.id, false, a.state);
       if (bar) {
-        group.add(buildBarrier(bar, t, u, ground, 43));
+        group.add(buildBarrier(bar, t, u, ground, 43, 1.25 * barrier));
+        if (barrier > 1) group.add(contactShadow(blob, t.x + t.w / 2, ground(t.x + t.w / 2, t.y + t.h), t.y + t.h - 0.1, t.w + 1.4, 1.8));
         continue;
       }
     }

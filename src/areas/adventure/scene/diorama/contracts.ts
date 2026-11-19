@@ -19,6 +19,12 @@ export interface SceneContract {
   wind?: number;
   /** How far the dirt paths are darkened and cooled, 0–1 (default 0). */
   pathTone?: number;
+  /** How far the night floors of open ground and paths are raised, 0–1 (default 0), so clearings read well beyond the lantern. */
+  nightLift?: number;
+  /** Height of a shut barrier (bramble, vine wall) as a multiple of the default, 1 = default: a map whose gate stands in dense woods needs it taller to read as a blocker. */
+  barrier?: number;
+  /** Small mushroom clusters (the landmark's picture scaled down) beside the woods' edge: share of the bush tiles that carry one (default 0). */
+  mushrooms?: number;
   /** Light added to the bridge decks in shade, 0–1 (default 0), so a tree's shadow never turns the planks black. */
   deckLift?: number;
   /** Trees and stones made of corruption around a centre (tile), share of the tiles at the centre. */
@@ -64,8 +70,9 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
   // cooler than the other woods, with no butterflies, petals or lily pads: falling needles and leaves, dust in the light.
   map_forest_deep: {
     trees: [0.3, 0.5, 0.2, 0],
-    light: { sat: -0.12, warm: -0.07, fog: 0.3, fogTint: TINT_DEEP, dim: 0.6, moon: 0.45 },
+    light: { sat: -0.12, warm: -0.07, fog: 0.3, fogTint: TINT_DEEP, dim: 0.6, moon: 0.7 },
     life: { wings: false, petals: false, leaves: 1.5 },
+    nightLift: 1,
     lilies: false,
     wind: 1.8,
     pathTone: 1,
@@ -114,10 +121,23 @@ export const CONTRACTS: Readonly<Record<string, SceneContract>> = {
       { name: '6 · Exit', x: 46, y: 13 },
     ],
   },
-  // Thung Nấm: damp hollow, spores. TODO(M4): spores round the giant mushroom, low mist.
+  // Thung Nấm: the damp hollow: teal light, gold spores rising round the giant mushroom (spores.ts), small mushroom clusters along the
+  // woods' edge, and the big canopy over the hidden nook that thins out when the party steps in (canopyCover.ts).
   map_forest_hollow: {
     trees: [0.35, 0.3, 0.35, 0],
-    light: { sat: 0.05, warm: -0.02, fog: 0.35, fogTint: TINT_TEAL },
+    light: { sat: 0.05, warm: -0.02, fog: 0.35, fogTint: TINT_TEAL, moon: 0.3 },
+    life: { wings: true, petals: false, leaves: 0.8, flies: 1.2 },
+    lilies: false,
+    wind: 1.3,
+    nightLift: 0.5,
+    mushrooms: 0.4,
+    deckLift: 1,
+    barrier: 1.5,
+    // The giant mushroom's clearing and the way to the bramble gate stand clear of tall crowns.
+    keepLow: [
+      { x: 32, y: 15, w: 14, h: 10 },
+      { x: 46, y: 22, w: 14, h: 9 },
+    ],
     accent: 'spores',
     spots: [
       { name: '1 · Start', x: 40, y: 33 },

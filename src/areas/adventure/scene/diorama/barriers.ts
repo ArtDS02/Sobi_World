@@ -14,9 +14,9 @@ const STRETCH = 1.25;
 const THORN = new THREE.ConeGeometry(0.045, 0.3, 4).translate(0, 0.15, 0);
 
 /** A barrier over the tiles of `r` (x, y, w, h in tiles), each clump a copy of `picture`. */
-export function buildBarrier(picture: Card, r: { x: number; y: number; w: number; h: number }, u: CardUniforms, ground: (x: number, z: number) => number, seed: number): THREE.Group {
+export function buildBarrier(picture: Card, r: { x: number; y: number; w: number; h: number }, u: CardUniforms, ground: (x: number, z: number) => number, seed: number, stretch = STRETCH): THREE.Group {
   const group = new THREE.Group();
-  const card: Card = { ...picture, aspect: picture.aspect / STRETCH };
+  const card: Card = { ...picture, aspect: picture.aspect / stretch };
   const items: Placed[] = [];
   for (let ty = r.y; ty < r.y + r.h; ty += 1)
     for (let tx = r.x; tx < r.x + r.w; tx += 1) {
@@ -29,7 +29,10 @@ export function buildBarrier(picture: Card, r: { x: number; y: number; w: number
       }
     }
   // Slightly reddened, so a bramble barrier does not melt into the green bushes of the woods around it.
-  group.add(cardBatch(card, items, u, { sway: 0.15, tilt: TILT }, 0xf6e0d4));
+  const wall = cardBatch(card, items, u, { sway: 0.15, tilt: TILT }, 0xf6e0d4);
+  // No shadow falls on it: a tree's moon shadow over a clump made a black column in the wall by night, and the barrier must always read.
+  wall.traverse((o) => void (o.receiveShadow = false));
+  group.add(wall);
   // Ember thorns: dark red-brown, smouldering faintly of their own (a fire bramble), the same by day and by night.
   const thorn = new THREE.MeshLambertMaterial({ color: 0x5a2014, emissive: 0x4a0c02 });
   const thorns: THREE.Matrix4[] = [];

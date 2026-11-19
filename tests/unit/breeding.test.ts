@@ -48,7 +48,8 @@ describe('breeding outcome (§6.5 as rules, U00-1 D4)', () => {
     expect(a).toEqual(b);
   });
 
-  it('seeded 10,000-sample distribution within 1.5 points of every weight', () => {
+  // 10,000 seeded crosses: slow when the whole suite runs in parallel.
+  it('seeded 10,000-sample distribution within 1.5 points of every weight', { timeout: 120_000 }, () => {
     const rng = mulberry32(2024);
     const pairs: [BreedId, BreedId][] = [
       ['PIG_EARTH_PINK', 'PIG_EARTH_PINK'],

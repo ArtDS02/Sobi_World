@@ -41,6 +41,8 @@ export interface CardLook {
   near?: number;
   /** Share (0–1) the picture is drained toward a cool violet-grey (a sick wood), 0 = none. */
   sick?: number;
+  /** A shared 0–1 opacity (dithered away below 1), changed from outside: a canopy that thins out over the party. */
+  fade?: { value: number };
 }
 
 /** Lean of the cards toward the camera (the camera looks down 52°): a picture keeps ~93 % of its height on screen. */
@@ -81,6 +83,8 @@ float lean = transformed.y;
 transformed.y = lean * cos(uTilt);
 transformed.z -= lean * sin(uTilt) * cardH;
 vFootZ = cardAt.z - uShift;
+// Leaf flutter, finished in the fragment shader: how far the picture's own pixels shift (about 0.03 tile whatever the card's size, as uv), larger toward the top and in a gust.
+vFl = vec2(min(.08, .03 * uWind * uSway * cardTop * min(swayFar, 1.6) * (1. + .6 * gust) / max(abs(cardW), .3)), cardAt.x * 1.3 + cardAt.z * .9);
 `;
 
 const DITHER = /* glsl */ `
@@ -103,21 +107,28 @@ export function cardMaterial(card: Card, u: CardUniforms, look: CardLook, tint =
   }
   mat.onBeforeCompile = (sh) => {
     patchVertex(sh, u, look, true);
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>\nuniform vec3 uSee; uniform float uSeeOn; uniform vec3 uPlayer; uniform float uSick;\nvarying float vFootZ;\n${DITHER}`).replace(
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', `#include <common>\nuniform vec3 uSee; uniform float uSeeOn; uniform vec3 uPlayer; uniform float uSick; uniform float uFade; uniform float uTime;\nvarying float vFootZ; varying vec2 vFl;\n${DITHER}`).replace(
       '#include <map_fragment>',
-      `#include <map_fragment>\ndiffuseColor.rgb = mix(diffuseColor.rgb, vec3(dot(diffuseColor.rgb, vec3(.2126, .7152, .0722))) * vec3(.92, .84, 1.08), uSick);`,
+      // The leaves of a crown flutter on the spot: the picture is sampled a pixel or two off, in slow waves about a leaf clump wide, so
+      // the crown shimmers between frames 0.1 s apart without its outline wobbling like jelly.
+      `#ifdef USE_MAP
+vec2 fuv = vMapUv + vec2(sin(uTime * 4.4 + vMapUv.y * 38. + vFl.y), cos(uTime * 3.7 + vMapUv.x * 31. + vFl.y * 1.7) * .7) * vFl.x;
+diffuseColor *= texture2D(map, fuv);
+#endif
+diffuseColor.rgb = mix(diffuseColor.rgb, vec3(dot(diffuseColor.rgb, vec3(.2126, .7152, .0722))) * vec3(.92, .84, 1.08), uSick);`,
     ).replace(
       '#include <clipping_planes_fragment>',
       // A card standing level with the party or in front of it (judged by its foot, not by the depth of each pixel: a tree right
       // beside the party is barely nearer the camera yet hides it) opens a circle around the party on screen.
       `#include <clipping_planes_fragment>
+if (uFade < .999 && ditherAt(gl_FragCoord.xy + 3.) > uFade) discard;
 if (uSeeOn > .5 && vFootZ > uPlayer.z - .2) {
   float keep = smoothstep(uSee.z * .5, uSee.z, distance(gl_FragCoord.xy, uSee.xy));
   if (ditherAt(gl_FragCoord.xy) > keep) discard;
 }`,
     );
   };
-  mat.customProgramCacheKey = () => `card-${look.sway}-${look.tilt}-${look.push ?? 0}-${look.see ? 1 : 0}-${look.shift ?? 0}-${look.near ?? 0}-${look.sick ?? 0}`;
+  mat.customProgramCacheKey = () => `card-${look.sway}-${look.tilt}-${look.push ?? 0}-${look.see ? 1 : 0}-${look.shift ?? 0}-${look.near ?? 0}-${look.sick ?? 0}-${look.fade ? 1 : 0}`;
   return mat;
 }
 
@@ -131,11 +142,12 @@ function patchVertex(sh: THREE.WebGLProgramParametersWithUniforms, u: CardUnifor
     uShift: { value: look.shift ?? 0 },
     uNear: { value: look.near ?? 0 },
     uSick: { value: look.sick ?? 0 },
+    uFade: look.fade ?? { value: 1 },
   });
   sh.vertexShader = sh.vertexShader
     .replace(
       '#include <common>',
-      '#include <common>\nuniform float uTime; uniform float uWind; uniform vec3 uPlayer; uniform float uSway; uniform float uTilt; uniform float uPush; uniform float uShift; uniform float uNear; uniform float uSick;\nvarying float vFootZ;',
+      '#include <common>\nuniform float uTime; uniform float uWind; uniform vec3 uPlayer; uniform float uSway; uniform float uTilt; uniform float uPush; uniform float uShift; uniform float uNear; uniform float uSick;\nvarying float vFootZ; varying vec2 vFl;',
     )
     .replace('#include <begin_vertex>', `#include <begin_vertex>\n${VERTEX}`)
     .replace(
