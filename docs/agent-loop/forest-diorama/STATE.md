@@ -73,3 +73,4 @@ dioramaProfile --gpu --quality full (ANIM_GPU=high) + --quality light (ANIM_GPU=
 Hoàn thiện hợp đồng design.md §C <n> cho <map>: vật mốc + bậc/cao nguyên, điểm nhấn riêng (thay TODO(M4) trong contracts/dress), PHẢI THẤY / KHÔNG ĐƯỢC, điểm duyệt nhìn đúng vật,
 cổng đóng đọc là vật chặn, đội luôn thấy ở chỗ rậm (denseSpots --map <map>). Không thấp hơn Bìa Rừng 9,0 (ảnh art_inbox/diorama_shots/m3r3/map_forest_edge).
 Không sửa luật/save/content; không phá Bìa Rừng (chụp lại edge day_2, day_4 để so). FPS RTX Đẹp ≥60, iGPU Nhẹ ≥30. Tự chụp vào art_inbox/diorama_shots/m4/<map>/ (shots 3 giờ, dense, walk có đoạn tĩnh, 2 profile).
+- Chỉ đạo tự sửa test: luôn chạy `npm run typecheck` trước commit (2 lần để sót tham số timeout cũ: assetsCheck, breeding).
